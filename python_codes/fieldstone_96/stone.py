@@ -65,7 +65,7 @@ eta_ref=1e22 # numerical parameter for FEM
 nstep=1 # number of time steps
 dt_user=1*year
 
-hhh=50e3 # element size at the surface
+hhh=20e3 # element size at the surface
 
 solve_stokes=True
 
@@ -99,7 +99,7 @@ g0=3.72076 #https://en.wikipedia.org/wiki/Mars
 
 #-------------------------------------
 
-radial_model='samuelB'
+radial_model='aspect'
 
 #---------------------------------
 if radial_model=='gravbench': 
@@ -209,6 +209,8 @@ if radial_model=='aspect':
    cmb_bc=1
    g0=3.72076 #https://en.wikipedia.org/wiki/Mars
 #   np_blob=0
+   density_above=0
+   density_below=6000
 
 #-------------------------------------
 
@@ -755,10 +757,10 @@ if radial_model=='aspect': #benchmark against aspect
    profile_eta[1,:]=eta0
 
    #making sure nodes on surfaces are correctly seen
-   profile_rho[0,0]=0.99999*R_inner
-   profile_rho[0,-1]=1.000001*R_outer
-   profile_eta[0,0]=0.99999*R_inner
-   profile_eta[0,-1]=1.000001*R_outer
+   profile_rho[0,0]=0.9999*R_inner
+   profile_rho[0,-1]=1.0001*R_outer
+   profile_eta[0,0]=0.9999*R_inner
+   profile_eta[0,-1]=1.0001*R_outer
 
 #np.savetxt('profile_rho.ascii',np.array([profile_rho[0,:],profile_rho[1,:]]).T)
 
@@ -865,8 +867,8 @@ for i in range(0,NP):
     if rP[i]<=1.001*R_inner: 
        cmb_Pnode[i]=True
 
-np.savetxt('surface_Pnode.ascii',np.array([xP,zP,rP,surface_Pnode]).T,header='# x,y')
-np.savetxt('cmb_Pnode.ascii',np.array([xP,zP,rP,cmb_Pnode]).T,header='# x,y')
+np.savetxt('surface_Pnode.ascii',np.array([xP,zP,surface_Pnode,rP]).T,header='# x,y,flag,r')
+np.savetxt('cmb_Pnode.ascii',np.array([xP,zP,cmb_Pnode,rP]).T,header='# x,y,flag,r')
 
 print("flag surface nodes: %.3f s" % (timing.time() - start))
 
@@ -1591,6 +1593,8 @@ for istep in range(0,nstep):
 
     #####################################################################
     # compute dynamic topography
+    # in order to be able to compare with aspect we need to 
+    # subtract the average cmb pressure from sigma_rr
     ##################################################################### 
     start = timing.time()
 
@@ -1605,7 +1609,8 @@ for istep in range(0,nstep):
     for i in range(0,NV):
         if cmb_node[i]:
            dyntop_i= -(tau_rr_nodal[i]-q[i])/((rho_nodal[i]-density_below)*g0) 
-           dynfile.write("%e %e\n" %(theta_nodal[i],dyntop_i))
+           dyntop_i_aspect= -(tau_rr_nodal[i]-q[i]+avrg_p_cmb)/((rho_nodal[i]-density_below)*g0) 
+           dynfile.write("%e %e %e \n" %(theta_nodal[i],dyntop_i,dyntop_i_aspect))
     dynfile.close()
 
     print("compute dynamic topography: %.3f s" % (timing.time() - start))
