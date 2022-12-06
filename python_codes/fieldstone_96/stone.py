@@ -65,7 +65,7 @@ eta_ref=1e22 # numerical parameter for FEM
 nstep=1 # number of time steps
 dt_user=1*year
 
-hhh=50e3 # element size at the surface
+hhh=30e3 # element size at the surface
 
 solve_stokes=True
 
@@ -99,7 +99,7 @@ g0=3.72076 #https://en.wikipedia.org/wiki/Mars
 
 #-------------------------------------
 
-radial_model='samuelA'
+radial_model='steinberger'
 
 #---------------------------------
 if radial_model=='gravbench': 
@@ -666,13 +666,13 @@ if radial_model=='steinberger':
    npt_rho=1968#3390
    npt_eta=1968
 
-   #profile_eta=np.empty(npt_eta,dtype=np.float64) 
-   #profile_depth=np.empty(npt_eta,dtype=np.float64) 
-   #profile_eta,profile_depth=np.loadtxt('data/steinberger_eta.ascii',unpack=True,usecols=[0,1])
+   p_eta=np.empty(npt_eta,dtype=np.float64) 
+   p_depth=np.empty(npt_eta,dtype=np.float64) 
+   p_eta,p_depth=np.loadtxt('data/steinberger_eta.ascii',unpack=True,usecols=[0,1])
 
-   #profile_rho=np.empty(npt_rho,dtype=np.float64) 
-   #profile_depth=np.empty(npt_rho,dtype=np.float64) 
-   #profile_rho,profile_depth=np.loadtxt('data/steinberger_rho.ascii',unpack=True,usecols=[0,1])
+   p_rho=np.empty(npt_rho,dtype=np.float64) 
+   p_depth=np.empty(npt_rho,dtype=np.float64) 
+   p_rho,p_depth=np.loadtxt('data/steinberger_rho.ascii',unpack=True,usecols=[0,1])
 
    # gets current file path as string 
    #cfilepath = os.path.dirname(os.path.abspath(__file__)) 
@@ -700,6 +700,9 @@ if radial_model=='steinberger':
    profile_eta[0,:]=np.flip(profile_eta[0,:])
    profile_eta[1,:]=np.flip(profile_eta[1,:])
 
+   for i in range(0,npt_eta):
+       profile_eta[1,i]=min(eta_max,profile_eta[1,i])
+
 #---------------------------
 if radial_model=='samuelA':
 
@@ -724,12 +727,6 @@ if radial_model=='samuelA':
 
    for i in range(0,npt_eta):
        profile_eta[1,i]=min(eta_max,profile_eta[1,i])
-
-   #making sure nodes on surfaces are correctly seen
-   profile_rho[0,0]=0.9999*R_inner
-   profile_rho[0,-1]=1.0001*R_outer
-   profile_eta[0,0]=0.9999*R_inner
-   profile_eta[0,-1]=1.0001*R_outer
 
 #---------------------------
 if radial_model=='samuelB':
@@ -756,12 +753,6 @@ if radial_model=='samuelB':
    for i in range(0,npt_eta):
        profile_eta[1,i]=min(eta_max,profile_eta[1,i])
 
-   #making sure nodes on surfaces are correctly seen
-   profile_rho[0,0]=0.9999*R_inner
-   profile_rho[0,-1]=1.0001*R_outer
-   profile_eta[0,0]=0.9999*R_inner
-   profile_eta[0,-1]=1.0001*R_outer
-
 #---------------------------
 if radial_model=='aspect': #benchmark against aspect
    npt_rho=1000
@@ -774,11 +765,12 @@ if radial_model=='aspect': #benchmark against aspect
    profile_rho[1,:]=rho0
    profile_eta[1,:]=eta0
 
-   #making sure nodes on surfaces are correctly seen
-   profile_rho[0,0]=0.9999*R_inner
-   profile_rho[0,-1]=1.0001*R_outer
-   profile_eta[0,0]=0.9999*R_inner
-   profile_eta[0,-1]=1.0001*R_outer
+
+#making sure nodes on surfaces are correctly seen
+profile_rho[0,0]=0.9999*R_inner
+profile_rho[0,-1]=1.0001*R_outer
+profile_eta[0,0]=0.9999*R_inner
+profile_eta[0,-1]=1.0001*R_outer
 
 #np.savetxt('profile_rho.ascii',np.array([profile_rho[0,:],profile_rho[1,:]]).T)
 
