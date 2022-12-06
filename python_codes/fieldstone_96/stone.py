@@ -65,7 +65,7 @@ eta_ref=1e22 # numerical parameter for FEM
 nstep=1 # number of time steps
 dt_user=1*year
 
-hhh=30e3 # element size at the surface
+hhh=40e3 # element size at the surface
 
 solve_stokes=True
 
@@ -99,7 +99,7 @@ g0=3.72076 #https://en.wikipedia.org/wiki/Mars
 
 #-------------------------------------
 
-radial_model='steinberger'
+radial_model='4layer'
 
 #---------------------------------
 if radial_model=='gravbench': 
@@ -137,20 +137,21 @@ if radial_model=='4layer': # 4layer model
    R_disc3 = R_inner+50e3   #arbitrary layer
    R_disc4 = R_inner+100e3   #arbitrary layer
 
-   rho_crust=3300
+   rho_crust=3100 #knaymeyer 2021 and Wieczorek 2022
    eta_crust=1e25
 
-   rho_lith=3400
+   rho_lith=3400  #knaymeyer 2021
    eta_lith=1e21
 
-   rho_mantle=3500
+   rho_mantle=3500 #knaymeyer 2021
    eta_mantle=6e20
 
    rho_layer=4300
    eta_layer=6e20
 
    density_above=0
-   density_below=5900
+   density_below=6200 #duran 2022
+
 
 #---------------------------------
 if radial_model=='steinberger':
@@ -489,7 +490,7 @@ xP1=dict_mesh['vertices'][:,0]
 zP1=dict_mesh['vertices'][:,1]
 NP1=np.size(xP1)
 mP,nel=np.shape(iconP1)
-export_elements_to_vtu(xP1,zP1,iconP1,'meshP1.vtu')
+#export_elements_to_vtu(xP1,zP1,iconP1,'meshP1.vtu')
 #exit()
 
 print("make P1 mesh: %.3f s" % (timing.time() - start))
@@ -499,7 +500,7 @@ NV0,xP2,zP2,iconP2=mesh_P1_to_P2(NP1,nel,xP1,zP1,iconP1)
 
 print("make P2 mesh: %.3f s" % (timing.time() - start))
 
-export_elements_to_vtuP2(xP2,zP2,iconP2,'meshP2.vtu')
+#export_elements_to_vtuP2(xP2,zP2,iconP2,'meshP2.vtu')
 #exit()
 
 
@@ -655,7 +656,8 @@ if radial_model=='4layer':
        if profile_eta[0,i]>R_disc1:
           profile_eta[1,i]=eta_crust       
        elif profile_eta[0,i]>R_disc2:
-
+          profile_eta[1,i]=eta_lith       
+       elif profile_eta[0,i]>R_disc3:
           profile_eta[1,i]=eta_mantle       
        else:
           profile_eta[1,i]=eta_layer
@@ -1876,7 +1878,7 @@ for istep in range(0,nstep):
 
     print("write data: %.3fs" % (timing.time() - start))
 
-    exit()
+    #exit()
 
     #####################################################################
     # compute gravity. phi goes from 0 to 2pi
