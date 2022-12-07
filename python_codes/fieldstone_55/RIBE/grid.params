@@ -1,0 +1,3 @@
+      common/cstr/pi,zero,one,half,dipend,ellplate,ellslab,doverh,darc
+      common/csti/nint_slab,nint_plate,nint_midsurf,
+     & npt_slab,npt_plate,npt_midsurf,nperh,mend 
