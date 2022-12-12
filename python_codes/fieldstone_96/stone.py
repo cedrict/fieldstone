@@ -65,19 +65,37 @@ eta_ref=1e22 # numerical parameter for FEM
 nstep=1 # number of time steps
 dt_user=1*year
 
-hhh=40e3 # element size at the surface
 
 solve_stokes=True
 
 #-------------------------------------
 # blob setup 
 #-------------------------------------
-R_blob=300e3            #radius of blob
-z_blob=R_outer-1000e3   #starting depth
-rho_blob=3200
-eta_blob=1e22
+
+if int(len(sys.argv) == 15): 
+    R_blob       = float(sys.argv[1])
+    z_blob       = float(sys.argv[2])
+    rho_blob     = float(sys.argv[3])
+    eta_blob     = float(sys.argv[4])
+    eccentricity = float(sys.argv[5])
+    path         =       sys.argv[6]
+    hhh          = float(sys.argv[7])
+    radial_model =       sys.argv[8]
+else:
+   R_blob=300e3            #radius of blob
+   z_blob=R_outer-1000e3   #starting depth
+   rho_blob=3200
+   eta_blob=1e22
+   eccentricity=0.8
+   path='solution/'
+   hhh=50e3                # element size at the surface
+   radial_model='4layer'
+
 np_blob=int(2*np.pi*R_blob/hhh)
 blobtype=1
+
+b_blob=R_blob
+a_blob=b_blob*np.sqrt(1/(1-eccentricity**2))
 
 #-------------------------------------
 #boundary conditions at planet surface
@@ -98,10 +116,6 @@ use_isog=True
 g0=3.72076 #https://en.wikipedia.org/wiki/Mars
 
 #-------------------------------------
-
-radial_model='4layer'
-
-#---------------------------------
 if radial_model=='gravbench': 
    solve_stokes=False
    nstep=1
@@ -111,7 +125,8 @@ if radial_model=='gravbench':
    R_disc2 = R_outer-50e3 
    R_disc3 = R_outer-75e3 
    R_disc4 = R_outer-100e3 
-   R_blob=300e3            #radius of blob
+   a_blob=300e3            #radius of blob
+   b_blob=300e3            #radius of blob
    z_blob=R_outer-1000e3   #starting depth
    eta0=1e22
    eta_blob=eta0
@@ -125,7 +140,6 @@ if radial_model=='gravbench':
    #rho0=0
    #rho_blob=4000
    #test=3
-
 
 #---------------------------------
 if radial_model=='4layer': # 4layer model 
@@ -152,6 +166,13 @@ if radial_model=='4layer': # 4layer model
    density_above=0
    density_below=6200 #duran 2022
 
+   if int(len(sys.argv) == 15): 
+      R_disc1   =sys.argv[9]  #R_outer-60e3   #crust
+      R_disc2   =sys.argv[10]  #R_outer-450e3  # lith
+      rho_crust =sys.argv[11] #3100 #knaymeyer 2021 and Wieczorek 2022
+      rho_lith  =sys.argv[12] #3400  #knaymeyer 2021
+      eta_lith  =sys.argv[13] #1e21
+      rho_mantle=sys.argv[14] #3500 #knaymeyer 2021
 
 #---------------------------------
 if radial_model=='steinberger':
@@ -205,7 +226,8 @@ if radial_model=='aspect':
    R_disc4 = R_outer-400e3 
 
    R_inner=R_outer-1700e3
-   R_blob=300e3           
+   a_blob=300e3           
+   b_blob=300e3           
    z_blob=R_outer-850e3   
    eta0=1e21
    eta_blob=1e22
@@ -220,6 +242,8 @@ if radial_model=='aspect':
    density_below=6000
 
 #-------------------------------------
+
+VOL_blob=4/3*np.pi*a_blob**2*b_blob
 
 nnt=int(np.pi*R_outer/hhh) 
 nnr=int((R_outer-R_inner)/hhh)+1 
@@ -244,6 +268,12 @@ height=10e3
 nqel_grav=12 # 6,12
 
 ###############################################################################
+#check if an existing directory exist if not make one
+if os.path.isdir(path) == False:
+   os.makedirs(path)
+   print(path," directory was created")
+
+###############################################################################
 
 print('R_inner=',R_inner)
 print('R_outer=',R_outer)
@@ -254,7 +284,8 @@ print('gravity_method=',gravity_method)
 print('radial_model=',radial_model)
 print('height=',height)
 print('np_blob=',np_blob)
-print('R_blob=',R_blob)
+print('a_blob=',a_blob)
+print('b_blob=',b_blob)
 print('z_blob=',z_blob)
 print('nnt=',nnt)
 print('nnt2=',nnt2)
@@ -427,7 +458,7 @@ if np_blob>0:
    # blob 
    #------------------------------------------------------------------------------
    theta_bl = np.linspace(-np.pi/2,np.pi/2,num=np_blob,endpoint=True,dtype=np.float64) #half-sphere in the x and y positive domain
-   pts_bl = np.stack([R_blob*np.cos(theta_bl),z_blob+R_blob*np.sin(theta_bl)], axis=1) #points on blob outersurface 
+   pts_bl = np.stack([a_blob*np.cos(theta_bl),z_blob+b_blob*np.sin(theta_bl)], axis=1) #points on blob outersurface 
    seg_bl = np.stack([counter+np.arange(np_blob-1), counter+np.arange(np_blob-1)+1], axis=1) #vertices on outersurface blob
    for i in range(0,np_blob):                                              #first and last point must be exactly on the y-axis.
        #print(pts_bl[i,0],pts_bl[i,1])
@@ -490,7 +521,7 @@ xP1=dict_mesh['vertices'][:,0]
 zP1=dict_mesh['vertices'][:,1]
 NP1=np.size(xP1)
 mP,nel=np.shape(iconP1)
-#export_elements_to_vtu(xP1,zP1,iconP1,'meshP1.vtu')
+export_elements_to_vtu(xP1,zP1,iconP1,'meshP1.vtu')
 #exit()
 
 print("make P1 mesh: %.3f s" % (timing.time() - start))
@@ -500,7 +531,7 @@ NV0,xP2,zP2,iconP2=mesh_P1_to_P2(NP1,nel,xP1,zP1,iconP1)
 
 print("make P2 mesh: %.3f s" % (timing.time() - start))
 
-#export_elements_to_vtuP2(xP2,zP2,iconP2,'meshP2.vtu')
+export_elements_to_vtuP2(xP2,zP2,iconP2,'meshP2.vtu')
 #exit()
 
 
@@ -806,7 +837,7 @@ cmb_node=np.zeros(NV,dtype=np.bool)
 for i in range(0,NV):
     theta_nodal[i]=np.arctan2(xV[i],zV[i])
     r_nodal[i]=np.sqrt(xV[i]**2+zV[i]**2)
-    if r_nodal[i]>0.99999*R_outer:
+    if r_nodal[i]>0.9999*R_outer:
        #r_nodal[i]=R_outer*0.99999999
        #xV[i]=r_nodal[i]*np.sin(theta_nodal[i])
        #zV[i]=r_nodal[i]*np.cos(theta_nodal[i])
@@ -829,41 +860,41 @@ print("flag cmb nodes: %.3f s" % (timing.time() - start))
 ###############################################################################
 # make blob a sphere - push mid edges out
 ###############################################################################
-start = timing.time()
+#start = timing.time()
 
 #np.savetxt('gridV_before.ascii',np.array([xV,zV]).T,header='# xV,zV')
 
-for iel in range(0,nel):
-    inode1=iconV[0,iel]
-    inode2=iconV[1,iel]
-    if abs(xV[inode1]**2+(zV[inode1]-z_blob)**2-R_blob**2)/R_blob**2<1e-4 and\
-       abs(xV[inode2]**2+(zV[inode2]-z_blob)**2-R_blob**2)/R_blob**2<1e-4 :
-       inode_mid=iconV[3,iel]
-       theta=np.arctan2(xV[inode_mid],zV[inode_mid]-z_blob)
-       xV[inode_mid]=R_blob*np.sin(theta)
-       zV[inode_mid]=R_blob*np.cos(theta)+z_blob
+#for iel in range(0,nel):
+#    inode1=iconV[0,iel]
+#    inode2=iconV[1,iel]
+#    if abs(xV[inode1]**2+(zV[inode1]-z_blob)**2-R_blob**2)/R_blob**2<1e-4 and\
+#       abs(xV[inode2]**2+(zV[inode2]-z_blob)**2-R_blob**2)/R_blob**2<1e-4 :
+#       inode_mid=iconV[3,iel]
+#       theta=np.arctan2(xV[inode_mid],zV[inode_mid]-z_blob)
+#       xV[inode_mid]=R_blob*np.sin(theta)
+#       zV[inode_mid]=R_blob*np.cos(theta)+z_blob
 
-    inode1=iconV[1,iel]
-    inode2=iconV[2,iel]
-    if abs(xV[inode1]**2+(zV[inode1]-z_blob)**2-R_blob**2)/R_blob**2<1e-4 and\
-       abs(xV[inode2]**2+(zV[inode2]-z_blob)**2-R_blob**2)/R_blob**2<1e-4 :
-       inode_mid=iconV[4,iel]
-       theta=np.arctan2(xV[inode_mid],zV[inode_mid]-z_blob)
-       xV[inode_mid]=R_blob*np.sin(theta)
-       zV[inode_mid]=R_blob*np.cos(theta)+z_blob
+#    inode1=iconV[1,iel]
+#    inode2=iconV[2,iel]
+#    if abs(xV[inode1]**2+(zV[inode1]-z_blob)**2-R_blob**2)/R_blob**2<1e-4 and\
+#       abs(xV[inode2]**2+(zV[inode2]-z_blob)**2-R_blob**2)/R_blob**2<1e-4 :
+#       inode_mid=iconV[4,iel]
+#       theta=np.arctan2(xV[inode_mid],zV[inode_mid]-z_blob)
+#       xV[inode_mid]=R_blob*np.sin(theta)
+#       zV[inode_mid]=R_blob*np.cos(theta)+z_blob
 
-    inode1=iconV[2,iel]
-    inode2=iconV[0,iel]
-    if abs(xV[inode1]**2+(zV[inode1]-z_blob)**2-R_blob**2)/R_blob**2<1e-4 and\
-       abs(xV[inode2]**2+(zV[inode2]-z_blob)**2-R_blob**2)/R_blob**2<1e-4 :
-       inode_mid=iconV[5,iel]
-       theta=np.arctan2(xV[inode_mid],zV[inode_mid]-z_blob)
-       xV[inode_mid]=R_blob*np.sin(theta)
-       zV[inode_mid]=R_blob*np.cos(theta)+z_blob
+#    inode1=iconV[2,iel]
+#    inode2=iconV[0,iel]
+#    if abs(xV[inode1]**2+(zV[inode1]-z_blob)**2-R_blob**2)/R_blob**2<1e-4 and\
+#       abs(xV[inode2]**2+(zV[inode2]-z_blob)**2-R_blob**2)/R_blob**2<1e-4 :
+#       inode_mid=iconV[5,iel]
+#       theta=np.arctan2(xV[inode_mid],zV[inode_mid]-z_blob)
+#       xV[inode_mid]=R_blob*np.sin(theta)
+#       zV[inode_mid]=R_blob*np.cos(theta)+z_blob
 
 #np.savetxt('gridV_after.ascii',np.array([xV,zV]).T,header='# xV,zV')
 
-print("making blob a sphere: %.3f s" % (timing.time() - start))
+#print("making blob a sphere: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 # flag surface P nodes (needed for p normalisation)
@@ -879,8 +910,8 @@ for i in range(0,NP):
     if rP[i]<=1.001*R_inner: 
        cmb_Pnode[i]=True
 
-np.savetxt('surface_Pnode.ascii',np.array([xP,zP,surface_Pnode,rP]).T,header='# x,y,flag,r')
-np.savetxt('cmb_Pnode.ascii',np.array([xP,zP,cmb_Pnode,rP]).T,header='# x,y,flag,r')
+np.savetxt(path+'surface_Pnode.ascii',np.array([xP,zP,surface_Pnode,rP]).T,header='# x,y,flag,r')
+np.savetxt(path+'cmb_Pnode.ascii',np.array([xP,zP,cmb_Pnode,rP]).T,header='# x,y,flag,r')
 
 print("flag surface nodes: %.3f s" % (timing.time() - start))
 
@@ -893,10 +924,10 @@ eta_nodal=np.zeros(NV,dtype=np.float64)
 rho_nodal=np.zeros(NV,dtype=np.float64) 
 
 for i in range(0,NV):
-    eta_nodal[i],rho_nodal[i]=material_model(xV[i],zV[i],eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+    eta_nodal[i],rho_nodal[i]=material_model(xV[i],zV[i],eta_blob,rho_blob,z_blob,a_blob,b_blob,npt_rho,\
                                              npt_eta,profile_rho,profile_eta,blobtype)
 
-np.savetxt('nodals.ascii',np.array([xV,zV,eta_nodal,rho_nodal]).T,header='# x,y')
+#np.savetxt('nodals.ascii',np.array([xV,zV,eta_nodal,rho_nodal]).T,header='# x,y')
 
 print("     -> eta_nodal (m,M) %.6e %.6e " %(np.min(eta_nodal),np.max(eta_nodal)))
 print("     -> rho_nodal (m,M) %.6e %.6e " %(np.min(rho_nodal),np.max(rho_nodal)))
@@ -931,7 +962,7 @@ start = timing.time()
 blob=np.zeros(nel,dtype=np.bool) 
 
 for iel in range(0,nel):
-    if xc[iel]**2+(zc[iel]-z_blob)**2<R_blob**2:
+    if xc[iel]**2/a_blob**2+(zc[iel]-z_blob)**2/b_blob**2<1:
        blob[iel]=True
 
 print("flag elts in blob: %.3f s" % (timing.time() - start))
@@ -945,7 +976,7 @@ eta_eltal=np.zeros(nel,dtype=np.float64)
 rho_eltal=np.zeros(nel,dtype=np.float64) 
 
 for iel in range(0,nel):
-    eta_eltal[iel],rho_eltal[iel]=material_model(xc[iel],zc[iel],eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+    eta_eltal[iel],rho_eltal[iel]=material_model(xc[iel],zc[iel],eta_blob,rho_blob,z_blob,a_blob,b_blob,npt_rho,\
                                                  npt_eta,profile_rho,profile_eta,blobtype)
 
 #np.savetxt('viscosity_elemental.ascii',np.array([xc,zc,eta_eltal]).T)
@@ -1014,14 +1045,15 @@ for iel in range(0,nel):
 
 VOL=4*np.pi*(R_outer**3-R_inner**3)/3
 
+
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area (meas) %.6f " %(area.sum()))
 print("     -> total area (anal) %.6f " %(np.pi*(R_outer**2-R_inner**2)/2))
 print("     -> total vol  (meas) %.6f " %(arear.sum()))
 print("     -> total vol  (error) %.6f percent" %((abs(arear.sum()/VOL)-1)*100))
 print("     -> blob vol (meas) %.6f " %(vol_blob))
-print("     -> blob vol (anal) %.6f " %(4/3*np.pi*R_blob**3))
-print("     -> blob vol (error) %.6f percent" % (abs(vol_blob/(4/3*np.pi*R_blob**3)-1)*100))
+print("     -> blob vol (anal) %.6f " %(VOL_blob))
+print("     -> blob vol (error) %.6f percent" % (abs(vol_blob/VOL_blob-1)*100))
 
 print("compute elements areas: %.3f s" % (timing.time() - start))
 
@@ -1093,6 +1125,7 @@ for istep in range(0,nstep):
     c_mat    = np.array([[2,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,1]],dtype=np.float64) 
 
     mass=0
+    inertia=0
 
     if solve_stokes:
 
@@ -1143,7 +1176,7 @@ for istep in range(0,nstep):
                     dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
 
                 # compute etaq, rhoq
-                etaq,rhoq=material_model(xq,yq,eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+                etaq,rhoq=material_model(xq,yq,eta_blob,rho_blob,z_blob,a_blob,b_blob,npt_rho,\
                                          npt_eta,profile_rho,profile_eta,blobtype)
 
                 for i in range(0,mV):
@@ -1160,6 +1193,7 @@ for istep in range(0,nstep):
                 G_el-=b_mat.T.dot(N_mat)*weightq*jcob * 2*np.pi*xq
 
                 mass+=jcob*weightq*rhoq * 2*np.pi*xq
+                inertia+=jcob*weightq*rhoq * 2*np.pi*xq**2 #NOT SURE
 
                 #compute gx,gy
                 radq=np.sqrt(xq**2+yq**2)
@@ -1267,6 +1301,7 @@ for istep in range(0,nstep):
         rhs[NfemV:Nfem]=h_rhs
 
         print('     -> mass=',mass)
+        print('     -> inertia=',inertia,'(???)')
 
         print("build FE matrix: %.3f s" % (timing.time() - start))
 
@@ -1334,9 +1369,9 @@ for istep in range(0,nstep):
             vrms+=(uq**2+vq**2)*jcob*weightq *xq*2*np.pi
         #end for
     #end for
-    vrms=np.sqrt(vrms/(4/3*np.pi*R_outer**3))
+    vrms=np.sqrt(vrms/(4/3*np.pi*(R_outer**3-R_inner**3)))
 
-    print("     -> nel= %6d ; vrms (m/year)= %e " %(nel,vrms*year))
+    print("     -> nel= %6d ; vrms (cm/year)= %e " %(nel,vrms/cm*year))
 
     print("compute vrms: %.3f s" % (timing.time() - start))
 
@@ -1426,7 +1461,7 @@ for istep in range(0,nstep):
        print('     -> cmb_surface (error)=',abs(perim_cmb-2)/(2)*100,'%')
        print('     -> avrg_p_cmb =',avrg_p_cmb)
 
-       np.savetxt('solution_pressure_normalised.ascii',np.array([xP,zP,p,rP]).T)
+       #np.savetxt('solution_pressure_normalised.ascii',np.array([xP,zP,p,rP]).T)
 
     print("normalise pressure: %.3f s" % (timing.time() - start))
 
@@ -1518,7 +1553,7 @@ for istep in range(0,nstep):
        print("     -> tau_zz_nodal (m,M) %.6e %.6e " %(np.min(tau_zz_nodal),np.max(tau_zz_nodal)))
        print("     -> tau_xz_nodal (m,M) %.6e %.6e " %(np.min(tau_xz_nodal),np.max(tau_xz_nodal)))
     
-       np.savetxt('sol_sr_cartesian.ascii',np.array([xV,zV,e_xx_nodal,e_zz_nodal,e_xz_nodal,e_nodal,cc]).T)
+       #np.savetxt('sol_sr_cartesian.ascii',np.array([xV,zV,e_xx_nodal,e_zz_nodal,e_xz_nodal,e_nodal,cc]).T)
 
     print("compute sr and stress: %.3f s" % (timing.time() - start))
 
@@ -1548,8 +1583,8 @@ for istep in range(0,nstep):
     sigma_tt_nodal=-q+tau_tt_nodal
     sigma_rt_nodal=   tau_rr_nodal
 
-    np.savetxt('sol_sr_spherical.ascii',np.array([xV,zV,e_rr_nodal,e_tt_nodal,e_rt_nodal,e_nodal]).T)
-    np.savetxt('sol_tau_spherical.ascii',np.array([xV,zV,tau_rr_nodal,tau_tt_nodal,tau_rt_nodal]).T)
+    #np.savetxt('sol_sr_spherical.ascii',np.array([xV,zV,e_rr_nodal,e_tt_nodal,e_rt_nodal,e_nodal]).T)
+    #np.savetxt('sol_tau_spherical.ascii',np.array([xV,zV,tau_rr_nodal,tau_tt_nodal,tau_rt_nodal]).T)
 
     print("rotate stresses: %.3f s" % (timing.time() - start))
 
@@ -1558,7 +1593,7 @@ for istep in range(0,nstep):
     #####################################################################
     start = timing.time()
 
-    tracfile=open('surface_traction_nodal_{:04d}.ascii'.format(istep),"w")
+    tracfile=open(path+'surface_traction_nodal_{:04d}.ascii'.format(istep),"w")
     tracfile.write("# theta sigma_rr x z tau_rr pressure e_rr \n")
     for i in range(0,NV):
         if surface_node[i]: 
@@ -1566,35 +1601,35 @@ for istep in range(0,nstep):
                           %(theta_nodal[i],tau_rr_nodal[i]-q[i],xV[i],zV[i],tau_rr_nodal[i],q[i],e_rr_nodal[i]))
     tracfile.close()
 
-    tracfile=open('surface_vr_{:04d}.ascii'.format(istep),"w")
+    tracfile=open(path+'surface_vr_{:04d}.ascii'.format(istep),"w")
     for i in range(0,NV):
         if surface_node[i]: 
            tracfile.write("%10e %10e \n" \
                           %(theta_nodal[i],u[i]*np.sin(theta_nodal[i])+v[i]*np.cos(theta_nodal[i])  ))
     tracfile.close()
 
-    tracfile=open('surface_vt_{:04d}.ascii'.format(istep),"w")
+    tracfile=open(path+'surface_vt_{:04d}.ascii'.format(istep),"w")
     for i in range(0,NV):
         if surface_node[i]: 
            tracfile.write("%10e %10e \n" \
                           %(theta_nodal[i],u[i]*np.cos(theta_nodal[i])-v[i]*np.sin(theta_nodal[i]) ) )
     tracfile.close()
 
-    tracfile=open('cmb_traction_nodal_{:04d}.ascii'.format(istep),"w")
+    tracfile=open(path+'cmb_traction_nodal_{:04d}.ascii'.format(istep),"w")
     for i in range(0,NV):
         if cmb_node[i]: 
            tracfile.write("%e %e %e %e %e %e %e %e\n" \
                           %(theta_nodal[i],tau_rr_nodal[i]-q[i],xV[i],zV[i],tau_rr_nodal[i],q[i],e_rr_nodal[i],avrg_p_cmb))
     tracfile.close()
 
-    tracfile=open('cmb_vr_{:04d}.ascii'.format(istep),"w")
+    tracfile=open(path+'cmb_vr_{:04d}.ascii'.format(istep),"w")
     for i in range(0,NV):
         if cmb_node[i]: 
            tracfile.write("%10e %10e \n" \
                           %(theta_nodal[i],u[i]*np.sin(theta_nodal[i])+v[i]*np.cos(theta_nodal[i])  ))
     tracfile.close()
 
-    tracfile=open('cmb_vt_{:04d}.ascii'.format(istep),"w")
+    tracfile=open(path+'cmb_vt_{:04d}.ascii'.format(istep),"w")
     for i in range(0,NV):
         if cmb_node[i]: 
            tracfile.write("%10e %10e \n" \
@@ -1610,14 +1645,14 @@ for istep in range(0,nstep):
     ##################################################################### 
     start = timing.time()
 
-    dynfile=open('dynamic_topography_surf_{:04d}.ascii'.format(istep),"w")
+    dynfile=open(path+'dynamic_topography_surf_{:04d}.ascii'.format(istep),"w")
     for i in range(0,NV):
         if surface_node[i]:
            dyntop_i= -(tau_rr_nodal[i]-q[i])/((rho_nodal[i]-density_above)*g0) 
            dynfile.write("%e %e\n" %(theta_nodal[i],dyntop_i))
     dynfile.close()
         
-    dynfile=open('dynamic_topography_cmb_{:04d}.ascii'.format(istep),"w")
+    dynfile=open(path+'dynamic_topography_cmb_{:04d}.ascii'.format(istep),"w")
     for i in range(0,NV):
         if cmb_node[i]:
            dyntop_i= -(tau_rr_nodal[i]-q[i])/((rho_nodal[i]-density_below)*g0) 
@@ -1636,7 +1671,7 @@ for istep in range(0,nstep):
     #u[:]/=(cm/year)
     #v[:]/=(cm/year)
 
-    filename = 'solution_{:04d}.vtu'.format(istep)
+    filename = path+'solution_{:04d}.vtu'.format(istep)
     vtufile=open(filename,"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
     vtufile.write("<UnstructuredGrid> \n")
@@ -1897,7 +1932,7 @@ for istep in range(0,nstep):
     angleM=np.zeros(np_grav,dtype=np.float64)   
 
     if radial_model=='gravbench': 
-       testfile=open('gravity_benchmark.ascii',"w")
+       testfile=open(path+'gravity_benchmark.ascii',"w")
        testfile.write("# angle gr_meas gr_anal \n")
 
     dphi=2*np.pi/nel_phi
@@ -1911,13 +1946,13 @@ for istep in range(0,nstep):
 
         elif gravity_method==1:
            gvect_x[i],gvect_y[i],gvect_z[i]=compute_gravity_at_point1(xM[i],yM[i],zM[i],nel,xV,zV,iconV,arear,dphi,nel_phi,\
-                                                                      eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+                                                                      eta_blob,rho_blob,z_blob,a_blob,b_blob,npt_rho,\
                                                                       npt_eta,profile_rho,profile_eta,blobtype)
         elif gravity_method==2:
            gvect_x[i],gvect_y[i],gvect_z[i]=compute_gravity_at_point2(xM[i],yM[i],zM[i],nel,xV,zV,iconV,\
                                                                       dphi,nel_phi,qcoords_r_grav,qcoords_s_grav,qweights_grav,\
                                                                       CR,mV,nqel_grav,\
-                                                                      eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+                                                                      eta_blob,rho_blob,z_blob,a_blob,b_blob,npt_rho,\
                                                                       npt_eta,profile_rho,profile_eta,blobtype)
         if i%20==0: 
            print('point',i,'gx,gy,gz',gvect_x[i],gvect_y[i],gvect_z[i])
@@ -1929,20 +1964,21 @@ for istep in range(0,nstep):
            
         if radial_model=='gravbench' and test==2:
            dist2=xM[i]**2+(zM[i]-z_blob)**2
-           gr=Ggrav*rho_blob*4/3*np.pi*R_blob**3/dist2
+           gr=Ggrav*rho_blob*VOL_blob/dist2
            testfile.write("%e %e %e\n" %(np.pi/2-angleM[i],np.sqrt(gvect_x[i]**2+gvect_y[i]**2+gvect_z[i]**2),gr))
 
     #end for
 
     gvect=np.sqrt(gvect_x**2+gvect_y**2+gvect_z**2)
+    gvect_avrg=np.sum(gvect)/np_grav
     rM=np.sqrt(xM**2+yM**2+zM**2)
 
-    filename = 'gravity_{:04d}.ascii'.format(istep)
-    np.savetxt(filename,np.array([xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect]).T,fmt='%.6e',\
-               header='# xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect')
+    filename = path+'gravity_{:04d}.ascii'.format(istep)
+    np.savetxt(filename,np.array([xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect,gvect,gvect-gvect_avrg]).T,fmt='%.6e',\
+               header='# xM,yM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,gvect,gvect-avrg')
 
     if istep>0:
-       filename = 'gravity_diff_{:04d}.ascii'.format(istep)
+       filename = path+'gravity_diff_{:04d}.ascii'.format(istep)
        np.savetxt(filename,np.array([xM,yM,zM,rM,angleM,gvect_x-gvect_x_0,gvect_y-gvect_y_0,gvect_z-gvect_z_0,gvect-gvect_0]).T,fmt='%.6e')
     else:
        gvect_x_0[:]=gvect_x[:]

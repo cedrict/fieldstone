@@ -5,7 +5,7 @@ import numba
 # linear interpolation between points in profile!
 
 @numba.njit
-def material_model(x,z,eta_blob,rho_blob,z_blob,R_blob,npt_rho,npt_eta,prof_rho,prof_eta,blobtype):
+def material_model(x,z,eta_blob,rho_blob,z_blob,a_blob,b_blob,npt_rho,npt_eta,prof_rho,prof_eta,blobtype):
     rr=np.sqrt(x**2+z**2)
     
     for i in range(0,npt_rho-1):
@@ -20,7 +20,7 @@ def material_model(x,z,eta_blob,rho_blob,z_blob,R_blob,npt_rho,npt_eta,prof_rho,
            break
 
     #print (x,z,rho)
-    if x**2+(z-z_blob)**2<1.001*R_blob**2:
+    if x**2/a_blob**2+(z-z_blob)**2/b_blob**2<1.001:
        rho=rho_blob
        eta=eta_blob
 

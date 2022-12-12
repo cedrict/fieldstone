@@ -13,7 +13,7 @@ Ggrav = 6.67430e-11
 
 @numba.njit(parallel=True)
 def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,arear,dphi,nel_phi,\
-                              eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+                              eta_blob,rho_blob,z_blob,a_blob,b_blob,npt_rho,\
                               npt_eta,profile_rho,profile_eta,blobtype):
 
     gx=0.
@@ -25,7 +25,7 @@ def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,arear,dphi,nel_phi,\
         zc=np.sum(zV[iconV[0:3,iel]])/3
         rc=np.sqrt(xc**2+zc**2)
         theta=np.arccos(zc/rc)
-        dummy,local_rho=material_model(xc,zc,eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+        dummy,local_rho=material_model(xc,zc,eta_blob,rho_blob,z_blob,a_blob,b_blob,npt_rho,\
                                        npt_eta,profile_rho,profile_eta,blobtype)
         for jel in numba.prange(0,nel_phi):
             x_c=rc*np.sin(theta)*np.cos(jel*dphi)
@@ -47,7 +47,7 @@ def compute_gravity_at_point1(xM,yM,zM,nel,xV,zV,iconV,arear,dphi,nel_phi,\
 
 @numba.njit(parallel=True)
 def compute_gravity_at_point2(xM,yM,zM,nel,xV,zV,iconV,dphi,nel_phi,qcoords_r,qcoords_s,qweights,CR,mV,nqel,\
-                              eta_blob,rho_blob,z_blob,R_blob,npt_rho,\
+                              eta_blob,rho_blob,z_blob,a_blob,b_blob,npt_rho,\
                               npt_eta,profile_rho,profile_eta,blobtype):
 
     gx=0.
@@ -72,7 +72,7 @@ def compute_gravity_at_point2(xM,yM,zM,nel,xV,zV,iconV,dphi,nel_phi,qcoords_r,qc
             zq=NNNV[:].dot(zV[iconV[:,iel]])
             rq=np.sqrt(xq**2+zq**2)
             thetaq=np.arccos(zq/rq)
-            dummy,local_rho=material_model(xq,zq,eta_blob,rho_blob,z_blob,R_blob,\
+            dummy,local_rho=material_model(xq,zq,eta_blob,rho_blob,z_blob,a_blob,b_blob,\
                                            npt_rho,npt_eta,profile_rho,profile_eta,blobtype)
             massq=local_rho*jcob*weightq*xq*dphi
             for jel in numba.prange(0,nel_phi):

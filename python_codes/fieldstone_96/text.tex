@@ -511,6 +511,86 @@ For simplicity we take the gravitational to be constant in the model at $g=3.72$
 The blob has a radius of 300km and its center is located 1000km below the north pole of the planet.
 It is therefore entirely in the mantle and its relative density with regards to the mantle is $\delta\rho=-200$.
 
+%__________________________________________________________________________
+\paragraph{Computing the total mass of the planet based on radial profiles}
+
+
+The mass of the shell is given by
+\[
+M= \iiint_\Omega \rho(r) r^2 \sin\theta dr d\theta d\phi
+= 4\pi \int_{Ri}^{Ro} \rho(r) r^2 dr
+\]
+The density profile is known on N intervals ($N+1$ points) between $Ri$ and $Ro$ so that 
+\[
+M = 4\pi \sum_{i=1}^N \int_{r_i^-}^{r_i^+} \rho(r) r^2 dr
+\]
+where $r_i^-$ and $r_i^+$ are the bounds of the interval $i$
+under consideration.
+Over this interval the density is linear and goes from $\rho(r_i^-)=\rho_i^-$ to $\rho(r_i^+)=\rho_i^+$. 
+We have then $\rho(r)=ar+b$ with 
+\[
+\rho(r) = \frac{\rho_i^+-\rho_i^-}{r_i^+-r_i^-}(r-r_i^-)+\rho_i^-
+\qquad\quad
+a= \frac{\rho_i^+-\rho_i^-}{r_i^+-r_i^-}
+\qquad\quad
+b=-\frac{\rho_i^+-\rho_i^-}{r_i^+-r_i^-}r_i^- + \rho_i^-
+\]
+so that the mass of a shell corresponding to interval $i$ 
+bounded by $r_i^-$ and $r_i^+$ is
+\begin{eqnarray}
+M_i 
+&=& \int_{r_i^-}^{r_i^+} (ar+b)r^2 dr  \nonumber\\
+&=& \int_{r_i^-}^{r_i^+} (ar^3+br^2) dr  \nonumber\\
+&=& a\int_{r_i^-}^{r_i^+} r^3 dr 
++b\int_{r_i^-}^{r_i^+} r^2 dr \nonumber\\
+&=& \frac{a}{4} \left[ (r_i^+)^4 -(r_i^-)^4  \right]
++\frac{b}{3} \left[ (r_i^+)^3 -(r_i^-)^3 \right]
+\end{eqnarray}
+We can now look at each provided density profile for the planet and
+compute the corresponding mass.
+
+
+
+
+%--------------------------------------------------
+\subsubsection*{Elliptic blob}
+
+The eccentricity $e$ of an ellipse is defined as 
+\[
+e=\sqrt{1-\frac{b^2}{a^2}}
+\]
+where $a$ is the length of the semi-major axis and $b$ is the length of the semi-minor axis.
+
+The eccentricity of ellipse is less than 1. The eccentricity of a ellipse helps us to understand how circular it is with reference to a circle. Eccentricity also measures the ovalness of the ellipse and eccentricity close to one refers to high degree of ovalness.
+
+In our case we assume that the semi-major axis is along the $x$-axis.
+We will set $b=R_{blob}$ and vary the eccentricity so as to obtain a circle ($e=1$) or an ellipse $e<1$.
+We have
+\[
+e^2 = 1 -\frac{b^2}{a^2}
+\quad
+\rightarrow
+\quad
+1-e^2 = \frac{b^2}{a^2}
+\quad
+\rightarrow
+\quad
+\frac{1}{1-e^2} = \frac{a^2}{b^2}
+\quad
+\rightarrow
+\quad
+a^2 = b^2 \frac{1}{1-e^2} 
+\quad
+\rightarrow
+\quad
+a = b \sqrt{\frac{1}{1-e^2}}
+\]
+
+The volume of the blob is then 
+\[
+V_{blob} = \frac{4\pi}{3}a^2b
+\]
+
  
 %--------------------------------------------------
 \subsubsection*{Gravity calculations}
