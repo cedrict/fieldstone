@@ -81,6 +81,8 @@ if int(len(sys.argv) == 15):
     path         =       sys.argv[6]
     hhh          = float(sys.argv[7])
     radial_model =       sys.argv[8]
+    print(sys.argv)
+    #print(R_blob,z_blob,rho_blob,eta_blob,eccentricity,path,hhh,radial_model)
 else:
    R_blob=300e3            #radius of blob
    z_blob=R_outer-1000e3   #starting depth
@@ -874,8 +876,8 @@ start = timing.time()
 
 theta_nodal=np.zeros(NV,dtype=np.float64)
 r_nodal=np.zeros(NV,dtype=np.float64)
-surface_node=np.zeros(NV,dtype=np.bool) 
-cmb_node=np.zeros(NV,dtype=np.bool) 
+surface_node=np.zeros(NV,dtype=bool) 
+cmb_node=np.zeros(NV,dtype=bool) 
 
 for i in range(0,NV):
     theta_nodal[i]=np.arctan2(xV[i],zV[i])
@@ -944,8 +946,8 @@ print("flag cmb nodes: %.3f s" % (timing.time() - start))
 ###############################################################################
 start = timing.time()
 
-surface_Pnode=np.zeros(NP,dtype=np.bool) 
-cmb_Pnode=np.zeros(NP,dtype=np.bool) 
+surface_Pnode=np.zeros(NP,dtype=bool) 
+cmb_Pnode=np.zeros(NP,dtype=bool) 
 for i in range(0,NP):
     rP[i]=np.sqrt(xP[i]**2+zP[i]**2)
     if rP[i]>=0.999*R_outer: 
@@ -1002,7 +1004,7 @@ print("compute element center coords: %.3f s" % (timing.time() - start))
 ###############################################################################
 start = timing.time()
 
-blob=np.zeros(nel,dtype=np.bool) 
+blob=np.zeros(nel,dtype=bool) 
 
 for iel in range(0,nel):
     if xc[iel]**2/a_blob**2+(zc[iel]-z_blob)**2/b_blob**2<1:
@@ -1035,9 +1037,9 @@ print("compute eltal rho eta: %.3f s" % (timing.time() - start))
 ###############################################################################
 start = timing.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
-on_surf=np.zeros(NV,dtype=np.bool)  # boundary condition, yes/no
+on_surf=np.zeros(NV,dtype=bool)  # boundary condition, yes/no
 
 for i in range(0, NV):
     #Left boundary  
