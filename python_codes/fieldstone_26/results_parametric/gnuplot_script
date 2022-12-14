@@ -1,0 +1,98 @@
+set terminal pdf enhanced font 'Times,10pt'
+set log y 
+set key outside 
+set grid
+set ylabel 'xi'
+set xlabel 'iter'
+
+set output 'xi.pdf'
+plot[:150][1e-9:]\
+'xi_case1a_nelx=50_tol=0.001.ascii'  w lp lt 1 ps .234 t 'nelx=50, tol=1e-3',\
+'xi_case1a_nelx=50_tol=1e-05.ascii'  w lp lt 1 ps .234 t 'nelx=50, tol=1e-5',\
+'xi_case1a_nelx=50_tol=1e-07.ascii'  w lp lt 1 ps .234 t 'nelx=50, tol=1e-7',\
+'xi_case1a_nelx=50_tol=1e-08.ascii'  w lp lt 1 ps .234 t 'nelx=50, tol=1e-8',\
+'xi_case1a_nelx=100_tol=0.001.ascii' w lp lt 2 ps .234 t 'nelx=100, tol=1e-3',\
+'xi_case1a_nelx=100_tol=1e-05.ascii' w lp lt 2 ps .234 t 'nelx=100, tol=1e-5',\
+'xi_case1a_nelx=100_tol=1e-07.ascii' w lp lt 2 ps .234 t 'nelx=100, tol=1e-7',\
+'xi_case1a_nelx=100_tol=1e-08.ascii' w lp lt 2 ps .234 t 'nelx=100, tol=1e-8',\
+'xi_case1a_nelx=150_tol=0.001.ascii' w lp lt 3 ps .234 t 'nelx=150, tol=1e-3',\
+'xi_case1a_nelx=150_tol=1e-05.ascii' w lp lt 3 ps .234 t 'nelx=150, tol=1e-5',\
+'xi_case1a_nelx=150_tol=1e-07.ascii' w lp lt 3 ps .234 t 'nelx=150, tol=1e-7',\
+'xi_case1a_nelx=150_tol=1e-08.ascii' w lp lt 3 ps .234 t 'nelx=150, tol=1e-8',\
+'xi_case1a_nelx=200_tol=0.001.ascii' w lp lt 4 ps .234 t 'nelx=200, tol=1e-3',\
+'xi_case1a_nelx=200_tol=1e-05.ascii' w lp lt 4 ps .234 t 'nelx=200, tol=1e-5',\
+'xi_case1a_nelx=200_tol=1e-07.ascii' w lp lt 4 ps .234 t 'nelx=200, tol=1e-7',\
+'xi_case1a_nelx=200_tol=1e-08.ascii' w lp lt 4 ps .234 t 'nelx=200, tol=1e-8',\
+'xi_case1a_nelx=300_tol=0.001.ascii' w lp lt 5 ps .234 t 'nelx=300, tol=1e-3',\
+'xi_case1a_nelx=300_tol=1e-05.ascii' w lp lt 5 ps .234 t 'nelx=300, tol=1e-5',\
+'xi_case1a_nelx=300_tol=1e-07.ascii' w lp lt 5 ps .234 t 'nelx=300, tol=1e-7',\
+'xi_case1a_nelx=300_tol=1e-08.ascii' w lp lt 5 ps .234 t 'nelx=300, tol=1e-8',\
+'xi_case1a_nelx=400_tol=0.001.ascii' w lp lt 6 ps .234 t 'nelx=400, tol=1e-3',\
+'xi_case1a_nelx=400_tol=1e-05.ascii' w lp lt 6 ps .234 t 'nelx=400, tol=1e-5',\
+'xi_case1a_nelx=400_tol=1e-07.ascii' w lp lt 6 ps .234 t 'nelx=400, tol=1e-7',\
+'xi_case1a_nelx=400_tol=1e-08.ascii' w lp lt 6 ps .234 t 'nelx=400, tol=1e-8',\
+1e-3 lw .5 lt -1,\
+1e-5 lw .5 lt -1,\
+1e-7 lw .5 lt -1,\
+1e-8 lw .5 lt -1
+
+set output 'horizontal_eta.pdf'
+plot[450e3:550e3][1e22:3e23]\
+'horizontal_case=1a_nelx=50_tol=0.001.ascii'  u 1:4 w l lt 1 dt 1 t 'nelx=50, tol=1e-3',\
+'horizontal_case=1a_nelx=50_tol=1e-05.ascii'  u 1:4 w l lt 1 dt 2 t 'nelx=50, tol=1e-5',\
+'horizontal_case=1a_nelx=50_tol=1e-07.ascii'  u 1:4 w l lt 1 dt 3 t 'nelx=50, tol=1e-7',\
+'horizontal_case=1a_nelx=50_tol=1e-08.ascii'  u 1:4 w l lt 1 dt 4 t 'nelx=50, tol=1e-8',\
+'horizontal_case=1a_nelx=100_tol=0.001.ascii' u 1:4 w l lt 2 dt 1 t 'nelx=100, tol=1e-3',\
+'horizontal_case=1a_nelx=100_tol=1e-05.ascii' u 1:4 w l lt 2 dt 2 t 'nelx=100, tol=1e-5',\
+'horizontal_case=1a_nelx=100_tol=1e-07.ascii' u 1:4 w l lt 2 dt 3 t 'nelx=100, tol=1e-7',\
+'horizontal_case=1a_nelx=100_tol=1e-08.ascii' u 1:4 w l lt 2 dt 3 t 'nelx=100, tol=1e-8',\
+'horizontal_case=1a_nelx=150_tol=0.001.ascii' u 1:4 w l lt 3 dt 1 t 'nelx=150, tol=1e-3',\
+'horizontal_case=1a_nelx=150_tol=1e-05.ascii' u 1:4 w l lt 3 dt 2 t 'nelx=150, tol=1e-5',\
+'horizontal_case=1a_nelx=150_tol=1e-07.ascii' u 1:4 w l lt 3 dt 3 t 'nelx=150, tol=1e-7',\
+'horizontal_case=1a_nelx=150_tol=1e-08.ascii' u 1:4 w l lt 3 dt 4 t 'nelx=150, tol=1e-8',\
+'horizontal_case=1a_nelx=200_tol=0.001.ascii' u 1:4 w l lt 4 dt 1 t 'nelx=200, tol=1e-3',\
+'horizontal_case=1a_nelx=200_tol=1e-05.ascii' u 1:4 w l lt 4 dt 2 t 'nelx=200, tol=1e-5',\
+'horizontal_case=1a_nelx=200_tol=1e-07.ascii' u 1:4 w l lt 4 dt 3 t 'nelx=200, tol=1e-7',\
+'horizontal_case=1a_nelx=200_tol=1e-08.ascii' u 1:4 w l lt 4 dt 4 t 'nelx=200, tol=1e-8',\
+'horizontal_case=1a_nelx=300_tol=0.001.ascii' u 1:4 w l lt 5 dt 1 t 'nelx=300, tol=1e-3',\
+'horizontal_case=1a_nelx=300_tol=1e-05.ascii' u 1:4 w l lt 5 dt 2 t 'nelx=300, tol=1e-5',\
+'horizontal_case=1a_nelx=300_tol=1e-07.ascii' u 1:4 w l lt 5 dt 3 t 'nelx=300, tol=1e-7',\
+'horizontal_case=1a_nelx=300_tol=1e-08.ascii' u 1:4 w l lt 5 dt 4 t 'nelx=300, tol=1e-8',\
+'horizontal_case=1a_nelx=400_tol=0.001.ascii' u 1:4 w l lt 6 dt 1 t 'nelx=400, tol=1e-3',\
+'horizontal_case=1a_nelx=400_tol=1e-05.ascii' u 1:4 w l lt 6 dt 2 t 'nelx=400, tol=1e-5',\
+'horizontal_case=1a_nelx=400_tol=1e-07.ascii' u 1:4 w l lt 6 dt 3 t 'nelx=400, tol=1e-7',\
+'horizontal_case=1a_nelx=400_tol=1e-08.ascii' u 1:4 w l lt 6 dt 4 t 'nelx=400, tol=1e-8',\
+
+
+
+
+set output 'vertical_eta.pdf'
+plot[250e3:660e3][:2e25]\
+'vertical_case1a_nelx=50_tol=0.001.ascii'  u 2:4 w l lt 1 dt 1 t 'nelx=50, tol=1e-3',\
+'vertical_case1a_nelx=50_tol=1e-05.ascii'  u 2:4 w l lt 1 dt 2 t 'nelx=50, tol=1e-5',\
+'vertical_case1a_nelx=50_tol=1e-07.ascii'  u 2:4 w l lt 1 dt 3 t 'nelx=50, tol=1e-7',\
+'vertical_case1a_nelx=50_tol=1e-08.ascii'  u 2:4 w l lt 1 dt 4 t 'nelx=50, tol=1e-8',\
+'vertical_case1a_nelx=100_tol=0.001.ascii' u 2:4 w l lt 2 dt 1 t 'nelx=100, tol=1e-3',\
+'vertical_case1a_nelx=100_tol=1e-05.ascii' u 2:4 w l lt 2 dt 2 t 'nelx=100, tol=1e-5',\
+'vertical_case1a_nelx=100_tol=1e-07.ascii' u 2:4 w l lt 2 dt 3 t 'nelx=100, tol=1e-7',\
+'vertical_case1a_nelx=100_tol=1e-08.ascii' u 2:4 w l lt 2 dt 4 t 'nelx=100, tol=1e-8',\
+'vertical_case1a_nelx=150_tol=0.001.ascii' u 2:4 w l lt 3 dt 1 t 'nelx=150, tol=1e-3',\
+'vertical_case1a_nelx=150_tol=1e-05.ascii' u 2:4 w l lt 3 dt 2 t 'nelx=150, tol=1e-5',\
+'vertical_case1a_nelx=150_tol=1e-07.ascii' u 2:4 w l lt 3 dt 3 t 'nelx=150, tol=1e-7',\
+'vertical_case1a_nelx=150_tol=1e-08.ascii' u 2:4 w l lt 3 dt 4 t 'nelx=150, tol=1e-8',\
+'vertical_case1a_nelx=200_tol=0.001.ascii' u 2:4 w l lt 4 dt 1 t 'nelx=200, tol=1e-3',\
+'vertical_case1a_nelx=200_tol=1e-05.ascii' u 2:4 w l lt 4 dt 2 t 'nelx=200, tol=1e-5',\
+'vertical_case1a_nelx=200_tol=1e-07.ascii' u 2:4 w l lt 4 dt 3 t 'nelx=200, tol=1e-7',\
+'vertical_case1a_nelx=200_tol=1e-08.ascii' u 2:4 w l lt 4 dt 4 t 'nelx=200, tol=1e-8',\
+'vertical_case1a_nelx=300_tol=0.001.ascii' u 2:4 w l lt 5 dt 1 t 'nelx=300, tol=1e-3',\
+'vertical_case1a_nelx=300_tol=1e-05.ascii' u 2:4 w l lt 5 dt 2 t 'nelx=300, tol=1e-5',\
+'vertical_case1a_nelx=300_tol=1e-07.ascii' u 2:4 w l lt 5 dt 3 t 'nelx=300, tol=1e-7',\
+'vertical_case1a_nelx=300_tol=1e-08.ascii' u 2:4 w l lt 5 dt 4 t 'nelx=300, tol=1e-8',\
+'vertical_case1a_nelx=400_tol=0.001.ascii' u 2:4 w l lt 6 dt 1 t 'nelx=400, tol=1e-3',\
+'vertical_case1a_nelx=400_tol=1e-05.ascii' u 2:4 w l lt 6 dt 2 t 'nelx=400, tol=1e-5',\
+'vertical_case1a_nelx=400_tol=1e-07.ascii' u 2:4 w l lt 6 dt 3 t 'nelx=400, tol=1e-7',\
+'vertical_case1a_nelx=400_tol=1e-08.ascii' u 2:4 w l lt 6 dt 4 t 'nelx=400, tol=1e-8',\
+
+
+
+
