@@ -242,7 +242,7 @@ if radial_model=='aspect':
    density_below=6000
 
 #-------------------------------------
-
+VOL=4*np.pi/3*(R_outer**3-R_inner**3)
 VOL_blob=4/3*np.pi*a_blob**2*b_blob
 
 nnt=int(np.pi*R_outer/hhh) 
@@ -696,7 +696,7 @@ if radial_model=='4layer':
 #---------------------------
 if radial_model=='steinberger':
 
-   npt_rho=1968#3390
+   npt_rho=1968#3390  ###CAREFUL
    npt_eta=1968
 
    p_eta=np.empty(npt_eta,dtype=np.float64) 
@@ -718,7 +718,7 @@ if radial_model=='steinberger':
    p_eta[:]=10**p_eta[:]
    p_rho[:]=1000*p_rho[:]
 
-   #####################################################
+   #-------------------------------------------------
    profile_rho=np.empty((2,npt_rho),dtype=np.float64) 
    profile_eta=np.empty((2,npt_eta),dtype=np.float64) 
 
@@ -800,10 +800,10 @@ if radial_model=='aspect': #benchmark against aspect
 
 
 #making sure nodes on surfaces are correctly seen
-profile_rho[0,0]=0.9999*R_inner
-profile_rho[0,-1]=1.0001*R_outer
-profile_eta[0,0]=0.9999*R_inner
-profile_eta[0,-1]=1.0001*R_outer
+profile_rho[0,0]=0.99999*R_inner
+profile_rho[0,-1]=1.00001*R_outer
+profile_eta[0,0]=0.99999*R_inner
+profile_eta[0,-1]=1.00001*R_outer
 
 #np.savetxt('profile_rho.ascii',np.array([profile_rho[0,:],profile_rho[1,:]]).T)
 
@@ -822,6 +822,49 @@ print("read profiles: %.3f s" % (timing.time() - start))
 #    profile_grav[i]=Ggrav*profile_mass[i]/profile_rad[i]**2
 #np.savetxt('profile_grav.ascii',np.array([profile_rad,profile_mass,profile_grav]).T)
 #print("build additional profiles: %.3f s" % (timing.time() - start))
+
+###############################################################################
+# from density profile build total mass and moment of inertia
+###############################################################################
+start = timing.time()
+
+
+#profile_rho[0,:]/=1e6
+#profile_rho[1,:]=1
+
+Prof_masse = 0.  
+Prof_inertia = 0.
+for i in range(0,npt_rho-1):
+    ri_0   = profile_rho[0,i] ; ri_1   = profile_rho[0,i+1]
+    rhoi_0 = profile_rho[1,i] ; rhoi_1 = profile_rho[1,i+1]
+
+    if abs(ri_0-ri_1)>1e-6: 
+        ai = (rhoi_1 - rhoi_0)/(ri_1 - ri_0)
+        bi = rhoi_0 - ri_0*(rhoi_1 - rhoi_0)/(ri_1 - ri_0)
+
+        Mi = ai/4*(ri_1**4-ri_0**4)+bi/3*(ri_1**3-ri_0**3)
+        Prof_masse += 4*np.pi*Mi
+    
+        Ii = ai/6*(ri_1**6-ri_0**6)+bi/5*(ri_1**5-ri_0**5)
+        Prof_inertia += 8*np.pi/3 * Ii 
+
+if radial_model=='steinberger' or radial_model=='samuelA' or radial_model=='samuelB': #full sphere profiles
+    M_mars = 6.39e23 #kg
+    I_mars = 0.3650 # *MR²
+    
+    print('Mass of full sphere (profile) :',Prof_masse)
+    print('Mass of full sphere (mars) :',M_mars)
+    print('Mass error with measurement of planetary mass:',(Prof_masse/M_mars-1)*100,"%")
+    print('Inertia of profile full sphere before plume:',Prof_inertia) 
+    print('Inertia in MR^2:',(Prof_inertia/(Prof_masse*R_outer**2)))    
+    print('Inertia error with measurement of planetairy mass:',((Prof_inertia/(Prof_masse*R_outer**2)/I_mars-1)*100),"%")
+
+#elif radial_model=='4layer': #hollow sphere profile
+#    print('Mass of profile hollow sphere:',Prof_masse)
+#    print('Inertia of profile hollow sphere:',Prof_inertia)
+
+#print(VOL,Prof_masse,(VOL-Prof_masse)/VOL)
+#exit()
 
 ###############################################################################
 # project mid-edge nodes onto circle at surface and cmb
