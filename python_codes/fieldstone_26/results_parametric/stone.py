@@ -76,6 +76,9 @@ print("-----------------------------")
 #------------------------------------------------------------------------------
 
 vrmsfile=open("vrms.ascii","w")
+ptA_file=open("ptA.ascii","w")
+ptB_file=open("ptB.ascii","w")
+ptC_file=open("ptC.ascii","w")
 
 #define loop parameters
 tol_loop = [1e-3, 1e-5, 1e-7, 1e-8]
@@ -783,6 +786,69 @@ for it in tol_loop:
                     ################################################################################
                     
                     print("export profiles: %.3fs" % (time.time() - start))
+
+                    #####################################################################
+                    # export values at key points
+                    #####################################################################
+                    start = time.time()
+
+                    npts=3
+                    xp=np.array([500e3,500e3,750e3],dtype=np.float64) 
+                    yp=np.array([440e3,620e3,620e3],dtype=np.float64) 
+                    rhop=np.zeros(npts,dtype=np.float64)  
+                    etap=np.zeros(npts,dtype=np.float64)  
+                    exxp=np.zeros(npts,dtype=np.float64)  
+                    eyyp=np.zeros(npts,dtype=np.float64)  
+                    exyp=np.zeros(npts,dtype=np.float64)  
+                    exxp2=np.zeros(npts,dtype=np.float64)  
+                    eyyp2=np.zeros(npts,dtype=np.float64)  
+                    exyp2=np.zeros(npts,dtype=np.float64)  
+
+                    for i in range(0,npts):
+                        ielx=int(xp[i]/Lx*nelx)
+                        iely=int(yp[i]/Ly*nely)
+                        iel=nelx*(iely)+ielx
+                        xmin=x[icon[0,iel]] ; xmax=x[icon[2,iel]]
+                        ymin=y[icon[0,iel]] ; ymax=y[icon[2,iel]]
+                        r=((xp[i]-xmin)/(xmax-xmin)-0.5)*2
+                        s=((yp[i]-ymin)/(ymax-ymin)-0.5)*2
+                        NNNV[0:mV]=NNV(r,s)
+                        dNdr[0:mV]=dNNVdr(r,s)
+                        dNds[0:mV]=dNNVds(r,s)
+                        jcb=np.zeros((2,2),dtype=np.float64)
+                        for k in range(0,mV):
+                            jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+                            jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+                            jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+                            jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+                        #end for
+                        jcbi=np.linalg.inv(jcb)
+                        for k in range(0,mV):
+                            dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
+                            dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+                            exxp[i]+=dNdx[k]*u[icon[k,iel]]
+                            eyyp[i]+=dNdy[k]*v[icon[k,iel]]
+                            exyp[i]+=0.5*(dNdy[k]*u[icon[k,iel]]+dNdx[k]*v[icon[k,iel]])
+                            exxp2[i]+=NNNV[k]*exxn[icon[k,iel]]
+                            exyp2[i]+=NNNV[k]*exyn[icon[k,iel]]
+                            eyyp2[i]+=NNNV[k]*eyyn[icon[k,iel]]
+                        #end for
+                        rhop[i]=density(xp[i],yp[i],Lx,Ly)
+                        etap[i]=viscosity(xp[i],yp[i],Lx,Ly,exxp[i],eyyp[i],exyp[i])
+                    #end for
+     
+                    ptA_file.write("%e %e %e %s \n" %(xp[0],yp[0],etap[0],nelx))
+                    ptB_file.write("%e %e %e %s \n" %(xp[1],yp[1],etap[1],nelx))
+                    ptC_file.write("%e %e %e %s \n" %(xp[2],yp[2],etap[2],nelx))
+                    ptA_file.flush()
+                    ptB_file.flush()
+                    ptC_file.flush()
+
+                    #np.savetxt('three_points.ascii',np.array([xp/1000,yp/1000,rhop,etap,\
+                    #           exxp,eyyp,exyp,exxp2,eyyp2,exyp2]).T,\
+                    #           header='# x,y,rho,eta,exx,eyy,exy,exx,eyy,exp',fmt='%.6e')
+
+                    print("export values at key points: %.3fs" % (time.time() - start))
                     
                     #####################################################################
                     # plot of solution
@@ -902,13 +968,9 @@ for it in tol_loop:
 
 #for it in tol_loop:
 
-
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")
-
-
-
 
 #####################################################################
 # report runtime
@@ -931,6 +993,3 @@ if len(nonconverged)>0:
     print(nonconverged)
 elif len(nonconverged)==0:
     print('all runs completed')
-    
-
-
