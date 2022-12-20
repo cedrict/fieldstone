@@ -470,10 +470,11 @@ for istep in range(0,nstep):
         vtufile.write("%e \n" % K[iel])
     vtufile.write("</DataArray>\n")
 
-    vtufile.write("<DataArray type='Float32' Name='cell' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%e \n" % voronoi_cell[iel])
-    vtufile.write("</DataArray>\n")
+    if experiment==3:
+       vtufile.write("<DataArray type='Float32' Name='cell' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%e \n" % voronoi_cell[iel])
+       vtufile.write("</DataArray>\n")
 
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/year)' Format='ascii'> \n")
     for iel in range(0,nel):
