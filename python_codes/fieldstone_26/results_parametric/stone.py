@@ -75,13 +75,9 @@ print("-----------------------------")
 #start the loopies
 #------------------------------------------------------------------------------
 
-vrmsfile=open("vrms.ascii","w")
-ptA_file=open("ptA.ascii","w")
-ptB_file=open("ptB.ascii","w")
-ptC_file=open("ptC.ascii","w")
 
 #define loop parameters
-tol_loop = [1e-3, 1e-5, 1e-7, 1e-8]
+tol_loop = [1e-3, 1e-4, 1e-5, 1e-7, 1e-8]
 case_loop = ['1a']
 res_loop = [50, 100, 150, 200, 250, 300, 400]
 loopnr = 0
@@ -91,6 +87,12 @@ nonconverged=[]
 
     
 for it in tol_loop:
+
+    vrmsfile=open("vrms_tol_%s.ascii"%(it),"w")
+    ptA_file=open("ptA_tol_%s.ascii"%(it),"w")
+    ptB_file=open("ptB_tol_%s.ascii"%(it),"w")
+    ptC_file=open("ptC_tol_%s.ascii"%(it),"w")
+
     for ic in case_loop:
         for ir in res_loop: 
                     
@@ -401,7 +403,7 @@ for it in tol_loop:
     
                         print("     -> xi= %.4e tol= %.4e " %(xi[iiter],tol))
     
-                        xifile="xi_case%s_nelx=%s_tol=%s.ascii"  % (ic, ir, tol)
+                        xifile="xi_case%s_nelx_%s_tol_%s.ascii"  % (ic, ir, tol)
                         np.savetxt(xifile,np.array([xi[0:iiter]]).T,header='# xi')
     
                         if xi[iiter]<tol:
@@ -684,12 +686,12 @@ for it in tol_loop:
                         
                         #plt.savefig('x-axisplot_tol=e'+str(int(np.log(it))))
                         
-                        pltfile="x-axisplot_case%s_nelx=%s_tol=1e%s"  % (ic, ir, str(int(np.log(tol))))
+                        pltfile="x-axisplot_case%s_nelx_%s_tol_1e%s"  % (ic, ir, str(int(np.log10(tol))))
                         plt.savefig(pltfile)
                     
                     ############################################### 
                     
-                    np.savetxt('horizontal_case=%s_nelx=%s_tol=%s.ascii' % (ic, ir, tol),np.array([xp,yp,rhop,etap,exxp,eyyp,exyp,exxp2,eyyp2,exyp2]).T,header='# x,y,rho,eta')
+                    np.savetxt('horizontal_case_%s_nelx_%s_tol_%s.ascii' % (ic, ir, tol),np.array([xp,yp,rhop,etap,exxp,eyyp,exyp,exxp2,eyyp2,exyp2]).T,header='# x,y,rho,eta')
                     
                     xp=np.zeros(npts,dtype=np.float64)  
                     yp=np.zeros(npts,dtype=np.float64)  
@@ -739,7 +741,7 @@ for it in tol_loop:
                         etap[i]=viscosity(xp[i],yp[i],Lx,Ly,exxp[i],eyyp[i],exyp[i])
                     #end for
                          
-                    np.savetxt('vertical_case%s_nelx=%s_tol=%s.ascii' % (ic, ir,tol),np.array([xp,yp,rhop,etap,exxp,eyyp,exyp,exxp2,eyyp2,exyp2]).T,header='# x,y,rho,eta')
+                    np.savetxt('vertical_case%s_nelx_%s_tol_%s.ascii' % (ic, ir,tol),np.array([xp,yp,rhop,etap,exxp,eyyp,exyp,exxp2,eyyp2,exyp2]).T,header='# x,y,rho,eta')
                      
                     #####################################################################
                     # plot y nodal data with matplotlib 
@@ -780,7 +782,7 @@ for it in tol_loop:
                         axs[1,1].set_ylabel("etap")
                         axs[1,1].set_yscale('log')  
 
-                        pltfile="y-axisplot_case%s_nelx=%s_tol=1e%s"  % (ic, ir, str(int(np.log(tol))))
+                        pltfile="y-axisplot_case%s_nelx_%s_tol_1e%s"  % (ic, ir, str(int(np.log10(tol))))
                         plt.savefig(pltfile)
                         
                     ################################################################################
