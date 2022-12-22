@@ -85,7 +85,7 @@ def export_mesh_2D(NV,nel,x,y,z,icon,filename):
 
 ###############################################################################
 
-def export_measurements(NV,nel,x,y,z,icon,filename,B_vi,B_si,B_th):
+def export_plane_measurements(NV,nel,x,y,z,icon,filename,B_vi,B_si,B_th):
 
    vtufile=open(filename,"w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
