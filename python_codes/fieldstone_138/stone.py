@@ -55,7 +55,7 @@ def compute_analytical_solution(x,y,z,R,Mx,My,Mz,xcenter,ycenter,zcenter,benchma
 #3: sphere (larger sphere, anywhere in space) analytical
 #4: wavy surface, domain with constant M vector
 
-benchmark=4
+benchmark=1
 
 ###############################################################################
 # be careful with the position of the measurement points for 
@@ -66,9 +66,9 @@ if benchmark==1:
    Lx=2
    Ly=2
    Lz=2
-   nelx=40
-   nely=40
-   nelz=40
+   nelx=20
+   nely=20
+   nelz=20
    Mx0=0     # do not change
    My0=0     # do not change
    Mz0=1     # do not change
@@ -85,7 +85,7 @@ if benchmark==1:
    xend=Lx/2+1e-9
    yend=Ly/2+1e-10
    zend=10
-   line_nmeas=100 
+   line_nmeas=10 
    #plane meas
    do_plane_measurements=False
    plane_x0=-Lx/2
@@ -244,6 +244,8 @@ for i in range(0,nnx):
         #end for
     #end for
 #end for
+   
+print('grid points setup')
 
 ###############################################################################
 # connectivity
@@ -268,6 +270,8 @@ for i in range(0,nelx):
     #end for
 #end for
 
+print('grid connectivity setup')
+
 ###############################################################################
 # adding wavy topography to surface and deform the mesh accordingly
 
@@ -288,19 +292,18 @@ if benchmark==4:
        #end for
    #end for
 
-#################################################################
+   print('add synthetic topography')
+
+###############################################################################
 # prescribe M inside each cell
 # for benchmarks 1 and 3, M is zero everywhere except inside
 # a sphere of radius sphere_R at location (sphere_xc,sphere_yc,sphere_zc)
+# we use the center of an element as a representative point.
 # For benchmark 2, M is constant in space and equal to (Mx0,My0,Mz0)
 
 Mx=np.zeros(nel,dtype=np.float64)
 My=np.zeros(nel,dtype=np.float64)
 Mz=np.zeros(nel,dtype=np.float64)
-
-Mx[:]=Mx0
-My[:]=My0
-Mz[:]=Mz0
 
 if benchmark==1 or benchmark==3:
    Mx[:]=0
@@ -321,15 +324,17 @@ if benchmark==2 or benchmark==4:
    Mz[:]=Mz0
 
 export_mesh_3D(NV,nel,x,y,z,icon,'mesh.vtu',Mx,My,Mz)
+   
+print('prescribe M vector in domain')
 
-#################################################################
+###############################################################################
 # plane measurements setup
 # the plane originates at (plane_x0,plane_y0,plane_z0) and extends 
 # in the x,y directions by plane_Lx,plane_Ly
 # note that a small perturbation is added to the x,y coordinates
 # so as to avoid that a measurement point lies in the plane
 # of an element (vertical) face. 
-#################################################################
+###############################################################################
 
 if do_plane_measurements:
 
@@ -339,9 +344,9 @@ if do_plane_measurements:
    plane_nely=plane_nny-1
    plane_nel=plane_nelx*plane_nely
 
-   x_meas = np.empty(plane_nmeas,dtype=np.float64)  # x coordinates
-   y_meas = np.empty(plane_nmeas,dtype=np.float64)  # y coordinates
-   z_meas = np.empty(plane_nmeas,dtype=np.float64)  # y coordinates
+   x_meas=np.empty(plane_nmeas,dtype=np.float64)  # x coordinates
+   y_meas=np.empty(plane_nmeas,dtype=np.float64)  # y coordinates
+   z_meas=np.empty(plane_nmeas,dtype=np.float64)  # y coordinates
 
    counter = 0
    for j in range(0,plane_nny):
@@ -367,18 +372,18 @@ if do_plane_measurements:
 
    print('setup plane measurement points ')
 
-#################################################################
+###############################################################################
 # measuring B on a plane
 # Nomenclature:
-# _vi: volume integral
-# _si: surface integral
-# _th: analytical value (if applicable)
+# vi: volume integral
+# si: surface integral
+# th: analytical value (if applicable)
 # The volume integral is parameterised by the number of quadrature 
 # points per dimension nqdim.
 # Because the integrand is not a polynomial, the volume integral
-# remains a numerical solution, while the surface integral 
-# is actually analytical (down to machine precision).
-#################################################################
+# remains a numerical solution (which depends on nqdim), while 
+# the surface integral is actually analytical (down to machine precision).
+###############################################################################
    
 if do_plane_measurements:
    print('starting plane measurement ...')
@@ -412,17 +417,21 @@ if do_plane_measurements:
                                                    B_vi[0,:],B_vi[1,:],B_vi[2,:],\
                                                    B_th[0,:],B_th[1,:],B_th[2,:]]).T)
 
-#################################################################
+###############################################################################
 # measuring B on a line
 # the line starts at xstart,ystart,zstart and ends at 
 # xend,yend,zend, and is discretised by means of line_nmeas pts
-#################################################################
+###############################################################################
 
 print('========================================')
 
 if do_line_measurements:
 
    print('starting line measurement ...')
+
+   x_meas=np.empty(line_nmeas,dtype=np.float64)  # x coordinates
+   y_meas=np.empty(line_nmeas,dtype=np.float64)  # y coordinates
+   z_meas=np.empty(line_nmeas,dtype=np.float64)  # y coordinates
 
    linefile=open("measurements_line.ascii","w")
 
@@ -435,6 +444,9 @@ if do_line_measurements:
        xm=xstart+(xend-xstart)/(line_nmeas-1)*i
        ym=ystart+(yend-ystart)/(line_nmeas-1)*i
        zm=zstart+(zend-zstart)/(line_nmeas-1)*i
+       x_meas[i]=xm
+       y_meas[i]=ym
+       z_meas[i]=zm
        #print(xm,ym,zm)
        for iel in range(0,nel):
            B_vi[:,i]+=compute_B_quadrature      (xm,ym,zm,x,y,z,icon[:,iel],Mx[iel],My[iel],Mz[iel],nqdim)
@@ -449,6 +461,8 @@ if do_line_measurements:
                                                        B_vi[0,i],B_vi[1,i],B_vi[2,i],\
                                                        B_si[0,i],B_si[1,i],B_si[2,i],\
                                                        B_th[0,i],B_th[1,i],B_th[2,i]))
+
+   export_line_measurements(line_nmeas,x_meas,y_meas,z_meas,'line_measurements.vtu',B_vi,B_si,B_th)
 
 print('========================================')
 

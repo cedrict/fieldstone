@@ -144,5 +144,62 @@ def export_plane_measurements(NV,nel,x,y,z,icon,filename,B_vi,B_si,B_th):
 
 ###############################################################################
 
+def export_line_measurements(N,x,y,z,filename,B_vi,B_si,B_th):
 
+   vtufile=open(filename,"w")
+   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+   vtufile.write("<UnstructuredGrid> \n")
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(N,N-1))
+   #####
+   vtufile.write("<Points> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+   for i in range(0,N):
+       vtufile.write("%10e %10e %10e \n" %(x[i],y[i],z[i]))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Points> \n")
+   #####
+   vtufile.write("<PointData Scalars='scalars'>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='B (vol int)' Format='ascii'> \n")
+   for i in range(0,N):
+       vtufile.write("%e %e %e \n" %(B_vi[0,i],B_vi[1,i],B_vi[2,i]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='B (surf int)' Format='ascii'> \n")
+   for i in range(0,N):
+       vtufile.write("%e %e %e \n" %(B_si[0,i],B_si[1,i],B_si[2,i]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='B (analytical)' Format='ascii'> \n")
+   for i in range(0,N):
+       vtufile.write("%e %e %e \n" %(B_th[0,i],B_th[1,i],B_th[2,i]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("</PointData>\n")
+   #####
+
+   #--
+   vtufile.write("<Cells>\n")
+   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+   for i in range (0,N-1):
+       vtufile.write("%d %d \n" %(i,i+1))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+   for i in range (0,N-1):
+       vtufile.write("%d \n" %((i+1)*2))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+   for iel in range (0,N-1):
+       vtufile.write("%d \n" %3)
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("</Cells>\n")
+
+   #####
+   vtufile.write("</Piece>\n")
+   vtufile.write("</UnstructuredGrid>\n")
+   vtufile.write("</VTKFile>\n")
+   vtufile.close()
 
