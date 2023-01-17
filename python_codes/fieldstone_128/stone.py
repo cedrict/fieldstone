@@ -20,35 +20,55 @@ eps=1.e-10
 ndim=2              # number of space dimensions
 m=4                 # number of nodes making up an element
 ndof=1              # number of degrees of freedom per node
-Lx=50e3             # horizontal extent of the domain 
-Ly=20e3             # vertical extent of the domain 
-rho=2700            # rock density (km/mˆ3) 
-rhof=1000           # water density (km/mˆ3)
-laambda = 0.6       # pore pressure ratio
-g=9.8               # acceleration due to gravity (m/sˆ2)
-Pb=laambda*rho*g*Ly # fixed fluid pressure on base (Pa)
-Ph=rhof*g*Ly        # hydrostatic fluid pressure on base (Pa)
-Peb=Pb-Ph           # excess overpressure on base (Pa)
-beta=1e-10          # bulk compresibility (1/Pa)
-phi=0.1             # porosity
-eta=1.33e-4         # fluid viscosity (Pa s)
-
-nstep=25   # maximum number of timestep   
-
-dt=0.1*year
-
-nelx = 800
-nely = int(nelx*Ly/Lx)
 
 experiment=3
+
+if experiment==1 or experiment==2 or experiment==3:
+   Lx=50e3             # horizontal extent of the domain 
+   Ly=20e3             # vertical extent of the domain 
+   rho=2700            # rock density (km/mˆ3) 
+   rhof=1000           # water density (km/mˆ3)
+   laambda = 0.6       # pore pressure ratio
+   g=9.8               # acceleration due to gravity (m/sˆ2)
+   Pb=laambda*rho*g*Ly # fixed fluid pressure on base (Pa)
+   Ph=rhof*g*Ly        # hydrostatic fluid pressure on base (Pa)
+   Peb=Pb-Ph           # excess overpressure on base (Pa)
+   beta=1e-10          # bulk compresibility (1/Pa)
+   eta=1.33e-4         # fluid viscosity (Pa s)
+   nstep=25   # maximum number of timestep   
+   dt=0.1*year
+   nelx = 200 #800
+   nely = int(nelx*Ly/Lx)
+
+#if experiment==4: #Antoine setup
+#   Lx=
+#   Ly=
+#   rho=
+#   rhof=
+#   laambda =
+#   g=
+#   Pb=laambda*rho*g*Ly # fixed fluid pressure on base (Pa)
+#   Ph=rhof*g*Ly        # hydrostatic fluid pressure on base (Pa)
+#   Peb=Pb-Ph           # excess overpressure on base (Pa)
+#   beta=
+#   eta=
+#   nstep=
+#   dt=
+#   nelx = 
+#   nely = int(nelx*Ly/Lx)
+
+
+
+
+
 
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
     
+nel=nelx*nely       # number of elements, total
 nnx=nelx+1      # number of elements, x direction
 nny=nely+1      # number of elements, y direction
 NP=nnx*nny      # number of nodes
-nel=nelx*nely   # number of elements, total
 Nfem=NP*ndof    # Total number of pressure degrees of freedom
 
 #####################################################################
@@ -128,15 +148,19 @@ for i in range(0,NP):
 #np.savetxt('pressure_init.ascii',np.array([x,y,p]).T,header='# x,y,p')
 
 #####################################################################
-# permeability K setup
+# porosity phi and permeability K setup
 #####################################################################
 start = timing.time()
 
-K = np.zeros(nel,dtype=np.float64) 
+K   = np.zeros(nel,dtype=np.float64) 
+phi = np.empty(nel,dtype=np.float64)
+H  = np.empty(nel,dtype=np.float64)
 xc = np.zeros(nel,dtype=np.float64) 
 yc = np.zeros(nel,dtype=np.float64) 
 
 if experiment==1:
+   phi[:]=0.1             # porosity
+   H[:]=0. 
    for iel in range(0,nel):
        xc[iel]=0.5*(x[icon[0,iel]]+x[icon[2,iel]])
        yc[iel]=0.5*(y[icon[0,iel]]+y[icon[2,iel]])
@@ -146,6 +170,8 @@ if experiment==1:
           K[iel]=1e-16
 
 if experiment==2:
+   phi[:]=0.1             # porosity
+   H[:]=0. 
    a=0.5
    b=Ly/2
    for iel in range(0,nel):
@@ -160,6 +186,8 @@ if experiment==2:
           K[iel]=1e-16
 
 if experiment==3:
+   phi[:]=0.1             # porosity
+   H[:]=0. 
    nvo=111
    xvo = np.empty(nvo,dtype=np.float64) 
    yvo = np.empty(nvo,dtype=np.float64) 
@@ -204,6 +232,16 @@ if experiment==3:
 
    #end for iel
 
+if experiment==4: #Antoine
+   for iel in range(0,nel):
+       xc[iel]=0.5*(x[icon[0,iel]]+x[icon[2,iel]])
+       yc[iel]=0.5*(y[icon[0,iel]]+y[icon[2,iel]])
+       #phi[iel]= ? 
+       #K[iel]= ?
+       #H[iel]= ? 
+       
+
+
 print("permeability setup: %.3f s" % (timing.time() - start))
 
 #####################################################################
@@ -241,11 +279,12 @@ for istep in range(0,nstep):
     for iel in range (0,nel):
 
         b_el=np.zeros(m,dtype=np.float64)
+        rhs_el=np.zeros(m,dtype=np.float64)
         a_el=np.zeros((m,m),dtype=np.float64)
         Kd=np.zeros((m,m),dtype=np.float64)   # elemental diffusion matrix 
         MM=np.zeros((m,m),dtype=np.float64)   # elemental mass matrix 
 
-        pvect=p[icon[:,iel]]
+        pvect=p[icon[0:m,iel]]
 
         for iq in [-1,1]:
             for jq in [-1,1]:
@@ -287,17 +326,19 @@ for istep in range(0,nstep):
                 #end for
 
                 # compute mass matrix
-                MM=N_mat.dot(N_mat.T)*weightq*jcob*beta*phi
+                MM=N_mat.dot(N_mat.T)*weightq*jcob*beta*phi[iel]
 
                 # compute diffusion matrix
                 Kd=B_mat.T.dot(B_mat)*weightq*jcob*K[iel]/eta
+
+                rhs_el[:]=N_mat[:,0]*weightq*jcob
 
                 #crank-nicolson does not work?!
                 #a_el+=MM+Kd*dt*0.5
                 #b_el+=(MM-Kd*dt*0.5).dot(pvect)
 
                 a_el+=MM+Kd*dt
-                b_el+=MM.dot(pvect)
+                b_el+=MM.dot(pvect)+rhs_el*dt
 
             #end for
         #end for
