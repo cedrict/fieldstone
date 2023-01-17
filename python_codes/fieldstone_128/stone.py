@@ -582,7 +582,25 @@ for istep in range(0,nstep):
     print("export to vtu: %.3f s" % (timing.time() - start))
 
     time+=dt
-    
+   
+    #####################################################################
+    # evolution law for phi and H
+    #####################################################################
+
+    phi_mem[:]=phi[:]
+
+    # to be implemented
+    # Antoine
+    if experiment==4:
+       for iel in range(0,nel):
+
+           #xc[iel] & yc[iel] are element center coords
+
+           #phi[iel]=.... evolve value of phi
+           #phi=(phi_f-phi_0)*time+phi_0
+           K[iel]=1e-26*phi[iel]**3
+           #H[iel]=... evolve value of H
+ 
 #end for
 
 #==============================================================================
@@ -619,20 +637,6 @@ if experiment==3:
     vtufile.write("</UnstructuredGrid>\n")
     vtufile.write("</VTKFile>\n")
     vtufile.close()
-
-    #####################################################################
-    # evolution law for phi and H
-    #####################################################################
-
-    phi_mem[:]=phi[:]
-
-    # to be implemented
-    # Antoine
-    if experiment==4:
-       for iel in range(0,nel):
-           #phi[iel]=.... evolve value of phi
-           K[iel]=1e-26*phi[iel]**3
-           #H[iel]=... evolve value of H
 
 print("-----------------------------")
 print("------------the end----------")
