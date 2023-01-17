@@ -40,27 +40,23 @@ if experiment==1 or experiment==2 or experiment==3:
    nelx = 200 #800
    nely = int(nelx*Ly/Lx)
 
-#if experiment==4: #Antoine setup
-#   Lx=
-#   Ly=
-#   rho=
-#   rhof=
-#   laambda =
-#   g=
-#   Pb=laambda*rho*g*Ly # fixed fluid pressure on base (Pa)
-#   Ph=rhof*g*Ly        # hydrostatic fluid pressure on base (Pa)
-#   Peb=Pb-Ph           # excess overpressure on base (Pa)
-#   beta=
-#   eta=
-#   nstep=
-#   dt=
-#   nelx = 
-#   nely = int(nelx*Ly/Lx)
-
-
-
-
-
+if experiment==4: #Antoine setup
+   Lx=2e-2             # horizontal extent of the domain 
+   Ly=1e-2             # vertical extent of the domain 
+   depth=40.e3         # depth in m
+   rho=2700            # rock density (km/mˆ3) 
+   rhof=1000           # water density (km/mˆ3)
+   laambda = 0.8       # pore pressure ratio
+   g=9.8               # acceleration due to gravity (m/sˆ2)
+   Pb=laambda*rho*g*depth # fixed fluid pressure on base and on top (Pa)
+   Ph=rhof*g*depth        # hydrostatic fluid pressure on base (Pa)
+   Peb=Pb-Ph           # excess overpressure on base (Pa)
+   beta=1e-10          # bulk compresibility (1/Pa)
+   eta=1.33e-4         # fluid viscosity (Pa s)
+   nstep=25   # maximum number of timestep   
+   dt=0.1*year
+   nelx = 80 #800
+   nely = int(nelx*Ly/Lx)
 
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
@@ -122,10 +118,11 @@ for j in range(0,nely):
 #end for
 
 #####################################################################
-# define temperature boundary conditions
+# define pressure boundary conditions
 #####################################################################
+start = timing.time()
 
-bc_fix=np.zeros(Nfem,dtype=np.bool)  
+bc_fix=np.zeros(Nfem,dtype=bool) 
 bc_val=np.zeros(Nfem,dtype=np.float64) 
 
 for i in range(0,NP):
@@ -133,19 +130,26 @@ for i in range(0,NP):
        bc_fix[i]=True ; bc_val[i]=Peb
     if y[i]/Ly>(1-eps):
        bc_fix[i]=True ; bc_val[i]=0.
+       if experiment==4: bc_val[i]=Peb   
 #end for
 
+print("define boundary conditions: %.3f s" % (timing.time() - start))
+
 #####################################################################
-# initial temperature
+# initial pressure
 #####################################################################
+start = timing.time()
 
 p = np.zeros(NP,dtype=np.float64)
 
 for i in range(0,NP):
     p[i]=(Ly-y[i])/Ly*Peb
+    if experiment==4:p[i]=Peb 
 #end for
 
 #np.savetxt('pressure_init.ascii',np.array([x,y,p]).T,header='# x,y,p')
+
+print("initial pressure: %.3f s" % (timing.time() - start))
 
 #####################################################################
 # porosity phi and permeability K setup
@@ -236,13 +240,19 @@ if experiment==4: #Antoine
    for iel in range(0,nel):
        xc[iel]=0.5*(x[icon[0,iel]]+x[icon[2,iel]])
        yc[iel]=0.5*(y[icon[0,iel]]+y[icon[2,iel]])
-       #phi[iel]= ? 
-       #K[iel]= ?
-       #H[iel]= ? 
-       
+       if (xc[iel]-Lx/2)**2+(yc[iel]-Ly/2)**2<2e-3**2:
+          phi[iel]=2
+          H[iel]= 1e-9   # FG
+       else:
+          phi[iel]=1
+          H[iel]= 0.0  # FG
+       #phi[iel]= 1 # initial porosity  FG
+       K[iel]= 1e-26*(phi[iel])**3  # FG
 
+phi_mem = np.empty(nel,dtype=np.float64)
+phi_mem[:]=phi[:]
 
-print("permeability setup: %.3f s" % (timing.time() - start))
+print("permeability & porosity setup: %.3f s" % (timing.time() - start))
 
 #####################################################################
 # create necessary arrays 
@@ -278,9 +288,8 @@ for istep in range(0,nstep):
 
     for iel in range (0,nel):
 
-        b_el=np.zeros(m,dtype=np.float64)
-        rhs_el=np.zeros(m,dtype=np.float64)
-        a_el=np.zeros((m,m),dtype=np.float64)
+        b_el=np.zeros(m,dtype=np.float64)     # elemental rhs
+        a_el=np.zeros((m,m),dtype=np.float64) # elemental matrix 
         Kd=np.zeros((m,m),dtype=np.float64)   # elemental diffusion matrix 
         MM=np.zeros((m,m),dtype=np.float64)   # elemental mass matrix 
 
@@ -331,14 +340,12 @@ for istep in range(0,nstep):
                 # compute diffusion matrix
                 Kd=B_mat.T.dot(B_mat)*weightq*jcob*K[iel]/eta
 
-                rhs_el[:]=N_mat[:,0]*weightq*jcob
-
                 #crank-nicolson does not work?!
                 #a_el+=MM+Kd*dt*0.5
                 #b_el+=(MM-Kd*dt*0.5).dot(pvect)
 
                 a_el+=MM+Kd*dt
-                b_el+=MM.dot(pvect)+rhs_el*dt
+                b_el+=MM.dot(pvect)+N_mat[:,0]*weightq*jcob*(H[iel]*dt-(phi[iel]-phi_mem[iel]))
 
             #end for
         #end for
@@ -370,7 +377,7 @@ for istep in range(0,nstep):
 
     #end for iel
 
-    print("building temperature matrix and rhs: %.3f s" % (timing.time() - start))
+    print("building pressure matrix and rhs: %.3f s" % (timing.time() - start))
 
     #################################################################
     # solve system
@@ -506,6 +513,17 @@ for istep in range(0,nstep):
     vtufile.write("</Points> \n")
     #####
     vtufile.write("<CellData Scalars='scalars'>\n")
+
+    vtufile.write("<DataArray type='Float32' Name='porosity' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%e \n" % phi[iel])
+    vtufile.write("</DataArray>\n")
+
+    vtufile.write("<DataArray type='Float32' Name='source' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%e \n" % H[iel])
+    vtufile.write("</DataArray>\n")
+
     vtufile.write("<DataArray type='Float32' Name='permeability' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%e \n" % K[iel])
@@ -533,6 +551,12 @@ for istep in range(0,nstep):
     for i in range(0,NP):
         vtufile.write("%e \n" % (p[i]/1e6))
     vtufile.write("</DataArray>\n")
+
+    vtufile.write("<DataArray type='Float32' Name='lambda=p/p_litho' Format='ascii'> \n")
+    for i in range(0,NP):
+        vtufile.write("%e \n" % (p[i]/p_litho))
+    vtufile.write("</DataArray>\n")
+
     vtufile.write("</PointData>\n")
     #####
     vtufile.write("<Cells>\n")
@@ -595,6 +619,20 @@ if experiment==3:
     vtufile.write("</UnstructuredGrid>\n")
     vtufile.write("</VTKFile>\n")
     vtufile.close()
+
+    #####################################################################
+    # evolution law for phi and H
+    #####################################################################
+
+    phi_mem[:]=phi[:]
+
+    # to be implemented
+    # Antoine
+    if experiment==4:
+       for iel in range(0,nel):
+           #phi[iel]=.... evolve value of phi
+           K[iel]=1e-26*phi[iel]**3
+           #H[iel]=... evolve value of H
 
 print("-----------------------------")
 print("------------the end----------")
