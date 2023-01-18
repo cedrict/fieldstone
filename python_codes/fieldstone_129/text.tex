@@ -63,14 +63,23 @@ we have\footnote{I have slightly changed the notations.}
 \end{array}
 \right) 
 \]
+or, 
+\[
+\vec{\sigma} = \tilde{\bm D}\cdot \vec{\dot{\varepsilon}} +
+{\bm D}_s \cdot \vec{\sigma}_0 
+\]
+Note the green '2' in the equation above: in Simpson's book it is in the
+lower right term of the matrix. Also, Simpson uses $\mu$ for the viscosity
+while we here use $\eta$. 
+
 We see that pressure is not a degree of freedom so the finite element
 formulation and discretisation will not yield a saddle point problem, 
 which is a good thing in terms of complexity and solving procedure.
 
 In the end the following weak form is obtained:
 \[
-\int {\bm B}^T \cdot {\bm D} \cdot \tilde{\bm D} dV \cdot \vec{\cal V} 
-= \int \vec{\bN} \rho \vec{g} dV -\int {\bm B}^T \cdot \tilde{\bm D}_s \cdot \vec{\sigma}_0 dV
+\int {\bm B}^T \cdot \tilde{\bm D} \cdot {\bm B} dV \cdot \vec{\cal V} 
+= \int \vec{\bN} \rho \vec{g} dV -\int {\bm B}^T \cdot {\bm D}_s \cdot \vec{\sigma}_0 dV
 \]
 
 We need to keep track of the stress $\vec{\sigma}_0$ and 
@@ -124,7 +133,35 @@ The mean stress can also be computed and visualised:
 = \frac{1}{2}(\sigma_{xx}+\sigma_{yy})
 \]
 
+The matrix $\tilde{\bm D}$ is implemented as follows:
 
+\begin{lstlisting}
+di=dt*(3*eta[iel]*K[iel]+3*dt*mu[iel]*K[iel]+4*mu[iel]*eta[iel])
+od=dt*(-2*mu[iel]*eta[iel]+3*eta[iel]*K[iel]+3*dt*mu[iel]*K[iel])
+d=3*(eta[iel]+dt*mu[iel])
+ed=eta[iel]*dt*mu[iel]/(eta[iel]+dt*mu[iel])
+Dee = np.array([[di/d, od/d,  0],\
+                [od/d, di/d,  0],\
+                [0,       0, ed]],dtype=np.float64)
+\end{lstlisting}
+while the matrix ${\bm D}_s$ is implemented as follows
+\begin{lstlisting}
+di=3*eta[iel]+dt*mu[iel]
+od=dt*mu[iel] 
+ed=eta[iel]/(eta[iel]+dt*mu[iel]) 
+Dees = np.array([[di/d, od/d,  0],\
+                 [od/d, di/d,  0],\
+                 [0,       0, ed]],dtype=np.float64)
+\end{lstlisting}
+
+In the case of a power-law viscous rheology, we have $\dot{\varepsilon}=A \tau^n$.
+If we now write $\tau=2 \eta_{eff} \dot\varepsilon$, or
+\[
+\eta_{eff} = \frac12 \frac{\tau}{\dot\varepsilon} = \frac12 \frac{\tau}{A \tau^n} = \frac12 A^{-1} \tau^{1-n}
+\]
+
+
+\newpage
 %------------------------------------------------------------------------------
 \subsection*{Folding (experiment=1)}
 
@@ -156,19 +193,43 @@ Poisson’s ratio = 0.3 (all considered uniform throughout),
 and a 40x40 elements.}
 \end{center}
 
+The position of the nodes on the interface between the layer and the matrix is 
+perturbed with a random signal:
+\begin{lstlisting}
+for i in range(0,NV):
+    if abs(yV[i]-0.45)/Ly<eps:
+       yV[i]+=hy*0.05*random.uniform(-1,1)
+    if abs(yV[i]-0.55)/Ly<eps:
+       yV[i]+=hy*0.05*random.uniform(-1,1)
+\end{lstlisting}
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment1/phase}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment1/eta}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment1/etaeff}\\
+{\captionfont Initial setup of the experiment.}
+\end{center} 
+
+\begin{verbatim}
+viscosity eta    = [1.e+18 1.e+18 1.e+20]
+Young modulus E  = [1.e+11 1.e+11 1.e+11]
+shear modulus mu = [3.84615385e+10 3.84615385e+10 3.84615385e+10]
+bulk modulus K   = [8.33333333e+10 8.33333333e+10 8.33333333e+10]
+poisson ratio nu = [0.3 0.3 0.3]
+\end{verbatim}
+
 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_129/images/simpson2}\\
 {\captionfont 
-Folding in a layered viscoelastic material after 40\% shortening. The central layer has a viscosity 100
-higher than the surrounding matrix. The shaded colors represent mean stress, 
-while the grid shows finite deformation (which is not the computational mesh).
-Unfortunately no color legend.}
+Folding in a layered viscoelastic material after 40\% shortening. The central 
+layer has a viscosity 100 higher than the surrounding matrix. The shaded colors 
+represent mean stress, while the grid shows finite deformation 
+(which is not the computational mesh). Unfortunately no color legend.}
 \end{center}
 
 what about pre-stress, initial compaction?
-
-write about perturbation!
 
 Remark:
 - p191, viscosity values in 1) are wrong ? different?
@@ -200,6 +261,9 @@ Remark:
 \includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/sigmam0299}
 \includegraphics[width=3.4cm]{python_codes/fieldstone_129/results/experiment1/sigmam0399}\\
 \end{center}
+
+{\color{red} this experiment works fine, elastic properties constant in space,
+only viscous props vary}
 
 
 %------------------------------------------------------------------------------
@@ -238,7 +302,7 @@ We have
 The resolution is set to $10\times 10$ elements. 200 time steps are carried out.
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment2/stats_stress}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_129/results/experiment2/stats_stress}\\
 {\captionfont Evolution or $\sigma_{xx}$ statistics over 20~kyr for various values of $\nu$.}
 \end{center} 
 
@@ -247,13 +311,83 @@ The resolution is set to $10\times 10$ elements. 200 time steps are carried out.
 %------------------------------------------------------------------------------
 \subsection*{Numerical benchmark - Bending of elastic slab (experiment=3)}
 
+This benchmark is a numerical benchmark, but not an analytical one. 
+It originates in Taras Gerya's book. It is originally for incompressible visco-elastic fluids so we will run it at different values of the Poisson ratio parameter.
+It is also carried out in \stone~64.
+
+The sinking slab benchmark consists of a beam of elastic material which is placed 
+in a weak and viscous surrounding medium. The initially unstressed beam is attached 
+to the left domain boundary through boundary conditions. A stress is then applied to  
+the beam in the form of gravity. The applied gravity force results in the deformation 
+of the beam through bending. After 20 kyr, the gravity field is turned off and the 
+elastic properties of the beam will then force itself to its original position.  
+The set-up of the benchmark is given in the following figure: 
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_64/images/poster_benchmark.png}\\
+\captionfont{Set-up of the benchmark from \cite{gery10}. The properties of the 
+two materials are given on the left, together\\ with the initial configuration of the benchmark.} 
+\end{center}
+
+The 800x600km beam is surrounded by a low-density, low-viscosity and high shear modulus medium 
+of which the specifications are given in  the following table.
+The boundary conditions of the domain consist of a no slip condition at  
+the left boundary where the slab is attached and free slip boundary conditions along all other sides. 
+The results are calculated on a grid with a resolution of 50x50 elements.
+The time step is set to $\delta t = 200yr$ (i.e. gravity is switched off after 100 time steps).
+
+As explained in the book: ``
+The slab deformation is purely elastic due to the large Maxwell time (3 170 000 kyr) of slab material
+compared to the total deformation time (20 000 kyr). In contrast, the low viscosity medium
+is subjected to irreversible, purely viscous deformation since its Maxwell time (\num{3.17e-10} kyr) 
+is negligible compared to the deformation time.''
+
+\begin{center}
+\begin{tabular}{lll}
+\hline 
+\textit{Material properties}& \textit{Elastic slab (fluid 1)}  & \textit{Surrounding medium (fluid 2)} \\
+\hline 
+\hline
+Density         $\rho$ \  [kg/m$^{3}$]            & 4000                    & 1     \\
+Viscosity       $\eta$ \  [\si{\pascal\second}]    & $10^{27}$               &   $10^{21}$     \\
+Shear modulus   $\mu $ \  [\si{\pascal}]           & $10^{10}$               & $10^{20}$       \\
+Maxwell time $t_M$     \  [yr]                     & 3.17Gyr                 &  $3.17\times10^{-7}$yr       \\
+eff. visc.      $\eta_{eff}$ \ [\si{\pascal\second}] & 6.307199602192306e+19   &  9.999999984145105e+20      \\
+\hline
+\end{tabular}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment3/phase}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment3/eta}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment3/etaeff}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment3/rho}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment3/mu}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment3/K}\\
+{\captionfont Initial setup of the experiment.}
+\end{center} 
+
+{\color{red} this happily explodes no matter the poisson ratio value!}
+It kinda looks like things go mostly wrong in the purely viscous part?
+
+
+
+\newpage
 %------------------------------------------------------------------------------
 \subsection*{Numerical benchmark - Flexure of elastic plate (experiment=4)}
 
-This benchmark is presented in Choi et al (2013) \cite{chtl13}. 
+This benchmark is presented in \textcite{chtl13}. 
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_129/images/chtl13a}
+\includegraphics[width=8cm]{python_codes/fieldstone_129/images/chtl13b}\\
+{\captionfont 
+Taken from \textcite{chtl13}. ``Effect of elastic compressibility on the prediction 
+of an elastic thin plate subject to an uplifting load. (a)
+Model setup for a finite length elastic layer subjected to a
+finite length buoyant load applied on the bottom. (b) Profiles
+of mean-subtracted surface topography.''}
 \end{center}
 
 
@@ -273,14 +407,22 @@ eff. visc.      $\eta_{eff}$ \ \si{\pascal\second}      & 4.73039776e+18& 4.7303
 \end{center}
 
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_129/results/experiment4/phases}
-\includegraphics[width=6cm]{python_codes/fieldstone_129/results/experiment4/eta_eff}
-\end{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment4/phase}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment4/etaeff}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment4/rho}\\
+{\captionfont Initial setup of the experiment.}
+\end{center} 
 
-This explodes when shear modulus contrast becomes too big.
+
+{\color{red}This explodes when shear modulus contrast becomes too big, i.e. when a material 
+essentially becomes purely viscous by having its $\mu$ very large. }
 It showcases oscillations at the beginning too!
 
 
+
+
+
+\newpage
 %------------------------------------------------------------------------------
 \subsection*{Numerical benchmark - Parallel-plate viscosimeter (experiment=5)}
 

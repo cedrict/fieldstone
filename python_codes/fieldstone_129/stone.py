@@ -7,6 +7,12 @@ from scipy.sparse.linalg.dsolve import linsolve
 
 ###############################################################################
 
+def powerlaw_viscosity(tau,nnn,A):
+    #problem if tau=0
+    return 0.5*A**(-1)*tau**(1-nnn)
+
+###############################################################################
+
 def NNV(rq,sq):
     NV_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
     NV_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
@@ -58,16 +64,16 @@ print("-----------------------------")
 print("---------- stone 129 --------")
 print("-----------------------------")
 
-mV=9
-ndof=2
-ndim=2
+mV=9   # nb of nodes per element
+ndof=2 # nb of degrees of freedom per node
+ndim=2 # nb of dimensions
 
-experiment=5
+experiment=1
 
 if experiment==1:
    Lx=6
    Ly=1
-   nelx=60
+   nelx=80
    nely=40
    #phase1: top layer
    #phase2: bottom layer
@@ -82,6 +88,7 @@ if experiment==1:
    gy=9.8
    nstep=800
    dt=0.8*year
+   viscous_rheology='linear'
 
 if experiment==2:
    Lx=50e3
@@ -98,6 +105,7 @@ if experiment==2:
    dt=100*year
    gx=0
    gy=0
+   viscous_rheology='linear'
 
 if experiment==3:
    Lx=1000e3
@@ -107,13 +115,14 @@ if experiment==3:
    viscosity = np.array([1e27,1e21],dtype=np.float64)
    density = np.array([4000,1],dtype=np.float64)
    shear_modulus=np.array([1e10,1e20],dtype=np.float64)
-   poisson_ratio=np.array([0.47,0.47],dtype=np.float64)
+   poisson_ratio=np.array([0.27,0.27],dtype=np.float64)
    young_modulus=2*shear_modulus*(1+poisson_ratio)
    bulk_modulus=young_modulus/(3*(1-2*poisson_ratio)) 
    dt=200*year
-   nstep=2
+   nstep=20
    gx=0
    gy=10
+   viscous_rheology='linear'
 
 if experiment==4: #flexure elastic plate a la Choi et al 2013
    Lx=50e3
@@ -122,18 +131,19 @@ if experiment==4: #flexure elastic plate a la Choi et al 2013
    nely=25
    density = np.array([2700,1890,2700],dtype=np.float64)
    poisson_ratio=np.array([0.25,0.25,0.25],dtype=np.float64)
-
    #shear_modulus=np.array([30e9,30e9,1e30],dtype=np.float64)
-
    viscosity = np.array([1e30,1e30,1e17],dtype=np.float64)
    shear_modulus=np.array([30e9,30e9,30e14],dtype=np.float64)
 
    young_modulus=2*shear_modulus*(1+poisson_ratio)
    bulk_modulus=young_modulus/(3*(1-2*poisson_ratio)) 
    dt=5*year
-   nstep=50
+   nstep=5
    gx=0
    gy=9.8
+   viscous_rheology='linear'
+
+
 
 if experiment==5: # parallel-plate viscosimeter
    Lx=20
@@ -150,14 +160,15 @@ if experiment==5: # parallel-plate viscosimeter
    nstep=500
    gx=0
    gy=0
+   viscous_rheology='linear'
 
 
 every=1
 
-nnx=2*nelx+1  # number of elements, x direction
-nny=2*nely+1  # number of elements, y direction
-NV=nnx*nny    # number of nodes
-nel=nelx*nely # number of elements, total
+nnx=2*nelx+1  # number of nodes, x direction
+nny=2*nely+1  # number of nodes, y direction
+NV=nnx*nny    # total number of nodes
+nel=nelx*nely # total number of elements
 Nfem=NV*ndof  # Total number of velocity dofs
 
 stats_vel_file=open('stats_vel.ascii',"w")
@@ -170,6 +181,7 @@ stats_sxy_file=open('stats_sxy.ascii',"w")
 stats_txx_file=open('stats_txx.ascii',"w")
 
 #####################################################################
+# Gauss numerical quadrature points and weights
 
 nqperdim=3
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
@@ -179,6 +191,9 @@ nq=nel*nqperdim**ndim # total number of quadrature points
 
 #####################################################################
 
+print('experiment       =',experiment)
+print('nelx             =',nelx)
+print('nely             =',nely)
 print('nnx              =',nnx)
 print('nny              =',nny)
 print('NV               =',NV)
@@ -326,16 +341,16 @@ bc_val=np.zeros(Nfem,dtype=np.float64)  # boundary condition, value
 if experiment==1:
    for i in range(0, NV):
        if xV[i]/Lx<eps: #Left boundary  
-          bc_fix[i*ndof  ] = True ; bc_val[i*ndof+1] = 0  
+          bc_fix[i*ndof  ] = True ; bc_val[i*ndof  ] = 0 # vx=0 
        if xV[i]/Lx>1-eps: #right boundary  
-          bc_fix[i*ndof  ] = True ; bc_val[i*ndof  ] = -5e-3/year  
+          bc_fix[i*ndof  ] = True ; bc_val[i*ndof  ] = -5e-3/year # vx  
        if yV[i]/Ly<eps: #bottom boundary  
-          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0 
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0 # vy
 
 if experiment==2:
    for i in range(0, NV):
        if xV[i]/Lx<eps: #Left boundary  
-          bc_fix[i*ndof  ] = True ; bc_val[i*ndof+1] = 0  
+          bc_fix[i*ndof  ] = True ; bc_val[i*ndof  ] = 0  
        if xV[i]/Lx>1-eps: #right boundary  
           bc_fix[i*ndof  ] = True ; bc_val[i*ndof  ] = 1*cm/year  
        if yV[i]/Ly<eps: #bottom boundary  
@@ -346,7 +361,7 @@ if experiment==2:
 if experiment==3:
    for i in range(0, NV):
        if xV[i]/Lx<eps: #Left boundary  
-          bc_fix[i*ndof  ] = True ; bc_val[i*ndof+1] = 0  
+          bc_fix[i*ndof  ] = True ; bc_val[i*ndof  ] = 0  
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0 
        if xV[i]/Lx>1-eps: #right boundary  
           bc_fix[i*ndof  ] = True ; bc_val[i*ndof  ] = 0 
@@ -358,7 +373,7 @@ if experiment==3:
 if experiment==4:
    for i in range(0, NV):
        if xV[i]/Lx<eps: #Left boundary  
-          bc_fix[i*ndof  ] = True ; bc_val[i*ndof+1] = 0  
+          bc_fix[i*ndof  ] = True ; bc_val[i*ndof  ] = 0  
        if xV[i]/Lx>1-eps: #right boundary  
           bc_fix[i*ndof  ] = True ; bc_val[i*ndof  ] = 0 
        if yV[i]/Ly<eps: #bottom boundary  
@@ -390,6 +405,8 @@ stress0_vector    = np.zeros((3,nq),dtype=np.float64) # stress vector memory
 stress_vector     = np.zeros((3,nq),dtype=np.float64) # stress vector 
 strainrate_vector = np.zeros((3,nq),dtype=np.float64) # strain rate vector
 devstress_vector  = np.zeros((3,nq),dtype=np.float64) # deviatoric stress vector 
+devstress         = np.zeros(nq,dtype=np.float64)     # effective deviatoric stress vector 
+etaq              = np.zeros(nq,dtype=np.float64)     # effective viscosity at quad point
 
 for istep in range(0,nstep):
 
@@ -397,7 +414,7 @@ for istep in range(0,nstep):
     print("istep= ", istep,'/',nstep-1)
     print("-----------------------------")
 
-    A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64) # FE matrix
+    A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64) # FE stiffness matrix 'KM'
     rhs      = np.zeros(Nfem,dtype=np.float64)          # right hand side of Ax=b
     NNNV     = np.zeros(mV,dtype=np.float64)            # shape functions V
     dNNNVdr  = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
@@ -412,23 +429,6 @@ for istep in range(0,nstep):
         # set arrays to 0 every loop
         f_el =np.zeros((mV*ndof),dtype=np.float64)
         K_el =np.zeros((mV*ndof,mV*ndof),dtype=np.float64)
-
-        #viscoelastic material matrix D
-        di=dt*(3*eta[iel]*K[iel]+3*dt*mu[iel]*K[iel]+4*mu[iel]*eta[iel])
-        od=dt*(-2*mu[iel]*eta[iel]+3*eta[iel]*K[iel]+3*dt*mu[iel]*K[iel])
-        d=3*(eta[iel]+dt*mu[iel])
-        ed=eta[iel]*dt*mu[iel]/(eta[iel]+dt*mu[iel])
-        Dee = np.array([[di/d, od/d,  0],\
-                        [od/d, di/d,  0],\
-                        [0,       0, ed]],dtype=np.float64)
-
-        #stress matrix Ds for rhs
-        di=3*eta[iel]+dt*mu[iel]
-        od=dt*mu[iel] 
-        ed=eta[iel]/(eta[iel]+dt*mu[iel]) 
-        Dees = np.array([[di/d, od/d,  0],\
-                         [od/d, di/d,  0],\
-                         [0,       0, ed]],dtype=np.float64)
 
         # integrate viscous term at 4 quadrature points
         for iq in [0,1,2]:
@@ -473,6 +473,30 @@ for istep in range(0,nstep):
                 strainrate_vector[1,counterq]=eyyq
                 strainrate_vector[2,counterq]=exyq
 
+                if viscous_rheology=='linear':
+                   etaq[counterq]=eta[iel]
+                elif viscous_rheology=='powerlaw':
+                   etaq[counterq]=powerlaw_viscosity(devstress[counterq],nnn[phase[iel]-1],A[phase[iel]-1])
+                else:
+                   exit('viscous_rheology not specified!')
+
+                #viscoelastic material matrix tilde(D)
+                di=dt*(3*etaq[counterq]*K[iel]+3*dt*mu[iel]*K[iel]+4*mu[iel]*etaq[counterq])
+                od=dt*(-2*mu[iel]*etaq[counterq]+3*etaq[counterq]*K[iel]+3*dt*mu[iel]*K[iel])
+                d=3*(etaq[counterq]+dt*mu[iel])
+                ed=etaq[counterq]*dt*mu[iel]/(etaq[counterq]+dt*mu[iel])
+                Dee = np.array([[di/d, od/d,  0],\
+                                [od/d, di/d,  0],\
+                                [0,       0, ed]],dtype=np.float64)
+
+                #stress matrix Ds for rhs
+                di=3*etaq[counterq]+dt*mu[iel]
+                od=dt*mu[iel] 
+                ed=etaq[counterq]/(etaq[counterq]+dt*mu[iel]) 
+                Dees = np.array([[di/d, od/d,  0],\
+                                 [od/d, di/d,  0],\
+                                 [0,       0, ed]],dtype=np.float64)
+
                 stress_vector[:,counterq]=Dee.dot(strainrate_vector[:,counterq])+\
                                           Dees.dot(stress0_vector[:,counterq])
 
@@ -490,7 +514,8 @@ for istep in range(0,nstep):
                     f_el[ndof*i  ]-=NNNV[i]*jcob*weightq*gx*rho[iel]
                     f_el[ndof*i+1]-=NNNV[i]*jcob*weightq*gy*rho[iel]
 
-                f_el-=b_mat.T.dot(stress_vector[:,counterq])*weightq*jcob
+                #f_el-=b_mat.T.dot(stress_vector[:,counterq])*weightq*jcob
+                f_el-=b_mat.T.dot(Dees.dot(stress0_vector[:,counterq]))*weightq*jcob
 
                 counterq+=1
             #end for
@@ -532,7 +557,7 @@ for istep in range(0,nstep):
 
     #end for iel
 
-    print("building temperature matrix and rhs: %.3f s" % (timing.time() - start))
+    print("building FEM matrix and rhs: %.3f s" % (timing.time() - start))
 
     #################################################################
     # solve system
@@ -551,11 +576,13 @@ for istep in range(0,nstep):
     print("solve FE system: %.3f s" % (timing.time() - start))
 
     #################################################################
-    #
+    # compute time step
+    #################################################################
+
     CFL=1
     dt1=CFL*(Lx/nelx)/np.max(np.sqrt(u**2+v**2))
 
-    print(dt1/year,dt/year)
+    #print(dt1/year,dt/year)
 
     #################################################################
     start = timing.time()
@@ -563,6 +590,8 @@ for istep in range(0,nstep):
     devstress_vector[xx,:]=0.5*(stress_vector[xx,:]-stress_vector[yy,:])
     devstress_vector[yy,:]=0.5*(stress_vector[yy,:]-stress_vector[xx,:])
     devstress_vector[xy,:]=stress_vector[xy,:]
+
+    devstress[:]=np.sqrt(0.5*(devstress_vector[xx,:]**2+devstress_vector[yy,:]**2)+devstress_vector[xy,:]**2)
 
     stats_vel_file.write("%e %e %e %e %e\n" % (model_time,np.min(u),np.max(u),np.min(v),np.max(v)))
     stats_vel_file.flush()
@@ -643,8 +672,6 @@ for istep in range(0,nstep):
        for iel in range (0,nel):
            vtufile.write("%e \n" % E[iel])
        vtufile.write("</DataArray>\n")
-
-
        vtufile.write("<DataArray type='Float32' Name='density rho' Format='ascii'> \n")
        for iel in range (0,nel):
            vtufile.write("%e \n" % rho[iel])
@@ -657,10 +684,19 @@ for istep in range(0,nstep):
        for iel in range (0,nel):
            vtufile.write("%e \n" % (stress_vector[1,iel*9+4]))
        vtufile.write("</DataArray>\n")
+
        vtufile.write("<DataArray type='Float32' Name='sigma_xy' Format='ascii'> \n")
        for iel in range (0,nel):
            vtufile.write("%e \n" % (stress_vector[2,iel*9+4]))
        vtufile.write("</DataArray>\n")
+  
+       vtufile.write("<DataArray type='Float32' Name='devstress' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%e \n" % (devstress[iel*9+4]))
+       vtufile.write("</DataArray>\n")
+  
+
+
        vtufile.write("<DataArray type='Float32' Name='sigma_m' Format='ascii'> \n")
        for iel in range (0,nel):
            vtufile.write("%e \n" % (0.5*stress_vector[0,iel*9+4]+0.5*stress_vector[1,iel*9+4]))
@@ -765,6 +801,16 @@ for istep in range(0,nstep):
        for iq in range(0,nq):
            vtufile.write("%10e \n" % (devstress_vector[xx,iq]))
        vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='tau' Format='ascii'> \n")
+       for iq in range(0,nq):
+           vtufile.write("%10e \n" % (devstress[iq]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+       for iq in range(0,nq):
+           vtufile.write("%10e \n" % (etaq[iq]))
+       vtufile.write("</DataArray>\n")
+
+
        vtufile.write("</PointData>\n")
        #####
        vtufile.write("<Cells>\n")
@@ -797,10 +843,10 @@ for istep in range(0,nstep):
 
     stress0_vector[:,:]=stress_vector[:,:]
 
-    shortening=(1-max(xV)/Lx)*100
-
-    print('max(x)=',max(xV),', Lx(t=0)=',Lx)
-    print('shortening=',shortening,'%')
+    if experiment==1:
+       shortening=(1-max(xV)/Lx)*100
+       print('max(x)=',max(xV),', Lx(t=0)=',Lx)
+       print('shortening=',shortening,'%')
     
 #end for istep
 
