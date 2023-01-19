@@ -183,9 +183,17 @@ compute field above vertical face!
 
 explain difference btw m and M (dipole moment vs magnetisation)
 
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Benchmark 1 - magnetic field above a spherical anomaly/dipole}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_138/results/bench1/setup1}
+\includegraphics[width=7cm]{python_codes/fieldstone_138/results/bench1/setup2}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_138/results/bench1/setup3}
+\includegraphics[width=7cm]{python_codes/fieldstone_138/results/bench1/setup4}\\
+{\captionfont bla bla}
+\end{center}
 
 The domain is $2\times 2\times 2~\si{\meter}$. No background magnetisation. Single spherical inclusion 
 of radius \SI{1}{\meter} in the middle of the domain with magnetisation ${\bm M}=(0,1,0)$. 
@@ -210,9 +218,7 @@ A_x(z)=\frac{\mu_0}{4\pi} \frac{MV}{(z-z_c)^2}  \quad\quad
 A_y=0 \quad\quad
 A_z=0
 \]
-%\begin{center}
-%\includegraphics[width=12cm]{images/benchmark_magfield_above_dipole/Ax.pdf}
-%\end{center}
+
 
 
 Turning to the magnetic field of a single dipole:
@@ -223,30 +229,101 @@ Turning to the magnetic field of a single dipole:
 \[
 {\bm B}_{dip}({\bm r}) = \frac{\mu_0 V}{4\pi} \frac{1}{r^3} \left[ \frac{3}{r^2} ({\bm M} \cdot {\bm r}) {\bm r} - {\bm M}\right]
 \]
-We have ${\bm M} \cdot {\bm r}=0$ so
+
+If we measure on a line perpendicular to $\vec{M}$, then ${\bm M} \cdot {\bm r}=0$ so
 \[
 {\bm B}_{dip}({\bm r}) = -\frac{\mu_0 V}{4\pi} \frac{M}{r^3}   {\bm e}_y
 \]
+If we measure on a line along $\vec{M}$, and take $\vec{M} \propto \vec{e}_z$, then 
+\[
+\frac{3}{r^2} ({\bm M} \cdot {\bm r}) {\bm r} - {\bm M}
+=
+\frac{3}{r_z^2} 
+\left[
+\left(
+\begin{array}{c}
+0 \\ 0 \\ r_z
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+0 \\ 0 \\ M_z
+\end{array}
+\right)
+\right]
+=
+3\left(
+\begin{array}{c}
+0 \\ 0 \\ M_z
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+0 \\ 0 \\ M_z
+\end{array}
+\right)
+=
+2
+\left(
+\begin{array}{c}
+0 \\ 0 \\ M_z
+\end{array}
+\right)
+\]
+
 %\begin{center}
 %\includegraphics[width=12cm]{images/benchmark_magfield_above_dipole/By.pdf}
 %\end{center}
 
+\todo[inline]{M is actually (0,0,1) is code! adapt eqations above}
+
+
+\begin{center}
+\includegraphics[width=9cm]{python_codes/fieldstone_138/results/bench1/Bz}
+\includegraphics[width=9cm]{python_codes/fieldstone_138/results/bench1/Bz_zoom}\\
+{\captionfont bla bla}
+\end{center}
 
 
 
 
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Benchmark 2}
+\subsection*{Benchmark 2 - testing internal cancellation of surf integrals} 
+
+random perturbation of internal nodes
+
+\todo[inline]{add description and why it matters}
+
+2 tests:
+\begin{itemize}
+\item 2a: random perturbation of cubic elements 
+\item 2b: random perturbation of elements with high aspect ratio
+\end{itemize}
+show(?) for both no change plane measurements
 
 
 
+
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Benchmark 3}
 
-The domain is . 
+The domain is 20x20x20. 
+Sphere. computing B on fibonacci spiral. 
+analytical solution exists.
+need for (very) high res, i.e. 40**3, 80**3, 120**3, or even more (?).
+
+100 fibonacci points. at radius 1.01*sphere radius, i.e. 10cm above sphere.
+
+plot vtu of fibo points .
+plot Bx,By,Bz in gnuplot for all 3 .
 
 
+
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Benchmark 4}
 

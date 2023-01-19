@@ -17,7 +17,8 @@ def topography(x,y,A,llambda,dx,dy,slopex,slopey):
 
 def compute_analytical_solution(x,y,z,R,Mx,My,Mz,xcenter,ycenter,zcenter,benchmark):
 
-   if benchmark==1: #--------------------------------------
+   #-----------------------------------------------------------------
+   if benchmark=='1': 
       mu0=4*np.pi #*1e-7
       V=4/3*np.pi*R**3
       r=np.sqrt((x-xcenter)**2+(y-ycenter)**2+(z-zcenter)**2)
@@ -25,12 +26,14 @@ def compute_analytical_solution(x,y,z,R,Mx,My,Mz,xcenter,ycenter,zcenter,benchma
       By=0
       Bz=2*mu0*V/4/np.pi/r**3*Mz0
 
-   if benchmark==2 or benchmark==4: #----------------------
+   #-----------------------------------------------------------------
+   if benchmark=='2a' or benchmark=='2b' or benchmark=='4':
       Bx=0
       By=0
       Bz=0
 
-   if benchmark==3: #--------------------------------------
+   #-----------------------------------------------------------------
+   if benchmark=='3': 
       r=np.sqrt((x-xcenter)**2+(y-ycenter)**2+(z-zcenter)**2)
       theta=np.arccos((z-zcenter)/r)
       phi=np.arctan2((y-ycenter),(x-xcenter))
@@ -51,18 +54,19 @@ def compute_analytical_solution(x,y,z,R,Mx,My,Mz,xcenter,ycenter,zcenter,benchma
 ###############################################################################
 #benchmark:
 #1: dipole (small sphere, far away), line measurement
-#2: random perturbation internal nodes -> checks cancellation of internal faces 
+#2a: random perturbation internal nodes cubic-> checks cancellation of internal faces 
+#2b: random perturbation internal nodes pancake-> checks cancellation of internal faces 
 #3: sphere (larger sphere, anywhere in space) analytical
 #4: wavy surface, domain with constant M vector
 
-benchmark=1
+benchmark='4'
 
 ###############################################################################
 # be careful with the position of the measurement points for 
 # benchmark 1. These cannot be above the center of the sphere
 # but also not above a diagonal of an element (see ...wtopo)
 
-if benchmark==1:
+if benchmark=='1':
    Lx=2
    Ly=2
    Lz=2
@@ -85,7 +89,7 @@ if benchmark==1:
    xend=Lx/2+1e-9
    yend=Ly/2+1e-10
    zend=10
-   line_nmeas=10 
+   line_nmeas=50 
    #plane meas
    do_plane_measurements=False
    plane_x0=-Lx/2
@@ -95,8 +99,9 @@ if benchmark==1:
    plane_Ly=2*Ly
    plane_nnx=21
    plane_nny=21
+   do_spiral_measurements=False
 
-if benchmark==2:
+if benchmark=='2a':
    Lx=10
    Ly=10
    Lz=10
@@ -122,14 +127,43 @@ if benchmark==2:
    sphere_xc=0
    sphere_yc=0
    sphere_zc=0
+   do_spiral_measurements=False
 
-if benchmark==3:
+if benchmark=='2b':
+   Lx=10
+   Ly=10
+   Lz=10
+   nelx=5
+   nely=5
+   nelz=20
+   Mx0=0
+   My0=1
+   Mz0=0
+   nqdim=6
+   #plane meas
+   do_plane_measurements=True
+   plane_x0=-Lx/2
+   plane_y0=-Ly/2
+   plane_z0=1
+   plane_Lx=2*Lx
+   plane_Ly=2*Ly
+   plane_nnx=11
+   plane_nny=11
+   dz=0.025 #amplitude random
+   do_line_measurements=False
+   sphere_R=0
+   sphere_xc=0
+   sphere_yc=0
+   sphere_zc=0
+   do_spiral_measurements=False
+
+if benchmark=='3':
    Lx=20
    Ly=20
    Lz=20
-   nelx=20
-   nely=20
-   nelz=20
+   nelx=60
+   nely=60
+   nelz=60
    Mx0=0
    My0=0
    Mz0=7.5
@@ -139,7 +173,7 @@ if benchmark==3:
    sphere_zc=-Lz/2
    nqdim=4
    #plane meas
-   do_plane_measurements=True
+   do_plane_measurements=False
    plane_x0=-Lx/2
    plane_y0=-Ly/2
    plane_z0=0.4
@@ -148,8 +182,11 @@ if benchmark==3:
    plane_nnx=30
    plane_nny=30
    do_line_measurements=False
+   do_spiral_measurements=True
+   radius_spiral=1.01*sphere_R
+   npts_spiral=101 #keep odd
 
-if benchmark==4:
+if benchmark=='4':
    Lx=100
    Ly=100
    Lz=100
@@ -182,6 +219,7 @@ if benchmark==4:
    sphere_yc=0
    sphere_zc=0
    # to do: code line meas 
+   do_spiral_measurements=False
 
    #subbench=1,2,3,4
    #if subbench==1:
@@ -218,6 +256,9 @@ if do_line_measurements:
    print('xstart,ystart,zstart=',xstart,ystart,zstart)
    print('xend,yend,zend=',xend,yend,zend)
    print('line_nmeas=',line_nmeas)
+if do_spiral_measurements:
+   print('npts_spiral',npts_spiral)
+   print('radius_spiral',radius_spiral)
 
 print('========================================')
 
@@ -238,7 +279,7 @@ for i in range(0,nnx):
             x[counter]=i*Lx/float(nelx)
             y[counter]=j*Ly/float(nely)
             z[counter]=k*Lz/float(nelz)-Lz
-            if i!=0 and j!=0 and k!=0 and i!=nnx-1 and j!=nny-1 and k!=nnz-1 and benchmark==2:
+            if i!=0 and j!=0 and k!=0 and i!=nnx-1 and j!=nny-1 and k!=nnz-1 and (benchmark=='2a' or benchmark=='2b'):
                z[counter]+=random.uniform(-1,+1)*dz
             counter += 1
         #end for
@@ -275,7 +316,7 @@ print('grid connectivity setup')
 ###############################################################################
 # adding wavy topography to surface and deform the mesh accordingly
 
-if benchmark==4:
+if benchmark=='4':
 
    for i in range(0,NV):
        if abs(z[i])<1e-6:
@@ -305,7 +346,7 @@ Mx=np.zeros(nel,dtype=np.float64)
 My=np.zeros(nel,dtype=np.float64)
 Mz=np.zeros(nel,dtype=np.float64)
 
-if benchmark==1 or benchmark==3:
+if benchmark=='1' or benchmark=='3':
    Mx[:]=0
    My[:]=0
    Mz[:]=0
@@ -318,7 +359,7 @@ if benchmark==1 or benchmark==3:
           My[iel]=My0
           Mz[iel]=Mz0
 
-if benchmark==2 or benchmark==4:
+if benchmark=='2a' or benchmark=='2b' or benchmark=='4':
    Mx[:]=Mx0
    My[:]=My0
    Mz[:]=Mz0
@@ -338,15 +379,15 @@ print('prescribe M vector in domain')
 
 if do_plane_measurements:
 
-   plane_nmeas=plane_nnx*plane_nny
+   plane_nmeas=plane_nnx*plane_nny # total number of points in plane
 
-   plane_nelx=plane_nnx-1
-   plane_nely=plane_nny-1
-   plane_nel=plane_nelx*plane_nely
+   plane_nelx=plane_nnx-1          # nb of cells in x direction in plane
+   plane_nely=plane_nny-1          # nb of cells in y direction in plane
+   plane_nel=plane_nelx*plane_nely # total nb of cells in plane
 
-   x_meas=np.empty(plane_nmeas,dtype=np.float64)  # x coordinates
-   y_meas=np.empty(plane_nmeas,dtype=np.float64)  # y coordinates
-   z_meas=np.empty(plane_nmeas,dtype=np.float64)  # y coordinates
+   x_meas=np.empty(plane_nmeas,dtype=np.float64)  # x coordinates of meas points
+   y_meas=np.empty(plane_nmeas,dtype=np.float64)  # y coordinates of meas points
+   z_meas=np.empty(plane_nmeas,dtype=np.float64)  # y coordinates of meas points
 
    counter = 0
    for j in range(0,plane_nny):
@@ -354,7 +395,7 @@ if do_plane_measurements:
            x_meas[counter]=plane_x0+(i+random.uniform(-1,+1)*1e-8)*plane_Lx/float(plane_nnx-1) 
            y_meas[counter]=plane_y0+(j+random.uniform(-1,+1)*1e-8)*plane_Ly/float(plane_nny-1) 
            z_meas[counter]=plane_z0
-           if benchmark==4:
+           if benchmark=='4':
               z_meas[counter]+=topography(x_meas[counter]-Lx/2,y_meas[counter]-Ly/2,A,wavelength,dx,dy,slopex,slopey)
            counter += 1
 
@@ -368,16 +409,16 @@ if do_plane_measurements:
            icon_meas[3,counter] = i + (j + 1) * (plane_nelx + 1)
            counter += 1
 
-   export_mesh_2D(plane_nmeas,plane_nel,x_meas,y_meas,z_meas,icon_meas,'mesh_meas.vtu')
+   #export_mesh_2D(plane_nmeas,plane_nel,x_meas,y_meas,z_meas,icon_meas,'mesh_plane_measurements.vtu')
 
    print('setup plane measurement points ')
 
 ###############################################################################
 # measuring B on a plane
-# Nomenclature:
-# vi: volume integral
-# si: surface integral
-# th: analytical value (if applicable)
+# Nomenclature for variables/arrays:
+# _vi: volume integral
+# _si: surface integral
+# _th: analytical value (if applicable)
 # The volume integral is parameterised by the number of quadrature 
 # points per dimension nqdim.
 # Because the integrand is not a polynomial, the volume integral
@@ -434,6 +475,8 @@ if do_line_measurements:
    z_meas=np.empty(line_nmeas,dtype=np.float64)  # y coordinates
 
    linefile=open("measurements_line.ascii","w")
+   linefile.write("# 1,2,3,4    ,5    ,6    ,7    ,8    ,9    ,10   ,11   ,12    \n")
+   linefile.write("# x,y,z,Bx_vi,By_vi,Bz_vi,Bx_si,By_si,Bz_si,Bx_th,By_th,Bz_th \n")
 
    B_vi=np.zeros((3,line_nmeas),dtype=np.float64)
    B_si=np.zeros((3,line_nmeas),dtype=np.float64)
@@ -463,6 +506,54 @@ if do_line_measurements:
                                                        B_th[0,i],B_th[1,i],B_th[2,i]))
 
    export_line_measurements(line_nmeas,x_meas,y_meas,z_meas,'line_measurements.vtu',B_vi,B_si,B_th)
+
+print('========================================')
+
+###############################################################################
+
+if do_spiral_measurements:
+
+   x_spiral = np.zeros(npts_spiral,dtype=np.float64)  
+   y_spiral = np.zeros(npts_spiral,dtype=np.float64)  
+   z_spiral = np.zeros(npts_spiral,dtype=np.float64)  
+   r_spiral = np.zeros(npts_spiral,dtype=np.float64)  
+   theta_spiral = np.zeros(npts_spiral,dtype=np.float64)  
+   phi_spiral = np.zeros(npts_spiral,dtype=np.float64)  
+
+   golden_ratio = (1. + np.sqrt(5.))/2.
+   golden_angle = 2. * np.pi * (1. - 1./golden_ratio)
+
+   for i in range(0,npts_spiral):
+       r_spiral[i] = radius_spiral
+       theta_spiral[i] = np.arccos(1. - 2. * i / (npts_spiral - 1.))
+       phi_spiral[i] = np.fmod((i*golden_angle), 2.*np.pi)
+
+   x_spiral[:]=r_spiral[:]*np.sin(theta_spiral[:])*np.cos(phi_spiral[:])+sphere_xc
+   y_spiral[:]=r_spiral[:]*np.sin(theta_spiral[:])*np.sin(phi_spiral[:])+sphere_yc
+   z_spiral[:]=r_spiral[:]*np.cos(theta_spiral[:])                      +sphere_zc
+
+   spiralfile=open("measurements_spiral.ascii","w")
+   spiralfile.write("# 1,2,3,4    ,5    ,6    ,7    ,8    ,9    ,10   ,11   ,12    \n")
+   spiralfile.write("# x,y,z,Bx_vi,By_vi,Bz_vi,Bx_si,By_si,Bz_si,Bx_th,By_th,Bz_th \n")
+
+   B_vi=np.zeros((3,npts_spiral),dtype=np.float64)
+   B_si=np.zeros((3,npts_spiral),dtype=np.float64)
+   B_th=np.zeros((3,npts_spiral),dtype=np.float64)
+
+   for i in range(0,npts_spiral):
+       print('doing',i,'out of ',npts_spiral) 
+       for iel in range(0,nel):
+           B_vi[:,i]+=compute_B_quadrature      (x_spiral[i],y_spiral[i],z_spiral[i],x,y,z,icon[:,iel],Mx[iel],My[iel],Mz[iel],nqdim)
+           B_si[:,i]+=compute_B_surface_integral_wtopo(x_spiral[i],y_spiral[i],z_spiral[i],x,y,z,icon[:,iel],Mx[iel],My[iel],Mz[iel])
+
+       B_th[:,i]=compute_analytical_solution(x_spiral[i],y_spiral[i],z_spiral[i],sphere_R,Mx0,My0,Mz0,sphere_xc,sphere_yc,sphere_zc,benchmark)
+    
+       spiralfile.write("%e %e %e %e %e %e %e %e %e %e %e %e \n" %(x_spiral[i],y_spiral[i],z_spiral[i],\
+                                                       B_vi[0,i],B_vi[1,i],B_vi[2,i],\
+                                                       B_si[0,i],B_si[1,i],B_si[2,i],\
+                                                       B_th[0,i],B_th[1,i],B_th[2,i]))
+
+   export_spiral_measurements(npts_spiral,x_spiral,y_spiral,z_spiral,'spiral_measurements.vtu',B_vi,B_si,B_th)
 
 print('========================================')
 
