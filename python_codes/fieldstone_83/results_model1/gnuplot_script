@@ -13,19 +13,20 @@ Ly=125e3
 f(x)=erf((Ly-x)/2/sqrt(k*time/rho/Cp))*1350
 
 #dt=10kyr
-set ylabel 'T'
-set xlabel 'y'
+
+set ylabel 'T (C)'
+set xlabel 'y (km)'
 set output 'Tprofiles.pdf'
 plot[][]\
-'T_000000.ascii' u 1:($2-273) w l t 't=0Myr',\
-'T_002000.ascii' u 1:($2-273) w l t 't=20Myr',\
-'T_004000.ascii' u 1:($2-273) w l t 't=40Myr',\
-'T_006000.ascii' u 1:($2-273) w l t 't=60Myr',\
-'T_008000.ascii' u 1:($2-273) w l t 't=80Myr',\
-'T_010000.ascii' u 1:($2-273) w l t 't=100Myr',\
-'T_012000.ascii' u 1:($2-273) w l t 't=120Myr',\
-'T_014000.ascii' u 1:($2-273) w l t 't=140Myr',\
-'T_016000.ascii' u 1:($2-273) w l t 't=160Myr',\
-f(x) lt -1 dashtype 2 t 'analytical' 
+'T_000000.ascii' u ($1/1000):($2-273) w l t 't=0Myr',\
+'T_002000.ascii' u ($1/1000):($2-273) w l t 't=20Myr',\
+'T_004000.ascii' u ($1/1000):($2-273) w l t 't=40Myr',\
+'T_006000.ascii' u ($1/1000):($2-273) w l t 't=60Myr',\
+'T_008000.ascii' u ($1/1000):($2-273) w l t 't=80Myr',\
+'T_010000.ascii' u ($1/1000):($2-273) w l t 't=100Myr',\
+'T_012000.ascii' u ($1/1000):($2-273) w l t 't=120Myr',\
+'T_014000.ascii' u ($1/1000):($2-273) w l t 't=140Myr',\
+'T_016000.ascii' u ($1/1000):($2-273) w l t 't=160Myr',\
+f(x*1000) lt -1 dashtype 2 t 'analytical' 
 
 

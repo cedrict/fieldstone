@@ -2,18 +2,34 @@ import numpy as np
 
 # ========== temperature dependent variables ==========
 
-#thermal_parameters = 2 # 1 = constant according to Parsons & Slater 1977; 2 = T-dependent with k from (simplified) Hofmeister 1999 as posed by McKenzie et al., 2005; 3 = T-dependent with k from Xu et al., 2004 
+# 0 = constant according to Parsons & Slater 1977; 
+# 1 = T-dependent with k from (simplified) Hofmeister 1999 as posed by McKenzie et al., 2005; 
+# 2 = T-dependent with k from Xu et al., 2004 
+# thermal_parameters = 2 
 
-#option_k:  # 0 = constant according to Parsons & Slater 1977; 1 = T-dependent with k from (simplified) Hofmeister 1999 as posed by McKenzie et al., 2005; 2 = T-dependent with k from Xu et al., 2004 
+#option_k:  
+# 0 = constant according to Parsons & Slater 1977; 
+# 1 = T-dependent with k from (simplified) Hofmeister 1999 as posed by McKenzie et al., 2005; 
+# 2 = T-dependent with k from Xu et al., 2004 
 
-#option_C_p:  #  0 = constant according to Parsons & Slater 1977; 1 = 100% forsterite Berman 1988; 2 = 100% fayalite Berman 1988; 3 = 89% forsterite & 11% fayalite Berman 1988; 4 = 100% forsterite Berman & Aranovich 1996; 5 = 100% fayalite Berman & Aranovich 1996; 6 = 89% forsterite & 11% fayalite Berman & Aranovich 1996;
+#option_C_p:  
+# 0 = constant according to Parsons & Slater 1977; 
+# 1 = 100% forsterite Berman 1988; 
+# 2 = 100% fayalite Berman 1988; 
+# 3 = 89% forsterite & 11% fayalite Berman 1988; 
+# 4 = 100% forsterite Berman & Aranovich 1996; 
+# 5 = 100% fayalite Berman & Aranovich 1996; 
+# 6 = 89% forsterite & 11% fayalite Berman & Aranovich 1996;
 
-#option_rho:  # 0 = constant according to Parsons & Slater 1977; 1 = T-dependent based on McKenzie et al., 2005
-
+#option_rho:  
+# 0 = constant according to Parsons & Slater 1977; 
+# 1 = T-dependent based on McKenzie et al., 2005
 
 kelvin=273
 
-def heat_conductivity(T,p,imat,option_k):
+###############################################################################
+
+def heat_conductivity(T,p,option_k):
     if option_k == 0:
         # constant variables 
         k = 3.138 
@@ -45,7 +61,9 @@ def heat_conductivity(T,p,imat,option_k):
         k = k298 * (298 / (T + kelvin))**n
     return k  
 
-def heat_capacity(T,p,imat,option_C_p):
+###############################################################################
+
+def heat_capacity(T,p,option_C_p):
     if option_C_p == 0: 
         # constant vriables 
         C_p = 1171.52 
@@ -95,7 +113,9 @@ def heat_capacity(T,p,imat,option_C_p):
         
     return C_p
 
-def density(T,p,imat,option_rho):
+###############################################################################
+
+def density(T,p,option_rho):
     if option_rho == 0:
         # constant variables 
         rho = 3330. 
@@ -107,3 +127,5 @@ def density(T,p,imat,option_rho):
         # calculate rho
         rho     = rho_0 * np.exp( - ( alpha_0 * (T - kelvin) + (alpha_1/2.) * ( np.power(T,2) - kelvin**2 ) ) )
     return rho
+
+###############################################################################

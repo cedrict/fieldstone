@@ -14,7 +14,7 @@ def NNT(r,s,order):
        N_1=0.25*(1.+r)*(1.-s)
        N_2=0.25*(1.-r)*(1.+s)
        N_3=0.25*(1.+r)*(1.+s)
-       return N_0,N_1,N_2,N_3
+       return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
     if order==2:
        N_0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
        N_1=    (1.-r**2) * 0.5*s*(s-1.)
@@ -25,7 +25,7 @@ def NNT(r,s,order):
        N_6= 0.5*r*(r-1.) * 0.5*s*(s+1.)
        N_7=    (1.-r**2) * 0.5*s*(s+1.)
        N_8= 0.5*r*(r+1.) * 0.5*s*(s+1.)
-       return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8
+       return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
 
 def dNNTdr(r,s,order):
     if order==1:
@@ -33,7 +33,7 @@ def dNNTdr(r,s,order):
        dNdr_1=+0.25*(1.-s)
        dNdr_2=-0.25*(1.+s)
        dNdr_3=+0.25*(1.+s)
-       return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+       return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3],dtype=np.float64)
     if order==2:
        dNdr_0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
        dNdr_1=       (-2.*r) * 0.5*s*(s-1)
@@ -44,7 +44,7 @@ def dNNTdr(r,s,order):
        dNdr_6= 0.5*(2.*r-1.) * 0.5*s*(s+1)
        dNdr_7=       (-2.*r) * 0.5*s*(s+1)
        dNdr_8= 0.5*(2.*r+1.) * 0.5*s*(s+1)
-       return dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8
+       return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8],dtype=np.float64)
 
 def dNNTds(r,s,order):
     if order==1:
@@ -52,7 +52,7 @@ def dNNTds(r,s,order):
        dNds_1=-0.25*(1.+r)
        dNds_2=+0.25*(1.-r)
        dNds_3=+0.25*(1.+r)
-       return dNds_0,dNds_1,dNds_2,dNds_3
+       return np.array([dNds_0,dNds_1,dNds_2,dNds_3],dtype=np.float64)
     if order==2:
        dNds_0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
        dNds_1=    (1.-r**2) * 0.5*(2.*s-1.)
@@ -63,10 +63,11 @@ def dNNTds(r,s,order):
        dNds_6= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
        dNds_7=    (1.-r**2) * 0.5*(2.*s+1.)
        dNds_8= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
-       return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8
+       return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8],dtype=np.float64)
 
-#------------------------------------------------------------------------------
+###############################################################################
 # this a 2D domain but we are actually only interested in the 1D solution
+# so we set nelx=2
 
 sqrt3=np.sqrt(3.)
 sqrt2=np.sqrt(2.)
@@ -81,15 +82,12 @@ print("-----------------------------")
 ndim=2       # number of space dimensions
 ndofT=1      # number of degrees of freedom per node
 
-
 order=2
 if order==1:
    m=4          # number of nodes making up an element
 if order==2:
    m=9
 
-nelx = 2
-nely = 60
 tfinal=100e6*year
 Ttop=0+273
 Tbottom=1350+273
@@ -106,16 +104,19 @@ if model==0:
    option_k=0
    option_C_p=0
    option_rho=0
-   Lx=2e3
    Ly=125e3
 
 if model==1:
    option_k=1
    option_C_p=6
    option_rho=1
-   Lx=2e3
    Ly=106e3
 
+Lx=2e3
+nelx = 2
+nely = int(Ly/1000)
+
+###############################################################################
 
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
@@ -144,16 +145,22 @@ if order==2:
    qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
    qweights=[5./9.,8./9.,5./9.]
 
-#####################################################################
+###############################################################################
 
 stats_T_file=open('stats_T.ascii',"w")
 
-#####################################################################
+###############################################################################
 
 print ('order      =',order)
 print ('nnx        =',nnx)
 print ('nny        =',nny)
 print ('NV         =',NV)
+print ('nelx       =',nelx)
+print ('nely       =',nely)
+print ('Lx         =',Lx)
+print ('Ly         =',Ly)
+print ('hx         =',hx)
+print ('hy         =',hy)
 print ('nel        =',nel)
 print ('NfemT      =',NfemT)
 print ('nqperdim   =',nqperdim)
@@ -161,30 +168,33 @@ print ('dt(yr)     =',dt/year)
 print ('nstep      =',nstep)
 print("-----------------------------")
 
-#####################################################################
+###############################################################################
 # generate ascii files for k, rho, CP as a fct of T
-#####################################################################
+###############################################################################
 
-hcond_file=open('hcond.ascii',"w")
-hcapa_file=open('hcapa.ascii',"w")
-rho_file=open('rho.ascii',"w")
-for i in range(0,1000):
-    T=Ttop+(Tbottom-Ttop)/999*i
-    hcond=temperature_dependent_variables.heat_conductivity(T,0,0,option_k)
-    hcapa=temperature_dependent_variables.heat_capacity(T,0,0,option_C_p)
-    rho=temperature_dependent_variables.density(T,0,0,option_rho)
-    hcond_file.write("%e %e \n" %(T,hcond)) 
-    hcapa_file.write("%e %e \n" %(T,hcapa)) 
-    rho_file.write("%e %e \n" %(T,rho)) 
-#end for
-hcond_file.close
-hcapa_file.close
-rho_file.close
+if model==1:
+   hcond_file=open('hcond.ascii',"w")
+   hcapa_file=open('hcapa.ascii',"w")
+   rho_file=open('rho.ascii',"w")
+   kappa_file=open('kappa.ascii',"w")
+   for i in range(0,1000):
+       T=Ttop+(Tbottom-Ttop)/999*i
+       hcond=temperature_dependent_variables.heat_conductivity(T,0,option_k)
+       hcapa=temperature_dependent_variables.heat_capacity(T,0,option_C_p)
+       rho=temperature_dependent_variables.density(T,0,option_rho)
+       hcond_file.write("%e %e \n" %(T,hcond)) 
+       hcapa_file.write("%e %e \n" %(T,hcapa)) 
+       rho_file.write("%e %e \n" %(T,rho)) 
+       kappa_file.write("%e %e \n" %(T,hcond/hcapa/rho))
+   #end for
+   hcond_file.close
+   hcapa_file.close
+   rho_file.close
+   kappa_file.close
 
-
-#####################################################################
+###############################################################################
 # grid point setup 
-#####################################################################
+###############################################################################
 start = timing.time()
 
 x = np.empty(NV,dtype=np.float64)  # x coordinates
@@ -203,9 +213,9 @@ for j in range(0,nny):
 
 print("mesh (%.3fs)" % (timing.time() - start))
 
-#####################################################################
+###############################################################################
 # connectivity
-#####################################################################
+###############################################################################
 start = timing.time()
 
 icon =np.zeros((m,nel),dtype=np.int32)
@@ -240,9 +250,9 @@ for j in range(0,nny-1):
 
 print("connectivity (%.3fs)" % (timing.time() - start))
 
-#####################################################################
+###############################################################################
 # define temperature boundary conditions
-#####################################################################
+###############################################################################
 start = timing.time()
 
 bc_fixT=np.zeros(NfemT,dtype=np.bool)  
@@ -257,9 +267,9 @@ for i in range(0,NV):
 
 print("boundary conditions (%.3fs)" % (timing.time() - start))
 
-#####################################################################
+###############################################################################
 # initial temperature
-#####################################################################
+###############################################################################
 start = timing.time()
 
 T = np.zeros(NV,dtype=np.float64)
@@ -267,34 +277,35 @@ T = np.zeros(NV,dtype=np.float64)
 for i in range(0,NV):
     T[i]=Tbottom
 
-
 #np.savetxt('T_init.ascii',np.array([x,y,T]).T,header='# x,y,T')
 
 print("initial temperature (%.3fs)" % (timing.time() - start))
 
-#####################################################################
+###############################################################################
 # create necessary arrays 
-#####################################################################
+###############################################################################
 start = timing.time()
 
-N     = np.zeros(m,dtype=np.float64)    # shape functions
-dNdx  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
-dNdy  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
-dNdr  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
-dNds  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
-Tvectm1 = np.zeros(m,dtype=np.float64)   
-NNNT    = np.zeros(m,dtype=np.float64)           # shape functions 
-dNNNTdx = np.zeros(m,dtype=np.float64)           # shape functions derivatives
-dNNNTdy = np.zeros(m,dtype=np.float64)           # shape functions derivatives
-dNNNTdr = np.zeros(m,dtype=np.float64)           # shape functions derivatives
-dNNNTds = np.zeros(m,dtype=np.float64)           # shape functions derivatives
-Tlithosphere=np.zeros((nny,nstep),dtype=np.float64)
+N     = np.zeros(m,dtype=np.float64)                # shape functions
+dNdx  = np.zeros(m,dtype=np.float64)                # shape functions derivatives
+dNdy  = np.zeros(m,dtype=np.float64)                # shape functions derivatives
+dNdr  = np.zeros(m,dtype=np.float64)                # shape functions derivatives
+dNds  = np.zeros(m,dtype=np.float64)                # shape functions derivatives
+Tvectm1 = np.zeros(m,dtype=np.float64)              # old T at nodes 
+NNNT    = np.zeros(m,dtype=np.float64)              # shape functions 
+dNNNTdx = np.zeros(m,dtype=np.float64)              # shape functions derivatives
+dNNNTdy = np.zeros(m,dtype=np.float64)              # shape functions derivatives
+dNNNTdr = np.zeros(m,dtype=np.float64)              # shape functions derivatives
+dNNNTds = np.zeros(m,dtype=np.float64)              # shape functions derivatives
+Tlithosphere=np.zeros((nny,nstep),dtype=np.float64) #array to store all T
     
 print("create arrays (%.3fs)" % (timing.time() - start))
 
-#==============================================================================
+###############################################################################
+###############################################################################
 # time stepping loop
-#==============================================================================
+###############################################################################
+###############################################################################
 
 model_time=0.
 
@@ -348,11 +359,7 @@ for istep in range(0,nstep):
                     jcb[1,0]+=dNNNTds[k]*x[icon[k,iel]]
                     jcb[1,1]+=dNNNTds[k]*y[icon[k,iel]]
                 #end for
-
-                # calculate the determinant of the jacobian
                 jcob=np.linalg.det(jcb)
-
-                # calculate inverse of the jacobian matrix
                 jcbi=np.linalg.inv(jcb)
 
                 # compute dNdx & dNdy
@@ -365,9 +372,9 @@ for istep in range(0,nstep):
                     Tq+=NNNT[k]*T[icon[k,iel]]
                 #end for
 
-                rhoq=temperature_dependent_variables.density(Tq,0,0,option_rho)
-                hcapaq=temperature_dependent_variables.heat_capacity(Tq,0,0,option_C_p)
-                hcondq=temperature_dependent_variables.heat_conductivity(Tq,0,0,option_k)
+                rhoq=temperature_dependent_variables.density(Tq,0,option_rho)
+                hcapaq=temperature_dependent_variables.heat_capacity(Tq,0,option_C_p)
+                hcondq=temperature_dependent_variables.heat_conductivity(Tq,0,option_k)
 
                 # compute mass matrix
                 MM=N_mat.dot(N_mat.T)*rhoq*hcapaq*weightq*jcob
@@ -431,12 +438,15 @@ for istep in range(0,nstep):
     #################################################################
     # save temperature at x=Lx/2 in array for later plot
     #################################################################
+    start = timing.time()
 
     counter=0
     for i in range(0,NV):
         if abs(x[i]-Lx/2)/Lx<0.0001:
            Tlithosphere[counter,istep]=T[i]
            counter+=1
+
+    print("save mid temperature: %.3f s" % (timing.time() - start))
 
     #################################################################
     # visualisation 
@@ -471,17 +481,17 @@ for istep in range(0,nstep):
        #--
        vtufile.write("<DataArray type='Float32' Name='k(T)' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10f \n" % temperature_dependent_variables.heat_conductivity(T[i],0,0,option_k))
+           vtufile.write("%10f \n" % temperature_dependent_variables.heat_conductivity(T[i],0,option_k))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='Cp(T)' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10f \n" % temperature_dependent_variables.heat_capacity(T[i],0,0,option_C_p))
+           vtufile.write("%10f \n" % temperature_dependent_variables.heat_capacity(T[i],0,option_C_p))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='rho(T)' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10f \n" % temperature_dependent_variables.density(T[i],0,0,option_rho))
+           vtufile.write("%10f \n" % temperature_dependent_variables.density(T[i],0,option_rho))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</PointData>\n")
@@ -521,12 +531,15 @@ for istep in range(0,nstep):
     model_time+=dt
     print ("model_time=",model_time/year/1e6,'Myr')
     
-#end for istep
+###############################################################################
+###############################################################################
+# end time stepping loop
+###############################################################################
+###############################################################################
 
-####################################################
-#generate vtu file for lithosphere temperature
-#aspect ratio 2:1
-####################################################
+###############################################################################
+#generate vtu file for lithosphere temperature; aspect ratio 2:1
+###############################################################################
 
 npts=nstep*nny
 ncell=(nny-1)*(nstep-1)
@@ -545,28 +558,31 @@ vtufile.write("</DataArray>\n")
 vtufile.write("</Points> \n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")
-vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
+#--
+vtufile.write("<DataArray type='Float32' Name='T (C)' Format='ascii'> \n")
 for j in range(0,nny):
     for i in range(0,nstep):
         vtufile.write("%10f \n" %(Tlithosphere[j,i]-273))
 vtufile.write("</DataArray>\n")
+#--
 vtufile.write("<DataArray type='Float32' Name='k(T)' Format='ascii'> \n")
 for j in range(0,nny):
     for i in range(0,nstep):
-        vtufile.write("%10f \n" %(temperature_dependent_variables.heat_conductivity(Tlithosphere[j,i],0,0,option_k)))
+        vtufile.write("%10f \n" %(temperature_dependent_variables.heat_conductivity(Tlithosphere[j,i],0,option_k)))
 vtufile.write("</DataArray>\n")
+#--
 vtufile.write("<DataArray type='Float32' Name='Cp(T)' Format='ascii'> \n")
 for j in range(0,nny):
     for i in range(0,nstep):
-        vtufile.write("%10f \n" %(temperature_dependent_variables.heat_capacity(Tlithosphere[j,i],0,0,option_C_p)))
+        vtufile.write("%10f \n" %(temperature_dependent_variables.heat_capacity(Tlithosphere[j,i],0,option_C_p)))
 vtufile.write("</DataArray>\n")
-
+#--
 vtufile.write("<DataArray type='Float32' Name='rho(T)' Format='ascii'> \n")
 for j in range(0,nny):
     for i in range(0,nstep):
-        vtufile.write("%10f \n" %(temperature_dependent_variables.density(Tlithosphere[j,i],0,0,option_rho)))
+        vtufile.write("%10f \n" %(temperature_dependent_variables.density(Tlithosphere[j,i],0,option_rho)))
 vtufile.write("</DataArray>\n")
-
+#--
 vtufile.write("</PointData>\n")
 #####
 vtufile.write("<Cells>\n")
@@ -595,9 +611,6 @@ vtufile.write("</UnstructuredGrid>\n")
 vtufile.write("</VTKFile>\n")
 vtufile.close()
 
-#==============================================================================
-# end time stepping loop
-#==============================================================================
 
 print("-----------------------------")
 print("------------the end----------")
