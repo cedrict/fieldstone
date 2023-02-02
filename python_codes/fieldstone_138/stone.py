@@ -7,8 +7,8 @@ import time as time
 #------------------------------------------------------------------------------
 # this function returns a topography value at each point x,y passed as argument
 
-def topography(x,y,A,llambda,dx,dy,slopex,slopey):
-    pert1=A*np.sin(2*np.pi/llambda*(x*dx+y*dy))
+def topography(x,y,A,llambda,cos_dir,sin_dir,slopex,slopey):
+    pert1=A*np.sin(2*np.pi/llambda*(x*cos_dir+y*sin_dir))
     pert2=slopex*x+slopey*y 
     return pert1+pert2
 
@@ -162,8 +162,8 @@ if benchmark=='3':
    Ly=20
    Lz=20
    nelx=60
-   nely=60
-   nelz=60
+   nely=nelx
+   nelz=nelx
    Mx0=0
    My0=0
    Mz0=7.5
@@ -171,7 +171,7 @@ if benchmark=='3':
    sphere_xc=Lx/2
    sphere_yc=Ly/2
    sphere_zc=-Lz/2
-   nqdim=4
+   nqdim=6
    #plane meas
    do_plane_measurements=False
    plane_x0=-Lx/2
@@ -189,30 +189,25 @@ if benchmark=='3':
 if benchmark=='4':
    Lx=100
    Ly=100
-   Lz=100
-   nelx=50
-   nely=50
-   nelz=12
+   Lz=50
+   nelx=40
+   nely=40
+   nelz=8
    Mx0=0
    My0=4
    Mz0=-6
    nqdim=4
    #topography parameters
    wavelength=25
-   A=1
-   angle=20/180*np.pi
-   dx=np.cos(angle)
-   dy=np.sin(angle)
-   slopex=np.arctan(3/180*np.pi)
-   slopey=np.arctan(5/180*np.pi)
+   A=4
    do_plane_measurements=True
    plane_x0=-Lx/2
    plane_y0=-Ly/2
    plane_z0=0.25
    plane_Lx=2*Lx
    plane_Ly=2*Ly
-   plane_nnx=30
-   plane_nny=30
+   plane_nnx=50
+   plane_nny=50
    do_line_measurements=False
    sphere_R=0
    sphere_xc=0
@@ -221,11 +216,30 @@ if benchmark=='4':
    # to do: code line meas 
    do_spiral_measurements=False
 
-   #subbench=1,2,3,4
-   #if subbench==1:
-   #if subbench==2:
-   #if subbench==3:
-   #if subbench==4:
+   subbench='south'
+
+   if subbench=='east':
+      slopex=np.arctan(-6/180*np.pi)
+      slopey=np.arctan(0/180*np.pi)
+      direction=90/180*np.pi
+
+   if subbench=='north':
+      slopex=np.arctan(0/180*np.pi)
+      slopey=np.arctan(-6/180*np.pi)
+      direction=0/180*np.pi
+
+   if subbench=='west':
+      slopex=np.arctan(6/180*np.pi)
+      slopey=np.arctan(0/180*np.pi)
+      direction=90/180*np.pi
+
+   if subbench=='south':
+      slopex=np.arctan(0/180*np.pi)
+      slopey=np.arctan(6/180*np.pi)
+      direction=0/180*np.pi
+
+   cos_dir=np.cos(direction)
+   sin_dir=np.sin(direction)
 
 #------------------------------------------------------------------------------
 
@@ -320,13 +334,13 @@ if benchmark=='4':
 
    for i in range(0,NV):
        if abs(z[i])<1e-6:
-          z[i]+=topography(x[i]-Lx/2,y[i]-Ly/2,A,wavelength,dx,dy,slopex,slopey)
+          z[i]+=topography(x[i]-Lx/2,y[i]-Ly/2,A,wavelength,cos_dir,sin_dir,slopex,slopey)
 
    counter=0
    for i in range(0,nnx):
        for j in range(0,nny):
            for k in range(0,nnz):
-               LLz=Lz+topography(x[counter]-Lx/2,y[counter]-Ly/2,A,wavelength,dx,dy,slopex,slopey)
+               LLz=Lz+topography(x[counter]-Lx/2,y[counter]-Ly/2,A,wavelength,cos_dir,sin_dir,slopex,slopey)
                z[counter]=k*LLz/float(nelz)-Lz
                counter += 1
            #end for
@@ -396,7 +410,8 @@ if do_plane_measurements:
            y_meas[counter]=plane_y0+(j+random.uniform(-1,+1)*1e-8)*plane_Ly/float(plane_nny-1) 
            z_meas[counter]=plane_z0
            if benchmark=='4':
-              z_meas[counter]+=topography(x_meas[counter]-Lx/2,y_meas[counter]-Ly/2,A,wavelength,dx,dy,slopex,slopey)
+              z_meas[counter]+=topography(x_meas[counter]-Lx/2,y_meas[counter]-Ly/2,A,\
+                               wavelength,cos_dir,sin_dir,slopex,slopey)
            counter += 1
 
    icon_meas =np.zeros((4,plane_nel),dtype=np.int32)
@@ -411,7 +426,10 @@ if do_plane_measurements:
 
    #export_mesh_2D(plane_nmeas,plane_nel,x_meas,y_meas,z_meas,icon_meas,'mesh_plane_measurements.vtu')
 
+   #np.savetxt('mesh_plane_measurements.ascii',np.array([x_meas,y_meas,z_meas]).T)
+
    print('setup plane measurement points ')
+
 
 ###############################################################################
 # measuring B on a plane
@@ -457,6 +475,8 @@ if do_plane_measurements:
    np.savetxt('plane_measurements.ascii',np.array([x_meas,y_meas,z_meas,\
                                                    B_vi[0,:],B_vi[1,:],B_vi[2,:],\
                                                    B_th[0,:],B_th[1,:],B_th[2,:]]).T)
+
+   exit()
 
 ###############################################################################
 # measuring B on a line
@@ -542,9 +562,16 @@ if do_spiral_measurements:
 
    for i in range(0,npts_spiral):
        print('doing',i,'out of ',npts_spiral) 
+
+       start = time.time()
        for iel in range(0,nel):
            B_vi[:,i]+=compute_B_quadrature      (x_spiral[i],y_spiral[i],z_spiral[i],x,y,z,icon[:,iel],Mx[iel],My[iel],Mz[iel],nqdim)
+       print("vol int: %.3f s" % (time.time() - start))
+
+       start = time.time()
+       for iel in range(0,nel):
            B_si[:,i]+=compute_B_surface_integral_wtopo(x_spiral[i],y_spiral[i],z_spiral[i],x,y,z,icon[:,iel],Mx[iel],My[iel],Mz[iel])
+       print("surf int: %.3f s" % (time.time() - start))
 
        B_th[:,i]=compute_analytical_solution(x_spiral[i],y_spiral[i],z_spiral[i],sphere_R,Mx0,My0,Mz0,sphere_xc,sphere_yc,sphere_zc,benchmark)
     

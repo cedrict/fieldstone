@@ -311,16 +311,36 @@ show(?) for both no change plane measurements
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Benchmark 3}
 
-The domain is 20x20x20. 
-Sphere. computing B on fibonacci spiral. 
-analytical solution exists.
-need for (very) high res, i.e. 40**3, 80**3, 120**3, or even more (?).
+The domain is $20\times 20\times 20$. 
+$\vec{M}=(0,0,7.5)$ is prescribed inside a sphere of radius $R=10$ centered 
+in the domain. 
+An analytical solution exists for this problem.
 
-100 fibonacci points. at radius 1.01*sphere radius, i.e. 10cm above sphere.
+Because we discretise a sphere we need a rather high mesh resolution,
+i.e. 40**3, 80**3, 120**3, or even more (?).
+In order to insure a high volume integral accuracy we set nqperdim=6.
 
-plot vtu of fibo points .
-plot Bx,By,Bz in gnuplot for all 3 .
+Instead of arbitrarily choosing a few points around the sphere
+we use a fibonacci spiral of 101 points. 
+And in order to show that we can accurately
+compute $\vec{B}$ close to objects, 
+we then set the spiral radius at $1.01*R$ radius, i.e. 10cm above sphere.
 
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_138/results/bench3/setup}\\
+{\captionfont isocontour of $M$ with spiral measurement points}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_138/results/bench3/Bx}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_138/results/bench3/By}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_138/results/bench3/Bz}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_138/results/bench3/B_vol}
+\includegraphics[width=8cm]{python_codes/fieldstone_138/results/bench3/B_surf}\\
+{\captionfont Various components of $B$ as measured with both techniques.}
+\end{center}
+
+Rather interestingly the volume integration seems to be the least accurate.
 
 
 \newpage
