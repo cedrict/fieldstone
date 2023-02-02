@@ -59,7 +59,9 @@ def compute_analytical_solution(x,y,z,R,Mx,My,Mz,xcenter,ycenter,zcenter,benchma
 #3: sphere (larger sphere, anywhere in space) analytical
 #4: wavy surface, domain with constant M vector
 
-benchmark='4'
+#-1: etna topography
+
+benchmark='-1'
 
 ###############################################################################
 # be careful with the position of the measurement points for 
@@ -100,6 +102,7 @@ if benchmark=='1':
    plane_nnx=21
    plane_nny=21
    do_spiral_measurements=False
+   do_path_measurements=False
 
 if benchmark=='2a':
    Lx=10
@@ -128,6 +131,7 @@ if benchmark=='2a':
    sphere_yc=0
    sphere_zc=0
    do_spiral_measurements=False
+   do_path_measurements=False
 
 if benchmark=='2b':
    Lx=10
@@ -156,6 +160,7 @@ if benchmark=='2b':
    sphere_yc=0
    sphere_zc=0
    do_spiral_measurements=False
+   do_path_measurements=False
 
 if benchmark=='3':
    Lx=20
@@ -185,6 +190,7 @@ if benchmark=='3':
    do_spiral_measurements=True
    radius_spiral=1.01*sphere_R
    npts_spiral=101 #keep odd
+   do_path_measurements=False
 
 if benchmark=='4':
    Lx=100
@@ -215,6 +221,7 @@ if benchmark=='4':
    sphere_zc=0
    # to do: code line meas 
    do_spiral_measurements=False
+   do_path_measurements=False
 
    subbench='south'
 
@@ -240,6 +247,61 @@ if benchmark=='4':
 
    cos_dir=np.cos(direction)
    sin_dir=np.sin(direction)
+
+   do_path_measurements=False
+
+if benchmark=='-1':
+
+   # 6 sites with ~3 paths & ~2 heights 
+
+   topofile='./dem/DEMS/dem5m_site1_300.asc'
+   nelx=55
+   nely=52
+   nelz=2
+   xllcorner=501598.81984712
+   yllcorner=4170988.3580075 
+   Lx=5*nelx    # each cell is 5x5 meter!
+   Ly=5*nely
+   Lz=2.4*Lx #thickness
+   do_plane_measurements=False
+
+   do_spiral_measurements=False
+   Mx0=0
+   My0=4
+   Mz0=-6
+   nqdim=4
+
+   #path info
+   pathfile='./sites/1_1_100_height.txt' ; npath=39
+   #zpath_option=1 #read it from file
+   zpath_option=2 #based on dem + zpath_height
+   zpath_height=1.8
+
+   do_line_measurements=False
+   do_path_measurements=True
+
+
+if benchmark=='-1000': #full 5m dem -- too big
+   nnx=6370
+   nny=6361
+   xllcorner=488243.81984712
+   yllcorner=4162238.3580075
+   nelx=nnx-1
+   nely=nny-1
+   Lx=5*nelx    # each cell is 5x5 meter!
+   Ly=5*nely
+   Lz=1000
+   nelz=1
+   do_plane_measurements=False
+   do_line_measurements=False
+   do_spiral_measurements=False
+   Mx0=0
+   My0=4
+   Mz0=-6
+   nqdim=4
+
+
+
 
 #------------------------------------------------------------------------------
 
@@ -288,6 +350,7 @@ z = np.empty(NV,dtype=np.float64)  # z coordinates
 
 counter=0
 for i in range(0,nnx):
+    print(int(i/nnx*100),'% done')
     for j in range(0,nny):
         for k in range(0,nnz):
             x[counter]=i*Lx/float(nelx)
@@ -310,6 +373,7 @@ icon =np.zeros((8,nel),dtype=np.int32)
 
 counter = 0
 for i in range(0,nelx):
+    print(int(i/nelx*100),'% done')
     for j in range(0,nely):
         for k in range(0,nelz):
             icon[0,counter]=nny*nnz*(i-1+1)+nnz*(j-1+1)+k
@@ -350,6 +414,140 @@ if benchmark=='4':
    print('add synthetic topography')
 
 ###############################################################################
+
+if benchmark=='-1':
+
+   x[:]+=xllcorner
+   y[:]+=yllcorner
+
+   N=nnx*nny
+
+   ztopo=np.empty(N,dtype=np.float64) 
+
+   topo = open(topofile, 'r')
+   lines_topo = topo.readlines()
+   nlines=np.size(lines_topo)
+   print('file counts ',nlines,' lines',nny)
+   counter=0
+   for i in range(0,nlines):
+       #reading lines backwards bc of how file is built
+       line=lines_topo[nlines-1-i].strip()
+       columns=line.split()
+       for j in range(0,nnx):
+           ztopo[counter]=columns[j]
+           counter+=1    
+
+   print('topo (min/max):',min(ztopo),max(ztopo))
+   print('read file')
+
+   counter=0
+   for i in range(0,nnx):
+       for j in range(0,nny):
+           for k in range(0,nnz):
+               zmax=Lz+ztopo[j*nnx+i]
+               zmin= 0+ztopo[j*nnx+i]
+               z[counter]=k*(zmax-zmin)/float(nelz)+zmin-Lz
+               counter += 1
+           #end for
+       #end for
+   #end for
+
+   print('add etna topography')
+
+   #read in path 
+
+   path = open(pathfile, 'r')
+   lines_path = path.readlines()
+   nlines=np.size(lines_path)
+   print('file counts ',nlines,' lines')
+   xpath = np.empty(npath,dtype=np.float64)  # x coordinates
+   ypath = np.empty(npath,dtype=np.float64)  # y coordinates
+   zpath = np.empty(npath,dtype=np.float64)  # z coordinates
+   B_inc = np.empty(npath,dtype=np.float64) 
+   B_dec = np.empty(npath,dtype=np.float64) 
+   B_int = np.empty(npath,dtype=np.float64) 
+
+   for i in range(0,npath):
+       #reading lines backwards bc of how file is built
+       line=lines_path[npath-1-i].strip()
+       columns=line.split()
+       xpath[i]=columns[1]
+       ypath[i]=columns[2]
+       zpath[i]=columns[3]
+       B_inc[i]=columns[4]
+       B_dec[i]=columns[5]
+       B_int[i]=columns[6]
+
+   if zpath_option==2: # based on dem
+
+      for i in range(0,npath):
+          iel=0
+          for ielx in range(0,nelx):
+              for iely in range(0,nely):
+                  for ielz in range(0,nelz):
+                      if ielz==nelz-1 and\
+                         xpath[i]>x[icon[0,iel]] and\
+                         xpath[i]<x[icon[2,iel]] and\
+                         ypath[i]>y[icon[0,iel]] and\
+                         ypath[i]<y[icon[2,iel]]:
+                         r=((xpath[i]-x[icon[0,iel]])/(x[icon[2,iel]]-x[icon[0,iel]])-0.5)*2
+                         s=((ypath[i]-y[icon[0,iel]])/(y[icon[2,iel]]-y[icon[0,iel]])-0.5)*2
+                         N1=0.25*(1-r)*(1-s)
+                         N2=0.25*(1+r)*(1-s)
+                         N3=0.25*(1+r)*(1+s)
+                         N4=0.25*(1-r)*(1+s)
+                         zpath[i]=z[icon[4,iel]]*N1+\
+                                  z[icon[5,iel]]*N2+\
+                                  z[icon[6,iel]]*N3+\
+                                  z[icon[7,iel]]*N4+\
+                                  zpath_height
+                      #end if
+                      iel+=1
+                  #end for
+              #end for
+          #end for
+      #end for
+
+   print('xpath (min/max):',min(xpath),max(xpath))
+   print('ypath (min/max):',min(ypath),max(ypath))
+   print('zpath (min/max):',min(zpath),max(zpath))
+
+   vtufile=open('path.vtu',"w")
+   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+   vtufile.write("<UnstructuredGrid> \n")
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(npath,npath))
+   vtufile.write("<Points> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+   for i in range(0,npath):
+       vtufile.write("%.10e %.10e %.10e \n" %(xpath[i],ypath[i],zpath[i]))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Points> \n")
+   #vtufile.write("<PointData Scalars='scalars'>\n")
+   #vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/s)' Format='ascii'> \n")
+   #for i in range(0,npath):
+   #    vtufile.write("%10e %10e %10e \n" %(swarm_u[i],swarm_v[i],0.))
+   #vtufile.write("</DataArray>\n")
+   #vtufile.write("</PointData>\n")
+   vtufile.write("<Cells>\n")
+   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+   for i in range(0,npath):
+       vtufile.write("%d " % i)
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+   for i in range(0,npath):
+       vtufile.write("%d " % (i+1))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+   for i in range(0,npath):
+       vtufile.write("%d " % 1)
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Cells>\n")
+   vtufile.write("</Piece>\n")
+   vtufile.write("</UnstructuredGrid>\n")
+   vtufile.write("</VTKFile>\n")
+   vtufile.close()
+
+###############################################################################
 # prescribe M inside each cell
 # for benchmarks 1 and 3, M is zero everywhere except inside
 # a sphere of radius sphere_R at location (sphere_xc,sphere_yc,sphere_zc)
@@ -373,12 +571,12 @@ if benchmark=='1' or benchmark=='3':
           My[iel]=My0
           Mz[iel]=Mz0
 
-if benchmark=='2a' or benchmark=='2b' or benchmark=='4':
+if benchmark=='2a' or benchmark=='2b' or benchmark=='4' or benchmark=='-1':
    Mx[:]=Mx0
    My[:]=My0
    Mz[:]=Mz0
 
-export_mesh_3D(NV,nel,x,y,z,icon,'mesh.vtu',Mx,My,Mz)
+export_mesh_3D(NV,nel,x,y,z,icon,'mesh.vtu',Mx,My,Mz,nnx,nny,nnz)
    
 print('prescribe M vector in domain')
 
@@ -528,6 +726,52 @@ if do_line_measurements:
    export_line_measurements(line_nmeas,x_meas,y_meas,z_meas,'line_measurements.vtu',B_vi,B_si,B_th)
 
 print('========================================')
+
+###############################################################################
+# measuring B on a path
+###############################################################################
+
+print('========================================')
+
+if do_path_measurements:
+
+   print('starting path measurement ...')
+
+   linefile=open("measurements_path.ascii","w")
+   linefile.write("# 1,2,3,4    ,5    ,6    ,7    ,8    ,9    ,10   ,11   ,12    \n")
+   linefile.write("# x,y,z,Bx_vi,By_vi,Bz_vi,Bx_si,By_si,Bz_si,Bx_th,By_th,Bz_th \n")
+
+   B_vi=np.zeros((3,npath),dtype=np.float64)
+   B_si=np.zeros((3,npath),dtype=np.float64)
+   B_th=np.zeros((3,npath),dtype=np.float64)
+
+   for i in range(0,npath):
+       print('doing',i,'out of ',npath) 
+       xm=xpath[i]
+       ym=ypath[i]
+       zm=zpath[i]
+       #print(xm,ym,zm)
+       for iel in range(0,nel):
+           B_vi[:,i]+=compute_B_quadrature      (xm,ym,zm,x,y,z,icon[:,iel],Mx[iel],My[iel],Mz[iel],nqdim)
+           B_si[:,i]+=compute_B_surface_integral_wtopo(xm,ym,zm,x,y,z,icon[:,iel],Mx[iel],My[iel],Mz[iel])
+
+       #print(B_vi[:,i]) 
+       #print(B_si[:,i]) 
+    
+       linefile.write("%e %e %e %e %e %e %e %e %e %e %e %e \n" %(xm,ym,zm,\
+                                                       B_vi[0,i],B_vi[1,i],B_vi[2,i],\
+                                                       B_si[0,i],B_si[1,i],B_si[2,i],\
+                                                       B_th[0,i],B_th[1,i],B_th[2,i]))
+
+   export_line_measurements(npath,xpath,ypath,zpath,'path_measurements.vtu',B_vi,B_si,B_th)
+
+print('========================================')
+
+
+
+
+
+
 
 ###############################################################################
 

@@ -1,6 +1,6 @@
 import numpy as np
 
-def export_mesh_3D(NV,nel,x,y,z,icon,filename,Mx,My,Mz):
+def export_mesh_3D(NV,nel,x,y,z,icon,filename,Mx,My,Mz,nnx,nny,nnz):
 
    vtufile=open(filename,"w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -14,8 +14,25 @@ def export_mesh_3D(NV,nel,x,y,z,icon,filename,Mx,My,Mz):
    vtufile.write("</DataArray>\n")
    vtufile.write("</Points> \n")
    #####
-   vtufile.write("<CellData Scalars='scalars'>\n")
+   vtufile.write("<PointData Scalars='scalars'>\n")
 
+   counter=0
+   zmin=1e50
+   for i in range(0,nnx):
+       for j in range(0,nny):
+           for k in range(0,nnz):
+               if k==nnz-1:
+                  zmin=min(zmin,z[counter])
+               counter += 1
+   print(zmin)
+
+   vtufile.write("<DataArray type='Float32' Name='z' Format='ascii'> \n")
+   for i in range (0,NV):
+        vtufile.write("%10e\n" % max(z[i],zmin))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</PointData>\n")
+   #####
+   vtufile.write("<CellData Scalars='scalars'>\n")
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='M vector' Format='ascii'> \n")
    for iel in range (0,nel):
        vtufile.write("%f %f %f \n" % (Mx[iel],My[iel],Mz[iel]))
