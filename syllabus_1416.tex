@@ -1,0 +1,621 @@
+Note: 
+This handout was written by W. Spakman and 
+is for a large part based on a syllabus by Dr. A.P. van den Berg and Prof. N.J. Vlaar
+and on material from the book “Mantle convection in the Earth and Planets” by Schubert, Turcotte,
+and Olson, Cambridge University Press, 2002.
+
+%---------------------------------------------------------------
+\subsection{Review of some essentials of continuum mechanics}
+
+
+Newtonian mechanics deals with particles and rigid (undeformable) bodies on which
+forces are acting. The application of Newtonian mechanics to realistic media (gases,
+fluids, solids) is undoable simply because of the many particles (atoms, molecules)
+involved. Continuum mechanics tackles this problem by assuming that physical fields
+(e.g. density, temperature, velocity) can be viewed as (piece-wise) continuous functions
+defined on the time and space coordinates involved in the description of macroscopic
+matter. The idea is essentially that a tiny cube with sides of, 
+say, $10^{-8}~\si{\meter}$ already contains
+a sufficient number of atoms (millions) which allows for establishing physically
+meaningful descriptions of quantities as temperature and density of the cube. In
+continuum mechanics we are mostly interested in material behavior on much larger scales
+than $10^{-8}~\si{\meter}$ for which is assumed that physical quantities 
+are smooth functions of time and spatial coordinates.
+
+
+The forces involved in the deformation of a continuum are postulated to be 
+{\bf body forces}
+$\vec{b}$ [\si{\newton\per\cubic\meter}], 
+such that $\vec{b}dV$ is the force acting on the infinitesimal 
+volume $dV$, and surface 
+{\bf tractions} $\vec{t}^{\vec n}$ [\si{\newton\per\square\meter}]
+(e.g. internal friction, applied surface tractions), 
+such that $\vec{t}^{\vec n} dS$ is the
+force acting on the infinitesimal surface $dS$. 
+It is usual to write $\vec{b} = \rho \vec{g}$, 
+with $\rho$ [\si{\kg\per\cubic\meter}] the
+mass density and with $\vec{g}$ [\si{\meter\per\square\second}]
+the acceleration due to the body force, which in
+mantle dynamics is gravity. 
+
+$\vec{b}$ and $\vec{t}^{\vec n}$
+are force densities which after integration over a
+volume or a surface, respectively, lead to net forces acting on 
+the volume or surface.
+The traction (or stress vector) is defined as
+\[
+\vec{t}^{\vec n} = \lim_{\Delta S \rightarrow 0} 
+\frac{\sum\limits_i f_i^{\vec n}}{\Delta S},
+\]
+which expresses the force
+per unit area working on a tiny surface $\Delta S$ 
+with unit normal $\vec{n}$ (defining the orientation of
+the surface). 
+The forces $f_i^{\vec n}$  can be viewed as the atomic 
+forces [\si{\newton}] that are applied at the
+$\vec{n}$-side of $\Delta S$ to atoms at the other side of the surface. 
+To maintain equilibrium, by the
+third law of Newton, the traction applied to the $-\vec{n}-side$ of the surface 
+is $\vec{t}^{-{\vec n}} = -\vec{t}^{\vec n}$.
+Tractions depend on the orientation of the surface. In principle, one can draw an
+infinite number of oriented surfaces through one point, each associated with a different
+traction.
+
+%%% page 3
+
+
+Tractions are usually separated into the thermodynamic pressure force $p \vec{n}$ and the traction $\vec{\tau}$
+related to mechanical deformation: $\vec{t}^{\vec n} = -p \vec{n} + \vec{\tau} \quad (p>0)$. The thermodynamic pressure
+(a traction always acting perpendicular to any surface) is obtained from the equation of
+state $f(\rho,p,T)$ relating thermodynamic quantities density, pressure, and temperature of a
+continuum. The sign convention in continuum mechanics is that compression is negative
+and tension is positive (in geology this is usually the other way around).
+
+
+{\bf Stress} is a second order tensor quantity, which is defined by the following steps:
+\begin{enumerate}
+\item 
+Assume a Cartesian coordinate frame in a point of interest for which the coordinate
+axis are spanned by three unit orthogonal vectors $\vec{e}_i \quad (i = 1,2,3)$,
+\item Imagine a tiny cube centered about the origin and with its faces parallel to the
+coordinate planes,
+\item Consider the 3 tractions $\vec{t}^{\vec{e}_i}$ that are acting on the three positive 
+faces of the cube (i.e. the faces which have the normal vectors $\vec{e}_i$),
+\item Lastly, define the components $\sigma_{ij}$ of the stress tensor ${\bm \sigma}$ as
+\begin{equation}
+\sigma_{ij} = \vec{t}^{\vec{e}_i} \cdot \vec{e}_j
+\end{equation}
+\end{enumerate}
+When the stress tensor is visualized as a matrix, the three rows are 
+the tractions on the
+positive faces of the cube. The diagonal elements of the stress tensor 
+${\bm \sigma}$ are called
+normal stresses and the off-diagonal elements are the shear stresses.
+
+Stress is a physical quantity, independent of coordinate frame, but the actual values of
+components $\sigma_{ij}$ of the stress tensor can only be computed in 
+a coordinate system. These
+numbers are dependent on the frame adopted like the components of a flow vector (a first
+order tensor) are frame dependent. Second order tensors follow (by definition) the
+coordinate transformation rules of $3 \times 3$ matrices. From an analysis of force and force-
+moment balance it can be demonstrated that the stress tensor is symmetric: $\sigma_{ij}=\sigma_{ji}$. 
+
+An eigenvalue-eigenvector analysis leads to the three principal stresses $\sigma_k$ (eigenvalues) and
+the corresponding three corresponding principal directions $\vec{q}_k$ (eigenvectors of unit
+length). The latter span three mutually orthogonal (Cartesian) axes. In the principal-axes
+frame the stress tensor is diagonal with the three principal stresses as diagonal elements.
+In the principal-axes frame the tensor components are the maximal normal stresses
+(tractions perpendicular to the faces of a tiny cube oriented along the principal coordinate
+planes) compared to the normal stresses in any other coordinate system.
+
+%%%%page 4
+
+An important relation (the Cauchy relation) exists between the local state of stress (i.e.
+the stress tensor ${\bm \sigma}$) 
+and the traction $\vec{t}^{\vec n}$  acting on 
+an (arbitrarily) oriented tiny surface $\Delta S$
+with unit normal $\vec{n}$:
+\begin{equation}
+{\bm \sigma} \cdot \vec{n} = \vec{t}^{\vec n}
+\label{chap10_tract1}
+\end{equation}
+or in components $\sigma_{ij} n_j = t_i^{\vec n}$ (summation convention implied).
+This relation states how traction can be computed from the local stress and conversely,
+that from known tractions on independently oriented surfaces the stress tensor can be
+constructed by solving Eq.~\eqref{chap10_tract1}.
+Note that it is required that $\vec{n}$ is a unit normal, i.e. $\vec{n}\cdot\vec{n}=1$.
+
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{problem}
+{\small \it 
+Determine the tractions acting on the negative faces of a tiny cube (of which
+the faces are aligned with the local coordinate axes) when the stress is given.
+}
+\end{problem}
+\end{minipage}
+}
+\vspace{0.5cm}
+
+{\bf Force balance equation of a continuum at rest}: Assume a 
+continuum (gas, liquid, solid)
+at rest. In this situation the net force acting on the entire 
+continuum is $\vec{0}$ (Newton). The
+sum of body forces and applied surface tractions cancel in some way. 
+This also holds for
+any sub-volume $V$. An internal stress field may still exist 
+as a result of the applied forces
+and surface tractions. The relation between the body force, tractions, 
+and the internal
+stress field is derived as follows: 
+Consider an arbitrary sub-volume $V$ with boundary $S$.
+Internal tractions act on the boundary $S$ 
+(e.g. to be determined with equation \eqref{chap10_tract1} from the
+internal stress field at $S$). 
+The following equation postulates that the total sum of body
+forces
+\begin{equation}
+\int_V \rho \vec{g} dV + \int_S \vec{t}^{\; \vec n} dS = \vec{0}
+\label{chap10_three}
+\end{equation}
+acting on $V$ and of tractions on $S$ leads to a zero net
+force acting on V.
+
+Substituting \eqref{chap10_tract1} in the surface integral and next 
+applying the Divergence 
+theorem\footnote{\url{https://en.wikipedia.org/wiki/Divergence_theorem}}
+one arrives at
+\[
+\int_V \rho \vec{g} dV + \int_V \vec\nabla \cdot {\bm\sigma} dV = \vec{0}
+\]
+Because $V$ is an
+arbitrary volume the integrant must equal 0, which leads to the 
+{\bf equilibrium equation}:
+\begin{equation}
+\vec\nabla \cdot {\bm\sigma} +  \rho \vec{g} = \vec{0} 
+\qquad
+\text{or,}
+\qquad
+\frac{\partial \sigma_ij}{\partial x_j} + \rho g_i = 0
+\label{chap10_balance}
+\end{equation}
+
+This equation holds for any point in the interior of the continuum. 
+Any traction applied at the boundary of the continuum relates to 
+the (local) stress through equation \eqref{chap10_tract1}. Equation
+\eqref{chap10_balance} states that body forces are in equilibrium 
+with the divergence of the stress tensor.
+Note: Gravity implies spatial variation in stress.
+
+A similar analysis for the equilibrium of torques leads to the symmetry of the stress
+tensor. In this case the equilibrium equation is
+\[
+\int_V \rho \vec{r} \times \vec{g}  dV 
++ 
+\int_S \vec{r} \times \vec{t}^{\vec n} dS = \vec{0},
+\]
+where $\vec{r}$ is the position vector 
+$\vec{r}=(x_1,x_2,x_3)^T$. The cross products can be written in
+index notation using the permutation symbol $\epsilon_{ijk}$
+which equals zero if at least two indices
+have the same value (e.g. $\epsilon_{121}=0$), 
+equals +1 if $ijk$ is an even permutation of $123$, 
+and
+equals -1 if $ijk$ is an odd permutation of $123$. 
+This leads to the following notation of the
+cross product of two vectors 
+$\vec{a}\times \vec{b}= \epsilon_{ijk} \vec{e}_i a_j b_k$
+and per component 
+$(\vec{a}\times \vec{b})=\epsilon_{ijk} a_j b_k$.
+
+
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{problem}
+{\small \it
+\noindent 
+a) Derive equation \eqref{chap10_balance}\\
+b) Using a similar approach, prove the symmetry of the stress tensor from the balance of
+torques (assuming that no internally applied tractions exist)\\
+c) Derive \eqref{chap10_balance} by considering the force balance of a tiny cube
+}
+\end{problem}
+\end{minipage}
+}
+\vspace{0.5cm}
+
+{\bf The material derivative}:
+{\color{red} (for a mathematical intro see Appendix A)}
+Consider a continuum with a three-dimensional flow 
+field $\vec{v}(x_1,x_2,x_3,t)$ dependent on
+the 3 spatial coordinates $x_j$ and time $t$. 
+For any differentiable scalar function $T$ defined on
+these 4 parameters we can write the total differential
+\footnote{See any basic textbook on Calculus.}
+\begin{equation}
+dT = \frac{\partial T}{\partial t} dt + 
+\sum_i \frac{\partial T}{\partial x_j} dx_j
+\label{chap10_der1}
+\end{equation}
+This equation can be interpreted as follows: 
+Consider a certain point $(\vec{r}, t)$ in which the
+scalar function $T(\vec{r}, t)$ has continuous partial 
+derivatives. The infinitesimal change $dT$,
+which results from going 
+from $(\vec{r}, t)$ to 
+$(\vec{r} + d\vec{r}, t + dt)$ in de domain of $T$ 
+is given by Eq.~\eqref{chap10_der1}. 
+Importantly, $d\vec{r}$ and $dt$ can be arbitrarily 
+chosen (including 0 values). The total
+differential is at the basis of the definition of 
+the so-called directional derivative.
+Differentiable functions of more than 1 variable 
+can be differentiated in arbitrary
+directions (in their domain) to find their rate of change 
+in this direction with respect to a
+specified parameter. Particularly, we can consider the 
+rate of change of $T$ with the time
+parameter $t$ and (spatially) in the direction of 
+the velocity field $\vec{v}(\vec{r}, t)$. This time-
+derivative is easily obtained from \eqref{chap10_der1}
+by coupling $dt$ and the spatial increment $d\vec{r}$ such
+that $d\vec{r} = \vec{v}dt$. 
+Substitution in \eqref{chap10_der1} leads to the time 
+derivative of $T$ in the direction of the
+velocity vector:
+\begin{equation}
+\frac{DT}{Dt} = 
+\frac{\partial T}{\partial t} 
++\vec{v} \cdot \vec\nabla T
+=
+\frac{\partial T}{\partial t} 
++\sum_j v_j \cdot \frac{\partial T}{\partial x_j} 
+\qquad
+\text{with}
+\qquad
+\vec{v} =\frac{d \vec{r}}{dt}
+\label{chap10_matder}
+\end{equation}
+which is called the material derivative of $T$ 
+giving the rate of change of $T$ with time in
+the direction of the flow $\vec{v}(\vec{r},t)$ 
+at a certain point $(\vec{r}, t)$. 
+The lhs of \eqref{chap10_matder} treats $T$ as a
+function of $t$ only in the point $(\vec{r}(t), t)$ 
+whereas the rhs of \eqref{chap10_matder} shows how this can be
+computed from the partial derivatives of $T(\vec{r}, t)$
+and the local velocity $\vec{v}(\vec{r}, t)$. The partial
+derivative $\partial T/\partial t$
+gives the temporal rate of change at fixed position 
+$\vec{r}$, while the second term
+gives the spatial contribution at fixed time, i.e
+$\vec{v} \cdot \vec\nabla T$
+expresses the advective contribution
+(carried with the flow) to $DT/Dt$.
+
+Without reference to a particular scalar function the material 
+derivative (operator) is:
+\[
+\frac{D}{Dt} = \frac{\partial }{\partial t}
++\vec{v} \cdot \vec\nabla 
+\]
+The material derivative holds for any scalar function, 
+particularly, for the components $v_i$
+of the velocity field leading to the particle acceleration:
+\[
+\frac{D \vec{v}}{Dt} 
+= \frac{\partial \vec{v}}{\partial t}
++ \vec\nabla \vec{v} \cdot \vec{v}
+\]
+Note that if the velocity field is time-stationary, i.e. 
+$\partial_t=0$, there is still acceleration. In
+this case the velocity vector field does not change with time. 
+But, there can still be a
+spatial variation which gives rise to a stationary acceleration 
+field and material velocity
+still changes in space, although the velocity is a constant vector in each point.
+
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{problem}
+{\small \it 
+Assume 2-D space. Let the temperature field $T$ be given by
+\begin{equation}
+T(\vec{r},t)= T_0 \frac{1}{r} \exp(-t) \qquad t>0, r>0
+\end{equation}
+The temperature field belongs to a flow field given
+by $\vec{\upnu}(\vec{r},t)=\frac{1}{r^2}\exp(-t) \vec{r}$.\\
+a) Determine the divergence of the velocity field.
+b) Compute the acceleration.
+c) Compute the material derivate of $T$ at any position and time.
+}
+\end{problem}
+\end{minipage}
+}
+\vspace{0.5cm}
+
+{\bf The material derivative of a material volume integral}: 
+Let $V$ be a material volume, i.e. a
+volume that encompasses for all $t$ the same flow particles. 
+This volume is following the
+flow, possibly being deformed, while there is no material exchange 
+with the region outside $V$. Let $T$ be again a scalar function 
+of the space and time coordinates. The
+material derivative of the (material) volume integral 
+of $T$ is {\color{red} (Appendix B)}:
+\begin{equation}
+\frac{D}{Dt}
+\left[
+\int_{V(t)} T(\vec{r},t) dV
+\right]
+=
+\int_{V(t)} \frac{DT}{Dt} + T \vec\nabla\cdot \vec\upnu dV
+=
+\int_{V(t)} \frac{DT}{Dt} + T \frac{\partial v_k}{\partial x_k} dV
+\label{chap10_matder2}
+\end{equation}
+
+
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{problem}
+{\small \it
+\noindent 
+Derive from \eqref{chap10_matder2} the alternative formula
+\[
+\frac{D}{Dt}
+\left[
+\int_{V(t)} T(\vec{r},t) dV
+\right]
+=
+\int_{V(t)} \frac{\partial T}{\partial t} + \frac{\partial T v_k}{\partial x_k} dV
+\]
+}
+\end{problem}
+\end{minipage}
+}
+\vspace{0.5cm}
+
+
+{\bf Diffusion processes} are in many cases described by (empirical) 
+laws of the form $\vec{a} = -{\bm D} \cdot \vec\nabla H$
+where $\vec{a}$ is a vector and ${\bm D}$ 
+is the (anisotropic) diffusion (coefficient) tensor,
+and $H$ a scalar field. 
+Examples are Fourier’s (isotropic) heat flow vector 
+$\vec{q} = -k \vec\nabla T$
+where $k$ is thermal conductivity and $T$ temperature, 
+or the isotropic diffusion of matter
+(atoms) given by the mass density flow vector $\vec{J} = -D \vec\nabla c$
+where $D$ is the diffusion
+coefficient and $c$ the concentration of the substance.
+
+%%page8
+
+{\bf The continuity equation} (Conservation of mass; Reynold’s transport theorem):
+Consider an arbitrary material volume $V$ within a continuum. 
+By definition of a material
+volume, the mass it contains is conserved, $M$=constant, or
+$DM/Dt=0$.
+The mass is given by
+\[
+M=\int_{V(t)} \rho(\vec{r},t) dV
+\]
+Applying \eqref{chap10_matder2} to $DM/Dt=0$ we find 
+(for arbitrary V) the continuity
+equation as a local expression of mass conservation:
+\begin{equation}
+\frac{D\rho}{Dt} + \rho \frac{\partial v_k}{\partial x_k} =0
+\label{chap10_massconv}
+\end{equation}
+or, when substituting the material derivative:
+\[
+\frac{\partial \rho}{\partial t} + \frac{\partial (\rho v_k)}{\partial x_k} =0
+\]
+In incompressible fluids the density cannot change: $D\rho/Dt=0$.
+Consequently, mass
+conservation requires that the divergence of the velocity is 0, i.e.
+\[
+\frac{\partial v_k}{\partial x_k} = \vec\nabla \cdot \vec\upnu = 0
+\]
+Note that an equation like 
+\eqref{chap10_massconv}
+can also be derived for any other quantity that is
+conserved by a material volume.
+
+
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{problem}
+{\small \it 
+Prove that in a flowing medium with density $\rho$ 
+the following relation holds
+\begin{equation}
+\frac{D}{Dt} \left[
+\int_{V(t)} \rho T dV
+\right]
+=\int_{V(t)} \rho \frac{DT}{Dt} dV
+\label{chap10_ex5}
+\end{equation}
+for any differentiable scalar function $T$ and material volume $V$. 
+This formula will be
+frequently used.
+}
+\end{problem}
+\end{minipage}
+}
+\vspace{0.5cm}
+
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{problem}
+{\small \it 
+\noindent
+a) Prove that in an incompressible fluid the cubic-meter content of a material volume
+does not change (hence, only the shape of boundary of the material volume is allowed to
+change).\\
+b) Prove that in an incompressible fluid the boundary $S$ of a material 
+volume obeys the
+following integral $\int_S \upnu_k n_k dS=0$. (Interpret this integral)
+}
+\end{problem}
+\end{minipage}
+}
+\vspace{0.5cm}
+
+
+
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{problem}
+{\small \it 
+\noindent
+Let $V$ be an imaginary volume fixed in space. 
+Derive the alternative mass
+conservation law: 
+\[
+\int_V \frac{\partial \rho}{\partial t} dV
+=
+-\int_S \vec{J} \cdot \vec{n} dS
+\]
+where $\vec{J} = \rho\vec{\upnu}$ is the mass-density flow.
+(Interpret this equation).
+}
+\end{problem}
+\end{minipage}
+}
+\vspace{0.5cm}
+
+%%%%% exercise 8
+
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{problem}
+{\small \it 
+We wish to describe the transport of a polluting substance $X$ carried by a
+fluid flow. We assume the substance is chemically non-reactive (passive) 
+and dissolved in
+the fluid. The spatial distribution of $X$ is given by the concentration function
+$c(\vec{r},t)$ [\si{\kg\per\cubic\meter}]. 
+Pollutant is also being produced/destroyed according to the function
+$H(\vec{r},t)$ [\si{\kg\per\second\per\cubic\meter}].
+
+a) Assume for the moment that mass diffusion of $X$ can be ignored. 
+Derive a conservation
+law in the form of a differential equation for the concentration 
+function $c(\vec{r},t)$. 
+[Hint:
+start with computing the total mass of $X$ (integral form) contained 
+in a material volume $V$. Next consider the (material) time derivative 
+of this integral. Is equal to what?]\\
+b) Now assume that mass diffusion of the pollutant is important. 
+This implies material diffusion (not controlled by the fluid flow) 
+across the boundary $S$ of the control volume $V$.
+Assume that the mass flow density vector $\vec{J}$ 
+[\si{\kg\per\second\per\square\meter}] is given by $\vec{J}=-D \vec\nabla c$ 
+where $D$ is the diffusion coefficient. Extend the answer obtained at 
+a) for this situation.
+}
+\end{problem}
+\end{minipage}
+}
+\vspace{0.5cm}
+
+{\bf The general equation of motion} (momentum equation):
+The second law of Newton postulates that the sum of applied forces equals the rate of
+change of the linear momentum of a particle with mass $m$:
+\[
+\sum_i \vec{F}_i = \frac{d\vec{p}}{dt},
+\qquad
+\vec{p}=m \vec{\upnu}.
+\]
+To arrive at a similar postulate for continuum mechanics, the total linear momentum of
+an arbitrary material volume is defined as: $\int_{V(t)}\rho \vec{\upnu} dV$.
+
+Newton’s second law leads to the following postulate of continuum mechanics:
+\[
+\frac{D}{Dt} \int_{V(t)} \rho \vec\upnu dV
+=
+\int_{V} \rho \vec{g} dV + \int_S \vec{t}^{\; \vec{n}} dS
+\]
+Using \eqref{chap10_ex5} to evaluate the left side of this equation 
+for each velocity component and
+applying the derivation following equation 
+\eqref{chap10_three}
+to the 
+right side we find (as V is arbitrarily
+chosen):
+\begin{equation}
+\rho \frac{D\vec\upnu}{Dt} = \vec\nabla\cdot {\bm \sigma} + \rho \vec{g}
+\qquad
+\text{or}
+\qquad
+\rho\frac{D \upnu_i}{Dt} = \frac{\partial \sigma_{ij}}{\partial j} + \rho {g}_i
+\label{chap10_motion}
+\end{equation}
+which is the general equation of motion.
+Recall that
+\[
+\frac{D\vec\upnu}{Dt} = \frac{\partial \vec\upnu}{\partial t}
++
+\vec\nabla \vec\upnu \cdot \vec\upnu
+\]
+is the material derivative of velocity which renders \eqref{chap10_motion} to
+be a non-linear equation in the unknown velocity field.
+
+{\bf Velocity gradient, strain rate, and rotation rate}
+The velocity gradient tensor is $\vec\nabla\vec\upnu = \partial \upnu_i/\partial x_j$
+and can be separated in a symmetric part, the strain rate tensor 
+\[
+\dot{\bm \varepsilon}(\vec\upnu) = \frac12 \left(  
+\vec\nabla\vec\upnu + (\vec\nabla\vec\upnu)^T 
+\right)
+\qquad
+\text{or}
+\qquad
+\dot\varepsilon_{ij}=\frac12 \left(
+\frac{\partial \upnu_i}{\partial x_j}
++ \frac{\partial \upnu_j}{\partial x_i}
+\right)
+\]
+and in an anti-symmetric part called the rotation
+rate tensor or spin-rate tensor
+\[
+\dot{\bm\omega}=  \frac12 \left(  
+\vec\nabla\vec\upnu - (\vec\nabla\vec\upnu)^T 
+\]
+Note that $\dot\omega_{11}=\dot\omega_{22}=\dot\omega_{33}=0$.
+The strain rate tensor is associated with the rate of
+deformation (rates of relative length and volume changes and shear) 
+while the spin rate
+tensor describes an increment of uniform rotation in a continuum 
+(i.e. without internal deformation). 
+Note that  $\vec\nabla\cdot\vec\upnu= \partial \upnu_k/\partial x_k = 
+\dot\varepsilon_{kk}$ gives the rate of relative volume change
+during deformation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
