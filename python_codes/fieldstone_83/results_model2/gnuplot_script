@@ -1,6 +1,6 @@
 #gnuplot script 
 
-set term pdf enhanced font "Times,11pt"
+set term pdf enhanced font "Times,12pt"
 set grid
 
 set xlabel 'T'
@@ -20,23 +20,33 @@ set ylabel 'heat conductivity'
 plot[][]\
 'hcond.ascii' u ($1-273):2 w l lw 2  notitle
 
+set output 'kappa.pdf'
+set ylabel 'heat diffusivity'
+plot[][]\
+'kappa.ascii' u ($1):2 w l lw 2  notitle,\
+1e-6 lt -1 
+
+
+
+
+
 set key outside
 
 
 #dt=10kyr
-set ylabel 'T'
-set xlabel 'y'
+set ylabel 'T (C)'
+set xlabel 'y (km)'
 set output 'Tprofiles.pdf'
 plot[][]\
-'T_000000.ascii' w l t 't=0Myr',\
-'T_002000.ascii' w l t 't=20Myr',\
-'T_004000.ascii' w l t 't=40Myr',\
-'T_006000.ascii' w l t 't=60Myr',\
-'T_008000.ascii' w l t 't=80Myr',\
-'T_010000.ascii' w l t 't=100Myr',\
-'T_012000.ascii' w l t 't=120Myr',\
-'T_014000.ascii' w l t 't=140Myr',\
-'T_016000.ascii' w l t 't=160Myr',\
+'T_000000.ascii' u ($1/1000):($2-273) w l t 't=0Myr',\
+'T_002000.ascii' u ($1/1000):($2-273) w l t 't=20Myr',\
+'T_004000.ascii' u ($1/1000):($2-273) w l t 't=40Myr',\
+'T_006000.ascii' u ($1/1000):($2-273) w l t 't=60Myr',\
+'T_008000.ascii' u ($1/1000):($2-273) w l t 't=80Myr',\
+'T_010000.ascii' u ($1/1000):($2-273) w l t 't=100Myr',\
+'T_012000.ascii' u ($1/1000):($2-273) w l t 't=120Myr',\
+'T_014000.ascii' u ($1/1000):($2-273) w l t 't=140Myr',\
+'T_016000.ascii' u ($1/1000):($2-273) w l t 't=160Myr',\
 
 
 
