@@ -105,7 +105,7 @@ if experiment==2 or experiment==7: #pure(2)/simple(7) shear
    poisson_ratio=np.array([0.45],dtype=np.float64)
    young_modulus=2*shear_modulus*(1+poisson_ratio)
    bulk_modulus=young_modulus/(3*(1-2*poisson_ratio)) 
-   nstep=200
+   nstep=20
    dt=100*year
    gx=0
    gy=0
@@ -178,7 +178,7 @@ if experiment==6: #analytical benchmark
    poisson_ratio=np.array([0.49],dtype=np.float64)
    young_modulus=2*shear_modulus*(1+poisson_ratio)
    bulk_modulus=young_modulus/(3*(1-2*poisson_ratio)) 
-   nstep=1500
+   nstep=100
    dt=5000*year
    gx=0
    gy=9.81
@@ -448,10 +448,10 @@ print("define boundary conditions: %.3f s" % (timing.time() - start))
 
 model_time=0.
     
-u = np.zeros(NV,dtype=np.float64) 
-v = np.zeros(NV,dtype=np.float64) 
-xq = np.zeros(nq,dtype=np.float64) 
-yq = np.zeros(nq,dtype=np.float64) 
+u                 = np.zeros(NV,dtype=np.float64) 
+v                 = np.zeros(NV,dtype=np.float64) 
+xq                = np.zeros(nq,dtype=np.float64) 
+yq                = np.zeros(nq,dtype=np.float64) 
 stress0_vector    = np.zeros((3,nq),dtype=np.float64) # stress vector memory
 stress_vector     = np.zeros((3,nq),dtype=np.float64) # stress vector 
 strainrate_vector = np.zeros((3,nq),dtype=np.float64) # strain rate vector
@@ -481,7 +481,7 @@ for istep in range(0,nstep):
         f_el =np.zeros((mV*ndof),dtype=np.float64)
         K_el =np.zeros((mV*ndof,mV*ndof),dtype=np.float64)
 
-        # integrate viscous term at 4 quadrature points
+        # integrate viscous term at quadrature points
         for iq in [0,1,2]:
             for jq in [0,1,2]:
 

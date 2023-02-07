@@ -1434,9 +1434,61 @@ The resolution is set to $10\times 10$ elements. 200 time steps are carried out.
 {\captionfont Evolution or $\sigma_{xx}$ statistics over 20~kyr for various values of $\nu$.}
 \end{center} 
 
+This benchmark is also carried out in \textcite{gery19book}.
+The solution is also used in \textcite{kabe07}.
+
+%------------------------------------------------------------------------------
+\subsection*{Analytical benchmark (experiment=7)}
+
+This is also a very simple setup. Gravity is set to zero. 
+The domain is 50x50km, $\eta=10^{21}$, $\mu=10^{10}$.
+
+Boundary conditions are $v=0$ on the left and right sides, 
+$\vec\upnu=(-1,0)~\si{\cm\per\year}$ at the bottom and 
+$\vec\upnu=(+1,0)~\si{\cm\per\year}$ at the top.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment7/vel}
+\end{center}
+
+In that case the strain rate tensor is given by
+\[
+\dot{\bm\varepsilon}
+=\left( 
+\begin{array}{cc}
+\dot\varepsilon_{xx} & \dot\varepsilon_{xy} \\
+\dot\varepsilon_{yx} & \dot\varepsilon_{yy} 
+\end{array}
+\right)
+=
+\left( 
+\begin{array}{cc}
+\partial_x u & \frac12(\partial_x v + \partial_y u) \\ 
+\frac12(\partial_x v + \partial_y u)  & \partial_y v 
+\end{array}
+\right)
+=
+\left( 
+\begin{array}{cc}
+0 & \frac{v_0}{L_y} \\
+\frac{v_0}{L_y} & 0
+\end{array}
+\right)
+=
+\left( 
+\begin{array}{cc}
+0 & \dot\varepsilon_0 \\ 
+\dot\varepsilon_0 & 0
+\end{array}
+\right)
+\]
+
+
+
+
 \newpage
 %------------------------------------------------------------------------------
-\subsection*{Analytical benchmark (experiment=6)}
+\subsection*{Analytical benchmark (experiment=6) ``compacting aquarium''}
 
 This is an extremely simple setup. The domain contains a single material. 
 Boundary conditions are free slip on left, right and bottom, stress-free boundary conditions 
@@ -1448,6 +1500,25 @@ $\eta=10^{21}$, $\rho=3300$, $\mu=10^{10}$.
 We expect the system to compact under its own weight and reach a 
 steady state. FIND OUT !!
 
+Given the setup, this is actually a 1D problem. Indeed we expect $u=0$, so that
+$\partial_x u = \partial_y u =0$ and also we expect $v$ to be independent of $x$, 
+so that $\partial_x v=0$, so
+\[
+\dot{\bm\varepsilon}
+=\left( 
+\begin{array}{cc}
+\dot\varepsilon_{xx} & \dot\varepsilon_{xy} \\
+\dot\varepsilon_{yx} & \dot\varepsilon_{yy} 
+\end{array}
+\right)
+=
+\left( 
+\begin{array}{cc}
+0 & 0 \\
+0 & \partial_y v
+\end{array}
+\right)
+\]
 
 
 
@@ -1457,7 +1528,8 @@ steady state. FIND OUT !!
 \subsection*{Numerical benchmark - Bending of elastic slab (experiment=3)}
 
 This benchmark is a numerical benchmark, but not an analytical one. 
-It originates in Taras Gerya's book. It is originally for incompressible visco-elastic fluids so we will run it at different values of the Poisson ratio parameter.
+It originates in Taras Gerya's book \cite{gery19book}. It is originally for incompressible 
+visco-elastic fluids so we will run it at different values of the Poisson ratio parameter.
 It is also carried out in \stone~64.
 
 The sinking slab benchmark consists of a beam of elastic material which is placed 
@@ -1474,12 +1546,12 @@ The set-up of the benchmark is given in the following figure:
 two materials are given on the left, together\\ with the initial configuration of the benchmark.} 
 \end{center}
 
-The 800x600km beam is surrounded by a low-density, low-viscosity and high shear modulus medium 
+The $800\times 600~\si{\km}$ beam is surrounded by a low-density, low-viscosity and high shear modulus medium 
 of which the specifications are given in  the following table.
 The boundary conditions of the domain consist of a no slip condition at  
 the left boundary where the slab is attached and free slip boundary conditions along all other sides. 
 The results are calculated on a grid with a resolution of 50x50 elements.
-The time step is set to $\delta t = 200yr$ (i.e. gravity is switched off after 100 time steps).
+The time step is set to $\delta t = 200~\si{\year}$ (i.e. gravity is switched off after 100 time steps).
 
 As explained in the book: ``
 The slab deformation is purely elastic due to the large Maxwell time (3 170 000 kyr) of slab material
@@ -1635,6 +1707,145 @@ It showcases oscillations at the beginning too!
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_129/results/experiment5/setup}
 \end{center}
+
+
+
+\newpage
+%------------------------------------------------------------------------------
+\subsection*{Rayleigh-Taylor instability}
+
+Carry out Rayleigh–Taylor instability a la \textcite{kabe07} (2007).
+
+The model consists of a viscoelastic layer of thickness $H_1$ , with density $\rho_1$, 
+viscosity $\eta_1$ and elastic shear module $\mu_1$ that overlies a viscous
+layer of thickness $H-H_1$ , with density $\rho_2$ and viscosity $\mu_2$. 
+The interface between the two fluids is perturbed sinusoidally according
+to $h(x) = (H - H_1 ) + A_0 \cos (2\pi / \lambda x)$, 
+where $H_1$ is the thickness of the upper layer, $H$ the height of the model, 
+$A_0$ the initial amplitude and $\lambda$ the wavelength of the perturbation. 
+If $\rho_1>\rho_2$, the system is gravitationally unstable.
+
+\begin{center}
+\fbox{
+\includegraphics[width=12cm]{python_codes/fieldstone_129/images/kabe07}}\\
+{\captionfont Taken from \textcite{kabe07}.}
+\end{center}
+
+The Deborah number is given by
+\[
+De=\frac{(\rho_1-\rho_2)g H}{\mu}
+\]
+and is here defined as the ratio between the viscous (Stokes) timescale ($(\rho_1-\rho_2)g H/\eta_1$)
+and the viscoelastic timescale $\eta_1/\mu$ of the upper layer.
+The authors state: ``
+Interestingly, the Deborah number, which is a measure of the importance of
+elasticity [...], is independent on the viscosity of the system. 
+This is due to the fact that the magnitude of stress is solely
+dependent on the density difference for purely buoyancy-driven flow.''
+
+Another parameter controlling the dynamics of the system is the viscosity contrast 
+between the upper and the lower layer, expressed by $R=\eta_1/\eta_2$.
+
+
+\newpage
+
+We wish to find the general solution $\tau(t)$ of from the first order ODE
+\[
+\frac{1}{2\mu} \frac{d\tau}{dt} + \frac{1}{2\eta} \tau = \dot\varepsilon_0
+\qquad
+\text{or},
+\qquad
+\frac{d\tau}{dt} + \frac{\mu}{\eta} \tau = 2\mu \dot\varepsilon_0
+\]
+There is a standard technique to solve such equations, and we start with the following equation instead:
+\[
+\frac{1}{2\mu} \frac{d\tau}{dt} + \frac{1}{2\eta} \tau = 0
+\]
+It can be rewritten
+\[
+\frac{d\tau}{\tau} = -\frac{\mu}{\eta} dt
+\]
+so
+\[
+\int \frac{d\tau}{\tau} = -\frac{\mu}{\eta} \int dt
+\]
+\[
+\ln \tau - \ln \tau_0 = -\frac{\mu}{\eta} t 
+\]
+\[
+\ln \tau = -\frac{\mu}{\eta} t  + \ln \tau_0
+\]
+\[
+\tau(t) 
+= \exp \left(  -\frac{\mu}{\eta} t  + \ln \tau_0 \right) 
+= \exp \left(  -\frac{\mu}{\eta} t   \right)   \exp \left(  \ln \tau_0 \right) 
+= \tau_0 \exp \left(  -\frac{\mu}{\eta} t   \right) 
+\]
+or, using the Maxwell time $t_M=\eta/\mu$,
+\[
+\tau(t) 
+= \tau_0 \exp \left(  -\frac{t}{t_M}   \right) 
+\]
+Based on this solution we now 
+consider the following equation
+\begin{eqnarray}
+\frac{d}{dt} \left[   \tau \exp\left( \frac{t}{t_M}   \right)  \right]
+&=& 
+\frac{d \tau}{dt}  \exp\left( \frac{t}{t_M}   \right)  +
+\tau \frac{1}{t_M} \exp\left( \frac{t}{t_M}   \right)  \nn\\
+&=& 
+\left( \underbrace{\frac{d \tau}{dt} + \frac{\mu}{\tau} \tau}_{2\mu \dot\varepsilon_0}  \right)  \exp\left( \frac{t}{t_M}   \right)  \nn
+\end{eqnarray}
+Then we proceed to integrate both sides:
+\[
+\int \frac{d}{dt} \left[   \tau \exp\left( \frac{t}{t_M}   \right)  \right] dt
+= 2\mu \dot\varepsilon_0 \int \exp\left( \frac{t}{t_M}   \right)  dt
+\]
+
+\[
+\tau(t) \exp\left( \frac{t}{t_M}   \right)
+-
+\tau(0) \exp\left( \frac{0}{t_M}   \right)
+ =
+ 2\mu \dot\varepsilon_0  t_M  [ \exp\left( \frac{t}{t_M}   \right)  -  \exp\left( \frac{0}{t_M} \right) ]
+\]
+
+\[
+\tau(t) \exp\left( \frac{t}{t_M}   \right)
+- \tau(0) 
+=
+2 \mu  \dot\varepsilon_0 \frac{\eta}{\mu} [ \exp\left( \frac{t}{t_M}   \right) -1 ]
+\]
+
+\[
+\tau(t) \exp\left( \frac{t}{t_M} \right)
+=
+2 \mu  \dot\varepsilon_0 \frac{\eta}{\mu} [ \exp\left( \frac{t}{t_M}   \right) -1 ] + \tau(0) 
+\]
+
+\[
+\tau(t) 
+=
+2 \eta  \dot\varepsilon_0  [1- \exp\left( -\frac{t}{t_M}\right) ] + \tau(0) \exp\left( -\frac{t}{t_M} \right)
+\]
+which is the solution of Eq.~(4) of \textcite{kabe07} (2007).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
