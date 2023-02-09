@@ -3,6 +3,7 @@ from magnetostatics import *
 from tools import *
 import random
 import time as time
+from set_measurement_parameters import *
 
 #------------------------------------------------------------------------------
 # this function returns a topography value at each point x,y passed as argument
@@ -50,6 +51,10 @@ def compute_analytical_solution(x,y,z,R,Mx,My,Mz,xcenter,ycenter,zcenter,benchma
       Bz=Q*Mz*(2*(ruz*np.cos(theta))+thuz*np.sin(theta))
 
    return np.array([Bx,By,Bz],dtype=np.float64)
+
+print('========================================')
+print('=             ETNA project             =')
+print('========================================')
 
 ###############################################################################
 #benchmark:
@@ -252,33 +257,33 @@ if benchmark=='4':
 
 if benchmark=='-1':
 
-   # 6 sites with ~3 paths & ~2 heights 
-
-   topofile='./dem/DEMS/dem5m_site1_300.asc'
-   nelx=55
-   nely=52
-   nelz=2
-   xllcorner=501598.81984712
-   yllcorner=4170988.3580075 
-   Lx=5*nelx    # each cell is 5x5 meter!
-   Ly=5*nely
-   Lz=2.4*Lx #thickness
-   do_plane_measurements=False
-
-   do_spiral_measurements=False
-   Mx0=0
-   My0=4
-   Mz0=-6
-   nqdim=4
-
-   #path info
-   pathfile='./sites/1_1_100_height.txt' ; npath=39
-   #zpath_option=1 #read it from file
-   zpath_option=2 #based on dem + zpath_height
-   zpath_height=1.8
-
    do_line_measurements=False
+   do_plane_measurements=False
+   do_spiral_measurements=False
    do_path_measurements=True
+
+   Mx0=0
+   My0=4.085
+   Mz0=-6.290
+   nqdim=5
+
+   zpath_option=2 #based on dem + zpath_height
+
+   # 6 sites with ~3 paths & ~2 heights 
+   # rDEM: 2 or 5m (resolution)
+   # sDEM: 1 (largest ~2km), 2 (small ~300m), 3 (very small ~200m)
+   # site: 1,2,3,4,5,6
+   # path: 1,2,3 (except site 6, only 1)
+   # ho  : 1,2 (height option), site5 has 4 options.
+
+   rDEM=5
+   sDEM=2
+   site=2
+   path=1
+   ho=1
+
+   Lx,Ly,Lz,nelx,nely,nelz,xllcorner,yllcorner,npath,zpath_height,pathfile,topofile=\
+      set_measurement_parameters(rDEM,sDEM,site,path,ho)
 
 
 if benchmark=='-1000': #full 5m dem -- too big
@@ -299,9 +304,6 @@ if benchmark=='-1000': #full 5m dem -- too big
    My0=4
    Mz0=-6
    nqdim=4
-
-
-
 
 #------------------------------------------------------------------------------
 
@@ -332,10 +334,17 @@ if do_line_measurements:
    print('xstart,ystart,zstart=',xstart,ystart,zstart)
    print('xend,yend,zend=',xend,yend,zend)
    print('line_nmeas=',line_nmeas)
+print('do_spiral_measurements=',do_spiral_measurements)
 if do_spiral_measurements:
    print('npts_spiral',npts_spiral)
    print('radius_spiral',radius_spiral)
-
+print('do_path_measurements=',do_path_measurements)   
+if do_path_measurements:                              
+   print('site=',site)                                
+   print('path=',path)                                
+   print('height=',ho,zpath_height)                   
+   print('npts path=',npath)                          
+   print('zpath_option=',zpath_option)
 print('========================================')
 
 ###############################################################################
@@ -343,6 +352,7 @@ print('========================================')
 # if benchmark 2, a small random perturbation is added to the
 # z coordinate of the interior nodes.
 ###############################################################################
+start = time.time()
 
 x = np.empty(NV,dtype=np.float64)  # x coordinates
 y = np.empty(NV,dtype=np.float64)  # y coordinates
@@ -350,7 +360,7 @@ z = np.empty(NV,dtype=np.float64)  # z coordinates
 
 counter=0
 for i in range(0,nnx):
-    print(int(i/nnx*100),'% done')
+    #print( int(i/nnx*100)  ,'% done')
     for j in range(0,nny):
         for k in range(0,nnz):
             x[counter]=i*Lx/float(nelx)
@@ -363,17 +373,18 @@ for i in range(0,nnx):
     #end for
 #end for
    
-print('grid points setup')
+print("grid points setup: %.3f s" % (time.time() - start))
 
 ###############################################################################
 # connectivity
 ###############################################################################
+start = time.time()
 
 icon =np.zeros((8,nel),dtype=np.int32)
 
 counter = 0
 for i in range(0,nelx):
-    print(int(i/nelx*100),'% done')
+    #print(int(i/nelx*100),'% done')
     for j in range(0,nely):
         for k in range(0,nelz):
             icon[0,counter]=nny*nnz*(i-1+1)+nnz*(j-1+1)+k
@@ -389,7 +400,7 @@ for i in range(0,nelx):
     #end for
 #end for
 
-print('grid connectivity setup')
+print("grid connectivity setup: %.3f s" % (time.time() - start))
 
 ###############################################################################
 # adding wavy topography to surface and deform the mesh accordingly
@@ -427,7 +438,7 @@ if benchmark=='-1':
    topo = open(topofile, 'r')
    lines_topo = topo.readlines()
    nlines=np.size(lines_topo)
-   print('file counts ',nlines,' lines',nny)
+   print(topofile+' counts ',nlines,' lines',nny)
    counter=0
    for i in range(0,nlines):
        #reading lines backwards bc of how file is built
@@ -438,7 +449,7 @@ if benchmark=='-1':
            counter+=1    
 
    print('topo (min/max):',min(ztopo),max(ztopo))
-   print('read file')
+   print('read topo file ok')
 
    counter=0
    for i in range(0,nnx):
@@ -459,7 +470,7 @@ if benchmark=='-1':
    path = open(pathfile, 'r')
    lines_path = path.readlines()
    nlines=np.size(lines_path)
-   print('file counts ',nlines,' lines')
+   print(pathfile+' counts ',nlines,' lines')
    xpath = np.empty(npath,dtype=np.float64)  # x coordinates
    ypath = np.empty(npath,dtype=np.float64)  # y coordinates
    zpath = np.empty(npath,dtype=np.float64)  # z coordinates
@@ -479,6 +490,8 @@ if benchmark=='-1':
        B_int[i]=columns[6]
 
    if zpath_option==2: # based on dem
+
+      start = time.time()
 
       for i in range(0,npath):
           iel=0
@@ -507,6 +520,8 @@ if benchmark=='-1':
               #end for
           #end for
       #end for
+
+      print("creating path points above DEM (zpath_option=2): %.3f s" % (time.time() - start))
 
    print('xpath (min/max):',min(xpath),max(xpath))
    print('ypath (min/max):',min(ypath),max(ypath))
@@ -547,12 +562,16 @@ if benchmark=='-1':
    vtufile.write("</VTKFile>\n")
    vtufile.close()
 
+   print('produced path.vtu')
+
 ###############################################################################
 # prescribe M inside each cell
 # for benchmarks 1 and 3, M is zero everywhere except inside
 # a sphere of radius sphere_R at location (sphere_xc,sphere_yc,sphere_zc)
 # we use the center of an element as a representative point.
 # For benchmark 2, M is constant in space and equal to (Mx0,My0,Mz0)
+###############################################################################
+start = time.time()
 
 Mx=np.zeros(nel,dtype=np.float64)
 My=np.zeros(nel,dtype=np.float64)
@@ -578,7 +597,7 @@ if benchmark=='2a' or benchmark=='2b' or benchmark=='4' or benchmark=='-1':
 
 export_mesh_3D(NV,nel,x,y,z,icon,'mesh.vtu',Mx,My,Mz,nnx,nny,nnz)
    
-print('prescribe M vector in domain')
+print("prescribe M vector in domain: %.3f s" % (time.time() - start))
 
 ###############################################################################
 # plane measurements setup
@@ -693,8 +712,8 @@ if do_line_measurements:
    z_meas=np.empty(line_nmeas,dtype=np.float64)  # y coordinates
 
    linefile=open("measurements_line.ascii","w")
-   linefile.write("# 1,2,3,4    ,5    ,6    ,7    ,8    ,9    ,10   ,11   ,12    \n")
-   linefile.write("# x,y,z,Bx_vi,By_vi,Bz_vi,Bx_si,By_si,Bz_si,Bx_th,By_th,Bz_th \n")
+   linefile.write("# 1,2,3, 4    , 5    , 6    , 7    , 8    , 9    , 10   , 11   , 12    \n")
+   linefile.write("# x,y,z, Bx_vi, By_vi, Bz_vi, Bx_si, By_si, Bz_si, Bx_th, By_th, Bz_th \n")
 
    B_vi=np.zeros((3,line_nmeas),dtype=np.float64)
    B_si=np.zeros((3,line_nmeas),dtype=np.float64)
@@ -738,8 +757,8 @@ if do_path_measurements:
    print('starting path measurement ...')
 
    linefile=open("measurements_path.ascii","w")
-   linefile.write("# 1,2,3,4    ,5    ,6    ,7    ,8    ,9    ,10   ,11   ,12    \n")
-   linefile.write("# x,y,z,Bx_vi,By_vi,Bz_vi,Bx_si,By_si,Bz_si,Bx_th,By_th,Bz_th \n")
+   linefile.write("# 1,2,3, 4    , 5    , 6    , 7    , 8    , 9    , 10   , 11   , 12    \n")
+   linefile.write("# x,y,z, Bx_vi, By_vi, Bz_vi, Bx_si, By_si, Bz_si, Bx_th, By_th, Bz_th \n")
 
    B_vi=np.zeros((3,npath),dtype=np.float64)
    B_si=np.zeros((3,npath),dtype=np.float64)
@@ -757,20 +776,17 @@ if do_path_measurements:
 
        #print(B_vi[:,i]) 
        #print(B_si[:,i]) 
+
+       B_vi[:,i]*=1e-7 #AEH check !
+       B_si[:,i]*=1e-7
     
-       linefile.write("%e %e %e %e %e %e %e %e %e %e %e %e \n" %(xm,ym,zm,\
-                                                       B_vi[0,i],B_vi[1,i],B_vi[2,i],\
-                                                       B_si[0,i],B_si[1,i],B_si[2,i],\
-                                                       B_th[0,i],B_th[1,i],B_th[2,i]))
+       linefile.write("%e %e %e %e %e %e %e %e %e  \n" %(xm,ym,zm,\
+                                                         B_vi[0,i],B_vi[1,i],B_vi[2,i],\
+                                                         B_si[0,i],B_si[1,i],B_si[2,i]))
 
    export_line_measurements(npath,xpath,ypath,zpath,'path_measurements.vtu',B_vi,B_si,B_th)
 
 print('========================================')
-
-
-
-
-
 
 
 ###############################################################################
@@ -809,7 +825,7 @@ if do_spiral_measurements:
 
        start = time.time()
        for iel in range(0,nel):
-           B_vi[:,i]+=compute_B_quadrature      (x_spiral[i],y_spiral[i],z_spiral[i],x,y,z,icon[:,iel],Mx[iel],My[iel],Mz[iel],nqdim)
+           B_vi[:,i]+=compute_B_quadrature (x_spiral[i],y_spiral[i],z_spiral[i],x,y,z,icon[:,iel],Mx[iel],My[iel],Mz[iel],nqdim)
        print("vol int: %.3f s" % (time.time() - start))
 
        start = time.time()

@@ -24,7 +24,7 @@ def export_mesh_3D(NV,nel,x,y,z,icon,filename,Mx,My,Mz,nnx,nny,nnz):
                if k==nnz-1:
                   zmin=min(zmin,z[counter])
                counter += 1
-   print(zmin)
+   #print(zmin)
 
    vtufile.write("<DataArray type='Float32' Name='z' Format='ascii'> \n")
    for i in range (0,NV):
@@ -32,33 +32,38 @@ def export_mesh_3D(NV,nel,x,y,z,icon,filename,Mx,My,Mz,nnx,nny,nnz):
    vtufile.write("</DataArray>\n")
    vtufile.write("</PointData>\n")
    #####
-   vtufile.write("<CellData Scalars='scalars'>\n")
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='M vector' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%f %f %f \n" % (Mx[iel],My[iel],Mz[iel]))
-   vtufile.write("</DataArray>\n")
 
-   vtufile.write("<DataArray type='Float32' Name='Mx' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%f \n" % (Mx[iel]))
-   vtufile.write("</DataArray>\n")
+   if abs(np.max(Mx)-np.min(Mx))>1e-6 or\
+      abs(np.max(My)-np.min(My))>1e-6 or\
+      abs(np.max(Mz)-np.min(Mz))>1e-6 : 
 
-   vtufile.write("<DataArray type='Float32' Name='My' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%f \n" % (My[iel]))
-   vtufile.write("</DataArray>\n")
+      vtufile.write("<CellData Scalars='scalars'>\n")
+      vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='M vector' Format='ascii'> \n")
+      for iel in range (0,nel):
+          vtufile.write("%f %f %f \n" % (Mx[iel],My[iel],Mz[iel]))
+      vtufile.write("</DataArray>\n")
 
-   vtufile.write("<DataArray type='Float32' Name='Mz' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%f \n" % (Mz[iel]))
-   vtufile.write("</DataArray>\n")
+      vtufile.write("<DataArray type='Float32' Name='Mx' Format='ascii'> \n")
+      for iel in range (0,nel):
+          vtufile.write("%f \n" % (Mx[iel]))
+      vtufile.write("</DataArray>\n")
 
-   vtufile.write("<DataArray type='Float32' Name='M' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%f \n" % (np.sqrt(Mx[iel]**2+My[iel]**2+Mz[iel]**2)))
-   vtufile.write("</DataArray>\n")
+      vtufile.write("<DataArray type='Float32' Name='My' Format='ascii'> \n")
+      for iel in range (0,nel):
+          vtufile.write("%f \n" % (My[iel]))
+      vtufile.write("</DataArray>\n")
 
-   vtufile.write("</CellData>\n")
+      vtufile.write("<DataArray type='Float32' Name='Mz' Format='ascii'> \n")
+      for iel in range (0,nel):
+          vtufile.write("%f \n" % (Mz[iel]))
+      vtufile.write("</DataArray>\n")
+
+      vtufile.write("<DataArray type='Float32' Name='M' Format='ascii'> \n")
+      for iel in range (0,nel):
+          vtufile.write("%f \n" % (np.sqrt(Mx[iel]**2+My[iel]**2+Mz[iel]**2)))
+      vtufile.write("</DataArray>\n")
+
+      vtufile.write("</CellData>\n")
    #####
    vtufile.write("<Cells>\n")
    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
@@ -149,10 +154,13 @@ def export_plane_measurements(NV,nel,x,y,z,icon,filename,B_vi,B_si,B_th):
        vtufile.write("%e %e %e \n" %(B_si[0,i],B_si[1,i],B_si[2,i]))
    vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='B (analytical)' Format='ascii'> \n")
-   for i in range(0,NV):
-       vtufile.write("%e %e %e \n" %(B_th[0,i],B_th[1,i],B_th[2,i]))
-   vtufile.write("</DataArray>\n")
+
+   if abs(np.max(B_th)-np.min(B_th))>1e-12:
+      vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='B (analytical)' Format='ascii'> \n")
+      for i in range(0,NV):
+          vtufile.write("%e %e %e \n" %(B_th[0,i],B_th[1,i],B_th[2,i]))
+      vtufile.write("</DataArray>\n")
+
    #--
    vtufile.write("</PointData>\n")
    #####
@@ -208,10 +216,11 @@ def export_line_measurements(N,x,y,z,filename,B_vi,B_si,B_th):
        vtufile.write("%e %e %e \n" %(B_si[0,i],B_si[1,i],B_si[2,i]))
    vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='B (analytical)' Format='ascii'> \n")
-   for i in range(0,N):
-       vtufile.write("%e %e %e \n" %(B_th[0,i],B_th[1,i],B_th[2,i]))
-   vtufile.write("</DataArray>\n")
+   if abs(np.max(B_th)-np.min(B_th))>1e-12:
+      vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='B (analytical)' Format='ascii'> \n")
+      for i in range(0,N):
+          vtufile.write("%e %e %e \n" %(B_th[0,i],B_th[1,i],B_th[2,i]))
+      vtufile.write("</DataArray>\n")
    #--
    vtufile.write("</PointData>\n")
    #####
@@ -270,10 +279,11 @@ def export_spiral_measurements(N,x,y,z,filename,B_vi,B_si,B_th):
        vtufile.write("%e %e %e \n" %(B_si[0,i],B_si[1,i],B_si[2,i]))
    vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='B (analytical)' Format='ascii'> \n")
-   for i in range(0,N):
-       vtufile.write("%e %e %e \n" %(B_th[0,i],B_th[1,i],B_th[2,i]))
-   vtufile.write("</DataArray>\n")
+   if abs(np.max(B_th)-np.min(B_th))>1e-12:
+      vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='B (analytical)' Format='ascii'> \n")
+      for i in range(0,N):
+          vtufile.write("%e %e %e \n" %(B_th[0,i],B_th[1,i],B_th[2,i]))
+      vtufile.write("</DataArray>\n")
    #--
    vtufile.write("</PointData>\n")
    #####
