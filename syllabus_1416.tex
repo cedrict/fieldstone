@@ -71,8 +71,10 @@ state $f(\rho,p,T)$ relating thermodynamic quantities density, pressure, and tem
 continuum. The sign convention in continuum mechanics is that compression is negative
 and tension is positive (in geology this is usually the other way around).
 
+%.....................
+\subsubsection{Stress} 
 
-{\bf Stress} is a second order tensor quantity, which is defined by the following steps:
+Stress is a second order tensor quantity, which is defined by the following steps:
 \begin{enumerate}
 \item 
 Assume a Cartesian coordinate frame in a point of interest for which the coordinate
@@ -128,18 +130,20 @@ Note that it is required that $\vec{n}$ is a unit normal, i.e. $\vec{n}\cdot\vec
 \vspace{0.5cm}
 \fbox{
 \begin{minipage}{0.9\textwidth}
-\begin{problem}
+\begin{exercise}
 {\small \it 
 Determine the tractions acting on the negative faces of a tiny cube (of which
 the faces are aligned with the local coordinate axes) when the stress is given.
 }
-\end{problem}
+\end{exercise}
 \end{minipage}
 }
 \vspace{0.5cm}
 
-{\bf Force balance equation of a continuum at rest}: Assume a 
-continuum (gas, liquid, solid)
+%............................................................
+\subsubsection{Force balance equation of a continuum at rest} 
+
+Assume a continuum (gas, liquid, solid)
 at rest. In this situation the net force acting on the entire 
 continuum is $\vec{0}$ (Newton). The
 sum of body forces and applied surface tractions cancel in some way. 
@@ -213,7 +217,7 @@ $(\vec{a}\times \vec{b})=\epsilon_{ijk} a_j b_k$.
 \vspace{0.5cm}
 \fbox{
 \begin{minipage}{0.9\textwidth}
-\begin{problem}
+\begin{exercise}
 {\small \it
 \noindent 
 a) Derive equation \eqref{chap10_balance}\\
@@ -221,13 +225,15 @@ b) Using a similar approach, prove the symmetry of the stress tensor from the ba
 torques (assuming that no internally applied tractions exist)\\
 c) Derive \eqref{chap10_balance} by considering the force balance of a tiny cube
 }
-\end{problem}
+\end{exercise}
 \end{minipage}
 }
 \vspace{0.5cm}
 
-{\bf The material derivative}:
-{\color{red} (for a mathematical intro see Appendix A)}
+%......................................
+\subsubsection{The material derivative}
+
+For a mathematical intro see Appendix \ref{app:ders}.
 Consider a continuum with a three-dimensional flow 
 field $\vec{v}(x_1,x_2,x_3,t)$ dependent on
 the 3 spatial coordinates $x_j$ and time $t$. 
@@ -320,7 +326,7 @@ still changes in space, although the velocity is a constant vector in each point
 \vspace{0.5cm}
 \fbox{
 \begin{minipage}{0.9\textwidth}
-\begin{problem}
+\begin{exercise}
 {\small \it 
 Assume 2-D space. Let the temperature field $T$ be given by
 \begin{equation}
@@ -332,12 +338,13 @@ a) Determine the divergence of the velocity field.
 b) Compute the acceleration.
 c) Compute the material derivate of $T$ at any position and time.
 }
-\end{problem}
+\end{exercise}
 \end{minipage}
 }
 \vspace{0.5cm}
 
-{\bf The material derivative of a material volume integral}: 
+%....................................................................
+\subsubsection{The material derivative of a material volume integral}
 Let $V$ be a material volume, i.e. a
 volume that encompasses for all $t$ the same flow particles. 
 This volume is following the
@@ -345,7 +352,7 @@ flow, possibly being deformed, while there is no material exchange
 with the region outside $V$. Let $T$ be again a scalar function 
 of the space and time coordinates. The
 material derivative of the (material) volume integral 
-of $T$ is {\color{red} (Appendix B)}:
+of $T$ is (See Appendix \ref{app:matdervi}):
 \begin{equation}
 \frac{D}{Dt}
 \left[
@@ -362,7 +369,7 @@ of $T$ is {\color{red} (Appendix B)}:
 \vspace{0.5cm}
 \fbox{
 \begin{minipage}{0.9\textwidth}
-\begin{problem}
+\begin{exercise}
 {\small \it
 \noindent 
 Derive from \eqref{chap10_matder2} the alternative formula
@@ -375,13 +382,15 @@ Derive from \eqref{chap10_matder2} the alternative formula
 \int_{V(t)} \frac{\partial T}{\partial t} + \frac{\partial T v_k}{\partial x_k} dV
 \]
 }
-\end{problem}
+\end{exercise}
 \end{minipage}
 }
 \vspace{0.5cm}
 
+%....................................
+\subsubsection{Diffusion processes} 
 
-{\bf Diffusion processes} are in many cases described by (empirical) 
+Diffusion processes are in many cases described by (empirical) 
 laws of the form $\vec{a} = -{\bm D} \cdot \vec\nabla H$
 where $\vec{a}$ is a vector and ${\bm D}$ 
 is the (anisotropic) diffusion (coefficient) tensor,
@@ -396,7 +405,11 @@ coefficient and $c$ the concentration of the substance.
 
 %%page8
 
-{\bf The continuity equation} (Conservation of mass; Reynold’s transport theorem):
+%....................................
+\subsubsection{The continuity equation} 
+
+The continuity equation is also called Conservation of mass or 
+Reynold’s transport theorem.
 Consider an arbitrary material volume $V$ within a continuum. 
 By definition of a material
 volume, the mass it contains is conserved, $M$=constant, or
@@ -431,7 +444,7 @@ conserved by a material volume.
 \vspace{0.5cm}
 \fbox{
 \begin{minipage}{0.9\textwidth}
-\begin{problem}
+\begin{exercise}
 {\small \it 
 Prove that in a flowing medium with density $\rho$ 
 the following relation holds
@@ -446,14 +459,14 @@ for any differentiable scalar function $T$ and material volume $V$.
 This formula will be
 frequently used.
 }
-\end{problem}
+\end{exercise}
 \end{minipage}
 }
 \vspace{0.5cm}
 
 \fbox{
 \begin{minipage}{0.9\textwidth}
-\begin{problem}
+\begin{exercise}
 {\small \it 
 \noindent
 a) Prove that in an incompressible fluid the cubic-meter content of a material volume
@@ -463,7 +476,7 @@ b) Prove that in an incompressible fluid the boundary $S$ of a material
 volume obeys the
 following integral $\int_S \upnu_k n_k dS=0$. (Interpret this integral)
 }
-\end{problem}
+\end{exercise}
 \end{minipage}
 }
 \vspace{0.5cm}
@@ -472,7 +485,7 @@ following integral $\int_S \upnu_k n_k dS=0$. (Interpret this integral)
 
 \fbox{
 \begin{minipage}{0.9\textwidth}
-\begin{problem}
+\begin{exercise}
 {\small \it 
 \noindent
 Let $V$ be an imaginary volume fixed in space. 
@@ -486,7 +499,7 @@ conservation law:
 where $\vec{J} = \rho\vec{\upnu}$ is the mass-density flow.
 (Interpret this equation).
 }
-\end{problem}
+\end{exercise}
 \end{minipage}
 }
 \vspace{0.5cm}
@@ -496,7 +509,7 @@ where $\vec{J} = \rho\vec{\upnu}$ is the mass-density flow.
 \vspace{0.5cm}
 \fbox{
 \begin{minipage}{0.9\textwidth}
-\begin{problem}
+\begin{exercise}
 {\small \it 
 We wish to describe the transport of a polluting substance $X$ carried by a
 fluid flow. We assume the substance is chemically non-reactive (passive) 
@@ -522,7 +535,7 @@ Assume that the mass flow density vector $\vec{J}$
 where $D$ is the diffusion coefficient. Extend the answer obtained at 
 a) for this situation.
 }
-\end{problem}
+\end{exercise}
 \end{minipage}
 }
 \vspace{0.5cm}
@@ -559,7 +572,7 @@ chosen):
 \rho\frac{D \upnu_i}{Dt} = \frac{\partial \sigma_{ij}}{\partial j} + \rho {g}_i
 \label{chap10_motion}
 \end{equation}
-which is the general equation of motion.
+which is the {\bf general equation of motion}.
 Recall that
 \[
 \frac{D\vec\upnu}{Dt} = \frac{\partial \vec\upnu}{\partial t}
@@ -569,7 +582,8 @@ Recall that
 is the material derivative of velocity which renders \eqref{chap10_motion} to
 be a non-linear equation in the unknown velocity field.
 
-{\bf Velocity gradient, strain rate, and rotation rate}
+%..................................................................
+\subsubsection{Velocity gradient, strain rate, and rotation rate}
 The velocity gradient tensor is $\vec\nabla\vec\upnu = \partial \upnu_i/\partial x_j$
 and can be separated in a symmetric part, the strain rate tensor 
 \[
@@ -588,7 +602,7 @@ and in an anti-symmetric part called the rotation
 rate tensor or spin-rate tensor
 \[
 \dot{\bm\omega}=  \frac12 \left(  
-\vec\nabla\vec\upnu - (\vec\nabla\vec\upnu)^T 
+\vec\nabla\vec\upnu - (\vec\nabla\vec\upnu)^T \right) 
 \]
 Note that $\dot\omega_{11}=\dot\omega_{22}=\dot\omega_{33}=0$.
 The strain rate tensor is associated with the rate of
@@ -601,8 +615,233 @@ Note that  $\vec\nabla\cdot\vec\upnu= \partial \upnu_k/\partial x_k =
 during deformation.
 
 
+%%%ex9
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+Make a detailed derivation of equation \eqref{chap10_motion}.
+}
+\end{exercise}
+\end{minipage}
+}
+\vspace{0.5cm}
 
 
+%%%ex 10
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+Assume a velocity field $\vec\upnu = \vec\omega \times \vec{r}$ 
+with $\vec\omega = [0,0, \Omega f(x_1,x_2))]^T$  and 
+$\vec{r} = (x_1,x_2, 0)^T$  where $f$ is an unknown function and $\Omega$ 
+is a constant angular speed (radians/sec). 
+Compute the velocity gradient field, the strain rate field and the rotation
+rate field. Determine a function $f$ that leads to incompressible flow and a 
+function $f$ that leads to flow without shear strain rate.
+}
+\end{exercise}
+\end{minipage}
+}
+\vspace{0.5cm}
+
+
+
+%%%ex 11:
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+Demonstrate that 
+\[
+\dot{\bm\omega} = 
+\left(
+\begin{array}{ccc}
+0 & -\frac12 \Omega_3 & \frac12 \Omega_2 \\
+\frac12 \Omega_3 & 0 & -\frac12 \Omega_1 \\
+-\frac12 \Omega_2 & \frac12 \Omega_1 & 0
+\end{array}
+\right)
+\]
+where 
+\[
+\vec\Omega=\vec\nabla \times \vec\upnu
+\]
+is the so-called vorticity.
+}
+\end{exercise}
+\end{minipage}
+}
+\vspace{0.5cm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%page 11
+
+{\bf Pressure and stress}
+Similar to traction, the total stress ${\bm \sigma}(\vec{r}, t)$ 
+is usually separated in the {\bf thermodynamic
+pressure} $p$ and the rheological (mechanical) stress ${\bm\tau}(\vec{r}, t)$:
+\begin{equation}
+{\bm\sigma} = -p {\bm 1} + {\bm \tau}
+\qquad
+\text{or}
+\qquad
+\sigma_{ij}=-p \delta_{ij} + \tau_{ij}
+\label{chap10_press1}
+\end{equation}
+\todo[inline]{tau is not dev stress here !!}
+In absence of deforming stresses ${\bm\sigma}=-p {\bm 1}$ 
+and in the equilibrium state (0 inertial force),
+\eqref{chap10_motion} reduces to the hydrostatic equation
+\[
+\vec\nabla p = \rho \vec{g} 
+\qquad
+\text{or}
+\qquad
+0 = -\frac{\partial p}{\partial x_i} + \rho g_i
+\]
+relating the pressure to the gravitational acceleration.
+
+%%%%%%%%%%%ex12
+
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+Let $C$ be a line contour in a continuum, which starts at point $A$ and ends at
+point $B$. The continuum is in hydrostatic equilibrium.\\
+a) Show that the pressure difference between $B$ and $A$ equals 
+$p(B) - p(A) = \int_C \rho \vec{g} \cdot d\vec{r}$
+where $d\vec{r}$ is a line element of $C$. \\
+b) Assume that the continuum is a spherically symmetric body: Show that the pressure
+difference between $B$ and $A$ is: $p(r_B ) - p(r_A) = -\int_{r_A}^{r_B} \rho g(r) dr$ 
+where quantities only depend on the radius.\\
+c) Show that the density field $\rho$ should satisfy $\vec\nabla // \vec\nabla \Phi$ 
+where $\Phi$ is the gravitational
+energy potential implicitly defined by $\vec{g}=-\vec\nabla \Phi$. 
+[Hint: take the curl of the hydrostatic equation]\\
+d) Show that surfaces of constant pressure, density and gravitational potential coincide.
+}
+\end{exercise}
+\end{minipage}
+}
+\vspace{0.5cm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+
+The average pressure is defined as $\overline{p} = -\frac13 \sigma_{kk}$. 
+Using \eqref{chap10_press1} we find 
+$p - \overline{p} = \frac13 \tau_{kk} $ 
+which demonstrates that local thermodynamic pressure $p$ can be
+perturbed by the isotropic part of mechanical stress. 
+In fluids this situation can occur in
+locations of local convergence or divergence of flow (see below).
+
+The deviatoric stress is defined as
+\[
+\sigma_{ij}'=\sigma_{ij}-\frac13 \sigma_{kk} \delta_{ij}
+\]
+The deviatoric stress describes the state of stress relative to the ambient (average)
+pressure. Substituting \eqref{chap10_press1} we have
+
+Notice that ${\bm \sigma}' = {\bm \tau}$ 
+when $p = \overline{p}$ , i.e. when the mechanical stress does not change the
+pressure.
+
+%%%ex13
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+Consider a two-dimensional state of stress.\\
+a) Prove in 2 different ways that the principal values of the deviatoric stress are equal in
+magnitude but opposite in sign.\\
+b) Demonstrate that only shear traction exists on planes bisecting the principal axis of
+deviatoric stress
+}
+\end{exercise}
+\end{minipage}
+}
+\vspace{0.5cm}
+
+
+
+%%%ex14
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+Demonstrate that the principal deviatoric stresses $\sigma_i'$ relate to the principal
+stresses $\sigma_i$ as: $\sigma_i'=\sigma_i +p$
+}
+\end{exercise}
+\end{minipage}
+}
+\vspace{0.5cm}
+
+
+%......................................
+\subsubsection{Constitutive equations}
+
+The mass conservation equation (10) and the momentum equation (12) constitute 4
+equations in 10 unknowns $\rho,\vec{v},{\bm \sigma}$. 
+Later we will add the energy equation but this also
+adds the temperature $T$ as additional unknown. We require knowledge of at least 6
+additional independent equations. These are provided for a particular material by
+specifying the relation between internal kinematics and stress and are called constitutive
+equations. For real fluids (i.e. fluids that cannot maintain shear stresses) the constitutive
+relation involves the viscosity as a material parameter. For solids that can deform brittle,
+elastic, or exhibit fluid behavior, the constitutive equation(s) will in general involve
+several material parameters. When stress in a solid material exceeds the elastic strength (a
+stress limit) the material can either break (deform brittle) or enter a regime of so-called
+ductile behavior where atoms leave their lattice position and occupy new positions
+elsewhere. Ductile behavior is accommodated by atomic diffusion processes and by
+dislocation processes (dislocations are geometric disturbances in a crystalline lattice at
+which fewer atomic bonds exists and which are thus mechanical weakness zones where
+applied stress will do its work first). Grain boundary processes are also important agents
+of deformation but are basically determined by diffusion and dislocation processes.
+Finding relations between stress and strain rate as a function of material properties,
+temperature, and pressure is the subject of {\bf rheology}.
+
+The thermodynamic pressure $p$ is taken to be independent of mechanical deformation.
+The thermodynamic pressure gives the state of stress in a static medium which may have
+a uniform velocity (either linear, angular of both), i.e. ${\bm\varepsilon}={\bm 0}$. 
+Therefore, constitutive equations take the general form
+\[
+{\bm \sigma}({\bm\varepsilon}) = -p {\bm 1} + {\bm tau}({\bm\varepsilon})
+\]
+with ${\bm \tau}({\bm 0})={\bm 0}$, showing that stress en strain rate can be interdependent.
+
+%...............................
+\subsubsection{Linear rheology}
+
+The most general form of linear rheology leading to a linear viscous
+fluid (also called a Newtonian fluid) is $\tau_{ij}=C_{ijkl} \dot{\varepsilon}_{kl}$, 
+where $C_{ijkl}$ is the anisotropic viscosity tensor. 
+This relation breaks down to the following law for a purely isotropic
+linearly viscous fluid:
+\[
+\tau_{ij} = \lambda \dot{\varepsilon}_{kk} \delta_{ij} + 2 \eta  \dot{\varepsilon}_{ij}
+\]
+where $\eta$ is the dynamic viscosity [\si{\pascal\second}] and $\lambda$ is a viscosity
+parameter without a specific name.
+
+The mechanical, or rheological, stress $\tau_{ij}$ quantifies the internal friction of the flow. By
+computing the trace of the rheological stress we find, using (15),
+\[
+p - \overline{p} = \left(\lambda + \frac23 \eta \right) \dot{\varepsilon}_{kk} 
+= \xi \vec\nabla\cdot\vec\upnu
+\]
+where $\xi$ is the bulk-viscosity.
 
 
 
