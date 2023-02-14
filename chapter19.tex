@@ -1,0 +1,743 @@
+
+{\Large Work in progress!!!}
+
+
+%==================================================================================================
+%==================================================================================================
+%==================================================================================================
+\subsection{Analytical Benchmarks}
+
+%..........................................................
+\subsubsection{the 1D solution}
+We wish to find the general solution $\tau(t)$ of from the first order ODE
+\[
+\frac{1}{2\mu} \frac{d\tau}{dt} + \frac{1}{2\eta} \tau = \dot\varepsilon_0
+\qquad
+\text{or},
+\qquad
+\frac{d\tau}{dt} + \frac{\mu}{\eta} \tau = 2\mu \dot\varepsilon_0
+\]
+There is a standard technique to solve such equations, and we start with the following equation instead:
+\[
+\frac{1}{2\mu} \frac{d\tau}{dt} + \frac{1}{2\eta} \tau = 0
+\]
+It can be rewritten
+\[
+\frac{d\tau}{\tau} = -\frac{\mu}{\eta} dt
+\]
+so
+\[
+\int \frac{d\tau}{\tau} = -\frac{\mu}{\eta} \int dt
+\]
+\[
+\ln \tau - \ln \tau_0 = -\frac{\mu}{\eta} t 
+\]
+\[
+\ln \tau = -\frac{\mu}{\eta} t  + \ln \tau_0
+\]
+\[
+\tau(t) 
+= \exp \left(  -\frac{\mu}{\eta} t  + \ln \tau_0 \right) 
+= \exp \left(  -\frac{\mu}{\eta} t   \right)   \exp \left(  \ln \tau_0 \right) 
+= \tau_0 \exp \left(  -\frac{\mu}{\eta} t   \right) 
+\]
+or, using the Maxwell time $t_M=\eta/\mu$,
+\[
+\tau(t) 
+= \tau_0 \exp \left(  -\frac{t}{t_M}   \right) 
+\]
+Based on this solution we now 
+consider the following equation
+\begin{eqnarray}
+\frac{d}{dt} \left[   \tau \exp\left( \frac{t}{t_M}   \right)  \right]
+&=& 
+\frac{d \tau}{dt}  \exp\left( \frac{t}{t_M}   \right)  +
+\tau \frac{1}{t_M} \exp\left( \frac{t}{t_M}   \right)  \nn\\
+&=& 
+\left( \underbrace{\frac{d \tau}{dt} + \frac{\mu}{\tau} \tau}_{2\mu \dot\varepsilon_0}  \right)  \exp\left( \frac{t}{t_M}   \right)  \nn
+\end{eqnarray}
+Then we proceed to integrate both sides:
+\[
+\int \frac{d}{dt} \left[   \tau \exp\left( \frac{t}{t_M}   \right)  \right] dt
+= 2\mu \dot\varepsilon_0 \int \exp\left( \frac{t}{t_M}   \right)  dt
+\]
+
+\[
+\tau(t) \exp\left( \frac{t}{t_M}   \right)
+-
+\tau(0) \exp\left( \frac{0}{t_M}   \right)
+ =
+ 2\mu \dot\varepsilon_0  t_M  [ \exp\left( \frac{t}{t_M}   \right)  -  \exp\left( \frac{0}{t_M} \right) ]
+\]
+
+\[
+\tau(t) \exp\left( \frac{t}{t_M}   \right)
+- \tau(0) 
+=
+2 \mu  \dot\varepsilon_0 \frac{\eta}{\mu} [ \exp\left( \frac{t}{t_M}   \right) -1 ]
+\]
+
+\[
+\tau(t) \exp\left( \frac{t}{t_M} \right)
+=
+2 \mu  \dot\varepsilon_0 \frac{\eta}{\mu} [ \exp\left( \frac{t}{t_M}   \right) -1 ] + \tau(0) 
+\]
+
+\[
+\tau(t) 
+=
+2 \eta  \dot\varepsilon_0  [1- \exp\left( -\frac{t}{t_M}\right) ] + \tau(0) \exp\left( -\frac{t}{t_M} \right)
+\]
+which is the solution of Eq.~(4) of \textcite{kabe07} (2007).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%..........................................................
+\subsubsection{Pure shear}
+
+
+{\color{orange} fully incompressible}
+
+The first benchmark performed to test the viscoelastic implementation considers the stress
+build-up present in a viscoelastic Maxwell body. Contrary to stressed viscous materials,
+viscoelastic materials gradually build-up stress when sheared after which a transition to viscous deformation occurs.
+
+An unstressed, incompressible viscoelastic Maxwell medium is subjected to a velocity field
+resulting in pure shear.
+The increase of the accumulated stress with time is given by an analytical solution:
+\begin{equation}
+{\bm \tau} = 2\eta\ {\dot{\bm \varepsilon}} \left ( 1-e^{-\frac{\mu }{\eta} t } \right )
+\end{equation}
+with $t$ time, $\eta$ the prescribed material viscosity and $\mu$ the prescribed material shear modulus.
+The domain size is 100$\times 100$km.
+The velocity prescribed at all boundaries equals $v=1$ cm/yr in magnitude yielding a constant
+background strain rate of $\dot{\varepsilon}=2\text{cm/yr}/100\text{km}\simeq \SI{6.342e-15}{\per\second}$.
+The viscosity is $\eta= 10^{21}\text{Pa.s}$, the shear modulus is
+$\mu =10^{10}$Pa and the gravity is set to zero. We set $\delta t=100$yr.
+
+\begin{center}
+\includegraphics[width=5cm]{images/viscoelasticity/stress_buildup_setup.png}\\
+\captionfont{Set up of the stress build-up benchmark. All domain sides have a free slip
+boundary condition, and pure shear velocity conditions are prescribed. Adapted from
+Gerya (2010) \cite{gery10}.}
+\end{center}
+
+We have
+\[
+\eta_{eff} 
+= \frac{\eta \delta t}{\delta t + \eta/\mu} 
+= \frac{10^{21} \cdot 3.154\times 10^{9}}{3.154\times 10^{9} + 10^{21}/10^{10}} 
+\simeq 
+3.0592 \times 10^{19}\text{Pa.s}
+\qquad
+\text{and}
+\qquad
+Z=\frac{\eta_{eff}}{\mu \delta t} 
+\simeq 
+0.9694
+\]
+The Maxwell time is $t_M = \frac{\eta}{\mu} = 10^{11}\text{s} \simeq 3171\text{yr}$.
+In the absence of elasticity (purely viscous behaviour), we have
+$\dot{\varepsilon}_{xx} = 6.342\times 10^{-15}$
+and $\eta=10^{21}$ so the
+deviatoric stress $\tau_{xx}$ is equal to
+\[
+\tau_{xx} = 2 \cdot 10^{21} \cdot 6.342\times 10^{-15} \simeq 12.68 \times 10^6 \text{Pa}
+\]
+
+The first time that the Stokes system is solved, there is no stored stress, i.e. the
+elastic rhs is identically zero, so that the system is solved with a viscosity equal to
+$\eta_{eff}$.
+We can easily compute the analytical solution, and we see that $\dot{\varepsilon}_{xy}=0$
+and $\dot{\omega}_{xy}=0$, which we recover:
+
+Results in Stone 64!
+
+%\begin{center}
+%\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup_11/init/vel}
+%\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup_11/init/exy}
+%\includegraphics[width=5cm]{python_codes/fieldstone_64/results/buildup_11/init/oxy}
+%\end{center}
+
+The expected stress value for $\tau_{xx}$ after the first Stokes solve is
+\[
+\tau_{xx} = 2 \eta_{eff} \dot{\varepsilon}_{xx} 
+= 2 \cdot 3.057\times 10^{19} \cdot 6.342\times 10^{-15} 
+\simeq 38.775 \times 10^4 \text{Pa}
+\]
+
+
+
+Also check Gerya's book page 358 2nd edition ?
+
+
+
+
+
+
+%..........................................................
+\subsubsection{simple shear}
+
+%..........................................................
+\subsubsection{Rayleigh-Taylor instability}
+
+{\color{orange} fully incompressible}
+
+This experiment is presented in \textcite{kabe07} (2007).
+
+The model consists of a viscoelastic layer of thickness $H_1$ , with density $\rho_1$, 
+viscosity $\eta_1$ and elastic shear module $\mu_1$ that overlies a viscous
+layer of thickness $H-H_1$ , with density $\rho_2$ and viscosity $\mu_2$. 
+The interface between the two fluids is perturbed sinusoidally according
+to $h(x) = (H - H_1 ) + A_0 \cos (2\pi x/ \lambda )$, 
+where $H_1$ is the thickness of the upper layer, $H$ the height of the model, 
+$A_0$ the initial amplitude and $\lambda$ the wavelength of the perturbation. 
+If $\rho_1>\rho_2$, the system is gravitationally unstable.
+
+\begin{center}
+\fbox{
+\includegraphics[width=12cm]{images/viscoelasticity/kabe07}}\\
+{\captionfont Taken from \textcite{kabe07}.}
+\end{center}
+
+The Deborah number is given by
+\[
+De=\frac{(\rho_1-\rho_2)g H}{\mu}
+\]
+and is here defined as the ratio between the viscous (Stokes) timescale ($(\rho_1-\rho_2)g H/\eta_1$)
+and the viscoelastic timescale $\eta_1/\mu$ of the upper layer.
+The authors state: ``
+Interestingly, the Deborah number, which is a measure of the importance of
+elasticity [...], is independent on the viscosity of the system. 
+This is due to the fact that the magnitude of stress is solely
+dependent on the density difference for purely buoyancy-driven flow.''
+Also: ``
+In the present definition of the Deborah number realistic values for 
+lithospheric-scale deformation are $10^{-4} \le De \le 1$ 
+(with $\rho =10-330~\si{\kg\per\cubic\meter}$ , 
+$g = 10~\si{\meter\per\square\second}$ , $H = 100-3000~\si{\km}$, 
+$\mu=10^{10}-10^{11}~\si{\pascal}$).''
+
+Another parameter controlling the dynamics of the system is the viscosity contrast 
+between the upper and the lower layer, expressed by $R=\eta_1/\eta_2$.
+
+We here set $H=500~\si{\km}$, $H_1=100~\si{\km}$,
+$\rho_2=3300~\si{\kg\per\cubic\meter}$, $\eta_2=10^{21}~\si{\pascal\second}$,
+$\mu_1=\mu_2=10^{10}~\si{\pascal}$, $\eta_1=R\eta_2$,
+$A_0=1~\si{\km}$, $\lambda=L_x$.
+
+
+
+
+
+
+
+%..........................................................
+\subsubsection{stress build-up inside an elastic inclusion in a viscous matrix (Beuchert \& Podlachikov}
+
+{\color{orange} fully incompressible}
+
+This is presented in Section 5.4 of \textcite{bepo10} (2010).
+The authors test their viscoelastic FEM model against the analytical solution 
+for stress built-up inside an elastic inclusion in a viscous matrix under pure shear. 
+
+\todo[inline]{include figure - not in paper}
+
+Note that the fluid in question is incompressible as shown by their Eq.~(3).
+
+An analytical solution applicable for the time-dependent stress evolution inside 
+a viscoelastic inclusion embedded in a viscous matrix can be derived:
+\[
+\tau_{xx} = -\frac{(a+1)^2 \left[-1+\exp -\frac{2\mu a t }{a^2+1}  \right]}{a} \dot\varepsilon^d_{xx}
+\]
+where $a$ is the aspect ratio of the inclusion and the matrix viscosity is assumed to be unity.
+
+For this equation to be applicable to our viscoelastic model, we prescribe a
+high viscosity inside the inclusion ($\eta_{inclusion}=10^5$) and thus obtain an 
+elastic response inside the inclusion. For the matrix, we apply a viscous
+rheology with viscosity $\eta_{matrix} =1$.
+
+\begin{center}
+\fbox{\includegraphics[width=17cm]{images/viscoelasticity/bepo10}}\\
+{\captionfont Taken from \textcite{bepo10}.
+Stress built-up inside an elliptical elastic inclusion with aspect ratios 
+$a =1,2,5$ embedded in a viscous matrix under constant pure shear
+loading. Comparison of the analytical solution 
+with the numerical solution obtained in their FEM model for different values 
+of Deborah number $De = 10^{-4},3\cdot10^{-4},10^{-3}$ 
+at non-dimensional deviatoric strain rate $\dot\varepsilon_{xx}^d=1$. 
+Time and deviatoric stress $\tau_{xx}$are non-dimensional.
+The test results show a good agreement of the numerical solution with the 
+analytical solution. For time $t\rightarrow \infty$, the solution for
+stress inside the elastic inclusion converges towards the solution for stress 
+inside a viscous inclusion (dashed horizontal line ‘viscous limit’).
+}
+\end{center}
+
+
+%..........................................................
+\subsubsection{Viscoelastic flow past a cylinder in a channel (Beuchert \& Podlachikov)}
+
+This is presented in Section 5.4 of \textcite{bepo10} (2010).
+
+We tested the flow code against a numerical benchmark for iso-viscous, 
+viscoelastic flow past a circular cylinder in a channel. Figure below shows
+the domain setup and boundary conditions for this benchmark. The radius of the circular 
+cylinder $r=1$ is half the domain height and the
+domain aspect ratio is $3:1$. 
+
+
+\begin{center}
+\fbox{\includegraphics[width=17cm]{images/viscoelasticity/bepo10a}}\\
+{\captionfont Taken from \textcite{bepo10}.
+Setup for the benchmark of viscous flow past circular cylinder in a channel. 
+The domain is symmetric about the horizontal axis and thus only the
+upper half of the channel is modelled.
+}
+\end{center}
+
+
+At the inflow and outflow boundaries, an established Poiseuille flow 
+$v_x = 3(R^2 –y^2 )/(2R^2)$ is imposed; $v_y=0$ at
+the sides. Both upper and lower boundaries are fixed in $y$-direction. We apply no-slip boundary conditions at the top and along the cylinder
+wall and free-slip (zero traction) conditions at the bottom (symmetry axis). For the inflow conditions on $\sigma$ , we use the analytical solution for
+simple shear of a Jaumann fluid, which is valid for Poiseuille flow. In that case, the Jaumann derivative equations are
+\begin{eqnarray}
+\tau_{xx}+2 De \omega \tau_{xy} &=& 0 \\
+\tau_{yy}+2 De \omega \tau_{xy} &=& 0 \\
+\tau_{xy}+2 De \omega (\tau_{yy}-\tau_{xx}) &=& 2 \mu \dot{\varepsilon}_{xy} \\
+\end{eqnarray}
+Given that $\dot\gamma = 2\dot\varepsilon_{xy}$ and $\omega = -1/2 \dot\gamma$ for simple shear, we obtain from the equation above
+\[
+\tau_{xy} = \frac{2 \mu \dot\varepsilon_{xy}}{1+4De^2\omega^2}
+= \frac{\mu \dot\gamma}{1+4De^2\omega^2}
+=\frac{\mu \dot\gamma}{1+2 De^2 \dot{\gamma}^2}
+\]
+and can then solve for $\tau_{xx}$ and $\tau_{yy}$ by substitution.
+The strain rate $\dot\gamma$ is given by $\partial v_x /\partial y$, 
+that is, by differentiating the inflow
+condition $v_x = 3(R^2 –y^2 )/(2R^2)$ 
+with respect to $y$, resulting in $\dot\gamma= -3y/R^2$ at the inflow boundary.
+
+The authors further measure the non-dimensional drag force $C_d$ exerted by the passing fluid on the cylinder wall and compare it with published values.
+
+
+
+\begin{center}
+\fbox{\includegraphics[width=17cm]{images/viscoelasticity/bepo10b}}\\
+{\captionfont Taken from \textcite{bepo10}.
+Non-dimensional deviatoric stresses $\tau$ at $De = 0$ and $De = 0.9$ 
+resulting from fluid flow past a cylinder in a channel. The benchmark is conducted
+on a regular, structured grid at resolution $600 \times 200$ nodes.
+}
+\end{center}
+
+
+
+%==================================================================================================
+%==================================================================================================
+%==================================================================================================
+\subsection{Numerical Benchmarks}
+
+%..........................................................
+\subsubsection{Bending of elastic slab (Gerya's book)}
+
+
+%----------------------------------------------------------------------------
+\subsection{Recovery of the original shape of an elastic slab - Gerya book}
+
+The sinking slab benchmark consists of a beam of elastic material which is placed 
+in a weak and viscous surrounding medium. The initially unstressed beam is attached to the left domain boundary through boundary conditions. A stress is then applied to the beam in the form of gravity. The applied gravity force results in the deformation of the beam through bending. After 20 kyr, the gravity field is turned off and the elastic properties of the beam will then force itself to its original position. The set-up of the benchmark is given in the following figure:
+
+\begin{center}
+\includegraphics[width=6cm]{images/viscoelasticity/poster_benchmark.png}\\
+\captionfont{Set-up of the benchmark from \cite{gery10}. The properties of the
+two materials are given on the left, together\\ with the initial configuration of the benchmark.}
+\end{center}
+
+The beam is surrounded by a low-density, low-viscosity and high shear modulus medium
+of which the specifications are given in  the following table.
+The boundary conditions of the domain consist of a no slip condition at
+the left boundary where the slab is attached and free slip boundary conditions along all other sides.
+The results are calculated on a grid with a resolution of 50x50 elements containing 64 randomly distributed markers at startup.
+The time step is set to $\delta t = 200yr$ (i.e. gravity is switched off after 100 time steps).
+
+\begin{center}
+\begin{tabular}{lll}
+\hline
+\textit{Material properties}& \textit{Elastic slab (fluid 1)}  & \textit{Surrounding medium (fluid 2)} \\
+\hline
+\hline
+Density         $\rho$ \     [kg/m$^{3}$]      & 4000                    & 1     \\
+Viscosity       $\eta$ \    [Pa$\cdot$ s]      & $10^{27}$               &   $10^{21}$     \\
+Shear modulus   $\mu $ \    [Pa]               & $10^{10}$               & $10^{20}$       \\
+Maxwell time $t_M$     \    [yr]               & 3.17Gyr                 &  $3.17\times10^{-7}$yr       \\
+eff. visc.      $\eta_{eff}$ \ [Pa$\cdot$s]    & 6.307199602192306e+19   &  9.999999984145105e+20      \\
+visco-elasticity factor $Z$      \ [-]         & 0.9999999369280039      &  1.5854895966744522e-09     \\
+\hline
+\end{tabular}
+\end{center}
+
+
+
+
+
+
+
+
+%..........................................................
+\subsubsection{Flexure of elastic plate (Choi et al) \label{sec:chtl13}}
+
+
+This benchmark is presented in \textcite{chtl13} (2013). 
+The setup is as follows:
+
+\begin{center}
+\includegraphics[width=9cm]{images/viscoelasticity/chtl13a}
+\includegraphics[width=7cm]{images/viscoelasticity/chtl13b}\\
+{\captionfont 
+Taken from \textcite{chtl13}. ``Effect of elastic compressibility on the prediction 
+of an elastic thin plate subject to an uplifting load. (a)
+Model setup for a finite length elastic layer subjected to a
+finite length buoyant load applied on the bottom. (b) Profiles
+of mean-subtracted surface topography.''}
+\end{center}
+
+\begin{center}
+\begin{tabular}{llll}
+\hline 
+\textit{Material properties}& \textit{elastic plate (1)}  & \textit{elastic block (2)} & \textit{viscous mantle (3)} \\
+\hline 
+\hline 
+Density         $\rho$       \ \si{\kg\per\cubic\meter} & 2700&1890 &2700 \\  
+Viscosity       $\eta$       \ \si{\pascal\second}      & $10^{35}$& $10^{35}$ & $10^{17}$ \\  
+Shear modulus   $\mu $       \ \si{\pascal}             & $30\cdot10^9$& $30\cdot10^9$&  $10^{50}$ \\
+Maxwell time    $t_M$        \ \si{\year}               & 10569930 &  10569930 & 3.1709791983764584e-41 \\  
+eff. visc.      $\eta_{eff}$ \ \si{\pascal\second}      & 4.73039776e+18& 4.73039776e+18&  1e+17\\ 
+\hline 
+\end{tabular} 
+\end{center}
+
+The value of $\eta_1=\eta_2=10^{35}$ for the elastic materials was obtained through personal communication. 
+The value of $\mu_3=10^{50}$ for the viscous material ensures that $\eta_{eff}=\eta_3$.
+Note that in the publication the authors test both compressible and incompressible 
+formulations, but we restrict ourselves to incompressible results since our code cannot handle compressible behavior. 
+I also use dt=5year.
+Gravity is not specified in the paper.
+
+The authors report a converged total relief of 306-308m.
+
+This benchmark requires either a sticky air layer (see Section~\ref{sss:stickyair})
+on top of the plate or a deformable mesh (ALE formulation, see Section~\ref{sss:ale}).
+
+
+
+%..........................................................
+\subsubsection{Elastic beam in viscous matrix - von Tscharner and Schmalholz}
+
+
+What follows is taken from \textcite{vosc15} (2015).
+
+This experiment first is a cylindrical elastic beam in a viscous matrix under gravity. 
+The model box has the dimensions of $10x0.25x10$. The elastic beam which is vertically 
+located in the middle of the model box has a thickness of $H=1$ and a length of $L=5$. 
+The viscosity is $\eta_m=1$ and $\eta_b=10^{13}$ for the matrix and the beam, respectively. 
+The elastic shear modulus is G m 5 10 10 and G b 5 10 3 for the matrix and beam, 
+respectively, and the density difference is $\rho_b-\rho_m=300$. These
+parameters provide a beam that is effectively elastic and a matrix that 
+is effectively viscous. All model dimensions and material parameters are given in 
+dimensionless numbers using the thickness of the beam H, the matrix viscosity and 
+the background strain rate as characteristic parameters. The
+boundary conditions are free slip for all boundaries. The results of this 
+simulation are shown in the figure below where the colors indicate the second 
+invariant of the stress tensor. The elastic beam is
+deflected downward under vertical gravity (Figure b). When the gravity is turned off, the beam
+deflects upward due to the stored elastic energy and recovers the original rectangular 
+shape which is stress free (Figure c). A similar test is given in Gerya's book [2010]. 
+The test shows the reversible elastic deformation. The elastic beam recovers its original rectangular shape and stress state when the applied load is removed.
+
+\begin{center}
+\includegraphics[width=14cm]{images/viscoelasticity/vosc15a}\\
+{\captionfont 
+Reversible deformation of an elastic beam in a viscous matrix under gravity. 
+(a) Unstressed initial configuration (gravity off). 
+(b) Deformation of the elastic beam under gravity. 
+(c) Gravity is turned off. (d) The elastic beam recovers the original rectangular 
+shape with zero stress. Colors indicate the second invariant of the stress 
+tensor $\tau_{II}$.}
+\end{center}
+
+
+
+%..........................................................
+\subsubsection{Elastic beam in viscous matrix - Keller, May, and Kaus}
+
+
+This benchmark comes from Appendix B of Keller et al (2013) \cite{kemk13}.
+
+The domain is $7.5\times5$km. A dominantly elastic beam is fixed to, and protrudes horizontally 
+from the left wall of the model box. 
+Surrounding the elastic beam is a viscous, but inelastic fluid. 
+All boundaries are free slip, except for the left wall, which is set to no slip in  
+order to keep the bending beam fixed to the wall. The beam has a higher density than the surrounding fluid and 
+thus will bend down elastically driven by gravity. After the beam has 
+accumulated some elastic strain through bending down, gravity is switched off. 
+If the stress evolution is implemented accurately, the elastic beam should now, 
+free from the pull of gravity, move upwards again and restore its initial position. 
+
+Material properties are as follows:
+\begin{itemize}
+\item beam: $\rho=1500$, $\eta=10^{24}$, $\mu=10^{10}$
+\item fluid: $\rho=1000$, $\eta=10^{18}$, $\mu=10^{11}$
+\end{itemize}
+
+This choice of parameters leads to a Maxwell time 
+$t_m = 0.32$ yr for the background fluid and Maxwell times of  
+$t_m = 3.2$ Myr for the beam, meaning that the deformation in this benchmark problem, 
+which occurs on a timescale of thousands to a million years, 
+will lead to dominantly viscous deformation in the fluid, 
+and dominantly elastic behaviour of the beam. 
+
+Keller et al set the numerical resolution to $300\times200$ elements, 
+with 16 markers per elements for stress advection. Such a resolution is  
+not feasible with our simple python implementation so the resolution is
+then set to $96\times64$. 
+
+The following plot comes from \cite{kemk13}:
+\begin{center}
+\includegraphics[width=14cm]{images/viscoelasticity/kemk13}
+\end{center}
+
+The elastic timestep is set to $\delta t_e=100$yr and the tectonic timestep is set to the same value.
+This yields $\eta_{eff}=10^{18}$ in the fluid, and $\eta_{eff}\simeq 3.15\times 10^{19}$.
+After 50kyr, the gravity ($|\vec{g}|=10$) is switched off and the model is ran for another 
+500kyr.
+
+
+%..........................................................
+\subsubsection{Boxcar load on an incompressible viscoelastic lithosphere - Wu (1992)}
+
+{\color{orange} fully incompressible}
+
+This originates in \textcite{wu92} (1992).
+The domain is $2500~\si{\km}$ long and it is either 
+a halfspace in the vertical direction 
+or a channel of $100~\si{\km}$ width. 
+The material is characterised by 
+$\rho=3400~\si{\kg\per\cubic\meter}$, 
+Young's modulus $E=\SI{1.13e11}{\pascal}$ 
+and a Poisson ratio $\nu=0.5$ with $|\vec{g}|=9.82~\si{\meter\per\square\second}$.
+The author explores the effect of a linear viscous mantle vs dislocation creep.
+Time evolution/relaxation figures are available.
+
+\begin{center}
+\includegraphics[width=12cm]{images/viscoelasticity/wu92}\\
+{\captionfont The Heaviside responses of linear viscoelastic earth models calculated 
+with the finite element method (lines) are compared to those computed using the conventional 
+transform method (symbols). For a $100~\si{\km}$ thick channel.}
+\end{center}
+
+also explore Wu \& Peltier \cite{wupe82} (1982).
+
+
+%..........................................................
+\subsubsection{Boxcar load on an incompressible viscoelastic lithosphere - Hampel et al. (2019)}
+
+
+\textcite{halk19} (2019)
+
+{\color{orange} fully incompressible}
+
+\begin{center}
+\includegraphics[width=12cm]{images/viscoelasticity/halk19}\\
+{\captionfont 
+a) Viscoelastic Haskell-type half-space models. b) Viscoelastic  half-space models used for modelling loading and subsequent
+unloading (after Wu, 1992; his Fig. 2). Both model types are meshed with 25x25 km large linear, rectangular plane strain elements suitable for incompressible materials. 
+The same mesh and element type are used in all model runs. All viscoelastic half-space models have the same boundary conditions (indicated by black triangles): the model bottom is fixed in both the vertical and horizontal direction while the model sides are fixed in the horizontal direction. In models with an elastic foundation (Table 1), it is applied to the model surface. Abbreviations for model parameters are $\rho$ density, $E$ Young's modulus, $\nu$ Poisson's ratio, $\eta$ viscosity and $g$ acceleration due to gravity. Following Wu (1992), we use a value of $g = 9.82 m/s^2$ in the viscoelastic
+half-space models. 
+In all models, the load is applied (and removed, if applicable) instantaneously. The magnitude of the applied load is 15 MPa, which is equivalent to about 1.5 km of ice. The left end of
+the load coincides with the origin of the coordinate system at the beginning of the model run. See text for details.
+}
+\end{center}
+
+
+%..........................................................
+\subsubsection{Kusznir and Bott (1977) experiment}
+
+The domain is a $\SI{2000}{\km}\times\SI{80}{\km}$ Cartesian box. 
+However since there is a vertical axis of symmetry it is then reduced to 
+$\SI{1000}{\km}\times\SI{80}{\km}$.
+It consists of two layers: the top layer is $\SI{20}{\km}$ thick and is 
+purely elastic characterised by a Young's modulus $E=\SI{1.7e11}{\newton\per\square\meter}$ and a Poisson ratio $\nu=0.25$.
+The lithosphere below is then $\SI{60}{\km}$ thick and is characterised by an elasto-viscous rheology. The elastic parameters are identical to the upper layer while the viscosity is set to $\eta_0=\SI{1e23}{\pascal\second}$.
+
+We arbitrarily design the right side as being the axis of symmetry and the 
+boundary condition on that side are then free slip. On the left side a uniform 
+horizontal stress $T$ is applied at time t=0.
+The viscous drag of the asthenosphere below is neglected and the authors do not 
+mention the bottom of the domain deforming so 
+we'll also impose free slip boundary conditions at the bottom.
+
+Fig.~4 of the paper shows the vertical displacement of the upper layer so we will use 
+a free surface boundary condition at the top. 
+The model is ran for $\SI{1}{\mega\year}$.
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (15,4); %background grid
+\draw[very thick] (1,1)--(13.5,1)--(13.5,3)--(1,3)--cycle;  
+\draw[very thick] (1,2.5)--(13.5,2.5);  
+\draw[<->] (1,0.7)--(13.5,0.7);
+\draw[<->] (14,1)--(14,3);
+\node[] at (7,0.45) {$\SI{1000}{\km}$};
+\node[rotate=90] at (14.25,2) {$\SI{80}{\km}$};
+\node[] at (6,2.73) {$E,\nu$};
+\node[] at (6,1.7) {$E,\nu,\eta_0$};
+\draw[->] (0.5,3)--(0.95,3);
+\draw[->] (0.5,2.5)--(0.95,2.5);
+\draw[->] (0.5,2)--(0.95,2);
+\draw[->] (0.5,1.5)--(0.95,1.5);
+\draw[->] (0.5,1)--(0.95,1);
+\node[] at (0.2,2) {$T$};
+
+\filldraw[black] (1,2.75) circle (2pt);
+\filldraw[black] (1,2.1) circle (2pt);
+
+\filldraw[black] (1.25,2.75) circle (2pt);
+\filldraw[black] (1.25,2.1) circle (2pt);
+
+\filldraw[black] (1.85,2.75) circle (2pt);
+\filldraw[black] (1.85,2.1) circle (2pt);
+
+\filldraw[black] (2.5,2.75) circle (2pt);
+\filldraw[black] (2.5,2.1) circle (2pt);
+
+\filldraw[black] (13.5,2.75) circle (2pt);
+\filldraw[black] (13.5,2.1) circle (2pt);
+\end{tikzpicture}
+\end{center}
+
+
+After a thorough read of the paper, I have noticed quite a few problems:
+\begin{itemize}
+\item the paper is old and has been digitized but the figures are missing a lot of lines/shades/points ... this could be remedied by finding the article in a library.
+\item in the intro it is stated: "Here we investigate the response of a lithosphere divided into upper elastic and lower uniform visco-elastic layers to simple boundary force and body force systems." The authors later talk about 'isostatic forces' opposing flexure. This means that buoyancy forces should be taken into account but there is no information about densities or gravity values!
+\item little uncertainty about boundary conditions. is it free slip or no-slip on the right side ? Looking at fig 4, it looks like the vertical displacement is zero at x=1000km?
+\item a Maxwell elasto-viscous rheology is used but this is only mentioned in the Appendix
+\item the dimensions of the thinned or thickened areas is simply not mentioned. 
+\item Fig~1 shows triangular elements. No mention is made of resolution, type of element, ndofs, resolution tests, any numerical detail whatsoever. Given the age of the paper, I would guess $P_1$
+elements.
+\item In the appendix they equate the viscous strain rate to $\sigma/4\eta$. Why 4 ?
+\item it is also not clear whether the domain is ALE or fully Lagrangian: does it shorten?
+\item the value of $T$ is never specified!
+\item the paper was published 45 years ago, it is extremely unlikely any of the two authors is still available 
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=16cm]{images/viscoelasticity/kubo77}\\
+{\captionfont Taken from \textcite{kubo77}. Measurement locations are indicated on 
+the setup figure above. probably should be reversed}
+\end{center}
+
+
+
+
+
+
+%..........................................................
+\subsubsection{Parallel-Plate Viscometer Problem - SNAC manual \label{v-e-snac}}
+
+A parallel-plate viscometer problem is simulated, in which viscoelastic material is squeezed between two
+parallel plates. The plates are moving at a constant velocity, $v_0$. Each plate has the length of $2L$ and 
+is at a distance $2h$ from the other. No slip is assumed between the material and the plates. The approximate
+analytical solution is given in the book by \textcite{jaeg69} (1969).
+
+Model Setup: $L = 10~\si{\meter}$, $h=5~\si{\meter}$, viscosity $\eta=10^9~\si{\pascal\second}$, 
+bulk modulus $K= 1.5~\si{\giga\pascal}$, shear modulus $\mu = 500~\si{\mega\pascal}$,
+$v_0 = 10^{-4}~\si{\meter\per\second}$, $dt = 1~\si{\second}$ (results compared after 500 time steps),
+mesh size: $20\times 10~\si{\meter}$, each element is a $1~\si{\meter}$ cube.
+
+Due to the assumption of the original problem setup, artificial forces should be added to left and right
+surfaces.
+
+\begin{center}
+\includegraphics[width=8cm]{images/viscoelasticity/snac_5}
+\includegraphics[width=8cm]{images/viscoelasticity/snac_6}\\
+{\captionfont 
+Left: The initial mesh (blue) with the velocity boundary condition (red arrows);
+Right: The second invariant of stress and velocities plotted on the deformed mesh. Colored arrows are
+for SNAC’s solution, black ones for the analytic solution.}
+\end{center}
+
+$K=\lambda + \frac23 \mu$ so $\lambda=\frac{3500}{3}MPa$ ?
+
+From wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Lame_parameters}}
+\[
+\nu = \frac{3K-2\mu}{2(3K+\mu)} 
+= \frac{4500-2*500}{2(4500+500)}
+= \frac{3500}{10000}
+= 0.35
+\]
+so we find that the material is {\color{orange} compressible $\nu=0.35$}
+
+\[
+E=\frac{9K\mu}{3K+\mu} 
+=\frac{9*1500*500 MPa^2}{4500+500 MPa}
+=\frac{9*1500*500}{5000} MPa
+= 1350Mpa
+\]
+
+
+%..........................................................
+\subsubsection{Relaxation after extention - Hassani syllabus}
+
+
+{\color{orange} compressible $\nu=0.25$}
+
+Un essai de relaxation consiste à imposer à un instant donné une déformation que 
+l’on maintient constante par la suite. On observe alors comment évolue la contrainte au cours du temps.
+
+The setup of the experiment is shown in the following figure:
+
+\begin{center}
+\includegraphics[width=9cm]{images/viscoelasticity/hassani_1}
+\end{center}
+
+The total duration of the experiment is $T=\SI{5}{\year}\simeq \SI{15.75e7}{\second}$.
+The duration of the loading is $T/10=\SI{6}{months}$ while the duration 
+of the subsequent relaxation is then $9T/10\simeq 4.5~\si{\year}$.
+
+The loading velocity is $v=\SI{1}{\mm\per\year}\simeq \SI{3.17e-11}{\meter\per\second}$.
+The sample has size $L\times L/2 = 20\times10\si{cm}$ and 
+the strain rate is then $v/L \simeq \SI{1.5e-10}{\per\second}$.
+Young's modulus is set to \SI{1e11}{\pascal} and the Poisson ratio is 0.25, i.e.
+$\mu=40~\si{GPa}$. The viscosity is set to $\eta_0=\SI{1e18}{\pascal\second}$.
+The Maxwell time is then $t_M=\eta/\mu=0.8~\si{\year}$, which is also the time it takes 
+to reduce the maximum stress by a factor $e$.
+
+\begin{center}
+\includegraphics[width=6cm]{images/viscoelasticity/hassani_2}
+\end{center}
+
+
+
