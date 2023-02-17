@@ -16,7 +16,7 @@ def rho(rho0,alphaT,T,T0):
     return val
 
 def eta(T,x,y,eta0):
-    return eta0*exp(T)
+    return eta0 #*np.exp(T)
 
 #------------------------------------------------------------------------------
 # velocity shape functions
@@ -28,7 +28,7 @@ def NNV(r,s,order):
        N_1=0.25*(1.+r)*(1.-s)
        N_2=0.25*(1.-r)*(1.+s)
        N_3=0.25*(1.+r)*(1.+s)
-       return N_0,N_1,N_2,N_3
+       return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
     if order==2:
        N_0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
        N_1=    (1.-r**2) * 0.5*s*(s-1.)
@@ -39,7 +39,7 @@ def NNV(r,s,order):
        N_6= 0.5*r*(r-1.) * 0.5*s*(s+1.)
        N_7=    (1.-r**2) * 0.5*s*(s+1.)
        N_8= 0.5*r*(r+1.) * 0.5*s*(s+1.)
-       return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8
+       return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
     if order==3:
        N1r=(-1    +r +9*r**2 - 9*r**3)/16
        N2r=(+9 -27*r -9*r**2 +27*r**3)/16
@@ -65,8 +65,8 @@ def NNV(r,s,order):
        N_13= N2r*N4t 
        N_14= N3r*N4t 
        N_15= N4r*N4t 
-       return N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
-              N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15
+       return np.array([N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
+              N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15],dtype=np.float64)
     if order==4:
        N1r=(    r -   r**2 -4*r**3 + 4*r**4)/6
        N2r=( -8*r +16*r**2 +8*r**3 -16*r**4)/6
@@ -103,11 +103,11 @@ def NNV(r,s,order):
        N_22= N3r*N5s
        N_23= N4r*N5s
        N_24= N5r*N5s
-       return N_00,N_01,N_02,N_03,N_04,\
-              N_05,N_06,N_07,N_08,N_09,\
-              N_10,N_11,N_12,N_13,N_14,\
-              N_15,N_16,N_17,N_18,N_19,\
-              N_20,N_21,N_22,N_23,N_24
+       return np.array([N_00,N_01,N_02,N_03,N_04,\
+                        N_05,N_06,N_07,N_08,N_09,\
+                        N_10,N_11,N_12,N_13,N_14,\
+                        N_15,N_16,N_17,N_18,N_19,\
+                        N_20,N_21,N_22,N_23,N_24],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 # velocity shape functions derivatives
@@ -119,7 +119,7 @@ def dNNVdr(r,s,order):
        dNdr_1=+0.25*(1.-s) 
        dNdr_2=-0.25*(1.+s) 
        dNdr_3=+0.25*(1.+s) 
-       return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+       return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3],dtype=np.float64)
     if order==2:
        dNdr_0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
        dNdr_1=       (-2.*r) * 0.5*s*(s-1)
@@ -130,7 +130,7 @@ def dNNVdr(r,s,order):
        dNdr_6= 0.5*(2.*r-1.) * 0.5*s*(s+1)
        dNdr_7=       (-2.*r) * 0.5*s*(s+1)
        dNdr_8= 0.5*(2.*r+1.) * 0.5*s*(s+1)
-       return dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8
+       return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8],dtype=np.float64)
     if order==3:
        dN1rdr=( +1 +18*r -27*r**2)/16
        dN2rdr=(-27 -18*r +81*r**2)/16
@@ -156,8 +156,8 @@ def dNNVdr(r,s,order):
        dNdr_13= dN2rdr* N4s 
        dNdr_14= dN3rdr* N4s 
        dNdr_15= dN4rdr* N4s 
-       return dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,dNdr_05,dNdr_06,dNdr_07,\
-              dNdr_08,dNdr_09,dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,dNdr_15
+       return np.array([dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,dNdr_05,dNdr_06,dNdr_07,\
+                        dNdr_08,dNdr_09,dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,dNdr_15],dtype=np.float64)
     if order==4:
        dN1dr=(    1 - 2*r -12*r**2 +16*r**3)/6
        dN2dr=(   -8 +32*r +24*r**2 -64*r**3)/6
@@ -194,11 +194,11 @@ def dNNVdr(r,s,order):
        dNdr_22= dN3dr*N5s
        dNdr_23= dN4dr*N5s
        dNdr_24= dN5dr*N5s
-       return dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,\
-              dNdr_05,dNdr_06,dNdr_07,dNdr_08,dNdr_09,\
-              dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,\
-              dNdr_15,dNdr_16,dNdr_17,dNdr_18,dNdr_19,\
-              dNdr_20,dNdr_21,dNdr_22,dNdr_23,dNdr_24
+       return np.array([dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,\
+                        dNdr_05,dNdr_06,dNdr_07,dNdr_08,dNdr_09,\
+                        dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,\
+                        dNdr_15,dNdr_16,dNdr_17,dNdr_18,dNdr_19,\
+                        dNdr_20,dNdr_21,dNdr_22,dNdr_23,dNdr_24],dtype=np.float64)
 
 def dNNVds(r,s,order):
     if order==1:
@@ -206,7 +206,7 @@ def dNNVds(r,s,order):
        dNds_1=-0.25*(1.+r)
        dNds_2=+0.25*(1.-r)
        dNds_3=+0.25*(1.+r)
-       return dNds_0,dNds_1,dNds_2,dNds_3
+       return np.array([dNds_0,dNds_1,dNds_2,dNds_3],dtype=np.float64)
     if order==2:
        dNds_0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
        dNds_1=    (1.-r**2) * 0.5*(2.*s-1.)
@@ -217,7 +217,7 @@ def dNNVds(r,s,order):
        dNds_6= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
        dNds_7=    (1.-r**2) * 0.5*(2.*s+1.)
        dNds_8= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
-       return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8
+       return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8],dtype=np.float64)
     if order==3:
        N1r=(-1    +r +9*r**2 - 9*r**3)/16
        N2r=(+9 -27*r -9*r**2 +27*r**3)/16
@@ -243,8 +243,8 @@ def dNNVds(r,s,order):
        dNds_13= N2r*dN4sds 
        dNds_14= N3r*dN4sds 
        dNds_15= N4r*dN4sds
-       return dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,dNds_05,dNds_06,dNds_07,\
-              dNds_08,dNds_09,dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,dNds_15
+       return np.array([dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,dNds_05,dNds_06,dNds_07,\
+                        dNds_08,dNds_09,dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,dNds_15],dtype=np.float64)
     if order==4:
        N1r=(    r -   r**2 -4*r**3 + 4*r**4)/6
        N2r=( -8*r +16*r**2 +8*r**3 -16*r**4)/6
@@ -281,11 +281,11 @@ def dNNVds(r,s,order):
        dNds_22= N3r*dN5ds
        dNds_23= N4r*dN5ds
        dNds_24= N5r*dN5ds
-       return dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,\
-              dNds_05,dNds_06,dNds_07,dNds_08,dNds_09,\
-              dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,\
-              dNds_15,dNds_16,dNds_17,dNds_18,dNds_19,\
-              dNds_20,dNds_21,dNds_22,dNds_23,dNds_24
+       return np.array([dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,\
+                        dNds_05,dNds_06,dNds_07,dNds_08,dNds_09,\
+                        dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,\
+                        dNds_15,dNds_16,dNds_17,dNds_18,dNds_19,\
+                        dNds_20,dNds_21,dNds_22,dNds_23,dNds_24],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 # pressure shape functions 
@@ -293,14 +293,13 @@ def dNNVds(r,s,order):
 
 def NNP(r,s,order):
     if order==1:
-       N_1=1.
-       return N_1
+       return np.array([1.],dtype=np.float64)
     if order==2:
        N_0=0.25*(1-r)*(1-s)
        N_1=0.25*(1+r)*(1-s)
        N_2=0.25*(1-r)*(1+s)
        N_3=0.25*(1+r)*(1+s)
-       return N_0,N_1,N_2,N_3
+       return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
     if order==3:
        N_0= 0.5*r*(r-1) * 0.5*s*(s-1)
        N_1=    (1-r**2) * 0.5*s*(s-1)
@@ -311,7 +310,7 @@ def NNP(r,s,order):
        N_6= 0.5*r*(r-1) * 0.5*s*(s+1)
        N_7=    (1-r**2) * 0.5*s*(s+1)
        N_8= 0.5*r*(r+1) * 0.5*s*(s+1)
-       return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8
+       return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
     if order==4:
        N1r=(-1    +r +9*r**2 - 9*r**3)/16
        N2r=(+9 -27*r -9*r**2 +27*r**3)/16
@@ -337,8 +336,8 @@ def NNP(r,s,order):
        N_13= N2r*N4t 
        N_14= N3r*N4t 
        N_15= N4r*N4t 
-       return N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
-              N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15
+       return np.array([N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
+                        N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 # constants
@@ -668,7 +667,7 @@ print("build iconP: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
 for i in range(0,NV):
@@ -692,7 +691,7 @@ print("velocity b.c.: %.3f s" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
-bc_fixT=np.zeros(NfemT,dtype=np.bool)  
+bc_fixT=np.zeros(NfemT,dtype=bool)  
 bc_valT=np.zeros(NfemT,dtype=np.float64) 
 
 for i in range(0,NV):
@@ -1110,6 +1109,8 @@ for istep in range(0,nstep):
                 vel[0,0]=0.
                 vel[0,1]=0.
                 Tq=0
+                xq=0.
+                yq=0.
                 exxq=0.
                 eyyq=0.
                 exyq=0.
@@ -1121,6 +1122,8 @@ for istep in range(0,nstep):
                     Tq+=NNNV[k]*T[iconV[k,iel]]
                     dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                     dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                    xq += NNNV[k]*xV[iconV[k,iel]]
+                    yq += NNNV[k]*yV[iconV[k,iel]]
                     exxq += dNNNVdx[k]*u[iconV[k,iel]]
                     eyyq += dNNNVdy[k]*v[iconV[k,iel]]
                     exyq += 0.5*(dNNNVdy[k]*u[iconV[k,iel]]+dNNNVdx[k]*v[iconV[k,iel]])
@@ -1140,8 +1143,8 @@ for istep in range(0,nstep):
                 Ka+=N_mat.dot(vel.dot(B_mat))*rho0*hcapa*weightq*jcob
 
                 if EBA:
-                   b_el[:]+=N_mat[:,0]*weightq*jcob* 2*eta(Tq,eta0)*(exxq**2+eyyq**2+2*exyq**2)      # viscous dissipation
-                   b_el[:]+=N_mat[:,0]*weightq*jcob* alphaT*Tq*(vel[0,0]*dpdxq+vel[0,1]*dpdyq)  # adiabatic heating
+                   b_el[:]+=N_mat[:,0]*weightq*jcob* 2*eta(Tq,xq,yq,eta0)*(exxq**2+eyyq**2+2*exyq**2) #viscous dissipation
+                   b_el[:]+=N_mat[:,0]*weightq*jcob* alphaT*Tq*(vel[0,0]*dpdxq+vel[0,1]*dpdyq)  #adiabatic heating
 
             #end for
         #end for
@@ -1430,7 +1433,7 @@ for istep in range(0,nstep):
        #--
        vtufile.write("<DataArray type='Float32' Name='shear heating (2*eta*e)' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%.15f \n" % (2*eta(T[i],eta0)*np.sqrt(exx_n[i]**2+eyy_n[i]**2+exy_n[i]**2)))
+           vtufile.write("%.15f \n" % (2*eta(T[i],xV[i],yV[i],eta0)*np.sqrt(exx_n[i]**2+eyy_n[i]**2+exy_n[i]**2)))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='adiab heating (linearised)' Format='ascii'> \n")
