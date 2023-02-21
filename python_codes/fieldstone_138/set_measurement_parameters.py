@@ -2,6 +2,20 @@
 #TODO: clean '' stuf around options
       
 def set_measurement_parameters(rDEM,sDEM,site,path,ho):
+
+   npath=0
+   zpath_height=0
+   Lx=0
+   Ly=0
+   Lz=0
+   nelx=0
+   nely=0
+   nelz=0
+   xllcorner=0
+   yllcorner=0
+   pathfile='nope_error'
+   topofile='nope_error'
+   error=False
    
    #----------------------------------------   
    if site==1:        #age:1892,flank:SF
@@ -121,7 +135,8 @@ def set_measurement_parameters(rDEM,sDEM,site,path,ho):
          xllcorner=501648.81984712           
          yllcorner=4171038.3580075
       else:
-         exit("unknown rDEM/sDEM combination for site 1")
+         error=True
+         print("unknown rDEM/sDEM combination for site 1")
 
    #----------------------------------------   
    elif (site==2 or site==5) : #1983,SF
@@ -209,7 +224,9 @@ def set_measurement_parameters(rDEM,sDEM,site,path,ho):
          nelz=10
          xllcorner=507026.44188544
          yllcorner=4188522.9789642
-      if (rDEM==5): sys.exit( "site 3 is not on the 5x5 DEM" )
+      if (rDEM==5):
+         error=True
+         print("site 3 is not on the 5x5 DEM")
 
    #----------------------------------------   
    elif (site==4): #2002,NEF
@@ -345,8 +362,7 @@ def set_measurement_parameters(rDEM,sDEM,site,path,ho):
    
    
    #----------------------------------------   
-   if (site==1):
-      if (path==1 and ho==1):
+   if (site==1 and path==1 and ho==1):
          pathfile='sites/1-1-1.txt'
          print('reading from 1-1-1')
          zpath_height=1
@@ -538,7 +554,8 @@ def set_measurement_parameters(rDEM,sDEM,site,path,ho):
       npath=147
       zpath_height=1
    else:
-      exit('unknown site in set_measurement_parameters')
+      error=True
+      print('unknown site in set_measurement_parameters')
 
    return Lx,Ly,Lz,nelx,nely,nelz,xllcorner,yllcorner,npath,\
-          zpath_height,pathfile,topofile
+          zpath_height,pathfile,topofile,error
