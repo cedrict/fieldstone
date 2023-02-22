@@ -15,41 +15,70 @@ ndim=2       # number of space dimensions
 m=4          # number of nodes making up an element
 ndofT=1
 
-Lx=25e3
-Ly=660e3
+#################################################################
 
-h_seds=1e3
-h_crust=7e3
-h_lith=22e3
-h_mantle=Ly-h_seds-h_crust-h_lith
+test=0
 
-nelx=3
-nely=int(Ly/1000)
+if test==0:
+   Lx=5e3
+   Ly=660e3
+   h_seds=1e3
+   h_crust=7e3
+   h_lith=22e3
+   h_mantle=Ly-h_seds-h_crust-h_lith
+   nelx=2
+   nely=int(Ly/1000)
+   bc_top='dirichlet'
+   bc_bottom='neumann'
+   flux_top=0
+   flux_bottom=0.03
+   T_top=0+273
+   T_moho=550+273
+   T_lith=1250+273
+   T_bottom=1500+273
+   q_bottom=0.03
+   nstep=1000
+   tfinal=20e6*year
+   every=10
+   Ttarget=1250+273
+
+if test==1: # T prescribed top and bottom
+   Lx=5e3
+   Ly=100e3
+   nelx=2
+   nely=20
+   bc_top='dirichlet'
+   bc_bottom='dirichlet'
+   T_top=0+273
+   T_bottom=100+273
+   nstep=1000
+   tfinal=200e6*year
+   every=100
+
+if test==2: # T prescribed at top, flux at bottom
+   Lx=5e3
+   Ly=100e3
+   nelx=2
+   nely=25
+   bc_top='dirichlet'
+   bc_bottom='neumann'
+   T_top=0+273
+   nstep=5000
+   tfinal=200e6*year
+   every=100
+   q_bottom=0.03
+
+#################################################################
+
 nel=nelx*nely
-
 nnx=nelx+1
 nny=nely+1
 NV=nnx*nny
 NfemT=NV
+hx=Lx/nelx
+hy=Ly/nely
 
-bc_top='dirichlet'
-bc_bottom='dirichlet'
-
-flux_top=0
-flux_bottom=0.03
-
-T_top=0+273
-T_bottom=1500+273
-T_moho=550+273
-T_lith=1250+273
-
-nstep=1
-
-tfinal=20e6*year
-
-print(nelx,nely)
-
-dt=1e3*year
+depthfile=open('geotherm_depth.ascii',"w")
 
 #################################################################
 # grid point setup
@@ -83,84 +112,107 @@ for j in range(0, nely):
         icon[3, counter] = i + (j + 1) * (nelx + 1)
         counter += 1
 
-# for iel in range (0,nel):
-#     print ("iel=",iel)
-#     print ("node 1",icon[0,iel],"at pos.",x[icon[0,iel]], y[icon[0,iel]])
-#     print ("node 2",icon[1,iel],"at pos.",x[icon[1,iel]], y[icon[1,iel]])
-#     print ("node 3",icon[2,iel],"at pos.",x[icon[2,iel]], y[icon[2,iel]])
-#     print ("node 4",icon[3,iel],"at pos.",x[icon[3,iel]], y[icon[3,iel]])
-
 print("setup: connectivity: %.3f s" % (timing.time() - start))
 
 #####################################################################
 # define temperature boundary conditions
 #####################################################################
-
-print("defining temperature boundary conditions")
+start = timing.time()
 
 bc_fixT=np.zeros(NfemT,dtype=np.bool)
 bc_valT=np.zeros(NfemT,dtype=np.float64)
 
 for i in range(0,NV):
-    if y[i]/Ly<eps:
-       bc_fixT[i]=True ; bc_valT[i]=T_bottom
+    if bc_bottom=='dirichlet':
+       if y[i]/Ly<eps:
+          bc_fixT[i]=True ; bc_valT[i]=T_bottom
     if y[i]/Ly>(1-eps):
        bc_fixT[i]=True ; bc_valT[i]=T_top
 #end for
 
+print("setup: define boundary conditions: %.3f s" % (timing.time() - start))
+
 #####################################################################
 # initial temperature
 #####################################################################
+start = timing.time()
 
 T = np.zeros(NV,dtype=np.float64)
 T_prev = np.zeros(NV,dtype=np.float64)
 
-for i in range(0,NV):
- 
-    if y[i]>=Ly-(h_seds+h_crust):
-       T[i]=(T_moho-T_top)/(h_seds+h_crust)*(Ly-y[i])+T_top
-    elif y[i]>Ly-(h_seds+h_crust+h_lith):
-       T[i]=(T_lith-T_moho)/h_lith*(Ly-h_seds-h_crust-y[i])+T_moho
-    else:
-       T[i]=(T_bottom-T_lith)/h_mantle*(h_mantle-y[i])+T_lith
-#end for
+if test==0:
+   for i in range(0,NV):
+       if y[i]>=Ly-(h_seds+h_crust):
+          T[i]=(T_moho-T_top)/(h_seds+h_crust)*(Ly-y[i])+T_top
+       elif y[i]>Ly-(h_seds+h_crust+h_lith):
+          T[i]=(T_lith-T_moho)/h_lith*(Ly-h_seds-h_crust-y[i])+T_moho
+       else:
+          T[i]=(T_bottom-T_lith)/h_mantle*(h_mantle-y[i])+T_lith
+   #end for
 
-T_prev[:]=T[:]
+if test==1 or test==2:
+   T[:]=T_top
 
 np.savetxt('temperature_init.ascii',np.array([x,y,T-273]).T,header='# x,y,T')
 
+print("setup: define initial temperature: %.3f s" % (timing.time() - start))
 
 #####################################################################
 # geometry/layering
 #####################################################################
+start = timing.time()
 
 hcond = np.zeros(nel,dtype=np.float64)
 hcapa = np.zeros(nel,dtype=np.float64)
 rho   = np.zeros(nel,dtype=np.float64)
 kappa = np.zeros(nel,dtype=np.float64)
 
-for iel in range(0,nel):
-    xc=np.sum(x[icon[:,iel]])*0.25
-    yc=np.sum(y[icon[:,iel]])*0.25
-    if yc>Ly-h_seds:
-       hcond[iel]=2.25
-       hcapa[iel]=750
-       rho[iel]=2700
-    elif yc>Ly-(h_seds+h_crust):
-       hcond[iel]=2.25
-       hcapa[iel]=750
-       rho[iel]=3000
-    elif yc>Ly-(h_seds+h_crust+h_lith):
-       hcond[iel]=2.25
-       hcapa[iel]=1250
-       rho[iel]=3370
-    else:
-       hcond[iel]=52
-       hcapa[iel]=1250
-       rho[iel]=3370
+if test==0:
+   for iel in range(0,nel):
+       xc=np.sum(x[icon[:,iel]])*0.25
+       yc=np.sum(y[icon[:,iel]])*0.25
+       if yc>Ly-h_seds:
+          hcond[iel]=2.25
+          hcapa[iel]=750
+          rho[iel]=2700
+       elif yc>Ly-(h_seds+h_crust):
+          hcond[iel]=2.25
+          hcapa[iel]=750
+          rho[iel]=3000
+       elif yc>Ly-(h_seds+h_crust+h_lith):
+          hcond[iel]=2.25
+          hcapa[iel]=1250
+          rho[iel]=3370
+       else:
+          hcond[iel]=52
+          hcapa[iel]=1250
+          rho[iel]=3370
+
+if test==1:
+   hcond[:]=2.5
+   hcapa[:]=1000
+   rho[:]=3000
+
+if test==2:
+   hcond[:]=50
+   hcapa[:]=1000
+   rho[:]=3000
+
+
 
 kappa[:]=hcond[:]/rho[:]/hcapa[:]
+    
+print("     -> kappa (m,M) %.4e %.4e " %(np.min(kappa),np.max(kappa)))
 
+print("setup: elemental material properties: %.3f s" % (timing.time() - start))
+
+#####################################################################
+# compute time step
+#####################################################################
+
+dt=min(0.5*hy**2/max(kappa),1e5*year)
+
+print('time step:',dt/year,' yr')
 
 #==================================================================================================
 #==================================================================================================
@@ -171,19 +223,23 @@ kappa[:]=hcond[:]/rho[:]/hcapa[:]
 time=0.
 
 for istep in range(0,nstep):
-    print("-----------------------------")
-    print("istep= ", istep)
-    print("-----------------------------")
+
+    time+=dt
+
+    print("-------------------------------------")
+    print("istep= ", istep, 'time=',time/year/1e6,'Myr')
+    print("-------------------------------------")
+
+    T_prev[:]=T[:]
 
     #################################################################
     # build temperature matrix
     #################################################################
-
-    print("building temperature matrix and rhs")
+    start = timing.time()
 
     A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
     rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
-    B_mat=np.zeros((2,ndofT*m),dtype=np.float64)     # gradient matrix B 
+    B_mat = np.zeros((2,ndofT*m),dtype=np.float64)   # gradient matrix B 
     N_mat = np.zeros((m,1),dtype=np.float64)         # shape functions
     Tvect = np.zeros(m,dtype=np.float64)   
     dNdr=np.zeros(m,dtype=np.float64)  
@@ -208,7 +264,7 @@ for istep in range(0,nstep):
                 # position & weight of quad. point
                 rq=iq/sqrt3
                 sq=jq/sqrt3
-                wq=1.*1.
+                weightq=1.*1.
 
                 # calculate shape functions
                 N_mat[0,0]=0.25*(1.-rq)*(1.-sq)
@@ -230,11 +286,7 @@ for istep in range(0,nstep):
                     jcb[1,0]+=dNds[k]*x[icon[k,iel]]
                     jcb[1,1]+=dNds[k]*y[icon[k,iel]]
                 #end for
-
-                # calculate the determinant of the jacobian
                 jcob=np.linalg.det(jcb)
-
-                # calculate inverse of the jacobian matrix
                 jcbi=np.linalg.inv(jcb)
 
                 # compute dNdx & dNdy
@@ -246,14 +298,18 @@ for istep in range(0,nstep):
                 #end for
 
                 # compute mass matrix
-                MM=N_mat.dot(N_mat.T)*rho[iel]*hcapa[iel]*wq*jcob
+                MM=N_mat.dot(N_mat.T)*rho[iel]*hcapa[iel]*weightq*jcob
 
                 # compute diffusion matrix
-                Kd=B_mat.T.dot(B_mat)*hcond[iel]*wq*jcob
+                Kd=B_mat.T.dot(B_mat)*hcond[iel]*weightq*jcob
 
-                a_el=MM+(Kd)*dt
+                a_el=MM+Kd*dt
 
                 b_el=MM.dot(Tvect)
+
+                if bc_bottom=='neumann' and y[icon[0,iel]]/Ly<eps:
+                   b_el[0]+=hx*q_bottom/8*dt
+                   b_el[1]+=hx*q_bottom/8*dt
 
                 # apply boundary conditions
                 for k1 in range(0,m):
@@ -284,21 +340,23 @@ for istep in range(0,nstep):
 
     #end for iel
 
+    print("build matrix: %.3f s" % (timing.time() - start))
+
     #################################################################
     # solve system
     #################################################################
-
     start = timing.time()
+
     T = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
-    print("solve T time: %.3f s" % (timing.time() - start))
 
-    np.savetxt('temperature.ascii',np.array([x,y,T]).T,header='# x,y,T')
+    print("     -> T (m,M) %.4f %.4f " %(np.min(T)-273,np.max(T)-273))
 
-    print("T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
+    print("solve: %.3f s" % (timing.time() - start))
 
     #####################################################################
     # compute field derivatives 
     #####################################################################
+    start = timing.time()
 
     qx=np.zeros(NV,dtype=np.float64)  
     qy=np.zeros(NV,dtype=np.float64)  
@@ -358,17 +416,38 @@ for istep in range(0,nstep):
     qx/=ccc
     qy/=ccc
 
-    print("qx  (m,M) %.4e %.4e " %(np.min(qx),np.max(qx)))
-    print("qy  (m,M) %.4e %.4e " %(np.min(qy),np.max(qy)))
+    print("     -> qx  (m,M) %.4e %.4e " %(np.min(qx),np.max(qx)))
+    print("     -> qy  (m,M) %.4e %.4e " %(np.min(qy),np.max(qy)))
 
-    #np.savetxt('temperature.ascii',np.array([x,y,T]).T,header='# x,y,T')
-    #np.savetxt('heatflux.ascii',np.array([x,y,qx,qy]).T,header='# x,y,qx,qy')
+    if istep%every==0:
+       np.savetxt('solution_{:04d}.ascii'.format(istep),np.array([y,T-273,qy]).T,header='# y,T,qy')
+
+    print("compute heat flux: %.3f s" % (timing.time() - start))
+
+    #####################################################################
+    # track depth of geotherm
+    #####################################################################
+
+    if test==0:
+       for iel in range(0,nel):
+           Tmin=min(T[icon[:,iel]])
+           Tmax=max(T[icon[:,iel]])
+           yc=np.sum(y[icon[:,iel]])*0.25
+           if Ttarget>Tmin and Ttarget<Tmax:
+              depthfile.write("%e %e \n" %(time/year,Ly-yc))
+              depthfile.flush()
+              print('depth of geotherm:',yc)
+              break
 
     #####################################################################
     # plot of solution
     #####################################################################
 
-    if istep%10==0:
+    if istep%every==0:
+
+       start = timing.time()
+
+       stretch=20
 
        filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
@@ -379,7 +458,7 @@ for istep in range(0,nstep):
        vtufile.write("<Points> \n")
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
        for i in range(0,NV):
-          vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
+          vtufile.write("%10e %10e %10e \n" %(x[i]*stretch,y[i],0.))
        vtufile.write("</DataArray>\n")
        vtufile.write("</Points> \n")
        #####
@@ -409,9 +488,9 @@ for istep in range(0,nstep):
        #####
        vtufile.write("<PointData Scalars='scalars'>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='T (C)' Format='ascii'> \n")
        for i in range(0,NV):
-           vtufile.write("%10e \n" % (T[i]))
+           vtufile.write("%10e \n" % (T[i]-273))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='qx' Format='ascii'> \n")
@@ -450,6 +529,15 @@ for istep in range(0,nstep):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
+       print("export to vtu: %.3f s" % (timing.time() - start))
+
+    #end if 
+
+    if time>tfinal:
+       print('**************')
+       print('tfinal reached')
+       print('**************')
+       break 
 
 #end for istep
 
