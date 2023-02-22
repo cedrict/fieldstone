@@ -1,0 +1,24 @@
+set term pdf enhanced font "times,12pt"
+set grid
+set xlabel 'y'
+
+set output 'temperature.pdf'
+set ylabel 'T (C)'
+plot[][]\
+'solution_0000.ascii' u 1:2 w lp ps .3 t 'istep=0000',\
+'solution_0500.ascii' u 1:2 w lp ps .3 t 'istep=0500',\
+'solution_1000.ascii' u 1:2 w lp ps .3 t 'istep=1000',\
+'solution_2000.ascii' u 1:2 w lp ps .3 t 'istep=2000',\
+'solution_3000.ascii' u 1:2 w lp ps .3 t 'istep=3000',\
+'solution_4000.ascii' u 1:2 w lp ps .3 t 'istep=4000',\
+
+set key outside
+set output 'heat_flux.pdf'
+set ylabel 'q_y'
+plot[][:0.035]\
+'solution_0000.ascii' u 1:3 w lp ps .3 t 'istep=0000',\
+'solution_0500.ascii' u 1:3 w lp ps .3 t 'istep=0500',\
+'solution_1000.ascii' u 1:3 w lp ps .3 t 'istep=1000',\
+'solution_2000.ascii' u 1:3 w lp ps .3 t 'istep=2000',\
+'solution_3000.ascii' u 1:3 w lp ps .3 t 'istep=3000',\
+'solution_4000.ascii' u 1:3 w lp ps .3 t 'istep=4000',\
