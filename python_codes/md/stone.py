@@ -8,6 +8,11 @@ from scipy.sparse import lil_matrix
 import time as timing
 
 #------------------------------------------------------------------------------
+# remark: in order to improve the build matrix time I do not compute 
+# the jacobian matrix and its derivative but instead prescribe its 
+# values assuming the element is a rectangle of size hx,hy.
+
+#------------------------------------------------------------------------------
 # density function
 #------------------------------------------------------------------------------
 
@@ -366,11 +371,11 @@ if int(len(sys.argv) == 7):
    Ra_nb = float(sys.argv[5])
    nstep = int(sys.argv[6])
 else:
-   nelx = 24
-   nely = 24
+   nelx = 32
+   nely = 32
    visu = 1
    order= 2
-   Ra_nb= 1e4
+   Ra_nb= 1e6
    nstep= 1000
 
 tol_ss=1e-7   # tolerance for steady state 
@@ -525,6 +530,7 @@ print ('Nfem     =',Nfem)
 print ('nqperdim =',nqperdim)
 print("-----------------------------")
 
+topstart = timing.time()
 
 #################################################################
 # checking that all velocity shape functions are 1 on their node 
@@ -742,7 +748,10 @@ for iel in range(0,nel):
                 jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
                 jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
             #end for
+            jcbi = np.linalg.inv(jcb)
             jcob = np.linalg.det(jcb)
+            #print (jcob,hx*hy/4)
+            #print(jcbi,2/hx,2/hy)
             area[iel]+=jcob*weightq
        #end for
    #end for
@@ -818,14 +827,17 @@ for istep in range(0,nstep):
                 NNNP[0:mP]=NNP(rq,sq,order)
 
                 # calculate jacobian matrix
-                jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                for k in range(0,mV):
-                    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-                jcob = np.linalg.det(jcb)
-                jcbi = np.linalg.inv(jcb)
+                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                #for k in range(0,mV):
+                #    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                #    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                #    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                #    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+                #jcob = np.linalg.det(jcb)
+                #jcbi = np.linalg.inv(jcb)
+                jcob=hx*hy/4
+                jcbi[0,0]=2/hx 
+                jcbi[1,1]=2/hy 
 
                 # compute dNdx & dNdy
                 xq=0.
@@ -947,6 +959,7 @@ for istep in range(0,nstep):
     ######################################################################
     # assign extra pressure b.c. to remove null space
     ######################################################################
+    start = timing.time()
 
     if sparse:
        A_sparse[Nfem-1,:]=0
@@ -959,6 +972,8 @@ for istep in range(0,nstep):
        a_mat[Nfem-1,Nfem-1]=1
        rhs[Nfem-1]=0
     #end if
+
+    print("remove null space: %.3f s" % (timing.time() - start))
 
     ######################################################################
     # solve system
@@ -1018,14 +1033,17 @@ for istep in range(0,nstep):
             dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
             dNNNVds[0:mV]=dNNVds(rq,sq,order)
             NNNP[0:mP]=NNP(rq,sq,order)
-            jcb=np.zeros((ndim,ndim),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
-                jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+            #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            #for k in range(0,mV):
+            #    jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+            #    jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
+            #    jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+            #    jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
             #end for
-            jcbi=np.linalg.inv(jcb)
+            #jcbi=np.linalg.inv(jcb)
+            jcbi[0,0]=2/hx 
+            jcbi[1,1]=2/hy 
+
             for k in range(0,mV):
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
@@ -1095,15 +1113,18 @@ for istep in range(0,nstep):
                 dNNNVds[0:mV]=dNNVds(rq,sq,order)
 
                 # calculate jacobian matrix
-                jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                for k in range(0,mV):
-                    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                #for k in range(0,mV):
+                #    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                #    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                #    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                #    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
                 #end for
-                jcob = np.linalg.det(jcb)
-                jcbi = np.linalg.inv(jcb)
+                #jcob = np.linalg.det(jcb)
+                #jcbi = np.linalg.inv(jcb)
+                jcob=hx*hy/4
+                jcbi[0,0]=2/hx 
+                jcbi[1,1]=2/hy 
 
                 # compute dNdx & dNdy
                 vel[0,0]=0.
@@ -1214,13 +1235,14 @@ for istep in range(0,nstep):
                 NNNV[0:mV]=NNV(rq,sq,order)
                 dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
                 dNNNVds[0:mV]=dNNVds(rq,sq,order)
-                jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                for k in range(0,mV):
-                    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-                jcob = np.linalg.det(jcb)
+                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                #for k in range(0,mV):
+                #    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                #    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                #    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                #    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+                #jcob = np.linalg.det(jcb)
+                jcob=hx*hy/4
                 uq=0.
                 vq=0.
                 Tq=0.
@@ -1265,14 +1287,16 @@ for istep in range(0,nstep):
             dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
             dNNNVds[0:mV]=dNNVds(rq,sq,order)
             NNNP[0:mP]=NNP(rq,sq,order)
-            jcb=np.zeros((ndim,ndim),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
-                jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+            #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            #for k in range(0,mV):
+            #    jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+            #    jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
+            #    jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+            #    jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
             #end for
-            jcbi=np.linalg.inv(jcb)
+            #jcbi=np.linalg.inv(jcb)
+            jcbi[0,0]=2/hx 
+            jcbi[1,1]=2/hy 
             for k in range(0,mV):
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
@@ -1515,6 +1539,8 @@ for istep in range(0,nstep):
 #end for istep
     
 print("     script ; Nusselt= %e ; Ra= %e ; order= %d" %(Nusselt,Ra_nb,order))
+
+print("total compute time: %.3f s" % (timing.time() - topstart))
 
 print("-----------------------------")
 print("------------the end----------")
