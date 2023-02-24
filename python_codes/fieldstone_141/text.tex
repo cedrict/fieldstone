@@ -1,6 +1,6 @@
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_141/text.tex}} \end{flushright}
 
-%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_141/keywords.ascii}
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_141/key.words}
 
 \begin{center}
 
@@ -24,11 +24,13 @@ initial temperature field.
 
 \begin{center}
 \fbox{\includegraphics[width=8cm]{python_codes/fieldstone_141/images/albe15}}
-\fbox{\includegraphics[width=8cm]{python_codes/fieldstone_141/images/bube17}}\\
+\fbox{\includegraphics[width=8cm]{python_codes/fieldstone_141/images/cubh07}}\\
 \fbox{\includegraphics[width=8cm]{python_codes/fieldstone_141/images/bubj14}}
 \fbox{\includegraphics[width=8cm]{python_codes/fieldstone_141/images/hube11}}\\
 \fbox{\includegraphics[width=8cm]{python_codes/fieldstone_141/images/hube14}}
 \fbox{\includegraphics[width=8cm]{python_codes/fieldstone_141/images/wabj08}}\\
+\fbox{\includegraphics[width=8cm]{python_codes/fieldstone_141/images/bejb09}}
+\fbox{\includegraphics[width=8cm]{python_codes/fieldstone_141/images/bube17}}\\
 {\captionfont 
 A: Taken from \textcite{albe15} (2015),
 B: Taken from \textcite{bube17} (2017),
@@ -36,14 +38,16 @@ C: Taken from \textcite{bubj14} (2014).
 D: Taken from \textcite{hube11} (2011),
 E: Taken from \textcite{hube14} (2014),
 F: Taken from \textcite{wabj08} (2008),
-}
+G: Taken from \textcite{bejb09} (2009),
+H: Taken from \textcite{cubh07} (2007).}
 \end{center}
 
 What is common to all is (aside from margins, cratons, sediment layers, etc ...) the presence 
 of a crust, a lithosphere and a mantle. 
-The temperature at the top of the model is $0~\si{\celsius}$, $500~\si{\celsius}$ at the base of the 
+The temperature at the top of the model is $0~\si{\celsius}$, $550~\si{\celsius}$ at the base of the 
 crust, $1330-1380~\si{\celsius}$ at the base of the lithosphere (it depends on its thickness), 
-and on some of the figures we see that the temperature is $1234~\si{\celsius}$.
+and on some of the figures we see that the temperature is $1500~\si{\celsius}$ at the bottom of the 
+domain (which is sometimes 600 or 660km thick).
 
 In between these depths the geotherm is linear (maybe parabolic in the crust where heat production
 is present, but not too relevant here).
@@ -53,26 +57,48 @@ At this stage it is worth noting that at the base of the model a heat flux value
 
 Another point worth noticing is the very large value of the heat conductivity 
 $k=52~\si{\watt\per\meter\kelvin}$
-of the mantle in \textcite{wabj08} (2008) (also in \textcite{wabj08b,wabj08c} - not shown here).
-Indeed, we can look at the table of properties of all materials in the paper:
+of the mantle in \textcite{wabj08} (2008) (also in \textcite{wabj08b,wabj08c} - not shown here) and 
+in \textcite{bejb09} (2009).
+Indeed, we can look at the table of properties of all materials in the 2008 paper and confirm 
+this is not a mistake in the figure:
 
 \begin{center}
-\fbox{\includegraphics[width=13cm]{python_codes/fieldstone_141/images/wabj08-2}}\\
+\fbox{\includegraphics[width=14cm]{python_codes/fieldstone_141/images/wabj08-2}}\\
 {\captionfont Taken from \textcite{wabj08} (2008).}
 \end{center}
 
 The purpose of this \stone is to answer these two questions: why did the authors set the 
 conductivity of the mantle to such high values and why did they use heat flux boundary conditions?
 
+Let us focus for a minute on \textcite{bejb09} (figure 'G'): at \SI{120}{\km} depth the temperature is \SI{1336}{\celsius}
+while it is set to 1552C at the base of the model. The temperature gradient is then 
+\[
+\frac{\Delta T}{\Delta z} = \frac{1552-1336}{660-120} = 0.4 C/km
+\]
+The heat flux is then $|q_y|=k \Delta T/\Delta y = 52*0.4=20.8$, which is 
+exactly the value prescribed at the bottom!
+Turning now to \textcite{hube14} (figure 'E') or \textcite{hube11} (figure 'D'): 
+The temperature difference is 
+$\Delta T=1520-1330=190C$ over $\Delta y=600-125=475km$, so that once again the 
+temperature gradient is 0.4C/km.
+
+These values for the temperature gradient in the upper mantle do agree well 
+with adiabatic temperature profiles in the (upper) mantle, see for example 
+\textcite{kayy10}. 
+
 In what follows we'll focus for simplicity 
 on the setup of \textcite{hube11} (2011): a 35km crust, a 90km lithosphere, 
 a 600km deep domain, with no variation in the horizontal direction. 
 
 
+
+what does Taras ?1
+
+
 %------------------------------------------------------------------------------
 \subsubsection*{Remarks about the code}
 
-The first obvious thing to be mentioned is that this is inherently a 1D problem.
+The first obvious thing to be mentioned is that this is inherently a 1D problem in the $y$-direction.
 However, for practical reasons I have reused an existing 2D code. As such, 
 we need to specify a lateral extent $L_x$ to the domain which can be only a 
 few kilometers. 
@@ -87,12 +113,22 @@ Each element is assigned a heat conductivity $k$, heat capacity $C_p$ and densit
 The timestep value is computed by means of a CFL condition for diffusive 
 processes, i.e. $dt=0.75*\min(h_x,h_y)^2/\max(\kappa)$ where
 $h_x,h_y$ is the size of an element, and $\kappa$ is the heat diffusivity
-given by $\kappa=k/\rho C_p$.
+given by $\kappa=k/\rho C_p$. The computed timestep is capped to $10^5~\si{\year}$.
 
-how is q nodal computed
+The heat flux vector is computed in each corner of each element using the elemental 
+heat conductivity and then averaged out on the nodes. 
+
+All results are exported to ascii and vtu files. Note that the latter have been stretched
+by a factor 20 in the horizontal direction so as to facilitate visualisation in paraview. 
+
+
+Note that if temperature is prescribed at the bottom of the domain then 
+the heat flux is unconstrained. On the other hand, if the heat flux is prescribed on 
+the boundary then it is the temperature that is unconstrained.
+
 
 %------------------------------------------------------------------------------
-\subsubsection*{benchmark \#1}
+\subsubsection*{benchmark \#1 ({\tt test=1})}
 
 The domain is $5\times 100~\si{\km}$. 
 Temperature boundary conditions are imposed at the top and bottom with 
@@ -100,10 +136,12 @@ $T_{top}=0\si{\celsius}$
 and $T_{bottom}=100\si{\celsius}$.
 The initial temperature $T(x,y,t=0)$ is set to $T_{top}$.
 
+A time-dependent analytical solution exists for this problem and is given ...
 
+{\color{red} to do !}
 
 %------------------------------------------------------------------------------
-\subsubsection*{benchmark \#2}
+\subsubsection*{benchmark \#2 ({\tt test=2})}
 
 The domain is $5\times 100~\si{\km}$. 
 Temperature boundary conditions are imposed at the top with 

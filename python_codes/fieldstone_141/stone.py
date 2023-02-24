@@ -21,26 +21,24 @@ test=0
 
 if test==0:
    Lx=5e3
-   Ly=660e3
-   h_seds=1e3
-   h_crust=7e3
-   h_lith=22e3
+   Ly=600e3
+   h_seds=5e3
+   h_crust=30e3
+   h_lith=90e3
    h_mantle=Ly-h_seds-h_crust-h_lith
    nelx=2
    nely=int(Ly/1000)
    bc_top='dirichlet'
-   bc_bottom='neumann'
-   flux_top=0
-   flux_bottom=0.03
+   bc_bottom='dirichlet'
    T_top=0+273
    T_moho=550+273
-   T_lith=1250+273
-   T_bottom=1500+273
-   q_bottom=0.03
+   T_lith=1330+273
+   T_bottom=1520+273
+   q_bottom=0.0208
    nstep=1000
-   tfinal=20e6*year
-   every=10
-   Ttarget=1250+273
+   tfinal=5e6*year
+   every=20
+   Ttarget=1330+273
 
 if test==1: # T prescribed top and bottom
    Lx=5e3
@@ -106,10 +104,10 @@ icon =np.zeros((m, nel),dtype=np.int32)
 counter = 0
 for j in range(0, nely):
     for i in range(0, nelx):
-        icon[0, counter] = i + j * (nelx + 1)
-        icon[1, counter] = i + 1 + j * (nelx + 1)
-        icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
-        icon[3, counter] = i + (j + 1) * (nelx + 1)
+        icon[0,counter] = i + j * (nelx + 1)
+        icon[1,counter] = i + 1 + j * (nelx + 1)
+        icon[2,counter] = i + 1 + (j + 1) * (nelx + 1)
+        icon[3,counter] = i + (j + 1) * (nelx + 1)
         counter += 1
 
 print("setup: connectivity: %.3f s" % (timing.time() - start))
@@ -171,22 +169,22 @@ if test==0:
    for iel in range(0,nel):
        xc=np.sum(x[icon[:,iel]])*0.25
        yc=np.sum(y[icon[:,iel]])*0.25
-       if yc>Ly-h_seds:
+       if yc>Ly-h_seds: #sediments
           hcond[iel]=2.25
           hcapa[iel]=750
-          rho[iel]=2700
-       elif yc>Ly-(h_seds+h_crust):
+          rho[iel]=2800
+       elif yc>Ly-(h_seds+h_crust): #crust
           hcond[iel]=2.25
           hcapa[iel]=750
-          rho[iel]=3000
-       elif yc>Ly-(h_seds+h_crust+h_lith):
+          rho[iel]=2800
+       elif yc>Ly-(h_seds+h_crust+h_lith): #mantle lithosphere
           hcond[iel]=2.25
           hcapa[iel]=1250
-          rho[iel]=3370
+          rho[iel]=3300
        else:
-          hcond[iel]=52
+          hcond[iel]=5 #2
           hcapa[iel]=1250
-          rho[iel]=3370
+          rho[iel]=3300
 
 if test==1:
    hcond[:]=2.5
@@ -197,7 +195,6 @@ if test==2:
    hcond[:]=50
    hcapa[:]=1000
    rho[:]=3000
-
 
 
 kappa[:]=hcond[:]/rho[:]/hcapa[:]
@@ -434,7 +431,7 @@ for istep in range(0,nstep):
            Tmax=max(T[icon[:,iel]])
            yc=np.sum(y[icon[:,iel]])*0.25
            if Ttarget>Tmin and Ttarget<Tmax:
-              depthfile.write("%e %e \n" %(time/year,Ly-yc))
+              depthfile.write("%e %e %e \n" %(time/year,Ly-yc,yc))
               depthfile.flush()
               print('depth of geotherm:',yc)
               break
