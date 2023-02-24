@@ -407,19 +407,19 @@ strict lower triangular part of ${\bm A}$ and
 ${\bm U}$ is the strict upper triangular part of ${\bm A}$.
 The iterative method is defined by:
 \begin{equation}
-{\bm D} \cdot \vec{T}^{{\color{Fuchsia}k+1}} = -({\bm L} + {\bm U}) \cdot \vec{T}^{\color{Fuchsia}k} 
+{\bm D} \cdot \vec{T}^{{\color{violet}k+1}} = -({\bm L} + {\bm U}) \cdot \vec{T}^{\color{violet}k} 
 + \vec{b}
 \qquad k=0,1,\dots
 \end{equation}
-where $\vec{T}^{\color{Fuchsia}0}$ is the initial guess (often taken to be zero).
+where $\vec{T}^{\color{violet}0}$ is the initial guess (often taken to be zero).
 Note that the superscript denotes the iteration number and has nothing to 
 do with the time step in this context.
 This method is trivial to implement since the linear system on the 
 left side of the equal sign involves a diagonal matrix.
 This can also be written 
 \begin{equation}
-T_i^{{\color{Fuchsia} k+1}} = \frac{1}{A_{ii}} \left(b_i - 
-\sum_{j\neq i} A_{ij} T_j^{{\color{Fuchsia}k}} \right)
+T_i^{{\color{violet} k+1}} = \frac{1}{A_{ii}} \left(b_i - 
+\sum_{j\neq i} A_{ij} T_j^{{\color{violet}k}} \right)
 \qquad
 i=1,2,...nnx
 \end{equation}
@@ -445,9 +445,9 @@ Looking at the previous example, we have
 \end{array}
 \right)
 \end{equation}
-We then start with the guess $\vec{T}^{\color{Fuchsia}0}=\vec{0}$, so that for ${\color{Fuchsia}k}=0$:
+We then start with the guess $\vec{T}^{\color{violet}0}=\vec{0}$, so that for ${\color{violet}k}=0$:
 \begin{equation}
-\vec{T}^{\color{Fuchsia}1} = {\bm D}^{-1}\cdot \vec{b} = 
+\vec{T}^{\color{violet}1} = {\bm D}^{-1}\cdot \vec{b} = 
 \left(
 \begin{array}{ccc}
 1 & 0 & 0 \\
@@ -468,11 +468,11 @@ We then start with the guess $\vec{T}^{\color{Fuchsia}0}=\vec{0}$, so that for $
 \end{array}
 \right)
 \end{equation}
-and then we obtain $\vec{T}^{\color{Fuchsia}2}$ by solving 
+and then we obtain $\vec{T}^{\color{violet}2}$ by solving 
 \begin{eqnarray}
-\vec{T}^{\color{Fuchsia}2} 
+\vec{T}^{\color{violet}2} 
 &=& {\bm D}^{-1} \cdot \left[-({\bm L} + {\bm U}) 
-\cdot \vec{T}^{\color{Fuchsia}1} + \vec{b} \right] \nn\\
+\cdot \vec{T}^{\color{violet}1} + \vec{b} \right] \nn\\
 &=&
 \left(
 \begin{array}{ccc}
@@ -510,7 +510,7 @@ and then we obtain $\vec{T}^{\color{Fuchsia}2}$ by solving
 We keep iterating until two consecutively obtained 
 temperature vectors are nearly identical, or, 
 \begin{equation}
-\| \vec{T}^{\color{Fuchsia}k+1}-\vec{T}^{\color{Fuchsia}k} \| < \epsilon
+\| \vec{T}^{\color{violet}k+1}-\vec{T}^{\color{violet}k} \| < \epsilon
 \end{equation}
 where $\epsilon$ is a carefully chosen small enough number. 
 

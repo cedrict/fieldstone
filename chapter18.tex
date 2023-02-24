@@ -66,7 +66,7 @@ Hooke's law\footnote{\url{https://en.wikipedia.org/wiki/Hooke's_law}}:
 \text{or}
 \qquad
 {\bm \sigma} = {\bm C} : {\bm \varepsilon}
-\label{eq:oone}
+\label{eq:ooone}
 \end{equation}
 where ${\bm C}$ is the fourth-order elastic tensor (which contains $3^4=81$ coefficients).
 The strain tensor is related to the displacement $\vec{\upupsilon}$ as follows: \index{general}{Strain Tensor}
@@ -80,7 +80,7 @@ We find that
 \[
 C_{ijkl} = \lambda \delta_{ij}\delta_{kl} + \mu (\delta_{ik}\delta_{jl}+\delta_{il}\delta_{jk})
 \]
-so that Eq.~\eqref{eq:oone} becomes:
+so that Eq.~\eqref{eq:ooone} becomes:
 \[
 \sigma_{ij}=\lambda \varepsilon_{kk} \delta_{ij} + 2\mu \varepsilon_{ij}
 \]
@@ -92,7 +92,7 @@ or
 +2\mu {\bm \varepsilon}(\vec{\upupsilon})
 \nn\\
 &=&\lambda (\vec{\nabla}\cdot\vec{\upupsilon}) {\bm 1} +2\mu {\bm \varepsilon}(\vec{\upupsilon}) 
-\label{eq:twoELAST}
+\label{eq:twooELAST}
 \end{eqnarray}
 \end{mdframed}
 where $\lambda$ is the Lam\'e parameter and $\mu$ is the shear modulus. The term $\vec{\nabla}\cdot\vec{\upupsilon}=\text{Tr}[{\bm \varepsilon}(\vec{\upupsilon})]$ is the isotropic dilation.
@@ -358,7 +358,7 @@ K=\lambda+\frac{2}{3}\mu
 \end{mdframed}
 
 \begin{remark}
-Eq. (\ref{eq:oone}) and (\ref{eq:twoELAST}) are analogous to the ones that one has to solve in the context of viscous flow using the penalty method. In this case $\lambda$ is the penalty coefficient, $\vec{\upupsilon}$ is the velocity, and $\mu$ is the dynamic viscosity.
+Eq. (\ref{eq:ooone}) and (\ref{eq:twooELAST}) are analogous to the ones that one has to solve in the context of viscous flow using the penalty method. In this case $\lambda$ is the penalty coefficient, $\vec{\upupsilon}$ is the velocity, and $\mu$ is the dynamic viscosity.
 \end{remark}
 
 \begin{remark}
@@ -620,7 +620,7 @@ We then have
 The compliance matrix for plane strain is {\it not} found by removing columns and rows from the general isotropic compliance matrix!
 \end{remark}
 
-Let us also look at another notation used in Simpson's book \cite{simp17} (Eq.~12.3). We start from Eq.~\eqref{eq:twoELAST}:
+Let us also look at another notation used in Simpson's book \cite{simp17} (Eq.~12.3). We start from Eq.~\eqref{eq:twooELAST}:
 
 \begin{eqnarray}
 \sigma_{xx} 
@@ -871,7 +871,6 @@ We then have
 0 &0 &\frac12(1-\nu)
 \end{array}
 \right)
-\label{eq:D_pstrain}
 \end{equation}
 \end{mdframed}
 
@@ -882,7 +881,7 @@ The stiffness matrix for plane stress is {\it not} found by removing columns and
 
 
 %.........................................................
-\subsection{The axisymmetric case} \label{ss:fem_elast_axis}
+\subsection{The axisymmetric case} \label{ss:fem_elast_axissymm}
 
 We start from 
 \begin{equation}

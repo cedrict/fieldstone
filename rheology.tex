@@ -727,47 +727,20 @@ Note that this expression is supplemented with a pseudo-plastic formulation \cit
 %-------------------------------------------------
 \subsubsection{Glen's law for ice}\label{ss:glen}
 
-As it turns out, ice and rocks share similarities in terms of rheology.
-Glen's law is the most commonly used flow law for ice in glaciers and ice sheets \cite{glen55}
-and it is actually a power-law type rheology:
-\[
-\dot{\bm \varepsilon} = A {\bm \tau}^n 
-\]
-with $n\sim 3$ and $A\sim 2.4\cdot 10^{-24} \text{Pa}^{-3}\cdot \text{s}^{-1}$ at $0\degree$C.
-The effective viscosity is then given by
-\[
-\eta = \frac{1}{2 A \tau_e^{n-1}} 
-\]
-\begin{center}
-\includegraphics[height=5cm]{images/rheology/glen}
-\includegraphics[height=5cm]{images/rheology/goko01}\\
-{\captionfont Left: Taken from Glen \cite{glen55}; Right: taken from \cite{goko01}.}
-\end{center}
-Most of these studies suggest values of the power-law exponent $n\sim 2-4$, and there seems to be 
-a general indication that the exponent is lower at lower stresses.
-
-The $A$ coefficient above has been found to depend on temperature and is reasonably described 
-with an Arrhenius law:
-\[
-A(T)=A_0 \exp\left( -\frac{Q}{RT} \right)
-\]
-A standard formulation is the Paterson-Budd law with a fixed Glen exponent $n=3$ and 
-a split Arrhenius term \cite{pabu82}:
-\[
-A=3.615 \cdot 10^{-13} \text{Pa}^{-3}\cdot \text{s}^{-1}, \qquad Q=60 \; \text{kJ}/\text{mol}, \qquad if\quad T<263\text{K} 
-\]
-\[
-A=1.733\cdot 10^{3} \text{Pa}^{-3}\cdot \text{s}^{-1}, \qquad  Q=139 \; \text{kJ}/\text{mol}, \qquad if\quad T>263\text{K}
-\]
-Be careful that in these two equations the temperature T is the pressure-adjusted temperature \cite{pabu82}.
+\input{glen_flow_law}
 
 
-Note that $A$ is also affected by the water content and the presence of impurities. 
 
-Finally, Glen's law is the standard rheology used for ice-sheet modelling 
-but it does not account for the complex evolution of fabric and resulting anisotropy.
 
-\Literature \cite{grev97,krab16,grbl09,issg15,jidb17,heah18}. Very mathematics heavy papers: \cite{jora11,chgp13}.
+
+
+
+
+
+
+
+
+
 
 %...........................................
 \subsubsection{Strain rate partitioning across deformation mechanisms}\label{ss:srpart}

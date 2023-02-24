@@ -76,20 +76,20 @@ For instance:
 The solution is then obtained iteratively via
 
 \begin{equation}
-{\bm D} \cdot \vec{x}^{{\color{Fuchsia}k+1}} = -({\bm L} + {\bm U}) \cdot \vec{x}^{\color{Fuchsia}k} 
+{\bm D} \cdot \vec{x}^{{\color{violet}k+1}} = -({\bm L} + {\bm U}) \cdot \vec{x}^{\color{violet}k} 
 + \vec{b}
 \qquad k=0,1,\dots
 \end{equation}
 where 
-$\vec{x}^{\color{Fuchsia}k}$ is the $k$-th approximation or iteration of $\vec{x}$ and
-$\vec{x}^{\color{Fuchsia}0}$ is the initial guess (often taken to be zero).
+$\vec{x}^{\color{violet}k}$ is the $k$-th approximation or iteration of $\vec{x}$ and
+$\vec{x}^{\color{violet}0}$ is the initial guess (often taken to be zero).
 A sufficient (but not necessary) condition for the method to converge is that the matrix ${\bm A}$ 
 is strictly or irreducibly diagonally dominant.
 
 \item Gauss-Seidel method\footnote{\url{https://en.wikipedia.org/wiki/Gauss-Seidel_method}}: 
 It is defined by the iteration
 \begin{equation}
-{\bm L_\star} \cdot \vec{x}^{{\color{Fuchsia}k+1}} = - {\bm U} \cdot \vec{x}^{\color{Fuchsia}k} 
+{\bm L_\star} \cdot \vec{x}^{{\color{violet}k+1}} = - {\bm U} \cdot \vec{x}^{\color{violet}k} 
 + \vec{b}
 \qquad k=0,1,\dots
 \end{equation}
@@ -105,8 +105,8 @@ Note that Gauss-Seidel is the same as SOR (successive over-relaxation) with $\om
 
 \item Successive over-relaxation method (SOR):
 \begin{equation}
-({\bm D} + \omega {\bm L}) \cdot \vec{x}^{{\color{Fuchsia}k+1}} 
-= - (\omega{\bm U} + (\omega-1) {\bm D}) \cdot \vec{x}^{\color{Fuchsia}k} 
+({\bm D} + \omega {\bm L}) \cdot \vec{x}^{{\color{violet}k+1}} 
+= - (\omega{\bm U} + (\omega-1) {\bm D}) \cdot \vec{x}^{\color{violet}k} 
 + \omega \vec{b}
 \qquad k=0,1,\dots
 \end{equation}
@@ -117,8 +117,8 @@ Note that Gauss-Seidel is the same as SOR (successive over-relaxation) with $\om
 The version of SOR for symmetric matrices ${\bm A}$, in which ${\bm U}={\bm L}^T$ is 
 given by the recursion
 \begin{equation}
-\vec{x}^{{\color{Fuchsia}k+1}} 
-=  \vec{x}^{\color{Fuchsia}k} 
+\vec{x}^{{\color{violet}k+1}} 
+=  \vec{x}^{\color{violet}k} 
 -\gamma^k {\bm P}^{-1} ( {\bm A}\cdot \vec{x}^{(k)} -\vec{b})
 \qquad k=0,1,\dots
 \end{equation}

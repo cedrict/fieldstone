@@ -1,6 +1,18 @@
 
 {\Large Work in progress!!!}
 
+%==================================================================================================
+%==================================================================================================
+%==================================================================================================
+\subsection{A remark}
+
+In the absence of gravity, density does not enter the equations. 
+As such compressible elasticity is fine. 
+
+If gravitational forces are taken into account, compressible elasticity
+means that density should change in space/time. However, 
+a lot of the experiments hereafter are written with a constant density, 
+meaning that they are reproducible or valid only for incompressible elastic (and viscou) flows!
 
 %==================================================================================================
 %==================================================================================================
@@ -90,6 +102,32 @@ Then we proceed to integrate both sides:
 \]
 which is the solution of Eq.~(4) of \textcite{kabe07} (2007).
 
+\vspace{1cm}
+Alternative:
+
+The general solution can be arrived at  
+by means of the Laplace transform (?!) and is given by: 
+\[
+{\bm \tau}(t) = {\bm \tau}(t_0) \exp\left( -\frac{t-t_0}{t_M} \right) + \exp \left(-\frac{t}{t_M}\right)
+\int_{t_0}^{t} 2 \mu \dot{\bm \varepsilon}_T  \exp \left(\frac{t'}{t_M}\right) dt'
+\]
+
+If $t_0=$ and ${\bm \tau}(t_0)=0$ then
+\[
+{\bm \tau}(t) =  \exp \left(-\frac{t}{t_M}\right)
+\int_{0}^{t} 2 \mu \dot{\bm \varepsilon}_T  \exp \left( \frac{t'}{t_M} \right) dt'
+\]
+If the strain rate and shear modulus are constant in time, then 
+\begin{eqnarray}
+{\bm \tau}(t) 
+&=&  \exp \left(-\frac{t}{t_M}\right)
+2 \mu \dot{\bm \varepsilon}_T   \int_{0}^{t} \exp \left( \frac{t'}{t_M} \right) dt' \nn\\
+&=&  \exp \left(-\frac{t}{t_M}\right)
+2 \mu \dot{\bm \varepsilon}_T  t_M  \left[ \exp \left( \frac{t}{t_M} \right) -1  \right] \nn\\
+&=& 
+2 \eta \dot{\bm \varepsilon}_T   \left[ 1 - \exp \left( -\frac{t}{t_M} \right)\right] \nn
+\end{eqnarray}
+since $t_M=\eta/\mu$.
 
 
 
@@ -354,6 +392,82 @@ on a regular, structured grid at resolution $600 \times 200$ nodes.
 
 
 
+
+%-------------------------------------------------------
+\subsubsection{Elastic Simple Shear,  \textcite{vosc15} (2015)}
+
+
+
+This experiment uses a homogeneous cube with the dimensions 1x1x1 which is
+deformed by simple shear. The bottom boundary is fixed 
+(i.e., the boundary condition is no slip), the
+velocities on the top surface are prescribed in x-direction to generate 
+simple shear and the top boundary is fixed in z-direction. 
+The boundary conditions are free slip for two vertical boundaries (y=0 and
+y=1) and the two remaining vertical boundaries (x=0 and x=1) are free. 
+The viscosity and the elastic shear modulus are $\eta=10^{10}$ and $G=1$, 
+respectively. All model dimensions and material parameters
+are given in dimensionless numbers using the model length, the elastic 
+shear modulus and the background strain rate as characteristic parameters. 
+The results for two simulations, one with Jaumann correction and one without 
+Jaumann correction, are given in Figure B5 where the colors indicate the
+second invariant of the stress tensor. The results with the Jaumann correction 
+show a homogeneous distribution of stress (Figures a–d), whereas the distribution 
+of the second invariant of the stress tensor is inhomogeneous without the 
+Jaumann correction and the simulation ‘‘crashes’’ for high strain
+(Figures e–h).
+
+\begin{center}
+\includegraphics[width=15cm]{images/viscoelasticity/vosc15b}\\
+{\captionfont Deformation of a homogeneous cube under simple shear (a–d) with 
+Jaumann correction and (e–h) without Jaumann correction for different amounts of bulk shear strain c
+(i.e., ratio of maximal horizontal displacement to model thickness). The colors indicate 
+the second invariant of the stress tensor $\tau_{ii}$. Without the Jaumann corrections, the stress 
+distribution becomes inhomogeneous and the simulation crashes for high strain.}
+\end{center}
+
+
+
+
+
+%..........................................................
+\subsubsection{Response to load from ice sheet - Nakiboglu and Lambeck (1982)}
+
+The domain is $500\times500$km. Vertical gravity is 9.8, density is 3300, viscosity 
+is $3\cdot10^{20}~\si{\pascal\second}$, 
+shear modulus is $10^{10}~\si{\pascal}$, free slip on left, right and bottom. 
+A normal stress is imposed on the top for $0<x<100$km. It corresponds to  
+an ice sheet of density $\rho_i=900$ of 1000m height. 
+The timestep is set to 100yr. Resolution is set to $50\times50$ elements.
+Stress/traction b.c. are explained in Section~\ref{ss:openbc}.
+
+Analytical solution is provided in Nakiboglu and Lambeck (1982) \cite{nala82}. 
+Note however that this is a 2D setup while the original solution is for a 
+cylindrical load and also for a semi-infinite domain.
+
+Effective viscosity is given by
+\[
+\eta_{eff} = \frac{\eta \delta t}{\delta t + \eta/\mu}
+= 2.85362675546547e+19
+\]
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_64/results/icesheetload/vel}\\
+{\captionfont Left: ASPECT; Right: stone 64} 
+\end{center}
+
+
+It was run with ASPECT: prm file in stone 64 results folder.
+
+
+
+
+
+
+
+
+
+
 %==================================================================================================
 %==================================================================================================
 %==================================================================================================
@@ -361,10 +475,6 @@ on a regular, structured grid at resolution $600 \times 200$ nodes.
 
 %..........................................................
 \subsubsection{Bending of elastic slab (Gerya's book)}
-
-
-%----------------------------------------------------------------------------
-\subsection{Recovery of the original shape of an elastic slab - Gerya book}
 
 The sinking slab benchmark consists of a beam of elastic material which is placed 
 in a weak and viscous surrounding medium. The initially unstressed beam is attached to the left domain boundary through boundary conditions. A stress is then applied to the beam in the form of gravity. The applied gravity force results in the deformation of the beam through bending. After 20 kyr, the gravity field is turned off and the elastic properties of the beam will then force itself to its original position. The set-up of the benchmark is given in the following figure:
@@ -477,7 +587,7 @@ shape which is stress free (Figure c). A similar test is given in Gerya's book [
 The test shows the reversible elastic deformation. The elastic beam recovers its original rectangular shape and stress state when the applied load is removed.
 
 \begin{center}
-\includegraphics[width=14cm]{images/viscoelasticity/vosc15a}\\
+\fbox{\includegraphics[width=16cm]{images/viscoelasticity/vosc15a}}\\
 {\captionfont 
 Reversible deformation of an elastic beam in a viscous matrix under gravity. 
 (a) Unstressed initial configuration (gravity off). 
@@ -525,7 +635,7 @@ then set to $96\times64$.
 
 The following plot comes from \cite{kemk13}:
 \begin{center}
-\includegraphics[width=14cm]{images/viscoelasticity/kemk13}
+\fbox{\includegraphics[width=14cm]{images/viscoelasticity/kemk13}}
 \end{center}
 
 The elastic timestep is set to $\delta t_e=100$yr and the tectonic timestep is set to the same value.
@@ -569,7 +679,7 @@ also explore Wu \& Peltier \cite{wupe82} (1982).
 {\color{orange} fully incompressible}
 
 \begin{center}
-\includegraphics[width=12cm]{images/viscoelasticity/halk19}\\
+\fbox{\includegraphics[width=12cm]{images/viscoelasticity/halk19}}\\
 {\captionfont 
 a) Viscoelastic Haskell-type half-space models. b) Viscoelastic  half-space models used for modelling loading and subsequent
 unloading (after Wu, 1992; his Fig. 2). Both model types are meshed with 25x25 km large linear, rectangular plane strain elements suitable for incompressible materials. 
@@ -654,7 +764,7 @@ elements.
 \end{itemize}
 
 \begin{center}
-\includegraphics[width=16cm]{images/viscoelasticity/kubo77}\\
+\fbox{\includegraphics[width=16cm]{images/viscoelasticity/kubo77}}\\
 {\captionfont Taken from \textcite{kubo77}. Measurement locations are indicated on 
 the setup figure above. probably should be reversed}
 \end{center}
@@ -741,3 +851,221 @@ to reduce the maximum stress by a factor $e$.
 
 
 
+
+
+
+
+%-------------------------------------------------------------------------
+\subsubsection{Role of elasticity in slab bending - \textcite{fogm14} (2014)}
+
+\begin{center}
+\includegraphics[width=8cm]{images/viscoelasticity/fogm14b}
+\includegraphics[width=8.5cm]{images/viscoelasticity/fogm14c}\\
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+%-------------------------------------------------------------------------
+\subsubsection{Shear test in 2D - \textcite{famc14} (2014)}
+
+This experiment consists of a viscoelastic material undergoing simple shear at a constant 
+rate from a time $t_0$ though to $t_{max}$. At $t_{max}$, the shearing velocity is taken 
+to zero using a no-slip velocity boundary condition. The viscoelastic stresses then decay
+with time while the material deformation rate remains zero. The $xy$ component of stored 
+stress, i.e. the nonviscous portion of the total stress, is given by
+\begin{align}
+\tau_{xy}^{stor} 
+&= 
+\exp -\frac{\mu}{\eta}t 
+\left(
+C_2 \cos\left( \frac{Vt}{h}\right)
+-C_1 \sin\left( \frac{Vt}{h}\right)
+\right)
+-C_2 & \textrm{if} \; t<t_{max} \nn\\
+&= \left[\exp -\frac{\mu}{\eta}t_{max} 
+\left(
+C_2 \cos\left( \frac{Vt}{h}\right)
+-C_1 \sin\left( \frac{Vt}{h}\right)
+\right)
+-C_2 \right] \exp -\frac{\mu}{\eta}(t-t_{max})
+& \textrm{if} \; t>t_{max} 
+\end{align}
+where $V$ is the shear velocity along the top wall boundary, 
+$h$ is the height of the box,
+\[
+C_1=-\frac{V^2 \eta^2 \mu}{\mu^2 h^2 + V^2 \eta^2}
+\]
+\[
+C_2=-\frac{Vh\eta \mu^2}{\mu^2 h^2 + V^2 \eta^2}
+\]
+
+
+
+\begin{center}
+\includegraphics[width=8cm]{images/viscoelasticity/famc14a}\\
+\captionfont{The xy component of dimensionless stored stress with dimensionless time 
+for the 2-D viscoelastic material undergoing simple shear and relaxation. Nondimensional 
+material parameters of $\eta=10^2$, $\mu=10^2$, $t_M=1$, $V=0.05$, $h=1$ 
+with $\Delta t_e\in[0.01,1]$ and $\Delta t_c=\frac13 \Delta t_e$.
+}
+\end{center}
+
+Figure above shows the resulting xy component of the deviatoric stored stress term for a 2-D viscoelastic material across a range of $\Delta t_e$. 
+At longer $\Delta t_e$, the stored stress appears under resolved, indicating these larger elastic time step values capture dynamics that occur on time scales approximately equal to or greater than the Maxwell relaxation time, that is with a portion of viscous deformation. For shorter $\Delta t_e$,
+the numerically calculated stress approaches the analytic solution, indicating that the elastic time step is
+sufficiently small to fully capture the elastic stored stresses produced within the material under the
+applied strain rate.
+
+
+
+
+
+
+
+%-------------------------------------------------------------------------
+\subsubsection{Tortion test in 3D - \textcite{famc14} (2014)}
+
+insert here eq 9 of paper
+
+The analytic solution outlined by equation (9) can be extended from this 
+essentially 1-D test into 3-D by applying the shear velocity in the x-z plane. 
+Testing of the full viscoelastic implementation including the
+rotation terms is possible by placing this 3-D shear test in a 
+coordinate system under going solid body rotation. 
+
+\begin{center}
+\includegraphics[width=8cm]{images/viscoelasticity/famc14b}\\
+\captionfont{
+The $xy$ and $yz$ stress components of a material undergoing simple shear within 
+a 3D rotating reference frame. Nondimensional material parameters of 
+$\eta=100$, $\mu=100$, $\alpha=1$, $V=0.3$, $h=1$, $t_{max}=0.5$
+and $\omega=42$. Note the coordinate system for this test has the $y$ axis in the vertical 
+with the $z$ axis in plane. Results for a first (crosses) and 
+fourth- (lines) order accurate Jaumann stress rate integration scheme are shown 
+in comparison to the analytical solution (black) given by equation (9) within the rotating frame.
+}
+\end{center}
+
+Figure above shows the evolution of the stress in comparison to the analytical solution of equation (9)
+placed within the rotating frame. The rotating frame is achieved by imposing a velocity boundary condition
+of a constant solid body rotation about the y axis in addition to the shearing rate. The stress within this
+rotating frame is given by equation (9), with the stress in the nonrotating frame found by 
+applying a rotation matrix, $R$, to the nonrotating stress solution. 
+That is, $\tau=R^{-1}\tau'R$, where $'$ denotes the rotated frame, $R$ is
+the rotation matrix about the y axis given by 
+\[
+R= \left(
+\begin{array}{ccc}
+\cos\theta &0 & \sin\theta \\
+0 & 1 & 0 \\
+-\sin\theta & 0 & \cos\theta
+\end{array}
+\right)
+\]
+with $\theta=\omega t$, $\omega$ being the dimensionless rotation rate. 
+The stress components shown in Figure 1b from within the 
+nonrotating frame can then be given by $\tau^{stor}_{xy}=\tau^{stor'}_{xy} \cos\theta$
+and $\tau^{stor}_{yz}=\tau^{stor'}_{yz} \sin\theta$.
+It can be seen that, using a higher-order Jaumann stress rate advection scheme 
+results in accurate stress advection and rotation within the full
+3-D space plus time domain. It should be noted here that the velocity field used in 
+this test was chosen to rigorously test the rotational terms in equation (6). 
+Whether these rotational terms are required for individual models is dependent upon 
+the model setup. For subducting slabs at a constant curvature, the individual 
+parcels of material experience purely rotational effects, accounting for this within the stress history term
+would then be required for consistency.
+
+{\color{red} finish!}
+
+
+
+
+
+
+
+
+
+
+%-------------------------------------------------------------------------
+\subsubsection{Cylindrical tunnel - Segall book (?)}
+
+{\color{orange} compressible $\nu=0.25$}
+
+communicated to me by L .van de Wiel.
+
+This is a cylindrical tunnel (2D magma chamber) in an infinite space, with certain radius.
+The material close around the hole is warm, and and such viscous. The material further from the hole is cold, and purely elastic. (accomplished by setting and absurdly high viscosity) 
+There is a clear transition radius between the two properties
+The hole contains a pressure, causing the space to expand.
+
+After the initial elastic deformation, viscous deformation continues in the viscous region of the domain.
+I have the implementation of the analytical solution attached to save you time.
+
+See plot with radial deformation for t=0 (green), t=300s (red), t=600s (blue), and t=3000s (black).
+thin line is analytic, points are numeric.
+(with parameters and size parameters as in analytic.f)
+
+
+\begin{center}
+\includegraphics[width=8cm]{images/viscoelasticity/radialDisp}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+%..........................................................
+\subsubsection{Relevant literature \& various notes}
+
+
+
+\begin{itemize}
+\item convection of viscoelastic fluids: 
+\textcite{hard91}, \textcite{momy93}, 
+\textcite{zhgm96}, \textcite{modm02}, 
+\textcite{mure05}, \textcite{likh05a},  
+\textcite{likh05b}, \textcite{fukk08}
+
+
+\item stress buildup associated with viscoelastic rheology 
+\textcite{kubo77}, \textcite{kupa84}, \textcite{pocp93}, \textcite{mapo09}
+
+\item viscoelastic effects on geodynamical pbs involving gravitational instability 
+\textcite{pocp93,kabe07,bumo08,scbe08}, 
+\textcite{hamy95} 
+
+\item large strain  eulerian viscoelasticity 
+\textcite{scps01,vapy01,coll06,moql07,fukk08,poso08}
+
+\end{itemize}
+
+\textcite{famc14} states 
+``Funiciello et al. [2003] implemented a viscoelastic rheology in numerical models of subduction, performing a
+range of numerical simulations to investigate its effect on subducting slab dynamics. Similar methodologies have addressed the details of viscoelastic stress within the bending zone during subduction, although a comparison between viscous and viscoelastic rheology was lacking [Capitanio et al., 2009; Capitanio and Morra, 2012].
+Muhlhaus and Regenauer-Lieb [2005] and Moresi et al. [2002] have studied the role of elasticity in mantle convection, comparing the viscous case to that of viscoelastic, and Kaus and Becker [2007] discussed the effect of elasticity on layered Rayleigh-Taylor instabilities. However, a systematic study into the effects of elastic stresses on models of free subduction has yet to be completed. Morra and Regenauer-Lieb [2006], Funiciello et al. [2003], Capitanio et al. [2007], Yamato et al. [2007], and Royden and Husson [2006] have included a viscoelastic slab in subduction models, without explicitly studying the effects of the elastic component across a range of parameters.''
+
+
+Check early paper by Braun \& Beaumont (1987) \cite{brbe87}
+
+\textcite{asmo12} (2012)
+\textcite{hepk14} (2014)
+\textcite{daws16} (2016)
+\textcite{thkp15} (2015)
+\textcite{beps10} (2010)
+\textcite{samb20} (2020)
+\textcite{vosc15} (2015)
+\textcite{nalr12} (2012)

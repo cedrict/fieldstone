@@ -1,0 +1,360 @@
+
+The following is a brief review of some basics of differential calculus which underlie many
+derivations in continuum mechanics.
+
+%.......................................
+\subsection{Directional derivative}
+
+Let's start with a 2-dimensional example of a function $f$ of the two variables $x$ and $y$, hence
+$f(x,y)$.
+
+Consider an arbitrary point ($x_0,y_0$) in the domain of $f$. 
+We want to determine the rate of change of $f$ in any direction in $(x_0,y_0)$.
+
+Let $(x_1,y_1)$ be another point and define the unit vector
+points from $(x_0,y_0)$ in the direction of $(x_1,y_1)$ as:
+\[
+\vec{n} = 
+\left(
+\begin{array}{c}
+n_1 \\ n_2
+\end{array}
+\right)
+=
+\frac{1}{d}
+\left(
+\begin{array}{c}
+x_1-x_0 \\ 
+y_1-y_0
+\end{array}
+\right)
+\qquad\text{with}\qquad
+d=\sqrt{(x_1-x_0)^2+(y_1-y_0)^2}
+\]
+The line segment connecting the two points can be
+parameterised as:
+\begin{eqnarray}
+x &=& x_0 + s n_1 \nn\\
+y &=& y_0 + s n_2 \qquad \text{,} \quad s\in[0,d]
+\label{aybntr}
+\end{eqnarray}
+Note that $s$, the arclength parameter, has the same dimension as the coordinates. On this
+line the function $f$ is described by the 1-D function $f(s) = f(x(s), y(s))$, $s \in [0;d]$. 
+The rate of change of $f(x,y)$ in the direction of $\vec{n}$ at some point $(x(s),y(s))$ 
+on the line is then $\partial f(s)/\partial s$. 
+This derivative can be related to the original coordinates as follows using the change
+rule of partial differentiation:
+\[
+\frac{d f(s)}{d s}
+=
+\frac{f(x(s),y(s))}{ds}
+=
+frac{\partial f}{\partial x}
+frac{\partial x}{\partial s}
++
+frac{\partial f}{\partial y}
+frac{\partial y}{\partial s}
+\]
+Using Eq.~\eqref{aybntr} this gives:
+\begin{equation}
+\frac{d f(s)}{d s}
+=
+frac{\partial f}{\partial x} n_1
++
+frac{\partial f}{\partial y} n_2
+=
+\vec\nabla f \cdot \vec{n}
+\label{sgeoete}
+\end{equation}
+This is the so-called directional derivative which can be computed in any point $(x,y)$ and
+direction $\vec{n}$ as long as the two basic partial derivatives 
+$\partial f/\partial x$ and $\partial f/\partial y$, which give the rate of
+change in the positive direction of the two axes, respectively, exist in $(x,y)$.
+
+Importantly,
+$df(s)/ds$ can be directly compared to $\partial f/\partial x$ and 
+$\partial f/\partial y$ because all derivatives have the
+same physical dimension in any application by virtue of the parameterisation \eqref{aybntr}. 
+A change of parameterisation parameter affects the l.h.s. of \eqref{sgeoete}
+but not the r.h.s because the latter depends on the $x$ and $y$ 
+coordinates and the unit vector n (which by definition \eqref{aybntr} is
+dimensionless). A change of parameterisation variable from arc-length s to time $t=s/v$ will
+change the l.h.s. into
+\[
+\frac{df}{ds} = \frac{df}{dt} \frac{dt}{ds} = \frac{1}{v} \frac{df}{dt}
+\]
+Substituting this result in \eqref{sgeoete} and rewriting gives another type of directional derivative:
+\[
+\frac{df(t)}{dt} = \vec\nabla \cdot \vec{\upnu}
+\]
+where $\vec{upnu}=\upnu \vec{n}$ can be interpreted as the local velocity vector, 
+but only if this would be useful
+in the context of what $f$ physically represents. Such re-parameterisation is useful in case
+one explicitly wants to determine the rate-of-change of $f$ with respect to a parameter
+different from the arc-length $s$. The material derivative of continuum mechanics is an
+example of such a scaled directional derivative (see below).
+
+
+
+%.......................................
+\subsection{Total differential}
+
+We can make the result \eqref{sgeoete} independent of parameterization as follows. 
+By differentiating \eqref{aybntr} to $s$, we find
+\begin{equation}
+dx(s) = n_1 ds \qquad \text{and} \qquad dy(s)=n_2 ds
+\label{jsbwrdjdsix}
+\end{equation}
+If we align the differential vector $d\vec{r}=(dx,dy)^T$ 
+with the line segment we can write $d\vec{r} = (dx(s),dy(s))^T$.
+By using \eqref{jsbwrdjdsix} we get $d\vec{r}(s)=\vec{n} ds$ 
+and $|d\vec{r}|=ds = \sqrt{dx^2+dy^2}$ because $\vec{n}$ is 
+of unit length.
+These relations between $d\vec{r}$, $dx$, $dy$, and $ds$, all with the same physical dimension,
+are general used.
+Next, rewriting \eqref{sgeoete} as $df(s)=(\vec\nabla \cdot \vec{n})ds = \vec\nabla \cdot (\vec{n} ds)$
+gives:
+\[
+df(s) = \vec\nabla f \cdot d\vec{r}(s)
+\]
+Because the line segment $(x_0,y_0)\rightarrow(x_1,y_1)$ is arbitrarily chosen we can as well write
+\begin{equation}
+df = \vec\nabla f \cdot d\vec{r} 
+= \frac{\partial f}{\partial x} dx + \frac{\partial f}{\partial y} dy
+\label{qfgagsyeight}
+\end{equation}
+Equation \eqref{qfgagsyeight} is called the {\bf total differential} of $f(x,y)$ 
+which holds in each point $(x,y)$ where the partial derivatives are calculated.
+
+This leads to the following interpretation: Given a function $f(x,y)$ 
+then in any point $(x,y)$ in which the partial derivatives
+$\partial f/\partial x$ and $\partial f/\partial y$ exist we can compute 
+the change $df$ in $f$ that occurs when going from $(x,y) \rightarrow (x + dx, y + dy)$ as
+\eqref{qfgagsyeight}, where $df =f(x + dx, y + dy) - f(x, y)$. 
+This holds for every choice, including $0$ or negative, of the
+differential steps $dx$ and $dy$.
+
+Generalisation to $N$-dimensional space: For any multi-parameter function $f(x_1,...x_N)$
+equation \eqref{qfgagsyeight} generalizes to the total differential
+\[
+df=
+\frac{\partial f}{\partial x_1} dx_1
++ ...
+\frac{\partial f}{\partial x_N} dx_N
+=
+\vec\nabla f^T \cdot d\vec{r}
+\]
+Similarly, equations \eqref{aybntr} and \eqref{sgeoete} can be generalized to functions of any number of
+parameters by parameterising the line connecting points $(x_1^0,...x_N^0)$ and 
+$(x_1,...x_N)$:
+\begin{eqnarray}
+x_1 &=& x_1^0 + s n_1 \nn\\
+   & ...&  \nn\\
+x_N &=& x_N^0 + s n_N \nn
+\end{eqnarray}
+with $s\in[0;d]$ and $d=\sqrt{(x_1-x_1^0)^2 + (x_N-x_N^0)^2}$.
+
+Direction of maximal change: It follows from \eqref{sgeoete} or \eqref{qfgagsyeight} 
+that the change of a function is
+largest if $\vec\nabla f \cdot d\vec{r}$ is maximum which occurs in any chosen point when 
+$\vec\nabla f$ is parallel to $d\vec{r}$.
+This implies that in every point the gradient vector $\vec\nabla f$ 
+always points in the direction of maximum change of $f$ and that 
+$| \vec\nabla f|= | df(s)/ds |$ is that maximum change.
+
+
+{\it Calculating a normal vector}:
+Suppose that $f(x_1, ... ,x_N) = k$ is the level surface of function $f$
+for the constant $k$ (for example the irregular and time-dependent temperature surface
+$T(t,x_1,x_2,x_3) = 20$ degrees in a room full of people). 
+The equation $f(x_1, ... ,x_N) = k$  implicitly defines the 
+$(N-1)$-dimensional surface in $N$-dimensional space of all points for
+which $f=k$. We want to determine in any chosen point of this surface the vector $\vec{n}$
+that is perpendicular to the surface. This is done as follows:
+Consider \eqref{qfgagsyeight}: $ df = \vec\nabla f \cdot d\vec{r}$
+and take $d\vec{r}$ to be a step from a point $(x_1,...x_N)$
+on $f=k$ along the level surface, 
+i.e. $d\vec{r}$ lies in the level surface. 
+In this case $df = 0$ because $f=k$ on the level
+surface. We find from \eqref{qfgagsyeight} that $\vec\nabla f \cdot d\vec{r}=0$, 
+implying that $\vec\nabla f$ is perpendicular to $d\vec{r}$. Hence,
+$\vec\nabla f$ is a vector which is always normal to a level surface. The unit normal in any point
+$(x_1,...x_N)$ on the level surface is then calculated as: 
+$\vec{n}= \vec\nabla f/ \left|\vec\nabla f \right|$
+where $\vec\nabla f$ is the gradient in that point.
+
+A corollary of this result is that if one calculates $\vec\nabla f$ 
+in some point $(x_1^0,...x_N^0)$ in $N$-space, then one also knows the local 
+direction of the level surface $f(x_1,...x_N) = f(x_1^0,...x_N^0)$ 
+that passes through $(x_1^0,...x_N^0)$.
+
+
+%.......................................
+\subsection{The material derivative}
+
+In continuum mechanics we distinguish the spatial coordinates $x_1,x_2,x_3$ and time $t$. Hence
+any function defined on this 4-parameter space is written as $f(t,x_1,x_2,x_3)$. The total
+differential (10) is then
+\begin{equation}
+df=
+\frac{\partial f}{\partial t} dt
++\frac{\partial f}{\partial x_1} dx_1
++\frac{\partial f}{\partial x_2} dx_2
++\frac{\partial f}{\partial x_3} dx_3
+\label{eqjdkfdkfeleven}
+\end{equation}
+In principle, the time differential $dt$ and spatial differentials $dx_i$ 
+can be arbitrarily chosen.
+For instance, taking $dt=0$ that only the spatial changes in the function 
+at fixed time are
+considered, while taking $dx_i=0$ focuses on the temporal variation 
+in a chosen fixed point.
+Generally, in continuum mechanics a special choice is made for 
+the directional derivative,
+which involves the local direction of the flow. 
+This direction is given at any point $(x_1,x_2,x_3)$
+and any time $t$ by the velocity vector
+\begin{equation}
+\vec\upnu(t,x_1,x_2,x_3)=\frac{d\vec{r}}{dt}
+\end{equation}
+where $d\vec{r}$ is the spatial step taken by a flow particle 
+from $(x_1,x_2,x_3)\rightarrow (x_1+dx_1,x_2+dx_2,x_3+dx_3)$ 
+during the time interval $t \rightarrow t + dt$. 
+Hence, the flow direction $d\vec{r}$ in point
+$(x_1,x_2,x_3)$ depends on the time $t$ such that 
+$d\vec{r}(t) = v(t,x_1,x_2,x_3)dt$.
+
+Taking $\vec\upnu=(\upnu_1,\upnu_2,\upnu_3)^T$ equation \eqref{eqjdkfdkfeleven} 
+becomes
+\[
+df=
+\frac{\partial f}{\partial t} dt
++\frac{\partial f}{\partial x_1} \upnu_1 dt 
++\frac{\partial f}{\partial x_2} \upnu_2 dt 
++\frac{\partial f}{\partial x_3} \upnu_3 dt 
+\]
+Dividing by $\delta t$ yields
+\[
+\frac{Df}{Dt}
+=\frac{\partial f}{\partial t} 
++\frac{\partial f}{\partial x_1} \upnu_1 
++\frac{\partial f}{\partial x_2} \upnu_2 
++\frac{\partial f}{\partial x_3} \upnu_3
+= 
+=\frac{\partial f}{\partial t} 
++\vec\upnu \cdot \vec\nabla f
+\]
+This equation is called the material derivative of $f$ 
+and describes the rate of change of $f$ with time in the local direction of
+the flow.
+
+
+
+
+
+FINISH
+
+%.......................................
+\subsection{Material derivative of a volume integral \label{app:matdervi}} 
+
+
+Let $F(\vec{r},t)$ be some scalar function depending on spatial coordinates $\vec{r}$ and time $t$ and
+$V(t)$ a volume that may also depend on $t$. Define the volume integral 
+\[
+I(t) = \int_{V(t)} F(\vec{r},t) dV.
+\] 
+For example, if $F$ is density, then $I(t)$ is the mass contained in the volume.
+
+Assume a deforming medium with incremental displacement field $\vec{s}(\vec{r},t)$. 
+Consider the
+deformation that occurs between $t$ and $t+\Delta t$ in which $\Delta t$ is a very small time step such
+that we can write that a particle at position $\vec{r}$ at time $t$ will be displaced to 
+$\vec{r} + \Delta \vec{r}$ at $t + \Delta t$.
+
+Then
+\[
+\Delta \vec{r} 
+= \vec{s}(\vec{r},t+\Delta t)-\vec{s}(\vec{r},t)
+= \frac{\vec{s}(\vec{r},t+\Delta t)-\vec{s}(\vec{r},t)}{\Delta t} \Delta t
+= \vec{\upnu} \Delta t
+\]
+where 
+$\vec{\upnu}=d\vec{s}/dt$ is the velocity vector at $(\vec{r},t)$.
+
+
+The volume $V(t)$ will deform to $V'(t + \Delta t)$. 
+The material derivative of $I(t)$ is defined as:
+\begin{equation}
+\frac{DI}{Dt}
+=
+\frac{D}{Dt}
+\int_{V(t)} F(\vec{r},t) dV
+=
+\lim_{\Delta t \rightarrow 0} \frac{1}{\Delta t}
+\left[
+\int_{V'(t+\Delta t)} F(\vec{r}+\Delta \vec{r},t+\Delta t) dV' - \int_{V(t)} F(\vec{r},t)  dV
+\right]
+\end{equation}
+For incremental $\Delta t$ we can approximate
+\[
+F(\vec{r}+\Delta \vec{r},t+\Delta t)
+= F(\vec{r},t)
++\frac{\partial F}{\partial x_j}v_j \Delta t + \frac{\partial F}{\partial t} \Delta t
+= F(\vec{r},t) + \frac{DF}{Dt} \Delta t
+\]
+Further, from continuum mechanics we have for the volume change associated with the
+incremental displacement field $\vec{s}(\vec{r}, t)$:
+\[
+\frac{dV'-dV}{dV'} = \vec\nabla \cdot \vec{s} = \vec\nabla \cdot (\vec\upnu \Delta t)
+\]
+or
+\[
+dV' = \left( 1 + \frac{\partial v_j}{\partial x_j} \Delta t \right) dV
+\]
+Using these results
+\[
+F(\vec{r}+\Delta \vec{r},t+\Delta t) dV'
+=
+\left(
+ F(\vec{r},t) + \frac{DF}{Dt} \Delta t
+\right)
+\left( 1 + \frac{\partial v_j}{\partial x_j} \Delta t \right) dV
+=
+F(\vec{r},t)  dV +  \frac{DF}{Dt} \Delta t dV + F(\vec{r},t) \frac{\partial v_j}{\partial x_j} 
+\Delta t dV + \frac{DF}{Dt}  \frac{\partial v_j}{\partial x_j} \Delta t^2 dV
+\]
+such that now the integration over $V'$ can be replaced by an integration over $V$:
+\[
+\int_{V'(t+\delta t)}  F(\vec{r}+\Delta \vec{r},t+\Delta t) dV'
+\simeq
+\int_{V(t)} F(\vec{r},t) dV
++ 
+\int_{V(t)} 
+\left[
+\left( \frac{DF}{Dt} + \frac{\partial v_j}{\partial x_j}  \right) \Delta t 
++\frac{DF}{Dt}  \frac{\partial v_j}{\partial x_j} \Delta t^2
+\right] dV
+\]
+Substituting this result in the above definition of the material derivative
+\[
+\frac{DI}{Dt}
+=
+\lim_{\Delta t \rightarrow 0} \frac{1}{\Delta t}
+\left[
+\int_{V(t)} 
+\left( \frac{DF}{Dt} + \frac{\partial v_j}{\partial x_j}  \right) \Delta t 
++\frac{DF}{Dt}  \frac{\partial v_j}{\partial x_j} \Delta t^2  \quad  dV
+\right]
+\]
+This leads to material derivative of a volume integral:
+\[
+\frac{D}{Dt} \int_{V(t)} F fV = \int_{V(t)} \frac{DF}{Dt} + F \frac{\partial v_j}{\partial x_j}  \quad dV
+\]
+
+
+
+
+
+
+
+
