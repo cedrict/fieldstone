@@ -1,0 +1,15 @@
+2D
+box
+Q2Q1
+sparse_matrix
+numerical_benchmark
+stokes_equation
+thermo_mechanical
+nonlinear
+viscous_rheology
+plastic_rheology
+residual
+paraview_output
+pressure_scaling
+pressure_normalisation
+

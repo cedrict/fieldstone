@@ -1,0 +1,12 @@
+2D
+box
+P1
+Q1
+analytical_benchmark
+numerical_benchmark
+error_convergence
+energy_equation
+residual
+paraview_output
+steady_state
+discontinuous_galerkin

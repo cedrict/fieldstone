@@ -1,0 +1,17 @@
+2D
+box
+Q2Q1
+numerical_benchmark
+stokes_equation
+energy_equation
+thermo_mechanical
+time_stepping
+buoyancy_driven
+vrms
+nusselt_number
+rayleigh_number
+paraview_output
+matplotlib
+pressure_scaling
+pressure_normalisation
+steady_state

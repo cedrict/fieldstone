@@ -1,0 +1,10 @@
+2D
+box
+Q1P0
+penalty
+analytical_benchmark
+stokes_equation
+nonlinear
+viscous_rheology
+plastic_rheology
+residual

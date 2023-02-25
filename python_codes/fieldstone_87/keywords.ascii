@@ -1,0 +1,16 @@
+2D
+box
+Q2Q1
+sparse_matrix
+analytical_benchmark
+numerical_benchmark
+error_convergence
+stokes_equation
+nonlinear
+viscous_rheology
+residual
+paraview_output
+pressure_scaling
+pressure_normalisation
+pressure_bc
+defect_picard

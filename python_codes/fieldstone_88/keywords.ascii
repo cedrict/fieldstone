@@ -1,0 +1,16 @@
+2D
+box
+Q2Q1
+sparse_matrix
+stokes_equation
+energy_equation
+thermo_mechanical
+time_stepping
+viscous_rheology
+buoyancy_driven
+vrms
+rayleigh_number
+paraview_output
+pressure_scaling
+pressure_normalisation
+schur_complement
