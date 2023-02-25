@@ -156,7 +156,7 @@ and the internal
 stress field is derived as follows: 
 Consider an arbitrary sub-volume $V$ with boundary $S$.
 Internal tractions act on the boundary $S$ 
-(e.g. to be determined with equation \eqref{chap10_tract1} from the
+(e.g. to be determined with equation \eqref{eq:md02} from the
 internal stress field at $S$). 
 The following equation postulates that the total sum of body
 forces
@@ -167,7 +167,7 @@ forces
 acting on $V$ and of tractions on $S$ leads to a zero net
 force acting on V.
 
-Substituting \eqref{chap10_tract1} in the surface integral and next 
+Substituting \eqref{eq:md02} in the surface integral and next 
 applying the Divergence 
 theorem\footnote{\url{https://en.wikipedia.org/wiki/Divergence_theorem}}
 one arrives at
@@ -188,7 +188,7 @@ arbitrary volume the integrant must equal 0, which leads to the
 
 This equation holds for any point in the interior of the continuum. 
 Any traction applied at the boundary of the continuum relates to 
-the (local) stress through equation \eqref{chap10_tract1}. Equation
+the (local) stress through equation \eqref{eq:md02}. Equation
 \eqref{eq:md04} states that body forces are in equilibrium 
 with the divergence of the stress tensor.
 Note: Gravity implies spatial variation in stress.
@@ -214,7 +214,7 @@ $\vec{a}\times \vec{b}= \epsilon_{ijk} \vec{e}_i a_j b_k$
 and per component 
 $(\vec{a}\times \vec{b})=\epsilon_{ijk} a_j b_k$.
 
-
+%exercise 2:
 \vspace{0.5cm}
 \fbox{
 \begin{minipage}{0.9\textwidth}
@@ -440,8 +440,7 @@ conservation requires that the divergence of the velocity is 0, i.e.
 \[
 \frac{\partial v_k}{\partial x_k} = \vec\nabla \cdot \vec\upnu = 0
 \]
-Note that an equation like 
-\eqref{eq:md10}
+Note that an equation like \eqref{eq:md10}
 can also be derived for any other quantity that is
 conserved by a material volume.
 
@@ -702,7 +701,7 @@ pressure} $p$ and the rheological (mechanical) stress ${\bm\tau}(\vec{r}, t)$:
 \todo[inline]{tau is not dev stress here !!}
 In absence of deforming stresses ${\bm\sigma}=-p {\bm 1}$ 
 and in the equilibrium state (0 inertial force),
-\eqref{eq:md12} reduces to the hydrostatic equation
+Eq.~\eqref{eq:md12} reduces to the hydrostatic equation
 \begin{equation}
 \vec\nabla p = \rho \vec{g} 
 \qquad
@@ -805,7 +804,7 @@ stresses $\sigma_i$ as: $\sigma_i'=\sigma_i +p$
 %......................................
 \subsubsection{Constitutive equations}
 
-The mass conservation equation (10) and the momentum equation (12) constitute 4
+The mass conservation equation \eqref{eq:md10} and the momentum equation \eqref{eq:md12} constitute 4
 equations in 10 unknowns $\rho,\vec{v},{\bm \sigma}$. 
 Later we will add the energy equation but this also
 adds the temperature $T$ as additional unknown. We require knowledge of at least 6
@@ -833,7 +832,7 @@ Therefore, constitutive equations take the general form
 {\bm \sigma}({\bm\varepsilon}) = -p {\bm 1} + {\bm tau}({\bm\varepsilon})
 \label{eq:md18}
 \end{equation}
-with ${\bm \tau}({\bm 0})={\bm 0}$, showing that stress en strain rate can be interdependent.
+with ${\bm \tau}({\bm 0})={\bm 0}$, showing that stress and strain rate can be interdependent.
 
 %...............................
 \subsubsection{Linear rheology}
@@ -851,7 +850,7 @@ where $\eta$ is the dynamic viscosity [\si{\pascal\second}] and $\lambda$ is a v
 parameter without a specific name.
 
 The mechanical, or rheological, stress $\tau_{ij}$ quantifies the internal friction of the flow. By
-computing the trace of the rheological stress we find, using (15),
+computing the trace of the rheological stress we find, using \eqref{eq:md15},
 \begin{equation}
 p - \overline{p} = \left(\lambda + \frac23 \eta \right) \dot{\varepsilon}_{kk} 
 = \xi \vec\nabla\cdot\vec\upnu
@@ -859,12 +858,12 @@ p - \overline{p} = \left(\lambda + \frac23 \eta \right) \dot{\varepsilon}_{kk}
 \end{equation}
 where $\xi=\lambda + \frac23 \eta$ is the {\bf bulk-viscosity}.
 
-Relation (20) demonstrates clearly that for a Newtonian fluid the difference between
+Relation \eqref{eq:md20} demonstrates clearly that for a Newtonian fluid the difference between
 thermodynamic pressure and average pressure is flow induced, i.e. by either local
 convergence or divergence of flow (i.e. $\vec\nabla\cdot \vec\upnu \neq 0$).
 
 For incompressible fluids $\vec\nabla\cdot \vec\upnu = 0$. 
-Then, according to (20): $p = \overline{p}$. Furthermore, (17)
+Then, according to \eqref{eq:md20}: $p = \overline{p}$. Furthermore, \eqref{eq:md17}
 leads to $\sigma_{ij}'=\tau_{ij}=\tau_{ij}'$. In the case that the bulk viscosity 
 is assumed 0 ({\bf Stokes condition}), we have $p = \overline{p}$ 
 independent of (in)compressibility. Evidently: $p - \overline{p} \longleftrightarrow =0$
@@ -934,14 +933,14 @@ with linear viscosity in an incompressible fluid we define the viscosity functio
 \eta=\frac{\tau_{ij}}{2 \dot\varepsilon_{ij}}.
 \label{eq:md24}
 \end{equation}
-Combined with (23), 
+Combined with \eqref{eq:md23}, 
 the viscosity function of power law rheology reads:
 \begin{equation}
 \eta(\tau) = \frac12 A \tau^{1-n}.
 \label{eq:md25}
 \end{equation}
 Notice that the viscosity decreases as stress increases. The stress
-(internal friction) is due to body forces and/or applied tractions (cf. 12). In regions of
+(internal friction) is due to body forces and/or applied tractions (cf. Eq.~\eqref{eq:md12}). In regions of
 high internal stress, the viscosity decreases in a power law rheology which causes
 increasing strain rates (according to $\tau_{ij}=2\eta \dot\varepsilon_{ij}$) 
 leading to a localization of deformation.
@@ -985,7 +984,7 @@ where the effective viscosity is
 \label{eq:md29}
 \end{equation}
 
-A constitutive equation, more detailed than (23), encompassing both power law creep and
+A constitutive equation, more detailed than \eqref{eq:md23}, encompassing both power law creep and
 pure diffusion creep is:
 \begin{equation}
 \dot\varepsilon_{ij} = A \left( \frac{b}{d}\right)^m 
@@ -1012,7 +1011,6 @@ Furthermore, feedback relations can exist between grain growth (due to dynamic
 crystallization) and stress, e.g.
 \begin{equation}
 d = K b \left( \frac{\tau}{\mu} \right)^{-q} \qquad K\sim 19
-\label{eq:md31}
 \end{equation}
 
 The above account of deformation laws (constitutive equations) is by no means
@@ -1037,33 +1035,35 @@ the constitutive equation (30).
 \vspace{0.5cm}
 
 
-
+%......................................................
 \subsubsection{The Navier-Stokes equation}
 
-Recalling the general equation of motion (12)
+Recalling the general equation of motion \eqref{eq:md12}
 \[
 \rho \frac{D\upnu_i}{Dt} = \rho g_i + \frac{\partial \sigma_{ij}}{\partial x_j}
 \]
 and the separation of
-the total stress in the thermodynamic pressure and mechanical stress (13)
-\[
+the total stress in the thermodynamic pressure and mechanical stress \eqref{eq:md13}
+\begin{equation}
 \sigma_{ij} = -p \delta_{ij} + \tau_{ij},
-\]
+\end{equation}
 we find after substitution:
-\[
+\begin{equation}
 \rho \frac{D\upnu_i}{Dt}=\rho g_i -\frac{\partial p}{\partial x_i}+\frac{\partial \tau_{ij}}{\partial x_j}
-\]
+\label{eq:md31}
+\end{equation}
 Adopting the constitutive equation for linear rheology
-\[
+\begin{equation}
 \tau_{ij} = (\xi - \frac23 \eta) \dot\varepsilon_{kk} \delta_{ij} + 2\eta \dot\varepsilon_{ij}
-\]
+\end{equation}
 and assuming that viscosities do not
 depend on the spatial coordinates we find that 
-\[
+\begin{equation}
 \rho \frac{D\upnu_i}{Dt}=\rho g_i -\frac{\partial p}{\partial x_i}+ \eta \vec\nabla^2 \upnu_i
 + (\xi+\frac13 \eta) \frac{\partial}{\partial x_i} \vec\nabla\cdot\vec\upnu
-\]
-This is the Navier-Stokes equation for a fluid with constant viscosities.
+\label{eq:md33}
+\end{equation}
+This is the {\bf Navier-Stokes equation} for a fluid with constant viscosities.
 
 %%%ex18
 \vspace{0.5cm}
@@ -1071,7 +1071,7 @@ This is the Navier-Stokes equation for a fluid with constant viscosities.
 \begin{minipage}{0.9\textwidth}
 \begin{exercise}
 {\small \it 
-Derive (32/33)
+Derive \eqref{eq:md33}
 }
 \end{exercise}
 \end{minipage}
@@ -1108,14 +1108,14 @@ lithosphere and for the asthenosphere and a lithosphere velocity of 5 cm/yr.
 }
 \vspace{0.5cm}
 
-
+%.............................................................................
 \subsubsection{Density perturbations as a driving force for mantle convection}
 
 The general equation of motion 
-\[
+\begin{equation}
 \rho \frac{D\upnu_i}{Dt} = -\frac{\partial p}{\partial x_i} + 
 \frac{\partial \tau_{ij}}{\partial x_j} + \rho g_i
-\]
+\end{equation}
 can be rewritten in terms
 of an equation relative to the hydrostatic reference state of the Earth's mantle. We define
 the hydrostatic reference state as the undeformed state in which no density perturbations
@@ -1141,6 +1141,7 @@ of motion the hydrostatic terms cancel and we find:
 = -\frac{\partial {\color{violet} p}}{\partial x_i} + \frac{\partial \tau_{ij}}{\partial x_j}
 + {\color{violet} \rho} g_i^0 +  {\color{violet} \rho} {\color{violet} g_i}
 + \rho_0  {\color{violet} g_i}
+\label{eq:md34a}
 \end{equation}
 The term $ {\color{violet}\rho} D\upnu_i/Dt$ and the the last two terms can often be 
 neglected as a small second order
@@ -1149,18 +1150,26 @@ perturbation leading to the perturbation equation
 \rho_0   \frac{D\upnu_i}{Dt}
 = -\frac{\partial {\color{violet} p}}{\partial x_i} + \frac{\partial \tau_{ij}}{\partial x_j}
 + {\color{violet} \rho} g_i^0 
+\label{eq:md34b}
 \end{equation}
 This equation shows explicitly that density perturbations and not the total density field
 are the driving forces for mantle convection.
 
 Gravity inside the Earth relates to the density field according to the differential (Poisson) equation:
-\[
+\begin{equation}
 \vec\nabla \cdot \vec{g} = - \vec\nabla^2 U = -4\pi {\cal G} \rho
-\]
+\end{equation}
+where ${\cal G}$ is the universal constant of gravity. With $\vec{g}=-\vec\nabla U$, 
+we obtain the {\bf Poisson equation}:
+\begin{equation}
+\vec\nabla^2 U = 4\pi {\cal G} \rho
+\label{eq:md35}
+\end{equation}
 or, for the dynamic quantities deviating from the hydrostatic state
-\[
+\begin{equation}
 \vec\nabla^2 {\color{violet} U} = -4\pi {\cal G} {\color{violet} \rho}
-\]
+\label{eq:md36}
+\end{equation}
 
 
 %%%ex20
@@ -1205,7 +1214,7 @@ By assuming incompressibility we can
 satisfy this equation trivially by defining the stream function $\psi(x,y)$ as follows:
 \begin{eqnarray}
 \upnu_x &=& \frac{\partial \psi}{\partial y} \nn\\
-\upnu_y &=&-\frac{\partial \psi}{\partial x} \nn\\
+\upnu_y &=&-\frac{\partial \psi}{\partial x} \label{eq:md37}
 \end{eqnarray}
 Please check that we have indeed $\vec\nabla\cdot\vec\upnu=0$.
 This definition does not impose any restriction on the velocity
@@ -1213,12 +1222,12 @@ field or the stream function (apart from being a differentiable function).
 
 Furthermore, assume (for now) that the viscosity is constant and that
 $\rho D\upnu_i/DT \sim 0$ for mantle
-convection (this will be demonstrated later). Then, the Navier-Stokes equation (33)
+convection (this will be demonstrated later). Then, the Navier-Stokes equation \eqref{eq:md33}
 reduces to:
 \begin{eqnarray}
 0 &=& -\frac{\partial p}{\partial x} + \eta \left( 
 \frac{\partial^3 \psi}{\partial y^3}  + \frac{\partial^3 \psi}{\partial x^2 \partial y}  
-\right) + \rho g_x \\
+\right) + \rho g_x \nn\\
 0 &=& -\frac{\partial p}{\partial y} + \eta \left( 
 \frac{\partial^3 \psi}{\partial x^3}  + \frac{\partial^3 \psi}{\partial y^2 \partial x}  
 \right) + \rho g_y 
@@ -1252,6 +1261,7 @@ and next by subtracting the resulting equations, leading to:
 \right)
 +\frac{\partial (\rho g_x)}{\partial y}
 -\frac{\partial (\rho g_y)}{\partial x}
+\label{eq:md39}
 \end{equation}
 or
 \begin{equation}
@@ -1314,7 +1324,7 @@ Demonstrate that
 }
 \vspace{0.5cm}
 
-
+%..............................................................................
 \subsubsection{Application of the stream function approach: Post-glacial rebound}
 
 We consider the restoration of the Earth’s surface to equilibrium shape in the aftermath of
@@ -1323,8 +1333,8 @@ the northern and southern hemisphere, left a depression in the Earth surface whi
 result of horizontal pressure gradients, is being restored to isostatic equilibrium. The
 uplift resulting from the last glaciation period started some 8000 years ago and is as yet
 not complete. To model the isostatic rebound we adopt an approximate analytical
-approach originally due to \textcite{hask35} (1935). This analysis will lead to a first estimate of the
-viscosity of the mantle.
+approach originally due to \textcite{hask35} (1935) - see also \textcite{mitr96} (1996). 
+This analysis will lead to a first estimate of the viscosity of the mantle.
 
 Assume an infinite 2-D half-space filled with an incompressible Newtonian fluid of
 constant viscosity and with density independent of spatial coordinates. The $y$-axis is taken
@@ -1336,6 +1346,7 @@ Because \eqref{eq:md40} is a linear differential equation we assume a spectral a
 surface deformation is prescribed as a harmonic function with a specific wavelength $\lambda$ :
 \begin{equation}
 w_k(x,t) = w_0(t) \cos (kx) 
+\label{eq:md41}
 \end{equation}
 with the wave number $k = 2\pi /\lambda$.
 
@@ -1350,10 +1361,12 @@ with separation of variables). A more detailed analysis than is given below will
 that $A(y) =0$. For simplicity, we take
 \begin{equation}
 \psi(x,y)=Y(y) \sin kx
+\label{eq:md42}
 \end{equation}
 Substitution in \eqref{eq:md40} leads to
 \begin{equation}
 \frac{d^4Y}{dy^4} - 2k^2 \frac{d^2Y}{dy^2} + k^4 Y = 0
+\label{eq:md43}
 \end{equation}
 This is an ordinary differential equation with constant coefficients. Substituting 
 $Y(y)=Y_0 \exp (m y)$ gives 
@@ -1386,7 +1399,8 @@ is only a crude approximation. Still, for Haskell’s problem it helps finding a
 analytical solution. Using \eqref{eq:md37} we find for the velocity components:
 \begin{eqnarray}
 \upnu_x &=& (B-k(A+By)) \exp (-ky) \sin kx \\
-\upnu_y &=& -k(A+By) \exp (-ky) \cos kx 
+\upnu_y &=& -k(A+By) \exp (-ky) \cos kx
+\label{eq:md46} 
 \end{eqnarray}
 
 %ex24
@@ -1446,7 +1460,7 @@ p(x,y) = -2\eta A k^2 \exp (-ky) \cos kx + \rho g_y y + p_0
 \begin{minipage}{0.9\textwidth}
 \begin{exercise}
 {\small \it 
-Derive equations \eqref{eq:md46}.
+Derive Eq.~\eqref{eq:md49} and determine that $p_0=0$.
 }
 \end{exercise}
 \end{minipage}
