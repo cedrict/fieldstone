@@ -1,9 +1,0 @@
-2D
-annulus
-Q1P0
-penalty
-sparse_matrix
-analytical_benchmark
-error_convergence
-stokes_equation
-paraview_output

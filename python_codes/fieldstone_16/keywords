@@ -1,9 +1,0 @@
-2D
-box
-Q1P0
-stokes_equation
-viscous_rheology
-buoyancy_driven
-paraview_output
-pressure_scaling
-schur_complement
