@@ -68,7 +68,6 @@ depth=50e3
 background_pressure=3000*9.81*depth
 p_0=p_f*background_pressure
 
-tfinal=100e6*year
 
 dt=1e-2*year
 nstep=150

@@ -832,14 +832,12 @@ for iter in range(0,niter):
    print("     -> sr  (m,M) %.6e %.6e " %(np.min(srn),np.max(srn)))
 
    print("compute nod strain rate: %.3f s" % (timing.time() - start))
-
  
    ######################################################################
    etan=np.zeros(NV,dtype=np.float64)
 
    for i in range (0,NV):
        etan[i]=viscosity(exxn[i],eyyn[i],exyn[i],q[i],iter,xV[i],yV[i],T[i],d[i])
-
 
    ######################################################################
    # generate vtu output at every nonlinear iteration
@@ -1170,8 +1168,7 @@ vtufile.write("<DataArray type='Float32' Name='d' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%.5e \n" %(d[i]))
 vtufile.write("</DataArray>\n")
-
-
+#--
 vtufile.write("</PointData>\n")
 #####
 vtufile.write("<Cells>\n")
