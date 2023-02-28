@@ -1,4 +1,4 @@
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_70/keywords}
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_70/keywords.ascii}
 
 \begin{center}
 Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_70}
@@ -56,10 +56,10 @@ As shown on the (modified) figure above, the rheological assemblage is as follow
 \begin{center}
 \input{python_codes/fieldstone_70/tikz_vvp}
 \end{center}
-The dislocation creep viscosity $\eta_{\color{OliveGreen}ds}$ and effective 
+The dislocation creep viscosity $\eta_{\color{green}ds}$ and effective 
 viscoplastic viscosity $\eta_{\color{blue}vp}$ are given by 
 \[
-\eta_{\color{OliveGreen}ds}(\dot\varepsilon) 
+\eta_{\color{green}ds}(\dot\varepsilon) 
 = \frac{1}{2} A^{-1/n} \dot{\varepsilon}^{-1+1/n} \exp \frac{Q}{nRT}
 \qquad
 \text{and}
@@ -81,15 +81,15 @@ for 'total').
 
 %%%%%%%%%%%%%%%%%
 \item We start by assuming that the plasticity element is not active 
-($\dot{\varepsilon}_{\color{blue}vp}=0$, $\dot{\varepsilon}_{\color{OliveGreen}ds}
+($\dot{\varepsilon}_{\color{blue}vp}=0$, $\dot{\varepsilon}_{\color{green}ds}
 +\dot{\varepsilon}_{\color{orange} v} =\dot{\varepsilon}_T$): 
 
 We use the technique explained here after to compute the partitioning of the strain rate
 and recover the stress $\tau$ and the dislocation creep effective viscosity
 is given by 
 \begin{eqnarray}
-\eta_{\color{OliveGreen}ds} &=& \frac{1}{2} A^{-1/n} 
-\dot{\varepsilon}_{\color{OliveGreen}ds}^{-1+1/n} \exp \left( \frac{Q}{nRT} \right) \nn\\
+\eta_{\color{green}ds} &=& \frac{1}{2} A^{-1/n} 
+\dot{\varepsilon}_{\color{green}ds}^{-1+1/n} \exp \left( \frac{Q}{nRT} \right) \nn\\
 \eta_v &=& \frac{\tau}{2 \dot{\varepsilon}_{\color{orange}v}}  \nn
 \end{eqnarray}
 \begin{lstlisting}
@@ -98,7 +98,7 @@ eps_v=tau/2/eta_v
 \end{lstlisting}
 The effective viscosity of both dampers is given by 
 \[
-\eta_{i\text eff}=\frac{1}{1/\eta_{\color{orange}v}+1/\eta_{\color{OliveGreen}ds}}
+\eta_{i\text eff}=\frac{1}{1/\eta_{\color{orange}v}+1/\eta_{\color{green}ds}}
 \]
 \begin{lstlisting}
 etaeff=1./(1./eta_v+1./eta_ds)
@@ -117,49 +117,49 @@ yield value, which is not allowed. In this case the plastic element must be pres
 and active and the linear viscous and dislocation creep viscous dampers are then 
 in series with the viscoplastic element. 
 They  respectively deform with a strain rate $\dot{\varepsilon}_{\color{orange}v}$, 
-$\dot{\varepsilon}_{\color{OliveGreen}ds}$ and $\dot\varepsilon_{\color{blue}vp}$ 
+$\dot{\varepsilon}_{\color{green}ds}$ and $\dot\varepsilon_{\color{blue}vp}$ 
 (all under the same tress $\tau$) 
 and we have  
 $\dot\varepsilon_T = \dot{\varepsilon}_{\color{orange}v} +
-\dot{\varepsilon}_{\color{OliveGreen}ds} + \dot\varepsilon_{\color{blue}vp}$ so:
+\dot{\varepsilon}_{\color{green}ds} + \dot\varepsilon_{\color{blue}vp}$ so:
 
 \begin{eqnarray}
 \dot\varepsilon_T 
 -\dot{\varepsilon}_{\color{orange}v} 
--\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau) 
+-\dot{\varepsilon}_{\color{green}ds}(\tau) 
 &=& \dot\varepsilon_{\color{blue}vp}(\tau)  \nonumber\\
 \dot\varepsilon_T 
 -\dot{\varepsilon}_{\color{orange}v} 
--\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau) 
+-\dot{\varepsilon}_{\color{green}ds}(\tau) 
 &=& \frac{\tau}{2 \eta_{\color{blue}vp}}  \nn\\
 \dot\varepsilon_T 
 -\dot{\varepsilon}_{\color{orange}v} 
--\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau) 
+-\dot{\varepsilon}_{\color{green}ds}(\tau) 
 &=& \frac{\tau}{2 \left( \frac{Y}{2\dot\varepsilon_{\color{blue}vp}(\tau)} + \eta_m  \right)} 
 \nonumber\\
 \dot\varepsilon_T 
 -\dot{\varepsilon}_{\color{orange}v} 
--\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau) 
+-\dot{\varepsilon}_{\color{green}ds}(\tau) 
 &=&
 \frac{\tau}{2 \left( \frac{Y}{2 (
 \dot\varepsilon_T 
 -\dot{\varepsilon}_{\color{orange}v}   
--\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau)  )} + \eta_m  \right)} \nonumber 
+-\dot{\varepsilon}_{\color{green}ds}(\tau)  )} + \eta_m  \right)} \nonumber 
 \\
 2 [
 \dot\varepsilon_T 
 -\dot{\varepsilon}_{\color{orange}v}(\tau) 
--\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau)
+-\dot{\varepsilon}_{\color{green}ds}(\tau)
 ]
 \left( \frac{Y}{2 (
 \dot\varepsilon_T 
 -\dot{\varepsilon}_{\color{orange}v} 
--\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau) )} + \eta_m  \right) &=& \tau 
+-\dot{\varepsilon}_{\color{green}ds}(\tau) )} + \eta_m  \right) &=& \tau 
 \nonumber\\
 Y + 2 (
 \dot\varepsilon_T 
 -\dot{\varepsilon}_{\color{orange}v}(\tau)  
--\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau) ) \eta_m  &=& \tau \nonumber 
+-\dot{\varepsilon}_{\color{green}ds}(\tau) ) \eta_m  &=& \tau \nonumber 
 \end{eqnarray}
 We must then find the zero of the function ${\cal F}(\tau)$: 
 \begin{eqnarray}
@@ -167,7 +167,7 @@ We must then find the zero of the function ${\cal F}(\tau)$:
 &=& Y + 2 [
 \dot\varepsilon_T 
 -\dot{\varepsilon}_{\color{orange}v}(\tau)   
--\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau) 
+-\dot{\varepsilon}_{\color{green}ds}(\tau) 
 ]\eta_m -\tau \nonumber\\
 &=& Y + 2 \left[ 
 \dot\varepsilon_T -\frac{\tau}{2\eta_v} -A \tau^n \exp \left(-\frac{Q}{RT}\right) 
@@ -204,12 +204,12 @@ while abs(func)>1e-6:
 
 \item Once $\tau$ has been found, one can compute 
 \begin{eqnarray}
-\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau)&=&A \tau^n \exp \left(-\frac{Q}{RT}\right)
+\dot{\varepsilon}_{\color{green}ds}(\tau)&=&A \tau^n \exp \left(-\frac{Q}{RT}\right)
 \qquad 
 \Rightarrow 
 \qquad 
-\eta_{\color{OliveGreen}ds}(\dot\varepsilon_{\color{OliveGreen}ds}) 
-= \frac{1}{2} A^{-1/n} \dot{\varepsilon}_{\color{OliveGreen}ds}^{-1+1/n} \exp \frac{Q}{nRT} \nn\\
+\eta_{\color{green}ds}(\dot\varepsilon_{\color{green}ds}) 
+= \frac{1}{2} A^{-1/n} \dot{\varepsilon}_{\color{green}ds}^{-1+1/n} \exp \frac{Q}{nRT} \nn\\
 \dot{\varepsilon}_{\color{orange}v}(\tau)&=&\frac{\tau}{2\eta_v}  \nn
 \end{eqnarray}
 \begin{lstlisting}
@@ -221,7 +221,7 @@ then
 $\dot{\varepsilon}_{\color{blue}vp}
 =\dot{\varepsilon}_T 
 -\dot{\varepsilon}_{\color{orange}v}(\tau) 
--\dot{\varepsilon}_{\color{OliveGreen}ds}(\tau)$,
+-\dot{\varepsilon}_{\color{green}ds}(\tau)$,
 and then 
 \[
 \eta_{\color{blue} vp}(\dot\varepsilon_{\color{blue} vp}) 
@@ -232,7 +232,7 @@ Ultimately the effective viscosity at every quadrature point is computed as foll
 \[
 \eta_{eff} = \left(
 \frac{1}{\eta_{\color{orange}v}} + 
-\frac{1}{\eta_{\color{OliveGreen}ds}}  + 
+\frac{1}{\eta_{\color{green}ds}}  + 
 \frac{1}{\eta_{\color{blue}vp}}  
 \right)^{-1}
 \]
