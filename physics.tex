@@ -1,4 +1,4 @@
-\subsubsection{Strain rate and spin tensor} \label{ss:srst}
+\subsection{Strain rate and spin tensor} \label{ss:srst}
 \index{general}{Velocity Gradient}
 \index{general}{Strain Rate}
 \index{general}{Spin Tensor}
@@ -35,7 +35,7 @@ ${\bm D}(\vec \upnu)$ - or simply ${\bm D}$, such as for instance in Fullsack (1
 \end{remark}
 
 %.............................................
-\subsection{Viscous Newtonian rheology}
+\section{Viscous Newtonian rheology}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 The relationship between velocity-related stresses and
@@ -113,7 +113,7 @@ This is an obvious conflict of notations.
 \end{remark}
 
 %------------------------------------------------------------------------
-\subsection{The heat transport equation - energy conservation equation \label{ss:hte}}
+\section{The heat transport equation - energy conservation equation \label{ss:hte}}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 %The heat contained within a volume $dV$ is $\rho C_p T dV$ where 
@@ -264,7 +264,7 @@ See discussions about shear heating (``viscous dissipation'') -- meaning and app
 \textcite{madu98} (1998).
 
 %------------------------------------------------------------------------
-\subsection{The momentum conservation equations} 
+\section{The momentum conservation equations} 
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 As explained in Section~\ref{ss:nondim}, in Earth science applications the Navier-Stokes 
@@ -300,7 +300,7 @@ The equations of motion \eqref{eq:forcebal} becomes\footnote{\url{https://en.wik
 
 
 %------------------------------------------------------------------------
-\subsection{The mass conservation equations} 
+\section{The mass conservation equations} 
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 \index{general}{Solenoidal Field} 
 \index{general}{Divergence-free}
@@ -370,7 +370,7 @@ the continuity equation for an incompressible fluid is :
 
 
 %------------------------------------------------------------------------------
-\subsection{The equations in \aspect manual}
+\section{The equations in \aspect manual}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 The following is lifted off the \aspect manual.
@@ -465,7 +465,7 @@ but since $k_B=\lambda+2\eta/3=0$, then $\lambda=-2\eta/3$ so
 
 \newpage
 %---------------------------------------------------------------------------------------------------
-\subsection{Equations for thermal convection in an anelastic, compressible, self-gravitating spherical mantle }
+\section{Equations for thermal convection in an anelastic, compressible, self-gravitating spherical mantle }
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 %------------------------------------------------------------------------------
 
@@ -636,11 +636,11 @@ with
 \todo[inline]{VERIFY all this !}
 
 %------------------------------------------------------------------------------
-\subsection{Non-dimensionalisation of the Navier-Stokes equations}\label{ss:nondim}
+\section{Non-dimensionalisation of the Navier-Stokes equations}\label{ss:nondim}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 %______________________________________________
-\subsubsection{Approach \# 1 - isothermal flow}
+\subsection{Approach \# 1 - isothermal flow}
 %We start from the following form of the momentum conservation equation: 
 %\[
 %\frac{\partial \vec\upnu}{\partial t} + (\vec\upnu \cdot \vec\nabla)\vec\upnu 
@@ -782,13 +782,13 @@ dimensionless Stokes equations):
 Note that in our case $Re/Fr\simeq 30.5$. 
 
 %_________________________________________________________________________
-\subsubsection{Approach \# 2 - Temperature dependent \label{ss:dimeqs2}}
+\subsection{Approach \# 2 - Temperature dependent \label{ss:dimeqs2}}
 
 \input{dimensionless_equations2}
 
 
 %_________________________________________________________________________
-\subsection{The Navier-Stokes equations in cylindrical coordinates}
+\section{The Navier-Stokes equations in cylindrical coordinates}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 In cylindrical coordinates, $(r,\theta,z)$, the continuity equation for an incompressible fluid is 
@@ -834,7 +834,7 @@ and the Laplacian operator is \index{general}{Laplace Operator} \index{general}{
 
 
 %------------------------------------------------------------------------------
-\subsection{The Stokes equations in spherical coordinates}
+\section{The Stokes equations in spherical coordinates}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 In spherical coordinates, $(r,\theta,\phi)$, the continuity equation for an incompressible fluid is 
@@ -1027,14 +1027,14 @@ Before being used these equations should be checked against multiple sources.
 }
 
 %------------------------------------------------------------------------------
-\subsection{The equations for axisymmetric geometries \label{ss:axicyleqs}}
+\section{The equations for axisymmetric geometries \label{ss:axicyleqs}}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 \input{axisymmetric_eqs}
 
 
 \newpage
 %---------------------------------
-\subsection{The Boussinesq approximation}
+\section{The Boussinesq approximation}
 \index{general}{Boussinesq Approximation}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
@@ -1085,7 +1085,7 @@ of the source term.
 
 
 %---------------------------------
-\subsection{The Extended Boussinesq approximation}
+\section{The Extended Boussinesq approximation}
 \index{general}{Extended Boussinesq Approximation}
 \index{general}{EBA}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
@@ -1098,7 +1098,7 @@ Christensen and Yuen (1985) \cite{chyu85} and more completely in Matyska and Yue
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
-\subsection{Stokes equation for elastic medium}
+\section{Stokes equation for elastic medium}
 
 \input{elastic_equations}
 
@@ -1108,13 +1108,13 @@ Christensen and Yuen (1985) \cite{chyu85} and more completely in Matyska and Yue
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 \newpage
-\subsection{The strain rate tensor in all coordinate systems}
+\section{The strain rate tensor in all coordinate systems}
 \input{strainrate_tensor}
 
 
 \newpage
 %-------------------------------
-\subsection{Boundary conditions}
+\section{Boundary conditions}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 %wiki
@@ -1139,7 +1139,7 @@ of the Neumann and Dirichlet boundary conditions.
 \index{general}{Neumann Boundary Condition}
 
 %....................................
-\subsubsection{The Stokes equations}
+\subsection{The Stokes equations}
 
 You may find the following terms in the computational geodynamics literature:
 
@@ -1153,13 +1153,13 @@ You may find the following terms in the computational geodynamics literature:
 \end{itemize}
 
 %....................................
-\subsubsection{The heat transport equation}
+\subsection{The heat transport equation}
 
 There are two types of boundary conditions for this equation: temperature boundary conditions (Dirichlet boundary conditions) and heat flux boundary conditions (Neumann boundary conditions). 
 
 \newpage
 %------------------------------------------
-\subsection{Meaningful physical quantities}
+\section{Meaningful physical quantities}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 \begin{itemize}
@@ -1396,7 +1396,7 @@ one can compute the averaged viscosity in a domain as follows:
 
 \newpage
 %------------------------------------------------------
-\subsection{Principal stress and principal invariants} \label{sec:princ_stress}
+\section{Principal stress and principal invariants} \label{sec:princ_stress}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 \index{general}{Maximum Shear Stress} 
@@ -1413,7 +1413,7 @@ As a consequence, in a coordinate system with axes $\vec{n}_{1},\vec{n}_{2},\vec
 the stress tensor is a diagonal matrix, and has only the three normal components $\lambda _{1},\lambda _{2},\lambda _{3}$
 i.e. the principal stresses. If the three eigenvalues are equal, the stress is an isotropic compression or tension, always perpendicular to any surface, there is no shear stress, and the tensor is a diagonal matrix in any coordinate frame.
 
-\subsubsection{In two dimensions}
+\subsection{In two dimensions}
 
 We are looking for the stress tensor eigenvector vector $\vec{n}=(n_x,n_y)$ associated to the
 eigenvalue $\lambda$ such that 
@@ -1655,7 +1655,7 @@ what is going on above}
 
 
 %...................................... 
-\subsubsection{In three dimensions}
+\subsection{In three dimensions}
 
 We are looking for the stress tensor eigenvector vector $\vec{n}=(n_x,n_y,n_z)$ associated to the
 eigenvalue $\lambda$ such that 
@@ -1764,7 +1764,7 @@ but not always. Be careful when reading literature!}:
 invariants\footnote{\url{https://en.wikipedia.org/wiki/Invariants_of_tensors}} 
 (see also Appendix A.1 of Zienkiewicz \& Taylor \cite{zita2} or  Eq.~(6.4) of Freudenthal \& Geiringer \cite{frge58}). 
 These invariants can be written in a coordinate-free manner\footnote{Proofs are in 
-Appendix~\ref{app_invariants}}:
+Appendix~\ref{app:invariants}}:
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
 {\cal K}_1({\bm \sigma}) &=& {\rm tr}({\bm \sigma})  \nn\\
@@ -2063,7 +2063,7 @@ The expression for the Lode angle is different in \cite[p101]{book_zitf} than in
 
 
 %.........................................................................
-\subsubsection{About the 2nd principal invariant of the deviatoric stress}
+\subsection{About the 2nd principal invariant of the deviatoric stress}
 
 \begin{eqnarray}
 {\cal K}_2({\bm \tau}) 
@@ -2094,7 +2094,7 @@ Looking at Eq.~\eqref{eq:max_shear_stress_2D}, we can then write
 
 
 %------------------------------------------------------
-\subsection{Tensor (moment) invariants}\label{sec:invariants}
+\section{Tensor (moment) invariants}\label{sec:invariants}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 \index{general}{Tensor Invariant}
@@ -2189,13 +2189,13 @@ is given by:
 
 
 %----------------------------------------------------------------
-\subsection{Stress \& strain rate invariants}\label{sec:stress_invariants}
+\section{Stress \& strain rate invariants}\label{sec:stress_invariants}
 
 \input{stress_sr_invariants}
 
 %-----------------------------------------------------------
 \index{general}{Plain Strain}
-\subsection{Two-dimensional plane strain calculations \label{ss:plane_strain}} 
+\section{Two-dimensional plane strain calculations \label{ss:plane_strain}} 
 \input{plane_strain}
 
 
@@ -2207,7 +2207,7 @@ is given by:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Alternative principal stresses notations}\label{sec:altinv}
+\section{Alternative principal stresses notations}\label{sec:altinv}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 The principal stresses of the stress tensor ${\bm \sigma}$ are $\sigma_1$, $\sigma_2$
@@ -2338,7 +2338,7 @@ Here again we arrive at the opposite of Eq. (16) of Wojciechowski \cite{wojc18}.
 %====================================================================================
 %====================================================================================
 
-\subsection{Recap of notations and definitions of stress invariants \label{ss:recapInv}}
+\section{Recap of notations and definitions of stress invariants \label{ss:recapInv}}
 \input{recap_invariants}
 
 

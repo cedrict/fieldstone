@@ -5,7 +5,7 @@ and on material from the book “Mantle convection in the Earth and Planets” b
 and Olson, Cambridge University Press, 2002.
 
 %---------------------------------------------------------------
-\subsection{Review of some essentials of continuum mechanics}
+\section{Review of some essentials of continuum mechanics}
 
 
 Newtonian mechanics deals with particles and rigid (undeformable) bodies on which
@@ -72,7 +72,7 @@ continuum. The sign convention in continuum mechanics is that compression is neg
 and tension is positive (in geology this is usually the other way around).
 
 %.....................
-\subsubsection{Stress} 
+\subsection{Stress} 
 
 Stress is a second order tensor quantity, which is defined by the following steps:
 \begin{enumerate}
@@ -142,7 +142,7 @@ the faces are aligned with the local coordinate axes) when the stress is given.
 \vspace{0.5cm}
 
 %............................................................
-\subsubsection{Force balance equation of a continuum at rest} 
+\subsection{Force balance equation of a continuum at rest} 
 
 Assume a continuum (gas, liquid, solid)
 at rest. In this situation the net force acting on the entire 
@@ -232,7 +232,7 @@ c) Derive \eqref{eq:md04} by considering the force balance of a tiny cube
 \vspace{0.5cm}
 
 %......................................
-\subsubsection{The material derivative}
+\subsection{The material derivative}
 
 For a mathematical intro see Appendix \ref{app:ders}.
 Consider a continuum with a three-dimensional flow 
@@ -346,7 +346,7 @@ c) Compute the material derivate of $T$ at any position and time.
 \vspace{0.5cm}
 
 %....................................................................
-\subsubsection{The material derivative of a material volume integral}
+\subsection{The material derivative of a material volume integral}
 Let $V$ be a material volume, i.e. a
 volume that encompasses for all $t$ the same flow particles. 
 This volume is following the
@@ -390,7 +390,7 @@ Derive from \eqref{eq:md09} the alternative formula
 \vspace{0.5cm}
 
 %....................................
-\subsubsection{Diffusion processes} 
+\subsection{Diffusion processes} 
 
 Diffusion processes are in many cases described by (empirical) 
 laws of the form $\vec{a} = -{\bm D} \cdot \vec\nabla H$
@@ -408,10 +408,10 @@ coefficient and $c$ the concentration of the substance.
 %%page8
 
 %----------------------------------------------------------
-\subsection{The basic equations of continuum mechanics}
+\section{The basic equations of continuum mechanics}
 
 %....................................
-\subsubsection{The continuity equation} 
+\subsection{The continuity equation} 
 
 The continuity equation is also called Conservation of mass or 
 Reynold’s transport theorem.
@@ -544,7 +544,7 @@ a) for this situation.
 }
 \vspace{0.5cm}
 
-\subsubsection{The general equation of motion (momentum equation)}
+\subsection{The general equation of motion (momentum equation)}
 
 The second law of Newton postulates that the sum of applied forces equals the rate of
 change of the linear momentum of a particle with mass $m$:
@@ -587,7 +587,7 @@ is the material derivative of velocity which renders \eqref{eq:md12} to
 be a non-linear equation in the unknown velocity field.
 
 %..................................................................
-\subsubsection{Velocity gradient, strain rate, and rotation rate}
+\subsection{Velocity gradient, strain rate, and rotation rate}
 The velocity gradient tensor is $\vec\nabla\vec\upnu = \partial \upnu_i/\partial x_j$
 and can be separated in a symmetric part, the strain rate tensor 
 \[
@@ -686,7 +686,7 @@ is the so-called vorticity.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %page 11
 
-\subsubsection{Pressure and stress}
+\subsection{Pressure and stress}
 Similar to traction, the total stress ${\bm \sigma}(\vec{r}, t)$ 
 is usually separated in the {\bf thermodynamic
 pressure} $p$ and the rheological (mechanical) stress ${\bm\tau}(\vec{r}, t)$:
@@ -802,7 +802,7 @@ stresses $\sigma_i$ as: $\sigma_i'=\sigma_i +p$
 
 
 %......................................
-\subsubsection{Constitutive equations}
+\subsection{Constitutive equations}
 
 The mass conservation equation \eqref{eq:md10} and the momentum equation \eqref{eq:md12} constitute 4
 equations in 10 unknowns $\rho,\vec{v},{\bm \sigma}$. 
@@ -835,7 +835,7 @@ Therefore, constitutive equations take the general form
 with ${\bm \tau}({\bm 0})={\bm 0}$, showing that stress and strain rate can be interdependent.
 
 %...............................
-\subsubsection{Linear rheology}
+\subsection{Linear rheology}
 
 The most general form of linear rheology leading to a linear viscous
 fluid (also called a Newtonian fluid) is $\tau_{ij}=C_{ijkl} \dot{\varepsilon}_{kl}$, 
@@ -910,7 +910,7 @@ where the prime denotes the deviators of stress and strain rate. (Interpret this
 
 
 
-\subsubsection{Non-linear rheology} 
+\subsection{Non-linear rheology} 
 Microphysical processes in solids like atomic diffusion and
 dislocation motion lead to permanent deformation (macroscopic flow). Pure diffusion,
 either along grain boundaries or through the bulk of a grain, is a prime example of a
@@ -1036,7 +1036,7 @@ the constitutive equation (30).
 
 
 %......................................................
-\subsubsection{The Navier-Stokes equation}
+\subsection{The Navier-Stokes equation}
 
 Recalling the general equation of motion \eqref{eq:md12}
 \[
@@ -1100,8 +1100,8 @@ a). Assume that the net amount of mass going through a vertical cross section is
 mass balance constraint). Use this constraint to determine the horizontal pressure
 gradient and determine the velocity profile.\\
 c) Determine for the model under b) the shear stress at the base of the lithosphere.
-Determine its value using 4.10 19 Pas for the viscosity, 100 km thickness for the
-lithosphere and for the asthenosphere and a lithosphere velocity of 5 cm/yr.
+Determine its value using 4.10 19 Pas for the viscosity, $100~\si{\kilo\meter}$ thickness for the
+lithosphere and for the asthenosphere and a lithosphere velocity of $5~\si{\cm\per\year}$.
 }
 \end{exercise}
 \end{minipage}
@@ -1109,7 +1109,7 @@ lithosphere and for the asthenosphere and a lithosphere velocity of 5 cm/yr.
 \vspace{0.5cm}
 
 %.............................................................................
-\subsubsection{Density perturbations as a driving force for mantle convection}
+\subsection{Density perturbations as a driving force for mantle convection}
 
 The general equation of motion 
 \begin{equation}
@@ -1196,7 +1196,7 @@ in the mantle.
 \vspace{0.5cm}
 
 %...................................................................................................
-\subsubsection{Two-dimensional formulation for incompressible fluids: the stream function approach}
+\subsection{Two-dimensional formulation for incompressible fluids: the stream function approach}
 
 Although 2-D formulations of flow problems may seem restrictive at first glance, it is
 useful for many applications in which variation in the omitted dimension are small. For
@@ -1325,7 +1325,7 @@ Demonstrate that
 \vspace{0.5cm}
 
 %..............................................................................
-\subsubsection{Application of the stream function approach: Post-glacial rebound}
+\subsection{Application of the stream function approach: Post-glacial rebound}
 
 We consider the restoration of the Earth’s surface to equilibrium shape in the aftermath of
 global de-glaciation. Relatively sudden removal of the huge ice-caps, covering parts of
@@ -1523,7 +1523,7 @@ Peltier, and K. Lambeck.
 
 
 %----------------------------------------------------------
-\subsubsection{The energy equation}
+\subsection{The energy equation}
 
 Mantle convection is driven by density perturbations relative to a hydrostatic state. In
 part, the density perturbations $\Delta\rho$ are due to thermal perturbations $\Delta T$ where the
@@ -1555,7 +1555,7 @@ forces $\rho g_i$ and the boundary tractions $t_i^n$ is
 \frac{DW}{Dt} = \int_V \rho g_i \upnu_i dV + \int_S t_i^n \upnu_i dS
 \label{eq:md55}
 \end{equation}
-By substituting the Cauchy relation \eqref{eq:md2}, $t_i^n = \sigma_{ij}n_j$, 
+By substituting the Cauchy relation \eqref{eq:md02}, $t_i^n = \sigma_{ij}n_j$, 
 with $n_j$ the outward pointing normal
 on $S$, and next applying the divergence theorem, the surface integral is transformed to a
 volume integral. After rearranging terms we get
@@ -1578,7 +1578,7 @@ Next, we can apply \eqref{eq:md11} to the first term in the last equality which 
 &=& \int_V \left(\frac12 \rho \frac{D (\upnu_i\upnu_i)}{Dt} 
 + \sigma_{ij}  \frac{\partial \upnu_i }{\partial x_j} \right) dV \\
 &=& \frac{D}{Dt} \int_V \frac12 \rho \upnu_i\upnu_i dV + 
-\int_V  + \sigma_{ij}  \frac{\partial \upnu_i }{\partial x_j}  dV \\
+\int_V  + \sigma_{ij}  \frac{\partial \upnu_i }{\partial x_j}  dV 
 \label{eq:md57}
 \end{eqnarray}
 The first term in \eqref{eq:md57} 
@@ -1601,6 +1601,7 @@ normal component of heat flow over the surface $S$
 &=& \int_V \rho H dV - \int_S \vec{q} \cdot \vec{n} dS \\
 &=& \int_V \rho H dV + \int_S k \vec\nabla T  \cdot \vec{n} dS \\
 &=& \int_V \left(  \rho H + \vec\nabla \cdot (  k \vec\nabla T )  \right) dV 
+\label{eq:md58}
 \end{eqnarray}
 Outward directed heat flow causes a negative contribution to $DQ/Dt$ 
 as heat is flowing out of
@@ -1613,6 +1614,7 @@ The total energy $E$ in \eqref{eq:md54} is now separated in to two contributions
 the internal energy $e$ (\si{\joule\per\kg}):
 \begin{equation}
 E = \int_V (\frac{1}{2} \upnu_i \upnu_i + \rho e)dV
+\label{eq:md59}
 \end{equation}
 Taking the time derivative leads to
 \begin{eqnarray}
@@ -1625,7 +1627,7 @@ Taking the time derivative leads to
 where we applied equation \eqref{eq:md11} to rewrite the last integral.
 
 We are now ready to create the energy balance of Eq.~\eqref{eq:md54}):
-Combining equations \eqref{eq:md60}, \eqref{md:eq57}, and
+Combining equations \eqref{eq:md60}, \eqref{eq:md57}, and
 \eqref{eq:md58} results in an integral equation over the material volume $V$ in which the kinetic
 energy terms cancel. As $V$ is chosen arbitrary we find the {\bf energy (or heat) equation}
 \begin{equation}
@@ -1653,8 +1655,9 @@ This relation is used to transform Eq.~\eqref{eq:md62} in to the entropy form of
 equation:
 \begin{equation}
 \rho T \frac{DS}{Dt} = 
-= \tau_{ij} \frac{\partial \upnu_i}{\partial x_j} + 
+\tau_{ij} \frac{\partial \upnu_i}{\partial x_j} + 
 \frac{\partial }{\partial x_j} (k \frac{\partial T}{\partial x_j}) + \rho H
+\label{eq:md63}
 \end{equation}
 (It is left as an exercise to derive the lhs of this equation)
 
@@ -1676,12 +1679,14 @@ Applying this relation to \eqref{eq:md63}
 leads to the temperature form of the heat equation
 \begin{equation}
 \rho c_p \frac{DT}{Dt} - \alpha T \frac{Dp}{Dt} = 
-= \tau_{ij} \frac{\partial \upnu_i}{\partial x_j} + 
+\tau_{ij} \frac{\partial \upnu_i}{\partial x_j} + 
 \frac{\partial }{\partial x_j} (k \frac{\partial T}{\partial x_j}) + \rho H
+\label{eq:md64}
 \end{equation}
 The lhs of this equation is zero for an adiabatic state. In this case we find that
 \begin{equation}
 \frac{dT_a}{dp} = \frac{\alpha T_a}{\rho c_p}
+\label{eq:md65}
 \end{equation}
 which gives how temperature changes due to pure adiabatic (de)compression.
 
@@ -1689,6 +1694,7 @@ A mantle in the adiabatic state satisfies the equilibrium equation $\vec\nabla p
 Assuming spherical symmetry we have $dp/dr=-\rho g$. Substitution in \eqref{eq:md65} gives
 \begin{equation}
 \frac{dT_a}{dr} = -\frac{\alpha T_a g}{c_p},
+\label{eq:md66}
 \end{equation}
 i.e. the {\bf adiabatic temperature gradient}.
 
@@ -1698,11 +1704,12 @@ lhs of \eqref{eq:md64} (the adiabatic (de)compression term) as
 \alpha T \frac{dp}{dr} \simeq \alpha T \frac{\rho \vec{g}\cdot d\vec{r}}{dt} 
 = -\alpha \rho T \vec{g} \cdot \vec{\upnu}
 \simeq -\alpha \rho T g_r \upnu_r 
+\label{eq:md67}
 \end{equation}
 where $g_r$ and $\upnu_r$ are the radial
 components of gravity and velocity, respectively.
 
-
+%exercise 27
 \vspace{0.5cm}
 \fbox{
 \begin{minipage}{0.9\textwidth}
@@ -1716,6 +1723,7 @@ Derive equation \eqref{eq:md63} from \eqref{eq:md62}.
 
 \vspace{0.5cm}
 
+%exercise 28
 \fbox{
 \begin{minipage}{0.9\textwidth}
 \begin{exercise}
@@ -1730,6 +1738,7 @@ conditions and a constant vertical flow velocity.
 
 \vspace{0.5cm}
 
+%exercise 29
 \fbox{
 \begin{minipage}{0.9\textwidth}
 \begin{exercise}
@@ -1746,6 +1755,7 @@ What can one conclude for the two viscosities?
 
 \vspace{0.5cm}
 
+%exercise 30
 \fbox{
 \begin{minipage}{0.9\textwidth}
 \begin{exercise}
@@ -1756,7 +1766,7 @@ $\Phi=\eta (\partial \upnu_x/\partial z)^2$.
 Use this to evaluate the dissipative heat production in the flow of exercise 19a assuming
 zero horizontal pressure gradient (Couette flow).
 Calculate a numerical value of this heat production using values of $h=200km$, 
-$\eta =10^{21} Pas$, $\upnu_0= 1 cm/yr$. 
+$\eta =10^{21}~\si{\pascal\second}$, $\upnu_0= 1~\si{\cm\per\year}$. 
 Compare this to estimates of radiogenic heat production in the
 upper mantle of $8.4\cdot 10^{-9} J/(s m^3 )$.
 }
@@ -1764,13 +1774,282 @@ upper mantle of $8.4\cdot 10^{-9} J/(s m^3 )$.
 \end{minipage}
 }
 
+\vspace{0.5cm}
+
+%exercise 31
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+The Navier-Stokes equation for perturbations relative to a hydrostatic
+reference state is in Cartesian coordinates
+\[
+\rho_0 \frac{D\upnu_i}{Dt} = - \frac{\partial {\color{violet} p}}{\partial x_i} +
+\frac{\partial \tau_{ij}}{\partial x_j} + {\color{violet} \rho} g_i^0
+\]
+(see equation \ref{eq:md34b}).
+The density perturbation is driving the flow of a medium contained in the material
+volume $V$. Assume that gravity is only working vertical
+$\vec{g}=(0,0,g)^T$ and that the
+velocity field is $\vec\upnu=(u,v,w)^T$. Assume incompressible flow and that the inertial term
+can be neglected.\\
+a) Derive the following energy conservation law relating the dissipation of gravitational
+energy into the energy released due to frictional flow:
+\[
+\int_V {\color{violet} \rho} g w \; dV = \int_V \tau_{ij} \frac{\partial \upnu_i}{\partial x_j} \; dV
+\]
+Hint: Take the inner product of the equation of motion with the velocity field and
+integrate the result over $V$. Assume an impermeable boundary $S$ of $V$ (i.e. $\vec\upnu\cdot\vec{n}=0$) 
+and that the boundary is shear stress free (free slip) or has no-slip ($\vec\upnu=\vec{0}$).\\
+b) Show by substitution of the Newtonian rheology that the rhs of this equation is positive
+and show that the lhs of the equation equals the created power due to the change in
+gravitational potential energy as a result of ${\color{violet} \rho}$ w.r.t. $\rho_0$.
+}
+\end{exercise}
+\end{minipage}
+}
+
+\vspace{0.5cm}
+
+%exercise 32
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+a) Derive the heat equation for a static medium ($\vec\upnu=\vec{0}$) from the conservation law of
+thermal energy. (Hint: Create the heat balance for a fixed control volume based on
+internal energy, heat production and heat flow through the boundary of the volume).\\
+b) Next, assume there is a flow field $\vec\upnu$ and extend the result under a) with a term
+involving the flow density of thermal energy $\vec{J}J = \rho c_p T \vec\upnu$ 
+(assume $\rho c_p$ to be constant and $\vec\nabla\cdot \vec\upnu=0$).\\
+The result is the heat equation for an incompressible medium in which adiabatic
+compression and viscous dissipation are neglected.
+}
+\end{exercise}
+\end{minipage}
+}
+
+%----------------------------------------------------------
+\subsection{The equation of state}
+
+An equation of state relates basic thermodynamic parameters such as density,
+temperature, pressure, or entropy. For an isochemical fluid, we can choose two
+independent thermodynamic parameters on which all other depend. Here we choose
+temperature and pressure as independent parameters, e.g. $\rho(T,p)$. 
+Mantle convection is
+usually studied relative to some motionless hydrostatic reference state either with a
+conductive or with an adiabatic geotherm. The perturbations with respect to this state are
+related to the convective state of the mantle. 
+Therefore, we write $\rho(T,p) = \rho_0(T_0,p_0) 
++ {\color{violet}rho}({\color{violet}T},{\color{violet} p} )$
+with 
+$T = T_0 + {\color{violet}T}$ and 
+$p = p_0 + {\color{violet}p}$ 
+where the 0-subscript denotes reference
+state quantities and the {\color{violet}colored} variables 
+the perturbations with respect to the reference state. The
+reference state quantities do not depend on time but can depend on the spatial
+coordinates. The usual assumption is that ${\color{violet}rho}({\color{violet}T},{\color{violet} p})$ 
+depends linearly on the perturbations in temperature and pressure. 
+In this case one can use the thermodynamic relation
+\[
+d\rho = 
+\left( \frac{\partial \rho}{\partial T} \right)_P dT + 
+\left( \frac{\partial \rho}{\partial p} \right)_T dp 
+= -\alpha \rho dT + K_T^{-1} \rho dp
+\]
+where $\alpha$ is the thermal expansion coefficient and 
+$K_T$ the isothermal incompressibility, or isothermal bulk
+modulus. Assuming linearity, this relation is up-scaled to the macroscopic mantle to
+obtain the equation of state
+\begin{equation}
+\rho(\vec{r},t) = \rho_0(\vec{r}) (1-\alpha {\color{violet}T} + K_T^{-1} {\color{violet}p} )
+\label{eq:md68}
+\end{equation}
+hence
+\[
+{\color{violet} \rho} = -\alpha \rho_0 \alpha {\color{violet}T} +  K_T^{-1} \rho_0 {\color{violet}p} 
+\]
+A simple extension to a 2-phase medium consisting of materials with reference
+densities $\rho_0$ and $\rho_1$ is obtained by assuming that the dependence of density of $T$ and $p$ 
+is the same for both phases. Then, only an addition factor is needed to account for the
+density of a mixed composition
+\begin{equation}
+\rho(\vec{r},t) = \rho_0(\vec{r})(1+\Gamma(\frac{\rho_1-\rho_0}{\rho_0})) 
+(1-\alpha {\color{violet}T} + K_T^{-1} {\color{violet}p} )
+\label{eq:md69}
+\end{equation}
+Taking $\rho_1>\rho_0$, the phase distribution $\Gamma$ can assume values between 0 and 1.
+
+%exercise 33
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+Assume an isothermal $({\color{violet}T} = 0)$ 
+and incompressible fluid ($K_T^{-1}=0$) and
+derive from the conservation law of mass, the conservation law
+$D\Gamma/Dt=0$ for the phase distribution function.
+}
+\end{exercise}
+\end{minipage}
+}
+
+\vspace{0.5cm}
+
+The reference quantities satisfy equations of a motionless reference state. The definition
+of the reference state depends on the problem studied. Usually the reference temperature
+is chosen constant or to follow a mantle adiabat or a conductive geotherm. For a simple
+reference state with constant thermodynamic parameters the following equations suffice:
+\begin{eqnarray}
+\vec\nabla p_0 &=& -\rho_0 \vec\nabla U_0 \\
+\vec\nabla^2 U_0 &=& 4\pi {\cal G} \rho_0 \\
+\vec\nabla \cdot ( k \vec\nabla T_0) &=& 0 \qquad \frac{DT_0}{Dt}=0
+\label{eq:md70}
+\end{eqnarray}
+More complex reference states involving depth variable thermodynamic parameters
+require internally consistent relations between thermodynamic parameters such as
+$\alpha$, $K_T$, $c_p$ $k$ and temperature, density, and pressure.
+
+%exercise 34
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+Show that an adiabatic geotherm approximately satisfies the heat equation
+for the reference state.
+}
+\end{exercise}
+\end{minipage}
+}
+
+
+%----------------------------------------------------------
+\subsection{The complete set of perturbation equations}
+
+Equations \eqref{eq:md71} give the relevant equations in terms of the perturbations w.r.t. the
+adiabatic reference state as defined with equations \eqref{eq:md70}. By use of \eqref{eq:md70} 
+some terms cancel in the general equations; no approximations have been made. This leads to:
+
+The equation of state is
+\begin{equation}
+\rho(\vec{r},t) = \rho(\vec{r}) \left(1-\alpha {\color{violet} T} + K_T^{-1} {\color{violet}p} \right) 
+\label{eq:md71a}
+\end{equation}
+The heat equation in terms of 
+\begin{equation}
+\rho c_p \frac{D {\color{violet} T}}{Dt} = \frac{\partial }{\partial x_j} 
+\left( k \frac{\partial {\color{violet}T}}{\partial x_j}  \right)
++ \rho H + \tau_{ij}\frac{\partial \upnu_i}{\partial x_j} + \alpha T \frac{Dp}{Dt}
+\label{eq:md71b}
+\end{equation}
+The equation of motion is in terms
+\begin{equation}
+\rho \frac{D \upnu_i}{Dt} = -\frac{\partial {\color{violet}p}}{\partial x_i}
++\frac{\partial \tau_{ij}}{\partial x_j}
+-\rho_0 (\alpha {\color{violet} T} + K_T^{-1} {\color{violet}p}) g_i
+\label{eq:md71c}
+\end{equation}
+The Poisson equation in terms of
+\begin{equation}
+\vec\nabla^2 {\color{violet} U} = 4 \pi {\cal G} {\color{violet} \rho}
+\label{eq:md71d}
+\end{equation}
+and, finally, the continuity equation in terms of ${\color{violet}\rho}$ reads
+\begin{equation}
+\frac{\partial {\color{violet}\rho} }{\partial t} + 
+\frac{\partial (\rho_0 + {\color{violet}\rho} \upnu_j }{\partial x_j} =0
+\label{eq:md71e}
+\end{equation}
 
 
 
+%----------------------------------------------------------
+\subsection{Scaling of equations}
 
 
+An important subject is the scaling of equations by means of scaling the relevant
+parameters with appropriate estimates (expected values) for the convection problem at
+hand. Here, we discuss scaling of parameters for the study of whole mantle convection,
+however, other studies such as boundary layer modeling or subduction modeling may
+require different scaling parameters. The idea behind scaling of equations is to find out
+the relative importance (contribution) of separate terms. Usual scaling parameters for
+mantle convection are:
+\[
+x_i = x_i' h
+\qquad
+t = t' \frac{h^2}{\kappa}
+\qquad
+\upnu_i = \upnu_i' \frac{\kappa}{h} 
+\qquad
+{\color{violet} T} = {\color{violet} T}' \Delta T_m
+\qquad
+{\color{violet} p} = {\color{violet} p}' \frac{\eta \kappa}{h^2}
+\qquad
+\rho = \rho' \rho_m 
+\]
+where $h$ is the mantle thickness, $\kappa=k/(\rho c_p)$
+is the thermal diffusivity, $\Delta T_m$ is the
+temperature difference between the Core-Mantle boundary and the surface,
+$\eta$ is the dynamic viscosity and $\rho_m$ is a scaling density.
 
+Note that on Earth, we have
+$\alpha \sim 3\cdot 10^{-5}~\si{\per\kelvin}$,
+$K_T \sim 3\cdot 10^{12}~\si{\pascal}$,
+$\Delta T_m \sim 10^3~\si{\kelvin}$,
+$c_p \sim 10^3~\si{\joule\per\kg\per\kelvin}$,
+$k\sim 4~\si{\watt\per\meter\per\kelvin}$,
+$\kappa \sim 1.2\times 10^{-6}~\si{\square\meter\per\second}$.
 
+The primed quantities are dimensionless and are of the order 1 if the scaling is correct for
+the problem at hand.
+Application of scaling to the equation of state \eqref{eq:md71a} leads to
+\begin{equation}
+\rho' = \rho_0' \left(  1 - \alpha \Delta T_m {\color{violet} T}' + 
+\frac{K_T^{-1}\eta \kappa }{h^2} {\color{violet} p}' \right)
+\label{eq:md72}
+\end{equation}
+The coefficients of the primed-quantities determine the relative importance of the terms
+(with respect to 1). We have 
+$\alpha \Delta T_m \sim 3\cdot 10^{-2}$ and $K_T^{-1}\eta \kappa/h^2 \sim 2.5\cdot 10^{-10}$,
+which leads us to conclude that
+thermal perturbations of density are much more important than pressure perturbations
+(assuming the equation of state and scaling are correct for the convection problem). We
+note that the scaling factor of pressure is about 100 Pa, i.e. perturbations of hydrostatic
+pressure are expected to be small compared to the rheological stress (1-100 MPa).
+
+The coefficient $K_T^{-1}\eta \kappa/h^2$ can be written as 
+$\eta c_p/k \cdot k^2 K_T^{-1}/c_p^2/\rho_m h^2 = Pr \cdot M^2$
+where where $Pr$ is the
+Prandtl number and $M$ the Mach number. $M$ gives the ratio between flow speed and
+sound speed which is about $10^{-16}$ for mantle convection. The Prandtl number is about $10^{24}$
+and will appear in the coefficient of the inertial term of the dimensionless equation of
+motion.
+
+Scaling of the continuity equation \eqref{eq:md71e} leads to some basic insight into the problem of
+(in-)compressibility. The dimensionless version is
+\begin{equation}
+\frac{\partial {\color{violet}\rho}'}{\partial t'} + 
+\frac{\partial (\rho_0' + {\color{violet}\rho})\upnu_j'  }{\partial x_j'} = 0
+\qquad
+; \qquad
+\rho_0' = \frac{\rho_0(\vec{r})}{\rho_m}
+\label{eq:md73a}
+\end{equation}
+
+%exercise 35
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+Derive Eq.~\eqref{eq:md73a}.
+}
+\end{exercise}
+\end{minipage}
+}
+
+Substitution of the equation of state \eqref{eq:md71a} and taking the limit $Pr\cdot M^2 \rightarrow\infty$
+leads to
 
 
 
