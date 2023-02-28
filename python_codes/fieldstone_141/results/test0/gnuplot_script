@@ -1,0 +1,32 @@
+set term pdf enhanced font "times,12pt"
+set grid
+set key outside
+
+set xlabel 'time (yr)'
+set ylabel 'depth'
+set output 'depth.pdf'
+plot[:5e6][]\
+'k05N/geotherm_depth.ascii' u 1:($2/1e3) w lp ps .25 t 'k=05, N',\
+'k05D/geotherm_depth.ascii' u 1:($2/1e3) w lp ps .25 t 'k=05, D',\
+'k52N/geotherm_depth.ascii' u 1:($2/1e3) w lp ps .25 t 'k=52, N',\
+
+set xlabel 'y (km)'
+
+set output 'temperature.pdf'
+set ylabel 'T (C)'
+plot[][]\
+'k52N/solution_0000.ascii' u ($1/1000):2 w l lw .5 t 't=0',\
+'k52N/solution_0980.ascii' u ($1/1000):2 w l lw .5 t 'k=52, t=1.25Myr, N',\
+'k05N/solution_0100.ascii' u ($1/1000):2 w l lw .5 t 'k=5, t=1.25Myr, N',\
+'k05D/solution_0100.ascii' u ($1/1000):2 w l lw .5 t 'k=5, t=1.25Myr, D',\
+550 lt -1 dt 2 lw .5,\
+1330 lt -1 dt 3 lw .5
+
+set output 'heat_flux.pdf'
+set ylabel '|q_y|'
+plot[][]\
+'k52N/solution_0000.ascii' u ($1/1000):3 w l lw .5 t 't=0',\
+'k52N/solution_0980.ascii' u ($1/1000):3 w l lw .5 t 'k=52, t=1.25Myr',\
+'k05N/solution_0100.ascii' u ($1/1000):3 w l lw .5 t 'k=5, t=1.25Myr, N',\
+'k05D/solution_0100.ascii' u ($1/1000):3 w l lw .5 t 'k=5, t=1.25Myr, D',\
+0.0208 lt -1 dt 2 lw .5
