@@ -127,7 +127,7 @@ for it in tol_loop:
                     
                     gy=-10.
                     eta_ref=1e21
-                    niter=150 
+                    niter=100 
                     tol=it   #-------------------------------------------------------------------> TOL [tol] here
                     
                     case = ic #-------------------------------------------------------------------> CASE [case] here
@@ -858,7 +858,7 @@ for it in tol_loop:
                     start = time.time()
                     
                     if visu==1:
-                       vtufile=open("solution_case%s_nelx=%s_tol=%s.vtu"  % (ic, ir, tol),"w")
+                       vtufile=open("solution_case%s_nelx_%s_tol_%s.vtu"  % (ic, ir, tol),"w")
                        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
                        vtufile.write("<UnstructuredGrid> \n")
                        vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
