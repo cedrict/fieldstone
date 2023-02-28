@@ -24,6 +24,7 @@
 \usepackage{amsthm}
 \usepackage{gensymb} %\degree
 \usepackage{siunitx} %\si{XX}
+
 \newcommand{\aspect}{{\textsc{Aspect~}{}}}
 \newcommand{\elefant}{{\textsc{Elefant~}{}}}
 \newcommand{\citcoms}{{\textsc{CitcomS~}{}}}
@@ -38,6 +39,8 @@
 \newcommand{\stone}{{\color{teal} {\textsc{stone~}}}}
 \newcommand{\stones}{{\color{teal} {\textsc{stones}~}}}
 \newcommand{\fieldstone}{{\color{teal} {\textsc{FieldStone~}}}}
+
+
 \newtheorem*{remark}{Remark}
 %\setcounter{secnumdepth}{1} % sections are level 1
 \usepackage{dirtytalk}
@@ -319,88 +322,79 @@ doi = "10.23644/uu.9209393.v1"}
 {\sl You can be correct or you can get stuff done.}
 \end{center}
 
-
-
-
-
-%\newpage
 \clearpage
 \maketitle
 \tableofcontents
 
-%\begin{center}
-%{\color{red} \huge WARNING: this is work in progress}
-%\end{center}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{Introduction} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapter1} 
+\include{chapter1} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\newpage
 %\section{List of stones and their features} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\input{list} 
+%\include{list} 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Physics and a bit of mathematics} \label{chapt3} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapter3} 
+\include{chapter3} 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The building blocks of the Finite Element Method} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapter4}
+\include{chapter4}
 
 \newpage 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Solving the heat transport equation with linear Finite Elements \label{chapt5}} %%%%%%%%%%
-\input{chapter5}
+\include{chapter5}
 
 \newpage 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Solving the flow equations with the FEM} \label{solvingFEM} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapter6}
+\include{chapter6}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The Discontinuous Galerkin Finite Element Method (DG-FEM) \label{dgfem}} %%%%%%%%%%%%%%%%%
-\input{chapter7}
+\include{chapter7}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Additional techniques, features, measurements} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapter8}
+\include{chapter8}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Geodynamics GEO3-1313 syllabus (Utrecht University)} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapter9} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\include{chapter9} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Mantle Dynamics GEO4-1416 syllabus (Utrecht University)} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapter10} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\include{chapter10} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The Finite Difference Method} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapter11}
+\include{chapter11}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Manufactured solutions \& numerical benchmarks} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapter12}
+\include{chapter12}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The literature} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapter13} \label{app:topics}
+\include{chapter13} \label{app:topics}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{ELEFANT} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapter14} \label{chapt:elefant}
+\include{chapter14} \label{chapt:elefant}
 
 %\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -420,20 +414,19 @@ doi = "10.23644/uu.9209393.v1"}
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Elasticity: physics, formulations and FEM } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapter18} \label{chapt:elasticity}
+\include{chapter18} \label{chapt:elasticity}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Visco-elasticity: physics, formulations and FEM } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{chapter19} \label{chapt:viscoelasticity}
-
-
+\include{chapter19} \label{chapt:viscoelasticity}
 
 %==================================================================================================
 %==================================================================================================
-\clearpage
+%\clearpage
 
-\input{all_the_stones}
+
+%\include{all_the_stones}
 
 %==================================================================================================
 %==================================================================================================
@@ -442,67 +435,65 @@ doi = "10.23644/uu.9209393.v1"}
 %\section{{\tt fieldstone}: Gravity: buried sphere} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\input{python_codes/gravity_01/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Problems, to do list and projects for students} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{projects} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Problems, to do list and projects for students} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\input{projects} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \appendix %========================================================================================
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Codes in geodynamics \label{app:codes} }\input{codes} %%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Codes in geodynamics \label{app:codes} }\input{codes} %%%%%%%%%%%%%%%%%%%%%%%%%%ok
 %\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{Matrix properties} \input{matrices} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Matrix properties} \input{matrices} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ok
 %\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{Don't be a hero - unless you have to} \input{hero} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Don't be a hero - unless you have to} \input{hero} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%ok
 %\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{A \fantom, an \elefant and a \ghost} \input{mycodes} %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{A \fantom, an \elefant and a \ghost} \input{mycodes} %%%%%%%%%%%%%%%%%%%%%%%%%%%ok
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Some useful Python commands} \input{app_useful_python} %%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Some useful Python commands} \input{app_useful_python} %%%%%%%%%%%%%%%%%%%%%%%%%ok
 %\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{Some useful maths} \input{app_maths} \label{app_maths} %%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Some useful maths} \input{app_maths} \label{app_maths} %%%%%%%%%%%%%%%%%%%%%%%%%ok
 %\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{Elemental matrices for simple geometries}\label{app:mm} \input{app_elemental_matrix}
+%\section{Elemental matrices for simple geometries}\label{app:mm} \input{app_elemental_matrix} ok
 %\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{Finite element terminology in various languages} \input{languagesFEM} %%%%%%%%%%
+%\section{Finite element terminology in various languages} \input{languagesFEM} %%%%%%%%%%ok
 %\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{Fun modelling} \input{interesting} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Fun modelling} \input{interesting} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ok
 %\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{Beautiful/interesting images from computational geodynamics}\input{beautiful}%%%
+%\section{Beautiful/interesting images from computational geodynamics}\input{beautiful}%%%ok
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Working with Git} \input{github}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\section{Working with Git} \input{github}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ok 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Writing a report as homework \label{app:grading}} \input{app_grading}%%%%%%%%%%%
+\section{Writing a report as homework \label{app:grading}} \input{app_grading}%%%%%%%%%%% ok
+%\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Analytical expressions for $\G_{el}$} \label{app:Gel} \input{app_Gel}%%%%%%%%%%% ok
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Analytical expressions for $\G_{el}$} \label{app:Gel} \input{app_Gel}%%%%%%%%%%%
-\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Computational Geophysics GEO4-1427 - projects} \input{compgeo} %%%%%%%%%%%%%%%%%
-\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Using prisms in forward gravity modelling \label{app:prisms}} \input{app_prisms}
+\section{Computational Geophysics GEO4-1427 - projects} \input{compgeo} %%%%%%%%%%%%%%%%% ok
+%\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Using prisms in forward gravity modelling \label{app:prisms}} \input{app_prisms} ok
 %\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\section{Using tetrahedra in forward gravity modelling} \label{app:tetra} \input{app_tetra}  %%EMPTY!!
 %\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{Solutions to exercises of chapter 9 \label{app:gravsols}} \input{app_gravsols} %
+%\section{Solutions to exercises of chapter 9 \label{app:gravsols}} \input{app_gravsols} % ok
 %\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{How to download a single stone} \input{download_single_stone} %%%%%%%%%%%%%%%%%%
-\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{A quick guide to Paraview and gnuplot} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\section{A quick guide to Paraview and gnuplot} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ok 
 \input{app_paraview} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{app_gnuplot} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{A few \LaTeX features} \input{app_latex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{A few \LaTeX features} \input{app_latex} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ok
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Linux how to} \input{app_linux_howto} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{on using Fortran} \input{app_fortran} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Linux how to} \input{app_linux_howto} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ok
 %\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{mineral parameters} \input{app_mineralparameters} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{on using Fortran} \input{app_fortran} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ok
+%\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{mineral parameters} \input{app_mineralparameters} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ok 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Invariants \label{app:invariants}} \input{app_invariants} %%%%%%%%%%%%%%%%%%%%%%
+\section{Invariants \label{app:invariants}} \input{app_invariants} %%%%%%%%%%%%%%%%%%%%%% ok
+%\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{The $\Gamma$ tensor in plasticity} \input{app_gammatensor} %%%%%%%%%%%%%%%%%%%%% ok
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The $\Gamma$ tensor in plasticity} \input{app_gammatensor} %%%%%%%%%%%%%%%%%%%%%
-\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Using gmsh \label{app:gmsh}} \input{app_gmsh} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Using gmsh \label{app:gmsh}} \input{app_gmsh} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ok
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Directional derivative, total differential, and material derivative \label{app:ders}} \input{app_ders}
 %\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
