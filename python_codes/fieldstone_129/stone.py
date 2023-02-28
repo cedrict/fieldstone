@@ -72,7 +72,7 @@ mV=9   # nb of nodes per element
 ndof=2 # nb of degrees of freedom per node
 ndim=2 # nb of dimensions
 
-experiment=7
+experiment=5
 
 if experiment==1: #elasto-viscous folding
    Lx=6
@@ -184,6 +184,24 @@ if experiment==6: #analytical benchmark
    gy=9.81
    viscous_rheology='linear'
 
+if experiment==8: #Rayleigh-Taylor instability
+   Lx=500e3
+   Ly=500e3
+   nelx=50
+   nely=50
+   A0=2e3
+   R=10
+   viscosity = np.array([1e21*R,1e21],dtype=np.float64)
+   density = np.array([3300+100,3300],dtype=np.float64)
+   shear_modulus=np.array([1e10,1e10],dtype=np.float64)
+   poisson_ratio=np.array([0.499999,0.499999],dtype=np.float64)
+   young_modulus=2*shear_modulus*(1+poisson_ratio)
+   bulk_modulus=young_modulus/(3*(1-2*poisson_ratio)) 
+   nstep=1
+   dt=5000*year
+   gx=0
+   gy=9.81
+   viscous_rheology='linear'
 
 every=1
 
@@ -201,6 +219,7 @@ stats_sxx_file=open('stats_sxx.ascii',"w")
 stats_syy_file=open('stats_syy.ascii',"w")
 stats_sxy_file=open('stats_sxy.ascii',"w")
 stats_txx_file=open('stats_txx.ascii',"w")
+stats__xy_file=open('stats__xy.ascii',"w")
 
 #####################################################################
 # Gauss numerical quadrature points and weights
@@ -213,22 +232,23 @@ nq=nel*nqperdim**ndim # total number of quadrature points
 
 #####################################################################
 
-print('experiment       =',experiment)
-print('nelx             =',nelx)
-print('nely             =',nely)
-print('nnx              =',nnx)
-print('nny              =',nny)
-print('NV               =',NV)
-print('nel              =',nel)
-print('dt(yr)           =',dt/year)
-print('nstep            =',nstep)
-print('viscosity eta    =',viscosity)
-print('Young modulus E  =',young_modulus)
-print('shear modulus mu =',shear_modulus)
-print('bulk modulus K   =',bulk_modulus)
-print('poisson ratio nu =',poisson_ratio)
-print('opla',shear_modulus*dt/viscosity)
-print('Maxwel times     =',viscosity[:]/shear_modulus[:])
+print('experiment        =',experiment)
+print('nelx              =',nelx)
+print('nely              =',nely)
+print('nnx               =',nnx)
+print('nny               =',nny)
+print('NV                =',NV)
+print('nel               =',nel)
+print('dt(yr)            =',dt/year)
+print('nstep             =',nstep)
+print('viscosity eta     =',viscosity)
+print('Young modulus E   =',young_modulus)
+print('shear modulus mu  =',shear_modulus)
+print('bulk modulus K    =',bulk_modulus)
+print('bulk modulus K*dt =',bulk_modulus*dt)
+print('poisson ratio nu  =',poisson_ratio)
+print('eta_eff           =',viscosity*dt/(dt+viscosity/shear_modulus))
+print('Maxwel times      =',viscosity[:]/shear_modulus[:])
 print("-----------------------------")
 
 #####################################################################
@@ -335,6 +355,13 @@ if experiment==5:
    for iel in range(0,nel):
        phase[iel]=1
 
+if experiment==8:
+   for iel in range(0,nel):
+       if yc[iel]>400e3:
+          phase[iel]=1
+       else:
+          phase[iel]=2
+
 for iel in range(0,nel):
     eta[iel]=viscosity[phase[iel]-1]
     mu[iel]=shear_modulus[phase[iel]-1]
@@ -346,7 +373,7 @@ for iel in range(0,nel):
 print("material layout: %.3f s" % (timing.time() - start))
 
 #################################################################
-# add random perturbation to central layer
+# add random perturbation to central layer (exp=1)
 #################################################################
 start = timing.time()
 
@@ -357,7 +384,25 @@ if experiment==1:
        if abs(yV[i]-0.55)/Ly<eps:
           yV[i]+=hy*0.05*random.uniform(-1,1)
 
-print("add perturbation to layer: %.3f s" % (timing.time() - start))
+   print("add perturbation to layer: %.3f s" % (timing.time() - start))
+
+#################################################################
+# add sin perturbation to nodes (exp=8)
+#################################################################
+start = timing.time()
+
+if experiment==8:
+   for i in range(0,NV):
+       if abs(yV[i]-400e3)/Ly<eps:
+          yV[i]+=A0*np.sin(np.pi*xV[i]/Lx)
+
+   for iel in range(0,nel):
+       yV[iconV[7,iel]]=0.5*(yV[iconV[0,iel]]+yV[iconV[3,iel]])
+       yV[iconV[5,iel]]=0.5*(yV[iconV[1,iel]]+yV[iconV[2,iel]])
+       yV[iconV[8,iel]]=0.5*(yV[iconV[4,iel]]+yV[iconV[6,iel]])
+       
+
+   print("add sinusoidal perturbation: %.3f s" % (timing.time() - start))
 
 #################################################################
 # define boundary conditions
@@ -438,6 +483,17 @@ if experiment==7:
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0 
        if yV[i]/Ly>1-eps: #top boundary  
           bc_fix[i*ndof  ] = True ; bc_val[i*ndof  ] = 1*cm/year
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0 
+
+if experiment==8:
+   for i in range(0, NV):
+       if xV[i]/Lx<eps: #Left boundary  
+          bc_fix[i*ndof] = True ; bc_val[i*ndof] = 0 
+       if xV[i]/Lx>1-eps: #right boundary  
+          bc_fix[i*ndof] = True ; bc_val[i*ndof] = 0 
+       if yV[i]/Ly<eps: #bottom boundary  
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0 
+       if yV[i]/Ly>1-eps: #top boundary  
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0 
 
 print("define boundary conditions: %.3f s" % (timing.time() - start))
@@ -679,6 +735,12 @@ for istep in range(0,nstep):
 
     xV[:]+=u[:]*dt
     yV[:]+=v[:]*dt
+    
+    print("     -> xV (m,M) %e %e (m)" %(np.min(xV),np.max(xV)))
+    print("     -> yV (m,M) %e %e (m)" %(np.min(yV),np.max(yV)))
+
+    stats__xy_file.write("%e %e %e %e %e\n" % (model_time,np.min(xV),np.max(xV),np.min(yV),np.max(yV)))
+    stats__xy_file.flush()
 
     print("evolve mesh: %.3f s" % (timing.time() - start))
 

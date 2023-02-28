@@ -1,6 +1,6 @@
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_129/text.tex}} \end{flushright}
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_129/keywords}
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_129/keywords.ascii}
 
 \begin{center}
 \fbox{\textbf{\huge \color{teal} P}}
@@ -15,11 +15,10 @@ Codes at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fie
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-
-We start from Eq.~(12.40) in the book of Simpson (I here use my notations
-and not those of the book):
+The flow is compressible, but 
+we start from Eq.~(12.40) in the book of Simpson (I here use my notations
+and not those of the book), which only considers the deviatoric part of the 
+strain rate tensor:
 \begin{eqnarray}
 \dot{\bm\varepsilon}^d
 &=&\frac{1}{2\mu} \frac{\partial \bm\tau}{\partial t}
@@ -772,10 +771,10 @@ viscosity $\eta_{eff}$ defined as
 =\frac{\eta}{1 + t_M/\delta t}
 =\frac{\mu\eta \delta t}{\mu \delta t + \eta}
 \]
-and 
-\[
-\eta_{eff}' = \frac{\eta_{eff}}{\mu\delta t}
-\]
+%and 
+%\[
+%\eta_{eff}' = \frac{\eta_{eff}}{\mu\delta t}
+%\]
 Then 
 \begin{eqnarray}
 \bm \sigma 
@@ -791,7 +790,7 @@ K {\rm tr}(\dot{\bm\varepsilon}) \delta t {\bm 1}  +
 \vec{\sigma} 
 &=& K {\rm tr}(\dot{\bm\varepsilon}) \delta t \vec{m} +
 2\eta_{eff} {\bm I}_d \cdot {\bm C} \cdot\dot{\vec{\bm\varepsilon}} 
-+\frac{\eta_{eff}}{\mu\delta t} {\bm I}_d \cdot \bm\sigma^0 + \sigma_m^0 \vec{m} \nn\\
++\frac{\eta_{eff}}{\mu\delta t} {\bm I}_d \cdot \vec\sigma^0 + \sigma_m^0 \vec{m} \nn\\
 &=& 
 \left(
 \begin{array}{c}
@@ -1040,14 +1039,14 @@ than the section above.
 
 %----------------------------------------------
 \paragraph{End member: infinite viscosity}
-In this case the Maxwell time $t_M=\eta/mu$ is very large.
+In this case the Maxwell time $t_M=\eta/\mu$ is very large.
 We have $\eta/\mu >> \delta t$ so that $\eta_{eff} 
 \rightarrow \mu \delta t$. This makes sense, infinite 
 viscosity means that the dashpot behaves as a rigid block 
 and its viscosity will not play a role in the deformation
 and it'll propagate the stress to the spring.
 
-Then 
+Then the rhs of the equation just above becomes: 
 \[
 \frac{\eta_{eff}}{\mu \delta t} \tilde{\bm\Lambda}^d + 
 \frac13 {\bm\Xi} 
@@ -1107,19 +1106,46 @@ Then
 \vec{\sigma}
 &=&
 \left(
-K \delta t {\bm \Xi}
+\underbrace{K \delta t}_{\lambda} {\bm \Xi}
 +
 \eta {\bm \Lambda}^d
 \right)
 \cdot
 \dot{\vec{\varepsilon}}
 +
-\vec{\sigma}_0 \nn\\
-&=& 
+\vec{\sigma}_0 
+= 
+\lambda 
+\left(
+\begin{array}{cccccc}
+1 & 1 & 1 & 0 & 0 & 0\\ 
+1 & 1 & 1 & 0 & 0 & 0\\ 
+1 & 1 & 1 & 0 & 0 & 0\\ 
+0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 
+\end{array}
+\right)
++ 
+\eta 
+\left(
+\begin{array}{cccccc}
+\frac43 & - \frac23 & - \frac23 & 0 & 0 & 0 \\
+-\frac23 & \frac43 & - \frac23  & 0 & 0 & 0\\
+-\frac23& - \frac23 & \frac43  & 0 & 0 & 0\\
+0&0&0& 1&0 &0  \\
+0&0&0&0&1 &0\\
+0&0&0&0&0& 1
+\end{array}
+\right)
+\cdot
+\dot{\vec{\varepsilon}}
 \end{eqnarray}
-
-This looks like the standard penalty formulation, except for 
-the $\vec{\sigma}_0$ term...?
+We notice that 
+${\bm \Lambda}^d$ is identical to the matrix ${\bm C}^d$ in \eqref{eq:chap6:mixed:Cd}.
+Also, this formulation looks identical to the standard penalty formulation 
+(see Section~\ref{sec_penalty}), except for 
+the $\vec{\sigma}_0$ term which accounts for the initial stress.
 
 This also probably means that reduced integration can/should be done ?
 
@@ -1483,6 +1509,10 @@ In that case the strain rate tensor is given by
 \right)
 \]
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_129/results/experiment7/stats_stress}\\
+{\captionfont Evolution or $\sigma_{xx}$ statistics over 20~kyr for various values of $\nu$.}
+\end{center} 
 
 
 
@@ -1647,42 +1677,13 @@ The stress fields look smoother, but there are still rather wild oscillations!!!
 {\color{red} is there a bug or is this a feature of this formulation? } 
 I NEED BENCHMARKS!!!
 
-Rob metioned a paper by Melosh?
-
-
 
 \newpage
 %------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
 \subsection*{Numerical benchmark - Flexure of elastic plate (experiment=4)}
 
-This benchmark is presented in \textcite{chtl13}. 
-
-\begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_129/images/chtl13a}
-\includegraphics[width=7cm]{python_codes/fieldstone_129/images/chtl13b}\\
-{\captionfont 
-Taken from \textcite{chtl13}. ``Effect of elastic compressibility on the prediction 
-of an elastic thin plate subject to an uplifting load. (a)
-Model setup for a finite length elastic layer subjected to a
-finite length buoyant load applied on the bottom. (b) Profiles
-of mean-subtracted surface topography.''}
-\end{center}
-
-
-\begin{center}
-\begin{tabular}{llll}
-\hline 
-\textit{Material properties}& \textit{elastic plate (1)}  & \textit{elastic block (2)} & \textit{viscous mantle (3)} \\
-\hline 
-\hline 
-Density         $\rho$       \ \si{\kg\per\cubic\meter} & 2700&1890 &2700 \\  
-Viscosity       $\eta$       \ \si{\pascal\second}      & $10^{35}$& $10^{35}$ & $10^{17}$ \\  
-Shear modulus   $\mu $       \ \si{\pascal}             & $30\cdot10^9$& $30\cdot10^9$&  $10^{50}$ \\
-Maxwell time    $t_M$        \ \si{\year}               & 10569930 &  10569930 & 3.1709791983764584e-41 \\  
-eff. visc.      $\eta_{eff}$ \ \si{\pascal\second}      & 4.73039776e+18& 4.73039776e+18&  1e+17\\ 
-\hline 
-\end{tabular} 
-\end{center}
+It is described in Section~\ref{sec:chtl13}.
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_129/results/experiment4/phase}
@@ -1691,153 +1692,31 @@ eff. visc.      $\eta_{eff}$ \ \si{\pascal\second}      & 4.73039776e+18& 4.7303
 {\captionfont Initial setup of the experiment.}
 \end{center} 
 
-
 {\color{red}This explodes when shear modulus contrast becomes too big, i.e. when a material 
 essentially becomes purely viscous by having its $\mu$ very large. }
 It showcases oscillations at the beginning too!
 
-
-
-
-
-\newpage
+%------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \subsection*{Numerical benchmark - Parallel-plate viscosimeter (experiment=5)}
+
+It is described in Section~\ref{v-e-snac}.
+
 
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_129/results/experiment5/setup}
 \end{center}
 
-
-
-\newpage
-%------------------------------------------------------------------------------
-\subsection*{Rayleigh-Taylor instability}
-
-Carry out Rayleigh–Taylor instability a la \textcite{kabe07} (2007).
-
-The model consists of a viscoelastic layer of thickness $H_1$ , with density $\rho_1$, 
-viscosity $\eta_1$ and elastic shear module $\mu_1$ that overlies a viscous
-layer of thickness $H-H_1$ , with density $\rho_2$ and viscosity $\mu_2$. 
-The interface between the two fluids is perturbed sinusoidally according
-to $h(x) = (H - H_1 ) + A_0 \cos (2\pi / \lambda x)$, 
-where $H_1$ is the thickness of the upper layer, $H$ the height of the model, 
-$A_0$ the initial amplitude and $\lambda$ the wavelength of the perturbation. 
-If $\rho_1>\rho_2$, the system is gravitationally unstable.
-
 \begin{center}
-\fbox{
-\includegraphics[width=12cm]{python_codes/fieldstone_129/images/kabe07}}\\
-{\captionfont Taken from \textcite{kabe07}.}
+\includegraphics[width=8cm]{python_codes/fieldstone_129/results/experiment5/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_129/results/experiment5/disp}
 \end{center}
 
-The Deborah number is given by
-\[
-De=\frac{(\rho_1-\rho_2)g H}{\mu}
-\]
-and is here defined as the ratio between the viscous (Stokes) timescale ($(\rho_1-\rho_2)g H/\eta_1$)
-and the viscoelastic timescale $\eta_1/\mu$ of the upper layer.
-The authors state: ``
-Interestingly, the Deborah number, which is a measure of the importance of
-elasticity [...], is independent on the viscosity of the system. 
-This is due to the fact that the magnitude of stress is solely
-dependent on the density difference for purely buoyancy-driven flow.''
-
-Another parameter controlling the dynamics of the system is the viscosity contrast 
-between the upper and the lower layer, expressed by $R=\eta_1/\eta_2$.
-
-
-\newpage
-
-We wish to find the general solution $\tau(t)$ of from the first order ODE
-\[
-\frac{1}{2\mu} \frac{d\tau}{dt} + \frac{1}{2\eta} \tau = \dot\varepsilon_0
-\qquad
-\text{or},
-\qquad
-\frac{d\tau}{dt} + \frac{\mu}{\eta} \tau = 2\mu \dot\varepsilon_0
-\]
-There is a standard technique to solve such equations, and we start with the following equation instead:
-\[
-\frac{1}{2\mu} \frac{d\tau}{dt} + \frac{1}{2\eta} \tau = 0
-\]
-It can be rewritten
-\[
-\frac{d\tau}{\tau} = -\frac{\mu}{\eta} dt
-\]
-so
-\[
-\int \frac{d\tau}{\tau} = -\frac{\mu}{\eta} \int dt
-\]
-\[
-\ln \tau - \ln \tau_0 = -\frac{\mu}{\eta} t 
-\]
-\[
-\ln \tau = -\frac{\mu}{\eta} t  + \ln \tau_0
-\]
-\[
-\tau(t) 
-= \exp \left(  -\frac{\mu}{\eta} t  + \ln \tau_0 \right) 
-= \exp \left(  -\frac{\mu}{\eta} t   \right)   \exp \left(  \ln \tau_0 \right) 
-= \tau_0 \exp \left(  -\frac{\mu}{\eta} t   \right) 
-\]
-or, using the Maxwell time $t_M=\eta/\mu$,
-\[
-\tau(t) 
-= \tau_0 \exp \left(  -\frac{t}{t_M}   \right) 
-\]
-Based on this solution we now 
-consider the following equation
-\begin{eqnarray}
-\frac{d}{dt} \left[   \tau \exp\left( \frac{t}{t_M}   \right)  \right]
-&=& 
-\frac{d \tau}{dt}  \exp\left( \frac{t}{t_M}   \right)  +
-\tau \frac{1}{t_M} \exp\left( \frac{t}{t_M}   \right)  \nn\\
-&=& 
-\left( \underbrace{\frac{d \tau}{dt} + \frac{\mu}{\tau} \tau}_{2\mu \dot\varepsilon_0}  \right)  \exp\left( \frac{t}{t_M}   \right)  \nn
-\end{eqnarray}
-Then we proceed to integrate both sides:
-\[
-\int \frac{d}{dt} \left[   \tau \exp\left( \frac{t}{t_M}   \right)  \right] dt
-= 2\mu \dot\varepsilon_0 \int \exp\left( \frac{t}{t_M}   \right)  dt
-\]
-
-\[
-\tau(t) \exp\left( \frac{t}{t_M}   \right)
--
-\tau(0) \exp\left( \frac{0}{t_M}   \right)
- =
- 2\mu \dot\varepsilon_0  t_M  [ \exp\left( \frac{t}{t_M}   \right)  -  \exp\left( \frac{0}{t_M} \right) ]
-\]
-
-\[
-\tau(t) \exp\left( \frac{t}{t_M}   \right)
-- \tau(0) 
-=
-2 \mu  \dot\varepsilon_0 \frac{\eta}{\mu} [ \exp\left( \frac{t}{t_M}   \right) -1 ]
-\]
-
-\[
-\tau(t) \exp\left( \frac{t}{t_M} \right)
-=
-2 \mu  \dot\varepsilon_0 \frac{\eta}{\mu} [ \exp\left( \frac{t}{t_M}   \right) -1 ] + \tau(0) 
-\]
-
-\[
-\tau(t) 
-=
-2 \eta  \dot\varepsilon_0  [1- \exp\left( -\frac{t}{t_M}\right) ] + \tau(0) \exp\left( -\frac{t}{t_M} \right)
-\]
-which is the solution of Eq.~(4) of \textcite{kabe07} (2007).
-
-
-
-
-
-
-
-
-
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_129/results/experiment5/size}
+\includegraphics[width=8cm]{python_codes/fieldstone_129/results/experiment5/velx}\\
+{\captionfont Note the oscillations!!}
+\end{center}
 
 
 

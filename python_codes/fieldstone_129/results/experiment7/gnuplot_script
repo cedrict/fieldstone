@@ -1,0 +1,22 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+
+cm=0.01
+year=365.25*3600*24
+
+set xlabel 'time (yr)'
+
+
+
+set ylabel 'stress (min/max)'
+set output 'stats_stress.pdf'
+plot[][]\
+'nu0p30/stats_txx.ascii' u ($1/year):3 w l t 'nu=0.30',\
+'nu0p35/stats_txx.ascii' u ($1/year):3 w l t 'nu=0.35',\
+'nu0p40/stats_txx.ascii' u ($1/year):3 w l t 'nu=0.40',\
+'nu0p45/stats_txx.ascii' u ($1/year):3 w l t 'nu=0.45',\
+2*1e21*6.342e-15*(1-exp(-1e-11*x*year)) lt -1 dt 2 lw .5 t 'analytical'
+
+#12.68e6 lt -1 dt 2 
+
