@@ -1,6 +1,6 @@
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_59/text.tex}} \end{flushright}
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_59/keywords}
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_59/keywords.ascii}
 
 \begin{center}
 Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_59}
@@ -17,7 +17,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 We start from the Stokes equation for isoviscous fluids:
 \[
-\eta \Delta \vec{\upnu} - \vec\nabla p + \rho \vec{g} = \vec{\bm 0}
+\eta \Delta \vec{\upnu} - \vec\nabla p + \rho \vec{g} = \vec{0}
 \]
 Assuming that the fluid is incompressible and that the incline is infinite, 
 then $\vec{\upnu}=(u(y),0)$.
@@ -70,31 +70,32 @@ u(y=h)=
 \includegraphics[height=9cm]{python_codes/fieldstone_59/images/narh15}\\
 {\captionfont Ice velocity map (magnitude, in logarithmic scale) of the Greenland Ice Sheet
 derived from SAR data of the Sentinel-1A satellite, acquired in Interferometric Wide Swath
-Mode (IW) between January and March 2015. Taken from \cite{narh15}.}
+Mode (IW) between January and March 2015. Taken from \textcite{narh15} (2015).}
 \end{center}
 
 As shown on the figures above the typical ice sheet velocity values around the NEEM ice core 
-is $\sim 0.03m/day \simeq 3\cdot 10^{-7}$m/s. 
+is $\sim 0.03~\si{\meter\per\day} \simeq 3\cdot 10^{-7}~\si{\meter\per\second}$. 
 Then, in order for the top of the ice sheet to flow at this speed it requires $m=15$.
 
-Having obtained the (effective linear) viscosity of the ice, i.e. $\eta\simeq 10^{15}$Pa.s,
+Having obtained the (effective linear) viscosity of the ice, i.e. 
+$\eta\simeq 10^{15}~\si{\pascal\second}$,
 we can compute the strain rate at the bottom and in the middle:
 \[
 \dot{\varepsilon}_{xy}(y=0) 
 = \frac{\rho g \sin \alpha}{2 \eta} h
 \sim \frac{1000\cdot 10 \cdot 0.01}{2 \cdot 10^{15}}2500
-\sim 10^{-10}\text{s}^{-1}
+\sim 10^{-10}~\si{\per\second}
 \]
 \[
 \dot{\varepsilon}_{xy}(y=h/2) 
 = \frac{\rho g \sin \alpha}{2 \eta} \frac{h}{2}
 \sim \frac{1000\cdot 10 \cdot 0.01}{2 \cdot 10^{15}}\frac{2500}{2}
-\sim 5\cdot 10^{-11}\text{s}^{-1}
+\sim 5\cdot 10^{-11}~\si{\per\second}
 \]
 which are reasonable values as confirmed by the following figure (see yellow line):  
 \begin{center}
 \includegraphics[width=11cm]{python_codes/fieldstone_59/images/kudd19}\\
-{\captionfont Taken from Kuiper et al \cite{kudd19}.}
+{\captionfont Taken from \textcite{kudd19} (2019).}
 \end{center}
 
 The conclusion from this exercise is that {\sl if} ice could be described by 
@@ -105,16 +106,16 @@ would yield observations that match recorded velocities and strain rates.
 \paragraph{Nonlinear power-law viscosity}
 However, the picture is way more complex, as it was observed very early on 
 by Glen in 1955 \cite{glen55} and many others later (see Section~\ref{ss:glen}). 
-It was then found that 
+It was then found that the strain rate and the stress are linked in a nonlinear way: 
 \[
 \dot{\varepsilon} = A \tau^n,
 \]
 i.e. the ice behaves as a power-law fluid (see Section~\ref{ss:powerlaw}), with 
 $n=3$ and $A\simeq 2.4\cdot 10^{-24}$ at 0\degree (REF?).
 
-More recently Kuiper et al. \cite{kuwd19,kudd19} derived a composite flow law 
+More recently \textcite{kuwd19} (2019) and \textcite{kudd19} (2019) derived a composite flow law 
 to model deformation in the NEEM deep ice core. 
-They start from the flow law proposed by Goldsby \& Kohlstedt \cite{goko01}:
+They start from the flow law proposed by \textcite{goko01} (2001):
 \[
 \dot{\varepsilon}_T = \dot{\varepsilon}_{disl} + 
 \left(\frac{1}{ \dot{\varepsilon}_{basal}} + \frac{1}{ \dot{\varepsilon}_{GBS}} \right)^{-1} 
@@ -131,15 +132,16 @@ power law relation of the form:
 \dot{\varepsilon} = A \tau^n d^{-p} \exp \left( -\frac{Q+pV}{RT} \right)
 \]
 where $A$ is a material parameter, $\tau$ is the differential stress (MPa), 
-$n$ is the stress exponent, $d$ is the grain size diameter (m), 
+$n$ is the stress exponent, $d$ is the grain size diameter (\si{\meter}), 
 $p$ is the grain size exponent, $Q$ is the activation energy for the creep 
-mechanism at stake (J$\cdot$mol$^{-1}$ ), $p$ is the hydrostatic pressure (MPa), 
-$V$ the activation volume (m$^3\cdot$mol$^{-1}$), 
-$R$ is the gas constant (J$\cdot$K$^{-1}\cdot$mol$^{-1}$), and $T$ the absolute temperature (K). 
+mechanism at stake ($\si{\joule\per\mole}$), $p$ is the hydrostatic pressure ($\si{\mega\pascal}$), 
+$V$ the activation volume ($\si{\cubic\meter\per\mole}$), 
+$R$ is the gas constant ($\si{\joule\per\kelvin\per\mole}$), 
+and $T$ the absolute temperature ($\si{\kelvin}$). 
 The effect of $pV$ is assumed to be very small \cite{dust01} 
 and is ignored for the remainder of this work.
 
-As explained in \cite{kuwd19} the composite flow law can actually be simplified to:
+As explained in \textcite{kuwd19} (2019) the composite flow law can actually be simplified to:
 \[
 \dot{\varepsilon}_T = \dot{\varepsilon}_{disl} + \dot{\varepsilon}_{GBS}
 \]
@@ -147,7 +149,7 @@ The material parameters for these deformation mechanisms are available in \cite{
 \begin{center}
 \begin{tabular}{lcccc}
 \hline
-Creep regime & A & n & p & Q (J$\cdot$mol$^{-1}$) \\
+Creep regime & $A$ & $n$ & $p$ & $Q$ (\si{\joule\per\mole}) \\
 \hline\hline
 Glen's flow law ($T<263$K) &$3.61\cdot10^5$ MPa$^{-3.0}$ s$^{-1}$ &3.0 &0 &60\\
 Glen's flow law ($T>263$K) &$1.73\cdot10^{21}$ MPa$^{-3.0}$ s$^{-1}$ &3.0 &0 &139\\
@@ -177,7 +179,7 @@ effective viscosity is then the harmonic average of both viscosities:
 
 The geometry is a 2D cartesian domain of size $L_x \times L_y$. Instead of tilting it by an angle $\alpha$
 I choose to instead 'tilt' the gravity vector so that it becomes 
-$\vec{g}=(\rho g \sin_\alpha,-\rho g\cos\alpha)$.
+$\vec{g}=(\rho g \sin\alpha,-\rho g\cos\alpha)$.
 The boundary conditions are as follows: no slip at the bottom, free surface at the top, 
 free slip on the left (we assume that this corresponds to a ridge - zero horizontal velocity)
 and we need to be careful about the right boundary which is where the ice exits the domain:
@@ -191,28 +193,28 @@ We set $L_x=125$km and $L_y=2500$m, $\rho=917$kg$\cdot$m$^{-3}$, $\alpha=0.1$\de
 
 
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_59/images/shsh14}
-\includegraphics[width=8cm]{python_codes/fieldstone_59/images/kuiper19}\\
-{\captionfont Left: Taken from Sheldon et al \cite{shsh14}; 
-Right: Taken from Kuiper \cite{kuiper19}}
+\includegraphics[width=7cm]{python_codes/fieldstone_59/images/shsh14}
+\includegraphics[width=10cm]{python_codes/fieldstone_59/images/kuiper19}\\
+{\captionfont Left: Taken from \textcite{shsh14} (2014); 
+Right: Taken from \textcite{kuiper19} (2019).}
 \end{center}
 
 I have obtained the raw data (curtesy from E.N. Kuiper) and it is plotted hereunder:
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_59/data/temperature}
-\includegraphics[width=7cm]{python_codes/fieldstone_59/data/grain_size}\\
-{\captionfont }
+\includegraphics[width=8cm]{python_codes/fieldstone_59/data/temperature}
+\includegraphics[width=8cm]{python_codes/fieldstone_59/data/grain_size}
 \end{center}
 
 In order to verify that the values reported in the table above are the ones 
 used in \cite{kudd19} I have reproduced the figure 3 of that paper (code and gnuplot
 script in {\sl ./data} folder):
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_59/data/strainrate}\\
-{\captionfont Log strain rate versus temperature for Glen’s flow law and 
+\includegraphics[width=9cm]{python_codes/fieldstone_59/data/strainrate}\\
+{\captionfont Log strain rate versus temperature for Glen's flow law and 
 the two mechanisms (dislocation creep and GBS-limited creep) that form the end members 
 of the modified composite flow law, using the flow law parameters from the table above. 
-A stress of 0.07MPa and a mean grain diameter of 5mm were used to calculate the strain rate.}
+A stress of 0.07MPa and a mean grain diameter of $5~\si{\milli\meter}$ 
+were used to calculate the strain rate.}
 \end{center}
 
 
@@ -225,8 +227,8 @@ We have computed the effective viscosity for all four rheologies with the
 implemented temperature and grain size profiles for $\dot{\varepsilon}_e=10^{-10}\text{s}^{-1}$:
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_59/results/profiles}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_59/results/profiles2}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_59/results/profiles}
+\includegraphics[width=8cm]{python_codes/fieldstone_59/results/profiles2}
 \end{center}
 Note that smaller strain rates shift the curves to the right (higher viscosities).
 
@@ -257,11 +259,11 @@ Core 1 ($x=L_x/4$) \hspace{5cm}  Core 2 ($x=L_x/2$)  \\
 
 
 \begin{center}
-\includegraphics[width=6.cm]{python_codes/fieldstone_59/results/rh4/vel}
-\includegraphics[width=6.cm]{python_codes/fieldstone_59/results/rh4/p}\\
-\includegraphics[width=6.cm]{python_codes/fieldstone_59/results/rh4/sr}
-\includegraphics[width=6.cm]{python_codes/fieldstone_59/results/rh4/eta}\\
-{\captionfont Velocity, pressure, strain rate and viscosity in the middle of the ice sheet
+\includegraphics[width=7cm]{python_codes/fieldstone_59/results/rh4/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_59/results/rh4/p}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_59/results/rh4/sr}
+\includegraphics[width=7cm]{python_codes/fieldstone_59/results/rh4/eta}\\
+{\captionfont Velocity, pressure, strain rate and effective viscosity in the middle of the ice sheet
 for rheology=4}
 \end{center}
 
@@ -273,9 +275,16 @@ Improvements: better density profile? more realistic geometry ?
 partitioning of strain rates. Better temperature profile. 
 Better grain size description. Influence of tilt angle? 
 
-
-
 \vspace{1cm}
 
-\Literature \cite{buja89}\cite{issg15}\cite{gors17}\cite{zhjg11}\cite{yash15}\cite{zwgg07}\cite{heah18}
-\cite{lejx14}
+\Literature 
+\textcite{buja89} (1989),
+\textcite{zwgg07} (2007),
+\textcite{zhjg11} (2011),
+\textcite{lejx14} (2014),
+\textcite{issg15} (2015),
+\textcite{yash15} (2015),
+\textcite{gors17} (2017),
+\textcite{heah18} (2018).
+
+
