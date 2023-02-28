@@ -91,7 +91,7 @@ else:
    eccentricity=0.8
    path='solution/'
    hhh=50e3                # element size at the surface
-   radial_model='4layer'
+   radial_model='samuelB'
 
 np_blob=int(2*np.pi*R_blob/hhh)
 blobtype=1
@@ -801,12 +801,6 @@ if radial_model=='aspect': #benchmark against aspect
    profile_eta[1,:]=eta0
 
 
-#making sure nodes on surfaces are correctly seen
-profile_rho[0,0]=0.99999*R_inner
-profile_rho[0,-1]=1.00001*R_outer
-profile_eta[0,0]=0.99999*R_inner
-profile_eta[0,-1]=1.00001*R_outer
-
 #np.savetxt('profile_rho.ascii',np.array([profile_rho[0,:],profile_rho[1,:]]).T)
 
 print("read profiles: %.3f s" % (timing.time() - start))
@@ -829,7 +823,6 @@ print("read profiles: %.3f s" % (timing.time() - start))
 # from density profile build total mass and moment of inertia
 ###############################################################################
 start = timing.time()
-
 
 #profile_rho[0,:]/=1e6
 #profile_rho[1,:]=1
@@ -864,9 +857,15 @@ if radial_model=='steinberger' or radial_model=='samuelA' or radial_model=='samu
 #elif radial_model=='4layer': #hollow sphere profile
 #    print('Mass of profile hollow sphere:',Prof_masse)
 #    print('Inertia of profile hollow sphere:',Prof_inertia)
-
 #print(VOL,Prof_masse,(VOL-Prof_masse)/VOL)
+
 #exit()
+
+#making sure nodes on surfaces are correctly seen
+profile_rho[0,0]=0.9999*R_inner
+profile_rho[0,-1]=1.00001*R_outer
+profile_eta[0,0]=0.9999*R_inner
+profile_eta[0,-1]=1.00001*R_outer
 
 ###############################################################################
 # project mid-edge nodes onto circle at surface and cmb
@@ -1534,11 +1533,18 @@ for istep in range(0,nstep):
     cc           = np.zeros(NV,dtype=np.float64)
     q            = np.zeros(NV,dtype=np.float64)
 
+    xV2 = np.zeros((nel,mV),dtype=np.float64)  
+    zV2 = np.zeros((nel,mV),dtype=np.float64)  
+    e_xx_nodal2 = np.zeros((nel,mV),dtype=np.float64)  
+    e_zz_nodal2 = np.zeros((nel,mV),dtype=np.float64)  
+    e_xz_nodal2 = np.zeros((nel,mV),dtype=np.float64)  
+
     rVnodes=[0,1,0,0.5,0.5,0,1./3.] # valid for CR and P2P1
     sVnodes=[0,0,1,0,0.5,0.5,1./3.]
 
     #u[:]=xV[:]**2
     #v[:]=zV[:]**2
+    srfile=open(path+'sol_sr_cartesian2_{:04d}.ascii'.format(istep),"w")
 
     if solve_stokes:
        for iel in range(0,nel):
@@ -1569,9 +1575,16 @@ for istep in range(0,nstep):
                    e_xx_nodal[inode] += dNNNVdx[k]*u[iconV[k,iel]]
                    e_zz_nodal[inode] += dNNNVdy[k]*v[iconV[k,iel]]
                    e_xz_nodal[inode] += 0.5*(dNNNVdy[k]*u[iconV[k,iel]]+dNNNVdx[k]*v[iconV[k,iel]])
+
+                   e_xx_nodal2[iel,kk] += dNNNVdx[k]*u[iconV[k,iel]]
+                   e_zz_nodal2[iel,kk] += dNNNVdy[k]*v[iconV[k,iel]]
+                   e_xz_nodal2[iel,kk] += 0.5*(dNNNVdy[k]*u[iconV[k,iel]]+dNNNVdx[k]*v[iconV[k,iel]])
                for k in range(0,mP):
                    q[inode]+= NNNP[k]*p[iconP[k,iel]]   
                #end for
+               #xV2[iel,kk]=xV[inode] 
+               #zV2[iel,kk]=zV[inode] 
+               srfile.write("%e %e %e %e %e\n" %(xV[inode],zV[inode],e_xx_nodal2[iel,kk],e_zz_nodal2[iel,kk],e_xz_nodal2[iel,kk]))
                cc[inode]+=1
            #end for
        #end for
@@ -1598,7 +1611,8 @@ for istep in range(0,nstep):
        print("     -> tau_zz_nodal (m,M) %.6e %.6e " %(np.min(tau_zz_nodal),np.max(tau_zz_nodal)))
        print("     -> tau_xz_nodal (m,M) %.6e %.6e " %(np.min(tau_xz_nodal),np.max(tau_xz_nodal)))
     
-       #np.savetxt('sol_sr_cartesian.ascii',np.array([xV,zV,e_xx_nodal,e_zz_nodal,e_xz_nodal,e_nodal,cc]).T)
+       np.savetxt('sol_sr_cartesian.ascii',np.array([xV,zV,e_xx_nodal,e_zz_nodal,e_xz_nodal,e_nodal,cc]).T)
+
 
     print("compute sr and stress: %.3f s" % (timing.time() - start))
 

@@ -1,0 +1,70 @@
+##############################################################
+set term pdf enhanced font "Times,12pt"
+set grid
+set ylabel 'dyn topo (m)'
+set xlabel 'co-latitude {/Symbol Q}'
+
+set output 'surface_dyn_topo.pdf'
+plot[:pi/2][-250:]\
+'output_mars_2_4_0p55/dynamic_topography_surface.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4 ps .12 t 'aspect, 2,4,0.55',\
+'output_mars_2_4_0p65/dynamic_topography_surface.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4 ps .12 t 'aspect, 2,4,0.65',\
+'output_mars_3_3_0p6/dynamic_topography_surface.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4  ps .12 t 'aspect, 3,3,0.6',\
+'output_mars_2_5_0p5/dynamic_topography_surface.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4  ps .12 t 'aspect, 2,5,0.5',\
+'dynamic_topography_surf_hhh50.ascii'  u 1:2 ps .2 t 'h=50km',\
+'dynamic_topography_surf_hhh40.ascii'  u 1:2 ps .2 t 'h=40km',\
+'dynamic_topography_surf_hhh30.ascii'  u 1:2 ps .2 t 'h=30km',\
+'dynamic_topography_surf_hhh20.ascii'  u 1:2 ps .2 t 'h=20km',\
+0 lt -1 notitle 
+
+
+set output 'surface_dyn_topo_left.pdf'
+plot[:0.2][1000:]\
+'output_mars_2_4_0p55/dynamic_topography_surface.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4 ps .12 t 'aspect, 2,4,0.55',\
+'output_mars_2_4_0p65/dynamic_topography_surface.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4 ps .12 t 'aspect, 2,4,0.65',\
+'output_mars_3_3_0p6/dynamic_topography_surface.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4  ps .12 t 'aspect, 3,3,0.6',\
+'output_mars_2_5_0p5/dynamic_topography_surface.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4  ps .12 t 'aspect, 2,5,0.5',\
+'dynamic_topography_surf_hhh50.ascii'  u 1:2 ps .2 t 'h=50km',\
+'dynamic_topography_surf_hhh40.ascii'  u 1:2 ps .2 t 'h=40km',\
+'dynamic_topography_surf_hhh30.ascii'  u 1:2 ps .2 t 'h=30km',\
+'dynamic_topography_surf_hhh20.ascii'  u 1:2 ps .2 t 'h=20km'
+
+##############################################################
+
+set title 'dynamic topography at CMB'
+set output 'cmb_dyn_topo.pdf'
+plot[:pi/2][:]\
+'output_mars_2_4_0p55/dynamic_topography_bottom.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4 ps .12 t 'aspect, 2,4,0.55',\
+'output_mars_2_4_0p65/dynamic_topography_bottom.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4 ps .12 t 'aspect, 2,4,0.65',\
+'output_mars_3_3_0p6/dynamic_topography_bottom.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4  ps .12 t 'aspect, 3,3,0.6',\
+'output_mars_2_5_0p5/dynamic_topography_bottom.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4  ps .12 t 'aspect, 2,5,0.5',\
+'dynamic_topography_cmb_hhh50.ascii'  u 1:3 ps .2 t 'h=50km',\
+'dynamic_topography_cmb_hhh40.ascii'  u 1:3 ps .2 t 'h=40km',\
+'dynamic_topography_cmb_hhh30.ascii'  u 1:3 ps .2 t 'h=30km',\
+'dynamic_topography_cmb_hhh20.ascii'  u 1:3 ps .2 t 'h=20km',\
+0 lt -1 notitle 
+
+set title 'dynamic topography at CMB'
+set output 'cmb_dyn_topo_left.pdf'
+plot[:0.2][:]\
+'output_mars_2_4_0p55/dynamic_topography_bottom.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4 ps .12 t 'aspect, 2,4,0.55',\
+'output_mars_2_4_0p65/dynamic_topography_bottom.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4 ps .12 t 'aspect, 2,4,0.65',\
+'output_mars_3_3_0p6/dynamic_topography_bottom.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4  ps .12 t 'aspect, 3,3,0.6',\
+'output_mars_2_5_0p5/dynamic_topography_bottom.00000' u (acos($3/sqrt($1**2+$2**2+$3**2))):4  ps .12 t 'aspect, 2,5,0.5',\
+'dynamic_topography_cmb_hhh50.ascii'  u 1:3 ps .2 t 'h=50km',\
+'dynamic_topography_cmb_hhh40.ascii'  u 1:3 ps .2 t 'h=40km',\
+'dynamic_topography_cmb_hhh30.ascii'  u 1:3 ps .2 t 'h=30km',\
+'dynamic_topography_cmb_hhh20.ascii'  u 1:3 ps .2 t 'h=20km',\
+0 lt -1 notitle 
+
+
+
+
+
+
+
+
+
+
+
+
+
