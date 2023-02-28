@@ -1,3 +1,5 @@
+\chapter{Visco-elasticity: physics, formulations and FEM } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 {\Large Work in progress!!!}
 
@@ -356,7 +358,7 @@ upper half of the channel is modelled.
 
 
 At the inflow and outflow boundaries, an established Poiseuille flow 
-$v_x = 3(R^2 –y^2 )/(2R^2)$ is imposed; $v_y=0$ at
+$v_x = 3(R^2 -y^2 )/(2R^2)$ is imposed; $v_y=0$ at
 the sides. Both upper and lower boundaries are fixed in $y$-direction. We apply no-slip boundary conditions at the top and along the cylinder
 wall and free-slip (zero traction) conditions at the bottom (symmetry axis). For the inflow conditions on $\sigma$ , we use the analytical solution for
 simple shear of a Jaumann fluid, which is valid for Poiseuille flow. In that case, the Jaumann derivative equations are
@@ -374,7 +376,7 @@ Given that $\dot\gamma = 2\dot\varepsilon_{xy}$ and $\omega = -1/2 \dot\gamma$ f
 and can then solve for $\tau_{xx}$ and $\tau_{yy}$ by substitution.
 The strain rate $\dot\gamma$ is given by $\partial v_x /\partial y$, 
 that is, by differentiating the inflow
-condition $v_x = 3(R^2 –y^2 )/(2R^2)$ 
+condition $v_x = 3(R^2 -y^2 )/(2R^2)$ 
 with respect to $y$, resulting in $\dot\gamma= -3y/R^2$ at the inflow boundary.
 
 The authors further measure the non-dimensional drag force $C_d$ exerted by the passing fluid on the cylinder wall and compare it with published values.

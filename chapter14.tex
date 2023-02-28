@@ -1,3 +1,4 @@
+\chapter{ELEFANT} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This version on \elefant is different than the one I built from 2012 until 2018.
 It incorporates many features and contains many identical algorithms with the original 
@@ -12,7 +13,7 @@ This code is in Fortran because a) this is the language I know best; b) it is (r
 c) the interface with MUMPS is seamless.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Principal features}
+\section{Principal features}
 
 \begin{itemize}
 \item 4 geometries:
@@ -43,7 +44,7 @@ c) the interface with MUMPS is seamless.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Philosophy}
+\subsection{Philosophy}
 \begin{itemize}
 \item readability
 \item not memory efficient/optimised
@@ -56,7 +57,7 @@ c) the interface with MUMPS is seamless.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{The modules and objects}
+\subsection{The modules and objects}
 The whole code is built around a few modules and objects:
 
 \begin{itemize}
@@ -92,9 +93,9 @@ The whole code is built around a few modules and objects:
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Install MUMPS (Ubuntu)}
+\section{Install MUMPS (Ubuntu)}
 
-\subsubsection{Sequential install}
+\subsection{Sequential install}
 
 Go to the MUMPS website \url{http://mumps.enseeiht.fr/index.php?page=home} and 
 fill the form of the Download page. 
@@ -126,16 +127,16 @@ Edit the Makefile of \elefant to adjust the location of the MUMPS solver.
 
 ADD METIS support
 
-\subsubsection{Parallel install}
+\subsection{Parallel install}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{List of subroutines}
+\section{List of subroutines}
 
 \input{ELEFANT/code.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Setting up an experiment/benchmark/cookbook}
+\section{Setting up an experiment/benchmark/cookbook}
 
 opla
 
@@ -144,12 +145,12 @@ opla
 \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{To do list}
+\section{To do list}
 \input{ELEFANT/todo}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{The MUMPS solver}
+\section{The MUMPS solver}
 
 MUMPS stands for MUltifrontal Massively Parallel Solver. It is a software package 
 for solving systems of linear equations of the 
@@ -204,7 +205,7 @@ ${\bm U}\cdot{\vec x}_{pre} ={\vec y}$ (or ${\bm L}^T{\vec x}_{pre} ={\vec y}$).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{How we use MUMPS - the elemental format}
+\section{How we use MUMPS - the elemental format}
 
 What follows is written with $Q_1\times P_0$ elements in mind. 
 
@@ -218,7 +219,7 @@ $nelx \times nely \times nelz = nel$ elements and the
 resulting matrix size is $N=(nelx+1)(nely+1)(nelz+1)ndofV$ with $ndofV=3$.
 
 %------------------------------
-\subsubsection{Allocating arrays}
+\subsection{Allocating arrays}
 
 First, a variable of type {\tt dmumps\_struc} must be declared:
 \begin{verbatim}
@@ -328,7 +329,7 @@ allocate(idV%RHS (idV%N))
 Note that the above code requires little to no change in the case that higher-order elements are used. 
 
 %==================
-\subsubsection{Assembly}
+\subsection{Assembly}
 
 The host loops over the elements and for each element
 the matrix ${\bm K}_{el}$. 
@@ -369,7 +370,7 @@ end do
 
 
 %------------------------------
-\subsubsection{Solving the system}
+\subsection{Solving the system}
 
 Once the loop over all elements is completed, {\tt INCTL(5)}
 must be set to 1 since the elemental format is being used. 
