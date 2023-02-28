@@ -744,7 +744,7 @@ if do_path_measurements:
        zm=zpath[i]
        #print(xm,ym,zm)
        for iel in range(0,nel):
-           B_vi[:,i]+=compute_B_quadrature      (xm,ym,zm,x,y,z,icon[:,iel],Mx[iel],My[iel],Mz[iel],nqdim)
+           #B_vi[:,i]+=compute_B_quadrature      (xm,ym,zm,x,y,z,icon[:,iel],Mx[iel],My[iel],Mz[iel],nqdim) # too slow here
            B_si[:,i]+=compute_B_surface_integral_wtopo(xm,ym,zm,x,y,z,icon[:,iel],Mx[iel],My[iel],Mz[iel])
 
        #print(B_vi[:,i]) 
