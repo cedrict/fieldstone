@@ -1,11 +1,10 @@
-biber --output-safechars manual
-pdflatex manual.tex
+biber --output-safechars field
+pdflatex field.tex
+
+#makeindex general
+#makeindex contributors 
+#makeindex topics
 
 #authorindex manual
-
-makeindex general
-makeindex contributors 
-makeindex topics
-
 #makeindex manual.idx
 #pdflatex manual.tex

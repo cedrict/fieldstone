@@ -25,11 +25,13 @@ __pycache__/
 *.node
 *.ele
 opla
-page.pdf
 manual.idx
 manual.ilg
 manual.ind
 manual.pdf
+field.pdf
+all_the_stones.aux
+all_the_stones.pdf
 triangle 
 showme
 *.1.poly
