@@ -1,4 +1,4 @@
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_63/keywords}
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_63/keywords.ascii}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -155,7 +155,7 @@ The code therefore needs not be modified to compute these.
 {\captionfont Contours for the minimum principal stress in the vicinity of the triple junction}
 \end{center}
 
-\note{
+\begin{remark}
 This paper by Wong and Wu is a nice example of not-reproducible science. For one, boundary conditions 
 are not all specified. Second, it is not specified whether the results are obtained in plane strain 
 or axisymmetric geometry. Third, the program that was used is proprietary (ABAQUS). 
@@ -164,7 +164,7 @@ in size it is to the elements, this is problematic. Fifth, it is not clear how t
 tensile zone is defined. Sixth: the type of finite element is not specified. Seven, 
 we are shown one field which is a derivative of the solution (displacement) but not the 
 solution itelf.  
-}
+\end{remark}
 
 The following results are obtained with very high resolutions, i.e. 
 nLayers=901, nel\_h=80. This yields a mesh with about 1.6M triangles, 
