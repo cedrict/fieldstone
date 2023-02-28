@@ -1,4 +1,4 @@
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_28/keywords}
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_28/keywords.ascii}
 
 {\sl This fieldstone was developed in collaboration with Rens Elbertsen}. 
 \index{contributors}{Rens Elbertsen}
@@ -30,15 +30,18 @@ where $\eta^*$ is a constant representing the effective viscosity at high stress
 
 \begin{equation}
 \sqrt{\dot{\boldsymbol{\epsilon}}:\dot{\boldsymbol{\epsilon}}} 
-= \sqrt{\dot{\epsilon}_{ij} \dot{\epsilon}_{ij} } \\
- = \sqrt{\left( \frac{\partial u_x}{\partial x} \right)^2 + \frac{1}{2} \left( \frac{\partial u_x}{\partial y} 
+= \sqrt{\dot{\epsilon}_{ij} \dot{\epsilon}_{ij} } 
+= \sqrt{\left( \frac{\partial u_x}{\partial x} \right)^2 + \frac{1}{2} \left( \frac{\partial u_x}{\partial y} 
 + \frac{\partial u_y}{\partial x} \right)^2 + \left( \frac{\partial u_y}{\partial y} \right)^2  }.
 \end{equation}
 
-The viscoplastic flow law (equation \ref{eq:eta}) leads to linear viscous deformation at low stresses (equation (\ref{eq:eta_Ty})) and to plastic deformation for stresses that exceed $\sigma_Y$ (equation (\ref{eq:eta_sigma})), with the decrease in viscosity limited by the choice of $\eta^{*}$ \cite{stlh14}.
+The viscoplastic flow law (equation \ref{eq:eta}) leads to linear viscous deformation at low stresses (equation (\ref{eq:eta_Ty})) 
+and to plastic deformation for stresses that exceed $\sigma_Y$ (equation (\ref{eq:eta_sigma})), with the decrease in viscosity limited by the choice of $\eta^{*}$ \cite{stlh14}.
 
-
-In all cases that we present, the domain is a two-dimensional square box. The mechanical boundary conditions are for all boundaries free-slip with no flux across, i.e. $\tau_{xy}=\tau_{yx}=0$ and $\boldsymbol{u}\cdot \boldsymbol{n}=0$, where $\boldsymbol{n}$ denotes the outward normal to the boundary. Concerning the energy equation, the bottom and top boundaries are isothermal, with the temperature $T$ set to 1 and 0, respectively, while side-walls are assumed to be insulating, i.e. $\partial T/\partial x = 0$. The initial distribution of the temperature field is prescribed as follows:
+In all cases that we present, the domain is a two-dimensional square box. The mechanical boundary conditions are for all boundaries free-slip 
+with no flux across, i.e. $\tau_{xy}=\tau_{yx}=0$ and $\boldsymbol{u}\cdot \boldsymbol{n}=0$, where $\boldsymbol{n}$ denotes the outward normal to 
+the boundary. Concerning the energy equation, the bottom and top boundaries are isothermal, with the temperature $T$ set to 1 and 0, respectively, 
+while side-walls are assumed to be insulating, i.e. $\partial T/\partial x = 0$. The initial distribution of the temperature field is prescribed as follows:
 
 \begin{equation}
 T(x,y) = (1-y) + A \cos(\pi x)\sin(\pi y), \label{eq:initemp}

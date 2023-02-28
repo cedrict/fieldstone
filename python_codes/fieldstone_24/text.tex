@@ -1,4 +1,4 @@
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_24/keywords}
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_24/keywords.ascii}
 
 \begin{center}
 Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_24}
@@ -50,17 +50,18 @@ from the equation of state.
 The full set of equations we wish to solve is given by
 
 \begin{eqnarray}
--\nabla \cdot \left[2\eta \dot{\bm \epsilon}^d({\bm v}) \right] + \nabla p &=& \rho_0 \left((1 - \alpha(T-T_0) + \beta_T p \right) {\bm g} \quad\quad \textrm{in $\Omega$}  \label{eq:stokes-1a} \\
-\nabla \cdot {\bm v} + \frac{1}{\rho} {\bm v} \cdot {\bm \nabla}\rho&=&0 \quad\quad  \textrm{in $\Omega$}   \label{eq:stokes-2a} \\
+-\nabla \cdot \left[2\eta \dot{\bm \epsilon}^d({\bm v}) \right] + \nabla p &=& \rho_0 \left((1 - \alpha(T-T_0) + \beta_T p \right) {\bm g} \quad\quad \textrm{in $\Omega$}  \label{eq:stokes-1a_} \\
+\nabla \cdot {\bm v} + \frac{1}{\rho} {\bm v} \cdot {\bm \nabla}\rho&=&0 \quad\quad  \textrm{in $\Omega$}   \label{eq:stokes-2a_} \\
 \rho C_p \left(\frac{\partial T}{\partial t} + \bm v\cdot\nabla T\right) - \nabla\cdot k\nabla T   &=& 
   \rho H  +  2\eta \dot{\bm \epsilon}^d : \dot{\bm \epsilon}^d    +\alpha T \left( \frac{\partial p}{\partial t}+  \bm v \cdot \nabla p \right) 
 \quad\quad   \textrm{in $\Omega$},
-  \label{eq:temperature}
+  \label{eq:temperature_}
 \end{eqnarray}
 
 Note that this presupposes that the density is not zero anywhere in the domain.
 
 
+%--------------------------------
 \subsection*{The numerics}
 
 We use a mixed formulation and therefore  

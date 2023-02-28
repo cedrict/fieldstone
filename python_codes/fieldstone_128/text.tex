@@ -1,6 +1,6 @@
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_128/text.tex}} \end{flushright}
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_128/keywords}
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_128/keywords.ascii}
 
 \begin{center}
 \fbox{\textbf{\huge \color{teal} P}}
@@ -21,7 +21,7 @@ where
 \begin{itemize}
 \item $p$ is the fluid pressure, 
 \item $\vec\upnu$ is the fluid velocity vector, 
-\item $\varphi$ is the porosity, 
+\item $\varphi$ is the porosity (-), 
 \item $\beta$ is the bulk compressibility (\si{\per\pascal}), 
 \item $K$ is the permeability (\si{\square\meter}), 
 \item $\eta_f$ is the fluid viscosity (\si{\pascal\second}), 
@@ -39,7 +39,30 @@ the excess fluid pressure as follows:
 =
 \vec\nabla \cdot \left( \frac{K}{\eta_f} \vec\nabla p_e  \right) + H
 \end{equation}
-Note that once the excess pressure is computed one can recover the fluid velocity via $\vec\upnu=-\frac{K}{\eta_f} \vec\nabla p_e$. 
+Note that once the excess pressure is computed one can recover the fluid velocity via 
+$\vec\upnu=-\frac{K}{\eta_f} \vec\nabla p_e$. 
+Note that $H=0$ in experiments 1,2,3.
+
+Applying standard FE methodology to what is essentially a diffusion equation, we arrive at:
+\[
+{\M} \cdot \dot{\vec{\cal P}}_e + {\K}_d \cdot \vec{\cal P}_e = rhs
+\]
+with
+\[
+{\M} = \int_\Omega \varphi \beta \vec{\bN}^T \vec{\bN} 
+\]
+\[
+\K_d = \int_\Omega {\bm B}^T {\bm B} \frac{K}{\eta_f} 
+\]
+\[
+rhs = \int_\Omega \vec\bN^T  H 
+\]
+Using a simple first order time discretisation yields
+\[
+({\M} + {\K}_d \delta t) \cdot \vec{\cal P}_e^n = \M \cdot \vec{\cal P}_e^{n-1} + rhs \delta t
+\]
+
+
 
 %--------------------------------------------------------------------------------------
 \subsection*{Fluid Flow Around a Fault (experiment=2)}
@@ -163,3 +186,7 @@ Obviously the number of 'grains', their position, their permeability, etc ... ca
 changed too.
 
 
+%--------------------------------------------------------------------------------------
+\subsection*{Fluid Flow a la Antoine (experiment=4)}
+
+In this case the term $H$ is not zero. 
