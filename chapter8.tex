@@ -5,123 +5,123 @@
 Solving the Stokes equations and the energy equations is one thing. Doing it in 
 a geodynamical context requires a lot of additional techniques. 
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Dealing with a free surface (and mesh deformation)}\label{sec:freesurface} \input{freesurface} 
+\section{Dealing with a free surface (and mesh deformation)}\label{sec:freesurface} \input{freesurface} 
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Convergence criterion for nonlinear iterations\label{sec:nlconvcrit}}\input{nlconvcrit} 
+\section{Convergence criterion for nonlinear iterations\label{sec:nlconvcrit}}\input{nlconvcrit} 
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Strain weakening} \label{sec:strainweakening} \input{strainweakening} %----------------
+\section{Strain weakening} \label{sec:strainweakening} \input{strainweakening} %----------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{The SUPG formulation for the energy equation} \label{ss:supg} \input{supg} %-----------
+\section{The SUPG formulation for the energy equation} \label{ss:supg} \input{supg} %-----------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Assigning values to quadrature points \label{ss:averagings}} \input{averagings} %------
+\section{Assigning values to quadrature points \label{ss:averagings}} \input{averagings} %------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Matrix (Sparse) storage} \input{storage} %---------------------------------------------
+\section{Matrix (Sparse) storage} \input{storage} %---------------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Mesh generation} \label{sec:meshes} \input{meshes} %-----------------------------------
+\section{Mesh generation} \label{sec:meshes} \input{meshes} %-----------------------------------
 %\newpage %----------------------------------------------------------------------------------------
-%\subsection{Visco-Plasticity} \input{viscoplasticity} %-------------------------------------------
+%\section{Visco-Plasticity} \input{viscoplasticity} %-------------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Pressure smoothing/filtering for $Q_1\times P_0$ elements \label{psmoothing}} \input{pressure_smoothing}
+\section{Pressure smoothing/filtering for $Q_1\times P_0$ elements \label{psmoothing}} \input{pressure_smoothing}
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Pressure scaling \label{pscaling}} \input{pressure_scaling} %--------------------------
+\section{Pressure scaling \label{pscaling}} \input{pressure_scaling} %--------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Pressure normalisation, nullspace\label{ss_pnorm}} \input{pressure_normalisation} %----
+\section{Pressure normalisation, nullspace\label{ss_pnorm}} \input{pressure_normalisation} %----
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Solving the Stokes system \label{sec:solvers}} \input{solvers} %-----------------------
+\section{Solving the Stokes system \label{sec:solvers}} \input{solvers} %-----------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{The consistent boundary flux (CBF) \label{ss:cbf}} \input{CBF} %-----------------------
+\section{The consistent boundary flux (CBF) \label{ss:cbf}} \input{CBF} %-----------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{The value of the timestep}\label{ss:cfl} \input{cfl} %---------------------------------
+\section{The value of the timestep}\label{ss:cfl} \input{cfl} %---------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Mappings \& Jacobians \label{ss:mappings}} \input{mappings} %--------------------------
+\section{Mappings \& Jacobians \label{ss:mappings}} \input{mappings} %--------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Exporting data to vtk/vtu format} \input{exporting_to_vtk} %---------------------------
+\section{Exporting data to vtk/vtu format} \input{exporting_to_vtk} %---------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Runge-Kutta methods}\label{ss:rkm} \input{rungekutta} %--------------------------------
+\section{Runge-Kutta methods}\label{ss:rkm} \input{rungekutta} %--------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Am I in or not? - finding reduced coordinates}\label{sec:amiin}\input{amiin} %---------
+\section{Am I in or not? - finding reduced coordinates}\label{sec:amiin}\input{amiin} %---------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Error measurements and convergence rates} \input{errors} %-----------------------------
+\section{Error measurements and convergence rates} \input{errors} %-----------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{The initial temperature field} \input{initial_temperature} %---------------------------
+\section{The initial temperature field} \input{initial_temperature} %---------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Kinematic boundary conditions}\label{kin_bc} \input{kinematic_bc} %--------------------
+\section{Kinematic boundary conditions}\label{kin_bc} \input{kinematic_bc} %--------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Computing gradients - the recovery process} \input{recovery} %-------------------------
+\section{Computing gradients - the recovery process} \input{recovery} %-------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Tracking materials and/or interfaces} \input{tracking} %-------------------------------
+\section{Tracking materials and/or interfaces} \input{tracking} %-------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Static condensation} \input{static_condensation} %-------------------------------------
+\section{Static condensation} \input{static_condensation} %-------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Measuring incompressibility \label{ss_incomp}} \input{incomp} %------------------------
+\section{Measuring incompressibility \label{ss_incomp}} \input{incomp} %------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Periodic boundary conditions\label{ss_periodic}}\input{periodic} %---------------------
+\section{Periodic boundary conditions\label{ss_periodic}}\input{periodic} %---------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Removing rotational nullspace\label{ss_nullspace}} \input{nullspace} %-----------------
+\section{Removing rotational nullspace\label{ss_nullspace}} \input{nullspace} %-----------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Picard and Newton \label{ss_nonlinear}} \input{nonlinear} %----------------------------
+\section{Picard and Newton \label{ss_nonlinear}} \input{nonlinear} %----------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Parallel or not?} \label{sec:parallel} \input{parallel} %------------------------------
+\section{Parallel or not?} \label{sec:parallel} \input{parallel} %------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Stream function} \label{sec:streamfunction} \input{streamfunction} %-------------------
+\section{Stream function} \label{sec:streamfunction} \input{streamfunction} %-------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Corner flow} \label{sec:cornerflow} \input{cornerflow} %-------------------------------
+\section{Corner flow} \label{sec:cornerflow} \input{cornerflow} %-------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Surface processes \label{sec:surfaceprocesses}} \input{surfaceprocesses} %-------------
+\section{Surface processes \label{sec:surfaceprocesses}} \input{surfaceprocesses} %-------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Geometric multigrid} \input{gmg} %-----------------------------------------------------
+\section{Geometric multigrid} \input{gmg} %-----------------------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Algebraic multigrid} \input{amg} %-----------------------------------------------------
+\section{Algebraic multigrid} \input{amg} %-----------------------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Computing depth \label{ss:depth}} \input{computing_depth} %----------------------------
+\section{Computing depth \label{ss:depth}} \input{computing_depth} %----------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Imposing boundary conditions \label{ss:howtobc}} \input{howtobc} %---------------------
+\section{Imposing boundary conditions \label{ss:howtobc}} \input{howtobc} %---------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{The Geoid} \label{ss:geoid} \input{geoid} %--------------------------------------------
+\section{The Geoid} \label{ss:geoid} \input{geoid} %--------------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{The Lyapunov time/exponent, mixing stirring}\label{ss:lyapunov}\input{lyapunov} %------
+\section{The Lyapunov time/exponent, mixing stirring}\label{ss:lyapunov}\input{lyapunov} %------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Phase transitions}\label{ss:phasetransitions}\input{phasetransitions} %----------------
+\section{Phase transitions}\label{ss:phasetransitions}\input{phasetransitions} %----------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Open boundary conditions}\label{ss:openbc}\input{openbc} %-----------------------------
+\section{Open boundary conditions}\label{ss:openbc}\input{openbc} %-----------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Free-slip boundary conditions on annulus}\label{ss:fsbc_annulus}\input{fsbc_annulus} %-
+\section{Free-slip boundary conditions on annulus}\label{ss:fsbc_annulus}\input{fsbc_annulus} %-
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Implementation of an elasto-viscous rheology} \label{ss:evrheo} \input{evrheo.tex} %--
+\section{Implementation of an elasto-viscous rheology} \label{ss:evrheo} \input{evrheo.tex} %--
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{The PREM model} \label{ss:prem} \input{prem} %----------------------------------------- 
+\section{The PREM model} \label{ss:prem} \input{prem} %----------------------------------------- 
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Interpolation inside an element} \label{ss:bern} \input{bernstein} %------------------- 
+\section{Interpolation inside an element} \label{ss:bern} \input{bernstein} %------------------- 
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Stability analysis for Rayleigh-B\'enard convection} \label{ss:sarb} \input{sarb} %---- 
+\section{Stability analysis for Rayleigh-B\'enard convection} \label{ss:sarb} \input{sarb} %---- 
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{From 1D tomography to density/temperature} \input{dlvsdlnro} %-------------------------
+\section{From 1D tomography to density/temperature} \input{dlvsdlnro} %-------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Conservative Velocity Interpolation (CVI)} \label{sec:cvi}\input{cvi} %----------------
+\section{Conservative Velocity Interpolation (CVI)} \label{sec:cvi}\input{cvi} %----------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Computing field derivatives -WIP} \label{ss:nodderiv} \input{nodal_derivatives} %------
+\section{Computing field derivatives -WIP} \label{ss:nodderiv} \input{nodal_derivatives} %------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Iterative solvers \label{ss:itsolvers}} \input{itsolvers} %----------------------------
+\section{Iterative solvers \label{ss:itsolvers}} \input{itsolvers} %----------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Weak seeds in extension modelling \label{ss:weakseeds}} \input{weakseeds} %------------
+\section{Weak seeds in extension modelling \label{ss:weakseeds}} \input{weakseeds} %------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Earth radial viscosity profile \label{ss:viscprof}} \input{viscosity_profile} %--------
+\section{Earth radial viscosity profile \label{ss:viscprof}} \input{viscosity_profile} %--------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Earth radial temperature profile \label{ss:adiab}} \input{adiabatic} %-----------------
+\section{Earth radial temperature profile \label{ss:adiab}} \input{adiabatic} %-----------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Earth radial thermal expansion profile} \input{thermal_expansion_profile} %------------
+\section{Earth radial thermal expansion profile} \input{thermal_expansion_profile} %------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Earth radial density profile} \input{density_profile} %--------------------------------
+\section{Earth radial density profile} \input{density_profile} %--------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Computing the volume of a hexahedron} \input{volume_hexahedron} %----------------------
+\section{Computing the volume of a hexahedron} \input{volume_hexahedron} %----------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Bandwidth reduction, matrix reordering} \input{reordering} %---------------------------
+\section{Bandwidth reduction, matrix reordering} \input{reordering} %---------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Scaling between dimensioned and dimensionless quantities} \input{scalingKs}
+\section{Scaling between dimensioned and dimensionless quantities} \input{scalingKs}
 
 \newpage %-----------------------------------------------------------------------------------------
-\subsection{Spectral methods} \input{spectral_methods}
+\section{Spectral methods} \input{spectral_methods}
 
 
 
-%\subsection{Steady state thermal problems \label{ss_ss}} \input{steadystate} %-
+%\section{Steady state thermal problems \label{ss_ss}} \input{steadystate} %-
