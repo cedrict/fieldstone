@@ -2055,18 +2055,53 @@ leads to
 
 
 
+Substitution of the equation of state \eqref{eq:md71a} 
+and taking the limit $Pr \cdot M^2 \rightarrow \infty$ leads to
+\begin{equation}
+-\rho_0' \alpha \Delta T_m \frac{\partial {\color{violet} T}'  }{\partial t'} + 
+\frac{\partial }{\partial x_j'} 
+\left[
+(\rho_0' - \rho_0' \alpha \Delta T_m {\color{violet} T}') \upnu_j'
+\right] = 0
+\label{eq:md73b}
+\end{equation}
+which gives the conservation law based on thermal perturbations of density only. In the
+limit that the perturbation terms are very small we arrive at
+\begin{equation}
+\frac{\partial }{\partial x_j'} ( \rho_0' \upnu_j' ) =0
+\label{eq:md73c}
+\end{equation}
+which is the equation of anelastic conservation of mass. Compared to \eqref{eq:md71e} we
+effectively replaced the density by the reference density. The time derivative of density
+has disappeared. This derivative is primarily related to the propagation of seismic waves.
+This process occurs at totally different time scales than mantle convection. The anelastic
+conservation of mass \eqref{eq:md73c} is being used in convection modeling of compressible fluids.
 
 
+%----------------------------------------------------------
+\subsection{The Bousinesq approximation}
 
+This approximation leads to a set of simplified equations that are easier to solve for some
+analytical problems and in numerical modeling of convective flow. The following
+approximations are being made:
+\begin{itemize}
+\item Neglect the effect of density variations with respect to a reference state except in terms
+related to the driving force of convection
+\item assume that the divergence of the velocity field is 0.
+\item Only concern temperature changes resulting from diffusion and advection (i.e. neglect
+terms related to adiabatic compression, and heat dissipation)
+\end{itemize}
 
-
-
-
-
-
-
-
-
+This simplifies equations (71) to
+\begin{eqnarray}
+\rho(\vec{r},t) &=& \rho_0 (1-\alpha {\color{violet}T}) \\
+\rho_0 c_p \frac{D {\color{violet}T} }{Dt} &=& \frac{\partial}{\partial x_j}
+\left( k \frac{\partial {\color{violet}T}}{\partial x_j}  \right) + \rho_0 H \\
+\rho_0 \frac{D\upnu_i}{Dt} &=& -\frac{\partial {\color{violet} p}}{\partial x_i}
++\frac{\partial \tau_{ij}}{\partial x_j} - \rho_0 \alpha {\color{violet}T} g_i \\
+\vec\nabla^2( {\color{violet}U} &=& -4 \pi {\cal G} \rho_0 \alpha {\color{violet}T} \\
+\frac{\partial \upnu_j}{\partial x_j} &=& 0
+\end{eqnarray}
 
 
 
