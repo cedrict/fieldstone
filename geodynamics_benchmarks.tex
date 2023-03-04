@@ -206,7 +206,7 @@ computational geodynamics community.
 
 
 %.......................................................
-\subsubsection{Poiseuille flow} \label{ss:poiseuille}
+\subsection{Poiseuille flow} \label{ss:poiseuille}
 
 We consider a two-dimensional channel in the $x,y$ plane. The walls 
 are at $y=0$ and $y=H$ with no-slip boundary conditions. 
@@ -288,7 +288,7 @@ and
 
 
 %..................................................
-\subsubsection{Relaxation of sinusoidal topography}
+\subsection{Relaxation of sinusoidal topography}
 
 Following Kramer \etal \cite[Section 3.1.1]{krwd12} and \cite{robh17} 
 the benchmark consists of the relaxation of surface topography in a 
@@ -318,7 +318,7 @@ where $n$ is a wavenumber which is an integer multiple of 1/2 (taken to be 1/2 e
 
 
 %...............................................................
-\subsubsection{the plastic brick} \label{ss:plasticbrick}
+\subsection{the plastic brick} \label{ss:plasticbrick}
 
 \Literature \textcite{hans03},
 \textcite{moml07},
@@ -464,7 +464,7 @@ with or without viscous lower layer.
 
 
 %..............................................................................
-\subsubsection{Time-dependent benchmark in an annulus}\label{sec:tdba}
+\subsection{Time-dependent benchmark in an annulus}\label{sec:tdba}
 
 This benchmark is presented in Gass{m\"o}ller \etal \cite{galb19}.
 The domain is a 2D annulus with inner and outer radii $R_1=1$ and $R_2=2$, respectively.
@@ -495,7 +495,7 @@ Rather importantly, this benchmark was arrived at by means of a stream function 
 $\psi(r,\theta)=F(r)G(\theta)$ with $F(r)=r^8/8$ and $G(\theta)=1$.
 
 %..............................................................................
-\subsubsection{Convection in 2D-box} \label{sec:citb}
+\subsection{Convection in 2D-box} \label{sec:citb}
 
 We start from the following stream function (see Section~\ref{sec:streamfunction}):
 \begin{equation}
@@ -534,7 +534,7 @@ g_y = -4\pi ^2 \frac{\cos (\pi x)}{\sin (\pi x)}
 
 
 %..............................................................................
-\subsubsection{The sinker problem}\label{sec:sinker}
+\subsection{The sinker problem}\label{sec:sinker}
 
 This experiment is not a benchmark stricto sensu since there is no analytical solution. However, it is widely used in the technical literature because of its simple setup and since it allows to test solving strategies.
 Also, it can conveniently be carried out in both two and three dimensions.
@@ -626,7 +626,7 @@ Results obtained with \aspect with $\rho_1=3200$ and $\rho_2=\rho_1+\delta\rho$ 
 
 
 %......................................................
-\subsubsection{The hot blob problem}\label{sec:hotblob}
+\subsection{The hot blob problem}\label{sec:hotblob}
 
 This is a very similar setup as the 3D sinker from the same authors
 with higher but more diffusive variation of viscosity.
@@ -642,7 +642,7 @@ contrast $\alpha$.
 \end{center}
 
 %...........................................................
-\subsubsection{The punch/indentor problem in 2D} \label{sec:punch}
+\subsection{The punch/indentor problem in 2D} \label{sec:punch}
 
 The punch benchmark is one of the few boundary value problems involving plastic solids 
 for which there exists an exact solution. 
@@ -710,7 +710,7 @@ limit state design/analysis \cite{mich01,zhll03,gour04,gork06,lesk05,shls03}.
 
 
 %................................................................................
-\subsubsection{Driven cavity with analytical solution} \label{sec:ldc_anal}
+\subsection{Driven cavity with analytical solution} \label{sec:ldc_anal}
 
 This comes from Elman \etal \cite{elsw}(section 3.1.4)\footnote{actually, not?}. The velocity is prescribed to be
 \[
@@ -839,7 +839,7 @@ We also find $\upnu_{rms}=\frac{1}{\sqrt{45}}\simeq 0.1490711985$
 
 
 %................................................................................
-\subsubsection{Viscous flow around a cylinder in 2D and 3D } \label{sec:flowcyl}
+\subsection{Viscous flow around a cylinder in 2D and 3D } \label{sec:flowcyl}
 
 There are many variants of this problem: 2D in Turek \cite{turek}, 3D in John \cite{john02}.
 Many studies focus on Navier-Stokes flow since the cylinder generates
@@ -858,7 +858,7 @@ Sch\"afer \& Turek (1996) \cite{sctu96}
 
 
 %................................................................................
-\subsubsection{Heat flow around a cylinder} \label{sec:hfcyl}
+\subsection{Heat flow around a cylinder} \label{sec:hfcyl}
 
 The domain is a 2D Cartesian box of size 8x4.
 The Stokes equations are not solved and the following velocity is prescribed:
@@ -891,7 +891,7 @@ Results obtained with \elefant (unpublished)}
 This is carried out in \stone 65.
 
 %................................................................................
-\subsubsection{Thermal diffusion of half-cooling space} \label{sec:hcsp}
+\subsection{Thermal diffusion of half-cooling space} \label{sec:hcsp}
 
 This is a simple 1D experiment which solution is (for instance) available 
 in Turcotte \& Schubert \cite{tusc} and is also presented in Choi \etal \cite{chtl13}.
@@ -914,11 +914,11 @@ DynEarthSol2D are plotted in circles. Taken from \cite{chtl13}}
 
 
 %................................................................................
-\subsubsection{Laplace equation on a semi infinite plate} \label{sec:lapplate}
+\subsection{Laplace equation on a semi infinite plate} \label{sec:lapplate}
 \input{benchmark_laplace_plate}
 
 %................................................................................
-\subsubsection{Slab detachment benchmark} \label{sec:slabdetach}
+\subsection{Slab detachment benchmark} \label{sec:slabdetach}
 
 \Literature: Schmeling (2011) \cite{schm11}, \aspect manual \cite{aspectmanual}, Glerum \etal \cite{gltf18}, 
 \stone 26.
@@ -932,7 +932,7 @@ Taken from \cite{gltf18}.}
 \end{center}
 
 %................................................................................
-\subsubsection{Layered flow with viscosity contrast} \label{sec:layfl}
+\subsection{Layered flow with viscosity contrast} \label{sec:layfl}
 
 The idea behind this benchmark is to construct an analytical solution to the incompressible
 Stokes equation in the case where the viscosity field showcases a 
@@ -1108,7 +1108,7 @@ C_2= \beta C_1 \log (\beta^2 + (1+y_0)^2)  -  2(1+y_0)C_1 \tan^{-1} ((1+y_0)/\be
 
 \newpage
 %................................................................................
-\subsubsection{The annulus convection benchmark \# 1} \label{ss:anconv}
+\subsection{The annulus convection benchmark \# 1} \label{ss:anconv}
 \input{benchmark_annulus_converction_benchmark1}
 
 
@@ -1121,14 +1121,14 @@ C_2= \beta C_1 \log (\beta^2 + (1+y_0)^2)  -  2(1+y_0)C_1 \tan^{-1} ((1+y_0)/\be
 
 \newpage
 %................................................................................
-\subsubsection{The annulus convection benchmark \#2 - no slip bc} \label{ss:anconv2}
+\subsection{The annulus convection benchmark \#2 - no slip bc} \label{ss:anconv2}
 
 \input{mms_annulus2}
 
 
 
 %................................................................................
-\subsubsection{Rayleigh-B{\'e}nard convection for silicon oil}
+\subsection{Rayleigh-B{\'e}nard convection for silicon oil}
 
 This originates in Jenkins \etal (2014) \cite{jejl14}.
 
@@ -1139,45 +1139,45 @@ This originates in Jenkins \etal (2014) \cite{jejl14}.
 
 \newpage
 %................................................................................
-\subsubsection{Rayleigh-Taylor experiment of van Keken \etal (1997)} \label{ss:vaks97}
+\subsection{Rayleigh-Taylor experiment of van Keken \etal (1997)} \label{ss:vaks97}
 \input{benchmark_vaks97}
 
 \newpage
 %................................................................................
-\subsubsection{(Instantaneous) Sinking block (2D)} \label{ss:sinking_block}
+\subsection{(Instantaneous) Sinking block (2D)} \label{ss:sinking_block}
 \input{benchmark_sinking_block}
 
 \newpage
 %................................................................................
-\subsubsection{(Instantaneous) Stokes sphere (3D)} \label{ss:stokes_sphere3D}
+\subsection{(Instantaneous) Stokes sphere (3D)} \label{ss:stokes_sphere3D}
 \input{benchmark_stokes_sphere_3D}
 
 \newpage
 %................................................................................
-\subsubsection{(Instantaneous) Stokes sphere (2D)} \label{ss:stokes_sphere2D}
+\subsection{(Instantaneous) Stokes sphere (2D)} \label{ss:stokes_sphere2D}
 \input{benchmark_stokes_sphere_2D}
 
 \newpage
 %................................................................................
-\subsubsection{Stokes sphere (2D) in fluid with deformable free surface} \label{ss:stokes_sphere_fs2D}
+\subsection{Stokes sphere (2D) in fluid with deformable free surface} \label{ss:stokes_sphere_fs2D}
 \input{benchmark_stokes_sphere_fs_2D}
 
 %.......................................................
-\subsubsection{Relaxation of topography (Crameri \etal, 2012)} \label{ss:crsg12}
+\subsection{Relaxation of topography (Crameri \etal, 2012)} \label{ss:crsg12}
 \input{benchmark_crsg12}
 
 %.......................................................
-\subsubsection{3D spherical shell convection benchmark} \label{ss:sscb3D}
+\subsection{3D spherical shell convection benchmark} \label{ss:sscb3D}
 \input{benchmark_sscb3D}
 
 %.......................................................
-\subsubsection{2D convection benchmark ('Blankenbach \etal benchmark')} \label{ss:blbc89}
+\subsection{2D convection benchmark ('Blankenbach \etal benchmark')} \label{ss:blbc89}
 \input{benchmark_blbc89}
 
 %................................................................
-\subsubsection{Subduction 'benchmark' of Schmeling \etal (2008)}
+\subsection{Subduction 'benchmark' of Schmeling \etal (2008)}
 \input{benchmark_scbe08}
 
 %................................................................................
-\subsubsection{Thin layer entrainment} \label{sec:tlentr}
+\subsection{Thin layer entrainment} \label{sec:tlentr}
 \input{benchmark_thin_layer_entrainment}

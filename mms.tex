@@ -16,7 +16,7 @@ Examples of this approach are to be found in
 \textcite{polp14b}, \textcite{lopp14}, \textcite{blmp16}, \textcite{thba22}.
 
 %-----------------------------------------------------------------------------
-\subsubsection{The repository}
+\subsection{The repository}
 
 I have created in folder {\tt mms} a template python script for incompressible
 isoviscous isothermal Stokes flow. All one has to do is to provide the velocity and 
@@ -62,15 +62,15 @@ p(x,y) &=&  \nn
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Manufactured solution in \textcite{dohu03} (book) \label{mms1}}
+\subsection{Manufactured solution in \textcite{dohu03} (book) \label{mms1}}
 \input{mms_dohu03}
 
 %--------------------------------------------------------------------------------
-\subsubsection{Manufactured solution in \textcite{dobo04} (2004) \label{ss:mms2}}
+\subsection{Manufactured solution in \textcite{dobo04} (2004) \label{ss:mms2}}
 \input{mms_dobo}
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark III \label{mms3} - "DB3D"}
+\subsection{Analytical benchmark III \label{mms3} - "DB3D"}
 
 This benchmark begins by postulating a polynomial solution 
 to the 3D Stokes equation \cite{dobo04}:
@@ -126,7 +126,7 @@ then
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark IV \label{mms4} - "Bercovier \& Engelman"}
+\subsection{Analytical benchmark IV \label{mms4} - "Bercovier \& Engelman"}
 
 From \cite{been79}. The two-dimensional domain is a unit square. The body forces are:
 \begin{eqnarray}
@@ -166,7 +166,7 @@ p &=& (x-1/2)(y-1/2)
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark V \label{mms5} - "VJ1"}
+\subsection{Analytical benchmark V \label{mms5} - "VJ1"}
 
 This is taken from Appendix D.1 of \cite{john16}.
 
@@ -194,7 +194,7 @@ p(x,y)=\pi^2( xy^3\cos(2\pi x^2y) - x^2y \sin(2\pi xy)) + \frac{1}{8}
 \bscthesis \index{general}{BSc Thesis}
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark VI \label{mms6} - "Ilinca \& Pelletier"}
+\subsection{Analytical benchmark VI \label{mms6} - "Ilinca \& Pelletier"}
 \index{general}{Poiseuille flow} \index{general}{Shear Heating}
 
 This is taken from \cite{ilpe07}.
@@ -238,11 +238,11 @@ T_M = T(y=0) = T_0 + \frac{1}{3} \frac{\eta u_0^2}{k}
 \]
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark VII \label{mms7} - "grooves"}
+\subsection{Analytical benchmark VII \label{mms7} - "grooves"}
 \input{mms_grooves}
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark VIII \label{mms8} - "Kovasznay"}
+\subsection{Analytical benchmark VIII \label{mms8} - "Kovasznay"}
 
 This flow was published by L.I.G. Kovasznay in 1948 \cite{kova48}. 
 This paper presents an exact two-dimensional solution of the Navier-Stokes equations 
@@ -319,7 +319,7 @@ of Hesthaven \& Warburton \cite{hewa08}.
 \bscthesis \index{general}{BSc Thesis}
 
 %-----------------------------------------------------------------------------
-\subsubsection{Analytical benchmark IX \label{mms9} - "VJ2"}
+\subsection{Analytical benchmark IX \label{mms9} - "VJ2"}
 
 It is presented in \cite{jolm17} and meant to be a peculiar case where the velocity solution 
 is exactly zero. The viscosity is 1, the domain is a unit square, no-slip boundary conditions 
@@ -328,7 +328,7 @@ $Ra>0$ is a parameter. The flow is incompressible and the analytical pressure so
 is given by $p=Ra(y^3-y^2/2+y-7/12)$.
 
 %-----------------------------------------------------------------------------
-\subsubsection{Manufactured solution in \textcite{jolm17}  \label{ss:mms_jolm17}}
+\subsection{Manufactured solution in \textcite{jolm17}  \label{ss:mms_jolm17}}
 \input{mms_jolm17}
 
 
@@ -337,27 +337,27 @@ is given by $p=Ra(y^3-y^2/2+y-7/12)$.
 
 
 %-----------------------------------------------------------------------------
-\subsubsection{Manufactured solution in \textcite{lami17} (2017) \label{ss:mms11}}
+\subsection{Manufactured solution in \textcite{lami17} (2017) \label{ss:mms11}}
 \input{mms_lami}
 
 %-----------------------------------------------------------------------------
-\subsubsection{Manufactured solution in \textcite{muye17}} \label{ss:mms_muye17a}
+\subsection{Manufactured solution in \textcite{muye17}} \label{ss:mms_muye17a}
 \input{mms_muye17a}
 
 %-----------------------------------------------------------------------------
-\subsubsection{Manufactured solution in \textcite{bocg12} (2012)} \label{ss:mms_bocg12}
+\subsection{Manufactured solution in \textcite{bocg12} (2012)} \label{ss:mms_bocg12}
 \input{mms_bocg12}
 
 %-----------------------------------------------------------------------------
-\subsubsection{Manufactured solution in \textcite{john16} (book)} \label{ss:mms_johnbook}
+\subsection{Manufactured solution in \textcite{john16} (book)} \label{ss:mms_johnbook}
 \input{mms_johnbook}
 
 %-----------------------------------------------------------------------------
-\subsubsection{Manufactured solution in \textcite{john98} (1998) on a disc} \label{ss:mms_john98}
+\subsection{Manufactured solution in \textcite{john98} (1998) on a disc} \label{ss:mms_john98}
 \input{mms_john98}
 
 %-----------------------------------------------------------------------------
-\subsubsection{Annulus with kinematical b.c. - pure rotation} \label{ss:ankbc}
+\subsection{Annulus with kinematical b.c. - pure rotation} \label{ss:ankbc}
 
 The domain is a hollow cylinder or inner radius $R_{i}$ and outside radius $R_{o}=1$.
 Boundary conditions are prescribed both on the inside and the outside with 
@@ -462,7 +462,7 @@ This benchmark is of course very simple and the fact that the solution is indepe
 renders it not so useful. It has succesfully been implemented in \elefant.
 
 %-----------------------------------------------------------------------------
-\subsubsection{Viscous beam under extension}
+\subsection{Viscous beam under extension}
 
 The domain is a Cartesian box of size $L_x \times L_y$. 
 Velocity $-u_0$ is applied on the left boundary and 
@@ -525,7 +525,7 @@ Note that using the bottom boundary with $\vec{n}=(0,-1)$ yields the same result
 
 \newpage
 %-----------------------------------------------------------------------------
-\subsubsection{Channel flow with Herschel-Bulkley rheology \label{ss:HBflow}}
+\subsection{Channel flow with Herschel-Bulkley rheology \label{ss:HBflow}}
 
 We start from the following formulation for the Herschel-Bulkley rheology:
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -1084,7 +1084,7 @@ In the following I explore the effect of the $\tau_0$ value ($K$ is calculated c
 
 \newpage
 %-----------------------------------------------------------------------------
-\subsubsection{Flow in a square using Stream Functions \label{ss:square_streamfct} }
+\subsection{Flow in a square using Stream Functions \label{ss:square_streamfct} }
 
 I wish to arrive at an analytical formulation for a 2D incompressible flow in the square domain $[-1:1]\times[-1:1]$
 The fluid has constant viscosity $\eta=1$ and is subject to free slip boundary conditions on all sides.
@@ -1176,7 +1176,7 @@ over the domain is zero, i.e. $\int p dV =0$.
 
 
 %-------------------------------------------------------------------------------
-\subsubsection{One-dimensional advection-diffusion equation \label{ss:advdiff} }
+\subsection{One-dimensional advection-diffusion equation \label{ss:advdiff} }
 
 Let us start with the 1D steady advection-diffusion equation:
 \begin{equation}
@@ -1199,7 +1199,7 @@ Pe = \frac{uh}{2 \kappa} = \frac{u h \rho C_p}{2 k}
 
 
 %..............................................................................
-\subsubsection{Annulus with kinematical b.c. - shear flow}\label{ss:sfan}
+\subsection{Annulus with kinematical b.c. - shear flow}\label{ss:sfan}
 
 Let us consider an annulus domain of inner radius $R_1$ and outer radius $R_2$.
 Boundary conditions are $\vec\upnu(r=R_1)=\upnu_1 \vec{e}_\theta$ and 
@@ -1301,7 +1301,7 @@ it allows for a decoupling of the equations, thereby
 only contributing to a lithostatic pressure field.
 
 %..............................................................................
-\subsubsection{Generic framework for 3D solution in Cartesian coordinates}\label{ss:mms3Dgen}
+\subsection{Generic framework for 3D solution in Cartesian coordinates}\label{ss:mms3Dgen}
 
 We postulate
 \begin{eqnarray}
@@ -1601,7 +1601,7 @@ p(x,y,z)=f'g'h' = 2x(2x^2-3x+1)  2y(2y^2-3y+1)  2z(2z^2-3z+1)
 
 
 %..........................................................
-\subsubsection{2D Analytical benchmark XII}\label{ss:sofo87_2D}
+\subsection{2D Analytical benchmark XII}\label{ss:sofo87_2D}
 
 This is presented in Soulaimani \etal (1987) \cite{sofo87}. 
 The velocity field is given by
@@ -1644,7 +1644,7 @@ p(x,y)=0
 
 
 %..........................................................
-\subsubsection{2D analytical benchmark from Burman \& Hansbo (2006)}\label{ss:mms_buha06}
+\subsection{2D analytical benchmark from Burman \& Hansbo (2006)}\label{ss:mms_buha06}
 
 This is presented in \textcite{buha06} (2006) and \textcite{buha07} (2007) and apparently originates 
 in \textcite{nosi98} (1998). 
@@ -1739,7 +1739,7 @@ It is implemented in \stone 14, 18 and 115.
 
 
 %..........................................................
-\subsubsection{3D Analytical benchmark XIII}\label{ss:sofo87_3D}
+\subsection{3D Analytical benchmark XIII}\label{ss:sofo87_3D}
 
 This is presented in Soulaimani \etal (1987) \cite{sofo87}. 
 
@@ -1752,7 +1752,7 @@ p(x,y,z)=x+y+z-1/2
 \]
 
 %..........................................................
-\subsubsection{2D Analytical benchmark XIV\label{ss:mmsjolm17}}
+\subsection{2D Analytical benchmark XIV\label{ss:mmsjolm17}}
 
 It originates in Section 6 of John \etal (2017) \cite{jolm17}.
 The velocity is given by
@@ -1837,7 +1837,7 @@ See \stone~104.
 
 
 %..........................................................
-\subsubsection{Poisson equation on 3D shell} 
+\subsection{Poisson equation on 3D shell} 
 
 This benchmark is presented in Phillips \etal \cite{phdo19}. 
 Inner radius is 1, outer radius is 3.
@@ -1868,22 +1868,22 @@ This expression is used to generate the Dirichlet boundary conditions on the inn
 
 
 %..........................................................
-\subsubsection{SolCx}\label{ss:solcx} 
+\subsection{SolCx}\label{ss:solcx} 
 \input{benchmark_solcx}
 
 %..........................................................
-\subsubsection{SolKz} \label{ss:solkz} 
+\subsection{SolKz} \label{ss:solkz} 
 \input{benchmark_solkz}
 
 %..........................................................
-\subsubsection{SolVi} \label{ss:solvi} 
+\subsection{SolVi} \label{ss:solvi} 
 \input{benchmark_solvi}
 
 
 
 
 %..........................................................
-\subsubsection{Simple shear heating} \label{ss:shearheating} 
+\subsection{Simple shear heating} \label{ss:shearheating} 
 \input{benchmark_shearheating}
 
 

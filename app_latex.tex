@@ -62,3 +62,40 @@ opla
 \verb|\footfullcite|
 
 
+%------------------------------
+\subsection*{how to refer to a latex document from another document?}
+
+This is the first latex file names {\tt manual.tex}. It contains sections and equations, all labelled.
+\begin{verbatim}
+\documentclass[a4paper]{book}
+\begin{document}
+\chapter{opla1} \label{ch1}
+\section{meuh} \label{ss1}
+\subsection{popo}
+opla \ref{ch1} opla \ref{ss1}
+\begin{equation}
+\alpha= \beta \label{eq:one}
+\end{equation}
+\end{document}
+\end{verbatim}
+
+This second file will load the {\tt manual.aux} with the 'xr' package
+and then all labels of that file are now available in this file:
+
+\begin{verbatim}
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+
+\usepackage{xr}
+\externaldocument[MMM-]{manual}
+
+\begin{document}
+
+opla
+
+the introduction to volume1 (\ref{MMM-ss1})
+see \eqref{MMM-eq:one}
+
+\end{document}
+\end{verbatim}
+

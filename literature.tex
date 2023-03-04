@@ -1,39 +1,62 @@
+\documentclass[a4paper,12pt]{report}
 
-\begin{center}
-\includegraphics[height=4.5cm]{images/literature/gerya_book}
-\includegraphics[height=4.5cm]{images/literature/gerya_book2}
-\includegraphics[height=4.5cm]{images/literature/tackley_book}
-\includegraphics[height=4.5cm]{images/literature/donea_huerta_book}\\
-\cite{gery10}     \hspace{1.99cm} 
-\cite{gery19book} \hspace{1.99cm} 
-\cite{tack10}     \hspace{1.99cm} 
-\cite{dohu03}  \\
-\includegraphics[height=4.5cm]{images/literature/bercovici_book}
-\includegraphics[height=4.5cm]{images/literature/bercovici_book2}
-\includegraphics[height=4.5cm]{images/literature/sto_book}
-\includegraphics[height=4.5cm]{images/literature/morra_book}\\
-\cite{berc09} \hspace{1.99cm} 
-\cite{berc15} \hspace{1.99cm} 
-\cite{scto01} \hspace{1.99cm} 
-\cite{morr18} \\ 
-\includegraphics[height=4.5cm]{images/literature/simpson_book}
-\includegraphics[height=4.5cm]{images/literature/langtangen_book}\\
-\cite{simp17} \hspace{1.99cm}
-\cite{lang08}
-\end{center}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{xcolor} 
+\usepackage[cm]{fullpage}
 
-\begin{itemize}
-\item {\it Numerical modeling of Earth Systems} by Thorsten W. Becker and Boris J. P. Kaus,\\ 
-\url{http://www-udc.ig.utexas.edu/external/becker/teaching-557.html}
+\usepackage{hyperref}
+\hypersetup{
+colorlinks,
+citecolor=black,
+filecolor=black,
+linkcolor=violet,
+urlcolor=black}
 
-\item {\it Myths \& Methods in Modeling} by M. Spiegelman,\\
- \url{https://www.ldeo.columbia.edu/~mspieg/mmm/}
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 
-\item {\it Computational Science I} by Matthew G. Knepley,\\
- \url{https://cse.buffalo.edu/~knepley/classes/caam519/Syllabus.html}
+\input{newcommands}
 
-\item {\it Introduction to Numerical Methods for Variational Problems} by Hans Petter Langtangen and 
-Kent-Andre Mardal, \\
-\url{https://hplgit.github.io/fem-book/doc/pub/book/pdf/fem-book-4print.pdf}
-\end{itemize}
+%Bibliography stuff
+\usepackage[maxnames=6]{biblatex}
+\addbibresource{biblio_geosciences.bib}
 
+\title{Literature}
+\author{C. Thieulot}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+\tableofcontents
+
+\newpage
+This is a {\it very} rough attempt at classifying my somewhat extensive 
+bibliography per theme/topic.
+It goes without saying that this cannot be extensive and that since I 
+started computational geodynamics myself around twothousandsix these lists are 
+biaised towards the last 2 decades or so. 
+In retrospect, the categories I have chosen could have been subdivided
+into narrower fields. I understand that having 100+ references 
+for 'subduction'  or 'mantle convection' is not particularly useful, 
+but it means that all these papers show up in the bibliography section 
+of this book, and the titles of said papers are then searchable per keyword.
+
+\chapter{Review papers} \input{topics_big}
+
+\chapter{Geodynamics} \input{topics}
+
+\chapter{Celestial bodies} \input{topics_celestial_bodies}
+
+\chapter{Geological areas on Earth} \input{topics_areas}
+
+\chapter{Numerical methods} \input{topics_numerical_methods}
+
+\chapter{Codes in geodynamics } \input{codes}
+
+\chapter{My publications} \input{mypapers}
+
+\chapter{A \fantom, an \elefant and a \ghost} \input{mycodes}
+
+\printbibliography
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

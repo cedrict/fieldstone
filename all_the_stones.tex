@@ -36,14 +36,27 @@ filecolor=black,
 linkcolor=violet,
 urlcolor=black}
 
-\newcommand{\inpython}{\fbox{\textbf{\huge \color{teal} P}}}
-\newcommand{\injulia}{\fbox{\textbf{\huge \color{purple} J}}}
-\newcommand{\infortran}{\fbox{\textbf{\huge \color{orange} F}}}
+\lstset{ 
+  language=Python,
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+}
+
+
+\newcommand{\inpython}{\fbox{\textbf{\large \color{teal} P}}}
+\newcommand{\injulia}{\fbox{\textbf{\large \color{purple} J}}}
+\newcommand{\infortran}{\fbox{\textbf{\large \color{orange} F}}}
 
 \input{newcommands}
 
 \usepackage{xr}
-\externaldocument[MMM-]{field}
+\externaldocument[MMM-]{manual}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -66,11 +79,11 @@ urlcolor=black}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
+\thispagestyle{empty}
+\includegraphics[width=0.9\linewidth]{images/frontpage/frontpage.png}
 
 \maketitle
 \tableofcontents
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter*{Naming convention for every stone and elefant }
@@ -174,74 +187,74 @@ Function & meaning \\
 \chapter*{Stone 00: mesh generation in 1D, 2D, 3D \label{f00}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{python_codes/fieldstone_00/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Simple analytical solution (D\&H) \label{f01}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Simple analytical solution (D\&H) \label{f01}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{python_codes/fieldstone_01/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stokes sphere in 2D with $Q_1\times P_0$ elements \& penalty formulation \label{f02}}
+\chapter{Stokes sphere in 2D with $Q_1\times P_0$ elements \& penalty formulation \label{f02}} %%%%
 \input{python_codes/fieldstone_02/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Convection in a 2D box \label{f03}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Convection in a 2D box \label{f03}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{python_codes/fieldstone_03/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{The lid driven cavity \label{f04}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{The lid driven cavity \label{f04}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{python_codes/fieldstone_04/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{SolCx benchmark \label{f05}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{SolCx benchmark \label{f05}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{python_codes/fieldstone_05/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{SolKz benchmark \label{f06}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{SolKz benchmark \label{f06}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{python_codes/fieldstone_06/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{SolVi benchmark \label{f07}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{SolVi benchmark \label{f07}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{python_codes/fieldstone_07/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{The indentor benchmark \label{f08}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{The indentor benchmark \label{f08}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{python_codes/fieldstone_08/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{The annulus benchmark with $Q_1\times P_0$ elements \label{f09}} %%%%%%%%%%%%%%%
+\chapter{The annulus benchmark with $Q_1\times P_0$ elements \label{f09}} %%%%%%%%%%%%%%%%%%%%%%%%%
 \input{python_codes/fieldstone_09/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stokes sphere (3D) - penalty \label{f10}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Stokes sphere (3D) - penalty \label{f10}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{python_codes/fieldstone_10/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stokes sphere (3D) - mixed formulation \label{f11}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Stokes sphere (3D) - mixed formulation \label{f11}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{python_codes/fieldstone_11/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{consistent pressure recovery \label{f12}}
-\input{python_codes/fieldstone_12/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{consistent pressure recovery \label{f12}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{python_codes/fieldstone_12/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{the Particle in Cell technique (1) - the effect of averaging \label{f13}}
-\input{python_codes/fieldstone_13/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{the Particle in Cell technique (1) - the effect of averaging \label{f13}} %%%%%%%%%%%%%%%%
+\input{python_codes/fieldstone_13/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{solving the full saddle point problem ($Q_1\times P_0$) \label{f14}}
-\input{python_codes/fieldstone_14/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{solving the full saddle point problem ($Q_1\times P_0$) \label{f14}} %%%%%%%%%%%%%%%%%%%%%
+\input{python_codes/fieldstone_14/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{saddle point problem with Schur complement approach - benchmark \label{f15}}
-\input{python_codes/fieldstone_15/text}
+\chapter{saddle point problem with Schur complement approach - benchmark \label{f15}} %%%%%%%%%%%%%
+\input{python_codes/fieldstone_15/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{saddle point problem with Schur complement approach - Stokes sphere \label{f16}}
-\input{python_codes/fieldstone_16/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{saddle point problem with Schur complement approach - Stokes sphere \label{f16}} %%%%%%%%%
+\input{python_codes/fieldstone_16/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{solving the full saddle point problem in 3D \label{f17}}
-\input{python_codes/fieldstone_17/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{solving the full saddle point problem in 3D \label{f17}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{python_codes/fieldstone_17/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{solving the full saddle point problem with $Q_2\times Q_1$ elements \label{f18}}
-\input{python_codes/fieldstone_18/text}
+\chapter{solving the full saddle point problem with $Q_2\times Q_1$ elements \label{f18}} %%%%%%%%%
+\input{python_codes/fieldstone_18/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{solving the full saddle point problem with $Q_3\times Q_2$ elements \label{f19}}
-\input{python_codes/fieldstone_19/text}
+\chapter{solving the full saddle point problem with $Q_3\times Q_2$ elements \label{f19}} %%%%%%%%%
+\input{python_codes/fieldstone_19/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{the Busse benchmark \label{f20}}
-\input{python_codes/fieldstone_20/text}
+\chapter{the Busse benchmark \label{f20}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{python_codes/fieldstone_20/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{the annulus benchmark with $Q_2\times Q_1$ elements \label{f21}}
-\input{python_codes/fieldstone_21/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{the annulus benchmark with $Q_2\times Q_1$ elements \label{f21}} %%%%%%%%%%%%%%%%%%%%%%%%%
+\input{python_codes/fieldstone_21/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{The stabilised $Q_1 \times Q_1$ element \label{f22}} 
-\input{python_codes/fieldstone_22/text}
+\chapter{The stabilised $Q_1 \times Q_1$ element \label{f22}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{python_codes/fieldstone_22/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{compressible flow (1) - analytical benchmark \label{f23}}
-\input{python_codes/fieldstone_23/text}
+\chapter{compressible flow (1) - analytical benchmark \label{f23}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{python_codes/fieldstone_23/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{compressible flow (2) - convection box \label{f24}}
 \input{python_codes/fieldstone_24/text}
@@ -541,101 +554,65 @@ Function & meaning \\
 \chapter{??\label{f122}}
 %\input{python_codes/fieldstone_123/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 123: Boussinesq \& Love elastic problems\label{f123}}
+\chapter{Boussinesq \& Love elastic problems\label{f123}}
 \input{python_codes/fieldstone_123/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 124: Plate with a hole elastic problems \label{f124}}
+\chapter{Plate with a hole elastic problems \label{f124}}
 \input{python_codes/fieldstone_124/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 125: Building Voronoi cells \label{f125}}
+\chapter{Building Voronoi cells \label{f125}}
 \input{python_codes/fieldstone_125/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 126: Darcy stuff\label{f126}}
+\chapter{Darcy stuff\label{f126}}
 \input{python_codes/fieldstone_126/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 127: circular inclusion in simple shear ($P_2^+\times P_{-1}$)\label{f127}}
+\chapter{circular inclusion in simple shear ($P_2^+\times P_{-1}$)\label{f127}}
 \input{python_codes/fieldstone_127/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 128: fluid flow in porous media - Simpson book chapter 10 ($Q_1$)\label{f128}}
+\chapter{fluid flow in porous media - Simpson book chapter 10 ($Q_1$)\label{f128}}
 \input{python_codes/fieldstone_128/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 129: Visco-elastic materials - Simpson book chapter 12 ($Q_2$)\label{f129}}
+\chapter{Visco-elastic materials - Simpson book chapter 12 ($Q_2$)\label{f129}}
 \input{python_codes/fieldstone_129/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 130: Reaction-diffusion ($Q_1$) - Simpson book chapter 7\label{f130}}
+\chapter{Reaction-diffusion ($Q_1$) - Simpson book chapter 7\label{f130}}
 \input{python_codes/fieldstone_130/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 131: creating triangular meshes with python \label{f131}}
+\chapter{creating triangular meshes with python \label{f131}}
 \input{python_codes/fieldstone_131/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 132: gravity field of a mass circle\label{f132}}
+\chapter{gravity field of a mass circle\label{f132}}
 \input{python_codes/fieldstone_132/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 133: gravity field of an asteroid\label{f133}}
+\chapter{gravity field of an asteroid\label{f133}}
 \input{python_codes/fieldstone_133/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 134: CMT Catalog Files\label{f134}}
+\chapter{CMT Catalog Files\label{f134}}
 \input{python_codes/fieldstone_134/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 135: SLAB2 data visualisation\label{f135}}
+\chapter{SLAB2 data visualisation\label{f135}}
 \input{python_codes/fieldstone_135/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 136: RUM slabs visualisation\label{f136}}
+\chapter{RUM slabs visualisation\label{f136}}
 \input{python_codes/fieldstone_136/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 137: Shannon and co \label{f137}}
+\chapter{Shannon and co \label{f137}}
 \input{python_codes/fieldstone_137/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 138: mag stuff \label{f138}}
+\chapter{mag stuff \label{f138}}
 \input{python_codes/fieldstone_138/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 139: Evolution of a 1D River Profile\label{f139}}
+\chapter{Evolution of a 1D River Profile\label{f139}}
 \input{python_codes/fieldstone_139/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 140: Evolution of a Fluvially Dissected Landscape \label{f140}}
+\chapter{Evolution of a Fluvially Dissected Landscape \label{f140}}
 \input{python_codes/fieldstone_140/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Stone 141: The 'Beaumont' mantle temperature trick \label{f141}}
+\chapter{The 'Beaumont' mantle temperature trick \label{f141}}
 \input{python_codes/fieldstone_141/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 
 \printbibliography
 \end{document}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 %\addcontentsline{toc}{chapter}{\protect\numberline{} Naming convention}

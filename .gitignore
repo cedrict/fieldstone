@@ -29,6 +29,7 @@ manual.idx
 manual.ilg
 manual.ind
 manual.pdf
+OLDmanual.pdf
 field.pdf
 all_the_stones.aux
 all_the_stones.pdf
@@ -38,6 +39,8 @@ showme
 *.1.ele
 *.1.node
 ELEFANT/OLD/
+literature.pdf
+
 
 # C extensions
 *.so
