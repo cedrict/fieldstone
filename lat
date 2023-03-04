@@ -1,5 +1,5 @@
-biber --output-safechars field
-pdflatex field.tex
+biber --output-safechars manual
+pdflatex manual.tex
 
 #makeindex general
 #makeindex contributors 
