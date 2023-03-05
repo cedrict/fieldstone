@@ -58,7 +58,7 @@ we find that the Nusselt number is simply 1.
 
 The steady state root mean square velocity and Nusselt number measurements
 are indicated in the following Table alongside those of \cite{blbc89} and \cite{tack94}.
-(Note that this benchmark was also carried out by many others (see Section~\ref{ss:blbc89}).
+(Note that this benchmark was also carried out by many others (see Section~\ref{MMM-ss:blbc89}).
 
 \begin{center}
 \begin{tabular}{llccccc}
@@ -90,7 +90,7 @@ of the system. Better schemes are available and one example thereof is explained
 \cite{krhb12}.
 
 Also, the current version of this \stone uses a Crank-Nicolson approach for the 
-time discretisation of the $\partial T/\partial t$ term as explained in Section~\ref{sec:timediscr}.
+time discretisation of the $\partial T/\partial t$ term as explained in Section~\ref{MMM-sec:timediscr}.
 
 Something must be said about how the Nusselt number is computed. 
 Its calculation requires the integral of the temperature gradient along an edge. 
@@ -98,7 +98,7 @@ Because it is much simpler to compute the temperature gradient in the middle of 
 element alongside other quantities such as pressure, this (elemental) quantity is 
 used in the Nusselt number calculations, which makes it inaccurate and therefore 
 explains the discrepancy between the computed values and those of other publications.
-Check the Consistent Boundary Flux method in Section~\ref{ss:cbf}.
+Check the Consistent Boundary Flux method in Section~\ref{MMM-ss:cbf}.
 
 Finally, it is expected that the thickness of the 
 boundary layers decreases with higher Rayleigh number values.

@@ -18,7 +18,7 @@ Codes at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fie
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This benchmark is taken from Donea \& Huerta (2003) \cite{dohu03} and is described fully in section \ref{mms1}. 
+This benchmark is taken from Donea \& Huerta (2003) \cite{dohu03} and is described fully in section \ref{MMM-mms1}. 
 In order to illustrate the behavior of selected mixed finite elements in the solution 
 of stationary Stokes flow,  we consider a two-dimensional problem 
 in the square domain $\Omega=[0,1]\times[0,1]$, which possesses a closed-form analytical 
@@ -39,11 +39,11 @@ linear convergence for pressure error, as expected.}
 \includegraphics[width=15cm]{python_codes/fieldstone_01/results/solution.pdf}
 \end{center}
 
-One can also compute vertical/depth averages of the velocity, see Eq.~\eqref{eq:dhvelnorm}.
+One can also compute vertical/depth averages of the velocity, see Eq.~\eqref{MMM-eq:dhvelnorm}.
 Note that the averages are computed somewhat naively: instead of computing integrals in the $x$-direction
 at many depths I simply take an arithmetic average over rows of nodes. At high resolution the profiles
 converge to the analytical profiles for the individual components and to the results 
-obtained with \aspect. Please check \stone~110 for a better implementation.
+obtained with \aspect. Please check \stone~\ref{f110} for a better implementation.
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_01/results/vel_profile}\\
 {\captionfont Vertical average of velocity. \aspect was run with the 'depth average' postprocessor
