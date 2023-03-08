@@ -26,7 +26,8 @@ contrast due to temperature ($\Delta\eta_T$) and pressure ($\Delta\eta_{z}$). Th
 \eta_\text{plast} (\dot{\boldsymbol{\epsilon}}) 
 = \eta^{*} + \frac{\sigma_Y}{\sqrt{\dot{\boldsymbol{\epsilon}}:\dot{\boldsymbol{\epsilon}}}}, \label{eq:eta_sigma}
 \end{equation}
-where $\eta^*$ is a constant representing the effective viscosity at high stresses \cite{stlh14} and $\sigma_Y$ is the yield stress, also assumed to be constant. In 2-D, the denominator in the second term of equation (\ref{eq:eta_sigma}) is given explicitly by
+where $\eta^*$ is a constant representing the effective viscosity at high stresses \cite{stlh14} and $\sigma_Y$ is the yield stress, also assumed to be constant. In 2-D, the denominator in the second term of 
+equation (\ref{eq:eta_sigma}) is given explicitly by
 
 \begin{equation}
 \sqrt{\dot{\boldsymbol{\epsilon}}:\dot{\boldsymbol{\epsilon}}} 
@@ -35,13 +36,19 @@ where $\eta^*$ is a constant representing the effective viscosity at high stress
 + \frac{\partial u_y}{\partial x} \right)^2 + \left( \frac{\partial u_y}{\partial y} \right)^2  }.
 \end{equation}
 
-The viscoplastic flow law (equation \ref{eq:eta}) leads to linear viscous deformation at low stresses (equation (\ref{eq:eta_Ty})) 
-and to plastic deformation for stresses that exceed $\sigma_Y$ (equation (\ref{eq:eta_sigma})), with the decrease in viscosity limited by the choice of $\eta^{*}$ \cite{stlh14}.
+The viscoplastic flow law (equation \ref{eq:eta}) leads to linear viscous 
+deformation at low stresses (equation (\ref{eq:eta_Ty})) 
+and to plastic deformation for stresses that exceed $\sigma_Y$ (equation (\ref{eq:eta_sigma})), 
+with the decrease in viscosity limited by the choice of $\eta^{*}$ \cite{stlh14}.
 
-In all cases that we present, the domain is a two-dimensional square box. The mechanical boundary conditions are for all boundaries free-slip 
-with no flux across, i.e. $\tau_{xy}=\tau_{yx}=0$ and $\boldsymbol{u}\cdot \boldsymbol{n}=0$, where $\boldsymbol{n}$ denotes the outward normal to 
-the boundary. Concerning the energy equation, the bottom and top boundaries are isothermal, with the temperature $T$ set to 1 and 0, respectively, 
-while side-walls are assumed to be insulating, i.e. $\partial T/\partial x = 0$. The initial distribution of the temperature field is prescribed as follows:
+In all cases that we present, the domain is a two-dimensional square box. The mechanical 
+boundary conditions are for all boundaries free-slip 
+with no flux across, i.e. $\tau_{xy}=\tau_{yx}=0$ and $\boldsymbol{u}\cdot \boldsymbol{n}=0$, 
+where $\boldsymbol{n}$ denotes the outward normal to 
+the boundary. Concerning the energy equation, the bottom and top boundaries are isothermal, 
+with the temperature $T$ set to 1 and 0, respectively, 
+while side-walls are assumed to be insulating, i.e. $\partial T/\partial x = 0$. 
+The initial distribution of the temperature field is prescribed as follows:
 
 \begin{equation}
 T(x,y) = (1-y) + A \cos(\pi x)\sin(\pi y), \label{eq:initemp}
@@ -66,7 +73,9 @@ Case & $Ra$ & $\Delta\eta_T$ & $\Delta\eta_y$ & $\eta^*$ & $\sigma_Y$ & Convecti
 {\small Benchmark cases and corresponding parameters.} 
 \end{center}
 
-In Cases 1 and 3 the viscosity is directly calculated from equation (\ref{eq:eta_Ty}), while for Cases 2, 4, 5a, and 5b, we used equation (\ref{eq:eta}). For a given mesh resolution, Case 5b requires running simulations with yield stress varying between 3 and 5
+In Cases 1 and 3 the viscosity is directly calculated from equation (\ref{eq:eta_Ty}), 
+while for Cases 2, 4, 5a, and 5b, we used equation (\ref{eq:eta}). For a given mesh resolution, 
+Case 5b requires running simulations with yield stress varying between 3 and 5
 
 
 In all tests, the reference Rayleigh number is set at the surface ($y=1$) to $10^2$, and the viscosity contrast due to temperature $\Delta\eta_T$ is $10^5$, implying therefore a maximum effective Rayleigh number of $10^7$ for $T=1$. Cases 3, 4, 5a, and 5b employ in addition a depth-dependent rheology with viscosity contrast  $\Delta\eta_z=10$. Cases 1 and 3 assume a linear viscous rheology that leads to a stagnant lid regime. Cases 2 and 4 assume a viscoplastic rheology that leads instead to a mobile lid regime. Case 5a also assumes a viscoplastic rheology but a higher yield stress, which ultimately causes the emergence of a strictly periodic regime. The setup of Case 5b is identical to that of Case 5a but the test consists in running several simulations using different yield stresses. Specifically, we varied $\sigma_Y$ between 3 and 5 in increments of 0.1 in order to identify the values of the yield stress corresponding to the transition from mobile to periodic and from periodic to stagnant lid regime. 

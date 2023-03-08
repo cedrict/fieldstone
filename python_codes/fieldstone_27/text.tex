@@ -57,7 +57,7 @@ the $yy$ component of the stress tensor in the top row of elements:
 Note that pressure is by definition elemental, and that strain rate
 components are then also computed in the middle of each element.
 
-These elemental quantities can be projected onto the nodes (see section \ref{f_XX})
+These elemental quantities can be projected onto the nodes (INSERT REFERENCE)
 by means of the C$\rightarrow$N algorithm or a least square algorithm (LS). 
 
 \begin{center}
@@ -124,12 +124,13 @@ our code computes all traction vectors on all boundaries at once.
 \todo[inline]{pressure average on surface instead of volume ?}
 
 \begin{remark}
-The original article on the CBF \cite{zhgh93} uses a penalty-based formulation (see Section~\ref{sec:penalty})
+The original article on the CBF \cite{zhgh93} uses a penalty-based formulation 
+(see Section~\ref{MMM-sec:penalty})
 so that they do not have to worry about pressure normalisation. However, since constant pressure fields lie 
 in the nullspace of $\G$ the pressure normalisation constant does not play a role.
 \end{remark}
 
-As shown in Appendix~\ref{app:mm}, the $Q_1$ mass matrix for the reference cell/element is given by:
+As shown in Appendix~\ref{MMM-app:mm}, the $Q_1$ mass matrix for the reference cell/element is given by:
 \[
 {\M}^e=
 \frac{1}{3}
@@ -142,7 +143,7 @@ As shown in Appendix~\ref{app:mm}, the $Q_1$ mass matrix for the reference cell/
 This matrix needs to be multiplied by $h/2$ for an element of size $h$.
 Following the methodology presented in \cite{zhgh93}, one can also use the Gauss-Lobatto 
 quadrature method to arrive at the mass matrix, and in this case the simple trapezoidal 
-integration rule variant thereof (see Section~\ref{sec:quad1D}).
+integration rule variant thereof (see Section~\ref{MMM-sec:quad1D}).
 We then have:
 \begin{equation}
 {\M}_e=\int_{\Omega_e} \vec{N}^T \vec{N} dV
