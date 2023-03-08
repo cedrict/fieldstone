@@ -169,99 +169,19 @@ This is an obvious conflict of notations.
 %\]
 
 
-\noindent 
-Let us start from the heat transport equation as shown in Eq.(6.9.1)
-of Schubert, Turcotte and Olson \cite{scto01}:
-\begin{equation}
-\rho T \frac{Ds}{Dt} = {\vec \nabla} \cdot k {\vec \nabla} T + \Phi + \rho H  
-\end{equation}
-where $s$ is the specific entropy and $H$ is the rate of internal heat production
-per unit mass. The terms on the right side of the equation are respectively
-thermal conduction, volumetric heat production rates
-due to viscous dissipation and internal heat generation.
-We have 
-\[
-\frac{Ds}{Dt} = 
-\left( \frac{\partial s}{\partial T} \right)_p \frac{DT}{Dt}
-+
-\left( \frac{\partial s}{\partial p} \right)_T \frac{Dp}{Dt}
-\]
-The thermal expansion coefficient is
-$\alpha = -\frac{1}{\rho} \left(\frac{\partial \rho}{\partial T} \right)_p$
-and the specific heat is 
-$C_p = T \left( \frac{\partial s}{\partial T} \right)_p$
-and we also have the thermodynamical relationship
-$
-\left( \frac{\partial s}{\partial p}  \right)_T
-=
--\left( \frac{\partial (1/\rho)}{\partial T}  \right)_p
-$. 
-Altogether we can further transform the $Ds/Dt$ term as follows:
-\begin{eqnarray}
-\frac{Ds}{Dt} 
-&=& 
-\frac{C_p}{T}\frac{DT}{Dt}-\left( \frac{\partial (1/\rho)}{\partial T}  \right)_p \frac{Dp}{Dt} \nn\\
-&=& 
-\frac{C_p}{T}\frac{DT}{Dt}+\frac{1}{\rho^2} \left( \frac{\partial \rho}{\partial T}\right)_p\frac{Dp}{Dt}\nn\\
-&=& 
-\frac{C_p}{T}\frac{DT}{Dt} - \frac{\alpha}{\rho} \frac{Dp}{Dt}\nn
-\end{eqnarray}
-so that we can now write
-\begin{equation}
-\rho C_p \frac{DT}{Dt} - \alpha T \frac{Dp}{Dt} = {\vec \nabla} \cdot k {\vec \nabla} T + \Phi + \rho H  
-\end{equation}
-with $D/Dt$ being the total derivatives, i.e. 
-\begin{equation}
-\frac{DT}{Dt} = \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec \nabla}T
-\qquad
-\text{and}
-\qquad
-\frac{Dp}{Dt} = \frac{\partial p}{\partial t} + {\vec \upnu}\cdot {\vec \nabla}p
-\end{equation}
-Solving for temperature, this equation is often rewritten as follows:
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{equation}
-\rho C_p \frac{DT}{Dt} - {\vec \nabla} \cdot k {\vec \nabla} T =  \alpha T \frac{Dp}{Dt} + \Phi + \rho H  
-\end{equation}
-\end{mdframed}
-where $\Phi$ is the shear heating (see Reddy \cite[p287]{reddybook2}). 
-In many publications, $\Phi$ is given by 
-$\Phi=\tau_{ij}\partial_j \upnu_i={\bm \tau}:{\vec \nabla}{\vec \upnu}$.
 
-In what follows I use the index notation as it makes for easier derivations:
-\begin{eqnarray}
-\Phi 
-&=& \tau_{ij}\partial_j \upnu_i \nonumber\\
-&=& 2 \eta \dot{\varepsilon}_{ij}^d\partial_j \upnu_i \nonumber\\
-&=& 2 \eta \frac{1}{2}\left( \dot{\varepsilon}_{ij}^d\partial_j \upnu_i + \dot{\varepsilon}_{ji}^d\partial_i u_j \right) \nonumber\\
-&=& 2 \eta \frac{1}{2}\left( \dot{\varepsilon}_{ij}^d\partial_j \upnu_i + \dot{\varepsilon}_{ij}^d\partial_i u_j \right) \nonumber\\
-&=& 2 \eta  \dot{\varepsilon}_{ij}^d  \frac{1}{2}\left(\partial_j \upnu_i + \partial_i u_j \right) \nonumber\\
-&=& 2 \eta  \dot{\varepsilon}_{ij}^d   \dot{\varepsilon}_{ij} \nonumber\\
-&=& 2 \eta  \dot{\bm \varepsilon}^d :  \dot{\bm \varepsilon} \nonumber\\
-&=& 2 \eta  \dot{\bm \varepsilon}^d : \left( \dot{\bm \varepsilon}^d +\frac{1}{3} ({\vec \nabla}\cdot{\vec \upnu}) {\bm 1} \right)\nonumber\\
-&=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
-+ 2 \eta  \dot{\bm \varepsilon}^d : {\bm 1} ({\vec \nabla}\cdot{\vec \upnu}) \nonumber\\ 
-&=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d \label{eq:physicsshearheating} 
-\end{eqnarray}
-Finally (in Cartesian coordinates)
-\begin{equation}
-\Phi = {\bm \tau}:{\vec \nabla}{\vec \upnu} = 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d
-= 2 \eta \left( (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + 2(\dot{\varepsilon}_{xy}^d)^2 \right) 
-\end{equation}
-See Schubert \& Yuen (1978) \cite{scyu78} for an analysis of shear heating instability in the upper mantle.
 
-Let us quickly look at the $Dp/Dt=\partial_t p + \vec\upnu\cdot\vec\nabla p$ term. 
-Often the term $\partial p/\partial t$
-is neglected and the pressure is assumed to be mostly hydrostatic in this term so 
-that $\vec\nabla p = - \rho \vec{g}$ which yields a much simpler formulation. 
 
-See discussions about shear heating (``viscous dissipation'') -- meaning and application-- in 
-\textcite{froi73} (1973),
-\textcite{stei78} (1978),
-\textcite{biyu79} (1979),
-\textcite{slsg79} (1979),
-\textcite{wint87} (1987),
-\textcite{madu98} (1998).
+
+
+
+
+
+
+
+
+
+
 
 %------------------------------------------------------------------------
 \section{The momentum conservation equations} 
@@ -1163,8 +1083,8 @@ There are two types of boundary conditions for this equation: temperature bounda
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
 \begin{itemize}
-\item \underline{Velocity} $\vec \upnu (\text{m/s})$: This is a vector quantity and both magnitude and direction are needed to define it. It is the rate of change of position with respect to a frame of reference.
-\item \underline{Root mean square velocity} $\upnu_{rms} (\text{m/s})$: 
+\item {\color{violet} Velocity} $\vec \upnu (\text{m/s})$: This is a vector quantity and both magnitude and direction are needed to define it. It is the rate of change of position with respect to a frame of reference.
+\item {\color{violet} Root mean square velocity} $\upnu_{rms} (\text{m/s})$: 
 \begin{equation}
 \upnu_{rms} = \left ( \frac{\int_\Omega |{\vec \upnu}|^2 \;  dV}{\int_\Omega dV }  \right )^{1/2}
 =\left ( \frac{1}{V_\Omega} \int_\Omega |{\vec \upnu}|^2 \;  dV \right )^{1/2} \label{eqVrms}
@@ -1191,13 +1111,14 @@ root mean square averages:
 \end{equation}
 
 
-\item \underline{Pressure} $p$ (\si{\pascal}):
-\item \underline{Stress tensor} ${\bm \sigma}$ (\si{\pascal}): \index{general}{Stress Tensor}
-\item \underline{Strain tensor} ${\bm \varepsilon}$ (dimensionless): \index{general}{Strain Tensor}
-\item \underline{Strain rate tensor} $ \dot{\bm \varepsilon}$ (\si{\per\second}): 
+\item {\color{violet} Pressure} $p$ (\si{\pascal}):
+\item {\color{violet} Stress tensor} ${\bm \sigma}$ (\si{\pascal}): \index{general}{Stress Tensor}
+\item {\color{violet} Strain tensor} ${\bm \varepsilon}$ (dimensionless): \index{general}{Strain Tensor}
+\item {\color{violet} Strain rate tensor} $ \dot{\bm \varepsilon}$ (\si{\per\second}): 
 \index{general}{Strain Rate Tensor}
 
-\item \underline{Argand Number}: 
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} Argand Number}: 
 Non-dimensional number (Ar) representing the ratio of the stress arising 
 from crustal thickness
 contrasts (vertical stress) to the stress required to deform
@@ -1207,8 +1128,8 @@ dynamics as a measure of the tendency of an orogen to
 collapse under its own gravitational potential energy.
 See England \& McKenzie \cite{enmc82}, Houseman \& England \cite{hoen86a}.
 
-%..........................................
-\item \underline{(Thermal) Rayleigh number} $\Ranb$ (or $\Ranb_T$) (X): \index{general}{Rayleigh Number}
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} (Thermal) Rayleigh number} $\Ranb$ (or $\Ranb_T$) (X): \index{general}{Rayleigh Number}
 It is a dimensionless number that expresses the	ratio of the driving forces to the opposing forces.
 The buoyancy force comes from the volumetric thermal expansion while the viscous forces and 
 the heat diffusivity oppose convection (the latter one smoothes out thermal gradients). 
@@ -1238,27 +1159,28 @@ Rayleigh number, which ranges from 600 to 3000 (it depends on the boundary condi
 geometry).
 \index{general}{Critical Rayleigh Number}
 
-%.........................................
-\item \underline{Compositional Rayleigh Number} $\Ranb_C$: \index{general}{Compositional Rayleigh Number} 
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet}Compositional Rayleigh Number} $\Ranb_C$: \index{general}{Compositional Rayleigh Number} 
 \[
 \Ranb_C= \frac{\Delta \rho_C  g  D^3}{\kappa \eta_0}
 \]
 where $\Delta \rho_C$ is the difference in density between the distinct material compositions
 (when compared at identical temperatures). See for instance Trim \etal (2020) \cite{trlb20}.
 
-%.........................................
-\item \underline{Prandtl number} $Pr$ (X): \index{general}{Prandtl Number} 
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} Prandtl number} $\Prnb$ (X): \index{general}{Prandtl Number} 
 It is named after the German physicist 
-Ludwig Prandtl and is defined as the ratio of momentum diffusivity to thermal diffusivity. 
+Ludwig Prandtl\footnote{\url{https://en.wikipedia.org/wiki/Ludwig_Prandtl}} 
+and is defined as the ratio of momentum diffusivity to thermal diffusivity. 
 It is given as: 
 \[
-Pr = \frac{\text{momentum diffusivity}}{\text{thermal diffusivity}} = \frac{\eta/\rho}{k/(\rho C_p)}= \frac{\eta C_p}{k}
+\Prnb = \frac{\text{momentum diffusivity}}{\text{thermal diffusivity}} = \frac{\eta/\rho}{k/(\rho C_p)}= \frac{\eta C_p}{k}
 \]
 For Earth materials, we have $Pr \sim (10^{21} 1000)/3 >> 1$, 
 which means that momentum diffusivity dominates.
 
 %..........................................
-\item \underline{Nusselt number} $N_u$ (X): \index{general}{Nusselt Number}  
+\item {\color{violet} Nusselt number} $\Nunb$ (X): \index{general}{Nusselt Number}  
 the Nusselt number ($\Nunb$) 
 is the ratio of convective to conductive heat transfer across (normal to) the boundary. 
 The conductive component is measured under the same conditions as the heat convection 
@@ -1336,23 +1258,38 @@ given by a steady state conductive geotherm.
 \Literature \cite{hohr87}
  
 %..........................................
-\item \underline{Temperature} (\si{\kelvin}):
+\item {\color{violet} Temperature} (\si{\kelvin}):
 
-\item \underline{(Dynamic) Viscosity} (\si{\pascal\second}): 
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} (Dynamic) Viscosity} (\si{\pascal\second}): 
 For air it is roughly $10^{-5}\si{\pascal\second}$, 
-about $10^{-3}\si{\pascal\second}$ for water, 
-about $10^{10}\si{\pascal\second}$ for ice and 
-about $10^{17}\si{\pascal\second}$ for salt. 
+about $10^{-3}~\si{\pascal\second}$ for water, 
+about $10^{10}~\si{\pascal\second}$ for ice and 
+about $10^{17}~\si{\pascal\second}$ for salt. 
 
-\item \underline{(mass) Density} $\rho$ (\si{\kg\per\cubic\metre}):
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} Entropy} $S$ (\si{\joule\per\kelvin})
 
-\item \underline{Heat capacity} $C_p$ (\si{\joule\per\kelvin}): 
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} (mass) Density} $\rho$ (\si{\kg\per\cubic\metre}):
+
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} Heat capacity} $C_p$ (\si{\joule\per\kelvin}): 
 It is the measure of the heat/energy required to increase the 
-temperature of a unit quantity of a substance by unit degree. Note that the specific 
+temperature of a unit quantity of a substance by unit degree. Note that the {\it specific} 
 heat capacity $c_P$ of a substance is the heat capacity of a sample of the substance 
 divided by the mass of the sample, with units \si{\joule\per\kelvin\per\kg}.
 
-\item \underline{Heat conductivity}, or thermal conductivity $k$ (\si{\watt\per\metre\per\kelvin}). 
+``Different substances respond to heat in different ways. If a metal chair sits in the bright sun 
+on a hot day, it may become quite hot to the touch. An equal mass of water under the same sun exposure will 
+not become nearly as hot. This means that water has a high heat capacity (the amount of heat required to 
+raise the temperature of an object by $1~\si{\celsius}$). Water is very resistant to changes in temperature, 
+while metals generally are not.''
+\footnote{\url{https://chem.libretexts.org/Bookshelves/Introductory_Chemistry/Introductory_Chemistry_(CK-12)/17\%3A_Thermochemistry/17.04\%3A_Heat_Capacity_and_Specific_Heat}}
+
+
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} Heat conductivity}, or thermal conductivity $k$ (\si{\watt\per\metre\per\kelvin}). 
 It is the property of a material that indicates its ability to conduct heat. It appears primarily 
 in Fourier's Law for heat conduction.
 Note that it is a function of temperature, especially in mantle convection settings,
@@ -1361,26 +1298,37 @@ Miyauchi \& Kameyama (2013) \cite{mika13}, Hofmeister \& Yuen (2007) \cite{hoyu0
 Note also that it can be a tensorial quantity in anisotropic context.
 The heat conductivity of many rocks was determined in \cite{ando13}.
 
-\item \underline{Heat diffusivity}: $\kappa=k/(\rho C_p)$ ($m^2.s^{-1}$). Substances with 
-high thermal diffusivity rapidly adjust their temperature to that of their surroundings, because they 
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} Heat diffusivity}: $\kappa=k/(\rho C_p)$ ($\si{\square\meter\per\second}$). 
+Substances with high thermal diffusivity rapidly adjust their temperature to that of their surroundings, because they 
 conduct heat quickly in comparison to their volumetric heat capacity or 'thermal bulk'.
 
-\item \underline{thermal expansion} $\alpha$ (\si{\per\kelvin}): 
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} thermal expansion} $\alpha$ (\si{\per\kelvin}): 
 it is the tendency of a matter to change in volume in response to a change in temperature. 
 Note that it is a function of temperature, especially in mantle convection settings \cite{mika13}.
+\[
+\alpha = \frac{1}{V} \left(\frac{\partial V}{\partial T}\right)_P
+\]
 
-\item \underline{Urey Ratio}: mantle heat production divided by heat loss. It is a key constraint 
+
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} Urey Ratio}: mantle heat production divided by heat loss. It is a key constraint 
 for thermal history models. Recent Urey ratio estimates are in the range of 0.21-0.49. \cite{lecm11}
 
-\item \underline{Shear modulus}: modulus of rigidity, usually expressed in \si{\giga\pascal}. 
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} Shear modulus}: modulus of rigidity, usually expressed in \si{\giga\pascal}. 
 It describes the material response to shear stress.
 
-\item \underline{Poisson ratio}: response in the direction orthogonal to uniaxial stress.
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} Poisson ratio}: response in the direction orthogonal to uniaxial stress.
 
-\item \underline{Young's modulus}: describes the material strain response to uniaxial stress
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} Young's modulus}: describes the material strain response to uniaxial stress
 in the direction of this stress, usually expressed in \si{\giga\pascal}.
 
-\item \underline{Average viscosity}: following Christensen (1983) \cite{chri83b}, 
+%--------------------------------------------------------------------------------------------------
+\item {\color{violet} Average viscosity}: following Christensen (1983) \cite{chri83b}, 
 one can compute the averaged viscosity in a domain as follows:
 \begin{equation}
 \langle \eta \rangle = \frac{\int_V \eta \dot{\varepsilon}_e^2 dV}{\int_V  \dot{\varepsilon}_e^2 dV }

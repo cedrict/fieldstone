@@ -1525,6 +1525,9 @@ Peltier, and K. Lambeck.
 %----------------------------------------------------------
 \subsection{The energy equation}
 
+\todo[inline]{This chapter needs to be revisited, much confusion about S and s, U and e,
+cp and Cp, etc ...}
+
 Mantle convection is driven by density perturbations relative to a hydrostatic state. In
 part, the density perturbations $\Delta\rho$ are due to thermal perturbations $\Delta T$ where the
 connection is given by an equation of state involving the thermal expansion coefficient a .
@@ -1648,7 +1651,8 @@ mechanical stress, i.e $\sigma_{ij} = -p \delta_{ij} + \tau_{ij}$, we get
 \label{eq:md62}
 \end{equation}
 
-From thermodynamic considerations (not treated here) we have the relation
+From thermodynamic considerations\footnote{See for 
+instance \url{https://en.wikipedia.org/wiki/Maxwell_relations}} (not treated here) we have the relation
 $de=TdS-p dv$ between internal energy $e$, the entropy $S$, 
 and the specific volume $v=1/\rho$. 
 This relation is used to transform Eq.~\eqref{eq:md62} in to the entropy form of the energy
@@ -1661,19 +1665,123 @@ equation:
 \end{equation}
 (It is left as an exercise to derive the lhs of this equation)
 
-
 An adiabatic state is a state of reversible processes with no heat exchange with
 surroundings and is defined by $S$=constant in which case the lhs of \eqref{eq:md63} is 0. 
 This state is
 not compatible with viscous heat dissipation, heat conduction, or internal heat production,
 as each of these processes would lead to a non-zero contribution at the rhs of \eqref{eq:md63}. 
-A fluid
-particle flowing in an adiabatic mantle assumes at any time the temperature and pressure
+A fluid particle flowing in an adiabatic mantle assumes at any time the temperature and pressure
 of the ambient mantle. Therefore there is no conductive heat exchange in the adiabatic
 state.
 
-Another useful thermodynamic relation is $dS = c_p/T dT -\alpha/\rho dp$
-with $c_p$ the specific heat at
+
+-------------------------------------
+
+{\bf what follows is not from Wim's handouts}
+
+Let us start from the heat transport equation as shown in Eq.(6.9.1)
+of Schubert, Turcotte and Olson \cite{scto01}:
+\begin{equation}
+\rho T \frac{Ds}{Dt} = {\vec \nabla} \cdot k {\vec \nabla} T + \Phi + \rho H  
+\end{equation}
+where $s$ is the specific entropy and $H$ is the rate of internal heat production
+per unit mass. The terms on the right side of the equation are respectively
+thermal conduction, volumetric heat production rates
+due to viscous dissipation and internal heat generation.
+We have 
+\[
+\frac{Ds}{Dt} = 
+\left( \frac{\partial s}{\partial T} \right)_p \frac{DT}{Dt}
++
+\left( \frac{\partial s}{\partial p} \right)_T \frac{Dp}{Dt}
+\]
+The thermal expansion coefficient is
+$\alpha = -\frac{1}{\rho} \left(\frac{\partial \rho}{\partial T} \right)_p$
+and the specific heat is 
+$C_p = T \left( \frac{\partial s}{\partial T} \right)_p$
+and we also have the thermodynamical relationship
+$
+\left( \frac{\partial s}{\partial p}  \right)_T
+=
+-\left( \frac{\partial (1/\rho)}{\partial T}  \right)_p
+$. 
+Altogether we can further transform the $Ds/Dt$ term as follows:
+\begin{eqnarray}
+\frac{Ds}{Dt} 
+&=& 
+\frac{C_p}{T}\frac{DT}{Dt}-\left( \frac{\partial (1/\rho)}{\partial T}  \right)_p \frac{Dp}{Dt} \nn\\
+&=& 
+\frac{C_p}{T}\frac{DT}{Dt}+\frac{1}{\rho^2} \left( \frac{\partial \rho}{\partial T}\right)_p\frac{Dp}{Dt}\nn\\
+&=& 
+\frac{C_p}{T}\frac{DT}{Dt} - \frac{\alpha}{\rho} \frac{Dp}{Dt}\nn
+\end{eqnarray}
+so that we can now write
+\begin{equation}
+\rho C_p \frac{DT}{Dt} - \alpha T \frac{Dp}{Dt} = {\vec \nabla} \cdot k {\vec \nabla} T + \Phi + \rho H  
+\end{equation}
+with $D/Dt$ being the total derivatives, i.e. 
+\begin{equation}
+\frac{DT}{Dt} = \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec \nabla}T
+\qquad
+\text{and}
+\qquad
+\frac{Dp}{Dt} = \frac{\partial p}{\partial t} + {\vec \upnu}\cdot {\vec \nabla}p
+\end{equation}
+Solving for temperature, this equation is often rewritten as follows:
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+\rho C_p \frac{DT}{Dt} - {\vec \nabla} \cdot k {\vec \nabla} T =  \alpha T \frac{Dp}{Dt} + \Phi + \rho H  
+\end{equation}
+\end{mdframed}
+where $\Phi$ is the shear heating (see Reddy \cite[p287]{reddybook2}). 
+In many publications, $\Phi$ is given by 
+$\Phi=\tau_{ij}\partial_j \upnu_i={\bm \tau}:{\vec \nabla}{\vec \upnu}$.
+
+In what follows I use the index notation as it makes for easier derivations:
+\begin{eqnarray}
+\Phi 
+&=& \tau_{ij}\partial_j \upnu_i \nonumber\\
+&=& 2 \eta \dot{\varepsilon}_{ij}^d\partial_j \upnu_i \nonumber\\
+&=& 2 \eta \frac{1}{2}\left( \dot{\varepsilon}_{ij}^d\partial_j \upnu_i + \dot{\varepsilon}_{ji}^d\partial_i u_j \right) \nonumber\\
+&=& 2 \eta \frac{1}{2}\left( \dot{\varepsilon}_{ij}^d\partial_j \upnu_i + \dot{\varepsilon}_{ij}^d\partial_i u_j \right) \nonumber\\
+&=& 2 \eta  \dot{\varepsilon}_{ij}^d  \frac{1}{2}\left(\partial_j \upnu_i + \partial_i u_j \right) \nonumber\\
+&=& 2 \eta  \dot{\varepsilon}_{ij}^d   \dot{\varepsilon}_{ij} \nonumber\\
+&=& 2 \eta  \dot{\bm \varepsilon}^d :  \dot{\bm \varepsilon} \nonumber\\
+&=& 2 \eta  \dot{\bm \varepsilon}^d : \left( \dot{\bm \varepsilon}^d +\frac{1}{3} ({\vec \nabla}\cdot{\vec \upnu}) {\bm 1} \right)\nonumber\\
+&=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d 
++ 2 \eta  \dot{\bm \varepsilon}^d : {\bm 1} ({\vec \nabla}\cdot{\vec \upnu}) \nonumber\\ 
+&=& 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d \label{eq:physicsshearheating} 
+\end{eqnarray}
+Finally (in Cartesian coordinates)
+\begin{equation}
+\Phi = {\bm \tau}:{\vec \nabla}{\vec \upnu} = 2 \eta  \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d
+= 2 \eta \left( (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + 2(\dot{\varepsilon}_{xy}^d)^2 \right) 
+\end{equation}
+See Schubert \& Yuen (1978) \cite{scyu78} for an analysis of shear heating instability in the upper mantle.
+
+Let us quickly look at the $Dp/Dt=\partial_t p + \vec\upnu\cdot\vec\nabla p$ term. 
+Often the term $\partial p/\partial t$
+is neglected and the pressure is assumed to be mostly hydrostatic in this term so 
+that $\vec\nabla p = - \rho \vec{g}$ which yields a much simpler formulation. 
+
+See discussions about shear heating (``viscous dissipation'') -- meaning and application-- in 
+\textcite{froi73} (1973),
+\textcite{stei78} (1978),
+\textcite{biyu79} (1979),
+\textcite{slsg79} (1979),
+\textcite{wint87} (1987),
+\textcite{madu98} (1998).
+
+-------------------------------------
+
+
+Another useful thermodynamic relation is 
+\begin{eqnarray}
+dS 
+&=& \left(\frac{\partial S}{\partial T} \right)_V dT  + \left(\frac{\partial S}{\partial V} \right)_T dV \\ 
+&=& c_p/T dT -\alpha/\rho dp 
+\end{eqnarray}
+with $c_p$ the specific heat \todo{very weird - units pb - dont trust this} at
 constant pressure and $\alpha$ the thermal expansion coefficient. 
 Applying this relation to \eqref{eq:md63}
 leads to the temperature form of the heat equation
@@ -1820,7 +1928,7 @@ a) Derive the heat equation for a static medium ($\vec\upnu=\vec{0}$) from the c
 thermal energy. (Hint: Create the heat balance for a fixed control volume based on
 internal energy, heat production and heat flow through the boundary of the volume).\\
 b) Next, assume there is a flow field $\vec\upnu$ and extend the result under a) with a term
-involving the flow density of thermal energy $\vec{J}J = \rho c_p T \vec\upnu$ 
+involving the flow density of thermal energy $\vec{J} = \rho c_p T \vec\upnu$ 
 (assume $\rho c_p$ to be constant and $\vec\nabla\cdot \vec\upnu=0$).\\
 The result is the heat equation for an incompressible medium in which adiabatic
 compression and viscous dissipation are neglected.
@@ -1927,7 +2035,7 @@ for the reference state.
 %----------------------------------------------------------
 \subsection{The complete set of perturbation equations}
 
-Equations \eqref{eq:md71} give the relevant equations in terms of the perturbations w.r.t. the
+Equations \eqref{eq:md71a,eq:md71b,eq:md71c,eq:md71d,eq:md71e} give the relevant equations in terms of the perturbations w.r.t. the
 adiabatic reference state as defined with equations \eqref{eq:md70}. By use of \eqref{eq:md70} 
 some terms cancel in the general equations; no approximations have been made. This leads to:
 
@@ -2205,7 +2313,7 @@ function approach with $u=\partial \Psi/\partial z$ and $w=-\partial \Psi/\parti
 leads to
 \begin{equation}
 \vec\nabla^4 \Psi = -\Ranb \frac{\partial {\color{violet}T}}{\partial x}
-\label{eq:md40}
+\label{eq:md80}
 \end{equation}
 (to be compared with \eqref{eq:md40}) with boundary conditions $\Psi(x,z=0)=\Psi(x,1)=0$
 and $\partial^2 \Psi/\partial z^2 (x,y=0)=\partial^2 \Psi/\partial z^2 (x,y=1)=0$.
@@ -2269,18 +2377,18 @@ ${\color{violet}T}={\color{violet}T_0}+{\color{violet}T_1}$. Substituting in \eq
 where the nonlinear term $\vec\upnu\cdot \vec\nabla{\color{violet}T_1} $ is neglected. Equation 
 \eqref{eq:md80} becomes
 \begin{equation}
-\vec\nabla^4 = -\Ranb \frac{\partial {\color{violet}T_1}}{\partial x} 
+\vec\nabla^4 \Psi = -\Ranb \frac{\partial {\color{violet}T_1}}{\partial x} 
 \label{eq:md83}
 \end{equation}
 Equations \eqref{eq:md82} and \eqref{eq:md83} are linear and can be solved by the method of separation of
 variables using a spectral approach. The solution has the following general structure for
 (non-dimensional) horizontal wave number $k_x$ and vertical wave number $k_z$:
 \begin{eqnarray}
-\Psi(x,z,t) &=& A_\Psi \exp pt \exp \pm ik_x x \exp \pm ik_z z = A_\Psi E_\Psi \\
-{\color{violet}T_1} (x,z,t) &=& A_T \exp pt \exp \pm ik_x x \exp \pm ik_z z = A_T E_T 
+\Psi(x,z,t) &=& A_\Psi \exp (pt) \exp (\pm ik_x x) \exp (\pm ik_z z) = A_\Psi E_\Psi \\
+{\color{violet}T_1} (x,z,t) &=& A_T \exp (pt) \exp (\pm ik_x x) \exp (\pm ik_z z) = A_T E_T 
 \end{eqnarray}
-where p is the temporal growth factor and the following ``short hand'' is used:
-$\exp \pm iky = a_k \exp iky + b_k \exp -iky$ implying integration constants to be determined by boundary
+where $p$ is the temporal growth factor and the following ``short hand'' is used:
+$\exp (\pm iky) = a_k \exp (iky) + b_k \exp (-iky)$ implying integration constants to be determined by boundary
 conditions.
 
 %exercise 39
@@ -2301,7 +2409,7 @@ Applying the boundary conditions for the temperature perturbation
 (i.e. $ {\color{violet}T_1}(x,z=0)= {\color{violet}T_1}(x,z=1)=0$
 and taking a real function for the $x$-dependence gives:
 \begin{equation}
-E_T = \exp pt \cos k_x x \sin n\pi z \qquad n=1,2,3...
+E_T = \exp (pt) \cos (k_x x) \sin (n\pi z) \qquad n=1,2,3...
 \label{eq:md85}
 \end{equation}
 demonstrating that vertical dimensionless wavelengths
@@ -2309,19 +2417,19 @@ $\lambda_z = 2\pi/k_z = 2/n$ should fit should fit within the fixed depth range.
 
 Application of the boundary condition \eqref{eq:md80} for the stream function leads to:
 \begin{equation}
-E_\Psi = \exp pt \sin k_x x \sin n\pi z \qquad n=1,2,3...
+E_\Psi = \exp (pt) \sin (k_x x) \sin (n\pi z) \qquad n=1,2,3...
 \label{eq:md86}
 \end{equation}
 The terms at the right hand side of equations \eqref{eq:md82} and \eqref{eq:md83} become
 $\partial \Psi/\partial x = k_x A_\Psi E_T$ and 
 $\partial {\color{violet}T_1}/\partial x = -k_x A_T E_\Psi$
-Making the remaining substitutions in \eqref{eq:md82} and \eqref{md83} leads to the
+Making the remaining substitutions in \eqref{eq:md82} and \eqref{eq:md83} leads to the
 following matrix equation for the amplitude coefficients:
 \begin{equation}
 \left(
 \begin{array}{cc}
 p + (k_x^2+ n^2 \pi^2) & -k_x \\
--\Ranb k_x & (k_x^2 + n^2 \pi^2)^2
+-\Ranb \; k_x & (k_x^2 + n^2 \pi^2)^2
 \end{array}
 \right)
 \cdot
@@ -2342,14 +2450,15 @@ A_T \\ A_\Psi
 This equation has only non-trivial solutions if the determinant of the matrix is zero from
 which follows that the temporal growth factor satisfies:
 \begin{equation}
-p = \frac{\Ranb k_x^2 - (k_x^2+n^2 \pi^2)^3}{(k_x^2+n^2\pi^2)^2}
+p = \frac{\Ranb\;  k_x^2 - (k_x^2+n^2 \pi^2)^3}{(k_x^2+n^2\pi^2)^2}
+\label{eq:md88}
 \end{equation}
 
 The following situation can occur:
 \begin{eqnarray}
-p<0 &  stable \nn\\
-p=0 & marginally stable \nn\\
-p>0 & unstable  \nn
+p<0 & \text{stable} \nn\\
+p=0 & \text{marginally stable} \nn\\
+p>0 & \text{unstable}  \nn
 \end{eqnarray}
 In case of the stable regime an initial temperature perturbation will die out (e.g. because
 conduction wins from advection). In the case of the unstable regime convection will
@@ -2393,6 +2502,9 @@ depth. The net effect may be that the Rayleigh number for the lower mantle is le
 
 
 
+\newpage %-----------------------------------------------------------------------------------------
+\todo[inline]{I need to reconcile above with what follows!!}
+\subsubsection{Stability analysis for Rayleigh-B\'enard convection} \label{ss:sarb} \input{sarb}
 
 
 
