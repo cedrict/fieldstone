@@ -9,7 +9,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 \subsection*{Donea \& Huerta manufactured solution}
 
-The details of the numerical setup are presented in Section~\ref{mms1}.
+The details of the numerical setup are presented in Section~\ref{MMM-mms1}.
 
 In this stone we do not use the penalty formulation and therefore 
 keep both velocity and pressure as unknowns. Therefore we end up having to solve 
@@ -51,7 +51,7 @@ As a consequence, matrix $\K$ has size $(NfemV,NfemV)$ and matrix $\G$ has size 
 Vector $f$ is of size $NfemV$ and vector $h$ is of size $NfemP$.  
 
 The pressure nullspace is removed by imposing that $\int_\Omega p \; dV =0$ through 
-a Lagrange multiplier (see Section~\ref{ss_pnorm}).
+a Lagrange multiplier (see Section~\ref{MMM-ss_pnorm}).
 
 \begin{center}
 \includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/dh/vel}
@@ -61,7 +61,7 @@ a Lagrange multiplier (see Section~\ref{ss_pnorm}).
 of strain rate for 32x32 mesh.}
 \end{center}
 
-Unlike the results obtained with the penalty formulation (see Section \ref{f1}),
+Unlike the results obtained with the penalty formulation (see Section \ref{f01}),
 the pressure showcases a very strong checkerboard pattern, similar to the one 
 in \cite{dohu03}. The amplitude of this checkerboard is unpredictable 
 and changes from one resolution to the other.
@@ -80,7 +80,7 @@ The nodal pressure (obtained with a simple center-to-node algorithm)
 fails to recover a correct pressure at the four corners.
 
 I have also explored the two formulations for the ${\bm C}$ matrix needed to 
-compute $\K$ (see Section~\ref{sec:mixed}):
+compute $\K$ (see Section~\ref{MMM-sec:mixed}):
 \[
 {\bm C}^{(a)}= \eta 
 \left(
@@ -117,7 +117,7 @@ checkerboard derails pressure error measurements for both cases:
 %-------------------------------------------------------------------------------
 \subsection*{Burman \& Hansbo manufactured solution}
 
-Details of this solution are in Section~\ref{ss:mms_buha06}.
+Details of this solution are in Section~\ref{MMM-ss:mms_buha06}.
 
 
 \begin{center}

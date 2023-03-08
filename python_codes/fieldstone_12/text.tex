@@ -7,7 +7,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-We start from the analytical benchmark of Section \ref{mms1} and we use $Q_1 \times P_0$
+We start from the analytical benchmark of Section \ref{MMM-mms1} and we use $Q_1 \times P_0$
 elements with a penalty formulation. 
 We have seen in \stone~1 how to recover the elemental pressure as a postprocessing step. 
 However, the discontinous nature of the pressure field (and the presence of a
@@ -18,7 +18,7 @@ time filtering the checkerboard mode out.
 
 Terminology: in general, when a discontinuous elemental pressure is used in a stone, 
 it is called $p$ while its projection onto the velocity nodes is called $q$. 
-In this case we compute several nodal pressures as explained in Section~\ref{psmoothing}:
+In this case we compute several nodal pressures as explained in Section~\ref{MMM-psmoothing}:
 
 \begin{itemize}
 %...........
@@ -65,7 +65,7 @@ p_{filtered} = p - \left( \frac{1}{|\Omega|} \iint_\Omega p \phi dV \right) \phi
 It is in fact a a projection. If $p=\alpha \phi$  where $\alpha$ is a scalar, then 
 it is trivial to show that $p_{filtered} =0$.
 Likewise, if $p=constant$ then $p_{filtered}=p$.
-This idea is probably to be found in the relevant publications of Section~\ref{psmoothing}
+This idea is probably to be found in the relevant publications of Section~\ref{MMM-psmoothing}
 in some form or shape. 
 
 There is much more work to be done on this topic/stone! Look at cost vs accuracy!
