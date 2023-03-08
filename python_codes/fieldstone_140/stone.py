@@ -2,8 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import triangle as tr
 import random
+import scipy.sparse as sps
+from scipy.sparse.linalg.dsolve import linsolve
+from scipy.sparse import csr_matrix
 
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 
 def NN(r,s):
     return np.array([1-r-s,r,s],dtype=np.float64)
@@ -14,7 +17,7 @@ def dNNdr(r,s):
 def dNNds(r,s):
     return np.array([-1,0,1],dtype=np.float64)
 
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 
 def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,icon,filename,area):
     N=np.size(x)
@@ -28,7 +31,7 @@ def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,icon,filename,area):
     vtufile.write("<Points> \n")
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
     for i in range(0,N):
-        vtufile.write("%10e %10e %10e \n" %(x[i],y[i],z[i]))
+        vtufile.write("%10e %10e %10e \n" %(x[i],y[i],z[i]*zscale))
     vtufile.write("</DataArray>\n")
     vtufile.write("</Points> \n")
     #####
@@ -56,9 +59,7 @@ def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,icon,filename,area):
     for iel in range (0,nel):
         vtufile.write("%d\n" % (sorted_indices[iel]))
     vtufile.write("</DataArray>\n")
-
     vtufile.write("</CellData>\n")
-
     #####
     vtufile.write("<Cells>\n")
     #--
@@ -84,13 +85,72 @@ def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,icon,filename,area):
     vtufile.write("</VTKFile>\n")
     vtufile.close()
 
-#------------------------------------------------------------------------------
+def export_flux_to_vtu(x,y,z,xc,yc,zc,icon,min_index,filename):
+    N=np.size(x)
+    m,nel=np.shape(icon)
+
+    xx=np.zeros(nel,dtype=np.float64) 
+    yy=np.zeros(nel,dtype=np.float64) 
+    vx=np.zeros(nel,dtype=np.float64) 
+    vy=np.zeros(nel,dtype=np.float64) 
+    for iel in range(0,nel):
+       jel=gnei[min_index[iel],iel]
+       xx[iel]=(xc[iel]+xc[jel])/2
+       yy[iel]=(yc[iel]+yc[jel])/2
+       if iel==jel:
+          vx[iel]=0
+          vy[iel]=0
+       else:
+          vx[iel]=xc[jel]-xc[iel]
+          vy[iel]=yc[jel]-yc[iel]
+
+    vtufile=open(filename,"w")
+    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+    vtufile.write("<UnstructuredGrid> \n")
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nel,nel))
+    #####
+    vtufile.write("<Points> \n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+    for i in range(0,nel):
+        vtufile.write("%10e %10e %10e \n" %(xc[i],yc[i],0))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Points> \n")
+    #####
+    vtufile.write("<PointData Scalars='scalars'>\n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='flux' Format='ascii'> \n")
+    for i in range(0,nel):
+        vtufile.write("%10e %10e %10e \n" %(vx[i],vy[i],0.))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</PointData>\n")
+    #####
+    vtufile.write("<Cells>\n")
+    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+    for i in range(0,nel):
+        vtufile.write("%d " % i) 
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+    for i in range(0,nel):
+        vtufile.write("%d " % (i+1))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+    for i in range(0,nel):
+        vtufile.write("%d " % 1) 
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Cells>\n")
+    #####
+    vtufile.write("</Piece>\n")
+    vtufile.write("</UnstructuredGrid>\n")
+    vtufile.write("</VTKFile>\n")
+    vtufile.close()
+
+
+#--------------------------------------------------------------------------------------------------
 
 def compute_segs(InputCoords):
     segs = np.stack([np.arange(len(InputCoords)),np.arange(len(InputCoords))+1],axis=1)%len(InputCoords)
     return segs
 
-#------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------
 
 def compute_triangles_area(coords,nodesArray):
     
@@ -108,10 +168,10 @@ def compute_triangles_area(coords,nodesArray):
     
     return area
 
-###############################################################################
-###############################################################################
+###################################################################################################
+###################################################################################################
 
-eps=1e-8
+eps=1e-6
 year=365.25*24*3600
 
 Lx=50e3
@@ -119,32 +179,32 @@ Ly=50e3
 
 rexp = 2       # drainage area exponent
 mexp = 1       # slope exponent
-w = 1e-3/year  # rock uplift rate (m/s)
+w_uplift = 0 #1e-3/year  # rock uplift rate (m/s)
 c = 1e-11/year # fluvial erosion coeff. (mˆ(2-2rexp)/s)
-c0 = 0.1/year  # linear diffusion coeff.(mˆ2/s)
+c0 = 1e-6  #0.1/year  # linear diffusion coeff.(mˆ2/s)
 Ac = 0         # critical drainage area (mˆ2)
 scale = 10     # amplitude random initial topography (m)
 
-nstep = 3000  # number of time steps
+nstep = 1 #3000  # number of time steps
 ndim = 2      # number of spatial dimensions
 m = 3         # number of nodes in 1 element
-dt = 100*year # time step (s)
+dt = 300*year #100*year # time step (s)
 tol = 1e-3    # iteration tolerance
+
+zscale=1000
 
 #------------------------------------------------------------------------------
 # Gauss quadrature setup
 
 nqel=3
 
-#qcoords_r=np.array([1/6,2/3,1/6],dtype=np.float64) 
-#qcoords_s=np.array([1/6,1/6,2/3],dtype=np.float64) 
-
-qcoords_r=np.array([1/2,1/2,0],dtype=np.float64) 
-qcoords_s=np.array([1/2,0,1/2],dtype=np.float64) 
+qcoords_r=np.array([1/6,2/3,1/6],dtype=np.float64) 
+qcoords_s=np.array([1/6,1/6,2/3],dtype=np.float64) 
 qweights =np.array([1/6,1/6,1/6],dtype=np.float64) 
 
-#WHYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY?
-
+#qcoords_r=np.array([1/2,1/2,0],dtype=np.float64) 
+#qcoords_s=np.array([1/2,0,1/2],dtype=np.float64) 
+#qweights =np.array([1/6,1/6,1/6],dtype=np.float64) 
 
 #------------------------------------------------------------------------------
 # build mesh
@@ -154,7 +214,8 @@ square_vertices = np.array([[0,0],[0,Lx],[Lx,Ly],[Ly,0]])
 square_edges = compute_segs(square_vertices)
 
 O1 = {'vertices' : square_vertices, 'segments' : square_edges}
-T1 = tr.triangulate(O1, 'pqa60000000') # tr.triangulate() computes the main dictionary 
+#T1 = tr.triangulate(O1, 'pqa60000000') #for testing
+T1 = tr.triangulate(O1, 'pqa1000000') 
 
 tr.compare(plt, O1, T1) # The tr.compare() function always takes plt as its 1st argument
 #plt.savefig('ex1.pdf', bbox_inches='tight')
@@ -172,9 +233,13 @@ m,nel=np.shape(icon)
 x=T1['vertices'][:,0] 
 y=T1['vertices'][:,1] 
 
-print(np.sum(area),Lx*Ly)
+print('sum(area)',np.sum(area),'Lx*Ly=',Lx*Ly)
 
 N=np.size(x)
+
+print('N  =',N)
+print('nel=',nel)
+
 
 #------------------------------------------------------------------------------
 # initial topography 
@@ -182,34 +247,21 @@ N=np.size(x)
 z=np.zeros(N,dtype=np.float64) 
 
 for i in range(0,N):
-    #z[i]=x[i]/10000+y[i]/11000 # random.uniform(0,10)
-    z[i]= random.uniform(0,10)
+    z[i]=x[i]/10000+y[i]/11000 #for testing
+    #z[i]= random.uniform(0,10)
+    #z[i]=y[i]/Ly/3
 
 #------------------------------------------------------------------------------
 # compute elevation of middle of element zc 
 #------------------------------------------------------------------------------
+xc=np.zeros(nel,dtype=np.float64) 
+yc=np.zeros(nel,dtype=np.float64) 
 zc=np.zeros(nel,dtype=np.float64) 
 
 for iel in range(0,nel):
+    xc[iel]=(x[icon[0,iel]]+x[icon[1,iel]]+x[icon[2,iel]])/3
+    yc[iel]=(y[icon[0,iel]]+y[icon[1,iel]]+y[icon[2,iel]])/3
     zc[iel]=(z[icon[0,iel]]+z[icon[1,iel]]+z[icon[2,iel]])/3
-
-
-#------------------------------------------------------------------------------
-# boundary conditions
-#------------------------------------------------------------------------------
-
-bc_fix = np.zeros(N,dtype=np.bool)  # boundary condition, yes/no
-bc_val = np.zeros(N,dtype=np.float64)  # boundary condition, value
-
-for i in range(0,N):
-    if abs(x[i]/Lx)<eps:
-       bc_fix[i] = True ; bc_val[i]=0
-    if abs(x[i]/Lx-1)<eps:
-       bc_fix[i] = True ; bc_val[i]=0
-    if abs(y[i]/Ly)<eps:
-       bc_fix[i] = True ; bc_val[i]=0
-    if abs(y[i]/Ly-1)<eps:
-       bc_fix[i] = True ; bc_val[i]=0
 
 #------------------------------------------------------------------------------
 # compute gnei (step 2)
@@ -219,13 +271,13 @@ for i in range(0,N):
 # face0: nodes 0-1
 # face1: nodes 1-2
 # face2: nodes 2-0
-# node1,2 are nodes making given face
+# iel_node1,2 are nodes making given face of element iel
+# jel_node1,2 are nodes making given face of element jel
 #------------------------------------------------------------------------------
 
 gnei = np.zeros((3,nel),dtype=np.int32) 
 
 for iel in range(0,nel):
-    #print('-------------------')
     for iface in range(0,3):
         if iface==0:
            iel_node1=icon[0,iel] 
@@ -284,10 +336,7 @@ sorted_indices=zc.argsort()
 sorted_indices=np.flip(sorted_indices[:])
 
 #print(sorted_indices)
-
-#print(zc)
-print(zc[sorted_indices])
-print('----')
+#print(zc[sorted_indices])
 
 #------------------------------------------------------------------------------
 # step 5: Using the sorted indices, sort the neighboring elements, the result of 
@@ -296,13 +345,9 @@ print('----')
 # three adjacent neighbors, from highest to lowest.
 #------------------------------------------------------------------------------
 
-sorted_gnei = np.zeros((3,nel),dtype=np.int32) 
-
-sorted_gnei[:,:] = gnei[:,sorted_indices]
-
-print(gnei)
-print('----')
-print(sorted_gnei)
+#sorted_gnei = np.zeros((3,nel),dtype=np.int32) 
+#sorted_gnei[:,:] = gnei[:,sorted_indices]
+#print(sorted_gnei)
 
 #------------------------------------------------------------------------------
 # step 6: For each element, find and save the local index of the lowest 
@@ -317,14 +362,13 @@ for iel in range(0,nel):
     zc_2=zc[gnei[2,iel]]
     if zc_0<zc_1 and zc_0<zc_2: 
        min_index[iel]=0
-       print('I am element',iel,'and I give to element',min_index[iel],gnei[0,iel])
     if zc_1<zc_0 and zc_1<zc_2: 
        min_index[iel]=1
-       print('I am element',iel,'and I give to element',min_index[iel],gnei[1,iel])
     if zc_2<zc_0 and zc_2<zc_1: 
        min_index[iel]=2
-       print('I am element',iel,'and I give to element',min_index[iel],gnei[2,iel])
-    #print(gnei[:,iel],zc[gnei[:,iel]])
+    #print('I am element',iel,'and I give to element',min_index[iel],gnei[min_index[iel],iel])
+
+export_flux_to_vtu(x,y,z,xc,yc,zc,icon,min_index,'flux.vtu')
 
 #------------------------------------------------------------------------------
 # step 7
@@ -345,27 +389,14 @@ for iel in range(0,nel):
    donor = sorted_indices[iel] 
    #receiver = sorted_gnei[min_index[iel],iel] suspicious line in book?!
    receiver=gnei[min_index[donor],donor]
-   print('loop index ',iel,'is donor',donor,'gives to ',receiver)
+   #print('loop index ',iel,'is donor',donor,'gives to ',receiver)
    A[receiver] += A[donor] 
 
 export_elements_to_vtu(x,y,z,zc,A,sorted_indices,icon,'solution_0.vtu',area)
 
 #------------------------------------------------------------------------------
-# solve system
-#------------------------------------------------------------------------------
-
-
-
-#------------------------------------------------------------------------------
-# export to vtu
-#------------------------------------------------------------------------------
-
-
-
-
-###############################################################################
 # compute area of elements
-###############################################################################
+#------------------------------------------------------------------------------
 
 area=np.zeros(nel,dtype=np.float64) 
 
@@ -385,6 +416,167 @@ for iel in range(0,nel):
             jcb[1,1] += dNNNVds[k]*y[icon[k,iel]]
         jcob = np.linalg.det(jcb)
         area[iel]+=jcob*weightq
+    #end for
+#end for
 
-print(area,np.sum(area))
+print('computing element areas with Gauss integration')
+print('sum(area)',np.sum(area),'Lx*Ly=',Lx*Ly)
+
+hmin=np.sqrt(np.min(area)) 
+print(hmin)
+print(hmin**2/c0)
+
+#------------------------------------------------------------------------------
+# boundary conditions
+#------------------------------------------------------------------------------
+
+bc_fix = np.zeros(N,dtype=np.bool)  # boundary condition, yes/no
+bc_val = np.zeros(N,dtype=np.float64)  # boundary condition, value
+
+for i in range(0,N):
+    #if abs(x[i]/Lx)<eps:
+    #   bc_fix[i] = True ; bc_val[i]=0
+    #if abs(x[i]/Lx-1)<eps:
+    #   bc_fix[i] = True ; bc_val[i]=0
+    if abs(y[i]/Ly)<eps:
+       bc_fix[i] = True ; bc_val[i]=0
+    if abs(y[i]/Ly-1)<eps:
+       bc_fix[i] = True ; bc_val[i]=1
+
+
+###################################################################################################
+###################################################################################################
+# time stepping 
+###################################################################################################
+###################################################################################################
+
+time=0
+
+for istep in range(0,nstep):
+
+    print('=============== istep=',istep,'==============')
+
+    time+=dt
+
+    #------------------------------------------------------------------------------
+
+
+
+
+    #------------------------------------------------------------------------------
+    # build FEM matrix and rhs
+    #------------------------------------------------------------------------------
+
+    A_mat = np.zeros((N,N),dtype=np.float64)    # FE matrix 
+    B_mat = np.zeros((ndim,m),dtype=np.float64) # gradient matrix B 
+    N_mat = np.zeros((m,1),dtype=np.float64)    # shape functions
+    dNNNdr = np.zeros(m,dtype=np.float64)       # shape functions derivatives
+    dNNNds = np.zeros(m,dtype=np.float64)       # shape functions derivatives
+    dNNNdx = np.zeros(m,dtype=np.float64)       # shape functions derivatives
+    dNNNdy = np.zeros(m,dtype=np.float64)       # shape functions derivatives
+    rhs   = np.zeros(N,dtype=np.float64)        # FE rhs 
+    hvect = np.zeros(m,dtype=np.float64)   
+
+    for iel in range (0,nel):
+
+        b_el=np.zeros(m,dtype=np.float64)
+        a_el=np.zeros((m,m),dtype=np.float64)
+        f_el=np.zeros(m,dtype=np.float64)
+        Kd=np.zeros((m,m),dtype=np.float64)   # elemental diffusion matrix 
+        MM=np.zeros((m,m),dtype=np.float64)   # elemental mass matrix 
+
+        for k in range(0,m):
+            hvect[k]=z[icon[k,iel]]
+
+        for kq in range (0,nqel):
+
+            # position & weight of quad. point
+            rq=qcoords_r[kq]
+            sq=qcoords_s[kq]
+            weightq=qweights[kq]
+
+            N_mat[0:m,0]=NN(rq,sq)
+            dNNNdr[0:m]=dNNdr(rq,sq)
+            dNNNds[0:m]=dNNds(rq,sq)
+
+            # calculate jacobian matrix
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,m):
+                jcb[0,0]+=dNNNdr[k]*x[icon[k,iel]]
+                jcb[0,1]+=dNNNdr[k]*y[icon[k,iel]]
+                jcb[1,0]+=dNNNds[k]*x[icon[k,iel]]
+                jcb[1,1]+=dNNNds[k]*y[icon[k,iel]]
+            jcob=np.linalg.det(jcb)
+            jcbi=np.linalg.inv(jcb)
+
+            for k in range(0,m):
+                dNNNdx[k]=jcbi[0,0]*dNNNdr[k]+jcbi[0,1]*dNNNds[k]
+                dNNNdy[k]=jcbi[1,0]*dNNNdr[k]+jcbi[1,1]*dNNNds[k]
+                B_mat[0,k]=dNNNdx[k]
+                B_mat[1,k]=dNNNdy[k]
+
+            kappa=c0
+
+            MM+=N_mat.dot(N_mat.T)*weightq*jcob
+
+            Kd+=B_mat.T.dot(B_mat)*weightq*jcob*kappa
+
+            f_el+=N_mat[:,0]*w_uplift*weightq*jcob
+
+        # end for kq
+
+        a_el=MM+Kd*dt
+
+        b_el=MM.dot(hvect)+f_el*dt
+
+        # apply boundary conditions
+        for k1 in range(0,m):
+            m1=icon[k1,iel]
+            if bc_fix[m1]:
+               Aref=a_el[k1,k1]
+               for k2 in range(0,m):
+                   m2=icon[k2,iel]
+                   b_el[k2]-=a_el[k2,k1]*bc_val[m1]
+                   a_el[k1,k2]=0
+                   a_el[k2,k1]=0
+               # end for k2
+               a_el[k1,k1]=Aref
+               b_el[k1]=Aref*bc_val[m1]
+            # end if
+        # end for k1
+
+        # assemble matrix A_mat and right hand side rhs
+        for k1 in range(0,m):
+            m1=icon[k1,iel]
+            for k2 in range(0,m):
+                m2=icon[k2,iel]
+                A_mat[m1,m2]+=a_el[k1,k2]
+            # end for k2
+            rhs[m1]+=b_el[k1]
+        # end for k1
+
+    # end for iel
+
+    print(np.min(A_mat),np.max(A_mat))
+    print(np.min(rhs),np.max(rhs))
+
+    #------------------------------------------------------------------------------
+    # solve system
+    #------------------------------------------------------------------------------
+
+    sol = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
+
+    print(np.min(sol),np.max(sol))
+
+    np.savetxt('solution'+str(istep)+'.ascii',np.array([x,y,sol]).T)
+
+    z[:]=sol[:]
+
+    #------------------------------------------------------------------------------
+    # export to vtu
+    #------------------------------------------------------------------------------
+
+    export_elements_to_vtu(x,y,z,zc,A,sorted_indices,icon,'solution'+str(istep)+'.vtu',area)
+
+
 

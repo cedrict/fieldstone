@@ -34,7 +34,7 @@ The finite element formulation of the equation above is
 with 
 \begin{eqnarray}
 \M &=& \int_\Omega \vec{\bN}^T \vec{\bN} dV \; \nn\\
-\K &=& \int_\Omega {\bm B}^T (c_0 + c A_e^r S^{m-1})  {\bm B} \;  dV \nn\\
+\K &=& \int_\Omega {\bm B}^T \underbrace{(c_0 + c A_e^r S^{m-1})}_{\kappa}  {\bm B} \;  dV \nn\\
 \vec{F} &=& \int_\Omega  \vec{\bN}^T w \; dV
 \end{eqnarray}
 where $\vec{h}$ is the vector of nodal elevations for an element, $\vec{\bN}$ 
@@ -43,7 +43,11 @@ in terms of physical coordinates.
 
 Using a first-order time derivative yields
 \[
-(\M  + \K \delta t ) \cdot \vec{h}^n = \vec{F}  + \K \cdot \vec{h}^{n-1}
+\vec{\dot h} \simeq \frac{\vec{h}^n-\vec{h}^{n-1}}{\delta t}
+\]
+so that 
+\[
+(\M  + \K \delta t ) \cdot \vec{h}^n = \vec{F} \delta t  + \M \cdot \vec{h}^{n-1}
 \]
 Except for the coefficient inside the $\K$ matrix, this is a rather standard diffusion equation. 
 Looking closer, the upstream drainage area $A$ appearing in the element matrix $\K$ 
@@ -71,8 +75,184 @@ from each (donor) element to its lowest adjacent neighbor (receiver). The result
 been completed is the accumulated surface area that ``drains'' to each element in the landscape, {\tt A}. 
 Note that this procedure implicitly assumes a spatially uniform rainfall, which can easily be
 accounted for if desired.
-
 \end{enumerate}
+
+Furthermore, the slope $S$ is computed as follows:
+\[
+S=\sqrt{ \left(\frac{\partial h}{\partial x} \right)^2 + \left(\frac{\partial h}{\partial y} \right)^2 } 
+\]
+This means that the diffusion coefficient $\kappa$ depends on (the gradient of) the solution,
+which renders the PDE nonlinear. As such we must then put in place a dedicated algorithm, 
+so-called Picard iterations, to iterate things out and obtain the converged solution at each 
+time step.
+We must then solve 
+\[
+\left(\M  + \K(\vec{h}^n) \delta t \right) \cdot \vec{h}^n = \vec{F}  + \M \cdot \vec{h}^{n-1}
+\]
+and we will therefore introduce a nonlinear loop inside each time step so that
+\[
+\left(\M  + \K(\vec{h}^n_k) \delta t \right) \cdot \vec{h}^n_{k+1} = \vec{F}  + \M \cdot \vec{h}^{n-1}
+\]
+We will loop over $k$ until $|\vec{h}_{k+1}^n-\vec{h}_k|<tol$.
+
+Note that when $m=1$ and $r=0$ then $\kappa=c_0$, the PDE is linear and is a 
+simple 2D diffusion equation which is trivial to benchmark, see Section~\ref{MMM-XXX}.
+
+
+
+
+
+
+\newpage
+%.......................................................................................
+\paragraph{Implementation \& testing}
+
+In order to test/debug the steps highlighted previously we first generate a mesh that only
+counts a few dozen of elements by setting the maximum size of a triangle to a large value:
+\begin{lstlisting}
+T1 = tr.triangulate(O1, 'pqa60000000')
+\end{lstlisting}
+We then obtain the following mesh counting 65 elements and 42 nodes:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_140/images/mesh1}
+\includegraphics[width=8cm]{python_codes/fieldstone_140/images/mesh2}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_140/images/mesh3}
+\includegraphics[width=8cm]{python_codes/fieldstone_140/images/mesh4}\\
+{\captionfont Note that the areas have been obtained by means of Heron's 
+formula\footnote{\url{https://en.wikipedia.org/wiki/Heron's_formula}}.}
+\end{center}
+
+We then proceed by assigning the nodes the following elevation:
+\begin{lstlisting}
+for i in range(0,N):
+    z[i]=x[i]/10000+y[i]/11000 
+\end{lstlisting}
+In this case we wish to establish a clear slope for the entire domain 
+so as to obtain a model that is easy to debug, i.e. with a clear 
+highest element at one corner and a lowest element in the opposite corner.
+
+\begin{center}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_140/images/mesh5}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_140/images/mesh6}\\
+{\captionfont Left: nodal elevation, Right: {\tt zc} elevation array.}
+\end{center}
+
+Step 2 is somewhat cumbersome but not difficult. In essence, we loop over all element with 
+loop index {\tt iel}. 
+For each element iel we must find the element that shares a face {\tt iface} with it. 
+We therefore again loop over all elements again using the loop index {\tt jel} and all their 
+faces via {\tt jface}. If the nodes making iface and jface are identical then we have found that 
+jel is a neighbour of iel through iface and we then set:
+\begin{lstlisting}
+gnei[iface,iel]=jel
+\end{lstlisting}
+If no neighbour was found this means that the face resides on the boundary of the domain 
+and we then assign
+\begin{lstlisting}
+gnei[iface,iel]=iel
+\end{lstlisting}
+In the end the {\tt gnei} array of size 2$\times${\tt nel} contains the following values:
+
+\begin{lstlisting}
+50 30 34  9 19  4  8  1 21  3 55 52 12 14 23 15 19 35 46  4 51  8 20 14 ... 
+49  7 30 47  5  6  5 35 48 12 54 11 22 11 48 52  1 36 62 42 29  9 21 50...
+59 16 31 33 55 24 47 33  6 21 56 13  9 49 13 51 47 17 27 16 22 22 12 24...
+\end{lstlisting}
+Looking at the figures above we see that element 0 indeed has the neighbours 50,49,59;
+element 1 has neighbours 30,7,16; etc ...
+
+Step 4 consists of creating an array that contains the list of elements ordered from the 
+highest elevation to the lowest.
+This is carried out in 2 simple lines of code:
+\begin{lstlisting}
+sorted_indices=zc.argsort()
+sorted_indices=np.flip(sorted_indices[:])
+\end{lstlisting}
+We can then ask to print the list of all {\tt zc} values as ordered with 
+{\tt sorted\_indices}:
+\begin{lstlisting}
+print(zc[sorted_indices])
+\end{lstlisting}
+This yields the following list of elevations:
+\begin{lstlisting}
+[8.67835429 8.64047551 7.90754376 7.73434388 7.63828038 7.38020001
+ 7.27131339 7.1985151  6.81720194 6.71087861 6.54905205 6.48554937
+ 6.47533275 6.41714392 6.33647163 6.24947391 6.202979   5.84086306
+ 5.80808307 5.77480023 5.76749316 5.59704537 5.51820154 5.46881474
+ 5.43960657 5.35480475 5.22180354 5.19653103 5.1113061  5.08682345
+ 5.06335745 4.98820004 4.9637227  4.85726269 4.84061664 4.5593502
+ 4.44070144 4.39626683 4.36048657 4.2913689  4.26790291 4.18357684
+ 4.08025568 3.97791121 3.86304993 3.85649411 3.83704947 3.76691017
+ 3.60859303 3.20257978 3.11988696 3.08200818 3.07224026 3.04159493
+ 2.77644341 2.75027056 2.72186147 2.70833333 2.07386364 2.03319022
+ 1.95481602 1.91287879 1.6503439  1.58811446 0.82648026 0.78860148]
+\end{lstlisting}
+
+Having verified that the ordering does work as intended, 
+we can turn to step 5, i.e. {\tt sorted\_gnei}. DO we really need it ?
+as it turns out, there may be a pb with the original code 
+{\tt receiver = sorted\_gnei(min\_index(iel),iel)}
+so that this line was replaced with a line that only uses gnei.
+
+for step 6, we must find behind which face 0, 1 or 2 
+the lowest neighbour is situated. The information is stored in {\tt min\_index}.
+The following algorithm is not particularly efficient nor elegant but it does 
+just that: 
+
+\begin{lstlisting}
+for iel in range(0,nel):
+    zc_0=zc[gnei[0,iel]]
+    zc_1=zc[gnei[1,iel]]
+    zc_2=zc[gnei[2,iel]]
+    if zc_0<zc_1 and zc_0<zc_2: 
+       min_index[iel]=0
+    if zc_1<zc_0 and zc_1<zc_2: 
+       min_index[iel]=1
+    if zc_2<zc_0 and zc_2<zc_1: 
+       min_index[iel]=2
+\end{lstlisting}
+
+This information is exported to a vtu file so that we can visualise 
+this bucket passing algorithm in action:
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_140/images/mesh7}
+\end{center}
+
+Finally steps 7 and 8 consist in identifying donors and receivers. 
+We loop on elements from the highest to the lowest with loop index iel.
+The donor is the element in question ({\tt sorted\_indices[iel]}) and 
+it gives to its lowest neighbour identified by {\tt gnei[min\_index[donor],donor]}.
+The result after the loop has been
+completed is the accumulated surface area that ``drains'' to each element in the landscape.
+
+\begin{lstlisting}
+A[:]=area[:]
+for iel in range(0,nel):
+   donor = sorted_indices[iel] 
+   receiver=gnei[min_index[donor],donor]
+   A[receiver] += A[donor] 
+\end{lstlisting}
+
+In the end the field A looks like:
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_140/images/mesh8}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \newpage
 \begin{center}
@@ -82,5 +262,3 @@ accounted for if desired.
 
 Questions:
 - his quadrature is weird?  3 pts see table 7.2???
-
-
