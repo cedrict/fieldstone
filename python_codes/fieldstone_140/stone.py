@@ -189,7 +189,7 @@ c0 = 1e-6  #0.1/year  # linear diffusion coeff.(mˆ2/s)
 Ac = 0         # critical drainage area (mˆ2)
 scale = 10     # amplitude random initial topography (m)
 
-nstep = 1000 #3000  # number of time steps
+nstep = 1 #3000  # number of time steps
 ndim = 2      # number of spatial dimensions
 m = 3         # number of nodes in 1 element
 dt = 500*year #100*year # time step (s)
@@ -226,7 +226,7 @@ square_edges = compute_segs(square_vertices)
 
 O1 = {'vertices' : square_vertices, 'segments' : square_edges}
 #T1 = tr.triangulate(O1, 'pqa60000000') #for testing
-T1 = tr.triangulate(O1, 'pqa1000000') 
+T1 = tr.triangulate(O1, 'pqa2500000') 
 
 tr.compare(plt, O1, T1) # The tr.compare() function always takes plt as its 1st argument
 #plt.savefig('ex1.pdf', bbox_inches='tight')
@@ -265,7 +265,7 @@ for i in range(0,N):
     #z[i]= random.uniform(0,10)
     #z[i]=y[i]/Ly/3
     z[i]=0
-    z[i]=np.cos((x[i]-Lx/2)/Lx*np.pi)*np.cos((y[i]-Ly/2)/Ly*np.pi)*10
+    #z[i]=np.cos((x[i]-Lx/2)/Lx*np.pi)*np.cos((y[i]-Ly/2)/Ly*np.pi)*10
 
 print("prescribe initial elevation: %.3f s" % (timing.time() - start))
 
@@ -301,6 +301,7 @@ start = timing.time()
 gnei = np.zeros((3,nel),dtype=np.int32) 
 
 for iel in range(0,nel):
+    if iel%100==0: print('iel=',iel)
     for iface in range(0,3):
         if iface==0:
            iel_node1=icon[0,iel] 
@@ -451,10 +452,6 @@ for iel in range(0,nel):
 #end for
 
 print('   -> sum(area)',np.sum(area),'Lx*Ly=',Lx*Ly)
-
-#hmin=np.sqrt(np.min(area)) 
-#print(hmin)
-#print(hmin**2/c0)
 
 print("compute element area: %.3f s" % (timing.time() - start))
 
@@ -624,6 +621,5 @@ for istep in range(0,nstep):
 
 
 
-#end for
-
+#end for istep
 
