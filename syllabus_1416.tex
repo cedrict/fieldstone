@@ -22,7 +22,6 @@ continuum mechanics we are mostly interested in material behavior on much larger
 than $10^{-8}~\si{\meter}$ for which is assumed that physical quantities 
 are smooth functions of time and spatial coordinates.
 
-
 The forces involved in the deformation of a continuum are postulated to be 
 {\bf body forces}
 $\vec{b}$ [\si{\newton\per\cubic\meter}], 
@@ -427,19 +426,31 @@ Applying \eqref{eq:md09} to $DM/Dt=0$ we find
 (for arbitrary V) the continuity
 equation as a local expression of mass conservation:
 \begin{equation}
-\frac{D\rho}{Dt} + \rho \frac{\partial v_k}{\partial x_k} =0
+\frac{D\rho}{Dt} + \rho \frac{\partial \upnu_k}{\partial x_k} =0
 \label{eq:md10}
 \end{equation}
 or, when substituting the material derivative:
-\[
-\frac{\partial \rho}{\partial t} + \frac{\partial (\rho v_k)}{\partial x_k} =0
-\]
+\begin{equation}
+\frac{\partial \rho}{\partial t} + \frac{\partial (\rho \upnu_k)}{\partial x_k} =0
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+\frac{\partial \rho}{\partial t} + \vec\nabla\cdot (\rho \vec\upnu) =0
+\end{equation}
 In incompressible fluids the density cannot change: $D\rho/Dt=0$.
 Consequently, mass
 conservation requires that the divergence of the velocity is 0, i.e.
-\[
-\frac{\partial v_k}{\partial x_k} = \vec\nabla \cdot \vec\upnu = 0
-\]
+\begin{equation}
+\frac{\partial \upnu_k}{\partial x_k} = 0
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+\vec\nabla \cdot \vec\upnu = 0
+\end{equation}
 Note that an equation like \eqref{eq:md10}
 can also be derived for any other quantity that is
 conserved by a material volume.
@@ -569,11 +580,13 @@ applying the derivation following equation
 to the 
 right side we find (as $V$ is arbitrarily chosen):
 \begin{equation}
-\rho \frac{D\vec\upnu}{Dt} = \vec\nabla\cdot {\bm \sigma} + \rho \vec{g}
-\qquad
-\text{or}
-\qquad
 \rho\frac{D \upnu_i}{Dt} = \frac{\partial \sigma_{ij}}{\partial j} + \rho {g}_i
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+\rho \frac{D\vec\upnu}{Dt} = \vec\nabla\cdot {\bm \sigma} + \rho \vec{g}
 \label{eq:md12}
 \end{equation}
 which is the {\bf general equation of motion}.
@@ -591,21 +604,22 @@ be a non-linear equation in the unknown velocity field.
 The velocity gradient tensor is $\vec\nabla\vec\upnu = \partial \upnu_i/\partial x_j$
 and can be separated in a symmetric part, the strain rate tensor 
 \[
-\dot{\bm \varepsilon}(\vec\upnu) = \frac12 \left(  
-\vec\nabla\vec\upnu + (\vec\nabla\vec\upnu)^T 
-\right)
-\qquad
-\text{or}
-\qquad
 \dot\varepsilon_{ij}=\frac12 \left(
 \frac{\partial \upnu_i}{\partial x_j}
 + \frac{\partial \upnu_j}{\partial x_i}
 \right)
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+\dot{\bm \varepsilon}(\vec\upnu) = \frac12 \left(  
+\vec\nabla\vec\upnu + (\vec\nabla\vec\upnu)^T \right)
 \]
 and in an anti-symmetric part called the rotation
 rate tensor or spin-rate tensor
 \[
-\dot{\bm\omega}=  \frac12 \left(  
+\dot{\bm\omega} (\vec\upnu)=  \frac12 \left(  
 \vec\nabla\vec\upnu - (\vec\nabla\vec\upnu)^T \right) 
 \]
 Note that $\dot\omega_{11}=\dot\omega_{22}=\dot\omega_{33}=0$.
@@ -691,11 +705,13 @@ Similar to traction, the total stress ${\bm \sigma}(\vec{r}, t)$
 is usually separated in the {\bf thermodynamic
 pressure} $p$ and the rheological (mechanical) stress ${\bm\tau}(\vec{r}, t)$:
 \begin{equation}
-{\bm\sigma} = -p {\bm 1} + {\bm \tau}
-\qquad
-\text{or}
-\qquad
 \sigma_{ij}=-p \delta_{ij} + \tau_{ij}
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+{\bm\sigma} = -p {\bm 1} + {\bm \tau}
 \label{eq:md13}
 \end{equation}
 \todo[inline]{tau is not dev stress here !!}
@@ -703,11 +719,13 @@ In absence of deforming stresses ${\bm\sigma}=-p {\bm 1}$
 and in the equilibrium state (0 inertial force),
 Eq.~\eqref{eq:md12} reduces to the hydrostatic equation
 \begin{equation}
-\vec\nabla p = \rho \vec{g} 
-\qquad
-\text{or}
-\qquad
 0 = -\frac{\partial p}{\partial x_i} + \rho g_i
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+\vec\nabla p = \rho \vec{g} 
 \label{eq:md14}
 \end{equation}
 relating the pressure to the gravitational acceleration.
@@ -829,7 +847,7 @@ The thermodynamic pressure gives the state of stress in a static medium which ma
 a uniform velocity (either linear, angular of both), i.e. ${\bm\varepsilon}={\bm 0}$. 
 Therefore, constitutive equations take the general form
 \begin{equation}
-{\bm \sigma}({\bm\varepsilon}) = -p {\bm 1} + {\bm tau}({\bm\varepsilon})
+{\bm \sigma}({\bm\varepsilon}) = -p {\bm 1} + {\bm \tau}({\bm\varepsilon})
 \label{eq:md18}
 \end{equation}
 with ${\bm \tau}({\bm 0})={\bm 0}$, showing that stress and strain rate can be interdependent.
@@ -844,6 +862,12 @@ This relation breaks down to the following law for a purely isotropic
 linearly viscous fluid:
 \begin{equation}
 \tau_{ij} = \lambda \dot{\varepsilon}_{kk} \delta_{ij} + 2 \eta  \dot{\varepsilon}_{ij}
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+{\bm \tau} = \lambda \dot{\varepsilon}_{kk} {\bm 1} + 2 \eta  \dot{\bm\varepsilon}
 \label{eq:md19}
 \end{equation}
 where $\eta$ is the dynamic viscosity [\si{\pascal\second}] and $\lambda$ is a viscosity
@@ -870,22 +894,46 @@ independent of (in)compressibility. Evidently: $p - \overline{p} \longleftrighta
 or $\vec\nabla \cdot \vec\upnu= 0$.
 
 In terms of bulk viscosity and dynamic viscosity \eqref{eq:md19} reads
-\[
+\begin{equation}
 \tau_{ij} = (\xi-\frac23 \eta) \dot\varepsilon_{kk} \delta_{ij} + 2\eta \dot\varepsilon_{ij}.
-\]
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+{\bm \tau} = (\xi-\frac23 \eta) \dot\varepsilon_{kk} {\bm 1} + 2\eta \dot{\bm \varepsilon}.
+\end{equation}
 By using the equation of deviatoric strain rate,
-\[
-\dot\varepsilon_{ij}' = \dot\varepsilon_{ij} -\frac13  \dot\varepsilon_{kk} \delta_{ij},
-\]
+\begin{equation}
+\dot\varepsilon_{ij}' = \dot\varepsilon_{ij} -\frac13  \dot\varepsilon_{kk} \delta_{ij}
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+\dot{\bm \varepsilon} = \dot{\bm \varepsilon} - \frac13 \dot\varepsilon_{kk} {\bm 1}
+\end{equation}
 we obtain as alternative expression for \eqref{eq:md19}
 \begin{equation}
 \tau_{ij} = \xi  \dot\varepsilon_{kk} \delta_{ij} + 2 \eta \dot\varepsilon_{ij}'
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+{\bm \tau} = \xi \dot\varepsilon_{kk} {\bm 1} + 2 \eta \dot{\bm \varepsilon}'
 \label{eq:md21}
 \end{equation}
 which explicitly shows the role of bulk viscosity and dynamic viscosity. In particular, for
 an incompressible fluid we have
 \begin{equation}
 \tau_{ij}=\tau_{ij}'=2\eta \dot\varepsilon_{ij}' = 2 \eta \dot\varepsilon_{ij}
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+{\bm \tau} = {\bm \tau}' = 2 \eta \dot{\bm \varepsilon}
 \label{eq:md22}
 \end{equation}
 
@@ -1040,30 +1088,63 @@ the constitutive equation (30).
 
 Recalling the general equation of motion \eqref{eq:md12}
 \[
-\rho \frac{D\upnu_i}{Dt} = \rho g_i + \frac{\partial \sigma_{ij}}{\partial x_j}
+\rho \frac{D\upnu_i}{Dt} = \rho g_i + \frac{\partial \sigma_{ij}}{\partial x_j} 
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+\rho \frac{D \vec{\upnu}}{Dt} = \rho \vec{g} + \vec\nabla\cdot {\bm \sigma}
 \]
 and the separation of
 the total stress in the thermodynamic pressure and mechanical stress \eqref{eq:md13}
 \begin{equation}
 \sigma_{ij} = -p \delta_{ij} + \tau_{ij},
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+{\bm \sigma} = - p {\bm 1} + {\bm \tau} 
 \end{equation}
 we find after substitution:
 \begin{equation}
 \rho \frac{D\upnu_i}{Dt}=\rho g_i -\frac{\partial p}{\partial x_i}+\frac{\partial \tau_{ij}}{\partial x_j}
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+\rho \frac{D \vec\upnu}{Dt}= \rho \vec{g} - \vec\nabla p + \vec\nabla\cdot {\bm \tau}
 \label{eq:md31}
 \end{equation}
 Adopting the constitutive equation for linear rheology
 \begin{equation}
-\tau_{ij} = (\xi - \frac23 \eta) \dot\varepsilon_{kk} \delta_{ij} + 2\eta \dot\varepsilon_{ij}
+\tau_{ij} = \left(\xi - \frac23 \eta \right) \dot\varepsilon_{kk} \delta_{ij} + 2\eta \dot\varepsilon_{ij}
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+{\bm \tau}= \left(\xi - \frac23 \eta \right) \dot\varepsilon_{kk} {\bm 1} + 2\eta \dot{\bm \varepsilon}
 \end{equation}
 and assuming that viscosities do not
 depend on the spatial coordinates we find that 
 \begin{equation}
 \rho \frac{D\upnu_i}{Dt}=\rho g_i -\frac{\partial p}{\partial x_i}+ \eta \vec\nabla^2 \upnu_i
 + (\xi+\frac13 \eta) \frac{\partial}{\partial x_i} \vec\nabla\cdot\vec\upnu
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+\rho \frac{D \vec\upnu}{Dt} = \rho \vec{g} -\vec\nabla p + \eta  \vec\nabla^2 \vec\upnu
++ (\xi+\frac13 \eta) \vec\nabla( \vec\nabla\cdot\vec\upnu)  
 \label{eq:md33}
 \end{equation}
 This is the {\bf Navier-Stokes equation} for a fluid with constant viscosities.
+\todo[inline]{check this equation!}
+
 
 %%%ex18
 \vspace{0.5cm}
@@ -1111,10 +1192,16 @@ lithosphere and for the asthenosphere and a lithosphere velocity of $5~\si{\cm\p
 %.............................................................................
 \subsection{Density perturbations as a driving force for mantle convection}
 
-The general equation of motion 
+The general equation of motion obtained previously
 \begin{equation}
 \rho \frac{D\upnu_i}{Dt} = -\frac{\partial p}{\partial x_i} + 
 \frac{\partial \tau_{ij}}{\partial x_j} + \rho g_i
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+\rho \frac{D\vec\upnu}{Dt} = -\vec\nabla p + \vec\nabla \cdot {\bm \tau} + \rho \vec{g}
 \end{equation}
 can be rewritten in terms
 of an equation relative to the hydrostatic reference state of the Earth's mantle. We define
@@ -1122,9 +1209,15 @@ the hydrostatic reference state as the undeformed state in which no density pert
 exist. The hydrostatic, or static, pressure is $p_0(r)$ and the density field in the hydrostatic
 state is $\rho_0(r)$. For the acceleration of gravity in the hydrostatic state we take $g_i^0(r)$. 
 The hydrostatic quantities obey the equilibrium equation: 
-\[
+\begin{equation}
 0 = \frac{\partial p_0}{\partial x_i} + \rho_0 g_i^0.
-\]
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+\vec{0} = \vec\nabla p_0 + \rho_0 \vec{g}^0
+\end{equation}
 We separate quantities in the dynamic state in a hydrostatic contribution and a
 perturbation:
 \begin{eqnarray}
@@ -1150,6 +1243,14 @@ perturbation leading to the perturbation equation
 \rho_0   \frac{D\upnu_i}{Dt}
 = -\frac{\partial {\color{violet} p}}{\partial x_i} + \frac{\partial \tau_{ij}}{\partial x_j}
 + {\color{violet} \rho} g_i^0 
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+\rho_0   \frac{D\vec\upnu}{Dt}
+=
+-\vec\nabla {\color{violet} p} + \vec\nabla \cdot {\bm \tau} + {\color{violet}\rho} \vec{g}
 \label{eq:md34b}
 \end{equation}
 This equation shows explicitly that density perturbations and not the total density field
@@ -1949,15 +2050,17 @@ usually studied relative to some motionless hydrostatic reference state either w
 conductive or with an adiabatic geotherm. The perturbations with respect to this state are
 related to the convective state of the mantle. 
 Therefore, we write $\rho(T,p) = \rho_0(T_0,p_0) 
-+ {\color{violet}rho}({\color{violet}T},{\color{violet} p} )$
++ {\color{violet}\rho}({\color{violet}T},{\color{violet} p} )$
 with 
 $T = T_0 + {\color{violet}T}$ and 
 $p = p_0 + {\color{violet}p}$ 
 where the 0-subscript denotes reference
 state quantities and the {\color{violet}colored} variables 
-the perturbations with respect to the reference state. The
-reference state quantities do not depend on time but can depend on the spatial
-coordinates. The usual assumption is that ${\color{violet}rho}({\color{violet}T},{\color{violet} p})$ 
+the perturbations with respect to the reference state\footnote{One would typically 
+write ${\color{violet}\rho}=\delta \rho$, but I find that using color enables me
+to do away with the cumbersome and sometimes confusing $\delta$ character in the equations.}. 
+The reference state quantities do not depend on time but can depend on the spatial
+coordinates. The usual assumption is that ${\color{violet}\rho}({\color{violet}T},{\color{violet} p})$ 
 depends linearly on the perturbations in temperature and pressure. 
 In this case one can use the thermodynamic relation
 \[
@@ -1983,7 +2086,7 @@ densities $\rho_0$ and $\rho_1$ is obtained by assuming that the dependence of d
 is the same for both phases. Then, only an addition factor is needed to account for the
 density of a mixed composition
 \begin{equation}
-\rho(\vec{r},t) = \rho_0(\vec{r})(1+\Gamma(\frac{\rho_1-\rho_0}{\rho_0})) 
+\rho(\vec{r},t) = \rho_0(\vec{r})\left(1+\Gamma(\frac{\rho_1-\rho_0}{\rho_0}) \right) 
 (1-\alpha {\color{violet}T} + K_T^{-1} {\color{violet}p} )
 \label{eq:md69}
 \end{equation}
@@ -2019,6 +2122,9 @@ More complex reference states involving depth variable thermodynamic parameters
 require internally consistent relations between thermodynamic parameters such as
 $\alpha$, $K_T$, $c_p$ $k$ and temperature, density, and pressure.
 
+\vspace{0.5cm}
+
+
 %exercise 34
 \fbox{
 \begin{minipage}{0.9\textwidth}
@@ -2035,7 +2141,8 @@ for the reference state.
 %----------------------------------------------------------
 \subsection{The complete set of perturbation equations}
 
-Equations \eqref{eq:md71a,eq:md71b,eq:md71c,eq:md71d,eq:md71e} give the relevant equations in terms of the perturbations w.r.t. the
+The following equations \eqref{eq:md71a},\eqref{eq:md71b},\eqref{eq:md71c},\eqref{eq:md71d},\eqref{eq:md71e} 
+give the relevant equations in terms of the perturbations w.r.t. the
 adiabatic reference state as defined with equations \eqref{eq:md70}. By use of \eqref{eq:md70} 
 some terms cancel in the general equations; no approximations have been made. This leads to:
 
@@ -2044,21 +2151,21 @@ The equation of state is
 \rho(\vec{r},t) = \rho(\vec{r}) \left(1-\alpha {\color{violet} T} + K_T^{-1} {\color{violet}p} \right) 
 \label{eq:md71a}
 \end{equation}
-The heat equation in terms of 
+The heat equation in terms of ${\color{violet}T}$
 \begin{equation}
 \rho c_p \frac{D {\color{violet} T}}{Dt} = \frac{\partial }{\partial x_j} 
 \left( k \frac{\partial {\color{violet}T}}{\partial x_j}  \right)
 + \rho H + \tau_{ij}\frac{\partial \upnu_i}{\partial x_j} + \alpha T \frac{Dp}{Dt}
 \label{eq:md71b}
 \end{equation}
-The equation of motion is in terms
+The equation of motion is in terms of ${\color{violet}p},{\color{violet}\rho},{\color{violet}T}$:
 \begin{equation}
 \rho \frac{D \upnu_i}{Dt} = -\frac{\partial {\color{violet}p}}{\partial x_i}
 +\frac{\partial \tau_{ij}}{\partial x_j}
 -\rho_0 (\alpha {\color{violet} T} + K_T^{-1} {\color{violet}p}) g_i
 \label{eq:md71c}
 \end{equation}
-The Poisson equation in terms of
+The Poisson equation in terms of ${\color{violet}U}$ and ${\color{violet}\rho}$:
 \begin{equation}
 \vec\nabla^2 {\color{violet} U} = 4 \pi {\cal G} {\color{violet} \rho}
 \label{eq:md71d}
@@ -2066,7 +2173,7 @@ The Poisson equation in terms of
 and, finally, the continuity equation in terms of ${\color{violet}\rho}$ reads
 \begin{equation}
 \frac{\partial {\color{violet}\rho} }{\partial t} + 
-\frac{\partial (\rho_0 + {\color{violet}\rho} \upnu_j }{\partial x_j} =0
+\frac{\partial (\rho_0 + {\color{violet}\rho}) \upnu_j }{\partial x_j} =0
 \label{eq:md71e}
 \end{equation}
 
