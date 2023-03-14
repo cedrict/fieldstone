@@ -1,0 +1,3 @@
+pdflatex literature.tex
+biber --output-safechars literature
+pdflatex literature.tex
