@@ -6,6 +6,8 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 This axisymmetric elastic probem is common in the literature, see for instance Sadd \cite{sadd14}.
 A hollow thick-walled cylinder is placed under the
 action of uniform internal and external pressure loadings, as shown here:
@@ -57,7 +59,8 @@ resulting displacements do depend on both $E$ and $\nu$.
 \end{eqnarray}
 It then follows that 
 \[
-\sigma_{zz} = \lambda div(\vec{u}) + 2 \mu \varepsilon_{zz} = \lambda (\varepsilon_{rr} + \varepsilon_{\theta\theta})
+\sigma_{zz} = \lambda div(\vec{u}) + 2 \mu \varepsilon_{zz} = 
+\lambda (\varepsilon_{rr} + \varepsilon_{\theta\theta})
 \qquad
 \text{and}
 \qquad
@@ -111,5 +114,6 @@ Results for displacement, strain and stress as a function of $r$ are shown hereu
 \includegraphics[width=5.4cm]{python_codes/fieldstone_90/results/strain.pdf}
 \includegraphics[width=5.4cm]{python_codes/fieldstone_90/results/stress.pdf}
 \end{center}
-The match is perfect and shows that the axisymmetric formulation presented in Section~\ref{ss:fem_elast_axis} is correct.
+The match is perfect and shows that the axisymmetric formulation presented in 
+Section~\ref{MMM-ss:fem_elast_axis} is correct.
 

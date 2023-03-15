@@ -29,7 +29,7 @@ based on experimental findings and different rock compositions \textcite{pasc77}
 Berman 1988, Berman and Aranovich 1996, Hofmeister 1999, Xu et al., 2004. 
 We then compare our results to those of \textcite{rihc18}.
 
-We start from Eq.~(1) of \textcite{mcjp05}:
+We start from Eq.~(1) of \textcite{mcjp05} (2005):
 \[
 \frac{\partial}{\partial t}
 \left(\rho(T) C_p(T) T \right) = \vec\nabla \cdot \left(k(T) \vec\nabla T \right)
@@ -41,7 +41,8 @@ Using a simple Euler scheme we have
 \]
 or, simply reorganising the terms: 
 \[
-\rho(T^{\color{blue}n}) C_p(T^{\color{blue}n}) T^{{\color{blue}n}} - \delta t \vec\nabla \cdot (k(T^{\color{blue}n}) \vec\nabla T^n)
+\rho(T^{\color{blue}n}) C_p(T^{\color{blue}n}) T^{{\color{blue}n}} - 
+\delta t \vec\nabla \cdot (k(T^{\color{blue}n}) \vec\nabla T^n)
 = \rho(T^{\color{blue}n-1}) C_p(T^{\color{blue}n-1}) T^{\color{blue}n-1} 
 \]
 However, since we wish to compute $\vec{T}^{\color{blue} n}$ then 
@@ -50,7 +51,8 @@ not available to us so we resort to using the ones from the previous timestep\fo
 later we should in fact implement a nonlinear loop and these would become the values 
 of the previous iteration.}, or
 \[
-\rho(T^{\color{blue}n-1}) C_p(T^{\color{blue}n-1}) T^{{\color{blue}n}} - \delta t \vec\nabla \cdot (k(T^{\color{blue}n-1}) \vec\nabla T^n)
+\rho(T^{\color{blue}n-1}) C_p(T^{\color{blue}n-1}) T^{{\color{blue}n}} - 
+\delta t \vec\nabla \cdot (k(T^{\color{blue}n-1}) \vec\nabla T^n)
 = \rho(T^{\color{blue}n-1}) C_p(T^{\color{blue}n-1}) T^{\color{blue}n-1} 
 \]
 We left multiply by a shape function $\bN_i$ and integrate over the whole domain $\Omega$:
@@ -64,7 +66,8 @@ Using the basis functions, we can write
 \[
 T^h(x,y) = \vec{\bN}(x,y) \cdot \vec{T}
 \]
-where $\vec{T}$ is the vector of nodal temperatures, and this ultimately yields\footnote{see Section~\ref{ss:hte_fem}
+where $\vec{T}$ is the vector of nodal temperatures, and this ultimately 
+yields\footnote{see Section~\ref{MMM-ss:hte_fem}
 for the derivations}
 \[
 {\bm \M}^{\color{blue}n} \cdot \vec{T}^{\color{blue}n} 

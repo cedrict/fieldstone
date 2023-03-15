@@ -22,7 +22,7 @@ is assumed to be of the power law type, i.e.
 \]
 where $\beta$ is a scalar, $n$ is a small number (but not 
 necessarily an integer) and
-$\dot{\varepsilon}_e$ is the effective strain rate defined in Eq.~\eqref{eq:tauepse},
+$\dot{\varepsilon}_e$ is the effective strain rate defined in Eq.~\eqref{MMM-eq:tauepse},
 i.e.
 \[
 \dot\varepsilon_e = \sqrt{ \frac{1}{2}(\dot\varepsilon_{xx}^2 + \dot\varepsilon_{yy}^2 ) 
@@ -47,11 +47,8 @@ Finally, to simplify notations we define $\alpha=\frac1n-1$ so that
 }
 \]
 
-
 \Literature: Dynamics of strongly time-dependent convection
-with non-Newtonian temperature-dependent viscosity, Larsen et al \cite{laym96}
-
- 
+with non-Newtonian temperature-dependent viscosity, \textcite{laym96} (1996).
 
 %--------------------------------------------------------------------
 \subsubsection*{Newton-Raphson method for single-valued functions}
@@ -60,10 +57,10 @@ Newton gave a version of the method in 1669. Raphson generalized and presented
 the method in 1690. Both mathematicians used the same concept, and both algorithms gave the
 same numerical results, which is why the method is often referred to as the Newton-Raphson method.
 
-
 In numerical analysis, the Newton's method (also Newton-Raphson method) 
 is an iterative root-finding algorithm.
-The most basic version for a function $f(x)$ is as follows\footnote{\url{https://en.wikipedia.org/wiki/Newtons_method}}:
+The most basic version for a function $f(x)$ is as 
+follows\footnote{\url{https://en.wikipedia.org/wiki/Newtons_method}}:
 \[
 x^{k+1} = x^k - \frac{f(x^k)}{f'(x^k)}
 \]
@@ -95,7 +92,8 @@ or,
 {\bm J}_R (\vec{X}^k) \cdot( \vec{X}^{k+1} - \vec{X}^k  )   = - \vec{R}(\vec{X}^k)
 \label{eq:f87newt}
 \end{equation}
-where the Jacobian matrix is defined as follows\footnote{\url{https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant}}:
+where the Jacobian matrix is defined as 
+follows\footnote{\url{https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant}}:
 \[
 {\bm J}_R = 
 \left(
@@ -108,10 +106,8 @@ where the Jacobian matrix is defined as follows\footnote{\url{https://en.wikiped
 \]
 
 
-
 %----------------------------------------------------------------
 \subsubsection*{The super simple / no questions asked approach}
-
 
 We have to solve 
 \[
@@ -187,7 +183,6 @@ The discrete residual is defined by
 {\bm A}(\vec{\cal X}^k) \cdot \vec{\cal X}^{k+1} = \vec{b} \label{eq:f87_picard}
 }
 \end{equation}
-
 
 \item Defect correction Picard iterations. We can use Eq.~\eqref{eq:f87_res} to write 
 $\vec{b} = {\bm A}(\vec{\cal X}^k)\cdot \vec{\cal X}^k  -\vec{R}(\vec{\cal X}^k)$

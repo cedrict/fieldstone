@@ -29,7 +29,14 @@ of the Lithospheric Mantle and
 follows the change in thickness of the Lithospheric Mantle.
 
 In 1978, McKenzie presented a quantitative model \cite{mcke78} 
-that allows the understanding of the lithospheric evolution related to the creation of a rifting. The model of McKenzie considered two steps. The first step (syn-rift) was considered as an instantaneous and uniform extension of the lithosphere and crust. The second step (post-rift)  is the thermal re-equilibration of the thinned down lithospheric mantle, considering that (a) the temperature at the end of the pre-rift stage is steady state and (b) the composition of the lithospheric mantle and underlying Asthenosphere is equivalent. For the purpose of thermal modelling, the initial temperature is defined by a fixed temperature at the surface and at the base of the Lithosphere, and the radiogenic heat production is neglected.
+that allows the understanding of the lithospheric evolution related to the creation of a rifting. 
+The model of McKenzie considered two steps. The first step (syn-rift) was considered as an 
+instantaneous and uniform extension of the lithosphere and crust. The second step (post-rift) 
+is the thermal re-equilibration of the thinned down lithospheric mantle, considering that 
+(a) the temperature at the end of the pre-rift stage is steady state and (b) the composition 
+of the lithospheric mantle and underlying Asthenosphere is equivalent. For the purpose of 
+thermal modelling, the initial temperature is defined by a fixed temperature at the surface 
+and at the base of the Lithosphere, and the radiogenic heat production is neglected.
 
 \begin{center}
 \includegraphics[width=13cm]{python_codes/fieldstone_86/images/eqcurve.jpg}\\
@@ -65,9 +72,6 @@ occurring for a value of the $\beta$-factor beyond 4.
 {\captionfont Basins of the rift–drift suite in terms of increasing stretch factor 
 and extensional strain rate. \cite{allen2013}.} 
 \end{center}
-
-
-
 
 The code solves the diffusion equation in a 2D Cartesian domain. There are 
 five materials in the domain: the sediments (\#1), the upper crust (UC, \#2), 
@@ -145,7 +149,7 @@ T_moho = 550
 T_lab = 1330
 \end{lstlisting}
 
-
+%...............................................................................
 \paragraph{Steady state} 
 If we are only interested in the steady state solution, the equation to solve is then 
 simply 
@@ -170,10 +174,6 @@ vertical temperature gradient and vertical component of the heat flux.}
 \includegraphics[width=7cm]{python_codes/fieldstone_86/results/dTdy}
 \includegraphics[width=7cm]{python_codes/fieldstone_86/results/heatflux}
 \end{center}
-
-
-
-
 
 
 ToDo: implement heat source !

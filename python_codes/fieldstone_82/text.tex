@@ -1,6 +1,6 @@
 
-The basis functions for this element is presented in Section~\ref{ss:Q1Q1bb_3D}.
-This element is presented in Karabelas \etal (2020) \cite{kahp20}. 
+The basis functions for this element is presented in Section~\ref{MMM-ss:Q1Q1bb_3D}.
+This element is presented in \textcite{kahp20} (2020). 
 
 There are two bubble functions/nodes per element so we then have 
 \begin{lstlisting}
@@ -42,9 +42,9 @@ and
 \begin{equation}
 p(x,y,z) = xyz + x^3 y^3z - 5/32
 \end{equation}
-The corresponding right-hand side is computed in Section~\ref{mms3}.
+The corresponding right-hand side is computed in Section~\ref{MMM-mms3}.
 The domain is a unit cube and velocity boundary conditions
-simply use Eq. (\ref{eqbur2}).
+simply use Eq.~\eqref{eqbur2}.
 Note that the pressure fulfills $\int_\Omega p(x,y,z) dV = 0.$
 
 \begin{center}
@@ -74,7 +74,7 @@ $\vec\upnu=(+1,0,0)$ prescribed on the bottom.
 %......................................
 \subsubsection*{Stokes sphere (bench=3)}
 
-This is the benchmark of Section~\ref{ss:stokes_sphere3D}.
+This is the benchmark of Section~\ref{MMM-ss:stokes_sphere3D}.
 A sphere of radius 0.123456789 is placed in the middle of the domain. 
 It has a density excess $\delta\rho=0.01$
 with respect to the surrounding fluid which has a density $\rho_{fluid}=1$. 
@@ -91,7 +91,7 @@ Boundary conditions are no slip on all sides. Gravity is $\vec{g}=-\vec{e}_z$.
 {\captionfont Resolution $20\times 20\times 20$. Quadrature $2\times 2 \times 2$.} 
 \end{center}
 
-All velocity and pressure statistics are presented in Section~\ref{ss:stokes_sphere3D}.
+All velocity and pressure statistics are presented in Section~\ref{MMM-ss:stokes_sphere3D}.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_82/results/bench3/build.pdf}
@@ -103,13 +103,14 @@ All velocity and pressure statistics are presented in Section~\ref{ss:stokes_sph
 \subsubsection*{Sinking cube (bench=4)}
 
 This is the same experiment as the Stokes sphere with the exception of the geometry of the sinker which 
-is 0.25x0.25x0.25 in size so that its edges align with boundary edges for 8x8x8, 16x16x16 and 24x24x24 meshes.
+is $0.25\times 0.25 \times 0.25$ in size so that its edges align with boundary edges 
+for $8 \times 8 \times 8$, $16 \times 16 \times 16$ and $24 \times 24 \times 24$ meshes.
 Reduced density is used in order to remove the lithostatic pressure signal.
  
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_82/results/bench4/rho}
 \includegraphics[width=8cm]{python_codes/fieldstone_82/results/bench4/vel}\\
-{\captionfont resolution 24x24x24 elements.}
+{\captionfont resolution $24\times 24 \times 24$ elements.}
 \end{center}
 
 The velocity and pressures are interpolated on 100 points on the four diagonals of the cube
@@ -140,7 +141,7 @@ through the middle of the block:
 \includegraphics[width=5.5cm]{python_codes/fieldstone_82/results/bench4/vert_w}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_82/results/bench4/vert_p}
 \end{center}
-We see that unfortunately the resolution 24x24x24 is most certainly not high 
+We see that unfortunately the resolution $24\times 24 \times 24$ is most certainly not high 
 enough to speak of capturing the true solution of the problem...
 
 Also, one can verify that the solution is symmetric by looking at the averages of the 
@@ -155,7 +156,7 @@ a form of asymmetry in the solution.
 %......................................
 \subsubsection*{Manufactured solution (bench=5)}
 
-We here consider the manufactured solution which is introduced in Section~\ref{ss:mms3Dgen}.
+We here consider the manufactured solution which is introduced in Section~\ref{MMM-ss:mms3Dgen}.
 The velocity and pressure fields are:
 \begin{eqnarray}
 u(x,y,z) &=& x(1-x)(1-2y)(1-2z)\\
@@ -196,8 +197,8 @@ that can be used:
 \includegraphics[width=5.2cm]{python_codes/fieldstone_82/results/bench5/pressth}\\
 \end{center}
 
-%................................................
-\subsubsection*{bench=-1: computing Ker($\G$) on a 2x2x2 mesh}
+%..............................................................................
+\subsubsection*{bench=-1: computing Ker($\G$) on a $2\times 2 \times 2$ mesh}
 
 We consider a mesh composed of $2\times 2\times 2$ elements. We prescribe no slip boundary conditions 
 on all sides, so that only the node in the middle has 3 velocity dofs left, in addition 
@@ -220,15 +221,5 @@ We then proceed to find the kernel/nullspace of matrix $\G_2$:
 ns = null_space(G2)
 \end{lstlisting}
 and we find that its size is just 1, as expected. 
-
-
-
-
-
-
-
-
-
-
 
 

@@ -21,10 +21,10 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 The S20RTS \cite{rivw99} and S40RTS \cite{ridv11} are commonly used shear-velocity models for the mantle.
 The dataset are widely available and used (in Specfem, in Aspect, ...) and come in the form of two 
-files {\sl S20RTS.sph} and {\sl S40RTS.sph} (supplemented by a file with the location of the knots of the 21 splines
-used for the radial interpolation). 
-Each {\sl .sph} file has a 1 line header, and the first number on this line indicates the maximum degree number $l$ 
-(20 or 40, then)\footnote{
+files {\sl S20RTS.sph} and {\sl S40RTS.sph} (supplemented by a file with the location of the 
+knots of the 21 splines used for the radial interpolation). 
+Each {\sl .sph} file has a 1 line header, and the first number on this line indicates 
+the maximum degree number $l$ (20 or 40, then)\footnote{
 "The header lines in the sph file includes a 24 followed by 3 zeroes and 21 ones. 
 This indicates that the first three splines, which apply to the crust, have been turned off."
 J. Ritsema, pers. comm.}. The rest of these files consists of many rows and colums of numbers.
@@ -90,7 +90,8 @@ i.e. the velocity anomaly on any of the shells
 f = \sum_{l=0}^\infty \left[a_{l0} X_{l0}(\theta) + \sqrt{2} \sum_{m=1}^l X_{lm}(\theta) 
 \left(a_{lm} \cos m\phi + b_{lm} \sin m\phi \right) \right]
 \]
-Note however that the implementation of Ritsema does {\it not} include the $\sqrt{2}$ term (go figure...) and this 
+Note however that the implementation of Ritsema does {\it not} include 
+the $\sqrt{2}$ term (go figure...) and this 
 was the nature of a later pull request in Aspect\footnote{\url{https://github.com/geodynamics/aspect/pull/966}} 
 so that the used formula is simply:
 \[
@@ -121,8 +122,8 @@ This stone uses the {\tt scipy.special.lpmv} function for the product $(-1)^m P_
 \includegraphics[width=11cm]{python_codes/fieldstone_85/images/lpmv}
 \end{center}
 
-In Ritsema et al (2011) \cite{ridv11}, one reads: "We use the same 
-spline functions as in Ritsema et al (2004) \cite{rivw04} to parametrize vertical 
+In \textcite{ridv11} (2011), one reads: "We use the same 
+spline functions as in \textcite{rivw04} (2004) to parametrize vertical 
 variation of shear velocity. The separation of the spline functions
 increases with depth. Relatively dense spline distribution helps to
 accommodate strong vertical shear-velocity variations across the
@@ -376,7 +377,6 @@ and then interpolated between 25 km depths (pers. comm.).
 \end{center}
 
 
-
 \begin{center}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_85/images/fieldstone/fieldstone_S20RTS_25km.png}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_85/images/fieldstone/fieldstone_S20RTS_100km.png}
@@ -387,12 +387,10 @@ and then interpolated between 25 km depths (pers. comm.).
 {\captionfont Results obtained with Fieldstone. Coastlines and plate boundaries are obtained from Stone 69.}
 \end{center}
 
-
 \begin{center}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_85/images/fieldstone/diff_600km_S20RTS.png}\\
 {\captionfont Difference between Ritsema's code results and fieldstone results at 600\si{km} depth.}
 \end{center}
-
 
 \newpage
 %......................................
@@ -405,11 +403,9 @@ and then interpolated between 25 km depths (pers. comm.).
 \includegraphics[width=5.5cm]{python_codes/fieldstone_85/images/submachine/submachine_S40RTS_1500km_SMALL.jpg}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_85/images/submachine/submachine_S40RTS_2800km_SMALL.jpg}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_85/images/submachine/submachine_S40RTS_2891km_SMALL.jpg}\\
-{\captionfont Signal as obtained from SubMachine for various depths, using the Oslo colour scale, equidistant cylindrical map projection, 
-16 discrete colours.}
+{\captionfont Signal as obtained from SubMachine for various depths, using the Oslo colour scale, 
+equidistant cylindrical map projection, 16 discrete colours.}
 \end{center}
-
-
 
 \begin{center}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_85/images/fieldstone/fieldstone_S40RTS_25km.png}

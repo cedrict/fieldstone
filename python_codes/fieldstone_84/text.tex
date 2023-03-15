@@ -16,7 +16,7 @@ It implements to different ways:
 \begin{itemize}
 \item the point mass approach: each cell of size $(h_x,h_y,h_z)$ and of constant density $\rho$
 is contracted to a single point in its middle of equivalent mass $m=\rho h_xh_yh_z$.
-\item the prism approach, as explained in Appendix~\ref{app:prisms}.
+\item the prism approach, as explained in Appendix~\ref{MMM-app:prisms}.
 \item the Gauss quadrature approach using $n_q^3$ points per cell.
 \end{itemize}
 
@@ -40,9 +40,11 @@ What about the Gauss quadrature approach ?
 The domain is a cuboid of size $L_x\times L_y \times L_z$ cut into $nel_x \times nel_y \times nel_z=nel$ cells.
 Note that in all what follows a cell has a constant density. 
 
-The function {\tt grav\_calc} computes $u$, $\vec{g}$ and ${\bm T}$ using one of the three methods hilighted above. 
+The function {\tt grav\_calc} computes $u$, $\vec{g}$ and ${\bm T}$ using one of the 
+three methods hilighted above. 
 
-Note that the \aspect postprocessor relies on the Gauss-Legendre quadrature, see also von Frese \etal \cite{vohb81}.
+Note that the \aspect postprocessor relies on the Gauss-Legendre quadrature, 
+see also \textcite{vohb81} (1981).
 
 \newpage
 %-------------------------------
@@ -122,10 +124,8 @@ Far away from the cube $g(r) \rightarrow {\cal G}M_c \rho/r^2$ and $U(r) \righta
 \includegraphics[width=5cm]{python_codes/fieldstone_84/cube/tensor_xy}
 \includegraphics[width=5cm]{python_codes/fieldstone_84/cube/tensor_xz}
 \includegraphics[width=5cm]{python_codes/fieldstone_84/cube/tensor_yz}\\
-{\captionfont  The grey area indicates the sphere. resolution  32x32x32}
+{\captionfont  The grey area indicates the sphere. resolution $32\times 32 \times 32$.}
 \end{center}
-
-
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_84/cube/g}
@@ -161,15 +161,13 @@ for increasing resolutions.
 
 The domain has dimensions $L_x=2940$, $L_y=2100$, $L_z=3060$ and the data set makes that  
 nelx=98, nely=70 and nelz=153. The data is
-synthetically generated using methods described in 
-Clausolles et al (2019) \cite{clcc19}
+synthetically generated using methods described in \textcite{clcc19} (2019)
 and the file containing the data is {\sl salt\_dome.data}.
 The salt has a relative density of $-400\si{\kg\per\cubic\metre}$.
 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_84/diapir/diapir.png}
 \end{center}
-
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_84/diapir/g.png}
@@ -179,14 +177,13 @@ The salt has a relative density of $-400\si{\kg\per\cubic\metre}$.
 \end{center}
 
 
-
 %------------------------------------------
 \subsection*{Prism of Arroyo et al (2015)}
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_84/arct15/setup}
 \includegraphics[width=8cm]{python_codes/fieldstone_84/arct15/arct15.png}\\
-{\captionfont Left: setup. Right: taken from \cite{arct15}}
+{\captionfont Left: setup. Right: taken from \textcite{arct15} (2015).}
 \end{center}
 
 
@@ -213,28 +210,28 @@ and 6 components of ${\bm T}$.}
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_84/earth/setup}
 \includegraphics[width=8cm]{python_codes/fieldstone_84/earth/rho}\\
-{\captionfont resolution 150x150x150. Density is obtained from the PREM model \cite{dzan81}.}
+{\captionfont resolution $150\times 150 \times 150$. Density is obtained from the PREM model \cite{dzan81}.}
 \end{center}
 
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_84/earth/gravnorm}
 \includegraphics[width=7cm]{python_codes/fieldstone_84/earth/gravpot}\\
-{\captionfont resolution 64x64x64}
+{\captionfont resolution $64 \times 64 \times 64$.}
 \end{center}
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_84/earth/spiral.png}\\
-{\captionfont Spiral of 500 points at height 250km above the Earth surface. 
-Earth is ased on 64x64x64 resolution.}
+{\captionfont Spiral of 500 points at height $250~\si{\km}$ above the Earth surface. 
+Earth is ased on $64\times 64 \times 64$ resolution.}
 \end{center}
 
 
 %------------------------------------------
 \subsection*{Hollow Earth with constant density}
 
-The density is constant and set to $\rho=4000\si{\kg\per\cubic\metre}$. Outer radius is 6371km and inner
-radius is 3480km.
+The density is constant and set to $\rho=4000\si{\kg\per\cubic\metre}$. 
+Outer radius is $6371~\si{\km}$ and inner radius is $3480~\si{\km}$.
 
 %\begin{center}
 %\includegraphics[width=8cm]{python_codes/fieldstone_84/hollow_earth/setup}
@@ -245,7 +242,7 @@ radius is 3480km.
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_84/hollow_earth/gravnorm}
 \includegraphics[width=7cm]{python_codes/fieldstone_84/hollow_earth/gravpot}\\
-{\captionfont resolution 64x64x64}
+{\captionfont resolution $64 \times 64 \times 64$}
 \end{center}
 
 

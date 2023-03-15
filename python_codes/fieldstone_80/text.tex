@@ -7,8 +7,9 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-We here consider the enriched $Q_1\times P_0$ element introduced first by Fortin (1981) \cite{fort81}.
-The shape functions in 2D and 3D are in derived in Section~\ref{ss:Q1pP02D} and Section~\ref{ss:Q1pP03D} respectively.
+We here consider the enriched $Q_1\times P_0$ element introduced first by \textcite{fort81} (1981).
+The shape functions in 2D and 3D are in derived in Section~\ref{MMM-ss:Q1pP02D} 
+and Section~\ref{MMM-ss:Q1pP03D} respectively.
 
 The list of velocity degrees of freedom per element is as follows:
 \[
@@ -16,7 +17,6 @@ The list of velocity degrees of freedom per element is as follows:
 \]
 We start with a simple $4\times 3$ element mesh. 
 Bubble $u$ dofs are represented in blue and bubble $v$ dofs are shown in green.
-
 
 \begin{center}
 \begin{tikzpicture}
@@ -320,7 +320,7 @@ The pressure field converges to a unique solution and no visible checkerboard si
 %---------------------------------------------------------------
 \subsection*{Dohrmann \& Bochev manufactured solution}
 
-This benchmark is defined in Section~\ref{ss:mms2}.
+This benchmark is defined in Section~\ref{MMM-ss:mms2}.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_80/results/db2d/vel}
@@ -389,7 +389,7 @@ are best for $nq>2$.
 %---------------------------------------------------------------
 \subsection*{SolCx}
 
-See Stone 5 and Section~\ref{sec:geobench}.
+See Stone 5 and Section~\ref{MMM-sec:geobench}.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_80/results/solcx/vrms}
@@ -404,7 +404,7 @@ See Stone 5 and Section~\ref{sec:geobench}.
 %---------------------------------------------------------------
 \subsection*{Sinking block}
 
-This experiment is fully described in Section~\ref{sec:sinker}.
+This experiment is fully described in Section~\ref{MMM-sec:sinker}.
 It is run at resolutions such that the boundaries of the elements are aligned with the sides of the block.
 
 \begin{center}
