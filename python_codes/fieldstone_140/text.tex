@@ -1,5 +1,15 @@
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_140/text.tex}} \end{flushright}
 
-This \stone idea originates in chapter 9.2 of \textcite{simp17}. 
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_140/keywords.txt}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+{\sl This stone was developed in collaboration with Rayane Meghezi}. \index{contributors}{R. Meghezi}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This \stone idea originates in chapter 9.2 of \textcite{simp17} (2017). 
 
 We solve the full 2D surface evolution model 
 \begin{equation}
@@ -8,7 +18,7 @@ We solve the full 2D surface evolution model
 + v \frac{\partial h}{\partial y}
 = \vec\nabla\cdot \left[ (c_0 + c A_e^r S^{m-1}) \vec\nabla h \right] + w
 \end{equation}
-without lateral tectonic advection, that is,
+without lateral tectonic advection ($u=v=0$), that is,
 \begin{equation}
 \frac{\partial h}{\partial t}
 = \vec\nabla\cdot \left[ (c_0 + c A_e^r S^{m-1}) \vec\nabla h \right] + w
@@ -22,10 +32,10 @@ area and $A_c$ is a critical drainage area below which there is no fluvial sedim
 $S$ is the slope, 
 $r$ and $m$ are positive exponents, and $w$ is the rate of rock uplift (assumed to be uniform and constant).
 
-This equation will be solved on a square $50\times 50~\si{\km}$ 
+As in the book, this equation will be solved on a square $50\times 50~\si{\km}$ 
 domain that has an initial random elevation of
 between 0 and 10 m, while the elevation of all four boundaries is fixed to zero. 
-Here, we use linear three-node triangular elements.
+Additional setups will be added later. Here, we use linear three-node triangular elements.
 
 The finite element formulation of the equation above is 
 \[
@@ -245,6 +255,52 @@ When increasing resolution one gets:
 \includegraphics[width=12cm]{python_codes/fieldstone_140/images/mesh11}
 \end{center}
 
+%....................................................
+\paragraph{Computing the slope}
+
+In order to compute $dh/dx$ and $dh/dy$, one could resort to using 
+basis functions derivatives in the middle of each element, but we
+instead use a different approach. 
+Since $P_1$ basis functions are used, it means that inside an element 
+the elevation $h$ is represented by 
+\[
+h(x,y)=a+bx+cy
+\]
+where the $a,b,c$ coefficients are such that 
+\begin{eqnarray}
+h_0=h(x_0,y_0) &=& a + bx_0 + cy_0 \\
+h_1=h(x_1,y_1) &=& a + bx_1 + cy_1 \\
+h_2=h(x_2,y_2) &=& a + bx_2 + cy_2
+\end{eqnarray} 
+where $0,1,2$ are the local numbers of the vertices.
+The equation above can be rewritten
+\[
+\left(
+\begin{array}{ccc}
+1 & x_0 & y_0 \\
+1 & x_1 & y_1 \\
+1 & x_2 & y_2 \\
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+a \\ b \\ c
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+h_0 \\ h_1 \\ h_2
+\end{array}
+\right)
+\]
+After solving this system in each element, we have
+\[
+\frac{\partial h}{\partial x} = b 
+\qquad
+\frac{\partial h}{\partial y} = c
+\]
 
 
 

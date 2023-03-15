@@ -8,6 +8,8 @@ from scipy.sparse import csr_matrix
 import time as timing
 
 #--------------------------------------------------------------------------------------------------
+# P1 basis functions
+#--------------------------------------------------------------------------------------------------
 
 def NN(r,s):
     return np.array([1-r-s,r,s],dtype=np.float64)
@@ -20,7 +22,7 @@ def dNNds(r,s):
 
 #--------------------------------------------------------------------------------------------------
 
-def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,icon,filename,area):
+def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,icon,filename,area):
     N=np.size(x)
     m,nel=np.shape(icon)
 
@@ -56,6 +58,18 @@ def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,icon,filename,area):
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (A[iel]))
     vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='dhdx' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%e\n" % (dhdx[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='dhdy' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%e\n" % (dhdy[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='slope' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%e\n" % (slope[iel]))
+    vtufile.write("</DataArray>\n")
     vtufile.write("<DataArray type='Float32' Name='sorted_indices' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%d\n" % (sorted_indices[iel]))
@@ -86,19 +100,15 @@ def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,icon,filename,area):
     vtufile.write("</VTKFile>\n")
     vtufile.close()
 
+#--------------------------------------------------------------------------------------------------
+
 def export_flux_to_vtu(x,y,z,xc,yc,zc,icon,min_index,filename):
     m,nel=np.shape(icon)
-    #xx=np.zeros(nel,dtype=np.float64) 
-    #yy=np.zeros(nel,dtype=np.float64) 
-    #zz=np.zeros(nel,dtype=np.float64) 
     vx=np.zeros(nel,dtype=np.float64) 
     vy=np.zeros(nel,dtype=np.float64) 
     vz=np.zeros(nel,dtype=np.float64) 
     for iel in range(0,nel):
        jel=gnei[min_index[iel],iel]
-       #xx[iel]=(xc[iel]+xc[jel])/2
-       #yy[iel]=(yc[iel]+yc[jel])/2
-       #zz[iel]=(zc[iel]+zc[jel])/2
        if iel==jel:
           vx[iel]=0
           vy[iel]=0
@@ -155,13 +165,12 @@ def compute_segs(InputCoords):
     return segs
 
 #--------------------------------------------------------------------------------------------------
+# Triangle Area is calculated via Heron's formula, see wikipedia
 
 def compute_triangles_area(coords,nodesArray):
     
     tx=coords[:,0]
     ty=coords[:,1]
-    
-    # Triangle Area is calculated via Heron's formula, see wikipedia
     
     a=np.sqrt((tx[nodesArray[:,0]]-tx[nodesArray[:,1]])**2 + (ty[nodesArray[:,0]]-ty[nodesArray[:,1]])**2)
     b=np.sqrt((tx[nodesArray[:,2]]-tx[nodesArray[:,1]])**2 + (ty[nodesArray[:,2]]-ty[nodesArray[:,1]])**2)
@@ -172,9 +181,22 @@ def compute_triangles_area(coords,nodesArray):
     
     return area
 
+#--------------------------------------------------------------------------------------------------
+# compute slope
+
+def compute_element_slope(x1,x2,x3,y1,y2,y3,h1,h2,h3):
+    maat = np.array([[1,x1,y1],[1,x2,y2],[1,x3,y3]],dtype=np.float64) 
+    rhhs = np.array([h1,h2,h3],dtype=np.float64)
+    sool = np.linalg.solve(maat,rhhs)
+    dh_dx=sool[1]
+    dh_dy=sool[2]
+    slope=np.sqrt(dh_dx**2+dh_dy**2)
+    return dh_dx,dh_dy,slope
+
 ###################################################################################################
 ###################################################################################################
 
+km=1e3
 eps=1e-6
 year=365.25*24*3600
 
@@ -192,10 +214,10 @@ scale = 10     # amplitude random initial topography (m)
 nstep = 1 #3000  # number of time steps
 ndim = 2      # number of spatial dimensions
 m = 3         # number of nodes in 1 element
-dt = 500*year #100*year # time step (s)
+dt = 0 #500*year #100*year # time step (s)
 tol = 1e-3    # iteration tolerance
 
-zscale=1000
+zscale=1 #000
 every=10
 
 print("-----------------------------")
@@ -226,7 +248,7 @@ square_edges = compute_segs(square_vertices)
 
 O1 = {'vertices' : square_vertices, 'segments' : square_edges}
 #T1 = tr.triangulate(O1, 'pqa60000000') #for testing
-T1 = tr.triangulate(O1, 'pqa2500000') 
+T1 = tr.triangulate(O1, 'pqa5000000') 
 
 tr.compare(plt, O1, T1) # The tr.compare() function always takes plt as its 1st argument
 #plt.savefig('ex1.pdf', bbox_inches='tight')
@@ -252,6 +274,10 @@ print('   -> N  =',N)
 print('   -> nel=',nel)
 
 print("generate mesh: %.3f s" % (timing.time() - start))
+    
+dhdx = np.zeros(nel,dtype=np.float64) 
+dhdy = np.zeros(nel,dtype=np.float64) 
+slope = np.zeros(nel,dtype=np.float64) 
 
 #------------------------------------------------------------------------------
 # initial topography 
@@ -264,8 +290,9 @@ for i in range(0,N):
     #z[i]=x[i]/10000+y[i]/11000 #for testing
     #z[i]= random.uniform(0,10)
     #z[i]=y[i]/Ly/3
-    z[i]=0
+    #z[i]=0
     #z[i]=np.cos((x[i]-Lx/2)/Lx*np.pi)*np.cos((y[i]-Ly/2)/Ly*np.pi)*10
+    z[i]=2*x[i]/km+3*y[i]/km
 
 print("prescribe initial elevation: %.3f s" % (timing.time() - start))
 
@@ -421,7 +448,8 @@ for iel in range(0,nel):
    #print('loop index ',iel,'is donor',donor,'gives to ',receiver)
    A[receiver] += A[donor] 
 
-export_elements_to_vtu(x,y,z,zc,A,sorted_indices,icon,'solution_init.vtu',area)
+np.savetxt('solution_init.ascii',np.array([x,y,z]).T)
+export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,icon,'solution_init.vtu',area)
 
 print("compute drainage area: %.3f s" % (timing.time() - start))
 
@@ -481,6 +509,7 @@ print("define boundary conditions: %.3f s" % (timing.time() - start))
 ###################################################################################################
 ###################################################################################################
 
+
 time=0
 
 for istep in range(0,nstep):
@@ -490,9 +519,12 @@ for istep in range(0,nstep):
     time+=dt
 
     #------------------------------------------------------------------------------
+    # compute slope
 
-
-
+    for iel in range(0,nel):
+        dhdx[iel],dhdy[iel],slope[iel]=compute_element_slope(x[icon[0,iel]],x[icon[1,iel]],x[icon[2,iel]],\
+                                                             y[icon[0,iel]],y[icon[1,iel]],y[icon[2,iel]],\
+                                                             z[icon[0,iel]],z[icon[1,iel]],z[icon[2,iel]])
 
     #------------------------------------------------------------------------------
     # build FEM matrix and rhs
@@ -614,7 +646,7 @@ for istep in range(0,nstep):
     start = timing.time()
 
     if istep%every==0:
-       export_elements_to_vtu(x,y,z,zc,A,sorted_indices,icon,'solution_'+str(istep)+'.vtu',area)
+       export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,icon,'solution_'+str(istep)+'.vtu',area)
 
     print("export to vtu: %.3f s" % (timing.time() - start))
 
