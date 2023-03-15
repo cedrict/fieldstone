@@ -41,8 +41,8 @@ in the buoyancy term of the momentum conservation equation. We consider two-dime
 {\vec \nabla}\cdot {\bm \sigma} + \rho(T) {\vec g} &=& {\vec 0} \label{eq_moce}\\
 {\vec \nabla}\cdot {\vec \upnu} &=& 0 \label{eq_mace}\\
 {\bm \sigma} &=& -p {\bm 1} + {\bm \tau} \label{steq}\\
-{\bm \tau} &=& 2 \eta \dot{\bm \varepsilon} \label{stwomu}\\
-\dot{\bm \varepsilon}  &=& \frac{1}{2} \left( {\vec \nabla}{\vec \upnu} 
+{\bm \tau} &=& 2 \eta \dot{\bm \varepsilon}(\vec\upnu) \label{stwomu}\\
+\dot{\bm \varepsilon}(\vec\upnu)  &=& \frac{1}{2} \left( {\vec \nabla}{\vec \upnu} 
 + ({\vec \nabla}{\vec \upnu})^T  \right) \label{epsdot} \\
 \rho_0 C_p \left( \frac{\partial T}{\partial t}  + {\vec \upnu}\cdot {\vec \nabla} T\right) 
 &=& {\vec \nabla}\cdot (k {\vec \nabla}T)  \label{eqhte} \\
@@ -79,7 +79,7 @@ $L_x$, $L_y$ & domain size (\si{\metre}) \\
 $p$ & pressure  (\si{\pascal}) \\
 ${\bm \tau}$ & deviatoric stress vector  (\si{\pascal}) \\
 ${\vec \upnu}=(u,v,w)$ & velocity (\si{\metre\per\second}) \\
-$\dot{\bm \varepsilon}$ & strain-rate tensor (\si{\per\second}) \\
+$\dot{\bm \varepsilon}(\vec\upnu)$ & strain-rate tensor (\si{\per\second}) \\
 $\eta$ & viscosity (\si{\pascal\second})\\
 $\rho,\rho_0$ & mass density (\si{\kg\per\cubic\metre}) \\
 ${\bm \sigma}$ & stress tensor  (\si{\pascal})  \\
@@ -202,8 +202,8 @@ bottom is prescribed to be 1.
 %was found to decrease quadratically with the element size.
 
 Finally, the steady state root mean square velocity and Nusselt number measurements
-are indicated in the followiug table alongside those of Blankenbach \etal \cite{blbc89} 
-and Tackley \cite{tack94}.
+are indicated in the followiug table alongside those of \textcite{blbc89} (1989)
+and \textcite{tack94} (1994).
 (Note that this benchmark was also carried out and published in 
 other publications \cite{trha98,albe00,gery10,dawk11,lezh11} but since they did not provide  a complete set 
 of measurement values, they are not included in the table.)
@@ -309,8 +309,11 @@ for a layer of depth $h$ and infinite horizontal extent, $\Ranb_C = (27/4)  \pi^
 \item Change the initial temperature profile to something more random, repeat some of these experiments. 
 What can you conclude ?
 
-\item change the top and bottom boundary conditions from free-slip to no-slip. How 
+\item Change the top and bottom boundary conditions from free-slip to no-slip. How 
 does this influence $\Ranb_c$ ?
+
+\item When convection occurs and a steady state is reached the depth-averaged temperature
+curves showcases two boundary layers. Measure their thickness as a function of $\Ranb$.
 
 \item Bonus: Explore the effect of the aspect ratio of the domain on $\Ranb_c$ and the slope $\beta$.
 
@@ -324,7 +327,7 @@ and $10^m$ in the upper half with $m>1$. Explore \& discuss ...
 
 Relevant sources:
 \begin{itemize}
-\item Chapter \ref{chapt3} presents the physical equations in more detail. 
+\item Chapter \ref{chapt3} and the first part of this chapter present the physical equations in more detail. 
 \item Stone 88 shows examples of mantle-scale convection.
 \item \url{https://youtu.be/YIN9Dcq31x0}
 \item \url{https://youtu.be/5SPCU1sFGGc}

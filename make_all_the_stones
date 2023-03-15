@@ -1,0 +1,3 @@
+pdflatex all_the_stones.tex
+biber --output-safechars all_the_stones
+pdflatex all_the_stones.tex
