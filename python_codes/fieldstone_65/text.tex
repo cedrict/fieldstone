@@ -16,7 +16,7 @@ where $u$ is the velocity, $h$ is the element size and $\kappa$ is the diffusion
 %----------------------------
 \subsection*{Experiment 1}
 We wish to solve the advection-diffusion problem presented in 
-Section~\ref{ss:advdiff}:
+Section~\ref{MMM-ss:advdiff}:
 \begin{equation}
 \rho C_p u \frac{dT}{dx} - k \frac{d^2T}{dx^2} = f \qquad \text{in} \quad [0,L_x]
 \end{equation}
@@ -54,7 +54,7 @@ Finally we see that we recover identical results as in Donea \& Huerta \cite{doh
 \includegraphics[width=8.6cm]{python_codes/fieldstone_65/images/dohu}
 \end{center}
 
-If we now use the artificial diffusion presented in Section~\ref{ss:supg}, we have
+If we now use the artificial diffusion presented in Section~\ref{MMM-ss:supg}, we have
 \[
 \tilde{\kappa}=\beta \kappa \Penb = \beta \frac{k}{\rho C_p} \Penb
 \]
@@ -213,7 +213,7 @@ ToDo: run this experiment with SUPG.
 %..................................................................................
 \subsection*{Experiment 4 - Heat flow around a cylinder} 
 
-This experiment is described in Section~\ref{sec:hfcyl}.
+This experiment is described in Section~\ref{MMM-sec:hfcyl}.
 We vary the Peclet number from $10^{-3}$ to $10^2$. 
 The prescribed velocity field is as follows:
 

@@ -25,7 +25,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \subsubsection*{Description of the setup and benchmark cases}
 
 
-The domain is $660\text{km}\times 600\text{km}$. 
+The domain is $660~\si{\km} \times 600~\si{\km}$. 
 
 \begin{center}
 \includegraphics[width=14cm]{python_codes/fieldstone_68/images/fig1}\\
@@ -41,14 +41,14 @@ the inflow boundaries (at both wedge and trench sides) and top of the model
 have prescribed temperature. The wedge is assumed to be an incompressible fluid that
 is driven only by the kinematic forcing of the slab. The wedge is
 confined by the top of the slab and the base of the rigid overriding
-plate (located at a depth of $50\text{km}$). 
+plate (located at a depth of $50~\si{\km}$). 
 The boundary conditions for the wedge are no-slip below the overriding plate and constant velocity
 along the top of the slab. The velocity boundary conditions for the
 boundaries of the wedge are either provided by the Batchelor cornerflow 
 solution (cases 1a and 1b) or based on free inflow/outflow
 boundaries (cases 1c, 2a, 2b). The velocity field is discontinuous between the slab
 and the overriding plate.
-The velocity in the slab is constant (5cm/yr) and it dips at a $45\degree$ angle
+The velocity in the slab is constant (5~\si{\cm\per\year}) and it dips at a $45\degree$ angle
 There is no radiogenic of shear heating.
 The mantle wedge rheology is either linear viscous (cases 1a,b,c),
 diffusion creep (case 2a) or dislocation creep (case 2b).
@@ -86,7 +86,8 @@ and
 \eta_{\text{diff}}=A_{\text{diff}} \exp\left( \frac{Q_{\text{diff}}}{RT} \right)
 \]
 with
-$Q_{diff}=335kJ/mol$ and $A_{diff}=1.32043 \cdot 10^9Pa\cdot s$. $\eta_{max}=10^{26}$Pa.s
+$Q_{diff}=335kJ/mol$ and $A_{diff}=1.32043 \cdot 10^9~\si{\pascal\second}$,  
+$\eta_{max}=10^{26}~\si{\pascal\second}$
 
 %___________________
 \paragraph{Case 2b}

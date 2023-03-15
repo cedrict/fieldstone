@@ -54,7 +54,7 @@ and compute the corresponding $k$ and $k+1$ values:
 k=iel
 kp1=iel+1
 \end{lstlisting}
-The $T^+$ and $T^-$ fields are then updated following Eq.~\eqref{eq:dgadv5}:
+The $T^+$ and $T^-$ fields are then updated following Eq.~\eqref{MMM-eq:dgadv5}:
 \begin{lstlisting}
 T_plus[k]   =T_plus_old[k]   +C*(-3*T_plus_old[k]-T_minus_old[k+1]+4*T_minus[k])
 T_minus[k+1]=T_minus_old[k+1]+C*( 3*T_plus_old[k]-T_minus_old[k+1]-2*T_minus[k])
@@ -108,7 +108,7 @@ C = \frac{\delta t \cdot u}{h} = \frac{10^{-4} \cdot  0.1}{1/200} = 0.002
 
 This advection benchmark originates in Donea \& Huerta \cite{dohu03}
 and it also to be found in Thieulot (2011) \cite{thie11} (and in 
-Section~\ref{ss:appAthie11}).
+Section~\ref{MMM-ss:appAthie11}).
 
 The domain has dimension $L_x=1$. 
 The temperature is prescribed on the left at $T=1$

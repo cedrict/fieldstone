@@ -79,7 +79,7 @@ Boundary conditions are as follows: $u=0$ is prescribed on the left and top boun
 while $v=0$ is prescribed on the bottom boundary, as shown below.
 Additionally, traction b.c. are prescribed at the top\footnote{Note that 
 in the axisymmetric case these then apply onto a disc and should be multiplied by $2\pi$} (these
-are described in Section~\ref{ss:openbc}) as indicated hereunder:
+are described in Section~\ref{MMM-ss:openbc}) as indicated hereunder:
 \begin{center}
 a)\includegraphics[width=5cm]{python_codes/fieldstone_63/images/bc_u}
 b)\includegraphics[width=5cm]{python_codes/fieldstone_63/images/bc_v}\\
@@ -91,7 +91,7 @@ c) Imposed traction at the top surface (Taken from \cite{wowu95}).}
 Linear triangular elements are used and a 3-point numerical quadrature is used.
 Average elemental quantities are computed with 7 quadrature points.
 These same quantities are also projected onto the nodes for visualisation purposes.
-Principal stresses are computed as explained in Section~\ref{sec:princ_stress}.
+Principal stresses are computed as explained in Section~\ref{MMM-sec:princ_stress}.
 
 The code solves the FE system and retrieves the deformation components $x$ and $y$,
 or $r$ and $z$ in the axisymmetric case.
