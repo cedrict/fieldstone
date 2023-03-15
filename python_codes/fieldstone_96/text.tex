@@ -93,7 +93,7 @@ The code relies on $P_2\times P_1$ elements or Crouzeix-Raviart elements. Fluids
 temperature effects are neglected. 
 
 We assume that the problem is axisymmetric, which allows us to simplify the equations greatly. 
-We here rely on axisymmetric cylindrical coordinates, see Section~\ref{ss:axicyleqs}.
+We here rely on axisymmetric cylindrical coordinates, see Section~\ref{MMM-ss:axicyleqs}.
 As shown on the following figure we assume that the deformation/flow is independent of the angle 
 $\theta$ so that the remaining space coordinates are $r$ and $z$.
 \begin{center}
@@ -107,7 +107,7 @@ $\theta$ so that the remaining space coordinates are $r$ and $z$.
 
 We assume here that the fluid is incompressible.
 Given the symmetry of the problem any term containing $\partial_\theta$ or $\upnu_\theta$ is zero.
-The strain rate tensor given in Section~\ref{ss:srcc} then simplifies to:
+The strain rate tensor given in Section~\ref{MMM-ss:srcc} then simplifies to:
 
 \begin{eqnarray}
 \dot\varepsilon_{rr} 
@@ -493,7 +493,8 @@ t_r = \vec{t}\cdot \vec{n} = ({\bm \tau}\cdot \vec{n})\cdot \vec{n} = \tau_{rr}
 %_____________________________________________________________
 \paragraph{A proxy for elasto-viscous lithospheric rheology}
 
-The implementation of elastic behaviour in a velocity-pressure code is not trivial and is presented in Section~\ref{ss:evrheo}.
+The implementation of elastic behaviour in a velocity-pressure code is not trivial 
+and is presented in Section~\ref{MMM-ss:evrheo}.
 In the end the lithospheric viscosity will be an effective viscosity given by
 \[
 \eta_{eff} = \frac{\mu \delta t}{1+\mu/\eta \delta t} 

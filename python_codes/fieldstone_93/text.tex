@@ -11,7 +11,8 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 This stone solves the problem of buoyancy-driven flows generated 
 by objects sinking in a fluid, potentially under a deformable free surface.
-It relies on an unstructured grid with Crouzeix-Raviart elements (see Section~\ref{sec:crouzeix-raviart}).
+It relies on an unstructured grid with Crouzeix-Raviart elements 
+(see Section~\ref{MMM-sec:crouzeix-raviart}).
 
 The workflow is as follows: the main parameters are defined in {\sl parameters.py}.
 The file {\sl generate\_nodes.py} uses these parameters to generate points on the 
@@ -22,7 +23,7 @@ as argument to triangle: the maximum area of a triangle.
 and this information is then read in by {\sl stone.py} which solves the 
 Stokes equation. 
 Boundary conditions are free slip everywhere. This benchmark is described in 
-Section~\ref{ss:stokes_sphere_fs2D}.
+Section~\ref{MMM-ss:stokes_sphere_fs2D}.
 
 All these actions are carried out automatically when the following script is 
 used\footnote{It assumes that the triangle program has been compiled and 
@@ -54,7 +55,7 @@ to $t\simeq 30$, while the simulation should ideally have been run up to $t>100$
 \newpage
 %....................................................
 \paragraph{The Stokes sphere in a unit square}
-The setup and all results are described in Section~\ref{ss:stokes_sphere2D}.
+The setup and all results are described in Section~\ref{MMM-ss:stokes_sphere2D}.
 Nodes are added on a vertical line to facilitate pressure and velocity profile measurements.
 
 \begin{center}
@@ -78,7 +79,7 @@ Nodes are added on a vertical line to facilitate pressure and velocity profile m
 
 Nodes on the deformable surface are flagged at the beginning of the calculations and 
 exported to an ascii file for later postprocessing. The multiple measurements for this 
-benchmark are thoroughly described and plotted in Section~\ref{ss:stokes_sphere_fs2D}.
+benchmark are thoroughly described and plotted in Section~\ref{MMM-ss:stokes_sphere_fs2D}.
 
 \begin{center}
 \includegraphics[width=6.5cm]{python_codes/fieldstone_93/50/mesh0000}

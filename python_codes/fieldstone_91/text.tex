@@ -9,15 +9,15 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-This stone carries out the Stokes sphere benchmark of Section~\ref{ss:stokes_sphere3D} although 
+This stone carries out the Stokes sphere benchmark of Section~\ref{MMM-ss:stokes_sphere3D} although 
 it uses an axisymmetric formulation, so that the sphere is actually falling inside 
 a vertical cylinder. As a consequence, the boundary conditions are: 
 free slip on the left (the axis of symmetry), top and bottom, and no slip on the right (the
 wall of the cylinder). The default domain size is $L_r=0.5$ and $L_z=1$.
 
 Having established the weak form of the Stokes equations and discretised them in 
-Section~\ref{ss:cyl_axi}, transforming a 2D plane-strain code into an axisymmetric one is rather straightforward.
-In a nutshell, 
+Section~\ref{MMM-ss:cyl_axi}, transforming a 2D plane-strain code into an axisymmetric 
+one is rather straightforward. In a nutshell, 
 \begin{itemize}
 \item $x$ stands for r
 \item $\upnu_r$ is $u$, $\upnu_z$ is $w$

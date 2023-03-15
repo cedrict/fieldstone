@@ -9,7 +9,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 I have implemented the two variants of the Rannacher-Turek element presented
-in Section~\ref{ss:RTq1p0}, the mid-value (MV) and the mid-point (MP).
+in Section~\ref{MMM-ss:RTq1p0}, the mid-value (MV) and the mid-point (MP).
 After communicating with Prof. Turek, I also implemented the Laplace 
 formulation of the Stokes equation, i.e. we assume $\eta$ to be constant 
 and therefore for an incompressible flow the momentum conservation 
@@ -18,12 +18,12 @@ equation becomes
 -\vec\nabla p + \eta \Delta \vec\upnu + \rho \vec{g} = \vec{0}
 \]
 This yields a different form of the viscous block of the Stokes system
-as explained in Section~\ref{ss:isovisc}.
+as explained in Section~\ref{MMM-ss:isovisc}.
 I use an isoparametric mapping, but I have tried a $Q_1$ mapping and given that 
 all elements are square it does not change anything. 
 
 Following a discussion with W. Bangerth, I have also implemented the DSSY element 
-(see Section~\ref{ss:dssy_2D}) which 'lives' on the same four nodes placed at 
+(see Section~\ref{MMM-ss:dssy_2D}) which 'lives' on the same four nodes placed at 
 the mid-edges. DSSY(1) corresponds to the basis functions based on $\theta_1$ 
 while DSSY(2) corresponds to the basis functions based on $\theta_2$ \cite{doss99}
 
@@ -32,7 +32,7 @@ Stokes equation, while formulation 2 stands for the Laplace one.
 
 I have implemented four benchmarks based on manufactured solutions:
 \begin{itemize}
-\item Donea-Huerta, see Section~\ref{mms1}
+\item Donea-Huerta, see Section~\ref{MMM-mms1}
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_77/results/dh/vel}
@@ -48,7 +48,7 @@ Middle row: root mean square velocity.
 Bottom row: root mean square velocity relative error.}
 \end{center}
 
-\item Volker John benchmark \cite{jolm17}, see Section~\ref{ss:mms_jolm17}:
+\item Volker John benchmark \cite{jolm17}, see Section~\ref{MMM-ss:mms_jolm17}:
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_77/results/vj/vel}
@@ -64,7 +64,7 @@ Middle row: root mean square velocity.
 Bottom row: root mean square velocity relative error.}
 \end{center}
 
-\item Dohrmann \& Bochev 2D benchmark \cite{dobo04,bodg06}, see Section~\ref{ss:mms2}:
+\item Dohrmann \& Bochev 2D benchmark \cite{dobo04,bodg06}, see Section~\ref{MMM-ss:mms2}:
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_77/results/db2D/vel}
@@ -93,15 +93,11 @@ Stokes equation, while formulation 2 stands for the Laplace one.}
 quadrilaterals obtained by joining the nodes.}
 \end{center}
 
-
 \end{itemize}
-
 
 Looking at these 4 analytical benchmarks (and focusing on the standard formulation only), 
 we can conclude that RT(MV) and DSSY(1) are the two best elements and that they are very close to 
 each other.
-
-
 
 %........................................................................
 \subsubsection*{Buoyancy-driven flow}
@@ -133,7 +129,7 @@ Results for all four basis functions are shown here:
 \includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/full/press2}
 \includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/full/press3}
 \includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/full/press4}\\
-{\captionfont Full density. Left to right: RT(MP), RT(MV), DSSY(1), DSSY(2). 64x64 elements}
+{\captionfont Full density. Left to right: RT(MP), RT(MV), DSSY(1), DSSY(2). $64\times 64$ elements}
 \end{center}
 
 We see that the pressure field is lithostatic and chequerboard-free  but the velocity field is abnormal 
@@ -154,7 +150,7 @@ the expected velocity field\footnote{Not saying it is 'the' solution but it at l
 \includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/reduced/press2}
 \includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/reduced/press3}
 \includegraphics[width=4cm]{python_codes/fieldstone_77/results/block/reduced/press4}\\
-{\captionfont Reduced density. Left to right: RT(MP), RT(MV), DSSY(1), DSSY(2). 64x64 elements}
+{\captionfont Reduced density. Left to right: RT(MP), RT(MV), DSSY(1), DSSY(2). $64\times 64$ elements}
 \end{center}
 
 
@@ -170,7 +166,7 @@ If I now conduct a short study on the value of $\delta\rho$:
 \includegraphics[width=5cm]{python_codes/fieldstone_77/results/block/drho/press1}
 \includegraphics[width=5cm]{python_codes/fieldstone_77/results/block/drho/press3}
 \includegraphics[width=5cm]{python_codes/fieldstone_77/results/block/drho/press2}\\
-{\captionfont From left to right: $\delta \rho=1,0.1,0.01$. 80x80 elements.}
+{\captionfont From left to right: $\delta \rho=1,0.1,0.01$. $80 \times 80$ elements.}
 \end{center}
 
 The conclusion is clear: in its current form, and unless there is a fundamental 
@@ -178,7 +174,7 @@ flaw in my implementation\footnote{but then how could the anlalytical benchmarks
 so well?}, these elements are not capable to 
 deal with buoyancy-driven flows where $\delta \rho/\rho < 1-10\%$ which is 
 unfortunately the type of simulations that are carried out in mantle dynamics modelling.
-The reasons are (partially) discussed in Section~\ref{ss:RTq1p0}, but 
+The reasons are (partially) discussed in Section~\ref{MMM-ss:RTq1p0}, but 
 I am not sure how to go further. If an additional jump term is needed in the 
 weak form in order to fix this problem, this makes the element not as simple as
 advertised. 

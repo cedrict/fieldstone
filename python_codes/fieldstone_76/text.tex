@@ -10,7 +10,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 
 This stone is an example of $Q_2\times P_{-1}$ implementation. 
-The 2D $Q_2$ shape functions have been derived in Section~\ref{ss:q22d}
+The 2D $Q_2$ shape functions have been derived in Section~\ref{MMM-ss:q22d}
 The $-1$ subscript indicates that the pressure field is linear (but not bilinear!).
 
 Actually the story is a bit more complicated than that, as explained for 
@@ -23,7 +23,7 @@ curvilinear co-ordinates on each quadrilateral $r$ and $s$). [...] Numerical res
 that the second choice (local or mapped pressure approximation) is suboptimally convergent.'' 
 
 In other words, the mapped version consists of  
-using the $P_{-1}$ basis functions defined in Section~\ref{ss:lbfq2D}:
+using the $P_{-1}$ basis functions defined in Section~\ref{MMM-ss:lbfq2D}:
 inside the element the pressure is given by $p^h(r,s)=a+br+cs$ 
 
 The unmapped version is a bit less straightforward and is as follows:
@@ -157,7 +157,7 @@ in the case of non-rectangular elements.
 %.......................................................
 \subsection*{Manufactured solution of Donea \& Huerta ({\tt bench=3})}
 
-This is the Donea \& Huerta benchmark, see Section~\ref{mms1}.
+This is the Donea \& Huerta benchmark, see Section~\ref{MMM-mms1}.
 
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_76/results/dh/reg/mesh_reg}
@@ -189,7 +189,7 @@ v(x,y)&=& 2xy^2(2x-1)(x-1)(y-1)^2 \\
 p(x,y)&=& x(1-x)(1-2y)
 \end{eqnarray}
 Boundary conditions are no-slip on all sides of the unit square. 
-The corresponding body force terms are derived in Section~\ref{ss:mms11}. 
+The corresponding body force terms are derived in Section~\ref{MMM-ss:mms11}. 
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mms1/reg/vrms}
@@ -209,7 +209,7 @@ The corresponding body force terms are derived in Section~\ref{ss:mms11}.
 \subsection*{Manufactured solution \#2 ({\tt bench=9})}
 
 This is the second manufactured solution 
-mentioned in Lamichhane \cite{lami17}. It is presented in Section~\ref{ss:mms2}.
+mentioned in Lamichhane \cite{lami17}. It is presented in Section~\ref{MMM-ss:mms2}.
 It is for a unit square with $\eta=1$ and the smooth exact solution is
 \begin{eqnarray}
 u(x,y) &=& x+x^2 - 2xy+x^3 - 3xy^2 + x^2y \\
@@ -237,7 +237,7 @@ velocity is prescribed on the boundary of the domain.
 %.......................................................
 \subsection*{Instantaneous sinking block}
 
-It is fully described in Section~\ref{ss:sinking_block}
+It is fully described in Section~\ref{MMM-ss:sinking_block}
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_76/results/block/vel}
