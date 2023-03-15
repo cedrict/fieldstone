@@ -5,14 +5,21 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
-
-\Literature Kiefer \& Hager \cite{kiha92}, King \cite{king97}, Redmond \& King \cite{reki04},
-Kiefer (2003) \cite{kief03}, Li \& Kiefer (2007) \cite{liki07}
-
-\par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This stone is inspired by Kellogg \& King (1997) \cite{keki97}. 
+\Literature:\\
+\fullcite{kiha92};\\
+\fullcite{king97};\\
+\fullcite{reki04};\\
+\fullcite{kief03};\\
+\fullcite{liki07};\\
+\fullcite{legu12}.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\vspace{.5cm}
+
+This stone is inspired by \textcite{keki97} (1997). 
 
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_106/images/keki97a}\\
@@ -58,13 +65,14 @@ during the adimensionalisation process then $\eta_0=1$ ({\color{orange} 4th gues
 As indicated in the paper, the viscosity is ``clipped'' to $1000\eta_0$.
 The initial temperature in the domain is set to $T=0.25$.
 
-As seen in Section~\ref{ss:dimeqs2}, the dimensionless heat transport equation is void of any coefficient if 
-$\kappa/h$ is used as a reference velocity (where $h$ is a reference length) so we take the 
+As seen in Section~\ref{MMM-ss:dimeqs2}, the dimensionless heat transport equation 
+is void of any coefficient if $\kappa/h$ is used as a reference velocity 
+(where $h$ is a reference length) so we take the 
 dimensionless value of $\kappa$ to be 1 in Eq.~5 of the paper.   
 
 Looking at Eq.~1 we find that there probably is a factor 2 missing before 
 the viscosity $\mu$ ({\color{orange} 5th guess}: confirmed by S.K., June 2021).
-In Section~2.2 it is stated that the SUPG method is used (see Section~\ref{ss:supg}) 
+In Section~2.2 it is stated that the SUPG method is used (see Section~\ref{MMM-ss:supg}) 
 but how the stabilisation parameter
 is chosen is not specified ({\color{orange} 6th guess}).
 
@@ -97,8 +105,9 @@ $t=0.000561$ corresponds to $1.5\cdot 10^8\si{\year}$,
 $t=0.000730$ corresponds to $2.0\cdot 10^8\si{\year}$, and
 $t=0.016353$ corresponds to $4.4\cdot 10^9\si{\year}$.
 This yields a reference time of about 270e9, which is close 
-to  the one obtained as $t_{ref}=h^2/\kappa = (2891e3)^2/10^{-6}\sim 8.36\cdot 10^{18}s \sim 265\cdot 10^9 \si{\year}$
-(see Section~\ref{ss:dimeqs2}).
+to  the one obtained as $t_{ref}=h^2/\kappa = 
+(2891e3)^2/10^{-6}\sim 8.36\cdot 10^{18}s \sim 265\cdot 10^9 \si{\year}$
+(see Section~\ref{MMM-ss:dimeqs2}).
 
 This stone relies on $Q_2\times Q_1$ elements while the orginal paper relies
 on the cheaper $Q_1\times P_0$ element with a penalty formulation (the 
@@ -124,8 +133,8 @@ rotational nullspace and it is removed by setting $\vec\upnu=\vec{0}$ at $x=0$ a
 This option was not explored in the original paper.
 
 The equations are solved in their cylindrical axisymmetric form, see
-Section~\ref{ss:axicyleqs}. Their FE discretisation is presented in Section~\ref{ss:cyl_axi}
-and Section~\ref{ss:hte_axisym}.
+Section~\ref{MMM-ss:axicyleqs}. Their FE discretisation is presented in Section~\ref{MMM-ss:cyl_axi}
+and Section~\ref{MMM-ss:hte_axisym}.
 
 
 \begin{remark}
@@ -195,7 +204,7 @@ t_n= \vec{t}_n \cdot \vec{n} = \sigma_{rr} n_r^2 + 2 \sigma_{rz} n_r n_z + \sigm
 
 What follows is an attempt at using the regular equations with Earth-like values for parameters...
 
-As explained in Section~\ref{ss:dimeqs2} we choose four reference quantities:
+As explained in Section~\ref{MMM-ss:dimeqs2} we choose four reference quantities:
 \begin{itemize}
 \item the reference length $L_{ref}=r_o-r_i=2891\si{\kilo\metre}$ (trivial choice)
 with $r_i=3480\si{\km}$ and $r_o=6371\si{\km}$.
@@ -223,7 +232,7 @@ so
 \eta_{ref}=\eta_0 =\frac{\rho_0^2 C_p g \alpha \Delta T (R_{outer}-R_{inner})^3}{\Ranb \; k}
 \simeq 1.25 \cdot 10^{22}\si{\pascal\second}
 \]
-which is a very acceptable value for the mantle viscosity, see Section~\ref{ss:viscprof}.
+which is a very acceptable value for the mantle viscosity, see Section~\ref{MMM-ss:viscprof}.
 \end{itemize}
 
 \noindent The dimensionless viscosity is either constant ($\eta_0'=1$) or temperature-dependent 
@@ -268,7 +277,7 @@ A = \{ 4\cdot 10^{-24}    , 5.05\cdot 10^{-24}   ,  6.26\cdot 10^{-23}\}
 \]
 From the four reference values above we can construct additional ones, 
 such as the reference stress, which we will need to look at dynamic topography.
-From Section~\ref{ss:dimeqs2}:
+From Section~\ref{MMM-ss:dimeqs2}:
 \[
 \sigma_{ref} 
 = \eta_{ref} \dot{\varepsilon}_{ref} 
@@ -278,8 +287,6 @@ From Section~\ref{ss:dimeqs2}:
 = \frac{\rho_0 g \alpha \Delta T (r_o-r_i)}{\Ranb}
 \simeq 829.55  
 \] 
-
-
 
 
 Of course this exercise is somewhat silly as the values of most material parameters

@@ -105,7 +105,7 @@ with format explaination at \url{https://pds-geosciences.wustl.edu/dataserv/grav
 
 We can now proceed to compute the gravity field(s) 
 resulting from this thin crustal layer at a point $\vec{r}=(x,y,z)$, as 
-explained in Section~\ref{exgravptmass}.
+explained in Section~\ref{MMM-exgravptmass}.
 
 %-----------------------------------------------------------------------
 \subsection*{Gravity calculations - 1degree resolution}
@@ -128,7 +128,7 @@ for ilat2 in range(0,nlat2):
 \end{lstlisting}
 We now have the coordinates of all measurement points and the coordinates of all the 
 cells \lstinline{xC,yC,zC} which have a volume \lstinline{cell_volume}.
-As explained in Section~\ref{exgravptmass}, the gravity fields can be computed as 
+As explained in Section~\ref{MMM-exgravptmass}, the gravity fields can be computed as 
 follows:
 \begin{eqnarray}
 g_x(x,y,z) &=& {\cal G}  \sum_{e=1}^{Ncell} \rho_e V_e  \frac{x-x_e}{|\vec{r}-\vec{r}_e|^3} \label{eqq:gravdiscr1}\\

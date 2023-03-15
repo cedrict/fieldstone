@@ -8,7 +8,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The following seven experiments are pure-advection experiments. As such the Peclet number
-is infinite and the $\gamma$ value of the SUPG algorithm as shown in Section~\ref{ss:supg} tends to 1
+is infinite and the $\gamma$ value of the SUPG algorithm as shown in Section~\ref{MMM-ss:supg} tends to 1
 and the $\tau$ parameter is simply $h/2 |\vec\upnu| p$ (where $p$ is the order of 
 the shape function polynomials).
 
@@ -47,7 +47,7 @@ In the book Donea \& Huerta set the timestep is set to $\delta t=2\pi/200$ which
 to a CFL number of approximately 0.666. If we want to be able to run this experiment at higher 
 resolution we need to adapt the timestep to the mesh size (CFL criterion). We 
 therefore set the CFL number to 0.5 and compute $\delta t$ 
-accordingly (see Section~\ref{ss:cfl}).  
+accordingly (see Section~\ref{MMM-ss:cfl}).  
 The density and heat capacity values are set to 1. We monitor the minimum 
 and maximum value of the temperature field, as well as the total thermal energy $E_T$ in the 
 system during the full rotation:
@@ -96,7 +96,7 @@ and we recover very similar results to those presented in \cite{dohu03}:
 
 
 \paragraph{On the use of BDF methods} I have also implemented 
-BDF1,2,3,4,5  (see Section~\ref{ss:hte_fem}). 
+BDF1,2,3,4,5  (see Section~\ref{MMM-ss:hte_fem}). 
 BDF2 outperforms BDF1 and is comparable to Crank-Nicolson. 
 For reasons unknown to me, the BDF3 diverges after 100 time steps. So do 
 BDF4 and BDF5 after even less timesteps. In the following picture the temperature is shown for 
@@ -276,7 +276,7 @@ large scale under/overshoots.
 \subsection*{Experiment 7 - Beam in a whirl}
 
 The setup is identical to experiment 6, but the velocity is now given by 
-the equations of Section~\ref{mms1} which have been multiplied by 100 cm/year 
+the equations of Section~\ref{MMM-mms1} which have been multiplied by 100 cm/year 
 to arrive at a max velocity in the domain of approximately 1cm/year:
 
 \begin{center}

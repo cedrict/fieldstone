@@ -41,7 +41,7 @@ M(t=0) = L_x \times 2km \times \rho_s + Lx \times 8km \times \rho_0 =
 
 \paragraph{The code} It is based on stable $Q_2\times Q_1$ elements for the Stokes equations and 
 the heat transport equation need not be solved. 
-It relies on the Particle-in-Cell method (see Section~\ref{ss:pic}) for material advection. 
+It relies on the Particle-in-Cell method (see Section~\ref{MMM-ss:pic}) for material advection. 
 At startup {\tt nmarker\_per\_dim**2} particles are regularly placed in each element. 
 There are in total:
 \begin{lstlisting}
@@ -82,12 +82,12 @@ somewhat more instinctive node-centric approach which itself is similar
 to the meshless methods approach (think of the SPH method kernel but with a 
 square support). Density is later on interpolated onto the quadrature points 
 with the $Q_1$ shape functions again to avoid the problems highlighted in 
-Section~\ref{ss:bern}.
+Section~\ref{MMM-ss:bern}.
 Viscosity is averaged per element by means of an arithmetic, geometric or harmonic mean.
 
 Particles are advected by means of a (space) Runge-Kutta 1st/2nd/3rd order algorithm (see
-Section~\ref{ss:rkm}). The time step $\delta t$ is set by means of the CFL criterion (see
-Section~\ref{ss:cfl}).
+Section~\ref{MMM-ss:rkm}). The time step $\delta t$ is set by means of the CFL criterion (see
+Section~\ref{MMM-ss:cfl}).
 
 The root mean square velocity and total mass of the system are computed every time step.
 
@@ -121,7 +121,7 @@ et al (1997). Letters stand for authors initials.}
 %---------------------------------------------------------------
 \subsection*{Stokes sphere under deformable free surface}
 
-The setup is described in Section~\ref{ss:stokes_sphere_fs2D}. 
+The setup is described in Section~\ref{MMM-ss:stokes_sphere_fs2D}. 
 Densities are projected on the nodes or elements with an arithmetic averaging while
 viscosities are projected onto elements ({\tt avrg}$>0$) or onto $Q_1$nodes ({\tt avrg}$<0$).
 There are 7 averaging schemes implemented:
@@ -136,7 +136,7 @@ There are 7 averaging schemes implemented:
 \end{itemize}
 
 Let us recall that the Least Squares methodology is presented for example in 
-Thielmann \etal \cite{thmk14} and in Section~\ref{ss:pic}:
+Thielmann \etal \cite{thmk14} and in Section~\ref{MMM-ss:pic}:
 the density or viscosity values carried by the markers are represented by a linear 
 function in a 2D space inside each 
 element, i.e. $\tilde{\eta}({\vec r}) = a + b x+c y$ and $\tilde{\rho}=d+ex+fy$.

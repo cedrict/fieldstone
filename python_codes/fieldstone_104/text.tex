@@ -2,7 +2,7 @@
 Note to self: normalisation does not work for Q2Q1.
 
 All the following benchmarks are isoviscous with $\eta=1$ and are valid in the unit square domain. 
-As such the scaling coefficient between blocks $\K$ and $\G$ of the Stokes matrix (see Section~\ref{XYZ}) 
+As such the scaling coefficient between blocks $\K$ and $\G$ of the Stokes matrix (see Section~\ref{X_Y_Z}) 
 is 1 and won't play any role in the results. 
 
 REDO all with aspect
@@ -15,7 +15,7 @@ equations, i.e.:
 = - \gamma \vec\nabla (\vec\nabla\cdot \vec\upnu)
 \]
 We immediately notice that the aditional term is in fact identical to the penalty term and 
-its weak form and discretisation is worked out in Section~\ref{XXX}, so that 
+its weak form and discretisation is worked out in Section~\ref{X_X_X}, so that 
 the matrix $\K$ then becomes:
 \[
 \K = \int {\bm B}^T \cdot [ \gamma {\bm K} + \eta {\bm C} ] \cdot {\bm B} \; dV
@@ -184,7 +184,7 @@ Pressure errors are however identical.
 %------------------------------------------------------------------------------------------
 \subsubsection*{Experiment=6: manufactured solution in John \etal (2017) \cite{jolm17}}
 
-See Section~\ref{ss:mmsjolm17} for details.
+See Section~\ref{MMM-ss:mmsjolm17} for details.
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_104/results/exp6/vel}

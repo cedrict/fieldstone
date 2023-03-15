@@ -64,11 +64,13 @@ Note that what is called Nu in the code is in fact $Q=\int_0^{L_x} q_y dx$.
 I have also run the very same experiments with \aspect{} at mesh uniform level 5 (and found that 
 level 6 did not change anything to the results). The prm file is hereby joined to this repository.
 
-As explained in McKenzie \etal (1974), for $\Ranb <<1$ advection of heat is negligible and $T$ is therefore harmonic:
+As explained in McKenzie \etal (1974), for $\Ranb <<1$ advection of heat is negligible and $T$ is 
+therefore harmonic:
 \[
 T(x,y) = \Delta T \cos (\pi x/L) \frac{\sinh \pi z/L}{\sinh \pi L_y/L_x}
 \]
-When $T_0=0.01$, only heat diffusion is present and we recover the analytical solution presented in McKenzie \etal:
+When $T_0=0.01$, only heat diffusion is present and we recover the analytical solution presented 
+in McKenzie \etal:
 
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_38/results/T0_0p001_32x32/T}

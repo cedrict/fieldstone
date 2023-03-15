@@ -2,7 +2,7 @@
 
 In this experiment we consider 4 different finite elements. The idea behind this stone 
 is to build a code which code(the FEM build and assembly) is common to all. 
-The setup is the Donea \& Huerta benchmark (Section~\ref{mms1}), which has been modified so that 
+The setup is the Donea \& Huerta benchmark (Section~\ref{MMM-mms1}), which has been modified so that 
 the pressure is zero at the top right corner.
 
 \begin{verbatim}
@@ -88,7 +88,7 @@ which can be conveniently implemented as follows:
 \begin{lstlisting}
 nqperdim=order+1
 \end{lstlisting}
-The quadrature points location and weight is document in Section~\ref{sec:quadrature}.
+The quadrature points location and weight is document in Section~\ref{MMM-sec:quadrature}.
 
 Because we wish to use a regular grid, the layout of the points for all three elements 
 can be implemented easily:
@@ -292,7 +292,7 @@ We see that we recover a second order convergence rate for velocity (as expected
 but because of the checkerboard pattern the pressure convergence is simply random. 
 The smoothed pressure $q$ shows virtually no checkerboard pattern, except on the boundaries.
 This is a perfect example for the use of more accurate/clever smoothing procedure, see
-Section~\ref{psmoothing}.
+Section~\ref{MMM-psmoothing}.
 
 
 \subsection*{Results with $Q_2\times Q_1$ element}
