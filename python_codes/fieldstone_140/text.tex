@@ -258,7 +258,7 @@ When increasing resolution one gets:
 %....................................................
 \paragraph{Computing the slope}
 
-In order to compute $dh/dx$ and $dh/dy$, one could resort to using 
+In order to compute $\partial h/\partial x$ and $\partial h/\partial y$, one could resort to using 
 basis functions derivatives in the middle of each element, but we
 instead use a different approach. 
 Since $P_1$ basis functions are used, it means that inside an element 
@@ -277,8 +277,8 @@ The equation above can be rewritten
 \[
 \left(
 \begin{array}{ccc}
-1 & x_0 & y_0 \\
-1 & x_1 & y_1 \\
+1 & x_0 & y_0 \nn\\
+1 & x_1 & y_1 \nn\\
 1 & x_2 & y_2 \\
 \end{array}
 \right)
@@ -300,8 +300,11 @@ After solving this system in each element, we have
 \frac{\partial h}{\partial x} = b 
 \qquad
 \frac{\partial h}{\partial y} = c
+\qquad
+S=\sqrt{b^2+c^2}
 \]
-
+The calculations can be be benchmarked by assigning a simple linear planar 
+topography and verifying that all elements are assigned the same correct slope.
 
 
 %....................................................
