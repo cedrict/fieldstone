@@ -265,7 +265,7 @@ square_edges = compute_segs(square_vertices)
 
 O1 = {'vertices' : square_vertices, 'segments' : square_edges}
 #T1 = tr.triangulate(O1, 'pqa60000000') #for testing
-T1 = tr.triangulate(O1, 'pqa2000000') 
+T1 = tr.triangulate(O1, 'pqa1500000') 
 
 tr.compare(plt, O1, T1) # The tr.compare() function always takes plt as its 1st argument
 #plt.savefig('ex1.pdf', bbox_inches='tight')
@@ -426,41 +426,47 @@ for iel in range(0,nel):
 
 print("compute gnei: %.3f s" % (timing.time() - start))
 
+#------------------------------------------------------------------------------
+# establish list of elements on border of domain 
+#------------------------------------------------------------------------------
+start = timing.time()
     
 border_element = np.zeros(nel,dtype=np.int16)
 
 for iel in range(nel):
-    if abs(x[icon[0,iel]])/Lx<eps:
+    if abs(x[icon[0,iel]])/Lx<eps and abs(x[icon[1,iel]])/Lx<eps:
        border_element[iel]=1
-    if abs(x[icon[1,iel]])/Lx<eps:
+    if abs(x[icon[1,iel]])/Lx<eps and abs(x[icon[2,iel]])/Lx<eps:
        border_element[iel]=1
-    if abs(x[icon[2,iel]])/Lx<eps:
-       border_element[iel]=1
-
-    if abs(x[icon[0,iel]]-Lx)/Lx<eps:
-       border_element[iel]=1
-    if abs(x[icon[1,iel]]-Lx)/Lx<eps:
-       border_element[iel]=1
-    if abs(x[icon[2,iel]]-Lx)/Lx<eps:
+    if abs(x[icon[2,iel]])/Lx<eps and abs(x[icon[0,iel]])/Lx<eps:
        border_element[iel]=1
 
-    if abs(y[icon[0,iel]])/Ly<eps:
+    if abs(x[icon[0,iel]]-Lx)/Lx<eps and abs(x[icon[1,iel]]-Lx)/Lx<eps:
        border_element[iel]=1
-    if abs(y[icon[1,iel]])/Ly<eps:
+    if abs(x[icon[1,iel]]-Lx)/Lx<eps and abs(x[icon[2,iel]]-Lx)/Lx<eps:
        border_element[iel]=1
-    if abs(y[icon[2,iel]])/Ly<eps:
-       border_element[iel]=1
-
-    if abs(y[icon[0,iel]]-Ly)/Ly<eps:
-       border_element[iel]=1
-    if abs(y[icon[1,iel]]-Ly)/Ly<eps:
-       border_element[iel]=1
-    if abs(y[icon[2,iel]]-Ly)/Ly<eps:
+    if abs(x[icon[2,iel]]-Lx)/Lx<eps and abs(x[icon[0,iel]]-Lx)/Lx<eps:
        border_element[iel]=1
 
+    if abs(y[icon[0,iel]])/Ly<eps and abs(y[icon[1,iel]])/Ly<eps:
+       border_element[iel]=1
+    if abs(y[icon[1,iel]])/Ly<eps and abs(y[icon[2,iel]])/Ly<eps:
+       border_element[iel]=1
+    if abs(y[icon[2,iel]])/Ly<eps and abs(y[icon[0,iel]])/Ly<eps:
+       border_element[iel]=1
+
+    if abs(y[icon[0,iel]]-Ly)/Ly<eps and abs(y[icon[1,iel]]-Ly)/Ly<eps:
+       border_element[iel]=1
+    if abs(y[icon[1,iel]]-Ly)/Ly<eps and abs(y[icon[2,iel]]-Ly)/Ly<eps:
+       border_element[iel]=1
+    if abs(y[icon[2,iel]]-Ly)/Ly<eps and abs(y[icon[0,iel]]-Ly)/Ly<eps:
+       border_element[iel]=1
 
 nborder=np.count_nonzero(border_element==1)
 
+print('   -> nborder=',nborder)
+
+print("compute gnei: %.3f s" % (timing.time() - start))
 
 ###################################################################################################
 ###################################################################################################
@@ -579,18 +585,19 @@ for istep in range(0,nstep):
     catchment = np.zeros(nel,dtype=np.float64) 
     catchment[:]=-1
 
-    counter=0
-    for iel in range(0,nel):
-        if border_element[iel]==1:
-           catchment[iel]=counter
-           counter+=1
+    if istep%every==0:
+       counter=0
+       for iel in range(0,nel):
+           if border_element[iel]==1:
+              catchment[iel]=counter
+              counter+=1
 
-    for it in range(0,5):
-        for iel in range(0,nel):
-            if catchment[iel]>-1:
-               for jel in range(0,nel):
-                   if gnei[min_index[jel],jel]==iel:
-                      catchment[jel]=catchment[iel]
+       for it in range(0,10):
+           for iel in range(0,nel):
+               if catchment[iel]>-1:
+                  for jel in range(0,nel):
+                      if gnei[min_index[jel],jel]==iel:
+                         catchment[jel]=catchment[iel]
 
     print("compute catchements: %.3f s" % (timing.time() - start))
 
