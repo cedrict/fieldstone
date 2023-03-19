@@ -23,39 +23,45 @@ a geodynamical context requires a lot of additional techniques.
 \newpage %-----------------------------------------------------------------------------------------
 \section{Pressure smoothing/filtering for $Q_1\times P_0$ elements \label{psmoothing}} \input{pressure_smoothing}
 \newpage %-----------------------------------------------------------------------------------------
-\section{Pressure scaling \label{pscaling}} \input{pressure_scaling} %--------------------------
+\section{Pressure scaling \label{pscaling}} \input{pressure_scaling} %-----------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Pressure normalisation, nullspace\label{ss_pnorm}} \input{pressure_normalisation} %----
+\section{Pressure normalisation, nullspace\label{ss_pnorm}} \input{pressure_normalisation} %-------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Solving the Stokes system \label{sec:solvers}} \input{solvers} %-----------------------
+\section{Solving the Stokes system \label{sec:solvers}} \input{solvers} %--------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{The consistent boundary flux (CBF) \label{ss:cbf}} \input{CBF} %-----------------------
+\section{The value of the timestep}\label{ss:cfl} \input{cfl} %------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{The value of the timestep}\label{ss:cfl} \input{cfl} %---------------------------------
+\section{Mappings \& Jacobians \label{ss:mappings}} \input{mappings} %-----------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Mappings \& Jacobians \label{ss:mappings}} \input{mappings} %--------------------------
+\section{Exporting data to vtk/vtu format} \input{exporting_to_vtk} %------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Exporting data to vtk/vtu format} \input{exporting_to_vtk} %---------------------------
+\section{Runge-Kutta methods}\label{ss:rkm} \input{rungekutta} %-----------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Runge-Kutta methods}\label{ss:rkm} \input{rungekutta} %--------------------------------
+\section{Am I in or not? - finding reduced coordinates}\label{sec:amiin}\input{amiin} %------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Am I in or not? - finding reduced coordinates}\label{sec:amiin}\input{amiin} %---------
+\section{Error measurements and convergence rates} \input{errors} %--------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Error measurements and convergence rates} \input{errors} %-----------------------------
+\section{The initial temperature field} \input{initial_temperature} %------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{The initial temperature field} \input{initial_temperature} %---------------------------
+\section{Kinematic boundary conditions}\label{kin_bc} \input{kinematic_bc} %-----------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Kinematic boundary conditions}\label{kin_bc} \input{kinematic_bc} %--------------------
+\section{Periodic boundary conditions\label{ss_periodic}}\input{periodic} %------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Computing gradients - the recovery process} \input{recovery} %-------------------------
+\section{Imposing boundary conditions \label{ss:howtobc}} \input{howtobc} %------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Tracking materials and/or interfaces} \input{tracking} %-------------------------------
+\section{Open boundary conditions}\label{ss:openbc}\input{openbc} %--------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Static condensation} \input{static_condensation} %-------------------------------------
+\section{Free-slip boundary conditions on annulus}\label{ss:fsbc_annulus}\input{fsbc_annulus} %----
 \newpage %-----------------------------------------------------------------------------------------
-\section{Measuring incompressibility \label{ss_incomp}} \input{incomp} %------------------------
+\section{The consistent boundary flux (CBF) \label{ss:cbf}} \input{CBF} %--------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Periodic boundary conditions\label{ss_periodic}}\input{periodic} %---------------------
+\section{Computing gradients - the recovery process} \input{recovery} %----------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\section{Tracking materials and/or interfaces} \input{tracking} %----------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\section{Static condensation} \input{static_condensation} %----------------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\section{Measuring incompressibility \label{ss_incomp}} \input{incomp} %---------------------------
 \newpage %-----------------------------------------------------------------------------------------
 \section{Removing rotational nullspace\label{ss_nullspace}} \input{nullspace} %-----------------
 \newpage %-----------------------------------------------------------------------------------------
@@ -75,17 +81,11 @@ a geodynamical context requires a lot of additional techniques.
 \newpage %-----------------------------------------------------------------------------------------
 \section{Computing depth \label{ss:depth}} \input{computing_depth} %----------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Imposing boundary conditions \label{ss:howtobc}} \input{howtobc} %---------------------
-\newpage %-----------------------------------------------------------------------------------------
 \section{The Geoid} \label{ss:geoid} \input{geoid} %--------------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
 \section{The Lyapunov time/exponent, mixing stirring}\label{ss:lyapunov}\input{lyapunov} %------
 \newpage %-----------------------------------------------------------------------------------------
 \section{Phase transitions}\label{ss:phasetransitions}\input{phasetransitions} %----------------
-\newpage %-----------------------------------------------------------------------------------------
-\section{Open boundary conditions}\label{ss:openbc}\input{openbc} %-----------------------------
-\newpage %-----------------------------------------------------------------------------------------
-\section{Free-slip boundary conditions on annulus}\label{ss:fsbc_annulus}\input{fsbc_annulus} %-
 \newpage %-----------------------------------------------------------------------------------------
 \section{Implementation of an elasto-viscous rheology} \label{ss:evrheo} \input{evrheo.tex} %--
 \newpage %-----------------------------------------------------------------------------------------
