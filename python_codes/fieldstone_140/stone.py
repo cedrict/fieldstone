@@ -22,7 +22,7 @@ def dNNds(r,s):
 
 #--------------------------------------------------------------------------------------------------
 
-def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,filename,area,border,catchment):
+def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,filename,area,border,catchment,dz):
     N=np.size(x)
     m,nel=np.shape(icon)
 
@@ -42,6 +42,10 @@ def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,
     vtufile.write("<DataArray type='Float32' Name='elevation' Format='ascii'> \n")
     for i in range(0,N):
         vtufile.write("%10e \n" %(z[i]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='elevation change (dz)' Format='ascii'> \n")
+    for i in range(0,N):
+        vtufile.write("%10e \n" %(dz[i]))
     vtufile.write("</DataArray>\n")
     vtufile.write("</PointData>\n")
     #####
@@ -82,10 +86,6 @@ def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,
     for iel in range (0,nel):
         vtufile.write("%e\n" % (catchment[iel]))
     vtufile.write("</DataArray>\n")
-
-
-
-
     vtufile.write("<DataArray type='Float32' Name='sorted_indices' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%d\n" % (sorted_indices[iel]))
@@ -93,22 +93,18 @@ def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,
     vtufile.write("</CellData>\n")
     #####
     vtufile.write("<Cells>\n")
-    #--
     vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%d %d %d \n" %(icon[0,iel],icon[1,iel],icon[2,iel]))
     vtufile.write("</DataArray>\n")
-    #--
     vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%d \n" %((iel+1)*m))
     vtufile.write("</DataArray>\n")
-    #--
     vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
     for iel in range (0,nel):
         vtufile.write("%d \n" %5)
     vtufile.write("</DataArray>\n")
-    #--
     vtufile.write("</Cells>\n")
     #####
     vtufile.write("</Piece>\n")
@@ -118,7 +114,7 @@ def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,
 
 #--------------------------------------------------------------------------------------------------
 
-def export_network_to_vtu(x,y,z,xc,yc,zc,icon,min_index,filename):
+def export_network_to_vtu(x,y,z,xc,yc,zc,A,icon,min_index,filename):
     m,nel=np.shape(icon)
     vx=np.zeros(nel,dtype=np.float64) 
     vy=np.zeros(nel,dtype=np.float64) 
@@ -151,6 +147,10 @@ def export_network_to_vtu(x,y,z,xc,yc,zc,icon,min_index,filename):
     for i in range(0,nel):
         vtufile.write("%10e %10e %10e \n" %(vx[i],vy[i],vz[i]))
     vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='drainage area' Format='ascii'> \n")
+    for i in range(0,nel):
+        vtufile.write("%e \n" % A[i])
+    vtufile.write("</DataArray>\n")
     vtufile.write("</PointData>\n")
     #####
     vtufile.write("<Cells>\n")
@@ -172,7 +172,6 @@ def export_network_to_vtu(x,y,z,xc,yc,zc,icon,min_index,filename):
     vtufile.write("</UnstructuredGrid>\n")
     vtufile.write("</VTKFile>\n")
     vtufile.close()
-
 
 #--------------------------------------------------------------------------------------------------
 
@@ -205,6 +204,25 @@ def compute_element_slope(x1,x2,x3,y1,y2,y3,h1,h2,h3):
     slope=np.sqrt(dh_dx**2+dh_dy**2)
     return dh_dx,dh_dy,slope
 
+#--------------------------------------------------------------------------------------------------
+
+def uplift(exp,xq,yq):
+    if exp==0:
+       val=w_uplift
+    elif exp==1:
+       val=w_uplift
+    elif exp==2:
+       val=w_uplift
+    elif exp==3:
+       val=0
+    elif exp==4:
+       r=np.sqrt((xq-Lx/2)**2+(yq-Ly/2)**2)
+       if r<Lx/2:
+          val=(1-r/(Lx/2))* 1e-2/year
+       else:
+          val=0 
+    return val 
+
 ###################################################################################################
 ###################################################################################################
 
@@ -214,24 +232,90 @@ year=365.25*24*3600
 ndim=2      # number of spatial dimensions
 m=3         # number of nodes in 1 element
 
-Lx=50e3
-Ly=50e3
-rexp = 2       # drainage area exponent
-mexp = 1       # slope exponent
-w_uplift = 1e-3/year  # rock uplift rate (m/s)
-c = 1e-11/year # fluvial erosion coeff. (mˆ(2-2rexp)/s)
-c0 = 0.1/year  # linear diffusion coeff.(mˆ2/s)
-Ac = 0         # critical drainage area (mˆ2)
-scale = 10     # amplitude random initial topography (m)
-
-nstep = 3000  # number of time steps
-dt = 100*year # time step (s)
-tol = 1e-3    # iteration tolerance
-
 zscale=1
 every=10
 
 lumping=True
+
+   
+tol = 1e-3    # iteration tolerance
+
+#------------------------------------------------------------------------------
+
+#experiment=0 # simpson's book example
+#experiment=1 # simple slope high at x=Lx
+#experiment=2 # benchmark uplift 
+#experiment=3 # benchmark linear diffusion
+experiment=4 # volcano-like
+
+if experiment==0:
+   Lx=50e3
+   Ly=50e3
+   rexp = 2       # drainage area exponent
+   mexp = 1       # slope exponent
+   w_uplift = 1e-3/year  # rock uplift rate (m/s)
+   c = 1e-11/year # fluvial erosion coeff. (mˆ(2-2rexp)/s)
+   c0 = 0.1/year  # linear diffusion coeff.(mˆ2/s)
+   Ac = 0         # critical drainage area (mˆ2)
+   scale = 10     # amplitude random initial topography (m)
+   nstep = 3000  # number of time steps
+   dt = 100*year # time step (s)
+   target_area='1500000'
+
+if experiment==1:
+   Lx=50e3
+   Ly=50e3
+   rexp = 2       # drainage area exponent
+   mexp = 1       # slope exponent
+   w_uplift = 0.1e-3/year  # rock uplift rate (m/s)
+   c = 1e-11/year # fluvial erosion coeff. (mˆ(2-2rexp)/s)
+   c0 = 0.1/year  # linear diffusion coeff.(mˆ2/s)
+   Ac = 0         # critical drainage area (mˆ2)
+   scale = 10     # amplitude random initial topography (m)
+   nstep = 3000  # number of time steps
+   dt = 100*year # time step (s)
+   target_area='1800000'
+
+if experiment==2:
+   Lx=50e3
+   Ly=50e3
+   rexp = 2       # drainage area exponent
+   mexp = 1       # slope exponent
+   w_uplift = 1e-3/year  # rock uplift rate (m/s)
+   c = 0.         # fluvial erosion coeff. (mˆ(2-2rexp)/s)
+   c0 = 0.        # linear diffusion coeff.(mˆ2/s)
+   Ac = 0         # critical drainage area (mˆ2)
+   scale = 10     # amplitude random initial topography (m)
+   nstep = 100  # number of time steps
+   dt = 100*year # time step (s)
+   target_area='3500000'
+
+if experiment==3:
+   Lx=50e3
+   Ly=50e3
+   rexp = 2       # drainage area exponent
+   mexp = 1       # slope exponent
+   c = 0.         # fluvial erosion coeff. (mˆ(2-2rexp)/s)
+   c0 = 200/year  # linear diffusion coeff.(mˆ2/s)
+   Ac = 0         # critical drainage area (mˆ2)
+   scale = 0     # amplitude random initial topography (m)
+   nstep = 5000  # number of time steps
+   dt = 100*year # time step (s)
+   target_area='4000000'
+   every=100
+
+if experiment==4: #volcano-like
+   Lx=50e3
+   Ly=50e3
+   rexp = 2       # drainage area exponent
+   mexp = 1       # slope exponent
+   c = 1e-12/year # fluvial erosion coeff. (mˆ(2-2rexp)/s)
+   c0 = 0.1/year  # linear diffusion coeff.(mˆ2/s)
+   Ac = 0         # critical drainage area (mˆ2)
+   scale = 1      # amplitude random initial topography (m)
+   nstep = 3000   # number of time steps
+   dt = 100*year  # time step (s)
+   target_area='700000'
 
 print("-----------------------------")
 print("----------fieldstone---------")
@@ -265,7 +349,7 @@ square_edges = compute_segs(square_vertices)
 
 O1 = {'vertices' : square_vertices, 'segments' : square_edges}
 #T1 = tr.triangulate(O1, 'pqa60000000') #for testing
-T1 = tr.triangulate(O1, 'pqa1500000') 
+T1 = tr.triangulate(O1, 'pqa'+target_area) 
 
 tr.compare(plt, O1, T1) # The tr.compare() function always takes plt as its 1st argument
 #plt.savefig('ex1.pdf', bbox_inches='tight')
@@ -296,20 +380,38 @@ dhdx = np.zeros(nel,dtype=np.float64)
 dhdy = np.zeros(nel,dtype=np.float64) 
 slope = np.zeros(nel,dtype=np.float64) 
 
+rad = np.zeros(N,dtype=np.float64) 
+rad[:]=np.sqrt((x[:]-Lx/2)**2+(y[:]-Ly/2)**2)
+
 #------------------------------------------------------------------------------
 # initial topography 
 #------------------------------------------------------------------------------
 start = timing.time()
 
 z=np.zeros(N,dtype=np.float64) 
+z_prev=np.zeros(N,dtype=np.float64) 
 
-for i in range(0,N):
-    #z[i]=x[i]/10000+y[i]/11000 #for testing
-    z[i]= random.uniform(0,scale)
-    #z[i]=y[i]/Ly/3
-    #z[i]=0
-    #z[i]=np.cos((x[i]-Lx/2)/Lx*np.pi)*np.cos((y[i]-Ly/2)/Ly*np.pi)*10
-    #z[i]=2*x[i]/km+3*y[i]/km
+if experiment==0 or experiment==4:
+   for i in range(0,N):
+       z[i]= random.uniform(0,scale)
+
+if experiment==1:
+   for i in range(0,N):
+       z[i]=x[i]/Lx*scale
+
+if experiment==2 or experiment==3:
+   for i in range(0,N):
+       z[i]=0
+
+
+#for i in range(0,N):
+   #z[i]=x[i]/10000+y[i]/11000 #for testing
+   #z[i]=y[i]/Ly/3
+   #z[i]=0
+   #z[i]=np.cos((x[i]-Lx/2)/Lx*np.pi)*np.cos((y[i]-Ly/2)/Ly*np.pi)*10
+   #z[i]=2*x[i]/km+3*y[i]/km
+
+z_prev[:]=z[:]
 
 print("prescribe initial elevation: %.3f s" % (timing.time() - start))
 
@@ -351,15 +453,28 @@ start = timing.time()
 bc_fix = np.zeros(N,dtype=np.bool)  # boundary condition, yes/no
 bc_val = np.zeros(N,dtype=np.float64)  # boundary condition, value
 
-for i in range(0,N):
-    if abs(x[i]/Lx)<eps:
-       bc_fix[i] = True ; bc_val[i]=0
-    if abs(x[i]/Lx-1)<eps:
-       bc_fix[i] = True ; bc_val[i]=0
-    #if abs(y[i]/Ly)<eps:
-    #   bc_fix[i] = True ; bc_val[i]=0
-    #if abs(y[i]/Ly-1)<eps:
-    #   bc_fix[i] = True ; bc_val[i]=0
+if experiment==0 or experiment==2 or experiment==4:
+   for i in range(0,N):
+       if abs(x[i]/Lx)<eps:
+          bc_fix[i] = True ; bc_val[i]=0
+       if abs(x[i]/Lx-1)<eps:
+          bc_fix[i] = True ; bc_val[i]=0
+       if abs(y[i]/Ly)<eps:
+          bc_fix[i] = True ; bc_val[i]=0
+       if abs(y[i]/Ly-1)<eps:
+          bc_fix[i] = True ; bc_val[i]=0
+
+if experiment==1:
+   for i in range(0,N):
+       if abs(x[i]/Lx)<eps:
+          bc_fix[i] = True ; bc_val[i]=0
+
+if experiment==3:
+   for i in range(0,N):
+       if abs(x[i]/Lx)<eps:
+          bc_fix[i] = True ; bc_val[i]=0
+       if abs(x[i]/Lx-1)<eps:
+          bc_fix[i] = True ; bc_val[i]=100
 
 print("define boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -377,7 +492,7 @@ start = timing.time()
 gnei = np.zeros((3,nel),dtype=np.int32) 
 
 for iel in range(0,nel):
-    if iel%100==0: print('iel=',iel)
+    if iel%200==0: print('iel=',iel)
     for iface in range(0,3):
         if iface==0:
            iel_node1=icon[0,iel] 
@@ -440,21 +555,18 @@ for iel in range(nel):
        border_element[iel]=1
     if abs(x[icon[2,iel]])/Lx<eps and abs(x[icon[0,iel]])/Lx<eps:
        border_element[iel]=1
-
     if abs(x[icon[0,iel]]-Lx)/Lx<eps and abs(x[icon[1,iel]]-Lx)/Lx<eps:
        border_element[iel]=1
     if abs(x[icon[1,iel]]-Lx)/Lx<eps and abs(x[icon[2,iel]]-Lx)/Lx<eps:
        border_element[iel]=1
     if abs(x[icon[2,iel]]-Lx)/Lx<eps and abs(x[icon[0,iel]]-Lx)/Lx<eps:
        border_element[iel]=1
-
     if abs(y[icon[0,iel]])/Ly<eps and abs(y[icon[1,iel]])/Ly<eps:
        border_element[iel]=1
     if abs(y[icon[1,iel]])/Ly<eps and abs(y[icon[2,iel]])/Ly<eps:
        border_element[iel]=1
     if abs(y[icon[2,iel]])/Ly<eps and abs(y[icon[0,iel]])/Ly<eps:
        border_element[iel]=1
-
     if abs(y[icon[0,iel]]-Ly)/Ly<eps and abs(y[icon[1,iel]]-Ly)/Ly<eps:
        border_element[iel]=1
     if abs(y[icon[1,iel]]-Ly)/Ly<eps and abs(y[icon[2,iel]]-Ly)/Ly<eps:
@@ -490,7 +602,6 @@ for istep in range(0,nstep):
     xc = np.zeros(nel,dtype=np.float64)
     yc = np.zeros(nel,dtype=np.float64)
     zc = np.zeros(nel,dtype=np.float64)
-
     for iel in range(0,nel):
         xc[iel]=(x[icon[0,iel]]+x[icon[1,iel]]+x[icon[2,iel]])/3
         yc[iel]=(y[icon[0,iel]]+y[icon[1,iel]]+y[icon[2,iel]])/3
@@ -551,9 +662,6 @@ for istep in range(0,nstep):
            min_index[iel]=2
         #print('I am element',iel,'and I give to element',min_index[iel],gnei[min_index[iel],iel])
 
-    if istep%every==0:
-       export_network_to_vtu(x,y,z,xc,yc,zc,icon,min_index,'network_'+str(istep)+'.vtu')
-
     print("compute min_index: %.3f s" % (timing.time() - start))
 
     #------------------------------------------------------------------------------
@@ -579,6 +687,8 @@ for istep in range(0,nstep):
 
     print("compute drainage area: %.3f s" % (timing.time() - start))
 
+    if istep%every==0:
+       export_network_to_vtu(x,y,z,xc,yc,zc,A,icon,min_index,'network_'+str(istep)+'.vtu')
 
     ###################################################
     start = timing.time()
@@ -592,14 +702,21 @@ for istep in range(0,nstep):
               catchment[iel]=counter
               counter+=1
 
-       for it in range(0,10):
+       ncmem=0
+       for it in range(0,1):
            for iel in range(0,nel):
                if catchment[iel]>-1:
                   for jel in range(0,nel):
                       if gnei[min_index[jel],jel]==iel:
                          catchment[jel]=catchment[iel]
+           nc=np.count_nonzero(catchment!=-1)
+           print('   -> ',it,nc)
+           if ncmem==nc: 
+              print('   -> conv!')
+              break
+           ncmem=nc
 
-    print("compute catchements: %.3f s" % (timing.time() - start))
+    print("compute catchments: %.3f s" % (timing.time() - start))
 
     #------------------------------------------------------------------------------
     # build FEM matrix and rhs
@@ -655,6 +772,12 @@ for istep in range(0,nstep):
                 B_mat[0,k]=dNNNdx[k]
                 B_mat[1,k]=dNNNdy[k]
 
+            xq=0
+            yq=0
+            for k in range(0,m):
+                xq+=N_mat[k,0]*x[icon[k,iel]]
+                yq+=N_mat[k,0]*y[icon[k,iel]]
+
             if A[iel]>Ac:
                kappa[iel]=c0+c*(A[iel]-Ac)**rexp * slope[iel]**(mexp-1)
             else:
@@ -665,7 +788,7 @@ for istep in range(0,nstep):
 
             Kd+=B_mat.T.dot(B_mat)*weightq*jcob*kappa[iel]
 
-            f_el+=N_mat[:,0]*w_uplift*weightq*jcob
+            f_el+=N_mat[:,0]*uplift(experiment,xq,yq)*weightq*jcob
 
         # end for kq
 
@@ -721,7 +844,7 @@ for istep in range(0,nstep):
     print('   -> z (m/M)',np.min(z),np.max(z))
 
     if istep%every==0:
-       np.savetxt('solution_'+str(istep)+'.ascii',np.array([x,y,z]).T)
+       np.savetxt('solution_'+str(istep)+'.ascii',np.array([x,y,z,rad]).T)
 
     print("solve FEM system: %.3f s" % (timing.time() - start))
 
@@ -730,10 +853,19 @@ for istep in range(0,nstep):
     #------------------------------------------------------------------------------
     start = timing.time()
 
+    dz=z-z_prev
+
     if istep%every==0:
-       export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,'solution_'+str(istep)+'.vtu',area,border_element,catchment)
+       export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,\
+                              'solution_'+str(istep)+'.vtu',area,border_element,catchment,dz)
 
     print("export to vtu: %.3f s" % (timing.time() - start))
 
+
+    z_prev[:]=z[:]
+
+
 #end for istep
 
+print("-----------------------------")
+print("-----------------------------")

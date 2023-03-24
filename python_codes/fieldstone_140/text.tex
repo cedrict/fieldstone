@@ -306,19 +306,81 @@ S=\sqrt{b^2+c^2}
 The calculations can be be benchmarked by assigning a simple linear planar 
 topography and verifying that all elements are assigned the same correct slope.
 
-
 %....................................................
-\paragraph{Benchmarking of linear diffusion}
+\paragraph{Why lumping ?}
+
+As explained in the book, ``mass lumping (or diagonalization) has been applied to the element mass matrix MM, which
+is performed to suppress numerical oscillations that can arise if the diffusivity in becomes too
+small. While there are no strict rules on how to perform mass lumping, here it is done by summing
+each column of MM separately, putting the result on the diagonal, and zeroing out all off-diagonal
+terms'' as follows:
+\begin{lstlisting}
+if lumping:
+   MM[0,0]+=MM[0,1]+MM[0,2] ; MM[0,1]=0 ; MM[0,2]=0
+   MM[1,1]+=MM[1,0]+MM[1,2] ; MM[1,0]=0 ; MM[1,2]=0
+   MM[2,2]+=MM[2,0]+MM[2,1] ; MM[2,0]=0 ; MM[2,1]=0
+\end{lstlisting}
+
+DOCUMENT with and without!! 
 
 
 
+%................................................................
+\paragraph{Experiment from Simpson's book ({\tt experiment=0})}.
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp0/z_000}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp0/z_100}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp0/z_200}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp0/z_300}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp0/z_400}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp0/z_500}
+\end{center}
 
 
+%................................................................
+\paragraph{Single slope ({\tt experiment=1})}.
 
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/z00}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/z05}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/z10}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/z15}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/z20}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/z30}
+\end{center}
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp1/elevation}
+\end{center}
 
+%................................................................
+\paragraph{Benchmarking of uplift ({\tt experiment=2})}.
 
+In this experiment we set the diffusion coefficient to zero and 
+pin the boundary nodes to $h=0$. The uplift rate is $1~\si{\milli\meter\per\year}$.
+As such we expect the elevation of the inside nodes to rise linearly with time. 
+However, as explained before, we find that lumping the mass matrix is needed:
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp2/elevation}
+\end{center}
+
+%................................................................
+\paragraph{Benchmarking of linear diffusion ({\tt experiment=3})}.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp3/elevation}
+\end{center}
+
+%................................................................
+\paragraph{Volcano-like uplift ({\tt experiment=4})}.
+
+\begin{center}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_140/results/exp4/elevation}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_140/results/exp4/slope}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_140/results/exp4/drainage}
+\end{center}
 
 
 
@@ -332,8 +394,40 @@ topography and verifying that all elements are assigned the same correct slope.
 \fbox{\includegraphics[width=12cm]{python_codes/fieldstone_140/images/simp2}}
 \end{center}
 
-Questions:
-- his quadrature is weird?  3 pts see table 7.2???
-- CFL condition ?!
-- higher order quadrature?
-- benchmarks
+Questions/todo:
+\begin{itemize}
+\item
+improve speed
+\item
+his quadrature is weird?  3 pts see table 7.2???
+\item
+CFL condition ?!
+\item
+benchmarks
+\item
+compute uplift 
+\item
+horizontal advection? 
+\item
+compute catchment efficiently
+\item
+precipitation fct space coords?
+\item
+cylindrical uplift w, look at average slope
+\item
+avalanche rule, see page 244 of pelletier
+\item
+establish river path ?
+\item
+add nonlinear adv see pelletier ?
+\item
+what physics is in cascade?
+\item
+inner lengthscale? one valley increase res?
+\end{itemize}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\fullcite{sisc03}\\
+\fullcite{simp04}\\
+\fullcite{simp04b}
