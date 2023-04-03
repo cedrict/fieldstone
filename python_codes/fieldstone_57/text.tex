@@ -20,7 +20,7 @@ we used $q$ is here positive!).
 %-----------------------------------------------------------------------------------------
 \subsubsection*{The code}
 
-We follow the discretisation presented in Section~\ref{ss:dgss1D} and use the 
+We follow the discretisation presented in Section~\ref{MMM-ss:dgss1D} and use the 
 successive substitution to arrive at the solution. 
 
 There are {\tt nelx} linear elements and therefore {\tt nnx} nodes.
@@ -60,7 +60,7 @@ K=np.array([[hx/3,hx/6,-C ,-0.5],
             [C   ,-0.5,E  ,0   ],
             [0.5 ,C   ,0  ,E   ]])
 \end{lstlisting}
-which corresponds to the matrix of Eq.~\eqref{eq:dgsyst1D},
+which corresponds to the matrix of Eq.~\eqref{MMM-eq:dgsyst1D},
 \begin{lstlisting}
 K_left=np.array([[hx/3,hx/6,-0.5,-0.5],
                  [hx/6,hx/3, 0.5,-C  ],
@@ -91,10 +91,10 @@ If the loop index points at the first element ({\tt iel==0})
 then the matrix ${\bm K}_{el}$ is ${\bm K}_{left}$, 
 if the loop index points at the last element ({\tt iel==nel-1})
 then the matrix ${\bm K}_{el}$ is ${\bm K}_{right}$, 
-otherwise ${\bm K}_{el}$ is ${\bm K}$ from Eq.\eqref{eq:dgsyst1D}.
+otherwise ${\bm K}_{el}$ is ${\bm K}$ from Eq.\eqref{MMM-eq:dgsyst1D}.
 
 In all three cases the rhs vector {\tt rhs\_el} is filled according to 
-Eqs.~\eqref{eq:dgsyst1Dleft}, \eqref{eq:dgsyst1Dright} and \eqref{eq:dgsyst1D} respectively.
+Eqs.~\eqref{eq:dgsyst1Dleft}, \eqref{eq:dgsyst1Dright} and \eqref{MMM-eq:dgsyst1D} respectively.
 
 When the elemental matrix and rhs are established for the element under consideration
 then the systen is solved and $q_k^+$, $q_{k+1}^-$, $T_k^+$ and $T_{k+1}^-$ are updated.

@@ -25,19 +25,25 @@ For simplicity, we assume an aquifer thickness of $H=1$. Thus, the values for th
 The differential equation describing the movement of the interface $h(x,t)$ is given by 
 
 \begin{equation} \label{eq:01}
-	\frac{\partial h(x,t)}{\partial t} = \Gamma \frac{\partial}{\partial x} \left( \frac{ h(1-h)\partial h / \partial x}{1+(\partial h/\partial x)^2} \right)
+\frac{\partial h(x,t)}{\partial t} = \Gamma \frac{\partial}{\partial x} \left( 
+\frac{ h(1-h)\partial h / \partial x}{1+(\partial h/\partial x)^2} \right)
 \end{equation}
 
-The constant $\Gamma=\frac{\kappa }{ \mu g (\rho_{ \rm salt}-\rho_{\rm fresh})}$ summarizes the physical properties: of the aquifer (permeability $\kappa$), of the fluids (viscosity $\mu$, density of salt water~$\rho_{\rm salt}$ and density of fresh water~$\rho_{\rm fresh}$) and the gravity constant $g$.
+The constant $\Gamma=\frac{\kappa }{ \mu g (\rho_{ \rm salt}-\rho_{\rm fresh})}$ summarizes 
+the physical properties: of the aquifer (permeability $\kappa$), of the fluids (viscosity $\mu$, 
+density of salt water~$\rho_{\rm salt}$ and density of fresh water~$\rho_{\rm fresh}$) 
+and the gravity constant $g$.
 
-The differential equation has the character of a non-linear diffusion equation with a non-constant diffusion coefficient $D(h)$:
+The differential equation has the character of a non-linear diffusion equation with a 
+non-constant diffusion coefficient $D(h)$:
 
 \begin{equation} \label{eq:02}
-	\frac{\partial h}{\partial t} = \Gamma \frac{\partial}{\partial x} \left( D(h)  \frac{ \partial h}{\partial x} \right)
-	\quad \quad D(h(x,t)) = \frac{ h(1-h)}{1+(\partial h/\partial x)^2}
+\frac{\partial h}{\partial t} = \Gamma \frac{\partial}{\partial x} \left( D(h)  \frac{ \partial h}{\partial x} \right)
+\quad \quad D(h(x,t)) = \frac{ h(1-h)}{1+(\partial h/\partial x)^2}
 \end{equation}
 
-According to the value range of $h \in [0,1]$, $D$ has the property of $D(0)=D(1)=0$ (this differential equation is therefore called {\sl degenerate}). \index{stones}{Degenerate Diffusion Equation}
+According to the value range of $h \in [0,1]$, $D$ has the property of $D(0)=D(1)=0$ (this differential 
+equation is therefore called {\sl degenerate}). \index{stones}{Degenerate Diffusion Equation}
 
 Despite the complexity of the initial differential equation, an analytical solution can be postulated in the form of:
 \begin{equation}  \label{eq:04}

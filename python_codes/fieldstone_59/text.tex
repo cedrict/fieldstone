@@ -105,12 +105,12 @@ would yield observations that match recorded velocities and strain rates.
 
 \paragraph{Nonlinear power-law viscosity}
 However, the picture is way more complex, as it was observed very early on 
-by Glen in 1955 \cite{glen55} and many others later (see Section~\ref{ss:glen}). 
+by Glen in 1955 \cite{glen55} and many others later (see Section~\ref{MMM-ss:glen}). 
 It was then found that the strain rate and the stress are linked in a nonlinear way: 
 \[
 \dot{\varepsilon} = A \tau^n,
 \]
-i.e. the ice behaves as a power-law fluid (see Section~\ref{ss:powerlaw}), with 
+i.e. the ice behaves as a power-law fluid (see Section~\ref{MMM-ss:powerlaw}), with 
 $n=3$ and $A\simeq 2.4\cdot 10^{-24}$ at 0\degree (REF?).
 
 More recently \textcite{kuwd19} (2019) and \textcite{kudd19} (2019) derived a composite flow law 
@@ -185,9 +185,9 @@ free slip on the left (we assume that this corresponds to a ridge - zero horizon
 and we need to be careful about the right boundary which is where the ice exits the domain:
 if we leave the boundary open ice will rush out, generate high strain rates and the nonlinear 
 rheologies will respond by generating low viscosities which in turn will promote a fast 
-exit. Instead we opt to prescribe the analytical solution of Eq.~(\ref{eq:ice1}) with $\eta=10^{15}$.
+exit. Instead we opt to prescribe the analytical solution of Eq.~(\ref{MMM-eq:ice1}) with $\eta=10^{15}$.
 We neglect any kind of phase change and precipitation and only carry out a single time step.
-The domain is discretised with nel=nelx$\times$nely $Q_2Q_1$ elements (see Section~\ref{ss:pairq2q1}).
+The domain is discretised with nel=nelx$\times$nely $Q_2Q_1$ elements (see Section~\ref{MMM-ss:pairq2q1}).
 We set $L_x=125$km and $L_y=2500$m, $\rho=917$kg$\cdot$m$^{-3}$, $\alpha=0.1$\degree.
 
 
@@ -234,7 +234,8 @@ Note that smaller strain rates shift the curves to the right (higher viscosities
 
 
 
-Because the rheologies are non linear we need to carry out nonlinear iterations (see Section~\ref{ss:picard}).
+Because the rheologies are non linear we need to carry out nonlinear iterations 
+(see Section~\ref{MMM-ss:picard}).
 In what follows we run models for Glen's flow law (rheology=1), 
 dislocation creep (rheology=2), GBS (rheology=3) and dislocation+GBS (rheology=4).
 Note that in the case of rheology=4, the partitioning of the strain rates between both 
