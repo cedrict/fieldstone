@@ -70,10 +70,17 @@ def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,
     for iel in range (0,nel):
         vtufile.write("%e\n" % (dhdy[iel]))
     vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='slope' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='slope (%)' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%e\n" % (slope[iel]))
     vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='slope (angle)' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%e\n" % (np.arctan(slope[iel])/np.pi*180))
+    vtufile.write("</DataArray>\n")
+
+
+
     vtufile.write("<DataArray type='Float32' Name='kappa' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%e\n" % (kappa[iel]))
@@ -120,15 +127,20 @@ def export_network_to_vtu(x,y,z,xc,yc,zc,A,icon,min_index,filename):
     vy=np.zeros(nel,dtype=np.float64) 
     vz=np.zeros(nel,dtype=np.float64) 
     for iel in range(0,nel):
-       jel=gnei[min_index[iel],iel]
-       if iel==jel:
+       if min_index[iel]>0: # if there is a lower neighbour
+          jel=gnei[min_index[iel],iel]
+          if iel==jel:
+             vx[iel]=0
+             vy[iel]=0
+             vz[iel]=0
+          else:
+             vx[iel]=xc[jel]-xc[iel]
+             vy[iel]=yc[jel]-yc[iel]
+             vz[iel]=zc[jel]-zc[iel]
+       else:
           vx[iel]=0
           vy[iel]=0
           vz[iel]=0
-       else:
-          vx[iel]=xc[jel]-xc[iel]
-          vy[iel]=yc[jel]-yc[iel]
-          vz[iel]=zc[jel]-zc[iel]
 
     vtufile=open(filename,"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -221,6 +233,8 @@ def uplift(exp,xq,yq):
           val=(1-r/(Lx/2))* 1e-2/year
        else:
           val=0 
+    elif exp==5:
+       val=w_uplift*xq/Lx*((1-np.cos(2*np.pi*xq/Lx))/2)**2
     return val 
 
 ###################################################################################################
@@ -233,7 +247,6 @@ ndim=2      # number of spatial dimensions
 m=3         # number of nodes in 1 element
 
 zscale=1
-every=10
 
 lumping=True
 
@@ -246,7 +259,8 @@ tol = 1e-3    # iteration tolerance
 #experiment=1 # simple slope high at x=Lx
 #experiment=2 # benchmark uplift 
 #experiment=3 # benchmark linear diffusion
-experiment=4 # volcano-like
+#experiment=4 # volcano-like
+experiment=5 # orogen-like
 
 if experiment==0:
    Lx=50e3
@@ -260,7 +274,8 @@ if experiment==0:
    scale = 10     # amplitude random initial topography (m)
    nstep = 3000  # number of time steps
    dt = 100*year # time step (s)
-   target_area='1500000'
+   target_area='1000000'
+   every=20
 
 if experiment==1:
    Lx=50e3
@@ -274,7 +289,9 @@ if experiment==1:
    scale = 10     # amplitude random initial topography (m)
    nstep = 3000  # number of time steps
    dt = 100*year # time step (s)
-   target_area='1800000'
+   target_area='500000'
+   nsegments=80
+   every=50
 
 if experiment==2:
    Lx=50e3
@@ -289,6 +306,7 @@ if experiment==2:
    nstep = 100  # number of time steps
    dt = 100*year # time step (s)
    target_area='3500000'
+   every=10
 
 if experiment==3:
    Lx=50e3
@@ -303,6 +321,7 @@ if experiment==3:
    dt = 100*year # time step (s)
    target_area='4000000'
    every=100
+   every=10
 
 if experiment==4: #volcano-like
    Lx=50e3
@@ -316,10 +335,31 @@ if experiment==4: #volcano-like
    nstep = 3000   # number of time steps
    dt = 100*year  # time step (s)
    target_area='700000'
+   every=10
+
+if experiment==5: # orogen-like
+   Lx=200e3
+   Ly=100e3
+   rexp = 2       # drainage area exponent
+   mexp = 1       # slope exponent
+   w_uplift = 2e-2/year  # rock uplift rate (m/s)
+   c = 1e-13/year # fluvial erosion coeff. (mˆ(2-2rexp)/s)
+   c0 = 0.001/year  # linear diffusion coeff.(mˆ2/s)
+   Ac = 0         # critical drainage area (mˆ2)
+   scale = 0.1     # amplitude random initial topography (m)
+   nstep = 3001  # number of time steps
+   dt = 100*year # time step (s)
+   target_area='3000000'
+   nsegments=80
+   every=50
+
 
 print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
+print("experiment=",experiment)
+print("Lx=",Lx)
+print("Ly=",Ly)
 print("c0=",c0)
 print("r =",rexp)
 print("m =",mexp)
@@ -344,7 +384,7 @@ qweights =np.array([1/6,1/6,1/6],dtype=np.float64)
 #------------------------------------------------------------------------------
 start = timing.time()
  
-square_vertices = np.array([[0,0],[0,Lx],[Lx,Ly],[Ly,0]])
+square_vertices = np.array([[0,0],[0,Ly],[Lx,Ly],[Lx,0]])
 square_edges = compute_segs(square_vertices)
 
 O1 = {'vertices' : square_vertices, 'segments' : square_edges}
@@ -391,7 +431,9 @@ start = timing.time()
 z=np.zeros(N,dtype=np.float64) 
 z_prev=np.zeros(N,dtype=np.float64) 
 
-if experiment==0 or experiment==4:
+random.seed(12)
+
+if experiment==0 or experiment==4 or experiment==5:
    for i in range(0,N):
        z[i]= random.uniform(0,scale)
 
@@ -412,6 +454,8 @@ if experiment==2 or experiment==3:
    #z[i]=2*x[i]/km+3*y[i]/km
 
 z_prev[:]=z[:]
+       
+np.savetxt('initial_topography.ascii',np.array([x,y,z]).T)
 
 print("prescribe initial elevation: %.3f s" % (timing.time() - start))
 
@@ -475,6 +519,13 @@ if experiment==3:
           bc_fix[i] = True ; bc_val[i]=0
        if abs(x[i]/Lx-1)<eps:
           bc_fix[i] = True ; bc_val[i]=100
+
+if experiment==5:
+   for i in range(0,N):
+       if abs(x[i]/Lx)<eps:
+          bc_fix[i] = True ; bc_val[i]=0
+       if abs(x[i]/Lx-1)<eps:
+          bc_fix[i] = True ; bc_val[i]=0
 
 print("define boundary conditions: %.3f s" % (timing.time() - start))
 
@@ -651,15 +702,25 @@ for istep in range(0,nstep):
     min_index = np.zeros(nel,dtype=np.int32) 
 
     for iel in range(0,nel):
+        min_index[iel]=-1
         zc_0=zc[gnei[0,iel]]
         zc_1=zc[gnei[1,iel]]
         zc_2=zc[gnei[2,iel]]
-        if zc_0<zc_1 and zc_0<zc_2: 
+        if zc_0<zc_1 and zc_0<zc_2 and zc[iel]>zc_0: 
            min_index[iel]=0
-        if zc_1<zc_0 and zc_1<zc_2: 
+        if zc_1<zc_0 and zc_1<zc_2 and zc[iel]>zc_1: 
            min_index[iel]=1
-        if zc_2<zc_0 and zc_2<zc_1: 
+        if zc_2<zc_0 and zc_2<zc_1 and zc[iel]>zc_2: 
            min_index[iel]=2
+
+        #if iel==16:
+        #   print('iel=16',zc_0,zc_1,zc_2,'  ',zc[iel])
+        #   print(min_index[iel],gnei[min_index[iel],iel])
+        #if iel==134:
+        #   print('iel=134',zc_0,zc_1,zc_2,'  ',zc[iel])
+        #   print(min_index[iel],gnei[min_index[iel],iel])
+        #   exit()
+
         #print('I am element',iel,'and I give to element',min_index[iel],gnei[min_index[iel],iel])
 
     print("compute min_index: %.3f s" % (timing.time() - start))
@@ -671,6 +732,7 @@ for istep in range(0,nstep):
     # accumulated surface area that “drains” to each element in the landscape, A. 
     # Note that this procedure implicitly assumes a spatially uniform rainfall, 
     # which can easily be accounted for if desired.
+    #receiver = sorted_gnei[min_index[iel],iel] suspicious line in book?!
     #------------------------------------------------------------------------------
     start = timing.time()
 
@@ -680,7 +742,7 @@ for istep in range(0,nstep):
 
     for iel in range(0,nel):
        donor = sorted_indices[iel] 
-       #receiver = sorted_gnei[min_index[iel],iel] suspicious line in book?!
+       #if min_index[donor]>0: #if there is a lower neighbour 
        receiver=gnei[min_index[donor],donor]
        #print('loop index ',iel,'is donor',donor,'gives to ',receiver)
        A[receiver] += A[donor] 
@@ -702,19 +764,38 @@ for istep in range(0,nstep):
               catchment[iel]=counter
               counter+=1
 
-       ncmem=0
-       for it in range(0,1):
-           for iel in range(0,nel):
-               if catchment[iel]>-1:
-                  for jel in range(0,nel):
-                      if gnei[min_index[jel],jel]==iel:
-                         catchment[jel]=catchment[iel]
-           nc=np.count_nonzero(catchment!=-1)
-           print('   -> ',it,nc)
-           if ncmem==nc: 
-              print('   -> conv!')
-              break
-           ncmem=nc
+
+       #for iel in range(0,5):
+       #    print('---------------')
+       #    donor = sorted_indices[iel] 
+       #    river=[]
+       #    for i in range(0,10):
+       #        receiver=gnei[min_index[donor],donor]
+       #        print(donor,receiver)
+       #        if receiver==donor:
+       #           print('dead end')
+       #           break
+       #        #if catchment[receiver]>0:
+       #        #   print('reached')
+       #        #   break
+       #        #river.append(receiver)
+       #        donor=receiver
+       #    #print(river)
+       #exit()
+
+       #ncmem=0
+       #for it in range(0,1):
+       #    for iel in range(0,nel):
+       #        if catchment[iel]>-1:
+       #           for jel in range(0,nel):
+       #               if gnei[min_index[jel],jel]==iel:
+       #                  catchment[jel]=catchment[iel]
+       #    nc=np.count_nonzero(catchment!=-1)
+       #    print('   -> ',it,nc)
+       #    if ncmem==nc: 
+       #       print('   -> conv!')
+       #       break
+       #    ncmem=nc
 
     print("compute catchments: %.3f s" % (timing.time() - start))
 
@@ -739,6 +820,7 @@ for istep in range(0,nstep):
         b_el=np.zeros(m,dtype=np.float64)
         a_el=np.zeros((m,m),dtype=np.float64)
         f_el=np.zeros(m,dtype=np.float64)
+        Ka=np.zeros((m,m),dtype=np.float64)   # elemental advection matrix 
         Kd=np.zeros((m,m),dtype=np.float64)   # elemental diffusion matrix 
         MM=np.zeros((m,m),dtype=np.float64)   # elemental mass matrix 
 
@@ -797,7 +879,7 @@ for istep in range(0,nstep):
            MM[1,1]+=MM[1,0]+MM[1,2] ; MM[1,0]=0 ; MM[1,2]=0
            MM[2,2]+=MM[2,0]+MM[2,1] ; MM[2,0]=0 ; MM[2,1]=0
 
-        a_el=MM+Kd*dt
+        a_el=MM+(Kd+Ka)*dt
 
         b_el=MM.dot(hvect)+f_el*dt
 
@@ -847,6 +929,31 @@ for istep in range(0,nstep):
        np.savetxt('solution_'+str(istep)+'.ascii',np.array([x,y,z,rad]).T)
 
     print("solve FEM system: %.3f s" % (timing.time() - start))
+
+    #------------------------------------------------------------------------------
+    # export min/max profiles
+    #------------------------------------------------------------------------------
+
+    if experiment==1 or experiment==5:
+       start = timing.time()
+
+       dx=Lx/nsegments
+       xprofile=np.zeros(nsegments,dtype=np.float64) 
+       zprofile_min=np.zeros(nsegments,dtype=np.float64) 
+       zprofile_max=np.zeros(nsegments,dtype=np.float64) 
+       zprofile_min[:]=+1e50
+       zprofile_max[:]=-1e50
+       for i in range(0,N):
+           iindex=int(min(x[i],0.99999*Lx)/dx)
+           #print(iindex)       
+           zprofile_min[iindex]=min(z[i],zprofile_min[iindex])
+           zprofile_max[iindex]=max(z[i],zprofile_max[iindex])
+       for i in range(0,nsegments):
+           xprofile[i]=(i+0.5)*dx
+       if istep%every==0:
+          np.savetxt('profile_x_'+str(istep)+'.ascii',np.array([xprofile,zprofile_min,zprofile_max]).T)
+
+       print("compute orogen profiles: %.3f s" % (timing.time() - start))
 
     #------------------------------------------------------------------------------
     # export to vtu

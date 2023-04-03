@@ -4,6 +4,12 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
+\begin{center}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_140}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
 {\sl This stone was developed in collaboration with Rayane Meghezi}. \index{contributors}{R. Meghezi}
 
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -115,7 +121,7 @@ simple 2D diffusion equation which is trivial to benchmark, see Section~\ref{MMM
 
 \newpage
 %.......................................................................................
-\paragraph{Implementation \& testing}
+\section*{Implementation \& testing}
 
 In order to test/debug the steps highlighted previously we first generate a mesh that only
 counts a few dozen of elements by setting the maximum size of a triangle to a large value:
@@ -256,7 +262,7 @@ When increasing resolution one gets:
 \end{center}
 
 %....................................................
-\paragraph{Computing the slope}
+\section*{Computing the slope}
 
 In order to compute $\partial h/\partial x$ and $\partial h/\partial y$, one could resort to using 
 basis functions derivatives in the middle of each element, but we
@@ -307,7 +313,7 @@ The calculations can be be benchmarked by assigning a simple linear planar
 topography and verifying that all elements are assigned the same correct slope.
 
 %....................................................
-\paragraph{Why lumping ?}
+\section*{Why lumping ?}
 
 As explained in the book, ``mass lumping (or diagonalization) has been applied to the element mass matrix MM, which
 is performed to suppress numerical oscillations that can arise if the diffusivity in becomes too
@@ -321,12 +327,11 @@ if lumping:
    MM[2,2]+=MM[2,0]+MM[2,1] ; MM[2,0]=0 ; MM[2,1]=0
 \end{lstlisting}
 
-DOCUMENT with and without!! 
 
 
 
 %................................................................
-\paragraph{Experiment from Simpson's book ({\tt experiment=0})}.
+\section*{Experiment from Simpson's book ({\tt experiment=0})}
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp0/z_000}
@@ -337,17 +342,27 @@ DOCUMENT with and without!!
 \includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp0/z_500}
 \end{center}
 
+\newpage
+\begin{center}
+\fbox{\includegraphics[width=12cm]{python_codes/fieldstone_140/images/simp1}}\\
+\fbox{\includegraphics[width=12cm]{python_codes/fieldstone_140/images/simp2}}\\
+{\captionfont Taken from Simpson's book.} 
+\end{center}
+\newpage
 
 %................................................................
-\paragraph{Single slope ({\tt experiment=1})}.
+\section*{Single slope ({\tt experiment=1})}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/z00}
-\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/z05}
-\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/z10}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/z15}
-\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/z20}
-\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/z30}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/elevation0000.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/elevation0002.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/elevation0004.png}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/elevation0006.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/elevation0008.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/elevation0010.png}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/elevation0012.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/elevation0014.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_140/results/exp1/elevation0016.png}
 \end{center}
 
 \begin{center}
@@ -355,7 +370,7 @@ DOCUMENT with and without!!
 \end{center}
 
 %................................................................
-\paragraph{Benchmarking of uplift ({\tt experiment=2})}.
+\section*{Benchmarking of uplift ({\tt experiment=2})}
 
 In this experiment we set the diffusion coefficient to zero and 
 pin the boundary nodes to $h=0$. The uplift rate is $1~\si{\milli\meter\per\year}$.
@@ -367,14 +382,20 @@ However, as explained before, we find that lumping the mass matrix is needed:
 \end{center}
 
 %................................................................
-\paragraph{Benchmarking of linear diffusion ({\tt experiment=3})}.
+\section*{Benchmarking of linear diffusion ({\tt experiment=3})}
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp3/elevation}
 \end{center}
 
 %................................................................
-\paragraph{Volcano-like uplift ({\tt experiment=4})}.
+\section*{Volcano-like uplift ({\tt experiment=4})}
+
+The domain is square of size $L_x=L_y=L=50~\si{\km}$.
+\[
+w(x,y) = w_0  \left( 1- \frac{r}{L/2} \right) 
+\qquad \text{for} \quad r=\sqrt{(x-L/2)^2+(y-L/2)^2}<(L/2)
+\]
 
 \begin{center}
 \includegraphics[width=5.3cm]{python_codes/fieldstone_140/results/exp4/elevation}
@@ -383,51 +404,66 @@ However, as explained before, we find that lumping the mass matrix is needed:
 \end{center}
 
 
+%................................................................
+\section*{Orogen-like uplift ({\tt experiment=5})}
+
+The domain is a rectangle of size $L_x\times L_y=200 \times 100 ~\si{\km}$.
+\[
+w(x,y)=w_0 \frac{x}{L_x} \left[  \left(1-\cos \frac{2\pi x}{L_x} \right)/2   \right]^2
+\]
+with $w_0=2~\si{\cm\per\year}$.
 
 
-
-
-
-\newpage
 \begin{center}
-\fbox{\includegraphics[width=12cm]{python_codes/fieldstone_140/images/simp1}}\\
-\fbox{\includegraphics[width=12cm]{python_codes/fieldstone_140/images/simp2}}
+\includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp5/elevation.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp5/slope}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp5/area}
+\includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp5/drainage}\\
+{\captionfont 3000 time steps = 300kyr.}
 \end{center}
 
-Questions/todo:
-\begin{itemize}
-\item
-improve speed
-\item
-his quadrature is weird?  3 pts see table 7.2???
-\item
-CFL condition ?!
-\item
-benchmarks
-\item
-compute uplift 
-\item
-horizontal advection? 
-\item
-compute catchment efficiently
-\item
-precipitation fct space coords?
-\item
-cylindrical uplift w, look at average slope
-\item
-avalanche rule, see page 244 of pelletier
-\item
-establish river path ?
-\item
-add nonlinear adv see pelletier ?
-\item
-what physics is in cascade?
-\item
-inner lengthscale? one valley increase res?
-\end{itemize}
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp5/elevation.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp5/elevation2.pdf}
+\end{center}
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \par\noindent\rule{\textwidth}{0.4pt}
 
+\vspace{.5cm}
+
+\begin{center}
+\fbox{\begin{minipage}{0.75\textwidth}
+To Do \& open questions: 
+\begin{itemize}
+\item decide/homogenise colorscales for drainage area, slope, elevation...
+\item improve speed for gnei and for matrix build
+\item test/document Simpson's quadrature?  3 pts see table 7.2???
+\item CFL condition ?!
+\item benchmarks
+\item compute uplift 
+\item horizontal advection? 
+\item compute catchment efficiently
+\item precipitation fct space coords?
+\item cylindrical uplift w, look at average slope
+\item avalanche rule, see page 244 of pelletier
+\item establish river path ?
+\item add nonlinear adv see pelletier ?
+\item what physics is in Cascade? \textcite{brsa97}
+\item inner lengthscale? one valley increase res?
+\item document with and without lumping 
+\item crank-nicolson ?
+\item create mesh with squares split in triangles ?
+\end{itemize}
+\end{minipage}}
+\end{center}
+
+\vspace{.5cm}
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\Literature:\\
 \fullcite{sisc03}\\
 \fullcite{simp04}\\
 \fullcite{simp04b}
