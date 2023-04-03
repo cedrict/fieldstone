@@ -26,7 +26,7 @@ the subscript $i$.
 
 There is however a major problem: 
 the FTCS method is in this case {\bf unconditionally} {\bf un}stable (see Section 6.2.1 
-of \cite{hoch}), i.e., it blows up for any $\delta t$.
+of \cite{hoch}, section 4.3.1 of \cite{pell08}), i.e., it blows up for any $\delta t$.
 The instability is related to the fact that this scheme produces negative diffusion, 
 which is numerically unstable.
 We could also consider the FTFS method:
@@ -42,7 +42,8 @@ We will now look at to methods which alleviate this problem:
 \begin{itemize}
 \item The {\color{olive} Lax-Friedrichs method}\footnote{Named after Peter Lax 
 and Kurt O. Friedrichs} consists of replacing the $T_{\color{teal}i}^n$ 
-in the time derivative term with $(T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)/2$. 
+in the time derivative term with $(T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)/2$
+(see for instance Section 4.3.1 of \cite{pell08} in the context of surface processes). 
 The resulting equation is
 \[
 \frac{T_{\color{teal}i}^{n+1}-  (T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)/2 }{\delta t} 
