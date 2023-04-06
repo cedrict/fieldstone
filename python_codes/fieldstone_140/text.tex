@@ -427,6 +427,33 @@ with $w_0=2~\si{\cm\per\year}$.
 \includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp5/elevation2.pdf}
 \end{center}
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp5/grid}\\
+{\captionfont example of regular grid of quadrilaterals split in two triangles}
+\end{center}
+
+
+%................................................................
+\section*{Crustal wedge with advection ({\tt experiment=6})}
+
+In this case Lx=200km, Ly=50km. Tectonic advection is included.
+
+\begin{center}
+a)\includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp6/uplift}
+b)\includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp6/elevation.png}\\
+{\captionfont Vertical scale x30. b) after 1000 timesteps = 100,000yr.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_140/results/exp6/elevation.pdf}\\
+{\captionfont We find the hallmarks of advection: over and undershoots}
+\end{center}
+
+
+
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -444,7 +471,6 @@ To Do \& open questions:
 \item CFL condition ?!
 \item benchmarks
 \item compute uplift 
-\item horizontal advection? 
 \item compute catchment efficiently
 \item precipitation fct space coords?
 \item cylindrical uplift w, look at average slope
@@ -453,9 +479,7 @@ To Do \& open questions:
 \item add nonlinear adv see pelletier ?
 \item what physics is in Cascade? \textcite{brsa97}
 \item inner lengthscale? one valley increase res?
-\item document with and without lumping 
 \item crank-nicolson ?
-\item create mesh with squares split in triangles ?
 \end{itemize}
 \end{minipage}}
 \end{center}

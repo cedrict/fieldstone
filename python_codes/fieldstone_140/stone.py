@@ -8,6 +8,15 @@ from scipy.sparse import csr_matrix
 import time as timing
 
 #--------------------------------------------------------------------------------------------------
+
+cm=0.01
+km=1e3
+eps=1e-6
+year=365.25*24*3600
+ndim=2      # number of spatial dimensions
+m=3         # number of nodes in 1 element
+
+#--------------------------------------------------------------------------------------------------
 # P1 basis functions
 #--------------------------------------------------------------------------------------------------
 
@@ -22,7 +31,7 @@ def dNNds(r,s):
 
 #--------------------------------------------------------------------------------------------------
 
-def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,filename,area,border,catchment,dz):
+def export_elements_to_vtu(x,y,z,u,v,w,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,filename,area,border,catchment,dz):
     N=np.size(x)
     m,nel=np.shape(icon)
 
@@ -47,6 +56,11 @@ def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,
     for i in range(0,N):
         vtufile.write("%10e \n" %(dz[i]))
     vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (cm/year)' Format='ascii'> \n")
+    for i in range(0,N):
+        vtufile.write("%10e %10e %10e \n" %(u[i]*year/cm,v[i]*year/cm,w[i]*year/cm))
+    vtufile.write("</DataArray>\n")
+
     vtufile.write("</PointData>\n")
     #####
     vtufile.write("<CellData Scalars='scalars'>\n")
@@ -78,9 +92,6 @@ def export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,
     for iel in range (0,nel):
         vtufile.write("%e\n" % (np.arctan(slope[iel])/np.pi*180))
     vtufile.write("</DataArray>\n")
-
-
-
     vtufile.write("<DataArray type='Float32' Name='kappa' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%e\n" % (kappa[iel]))
@@ -127,20 +138,15 @@ def export_network_to_vtu(x,y,z,xc,yc,zc,A,icon,min_index,filename):
     vy=np.zeros(nel,dtype=np.float64) 
     vz=np.zeros(nel,dtype=np.float64) 
     for iel in range(0,nel):
-       if min_index[iel]>0: # if there is a lower neighbour
-          jel=gnei[min_index[iel],iel]
-          if iel==jel:
-             vx[iel]=0
-             vy[iel]=0
-             vz[iel]=0
-          else:
-             vx[iel]=xc[jel]-xc[iel]
-             vy[iel]=yc[jel]-yc[iel]
-             vz[iel]=zc[jel]-zc[iel]
-       else:
-          vx[iel]=0
-          vy[iel]=0
-          vz[iel]=0
+        jel=gnei[min_index[iel],iel]
+        if iel==jel:
+           vx[iel]=0
+           vy[iel]=0
+           vz[iel]=0
+        else:
+           vx[iel]=xc[jel]-xc[iel]
+           vy[iel]=yc[jel]-yc[iel]
+           vz[iel]=zc[jel]-zc[iel]
 
     vtufile=open(filename,"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -219,7 +225,9 @@ def compute_element_slope(x1,x2,x3,y1,y2,y3,h1,h2,h3):
 #--------------------------------------------------------------------------------------------------
 
 def uplift(exp,xq,yq):
-    if exp==0:
+    if exp==-1:
+       val=0
+    elif exp==0:
        val=w_uplift
     elif exp==1:
        val=w_uplift
@@ -235,32 +243,82 @@ def uplift(exp,xq,yq):
           val=0 
     elif exp==5:
        val=w_uplift*xq/Lx*((1-np.cos(2*np.pi*xq/Lx))/2)**2
+    elif exp==6:
+       if xq<Lx/2-thickness:
+          val=0
+       elif xq<Lx/2+thickness:
+          val=w_uplift
+       else:
+          val=0 
+    else:
+       exit('pb with exp in uplift function')
     return val 
 
-###################################################################################################
-###################################################################################################
+#--------------------------------------------------------------------------------------------------
 
-km=1e3
-eps=1e-6
-year=365.25*24*3600
-ndim=2      # number of spatial dimensions
-m=3         # number of nodes in 1 element
+def tectonic_velocity(exp,xq,yq):
+    if exp==-1:
+       return 0,0
+    elif exp==0:
+       return 0,0
+    elif exp==1:
+       return 0,0
+    elif exp==2:
+       return 0,0
+    elif exp==3:
+       return 0,0
+    elif exp==4:
+       return 0,0
+    elif exp==5:
+       return 0,0
+    elif exp==6:
+       if xq<Lx/2-thickness:
+          return 0,0
+       elif xq<Lx/2+thickness:
+          return u_tecto/1.414,0
+       else:
+          return u_tecto,0
+    else:
+       exit('pb with exp in tectonic_velocity function')
+
+###################################################################################################
+###################################################################################################
 
 zscale=1
 
 lumping=True
 
+unstructured=True
    
 tol = 1e-3    # iteration tolerance
 
 #------------------------------------------------------------------------------
 
+experiment=-1
 #experiment=0 # simpson's book example
 #experiment=1 # simple slope high at x=Lx
 #experiment=2 # benchmark uplift 
 #experiment=3 # benchmark linear diffusion
 #experiment=4 # volcano-like
-experiment=5 # orogen-like
+#experiment=5 # orogen-like
+#experiment=6 # crustal orogen with tect adv
+
+if experiment==-1: #test
+   Lx=50e3
+   Ly=50e3
+   rexp = 2       # drainage area exponent
+   mexp = 1       # slope exponent
+   w_uplift = 1e-3/year  # rock uplift rate (m/s)
+   c = 1e-11/year # fluvial erosion coeff. (mˆ(2-2rexp)/s)
+   c0 = 0.1/year  # linear diffusion coeff.(mˆ2/s)
+   Ac = 0         # critical drainage area (mˆ2)
+   scale = 10     # amplitude random initial topography (m)
+   nstep = 1  # number of time steps
+   dt = 0*year # time step (s)
+   target_area='60000000'
+   every=1
+   
+
 
 if experiment==0:
    Lx=50e3
@@ -274,7 +332,7 @@ if experiment==0:
    scale = 10     # amplitude random initial topography (m)
    nstep = 3000  # number of time steps
    dt = 100*year # time step (s)
-   target_area='1000000'
+   target_area='4000000'
    every=20
 
 if experiment==1:
@@ -349,9 +407,27 @@ if experiment==5: # orogen-like
    scale = 0.1     # amplitude random initial topography (m)
    nstep = 3001  # number of time steps
    dt = 100*year # time step (s)
-   target_area='3000000'
+   target_area='8000000'
    nsegments=80
    every=50
+
+if experiment==6: # upper crustal wedge with advection
+   Lx=200e3
+   Ly=50e3
+   rexp = 2       # drainage area exponent
+   mexp = 1       # slope exponent
+   c = 0 # fluvial erosion coeff. (mˆ(2-2rexp)/s)
+   c0 = 0.001/year  # linear diffusion coeff.(mˆ2/s)
+   Ac = 0         # critical drainage area (mˆ2)
+   scale = 0.1     # amplitude random initial topography (m)
+   nstep = 1001  # number of time steps
+   dt = 100*year # time step (s)
+   target_area='25000000'
+   nsegments=80
+   every=25
+   u_tecto=-0.02/year
+   w_uplift=-u_tecto/1.414
+   thickness=25e3
 
 
 print("-----------------------------")
@@ -360,10 +436,6 @@ print("-----------------------------")
 print("experiment=",experiment)
 print("Lx=",Lx)
 print("Ly=",Ly)
-print("c0=",c0)
-print("r =",rexp)
-print("m =",mexp)
-print("c =",c)
 
 #------------------------------------------------------------------------------
 # Gauss quadrature setup
@@ -383,33 +455,99 @@ qweights =np.array([1/6,1/6,1/6],dtype=np.float64)
 # build mesh
 #------------------------------------------------------------------------------
 start = timing.time()
+
+if unstructured:
+   print('   unstructured mesh')
  
-square_vertices = np.array([[0,0],[0,Ly],[Lx,Ly],[Lx,0]])
-square_edges = compute_segs(square_vertices)
+   square_vertices = np.array([[0,0],[0,Ly],[Lx,Ly],[Lx,0]])
+   square_edges = compute_segs(square_vertices)
 
-O1 = {'vertices' : square_vertices, 'segments' : square_edges}
-#T1 = tr.triangulate(O1, 'pqa60000000') #for testing
-T1 = tr.triangulate(O1, 'pqa'+target_area) 
+   O1 = {'vertices' : square_vertices, 'segments' : square_edges}
+   #T1 = tr.triangulate(O1, 'pqa60000000') #for testing
+   T1 = tr.triangulate(O1, 'pqa'+target_area) 
 
-tr.compare(plt, O1, T1) # The tr.compare() function always takes plt as its 1st argument
-#plt.savefig('ex1.pdf', bbox_inches='tight')
-#plt.show()
+   tr.compare(plt, O1, T1) # The tr.compare() function always takes plt as its 1st argument
+   #plt.savefig('ex1.pdf', bbox_inches='tight')
+   #plt.show()
 
-#print('vertices:',T1['vertices'])
-#print('segments:',T1['segments'])
-#print('triangles connectivity:',T1['triangles']) # this is icon!
-#print('vertices on hull:',T1['vertex_markers'])
-#print('segments on hull:',T1['segment_markers'])
+   #print('vertices:',T1['vertices'])
+   #print('segments:',T1['segments'])
+   #print('triangles connectivity:',T1['triangles']) # this is icon!
+   #print('vertices on hull:',T1['vertex_markers'])
+   #print('segments on hull:',T1['segment_markers'])
 
-area=compute_triangles_area(T1['vertices'], T1['triangles'])
-icon=T1['triangles'] ; icon=icon.T
-m,nel=np.shape(icon)
-x=T1['vertices'][:,0] 
-y=T1['vertices'][:,1] 
+   area=compute_triangles_area(T1['vertices'], T1['triangles'])
+   icon=T1['triangles'] ; icon=icon.T
+   m,nel=np.shape(icon)
+   x=T1['vertices'][:,0] 
+   y=T1['vertices'][:,1] 
 
-print('   -> sum(area)',np.sum(area),'Lx*Ly=',Lx*Ly)
+   print('   -> sum(area)',np.sum(area),'Lx*Ly=',Lx*Ly)
 
-N=np.size(x)
+   N=np.size(x)
+
+
+else:
+
+   print('   structured mesh')
+
+   hmean=np.sqrt(float(target_area))
+
+   print('   -> hmean  =',hmean)
+
+   nelx=int(Lx/hmean)
+   nely=int(Ly/hmean)
+
+   print('   -> nelx  =',nelx)
+   print('   -> nely  =',nely)
+
+   hx=Lx/nelx
+   hy=Lx/nely
+
+   nel=nelx*nely*2
+   N=(nelx+1)*(nely+1)
+
+   print('   -> hx  =',hx)
+   print('   -> hy  =',hy)
+
+   x = np.empty(N,dtype=np.float64)  # x coordinates
+   y = np.empty(N,dtype=np.float64)  # y coordinates
+
+   counter=0
+   for j in range(0,nely+1):
+       for i in range(0,nelx+1):
+           x[counter]=i*Lx/float(nelx)
+           y[counter]=j*Ly/float(nely)
+           counter += 1
+
+   icon =np.zeros((m,nel),dtype=np.int32)
+   counter = 0
+   for j in range(0, nely):
+       for i in range(0, nelx):
+           i0=i + j * (nelx + 1)
+           i1=i + 1 + j * (nelx + 1)
+           i2=i + 1 + (j + 1) * (nelx + 1)
+           i3=i + (j + 1) * (nelx + 1)
+           nb= random.uniform(0,10)
+           if nb<5:
+              icon[0,counter]=i0 
+              icon[1,counter]=i1 
+              icon[2,counter]=i3 
+              counter+=1
+              icon[0,counter]=i1 
+              icon[1,counter]=i2 
+              icon[2,counter]=i3 
+              counter+=1
+           else:
+              icon[0,counter]=i0 
+              icon[1,counter]=i1 
+              icon[2,counter]=i2 
+              counter+=1
+              icon[0,counter]=i0
+              icon[1,counter]=i2 
+              icon[2,counter]=i3 
+              counter+=1
+
 
 print('   -> N  =',N)
 print('   -> nel=',nel)
@@ -423,6 +561,7 @@ slope = np.zeros(nel,dtype=np.float64)
 rad = np.zeros(N,dtype=np.float64) 
 rad[:]=np.sqrt((x[:]-Lx/2)**2+(y[:]-Ly/2)**2)
 
+
 #------------------------------------------------------------------------------
 # initial topography 
 #------------------------------------------------------------------------------
@@ -431,20 +570,26 @@ start = timing.time()
 z=np.zeros(N,dtype=np.float64) 
 z_prev=np.zeros(N,dtype=np.float64) 
 
-random.seed(12)
+#random.seed(12)
 
-if experiment==0 or experiment==4 or experiment==5:
+if experiment==-1:
+   for i in range(0,N):
+       z[i]=x[i]/10000+y[i]/11000 
+
+elif experiment==0 or experiment==4 or experiment==5 or experiment==6:
    for i in range(0,N):
        z[i]= random.uniform(0,scale)
 
-if experiment==1:
+elif experiment==1:
    for i in range(0,N):
        z[i]=x[i]/Lx*scale
 
-if experiment==2 or experiment==3:
+elif experiment==2 or experiment==3:
    for i in range(0,N):
        z[i]=0
 
+else:
+   exit("unknown experiment in initial topography")
 
 #for i in range(0,N):
    #z[i]=x[i]/10000+y[i]/11000 #for testing
@@ -458,6 +603,18 @@ z_prev[:]=z[:]
 np.savetxt('initial_topography.ascii',np.array([x,y,z]).T)
 
 print("prescribe initial elevation: %.3f s" % (timing.time() - start))
+
+#------------------------------------------------------------------------------
+# tectonic velocity
+#------------------------------------------------------------------------------
+
+u=np.zeros(N,dtype=np.float64) 
+v=np.zeros(N,dtype=np.float64) 
+w=np.zeros(N,dtype=np.float64) 
+
+for i in range(0,N):
+    u[i],v[i]=tectonic_velocity(experiment,x[i],y[i])
+    w[i]=uplift(experiment,x[i],y[i])
 
 #------------------------------------------------------------------------------
 # compute area of elements with basis functions
@@ -497,7 +654,7 @@ start = timing.time()
 bc_fix = np.zeros(N,dtype=np.bool)  # boundary condition, yes/no
 bc_val = np.zeros(N,dtype=np.float64)  # boundary condition, value
 
-if experiment==0 or experiment==2 or experiment==4:
+if experiment==-1 or experiment==0 or experiment==2 or experiment==4:
    for i in range(0,N):
        if abs(x[i]/Lx)<eps:
           bc_fix[i] = True ; bc_val[i]=0
@@ -508,26 +665,79 @@ if experiment==0 or experiment==2 or experiment==4:
        if abs(y[i]/Ly-1)<eps:
           bc_fix[i] = True ; bc_val[i]=0
 
-if experiment==1:
+elif experiment==1:
    for i in range(0,N):
        if abs(x[i]/Lx)<eps:
           bc_fix[i] = True ; bc_val[i]=0
 
-if experiment==3:
+elif experiment==3:
    for i in range(0,N):
        if abs(x[i]/Lx)<eps:
           bc_fix[i] = True ; bc_val[i]=0
        if abs(x[i]/Lx-1)<eps:
           bc_fix[i] = True ; bc_val[i]=100
 
-if experiment==5:
+elif experiment==5 or experiment==6:
    for i in range(0,N):
        if abs(x[i]/Lx)<eps:
           bc_fix[i] = True ; bc_val[i]=0
        if abs(x[i]/Lx-1)<eps:
           bc_fix[i] = True ; bc_val[i]=0
 
+else:
+
+   exit('unknown experiment in boundary conditions')
+
 print("define boundary conditions: %.3f s" % (timing.time() - start))
+
+#------------------------------------------------------------------------------
+# step 2a: same as step 2, but about twice as fast and more compact.
+#------------------------------------------------------------------------------
+start = timing.time()
+
+faces=np.zeros((3,2,nel),dtype=np.int32) # 3 face per elt, each face 2 nodes
+
+for iel in range(0,nel):
+    faces[0,0,iel]=icon[0,iel]
+    faces[0,1,iel]=icon[1,iel]
+    faces[1,0,iel]=icon[1,iel]
+    faces[1,1,iel]=icon[2,iel]
+    faces[2,0,iel]=icon[2,iel]
+    faces[2,1,iel]=icon[0,iel]
+
+gnei = np.zeros((3,nel),dtype=np.int32) ; gnei[:]=-1
+
+for iel in range(0,nel):
+    if iel%200==0: print('iel=',iel)
+    found=np.zeros(3,dtype=np.bool) 
+    for iface in range(0,3):
+        if gnei[iface,iel]>=0: continue
+        for jel in range(0,nel):
+            if jel==iel: continue
+            for jface in range(0,3):
+                if faces[iface,0,iel]==faces[jface,1,jel] and \
+                   faces[iface,1,iel]==faces[jface,0,jel]: 
+                   gnei[iface,iel]=jel
+                   gnei[jface,jel]=iel
+                   found[iface]=True
+                   #print(iel,'found',iface)
+                   break 
+                #end if
+            #end for
+        #end for
+        if not found[iface]: gnei[iface,iel]=iel 
+    #end for
+    #print('element behind face 0 of element',iel,'is element',gnei[0,iel])
+    #print('element behind face 1 of element',iel,'is element',gnei[1,iel])
+    #print('element behind face 2 of element',iel,'is element',gnei[2,iel])
+#end for
+
+if experiment==-1:
+   print(gnei[0,0:15],gnei[0,-10:])
+   print(gnei[1,0:15],gnei[1,-10:])
+   print(gnei[2,0:15],gnei[2,-10:])
+
+print("compute gnei: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
 # compute gnei (step 2)
@@ -589,6 +799,11 @@ for iel in range(0,nel):
     #print('element behind face 1 of element',iel,'is element',gnei[1,iel])
     #print('element behind face 2 of element',iel,'is element',gnei[2,iel])
 #end for iel
+
+if experiment==-1:
+   print(gnei[0,0:15],gnei[0,-10:])
+   print(gnei[1,0:15],gnei[1,-10:])
+   print(gnei[2,0:15],gnei[2,-10:])
 
 print("compute gnei: %.3f s" % (timing.time() - start))
 
@@ -823,6 +1038,7 @@ for istep in range(0,nstep):
         Ka=np.zeros((m,m),dtype=np.float64)   # elemental advection matrix 
         Kd=np.zeros((m,m),dtype=np.float64)   # elemental diffusion matrix 
         MM=np.zeros((m,m),dtype=np.float64)   # elemental mass matrix 
+        vel=np.zeros((1,ndim),dtype=np.float64)
 
         for k in range(0,m):
             hvect[k]=z[icon[k,iel]]
@@ -856,9 +1072,13 @@ for istep in range(0,nstep):
 
             xq=0
             yq=0
+            vel[0,0]=0.
+            vel[0,1]=0.
             for k in range(0,m):
                 xq+=N_mat[k,0]*x[icon[k,iel]]
                 yq+=N_mat[k,0]*y[icon[k,iel]]
+                vel[0,0]+=N_mat[k,0]*u[icon[k,iel]]
+                vel[0,1]+=N_mat[k,0]*v[icon[k,iel]]
 
             if A[iel]>Ac:
                kappa[iel]=c0+c*(A[iel]-Ac)**rexp * slope[iel]**(mexp-1)
@@ -867,6 +1087,8 @@ for istep in range(0,nstep):
             #kappa[iel]=0
 
             MM+=N_mat.dot(N_mat.T)*weightq*jcob
+
+            Ka+=N_mat.dot(vel.dot(B_mat))*weightq*jcob
 
             Kd+=B_mat.T.dot(B_mat)*weightq*jcob*kappa[iel]
 
@@ -934,7 +1156,7 @@ for istep in range(0,nstep):
     # export min/max profiles
     #------------------------------------------------------------------------------
 
-    if experiment==1 or experiment==5:
+    if experiment==1 or experiment==5 or experiment==6:
        start = timing.time()
 
        dx=Lx/nsegments
@@ -963,7 +1185,7 @@ for istep in range(0,nstep):
     dz=z-z_prev
 
     if istep%every==0:
-       export_elements_to_vtu(x,y,z,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,\
+       export_elements_to_vtu(x,y,z,u,v,w,zc,A,sorted_indices,dhdx,dhdy,slope,kappa,icon,\
                               'solution_'+str(istep)+'.vtu',area,border_element,catchment,dz)
 
     print("export to vtu: %.3f s" % (timing.time() - start))
