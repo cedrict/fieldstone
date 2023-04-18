@@ -1,0 +1,14 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set output 'times.pdf'
+set xlabel 'nel'
+set key outside 
+set log xy
+set ylabel 'gnei time'
+plot[][]\
+'times.txt' u 1:2 w lp pt 5 ps .5 t 'first algo',\
+'times.txt' u 1:3 w lp pt 5 ps .5 t 'optimed first algo',\
+'times.txt' u 1:4 w lp pt 5 ps .5 t 'new algo',\
+x**2/100000 lt -1 dt 2 t 'quadratic',\
+x/20000 lt -1 dt 3 t 'linear'
+

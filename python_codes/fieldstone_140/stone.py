@@ -281,6 +281,11 @@ def tectonic_velocity(exp,xq,yq):
     else:
        exit('pb with exp in tectonic_velocity function')
 
+#--------------------------------------------------------------------------------------------------
+
+def med(a, b, c):
+    return sorted([a, b, c])[1]
+
 ###################################################################################################
 ###################################################################################################
 
@@ -315,9 +320,9 @@ if experiment==-1: #test
    scale = 10     # amplitude random initial topography (m)
    nstep = 1  # number of time steps
    dt = 0*year # time step (s)
-   target_area='60000000'
+   #target_area='60000000' #ref
+   target_area='4500000' 
    every=1
-   
 
 
 if experiment==0:
@@ -654,7 +659,11 @@ start = timing.time()
 bc_fix = np.zeros(N,dtype=np.bool)  # boundary condition, yes/no
 bc_val = np.zeros(N,dtype=np.float64)  # boundary condition, value
 
-if experiment==-1 or experiment==0 or experiment==2 or experiment==4:
+if experiment==-1:
+
+   1
+
+elif experiment==0 or experiment==2 or experiment==4:
    for i in range(0,N):
        if abs(x[i]/Lx)<eps:
           bc_fix[i] = True ; bc_val[i]=0
@@ -691,6 +700,87 @@ else:
 print("define boundary conditions: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
+# step 2b: same as step 2, but much much faster
+#------------------------------------------------------------------------------
+start = timing.time()
+
+edges = np.empty((N,N,2),dtype=np.int32) ; edges[:,:,:]=-1
+
+for iel in range(0,nel):
+    min_vertex = min(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 0
+    mid_vertex = med(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 1
+    max_vertex = max(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 2
+
+    #edge 0
+    if edges[min_vertex,mid_vertex,0]<0:
+       edges[min_vertex,mid_vertex,0]=iel
+    else:
+       edges[min_vertex,mid_vertex,1]=iel
+
+    #edge 1
+    if edges[mid_vertex,max_vertex,0]<0:
+       edges[mid_vertex,max_vertex,0]=iel
+    else:
+       edges[mid_vertex,max_vertex,1]=iel
+
+    #edge 2
+    if edges[min_vertex,max_vertex,0]<0:
+       edges[min_vertex,max_vertex,0]=iel
+    else:
+       edges[min_vertex,max_vertex,1]=iel
+
+
+gnei = np.zeros((3,nel),dtype=np.int32) ; gnei[:]=-1
+
+for iel in range(0,nel):
+    min_vertex = min(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 0
+    mid_vertex = med(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 1
+    max_vertex = max(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 2
+
+    #edge 0 - min-mid we assume the edge has two neighbours
+    el1=edges[min_vertex,mid_vertex,0] 
+    el2=edges[min_vertex,mid_vertex,1] 
+    if el2<0: el2=iel
+
+    if iel==el1:
+       gnei[0,el1]=el2
+    else:
+       gnei[0,el2]=el1
+
+    #edge 1 - mid-max we assume the edge has two neighbours
+    el1=edges[mid_vertex,max_vertex,0]
+    el2=edges[mid_vertex,max_vertex,1]
+    if el2<0: el2=iel
+
+    if iel==el1:
+       gnei[1,el1]=el2
+    else:
+       gnei[1,el2]=el1
+
+    #edge 2 - min-max we assume the edge has two neighbours
+    el1=edges[min_vertex,max_vertex,0]
+    el2=edges[min_vertex,max_vertex,1]
+    if el2<0: el2=iel
+
+    if iel==el1:
+       gnei[2,el1]=el2
+    else:
+       gnei[2,el2]=el1
+
+if experiment==-1:
+   print(gnei[0,0:15],gnei[0,-13:])
+   print(gnei[1,0:15],gnei[1,-13:])
+   print(gnei[2,0:15],gnei[2,-13:])
+
+#for iel in range(0,nel):
+#    min_vertex = min(icon[0,iel],icon[1,iel],icon[2,iel])
+#    mid_vertex = med(icon[0,iel],icon[1,iel],icon[2,iel])
+#    max_vertex = max(icon[0,iel],icon[1,iel],icon[2,iel])
+#    print(edges[min_vertex,mid_vertex,:])
+
+print("compute gnei 2b: %.3f s" % (timing.time() - start))
+
+#------------------------------------------------------------------------------
 # step 2a: same as step 2, but about twice as fast and more compact.
 #------------------------------------------------------------------------------
 start = timing.time()
@@ -720,11 +810,11 @@ for iel in range(0,nel):
                    gnei[iface,iel]=jel
                    gnei[jface,jel]=iel
                    found[iface]=True
-                   #print(iel,'found',iface)
                    break 
                 #end if
-            #end for
-        #end for
+            #end for jface
+            if found[iface]: break
+        #end for jel
         if not found[iface]: gnei[iface,iel]=iel 
     #end for
     #print('element behind face 0 of element',iel,'is element',gnei[0,iel])
@@ -733,11 +823,13 @@ for iel in range(0,nel):
 #end for
 
 if experiment==-1:
-   print(gnei[0,0:15],gnei[0,-10:])
-   print(gnei[1,0:15],gnei[1,-10:])
-   print(gnei[2,0:15],gnei[2,-10:])
+   print(gnei[0,0:15],gnei[0,-13:])
+   print(gnei[1,0:15],gnei[1,-13:])
+   print(gnei[2,0:15],gnei[2,-13:])
 
-print("compute gnei: %.3f s" % (timing.time() - start))
+print("compute gnei 2a: %.3f s" % (timing.time() - start))
+
+#exit()
 
 #------------------------------------------------------------------------------
 # compute gnei (step 2)
@@ -801,11 +893,13 @@ for iel in range(0,nel):
 #end for iel
 
 if experiment==-1:
-   print(gnei[0,0:15],gnei[0,-10:])
-   print(gnei[1,0:15],gnei[1,-10:])
-   print(gnei[2,0:15],gnei[2,-10:])
+   print(gnei[0,0:15],gnei[0,-13:])
+   print(gnei[1,0:15],gnei[1,-13:])
+   print(gnei[2,0:15],gnei[2,-13:])
 
-print("compute gnei: %.3f s" % (timing.time() - start))
+print("compute gnei 2 : %.3f s" % (timing.time() - start))
+
+exit()
 
 #------------------------------------------------------------------------------
 # establish list of elements on border of domain 
@@ -844,7 +938,7 @@ nborder=np.count_nonzero(border_element==1)
 
 print('   -> nborder=',nborder)
 
-print("compute gnei: %.3f s" % (timing.time() - start))
+print("establish border elts: %.3f s" % (timing.time() - start))
 
 ###################################################################################################
 ###################################################################################################
