@@ -1,0 +1,36 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set xlabel 'x (km)'
+set ylabel 'z (m)'
+
+set output 'elevation.pdf'
+plot[][]\
+'solution_0.ascii'     u ($1/1e3):3 ps .12 t '0',\
+'solution_200.ascii'   u ($1/1e3):3 ps .12 t '200',\
+'solution_400.ascii'   u ($1/1e3):3 ps .12 t '400',\
+'solution_600.ascii'   u ($1/1e3):3 ps .12 t '600',\
+'solution_1000.ascii'  u ($1/1e3):3 ps .12 t '1000',\
+'solution_2000.ascii'  u ($1/1e3):3 ps .12 t '2000',\
+'solution_3000.ascii'  u ($1/1e3):3 ps .23 pt 5 t '3000',\
+'profile_x_3000.ascii' u ($1/1e3):2 w l lt -1 dt 2 t 'min',\
+'profile_x_3000.ascii' u ($1/1e3):3 w l lt -1 dt 3 t 'max'
+
+set output 'elevation2.pdf'
+plot[][]\
+'profile_x_200.ascii'  u ($1/1e3):2 w l lt 1 t '200',\
+'profile_x_200.ascii'  u ($1/1e3):3 w l lt 1 notitle,\
+'profile_x_400.ascii'  u ($1/1e3):2 w l lt 2 t '400',\
+'profile_x_400.ascii'  u ($1/1e3):3 w l lt 2 notitle,\
+'profile_x_600.ascii'  u ($1/1e3):2 w l lt 3 t '600',\
+'profile_x_600.ascii'  u ($1/1e3):3 w l lt 3 notitle,\
+'profile_x_800.ascii'  u ($1/1e3):2 w l lt 4 t '800',\
+'profile_x_800.ascii'  u ($1/1e3):3 w l lt 4 notitle,\
+'profile_x_1000.ascii' u ($1/1e3):2 w l lt 5 t '1000',\
+'profile_x_1000.ascii' u ($1/1e3):3 w l lt 5 notitle,\
+'profile_x_2000.ascii' u ($1/1e3):2 w l lt 6 t '2000',\
+'profile_x_2000.ascii' u ($1/1e3):3 w l lt 6 notitle,\
+'profile_x_3000.ascii' u ($1/1e3):2 w l lt 7 t '3000',\
+'profile_x_3000.ascii' u ($1/1e3):3 w l lt 7 notitle
+
+

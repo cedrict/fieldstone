@@ -297,15 +297,17 @@ unstructured=True
    
 tol = 1e-3    # iteration tolerance
 
+build_gnei='2b'
+
 #------------------------------------------------------------------------------
 
-experiment=-1
+#experiment=-1 #test
 #experiment=0 # simpson's book example
 #experiment=1 # simple slope high at x=Lx
 #experiment=2 # benchmark uplift 
 #experiment=3 # benchmark linear diffusion
 #experiment=4 # volcano-like
-#experiment=5 # orogen-like
+experiment=5 # orogen-like
 #experiment=6 # crustal orogen with tect adv
 
 if experiment==-1: #test
@@ -412,9 +414,9 @@ if experiment==5: # orogen-like
    scale = 0.1     # amplitude random initial topography (m)
    nstep = 3001  # number of time steps
    dt = 100*year # time step (s)
-   target_area='8000000'
+   target_area='1500000'
    nsegments=80
-   every=50
+   every=10
 
 if experiment==6: # upper crustal wedge with advection
    Lx=200e3
@@ -704,132 +706,128 @@ print("define boundary conditions: %.3f s" % (timing.time() - start))
 #------------------------------------------------------------------------------
 start = timing.time()
 
-edges = np.empty((N,N,2),dtype=np.int32) ; edges[:,:,:]=-1
+if build_gnei=='2b':
 
-for iel in range(0,nel):
-    min_vertex = min(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 0
-    mid_vertex = med(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 1
-    max_vertex = max(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 2
+   edges = np.empty((N,N,2),dtype=np.int32) ; edges[:,:,:]=-1
 
-    #edge 0
-    if edges[min_vertex,mid_vertex,0]<0:
-       edges[min_vertex,mid_vertex,0]=iel
-    else:
-       edges[min_vertex,mid_vertex,1]=iel
+   for iel in range(0,nel):
+       min_vertex = min(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 0
+       mid_vertex = med(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 1
+       max_vertex = max(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 2
 
-    #edge 1
-    if edges[mid_vertex,max_vertex,0]<0:
-       edges[mid_vertex,max_vertex,0]=iel
-    else:
-       edges[mid_vertex,max_vertex,1]=iel
+       #edge 0
+       if edges[min_vertex,mid_vertex,0]<0:
+          edges[min_vertex,mid_vertex,0]=iel
+       else:
+          edges[min_vertex,mid_vertex,1]=iel
 
-    #edge 2
-    if edges[min_vertex,max_vertex,0]<0:
-       edges[min_vertex,max_vertex,0]=iel
-    else:
-       edges[min_vertex,max_vertex,1]=iel
+       #edge 1
+       if edges[mid_vertex,max_vertex,0]<0:
+          edges[mid_vertex,max_vertex,0]=iel
+       else:
+          edges[mid_vertex,max_vertex,1]=iel
+
+       #edge 2
+       if edges[min_vertex,max_vertex,0]<0:
+          edges[min_vertex,max_vertex,0]=iel
+       else:
+          edges[min_vertex,max_vertex,1]=iel
 
 
-gnei = np.zeros((3,nel),dtype=np.int32) ; gnei[:]=-1
+   gnei = np.zeros((3,nel),dtype=np.int32) ; gnei[:]=-1
 
-for iel in range(0,nel):
-    min_vertex = min(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 0
-    mid_vertex = med(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 1
-    max_vertex = max(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 2
+   for iel in range(0,nel):
+       min_vertex = min(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 0
+       mid_vertex = med(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 1
+       max_vertex = max(icon[0,iel],icon[1,iel],icon[2,iel]) #edge 2
 
-    #edge 0 - min-mid we assume the edge has two neighbours
-    el1=edges[min_vertex,mid_vertex,0] 
-    el2=edges[min_vertex,mid_vertex,1] 
-    if el2<0: el2=iel
+       #edge 0 - min-mid we assume the edge has two neighbours
+       el1=edges[min_vertex,mid_vertex,0] 
+       el2=edges[min_vertex,mid_vertex,1] 
+       if el2<0: el2=iel
 
-    if iel==el1:
-       gnei[0,el1]=el2
-    else:
-       gnei[0,el2]=el1
+       if iel==el1:
+          gnei[0,el1]=el2
+       else:
+          gnei[0,el2]=el1
 
-    #edge 1 - mid-max we assume the edge has two neighbours
-    el1=edges[mid_vertex,max_vertex,0]
-    el2=edges[mid_vertex,max_vertex,1]
-    if el2<0: el2=iel
+       #edge 1 - mid-max we assume the edge has two neighbours
+       el1=edges[mid_vertex,max_vertex,0]
+       el2=edges[mid_vertex,max_vertex,1]
+       if el2<0: el2=iel
 
-    if iel==el1:
-       gnei[1,el1]=el2
-    else:
-       gnei[1,el2]=el1
+       if iel==el1:
+          gnei[1,el1]=el2
+       else:
+          gnei[1,el2]=el1
 
-    #edge 2 - min-max we assume the edge has two neighbours
-    el1=edges[min_vertex,max_vertex,0]
-    el2=edges[min_vertex,max_vertex,1]
-    if el2<0: el2=iel
+       #edge 2 - min-max we assume the edge has two neighbours
+       el1=edges[min_vertex,max_vertex,0]
+       el2=edges[min_vertex,max_vertex,1]
+       if el2<0: el2=iel
 
-    if iel==el1:
-       gnei[2,el1]=el2
-    else:
-       gnei[2,el2]=el1
+       if iel==el1:
+          gnei[2,el1]=el2
+       else:
+          gnei[2,el2]=el1
 
-if experiment==-1:
-   print(gnei[0,0:15],gnei[0,-13:])
-   print(gnei[1,0:15],gnei[1,-13:])
-   print(gnei[2,0:15],gnei[2,-13:])
+   if experiment==-1:
+      print(gnei[0,0:15],gnei[0,-13:])
+      print(gnei[1,0:15],gnei[1,-13:])
+      print(gnei[2,0:15],gnei[2,-13:])
 
-#for iel in range(0,nel):
-#    min_vertex = min(icon[0,iel],icon[1,iel],icon[2,iel])
-#    mid_vertex = med(icon[0,iel],icon[1,iel],icon[2,iel])
-#    max_vertex = max(icon[0,iel],icon[1,iel],icon[2,iel])
-#    print(edges[min_vertex,mid_vertex,:])
-
-print("compute gnei 2b: %.3f s" % (timing.time() - start))
+   print("compute gnei 2b: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
 # step 2a: same as step 2, but about twice as fast and more compact.
 #------------------------------------------------------------------------------
 start = timing.time()
 
-faces=np.zeros((3,2,nel),dtype=np.int32) # 3 face per elt, each face 2 nodes
+if build_gnei=='2a':
 
-for iel in range(0,nel):
-    faces[0,0,iel]=icon[0,iel]
-    faces[0,1,iel]=icon[1,iel]
-    faces[1,0,iel]=icon[1,iel]
-    faces[1,1,iel]=icon[2,iel]
-    faces[2,0,iel]=icon[2,iel]
-    faces[2,1,iel]=icon[0,iel]
+   faces=np.zeros((3,2,nel),dtype=np.int32) # 3 face per elt, each face 2 nodes
 
-gnei = np.zeros((3,nel),dtype=np.int32) ; gnei[:]=-1
+   for iel in range(0,nel):
+       faces[0,0,iel]=icon[0,iel]
+       faces[0,1,iel]=icon[1,iel]
+       faces[1,0,iel]=icon[1,iel]
+       faces[1,1,iel]=icon[2,iel]
+       faces[2,0,iel]=icon[2,iel]
+       faces[2,1,iel]=icon[0,iel]
 
-for iel in range(0,nel):
-    if iel%200==0: print('iel=',iel)
-    found=np.zeros(3,dtype=np.bool) 
-    for iface in range(0,3):
-        if gnei[iface,iel]>=0: continue
-        for jel in range(0,nel):
-            if jel==iel: continue
-            for jface in range(0,3):
-                if faces[iface,0,iel]==faces[jface,1,jel] and \
-                   faces[iface,1,iel]==faces[jface,0,jel]: 
-                   gnei[iface,iel]=jel
-                   gnei[jface,jel]=iel
-                   found[iface]=True
-                   break 
-                #end if
-            #end for jface
-            if found[iface]: break
-        #end for jel
-        if not found[iface]: gnei[iface,iel]=iel 
-    #end for
-    #print('element behind face 0 of element',iel,'is element',gnei[0,iel])
-    #print('element behind face 1 of element',iel,'is element',gnei[1,iel])
-    #print('element behind face 2 of element',iel,'is element',gnei[2,iel])
-#end for
+   gnei = np.zeros((3,nel),dtype=np.int32) ; gnei[:]=-1
 
-if experiment==-1:
-   print(gnei[0,0:15],gnei[0,-13:])
-   print(gnei[1,0:15],gnei[1,-13:])
-   print(gnei[2,0:15],gnei[2,-13:])
+   for iel in range(0,nel):
+       if iel%200==0: print('iel=',iel)
+       found=np.zeros(3,dtype=np.bool) 
+       for iface in range(0,3):
+           if gnei[iface,iel]>=0: continue
+           for jel in range(0,nel):
+               if jel==iel: continue
+               for jface in range(0,3):
+                   if faces[iface,0,iel]==faces[jface,1,jel] and \
+                      faces[iface,1,iel]==faces[jface,0,jel]: 
+                      gnei[iface,iel]=jel
+                      gnei[jface,jel]=iel
+                      found[iface]=True
+                      break 
+                   #end if
+               #end for jface
+               if found[iface]: break
+           #end for jel
+           if not found[iface]: gnei[iface,iel]=iel 
+       #end for
+       #print('element behind face 0 of element',iel,'is element',gnei[0,iel])
+       #print('element behind face 1 of element',iel,'is element',gnei[1,iel])
+       #print('element behind face 2 of element',iel,'is element',gnei[2,iel])
+   #end for
 
-print("compute gnei 2a: %.3f s" % (timing.time() - start))
+   if experiment==-1:
+      print(gnei[0,0:15],gnei[0,-13:])
+      print(gnei[1,0:15],gnei[1,-13:])
+      print(gnei[2,0:15],gnei[2,-13:])
 
-#exit()
+   print("compute gnei 2a: %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
 # compute gnei (step 2)
@@ -842,64 +840,64 @@ print("compute gnei 2a: %.3f s" % (timing.time() - start))
 #------------------------------------------------------------------------------
 start = timing.time()
 
-gnei = np.zeros((3,nel),dtype=np.int32) 
+if build_gnei=='2':
 
-for iel in range(0,nel):
-    if iel%200==0: print('iel=',iel)
-    for iface in range(0,3):
-        if iface==0:
-           iel_node1=icon[0,iel] 
-           iel_node2=icon[1,iel] 
-           found0=False
-        if iface==1:
-           iel_node1=icon[1,iel] 
-           iel_node2=icon[2,iel] 
-           found1=False
-        if iface==2:
-           iel_node1=icon[2,iel] 
-           iel_node2=icon[0,iel] 
-           found2=False
-        #print('iel=',iel,'iface=',iface,iel_node1,iel_node2)
-        for jel in range(0,nel):
-            if jel!=iel:
-               for jface in range(0,3):
-                   if jface==0:
-                      jel_node1=icon[0,jel] 
-                      jel_node2=icon[1,jel] 
-                   if jface==1:
-                      jel_node1=icon[1,jel] 
-                      jel_node2=icon[2,jel] 
-                   if jface==2:
-                      jel_node1=icon[2,jel] 
-                      jel_node2=icon[0,jel] 
-                   #print('   -> jel=',jel,'jface=',jface,jel_node1,jel_node2)
-                   if iel_node1==jel_node2 and iel_node2==jel_node1:
-                      gnei[iface,iel]=jel
-                      if iface==0: found0=True
-                      if iface==1: found1=True
-                      if iface==2: found2=True
-                   #end if
+   gnei = np.zeros((3,nel),dtype=np.int32) 
 
-               #end for jface
-            #end if jel/=iel       
-        #end for jel
-    #end for iface 
-    if not found0: gnei[0,iel]=iel 
-    if not found1: gnei[1,iel]=iel 
-    if not found2: gnei[2,iel]=iel 
-    #print('element behind face 0 of element',iel,'is element',gnei[0,iel])
-    #print('element behind face 1 of element',iel,'is element',gnei[1,iel])
-    #print('element behind face 2 of element',iel,'is element',gnei[2,iel])
-#end for iel
+   for iel in range(0,nel):
+       if iel%200==0: print('iel=',iel)
+       for iface in range(0,3):
+           if iface==0:
+              iel_node1=icon[0,iel] 
+              iel_node2=icon[1,iel] 
+              found0=False
+           if iface==1:
+              iel_node1=icon[1,iel] 
+              iel_node2=icon[2,iel] 
+              found1=False
+           if iface==2:
+              iel_node1=icon[2,iel] 
+              iel_node2=icon[0,iel] 
+              found2=False
+           #print('iel=',iel,'iface=',iface,iel_node1,iel_node2)
+           for jel in range(0,nel):
+               if jel!=iel:
+                  for jface in range(0,3):
+                      if jface==0:
+                         jel_node1=icon[0,jel] 
+                         jel_node2=icon[1,jel] 
+                      if jface==1:
+                         jel_node1=icon[1,jel] 
+                         jel_node2=icon[2,jel] 
+                      if jface==2:
+                         jel_node1=icon[2,jel] 
+                         jel_node2=icon[0,jel] 
+                      #print('   -> jel=',jel,'jface=',jface,jel_node1,jel_node2)
+                      if iel_node1==jel_node2 and iel_node2==jel_node1:
+                         gnei[iface,iel]=jel
+                         if iface==0: found0=True
+                         if iface==1: found1=True
+                         if iface==2: found2=True
+                      #end if
 
-if experiment==-1:
-   print(gnei[0,0:15],gnei[0,-13:])
-   print(gnei[1,0:15],gnei[1,-13:])
-   print(gnei[2,0:15],gnei[2,-13:])
+                  #end for jface
+               #end if jel/=iel       
+           #end for jel
+       #end for iface 
+       if not found0: gnei[0,iel]=iel 
+       if not found1: gnei[1,iel]=iel 
+       if not found2: gnei[2,iel]=iel 
+       #print('element behind face 0 of element',iel,'is element',gnei[0,iel])
+       #print('element behind face 1 of element',iel,'is element',gnei[1,iel])
+       #print('element behind face 2 of element',iel,'is element',gnei[2,iel])
+   #end for iel
 
-print("compute gnei 2 : %.3f s" % (timing.time() - start))
+   if experiment==-1:
+      print(gnei[0,0:15],gnei[0,-13:])
+      print(gnei[1,0:15],gnei[1,-13:])
+      print(gnei[2,0:15],gnei[2,-13:])
 
-exit()
+   print("compute gnei 2 : %.3f s" % (timing.time() - start))
 
 #------------------------------------------------------------------------------
 # establish list of elements on border of domain 

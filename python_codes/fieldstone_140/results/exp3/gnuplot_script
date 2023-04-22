@@ -1,0 +1,18 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set xlabel 'x'
+set ylabel 'z'
+set output 'elevation.pdf'
+plot[][-5:105]\
+'solution_0.ascii'   u 1:3 ps .2 t '0',\
+'solution_100.ascii' u 1:3 ps .2 t '100',\
+'solution_200.ascii' u 1:3 ps .2 t '200',\
+'solution_300.ascii' u 1:3 ps .2 t '300',\
+'solution_500.ascii' u 1:3 ps .2 t '300',\
+'solution_800.ascii' u 1:3 ps .2 t '300',\
+'solution_1200.ascii' u 1:3 ps .2 t '300',\
+'solution_2000.ascii' u 1:3 ps .2 t '300',\
+'solution_2800.ascii' u 1:3 ps .2 t '300',\
+'solution_4000.ascii' u 1:3 ps .2 t '300',\
+'solution_4900.ascii' u 1:3 ps .2 t '300',\
