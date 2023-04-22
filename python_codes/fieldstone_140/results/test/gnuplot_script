@@ -9,6 +9,9 @@ plot[][]\
 'times.txt' u 1:2 w lp pt 5 ps .5 t 'first algo',\
 'times.txt' u 1:3 w lp pt 5 ps .5 t 'optimed first algo',\
 'times.txt' u 1:4 w lp pt 5 ps .5 t 'new algo',\
+'timesR.txt' u 1:2 w lp ps .5 t 'alt 1',\
+'timesR.txt' u 1:3 w lp ps .5 t 'alt 2',\
 x**2/100000 lt -1 dt 2 t 'quadratic',\
+x**2/1000000 lt -1 dt 2 notitle,\
 x/20000 lt -1 dt 3 t 'linear'
 
