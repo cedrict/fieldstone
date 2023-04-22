@@ -429,7 +429,7 @@ NfemT=NV*ndofT       # nb of temperature dofs
 hx=Lx/nelx # element size in x direction
 hy=Ly/nely # element size in y direction
 
-sparse=False # storage of FEM matrix 
+sparse=True # storage of FEM matrix 
 
 EBA=False
 
@@ -509,7 +509,7 @@ if nqperdim==6:
 # open output files
 
 Nu_vrms_file=open('Nu_vrms.ascii',"w")
-Nu_vrms_file.write("#istep,Nusselt,vrms\n")
+Nu_vrms_file.write("#istep,Nusselt,vrms,qy bottom, qy top\n")
 Tavrg_file=open('Tavrg.ascii',"w")
 conv_file=open('conv.ascii',"w")
 
