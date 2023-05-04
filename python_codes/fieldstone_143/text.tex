@@ -1,0 +1,153 @@
+
+This \stone is based on \textcite{yahb13} (2013). 
+
+In the paper the authors state that their simple setup
+``also ensures the reproducibility of our results that can be easily tested by any code-
+solving Stokes equations with free-slip boundary conditions.''
+This is exactly what we are going to do in what follows.
+
+The authors state: ``The Cartesian box is $6000~\si{\km}$ wide and $3000~\si{\km}$
+deep. The grid resolution used is of 601$\times$301 nodes which
+corresponds to a spatial resolution of $10~\si{\km}$. [...] 
+All the mechanical boundary conditions are free slip and all the viscosities 
+in our model are linear viscous.''
+This makes indeed for a simple model.
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_143/images/yahb13_a}\\
+{\captionfont 
+Taken from \cite{yahb13}. Initial configuration of the model. (a) Model setup. L: length of mantle space between the left-
+hand side of the box and the continental lithosphere; $l_c$ : length of continental lithosphere; lo : length of
+oceanic lithosphere; $l_r$=500km : length corresponding to the thinning of the lithosphere due to the ridge; 
+$F_d$: downwelling force; $F_u$: upwelling force. These buoyancy forces are implemented by setting variable
+densities in the red and blue columns. The area of the columns is $A_d$ and $A_u$ for the downwelling and the
+upwelling force, respectively. (b) Viscosity structure. $\eta_c$, $\eta_o$, and $\eta_{um}$ correspond
+to the viscosity of the continental lithosphere, oceanic lithosphere, and upper mantle, respectively. The
+viscosity of the lower mantle corresponds to a simplified profile (black line). The viscosity models from
+\cite{civs12} (2012) are also provided (Family-A model in red and Family-B model in blue) as references. }
+\end{center}
+
+Please read the original paper for a justification of the chosen values for most 
+of the parameters.
+
+``The oceanic lithosphere is not attached
+to the right-hand side of the box, for one upper mantle cell
+separates it from the model box edge. This ensures that the
+lithosphere is free to move laterally and is not affected by
+the free-slip boundary condition imposed at the right side [...].''
+
+``We [...] fixed typical thicknesses to
+$200~\si{\km}$ and $100~\si{\km}$ [...] for the continental and the oceanic lithosphere, 
+respectively. The width of the continental lithosphere is similarly
+set in all our models to $2000~\si{\km}$.''
+
+The density is set to $\rho_{ref}=3250~\si{\kg\per\cubic\meter}$ everywhere in the model box. Density
+differences are only assigned to the upwelling and the
+downwelling zones that drive, by buoyancy, the convection
+cell. The density value in the upwelling ($\rho_u$) and
+in the downwelling ($\rho_d$) areas depends on the buoyancy force
+applied and are expressed as follows:
+
+\begin{eqnarray}
+\rho_u &=& \rho_{ref} - \frac{F_u}{\rho_{ref} g A_u} \\
+\rho_d &=& \rho_{ref} + \frac{F_d}{\rho_{ref} g A_d} 
+\end{eqnarray}
+where $F_u$ and $F_d$ correspond to the absolute values of the 
+upwelling and downwelling forces, respectively, and g is the gravitational 
+acceleration set to $9.81~\si{\meter\per\square\second}$.
+Note that the values for $A_u$ and $A_d$ is never specified!
+
+
+The viscosity in the lower mantle corresponds
+to a very simplified profile: From 660 km to 2650 km depth,
+the viscosity is set to $\eta_{um}=5\cdot 10^{22}~\si{\pascal\second}$. 
+Below, the viscosity is set to $10^{21} Pa s$ (D'' layer). 
+
+Above the lower mantle, the viscosities
+are not well resolved and therefore need to be tested.
+The authors ``considered the viscosity of the continental 
+lithosphere, of the oceanic lithosphere, and of the
+upper mantle as linear and constant.''
+
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_143/images/yahb13_b}\\
+{\captionfont 
+Taken from \cite{yahb13}. 
+Sketch of the mantle convective cell flow in (a) collision mode and (b) drift mode. In the
+collision mode, the anchored slab does not retreat and prevents the trench-ward motion of the upper plate
+and is thus blocked. In drift mode, the subducting slab is retreating and accommodates the oceanic litho-
+sphere convergence that can freely move. Thick black and blue arrows show mantle flow and slab motion,
+respectively. Thin black and magenta arrows correspond to the lithosphere and trench displacements,
+respectively. These thin arrows are replaced by crosses when the motion is zero with respect to the upwelling.
+Large grey and magenta arrows correspond to compressional and extensional areas at active and passive plate
+margins, respectively.
+}
+\end{center}
+
+
+\section*{Collision mode}
+
+In the collision mode, $L = 0$ and the lithosphere cannot
+move freely above the convection cell. The net driving force involved in this
+example amounts to $2\cdot 10^{13}~\si{\newton\per\meter}$. This total force is evenly
+distributed ($F_u = F_d = 10^{13}~\si{\newton\per\meter}$). 
+
+
+
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_143/images/yahb13_c}\\
+{\captionfont Taken from \cite{yahb13}.
+(a) Strain rate at the surface across the $3000~\si{\km}$ long continental and oceanic lithospheres
+($L=0~\si{\km}$ and $l_ c=2000~\si{\km}$). 
+(b) Streamlines obtained for the downwelling driven model
+($F_u=0$, $F_d=2 \cdot 10^{13} N m 1$ ), 
+the upwelling driven model (F u = 2 · 10 13 N m 1 , F d = 0 N m 1 ), and
+the reference model ($F_u=10^{13}~\si{\newton\per\meter}$, F d = 10 13 N m -1 ).
+}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
