@@ -184,7 +184,7 @@ print("-----------------------------")
 # - stretch mesh in vertical direction - careful with jacobian!!
 # - matrix does not change in time, precompute!
 # - compute heat flux at surface
-
+# - benchmark advection and diffusion
 #####################################################################
 Lx=100*km          # horizontal dimension of domain
 Ly=25*km           # vertical dimension of domain
@@ -192,7 +192,7 @@ Tsurf=0            # temperature at the top
 Tbase=1480         # temperature at the bottom
 Tintrusion=1250    # temperature prescribed at intrusion
 Hmagma=2500        # thickness of magma channel
-Umagma=10*cm/year  # maximum velocity
+Umagma=20*cm/year  # maximum velocity
 Ymagma=10.5*km     # channel middle depth 
 hcapa_rock=800     # heat capacity
 hcond_rock=1.5     # heat conductivity
@@ -205,7 +205,7 @@ nelx = 80          # number of elements in x direction
 nely = 100         # number of elements in y direction
 order= 1           # polynomial basis for basis functions
 nstep= 2000        # maximum number of time steps
-CFL_nb=0.8         # CFL number
+CFL_nb = 1         # CFL number
 supg_type=0        # toggle switch for SUPG advection stabilisation
 #####################################################################
 
@@ -438,6 +438,29 @@ for i in range(0,NV):
 
 print("define velocity field: %.3f s" % (timing.time() - start))
 
+#################################################################
+# define elemental parameters 
+#################################################################
+start = timing.time()
+    
+hcond = np.zeros(nel,dtype=np.float64)
+hcapa = np.zeros(nel,dtype=np.float64)
+rho = np.zeros(nel,dtype=np.float64)
+
+for iel in range(0,nel):
+    xc=np.sum(xV[iconV[:,iel]])/mV
+    yc=np.sum(yV[iconV[:,iel]])/mV
+    if abs(yc-Ymagma)<Hmagma/2:
+       hcapa[iel]=hcapa_magma
+       hcond[iel]=hcond_magma
+       rho[iel]=rho_magma
+    else:
+       hcapa[iel]=hcapa_rock
+       hcond[iel]=hcond_rock
+       rho[iel]=rho_rock
+
+print("elemental params: %.3f s" % (timing.time() - start))
+
 #==============================================================================
 #==============================================================================
 #==============================================================================
@@ -555,23 +578,14 @@ for istep in range(0,nstep):
     
                 N_mat_supg=N_mat+tau_supg[counterq]*np.transpose(vel.dot(B_mat))
 
-                if abs(yq-Ymagma)<Hmagma/2:
-                   hcapa=hcapa_magma
-                   hcond=hcond_magma
-                   rho=rho_magma
-                else:
-                   hcapa=hcapa_rock
-                   hcond=hcond_rock
-                   rho=rho_rock
-
                 # compute mass matrix
-                MM+=N_mat_supg.dot(N_mat.T)*weightq*jcob*rho*hcapa
+                MM+=N_mat_supg.dot(N_mat.T)*weightq*jcob*rho[iel]*hcapa[iel]
 
                 # compute diffusion matrix
-                Kd+=B_mat.T.dot(B_mat)*weightq*jcob*hcond
+                Kd+=B_mat.T.dot(B_mat)*weightq*jcob*hcond[iel]
 
                 # compute advection matrix
-                Ka+=N_mat_supg.dot(vel.dot(B_mat))*weightq*jcob*rho*hcapa
+                Ka+=N_mat_supg.dot(vel.dot(B_mat))*weightq*jcob*rho[iel]*hcapa[iel]
 
                 counterq+=1
 
@@ -626,7 +640,33 @@ for istep in range(0,nstep):
     Tstats_file.write("%6e %6e %6e\n" % (time,np.min(T),np.max(T)))
     Tstats_file.flush()
 
-    print("solve T time: %.3f s" % (timing.time() - start))
+    print("solve linear system: %.3f s" % (timing.time() - start))
+
+    #####################################################################
+    # compute heat flux
+    #####################################################################
+    start = timing.time()
+
+    qx = np.zeros(nel,dtype=np.float64)
+    qy = np.zeros(nel,dtype=np.float64)
+
+    for iel in range(0,nel):
+        rq = 0.0 
+        sq = 0.0 
+        dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
+        dNNNVds[0:mV]=dNNVds(rq,sq,order)
+        for k in range(0,mV):
+            dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+            dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+            qx[iel]-=hcond[iel]*dNNNVdx[k]*T[iconV[k,iel]]
+            qy[iel]-=hcond[iel]*dNNNVdy[k]*T[iconV[k,iel]]
+        #end for
+    #end for
+
+    print("     qx (m,M): %.4f %.4f " %(np.min(qx),np.max(qx)))
+    print("     qy (m,M): %.4f %.4f " %(np.min(qy),np.max(qy)))
+
+    print("compute heat flux: %.3f s" % (timing.time() - start))
 
     #####################################################################
     # plot of solution
@@ -659,16 +699,36 @@ for istep in range(0,nstep):
        for i in range(0,NV):
            vtufile.write("%10e \n" %T[i])
        vtufile.write("</DataArray>\n")
-
        #--
        vtufile.write("<DataArray type='Float32' Name='T-T_init' Format='ascii'> \n")
        for i in range(0,NV):
            vtufile.write("%10e \n" %(T[i]-T_init[i]))
        vtufile.write("</DataArray>\n")
-
-
        #--
        vtufile.write("</PointData>\n")
+       #####
+       vtufile.write("<CellData Scalars='scalars'>\n")
+       vtufile.write("<DataArray type='Float32' Name='qx' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%e \n" % qx[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='qy' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%e \n" % qy[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%e \n" % rho[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='hcapa' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%e \n" % hcapa[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='hcond' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%e \n" % hcond[iel])
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</CellData>\n")
        #####
        vtufile.write("<Cells>\n")
        #--
