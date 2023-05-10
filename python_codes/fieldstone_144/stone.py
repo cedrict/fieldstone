@@ -183,7 +183,6 @@ print("-----------------------------")
 # - make function for velocity profile
 # - stretch mesh in vertical direction - careful with jacobian!!
 # - matrix does not change in time, precompute!
-# - compute heat flux at surface
 # - benchmark advection and diffusion
 #####################################################################
 Lx=100*km          # horizontal dimension of domain
@@ -191,7 +190,7 @@ Ly=25*km           # vertical dimension of domain
 Tsurf=0            # temperature at the top
 Tbase=1480         # temperature at the bottom
 Tintrusion=1250    # temperature prescribed at intrusion
-Hmagma=2500        # thickness of magma channel
+Hmagma=1000        # thickness of magma channel
 Umagma=20*cm/year  # maximum velocity
 Ymagma=10.5*km     # channel middle depth 
 hcapa_rock=800     # heat capacity
@@ -201,8 +200,8 @@ hcapa_magma=1100   # heat capacity
 hcond_magma=1.5    # heat conductivity
 rho_magma=2700     # density
 tfinal=10e6*year   # duration of simulation
-nelx = 80          # number of elements in x direction
-nely = 100         # number of elements in y direction
+nelx = 120         # number of elements in x direction
+nely = 40          # number of elements in y direction
 order= 1           # polynomial basis for basis functions
 nstep= 2000        # maximum number of time steps
 CFL_nb = 1         # CFL number
@@ -314,6 +313,31 @@ for j in range(0,nny):
 #end for
 
 print("build V grid: %.3f s" % (timing.time() - start))
+
+#################################################################
+#################################################################
+
+beta1=0.125
+beta2=0.5
+y1=Ymagma-Hmagma/2
+y2=Ymagma+Hmagma/2
+a=2
+
+x1=y1/a
+x2=(y2-Ly)/a+Ly
+
+for i in range(0,NV):
+    if yV[i]<x1:
+       yV[i]=a*yV[i]
+    elif yV[i]<x2:
+       yV[i]=Hmagma/(x2-x1)*(yV[i]-x1)+y1
+    else:
+       yV[i]=a*(yV[i]-Ly)+Ly
+
+if order>1:
+   exit('stretching not ok for Q2,Q3')
+
+np.savetxt('grid_stretched',np.array([xV,yV]).T)
 
 #################################################################
 # connectivity
@@ -443,14 +467,16 @@ print("define velocity field: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
     
+xc = np.zeros(nel,dtype=np.float64)
+yc = np.zeros(nel,dtype=np.float64)
 hcond = np.zeros(nel,dtype=np.float64)
 hcapa = np.zeros(nel,dtype=np.float64)
 rho = np.zeros(nel,dtype=np.float64)
 
 for iel in range(0,nel):
-    xc=np.sum(xV[iconV[:,iel]])/mV
-    yc=np.sum(yV[iconV[:,iel]])/mV
-    if abs(yc-Ymagma)<Hmagma/2:
+    xc[iel]=np.sum(xV[iconV[:,iel]])/mV
+    yc[iel]=np.sum(yV[iconV[:,iel]])/mV
+    if abs(yc[iel]-Ymagma)<Hmagma/2:
        hcapa[iel]=hcapa_magma
        hcond[iel]=hcond_magma
        rho[iel]=rho_magma
@@ -511,10 +537,10 @@ for istep in range(0,nstep):
     tau_supg = np.zeros(nel*nqperdim**ndim,dtype=np.float64)
 
     #precompute jacobian
-    jcob=hx*hy/4
-    jcbi=np.zeros((ndim,ndim),dtype=np.float64)
-    jcbi[0,0]=2/hx
-    jcbi[1,1]=2/hy
+    #jcob=hx*hy/4
+    #jcbi=np.zeros((ndim,ndim),dtype=np.float64)
+    #jcbi[0,0]=2/hx
+    #jcbi[1,1]=2/hy
 
     counterq=0   
     for iel in range (0,nel):
@@ -541,15 +567,14 @@ for istep in range(0,nstep):
                 dNNNVds[0:mV]=dNNVds(rq,sq,order)
 
                 # calculate jacobian matrix
-                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                #for k in range(0,mV):
-                #    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                #    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                #    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                #    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-                #end for
-                #jcob = np.linalg.det(jcb)
-                #jcbi = np.linalg.inv(jcb)
+                jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                for k in range(0,mV):
+                    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+                jcob = np.linalg.det(jcb)
+                jcbi = np.linalg.inv(jcb)
 
                 # compute dNdx & dNdy
                 xq=0
@@ -655,6 +680,16 @@ for istep in range(0,nstep):
         sq = 0.0 
         dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
         dNNNVds[0:mV]=dNNVds(rq,sq,order)
+
+        # calculate jacobian matrix
+        jcb=np.zeros((ndim,ndim),dtype=np.float64)
+        for k in range(0,mV):
+            jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+            jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+            jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+            jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+        jcbi = np.linalg.inv(jcb)
+
         for k in range(0,mV):
             dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
             dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
@@ -666,6 +701,9 @@ for istep in range(0,nstep):
     print("     qx (m,M): %.4f %.4f " %(np.min(qx),np.max(qx)))
     print("     qy (m,M): %.4f %.4f " %(np.min(qy),np.max(qy)))
 
+    filename = 'surface_heat_flux_{:04d}.ascii'.format(istep)
+    np.savetxt(filename,np.array([xc[nel-nelx:nel],qy[nel-nelx:nel]]).T)
+
     print("compute heat flux: %.3f s" % (timing.time() - start))
 
     #####################################################################
@@ -673,9 +711,19 @@ for istep in range(0,nstep):
     #####################################################################
     start = timing.time()
 
+    if istep==0:
+       filename='solution.pvd'
+       pvdfile=open(filename,"w")
+       pvdfile.write('<?xml version="1.0" ?> \n')
+       pvdfile.write('<VTKFile type="Collection" version="0.1" ByteOrder="LittleEndian"> \n')
+       pvdfile.write('<Collection> \n')
+
     every=1
     if istep%every==0:
        filename = 'solution_{:04d}.vtu'.format(istep)
+
+       pvdfile.write('<DataSet timestep="'+str(time/year)+'" file="'+filename+'" /> \n')
+
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
@@ -728,6 +776,11 @@ for istep in range(0,nstep):
        for iel in range (0,nel):
            vtufile.write("%e \n" % hcond[iel])
        vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%e \n" % area[iel])
+       vtufile.write("</DataArray>\n")
+
        vtufile.write("</CellData>\n")
        #####
        vtufile.write("<Cells>\n")
@@ -763,6 +816,10 @@ for istep in range(0,nstep):
        break
 
 #end for istep
+       
+pvdfile.write('</Collection> \n')
+pvdfile.write('</VTKFile> \n')
+pvdfile.close()
 
 print("-----------------------------")
 print("------------the end----------")
