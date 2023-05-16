@@ -3,101 +3,18 @@ import matplotlib.pyplot as plt
 import triangle as tr
 import time as timing
 
-#------------------------------------------------------------------------------
+from tools import *
+from basis_functions_numba import *
 
-def compute_segs(InputCoords):
-    segs = np.stack([np.arange(len(InputCoords)),np.arange(len(InputCoords))+1],axis=1)%len(InputCoords)
-    return segs
 
 #------------------------------------------------------------------------------
 
-def compute_triangles_area(coords,nodesArray):
-    
-    tx = coords[:,0]
-    ty = coords[:,1]
-    
-    # Triangle Area is calculated via Heron's formula, see wikipedia
-    
-    a = np.sqrt((tx[nodesArray[:,0]]-tx[nodesArray[:,1]])**2 + (ty[nodesArray[:,0]]-ty[nodesArray[:,1]])**2)
-    b = np.sqrt((tx[nodesArray[:,2]]-tx[nodesArray[:,1]])**2 + (ty[nodesArray[:,2]]-ty[nodesArray[:,1]])**2)
-    c = np.sqrt((tx[nodesArray[:,0]]-tx[nodesArray[:,2]])**2 + (ty[nodesArray[:,0]]-ty[nodesArray[:,2]])**2)
-    
-    area = 0.5 * np.sqrt(a**2 * c**2 - (( a**2 + c**2 - b**2) / 2)**2)
-    area = area.reshape(-1,1) #Transposing the 1xN matrix into Nx1 shape
-    
-    return area
-
-#------------------------------------------------------------------------------
-
-def export_elements_to_vtu(x,y,icon,filename,area):
-    N=np.size(x)
-    m,nel=np.shape(icon)
-
-    vtufile=open(filename,"w")
-    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-    vtufile.write("<UnstructuredGrid> \n")
-    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(N,nel))
-    #####
-    vtufile.write("<Points> \n")
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-    for i in range(0,N):
-        vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</Points> \n")
-    #####
-    vtufile.write("<CellData Scalars='scalars'>\n")
-    vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (area[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</CellData>\n")
-    #####
-    vtufile.write("<Cells>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d %d %d \n" %(icon[0,iel],icon[1,iel],icon[2,iel]))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d \n" %((iel+1)*m))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-    for iel in range (0,nel):
-        vtufile.write("%d \n" %5)
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("</Cells>\n")
-    #####
-    vtufile.write("</Piece>\n")
-    vtufile.write("</UnstructuredGrid>\n")
-    vtufile.write("</VTKFile>\n")
-    vtufile.close()
-
-#------------------------------------------------------------------------------
-
-def compute_triangles_center_coordinates(coords,nodesArray):
-
-    tx = coords[:,0]
-    ty = coords[:,1]
-
-    xc = (tx[nodesArray[:,0]] + tx[nodesArray[:,1]] + tx[nodesArray[:,2]]) / 3 
-    yc = (ty[nodesArray[:,0]] + ty[nodesArray[:,1]] + ty[nodesArray[:,2]]) / 3 
-
-    center = np.stack([xc, yc],axis=1)
-
-    return center 
-
-#------------------------------------------------------------------------------
-
-def viscosity(x,y,Ly,eta_um,eta_c,eta_o,xA,yA,xB,yB,xC,yC,xD,yD,xE,yE,xF,yF,xG,yG,xI,yI):
+def viscosity(x,y,Ly,eta_um,eta_c,eta_o,xA,yB,xC,xE,yE,xF,yF,yG,yI):
 
     if y<yI:
        val=1e21
     elif y<yG:
-       val5e22
+       val=5e22
     else:
        val=eta_um
 
@@ -112,43 +29,80 @@ def viscosity(x,y,Ly,eta_um,eta_c,eta_o,xA,yA,xB,yB,xC,yC,xD,yD,xE,yE,xF,yF,xG,y
     return val
 
 #------------------------------------------------------------------------------
-Lx=6000
-Ly=3000 
 
-h=20
+year=365.25*3600*24
+cm=0.01
+km=1e3
 
-xA=1000
-yA=3000
+print("-----------------------------")
+print("--------- stone 143 ---------")
+print("-----------------------------")
 
-xB=1000
-yB=2800
+CR=False
 
-xC=xA+2000
-yC=3000
+if CR:
+   mV=7     # number of velocity nodes making up an element
+else:
+   mV=6
 
-xD=xB+2000
+mP=3     # number of pressure nodes making up an element
+ndofV=2  # number of velocity degrees of freedom per node
+ndofP=1  # number of pressure degrees of freedom 
+
+eta_ref=1e22 # numerical parameter for FEM
+
+Lx=6000*km
+Ly=3000*km
+
+
+
+
+
+
+
+
+
+
+#note that lengths are in km for now
+
+h=20*km
+
+xA=1000*km
+yA=Ly
+
+xB=1000*km
+yB=2800*km
+
+xC=xA+2000*km
+yC=Ly
+
+xD=xB+2000*km
 yD=yB
 
-xE=6000-500 #Lx-lr
-yE=3000-100
+xE=6000*km-500*km #Lx-lr
+yE=3000*km-100*km
 
-xF=6000-h
-yF=3000
+xF=6000*km-h
+yF=3000*km
 
 xG=0
-yG=3000-660
+yG=3000*km-660*km
 
-xH=6000
-yH=3000-660
+xH=6000*km
+yH=3000*km-660*km
 
 xI=0
-yI=350
+yI=350*km
 
-xJ=6000
-yJ=350
+xJ=6000*km
+yJ=350*km
 
 xK=xD
 yK=yE
+
+eta_um=1e20
+eta_o=1e23
+eta_c=1e22
 
 
 if True:
@@ -159,17 +113,19 @@ if True:
 
    #segment AB 
    nptsAB=int((yA-yB)/h)
+   print(nptsAB)
    x1=np.zeros(nptsAB) ; x1[:]=xA
    y1=np.linspace(yA,yB, nptsAB, endpoint=True)
-   pointsAB = np.stack([x1,y1], axis = 1)
+   pointsAB = np.stack([x1,y1],axis = 1)
    segsAB = np.stack([np.arange(nptsAB-1) +offset , np.arange(nptsAB-1) + 1 +offset], axis=1) 
    offset+=nptsAB
 
    #segment BD
    nptsBD=int((xD-xB)/h)
+   print(nptsBD)
    x1=np.linspace(xB,xD, nptsBD, endpoint=True)
    y1=np.zeros(nptsBD) ; y1[:]=yB
-   pointsBD = np.stack([x1,y1], axis = 1)
+   pointsBD = np.stack([x1,y1],axis = 1)
    segsBD = np.stack([np.arange(nptsBD-1) +offset , np.arange(nptsBD-1) + 1 +offset], axis=1) 
    offset+=nptsBD
 
@@ -177,7 +133,7 @@ if True:
    nptsCD=int((yC-yD)/h)
    x1=np.zeros(nptsCD) ; x1[:]=xC
    y1=np.linspace(yC,yD, nptsCD, endpoint=True)
-   pointsCD = np.stack([x1,y1], axis = 1)
+   pointsCD = np.stack([x1,y1],axis = 1)
    segsCD = np.stack([np.arange(nptsCD-1) +offset , np.arange(nptsCD-1) + 1 +offset], axis=1) 
    offset+=nptsCD
 
@@ -185,7 +141,7 @@ if True:
    nptsKE=int((xE-xK)/h)
    x1=np.linspace(xK,xE, nptsKE, endpoint=True)
    y1=np.zeros(nptsKE) ; y1[:]=yK
-   pointsKE = np.stack([x1,y1], axis = 1)
+   pointsKE = np.stack([x1,y1],axis = 1)
    segsKE = np.stack([np.arange(nptsKE-1) +offset , np.arange(nptsKE-1) + 1 +offset], axis=1) 
    offset+=nptsKE
 
@@ -193,44 +149,61 @@ if True:
    nptsEF=int((xF-xE)/h)
    x1=np.linspace(xE,xF, nptsEF, endpoint=True)
    y1=np.linspace(yE,yF, nptsEF, endpoint=True)
-   pointsEF = np.stack([x1,y1], axis = 1)
+   pointsEF = np.stack([x1,y1],axis = 1)
    segsEF = np.stack([np.arange(nptsEF-1) +offset , np.arange(nptsEF-1) + 1 +offset], axis=1) 
    offset+=nptsEF
 
    #segment GH
-   nptsGH=300
+   nptsGH=100
    x1=np.linspace(xG,xH, nptsGH, endpoint=True)
    y1=np.zeros(nptsGH) ; y1[:]=yG
-   pointsGH = np.stack([x1,y1], axis = 1)
+   pointsGH = np.stack([x1,y1],axis = 1)
    segsGH = np.stack([np.arange(nptsGH-1) +offset , np.arange(nptsGH-1) + 1 +offset], axis=1) 
    offset+=nptsGH
 
    #segment IJ
-   nptsIJ=200
+   nptsIJ=100
    x1=np.linspace(xI,xJ, nptsIJ, endpoint=True)
    y1=np.zeros(nptsIJ) ; y1[:]=yI
-   pointsIJ = np.stack([x1,y1], axis = 1)
+   pointsIJ = np.stack([x1,y1],axis = 1)
    segsIJ = np.stack([np.arange(nptsIJ-1) +offset , np.arange(nptsIJ-1) + 1 +offset], axis=1) 
    offset+=nptsIJ
 
    #assemble all coordinate arrays
-   points = np.vstack([square_vertices, pointsAB, pointsBD, pointsCD, pointsKE, pointsEF, pointsGH, pointsIJ])
+   points = np.vstack([square_vertices,pointsAB,pointsBD,pointsCD,pointsKE,pointsEF,pointsGH,pointsIJ])
 
    #assemble all segments arrays
    SEGS = np.vstack([square_edges, segsAB, segsBD, segsCD, segsKE, segsEF, segsGH, segsIJ])
 
    O1 = {'vertices' : points, 'segments' : SEGS}
-   T1 = tr.triangulate(O1, 'pqa20000') # tr.triangulate() computes the main dictionary 
+   T1 = tr.triangulate(O1, 'pqa30000000000') # tr.triangulate() computes the main dictionary 
 
    area=compute_triangles_area(T1['vertices'], T1['triangles'])
-   icon=T1['triangles'] ; icon=icon.T
-   x=T1['vertices'][:,0] 
-   y=T1['vertices'][:,1] 
-   export_elements_to_vtu(x,y,icon,'example1.vtu',area)
+   iconP1=T1['triangles'] ; iconP1=iconP1.T
+   xP1=T1['vertices'][:,0] 
+   yP1=T1['vertices'][:,1] 
+   NP1=np.size(xP1)
 
-   m,nel=np.shape(icon)
+   np.savetxt('meshP1.ascii',np.array([xP1,yP1]).T,header='# xV,zV') 
 
-   print(nel)
+
+   print('NP1=',NP1)
+
+   export_elements_to_vtu(xP1,yP1,iconP1,'meshP1.vtu',area)
+
+   mP,nel=np.shape(iconP1)
+   print('nel=',nel)
+
+   print(np.shape(xP1))
+   print(np.shape(yP1))
+   print(np.shape(iconP1))
+
+   NV0,xP2,yP2,iconP2=mesh_P1_to_P2(xP1,yP1,iconP1)
+
+   np.savetxt('meshP2.ascii',np.array([xP2,yP2]).T,header='# xV,zV') 
+   print('NV0=',NV0)
+
+   export_elements_to_vtuP2(xP2,yP2,iconP2,'meshP2.vtu')
 
 ######################################################################
 # compute element center coordinates
@@ -241,14 +214,26 @@ xc = np.zeros(nel,dtype=np.float64)
 yc = np.zeros(nel,dtype=np.float64)  
 
 for iel in range(0,nel):
-    xc[iel]= (x[icon[0,iel]]+x[icon[1,iel]]+x[icon[2,iel]])/3
-    yc[iel]= (y[icon[0,iel]]+y[icon[1,iel]]+y[icon[2,iel]])/3
+    xc[iel]= (xP1[iconP1[0,iel]]+xP1[iconP1[1,iel]]+xP1[iconP1[2,iel]])/3
+    yc[iel]= (yP1[iconP1[0,iel]]+yP1[iconP1[1,iel]]+yP1[iconP1[2,iel]])/3
 
 print("     -> xc (m,M) %.6e %.6e " %(np.min(xc),np.max(xc)))
 print("     -> yc (m,M) %.6e %.6e " %(np.min(yc),np.max(yc)))
 
 print("compute element center coords: %.3f s" % (timing.time() - start))
 
+
+######################################################################
+# assign viscosity to elements
+######################################################################
+
+eta=np.zeros(nel,dtype=np.float64)  
+
+for iel in range(0,nel):
+    eta[iel]=viscosity(xc[iel],yc[iel],Ly,eta_um,eta_c,eta_o,xA,yB,xC,xE,yE,xF,yF,yG,yI)
+
+
+np.savetxt('viscosity.ascii',np.array([xc,yc,np.log10(eta)]).T,header='# xV,zV') 
 
 
 
