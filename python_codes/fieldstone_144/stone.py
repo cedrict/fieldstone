@@ -536,12 +536,6 @@ for istep in range(0,nstep):
     N_mat_supg = np.zeros((mV,1),dtype=np.float64)         # shape functions
     tau_supg = np.zeros(nel*nqperdim**ndim,dtype=np.float64)
 
-    #precompute jacobian
-    #jcob=hx*hy/4
-    #jcbi=np.zeros((ndim,ndim),dtype=np.float64)
-    #jcbi[0,0]=2/hx
-    #jcbi[1,1]=2/hy
-
     counterq=0   
     for iel in range (0,nel):
 
