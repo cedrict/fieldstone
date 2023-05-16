@@ -4,7 +4,7 @@
 
 \begin{center}
 
-\fbox{\textbf{\huge \color{teal} P}}
+\fbox{\textbf{\large \color{teal} P}}
 Codes at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_131}
 \end{center}
 
@@ -29,7 +29,10 @@ and we here explore its use. In order to install it:
 pip3 install triangle
 \end{verbatim}
 
-https://rufat.be/triangle/delaunay.html
+\url{https://rufat.be/triangle/delaunay.html}
+
+In the {\python stone.py} you will find five examples illustrating the various 
+uses of this library. The code also provides an export to vtu file. 
 
 
 \begin{center}
@@ -40,21 +43,56 @@ https://rufat.be/triangle/delaunay.html
 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_131/example3/example3}
-\includegraphics[width=7cm]{python_codes/fieldstone_131/example4/example4}\\
-{\captionfont Example 3 (left), example 4 (right)}
+\includegraphics[width=5cm]{python_codes/fieldstone_131/example3/example3}
+\includegraphics[width=5cm]{python_codes/fieldstone_131/example4/example4}
+\includegraphics[width=5cm]{python_codes/fieldstone_131/example5/example5}\\
+{\captionfont Example 3 (left), example 4 (middle), example 5 (right)}
 \end{center}
 
-\begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_131/example5/example5}
-{\captionfont Example 5 (left), example 6 (right)}
-\end{center}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{From linear triangles to quadratic ones}
+
+In the case quadratic triangular elements are to be used a conversion $P_1 \rightarrow P_2$
+is provided.
+
+Two methods are implemented. The first one is naive and therefore not efficient at all:
+It essentially creates all mid-edges points for all triangles and then looks for those 
+that are situated at the same coordinates and remove doubles. 
+The second one generates the mid-edge nodes progressively and checks that they do not 
+exist yet (by means of a connectivity matrix which registers edges - 
+stored as vertices pairs).
 
 
+The file {\pythonfile stone2.py} contains multiple functions:
+\begin{itemize}
+\item {\pythonfile export\_elements\_to\_vtuP1}
+\item {\pythonfile export\_elements\_to\_vtuP2}
+\item {\pythonfile mesh\_P1\_to\_P2\_naive}
+\item {\pythonfile mesh\_P1\_to\_P2}
+\end{itemize}
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_131/P1P2/meshP1}
 \includegraphics[width=7cm]{python_codes/fieldstone_131/P1P2/meshP2}\\
 {\captionfont $P_1$ mesh (left), $P_2$ mesh (right)}
 \end{center}
+
+
+In the case of a full disc, we vary the number of triangles and find that 
+the second algorithm strongly outperforms the first one:
+ 
+\begin{center}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+                       & 'qa0.003' & 'qa0.002' & 'qa0.001' & 'qa0.0005' \\
+nel                    & 1638      & 2408      & 4813 &  9677\\
+\hline
+P1$\rightarrow$P2 naive& 27.4s      & 53.8s     & 216.6s & 958.5s\\
+P1$\rightarrow$P2 smart& 0.071s     & 0.099s    & 0.195s & 0.397s\\
+\hline
+\end{tabular}
+\end{center}
+
+
+
 

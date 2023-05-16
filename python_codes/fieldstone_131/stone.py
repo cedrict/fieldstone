@@ -92,11 +92,11 @@ def compute_triangles_center_coordinates(coords,nodesArray):
 ###############################################################################
 ###############################################################################
 
-ex1=False
+ex1=True
 ex2=False
-ex3=True
+ex3=False
 ex4=False
-ex5=True
+ex5=False
 
 #------------------------------------------------------------------------------
 # first example: a square of size L. 
@@ -106,6 +106,8 @@ if ex1:
    L = 10 
    square_vertices = np.array([[0,0],[0,L],[L,L],[L,0]])
    square_edges = compute_segs(square_vertices)
+
+   print(square_edges)
 
    O1 = {'vertices' : square_vertices, 'segments' : square_edges}
    T1 = tr.triangulate(O1, 'pqa10') # tr.triangulate() computes the main dictionary 
@@ -158,7 +160,6 @@ if ex2:
 
    # Stacks the nodes of all three half-circles into one matrix
    points1 = np.vstack([points10, points11, points12])
-#print(points1)
 
    # Combines all segment matrices and adds segments that connect 
    # The code below is a bit messy. The goal here is to add segments that
@@ -243,7 +244,6 @@ if ex4:
 #------------------------------------------------------------------------------
 
 if ex5:
-
 
    def halfcircle(N, R):   #a function that returns half a sphere with radius R and N# of nodes on the border
        i = np.arange(N)
