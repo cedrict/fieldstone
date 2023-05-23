@@ -9,7 +9,7 @@ lonmin=0.5
 lonmax=359.5
 
 #user chosen
-nrad=301  # 301 <-> 300m resolution for -81:9km range
+nrad=11 #301  # 301 <-> 300m resolution for -81:9km range
 
 alpha=3e-5
 rho0=3300
@@ -468,11 +468,6 @@ for il in range(0,8): #layer
     #end for
     vtufile.write("</DataArray>\n")
 
-
-
-
-
-
     vtufile.write("</CellData>\n")
     #####
     vtufile.write("<Cells>\n")
@@ -503,11 +498,16 @@ for il in range(0,8): #layer
 # Same exercise but now with lat-lon bounds
 #########################################################################################
 
-min_lon=60 +180
-max_lon=100 +180 
+#india
+#min_lon=60 +180
+#max_lon=100 +180 
+#min_lat=5
+#max_lat=40
 
-min_lat=5
-max_lat=40
+min_lon=-78+180
+max_lon=-10+180
+min_lat=58
+max_lat=85
 
 counter =np.zeros(8,dtype=np.int32)
 
