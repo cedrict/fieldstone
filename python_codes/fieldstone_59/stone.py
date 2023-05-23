@@ -126,7 +126,7 @@ cm=0.01
 year=3600*24*365.
 
 print("-----------------------------")
-print("----------fieldstone---------")
+print("---------- stone 59 ---------")
 print("-----------------------------")
 
 ndim=2
@@ -160,11 +160,11 @@ theta=0.1/180.*np.pi
 
 rheology=4
 
-nnx=2*nelx+1  # number of elements, x direction
-nny=2*nely+1  # number of elements, y direction
-NV=nnx*nny  # number of nodes
-nel=nelx*nely  # number of elements, total
-NfemV=NV*ndofV               # number of velocity dofs
+nnx=2*nelx+1                  # number of elements, x direction
+nny=2*nely+1                  # number of elements, y direction
+NV=nnx*nny                    # number of nodes
+nel=nelx*nely                 # number of elements, total
+NfemV=NV*ndofV                # number of velocity dofs
 NfemP=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
 Nfem=NfemV+NfemP              # total number of dofs
 
