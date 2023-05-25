@@ -1,0 +1,222 @@
+
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_142/text.tex}} \end{flushright}
+
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_142/keywords.key}
+
+\begin{center}
+
+\fbox{\textbf{\huge \color{teal} P}}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_142}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This \stone is based on \textcite{hams22} (2022).
+
+In the paper the effective viscosity for a power-law viscous fluid, termed here $\eta_{PL}$, can be written
+as
+\[
+\eta_{PL}=\eta_L \left( \frac{\tau_e}{\tau_R}  \right)^{1-n}
+\]
+where $\eta_L$ is the linear viscosity, $\tau_R$ is a constant reference stress, 
+$n$ is the stress exponent (which for rocks is $\ge$1), and $\tau_e$ is the effective 
+deviatoric stress (see Section~\ref{ss:XXXXXX}).
+
+Often, a combination of linear viscous and power-law viscous flow is
+assumed for ductile rocks. The viscosity for such combined flow law can
+be given by the pseudo-harmonic mean of $\eta_L$ and $\eta_{PL}$:
+\[
+\eta_C = \left(  \frac{1}{\eta_L} + \frac{1}{\eta_{PL}} \right)^{-1}
+\]
+
+The effective viscosity, $\eta$ in the momentum conservation equation can, hence, either be
+equal to $\eta_L$, $\eta_{PL}$ or $\eta_C$ depending on whether a linear viscous, power-law
+viscous or combined flow law, respectively, is used.
+
+The paper relies on the Finite Difference method to solve the Stokes equations but we will here 
+rely on the Finite Element method based on an unstructured mesh.
+
+Boundary conditions are either a far-field pure shear velocity field at the model boundaries
+or a simple shear velocity field.
+Hence, both the horizontal and vertical components of the velocity are defined as
+boundary conditions at the model boundaries.
+
+The model domain consists of a matrix in which stiffer or weaker inclusions are embedded. As
+initial guess for the unknown velocities, which is required for the first
+iteration step, the authors assume that the velocity field in the model domain
+corresponds to either a homogeneous pure shear or homogeneous simple
+shear velocity field, depending which far-field velocity boundary conditions are applied. 
+For the pressure, we assume that all values are zero initially. 
+
+A few remarks:
+\begin{itemize}
+\item The authors also state that ``The pressure values at the model boundaries remain zero.'' Say WHAAAAAT???!
+\item the authors also smooth the viscosity field:
+\begin{verbatim}
+for smo=1:2; Ii  = [2:nx-1]; Ij  = [2:ny-1]; % Smoothing of the initial viscosity field
+    ETA(Ii,:)    = ETA(Ii,:) + 0.4*(ETA(Ii+1,:)-2*ETA(Ii,:)+ETA(Ii-1,:));
+    ETA(:,Ij)    = ETA(:,Ij) + 0.4*(ETA(:,Ij+1)-2*ETA(:,Ij)+ETA(:,Ij-1));
+end
+\end{verbatim}
+but this is never mentioned in the paper!
+
+\item no real benchmarking, no error convergence on SolVi, instead: eyeball norm
+\item no solver in code, how does thaht work?
+\item comment on visc relaation in fig 7
+\end{itemize}
+
+COMMENT HERE about the bug/correction
+
+Newton stone 87
+
+NOTE: basis fcts and tools also used in stone 143
+
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_142/images/hams22_a}\\
+\captionfont{Taken from \cite{hams22}.
+Model configuration and boundary conditions. An elliptical inclusion of
+different viscosity than its surrounding matrix is located in the center of a
+square box of size Lx by Ly. The ellipse has a semi-major axis $a$ and semi-minor
+axis $b$ and is rotated by angle $\phi$ from the horizontal axis. Both simple (SS) and
+pure (PS) shear boundary conditions can be applied.}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+\section*{Exp1: Circular inclusion and comparison with analytical solution}
+
+
+approximates the hole as a weak inclusion with a viscosity that is 1000 times smaller 
+than the viscosity of the matrix.
+We apply horizontal pure shear extension
+
+This is obviously the well known SolVi benchmark that has been already 
+encountered in \stone 7,120.
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_142/images/hams22_b}\\
+\captionfont{Taken from \cite{hams22}.
+Panels A) and B): Comparison of the normalized horizontal total stress field generated with the presented iterative finite difference (FD) program against an
+analytical solution for a circular hole within a matrix subjected to horizontally extensional pure shear. The hole in the FD program is approximated by a viscosity
+contrast of 1000. The hole radius is 0.1 times the model width. Panels C) to F): Comparison of the normalized pressure field generated with the presented iterative FD
+program against a tested finite element method (FEM) program (Schmalholz and Schmid, 2012) for both a weak and a strong circular inclusion under horizontally
+compressive pure shear. The regions of high pressure (red color) and the low pressure (blue color) are inverted from the weak inclusion to the strong inclusion setup.
+The viscosity of the inclusion is 100 times lower, respectively higher, than the surrounding matrix viscosity. The circle radius is 0.15 times the model width.}
+\end{center}
+
+why change the radius inside the figure??
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp1/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp1/vel_th}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp1/press}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp1/press_th}\\
+{\captionfont Left: solution using CR elements; Right: analytical solution.}
+\end{center}
+
+This proves that the code is correct.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+\section*{Exp2: Rectangular inclusion under pure shear and simple shear}
+
+
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_142/images/hams22_c}\\
+\captionfont{Taken from \cite{hams22}.
+Comparison between horizontally
+compressive pure shear and horizontal simple shear boundary conditions for a strong
+(viscosity contrast of 1000) rectangular inclusion. Regions of pressure accumulation
+are depicted in red, pressure shadow zones in blue. The arrows display the velocity field,
+they are not to scale and only for direction. The long side of the rectangle is twice the 
+size of its short side and corresponds to 0.4 times the model width. The long side of the
+rectangle is rotated by an angle of 60 from the horizontal axis. }
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/inclusion}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/vel1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/press1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/areas}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/vel2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/press2}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+\section*{Exp3: Power-law viscous matrix and weak elliptical inclusion}
+
+
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_142/images/hams22_d}
+\includegraphics[width=8cm]{python_codes/fieldstone_142/images/hams22_dd}\\
+\captionfont{Taken from \cite{hams22}.
+Viscosity and pressure field of a
+weak (viscosity ratio of 1000) elliptical in­
+clusion under pure shear. A model with a
+purely linear viscosity (left panels) is
+compared against a model with an effective
+viscosity including power-law viscosity
+(right panels). The power-law viscosity is
+calculated using a stress exponent of 5 and a
+constant reference stress of 1.5 (see equation
+(12)). The arrows display the velocity field,
+they are not to scale and only for direction.
+The ellipse’s semi-major axis is twice as long
+as its semi-minor axis and corresponds to 0.2
+times the model width. The semi-major axis
+is rotated by 30 from the horizontal axis.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/inclusion}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/press}
+\end{center}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+\section*{Exp4: Multiple inclusions of different shape}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_142/images/hams22_e}
+\includegraphics[width=8cm]{python_codes/fieldstone_142/images/hams22_f}\\
+\captionfont{
+Viscosity and pressure for a combination of different geometrical weak and strong inclusions 
+subjected to horizontally compressive pure shear. The arrows in
+panel A) display the velocity field, they are not to scale and only for direction. 
+The ellipses are 100 times more viscous, the squares are 100 times less viscous than the
+surrounding matrix. Except for the circular inclusion, all ellipses possess the same aspect ratio.
+}
+\end{center}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+\section*{Exp5: Inclusion with a more natural shape}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_142/images/hams22_g}\\
+\captionfont{
+Numerical modelling of the pressure and strain rate field around a
+garnet inclusion using a photo from an actual inclusion (Fig. 1 C). In the model
+the strong inclusion has a viscosity contrast of 1000 and is subjected to hori­
+zontally extensional pure shear. The garnet was redrawn as a polygon using the
+Matlab ginput function. The arrows in panel B) display the velocity field, they
+are not to scale and only for direction.
+}
+\end{center}
+
+
+
+
+
+
+
