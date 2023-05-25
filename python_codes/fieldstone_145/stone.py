@@ -5,20 +5,15 @@ from vtk.util import numpy_support
 import glob
 import re
 import matplotlib.pyplot as plt
-#import seaborn as sns
 import scipy.interpolate
 
 
-###############################################################################
-# computes square root of second invariant of tensor
-
-def effective(xx,yy,xy):
-    return np.sqrt(0.5*(xx**2+yy**2)+xy**2)
-
-#--------------------------------
+#------------------------------------------------------------------------------
 #  read values from VTU
+#------------------------------------------------------------------------------
+
 def readvtu(file):
-    #file = '/Users/fred/0-STATION/Aspect/RUN/SimpleShear/10mar23/0-testvtu/solution-00001.pvtu'
+
     #Load vtu data (pvtu directs to vtu files)
     reader = vtk.vtkXMLPUnstructuredGridReader()
     reader.SetFileName(file)
@@ -32,13 +27,12 @@ def readvtu(file):
     
     #Extract x, y and z coordinates from numpy array
     x,y,z= nodes_numpy_array[:,0] , nodes_numpy_array[:,1] , nodes_numpy_array[:,2]    
+
     #Determine the number of scalar fields contained in the .pvtu file
     number_of_fields = reader.GetOutput().GetPointData().GetNumberOfArrays()
     
     #Determine the name of each field and place it in an array.
     field_names = []
-    #eigvals = []
-    ifl=0
           
     for i in range(number_of_fields):
         field_names.append(reader.GetOutput().GetPointData().GetArrayName(i))
@@ -102,7 +96,7 @@ for fich in glob.glob(f'solution-*.pvtu'):
     print('processing ',fich,'which contains ',np.size(x),' data points')
         
     print('-----> strain rate m/M:',min(sr),max(sr))
-    plt.scatter(x, y, c=np.log10(sr), s=4, cmap='viridis', vmin=-13, vmax=-9)
+    plt.scatter(x, y, c=np.log10(sr), s=3, cmap='viridis', vmin=-13, vmax=-9)
     plt.xlim(-1, 1)
     plt.ylim(-1, 1)
     plt.axis('scaled')
