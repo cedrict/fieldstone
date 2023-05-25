@@ -49,7 +49,7 @@ def viscosity(case,x,y,a_incl,b_incl,phi_incl,eta_B):
 
     if case==2: #elliptical
        if is_in:
-          eta_eff=1000
+          eta_eff=1e-3
        else:
           eta_eff=1
 
@@ -94,9 +94,9 @@ tol=1e-6
 # case 1: rectangle (fig. 6)
 # case 2: elliptical inclusion (fig. 8)
 
-case=2
+case=1
 
-v_bc=1
+v_bc=0.5
 
 a_incl = 0.2
 b_incl = 0.1
@@ -108,13 +108,12 @@ if case==1:
 if case==2:
    phi_incl = 30/180*np.pi
 
-#bc_type='simpleshear'
-bc_type='pureshear'
+bc_type='simpleshear'
+#bc_type='pureshear'
 
 eta_B=1
-D_B=1
 
-resolution='pqa0.0001'
+resolution='pqa0.00008'
 
 if case==0:
    bc_type='solvi'
@@ -159,10 +158,10 @@ if case==0:
    pts_ib = np.stack([np.cos(theta)*a_incl+.5, np.sin(theta)*a_incl+0.5], axis=1) 
    seg_ib = np.stack([np.arange(nnt), np.arange(nnt) + 1], axis=1) 
 
-elif case==1:
+elif case==1: # rectangle
 
-   na=100
-   nb=50
+   na=128
+   nb=64
    pts_ib = np.zeros((2*na+2*nb,2),dtype=np.float64)  
    ha=2*a_incl/na
    hb=2*b_incl/nb
@@ -196,7 +195,7 @@ elif case==1:
        pts_ib[counter,1]=xx*np.sin(phi_incl)+yy*np.cos(phi_incl)+0.5
        counter+=1
 
-elif case==2:
+elif case==2: # ellipse
 
    nnt=200
    theta = np.linspace(-np.pi, np.pi,nnt, endpoint=False)      
@@ -228,22 +227,19 @@ xP1=T1['vertices'][:,0]
 yP1=T1['vertices'][:,1]
 NP1=np.size(xP1)
 
-np.savetxt('meshP1.ascii',np.array([xP1,yP1]).T)
-
 print('     -> number of nodes P1 mesh=',NP1)
-
-export_elements_to_vtu(xP1,yP1,iconP1,'meshP1.vtu',area)
 
 mP,nel=np.shape(iconP1)
 print('     -> nel=',nel)
 
 NP2,xP2,yP2,iconP2=mesh_P1_to_P2(xP1,yP1,iconP1)
 
-np.savetxt('meshP2.ascii',np.array([xP2,yP2]).T) 
-
 print('     -> number of nodes P2 mesh=',NP2)
 
-export_elements_to_vtuP2(xP2,yP2,iconP2,'meshP2.vtu')
+#np.savetxt('meshP1.ascii',np.array([xP1,yP1]).T)
+#np.savetxt('meshP2.ascii',np.array([xP2,yP2]).T) 
+#export_elements_to_vtu(xP1,yP1,iconP1,'meshP1.vtu',area)
+#export_elements_to_vtuP2(xP2,yP2,iconP2,'meshP2.vtu')
 
 print("use Delaunay mesher: %.3f s" % (timing.time() - start))
 
@@ -267,7 +263,6 @@ iconV=np.zeros((mV,nel),dtype=np.int32)
 iconP=np.zeros((mP,nel),dtype=np.int32)
 
 if CR:
-
    iconV[0,:]=iconP2[0,:]
    iconV[1,:]=iconP2[1,:]
    iconV[2,:]=iconP2[2,:]
@@ -396,14 +391,14 @@ elif bc_type=='simpleshear':
 
    for i in range(0,NV):
        if xV[i]/Lx<eps:
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1]   = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
        if xV[i]/Lx>(1-eps):
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1]   = 0
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
        if yV[i]/Ly<eps:
-          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV] = -v_bc
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = -v_bc
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
        if yV[i]/Ly>(1-eps):
-          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV] = v_bc
+          bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = v_bc
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
 
 elif bc_type=='solvi':
@@ -646,7 +641,11 @@ print("project pressure onto V grid: %.3f s" % (timing.time() - start))
 #------------------------------------------------------------------------------
 start = timing.time()
 
-e_nodal    = np.zeros(NV,dtype=np.float64)  
+e_xx       = np.zeros(nel,dtype=np.float64)  
+e_yy       = np.zeros(nel,dtype=np.float64)  
+e_xy       = np.zeros(nel,dtype=np.float64)  
+sr         = np.zeros(nel,dtype=np.float64)  
+sr_nodal   = np.zeros(NV,dtype=np.float64)  
 e_xx_nodal = np.zeros(NV,dtype=np.float64)  
 e_yy_nodal = np.zeros(NV,dtype=np.float64)  
 e_xy_nodal = np.zeros(NV,dtype=np.float64)  
@@ -672,7 +671,6 @@ for iel in range(0,nel):
             jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
             jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
             jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
-        jcob=np.linalg.det(jcb)
         jcbi=np.linalg.inv(jcb)
         for k in range(0,mV):
             dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
@@ -681,20 +679,31 @@ for iel in range(0,nel):
             e_xx_nodal[inode] += dNNNVdx[k]*u[iconV[k,iel]]
             e_yy_nodal[inode] += dNNNVdy[k]*v[iconV[k,iel]]
             e_xy_nodal[inode] += 0.5*(dNNNVdy[k]*u[iconV[k,iel]]+dNNNVdx[k]*v[iconV[k,iel]])
+            e_xx[iel] += dNNNVdx[k]*u[iconV[k,iel]]
+            e_yy[iel] += dNNNVdy[k]*v[iconV[k,iel]]
+            e_xy[iel] += 0.5*(dNNNVdy[k]*u[iconV[k,iel]]+dNNNVdx[k]*v[iconV[k,iel]])
         cc[inode]+=1
     #end for
 #end for
 e_xx_nodal/=cc
 e_yy_nodal/=cc
 e_xy_nodal/=cc
+e_xx/=mV
+e_yy/=mV
+e_xy/=mV
 
-e_nodal=np.sqrt(0.5*(e_xx_nodal**2+e_yy_nodal**2)+e_xy_nodal**2)
+sr_nodal=np.sqrt(0.5*(e_xx_nodal**2+e_yy_nodal**2)+e_xy_nodal**2)
 
-print("     -> e_xx_nodal   (m,M) %.6e %.6e " %(np.min(e_xx_nodal),np.max(e_xx_nodal)))
-print("     -> e_yy_nodal   (m,M) %.6e %.6e " %(np.min(e_yy_nodal),np.max(e_yy_nodal)))
-print("     -> e_xy_nodal   (m,M) %.6e %.6e " %(np.min(e_xy_nodal),np.max(e_xy_nodal)))
-    
-#np.savetxt('sr_cartesian.ascii',np.array([xV,yV,e_xx_nodal,e_yy_nodal,e_xy_nodal,e_nodal,cc]).T)
+sr=np.sqrt(0.5*(e_xx**2+e_yy**2)+e_xy**2)
+
+print("     -> e_xx (eltal) (m,M) %.6e %.6e " %(np.min(e_xx),np.max(e_xx)))
+print("     -> e_yy (eltal) (m,M) %.6e %.6e " %(np.min(e_yy),np.max(e_yy)))
+print("     -> e_xy (eltal) (m,M) %.6e %.6e " %(np.min(e_xy),np.max(e_xy)))
+print("     -> e_xx (nodal) (m,M) %.6e %.6e " %(np.min(e_xx_nodal),np.max(e_xx_nodal)))
+print("     -> e_yy (nodal) (m,M) %.6e %.6e " %(np.min(e_yy_nodal),np.max(e_yy_nodal)))
+print("     -> e_xy (nodal) (m,M) %.6e %.6e " %(np.min(e_xy_nodal),np.max(e_xy_nodal)))
+   
+#np.savetxt('sr_cartesian.ascii',np.array([xV,yV,e_xx_nodal,e_yy_nodal,e_xy_nodal,sr_nodal,cc]).T)
 
 print("compute sr and stress: %.3f s" % (timing.time() - start))
 
@@ -725,6 +734,31 @@ if True:
         vtufile.write("%10e\n" % (area[iel]))
     vtufile.write("</DataArray>\n")
     #--
+    vtufile.write("<DataArray type='Float32' Name='e_xx' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (e_xx[iel]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='e_yy' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (e_yy[iel]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='e_xy' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (e_xy[iel]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (sr[iel]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='eff dev stress' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % ((2*etaq[iel*nqel+5]*sr[iel])))
+    vtufile.write("</DataArray>\n")
+    #--
     vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" %((p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3 ))
@@ -735,7 +769,6 @@ if True:
        for iel in range(0,nel):
            vtufile.write("%10e \n" % (p_th((xc[iel]-0.5),(yc[iel]-0.5))))
        vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' Name='eta(q)' Format='ascii'> \n")
     for iel in range (0,nel):
@@ -782,9 +815,8 @@ if True:
     #--
     vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
     for i in range(0,NV):
-        vtufile.write("%10e \n" %e_nodal[i])
+        vtufile.write("%10e \n" %sr_nodal[i])
     vtufile.write("</DataArray>\n")
-
     if case==0:
        #--
        vtufile.write("<DataArray type='Float32' Name='pressure (th)' Format='ascii'> \n")
@@ -798,12 +830,6 @@ if True:
            vi=v_th((xV[i]-0.5),(yV[i]-0.5)) 
            vtufile.write("%10e %10e %10e \n" %(ui,vi,0.))
        vtufile.write("</DataArray>\n")
-
-    #--
-    vtufile.write("<DataArray type='Float32' Name='p / (2 eta_B D_B)' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e \n" % (q[i]/2/eta_B/D_B))
-    vtufile.write("</DataArray>\n")
     #--
     #vtufile.write("<DataArray type='Float32' Name='fix_u' Format='ascii'> \n")
     #for i in range(0,NV):

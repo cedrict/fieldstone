@@ -37,6 +37,17 @@ viscous or combined flow law, respectively, is used.
 The paper relies on the Finite Difference method to solve the Stokes equations but we will here 
 rely on the Finite Element method based on an unstructured mesh.
 
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_142/images/hams22_a}\\
+\captionfont{Taken from \cite{hams22}.
+Model configuration and boundary conditions. An elliptical inclusion of
+different viscosity than its surrounding matrix is located in the center of a
+square box of size Lx by Ly. The ellipse has a semi-major axis $a$ and semi-minor
+axis $b$ and is rotated by angle $\phi$ from the horizontal axis. Both simple (SS) and
+pure (PS) shear boundary conditions can be applied.}
+\end{center}
+
 Boundary conditions are either a far-field pure shear velocity field at the model boundaries
 or a simple shear velocity field.
 Hence, both the horizontal and vertical components of the velocity are defined as
@@ -47,7 +58,9 @@ initial guess for the unknown velocities, which is required for the first
 iteration step, the authors assume that the velocity field in the model domain
 corresponds to either a homogeneous pure shear or homogeneous simple
 shear velocity field, depending which far-field velocity boundary conditions are applied. 
-For the pressure, we assume that all values are zero initially. 
+
+%----------------------------------------
+\subsection*{Comments about the article}
 
 A few remarks:
 \begin{itemize}
@@ -62,29 +75,55 @@ end
 but this is never mentioned in the paper!
 
 \item no real benchmarking, no error convergence on SolVi, instead: eyeball norm
-\item no solver in code, how does thaht work?
-\item comment on visc relaation in fig 7
+\item no solver in code ...why use Richardson rather than backslah operator of matlab? ok, finally explained in Discussion. weird.
+\item comment on visc relaxation in fig 7 ? 
+\item in the Octave code:
+\begin{verbatim}
+subplot(224),pcolor(X,Y,DXX/(2*eta_B*D_B)),shading interp,axis equal,axis tight,colorbar,colormap(jet)
+         title(['D) Horizontal strain rate [ ], D_{xx}/D_B']), xlabel('Width [ ]')
+\end{verbatim}
+We see that in the data of the plot is \verb|DXX/(2*eta_B*D_B|, not \verb|D_{xx}/D_B|...
+
+\item As we will see in the ellipse inclusion case, the code fails to converge
+for modest viscosity contrasts.
+
+\item authors state: Considering more irregular geometries is important, 
+because “the geometrical form of the competent
+inclusion clearly has an influence on the pattern of stress orientations in the
+surrounding medium”. Yet no principal stress components calculations? 
+
+\item tensor notations are not allowed? why eqs 1,2,3 and 4,5,6 ?
+
+\item spacial ?? quadratic model domain ??
+
+\item fig 5: why change the radius inside the figure? why viscosity contrast at 100, not 1000 ?
+
+\item provided code does not allow to reproduce experiments directly. Only ellipse. 
+
+\item fig 9: resolution? applied vel ? 'Except for the circular inclusion, all ellipses possess the same aspect ratio.' Which is equal to ?
+
+\item nothing about convergence pattern ? 1000's of iterations ? round off errors.
+
+\item about fig 10: 'The value of Dxx inside the garnet inclusion is zero, indicating that the inclusion is rigid and not deforming.' hell no, Dxx cannot be zero. 
+
+\item in the correction only ellipse figures are corrected, not all the other ones so that the figs in the paper are useless to us when it comes to nonlinear rheologies
+
 \end{itemize}
 
-COMMENT HERE about the bug/correction
+
+
+%----------------------------------------
+\subsection*{Comments about the code}
 
 Newton stone 87
 
 NOTE: basis fcts and tools also used in stone 143
 
+P2P1 + CR 
 
-\begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_142/images/hams22_a}\\
-\captionfont{Taken from \cite{hams22}.
-Model configuration and boundary conditions. An elliptical inclusion of
-different viscosity than its surrounding matrix is located in the center of a
-square box of size Lx by Ly. The ellipse has a semi-major axis $a$ and semi-minor
-axis $b$ and is rotated by angle $\phi$ from the horizontal axis. Both simple (SS) and
-pure (PS) shear boundary conditions can be applied.}
-\end{center}
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-\section*{Exp1: Circular inclusion and comparison with analytical solution}
+\section*{Case 0: Circular inclusion and comparison with analytical solution}
 
 
 approximates the hole as a weak inclusion with a viscosity that is 1000 times smaller 
@@ -105,8 +144,6 @@ compressive pure shear. The regions of high pressure (red color) and the low pre
 The viscosity of the inclusion is 100 times lower, respectively higher, than the surrounding matrix viscosity. The circle radius is 0.15 times the model width.}
 \end{center}
 
-why change the radius inside the figure??
-
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp1/vel}
@@ -118,13 +155,19 @@ why change the radius inside the figure??
 
 This proves that the code is correct.
 
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-\section*{Exp2: Rectangular inclusion under pure shear and simple shear}
+\section*{Case 1: Strong rectangular inclusion under pure shear and simple shear}
 
-
+``For illustration purposes, we calculated the pressure fields for a strong and inclined rectangular in­
+clusion for pure shear and simple shear. For simple shear, the
+pressure variations are more localized around the inclusion compared to
+the pressure variations for pure shear. Also, for simple shear the velocity
+field indicates a rotational flow of the inclusion with a clock-wise sense,
+in agreement with the applied simple shear.''
 
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_142/images/hams22_c}\\
+\includegraphics[width=13cm]{python_codes/fieldstone_142/images/hams22_c}\\
 \captionfont{Taken from \cite{hams22}.
 Comparison between horizontally
 compressive pure shear and horizontal simple shear boundary conditions for a strong
@@ -136,50 +179,88 @@ rectangle is rotated by an angle of 60 from the horizontal axis. }
 \end{center}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/inclusion}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/vel1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/press1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/mesh}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/areas}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/eta}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/vel1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/press1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/sr1}\\
 \includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/vel2}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/press2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/sr2}\\
+{\captionfont In order to favor comparison with the figure of the paper I for once
+use a different pressure colorscale ('vik') than normal.}
 \end{center}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
-\section*{Exp3: Power-law viscous matrix and weak elliptical inclusion}
+Pb: pressures do not agree!!
 
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+\section*{Case 2: Power-law viscous matrix and weak elliptical inclusion}
 
 
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_142/images/hams22_d}
-\includegraphics[width=8cm]{python_codes/fieldstone_142/images/hams22_dd}\\
+\includegraphics[width=8.5cm]{python_codes/fieldstone_142/images/hams22_d}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_142/images/hams22_dd}\\
 \captionfont{Taken from \cite{hams22}.
 Viscosity and pressure field of a
-weak (viscosity ratio of 1000) elliptical in­
-clusion under pure shear. A model with a
-purely linear viscosity (left panels) is
-compared against a model with an effective
-viscosity including power-law viscosity
-(right panels). The power-law viscosity is
-calculated using a stress exponent of 5 and a
-constant reference stress of 1.5 (see equation
-(12)). The arrows display the velocity field,
-they are not to scale and only for direction.
-The ellipse’s semi-major axis is twice as long
-as its semi-minor axis and corresponds to 0.2
-times the model width. The semi-major axis
-is rotated by 30 from the horizontal axis.}
+weak (viscosity ratio of 1000) elliptical inclusion under pure shear. A model with a
+purely linear viscosity (left panels) is compared against a model with an effective
+viscosity including power-law viscosity (right panels). The power-law viscosity is
+calculated using a stress exponent of 5 and a constant reference stress of 1.5 (see equation
+(12)). The arrows display the velocity field, they are not to scale and only for direction.
+The ellipse’s semi-major axis is twice as long as its semi-minor axis and corresponds to 0.2
+times the model width. The semi-major axis is rotated by 30 degrees from the horizontal axis.}
 \end{center}
+
+The paper lists two corrected Matlab and Octave codes that are available online under
+\url{https://github.com/halterw/A_simple_computer_program}.
+I have run the Octave version as is (I do not have Matlab).
+Rather annoyingly, it runs, shows results every 2000 iterations, ultimately converges
+but does not produces a plot. 
+I have therefore modified the code to add velocity visualisation and export to png.
+I have also removed the normalisation of results.
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_142/images/octave1}\\
+{\captionfont Screen capture of the Octave code output when run as is off github.
+Remark: $Dxx$ is not 'horizontal strain rate' mean? }
+\end{center}
+
+If I now set \verb|n_exp=1| with a 1000 viscosity ratio the model now becomes Newtonian,
+but the code fails to converge. After more than 200,000 iterations the results are as 
+follows:
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_142/images/octave2}\\
+{\captionfont Screen capture of the Octave code output for a viscosity ratio of 1000.
+Modified output.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/press2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/u2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/v2}\\
+{\captionfont I get a reasonable match for pressure and velocity - provided I use 
+the same colorscale and range - but not for Dxx...?}
+\end{center}
+
 
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/inclusion}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/mesh}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/eta}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/vel}\\
 \includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/press}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/sr}
 \end{center}
 
 
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \section*{Exp4: Multiple inclusions of different shape}
 
@@ -198,6 +279,7 @@ surrounding matrix. Except for the circular inclusion, all ellipses possess the 
 
 
 
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \section*{Exp5: Inclusion with a more natural shape}
 
