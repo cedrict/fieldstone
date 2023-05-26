@@ -14,26 +14,20 @@ from mms_solvi import *
 #------------------------------------------------------------------------------
 
 def is_in_inclusion(case,x,y,a_incl,b_incl,phi_incl):
-
     if case==0: # circle
        return (x-0.5)**2+(y-0.5)**2<a_incl**2
-
     if case==1: # rectangle
        return  abs( (x-.5)*np.cos(phi_incl)+(y-.5)*np.sin(phi_incl))<a_incl and\
                abs(-(x-.5)*np.sin(phi_incl)+(y-.5)*np.cos(phi_incl))<b_incl
-
     if case==2: # ellipse
        return  (( (x-.5)*np.cos(phi_incl)+(y-.5)*np.sin(phi_incl))**2/a_incl**2 + \
                 (-(x-.5)*np.sin(phi_incl)+(y-.5)*np.cos(phi_incl))**2/b_incl**2 < 1)
 
 #------------------------------------------------------------------------------
 
-def viscosity(case,x,y,a_incl,b_incl,phi_incl,eta_B):
+def viscosity(case,x,y,a_incl,b_incl,phi_incl):
 
     is_in=is_in_inclusion(case,x,y,a_incl,b_incl,phi_incl)
-
-    n_exp=3
-    sr_ref= 1.5              
 
     if case==0: #SolVi
        if is_in:
@@ -53,15 +47,11 @@ def viscosity(case,x,y,a_incl,b_incl,phi_incl,eta_B):
        else:
           eta_eff=1
 
-    #eta_eff=1/(1/eta_L+1/eta_PL)
-    #eta_eff=1
-
     return eta_eff
 
 #------------------------------------------------------------------------------
 
 ndim=2
-km=1e3
 eps=1e-6
 
 print("-----------------------------")
@@ -108,10 +98,8 @@ if case==1:
 if case==2:
    phi_incl = 30/180*np.pi
 
-bc_type='simpleshear'
-#bc_type='pureshear'
-
-eta_B=1
+#bc_type='simpleshear'
+bc_type='pureshear'
 
 resolution='pqa0.00008'
 
@@ -141,6 +129,7 @@ print('CR=',CR)
 print('nqel=',nqel)
 print('case=',case)
 print('bc_type=',bc_type)
+print('resolution=',resolution)
 print("-----------------------------")
 
 #------------------------------------------------------------------------------
@@ -173,21 +162,18 @@ elif case==1: # rectangle
        pts_ib[counter,0]=xx*np.cos(phi_incl)-yy*np.sin(phi_incl)+0.5
        pts_ib[counter,1]=xx*np.sin(phi_incl)+yy*np.cos(phi_incl)+0.5
        counter+=1
-
    for i in range(0,nb): #east
        xx=a_incl
        yy=-b_incl+i*hb
        pts_ib[counter,0]=xx*np.cos(phi_incl)-yy*np.sin(phi_incl)+0.5
        pts_ib[counter,1]=xx*np.sin(phi_incl)+yy*np.cos(phi_incl)+0.5
        counter+=1
-
    for i in range(0,na): #north
        xx=a_incl-i*ha
        yy=b_incl
        pts_ib[counter,0]=xx*np.cos(phi_incl)-yy*np.sin(phi_incl)+0.5
        pts_ib[counter,1]=xx*np.sin(phi_incl)+yy*np.cos(phi_incl)+0.5
        counter+=1
-
    for i in range(0,nb): #west
        xx=-a_incl
        yy=b_incl-i*hb
@@ -227,13 +213,12 @@ xP1=T1['vertices'][:,0]
 yP1=T1['vertices'][:,1]
 NP1=np.size(xP1)
 
-print('     -> number of nodes P1 mesh=',NP1)
-
 mP,nel=np.shape(iconP1)
-print('     -> nel=',nel)
 
 NP2,xP2,yP2,iconP2=mesh_P1_to_P2(xP1,yP1,iconP1)
 
+print('     -> nel=',nel)
+print('     -> number of nodes P1 mesh=',NP1)
 print('     -> number of nodes P2 mesh=',NP2)
 
 #np.savetxt('meshP1.ascii',np.array([xP1,yP1]).T)
@@ -376,7 +361,6 @@ bc_fix=np.zeros(NfemV,dtype=np.bool)
 bc_val=np.zeros(NfemV,dtype=np.float64)
 
 if bc_type=='pureshear':
-
    for i in range(0,NV):
        if xV[i]/Lx<eps:
           bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = v_bc
@@ -388,7 +372,6 @@ if bc_type=='pureshear':
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = v_bc
 
 elif bc_type=='simpleshear':
-
    for i in range(0,NV):
        if xV[i]/Lx<eps:
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
@@ -402,7 +385,6 @@ elif bc_type=='simpleshear':
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
 
 elif bc_type=='solvi':
-
    for i in range(0, NV):
        ui=u_th(xV[i]-0.5,yV[i]-0.5)
        vi=v_th(xV[i]-0.5,yV[i]-0.5)
@@ -420,7 +402,6 @@ elif bc_type=='solvi':
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vi
 
 else:
-
     exit('bc_type unknown')
 
 print("define bc: %.3f s" % (timing.time() - start))
@@ -433,7 +414,6 @@ print("define bc: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
-#A_sparse = np.zeros((Nfem,Nfem),dtype=np.float64)
 f_rhs = np.zeros(NfemV,dtype=np.float64)            # right hand side f 
 h_rhs = np.zeros(NfemP,dtype=np.float64)            # right hand side h 
 b_mat = np.zeros((3,ndofV*mV),dtype=np.float64)     # gradient matrix B 
@@ -492,9 +472,8 @@ for iel in range(0,nel):
                                      [0.        ,dNNNVdy[i]],
                                      [dNNNVdy[i],dNNNVdx[i]]]
 
-        etaq[counterq]=viscosity(case,xq[counterq],yq[counterq],a_incl,b_incl,phi_incl,eta_B)
+        etaq[counterq]=viscosity(case,xq[counterq],yq[counterq],a_incl,b_incl,phi_incl)
 
-        # compute elemental a_mat matrix
         K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq[counterq]*weightq*jcobq[counterq]
 
         # compute elemental rhs vector

@@ -115,21 +115,18 @@ surrounding medium”. Yet no principal stress components calculations?
 %----------------------------------------
 \subsection*{Comments about the code}
 
-Newton stone 87
-
-NOTE: basis fcts and tools also used in stone 143
-
-P2P1 + CR 
+The code solves the incompressible Stokes equations with the Finite Element method
+on an unstructured grid.
+$P_2\times P_1$ or Crouzeix-Raviart elements can be used.
+The Delaunay triangulation is explained in \stone 131, and 
+some of the tools are also used in \stone 96 and 143.
+In what follows I focus only on the Newtonian cases.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \section*{Case 0: Circular inclusion and comparison with analytical solution}
 
-
-approximates the hole as a weak inclusion with a viscosity that is 1000 times smaller 
-than the viscosity of the matrix.
-We apply horizontal pure shear extension
-
+The boundary conditions are pure shear extension.
 This is obviously the well known SolVi benchmark that has been already 
 encountered in \stone 7,120.
 
@@ -144,12 +141,11 @@ compressive pure shear. The regions of high pressure (red color) and the low pre
 The viscosity of the inclusion is 100 times lower, respectively higher, than the surrounding matrix viscosity. The circle radius is 0.15 times the model width.}
 \end{center}
 
-
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp1/vel}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp1/vel_th}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp1/press}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp1/press_th}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case0/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case0/vel_th}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case0/press}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case0/press_th}\\
 {\captionfont Left: solution using CR elements; Right: analytical solution.}
 \end{center}
 
@@ -179,26 +175,43 @@ rectangle is rotated by an angle of 60 from the horizontal axis. }
 \end{center}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/mesh}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/areas}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/eta}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/vel1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/press1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/sr1}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/vel2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/press2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp2/sr2}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/mesh}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/areas}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/eta}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/vel1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/press1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/sr1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/vel2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/press2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/sr2}\\
 {\captionfont In order to favor comparison with the figure of the paper I for once
 use a different pressure colorscale ('vik') than normal.}
 \end{center}
 
-Pb: pressures do not agree!!
+To validate the results of this stone further, I have run this model with the \aspect
+code\footnote{The .prm file is in /results/case1/aspect/}:
 
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_142/results/case1/aspect/vel}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_142/results/case1/aspect/press}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_142/results/case1/aspect/sr}\\
+{\captionfont Left: \aspect results; Right: fieldstone results.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[height=5cm]{python_codes/fieldstone_142/images/hams22_cc}
+\includegraphics[height=5.6cm]{python_codes/fieldstone_142/results/case1/aspect/press2}\\
+{\captionfont In the paper $\eta_B=1$ and $D_B=1$ so that the pressure range in their
+figure is in fact -8:8. Plotting the \aspect and fieldstone results with a similar
+color scale yields the unescapable conclusion that {\color{red} the pressure field 
+in the figure of the paper is wrong inside the inclusion}.}
+\end{center}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \section*{Case 2: Power-law viscous matrix and weak elliptical inclusion}
-
 
 
 \begin{center}
@@ -240,23 +253,33 @@ Modified output.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/press2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/u2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/v2}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/press2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/u2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/v2}\\
 {\captionfont I get a reasonable match for pressure and velocity - provided I use 
 the same colorscale and range - but not for Dxx...?}
 \end{center}
 
+Here is the full set of fields with appropriate color scales obtained with 
+this stone:
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/mesh}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/eta}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/vel}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/press}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/sr}
+\end{center}
 
+To validate the results of this stone further, I have run this model with the \aspect
+code\footnote{The .prm file is in /results/case2/aspect/}:
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/mesh}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/eta}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/u}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/v}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/vel}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/press}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/exp3/sr}
+\includegraphics[width=8cm]{python_codes/fieldstone_142/results/case2/aspect/u}
+\includegraphics[width=8cm]{python_codes/fieldstone_142/results/case2/aspect/v}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_142/results/case2/aspect/press}
+\includegraphics[width=8cm]{python_codes/fieldstone_142/results/case2/aspect/sr}
 \end{center}
 
 
@@ -278,8 +301,6 @@ surrounding matrix. Except for the circular inclusion, all ellipses possess the 
 
 
 
-
-\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \section*{Exp5: Inclusion with a more natural shape}
 
