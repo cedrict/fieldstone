@@ -1309,6 +1309,7 @@ for istep in range(0,nstep):
                 #end for
             #end for
 
+            #after of before apply bc?
             G_el*=eta_ref/R_outer
             h_el*=eta_ref/R_outer
 
