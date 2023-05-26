@@ -493,8 +493,7 @@ if unstructured:
 
    N=np.size(x)
 
-
-else:
+else: #structured mesh
 
    print('   structured mesh')
 
@@ -554,7 +553,9 @@ else:
               icon[1,counter]=i2 
               icon[2,counter]=i3 
               counter+=1
-
+           #end if
+       #end for
+   #end for
 
 print('   -> N  =',N)
 print('   -> nel=',nel)
@@ -567,7 +568,6 @@ slope = np.zeros(nel,dtype=np.float64)
 
 rad = np.zeros(N,dtype=np.float64) 
 rad[:]=np.sqrt((x[:]-Lx/2)**2+(y[:]-Ly/2)**2)
-
 
 #------------------------------------------------------------------------------
 # initial topography 
@@ -597,13 +597,6 @@ elif experiment==2 or experiment==3:
 
 else:
    exit("unknown experiment in initial topography")
-
-#for i in range(0,N):
-   #z[i]=x[i]/10000+y[i]/11000 #for testing
-   #z[i]=y[i]/Ly/3
-   #z[i]=0
-   #z[i]=np.cos((x[i]-Lx/2)/Lx*np.pi)*np.cos((y[i]-Ly/2)/Ly*np.pi)*10
-   #z[i]=2*x[i]/km+3*y[i]/km
 
 z_prev[:]=z[:]
        
@@ -662,8 +655,7 @@ bc_fix = np.zeros(N,dtype=np.bool)  # boundary condition, yes/no
 bc_val = np.zeros(N,dtype=np.float64)  # boundary condition, value
 
 if experiment==-1:
-
-   1
+   print(' ')
 
 elif experiment==0 or experiment==2 or experiment==4:
    for i in range(0,N):
@@ -1020,14 +1012,6 @@ for istep in range(0,nstep):
         if zc_2<zc_0 and zc_2<zc_1 and zc[iel]>zc_2: 
            min_index[iel]=2
 
-        #if iel==16:
-        #   print('iel=16',zc_0,zc_1,zc_2,'  ',zc[iel])
-        #   print(min_index[iel],gnei[min_index[iel],iel])
-        #if iel==134:
-        #   print('iel=134',zc_0,zc_1,zc_2,'  ',zc[iel])
-        #   print(min_index[iel],gnei[min_index[iel],iel])
-        #   exit()
-
         #print('I am element',iel,'and I give to element',min_index[iel],gnei[min_index[iel],iel])
 
     print("compute min_index: %.3f s" % (timing.time() - start))
@@ -1060,6 +1044,9 @@ for istep in range(0,nstep):
        export_network_to_vtu(x,y,z,xc,yc,zc,A,icon,min_index,'network_'+str(istep)+'.vtu')
 
     ###################################################
+    # trying to compute catchments here
+    # not sure exactly what I am doing, does not work
+    ###################################################
     start = timing.time()
     catchment = np.zeros(nel,dtype=np.float64) 
     catchment[:]=-1
@@ -1070,7 +1057,6 @@ for istep in range(0,nstep):
            if border_element[iel]==1:
               catchment[iel]=counter
               counter+=1
-
 
        #for iel in range(0,5):
        #    print('---------------')
@@ -1282,9 +1268,7 @@ for istep in range(0,nstep):
 
     print("export to vtu: %.3f s" % (timing.time() - start))
 
-
     z_prev[:]=z[:]
-
 
 #end for istep
 
