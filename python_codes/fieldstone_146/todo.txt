@@ -1,0 +1,5 @@
+prescribe velocity on NEEM side
+prescribe temperature in domain
+prescribe grain size in domain
+adjust inside mesh to follow 3 layers
+
