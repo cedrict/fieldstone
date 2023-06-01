@@ -8,6 +8,7 @@ from scipy.sparse import csr_matrix, lil_matrix, hstack, vstack
 import time as timing
 from scipy.sparse import lil_matrix
 from numpy import linalg as LA
+import numba
 
 #------------------------------------------------------------------------------
 
@@ -72,6 +73,7 @@ def viscosity(exx,eyy,exy,pq,iter,x,y,T,d):
 
 #------------------------------------------------------------------------------
 
+@numba.njit
 def NNV(rq,sq):
     NV_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
     NV_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
@@ -82,8 +84,9 @@ def NNV(rq,sq):
     NV_6=     (1.-rq**2) * 0.5*sq*(sq+1.)
     NV_7= 0.5*rq*(rq-1.) *     (1.-sq**2)
     NV_8=     (1.-rq**2) *     (1.-sq**2)
-    return NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,NV_6,NV_7,NV_8
+    return np.array([NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,NV_6,NV_7,NV_8],dtype=np.float64)
 
+@numba.njit
 def dNNVdr(rq,sq):
     dNVdr_0= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
     dNVdr_1= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
@@ -94,8 +97,9 @@ def dNNVdr(rq,sq):
     dNVdr_6=       (-2.*rq) * 0.5*sq*(sq+1)
     dNVdr_7= 0.5*(2.*rq-1.) *    (1.-sq**2)
     dNVdr_8=       (-2.*rq) *    (1.-sq**2)
-    return dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,dNVdr_6,dNVdr_7,dNVdr_8
+    return np.array([dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,dNVdr_6,dNVdr_7,dNVdr_8],dtype=np.float64)
 
+@numba.njit
 def dNNVds(rq,sq):
     dNVds_0= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
     dNVds_1= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
@@ -106,14 +110,15 @@ def dNNVds(rq,sq):
     dNVds_6=     (1.-rq**2) * 0.5*(2.*sq+1.)
     dNVds_7= 0.5*rq*(rq-1.) *       (-2.*sq)
     dNVds_8=     (1.-rq**2) *       (-2.*sq)
-    return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8
+    return np.array([dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8],dtype=np.float64)
 
+@numba.njit
 def NNP(rq,sq):
     NP_0=0.25*(1-rq)*(1-sq)
     NP_1=0.25*(1+rq)*(1-sq)
     NP_2=0.25*(1+rq)*(1+sq)
     NP_3=0.25*(1-rq)*(1+sq)
-    return NP_0,NP_1,NP_2,NP_3
+    return np.array([NP_0,NP_1,NP_2,NP_3],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 
@@ -128,9 +133,9 @@ def NEEM_velocity(y):
 
 year=3600*24*365.
 
-print("-----------------------------")
-print("---------- stone 59 ---------")
-print("-----------------------------")
+print("------------------------------")
+print("---------- stone 146 ---------")
+print("------------------------------")
 
 ndim=2
 mV=9     # number of velocity nodes making up an element
@@ -138,7 +143,7 @@ mP=4     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-nelx = 600 
+nelx = 500 
 nely = 20
 
 Lx=400e3 
@@ -170,18 +175,13 @@ hy=Ly/nely
 rho=917
 gy=-9.8
 
-factorvisu=1
-
 tol_nl=1e-6
 
 eta_ref=1.e13      # scaling of G blocks
 scaling_coeff=eta_ref/Ly
 
 niter_min=1
-niter=1
-
-rVnodes=[-1,+1,1,-1, 0,1,0,-1,0]
-sVnodes=[-1,-1,1,+1,-1,0,1, 0,0]
+niter=2
 
 #################################################################
 #################################################################
@@ -197,7 +197,7 @@ print("NfemP=",NfemP)
 print("Nfem=",Nfem)
 print("hx",hx)
 print("hy",hy)
-print("------------------------------")
+print("----------------------------------------")
 
 #################################################################
 # grid point setup
@@ -217,11 +217,13 @@ for j in range(0, nny):
     for i in range(0, nnx):
         xV[counter]=i*hx/2.
         yV[counter]=j*hy/2.
-        bottom[counter]= (j==0)
-        left[counter]= (i==0)
-        right[counter]= (i==nnx-1)
-        top[counter]= (j==nny-1)
+        bottom[counter]=(j==0)
+        left[counter]=(i==0)
+        right[counter]=(i==nnx-1)
+        top[counter]=(j==nny-1)
         counter += 1
+    #end for
+#end for
 
 #np.savetxt('grid.ascii',np.array([xV,yV]).T,header='# x,y')
 
@@ -230,7 +232,7 @@ print("setup: grid points: %.3f s" % (timing.time() - start))
 #################################################################
 # define coordinates of A,B,C,D,E,F,G,...
 #################################################################
-# the origin is at sea level, below point F
+# the origin is at sea level, below point F !!
 
 xA=0
 yA=1000
@@ -250,15 +252,16 @@ yE=500
 xF=xA 
 yF=500
 
-xVnew=np.zeros(NV,dtype=np.float64)  # x coordinates
-yVnew=np.zeros(NV,dtype=np.float64)  # y coordinates
-
 #################################################################
 # create new mesh
 # the current assumption is that the length of the initial 
 # domain is the same as the new domain.
 # we use a bilinear mapping to map the blocks left and right of CC
 #################################################################
+start = timing.time()
+
+xVnew=np.zeros(NV,dtype=np.float64)  # x coordinates
+yVnew=np.zeros(NV,dtype=np.float64)  # y coordinates
 
 counter = 0
 for j in range(0,nny):
@@ -296,9 +299,12 @@ for j in range(0,nny):
 xV[:]=xVnew[:]
 yV[:]=yVnew[:]
 
+print("setup: map mesh blocks: %.3f s" % (timing.time() - start))
+
 #################################################################
 # prescribe topography of surface and bed rock
 #################################################################
+start = timing.time()
 
 for i in range(0,NV):
 
@@ -309,6 +315,8 @@ for i in range(0,NV):
     if top[i]:
        #JAN
        2
+
+print("setup: surface and bedrock topo: %.3f s" % (timing.time() - start))
 
 #################################################################
 # further internally deform the mesh according to layers
@@ -329,7 +337,6 @@ for i in range(0,NV):
 # |       |   |       |
 # 0---4---1   0-------1
 #################################################################
-
 start = timing.time()
 
 iconV=np.zeros((mV,nel),dtype=np.int32)
@@ -468,9 +475,9 @@ conv_inf_Rp = np.zeros(niter,dtype=np.float64)
 
 for iter in range(0,niter):
 
-   print("--------------------------")
+   print("------------------------------------")
    print("iter=", iter)
-   print("--------------------------")
+   print("------------------------------------")
 
    #################################################################
    # build FE matrix
@@ -631,8 +638,8 @@ for iter in range(0,niter):
 
    # end for iel 
 
-   print("     -> f (m,M) %.5e %.5e " %(np.min(f_rhs),np.max(f_rhs)))
-   print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
+   #print("     -> f (m,M) %.5e %.5e " %(np.min(f_rhs),np.max(f_rhs)))
+   #print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
 
    print("     -> srq  (m,M) %.4e %.4e " %(np.min(srq),np.max(srq)))
    print("     -> etaq (m,M) %.4e %.4e " %(np.min(etaq),np.max(etaq)))
@@ -653,9 +660,11 @@ for iter in range(0,niter):
    u,v=np.reshape(sol[0:NfemV],(NV,2)).T
    p=sol[NfemV:Nfem]*scaling_coeff
 
-   print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
-   print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
-   print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
+   print("     -> u (m,M) %.4e %.4e (m/s)" %(np.min(u),np.max(u)))
+   print("     -> v (m,M) %.4e %.4e (m/s)" %(np.min(v),np.max(v)))
+   print("     -> p (m,M) %.4e %.4e (Pa)" %(np.min(p),np.max(p)))
+   print("     -> u (m,M) %.4e %.4e (m/year)" %(np.min(u*year),np.max(u*year)))
+   print("     -> v (m,M) %.4e %.4e (m/year)" %(np.min(v*year),np.max(v*year)))
 
    print("solve system: %.3f s - Nfem %d" % (timing.time() - start, Nfem))
 
@@ -800,12 +809,6 @@ for iter in range(0,niter):
    print("compute press & sr: %.3f s" % (timing.time() - start))
 
    #####################################################################
-
-   avrg_press=np.sum(pc)/nel
-
-   print ("     -> avrg press. %.5e" % avrg_press)
-
-   #####################################################################
    # project strainrate onto velocity grid
    #####################################################################
    start = timing.time()
@@ -816,9 +819,11 @@ for iter in range(0,niter):
    srn=np.zeros(NV,dtype=np.float64)
    c=np.zeros(NV,dtype=np.float64)
 
+   rVnodes=[-1,+1,1,-1, 0,1,0,-1,0]
+   sVnodes=[-1,-1,1,+1,-1,0,1, 0,0]
+
    for iel in range(0,nel):
        for i in range(0,mV):
-           NNNV[0:mV]=NNV(rVnodes[i],sVnodes[i])
            dNNNVdr[0:mV]=dNNVdr(rVnodes[i],sVnodes[i])
            dNNNVds[0:mV]=dNNVds(rVnodes[i],sVnodes[i])
            jcb=np.zeros((ndim,ndim),dtype=np.float64)
@@ -861,14 +866,19 @@ for iter in range(0,niter):
    print("compute nod strain rate: %.3f s" % (timing.time() - start))
  
    ######################################################################
+   start = timing.time()
+
    etan=np.zeros(NV,dtype=np.float64)
 
    for i in range (0,NV):
        etan[i]=viscosity(exxn[i],eyyn[i],exyn[i],q[i],iter,xV[i],yV[i],T[i],d[i])
 
+   print("compute nodal viscosity: %.3f s" % (timing.time() - start))
+
    ######################################################################
    # generate vtu output at every nonlinear iteration
    ######################################################################
+   start = timing.time()
 
    filename = 'solution_nl_{:04d}.vtu'.format(iter)
    vtufile=open(filename,"w")
@@ -879,7 +889,7 @@ for iter in range(0,niter):
    vtufile.write("<Points> \n")
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
    for i in range(0,NV):
-       vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i]*factorvisu,0.))
+       vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
    vtufile.write("</DataArray>\n")
    vtufile.write("</Points> \n")
    #####
@@ -933,9 +943,15 @@ for iter in range(0,niter):
    vtufile.write("</VTKFile>\n")
    vtufile.close()
 
+   print("export to vtu: %.3f s" % (timing.time() - start))
+
 #------------------------------------------------------------------------------
 # end of non-linear iterations
 #------------------------------------------------------------------------------
+   
+print("------------------------------------")
+print("end of nonlinear iterations  ")
+print("------------------------------------")
 
 ######################################################################
 # compute averaged elemental strainrate 
@@ -1027,23 +1043,12 @@ if False:
    core1file.close()
    core2file.close()
 
-#midfile=open('nueffs.ascii',"w")
-#for i in range(0,NV):
-#    if abs(xV[i]-Lx/2)/Lx<eps:
-#       eta10= viscosity(0.,0.,1e-10,0.,1,0.,0.,T[i],d[i])
-#       eta11= viscosity(0.,0.,1e-11,0.,1,0.,0.,T[i],d[i])
-#       eta12= viscosity(0.,0.,1e-12,0.,1,0.,0.,T[i],d[i])
-#       eta13= viscosity(0.,0.,1e-13,0.,1,0.,0.,T[i],d[i])
-#       midfile.write("%5e %5e %5e %5e %5e %5e %5e\n"\
-#                      %(yV[i],T[i],d[i],eta10,eta11,eta12,eta13))
-#midfile.close()
-
-
 #####################################################################
 # plot of solution
-#####################################################################
 # the 9-node Q2 element does not exist in vtk, but the 8-node one 
 # does, i.e. type=23. 
+#####################################################################
+start = timing.time()
 
 filename = 'solution.vtu'
 vtufile=open(filename,"w")
@@ -1054,7 +1059,7 @@ vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel
 vtufile.write("<Points> \n")
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
 for i in range(0,NV):
-    vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i]*factorvisu,0.))
+    vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
 vtufile.write("</DataArray>\n")
 vtufile.write("</Points> \n")
 #####
@@ -1248,7 +1253,9 @@ vtufile.write("</Piece>\n")
 vtufile.write("</UnstructuredGrid>\n")
 vtufile.write("</VTKFile>\n")
 vtufile.close()
+   
+print("export to vtu: %.3f s" % (timing.time() - start))
 
-print("-----------------------------")
-print("------------the end----------")
-print("-----------------------------")
+print("---------------------------------------")
+print("-----------------the end---------------")
+print("---------------------------------------")
