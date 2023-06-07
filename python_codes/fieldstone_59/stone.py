@@ -290,12 +290,15 @@ bc_fix=np.zeros(NfemV,dtype=np.bool)    # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64) # boundary condition, value
 
 for i in range(0,NV):
-    if xV[i]/Lx<eps:
+
+    if xV[i]/Lx<eps: #exit
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0 
        #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
-    if xV[i]/Lx>(1-eps):
+
+    if xV[i]/Lx>(1-eps): #NEEM
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = rho*g*np.sin(theta)/2/1e15*yV[i]*(2*Ly-yV[i]) 
        #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 
+
     if yV[i]/Ly<eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
