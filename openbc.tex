@@ -1,3 +1,6 @@
+\begin{flushright} {\tiny {\color{gray} openbc.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 So-called open boundary conditions have a special meaning in computational geodynamics. 
 They usually refer to the boundary conditions on the sides of Cartesian models, 
 usually looking at subduction or rifting processes. 
@@ -12,18 +15,18 @@ In the literature boundary conditions on the vertical sidewalls are usually
 Free slip is the most commonly used boundary condition while prescribed in- and outflow 
 or periodic boundary conditions are also common. (REF?)
 
-Taken from Chertova \etal (2012) \cite{chgv12}:
-"Open boundaries for which the horizontal in- and outflow are defined by a fully 
+Taken from \textcite{chgv12} (2012):
+``Open boundaries for which the horizontal in- and outflow are defined by a fully 
 internally developed flow, have hardly been used [...]. 
 Such open boundaries basically prescribe a hydrostatic pressure condition on 
 the boundary preventing the model to collapse while horizontal in and outflow is free, 
 in the sense that it is driven by the internal dynamics and the usual condition of 
 incompressible flow. 
 Among the range of boundary conditions used, open boundaries may fit best to 
-real-mantle flow conditions surrounding subduction zones." 
+real-mantle flow conditions surrounding subduction zones.''
 
 Two examples of the use of such boundary conditions were found in 
-the literature: \cite{qusp10} and \cite{chgv12}.
+the literature: \textcite{qusp10} (2010) and \textcite{chgv12} (212).
 
 We start again from the variational form of the momentum equation, and focus on the term containing 
 the full stress tensor ${\bm \sigma}$. 
@@ -51,7 +54,7 @@ such as the so-called open boundary conditions.
 
 Note that in \textcite{lige17} (2017) the authors describe an iterative algorithm that 
 allows them to control the actual force applied at the boundary by 
-scaling the kinematica boundary conditions
+scaling the kinematical boundary conditions
 
 %.................................................................
 \subsubsection{Two-dimensional case - $Q_1 \times P_0$ elements}
@@ -346,8 +349,7 @@ so the non-zero terms are in positions $(8,11,20,23)$.
 \subsubsection{Two-dimensional case - $Q_2 \times Q_1$ elements}
 
 It is not fundamentally different, except that the element counts 9 nodes, 
-so the vector is 9x2=18 long. 
-
+so the vector is $9\times 2=18$ long. 
 The internal numbering of the nodes is as follows:
 \begin{verbatim}
  velocity    pressure
@@ -394,23 +396,11 @@ t_x
 \left(
 \begin{array}{c}
 \int_{\Gamma_{073}} N_0(x,y) dS\\
-0 \\
-0 \\
-0 \\
-0 \\
-0 \\
+0 \\ 0 \\ 0 \\ 0 \\ 0 \\
 \int_{\Gamma_{073}} N_3(x,y) dS \\
-0 \\
-0 \\
-0 \\
-0 \\
-0 \\
-0 \\
-0 \\
+0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\
 \int_{\Gamma_{073}}  N_7(x,y) dS \\
-0 \\
-0 \\
-0
+0 \\ 0 \\ 0
 \end{array}
 \right)
 =
@@ -418,23 +408,11 @@ t_x  \frac{h_y}{2}
 \left(
 \begin{array}{c}
 \int_{-1}^{+1} N_0(r=-1,s) ds\\
-0 \\
-0 \\
-0 \\
-0 \\
-0 \\
+0 \\ 0 \\ 0 \\ 0 \\ 0 \\
 \int_{-1}^{+1} N_3(r=-1,s) ds \\
-0 \\
-0 \\
-0 \\
-0 \\
-0 \\
-0 \\
-0 \\
+0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\
 \int_{-1}^{+1}  N_7(r=-1,s) ds \\
-0 \\
-0 \\
-0
+0 \\ 0 \\ 0
 \end{array}
 \right)
 \]
@@ -477,9 +455,181 @@ interval [-1,1] yields 2. Finally
 \end{array}
 \right)
 \]
-This is implemented in \stone 61 and 64.
+This is implemented in \stone 61, 64 and 146.
+
+On the right boundary, we need to compute (careful with sign when implementing!)
+\[
+\vec{F}_{el}=
+\int_{\Gamma_{152}} 
+\left(
+\begin{array}{c}
+N_0(x,y) t_x(x,y)\\
+N_0(x,y) t_y(x,y)\\
+N_1(x,y) t_x(x,y)\\
+N_1(x,y) t_y(x,y)\\
+N_2(x,y) t_x(x,y)\\
+N_2(x,y) t_y(x,y)\\
+N_3(x,y) t_x(x,y)\\
+N_3(x,y) t_y(x,y)\\
+N_4(x,y) t_x(x,y)\\
+N_4(x,y) t_y(x,y)\\
+N_5(x,y) t_x(x,y)\\
+N_5(x,y) t_y(x,y)\\
+N_6(x,y) t_x(x,y)\\
+N_6(x,y) t_y(x,y)\\
+N_7(x,y) t_x(x,y)\\
+N_7(x,y) t_y(x,y)\\
+N_8(x,y) t_x(x,y)\\
+N_8(x,y) t_y(x,y)
+\end{array}
+\right)
+dS
+=
+t_x 
+\left(
+\begin{array}{c}
+0 \\ 0 \\
+\int_{\Gamma_{125}} N_1(x,y) dS \\ 0 \\ 
+\int_{\Gamma_{125}} N_2(x,y) dS \\ 0 \\
+0 \\ 0 \\
+0 \\ 0 \\ 
+\int_{\Gamma_{125}} N_5(x,y) dS \\
+0 \\ 0 \\ 
+0 \\ 0 \\ 
+0 \\ 0
+\end{array}
+\right)
+=
+t_x  \frac{h_y}{2}
+\left(
+\begin{array}{c}
+0 \\ 0 \\
+\int_{-1}^{+1} N_1(-1,s) ds \\ 0 \\ 
+\int_{-1}^{+1} N_2(-1,s) ds \\ 0 \\
+0 \\ 0 \\
+0 \\ 0 \\
+\int_{-1}^{+1} N_5(-1,s) ds \\
+0 \\ 0 \\
+0 \\ 0 \\
+0 \\ 0 
+\end{array}
+\right)
+=
+\frac{t_x h_y}{6}
+\left(
+\begin{array}{c}
+0 \\ 0 \\
+1 \\ 0 \\
+1 \\ 0 \\
+0 \\ 0 \\
+0 \\ 0 \\
+4 \\ 0 \\
+0 \\ 0 \\
+0 \\ 0 \\
+0 \\ 0
+\end{array}
+\right)
+\]
 
 
+Let us now turn to the case where the traction we wish to apply 
+on the boundary is not piecewise constant bu linear.
+We set $t_x(y)=ay+b$, so that on the right side, we have to compute
+
+\begin{eqnarray}
+\int_{\Gamma_{125}} N_1(x,y) t_x(y) dS 
+&=&\int_{\Gamma_{125}} N_1(x,y) (ay+b) dS \nn\\
+&=&\frac{h_y}{2} \int_{-1}^1 N_1(r=1,s) [ay(s)+b] ds \nn
+\end{eqnarray}
+We have 
+\[
+s(y)=\frac{2}{h_y}(y-y_1)-1 
+\qquad
+\text{or}
+\qquad
+y(s)= \frac{h_y}{2}(s+1) +y_1
+\]
+and
+\[
+\bN_1(r,s) 
+= \frac{1}{2}r(r+1)\frac{1}{2}s(s-1)
+\qquad
+\Rightarrow
+\qquad
+N_1(r=1,s) 
+= \frac{1}{2}1(1+1)\frac{1}{2}s(s-1) 
+= \frac{1}{2}s(s-1) 
+\]
+Then
+\begin{eqnarray}
+\int_{\Gamma_{125}} N_1(x,y) t_x(y) dS 
+&=&\frac{h_y}{2} \int_{-1}^1 N_1(r=1,s) \left[ a \left(\frac{h_y}{2}(s+1) +y_1\right) +b \right] ds \nn\\
+&=&\frac{h_y}{2} \int_{-1}^1 \frac12 s(s-1) \left[ a \left(\frac{h_y}{2}(s+1) +y_1\right) +b \right] ds \nn\\
+&=&\frac{h_y}{4} \int_{-1}^1 s(s-1) \left[ \frac{a h_y}{2}(s+1) + (ay_1+b) \right] ds \nn\\
+&=& \frac{h_y}{4} \left[
+\frac{a h_y}{2} \int_{-1}^1 s(s-1) (s+1)  ds 
++(ay_1+b) \int_{-1}^1 s(s-1)   ds 
+\right] \nn\\
+&=& \frac{h_y}{4} 
+\frac{a h_y}{2} \underbrace{\int_{-1}^1 s(s^2-1)  ds}_{=0} 
++\frac{h_y}{4} (ay_1+b) \underbrace{\int_{-1}^1 s(s-1)   ds}_{=2/3} \nn\\
+&=& \frac{h_y}{6} (ay_1+b)
+\end{eqnarray}
+
+Let us now turn to $\bN_2$:
+\[
+\bN_2(r,s) = \frac12 r(r+1) \frac12 s(s+1)
+\qquad
+\Rightarrow
+\qquad
+\bN_2(r=1,s) = \frac12 s(s+1)
+\]
+Then
+\begin{eqnarray}
+\int_{\Gamma_{125}} N_2(x,y) t_x(y) dS 
+&=&\frac{h_y}{2} \int_{-1}^1 N_2(r=1,s) \left[ a \left(\frac{h_y}{2}(s+1) +y_1\right) +b \right] ds \nn\\
+&=&\frac{h_y}{2} \int_{-1}^1 \frac12 s(s+1) \left[ a \left(\frac{h_y}{2}(s+1) +y_1\right) +b \right] ds \nn\\
+&=&\frac{h_y}{4} \int_{-1}^1 s(s+1) \left[ \frac{a h_y}{2}(s+1) + (ay_1+b) \right] ds \nn\\
+&=& \frac{h_y}{4} \left[
+\frac{a h_y}{2} \int_{-1}^1 s(s+1) (s+1)  ds 
++(ay_1+b) \int_{-1}^1 s(s+1)   ds 
+\right] \nn\\
+&=& \frac{h_y}{4} 
+\frac{a h_y}{2} \underbrace{\int_{-1}^1 s(s+1)^2  ds}_{=4/3} 
++\frac{h_y}{4} (ay_1+b) \underbrace{\int_{-1}^1 s(s+1)  ds}_{=2/3} \nn \\
+&=& \frac{h_y}{6} \left( a h_y + ay_1+b   \right)
+\end{eqnarray}
+
+
+
+And finally let us turn to $\bN_5$:
+\[
+\bN_5(r,s) = \frac12 r(r+1) \frac12 (1-s^2)
+\qquad
+\Rightarrow
+\qquad
+\bN_5(r=1,s) = \frac12 (1-s^2)
+\]
+then
+\begin{eqnarray}
+\int_{\Gamma_{125}} N_5(x,y) t_x(y) dS 
+&=&\frac{h_y}{2} \int_{-1}^1 N_2(r=1,s) \left[ a \left(\frac{h_y}{2}(s+1) +y_1\right) +b \right] ds \nn\\
+&=&\frac{h_y}{2} \int_{-1}^1 \frac12 (1-s^2) \left[ a \left(\frac{h_y}{2}(s+1) +y_1\right) +b \right] ds \nn\\
+&=&\frac{h_y}{4} \int_{-1}^1 (1-s^2) \left[ \frac{a h_y}{2}(s+1) + (ay_1+b) \right] ds \nn\\
+&=& \frac{h_y}{4} \left[
+\frac{a h_y}{2} \int_{-1}^1 (1-s^2) (s+1)  ds 
++(ay_1+b) \int_{-1}^1 (1-s^2)   ds 
+\right] \nn\\
+&=& \frac{h_y}{4} 
+\frac{a h_y}{2} \underbrace{\int_{-1}^1 (1-s^2)(1+s)  ds}_{=4/3} 
++\frac{h_y}{4} (ay_1+b) \underbrace{\int_{-1}^1 (1-s^2)  ds}_{=4/3} \nn \\
+&=& \frac{h_y}{6} \left( a h_y + 2ay_1+2 b   \right)
+\end{eqnarray}
+
+Note that by setting $a=0$ and $b=t_x$ we recover the expressions above for a 
+piecewise constant value.
+
+CHECK!!!!!!!
 
 
 

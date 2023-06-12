@@ -127,17 +127,18 @@ We note that when using discontinuous pressure space
 (e.g., $P_0$, $P_{-1}$), these bounds remain valid even
 when the viscosity is discontinuous provided that the element boundaries conform to the discontinuity.
 
- 
+%------------------------------------------------------------------------------ 
 \subsubsection{About extrapolation}\label{ss:extrapolation}
 \index{general}{Extrapolation}
 
-{\it Section contributed by W. Bangerth and part of Thieulot \& Bangerth [in prep.]}
+Section contributed by W. Bangerth and part of \textcite{thba22} (2022) 
+but it was ultimately not used. 
 
 In a number of numerical benchmarks we
 want to estimate the error $X_h-X^\ast$ between a quantity $X_h$ computed
-from the numerical solution $\vec{u}_h,p_h$ and the corresponding value
-$X$ computed from the exact solution $\vec{u},p$. Examples of such quantities
-$X$ are the root mean square velocity $v_{rms}$, but it could also be a mass flux
+from the numerical solution $\vec{\upnu}_h,p_h$ and the corresponding value
+$X$ computed from the exact solution $\vec{\upnu},p$. Examples of such quantities
+$X$ are the root mean square velocity $\upnu_{rms}$, but it could also be a mass flux
 across a boundary, an average horizontal velocity at the top boundary, or
 any other scalar quantity.
 
@@ -206,4 +207,46 @@ In the determination of $r$, we could also have used $X_h$ and $X_{h/2}$,
 but using $X_{h/2}$ and $X_{h/4}$ is generally more reliable because
 the higher order terms we have omitted in \eqref{eq:extrapolation-1} are less
 visible on finer meshes.
+
+In some cases, however, halving the mesh size multiple times 
+is not really tractable (memory problem, or cpu time).
+Let us now start again from 
+\begin{equation}
+  e_h=|X_h-X| \approx C h^r.
+\end{equation}
+and assume that we run two other models at a resolution $\alpha h$
+and $\beta h$, such that $1>\alpha>\beta>0$. 
+In the example above we of course had $\alpha=1/2$ and $\beta=1/4$.
+Then we have 
+\begin{eqnarray}
+e_{\alpha h}=|X_{\alpha h}-X| \approx C \left(\alpha h\right)^r,  \\
+e_{\beta  h}=|X_{\beta h} -X| \approx C \left(\beta  h\right)^r.
+\end{eqnarray}
+which leads to 
+\begin{equation*}
+\frac{|X_h-X^\star|}{|X_{\alpha h}-X^\star|}
+= \frac{C h^r}{C (\alpha h)^r} = (1/\alpha)^{r}
+\qquad
+\text{and}
+\qquad
+\frac{|X_{\alpha h}-X^\star|}{|X_{\beta h}-X^\star|}
+= \frac{C (\alpha h)^r}{C(\beta h)^r} = (\alpha/\beta)^r
+\end{equation*}
+In order for both to be equal we must have
+\[
+(1/\alpha)^{r} = (\alpha/\beta)^r
+\qquad
+\Rightarrow
+\qquad
+1/\alpha = \alpha/\beta
+\qquad
+\Rightarrow
+\qquad
+\beta=\alpha^2
+\]
+So of course if $\alpha=1/2$ then $\beta=1/4$, but now we can also take 
+$\alpha=3/4$ and then $\beta=9/16$. Etc ...
+
+In the end, this approach might not be that useful since the mesh sizes would
+then be $h,3h/4,9h/16,27h/64,...$ which may be hard to achieve in practice.
 
