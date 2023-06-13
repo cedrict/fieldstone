@@ -1,3 +1,6 @@
+
+\includegraphics[width=1.5cm]{images/pictograms/replication}
+
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_143/keywords.key}
 
 \begin{center}
@@ -8,7 +11,38 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This \stone is based on \textcite{yahb13} (2013). 
+This \stone is based on \textcite{yahb13} (2013) published in Tectonics.
+As for every \stone aiming at reproducing results off a publication I here include de abstract
+of the article:
+
+\begin{center}
+\begin{minipage}{13cm}
+{\small 
+Passive margins often exhibit uplift, exhumation, and tectonic inversion. We speculate
+that the compression in the lithosphere gradually increased during the Cenozoic, as seen in
+the number of mountain belts found at active margins during that period. Less clear is how
+that compression increase affects passive margins. In order to address this issue, we design a
+2-D viscous numerical model wherein a lithospheric plate rests above a weaker mantle. It is
+driven by a mantle conveyor belt, alternatively excited by a lateral downwelling on one side,
+an upwelling on the other side, or both simultaneously. The lateral edges of the plate are
+either free or fixed, representing the cases of free convergence, and collision (or slab
+anchoring), respectively. This distinction changes the upper mechanical boundary condition
+for mantle circulation and thus, the stress field. Between these two regimes, the flow pattern
+transiently evolves from a free-slip convection mode toward a no-slip boundary condition
+above the upper mantle. In the second case, the lithosphere is highly stressed horizontally
+and deforms. For a constant total driving force, compression increases drastically at passive
+margins if upwellings are active. Conversely, if downwellings alone are activated,
+compression occurs at short distances from the trench and extension prevails elsewhere.
+These results are supported by Earth-like models that reveal the same pattern, where active
+upwellings are required to excite passive margins compression. Our results substantiate the
+idea that compression at passive margins is in response to the underlying mantle flow that is
+increasingly resisted by the Cenozoic collisions.}
+\end{minipage}
+\end{center}
+ 
+
+
+
 
 In the paper the authors state that their simple setup
 ``also ensures the reproducibility of our results that can be easily tested by any code-
@@ -67,6 +101,9 @@ where $F_u$ and $F_d$ correspond to the absolute values of the
 upwelling and downwelling forces, respectively, and g is the gravitational 
 acceleration set to $9.81~\si{\meter\per\square\second}$.
 Note that the values for $A_u$ and $A_d$ is never specified!
+Looking closely at Fig 6, we find that the blue and red zones are as wide as 
+the thickness of the oceanic lithosphere, i.e. 100km.
+
 
 The viscosity in the lower mantle corresponds
 to a very simplified profile: From $660~\si{\km}$ to $2650~\si{\km}$ depth,
@@ -106,6 +143,8 @@ Both elements are available
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Collision mode}
 
+This corresponds to paragraph 19 and after in the paper. 
+
 In the collision mode, $L = 0$ and the lithosphere cannot
 move freely above the convection cell. The net driving force involved in this
 example amounts to $2\cdot 10^{13}~\si{\newton\per\meter}$. This total force is evenly
@@ -121,8 +160,8 @@ distributed ($F_u = F_d = 10^{13}~\si{\newton\per\meter}$).
 ($L=0~\si{\km}$ and $l_ c=2000~\si{\km}$). 
 (b) Streamlines obtained for the downwelling driven model
 ($F_u=0$, $F_d=2 \cdot 10^{13} N m 1$ ), 
-the upwelling driven model (F u = 2 · 10 13 N m 1 , F d = 0 N m 1 ), and
-the reference model ($F_u=10^{13}~\si{\newton\per\meter}$, F d = 10 13 N m -1 ).
+the upwelling driven model ($F_u = 2 \times 10^{13} N/m$ , $F_d = 0 N/m$ ), and
+the reference model ($F_u=10^{13}~\si{\newton\per\meter}$, $F_d = 10^{13} N/m$).
 }
 \end{center}
 
