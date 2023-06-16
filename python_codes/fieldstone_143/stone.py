@@ -1,9 +1,9 @@
+import sys 
 import numpy as np
 import time as timing
 from scipy.sparse import lil_matrix
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
-
 
 ###############################################################################
 #   Vspace=Q2     Pspace=Q1       
@@ -86,15 +86,11 @@ def viscosity(x,y,Ly,eta_um,eta_c,eta_o,xA,yB,xC,xE,yE,xF,yF,yG,yI):
 ###############################################################################
 
 def density(x,y,yB,xL,xM,xN,rhod,rhou,rho0):
-
     val=rho0
-
     if x>xL and x<xM and y<yB:
        val=rhod
-
     if x>xN and y<Ly-30e3:
        val=rhou
-
     return val
 
 ###############################################################################
@@ -119,19 +115,38 @@ eta_ref=1e22 # numerical parameter for FEM
 Lx=6000*km
 Ly=3000*km
 
-gx=0
 gy=-9.81
-   
-nelx=128
-nely=int(nelx*Ly/Lx)
 
-compute_area=False
+# allowing for argument parsing through command line
+if int(len(sys.argv) == 7): 
+   um = int(sys.argv[1])
+   c = int(sys.argv[2])
+   o = int(sys.argv[3])
+   Fu = float(sys.argv[4])
+   Fd = float(sys.argv[5])
+   nelx=int(sys.argv[6])
+   eta_um=10.**um
+   eta_c=10.**c
+   eta_o=10.**o
+   Fu*=1e13
+   Fd*=1e13
+else:
+   eta_um=1e20
+   eta_c=1e22 
+   eta_o=1e23
+   Fu=1e13
+   Fd=1e13
+   nelx=200
+
+###############################################################################
+
+nely=int(nelx*Ly/Lx)
     
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
 
-NV=nnx*nny  # number of nodes
-nel=nelx*nely  # number of elements, total
+NV=nnx*nny    # number of nodes
+nel=nelx*nely # number of elements, total
 NP=(nelx+1)*(nely+1)
 
 NfemV=NV*ndofV   # number of velocity dofs
@@ -140,6 +155,18 @@ Nfem=NfemV+NfemP # total number of dofs
 
 hx=Lx/nelx # size of element
 hy=Ly/nely
+
+print("nelx",nelx)
+print("nely",nely)
+print("nel",nel)
+print("nnx=",nnx)
+print("nny=",nny)
+print("NV=",NV)
+print("hx=",hx)
+print("hy=",hy)
+print("------------------------------")
+
+compute_area=False
 
 ###############################################################################
 
@@ -165,24 +192,21 @@ xN=Lx-100*km ; yN=0
 
 ###############################################################################
 
-ref=True
-
-if ref: #see paragraph 24
-   eta_um=1e20 # range: 19,20,21
-   eta_o=1e23
-   eta_c=1e22  # continental lithosphere
-   Fu=1e13
-   Fd=1e13
-   Au=100e3*Ly
-   Ad=100e3*yB
-   rho_ref=3250 
-   rho_u=rho_ref-Fu/(rho_ref*abs(gy)*Au)#-3250 
-   rho_d=rho_ref+Fd/(rho_ref*abs(gy)*Ad)#-3250 
-   #rho_ref-=3250
+Au=100e3*Ly
+Ad=100e3*yB
+rho_ref=3250. 
+rho_u=rho_ref-Fu/(abs(gy)*Au)#-3250 
+rho_d=rho_ref+Fd/(abs(gy)*Ad)#-3250 
+#rho_ref-=3250
 
 print('rho_ref',rho_ref)
 print('rho_u',rho_u)
 print('rho_d',rho_d)
+print('eta_um',eta_um)
+print('eta_o',eta_o)
+print('eta_c',eta_c)
+print('Fu',Fu)
+print('Fd',Fd)
 
 ###############################################################################
 # integration coeffs and weights 
@@ -191,18 +215,6 @@ print('rho_d',rho_d)
 nqperdim=3
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
-
-###############################################################################
-
-print("nelx",nelx)
-print("nely",nely)
-print("nel",nel)
-print("nnx=",nnx)
-print("nny=",nny)
-print("NV=",NV)
-print("hx=",hx)
-print("hy=",hy)
-print("------------------------------")
 
 ###############################################################################
 # grid point setup
@@ -570,7 +582,7 @@ print("          -> p (m,M) %.4e %.4e (Pa)     " %(np.min(p),np.max(p)))
 
 #np.savetxt('pressure_aft.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
             
-print("     pressure normalisation: %.3f s" % (timing.time() - start))
+print("pressure normalisation: %.3f s" % (timing.time() - start))
 
 ######################################################################
 # project pressure onto Q2 mesh for plotting
@@ -640,7 +652,50 @@ print("          -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
 print("          -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
 print("          -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
  
-print("     compute strain rate: %.3f s" % (timing.time() - start))
+print("compute strain rate: %.3f s" % (timing.time() - start))
+
+######################################################################
+# compute vrms 
+######################################################################
+start = timing.time()
+
+vrms=0.
+for iel in range (0,nel):
+    for iq in range(0,nqperdim):
+        for jq in range(0,nqperdim):
+            rq=qcoords[iq]
+            sq=qcoords[jq]
+            weightq=qweights[iq]*qweights[jq]
+            NNNV[0:9]=NNV(rq,sq)
+            dNNNVdr[0:9]=dNNVdr(rq,sq)
+            dNNNVds[0:9]=dNNVds(rq,sq)
+
+            jcb=np.zeros((2,2),dtype=np.float64)
+            for k in range(0,mV):
+                jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+                jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
+                jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+                jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+            #end for
+            jcob=np.linalg.det(jcb)
+
+            uq=0.0
+            vq=0.0
+            for k in range(0,mV):
+                uq+=NNNV[k]*u[iconV[k,iel]]
+                vq+=NNNV[k]*v[iconV[k,iel]]
+            #end for
+            vrms+=(uq**2+vq**2)*weightq*jcob 
+
+        #end for jq
+    #end for iq
+#end for iel
+
+vrms=np.sqrt(vrms/Lx/Ly)
+
+print("     -> nel= %6d ; vrms= %e " %(nel,vrms/cm*year))
+
+print("compute vrms: %.3f s" % (timing.time() - start))
 
 #####################################################################
 # plot of solution
@@ -649,7 +704,8 @@ print("     compute strain rate: %.3f s" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
-np.savetxt('solution_surface.ascii',np.array([xV[top],u[top],q[top],exx[top]]).T,header='# x,u,p,exx')
+np.savetxt('solution_surface.ascii',np.array([xV[top],u[top],\
+                                    q[top],exx[top],ee[top]]).T,header='# x,u,p,exx,e')
 
 if True:
     filename = 'solution.vtu'

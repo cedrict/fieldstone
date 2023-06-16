@@ -1,0 +1,50 @@
+#! /bin/bash
+
+# um c o fu fd
+
+python3 stone.py 19 23 23 1 1 200 
+mv solution_surface.ascii solution_surface_19_23_23.ascii
+mv solution.vtu solution_19_23_23.vtu
+
+python3 stone.py 19 22 22 1 1  200 
+mv solution_surface.ascii solution_surface_19_22_22.ascii
+mv solution.vtu solution_19_22_22.vtu
+
+python3 stone.py 19 21 21 1 1  200 
+mv solution_surface.ascii solution_surface_19_21_21.ascii
+mv solution.vtu solution_19_21_21.vtu
+
+#-------------
+
+python3 stone.py 20 23 23 1 1  200 
+mv solution_surface.ascii solution_surface_20_23_23.ascii
+mv solution.vtu solution_20_23_23.vtu
+
+python3 stone.py 20 22 22 1 1  200 
+mv solution_surface.ascii solution_surface_20_22_22.ascii
+mv solution.vtu solution_20_22_22.vtu
+
+python3 stone.py 20 21 21 1 1  200 
+mv solution_surface.ascii solution_surface_20_21_21.ascii
+mv solution.vtu solution_20_21_21.vtu
+
+#-------------
+
+python3 stone.py 21 23 23 1 1  200 
+mv solution_surface.ascii solution_surface_21_23_23.ascii
+mv solution.vtu solution_21_23_23.vtu
+
+python3 stone.py 21 22 22 1 1  200 
+mv solution_surface.ascii solution_surface_21_22_22.ascii
+mv solution.vtu solution_21_22_22.vtu
+
+python3 stone.py 21 21 21 1 1  200 
+mv solution_surface.ascii solution_surface_21_21_21.ascii
+mv solution.vtu solution_21_21_21.vtu
+
+#-------------
+
+
+
+
+

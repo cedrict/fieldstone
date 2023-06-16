@@ -104,6 +104,8 @@ Note that the values for $A_u$ and $A_d$ is never specified!
 Looking closely at Fig 6, we find that the blue and red zones are as wide as 
 the thickness of the oceanic lithosphere, i.e. 100km.
 
+NOTE THE FORMULA ABOVE NOT CORRECT
+
 
 The viscosity in the lower mantle corresponds
 to a very simplified profile: From $660~\si{\km}$ to $2650~\si{\km}$ depth,
@@ -139,7 +141,7 @@ the basis functions are in a separate file that originates in stone 96.
 Both elements are available
 
 
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Collision mode}
 
@@ -153,20 +155,77 @@ distributed ($F_u = F_d = 10^{13}~\si{\newton\per\meter}$).
 
 
 
+
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_143/images/yahb13_c}\\
-{\captionfont Taken from \cite{yahb13}.
-(a) Strain rate at the surface across the $3000~\si{\km}$ long continental and oceanic lithospheres
-($L=0~\si{\km}$ and $l_ c=2000~\si{\km}$). 
-(b) Streamlines obtained for the downwelling driven model
-($F_u=0$, $F_d=2 \cdot 10^{13} N m 1$ ), 
-the upwelling driven model ($F_u = 2 \times 10^{13} N/m$ , $F_d = 0 N/m$ ), and
-the reference model ($F_u=10^{13}~\si{\newton\per\meter}$, $F_d = 10^{13} N/m$).
-}
+\includegraphics[width=12cm]{python_codes/fieldstone_143/images/fig4}\\
+{\captionfont (a) Shortening rate  $\dot{\varepsilon}_{xx}$ 
+(horizontal component of the strain rate tensor) at the surface across the
+3000 km long continental and oceanic lithospheres ($L = 0~\si{\km}$, 
+$l_c = 2000~\si{\km}$, $F_d = F_u = 10^{13}~\si{\newton\per\meter}$. 
+Positive values of  $\dot{\varepsilon}_{xx}$ correspond to compression\footnote{explain pb}. 
+(b) Logarithm of the second invariant of the strain rate (e2d) along the same profile.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8.6cm]{python_codes/fieldstone_143/results/fig4/fig4a}
+\includegraphics[width=8.6cm]{python_codes/fieldstone_143/results/fig4/fig4b}\\
+\includegraphics[width=8.6cm]{python_codes/fieldstone_143/results/fig4/fig4_u}
+\includegraphics[width=8.6cm]{python_codes/fieldstone_143/results/fig4/fig4_p}\\
+{\captionfont Data obtained with {\tt script\_fig4} with resolution $200\times 100$.
+Replication is possible and aside from 19/21/21 all curves agree.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_143/images/fig5}
+\includegraphics[width=10.5cm]{python_codes/fieldstone_143/results/fig5/fig5a}\\
+{\captionfont Horizontal component of the strain rate $\dot{\varepsilon}_{xx}$
+across the 3000 km long continental and oceanic lithospheres
+($L = 0~\si{\km}$ and $l_c = 2000~\si{\km}$), for a variety of
+oceanic $\eta_o$ and upper mantle $\eta_um$ viscosities. The viscosity
+of the continental lithosphere $\eta_c$ is set to $10^{22}~\si{\pascal\second}$.
+Left: from the paper. Right: obtained with this  {\tt script\_fig5}.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_143/images/fig6}
+\includegraphics[width=10cm]{python_codes/fieldstone_143/results/fig6/fig6a}\\
+{\captionfont 
+Strain rate at the surface across the $3000~\si{\km}$ long continental and 
+oceanic lithospheres ($L=0~\si{\km}$ and $l_ c=2000~\si{\km}$).
+Reference model, $\eta_{um}=10^{20}~\si{\pascal\second}$, 
+$\eta_c=10^{22}~\si{\pascal\second}$, $\eta_o=10^{23}~\si{\pascal\second}$. 
+Left: Taken from \cite{yahb13}, Right: obtained with this  {\tt script\_fig6}.}
+\end{center}
+
+
+Testing influence of resolution
+
+\begin{center}
+\includegraphics[width=9.5cm]{python_codes/fieldstone_143/results/resolutions/fig_resolutions}\\
+{\captionfont 
+Reference model, $\eta_{um}=10^{20}~\si{\pascal\second}$, 
+$\eta_c=10^{22}~\si{\pascal\second}$, $\eta_o=10^{23}~\si{\pascal\second}$. 
+Obtained with this  {\tt script\_resolutions}.}
+\end{center}
+
+\newpage
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_143/results/resolutions/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_143/results/resolutions/press}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_143/results/resolutions/exx}
+\includegraphics[width=8cm]{python_codes/fieldstone_143/results/resolutions/exy}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_143/results/resolutions/eta}
+\includegraphics[width=8cm]{python_codes/fieldstone_143/results/resolutions/rho}\\
+{\captionfont Reference model, nelx=300.}
 \end{center}
 
 
 
+
+
+
+Todo: Testing influence of width of areas ?
 
 
 
