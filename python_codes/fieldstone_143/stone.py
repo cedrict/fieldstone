@@ -80,7 +80,6 @@ def viscosity(x,y,Ly,eta_um,eta_c,eta_o,xA,yB,xC,xE,yE,xF,yF,yG,yI):
     if x>xE and y>(yF-yE)/(xF-xE)*(x-xE)+yE:
        val=eta_o
 
-    #val=1e22
     return val
 
 ###############################################################################
@@ -136,7 +135,7 @@ else:
    eta_o=1e23
    Fu=1e13
    Fd=1e13
-   nelx=200
+   nelx=250
 
 ###############################################################################
 
@@ -173,7 +172,7 @@ compute_area=False
 lr=500*km
 lc=2000*km
 
-L=0 #1000*km
+L=0*km
 
 xA=L   ; yA=Ly
 xB=xA        ; yB=2800*km

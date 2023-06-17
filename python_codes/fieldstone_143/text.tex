@@ -92,7 +92,6 @@ downwelling zones that drive, by buoyancy, the convection
 cell. The density value in the upwelling ($\rho_u$) and
 in the downwelling ($\rho_d$) areas depends on the buoyancy force
 applied and are expressed as follows:
-
 \begin{eqnarray}
 \rho_u &=& \rho_{ref} - \frac{F_u}{\rho_{ref} g A_u} \\
 \rho_d &=& \rho_{ref} + \frac{F_d}{\rho_{ref} g A_d} 
@@ -104,13 +103,28 @@ Note that the values for $A_u$ and $A_d$ is never specified!
 Looking closely at Fig 6, we find that the blue and red zones are as wide as 
 the thickness of the oceanic lithosphere, i.e. 100km.
 
-NOTE THE FORMULA ABOVE NOT CORRECT
+These formula provide us with a learning opportunity:
+If one fills the values for $F_u$, $\rho_{ref}$, $g$ and $A_u$ or $A_d$
+in the formula we find {\it very} small density variations, i.e.
+$\rho_u=3249.99895449$ and $\rho_d=3250.00104551$. 
+These values are suspicious, and given the rather realistic viscosity
+values and dimensions of the setup this is not likely to yield 
+plausible velocities or strain rates. 
 
+Looking closely, the nominator and denominator have the same dimensions, 
+so that the ratio is dimensionless and can therefore not be 
+added or subtracted to a density! Upon my contacting the authors they confirmed
+that the density term in the denominator is wrong.
+The correct formula then read:
+\begin{eqnarray}
+\rho_u &=& \rho_{ref} - \frac{F_u}{ g A_u} \simeq 3246.6021066938497\\
+\rho_d &=& \rho_{ref} + \frac{F_d}{ g A_d} \simeq 3253.640599970875
+\end{eqnarray}
 
 The viscosity in the lower mantle corresponds
 to a very simplified profile: From $660~\si{\km}$ to $2650~\si{\km}$ depth,
-the viscosity is set to $\eta_{um}=5\cdot 10^{22}~\si{\pascal\second}$. 
-Below, the viscosity is set to $10^{21} Pa s$ (D'' layer). 
+the viscosity is set to $\eta_{lm}=5\cdot 10^{22}~\si{\pascal\second}$. 
+Below, the viscosity is set to $10^{21}~\si{\pascal\second}$ (D'' layer). 
 
 Above the lower mantle, the viscosities
 are not well resolved and therefore need to be tested.
@@ -136,10 +150,9 @@ margins, respectively.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{About the code}
 
-the basis functions are in a separate file that originates in stone 96.
-
-Both elements are available
-
+The code relies on the Finite Element method to solve the mass and momentum conservation
+equations for an isothermal incompressible fluid. 
+Quadrilateral elements are used and the stable $Q_2\times Q_1$ pair is used.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,16 +166,14 @@ example amounts to $2\cdot 10^{13}~\si{\newton\per\meter}$. This total force is 
 distributed ($F_u = F_d = 10^{13}~\si{\newton\per\meter}$). 
 
 
-
-
-
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_143/images/fig4}\\
+\includegraphics[width=14cm]{python_codes/fieldstone_143/images/fig4}\\
 {\captionfont (a) Shortening rate  $\dot{\varepsilon}_{xx}$ 
 (horizontal component of the strain rate tensor) at the surface across the
 3000 km long continental and oceanic lithospheres ($L = 0~\si{\km}$, 
 $l_c = 2000~\si{\km}$, $F_d = F_u = 10^{13}~\si{\newton\per\meter}$. 
-Positive values of  $\dot{\varepsilon}_{xx}$ correspond to compression\footnote{explain pb}. 
+Positive values of  $\dot{\varepsilon}_{xx}$ correspond to compression\footnote{Their convention
+is then opposite of mine so I plot the negative of my measurements to match theirs.}. 
 (b) Logarithm of the second invariant of the strain rate (e2d) along the same profile.}
 \end{center}
 
@@ -183,22 +194,22 @@ across the 3000 km long continental and oceanic lithospheres
 ($L = 0~\si{\km}$ and $l_c = 2000~\si{\km}$), for a variety of
 oceanic $\eta_o$ and upper mantle $\eta_um$ viscosities. The viscosity
 of the continental lithosphere $\eta_c$ is set to $10^{22}~\si{\pascal\second}$.
-Left: from the paper. Right: obtained with this  {\tt script\_fig5}.}
+Left: fig 5 from the paper. Right: obtained with this  {\tt script\_fig5}.}
 \end{center}
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_143/images/fig6}
-\includegraphics[width=10cm]{python_codes/fieldstone_143/results/fig6/fig6a}\\
+\includegraphics[width=10.5cm]{python_codes/fieldstone_143/results/fig6/fig6a}\\
 {\captionfont 
 Strain rate at the surface across the $3000~\si{\km}$ long continental and 
 oceanic lithospheres ($L=0~\si{\km}$ and $l_ c=2000~\si{\km}$).
 Reference model, $\eta_{um}=10^{20}~\si{\pascal\second}$, 
 $\eta_c=10^{22}~\si{\pascal\second}$, $\eta_o=10^{23}~\si{\pascal\second}$. 
-Left: Taken from \cite{yahb13}, Right: obtained with this  {\tt script\_fig6}.}
+Left: Fig 6 from \cite{yahb13}, Right: obtained with this  {\tt script\_fig6}.}
 \end{center}
 
 
-Testing influence of resolution
+\subsubsection*{Testing influence of resolution}
 
 \begin{center}
 \includegraphics[width=9.5cm]{python_codes/fieldstone_143/results/resolutions/fig_resolutions}\\
@@ -217,16 +228,18 @@ Obtained with this  {\tt script\_resolutions}.}
 \includegraphics[width=8cm]{python_codes/fieldstone_143/results/resolutions/exy}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_143/results/resolutions/eta}
 \includegraphics[width=8cm]{python_codes/fieldstone_143/results/resolutions/rho}\\
-{\captionfont Reference model, nelx=300.}
+{\captionfont Reference model, nelx=300. Resolution is then 20 km while theirs is 10 km.}
 \end{center}
-
-
-
 
 
 
 Todo: Testing influence of width of areas ?
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Drift versus collision mode}
+
+In this case we explore $L=0,1000,3000~\si{\km}$.
 
 
 
