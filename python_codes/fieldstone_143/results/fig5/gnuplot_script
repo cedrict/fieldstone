@@ -1,0 +1,56 @@
+set term pdf enhanced font "times,11pt"
+set grid
+
+set xlabel 'x (km)'
+set ylabel '{/Symbol e}_{xx} (s^{-1})'
+set size square
+set key outside 
+
+# um c o 
+
+set arrow from 2000, graph 0 to 2000, graph 1 nohead lw 5 lc 'gray' 
+
+set output 'fig5a.pdf'
+plot[:3000][-5e-16:5e-16]\
+'solution_surface_19_22_22.ascii' u ($1/1e3):(-$4) w l lt -1 dt 2 t '{/Symbol h}_{um}=10^{19},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{22}',\
+'solution_surface_19_22_23.ascii' u ($1/1e3):(-$4) w l lt -1 dt 1 t '{/Symbol h}_{um}=10^{19},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{23}',\
+'solution_surface_19_22_24.ascii' u ($1/1e3):(-$4) w l lt -1 dt 3 t '{/Symbol h}_{um}=10^{19},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{24}',\
+'solution_surface_20_22_22.ascii' u ($1/1e3):(-$4) w l lt  7 dt 2 t '{/Symbol h}_{um}=10^{20},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{22}',\
+'solution_surface_20_22_23.ascii' u ($1/1e3):(-$4) w l lt  7 dt 1 t '{/Symbol h}_{um}=10^{20},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{23}',\
+'solution_surface_20_22_24.ascii' u ($1/1e3):(-$4) w l lt  7 dt 3 t '{/Symbol h}_{um}=10^{20},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{24}',\
+0 lw 2 lt -1
+
+set ylabel '{/Symbol e}_{eff} (s^{-1})'
+set output 'fig5b.pdf'
+plot[:3000][-17.5:-14.5]\
+'solution_surface_19_22_22.ascii' u ($1/1e3):(log10($5)) w l lt -1 dt 2 t '{/Symbol h}_{um}=10^{19},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{22}',\
+'solution_surface_19_22_23.ascii' u ($1/1e3):(log10($5)) w l lt -1 dt 1 t '{/Symbol h}_{um}=10^{19},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{23}',\
+'solution_surface_19_22_24.ascii' u ($1/1e3):(log10($5)) w l lt -1 dt 3 t '{/Symbol h}_{um}=10^{19},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{24}',\
+'solution_surface_20_22_22.ascii' u ($1/1e3):(log10($5)) w l lt  7 dt 2 t '{/Symbol h}_{um}=10^{20},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{22}',\
+'solution_surface_20_22_23.ascii' u ($1/1e3):(log10($5)) w l lt  7 dt 1 t '{/Symbol h}_{um}=10^{20},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{23}',\
+'solution_surface_20_22_24.ascii' u ($1/1e3):(log10($5)) w l lt  7 dt 3 t '{/Symbol h}_{um}=10^{20},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{24}',\
+
+set ylabel 'u (m/s)'
+set output 'fig5_u.pdf'
+plot[:3000][]\
+'solution_surface_19_22_22.ascii' u ($1/1e3):2 w l lt -1 dt 2 t '{/Symbol h}_{um}=10^{19},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{22}',\
+'solution_surface_19_22_23.ascii' u ($1/1e3):2 w l lt -1 dt 1 t '{/Symbol h}_{um}=10^{19},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{23}',\
+'solution_surface_19_22_24.ascii' u ($1/1e3):2 w l lt -1 dt 3 t '{/Symbol h}_{um}=10^{19},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{24}',\
+'solution_surface_20_22_22.ascii' u ($1/1e3):2 w l lt  7 dt 2 t '{/Symbol h}_{um}=10^{20},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{22}',\
+'solution_surface_20_22_23.ascii' u ($1/1e3):2 w l lt  7 dt 1 t '{/Symbol h}_{um}=10^{20},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{23}',\
+'solution_surface_20_22_24.ascii' u ($1/1e3):2 w l lt  7 dt 3 t '{/Symbol h}_{um}=10^{20},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{24}',\
+
+ 
+set ylabel 'p (Pa)'
+set output 'fig5_p.pdf'
+plot[:3000][]\
+'solution_surface_19_22_22.ascii' u ($1/1e3):3 w l lt -1 dt 2 t '{/Symbol h}_{um}=10^{19},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{22}',\
+'solution_surface_19_22_23.ascii' u ($1/1e3):3 w l lt -1 dt 1 t '{/Symbol h}_{um}=10^{19},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{23}',\
+'solution_surface_19_22_24.ascii' u ($1/1e3):3 w l lt -1 dt 3 t '{/Symbol h}_{um}=10^{19},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{24}',\
+'solution_surface_20_22_22.ascii' u ($1/1e3):3 w l lt  7 dt 2 t '{/Symbol h}_{um}=10^{20},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{22}',\
+'solution_surface_20_22_23.ascii' u ($1/1e3):3 w l lt  7 dt 1 t '{/Symbol h}_{um}=10^{20},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{23}',\
+'solution_surface_20_22_24.ascii' u ($1/1e3):3 w l lt  7 dt 3 t '{/Symbol h}_{um}=10^{20},{/Symbol h}_{c}=10^{22},{/Symbol h}_{o}=10^{24}',\
+
+ 
+ 
+ 

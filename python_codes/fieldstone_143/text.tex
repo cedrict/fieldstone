@@ -153,6 +153,10 @@ margins, respectively.
 The code relies on the Finite Element method to solve the mass and momentum conservation
 equations for an isothermal incompressible fluid. 
 Quadrilateral elements are used and the stable $Q_2\times Q_1$ pair is used.
+Since free slip boundary conditions are used on all sides there is a pressure 
+nullspace which is removed by requiring that $\int_\Omega p dV=0$.
+Note that this code is rather inefficient and that although resolutions above 300x250 
+are attainable, the required cpu time makes them undesirable. 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,7 +216,7 @@ Left: Fig 6 from \cite{yahb13}, Right: obtained with this  {\tt script\_fig6}.}
 \subsubsection*{Testing influence of resolution}
 
 \begin{center}
-\includegraphics[width=9.5cm]{python_codes/fieldstone_143/results/resolutions/fig_resolutions}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_143/results/resolutions/fig_resolutions}\\
 {\captionfont 
 Reference model, $\eta_{um}=10^{20}~\si{\pascal\second}$, 
 $\eta_c=10^{22}~\si{\pascal\second}$, $\eta_o=10^{23}~\si{\pascal\second}$. 
@@ -239,14 +243,33 @@ Todo: Testing influence of width of areas ?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Drift versus collision mode}
 
-In this case we explore $L=0,1000,3000~\si{\km}$.
+In this case we explore $L=0,1000,3000~\si{\km}$, see paper for geodynamical 
+implications. Also I have not bothered to carry out the measurements of their fig 8.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_143/images/fig9}
+\includegraphics[width=10cm]{python_codes/fieldstone_143/results/fig9/fig9}\\
+{\captionfont Horizontal component of the strain rate $\dot{\varepsilon}_{xx}$ at
+the surface across the 3000 km long continental and oceanic
+lithospheres. Red arrows show the jump that occurs at the
+transition from drift mode to collision mode.
+Left: fig 9 of the paper. Right: obtained with this stone.}
+\end{center}
 
 
 
-
-
-
-
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_143/results/fig9/eta0000}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_143/results/fig9/eta1000}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_143/results/fig9/eta3000}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_143/results/fig9/u0000}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_143/results/fig9/u1000}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_143/results/fig9/u3000}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_143/results/fig9/v0000}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_143/results/fig9/v1000}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_143/results/fig9/v3000}\\
+{\captionfont From left to right: L=0km, L=10000km, L=3000km.}
+\end{center}
 
 
 

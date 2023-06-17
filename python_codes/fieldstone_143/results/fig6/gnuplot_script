@@ -1,0 +1,21 @@
+set term pdf enhanced font "times,11pt"
+set grid
+
+set xlabel 'x (km)'
+set ylabel '{/Symbol e}_{xx} (s^{-1})'
+set size square
+set key outside 
+
+# um c o Fu Fd 
+
+set arrow from 2000, graph 0 to 2000, graph 1 nohead lw 5 lc 'gray' 
+
+set output 'fig6a.pdf'
+plot[:3000][-5e-16:5e-16]\
+'solution_surface_20_22_23_000_200.ascii' u ($1/1e3):(-$4) w l lt 3 dt 1  t 'F_u=0, F_d=2',\
+'solution_surface_20_22_23_050_150.ascii' u ($1/1e3):(-$4) w l lt 3 dt 2  t 'F_u=0.5, F_d=1.5',\
+'solution_surface_20_22_23_100_100.ascii' u ($1/1e3):(-$4) w l lt -1 dt 1 t 'F_u=1, F_d=1',\
+'solution_surface_20_22_23_150_050.ascii' u ($1/1e3):(-$4) w l lt 7 dt 2  t 'F_u=1.5, F_d=0.5',\
+'solution_surface_20_22_23_200_000.ascii' u ($1/1e3):(-$4) w l lt 7 dt 1  t 'F_u=2, F_d=0',\
+0 lw 2 lt -1
+
