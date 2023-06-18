@@ -1,3 +1,7 @@
+
+\includegraphics[width=1.5cm]{images/pictograms/replication}
+\includegraphics[width=3.3cm]{images/pictograms/aspect_logo}
+
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_38/keywords.ascii}
 
 \begin{center}
@@ -8,11 +12,33 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+This \stone is based on \textcite{mcrw74} (1974) published in J. Fluid Mech.
+As for every \stone aiming at reproducing results off a publication I here include de abstract
+of the article:
 
-This experiment originates in McKenzie \etal (1974) \cite{mcrw74}. The domain is a 2D 
-square of size $L$. The fluid is incompressible, and the Boussinesq approximation is used.
-Boundary conditions are free slip on all sides. $T=0$ is prescribed at the bottom 
-and $T(x)=T_0 \cos (\pi x/L)$ at the top. The two sides are insulated.
+\begin{center}
+\begin{minipage}{13cm}
+{\small 
+Plate tectonics provides a remarkably accurate kinematic description of the
+motion of the earth’s crust but a fully dynamical theory requires a n under-
+standing of convection in the mantle. Thus the properties of plates and of the
+mantle must be related to a systematic study of convection. This paper reviews
+both the geophysical information and the fluid dynamics of convection in a
+Boussinesq fluid of infinite Prandtl number. Numerical experiments have been
+carried out on several simple two-dimensional models, in which convection is
+driven by imposed horizontal temperature gradients or else by heating either
+internally or from below. The results are presented and analysed in terms of
+simple physical models. Although the computations are highly idealized and
+omit variation of viscosity and other major features of mantle convection, they
+can be related to geophysical measurements. I n particular, the external gravity
+field depends on changes in surface elevation; this suggests an observational
+means of investigating convection in the upper mantle.}
+\end{minipage}
+\end{center}
+
+The domain is a 2D square of size $L$. The fluid is incompressible, and the Boussinesq 
+approximation is used. Boundary conditions are free slip on all sides. $T=0$ is prescribed 
+at the bottom and $T(x)=T_0 \cos (\pi x/L)$ at the top. The two sides are insulated.
 
 Following Sato \& Thompson (1976) \cite{sath76}, 
 parameters are $\kappa=1.5\cdot 10^{-6}\si{\square\m\per\second}$, 
@@ -59,7 +85,7 @@ The code is based on \stone~03, and because velocities are very small for low Ra
 reduced densities are used, i.e. the buoyancy force in the Stokes equation is given by $-\alpha(T-T_0)\vec{g}$.
 Steady state is reached when the velocity and temperature fields do not change by more than $tol=10^{-6}$.
 
-Note that what is called Nu in the code is in fact $Q=\int_0^{L_x} q_y dx$.
+Note that what is called $\Nunb$ in the code is in fact $Q=\int_0^{L_x} q_y dx$.
 
 I have also run the very same experiments with \aspect{} at mesh uniform level 5 (and found that 
 level 6 did not change anything to the results). The prm file is hereby joined to this repository.
@@ -79,8 +105,8 @@ in McKenzie \etal:
 \end{center}
 
 \newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection*{Steady-state study}
-
 
 \begin{center}
 \includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_0p01_64x64/vel}
@@ -107,6 +133,10 @@ Top to bottom: $T_0=0.01,0.1,1,10,100$}
 {\captionfont Heat flux on top boundary (top) and root mean square velocity (bottom)
 as measured with \stone~38 and \aspect on 64x64 mesh.}
 \end{center}
+
+
+
+
 
 TODO: boundary conditions should be done on elemental matrices.
 
