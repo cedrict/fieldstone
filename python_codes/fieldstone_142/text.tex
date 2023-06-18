@@ -1,10 +1,13 @@
 
+\includegraphics[height=1.5cm]{images/pictograms/replication}
+\includegraphics[height=1.5cm]{images/pictograms/aspect_logo}
+\includegraphics[height=1.5cm]{images/pictograms/triangle}
+
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_142/text.tex}} \end{flushright}
 
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_142/keywords.key}
 
 \begin{center}
-
 \fbox{\textbf{\huge \color{teal} P}}
 Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_142}
 \end{center}
@@ -12,7 +15,29 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This \stone is based on \textcite{hams22} (2022).
+This \stone is based on \textcite{hams22} (2022) published in the Journal of Structural Geology.
+As for every \stone aiming at reproducing results off a publication I here include de abstract
+of the article:
+
+\begin{center}
+\begin{minipage}{13cm}
+{\small 
+Computer-based numerical solutions of geomechanical problems are important to understand the processes
+forming rock structures as well as to quantify the associated pressure, stresses and strain rates. However, the
+development of such computer programs and the underlying mathematical methods are commonly not taught in
+a standard structural geology curriculum. Here, we present a simple computer program to calculate the stress,
+pressure, velocity and strain rate fields for two-dimensional (2D) viscous inclusion-matrix systems under pure
+shear and simple shear. The main aim of our contribution is to explain this computer program in a simple and
+transparent way, so that it can be used for introductory courses on geomechanical numerical modelling in
+structural geology. We present the governing equations of 2D viscous deformation and program the equations in
+the same order and style, so that the equations are still recognizable in the computer program. The computer
+program can treat stiff and weak inclusions of any shape and considers both linear and power-law viscous flow
+laws. We present numerical calculations for various inclusion-matrix scenarios. The program is written with the
+software MATLAB, is provided as supplementary material, and can also be run with the freely available software
+GNU Octave.}
+\end{minipage}
+\end{center}
+ 
 
 In the paper the effective viscosity for a power-law viscous fluid, termed here $\eta_{PL}$, can be written
 as
@@ -108,19 +133,24 @@ surrounding medium”. Yet no principal stress components calculations?
 
 \item in the correction only ellipse figures are corrected, not all the other ones so that the figs in the paper are useless to us when it comes to nonlinear rheologies
 
+\item often in figure captions: 'The arrows display the velocity field, they are not to scale and only for direction.'
+However looking at the figures arrows have various lengths which reflect the velocity field.
+
 \end{itemize}
 
 
 
 %----------------------------------------
-\subsection*{Comments about the code}
+\subsection*{Comments about the \stone}
 
-The code solves the incompressible Stokes equations with the Finite Element method
-on an unstructured grid.
+The code solves the incompressible Stokes equations with the Finite Element Method
+on an unstructured grid that is built so that it fits the shape of the inclusion(s).
 $P_2\times P_1$ or Crouzeix-Raviart elements can be used.
 The Delaunay triangulation is explained in \stone 131, and 
 some of the tools are also used in \stone 96 and 143.
 In what follows I focus only on the Newtonian cases.
+
+I also make use of the \aspect code\footnote{\url{https://github.com/geodynamics/aspect}}. 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
@@ -149,12 +179,14 @@ The viscosity of the inclusion is 100 times lower, respectively higher, than the
 {\captionfont Left: solution using CR elements; Right: analytical solution.}
 \end{center}
 
-This proves that the code is correct.
+This proves that the code is correct. One should obviously do a proper error analysis as a function 
+of resolution but this has been done before in many other stones. 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \section*{Case 1: Strong rectangular inclusion under pure shear and simple shear}
 
+The authors state:
 ``For illustration purposes, we calculated the pressure fields for a strong and inclined rectangular in­
 clusion for pure shear and simple shear. For simple shear, the
 pressure variations are more localized around the inclusion compared to
@@ -189,7 +221,7 @@ use a different pressure colorscale ('vik') than normal.}
 \end{center}
 
 To validate the results of this stone further, I have run this model with the \aspect
-code\footnote{The .prm file is in /results/case1/aspect/}:
+code\footnote{The corresponding .prm file is in /results/case1/aspect/}:
 
 
 \begin{center}
@@ -232,9 +264,7 @@ The paper lists two corrected Matlab and Octave codes that are available online 
 \url{https://github.com/halterw/A_simple_computer_program}.
 I have run the Octave version as is (I do not have Matlab).
 Rather annoyingly, it runs, shows results every 2000 iterations, ultimately converges
-but does not produces a plot. 
-I have therefore modified the code to add velocity visualisation and export to png.
-I have also removed the normalisation of results.
+but does not produce a plot. 
 
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_142/images/octave1}\\
@@ -242,6 +272,8 @@ I have also removed the normalisation of results.
 Remark: $Dxx$ is not 'horizontal strain rate' mean? }
 \end{center}
 
+I have therefore modified the code to add velocity visualisation and export to png.
+I have also removed the normalisation of results.
 If I now set \verb|n_exp=1| with a 1000 viscosity ratio the model now becomes Newtonian,
 but the code fails to converge. After more than 200,000 iterations the results are as 
 follows:
@@ -249,19 +281,27 @@ follows:
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_142/images/octave2}\\
 {\captionfont Screen capture of the Octave code output for a viscosity ratio of 1000.
-Modified output.}
+Modified output. Dxx looks somewhat suspicious...}
 \end{center}
+
+As it turns out, when one lets the code run for a {\it long} time, 
+the error looks like:
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_142/results/case2/error}
+\end{center}
+In summary, {\color{red} the solver is not converging} and the results above are meaningless!
+
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/press2}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/u2}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/v2}\\
 {\captionfont I get a reasonable match for pressure and velocity - provided I use 
-the same colorscale and range - but not for Dxx...?}
+the same colorscale and range.}
 \end{center}
 
 Here is the full set of fields with appropriate color scales obtained with 
-this stone:
+this \stone:
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/mesh}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/eta}\\
@@ -273,13 +313,14 @@ this stone:
 \end{center}
 
 To validate the results of this stone further, I have run this model with the \aspect
-code\footnote{The .prm file is in /results/case2/aspect/}:
+code\footnote{The corresponding .prm file is in /results/case2/aspect/}:
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_142/results/case2/aspect/u}
 \includegraphics[width=8cm]{python_codes/fieldstone_142/results/case2/aspect/v}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_142/results/case2/aspect/press}
-\includegraphics[width=8cm]{python_codes/fieldstone_142/results/case2/aspect/sr}
+\includegraphics[width=8cm]{python_codes/fieldstone_142/results/case2/aspect/sr}\\
+{\captionfont Left: \aspect results; Right: fieldstone results.}
 \end{center}
 
 
@@ -310,8 +351,8 @@ surrounding matrix. Except for the circular inclusion, all ellipses possess the 
 \captionfont{
 Numerical modelling of the pressure and strain rate field around a
 garnet inclusion using a photo from an actual inclusion (Fig. 1 C). In the model
-the strong inclusion has a viscosity contrast of 1000 and is subjected to hori­
-zontally extensional pure shear. The garnet was redrawn as a polygon using the
+the strong inclusion has a viscosity contrast of 1000 and is subjected to horizontally 
+extensional pure shear. The garnet was redrawn as a polygon using the
 Matlab ginput function. The arrows in panel B) display the velocity field, they
 are not to scale and only for direction.
 }
