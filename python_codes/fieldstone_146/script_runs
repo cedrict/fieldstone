@@ -1,0 +1,13 @@
+#! /bin/bash
+
+# python3           0  
+# stone.py          1
+# nelx              2
+# nely              3
+# rheology          4
+# prefactor bottom  5
+# grain size bottom 6
+
+
+python3 stone.py 450 23 4 0.1 0.0123 
+

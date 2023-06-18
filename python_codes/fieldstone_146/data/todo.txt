@@ -1,0 +1,7 @@
+adjust inside mesh to follow 3 layers ?
+
+density?
+
+gravity as function of lat/lon ?
+
+use X & May lith pressure approach ?

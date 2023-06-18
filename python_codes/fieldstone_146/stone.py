@@ -327,7 +327,8 @@ def defMechMapPlot(save=True):
     if save:
         fig.savefig('deformation_maps_for_different_d.pdf', bbox_inches='tight')
 
-defMechMapPlot()
+#uncomment to generate deformation maps
+#defMechMapPlot()
 
 ###############################################################################
 
@@ -343,40 +344,18 @@ ndofP=1  # number of pressure degrees of freedom
 
 aquarium=False
 Neumann=True
-
-if aquarium:
-   nelx=25
-   nely=25
-   Lx=3000 
-   Ly=3000
-else:
-   nelx=500 
-   nely=12
-   Lx=382600 
-   Ly=3000
-
-nnx=2*nelx+1                  # number of elements, x direction
-nny=2*nely+1                  # number of elements, y direction
-NV=nnx*nny                    # number of nodes
-nel=nelx*nely                 # number of elements, total
-NfemV=NV*ndofV                # number of velocity dofs
-NfemP=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
-Nfem=NfemV+NfemP              # total number of dofs
-hx=Lx/nelx
-hy=Ly/nely
+   
+Lx=382600 
+Ly=3000
 
 #--------------------------------------
-#rheology=0: lin viscous
-#rheology=1: glen
-#rheology=2: disl
-#rheology=3: gbs
-#rheology=4: disl+gbs (cheap)
-#rheology=5: disl+gbs (right thing :)
-
-rheology=5
 
 viscosity_prefactor_bulk=1
 viscosity_prefactor_bottom=1 # bottom row of elements
+
+#grain size for three layers
+d_top=0.005
+d_mid=0.002
 
 rho=917
 gy=-9.8
@@ -390,6 +369,48 @@ scaling_coeff=eta_ref/Ly
 
 niter_min=1
 niter=10
+
+#------------------------------------------------
+#rheology=0: lin viscous
+#rheology=1: glen
+#rheology=2: disl
+#rheology=3: gbs
+#rheology=4: disl+gbs (cheap)
+#rheology=5: disl+gbs (right thing :)
+# allowing for argument parsing through command line
+#------------------------------------------------
+if int(len(sys.argv) == 6): 
+   nelx                       = int(sys.argv[1])
+   nely                       = int(sys.argv[2])
+   rheology                   = int(sys.argv[3])
+   viscosity_prefactor_bottom = float(sys.argv[4])
+   d_bot                      = float(sys.argv[5])
+else:
+   nelx                       = 500 
+   nely                       = 20
+   rheology                   = 5
+   viscosity_prefactor_bottom = 1 
+   d_bot                      = 0.03 
+
+#-------------------------------------
+
+if aquarium:
+   nelx=25
+   nely=25
+   Lx=3000 
+   Ly=3000
+
+#-------------------------------------
+
+nnx=2*nelx+1                  # number of elements, x direction
+nny=2*nely+1                  # number of elements, y direction
+NV=nnx*nny                    # number of nodes
+nel=nelx*nely                 # number of elements, total
+NfemV=NV*ndofV                # number of velocity dofs
+NfemP=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
+Nfem=NfemV+NfemP              # total number of dofs
+hx=Lx/nelx
+hy=Ly/nely
 
 ###############################################################################
 # quadrature points and weights
@@ -413,6 +434,10 @@ print("Nfem=",Nfem)
 print("hx",hx)
 print("hy",hy)
 print("niter",niter)
+print("rheology=",rheology)
+print("d_bot=",d_bot)
+print("viscosity_prefactor_bottom=",viscosity_prefactor_bottom)
+print("viscosity_prefactor_bulk=",viscosity_prefactor_bulk)
 print("----------------------------------------")
 
 vel_stats_file=open('velocity_statistics.ascii',"w")
@@ -813,11 +838,11 @@ if not aquarium:
    for j in range(0,nny):
        for i in range(0,nnx):
            if depth[counter] < yB - yE: # Thickness at CC
-               d[counter] = 0.005
+               d[counter] = d_top 
            elif depth[counter] > large_grain_boundary[i]:
-               d[counter] = 0.03
+               d[counter] = d_bot 
            else:
-               d[counter] = 0.002
+               d[counter] = d_mid 
            counter += 1
 
 print("setup: grain size: %.3f s" % (timing.time() - start))
