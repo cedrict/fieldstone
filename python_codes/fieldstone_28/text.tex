@@ -1,7 +1,46 @@
+
+\includegraphics[width=1.5cm]{images/pictograms/replication}
+
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_28/keywords.ascii}
+
+\begin{center}
+\fbox{\textbf{\huge \color{teal} P}}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_28}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
 
 {\sl This fieldstone was developed in collaboration with Rens Elbertsen}. 
 \index{contributors}{Rens Elbertsen}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This \stone is based on \textcite{tosn15} (2015) published in Geochemistry, Geophysics, Geosystems.
+As for every \stone aiming at reproducing results off a publication I here include de abstract
+of the article:
+
+\begin{center}
+\begin{minipage}{13cm}
+{\small
+Numerical simulations of thermal convection in the Earth’s mantle often employ a pseudoplastic 
+rheology in order to mimic the plate-like behavior of the lithosphere. Yet the benchmark tests available
+in the literature are largely based on simple linear rheologies in which the viscosity is either assumed to be
+constant or weakly dependent on temperature. Here we present a suite of simple tests based on nonlinear
+rheologies featuring temperature, pressure, and strain rate-dependent viscosity. Eleven different codes
+based on the finite volume, finite element, or spectral methods have been used to run five benchmark cases
+leading to stagnant lid, mobile lid, and periodic convection in a 2-D square box. For two of these cases, we
+also show resolution tests from all contributing codes. In addition, we present a bifurcation analysis, describing 
+the transition from a mobile lid regime to a periodic regime, and from a periodic regime to a stagnant
+lid regime, as a function of the yield stress. At a resolution of around 100 cells or elements in both vertical
+and horizontal directions, all codes reproduce the required diagnostic quantities with a discrepancy of at
+most 3\% in the presence of both linear and nonlinear rheologies. Furthermore, they consistently predict
+the critical value of the yield stress at which the transition between different regimes occurs. As the most
+recent mantle convection codes can handle a number of different geometries within a single solution
+framework, this benchmark will also prove useful when validating viscoplastic thermal convection 
+simulations in such geometries.}
+\end{minipage}
+\end{center}
 
 The viscosity field $\eta$ is calculated as the harmonic average between a linear part $\eta_{lin}$ 
 that depends on temperature only or on temperature and depth $d$ , and a non-linear,
@@ -80,7 +119,7 @@ Case 5b requires running simulations with yield stress varying between 3 and 5
 
 In all tests, the reference Rayleigh number is set at the surface ($y=1$) to $10^2$, and the viscosity contrast due to temperature $\Delta\eta_T$ is $10^5$, implying therefore a maximum effective Rayleigh number of $10^7$ for $T=1$. Cases 3, 4, 5a, and 5b employ in addition a depth-dependent rheology with viscosity contrast  $\Delta\eta_z=10$. Cases 1 and 3 assume a linear viscous rheology that leads to a stagnant lid regime. Cases 2 and 4 assume a viscoplastic rheology that leads instead to a mobile lid regime. Case 5a also assumes a viscoplastic rheology but a higher yield stress, which ultimately causes the emergence of a strictly periodic regime. The setup of Case 5b is identical to that of Case 5a but the test consists in running several simulations using different yield stresses. Specifically, we varied $\sigma_Y$ between 3 and 5 in increments of 0.1 in order to identify the values of the yield stress corresponding to the transition from mobile to periodic and from periodic to stagnant lid regime. 
 
-NOTE: no crank-nicolson scheme for temperature !!
+NOTE: no Crank-Nicolson scheme for temperature !!
 
 %---------------------------------------------------------------------------------
 \subsubsection*{Case 0: Newtonian case, a la Blankenbach et al., 1989}
