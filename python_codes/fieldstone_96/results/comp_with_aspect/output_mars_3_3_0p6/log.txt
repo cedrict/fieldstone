@@ -1,0 +1,73 @@
+-----------------------------------------------------------------------------
+-- This is ASPECT, the Advanced Solver for Problems in Earth's ConvecTion.
+--     . version 2.5.0-pre (main, ea932fd49)
+--     . using deal.II 9.4.0
+--     .       with 32 bit indices and vectorization level 1 (128 bits)
+--     . using Trilinos 13.2.0
+--     . using p4est 2.3.2
+--     . running in OPTIMIZED mode
+--     . running with 8 MPI processes
+-----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+-- For information on how to cite ASPECT, see:
+--   https://aspect.geodynamics.org/citing.html?ver=2.5.0-pre&sha=ea932fd49&src=code
+-----------------------------------------------------------------------------
+Number of active cells: 49,152 (on 4 levels)
+Number of degrees of freedom: 2,080,108 (1,216,710+52,258+405,570+405,570)
+
+*** Timestep 0:  t=0 years, dt=0 years
+   Rebuilding Stokes preconditioner...
+   Solving Stokes system... 0+30 iterations.
+
+Number of active cells: 72,728 (on 5 levels)
+Number of degrees of freedom: 3,141,416 (1,837,338+79,186+612,446+612,446)
+
+*** Timestep 0:  t=0 years, dt=0 years
+   Rebuilding Stokes preconditioner...
+   Solving Stokes system... 0+30 iterations.
+
+Number of active cells: 134,916 (on 6 levels)
+Number of degrees of freedom: 5,846,926 (3,420,114+146,736+1,140,038+1,140,038)
+
+*** Timestep 0:  t=0 years, dt=0 years
+   Rebuilding Stokes preconditioner...
+   Solving Stokes system... 0+30 iterations.
+
+Number of active cells: 328,648 (on 7 levels)
+Number of degrees of freedom: 14,194,750 (8,304,450+354,000+2,768,150+2,768,150)
+
+*** Timestep 0:  t=0 years, dt=0 years
+   Rebuilding Stokes preconditioner...
+   Solving Stokes system... 0+31 iterations.
+
+   Postprocessing:
+     Pressure at top/bottom of domain: -2.793e-05 Pa, 2.34e+10 Pa
+     Computing dynamic topography      
+     Writing graphical output:         output_mars_2_4/solution/solution-00000
+
+Termination requested by criterion: end time
+
+
++---------------------------------------------+------------+------------+
+| Total wallclock time elapsed since start    |  1.39e+03s |            |
+|                                             |            |            |
+| Section                         | no. calls |  wall time | % of total |
++---------------------------------+-----------+------------+------------+
+| Assemble Stokes system          |         4 |       117s |       8.4% |
+| Build Stokes preconditioner     |         4 |      77.1s |       5.5% |
+| Initialization                  |         1 |     0.486s |         0% |
+| Postprocessing                  |         1 |       7.7s |      0.55% |
+| Refine mesh structure, part 1   |         3 |      11.3s |      0.81% |
+| Refine mesh structure, part 2   |         3 |      7.63s |      0.55% |
+| Setup dof systems               |         4 |      5.67s |      0.41% |
+| Setup initial conditions        |         4 |      13.6s |      0.98% |
+| Setup matrices                  |         4 |      43.5s |       3.1% |
+| Solve Stokes system             |         4 |   1.1e+03s |        79% |
++---------------------------------+-----------+------------+------------+
+
+-- Total wallclock time elapsed including restarts: 1391s
+-----------------------------------------------------------------------------
+-- For information on how to cite ASPECT, see:
+--   https://aspect.geodynamics.org/citing.html?ver=2.5.0-pre&sha=ea932fd49&src=code
+-----------------------------------------------------------------------------
