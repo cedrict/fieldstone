@@ -1,5 +1,6 @@
 
 \includegraphics[width=1.5cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
 
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_143/keywords.key}
 
@@ -114,11 +115,11 @@ plausible velocities or strain rates.
 Looking closely, the nominator and denominator have the same dimensions, 
 so that the ratio is dimensionless and can therefore not be 
 added or subtracted to a density! Upon my contacting the authors they confirmed
-that the density term in the denominator is wrong.
+my suspicion: the density term in the denominator is wrong.
 The correct formula then read:
 \begin{eqnarray}
-\rho_u &=& \rho_{ref} - \frac{F_u}{ g A_u} \simeq 3246.6021066938497\\
-\rho_d &=& \rho_{ref} + \frac{F_d}{ g A_d} \simeq 3253.640599970875
+\rho_u &=& \rho_{ref} - \frac{F_u}{ g A_u} \simeq 3246.60211~\si{\kg\per\cubic\meter} \\
+\rho_d &=& \rho_{ref} + \frac{F_d}{ g A_d} \simeq 3253.64059~\si{\kg\per\cubic\meter} 
 \end{eqnarray}
 
 The viscosity in the lower mantle corresponds
@@ -133,7 +134,7 @@ lithosphere, of the oceanic lithosphere, and of the
 upper mantle as linear and constant.''
 
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_143/images/yahb13_b}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_143/images/yahb13_b}\\
 {\captionfont 
 Taken from \cite{yahb13}. 
 Sketch of the mantle convective cell flow in (a) collision mode and (b) drift mode. In the
@@ -154,9 +155,11 @@ The code relies on the Finite Element method to solve the mass and momentum cons
 equations for an isothermal incompressible fluid. 
 Quadrilateral elements are used and the stable $Q_2\times Q_1$ pair is used.
 Since free slip boundary conditions are used on all sides there is a pressure 
-nullspace which is removed by requiring that $\int_\Omega p dV=0$.
-Note that this code is rather inefficient and that although resolutions above 300x250 
-are attainable, the required cpu time makes them undesirable. 
+nullspace which is removed by requiring that $\int_\Omega p \; dV=0$.
+Note that this code is rather inefficient and that although resolutions above $300 \times 150$ 
+are attainable, the required cpu time makes them undesirable\footnote{On my laptop
+a 400x200 mesh yields a matrix that is built in approx. 1000s! and memory requirements 
+seem to be above 10Gb.}. 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -270,6 +273,16 @@ Left: fig 9 of the paper. Right: obtained with this stone.}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_143/results/fig9/v3000}\\
 {\captionfont From left to right: L=0km, L=10000km, L=3000km.}
 \end{center}
+
+----------------------------------------------------------------
+
+ToDo:
+
+- implement Q2P-1
+
+- redo figure 8 of paper
+
+- make code faster?
 
 
 
