@@ -1,4 +1,3 @@
-
 \includegraphics[height=1.5cm]{images/pictograms/replication}
 \includegraphics[height=1.5cm]{images/pictograms/aspect_logo}
 \includegraphics[height=1.5cm]{images/pictograms/triangle}
@@ -46,7 +45,7 @@ as
 \]
 where $\eta_L$ is the linear viscosity, $\tau_R$ is a constant reference stress, 
 $n$ is the stress exponent (which for rocks is $\ge$1), and $\tau_e$ is the effective 
-deviatoric stress (see Section~\ref{ss:XXXXXX}).
+deviatoric stress.
 
 Often, a combination of linear viscous and power-law viscous flow is
 assumed for ductile rocks. The viscosity for such combined flow law can
@@ -54,14 +53,12 @@ be given by the pseudo-harmonic mean of $\eta_L$ and $\eta_{PL}$:
 \[
 \eta_C = \left(  \frac{1}{\eta_L} + \frac{1}{\eta_{PL}} \right)^{-1}
 \]
-
 The effective viscosity, $\eta$ in the momentum conservation equation can, hence, either be
 equal to $\eta_L$, $\eta_{PL}$ or $\eta_C$ depending on whether a linear viscous, power-law
 viscous or combined flow law, respectively, is used.
 
 The paper relies on the Finite Difference method to solve the Stokes equations but we will here 
 rely on the Finite Element method based on an unstructured mesh.
-
 
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_142/images/hams22_a}\\
@@ -90,18 +87,18 @@ shear velocity field, depending which far-field velocity boundary conditions are
 A few remarks:
 \begin{itemize}
 \item The authors also state that ``The pressure values at the model boundaries remain zero.'' Say WHAAAAAT???!
-\item the authors also smooth the viscosity field:
+\item the authors also smooth the viscosity field but this is never mentioned in the paper!
 \begin{verbatim}
 for smo=1:2; Ii  = [2:nx-1]; Ij  = [2:ny-1]; % Smoothing of the initial viscosity field
     ETA(Ii,:)    = ETA(Ii,:) + 0.4*(ETA(Ii+1,:)-2*ETA(Ii,:)+ETA(Ii-1,:));
     ETA(:,Ij)    = ETA(:,Ij) + 0.4*(ETA(:,Ij+1)-2*ETA(:,Ij)+ETA(:,Ij-1));
 end
 \end{verbatim}
-but this is never mentioned in the paper!
 
-\item no real benchmarking, no error convergence on SolVi, instead: eyeball norm
-\item no solver in code ...why use Richardson rather than backslah operator of matlab? ok, finally explained in Discussion. weird.
-\item comment on visc relaxation in fig 7 ? 
+\item no real benchmarking, no error convergence on SolVi, instead: instead eyeball norm
+\item no solver in code ... why use Richardson rather than backslah operator of matlab? This finally explained in Discussion but
+this should have been addressed earlier in the paper since it is rather uncommon.  
+\item no comment on viscous relaxation in fig 7 ? 
 \item in the Octave code:
 \begin{verbatim}
 subplot(224),pcolor(X,Y,DXX/(2*eta_B*D_B)),shading interp,axis equal,axis tight,colorbar,colormap(jet)
@@ -117,9 +114,9 @@ because “the geometrical form of the competent
 inclusion clearly has an influence on the pattern of stress orientations in the
 surrounding medium”. Yet no principal stress components calculations? 
 
-\item tensor notations are not allowed? why eqs 1,2,3 and 4,5,6 ?
+\item Why are tensor notations not used ? (why eqs 1,2,3 and 4,5,6 ?)
 
-\item spacial ?? quadratic model domain ??
+\item 'spacial' ?? 'quadratic model domain' ??
 
 \item fig 5: why change the radius inside the figure? why viscosity contrast at 100, not 1000 ?
 
@@ -129,15 +126,16 @@ surrounding medium”. Yet no principal stress components calculations?
 
 \item nothing about convergence pattern ? 1000's of iterations ? round off errors.
 
-\item about fig 10: 'The value of Dxx inside the garnet inclusion is zero, indicating that the inclusion is rigid and not deforming.' hell no, Dxx cannot be zero. 
+\item about fig 10: 'The value of Dxx inside the garnet inclusion is zero, indicating that the inclusion is rigid and not deforming.' 
+No, Dxx cannot be and is not zero. 
 
-\item in the correction only ellipse figures are corrected, not all the other ones so that the figs in the paper are useless to us when it comes to nonlinear rheologies
+\item in the corrgendum only ellipse figures are corrected, not all the other ones so that the figs in the paper are useless 
+to us when it comes to nonlinear rheologies
 
 \item often in figure captions: 'The arrows display the velocity field, they are not to scale and only for direction.'
 However looking at the figures arrows have various lengths which reflect the velocity field.
 
 \end{itemize}
-
 
 
 %----------------------------------------
@@ -150,25 +148,29 @@ The Delaunay triangulation is explained in \stone 131, and
 some of the tools are also used in \stone 96 and 143.
 In what follows I focus only on the Newtonian cases.
 
-I also make use of the \aspect code\footnote{\url{https://github.com/geodynamics/aspect}}. 
+I also make use of the \aspect code\footnote{\url{https://github.com/geodynamics/aspect}}
+and the prm file is provided in results/case1/aspect. 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \section*{Case 0: Circular inclusion and comparison with analytical solution}
 
 The boundary conditions are pure shear extension.
-This is obviously the well known SolVi benchmark that has been already 
-encountered in \stone 7,120.
+This is the well known SolVi benchmark that has been already encountered in \stone 7,120.
 
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_142/images/hams22_b}\\
 \captionfont{Taken from \cite{hams22}.
-Panels A) and B): Comparison of the normalized horizontal total stress field generated with the presented iterative finite difference (FD) program against an
-analytical solution for a circular hole within a matrix subjected to horizontally extensional pure shear. The hole in the FD program is approximated by a viscosity
-contrast of 1000. The hole radius is 0.1 times the model width. Panels C) to F): Comparison of the normalized pressure field generated with the presented iterative FD
-program against a tested finite element method (FEM) program (Schmalholz and Schmid, 2012) for both a weak and a strong circular inclusion under horizontally
-compressive pure shear. The regions of high pressure (red color) and the low pressure (blue color) are inverted from the weak inclusion to the strong inclusion setup.
-The viscosity of the inclusion is 100 times lower, respectively higher, than the surrounding matrix viscosity. The circle radius is 0.15 times the model width.}
+Panels A) and B): Comparison of the normalized horizontal total stress field generated with the presented iterative 
+finite difference (FD) program against an analytical solution for a circular hole within a matrix subjected to 
+horizontally extensional pure shear. The hole in the FD program is approximated by a viscosity
+contrast of 1000. The hole radius is 0.1 times the model width. Panels C) to F): Comparison of 
+the normalized pressure field generated with the presented iterative FD
+program against a tested finite element method (FEM) program (Schmalholz and Schmid, 2012) for both a weak 
+and a strong circular inclusion under horizontally compressive pure shear. The regions of high pressure (red color) 
+and the low pressure (blue color) are inverted from the weak inclusion to the strong inclusion setup.
+The viscosity of the inclusion is 100 times lower, respectively higher, than the surrounding matrix viscosity. 
+The circle radius is 0.15 times the model width.}
 \end{center}
 
 \begin{center}
@@ -176,7 +178,7 @@ The viscosity of the inclusion is 100 times lower, respectively higher, than the
 \includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case0/vel_th}\\
 \includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case0/press}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case0/press_th}\\
-{\captionfont Left: solution using CR elements; Right: analytical solution.}
+{\captionfont Left: solution using Crouzeix-Raviart elements; Right: analytical solution.}
 \end{center}
 
 This proves that the code is correct. One should obviously do a proper error analysis as a function 
@@ -207,22 +209,22 @@ rectangle is rotated by an angle of 60 from the horizontal axis. }
 \end{center}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/mesh}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/areas}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/eta}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/vel1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/press1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/sr1}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/vel2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/press2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case1/sr2}\\
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case1/mesh}
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case1/areas}
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case1/eta}\\
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case1/vel1}
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case1/press1}
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case1/sr1}\\
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case1/vel2}
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case1/press2}
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case1/sr2}\\
 {\captionfont In order to favor comparison with the figure of the paper I for once
-use a different pressure colorscale ('vik') than normal.}
+use a different pressure colorscale ('vik') than normal. 
+Second line is Pure Shear (PS), third line is simple shear (SS).}
 \end{center}
 
 To validate the results of this stone further, I have run this model with the \aspect
-code\footnote{The corresponding .prm file is in /results/case1/aspect/}:
-
+code:
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_142/results/case1/aspect/vel}\\
@@ -303,17 +305,17 @@ the same colorscale and range.}
 Here is the full set of fields with appropriate color scales obtained with 
 this \stone:
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/mesh}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/eta}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/u}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/v}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/vel}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/press}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_142/results/case2/sr}
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case2/mesh}
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case2/eta}\\
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case2/u}
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case2/v}
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case2/vel}\\
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case2/press}
+\includegraphics[width=5.57cm]{python_codes/fieldstone_142/results/case2/sr}
 \end{center}
 
 To validate the results of this stone further, I have run this model with the \aspect
-code\footnote{The corresponding .prm file is in /results/case2/aspect/}:
+code:
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_142/results/case2/aspect/u}
