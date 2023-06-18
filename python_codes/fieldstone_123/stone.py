@@ -722,7 +722,7 @@ for iel in range(0, nel):
 
 errv=np.sqrt(errv/Lx/Ly/Lz)
 
-dvrms=np.sqrt(drms/Lx/Ly/Lz)
+drms=np.sqrt(drms/Lx/Ly/Lz)
 
 print("     -> nel= %6d ; errv: %e " %(nel,errv))
 

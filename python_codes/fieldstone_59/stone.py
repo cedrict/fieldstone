@@ -76,6 +76,7 @@ def viscosity(exx,eyy,exy,pq,iter,x,y,T,d):
     return val
 
 #------------------------------------------------------------------------------
+# basis functions for Q2xQ1 pair.
 
 def NNV(rq,sq):
     NV_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
@@ -678,7 +679,7 @@ for iter in range(0,niter):
    print("computing res norms: %.3f s" % (timing.time() - start))
 
    #####################################################################
-   # interpolate pressure onto velocity grid points
+   # interpolate pressure p onto velocity grid points (becomes q field)
    #####################################################################
    start = timing.time()
 
@@ -774,12 +775,6 @@ for iter in range(0,niter):
    print("     -> dc  (m,M) %.5e %.5e " %(np.min(dc),np.max(dc)))
 
    print("compute press & sr: %.3f s" % (timing.time() - start))
-
-   #####################################################################
-
-   avrg_press=np.sum(pc)/nel
-
-   print ("     -> avrg press. %.5e" % avrg_press)
 
    #####################################################################
    # project strainrate onto velocity grid
