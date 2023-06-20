@@ -55,11 +55,17 @@ def dNNVds(rq,sq):
     return np.array([dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8],dtype=np.float64)
 
 def NNP(rq,sq):
-    NP_0=0.25*(1-rq)*(1-sq)
-    NP_1=0.25*(1+rq)*(1-sq)
-    NP_2=0.25*(1+rq)*(1+sq)
-    NP_3=0.25*(1-rq)*(1+sq)
-    return np.array([NP_0,NP_1,NP_2,NP_3],dtype=np.float64)
+    if disc:
+       NP_0=1-rq-sq
+       NP_1=rq
+       NP_2=sq
+       return np.array([NP_0,NP_1,NP_2],dtype=np.float64)
+    else:
+       NP_0=0.25*(1-rq)*(1-sq)
+       NP_1=0.25*(1+rq)*(1-sq)
+       NP_2=0.25*(1+rq)*(1+sq)
+       NP_3=0.25*(1-rq)*(1+sq)
+       return np.array([NP_0,NP_1,NP_2,NP_3],dtype=np.float64)
 
 ###############################################################################
 
@@ -104,8 +110,13 @@ print("-----------------------------")
 print("--------- stone 143 ---------")
 print("-----------------------------")
 
+disc=True # Q2Q1 vs Q2P-1
+
 mV=9     # number of velocity nodes making up an element
-mP=4     # number of pressure nodes making up an element
+if disc:
+   mP=3
+else:
+   mP=4  # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
@@ -135,9 +146,10 @@ else:
    eta_o=1e23
    Fu=1e13
    Fd=1e13
-   nelx=300
+   nelx=200
 
 ###############################################################################
+
 
 nely=int(nelx*Ly/Lx)
     
@@ -146,7 +158,10 @@ nny=2*nely+1  # number of elements, y direction
 
 NV=nnx*nny    # number of nodes
 nel=nelx*nely # number of elements, total
-NP=(nelx+1)*(nely+1)
+if disc:
+   NP=3*nel
+else:
+   NP=(nelx+1)*(nely+1)
 
 NfemV=NV*ndofV   # number of velocity dofs
 NfemP=NP*ndofP   # number of pressure dofs
@@ -264,23 +279,62 @@ xP=np.zeros(NP,dtype=np.float64)     # x coordinates
 yP=np.zeros(NP,dtype=np.float64)     # y coordinates
 iconP=np.zeros((mP,nel),dtype=np.int32)
 
-counter = 0
-for j in range(0,nely):
-    for i in range(0,nelx):
-        iconP[0,counter]=i+j*(nelx+1)
-        iconP[1,counter]=i+1+j*(nelx+1)
-        iconP[2,counter]=i+1+(j+1)*(nelx+1)
-        iconP[3,counter]=i+(j+1)*(nelx+1)
-        counter += 1
-    #end for
-#end for
+if disc:
+   for iel in range(nel):
+       iconP[0,iel]=3*iel
+       iconP[1,iel]=3*iel+1
+       iconP[2,iel]=3*iel+2
 
-counter = 0
-for j in range(0, nely+1):
-    for i in range(0, nelx+1):
-        xP[counter]=i*Lx/float(nelx)
-        yP[counter]=j*Ly/float(nely)
-        counter += 1
+   NNNV = np.zeros(mV,dtype=np.float64)           # shape functions V
+   counter=0
+   for iel in range(nel):
+       #pressure node 0
+       rq=0.0
+       sq=0.0
+       NNNV[0:mV]=NNV(rq,sq)
+       xq=NNNV[:].dot(xV[iconV[:,iel]])
+       yq=NNNV[:].dot(yV[iconV[:,iel]])
+       xP[counter]=xq
+       yP[counter]=yq
+       counter+=1
+       #pressure node 1
+       rq=1.0
+       sq=0.0
+       NNNV[0:mV]=NNV(rq,sq)
+       xq=NNNV[:].dot(xV[iconV[:,iel]])
+       yq=NNNV[:].dot(yV[iconV[:,iel]])
+       xP[counter]=xq
+       yP[counter]=yq
+       counter+=1
+       #pressure node 2
+       rq=0.0
+       sq=1.0
+       NNNV[0:mV]=NNV(rq,sq)
+       xq=NNNV[:].dot(xV[iconV[:,iel]])
+       yq=NNNV[:].dot(yV[iconV[:,iel]])
+       xP[counter]=xq
+       yP[counter]=yq
+       counter+=1
+
+else:
+
+   counter = 0
+   for j in range(0,nely):
+       for i in range(0,nelx):
+           iconP[0,counter]=i+j*(nelx+1)
+           iconP[1,counter]=i+1+j*(nelx+1)
+           iconP[2,counter]=i+1+(j+1)*(nelx+1)
+           iconP[3,counter]=i+(j+1)*(nelx+1)
+           counter += 1
+       #end for
+   #end for
+
+   counter = 0
+   for j in range(0, nely+1):
+       for i in range(0, nelx+1):
+           xP[counter]=i*Lx/float(nelx)
+           yP[counter]=j*Ly/float(nely)
+           counter += 1
 
 #np.savetxt('gridP.ascii',np.array([xP,yP]).T) 
 
@@ -589,17 +643,36 @@ print("pressure normalisation: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 q=np.zeros(NV,dtype=np.float64)
+counter=np.zeros(NV,dtype=np.float64)
 
-for iel in range(0,nel):
-    q[iconV[0,iel]]=p[iconP[0,iel]]
-    q[iconV[1,iel]]=p[iconP[1,iel]]
-    q[iconV[2,iel]]=p[iconP[2,iel]]
-    q[iconV[3,iel]]=p[iconP[3,iel]]
-    q[iconV[4,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
-    q[iconV[5,iel]]=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
-    q[iconV[6,iel]]=(p[iconP[2,iel]]+p[iconP[3,iel]])*0.5
-    q[iconV[7,iel]]=(p[iconP[3,iel]]+p[iconP[0,iel]])*0.5
-    q[iconV[8,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]]+p[iconP[3,iel]])*0.25
+if disc:
+   rVnodes=[-1,1,1,-1,0,1,0,-1,0]
+   sVnodes=[-1,-1,1,1,-1,0,1,0,0]
+   for iel in range(0,nel):
+       for c in range(0,9):
+          rq=rVnodes[c]
+          sq=sVnodes[c]
+          NNNP[0:mP]=NNP(rq,sq)
+          pq=0
+          for k in range(0,mP):
+              pq+=NNNP[k]*p[iconP[k,iel]]
+          q[iconV[c,iel]]+=pq
+          counter[iconV[c,iel]]+=1
+       #end for
+   #end for
+   q[:]/=counter[:]
+
+else:
+   for iel in range(0,nel):
+       q[iconV[0,iel]]=p[iconP[0,iel]]
+       q[iconV[1,iel]]=p[iconP[1,iel]]
+       q[iconV[2,iel]]=p[iconP[2,iel]]
+       q[iconV[3,iel]]=p[iconP[3,iel]]
+       q[iconV[4,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
+       q[iconV[5,iel]]=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
+       q[iconV[6,iel]]=(p[iconP[2,iel]]+p[iconP[3,iel]])*0.5
+       q[iconV[7,iel]]=(p[iconP[3,iel]]+p[iconP[0,iel]])*0.5
+       q[iconV[8,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]]+p[iconP[3,iel]])*0.25
 
 print("project pressure onto V grid: %.3f s" % (timing.time() - start))
 
@@ -738,10 +811,16 @@ if True:
         vtufile.write("%10e\n" % (eta[iel]))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % ((p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3   ))
-    vtufile.write("</DataArray>\n")
+    if disc:
+       vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (p[3*iel]))
+       vtufile.write("</DataArray>\n")
+    else:
+       vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % ((p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]])/3   ))
+       vtufile.write("</DataArray>\n")
     #--
     vtufile.write("</CellData>\n")
     #####

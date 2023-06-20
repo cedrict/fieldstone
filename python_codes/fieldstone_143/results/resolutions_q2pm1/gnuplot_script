@@ -23,3 +23,4 @@ plot[:3000][-1e-16:4e-16]\
 0 lw 2 lt -1 notitle,\
 1.2e-17 lt -1 dt 2 lw .5,\
 1.2e-16 lt -1 dt 4 lw .5 
+

@@ -154,6 +154,8 @@ margins, respectively.
 The code relies on the Finite Element method to solve the mass and momentum conservation
 equations for an isothermal incompressible fluid. 
 Quadrilateral elements are used and the stable $Q_2\times Q_1$ pair is used.
+Note that in the light of the first round of results I have also implemented
+the $Q_2\times P_{-1}$ pair (unless mentioned the first element is used). 
 Since free slip boundary conditions are used on all sides there is a pressure 
 nullspace which is removed by requiring that $\int_\Omega p \; dV=0$.
 Note that this code is rather inefficient and that although resolutions above $300 \times 150$ 
@@ -193,6 +195,17 @@ is then opposite of mine so I plot the negative of my measurements to match thei
 Replication is possible and aside from 19/21/21 all curves agree.}
 \end{center}
 
+If we now run the same models using the discontinuous pressure element, we
+observe substantial differences in the results:
+
+\begin{center}
+\includegraphics[width=8.6cm]{python_codes/fieldstone_143/results/fig4/fig4a}
+\includegraphics[width=8.6cm]{python_codes/fieldstone_143/results/fig4_q2pm1/fig4a}\\
+{\captionfont  Left: $Q_2\times Q_1$; Right: $Q_2\times P_{-1}$. Both at resolution $200\times 100$.}
+\end{center}
+
+ 
+
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_143/images/fig5}
 \includegraphics[width=10.5cm]{python_codes/fieldstone_143/results/fig5/fig5a}\\
@@ -215,15 +228,18 @@ $\eta_c=10^{22}~\si{\pascal\second}$, $\eta_o=10^{23}~\si{\pascal\second}$.
 Left: Fig 6 from \cite{yahb13}, Right: obtained with this  {\tt script\_fig6}.}
 \end{center}
 
-
+%---------------------------------------------------
 \subsubsection*{Testing influence of resolution}
 
+Results are not fundamentally different between the two types of elements.
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_143/results/resolutions/fig_resolutions}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_143/results/resolutions/fig_resolutions}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_143/results/resolutions_q2pm1/fig_resolutions}\\
 {\captionfont 
 Reference model, $\eta_{um}=10^{20}~\si{\pascal\second}$, 
 $\eta_c=10^{22}~\si{\pascal\second}$, $\eta_o=10^{23}~\si{\pascal\second}$. 
-Obtained with this  {\tt script\_resolutions}.}
+Obtained with this  {\tt script\_resolutions}.
+Left: $Q_2\times Q_1$; Right: $Q_2\times P_{-1}$.}
 \end{center}
 
 \newpage
