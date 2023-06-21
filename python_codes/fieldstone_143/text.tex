@@ -161,7 +161,11 @@ nullspace which is removed by requiring that $\int_\Omega p \; dV=0$.
 Note that this code is rather inefficient and that although resolutions above $300 \times 150$ 
 are attainable, the required cpu time makes them undesirable\footnote{On my laptop
 a 400x200 mesh yields a matrix that is built in approx. 1000s! and memory requirements 
-seem to be above 10Gb.}. 
+seem to be above 10Gb. A mesh of 600x300 takes 1000s to build the matrix, 650s to solve and about 
+30Gb of RAM.}. 
+For simplicity elements are isoviscous so that the question of averaging does not come into
+play. Before building the FE matrix, the density and viscosity are evaluated at the
+center of each element.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -284,7 +288,7 @@ implications. Also I have not bothered to carry out the measurements of their fi
 the surface across the 3000 km long continental and oceanic
 lithospheres. Red arrows show the jump that occurs at the
 transition from drift mode to collision mode.
-Left: fig 9 of the paper. Right: obtained with this stone.}
+Left: fig 9 of the paper. Right: obtained with this stone, nelx=300.}
 \end{center}
 
 
@@ -306,13 +310,11 @@ Left: fig 9 of the paper. Right: obtained with this stone.}
 
 ToDo:
 
-- implement Q2P-1
-
 - redo figure 8 of paper
 
 - make code faster?
 
-
+- stretch mesh ?
 
 
 

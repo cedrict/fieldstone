@@ -1,0 +1,21 @@
+set term pdf enhanced font "times,11pt"
+set grid
+
+set xlabel 'x (km)'
+set ylabel '{/Symbol e}_{xx} (s^{-1})'
+set size square
+set key outside 
+set title 'Q_2xQ_1'
+
+# um c o Fu Fd 
+
+set arrow from 2000, graph 0 to 2000, graph 1 nohead lw 5 lc 'gray' 
+
+set output 'fig_widths.pdf'
+plot[:3000][-1e-16:4e-16]\
+'solution_surface_ref_060km.ascii' u ($1/1e3):(-$4) w l lt 1 dt 1 t 'width=060km',\
+'solution_surface_ref_080km.ascii' u ($1/1e3):(-$4) w l lt 2 dt 1 t 'width=080km',\
+'solution_surface_ref_100km.ascii' u ($1/1e3):(-$4) w l lt 3 lw 3 dt 1 t 'width=100km',\
+'solution_surface_ref_120km.ascii' u ($1/1e3):(-$4) w l lt 4 dt 1 t 'width=120km',\
+'solution_surface_ref_140km.ascii' u ($1/1e3):(-$4) w l lt 5 dt 1 t 'width=140km',\
+0 lw 2 lt -1 notitle

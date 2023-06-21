@@ -110,7 +110,7 @@ print("-----------------------------")
 print("--------- stone 143 ---------")
 print("-----------------------------")
 
-disc=True # Q2Q1 vs Q2P-1
+disc=False # Q2Q1 vs Q2P-1
 
 mV=9     # number of velocity nodes making up an element
 if disc:
@@ -149,11 +149,10 @@ else:
    eta_o=1e23
    Fu=1e13
    Fd=1e13
-   nelx=200
+   nelx=600
    width=100e3
 
 ###############################################################################
-
 
 nely=int(nelx*Ly/Lx)
     
@@ -180,6 +179,8 @@ print("nel",nel)
 print("nnx=",nnx)
 print("nny=",nny)
 print("NV=",NV)
+print("NP=",NP)
+print("Nfem=",Nfem)
 print("hx=",hx)
 print("hy=",hy)
 print("width=",width)
