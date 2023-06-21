@@ -1,0 +1,24 @@
+#! /bin/bash
+
+# um c o fu fd res width
+
+python3 stone.py 20 22 23 1 1 300 60
+mv solution_surface.ascii solution_surface_ref_060km.ascii
+mv solution.vtu solution_ref_060km.vtu
+
+python3 stone.py 20 22 23 1 1 300 80
+mv solution_surface.ascii solution_surface_ref_080km.ascii
+mv solution.vtu solution_ref_080km.vtu
+
+python3 stone.py 20 22 23 1 1 300 100
+mv solution_surface.ascii solution_surface_ref_100km.ascii
+mv solution.vtu solution_ref_100km.vtu
+
+python3 stone.py 20 22 23 1 1 300 120
+mv solution_surface.ascii solution_surface_ref_120km.ascii
+mv solution.vtu solution_ref_120km.vtu
+
+python3 stone.py 20 22 23 1 1 300 140
+mv solution_surface.ascii solution_surface_ref_140km.ascii
+mv solution.vtu solution_ref_140km.vtu
+

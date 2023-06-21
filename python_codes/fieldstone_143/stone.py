@@ -90,11 +90,11 @@ def viscosity(x,y,Ly,eta_um,eta_c,eta_o,xA,yB,xC,xE,yE,xF,yF,yG,yI):
 
 ###############################################################################
 
-def density(x,y,yB,xL,xM,xN,rhod,rhou,rho0):
+def density(x,y,yB,xL,xM,xN,xE,yE,xF,yF,rhod,rhou,rho0):
     val=rho0
     if x>xL and x<xM and y<yB:
        val=rhod
-    if x>xN and y<Ly-30e3:
+    if x>xN and y< (yF-yE)/(xF-xE)*(x-xE)+yE:
        val=rhou
     return val
 
@@ -128,25 +128,29 @@ Ly=3000*km
 gy=-9.81
 
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 7): 
+if int(len(sys.argv) == 8): 
    um = int(sys.argv[1])
    c = int(sys.argv[2])
    o = int(sys.argv[3])
    Fu = float(sys.argv[4])
    Fd = float(sys.argv[5])
    nelx=int(sys.argv[6])
+   width = float(sys.argv[7])
    eta_um=10.**um
    eta_c=10.**c
    eta_o=10.**o
    Fu*=1e13
    Fd*=1e13
+   width*=1e3
 else:
+   # reference is 20-22-23
    eta_um=1e20
    eta_c=1e22 
    eta_o=1e23
    Fu=1e13
    Fd=1e13
    nelx=200
+   width=100e3
 
 ###############################################################################
 
@@ -178,10 +182,13 @@ print("nny=",nny)
 print("NV=",NV)
 print("hx=",hx)
 print("hy=",hy)
+print("width=",width)
 print("------------------------------")
 
 compute_area=False
 
+###############################################################################
+# definition of letters A,B,C, ... in figure in images/ folder
 ###############################################################################
 
 lr=500*km
@@ -206,8 +213,8 @@ xN=Lx-100*km ; yN=0
 
 ###############################################################################
 
-Au=100e3*Ly
-Ad=100e3*yB
+Au=width*Ly #slight approximation!
+Ad=width*yB
 rho_ref=3250. 
 rho_u=rho_ref-Fu/(abs(gy)*Au)#-3250 
 rho_d=rho_ref+Fd/(abs(gy)*Ad)#-3250 
@@ -369,7 +376,7 @@ rho=np.zeros(nel,dtype=np.float64)
 
 for iel in range(0,nel):
     eta[iel]=viscosity(xc[iel],yc[iel],Ly,eta_um,eta_c,eta_o,xA,yB,xC,xE,yE,xF,yF,yG,yI)
-    rho[iel]=density(xc[iel],yc[iel],yB,xL,xM,xN,rho_d,rho_u,rho_ref)
+    rho[iel]=density(xc[iel],yc[iel],yB,xL,xM,xN,xE,yE,xF,yF,rho_d,rho_u,rho_ref)
 
 print("     -> rho (m,M) %.6e %.6e " %(np.min(rho),np.max(rho)))
 print("     -> eta (m,M) %.6e %.6e " %(np.min(eta),np.max(eta)))

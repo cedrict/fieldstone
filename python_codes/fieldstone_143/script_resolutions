@@ -1,8 +1,8 @@
 #! /bin/bash
 
-# um c o fu fd
+# um c o fu fd res width
 
-python3 stone.py 20 22 23 1 1 100 
+python3 stone.py 20 22 23 1 1 100 100
 mv solution_surface.ascii solution_surface_ref_100.ascii
 mv solution.vtu solution_ref_100.vtu
 
@@ -10,35 +10,35 @@ mv solution.vtu solution_ref_100.vtu
 #mv solution_surface.ascii solution_surface_ref_125.ascii
 #mv solution.vtu solution_ref_125.vtu
 
-python3 stone.py 20 22 23 1 1 150 
+python3 stone.py 20 22 23 1 1 150  100
 mv solution_surface.ascii solution_surface_ref_150.ascii
 mv solution.vtu solution_ref_150.vtu
 
-python3 stone.py 20 22 23 1 1 175 
+python3 stone.py 20 22 23 1 1 175  100
 mv solution_surface.ascii solution_surface_ref_175.ascii
 mv solution.vtu solution_ref_175.vtu
 
-python3 stone.py 20 22 23 1 1 200 
+python3 stone.py 20 22 23 1 1 200  100
 mv solution_surface.ascii solution_surface_ref_200.ascii
 mv solution.vtu solution_ref_200.vtu
 
-python3 stone.py 20 22 23 1 1 225 
+python3 stone.py 20 22 23 1 1 225  100
 mv solution_surface.ascii solution_surface_ref_225.ascii
 mv solution.vtu solution_ref_225.vtu
 
-python3 stone.py 20 22 23 1 1 250 
+python3 stone.py 20 22 23 1 1 250  100
 mv solution_surface.ascii solution_surface_ref_250.ascii
 mv solution.vtu solution_ref_250.vtu
 
-python3 stone.py 20 22 23 1 1 275 
+python3 stone.py 20 22 23 1 1 275  100
 mv solution_surface.ascii solution_surface_ref_275.ascii
 mv solution.vtu solution_ref_275.vtu
 
-python3 stone.py 20 22 23 1 1 300 
+python3 stone.py 20 22 23 1 1 300  100
 mv solution_surface.ascii solution_surface_ref_300.ascii
 mv solution.vtu solution_ref_300.vtu
 
-python3 stone.py 20 22 23 1 1 400 
+python3 stone.py 20 22 23 1 1 400  100
 mv solution_surface.ascii solution_surface_ref_400.ascii
 mv solution.vtu solution_ref_400.vtu
 

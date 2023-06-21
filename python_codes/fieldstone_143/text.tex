@@ -207,14 +207,16 @@ observe substantial differences in the results:
  
 
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_143/images/fig5}
-\includegraphics[width=10.5cm]{python_codes/fieldstone_143/results/fig5/fig5a}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_143/images/fig5}
+\includegraphics[width=6.5cm]{python_codes/fieldstone_143/results/fig5/fig5a}
+\includegraphics[width=6.5cm]{python_codes/fieldstone_143/results/fig5_q2pm1/fig5a}\\
 {\captionfont Horizontal component of the strain rate $\dot{\varepsilon}_{xx}$
 across the 3000 km long continental and oceanic lithospheres
 ($L = 0~\si{\km}$ and $l_c = 2000~\si{\km}$), for a variety of
 oceanic $\eta_o$ and upper mantle $\eta_um$ viscosities. The viscosity
 of the continental lithosphere $\eta_c$ is set to $10^{22}~\si{\pascal\second}$.
-Left: fig 5 from the paper. Right: obtained with this  {\tt script\_fig5}.}
+Left: fig 5 from the paper. Middle: obtained with this  {\tt script\_fig5},
+$Q_2\times Q_1$; Right: same with $Q_2\times P_{-1}$.}
 \end{center}
 
 \begin{center}
@@ -255,8 +257,18 @@ Left: $Q_2\times Q_1$; Right: $Q_2\times P_{-1}$.}
 \end{center}
 
 
+%---------------------------------------------------
+\subsubsection*{Testing the influence of width of areas}
 
-Todo: Testing influence of width of areas ?
+In the paper the exact width of the high/low density zones is not specified. 
+Based on the figures we have assumed that there were 100~\si{\km} wide,
+so it is time to explore this parameter.
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_143/results/widths_q2pm1/fig_widths}\\
+{\captionfont Obtained with {\tt script\_widths} with $Q_2\times P_{-1}$ elements. Resolution 300x150, h=20km.}
+\end{center}
+
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
