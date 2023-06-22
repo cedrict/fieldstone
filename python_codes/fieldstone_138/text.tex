@@ -1,19 +1,40 @@
+\includegraphics[height=1.25cm]{images/pictograms/visualisation}
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/bsc}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_138/text.tex}} \end{flushright}
+
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_138/keywords.key}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\fbox{\textbf{\huge \color{teal} P}}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_138}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+{\sl This stone was developed in collaboration with Agnes Hendrickx
+and Lennart de Groot}. \index{contributors}{A. Hendrickx}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Rationale:
 
 
 
 
 
 
-stone\_test: bunch of small tests to make sure all works as expected 
-
-stone.py: computes B on plane or line above 3D domain with mesh
-
-two surface integral functions, one for cuboids, one for deformed hexahedra accomodating surface
-
-jit much faster!
-
-
-
+%------------------------------------------------
+\section*{Maxwell equations for magnetostatics}
 
 
 
@@ -167,24 +188,60 @@ d^3{\vec r}'
 
 
 
+%------------------------------------------------
+\section*{Computational methods}
+
+book fortran
+translation to python
+jit
+ 
+stone\_test: bunch of small tests to make sure all works as expected 
+
+stone.py: computes B on plane or line above 3D domain with mesh
+
+two surface integral functions, one for cuboids, one for deformed hexahedra accomodating surface
+
+jit much faster!
+
+In magnetostatics.py:
+\begin{verbatim}
+def cross(a,b):
+def qcoords_1D(nqpts):
+def qweights_1D(nqpts):
+def NNN(r,s,t):
+def dNNNdr(r,s,t):
+def dNNNds(r,s,t):
+def dNNNdt(r,s,t):
+def compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz,nqdim):
+def plane(x0,y0,z0,x1,y1,z1,x2,y2,z2,x3,y3,z3):
+def line(x0,y0,z0,x1,y1,z1,x2,y2,z2):
+def rot(ax,ay,az,bx,by,bz,nx,ny,nz,px,py,pz):
+def facmag(Mx,My,Mz,x0,y0,z0,x,y,z,n):
+def compute_B_surface_integral_cuboid(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz):
+def compute_B_surface_integral_wtopo(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz):
+\end{verbatim}
+
+Surf vs volume integration 
 
 
-TODO/TOCHECK:
+%------------------------------------------------
+\section*{DEM processing \& visualisation, and paths}
 
-minus sign: resulting B from vol and surface intergation are opposite signs?
+provenance
 
-nqdim ? 
+resolutions 1,2,5,10 ?
 
-atan2? f77 python 
+processing / coordinate system
 
-add dtype to arrrays
+height offset DEM path
 
-compute field above vertical face!
+%------------------------------------------------
+\section*{Benchmarking}
 
-explain difference btw m and M (dipole moment vs magnetisation)
+\subsection*{small tests - volume vs surface integration}
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \subsection*{Benchmark 1 - magnetic field above a spherical anomaly/dipole}
 
 %\begin{center}
@@ -289,9 +346,13 @@ If we measure on a line along $\vec{M}$, and take $\vec{M} \propto \vec{e}_z$, t
 
 
 
-\newpage
+
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Benchmark 2 - testing internal cancellation of surf integrals} 
+\subsection*{Benchmark 2 - testing internal cancellation of surface integrals} 
 
 random perturbation of internal nodes
 
@@ -307,9 +368,10 @@ show(?) for both no change plane measurements
 
 
 
-\newpage
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Benchmark 3}
+\subsection*{Benchmark 3 - magnetic field outside a magnetised sphere}
 
 The domain is $20\times 20\times 20$. 
 $\vec{M}=(0,0,7.5)$ is prescribed inside a sphere of radius $R=10$ centered 
@@ -343,9 +405,90 @@ we then set the spiral radius at $1.01*R$ radius, i.e. 10cm above sphere.
 Rather interestingly the volume integration seems to be the least accurate.
 
 
+
+
+%------------------------------------------------
+\section*{The paper}
+
+
+
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Benchmark 4}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\vspace{.5cm}
+
+\begin{center}
+\fbox{\begin{minipage}{0.9\textwidth}
+{\color{teal}To Do, open questions, future work?}
+\begin{itemize}
+\item 
+minus sign: resulting B from vol and surface intergation are opposite signs?
+
+\item 
+nqdim ? 
+
+\item 
+atan2? f77 python 
+
+\item 
+add dtype to arrrays
+
+\item 
+compute field above vertical face!
+
+\item 
+explain difference btw m and M (dipole moment vs magnetisation)
+
+
+\end{itemize}
+\end{minipage}}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{.5cm}
+
+\Literature:\\
+\fullcite{blakely1996potential}
+
+
+
 
 
 
