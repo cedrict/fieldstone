@@ -1,10 +1,10 @@
 set term pdf enhanced font "times,11pt"
 set grid
-
 set xlabel 'x (km)'
 set ylabel '{/Symbol e}_{xx} (s^{-1})'
 set size square
-set key outside 
+set key bottom left
+set title 'Q_2xQ_1'
 
 set arrow from 2000, graph 0 to 2000, graph 1 nohead lw 5 lc 'gray' 
 
