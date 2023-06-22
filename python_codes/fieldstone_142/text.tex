@@ -86,25 +86,30 @@ shear velocity field, depending which far-field velocity boundary conditions are
 
 A few remarks:
 \begin{itemize}
-\item The authors also state that ``The pressure values at the model boundaries remain zero.'' Say WHAAAAAT???!
-\item the authors also smooth the viscosity field but this is never mentioned in the paper!
+\item The authors also state that ``The pressure values at the model boundaries remain zero.'' uh??!
+\item The viscosity field is smoothed but this is never mentioned in the paper!
 \begin{verbatim}
 for smo=1:2; Ii  = [2:nx-1]; Ij  = [2:ny-1]; % Smoothing of the initial viscosity field
     ETA(Ii,:)    = ETA(Ii,:) + 0.4*(ETA(Ii+1,:)-2*ETA(Ii,:)+ETA(Ii-1,:));
     ETA(:,Ij)    = ETA(:,Ij) + 0.4*(ETA(:,Ij+1)-2*ETA(:,Ij)+ETA(:,Ij-1));
 end
 \end{verbatim}
+This looks like a discretised diffusion operator...
 
 \item no real benchmarking, no error convergence on SolVi, instead: instead eyeball norm
 \item no solver in code ... why use Richardson rather than backslah operator of matlab? This finally explained in Discussion but
 this should have been addressed earlier in the paper since it is rather uncommon.  
-\item no comment on viscous relaxation in fig 7 ? 
+\item no comment on viscous relaxation in fig 7 ?
+\begin{verbatim}
+ETA_PL = exp(log(ETA_PL)*0.5+log(ETA_PL_it)*0.5);
+\end{verbatim}
+ 
 \item in the Octave code:
 \begin{verbatim}
 subplot(224),pcolor(X,Y,DXX/(2*eta_B*D_B)),shading interp,axis equal,axis tight,colorbar,colormap(jet)
          title(['D) Horizontal strain rate [ ], D_{xx}/D_B']), xlabel('Width [ ]')
 \end{verbatim}
-We see that in the data of the plot is \verb|DXX/(2*eta_B*D_B|, not \verb|D_{xx}/D_B|...
+We see that there is a mismatch between what is plotted and the legend (\verb|DXX/(2*eta_B*D_B)| vs. \verb|D_{xx}/D_B|)
 
 \item As we will see in the ellipse inclusion case, the code fails to converge
 for modest viscosity contrasts.
@@ -112,28 +117,30 @@ for modest viscosity contrasts.
 \item authors state: Considering more irregular geometries is important, 
 because “the geometrical form of the competent
 inclusion clearly has an influence on the pattern of stress orientations in the
-surrounding medium”. Yet no principal stress components calculations? 
+surrounding medium”. Yet not a single stress or principal stress components calculations in the wole paper? 
 
 \item Why are tensor notations not used ? (why eqs 1,2,3 and 4,5,6 ?)
 
-\item 'spacial' ?? 'quadratic model domain' ??
+\item 'spacial' ? 'quadratic model domain' ?
 
 \item fig 5: why change the radius inside the figure? why viscosity contrast at 100, not 1000 ?
 
-\item provided code does not allow to reproduce experiments directly. Only ellipse. 
+\item The provided code does not allow to reproduce experiments directly. Only ellipse. 
 
-\item fig 9: resolution? applied vel ? 'Except for the circular inclusion, all ellipses possess the same aspect ratio.' Which is equal to ?
+\item fig 9: resolution? applied velocity ? ``Except for the circular inclusion, all ellipses possess the same aspect ratio.'' Which is equal to ?
 
 \item nothing about convergence pattern ? 1000's of iterations ? round off errors.
 
 \item about fig 10: 'The value of Dxx inside the garnet inclusion is zero, indicating that the inclusion is rigid and not deforming.' 
 No, Dxx cannot be and is not zero. 
 
-\item in the corrgendum only ellipse figures are corrected, not all the other ones so that the figs in the paper are useless 
-to us when it comes to nonlinear rheologies
+\item in the corrigendum only ellipse figures are corrected, not all the other ones so that the figs in the paper are useless 
+to us when it comes to nonlinear rheologies as they cannot be used for comparison/benchmarking.
 
 \item often in figure captions: 'The arrows display the velocity field, they are not to scale and only for direction.'
 However looking at the figures arrows have various lengths which reflect the velocity field.
+
+\item in some plots, $Dxx$ is described as 'horizontal strain rate'. meh 
 
 \end{itemize}
 
@@ -182,15 +189,15 @@ The circle radius is 0.15 times the model width.}
 \end{center}
 
 This proves that the code is correct. One should obviously do a proper error analysis as a function 
-of resolution but this has been done before in many other stones. 
+of resolution but this has been done before in many other stones (see \stone~\ref{f07} for example). 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \section*{Case 1: Strong rectangular inclusion under pure shear and simple shear}
 
 The authors state:
-``For illustration purposes, we calculated the pressure fields for a strong and inclined rectangular in­
-clusion for pure shear and simple shear. For simple shear, the
+``For illustration purposes, we calculated the pressure fields for a strong and inclined rectangular 
+inclusion for pure shear and simple shear. For simple shear, the
 pressure variations are more localized around the inclusion compared to
 the pressure variations for pure shear. Also, for simple shear the velocity
 field indicates a rotational flow of the inclusion with a clock-wise sense,
@@ -224,7 +231,7 @@ Second line is Pure Shear (PS), third line is simple shear (SS).}
 \end{center}
 
 To validate the results of this stone further, I have run this model with the \aspect
-code:
+code, and my results agree nicely with those of \aspect:
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_142/results/case1/aspect/vel}\\
@@ -234,13 +241,14 @@ code:
 \end{center}
 
 
+Plotting the \aspect and fieldstone results with a similar
+color scale yields the unescapable conclusion that {\color{red} the pressure field 
+in the figure of the paper is wrong inside the inclusion}:
 \begin{center}
 \includegraphics[height=5cm]{python_codes/fieldstone_142/images/hams22_cc}
 \includegraphics[height=5.6cm]{python_codes/fieldstone_142/results/case1/aspect/press2}\\
 {\captionfont In the paper $\eta_B=1$ and $D_B=1$ so that the pressure range in their
-figure is in fact -8:8. Plotting the \aspect and fieldstone results with a similar
-color scale yields the unescapable conclusion that {\color{red} the pressure field 
-in the figure of the paper is wrong inside the inclusion}.}
+figure is in fact [-8:8].i Left: fig 6 of the paper; Middle: \aspect; Right: fieldstone.}
 \end{center}
 
 \newpage
@@ -262,16 +270,15 @@ The ellipse’s semi-major axis is twice as long as its semi-minor axis and corr
 times the model width. The semi-major axis is rotated by 30 degrees from the horizontal axis.}
 \end{center}
 
-The paper lists two corrected Matlab and Octave codes that are available online under
+The paper comes with two corrected Matlab and Octave codes that are available online under
 \url{https://github.com/halterw/A_simple_computer_program}.
 I have run the Octave version as is (I do not have Matlab).
 Rather annoyingly, it runs, shows results every 2000 iterations, ultimately converges
-but does not produce a plot. 
+but does not produce a plot. Also there is no visualisation of velocity? 
 
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_142/images/octave1}\\
-{\captionfont Screen capture of the Octave code output when run as is off github.
-Remark: $Dxx$ is not 'horizontal strain rate' mean? }
+{\captionfont Screen capture of the Octave code output when run as is off github.}
 \end{center}
 
 I have therefore modified the code to add velocity visualisation and export to png.
@@ -281,7 +288,7 @@ but the code fails to converge. After more than 200,000 iterations the results a
 follows:
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_142/images/octave2}\\
+\includegraphics[width=13cm]{python_codes/fieldstone_142/images/octave2}\\
 {\captionfont Screen capture of the Octave code output for a viscosity ratio of 1000.
 Modified output. Dxx looks somewhat suspicious...}
 \end{center}
@@ -302,6 +309,7 @@ In summary, {\color{red} the solver is not converging} and the results above are
 the same colorscale and range.}
 \end{center}
 
+\newpage
 Here is the full set of fields with appropriate color scales obtained with 
 this \stone:
 \begin{center}
