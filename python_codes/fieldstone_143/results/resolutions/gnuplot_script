@@ -5,6 +5,7 @@ set xlabel 'x (km)'
 set ylabel '{/Symbol e}_{xx} (s^{-1})'
 set size square
 set key outside 
+set title 'Q_2xQ_1'
 
 # um c o Fu Fd 
 
@@ -16,10 +17,10 @@ plot[:3000][-1e-16:4e-16]\
 'solution_surface_ref_150.ascii' u ($1/1e3):(-$4) w l lt 2 dt 1 t 'nelx=150',\
 'solution_surface_ref_175.ascii' u ($1/1e3):(-$4) w l lt 3 dt 1 t 'nelx=175',\
 'solution_surface_ref_200.ascii' u ($1/1e3):(-$4) w l lt 4 dt 1 t 'nelx=200',\
-'solution_surface_ref_225.ascii' u ($1/1e3):(-$4) w l lt 5 dt 1 t 'nelx=225',\
-'solution_surface_ref_250.ascii' u ($1/1e3):(-$4) w l lt 6 dt 1 t 'nelx=250',\
-'solution_surface_ref_300.ascii' u ($1/1e3):(-$4) w l lt 7 dt 1 t 'nelx=300',\
-'solution_surface_ref_400.ascii' u ($1/1e3):(-$4) w l lt 8 lw 2 dt 1 t 'nelx=400',\
+'solution_surface_ref_250.ascii' u ($1/1e3):(-$4) w l lt 5 dt 1 t 'nelx=250',\
+'solution_surface_ref_300.ascii' u ($1/1e3):(-$4) w l lt 6 dt 1 t 'nelx=300',\
+'solution_surface_ref_400.ascii' u ($1/1e3):(-$4) w l lt 7 dt 1 t 'nelx=400',\
+'solution_surface_ref_600.ascii' u ($1/1e3):(-$4) w l lt 8 lw 2 dt 1 t 'nelx=600',\
 0 lw 2 lt -1 notitle,\
 1.2e-17 lt -1 dt 2 lw .5,\
 1.2e-16 lt -1 dt 4 lw .5 
