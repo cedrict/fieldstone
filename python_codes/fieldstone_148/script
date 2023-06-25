@@ -1,0 +1,183 @@
+#! /bin/bash
+
+# um rA rB o vL vR res bc_type vmantle
+
+
+#----------------------------------------------------
+# change bc 
+
+echo experiment_18
+python3 stone.py 20 19 19 23 -6 12 300 1 0 > opla_18 
+mv solution_surface.ascii solution_surface_18.ascii
+mv solution_middle.ascii solution_middle_18.ascii
+mv solution.vtu solution_18.vtu
+
+exit
+quit
+break
+
+
+
+
+echo experiment_01
+python3 stone.py 20 19 19 23 -4  4 300 0 0 > opla_01 
+mv solution_surface.ascii solution_surface_01.ascii
+mv solution_middle.ascii solution_middle_01.ascii
+mv solution.vtu solution_01.vtu
+
+echo experiment_02
+python3 stone.py 20 19 19 23 -2  4 300 0 0 > opla_02 
+mv solution_surface.ascii solution_surface_02.ascii
+mv solution_middle.ascii solution_middle_02.ascii
+mv solution.vtu solution_02.vtu
+
+echo experiment_03
+python3 stone.py 20 19 19 23 -4  8 300 0 0 > opla_03 
+mv solution_surface.ascii solution_surface_03.ascii
+mv solution_middle.ascii solution_middle_03.ascii
+mv solution.vtu solution_03.vtu
+
+#reference model
+echo experiment_04
+python3 stone.py 20 19 19 23 -6 12 300 0 0 > opla_04 
+mv solution_surface.ascii solution_surface_04.ascii
+mv solution_middle.ascii solution_middle_04.ascii
+mv solution.vtu solution_04.vtu
+
+echo experiment_05
+python3 stone.py 20 19 19 23 -8 16 300 0 0 > opla_05 
+mv solution_surface.ascii solution_surface_05.ascii
+mv solution_middle.ascii solution_middle_05.ascii
+mv solution.vtu solution_05.vtu
+
+echo experiment_06
+python3 stone.py 20 19 19 23 -4 10 300 0 0 > opla_06 
+mv solution_surface.ascii solution_surface_06.ascii
+mv solution_middle.ascii solution_middle_06.ascii
+mv solution.vtu solution_06.vtu
+
+echo experiment_07
+python3 stone.py 20 19 19 23 -8  8 300 0 0 > opla_07 
+mv solution_surface.ascii solution_surface_07.ascii
+mv solution_middle.ascii solution_middle_07.ascii
+mv solution.vtu solution_07.vtu
+
+echo experiment_08
+python3 stone.py 20 19 19 23 -2  8 300 0 0 > opla_08 
+mv solution_surface.ascii solution_surface_08.ascii
+mv solution_middle.ascii solution_middle_08.ascii
+mv solution.vtu solution_08.vtu
+
+echo experiment_09
+python3 stone.py 20 19 19 23 -4 15 300 0 0 > opla_09 
+mv solution_surface.ascii solution_surface_09.ascii
+mv solution_middle.ascii solution_middle_09.ascii
+mv solution.vtu solution_09.vtu
+
+echo experiment_10
+python3 stone.py 20 19 19 23 -4 20 300 0 0 > opla_10 
+mv solution_surface.ascii solution_surface_10.ascii
+mv solution_middle.ascii solution_middle_10.ascii
+mv solution.vtu solution_10.vtu
+
+#----------------------------------------------------
+# change eta_r
+
+echo experiment_11
+python3 stone.py 20 18 18 23 -6 12 300 0 0 > opla_11 
+mv solution_surface.ascii solution_surface_11.ascii
+mv solution_middle.ascii solution_middle_11.ascii
+mv solution.vtu solution_11.vtu
+
+echo experiment_12
+python3 stone.py 20 20 20 23 -6 12 300 0 0 > opla_12 
+mv solution_surface.ascii solution_surface_12.ascii
+mv solution_middle.ascii solution_middle_12.ascii
+mv solution.vtu solution_12.vtu
+
+#----------------------------------------------------
+# change eta_um
+
+echo experiment_13
+python3 stone.py 19 19 19 23 -6 12 300 0 0 > opla_13 
+mv solution_surface.ascii solution_surface_13.ascii
+mv solution_middle.ascii solution_middle_13.ascii
+mv solution.vtu solution_13.vtu
+
+echo experiment_14
+python3 stone.py 21 19 19 23 -6 12 300 0 0 > opla_14 
+mv solution_surface.ascii solution_surface_14.ascii
+mv solution_middle.ascii solution_middle_14.ascii
+mv solution.vtu solution_14.vtu
+
+#----------------------------------------------------
+# change eta_o
+
+echo experiment_15
+python3 stone.py 20 19 19 22 -6 12 300 0 0 > opla_15 
+mv solution_surface.ascii solution_surface_15.ascii
+mv solution_middle.ascii solution_middle_15.ascii
+mv solution.vtu solution_15.vtu
+
+echo experiment_16
+python3 stone.py 20 19 19 24 -6 12 300 0 0 > opla_16 
+mv solution_surface.ascii solution_surface_16.ascii
+mv solution_middle.ascii solution_middle_16.ascii
+mv solution.vtu solution_16.vtu
+
+echo experiment_17
+python3 stone.py 20 19 19 25 -6 12 300 0 0 > opla_17 
+mv solution_surface.ascii solution_surface_17.ascii
+mv solution_middle.ascii solution_middle_17.ascii
+mv solution.vtu solution_17.vtu
+
+
+
+
+#----------------------------------------------------
+# explore asymmetric ridge viscosity
+
+echo experiment_19
+python3 stone.py 20 19 18 23 -6 12 300 0 0 > opla_19 
+mv solution_surface.ascii solution_surface_19.ascii
+mv solution_middle.ascii solution_middle_19.ascii
+mv solution.vtu solution_19.vtu
+
+echo experiment_20
+python3 stone.py 20 18 19 23 -6 12 300 0 0 > opla_20 
+mv solution_surface.ascii solution_surface_20.ascii
+mv solution_middle.ascii solution_middle_20.ascii
+mv solution.vtu solution_20.vtu
+ 
+echo experiment_21
+python3 stone.py 20 20 19 23 -6 12 300 0 0 > opla_21
+mv solution_surface.ascii solution_surface_21.ascii
+mv solution_middle.ascii solution_middle_21.ascii
+mv solution.vtu solution_21.vtu
+
+echo experiment_22
+python3 stone.py 20 19 20 23 -6 12 300 0 0 > opla_22 
+mv solution_surface.ascii solution_surface_22.ascii
+mv solution_middle.ascii solution_middle_22.ascii
+mv solution.vtu solution_22.vtu
+
+#----------------------------------------------------
+echo experiment_23
+python3 stone.py 20 19 19 23 -6 12 300 0 1 > opla_23
+mv solution_surface.ascii solution_surface_23.ascii
+mv solution_middle.ascii solution_middle_23.ascii
+mv solution.vtu solution_23.vtu
+
+echo experiment_24
+python3 stone.py 20 19 19 23 -6 12 300 0 3 > opla_24
+mv solution_surface.ascii solution_surface_24.ascii
+mv solution_middle.ascii solution_middle_24.ascii
+mv solution.vtu solution_24.vtu
+
+echo experiment_25
+python3 stone.py 20 19 19 23 -6 12 300 0 6 > opla_25
+mv solution_surface.ascii solution_surface_25.ascii
+mv solution_middle.ascii solution_middle_25.ascii
+mv solution.vtu solution_25.vtu
+
+

@@ -1,0 +1,146 @@
+\includegraphics[height=1.25cm]{images/pictograms/aspect_logo}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_148/text.tex}} \end{flushright}
+
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/template_keywords.key}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\fbox{\textbf{\huge \color{teal} P}}
+Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_148}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+{\sl This stone was developed in collaboration with Erik van der Wiel}. \index{contributors}{E. van der Wiel}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+Viscosities and densities for Reference model:
+
+\begin{tabular}{lll}
+\hline
+Oceanic lith (o) &1e23 &3300\\
+Ridge A   (rA) &1e19 &3300\\
+Ridge B   (rB) &1e19 &3300\\
+Upper Mantle (um) &1e20 &3500\\
+Lower Mantle &5e22 (fixed) &3900\\
+D’’ zone &1e21 (fixed) &4000\\
+\hline
+\end{tabular}
+
+
+
+\begin{tabular}{lllllllll}
+\hline
+experiment & $v_L$ & $v_R$ & $\eta_{um}$ &rA &rB &o & $v_{mantle}$\\ 
+\hline
+\hline
+1 & -4 &  4& 20&19&19&23&0\\
+2 & -2 &  4& 20&19&19&23&0\\
+3 & -4 &  8& 20&19&19&23&0\\
+4 & -6 & 12& 20&19&19&23&0 & REF\\
+5 & -8 & 16& 20&19&19&23&0\\
+6 & -4 & 10& 20&19&19&23&0\\
+7 & -8 &  8& 20&19&19&23&0\\
+8 & -2 &  8& 20&19&19&23&0\\
+9 & -4 & 15& 20&19&19&23&0\\
+10& -4 & 20& 20&19&19&23&0\\
+11& -6 & 12& 20       & {\bf 18} &  {\bf 18} & 23&0 & \\ 
+12& -6 & 12& 20       & {\bf 20} &  {\bf 20} & 23&0 & \\ 
+13& -6 & 12& {\bf 19} & 19       & 19        & 23&0\\
+14& -6 & 12& {\bf 21} & 19       & 19        & 23&0\\
+15& -6 & 12& 20       & 19       & 19        & {\bf 22}&0\\
+16& -6 & 12& 20       & 19       & 19        & {\bf 24}&0\\
+17& -6 & 12& 20       & 19       & 19        & {\bf 25}&0\\
+18& -6 & 12& 20       & 19       & 19        & 23&0 & symm bc\\
+19& -6 & 12& 20       & 19       & {\bf 18}  & 23&0&\\
+20& -6 & 12& 20       & {\bf 18} & 19        & 23&0&\\
+21& -6 & 12& 20       & {\bf 20} & 19        & 23&0&\\
+22& -6 & 12& 20       &  19      & {\bf 20}  & 23&0&\\
+23& -6 & 12& 20&19&19&23& {\bf 1} & \\
+24& -6 & 12& 20&19&19&23& {\bf 3} & \\
+25& -6 & 12& 20&19&19&23& {\bf 6} & \\
+\hline
+\end{tabular}
+
+
+
+
+Todo/totry
+\begin{itemize}
+\item vary middle plate length
+\item shape ridges
+\item open bc + traction
+\end{itemize}
+
+\newpage
+
+Horizontal profile at $y=Ly$:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig1_exx_surface}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig1_u_surface}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig2_exx_surface}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig2_u_surface}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig3_exx_surface}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig3_u_surface}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig4_exx_surface}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig4_u_surface}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig5_exx_surface}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig5_u_surface}\\
+\end{center}
+
+
+\newpage
+
+Vertical profile at $x=L_x/2$
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig1_exx_middle}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig1_u_middle}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig2_exx_middle}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig2_u_middle}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig3_exx_middle}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig3_u_middle}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig4_exx_middle}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig4_u_middle}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig5_exx_middle}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig5_u_middle}\\
+\end{center}
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\vspace{.5cm}
+
+\begin{center}
+\fbox{\begin{minipage}{0.9\textwidth}
+{\color{teal}To Do, open questions, future work?}
+\begin{itemize}
+\item do smthg
+\end{itemize}
+\end{minipage}}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{.5cm}
+
+\Literature:\\
+\fullcite{xxxxYY}
+
+
