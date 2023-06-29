@@ -5,6 +5,7 @@ from scipy.sparse import lil_matrix
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 import datetime
+import numba
 
 ###############################################################################
 #   Vspace=Q2     Pspace=Q1       
@@ -19,6 +20,7 @@ import datetime
 #
 ###############################################################################
 
+@numba.njit
 def NNV(rq,sq):
     NV_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
     NV_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
@@ -31,6 +33,7 @@ def NNV(rq,sq):
     NV_8=     (1.-rq**2) *     (1.-sq**2)
     return np.array([NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,NV_6,NV_7,NV_8],dtype=np.float64)
 
+@numba.njit
 def dNNVdr(rq,sq):
     dNVdr_0= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
     dNVdr_1= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
@@ -43,6 +46,7 @@ def dNNVdr(rq,sq):
     dNVdr_8=       (-2.*rq) *    (1.-sq**2)
     return np.array([dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,dNVdr_6,dNVdr_7,dNVdr_8],dtype=np.float64)
 
+@numba.njit
 def dNNVds(rq,sq):
     dNVds_0= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
     dNVds_1= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
@@ -55,6 +59,7 @@ def dNNVds(rq,sq):
     dNVds_8=     (1.-rq**2) *       (-2.*sq)
     return np.array([dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8],dtype=np.float64)
 
+@numba.njit
 def NNP(rq,sq):
     if disc:
        NP_0=1-rq-sq
@@ -70,6 +75,7 @@ def NNP(rq,sq):
 
 ###############################################################################
 
+@numba.njit
 def viscosity(x,y):
 
     if y<yI:
@@ -101,18 +107,17 @@ def viscosity(x,y):
 
 ###############################################################################
 
+@numba.njit
 def density(x,y):
 
     if y<yI:
-       val=4000
+       val=rho_dpp
     elif y<yG:
-       val=3900
+       val=rho_lm
     elif y<yC:
-       val=3300
+       val=rho_um
     else:
-       val=3300
-
-    rho_r=3250
+       val=rho_o
 
     #left ridge
     if x>xD and x<xA and y>yC and y<(yD-yA)/(xD-xA)*(x-xD)+yD:
@@ -126,6 +131,21 @@ def density(x,y):
     if x>xB and x<xH and y>yC and y<(yH-yB)/(xH-xB)*(x-xH)+yH:
        val=rho_r
 
+    #val=3000
+    return val
+
+###############################################################################
+
+def lithostatic_pressure(y):
+    if y>=yC:
+       val=rho_o*abs(gy)*(Ly-y)
+    elif y>=yG:
+       val=rho_o*abs(gy)*(Ly-yC)+rho_um*abs(gy)*(yC-y)
+    elif y>=yI:
+       val=rho_o*abs(gy)*(Ly-yC)+rho_um*abs(gy)*(yC-yG)+rho_lm*abs(gy)*(yG-y)
+    else:
+       val=rho_o*abs(gy)*(Ly-yC)+rho_um*abs(gy)*(yC-yG)+rho_lm*abs(gy)*(yG-yI)+rho_dpp*abs(gy)*(yI-y)
+    #val=3000*abs(gy)*(Ly-y)
     return val
 
 ###############################################################################
@@ -158,7 +178,7 @@ eta_ref=1e22 # numerical parameter for FEM
 Lx=6000*km
 Ly=3000*km
 
-gy=-9.81
+gy=-10 #9.81
 
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 10): 
@@ -186,13 +206,21 @@ else:
    eta_o=1e23
    v_L=-6.*cm/year
    v_R=+12.*cm/year
-   nelx=300
+   nelx=200
    symm_bc=0
-   v_mantle=3*cm/year
+   v_mantle=0*cm/year
 
 gamma=1. # change shape of triangles
 
 eta_lm=5e22
+
+rho_r=3290
+rho_o=3300
+rho_um=3300
+rho_lm=3900
+rho_dpp=4000
+
+Neumann=1
 
 ###############################################################################
 
@@ -274,6 +302,8 @@ xV=np.empty(NV,dtype=np.float64)  # x coordinates
 yV=np.empty(NV,dtype=np.float64)  # y coordinates
 top=np.empty(NV,dtype=bool)  
 mid=np.empty(NV,dtype=bool)  
+left=np.empty(NV,dtype=bool)  
+right=np.empty(NV,dtype=bool)  
 
 counter = 0
 for j in range(0,nny):
@@ -282,6 +312,8 @@ for j in range(0,nny):
         yV[counter]=j*hy/2.
         top[counter]= (j==nny-1)
         mid[counter]= (i==int(nnx-1)/2)
+        left[counter]= (i==0)
+        right[counter]= (i==nnx-1)
         counter += 1
     #end for
 #end for
@@ -302,8 +334,6 @@ for j in range(0,nely):
         counter += 1
     #end for
 #end for
-
-#np.savetxt('gridV.ascii',np.array([xV,yV]).T) 
 
 print("velocity grid points: %.3f s" % (timing.time() - start))
 
@@ -373,8 +403,6 @@ else:
            yP[counter]=j*Ly/float(nely)
            counter += 1
 
-#np.savetxt('gridP.ascii',np.array([xP,yP]).T) 
-
 print("pressure connectivity & nodes: %.3f s" % (timing.time() - start))
 
 ###############################################################################
@@ -391,8 +419,6 @@ for iel in range(0,nel):
 
 print("     -> xc (m,M) %.6e %.6e " %(np.min(xc),np.max(xc)))
 print("     -> yc (m,M) %.6e %.6e " %(np.min(yc),np.max(yc)))
-
-#np.savetxt('grid_centers.ascii',np.array([xc,yc]).T) 
 
 print("compute element center coords: %.3f s" % (timing.time() - start))
 
@@ -486,20 +512,27 @@ for i in range(0,NV):
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. 
     if yV[i]/Ly>(1-eps):
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. 
-    if xV[i]/Lx>1-eps:#right boundary  
+
+    
+    if not Neumann and xV[i]/Lx>1-eps:#right boundary  
        if yV[i]<y_out:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = vR_out
        elif yV[i]<y_in:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = (v_R-vR_out)/(y_in-y_out)*(yV[i]-y_out)+vR_out
        else:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = v_R
-    if xV[i]/Lx<eps:#left boundary  
+    if not Neumann and xV[i]/Lx<eps:#left boundary  
        if yV[i]<y_out:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = vL_out
        elif yV[i]<y_in:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = (v_L-vL_out)/(y_in-y_out)*(yV[i]-y_out)+vL_out
        else:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = v_L
+
+    #if Neumann and yV[i]/Ly<eps and abs(xV[i]-Lx/2)/Lx<eps:
+    if Neumann and yV[i]/Ly<eps:
+       bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = 0. 
+
 
 print("define bc: %.3f s" % (timing.time() - start))
 
@@ -524,6 +557,8 @@ dNNNVds = np.zeros(mV,dtype=np.float64)             # shape functions derivative
 u = np.zeros(NV,dtype=np.float64)                   # x-component velocity
 v = np.zeros(NV,dtype=np.float64)                   # y-component velocity
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64)
+f_rhs_c = np.zeros(NfemV,dtype=np.float64)            # right hand side f 
+f_rhs_g = np.zeros(NfemV,dtype=np.float64)            # right hand side f 
            
 #only ok if elements are rectangles 
 jcbi=np.zeros((2,2),dtype=np.float64)
@@ -537,6 +572,8 @@ for iel in range(0,nel):
     K_el=np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
     G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
     h_el=np.zeros((mP*ndofP),dtype=np.float64)
+    f_el_c=np.zeros((mV*ndofV),dtype=np.float64)
+    f_el_g=np.zeros((mV*ndofV),dtype=np.float64)
 
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
@@ -589,6 +626,45 @@ for iel in range(0,nel):
         # end for jq
     # end for iq
 
+
+    #Neumann bc on right side (1,2,5)
+    if Neumann and right[iconV[5,iel]]:
+       y1=yV[iconV[1,iel]]
+       p1=lithostatic_pressure(yV[iconV[1,iel]])
+       p2=lithostatic_pressure(yV[iconV[2,iel]])
+       a=(p2-p1)/hy
+       b=p1-(p2-p1)/hy*y1
+       #print(p1,p2,a,b,a*yV[iconV[5,iel]]+b,lithostatic_pressure(yV[iconV[5,iel]]))
+       #print(a*y1+b,lithostatic_pressure(yV[iconV[5,iel]]))
+       #print(a*hy+a*y1+b,lithostatic_pressure(yV[iconV[5,iel]]))
+       #print(2*a*hy+4*a*y1+4*b,4*lithostatic_pressure(yV[iconV[5,iel]]))
+       f_el[ 2]-=hy/6*(a*y1+b)
+       f_el[ 4]-=hy/6*(a*hy+a*y1+b)
+       f_el[10]-=hy/6*(2*a*hy+4*a*y1+4*b)
+
+       #f_el_g[ 2]-=hy/6*(a*y1+b)
+       #f_el_g[ 4]-=hy/6*(a*hy+a*y1+b)
+       #f_el_g[10]-=hy/6*(2*a*hy+4*a*y1+4*b)
+       #a=0
+       #b=lithostatic_pressure(yV[iconV[5,iel]])
+       #f_el_c[ 2]-=hy/6*(a*y1+b)
+       #f_el_c[ 4]-=hy/6*(a*hy+a*y1+b)
+       #f_el_c[10]-=hy/6*(2*a*hy+4*a*y1+4*b)
+
+
+    #Neumann bc on left side (0,7,3)
+    if Neumann and left[iconV[0,iel]]:
+       y0=yV[iconV[0,iel]]
+       p0=lithostatic_pressure(yV[iconV[0,iel]])
+       p3=lithostatic_pressure(yV[iconV[3,iel]])
+       a=(p3-p0)/hy
+       b=p0-(p3-p0)/hy*y0
+       #a=0
+       #b=lithostatic_pressure(yV[iconV[7,iel]])
+       f_el[ 0]+=hy/6*(a*y0+b)
+       f_el[ 6]+=hy/6*(a*hy+a*y0+b)
+       f_el[14]+=hy/6*(2*a*hy+4*a*y0+4*b)
+
     # impose b.c. 
     for k1 in range(0,mV):
         for i1 in range(0,ndofV):
@@ -629,6 +705,8 @@ for iel in range(0,nel):
                 A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
             #end for
             f_rhs[m1]+=f_el[ikk]
+            #f_rhs_c[m1]+=f_el_c[ikk]
+            #f_rhs_g[m1]+=f_el_g[ikk]
         #end for
     #end for
     for k2 in range(0,mP):
@@ -642,6 +720,8 @@ for iel in range(0,nel):
 #end for iel
 
 print("     build FE matrix: %.3f s" % (timing.time() - start))
+
+#np.savetxt('f_rhs.ascii',np.array([f_rhs_c,f_rhs_g,f_rhs_c-f_rhs_g]).T)
 
 ######################################################################
 # solve system
@@ -689,9 +769,25 @@ for iel in range(0,nel):
             pq=NNNP.dot(p[iconP[0:mP,iel]])
             avrg_p+=pq*jcob*weightq
 
+p-=avrg_p/Lx/Ly
+
+avrg_p=0
+for iel in range(0,nel):
+    if top[iconV[2,iel]]: # element is at top
+       #north-west
+       rq=-1 ; sq=1
+       NNNP[0:mP]=NNP(rq,sq)
+       p_nw=NNNP.dot(p[iconP[0:mP,iel]])
+       #north-east
+       rq=+1 ; sq=1
+       NNNP[0:mP]=NNP(rq,sq)
+       p_ne=NNNP.dot(p[iconP[0:mP,iel]])
+
+       avrg_p+=(p_nw+p_ne)/2*hx
+
 print('          -> avrg_p=',avrg_p)
 
-p-=avrg_p/Lx/Ly
+p-=avrg_p/Lx
 
 print("          -> p (m,M) %.4e %.4e (Pa)     " %(np.min(p),np.max(p)))
 
@@ -865,10 +961,21 @@ if True:
         vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%10e \n" %q[i])
     vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='p (lith)' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" % (lithostatic_pressure(yV[i])))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='p (dyn)' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" % (lithostatic_pressure(yV[i])-q[i]))
+    vtufile.write("</DataArray>\n")
+
     #--
     vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
     for i in range(0,NV):
