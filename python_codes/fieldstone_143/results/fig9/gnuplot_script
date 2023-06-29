@@ -5,6 +5,8 @@ set xlabel 'x (km)'
 set ylabel '{/Symbol e}_{xx} (s^{-1})'
 set size square
 set key outside 
+set title 'Q_2xQ_1'
+set ytics 1e-16
 
 # um c o Fu Fd 
 
