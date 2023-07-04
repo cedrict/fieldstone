@@ -1,10 +1,16 @@
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/under_construction}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_130/text.tex}} \end{flushright}
 
 %\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_130/keywords}
 
 \begin{center}
-\fbox{\textbf{\huge \color{teal} P}}
-Codes at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_130}
+\inpython
+Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_130}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -22,20 +28,23 @@ performed on systems of equations, we consider the following equations
 with the two unknowns, $A$ and $B$. This system of equations is used to model the interaction between
 two interacting chemicals $A$ and $B$ \cite{mawb12}.
 
-$B$ represents the concentration of
-a ``substrate'' (inhibitor) chemical that is consumed in a reaction by some chemical ``activator'',
-with concentration $A$. The reaction produces the activator, which explains the $A^2B$ terms in both
-equations. Both substances are also produced at some background rate ($\gamma a$ for $A$ and $\gamma b$ for $B$,
+$B$ represents the concentration of a ``substrate'' (inhibitor) chemical 
+that is consumed in a reaction by some chemical ``activator'',
+with concentration $A$. The reaction produces the activator, which explains 
+the $A^2B$ terms in both equations. Both substances are also produced 
+at some background rate ($\gamma a$ for $A$ and $\gamma b$ for $B$,
 respectively) and $A$ decays with first-order kinetics at a rate $\gamma$.
 
 This ``substrate depletion'' reaction
 model is known as Schnakenberg kinetics \cite{gime72,schn79}. This
-model is most widely applied in biology, but it might also be relevant in Earth science to explain
-the formation of self-organizing patterns, for example, related to mineral growth, stromatolites and
+model is most widely applied in biology, but it might also be relevant 
+in Earth science to explain
+the formation of self-organizing patterns, for example, 
+related to mineral growth, stromatolites and
 corals, concretions, and so on.
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_130/images/simpson1}
+\includegraphics[width=7cm]{python_codes/fieldstone_130/images/simpson1}
 \end{center}
 
 The domain is a square of size 5. At $t=0$ the fields are given by
@@ -43,8 +52,10 @@ The domain is a square of size 5. At $t=0$ the fields are given by
 A(x,y)&=&a+b+r \nn\\
 B(x,y)&=& \frac{b}{(a+b)^2} +r
 \end{eqnarray}
-which is the steady-state solution with a small random perturbation $r$ (that has a maximum amplitude
-of 1/100). No flux (zero gradient) conditions are considered across all lateral boundaries.
+which is the steady-state solution with a small random 
+perturbation $r$ (that has a maximum amplitude
+of 1/100). No flux (zero gradient) conditions are considered across 
+all lateral boundaries.
 
 In the book we find: 
 \begin{verbatim}
@@ -81,10 +92,10 @@ Since the matrix does not change (only the rhs) we will be making use of this fa
 We define the mass matrix $\M$ and the diffusion matrix $\K_D$ as follows:
 \[
 {\M} = 
-\int \vec{\bN}^T \vec{\bN} dV 
+\int \vec{\bN}^T \vec{\bN} \; dV 
 \qquad
 \K_D = 
-\int {\bm B}^T \cdot {\bm B} dV  
+\int {\bm B}^T \cdot {\bm B} \; dV  
 \]
 so that we have (note that  the $a$, $b$, $d$ and $\gamma$ coefficients are
 constant in space so we can take them out of the integrals)
@@ -146,7 +157,7 @@ B^n = \vec{\cal N}\cdot \vec{\cal B}^n
 
 
 
-\subsubsection*{simple approach} The FE matrix structure is as follows:
+\subsection*{Simple approach} The FE matrix structure is as follows:
 \[
 \left(
 \begin{array}{cc}
@@ -171,7 +182,7 @@ B^n = \vec{\cal N}\cdot \vec{\cal B}^n
 \]
 
 
-\subsubsection*{different approach} The rhs of the first equation contains the term $\gamma A^2B$
+\subsection*{Different approach} The rhs of the first equation contains the term $\gamma A^2B$
 so that we have to compute
 \[
 \gamma \int \vec{\cal N}^T A^2 B dV
@@ -210,10 +221,7 @@ The FE matrix structure is then as follows:
 \]
 
 
-
-
-\newpage
-
+\subsection*{Results} 
 This is a rough take.
 I need nonlinear iterations to take care of the nonlinearities introduced by the rhs
 I need to explaore whether part of the rhs could not make its way in the matrix. 
@@ -223,12 +231,12 @@ Check analytical solution
 talk about implementation of bc
 
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_130/results/AB_000}
-\includegraphics[width=6cm]{python_codes/fieldstone_130/results/AB_200}
-\includegraphics[width=6cm]{python_codes/fieldstone_130/results/AB_400}
-\includegraphics[width=6cm]{python_codes/fieldstone_130/results/AB_600}
-\includegraphics[width=6cm]{python_codes/fieldstone_130/results/AB_800}\\
-{\captionfont phases $A$ and $B$ at time steps 0,200,400,600,800.}
+\includegraphics[width=7cm]{python_codes/fieldstone_130/results/AB_000}
+\includegraphics[width=7cm]{python_codes/fieldstone_130/results/AB_200}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_130/results/AB_400}
+\includegraphics[width=7cm]{python_codes/fieldstone_130/results/AB_600}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_130/results/AB_800}\\
+{\captionfont Phases $A$ and $B$ at time steps 0,200,400,600,800.}
 \end{center}
 
 
