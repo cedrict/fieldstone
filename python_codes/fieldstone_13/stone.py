@@ -33,12 +33,16 @@ def dNNVds(rq,sq):
     dNds_3=+0.25*(1.-rq)
     return dNds_0,dNds_1,dNds_2,dNds_3
 
+#------------------------------------------------------------------------------
+
 def paint(x,y):
     if (x-.5)**2+(y-0.5)**2<0.123**2:
        val=2
     else:
        val=1
     return val
+
+#------------------------------------------------------------------------------
 
 def onePlot(variable, plotX, plotY, title, labelX, labelY, extVal, limitX, limitY, colorMap):
     im = axes[plotX][plotY].imshow(np.flipud(variable),extent=extVal, cmap=colorMap, interpolation="nearest")
@@ -72,7 +76,6 @@ print("-----------------------------")
 print("----------fieldstone---------")
 print("-----------------------------")
 
-# declare variables
 print("variable declaration")
 
 m=4     # number of nodes making up an element
@@ -80,9 +83,6 @@ ndof=2  # number of degrees of freedom per node
 
 Lx=1.  # horizontal extent of the domain 
 Ly=1.  # vertical extent of the domain 
-
-assert (Lx>0.), "Lx should be positive" 
-assert (Ly>0.), "Ly should be positive" 
 
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 8):
@@ -101,9 +101,6 @@ else:
    nmarker_per_dim=4
    mdistribution=2 # 1: random, 2: regular, 3: Poisson disc
    proj = 3
-
-assert (nelx>0.), "nnx should be positive" 
-assert (nely>0.), "nny should be positive" 
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
