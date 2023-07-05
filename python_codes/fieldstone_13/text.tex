@@ -141,7 +141,7 @@ functions are 1 on node $k$ and then linearly decrease and become zero on
 the neighbouring nodes, this
 effectively gives more weight to those markers closest to node $k$.
 
-This strategy is adopted in textcite{mabl14} (2014) and \textcite{mabl15} (2015) 
+This strategy is adopted in \textcite{mabl14} (2014) and \textcite{mabl15} (2015) 
 (although it is used to interpolate onto the nodes of $Q_2 \times P_{-1}$ elements). 
 It is formulated as follows:\\
 "We assume that an arbitrary material point property $f$, is discretized via 
@@ -160,11 +160,29 @@ contained within the support $\Omega_i$ of the trilinear interpolant $N_i$".
 %---------------------------------------------------------------
 \subsection*{Numerical setup}
 
-The setup is identical to the Stokes sphere experiment. The bash script {\sl script\_runall} 
-runs the code for many resolutions, both initial marker distribution and all four 
-averaging types. The viscosity of the sphere has been 
+The setup is a Stokes sphere experiment with radius $R=0.123$ placed in the center 
+of the domain which is a $1\times 1$ square. 
+The viscosity of the sphere has been 
 set to $10^3$ while the viscosity of the surrounding fluid is 1. 
 The average density is always computed with an arithmetic mean. 
+
+The code relies on $Q_1 \times P_0$ elements with a penalty formulation for simplicity.
+The penalty parameter is set to $\lambda=10^7$.
+No-slip boundary conditions are applied on all four sides.
+
+The bash script {\sl script\_runall} 
+runs the code for many resolutions, both initial marker distribution and all four 
+averaging types. 
+
+The script loops over the number of markers per dimension (3,4,5,6...), the type of projection
+(1:
+,2: use all four elements around node, 
+,3: use all four quadrants around node
+,4: use all four elements around node with weighing
+) and also the type of averaging (
+avrg=1: arithmetic mean;
+avrg=2: geometric mean;
+avrg=3: harmonic mean).
 
 
 %---------------------------------------------------------------

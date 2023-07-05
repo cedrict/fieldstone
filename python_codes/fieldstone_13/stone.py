@@ -374,7 +374,7 @@ for im in range(0,nmarker):
           eta_nodal2[icon[3,iel]]+=1./eta_mat[swarm_mat[im]-1]
 
     # compute rho_nodal3,eta_nodal3
-    # proj=4: use all four elements around node w/ averaging
+    # proj=4: use all four elements around node w/ weighting
     # nodal C
 
     N0=0.25*(1-r)*(1-s)
