@@ -17,21 +17,21 @@ def NNV(rq,sq):
     N_1=0.25*(1.+rq)*(1.-sq)
     N_2=0.25*(1.+rq)*(1.+sq)
     N_3=0.25*(1.-rq)*(1.+sq)
-    return N_0,N_1,N_2,N_3
+    return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
 
 def dNNVdr(rq,sq):
     dNdr_0=-0.25*(1.-sq)
     dNdr_1=+0.25*(1.-sq)
     dNdr_2=+0.25*(1.+sq)
     dNdr_3=-0.25*(1.+sq)
-    return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+    return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3],dtype=np.float64)
 
 def dNNVds(rq,sq):
     dNds_0=-0.25*(1.-rq)
     dNds_1=-0.25*(1.+rq)
     dNds_2=+0.25*(1.+rq)
     dNds_3=+0.25*(1.-rq)
-    return dNds_0,dNds_1,dNds_2,dNds_3
+    return np.array([dNds_0,dNds_1,dNds_2,dNds_3],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 
@@ -102,16 +102,13 @@ else:
    mdistribution=2 # 1: random, 2: regular, 3: Poisson disc
    proj = 3
     
-nnx=nelx+1  # number of elements, x direction
-nny=nely+1  # number of elements, y direction
-
-nnp=nnx*nny  # number of nodes
-
+nnx=nelx+1     # number of elements, x direction
+nny=nely+1     # number of elements, y direction
+nnp=nnx*nny    # number of nodes
 nel=nelx*nely  # number of elements, total
+Nfem=nnp*ndof  # Total number of degrees of freedom
 
 penalty=1.e7  # penalty coefficient value
-
-Nfem=nnp*ndof  # Total number of degrees of freedom
 
 gx=0.
 gy=-10.
@@ -126,8 +123,7 @@ eta_mat = np.array([1.,1.e3],dtype=np.float64)
 #################################################################
 # grid point setup
 #################################################################
-
-print("grid point setup")
+start = time.time()
 
 x = np.empty(nnp, dtype=np.float64)  # x coordinates
 y = np.empty(nnp, dtype=np.float64)  # y coordinates
@@ -141,11 +137,12 @@ for j in range(0, nny):
 
 #np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
 
+print("grid points layout: %.3f s" % (time.time() - start))
+
 #################################################################
 # connectivity
 #################################################################
-
-print("connectivity")
+start = time.time()
 
 icon =np.zeros((m, nel),dtype=np.int32)
 
@@ -157,6 +154,8 @@ for j in range(0, nely):
         icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
         icon[3, counter] = i + (j + 1) * (nelx + 1)
         counter += 1
+
+print("connectivity array: %.3f s" % (time.time() - start))
 
 #################################################################
 # marker setup
@@ -224,6 +223,8 @@ else: # Poisson disc
 print("     -> swarm_x (m,M) %.4f %.4f " %(np.min(swarm_x),np.max(swarm_x)))
 print("     -> swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
 
+print("marker layout: %.3f s" % (time.time() - start))
+
 #################################################################
 # material layout
 #################################################################
@@ -234,7 +235,7 @@ for im in range(0,nmarker):
 
 print("     -> swarm_mat (m,M) %.4f %.4f " %(np.min(swarm_mat),np.max(swarm_mat)))
 
-np.savetxt('swarm.ascii',np.array([swarm_x,swarm_y,swarm_mat]).T,header='# x,y,mat')
+#np.savetxt('swarm.ascii',np.array([swarm_x,swarm_y,swarm_mat]).T,header='# x,y,mat')
 
 print("material layout: %.3f s" % (time.time() - start))
 
@@ -441,15 +442,15 @@ print("     -> eta_nodal1 (m,M) %.4f %.4f " %(np.min(eta_nodal1),np.max(eta_noda
 print("     -> eta_nodal2 (m,M) %.4f %.4f " %(np.min(eta_nodal2),np.max(eta_nodal2)))
 print("     -> eta_nodal3 (m,M) %.4f %.4f " %(np.min(eta_nodal3),np.max(eta_nodal3)))
 
-np.savetxt('count_nodal1.ascii',np.array([x,y,count_nodal1]).T,header='# x,y,count')
-np.savetxt('count_nodal2.ascii',np.array([x,y,count_nodal2]).T,header='# x,y,count')
-np.savetxt('count_nodal3.ascii',np.array([x,y,count_nodal3]).T,header='# x,y,count')
-np.savetxt('rho_nodal1.ascii',np.array([x,y,rho_nodal1]).T,header='# x,y,rho')
-np.savetxt('rho_nodal2.ascii',np.array([x,y,rho_nodal2]).T,header='# x,y,rho')
-np.savetxt('rho_nodal3.ascii',np.array([x,y,rho_nodal3]).T,header='# x,y,rho')
-np.savetxt('eta_nodal1.ascii',np.array([x,y,eta_nodal1]).T,header='# x,y,eta')
-np.savetxt('eta_nodal2.ascii',np.array([x,y,eta_nodal2]).T,header='# x,y,eta')
-np.savetxt('eta_nodal3.ascii',np.array([x,y,eta_nodal3]).T,header='# x,y,eta')
+#np.savetxt('count_nodal1.ascii',np.array([x,y,count_nodal1]).T,header='# x,y,count')
+#np.savetxt('count_nodal2.ascii',np.array([x,y,count_nodal2]).T,header='# x,y,count')
+#np.savetxt('count_nodal3.ascii',np.array([x,y,count_nodal3]).T,header='# x,y,count')
+#np.savetxt('rho_nodal1.ascii',np.array([x,y,rho_nodal1]).T,header='# x,y,rho')
+#np.savetxt('rho_nodal2.ascii',np.array([x,y,rho_nodal2]).T,header='# x,y,rho')
+#np.savetxt('rho_nodal3.ascii',np.array([x,y,rho_nodal3]).T,header='# x,y,rho')
+#np.savetxt('eta_nodal1.ascii',np.array([x,y,eta_nodal1]).T,header='# x,y,eta')
+#np.savetxt('eta_nodal2.ascii',np.array([x,y,eta_nodal2]).T,header='# x,y,eta')
+#np.savetxt('eta_nodal3.ascii',np.array([x,y,eta_nodal3]).T,header='# x,y,eta')
 
 print("projection nodal 1,2,3: %.3f s" % (time.time() - start))
 
@@ -542,7 +543,7 @@ for iel in range(0,nel):
 rho_nodal4=sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
 #rho_nodal4[:]=rhs[:]/Adiag[:]
 
-np.savetxt('rho_nodal4.ascii',np.array([x,y,rho_nodal4]).T,header='# x,y,rho')
+#np.savetxt('rho_nodal4.ascii',np.array([x,y,rho_nodal4]).T,header='# x,y,rho')
 
 print("projection nodal 4: %.3f s" % (time.time() - start))
 
@@ -551,7 +552,7 @@ print("projection nodal 4: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-bc_fix = np.zeros(Nfem, dtype=np.bool)  # boundary condition, yes/no
+bc_fix = np.zeros(Nfem, dtype=bool)  # boundary condition, yes/no
 bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
 
 for i in range(0, nnp):
@@ -591,8 +592,8 @@ c_mat = np.array([[2.,0.,0.],[0.,2.,0.],[0.,0.,1.]],dtype=np.float64)
 for iel in range(0, nel):
 
     # set 2 arrays to 0 every loop
-    b_el = np.zeros(m * ndof)
-    a_el = np.zeros((m * ndof, m * ndof), dtype=float)
+    b_el = np.zeros(m*ndof)
+    a_el = np.zeros((m*ndof,m*ndof), dtype=np.float64)
 
     # integrate viscous term at 4 quadrature points
     for iq in [-1, 1]:
@@ -603,20 +604,12 @@ for iel in range(0, nel):
             sq=jq/sqrt3
             wq=1.*1.
 
-            # calculate shape functions
-            N[0]=0.25*(1.-rq)*(1.-sq)
-            N[1]=0.25*(1.+rq)*(1.-sq)
-            N[2]=0.25*(1.+rq)*(1.+sq)
-            N[3]=0.25*(1.-rq)*(1.+sq)
-
-            # calculate shape function derivatives
-            dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
-            dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
-            dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
-            dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
+            N[0:m]=NNV(rq,sq)
+            dNdr[0:m]=dNNVdr(rq,sq)
+            dNds[0:m]=dNNVds(rq,sq)
 
             # calculate jacobian matrix
-            jcb = np.zeros((2, 2),dtype=float)
+            jcb = np.zeros((2, 2),dtype=np.float64)
             for k in range(0,m):
                 jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
                 jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
@@ -681,19 +674,13 @@ for iel in range(0, nel):
     sq=0.
     wq=2.*2.
 
-    N[0]=0.25*(1.-rq)*(1.-sq)
-    N[1]=0.25*(1.+rq)*(1.-sq)
-    N[2]=0.25*(1.+rq)*(1.+sq)
-    N[3]=0.25*(1.-rq)*(1.+sq)
-
-    dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
-    dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
-    dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
-    dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
+    N[0:m]=NNV(rq,sq)
+    dNdr[0:m]=dNNVdr(rq,sq)
+    dNds[0:m]=dNNVds(rq,sq)
 
     # compute the jacobian
-    jcb=np.zeros((2,2),dtype=float)
-    for k in range(0, m):
+    jcb=np.zeros((2,2),dtype=np.float64)
+    for k in range(0,m):
         jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
         jcb[1,0]+=dNds[k]*x[icon[k,iel]]
@@ -771,7 +758,7 @@ u,v=np.reshape(sol,(nnp,2)).T
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
-np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+#np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
 #####################################################################
 # retrieve pressure
@@ -800,7 +787,7 @@ for iel in range(0,nel):
     dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
     dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
-    jcb=np.zeros((2,2),dtype=float)
+    jcb=np.zeros((2,2),dtype=np.float64)
     for k in range(0, m):
         jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
@@ -831,8 +818,8 @@ print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 
-np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
-np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+#np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
+#np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
 #################################################################
 # compute vrms 

@@ -1,8 +1,0 @@
-     -> nel= 100 ; nmarker= 1600 ;  vrms= 0.008146
-     -> nel= 144 ; nmarker= 2304 ;  vrms= 0.008199
-     -> nel= 196 ; nmarker= 3136 ;  vrms= 0.009234
-     -> nel= 256 ; nmarker= 4096 ;  vrms= 0.008846
-     -> nel= 400 ; nmarker= 6400 ;  vrms= 0.009270
-     -> nel= 1024 ; nmarker= 16384 ;  vrms= 0.009163
-     -> nel= 2304 ; nmarker= 36864 ;  vrms= 0.009398
-     -> nel= 4096 ; nmarker= 65536 ;  vrms= 0.009430
