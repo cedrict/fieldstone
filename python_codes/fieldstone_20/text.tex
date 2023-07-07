@@ -8,8 +8,8 @@
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_20/keywords.ascii}
 
 \begin{center}
-\fbox{\textbf{\huge \color{teal} P}}
-Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_20}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_20}}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -136,7 +136,7 @@ the published values/measurements are {\it at} steady state.
 The mass and momentum conservation equations for incompressible Stokes flow do not 
 contain a time derivative but the energy conservation equation does. 
 At steady state the terms $\partial_t T$ is zero by definition so we must solve
-the following equation\footnote{Adiabtic heating, shear heating and internal heating are not considered
+the following equation\footnote{Adiabatic heating, shear heating and internal heating are not considered
 in the benchmark} (see Section~\ref{ss:hte}):
 \begin{equation}
 \vec{\upnu}\cdot\vec\nabla T - {\vec \nabla} \cdot k {\vec \nabla} T = 0
@@ -277,7 +277,8 @@ runs take a long time to run, even using relaxation instead of time stepping.
 \includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/wmid2.pdf}
 \end{center}
 
-The reported values for Busse et al. in the following table are taken from Table 3 of \cite{bucc94}.
+The reported values for Busse et al. in the following table are taken from Table 3 
+of \textcite{bucc94} (1994).
 The reported values for fieldstone are adimensionalised by means of a reference temperature (3700K),
 a reference lengthscale 2700km, and a reference time $L_z^2/\kappa\sim 7.29e+18$s.
 %The steady state is arrived at by solving the steady state Stokes and temperature equations 

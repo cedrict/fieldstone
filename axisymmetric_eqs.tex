@@ -9,17 +9,17 @@ axisymmetric geometry, for example a plume:
 a)\includegraphics[width=5cm]{images/axisymmetry/keki97}
 b)\includegraphics[width=5cm]{images/axisymmetry/lesy96a}
 c)\includegraphics[width=5cm]{images/axisymmetry/lesy96b}\\
-{\captionfont a)Taken from Kellogg \& King (1997) \cite{keki97}.
-b,c) Taken from Leitch \etal (1996) \cite{lesy96}.}
+{\captionfont a)Taken from \textcite{keki97} (1997); 
+b,c) Taken from \textcite{lesy96} (1996).}
 \end{center}
 
 Looking at the figure above we see that there are in fact two cases: axisymmetry in 
 cylindrical coordinates (b) and axisymmetry in spherical coordinates (c).
 
-As mentioned in Kellogg \& King (1997) \cite{keki97}: "By imposing axisymmetry,
+As mentioned in \textcite{keki97} (1997): "By imposing axisymmetry,
 we restrict the problem to two degrees of freedom, reducing the computational
 effort significantly over 3D calculations."
-However, Redmond \& King (2004) \cite{reki04} also mention:
+However, \cite{reki04} (2004) also mention:
 "An important caveat of axisymmetric calculations is that there are no variations 
 in the $\phi$ direction (i.e., there are no $\phi$ derivatives in
 the governing equations). Thus, as we get further from
@@ -102,6 +102,8 @@ or,
 \]
 
 \Literature: Daly \& Raefsky (1985) \cite{dara85}, Kiefer \& Hager (1992) \cite{kiha92}.
+
+This is implemented in \stone~36,63,90,91,92,96,106.
 
 %---------------------------------------
 \subsubsection{In spherical coordinates}

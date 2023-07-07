@@ -6,11 +6,10 @@
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_01/keywords.ascii}
 
 \begin{center}
-
-\fbox{\textbf{\huge \color{teal} P}}
-\fbox{\textbf{\huge \color{purple} J}}
-\fbox{\textbf{\huge \color{orange} F}}
-Codes at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_01}
+\inpython
+\injulia
+\infortran
+{\small Codes: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_01}}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -34,12 +33,12 @@ linear convergence for pressure error, as expected.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_01/results/pressure.pdf}\\
+\includegraphics[width=11cm]{python_codes/fieldstone_01/results/pressure.pdf}\\
 {\captionfont Pressure field}
 \end{center}
 
 \begin{center}
-\includegraphics[width=15cm]{python_codes/fieldstone_01/results/solution.pdf}
+\includegraphics[width=16cm]{python_codes/fieldstone_01/results/solution.pdf}
 \end{center}
 
 One can also compute vertical/depth averages of the velocity, see Eq.~\eqref{MMM-eq:dhvelnorm}.
@@ -48,7 +47,7 @@ at many depths I simply take an arithmetic average over rows of nodes. At high r
 converge to the analytical profiles for the individual components and to the results 
 obtained with \aspect. Please check \stone~\ref{f110} for a better implementation.
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_01/results/vel_profile}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_01/results/vel_profile}\\
 {\captionfont Vertical average of velocity. \aspect was run with the 'depth average' postprocessor
 added to the prm file.}
 \end{center}
@@ -71,7 +70,7 @@ and run as follows:
 The solver used here does not make use of a sparse storage and relies on a dense matrix 
 set of subroutine from BLAS and LinPACK\footnote{\url{https://en.wikipedia.org/wiki/LINPACK}}.
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_01/simplefem/timings/timings.pdf}\\
+\includegraphics[width=11cm]{python_codes/fieldstone_01/simplefem/timings/timings.pdf}\\
 {\captionfont Despite a very naive application of the boundary conditions to the entire
 assembled FE matrix, we find here that this part of the code is not taking long at all.}
 \end{center}
@@ -85,9 +84,9 @@ There is no export of the results to ParaView format, only ascii text files.
 The python code was translated to julia in a rather straightforward manner. 
 The matrix is still a full array (no sparse storage during the build process) 
 and the boundary conditions
-are applied naively. Even with a 80x80 resolution the memory use is under 2Gb. 
+are applied naively. Even with a $80\times 80$ resolution the memory use is under 2Gb. 
 Note that there seems to be a limit as to the maximum size of the matrix array 
-and for instance 96x96 yields to a crash.
+and for instance $96\times 96$ yields to a crash.
 
 In this version the matrix is stored as a full array. 
 Before the linear system is solved, however, we must convert it to sparse storage:
@@ -114,9 +113,9 @@ this is likely due to the time taken by julia to compile the code.
  
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_01/results/julia/timings_build.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_01/results/julia/timings_solve.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_01/results/julia/errors.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_01/results/julia/timings_build.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_01/results/julia/timings_solve.pdf}\\
+\includegraphics[width=11cm]{python_codes/fieldstone_01/results/julia/errors.pdf}\\
 {\captionfont Matrix building and solving times as obtained for nelx from 8 until 80, each 
 resolution being run 10 times.}
 \end{center}

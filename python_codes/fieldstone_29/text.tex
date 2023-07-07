@@ -12,7 +12,6 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 In what follows we will investigate the use of the so-called open boundary conditions in 
 the very simple context of a 2D Stokes sphere experiment. 
 
-
 We start with a domain without the sphere. Essentially, it is what people would 
 call an aquarium.
 Free slip boundary conditions are prescribed on the sides and no-slip conditions at the bottom. 
@@ -22,22 +21,22 @@ so that we expect a zero velocity field and a lithostatic pressure field.
 This is indeed what we recover:  
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_29/results/aquarium/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_29/results/aquarium/p}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_29/results/aquarium/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_29/results/aquarium/p}
 \end{center}
 
 If we now implement a sphere parametrised by its density $\rho_s=\rho_0+1$, its 
 viscosity $\eta_s=10^3$ and its radius $R_s=0.123$ in the middle of the domain,  
-we see clear velocity field which logically shows the sphere falling downward and 
+we recover a velocity field which logically shows the sphere falling downward and 
 a symmetric return flow of the fluid on each side:
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_29/results/sphere_free_slip/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_29/results/sphere_free_slip/p}
-\includegraphics[width=5cm]{python_codes/fieldstone_29/results/sphere_free_slip/density}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_29/results/sphere_free_slip/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_29/results/sphere_free_slip/p}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_29/results/sphere_free_slip/density}
 \end{center}
 
-Unfortunately it has been widely documented that the presence of free-slip 
+Unfortunately it has been documented that the presence of free-slip 
 boundary conditions affects the evolution of subduction \cite{chgv12}, 
 even when these are placed rather far from the subduction zone. 
 A proposed solution to this problem is the use of 'open boundary conditions'
@@ -48,9 +47,10 @@ along the side walls. Only pressure deviations with respect to the
 lithostatic are responsible for flow and such boundary conditions allow flow  
 across the boundaries.
 
-We need the lithostatic pressure and compute it before hand (which is trivial in 
+We therefore need the lithostatic pressure and compute it before hand (which is trivial in 
 our case but can prove to be a bit more tedious in real life situations when for instance
-density varies in the domain as a function of temperature and/or pressure).
+density varies in the domain as a function of temperature and/or pressure 
+- see \stone~\ref{f119}).
 
 \begin{lstlisting}
 plith = np.zeros(nnp,dtype=np.float64)
@@ -66,8 +66,8 @@ think about an aquarium without side walls, or a broken dam. The velocity field
 indeed shows a complete collapse of the fluid left and right of the bottom.
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_29/results/nobc/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_29/results/nobc/p}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_29/results/nobc/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_29/results/nobc/p}
 \end{center}
 
 Let us then continue (still with no sphere) but let us now switch on the open 
@@ -76,8 +76,8 @@ pressure we expect no flow at all in the absence of any density perturbation
 in the system. This is indeed what is recovered:
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_29/results/no_sphere_openbc/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_29/results/no_sphere_openbc/p}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_29/results/no_sphere_openbc/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_29/results/no_sphere_openbc/p}
 \end{center}
  
 Finally, let us reintroduce the sphere. This 
@@ -94,8 +94,8 @@ of the velocity: the open b.c. implementation acts on the horizontal velocity
 dofs only, so that one can fix the vertical component to zero, as is shown hereunder:
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_29/results/sphere_openbc_v0/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_29/results/sphere_openbc_v0/p}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_29/results/sphere_openbc_v0/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_29/results/sphere_openbc_v0/p}
 \end{center}
 
 We indeed see that the in/outflow on the sides is perpendicular to the boundaries. 
@@ -120,7 +120,21 @@ if open_bc_right and x[icon[1,iel]]>Lx-eps: # right side
 These few lines of code are added after the elemental matrices and rhs are built, 
 and before the application of other Dirichlet boundary conditions, and assembly.
 
+Open boundary conditions are discussed in Section~\ref{MMM-ss:openbc}.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\vspace{.5cm}
+
+\begin{center}
+\fbox{\begin{minipage}{0.9\textwidth}
+{\color{teal}To Do, open questions, future work?}
+\begin{itemize}
+\item For aquarium, look at convergence rate 
+\end{itemize}
+\end{minipage}}
+\end{center}
 
 
 

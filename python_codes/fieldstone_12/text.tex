@@ -1,7 +1,13 @@
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_12/keywords.ascii}
 
 \begin{center}
-Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_12}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_12}}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -9,7 +15,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 We start from the analytical benchmark of Section \ref{MMM-mms1} and we use $Q_1 \times P_0$
 elements with a penalty formulation. 
-We have seen in \stone~1 how to recover the elemental pressure as a postprocessing step. 
+We have seen in \stone~\ref{f01} how to recover the elemental pressure as a postprocessing step. 
 However, the discontinous nature of the pressure field (and the presence of a
 parasitic checkerboard mode) can be problematic for many reasons 
 (pressure enters the rheology, equation of state, plotting, ...). 
