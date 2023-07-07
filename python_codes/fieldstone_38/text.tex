@@ -46,10 +46,10 @@ approximation is used. Boundary conditions are free slip on all sides. $T=0$ is 
 at the bottom and $T(x)=T_0 \cos (\pi x/L)$ at the top. The two sides are insulated.
 
 Following Sato \& Thompson (1976) \cite{sath76}, 
-parameters are $\kappa=1.5\cdot 10^{-6}\si{\square\m\per\second}$, 
-$\rho_0=3700\si{\kg\per\cubic\metre}$, $\alpha=2\cdot 10^{-5}\si{\kelvin}^{-1}$, 
-$\nu=\eta/\rho_0=2\cdot10^{17} \si{\square\metre\second}$, $g=10\si{\metre\per\square\second}$, 
-$C_p=1200 \si{\joule\per\kg\per\kelvin}$, $T_0=0.1,1,10\si{\kelvin}$.  
+parameters are $\kappa=1.5\cdot 10^{-6}~\si{\square\m\per\second}$, 
+$\rho_0=3700~\si{\kg\per\cubic\metre}$, $\alpha=2\cdot 10^{-5}~\si{\kelvin}^{-1}$, 
+$\nu=\eta/\rho_0=2\cdot10^{17}~\si{\square\metre\second}$, $g=10~\si{\metre\per\square\second}$, 
+$C_p=1200~\si{\joule\per\kg\per\kelvin}$, $T_0=0.1,1,10~\si{\kelvin}$.  
 
 We then deduce that $k=\kappa \rho_0 C_p = 6.66$. The Rayleigh number is given by
 \[
@@ -106,12 +106,21 @@ in McKenzie \etal:
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_38/results/T0_0p001_32x32/T}
 \includegraphics[width=8cm]{python_codes/fieldstone_38/results/T0_0p001_32x32/T_anal}\\
-{\captionfont Left: computed temperature, 48x48 resolution; Right: analytical solution.}
+{\captionfont Left: computed temperature, $48\times48$ resolution; Right: analytical solution.}
 \end{center}
 
-\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection*{Steady-state study}
+
+\begin{center}
+\includegraphics[width=13cm]{python_codes/fieldstone_38/results/Q.pdf}\\
+\includegraphics[width=13cm]{python_codes/fieldstone_38/results/vrms.pdf}\\
+{\captionfont Heat flux on top boundary (top) and root mean square velocity (bottom)
+as measured with \stone~38 and \aspect on $64\times 64$ mesh.}
+\end{center}
+
+
+\newpage
 
 \begin{center}
 \includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_0p01_64x64/vel}
@@ -120,25 +129,16 @@ in McKenzie \etal:
 \includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_0p1_64x64/vel}
 \includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_0p1_64x64/T}
 \includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_0p1_64x64/qy}\\
-missing T0=1 \\
+...missing T0=1 row...\\
 \includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_10_64x64/vel}
 \includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_10_64x64/T}
 \includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_10_64x64/qy}\\
 \includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_100_64x64/vel}
 \includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_100_64x64/T}
 \includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_100_64x64/qy}\\
-{\captionfont Obtained with \stone~38 on 64x64 mesh. 
+{\captionfont Obtained with \stone~38 on $64\times64$ mesh. 
 Top to bottom: $T_0=0.01,0.1,1,10,100$}
 \end{center}
-
-\newpage
-\begin{center}
-\includegraphics[width=13cm]{python_codes/fieldstone_38/results/Q.pdf}\\
-\includegraphics[width=13cm]{python_codes/fieldstone_38/results/vrms.pdf}\\
-{\captionfont Heat flux on top boundary (top) and root mean square velocity (bottom)
-as measured with \stone~38 and \aspect on 64x64 mesh.}
-\end{center}
-
 
 
 

@@ -1,5 +1,6 @@
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/nonlinear}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -50,8 +51,8 @@ vector is set to zero. Sides are set to free slip boundary conditions, the botto
 while a vertical velocity $(0,-v_p)$ is prescribed at the top boundary for nodes 
 whose $x$ coordinate is within $[L_x/2-\delta/2,L_x/2+\delta/2]$. 
 
-The following parameters are used: $L_x=1$, $L_y=0.5$, $\mu_{min}=10^{-3}$, 
-$\mu_{max}=10^3$, $v_p=1$, $\delta=0.11111$ 
+The following parameters are used: $L_x=1$, $L_y=0.5$, $\eta_{min}=10^{-3}$, 
+$\eta_{max}=10^3$, $v_p=1$, $\delta=0.11111$ 
 and the yield value of the material is set to $\sigma_Y=1$. 
 
 The analytical solution predicts that the angle of the shear bands stemming from the sides of the punch 
@@ -59,7 +60,7 @@ is $\pi/4$, that the pressure right under the punch is $1+\pi$,
 and that the velocity of the rigid blocks on each side of the punch is $v_p/\sqrt{2}$ 
 (this is simply explained by invoking conservation of mass).
 
-In what follows I show results of the rough and smooth punch for a 124x68 grid. The difference between the two
+In what follows I show results of the rough and smooth punch for a $124\times 68$ mesh. The difference between the two
 lies in the nature of the kinematic boundary conditions under the punched area. 'rough' means that the indentor 
 also fixes the horizontal velocity component to zero while it is free in the smooth case.
 

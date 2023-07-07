@@ -9,6 +9,9 @@
    id="svg8"
    inkscape:version="1.2.2 (732a01da63, 2022-12-09, custom)"
    sodipodi:docname="bsc_msc_pictograms.svg"
+   inkscape:export-filename="nonlinear.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -19,6 +22,36 @@
    xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs2">
+    <marker
+       style="overflow:visible"
+       id="Arrow4"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Arrow4"
+       markerWidth="5"
+       markerHeight="6"
+       viewBox="0 0 5 6"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         d="m 1,0 -3,3 h -2 l 3,-3 -3,-3 h 2 z"
+         id="path1741" />
+    </marker>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient26372">
+      <stop
+         style="stop-color:#cccccc;stop-opacity:1;"
+         offset="0"
+         id="stop26368" />
+      <stop
+         style="stop-color:#cccccc;stop-opacity:0;"
+         offset="1"
+         id="stop26370" />
+    </linearGradient>
     <marker
        inkscape:stockid="Arrow1Mend"
        orient="auto"
@@ -98,6 +131,15 @@
        x2="53.231895"
        y2="59.761639"
        gradientTransform="translate(0,23.283333)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient26372"
+       id="linearGradient26374"
+       x1="126.60717"
+       y1="119.10152"
+       x2="157.41807"
+       y2="119.10152"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -108,7 +150,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
      inkscape:cx="354.64286"
-     inkscape:cy="653.21429"
+     inkscape:cy="653.92857"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -112376,5 +112418,32 @@
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.7556px;font-family:'Berenis ADF Pro Math';-inkscape-font-specification:'Berenis ADF Pro Math';stroke-width:0.264583"
          x="137.41737"
          y="179.73958">PIC</tspan></text>
+    <path
+       sodipodi:type="spiral"
+       style="fill:url(#linearGradient26374);fill-rule:evenodd;stroke:#000000;stroke-width:1.765;stroke-dasharray:none;fill-opacity:1;opacity:0.18981103;marker-end:url(#Arrow4)"
+       id="path25504"
+       sodipodi:cx="140.64183"
+       sodipodi:cy="120.47179"
+       sodipodi:expansion="1"
+       sodipodi:revolution="3"
+       sodipodi:radius="16.542089"
+       sodipodi:argument="-18.153423"
+       sodipodi:t0="0"
+       d="m 140.64183,120.47179 c 0.63642,0.53185 -0.40294,1.12027 -0.88397,1.05776 -1.30357,-0.16939 -1.65558,-1.78817 -1.23156,-2.82571 0.75846,-1.85592 3.12171,-2.2769 4.76745,-1.40536 2.4152,1.27903 2.91466,4.47263 1.57915,6.70921 -1.78002,2.98099 -5.82962,3.55928 -8.65094,1.75293 -3.55035,-2.27311 -4.20747,-7.18947 -1.92673,-10.59268 2.76227,-4.12174 8.55094,-4.85768 12.53442,-2.10052 4.6944,3.24921 5.50918,9.91342 2.27432,14.47616 -3.73478,5.26787 -11.27657,6.16153 -16.41791,2.44811 -5.84192,-4.21943 -6.81448,-12.64019 -2.6219,-18.35965 4.70344,-6.41638 14.00415,-7.46787 20.30139,-2.79569 6.99114,5.187 8.12158,15.36837 2.96949,22.24313"
+       transform="translate(14.250145,8.0925293)"
+       inkscape:export-filename="../d73bc9aa/opla.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <text
+       xml:space="preserve"
+       style="font-size:31.0444px;font-family:'Berenis ADF Pro Math';-inkscape-font-specification:'Berenis ADF Pro Math';opacity:1;fill:#800080;fill-opacity:1;stroke-width:1.765;stroke-dasharray:none"
+       x="146.6571"
+       y="131.13957"
+       id="text27278"><tspan
+         sodipodi:role="line"
+         id="tspan27276"
+         style="font-size:31.0444px;fill:#800080;fill-opacity:1;stroke-width:1.765"
+         x="146.6571"
+         y="131.13957">η</tspan></text>
   </g>
 </svg>
