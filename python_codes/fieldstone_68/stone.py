@@ -166,8 +166,8 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    slope= float(sys.argv[4])
 else:
-   nelx = 66 #264
-   nely = 60 #240
+   nelx = 66*2 #264
+   nely = 60*2 #240
    visu = 1 
    slope= 1 # between 0.4 and 1
 

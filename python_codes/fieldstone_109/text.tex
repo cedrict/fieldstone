@@ -54,7 +54,7 @@ p(r,\theta) =
  -\frac{U a^2 }{\kappa r}  \cos \theta
 \]
 is also computed and projected onto the mesh (pressure is then set to zero inside the 
-obstacle) (where $U=2U_0/3$, see \stone 108). 
+obstacle) (where $U=2U_0/3$, see footnote in \stone~\ref{f108}). 
 
 %------------------------------
 \subsubsection*{Benchmarking}
@@ -90,21 +90,22 @@ so we can now turn to the problem at hand.
 %------------------------------
 \subsubsection*{Application}
 
-We find that the computed pressure is rather similar to the analytical pressure, although 
-amplitudes differ by about 20\%. This is likely due to the finite size of the domain while 
-the analytical solution assumes an infinite domain around the obstacle.
+We find that the computed pressure is rather similar to the analytical pressure outside the 
+obstacle, although amplitudes differ by about 20\%. This is likely due to the finite 
+size of the domain while the analytical solution assumes an infinite domain 
+around the obstacle.
 
 \begin{center}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_109/results/vel}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_109/results/press}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_109/results/press_anal}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_109/results/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_109/results/press}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_109/results/press_anal}\\
 {\captionfont Velocity, pressure and analytical pressure fields. }
 \end{center}
 
 Note that the computed pressure does not depend on the $z$-coordinate (while of course the velocity does): 
 \begin{center}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_109/results/vel2}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_109/results/press2}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_109/results/vel2}
+\includegraphics[width=7cm]{python_codes/fieldstone_109/results/press2}\\
 {\captionfont Velocity and pressure fields. We see that the aspect ratio of the elements
 is rather large and this is likely to alter the accuracy of the calculations.}
 \end{center}
@@ -117,10 +118,10 @@ I have also run this experiment with the \aspect code and the prm file is presen
 the folder of this stone. Resolution was higher than above ($160 \times 80 \times 16 =204,800$ elements).
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_109/results/aspect/vel}
-\includegraphics[width=7cm]{python_codes/fieldstone_109/results/aspect/press}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_109/results/aspect/eta}
-\includegraphics[width=7cm]{python_codes/fieldstone_109/results/aspect/sr}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_109/results/aspect/vel}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_109/results/aspect/press}\\
+\includegraphics[width=8.5cm]{python_codes/fieldstone_109/results/aspect/eta}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_109/results/aspect/sr}
 \end{center}
 
 We find that the results obtained with \aspect do not differ substantially from those
