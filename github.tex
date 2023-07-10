@@ -1,23 +1,24 @@
 
+\subsection{Contributing to \aspect}
 
 \begin{enumerate}
 \item make sure that you  have an account on GitHub (say, \verb"https://github.com/myusername") 
 and carry out a proper setup on your local computer as follows:\\
-\$ \verb'git config --global user.name "firstname lastname" '\\
-\$ \verb'git config --global user.email your@email'
+\verb'$ git config --global user.name "firstname lastname" '\\
+\verb'$ git config --global user.email your@email'
 
 \item On github.com, fork the official \aspect repository to your repository:\\
 go to \verb"https://github.com/geodynamics/aspect"
 and click on the 'fork' button on the upper right corner of the screen.
 
 \item On your machine, in a terminal, clone your repository with \\
-\$ \verb"git clone git@github.com:myusername/aspect.git". 
+\verb"$ git clone git@github.com:myusername/aspect.git". 
 This is now your main\footnote{previously 'master', although this term should not be used anymore} branch.
 
 \item On your machine, find your security key \footnote{
 Note that you can create a public key as follows: 
 {\tt https://help.github.com/articles/generating-ssh-keys/}}
- with \$ \verb"less ~/.ssh/id_dsa.pub" and copy this into github.com 
+ with \verb"$ less ~/.ssh/id_dsa.pub" and copy this into github.com 
 so you can push to your repository. See \url{https://help.github.com/en/articles/connecting-to-github-with-ssh} on how to configure github with ssh support (no more login/password to type -- if you have cloned the repository wish ssh, not html).
 Please also check the instructions at \url{https://help.github.com/en/articles/connecting-to-github-with-ssh}.  
  
@@ -27,10 +28,17 @@ and in order to avoid potential confusion later on, we shall rename our github r
 \verb"$ git remote rename origin myusername" 
 
 \item Also create a remote of the official version with\\
-\verb"$ git remote add upstream https://github.com/cedrict/aspect"
+\verb"$ git remote add upstream https://github.com/myusername/aspect"
 
 \item Do \verb"$git remote -v" which shows you the URLs that git 
 has stored for the shortname to be used when reading and writing to that remote.
+\begin{verbatim}
+$ git remote -v
+myusername	git@github.com:myusername/aspect.git (fetch)
+myusername	git@github.com:myusername/aspect.git (push)
+upstream	https://github.com/geodynamics/aspect.git (fetch)
+upstream	https://github.com/geodynamics/aspect.git (push)
+\end{verbatim}
 
 \end{enumerate}
 
@@ -46,23 +54,23 @@ has stored for the shortname to be used when reading and writing to that remote.
 \draw[gray,thick] (8,5) -- (8,11); %vertical line
 %\draw[thick] (12,5) -- (12,11); %vertical line
 
-\node[align=left] at (3.75,10.25) {Cedric's repository "upstream"\\ \footnotesize \verb"https://github.com/cedrict/aspect"};
+\node[align=left] at (3.75,10.25) {geodynamics repository "upstream"\\ \footnotesize \verb"https://github.com/geodynamics/aspect"};
 
 \node[align=left] at (12,10.25) {my repository "myusername"\\ \footnotesize \verb"https://github.com/myusername/aspect"};
 
 \node[rotate=90] at (0.45,8) {\large ONLINE};
-\node[rotate=90] at (0.45,3.5) {\large LOCAL};
+\node[rotate=90] at (0.45,2.5) {\large LOCAL MACHINE};
 
 \draw[->,very thick] (9,8) -- (7,8);
 \node[align=left] at (8,7.5) {pull request};
 
-\node[align=left] at (8.5,2.5) {\underline{Branches:}\\main\\otherbranch\\savemyphd\\tryout\\crazyidea\\branchformyplugin};
+\node[align=left] at (8.5,2.25) {\underline{Branches:}\\main\\otherbranch\\savemyphd\\tryout\\crazyidea\\branchformyplugin};
 
 \draw[->,very thick] (2.5,6) -- (2.5,4);
 \node[align=left] at (4.75,5) {\footnotesize update main branch:\\
 \footnotesize \verb"git pull upstream main"};
 
-\draw[->,very thick] (10,4) -- (10,6);
+\draw[->,very thick] (9.5,4) -- (9.5,6);
 \node[align=left] at (13.5,5) {\footnotesize push branch to my repo:\\
 \footnotesize \verb"git push myusername branchformyplugin"};
 
@@ -90,7 +98,7 @@ and also update your own repo online:
 \item
 Create a new branch with a self explanatory name:
 \verb"$ git branch fix_typo"
-Then do \$ \verb"git branch" to see all your branches. The one that is coloured is 
+Then do \verb"$ git branch" to see all your branches. The one that is coloured is 
 the active branch. In order to switch to this new branch, do 
 \verb"$ git checkout fix_typo". Redo \verb"$ git branch" to verify that 
 the branch 'fix\_typo' is highlighted.
@@ -104,7 +112,7 @@ it as follows:
 \begin{verbatim}
 $ git add physics.cc
 \end{verbatim}
-If you do git status again, the file should have changed colour. 
+If you do \verb'$ git status' again, the file should have changed colour. 
 Then do
 \begin{verbatim}
 $ git commit -m "message"
@@ -140,13 +148,43 @@ $ git branch -d fix_typo
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 
+\subsection{Contributing a cookbook in \aspect}
+
+\begin{enumerate}
+\item Download/update/install \aspect 
+\item In the cookbooks folder, create a new folder: \verb'$ mkdir my_cool_setup'
+\item In this folder, place your .prm file, say my\_cool\_setup.prm
+\item Make sure your .prm file is clean, commented, and contains a header with a concise
+description of what the experiment is, and/or in which publication it originates.
+\item In the folder, create a new folder:  \verb'$ mkdir doc'
+\item In this folder create the file my\_cool\_setup.md file which contains the 
+text for the cookbook. Look at other cookbooks md files for examples of how 
+to include a figure, an equation, cite publications, etc ...
+\item Place in this same folder all figures pertaining 
+to the cookbook entry in the manual. 
+\item go to /doc/sphinx/user/cookbooks/ and add your cookbook to the list in 
+(for example) geophysical-setups.md
+\item if you with to cite publications, add them to /doc/sphinx/references.bib
+\item In order to generate the manual, go to /doc/sphinx and do \verb"$ make html"
+\item If there is no error, you should be able to open the file /doc/sphinx/\_build/html/index.html
+with firefox
+\item if the referencing of the figures does not work correctly, simply do 
+make clean and then make html again.
+\end{enumerate}
+
+astyle ?
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\subsection{Contributing to fieldstone}
+
 \begin{mdframed}[backgroundcolor=red!5]
 This appendix was contributed by E. van der Wiel.
 \end{mdframed}
