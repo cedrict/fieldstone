@@ -79,8 +79,8 @@ block2_hull[:]=block1_hull[:]
 
 block2_x+=Lx
 
-np.savetxt('block1.ascii',np.array([block1_x,block1_y,block1_hull]).T)
-np.savetxt('block2.ascii',np.array([block2_x,block2_y,block2_hull]).T)
+#np.savetxt('block1.ascii',np.array([block1_x,block1_y,block1_hull]).T)
+#np.savetxt('block2.ascii',np.array([block2_x,block2_y,block2_hull]).T)
 
 export_to_vtu('block1.vtu',block1_x,block1_y,block1_icon,block1_hull)
 export_to_vtu('block2.vtu',block2_x,block2_y,block2_icon,block2_hull)

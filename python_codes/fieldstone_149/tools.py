@@ -1,7 +1,11 @@
 import numpy as np
 
 ###############################################################################
-#inspired by stone 69 - also see GHOST code 
+# inspired by stone 69 - also see GHOST code 
+# this function merges two meshes that potentially have different numbers
+# of points and elements. It will be fine as long as the side they have in 
+# common counts the same number of points at the same location
+###############################################################################
 
 def merge_two_blocks(x1,y1,icon1,hull1,x2,y2,icon2,hull2):
 
@@ -59,7 +63,7 @@ def merge_two_blocks(x1,y1,icon1,hull1,x2,y2,icon2,hull2):
 
     together_nel=nel1+nel2
 
-    print('count(doubble)=',np.count_nonzero(doubble))
+    #print('count(doubble)=',np.count_nonzero(doubble))
     print('new: nnp=',together_nnp)
     print('new: nel=',together_nel)
 
@@ -160,3 +164,4 @@ def export_to_vtu(name,x,y,icon,hull):
     vtufile.write("</VTKFile>\n")
     vtufile.close()
 
+###############################################################################
