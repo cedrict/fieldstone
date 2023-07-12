@@ -1220,10 +1220,10 @@ we only keep the four non zero components:
 =
 \left(
 \begin{array}{c}
-\frac{\partial u_r}{\partial r} \\ 
+\frac{\partial \upnu_r}{\partial r} \\ 
 \frac{u_r}{r} \\ 
-\frac{\partial u_z}{\partial z} \\ 
-\frac{\partial u_z}{\partial r}+\frac{\partial u_r}{\partial z} 
+\frac{\partial \upnu_z}{\partial z} \\ 
+\frac{\partial \upnu_z}{\partial r}+\frac{\partial \upnu_r}{\partial z} 
 \end{array}
 \right)
 \]
@@ -1494,7 +1494,7 @@ N_{m_p}^p \left(
 \end{eqnarray}
 
 Note that it is common to actually start from $- \vec\nabla\cdot\vec v=0$ (see Eq.~(3) in \cite{mabl14})
-so as to arrive at $\G_e^T \cdot {\vec V}=\vec 0$
+so as to arrive at $\G_e^T \cdot {\vec V}=\vec 0$.
 Ultimately we obtain the following system for each element:
 \[
 \left(

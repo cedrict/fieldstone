@@ -15,12 +15,9 @@ and click on the 'fork' button on the upper right corner of the screen.
 \verb"$ git clone git@github.com:myusername/aspect.git". 
 This is now your main\footnote{previously 'master', although this term should not be used anymore} branch.
 
-\item On your machine, find your security key \footnote{
-Note that you can create a public key as follows: 
-{\tt https://help.github.com/articles/generating-ssh-keys/}}
- with \verb"$ less ~/.ssh/id_dsa.pub" and copy this into github.com 
-so you can push to your repository. See \url{https://help.github.com/en/articles/connecting-to-github-with-ssh} on how to configure github with ssh support (no more login/password to type -- if you have cloned the repository wish ssh, not html).
-Please also check the instructions at \url{https://help.github.com/en/articles/connecting-to-github-with-ssh}.  
+\item 
+Follow the instructions at \url{https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account}
+to add a new SSH key to your GitHub account.
  
 \item create a remote of your (online) repository\\
 \verb"$ git remote add origin git@github.com:myusername/aspect.git"
@@ -93,7 +90,7 @@ make sure that your terminal points at your main branch:
 Then, make sure you update your local version:
 \verb"$ git pull upstream main" 
 and also update your own repo online:
-\verb"$ git push"
+\verb"$ git push username main"
 
 \item
 Create a new branch with a self explanatory name:
@@ -106,6 +103,13 @@ the branch 'fix\_typo' is highlighted.
 \item
 Edit the file physics.cc, correct the typo, save and exit. 
 Do \verb"$ git status" and you should see the filename highlighted next to 'modified'. 
+
+\item before we go any further, we need to run the indenting script with astyle. 
+In the build directory run \verb'$ make indent'.
+Note that you need a specific version of astyle, see \url{https://github.com/geodynamics/aspect/wiki/Indenting-code-and-installing-the-correct-version-of-astyle} 
+
+\item add a changelog entry in doc/modules/changes. Look at the entries and find the one that resembles your contribution the most. Use it to 
+write your entry.
 
 \item If this is the only modification you wish to communicate, you then need to add and commit 
 it as follows:
@@ -126,25 +130,48 @@ $ git push myusername fix_typo
 
 \item You are nearly done. The last step takes place on github.com: when you log onto 
 your own github fieldstone page, you should see a large green rectangle "Compare and pull request".
-Click on this button.
+Click on this button, follow the instructions.
 
 \item a new page opens, entitled "Open a pull request" (PR). If necessary, add a detailed description of 
 the pull request (this makes sense when you contribute a piece of code, or a whole new section, etc ...).
-You can review the requested changes at the bottom. In the end, simply click "Create pull request".
+Later you will be able to review the requested changes at the bottom. In the end, simply click "Create pull request".
 
 \item Once you have done so, \aspect developers will then review it. 
 If they have no comment, the PR will be accepted and your modification will 
 then be incorporated in the main repo. If they have comments, you will be notified via github and a 
 back-and-forth discussion will ensue until the PR is accepted. 
 
-\item After the PR has been accepted, the branch is no longer needed. Switch back to your local master branch:
-\$ \verb"git checkout master ".
-Update your local master and online repo (see step \# 2) and then delete the no-longer-needed 
+\item if the reviewers have comments. Edit/change your file(s). 
+Then add these (\verb'git add ...'), and commit again (\verb'git commit -m "msg"')
+and push as before. 
+
+
+
+\item After the PR has been accepted, the branch is no longer needed. Switch back to your local main branch:
+\$ \verb"git checkout main ".
+Update your local main and online repo (see step \# 2) and then delete the no-longer-needed 
 branch as follows:
 \begin{verbatim}
 $ git branch -d fix_typo
 \end{verbatim}
 \end{enumerate}
+
+-----------------------------------
+
+If there is a pb with your PR and u need to rebase. For example if your 2 PRs modify the same line (say for example reference.bib - 
+in that case better spread your changes to different locations in the reference.bib)
+
+\begin{itemize}
+\item \verb'git checkout main'
+\item \verb'git branch', make sure you are indeed back on main
+\item \verb'git pull upstream main'. depending how much happened in the last hours/days it will display a bunch of files/updates
+\item \verb'git checkout my_branch'
+\item \verb'git rebase main'. Follow instructions, resolve conflicts in indicated files. finish with \verb'git rebase --continue'. 
+\item \verb'git push -f cedrict my_branch'
+\end{itemize}
+
+git config --global core.editor "vim"
+
 
 
 
