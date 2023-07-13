@@ -162,11 +162,15 @@ If there is a pb with your PR and u need to rebase. For example if your 2 PRs mo
 in that case better spread your changes to different locations in the reference.bib)
 
 \begin{itemize}
+\item carry out modifications as required by reviewers
+\item \verb'git add' files, and \verb' git commit'
 \item \verb'git checkout main'
 \item \verb'git branch', make sure you are indeed back on main
 \item \verb'git pull upstream main'. depending how much happened in the last hours/days it will display a bunch of files/updates
 \item \verb'git checkout my_branch'
-\item \verb'git rebase main'. Follow instructions, resolve conflicts in indicated files. finish with \verb'git rebase --continue'. 
+\item \verb'git rebase main'. Follow instructions, resolve conflicts in indicated files. 
+\verb'git add problematic_file'. 
+Finish with \verb'git rebase --continue'. 
 \item \verb'git push -f cedrict my_branch'
 \end{itemize}
 
@@ -192,17 +196,16 @@ text for the cookbook. Look at other cookbooks md files for examples of how
 to include a figure, an equation, cite publications, etc ...
 \item Place in this same folder all figures pertaining 
 to the cookbook entry in the manual. 
-\item go to /doc/sphinx/user/cookbooks/ and add your cookbook to the list in 
-(for example) geophysical-setups.md
-\item if you with to cite publications, add them to /doc/sphinx/references.bib
+\item go to \verb'/doc/sphinx/user/cookbooks/' and add your cookbook to the list in 
+(for example) \verb'geophysical-setups.md'
+\item if you with to cite publications, add them to \verb'/doc/sphinx/references.bib'
 \item In order to generate the manual, go to /doc/sphinx and do \verb"$ make html"
-\item If there is no error, you should be able to open the file /doc/sphinx/\_build/html/index.html
+\item If there is no error, you should be able to open the file \verb'/doc/sphinx/\_build/html/index.html'
 with firefox
 \item if the referencing of the figures does not work correctly, simply do 
-make clean and then make html again.
+\verb'make clean' and then make html again.
+\item before you make a pull request, make sure you run \verb'make indent'
 \end{enumerate}
-
-astyle ?
 
 
 
