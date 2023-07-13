@@ -9,32 +9,34 @@ import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 
 ###############################################################################
+# Q1 basis functions in 2D
+###############################################################################
 
 def NNT(rq,sq):
     N_0=0.25*(1.-rq)*(1.-sq)
     N_1=0.25*(1.+rq)*(1.-sq)
     N_2=0.25*(1.+rq)*(1.+sq)
     N_3=0.25*(1.-rq)*(1.+sq)
-    return N_0,N_1,N_2,N_3
+    return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
 
 def dNNTdr(rq,sq):
     dNdr_0=-0.25*(1.-sq) 
     dNdr_1=+0.25*(1.-sq) 
     dNdr_2=+0.25*(1.+sq) 
     dNdr_3=-0.25*(1.+sq) 
-    return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+    return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3],dtype=np.float64)
 
 def dNNTds(rq,sq):
     dNds_0=-0.25*(1.-rq)
     dNds_1=-0.25*(1.+rq)
     dNds_2=+0.25*(1.+rq)
     dNds_3=+0.25*(1.-rq)
-    return dNds_0,dNds_1,dNds_2,dNds_3
-
+    return np.array([dNds_0,dNds_1,dNds_2,dNds_3],dtype=np.float64)
 
 ###############################################################################
 # this function receives the coordinates of the corners of a block
-# as well as its desired resolution and returns the position of nodes
+# as well as its desired resolution and returns the position of nodes.
+# nodes on the boundary are flagged.
 ###############################################################################
 
 def laypts4(x1,y1,x2,y2,x3,y3,x4,y4,x,y,hull,level):
@@ -57,14 +59,31 @@ def laypts4(x1,y1,x2,y2,x3,y3,x4,y4,x,y,hull,level):
     #end for
 
 ###############################################################################
+# 12---------------13
+# | \               |
+# |  10------------11 
+# |   | \           | 
+# |   |  \          | 
+# |   |   \         | 
+# |   |    \        | 
+# 5---6     8-------9 
+# |   | \-  / \     | 
+# |   |   7-   \    | 
+# |   |     \   \   | 
+# 0---1-----2----3--4
+###############################################################################
 print("-----------------------------")
-print("-------- stone 149(2)--------")
+print("--------- stone 149 ---------")
 print("-----------------------------")
 
-NV=14
+m=4   # number of nodes per element
+nel=8 # number of elements
+NV=14 # number of nodes
 
-x = np.empty(NV,dtype=np.float64) 
-y = np.empty(NV,dtype=np.float64) 
+x=np.empty(NV,dtype=np.float64) 
+y=np.empty(NV,dtype=np.float64) 
+icon =np.zeros((m,nel),dtype=np.int32)
+hull=np.zeros(14,dtype=bool)
 
 x[ 0]=0   ; y[ 0]=0
 x[ 1]=50  ; y[ 1]=0
@@ -83,13 +102,6 @@ x[13]=660 ; y[13]=600
 x[ 7]=(x[1]+x[3]+x[10])/3    
 y[ 7]=(y[1]+y[3]+y[10])/3    
 
-#np.savetxt('points.ascii',np.array([x,y]).T)
-
-m=4
-nel=8
-
-icon =np.zeros((m, nel),dtype=np.int32)
-
 icon[0:m,0]=[0,1,6,5]
 icon[0:m,1]=[1,2,7,6]
 icon[0:m,2]=[2,3,8,7]
@@ -99,14 +111,12 @@ icon[0:m,5]=[6,7,8,10]
 icon[0:m,6]=[8,9,11,10]
 icon[0:m,7]=[10,11,13,12]
 
-hull=np.zeros(14,dtype=bool)
-
 export_to_vtu('initial.vtu',x,y,icon,hull)
 
 ###############################################################################
 # assigning level (resolution) of each block
 ###############################################################################
-level=64
+level=32
 
 nelx=level
 nely=nelx
@@ -115,8 +125,6 @@ nel=nelx*nely
 nnx=level+1
 nny=nnx
 NV=nnx*nny
-
-m=4
 
 ###############################################################################
 # build generic connectivity array for a block
@@ -127,10 +135,10 @@ block_icon =np.zeros((m, nel),dtype=np.int32)
 counter = 0
 for j in range(0,nely):
     for i in range(0,nelx):
-        block_icon[0,counter] = i + j * (nelx + 1)
-        block_icon[1,counter] = i + 1 + j * (nelx + 1)
-        block_icon[2,counter] = i + 1 + (j + 1) * (nelx + 1)
-        block_icon[3,counter] = i + (j + 1) * (nelx + 1)
+        block_icon[0,counter]=i+j*(nelx+1)
+        block_icon[1,counter]=i+1+j*(nelx+1)
+        block_icon[2,counter]=i+1+(j+1)*(nelx+1)
+        block_icon[3,counter]=i+(j+1)*(nelx+1)
         counter += 1
 
 print("setup: connectivity: %.3f s" % (time.time() - start))
@@ -266,11 +274,10 @@ print(" meshing completed           ")
 print("-----------------------------")
 
 #################################################################
+mT=4
 
 NT=np.size(x18)
 m,nel=np.shape(icon18)
-
-mT=4
 
 xT=np.empty(NT,dtype=np.float64)  # x coordinates
 yT=np.empty(NT,dtype=np.float64)  # y coordinates
@@ -282,31 +289,28 @@ iconT[:,:]=icon18[:,:]
 
 NfemT=NT
 
-print('NT=',NT)
 print('nel=',nel)
+print('NT=',NT)
+print('NfemT=',NfemT)
 
 #################################################################
 
-hcond=3
-hcapa=1250
-rho=3300
-cm=0.01
+Kelvin=273.15
+ndim=2
+sqrt3=np.sqrt(3.)
+cm=0.01 
 year=365.25*24*3600
+
+Lx=660e3
+Ly=600e3
+hcond=3    # heat conductivity
+hcapa=1250 # heat capacity
+rho=3300   # density
 l1=1000.e3
 l2=50.e3
 l3=0.e3
 vel=5*cm/year
 angle=45./180.*np.pi  
-Lx=660e3
-Ly=600e3
-Kelvin=273.15
-ndim=2
-sqrt3=np.sqrt(3.)
-
-#################################################################
-
-nq_per_dim=2
-nqel=nq_per_dim**ndim
 
 #################################################################
 # assign velocity to nodes, corner flow
@@ -357,19 +361,19 @@ for iter in range(0,1):
     ######################################################################
     start = timing.time()
 
-    A_mat = lil_matrix((NfemT,NfemT),dtype=np.float64)# FE matrix
-    rhs   = np.zeros(NfemT,dtype=np.float64)          # FE rhs 
-    B_mat = np.zeros((ndim,mT),dtype=np.float64)# gradient matrix B 
-    N_mat = np.zeros((mT,1),dtype=np.float64)         # shape functions
-    dNNNTdr = np.zeros(mT,dtype=np.float64)         # shape functions
-    dNNNTds = np.zeros(mT,dtype=np.float64)         # shape functions
-    dNNNTdx = np.zeros(mT,dtype=np.float64)         # shape functions
-    dNNNTdy = np.zeros(mT,dtype=np.float64)         # shape functions
+    A_mat = lil_matrix((NfemT,NfemT),dtype=np.float64) # FE matrix
+    rhs   = np.zeros(NfemT,dtype=np.float64)           # FE rhs 
+    B_mat = np.zeros((ndim,mT),dtype=np.float64)       # gradient matrix B 
+    N_mat = np.zeros((mT,1),dtype=np.float64)          # shape functions vector
+    dNNNTdr = np.zeros(mT,dtype=np.float64)            # shape functions derivatives
+    dNNNTds = np.zeros(mT,dtype=np.float64)            # shape functions derivatives
+    dNNNTdx = np.zeros(mT,dtype=np.float64)            # shape functions derivatives
+    dNNNTdy = np.zeros(mT,dtype=np.float64)            # shape functions derivatives
 
     for iel in range (0,nel):
 
-        b_el=np.zeros(mT,dtype=np.float64)
-        a_el=np.zeros((mT,mT),dtype=np.float64)
+        b_el=np.zeros(mT,dtype=np.float64)      # elemental rhs
+        a_el=np.zeros((mT,mT),dtype=np.float64) # elemental matrix
         Ka=np.zeros((mT,mT),dtype=np.float64)   # elemental advection matrix 
         Kd=np.zeros((mT,mT),dtype=np.float64)   # elemental diffusion matrix 
         velq=np.zeros((1,ndim),dtype=np.float64)
@@ -394,7 +398,6 @@ for iter in range(0,1):
                     jcb[0,1]+=dNNNTdr[k]*yT[iconT[k,iel]]
                     jcb[1,0]+=dNNNTds[k]*xT[iconT[k,iel]]
                     jcb[1,1]+=dNNNTds[k]*yT[iconT[k,iel]]
-
                 jcob=np.linalg.det(jcb)
                 jcbi=np.linalg.inv(jcb)
 
@@ -471,6 +474,19 @@ for iter in range(0,1):
     print("solve T: %.3f s" % (timing.time() - start))
 
     ######################################################################
+    diag=np.zeros(NT,dtype=np.float64) # size too large
+    dist=np.zeros(NT,dtype=np.float64)
+
+    counter=0
+    for i in range(0,NT):
+        if abs(yT[i]-Ly+xT[i])/Lx<1e-4:
+           diag[counter]=T[i]
+           dist[counter]=np.sqrt( (xT[i]-0)**2+(yT[i]-Ly)**2  )
+           counter+=1
+
+    np.savetxt('diagT.ascii',np.array([dist[0:counter],diag[0:counter]]).T)
+
+    ######################################################################
 
     vtufile=open('solution.vtu',"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -524,5 +540,3 @@ for iter in range(0,1):
 print("-----------------------------")
 
 ###############################################################################
-
-
