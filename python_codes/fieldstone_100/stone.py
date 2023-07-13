@@ -97,7 +97,7 @@ method_jit=False
 
 use_tetrahedra=True
 
-simple_shell=True
+simple_shell=False
 shell_thickness=300e3
 
 npts=nlon*nlat
@@ -207,6 +207,31 @@ print('   -> yC m/M: %.2f %.2f m' %(np.min(yC),np.max(yC)))
 print('   -> zC m/M: %.2f %.2f m' %(np.min(zC),np.max(zC)))
 
 print("time cell volume: %.3f s" % (time.time() - start))
+
+#########################################################################################
+# exporting data to ASPECT format
+# ASPECT requires longitude[-pi:pi] - colatitude[0:pi] - topo
+#########################################################################################
+
+molaspect=open("MOLA_aspect.ascii","w")
+molaspect.write('# Test data for ascii data initial topography in 3d. \n')
+molaspect.write('# Only next line is parsed in format: [nx] [ny] [nz] because of keyword "POINTS:" \n')
+molaspect.write('# POINTS: 360 180 \n')
+molaspect.write('# Columns: phi theta topography \n')
+
+for ilat in range(0,nlat):
+    for ilon in range(0,nlon):
+        lon=lonmin+ilon*dlon
+        lat=latmin+ilat*dlat
+        if lon-360>-180:
+           molaspect.write("%f %f %f\n" % ((lon-360)/180*np.pi,(90-lat)/180*np.pi,topography[ilat,ilon]))
+    for ilon in range(0,nlon):
+        lon=lonmin+ilon*dlon
+        lat=latmin+ilat*dlat
+        if lon<180:
+           molaspect.write("%f %f %f\n" % ((lon)/180*np.pi,(90-lat)/180*np.pi,topography[ilat,ilon]))
+
+molaspect.close
 
 #########################################################################################
 # store coordinates of cell vertices
