@@ -84,7 +84,7 @@ tol=1e-6
 # case 1: rectangle (fig. 6)
 # case 2: elliptical inclusion (fig. 8)
 
-case=1
+case=2
 
 v_bc=0.5
 
@@ -314,7 +314,7 @@ print("compute element center coords: %.3f s" % (timing.time() - start))
 #------------------------------------------------------------------------------
 start = timing.time()
 
-inclusion=np.zeros(nel,dtype=np.bool)
+inclusion=np.zeros(nel,dtype=bool)
 
 for iel in range(0,nel):
     inclusion[iel]=is_in_inclusion(case,xc[iel],yc[iel],a_incl,b_incl,phi_incl)
@@ -357,7 +357,7 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 #------------------------------------------------------------------------------
 start = timing.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)
+bc_fix=np.zeros(NfemV,dtype=bool)
 bc_val=np.zeros(NfemV,dtype=np.float64)
 
 if bc_type=='pureshear':
