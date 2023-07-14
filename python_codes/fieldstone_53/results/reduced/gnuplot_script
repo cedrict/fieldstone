@@ -1,4 +1,5 @@
-set term pdf enhanced font "Times,10pt"
+set term pdf enhanced font "Times,12pt"
+set grid
 set log x
 set xlabel '{/Symbol h}_1/{/Symbol h}_2'
 set ylabel '|v_b| {/Symbol h}_1/({/Symbol r}_2-{/Symbol r}_1)'
