@@ -143,7 +143,9 @@ back-and-forth discussion will ensue until the PR is accepted.
 
 \item if the reviewers have comments. Edit/change your file(s). 
 Then add these (\verb'git add ...'), and commit again (\verb'git commit -m "msg"')
-and push as before. 
+and push as before. \\
+OR: better: \\
+\verb'git commit --amend -a' so that you don't have to squash/fixup afterwards
 
 
 
@@ -174,7 +176,41 @@ Finish with \verb'git rebase --continue'.
 \item \verb'git push -f cedrict my_branch'
 \end{itemize}
 
+To configure the editor used by git (do it once):
+\begin{verbatim}
 git config --global core.editor "vim"
+\end{verbatim}
+
+
+git stash 
+git stash pop
+
+
+git log
+
+
+\newpage
+how to squash/fixup:
+
+git rebase -i main $->$  
+
+A similar window as this will open:
+
+\begin{center}
+\includegraphics[width=10cm]{images/github/aaa}
+\end{center}
+
+Since we wish to squash (or rather fixup!) we do:
+
+\begin{center}
+\includegraphics[width=10cm]{images/github/bbb}
+\end{center}
+
+save and exit
+
+do git diff
+
+\newpage
 
 
 
@@ -200,6 +236,14 @@ to the cookbook entry in the manual.
 (for example) \verb'geophysical-setups.md'
 \item if you with to cite publications, add them to \verb'/doc/sphinx/references.bib'
 \item In order to generate the manual, go to /doc/sphinx and do \verb"$ make html"
+
+\item if you wish to re-generate the part of the manual that comes from the documentation
+of .cc files, then got to \verb'\build' and \verb'make' the code, then do in \verb'/doc/': 
+\begin{verbatim}
+./update_parameters.sh /home/absolute/path/aspect/build/aspect
+\end{verbatim}
+and then do \verb'make html'. If you re-modify the .cc file, you need to redo all 3 steps.
+
 \item If there is no error, you should be able to open the file \verb'/doc/sphinx/\_build/html/index.html'
 with firefox
 \item if the referencing of the figures does not work correctly, simply do 
