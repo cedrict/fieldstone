@@ -1,6 +1,17 @@
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/triangle}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/temperature}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_51/text.tex}} \end{flushright}
+
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_51/keywords.ascii}
 
 \begin{center}
+\inpython
 Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_51}
 \end{center}
 
@@ -32,18 +43,19 @@ the left wall is set to a constant temperature
 of zero, and the hypotenuse wall is perfectly insulated so that a Neumann 
 boundary condition is appropriate.
 
-The steady state velocity pressure and temperature fields as shown in 
-\cite{jolm17} are as follows:
+The steady state velocity pressure and temperature fields are as follows:
 
 \begin{center}
 a)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/jolm17_vel}
 b)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/jolm17_p}
 c)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/jolm17_T}\\
-{\small Steady state fields: a) velocity, b) pressure, c) temperature.}
+{\captionfont Taken from \cite{jolm17}. Steady state fields: a) velocity, b) pressure, c) temperature.}
 \end{center}
 
 Although it is not mentioned in the original article it appears that the 
-pressure field has been normalised so that $\langle p \rangle = \int_\Omega p dV=0$.
+pressure field has been normalised so that $\langle p \rangle = \int_\Omega p dV=0$
+(because of the nature of the velocity boundary conditions the pressure 
+solution has a nullspace).
 
 As opposed to the mesh presented in \cite{jolm17} I build a regular mesh.
 An example of such a mesh is shown hereunder (a) for $n=5$ (the number of nodes
@@ -65,10 +77,10 @@ Since I am solving for the steady-state solution I set the mass matrix in the
 heat transport part of the code to zero. However, since I am solving the stokes equations
 and the heat transport equation alternatively until convergence is reached, it is well 
 known that this approach does not converge fast (if at all). 
-I then implement a simple relaxation scheme \cite{vyrc13}. After I have solved for velocity (using the 
+I then implement a simple relaxation scheme (e.g. \textcite{vyrc13}). After I have solved for velocity (using the 
 most recent temperature field in the rhs), I do:
 \[
-\vec{v}^k = \gamma \vec{v}^k + (1-\gamma) \vec{v}^{k-1}
+\vec{\upnu}^k = \gamma \vec{\upnu}^k + (1-\gamma) \vec{\upnu}^{k-1}
 \]
 and after having solved for temperature having used the most recent velocity field, 
 I do the same for temperature:
@@ -88,7 +100,7 @@ Nu
 =\int_{y=0} \vec{\nabla}T \cdot \vec{n} dS  
 =-\int_{x=0}^{x=1} \frac{\partial T}{\partial y} dx 
 \]
-It is reported to be 24.535 in \cite{jolm17}.
+It is reported to be 24.535 in \textcite{jolm17} (2017).
 \item the temperature on the hypotenuse.
 \item the root mean square velocity
 \item the mean temperature $\langle T \rangle = |\Omega|^{-1} \int_\Omega T \; dV$
@@ -105,10 +117,10 @@ delays greatly the convergence and too large a value also seems detrimental.
 In light of this, I have chosen $\gamma=0.2$ for all what follows.
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_51/images/vrms_gammas.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_51/images/Nu_gammas.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_51/images/avrgT_gammas.pdf}\\
-{\small Left to right: Root mean square velocity, Nusselt number and average temperature as a function 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_51/images/vrms_gammas.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_51/images/Nu_gammas.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_51/images/avrgT_gammas.pdf}\\
+{\captionfont Left to right: Root mean square velocity, Nusselt number and average temperature as a function 
 of the iteration counter.}
 \end{center}
 
@@ -144,8 +156,8 @@ resolution $(n)$ & $v_{rms}$ & Nu & $\langle T \rangle$ \\
 The following two plots show the temperature along the hypotenuse (as a function of $x$
 for simplicity) at steady-state and the heat flux measured at the bottom. 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_51/images/temp_hyp_res.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_51/images/qy_bot_res.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_51/images/temp_hyp_res.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_51/images/qy_bot_res.pdf}
 \end{center}
 
 Finally, here are the fields for $n=100$ at steady state:
@@ -160,7 +172,7 @@ f)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/relax0p20_100/
 g)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/relax0p20_100/exx}
 h)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/relax0p20_100/exy}
 i)\includegraphics[width=4.5cm]{python_codes/fieldstone_51/images/relax0p20_100/divv}\\
-{\small Steady state fields: a) grid (n=100), b,c) velocity, d) pressure, e) temperature,
+{\captionfont Steady state fields: a) grid (n=100), b,c) velocity, d) pressure, e) temperature,
 f) heat flux, g) $\dot{\varepsilon}_{xx}$, h) $\dot{\varepsilon}_{xy}$, i) velocity 
 divergence measured in the middle of the element.}
 \end{center}
