@@ -1,3 +1,10 @@
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_52/text.tex}} \end{flushright}
+
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_52/keywords.ascii}
 
 \begin{center}
@@ -74,7 +81,7 @@ two.}
 Looking at the ratio between both, we see that ultimately 
 at high resolution, a mesh composed of serendipity elements 
 will count 25\% less nodes than a mesh with Taylor-Hood elements.
-Since there is not free lunch, what is the price paid in terms of accuracy when using 
+Since there is no free lunch, what is the price paid in terms of accuracy when using 
 the cheaper serendipity? 
 
 Although the vtk format does not support the $Q_2$ element in 2D or 3D, it surprisingly does
@@ -88,16 +95,15 @@ on the edges between corner nodes are relocated to the middle of the edge so as 
 straight-side quadrilaterals.
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_52/images/vel}
-\includegraphics[width=7cm]{python_codes/fieldstone_52/images/press}
+\includegraphics[width=8cm]{python_codes/fieldstone_52/images/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_52/images/press}
 \end{center}
-
 
 We then compute the velocity and pressure error as a function of resolution $h$:
 
 \begin{center}
-\includegraphics[width=7.8cm]{python_codes/fieldstone_52/images/errors_reg.pdf}
-\includegraphics[width=7.8cm]{python_codes/fieldstone_52/images/errors_rand.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_52/images/errors_reg.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_52/images/errors_rand.pdf}\\
 {\captionfont 'TH' is Taylor-Hood, 'S1' is serendipity $Q_2^{(8)}\times Q_1$, 'S2' is $QH8C1\times Q_1$ element.}
 \end{center}
 
@@ -140,5 +146,5 @@ quadratically with the mesh size, it does now do so in a much more erratic way.
 Also the Taylor-Hood element outperforms the serendipity elements by about an 
 order of magnitude. 
 
-
+Question: isoparametric mapping vs Q1 mapping?
 
