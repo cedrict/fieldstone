@@ -1,18 +1,24 @@
 set term pdf enhanced font "Times,12pt"
 set grid
 set key outside
-set xlabel 'distance to top left corner'
+set xlabel 'distance to top left corner (km)'
 set ylabel 'T (C)'
 
 set output 'diagT.pdf'
 plot[][0:]\
-'diagT_lvl16.ascii'  u 1:($2-273.15) ps .23 t 'lvl=16',\
-'diagT_lvl32.ascii'  u 1:($2-273.15) ps .23 t 'lvl=32',\
-'diagT_lvl48.ascii'  u 1:($2-273.15) ps .23 t 'lvl=48',\
-'diagT_lvl64.ascii'  u 1:($2-273.15) ps .23 t 'lvl=64',\
-'diagT_lvl80.ascii'  u 1:($2-273.15) ps .123 t 'lvl=80',\
-'diagT_lvl96.ascii'  u 1:($2-273.15) ps .123 t 'lvl=96',\
-'diagT_lvl128.ascii' u 1:($2-273.15) ps .123 t 'lvl=128',\
-'diagT_lvl144.ascii' u 1:($2-273.15) ps .123 t 'lvl=144',\
-'diagT_lvl160.ascii' u 1:($2-273.15) ps .123 t 'lvl=160',\
-'diagT_lvl176.ascii' u 1:($2-273.15) ps .123 t 'lvl=176',\
+'diagT_lvl16.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=16',\
+'diagT_lvl32.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=32',\
+'diagT_lvl48.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=48',\
+'diagT_lvl64.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=64',\
+'diagT_lvl80.ascii'  u ($1/1e3):($2-273.15) ps .123 t 'lvl=80',\
+'diagT_lvl96.ascii'  u ($1/1e3):($2-273.15) ps .123 t 'lvl=96',\
+'diagT_lvl128.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=128',\
+'diagT_lvl144.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=144',\
+'diagT_lvl160.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=160',\
+'diagT_lvl176.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=176',\
+'diagT_lvl192.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=192',\
+
+set output 'diagT2.pdf'
+plot[][0:]\
+'diagT_lvl176.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=176',\
+'diagT_lvl192.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=192',\
