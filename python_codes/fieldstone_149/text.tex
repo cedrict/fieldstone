@@ -43,8 +43,8 @@ in {\pythonfile stone\_demo.py}. Note that the nodes of a block that are on the 
 block and merged.
 
 \begin{center}
-a)\includegraphics[width=8cm]{python_codes/fieldstone_149/results/one}
-b)\includegraphics[width=8cm]{python_codes/fieldstone_149/results/two}\\
+a)\includegraphics[width=8cm]{python_codes/fieldstone_149/results/meshing/one}
+b)\includegraphics[width=8cm]{python_codes/fieldstone_149/results/meshing/two}\\
 {\captionfont a) two individual meshes. b) final assembled mesh showing the hull flag. Note that the current algorithm does 
 not unflag nodes that are no more on the boundary, it simply merges the two hull fields.}
 \end{center}
@@ -71,33 +71,103 @@ This proto-mesh contains 8 elements and 14 points.
 \end{verbatim}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_149/results/mesh}
+\includegraphics[width=8cm]{python_codes/fieldstone_149/results/meshing/mesh}
 \end{center}
 
 We then proceed by creating 8 blocks of resolution $10\times 10$. 
 We then map them and finally assemble them one by one to obtain:
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_149/results/vkkmesh}
+\includegraphics[width=8cm]{python_codes/fieldstone_149/results/meshing/vkkmesh}
 \end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{About the code}
+
+This is a rather peculiar approach that we take here. We wish to solve the 
+temperature equation on the full domain $L_x \times L_y$ while 
+we only wish to solve the Stokes equations on the domain composed of 
+blocks 3 and 6. 
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_149/results/meshing/meshes}
+\end{center}
+
+
+For simplicity (and because I have not yet implemented a version of the 
+merging algorithm for second order elements), I will use 
+the $Q_1^+\times Q_1$ pair for Stokes and $Q_1$ elements for the temperature.
+
+
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Case 1a}
+
+The Stokes equations are not solved. Instead the velocity field
+is prescribed analytically everywhere in the domain, using the corner flow solution 
+in the mantle wedge. 
 
 The code uses analytical velocity from corner flow theory (see \stone~\ref{f68})
-so the Stokes equations are (for now) not solved. For simplicity $Q_1$
-elements are used for the  temperature.
+so the Stokes equations are (for now) not solved. 
+
+%\begin{center}
+%\includegraphics[width=8.5cm]{python_codes/fieldstone_149/results/case1a/temp}
+%\includegraphics[width=8.5cm]{python_codes/fieldstone_149/results/case1a/vel}
+%\end{center}
 
 \begin{center}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_149/results/temp}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_149/results/vel}
-\end{center}
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_149/results/diagT.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_149/results/diagT2.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_149/results/case1a/diagT.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_149/results/case1a/diagT2.pdf}\\
 {\captionfont We see that results seem to become resolution independent
 when level$>160$.} 
 \end{center}
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Case 1b - dynamical flow in isoviscous wedge I}
 
+This case is the same as 1a, except that the solution
+for the wedge flow is determined by solving the Stokes equations while the Batchelor solution is
+imposed on the inflow and outflow boundaries. This case tests the ability of the numerical method
+to accurately reproduce the corner flow solution.
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Case 1c - dynamical flow in isoviscous wedge II} 
+
+Same as case 1b, but with stress-free boundary conditions on the mantle wedge.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_149/results/case1c/diagT.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_149/results/case1c/diagP.pdf}\\
+{\captionfont Measurements on the diagonal.} 
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_149/results/case1c/rightT.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_149/results/case1c/rightP.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_149/results/case1c/rightu.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_149/results/case1c/rightv.pdf}\\
+{\captionfont Measurements on the right side of the domain.}
+\end{center}
+
+There seems to be a pressure instability/mode towards the bottom?!
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -110,6 +180,8 @@ when level$>160$.}
 \item use f131 P1 to P2 tool to make Q1 to Q2 ?
 \item redo figures with appropriate colors
 \item redo (some) benchmark measurements?
+\item redo quadrature loops for T to match quad of stokes
+\item improve mapping algo? 
 \end{itemize}
 \end{minipage}}
 \end{center}
