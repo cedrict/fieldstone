@@ -94,7 +94,7 @@ Ly=1.
 if int(len(sys.argv) == 2):
    nelx = int(sys.argv[1])
 else:
-   nelx = 16
+   nelx = 48
 
 nely=nelx
 
@@ -108,9 +108,6 @@ mV=9     # number of velocity nodes making up an element
 mP=4     # number of pressure nodes making up an element
 rVnodes=[-1,0,+1,-1,0,+1,-1,0,+1]
 sVnodes=[-1,-1,-1,0,0,0,+1,+1,+1]
-
-ndofV=2
-ndofP=1
 
 NfemV=NV*ndofV       # number of velocity dofs
 NfemP=NP*ndofP       # number of pressure dofs
@@ -341,11 +338,8 @@ for iel in range(0,nel):
 
     for iq in range(0,nqel):
 
-        xq=0.0
-        yq=0.0
-        for k in range(0,mV):
-            xq+=NNNV[iq,k]*xV[iconV[k,iel]]
-            yq+=NNNV[iq,k]*yV[iconV[k,iel]]
+        xq=np.dot(NNNV[iq,:],xV[iconV[:,iel]])
+        yq=np.dot(NNNV[iq,:],yV[iconV[:,iel]])
 
         for i in range(0,mV):
             b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[iq,i],0.           ],
@@ -446,9 +440,7 @@ start = timing.time()
 avrgP=0
 for iel in range(0,nel):
     for iq in range(0,nqel):
-        pq=0.
-        for k in range(0,mP):
-            pq+=NNNP[iq,k]*p[iconP[k,iel]]
+        pq=np.dot(NNNP[iq,:],p[iconP[:,iel]])
         avrgP+=pq*jcob*weightq[iq]
     # end for iq
 #end iel
@@ -469,16 +461,15 @@ c=np.zeros(NV,dtype=np.float64)
 
 for iel in range(0,nel):
     for i in range(0,mV):
-        #NNNP[0:mP]=NNP(rVnodes[i],sVnodes[i])
-        #q[iconV[i,iel]]+=np.dot(p[iconP[0:mP,iel]],NNNP[0:mP])
         q[iconV[i,iel]]+=np.dot(p[iconP[0:mP,iel]],NNP(rVnodes[i],sVnodes[i]))
         c[iconV[i,iel]]+=1.
-
+    #end for
+#end for
 q=q/c
 
 #np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
 
-print("project p onto Vnodes: %.3f s" % (timing.time() - start))
+print("project p onto Vnodes: %.5f s" % (timing.time() - start))
 
 ###############################################################################
 # compute error fields for plotting
@@ -516,27 +507,17 @@ errq=0.
 for iel in range (0,nel):
     for iq in range(0,nqel):
 
-        xq=0.
-        yq=0.
-        uq=0.
-        vq=0.
-        qq=0.
-        for k in range(0,mV):
-            xq+=NNNV[iq,k]*xV[iconV[k,iel]]
-            yq+=NNNV[iq,k]*yV[iconV[k,iel]]
-            uq+=NNNV[iq,k]*u[iconV[k,iel]]
-            vq+=NNNV[iq,k]*v[iconV[k,iel]]
-            qq+=NNNV[iq,k]*q[iconV[k,iel]]
+        xq=np.dot(NNNV[iq,:],xV[iconV[:,iel]])
+        yq=np.dot(NNNV[iq,:],yV[iconV[:,iel]])
+        uq=np.dot(NNNV[iq,:],u[iconV[:,iel]])
+        vq=np.dot(NNNV[iq,:],v[iconV[:,iel]])
+        qq=np.dot(NNNV[iq,:],q[iconV[:,iel]])
         errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq[iq]*jcob
         errq+=(qq-pressure(xq,yq))**2*weightq[iq]*jcob
 
-        xq=0.
-        yq=0.
-        pq=0.
-        for k in range(0,mP):
-            xq+=NNNP[iq,k]*xP[iconP[k,iel]]
-            yq+=NNNP[iq,k]*yP[iconP[k,iel]]
-            pq+=NNNP[iq,k]*p[iconP[k,iel]]
+        xq=np.dot(NNNP[iq,:],xP[iconP[:,iel]])
+        yq=np.dot(NNNP[iq,:],yP[iconP[:,iel]])
+        pq=np.dot(NNNP[iq,:],p[iconP[:,iel]])
         errp+=(pq-pressure(xq,yq))**2*weightq[iq]*jcob
 
     # end for iq
@@ -546,9 +527,9 @@ errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 errq=np.sqrt(errq)
 
-print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errq= %.8e" %(nel,errv,errp,errq))
+print("     -> nel= %6d ; errv= %.9e ; errp= %.9e ; errq= %.9e" %(nel,errv,errp,errq))
 
-print("compute errors: %.3f s - %d elts" % (timing.time() - start,nel))
+print("compute errors: %.5f s - %d elts" % (timing.time() - start,nel))
 
 ###############################################################################
 # plot of solution

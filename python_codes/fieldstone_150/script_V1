@@ -1,0 +1,35 @@
+#! /bin/bash
+
+rm timings_solve_V1
+rm timings_build_V1
+rm timings_errors_V1
+rm timings_normalise_V1
+rm errors_V1
+
+for n in {8..48} ; do
+    for s in {1..5} ; do 
+        echo nelx=nely= $n
+        python3 stone_V1.py  $n > opla
+        grep solve opla >> timings_solve_V1
+        grep FE opla >> timings_build_V1
+        grep errors opla >> timings_errors_V1
+        grep normalise opla >> timings_normalise_V1
+        grep errv opla >> errors_V1
+    done
+done
+
+for n in 56 64 72 80 96 112 128 ; do
+    for s in {1..3} ; do 
+        echo nelx=nely= $n
+        python3 stone_V1.py  $n > opla
+        grep solve opla >> timings_solve_V1
+        grep FE opla >> timings_build_V1
+        grep errors opla >> timings_errors_V1
+        grep normalise opla >> timings_normalise_V1
+        grep errv opla >> errors_V1
+    done
+done
+
+
+
+

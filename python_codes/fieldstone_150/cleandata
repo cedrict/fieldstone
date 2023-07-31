@@ -3,3 +3,5 @@ rm *.ascii
 rm timings_*
 rm results_*
 rm errors_*
+rm opla
+

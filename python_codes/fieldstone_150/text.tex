@@ -133,8 +133,6 @@ compute errors    ($128\times 128$)& 12.2-12.9 s& 7.6-8 s    \\
 We see that this change has not really lead to a substantial improvement in 
 computational time, especially for the build time (only 10\% improvement)... 
 
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Dealing with the basis functions}
 
@@ -255,9 +253,278 @@ element given by $\eta_e(x,y)=a+bx+cy$ (think symbolic calculation ?).
 This is carried out in {\pythonfile stone\_V2.py}.
 
 
+\begin{center}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_150/results/times_V2}\\
+{\captionfont Timings of 4 parts of the code as a function of the number of elements.
+The dotted lines correspond to the timings of version V0.}
+\end{center}
+
+Here two, we see that we have improved the timings of the normalisation and 
+error calculations but not of the matrix building. 
+One possible benefit from this is that the code is getting more compact.
+Note that of course we can verify that the measured errors themselves have not changed.
+ 
+Side note: in the calculation of errors (and elsewhere), we had so far these explicit loops:
+
+\begin{lstlisting}
+for iel in range (0,nel):
+    for iq in range(0,nqel):
+        xq=0.
+        yq=0.
+        uq=0.
+        vq=0.
+        qq=0.
+        for k in range(0,mV):
+            xq+=
+            yq+=NNNV[iq,k]*yV[iconV[k,iel]]
+            uq+=NNNV[iq,k]*u[iconV[k,iel]]
+            vq+=NNNV[iq,k]*v[iconV[k,iel]]
+            qq+=NNNV[iq,k]*q[iconV[k,iel]]
+        errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq[iq]*jcob
+        errq+=(qq-pressure(xq,yq))**2*weightq[iq]*jcob
+\end{lstlisting}
+This is easily replaced by a much more compact code:
+\begin{lstlisting}
+for iel in range (0,nel):
+    for iq in range(0,nqel):
+        xq=np.dot(NNNV[iq,:],xV[iconV[:,iel]])
+        yq=np.dot(NNNV[iq,:],yV[iconV[:,iel]])
+        uq=np.dot(NNNV[iq,:],u[iconV[:,iel]])
+        vq=np.dot(NNNV[iq,:],v[iconV[:,iel]])
+        qq=np.dot(NNNV[iq,:],q[iconV[:,iel]])
+        errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq[iq]*jcob
+        errq+=(qq-pressure(xq,yq))**2*weightq[iq]*jcob
+\end{lstlisting}
+Such approach has been taken where ever possible in the stone.
+This makes bits of code even more compact (we have lost 30+ lines so far).
+As it turns out, this is also much faster (about 30\%), as shown here for
+the error calculations:
+\begin{center}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_150/results/times_V2_errors}
+\end{center}
+
+All in all, there is an improvement in the timings, but nothing really 
+substantial with regards to the matrix building. Let's dig deeper. 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Improving matrix building (1)}
 
+We see that in the V2 version we have 
+\begin{lstlisting}
+for i in range(0,mP):
+    N_mat[0,i]=NNNP[iq,i]
+    N_mat[1,i]=NNNP[iq,i]
+    N_mat[2,i]=0.
+\end{lstlisting}
+which can be replaced by
+\begin{lstlisting}
+N_mat[0,0:mP]=NNNP[iq,0:mP]
+N_mat[1,0:mP]=NNNP[iq,0:mP]
+\end{lstlisting}
+but it barely registers in terms on compute time. 
+As this stage we have the building matrix code that looks as 
+follows:
+\begin{lstlisting}
+for iel in range(0,nel):
+    loop over qpts to build K_el,G_el,f_el
+    impose boundary conditions
+    assemble
+\end{lstlisting}
+The question is then: which part is the most costly?
+In order to have an idea, we can implement something like this:
+\begin{lstlisting}
+for iel in range(0,nel):
+    start1 = timing.time()
+    loop over qpts to build K_el,G_el,f_el
+    end1 = timing.time()
+    --
+    start2 = timing.time()
+    impose boundary conditions
+    end2 = timing.time()
+    --
+    start3 = timing.time()
+    assemble
+    end3 = timing.time()
+    --
+    t1+=end1-start1
+    t2+=end2-start2
+    t3+=end3-start3
+\end{lstlisting}
+This is carried out in {\pythonfile stone\_V3.py}.
+This is probably not ideal since these calls probably slow the execution 
+of the element loop somewhat, but it proves to be informative:
+\begin{center}
+\begin{tabular}{lccccc}
+\hline
+resolution & t1 & t2 & t3 & t1+t2+t3 & t3/t1\\ 
+\hline
+\hline
+$32\times 32$   & 0.90  s& 0.06 s& 3.12  s& 4.08  s & 3.3\\ 
+$48\times 48$   & 1.93  s& 0.11 s& 6.61  s& 9.24  s & 3.4\\
+$96\times 96$   & 7.86  s& 0.40 s& 26.34 s& 35.64 s & 3.4\\
+$128\times 128$ & 13.87 s& 0.68 s& 47.04 s& 66.38 s & 3.5\\
+\hline
+\end{tabular}
+\end{center}
+The assembly seems to be the part that takes the most time (about 3x the quadrature points loop) so 
+this is now our focus.
+
+The assembly for each element looks like:
+\begin{lstlisting}
+for k1 in range(0,mV):
+    for i1 in range(0,ndofV):
+        ikk=ndofV*k1          +i1
+        m1 =ndofV*iconV[k1,iel]+i1
+        for k2 in range(0,mV):
+            for i2 in range(0,ndofV):
+                jkk=ndofV*k2          +i2
+                m2 =ndofV*iconV[k2,iel]+i2
+                A_sparse[m1,m2] += K_el[ikk,jkk]
+\end{lstlisting}
+Effectively the loops over {\tt k1+i1} and {\tt k2+i2} loop over all terms of the {\tt K\_el}.
+Since we know that explicit for loops are slow in python, we could try to rewrite this as follows:
+\begin{lstlisting}
+for ikk in range(0,ndofV*mV): 
+    for jkk in range(0,ndofV*mV): 
+        A_sparse[X,Y] += K_el[ikk,jkk]
+\end{lstlisting}
+where the values X and Y have been precomputed for each element. 
+In the case of \QtwoQone elements in 2D, we have mV=9 and ndofV=2 so that 
+the size of the matrix {\tt K\_el} is $18\times 18$. For each of these 18 dofs 
+I need to know its corresponding global dof number. 
+I can precompute this for each element as follows:
+ 
+\begin{lstlisting}
+local_to_globalV=np.zeros((ndofV_el,nel),dtype=np.int32)
+for iel in range(0,nel):
+    for k1 in range(0,mV):
+        for i1 in range(0,ndofV):
+            ikk=ndofV*k1          +i1
+            m1 =ndofV*iconV[k1,iel]+i1
+            local_to_globalV[ikk,iel]=m1
+\end{lstlisting}
+and the assembly has now become more compact:
+\begin{lstlisting}
+    for ikk in range(ndofV_el):
+        m1=local_to_globalV[ikk,iel]
+        for jkk in range(ndofV_el):
+            A_sparse[m1,local_to_globalV[jkk,iel]] += K_el[ikk,jkk]
+        for jkk in range(0,mP):
+            m2 =iconP[jkk,iel]
+            A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
+            A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
+        f_rhs[m1]+=f_el[ikk]
+    for k2 in range(0,mP):
+        m2=iconP[k2,iel]
+        h_rhs[m2]+=h_el[k2]
+\end{lstlisting}
+This is carried out in {\pythonfile stone\_V4.py}. Unfortunately, 
+the improvement is just not very substantial again (a few percents at best).
+
+\begin{center}
+\begin{tabular}{lccccc}
+\hline
+resolution & t1 & t2 & t3 & t1+t2+t3 & t3/t1\\ 
+\hline
+\hline
+$32\times 32$   &  0.88 s& 0.05 s&  2.11 s&  3.04 s& 2.40 \\ 
+$48\times 48$   &  2.04 s& 0.11 s&  4.96 s&  7.12 s& 2.42 \\
+$96\times 96$   &  7.90 s& 0.40 s& 18.80 s& 27.11 s& 2.38 \\
+$128\times 128$ & 14.32 s& 0.72 s& 35.93 s& 50.97 s& 2.51 \\
+\hline
+\end{tabular}
+\end{center}
+
+Turning now to the calculation of the elemental matrices, 
+I put a timer around each piece of code:
+\begin{lstlisting}
+    for iq in range(0,nqel):
+
+        start11 = timing.time()
+        xq=np.dot(NNNV[iq,:],xV[iconV[:,iel]])
+        yq=np.dot(NNNV[iq,:],yV[iconV[:,iel]])
+        end11 = timing.time()
+
+        start12 = timing.time()
+        for i in range(0,mV):
+            b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[iq,i],0.           ],
+                                     [0.           ,dNNNVdy[iq,i]],
+                                     [dNNNVdy[iq,i],dNNNVdx[iq,i]]]
+        end12 = timing.time()
+
+        start13 = timing.time()
+        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta*weightq[iq]*jcob
+        end13 = timing.time()
+
+        start14 = timing.time()
+        for i in range(0,mV):
+            f_el[ndofV*i  ]+=NNNV[iq,i]*jcob*weightq[iq]*bx(xq,yq)
+            f_el[ndofV*i+1]+=NNNV[iq,i]*jcob*weightq[iq]*by(xq,yq)
+        end14 = timing.time()
+
+        start15 = timing.time()
+        N_mat[0,0:mP]=NNNP[iq,0:mP]
+        N_mat[1,0:mP]=NNNP[iq,0:mP]
+        end15 = timing.time()
+
+        start16 = timing.time()
+        G_el-=b_mat.T.dot(N_mat)*weightq[iq]*jcob
+        end16 = timing.time()
+
+        t11+=end11-start11
+        t12+=end12-start12
+        t13+=end13-start13
+        t14+=end14-start14
+        t15+=end15-start15
+        t16+=end16-start16
+
+    # end for iq
+\end{lstlisting}
+I found that t14 was rather large, but it actually comes from 
+the complicated polynomial calculations inside bx and by. 
+The second most costly was t12. A lucky guess had me replace
+\begin{lstlisting}
+for i in range(0,mV):
+    b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[iq,i],0.           ],
+                             [0.           ,dNNNVdy[iq,i]],
+                             [dNNNVdy[iq,i],dNNNVdx[iq,i]]]
+\end{lstlisting}
+by 
+\begin{lstlisting}
+for i in range(0,mV):
+    b_mat[0,2*i  ]=dNNNVdx[iq,i]
+    b_mat[1,2*i+1]=dNNNVdy[iq,i]
+    b_mat[2,2*i  ]=dNNNVdy[iq,i]
+    b_mat[2,2*i+1]=dNNNVdx[iq,i]
+\end{lstlisting}
+and I obtained an improvement for t1:
+\begin{center}
+\begin{tabular}{lccccc}
+\hline
+resolution & t1 & t2 & t3 & t1+t2+t3 & t3/t1\\ 
+\hline
+\hline
+$32\times 32$   &  0.77 & 0.05 &  2.06 &  2.89 & 2.69 \\
+$48\times 48$   &  1.75 & 0.11 &  4.92 &  6.79 & 2.81 \\
+$96\times 96$   &  7.26 & 0.42 & 19.97 & 27.65 & 2.75 \\
+$128\times 128$ &  12.66& 0.67 & 35.13 & 48.46 & 2.77 \\ 
+\hline
+\end{tabular}
+\end{center}
+Again, nothing spectacular.
+Looking at this block again, we see that we have 4 times the occurence of the product {\tt jcob*weightq[iq]}.
+We should therefore compute it once and store it:
+\begin{lstlisting}
+JxW=jcob*weightq[iq]
+\end{lstlisting}
+
+All in all, this is where we are at:
+\begin{center}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_150/results/times_V4}
+\end{center}
+The matrix build for 128x128 used to take about 80s for V0, now it takes 
+about 55s. Let us be honest, I was hoping for at least a factor 2. 
 
 
 
