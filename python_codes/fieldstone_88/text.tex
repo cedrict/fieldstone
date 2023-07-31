@@ -3,7 +3,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_88/keywords.ascii}
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_88/keywords.key}
 
 \begin{center}
 Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_88}
@@ -11,11 +11,11 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-The motivation for this stone is based on Burstedde et al (2008) \cite{bugg08}:
+The motivation for this stone is based on \textcite{bugg08} (2008):
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_88/images/bugg08}\\
-{\captionfont Taken from \cite{bugg08}. Dimensionless dimensions are 8x4x1.}
+\includegraphics[width=13cm]{python_codes/fieldstone_88/images/bugg08}\\
+{\captionfont Taken from \cite{bugg08}. Dimensionless dimensions are $8\times 4 \times 1$.}
 \end{center}
 
 This stone solves the dimensionless thermo-mechanical equations:
@@ -27,16 +27,14 @@ This stone solves the dimensionless thermo-mechanical equations:
 with $\dot{\varepsilon}_e$ is the effective strain rate and the viscosity $\eta$ is a simple
 piecewise function of temperature, depth and strain rate.
 
-This approach is not unique and we therefore look into two other similar implementations.
+This approach is not unique and we therefore look into three other similar implementations.
+If you are aware of another one, please let me know and I will add it!
 
-%------------------------------------------------------
-\begin{center}
-$----------------------------------$\\
-$\smile \frown \bullet \circ \bullet \subset ( {\tt viscosity\_model=1} ) \supset \circ \bullet \smile \frown$\\
-$----------------------------------$
-\end{center}
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{viscosity\_model=1}
 
-The viscosity in Burstedde et al (2008) \cite{bugg08} is given by 
+The viscosity in \textcite{bugg08} (2008) is given by 
 \[
 \eta(T,\dot{\varepsilon}_e,y) =
 \left\{
@@ -49,14 +47,14 @@ The viscosity in Burstedde et al (2008) \cite{bugg08} is given by
 \]
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_88/images/visc.pdf}\\
+\includegraphics[width=9cm]{python_codes/fieldstone_88/images/visc.pdf}\\
 {\captionfont Dimensionless viscosity values as a function of the dimensionless temperature.}
 \end{center}
 
 In the paper the value of $\sigma_y$ is not specified, nor is the Rayleigh number (although 
 they mention it is between $10^6$ and $10^9$).
-Their box is 8x4x1 and temperatures range from 0 at the top to 1 at the bottom.
-In this case 3D modeling is out of the question here so we restrict ourselves to 2D with a 4x1 domain. 
+Their box is $8\times 4 \times 1$ and temperatures range from 0 at the top to 1 at the bottom.
+In this case 3D modeling is out of the question here so we restrict ourselves to 2D with a $4\times 1$ domain. 
 We set $\sigma_y=1.5\cdot 10^5$ and $Ra=10^6$.
 
 The initial temperature is based on the steady state conduction profile $T_(y)=1-y$, to which a
@@ -95,7 +93,7 @@ It therefore cannot 'cure' alone the poor quality of the solution within these b
 \end{center}
 
 We now switch the filter off implement the SUPG method (see Section~\ref{MMM-ss:supg}). 
-The resolution is set to 200x50:
+The resolution is set to $200 \times 50$:
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_88/results/200x50/vel}
 \includegraphics[width=7cm]{python_codes/fieldstone_88/results/200x50/eta}\\
@@ -134,7 +132,7 @@ In what follows we set CFL=0.5 and SUPG is used.
 We see that the behaviour of the system is very different. The perturbation generates 
 much smaller buoyancy forces. The huge upwelling is gone and rather plumes form. 
 Also, in order to better visusalise the flow, we add passive markers which are 
-advected with the computed velocity at each time step (see stone 37).
+advected with the computed velocity at each time step (see \stone~\ref{f37}).
 These are painted with a checkerboard pattern.
 
 \newpage
@@ -170,21 +168,17 @@ These are painted with a checkerboard pattern.
 \includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/v0009.png}
 \includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/v0014.png}
 \includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model1/v0019.png}\\
-\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model1/profile_T.pdf}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model1/profile_eta.pdf}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model1/vrms.pdf}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model1/Tavrg.pdf}\\
-{\captionfont viscosity model 1. Temperature, makers and velocity fields. Resolution $200\times 50$.}
+\includegraphics[width=8cm]{python_codes/fieldstone_88/results/model1/profile_T.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_88/results/model1/profile_eta.pdf} \\
+\includegraphics[width=8cm]{python_codes/fieldstone_88/results/model1/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_88/results/model1/Tavrg.pdf}\\
+{\captionfont viscosity model 1. Temperature, markers and velocity fields. Resolution $200\times 50$.}
 \end{center}
 
 
 \newpage
-%------------------------------------------------------
-\begin{center}
-$----------------------------------$\\
-$\smile \frown \bullet \circ \bullet \subset ( {\tt viscosity\_model=2} ) \supset \circ \bullet \smile \frown$\\
-$----------------------------------$
-\end{center}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{viscosity\_model=2}
 
 We can also explore a different rheology, as given in \textcite{brhv08} (2008):
 \[
@@ -237,38 +231,34 @@ and $b=\ln 1000$.
 \includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model2/profile_eta.pdf}
 \includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model2/vrms.pdf}
 \includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model2/Tavrg.pdf}\\
-{\captionfont viscosity model 1. Temperature, makers and velocity fields. Resolution 200x50.}
+{\captionfont viscosity model 1. Temperature, markers and velocity fields. Resolution 200x50.}
 \end{center} 
 
 
 \newpage
-%------------------------------------------------------
-\begin{center}
-$----------------------------------$\\
-$\smile \frown \bullet \circ \bullet \subset ( {\tt viscosity\_model=3} ) \supset \circ \bullet \smile \frown$\\
-$----------------------------------$
-\end{center}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{viscosity\_model=3}
 
 A similar yet different rheology is found in \textcite{zhzl10} (2010):
 \[
 \eta(y,T) = \eta_0(y) \exp [A(0.5-T)]
 \]
 with $A=9.2103$. The expression for $\eta_0(r)$ is given in the text (section 3.1):
-"The depth‐dependent prefactors $\eta_0(r)$ in equation (9)
+``The depth‐dependent prefactors $\eta_0(r)$ in equation (9)
 for the lithosphere and the upper mantle are 1 and 1/30,
 respectively. For the lower mantle, $\eta_0(r)$ increases
 linearly from 2.0 at the 670 km depth to 6.8 at the CMB. This
 leads to a mantle viscosity structure in which the lower mantle
 viscosity on average is $\sim 2$ orders of magnitude higher than
-that in the upper mantle." Note that is corresponds to case FS1 in the paper. 
+that in the upper mantle.'' 
+Note that this corresponds to case FS1 in the paper. 
 
-The base of the lithosphere is set to 120km, so its dimensionless
+The base of the lithosphere is set to 120~\si{\km}, so its dimensionless
 vertical coordinate is 
 \[
 y_l = \frac{2891-120}{2891} \simeq 0.9585
 \] 
-The base of the upper mantle is set to 670km, so its dimensionless
+The base of the upper mantle is set to 670~\si{\km}, so its dimensionless
 vertical coordinate is 
 \[
 y_{um} = \frac{2891-670}{2891} \simeq 0.7682
@@ -310,30 +300,27 @@ is
 \includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/v0009.png}
 \includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/v0014.png}
 \includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model3/v0019.png}\\
-\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model3/profile_T.pdf}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model3/profile_eta.pdf}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model3/vrms.pdf}
-\includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model3/Tavrg.pdf}\\
-{\captionfont viscosity model 3. Temperature, makers and velocity fields. Resolution 200x50.}
+\includegraphics[width=8cm]{python_codes/fieldstone_88/results/model3/profile_T.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_88/results/model3/profile_eta.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_88/results/model3/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_88/results/model3/Tavrg.pdf}\\
+{\captionfont viscosity model 3. Temperature, markers and velocity fields. Resolution 200x50.}
 \end{center} 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_88/images/zhzl10a}
-\includegraphics[width=7cm]{python_codes/fieldstone_88/images/zhzl10b}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_88/images/zhzl10a}
+\includegraphics[width=8cm]{python_codes/fieldstone_88/images/zhzl10b}\\
 {\captionfont Taken from \textcite{zhzl10} (2010).
 Depth dependences of horizontally averaged
 (a) mantle viscosities for cases FS1, FS2, FS3, FS4, FS5,
 and FS8 and (b) mantle temperatures for cases FS1 and FS8.}
 \end{center}
 
-%------------------------------------------------------
-\begin{center}
-$----------------------------------$\\
-$\smile \frown \bullet \circ \bullet \subset ( {\tt viscosity\_model=4} ) \supset \circ \bullet \smile \frown$\\
-$----------------------------------$
-\end{center}
 
-From Matyska et al \cite{mayw11}: 
+\newpage
+\section*{viscosity\_model=4}
+
+From \textcite{mayw11} (2011) we get: 
 \[
 \eta = \eta_{ref}\left[  \exp 12.66\left(   \frac{G(z)}{0.15+1.7T}-1  \right) \right]
 \]
@@ -342,12 +329,11 @@ $z=0$ and equal to $1$ at the CMB $z=1$.
 The non-monotonic depth-dependence of the activation energy
 is approximated by a simple piece-wise linear function
 \begin{align}
-G(z)&=1                    & \text{ for }  &0.00\leq &z \leq 0.23 \\
-G(z)&=1.0+0.2(z-0.23)/0.19 & \text{ for }  &0.23\leq &z \leq 0.42 \\
-G(z)&=1.2-0.1(z-0.42)/0.13 & \text{ for }  &0.42\leq &z \leq 0.55 \\
-G(z)&=1.1+0.7(z-0.55)/0.45 & \text{ for }  &0.55\leq &z \leq 1.00 
+G(z)&=1                    & \text{ for }  &0.00\leq &z \leq 0.23 \nonumber\\
+G(z)&=1.0+0.2(z-0.23)/0.19 & \text{ for }  &0.23\leq &z \leq 0.42 \nonumber\\
+G(z)&=1.2-0.1(z-0.42)/0.13 & \text{ for }  &0.42\leq &z \leq 0.55 \nonumber\\
+G(z)&=1.1+0.7(z-0.55)/0.45 & \text{ for }  &0.55\leq &z \leq 1.00 \nonumber
 \end{align}
-
 
 \begin{center}
 \includegraphics[width=3.5cm]{python_codes/fieldstone_88/results/model4/T0000}
@@ -369,7 +355,7 @@ G(z)&=1.1+0.7(z-0.55)/0.45 & \text{ for }  &0.55\leq &z \leq 1.00
 \includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model4/profile_eta.pdf}
 \includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model4/vrms.pdf}
 \includegraphics[width=4.2cm]{python_codes/fieldstone_88/results/model4/Tavrg.pdf}\\
-{\captionfont viscosity model 4. Temperature, makers and velocity fields. Resolution 200x50.}
+{\captionfont viscosity model 4. Temperature, markers and velocity fields. Resolution 200x50.}
 \end{center} 
 
 
@@ -382,6 +368,9 @@ G(z)&=1.1+0.7(z-0.55)/0.45 & \text{ for }  &0.55\leq &z \leq 1.00
 
 Problems \& ToDos: \\
 pressure nullspace \\
+the code can do 4 diff FE pairs, use them!\\
 nonlinear iterations missing\\
 As usual code is painfully slow...
+change jcob to hx,hy formulation\\
+run plenty of models with 4 elements, diff resolutions and see when/how they differ?
 implement vrms as a fct of depth a la \cite{king15}

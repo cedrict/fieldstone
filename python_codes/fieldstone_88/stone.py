@@ -9,7 +9,7 @@ import time as timing
 import random
 from scipy import special
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def interpolate_vel_on_pt(xm,ym):
     ielx=int(xm/Lx*nelx)
@@ -35,9 +35,9 @@ def interpolate_vel_on_pt(xm,ym):
         vm+=NNNV[k]*v[iconV[k,iel]]
     return um,vm,rm,sm,iel 
 
-#------------------------------------------------------------------------------
+###############################################################################
 # viscosity function
-#------------------------------------------------------------------------------
+###############################################################################
 
 def eta(T,e,y):
     TT=min(T,1)
@@ -99,15 +99,18 @@ def eta(T,e,y):
 
     return val,rh
 
-#------------------------------------------------------------------------------
+###############################################################################
 # velocity shape functions
-#------------------------------------------------------------------------------
-# Q2          Q1
-# 6---7---8   2-------3
-# |       |   |       |
-# 3   4   5   |       |    etc ...
-# |       |   |       |
-# 0---1---2   0-------1
+###############################################################################
+# 
+#  Q2          Q1
+#  6---7---8   2-------3
+#  |       |   |       |
+#  3   4   5   |       |    etc ...
+#  |       |   |       |
+#  0---1---2   0-------1
+#
+###############################################################################
 
 def NNV(r,s,order):
     if order==1:
@@ -115,7 +118,7 @@ def NNV(r,s,order):
        N_1=0.25*(1.+r)*(1.-s)
        N_2=0.25*(1.-r)*(1.+s)
        N_3=0.25*(1.+r)*(1.+s)
-       return N_0,N_1,N_2,N_3
+       return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
     if order==2:
        N_0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
        N_1=    (1.-r**2) * 0.5*s*(s-1.)
@@ -126,7 +129,7 @@ def NNV(r,s,order):
        N_6= 0.5*r*(r-1.) * 0.5*s*(s+1.)
        N_7=    (1.-r**2) * 0.5*s*(s+1.)
        N_8= 0.5*r*(r+1.) * 0.5*s*(s+1.)
-       return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8
+       return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
     if order==3:
        N1r=(-1    +r +9*r**2 - 9*r**3)/16
        N2r=(+9 -27*r -9*r**2 +27*r**3)/16
@@ -152,8 +155,8 @@ def NNV(r,s,order):
        N_13= N2r*N4t 
        N_14= N3r*N4t 
        N_15= N4r*N4t 
-       return N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
-              N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15
+       return np.array([N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
+                        N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15],dtype=np.float64)
     if order==4:
        N1r=(    r -   r**2 -4*r**3 + 4*r**4)/6
        N2r=( -8*r +16*r**2 +8*r**3 -16*r**4)/6
@@ -190,11 +193,11 @@ def NNV(r,s,order):
        N_22= N3r*N5s
        N_23= N4r*N5s
        N_24= N5r*N5s
-       return N_00,N_01,N_02,N_03,N_04,\
-              N_05,N_06,N_07,N_08,N_09,\
-              N_10,N_11,N_12,N_13,N_14,\
-              N_15,N_16,N_17,N_18,N_19,\
-              N_20,N_21,N_22,N_23,N_24
+       return np.array([N_00,N_01,N_02,N_03,N_04,\
+                        N_05,N_06,N_07,N_08,N_09,\
+                        N_10,N_11,N_12,N_13,N_14,\
+                        N_15,N_16,N_17,N_18,N_19,\
+                        N_20,N_21,N_22,N_23,N_24],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 # velocity shape functions derivatives
@@ -206,7 +209,7 @@ def dNNVdr(r,s,order):
        dNdr_1=+0.25*(1.-s) 
        dNdr_2=-0.25*(1.+s) 
        dNdr_3=+0.25*(1.+s) 
-       return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+       return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3],dtype=np.float64)
     if order==2:
        dNdr_0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
        dNdr_1=       (-2.*r) * 0.5*s*(s-1)
@@ -217,7 +220,8 @@ def dNNVdr(r,s,order):
        dNdr_6= 0.5*(2.*r-1.) * 0.5*s*(s+1)
        dNdr_7=       (-2.*r) * 0.5*s*(s+1)
        dNdr_8= 0.5*(2.*r+1.) * 0.5*s*(s+1)
-       return dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8
+       return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,\
+                        dNdr_5,dNdr_6,dNdr_7,dNdr_8],dtype=np.float64)
     if order==3:
        dN1rdr=( +1 +18*r -27*r**2)/16
        dN2rdr=(-27 -18*r +81*r**2)/16
@@ -243,8 +247,8 @@ def dNNVdr(r,s,order):
        dNdr_13= dN2rdr* N4s 
        dNdr_14= dN3rdr* N4s 
        dNdr_15= dN4rdr* N4s 
-       return dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,dNdr_05,dNdr_06,dNdr_07,\
-              dNdr_08,dNdr_09,dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,dNdr_15
+       return np.array([dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,dNdr_05,dNdr_06,dNdr_07,\
+                        dNdr_08,dNdr_09,dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,dNdr_15],dtype=np.float64)
     if order==4:
        dN1dr=(    1 - 2*r -12*r**2 +16*r**3)/6
        dN2dr=(   -8 +32*r +24*r**2 -64*r**3)/6
@@ -281,11 +285,11 @@ def dNNVdr(r,s,order):
        dNdr_22= dN3dr*N5s
        dNdr_23= dN4dr*N5s
        dNdr_24= dN5dr*N5s
-       return dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,\
-              dNdr_05,dNdr_06,dNdr_07,dNdr_08,dNdr_09,\
-              dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,\
-              dNdr_15,dNdr_16,dNdr_17,dNdr_18,dNdr_19,\
-              dNdr_20,dNdr_21,dNdr_22,dNdr_23,dNdr_24
+       return np.array([dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,\
+                        dNdr_05,dNdr_06,dNdr_07,dNdr_08,dNdr_09,\
+                        dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,\
+                        dNdr_15,dNdr_16,dNdr_17,dNdr_18,dNdr_19,\
+                        dNdr_20,dNdr_21,dNdr_22,dNdr_23,dNdr_24],dtype=np.float64)
 
 def dNNVds(r,s,order):
     if order==1:
@@ -293,7 +297,7 @@ def dNNVds(r,s,order):
        dNds_1=-0.25*(1.+r)
        dNds_2=+0.25*(1.-r)
        dNds_3=+0.25*(1.+r)
-       return dNds_0,dNds_1,dNds_2,dNds_3
+       return np.array([dNds_0,dNds_1,dNds_2,dNds_3],dtype=np.float64)
     if order==2:
        dNds_0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
        dNds_1=    (1.-r**2) * 0.5*(2.*s-1.)
@@ -304,7 +308,7 @@ def dNNVds(r,s,order):
        dNds_6= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
        dNds_7=    (1.-r**2) * 0.5*(2.*s+1.)
        dNds_8= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
-       return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8
+       return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8],dtype=np.float64)
     if order==3:
        N1r=(-1    +r +9*r**2 - 9*r**3)/16
        N2r=(+9 -27*r -9*r**2 +27*r**3)/16
@@ -330,8 +334,8 @@ def dNNVds(r,s,order):
        dNds_13= N2r*dN4sds 
        dNds_14= N3r*dN4sds 
        dNds_15= N4r*dN4sds
-       return dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,dNds_05,dNds_06,dNds_07,\
-              dNds_08,dNds_09,dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,dNds_15
+       return np.array([dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,dNds_05,dNds_06,dNds_07,\
+                        dNds_08,dNds_09,dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,dNds_15],dtype=np.float64)
     if order==4:
        N1r=(    r -   r**2 -4*r**3 + 4*r**4)/6
        N2r=( -8*r +16*r**2 +8*r**3 -16*r**4)/6
@@ -368,11 +372,11 @@ def dNNVds(r,s,order):
        dNds_22= N3r*dN5ds
        dNds_23= N4r*dN5ds
        dNds_24= N5r*dN5ds
-       return dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,\
-              dNds_05,dNds_06,dNds_07,dNds_08,dNds_09,\
-              dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,\
-              dNds_15,dNds_16,dNds_17,dNds_18,dNds_19,\
-              dNds_20,dNds_21,dNds_22,dNds_23,dNds_24
+       return np.array([dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,\
+                        dNds_05,dNds_06,dNds_07,dNds_08,dNds_09,\
+                        dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,\
+                        dNds_15,dNds_16,dNds_17,dNds_18,dNds_19,\
+                        dNds_20,dNds_21,dNds_22,dNds_23,dNds_24],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 # pressure shape functions 
@@ -381,13 +385,13 @@ def dNNVds(r,s,order):
 def NNP(r,s,order):
     if order==1:
        N_1=1.
-       return N_1
+       return np.array([N_1],dtype=np.float64)
     if order==2:
        N_0=0.25*(1-r)*(1-s)
        N_1=0.25*(1+r)*(1-s)
        N_2=0.25*(1-r)*(1+s)
        N_3=0.25*(1+r)*(1+s)
-       return N_0,N_1,N_2,N_3
+       return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
     if order==3:
        N_0= 0.5*r*(r-1) * 0.5*s*(s-1)
        N_1=    (1-r**2) * 0.5*s*(s-1)
@@ -398,7 +402,7 @@ def NNP(r,s,order):
        N_6= 0.5*r*(r-1) * 0.5*s*(s+1)
        N_7=    (1-r**2) * 0.5*s*(s+1)
        N_8= 0.5*r*(r+1) * 0.5*s*(s+1)
-       return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8
+       return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
     if order==4:
        N1r=(-1    +r +9*r**2 - 9*r**3)/16
        N2r=(+9 -27*r -9*r**2 +27*r**3)/16
@@ -424,18 +428,19 @@ def NNP(r,s,order):
        N_13= N2r*N4t 
        N_14= N3r*N4t 
        N_15= N4r*N4t 
-       return N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
-              N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15
+       return np.array([N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
+                        N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15],dtype=np.float64)
 
-#------------------------------------------------------------------------------
+###############################################################################
 # constants
 
 eps=1e-9
+sqrt2=np.sqrt(2)
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 print("-----------------------------")
-print("----------fieldstone---------")
+print("--------- stone 88 ----------")
 print("-----------------------------")
 
 ndim=2   # number of dimensions
@@ -454,28 +459,38 @@ if int(len(sys.argv) == 7):
    Ra    = float(sys.argv[5])
    nstep = int(sys.argv[6])
 else:
-   nelx = 64
-   nely = 32
-   visu = 1
-   order= 2
-   Ra = 1e6
-   nstep=1000
+   nelx = 64  # number of elements in x direction
+   nely = 32  # number of elements in y direction
+   visu = 1   # trigger for vtu output
+   order= 2   # polynomial order for velocity
+   Ra = 1e6   # Rayleigh number
+   nstep=10 # number of time steps
 
 nmarker_per_dim=4 
-random_markers=1
+random_markers=True
 RKorder=1 # cheap!
 
+###################
+# viscosity model:
+# 1: bugg08
+# 2: brhv08
+# 3: budt14
+# 4: mayv11
 viscosity_model=4
-sigma_y=1.5e5
+sigma_y=1.5e5     #only model 1
+
 tfinal=1.5e-2
 
 CFL_nb=0.5
-apply_filter=False
+apply_filter=False # Lenardic & Kaula filter
+
+# streamline upwind stabilisation
+# 0: none
+# 1: standard
+# 2: using sqrt15
 supg_type=1
 
-every=1
-
-#tol_ss=1e-6   # tolerance for steady state 
+every=1 # how often vtu files are generated
 
 top_bc_noslip=False
 bot_bc_noslip=False
@@ -493,6 +508,7 @@ if order==1:
    sVnodes=[-1,-1,+1,+1]
    rPnodes=[0]
    sPnodes=[0]
+
 if order==2:
    NP=(nelx+1)*(nely+1)
    mV=9     # number of velocity nodes making up an element
@@ -501,6 +517,7 @@ if order==2:
    sVnodes=[-1,-1,-1,0,0,0,+1,+1,+1]
    rPnodes=[-1,+1,-1,+1]
    sPnodes=[-1,-1,+1,+1]
+
 if order==3:
    NP=(2*nelx+1)*(2*nely+1)
    mV=16    # number of velocity nodes making up an element
@@ -509,6 +526,7 @@ if order==3:
    sVnodes=[-1,-1,-1,-1,-1./3.,-1./3.,-1./3.,-1./3.,+1./3.,+1./3.,+1./3.,+1./3.,+1,+1,+1,+1]
    rPnodes=[-1,0,+1,-1,0,+1,-1,0,+1]
    sPnodes=[-1,-1,-1,0,0,0,+1,+1,+1]
+
 if order==4:
    NP=(3*nelx+1)*(3*nely+1)
    mV=25    # number of velocity nodes making up an element
@@ -526,11 +544,9 @@ NfemT=NV*ndofT       # nb of temperature dofs
 hx=Lx/nelx # element size in x direction
 hy=Ly/nely # element size in y direction
 
-sparse=True # storage of FEM matrix 
-
-#################################################################
-
-sqrt2=np.sqrt(2)
+###############################################################################
+# Gauss quadrature setup
+###############################################################################
 
 nqperdim=order+1
 
@@ -574,8 +590,9 @@ if nqperdim==6:
              0.360761573048139,\
              0.171324492379170]
 
-#################################################################
+###############################################################################
 # open output files
+###############################################################################
 
 vrms_file=open('vrms.ascii',"w")
 dt_file=open('dt.ascii',"w")
@@ -585,7 +602,7 @@ Tstats_file=open('stats_T.ascii',"w")
 ustats_file=open('stats_u.ascii',"w")
 vstats_file=open('stats_v.ascii',"w")
 
-#################################################################
+###############################################################################
 
 print ('Ra       =',Ra)
 print ('order    =',order)
@@ -600,21 +617,21 @@ print ('Nfem     =',Nfem)
 print ('nqperdim =',nqperdim)
 print("-----------------------------")
 
-#################################################################
+###############################################################################
 # checking that all velocity shape functions are 1 on their node 
 # and  zero elsewhere
 #for i in range(0,mV):
 #   print ('node',i,':',NNV(rVnodes[i],sVnodes[i],order))
 
-#################################################################
+###############################################################################
 # checking that all pressure shape functions are 1 on their node 
 # and  zero elsewhere
 #for i in range(0,mP):
 #   print ('node',i,':',NNP(rPnodes[i],sPnodes[i],order))
 
-#################################################################
+###############################################################################
 # build velocity nodes coordinates 
-#################################################################
+###############################################################################
 start = timing.time()
 
 xV=np.zeros(NV,dtype=np.float64)  # x coordinates
@@ -633,12 +650,13 @@ for j in range(0,nny):
 
 print("build V grid: %.3f s" % (timing.time() - start))
 
-#################################################################
+###############################################################################
 # connectivity
-#################################################################
+###############################################################################
 start = timing.time()
 
 iconV=np.zeros((mV,nel),dtype=np.int32)
+top=np.zeros(nel,dtype=bool)
 
 counter=0
 for j in range(0,nely):
@@ -650,6 +668,7 @@ for j in range(0,nely):
                 counter2+=1
             #end for
         #end for
+        top[counter]=(j==nely-1)
         counter += 1
     #end for
 #end for
@@ -672,13 +691,14 @@ for j in range(0,nny-1):
 
 print("build iconV: %.3f s" % (timing.time() - start))
 
-#################################################################
-# build pressure grid 
-#################################################################
+###############################################################################
+# build pressure grid
+# if Q1P0 elements are used then the pressure node is in the center of elt 
+###############################################################################
 start = timing.time()
 
-xP=np.empty(NP,dtype=np.float64)     # x coordinates
-yP=np.empty(NP,dtype=np.float64)     # y coordinates
+xP=np.empty(NP,dtype=np.float64) # x coordinates
+yP=np.empty(NP,dtype=np.float64) # y coordinates
 
 if order==1:
    for iel in range(0,nel):
@@ -702,9 +722,10 @@ if order>1:
 
 print("build P grid: %.3f s" % (timing.time() - start))
 
-#################################################################
+###############################################################################
 # build pressure connectivity array 
-#################################################################
+# if Q1P0 elements are used then the pressure node is in the center of elt 
+###############################################################################
 start = timing.time()
 
 iconP=np.zeros((mP,nel),dtype=np.int32)
@@ -736,12 +757,12 @@ if order>1:
 
 print("build iconP: %.3f s" % (timing.time() - start))
 
-#################################################################
+###############################################################################
 # define boundary conditions
-#################################################################
+###############################################################################
 start = timing.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
 for i in range(0,NV):
@@ -760,12 +781,12 @@ for i in range(0,NV):
 
 print("velocity b.c.: %.3f s" % (timing.time() - start))
 
-#####################################################################
+###############################################################################
 # define temperature boundary conditions
-#####################################################################
+###############################################################################
 start = timing.time()
 
-bc_fixT=np.zeros(NfemT,dtype=np.bool)  
+bc_fixT=np.zeros(NfemT,dtype=bool)  
 bc_valT=np.zeros(NfemT,dtype=np.float64) 
 
 for i in range(0,NV):
@@ -777,36 +798,31 @@ for i in range(0,NV):
 
 print("temperature b.c.: %.3f s" % (timing.time() - start))
 
-#####################################################################
+###############################################################################
 # initial temperature
-#####################################################################
+###############################################################################
 
 T = np.zeros(NV,dtype=np.float64)
 T_prev = np.zeros(NV,dtype=np.float64)
 
 for i in range(0,NV):
-
     #T[i]=1.-yV[i]  # conductive profile
-
     T[i]=0.5
-
     kappa=1
     T[i]-=0.5*special.erfc((Ly-yV[i])/2/np.sqrt(kappa*0.001))
     T[i]+=0.5*special.erfc(yV[i]/2/np.sqrt(kappa*0.001))
-
     T[i]-=0.03*(np.cos(2.132*np.pi*xV[i]/Lx)+\
                 np.cos(3.333*np.pi*xV[i]/Lx)+\
                 np.cos(7.123*np.pi*xV[i]/Lx)) *np.sin(np.pi*yV[i]/Ly)
-
 #end for
 
 T_prev[:]=T[:]
 
 np.savetxt('temperature_init.ascii',np.array([xV,yV,T]).T,header='# x,y,T')
 
-#################################################################
+###############################################################################
 # compute area of elements
-#################################################################
+###############################################################################
 start = timing.time()
 
 area    = np.zeros(nel,dtype=np.float64) 
@@ -839,9 +855,9 @@ print("     -> total area %.6f " %(area.sum()))
 
 print("compute elements areas: %.3f s" % (timing.time() - start))
 
-#################################################################
+###############################################################################
 # marker setup
-#################################################################
+###############################################################################
 start = timing.time()
 
 nmarker_per_element=nmarker_per_dim**2
@@ -851,9 +867,9 @@ swarm_x=np.empty(nmarker,dtype=np.float64)
 swarm_y=np.empty(nmarker,dtype=np.float64)  
 swarm_u=np.zeros(nmarker,dtype=np.float64)  
 swarm_v=np.zeros(nmarker,dtype=np.float64)  
-swarm_active=np.zeros(nmarker,dtype=np.bool) 
+swarm_active=np.zeros(nmarker,dtype=bool) 
 
-if random_markers==1:
+if random_markers:
    counter=0
    for iel in range(0,nel):
        x1=xV[iconV[0,iel]] ; y1=yV[iconV[0,iel]]
@@ -871,7 +887,8 @@ if random_markers==1:
            swarm_x[counter]=N1*x1+N2*x2+N3*x3+N4*x4
            swarm_y[counter]=N1*y1+N2*y2+N3*y3+N4*y4
            counter+=1
-
+       #end for
+   #end for
 else:
    counter=0
    for iel in range(0,nel):
@@ -890,6 +907,9 @@ else:
                swarm_x[counter]=N1*x1+N2*x2+N3*x3+N4*x4
                swarm_y[counter]=N1*y1+N2*y2+N3*y3+N4*y4
                counter+=1
+           #end for
+       #end for
+   #end for
 
 swarm_active[:]=True
 
@@ -899,9 +919,9 @@ print("     -> swarm_y (m,M) %.4f %.4f " %(np.min(swarm_y),np.max(swarm_y)))
 
 print("markers setup: %.3f s" % (timing.time() - start))
 
-#################################################################
+###############################################################################
 # marker paint
-#################################################################
+###############################################################################
 start = timing.time()
 
 swarm_mat=np.zeros(nmarker,dtype=np.int32)  
@@ -920,57 +940,55 @@ for i in [0,2]:
 
 print("markers paint: %.3f s" % (timing.time() - start))
 
-#==============================================================================
-#==============================================================================
-#==============================================================================
+###################################################################################################
+###################################################################################################
 # time stepping loop
-#==============================================================================
-#==============================================================================
-#==============================================================================
-u       = np.zeros(NV,dtype=np.float64)           # x-component velocity
-v       = np.zeros(NV,dtype=np.float64)           # y-component velocity
-u_prev  = np.zeros(NV,dtype=np.float64)           # x-component velocity
-v_prev  = np.zeros(NV,dtype=np.float64)           # y-component velocity
-NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
-NNNP    = np.zeros(mP,dtype=np.float64)           # shape functions P
-dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVdr = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+###################################################################################################
+###################################################################################################
+
+u       = np.zeros(NV,dtype=np.float64) # x-component velocity
+v       = np.zeros(NV,dtype=np.float64) # y-component velocity
+u_prev  = np.zeros(NV,dtype=np.float64) # x-component velocity
+v_prev  = np.zeros(NV,dtype=np.float64) # y-component velocity
+NNNV    = np.zeros(mV,dtype=np.float64) # shape functions V
+NNNP    = np.zeros(mP,dtype=np.float64) # shape functions P
+dNNNVdx = np.zeros(mV,dtype=np.float64) # shape functions derivatives
+dNNNVdy = np.zeros(mV,dtype=np.float64) # shape functions derivatives
+dNNNVdr = np.zeros(mV,dtype=np.float64) # shape functions derivatives
+dNNNVds = np.zeros(mV,dtype=np.float64) # shape functions derivatives
 Tvect   = np.zeros(mV,dtype=np.float64)   
-c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 exx_n   = np.zeros(NV,dtype=np.float64)  
 eyy_n   = np.zeros(NV,dtype=np.float64)  
 exy_n   = np.zeros(NV,dtype=np.float64)  
+c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 time=0
 
 for istep in range(0,nstep):
+
     print("-----------------------------")
     print("istep= ", istep)
     print("-----------------------------")
 
-    #################################################################
+    ###########################################################################
     # build FE matrix
     # [ K G ][u]=[f]
     # [GT 0 ][p] [h]
-    #################################################################
+    ###########################################################################
     start = timing.time()
 
-    if sparse:
-       A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
-    else:   
-       K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-       G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
-
-    f_rhs   = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
-    h_rhs   = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
-    b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
-    N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
+    A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
+    f_rhs=np.zeros(NfemV,dtype=np.float64)        # right hand side f 
+    h_rhs=np.zeros(NfemP,dtype=np.float64)        # right hand side h 
+    b_mat=np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
+    N_mat=np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
+    jcbi=np.zeros((ndim,ndim),dtype=np.float64)
+    jcbi[0,0]=2/hx
+    jcbi[1,1]=2/hy
+    jcob=hx*hy/4
 
     for iel in range(0,nel):
 
-        # set arrays to 0 every loop
         f_el =np.zeros((mV*ndofV),dtype=np.float64)
         K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
         G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
@@ -988,14 +1006,14 @@ for istep in range(0,nstep):
                 NNNP[0:mP]=NNP(rq,sq,order)
 
                 # calculate jacobian matrix
-                jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                for k in range(0,mV):
-                    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-                jcob = np.linalg.det(jcb)
-                jcbi = np.linalg.inv(jcb)
+                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                #for k in range(0,mV):
+                #    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                #    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                #    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                #    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+                #jcbi = np.linalg.inv(jcb)
+                #jcob = np.linalg.det(jcb)
 
                 # compute dNdx & dNdy
                 xq=0.
@@ -1011,8 +1029,10 @@ for istep in range(0,nstep):
                     exxq+=NNNV[k]*exx_n[iconV[k,iel]]
                     eyyq+=NNNV[k]*eyy_n[iconV[k,iel]]
                     exyq+=NNNV[k]*exy_n[iconV[k,iel]]
-                    dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                    dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                    #dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                    #dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                    dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]
+                    dNNNVdy[k]=jcbi[1,1]*dNNNVds[k]
                 #end for
 
                 # construct 3x8 b_mat matrix
@@ -1067,28 +1087,21 @@ for istep in range(0,nstep):
         # assemble matrix K_mat and right hand side rhs
         for k1 in range(0,mV):
             for i1 in range(0,ndofV):
-                ikk=ndofV*k1          +i1
+                ikk=ndofV*k1+i1
                 m1 =ndofV*iconV[k1,iel]+i1
                 for k2 in range(0,mV):
                     for i2 in range(0,ndofV):
-                        jkk=ndofV*k2          +i2
+                        jkk=ndofV*k2+i2
                         m2 =ndofV*iconV[k2,iel]+i2
-                        if sparse:
-                           A_sparse[m1,m2] += K_el[ikk,jkk]
-                        else:
-                           K_mat[m1,m2]+=K_el[ikk,jkk]
+                        A_sparse[m1,m2] += K_el[ikk,jkk]
                         #end if
                     #end for
                 #end for
                 for k2 in range(0,mP):
-                    jkk=k2
                     m2 =iconP[k2,iel]
-                    if sparse:
-                       A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
-                       A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
-                    else:
-                       G_mat[m1,m2]+=G_el[ikk,jkk]
-                    #end if
+                    A_sparse[m1,NfemV+m2]+=G_el[ikk,k2]
+                    A_sparse[NfemV+m2,m1]+=G_el[ikk,k2]
+                #end for
                 f_rhs[m1]+=f_el[ikk]
             #end for
         #end for
@@ -1099,11 +1112,7 @@ for istep in range(0,nstep):
 
     #end for iel
 
-    if not sparse:
-       print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
-       print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
-
-    print("build FE matrix: %.3fs" % (timing.time()-start))
+    print("build FE matrix Stokes: %.3fs" % (timing.time()-start))
 
     ######################################################################
     # assemble K, G, GT, f, h into A and rhs
@@ -1114,47 +1123,38 @@ for istep in range(0,nstep):
     rhs[0:NfemV]=f_rhs
     rhs[NfemV:Nfem]=h_rhs
 
-    if not sparse:
-       a_mat = np.zeros((Nfem,Nfem),dtype=np.float64) 
-       a_mat[0:NfemV,0:NfemV]=K_mat
-       a_mat[0:NfemV,NfemV:Nfem]=G_mat
-       a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-
     print("assemble blocks: %.3f s" % (timing.time() - start))
 
     ######################################################################
     # assign extra pressure b.c. to remove null space
     ######################################################################
-
-    if sparse:
-       A_sparse[Nfem-1,:]=0
-       A_sparse[:,Nfem-1]=0
-       A_sparse[Nfem-1,Nfem-1]=1
-       rhs[Nfem-1]=0
-    else:
-       a_mat[Nfem-1,:]=0
-       a_mat[:,Nfem-1]=0
-       a_mat[Nfem-1,Nfem-1]=1
-       rhs[Nfem-1]=0
+    #if sparse:
+    #   A_sparse[Nfem-1,:]=0
+    #   A_sparse[:,Nfem-1]=0
+    #   A_sparse[Nfem-1,Nfem-1]=1
+    #   rhs[Nfem-1]=0
+    #else:
+    #   a_mat[Nfem-1,:]=0
+    #   a_mat[:,Nfem-1]=0
+    #   a_mat[Nfem-1,Nfem-1]=1
+    #   rhs[Nfem-1]=0
     #end if
 
-    ######################################################################
+
+    ###########################################################################
     # solve system
-    ######################################################################
+    ###########################################################################
     start = timing.time()
 
-    if sparse:
-       sparse_matrix=A_sparse.tocsr()
-    else:
-       sparse_matrix=sps.csr_matrix(a_mat)
+    sparse_matrix=A_sparse.tocsr()
 
     sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
     print("solve time: %.3f s" % (timing.time() - start))
 
-    ######################################################################
+    ###########################################################################
     # put solution into separate x,y velocity arrays
-    ######################################################################
+    ###########################################################################
     start = timing.time()
 
     u,v=np.reshape(sol[0:NfemV],(NV,2)).T
@@ -1174,9 +1174,36 @@ for istep in range(0,nstep):
 
     print("split vel into u,v: %.3f s" % (timing.time() - start))
 
-    #################################################################
+    ###########################################################################
+    # normalise pressure
+    ###########################################################################
+
+    #TODO
+    if order==1:
+
+       print('not done')
+
+    elif order==2:
+       avrgP=0
+       for iel in range(0,nel):
+           if top[iel]:
+              for iq in range(0,nqperdim):
+                  sq=1
+                  jcob=hx/2
+                  NNNP[0:mP]=NNP(rq,sq,order)
+                  pq=0
+                  for k in range(0,mP):
+                      pq+=NNNP[k]*p[iconP[k,iel]]
+                  avrgP+=pq*qweights[iq]*jcob
+
+    avrgP/=Lx
+    print('********************',avrgP)
+
+    p[:]-=avrgP
+
+    ###########################################################################
     # compute timestep value
-    #################################################################
+    ###########################################################################
 
     dt1=CFL_nb*(Lx/nelx)/np.max(np.sqrt(u**2+v**2))
     dt2=CFL_nb*(Lx/nelx)**2 #/(hcond/hcapa/rho0)=1 
@@ -1194,17 +1221,17 @@ for istep in range(0,nstep):
     dt_file.write("%10e %10e %10e %10e\n" % (time,dt1,dt2,dt))
     dt_file.flush()
 
-    #################################################################
+    ###########################################################################
     # build temperature matrix
-    #################################################################
+    ###########################################################################
     start = timing.time()
 
-    A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
-    rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
-    B_mat=np.zeros((2,ndofT*mV),dtype=np.float64)     # gradient matrix B 
-    N_mat = np.zeros((mV,1),dtype=np.float64)         # shape functions
-    N_mat_supg = np.zeros((mV,1),dtype=np.float64)         # shape functions
-    tau_supg = np.zeros(nel*nqperdim**ndim,dtype=np.float64)
+    A_mat=np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
+    rhs=np.zeros(NfemT,dtype=np.float64)           # FE rhs 
+    B_mat=np.zeros((2,ndofT*mV),dtype=np.float64)  # gradient matrix B 
+    N_mat=np.zeros((mV,1),dtype=np.float64)        # shape functions
+    N_mat_supg=np.zeros((mV,1),dtype=np.float64)   # shape functions
+    tau_supg=np.zeros(nel*nqperdim**ndim,dtype=np.float64)
 
     counterq=0   
     for iel in range (0,nel):
@@ -1231,15 +1258,15 @@ for istep in range(0,nstep):
                 dNNNVds[0:mV]=dNNVds(rq,sq,order)
 
                 # calculate jacobian matrix
-                jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                for k in range(0,mV):
-                    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                #for k in range(0,mV):
+                #    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                #    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                #    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                #    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
                 #end for
-                jcob = np.linalg.det(jcb)
-                jcbi = np.linalg.inv(jcb)
+                #jcob = np.linalg.det(jcb)
+                #jcbi = np.linalg.inv(jcb)
 
                 # compute dNdx & dNdy
                 vel[0,0]=0.
@@ -1312,7 +1339,7 @@ for istep in range(0,nstep):
 
     print("     -> tau_supg (m,M) %e %e " %(np.min(tau_supg),np.max(tau_supg)))
 
-    print("build FE matrix : %.3f s" % (timing.time() - start))
+    print("build FE matrix temperature: %.3f s" % (timing.time() - start))
 
     #################################################################
     # solve system
@@ -1385,7 +1412,7 @@ for istep in range(0,nstep):
     print("apply L&K filter: %.3f s" % (timing.time() - start))
 
     #################################################################
-    # compute vrms 
+    # compute vrms & <T>
     #################################################################
     start = timing.time()
 
@@ -1400,13 +1427,13 @@ for istep in range(0,nstep):
                 NNNV[0:mV]=NNV(rq,sq,order)
                 dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
                 dNNNVds[0:mV]=dNNVds(rq,sq,order)
-                jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                for k in range(0,mV):
-                    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-                jcob = np.linalg.det(jcb)
+                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                #for k in range(0,mV):
+                #    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                #    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                #    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                #    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+                #jcob = np.linalg.det(jcb)
                 uq=0.
                 vq=0.
                 Tq=0.
@@ -1439,13 +1466,13 @@ for istep in range(0,nstep):
     #####################################################################
     start = timing.time()
     
-    exx_n = np.zeros(NV,dtype=np.float64)  
-    eyy_n = np.zeros(NV,dtype=np.float64)  
-    exy_n = np.zeros(NV,dtype=np.float64)  
-    sr_n  = np.zeros(NV,dtype=np.float64)  
-    eta_n = np.zeros(NV,dtype=np.float64)  
-    rh_n  = np.zeros(NV,dtype=np.float64)  
-    count = np.zeros(NV,dtype=np.int32)  
+    exx_n=np.zeros(NV,dtype=np.float64)  
+    eyy_n=np.zeros(NV,dtype=np.float64)  
+    exy_n=np.zeros(NV,dtype=np.float64)  
+    sr_n=np.zeros(NV,dtype=np.float64)  
+    eta_n=np.zeros(NV,dtype=np.float64)  
+    rh_n=np.zeros(NV,dtype=np.float64)  
+    count=np.zeros(NV,dtype=np.int32)  
     q=np.zeros(NV,dtype=np.float64)
     c=np.zeros(NV,dtype=np.float64)
 
@@ -1495,7 +1522,6 @@ for istep in range(0,nstep):
 
     for i in range(0,NV):
         eta_n[i],rh_n[i]=eta(T[i],sr_n[i],yV[i])
-
 
     print("     -> exx_n (m,M) %.6e %.6e " %(np.min(exx_n),np.max(exx_n)))
     print("     -> eyy_n (m,M) %.6e %.6e " %(np.min(eyy_n),np.max(eyy_n)))
@@ -1562,12 +1588,15 @@ for istep in range(0,nstep):
            # end if active
        # end for im
 
+    else:
+
+       exit('no higher order RK yet')
 
     print("advect markers: %.3f s" % (timing.time() - start))
 
-    #####################################################################
+    ###########################################################################
     # plot of solution
-    #####################################################################
+    ###########################################################################
     start = timing.time()
 
     if istep%every==0:
@@ -1618,7 +1647,6 @@ for istep in range(0,nstep):
        for i in range(0,NV):
            vtufile.write("%10e \n" %rh_n[i])
        vtufile.write("</DataArray>\n")
-
        #--
        vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
        for i in range(0,NV):
@@ -1670,6 +1698,10 @@ for istep in range(0,nstep):
        vtufile.write("</UnstructuredGrid>\n")
        vtufile.write("</VTKFile>\n")
        vtufile.close()
+
+       ########################################################################
+       # export markers to vtu file
+       ########################################################################
 
        filename = 'markers_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
