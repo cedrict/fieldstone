@@ -1,9 +1,8 @@
 import numpy as np
 from numba import jit
 
-epsilon=1e-20
 
-###############################################################################
+###################################################################################################
 # computes the vector product of two vectors; i.e.,
 
 @jit(nopython=True)
@@ -13,7 +12,7 @@ def cross(a,b):
     cz=a[0]*b[1]-a[1]*b[0]
     return np.array([cx,cy,cz],dtype=np.float64)
 
-###############################################################################
+###################################################################################################
 
 @jit(nopython=True)
 def qcoords_1D(nqpts):
@@ -90,7 +89,7 @@ def qcoords_1D(nqpts):
              0.973906528517172],dtype=np.float64)
 
 
-###############################################################################
+###################################################################################################
 
 @jit(nopython=True)
 def qweights_1D(nqpts):
@@ -167,7 +166,7 @@ def qweights_1D(nqpts):
             0.066671344308688],dtype=np.float64)
 
 
-###############################################################################
+###################################################################################################
 # Q1 basis functions inside the [-1:1]x[-1:1]x[-1:1] reference element/cell
 
 @jit(nopython=True)
@@ -218,7 +217,7 @@ def dNNNdt(r,s,t):
     dNdt7=+0.125*(1.-r)*(1.+s)
     return np.array([dNdt0,dNdt1,dNdt2,dNdt3,dNdt4,dNdt5,dNdt6,dNdt7],dtype=np.float64)
 
-###############################################################################
+###################################################################################################
 # computes magnetic field components based on a 2^3 quadrature point integration
 # produced by a single hexahedron (cuboid) carrying a magnetisation
 # vector (Mx,My,Mz) assumed to be constant inside the element/cell.
@@ -305,7 +304,7 @@ def compute_B_quadrature(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz,nqdim):
 
     return np.array([Bx,By,Bz],dtype=np.float64)
 
-###############################################################################
+###################################################################################################
 # Subroutine plane computes the intersection (x,y,z) of a plane 
 # and a perpendicular line.  The plane is defined by three points 
 # (x1,y1,z1), (x2,y2,z2), and (x3,y3,z3).  The line passes through 
@@ -362,7 +361,7 @@ def plane(x0,y0,z0,x1,y1,z1,x2,y2,z2,x3,y3,z3):
     z=z+z1
     return x,y,z,r
 
-###############################################################################
+###################################################################################################
 # Subroutine LINE determines the intersection (x,y,z) of two 
 # lines.  First line is defined by points (x1,y1,z1) and 
 # (x2,y2,z2).  Second line is perpendicular to the first and 
@@ -413,8 +412,7 @@ def line(x0,y0,z0,x1,y1,z1,x2,y2,z2):
       v2=a-u0
       return x,y,z,v1,v2,r
 
-
-###############################################################################
+###################################################################################################
 # Subroutine ROT finds the sense of rotation of the vector 
 # from (ax,ay,az) to (bx,by,bz) with respect to a second 
 # vector through point (px,py,pz).  The second vector has 
@@ -450,7 +448,7 @@ def rot(ax,ay,az,bx,by,bz,nx,ny,nz,px,py,pz):
 
     return s
 
-###############################################################################
+###################################################################################################
 # Subroutine FACMAG computes the magnetic field due to surface 
 # charge  on a polygonal face.  Repeated calls can build the 
 # field of an arbitrary polyhedron.  X axis is directed north, 
@@ -463,6 +461,16 @@ def rot(ax,ay,az,bx,by,bz,nx,ny,nz,px,py,pz):
 #  magnetization in A/m. 
 # Output parameters: Three components of magnetic field (Bx,By,Bz), in T.
 # Directly translated from Blakely 1995 book. 
+
+# in the book, epsilon is set to a very small value (1e-20)
+# however upon careful consideration, if the measurement point 
+# is above a vertical wall AND very close to a node defining that plane, 
+# then the value of epsilon might become problematic?
+# in practice we always measure at heights many orders of magnitude 
+# large than epsilon and we also make sure the measuring points 
+# are never exactly above a cell wall/corner.
+
+epsilon=1e-20
 
 @jit(nopython=True)
 def facmag(Mx,My,Mz,x0,y0,z0,x,y,z,n):
@@ -493,13 +501,15 @@ def facmag(Mx,My,Mz,x0,y0,z0,x,y,z,n):
       ny=N[1]
       nz=N[2]
       rn=np.sqrt(nx**2+ny**2+nz**2)
-      nx=nx/rn
-      ny=ny/rn
-      nz=nz/rn
+      nx/=rn
+      ny/=rn
+      nz/=rn
 
       dot=Mx*nx+My*ny+Mz*nz
 
-      if abs(dot)<epsilon:
+      #nx,ny,nz of order unity
+      #typical Mx,My,Mz of order unity
+      if abs(dot)<1e-20:
          return np.array([0.,0.,0.])
 
       px,py,pz,w=plane(x0,y0,z0,x[0],y[0],z[0],x[1],y[1],z[1],x[2],y[2],z[2])
@@ -568,7 +578,7 @@ def facmag(Mx,My,Mz,x0,y0,z0,x,y,z,n):
 
       return np.array([Bx,By,Bz],dtype=np.float64)
 
-###############################################################################
+###################################################################################################
 # this function computes the magnetic field produced by a cuboid cell
 # using facmag function on each face. Here again the magnetisation vector 
 # (Mx,My,Mz) is assumed to be constant inside the cell.
@@ -666,7 +676,7 @@ def compute_B_surface_integral_cuboid(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz):
 
     return np.array([Bx,By,Bz],dtype=np.float64)
 
-###############################################################################
+###################################################################################################
 # this function computes the magnetic field produced by a hexahedron cell
 # which vertical sides are planar. Only the top and bottom faces can 
 # contain 4 nodes which are not co-planar.
@@ -780,7 +790,6 @@ def compute_B_surface_integral_wtopo(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz):
     By+=field[1]
     Bz+=field[2]
 
-
     #top face
     x9=(x[icon[4]]+x[icon[5]]+x[icon[6]]+x[icon[7]])*0.25
     y9=(y[icon[4]]+y[icon[5]]+y[icon[6]]+y[icon[7]])*0.25
@@ -825,7 +834,180 @@ def compute_B_surface_integral_wtopo(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz):
     Bx+=field[0]
     By+=field[1]
     Bz+=field[2]
-
+    Bx=Bx*1e-7  #AEH (output, left from cm = [T])
+    By=By*1e-7  #AEH
+    Bz=Bz*1e-7  #AEH
     return np.array([-Bx,-By,-Bz],dtype=np.float64)
+# minus as always reversed, see previous function last lines , minus Bz,Bx,By. 
+# Likely due to counterclockwise fashion numbering of corners
+# while the original blakely subroutines are structured for clockwise numbering 
+# benchmark 1/3 validify orientation   #AEH
+
+###################################################################################################
+# noise is added to the middle point of each cell at the bottom and top.
+# note that when measurements are being carried out, it could be that the 
+# measuring point is then actually inside the domain but we do not 
+# correct for it nor test it.
+###################################################################################################
+
+@jit(nopython=True)
+def compute_B_surface_integral_wtopo_noise(xmeas,ymeas,zmeas,x,y,z,icon,Mx,My,Mz,noise):
+
+    Bx=0
+    By=0
+    Bz=0
+
+    nface=4 
+    xface=np.empty(nface+1,dtype=np.float64)
+    yface=np.empty(nface+1,dtype=np.float64)
+    zface=np.empty(nface+1,dtype=np.float64)
+
+    #face 'x=0'
+    xface[0]=x[icon[7]] ; yface[0]=y[icon[7]] ; zface[0]=z[icon[7]] 
+    xface[1]=x[icon[3]] ; yface[1]=y[icon[3]] ; zface[1]=z[icon[3]] 
+    xface[2]=x[icon[0]] ; yface[2]=y[icon[0]] ; zface[2]=z[icon[0]] 
+    xface[3]=x[icon[4]] ; yface[3]=y[icon[4]] ; zface[3]=z[icon[4]] 
+    xface[4]=xface[0]   ; yface[4]=yface[0]   ; zface[4]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #face 'x=1'
+    xface[0]=x[icon[1]] ; yface[0]=y[icon[1]] ; zface[0]=z[icon[1]] 
+    xface[1]=x[icon[2]] ; yface[1]=y[icon[2]] ; zface[1]=z[icon[2]] 
+    xface[2]=x[icon[6]] ; yface[2]=y[icon[6]] ; zface[2]=z[icon[6]] 
+    xface[3]=x[icon[5]] ; yface[3]=y[icon[5]] ; zface[3]=z[icon[5]] 
+    xface[4]=xface[0]   ; yface[4]=yface[0]   ; zface[4]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #face 'y=0'
+    xface[0]=x[icon[0]] ; yface[0]=y[icon[0]] ; zface[0]=z[icon[0]] 
+    xface[1]=x[icon[1]] ; yface[1]=y[icon[1]] ; zface[1]=z[icon[1]] 
+    xface[2]=x[icon[5]] ; yface[2]=y[icon[5]] ; zface[2]=z[icon[5]] 
+    xface[3]=x[icon[4]] ; yface[3]=y[icon[4]] ; zface[3]=z[icon[4]] 
+    xface[4]=xface[0]   ; yface[4]=yface[0]   ; zface[4]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #face 'y=1'
+    xface[0]=x[icon[2]] ; yface[0]=y[icon[2]] ; zface[0]=z[icon[2]] 
+    xface[1]=x[icon[3]] ; yface[1]=y[icon[3]] ; zface[1]=z[icon[3]] 
+    xface[2]=x[icon[7]] ; yface[2]=y[icon[7]] ; zface[2]=z[icon[7]] 
+    xface[3]=x[icon[6]] ; yface[3]=y[icon[6]] ; zface[3]=z[icon[6]] 
+    xface[4]=xface[0]   ; yface[4]=yface[0]   ; zface[4]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    nface=3 
+    xface=np.empty(nface+1,dtype=np.float64)
+    yface=np.empty(nface+1,dtype=np.float64)
+    zface=np.empty(nface+1,dtype=np.float64)
+
+    #bottom face 
+    x8=(x[icon[0]]+x[icon[1]]+x[icon[2]]+x[icon[3]])*0.25
+    y8=(y[icon[0]]+y[icon[1]]+y[icon[2]]+y[icon[3]])*0.25
+    z8=(z[icon[0]]+z[icon[1]]+z[icon[2]]+z[icon[3]])*0.25+noise
+
+    #328
+    xface[0]=x[icon[3]] ; yface[0]=y[icon[3]] ; zface[0]=z[icon[3]] 
+    xface[1]=x[icon[2]] ; yface[1]=y[icon[2]] ; zface[1]=z[icon[2]] 
+    xface[2]=x8         ; yface[2]=y8         ; zface[2]=z8
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #821
+    xface[0]=x8         ; yface[0]=y8         ; zface[0]=z8 
+    xface[1]=x[icon[2]] ; yface[1]=y[icon[2]] ; zface[1]=z[icon[2]] 
+    xface[2]=x[icon[1]] ; yface[2]=y[icon[1]] ; zface[2]=z[icon[1]] 
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #108
+    xface[0]=x[icon[1]] ; yface[0]=y[icon[1]] ; zface[0]=z[icon[1]] 
+    xface[1]=x[icon[0]] ; yface[1]=y[icon[0]] ; zface[1]=z[icon[0]] 
+    xface[2]=x8         ; yface[2]=y8         ; zface[2]=z8 
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #803
+    xface[0]=x8         ; yface[0]=y8         ; zface[0]=z8
+    xface[1]=x[icon[0]] ; yface[1]=y[icon[0]] ; zface[1]=z[icon[0]] 
+    xface[2]=x[icon[3]] ; yface[2]=y[icon[3]] ; zface[2]=z[icon[3]] 
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+
+    #top face
+    x9=(x[icon[4]]+x[icon[5]]+x[icon[6]]+x[icon[7]])*0.25
+    y9=(y[icon[4]]+y[icon[5]]+y[icon[6]]+y[icon[7]])*0.25
+    z9=(z[icon[4]]+z[icon[5]]+z[icon[6]]+z[icon[7]])*0.25+noise
+
+    #679
+    xface[0]=x[icon[6]] ; yface[0]=y[icon[6]] ; zface[0]=z[icon[6]] 
+    xface[1]=x[icon[7]] ; yface[1]=y[icon[7]] ; zface[1]=z[icon[7]] 
+    xface[2]=x9         ; yface[2]=y9         ; zface[2]=z9
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #974
+    xface[0]=x9         ; yface[0]=y9         ; zface[0]=z9
+    xface[1]=x[icon[7]] ; yface[1]=y[icon[7]] ; zface[1]=z[icon[7]] 
+    xface[2]=x[icon[4]] ; yface[2]=y[icon[4]] ; zface[2]=z[icon[4]] 
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #459
+    xface[0]=x[icon[4]] ; yface[0]=y[icon[4]] ; zface[0]=z[icon[4]] 
+    xface[1]=x[icon[5]] ; yface[1]=y[icon[5]] ; zface[1]=z[icon[5]] 
+    xface[2]=x9         ; yface[2]=y9         ; zface[2]=z9 
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+
+    #956
+    xface[0]=x9         ; yface[0]=y9         ; zface[0]=z9
+    xface[1]=x[icon[5]] ; yface[1]=y[icon[5]] ; zface[1]=z[icon[5]] 
+    xface[2]=x[icon[6]] ; yface[2]=y[icon[6]] ; zface[2]=z[icon[6]] 
+    xface[3]=xface[0]   ; yface[3]=yface[0]   ; zface[3]=zface[0]  
+    field=facmag(Mx,My,Mz,xmeas,ymeas,zmeas,xface,yface,zface,nface)
+    Bx+=field[0]
+    By+=field[1]
+    Bz+=field[2]
+    Bx*=1e-7  #AEH (output, left from cm = [T])
+    By*=1e-7  #AEH
+    Bz*=1e-7  #AEH
+    return np.array([-Bx,-By,-Bz],dtype=np.float64)
+# minus as always reversed, see previous function last lines , minus Bz,Bx,By. 
+# Likely due to counterclockwise fashion numbering of corners
+# while the original blakely subroutines are structured for clockwise numbering 
+# benchmark 1/3 validify orientation   #AEH
 
  

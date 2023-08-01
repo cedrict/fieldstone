@@ -1,32 +1,33 @@
 #! /bin/bash
 
 #######################################################
-rDEM=5
+rdem=2
 #######################################################
 
-rm -r results_site*
+#rm -r results_site*
 
-for site in 1 2 3 4 5 6 ; do
-    for ipath in 1 2 3 ; do
-        for sdem in 1 2 3; do 
-            for ho in 1 2 3 4; do 
+for site in 3 ; do
+     for sdem in 3 ; do
+        for ipath in 1; do 
+            for ho in 1; do 
 
                 echo '********************************************************'
-                echo site= $site path=$ipath sDEM=$sdem ho=$ho
+                echo site= $site path=$ipath sDEM=$sdem ho=$ho rDEM=$rdem
 
                 sed -i "s/path=.*/path="$ipath"/" etna.py
                 sed -i "s/site=.*/site="$site"/" etna.py
                 sed -i "s/ho=.*/ho="$ho"/" etna.py
                 sed -i "s/sDEM=.*/sDEM="$sdem"/" etna.py
+                sed -i "s/rDEM=.*/rDEM="$rdem"/" etna.py
 
                 python3 stone.py  > opla
 
-                if test -f "path.vtu"; then
+                if test -f "opla"; then
                    mkdir results
                    mv *.vtu results/
                    mv *.ascii results/
                    mv opla results/
-                   mv results results_site${site}_path${ipath}_sdem${sdem}_ho${ho}
+                   mv results results_${rdem}m_site${site}_path${ipath}_sdem${sdem}_ho${ho}
                 fi
 
                 rm -f *.vtu
@@ -36,7 +37,7 @@ for site in 1 2 3 4 5 6 ; do
 
         done
 
-    done
+     done
 
 done
 

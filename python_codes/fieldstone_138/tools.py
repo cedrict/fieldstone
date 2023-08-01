@@ -31,11 +31,13 @@ def export_mesh_3D(NV,nel,x,y,z,icon,filename,Mx,My,Mz,nnx,nny,nnz):
         vtufile.write("%10e\n" % max(z[i],zmin))
    vtufile.write("</DataArray>\n")
    vtufile.write("</PointData>\n")
-   #####
+   ##### 
+   ##### TODO: check why I removed 3 lines below before ?
 
-   if abs(np.max(Mx)-np.min(Mx))>1e-6 or\
-      abs(np.max(My)-np.min(My))>1e-6 or\
-      abs(np.max(Mz)-np.min(Mz))>1e-6 : 
+   if nel==nel:
+   #abs(np.max(Mx)-np.min(Mx))>1e-6 or\
+   #   abs(np.max(My)-np.min(My))>1e-6 or\
+   #   abs(np.max(Mz)-np.min(Mz))>1e-6 : 
 
       vtufile.write("<CellData Scalars='scalars'>\n")
       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='M vector' Format='ascii'> \n")
@@ -250,6 +252,48 @@ def export_line_measurements(N,x,y,z,filename,B_vi,B_si,B_th):
    vtufile.write("</VTKFile>\n")
    vtufile.close()
 
+
+###############################################################################
+
+def export_path_measurements(npath,xpath,ypath,zpath,filename):
+
+   vtufile=open(filename,"w")
+   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+   vtufile.write("<UnstructuredGrid> \n")
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(npath,npath))
+   vtufile.write("<Points> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+   for i in range(0,npath):
+       vtufile.write("%10e %10e %10e \n" %(xpath[i],ypath[i],zpath[i]))
+#       vtufile.write("%.10e %.10e %.10e \n" %(xpath[i],ypath[i],zpath[i]))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Points> \n")
+   #vtufile.write("<PointData Scalars='scalars'>\n")
+   #vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/s)' Format='ascii'> \n")
+   #for i in range(0,npath):
+   #    vtufile.write("%10e %10e %10e \n" %(swarm_u[i],swarm_v[i],0.))
+   #vtufile.write("</DataArray>\n")
+   #vtufile.write("</PointData>\n")
+   vtufile.write("<Cells>\n")
+   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+   for i in range(0,npath):
+       vtufile.write("%d " % i)
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+   for i in range(0,npath):
+       vtufile.write("%d " % (i+1))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+   for i in range(0,npath):
+       vtufile.write("%d " % 1)
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Cells>\n")
+   vtufile.write("</Piece>\n")
+   vtufile.write("</UnstructuredGrid>\n")
+   vtufile.write("</VTKFile>\n")
+   vtufile.close()
+
+   print('produced path.vtu')
 ###################################################################################################
 
 def export_spiral_measurements(N,x,y,z,filename,B_vi,B_si,B_th):

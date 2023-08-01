@@ -21,13 +21,54 @@ zpath_option=2 #based on dem + zpath_height
 # ho  : 1,2 (height option), site5 has 4 options.
 
 rDEM=5
-sDEM=1
-site=1
+sDEM=5
+site=6
 path=1
 ho=1
 
-Lx,Ly,Lz,nelx,nely,nelz,xllcorner,yllcorner,npath,zpath_height,pathfile,topofile,error=\
+Lx,Ly,Lz,nelx,nely,nelz,xllcorner,yllcorner,npath,zpath_height,pathfile,topofile,error,IGRFx,IGRFy,IGRFz,Brefx,Brefy,Brefz=\
       set_measurement_parameters(rDEM,sDEM,site,path,ho)
 
 if error:
    exit('combination does not exist -> terminate')
+   
+###############################################################################
+# setup for case study into Mt. Etna field measurements, reproducing sites
+# site measurement locations were ~1m apart, three paths per site
+# 6 sites, nomenclature: 
+# rDEM: resolution of DEM (either 2m or 5m, but 5m does not exist for site 3) 
+# sDEM: size of DEM cuts (cuts were made with path kept ~ in the middle) see below for 
+# path: the number allocated to each path on the sites (for 1-5: 3 paths)
+#
+#
+#
+#
+#site  rDEM  sDEM  rough_size
+# 1    2m    1     2000
+# 1    2m    2     1400
+# 1    2m    3     1000
+# 1    2m    4     1400
+# 1    2m    5     1000
+# 1    2m    6     1400
+# 1    2m    7     1000
+# 1    2m    2     1400
+
+# 1    5m    1     2000
+# 1    5m    1     300
+# 1    5m    1     200
+#######################
+# 2    2m    -     2000
+
+# 2    5m    1     2000
+# 2    5m    2     300
+# 2    5m    3     200
+#######################
+# 3
+#######################
+# 4
+#######################
+# 5
+#######################
+# 6
+###############################################################################
+
