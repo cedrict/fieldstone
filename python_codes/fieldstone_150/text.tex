@@ -526,6 +526,32 @@ All in all, this is where we are at:
 The matrix build for 128x128 used to take about 80s for V0, now it takes 
 about 55s. Let us be honest, I was hoping for at least a factor 2. 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Dealing with the matrix storage}
+
+One thing we have not tried yet is to not use a linked list approach to store the 
+FE matrix but instead use a full array approach, i.e.
+ 
+\begin{lstlisting}
+A_sparse=np.zeros((Nfem,Nfem),dtype=np.float64)
+...
+sparse_matrix=sps.csr_matrix(A_sparse)
+\end{lstlisting}
+instead of 
+\begin{lstlisting}
+A_sparse=lil_matrix((Nfem,Nfem),dtype=np.float64)
+...
+sparse_matrix=A_sparse.tocsr()
+\end{lstlisting}
+This is carried out in {\pythonfile stone\_V5.py}. 
+\begin{center}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_150/results/times_V5}
+\end{center}
+The build time is improved BUT there are two problems: a) converting the matrix to csr 
+format before passing it to the solver takes more time and therefore shifts the solve
+time up; b) the simulation stops at resolution 96x96 as the python interpreter complains 
+about the memory to store the matrix:
+``Unable to allocate 165. GiB for an array with shape (148739, 148739) and data type float64''.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

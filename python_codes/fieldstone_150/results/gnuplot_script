@@ -1,0 +1,121 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set log xy
+set key outside
+set format y "10^{%L}"
+
+############################################################
+
+set xlabel 'nel'
+set ylabel 'time (s)'
+set output 'times_V0.pdf'
+plot[:20000][0.002:]\
+'timings_build_V0'     u 6:4 w p ps .3 t 'build matrix V_0',\
+'timings_errors_V0'    u 6:3 w p ps .3 t 'compute errors V_0',\
+'timings_normalise_V0' u 6:3 w p ps .3 t 'normalise V_0',\
+'timings_solve_V0'     u 6:3 w p ps .3 t 'solve matrix',\
+x/200  lt 1 lw .57 dt 2 t 'x^1',\
+x/1400 lt 2 lw .57 dt 2 t 'x^1',\
+x/3500 lt 3 lw .57 dt 2 t 'x^1',\
+x**1.66/280000 lt -1 dt 3 t 'x^{1.66}'
+
+set xlabel 'h'
+set ylabel '|error|_2'
+set output 'errors_V0.pdf'
+plot[][]\
+'errors_V0' u (1/sqrt($3)):6 w lp ps .3 t 'vel',\
+'errors_V0' u (1/sqrt($3)):9 w lp ps .3 t 'vel',\
+x**3/180 lt -1 dt 2 t 'h^3',\
+x**2/18 lt -1 dt 3 t 'h^2'
+
+############################################################
+############################################################
+
+set xlabel 'nel'
+set ylabel 'time (s)'
+set output 'times_V1.pdf'
+plot[:20000][0.002:]\
+'timings_build_V1'  u 6:4 w p ps .3 t 'build matrix V_1',\
+'timings_errors_V1' u 6:3 w p ps .3 t 'compute errors V_1',\
+'timings_normalise_V1' u 6:3 w p ps .3 t 'normalise V_1',\
+'timings_solve_V1'  u 6:3 w p ps .3 t 'solve matrix',\
+x/200  lt 1 lw .57 dt 2 t 'x^1',\
+x/1400 lt 2 lw .57 dt 2 t 'x^1',\
+x/3500 lt 3 lw .57 dt 2 t 'x^1',\
+x**1.66/280000 lt -1 dt 3 t 'x^{1.66}'
+
+############################################################
+############################################################
+
+set xlabel 'nel'
+set ylabel 'time (s)'
+set output 'times_V2.pdf'
+plot[:20000][0.002:]\
+'timings_build_V2'  u 6:4 w p ps .3 t 'build matrix V_2',\
+'timings_errors_V2' u 6:3 w p ps .3 t 'compute errors V_2',\
+'timings_normalise_V2' u 6:3 w p ps .3 t 'normalise V_2',\
+'timings_solve_V2'  u 6:3 w p ps .3 t 'solve matrix',\
+x/200  lt 1 lw .57 dt 2 t 'x^1',\
+x/1400 lt 2 lw .57 dt 2 t 'x^1',\
+x/3500 lt 3 lw .57 dt 2 t 'x^1',\
+x**1.66/280000 lt -1 dt 3 t 'x^{1.66}'
+
+set output 'times_V2_errors.pdf'
+plo[][]\
+'timings_errors_V2_bef' u 6:3 w p ps .3 t 'compute errors V_2 (bef)',\
+'timings_errors_V2' u 6:3 w p ps .3 t 'compute errors V_2 (aft)'
+
+############################################################
+############################################################
+
+set xlabel 'nel'
+set ylabel 'time (s)'
+set output 'times_V4.pdf'
+plot[:20000][0.002:]\
+'timings_build_V4'  u 6:4 w p ps .3 t 'build matrix V_1',\
+'timings_errors_V4' u 6:3 w p ps .3 t 'compute errors V_1',\
+'timings_normalise_V4' u 6:3 w p ps .3 t 'normalise V_1',\
+'timings_solve_V4'  u 6:3 w p ps .3 t 'solve matrix',\
+x/200  lt 1 lw .57 dt 2 t 'x^1',\
+x/1400 lt 2 lw .57 dt 2 t 'x^1',\
+x/3500 lt 3 lw .57 dt 2 t 'x^1',\
+x**1.66/280000 lt -1 dt 3 t 'x^{1.66}'
+
+############################################################
+############################################################
+
+set xlabel 'nel'
+set ylabel 'time (s)'
+set output 'times_V5.pdf'
+plot[:20000][0.002:]\
+'timings_build_V5'  u 6:4 w p ps .3 t 'build matrix V_1',\
+'timings_errors_V5' u 6:3 w p ps .3 t 'compute errors V_1',\
+'timings_normalise_V5' u 6:3 w p ps .3 t 'normalise V_1',\
+'timings_solve_V5'  u 6:3 w p ps .3 t 'solve matrix',\
+x/200  lt 1 lw .57 dt 2 t 'x^1',\
+x/1400 lt 2 lw .57 dt 2 t 'x^1',\
+x/3500 lt 3 lw .57 dt 2 t 'x^1',\
+x**1.66/280000 lt -1 dt 3 t 'x^{1.66}'
+
+############################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
