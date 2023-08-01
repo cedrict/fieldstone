@@ -98,9 +98,18 @@ For simplicity (and because I have not yet implemented a version of the
 merging algorithm for second order elements), I will use 
 the $Q_1^+\times Q_1$ pair for Stokes and $Q_1$ elements for the temperature.
 
+Also, the steady state energy equation is solved. Since the (linear) Stokes equations 
+do not depend on temperature, we then only need to solve the Stokes equations 
+first and the energy equation second.
 
+After the Stokes equations are solved we must transfer the velocity solution 
+onto the temperature mesh. I have then created the {\tt mapping} array
+that links each Stokes mesh point with a temperature mesh point.
+Note that this algorithm is *very* slow and could certainly be improved
+(currently about 500s for level=128!). 
 
-
+Once the temperature equation is solved I also compute the nodal heat flux vector
+$\vec{q}=-k \vec\nabla T$.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,7 +134,6 @@ so the Stokes equations are (for now) not solved.
 when level$>160$.} 
 \end{center}
 
-\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Case 1b - dynamical flow in isoviscous wedge I}
 
@@ -155,7 +163,7 @@ Same as case 1b, but with stress-free boundary conditions on the mantle wedge.
 \end{center}
 
 There seems to be a pressure instability/mode towards the bottom?!
-
+Is this because of the element?
 
 
 
@@ -180,8 +188,8 @@ There seems to be a pressure instability/mode towards the bottom?!
 \item use f131 P1 to P2 tool to make Q1 to Q2 ?
 \item redo figures with appropriate colors
 \item redo (some) benchmark measurements?
-\item redo quadrature loops for T to match quad of stokes
-\item improve mapping algo? 
+\item improve mapping algo?
+\item is it worth moving to Q2Q1 ? what about the weird pressure error of Q1+xQ1 ? 
 \end{itemize}
 \end{minipage}}
 \end{center}

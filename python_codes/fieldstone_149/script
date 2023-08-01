@@ -1,0 +1,11 @@
+
+python3 stone.py 16 > opla_16
+python3 stone.py 32 > opla_32
+python3 stone.py 48 > opla_48
+python3 stone.py 64 > opla_64
+python3 stone.py 80 > opla_80
+python3 stone.py 96 > opla_96
+python3 stone.py 112 > opla_112
+python3 stone.py 128 > opla_128
+
+

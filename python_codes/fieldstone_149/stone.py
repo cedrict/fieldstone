@@ -10,7 +10,7 @@ import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 
 ###############################################################################
-# Q1 basis functions in 2D
+# Q1 basis functions in 2D - temperature equation
 ###############################################################################
 
 def NNT(rq,sq):
@@ -66,11 +66,11 @@ def dBds(r,s):
        return (1-r**2)*(-2*s)
 
 def NNV(r,s):
-    NV_0= 0.25*(1-r)*(1-s) - 0.25*B(r,s)
-    NV_1= 0.25*(1+r)*(1-s) - 0.25*B(r,s)
-    NV_2= 0.25*(1+r)*(1+s) - 0.25*B(r,s)
-    NV_3= 0.25*(1-r)*(1+s) - 0.25*B(r,s)
-    NV_4= B(r,s)
+    NV_0=0.25*(1-r)*(1-s) - 0.25*B(r,s)
+    NV_1=0.25*(1+r)*(1-s) - 0.25*B(r,s)
+    NV_2=0.25*(1+r)*(1+s) - 0.25*B(r,s)
+    NV_3=0.25*(1-r)*(1+s) - 0.25*B(r,s)
+    NV_4=B(r,s)
     return np.array([NV_0,NV_1,NV_2,NV_3,NV_4],dtype=np.float64)
 
 def dNNVdr(r,s):
@@ -90,10 +90,10 @@ def dNNVds(r,s):
     return np.array([dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4],dtype=np.float64)
 
 def NNP(r,s):
-    NP_0= 0.25*(1-r)*(1-s)
-    NP_1= 0.25*(1+r)*(1-s)
-    NP_2= 0.25*(1+r)*(1+s)
-    NP_3= 0.25*(1-r)*(1+s)
+    NP_0=0.25*(1-r)*(1-s)
+    NP_1=0.25*(1+r)*(1-s)
+    NP_2=0.25*(1+r)*(1+s)
+    NP_3=0.25*(1-r)*(1+s)
     return np.array([NP_0,NP_1,NP_2,NP_3],dtype=np.float64)
 
 ###############################################################################
@@ -127,6 +127,7 @@ def eta(x,y):
     return 1e21
 
 ###############################################################################
+#
 # 12---------------13
 # | \       7       |
 # |  10------------11 
@@ -139,7 +140,9 @@ def eta(x,y):
 # | 0 |  \7   \  3  | 
 # |   | 1  \   \    | 
 # 0---1-----2----3--4
+#
 ###############################################################################
+
 print("-----------------------------")
 print("--------- stone 149 ---------")
 print("-----------------------------")
@@ -167,8 +170,8 @@ x[11]=660 ; y[11]=550
 x[12]=0   ; y[12]=600
 x[13]=660 ; y[13]=600
 
-x[ 7]=(x[1]+x[3]+x[10])/3    
-y[ 7]=(y[1]+y[3]+y[10])/3    
+x[7]=(x[1]+x[3]+x[10])/3    
+y[7]=(y[1]+y[3]+y[10])/3    
 
 icon[0:m,0]=[0,1,6,5]
 icon[0:m,1]=[1,2,7,6]
@@ -188,17 +191,18 @@ export_to_vtu('initial.vtu',x,y,icon,hull)
 if int(len(sys.argv) == 2):
    level=int(sys.argv[1])
 else:
-   level=32
+   level=48
 
 nelx=level
-nely=nelx
+nely=level
 nel=nelx*nely
 
 nnx=level+1
-nny=nnx
+nny=level+1
 NV=nnx*nny
 
 print('level=',level)
+print('nnx=nny=',nnx)
 
 ###############################################################################
 # build generic connectivity array for a block
@@ -397,34 +401,32 @@ for iel in range(0,nelS):
     xV[NP+iel]=np.sum(xP[iconP[:,iel]])*0.25
     yV[NP+iel]=np.sum(yP[iconP[:,iel]])*0.25
     iconV[4,iel]=NP+iel
-    #print('----------------')
-    #print(xV[iconV[0,iel]],yV[iconV[0,iel]])
-    #print(xV[iconV[1,iel]],yV[iconV[1,iel]])
-    #print(xV[iconV[2,iel]],yV[iconV[2,iel]])
-    #print(xV[iconV[3,iel]],yV[iconV[3,iel]])
-    #print(xV[iconV[4,iel]],yV[iconV[4,iel]])
 
 NfemT=NT*ndofT
 NfemP=NP*ndofP
 NfemV=NV*ndofV
 Nfem=NfemV+NfemP
 
+print('mV=',mV)
+print('mP=',mP)
+print('mT=',mT)
 print('nelT=',nelT)
 print('NT=',NT)
 print('nelS=',nelS)
 print('NP=',NP)
 print('NV=',NV)
-
 print('NfemV=',NfemV)
 print('NfemP=',NfemP)
 print('NfemT=',NfemT)
 print('Nfem=',Nfem)
 print("-----------------------------")
 
-np.savetxt('meshT.ascii',np.array([xT,yT]).T,header='# x,y')
-np.savetxt('meshP.ascii',np.array([xP,yP]).T,header='# x,y')
-np.savetxt('meshV.ascii',np.array([xV,yV]).T,header='# x,y')
+#np.savetxt('meshT.ascii',np.array([xT,yT]).T,header='# x,y')
+#np.savetxt('meshP.ascii',np.array([xP,yP]).T,header='# x,y')
+#np.savetxt('meshV.ascii',np.array([xV,yV]).T,header='# x,y')
 
+###############################################################################
+# constants
 ###############################################################################
 
 Kelvin=273.15
@@ -432,10 +434,11 @@ ndim=2
 sqrt3=np.sqrt(3.)
 cm=0.01 
 year=365.25*24*3600
-eps=1e-6
+eps=1e-4
 
-caase='1b'
-solve_stokes=True
+###############################################################################
+
+caase='1c'
 
 Lx=660e3
 Ly=600e3
@@ -450,10 +453,30 @@ angle=45./180.*np.pi
 
 eta_ref=1e21
 
+print('case=',caase)
+print("-----------------------------")
+
+###############################################################################
+# quadrature rules
+###############################################################################
+
 nqperdim=2
+
 if nqperdim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
    qweights=[1.,1.]
+
+if nqperdim==3:
+   qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
+   qweights=[5./9.,8./9.,5./9.]
+
+if nqperdim==4:
+   qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
+   qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
+   qw4a=(18-np.sqrt(30.))/36.
+   qw4b=(18+np.sqrt(30.))/36.
+   qcoords=[-qc4a,-qc4b,qc4b,qc4a]
+   qweights=[qw4a,qw4b,qw4b,qw4a]
 
 ###############################################################################
 # mapping the Stokes domain (only Q1 nodes) onto T domain
@@ -469,7 +492,7 @@ for i in range(0,NT):
 mapping =np.zeros(NP,dtype=np.int32)
 for i in range(0,NP):
     for j in range(0,NT):
-        if in_stokes_domain[j] and abs(xV[i]-xT[j])<1 and abs(yV[i]-yT[j])<1:
+        if in_stokes_domain[j] and abs(xV[i]-xT[j])<eps and abs(yV[i]-yT[j])<eps:
            mapping[i]=j
            break
 
@@ -513,8 +536,6 @@ for iel in range(0,nelS):
     #end for
 #end for
 
-#print(area)
-
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area meas %.6f " %(area.sum()))
 print("     -> total area anal %.6f " %((610e3+60e3)/2*550e3))
@@ -531,12 +552,13 @@ T=np.empty(NT,dtype=np.float64)
 
 for iter in range(0,1):
 
-    uu=np.zeros(NT,dtype=np.float64) # velocity field on T mesh
-    vv=np.zeros(NT,dtype=np.float64) 
-    pp=np.zeros(NT,dtype=np.float64) 
+    uu=np.zeros(NT,dtype=np.float64) # velocity x field on T mesh
+    vv=np.zeros(NT,dtype=np.float64) # velocity y field on T mesh
+    pp=np.zeros(NT,dtype=np.float64) # pressure field on T mesh
 
     #################################################################
-    # assign velocity to nodes, corner flow
+    # assign i(case 1a) or compute (case 1b,1c) velocity to nodes
+    # note that I have completely taken the buyoancy forces out
     #################################################################
 
     if not caase=='1a':
@@ -554,9 +576,6 @@ for iter in range(0,1):
               uui,vvi=velocity.compute_corner_flow_velocity(xV[i],yV[i],l1,l2,l3,angle,vel,Lx,Ly)
               bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV]   = uui
               bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vvi
-
-
-
        #end for
 
        A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
@@ -590,12 +609,12 @@ for iter in range(0,1):
                    # calculate jacobian matrix
                    jcb=np.zeros((ndim,ndim),dtype=np.float64)
                    for k in range(0,mV):
-                       jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                       jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                       jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                       jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-                   jcob = np.linalg.det(jcb)
-                   jcbi = np.linalg.inv(jcb)
+                       jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+                       jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
+                       jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+                       jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+                   jcob=np.linalg.det(jcb)
+                   jcbi=np.linalg.inv(jcb)
 
                    # compute dNdx & dNdy
                    xq=0.0
@@ -605,7 +624,6 @@ for iter in range(0,1):
                        yq+=NNNV[k]*yV[iconV[k,iel]]
                        dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                        dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-
 
                    # construct 3x8 b_mat matrix
                    for i in range(0,mV):
@@ -643,6 +661,9 @@ for iter in range(0,1):
                       f_el[ikk]=K_ref*bc_val[m1]
                       h_el[:]-=G_el[ikk,:]*bc_val[m1]
                       G_el[ikk,:]=0
+                   #end if
+               #end for
+           #end for
 
            # assemble matrix K_mat and right hand side rhs
            for k1 in range(0,mV):
@@ -685,12 +706,6 @@ for iter in range(0,1):
        sparse_matrix=A_sparse.tocsr()
        sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
-       print("solve time: %.3f s" % (timing.time() - start))
-
-       ##############################################################
-       # put solution into separate x,y velocity arrays
-       ##############################################################
-
        u,v=np.reshape(sol[0:NfemV],(NV,2)).T
        p=sol[NfemV:Nfem]*(eta_ref/Ly)
 
@@ -701,9 +716,12 @@ for iter in range(0,1):
        #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
        #np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
+       print("solve time: %.3f s" % (timing.time() - start))
+
        ##############################################################
-       # export solution to vtu format
+       # export Stokes solution to vtu format
        ##############################################################
+       start = timing.time()
 
        vtufile=open('solutionS_lvl'+str(level)+'.vtu',"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -722,6 +740,12 @@ for iter in range(0,1):
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
        for i in range(0,NP):
            vtufile.write("%10e %10e %10e \n" % (u[i]/cm*year,v[i]/cm*year,0))
+       vtufile.write("</DataArray>\n")
+       #--  
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (cornerflow)' Format='ascii'> \n")
+       for i in range(0,NP):
+           uui,vvi=velocity.compute_corner_flow_velocity(xP[i],yP[i],l1,l2,l3,angle,vel,Lx,Ly)
+           vtufile.write("%10e %10e %10e \n" % (uui/cm*year,vvi/cm*year,0))
        vtufile.write("</DataArray>\n")
        #--  
        vtufile.write("<DataArray type='Float32'   Name='pressure' Format='ascii'> \n")
@@ -767,6 +791,8 @@ for iter in range(0,1):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
+       print("export to vtu: %.3f s" % (timing.time() - start))
+
        ##############################################################
        # project velocity on T mesh
        ##############################################################
@@ -795,13 +821,15 @@ for iter in range(0,1):
 
     kappa=hcond/rho/hcapa
 
+    age=50e6
+
     for i in range(0,NT):
-        # top boundary - vack08
+        # top boundary 
         if abs(yT[i]-Ly)/Ly<eps: #
            bc_fixT[i]=True ; bc_valT[i]=Kelvin
         # left boundary 
         if abs(xT[i]/Lx)<eps:
-           bc_fixT[i]=True ; bc_valT[i]=Kelvin+(1573-Kelvin)*erf(((Ly-yT[i]))/(2*np.sqrt(kappa*50e6*year)))
+           bc_fixT[i]=True ; bc_valT[i]=Kelvin+(1573-Kelvin)*erf(((Ly-yT[i]))/(2*np.sqrt(kappa*age*year)))
         # right boundary 
         if abs(xT[i]-Lx)/Lx<eps:
            if yT[i]>=Ly-l2:
@@ -831,9 +859,9 @@ for iter in range(0,1):
         Kd=np.zeros((mT,mT),dtype=np.float64)    # elemental diffusion matrix 
         velq=np.zeros((1,ndim),dtype=np.float64) # velocity at quad point
 
-        # integrate viscous term at 4 quadrature points
-        for iq in [-1, 1]:
-            for jq in [-1, 1]:
+        # integrate matrix and rhs at 4 quadrature points
+        for iq in [-1,1]:
+            for jq in [-1,1]:
 
                 # position & weight of quad. point
                 rq=iq/sqrt3
@@ -921,7 +949,50 @@ for iter in range(0,1):
     print("solve T: %.3f s" % (timing.time() - start))
 
     #################################################################
-    # export Temperature along diagonal
+    # compute heat flux
+    #################################################################
+    start = timing.time()
+
+    qx=np.zeros(NT,dtype=np.float64) 
+    qy=np.zeros(NT,dtype=np.float64) 
+    cc=np.zeros(NT,dtype=np.float64) 
+
+    rTnodes=[-1,1,1,-1]
+    sTnodes=[-1,-1,1,1]
+
+    for iel in range(0,nelT):
+        for kk in range(0,mT):
+            inode=iconT[kk,iel]
+            rq = rTnodes[kk]
+            sq = sTnodes[kk]
+            dNNNTdr=dNNTdr(rq,sq)
+            dNNNTds=dNNTds(rq,sq)
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,mT):
+                jcb[0,0]+=dNNNTdr[k]*xT[iconT[k,iel]]
+                jcb[0,1]+=dNNNTdr[k]*yT[iconT[k,iel]]
+                jcb[1,0]+=dNNNTds[k]*xT[iconT[k,iel]]
+                jcb[1,1]+=dNNNTds[k]*yT[iconT[k,iel]]
+            jcbi=np.linalg.inv(jcb)
+            for k in range(0,mT):
+                dNNNTdx[k]=jcbi[0,0]*dNNNTdr[k]+jcbi[0,1]*dNNNTds[k]
+                dNNNTdy[k]=jcbi[1,0]*dNNNTdr[k]+jcbi[1,1]*dNNNTds[k]
+            for k in range(0,mT):
+                qx[inode]-=hcond*dNNNTdx[k]*T[iconT[k,iel]]
+                qy[inode]-=hcond*dNNNTdy[k]*T[iconT[k,iel]]
+            cc[inode]+=1
+        #end for
+    #end for
+    qx/=cc
+    qy/=cc
+
+    print("     -> qx (m,M) %.4f %.4f " %(np.min(qx),np.max(qx)))
+    print("     -> qy (m,M) %.4f %.4f " %(np.min(qy),np.max(qy)))
+
+    print("compute heat flux: %.3f s" % (timing.time() - start))
+
+    #################################################################
+    # export Temperature along given lines 
     #################################################################
     start = timing.time()
 
@@ -933,16 +1004,19 @@ for iter in range(0,1):
     rightT=np.zeros(NT,dtype=np.float64) # size way too large
     rightP=np.zeros(NT,dtype=np.float64) # size way too large
     depth=np.zeros(NT,dtype=np.float64)  # size way too large
+    topqx=np.zeros(NT,dtype=np.float64)  # size way too large
+    topqy=np.zeros(NT,dtype=np.float64)  # size way too large
+    topxx=np.zeros(NT,dtype=np.float64)  # size way too large
 
     counter=0
     for i in range(0,NT):
         if abs(yT[i]-Ly+xT[i])/Lx<eps:
            diagT[counter]=T[i]
            diagP[counter]=pp[i]
-           dist[counter]=np.sqrt( (xT[i]-0)**2+(yT[i]-Ly)**2  )
+           dist[counter]=np.sqrt( (xT[i]-0)**2+(yT[i]-Ly)**2 )
            counter+=1
 
-    np.savetxt('diagTP_lvl'+str(level)+'.ascii',np.array([dist[0:counter],diagT[0:counter],diagP[0:counter]]).T)
+    np.savetxt('diag_lvl'+str(level)+'.ascii',np.array([dist[0:counter],diagT[0:counter],diagP[0:counter]]).T)
 
     counter=0
     for i in range(0,NT):
@@ -954,14 +1028,29 @@ for iter in range(0,1):
            depth[counter]=Ly-yT[i]
            counter+=1
 
-    np.savetxt('rightTP_lvl'+str(level)+'.ascii',np.array([depth[0:counter],rightT[0:counter],rightP[0:counter],\
-                                                                            rightu[0:counter],rightv[0:counter]]).T)
+    np.savetxt('right_lvl'+str(level)+'.ascii',np.array([depth[0:counter],rightT[0:counter],rightP[0:counter],\
+                                                                          rightu[0:counter],rightv[0:counter]]).T)
+
+    counter=0
+    for i in range(0,NT):
+        if abs(yT[i]-Ly)/Ly<eps:
+           topqx[counter]=qx[i]
+           topqy[counter]=qy[i]
+           topxx[counter]=xT[i]
+           counter+=1
+
+    np.savetxt('top_lvl'+str(level)+'.ascii',np.array([topxx[0:counter],topqx[0:counter],topqy[0:counter]]).T)
+
+    print('     -> produced diag_lvl'+str(level)+'.ascii')
+    print('     -> produced right_lvl'+str(level)+'.ascii')
+    print('     -> produced top_lvl'+str(level)+'.ascii')
 
     print("carry out measurements: %.3f s" % (timing.time() - start))
 
     #################################################################
     # export solution to vtu file
     #################################################################
+    start = timing.time()
 
     vtufile=open('solutionT_lvl'+str(level)+'.vtu',"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -982,6 +1071,11 @@ for iter in range(0,1):
         vtufile.write("%10e %10e %10e \n" % (uu[i]/cm*year,vv[i]/cm*year,0))
     vtufile.write("</DataArray>\n")
     #--  
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3'  Name='heat flux' Format='ascii'> \n")
+    for i in range(0,NT):
+        vtufile.write("%10e %10e %10e \n" % (qx[i],qy[i],0))
+    vtufile.write("</DataArray>\n")
+    #--  
     vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
     for i in range(0,NT):
         vtufile.write("%10e \n" % (pp[i]))
@@ -999,7 +1093,6 @@ for iter in range(0,1):
         else:
            vtufile.write("%10e \n" % 0)
     vtufile.write("</DataArray>\n")
-
     #--  
     vtufile.write("</PointData>\n")
     #####
@@ -1025,6 +1118,8 @@ for iter in range(0,1):
     vtufile.write("</UnstructuredGrid>\n")
     vtufile.write("</VTKFile>\n")
     vtufile.close()
+
+    print("export to vtu: %.3f s" % (timing.time() - start))
 
 print("-----------------------------")
 

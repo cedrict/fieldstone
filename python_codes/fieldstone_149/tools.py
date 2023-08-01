@@ -64,8 +64,7 @@ def merge_two_blocks(x1,y1,icon1,hull1,x2,y2,icon2,hull2):
     together_nel=nel1+nel2
 
     #print('count(doubble)=',np.count_nonzero(doubble))
-    print('new: nnp=',together_nnp)
-    print('new: nel=',together_nel)
+    print('new: nnp=',together_nnp,' ; nel=',together_nel)
 
     together_x=np.zeros(together_nnp,dtype=np.float64)
     together_y=np.zeros(together_nnp,dtype=np.float64)
