@@ -1,0 +1,163 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+cm=0.01
+year=365.25*24*3600
+
+set xtics 50
+
+set key bottom
+
+####################################################################
+set xlabel 'distance to top left corner (km)'
+
+set ylabel 'T (^oC)'
+set output 'diagT.pdf'
+plot[][0:]\
+'diag_lvl16.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=16',\
+'diag_lvl32.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=32',\
+'diag_lvl48.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=48',\
+'diag_lvl64.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=64',\
+'diag_lvl80.ascii'  u ($1/1e3):($2-273.15) ps .123 t 'lvl=80',\
+'diag_lvl96.ascii'  u ($1/1e3):($2-273.15) ps .123 t 'lvl=96',\
+'diag_lvl112.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=112',\
+'diag_lvl128.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=128',\
+'diag_lvl144.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=144',\
+'diag_lvl160.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=160',\
+
+set ylabel 'P (Pa)'
+set output 'diagP.pdf'
+plot[][]\
+'diag_lvl16.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=16',\
+'diag_lvl32.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=32',\
+'diag_lvl48.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=48',\
+'diag_lvl64.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=64',\
+'diag_lvl80.ascii'  u ($1/1e3):($3) ps .123 t 'lvl=80',\
+'diag_lvl96.ascii'  u ($1/1e3):($3) ps .123 t 'lvl=96',\
+'diag_lvl112.ascii' u ($1/1e3):($3) ps .123 t 'lvl=112',\
+'diag_lvl128.ascii' u ($1/1e3):($3) ps .123 t 'lvl=128',\
+'diag_lvl144.ascii' u ($1/1e3):($3) ps .123 t 'lvl=144',\
+'diag_lvl160.ascii' u ($1/1e3):($3) ps .123 t 'lvl=160',\
+
+####################################################################
+set xlabel 'depth (km)'
+
+set ylabel 'T (C)'
+set output 'rightT.pdf'
+plot[][0:]\
+'right_lvl16.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=16',\
+'right_lvl32.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=32',\
+'right_lvl48.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=48',\
+'right_lvl64.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=64',\
+'right_lvl80.ascii'  u ($1/1e3):($2-273.15) ps .123 t 'lvl=80',\
+'right_lvl96.ascii'  u ($1/1e3):($2-273.15) ps .123 t 'lvl=96',\
+'right_lvl112.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=112',\
+'right_lvl128.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=128',\
+'right_lvl144.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=144',\
+'right_lvl160.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=160',\
+
+set ylabel 'P (Pa)'
+set output 'rightP.pdf'
+plot[][]\
+'right_lvl16.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=16',\
+'right_lvl32.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=32',\
+'right_lvl48.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=48',\
+'right_lvl64.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=64',\
+'right_lvl80.ascii'  u ($1/1e3):($3) ps .123 t 'lvl=80',\
+'right_lvl96.ascii'  u ($1/1e3):($3) ps .123 t 'lvl=96',\
+'right_lvl112.ascii' u ($1/1e3):($3) ps .123 t 'lvl=112',\
+'right_lvl128.ascii' u ($1/1e3):($3) ps .123 t 'lvl=128',\
+'right_lvl144.ascii' u ($1/1e3):($3) ps .123 t 'lvl=144',\
+'right_lvl160.ascii' u ($1/1e3):($3) ps .123 t 'lvl=160',\
+
+
+set ylabel 'u (cm/year)'
+set output 'rightu.pdf'
+plot[][-4:4]\
+'right_lvl16.ascii'  u ($1/1e3):($4/cm*year) ps .23 t 'lvl=16',\
+'right_lvl32.ascii'  u ($1/1e3):($4/cm*year) ps .23 t 'lvl=32',\
+'right_lvl48.ascii'  u ($1/1e3):($4/cm*year) ps .23 t 'lvl=48',\
+'right_lvl64.ascii'  u ($1/1e3):($4/cm*year) ps .23 t 'lvl=64',\
+'right_lvl80.ascii'  u ($1/1e3):($4/cm*year) ps .123 t 'lvl=80',\
+'right_lvl96.ascii'  u ($1/1e3):($4/cm*year) ps .123 t 'lvl=96',\
+'right_lvl112.ascii' u ($1/1e3):($4/cm*year) ps .123 t 'lvl=112',\
+'right_lvl128.ascii' u ($1/1e3):($4/cm*year) ps .123 t 'lvl=128',\
+'right_lvl144.ascii' u ($1/1e3):($4/cm*year) ps .123 t 'lvl=144',\
+'right_lvl160.ascii' u ($1/1e3):($4/cm*year) ps .123 t 'lvl=160',\
+0 lt -1 dt 2 notitle
+
+set key left
+set ylabel 'v (cm/year)'
+set output 'rightv.pdf'
+plot[][]\
+'right_lvl16.ascii'  u ($1/1e3):($5/cm*year) ps .23 t 'lvl=16',\
+'right_lvl32.ascii'  u ($1/1e3):($5/cm*year) ps .23 t 'lvl=32',\
+'right_lvl48.ascii'  u ($1/1e3):($5/cm*year) ps .23 t 'lvl=48',\
+'right_lvl64.ascii'  u ($1/1e3):($5/cm*year) ps .23 t 'lvl=64',\
+'right_lvl80.ascii'  u ($1/1e3):($5/cm*year) ps .123 t 'lvl=80',\
+'right_lvl96.ascii'  u ($1/1e3):($5/cm*year) ps .123 t 'lvl=96',\
+'right_lvl112.ascii' u ($1/1e3):($5/cm*year) ps .123 t 'lvl=112',\
+'right_lvl128.ascii' u ($1/1e3):($5/cm*year) ps .123 t 'lvl=128',\
+'right_lvl144.ascii' u ($1/1e3):($5/cm*year) ps .123 t 'lvl=144',\
+'right_lvl160.ascii' u ($1/1e3):($5/cm*year) ps .123 t 'lvl=160',\
+
+set key right
+
+####################################################################
+set xlabel 'distance to top left corner (km)'
+
+set ylabel 'q_x (^oC/m)'
+set output 'top_qx.pdf'
+plot[][]\
+'top_lvl16.ascii'   u ($1/1e3):($2) w lp ps .23 t 'lvl=16',\
+'top_lvl32.ascii'   u ($1/1e3):($2) w lp ps .23 t 'lvl=32',\
+'top_lvl48.ascii'   u ($1/1e3):($2) w lp ps .23 t 'lvl=48',\
+'top_lvl64.ascii'   u ($1/1e3):($2) w lp ps .23 t 'lvl=64',\
+'top_lvl80.ascii'   u ($1/1e3):($2) w lp ps .23 t 'lvl=80',\
+'top_lvl96.ascii'   u ($1/1e3):($2) w lp ps .23 t 'lvl=96',\
+'top_lvl112.ascii'  u ($1/1e3):($2) w lp ps .23 t 'lvl=112',\
+'top_lvl128.ascii'  u ($1/1e3):($2) w lp ps .23 t 'lvl=128',\
+'top_lvl144.ascii'  u ($1/1e3):($2) w lp ps .23 t 'lvl=144',\
+'top_lvl160.ascii'  u ($1/1e3):($2) w lp ps .23 t 'lvl=160',\
+
+set ylabel 'q_y (^oC/m)'
+set output 'top_qy.pdf'
+plot[][]\
+'top_lvl16.ascii'   u ($1/1e3):($3) w lp ps .23 t 'lvl=16',\
+'top_lvl32.ascii'   u ($1/1e3):($3) w lp ps .23 t 'lvl=32',\
+'top_lvl48.ascii'   u ($1/1e3):($3) w lp ps .23 t 'lvl=48',\
+'top_lvl64.ascii'   u ($1/1e3):($3) w lp ps .23 t 'lvl=64',\
+'top_lvl80.ascii'   u ($1/1e3):($3) w lp ps .23 t 'lvl=80',\
+'top_lvl96.ascii'   u ($1/1e3):($3) w lp ps .23 t 'lvl=96',\
+'top_lvl112.ascii'  u ($1/1e3):($3) w lp ps .23 t 'lvl=112',\
+'top_lvl128.ascii'  u ($1/1e3):($3) w lp ps .23 t 'lvl=128',\
+'top_lvl144.ascii'  u ($1/1e3):($3) w lp ps .23 t 'lvl=144',\
+'top_lvl160.ascii'  u ($1/1e3):($3) w lp ps .23 t 'lvl=160',\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
