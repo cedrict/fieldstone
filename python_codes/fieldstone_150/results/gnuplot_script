@@ -98,6 +98,43 @@ x/3500 lt 3 lw .57 dt 2 t 'x^1',\
 x**1.66/280000 lt -1 dt 3 t 'x^{1.66}'
 
 ############################################################
+############################################################
+
+set xlabel 'nel'
+set ylabel 'time (s)'
+set output 'times_V6.pdf'
+plot[:20000][0.002:]\
+'timings_build_V6'  u 6:4 w p ps .3 t 'build matrix V_1',\
+'timings_errors_V6' u 6:3 w p ps .3 t 'compute errors V_1',\
+'timings_normalise_V6' u 6:3 w p ps .3 t 'normalise V_1',\
+'timings_solve_V6'  u 6:3 w p ps .3 t 'solve matrix',\
+x/200  lt 1 lw .57 dt 2 t 'x^1',\
+x/1400 lt 2 lw .57 dt 2 t 'x^1',\
+x/3500 lt 3 lw .57 dt 2 t 'x^1',\
+x**1.66/280000 lt -1 dt 3 t 'x^{1.66}'
+
+############################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
