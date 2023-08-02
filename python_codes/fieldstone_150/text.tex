@@ -730,7 +730,74 @@ about 5s.
 \end{center}
 
 
+%-------------------------------------------------------------------------
+\section*{Back to computing elemental matrices}
 
+I have tried replacing in {\pythonfile stone\_V7.py} 
+\begin{lstlisting}
+for i in range(0,mV):
+    b_mat[0,2*i  ]=dNNNVdx[iq,i]
+    b_mat[1,2*i+1]=dNNNVdy[iq,i]
+    b_mat[2,2*i  ]=dNNNVdy[iq,i]
+    b_mat[2,2*i+1]=dNNNVdx[iq,i]
+\end{lstlisting}
+by 
+\begin{lstlisting}
+for i in range(0,mV):
+    dNdx=dNNNVdx[iq,i] 
+    dNdy=dNNNVdy[iq,i] 
+    b_mat[0,2*i  ]=dNdx
+    b_mat[1,2*i+1]=dNdy
+    b_mat[2,2*i  ]=dNdy
+    b_mat[2,2*i+1]=dNdx
+\end{lstlisting}
+and found a minor improvement (few percents on t12).
+I have then tried 
+\begin{lstlisting}
+b_mat[0,:]=[dNNNVdx[iq,0],0,dNNNVdx[iq,1],0,dNNNVdx[iq,2],0,\
+            dNNNVdx[iq,3],0,dNNNVdx[iq,4],0,dNNNVdx[iq,5],0,\
+            dNNNVdx[iq,6],0,dNNNVdx[iq,7],0,dNNNVdx[iq,8],0]
+b_mat[1,:]=[0,dNNNVdy[iq,0],0,dNNNVdy[iq,1],0,dNNNVdy[iq,2],\
+            0,dNNNVdy[iq,3],0,dNNNVdy[iq,4],0,dNNNVdy[iq,5],\
+            0,dNNNVdy[iq,6],0,dNNNVdy[iq,7],0,dNNNVdy[iq,8]]
+b_mat[2,:]=[dNNNVdy[iq,0],dNNNVdx[iq,0],\
+            dNNNVdy[iq,1],dNNNVdx[iq,1],\
+            dNNNVdy[iq,2],dNNNVdx[iq,2],\
+            dNNNVdy[iq,3],dNNNVdx[iq,3],\
+            dNNNVdy[iq,4],dNNNVdx[iq,4],\
+            dNNNVdy[iq,5],dNNNVdx[iq,5],\
+            dNNNVdy[iq,6],dNNNVdx[iq,6],\
+            dNNNVdy[iq,7],dNNNVdx[iq,7],\
+            dNNNVdy[iq,8],dNNNVdx[iq,8]]
+\end{lstlisting}
+which is of course ugly and not extendable to 3D or higher order elements. 
+It did not yield any improvement at all. 
+
+Likewise I replaced
+\begin{lstlisting}
+for i in range(0,mV):
+    f_el[ndofV*i  ]+=NNNV[iq,i]*JxW*bx(xq,yq)
+    f_el[ndofV*i+1]+=NNNV[iq,i]*JxW*by(xq,yq)
+\end{lstlisting}
+by 
+\begin{lstlisting}
+for i in range(0,mV):
+    Ni=NNNV[iq,i]i*JxW
+    f_el[ndofV*i  ]+=Ni*bx(xq,yq)
+    f_el[ndofV*i+1]+=Ni*by(xq,yq)
+\end{lstlisting}
+and shave off a few percents off t14.
+
+\begin{center}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_150/results/times_V7}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_150/results/times_build_all}
+\end{center}
+Looking at these results, I am not sure V7 is that relevant, as it is 
+undistinguishable from V6.
+For now V6 is the final version as it is more compact than V7. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
