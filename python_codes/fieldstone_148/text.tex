@@ -31,7 +31,7 @@ element pairs are implemented, but given the discontinuous nature of the viscosi
 field (see hereafter) the latter is to be preferred. 
 
 Boundary conditions are free slip at the top and bottom while in/out-flow
-kinematical boundary conditions are prescribed on the sides (see Section~\ref{abcd}). 
+kinematical boundary conditions are prescribed on the sides (see Section~\ref{mmm:kin_bc}). 
 The in- to out-flow transition profile starts at a 150~\si{\km} depth and ends at a depth of 350~\si{\km}.
 The prescribed velocities on the left and right lithosphere are $v_L$ and $v_R$ respectively.
 Also an option ('symm bc') has been created so that the same outflow velocity is prescribed 
@@ -47,9 +47,9 @@ $\eta_o=10^{23}~\si{\pascal\second}$, $\rho_o=3300~\si{\kg\per\cubic\meter}$
 \item Upper mantle ('um'): 
 $\eta_{um}=10^{20}~\si{\pascal\second}$, $\rho_{um}=3500~\si{\kg\per\cubic\meter}$
 \item Lower mantle ('lm'): 
-$5\cdot 10^{22}~\si{\pascal\second}$, $ 3900~\si{\kg\per\cubic\meter}$ 
+$\eta_{lm}=5\cdot 10^{22}~\si{\pascal\second}$, $ 3900~\si{\kg\per\cubic\meter}$ 
 \item a D'' layer (dpp): 
-$10^{21}~\si{\pascal\second}$,   $\rho_{dpp}=4000~\si{\kg\per\cubic\meter}$
+$\eta_{dpp}=10^{21}~\si{\pascal\second}$,   $\rho_{dpp}=4000~\si{\kg\per\cubic\meter}$
 \item two oceanic ridges coined A and B ('A', 'B'): 
 $\eta_A=\eta_B=10^{19}$, $\rho_A=\rho_B=3300~\si{\kg\per\cubic\meter}$
 \end{itemize}
@@ -74,39 +74,43 @@ The code has been written in such a
 way that it can be scripted and the list of conducted experiments is presented in the following 
 table. For reasons that need to be justified, experiment 4 has been deemed the reference one.
 
-
-\begin{tabular}{lllllllll}
+\begin{center}
+\begin{tabular}{llllllllll}
 \hline
-experiment & $v_L$ & $v_R$ & $\eta_{um}$ &rA &rB &o & $v_{mantle}$\\ 
+experiment & $v_L$ & $v_R$ & $\eta_{um}$ &rA &rB &o & $v_{mantle}$ & $\gamma$\\ 
 \hline
 \hline
-1 & -4 &  4& 20&19&19&23&0\\
-2 & -2 &  4& 20&19&19&23&0\\
-3 & -4 &  8& 20&19&19&23&0\\
-4 & -6 & 12& 20&19&19&23&0 & REF\\
-5 & -8 & 16& 20&19&19&23&0\\
-6 & -4 & 10& 20&19&19&23&0\\
-7 & -8 &  8& 20&19&19&23&0\\
-8 & -2 &  8& 20&19&19&23&0\\
-9 & -4 & 15& 20&19&19&23&0\\
-10& -4 & 20& 20&19&19&23&0\\
-11& -6 & 12& 20       & {\bf 18} &  {\bf 18} & 23&0 & \\ 
-12& -6 & 12& 20       & {\bf 20} &  {\bf 20} & 23&0 & \\ 
-13& -6 & 12& {\bf 19} & 19       & 19        & 23&0\\
-14& -6 & 12& {\bf 21} & 19       & 19        & 23&0\\
-15& -6 & 12& 20       & 19       & 19        & {\bf 22}&0\\
-16& -6 & 12& 20       & 19       & 19        & {\bf 24}&0\\
-17& -6 & 12& 20       & 19       & 19        & {\bf 25}&0\\
-18& -6 & 12& 20       & 19       & 19        & 23&0 & symm bc\\
-19& -6 & 12& 20       & 19       & {\bf 18}  & 23&0&\\
-20& -6 & 12& 20       & {\bf 18} & 19        & 23&0&\\
-21& -6 & 12& 20       & {\bf 20} & 19        & 23&0&\\
-22& -6 & 12& 20       &  19      & {\bf 20}  & 23&0&\\
-23& -6 & 12& 20&19&19&23& {\bf 1} & \\
-24& -6 & 12& 20&19&19&23& {\bf 3} & \\
-25& -6 & 12& 20&19&19&23& {\bf 6} & \\
+1 & -4 &  4& 20&19&19&23&0&1\\
+2 & -2 &  4& 20&19&19&23&0&1\\
+3 & -4 &  8& 20&19&19&23&0&1\\
+4 & -6 & 12& 20&19&19&23&0&1 & REF\\
+5 & -8 & 16& 20&19&19&23&0&1\\
+6 & -4 & 10& 20&19&19&23&0&1\\
+7 & -8 &  8& 20&19&19&23&0&1\\
+8 & -2 &  8& 20&19&19&23&0&1\\
+9 & -4 & 15& 20&19&19&23&0&1\\
+10& -4 & 20& 20&19&19&23&0&1\\
+11& -6 & 12& 20       & {\bf 18} &  {\bf 18} & 23&0 &1 \\ 
+12& -6 & 12& 20       & {\bf 20} &  {\bf 20} & 23&0 &1 \\ 
+13& -6 & 12& {\bf 19} & 19       & 19        & 23&0 &1\\
+14& -6 & 12& {\bf 21} & 19       & 19        & 23&0 &1\\
+15& -6 & 12& 20       & 19       & 19        & {\bf 22}&0&1\\
+16& -6 & 12& 20       & 19       & 19        & {\bf 24}&0&1\\
+17& -6 & 12& 20       & 19       & 19        & {\bf 25}&0&1\\
+18& -6 & 12& 20       & 19       & 19        & 23&0 &1 &symm bc\\
+19& -6 & 12& 20       & 19       & {\bf 18}  & 23&0&1\\
+20& -6 & 12& 20       & {\bf 18} & 19        & 23&0&1\\
+21& -6 & 12& 20       & {\bf 20} & 19        & 23&0&1\\
+22& -6 & 12& 20       &  19      & {\bf 20}  & 23&0&1\\
+23& -6 & 12& 20&19&19&23& {\bf 1} & 1\\
+24& -6 & 12& 20&19&19&23& {\bf 3} & 1\\
+25& -6 & 12& 20&19&19&23& {\bf 6} & 1\\
+26& -6 & 12& 20&19&19&23&0 & {\bf 1.5} \\ 
+27& -6 & 12& 20&19&19&23&0 & {\bf 2} \\ 
+27& -6 & 12& 20&19&19&23&0 & {\bf 4} \\ 
 \hline
 \end{tabular}
+\end{center}
 
 Additionally, mantle wind can be addedd ($v_{mantle}$). 
 
@@ -114,12 +118,22 @@ There are two simple ridges in the system, coined A and B. Each can have its own
 They are isosceles triangles. Ridge A is parameterised by points A,D,E while 
 ridge B is parameterised by points B,F,H.
 
+The parameter $\gamma$ controls of wide the rifts are at 100km depth.
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_148/results/gamma1}
+\includegraphics[width=4cm]{python_codes/fieldstone_148/results/gamma2}
+\includegraphics[width=4cm]{python_codes/fieldstone_148/results/gamma4}\\
+{\captionfont from left to right: $\gamma=1,2,4$.}
+\end{center}
+
 %---------------------------------
 \subsection*{Measurements}
 We focus on two profiles: $y=L_y$ and $x=L_x/2$ for which we export the velocity, 
 the strain rate components, the pressure and the stress components.
 
-Results are for now obtained with 300x150 but should ve rerun with 600x300 resolutions.
+Results are for now obtained with 300x150 but should be re-run with 600x300 resolutions.
+Each model takes about 5min to run at the current resolution. 
+The assembly process could be made faster following the explanations provided in \stone~\ref{f150}.
 
 Todo/totry
 \begin{itemize}
@@ -129,7 +143,8 @@ Todo/totry
 
 \newpage
 
-Horizontal profile at $y=Ly$:
+%-------------------------------------------
+\subsection*{Horizontal profile at $y=Ly$}
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig1_exx_surface}
@@ -142,12 +157,14 @@ Horizontal profile at $y=Ly$:
 \includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig4_u_surface}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig5_exx_surface}
 \includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig5_u_surface}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig6_exx_surface}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig6_u_surface}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig7_exx_surface}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig7_u_surface}\\
 \end{center}
 
-
-\newpage
-
-Vertical profile at $x=L_x/2$
+%--------------------------------------------
+\subsection*{Vertical profile at $x=L_x/2$}
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig1_exx_middle}
@@ -160,12 +177,126 @@ Vertical profile at $x=L_x/2$
 \includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig4_u_middle}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig5_exx_middle}
 \includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig5_u_middle}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig6_exx_middle}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig6_u_middle}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig7_exx_middle}
+\includegraphics[width=8cm]{python_codes/fieldstone_148/results/fig7_u_middle}\\
 \end{center}
 
 
 
 
+\newpage
+\begin{itemize}
+\item experiment 1:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0000}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0000}
+\item experiment 2:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0001}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0001}
+\item experiment 3:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0002}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0002}
+\item experiment 4:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0003}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0003}
+\end{itemize}
 
+\newpage
+\begin{itemize}
+\item experiment 5:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0004}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0004}
+\item experiment 6:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0005}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0005}
+\item experiment 7:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0006}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0006}
+\item experiment 8:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0007}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0007}
+\end{itemize}
+
+\newpage
+\begin{itemize}
+\item experiment 9:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0008}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0008}
+\item experiment 10:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0009}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0009}
+\item experiment 11:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0010}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0010}
+\item experiment 12:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0011}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0011}
+\end{itemize}
+
+\newpage
+\begin{itemize}
+\item experiment 13:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0012}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0012}
+\item experiment 14:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0013}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0013}
+\item experiment 15:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0014}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0014}
+\item experiment 16:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0015}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0015}
+\end{itemize}
+
+\newpage
+\begin{itemize}
+\item experiment 17:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0016}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0016}
+\item experiment 18:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0017}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0017}
+\item experiment 19:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0018}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0018}
+\item experiment 20:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0019}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0019}
+\end{itemize}
+
+\newpage
+\begin{itemize}
+\item experiment 21:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0020}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0020}
+\item experiment 22:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0021}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0021}
+\item experiment 23:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0022}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0022}
+\item experiment 24:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0023}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0023}
+\end{itemize}
+
+\newpage
+\begin{itemize}
+\item experiment 25:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0024}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0024}
+\item experiment 26:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0025}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0025}
+\item experiment 27:\\
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/vels_0026}
+\includegraphics[width=7cm]{python_codes/fieldstone_148/results/etas_0026}
+\end{itemize}
+
+
+\newpage
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

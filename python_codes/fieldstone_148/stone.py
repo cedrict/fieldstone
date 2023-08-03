@@ -3,7 +3,7 @@ import numpy as np
 import time as timing
 from scipy.sparse import lil_matrix
 import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
+from scipy.sparse.linalg import *
 import datetime
 import numba
 
@@ -181,7 +181,7 @@ Ly=3000*km
 gy=-10 #9.81
 
 # allowing for argument parsing through command line
-if int(len(sys.argv) == 10): 
+if int(len(sys.argv) == 11): 
    um = int(sys.argv[1])
    rA = int(sys.argv[2])
    rB = int(sys.argv[3])
@@ -191,6 +191,7 @@ if int(len(sys.argv) == 10):
    nelx=int(sys.argv[7])
    symm_bc=int(sys.argv[8])
    v_mantle = float(sys.argv[9])
+   gamma=float(sys.argv[10])
    eta_um=10.**um
    eta_rA=10.**rA
    eta_rB=10.**rB
@@ -206,11 +207,10 @@ else:
    eta_o=1e23
    v_L=-6.*cm/year
    v_R=+12.*cm/year
-   nelx=200
+   nelx=300
    symm_bc=0
    v_mantle=0*cm/year
-
-gamma=1. # change shape of triangles
+   gamma=1. # change shape of triangles
 
 eta_lm=5e22
 
@@ -220,7 +220,7 @@ rho_um=3300
 rho_lm=3900
 rho_dpp=4000
 
-Neumann=1
+Neumann=0
 
 ###############################################################################
 
@@ -283,6 +283,7 @@ print('v_R',v_R/cm*year)
 print('nelx',nelx)
 print('symm_bc',symm_bc)
 print('v_mantle',v_mantle/cm*year)
+print('gamma',gamma)
 print("------------------------------")
 
 ###############################################################################
@@ -437,7 +438,7 @@ for iel in range(0,nel):
 print("     -> rho (m,M) %.6e %.6e " %(np.min(rho),np.max(rho)))
 print("     -> eta (m,M) %.6e %.6e " %(np.min(eta),np.max(eta)))
 
-np.savetxt('viscosity.ascii',np.array([xc,yc,np.log10(eta),rho]).T) 
+#np.savetxt('viscosity.ascii',np.array([xc,yc,np.log10(eta),rho]).T) 
 
 print("assign density,viscosity: %.3f s" % (timing.time() - start))
 
@@ -488,7 +489,7 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)
+bc_fix=np.zeros(NfemV,dtype=bool)
 bc_val=np.zeros(NfemV,dtype=np.float64)
 
 y_in=Ly-150e3
@@ -508,20 +509,21 @@ print('     -> vR_out=',vR_out)
 print('     -> vL_out=',vL_out)
 
 for i in range(0,NV):
-    if yV[i]/Ly<eps:
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. 
-    if yV[i]/Ly>(1-eps):
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. 
-
     
-    if not Neumann and xV[i]/Lx>1-eps:#right boundary  
+    if yV[i]/Ly<eps: #bottom
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. 
+    
+    if yV[i]/Ly>(1-eps): #top
+       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. 
+    
+    if (not Neumann) and xV[i]/Lx>1-eps:#right boundary  
        if yV[i]<y_out:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = vR_out
        elif yV[i]<y_in:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = (v_R-vR_out)/(y_in-y_out)*(yV[i]-y_out)+vR_out
        else:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = v_R
-    if not Neumann and xV[i]/Lx<eps:#left boundary  
+    if (not Neumann) and xV[i]/Lx<eps:#left boundary  
        if yV[i]<y_out:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = vL_out
        elif yV[i]<y_in:
@@ -557,8 +559,6 @@ dNNNVds = np.zeros(mV,dtype=np.float64)             # shape functions derivative
 u = np.zeros(NV,dtype=np.float64)                   # x-component velocity
 v = np.zeros(NV,dtype=np.float64)                   # y-component velocity
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64)
-f_rhs_c = np.zeros(NfemV,dtype=np.float64)            # right hand side f 
-f_rhs_g = np.zeros(NfemV,dtype=np.float64)            # right hand side f 
            
 #only ok if elements are rectangles 
 jcbi=np.zeros((2,2),dtype=np.float64)
@@ -572,8 +572,6 @@ for iel in range(0,nel):
     K_el=np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
     G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
     h_el=np.zeros((mP*ndofP),dtype=np.float64)
-    f_el_c=np.zeros((mV*ndofV),dtype=np.float64)
-    f_el_g=np.zeros((mV*ndofV),dtype=np.float64)
 
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
@@ -600,14 +598,20 @@ for iel in range(0,nel):
 
             # compute dNdx & dNdy
             for k in range(0,mV):
-                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]
+                dNNNVdy[k]=jcbi[1,1]*dNNNVds[k]
 
             # construct b_mat matrix
+            #for i in range(0,mV):
+            #    b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.       ],
+            #                             [0.        ,dNNNVdy[i]],
+            #                             [dNNNVdy[i],dNNNVdx[i]]]
+
             for i in range(0,mV):
-                b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.       ],
-                                         [0.        ,dNNNVdy[i]],
-                                         [dNNNVdy[i],dNNNVdx[i]]]
+                b_mat[0,2*i  ]=dNNNVdx[i]
+                b_mat[1,2*i+1]=dNNNVdy[i]
+                b_mat[2,2*i  ]=dNNNVdy[i]
+                b_mat[2,2*i+1]=dNNNVdx[i]
 
             # compute elemental a_mat matrix
             K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta[iel]*weightq*jcob
@@ -616,10 +620,13 @@ for iel in range(0,nel):
             for i in range(0,mV):
                 f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy*rho[iel]
 
-            for i in range(0,mP):
-                N_mat[0,i]=NNNP[i]
-                N_mat[1,i]=NNNP[i]
-                N_mat[2,i]=0.
+            #for i in range(0,mP):
+            #    N_mat[0,i]=NNNP[i]
+            #    N_mat[1,i]=NNNP[i]
+            #    N_mat[2,i]=0.
+
+            N_mat[0,0:mP]=NNNP[0:mP]
+            N_mat[1,0:mP]=NNNP[0:mP]
 
             G_el-=b_mat.T.dot(N_mat)*weightq*jcob
 
@@ -705,23 +712,15 @@ for iel in range(0,nel):
                 A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
             #end for
             f_rhs[m1]+=f_el[ikk]
-            #f_rhs_c[m1]+=f_el_c[ikk]
-            #f_rhs_g[m1]+=f_el_g[ikk]
         #end for
     #end for
     for k2 in range(0,mP):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
-        #constr[m2]+=NNNNP[k2]
-        #if pnormalise:
-        #   A_sparse[Nfem,NfemV+m2]+=constr[m2]
-        #   A_sparse[NfemV+m2,Nfem]+=constr[m2]
     #end for
 #end for iel
 
-print("     build FE matrix: %.3f s" % (timing.time() - start))
-
-#np.savetxt('f_rhs.ascii',np.array([f_rhs_c,f_rhs_g,f_rhs_c-f_rhs_g]).T)
+print("build FE matrix: %.3f s" % (timing.time() - start))
 
 ######################################################################
 # solve system
@@ -735,7 +734,6 @@ rhs[NfemV:Nfem]=h_rhs
 sol=sps.linalg.spsolve(sps.csr_matrix(A_sparse),rhs)
 
 print("solve time: %.3f s" % (timing.time() - start))
-
 
 ######################################################################
 # put solution into separate x,y velocity arrays
@@ -755,8 +753,6 @@ print("split vel into u,v: %.3f s" % (timing.time() - start))
 # normalise pressure
 ######################################################################
 start = timing.time()
-            
-jcob=hx*hy/4
 
 avrg_p=0
 for iel in range(0,nel):
@@ -789,7 +785,7 @@ print('          -> avrg_p=',avrg_p)
 
 p-=avrg_p/Lx
 
-print("          -> p (m,M) %.4e %.4e (Pa)     " %(np.min(p),np.max(p)))
+print("     -> p (m,M) %.4e %.4e (Pa)     " %(np.min(p),np.max(p)))
 
 #np.savetxt('pressure_aft.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
             
@@ -887,12 +883,12 @@ tauyy[:]/=ccc[:]
 tauxy[:]/=ccc[:]
 ee[:]=np.sqrt(0.5*(exx[:]*exx[:]+eyy[:]*eyy[:])+exy[:]*exy[:])
  
-print("          -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
-print("          -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
-print("          -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
-print("          -> tauxx (m,M) %.4e %.4e " %(np.min(tauxx),np.max(tauxx)))
-print("          -> tauyy (m,M) %.4e %.4e " %(np.min(tauyy),np.max(tauyy)))
-print("          -> tauxy (m,M) %.4e %.4e " %(np.min(tauxy),np.max(tauxy)))
+print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
+print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
+print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
+print("     -> tauxx (m,M) %.4e %.4e " %(np.min(tauxx),np.max(tauxx)))
+print("     -> tauyy (m,M) %.4e %.4e " %(np.min(tauyy),np.max(tauyy)))
+print("     -> tauxy (m,M) %.4e %.4e " %(np.min(tauxy),np.max(tauxy)))
  
 print("compute strain rate: %.3f s" % (timing.time() - start))
 

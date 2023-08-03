@@ -1,8 +1,8 @@
+####
 set term pdf enhanced font "times,11pt"
 set grid
 set xlabel 'x (km)'
 set key outside left 
-#set title 'Q_2xQ_1'
 
 set arrow from 2000, graph 0 to 2000, graph 1 nohead lw 5 lc 'gray' 
 set arrow from 4000, graph 0 to 4000, graph 1 nohead lw 5 lc 'gray' 
@@ -58,13 +58,19 @@ plot[:][-5e-16:5e-16]\
 'solution_surface_18.ascii' u ($1/1e3):($4) w l   t 'exp 18, symm bc',\
 0 lw 2 lt -1
 
-
 set output 'fig6_exx_surface.pdf'
 plot[:][-5e-16:5e-16]\
 'solution_surface_04.ascii' u ($1/1e3):4 w l t 'exp 4, ref',\
 'solution_surface_23.ascii' u ($1/1e3):4 w l t 'exp 23, v_{mantle}=1',\
 'solution_surface_24.ascii' u ($1/1e3):4 w l t 'exp 24, v_{mantle}=3',\
 'solution_surface_25.ascii' u ($1/1e3):4 w l t 'exp 25, v_{mantle}=6',\
+
+set output 'fig7_exx_surface.pdf'
+plot[:][-5e-16:5e-16]\
+'solution_surface_04.ascii' u ($1/1e3):4 w l t 'exp 4, ref',\
+'solution_surface_26.ascii' u ($1/1e3):4 w l t 'exp 26, gamma=2',\
+'solution_surface_27.ascii' u ($1/1e3):4 w l t 'exp 27, gamma=4',\
+
 
 
 
@@ -80,11 +86,10 @@ plot[:][-7:13]\
 'solution_surface_04.ascii' u ($1/1e3):($2) w l lt 4  t 'exp 4, -6,12, ref',\
 'solution_surface_05.ascii' u ($1/1e3):($2) w l lt 5  t 'exp 5, -8,16',\
 'solution_surface_06.ascii' u ($1/1e3):($2) w l lt 6  t 'exp 6, -4,10',\
-'solution_surface_07.ascii' u ($1/1e3):($2) w l lt 7  t 'exp 7, -8,8',\
-'solution_surface_08.ascii' u ($1/1e3):($2) w l lt 8  t 'exp 8, -2,8',\
-'solution_surface_09.ascii' u ($1/1e3):($2) w l lt 9  t 'exp 9, -4,15',\
-'solution_surface_10.ascii' u ($1/1e3):($2) w l lt 10  t 'exp 10, -4,20',\
-0 lw 2 lt -1
+'solution_surface_07.ascii' u ($1/1e3):($2) w l lt 7  dt 3 t 'exp 7, -8,8',\
+'solution_surface_08.ascii' u ($1/1e3):($2) w l lt 8  dt 2 t 'exp 8, -2,8',\
+'solution_surface_09.ascii' u ($1/1e3):($2) w l lt 9  dt 2 t 'exp 9, -4,15',\
+'solution_surface_10.ascii' u ($1/1e3):($2) w l lt 10 dt 2 t 'exp 10, -4,20'
 
 set output 'fig2_u_surface.pdf'
 plot[:][-7:13]\
@@ -124,6 +129,14 @@ plot[:][]\
 'solution_surface_23.ascii' u ($1/1e3):2 w l t 'exp 23, v_{mantle}=1',\
 'solution_surface_24.ascii' u ($1/1e3):2 w l t 'exp 24, v_{mantle}=3',\
 'solution_surface_25.ascii' u ($1/1e3):2 w l t 'exp 25, v_{mantle}=6',\
+
+set output 'fig7_u_surface.pdf'
+plot[:][]\
+'solution_surface_04.ascii' u ($1/1e3):2 w l t 'exp 4, ref',\
+'solution_surface_26.ascii' u ($1/1e3):2 w l t 'exp 26, gamma=2',\
+'solution_surface_27.ascii' u ($1/1e3):2 w l t 'exp 27, gamma=4'
+
+
 
 
 
@@ -186,6 +199,12 @@ plot[:][]\
 'solution_middle_24.ascii' u 2:($1/1e3) w l t 'exp 24, v_{mantle}=3',\
 'solution_middle_25.ascii' u 2:($1/1e3) w l t 'exp 25, v_{mantle}=6',\
 
+set output 'fig7_u_middle.pdf'
+plot[:][]\
+'solution_middle_04.ascii' u 2:($1/1e3) w l t 'exp 4, ref',\
+'solution_middle_26.ascii' u 2:($1/1e3) w l t 'exp 26, gamma=2',\
+'solution_middle_27.ascii' u 2:($1/1e3) w l t 'exp 27, gamma=4',\
+
 
 #--------------------------------------
 
@@ -239,23 +258,14 @@ plot[:][]\
 'solution_middle_24.ascii' u 5:($1/1e3) w l t 'exp 24, v_{mantle}=3',\
 'solution_middle_25.ascii' u 5:($1/1e3) w l t 'exp 25, v_{mantle}=6',\
 
+set output 'fig7_exx_middle.pdf'
+plot[:][]\
+'solution_middle_04.ascii' u 5:($1/1e3) w l t 'exp 4, ref',\
+'solution_middle_26.ascii' u 5:($1/1e3) w l t 'exp 26, gamma=2',\
+'solution_middle_27.ascii' u 5:($1/1e3) w l t 'exp 27, gamma=4',\
 
 
-#--------------------------------------
 
-set xlabel '{/Symbol e}_{xy} (s^{-1})'
-set output 'fig1_exy_middle.pdf'
-plot[][]\
-'solution_middle_01.ascii' u 6:($1/1e3) w l lt 1  t 'exp 1',\
-'solution_middle_02.ascii' u 6:($1/1e3) w l lt 2  t 'exp 2',\
-'solution_middle_03.ascii' u 6:($1/1e3) w l lt 3  t 'exp 3',\
-'solution_middle_04.ascii' u 6:($1/1e3) w l lt 4  t 'exp 4, ref',\
-'solution_middle_05.ascii' u 6:($1/1e3) w l lt 5  t 'exp 5',\
-'solution_middle_06.ascii' u 6:($1/1e3) w l lt 6  t 'exp 6',\
-'solution_middle_07.ascii' u 6:($1/1e3) w l lt 7  t 'exp 7',\
-'solution_middle_08.ascii' u 6:($1/1e3) w l lt 8  t 'exp 8',\
-'solution_middle_09.ascii' u 6:($1/1e3) w l lt 9  t 'exp 9',\
-'solution_middle_10.ascii' u 6:($1/1e3) w l lt 10 t 'exp 10',\
 
 
 
