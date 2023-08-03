@@ -19,7 +19,7 @@ Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fields
 
 The title of this \stone is voluntarily meant to be funny. 
 Nobody calls what follows the 'Beaumont trick' but it has been 
-prominent in many of his publications, all based on the \sopale code.
+prominent in many of his (and his collaborators') publications, all based on the \sopale code.
 Let us look at the following figures from a few papers and focus on the 
 initial temperature field.
 
@@ -64,7 +64,7 @@ Indeed, we can look at the table of properties of all materials in the 2008 pape
 this is not a mistake in the figure:
 
 \begin{center}
-\fbox{\includegraphics[width=14cm]{python_codes/fieldstone_141/images/wabj08-2}}\\
+\fbox{\includegraphics[width=16cm]{python_codes/fieldstone_141/images/wabj08-2}}\\
 {\captionfont Taken from \textcite{wabj08} (2008).}
 \end{center}
 
@@ -79,7 +79,7 @@ The temperature gradient is then
 \]
 The heat flux is then $|q_y|=k \Delta T/\Delta y = 52*0.4=
 20.8~\si{\milli\watt\per\square\meter}$, which is exactly the value prescribed 
-at the bottom!
+at the bottom.
 Turning now to \textcite{hube14} (figure 'E') or \textcite{hube11} (figure 'D'): 
 The temperature difference is 
 $\Delta T=1520-1330=190~\si{\celsius}$ 
@@ -114,7 +114,6 @@ make sure it works as intended, i.e. we need to carry out analytical benchmarks.
 
 Each element is assigned a heat conductivity $k$, 
 heat capacity $C_p$ and density $\rho$.
-
 The timestep value is computed by means of a CFL condition for diffusive 
 processes, i.e. $dt=0.75*\min(h_x,h_y)^2/\max(\kappa)$ where
 $h_x,h_y$ is the size of an element, and $\kappa$ is the heat diffusivity
@@ -176,13 +175,32 @@ bottom of $60~\si{\celsius}$.
 %------------------------------------------------------------------------------
 \subsubsection*{Real application ({\tt test=0})}
 
-{\color{red} to finish}
+We want to track the depth of the 1330~\si{\celsius} isotherm.
+We then run three models:
+\begin{itemize}
+\item $k=5$ in the mantle, Neumann b.c. at the bottom with $q_{bottom}=0.0208$  
+\item $k=5$ in the mantle, Dirichlet b.c. at the bottom with $T_{bottom}=1520$  
+\item $k=52$ in the mantle, Neumann b.c. at the bottom with $q_{bottom}=0.0208$  
+\end{itemize}
+Note that in the case $k=52$ the time step dt is essentially 10x smaller than in the 
+$k=5$ case so that the code needs to run longer.
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_141/results/test0/depth}
-\includegraphics[width=5cm]{python_codes/fieldstone_141/results/test0/heat_flux}
-\includegraphics[width=5cm]{python_codes/fieldstone_141/results/test0/temperature}
+\includegraphics[width=8cm]{python_codes/fieldstone_141/results/test0/depth}
+\includegraphics[width=8cm]{python_codes/fieldstone_141/results/test0/heat_flux}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_141/results/test0/temperature}
 \end{center}
+
+We see that the depth of the 1330 isotherm increases with time if $k=5$ values are used.
+Using a higher $k$ value prevents that.
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_141/results/test0/temps_0Myr}
+\includegraphics[width=6cm]{python_codes/fieldstone_141/results/test0/temps_5Myr}\\
+{\captionfont Left: temperatures at t=0; Right: temperatures at t=5Myr. 
+from left to right: k05D, k05N, k52N.}
+\end{center}
+
 
 
 

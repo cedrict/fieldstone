@@ -1,7 +1,7 @@
 import numpy as np
 import time as timing
 import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
+from scipy.sparse.linalg import *
 
 print("-----------------------------")
 print("--------fieldstone 141-------")
@@ -28,14 +28,13 @@ if test==0:
    h_mantle=Ly-h_seds-h_crust-h_lith
    nelx=2
    nely=int(Ly/1000)
-   bc_top='dirichlet'
-   bc_bottom='dirichlet'
+   bc_bottom='neumann'
    T_top=0+273
    T_moho=550+273
    T_lith=1330+273
    T_bottom=1520+273
    q_bottom=0.0208
-   nstep=1000
+   nstep=5000
    tfinal=5e6*year
    every=20
    Ttarget=1330+273
@@ -45,7 +44,6 @@ if test==1: # T prescribed top and bottom
    Ly=100e3
    nelx=2
    nely=20
-   bc_top='dirichlet'
    bc_bottom='dirichlet'
    T_top=0+273
    T_bottom=100+273
@@ -58,7 +56,6 @@ if test==2: # T prescribed at top, flux at bottom
    Ly=100e3
    nelx=2
    nely=25
-   bc_top='dirichlet'
    bc_bottom='neumann'
    T_top=0+273
    nstep=5000
@@ -117,7 +114,7 @@ print("setup: connectivity: %.3f s" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
-bc_fixT=np.zeros(NfemT,dtype=np.bool)
+bc_fixT=np.zeros(NfemT,dtype=bool)
 bc_valT=np.zeros(NfemT,dtype=np.float64)
 
 for i in range(0,NV):
@@ -182,7 +179,7 @@ if test==0:
           hcapa[iel]=1250
           rho[iel]=3300
        else:
-          hcond[iel]=5 #2
+          hcond[iel]=52 
           hcapa[iel]=1250
           rho[iel]=3300
 
