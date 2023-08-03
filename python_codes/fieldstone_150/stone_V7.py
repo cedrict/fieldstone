@@ -467,13 +467,11 @@ for iel in range(0,nel):
 
     #start2 = timing.time()
     # impose b.c. 
-    for k1 in range(0,mV):
-        for i1 in range(0,ndofV):
-            ikk=ndofV*k1          +i1
-            m1 =ndofV*iconV[k1,iel]+i1
-            if bc_fix[m1]:
+    for ikk in range(0,ndofV_el):
+        m1=local_to_globalV[ikk,iel]
+        if bc_fix[m1]:
                K_ref=K_el[ikk,ikk] 
-               for jkk in range(0,mV*ndofV):
+               for jkk in range(0,ndofV_el):
                    f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
                    K_el[ikk,jkk]=0
                    K_el[jkk,ikk]=0

@@ -731,7 +731,7 @@ about 5s.
 
 
 %-------------------------------------------------------------------------
-\section*{Back to computing elemental matrices}
+\section*{Back to computing elemental matrices / looking at b.c.}
 
 I have tried replacing in {\pythonfile stone\_V7.py} 
 \begin{lstlisting}
@@ -752,6 +752,7 @@ for i in range(0,mV):
     b_mat[2,2*i+1]=dNdx
 \end{lstlisting}
 and found a minor improvement (few percents on t12).
+
 I have then tried 
 \begin{lstlisting}
 b_mat[0,:]=[dNNNVdx[iq,0],0,dNNNVdx[iq,1],0,dNNNVdx[iq,2],0,\
@@ -771,7 +772,7 @@ b_mat[2,:]=[dNNNVdy[iq,0],dNNNVdx[iq,0],\
             dNNNVdy[iq,8],dNNNVdx[iq,8]]
 \end{lstlisting}
 which is of course ugly and not extendable to 3D or higher order elements. 
-It did not yield any improvement at all. 
+It did not yield any improvement at all so I abandoned this.
 
 Likewise I replaced
 \begin{lstlisting}
@@ -788,6 +789,41 @@ for i in range(0,mV):
 \end{lstlisting}
 and shave off a few percents off t14.
 
+Finally, we can also make use of the {\tt local\_to\_globalV}
+array in the boundary conditions, so that 
+\begin{lstlisting}
+for k1 in range(0,mV):
+    for i1 in range(0,ndofV):
+        ikk=ndofV*k1          +i1
+        m1 =ndofV*iconV[k1,iel]+i1
+        if bc_fix[m1]:
+           ...
+\end{lstlisting}
+is replaced by
+\begin{lstlisting}
+for ikk in range(0,ndofV_el):
+    m1=local_to_globalV[ikk,iel]
+    if bc_fix[m1]:
+       ...
+\end{lstlisting}
+Once again, this is more compact and contains less nested loops.
+
+\begin{center}
+\begin{tabular}{lccccc}
+\hline
+resolution & t1 & t2 & t3 & t1+t2+t3 & t3/t1\\ 
+\hline
+\hline
+$32\times 32$   &   0.71 s& 0.019 s& 0.14 s&  0.87 s& 0.20 \\  
+$48\times 48$   &   1.54 s& 0.034 s& 0.32 s&  1.90 s& 0.21 \\
+$96\times 96$   &   6.23 s& 0.094 s& 1.38 s&  7.71 s& 0.22 \\
+$128\times 128$ &  10.82 s& 0.140 s& 2.29 s& 13.25 s& 0.21 \\
+\hline
+\end{tabular}
+\end{center}
+We see that the boundary conditions time has been divided by 5!
+
+
 \begin{center}
 \includegraphics[width=8.5cm]{python_codes/fieldstone_150/results/times_V7}
 \end{center}
@@ -795,9 +831,7 @@ and shave off a few percents off t14.
 \begin{center}
 \includegraphics[width=8.5cm]{python_codes/fieldstone_150/results/times_build_all}
 \end{center}
-Looking at these results, I am not sure V7 is that relevant, as it is 
-undistinguishable from V6.
-For now V6 is the final version as it is more compact than V7. 
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -817,8 +851,11 @@ For now V6 is the final version as it is more compact than V7.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vspace{.5cm}
 
-\Literature:\\
-\fullcite{cujs16}\\
-\fullcite{voet23}
+Note that there is quite some literature about how to carry out the assembly in a very efficient 
+manner. 
+\begin{itemize}
+\item \fullcite{cujs16}
+\item \fullcite{voet23}
+\end{itemize}
 
 
