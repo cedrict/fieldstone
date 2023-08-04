@@ -9,88 +9,88 @@ for R in 200 400 600 700 750 775 800 850 900 1000 2000 4000; do
     ### Q1Q0 ###
 
     echo Ra= $R - resolution 12x12 - order=1
-    python3 fieldstone.py  12 12 0 1  $R $nstep | grep script >> onset_order1_12x12.ascii
+    python3 stone_old.py  12 12 0 1  $R $nstep | grep script >> onset_order1_12x12.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order1_12x12.ascii
     mv T_profile.ascii T_profile_$R.order1_12x12.ascii
 
     echo Ra= $R - resolution 16x16 - order=1
-    python3 fieldstone.py  16 16 0 1  $R $nstep | grep script >> onset_order1_16x16.ascii
+    python3 stone_old.py  16 16 0 1  $R $nstep | grep script >> onset_order1_16x16.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order1_16x16.ascii
     mv T_profile.ascii T_profile_$R.order1_16x16.ascii
 
     echo Ra= $R - resolution 20x20 - order=1
-    python3 fieldstone.py  20 20 0 1  $R $nstep | grep script >> onset_order1_20x20.ascii
+    python3 stone_old.py  20 20 0 1  $R $nstep | grep script >> onset_order1_20x20.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order1_20x20.ascii
     mv T_profile.ascii T_profile_$R.order1_20x20.ascii
 
     echo Ra= $R - resolution 24x24 - order=1
-    python3 fieldstone.py  24 24 0 1  $R $nstep | grep script >> onset_order1_24x24.ascii
+    python3 stone_old.py  24 24 0 1  $R $nstep | grep script >> onset_order1_24x24.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order1_24x24.ascii
     mv T_profile.ascii T_profile_$R.order1_24x24.ascii
 
     ### Q2Q1 ###
 
     echo Ra= $R - resolution 12x12 - order=2
-    python3 fieldstone.py  12 12 0 2  $R $nstep | grep script >> onset_order2_12x12.ascii
+    python3 stone_old.py  12 12 0 2  $R $nstep | grep script >> onset_order2_12x12.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order2_12x12.ascii
     mv T_profile.ascii T_profile_$R.order2_12x12.ascii
 
     echo Ra= $R - resolution 16x16 - order=2
-    python3 fieldstone.py  16 16 0 2  $R $nstep | grep script >> onset_order2_16x16.ascii
+    python3 stone_old.py  16 16 0 2  $R $nstep | grep script >> onset_order2_16x16.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order2_16x16.ascii
     mv T_profile.ascii T_profile_$R.order2_16x16.ascii
 
     echo Ra= $R - resolution 20x20 - order=2
-    python3 fieldstone.py  20 20 0 2  $R $nstep | grep script >> onset_order2_20x20.ascii
+    python3 stone_old.py  20 20 0 2  $R $nstep | grep script >> onset_order2_20x20.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order2_20x20.ascii
     mv T_profile.ascii T_profile_$R.order2_20x20.ascii
 
     echo Ra= $R - resolution 24x24 - order=2
-    python3 fieldstone.py  24 24 0 2  $R $nstep | grep script >> onset_order2_24x24.ascii
+    python3 stone_old.py  24 24 0 2  $R $nstep | grep script >> onset_order2_24x24.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order2_24x24.ascii
     mv T_profile.ascii T_profile_$R.order2_24x24.ascii
 
     ### Q3Q2 ###
 
     echo Ra= $R - resolution 12x12 - order=3
-    python3 fieldstone.py  12 12 0 3  $R $nstep | grep script >> onset_order3_12x12.ascii
+    python3 stone_old.py  12 12 0 3  $R $nstep | grep script >> onset_order3_12x12.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order3_12x12.ascii
     mv T_profile.ascii T_profile_$R.order3_12x12.ascii
 
     echo Ra= $R - resolution 16x16 - order=3
-    python3 fieldstone.py  16 16 0 3  $R $nstep | grep script >> onset_order3_16x16.ascii
+    python3 stone_old.py  16 16 0 3  $R $nstep | grep script >> onset_order3_16x16.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order3_16x16.ascii
     mv T_profile.ascii T_profile_$R.order3_16x16.ascii
 
     echo Ra= $R - resolution 20x20 - order=3
-    python3 fieldstone.py  20 20 0 3  $R $nstep | grep script >> onset_order3_20x20.ascii
+    python3 stone_old.py  20 20 0 3  $R $nstep | grep script >> onset_order3_20x20.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order3_20x20.ascii
     mv T_profile.ascii T_profile_$R.order3_20x20.ascii
 
     echo Ra= $R - resolution 24x24 - order=3
-    python3 fieldstone.py  24 24 0 3  $R $nstep | grep script >> onset_order3_24x24.ascii
+    python3 stone_old.py  24 24 0 3  $R $nstep | grep script >> onset_order3_24x24.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order3_24x24.ascii
     mv T_profile.ascii T_profile_$R.order3_24x24.ascii
 
     ### Q4Q3 ###
 
     echo Ra= $R - resolution 12x12 - order=4
-    python3 fieldstone.py  12 12 0 4  $R $nstep | grep script >> onset_order4_12x12.ascii
+    python3 stone_old.py  12 12 0 4  $R $nstep | grep script >> onset_order4_12x12.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order4_12x12.ascii
     mv T_profile.ascii T_profile_$R.order4_12x12.ascii
 
     echo Ra= $R - resolution 16x16 - order=4
-    python3 fieldstone.py  16 16 0 4  $R $nstep | grep script >> onset_order4_16x16.ascii
+    python3 stone_old.py  16 16 0 4  $R $nstep | grep script >> onset_order4_16x16.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order4_16x16.ascii
     mv T_profile.ascii T_profile_$R.order4_16x16.ascii
 
     echo Ra= $R - resolution 20x20 - order=4
-    python3 fieldstone.py  20 20 0 4  $R $nstep | grep script >> onset_order4_20x20.ascii
+    python3 stone_old.py  20 20 0 4  $R $nstep | grep script >> onset_order4_20x20.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order4_20x20.ascii
     mv T_profile.ascii T_profile_$R.order4_20x20.ascii
 
     echo Ra= $R - resolution 24x24 - order=4
-    python3 fieldstone.py  24 24 0 4  $R $nstep | grep script >> onset_order4_24x24.ascii
+    python3 stone_old.py  24 24 0 4  $R $nstep | grep script >> onset_order4_24x24.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.order4_24x24.ascii
     mv T_profile.ascii T_profile_$R.order4_24x24.ascii
 
@@ -100,17 +100,17 @@ done
 
 
 
-#python3 fieldstone.py  16 16 0 2   200 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2   300 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2   400 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2   500 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2   600 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2   700 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2   800 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2   900 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2  1000 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2  2000 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2  3000 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2  4000 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2  5000 15 | grep script >> onset.ascii
-#python3 fieldstone.py  16 16 0 2 10000 15 | grep script >> onset.ascii
+#python3 stone_old.py  16 16 0 2   200 15 | grep script >> onset.ascii
+#python3 stone_old.py  16 16 0 2   300 15 | grep script >> onset.ascii
+#python3 stone_old.py  16 16 0 2   400 15 | grep script >> onset.ascii
+#python3 stone_old.py  16 16 0 2   500 15 | grep script >> onset.ascii
+#python3 stone_old.py  16 16 0 2   600 15 | grep script >> onset.ascii
+#python3 stone_old.py  16 16 0 2   700 15 | grep script >> onset.ascii
+#python3 stone_old.py  16 16 0 2   800 15 | grep script >> onset.ascii
+#python3 stone_old.py  16 16 0 2   900 15 | grep script >> onset.ascii
+#python3 stone_old.py  16 16 0 2  1000 15 | grep script >> onset.ascii
+#python3 stone_old.py  16 16 0 2  2000 15 | grep script >> onset.ascii
+#python3 stone_old.py  16 16 0 2  3000 15 | grep script >> onset.ascii
+#python3 stone_old.py  16 16 0 2  4000 15 | grep script >> onset.ascii
+#python3 stone_old.py  16 16 0 2  5000 15 | grep script >> onset.ascii
+#python3 stone_old.py  16 16 0 2 10000 15 | grep script >> onset.ascii

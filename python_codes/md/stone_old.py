@@ -3,9 +3,9 @@ import sys as sys
 import scipy
 import math as math
 import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import lil_matrix
 import time as timing
+from scipy.sparse.linalg import *
 
 #------------------------------------------------------------------------------
 # remark: in order to improve the build matrix time I do not compute 
@@ -371,12 +371,12 @@ if int(len(sys.argv) == 7):
    Ra_nb = float(sys.argv[5])
    nstep = int(sys.argv[6])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 16
+   nely = 16
    visu = 1
    order= 2
-   Ra_nb= 1e6
-   nstep= 1000
+   Ra_nb= 1e4
+   nstep= 100
 
 tol_ss=1e-7   # tolerance for steady state 
 

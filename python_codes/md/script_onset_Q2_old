@@ -7,23 +7,23 @@ nstep=500
 for R in 400 600 700 725 750 770 775 780 785 800 1000 2000 4000 8000 16000 32000 64000 128000 256000 512000 1024000; do
 
     echo Ra= $R - resolution 12x12 
-    python3 fieldstone_relax.py  12 12 0 2  $R $nstep | grep script >> onset_12x12.ascii
+    python3 stone_old_relax.py  12 12 0 2  $R $nstep | grep script >> onset_12x12.ascii
     mv Nu_vrms.ascii Nu_vrms_$R.12x12.ascii
     mv T_profile.ascii T_profile_$R.12x12.ascii
     mv conv.ascii conv_$R.12x12.ascii
 
     #echo Ra= $R - resolution 16x16 
-    #python3 fieldstone_relax.py  16 16 0 2  $R $nstep | grep script >> onset_16x16.ascii
+    #python3 stone_old_relax.py  16 16 0 2  $R $nstep | grep script >> onset_16x16.ascii
     #mv Nu_vrms.ascii Nu_vrms_$R.16x16.ascii
     #mv T_profile.ascii T_profile_$R.16x16.ascii
 
     #echo Ra= $R - resolution 20x20 
-    #python3 fieldstone_relax.py  20 20 0 2  $R $nstep | grep script >> onset_20x20.ascii
+    #python3 stone_old_relax.py  20 20 0 2  $R $nstep | grep script >> onset_20x20.ascii
     #mv Nu_vrms.ascii Nu_vrms_$R.20x20.ascii
     #mv T_profile.ascii T_profile_$R.20x20.ascii
 
     #echo Ra= $R - resolution 24x24 
-    #python3 fieldstone_relax.py  24 24 0 2  $R $nstep | grep script >> onset_24x24.ascii
+    #python3 stone_old_relax.py  24 24 0 2  $R $nstep | grep script >> onset_24x24.ascii
     #mv Nu_vrms.ascii Nu_vrms_$R.24x24.ascii
     #mv T_profile.ascii T_profile_$R.24x24.ascii
 
