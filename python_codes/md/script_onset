@@ -1,0 +1,20 @@
+#! /bin/bash
+
+rm onset*.ascii
+
+nstep=100
+
+for R in 400 600 700 725 750 770 775 780 785 800 1000 2000 4000 8000 16000 32000 64000 100000 128000 200000 256000 512000 1024000; do
+
+    for res in 16 24 32 ; do
+
+        echo Ra= $R - resolution $res 
+        python3 stone_new.py  $res $R $nstep | grep script >> onset_${res}x${res}.ascii
+        mv Nu_vrms.ascii Nu_vrms_${R}_${res}x${res}.ascii
+        mv T_profile.ascii T_profile_${R}_${res}x${res}.ascii
+        mv conv.ascii conv_${R}_${res}x${res}.ascii
+
+    done
+
+done
+

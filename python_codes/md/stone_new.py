@@ -7,15 +7,18 @@ from scipy.sparse import lil_matrix
 from scipy.sparse.linalg import *
 import time as timing
 from scipy import sparse
+import numba
 
 ###############################################################################
 # density function
 ###############################################################################
 
+@numba.njit
 def rho(rho0,alphaT,T,T0):
     val=rho0*(1.-alphaT*(T-T0)) 
     return val
 
+@numba.njit
 def eta(T,x,y,eta0):
     return eta0 #*np.exp(T)
 
@@ -23,6 +26,7 @@ def eta(T,x,y,eta0):
 # velocity shape functions
 ###############################################################################
 
+@numba.njit
 def NNV(r,s):
     N_0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
     N_1=    (1.-r**2) * 0.5*s*(s-1.)
@@ -35,6 +39,7 @@ def NNV(r,s):
     N_8= 0.5*r*(r+1.) * 0.5*s*(s+1.)
     return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
 
+@numba.njit
 def dNNVdr(r,s):
     dNdr_0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
     dNdr_1=       (-2.*r) * 0.5*s*(s-1)
@@ -48,6 +53,7 @@ def dNNVdr(r,s):
     return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,\
                      dNdr_6,dNdr_7,dNdr_8],dtype=np.float64)
 
+@numba.njit
 def dNNVds(r,s):
     dNds_0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
     dNds_1=    (1.-r**2) * 0.5*(2.*s-1.)
@@ -65,6 +71,7 @@ def dNNVds(r,s):
 # pressure shape functions 
 ###############################################################################
 
+@numba.njit
 def NNP(r,s):
     N_0=0.25*(1-r)*(1-s)
     N_1=0.25*(1+r)*(1-s)
@@ -96,7 +103,7 @@ if int(len(sys.argv) == 4):
    Ra_nb = float(sys.argv[2])
    nstep = int(sys.argv[3])
 else:
-   nelx = 16
+   nelx = 32
    Ra_nb= 1e4
    nstep= 100
 
@@ -106,6 +113,7 @@ top_bc_noslip=False
 bot_bc_noslip=False
 
 nely=nelx
+
 nel=nelx*nely # total number of elements
 nnx=2*nelx+1  # number of V nodes, x direction
 nny=2*nely+1  # number of V nodes, y direction
@@ -132,6 +140,11 @@ hx=Lx/nelx # element size in x direction
 hy=Ly/nely # element size in y direction
 
 EBA=False
+
+###############################################################################
+
+t01=0 ; t02=0 ; t03=0 ; t04=0 ; t05=0 ; t06=0
+t07=0 ; t08=0 ; t09=0 ; t10=0 ; t11=0
 
 ###############################################################################
 # definition: Ra_nb=alphaT*abs(gy)*Ly**3*rho0**2*hcapa/hcond/eta
@@ -192,8 +205,6 @@ print ('Nfem     =',Nfem)
 print ('nqperdim =',nqperdim)
 print("-----------------------------")
 
-topstart = timing.time()
-
 ###############################################################################
 # checking that all velocity shape functions are 1 on their node 
 # and  zero elsewhere
@@ -247,8 +258,6 @@ for j in range(0,nely):
         counter += 1
     #end for
 #end for
-
-print(iconV)
 
 # creating a dedicated connectivity array to plot the solution on Q1 space
 # different icon array but same velocity nodes.
@@ -309,8 +318,6 @@ for j in range(0,nely):
         counter+=1
     #end for
 #end for
-
-print(iconP)
 
 print("build iconP: %.3f s" % (timing.time() - start))
 
@@ -445,6 +452,30 @@ for iq in range(0,nqperdim):
 print("compute N & grad(N) at q pts: %.3f s" % (timing.time() - start))
 
 ###############################################################################
+# precompute basis functions values at V nodes
+###############################################################################
+start = timing.time()
+
+NNNV_n=np.zeros((mV,mV),dtype=np.float64) 
+NNNP_n=np.zeros((mV,mP),dtype=np.float64) 
+dNNNVdr_n=np.zeros((mV,mV),dtype=np.float64) 
+dNNNVds_n=np.zeros((mV,mV),dtype=np.float64) 
+dNNNVdx_n=np.zeros((mV,mV),dtype=np.float64) 
+dNNNVdy_n=np.zeros((mV,mV),dtype=np.float64) 
+   
+for i in range(0,mV):
+    rq=rVnodes[i]
+    sq=sVnodes[i]
+    NNNV_n[i,0:mV]=NNV(rq,sq)
+    dNNNVdr_n[i,0:mV]=dNNVdr(rq,sq)
+    dNNNVds_n[i,0:mV]=dNNVds(rq,sq)
+    NNNP_n[i,0:mP]=NNP(rq,sq)
+    dNNNVdx_n[i,0:mV]=jcbi[0,0]*dNNNVdr_n[i,0:mV]
+    dNNNVdy_n[i,0:mV]=jcbi[1,1]*dNNNVds_n[i,0:mV]
+
+print("compute N & grad(N) at V nodes: %.3f s" % (timing.time() - start))
+
+###############################################################################
 # compute array for assembly
 ###############################################################################
 start = timing.time()
@@ -523,6 +554,8 @@ print("fill II_T,JJ_T arrays: %.3f s" % (timing.time()-start))
 ###############################################################################
 c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
+topstart = timing.time()
+
 for istep in range(0,nstep):
     print("-----------------------------")
     print("istep= ", istep)
@@ -569,9 +602,6 @@ for istep in range(0,nstep):
 
             for i in range(0,mV):
                 f_el[ndofV*i+1]+=NNNV[iq,i]*JxW*rho(rho0,alphaT,Tq,T0)*gy
-                #Ni=NNNV[iq,i]*JxW
-                #f_el[ndofV*i  ]+=Ni*bx(xq,yq)
-                #f_el[ndofV*i+1]+=Ni*by(xq,yq)
 
             N_mat[0,0:mP]=NNNP[iq,0:mP]
             N_mat[1,0:mP]=NNNP[iq,0:mP]
@@ -614,6 +644,8 @@ for istep in range(0,nstep):
 
     print("build FE matrix: %.3fs" % (timing.time()-start))
 
+    t01+=timing.time()-start
+
     ###########################################################################
     # solve system
     ###########################################################################
@@ -628,6 +660,8 @@ for istep in range(0,nstep):
     sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
     print("solve time: %.3f s" % (timing.time() - start))
+
+    t02+=timing.time()-start
 
     ###########################################################################
     # put solution into separate x,y velocity arrays
@@ -655,53 +689,30 @@ for istep in range(0,nstep):
        v[:]=relax*v[:]+(1-relax)*v_prev[:]
 
     ###########################################################################
-    # compute nodal strainrate and heat flux 
+    # compute nodal pressure 
     ###########################################################################
     start = timing.time()
     
-    exx_n = np.zeros(NV,dtype=np.float64)  
-    eyy_n = np.zeros(NV,dtype=np.float64)  
-    exy_n = np.zeros(NV,dtype=np.float64)  
     count = np.zeros(NV,dtype=np.int32)  
     q=np.zeros(NV,dtype=np.float64)
-    c=np.zeros(NV,dtype=np.float64)
-    dNNNNVdx = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
-    dNNNNVdy = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
-    NNNNP = np.zeros(mP,dtype=np.float64)  
 
     for iel in range(0,nel):
         for i in range(0,mV):
-            rq=rVnodes[i]
-            sq=sVnodes[i]
-            dNNNNVdr=dNNVdr(rq,sq)
-            dNNNNVds=dNNVds(rq,sq)
-            dNNNNVdx[:]=jcbi[0,0]*dNNNNVdr[:]
-            dNNNNVdy[:]=jcbi[1,1]*dNNNNVds[:]
-            NNNNP[0:mP]=NNP(rq,sq)
             inode=iconV[i,iel]
-            exx_n[inode]+=np.dot(dNNNNVdx[:],u[iconV[:,iel]])
-            eyy_n[inode]+=np.dot(dNNNNVdy[:],v[iconV[:,iel]])
-            exy_n[inode]+=0.5*np.dot(dNNNNVdx[:],v[iconV[:,iel]])\
-                         +0.5*np.dot(dNNNNVdy[:],u[iconV[:,iel]])
-            q[inode]+=np.dot(NNNNP[:],p[iconP[:,iel]])
+            q[inode]+=np.dot(NNNP_n[i,:],p[iconP[:,iel]])
             count[inode]+=1
         #end for
     #end for
     
-    exx_n/=count
-    eyy_n/=count
-    exy_n/=count
     q/=count
 
-    print("     -> exx_n (m,M) %.6e %.6e " %(np.min(exx_n),np.max(exx_n)))
-    print("     -> eyy_n (m,M) %.6e %.6e " %(np.min(eyy_n),np.max(eyy_n)))
-    print("     -> exy_n (m,M) %.6e %.6e " %(np.min(exy_n),np.max(exy_n)))
     print("     -> q     (m,M) %.6e %.6e " %(np.min(q    ),np.max(q    )))
 
     #np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
-    #np.savetxt('strainrate.ascii',np.array([xV,yV,exx_n,eyy_n,exy_n]).T)
 
-    print("compute nodal press & sr: %.3f s" % (timing.time() - start))
+    print("compute nodal press: %.3f s" % (timing.time() - start))
+
+    t03+=timing.time()-start
 
     ###########################################################################
     # build temperature matrix
@@ -794,6 +805,8 @@ for istep in range(0,nstep):
 
     print("build FE matrix : %.3f s" % (timing.time() - start))
 
+    t04+=timing.time()-start
+
     ###########################################################################
     # solve system
     ###########################################################################
@@ -806,6 +819,8 @@ for istep in range(0,nstep):
     print("     T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
 
     print("solve T time: %.3f s" % (timing.time() - start))
+
+    t05+=timing.time()-start
 
     ###########################################################################
     # relax
@@ -842,8 +857,10 @@ for istep in range(0,nstep):
 
     print("compute vrms: %.3f s" % (timing.time() - start))
 
+    t06+=timing.time()-start
+
     ###########################################################################
-    # compute nodal strainrate and heat flux 
+    # compute nodal heat flux 
     ###########################################################################
     start = timing.time()
     
@@ -855,17 +872,11 @@ for istep in range(0,nstep):
 
     for iel in range(0,nel):
         for i in range(0,mV):
-            rq=rVnodes[i]
-            sq=sVnodes[i]
-            dNNNNVdr=dNNVdr(rq,sq)
-            dNNNNVds=dNNVds(rq,sq)
-            dNNNNVdx[:]=jcbi[0,0]*dNNNNVdr[:]
-            dNNNNVdy[:]=jcbi[1,1]*dNNNNVds[:]
             inode=iconV[i,iel]
-            qx_n[inode]+=-np.dot(hcond*dNNNNVdx[:],T[iconV[:,iel]])
-            qy_n[inode]+=-np.dot(hcond*dNNNNVdy[:],T[iconV[:,iel]])
-            dpdx_n[inode]+=np.dot(dNNNNVdx[:],q[iconV[:,iel]])
-            dpdy_n[inode]+=np.dot(dNNNNVdy[:],q[iconV[:,iel]])
+            qx_n[inode]+=-np.dot(hcond*dNNNVdx_n[i,:],T[iconV[:,iel]])
+            qy_n[inode]+=-np.dot(hcond*dNNNVdy_n[i,:],T[iconV[:,iel]])
+            dpdx_n[inode]+=np.dot(dNNNVdx_n[i,:],q[iconV[:,iel]])
+            dpdy_n[inode]+=np.dot(dNNNVdy_n[i,:],q[iconV[:,iel]])
             count[inode]+=1
         #end for
     #end for
@@ -879,6 +890,8 @@ for istep in range(0,nstep):
     print("     -> qy_n (m,M) %.6e %.6e " %(np.min(qy_n),np.max(qy_n)))
 
     print("compute nodal heat flux: %.3f s" % (timing.time() - start))
+
+    t07+=timing.time()-start
 
     ###########################################################################
     # compute Nusselt number at top
@@ -918,6 +931,8 @@ for istep in range(0,nstep):
 
     print("compute Nu: %.3f s" % (timing.time() - start))
 
+    t08+=timing.time()-start
+
     ###########################################################################
     # compute temperature profile
     ###########################################################################
@@ -939,12 +954,75 @@ for istep in range(0,nstep):
 
     print("compute T profile: %.3f s" % (timing.time() - start))
 
+    t09+=timing.time()-start
+
+    ###########################################################################
+    # assess convergence of iterations
+    ###########################################################################
+
+    if istep==0: Nusselt_prev=1
+
+    T_diff=np.sum(abs(T-T_prev))/NV
+    Nu_diff=np.abs(Nusselt-Nusselt_prev)/Nusselt
+
+    print("T conv, T_diff, Nu_diff: " , T_diff<tol_ss,T_diff,Nu_diff)
+
+    conv_file.write("%10e %10e %10e %10e\n" % (istep,T_diff,Nu_diff,tol_ss))
+    conv_file.flush()
+
+    converged=(T_diff<tol_ss and Nu_diff<tol_ss)
+
+    if converged:
+       print("***convergence reached***")
+
+    u_prev=u.copy()
+    v_prev=v.copy()
+    T_prev=T.copy()
+    Nusselt_prev=Nusselt
+
+    ###########################################################################
+    # compute nodal strainrate
+    ###########################################################################
+    start = timing.time()
+    
+    if converged: 
+
+       exx_n = np.zeros(NV,dtype=np.float64)  
+       eyy_n = np.zeros(NV,dtype=np.float64)  
+       exy_n = np.zeros(NV,dtype=np.float64)  
+       count = np.zeros(NV,dtype=np.int32)  
+
+       for iel in range(0,nel):
+           for i in range(0,mV):
+               inode=iconV[i,iel]
+               exx_n[inode]+=np.dot(dNNNVdx_n[i,:],u[iconV[:,iel]])
+               eyy_n[inode]+=np.dot(dNNNVdy_n[i,:],v[iconV[:,iel]])
+               exy_n[inode]+=0.5*np.dot(dNNNVdx_n[i,:],v[iconV[:,iel]])+\
+                             0.5*np.dot(dNNNVdy_n[i,:],u[iconV[:,iel]])
+               count[inode]+=1
+           #end for
+       #end for
+    
+       exx_n/=count
+       eyy_n/=count
+       exy_n/=count
+
+       print("     -> exx_n (m,M) %.6e %.6e " %(np.min(exx_n),np.max(exx_n)))
+       print("     -> eyy_n (m,M) %.6e %.6e " %(np.min(eyy_n),np.max(eyy_n)))
+       print("     -> exy_n (m,M) %.6e %.6e " %(np.min(exy_n),np.max(exy_n)))
+
+       #np.savetxt('strainrate.ascii',np.array([xV,yV,exx_n,eyy_n,exy_n]).T)
+
+       print("compute nodal sr: %.3f s" % (timing.time() - start))
+
+       t11+=timing.time()-start
+
     ###########################################################################
     # plot of solution
     ###########################################################################
     start = timing.time()
 
-    if True: 
+    if converged: 
        filename = 'solution_{:04d}.vtu'.format(istep)
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -1020,8 +1098,6 @@ for istep in range(0,nstep):
        for i in range(0,NV):
            vtufile.write("%10f %10f %10f \n" %(dpdx_n[i],dpdy_n[i],0.))
        vtufile.write("</DataArray>\n")
-
-
        #--
        vtufile.write("</PointData>\n")
        #####
@@ -1051,42 +1127,33 @@ for istep in range(0,nstep):
 
        print("export to vtu file: %.3f s" % (timing.time() - start))
 
+       t10+=timing.time()-start
+
     ###########################################################################
-    # assess convergence of iterations
 
-    if istep==0: Nusselt_prev=1
-
-    T_diff=np.sum(abs(T-T_prev))/NV
-    Nu_diff=np.abs(Nusselt-Nusselt_prev)/Nusselt
-
-    print("T conv, T_diff, Nu_diff: " , T_diff<tol_ss,T_diff,Nu_diff)
-
-    conv_file.write("%10e %10e %10e %10e\n" % (istep,T_diff,Nu_diff,tol_ss))
-    conv_file.flush()
-
-    if T_diff<tol_ss and Nu_diff<tol_ss:
-       print("convergence reached")
+    if converged:
        break
-
-    #u_prev  = np.zeros(NV,dtype=np.float64)           # x-component velocity
-    #v_prev  = np.zeros(NV,dtype=np.float64)           # y-component velocity
-    u_prev=u.copy()
-    v_prev=v.copy()
-    T_prev=T.copy()
-
-    #T_prev[:]=T[:]
-    #u_prev[:]=u[:]
-    #v_prev[:]=v[:]
-    Nusselt_prev=Nusselt
 
 #end for istep
     
 print("     script ; Nusselt= %e ; Ra= %e " %(Nusselt,Ra_nb))
 
-print("total compute time: %.3f s" % (timing.time() - topstart))
+duration=timing.time()-topstart
 
-print("-----------------------------")
-print("------------the end----------")
-print("-----------------------------")
+print("total compute time: %.3f s" % (duration))
+
+print("-----------------------------------------------")
+print("build FE matrix V: %.3f s       | %3d percent" % (t01,int(t01/duration*100))) 
+print("solve system V: %.3f s          | %3d percent" % (t02,int(t02/duration*100))) 
+print("compute nodal p: %.3f s         | %3d percent" % (t03,int(t03/duration*100))) 
+print("build matrix T: %.3f s          | %3d percent" % (t04,int(t04/duration*100))) 
+print("solve system T: %.3f s          | %3d percent" % (t05,int(t05/duration*100))) 
+print("compute vrms: %.3f s            | %3d percent" % (t06,int(t06/duration*100))) 
+print("compute nodal heat flux: %.3f s | %3d percent" % (t07,int(t07/duration*100))) 
+print("compute Nusself nb: %.3f s      | %3d percent" % (t08,int(t08/duration*100))) 
+print("compute T profile: %.3f s       | %3d percent" % (t09,int(t09/duration*100))) 
+print("export to vtu: %.3f s           | %3d percent" % (t10,int(t10/duration*100))) 
+print("compute nodal sr: %.3f s        | %3d percent" % (t11,int(t11/duration*100))) 
+print("-----------------------------------------------")
     
 ###############################################################################
