@@ -2,11 +2,11 @@
 
 rm onset*.ascii
 
-nstep=100
+nstep=1000
 
-for R in 400 600 700 725 750 770 775 780 785 800 1000 2000 4000 8000 16000 32000 64000 100000 128000 200000 256000 512000 1024000; do
+for R in 400 600 700 725 750 770 775 780 785 800 1000 2000 4000 8000 16000 32000 64000 100000 128000 200000 256000 300000 400000 512000 700000 1024000; do
 
-    for res in 16 24 32 ; do
+    for res in 16 24 32 48; do
 
         echo Ra= $R - resolution $res 
         python3 stone_new.py  $res $R $nstep | grep script >> onset_${res}x${res}.ascii

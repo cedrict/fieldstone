@@ -144,17 +144,18 @@ EBA=False
 ###############################################################################
 
 t01=0 ; t02=0 ; t03=0 ; t04=0 ; t05=0 ; t06=0
-t07=0 ; t08=0 ; t09=0 ; t10=0 ; t11=0
+t07=0 ; t08=0 ; t09=0 ; t10=0 ; t11=0 ; t12=0
 
 ###############################################################################
 # definition: Ra_nb=alphaT*abs(gy)*Ly**3*rho0**2*hcapa/hcond/eta
+# following parameters are somewhat arbitrary
 
 alphaT=2.5e-3   # thermal expansion coefficient
 hcond=1.      # thermal conductivity
 hcapa=1e-2      # heat capacity
 rho0=20        # reference density
 T0=0          # reference temperature
-relax=0.5    # relaxation coefficient (0,1)
+relax=0.75    # relaxation coefficient (0,1)
 gy=-1 #Ra/alphaT # vertical component of gravity vector
 
 eta0 = alphaT*abs(gy)*Ly**3*rho0**2*hcapa/hcond/Ra_nb
@@ -181,13 +182,19 @@ qweights=[5./9.,8./9.,5./9.]
 nqel=nqperdim**ndim
 
 ###############################################################################
-# open output files
+# open output files & write headers
 ###############################################################################
 
 Nu_vrms_file=open('Nu_vrms.ascii',"w")
 Nu_vrms_file.write("#istep,Nusselt,vrms,qy bottom, qy top\n")
 Tavrg_file=open('Tavrg.ascii',"w")
+Tavrg_file.write("istep,Tavrg")
 conv_file=open('conv.ascii',"w")
+conv_file.write("istep,T_diff,Nu_diff,tol_ss\n")
+pstats_file=open('pressure_stats.ascii',"w")
+pstats_file.write("#istep,min p, max p\n")
+vstats_file=open('velocity_stats.ascii',"w")
+vstats_file.write("#istep,min(u),max(u),min(v),max(v)\n")
 
 ###############################################################################
 
@@ -675,10 +682,34 @@ for istep in range(0,nstep):
     print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
     print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
+    vstats_file.write("%10e %10e %10e %10e %10e\n" % (istep,np.min(u),np.max(u),\
+                                                            np.min(u),np.max(u)))
+
     #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
     #np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
     print("split vel into u,v: %.3f s" % (timing.time() - start))
+
+    ###########################################################################
+    # normalise pressure
+    ###########################################################################
+    start = timing.time()
+
+    pressure_avrg=0
+    for iel in range(0,nel):
+        for iq in range(0,nqel):
+            pressure_avrg+=np.dot(NNNP[iq,0:mP],p[iconP[0:mP,iel]])*jcob*weightq[iq]
+        #end for iq
+    #end for iel
+    p-=pressure_avrg
+
+    print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+
+    pstats_file.write("%10e %10e %10e\n" % (istep,np.min(p),np.max(p)))
+        
+    print("normalise pressure: %.3f s" % (timing.time() - start))
+
+    t12+=timing.time()-start
 
     ###########################################################################
     # relaxation step
@@ -1135,8 +1166,20 @@ for istep in range(0,nstep):
        break
 
 #end for istep
-    
+
 print("     script ; Nusselt= %e ; Ra= %e " %(Nusselt,Ra_nb))
+
+###############################################################################
+# close files
+###############################################################################
+       
+vstats_file.close()
+pstats_file.close()
+conv_file.close()
+Tavrg_file.close()
+Nu_vrms_file.close()
+
+###############################################################################
 
 duration=timing.time()-topstart
 
@@ -1154,6 +1197,7 @@ print("compute Nusself nb: %.3f s      | %3d percent" % (t08,int(t08/duration*10
 print("compute T profile: %.3f s       | %3d percent" % (t09,int(t09/duration*100))) 
 print("export to vtu: %.3f s           | %3d percent" % (t10,int(t10/duration*100))) 
 print("compute nodal sr: %.3f s        | %3d percent" % (t11,int(t11/duration*100))) 
+print("normalise pressure: %.3f s      | %3d percent" % (t12,int(t12/duration*100))) 
 print("-----------------------------------------------")
     
 ###############################################################################

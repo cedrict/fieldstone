@@ -1,0 +1,22 @@
+#! /bin/bash
+
+rm *.ascii
+
+nstep=1000
+
+for res in 16 24 32 40 48 56 64; do
+
+    for R in 10000 100000 1000000; do
+
+        echo res= $res - Ra= $R
+        python3 stone_new.py $res $R $nstep > opla_${R}_${res}
+        mv Nu_vrms.ascii ss_Nu_vrms_${R}_${res}.ascii
+        mv T_profile.ascii ss_T_profile_${R}_${res}.ascii
+    done
+
+done
+
+
+
+
+
