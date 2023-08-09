@@ -1,0 +1,373 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set xlabel '# it'
+set log x
+
+#############################################################
+
+set xlabel 'Ra'
+set ylabel 'Nu'
+set pointsize .25
+set log y
+
+set output 'onset.pdf'
+plot[:2e6][]\
+'onset_16x16.ascii' u 7:4 w lp t '16^2',\
+'onset_24x24.ascii' u 7:4 w lp t '24^2',\
+'onset_32x32.ascii' u 7:4 w lp t '32^2',\
+'onset_48x48.ascii' u 7:4 w lp t '48^2',\
+x**0.33/3.5 lt -1 dt 2 t 'Ra^{1/3}' 
+
+unset log
+set output 'onset_zoom.pdf'
+plot[700:799][0.9999:1.001]\
+'onset_16x16.ascii' u 7:4 w lp t '16^2',\
+'onset_24x24.ascii' u 7:4 w lp t '24^2',\
+'onset_32x32.ascii' u 7:4 w lp t '32^2',\
+'onset_48x48.ascii' u 7:4 w lp t '48^2',\
+1 lt -1 dt 2 
+
+#############################################################
+set log x 
+
+set ylabel 'Nu'
+set title 'Resolution 16x16'
+set output 'Nu_16x16.pdf'
+plot[:1000][:1.001]\
+'Nu_vrms_700_16x16.ascii'  u 1:2 w l t 'Ra=700',\
+'Nu_vrms_725_16x16.ascii'  u 1:2 w l t 'Ra=725',\
+'Nu_vrms_750_16x16.ascii'  u 1:2 w l t 'Ra=750',\
+'Nu_vrms_770_16x16.ascii'  u 1:2 w l t 'Ra=770',\
+'Nu_vrms_775_16x16.ascii'  u 1:2 w l t 'Ra=775',\
+'Nu_vrms_780_16x16.ascii'  u 1:2 w l dt 2 t 'Ra=780',\
+'Nu_vrms_785_16x16.ascii'  u 1:2 w l dt 2 t 'Ra=785',\
+'Nu_vrms_800_16x16.ascii'  u 1:2 w l dt 2 t 'Ra=800',\
+
+set ylabel 'v_{rms}'
+set output 'vrms_16x16.pdf'
+plot[:1000][:]\
+'Nu_vrms_700_16x16.ascii'  u 1:3 w l t 'Ra=700',\
+'Nu_vrms_725_16x16.ascii'  u 1:3 w l t 'Ra=725',\
+'Nu_vrms_750_16x16.ascii'  u 1:3 w l t 'Ra=750',\
+'Nu_vrms_770_16x16.ascii'  u 1:3 w l t 'Ra=770',\
+'Nu_vrms_775_16x16.ascii'  u 1:3 w l t 'Ra=775',\
+'Nu_vrms_780_16x16.ascii'  u 1:3 w l dt 2 t 'Ra=780',\
+'Nu_vrms_785_16x16.ascii'  u 1:3 w l dt 2 t 'Ra=785',\
+'Nu_vrms_800_16x16.ascii'  u 1:3 w l dt 2 t 'Ra=800',\
+
+set ylabel 'Nu'
+set title 'Resolution 24x24'
+set output 'Nu_24x24.pdf'
+plot[:1000][:1.001]\
+'Nu_vrms_700_24x24.ascii'  u 1:2 w l t 'Ra=700',\
+'Nu_vrms_725_24x24.ascii'  u 1:2 w l t 'Ra=725',\
+'Nu_vrms_750_24x24.ascii'  u 1:2 w l t 'Ra=750',\
+'Nu_vrms_770_24x24.ascii'  u 1:2 w l t 'Ra=770',\
+'Nu_vrms_775_24x24.ascii'  u 1:2 w l t 'Ra=775',\
+'Nu_vrms_780_24x24.ascii'  u 1:2 w l dt 2 t 'Ra=780',\
+'Nu_vrms_785_24x24.ascii'  u 1:2 w l dt 2 t 'Ra=785',\
+'Nu_vrms_800_24x24.ascii'  u 1:2 w l dt 2 t 'Ra=800',\
+
+set ylabel 'v_{rms}'
+set output 'vrms_24x24.pdf'
+plot[:1000][:]\
+'Nu_vrms_700_24x24.ascii'  u 1:3 w l t 'Ra=700',\
+'Nu_vrms_725_24x24.ascii'  u 1:3 w l t 'Ra=725',\
+'Nu_vrms_750_24x24.ascii'  u 1:3 w l t 'Ra=750',\
+'Nu_vrms_770_24x24.ascii'  u 1:3 w l t 'Ra=770',\
+'Nu_vrms_775_24x24.ascii'  u 1:3 w l t 'Ra=775',\
+'Nu_vrms_780_24x24.ascii'  u 1:3 w l dt 2 t 'Ra=780',\
+'Nu_vrms_785_24x24.ascii'  u 1:3 w l dt 2 t 'Ra=785',\
+'Nu_vrms_800_24x24.ascii'  u 1:3 w l dt 2 t 'Ra=800',\
+
+set ylabel 'Nu'
+set title 'Resolution 32x32'
+set output 'Nu_32x32.pdf'
+plot[:1000][:1.001]\
+'Nu_vrms_700_32x32.ascii'  u 1:2 w l t 'Ra=700',\
+'Nu_vrms_725_32x32.ascii'  u 1:2 w l t 'Ra=725',\
+'Nu_vrms_750_32x32.ascii'  u 1:2 w l t 'Ra=750',\
+'Nu_vrms_770_32x32.ascii'  u 1:2 w l t 'Ra=770',\
+'Nu_vrms_775_32x32.ascii'  u 1:2 w l dt 1 t 'Ra=775',\
+'Nu_vrms_780_32x32.ascii'  u 1:2 w l dt 2 t 'Ra=780',\
+'Nu_vrms_785_32x32.ascii'  u 1:2 w l dt 2 t 'Ra=785',\
+'Nu_vrms_800_32x32.ascii'  u 1:2 w l dt 2 t 'Ra=800',\
+
+set ylabel 'v_{rms}'
+set output 'vrms_32x32.pdf'
+plot[:1000][:]\
+'Nu_vrms_700_32x32.ascii'  u 1:3 w l t 'Ra=700',\
+'Nu_vrms_725_32x32.ascii'  u 1:3 w l t 'Ra=725',\
+'Nu_vrms_750_32x32.ascii'  u 1:3 w l t 'Ra=750',\
+'Nu_vrms_770_32x32.ascii'  u 1:3 w l t 'Ra=770',\
+'Nu_vrms_775_32x32.ascii'  u 1:3 w l dt 1 t 'Ra=775',\
+'Nu_vrms_780_32x32.ascii'  u 1:3 w l dt 2 t 'Ra=780',\
+'Nu_vrms_785_32x32.ascii'  u 1:3 w l dt 2 t 'Ra=785',\
+'Nu_vrms_800_32x32.ascii'  u 1:3 w l dt 2 t 'Ra=800',\
+
+set ylabel 'Nu'
+set title 'Resolution 48x48'
+set output 'Nu_48x48.pdf'
+plot[:1000][:1.001]\
+'Nu_vrms_700_48x48.ascii'  u 1:2 w l t 'Ra=700',\
+'Nu_vrms_725_48x48.ascii'  u 1:2 w l t 'Ra=725',\
+'Nu_vrms_750_48x48.ascii'  u 1:2 w l t 'Ra=750',\
+'Nu_vrms_770_48x48.ascii'  u 1:2 w l t 'Ra=770',\
+'Nu_vrms_775_48x48.ascii'  u 1:2 w l dt 1 t 'Ra=775',\
+'Nu_vrms_780_48x48.ascii'  u 1:2 w l dt 2 t 'Ra=780',\
+'Nu_vrms_785_48x48.ascii'  u 1:2 w l dt 2 t 'Ra=785',\
+'Nu_vrms_800_48x48.ascii'  u 1:2 w l dt 2 t 'Ra=800',\
+
+set ylabel 'v_{rms}'
+set output 'vrms_48x48.pdf'
+plot[:1000][:]\
+'Nu_vrms_700_48x48.ascii'  u 1:3 w l t 'Ra=700',\
+'Nu_vrms_725_48x48.ascii'  u 1:3 w l t 'Ra=725',\
+'Nu_vrms_750_48x48.ascii'  u 1:3 w l t 'Ra=750',\
+'Nu_vrms_770_48x48.ascii'  u 1:3 w l t 'Ra=770',\
+'Nu_vrms_775_48x48.ascii'  u 1:3 w l dt 1 t 'Ra=775',\
+'Nu_vrms_780_48x48.ascii'  u 1:3 w l dt 2 t 'Ra=780',\
+'Nu_vrms_785_48x48.ascii'  u 1:3 w l dt 2 t 'Ra=785',\
+'Nu_vrms_800_48x48.ascii'  u 1:3 w l dt 2 t 'Ra=800',\
+
+
+
+
+
+
+
+#############################################################
+
+set xlabel 'T'
+set ylabel 'y'
+unset log xy
+
+set title 'Resolution 16x16'
+set output 'profile_16x16.pdf' 
+plot[0:1][]\
+'T_profile_400_16x16.ascii'    u 2:1 w l t 'Ra=400' ,\
+'T_profile_770_16x16.ascii'    u 2:1 w l t 'Ra=770' ,\
+'T_profile_800_16x16.ascii'    u 2:1 w l t 'Ra=800' ,\
+'T_profile_1000_16x16.ascii'   u 2:1 w l t 'Ra=1000' ,\
+'T_profile_4000_16x16.ascii'   u 2:1 w l t 'Ra=4000' ,\
+'T_profile_32000_16x16.ascii'  u 2:1 w l t 'Ra=32000' ,\
+'T_profile_256000_16x16.ascii' u 2:1 w l t 'Ra=256000' ,\
+'T_profile_512000_16x16.ascii' u 2:1 w l t 'Ra=512000' ,\
+
+set title 'Resolution 24x24'
+set output 'profile_24x24.pdf' 
+plot[0:1][]\
+'T_profile_400_24x24.ascii'    u 2:1 w l t 'Ra=400' ,\
+'T_profile_770_24x24.ascii'    u 2:1 w l t 'Ra=770' ,\
+'T_profile_800_24x24.ascii'    u 2:1 w l t 'Ra=800' ,\
+'T_profile_1000_24x24.ascii'   u 2:1 w l t 'Ra=1000' ,\
+'T_profile_4000_24x24.ascii'   u 2:1 w l t 'Ra=4000' ,\
+'T_profile_32000_24x24.ascii'  u 2:1 w l t 'Ra=32000' ,\
+'T_profile_256000_24x24.ascii' u 2:1 w l t 'Ra=256000' ,\
+'T_profile_512000_24x24.ascii' u 2:1 w l t 'Ra=512000' ,\
+
+set title 'Resolution 32x32'
+set output 'profile_32x32.pdf' 
+plot[0:1][]\
+'T_profile_400_32x32.ascii'    u 2:1 w l t 'Ra=400' ,\
+'T_profile_770_32x32.ascii'    u 2:1 w l t 'Ra=770' ,\
+'T_profile_800_32x32.ascii'    u 2:1 w l t 'Ra=800' ,\
+'T_profile_1000_32x32.ascii'   u 2:1 w l t 'Ra=1000' ,\
+'T_profile_4000_32x32.ascii'   u 2:1 w l t 'Ra=4000' ,\
+'T_profile_32000_32x32.ascii'  u 2:1 w l t 'Ra=32000' ,\
+'T_profile_256000_32x32.ascii' u 2:1 w l t 'Ra=256000' ,\
+'T_profile_512000_32x32.ascii' u 2:1 w l t 'Ra=512000' ,\
+
+set title 'Resolution 48x48'
+set output 'profile_48x48.pdf' 
+plot[0:1][]\
+'T_profile_400_48x48.ascii'    u 2:1 w l t 'Ra=400' ,\
+'T_profile_770_48x48.ascii'    u 2:1 w l t 'Ra=770' ,\
+'T_profile_800_48x48.ascii'    u 2:1 w l t 'Ra=800' ,\
+'T_profile_1000_48x48.ascii'   u 2:1 w l t 'Ra=1000' ,\
+'T_profile_4000_48x48.ascii'   u 2:1 w l t 'Ra=4000' ,\
+'T_profile_32000_48x48.ascii'  u 2:1 w l t 'Ra=32000' ,\
+'T_profile_256000_48x48.ascii' u 2:1 w l t 'Ra=256000' ,\
+'T_profile_512000_48x48.ascii' u 2:1 w l t 'Ra=512000' ,\
+
+############################################
+set xlabel '# iter'
+set log xy 
+
+set title 'Resolution 16x16'
+
+set ylabel 'T_{diff}'
+set output 'conv_16x16_T.pdf'
+plot[:1000][1e-8:1]\
+'conv_400_16x16.ascii'    w l dt 1 t 'Ra=400',\
+'conv_600_16x16.ascii'    w l dt 1 t 'Ra=600',\
+'conv_700_16x16.ascii'    w l dt 1 t 'Ra=700',\
+'conv_725_16x16.ascii'    w l dt 1 t 'Ra=725',\
+'conv_750_16x16.ascii'    w l dt 1 t 'Ra=750',\
+'conv_770_16x16.ascii'    w l dt 1 t 'Ra=770',\
+'conv_775_16x16.ascii'    w l dt 1 t 'Ra=775',\
+'conv_780_16x16.ascii'    w l dt 2 t 'Ra=780',\
+'conv_785_16x16.ascii'    w l dt 2 t 'Ra=785',\
+'conv_800_16x16.ascii'    w l dt 2 t 'Ra=800',\
+'conv_1000_16x16.ascii'   w l dt 2 t 'Ra=1000',\
+'conv_4000_16x16.ascii'   w l dt 2 t 'Ra=4000',\
+'conv_32000_16x16.ascii'  w l dt 2 t 'Ra=32000',\
+'conv_256000_16x16.ascii' w l dt 2 t 'Ra=256000',\
+'conv_512000_16x16.ascii' w l dt 2 t 'Ra=512000',\
+1e-7 lt -1 dt 2
+
+set ylabel 'Nu_{diff}'
+set output 'conv_16x16_Nu.pdf'
+plot[:1000][1e-8:1]\
+'conv_400_16x16.ascii'    u 1:3 w l dt 1 t 'Ra=400',\
+'conv_600_16x16.ascii'    u 1:3 w l dt 1 t 'Ra=600',\
+'conv_700_16x16.ascii'    u 1:3 w l dt 1 t 'Ra=700',\
+'conv_725_16x16.ascii'    u 1:3 w l dt 1 t 'Ra=725',\
+'conv_750_16x16.ascii'    u 1:3 w l dt 1 t 'Ra=750',\
+'conv_770_16x16.ascii'    u 1:3 w l dt 1 t 'Ra=770',\
+'conv_775_16x16.ascii'    u 1:3 w l dt 1 t 'Ra=775',\
+'conv_780_16x16.ascii'    u 1:3 w l dt 2 t 'Ra=780',\
+'conv_785_16x16.ascii'    u 1:3 w l dt 2 t 'Ra=785',\
+'conv_800_16x16.ascii'    u 1:3 w l dt 2 t 'Ra=800',\
+'conv_1000_16x16.ascii'   u 1:3 w l dt 2 t 'Ra=1000',\
+'conv_4000_16x16.ascii'   u 1:3 w l dt 2 t 'Ra=4000',\
+'conv_32000_16x16.ascii'  u 1:3 w l dt 2 t 'Ra=32000',\
+'conv_256000_16x16.ascii' u 1:3 w l dt 2 t 'Ra=256000',\
+'conv_512000_16x16.ascii' u 1:3 w l dt 2 t 'Ra=512000',\
+1e-7 lt -1 dt 2
+
+#----------------------------------------------------------
+set title 'Resolution 24x24'
+
+set ylabel 'T_{diff}'
+set output 'conv_24x24_T.pdf'
+plot[:1000][1e-8:1]\
+'conv_400_24x24.ascii'    w l dt 1 t 'Ra=400',\
+'conv_600_24x24.ascii'    w l dt 1 t 'Ra=600',\
+'conv_700_24x24.ascii'    w l dt 1 t 'Ra=700',\
+'conv_725_24x24.ascii'    w l dt 1 t 'Ra=725',\
+'conv_750_24x24.ascii'    w l dt 1 t 'Ra=750',\
+'conv_770_24x24.ascii'    w l dt 1 t 'Ra=770',\
+'conv_775_24x24.ascii'    w l dt 1 t 'Ra=775',\
+'conv_780_24x24.ascii'    w l dt 2 t 'Ra=780',\
+'conv_785_24x24.ascii'    w l dt 2 t 'Ra=785',\
+'conv_800_24x24.ascii'    w l dt 2 t 'Ra=800',\
+'conv_1000_24x24.ascii'   w l dt 2 t 'Ra=1000',\
+'conv_4000_24x24.ascii'   w l dt 2 t 'Ra=4000',\
+'conv_32000_24x24.ascii'  w l dt 2 t 'Ra=32000',\
+'conv_256000_24x24.ascii' w l dt 2 t 'Ra=256000',\
+1e-7 lt -1 dt 2
+
+set ylabel 'Nu_{diff}'
+set output 'conv_24x24_Nu.pdf'
+plot[:1000][1e-8:1]\
+'conv_400_24x24.ascii'    u 1:3 w l dt 1 t 'Ra=400',\
+'conv_600_24x24.ascii'    u 1:3 w l dt 1 t 'Ra=600',\
+'conv_700_24x24.ascii'    u 1:3 w l dt 1 t 'Ra=700',\
+'conv_725_24x24.ascii'    u 1:3 w l dt 1 t 'Ra=725',\
+'conv_750_24x24.ascii'    u 1:3 w l dt 1 t 'Ra=750',\
+'conv_770_24x24.ascii'    u 1:3 w l dt 1 t 'Ra=770',\
+'conv_775_24x24.ascii'    u 1:3 w l dt 1 t 'Ra=775',\
+'conv_780_24x24.ascii'    u 1:3 w l dt 2 t 'Ra=780',\
+'conv_785_24x24.ascii'    u 1:3 w l dt 2 t 'Ra=785',\
+'conv_800_24x24.ascii'    u 1:3 w l dt 2 t 'Ra=800',\
+'conv_1000_24x24.ascii'   u 1:3 w l dt 2 t 'Ra=1000',\
+'conv_4000_24x24.ascii'   u 1:3 w l dt 2 t 'Ra=4000',\
+'conv_32000_24x24.ascii'  u 1:3 w l dt 2 t 'Ra=32000',\
+'conv_256000_24x24.ascii' u 1:3 w l dt 2 t 'Ra=256000',\
+'conv_512000_24x24.ascii' u 1:3 w l dt 2 t 'Ra=512000',\
+1e-7 lt -1 dt 2
+
+#----------------------------------------------------------
+set title 'Resolution 32x32'
+
+set ylabel 'T_{diff}'
+set output 'conv_32x32_T.pdf'
+plot[:1000][1e-8:1]\
+'conv_400_32x32.ascii'    w l dt 1 t 'Ra=400',\
+'conv_600_32x32.ascii'    w l dt 1 t 'Ra=600',\
+'conv_700_32x32.ascii'    w l dt 1 t 'Ra=700',\
+'conv_725_32x32.ascii'    w l dt 1 t 'Ra=725',\
+'conv_750_32x32.ascii'    w l dt 1 t 'Ra=750',\
+'conv_770_32x32.ascii'    w l dt 1 t 'Ra=770',\
+'conv_775_32x32.ascii'    w l dt 1 t 'Ra=775',\
+'conv_780_32x32.ascii'    w l dt 2 t 'Ra=780',\
+'conv_785_32x32.ascii'    w l dt 2 t 'Ra=785',\
+'conv_800_32x32.ascii'    w l dt 2 t 'Ra=800',\
+'conv_1000_32x32.ascii'   w l dt 2 t 'Ra=1000',\
+'conv_4000_32x32.ascii'   w l dt 2 t 'Ra=4000',\
+'conv_32000_32x32.ascii'  w l dt 2 t 'Ra=32000',\
+'conv_256000_32x32.ascii' w l dt 2 t 'Ra=256000',\
+'conv_512000_32x32.ascii' w l dt 2 t 'Ra=512000',\
+1e-7 lt -1 dt 2
+
+
+set ylabel 'Nu_{diff}'
+set output 'conv_32x32_Nu.pdf'
+plot[:1000][1e-8:1]\
+'conv_400_32x32.ascii'    u 1:3 w l dt 1 t 'Ra=400',\
+'conv_600_32x32.ascii'    u 1:3 w l dt 1 t 'Ra=600',\
+'conv_700_32x32.ascii'    u 1:3 w l dt 1 t 'Ra=700',\
+'conv_725_32x32.ascii'    u 1:3 w l dt 1 t 'Ra=725',\
+'conv_750_32x32.ascii'    u 1:3 w l dt 1 t 'Ra=750',\
+'conv_770_32x32.ascii'    u 1:3 w l dt 1 t 'Ra=770',\
+'conv_775_32x32.ascii'    u 1:3 w l dt 1 t 'Ra=775',\
+'conv_780_32x32.ascii'    u 1:3 w l dt 2 t 'Ra=780',\
+'conv_785_32x32.ascii'    u 1:3 w l dt 2 t 'Ra=785',\
+'conv_800_32x32.ascii'    u 1:3 w l dt 2 t 'Ra=800',\
+'conv_1000_32x32.ascii'   u 1:3 w l dt 2 t 'Ra=1000',\
+'conv_4000_32x32.ascii'   u 1:3 w l dt 2 t 'Ra=4000',\
+'conv_32000_32x32.ascii'  u 1:3 w l dt 2 t 'Ra=32000',\
+'conv_256000_32x32.ascii' u 1:3 w l dt 2 t 'Ra=256000',\
+'conv_512000_32x32.ascii' u 1:3 w l dt 2 t 'Ra=512000',\
+1e-7 lt -1 dt 2
+
+#----------------------------------------------------------
+set title 'Resolution 48x48'
+
+set ylabel 'T_{diff}'
+set output 'conv_48x48_T.pdf'
+plot[:1000][1e-8:1]\
+'conv_400_48x48.ascii'    w l dt 1 t 'Ra=400',\
+'conv_600_48x48.ascii'    w l dt 1 t 'Ra=600',\
+'conv_700_48x48.ascii'    w l dt 1 t 'Ra=700',\
+'conv_725_48x48.ascii'    w l dt 1 t 'Ra=725',\
+'conv_750_48x48.ascii'    w l dt 1 t 'Ra=750',\
+'conv_770_48x48.ascii'    w l dt 1 t 'Ra=770',\
+'conv_775_48x48.ascii'    w l dt 1 t 'Ra=775',\
+'conv_780_48x48.ascii'    w l dt 2 t 'Ra=780',\
+'conv_785_48x48.ascii'    w l dt 2 t 'Ra=785',\
+'conv_800_48x48.ascii'    w l dt 2 t 'Ra=800',\
+'conv_1000_48x48.ascii'   w l dt 2 t 'Ra=1000',\
+'conv_4000_48x48.ascii'   w l dt 2 t 'Ra=4000',\
+'conv_32000_48x48.ascii'  w l dt 2 t 'Ra=32000',\
+'conv_256000_48x48.ascii' w l dt 2 t 'Ra=256000',\
+'conv_512000_48x48.ascii' w l dt 2 t 'Ra=512000',\
+1e-7 lt -1 dt 2
+
+
+set ylabel 'T_{diff}'
+set output 'conv_48x48_Nu.pdf'
+plot[:1000][1e-8:1]\
+'conv_400_48x48.ascii'    u 1:3 w l dt 1 t 'Ra=400',\
+'conv_600_48x48.ascii'    u 1:3 w l dt 1 t 'Ra=600',\
+'conv_700_48x48.ascii'    u 1:3 w l dt 1 t 'Ra=700',\
+'conv_725_48x48.ascii'    u 1:3 w l dt 1 t 'Ra=725',\
+'conv_750_48x48.ascii'    u 1:3 w l dt 1 t 'Ra=750',\
+'conv_770_48x48.ascii'    u 1:3 w l dt 1 t 'Ra=770',\
+'conv_775_48x48.ascii'    u 1:3 w l dt 1 t 'Ra=775',\
+'conv_780_48x48.ascii'    u 1:3 w l dt 2 t 'Ra=780',\
+'conv_785_48x48.ascii'    u 1:3 w l dt 2 t 'Ra=785',\
+'conv_800_48x48.ascii'    u 1:3 w l dt 2 t 'Ra=800',\
+'conv_1000_48x48.ascii'   u 1:3 w l dt 2 t 'Ra=1000',\
+'conv_4000_48x48.ascii'   u 1:3 w l dt 2 t 'Ra=4000',\
+'conv_32000_48x48.ascii'  u 1:3 w l dt 2 t 'Ra=32000',\
+'conv_256000_48x48.ascii' u 1:3 w l dt 2 t 'Ra=256000',\
+'conv_512000_48x48.ascii' u 1:3 w l dt 2 t 'Ra=512000',\
+1e-7 lt -1 dt 2
+
+
+
+
