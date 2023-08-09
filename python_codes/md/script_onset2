@@ -2,9 +2,9 @@
 
 rm onset*.ascii
 
-nstep=5
+nstep=10
 
-for R in 770 771 772 773 774 775 776 777 778 779 780 ; do
+for R in 771 772 773 774 775 776 777 778 779 780 781; do
 
     for res in 48; do
 

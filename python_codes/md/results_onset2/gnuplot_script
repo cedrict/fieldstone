@@ -1,0 +1,20 @@
+#gnuplot script
+set term pdf enhanced font "Times,12pt"
+set grid
+set xlabel '# iter'
+set ylabel 'v_{rms}'
+set key outside
+
+set output 'vrms.pdf'
+plot[][]\
+'Nu_vrms_771_48x48.ascii' u 1:3 w l t 'Ra=771',\
+'Nu_vrms_772_48x48.ascii' u 1:3 w l t 'Ra=772',\
+'Nu_vrms_773_48x48.ascii' u 1:3 w l t 'Ra=773',\
+'Nu_vrms_774_48x48.ascii' u 1:3 w l t 'Ra=774',\
+'Nu_vrms_775_48x48.ascii' u 1:3 w l t 'Ra=775',\
+'Nu_vrms_776_48x48.ascii' u 1:3 w l t 'Ra=776',\
+'Nu_vrms_777_48x48.ascii' u 1:3 w l t 'Ra=777',\
+'Nu_vrms_778_48x48.ascii' u 1:3 w l t 'Ra=778',\
+'Nu_vrms_779_48x48.ascii' u 1:3 w l t 'Ra=779',\
+'Nu_vrms_780_48x48.ascii' u 1:3 w l t 'Ra=780',\
+'Nu_vrms_781_48x48.ascii' u 1:3 w l t 'Ra=781',\

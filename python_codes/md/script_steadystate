@@ -4,7 +4,7 @@ rm *.ascii
 
 nstep=1000
 
-for res in 16 24 32 40 48 56 64; do
+for res in 16 32 48 64 80 96; do
 
     for R in 10000 100000 1000000; do
 
