@@ -321,7 +321,7 @@ for iq in range(0,nqperdim):
 print("compute N & grad(N) at q pts: %.3f s" % (timing.time() - start))
 
 ###############################################################################
-# compute array for assenbly
+# compute array for assembly
 ###############################################################################
 start = timing.time()
 
@@ -333,7 +333,7 @@ for iel in range(0,nel):
             ikk=ndofV*k1          +i1
             m1 =ndofV*iconV[k1,iel]+i1
             local_to_globalV[ikk,iel]=m1
-                 
+  
 print("compute local_to_global: %.3f s" % (timing.time() - start))
 
 ###############################################################################
