@@ -1,3 +1,5 @@
 rm *.vtu
 rm *.ascii
 rm *.pdf
+rm opla_*
+
