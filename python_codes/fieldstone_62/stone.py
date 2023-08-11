@@ -2,11 +2,37 @@ import numpy as np
 import sys as sys
 import scipy
 import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
+from scipy.sparse.linalg import *
 import time as timing
 from scipy.sparse import lil_matrix
 import matplotlib.pyplot as plt
 from points import *
+
+Myear=1e6*365.25*3600*24
+km=1e3
+
+#------------------------------------------------------------------------------
+# 40Mo on left, 70Mo on right
+
+def temp(x,y):
+
+    Ts=0+273
+    Tm=1300+273
+    kappa=1e-6
+
+    if x<1500e3:
+       ta=40*Myear
+       yl=82*km
+    else:
+       ta=80*Myear
+       yl=110*km
+
+    n=1
+    t1=1./n*np.exp(-kappa*n**2*np.pi**2*ta/yl**2)*np.sin(n*np.pi*(Ly-y)/yl)
+    n=2
+    t2=1./n*np.exp(-kappa*n**2*np.pi**2*ta/yl**2)*np.sin(n*np.pi*(Ly-y)/yl)
+
+    return Ts+(Tm-Ts)*((Ly-y)/yl+2/np.pi*(t1+t2))
 
 #------------------------------------------------------------------------------
 
@@ -246,8 +272,6 @@ for iel in range(0,nel):
 
 print("setup: connectivity P: %.3f s" % (timing.time() - start))
 
-
-
 #################################################################
 # compute coordinates of element centers
 #################################################################
@@ -301,7 +325,7 @@ print("assign material to elements: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
 v_in=-5.*cm/year
@@ -315,7 +339,7 @@ y_b=0.
 v_out=-v_in * ( Ly - 0.5*(y_in+y_out)  ) / ( 0.5*(y_in+y_out))
 
 
-for i in range(0, NV):
+for i in range(0,NV):
 
     #Left boundary  
     if xV[i]/Lx<0.0000001:
@@ -339,15 +363,15 @@ for i in range(0, NV):
 
 print("define boundary conditions: %.3f s" % (timing.time() - start))
 
-#################################################################
+###############################################################################
 # compute area of elements
-#################################################################
+###############################################################################
 start = timing.time()
 
 area=np.zeros(nel,dtype=np.float64) 
-NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
-dNNNVdr  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-dNNNVds  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
+NNNV=np.zeros(mV,dtype=np.float64)    # shape functions V
+dNNNVdr=np.zeros(mV,dtype=np.float64) # shape functions derivatives
+dNNNVds=np.zeros(mV,dtype=np.float64) # shape functions derivatives
 
 for iel in range(0,nel):
     for kq in range (0,nqel):
@@ -372,14 +396,35 @@ print("     -> total area (anal) %.6f " %(Lx*Ly))
 
 print("compute elements areas: %.3f s" % (timing.time() - start))
 
-################################################################################################
-################################################################################################
-# TIME STEPPING
-################################################################################################
-################################################################################################
+###############################################################################
+# assign temperature
+###############################################################################
 
-u        = np.zeros(NV,dtype=np.float64)           # x-component velocity
-v        = np.zeros(NV,dtype=np.float64)           # y-component velocity
+T=np.zeros(NV,dtype=np.float64)  # boundary condition, value
+
+for i in range(0,NV):
+
+    if xV[i]<Lx/2:
+       if Ly-yV[i]<82e3:
+          T[i]=temp(xV[i],yV[i])
+       else:
+          T[i]=1440+273-0.25*yV[i]/km
+    else:
+       if Ly-yV[i]<110e3:
+          T[i]=temp(xV[i],yV[i])
+       else:
+          T[i]=1440+273-0.25*yV[i]/km
+
+np.savetxt('temperature.ascii',np.array([xV,yV,T]).T,header='# xV,yV')
+
+###############################################################################
+###############################################################################
+# TIME STEPPING
+###############################################################################
+###############################################################################
+
+u = np.zeros(NV,dtype=np.float64)           # x-component velocity
+v = np.zeros(NV,dtype=np.float64)           # y-component velocity
 
 for istep in range(0,nstep):
 
@@ -402,7 +447,6 @@ for istep in range(0,nstep):
            if not bc_fix[2*i+1]:
               yV[i]+=v[i]*dt
 
-
     for iel in range(0,nel):
         # node 3 is between nodes 0 and 1
         xV[iconV[3,iel]]=0.5*(xV[iconV[0,iel]]+xV[iconV[1,iel]]) 
@@ -417,7 +461,6 @@ for istep in range(0,nstep):
         xV[iconV[6,iel]]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]])/3.
         yV[iconV[6,iel]]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]])/3.
 
-    
     #np.savetxt('gridV1.ascii',np.array([xV,yV]).T,header='# xV,yV')
 
     for iel in range(0,nel):
@@ -452,7 +495,7 @@ for istep in range(0,nstep):
 
     for iel in range(0,nel):
 
-        if iel%500==0:
+        if iel%1000==0:
            print(iel)
 
         # set arrays to 0 every loop
@@ -615,10 +658,7 @@ for istep in range(0,nstep):
     e   = np.zeros(nel,dtype=np.float64)  
   
     vrms=0.
-
-    #u[:]=xV[:]
-    #v[:]=yV[:]
-
+    Trms=0.
     for iel in range(0,nel):
         for kq in range (0,nqel):
             # position & weight of quad. point
@@ -642,6 +682,7 @@ for istep in range(0,nstep):
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
             #end for
+            Tq=np.dot(NNNV[:],T[iconV[:,iel]])
             uq=0.0
             vq=0.0
             exxq=0.0
@@ -658,6 +699,7 @@ for istep in range(0,nstep):
             eyy[iel] += eyyq*jcob*weightq
             exy[iel] += exyq*jcob*weightq
             vrms+=(uq**2+vq**2)*jcob*weightq
+            Trms+=Tq**2*jcob*weightq
         #end for
         exx[iel] /= area[iel] 
         eyy[iel] /= area[iel] 
@@ -666,11 +708,13 @@ for istep in range(0,nstep):
     #end for
 
     vrms=np.sqrt(vrms/(Lx*Ly))
+    Trms=np.sqrt(Trms/(Lx*Ly))
 
     print("     -> exx (m,M) %.6e %.6e " %(np.min(exx),np.max(exx)))
     print("     -> eyy (m,M) %.6e %.6e " %(np.min(eyy),np.max(eyy)))
     print("     -> exy (m,M) %.6e %.6e " %(np.min(exy),np.max(exy)))
     print("     -> vrms %.6e " %vrms )
+    print("     -> Trms %.6e " %Trms )
 
     print("compute elemental sr: %.3f s" % (timing.time() - start))
 
@@ -965,10 +1009,16 @@ for istep in range(0,nstep):
         vtufile.write("%10e \n" %exy_n[i])
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='p (nod)' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
     for i in range(0,NV):
         vtufile.write("%10e \n" %q[i])
     vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
+    for i in range(0,NV):
+        vtufile.write("%10e \n" %T[i])
+    vtufile.write("</DataArray>\n")
+
     #--
     vtufile.write("<DataArray type='Float32' Name='fix_u' Format='ascii'> \n")
     for i in range(0,NV):
