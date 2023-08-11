@@ -1,0 +1,239 @@
+#gnuplot script
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+
+###############################
+
+set xlabel 'co-latitude'
+set ylabel 'v_t at cmb (CR)'
+set output 'cmb_vt_cr.pdf'
+plot[0:pi][-5e-10:2e-10]\
+'cr_hhh200/cmb_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh150/cmb_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=150',\
+'cr_hhh100/cmb_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=100',\
+'cr_hhh050/cmb_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=050',\
+'cr_hhh040/cmb_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=040',\
+'cr_hhh030/cmb_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=030',\
+'../stokes_test0/cr_hhh100/cmb_vt_0000.ascii'   ps .1 t 'P_2^+xP_{-1} - test0',\
+
+set ylabel 'v_t at cmb (P2P1)'
+set output 'cmb_vt_p2p1.pdf'
+plot[0:pi][-5e-10:2e-10]\
+'p2p1_hhh200/cmb_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh150/cmb_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=150',\
+'p2p1_hhh100/cmb_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=100',\
+'p2p1_hhh050/cmb_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=050',\
+'p2p1_hhh040/cmb_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=040',\
+'p2p1_hhh030/cmb_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=030',\
+'../stokes_test0/cr_hhh100/cmb_vt_0000.ascii'   ps .1 t 'P_2^+xP_{-1} - test0',\
+
+###############################
+
+set ylabel 'v_t at surface (CR)'
+set output 'surface_vt_cr.pdf'
+plot[0:pi][-1e-10:6e-10]\
+'cr_hhh200/surface_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh150/surface_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=150',\
+'cr_hhh100/surface_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=100',\
+'cr_hhh050/surface_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=050',\
+'cr_hhh040/surface_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=040',\
+'cr_hhh030/surface_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=030',\
+'../stokes_test0/cr_hhh100/surface_vt_0000.ascii'   ps .1 t 'P_2^+xP_{-1} - test0',\
+
+set ylabel 'v_t at surface (P2P1)'
+set output 'surface_vt_p2p1.pdf'
+plot[0:pi][-1e-10:6e-10]\
+'p2p1_hhh200/surface_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh150/surface_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=150',\
+'p2p1_hhh100/surface_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=100',\
+'p2p1_hhh050/surface_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=050',\
+'p2p1_hhh040/surface_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=040',\
+'p2p1_hhh030/surface_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=030',\
+'../stokes_test0/cr_hhh100/surface_vt_0000.ascii'   ps .1 t 'P_2^+xP_{-1} - test0',\
+
+###############################
+
+set ylabel 'pressure (q) at surface (CR)'
+set output 'surface_q_cr.pdf'
+plot[0:pi][-6e6:6e6]\
+'cr_hhh200/surface_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh150/surface_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=150',\
+'cr_hhh100/surface_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=100',\
+'cr_hhh050/surface_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=050',\
+'cr_hhh040/surface_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=040',\
+'cr_hhh030/surface_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=030',\
+
+set ylabel 'pressure (q) at surface (P2P1)'
+set output 'surface_q_p2p1.pdf'
+plot[0:pi][-6e6:6e6]\
+'p2p1_hhh200/surface_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh150/surface_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=150',\
+'p2p1_hhh100/surface_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=100',\
+'p2p1_hhh050/surface_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=050',\
+'p2p1_hhh040/surface_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=040',\
+'p2p1_hhh030/surface_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=030',\
+
+###############################
+
+set ylabel 'pressure (p) at surface (CR)'
+set output 'surface_p_cr.pdf'
+plot[0:pi][-6e6:6e6]\
+'cr_hhh200/surface_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh150/surface_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=150',\
+'cr_hhh100/surface_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=100',\
+'cr_hhh050/surface_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=050',\
+'cr_hhh040/surface_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=040',\
+'cr_hhh030/surface_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=030',\
+
+set ylabel 'pressure (p) at surface (P2P1)'
+set output 'surface_p_p2p1.pdf'
+plot[0:pi][-6e6:6e6]\
+'p2p1_hhh200/surface_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh150/surface_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=150',\
+'p2p1_hhh100/surface_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=100',\
+'p2p1_hhh050/surface_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=050',\
+'p2p1_hhh040/surface_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=040',\
+'p2p1_hhh030/surface_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=030',\
+
+###############################
+
+set ylabel 'pressure (p) at cmb (CR)'
+set output 'cmb_p_cr.pdf'
+plot[0:pi][]\
+'cr_hhh200/cmb_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh150/cmb_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=150',\
+'cr_hhh100/cmb_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=100',\
+'cr_hhh050/cmb_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=050',\
+'cr_hhh040/cmb_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=040',\
+'cr_hhh030/cmb_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=030',\
+
+set ylabel 'pressure (p) at cmb (P2P1)'
+set output 'cmb_p_p2p1.pdf'
+plot[0:pi][]\
+'p2p1_hhh200/cmb_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh150/cmb_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=150',\
+'p2p1_hhh100/cmb_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=100',\
+'p2p1_hhh050/cmb_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=050',\
+'p2p1_hhh040/cmb_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=040',\
+'p2p1_hhh030/cmb_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=030',\
+
+###############################
+
+set ylabel 'pressure at cmb (CR)'
+set output 'cmb_q_cr.pdf'
+plot[0:pi][]\
+'cr_hhh200/cmb_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh150/cmb_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=150',\
+'cr_hhh100/cmb_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=100',\
+'cr_hhh050/cmb_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=050',\
+'cr_hhh040/cmb_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=040',\
+'cr_hhh030/cmb_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=030',\
+
+set ylabel 'pressure at cmb (P2P1)'
+set output 'cmb_q_p2p1.pdf'
+plot[0:pi][]\
+'p2p1_hhh200/cmb_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh150/cmb_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=150',\
+'p2p1_hhh100/cmb_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=100',\
+'p2p1_hhh050/cmb_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=050',\
+'p2p1_hhh040/cmb_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=040',\
+'p2p1_hhh030/cmb_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=030',\
+
+###############################
+
+set xlabel 'co-latitude'
+set ylabel 'dynamic topography (CR)'
+set output 'surface_dynamic_topography_cr.pdf'
+plot[0:pi][-250:250]\
+'cr_hhh200/surface_dyn_topo_0000.ascii' ps .3 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh150/surface_dyn_topo_0000.ascii' ps .3 t 'P_2^+xP_{-1} - h=150',\
+'cr_hhh100/surface_dyn_topo_0000.ascii' ps .3 t 'P_2^+xP_{-1} - h=100',\
+'cr_hhh050/surface_dyn_topo_0000.ascii' ps .3 t 'P_2^+xP_{-1} - h=050',\
+'cr_hhh040/surface_dyn_topo_0000.ascii' ps .3 t 'P_2^+xP_{-1} - h=040',\
+'cr_hhh030/surface_dyn_topo_0000.ascii' ps .3 t 'P_2^+xP_{-1} - h=030',\
+
+set ylabel 'dynamic topography (P2P1)'
+set output 'surface_dynamic_topography_p2p1.pdf'
+plot[0:pi][-250:250]\
+'p2p1_hhh200/surface_dyn_topo_0000.ascii' ps .3 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh150/surface_dyn_topo_0000.ascii' ps .3 t 'P_2xP_{1} - h=150',\
+'p2p1_hhh100/surface_dyn_topo_0000.ascii' ps .3 t 'P_2xP_{1} - h=100',\
+'p2p1_hhh050/surface_dyn_topo_0000.ascii' ps .3 t 'P_2xP_{1} - h=050',\
+'p2p1_hhh040/surface_dyn_topo_0000.ascii' ps .3 t 'P_2xP_{1} - h=040',\
+'p2p1_hhh030/surface_dyn_topo_0000.ascii' ps .3 t 'P_2xP_{1} - h=030',\
+
+###############################
+
+set ylabel 'dynamic topography (CR)'
+set output 'cmb_dynamic_topography_cr.pdf'
+plot[0:pi][]\
+'cr_hhh200/cmb_dyn_topo_0000.ascii' ps .3 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh150/cmb_dyn_topo_0000.ascii' ps .3 t 'P_2^+xP_{-1} - h=150',\
+'cr_hhh100/cmb_dyn_topo_0000.ascii' ps .3 t 'P_2^+xP_{-1} - h=100',\
+'cr_hhh050/cmb_dyn_topo_0000.ascii' ps .3 t 'P_2^+xP_{-1} - h=050',\
+'cr_hhh040/cmb_dyn_topo_0000.ascii' ps .3 t 'P_2^+xP_{-1} - h=040',\
+'cr_hhh030/cmb_dyn_topo_0000.ascii' ps .3 t 'P_2^+xP_{-1} - h=030',\
+
+set ylabel 'dynamic topography (P2P1)'
+set output 'cmb_dynamic_topography_p2p1.pdf'
+plot[0:pi][]\
+'p2p1_hhh200/cmb_dyn_topo_0000.ascii' ps .3 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh150/cmb_dyn_topo_0000.ascii' ps .3 t 'P_2xP_{1} - h=150',\
+'p2p1_hhh100/cmb_dyn_topo_0000.ascii' ps .3 t 'P_2xP_{1} - h=100',\
+'p2p1_hhh050/cmb_dyn_topo_0000.ascii' ps .3 t 'P_2xP_{1} - h=050',\
+'p2p1_hhh040/cmb_dyn_topo_0000.ascii' ps .3 t 'P_2xP_{1} - h=040',\
+'p2p1_hhh030/cmb_dyn_topo_0000.ascii' ps .3 t 'P_2xP_{1} - h=030',\
+
+###############################
+
+set xlabel 'co-latitude'
+set ylabel 'tau_{rr} at cmb (CR)'
+set output 'cmb_taurr_cr.pdf'
+plot[0:pi][]\
+'cr_hhh200/cmb_tau_rr_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh150/cmb_tau_rr_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=150',\
+'cr_hhh100/cmb_tau_rr_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=100',\
+'cr_hhh050/cmb_tau_rr_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=050',\
+'cr_hhh040/cmb_tau_rr_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=040',\
+'cr_hhh030/cmb_tau_rr_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=030',\
+
+set ylabel 'tau_{rr} at cmb (P2P1)'
+set output 'cmb_taurr_p2p1.pdf'
+plot[0:pi][]\
+'p2p1_hhh200/cmb_tau_rr_0000.ascii' ps .2 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh150/cmb_tau_rr_0000.ascii' ps .2 t 'P_2xP_{1} - h=150',\
+'p2p1_hhh100/cmb_tau_rr_0000.ascii' ps .2 t 'P_2xP_{1} - h=100',\
+'p2p1_hhh050/cmb_tau_rr_0000.ascii' ps .2 t 'P_2xP_{1} - h=050',\
+'p2p1_hhh040/cmb_tau_rr_0000.ascii' ps .2 t 'P_2xP_{1} - h=040',\
+'p2p1_hhh030/cmb_tau_rr_0000.ascii' ps .2 t 'P_2xP_{1} - h=030',\
+
+###############################
+
+set xlabel 'co-latitude'
+set ylabel 'tau_{rr} at surface (CR)'
+set output 'surface_taurr_cr.pdf'
+plot[0:pi][]\
+'cr_hhh200/surface_tau_rr_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh150/surface_tau_rr_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=150',\
+'cr_hhh100/surface_tau_rr_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=100',\
+'cr_hhh050/surface_tau_rr_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=050',\
+'cr_hhh040/surface_tau_rr_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=040',\
+'cr_hhh030/surface_tau_rr_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=030',\
+
+set ylabel 'tau_{rr} at surface (P2P1)'
+set output 'surface_taurr_p2p1.pdf'
+plot[0:pi][]\
+'p2p1_hhh200/surface_tau_rr_0000.ascii' ps .2 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh150/surface_tau_rr_0000.ascii' ps .2 t 'P_2xP_{1} - h=150',\
+'p2p1_hhh100/surface_tau_rr_0000.ascii' ps .2 t 'P_2xP_{1} - h=100',\
+'p2p1_hhh050/surface_tau_rr_0000.ascii' ps .2 t 'P_2xP_{1} - h=050',\
+'p2p1_hhh040/surface_tau_rr_0000.ascii' ps .2 t 'P_2xP_{1} - h=040',\
+'p2p1_hhh030/surface_tau_rr_0000.ascii' ps .2 t 'P_2xP_{1} - h=030',\
+
+
+
+
+
+
+

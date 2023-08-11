@@ -1,0 +1,66 @@
+#gnuplot script
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+
+set xlabel 'co-latitude'
+set ylabel 'v_t at cmb'
+set output 'cmb_vt.pdf'
+plot[0:pi][]\
+'cr_hhh200/cmb_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh100/cmb_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=100',\
+'p2p1_hhh200/cmb_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh100/cmb_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=100',\
+
+set ylabel 'v_t at surface'
+set output 'surface_vt.pdf'
+plot[0:pi][]\
+'cr_hhh200/surface_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh100/surface_vt_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=100',\
+'p2p1_hhh200/surface_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh100/surface_vt_0000.ascii' ps .2 t 'P_2xP_{1} - h=100',\
+
+######################################################################
+
+set ylabel 'pressure (q) at surface'
+set output 'surface_q.pdf'
+plot[0:pi][]\
+'cr_hhh200/surface_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh100/surface_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=100',\
+'p2p1_hhh200/surface_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh100/surface_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=100',\
+
+set ylabel 'pressure (q) at surface'
+set output 'cmb_q.pdf'
+plot[0:pi][]\
+'cr_hhh200/cmb_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh100/cmb_q_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=100',\
+'p2p1_hhh200/cmb_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh100/cmb_q_0000.ascii' ps .2 t 'P_2xP_{1} - h=100',\
+
+######################################################################
+
+set ylabel 'pressure (p) at surface'
+set output 'surface_p.pdf'
+plot[0:pi][]\
+'cr_hhh200/surface_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh100/surface_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=100',\
+'p2p1_hhh200/surface_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh100/surface_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=100',\
+
+set ylabel 'pressure (p) at surface'
+set output 'cmb_p.pdf'
+plot[0:pi][]\
+'cr_hhh200/cmb_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=200',\
+'cr_hhh100/cmb_p_0000.ascii'   ps .2 t 'P_2^+xP_{-1} - h=100',\
+'p2p1_hhh200/cmb_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=200',\
+'p2p1_hhh100/cmb_p_0000.ascii' ps .2 t 'P_2xP_{1} - h=100',\
+
+
+
+
+
+
+
+
+

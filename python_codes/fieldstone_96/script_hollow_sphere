@@ -1,0 +1,37 @@
+#! /bin/bash
+
+
+#   R_inner=float(sys.argv[1])
+#   R_outer=float(sys.argv[2])
+#   R_12=float(sys.argv[3])
+#   R_23=float(sys.argv[4])
+#   R_34=float(sys.argv[5])
+#   R_45=float(sys.argv[6])
+#   rho1=float(sys.argv[7])
+#   rho2=float(sys.argv[8])
+#   rho3=float(sys.argv[9])
+#   rho4=float(sys.argv[10])
+#   rho5=float(sys.argv[11])
+#   eta1=float(sys.argv[12])
+#   eta2=float(sys.argv[13])
+#   eta3=float(sys.argv[14])
+#   eta4=float(sys.argv[15])
+#   eta5=float(sys.argv[16])
+#   R_blob=float(sys.argv[17])
+#   eccentricity=float(sys.argv[18])
+#   rho_blob=float(sys.argv[19])
+#   eta_blob=float(sys.argv[20])
+#   depth_blob=float(sys.argv[21])
+#   solve_stokes=(int(sys.argv[22])==1)
+#   compute_gravity=(int(sys.argv[23])==1)
+#   nstep=int(sys.argv[24])
+#   hhh=float(sys.argv[25])
+
+
+python3 stone.py 3000e3 6000e3 \
+                 5800e3 5600e3 5000e3 4000e3\
+                 3000 3000 3000 3000 3000 \
+                 1e22 1e22 1e22 1e22 1e22\
+                 400e3 0 3000 1e25 1000e3 \
+                 0 1 \
+                 1 200e3 
