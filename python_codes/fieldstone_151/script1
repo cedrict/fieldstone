@@ -1,0 +1,9 @@
+#! /bin/bash
+
+rm errors1
+
+for n in 8 10 12 14 16 18 20 24 28 32 ; do
+    python3 stone.py $n 1 0 > opla
+    grep errv opla >> errors1
+done
+ 

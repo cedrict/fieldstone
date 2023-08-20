@@ -14,17 +14,18 @@ def velocity_x(x,y,r,theta,test):
     if test==1 or test==2:
        return 0
     if test==3:
-       return 0
-    if test==3:
-       return 0
+       return -np.sin(theta)*vbc*(R2-r)/(R2-R1)
+    if test==4:
+       return -np.sin(theta)*vbc*r
 
 def velocity_y(x,y,r,theta,test):
     if test==1 or test==2:
        return 0
     if test==3:
+       return np.cos(theta)*vbc*(R2-r)/(R2-R1)
        return 0
-    if test==3:
-       return 0
+    if test==4:
+       return np.cos(theta)*vbc*r
 
 def pressure(x,y,r,theta,test):
     if test==1 or test==2 or test==3 or test==4:
@@ -105,8 +106,8 @@ if int(len(sys.argv) == 4):
    fs_method = int(sys.argv[3])
 else:
    nelr = 20
-   test = 2 
-   fs_method=2
+   test = 4 
+   fs_method=3
 
 R1=1.
 R2=2.
@@ -227,23 +228,32 @@ for j in range(0, nelr):
 # now that the grid has been built as if it was a Q1 grid, 
 # we can simply use these same points to arrive at a Q2 
 # connectivity array with 4 times less elements.
+# Nlm is the number of additional lines/columns to the matrix
 ###############################################################################
 
 nelr=nelr//2
 nelt=nelt//2
 nel=nel//4
 
+if fs_method==3:
+   Nlm=2*nelt
+else:
+   Nlm=0
+
 NfemV=nnp*ndofV           # Total number of degrees of V freedom 
 NfemP=nelt*(nelr+1)*ndofP # Total number of degrees of P freedom
-Nfem=NfemV+NfemP          # total number of dofs
+Nfem=NfemV+NfemP+Nlm          # total number of dofs
 
 print('nelr=',nelr)
 print('nelt=',nelt)
 print('nel=',nel)
 print('NfemV=',NfemV)
 print('NfemP=',NfemP)
+print('Nlm=',Nlm)
+print('Nfem=',Nfem)
 print('surface_bc=',surface_bc)
 print('fs_method=',fs_method)
+print("-----------------------------")
 
 ###############################################################################
 # connectivity
@@ -324,10 +334,10 @@ start = timing.time()
 
 eps=1.e-6
 
-bc_fix = np.zeros(NfemV,dtype=bool)  
-bc_val = np.zeros(NfemV,dtype=np.float64) 
-surface = np.zeros(nnp,dtype=bool)  
-cmb = np.zeros(nnp,dtype=bool)  
+bc_fix=np.zeros(NfemV,dtype=bool)  
+bc_val=np.zeros(NfemV,dtype=np.float64) 
+surface=np.zeros(nnp,dtype=bool)  
+cmb=np.zeros(nnp,dtype=bool)  
 nx=np.empty(nnp,dtype=np.float64) 
 ny=np.empty(nnp,dtype=np.float64) 
 
@@ -349,6 +359,18 @@ for i in range(0,nnp):
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
 
 print("defining boundary conditions (%.3fs)" % (timing.time() - start))
+
+###############################################################################
+
+surfaceP=np.zeros(NP,dtype=bool)  
+cmbP=np.zeros(NP,dtype=bool)  
+
+for i in range(0,NP):
+    if rP[i]/R1<1+eps:
+       cmbP[i]=True
+    if rP[i]/R2>1-eps:
+       surfaceP[i]=True
+
 
 ###############################################################################
 # flag all elements with a node touching the surface r=R_outer
@@ -609,14 +631,34 @@ for iel in range(0,nel):
 
 print("build FE matrixs & rhs (%.3fs)" % (timing.time() - start))
 
-#################################################################
+###############################################################################
+# Lagrange multipliers business
+###############################################################################
+
+if fs_method==3:
+
+   start = timing.time()
+
+   counter=NfemV+NfemP
+   for i in range(0,nnp):
+       if surface[i]:
+          # we need nx[i]*u[i]+ny[i]*v[i]=0
+          A_sparse[counter, 2*i  ]=nx[i]
+          A_sparse[counter, 2*i+1]=ny[i]
+          A_sparse[2*i  ,counter]=nx[i]
+          A_sparse[2*i+1,counter]=ny[i]
+          counter+=1
+
+   print("build L block (%.3fs)" % (timing.time() - start))
+
+###############################################################################
 # solve system
-#################################################################
+###############################################################################
 start = timing.time()
 
 rhs=np.zeros(Nfem,dtype=np.float64)
 rhs[0:NfemV]=f_rhs
-rhs[NfemV:Nfem]=h_rhs
+rhs[NfemV:NfemV+NfemP]=h_rhs
     
 sparse_matrix=A_sparse.tocsr()
 
@@ -624,19 +666,18 @@ sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
 print("solving system (%.3fs)" % (timing.time() - start))
 
-#####################################################################
+###############################################################################
 # put solution into separate x,y velocity arrays
-#####################################################################
+###############################################################################
 start = timing.time()
 
 u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
-p=sol[NfemV:Nfem]
+p=sol[NfemV:NfemV+NfemP]
+l=sol[NfemV+NfemP:Nfem]
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
-
-np.savetxt('velocity.ascii',np.array([xV,yV,u,v,r]).T,header='# x,y,u,v')
-np.savetxt('pressure.ascii',np.array([xP,yP,p,rP]).T,header='# x,y,p,r')
+print("     -> l (m,M) %.4f %.4f " %(np.min(l),np.max(l)))
 
 vr= np.cos(theta)*u+np.sin(theta)*v
 vt=-np.sin(theta)*u+np.cos(theta)*v
@@ -644,11 +685,14 @@ vt=-np.sin(theta)*u+np.cos(theta)*v
 print("     -> vr (m,M) %.4f %.4f " %(np.min(vr),np.max(vr)))
 print("     -> vt (m,M) %.4f %.4f " %(np.min(vt),np.max(vt)))
 
+np.savetxt('velocity.ascii',np.array([xV,yV,u,v,vr,vt,r]).T,header='# x,y,u,v,vr,vt,r')
+np.savetxt('pressure.ascii',np.array([xP,yP,p,rP]).T,header='# x,y,p,r')
+
 print("reshape solution (%.3fs)" % (timing.time() - start))
 
-#####################################################################
+###############################################################################
 # compute strain rate - center to nodes - method 1
-#####################################################################
+###############################################################################
 
 count = np.zeros(nnp,dtype=np.int32)  
 Lxx1 = np.zeros(nnp,dtype=np.float64)  
@@ -705,8 +749,7 @@ print("     -> Lxy1 (m,M) %.4f %.4f " %(np.min(Lyx1),np.max(Lyx1)))
 
 print("compute vel gradient meth-1 (%.3fs)" % (timing.time() - start))
 
-#################################################################
-#################################################################
+###############################################################################
 
 exx1 = np.zeros(nnp,dtype=np.float64)  
 eyy1 = np.zeros(nnp,dtype=np.float64)  
@@ -716,9 +759,9 @@ exx1[:]=Lxx1[:]
 eyy1[:]=Lyy1[:]
 exy1[:]=0.5*(Lxy1[:]+Lyx1[:])
 
-#####################################################################
+###############################################################################
 # compute strain rate - corners to nodes - method 2
-#####################################################################
+###############################################################################
 start = timing.time()
 
 count = np.zeros(nnp,dtype=np.int32)  
@@ -783,8 +826,7 @@ print("     -> Lxy2 (m,M) %.4f %.4f " %(np.min(Lyx2),np.max(Lyx2)))
 
 print("compute vel gradient meth-2 (%.3fs)" % (timing.time() - start))
 
-#################################################################
-#################################################################
+###############################################################################
 
 exx2 = np.zeros(nnp,dtype=np.float64)  
 eyy2 = np.zeros(nnp,dtype=np.float64)  
@@ -794,8 +836,7 @@ exx2[:]=Lxx2[:]
 eyy2[:]=Lyy2[:]
 exy2[:]=0.5*(Lxy2[:]+Lyx2[:])
 
-#################################################################
-#################################################################
+###############################################################################
 start = timing.time()
 
 M_mat= np.zeros((nnp,nnp),dtype=np.float64)
@@ -887,8 +928,7 @@ print("     -> Lxy3 (m,M) %.4f %.4f " %(np.min(Lyx3),np.max(Lyx3)))
 
 print("compute vel gradient meth-3 (%.3fs)" % (timing.time() - start))
 
-#################################################################
-#################################################################
+###############################################################################
 
 exx3 = np.zeros(nnp,dtype=np.float64)  
 eyy3 = np.zeros(nnp,dtype=np.float64)  
@@ -898,9 +938,9 @@ exx3[:]=Lxx3[:]
 eyy3[:]=Lyy3[:]
 exy3[:]=0.5*(Lxy3[:]+Lyx3[:])
 
-#################################################################
+###############################################################################
 # normalise pressure
-#################################################################
+###############################################################################
 start = timing.time()
 
 #print(np.sum(q[0:2*nelt])/(2*nelt))
@@ -916,27 +956,26 @@ p-=poffset
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 print("     -> q (m,M) %.4f %.4f " %(np.min(q),np.max(q)))
 
+np.savetxt('pressure_normalised.ascii',np.array([xP,yP,p,rP]).T,header='# x,y,p,r')
+
 print("normalise pressure (%.3fs)" % (timing.time() - start))
 
-#################################################################
+###############################################################################
 # export pressure at both surfaces
-#################################################################
+###############################################################################
 start = timing.time()
 
-np.savetxt('q_R1.ascii',np.array([xV[0:2*nelt],yV[0:2*nelt],q[0:2*nelt],theta[0:2*nelt]]).T)
-np.savetxt('q_R2.ascii',np.array([xV[nnp-2*nelt:nnp],\
-                                  yV[nnp-2*nelt:nnp],\
-                                   q[nnp-2*nelt:nnp],\
-                               theta[nnp-2*nelt:nnp]]).T)
-
-np.savetxt('p_R1.ascii',np.array([xP[0:nelt],yP[0:nelt],p[0:nelt]]).T)
-np.savetxt('p_R2.ascii',np.array([xP[NP-nelt:NP],yP[NP-nelt:NP],p[NP-nelt:NP]]).T)
+np.savetxt('lambda.ascii',np.array([theta[surface],l]).T)
+np.savetxt('q_R1.ascii',np.array([xV[cmb],yV[cmb],q[cmb],theta[cmb]]).T)
+np.savetxt('q_R2.ascii',np.array([xV[surface],yV[surface],q[surface],theta[surface]]).T)
+np.savetxt('p_R1.ascii',np.array([xP[cmbP],yP[cmbP],p[cmbP]]).T)
+np.savetxt('p_R2.ascii',np.array([xP[surfaceP],yP[surfaceP],p[surfaceP]]).T)
 
 print("export p&q on R1,R2 (%.3fs)" % (timing.time() - start))
 
-#################################################################
+###############################################################################
 # compute error
-#################################################################
+###############################################################################
 start = timing.time()
 
 NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
@@ -1053,9 +1092,9 @@ print("     -> nelr= %6d ; errexx3= %.8e ; erreyy3= %.8e ; errexy3= %.8e" %(nelr
 
 print("compute errors (%.3fs)" % (timing.time() - start))
 
-#####################################################################
+###############################################################################
 # plot of solution
-#####################################################################
+###############################################################################
 start = timing.time()
 
 if True:
@@ -1091,7 +1130,7 @@ if True:
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(error)' Format='ascii'> \n")
    for i in range(0,nnp):
-       vtufile.write("%10f %10f %10f \n" %(u[i]-velocity_x(xV[i],yV[i],r[i],theta[i],test),\
+       vtufile.write("%10e %10e %10e \n" %(u[i]-velocity_x(xV[i],yV[i],r[i],theta[i],test),\
                                            v[i]-velocity_y(xV[i],yV[i],r[i],theta[i],test),0.))
    vtufile.write("</DataArray>\n")
    #--
@@ -1109,56 +1148,6 @@ if True:
    for i in range(0,nnp):
        vtufile.write("%10f \n" %theta[i])
    vtufile.write("</DataArray>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' Name='Lxx (NEW)' Format='ascii'> \n")
-   #for i in range(0,nnp):
-   #    vtufile.write("%10f \n" %Lxx2[i])
-   #vtufile.write("</DataArray>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' Name='Lyy (NEW)' Format='ascii'> \n")
-   #for i in range(0,nnp):
-   #    vtufile.write("%10f \n" %Lyy2[i])
-   #vtufile.write("</DataArray>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' Name='Lxy (NEW)' Format='ascii'> \n")
-   #for i in range(0,nnp):
-   #    vtufile.write("%10f \n" %Lxy2[i])
-   #vtufile.write("</DataArray>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' Name='Lyx (NEW)' Format='ascii'> \n")
-   #for i in range(0,nnp):
-   #    vtufile.write("%10f \n" %Lyx2[i])
-   #vtufile.write("</DataArray>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' Name='exx (th)' Format='ascii'> \n")
-   #for i in range(0,nnp):
-   #    vtufile.write("%10f \n" %(sr_xx(xV[i],yV[i],R1,R2,kk)))
-   #vtufile.write("</DataArray>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' Name='eyy (th)' Format='ascii'> \n")
-   #for i in range(0,nnp):
-   #    vtufile.write("%10f \n" %(sr_yy(xV[i],yV[i],R1,R2,kk)))
-   #vtufile.write("</DataArray>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' Name='exy (th)' Format='ascii'> \n")
-   #for i in range(0,nnp):
-   #    vtufile.write("%10f \n" %(sr_xy(xV[i],yV[i],R1,R2,kk)))
-   #vtufile.write("</DataArray>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' Name='Lyy' Format='ascii'> \n")
-   #for i in range(0,nnp):
-   #    vtufile.write("%10f \n" %Lyy[i])
-   #vtufile.write("</DataArray>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' Name='Lxy' Format='ascii'> \n")
-   #for i in range(0,nnp):
-   #    vtufile.write("%10f \n" %Lxy[i])
-   #vtufile.write("</DataArray>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' Name='Lyx' Format='ascii'> \n")
-   #for i in range(0,nnp):
-   #    vtufile.write("%10f \n" %Lyx[i])
-   #vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' Name='exx1' Format='ascii'> \n")
    for i in range(0,nnp):
@@ -1238,7 +1227,7 @@ if True:
    #--
    vtufile.write("<DataArray type='Float32' Name='q (error)' Format='ascii'> \n")
    for i in range (0,nnp):
-       vtufile.write("%f\n" % (q[i]-pressure(xV[i],yV[i],r[i],theta[i],test)))
+       vtufile.write("%e \n" % (q[i]-pressure(xV[i],yV[i],r[i],theta[i],test)))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("</PointData>\n")

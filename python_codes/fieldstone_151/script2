@@ -1,0 +1,15 @@
+#! /bin/bash
+
+rm errors_fs1
+rm errors_fs2
+
+for n in 8 10 12 14 16 18 20 24 28 32 ; do
+
+    python3 stone.py $n 2 1 > opla
+    grep errv opla >> errors_fs1
+
+    python3 stone.py $n 2 3 > opla
+    grep errv opla >> errors_fs3
+
+done
+ 

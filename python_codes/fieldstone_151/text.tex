@@ -51,12 +51,38 @@ Goal:
 Todo:
 remove nnp
 proper surface integral for p normalisation
+analytical solution test 3 ?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{method 1: rotating elemental matrices}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{method 2: constraints applied to elemental matrix}
+
+After asking W. Bangerth about the deal.II strategy for such boundary conditions 
+his email answer was
+
+\begin{verbatim}
+------------------------------
+It's this function:
+
+https://dealii.org/developer/doxygen/deal.II/group__constraints.html#gae3b53d69bd7afe08f0d033497833938e
+
+In short, we compute constraints on individual nodes that correspond to the
+  u.n = 0
+constraint. In 2d, you get something like
+  ux*nx + uy*ny = 0
+which you convert into a constraint of the kind
+  ux = - uy*ny/nx
+or
+  uy = - ux*nx/ny
+depending on whether nx>ny or nx<ny, for numerical stability.
+------------------------------
+\end{verbatim}
+
+What follows is mine only.
+
+
 
 \[
 \left(
@@ -245,6 +271,82 @@ G_1^T & 0
 \]
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{method 3: constraints via Lagrange multipliers}
+
+Once assembled (without the free slip constraints) the Stokes system 
+is 
+\[
+\left(
+\begin{array}{cc}
+\K & \G \\
+\G^T & 0
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{V} \\
+\vec{P}
+\end{array}
+\right)
+=\left(
+\begin{array}{c}
+\vec{f} \\ \vec{h}
+\end{array}
+\right)
+\]
+Since we wish to impose free slip at all nodes on the outer surface 
+of the annulus by means of Lagrange mutlipliers the new system will 
+look like
+\[
+\left(
+\begin{array}{ccc}
+\K & \G & \mathbb{L}\\
+\G^T & 0 &0 \\
+\mathbb{L}^T & 0 & 0
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{V} \\
+\vec{P} \\
+\vec{\Lambda}
+\end{array}
+\right)
+=\left(
+\begin{array}{c}
+\vec{f} \\ \vec{h} \\ \vec{0}
+\end{array}
+\right)
+\]
+The vector $\vec\Lambda$ is $N_{lm}$ long where 
+$N_{lm}$ is the number of nodes on the outer surface.
+Since the constraints do not involve the pressure dofs 
+there is only one block added to the global matrix, 
+coined $\mathbb{L}$ of size $ndofV*N_V \times N_{lm}$.
+
+The total size of the Stokes matrix is then $NfemV+NfemP+N_{lm}$.
+The non zero entries of $\mathbb{L}$ are obtained by 
+looping over all surface nodes, computing the normal vector $(n_x,n_y)$ there, and 
+writing $n_x$ and $n_y$ in $\mathbb{L}$ at the right line (corresponding to the 
+surface node identity) so that $n_x u + n_y v = 0$:
+\begin{lstlisting}
+counter=NfemV+NfemP
+for i in range(0,nnp):
+    if surface[i]:
+       A_sparse[counter, 2*i  ]=nx[i]
+       A_sparse[counter, 2*i+1]=ny[i]
+       A_sparse[2*i  ,counter]=nx[i]
+       A_sparse[2*i+1,counter]=ny[i]
+       counter+=1
+\end{lstlisting}
+
+
+
+
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -255,10 +357,18 @@ and $\eta=1$. The following tests are such that there is no rotational nullspace
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{test \#1: the aquarium - no slip}
 
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_151/results/test1/errv}
+\includegraphics[width=6cm]{python_codes/fieldstone_151/results/test1/errp}
+\end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{test \#2: the aquarium - free slip}
 
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_151/results/test2/errv}
+\includegraphics[width=6cm]{python_codes/fieldstone_151/results/test2/errp}
+\end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{test \#3: shearing - no slip}
