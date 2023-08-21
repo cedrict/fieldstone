@@ -1,0 +1,87 @@
+#gnuplot script
+set term pdf enhanced font "Times,12pt"
+set grid
+set log xy
+set key outside 
+
+set xlabel 'h'
+set ylabel 'velocity error'
+
+set output 'errv.pdf'
+plot[][]\
+'errors_fs1'   u (1./$3):6 w lp ps .5 t 'fs=1, T=0',\
+'errors_fs3'   u (1./$3):6 w lp ps .5 t 'fs=3, T=0',\
+'errors_fs1_T' u (1./$3):6 w lp ps .5 t 'fs=1, T=1',\
+'errors_fs3_T' u (1./$3):6 w lp ps .5 t 'fs=3, T=1',\
+x**6/1e7 lt -1 dt 2 t 'h^6' 
+
+
+set ylabel 'pressure error'
+set output 'errp.pdf'
+plot[][]\
+'errors_fs1'   u (1./$3):9 w lp ps .5 t 'fs=1, T=0',\
+'errors_fs3'   u (1./$3):9 w lp ps .5 t 'fs=3, T=0',\
+'errors_fs1_T' u (1./$3):9 w lp ps .5 t 'fs=1, T=1',\
+'errors_fs3_T' u (1./$3):9 w lp ps .5 t 'fs=3, T=1',\
+x**2/1e1 lt -1 dt 2 t 'h^2' 
+
+######################################################
+
+set xlabel 'nel'
+set ylabel 'e_{rr}'
+unset log y
+set output 'e_rr.pdf'
+plot[][]\
+'e_rr_fs1'   u 8:4 w lp lt 1 ps .5 t 'fs=1, T=0',\
+'e_rr_fs1'   u 8:5 w lp lt 1 ps .5 notitle,\
+'e_rr_fs3'   u 8:4 w lp lt 2 ps .5 t 'fs=3, T=0',\
+'e_rr_fs3'   u 8:5 w lp lt 2 ps .5 notitle,\
+'e_rr_fs1_T' u 8:4 w lp lt 3 ps .5 t 'fs=1, T=1',\
+'e_rr_fs1_T' u 8:5 w lp lt 3 ps .5 notitle,\
+'e_rr_fs3_T' u 8:4 w lp lt 4 ps .5 t 'fs=3, T=1',\
+'e_rr_fs3_T' u 8:5 w lp lt 4 ps .5 notitle,\
+
+set ylabel 'e_{tt}'
+set output 'e_tt.pdf'
+plot[][]\
+'e_tt_fs1'   u 8:4 w lp lt 1 ps .5 t 'fs=1, T=0',\
+'e_tt_fs1'   u 8:5 w lp lt 1 ps .5 notitle,\
+'e_tt_fs3'   u 8:4 w lp lt 2 ps .5 t 'fs=3, T=0',\
+'e_tt_fs3'   u 8:5 w lp lt 2 ps .5 notitle,\
+'e_tt_fs1_T' u 8:4 w lp lt 3 ps .5 t 'fs=1, T=1',\
+'e_tt_fs1_T' u 8:5 w lp lt 3 ps .5 notitle,\
+'e_tt_fs3_T' u 8:4 w lp lt 4 ps .5 t 'fs=3, T=1',\
+'e_tt_fs3_T' u 8:5 w lp lt 4 ps .5 notitle,\
+
+set ylabel 'e_{rt}'
+set output 'e_rt.pdf'
+plot[][]\
+'e_rt_fs1'   u 8:4 w lp lt 1 ps .5 t 'fs=1, T=0',\
+'e_rt_fs1'   u 8:5 w lp lt 1 ps .5 notitle,\
+'e_rt_fs3'   u 8:4 w lp lt 2 ps .5 t 'fs=3, T=0',\
+'e_rt_fs3'   u 8:5 w lp lt 2 ps .5 notitle,\
+'e_rt_fs1_T' u 8:4 w lp lt 3 ps .5 t 'fs=1, T=1',\
+'e_rt_fs1_T' u 8:5 w lp lt 3 ps .5 notitle,\
+'e_rt_fs3_T' u 8:4 w lp lt 4 ps .5 t 'fs=3, T=1',\
+'e_rt_fs3_T' u 8:5 w lp lt 4 ps .5 notitle,\
+
+######################################################
+
+set xlabel 'h'
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
+plot[][]\
+'vrms_fs1'   u (1/$3):5 w lp ps .5 t 'fs=1, T=0',\
+'vrms_fs3'   u (1/$3):5 w lp ps .5 t 'fs=3, T=0',\
+'vrms_fs1_T' u (1/$3):5 w lp ps .5 t 'fs=1, T=1',\
+'vrms_fs3_T' u (1/$3):5 w lp ps .5 t 'fs=3, T=1',\
+
+
+
+
+
+
+
+
+
+
