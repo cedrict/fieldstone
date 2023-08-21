@@ -1,0 +1,93 @@
+#script
+set term pdf enhanced font 'Times,12pt'
+set grid
+set key outside
+
+set xlabel 'theta'
+
+set ylabel 'e_{rr}'
+set output 'e_rr.pdf'
+plot[0:2*pi][]\
+'fs1/e_rr_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs1, T=0',\
+'fs3/e_rr_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs3, T=0',\
+'fs1_T1/e_rr_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs1, T=1',\
+'fs3_T1/e_rr_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs3, T=1'
+
+set output 'e_rr2.pdf'
+plot[pi:2*pi][]\
+'fs1/e_rr_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs1, T=0',\
+'fs3/e_rr_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs3, T=0',\
+'fs1_T1/e_rr_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs1, T=1',\
+'fs3_T1/e_rr_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs3, T=1'
+
+###############################################################
+
+set ylabel 'e_{tt}'
+set output 'e_tt.pdf'
+plot[0:2*pi][]\
+'fs1/e_tt_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs1, T=0',\
+'fs3/e_tt_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs3, T=0',\
+'fs1_T1/e_tt_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs1, T=1',\
+'fs3_T1/e_tt_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs3, T=1'
+
+set output 'e_tt2.pdf'
+plot[pi:2*pi][]\
+'fs1/e_tt_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs1, T=0',\
+'fs3/e_tt_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs3, T=0',\
+'fs1_T1/e_tt_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs1, T=1',\
+'fs3_T1/e_tt_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs3, T=1'
+
+###############################################################
+
+set ylabel 'e_{rt}'
+set output 'e_rt.pdf'
+plot[0:2*pi][]\
+'fs1/e_rt_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs1, T=0',\
+'fs3/e_rt_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs3, T=0',\
+'fs1_T1/e_rt_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs1, T=1',\
+'fs3_T1/e_rt_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs3, T=1'
+
+set output 'e_rt2.pdf'
+plot[pi:2*pi][]\
+'fs1/e_rt_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs1, T=0',\
+'fs3/e_rt_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs3, T=0',\
+'fs1_T1/e_rt_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs1, T=1',\
+'fs3_T1/e_rt_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs3, T=1'
+
+
+###############################################################
+
+set ylabel 'pressure'
+set output 'p.pdf'
+plot[0:2*pi][]\
+'fs1/q_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs1, T=0',\
+'fs3/q_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs3, T=0',\
+'fs1_T1/q_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs1, T=1',\
+'fs3_T1/q_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs3, T=1'
+
+set output 'p2.pdf'
+plot[pi:2*pi][]\
+'fs1/q_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs1, T=0',\
+'fs3/q_R2.ascii'    u 4:3 w lp lw .5 ps .3 t 'fs3, T=0',\
+'fs1_T1/q_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs1, T=1',\
+'fs3_T1/q_R2.ascii' u 4:3 w lp lw .5 ps .3 t 'fs3, T=1'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
