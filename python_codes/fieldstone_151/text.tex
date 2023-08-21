@@ -20,41 +20,74 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+This \stone builds on \stone~\ref{f33} in the sense that in \stone~\ref{f33} 
+free slip boundary conditions were implemented and tested on an annulus discretised 
+by means of \QonePzero{} elements. We here implement and test the implementation 
+of such boundary conditions on an annulus discretised by means of \QtwoQone{} elements.
 
-This \stone builds on \stone~\ref{f33} in the sense that in \stone~\ref{f33} free slip boundary conditions 
-were implemented and tested on an annulus discretised by means of \QonePzero elements. 
-We here implement and test the implementation of such boundary conditions on an annulus discretised
-by means of \QtwoQone elements.
-
-As far as I know, there are three ways to implemenent these boundary conditions:
+One could envisage three ways to implemenent these boundary conditions:
 \begin{itemize}
 \item the rotating method, \ref{MMM-ss:fsbc_annulus} 
 \item constraints applied to elemental matrix
 \item constraints via Lagrange multipliers
 \end{itemize}
 
-
+The code follows a standard approach when it comes to meshing, FEM, isoparametric
+mapping, quadratur, solving, etc ...
+The fluid is isothermal and incompressible.
+Note that the code computes the strain rate tensor components by means of 3 different 
+methods (it is based on \stone~\ref{f21}) but this is not relevant here.
+Also the mesh exported to the vtu file is based on a subdivision of the elements into 
+four bilinear quadrilaterals. In other words it means that 4 elements in paraview 
+form a single 'real' element in the code.
+By default all node are placed on concentric circles. However the {\python trapezes}
+boolean ensures that all mid-edges nodes are then placed exactly in the middle of the 
+corresponding corner nodes when set to True (obviously the middle node is then also 
+moved to be at the center of the trapeze/element).
 
 \begin{center}
 \includegraphics[width=5cm]{./python_codes/fieldstone_151/images/mesh}
 \includegraphics[width=5cm]{./python_codes/fieldstone_151/images/r}
-\includegraphics[width=5cm]{./python_codes/fieldstone_151/images/theta}
+\includegraphics[width=5cm]{./python_codes/fieldstone_151/images/theta}\\
+{\captionfont Mesh, $r$ and $\theta$ coordinates.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=6cm]{./python_codes/fieldstone_151/images/mesh1}
+\includegraphics[width=6cm]{./python_codes/fieldstone_151/images/mesh2}\\
+{\captionfont Left: {\python trapezes=False}; right:   {\python trapezes=True}.}
+\end{center}
+
+The goal of this \stone is twofold:
+\begin{itemize}
+\item test b.c algorithms,
+\item explore the importance of straight edge elts vs curved ones.
+\end{itemize}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\vspace{.5cm}
+
+\begin{center}
+\fbox{\begin{minipage}{0.9\textwidth}
+{\color{teal}To Do, open questions, future work?}
+\begin{itemize}
+\item analytical solution test 3 ?
+\end{itemize}
+\end{minipage}}
 \end{center}
 
 
-Goal: 
-\begin{itemize}
-\item test b.c algorithms
-\item straight edge elts vs curved ones.
-\end{itemize}
 
-Todo:
-remove nnp
-proper surface integral for p normalisation
-analytical solution test 3 ?
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{method 1: rotating elemental matrices}
+
+This is explained in Section~\ref{MMM-ss:fsbc_annulus}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{method 2: constraints applied to elemental matrix}
@@ -270,6 +303,23 @@ G_1^T & 0
 \right)
 \]
 
+After writing \& sending my doubts to Wolfgang:
+\begin{verbatim}
+C: My instinct(memory?) tells me that having the discretised gradient and
+divergence operators not being the transpose of one another (after applying
+boundary conditions) is wrong. Is my hunch correct? If so, what is the common
+procedure? 
+W: Yes, you need to keep things symmetric.
+If you have constraints that couple multiple DoFs, the procedure is
+substantially more complex. I've never really seen a good description of how
+this is done (even though it's been done for decades), so I wrote it up a few
+years ago. Take a look at section 5 here:
+https://www.math.colostate.edu/~bangerth/publications/2006-hp.pdf
+\end{verbatim}
+This publication is \fullcite{baka09}.
+
+This therefore means that this approach is not viable and {\python fs\_method=2} 
+should not be used. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{method 3: constraints via Lagrange multipliers}
@@ -353,54 +403,122 @@ for i in range(0,nnp):
 
 In what follows we set $R_1=1$ and $R_2=2$. Unless otherwise specified we also set $\rho=1$
 and $\eta=1$. The following tests are such that there is no rotational nullspace.
+Note that the argument $n$ passed as argument to the code is the number of $Q_1$ 
+elements in the radial direction.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{test \#1: the aquarium - no slip}
 
+Results are obtained by running {\tt script1}. Boundary conditions are 
+no slip on the surface and the cmb. 
+The analytical solution is a zero velocity field and an hydrostatic pressure field.
+The following figures show the error convergence for both velocity and pressure.
+
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_151/results/test1/errv}
-\includegraphics[width=6cm]{python_codes/fieldstone_151/results/test1/errp}
+\includegraphics[width=6cm]{python_codes/fieldstone_151/results/test1/errp}\\
+{\captionfont T stands for {\python trapezes}.}
 \end{center}
+
+We obtain a supra-convergence for velocity and quadratic convergence for pressure.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{test \#2: the aquarium - free slip}
 
+Results are obtained by running {\tt script2}. 
+This is the same experiment as test 1, but we now prescribe free slip on the 
+outer surface by means of method 1 or 3. The analytical solution is identical 
+and we recover near identical results as before, for both methods.
+
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_151/results/test2/errv}
-\includegraphics[width=6cm]{python_codes/fieldstone_151/results/test2/errp}
+\includegraphics[width=6cm]{python_codes/fieldstone_151/results/test2/errp}\\
+{\captionfont T stands for {\python trapezes=True}.}
 \end{center}
+
+Unsurprisingly we also find that using trapezoidal elements yields a 
+much higher accuracy for the volume of the domain:
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_151/results/test2/areas}\\
+{\captionfont total area of the domain measured by means of Gauss integration.
+T stands for {\python trapezes=True}.}
+\end{center}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{test \#3: shearing - no slip}
+
+Results are obtained by running {\tt script3}. Boundary conditions are 
+no slip on the surface and a prescribed constant velocity $\upnu_{bc}=1$ tangent 
+to the inner boundary.
+The analytical solution is hydrostatic pressure and a rotational velocity going from 
+$1$ at the cmb to 0 on the outer surface
+
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{test \#4: shearing - free slip}
 
+Results are obtained by running {\tt script4}. Boundary conditions are 
+free slip on the surface and a prescribed constant velocity $\upnu_{bc}=1$ tangent 
+to the inner boundary.
 
+The analytical solution is described in Section~\ref{MMM-ss:ankbc}.
+It is a hydrostatic pressure and a rotational velocity given by $\vec{\upnu}=r \; \vec{e}_\theta$.
+Turning to Section~\ref{MMM-ss:srpc}:
 
+\begin{eqnarray}
+\dot\varepsilon_{rr}  &=& \frac{\partial \upnu_r}{\partial r}  = 0\\
+\dot\varepsilon_{\theta\theta}  &=& \frac{\upnu_r}{r} + \frac{1}{r} \frac{\partial \upnu_\theta}{\partial \theta} =0 \\
+\dot\varepsilon_{\theta r} = \dot\varepsilon_{r\theta}  &=& \frac{1}{2} \left(   \frac{\partial \upnu_\theta}{\partial r} - \frac{\upnu_\theta}{r} 
++\frac{1}{r} \frac{\partial \upnu_r}{\partial \theta}  \right)  = \frac12 (1-1) =0
+\end{eqnarray}
 
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\par\noindent\rule{\textwidth}{0.4pt}
-
-\vspace{.5cm}
 
 \begin{center}
-\fbox{\begin{minipage}{0.9\textwidth}
-{\color{teal}To Do, open questions, future work?}
-\begin{itemize}
-\item do smthg
-\end{itemize}
-\end{minipage}}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test4/errv}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test4/errp}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test4/vrms}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test4/e_rr}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test4/e_tt}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test4/e_rt}\\
+{\captionfont T stands for {\python trapezes}.}
 \end{center}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\vspace{.5cm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{test \#4: sinking blob - free slip}
 
-\Literature:\\
-\fullcite{xxxxYY}
+$\delta \rho/\rho_0=0.01$
+centered at (90,1.5), radius 0.25
+
+\begin{center}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/e_rr}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/e_tt}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/e_rt}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/e_rr2}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/e_tt2}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/e_rt2}\\
+{\captionfont Strain rate components at the surface, resolution 24x288.}
+\end{center}
+
+The first line of plots is the strain rate components all around the annulus at the surface, i.e.
+$\theta\in[0,2\pi]$. The second line is the same components but plotted for $\theta\in[\pi,2\pi]$.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_151/results/test5/p}
+\includegraphics[width=7cm]{python_codes/fieldstone_151/results/test5/p2}\\
+{\captionfont Pressure at the surface, resolution 24x288.}
+\end{center}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Conclusions}
+
+The conclusion is unescapable: either way of prescribing free slip is fine, they yield 
+virtuallly identical results. The trapeze option should not be used.  
+
 

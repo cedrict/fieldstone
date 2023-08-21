@@ -1,3 +1,21 @@
 rm *.vtu
 rm *.ascii
-rm *.pdf
+rm opla
+rm errors_fs1
+rm errors_fs3
+rm errors_fs1_T
+rm errors_fs3_T
+rm e_rr*fs1
+rm e_tt*fs1
+rm e_rt*fs1
+rm e_rr*fs3
+rm e_tt*fs3
+rm e_rt*fs3
+rm e_rr*fs1_T
+rm e_tt*fs1_T
+rm e_rt*fs1_T
+rm e_rr*fs3_T
+rm e_tt*fs3_T
+rm e_rt*fs3_T
+rm vrms_*
+

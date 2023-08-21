@@ -1,0 +1,59 @@
+#! /bin/bash
+
+rm errors_fs1
+rm errors_fs3
+rm e_rr_fs1
+rm e_rr_fs3
+rm e_tt_fs1
+rm e_tt_fs3
+rm e_rt_fs1
+rm e_rt_fs3
+rm e_rr_fs1_T
+rm e_rr_fs3_T
+rm e_tt_fs1_T
+rm e_tt_fs3_T
+rm e_rt_fs1_T
+rm e_rt_fs3_T
+rm vrms_fs1
+rm vrms_fs3
+rm vrms_fs1_T
+rm vrms_fs3_T
+
+for n in 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34; do
+
+    echo ------- n= $n ------------
+
+    echo fs_method=1 T=0
+    python3 stone.py $n 4 1 0 > opla
+    grep errv opla >> errors_fs1
+    grep e_rr opla >> e_rr_fs1
+    grep e_tt opla >> e_tt_fs1
+    grep e_rt opla >> e_rt_fs1
+    grep vrms opla >> vrms_fs1
+
+    echo fs_method=3 T=0
+    python3 stone.py $n 4 3 0 > opla
+    grep errv opla >> errors_fs3
+    grep e_rr opla >> e_rr_fs3
+    grep e_tt opla >> e_tt_fs3
+    grep e_rt opla >> e_rt_fs3
+    grep vrms opla >> vrms_fs3
+
+    echo fs_method=1 T=1
+    python3 stone.py $n 4 1 1 > opla
+    grep errv opla >> errors_fs1_T
+    grep e_rr opla >> e_rr_fs1_T
+    grep e_tt opla >> e_tt_fs1_T
+    grep e_rt opla >> e_rt_fs1_T
+    grep vrms opla >> vrms_fs1_T
+
+    echo fs_method=3 T=1
+    python3 stone.py $n 4 3 1 > opla
+    grep errv opla >> errors_fs3_T
+    grep e_rr opla >> e_rr_fs3_T
+    grep e_tt opla >> e_tt_fs3_T
+    grep e_rt opla >> e_rt_fs3_T
+    grep vrms opla >> vrms_fs3_T
+
+done
+ 
