@@ -1,3 +1,6 @@
+\begin{flushright} {\tiny {\color{gray} pressure\_normlisation.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 %..................................................
 \subsubsection{Basic idea and naive implementation}
@@ -13,7 +16,7 @@ to have a zero average, i.e.
 \int_\Omega p\; dV = 0
 \end{equation}
 
-Let us assume for example that we are using $Q_1 \times P_0$ elements. The pressure is constant 
+Let us assume for example/simplicity that we are using \QonePzero elements. The pressure is constant 
 inside each element so the integral above becomes:
 \begin{equation}
 \int_\Omega p\; dV = 
@@ -90,7 +93,18 @@ so that the normalising condition is respected.
 
 \Literature
 
-\url{https://scicomp.stackexchange.com/questions/27645/pressure-boundary-condition-in-lid-driven-cavity-using-finite-element-method}
+In \url{https://scicomp.stackexchange.com/questions/27645/pressure-boundary-condition-in-lid-driven-cavity-using-finite-element-method}
+we find:
+{\it 
+Zero mean pressure space is used for convenience when one is interested in FEA theory (basically, we cannot 
+enforce $p(x_0)=p_0$ for $p \in L^2$ since it does not make sense); from the computational point of view, 
+it is easier to fix one of the pressure DOFs (although you can subtract mean value at the post–processing step 
+if you want to). When you are working w/ polynomial spaces—and this is exactly what you do in FEM 
+-it is perfectly fine to enforce $p(x_0)=p_0$. Handle this constraint like you usually handle Dirichlet 
+BCs (e.g., via modifying your matrix). It is also fine to ignore this constraint in some 
+cases (e.g., Krylov solvers can do fine with this).
+}
+
 
 \url{
 https://scicomp.stackexchange.com/questions/25134/mixed-finite-element-method-for-the-stokes-system-some-implementation-details}
