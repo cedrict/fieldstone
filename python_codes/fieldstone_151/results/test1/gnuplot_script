@@ -1,0 +1,24 @@
+#gnuplot script
+set term pdf enhanced font "Times,12pt"
+set grid
+set log xy
+set key outside 
+
+set xlabel 'h'
+set ylabel 'error'
+
+set output 'errv.pdf'
+plot[][]\
+'errors1'   u (1./$3):6 w lp t 'T=false',\
+'errors1_T' u (1./$3):6 w lp t 'T=True',\
+x**6/1e7 lt -1 dt 2 t 'h^6',\
+x**4/5e3 lt -1 dt 3 t 'h^4'
+
+
+set output 'errp.pdf'
+plot[][]\
+'errors1'   u (1./$3):9 w lp t 'T=false',\
+'errors1_T' u (1./$3):9 w lp t 'T=True',\
+x**2/1e1 lt -1 dt 2 t 'h^2' 
+
+
