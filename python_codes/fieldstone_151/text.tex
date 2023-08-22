@@ -1,5 +1,4 @@
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
-\includegraphics[height=1.25cm]{images/pictograms/under_construction}
 \includegraphics[height=1.25cm]{images/pictograms/tools}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 
@@ -27,28 +26,27 @@ of such boundary conditions on an annulus discretised by means of \QtwoQone{} el
 
 One could envisage three ways to implemenent these boundary conditions:
 \begin{itemize}
-\item the rotating method, \ref{MMM-ss:fsbc_annulus} 
-\item constraints applied to elemental matrix
+\item the rotating method (see Section~\ref{MMM-ss:fsbc_annulus}),
+\item constraints applied to elemental matrix,
 \item constraints via Lagrange multipliers
 \end{itemize}
 
 The code follows a standard approach when it comes to meshing, FEM, isoparametric
-mapping, quadratur, solving, etc ...
-The fluid is isothermal and incompressible.
+mapping, quadrature, solving, etc ...and the fluid is isothermal and incompressible.
 Note that the code computes the strain rate tensor components by means of 3 different 
 methods (it is based on \stone~\ref{f21}) but this is not relevant here.
 Also the mesh exported to the vtu file is based on a subdivision of the elements into 
 four bilinear quadrilaterals. In other words it means that 4 elements in paraview 
 form a single 'real' element in the code.
-By default all node are placed on concentric circles. However the {\python trapezes}
-boolean ensures that all mid-edges nodes are then placed exactly in the middle of the 
-corresponding corner nodes when set to True (obviously the middle node is then also 
+By default all node are placed on concentric circles. However when the {\python trapezes}
+integer variable is set to {\python 1} then all mid-edges nodes are then placed exactly in the middle of the 
+corresponding corner nodes (obviously the middle node is then also 
 moved to be at the center of the trapeze/element).
 
 \begin{center}
-\includegraphics[width=5cm]{./python_codes/fieldstone_151/images/mesh}
-\includegraphics[width=5cm]{./python_codes/fieldstone_151/images/r}
-\includegraphics[width=5cm]{./python_codes/fieldstone_151/images/theta}\\
+\includegraphics[width=5.6cm]{./python_codes/fieldstone_151/images/mesh}
+\includegraphics[width=5.6cm]{./python_codes/fieldstone_151/images/r}
+\includegraphics[width=5.6cm]{./python_codes/fieldstone_151/images/theta}\\
 {\captionfont Mesh, $r$ and $\theta$ coordinates.}
 \end{center}
 
@@ -60,8 +58,8 @@ moved to be at the center of the trapeze/element).
 
 The goal of this \stone is twofold:
 \begin{itemize}
-\item test b.c algorithms,
-\item explore the importance of straight edge elts vs curved ones.
+\item test the implementation of the free slip boundary conditions algorithms,
+\item explore the differences between straight edge elelements vs curved ones.
 \end{itemize}
 
 
@@ -76,6 +74,8 @@ The goal of this \stone is twofold:
 {\color{teal}To Do, open questions, future work?}
 \begin{itemize}
 \item analytical solution test 3 ?
+\item design more appropriate flow solution and test 3 methods to compute strain rate
+\item implement axisymmetric calculations
 \end{itemize}
 \end{minipage}}
 \end{center}
@@ -83,20 +83,20 @@ The goal of this \stone is twofold:
 
 
 
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{method 1: rotating elemental matrices}
+\section*{Method 1: rotating elemental matrices}
 
 This is explained in Section~\ref{MMM-ss:fsbc_annulus}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{method 2: constraints applied to elemental matrix}
+\section*{Method 2: constraints applied to elemental matrix}
 
 After asking W. Bangerth about the deal.II strategy for such boundary conditions 
 his email answer was
 
 \begin{verbatim}
-------------------------------
+----------------------------------------------------------
 It's this function:
 
 https://dealii.org/developer/doxygen/deal.II/group__constraints.html#gae3b53d69bd7afe08f0d033497833938e
@@ -110,7 +110,7 @@ which you convert into a constraint of the kind
 or
   uy = - ux*nx/ny
 depending on whether nx>ny or nx<ny, for numerical stability.
-------------------------------
+----------------------------------------------------------
 \end{verbatim}
 
 What follows is mine only.
@@ -140,7 +140,8 @@ What follows is mine only.
 Let us assume that node 2 is on the boundary and we therefore wish to 
 impose $\vec{v}_2\cdot \vec{n}=0$, or $u_2 n_x + v_2 n_y =0$.
 
-The equation above writes (for simplicity we take $m_v=4$ and $m_p=3$ which does not correspond to a real FE pair) with $K_e$ of size 8x8 and $G_e$ of size 8x3 in 2D:
+The equation above writes (for simplicity we take $m_v=4$ and $m_p=3$ which does not correspond to a real FE pair) 
+with $K_e$ of size $8\times 8$ and $G_e$ of size $8\times 3$ in 2D:
 {\small
 \[
 \begin{array}{ccccccccccccc}
@@ -193,7 +194,8 @@ G_{13}u_1 &+ G_{23}v_1 &+ G_{33}u_2 &+ 0 &+ G_{53}u_3 &+ G_{63}v_3 &+ G_{73}u_4 
 \end{array}
 \]
 }
-This approach yields an elemental Stokes matrix that is still strictly symmetric. Since we only build $G_{e}$ (and not $G_e^T$) in the code then zeroing a line in $G_e$ means zeroing a line in $G_e^T$ so the approach above reconciles this pb.
+This approach yields an elemental Stokes matrix that is still strictly symmetric. Since we only build $G_{e}$ (and not $G_e^T$) 
+in the code then zeroing a line in $G_e$ means zeroing a line in $G_e^T$ so the approach above reconciles this pb.
 
 If $v_{bc}=0$ then we obtain
 {\small
@@ -221,9 +223,6 @@ G_{13}u_1 &+ G_{23}v_1 &+ G_{33}u_2 &+ 0 &+ G_{53}u_3 &+ G_{63}v_3 &+ G_{73}u_4 
 \end{array}
 \]
 }
-
-
-
 
 Let us now turn to free slip and start with $v_2=-u_2 n_x/n_y$. Then we could write:
 {\small
@@ -316,7 +315,7 @@ this is done (even though it's been done for decades), so I wrote it up a few
 years ago. Take a look at section 5 here:
 https://www.math.colostate.edu/~bangerth/publications/2006-hp.pdf
 \end{verbatim}
-This publication is \fullcite{baka09}.
+This publication is: \fullcite{baka09}.
 
 This therefore means that this approach is not viable and {\python fs\_method=2} 
 should not be used. 
@@ -346,7 +345,7 @@ is
 \end{array}
 \right)
 \]
-Since we wish to impose free slip at all nodes on the outer surface 
+Since we wish to impose free slip at all nodes on the outer surface\footnote{We restrict ourselves to the outer boundary} 
 of the annulus by means of Lagrange mutlipliers the new system will 
 look like
 \[
@@ -375,7 +374,7 @@ The vector $\vec\Lambda$ is $N_{lm}$ long where
 $N_{lm}$ is the number of nodes on the outer surface.
 Since the constraints do not involve the pressure dofs 
 there is only one block added to the global matrix, 
-coined $\mathbb{L}$ of size $ndofV*N_V \times N_{lm}$.
+coined $\mathbb{L}$ of size $(ndofV*N_V) \times N_{lm}$.
 
 The total size of the Stokes matrix is then $NfemV+NfemP+N_{lm}$.
 The non zero entries of $\mathbb{L}$ are obtained by 
@@ -386,20 +385,21 @@ surface node identity) so that $n_x u + n_y v = 0$:
 counter=NfemV+NfemP
 for i in range(0,nnp):
     if surface[i]:
-       A_sparse[counter, 2*i  ]=nx[i]
-       A_sparse[counter, 2*i+1]=ny[i]
+       A_sparse[counter,2*i  ]=nx[i]
+       A_sparse[counter,2*i+1]=ny[i]
        A_sparse[2*i  ,counter]=nx[i]
        A_sparse[2*i+1,counter]=ny[i]
        counter+=1
 \end{lstlisting}
 
+This turns out to be a very simple method to implement. However, it has the disadvantage that 
+the Stokes matrix is now larger and contains yet another zero block on the diagonal.
 
-
-
-
+Q: what is the meaning of the vector $\Lambda$ that we recover after solving the system?
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Various benchmarks/tests}
 
 In what follows we set $R_1=1$ and $R_2=2$. Unless otherwise specified we also set $\rho=1$
 and $\eta=1$. The following tests are such that there is no rotational nullspace.
@@ -407,7 +407,7 @@ Note that the argument $n$ passed as argument to the code is the number of $Q_1$
 elements in the radial direction.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{test \#1: the aquarium - no slip}
+\subsection*{test \#1: the aquarium - no slip}
 
 Results are obtained by running {\tt script1}. Boundary conditions are 
 no slip on the surface and the cmb. 
@@ -423,7 +423,7 @@ The following figures show the error convergence for both velocity and pressure.
 We obtain a supra-convergence for velocity and quadratic convergence for pressure.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{test \#2: the aquarium - free slip}
+\subsection*{test \#2: the aquarium - free slip}
 
 Results are obtained by running {\tt script2}. 
 This is the same experiment as test 1, but we now prescribe free slip on the 
@@ -447,7 +447,7 @@ T stands for {\python trapezes=True}.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{test \#3: shearing - no slip}
+\subsection*{test \#3: shearing - no slip}
 
 Results are obtained by running {\tt script3}. Boundary conditions are 
 no slip on the surface and a prescribed constant velocity $\upnu_{bc}=1$ tangent 
@@ -455,20 +455,20 @@ to the inner boundary.
 The analytical solution is hydrostatic pressure and a rotational velocity going from 
 $1$ at the cmb to 0 on the outer surface
 
-
+TODO
 
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{test \#4: shearing - free slip}
+\subsection*{test \#4: shearing - free slip}
 
 Results are obtained by running {\tt script4}. Boundary conditions are 
 free slip on the surface and a prescribed constant velocity $\upnu_{bc}=1$ tangent 
 to the inner boundary.
 
 The analytical solution is described in Section~\ref{MMM-ss:ankbc}.
-It is a hydrostatic pressure and a rotational velocity given by $\vec{\upnu}=r \; \vec{e}_\theta$.
+It is a hydrostatic pressure and a rotational velocity given by $\vec{\upnu}=\upnu_r \vec{e}_r + \upnu_\theta \vec{e}_\theta = r \; \vec{e}_\theta$.
 Turning to Section~\ref{MMM-ss:srpc}:
 
 \begin{eqnarray}
@@ -490,23 +490,35 @@ Turning to Section~\ref{MMM-ss:srpc}:
 \end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{test \#4: sinking blob - free slip}
+\subsection*{test \#4: sinking blob - free slip}
 
-$\delta \rho/\rho_0=0.01$
-centered at (90,1.5), radius 0.25
+There is a disc of slightly higher density ($\delta \rho/\rho_0=0.01$)
+centered at $(0,1.5)$  with a radius 0.25. 
 
 \begin{center}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/e_rr}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/e_tt}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/e_rt}\\
-\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/e_rr2}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/e_tt2}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/e_rt2}\\
-{\captionfont Strain rate components at the surface, resolution 24x288.}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/rho}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/press}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/vel}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/vr}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/vt}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_151/results/test5/vel2}\\
+{\captionfont resolution 32x384.}
 \end{center}
 
+
+\begin{center}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_151/results/test5/e_rr}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_151/results/test5/e_rr2}\\
+\includegraphics[width=8.5cm]{python_codes/fieldstone_151/results/test5/e_tt}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_151/results/test5/e_tt2}\\
+\includegraphics[width=8.5cm]{python_codes/fieldstone_151/results/test5/e_rt}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_151/results/test5/e_rt2}\\
+{\captionfont Strain rate components at the surface, resolution 24x288. 
 The first line of plots is the strain rate components all around the annulus at the surface, i.e.
 $\theta\in[0,2\pi]$. The second line is the same components but plotted for $\theta\in[\pi,2\pi]$.
+Zoom in to better see the results.}
+\end{center}
+
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_151/results/test5/p}
@@ -516,7 +528,7 @@ $\theta\in[0,2\pi]$. The second line is the same components but plotted for $\th
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Conclusions}
+\subsection*{Conclusions}
 
 The conclusion is unescapable: either way of prescribing free slip is fine, they yield 
 virtuallly identical results. The trapeze option should not be used.  
