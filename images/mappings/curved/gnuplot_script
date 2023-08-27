@@ -24,6 +24,19 @@ plot[0:1.5][0:1.5]\
 sqrt(1-x**2) lt -1 notitle,\
 sqrt(1.5**2-x**2) lt -1 notitle
 
+set title 'Q_4 mapping'
+set output 'xy4.pdf'
+plot[0:1.5][0:1.5]\
+'xy4.ascii' w d notitle,\
+sqrt(1-x**2) lt -1 notitle,\
+sqrt(1.5**2-x**2) lt -1 notitle
+
+
+
+
+
+
+
 #########################################################
 set key outside
 
@@ -94,3 +107,8 @@ set title 'Q_3 mapping'
 set output 'innerline_error_Q3mapping.pdf'
 plot[][]\
 'xy3.ascii' u (1.-$3) w l notitle 
+
+set title 'Q_4 mapping'
+set output 'innerline_error_Q4mapping.pdf'
+plot[][]\
+'xy4.ascii' u (1.-$3) w l notitle 
