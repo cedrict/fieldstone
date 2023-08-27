@@ -706,7 +706,7 @@ Note that in our case $Re/Fr\simeq 30.5$.
 
 \input{dimensionless_equations2}
 
-
+\newpage
 %_________________________________________________________________________
 \section{The Navier-Stokes equations in cylindrical coordinates}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
@@ -719,6 +719,12 @@ In cylindrical coordinates, $(r,\theta,z)$, the continuity equation for an incom
 \frac{\partial \upnu_z}{\partial z} =0
 \end{equation}
 \end{mdframed}
+or
+\begin{equation}
+\frac{\partial \upnu_r }{\partial r}  + \frac{\upnu_r}{r} +
+\frac{1}{r} \frac{\partial}{\partial \theta} (\upnu_\theta) + 
+\frac{\partial \upnu_z}{\partial z} =0
+\end{equation}
 The Navier-Stokes equations of motion for an incompressible fluid with uniform viscosity are:
 \begin{eqnarray}
 \rho \left(  \frac{D\upnu_r}{Dt} -\frac{\upnu_\theta^2}{r} \right) 
@@ -751,8 +757,21 @@ and the Laplacian operator is \index{general}{Laplace Operator} \index{general}{
 + \frac{1}{r^2}  \frac{\partial^2}{\partial \theta^2}
 + \frac{\partial^2 }{\partial z^2}
 \end{equation}
+and for an incompressible, Newtonian fluid
+
+\begin{eqnarray}
+\sigma_{rr}&=& -p + 2 \eta \frac{\partial \upnu_r}{\partial r} \\
+\sigma_{\theta\theta}&=& -p +2\eta \left( \frac{1}{r} \frac{\partial \upnu_\theta}{\partial \theta} +\frac{u}{r}\right)\\
+\sigma_{zz}&=& -p + 2 \eta \frac{\partial \upnu_z}{\partial z} \\
+\sigma_{rz}&=& \eta \left( \frac{\partial \upnu_r}{\partial z}+\frac{\partial \upnu_z}{\partial r}\right)\\
+\sigma_{r\theta}&=&\eta\left( \frac{1}{r} \frac{\partial \upnu_r}{\partial \theta}
++\frac{\partial \upnu_\theta}{\partial r} - \frac{\upnu_\theta}{r}   \right) \\
+\sigma_{\theta z} &=& \eta \left( \frac{1}{r} \frac{\partial \upnu_z}{\partial\theta} 
++ \frac{\partial \upnu_\theta}{\partial z} \right)
+\end{eqnarray}
 
 
+\newpage
 %------------------------------------------------------------------------------
 \section{The Stokes equations in spherical coordinates}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}

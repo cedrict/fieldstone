@@ -1,3 +1,5 @@
+\begin{flushright} {\tiny {\color{gray} mappings.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \index{general}{Isoparametric}
 The name isoparametric derives from the fact that the same ('iso') 
@@ -480,14 +482,17 @@ R1=1.
 R2=1.5
 \end{lstlisting}
 The $Q_1$ mapping requires four points, the $Q_2$ nine points and the $Q_3$
-sixteen points. These are placed equidistantly in the $r,\theta$ coordinate
+sixteen points. 
+The code used in the following is available at {\tt ./images/mappings/curved/}.
+These are placed equidistantly in the $r,\theta$ coordinate
 system, as shown hereunder:
 
 \begin{center}
-\includegraphics[width=5cm]{images/mappings/curved/nodesQ1.pdf}
-\includegraphics[width=5cm]{images/mappings/curved/nodesQ2.pdf}
-\includegraphics[width=5cm]{images/mappings/curved/nodesQ3.pdf}\\
-{\captionfont Left to right: position of the nodes for the $Q_1$, $Q_2$ and $Q_3$ mappings.}
+\includegraphics[width=5.7cm]{images/mappings/curved/nodesQ1.pdf}
+\includegraphics[width=5.7cm]{images/mappings/curved/nodesQ2.pdf}
+\includegraphics[width=5.7cm]{images/mappings/curved/nodesQ3.pdf}\\
+{\captionfont Left to right: position of the nodes for the $Q_1$, $Q_2$ and $Q_3$ mappings.
+$Q_4$ is not shown.}
 \end{center}
 
 As before, we randomly shoot 10,000 points inside the reference element 
@@ -495,10 +500,11 @@ and map these out in the $x,y$ space. Resulting swarms of points are shown
 in the following figures:
 
 \begin{center}
-\includegraphics[width=5cm]{images/mappings/curved/xy1_keep.pdf}
-\includegraphics[width=5cm]{images/mappings/curved/xy2_keep.pdf}
-\includegraphics[width=5cm]{images/mappings/curved/xy3_keep.pdf}\\
-{\captionfont Left to right: position of the mapped points for the $Q_1$, $Q_2$ and $Q_3$ mappings.}
+\includegraphics[width=5.7cm]{images/mappings/curved/xy1_keep.pdf}
+\includegraphics[width=5.7cm]{images/mappings/curved/xy2_keep.pdf}
+\includegraphics[width=5.7cm]{images/mappings/curved/xy3_keep.pdf}\\
+{\captionfont Left to right: position of the mapped points for the $Q_1$, $Q_2$ and $Q_3$ mappings.
+$Q_4$ is not shown.}
 \end{center}
 
 The image of a square with a $Q_1$ mapping is obviously a quadrilateral
@@ -512,10 +518,11 @@ this better, we now place 10,000 points on the bottom face of the reference elem
 and once again compute their coordinates in the the $x,y$ space:
 
 \begin{center}
-\includegraphics[width=5cm]{images/mappings/curved/xy1.pdf}
-\includegraphics[width=5cm]{images/mappings/curved/xy2.pdf}
-\includegraphics[width=5cm]{images/mappings/curved/xy3.pdf}\\
-{\captionfont Left to right: position of the mapped points for the $Q_1$, $Q_2$ and $Q_3$ mappings.}
+\includegraphics[width=8cm]{images/mappings/curved/xy1.pdf}
+\includegraphics[width=8cm]{images/mappings/curved/xy2.pdf}\\
+\includegraphics[width=8cm]{images/mappings/curved/xy3.pdf}
+\includegraphics[width=8cm]{images/mappings/curved/xy4.pdf}\\
+{\captionfont Position of the mapped points for the $Q_1$, $Q_2$, $Q_3$ and $Q_4$ mappings.}
 \end{center}
 
 For each point $i$ we now compute the distance $r_i$ 
@@ -525,14 +532,16 @@ On the following plots are shown the error $r_i-1$ for all
 points, from $r=-1$ to $r=+1$.
 
 \begin{center}
-\includegraphics[width=5cm]{images/mappings/curved/innerline_error_Q1mapping.pdf}
-\includegraphics[width=5cm]{images/mappings/curved/innerline_error_Q2mapping.pdf}
-\includegraphics[width=5cm]{images/mappings/curved/innerline_error_Q3mapping.pdf}\\
-{\captionfont Left to right: radius error of the mapped points for the $Q_1$, $Q_2$ and $Q_3$ mappings.}
+\includegraphics[width=8cm]{images/mappings/curved/innerline_error_Q1mapping.pdf}
+\includegraphics[width=8cm]{images/mappings/curved/innerline_error_Q2mapping.pdf}\\
+\includegraphics[width=8cm]{images/mappings/curved/innerline_error_Q3mapping.pdf}
+\includegraphics[width=8cm]{images/mappings/curved/innerline_error_Q4mapping.pdf}\\
+{\captionfont Radius error of the mapped points for the $Q_1$, $Q_2$, $Q_3$ and $Q_4$ mappings.}
 \end{center}
 
 We see that the amplitude of the error decreases with the order of the mapping used, 
-which is why for instance \aspect uses a $Q_4$ mapping by default.
+which is why for instance \aspect uses a $Q_4$ mapping by default\footnote{I find it also quite striking 
+that the $Q_4$ mapping outperforms the $Q_3$ one by two orders of magnitude...}.
 Actually, in this particular case, the equation which describes the circle is not a 
 polynomial so that no high-order mapping will ever be able to {\it exactly} 
 represent the curved boundary of the element!
@@ -550,9 +559,39 @@ not neutral.
 
 \todo[inline]{re ask Wolfgang about this - correlate with deal.ii}
 
+---------------------------
+
+Finally, we can explore the importance of the mapping in combination with 
+numerical quadrature. For each mapping we compute the area of the element
+by means of a 3x3, 4x4 or 5x5 quadrature.
+
+\begin{verbatim}
+**********Q1*********
+nqperdim= 3 0.3030060126539606 rel. error -0.04215361698430029
+nqperdim= 4 0.3030060126539606 rel. error -0.04215361698430012 ~ 4%
+nqperdim= 5 0.3030060126539606 rel. error -0.04215361698430012
+**********Q2*********
+nqperdim= 3 0.3162980025394154 rel. error -0.00013569026611326453
+nqperdim= 4 0.3162980025394155 rel. error -0.00013569026611308905 ~ 0.01%
+nqperdim= 5 0.3162980025394154 rel. error -0.00013569026611326453
+**********Q3*********
+nqperdim= 3 0.3163472223929359 rel. error 1.9900899402587318e-05
+nqperdim= 4 0.316347222392936  rel. error 1.9900899402938278e-05 ~ 0.002%
+nqperdim= 5 0.316347222392936  rel. error 1.9900899402938278e-05
+**********Q4*********
+nqperdim= 3 0.3163409410866220 rel. error 4.477021014282521e-08
+nqperdim= 4 0.3163409541901677 rel. error 8.619243716974044e-08 ~ 0.000008%
+nqperdim= 5 0.316340954190168  rel. error 8.619243804713484e-08
+\end{verbatim}
+
+Here again the $Q_4$ mapping makes quite the difference. 
+
 \vspace{1cm}
 
-\Literature Yuan \etal (1994) \cite{yuhy94}
+\Literature 
+\begin{itemize}
+\item \fullcite{yuhy94}
+\end{itemize}
 
 
 
