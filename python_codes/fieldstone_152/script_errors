@@ -1,0 +1,30 @@
+#! /bin/bash
+
+rm errors_*
+rm vrms_* 
+rm area_*
+rm volume_*
+
+for l in 4 6 8 10 12 14 16 20 24 32 ; do
+
+   for nqperdim in 2 3 4 5; do
+
+      for mapping in 1 2 3 4; do
+
+          echo nelr= $l - nqperdim= $nqperdim - mapping= $mapping
+
+          python3 stone.py $l 0 $nqperdim $mapping > opla  
+          grep errv opla >> errors_${nqperdim}_${mapping} 
+          grep vrms opla >> vrms_${nqperdim}_${mapping}
+          grep area opla | grep meas >> area_${nqperdim}_${mapping}
+          grep volume opla | grep meas >> volume_${nqperdim}_${mapping}
+          #grep errexx1 opla >> errors_sr1 
+          #grep errexx2 opla >> errors_sr2 
+          #grep errexx3 opla >> errors_sr3 
+
+      done
+   done
+done
+
+rm opla
+
