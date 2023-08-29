@@ -296,53 +296,6 @@ def gy(x,y,g0):
 
 ###############################################################################
 
-#def NNV(rq,sq):
-#    N_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
-#    N_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
-#    N_2= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.)
-#    N_3= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.)
-#    N_4=     (1.-rq**2) * 0.5*sq*(sq-1.)
-#    N_5= 0.5*rq*(rq+1.) *     (1.-sq**2)
-#    N_6=     (1.-rq**2) * 0.5*sq*(sq+1.)
-#    N_7= 0.5*rq*(rq-1.) *     (1.-sq**2)
-#    N_8=     (1.-rq**2) *     (1.-sq**2)
-#    return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
-#
-#def dNNVdr(rq,sq):
-#    dNdr_0= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
-#    dNdr_1= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
-#    dNdr_2= 0.5*(2.*rq+1.) * 0.5*sq*(sq+1)
-#    dNdr_3= 0.5*(2.*rq-1.) * 0.5*sq*(sq+1)
-#    dNdr_4=       (-2.*rq) * 0.5*sq*(sq-1)
-#    dNdr_5= 0.5*(2.*rq+1.) *    (1.-sq**2)
-#    dNdr_6=       (-2.*rq) * 0.5*sq*(sq+1)
-#    dNdr_7= 0.5*(2.*rq-1.) *    (1.-sq**2)
-#    dNdr_8=       (-2.*rq) *    (1.-sq**2)
-#    return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,\
-#                     dNdr_5,dNdr_6,dNdr_7,dNdr_8],dtype=np.float64)
-
-def dNNVds(rq,sq):
-    dNds_0= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
-    dNds_1= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
-    dNds_2= 0.5*rq*(rq+1.) * 0.5*(2.*sq+1.)
-    dNds_3= 0.5*rq*(rq-1.) * 0.5*(2.*sq+1.)
-    dNds_4=     (1.-rq**2) * 0.5*(2.*sq-1.)
-    dNds_5= 0.5*rq*(rq+1.) *       (-2.*sq)
-    dNds_6=     (1.-rq**2) * 0.5*(2.*sq+1.)
-    dNds_7= 0.5*rq*(rq-1.) *       (-2.*sq)
-    dNds_8=     (1.-rq**2) *       (-2.*sq)
-    return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,\
-                     dNds_5,dNds_6,dNds_7,dNds_8],dtype=np.float64)
-
-def NNP(rq,sq):
-    N_0=0.25*(1-rq)*(1-sq)
-    N_1=0.25*(1+rq)*(1-sq)
-    N_2=0.25*(1+rq)*(1+sq)
-    N_3=0.25*(1-rq)*(1+sq)
-    return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
-
-###############################################################################
-
 print("-----------------------------")
 print("--------stone 152------------")
 print("-----------------------------")
@@ -363,10 +316,10 @@ if int(len(sys.argv) == 5):
    if mapping==3: mapping='Q3'
    if mapping==4: mapping='Q4'
 else:
-   nelr = 10
+   nelr = 20
    visu = 1
    nqperdim=3
-   mapping='Q3' 
+   mapping='Q2' 
 
 R1=1.
 R2=2.
@@ -883,7 +836,6 @@ print("     -> vt (m,M) %.4f %.4f " %(np.min(vt),np.max(vt)))
 
 print("reshape solution (%.3fs)" % (timing.time() - start))
 
-exit()
 ###############################################################################
 # compute strain rate - center to nodes - method 1
 ###############################################################################
@@ -895,23 +847,35 @@ Lyx1 = np.zeros(nnp,dtype=np.float64)
 Lyy1 = np.zeros(nnp,dtype=np.float64)  
 
 for iel in range(0,nel):
-    rq=0.
-    sq=0.
-    NNNV[0:mV]=NNV(rq,sq)
-    dNNNVdr[0:mV]=dNNVdr(rq,sq)
-    dNNNVds[0:mV]=dNNVds(rq,sq)
-    jcb=np.zeros((ndim,ndim),dtype=np.float64)
-    for k in range(0,mV):
-        jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-        jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
-        jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-        jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
-    #end for
+
+    rq=qcoords_r[kq]
+    sq=qcoords_s[kq]
+    weightq=qweights[kq]
+
+    #compute coords of quadrature points
+    NNNV=NNN(rq,sq,mapping)
+    xq=np.dot(NNNV[:],xmapping[:,iel])
+    yq=np.dot(NNNV[:],ymapping[:,iel])
+
+    #compute jacobian matrix
+    dNNNVdr=dNNNdr(rq,sq,mapping)
+    dNNNVds=dNNNds(rq,sq,mapping)
+    jcb[0,0]=np.dot(dNNNVdr[:],xmapping[:,iel])
+    jcb[0,1]=np.dot(dNNNVdr[:],ymapping[:,iel])
+    jcb[1,0]=np.dot(dNNNVds[:],xmapping[:,iel])
+    jcb[1,1]=np.dot(dNNNVds[:],ymapping[:,iel])
+    jcob=np.linalg.det(jcb)
     jcbi=np.linalg.inv(jcb)
+
+    #basis functions
+    dNNNVdr=dNNNdr(rq,sq,'Q2')
+    dNNNVds=dNNNds(rq,sq,'Q2')
+
     for k in range(0,mV):
         dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
         dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
     #end for
+
     L_xx=0.
     L_xy=0.
     L_yx=0.
@@ -968,22 +932,34 @@ for iel in range(0,nel):
         inode=iconV[i,iel]
         rq=rVnodes[i]
         sq=sVnodes[i]
-        NNNV[0:mV]=NNV(rq,sq)
-        dNNNVdr[0:mV]=dNNVdr(rq,sq)
-        dNNNVds[0:mV]=dNNVds(rq,sq)
-        NNNP[0:mP]=NNP(rq,sq)
-        jcb=np.zeros((ndim,ndim),dtype=np.float64)
-        for k in range(0,mV):
-            jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-            jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
-            jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-            jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
-        #end for
+
+        #compute coords of quadrature points
+        NNNV=NNN(rq,sq,mapping)
+        xq=np.dot(NNNV[:],xmapping[:,iel])
+        yq=np.dot(NNNV[:],ymapping[:,iel])
+
+        #compute jacobian matrix
+        dNNNVdr=dNNNdr(rq,sq,mapping)
+        dNNNVds=dNNNds(rq,sq,mapping)
+        jcb[0,0]=np.dot(dNNNVdr[:],xmapping[:,iel])
+        jcb[0,1]=np.dot(dNNNVdr[:],ymapping[:,iel])
+        jcb[1,0]=np.dot(dNNNVds[:],xmapping[:,iel])
+        jcb[1,1]=np.dot(dNNNVds[:],ymapping[:,iel])
+        jcob=np.linalg.det(jcb)
         jcbi=np.linalg.inv(jcb)
+
+        #basis functions
+        NNNV=NNN(rq,sq,'Q2')
+        dNNNVdr=dNNNdr(rq,sq,'Q2')
+        dNNNVds=dNNNds(rq,sq,'Q2')
+        NNNP=NNN(rq,sq,'Q1')
+
+        # compute dNdx & dNdy
         for k in range(0,mV):
             dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
             dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-        #end for
+        #end for 
+	
         L_xx=0.
         L_xy=0.
         L_yx=0.
@@ -1042,27 +1018,32 @@ for iel in range(0,nel):
     fLyy_el=np.zeros(mV,dtype=np.float64)
     fLxy_el=np.zeros(mV,dtype=np.float64)
     fLyx_el=np.zeros(mV,dtype=np.float64)
-    NNNV =np.zeros((mV,1),dtype=np.float64) 
+    NNNV1 =np.zeros((mV,1),dtype=np.float64) 
 
     for kq in range(0,nqel):
         rq=qcoords_r[kq]
         sq=qcoords_s[kq]
         weightq=qweights[kq]
 
-        NNNV[0:mV,0]=NNV(rq,sq)
-        dNNNVdr[0:mV]=dNNVdr(rq,sq)
-        dNNNVds[0:mV]=dNNVds(rq,sq)
+        #compute coords of quadrature points
+        NNNV=NNN(rq,sq,mapping)
+        xq=np.dot(NNNV[:],xmapping[:,iel])
+        yq=np.dot(NNNV[:],ymapping[:,iel])
 
-        # calculate jacobian matrix
-        jcb=np.zeros((2,2),dtype=np.float64)
-        for k in range(0,mV):
-            jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-            jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-            jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-            jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-        #end for 
-        jcob = np.linalg.det(jcb)
-        jcbi = np.linalg.inv(jcb)
+        #compute jacobian matrix
+        dNNNVdr=dNNNdr(rq,sq,mapping)
+        dNNNVds=dNNNds(rq,sq,mapping)
+        jcb[0,0]=np.dot(dNNNVdr[:],xmapping[:,iel])
+        jcb[0,1]=np.dot(dNNNVdr[:],ymapping[:,iel])
+        jcb[1,0]=np.dot(dNNNVds[:],xmapping[:,iel])
+        jcb[1,1]=np.dot(dNNNVds[:],ymapping[:,iel])
+        jcob=np.linalg.det(jcb)
+        jcbi=np.linalg.inv(jcb)
+
+        #basis functions
+        NNNV1[:,0]=NNN(rq,sq,'Q2')
+        dNNNVdr=dNNNdr(rq,sq,'Q2')
+        dNNNVds=dNNNds(rq,sq,'Q2')
 
         # compute dNdx & dNdy
         Lxxq=0.
@@ -1078,12 +1059,12 @@ for iel in range(0,nel):
             Lyxq+=dNNNVdy[k]*u[iconV[k,iel]]
         #end for 
 
-        M_el +=NNNV.dot(NNNV.T)*weightq*jcob
+        M_el +=NNNV1.dot(NNNV1.T)*weightq*jcob
 
-        fLxx_el[:]+=NNNV[:,0]*Lxxq*jcob*weightq
-        fLyy_el[:]+=NNNV[:,0]*Lyyq*jcob*weightq
-        fLxy_el[:]+=NNNV[:,0]*Lxyq*jcob*weightq
-        fLyx_el[:]+=NNNV[:,0]*Lyxq*jcob*weightq
+        fLxx_el[:]+=NNNV1[:,0]*Lxxq*jcob*weightq
+        fLyy_el[:]+=NNNV1[:,0]*Lyyq*jcob*weightq
+        fLxy_el[:]+=NNNV1[:,0]*Lxyq*jcob*weightq
+        fLyx_el[:]+=NNNV1[:,0]*Lyxq*jcob*weightq
 
     #end for kq
 
@@ -1184,21 +1165,26 @@ for iel in range (0,nel):
         rq=qcoords_r[kq]
         sq=qcoords_s[kq]
         weightq=qweights[kq]
-        NNNV[0:mV]=NNV(rq,sq)
 
+        #compute coords of quadrature points
+        NNNV=NNN(rq,sq,mapping)
+        xq=np.dot(NNNV[:],xmapping[:,iel])
+        yq=np.dot(NNNV[:],ymapping[:,iel])
 
-        NNNV[0:mV]=NNV(rq,sq)
-        dNNNVdr[0:mV]=dNNVdr(rq,sq)
-        dNNNVds[0:mV]=dNNVds(rq,sq)
-        NNNP[0:mP]=NNP(rq,sq)
+        #compute jacobian matrix
+        dNNNVdr=dNNNdr(rq,sq,mapping)
+        dNNNVds=dNNNds(rq,sq,mapping)
+        jcb[0,0]=np.dot(dNNNVdr[:],xmapping[:,iel])
+        jcb[0,1]=np.dot(dNNNVdr[:],ymapping[:,iel])
+        jcb[1,0]=np.dot(dNNNVds[:],xmapping[:,iel])
+        jcb[1,1]=np.dot(dNNNVds[:],ymapping[:,iel])
+        jcob=np.linalg.det(jcb)
 
-        jcb=np.zeros((ndim,ndim),dtype=np.float64)
-        for k in range(0,mV):
-            jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-            jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-            jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-            jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-        jcob = np.linalg.det(jcb)
+        #basis functions
+        NNNV=NNN(rq,sq,'Q2')
+        dNNNVdr=dNNNdr(rq,sq,'Q2')
+        dNNNVds=dNNNds(rq,sq,'Q2')
+        NNNP=NNN(rq,sq,'Q1')
 
         xq=0.
         yq=0.
