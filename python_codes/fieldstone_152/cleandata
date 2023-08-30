@@ -4,3 +4,7 @@ rm *.ascii
 rm *.vtu
 rm volume_*
 rm area_*
+rm v_err_*
+rm u_err_*
+rm p_err_*
+

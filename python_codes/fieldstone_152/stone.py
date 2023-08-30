@@ -316,9 +316,9 @@ if int(len(sys.argv) == 5):
    if mapping==3: mapping='Q3'
    if mapping==4: mapping='Q4'
 else:
-   nelr = 28
+   nelr = 20
    visu = 1
-   nqperdim=3
+   nqperdim=5
    mapping='Q3' 
 
 R1=1.
@@ -826,6 +826,8 @@ print("     -> vt (m,M) %.4f %.4f " %(np.min(vt),np.max(vt)))
 
 print("reshape solution (%.3fs)" % (timing.time() - start))
 
+
+
 ###############################################################################
 # compute strain rate - center to nodes - method 1
 ###############################################################################
@@ -1112,6 +1114,23 @@ print("     -> q (m,M) %.4f %.4f " %(np.min(q),np.max(q)))
 print("normalise pressure (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
+
+u_err = np.zeros(nnp,dtype=np.float64) 
+v_err = np.zeros(nnp,dtype=np.float64)    
+p_err = np.zeros(NP,dtype=np.float64)    
+
+for i in range(0,nnp):
+    u_err[i]=u[i]-velocity_x(xV[i],yV[i],R1,R2,kk,rho0,g0)
+    v_err[i]=v[i]-velocity_y(xV[i],yV[i],R1,R2,kk,rho0,g0)
+
+for i in range(0,NP):
+    p_err[i]=p[i]-pressure(xP[i],yP[i],R1,R2,kk,rho0,g0)
+
+print("     -> u_err (m,M) %.10e %.10e | nelr= %d" %(np.min(u_err),np.max(u_err),nelr))
+print("     -> v_err (m,M) %.10e %.10e | nelr= %d" %(np.min(v_err),np.max(v_err),nelr))
+print("     -> p_err (m,M) %.10e %.10e | nelr= %d" %(np.min(p_err),np.max(p_err),nelr))
+
+###############################################################################
 # export pressure at both surfaces
 ###############################################################################
 start = timing.time()
@@ -1228,7 +1247,9 @@ print("     -> nelr= %6d ; errexx2= %.10e ; erreyy2= %.10e ; errexy2= %.10e" %(n
 print("     -> nelr= %6d ; errexx3= %.10e ; erreyy3= %.10e ; errexy3= %.10e" %(nelr,errexx3,erreyy3,errexy3))
 
 print("compute errors (%.3fs)" % (timing.time() - start))
+
 ###############################################################################
+# generate vtu files for mapping nodes and quadrature points
 ###############################################################################
 
 if visu==1:
@@ -1269,6 +1290,46 @@ if visu==1:
    vtufile.write("</VTKFile>\n")
    vtufile.close()
 
+   vtufile=open("quadrature_points_"+str(nqperdim)+".vtu","w")
+   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+   vtufile.write("<UnstructuredGrid> \n")
+   vtufile.write("<Piece NumberOfPoints='%5d' NumberOfCells='%5d'> \n" %(nqel,nqel))
+   #####
+   vtufile.write("<Points> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+   for k in range(0,nqel):
+       rq=qcoords_r[k]
+       sq=qcoords_s[k]
+       NNNV=NNN(rq,sq,mapping)
+       xq=np.dot(NNNV[:],xmapping[:,0])
+       yq=np.dot(NNNV[:],ymapping[:,0])
+       vtufile.write("%e %e %e \n" %(xq,yq,0.))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Points> \n")
+   #####
+   vtufile.write("<Cells>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+   for iel in range (0,nqel):
+       vtufile.write("%d \n" %(iel))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+   for iel in range (0,nqel):
+       vtufile.write("%d \n" %((iel+1)*1))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+   for iel in range (0,nqel):
+       vtufile.write("%d \n" %1)
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("</Cells>\n")
+   #####
+   vtufile.write("</Piece>\n")
+   vtufile.write("</UnstructuredGrid>\n")
+   vtufile.write("</VTKFile>\n")
+   vtufile.close()
 
 ###############################################################################
 # plot of solution

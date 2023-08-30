@@ -31,7 +31,7 @@ The goal here is to explore the influence of the mapping polynomial order and/or
 the number of quadrature points on the accuracy of the solution of the so-called 
 annulus benchmark (see Section~\ref{MMM-ss:anconv}).
 
-For reference, we wish to solve the Stokes equation for an incompressible
+For reference, in this benchmark we solve the Stokes equation for an incompressible
 isothermal fluid in an annulus of inner radius $R_1$
 and outer radius $R_2$ with the following boundary conditions:
 \begin{itemize}
@@ -44,15 +44,18 @@ and the manufactured solution takes the form:
 \upnu_r(r,\theta) &=& g(r) k  \sin(k\theta)  \\
 p(r,\theta) &=& k h(r) \sin(k \theta) + \rho_0 g_r (r-R_2)  \\
 \rho(r,\theta) &=& k \sin (k \theta) \aleph(r) + \rho_0 \\
-A &=& \frac{2(\ln R_1 - \ln R_2)} { R_2^2 \ln R_1  - R_1^2 \ln R_2}    \\
-B &=& \frac{R_2^2-R_1^2}{R_2^2 \ln R_1 - R_1^2 \ln R_2} \\
-f(r)   &=& Ar +\frac{B}{r} \\
-f'(r)  &=& A - \frac{B}{r^2} \\
-g(r)   &=& \frac{A}{2}r  +  \frac{B}{r} \ln r - \frac{1}{r} \\
-g'(r)  &=& \frac{A}{2}  +  \frac{B}{r^2} (1-\ln r)   + \frac{1}{r^2} \\
-g''(r) &=&  - \frac{B}{r^3} (3 - 2 \ln r )  \\
-h(r)   &=& \frac{1}{r^2}(2g-f) \\
-\aleph(r) &=&  -g'' - \frac{g'}{r} ( 1 - \frac{2}{r}) + \frac{g}{r^2} (k^2 + 1 -\frac{4}{r})  - \frac{2f}{r^2}  (1-\frac{1}{r}) - \frac{f'}{r^2}   
+\end{eqnarray}
+with
+\begin{eqnarray}
+A &=& \frac{2(\ln R_1 - \ln R_2)} { R_2^2 \ln R_1  - R_1^2 \ln R_2}    \nn\\
+B &=& \frac{R_2^2-R_1^2}{R_2^2 \ln R_1 - R_1^2 \ln R_2} \nn\\
+f(r)   &=& Ar +\frac{B}{r} \nn\\
+f'(r)  &=& A - \frac{B}{r^2} \nn\\
+g(r)   &=& \frac{A}{2}r  +  \frac{B}{r} \ln r - \frac{1}{r} \nn\\
+g'(r)  &=& \frac{A}{2}  +  \frac{B}{r^2} (1-\ln r)   + \frac{1}{r^2} \nn\\
+g''(r) &=&  - \frac{B}{r^3} (3 - 2 \ln r )  \nn\\
+h(r)   &=& \frac{1}{r^2}(2g-f) \nn\\
+\aleph(r) &=&  -g'' - \frac{g'}{r} ( 1 - \frac{2}{r}) + \frac{g}{r^2} (k^2 + 1 -\frac{4}{r})  - \frac{2f}{r^2}  (1-\frac{1}{r}) - \frac{f'}{r^2}   \nn
 \end{eqnarray}
 
 
@@ -133,6 +136,15 @@ for iel in range(0,nel):
 \end{lstlisting}
 
 
+\begin{center}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_152/images/nq4}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_152/images/nq9}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_152/images/nq16}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_152/images/nq25}\\
+{\captionfont Layout of the quadrature points in element \#0 of the mesh. 
+From left to right: {\python nqperdim=2,3,4,5}.} 
+\end{center}
+
 
 
 \newpage
@@ -148,7 +160,8 @@ and
 \[
 {\cal V} = \sum_e \int_{\Omega_e} 2\pi x d\Omega
 \]
-for elements on the $x>0$ side of the annulus (axisymmetric formulation).
+for elements on the $x>0$ side of the annulus (axisymmetric formulation)\footnote{the number of elements in the 
+tangential direction is a multiple of 4, so element sides always coincide with the $y$-axis.}.
 We of course have 
 \[
 {\cal A}_{analytical} = \pi (R_2^2-R_1^2)
@@ -166,10 +179,10 @@ so that we can compute the relative errors as a function of resolution, mapping 
 \item unsurprisingly $Q_1$ mapping yields the worst results
 \item mapping is the controling factor, much more than quadrature
 \item for the isoparametric element (mapping $Q_2$) the number of quadrature points 
-is not critical. Results are virtually identical for nqperdim=2,3,4,5
+is not critical. Results are virtually identical for {\python nqperdim=2,3,4,5}
 \item $Q_3$ about one order of magnitude more accurate than $Q_2$ 
 \item $Q_4$ mapping 3-4 orders of magnitude more accurate than $Q_2$ mapping
-\item I can't explain the nqperdim=2/mapping=$Q_3$ results that outperform everything else... (volume only)
+\item I can't explain the {\python nqperdim=2 + mapping=Q3} results that outperform everything else... (volume only)
 \end{itemize}
 
 Do these results translate to the solution of the Stokes system? Let's investigate...
@@ -184,21 +197,35 @@ Results are shown in the following.
 \begin{center}
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/vrms}
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/vrms_error}\\
-Note that we define $h=(R_2-R_1)/nelr=1/nelr$. 
+{\captionfont Note that we define $h=(R_2-R_1)/nelr=1/nelr$.}
 \end{center}
 
 As expected linear mapping yields the worst results. However results are virtually identical for 
 the three other mappings.
-What is very surprising is the much higher accuracy of nqperdim=2 (i.e. subparametric mapping) ?!
+What is very surprising is the much higher accuracy of {\python nqperdim=2} (i.e. subparametric mapping) ?!
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Velocity and pressure errors}
 
+We first look at the min/max values of the nodal velocity and pressure errors over all the nodes:
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/u_err}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/v_err}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/p_err}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/p_err_max}\\
+{\captionfont Top row: min/max of $u^h(x,y)-u^{th}(x,y)$ and $v^h(x,y)-v^{th}(x,y)$;
+Bottom row left: min/max of $p^h(x,y)-p^{th}(x,y)$; bottom row right max of  $p^h(x,y)-p^{th}(x,y)$.} 
+\end{center}
+We see that all measurements decrease (in amplitude) when the resolution is increased and that 
+the $Q_1$ mapping yields the largest errors. 
+Interestingly the subparametric case {\python nqperdim=2} seems to yield more accurate 
+pressure results.
 
-As expected with the \QtwoQone element (and already shown in \stone~\ref{f21})
+Turning now to velocity and pressure errors in the $L_2$ norm, 
+as expected with the \QtwoQone element (and already shown in \stone~\ref{f21})
 we recover a cubic convergence for the velocity error and quadratic for the 
-pressure. 
+pressure... almost always.
 
 \begin{center}
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/errv}
@@ -208,7 +235,7 @@ pressure.
 Our velocity and pressure error measurements are identical to those of \aspect.
 But why does the subparametric mapping yield a pressure error that is superconvergent?
 
-IDEA/THOUGHT: are these q points superconvergent points? find ref!
+%IDEA/THOUGHT: are these q points superconvergent points? find ref!
 
 \newpage
 
@@ -263,6 +290,7 @@ Why the super-convergence for nqperdim=2 ?!?
 \vspace{.5cm}
 
 \Literature:\\
-\fullcite{xxxxYY}
+\fullcite{zizh92a}\\
+\fullcite{zizh92b}
 
 
