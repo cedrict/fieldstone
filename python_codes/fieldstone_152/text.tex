@@ -1,6 +1,6 @@
 \noindent
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
-\includegraphics[height=1.25cm]{images/pictograms/under_construction}
+\includegraphics[height=1.25cm]{images/pictograms/aspect_logo}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/paraview}
 
@@ -26,35 +26,116 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The code for this \stone is based on \stone~\ref{f21}. 
 
 The goal here is to explore the influence of the mapping polynomial order and/or
 the number of quadrature points on the accuracy of the solution of the so-called 
-annulus benchmark \ref{MMM-ss:sfan}.
+annulus benchmark (see Section~\ref{MMM-ss:anconv}).
 
-We will explore:
+For reference, we wish to solve the Stokes equation for an incompressible
+isothermal fluid in an annulus of inner radius $R_1$
+and outer radius $R_2$ with the following boundary conditions:
 \begin{itemize}
-\item resolution {\python nelr=4-48}
-\item {\python nqperdim=2,3,4,5}
-\item {\python mapping='Q1','Q2','Q3','Q4'}
+\item Inner boundary: $\upnu_r(R_1,\theta)=0$ 
+\item Outer boundary: $\upnu_r(R_2,\theta)=0$ 
 \end{itemize}
-and will monitor the computed area, and the velocity and pressure errors.
+and the manufactured solution takes the form:
+\begin{eqnarray}
+\upnu_\theta(r,\theta) &=& f(r) \cos(k\theta) \\
+\upnu_r(r,\theta) &=& g(r) k  \sin(k\theta)  \\
+p(r,\theta) &=& k h(r) \sin(k \theta) + \rho_0 g_r (r-R_2)  \\
+\rho(r,\theta) &=& k \sin (k \theta) \aleph(r) + \rho_0 \\
+A &=& \frac{2(\ln R_1 - \ln R_2)} { R_2^2 \ln R_1  - R_1^2 \ln R_2}    \\
+B &=& \frac{R_2^2-R_1^2}{R_2^2 \ln R_1 - R_1^2 \ln R_2} \\
+f(r)   &=& Ar +\frac{B}{r} \\
+f'(r)  &=& A - \frac{B}{r^2} \\
+g(r)   &=& \frac{A}{2}r  +  \frac{B}{r} \ln r - \frac{1}{r} \\
+g'(r)  &=& \frac{A}{2}  +  \frac{B}{r^2} (1-\ln r)   + \frac{1}{r^2} \\
+g''(r) &=&  - \frac{B}{r^3} (3 - 2 \ln r )  \\
+h(r)   &=& \frac{1}{r^2}(2g-f) \\
+\aleph(r) &=&  -g'' - \frac{g'}{r} ( 1 - \frac{2}{r}) + \frac{g}{r^2} (k^2 + 1 -\frac{4}{r})  - \frac{2f}{r^2}  (1-\frac{1}{r}) - \frac{f'}{r^2}   
+\end{eqnarray}
+
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_152/images/vel}
+\includegraphics[width=6cm]{python_codes/fieldstone_152/images/press}\\
+{\captionfont Velocity and pressure fields for $k=4$.}
+\end{center}
+
+\noindent In this \stone we will explore the effect of:
+\begin{itemize}
+\item resolution via the number of elements in the radial direction: {\python nelr=2-32} (we automatically set {\python nelt=12*nelr})
+\item the number of quadrature points per dimension: {\python nqperdim=2,3,4,5}
+\item the polynomial order of the mapping: {\python mapping='Q1','Q2','Q3','Q4'}
+\end{itemize}
+and we will monitor the computed area/volume, the root mean square velocity and the velocity and pressure errors.
 
 After discretising the domain in {\python nel} elements, and having decided the FE
 pair we want to use to solve the Stokes equations (in this case \QtwoQone), we end up 
 having to compute elemental integrals such as 
 \[
-\K_e = \int_{\Omega_e} {\bm B}^T\cdot {\bm C} \cdot {\bm B} \; d\Omega
+\K_e = \int_{\Omega_e} {\bm B}^T\cdot {\bm C}_\eta \cdot {\bm B} \; d\Omega
 \]
-The way we carry out integration is by means of the Gauss-Legendre quadrature, which 
-forces us to carry out an change of variables from the original element $\Omega_e$ 
-to the reference element $[-1,1]\times [-1,1]$. For this we establish a mapping between both 
+where $\Omega_e$ denotes an element.
+The way we carry out this integration is by means of the Gauss-Legendre quadrature
+(see Section~\ref{MMM-sec:quadrature}), which 
+forces us to carry out a change of variables from the original element $\Omega_e$ 
+to the reference element $(r,s) \in [-1,1]\times [-1,1]$. For this we establish a mapping between both 
 as explained in Section~\ref{MMM-ss:mappings}.
+Basis functions $Q_{1,2,3,4}$ are defined in Section~\ref{MMM-sec:shpfct2d}.
 
-\todo[inline]{
-drawing of Q2Q1 nodes and mapping nodes Q1-Q4 next to them}
+\begin{center}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_152/images/mappingQ1}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_152/images/mappingQ2}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_152/images/mappingQ3}
+\includegraphics[width=4.2cm]{python_codes/fieldstone_152/images/mappingQ4}\\
+{\captionfont Layout of the mapping nodes in element \#0 of the mesh. 
+From left to right: $Q_1$, $Q_2$, $Q_3$ and $Q_4$. Rows of nodes are placed 
+on concentric circles and columns of nodes are equidistant in $\theta$ space.} 
+\end{center}
+
+The code for this \stone is based on \stone~\ref{f21}.  
+For each element we store the coordinates of these mapping points into two 
+arrays:
+\begin{lstlisting}
+xmapping=np.zeros((X,nel),dtype=np.float64)
+ymapping=np.zeros((X,nel),dtype=np.float64)
+\end{lstlisting}
+where {\python X} stands for the number of nodes for each mapping.
+
+The reduced coordinates for the quadrature points are given by 
+the Gauss-Legendre quadrature approach. The real coordinates of these points
+is a function of the mapping used so that 
+\begin{lstlisting}
+for iel in range(0,nel):
+    for kq in range(0,nqel):
+        rq=qcoords_r[kq]
+        sq=qcoords_s[kq]
+        NNNV=NNN(rq,sq,mapping)
+        xq=np.dot(NNNV[:],xmapping[:,iel])
+        yq=np.dot(NNNV[:],ymapping[:,iel])
+\end{lstlisting}
+Likewise the Jacobian matrix is by definition a function of the chosen mapping 
+so that 
+\begin{lstlisting}
+for iel in range(0,nel):
+    for kq in range(0,nqel):
+        rq=qcoords_r[kq]
+        sq=qcoords_s[kq]
+        dNNNVdr=dNNNdr(rq,sq,mapping)
+        dNNNVds=dNNNds(rq,sq,mapping)
+        jcb[0,0]=np.dot(dNNNVdr[:],xmapping[:,iel])
+        jcb[0,1]=np.dot(dNNNVdr[:],ymapping[:,iel])
+        jcb[1,0]=np.dot(dNNNVds[:],xmapping[:,iel])
+        jcb[1,1]=np.dot(dNNNVds[:],ymapping[:,iel])
+        jcob=np.linalg.det(jcb)
+        jcbi=np.linalg.inv(jcb)
+\end{lstlisting}
 
 
+
+
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Areas and volumes}
 
@@ -80,26 +161,84 @@ so that we can compute the relative errors as a function of resolution, mapping 
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/areas/volumes.pdf}
 \end{center}
 
-Conclusions:
+\noindent Conclusions:
 \begin{itemize}
-\item unsurprisingly Q1 mapping yields the worst results
-\item the type of mapping is the controling factor
-\item for the isoparametric mapping $Q_2$ the number of quadrature points 
+\item unsurprisingly $Q_1$ mapping yields the worst results
+\item mapping is the controling factor, much more than quadrature
+\item for the isoparametric element (mapping $Q_2$) the number of quadrature points 
 is not critical. Results are virtually identical for nqperdim=2,3,4,5
-\item Q3 about one order of magnitude more accurate than Q2 
-\item Q4 mapping 3-4 orders of magnitude more accurate than Q2 mapping
-\item I can't explain the nqperdim=2/mapping=Q3 results that outperform everything else... (volume only)
+\item $Q_3$ about one order of magnitude more accurate than $Q_2$ 
+\item $Q_4$ mapping 3-4 orders of magnitude more accurate than $Q_2$ mapping
+\item I can't explain the nqperdim=2/mapping=$Q_3$ results that outperform everything else... (volume only)
 \end{itemize}
 
 Do these results translate to the solution of the Stokes system? Let's investigate...
+The provided {\tt script\_errors} bash script implements a triple loop 
+over resolution, number of quadrature points and mapping type.
+Results are shown in the following.
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Root mean square velocity}
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/vrms}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/vrms_error}\\
+Note that we define $h=(R_2-R_1)/nelr=1/nelr$. 
+\end{center}
+
+As expected linear mapping yields the worst results. However results are virtually identical for 
+the three other mappings.
+What is very surprising is the much higher accuracy of nqperdim=2 (i.e. subparametric mapping) ?!
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Velocity and pressure errors}
 
 
+As expected with the \QtwoQone element (and already shown in \stone~\ref{f21})
+we recover a cubic convergence for the velocity error and quadratic for the 
+pressure. 
 
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/errv}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/errp}
+\end{center}
 
+Our velocity and pressure error measurements are identical to those of \aspect.
+But why does the subparametric mapping yield a pressure error that is superconvergent?
 
+IDEA/THOUGHT: are these q points superconvergent points? find ref!
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Strain rate errors}
+
+Since the analytical velocity field is known so are the strain rate tensor components.
+Similarly to \stone~21 this code computes the nodal strain rate components
+in three different ways. 
+\begin{itemize}
+\item method \#1: strain rate components are computed in the middle of the element and then averaged over elements sharing a node.
+\item method \#2: strain rate components are computed at each node of the element and then averaged over elements sharing a node.
+\item method \#3: global recovery process as documented in Section~\ref{MMM-ss:gradrecovery}.
+\end{itemize}
+
+Errors are then computed in the same way as the velocity components.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_exx1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_eyy1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_exy1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_exx2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_eyy2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_exy2}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_exx3}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_eyy3}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_exy3}
+\end{center}
+
+Why the super-convergence for nqperdim=2 ?!?
 
 
 

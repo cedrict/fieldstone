@@ -5,7 +5,7 @@ rm vrms_*
 rm area_*
 rm volume_*
 
-for l in 4 6 8 10 12 14 16 20 24 32 40 48; do
+for l in 4 8 12 16 20 24 32 40 48 56 64; do
 
    for nqperdim in 2 3 4 5; do
 
@@ -18,9 +18,9 @@ for l in 4 6 8 10 12 14 16 20 24 32 40 48; do
           grep vrms opla >> vrms_${nqperdim}_${mapping}
           grep area opla | grep meas >> area_${nqperdim}_${mapping}
           grep volume opla | grep meas >> volume_${nqperdim}_${mapping}
-          #grep errexx1 opla >> errors_sr1 
-          #grep errexx2 opla >> errors_sr2 
-          #grep errexx3 opla >> errors_sr3 
+          grep errexx1 opla >> errors_sr1_${nqperdim}_${mapping}
+          grep errexx2 opla >> errors_sr2_${nqperdim}_${mapping}
+          grep errexx3 opla >> errors_sr3_${nqperdim}_${mapping}
 
       done
    done

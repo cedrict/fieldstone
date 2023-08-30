@@ -1,0 +1,6 @@
+rm vrms_*
+rm errors_*
+rm *.ascii
+rm *.vtu
+rm volume_*
+rm area_*
