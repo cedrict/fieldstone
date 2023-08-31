@@ -191,8 +191,11 @@ over resolution, number of quadrature points and mapping type.
 Results are shown in the following.
 
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Root mean square velocity}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Annulus convection benchmark (exp=0)}
+
+%---------------------------------------
+\subsection*{Root mean square velocity}
 
 \begin{center}
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/vrms}
@@ -205,8 +208,8 @@ the three other mappings.
 What is very surprising is the much higher accuracy of {\python nqperdim=2} (i.e. subparametric mapping) ?!
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Velocity and pressure errors}
+%---------------------------------------
+\subsection*{Velocity and pressure errors}
 
 We first look at the min/max values of the nodal velocity and pressure errors over all the nodes:
 \begin{center}
@@ -239,8 +242,8 @@ But why does the subparametric mapping yield a pressure error that is superconve
 
 \newpage
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Strain rate errors}
+%---------------------------------------
+\subsection*{Strain rate errors}
 
 Since the analytical velocity field is known so are the strain rate tensor components.
 Similarly to \stone~21 this code computes the nodal strain rate components
@@ -269,9 +272,132 @@ Why the super-convergence for nqperdim=2 ?!?
 
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{The aquarium test (exp=1) - plane strain}
+
+obtained with 10 elements in radial direction
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/errv}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/errp}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1/sr1_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1/sr2_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1/sr3_R1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1/sr1_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1/sr2_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1/sr3_R2}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/qqq_R1}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/qqq_R2}
+\end{center}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{The aquarium test (exp=1) - axisymmetric}
+
+obtained with 10 elements in radial direction
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/errv}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/errp}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr1_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr2_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr3_R1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr1_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr2_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr3_R2}\\
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/qqq_R1}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/qqq_R2}
+\end{center}
+
+Conclusion: best/cheapest results obtained for nqperdim=4 and Q4
 
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{The blob test (exp=2) - plane strain}
+
+obtained with 10 elements in radial direction
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2/sr1_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2/sr2_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2/sr3_R1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2/sr1_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2/sr2_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2/sr3_R2}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/qqq_R1}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/qqq_R2}
+\end{center}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{The blob test (exp=2) - axisymmetric}
+
+obtained with 10 elements in radial direction
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr1_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr2_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr3_R1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr1_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr2_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr3_R2}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/qqq_R1}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/qqq_R2}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -289,7 +415,7 @@ Why the super-convergence for nqperdim=2 ?!?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vspace{.5cm}
 
-\Literature:\\
+\noindent\Literature:\\
 \fullcite{zizh92a}\\
 \fullcite{zizh92b}
 

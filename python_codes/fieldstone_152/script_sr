@@ -1,0 +1,34 @@
+#! /bin/bash
+
+rm sr1_*
+rm sr2_*
+rm sr3_*
+
+for l in 16; do
+
+   for nqperdim in 2 3 4 5; do
+
+      for mapping in 1 2 3 4; do
+
+          echo nelr= $l - nqperdim= $nqperdim - mapping= $mapping
+
+          python3 stone.py $l 0 $nqperdim $mapping > opla  
+
+          mv sr1_R1.ascii sr1_R1.ascii_${nqperdim}_${mapping}
+          mv sr2_R1.ascii sr2_R1.ascii_${nqperdim}_${mapping}
+          mv sr3_R1.ascii sr3_R1.ascii_${nqperdim}_${mapping}
+          mv vel_R1.ascii vel_R1.ascii_${nqperdim}_${mapping}
+          mv qqq_R1.ascii qqq_R1.ascii_${nqperdim}_${mapping}
+
+          mv sr1_R2.ascii sr1_R2.ascii_${nqperdim}_${mapping}
+          mv sr2_R2.ascii sr2_R2.ascii_${nqperdim}_${mapping}
+          mv sr3_R2.ascii sr3_R2.ascii_${nqperdim}_${mapping}
+          mv vel_R2.ascii vel_R2.ascii_${nqperdim}_${mapping}
+          mv qqq_R2.ascii qqq_R2.ascii_${nqperdim}_${mapping}
+
+      done
+   done
+done
+
+rm opla
+
