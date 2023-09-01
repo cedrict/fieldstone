@@ -319,6 +319,8 @@ def sr_xy(x,y,R1,R2,k):
        val=0
     return val
 
+###############################################################################
+
 def gx(x,y,g0):
     val=-x/np.sqrt(x*x+y*y)*g0
     return val
@@ -349,13 +351,15 @@ if int(len(sys.argv) == 5):
    if mapping==3: mapping='Q3'
    if mapping==4: mapping='Q4'
 else:
-   nelr = 20
+   nelr = 64 # Q1 cells!
    visu = 1
-   nqperdim=5
-   mapping='Q3' 
+   nqperdim=3
+   mapping='Q4' 
 
 R1=1.
 R2=2.
+
+surface_free_slip=True
 
 if exp==0:
    rho0=0.
@@ -372,6 +376,8 @@ eps=1.e-10
 
 rVnodes=[-1,1,1,-1,0,1,0,-1,0]
 sVnodes=[-1,-1,1,1,-1,0,1,0,0]
+
+debug=False
 
 ###############################################################################
 
@@ -420,8 +426,6 @@ for iq in range(0,nqperdim):
 # grid point setup
 ###############################################################################
 start = timing.time()
-
-#dr=(R2-R1)/nelr
 
 if not axisymmetric:
 
@@ -507,7 +511,6 @@ else:
 
    #np.savetxt('grid.ascii',np.array([xV,yV,theta]).T,header='# x,y')
 
-
 print("building coordinate arrays (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
@@ -547,41 +550,42 @@ else:
            iconQ1[3,counter] = i + (j + 1) * (nelt + 1)
            counter += 1
 
-vtufile=open("mesh_Q1.vtu","w")
-vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-vtufile.write("<UnstructuredGrid> \n")
-vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
-#####
-vtufile.write("<Points> \n")
-vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%10f %10f %10f \n" %(xV[i],yV[i],0.))
-vtufile.write("</DataArray>\n")
-vtufile.write("</Points> \n")
-
-vtufile.write("<Cells>\n")
-#--
-vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%d %d %d %d\n" %(iconQ1[0,iel],iconQ1[1,iel],iconQ1[2,iel],iconQ1[3,iel]))
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%d \n" %((iel+1)*4))
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-for iel in range (0,nel):
-    vtufile.write("%d \n" %9)
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("</Cells>\n")
-#####
-vtufile.write("</Piece>\n")
-vtufile.write("</UnstructuredGrid>\n")
-vtufile.write("</VTKFile>\n")
-vtufile.close()
+if debug:
+   vtufile=open("mesh_Q1.vtu","w")
+   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+   vtufile.write("<UnstructuredGrid> \n")
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+   #####
+   vtufile.write("<Points> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10f %10f %10f \n" %(xV[i],yV[i],0.))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Points> \n")
+   #####
+   vtufile.write("<Cells>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%d %d %d %d\n" %(iconQ1[0,iel],iconQ1[1,iel],iconQ1[2,iel],iconQ1[3,iel]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%d \n" %((iel+1)*4))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+   for iel in range (0,nel):
+       vtufile.write("%d \n" %9)
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("</Cells>\n")
+   #####
+   vtufile.write("</Piece>\n")
+   vtufile.write("</UnstructuredGrid>\n")
+   vtufile.write("</VTKFile>\n")
+   vtufile.close()
 
 ###############################################################################
 # now that the grid has been built as if it was a Q1 grid, 
@@ -602,11 +606,19 @@ NfemV=NV*ndofV   # Total number of degrees of V freedom
 NfemP=NP*ndofP   # Total number of degrees of P freedom
 Nfem=NfemV+NfemP # total number of dofs
 
+if surface_free_slip:
+   Nlm=nnt
+   Nfem+=Nlm
+else:
+   Nlm=0
+
 print('nelr=',nelr)
 print('nelt=',nelt)
 print('nel=',nel)
 print('NfemV=',NfemV)
 print('NfemP=',NfemP)
+print('Nlm=',Nlm)
+print('Nfem=',Nfem)
 print('nqel=',nqel)
 print('mapping=',mapping)
 print('axisymmetric=',axisymmetric)
@@ -714,6 +726,7 @@ print("building connectivity array (%.3fs)" % (timing.time() - start))
 # Q3 nodes for mapping are built
 # Q4 nodes for mapping are built
 ###############################################################################
+start = timing.time()
 
 if mapping=='Q1':
    xmapping=np.zeros((4,nel),dtype=np.float64)
@@ -780,26 +793,46 @@ if mapping=='Q4':
                #print(xmapping[counter,iel],ymapping[counter,iel])
                counter+=1
 
+print("define mapping (%.3fs)" % (timing.time() - start))
+
+###############################################################################
+# compute normal vectors
+###############################################################################
+start = timing.time()
+
+nx=np.zeros(NV,dtype=np.float64) 
+ny=np.zeros(NV,dtype=np.float64) 
+surfaceV=np.zeros(NV,dtype=bool) 
+
+for i in range(0,NV):
+    if r[i]/R1<1+eps:
+       nx[i]=-np.cos(theta[i])
+       ny[i]=-np.sin(theta[i])
+    if r[i]/R2>1-eps:
+       surfaceV[i]=True
+       nx[i]=np.cos(theta[i])
+       ny[i]=np.sin(theta[i])
+
+print("compute surface normals (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
 # define boundary conditions
 ###############################################################################
 start = timing.time()
 
-bc_fix = np.zeros(Nfem, dtype=bool)  
-bc_val = np.zeros(Nfem, dtype=np.float64) 
+bc_fix = np.zeros(Nfem,dtype=bool)  
+bc_val = np.zeros(Nfem,dtype=np.float64) 
 
 for i in range(0,NV):
     if r[i]<R1+eps:
        bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = velocity_x(xV[i],yV[i],R1,R2,kk)
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i],R1,R2,kk)
-    if r[i]>(R2-eps):
+    if r[i]>(R2-eps) and not surface_free_slip:
        bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = velocity_x(xV[i],yV[i],R1,R2,kk)
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i],R1,R2,kk)
 
     if axisymmetric and xV[i]<eps:
        bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0
-
 
 print("defining boundary conditions (%.3fs)" % (timing.time() - start))
 
@@ -832,13 +865,11 @@ for iel in range(0,nel):
     #end for
 #end for
 
+print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
+print("     -> total area (meas) %.12e | nel= %d" %(area.sum(),nel))
 if not axisymmetric:
-   print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
-   print("     -> total area (meas) %.12e | nel= %d" %(area.sum(),nel))
    print("     -> total area (anal) %e " %(np.pi*(R2**2-R1**2)))
 else:
-   print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
-   print("     -> total area (meas) %.12e | nel= %d" %(area.sum(),nel))
    print("     -> total area (anal) %e " %(np.pi*(R2**2-R1**2)/2))
 
 print("     -> total volume (meas) %.12e | nel= %d" %(vol.sum(),nel))
@@ -852,8 +883,8 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
-f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
-h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
+f_rhs = np.zeros(NfemV,dtype=np.float64) 
+h_rhs = np.zeros(NfemP,dtype=np.float64) 
 dNNNVdx  = np.zeros(mV,dtype=np.float64) 
 dNNNVdy  = np.zeros(mV,dtype=np.float64) 
 
@@ -942,7 +973,6 @@ for iel in range(0,nel):
 
     #end for kq
 
-
     # impose b.c. 
     for k1 in range(0,mV):
         for i1 in range(0,ndofV):
@@ -992,13 +1022,35 @@ for iel in range(0,nel):
 print("build FE matrixs & rhs (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
+
+if surface_free_slip:
+
+   start = timing.time()
+
+   cc=0
+   counter=NfemV+NfemP
+   for i in range(0,NV):
+       if surfaceV[i]:
+          # we need nx[i]*u[i]+ny[i]*v[i]=0
+          A_sparse[counter,2*i  ]=nx[i]
+          A_sparse[counter,2*i+1]=ny[i]
+          A_sparse[2*i  ,counter]=nx[i]
+          A_sparse[2*i+1,counter]=ny[i]
+          counter+=1
+          cc+=1
+
+   print(cc,Nlm)
+
+   print("build L block (%.3fs)" % (timing.time() - start))
+
+###############################################################################
 # solve system
 ###############################################################################
 start = timing.time()
 
 rhs=np.zeros(Nfem,dtype=np.float64)
 rhs[0:NfemV]=f_rhs
-rhs[NfemV:Nfem]=h_rhs
+rhs[NfemV:NfemV+NfemP]=h_rhs
     
 sparse_matrix=A_sparse.tocsr()
 
@@ -1012,10 +1064,14 @@ print("solving system (%.3fs)" % (timing.time() - start))
 start = timing.time()
 
 u,v=np.reshape(sol[0:NfemV],(NV,2)).T
-p=sol[NfemV:Nfem]
+p=sol[NfemV:NfemV+NfemP]
 
 print("     -> u (m,M) %.7e %.7e " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.7e %.7e " %(np.min(v),np.max(v)))
+
+if surface_free_slip:
+   l=sol[NfemV+NfemP:Nfem]
+   print("     -> l (m,M) %.4f %.4f " %(np.min(l),np.max(l)))
 
 #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 
@@ -1183,8 +1239,6 @@ print("     -> Lxy2 (m,M) %.4f %.4f " %(np.min(Lyx2),np.max(Lyx2)))
 #np.savetxt('pressure.ascii',np.array([xV,yV,q]).T)
 #np.savetxt('strainrate.ascii',np.array([xV,yV,Lxx,Lyy,Lxy,Lyx]).T)
 
-print("compute vel gradient meth-2 (%.3fs)" % (timing.time() - start))
-
 exx2 = np.zeros(NV,dtype=np.float64)  
 eyy2 = np.zeros(NV,dtype=np.float64)  
 exy2 = np.zeros(NV,dtype=np.float64)  
@@ -1192,6 +1246,16 @@ exy2 = np.zeros(NV,dtype=np.float64)
 exx2[:]=Lxx2[:]
 eyy2[:]=Lyy2[:]
 exy2[:]=0.5*(Lxy2[:]+Lyx2[:])
+
+e_rr=exx2*np.sin(theta)**2+2*exy2*np.sin(theta)*np.cos(theta)+eyy2*np.cos(theta)**2
+e_tt=exx2*np.cos(theta)**2-2*exy2*np.sin(theta)*np.cos(theta)+eyy2*np.sin(theta)**2
+e_rt=(exx2-eyy2)*np.sin(theta)*np.cos(theta)+exy2*(-np.sin(theta)**2+np.cos(theta)**2)
+
+print("     -> e_rr (m,M) %e %e | nel= %d" %(np.min(e_rr),np.max(e_rr),nel))
+print("     -> e_tt (m,M) %e %e | nel= %d" %(np.min(e_tt),np.max(e_tt),nel))
+print("     -> e_rt (m,M) %e %e | nel= %d" %(np.min(e_rt),np.max(e_rt),nel))
+
+print("compute vel gradient meth-2 (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
 start = timing.time()
@@ -1294,10 +1358,9 @@ exx3[:]=Lxx3[:]
 eyy3[:]=Lyy3[:]
 exy3[:]=0.5*(Lxy3[:]+Lyx3[:])
 
-
-
 ###############################################################################
 # normalise pressure
+# note this is not proper normalisation .. I should integrate...
 ###############################################################################
 start = timing.time()
 
@@ -1363,7 +1426,8 @@ np.savetxt('qqq_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],q[NV-nnt:],theta[NV-
 np.savetxt('sr1_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],sr1[NV-nnt:],theta[NV-nnt:]]).T)
 np.savetxt('sr2_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],sr2[NV-nnt:],theta[NV-nnt:]]).T)
 np.savetxt('sr3_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],sr3[NV-nnt:],theta[NV-nnt:]]).T)
-np.savetxt('vel_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],vel[NV-nnt:],theta[NV-nnt:]]).T)
+np.savetxt('vel_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],vel[NV-nnt:],theta[NV-nnt:],vr[NV-nnt:],vt[NV-nnt:]]).T)
+np.savetxt('err_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],e_rr[NV-nnt:],theta[NV-nnt:]]).T)
 
 print("export p&q on R1,R2 (%.3fs)" % (timing.time() - start))
 
@@ -1371,10 +1435,6 @@ print("export p&q on R1,R2 (%.3fs)" % (timing.time() - start))
 # compute error
 ###############################################################################
 start = timing.time()
-
-NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
-dNNNVdr  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-dNNNVds  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 
 errv=0.
 errp=0.
@@ -1578,6 +1638,11 @@ if visu==1:
        vtufile.write("%.13e %.13e %.13e \n" %(u[i],v[i],0.))
    vtufile.write("</DataArray>\n")
    #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%.13e %.13e %.13e \n" %(nx[i],ny[i],0.))
+   vtufile.write("</DataArray>\n")
+   #--
    vtufile.write("</PointData>\n")
    #####
    vtufile.write("<CellData Scalars='scalars'>\n")
@@ -1691,6 +1756,21 @@ if visu==1:
    vtufile.write("<DataArray type='Float32' Name='exy (th)' Format='ascii'> \n")
    for i in range(0,NV):
        vtufile.write("%10f \n" %(sr_xy(xV[i],yV[i],R1,R2,kk)))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sr1' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10f \n" %sr1[i])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sr2' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10f \n" %sr2[i])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='sr3' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10f \n" %sr3[i])
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' Name='exx1' Format='ascii'> \n")

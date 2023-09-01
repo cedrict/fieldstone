@@ -198,8 +198,8 @@ Results are shown in the following.
 \subsection*{Root mean square velocity}
 
 \begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/vrms}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/vrms_error}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/vrms}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/vrms_error}\\
 {\captionfont Note that we define $h=(R_2-R_1)/nelr=1/nelr$.}
 \end{center}
 
@@ -213,10 +213,10 @@ What is very surprising is the much higher accuracy of {\python nqperdim=2} (i.e
 
 We first look at the min/max values of the nodal velocity and pressure errors over all the nodes:
 \begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/u_err}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/v_err}\\
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/p_err}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/p_err_max}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/u_err}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/v_err}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/p_err}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/p_err_max}\\
 {\captionfont Top row: min/max of $u^h(x,y)-u^{th}(x,y)$ and $v^h(x,y)-v^{th}(x,y)$;
 Bottom row left: min/max of $p^h(x,y)-p^{th}(x,y)$; bottom row right max of  $p^h(x,y)-p^{th}(x,y)$.} 
 \end{center}
@@ -231,8 +231,8 @@ we recover a cubic convergence for the velocity error and quadratic for the
 pressure... almost always.
 
 \begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/errv}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/errors/errp}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/errv}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/errp}
 \end{center}
 
 Our velocity and pressure error measurements are identical to those of \aspect.
@@ -257,15 +257,15 @@ in three different ways.
 Errors are then computed in the same way as the velocity components.
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_exx1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_eyy1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_exy1}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_exx2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_eyy2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_exy2}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_exx3}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_eyy3}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/errors/err_exy3}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp0/err_exx1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp0/err_eyy1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp0/err_exy1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp0/err_exx2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp0/err_eyy2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp0/err_exy2}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp0/err_exx3}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp0/err_eyy3}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp0/err_exy3}
 \end{center}
 
 Why the super-convergence for nqperdim=2 ?!?
@@ -276,7 +276,7 @@ Why the super-convergence for nqperdim=2 ?!?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{The aquarium test (exp=1) - plane strain}
 
-obtained with 10 elements in radial direction
+obtained with 8 elements in radial direction
 
 \begin{center}
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/errv}
@@ -302,7 +302,7 @@ obtained with 10 elements in radial direction
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{The aquarium test (exp=1) - axisymmetric}
 
-obtained with 10 elements in radial direction
+obtained with 8 elements in radial direction
 
 \begin{center}
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/errv}
@@ -333,7 +333,7 @@ Conclusion: best/cheapest results obtained for nqperdim=4 and Q4
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{The blob test (exp=2) - plane strain}
 
-obtained with 10 elements in radial direction
+obtained with 8 elements in radial direction - {\tt script\_sr}
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2/sr1_R1}
@@ -353,32 +353,154 @@ obtained with 10 elements in radial direction
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{The blob test (exp=2) - axisymmetric}
 
-obtained with 10 elements in radial direction
+obtained with 8 elements in radial direction
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr1_R1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr2_R1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr3_R1}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr1_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr2_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr3_R2}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/sr1_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/sr2_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/sr3_R1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/sr1_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/sr2_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/sr3_R2}\\
 \end{center}
 
 \begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/qqq_R1}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/qqq_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/qqq_R1}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/qqq_R2}
+\end{center}
+
+\newpage
+
+obtained with 16 elements in radial direction, Q1 mapping data removed for readability
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/sr1_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/sr2_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/sr3_R1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/sr1_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/sr2_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/sr3_R2}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/qqq_R1}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/qqq_R2}
+\end{center}
+
+obvious conclusion is nqperdim=2 not fine.
+
+\newpage
+
+obtained with 24 elements in radial direction, Q1 mapping data and nqperdim=2 data removed for readability
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/sr1_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/sr2_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/sr3_R1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/sr1_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/sr2_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/sr3_R2}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/qqq_R1}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/qqq_R2}
+\end{center}
+
+\newpage
+
+obtained with 32 elements in radial direction, Q1 mapping data and nqperdim=2 data removed for readability
+point size decreased.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/sr1_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/sr2_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/sr3_R1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/sr1_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/sr2_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/sr3_R2}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/qqq_R1}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/qqq_R2}
+\end{center}
+
+Run with ASPECT and plot against these
+
+\newpage
+
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/rho}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/vel}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/press}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr}\\
+{\captionfont nelr=32, nqperdim=3, Q4 mapping.} 
 \end{center}
 
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{The blob test (exp=2) - axisymmetric + free slip}
+
+obtained with 8 elements in radial direction
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/sr1_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/sr2_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/sr3_R1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/sr1_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/sr2_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/sr3_R2}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/qqq_R1}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/qqq_R2}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/vt_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/err_R2}
+\end{center}
+
+Run with ASPECT and plot against these
 
 
 
 
 
+\newpage
+obtained with 32 elements in radial direction, Q1 mapping data and nqperdim=2 data removed for readability
+point size decreased.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/sr1_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/sr2_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/sr3_R1}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/sr1_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/sr2_R2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/sr3_R2}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/qqq_R1}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/qqq_R2}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/vt_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/err_R2}
+\end{center}
 
 
+THERE REMAINS a pb: strain rate far away from blob should go to zero. It was the case with no-slip!
 
+look at olga stuff about normals and jacobian?1
+
+Run with ASPECT and plot against these
 
 
 
