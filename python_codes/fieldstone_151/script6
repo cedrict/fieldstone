@@ -9,12 +9,11 @@ for n in 8 10 12 14 16 18 20 22 24 26 28 30 32 ; do
     echo ------- n= $n ------------
 
     echo fs_method=1
-    python3 stone.py $n 2 1 0 > opla
+    python3 stone.py $n 6 1 0 > opla
     grep errv opla >> errors_fs1
-    grep area opla | grep meas >> areas
 
     echo fs_method=3
-    python3 stone.py $n 2 3 0 > opla
+    python3 stone.py $n 6 3 0 > opla
     grep errv opla >> errors_fs3
 
 done

@@ -39,9 +39,10 @@ Also the mesh exported to the vtu file is based on a subdivision of the elements
 four bilinear quadrilaterals. In other words it means that 4 elements in paraview 
 form a single 'real' element in the code.
 By default all node are placed on concentric circles. However when the {\python trapezes}
-integer variable is set to {\python 1} then all mid-edges nodes are then placed exactly in the middle of the 
-corresponding corner nodes (obviously the middle node is then also 
+integer variable is set to {\python 1} then all mid-edges nodes are then placed exactly 
+in the middle of the corresponding corner nodes (obviously the middle node is then also 
 moved to be at the center of the trapeze/element).
+Free slip boundary conditions are only implemented at the surface ($r=R_2$).
 
 \begin{center}
 \includegraphics[width=5.6cm]{./python_codes/fieldstone_151/images/mesh}
@@ -53,32 +54,16 @@ moved to be at the center of the trapeze/element).
 \begin{center}
 \includegraphics[width=6cm]{./python_codes/fieldstone_151/images/mesh1}
 \includegraphics[width=6cm]{./python_codes/fieldstone_151/images/mesh2}\\
-{\captionfont Left: {\python trapezes=False}; right:   {\python trapezes=True}.}
+{\captionfont Left: {\python trapezes=0}; right:   {\python trapezes=1}.}
 \end{center}
 
-The goal of this \stone is twofold:
+\noindent The goal of this \stone is twofold:
 \begin{itemize}
 \item test the implementation of the free slip boundary conditions algorithms,
 \item explore the differences between straight edge elelements vs curved ones.
 \end{itemize}
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\par\noindent\rule{\textwidth}{0.4pt}
-
-\vspace{.5cm}
-
-\begin{center}
-\fbox{\begin{minipage}{0.9\textwidth}
-{\color{teal}To Do, open questions, future work?}
-\begin{itemize}
-\item analytical solution test 3 ?
-\item design more appropriate flow solution and test 3 methods to compute strain rate
-\item implement axisymmetric calculations
-\end{itemize}
-\end{minipage}}
-\end{center}
 
 
 
@@ -514,17 +499,42 @@ centered at $(0,1.5)$  with a radius 0.25.
 \includegraphics[width=8.5cm]{python_codes/fieldstone_151/results/test5/e_rt}
 \includegraphics[width=8.5cm]{python_codes/fieldstone_151/results/test5/e_rt2}\\
 {\captionfont Strain rate components at the surface, resolution 24x288. 
-The first line of plots is the strain rate components all around the annulus at the surface, i.e.
-$\theta\in[0,2\pi]$. The second line is the same components but plotted for $\theta\in[\pi,2\pi]$.
-Zoom in to better see the results.}
+The first column of plots is the strain rate components all around the annulus at the surface, i.e.
+$\theta\in[0,2\pi]$. The second column is the same components but plotted for $\theta\in[\pi,2\pi]$.
+Zoom in to better see the results. 'T' stands for the trapezes variable.}
 \end{center}
 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_151/results/test5/p}
-\includegraphics[width=7cm]{python_codes/fieldstone_151/results/test5/p2}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_151/results/test5/p}
+\includegraphics[width=8cm]{python_codes/fieldstone_151/results/test5/p2}\\
 {\captionfont Pressure at the surface, resolution 24x288.}
 \end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{test \#6: aquarium - free slip}
+
+This test is inspired by \textcite{behr04}. Results obtained with {\tt script6}.
+Density is constant, viscosity is constant, but now gravity is given by $\vec{g}=(0,-g_0)$.
+Free slip boundary conditions are used. We expect zero flow and yet ...
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_151/results/test6/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_151/results/test6/press}\\
+{\captionfont Velocity and pressure fields, resolution $8\times 96$.}
+\end{center}
+
+The analytical solution is $\vec\upnu=(0,0)$ and $p(x,y)=-R_2+i\rho_0 g_0(R_2-y)$ so 
+we can compute the velocity and pressure errors as a function of the mesh size $h$:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_151/results/test6/errv}
+\includegraphics[width=8cm]{python_codes/fieldstone_151/results/test6/errp}
+\end{center}
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -533,4 +543,21 @@ Zoom in to better see the results.}
 The conclusion is unescapable: either way of prescribing free slip is fine, they yield 
 virtuallly identical results. The trapeze option should not be used.  
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\vspace{.5cm}
+
+\begin{center}
+\fbox{\begin{minipage}{0.9\textwidth}
+{\color{teal}To Do, open questions, future work?}
+\begin{itemize}
+\item analytical solution test 3 ?
+\item design more appropriate flow solution and test 3 methods to compute strain rate
+\item implement axisymmetric calculations
+\item check \fullcite{ensg82}
+\end{itemize}
+\end{minipage}}
+\end{center}
 

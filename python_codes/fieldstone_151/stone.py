@@ -10,7 +10,7 @@ from scipy.sparse import lil_matrix
 ###############################################################################
 
 def velocity_x(x,y,r,theta,test):
-    if test==1 or test==2 or test==5:
+    if test==1 or test==2 or test==5 or test==6:
        return 0
     if test==3:
        return -np.sin(theta)*vbc*(R2-r)/(R2-R1)
@@ -18,7 +18,7 @@ def velocity_x(x,y,r,theta,test):
        return -np.sin(theta)*vbc*r
 
 def velocity_y(x,y,r,theta,test):
-    if test==1 or test==2 or test==5:
+    if test==1 or test==2 or test==5 or test==6:
        return 0
     if test==3:
        return np.cos(theta)*vbc*(R2-r)/(R2-R1)
@@ -31,15 +31,19 @@ def pressure(x,y,r,theta,test):
        return rho0*g0*(R2-r)
     if test==5:
        return 0
+    if test==6:
+       return -2+rho0*g0*(R2-y)
 
 ###############################################################################
 
 def gx(x,y,g0):
     val=-x/np.sqrt(x*x+y*y)*g0
+    if test==6: val=0
     return val
 
 def gy(x,y,g0):
     val=-y/np.sqrt(x*x+y*y)*g0
+    if test==6: val=-g0
     return val
 
 ###############################################################################
@@ -107,8 +111,8 @@ if int(len(sys.argv) == 5):
    fs_method = int(sys.argv[3])
    trapezes  = int(sys.argv[4])
 else:
-   nelr      = 32
-   test      = 5 
+   nelr      = 16
+   test      = 6 
    fs_method = 1
    trapezes  = 0
 
@@ -154,6 +158,12 @@ if test==5:
    g0=1.
    vbc=0
    surface_bc=1
+
+if test==6:
+   rho0=1
+   g0=1
+   vbc=0
+   surface_bc=1   
 
 ###############################################################################
 
@@ -480,7 +490,7 @@ start = timing.time()
 rho=np.zeros(nel,dtype=np.float64)
 rhoQ1=np.zeros(4*nel,dtype=np.float64)
 
-if test==1 or test==2 or test==3 or test==4:
+if test==1 or test==2 or test==3 or test==4 or test==6:
    rho[:]=rho0
    rhoQ1[:]=rho0
 elif test==5:
@@ -1171,12 +1181,12 @@ if True:
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(x,y)' Format='ascii'> \n")
    for i in range(0,NV):
-       vtufile.write("%10f %10f %10f \n" %(u[i],v[i],0.))
+       vtufile.write("%.8e %.8e %.8e \n" %(u[i],v[i],0.))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(th)' Format='ascii'> \n")
    for i in range(0,NV):
-       vtufile.write("%13e %13e %13e \n" %(velocity_x(xV[i],yV[i],rV[i],theta[i],test),\
+       vtufile.write("%.8e %.8e %.8e \n" %(velocity_x(xV[i],yV[i],rV[i],theta[i],test),\
                                            velocity_y(xV[i],yV[i],rV[i],theta[i],test),0.))
    vtufile.write("</DataArray>\n")
    #--
