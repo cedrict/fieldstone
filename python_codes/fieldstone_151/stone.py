@@ -116,6 +116,8 @@ else:
    fs_method = 1
    trapezes  = 0
 
+normal_type=1
+
 R1=1. # inner radius
 R2=2. # outer radius
 
@@ -164,6 +166,8 @@ if test==6:
    g0=1
    vbc=0
    surface_bc=1   
+
+eps=1.e-3
 
 ###############################################################################
 
@@ -373,28 +377,93 @@ rP[:]=np.sqrt(xP[:]**2+yP[:]**2)
 print("building connectivity array (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
+# compute normal vectors
+###############################################################################
+start = timing.time()
+
+nx1=np.zeros(NV,dtype=np.float64) 
+ny1=np.zeros(NV,dtype=np.float64) 
+surfaceV=np.zeros(NV,dtype=bool) 
+
+#compute normal 1 type
+for i in range(0,NV):
+    if rV[i]/R2>1-eps:
+       surfaceV[i]=True
+       nx1[i]=np.cos(theta[i])
+       ny1[i]=np.sin(theta[i])
+
+#compute normal 2 type
+nx2=np.zeros(NV,dtype=np.float64) 
+ny2=np.zeros(NV,dtype=np.float64) 
+dNNNVdx=np.zeros(mV,dtype=np.float64) 
+dNNNVdy=np.zeros(mV,dtype=np.float64) 
+jcb=np.zeros((2,2),dtype=np.float64)
+
+for iel in range(0,nel):
+    if surfaceV[iconV[2,iel]]: # element is at top
+       for iq in [0,1,2]:
+           for jq in [0,1,2]:
+               rq=qcoords[iq]
+               sq=qcoords[jq]
+               weightq=qweights[iq]*qweights[jq]
+               NNNV=NNV(rq,sq)
+               dNNNVdr=dNNVdr(rq,sq)
+               dNNNVds=dNNVds(rq,sq)
+               jcb[0,0]=np.dot(dNNNVdr[:],xV[iconV[:,iel]])
+               jcb[0,1]=np.dot(dNNNVdr[:],yV[iconV[:,iel]])
+               jcb[1,0]=np.dot(dNNNVds[:],xV[iconV[:,iel]])
+               jcb[1,1]=np.dot(dNNNVds[:],yV[iconV[:,iel]])
+               jcob = np.linalg.det(jcb)
+               jcbi=np.linalg.inv(jcb)
+               for k in range(0,mV):
+                   dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                   dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+               #end for 
+               nx2[iconV[2,iel]]+=dNNNVdx[2]*jcob*weightq
+               ny2[iconV[2,iel]]+=dNNNVdy[2]*jcob*weightq
+               nx2[iconV[3,iel]]+=dNNNVdx[3]*jcob*weightq
+               ny2[iconV[3,iel]]+=dNNNVdy[3]*jcob*weightq
+               nx2[iconV[6,iel]]+=dNNNVdx[6]*jcob*weightq
+               ny2[iconV[6,iel]]+=dNNNVdy[6]*jcob*weightq
+
+           #end for
+       #end for
+    #end if
+#end for
+
+for i in range(0,NV):
+    if surfaceV[i]:
+       norm=np.sqrt(nx2[i]**2+ny2[i]**2)
+       nx2[i]/=norm
+       ny2[i]/=norm
+
+nx=np.zeros(NV,dtype=np.float64) 
+ny=np.zeros(NV,dtype=np.float64) 
+if normal_type==1:
+   nx[:]=nx1[:]
+   ny[:]=ny1[:]
+else:
+   nx[:]=nx2[:]
+   ny[:]=ny2[:]
+
+print("compute surface normals (%.3fs)" % (timing.time() - start))
+
+###############################################################################
 # define boundary conditions
 ###############################################################################
 start = timing.time()
 
-eps=1.e-3
 
 bc_fix=np.zeros(NfemV,dtype=bool)  
 bc_val=np.zeros(NfemV,dtype=np.float64) 
-nx=np.zeros(NV,dtype=np.float64) 
-ny=np.zeros(NV,dtype=np.float64) 
 
 for i in range(0,NV):
     #bottom boundary
     if rV[i]/R1<1+eps:
-       nx[i]=np.cos(theta[i])
-       ny[i]=np.sin(theta[i])
        bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = -np.sin(theta[i])*vbc
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] =  np.cos(theta[i])*vbc
     #surface boundary
     if rV[i]/R2>1-eps:
-       nx[i]=np.cos(theta[i])
-       ny[i]=np.sin(theta[i])
        if surface_bc==0:
           bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
@@ -1271,9 +1340,19 @@ if True:
        vtufile.write("%e \n" %e_rt[i])
    vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal1' Format='ascii'> \n")
    for i in range(0,NV):
-       vtufile.write("%10e %10e %10e \n" %(nx[i],ny[i],0))
+       vtufile.write("%.13e %.13e %.13e \n" %(nx1[i],ny1[i],0.))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal2' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%.13e %.13e %.13e \n" %(nx2[i],ny2[i],0.))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal diff' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%.13e %.13e %.13e \n" %(nx1[i]-nx2[i],ny1[i]-ny2[i],0.))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Int32' Name='flag_surface' Format='ascii'> \n")

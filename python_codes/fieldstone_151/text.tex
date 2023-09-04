@@ -384,6 +384,57 @@ Q: what is the meaning of the vector $\Lambda$ that we recover after solving the
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Computing the normal vector}
+
+In the case of an annulus, the normal to the surface is easily calculated. If a node $i$
+has an associated angle $\theta_i$, then its normal vector is $\vec{n}_i=(\cos\theta_i,\sin\theta_i)$.
+This simply translates as follows in the code:
+
+\begin{lstlisting}
+nx1=np.zeros(NV,dtype=np.float64) 
+ny1=np.zeros(NV,dtype=np.float64) 
+for i in range(0,NV):
+    if rV[i]/R2>1-eps:
+       nx1[i]=np.cos(theta[i])
+       ny1[i]=np.sin(theta[i])
+\end{lstlisting}
+
+However, as explained in \textcite{ensg82}, the normal vector at a node $i$ can be computed using the 
+basis function derivatives:
+\begin{eqnarray}
+n_{x,i} &=& \frac{1}{n_i}\int_\Omega \frac{\partial \bN_i}{\partial x} dV \nn\\
+n_{y,i} &=& \frac{1}{n_i}\int_\Omega \frac{\partial \bN_i}{\partial y} dV \nn
+\end{eqnarray}
+with 
+\[
+n_i = \left[
+\left(\int_\Omega \frac{\partial \bN_i}{\partial x} dV\right)^2 +
+\left(\int_\Omega \frac{\partial \bN_i}{\partial y} dV\right)^2 
+\right]^{1/2}
+\]
+This second method yields the nodal fields
+\begin{lstlisting}
+nx2=np.zeros(NV,dtype=np.float64) 
+ny2=np.zeros(NV,dtype=np.float64) 
+\end{lstlisting}
+and the {\python normal\_type} indicates which of the two normal vectors is to be 
+used.  
+
+Actually, when computing $\vec{n}_1$ and $\vec{n}_2$ on the outer surface of the annulus we find 
+not so surprisingly that the two vectors are nearly identical (the difference is basically machine precision):
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_151/images/n1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_151/images/n2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_151/images/n12}\\
+{\captionfont Mesh $8\times 96$ elements.}
+\end{center}
+
+In what follows models are run with $\vec{n}_1$.
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Various benchmarks/tests}
 
 In what follows we set $R_1=1$ and $R_2=2$. Unless otherwise specified we also set $\rho=1$
@@ -406,6 +457,7 @@ The following figures show the error convergence for both velocity and pressure.
 \end{center}
 
 We obtain a supra-convergence for velocity and quadratic convergence for pressure.
+This experiment serves as a reference for the next one.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{test \#2: the aquarium - free slip}

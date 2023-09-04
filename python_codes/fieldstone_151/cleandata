@@ -18,4 +18,4 @@ rm e_rr*fs3_T
 rm e_tt*fs3_T
 rm e_rt*fs3_T
 rm vrms_*
-
+rm areas
