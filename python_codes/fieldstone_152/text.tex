@@ -145,6 +145,73 @@ for iel in range(0,nel):
 From left to right: {\python nqperdim=2,3,4,5}.} 
 \end{center}
 
+Note that the {\python axisymmetric} flag controls whether the Stokes equations 
+are solved in plane strain or under the assumption that there is axisymmetry. 
+In the latter case the mesh is a demi-annulus in the $x>0$ half plane.
+
+Finally free slip boundary conditions have been implemented, but only at the 
+surface, and only with the method of Lagrange Multipliers (\stone~\ref{f151}
+taught us that it works as well as the other method).  
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Computing normals - axisymmetric case only}
+
+As seen in \stone~\ref{f151}, there are (at least) two ways to compute the normal at the
+nodes on the surface: $\vec{n}_1$ which is purely geometric and $\vec{n}_2$ which is based 
+on an integration of the basis function derivatives.
+We found that in the case of the annulus the two coincided to machine precision. 
+Let us now turn the half annulus. As an experiment, {\it all} nodes on the hull are flagged
+and the normal $\vec{n}_2$ is computed. 
+Since this normal is a function of basis functions and requires an integration 
+over elements, we can ask ourselves whether the mapping and/or the number
+of quadrature points influence the results of the normal calculations.
+The {\tt script\_normals} bash script runs the required models - note that the
+$Q_1$ mapping and nqperdim=2 have been removed from the loops.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/normals/nx}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/normals/ny}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/normals/nnx}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/normals/nny}\\
+{\captionfont components of the normal vector on the hull (first line),
+on the surface (second line). Mesh is 8x96.}
+\end{center}
+
+We find that these normal vector components do not seem to depend on the mapping nor quadrature,
+and that on the curved parts they match their geometrical counterparts $\vec{n}_1$.
+These normal vectors are shown here:
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_152/results/normals/normals}
+\end{center}
+
+Obviously, we need to look closer at the four nodes that belong to the surface and the cmb with $x=0$.
+On the one hand they belong the vertical boundary $x=0$ so their horizontal velocity component should be zero (axisymmetry).
+On the other hand they also belong to the curved boundaries. In the case of a near infinite resolution the 
+normal to the curved part would align with the vertical axis so that we would then have $v=0$. 
+In the end these 4 points should be prescribed no-slip boundary conditions.
+
+In our case here only the surface can be prescribed free slip boundary conditions and there are {\python nnt} points at the surface.
+Removing the 2 extremities, we have {\python nnt-2} Lagrange multipliers. Note that then how we compute normals is not relevant.
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_152/images/bcfix_u}
+\includegraphics[width=6cm]{python_codes/fieldstone_152/images/bcfix_v}\\
+{\captionfont horizontal and vertical boundary condition indicators.}
+\end{center}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{On the use of ASPECT}
+
+\[
+h = \frac{\sigma_{rr}}{|\vec{g}| \delta\rho}
+\]
+
+
+
+
 
 
 \newpage
@@ -276,25 +343,37 @@ Why the super-convergence for nqperdim=2 ?!?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{The aquarium test (exp=1) - plane strain}
 
-obtained with 8 elements in radial direction
+\begin{lstlisting}
+axisymmetric=False
+exp=1
+surface_free_slip=True
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/results/exp1/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/results/exp1/press}\\
+{\captionfont Obtained with Q4 mapping and nqperdim=3.}
+\end{center}
 
 \begin{center}
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/errv}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/errp}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/errp}\\
+{\captionfont Obtained with {\tt script\_errors}.}
 \end{center}
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1/sr1_R1}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1/sr2_R1}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1/sr3_R1}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1/sr1_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1/sr2_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1/sr3_R2}\\
-\end{center}
-
-\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/sr1_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/sr2_R2}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/sr3_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/src_R2}\\
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/qqq_R1}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/qqq_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/qqq_R2}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/vel_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1/err_R2}\\
+{\captionfont Obtained with 32x elements. Obtained with {\tt script\_sr}.}
 \end{center}
 
 
@@ -302,7 +381,13 @@ obtained with 8 elements in radial direction
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{The aquarium test (exp=1) - axisymmetric}
 
-obtained with 8 elements in radial direction
+\begin{lstlisting}
+axisymmetric=True
+exp=1
+surface_free_slip=True
+\end{lstlisting}
+
+
 
 \begin{center}
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/errv}
@@ -314,15 +399,15 @@ obtained with 8 elements in radial direction
 \includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr1_R1}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr2_R1}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr3_R1}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr1_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr2_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr3_R2}\\
-\end{center}
-
-
-\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr1_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr2_R2}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/sr3_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/src_R2}\\
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/qqq_R1}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/qqq_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/qqq_R2}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/vel_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/err_R2}\\
+{\captionfont Obtained with 32x elements. Obtained with {\tt script\_sr}.}
 \end{center}
 
 Conclusion: best/cheapest results obtained for nqperdim=4 and Q4
@@ -333,187 +418,69 @@ Conclusion: best/cheapest results obtained for nqperdim=4 and Q4
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{The blob test (exp=2) - plane strain}
 
-obtained with 8 elements in radial direction - {\tt script\_sr}
+The blob is prescribed as follows:
+\begin{lstlisting}
+val=rho0
+if x**2+(y-1.5)**2<0.05:
+   val-=0.01
+\end{lstlisting}
+
+In the light of previous results, we discard the Q1 mapping results 
+and those obtained with {\python nqperdim=2}.
+
+\begin{lstlisting}
+axisymmetric=False
+exp=2
+surface_free_slip=True
+\end{lstlisting}
+
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2/sr1_R1}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2/sr2_R1}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2/sr3_R1}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2/sr1_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2/sr2_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2/sr3_R2}\\
-\end{center}
-
-\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/sr1_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/sr2_R2}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/sr3_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/src_R2}\\
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/qqq_R1}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/qqq_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/qqq_R2}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/vel_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/err_R2}\\
 \end{center}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{The blob test (exp=2) - axisymmetric}
 
-obtained with 8 elements in radial direction
+\begin{lstlisting}
+axisymmetric=True
+exp=2
+surface_free_slip=True
+\end{lstlisting}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/sr1_R1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/sr2_R1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/sr3_R1}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/sr1_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/sr2_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/sr3_R2}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr1_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr2_R1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr3_R1}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr1_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr2_R2}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr3_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/src_R2}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/qqq_R1}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/qqq_R2}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/vel_R2}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/err_R2}\\
 \end{center}
 
-\begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/qqq_R1}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_08/qqq_R2}
-\end{center}
 
-\newpage
-
-obtained with 16 elements in radial direction, Q1 mapping data removed for readability
-
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/sr1_R1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/sr2_R1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/sr3_R1}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/sr1_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/sr2_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/sr3_R2}\\
-\end{center}
-
-\begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/qqq_R1}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_16/qqq_R2}
-\end{center}
-
-obvious conclusion is nqperdim=2 not fine.
-
-\newpage
-
-obtained with 24 elements in radial direction, Q1 mapping data and nqperdim=2 data removed for readability
-
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/sr1_R1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/sr2_R1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/sr3_R1}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/sr1_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/sr2_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/sr3_R2}\\
-\end{center}
-
-\begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/qqq_R1}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_24/qqq_R2}
-\end{center}
-
-\newpage
-
-obtained with 32 elements in radial direction, Q1 mapping data and nqperdim=2 data removed for readability
-point size decreased.
-
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/sr1_R1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/sr2_R1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/sr3_R1}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/sr1_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/sr2_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/sr3_R2}\\
-\end{center}
-
-\begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/qqq_R1}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/nelr_32/qqq_R2}
-\end{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr_R2_comparison}
 
 Run with ASPECT and plot against these
 
-\newpage
-
-
-\begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/rho}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/vel}\\
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/press}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr}\\
-{\captionfont nelr=32, nqperdim=3, Q4 mapping.} 
-\end{center}
-
-
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{The blob test (exp=2) - axisymmetric + free slip}
-
-obtained with 8 elements in radial direction
-
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/sr1_R1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/sr2_R1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/sr3_R1}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/sr1_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/sr2_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/sr3_R2}\\
-\end{center}
-
-\begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/qqq_R1}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/qqq_R2}
-\end{center}
-
-\begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/vt_R2}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_08/err_R2}
-\end{center}
-
-Run with ASPECT and plot against these
-
-
-
-
-
-\newpage
-obtained with 32 elements in radial direction, Q1 mapping data and nqperdim=2 data removed for readability
-point size decreased.
-
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/sr1_R1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/sr2_R1}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/sr3_R1}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/sr1_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/sr2_R2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/sr3_R2}\\
-\end{center}
-
-\begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/qqq_R1}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/qqq_R2}
-\end{center}
-
-\begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/vt_R2}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric_fs/nelr_32/err_R2}
-\end{center}
 
 
 THERE REMAINS a pb: strain rate far away from blob should go to zero. It was the case with no-slip!
-
-look at olga stuff about normals and jacobian?1
-
-Run with ASPECT and plot against these
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

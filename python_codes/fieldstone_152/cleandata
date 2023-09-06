@@ -11,6 +11,9 @@ rm vel_R*
 rm sr1_*
 rm sr2_*
 rm sr3_*
+rm src_*
 rm qqq_*
 rm opla
+rm normal2*
+rm err_R2*
 

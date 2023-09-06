@@ -14,8 +14,9 @@ from scipy.sparse import lil_matrix
 # exp=1: aquarium
 # exp=2: blob
 
-axisymmetric=True
+axisymmetric=False
 exp=2
+surface_free_slip=True
 
 ###############################################################################
 
@@ -353,13 +354,14 @@ if int(len(sys.argv) == 5):
 else:
    nelr = 64 # Q1 cells!
    visu = 1
-   nqperdim=3
+   nqperdim=5
    mapping='Q4' 
+
+normal_type=2
 
 R1=1.
 R2=2.
 
-surface_free_slip=True
 
 if exp==0:
    rho0=0.
@@ -606,18 +608,13 @@ NfemV=NV*ndofV   # Total number of degrees of V freedom
 NfemP=NP*ndofP   # Total number of degrees of P freedom
 Nfem=NfemV+NfemP # total number of dofs
 
-if surface_free_slip:
-   Nlm=nnt
-   Nfem+=Nlm
-else:
-   Nlm=0
+
 
 print('nelr=',nelr)
 print('nelt=',nelt)
 print('nel=',nel)
 print('NfemV=',NfemV)
 print('NfemP=',NfemP)
-print('Nlm=',Nlm)
 print('Nfem=',Nfem)
 print('nqel=',nqel)
 print('mapping=',mapping)
@@ -796,22 +793,127 @@ if mapping=='Q4':
 print("define mapping (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
+# find out nodes on hull
+###############################################################################
+
+hull=np.zeros(NV,dtype=bool) 
+
+for i in range(0,NV):
+    if r[i]/R1<1+eps:
+       hull[i]=True
+    if r[i]/R2>1-eps:
+       hull[i]=True
+    if axisymmetric and xV[i]<eps:
+       hull[i]=True
+
+
+if surface_free_slip:
+   #Nlm=np.count_nonzero(hull)
+   if axisymmetric:
+      Nlm=nnt-2
+   else:
+      Nlm=nnt
+   Nfem+=Nlm
+else:
+   Nlm=0
+
+print('Nlm=',Nlm)
+
+###############################################################################
 # compute normal vectors
 ###############################################################################
 start = timing.time()
 
-nx=np.zeros(NV,dtype=np.float64) 
-ny=np.zeros(NV,dtype=np.float64) 
+nx1=np.zeros(NV,dtype=np.float64) 
+ny1=np.zeros(NV,dtype=np.float64) 
 surfaceV=np.zeros(NV,dtype=bool) 
+surface_element=np.zeros(nel,dtype=bool) 
 
+#compute normal 1 type
 for i in range(0,NV):
+    if axisymmetric and xV[i]<eps:
+       nx1[i]=-1
+       ny1[i]=0
     if r[i]/R1<1+eps:
-       nx[i]=-np.cos(theta[i])
-       ny[i]=-np.sin(theta[i])
+       nx1[i]=-np.cos(theta[i])
+       ny1[i]=-np.sin(theta[i])
     if r[i]/R2>1-eps:
        surfaceV[i]=True
-       nx[i]=np.cos(theta[i])
-       ny[i]=np.sin(theta[i])
+       nx1[i]=np.cos(theta[i])
+       ny1[i]=np.sin(theta[i])
+
+for iel in range(0,nel):
+    if surfaceV[iconV[2,iel]]:
+       surface_element[iel]=True 
+
+
+#compute normal 2 type
+nx2=np.zeros(NV,dtype=np.float64) 
+ny2=np.zeros(NV,dtype=np.float64) 
+dNNNVdx=np.zeros(mV,dtype=np.float64) 
+dNNNVdy=np.zeros(mV,dtype=np.float64) 
+jcb=np.zeros((2,2),dtype=np.float64)
+for iel in range(0,nel):
+    if True: #hull[iconV[0,iel]] or hull[iconV[2,iel]]: 
+       for kq in range(0,nqel):
+           rq=qcoords_r[kq]
+           sq=qcoords_s[kq]
+           weightq=qweights[kq]
+           #compute jacobian matrix
+           dNNNVdr=dNNNdr(rq,sq,mapping)
+           dNNNVds=dNNNds(rq,sq,mapping)
+           jcb[0,0]=np.dot(dNNNVdr[:],xmapping[:,iel])
+           jcb[0,1]=np.dot(dNNNVdr[:],ymapping[:,iel])
+           jcb[1,0]=np.dot(dNNNVds[:],xmapping[:,iel])
+           jcb[1,1]=np.dot(dNNNVds[:],ymapping[:,iel])
+           jcob=np.linalg.det(jcb)
+           jcbi=np.linalg.inv(jcb)
+           #basis functions
+           dNNNVdr=dNNNdr(rq,sq,'Q2')
+           dNNNVds=dNNNds(rq,sq,'Q2')
+           # compute dNdx & dNdy
+           for k in range(0,mV):
+               dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+               dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+           #end for 
+           nx2[iconV[0,iel]]+=dNNNVdx[0]*jcob*weightq
+           ny2[iconV[0,iel]]+=dNNNVdy[0]*jcob*weightq
+           nx2[iconV[1,iel]]+=dNNNVdx[1]*jcob*weightq
+           ny2[iconV[1,iel]]+=dNNNVdy[1]*jcob*weightq
+           nx2[iconV[2,iel]]+=dNNNVdx[2]*jcob*weightq
+           ny2[iconV[2,iel]]+=dNNNVdy[2]*jcob*weightq
+           nx2[iconV[3,iel]]+=dNNNVdx[3]*jcob*weightq
+           ny2[iconV[3,iel]]+=dNNNVdy[3]*jcob*weightq
+           nx2[iconV[4,iel]]+=dNNNVdx[4]*jcob*weightq
+           ny2[iconV[4,iel]]+=dNNNVdy[4]*jcob*weightq
+           nx2[iconV[5,iel]]+=dNNNVdx[5]*jcob*weightq
+           ny2[iconV[5,iel]]+=dNNNVdy[5]*jcob*weightq
+           nx2[iconV[6,iel]]+=dNNNVdx[6]*jcob*weightq
+           ny2[iconV[6,iel]]+=dNNNVdy[6]*jcob*weightq
+           nx2[iconV[7,iel]]+=dNNNVdx[7]*jcob*weightq
+           ny2[iconV[7,iel]]+=dNNNVdy[7]*jcob*weightq
+       #end for
+    #end if
+#end for
+
+for i in range(0,NV):
+    if hull[i]:
+       norm=np.sqrt(nx2[i]**2+ny2[i]**2)
+       nx2[i]/=norm
+       ny2[i]/=norm
+
+np.savetxt('normal2.ascii',np.array([xV[hull],yV[hull],nx2[hull],ny2[hull]]).T)
+np.savetxt('normal2a.ascii',np.array([xV[surfaceV],yV[surfaceV],\
+                                      nx2[surfaceV],ny2[surfaceV],theta[surfaceV]]).T)
+
+nx=np.zeros(NV,dtype=np.float64) 
+ny=np.zeros(NV,dtype=np.float64) 
+if normal_type==1:
+   nx[:]=nx1[:]
+   ny[:]=ny1[:]
+else:
+   nx[:]=nx2[:]
+   ny[:]=ny2[:]
 
 print("compute surface normals (%.3fs)" % (timing.time() - start))
 
@@ -831,8 +933,11 @@ for i in range(0,NV):
        bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = velocity_x(xV[i],yV[i],R1,R2,kk)
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i],R1,R2,kk)
 
+    #vertical wall x=0
     if axisymmetric and xV[i]<eps:
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0
+       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0 #u=0
+       if r[i]>R2-eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 #also v=0 for 2 pts
 
 print("defining boundary conditions (%.3fs)" % (timing.time() - start))
 
@@ -1027,17 +1132,30 @@ if surface_free_slip:
 
    start = timing.time()
 
-   cc=0
-   counter=NfemV+NfemP
-   for i in range(0,NV):
-       if surfaceV[i]:
-          # we need nx[i]*u[i]+ny[i]*v[i]=0
-          A_sparse[counter,2*i  ]=nx[i]
-          A_sparse[counter,2*i+1]=ny[i]
-          A_sparse[2*i  ,counter]=nx[i]
-          A_sparse[2*i+1,counter]=ny[i]
-          counter+=1
-          cc+=1
+   if axisymmetric:
+      cc=0
+      counter=NfemV+NfemP
+      for i in range(0,NV):
+          if surfaceV[i] and xV[i]>eps:
+             # we need nx[i]*u[i]+ny[i]*v[i]=0
+             A_sparse[counter,2*i  ]=nx[i]
+             A_sparse[counter,2*i+1]=ny[i]
+             A_sparse[2*i  ,counter]=nx[i]
+             A_sparse[2*i+1,counter]=ny[i]
+             counter+=1
+             cc+=1
+   else:
+      cc=0
+      counter=NfemV+NfemP
+      for i in range(0,NV):
+          if surfaceV[i]:
+             # we need nx[i]*u[i]+ny[i]*v[i]=0
+             A_sparse[counter,2*i  ]=nx[i]
+             A_sparse[counter,2*i+1]=ny[i]
+             A_sparse[2*i  ,counter]=nx[i]
+             A_sparse[2*i+1,counter]=ny[i]
+             counter+=1
+             cc+=1
 
    print(cc,Nlm)
 
@@ -1087,17 +1205,22 @@ print("reshape solution (%.3fs)" % (timing.time() - start))
 # compute strain rate - center to nodes - method 1
 ###############################################################################
 
-count= np.zeros(NV,dtype=np.int32)  
-Lxx1 = np.zeros(NV,dtype=np.float64)  
-Lxy1 = np.zeros(NV,dtype=np.float64)  
-Lyx1 = np.zeros(NV,dtype=np.float64)  
-Lyy1 = np.zeros(NV,dtype=np.float64)  
+count=np.zeros(NV,dtype=np.int32)  
+Lxx1=np.zeros(NV,dtype=np.float64)  
+Lxy1=np.zeros(NV,dtype=np.float64)  
+Lyx1=np.zeros(NV,dtype=np.float64)  
+Lyy1=np.zeros(NV,dtype=np.float64)  
+exxc=np.zeros(nel,dtype=np.float64)
+eyyc=np.zeros(nel,dtype=np.float64)
+exyc=np.zeros(nel,dtype=np.float64)
+xc=np.zeros(nel,dtype=np.float64)
+yc=np.zeros(nel,dtype=np.float64)
+thetac=np.zeros(nel,dtype=np.float64)
 
 for iel in range(0,nel):
 
-    rq=qcoords_r[kq]
-    sq=qcoords_s[kq]
-    weightq=qweights[kq]
+    rq=0
+    sq=0
 
     #compute coords of quadrature points
     NNNV=NNN(rq,sq,mapping)
@@ -1123,16 +1246,19 @@ for iel in range(0,nel):
         dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
     #end for
 
-    L_xx=0.
-    L_xy=0.
-    L_yx=0.
-    L_yy=0.
-    for k in range(0,mV):
-        L_xx+=dNNNVdx[k]*u[iconV[k,iel]]
-        L_xy+=dNNNVdx[k]*v[iconV[k,iel]]
-        L_yx+=dNNNVdy[k]*u[iconV[k,iel]]
-        L_yy+=dNNNVdy[k]*v[iconV[k,iel]]
-    #end for
+    L_xx=np.dot(dNNNVdx[:],u[iconV[:,iel]])
+    L_xy=np.dot(dNNNVdx[:],v[iconV[:,iel]])
+    L_yx=np.dot(dNNNVdy[:],u[iconV[:,iel]])
+    L_yy=np.dot(dNNNVdy[:],v[iconV[:,iel]])
+
+    xc[iel]=xq
+    yc[iel]=yq
+    exxc[iel]=L_xx
+    eyyc[iel]=L_yy
+    exxc[iel]=(L_xy+L_yx)/2
+    thetac[iel]=math.atan2(yq,xq)
+    if (not axisymmetric) and thetac[iel]<0.: thetac[iel]+=2.*math.pi
+
     for i in range(0,mV):
         inode=iconV[i,iel]
         Lxx1[inode]+=L_xx
@@ -1161,6 +1287,7 @@ exy1 = np.zeros(NV,dtype=np.float64)
 exx1[:]=Lxx1[:]
 eyy1[:]=Lyy1[:]
 exy1[:]=0.5*(Lxy1[:]+Lyx1[:])
+
 
 ###############################################################################
 # compute strain rate - corners to nodes - method 2
@@ -1206,17 +1333,12 @@ for iel in range(0,nel):
             dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
             dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
         #end for 
-	
-        L_xx=0.
-        L_xy=0.
-        L_yx=0.
-        L_yy=0.
-        for k in range(0,mV):
-            L_xx+=dNNNVdx[k]*u[iconV[k,iel]]
-            L_xy+=dNNNVdx[k]*v[iconV[k,iel]]
-            L_yx+=dNNNVdy[k]*u[iconV[k,iel]]
-            L_yy+=dNNNVdy[k]*v[iconV[k,iel]]
-        #end for
+
+        L_xx=np.dot(dNNNVdx[:],u[iconV[:,iel]])
+        L_xy=np.dot(dNNNVdx[:],v[iconV[:,iel]])
+        L_yx=np.dot(dNNNVdy[:],u[iconV[:,iel]])
+        L_yy=np.dot(dNNNVdy[:],v[iconV[:,iel]])
+
         Lxx2[inode]+=L_xx
         Lxy2[inode]+=L_xy
         Lyx2[inode]+=L_yx
@@ -1402,19 +1524,41 @@ print("     -> v_err (m,M) %.10e %.10e | nelr= %d" %(np.min(v_err),np.max(v_err)
 print("     -> p_err (m,M) %.10e %.10e | nelr= %d" %(np.min(p_err),np.max(p_err),nelr))
 
 ###############################################################################
-# export pressure at both surfaces
+# 
+###############################################################################
+
+#dyn_topo=np.zeros(NV,dtype=np.float64)
+#for i in range(0,NV):
+#    if surface_node[i] and rho_nodal[i]>0:
+#       dyn_topo[i]= -(tau_rr[i]-q[i])/((rho_nodal[i]-density_above)*g0) 
+#    if cmb_node[i]:
+#       dyn_topo[i]= -(tau_rr[i]-q[i])/((density_below-rho_nodal[i])*g0) 
+
+#print("compute dynamic topography: %.3f s" % (timing.time() - start))
+
+
+
+
+
+###############################################################################
+# export fields at both surfaces
 ###############################################################################
 start = timing.time()
 
 sr1=np.zeros(NV,dtype=np.float64)  
 sr2=np.zeros(NV,dtype=np.float64)  
 sr3=np.zeros(NV,dtype=np.float64)  
+src=np.zeros(nel,dtype=np.float64)  
 sr1[:]=np.sqrt(0.5*(exx1[:]**2+eyy1[:]**2)+exy1[:]**2)
 sr2[:]=np.sqrt(0.5*(exx2[:]**2+eyy2[:]**2)+exy2[:]**2)
 sr3[:]=np.sqrt(0.5*(exx3[:]**2+eyy3[:]**2)+exy3[:]**2)
+src[:]=np.sqrt(0.5*(exxc[:]**2+eyyc[:]**2)+exyc[:]**2)
 
 vel=np.zeros(NV,dtype=np.float64)  
 vel[:]=np.sqrt(u[:]**2+v[:]**2)
+
+np.savetxt('src.ascii',np.array([xc,yc,exxc,eyyc,exyc,src]).T)
+np.savetxt('src_R2.ascii',np.array([xc[surface_element],yc[surface_element],src[surface_element],thetac[surface_element]]).T)
 
 np.savetxt('qqq_R1.ascii',np.array([xV[0:nnt],yV[0:nnt],q[0:nnt],theta[0:nnt]]).T)
 np.savetxt('sr1_R1.ascii',np.array([xV[0:nnt],yV[0:nnt],sr1[0:nnt],theta[0:nnt]]).T)
@@ -1521,11 +1665,11 @@ errexx3=np.sqrt(errexx3) ; erreyy3=np.sqrt(erreyy3) ; errexy3=np.sqrt(errexy3)
 
 vrms=np.sqrt(vrms/np.pi/(R2**2-R1**2))
 
-print('     -> nelr= %6d ; vrms= %.10e' %(nelr,vrms))
-print("     -> nelr= %6d ; errv= %.10e ; errp= %.10e ; errq= %.10e" %(nelr,errv,errp,errq))
-print("     -> nelr= %6d ; errexx1= %.10e ; erreyy1= %.10e ; errexy1= %.10e" %(nelr,errexx1,erreyy1,errexy1))
-print("     -> nelr= %6d ; errexx2= %.10e ; erreyy2= %.10e ; errexy2= %.10e" %(nelr,errexx2,erreyy2,errexy2))
-print("     -> nelr= %6d ; errexx3= %.10e ; erreyy3= %.10e ; errexy3= %.10e" %(nelr,errexx3,erreyy3,errexy3))
+print('     -> nelr= %6d ; vrms= %.14e' %(nelr,vrms))
+print("     -> nelr= %6d ; errv= %.14e ; errp= %.14e ; errq= %.14e" %(nelr,errv,errp,errq))
+print("     -> nelr= %6d ; errexx1= %.14e ; erreyy1= %.14e ; errexy1= %.14e" %(nelr,errexx1,erreyy1,errexy1))
+print("     -> nelr= %6d ; errexx2= %.14e ; erreyy2= %.14e ; errexy2= %.14e" %(nelr,errexx2,erreyy2,errexy2))
+print("     -> nelr= %6d ; errexx3= %.14e ; erreyy3= %.14e ; errexy3= %.14e" %(nelr,errexx3,erreyy3,errexy3))
 
 print("compute errors (%.3fs)" % (timing.time() - start))
 
@@ -1633,15 +1777,51 @@ if visu==1:
    #####
    vtufile.write("<PointData Scalars='scalars'>\n")
    #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(x,y)' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
    for i in range(0,NV):
        vtufile.write("%.13e %.13e %.13e \n" %(u[i],v[i],0.))
    vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal1' Format='ascii'> \n")
    for i in range(0,NV):
-       vtufile.write("%.13e %.13e %.13e \n" %(nx[i],ny[i],0.))
+       vtufile.write("%.13e %.13e %.13e \n" %(nx1[i],ny1[i],0.))
    vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal2' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%.13e %.13e %.13e \n" %(nx2[i],ny2[i],0.))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal diff' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%.13e %.13e %.13e \n" %(nx1[i]-nx2[i],ny1[i]-ny2[i],0.))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='hull' Format='ascii'> \n")
+   for i in range(0,NV):
+       if hull[i]:
+          vtufile.write("%e \n" % 1)
+       else:
+          vtufile.write("%e \n" % 0)
+   vtufile.write("</DataArray>\n")
+
+   #--
+   vtufile.write("<DataArray type='Float32' Name='bc_fix(u)' Format='ascii'> \n")
+   for i in range(0,NV):
+       if bc_fix[2*i]:
+          vtufile.write("%e \n" % 1)
+       else:
+          vtufile.write("%e \n" % 0)
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='bc_fix(v)' Format='ascii'> \n")
+   for i in range(0,NV):
+       if bc_fix[2*i+1]:
+          vtufile.write("%e \n" % 1)
+       else:
+          vtufile.write("%e \n" % 0)
+   vtufile.write("</DataArray>\n")
+
    #--
    vtufile.write("</PointData>\n")
    #####
@@ -1702,7 +1882,7 @@ if visu==1:
        vtufile.write("%10f %10f %10f \n" %(gx(xV[i],yV[i],g0),gy(xV[i],yV[i],g0),0.))
    vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(x,y)' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
    for i in range(0,NV):
        vtufile.write("%.13e %.13e %.13e \n" %(u[i],v[i],0.))
    vtufile.write("</DataArray>\n")
