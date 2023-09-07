@@ -14,7 +14,7 @@ from scipy.sparse import lil_matrix
 # exp=1: aquarium
 # exp=2: blob
 
-axisymmetric=False
+axisymmetric=True
 exp=2
 surface_free_slip=True
 
@@ -1191,7 +1191,7 @@ if surface_free_slip:
    l=sol[NfemV+NfemP:Nfem]
    print("     -> l (m,M) %.4f %.4f " %(np.min(l),np.max(l)))
 
-#np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 
 vr= np.cos(theta)*u+np.sin(theta)*v
 vt=-np.sin(theta)*u+np.cos(theta)*v
@@ -1369,15 +1369,38 @@ exx2[:]=Lxx2[:]
 eyy2[:]=Lyy2[:]
 exy2[:]=0.5*(Lxy2[:]+Lyx2[:])
 
-e_rr=exx2*np.sin(theta)**2+2*exy2*np.sin(theta)*np.cos(theta)+eyy2*np.cos(theta)**2
-e_tt=exx2*np.cos(theta)**2-2*exy2*np.sin(theta)*np.cos(theta)+eyy2*np.sin(theta)**2
-e_rt=(exx2-eyy2)*np.sin(theta)*np.cos(theta)+exy2*(-np.sin(theta)**2+np.cos(theta)**2)
+
+
+print("compute vel gradient meth-2 (%.3fs)" % (timing.time() - start))
+
+###############################################################################
+# convert strain rate tensor to spherical coordinates
+# so far theta starts from the x-axis but in spherical coordinates 
+# theta must start from the north pole and go downward so we create a 
+# theta_sph coordinate
+# Note that there is a pb when we run the model in plane strain. In that 
+# case I set the err,ert,ett to zero for x<0
+###############################################################################
+
+theta_sph = np.zeros(NV,dtype=np.float64)  
+e_rr = np.zeros(NV,dtype=np.float64)  
+e_tt = np.zeros(NV,dtype=np.float64)  
+e_rt = np.zeros(NV,dtype=np.float64)  
+
+for i in range(0,NV):
+    theta_sph[i]=np.pi/2-math.atan(yV[i]/abs(xV[i]))
+    if xV[i]>=0:
+       e_rr[i]=exx2[i]*np.sin(theta_sph[i])**2+2*exy2[i]*np.sin(theta_sph[i])*np.cos(theta_sph[i])+eyy2[i]*np.cos(theta_sph[i])**2
+       e_tt[i]=exx2[i]*np.cos(theta_sph[i])**2-2*exy2[i]*np.sin(theta_sph[i])*np.cos(theta_sph[i])+eyy2[i]*np.sin(theta_sph[i])**2
+       e_rt[i]=(exx2[i]-eyy2[i])*np.sin(theta_sph[i])*np.cos(theta_sph[i])+exy2[i]*(-np.sin(theta_sph[i])**2+np.cos(theta_sph[i])**2)
+
+#e_rr=exx2*np.sin(theta_sph)**2+2*exy2*np.sin(theta_sph)*np.cos(theta_sph)+eyy2*np.cos(theta_sph)**2
+#e_tt=exx2*np.cos(theta_sph)**2-2*exy2*np.sin(theta_sph)*np.cos(theta_sph)+eyy2*np.sin(theta_sph)**2
+#e_rt=(exx2-eyy2)*np.sin(theta_sph)*np.cos(theta_sph)+exy2*(-np.sin(theta_sph)**2+np.cos(theta_sph)**2)
 
 print("     -> e_rr (m,M) %e %e | nel= %d" %(np.min(e_rr),np.max(e_rr),nel))
 print("     -> e_tt (m,M) %e %e | nel= %d" %(np.min(e_tt),np.max(e_tt),nel))
 print("     -> e_rt (m,M) %e %e | nel= %d" %(np.min(e_rt),np.max(e_rt),nel))
-
-print("compute vel gradient meth-2 (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
 start = timing.time()
@@ -1504,6 +1527,8 @@ p-=poffset
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 print("     -> q (m,M) %.4f %.4f " %(np.min(q),np.max(q)))
 
+np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+
 print("normalise pressure (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
@@ -1524,21 +1549,18 @@ print("     -> v_err (m,M) %.10e %.10e | nelr= %d" %(np.min(v_err),np.max(v_err)
 print("     -> p_err (m,M) %.10e %.10e | nelr= %d" %(np.min(p_err),np.max(p_err),nelr))
 
 ###############################################################################
-# 
+# since I have zeroed the the spherical components of the strain rate for x<0
+# then I also zero the dynamic topography
 ###############################################################################
+start = timing.time()
 
-#dyn_topo=np.zeros(NV,dtype=np.float64)
-#for i in range(0,NV):
-#    if surface_node[i] and rho_nodal[i]>0:
-#       dyn_topo[i]= -(tau_rr[i]-q[i])/((rho_nodal[i]-density_above)*g0) 
-#    if cmb_node[i]:
-#       dyn_topo[i]= -(tau_rr[i]-q[i])/((density_below-rho_nodal[i])*g0) 
+dyn_topo=np.zeros(NV,dtype=np.float64)
 
-#print("compute dynamic topography: %.3f s" % (timing.time() - start))
+for i in range(0,NV):
+    if surfaceV[i] and xV[i]>=0:
+       dyn_topo[i]= -(2*viscosity*e_rr[i]-q[i])/(rho0*g0) 
 
-
-
-
+print("compute dynamic topography: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 # export fields at both surfaces
@@ -1572,6 +1594,8 @@ np.savetxt('sr2_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],sr2[NV-nnt:],theta[N
 np.savetxt('sr3_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],sr3[NV-nnt:],theta[NV-nnt:]]).T)
 np.savetxt('vel_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],vel[NV-nnt:],theta[NV-nnt:],vr[NV-nnt:],vt[NV-nnt:]]).T)
 np.savetxt('err_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],e_rr[NV-nnt:],theta[NV-nnt:]]).T)
+np.savetxt('eyy_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],eyy2[NV-nnt:],theta[NV-nnt:]]).T)
+np.savetxt('d_t_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],dyn_topo[NV-nnt:],theta[NV-nnt:]]).T)
 
 print("export p&q on R1,R2 (%.3fs)" % (timing.time() - start))
 
@@ -1907,6 +1931,11 @@ if visu==1:
        vtufile.write("%10f \n" %r[i])
    vtufile.write("</DataArray>\n")
    #--
+   vtufile.write("<DataArray type='Float32' Name='theta(sph.coords.)' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10f \n" %theta_sph[i])
+   vtufile.write("</DataArray>\n")
+   #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='theta' Format='ascii'> \n")
    for i in range(0,NV):
        vtufile.write("%10f \n" %theta[i])
@@ -1997,6 +2026,23 @@ if visu==1:
    for i in range(0,NV):
        vtufile.write("%10f \n" %exy3[i])
    vtufile.write("</DataArray>\n")
+
+   #--
+   vtufile.write("<DataArray type='Float32' Name='err' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10f \n" %e_rr[i])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='ett' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10f \n" %e_tt[i])
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='ert' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10f \n" %e_rt[i])
+   vtufile.write("</DataArray>\n")
+
    #--
    vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
    for i in range(0,NV):

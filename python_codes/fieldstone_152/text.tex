@@ -214,6 +214,274 @@ h = \frac{\sigma_{rr}}{|\vec{g}| \delta\rho}
 
 
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{From Cartesian to Spherical coordinates}
+
+We have
+\begin{eqnarray}
+{\bm T}_{\tiny Sph}&=&
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{r\phi} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
+T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
+\end{array}
+\right) \nn\\
+&=&
+\left(
+\begin{array}{ccc}
+\sin\theta \cos\phi & \sin\theta \sin\phi & \cos\theta \\
+\cos\theta \cos\phi & \cos\theta \sin\phi & -\sin\theta \\
+-\sin\phi & \cos\phi & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\sin\theta\cos\phi & \cos\theta\cos\phi & -\sin\phi \\
+\sin\theta\sin\phi & \cos\theta\sin\phi & \cos\phi \\
+\cos\theta & -\sin\theta & 0
+\end{array}
+\right) 
+\nn\\
+{\bm T}_{\tiny Cart} &=&
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right) \nn\\
+&=&
+\left(
+\begin{array}{ccc}
+\sin\theta\cos\phi & \cos\theta\cos\phi & -\sin\phi \\
+\sin\theta\sin\phi & \cos\theta\sin\phi & \cos\phi \\
+\cos\theta & -\sin\theta & 0
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{r\phi} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
+T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\sin\theta \cos\phi & \sin\theta \sin\phi & \cos\theta \\
+\cos\theta \cos\phi & \cos\theta \sin\phi & -\sin\theta \\
+-\sin\phi & \cos\phi & 0 
+\end{array}
+\right) \nonumber
+\end{eqnarray}
+In our case, calculations take place in the 
+$(x,z)$-plane so we have $\phi=0$ and the equation above 
+becomes
+\[
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{r\phi} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
+T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+\sin\theta  & 0 & \cos\theta \\
+\cos\theta  & 0 & -\sin\theta \\
+0 & 1 & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\sin\theta & \cos\theta & 0 \\
+0 & 0 & 1 \\
+\cos\theta & -\sin\theta & 0
+\end{array}
+\right)
+\]
+We define $c_\theta=\cos\theta$, $s_\theta=\sin\theta$ so that
+\[
+\left(
+\begin{array}{ccc}
+T_{rr}       & T_{r\theta}      & T_{r\phi} \\
+T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
+T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+s_\theta  & 0 & c_\theta \\
+c_\theta  & 0 & -s_\theta \\
+0 & 1 & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{xx} & T_{xy} & T_{xz} \\
+T_{yx} & T_{yy} & T_{yz} \\
+T_{zx} & T_{zy} & T_{zz} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+s_\theta & c_\theta & 0 \\
+0 & 0 & 1 \\
+c_\theta & -s_\theta & 0
+\end{array}
+\right)
+\]
+As we have seen above we have 
+\[
+\dot{\bm\varepsilon}_{\tiny Cart}
+=
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{xx} & 0 & \dot{\varepsilon}_{xz} \\
+0 & \dot{\varepsilon}_{yy}  & 0 \\
+\dot{\varepsilon}_{xz} & 0 & \dot\varepsilon_{zz}
+\end{array}
+\right)
+\]
+so 
+\begin{eqnarray}
+\dot{\bm \varepsilon}_{\tiny Sph}=
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{rr}       & \dot\varepsilon_{r\theta}      & \dot\varepsilon_{r\phi} \\
+\dot\varepsilon_{\theta r} & \dot\varepsilon_{\theta\theta} & \dot\varepsilon_{\theta\phi} \\
+\dot\varepsilon_{\phi r}   & \dot\varepsilon_{\phi \theta}  & \dot\varepsilon_{\phi\phi}
+\end{array}
+\right)
+&=&
+\left(
+\begin{array}{ccc}
+s_\theta  & 0 & c_\theta \\
+c_\theta  & 0 & -s_\theta \\
+0 & 1 & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{xx} & 0 & \dot{\varepsilon}_{xz} \\
+0 & \dot{\varepsilon}_{yy}  & 0 \\
+\dot{\varepsilon}_{xz} & 0 & \dot\varepsilon_{zz}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+s_\theta & c_\theta & 0 \\
+0 & 0 & 1 \\
+c_\theta & -s_\theta & 0
+\end{array}
+\right)  \nonumber\\
+&=&
+\left(
+\begin{array}{ccc}
+s_\theta  & 0 & c_\theta \\
+c_\theta  & 0 & -s_\theta \\
+0 & 1 & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{xx} s_\theta + 
+\dot\varepsilon_{xz} c_\theta  & 
+\dot\varepsilon_{xx} c_\theta - 
+\dot\varepsilon_{xz} s_\theta  &
+0 \\
+0 & 0 & \dot{\varepsilon}_{yy}  
+\\
+\dot\varepsilon_{xz} s_\theta + 
+\dot\varepsilon_{zz} c_\theta  &
+\dot\varepsilon_{xz} c_\theta - 
+\dot\varepsilon_{zz} s_\theta  &
+0 
+\end{array}
+\right)  \nonumber\\
+&=&
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{xx} s_\theta^2 + 
+2 \dot\varepsilon_{xz} c_\theta  s_\theta +
+\dot\varepsilon_{zz} c_\theta ^2  
+& 
+\dot\varepsilon_{xx} c_\theta s_\theta - 
+\dot\varepsilon_{xz} s_\theta^2  +
+\dot\varepsilon_{xz} c_\theta^2 - 
+\dot\varepsilon_{zz} s_\theta c_\theta 
+& 0 \\ \\
+\dot\varepsilon_{xx} s_\theta c_\theta+ 
+\dot\varepsilon_{xz} c_\theta^2  -
+\dot\varepsilon_{xz} s_\theta^2 -
+\dot\varepsilon_{zz} c_\theta s_\theta 
+&
+\dot\varepsilon_{xx} c_\theta^2 - 
+2\dot\varepsilon_{xz} s_\theta c_\theta +
+\dot\varepsilon_{zz} s_\theta^2  
+& 0 
+\\ \\
+0 & 0 & \dot{\varepsilon}_{yy} 
+\end{array}
+\right)  \nonumber
+\end{eqnarray}
+We can easily verify that the trace of this tensor is zero.
+
+The deviatoric stress is given by 
+${\bm \tau}=2\eta \dot{\bm \varepsilon}$,
+the traction at the surface  by 
+$\vec{t}={\bm \tau}\cdot \vec{n}$ (
+with $\vec{n}=\vec{e}_r$ at the surface in Spherical coordinates) and the normal to the surface component of this traction 
+is given by
+\[
+t_r = \vec{t}\cdot \vec{n} = ({\bm \tau}\cdot \vec{n})\cdot \vec{n} = \tau_{rr}
+\]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Areas and volumes}
@@ -449,6 +717,14 @@ surface_free_slip=True
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/err_R2}\\
 \end{center}
 
+Include here images from aspect vs stone
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_152/results/exp2/output_plane_strain/dynamic_topography.pdf}\\
+{\captionfont Dynamic topography as computer with this \stone with resolution 32x... against the 
+values obtained with \aspect.}
+\end{center}
+
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{The blob test (exp=2) - axisymmetric}
@@ -476,8 +752,14 @@ surface_free_slip=True
 
 \includegraphics[width=12cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr_R2_comparison}
 
-Run with ASPECT and plot against these
 
+Include here images from aspect vs stone
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/output_axisymmetric/dynamic_topography.pdf}\\
+{\captionfont Dynamic topography as computer with this \stone with resolution 32x... against the 
+values obtained with \aspect.}
+\end{center}
 
 
 THERE REMAINS a pb: strain rate far away from blob should go to zero. It was the case with no-slip!
