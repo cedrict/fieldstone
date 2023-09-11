@@ -28,44 +28,11 @@
 
 
 The goal here is to explore the influence of the mapping polynomial order and/or
-the number of quadrature points on the accuracy of the solution of the so-called 
-annulus benchmark (see Section~\ref{MMM-ss:anconv}).
+the number of quadrature points on the accuracy of the solution of various benchmarks and test cases.
+We will exclusively focus on annulus geometries in plane strain of 
+shell geometries by means of an axisymmetric formulation.
 
-For reference, in this benchmark we solve the Stokes equation for an incompressible
-isothermal fluid in an annulus of inner radius $R_1$
-and outer radius $R_2$ with the following boundary conditions:
-\begin{itemize}
-\item Inner boundary: $\upnu_r(R_1,\theta)=0$ 
-\item Outer boundary: $\upnu_r(R_2,\theta)=0$ 
-\end{itemize}
-and the manufactured solution takes the form:
-\begin{eqnarray}
-\upnu_\theta(r,\theta) &=& f(r) \cos(k\theta) \\
-\upnu_r(r,\theta) &=& g(r) k  \sin(k\theta)  \\
-p(r,\theta) &=& k h(r) \sin(k \theta) + \rho_0 g_r (r-R_2)  \\
-\rho(r,\theta) &=& k \sin (k \theta) \aleph(r) + \rho_0 \\
-\end{eqnarray}
-with
-\begin{eqnarray}
-A &=& \frac{2(\ln R_1 - \ln R_2)} { R_2^2 \ln R_1  - R_1^2 \ln R_2}    \nn\\
-B &=& \frac{R_2^2-R_1^2}{R_2^2 \ln R_1 - R_1^2 \ln R_2} \nn\\
-f(r)   &=& Ar +\frac{B}{r} \nn\\
-f'(r)  &=& A - \frac{B}{r^2} \nn\\
-g(r)   &=& \frac{A}{2}r  +  \frac{B}{r} \ln r - \frac{1}{r} \nn\\
-g'(r)  &=& \frac{A}{2}  +  \frac{B}{r^2} (1-\ln r)   + \frac{1}{r^2} \nn\\
-g''(r) &=&  - \frac{B}{r^3} (3 - 2 \ln r )  \nn\\
-h(r)   &=& \frac{1}{r^2}(2g-f) \nn\\
-\aleph(r) &=&  -g'' - \frac{g'}{r} ( 1 - \frac{2}{r}) + \frac{g}{r^2} (k^2 + 1 -\frac{4}{r})  - \frac{2f}{r^2}  (1-\frac{1}{r}) - \frac{f'}{r^2}   \nn
-\end{eqnarray}
-
-
-\begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_152/images/vel}
-\includegraphics[width=6cm]{python_codes/fieldstone_152/images/press}\\
-{\captionfont Velocity and pressure fields for $k=4$.}
-\end{center}
-
-\noindent In this \stone we will explore the effect of:
+Concretely, in this \stone we will explore the effect of:
 \begin{itemize}
 \item resolution via the number of elements in the radial direction: {\python nelr=2-32} (we automatically set {\python nelt=12*nelr})
 \item the number of quadrature points per dimension: {\python nqperdim=2,3,4,5}
@@ -153,6 +120,53 @@ Finally free slip boundary conditions have been implemented, but only at the
 surface, and only with the method of Lagrange Multipliers (\stone~\ref{f151}
 taught us that it works as well as the other method).  
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Axisymmetric considerations}
+
+We here rely on axisymmetric cylindrical coordinates, see Section~\ref{MMM-ss:axicyleqs}.
+As shown on the following figure we assume that the deformation/flow is independent of the angle 
+$\theta$ so that the remaining space coordinates are $r$ and $z$.
+\begin{center}
+\input{tikz/tikz_axi}
+\end{center}
+
+Given the symmetry of the problem any term containing $\partial_\theta$ or $\upnu_\theta$ is zero.
+The strain rate tensor given in Section~\ref{MMM-ss:srcc} then simplifies to:
+
+\begin{eqnarray}
+\dot\varepsilon_{rr} 
+&=& \frac{\partial \upnu_r}{\partial r} \nn\\
+\dot\varepsilon_{\theta\theta}  &=& \frac{\upnu_r}{r} \nn\\
+\dot\varepsilon_{\theta r} = \dot\varepsilon_{r\theta}  &=& 0 \nn\\
+\dot\varepsilon_{zz} &=& \frac{\partial \upnu_z}{\partial z} \nn\\
+\dot{\varepsilon}_{rz} = \dot{\varepsilon}_{zr} 
+&=& \frac{1}{2}\left( \frac{\partial \upnu_r}{\partial z} + \frac{\partial \upnu_z}{\partial r} \right) \nn\\
+\dot{\varepsilon}_{\theta z} = \dot{\varepsilon}_{z \theta} &=& 0 \nn
+\end{eqnarray}
+Note that the term $\dot\varepsilon_{\theta\theta} $ is not zero!
+The deviatoric stress tensor ${\bm \tau}=2\eta \dot{\bm \varepsilon}$ can be computed
+as well as the full stress tensor ${\bm \sigma}=-p {\bm 1} + {\bm \tau}$. 
+
+
+In cylindrical coordinates, and in the axisymmetric case
+the strain rate tensor is given by
+\[
+\dot{\bm\varepsilon}(\vec\upnu)
+=
+\left(
+\begin{array}{ccc}
+\dot\varepsilon_{rr} & 0 & \dot{\varepsilon}_{rz} \\
+0 & \dot{\varepsilon}_{\theta\theta}  & 0 \\
+\dot{\varepsilon}_{zr} & 0 & \dot\varepsilon_{zz}
+\end{array}
+\right)
+\]
+
+
+
+
+
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Computing normals - axisymmetric case only}
@@ -201,23 +215,95 @@ Removing the 2 extremities, we have {\python nnt-2} Lagrange multipliers. Note t
 {\captionfont horizontal and vertical boundary condition indicators.}
 \end{center}
 
-\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{On the use of ASPECT}
+\section*{Pressure normalisation}
 
+%-------------------------
+\subsection*{Plane strain}
+
+In polar coordinates the surface element is 
 \[
-h = \frac{\sigma_{rr}}{|\vec{g}| \delta\rho}
+dS = R d\theta
+\]
+so that 
+$\int_0^{2\pi} dS = 2 \pi R$ which is the perimeter of the circle.
+
+We wish to normalise the pressure so that it is on average zero on the surface:
+\[
+p_{normalised} = p - <p>
+\]
+where 
+\[
+<p> 
+= \frac{\int p(r, \theta) dS }{\int dS}
+= \frac{\int p(\theta) R d\theta }{\int R d \theta d\theta}
+= \frac{1}{2 \pi R} R \int p(\theta) d\theta 
+= \frac{1}{2 \pi }  \int_0^{2\pi} p(\theta) d\theta 
 \]
 
 
+%------------------------------
+\subsection*{Axisymmetric case}
+
+\begin{center}
+\includegraphics[width=2cm]{images/sphcoord}
+\end{center}
+
+In spherical coordinates, the surface element is 
+\[
+dS= R^2 \sin \theta d\theta d\phi
+\]
+We wish to normalise the pressure so that it is on average zero on the surface:
+\[
+p_{normalised} = p - <p>
+\]
+where 
+\[
+<p> 
+= \frac{\iint p(\theta,\phi) dS }{\iint dS}
+= \frac{\iint p(\theta,\phi) R^2 \sin \theta d\theta d\phi}{\iint R^2 \sin \theta d\theta d\phi}
+\]
+and since $p$ is independent of $\phi$ then 
+\[
+<p> 
+= \frac{R_2^2 \cdot 2\pi \cdot  \int_0^\pi p(\theta)  \sin \theta d\theta}
+{R_2^2 \cdot 2\pi \cdot \int  \sin \theta d\theta }
+= \frac{ 2\pi R_2^2 \int_0^\pi p(\theta)  \sin \theta d\theta} {4\pi R_2^2}
+\]
+The integral over $\theta$ can be simplified by using the average pressure 
+along the edge and the angle of the edge middle point:
+\begin{lstlisting}
+poffset=0
+for iel in range(0,nel):
+    if surface_element[iel]:
+       dtheta=theta_sph[iconV[2,iel]]-theta_sph[iconV[3,iel]]
+       pmean=0.5*(p[iconP[2,iel]]+p[iconP[3,iel]])
+       poffset+=np.sin((theta_sph[iconV[2,iel]]+theta_sph[iconV[3,iel]])/2)*dtheta\
+                *2*np.pi*R2**2 * pmean
+poffset/=4*np.pi*R2**2
+\end{lstlisting}
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{On the use of ASPECT}
 
+I have produced two input files for \aspect that carry out experiment 2.
+One is 2D (plane strain), the other one is 3D. 
+Input files and their results are included in the corresponding results folder.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{From Cartesian to Spherical coordinates}
+
+In order to compute the dynamic topography we will need $\sigma_{rr}$, 
+which in fact will require $\dot{\varepsilon}_{rr}$. This means that 
+having obtained the strain rate tensor in Cartesian coordinates we must 
+rewrite it in spherical coordinates with the following conventions:
+
+\begin{center}
+\includegraphics[width=3cm]{images/sphcoord}
+\end{center}
 
 We have
 \begin{eqnarray}
@@ -456,22 +542,76 @@ c_\theta  & 0 & -s_\theta \\
 \end{eqnarray}
 We can easily verify that the trace of this tensor is zero.
 
-The deviatoric stress is given by 
-${\bm \tau}=2\eta \dot{\bm \varepsilon}$,
-the traction at the surface  by 
-$\vec{t}={\bm \tau}\cdot \vec{n}$ (
-with $\vec{n}=\vec{e}_r$ at the surface in Spherical coordinates) and the normal to the surface component of this traction 
-is given by
+In the code we need to be careful and use {\python theta\_sph}:
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/images/theta}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/images/theta_sph}
+\end{center}
+
+\begin{lstlisting}
+for i in range(0,NV):
+    theta_sph[i]=np.pi/2-math.atan(yV[i]/abs(xV[i]))
+    if xV[i]>=0:
+       e_rr[i]=exx2[i]*np.sin(theta_sph[i])**2+\
+               2*exy2[i]*np.sin(theta_sph[i])*np.cos(theta_sph[i])+\
+               eyy2[i]*np.cos(theta_sph[i])**2
+       e_tt[i]=exx2[i]*np.cos(theta_sph[i])**2-\
+               2*exy2[i]*np.sin(theta_sph[i])*np.cos(theta_sph[i])+\
+               eyy2[i]*np.sin(theta_sph[i])**2
+       e_rt[i]=(exx2[i]-eyy2[i])*np.sin(theta_sph[i])*np.cos(theta_sph[i])+\
+               exy2[i]*(-np.sin(theta_sph[i])**2+\
+               np.cos(theta_sph[i])**2)
+\end{lstlisting}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Dynamic topography}
+
+Looking at the \aspect manual, we find:
+
+``we evaluate the stress and evaluate the component of it in the direction in which 
+gravity acts. In other words we compute 
 \[
-t_r = \vec{t}\cdot \vec{n} = ({\bm \tau}\cdot \vec{n})\cdot \vec{n} = \tau_{rr}
+\sigma_{rr}={\hat g}^T (2 \eta \varepsilon(\mathbf u)
+- \frac 13 (\textrm{div}\;\mathbf u)I)\hat g - p_d
+\] 
+where 
+$\hat g = \mathbf g/\|\mathbf g\|$ is the direction of 
+the gravity vector $\mathbf g$ and $p_d=p-p_a$ is the dynamic 
+pressure computed by subtracting the adiabatic pressure $p_a$ 
+from the total pressure $p$ computed as part of the Stokes 
+solve. From this, the dynamic 
+topography is computed using the formula 
+\[
+h=\frac{\sigma_{rr}}{(\mathbf g \cdot \mathbf n)  \rho}
+\] 
+where $\rho$ is the density. For the bottom surface we chose the convection 
+that positive values are up (out) and negative values are in (down), analogous to 
+the deformation of the upper surface. 
+The file format then consists of lines with Euclidean coordinates 
+followed by the corresponding topography value.''
+
+In this \stone the viscosity is constant in the domain, the flow 
+is incompressible and $\vec{g}= -g_0 \vec{e}_r$ so we can compute the 
+dynamic topography as follows:
+\[
+h = - \frac{-p + 2 \eta_0 \dot{\varepsilon}_{rr} }{\rho_0 g_0}
 \]
+This is of course valid if what is above the surface is a fluid with zero density.
+This translates into:
 
+\begin{lstlisting}
+dyn_topo=np.zeros(NV,dtype=np.float64)
+for i in range(0,NV):
+    if surfaceV[i] and xV[i]>=0:
+       dyn_topo[i]= -(2*viscosity*e_rr[i]-q[i])/(rho0*g0) 
+\end{lstlisting}
 
-
-
-
-
-
+Note that in our case $\rho_0=1$ and $g_0=1$ so that in fact the dynamic topography 
+is simply $-\sigma_{rr}$.
 
 
 
@@ -528,6 +668,47 @@ Results are shown in the following.
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Annulus convection benchmark (exp=0)}
+
+
+This benchmark is documented in Section~\ref{MMM-ss:anconv}.
+
+For reference, in this benchmark we solve the Stokes equation for an incompressible
+isothermal fluid in an annulus of inner radius $R_1$
+and outer radius $R_2$ with the following boundary conditions:
+\begin{itemize}
+\item Inner boundary: $\upnu_r(R_1,\theta)=0$ 
+\item Outer boundary: $\upnu_r(R_2,\theta)=0$ 
+\end{itemize}
+and the manufactured solution takes the form:
+\begin{eqnarray}
+\upnu_\theta(r,\theta) &=& f(r) \cos(k\theta) \\
+\upnu_r(r,\theta) &=& g(r) k  \sin(k\theta)  \\
+p(r,\theta) &=& k h(r) \sin(k \theta) + \rho_0 g_r (r-R_2)  \\
+\rho(r,\theta) &=& k \sin (k \theta) \aleph(r) + \rho_0 \\
+\end{eqnarray}
+with
+\begin{eqnarray}
+A &=& \frac{2(\ln R_1 - \ln R_2)} { R_2^2 \ln R_1  - R_1^2 \ln R_2}    \nn\\
+B &=& \frac{R_2^2-R_1^2}{R_2^2 \ln R_1 - R_1^2 \ln R_2} \nn\\
+f(r)   &=& Ar +\frac{B}{r} \nn\\
+f'(r)  &=& A - \frac{B}{r^2} \nn\\
+g(r)   &=& \frac{A}{2}r  +  \frac{B}{r} \ln r - \frac{1}{r} \nn\\
+g'(r)  &=& \frac{A}{2}  +  \frac{B}{r^2} (1-\ln r)   + \frac{1}{r^2} \nn\\
+g''(r) &=&  - \frac{B}{r^3} (3 - 2 \ln r )  \nn\\
+h(r)   &=& \frac{1}{r^2}(2g-f) \nn\\
+\aleph(r) &=&  -g'' - \frac{g'}{r} ( 1 - \frac{2}{r}) + \frac{g}{r^2} (k^2 + 1 -\frac{4}{r})  - \frac{2f}{r^2}  (1-\frac{1}{r}) - \frac{f'}{r^2}   \nn
+\end{eqnarray}
+
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_152/images/vel}
+\includegraphics[width=6cm]{python_codes/fieldstone_152/images/press}\\
+{\captionfont Velocity and pressure fields for $k=4$.}
+\end{center}
+
+
+
+
 
 %---------------------------------------
 \subsection*{Root mean square velocity}
@@ -715,12 +896,18 @@ surface_free_slip=True
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/qqq_R2}\\
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/vel_R2}
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/err_R2}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/d_t_R2}
 \end{center}
 
-Include here images from aspect vs stone
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/aspect/meshes}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/aspect/rho}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/aspect/vel}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2/aspect/press}
+\end{center}
 
 \begin{center}
-\includegraphics[width=14cm]{python_codes/fieldstone_152/results/exp2/output_plane_strain/dynamic_topography.pdf}\\
+\includegraphics[width=14cm]{python_codes/fieldstone_152/results/exp2/aspect/dynamic_topography.pdf}\\
 {\captionfont Dynamic topography as computer with this \stone with resolution 32x... against the 
 values obtained with \aspect.}
 \end{center}
@@ -750,19 +937,58 @@ surface_free_slip=True
 \end{center}
 
 
-\includegraphics[width=12cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr_R2_comparison}
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr_R2_comparison}\\
+{\captionfont Comparison of the effective strain rate at the surface for all three nodal methods and the 
+elemental approach. Unsurprisingly the element-based strain rate is less accurate than its nodal counterpart, 
+albeit smoother near the ends.}
+\end{center}
 
+\aspect models were run with the following mesh construction:
+\begin{lstlisting}
+subsection Mesh refinement
+  set Initial global refinement          = 4 #3
+  set Initial adaptive refinement        = 3 #2
+  set Refinement fraction                = 0.5
+  set Coarsening fraction                = 0.
+  set Strategy                           = composition, strain rate
+end
+\end{lstlisting}
 
-Include here images from aspect vs stone
 
 \begin{center}
-\includegraphics[width=14cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/output_axisymmetric/dynamic_topography.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/aspect/dynamic_topography.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/aspect/dynamic_topography_zoom.pdf}\\
 {\captionfont Dynamic topography as computer with this \stone with resolution 32x... against the 
 values obtained with \aspect.}
 \end{center}
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/aspect/mesh}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/aspect/mesh2}\\
+{\captionfont Mesh as generated by \aspect.}
+\end{center}
 
-THERE REMAINS a pb: strain rate far away from blob should go to zero. It was the case with no-slip!
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/aspect/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/aspect/press}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/aspect/vr}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/aspect/vphi}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/aspect/eyy}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/aspect/exy}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/aspect/sr}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/aspect/sr2}\\
+{\captionfont Left half of annulus is \aspect, right half is this \stone. 
+We find that the strain rate field as obtained with \aspect with a reasonably high 
+resolution still highlights the underlying mesh. As such we can't really compare our axisymmetric 
+results with those of \aspect. Note that since this \stone computes the solution in the 
+$x,y$-plane the vtu file had to be rotated so as to align with the vtu file returned by \aspect.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/aspect/sols}
+\end{center}
 
 
 
@@ -772,16 +998,15 @@ THERE REMAINS a pb: strain rate far away from blob should go to zero. It was the
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \par\noindent\rule{\textwidth}{0.4pt}
 
-\vspace{.5cm}
-
-\begin{center}
-\fbox{\begin{minipage}{0.9\textwidth}
-{\color{teal}To Do, open questions, future work?}
-\begin{itemize}
-\item do smthg
-\end{itemize}
-\end{minipage}}
-\end{center}
+%\vspace{.5cm}
+%\begin{center}
+%\fbox{\begin{minipage}{0.9\textwidth}
+%{\color{teal}To Do, open questions, future work?}
+%\begin{itemize}
+%\item do smthg
+%\end{itemize}
+%\end{minipage}}
+%\end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vspace{.5cm}
