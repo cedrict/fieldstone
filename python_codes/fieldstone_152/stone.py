@@ -14,7 +14,7 @@ from scipy.sparse import lil_matrix
 # exp=1: aquarium
 # exp=2: blob
 
-axisymmetric=False
+axisymmetric=True
 exp=2
 surface_free_slip=True
 
@@ -352,7 +352,7 @@ if int(len(sys.argv) == 5):
    if mapping==3: mapping='Q3'
    if mapping==4: mapping='Q4'
 else:
-   nelr = 16 # Q1 cells!
+   nelr = 64 # Q1 cells!
    visu = 1
    nqperdim=5
    mapping='Q4' 
@@ -1644,6 +1644,13 @@ np.savetxt('vel_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],vel[NV-nnt:],theta[N
 np.savetxt('err_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],e_rr2[NV-nnt:],theta[NV-nnt:]]).T)
 np.savetxt('d_t_R2.ascii',np.array([xV[NV-nnt:],yV[NV-nnt:],dyn_topo_nodal[NV-nnt:],theta[NV-nnt:]]).T)
 
+
+leftV=np.zeros(NV,dtype=bool) 
+for i in range(0,NV):
+    if xV[i]<eps and yV[i]<0: leftV[i]=True
+np.savetxt('sr2_left.ascii',np.array([xV[leftV],yV[leftV],sr2[leftV],r[leftV]]).T)
+np.savetxt('vel_left.ascii',np.array([xV[leftV],yV[leftV],vel[leftV],r[leftV]]).T)
+
 print("export p&q on R1,R2 (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
@@ -1910,10 +1917,6 @@ if visu==1:
        else:
           vtufile.write("%10f \n" % 0)
    vtufile.write("</DataArray>\n")
-
-
-
-
    vtufile.write("</CellData>\n")
    #####
    vtufile.write("<Cells>\n")

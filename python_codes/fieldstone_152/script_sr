@@ -29,6 +29,9 @@ for l in 64; do
           mv src_R2.ascii src_R2.ascii_${nqperdim}_${mapping}
           mv d_t_R2.ascii d_t_R2.ascii_${nqperdim}_${mapping}
 
+          mv sr2_left.ascii sr2_left.ascii_${nqperdim}_${mapping}
+          mv vel_left.ascii vel_left.ascii_${nqperdim}_${mapping}
+
       done
    done
 done

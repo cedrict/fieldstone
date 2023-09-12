@@ -1,0 +1,676 @@
+#script
+set term pdf enhanced font "Times,12pt"
+set key outside
+set grid
+
+pi2=2*pi
+
+set xlabel 'h'
+
+set ylabel 'u_{err} min/max' 
+set log x 
+set output 'u_err.pdf'
+plot[][]\
+'u_err_2_1' u (1/$8):4 w lp lw .5 lt 1 pt 1 ps .3  t 'nq=2, map=Q_1',\
+'u_err_2_1' u (1/$8):5 w lp lw .5 lt 1 pt 1 ps .3  notitle,\
+'u_err_3_1' u (1/$8):4 w lp lw .5 lt 1 pt 2 ps .3  t 'nq=3, map=Q_1',\
+'u_err_3_1' u (1/$8):5 w lp lw .5 lt 1 pt 2 ps .3  notitle,\
+'u_err_4_1' u (1/$8):4 w lp lw .5 lt 1 pt 3 ps .3  t 'nq=4, map=Q_1',\
+'u_err_4_1' u (1/$8):5 w lp lw .5 lt 1 pt 3 ps .3  notitle,\
+'u_err_5_1' u (1/$8):4 w lp lw .5 lt 1 pt 4 ps .53 t 'nq=5, map=Q_1',\
+'u_err_5_1' u (1/$8):5 w lp lw .5 lt 1 pt 4 ps .53 notitle,\
+'u_err_2_2' u (1/$8):4 w lp lw .5 lt 2 pt 1 ps .3  t 'nq=2, map=Q_2',\
+'u_err_2_2' u (1/$8):5 w lp lw .5 lt 2 pt 1 ps .3  notitle,\
+'u_err_3_2' u (1/$8):4 w lp lw .5 lt 2 pt 2 ps .3  t 'nq=3, map=Q_2',\
+'u_err_3_2' u (1/$8):5 w lp lw .5 lt 2 pt 2 ps .3  notitle,\
+'u_err_4_2' u (1/$8):4 w lp lw .5 lt 2 pt 3 ps .3  t 'nq=4, map=Q_2',\
+'u_err_4_2' u (1/$8):5 w lp lw .5 lt 2 pt 3 ps .3  notitle,\
+'u_err_5_2' u (1/$8):4 w lp lw .5 lt 2 pt 4 ps .53 t 'nq=5, map=Q_2',\
+'u_err_5_2' u (1/$8):5 w lp lw .5 lt 2 pt 4 ps .53 notitle,\
+'u_err_2_3' u (1/$8):4 w lp lw .5 lt 3 pt 1 ps .3  t 'nq=2, map=Q_3',\
+'u_err_2_3' u (1/$8):5 w lp lw .5 lt 3 pt 1 ps .3  notitle,\
+'u_err_3_3' u (1/$8):4 w lp lw .5 lt 3 pt 2 ps .3  t 'nq=3, map=Q_3',\
+'u_err_3_3' u (1/$8):5 w lp lw .5 lt 3 pt 2 ps .3  notitle,\
+'u_err_4_3' u (1/$8):4 w lp lw .5 lt 3 pt 3 ps .3  t 'nq=4, map=Q_3',\
+'u_err_4_3' u (1/$8):5 w lp lw .5 lt 3 pt 3 ps .3  notitle,\
+'u_err_5_3' u (1/$8):4 w lp lw .5 lt 3 pt 4 ps .53 t 'nq=5, map=Q_3',\
+'u_err_5_3' u (1/$8):5 w lp lw .5 lt 3 pt 4 ps .53 notitle,\
+'u_err_2_4' u (1/$8):4 w lp lw .5 lt 4 pt 1 ps .3  t 'nq=2, map=Q_4',\
+'u_err_2_4' u (1/$8):5 w lp lw .5 lt 4 pt 1 ps .3  notitle,\
+'u_err_3_4' u (1/$8):4 w lp lw .5 lt 4 pt 2 ps .3  t 'nq=3, map=Q_4',\
+'u_err_3_4' u (1/$8):5 w lp lw .5 lt 4 pt 2 ps .3  notitle,\
+'u_err_4_4' u (1/$8):4 w lp lw .5 lt 4 pt 3 ps .3  t 'nq=4, map=Q_4',\
+'u_err_4_4' u (1/$8):5 w lp lw .5 lt 4 pt 3 ps .3  notitle,\
+'u_err_5_4' u (1/$8):4 w lp lw .5 lt 4 pt 4 ps .53 t 'nq=5, map=Q_4',\
+'u_err_5_4' u (1/$8):5 w lp lw .5 lt 4 pt 4 ps .53 notitle,\
+
+set ylabel 'v_{err} min/max' 
+set output 'v_err.pdf'
+plot[][]\
+'v_err_2_1' u (1/$8):4 w lp lw .5 lt 1 pt 1 ps .3  t 'nq=2, map=Q_1',\
+'v_err_2_1' u (1/$8):5 w lp lw .5 lt 1 pt 1 ps .3  notitle,\
+'v_err_3_1' u (1/$8):4 w lp lw .5 lt 1 pt 2 ps .3  t 'nq=3, map=Q_1',\
+'v_err_3_1' u (1/$8):5 w lp lw .5 lt 1 pt 2 ps .3  notitle,\
+'v_err_4_1' u (1/$8):4 w lp lw .5 lt 1 pt 3 ps .3  t 'nq=4, map=Q_1',\
+'v_err_4_1' u (1/$8):5 w lp lw .5 lt 1 pt 3 ps .3  notitle,\
+'v_err_5_1' u (1/$8):4 w lp lw .5 lt 1 pt 4 ps .53 t 'nq=5, map=Q_1',\
+'v_err_5_1' u (1/$8):5 w lp lw .5 lt 1 pt 4 ps .53 notitle,\
+'v_err_2_2' u (1/$8):4 w lp lw .5 lt 2 pt 1 ps .3  t 'nq=2, map=Q_2',\
+'v_err_2_2' u (1/$8):5 w lp lw .5 lt 2 pt 1 ps .3  notitle,\
+'v_err_3_2' u (1/$8):4 w lp lw .5 lt 2 pt 2 ps .3  t 'nq=3, map=Q_2',\
+'v_err_3_2' u (1/$8):5 w lp lw .5 lt 2 pt 2 ps .3  notitle,\
+'v_err_4_2' u (1/$8):4 w lp lw .5 lt 2 pt 3 ps .3  t 'nq=4, map=Q_2',\
+'v_err_4_2' u (1/$8):5 w lp lw .5 lt 2 pt 3 ps .3  notitle,\
+'v_err_5_2' u (1/$8):4 w lp lw .5 lt 2 pt 4 ps .53 t 'nq=5, map=Q_2',\
+'v_err_5_2' u (1/$8):5 w lp lw .5 lt 2 pt 4 ps .53 notitle,\
+'v_err_2_3' u (1/$8):4 w lp lw .5 lt 3 pt 1 ps .3  t 'nq=2, map=Q_3',\
+'v_err_2_3' u (1/$8):5 w lp lw .5 lt 3 pt 1 ps .3  notitle,\
+'v_err_3_3' u (1/$8):4 w lp lw .5 lt 3 pt 2 ps .3  t 'nq=3, map=Q_3',\
+'v_err_3_3' u (1/$8):5 w lp lw .5 lt 3 pt 2 ps .3  notitle,\
+'v_err_4_3' u (1/$8):4 w lp lw .5 lt 3 pt 3 ps .3  t 'nq=4, map=Q_3',\
+'v_err_4_3' u (1/$8):5 w lp lw .5 lt 3 pt 3 ps .3  notitle,\
+'v_err_5_3' u (1/$8):4 w lp lw .5 lt 3 pt 4 ps .53 t 'nq=5, map=Q_3',\
+'v_err_5_3' u (1/$8):5 w lp lw .5 lt 3 pt 4 ps .53 notitle,\
+'v_err_2_4' u (1/$8):4 w lp lw .5 lt 4 pt 1 ps .3  t 'nq=2, map=Q_4',\
+'v_err_2_4' u (1/$8):5 w lp lw .5 lt 4 pt 1 ps .3  notitle,\
+'v_err_3_4' u (1/$8):4 w lp lw .5 lt 4 pt 2 ps .3  t 'nq=3, map=Q_4',\
+'v_err_3_4' u (1/$8):5 w lp lw .5 lt 4 pt 2 ps .3  notitle,\
+'v_err_4_4' u (1/$8):4 w lp lw .5 lt 4 pt 3 ps .3  t 'nq=4, map=Q_4',\
+'v_err_4_4' u (1/$8):5 w lp lw .5 lt 4 pt 3 ps .3  notitle,\
+'v_err_5_4' u (1/$8):4 w lp lw .5 lt 4 pt 4 ps .53 t 'nq=5, map=Q_4',\
+'v_err_5_4' u (1/$8):5 w lp lw .5 lt 4 pt 4 ps .53 notitle,\
+
+set ylabel 'p_{err} min/max' 
+set output 'p_err.pdf'
+plot[][]\
+'p_err_2_1' u (1/$8):4 w lp lw .5 lt 1 pt 1 ps .43  t 'nq=2, map=Q_1',\
+'p_err_2_1' u (1/$8):5 w lp lw .5 lt 1 pt 1 ps .43  notitle,\
+'p_err_3_1' u (1/$8):4 w lp lw .5 lt 1 pt 2 ps .3  t 'nq=3, map=Q_1',\
+'p_err_3_1' u (1/$8):5 w lp lw .5 lt 1 pt 2 ps .3  notitle,\
+'p_err_4_1' u (1/$8):4 w lp lw .5 lt 1 pt 3 ps .3  t 'nq=4, map=Q_1',\
+'p_err_4_1' u (1/$8):5 w lp lw .5 lt 1 pt 3 ps .3  notitle,\
+'p_err_5_1' u (1/$8):4 w lp lw .5 lt 1 pt 4 ps .53 t 'nq=5, map=Q_1',\
+'p_err_5_1' u (1/$8):5 w lp lw .5 lt 1 pt 4 ps .53 notitle,\
+'p_err_2_2' u (1/$8):4 w lp lw .5 lt 2 pt 1 ps .43  t 'nq=2, map=Q_2',\
+'p_err_2_2' u (1/$8):5 w lp lw .5 lt 2 pt 1 ps .43  notitle,\
+'p_err_3_2' u (1/$8):4 w lp lw .5 lt 2 pt 2 ps .3  t 'nq=3, map=Q_2',\
+'p_err_3_2' u (1/$8):5 w lp lw .5 lt 2 pt 2 ps .3  notitle,\
+'p_err_4_2' u (1/$8):4 w lp lw .5 lt 2 pt 3 ps .3  t 'nq=4, map=Q_2',\
+'p_err_4_2' u (1/$8):5 w lp lw .5 lt 2 pt 3 ps .3  notitle,\
+'p_err_5_2' u (1/$8):4 w lp lw .5 lt 2 pt 4 ps .53 t 'nq=5, map=Q_2',\
+'p_err_5_2' u (1/$8):5 w lp lw .5 lt 2 pt 4 ps .53 notitle,\
+'p_err_2_3' u (1/$8):4 w lp lw .5 lt 3 pt 1 ps .43  t 'nq=2, map=Q_3',\
+'p_err_2_3' u (1/$8):5 w lp lw .5 lt 3 pt 1 ps .43  notitle,\
+'p_err_3_3' u (1/$8):4 w lp lw .5 lt 3 pt 2 ps .3  t 'nq=3, map=Q_3',\
+'p_err_3_3' u (1/$8):5 w lp lw .5 lt 3 pt 2 ps .3  notitle,\
+'p_err_4_3' u (1/$8):4 w lp lw .5 lt 3 pt 3 ps .3  t 'nq=4, map=Q_3',\
+'p_err_4_3' u (1/$8):5 w lp lw .5 lt 3 pt 3 ps .3  notitle,\
+'p_err_5_3' u (1/$8):4 w lp lw .5 lt 3 pt 4 ps .53 t 'nq=5, map=Q_3',\
+'p_err_5_3' u (1/$8):5 w lp lw .5 lt 3 pt 4 ps .53 notitle,\
+'p_err_2_4' u (1/$8):4 w lp lw .5 lt 4 pt 1 ps .43  t 'nq=2, map=Q_4',\
+'p_err_2_4' u (1/$8):5 w lp lw .5 lt 4 pt 1 ps .43  notitle,\
+'p_err_3_4' u (1/$8):4 w lp lw .5 lt 4 pt 2 ps .3  t 'nq=3, map=Q_4',\
+'p_err_3_4' u (1/$8):5 w lp lw .5 lt 4 pt 2 ps .3  notitle,\
+'p_err_4_4' u (1/$8):4 w lp lw .5 lt 4 pt 3 ps .3  t 'nq=4, map=Q_4',\
+'p_err_4_4' u (1/$8):5 w lp lw .5 lt 4 pt 3 ps .3  notitle,\
+'p_err_5_4' u (1/$8):4 w lp lw .5 lt 4 pt 4 ps .53 t 'nq=5, map=Q_4',\
+'p_err_5_4' u (1/$8):5 w lp lw .5 lt 4 pt 4 ps .53 notitle,\
+
+set log y
+set ylabel 'p_{err} max' 
+set output 'p_err_max.pdf'
+plot[][]\
+'p_err_2_1' u (1/$8):5 w lp lw .5 lt 1 pt 1 ps .43  t 'nq=2, map=Q_1',\
+'p_err_3_1' u (1/$8):5 w lp lw .5 lt 1 pt 2 ps .3  t 'nq=3, map=Q_1',\
+'p_err_4_1' u (1/$8):5 w lp lw .5 lt 1 pt 3 ps .3  t 'nq=4, map=Q_1',\
+'p_err_5_1' u (1/$8):5 w lp lw .5 lt 1 pt 4 ps .53 t 'nq=5, map=Q_1',\
+'p_err_2_2' u (1/$8):5 w lp lw .5 lt 2 pt 1 ps .43  t 'nq=2, map=Q_2',\
+'p_err_3_2' u (1/$8):5 w lp lw .5 lt 2 pt 2 ps .3  t 'nq=3, map=Q_2',\
+'p_err_4_2' u (1/$8):5 w lp lw .5 lt 2 pt 3 ps .3  t 'nq=4, map=Q_2',\
+'p_err_5_2' u (1/$8):5 w lp lw .5 lt 2 pt 4 ps .53 t 'nq=5, map=Q_2',\
+'p_err_2_3' u (1/$8):5 w lp lw .5 lt 3 pt 1 ps .43  t 'nq=2, map=Q_3',\
+'p_err_3_3' u (1/$8):5 w lp lw .5 lt 3 pt 2 ps .3  t 'nq=3, map=Q_3',\
+'p_err_4_3' u (1/$8):5 w lp lw .5 lt 3 pt 3 ps .3  t 'nq=4, map=Q_3',\
+'p_err_5_3' u (1/$8):5 w lp lw .5 lt 3 pt 4 ps .53 t 'nq=5, map=Q_3',\
+'p_err_2_4' u (1/$8):5 w lp lw .5 lt 4 pt 1 ps .43  t 'nq=2, map=Q_4',\
+'p_err_3_4' u (1/$8):5 w lp lw .5 lt 4 pt 2 ps .3  t 'nq=3, map=Q_4',\
+'p_err_4_4' u (1/$8):5 w lp lw .5 lt 4 pt 3 ps .3  t 'nq=4, map=Q_4',\
+'p_err_5_4' u (1/$8):5 w lp lw .5 lt 4 pt 4 ps .53 t 'nq=5, map=Q_4',\
+
+unset log y
+
+
+
+
+
+
+
+#########################################################################
+
+set ylabel 'v_{rms}'
+
+set output 'vrms.pdf'
+plot[][:]\
+'vrms_2_1' u (1/$3):6 w lp lw .5 lt 1 pt 1 ps .3  t 'nq=2, map=Q_1',\
+'vrms_3_1' u (1/$3):6 w lp lw .5 lt 1 pt 2 ps .3  t 'nq=3, map=Q_1',\
+'vrms_4_1' u (1/$3):6 w lp lw .5 lt 1 pt 3 ps .3  t 'nq=4, map=Q_1',\
+'vrms_5_1' u (1/$3):6 w lp lw .5 lt 1 pt 4 ps .53 t 'nq=5, map=Q_1',\
+'vrms_2_2' u (1/$3):6 w lp lw .5 lt 2 pt 1 ps .3  t 'nq=2, map=Q_2',\
+'vrms_3_2' u (1/$3):6 w lp lw .5 lt 2 pt 2 ps .3  t 'nq=3, map=Q_2',\
+'vrms_4_2' u (1/$3):6 w lp lw .5 lt 2 pt 3 ps .3  t 'nq=4, map=Q_2',\
+'vrms_5_2' u (1/$3):6 w lp lw .5 lt 2 pt 4 ps .53 t 'nq=5, map=Q_2',\
+'vrms_2_3' u (1/$3):6 w lp lw .5 lt 3 pt 1 ps .3  t 'nq=2, map=Q_3',\
+'vrms_3_3' u (1/$3):6 w lp lw .5 lt 3 pt 2 ps .3  t 'nq=3, map=Q_3',\
+'vrms_4_3' u (1/$3):6 w lp lw .5 lt 3 pt 3 ps .3  t 'nq=4, map=Q_3',\
+'vrms_5_3' u (1/$3):6 w lp lw .5 lt 3 pt 4 ps .53 t 'nq=5, map=Q_3',\
+'vrms_2_4' u (1/$3):6 w lp lw .5 lt 4 pt 1 ps .3  t 'nq=2, map=Q_4',\
+'vrms_3_4' u (1/$3):6 w lp lw .5 lt 4 pt 2 ps .3  t 'nq=3, map=Q_4',\
+'vrms_4_4' u (1/$3):6 w lp lw .5 lt 4 pt 3 ps .3  t 'nq=4, map=Q_4',\
+'vrms_5_4' u (1/$3):6 w lp lw .5 lt 4 pt 4 ps .53 t 'nq=5, map=Q_4',\
+
+############################################################################################
+
+set xlabel 'h'
+
+set log xy
+set ylabel 'error velocity'
+set output 'errv.pdf'
+plot[0.02:][]\
+'errors_2_1' u (1/$3):6 w lp lt 1 pt 1 ps .3 t 'nq=2, map=Q_1',\
+'errors_3_1' u (1/$3):6 w lp lt 1 pt 2 ps .3 t 'nq=3, map=Q_1',\
+'errors_4_1' u (1/$3):6 w lp lt 1 pt 3 ps .3 t 'nq=4, map=Q_1',\
+'errors_5_1' u (1/$3):6 w lp lt 1 pt 4 ps .3 t 'nq=5, map=Q_1',\
+'errors_2_2' u (1/$3):6 w lp lt 2 pt 1 ps .3 t 'nq=2, map=Q_2',\
+'errors_3_2' u (1/$3):6 w lp lt 2 pt 2 ps .3 t 'nq=3, map=Q_2',\
+'errors_4_2' u (1/$3):6 w lp lt 2 pt 3 ps .3 t 'nq=4, map=Q_2',\
+'errors_5_2' u (1/$3):6 w lp lt 2 pt 4 ps .3 t 'nq=5, map=Q_2',\
+'errors_2_3' u (1/$3):6 w lp lt 3 pt 1 ps .3 t 'nq=2, map=Q_3',\
+'errors_3_3' u (1/$3):6 w lp lt 3 pt 2 ps .3 t 'nq=3, map=Q_3',\
+'errors_4_3' u (1/$3):6 w lp lt 3 pt 3 ps .3 t 'nq=4, map=Q_3',\
+'errors_5_3' u (1/$3):6 w lp lt 3 pt 4 ps .3 t 'nq=5, map=Q_3',\
+'errors_2_4' u (1/$3):6 w lp lt 4 pt 1 ps .3 t 'nq=2, map=Q_4',\
+'errors_3_4' u (1/$3):6 w lp lt 4 pt 2 ps .3 t 'nq=3, map=Q_4',\
+'errors_4_4' u (1/$3):6 w lp lt 4 pt 3 ps .3 t 'nq=4, map=Q_4',\
+'errors_5_4' u (1/$3):6 w lp lt 4 pt 4 ps .3 t 'nq=5, map=Q_4',\
+x**3/400 lt -1 dt 2 t 'h^3' 
+
+set ylabel 'error pressure'
+set output 'errp.pdf'
+plot[0.02:][]\
+'errors_2_1' u (1/$3):9 w lp lt 1 pt 1 ps .43 t 'nq=2, map=Q_1',\
+'errors_3_1' u (1/$3):9 w lp lt 1 pt 2 ps .3 t 'nq=3, map=Q_1',\
+'errors_4_1' u (1/$3):9 w lp lt 1 pt 3 ps .3 t 'nq=4, map=Q_1',\
+'errors_5_1' u (1/$3):9 w lp lt 1 pt 4 ps .3 t 'nq=5, map=Q_1',\
+'errors_2_2' u (1/$3):9 w lp lt 2 pt 1 ps .43 t 'nq=2, map=Q_2',\
+'errors_3_2' u (1/$3):9 w lp lt 2 pt 2 ps .3 t 'nq=3, map=Q_2',\
+'errors_4_2' u (1/$3):9 w lp lt 2 pt 3 ps .3 t 'nq=4, map=Q_2',\
+'errors_5_2' u (1/$3):9 w lp lt 2 pt 4 ps .3 t 'nq=5, map=Q_2',\
+'errors_2_3' u (1/$3):9 w lp lt 3 pt 1 ps .43 t 'nq=2, map=Q_3',\
+'errors_3_3' u (1/$3):9 w lp lt 3 pt 2 ps .3 t 'nq=3, map=Q_3',\
+'errors_4_3' u (1/$3):9 w lp lt 3 pt 3 ps .3 t 'nq=4, map=Q_3',\
+'errors_5_3' u (1/$3):9 w lp lt 3 pt 4 ps .3 t 'nq=5, map=Q_3',\
+'errors_2_4' u (1/$3):9 w lp lt 4 pt 1 ps .43 t 'nq=2, map=Q_4',\
+'errors_3_4' u (1/$3):9 w lp lt 4 pt 2 ps .3 t 'nq=3, map=Q_4',\
+'errors_4_4' u (1/$3):9 w lp lt 4 pt 3 ps .3 t 'nq=4, map=Q_4',\
+'errors_5_4' u (1/$3):9 w lp lt 4 pt 4 ps .3 t 'nq=5, map=Q_4',\
+x**3/1000 lt -1 dt 2 t 'h^3',\
+x**2/100 lt -1 dt 3  t 'h^2' 
+
+############################################################################################
+
+set ylabel 'error exx_1'
+set output 'err_exx1.pdf'
+plot[][]\
+'errors_sr1_2_1' u (1/$3):6 w lp lt 1 pt 1 ps .3 t 'nq=2, map=1',\
+'errors_sr1_3_1' u (1/$3):6 w lp lt 1 pt 2 ps .3 t 'nq=3, map=Q_1',\
+'errors_sr1_4_1' u (1/$3):6 w lp lt 1 pt 3 ps .3 t 'nq=4, map=Q_1',\
+'errors_sr1_5_1' u (1/$3):6 w lp lt 1 pt 4 ps .3 t 'nq=5, map=Q_1',\
+'errors_sr1_2_2' u (1/$3):6 w lp lt 2 pt 1 ps .3 t 'nq=2, map=Q_2',\
+'errors_sr1_3_2' u (1/$3):6 w lp lt 2 pt 2 ps .3 t 'nq=3, map=Q_2',\
+'errors_sr1_4_2' u (1/$3):6 w lp lt 2 pt 3 ps .3 t 'nq=4, map=Q_2',\
+'errors_sr1_5_2' u (1/$3):6 w lp lt 2 pt 4 ps .3 t 'nq=5, map=Q_2',\
+'errors_sr1_2_3' u (1/$3):6 w lp lt 3 pt 1 ps .3 t 'nq=2, map=Q_3',\
+'errors_sr1_3_3' u (1/$3):6 w lp lt 3 pt 2 ps .3 t 'nq=3, map=Q_3',\
+'errors_sr1_4_3' u (1/$3):6 w lp lt 3 pt 3 ps .3 t 'nq=4, map=Q_3',\
+'errors_sr1_5_3' u (1/$3):6 w lp lt 3 pt 4 ps .3 t 'nq=5, map=Q_3',\
+'errors_sr1_2_4' u (1/$3):6 w lp lt 4 pt 1 ps .3 t 'nq=2, map=Q_4',\
+'errors_sr1_3_4' u (1/$3):6 w lp lt 4 pt 2 ps .3 t 'nq=3, map=Q_4',\
+'errors_sr1_4_4' u (1/$3):6 w lp lt 4 pt 3 ps .3 t 'nq=4, map=Q_4',\
+'errors_sr1_5_4' u (1/$3):6 w lp lt 4 pt 4 ps .3 t 'nq=5, map=Q_4',\
+x**3 lt -1 dt 2 t 'h^3',\
+x**1*4 lt -1 dt 3 t 'h^{1}'
+
+set ylabel 'error eyy_1'
+set output 'err_eyy1.pdf'
+plot[][]\
+'errors_sr1_2_1' u (1/$3):9 w lp lt 1 pt 1 ps .43 t 'nq=2, map=Q_1',\
+'errors_sr1_3_1' u (1/$3):9 w lp lt 1 pt 2 ps .3 t 'nq=3, map=Q_1',\
+'errors_sr1_4_1' u (1/$3):9 w lp lt 1 pt 3 ps .3 t 'nq=4, map=Q_1',\
+'errors_sr1_5_1' u (1/$3):9 w lp lt 1 pt 4 ps .3 t 'nq=5, map=Q_1',\
+'errors_sr1_2_2' u (1/$3):9 w lp lt 2 pt 1 ps .43 t 'nq=2, map=Q_2',\
+'errors_sr1_3_2' u (1/$3):9 w lp lt 2 pt 2 ps .3 t 'nq=3, map=Q_2',\
+'errors_sr1_4_2' u (1/$3):9 w lp lt 2 pt 3 ps .3 t 'nq=4, map=Q_2',\
+'errors_sr1_5_2' u (1/$3):9 w lp lt 2 pt 4 ps .3 t 'nq=5, map=Q_2',\
+'errors_sr1_2_3' u (1/$3):9 w lp lt 3 pt 1 ps .43 t 'nq=2, map=Q_3',\
+'errors_sr1_3_3' u (1/$3):9 w lp lt 3 pt 2 ps .3 t 'nq=3, map=Q_3',\
+'errors_sr1_4_3' u (1/$3):9 w lp lt 3 pt 3 ps .3 t 'nq=4, map=Q_3',\
+'errors_sr1_5_3' u (1/$3):9 w lp lt 3 pt 4 ps .3 t 'nq=5, map=Q_3',\
+'errors_sr1_2_4' u (1/$3):9 w lp lt 4 pt 1 ps .43 t 'nq=2, map=Q_4',\
+'errors_sr1_3_4' u (1/$3):9 w lp lt 4 pt 2 ps .3 t 'nq=3, map=Q_4',\
+'errors_sr1_4_4' u (1/$3):9 w lp lt 4 pt 3 ps .3 t 'nq=4, map=Q_4',\
+'errors_sr1_5_4' u (1/$3):9 w lp lt 4 pt 4 ps .3 t 'nq=5, map=Q_4',\
+x**3 lt -1 dt 2 t 'h^3',\
+x**1*4 lt -1 dt 3 t 'h^{1}'
+
+set ylabel 'error exy_1'
+set output 'err_exy1.pdf'
+plot[][]\
+'errors_sr1_2_1' u (1/$3):12 w lp lt 1 pt 1 ps .43 t 'nq=2, map=Q_1',\
+'errors_sr1_3_1' u (1/$3):12 w lp lt 1 pt 2 ps .3 t 'nq=3, map=Q_1',\
+'errors_sr1_4_1' u (1/$3):12 w lp lt 1 pt 3 ps .3 t 'nq=4, map=Q_1',\
+'errors_sr1_5_1' u (1/$3):12 w lp lt 1 pt 4 ps .3 t 'nq=5, map=Q_1',\
+'errors_sr1_2_2' u (1/$3):12 w lp lt 2 pt 1 ps .43 t 'nq=2, map=Q_2',\
+'errors_sr1_3_2' u (1/$3):12 w lp lt 2 pt 2 ps .3 t 'nq=3, map=Q_2',\
+'errors_sr1_4_2' u (1/$3):12 w lp lt 2 pt 3 ps .3 t 'nq=4, map=Q_2',\
+'errors_sr1_5_2' u (1/$3):12 w lp lt 2 pt 4 ps .3 t 'nq=5, map=Q_2',\
+'errors_sr1_2_3' u (1/$3):12 w lp lt 3 pt 1 ps .43 t 'nq=2, map=Q_3',\
+'errors_sr1_3_3' u (1/$3):12 w lp lt 3 pt 2 ps .3 t 'nq=3, map=Q_3',\
+'errors_sr1_4_3' u (1/$3):12 w lp lt 3 pt 3 ps .3 t 'nq=4, map=Q_3',\
+'errors_sr1_5_3' u (1/$3):12 w lp lt 3 pt 4 ps .3 t 'nq=5, map=Q_3',\
+'errors_sr1_2_4' u (1/$3):12 w lp lt 4 pt 1 ps .43 t 'nq=2, map=Q_4',\
+'errors_sr1_3_4' u (1/$3):12 w lp lt 4 pt 2 ps .3 t 'nq=3, map=Q_4',\
+'errors_sr1_4_4' u (1/$3):12 w lp lt 4 pt 3 ps .3 t 'nq=4, map=Q_4',\
+'errors_sr1_5_4' u (1/$3):12 w lp lt 4 pt 4 ps .3 t 'nq=5, map=Q_4',\
+x**3 lt -1 dt 2 t 'h^3',\
+x**1*4 lt -1 dt 3 t 'h^{1}'
+
+############################################################################################
+
+set ylabel 'error exx_2'
+set output 'err_exx2.pdf'
+plot[][]\
+'errors_sr2_2_1' u (1/$3):6 w lp lt 1 pt 1 ps .43 t 'nq=2, map=Q_1',\
+'errors_sr2_3_1' u (1/$3):6 w lp lt 1 pt 2 ps .3 t 'nq=3, map=Q_1',\
+'errors_sr2_4_1' u (1/$3):6 w lp lt 1 pt 3 ps .3 t 'nq=4, map=Q_1',\
+'errors_sr2_5_1' u (1/$3):6 w lp lt 1 pt 4 ps .3 t 'nq=5, map=Q_1',\
+'errors_sr2_2_2' u (1/$3):6 w lp lt 2 pt 1 ps .43 t 'nq=2, map=Q_2',\
+'errors_sr2_3_2' u (1/$3):6 w lp lt 2 pt 2 ps .3 t 'nq=3, map=Q_2',\
+'errors_sr2_4_2' u (1/$3):6 w lp lt 2 pt 3 ps .3 t 'nq=4, map=Q_2',\
+'errors_sr2_5_2' u (1/$3):6 w lp lt 2 pt 4 ps .3 t 'nq=5, map=Q_2',\
+'errors_sr2_2_3' u (1/$3):6 w lp lt 3 pt 1 ps .43 t 'nq=2, map=Q_3',\
+'errors_sr2_3_3' u (1/$3):6 w lp lt 3 pt 2 ps .3 t 'nq=3, map=Q_3',\
+'errors_sr2_4_3' u (1/$3):6 w lp lt 3 pt 3 ps .3 t 'nq=4, map=Q_3',\
+'errors_sr2_5_3' u (1/$3):6 w lp lt 3 pt 4 ps .3 t 'nq=5, map=Q_3',\
+'errors_sr2_2_4' u (1/$3):6 w lp lt 4 pt 1 ps .43 t 'nq=2, map=Q_4',\
+'errors_sr2_3_4' u (1/$3):6 w lp lt 4 pt 2 ps .3 t 'nq=3, map=Q_4',\
+'errors_sr2_4_4' u (1/$3):6 w lp lt 4 pt 3 ps .3 t 'nq=4, map=Q_4',\
+'errors_sr2_5_4' u (1/$3):6 w lp lt 4 pt 4 ps .3 t 'nq=5, map=Q_4',\
+x**3 lt -1 dt 2 t 'h^3'
+
+set ylabel 'error eyy_2'
+set output 'err_eyy2.pdf'
+plot[][]\
+'errors_sr2_2_1' u (1/$3):9 w lp lt 1 pt 1 ps .43 t 'nq=2, map=Q_1',\
+'errors_sr2_3_1' u (1/$3):9 w lp lt 1 pt 2 ps .3 t 'nq=3, map=Q_1',\
+'errors_sr2_4_1' u (1/$3):9 w lp lt 1 pt 3 ps .3 t 'nq=4, map=Q_1',\
+'errors_sr2_5_1' u (1/$3):9 w lp lt 1 pt 4 ps .3 t 'nq=5, map=Q_1',\
+'errors_sr2_2_2' u (1/$3):9 w lp lt 2 pt 1 ps .43 t 'nq=2, map=Q_2',\
+'errors_sr2_3_2' u (1/$3):9 w lp lt 2 pt 2 ps .3 t 'nq=3, map=Q_2',\
+'errors_sr2_4_2' u (1/$3):9 w lp lt 2 pt 3 ps .3 t 'nq=4, map=Q_2',\
+'errors_sr2_5_2' u (1/$3):9 w lp lt 2 pt 4 ps .3 t 'nq=5, map=Q_2',\
+'errors_sr2_2_3' u (1/$3):9 w lp lt 3 pt 1 ps .43 t 'nq=2, map=Q_3',\
+'errors_sr2_3_3' u (1/$3):9 w lp lt 3 pt 2 ps .3 t 'nq=3, map=Q_3',\
+'errors_sr2_4_3' u (1/$3):9 w lp lt 3 pt 3 ps .3 t 'nq=4, map=Q_3',\
+'errors_sr2_5_3' u (1/$3):9 w lp lt 3 pt 4 ps .3 t 'nq=5, map=Q_3',\
+'errors_sr2_2_4' u (1/$3):9 w lp lt 4 pt 1 ps .43 t 'nq=2, map=Q_4',\
+'errors_sr2_3_4' u (1/$3):9 w lp lt 4 pt 2 ps .3 t 'nq=3, map=Q_4',\
+'errors_sr2_4_4' u (1/$3):9 w lp lt 4 pt 3 ps .3 t 'nq=4, map=Q_4',\
+'errors_sr2_5_4' u (1/$3):9 w lp lt 4 pt 4 ps .3 t 'nq=5, map=Q_4',\
+x**3 lt -1 dt 2 t 'h^3'
+
+set ylabel 'error exy_2'
+set output 'err_exy2.pdf'
+plot[][]\
+'errors_sr2_2_1' u (1/$3):12 w lp lt 1 pt 1 ps .43 t 'nq=2, map=Q_1',\
+'errors_sr2_3_1' u (1/$3):12 w lp lt 1 pt 2 ps .3 t 'nq=3, map=Q_1',\
+'errors_sr2_4_1' u (1/$3):12 w lp lt 1 pt 3 ps .3 t 'nq=4, map=Q_1',\
+'errors_sr2_5_1' u (1/$3):12 w lp lt 1 pt 4 ps .3 t 'nq=5, map=Q_1',\
+'errors_sr2_2_2' u (1/$3):12 w lp lt 2 pt 1 ps .43 t 'nq=2, map=Q_2',\
+'errors_sr2_3_2' u (1/$3):12 w lp lt 2 pt 2 ps .3 t 'nq=3, map=Q_2',\
+'errors_sr2_4_2' u (1/$3):12 w lp lt 2 pt 3 ps .3 t 'nq=4, map=Q_2',\
+'errors_sr2_5_2' u (1/$3):12 w lp lt 2 pt 4 ps .3 t 'nq=5, map=Q_2',\
+'errors_sr2_2_3' u (1/$3):12 w lp lt 3 pt 1 ps .43 t 'nq=2, map=Q_3',\
+'errors_sr2_3_3' u (1/$3):12 w lp lt 3 pt 2 ps .3 t 'nq=3, map=Q_3',\
+'errors_sr2_4_3' u (1/$3):12 w lp lt 3 pt 3 ps .3 t 'nq=4, map=Q_3',\
+'errors_sr2_5_3' u (1/$3):12 w lp lt 3 pt 4 ps .3 t 'nq=5, map=Q_3',\
+'errors_sr2_2_4' u (1/$3):12 w lp lt 4 pt 1 ps .43 t 'nq=2, map=Q_4',\
+'errors_sr2_3_4' u (1/$3):12 w lp lt 4 pt 2 ps .3 t 'nq=3, map=Q_4',\
+'errors_sr2_4_4' u (1/$3):12 w lp lt 4 pt 3 ps .3 t 'nq=4, map=Q_4',\
+'errors_sr2_5_4' u (1/$3):12 w lp lt 4 pt 4 ps .3 t 'nq=5, map=Q_4',\
+x**3 lt -1 dt 2 t 'h^3'
+
+############################################################################################
+
+set ylabel 'error exx_3'
+set output 'err_exx3.pdf'
+plot[][]\
+'errors_sr3_2_1' u (1/$3):6 w lp lt 1 lw .5 pt 1 ps .43 t 'nq=2, map=Q_1',\
+'errors_sr3_3_1' u (1/$3):6 w lp lt 1 lw .5 pt 2 ps .3 t 'nq=3, map=Q_1',\
+'errors_sr3_4_1' u (1/$3):6 w lp lt 1 lw .5 pt 3 ps .3 t 'nq=4, map=Q_1',\
+'errors_sr3_5_1' u (1/$3):6 w lp lt 1 lw .5 pt 4 ps .3 t 'nq=5, map=Q_1',\
+'errors_sr3_2_2' u (1/$3):6 w lp lt 2 lw .5 pt 1 ps .43 t 'nq=2, map=Q_2',\
+'errors_sr3_3_2' u (1/$3):6 w lp lt 2 lw .5 pt 2 ps .3 t 'nq=3, map=Q_2',\
+'errors_sr3_4_2' u (1/$3):6 w lp lt 2 lw .5 pt 3 ps .3 t 'nq=4, map=Q_2',\
+'errors_sr3_5_2' u (1/$3):6 w lp lt 2 lw .5 pt 4 ps .3 t 'nq=5, map=Q_2',\
+'errors_sr3_2_3' u (1/$3):6 w lp lt 3 lw .5 pt 1 ps .43 t 'nq=2, map=Q_3',\
+'errors_sr3_3_3' u (1/$3):6 w lp lt 3 lw .5 pt 2 ps .3 t 'nq=3, map=Q_3',\
+'errors_sr3_4_3' u (1/$3):6 w lp lt 3 lw .5 pt 3 ps .3 t 'nq=4, map=Q_3',\
+'errors_sr3_5_3' u (1/$3):6 w lp lt 3 lw .5 pt 4 ps .3 t 'nq=5, map=Q_3',\
+'errors_sr3_2_4' u (1/$3):6 w lp lt 4 lw .5 pt 1 ps .43 t 'nq=2, map=Q_4',\
+'errors_sr3_3_4' u (1/$3):6 w lp lt 4 lw .5 pt 2 ps .3 t 'nq=3, map=Q_4',\
+'errors_sr3_4_4' u (1/$3):6 w lp lt 4 lw .5 pt 3 ps .3 t 'nq=4, map=Q_4',\
+'errors_sr3_5_4' u (1/$3):6 w lp lt 4 lw .5 pt 4 ps .3 t 'nq=5, map=Q_4',\
+x**3 lt -1 dt 2 t 'h^3'
+
+set ylabel 'error eyy_3'
+set output 'err_eyy3.pdf'
+plot[][]\
+'errors_sr3_2_1' u (1/$3):9 w lp lt 1 lw .5 pt 1 ps .43 t 'nq=2, map=Q_1',\
+'errors_sr3_3_1' u (1/$3):9 w lp lt 1 lw .5 pt 2 ps .3 t 'nq=3, map=Q_1',\
+'errors_sr3_4_1' u (1/$3):9 w lp lt 1 lw .5 pt 3 ps .3 t 'nq=4, map=Q_1',\
+'errors_sr3_5_1' u (1/$3):9 w lp lt 1 lw .5 pt 4 ps .3 t 'nq=5, map=Q_1',\
+'errors_sr3_2_2' u (1/$3):9 w lp lt 2 lw .5 pt 1 ps .43 t 'nq=2, map=Q_2',\
+'errors_sr3_3_2' u (1/$3):9 w lp lt 2 lw .5 pt 2 ps .3 t 'nq=3, map=Q_2',\
+'errors_sr3_4_2' u (1/$3):9 w lp lt 2 lw .5 pt 3 ps .3 t 'nq=4, map=Q_2',\
+'errors_sr3_5_2' u (1/$3):9 w lp lt 2 lw .5 pt 4 ps .3 t 'nq=5, map=Q_2',\
+'errors_sr3_2_3' u (1/$3):9 w lp lt 3 lw .5 pt 1 ps .43 t 'nq=2, map=Q_3',\
+'errors_sr3_3_3' u (1/$3):9 w lp lt 3 lw .5 pt 2 ps .3 t 'nq=3, map=Q_3',\
+'errors_sr3_4_3' u (1/$3):9 w lp lt 3 lw .5 pt 3 ps .3 t 'nq=4, map=Q_3',\
+'errors_sr3_5_3' u (1/$3):9 w lp lt 3 lw .5 pt 4 ps .3 t 'nq=5, map=Q_3',\
+'errors_sr3_2_4' u (1/$3):9 w lp lt 4 lw .5 pt 1 ps .43 t 'nq=2, map=Q_4',\
+'errors_sr3_3_4' u (1/$3):9 w lp lt 4 lw .5 pt 2 ps .3 t 'nq=3, map=Q_4',\
+'errors_sr3_4_4' u (1/$3):9 w lp lt 4 lw .5 pt 3 ps .3 t 'nq=4, map=Q_4',\
+'errors_sr3_5_4' u (1/$3):9 w lp lt 4 lw .5 pt 4 ps .3 t 'nq=5, map=Q_4',\
+x**3 lt -1 dt 2 t 'h^3'
+
+set ylabel 'error exy_3'
+set output 'err_exy3.pdf'
+plot[][]\
+'errors_sr3_2_1' u (1/$3):12 w lp lt 1 lw .5 pt 1 ps .43 t 'nq=2, map=Q_1',\
+'errors_sr3_3_1' u (1/$3):12 w lp lt 1 lw .5 pt 2 ps .3 t 'nq=3, map=Q_1',\
+'errors_sr3_4_1' u (1/$3):12 w lp lt 1 lw .5 pt 3 ps .3 t 'nq=4, map=Q_1',\
+'errors_sr3_5_1' u (1/$3):12 w lp lt 1 lw .5 pt 4 ps .3 t 'nq=5, map=Q_1',\
+'errors_sr3_2_2' u (1/$3):12 w lp lt 2 lw .5 pt 1 ps .43 t 'nq=2, map=Q_2',\
+'errors_sr3_3_2' u (1/$3):12 w lp lt 2 lw .5 pt 2 ps .3 t 'nq=3, map=Q_2',\
+'errors_sr3_4_2' u (1/$3):12 w lp lt 2 lw .5 pt 3 ps .3 t 'nq=4, map=Q_2',\
+'errors_sr3_5_2' u (1/$3):12 w lp lt 2 lw .5 pt 4 ps .3 t 'nq=5, map=Q_2',\
+'errors_sr3_2_3' u (1/$3):12 w lp lt 3 lw .5 pt 1 ps .43 t 'nq=2, map=Q_3',\
+'errors_sr3_3_3' u (1/$3):12 w lp lt 3 lw .5 pt 2 ps .3 t 'nq=3, map=Q_3',\
+'errors_sr3_4_3' u (1/$3):12 w lp lt 3 lw .5 pt 3 ps .3 t 'nq=4, map=Q_3',\
+'errors_sr3_5_3' u (1/$3):12 w lp lt 3 lw .5 pt 4 ps .3 t 'nq=5, map=Q_3',\
+'errors_sr3_2_4' u (1/$3):12 w lp lt 4 lw .5 pt 1 ps .43 t 'nq=2, map=Q_4',\
+'errors_sr3_3_4' u (1/$3):12 w lp lt 4 lw .5 pt 2 ps .3 t 'nq=3, map=Q_4',\
+'errors_sr3_4_4' u (1/$3):12 w lp lt 4 lw .5 pt 3 ps .3 t 'nq=4, map=Q_4',\
+'errors_sr3_5_4' u (1/$3):12 w lp lt 4 lw .5 pt 4 ps .3 t 'nq=5, map=Q_4',\
+x**3 lt -1 dt 2 t 'h^3'
+
+
+#################################################################################
+reset 
+
+set term pdf enhanced font "Times,12pt"
+set key outside
+set grid
+set xlabel 'theta'
+
+set log y
+
+set title 'measured at r=R_1'
+set ylabel 'sr_1' 
+set output 'sr1_R1.pdf'
+plot[][1e-16:1]\
+'sr1_R1.ascii_2_1' u 4:3 w lp lt 1 pt 1 ps .3 lw .5 t 'nq=2, map=Q_1',\
+'sr1_R1.ascii_3_1' u 4:3 w lp lt 1 pt 2 ps .3 lw .5 t 'nq=3, map=Q_1',\
+'sr1_R1.ascii_4_1' u 4:3 w lp lt 1 pt 3 ps .3 lw .5 t 'nq=4, map=Q_1',\
+'sr1_R1.ascii_5_1' u 4:3 w lp lt 1 pt 4 ps .3 lw .5 t 'nq=5, map=Q_1',\
+'sr1_R1.ascii_2_2' u 4:3 w lp lt 2 pt 1 ps .3 lw .5 t 'nq=2, map=Q_2',\
+'sr1_R1.ascii_3_2' u 4:3 w lp lt 2 pt 2 ps .3 lw .5 t 'nq=3, map=Q_2',\
+'sr1_R1.ascii_4_2' u 4:3 w lp lt 2 pt 3 ps .3 lw .5 t 'nq=4, map=Q_2',\
+'sr1_R1.ascii_5_2' u 4:3 w lp lt 2 pt 4 ps .3 lw .5 t 'nq=5, map=Q_2',\
+'sr1_R1.ascii_2_3' u 4:3 w lp lt 3 pt 1 ps .3 lw .5 t 'nq=2, map=Q_3',\
+'sr1_R1.ascii_3_3' u 4:3 w lp lt 3 pt 2 ps .3 lw .5 t 'nq=3, map=Q_3',\
+'sr1_R1.ascii_4_3' u 4:3 w lp lt 3 pt 3 ps .3 lw .5 t 'nq=4, map=Q_3',\
+'sr1_R1.ascii_5_3' u 4:3 w lp lt 3 pt 4 ps .3 lw .5 t 'nq=5, map=Q_3',\
+'sr1_R1.ascii_2_4' u 4:3 w lp lt 4 pt 1 ps .3 lw .5 t 'nq=2, map=Q_4',\
+'sr1_R1.ascii_3_4' u 4:3 w lp lt 4 pt 2 ps .3 lw .5 t 'nq=3, map=Q_4',\
+'sr1_R1.ascii_4_4' u 4:3 w lp lt 4 pt 3 ps .3 lw .5 t 'nq=4, map=Q_4',\
+'sr1_R1.ascii_5_4' u 4:3 w lp lt 4 pt 4 ps .3 lw .5 t 'nq=5, map=Q_4',\
+
+set ylabel 'sr_2' 
+set output 'sr2_R1.pdf'
+plot[][1e-16:1]\
+'sr2_R1.ascii_2_1' u 4:3 w lp lt 1 pt 1 ps .3 lw .5 t 'nq=2, map=Q_1',\
+'sr2_R1.ascii_3_1' u 4:3 w lp lt 1 pt 2 ps .3 lw .5 t 'nq=3, map=Q_1',\
+'sr2_R1.ascii_4_1' u 4:3 w lp lt 1 pt 3 ps .3 lw .5 t 'nq=4, map=Q_1',\
+'sr2_R1.ascii_5_1' u 4:3 w lp lt 1 pt 4 ps .3 lw .5 t 'nq=5, map=Q_1',\
+'sr2_R1.ascii_2_2' u 4:3 w lp lt 2 pt 1 ps .3 lw .5 t 'nq=2, map=Q_2',\
+'sr2_R1.ascii_3_2' u 4:3 w lp lt 2 pt 2 ps .3 lw .5 t 'nq=3, map=Q_2',\
+'sr2_R1.ascii_4_2' u 4:3 w lp lt 2 pt 3 ps .3 lw .5 t 'nq=4, map=Q_2',\
+'sr2_R1.ascii_5_2' u 4:3 w lp lt 2 pt 4 ps .3 lw .5 t 'nq=5, map=Q_2',\
+'sr2_R1.ascii_2_3' u 4:3 w lp lt 3 pt 1 ps .3 lw .5 t 'nq=2, map=Q_3',\
+'sr2_R1.ascii_3_3' u 4:3 w lp lt 3 pt 2 ps .3 lw .5 t 'nq=3, map=Q_3',\
+'sr2_R1.ascii_4_3' u 4:3 w lp lt 3 pt 3 ps .3 lw .5 t 'nq=4, map=Q_3',\
+'sr2_R1.ascii_5_3' u 4:3 w lp lt 3 pt 4 ps .3 lw .5 t 'nq=5, map=Q_3',\
+'sr2_R1.ascii_2_4' u 4:3 w lp lt 4 pt 1 ps .3 lw .5 t 'nq=2, map=Q_4',\
+'sr2_R1.ascii_3_4' u 4:3 w lp lt 4 pt 2 ps .3 lw .5 t 'nq=3, map=Q_4',\
+'sr2_R1.ascii_4_4' u 4:3 w lp lt 4 pt 3 ps .3 lw .5 t 'nq=4, map=Q_4',\
+'sr2_R1.ascii_5_4' u 4:3 w lp lt 4 pt 4 ps .3 lw .5 t 'nq=5, map=Q_4',\
+
+set ylabel 'sr_3' 
+set output 'sr3_R1.pdf'
+plot[][1e-16:1]\
+'sr3_R1.ascii_2_1' u 4:3 w lp lt 1 pt 1 ps .3 lw .5 t 'nq=2, map=Q_1',\
+'sr3_R1.ascii_3_1' u 4:3 w lp lt 1 pt 2 ps .3 lw .5 t 'nq=3, map=Q_1',\
+'sr3_R1.ascii_4_1' u 4:3 w lp lt 1 pt 3 ps .3 lw .5 t 'nq=4, map=Q_1',\
+'sr3_R1.ascii_5_1' u 4:3 w lp lt 1 pt 4 ps .3 lw .5 t 'nq=5, map=Q_1',\
+'sr3_R1.ascii_2_2' u 4:3 w lp lt 2 pt 1 ps .3 lw .5 t 'nq=2, map=Q_2',\
+'sr3_R1.ascii_3_2' u 4:3 w lp lt 2 pt 2 ps .3 lw .5 t 'nq=3, map=Q_2',\
+'sr3_R1.ascii_4_2' u 4:3 w lp lt 2 pt 3 ps .3 lw .5 t 'nq=4, map=Q_2',\
+'sr3_R1.ascii_5_2' u 4:3 w lp lt 2 pt 4 ps .3 lw .5 t 'nq=5, map=Q_2',\
+'sr3_R1.ascii_2_3' u 4:3 w lp lt 3 pt 1 ps .3 lw .5 t 'nq=2, map=Q_3',\
+'sr3_R1.ascii_3_3' u 4:3 w lp lt 3 pt 2 ps .3 lw .5 t 'nq=3, map=Q_3',\
+'sr3_R1.ascii_4_3' u 4:3 w lp lt 3 pt 3 ps .3 lw .5 t 'nq=4, map=Q_3',\
+'sr3_R1.ascii_5_3' u 4:3 w lp lt 3 pt 4 ps .3 lw .5 t 'nq=5, map=Q_3',\
+'sr3_R1.ascii_2_4' u 4:3 w lp lt 4 pt 1 ps .3 lw .5 t 'nq=2, map=Q_4',\
+'sr3_R1.ascii_3_4' u 4:3 w lp lt 4 pt 2 ps .3 lw .5 t 'nq=3, map=Q_4',\
+'sr3_R1.ascii_4_4' u 4:3 w lp lt 4 pt 3 ps .3 lw .5 t 'nq=4, map=Q_4',\
+'sr3_R1.ascii_5_4' u 4:3 w lp lt 4 pt 4 ps .3 lw .5 t 'nq=5, map=Q_4',\
+
+#-----------------
+
+set ylabel 'sr_1' 
+set title 'measured at r=R_2'
+set output 'sr1_R2.pdf'
+plot[][1e-16:1]\
+'sr1_R2.ascii_2_1' u 4:3 w lp lt 1 pt 1 ps .3 lw .5 t 'nq=2, map=Q_1',\
+'sr1_R2.ascii_3_1' u 4:3 w lp lt 1 pt 2 ps .3 lw .5 t 'nq=3, map=Q_1',\
+'sr1_R2.ascii_4_1' u 4:3 w lp lt 1 pt 3 ps .3 lw .5 t 'nq=4, map=Q_1',\
+'sr1_R2.ascii_5_1' u 4:3 w lp lt 1 pt 4 ps .3 lw .5 t 'nq=5, map=Q_1',\
+'sr1_R2.ascii_2_2' u 4:3 w lp lt 2 pt 1 ps .3 lw .5 t 'nq=2, map=Q_2',\
+'sr1_R2.ascii_3_2' u 4:3 w lp lt 2 pt 2 ps .3 lw .5 t 'nq=3, map=Q_2',\
+'sr1_R2.ascii_4_2' u 4:3 w lp lt 2 pt 3 ps .3 lw .5 t 'nq=4, map=Q_2',\
+'sr1_R2.ascii_5_2' u 4:3 w lp lt 2 pt 4 ps .3 lw .5 t 'nq=5, map=Q_2',\
+'sr1_R2.ascii_2_3' u 4:3 w lp lt 3 pt 1 ps .3 lw .5 t 'nq=2, map=Q_3',\
+'sr1_R2.ascii_3_3' u 4:3 w lp lt 3 pt 2 ps .3 lw .5 t 'nq=3, map=Q_3',\
+'sr1_R2.ascii_4_3' u 4:3 w lp lt 3 pt 3 ps .3 lw .5 t 'nq=4, map=Q_3',\
+'sr1_R2.ascii_5_3' u 4:3 w lp lt 3 pt 4 ps .3 lw .5 t 'nq=5, map=Q_3',\
+'sr1_R2.ascii_2_4' u 4:3 w lp lt 4 pt 1 ps .3 lw .5 t 'nq=2, map=Q_4',\
+'sr1_R2.ascii_3_4' u 4:3 w lp lt 4 pt 2 ps .3 lw .5 t 'nq=3, map=Q_4',\
+'sr1_R2.ascii_4_4' u 4:3 w lp lt 4 pt 3 ps .3 lw .5 t 'nq=4, map=Q_4',\
+'sr1_R2.ascii_5_4' u 4:3 w lp lt 4 pt 4 ps .3 lw .5 t 'nq=5, map=Q_4',\
+
+set ylabel 'sr_2' 
+set output 'sr2_R2.pdf'
+plot[][1e-16:1]\
+'sr2_R2.ascii_2_1' u 4:3 w lp lt 1 pt 1 ps .3 lw .5 t 'nq=2, map=Q_1',\
+'sr2_R2.ascii_3_1' u 4:3 w lp lt 1 pt 2 ps .3 lw .5 t 'nq=3, map=Q_1',\
+'sr2_R2.ascii_4_1' u 4:3 w lp lt 1 pt 3 ps .3 lw .5 t 'nq=4, map=Q_1',\
+'sr2_R2.ascii_5_1' u 4:3 w lp lt 1 pt 4 ps .3 lw .5 t 'nq=5, map=Q_1',\
+'sr2_R2.ascii_2_2' u 4:3 w lp lt 2 pt 1 ps .3 lw .5 t 'nq=2, map=Q_2',\
+'sr2_R2.ascii_3_2' u 4:3 w lp lt 2 pt 2 ps .3 lw .5 t 'nq=3, map=Q_2',\
+'sr2_R2.ascii_4_2' u 4:3 w lp lt 2 pt 3 ps .3 lw .5 t 'nq=4, map=Q_2',\
+'sr2_R2.ascii_5_2' u 4:3 w lp lt 2 pt 4 ps .3 lw .5 t 'nq=5, map=Q_2',\
+'sr2_R2.ascii_2_3' u 4:3 w lp lt 3 pt 1 ps .3 lw .5 t 'nq=2, map=Q_3',\
+'sr2_R2.ascii_3_3' u 4:3 w lp lt 3 pt 2 ps .3 lw .5 t 'nq=3, map=Q_3',\
+'sr2_R2.ascii_4_3' u 4:3 w lp lt 3 pt 3 ps .3 lw .5 t 'nq=4, map=Q_3',\
+'sr2_R2.ascii_5_3' u 4:3 w lp lt 3 pt 4 ps .3 lw .5 t 'nq=5, map=Q_3',\
+'sr2_R2.ascii_2_4' u 4:3 w lp lt 4 pt 1 ps .3 lw .5 t 'nq=2, map=Q_4',\
+'sr2_R2.ascii_3_4' u 4:3 w lp lt 4 pt 2 ps .3 lw .5 t 'nq=3, map=Q_4',\
+'sr2_R2.ascii_4_4' u 4:3 w lp lt 4 pt 3 ps .3 lw .5 t 'nq=4, map=Q_4',\
+'sr2_R2.ascii_5_4' u 4:3 w lp lt 4 pt 4 ps .3 lw .5 t 'nq=5, map=Q_4',\
+
+set ylabel 'sr_3' 
+set output 'sr3_R2.pdf'
+plot[][1e-16:1]\
+'sr3_R2.ascii_2_1' u 4:3 w lp lt 1 pt 1 ps .3 lw .5 t 'nq=2, map=Q_1',\
+'sr3_R2.ascii_3_1' u 4:3 w lp lt 1 pt 2 ps .3 lw .5 t 'nq=3, map=Q_1',\
+'sr3_R2.ascii_4_1' u 4:3 w lp lt 1 pt 3 ps .3 lw .5 t 'nq=4, map=Q_1',\
+'sr3_R2.ascii_5_1' u 4:3 w lp lt 1 pt 4 ps .3 lw .5 t 'nq=5, map=Q_1',\
+'sr3_R2.ascii_2_2' u 4:3 w lp lt 2 pt 1 ps .3 lw .5 t 'nq=2, map=Q_2',\
+'sr3_R2.ascii_3_2' u 4:3 w lp lt 2 pt 2 ps .3 lw .5 t 'nq=3, map=Q_2',\
+'sr3_R2.ascii_4_2' u 4:3 w lp lt 2 pt 3 ps .3 lw .5 t 'nq=4, map=Q_2',\
+'sr3_R2.ascii_5_2' u 4:3 w lp lt 2 pt 4 ps .3 lw .5 t 'nq=5, map=Q_2',\
+'sr3_R2.ascii_2_3' u 4:3 w lp lt 3 pt 1 ps .3 lw .5 t 'nq=2, map=Q_3',\
+'sr3_R2.ascii_3_3' u 4:3 w lp lt 3 pt 2 ps .3 lw .5 t 'nq=3, map=Q_3',\
+'sr3_R2.ascii_4_3' u 4:3 w lp lt 3 pt 3 ps .3 lw .5 t 'nq=4, map=Q_3',\
+'sr3_R2.ascii_5_3' u 4:3 w lp lt 3 pt 4 ps .3 lw .5 t 'nq=5, map=Q_3',\
+'sr3_R2.ascii_2_4' u 4:3 w lp lt 4 pt 1 ps .3 lw .5 t 'nq=2, map=Q_4',\
+'sr3_R2.ascii_3_4' u 4:3 w lp lt 4 pt 2 ps .3 lw .5 t 'nq=3, map=Q_4',\
+'sr3_R2.ascii_4_4' u 4:3 w lp lt 4 pt 3 ps .3 lw .5 t 'nq=4, map=Q_4',\
+'sr3_R2.ascii_5_4' u 4:3 w lp lt 4 pt 4 ps .3 lw .5 t 'nq=5, map=Q_4',\
+
+
+set ylabel 'sr_c' 
+set output 'src_R2.pdf'
+plot[0:pi2][1e-16:1]\
+'src_R2.ascii_2_1' u 4:3 w lp lt 1 pt 1 ps .3 lw .5 t 'nq=2, map=Q_1',\
+'src_R2.ascii_3_1' u 4:3 w lp lt 1 pt 2 ps .3 lw .5 t 'nq=3, map=Q_1',\
+'src_R2.ascii_4_1' u 4:3 w lp lt 1 pt 3 ps .3 lw .5 t 'nq=4, map=Q_1',\
+'src_R2.ascii_5_1' u 4:3 w lp lt 1 pt 4 ps .3 lw .5 t 'nq=5, map=Q_1',\
+'src_R2.ascii_2_2' u 4:3 w lp lt 2 pt 1 ps .3 lw .5 t 'nq=2, map=Q_2',\
+'src_R2.ascii_3_2' u 4:3 w lp lt 2 pt 2 ps .3 lw .5 t 'nq=3, map=Q_2',\
+'src_R2.ascii_4_2' u 4:3 w lp lt 2 pt 3 ps .3 lw .5 t 'nq=4, map=Q_2',\
+'src_R2.ascii_5_2' u 4:3 w lp lt 2 pt 4 ps .3 lw .5 t 'nq=5, map=Q_2',\
+'src_R2.ascii_2_3' u 4:3 w lp lt 3 pt 1 ps .3 lw .5 t 'nq=2, map=Q_3',\
+'src_R2.ascii_3_3' u 4:3 w lp lt 3 pt 2 ps .3 lw .5 t 'nq=3, map=Q_3',\
+'src_R2.ascii_4_3' u 4:3 w lp lt 3 pt 3 ps .3 lw .5 t 'nq=4, map=Q_3',\
+'src_R2.ascii_5_3' u 4:3 w lp lt 3 pt 4 ps .3 lw .5 t 'nq=5, map=Q_3',\
+'src_R2.ascii_2_4' u 4:3 w lp lt 4 pt 1 ps .3 lw .5 t 'nq=2, map=Q_4',\
+'src_R2.ascii_3_4' u 4:3 w lp lt 4 pt 2 ps .3 lw .5 t 'nq=3, map=Q_4',\
+'src_R2.ascii_4_4' u 4:3 w lp lt 4 pt 3 ps .3 lw .5 t 'nq=4, map=Q_4',\
+'src_R2.ascii_5_4' u 4:3 w lp lt 4 pt 4 ps .3 lw .5 t 'nq=5, map=Q_4',\
+
+
+
+
+#-----------------
+
+set ylabel 'pressure error'
+
+set title 'measured at r=R_1'
+set output 'qqq_R1.pdf'
+plot[][]\
+'qqq_R1.ascii_2_1' u 4:(abs($3-1)) w lp lt 1 pt 1 ps .3 lw .5 t 'nq=2, map=Q_1',\
+'qqq_R1.ascii_3_1' u 4:(abs($3-1)) w lp lt 1 pt 2 ps .3 lw .5 t 'nq=3, map=Q_1',\
+'qqq_R1.ascii_4_1' u 4:(abs($3-1)) w lp lt 1 pt 3 ps .3 lw .5 t 'nq=4, map=Q_1',\
+'qqq_R1.ascii_5_1' u 4:(abs($3-1)) w lp lt 1 pt 4 ps .3 lw .5 t 'nq=5, map=Q_1',\
+'qqq_R1.ascii_2_2' u 4:(abs($3-1)) w lp lt 2 pt 1 ps .3 lw .5 t 'nq=2, map=Q_2',\
+'qqq_R1.ascii_3_2' u 4:(abs($3-1)) w lp lt 2 pt 2 ps .3 lw .5 t 'nq=3, map=Q_2',\
+'qqq_R1.ascii_4_2' u 4:(abs($3-1)) w lp lt 2 pt 3 ps .3 lw .5 t 'nq=4, map=Q_2',\
+'qqq_R1.ascii_5_2' u 4:(abs($3-1)) w lp lt 2 pt 4 ps .3 lw .5 t 'nq=5, map=Q_2',\
+'qqq_R1.ascii_2_3' u 4:(abs($3-1)) w lp lt 3 pt 1 ps .3 lw .5 t 'nq=2, map=Q_3',\
+'qqq_R1.ascii_3_3' u 4:(abs($3-1)) w lp lt 3 pt 2 ps .3 lw .5 t 'nq=3, map=Q_3',\
+'qqq_R1.ascii_4_3' u 4:(abs($3-1)) w lp lt 3 pt 3 ps .3 lw .5 t 'nq=4, map=Q_3',\
+'qqq_R1.ascii_5_3' u 4:(abs($3-1)) w lp lt 3 pt 4 ps .3 lw .5 t 'nq=5, map=Q_3',\
+'qqq_R1.ascii_2_4' u 4:(abs($3-1)) w lp lt 4 pt 1 ps .3 lw .5 t 'nq=2, map=Q_4',\
+'qqq_R1.ascii_3_4' u 4:(abs($3-1)) w lp lt 4 pt 2 ps .3 lw .5 t 'nq=3, map=Q_4',\
+'qqq_R1.ascii_4_4' u 4:(abs($3-1)) w lp lt 4 pt 3 ps .3 lw .5 t 'nq=4, map=Q_4',\
+'qqq_R1.ascii_5_4' u 4:(abs($3-1)) w lp lt 4 pt 4 ps .3 lw .5 t 'nq=5, map=Q_4',\
+
+
+set title 'measured at r=R_2'
+set output 'qqq_R2.pdf'
+plot[][]\
+'qqq_R2.ascii_2_1' u 4:(abs($3)) w lp lt 1 pt 1 ps .3 lw .5 t 'nq=2, map=Q_1',\
+'qqq_R2.ascii_3_1' u 4:(abs($3)) w lp lt 1 pt 2 ps .3 lw .5 t 'nq=3, map=Q_1',\
+'qqq_R2.ascii_4_1' u 4:(abs($3)) w lp lt 1 pt 3 ps .3 lw .5 t 'nq=4, map=Q_1',\
+'qqq_R2.ascii_5_1' u 4:(abs($3)) w lp lt 1 pt 4 ps .3 lw .5 t 'nq=5, map=Q_1',\
+'qqq_R2.ascii_2_2' u 4:(abs($3)) w lp lt 2 pt 1 ps .3 lw .5 t 'nq=2, map=Q_2',\
+'qqq_R2.ascii_3_2' u 4:(abs($3)) w lp lt 2 pt 2 ps .3 lw .5 t 'nq=3, map=Q_2',\
+'qqq_R2.ascii_4_2' u 4:(abs($3)) w lp lt 2 pt 3 ps .3 lw .5 t 'nq=4, map=Q_2',\
+'qqq_R2.ascii_5_2' u 4:(abs($3)) w lp lt 2 pt 4 ps .3 lw .5 t 'nq=5, map=Q_2',\
+'qqq_R2.ascii_2_3' u 4:(abs($3)) w lp lt 3 pt 1 ps .3 lw .5 t 'nq=2, map=Q_3',\
+'qqq_R2.ascii_3_3' u 4:(abs($3)) w lp lt 3 pt 2 ps .3 lw .5 t 'nq=3, map=Q_3',\
+'qqq_R2.ascii_4_3' u 4:(abs($3)) w lp lt 3 pt 3 ps .3 lw .5 t 'nq=4, map=Q_3',\
+'qqq_R2.ascii_5_3' u 4:(abs($3)) w lp lt 3 pt 4 ps .3 lw .5 t 'nq=5, map=Q_3',\
+'qqq_R2.ascii_2_4' u 4:(abs($3)) w lp lt 4 pt 1 ps .3 lw .5 t 'nq=2, map=Q_4',\
+'qqq_R2.ascii_3_4' u 4:(abs($3)) w lp lt 4 pt 2 ps .3 lw .5 t 'nq=3, map=Q_4',\
+'qqq_R2.ascii_4_4' u 4:(abs($3)) w lp lt 4 pt 3 ps .3 lw .5 t 'nq=4, map=Q_4',\
+'qqq_R2.ascii_5_4' u 4:(abs($3)) w lp lt 4 pt 4 ps .3 lw .5 t 'nq=5, map=Q_4',\
+
+
+
+
+
+
+
+set ylabel 'velocity'
+set title 'measured at r=R_2'
+set output 'vel_R2.pdf'
+plot[][]\
+'vel_R2.ascii_2_1' u 4:3 w lp lt 1 pt 1 ps .3 lw .5 t 'nq=2, map=Q_1',\
+'vel_R2.ascii_3_1' u 4:3 w lp lt 1 pt 2 ps .3 lw .5 t 'nq=3, map=Q_1',\
+'vel_R2.ascii_4_1' u 4:3 w lp lt 1 pt 3 ps .3 lw .5 t 'nq=4, map=Q_1',\
+'vel_R2.ascii_5_1' u 4:3 w lp lt 1 pt 4 ps .3 lw .5 t 'nq=5, map=Q_1',\
+'vel_R2.ascii_2_2' u 4:3 w lp lt 2 pt 1 ps .3 lw .5 t 'nq=2, map=Q_2',\
+'vel_R2.ascii_3_2' u 4:3 w lp lt 2 pt 2 ps .3 lw .5 t 'nq=3, map=Q_2',\
+'vel_R2.ascii_4_2' u 4:3 w lp lt 2 pt 3 ps .3 lw .5 t 'nq=4, map=Q_2',\
+'vel_R2.ascii_5_2' u 4:3 w lp lt 2 pt 4 ps .3 lw .5 t 'nq=5, map=Q_2',\
+'vel_R2.ascii_2_3' u 4:3 w lp lt 3 pt 1 ps .3 lw .5 t 'nq=2, map=Q_3',\
+'vel_R2.ascii_3_3' u 4:3 w lp lt 3 pt 2 ps .3 lw .5 t 'nq=3, map=Q_3',\
+'vel_R2.ascii_4_3' u 4:3 w lp lt 3 pt 3 ps .3 lw .5 t 'nq=4, map=Q_3',\
+'vel_R2.ascii_5_3' u 4:3 w lp lt 3 pt 4 ps .3 lw .5 t 'nq=5, map=Q_3',\
+'vel_R2.ascii_2_4' u 4:3 w lp lt 4 pt 1 ps .3 lw .5 t 'nq=2, map=Q_4',\
+'vel_R2.ascii_3_4' u 4:3 w lp lt 4 pt 2 ps .3 lw .5 t 'nq=3, map=Q_4',\
+'vel_R2.ascii_4_4' u 4:3 w lp lt 4 pt 3 ps .3 lw .5 t 'nq=4, map=Q_4',\
+'vel_R2.ascii_5_4' u 4:3 w lp lt 4 pt 4 ps .3 lw .5 t 'nq=5, map=Q_4',\
+
+
+
+
+set ylabel 'e_{rr}'
+set title 'measured at r=R_2'
+set output 'err_R2.pdf'
+plot[][]\
+'err_R2.ascii_2_1' u 4:3 w lp lt 1 pt 1 ps .3 lw .5 t 'nq=2, map=Q_1',\
+'err_R2.ascii_3_1' u 4:3 w lp lt 1 pt 2 ps .3 lw .5 t 'nq=3, map=Q_1',\
+'err_R2.ascii_4_1' u 4:3 w lp lt 1 pt 3 ps .3 lw .5 t 'nq=4, map=Q_1',\
+'err_R2.ascii_5_1' u 4:3 w lp lt 1 pt 4 ps .3 lw .5 t 'nq=5, map=Q_1',\
+'err_R2.ascii_2_2' u 4:3 w lp lt 2 pt 1 ps .3 lw .5 t 'nq=2, map=Q_2',\
+'err_R2.ascii_3_2' u 4:3 w lp lt 2 pt 2 ps .3 lw .5 t 'nq=3, map=Q_2',\
+'err_R2.ascii_4_2' u 4:3 w lp lt 2 pt 3 ps .3 lw .5 t 'nq=4, map=Q_2',\
+'err_R2.ascii_5_2' u 4:3 w lp lt 2 pt 4 ps .3 lw .5 t 'nq=5, map=Q_2',\
+'err_R2.ascii_2_3' u 4:3 w lp lt 3 pt 1 ps .3 lw .5 t 'nq=2, map=Q_3',\
+'err_R2.ascii_3_3' u 4:3 w lp lt 3 pt 2 ps .3 lw .5 t 'nq=3, map=Q_3',\
+'err_R2.ascii_4_3' u 4:3 w lp lt 3 pt 3 ps .3 lw .5 t 'nq=4, map=Q_3',\
+'err_R2.ascii_5_3' u 4:3 w lp lt 3 pt 4 ps .3 lw .5 t 'nq=5, map=Q_3',\
+'err_R2.ascii_2_4' u 4:3 w lp lt 4 pt 1 ps .3 lw .5 t 'nq=2, map=Q_4',\
+'err_R2.ascii_3_4' u 4:3 w lp lt 4 pt 2 ps .3 lw .5 t 'nq=3, map=Q_4',\
+'err_R2.ascii_4_4' u 4:3 w lp lt 4 pt 3 ps .3 lw .5 t 'nq=4, map=Q_4',\
+'err_R2.ascii_5_4' u 4:3 w lp lt 4 pt 4 ps .3 lw .5 t 'nq=5, map=Q_4',\
+
+
+
+
+
+

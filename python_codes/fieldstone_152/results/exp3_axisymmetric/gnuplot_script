@@ -1,0 +1,78 @@
+#script
+set term pdf enhanced font "12pt,Times"
+set grid
+set key outside
+pi2=pi/2
+
+###############################################################################
+
+set log y 
+set xlabel 'r'
+set ylabel 'eff. strain rate'
+set output 'sr2_left.pdf'
+plot[][]\
+'1pct/sr2_left.ascii' u 4:3 w lp ps .3 t '1%',\
+'5pct/sr2_left.ascii' u 4:3 w lp ps .3 t '5%',\
+'10pct/sr2_left.ascii' u 4:3 w lp ps .3 t '10%',\
+'50pct/sr2_left.ascii' u 4:3 w lp ps .3 t '50%',\
+
+set xlabel 'r'
+set ylabel 'velocity magnitude'
+set output 'vel_left.pdf'
+plot[][]\
+'1pct/vel_left.ascii' u 4:3 w lp ps .3 t '1%',\
+'5pct/vel_left.ascii' u 4:3 w lp ps .3 t '5%',\
+'10pct/vel_left.ascii' u 4:3 w lp ps .3 t '10%',\
+'50pct/vel_left.ascii' u 4:3 w lp ps .3 t '50%',\
+
+###############################################################################
+
+set xlabel '{/Symbol q}'
+set ylabel 'eff. strain rate'
+set output 'sr2_R2.pdf'
+plot[-pi2:pi2][]\
+'1pct/sr2_R2.ascii' u 4:3 w lp ps .3 t '1%',\
+'5pct/sr2_R2.ascii' u 4:3 w lp ps .3 t '5%',\
+'10pct/sr2_R2.ascii' u 4:3 w lp ps .3 t '10%',\
+'50pct/sr2_R2.ascii' u 4:3 w lp ps .3 t '50%',\
+
+set xlabel '{/Symbol q}'
+set ylabel 'velocity magnitude'
+set output 'vel_R2.pdf'
+plot[-pi2:pi2][]\
+'1pct/vel_R2.ascii' u 4:3 w lp ps .3 t '1%',\
+'5pct/vel_R2.ascii' u 4:3 w lp ps .3 t '5%',\
+'10pct/vel_R2.ascii' u 4:3 w lp ps .3 t '10%',\
+'50pct/vel_R2.ascii' u 4:3 w lp ps .3 t '50%',\
+
+###############################################################################
+
+unset log y
+set xlabel '{/symbol q}'
+set ylabel 'pressure'
+set output 'p_R2.pdf'
+plot[-pi2:pi2][]\
+'1pct/qqq_R2.ascii'  u 4:3 w lp ps .13 t '1%',\
+'5pct/qqq_R2.ascii'  u 4:3 w lp ps .13 t '5%',\
+'10pct/qqq_R2.ascii' u 4:3 w lp ps .13 t '10%',\
+'50pct/qqq_R2.ascii' u 4:3 w lp ps .13 t '50%',\
+
+set xlabel '{/symbol q}'
+set ylabel '{/Symbol e}_{rr}'
+set output 'err_R2.pdf'
+plot[-pi2:pi2][]\
+'1pct/err_R2.ascii'  u 4:3 w lp ps .13 t '1%',\
+'5pct/err_R2.ascii'  u 4:3 w lp ps .13 t '5%',\
+'10pct/err_R2.ascii' u 4:3 w lp ps .13 t '10%',\
+'50pct/err_R2.ascii' u 4:3 w lp ps .13 t '50%',\
+
+
+
+
+
+
+
+
+
+
+

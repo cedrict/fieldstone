@@ -934,8 +934,19 @@ surface_free_slip=True
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/qqq_R2}\\
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/vel_R2}
 \includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/err_R2}\\
+{\captionfont Various fields as measured on the inner or outer surface.}
 \end{center}
 
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/vel_left}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr2_left}\\
+{\captionfont velocity magnitude and strain rate measured on the straight boundary 
+defined by $x=0$ and $y<0$. This is the part of the domain that is the furthest from the 
+blob, so we expect a very low velocity and strain rate. Despite the weird oscillations
+obtained with this \stone the overal velocity and strain rate are lower than the results obtained
+with \aspect (5+2 mesh). What is also rather interesting is the fact that the \aspect velocity is
+not zero at $r=R_2$. Also it would be interesting to run the \aspect model with a higher global resolution but that would take a lot of resources. These models were run on 192 MPI processes.}
+\end{center}
 
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/sr_R2_comparison}\\
@@ -991,6 +1002,25 @@ $x,y$-plane the vtu file had to be rotated so as to align with the vtu file retu
 \end{center}
 
 
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{The other blob test (exp=3) - axisymmetric}
+
+We now fix the resolution at 32x192 elements. This experiment is identical to experiment 2
+except that we now vary the density of the blob. In experiment 2 it was 1\%. We explore other values:
+5\%, 10\% and 50\%.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp3_axisymmetric/vel_left}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp3_axisymmetric/sr2_left}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp3_axisymmetric/vel_R2}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp3_axisymmetric/sr2_R2}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp3_axisymmetric/p_R2}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp3_axisymmetric/err_R2}\\
+{\captionfont Reassuringly the velocities (and therefore strain rates) scale linearly with the 
+change in buoyancy forces.}
+\end{center}
 
 
 

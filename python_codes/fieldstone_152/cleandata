@@ -16,4 +16,5 @@ rm qqq_*
 rm opla
 rm normal2*
 rm err_R2*
-
+rm vel_left*
+rm d_t_*
