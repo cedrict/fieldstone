@@ -15,7 +15,7 @@ from scipy.sparse import lil_matrix
 # exp=2: blob
 
 axisymmetric=True
-exp=2
+exp=1
 surface_free_slip=True
 
 ###############################################################################
@@ -352,7 +352,7 @@ if int(len(sys.argv) == 5):
    if mapping==3: mapping='Q3'
    if mapping==4: mapping='Q4'
 else:
-   nelr = 64 # Q1 cells!
+   nelr = 32 # Q1 cells!
    visu = 1
    nqperdim=5
    mapping='Q4' 
