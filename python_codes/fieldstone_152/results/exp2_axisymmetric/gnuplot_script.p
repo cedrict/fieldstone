@@ -1,4 +1,3 @@
-#script
 set term pdf enhanced font "Times,12pt"
 set key outside
 set grid
