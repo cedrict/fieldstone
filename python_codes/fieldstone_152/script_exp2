@@ -1,0 +1,89 @@
+#! /bin/bash
+#   nelr        = int(sys.argv[1])
+#   visu        = int(sys.argv[2])
+#   nqperdim    = int(sys.argv[3])
+#   mapping     = int(sys.argv[4])
+#   xi          = int(sys.argv[5])
+#   etablobstar = float(sys.argv[6])
+#   rhoblobstar = float(sys.argv[7])
+#   yblob       = float(sys.argv[8])
+#   Rblob       = float(sys.argv[9])
+#   etalithstar = float(sys.argv[10])
+
+
+# testing xi
+for l in 16 32 64 ; do
+   for nqperdim in 3; do
+      for mapping in 4; do
+          for xi in 4 5 6 7 8; do
+              echo nelr= $l - nqperdim= $nqperdim - mapping= $mapping - xi= $xi
+              python3 stone.py 2 $l 0 $nqperdim $mapping $xi 1 0.999 4900000  400000 1 > opla 
+              mv vel_R2.ascii vel_R2.ascii_${l}_${xi}
+              mv qqq_R2.ascii qqq_R2.ascii_${l}_${xi}
+              mv err_R2.ascii err_R2.ascii_${l}_${xi}
+              mv d_t_R2.ascii d_t_R2.ascii_${l}_${xi}
+              mv sr2_R2.ascii sr2_R2.ascii_${l}_${xi}
+              mv v_r_R2.ascii v_r_R2.ascii_${l}_${xi}
+              mv v_t_R2.ascii v_t_R2.ascii_${l}_${xi}
+              grep build opla >> builds.ascii
+              grep solving opla >> solves.ascii
+         done
+      done
+   done
+done
+
+exit
+
+#testing quadrature
+for l in 64 ; do
+   for nqperdim in 2 3 4 5; do
+      for mapping in 2 ; do
+          for xi in 8; do
+              echo nelr= $l - nqperdim= $nqperdim - mapping= $mapping - xi= $xi
+              python3 stone.py 2 $l 0 $nqperdim $mapping $xi 1 0.999 4900000  400000 1 > opla 
+              mv vel_R2.ascii vel_R2.ascii_${l}_${nqperdim}
+              mv qqq_R2.ascii qqq_R2.ascii_${l}_${nqperdim}
+              mv err_R2.ascii err_R2.ascii_${l}_${nqperdim}
+              mv d_t_R2.ascii d_t_R2.ascii_${l}_${nqperdim}
+              mv sr2_R2.ascii sr2_R2.ascii_${l}_${nqperdim}
+              mv v_r_R2.ascii v_r_R2.ascii_${l}_${nqperdim}
+              mv v_t_R2.ascii v_t_R2.ascii_${l}_${nqperdim}
+         done
+      done
+   done
+done
+
+exit
+quit
+
+
+#testing mapping
+for l in 64 ; do
+   for nqperdim in 3; do
+      for mapping in 2 3 4; do
+          for xi in 8; do
+              echo nelr= $l - nqperdim= $nqperdim - mapping= $mapping - xi= $xi
+              python3 stone.py 2 $l 0 $nqperdim $mapping $xi 1 0.999 4900000  400000 1 > opla 
+              mv vel_R2.ascii vel_R2.ascii_${l}_${mapping}
+              mv qqq_R2.ascii qqq_R2.ascii_${l}_${mapping}
+              mv err_R2.ascii err_R2.ascii_${l}_${mapping}
+              mv d_t_R2.ascii d_t_R2.ascii_${l}_${mapping}
+              mv sr2_R2.ascii sr2_R2.ascii_${l}_${mapping}
+              mv v_r_R2.ascii v_r_R2.ascii_${l}_${mapping}
+              mv v_t_R2.ascii v_t_R2.ascii_${l}_${mapping}
+         done
+      done
+   done
+done
+
+exit
+quit
+
+
+
+
+
+
+
+rm opla
+

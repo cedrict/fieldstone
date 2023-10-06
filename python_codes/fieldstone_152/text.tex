@@ -26,7 +26,6 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 The goal here is to explore the influence of the mapping polynomial order and/or
 the number of quadrature points on the accuracy of the solution of various benchmarks and test cases.
 We will exclusively focus on annulus geometries in plane strain of 
@@ -116,9 +115,49 @@ Note that the {\python axisymmetric} flag controls whether the Stokes equations
 are solved in plane strain or under the assumption that there is axisymmetry. 
 In the latter case the mesh is a demi-annulus in the $x>0$ half plane.
 
+
+\newpage
+
 Finally free slip boundary conditions have been implemented, but only at the 
 surface, and only with the method of Lagrange Multipliers (\stone~\ref{f151}
 taught us that it works as well as the other method).  
+{\color{red} change}
+
+\begin{eqnarray}
+\K_e \cdot \vec{\cal V} + \G_e \cdot \vec{\cal P} &=& \vec{f}  \\
+\G_e \cdot \vec{\cal V} &=& \vec{0}
+\end{eqnarray}
+We multiply the first line by the rotation matrix ${\bm R}$:
+\begin{eqnarray}
+{\bm R} \cdot \K_e \cdot \vec{\cal V} +{\bm R} \cdot \G_e \cdot \vec{\cal P} &=&{\bm R} \cdot \vec{f}  \\
+\G_e \cdot \vec{\cal V} &=& \vec{0}
+\end{eqnarray}
+and then introduce the identity matrix ${\bm I}={\bm R}^T\cdot {\bm R}$ before the velocity vector:
+\begin{eqnarray}
+{\bm R} \cdot \K_e \cdot {\bm R}^T\cdot {\bm R} \cdot  \vec{\cal V} +{\bm R} \cdot \G_e \cdot \vec{\cal P} &=&{\bm R} \cdot \vec{f}  \\
+\G_e \cdot  {\bm R}^T\cdot {\bm R} \cdot  \vec{\cal V} &=& \vec{0}
+\end{eqnarray}
+The second line can also be written
+\begin{eqnarray}
+({\bm R} \cdot \K_e \cdot {\bm R}^T) \cdot ({\bm R} \cdot  \vec{\cal V}) + ({\bm R} \cdot \G_e) \cdot \vec{\cal P} &=&{\bm R} \cdot \vec{f}  \\
+( {\bm R} \cdot \G_e)^T \cdot  ({\bm R} \cdot  \vec{\cal V}) &=& \vec{0}
+\end{eqnarray}
+which translates at the elemental level into
+\begin{lstlisting}
+K_el=RotMat.dot(K_el.dot(RotMat.T))
+f_el=RotMat.dot(f_el)
+G_el=RotMat.dot(G_el)
+\end{lstlisting}
+Note that the matrix $\K_e$ is $(m*ndofV)\times (m*ndofV)$ in size, and so is the matrix ${\bm R}$.
+
+After boundary conditions are imposed, the system is rotated back:
+
+\begin{lstlisting}
+K_el=RotMat.T.dot(K_el.dot(RotMat))
+f_el=RotMat.T.dot(f_el)
+G_el=RotMat.T.dot(G_el)
+\end{lstlisting}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -625,6 +664,145 @@ Note that in our case $\rho_0=1$ and $g_0=1$ so that in fact the dynamic topogra
 is simply $-\sigma_{rr}$.
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Exp1}
+
+\todo{Describe experiment - add figures}
+
+
+
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/vel_16}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/vel_32}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/vel_64}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/vel_128}
+
+\noindent
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/sr2_16}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/sr2_32}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/sr2_64}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/sr2_128}
+
+\noindent
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/err_16}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/err_32}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/err_64}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/err_128}
+
+\noindent
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/qqq_16}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/qqq_32}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/qqq_64}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/qqq_128}
+
+\noindent
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/d_t_16}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/d_t_32}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/d_t_64}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/d_t_128}
+
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/v_r_128}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp1/v_t_128}
+
+%\begin{center}
+%\includegraphics[width=8cm]{exp1/vel_80}
+%\includegraphics[width=8cm]{exp1/sr2_80}\\
+%\includegraphics[width=8cm]{exp1/err_80}
+%\includegraphics[width=8cm]{exp1/qqq_80}\\
+%\includegraphics[width=14cm]{exp1/d_t_80}
+%\end{center}
+
+Conclusions:
+\begin{itemize}
+\item Experiment not very conclusive
+\item Reassuringly the dyn topo is less than 2cm at the surface 
+\item it looks like xi=5 is best?
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section*{Exp2 - delta rho/rho=0.1 \%}
+
+
+%\begin{center}
+%\includegraphics[width=8cm]{exp2_0p001/rho}
+%\includegraphics[width=8cm]{exp2_0p001/vel}
+%\end{center}
+
+
+
+\noindent
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/vel_16}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/vel_32}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/vel_48}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/vel_64}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/vel_80}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/vel_96}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/vel_112}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/vel_128}
+
+\noindent
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/sr2_16}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/sr2_32}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/sr2_48}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/sr2_64}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/sr2_80}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/sr2_96}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/sr2_112}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/sr2_128}
+
+\noindent
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/err_16}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/err_32}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/err_48}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/err_64}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/err_80}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/err_96}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/err_112}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/err_128}
+
+\noindent
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/qqq_16}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/qqq_32}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/qqq_48}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/qqq_64}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/qqq_80}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/qqq_96}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/qqq_112}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/qqq_128}
+
+\noindent
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/d_t_16}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/d_t_32}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/d_t_48}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/d_t_64}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/d_t_80}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/d_t_96}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/d_t_112}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/exp2_0p001/d_t_128}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/exp2_0p001/vel_160}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/exp2_0p001/sr2_160}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/exp2_0p001/err_160}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/exp2_0p001/qqq_160}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/exp2_0p001/d_t_160_left}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/exp2_0p001/d_t_160_right}\\
+\includegraphics[width=14cm]{python_codes/fieldstone_152/exp2_0p001/d_t_160}
+\end{center}
+
+
+Remarks \& Conclusions:
+\begin{itemize}
+\item so far all previous experiments had density contrasts that followed element boundaries.
+Here, the blob does not does not fit with any edge element and some elements have quadrature points
+that have different densities.
+\item nelr=80 not enough to guarantee resolution-independent results
+\item nelr=96 substantially better, with xi>6 
+\item right value of xi not really clear from all those experiments
+\item looks like xi=6,8 almost consistently perform worse than higher xi values
+\end{itemize}
 
 
 
@@ -632,6 +810,28 @@ is simply $-\sigma_{rr}$.
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+{\large old stuff}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -889,6 +1089,30 @@ velocity, strain rate and dynamic topography bear the marks of how the mesh is b
 \end{center}
 
 
+\newpage
+
+Using {\tt script\_normals2} I look at velocity and strainrate at the surface
+with both normals calculations. 
+I have already confirmed/checked that the value of the normals at the poles is irrelevant
+(no slip is prescribed there).
+
+run with nq=3, map=Q4
+
+\begin{center}
+\includegraphics[width=8.2cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/norms/vel_R2_n1.pdf}
+\includegraphics[width=8.2cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/norms/vel_R2_n2.pdf}\\
+\includegraphics[width=8.2cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/norms/sr2_R2_n1.pdf}
+\includegraphics[width=8.2cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/norms/sr2_R2_n2.pdf}\\
+\includegraphics[width=8.2cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/norms/err_R2_n1.pdf}
+\includegraphics[width=8.2cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/norms/err_R2_n2.pdf}\\
+\includegraphics[width=8.2cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/norms/qqq_R2_n1.pdf}
+\includegraphics[width=8.2cm]{python_codes/fieldstone_152/results/exp1_axisymmetric/norms/qqq_R2_n2.pdf}\\
+\end{center}
+
+So on average (L2-norm) the velocity decreases in the domain (see plots at the 
+beginning) but at the surface velocities increase?!
+
+hwoever, since velocity solution is exactly 0 the contraints in the lagrange multipliers are also zero... pb?
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -972,7 +1196,8 @@ defined by $x=0$ and $y<0$. This is the part of the domain that is the furthest 
 blob, so we expect a very low velocity and strain rate. Despite the weird oscillations
 obtained with this \stone the overal velocity and strain rate are lower than the results obtained
 with \aspect (5+2 mesh). What is also rather interesting is the fact that the \aspect velocity is
-not zero at $r=R_2$. Also it would be interesting to run the \aspect model with a higher global resolution but that would take a lot of resources. These models were run on 192 MPI processes.}
+not zero at $r=R_2$. Also it would be interesting to run the \aspect model with a higher global resolution but 
+that would take a lot of resources. These models were run on 192 MPI processes for a few minutes.}
 \end{center}
 
 \begin{center}
@@ -1026,9 +1251,28 @@ $x,y$-plane the vtu file had to be rotated so as to align with the vtu file retu
 \includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/aspect/sols}
 \end{center}
 
+\vspace{2cm}
+
+Resolution tests with {\tt script\_normals2}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/res/vel_R2.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/res/sr2_R2.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/res/err_R2.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp2_axisymmetric/res/qqq_R2.pdf}\\
+{\captionfont nq=3, Q4mapping}
+\end{center}
+
+
+
+
+
+
+
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{The other blob test (exp=3) - axisymmetric}
+\section*{The blob test with different densities (exp=3) - axisymmetric}
 
 We now fix the resolution at 32x192 elements. This experiment is identical to experiment 2
 except that we now vary the density of the blob. In experiment 2 it was 1\%. We explore other values:
@@ -1044,6 +1288,123 @@ except that we now vary the density of the blob. In experiment 2 it was 1\%. We 
 {\captionfont Reassuringly the velocities (and therefore strain rates) scale linearly with the 
 change in buoyancy forces.}
 \end{center}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp3_axisymmetric/vel_left_norm}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp3_axisymmetric/vel_R2_norm}\\
+{\captionfont velocities divided by $\delta\rho$. Weird patterns do not depend on rho, they scale with it.}
+\end{center}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{The blob test (exp=4)  with lithosphere - axisymmetric}
+
+In this case we assign both the blob and the lithosphere ($r>1.875$ - the lithosphere
+thickness is 1/8th the mantle depth) a viscosity $\eta=100$.
+Models ran with highest mapping and quadrature
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp4_axisymmetric/vel_R2}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp4_axisymmetric/sr2_R2}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp4_axisymmetric/err_R2}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp4_axisymmetric/qqq_R2}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_152/results/exp4_axisymmetric/d_t_R2}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp4_axisymmetric/vel_left}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp4_axisymmetric/sr2_left}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_152/results/exp4_axisymmetric/rho}\\
+\includegraphics[width=14cm]{python_codes/fieldstone_152/results/exp4_axisymmetric/vel}\\
+\includegraphics[width=14cm]{python_codes/fieldstone_152/results/exp4_axisymmetric/vel_log}\\
+\includegraphics[width=14cm]{python_codes/fieldstone_152/results/exp4_axisymmetric/sr2}\\
+{\captionfont From left to right: nelr=16,24,32,40,48.}
+\end{center}
+
+We see that all results converge to a single value/curve with increasing resolution.
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{The blob test (exp=5)  with lithosphere, reduced rho - axisymmetric}
+
+If we are using dynamic topo, it is because we impose free slip on surface(s).
+If we do so, then there is a constant nullspace in the pressure, so we could 
+work with reduced densities: $\rho_m=0$, $\rho_s=-0.01$.
+After the solve the real full pressure can be recovered by adding to the 
+computed one the lithostatic one.
+At the surface, since the lithostatic pressure is zero, this will not change the 
+dynamic topography values.
+Models ran with highest mapping and quadrature
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp5_axisymmetric/vel_R2}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp5_axisymmetric/sr2_R2}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp5_axisymmetric/err_R2}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp5_axisymmetric/qqq_R2}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_152/results/exp5_axisymmetric/d_t_R2}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp5_axisymmetric/vel_left}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/results/exp5_axisymmetric/sr2_left}
+\end{center}
+
+We find identical results as experiment 4, which tells us that the lithostatic pressure 
+(or the background density $\rho_0$) does not influence the results (as expected).
+This also means that the small instabilities observed near the poles are still present...
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Exp6}
+
+script\_normals2, nq=3, Q4 mapping.
+
+a) $g_x=0$, $g_y=-g_0$, offset=1
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/results/exp6a/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/results/exp6a/err}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/results/exp6a/qqq}
+\end{center}
+
+d) $g_x=0$, $g_y=-g_0$, offset=0
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/results/exp6d/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/results/exp6d/err}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/results/exp6d/qqq}
+\end{center}
+
+b) $g_x=g_0$, $g_y=0$, offset=1
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/results/exp6b/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/results/exp6b/err}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/results/exp6b/qqq}
+\end{center}
+
+c) $g_x=g_0$, $g_y=0$, offset=0
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/results/exp6c/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/results/exp6c/err}
+\includegraphics[width=5cm]{python_codes/fieldstone_152/results/exp6c/qqq}
+\end{center}
+
+
+
+
+
+
+
+
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1068,4 +1429,6 @@ change in buoyancy forces.}
 
 should i do a systematic study of normal for mid edge node of elements near corners?
 
+should i implement CBF too ?
 
+try free surface?!

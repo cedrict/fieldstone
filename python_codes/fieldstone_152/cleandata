@@ -18,3 +18,7 @@ rm normal2*
 rm err_R2*
 rm vel_left*
 rm d_t_*
+rm normal_diff*
+rm opla_*
+rm v_r_*
+rm v_t_*
