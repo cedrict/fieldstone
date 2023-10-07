@@ -1,0 +1,479 @@
+#
+set term pdf enhanced font 'Times,12pt' linewidth .1
+set xlabel '{/Symbol q}'
+set grid
+set key outside
+set log y
+
+###############################################################################
+set title 'nelr=8'
+set ylabel 'velocity magnitude (m/s)'
+set output 'vel_16.pdf'
+plot[:pi][1e-19:1e-9]\
+'vel_R2.ascii_16_4'  w l t 'xi=4',\
+'vel_R2.ascii_16_5'  w l t 'xi=5',\
+'vel_R2.ascii_16_6'  w l t 'xi=6',\
+'vel_R2.ascii_16_7'  w l t 'xi=7',\
+'vel_R2.ascii_16_8'  w l t 'xi=8',\
+
+set title 'nelr=16'
+set output 'vel_32.pdf'
+plot[:pi][1e-19:1e-9]\
+'vel_R2.ascii_32_4'  w l t 'xi=4',\
+'vel_R2.ascii_32_5'  w l t 'xi=5',\
+'vel_R2.ascii_32_6'  w l t 'xi=6',\
+'vel_R2.ascii_32_7'  w l t 'xi=7',\
+'vel_R2.ascii_32_8'  w l t 'xi=8',\
+
+set title 'nelr=24'
+set output 'vel_48.pdf'
+plot[:pi][1e-19:1e-9]\
+'vel_R2.ascii_48_4'  w l t 'xi=4',\
+'vel_R2.ascii_48_5'  w l t 'xi=5',\
+'vel_R2.ascii_48_6'  w l t 'xi=6',\
+'vel_R2.ascii_48_7'  w l t 'xi=7',\
+'vel_R2.ascii_48_8'  w l t 'xi=8',\
+
+set title 'nelr=32'
+set output 'vel_64.pdf'
+plot[:pi][1e-19:1e-9]\
+'vel_R2.ascii_64_4'  w l t 'xi=4',\
+'vel_R2.ascii_64_5'  w l t 'xi=5',\
+'vel_R2.ascii_64_6'  w l t 'xi=6',\
+'vel_R2.ascii_64_7'  w l t 'xi=7',\
+'vel_R2.ascii_64_8'  w l t 'xi=8',\
+
+set title 'nelr=40'
+set output 'vel_80.pdf'
+plot[:pi][1e-19:1e-9]\
+'vel_R2.ascii_80_4'  w l t 'xi=4',\
+'vel_R2.ascii_80_5'  w l t 'xi=5',\
+'vel_R2.ascii_80_6'  w l t 'xi=6',\
+'vel_R2.ascii_80_7'  w l t 'xi=7',\
+'vel_R2.ascii_80_8'  w l t 'xi=8',\
+
+set title 'nelr=48'
+set output 'vel_96.pdf'
+plot[:pi][1e-19:1e-9]\
+'vel_R2.ascii_96_4'  w l t 'xi=4',\
+'vel_R2.ascii_96_5'  w l t 'xi=5',\
+'vel_R2.ascii_96_6'  w l t 'xi=6',\
+'vel_R2.ascii_96_7'  w l t 'xi=7',\
+'vel_R2.ascii_96_8'  w l t 'xi=8',\
+
+set title 'nelr=56'
+set output 'vel_112.pdf'
+plot[:pi][1e-19:1e-9]\
+'vel_R2.ascii_112_4'  w l t 'xi=4',\
+'vel_R2.ascii_112_5'  w l t 'xi=5',\
+'vel_R2.ascii_112_6'  w l t 'xi=6',\
+'vel_R2.ascii_112_7'  w l t 'xi=7',\
+'vel_R2.ascii_112_8'  w l t 'xi=8',\
+
+set title 'nelr=64'
+set output 'vel_128.pdf'
+plot[:pi][1e-19:1e-9]\
+'vel_R2.ascii_128_4'  w l t 'xi=4',\
+'vel_R2.ascii_128_5'  w l t 'xi=5',\
+'vel_R2.ascii_128_6'  w l t 'xi=6',\
+'vel_R2.ascii_128_7'  w l t 'xi=7',\
+'vel_R2.ascii_128_8'  w l t 'xi=8',\
+
+set title 'nelr=80'
+set output 'vel_160.pdf'
+plot[:pi][1e-19:1e-9]\
+'vel_R2.ascii_160_4'  w l t 'xi=4',\
+'vel_R2.ascii_160_5'  w l t 'xi=5',\
+'vel_R2.ascii_160_6'  w l t 'xi=6',\
+'vel_R2.ascii_160_7'  w l t 'xi=7',\
+'vel_R2.ascii_160_8'  w l t 'xi=8',\
+
+####################################################################
+
+unset log y 
+
+set title 'nelr=80'
+set ylabel 'velocity v_t'
+set output 'v_t_160.pdf'
+plot[:pi][]\
+'v_t_R2.ascii_160_4'  w l t 'xi=4',\
+'v_t_R2.ascii_160_5'  w l t 'xi=5',\
+'v_t_R2.ascii_160_6'  w l t 'xi=6',\
+'v_t_R2.ascii_160_7'  w l t 'xi=7',\
+'v_t_R2.ascii_160_8'  w l t 'xi=8',\
+
+set title 'nelr=80'
+set ylabel 'velocity v_r'
+set output 'v_r_160.pdf'
+plot[:pi][]\
+'v_r_R2.ascii_160_4'  w l t 'xi=4',\
+'v_r_R2.ascii_160_5'  w l t 'xi=5',\
+'v_r_R2.ascii_160_6'  w l t 'xi=6',\
+'v_r_R2.ascii_160_7'  w l t 'xi=7',\
+'v_r_R2.ascii_160_8'  w l t 'xi=8',\
+
+
+####################################################################
+
+set log y
+
+set title 'nelr=8'
+set ylabel 'effective strain rate (s^{-1})'
+set output 'sr2_16.pdf'
+plot[:pi][1e-23:1e-15]\
+'sr2_R2.ascii_16_4'  w l t 'xi=4',\
+'sr2_R2.ascii_16_5'  w l t 'xi=5',\
+'sr2_R2.ascii_16_6'  w l t 'xi=6',\
+'sr2_R2.ascii_16_7'  w l t 'xi=7',\
+'sr2_R2.ascii_16_8'  w l t 'xi=8',\
+
+set title 'nelr=16'
+set output 'sr2_32.pdf'
+plot[:pi][1e-23:1e-15]\
+'sr2_R2.ascii_32_4'  w l t 'xi=4',\
+'sr2_R2.ascii_32_5'  w l t 'xi=5',\
+'sr2_R2.ascii_32_6'  w l t 'xi=6',\
+'sr2_R2.ascii_32_7'  w l t 'xi=7',\
+'sr2_R2.ascii_32_8'  w l t 'xi=8',\
+
+set title 'nelr=24'
+set output 'sr2_48.pdf'
+plot[:pi][1e-23:1e-15]\
+'sr2_R2.ascii_48_4'  w l t 'xi=4',\
+'sr2_R2.ascii_48_5'  w l t 'xi=5',\
+'sr2_R2.ascii_48_6'  w l t 'xi=6',\
+'sr2_R2.ascii_48_7'  w l t 'xi=7',\
+'sr2_R2.ascii_48_8'  w l t 'xi=8',\
+
+set title 'nelr=32'
+set output 'sr2_64.pdf'
+plot[:pi][1e-23:1e-15]\
+'sr2_R2.ascii_64_4' w l t 'xi=4',\
+'sr2_R2.ascii_64_5' w l t 'xi=5',\
+'sr2_R2.ascii_64_6' w l t 'xi=6',\
+'sr2_R2.ascii_64_7' w l t 'xi=7',\
+'sr2_R2.ascii_64_8' w l t 'xi=8',\
+
+set title 'nelr=40'
+set output 'sr2_80.pdf'
+plot[:pi][1e-23:1e-15]\
+'sr2_R2.ascii_80_4'  w l t 'xi=4',\
+'sr2_R2.ascii_80_5'  w l t 'xi=5',\
+'sr2_R2.ascii_80_6'  w l t 'xi=6',\
+'sr2_R2.ascii_80_7'  w l t 'xi=7',\
+'sr2_R2.ascii_80_8'  w l t 'xi=8',\
+
+set title 'nelr=48'
+set output 'sr2_96.pdf'
+plot[:pi][1e-23:1e-15]\
+'sr2_R2.ascii_96_4'  w l t 'xi=4',\
+'sr2_R2.ascii_96_5'  w l t 'xi=5',\
+'sr2_R2.ascii_96_6'  w l t 'xi=6',\
+'sr2_R2.ascii_96_7'  w l t 'xi=7',\
+'sr2_R2.ascii_96_8'  w l t 'xi=8',\
+
+set title 'nelr=56'
+set output 'sr2_112.pdf'
+plot[:pi][1e-23:1e-15]\
+'sr2_R2.ascii_112_4'  w l t 'xi=4',\
+'sr2_R2.ascii_112_5'  w l t 'xi=5',\
+'sr2_R2.ascii_112_6'  w l t 'xi=6',\
+'sr2_R2.ascii_112_7'  w l t 'xi=7',\
+'sr2_R2.ascii_112_8'  w l t 'xi=8',\
+
+set title 'nelr=64'
+set output 'sr2_128.pdf'
+plot[:pi][1e-23:1e-15]\
+'sr2_R2.ascii_128_4'  w l t 'xi=4',\
+'sr2_R2.ascii_128_5'  w l t 'xi=5',\
+'sr2_R2.ascii_128_6'  w l t 'xi=6',\
+'sr2_R2.ascii_128_7'  w l t 'xi=7',\
+'sr2_R2.ascii_128_8'  w l t 'xi=8',\
+
+set title 'nelr=80'
+set output 'sr2_160.pdf'
+plot[:pi][1e-23:1e-15]\
+'sr2_R2.ascii_160_4'  w l t 'xi=4',\
+'sr2_R2.ascii_160_5'  w l t 'xi=5',\
+'sr2_R2.ascii_160_6'  w l t 'xi=6',\
+'sr2_R2.ascii_160_7'  w l t 'xi=7',\
+'sr2_R2.ascii_160_8'  w l t 'xi=8',\
+
+###############################################################################
+
+unset log y 
+set ylabel 'pressure (Pa)'
+
+set title 'nelr=8'
+set output 'qqq_16.pdf'
+plot[0:pi][]\
+'qqq_R2.ascii_16_4' w l t 'xi=4',\
+'qqq_R2.ascii_16_5' w l t 'xi=5',\
+'qqq_R2.ascii_16_6' w l t 'xi=6',\
+'qqq_R2.ascii_16_7' w l t 'xi=7',\
+'qqq_R2.ascii_16_8' w l t 'xi=8',\
+
+set title 'nelr=16'
+set output 'qqq_32.pdf'
+plot[0:pi][]\
+'qqq_R2.ascii_32_4'  w l t 'xi=4',\
+'qqq_R2.ascii_32_5'  w l t 'xi=5',\
+'qqq_R2.ascii_32_6'  w l t 'xi=6',\
+'qqq_R2.ascii_32_7'  w l t 'xi=7',\
+'qqq_R2.ascii_32_8'  w l t 'xi=8',\
+
+set title 'nelr=24'
+set output 'qqq_48.pdf'
+plot[0:pi][]\
+'qqq_R2.ascii_48_4'  w l t 'xi=4',\
+'qqq_R2.ascii_48_5'  w l t 'xi=5',\
+'qqq_R2.ascii_48_6'  w l t 'xi=6',\
+'qqq_R2.ascii_48_7'  w l t 'xi=7',\
+'qqq_R2.ascii_48_8'  w l t 'xi=8',\
+
+set title 'nelr=32'
+set output 'qqq_64.pdf'
+plot[:pi][]\
+'qqq_R2.ascii_64_4'  w l t 'xi=4',\
+'qqq_R2.ascii_64_5'  w l t 'xi=5',\
+'qqq_R2.ascii_80_6'  w l t 'xi=6',\
+'qqq_R2.ascii_80_7'  w l t 'xi=7',\
+'qqq_R2.ascii_80_8'  w l t 'xi=8',\
+
+set title 'nelr=40'
+set output 'qqq_80.pdf'
+plot[0:pi][]\
+'qqq_R2.ascii_80_4'  w l t 'xi=4',\
+'qqq_R2.ascii_80_5'  w l t 'xi=5',\
+'qqq_R2.ascii_80_6'  w l t 'xi=6',\
+'qqq_R2.ascii_80_7'  w l t 'xi=7',\
+'qqq_R2.ascii_80_8'  w l t 'xi=8',\
+
+set title 'nelr=48'
+set output 'qqq_96.pdf'
+plot[0:pi][]\
+'qqq_R2.ascii_96_4'  w l t 'xi=4',\
+'qqq_R2.ascii_96_5'  w l t 'xi=5',\
+'qqq_R2.ascii_96_6'  w l t 'xi=6',\
+'qqq_R2.ascii_96_7'  w l t 'xi=7',\
+'qqq_R2.ascii_96_8'  w l t 'xi=8',\
+
+set title 'nelr=56'
+set output 'qqq_112.pdf'
+plot[0:pi][]\
+'qqq_R2.ascii_112_4' w l t 'xi=4',\
+'qqq_R2.ascii_112_5' w l t 'xi=5',\
+'qqq_R2.ascii_112_6' w l t 'xi=6',\
+'qqq_R2.ascii_112_7' w l t 'xi=7',\
+'qqq_R2.ascii_112_8' w l t 'xi=8',\
+
+set title 'nelr=64'
+set output 'qqq_128.pdf'
+plot[0:pi][]\
+'qqq_R2.ascii_128_4'  w l t 'xi=4',\
+'qqq_R2.ascii_128_5'  w l t 'xi=5',\
+'qqq_R2.ascii_128_6'  w l t 'xi=6',\
+'qqq_R2.ascii_128_7'  w l t 'xi=7',\
+'qqq_R2.ascii_128_8'  w l t 'xi=8',\
+
+set title 'nelr=80'
+set output 'qqq_160.pdf'
+plot[0:pi][]\
+'qqq_R2.ascii_160_4'  w l t 'xi=4',\
+'qqq_R2.ascii_160_5'  w l t 'xi=5',\
+'qqq_R2.ascii_160_6'  w l t 'xi=6',\
+'qqq_R2.ascii_160_7'  w l t 'xi=7',\
+'qqq_R2.ascii_160_8'  w l t 'xi=8',\
+
+
+###############################################################################
+
+unset log y 
+set ylabel '{/Symbol e}_{rr} (s^{-1})'
+
+set title 'nelr=8'
+set output 'err_16.pdf'
+plot[:pi][]\
+'err_R2.ascii_16_4'  w l t 'xi=4',\
+'err_R2.ascii_16_5'  w l t 'xi=5',\
+'err_R2.ascii_16_6'  w l t 'xi=6',\
+'err_R2.ascii_16_7'  w l t 'xi=7',\
+'err_R2.ascii_16_8'  w l t 'xi=8',\
+
+set title 'nelr=16'
+set output 'err_32.pdf'
+plot[:pi][]\
+'err_R2.ascii_32_4'  w l t 'xi=4',\
+'err_R2.ascii_32_5'  w l t 'xi=5',\
+'err_R2.ascii_32_6'  w l t 'xi=6',\
+'err_R2.ascii_32_7'  w l t 'xi=7',\
+'err_R2.ascii_32_8'  w l t 'xi=8',\
+
+set title 'nelr=24'
+set output 'err_48.pdf'
+plot[:pi][]\
+'err_R2.ascii_48_4'  w l t 'xi=4',\
+'err_R2.ascii_48_5'  w l t 'xi=5',\
+'err_R2.ascii_48_6'  w l t 'xi=6',\
+'err_R2.ascii_48_7'  w l t 'xi=7',\
+'err_R2.ascii_48_8'  w l t 'xi=8',\
+
+set title 'nelr=32'
+set output 'err_64.pdf'
+plot[:pi][]\
+'err_R2.ascii_64_4'  w l t 'xi=4',\
+'err_R2.ascii_64_5'  w l t 'xi=5',\
+'err_R2.ascii_64_6'  w l t 'xi=6',\
+'err_R2.ascii_64_7'  w l t 'xi=7',\
+'err_R2.ascii_64_8'  w l t 'xi=8',\
+
+set title 'nelr=40'
+set output 'err_80.pdf'
+plot[:pi][]\
+'err_R2.ascii_80_4'  w l t 'xi=4',\
+'err_R2.ascii_80_5'  w l t 'xi=5',\
+'err_R2.ascii_80_6'  w l t 'xi=6',\
+'err_R2.ascii_80_7'  w l t 'xi=7',\
+'err_R2.ascii_80_8'  w l t 'xi=8',\
+
+set title 'nelr=48'
+set output 'err_96.pdf'
+plot[:pi][]\
+'err_R2.ascii_96_4'  w l t 'xi=4',\
+'err_R2.ascii_96_5'  w l t 'xi=5',\
+'err_R2.ascii_96_6'  w l t 'xi=6',\
+'err_R2.ascii_96_7'  w l t 'xi=7',\
+'err_R2.ascii_96_8'  w l t 'xi=8',\
+
+set title 'nelr=56'
+set output 'err_112.pdf'
+plot[:pi][]\
+'err_R2.ascii_112_4'  w l t 'xi=4',\
+'err_R2.ascii_112_5'  w l t 'xi=5',\
+'err_R2.ascii_112_6'  w l t 'xi=6',\
+'err_R2.ascii_112_7'  w l t 'xi=7',\
+'err_R2.ascii_112_8'  w l t 'xi=8',\
+
+set title 'nelr=64'
+set output 'err_128.pdf'
+plot[:pi][]\
+'err_R2.ascii_128_4'  w l t 'xi=4',\
+'err_R2.ascii_128_5'  w l t 'xi=5',\
+'err_R2.ascii_128_6'  w l t 'xi=6',\
+'err_R2.ascii_128_7'  w l t 'xi=7',\
+'err_R2.ascii_128_8'  w l t 'xi=8',\
+
+set title 'nelr=80'
+set output 'err_160.pdf'
+plot[:pi][]\
+'err_R2.ascii_160_4'  w l t 'xi=4',\
+'err_R2.ascii_160_5'  w l t 'xi=5',\
+'err_R2.ascii_160_6'  w l t 'xi=6',\
+'err_R2.ascii_160_7'  w l t 'xi=7',\
+'err_R2.ascii_160_8'  w l t 'xi=8',\
+
+###############################################################################
+
+set ylabel 'dynamic topography (m)'
+
+unset log y
+
+set title 'nelr=8'
+set output 'd_t_16.pdf'
+plot[:pi][]\
+'d_t_R2.ascii_16_4'  w l t 'xi=4',\
+'d_t_R2.ascii_16_5'  w l t 'xi=5',\
+'d_t_R2.ascii_16_6'  w l t 'xi=6',\
+'d_t_R2.ascii_16_7'  w l t 'xi=7',\
+'d_t_R2.ascii_16_8'  w l t 'xi=8',\
+
+set title 'nelr=16'
+set output 'd_t_32.pdf'
+plot[:pi][]\
+'d_t_R2.ascii_32_4'  w l t 'xi=4',\
+'d_t_R2.ascii_32_5'  w l t 'xi=5',\
+'d_t_R2.ascii_32_6'  w l t 'xi=6',\
+'d_t_R2.ascii_32_7'  w l t 'xi=7',\
+'d_t_R2.ascii_32_8'  w l t 'xi=8',\
+
+set title 'nelr=24'
+set output 'd_t_48.pdf'
+plot[:pi][]\
+'d_t_R2.ascii_48_4'  w l t 'xi=4',\
+'d_t_R2.ascii_48_5'  w l t 'xi=5',\
+'d_t_R2.ascii_48_6'  w l t 'xi=6',\
+'d_t_R2.ascii_48_7'  w l t 'xi=7',\
+'d_t_R2.ascii_48_8'  w l t 'xi=8',\
+
+set title 'nelr=32'
+set output 'd_t_64.pdf'
+plot[:pi][]\
+'d_t_R2.ascii_64_4'  w l t 'xi=4',\
+'d_t_R2.ascii_64_5'  w l t 'xi=5',\
+'d_t_R2.ascii_64_6'  w l t 'xi=6',\
+'d_t_R2.ascii_64_7'  w l t 'xi=7',\
+'d_t_R2.ascii_64_8'  w l t 'xi=8',\
+
+set title 'nelr=40'
+set output 'd_t_80.pdf'
+plot[:pi][]\
+'d_t_R2.ascii_80_4'  w l t 'xi=4',\
+'d_t_R2.ascii_80_5'  w l t 'xi=5',\
+'d_t_R2.ascii_80_6'  w l t 'xi=6',\
+'d_t_R2.ascii_80_7'  w l t 'xi=7',\
+'d_t_R2.ascii_80_8'  w l t 'xi=8',\
+
+set title 'nelr=48'
+set output 'd_t_96.pdf'
+plot[:pi][]\
+'d_t_R2.ascii_96_4'  w l t 'xi=4',\
+'d_t_R2.ascii_96_5'  w l t 'xi=5',\
+'d_t_R2.ascii_96_6'  w l t 'xi=6',\
+'d_t_R2.ascii_96_7'  w l t 'xi=7',\
+'d_t_R2.ascii_96_8'  w l t 'xi=8',\
+
+set title 'nelr=56'
+set output 'd_t_112.pdf'
+plot[:pi][]\
+'d_t_R2.ascii_112_4'  w l t 'xi=4',\
+'d_t_R2.ascii_112_5'  w l t 'xi=5',\
+'d_t_R2.ascii_112_6'  w l t 'xi=6',\
+'d_t_R2.ascii_112_7'  w l t 'xi=7',\
+'d_t_R2.ascii_112_8'  w l t 'xi=8',\
+
+set title 'nelr=64'
+set output 'd_t_128.pdf'
+plot[:pi][]\
+'d_t_R2.ascii_128_4'  w l t 'xi=4',\
+'d_t_R2.ascii_128_5'  w l t 'xi=5',\
+'d_t_R2.ascii_128_6'  w l t 'xi=6',\
+'d_t_R2.ascii_128_7'  w l t 'xi=7',\
+'d_t_R2.ascii_128_8'  w l t 'xi=8',\
+
+set title 'nelr=80'
+set output 'd_t_160.pdf'
+plot[:pi][]\
+'d_t_R2.ascii_160_4'  w l t 'xi=4',\
+'d_t_R2.ascii_160_5'  w l t 'xi=5',\
+'d_t_R2.ascii_160_6'  w l t 'xi=6',\
+'d_t_R2.ascii_160_7'  w l t 'xi=7',\
+'d_t_R2.ascii_160_8'  w l t 'xi=8',\
+
+set title 'nelr=80'
+set output 'd_t_160_left.pdf'
+plot[0:0.1][]\
+'d_t_R2.ascii_160_4'  w l t 'xi=4',\
+'d_t_R2.ascii_160_5'  w l t 'xi=5',\
+'d_t_R2.ascii_160_6'  w l t 'xi=6',\
+'d_t_R2.ascii_160_7'  w l t 'xi=7',\
+'d_t_R2.ascii_160_8'  w l t 'xi=8',\
+
+set output 'd_t_160_right.pdf'
+plot[pi-0.1:pi][]\
+'d_t_R2.ascii_160_4'  w l t 'xi=4',\
+'d_t_R2.ascii_160_5'  w l t 'xi=5',\
+'d_t_R2.ascii_160_6'  w l t 'xi=6',\
+'d_t_R2.ascii_160_7'  w l t 'xi=7',\
+'d_t_R2.ascii_160_8'  w l t 'xi=8',\
+
+
