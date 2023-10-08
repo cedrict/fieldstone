@@ -1,3 +1,4 @@
 rm *.vtu
 rm *.ascii
+rm solution.pdf
 
