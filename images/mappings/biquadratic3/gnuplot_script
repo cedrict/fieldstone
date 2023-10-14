@@ -1,0 +1,68 @@
+#
+set term pdf enhanced font "Times,12pt" ps .3
+set grid
+set size square
+
+set log y 
+
+
+set arrow from 1.3858192, graph 0 to 1.3858192, graph 1 nohead 
+set arrow from 1.4143644, graph 0 to 1.4143644, graph 1 nohead 
+set arrow from 1.4286370, graph 0 to 1.4286370, graph 1 nohead 
+set arrow from 1.5, graph 0 to 1.5, graph 1 nohead 
+set arrow from 1.51588, graph 0 to 1.51588, graph 1 nohead 
+
+set output 'avrg_err_grad.pdf'
+plot[]\
+'avrg_err_grad_3.ascii'  u 6:5 w lp t 'nq=3^2',\
+'avrg_err_grad_4.ascii'  u 6:5 w lp t 'nq=4^2',\
+'avrg_err_grad_5.ascii'  u 6:5 w lp t 'nq=5^2',\
+'avrg_err_grad_6.ascii'  u 6:5 w lp t 'nq=6^2',\
+'avrg_err_grad_10.ascii' u 6:5 w lp t 'nq=10^2',\
+
+
+
+set output 'avrg_err_pos2.pdf'
+plot[]\
+'avrg_err_pos2_3.ascii'  u 6:5 w lp t 'nq=3^2',\
+'avrg_err_pos2_4.ascii'  u 6:5 w lp t 'nq=4^2',\
+'avrg_err_pos2_5.ascii'  u 6:5 w lp t 'nq=5^2',\
+'avrg_err_pos2_6.ascii'  u 6:5 w lp t 'nq=6^2',\
+'avrg_err_pos2_10.ascii' u 6:5 w lp t 'nq=10^2',\
+
+
+set output 'int_err_grad.pdf'
+plot[]\
+'int_err_grad_3.ascii'  u 4:3 w lp t 'nq=3^2',\
+'int_err_grad_4.ascii'  u 4:3 w lp t 'nq=4^2',\
+'int_err_grad_5.ascii'  u 4:3 w lp t 'nq=5^2',\
+'int_err_grad_6.ascii'  u 4:3 w lp t 'nq=6^2',\
+'int_err_grad_10.ascii' u 4:3 w lp t 'nq=10^2',\
+
+set output 'int_err_pos2.pdf'
+plot[]\
+'int_err_pos2_3.ascii'  u 4:3 w lp t 'nq=3^2',\
+'int_err_pos2_4.ascii'  u 4:3 w lp t 'nq=4^2',\
+'int_err_pos2_5.ascii'  u 4:3 w lp t 'nq=5^2',\
+'int_err_pos2_6.ascii'  u 4:3 w lp t 'nq=6^2',\
+'int_err_pos2_10.ascii' u 4:3 w lp t 'nq=10^2',\
+
+
+unset log y
+set output 'area.pdf'
+plot[]\
+'area_3.ascii'  u 8 t 'nq=3^2',\
+'area_4.ascii'  u 8 t 'nq=4^2',\
+'area_5.ascii'  u 8 t 'nq=5^2',\
+'area_6.ascii'  u 8 t 'nq=6^2',\
+'area_10.ascii' u 8 t 'nq=10^2'
+
+
+
+
+
+
+
+
+
+

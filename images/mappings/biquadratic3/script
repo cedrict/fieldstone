@@ -1,0 +1,28 @@
+#! /bin/bash
+
+rm avrg*.ascii
+rm int*.ascii
+rm area*.ascii
+
+for nq in 3 4 5 6 10 ; do 
+
+    for xi in {-45..45} ; do
+        echo $xi
+
+        python3 program.py $xi $nq > opla
+        grep avrg opla | grep err_pos2 | grep c5 >> avrg_err_pos2.ascii
+        grep avrg opla | grep err_grad | grep c5 >> avrg_err_grad.ascii
+        grep int opla  | grep err_pos2 | grep c5 >> int_err_pos2.ascii
+        grep int opla  | grep err_grad | grep c5 >> int_err_grad.ascii
+        grep area opla | grep c5 >> area.ascii
+
+    done
+
+    mv avrg_err_pos2.ascii avrg_err_pos2_${nq}.ascii
+    mv avrg_err_grad.ascii avrg_err_grad_${nq}.ascii
+    mv int_err_pos2.ascii int_err_pos2_${nq}.ascii
+    mv int_err_grad.ascii int_err_grad_${nq}.ascii
+    mv area.ascii area_${nq}.ascii
+
+done
+
