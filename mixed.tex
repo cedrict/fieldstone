@@ -453,12 +453,13 @@ We start from the Stokes equations:
 - {\vec \nabla p} + {\vec \nabla} \cdot (2 \eta \dot{\bm \varepsilon} ) + \rho \vec{g} &=& \vec{0}  \\
 \vec \nabla \cdot \vec \upnu &=& 0 
 \end{eqnarray}
-
-The dimensions of the terms in the first equation are: $ML^{-2}T^{-2}$. The blocks $\K$ and $\G$
+We have
+$[p]=ML^{-1}T^{-2}$, $[\vec\nabla]=L^{-1}$, so the dimensions of the terms in the first equation 
+are: $ML^{-2}T^{-2}$. The blocks $\K$ and $\G$
 stem from the weak form which is obtained by multiplying the strong form equations by the (dimensionless)
 basis functions and integrating over the 3D domain, so that it follows that 
 \[
-[ \K \cdot \vec V] = [\G \cdot \vec P] = [\vec f] = ML^{-2}T^{-2} \cdot  L^3 = MLT^{-2} 
+[ \K \cdot \vec {\cal V}] = [\G \cdot \vec {\cal P}] = [\vec f] = (ML^{-2}T^{-2}) \cdot  L^3 = MLT^{-2} 
 \]
 We can then easily deduce:
 \[
@@ -470,6 +471,15 @@ We can then easily deduce:
 %and finally this also imposes that $[\G^T V]= L^3T^{-1} $, and also that $[\C P]=L^3T^{-1} $,
 %i.e. $[\C]=M^{-1}L^4T$ (analogous to $h^3/\mu$, which is also the dimension of the Schur
 %complement $\SSS$). One can easily verify that $[\G^T \K \G]=[\C]$.
+
+Turning to the mass conservation equation, we have $[\vec \nabla \cdot \vec \upnu]=L^{-1}LT^{-1}=T^{-1}$, 
+which yields the discretised weak form $\G \cdot \vec{\cal V}=0$ so that $[\G \cdot \vec{\cal V}]=L^3 T^{-1}$ and
+we of course recover $[\G]=L^2$.
+
+If we wanted both equations to have the same dimensions, we would need to multiply the second one by a 
+characteristic quantity which dimension is $M L^{-2} T^{-1}$, i.e. for example $\eta/L$ (since $[\eta]=ML^{-1}T^{-1}$).
+This is indeed what we end up doing in practice, see Section~\ref{pscaling}.
+   
 
 %--------------------------------------------------------------------------------
 \subsubsection{On elemental level mass balance}

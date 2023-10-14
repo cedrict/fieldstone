@@ -129,4 +129,19 @@ around axis $y$ by an angle $-\theta$ in the case of a spherical shell.
 These are the {\tt Rott} and {\tt Rotp} matrices in the routines.
 
 
-
+\Literature
+\begin{itemize}
+\item 
+Note that in some cases applying free slip boundary conditions on a curved boundary with a triangular mesh 
+can be problematic as explained in \textcite{ditu13} (2013).
+\item \fullcite{ensg82}
+\item \fullcite{behr04} in which it is stated:\\
+{\it 1. If the slip boundary coincides with a Cartesian coordinate plane, the implementation is trivial,
+with the equations corresponding to the normal component of velocity simply being dropped
+from the equation system.
+2. If the slip boundary does not coincide with a Cartesian coordinate plane, the equations
+corresponding to the velocity components at the boundary are locally aligned with the normal-
+tangent-bi-tangent coordinate system, and the normal component of velocity is set to zero.
+This procedure is described by \textcite{ensg82} (1982), who also advocate the use of consistent
+normals for proper mass conservation.}
+\end{itemize}

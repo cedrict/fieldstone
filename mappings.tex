@@ -2,14 +2,16 @@
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \index{general}{Isoparametric}
-The name isoparametric derives from the fact that the same ('iso') 
+\index{general}{Subparametric} 
+\index{general}{Superparametric}
+
+The name {\sl isoparametric} derives from the fact that the same ('iso') 
 functions are used as basis functions and for the mapping to the reference element.
 
 More generally, if $n_e$ denotes the number of nodes of an element and $n_g$ denotes the 
 number of nodes describing the geometry of the element, 
-then the element is termed subparametric when $n_g<n_e$ and 
-superparametric when $n_g>n_e$.
-\index{general}{Subparametric} \index{general}{Superparametric}
+then the element is termed {\sl subparametric} when $n_g<n_e$ and 
+{\sl superparametric} when $n_g>n_e$.
 
 %...........................................
 \subsubsection{Linear mapping on a triangle}
@@ -26,30 +28,35 @@ Let us assume that the coordinates of the vertices are
 $(x_1,y_1)$,  
 $(x_2,y_2)$, and 
 $(x_3,y_3)$.
-The coordinates inside the reference element are $(r,s)$. We then simply have the 
+The coordinates inside the reference element are $(r,s)$ with 
+$0\le r \le 1$ and $0 \le s \le 1$. We then simply have the 
 following relationship, i.e. any point of the reference element 
 can be mapped to the physical triangle as follows:
 \begin{eqnarray}
 x&=& r x_1 + s x_2 + (1-r-s) x_3 \\
 y&=& r y_1 + s y_2 + (1-r-s) y_3 
 \end{eqnarray} 
+Note that the functions $r$, $s$ and $1-r-s$ are in fact the 
+$P_1$ basis functions (see Section~\ref{ss:p1}).
 There is also an inverse map, which is easily computed:
 \begin{eqnarray}
 r&=& \frac{(y_2-y_3)(x-x_3)-(x_2-x_3)(y-y_3)}{(x_1-x_3)(y_2-y_3)-(y_1-y_3)(x_2-x_3)} \\
 s&=& \frac{-(y_1-y_3)(x-x_3)+(x_1-x_3)(y-y_3)}{(x_1-x_3)(y_2-y_3)-(y_1-y_3)(x_2-x_3)} 
 \end{eqnarray} 
 \begin{remark}
-The denominator will not vanish, because it is a multiple of the area of the triangle. If the three points
+The denominator will not vanish, because it is a multiple of the area of the 
+triangle. If the three points
 are distinct then the area cannot be zero.
 \end{remark}
 
 %................................................
-\subsubsection{Bilinear mapping on a linear quadrilateral}
+\subsubsection{Bilinear mapping on a quadrilateral}
 
 The \index{general}{reference element} reference element 
 is in the $(r,s)$ space. It is a square of size $2\times2$ 
 centered around the origin, i.e. $(r,s)\in[-1,1]\times[-1,1]$. 
-We wish to map it to the quadrilateral in the $(x,y)$ space:
+We wish to map it to the quadrilateral in the $(x,y)$ space 
+(and vice versa):
 
 \begin{center}
 \includegraphics[width=8cm]{images/mappings/bilinear/mapping_bilinear.png}
@@ -66,7 +73,8 @@ y&=& \bN_1(r,s) y_1 + \bN_2(r,s) y_2 + \bN_3(r,s) y_3 + \bN_4(r,s) y_4
 \end{eqnarray} 
 where the $Q_1$ basis functions $\bN_i(r,s)$ are defined in Section~\ref{sec:elts1D}.
 
-In the following example the program randomly generates 10000 points inside the reference 
+In the following example the program randomly generates 10000 points 
+inside the reference 
 element and computes their mapping into the $(x,y)$ space. 
 
 \begin{lstlisting}
@@ -206,9 +214,11 @@ The presence of the determinant in the denominator implies that it cannot
 be zero anywhere, or in other words: the mapping is not valid if $|{\bm J}|$
 is zero anywhere over the element.
 
-Note that Hua \cite{hua90} published analytical inverse transformation for quadrilateral
-isoparametric elements, i.e. how to compute ${\bm J}^{-1}$ as a function of space coordinates
-and not just at the quadrature points. 
+\begin{remark}
+\textcite{hua90} (1990) has published analytical inverse transformation 
+for quadrilateral isoparametric elements, i.e. how to compute ${\bm J}^{-1}$ 
+as a function of space coordinates and not just at the quadrature points. 
+\end{remark}
 
 Let us look at this by means of a simple example and let us consider the following 
 element:
@@ -217,7 +227,7 @@ element:
 \end{center}
 Then a $Q_1$ mapping yields:
 \begin{eqnarray}
-x(r,s) &=& \sum_i \bN_i(r,s) x_i = \bN_2 + 2\bN_3 = \frac{1}{4} (3+3r+ s+rt) \\
+x(r,s) &=& \sum_i \bN_i(r,s) x_i = \bN_2 + 2\bN_3 = \frac{1}{4} (3+3r+ s+rt) \nn\\
 y(r,s) &=& \sum_i \bN_i(r,s) y_i = 2\bN_3 + \bN_4 = \frac{1}{4} (3+r+ 3s+rt) 
 \end{eqnarray}
 The Jacobian matrix is then
@@ -284,14 +294,19 @@ dr \\ ds
 \end{array}
 \right)
 \end{equation}
-This means that 
+This means that integrating over the 'real' element in $(x,y)$ space
+can be simply done by integrating of the reference element in the 
+$(r,s)$ space. This is the cornerstone of most of the implementation of the 
+Finite Element Method, the second integral being carried out by means 
+of the Gauss-Legendre quadrature.
+
 \begin{equation}
-\iint_{\Omega_e} ... dx dy = \int_{-1}^{+1} \int_{-1}^{+1} ...|{\bm J}| dr ds
+\iint_{\Omega_e} ... \; dx dy = \int_{-1}^{+1} \int_{-1}^{+1} ...|{\bm J}| \; dr ds
 \end{equation}
 
 
 %.................................................................
-\subsubsection{biquadratic mapping of a straight-line face $Q_2$ element }
+\subsubsection{Biquadratic mapping of a straight-edge face $Q_2$ element }
 
 \begin{center}
 \includegraphics[width=8cm]{images/mappings/biquadratic/mapping1}
@@ -437,12 +452,17 @@ np.savetxt('xyQ1.ascii',np.array([xQ1,yQ1]).T)
 np.savetxt('xyQ2.ascii',np.array([xQ2,yQ2]).T)
 \end{lstlisting}
 
+The code is available in {\tt /images/mappings/biquadratic}
+Note that the coordinates of point 5 are defined being those of the barycenter
+of the quadrilateral. More on this choice later.
+
 \begin{center}
-a)\includegraphics[width=4.5cm]{images/mappings/biquadratic/rs.pdf}
-b)\includegraphics[width=4.5cm]{images/mappings/biquadratic/xyQ1.pdf}
-c)\includegraphics[width=4.5cm]{images/mappings/biquadratic/xyQ2.pdf}\\
-{\captionfont a) 10,000 random points in the reference element; b,c) image of these points
-by means of a bilinear and biquadratic mapping respectively.\\ When the sides of the element
+a)\includegraphics[width=5.6cm]{images/mappings/biquadratic/rs.pdf}
+b)\includegraphics[width=5.6cm]{images/mappings/biquadratic/xyQ1.pdf}
+c)\includegraphics[width=5.6cm]{images/mappings/biquadratic/xyQ2.pdf}\\
+{\captionfont a) 10,000 random points in the reference element; 
+b,c) image of these points by means of a bilinear and biquadratic mapping 
+respectively.\\ When the sides of the element
 are straight we see that a $Q_1$ mapping is sufficient.}
 \end{center}
 
@@ -451,15 +471,27 @@ are straight we see that a $Q_1$ mapping is sufficient.}
 
 We now carry out the same exercise as before but nodes 2 and 8 are no more 
 in the middle of nodes 1-3 and 7-9 respectively.
+The code is available in {\tt /images/mappings/biquadratic2}.
 
 \begin{center}
 a)\includegraphics[width=4.5cm]{images/mappings/biquadratic2/rs.pdf}
 b)\includegraphics[width=4.5cm]{images/mappings/biquadratic2/xyQ1.pdf}
 c)\includegraphics[width=4.5cm]{images/mappings/biquadratic2/xyQ2.pdf}\\
-{\captionfont a) 10,000 random points in the reference element; b,c) image of these points
-by means of a bilinear and biquadratic mapping respectively. In this case we see that 
-the $Q_2$ mapping manages to better capture the 'real' shape of the element.}
+{\captionfont a) 10,000 random points in the reference element; 
+b,c) image of these points by means of a bilinear and biquadratic mapping 
+respectively.} 
 \end{center}
+
+In this case we see that 
+the $Q_2$ mapping manages to better capture the 'real' shape of the element.
+Since nodes 2 and 8 have moved, we could now ask ourselves 
+where we should place node 5? In this example we set it as follows
+but it is somewhat arbitrary.
+\begin{lstlisting}
+x5=(x1+x2+x3+x4+x6+x7+x8+x9)/8. 
+y5=(y1+y2+y3+y4+y6+y7+y8+y9)/8.
+\end{lstlisting}
+We will come back to this later.
 
 %.......................................................................
 \subsubsection{Bilinear, biquadratic and bicubic mapping in an annulus }
@@ -510,11 +542,13 @@ $Q_4$ is not shown.}
 The image of a square with a $Q_1$ mapping is obviously a quadrilateral
 so that it looks like quite a few points land outside of the domain $R_1\leq r\leq R_2$.
 Note that points are well within $23\degree \leq \theta \leq 52\degree$, which can 
-simply be explained by the fact that the faces of the element are straight lines.
+simply be explained by the fact that the faces of the element joining $R_1$
+to $R_2$ are straight lines.
 
 However, it looks like the biquadratic and bicubic mappings are doing a much better 
 job at mapping the region of space $R_1\leq r\leq R_2$. In order to characterise 
-this better, we now place 10,000 points on the bottom face of the reference element (i.e. $s=-1$)
+this better, we now place 10,000 points on the bottom face of 
+the reference element (i.e. $s=-1$)
 and once again compute their coordinates in the the $x,y$ space:
 
 \begin{center}
@@ -551,15 +585,12 @@ in the $x,y$ space is also determined by the mapping used, which can have conseq
 on the accuracy of the integration and it will be reflected (for instance) on the 
 error convergence rate.
 
-Finally, the coordinates of the nodes of the element in the $x,y$ are 
+As already mentioned previously, 
+the coordinates of the nodes of the element in the $x,y$ are 
 uniquely determined when they are on the convex hull of the element (
 for instance nodes 0-7 for $Q_2$) but we need to choose the position 
 of the last nodes which are inside the element. Unfortunately, this choice is 
 not neutral. 
-
-\todo[inline]{re ask Wolfgang about this - correlate with deal.ii}
-
----------------------------
 
 Finally, we can explore the importance of the mapping in combination with 
 numerical quadrature. For each mapping we compute the area of the element
@@ -585,6 +616,206 @@ nqperdim= 5 0.316340954190168  rel. error 8.619243804713484e-08
 \end{verbatim}
 
 Here again the $Q_4$ mapping makes quite the difference. 
+
+\newpage
+
+%..................................................................
+\subsubsection{Biquadratic mapping - the middle node conundrum}
+
+Python code at {\tt images/mappings/biquadratic3}.
+
+As mentioned before, unless the element is a straight-edge quadrilateral, 
+determining the (best) position of the middle node is not trivial. Or is it?
+
+
+\begin{verbatim}
+
+4--7--3
+|     |
+8  9  6   (reference element)
+|     |
+1--5--2
+
+\end{verbatim}
+
+We will here consider 5 different elements:
+
+\begin{center}
+\includegraphics[width=3.5cm]{images/mappings/biquadratic3/elt0/element0}
+\includegraphics[width=3.5cm]{images/mappings/biquadratic3/elt1/element1}
+\includegraphics[width=3.5cm]{images/mappings/biquadratic3/elt2/element2}
+\includegraphics[width=3.5cm]{images/mappings/biquadratic3/elt3/element3}
+\includegraphics[width=3.5cm]{images/mappings/biquadratic3/elt4/element4}\\
+{\captionfont From left to right: element 0,1,2,3,4.}
+\end{center}
+
+We can think of multiple ways to come up with the 'center' of the element, 
+i.e. the location of point I.
+
+\begin{itemize}
+\item {\python center=0}: 
+\[
+x_9=(x_1+x_2+x_3+x_4)/4 
+\qquad
+y_9=(y_1+y_2+y_3+y_4)/4
+\]
+
+\item {\python center=1}: 
+\[
+x_9=(x_1+x_2+x_3+x_4+x_5+x_6+x_7+x_8)/8 
+\qquad
+y_9=(y_1+y_2+y_3+y_4+y_5+y_6+y_7+y_8)/8
+\]
+\item {\python center=2}:
+\[
+x_9=(x_1+x_2+x_3+x_4+3x_5+3x_6+3x_7+3x_8)/16. 
+\qquad
+y_9=(y_1+y_2+y_3+y_4+3y_5+3y_6+3y_7+3y_8)/16.
+\]
+\item {\python center=3}: (only element=4)
+\[
+x_9=\frac12(R_1+R_2)\cos(3\pi/8) 
+\qquad
+y_9=\frac12(R_1+R_2)\sin(3\pi/8)
+\]
+\item {\python center=4}: I is the center of mass. 
+The element is defined by $R_1<r<R_2$ and $\theta_1<\theta<\theta_2$.
+
+We need to compute\footnote{\url{https://en.wikipedia.org/wiki/Center_of_mass}}
+\begin{eqnarray}
+\vec{R} 
+&=&\frac{1}{M} \int \vec{r} \rho(\vec r) dV \nn\\
+&=&\frac{1}{M} \rho_0 \int \vec{r} dV\nn\\
+&=&\frac{1}{M} \frac{M}{V} \int \vec{r} dV\nn\\
+&=&\frac{1}{V} \int \vec{r} dV\nn\\
+&=&\frac{1}{V} \int \left(\begin{array}{c} x \\ y \end{array}\right)  dV\nn\\
+&=&\frac{1}{V} \int \left(\begin{array}{c} r \cos \theta \\ r \sin\theta \end{array}\right)dV\nn\\
+&=&\frac{1}{V} \int_{R_1}^{R_2} \int_{\theta_1}^{\theta_2} \left(\begin{array}{c} r \cos \theta 
+\\ r \sin\theta \end{array}\right)  r dr d\theta\nn\\
+&=&\frac{1}{\frac12 (R_2^2-R_1^2) (\theta_2-\theta_1)} \frac13(R_2^3-R_1^3) 
+\left(
+\begin{array}{c}
+\sin\theta_2-\sin\theta_1 \\
+-\cos\theta_2+\cos\theta_1 
+\end{array}
+\right) \nn\\
+&\simeq& 
+\left(
+\begin{array}{c}
+0.5801028000103104\\
+1.4004920473554983
+\end{array}
+\right) 
+\end{eqnarray}
+which corresponds to $r=1.5158816686291174$ and $\theta=67.5^o=3\pi/8$.
+
+\item {\python center=5}: variable position
+\end{itemize}
+
+
+isoparametric mapping. 
+
+
+At each point $(r,s)$ we compute the error $|\sum_i N_i(r,s) x_i^2 - (\sum_i N_i(r,s) x_i)^2|$.
+
+position of edges (setting r=+- 1, s=+-1) independent of position of middle node since shape functions are zero there
+
+area indep of position middle node ?
+
+
+
+%....................
+\paragraph{Element 0}
+
+In this case all only {\python center=0,1,2,4} are applicable but they all 
+lead to the same point I with $x_I=0,y_I=0$. This means that the position of 
+quadrature points is also independent of the {\python center} parameter.
+ 
+\begin{center}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt0/jcob}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt0/error_posx2}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt0/error_posy2}\\
+{\captionfont 10,000 points at random.} 
+\end{center}
+
+%....................
+\paragraph{Element 1}
+
+In this case all only {\python center=0,1,2,4} are applicable but they all 
+lead to the same point I with $x_I=0,y_I=0$. This means that the position of 
+quadrature points is also independent of the {\python center} parameter.
+ 
+\begin{center}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt1/jcob}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt1/error_posx2}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt1/error_posy2}\\
+{\captionfont 10,000 points at random.} 
+\end{center}
+
+
+%....................
+\paragraph{Element 2} .
+
+\begin{center}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt2/jcob_0}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt2/jcob_1}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt2/jcob_2}\\
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt2/error_posx2_0}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt2/error_posx2_1}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt2/error_posx2_2}\\
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt2/error_posy2_0}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt2/error_posy2_1}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt2/error_posy2_2}\\
+{\captionfont 50,000 points at random. From left to right: center=0,1,2.} 
+\end{center}
+
+
+
+
+%....................
+\paragraph{Element 3} .
+
+\begin{center}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt3/jcob_0}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt3/jcob_1}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt3/jcob_2}\\
+{\captionfont 50,000 points at random. From left to right: center=0,1,2.} 
+\end{center}
+
+
+
+
+%....................
+\paragraph{Element 4}
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt4/jcob_0}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt4/jcob_1}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt4/jcob_2}\\
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt4/jcob_3}
+\includegraphics[width=5.7cm]{images/mappings/biquadratic3/elt4/jcob_4}\\
+{\captionfont 50,000 points at random. From left to right: center=0,1,2,3,4.} 
+\end{center}
+
+
+
+
+\begin{center}
+\includegraphics[width=8.5cm]{images/mappings/biquadratic3/elt4/nodes}
+\includegraphics[width=8.5cm]{images/mappings/biquadratic3/elt4/quads}\\
+{\captionfont Left: position of the nodes. Right position of quadrature points with 
+nqperdim=3.}
+\end{center}
+
+\begin{verbatim}
+
+\end{verbatim}
+
+Area does not depend on position of middle node?!
+
+
+
 
 \vspace{1cm}
 

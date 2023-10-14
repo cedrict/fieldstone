@@ -4,7 +4,7 @@
 
 As nicely explained in the 
 step 32 of deal.ii\footnote{\url{https://www.dealii.org/9.0.0/doxygen/deal.II/step\_32.html}},
-we often need to scale the $\G$ block since it is many orders of magnitude smaller than $\K$, 
+we often need to scale the $\G$ block since it is many orders of magnitude smaller than $\K$ (especially in geodynamics where viscosities are $\sim 10^{22}$), 
 which introduces large inaccuracies in the solving process to the point that the solution is nonsensical. 
 This scaling coefficient is $\eta/L$ where $\eta$ and $L$ are representative viscosities and lengths. 
 We start from 
