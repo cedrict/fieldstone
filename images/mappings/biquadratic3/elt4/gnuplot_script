@@ -1,0 +1,64 @@
+#
+set term pdf enhanced font "times,12pt"
+set grid
+set size square
+
+
+set output 'nodes.pdf'
+plot[0:2][0:2]\
+'left.ascii'   lt -1 notitle,\
+'right.ascii'  lt -1 notitle,\
+'bottom.ascii' lt -1 notitle,\
+'top.ascii'    lt -1 notitle,\
+'nodes0.ascii' ps .4 t 'center=0',\
+'nodes1.ascii' ps .4 t 'center=1',\
+'nodes2.ascii' ps .4 t 'center=2',\
+'nodes3.ascii' ps .4 t 'center=3',\
+'nodes5.ascii' ps .4 t 'center=5',\
+
+
+set output 'quads.pdf'
+plot[0:2][0:2]\
+'left.ascii'   lt -1 notitle,\
+'right.ascii'  lt -1 notitle,\
+'bottom.ascii' lt -1 notitle,\
+'top.ascii'    lt -1 notitle,\
+'quads0.ascii' ps .4 t 'center=0',\
+'quads1.ascii' ps .4 t 'center=1',\
+'quads2.ascii' ps .4 t 'center=2',\
+'quads3.ascii' ps .4 t 'center=3',\
+'quads5.ascii' ps .4 t 'center=5'
+
+#set output 'points0.pdf'
+#plot[0:2][0:2]\
+#'left.ascii'   lt -1 notitle,\
+#'right.ascii'  lt -1 notitle,\
+#'bottom.ascii' lt -1 notitle,\
+#'top.ascii'    lt -1 notitle,\
+#'points0.ascii' w d lt 1  t 'center=0',\
+
+#set output 'points1.pdf'
+#plot[0:2][0:2]\
+#'left.ascii'   lt -1 notitle,\
+#'right.ascii'  lt -1 notitle,\
+#'bottom.ascii' lt -1 notitle,\
+#'top.ascii'    lt -1 notitle,\
+#'points1.ascii' w d lt 1  t 'center=1',\
+
+#set output 'points2.pdf'
+#plot[0:2][0:2]\
+#'left.ascii'   lt -1 notitle,\
+#'right.ascii'  lt -1 notitle,\
+#'bottom.ascii' lt -1 notitle,\
+#'top.ascii'    lt -1 notitle,\
+#'points2.ascii' w d lt 1  t 'center=2',\
+
+#set output 'points3.pdf'
+#plot[0:2][0:2]\
+#'left.ascii'   lt -1 notitle,\
+#'right.ascii'  lt -1 notitle,\
+#'bottom.ascii' lt -1 notitle,\
+#'top.ascii'    lt -1 notitle,\
+#'points3.ascii' w d lt 1  t 'center=3',\
+
+
