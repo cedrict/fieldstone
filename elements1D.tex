@@ -408,3 +408,239 @@ The basis functions derivative are given by
 \end{eqnarray}
 \end{mdframed}
 
+
+%---------------------------------------------------------------
+\subsubsection{Quartic basis functions ($Q_6$) \label{sec:bf6}}
+\index{general}{$Q_6$}
+
+The 1D basis polynomial is given by
+\[
+f_h(r)=a+br+cr^2+dr^3+er^4+fr^5+gr^6
+\]
+with the nodes at position -1,-2/3, -1/3, 0, +1/3, +2/3 and +1.
+The function $f^h(r)$ must then fulfil 
+%\begin{eqnarray}
+%f_h(-1)   &=&  a -        b +         c -            d +e -f +g =f_1 \nn\\
+%f_h(-2/3) &=&  a -\frac23 b + \frac49 c -\frac{8}{27}d +e -f +g =f_2\nn\\
+%f_h(-1/3) &=&  a -\frac13 b + \frac19 c -\frac{1}{27}d +e -f +g =f_3\nn\\
+%f_h(0)    &=&  a                                                = f_4 \nn\\
+%f_h(+1/3) &=&  a +\frac13 b + \frac19 c +\frac{1}{27}d +e +f +g =f_5\nn\\
+%f_h(+2/3) &=&  a +\frac23 b + \frac49 c +\frac{8}{27}d +e +f =g =f_6\nn\\
+%f_h(+1)   &=&  a +        b +         c +            d +e +f +g =f_7 \nn
+%\end{eqnarray}
+
+
+\[
+\left(
+\begin{array}{ccccccc}
+1& -1       & 1       & -1           & 1 & -1 & 1  \\
+1& -\frac23 & \frac49 & -\frac{8}{27}& \frac{16}{81} & -\frac{32}{243} & \frac{64}{729}  \\
+1& -\frac13 & \frac19 & -\frac{1}{27}& \frac{1}{81}  & -\frac{1}{243}  & \frac{1}{729}  \\
+1& 0        & 0       & 0            &0 & 0 & 0 \\
+1& \frac13  & \frac19 & \frac{1}{27} & \frac{1}{81}  & \frac{1}{243}  & \frac{1}{729}  \\
+1& \frac23  & \frac49 & \frac{8}{27} & \frac{16}{81} & \frac{32}{243} & \frac{64}{729}  \\
+1& 1        & 1       & 1            & 1 & 1 & 1  
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+a \\ b \\ c \\ d \\ e \\ f \\ g
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+f_1 \\ f_2 \\ f_3 \\ f_4 \\ f_5 \\ f_6 \\ f_7
+\end{array}
+\right)
+\]
+
+
+The middle line yields $a=f_4$, so that we have:
+
+\[
+\left(
+\begin{array}{cccccc}
+ -1       & 1       & -1           & 1 & -1 & 1  \\
+ -\frac23 & \frac49 & -\frac{8}{27}& \frac{16}{81} & -\frac{32}{243} & \frac{64}{729}  \\
+ -\frac13 & \frac19 & -\frac{1}{27}& \frac{1}{81}  & -\frac{1}{243}  & \frac{1}{729}  \\
+ \frac13  & \frac19 & \frac{1}{27} & \frac{1}{81}  & \frac{1}{243}  & \frac{1}{729}  \\
+ \frac23  & \frac49 & \frac{8}{27} & \frac{16}{81} & \frac{32}{243} & \frac{64}{729}  \\
+ 1        & 1       & 1            & 1 & 1 & 1  
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+b \\ c \\ d \\ e \\ f \\ g
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+f_1 -f_4 \\ f_2 -f_4\\ f_3 -f_4 \\ f_5 -f_4\\ f_6 -f_4\\ f_7-f_4
+\end{array}
+\right)
+\]
+Multiplying all lines by 729, we obtain:
+
+\[
+\frac{1}{729}
+\left(
+\begin{array}{cccccc}
+ -729 & 729 & -729 & 729 & -729 & 729  \\
+ -486 & 324 & -216 & 144 & -96  & 64  \\
+ -243 & 81  & -27  & 9   & -3   & 1  \\
+ 243  & 81  & 27   & 9   & 3    & 1  \\
+ 486  & 324 & 216  & 144 & 96   & 64  \\
+729   & 729 & 729  & 729 & 729  & 729  
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+b \\ c \\ d \\ e \\ f \\ g
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+f_1 -f_4 \\ f_2 -f_4\\ f_3 -f_4 \\ f_5 -f_4\\ f_6 -f_4\\ f_7-f_4
+\end{array}
+\right)
+\]
+
+The inverse\footnote{\url{https://physandmathsolutions.com/Matrices/matrix_inverse/matrix_inverse_6x6.php}} of this matrix is:
+
+\begin{verbatim}
+-0.00006859 	0.00061728 	-0.00308642 	0.00308642 	-0.00061728 	0.00006859
+0.00006859 	-0.00092593 	0.00925926 	0.00925926 	-0.00092593 	0.00006859
+0.00077160 	-0.00617284 	0.01003086 	-0.01003086 	0.00617284 	-0.00077160
+-0.00077160 	0.00925926 	-0.03009259 	-0.03009259 	0.00925926 	-0.00077160
+-0.00138889 	0.00555556 	-0.00694444 	0.00694444 	-0.00555556 	0.00138889
+0.00138889 	-0.00833333 	0.02083333 	0.02083333 	-0.00833333 	0.00138889
+\end{verbatim}
+
+Obviously, this is not a very practical approach anymore. One could 
+solve the system by hand, making sure to keep fractions but it will be 
+cumbersome. Let us turn to another approach.
+
+The nodes inside the reference element are as follows:
+
+\begin{verbatim}
+(1) (2)  (3) (4) (5)  (6) (7)
+-|---|----|---+---|----|---|-
+-1 -2/3 -1/3  0  1/3  2/3  1
+\end{verbatim}
+
+Basis function $\bN_1(r)$ is a 6th order polynomial expression 
+that should be 1 at node 1, and 0 at others,
+i.e. at $r=-2/3,-1/3,0,1/3,2/3,1$. It must then be of the form:
+\[
+\bN_1(r) = \alpha(r+\frac23)(r+\frac13)(r)(r-\frac13)(r-\frac23)(r-1)
+\]
+When evaluated at $r=-1$, we get
+\[
+\bN_1(r=-1) 
+= \alpha(-\frac13)(-\frac23)(-1)(-\frac43)(-\frac53)(-2)
+= \alpha\frac{80}{81}
+\]
+Since this quantity must be 1, we have
+\[
+1 = \alpha \frac{80}{81}
+\quad
+\rightarrow
+\quad
+\alpha=\frac{81}{80}
+\]
+so that 
+\begin{eqnarray}
+\bN_1(r)
+&=& \frac{81}{80}(r+\frac23)(r+\frac13)(r)(r-\frac13)(r-\frac23)(r-1) \nn\\
+&=& \frac{81}{80} \frac{1}{81} (3r+2)(3r+1)(r)(3r-1)(3r-2)(r-1) \nn\\
+&=& \frac{1}{80} (9r^2-4)(9r^2-1)(r^2-r) \nn\\
+&=& \frac{1}{80} (81r^4 -45r^2 +4)(r^2-r) 
+\end{eqnarray}
+
+Moving to $\bN_2(r)$, we have
+\[
+\bN_2(r)= \alpha(r+1)(r+\frac13)(r)(r-\frac13)(r-\frac23)(r-1)
+\]
+which must be equal to 1 for $r=-2/3$:
+\begin{eqnarray}
+\bN_2(r=-2/3)
+&=& \alpha(-\frac23+1)(-\frac23+\frac13)(-\frac23)(-\frac23-\frac13)(-\frac23-\frac23)(-\frac23-1)\nn\\
+&=& \alpha (\frac13)(-\frac13)(-\frac23)(-1)(-\frac43)(-\frac53)\nn\\
+&=& -\alpha \frac{40}{243}
+\end{eqnarray}
+so that 
+\[
+\bN_2(r)= -\frac{243}{40}(r+1)(r+\frac13)(r)(r-\frac13)(r-\frac23)(r-1)
+\]
+
+Moving to $\bN_3(r)$, we have
+\[
+\bN_3(r)= \alpha(r+1)(r+\frac23)(r)(r-\frac13)(r-\frac23)(r-1)
+\]
+which must be equal to 1 for $r=-1/3$:
+\begin{eqnarray}
+\bN_3(r=-1/3)
+&=& \alpha(-\frac13+1)(-\frac13+\frac23)(-\frac13)(-\frac13-\frac13)(-\frac13-\frac23)(-\frac13-1) \nn\\
+&=& \alpha(\frac23)(\frac13)(-\frac13)(-\frac23)(-1)(-\frac43) \nn\\
+&=& \alpha \frac{16}{243}
+\end{eqnarray}
+so that 
+\[
+\bN_3(r)= \frac{243}{16}(r+1)(r+\frac23)(r)(r-\frac13)(r-\frac23)(r-1)
+\]
+Likewise, we arrive at the rest of the basis functions. In the end:
+
+\begin{eqnarray}
+\bN_1(r) &=& \frac{81}{80}(r+\frac23)(r+\frac13)(r)(r-\frac13)(r-\frac23)(r-1) \nn\\
+\bN_2(r) &=& -\frac{243}{40}(r+1)(r+\frac13)(r)(r-\frac13)(r-\frac23)(r-1) \nn\\
+\bN_3(r) &=& \frac{243}{16}(r+1)(r+\frac23)(r)(r-\frac13)(r-\frac23)(r-1) \nn\\
+\bN_4(r) &=& -\frac{81}{4}(r+1)(r+\frac23)(r+\frac13)(r-\frac13)(r-\frac23)(r-1) \nn\\
+\bN_5(r) &=& \frac{243}{16}(r+1)(r+\frac23)(r+\frac13)(r)(r-\frac23)(r-1) \nn\\
+\bN_6(r) &=& -\frac{243}{40}(r+1)(r+\frac23)(r+\frac13)(r)(r-\frac13)(r-1) \nn\\
+\bN_7(r) &=& \frac{81}{80}(r+1)(r+\frac23)(r+\frac13)(r)(r-\frac13)(r-\frac23)
+\end{eqnarray}
+or 
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\bN_1(r) &=& \frac{1}{80}(81r^6-81r^5-45r^4+45r^3+4r^2-4r) \nn\\
+\bN_2(r) &=& -\frac{9}{40}(27r^6 -18r^5 -30r^4 +20r^3 +3r^2 -2r) \nn\\ 
+\bN_3(r) &=& \frac{9}{16} (27r^6 -9r^5 -39r^4 +13r^3 +12r^2 -4r) \nn\\ 
+\bN_4(r) &=& -\frac{1}{4} (81r^6 - 126r^4+49r^2 +4) \nn\\ 
+\bN_5(r) &=& \frac{9}{16} (27r^6 +9r^5 -39r^4 -13r^3 +12r^2 +4r) \nn\\ 
+\bN_6(r) &=& -\frac{9}{40}(27r^6 +18r^5 -30r^4 -20r^3 +3r^2 +2r) \nn\\ 
+\bN_7(r) &=&  \frac{1}{80}(81r^6+81r^5-45r^4-45r^3+4r^2+4r) 
+\end{eqnarray}
+\end{mdframed}
+
+\begin{center}
+\includegraphics[width=11cm]{images/basis1D/Q6.pdf}\\
+{\captionfont Plot of the 7 six-order basis functions.}
+\end{center}
+
+Using WolframAlpha\footnote{\url{https://www.wolframalpha.com/}}, we arrive at 
+
+\begin{eqnarray}
+\frac{d \bN_1}{dr} &=& \frac{1}{80} (486r^5 - 405r^4 - 180r^3 + 135 r^2 +8r-4) \nn\\
+\frac{d \bN_2}{dr} &=& -\frac{9}{20} (81r^5 - 45r^4 -60r^3 + 30r^2 +3r -1) \nn\\ 
+\frac{d \bN_3}{dr} &=& \frac{9}{16} (162r^5-45r^4 -156r^3 +39r^2 +24r -4) \nn\\ 
+\frac{d \bN_4}{dr} &=& \frac{1}{2} (-243r^5+252r^3-49r) \nn\\
+\frac{d \bN_5}{dr} &=& \frac{9}{16} (162r^5 +45r^4 -156r^3 -39r^2 +24r +4) \nn\\ 
+\frac{d \bN_6}{dr} &=& -\frac{9}{20} (81r^5 +45r^4 -60r^3 - 30r^2 +3r +1) \nn\\ 
+\frac{d \bN_7}{dr} &=& \frac{1}{80} (486r^5 + 405r^4 - 180r^3 -135r^2 +8r+4) 
+\end{eqnarray}
+
+
+
+
+
+
+
+
+

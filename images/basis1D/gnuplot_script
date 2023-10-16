@@ -52,5 +52,32 @@ f5(x) lw 2 title 'N_5(r)',\
 "<echo '0.5 0'"    with points lt -1 pt 5 ps .5 notitle,\
 "<echo '1 0'"      with points lt -1 pt 5 ps .5 notitle
 
+#########################################################
+set xtics 1./3.
+f1(x)=   81./80      *(x+2./3)*(x+1./3)*(x)*(x-1./3)*(x-2./3)*(x-1)
+f2(x)= -243./40*(x+1)*         (x+1./3)*(x)*(x-1./3)*(x-2./3)*(x-1)
+f3(x)=  243./16*(x+1)*(x+2./3)*         (x)*(x-1./3)*(x-2./3)*(x-1)
+f4(x)=  -81./4 *(x+1)*(x+2./3)*(x+1./3)    *(x-1./3)*(x-2./3)*(x-1)
+f5(x)=  243./16*(x+1)*(x+2./3)*(x+1./3)*(x)*         (x-2./3)*(x-1)
+f6(x)= -243./40*(x+1)*(x+2./3)*(x+1./3)*(x)*(x-1./3)         *(x-1)
+f7(x)=   81./80*(x+1)*(x+2./3)*(x+1./3)*(x)*(x-1./3)*(x-2./3)
+
+set output 'Q6.pdf'
+plot[-1:1][]\
+f1(x) lw 2 title 'N_1(r)',\
+f2(x) lw 2 title 'N_2(r)',\
+f3(x) lw 2 title 'N_3(r)',\
+f4(x) lw 2 title 'N_4(r)',\
+f5(x) lw 2 title 'N_5(r)',\
+f6(x) lw 2 title 'N_6(r)',\
+f7(x) lw 2 title 'N_7(r)',\
+"<echo '-1 0'"     with points lt -1 pt 5 ps .5 notitle,\
+"<echo '-0.66667 0'"   with points lt -1 pt 5 ps .5 notitle,\
+"<echo '-0.33333 0'"   with points lt -1 pt 5 ps .5 notitle,\
+"<echo '0 0'"      with points lt -1 pt 5 ps .5 notitle,\
+"<echo '0.33333 0'"    with points lt -1 pt 5 ps .5 notitle,\
+"<echo '0.66667 0'"    with points lt -1 pt 5 ps .5 notitle,\
+"<echo '1 0'"      with points lt -1 pt 5 ps .5 notitle
+
 
 
