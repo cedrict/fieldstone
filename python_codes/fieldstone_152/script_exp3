@@ -12,13 +12,13 @@
 #   etalithstar = float(sys.argv[11])
 
 for l in 16 32 64 ; do
-   for nqperdim in 3 4 5 6 7; do
+   for nqperdim in 3 4 5 ; do
       for mapping in 2 3 4 5 6; do
-          for xi in 5 6 7 ; do
+          for xi in 6 8 10 ; do
 
               echo nelr= $l - nqperdim= $nqperdim - mapping= $mapping - xi= $xi
 
-              python3 stone.py 2 $l 0 $nqperdim $mapping $xi 1 0.999 4900000  400000 1 > opla_${l}_${xi}_${nqperdim}_${mapping}
+              python3 stone.py 3 $l 1 $nqperdim $mapping $xi 1 0.999 0 0 1 > opla_${l}_${xi}_${nqperdim}_${mapping}
 
               mv vel_R2.ascii vel_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
               mv qqq_R2.ascii qqq_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
@@ -27,6 +27,9 @@ for l in 16 32 64 ; do
               mv sr2_R2.ascii sr2_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
               mv v_r_R2.ascii v_r_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
               mv v_t_R2.ascii v_t_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
+
+              mv solutionQ1.vtu solutionQ1_${l}_${xi}_nq${nqperdim}_m${mapping}.vtu
+              mv solutionQ2.vtu solutionQ2_${l}_${xi}_nq${nqperdim}_m${mapping}.vtu
 
          done
       done
