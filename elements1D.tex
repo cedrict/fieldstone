@@ -410,7 +410,64 @@ The basis functions derivative are given by
 
 
 %---------------------------------------------------------------
-\subsubsection{Quartic basis functions ($Q_6$) \label{sec:bf6}}
+\subsubsection{Fifth-order basis functions ($Q_5$) \label{sec:bf5}}
+\index{general}{$Q_5$}
+
+Following the methodology presented hereafter for $Q_6$, we arrive at 
+
+\begin{eqnarray}
+\bN_1(r) &=& -\frac{625}{768}(r+\frac35)(r+\frac15)(r-\frac15)(r-\frac35)(r-1) \nn\\
+\bN_2(r) &=&  \frac{3125}{768}(r+1)(r+\frac15)(r-\frac15)(r-\frac35)(r-1) \nn\\
+\bN_3(r) &=& -\frac{3125}{384}(r+1)(r+\frac35)(r-\frac15)(r-\frac35)(r-1) \nn\\
+\bN_4(r) &=&  \frac{3125}{384}(r+1)(r+\frac35)(r+\frac15)(r-\frac35)(r-1) \nn\\
+\bN_5(r) &=& -\frac{3125}{768}(r+1)(r+\frac35)(r+\frac15)(r-\frac15)(r-1) \nn\\
+\bN_6(r) &=&  \frac{625}{768}(r+1)(r+\frac35)(r+\frac15)(r-\frac15)(r-\frac35) 
+\end{eqnarray}
+
+or, 
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\bN_1(r) &=& -\frac{1}{768} (625r^5-625r^4-250r^3+250r^2+9r-9) \nn\\
+\bN_2(r) &=& \frac{25}{768} (125r^5-75r^4-130r^3+78r^2+5r-3) \nn\\
+\bN_3(r) &=& -\frac{25}{384} (125r^5-25r^4-170r^3+34r^2+45r-9) \nn\\
+\bN_4(r) &=& \frac{25}{384} (125r^5+25r^4-170r^3-34r^2+45r+9) \nn\\
+\bN_5(r) &=& -\frac{25}{768} (125r^5+75r^4-130r^3-78r^2+5r+3) \nn\\
+\bN_6(r) &=& \frac{1}{768} (625r^5+625r^4-250r^3-250r^2+9r+9) 
+\end{eqnarray}
+\end{mdframed}
+
+with the derivatives given by
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\frac{\partial N_1}{\partial r}&=& -\frac{1}{768}(3125r^4-2500r^3-750r^2+500r+9 ) \nn\\ 
+\frac{\partial N_2}{\partial r}&=& \frac{25}{768}(625r^4-300r^3-390r^2+156r+5  ) \nn\\ 
+\frac{\partial N_3}{\partial r}&=& -\frac{25}{384}(625r^4-100r^3-510r^2+68r+45  ) \nn\\ 
+\frac{\partial N_4}{\partial r}&=& \frac{25}{384}(625r^4+100r^3-510r^2-68r+45  ) \nn\\ 
+\frac{\partial N_5}{\partial r}&=& -\frac{25}{768}(625r^4+300r^3-390r^2-156r+5  ) \nn\\ 
+\frac{\partial N_6}{\partial r}&=& \frac{1}{768}(3125r^4+2500r^3-750r^2-500r+9 ) 
+\end{eqnarray}
+\end{mdframed}
+
+
+
+
+\begin{center}
+\includegraphics[width=11cm]{images/basis1D/Q5.pdf}\\
+{\captionfont Plot of the 6 fifth-order basis functions.}
+\end{center}
+
+
+These functions are used in \stone~\ref{f152}.
+
+
+
+
+
+
+%---------------------------------------------------------------
+\subsubsection{Sixth-order basis functions ($Q_6$) \label{sec:bf6}}
 \index{general}{$Q_6$}
 
 The 1D basis polynomial is given by
@@ -612,7 +669,7 @@ or
 \bN_1(r) &=& \frac{1}{80}(81r^6-81r^5-45r^4+45r^3+4r^2-4r) \nn\\
 \bN_2(r) &=& -\frac{9}{40}(27r^6 -18r^5 -30r^4 +20r^3 +3r^2 -2r) \nn\\ 
 \bN_3(r) &=& \frac{9}{16} (27r^6 -9r^5 -39r^4 +13r^3 +12r^2 -4r) \nn\\ 
-\bN_4(r) &=& -\frac{1}{4} (81r^6 - 126r^4+49r^2 +4) \nn\\ 
+\bN_4(r) &=& -\frac{1}{4} (81r^6 - 126r^4+49r^2 -4) \nn\\ 
 \bN_5(r) &=& \frac{9}{16} (27r^6 +9r^5 -39r^4 -13r^3 +12r^2 +4r) \nn\\ 
 \bN_6(r) &=& -\frac{9}{40}(27r^6 +18r^5 -30r^4 -20r^3 +3r^2 +2r) \nn\\ 
 \bN_7(r) &=&  \frac{1}{80}(81r^6+81r^5-45r^4-45r^3+4r^2+4r) 
@@ -636,7 +693,7 @@ Using WolframAlpha\footnote{\url{https://www.wolframalpha.com/}}, we arrive at
 \frac{d \bN_7}{dr} &=& \frac{1}{80} (486r^5 + 405r^4 - 180r^3 -135r^2 +8r+4) 
 \end{eqnarray}
 
-
+These functions are used in \stone~\ref{f152}.
 
 
 
