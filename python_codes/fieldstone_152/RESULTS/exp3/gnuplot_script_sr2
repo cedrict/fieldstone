@@ -1,0 +1,136 @@
+#
+set term pdf enhanced font 'Times,12pt' linewidth .1
+set xlabel '{/Symbol q}'
+set grid
+set key outside
+set log y 
+
+cm=1
+year=1
+
+xmin=0
+xmax=pi
+ymin=1e-20
+ymax=1e-14
+
+#################################################################
+
+set ylabel 'Effective strain rate (s^{-1})'
+
+set title 'nelr=8, mapping=Q_2'
+set output 'sr2_16_m2.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_16_xi6_nq3_m2' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_16_xi6_nq4_m2' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_16_xi6_nq5_m2' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+set title 'nelr=8, mapping=Q_3'
+set output 'sr2_16_m3.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_16_xi6_nq3_m3' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_16_xi6_nq4_m3' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_16_xi6_nq5_m3' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+set title 'nelr=8, mapping=Q_4'
+set output 'sr2_16_m4.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_16_xi6_nq3_m4' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_16_xi6_nq4_m4' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_16_xi6_nq5_m4' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+set title 'nelr=8, mapping=Q_5'
+set output 'sr2_16_m5.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_16_xi6_nq3_m5' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_16_xi6_nq4_m5' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_16_xi6_nq5_m5' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+set title 'nelr=8, mapping=Q_6'
+set output 'sr2_16_m6.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_16_xi6_nq3_m6' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_16_xi6_nq4_m6' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_16_xi6_nq5_m6' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+#-----------------------------------------------------------------
+
+set title 'nelr=16, mapping=Q_2'
+set output 'sr2_32_m2.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_32_xi6_nq3_m2' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_32_xi6_nq4_m2' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_32_xi6_nq5_m2' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+set title 'nelr=16, mapping=Q_3'
+set output 'sr2_32_m3.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_32_xi6_nq3_m3' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_32_xi6_nq4_m3' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_32_xi6_nq5_m3' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+set title 'nelr=16, mapping=Q_4'
+set output 'sr2_32_m4.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_32_xi6_nq3_m4' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_32_xi6_nq4_m4' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_32_xi6_nq5_m4' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+set title 'nelr=16, mapping=Q_5'
+set output 'sr2_32_m5.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_32_xi6_nq3_m5' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_32_xi6_nq4_m5' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_32_xi6_nq5_m5' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+set title 'nelr=16, mapping=Q_6'
+set output 'sr2_32_m6.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_32_xi6_nq3_m6' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_32_xi6_nq4_m6' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_32_xi6_nq5_m6' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+#-----------------------------------------------------------------
+
+set title 'nelr=32, mapping=Q_2'
+set output 'sr2_64_m2.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_64_xi6_nq3_m2' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_64_xi6_nq4_m2' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_64_xi6_nq5_m2' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+set title 'nelr=32, mapping=Q_3'
+set output 'sr2_64_m3.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_64_xi6_nq3_m3' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_64_xi6_nq4_m3' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_64_xi6_nq5_m3' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+set title 'nelr=32, mapping=Q_4'
+set output 'sr2_64_m4.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_64_xi6_nq3_m4' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_64_xi6_nq4_m4' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_64_xi6_nq5_m4' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+set title 'nelr=32, mapping=Q_5'
+set output 'sr2_64_m5.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_64_xi6_nq3_m5' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_64_xi6_nq4_m5' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_64_xi6_nq5_m5' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+set title 'nelr=32, mapping=Q_6'
+set output 'sr2_64_m6.pdf'
+plot[xmin:xmax][ymin:ymax]\
+'sr2_R2.ascii_64_xi6_nq3_m6' u 1:($2/cm*year) w l lt 1 t 'nq=3',\
+'sr2_R2.ascii_64_xi6_nq4_m6' u 1:($2/cm*year) w l lt 2 t 'nq=4',\
+'sr2_R2.ascii_64_xi6_nq5_m6' u 1:($2/cm*year) w l lt 3 t 'nq=5',\
+
+#-----------------------------------------------------------------
+
+
+
+
+
+
+
