@@ -741,7 +741,7 @@ We of course have
 \]
 so that we can compute the relative errors as a function of resolution, mapping and quadrature: 
 \begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/vols/volumes.pdf}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/RESULTS/vols/volumes.pdf}
 \end{center}
 
 \noindent Conclusions:
@@ -754,6 +754,100 @@ is not critical. Results are virtually identical for {\python nqperdim=2,3,4,5}
 \item $Q_4$ mapping 3-4 orders of magnitude more accurate than $Q_2$ mapping
 \end{itemize}
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Exp=0: Annulus convection benchmark (exp=0)}
+
+In order to run this benchmark, the following two options must be False in the code:
+\begin{lstlisting}
+axisymmetric=False
+surface_free_slip=False
+\end{lstlisting}
+
+This benchmark is documented in Section~\ref{MMM-ss:anconv}.
+
+For reference, in this benchmark we solve the Stokes equation for an incompressible
+isothermal fluid in an annulus of inner radius $R_1$
+and outer radius $R_2$ with the following boundary conditions:
+\begin{itemize}
+\item Inner boundary: $\upnu_r(R_1,\theta)=0$ 
+\item Outer boundary: $\upnu_r(R_2,\theta)=0$ 
+\end{itemize}
+and the manufactured solution takes the form:
+\begin{eqnarray}
+\upnu_\theta(r,\theta) &=& f(r) \cos(k\theta) \\
+\upnu_r(r,\theta) &=& g(r) k  \sin(k\theta)  \\
+p(r,\theta) &=& k h(r) \sin(k \theta) + \rho_0 g_r (r-R_2)  \\
+\rho(r,\theta) &=& k \sin (k \theta) \aleph(r) + \rho_0 \\
+\end{eqnarray}
+with
+\begin{eqnarray}
+A &=& \frac{2(\ln R_1 - \ln R_2)} { R_2^2 \ln R_1  - R_1^2 \ln R_2}    \nn\\
+B &=& \frac{R_2^2-R_1^2}{R_2^2 \ln R_1 - R_1^2 \ln R_2} \nn\\
+f(r)   &=& Ar +\frac{B}{r} \nn\\
+f'(r)  &=& A - \frac{B}{r^2} \nn\\
+g(r)   &=& \frac{A}{2}r  +  \frac{B}{r} \ln r - \frac{1}{r} \nn\\
+g'(r)  &=& \frac{A}{2}  +  \frac{B}{r^2} (1-\ln r)   + \frac{1}{r^2} \nn\\
+g''(r) &=&  - \frac{B}{r^3} (3 - 2 \ln r )  \nn\\
+h(r)   &=& \frac{1}{r^2}(2g-f) \nn\\
+\aleph(r) &=&  -g'' - \frac{g'}{r} ( 1 - \frac{2}{r}) + \frac{g}{r^2} (k^2 + 1 -\frac{4}{r})  
+- \frac{2f}{r^2}  (1-\frac{1}{r}) - \frac{f'}{r^2}   \nn
+\end{eqnarray}
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_152/images/vel}
+\includegraphics[width=6cm]{python_codes/fieldstone_152/images/press}\\
+{\captionfont Velocity and pressure fields for $k=4$.}
+\end{center}
+
+%---------------------------------------
+\subsection*{Root mean square velocity}
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/RESULTS/exp0/vrms}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/RESULTS/exp0/vrms_error}\\
+{\captionfont Note that we define $h=(R_2-R_1)/nelr=1/nelr$.}
+\end{center}
+
+As expected linear mapping yields the worst results. However results are virtually identical for 
+the three other mappings.
+What is very surprising is the much higher accuracy of {\python nqperdim=2} (i.e. subparametric mapping) ?!
+
+
+%---------------------------------------
+\subsection*{Velocity and pressure errors}
+
+We first look at the min/max values of the nodal velocity and pressure errors over all the nodes:
+\begin{center}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_152/RESULTS/exp0/u_err}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_152/RESULTS/exp0/v_err}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_152/RESULTS/exp0/p_err}\\
+{\captionfont min/max of $u^h(x,y)-u^{th}(x,y)$ and $v^h(x,y)-v^{th}(x,y)$, min/max of $p^h(x,y)-p^{th}(x,y)$.} 
+\end{center}
+We see that all measurements decrease (in amplitude) when the resolution is increased and that 
+the $Q_1$ mapping yields the largest errors. 
+Interestingly the subparametric case {\python nqperdim=2} seems to yield more accurate 
+pressure results.
+
+Turning now to velocity and pressure errors in the $L_2$ norm, 
+as expected with the \QtwoQone element (and already shown in \stone~\ref{f21})
+we recover a cubic convergence for the velocity error and quadratic for the 
+pressure... almost always.
+
+\begin{center}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/RESULTS/exp0/errv}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_152/RESULTS/exp0/errp}
+\end{center}
+
+Our velocity and pressure error measurements are identical to those of \aspect.
+But why does the subparametric mapping yield a pressure error that is superconvergent?
+
+
+
+
+
+
+
 
 
 
@@ -762,7 +856,7 @@ is not critical. Results are virtually identical for {\python nqperdim=2,3,4,5}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Exp1 - the aquarium test}
+\section*{Exp=1: - the aquarium test}
 
 Planet is R1=3400km, R2=6400km, g=10, rho=4000, eta=1e21.
 Free slip on all sides. Unless specified, xi=6.
@@ -772,152 +866,152 @@ Obtained with {\tt script\_exp1}
 
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_64_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_128_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_128_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_128_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_128_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/vel_128_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_128_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_128_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_128_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_128_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/vel_128_m6}
 
 \hrule
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_64_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_128_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_128_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_128_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_128_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/qqq_128_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_128_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_128_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_128_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_128_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/qqq_128_m6}
 
 \hrule
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_64_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_128_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_128_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_128_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_128_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/sr2_128_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_128_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_128_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_128_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_128_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/sr2_128_m6}
 
 \hrule
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_64_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_128_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_128_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_128_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_128_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/err_128_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_128_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_128_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_128_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_128_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/err_128_m6}
 
 \hrule
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_64_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_128_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_128_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_128_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_128_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp1/d_t_128_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_128_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_128_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_128_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_128_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp1/d_t_128_m6}
 
 \hrule
 
@@ -945,121 +1039,121 @@ Center of blob at y=4900km, radius is 400km.
 Obtained with {\tt script\_exp2}.
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_64_m6}
 
 \hrule
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/qqq_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/qqq_64_m6}
 
 \hrule
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/sr2_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/sr2_64_m6}
 
 \hrule
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/err_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/err_64_m6}
 
 \hrule
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/d_t_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/d_t_64_m6}
 
 \hrule
 
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp2/vel_64_xi}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp2/vel_64_xi}
 
 
 Conclusions:
@@ -1101,128 +1195,128 @@ designed in such a way that there are no elements cut by the edges of it.
 Results obtained with {\tt script\_exp3}.
 
 \begin{center}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_152/exp3/rho}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_152/exp3/vel}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_152/exp3/press}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_152/RESULTS/exp3/rho}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_152/RESULTS/exp3/vel}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_152/RESULTS/exp3/press}
 \end{center}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_64_m6}
 
 \hrule
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/qqq_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/qqq_64_m6}
 
 \hrule
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/sr2_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/sr2_64_m6}
 
 \hrule
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/err_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/err_64_m6}
 
 \hrule
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_16_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_16_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_16_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_16_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_16_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_16_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_16_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_16_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_16_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_16_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_32_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_32_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_32_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_32_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_32_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_32_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_32_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_32_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_32_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_32_m6}
 
 \noindent
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_64_m2}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_64_m3}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_64_m4}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_64_m5}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/d_t_64_m6}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_64_m2}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_64_m3}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_64_m4}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_64_m5}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/d_t_64_m6}
 
 \hrule
 
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_32_xi}
-\includegraphics[width=3.5cm]{python_codes/fieldstone_152/exp3/vel_64_xi}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_32_xi}
+\includegraphics[width=3.5cm]{python_codes/fieldstone_152/RESULTS/exp3/vel_64_xi}
 
 Conclusions:
 \begin{itemize}
@@ -1238,42 +1332,6 @@ Conclusions:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1284,107 +1342,46 @@ Conclusions:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
-
 
 
 
 {\large old stuff}
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Annulus convection benchmark (exp=0)}
-
-
-This benchmark is documented in Section~\ref{MMM-ss:anconv}.
-
-For reference, in this benchmark we solve the Stokes equation for an incompressible
-isothermal fluid in an annulus of inner radius $R_1$
-and outer radius $R_2$ with the following boundary conditions:
-\begin{itemize}
-\item Inner boundary: $\upnu_r(R_1,\theta)=0$ 
-\item Outer boundary: $\upnu_r(R_2,\theta)=0$ 
-\end{itemize}
-and the manufactured solution takes the form:
-\begin{eqnarray}
-\upnu_\theta(r,\theta) &=& f(r) \cos(k\theta) \\
-\upnu_r(r,\theta) &=& g(r) k  \sin(k\theta)  \\
-p(r,\theta) &=& k h(r) \sin(k \theta) + \rho_0 g_r (r-R_2)  \\
-\rho(r,\theta) &=& k \sin (k \theta) \aleph(r) + \rho_0 \\
-\end{eqnarray}
-with
-\begin{eqnarray}
-A &=& \frac{2(\ln R_1 - \ln R_2)} { R_2^2 \ln R_1  - R_1^2 \ln R_2}    \nn\\
-B &=& \frac{R_2^2-R_1^2}{R_2^2 \ln R_1 - R_1^2 \ln R_2} \nn\\
-f(r)   &=& Ar +\frac{B}{r} \nn\\
-f'(r)  &=& A - \frac{B}{r^2} \nn\\
-g(r)   &=& \frac{A}{2}r  +  \frac{B}{r} \ln r - \frac{1}{r} \nn\\
-g'(r)  &=& \frac{A}{2}  +  \frac{B}{r^2} (1-\ln r)   + \frac{1}{r^2} \nn\\
-g''(r) &=&  - \frac{B}{r^3} (3 - 2 \ln r )  \nn\\
-h(r)   &=& \frac{1}{r^2}(2g-f) \nn\\
-\aleph(r) &=&  -g'' - \frac{g'}{r} ( 1 - \frac{2}{r}) + \frac{g}{r^2} (k^2 + 1 -\frac{4}{r})  - \frac{2f}{r^2}  (1-\frac{1}{r}) - \frac{f'}{r^2}   \nn
-\end{eqnarray}
-
-
-\begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_152/images/vel}
-\includegraphics[width=6cm]{python_codes/fieldstone_152/images/press}\\
-{\captionfont Velocity and pressure fields for $k=4$.}
-\end{center}
 
 
 
 
 
-%---------------------------------------
-\subsection*{Root mean square velocity}
-
-\begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/vrms}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/vrms_error}\\
-{\captionfont Note that we define $h=(R_2-R_1)/nelr=1/nelr$.}
-\end{center}
-
-As expected linear mapping yields the worst results. However results are virtually identical for 
-the three other mappings.
-What is very surprising is the much higher accuracy of {\python nqperdim=2} (i.e. subparametric mapping) ?!
 
 
-%---------------------------------------
-\subsection*{Velocity and pressure errors}
 
-We first look at the min/max values of the nodal velocity and pressure errors over all the nodes:
-\begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/u_err}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/v_err}\\
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/p_err}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/p_err_max}\\
-{\captionfont Top row: min/max of $u^h(x,y)-u^{th}(x,y)$ and $v^h(x,y)-v^{th}(x,y)$;
-Bottom row left: min/max of $p^h(x,y)-p^{th}(x,y)$; bottom row right max of  $p^h(x,y)-p^{th}(x,y)$.} 
-\end{center}
-We see that all measurements decrease (in amplitude) when the resolution is increased and that 
-the $Q_1$ mapping yields the largest errors. 
-Interestingly the subparametric case {\python nqperdim=2} seems to yield more accurate 
-pressure results.
 
-Turning now to velocity and pressure errors in the $L_2$ norm, 
-as expected with the \QtwoQone element (and already shown in \stone~\ref{f21})
-we recover a cubic convergence for the velocity error and quadratic for the 
-pressure... almost always.
 
-\begin{center}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/errv}
-\includegraphics[width=8.3cm]{python_codes/fieldstone_152/results/exp0/errp}
-\end{center}
 
-Our velocity and pressure error measurements are identical to those of \aspect.
-But why does the subparametric mapping yield a pressure error that is superconvergent?
 
-%IDEA/THOUGHT: are these q points superconvergent points? find ref!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \newpage
 

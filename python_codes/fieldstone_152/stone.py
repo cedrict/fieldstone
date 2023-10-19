@@ -10,9 +10,11 @@ from numba import jit
 
 ###############################################################################
 
-axisymmetric=True
+axisymmetric=False
 
-surface_free_slip=True
+surface_free_slip=False
+
+###############################################################################
 
 planet_is_Earth=False
 use_rho_PREM=False
@@ -643,15 +645,16 @@ if int(len(sys.argv) == 12):
    print(sys.argv)
 
 else:
+   # exp=0: cyl benchmark
    # exp=1: aquarium
    # exp=2: blob
    # exp=3: pancake pi/8
-   exp         = 1
-   nelr        = 32 # Q1 cells!
+   exp         = 0
+   nelr        = 16 # Q1 cells!
    visu        = 1
-   nqperdim    = 4
-   mapping     = 'Q6' 
-   xi          = 6
+   nqperdim    = 3
+   mapping     = 'Q2' 
+   xi          = 4
    etablobstar = 1
    rhoblobstar = 1 #.99
    yblob       = 4900e3
@@ -884,7 +887,7 @@ if not axisymmetric:
 
    xV=np.zeros(NV,dtype=np.float64) 
    yV=np.zeros(NV,dtype=np.float64) 
-   r=np.zeros(NV,dtype=np.float64)  
+   rad=np.zeros(NV,dtype=np.float64)  
    theta=np.zeros(NV,dtype=np.float64) 
 
    Louter=2.*math.pi*R2
@@ -907,8 +910,9 @@ if not axisymmetric:
            t=xi/Louter*2.*math.pi    
            xV[counter]=math.cos(t)*(R1+yi)
            yV[counter]=math.sin(t)*(R1+yi)
-           r[counter]=R1+yi
-           theta[counter]=np.arctan2(yV[counter],xV[counter])
+           rad[counter]=R1+yi
+           #theta[counter]=np.arctan2(yV[counter],xV[counter])
+           theta[counter]=np.pi/2-np.arctan2(yV[counter],xV[counter])
            if theta[counter]<0.:
               theta[counter]+=2.*math.pi
            counter+=1
@@ -956,7 +960,8 @@ else:
               xV[counter]=0
            counter+=1
 
-   np.savetxt('grid.ascii',np.array([xV,yV,theta]).T,header='# x,y')
+   if debug:
+      np.savetxt('grid.ascii',np.array([xV,yV,theta]).T,header='# x,y')
 
 print("coordinate arrays (%.3fs)" % (timing.time() - start))
 
@@ -1304,7 +1309,8 @@ if mapping=='Q6':
                ymapping[counter,iel]=math.cos(ttt)*rrr
                #print(xmapping[counter,iel],ymapping[counter,iel])
                counter+=1
-
+if debug:
+   np.savetxt('xymapping'+mapping+'.ascii',np.array([xmapping[0,:],ymapping[0,:]]).T)
 
 print("define mapping (%.3fs)" % (timing.time() - start))
 
@@ -1691,6 +1697,7 @@ for iel in range(0,nel):
             f_el[ndofV*i  ]+=NNNV[i]*coeffq*gx(xq,yq,g0)*density(xq,yq,R1,R2,kk,rho_m,g0)
             f_el[ndofV*i+1]+=NNNV[i]*coeffq*gy(xq,yq,g0)*density(xq,yq,R1,R2,kk,rho_m,g0)
         #end for 
+        print(xq,yq,gx(xq,yq,g0),gy(xq,yq,g0),jcob,coeffq,viscosity(xq,yq,R1,R2))
 
     #end for kq
 
@@ -1823,7 +1830,8 @@ p=sol[NfemV:NfemV+NfemP]*eta_ref/h_r
 print("     -> u (m,M) %.7e %.7e " %(np.min(u)/vel_unit,np.max(u)/vel_unit),velunit)
 print("     -> v (m,M) %.7e %.7e " %(np.min(v)/vel_unit,np.max(v)/vel_unit),velunit)
 
-#np.savetxt('velocity.ascii',np.array([xV,yV,u/vel_unit,v/vel_unit]).T,header='# x,y,u,v')
+if debug:
+   np.savetxt('velocity.ascii',np.array([xV,yV,u/vel_unit,v/vel_unit]).T,header='# x,y,u,v')
 
 #vr= np.cos(theta)*u+np.sin(theta)*v
 #vt=-np.sin(theta)*u+np.cos(theta)*v
@@ -1861,6 +1869,7 @@ for iel in range(0,nel):
        thetac[iel]=np.pi/2-math.atan2(yq,xq)
        pc[iel]=np.sum(p[iconP[0:4,iel]])/4
        #if (not axisymmetric) and thetac[iel]<0.: thetac[iel]+=2.*math.pi
+
 
 print("compute center coords (%.3fs)" % (timing.time() - start))
 
@@ -2203,6 +2212,9 @@ for iel in range(0,nel):
 
 viscosity_nodal/=counter
 
+if debug:
+   np.savetxt('xycenter'+mapping+'.ascii',np.array([xc,yc,density_elemental]).T)
+
 print("compute viscosity on mesh (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
@@ -2284,14 +2296,16 @@ print("compute error fields (%.3fs)" % (timing.time() - start))
 start = timing.time()
 
 dyn_topo_nodal=np.zeros(NV,dtype=np.float64)
-for i in range(0,NV):
-    if surfaceV[i] and xV[i]>=0:
-       dyn_topo_nodal[i]= -(2*viscosity_nodal[i]*e_rr2[i]-q[i])/(rho_m*g0) 
+if exp>0:
+   for i in range(0,NV):
+       if surfaceV[i] and xV[i]>=0:
+          dyn_topo_nodal[i]= -(2*viscosity_nodal[i]*e_rr2[i]-q[i])/(rho_m*g0) 
 
 dyn_topo_eltal=np.zeros(nel,dtype=np.float64)
-for iel in range(0,nel):
-    if surface_element[iel] and xc[iel]>=0:
-       dyn_topo_eltal[iel]= -(2*viscosity_elemental[iel]*e_rrc[iel]-pc[iel])/(rho_m*g0) 
+if exp>0:
+   for iel in range(0,nel):
+       if surface_element[iel] and xc[iel]>=0:
+          dyn_topo_eltal[iel]= -(2*viscosity_elemental[iel]*e_rrc[iel]-pc[iel])/(rho_m*g0) 
 
 print("compute dynamic topography: %.3f s" % (timing.time() - start))
 
@@ -2552,7 +2566,7 @@ start = timing.time()
 
 if visu==1:
 
-   vtufile=open("solutionQ2.vtu","w")
+   vtufile=open("solutionQ2_mapping"+mapping+".vtu","w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
    vtufile.write("<UnstructuredGrid> \n")
    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
@@ -2708,7 +2722,7 @@ if visu==1:
 
    ####################################
 
-   vtufile=open("solutionQ1.vtu","w")
+   vtufile=open("solutionQ1_mapping"+mapping+".vtu","w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
    vtufile.write("<UnstructuredGrid> \n")
    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,4*nel))
@@ -2901,7 +2915,7 @@ if visu==1:
    vtufile.close()
    print("export to vtu file (%.3fs)" % (timing.time() - start))
 
-print("EARTH4D | nelr= %d | v_r  %.5f %.5f  v_t  %.5f %.5f vrms: %.5f " %\
+print("EARTH4D | nelr= %d | v_r  %.5f %.5f  v_t  %.5f %.5f v_rms: %.5f " %\
 (nelr,np.min(vr)/vel_unit,np.max(vr)/vel_unit,np.min(vt)/vel_unit,np.max(vt)/vel_unit,vrms/vel_unit))
 
 print("-----------------------------")
