@@ -4,7 +4,7 @@ rm avrg*.ascii
 rm int*.ascii
 rm area*.ascii
 
-for nq in 3 4 5 6 10 ; do 
+for nq in 3 4 5 6 7 10 ; do 
 
     for xi in {-45..45} ; do
         echo $xi
