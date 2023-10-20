@@ -453,7 +453,7 @@ The following figures show the error convergence for both velocity and pressure.
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_151/results/test1/errv}
 \includegraphics[width=6cm]{python_codes/fieldstone_151/results/test1/errp}\\
-{\captionfont T stands for {\python trapezes}.}
+{\captionfont T=1 means {\python trapezes=True}.}
 \end{center}
 
 We obtain a supra-convergence for velocity and quadratic convergence for pressure.
@@ -470,15 +470,15 @@ and we recover near identical results as before, for both methods.
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_151/results/test2/errv}
 \includegraphics[width=6cm]{python_codes/fieldstone_151/results/test2/errp}\\
-{\captionfont T stands for {\python trapezes=True}.}
+{\captionfont T=1 means {\python trapezes=True}.}
 \end{center}
 
-Unsurprisingly we also find that using trapezoidal elements yields a 
+Unsurprisingly we also find that not using trapezoidal elements yields a 
 much higher accuracy for the volume of the domain:
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_151/results/test2/areas}\\
 {\captionfont total area of the domain measured by means of Gauss integration.
-T stands for {\python trapezes=True}.}
+T=1 means {\python trapezes=True}.}
 \end{center}
 
 
@@ -609,7 +609,74 @@ virtuallly identical results. The trapeze option should not be used.
 \item design more appropriate flow solution and test 3 methods to compute strain rate
 \item implement axisymmetric calculations
 \item check \fullcite{ensg82}
+\item make sure that conversion between cartesian strain rate and cylindrical strain rate is correct
+\item from my experience with stone 152, it is not clear how the additional terms in the matrix
+wrt Lagrange multipliers should be scaled
 \end{itemize}
 \end{minipage}}
 \end{center}
+
+\newpage
+
+Following \textcite{diur15} we add the following term to the weak form 
+of the momentum equation:
+\[
+\int_\Gamma \vec{u}\cdot \vec{n} \; \vec{v}  \cdot \vec{n} d\Gamma  \qquad \forall \vec{v}
+\]
+where $\epsilon >0$ has a small value destined to converge to 0 and 
+$\Gamma$ is the portion of the boundary where slip boundary conditions are to 
+be implemented.
+We have
+\begin{eqnarray}
+\vec{u}\cdot \vec{n} \quad \vec{v}  \cdot \vec{n} 
+&=& (u_x n_x + u_y n_y) (v_x n_x+v_y n_y)  \\
+&=& u_xv_x n_x^2 + u_y v_y n_y^2 + (u_xv_y +u_yv_x) n_x n_y  \\
+&=& v_x(n_x^2 u_x + n_xn_y u_y) + v_y (n_xn_y u_x + n_y^2 u_y) \\
+&=& (v_x \; v_y) \cdot
+\left(
+\begin{array}{c}
+n_x^2 u_x + n_xn_y u_y\\
+n_xn_y u_x + n_y^2 u_y
+\end{array}
+\right) \\
+&=& 
+(v_x \; v_y)
+\cdot
+\left(
+\begin{array}{cc}
+n_x^2 & n_xn_y \\
+n_xn_y & n_y^2
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+u_x \\ u_y
+\end{array}
+\right)\\
+&=& 
+(v_x \; v_y)
+\cdot
+\left(
+\begin{array}{cc}
+n_x^2 & n_xn_y \\
+n_xn_y & n_y^2
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\sum_i \bN_i u_{x,i} \\ \sum _i \bN_i u_{y,i}
+\end{array}
+\right)\\
+\end{eqnarray}
+
+
+
+
+
+
+
+
+
 

@@ -231,8 +231,6 @@ viscosity=1.  # dynamic viscosity \eta
 
 eps=1.e-10
 
-sqrt3=np.sqrt(3.)
-
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
 
@@ -401,7 +399,7 @@ print("building connectivity array (%.3fs)" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-bc_fix = np.zeros(Nfem, dtype=np.bool)  
+bc_fix = np.zeros(Nfem, dtype=bool)  
 bc_val = np.zeros(Nfem, dtype=np.float64) 
 
 for i in range(0,nnp):
