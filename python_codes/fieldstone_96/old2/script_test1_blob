@@ -1,0 +1,50 @@
+#! /bin/bash
+
+rm test1_vrms
+rm test1_volume
+rm test1_stats
+rm test1_avrg_p_cmb
+
+#   R_inner=float(sys.argv[1]), R_outer=float(sys.argv[2])
+#   R_12=float(sys.argv[3]), R_23=float(sys.argv[4]), R_34=float(sys.argv[5]), R_45=float(sys.argv[6])
+#   rho1=float(sys.argv[7]), rho2=float(sys.argv[8]), rho3=float(sys.argv[9]), rho4=float(sys.argv[10]), rho5=float(sys.argv[11])
+#   eta1=float(sys.argv[12]), eta2=float(sys.argv[13]), eta3=float(sys.argv[14]), eta4=float(sys.argv[15]), eta5=float(sys.argv[16])
+#   R_blob=float(sys.argv[17]), eccentricity=float(sys.argv[18]), rho_blob=float(sys.argv[19]), eta_blob=float(sys.argv[20]), depth_blob=float(sys.argv[21])
+#   solve_stokes=(int(sys.argv[22])==1), compute_gravity=(int(sys.argv[23])==1)
+#   nstep=int(sys.argv[24]), hhh=float(sys.argv[25])
+#   element=sys.argv[26]
+
+echo --------------------------- 
+echo --------- test 1 ----------
+echo ---------------------------
+
+#for elt in 1 2 3; do
+for elt in 1 ; do
+   
+     echo elt= $elt
+
+    #for hh in 200e3 175e3 150e3 125e3 100e3 75e3 50e3 ; do
+    for hh in 200e3 ; do
+
+        echo ---hh= $hh
+
+        python3 stone.py 3000e3 6000e3 \
+                 5900e3 5700e3 5300e3 3500e3\
+                 3000 3000 3000 3000 3000 \
+                 1e21 1e21 1e21 1e21 1e21\
+                 400e3 0 2900 1e25 1500e3 \
+                 1 0 \
+                 1 $hh $elt > opla
+
+        grep vrms opla | grep nel   >> test1_vrms_${elt}
+        grep vol opla  | grep error >> test1_volume_${elt}
+        grep stats opla             >> test1_stats_${elt}
+        grep avrg_p_cmb opla        >> test1_avrg_p_cmb_${elt}
+        mv surface_vt_0000.ascii       surface_vt_${hh}_${elt}   
+        mv surface_q_0000.ascii        surface_q_${hh}_${elt}   
+        mv surface_tau_rr_0000.ascii   surface_tau_rr_${hh}_${elt}   
+
+    done
+
+done
+

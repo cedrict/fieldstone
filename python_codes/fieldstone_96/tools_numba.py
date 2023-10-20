@@ -1,6 +1,6 @@
 import numpy as np
 import time as timing
-import numba
+from numba import jit
 
 ##################################################################################################
 
@@ -90,7 +90,7 @@ def export_elements_to_vtuP2(x,y,icon,filename):
 # convert P1 mesh into P2 mesh
 ##################################################################################################
 
-@numba.jit()
+@jit(nopython=True)
 def mesh_P1_to_P2(NV,nel,x,y,icon):
     #NV=np.size(x)
     #m,nel=np.shape(icon)
@@ -166,4 +166,3 @@ def mesh_P1_to_P2(NV,nel,x,y,icon):
     #print("...P1->P2 (c): %.3f s" % (timing.time() - start))
 
     return NVnew,xV,yV,iconV
-

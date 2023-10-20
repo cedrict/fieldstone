@@ -80,32 +80,6 @@ The pressure solution $p$ is projected onto the velocity mesh and is then called
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Axisymmetric considerations}
-
-We here rely on axisymmetric cylindrical coordinates, see Section~\ref{MMM-ss:axicyleqs}.
-As shown on the following figure we assume that the deformation/flow is independent of the angle 
-$\theta$ so that the remaining space coordinates are $r$ and $z$.
-\begin{center}
-\input{tikz/tikz_axi}
-\end{center}
-
-Given the symmetry of the problem any term containing $\partial_\theta$ or $\upnu_\theta$ is zero.
-The strain rate tensor given in Section~\ref{MMM-ss:srcc} then simplifies to:
-
-\begin{eqnarray}
-\dot\varepsilon_{rr} 
-&=& \frac{\partial \upnu_r}{\partial r} \nn\\
-\dot\varepsilon_{\theta\theta}  &=& \frac{\upnu_r}{r} \nn\\
-\dot\varepsilon_{\theta r} = \dot\varepsilon_{r\theta}  &=& 0 \nn\\
-\dot\varepsilon_{zz} &=& \frac{\partial \upnu_z}{\partial z} \nn\\
-\dot{\varepsilon}_{rz} = \dot{\varepsilon}_{zr} 
-&=& \frac{1}{2}\left( \frac{\partial \upnu_r}{\partial z} + \frac{\partial \upnu_z}{\partial r} \right) \nn\\
-\dot{\varepsilon}_{\theta z} = \dot{\varepsilon}_{z \theta} &=& 0 \nn
-\end{eqnarray}
-Note that the term $\dot\varepsilon_{\theta\theta} $ is not zero!
-The deviatoric stress tensor ${\bm \tau}=2\eta \dot{\bm \varepsilon}$ can be computed
-as well as the full stress tensor ${\bm \sigma}=-p {\bm 1} + {\bm \tau}$. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,19 +101,14 @@ The obtained value is then subtracted from the pressure.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{From Cylindrical to Cartesian coordinates}
 
-In cylindrical coordinates, and in the axisymmetric case
-the strain rate tensor is given by
-\[
-\dot{\bm\varepsilon}(\vec\upnu)
-=
-\left(
-\begin{array}{ccc}
-\dot\varepsilon_{rr} & 0 & \dot{\varepsilon}_{rz} \\
-0 & \dot{\varepsilon}_{\theta\theta}  & 0 \\
-\dot{\varepsilon}_{zr} & 0 & \dot\varepsilon_{zz}
-\end{array}
-\right)
-\]
+
+
+
+
+
+
+
+
 We will now convert it to Cartesian coordinates using the equation 
 from \url{https://www.brown.edu/Departments/Engineering/Courses/En221/Notes/Polar_Coords/Polar_Coords.htm}, where ${\bm T}$ is a tensor:
 \[
@@ -219,255 +188,22 @@ $\dot{\bm \varepsilon}_{\tiny Cart}=
 \dot{\bm \varepsilon}_{\tiny Cyl}$.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{From Cartesian to Spherical coordinates}
 
-We have
-\begin{eqnarray}
-{\bm T}_{\tiny Sph}&=&
-\left(
-\begin{array}{ccc}
-T_{rr}       & T_{r\theta}      & T_{r\phi} \\
-T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
-T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
-\end{array}
-\right) \nn\\
-&=&
-\left(
-\begin{array}{ccc}
-\sin\theta \cos\phi & \sin\theta \sin\phi & \cos\theta \\
-\cos\theta \cos\phi & \cos\theta \sin\phi & -\sin\theta \\
--\sin\phi & \cos\phi & 0 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-T_{xx} & T_{xy} & T_{xz} \\
-T_{yx} & T_{yy} & T_{yz} \\
-T_{zx} & T_{zy} & T_{zz} 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-\sin\theta\cos\phi & \cos\theta\cos\phi & -\sin\phi \\
-\sin\theta\sin\phi & \cos\theta\sin\phi & \cos\phi \\
-\cos\theta & -\sin\theta & 0
-\end{array}
-\right) 
-\nn\\
-{\bm T}_{\tiny Cart} &=&
-\left(
-\begin{array}{ccc}
-T_{xx} & T_{xy} & T_{xz} \\
-T_{yx} & T_{yy} & T_{yz} \\
-T_{zx} & T_{zy} & T_{zz} 
-\end{array}
-\right) \nn\\
-&=&
-\left(
-\begin{array}{ccc}
-\sin\theta\cos\phi & \cos\theta\cos\phi & -\sin\phi \\
-\sin\theta\sin\phi & \cos\theta\sin\phi & \cos\phi \\
-\cos\theta & -\sin\theta & 0
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-T_{rr}       & T_{r\theta}      & T_{r\phi} \\
-T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
-T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-\sin\theta \cos\phi & \sin\theta \sin\phi & \cos\theta \\
-\cos\theta \cos\phi & \cos\theta \sin\phi & -\sin\theta \\
--\sin\phi & \cos\phi & 0 
-\end{array}
-\right)
-\end{eqnarray}
-In our case, calculations take place in the 
-$(x,z)$-plane so we have $\phi=0$ and the equation above 
-becomes
-\[
-\left(
-\begin{array}{ccc}
-T_{rr}       & T_{r\theta}      & T_{r\phi} \\
-T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
-T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
-\end{array}
-\right)
-=
-\left(
-\begin{array}{ccc}
-\sin\theta  & 0 & \cos\theta \\
-\cos\theta  & 0 & -\sin\theta \\
-0 & 1 & 0 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-T_{xx} & T_{xy} & T_{xz} \\
-T_{yx} & T_{yy} & T_{yz} \\
-T_{zx} & T_{zy} & T_{zz} 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-\sin\theta & \cos\theta & 0 \\
-0 & 0 & 1 \\
-\cos\theta & -\sin\theta & 0
-\end{array}
-\right)
-\]
-We define $c_\theta=\cos\theta$, $s_\theta=\sin\theta$ so that
-\[
-\left(
-\begin{array}{ccc}
-T_{rr}       & T_{r\theta}      & T_{r\phi} \\
-T_{\theta r} & T_{\theta\theta} & T_{\theta\phi} \\
-T_{\phi r}   & T_{\phi \theta}  & T_{\phi\phi}
-\end{array}
-\right)
-=
-\left(
-\begin{array}{ccc}
-s_\theta  & 0 & c_\theta \\
-c_\theta  & 0 & -s_\theta \\
-0 & 1 & 0 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-T_{xx} & T_{xy} & T_{xz} \\
-T_{yx} & T_{yy} & T_{yz} \\
-T_{zx} & T_{zy} & T_{zz} 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-s_\theta & c_\theta & 0 \\
-0 & 0 & 1 \\
-c_\theta & -s_\theta & 0
-\end{array}
-\right)
-\]
-As we have seen above we have 
-\[
-\dot{\bm\varepsilon}_{\tiny Cart}
-=
-\left(
-\begin{array}{ccc}
-\dot\varepsilon_{xx} & 0 & \dot{\varepsilon}_{xz} \\
-0 & \dot{\varepsilon}_{yy}  & 0 \\
-\dot{\varepsilon}_{xz} & 0 & \dot\varepsilon_{zz}
-\end{array}
-\right)
-\]
-so 
-\begin{eqnarray}
-\dot{\bm \varepsilon}_{\tiny Sph}=
-\left(
-\begin{array}{ccc}
-\dot\varepsilon_{rr}       & \dot\varepsilon_{r\theta}      & \dot\varepsilon_{r\phi} \\
-\dot\varepsilon_{\theta r} & \dot\varepsilon_{\theta\theta} & \dot\varepsilon_{\theta\phi} \\
-\dot\varepsilon_{\phi r}   & \dot\varepsilon_{\phi \theta}  & \dot\varepsilon_{\phi\phi}
-\end{array}
-\right)
-&=&
-\left(
-\begin{array}{ccc}
-s_\theta  & 0 & c_\theta \\
-c_\theta  & 0 & -s_\theta \\
-0 & 1 & 0 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-\dot\varepsilon_{xx} & 0 & \dot{\varepsilon}_{xz} \\
-0 & \dot{\varepsilon}_{yy}  & 0 \\
-\dot{\varepsilon}_{xz} & 0 & \dot\varepsilon_{zz}
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-s_\theta & c_\theta & 0 \\
-0 & 0 & 1 \\
-c_\theta & -s_\theta & 0
-\end{array}
-\right)  \nonumber\\
-&=&
-\left(
-\begin{array}{ccc}
-s_\theta  & 0 & c_\theta \\
-c_\theta  & 0 & -s_\theta \\
-0 & 1 & 0 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{ccc}
-\dot\varepsilon_{xx} s_\theta + 
-\dot\varepsilon_{xz} c_\theta  & 
-\dot\varepsilon_{xx} c_\theta - 
-\dot\varepsilon_{xz} s_\theta  &
-0 \\
-0 & 0 & \dot{\varepsilon}_{yy}  
-\\
-\dot\varepsilon_{xz} s_\theta + 
-\dot\varepsilon_{zz} c_\theta  &
-\dot\varepsilon_{xz} c_\theta - 
-\dot\varepsilon_{zz} s_\theta  &
-0 
-\end{array}
-\right)  \nonumber\\
-&=&
-\left(
-\begin{array}{ccc}
-\dot\varepsilon_{xx} s_\theta^2 + 
-2 \dot\varepsilon_{xz} c_\theta  s_\theta +
-\dot\varepsilon_{zz} c_\theta ^2  
-& 
-\dot\varepsilon_{xx} c_\theta s_\theta - 
-\dot\varepsilon_{xz} s_\theta^2  +
-\dot\varepsilon_{xz} c_\theta^2 - 
-\dot\varepsilon_{zz} s_\theta c_\theta 
-& 0 \\ \\
-\dot\varepsilon_{xx} s_\theta c_\theta+ 
-\dot\varepsilon_{xz} c_\theta^2  -
-\dot\varepsilon_{xz} s_\theta^2 -
-\dot\varepsilon_{zz} c_\theta s_\theta 
-&
-\dot\varepsilon_{xx} c_\theta^2 - 
-2\dot\varepsilon_{xz} s_\theta c_\theta +
-\dot\varepsilon_{zz} s_\theta^2  
-& 0 
-\\ \\
-0 & 0 & \dot{\varepsilon}_{yy} 
-\end{array}
-\right)  \nonumber
-\end{eqnarray}
-We can easily verify that the trace of this tensor is zero.
 
-The deviatoric stress is given by 
-${\bm \tau}=2\eta \dot{\bm \varepsilon}$,
-the traction at the surface  by 
-$\vec{t}={\bm \tau}\cdot \vec{n}$ (
-with $\vec{n}=\vec{e}_r$ at the surface in Spherical coordinates) and the normal to the surface component of this traction 
-is given by
-\[
-t_r = \vec{t}\cdot \vec{n} = ({\bm \tau}\cdot \vec{n})\cdot \vec{n} = \tau_{rr}
-\]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 %_____________________________________________________________
@@ -593,137 +329,6 @@ Open question: what is an optimal value for {\tt nel\_phi} ?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Benchmarking}
 
-The type of model that this \stone is designed to simulate does not admit an 
-analytical mechanical solution, so we will need to compare our results with those 
-of an other code, typically \aspect. 
-However, two simple benchmarks can be run for the gravity calculations: 
-a hollow sphere of constant density, and a full sphere (only the blob has non zero density).
-
-
-
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Stokes benchmark - test0}
-
-The planet has an inner radius of 3000km and an outer radius of 6000km.
-The material interfaces are placed at $R=5900~\si{\km}$, $R=5700~\si{\km}$, $R=5300~\si{\km}$, $R=3500~\si{\km}$.
-To start with we assign a zero density to all layers and a density of -10 to the blob. 
-All layers have a viscosity of 1e21 while the blob has a viscosity of 1e25.
-Dynamic topography cannot be computed because density is zero at the surface.
-Free slip at top and bottom, hhh=200.
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_96/results/stokes_test0/surface_vt}
-\includegraphics[width=8cm]{python_codes/fieldstone_96/results/stokes_test0/cmb_vt}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_96/results/stokes_test0/surface_p}
-\includegraphics[width=8cm]{python_codes/fieldstone_96/results/stokes_test0/cmb_p}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_96/results/stokes_test0/surface_q}
-\includegraphics[width=8cm]{python_codes/fieldstone_96/results/stokes_test0/cmb_q}\\
-{\captionfont Tangential velocity and pressure at surface and cmb for both finite element pairs.}
-\end{center}
-
-\todo[inline]{do with aspect and plot against my data}
-
-\begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/stokes_test0/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/stokes_test0/vr}
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/stokes_test0/vt}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/stokes_test0/rho}
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/stokes_test0/press}
-\end{center}
-
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Stokes benchmark - test1}
-
-This is an identical setup to test0, but now all layers have a density of 3000 and the blob a density of 2990.
-The velocity solution should be identical but the pressure should now showcase the hydrostatic signal too.
-
-\begin{center}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/surface_vt_cr}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/surface_vt_p2p1}\\
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/surface_p_cr}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/surface_p_p2p1}\\
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/surface_q_cr}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/surface_q_p2p1}\\
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/surface_taurr_cr}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/surface_taurr_p2p1}\\
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/surface_dynamic_topography_cr.pdf}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/surface_dynamic_topography_p2p1.pdf}\\
-{\captionfont Tangential velocity and pressure at surface for both finite element pairs.}
-\end{center}
-
--------
-
-\begin{center}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/cmb_vt_cr}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/cmb_vt_p2p1}\\
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/cmb_p_cr}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/cmb_p_p2p1}\\
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/cmb_q_cr}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/cmb_q_p2p1}\\
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/cmb_taurr_cr}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/cmb_taurr_p2p1}\\
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/cmb_dynamic_topography_cr.pdf}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_96/results/stokes_test1/cmb_dynamic_topography_p2p1.pdf}\\
-{\captionfont Tangential velocity and pressure at cmb for both finite element pairs.}
-\end{center}
-
-We see that the velocity field is actually showcasing a lot of random variations
-which can only be attributed to using the full density... WHY ? 
-
-
-\begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/stokes_test1/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/stokes_test1/press}
-\end{center}
-
-
-
-
-
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{Stokes benchmark - test2}
-
-
-with $\rho_1=2900$,  $\rho_2=3000$,  $\rho_3=3300$, $\rho_4=4000$,  $\rho_5=4500$ and 
-with $\eta_1=1e23$,  $\eta_2=1e21$,  $\eta_3=5e21$, $\eta_4=5e20$, $\eta_4=1e20$.
-The blob is situated 1000km below the surface, and it has a radius of 400km and density of 3100kg/m3 and viscosity $10^{25}$.
-Gravity is set to 10 for simplicity.
-
-{\tt script\_test1}
-
-\begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/stokes_test2/materials}
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/stokes_test2/rho}
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/stokes_test2/eta}
-\end{center}
-
-
-\begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/stokes_test2/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/stokes_test2/press}
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/stokes_test2/sr}
-\end{center}
-
-
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_96/results/stokes_test2/surface_vt}
-\includegraphics[width=8cm]{python_codes/fieldstone_96/results/stokes_test2/cmb_vt}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_96/results/stokes_test2/dynamic_topography_cmb}
-\includegraphics[width=8cm]{python_codes/fieldstone_96/results/stokes_test2/dynamic_topography_surf}\\
-\end{center}
-
-
-
-
-
-\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{gravity benchmark \#1: hollow sphere}
 

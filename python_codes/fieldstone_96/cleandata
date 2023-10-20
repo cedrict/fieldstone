@@ -8,4 +8,9 @@ rm mesh.poly
 rm temp
 rm mypoints
 rm mysegments
+rm testA_*
+rm opla
+rm opla_*
+rm test_*
+
 
