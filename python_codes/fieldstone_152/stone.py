@@ -10,18 +10,25 @@ from numba import jit
 
 ###############################################################################
 
-axisymmetric=False
+axisymmetric=True
 
-surface_free_slip=False
+surface_free_slip=True
+
+compute_gravity=True
 
 ###############################################################################
 
-planet_is_Earth=False
-use_rho_PREM=False
-use_eta_civs12a=False
+planet_is_Earth=True
+use_rho_PREM=True
+use_rho_ST105W=False
+use_rho_AK135F=False
+
+use_eta_civs12a=True
 use_eta_civs12b=False
 use_eta_stho08=False
-use_eta_yohk01=True
+use_eta_yohk01=False
+
+#######################################
 
 planet_is_Mars=False
 use_steinberger=True
@@ -80,7 +87,6 @@ def NNN(r,s,space):
        val[10]= N1r*N3s ; val[11]= N2r*N3s ; val[12]= N3r*N3s ; val[13]= N4r*N3s ; val[14]= N5r*N3s
        val[15]= N1r*N4s ; val[16]= N2r*N4s ; val[17]= N3r*N4s ; val[18]= N4r*N4s ; val[19]= N5r*N4s
        val[20]= N1r*N5s ; val[21]= N2r*N5s ; val[22]= N3r*N5s ; val[23]= N4r*N5s ; val[24]= N5r*N5s
-
     if space=='Q5':
        val = np.zeros(36,dtype=np.float64)
        N1r=-(625*r**5-625*r**4-250*r**3+250*r**2 +9*r-9)/768 
@@ -89,34 +95,27 @@ def NNN(r,s,space):
        N4r= (125*r**5 +25*r**4-170*r**3 -34*r**2+45*r+9)*25/384
        N5r=-(125*r**5 +75*r**4-130*r**3 -78*r**2 +5*r+3)*25/768
        N6r= (625*r**5+625*r**4-250*r**3-250*r**2 +9*r+9)/768 
-       #print(N1r+N2r+N3r+N4r+N5r+N6r)
-
        N1s=-(625*s**5-625*s**4-250*s**3+250*s**2 +9*s-9)/768 
        N2s= (125*s**5 -75*s**4-130*s**3 +78*s**2 +5*s-3)*25/768
        N3s=-(125*s**5 -25*s**4-170*s**3 +34*s**2+45*s-9)*25/384
        N4s= (125*s**5 +25*s**4-170*s**3 -34*s**2+45*s+9)*25/384
        N5s=-(125*s**5 +75*s**4-130*s**3 -78*s**2 +5*s+3)*25/768
        N6s= (625*s**5+625*s**4-250*s**3-250*s**2 +9*s+9)/768 
-       #print(N1s+N2s+N3s+N4s+N5s+N6s)
-
-       val[0]=N1r*N1s  ; val[1]=N2r*N1s  ; val[2]=N3r*N1s  ; val[3]=N4r*N1s  ; val[4]=N5r*N1s  ; val[5]=N6r*N1s  
-       val[6]=N1r*N2s  ; val[7]=N2r*N2s  ; val[8]=N3r*N2s  ; val[9]=N4r*N2s  ; val[10]=N5r*N2s ; val[11]=N6r*N2s 
-       val[12]=N1r*N3s ; val[13]=N2r*N3s ; val[14]=N3r*N3s ; val[15]=N4r*N3s ; val[16]=N5r*N3s ; val[17]=N6r*N3s 
-       val[18]=N1r*N4s ; val[19]=N2r*N4s ; val[20]=N3r*N4s ; val[21]=N4r*N4s ; val[22]=N5r*N4s ; val[23]=N6r*N4s 
-       val[24]=N1r*N5s ; val[25]=N2r*N5s ; val[26]=N3r*N5s ; val[27]=N4r*N5s ; val[28]=N5r*N5s ; val[29]=N6r*N5s 
-       val[30]=N1r*N6s ; val[31]=N2r*N6s ; val[32]=N3r*N6s ; val[33]=N4r*N6s ; val[34]=N5r*N6s ; val[35]=N6r*N6s 
-
+       val[0]=N1r*N1s  ;val[1]=N2r*N1s  ;val[2]=N3r*N1s  ;val[3]=N4r*N1s  ;val[4]=N5r*N1s  ;val[5]=N6r*N1s  
+       val[6]=N1r*N2s  ;val[7]=N2r*N2s  ;val[8]=N3r*N2s  ;val[9]=N4r*N2s  ;val[10]=N5r*N2s ;val[11]=N6r*N2s 
+       val[12]=N1r*N3s ;val[13]=N2r*N3s ;val[14]=N3r*N3s ;val[15]=N4r*N3s ;val[16]=N5r*N3s ;val[17]=N6r*N3s 
+       val[18]=N1r*N4s ;val[19]=N2r*N4s ;val[20]=N3r*N4s ;val[21]=N4r*N4s ;val[22]=N5r*N4s ;val[23]=N6r*N4s 
+       val[24]=N1r*N5s ;val[25]=N2r*N5s ;val[26]=N3r*N5s ;val[27]=N4r*N5s ;val[28]=N5r*N5s ;val[29]=N6r*N5s 
+       val[30]=N1r*N6s ;val[31]=N2r*N6s ;val[32]=N3r*N6s ;val[33]=N4r*N6s ;val[34]=N5r*N6s ;val[35]=N6r*N6s 
     if space=='Q6':
        val = np.zeros(49,dtype=np.float64)
-       N1r=  (81*r**6 - 81*r**5 -  45*r**4 + 45*r**3 +  4*r**2 - 4*r)/80    #ok 
-       N2r= -(27*r**6 - 18*r**5 -  30*r**4 + 20*r**3 +  3*r**2 - 2*r)*9./40 #ok
-       N3r=  (27*r**6 -  9*r**5 -  39*r**4 + 13*r**3 + 12*r**2 - 4*r)*9./16 #ok
+       N1r=  (81*r**6 - 81*r**5 -  45*r**4 + 45*r**3 +  4*r**2 - 4*r)/80    
+       N2r= -(27*r**6 - 18*r**5 -  30*r**4 + 20*r**3 +  3*r**2 - 2*r)*9./40 
+       N3r=  (27*r**6 -  9*r**5 -  39*r**4 + 13*r**3 + 12*r**2 - 4*r)*9./16 
        N4r= -(81*r**6           - 126*r**4           + 49*r**2       -4)/4  
        N5r=  (27*r**6 +  9*r**5 -  39*r**4 - 13*r**3 + 12*r**2 + 4*r)*9./16
        N6r= -(27*r**6 + 18*r**5 -  30*r**4 - 20*r**3 +  3*r**2 + 2*r)*9./40 
        N7r=  (81*r**6 + 81*r**5 -  45*r**4 - 45*r**3 +  4*r**2 + 4*r)/80
-       #print(N1r+N2r+N3r+N4r+N5r+N6r+N7r)
-
        N1s=  (81*s**6 - 81*s**5 -  45*s**4 + 45*s**3 +  4*s**2 - 4*s)/80 
        N2s= -(27*s**6 - 18*s**5 -  30*s**4 + 20*s**3 +  3*s**2 - 2*s)*9/40
        N3s=  (27*s**6 -  9*s**5 -  39*s**4 + 13*s**3 + 12*s**2 - 4*s)*9/16
@@ -124,16 +123,13 @@ def NNN(r,s,space):
        N5s=  (27*s**6 +  9*s**5 -  39*s**4 - 13*s**3 + 12*s**2 + 4*s)*9/16
        N6s= -(27*s**6 + 18*s**5 -  30*s**4 - 20*s**3 +  3*s**2 + 2*s)*9/40 
        N7s=  (81*s**6 + 81*s**5 -  45*s**4 - 45*s**3 +  4*s**2 + 4*s)/80
-       #print(N1s+N2s+N3s+N4s+N5s+N6s+N7s)
-
-       val[0]=N1r*N1s  ; val[1]=N2r*N1s  ; val[2]=N3r*N1s  ; val[3]=N4r*N1s  ; val[4]=N5r*N1s  ; val[5]=N6r*N1s  ; val[6]=N7r*N1s
-       val[7]=N1r*N2s  ; val[8]=N2r*N2s  ; val[9]=N3r*N2s  ; val[10]=N4r*N2s ; val[11]=N5r*N2s ; val[12]=N6r*N2s ; val[13]=N7r*N2s
-       val[14]=N1r*N3s ; val[15]=N2r*N3s ; val[16]=N3r*N3s ; val[17]=N4r*N3s ; val[18]=N5r*N3s ; val[19]=N6r*N3s ; val[20]=N7r*N3s
-       val[21]=N1r*N4s ; val[22]=N2r*N4s ; val[23]=N3r*N4s ; val[24]=N4r*N4s ; val[25]=N5r*N4s ; val[26]=N6r*N4s ; val[27]=N7r*N4s
-       val[28]=N1r*N5s ; val[29]=N2r*N5s ; val[30]=N3r*N5s ; val[31]=N4r*N5s ; val[32]=N5r*N5s ; val[33]=N6r*N5s ; val[34]=N7r*N5s
-       val[35]=N1r*N6s ; val[36]=N2r*N6s ; val[37]=N3r*N6s ; val[38]=N4r*N6s ; val[39]=N5r*N6s ; val[40]=N6r*N6s ; val[41]=N7r*N6s
-       val[42]=N1r*N7s ; val[43]=N2r*N7s ; val[44]=N3r*N7s ; val[45]=N4r*N7s ; val[46]=N5r*N7s ; val[47]=N6r*N7s ; val[48]=N7r*N7s
-
+       val[0]=N1r*N1s  ;val[1]=N2r*N1s  ;val[2]=N3r*N1s  ;val[3]=N4r*N1s  ;val[4]=N5r*N1s  ;val[5]=N6r*N1s  ;val[6]=N7r*N1s
+       val[7]=N1r*N2s  ;val[8]=N2r*N2s  ;val[9]=N3r*N2s  ;val[10]=N4r*N2s ;val[11]=N5r*N2s ;val[12]=N6r*N2s ;val[13]=N7r*N2s
+       val[14]=N1r*N3s ;val[15]=N2r*N3s ;val[16]=N3r*N3s ;val[17]=N4r*N3s ;val[18]=N5r*N3s ;val[19]=N6r*N3s ;val[20]=N7r*N3s
+       val[21]=N1r*N4s ;val[22]=N2r*N4s ;val[23]=N3r*N4s ;val[24]=N4r*N4s ;val[25]=N5r*N4s ;val[26]=N6r*N4s ;val[27]=N7r*N4s
+       val[28]=N1r*N5s ;val[29]=N2r*N5s ;val[30]=N3r*N5s ;val[31]=N4r*N5s ;val[32]=N5r*N5s ;val[33]=N6r*N5s ;val[34]=N7r*N5s
+       val[35]=N1r*N6s ;val[36]=N2r*N6s ;val[37]=N3r*N6s ;val[38]=N4r*N6s ;val[39]=N5r*N6s ;val[40]=N6r*N6s ;val[41]=N7r*N6s
+       val[42]=N1r*N7s ;val[43]=N2r*N7s ;val[44]=N3r*N7s ;val[45]=N4r*N7s ;val[46]=N5r*N7s ;val[47]=N6r*N7s ;val[48]=N7r*N7s
     return val
 
 @jit(nopython=True)
@@ -192,32 +188,26 @@ def dNNNdr(r,s,space):
        val[24]=dN5dr*N5s
    if space=='Q5':
        val = np.zeros(36,dtype=np.float64)
-
        N1r= (-3125*r**4+2500*r**3+750*r**2-500*r-9 )/768
        N2r= (  625*r**4- 300*r**3-390*r**2+156*r+5 )*25/768
        N3r=-(  625*r**4- 100*r**3-510*r**2+ 68*r+45)*25/384
        N4r= (  625*r**4+ 100*r**3-510*r**2- 68*r+45)*25/384 
        N5r=-(  625*r**4+ 300*r**3-390*r**2-156*r+5 )*25/768
        N6r= ( 3125*r**4+2500*r**3-750*r**2-500*r+9 )/768 
-
        N1s=-(625*s**5-625*s**4-250*s**3+250*s**2 +9*s-9)/768 
        N2s= (125*s**5 -75*s**4-130*s**3 +78*s**2 +5*s-3)*25/768
        N3s=-(125*s**5 -25*s**4-170*s**3 +34*s**2+45*s-9)*25/384
        N4s= (125*s**5 +25*s**4-170*s**3 -34*s**2+45*s+9)*25/384
        N5s=-(125*s**5 +75*s**4-130*s**3 -78*s**2 +5*s+3)*25/768
        N6s= (625*s**5+625*s**4-250*s**3-250*s**2 +9*s+9)/768 
-       #print(N1s+N2s+N3s+N4s+N5s+N6s)
-
-       val[0]=N1r*N1s  ; val[1]=N2r*N1s  ; val[2]=N3r*N1s  ; val[3]=N4r*N1s  ; val[4]=N5r*N1s  ; val[5]=N6r*N1s  
-       val[6]=N1r*N2s  ; val[7]=N2r*N2s  ; val[8]=N3r*N2s  ; val[9]=N4r*N2s  ; val[10]=N5r*N2s ; val[11]=N6r*N2s 
-       val[12]=N1r*N3s ; val[13]=N2r*N3s ; val[14]=N3r*N3s ; val[15]=N4r*N3s ; val[16]=N5r*N3s ; val[17]=N6r*N3s 
-       val[18]=N1r*N4s ; val[19]=N2r*N4s ; val[20]=N3r*N4s ; val[21]=N4r*N4s ; val[22]=N5r*N4s ; val[23]=N6r*N4s 
-       val[24]=N1r*N5s ; val[25]=N2r*N5s ; val[26]=N3r*N5s ; val[27]=N4r*N5s ; val[28]=N5r*N5s ; val[29]=N6r*N5s 
-       val[30]=N1r*N6s ; val[31]=N2r*N6s ; val[32]=N3r*N6s ; val[33]=N4r*N6s ; val[34]=N5r*N6s ; val[35]=N6r*N6s 
-
+       val[0]=N1r*N1s  ;val[1]=N2r*N1s  ;val[2]=N3r*N1s  ;val[3]=N4r*N1s  ;val[4]=N5r*N1s  ;val[5]=N6r*N1s  
+       val[6]=N1r*N2s  ;val[7]=N2r*N2s  ;val[8]=N3r*N2s  ;val[9]=N4r*N2s  ;val[10]=N5r*N2s ;val[11]=N6r*N2s 
+       val[12]=N1r*N3s ;val[13]=N2r*N3s ;val[14]=N3r*N3s ;val[15]=N4r*N3s ;val[16]=N5r*N3s ;val[17]=N6r*N3s 
+       val[18]=N1r*N4s ;val[19]=N2r*N4s ;val[20]=N3r*N4s ;val[21]=N4r*N4s ;val[22]=N5r*N4s ;val[23]=N6r*N4s 
+       val[24]=N1r*N5s ;val[25]=N2r*N5s ;val[26]=N3r*N5s ;val[27]=N4r*N5s ;val[28]=N5r*N5s ;val[29]=N6r*N5s 
+       val[30]=N1r*N6s ;val[31]=N2r*N6s ;val[32]=N3r*N6s ;val[33]=N4r*N6s ;val[34]=N5r*N6s ;val[35]=N6r*N6s 
    if space=='Q6':
        val = np.zeros(49,dtype=np.float64)
-
        N1r=  ( 486*r**5 -405*r**4 - 180*r**3 + 135*r**2 +  8*r -4)/80  #ok 
        N2r= -(  81*r**5 - 45*r**4 -  60*r**3 +  30*r**2 +  3*r -1)*9./20 #ok
        N3r=  ( 162*r**5 - 45*r**4 - 156*r**3 +  39*r**2 + 24*r -4)*9./16 #ok
@@ -225,7 +215,6 @@ def dNNNdr(r,s,space):
        N5r=  ( 162*r**5 + 45*r**4 - 156*r**3 -  39*r**2 + 24*r +4)*9./16 #OK
        N6r= -(  81*r**5 + 45*r**4 -  60*r**3 -  30*r**2 +  3*r +1)*9./20 #ok
        N7r=  ( 486*r**5 +405*r**4 - 180*r**3 - 135*r**2 +  8*r +4)/80 #OK
-
        N1s=  (81*s**6 - 81*s**5 -  45*s**4 + 45*s**3 +  4*s**2 - 4*s)/80 
        N2s= -(27*s**6 - 18*s**5 -  30*s**4 + 20*s**3 +  3*s**2 - 2*s)*9./40
        N3s=  (27*s**6 -  9*s**5 -  39*s**4 + 13*s**3 + 12*s**2 - 4*s)*9./16
@@ -233,15 +222,13 @@ def dNNNdr(r,s,space):
        N5s=  (27*s**6 +  9*s**5 -  39*s**4 - 13*s**3 + 12*s**2 + 4*s)*9./16
        N6s= -(27*s**6 + 18*s**5 -  30*s**4 - 20*s**3 +  3*s**2 + 2*s)*9./40 
        N7s=  (81*s**6 + 81*s**5 -  45*s**4 - 45*s**3 +  4*s**2 + 4*s)/80
-       #print(N1s+N2s+N3s+N4s+N5s+N6s+N7s)
-       val[0]=N1r*N1s  ; val[1]=N2r*N1s  ; val[2]=N3r*N1s  ; val[3]=N4r*N1s  ; val[4]=N5r*N1s  ; val[5]=N6r*N1s  ; val[6]=N7r*N1s
-       val[7]=N1r*N2s  ; val[8]=N2r*N2s  ; val[9]=N3r*N2s  ; val[10]=N4r*N2s ; val[11]=N5r*N2s ; val[12]=N6r*N2s ; val[13]=N7r*N2s
-       val[14]=N1r*N3s ; val[15]=N2r*N3s ; val[16]=N3r*N3s ; val[17]=N4r*N3s ; val[18]=N5r*N3s ; val[19]=N6r*N3s ; val[20]=N7r*N3s
-       val[21]=N1r*N4s ; val[22]=N2r*N4s ; val[23]=N3r*N4s ; val[24]=N4r*N4s ; val[25]=N5r*N4s ; val[26]=N6r*N4s ; val[27]=N7r*N4s
-       val[28]=N1r*N5s ; val[29]=N2r*N5s ; val[30]=N3r*N5s ; val[31]=N4r*N5s ; val[32]=N5r*N5s ; val[33]=N6r*N5s ; val[34]=N7r*N5s
-       val[35]=N1r*N6s ; val[36]=N2r*N6s ; val[37]=N3r*N6s ; val[38]=N4r*N6s ; val[39]=N5r*N6s ; val[40]=N6r*N6s ; val[41]=N7r*N6s
-       val[42]=N1r*N7s ; val[43]=N2r*N7s ; val[44]=N3r*N7s ; val[45]=N4r*N7s ; val[46]=N5r*N7s ; val[47]=N6r*N7s ; val[48]=N7r*N7s
-
+       val[0]=N1r*N1s  ;val[1]=N2r*N1s  ;val[2]=N3r*N1s  ;val[3]=N4r*N1s  ;val[4]=N5r*N1s  ;val[5]=N6r*N1s  ;val[6]=N7r*N1s
+       val[7]=N1r*N2s  ;val[8]=N2r*N2s  ;val[9]=N3r*N2s  ;val[10]=N4r*N2s ;val[11]=N5r*N2s ;val[12]=N6r*N2s ;val[13]=N7r*N2s
+       val[14]=N1r*N3s ;val[15]=N2r*N3s ;val[16]=N3r*N3s ;val[17]=N4r*N3s ;val[18]=N5r*N3s ;val[19]=N6r*N3s ;val[20]=N7r*N3s
+       val[21]=N1r*N4s ;val[22]=N2r*N4s ;val[23]=N3r*N4s ;val[24]=N4r*N4s ;val[25]=N5r*N4s ;val[26]=N6r*N4s ;val[27]=N7r*N4s
+       val[28]=N1r*N5s ;val[29]=N2r*N5s ;val[30]=N3r*N5s ;val[31]=N4r*N5s ;val[32]=N5r*N5s ;val[33]=N6r*N5s ;val[34]=N7r*N5s
+       val[35]=N1r*N6s ;val[36]=N2r*N6s ;val[37]=N3r*N6s ;val[38]=N4r*N6s ;val[39]=N5r*N6s ;val[40]=N6r*N6s ;val[41]=N7r*N6s
+       val[42]=N1r*N7s ;val[43]=N2r*N7s ;val[44]=N3r*N7s ;val[45]=N4r*N7s ;val[46]=N5r*N7s ;val[47]=N6r*N7s ;val[48]=N7r*N7s
    return val
 
 @jit(nopython=True)
@@ -300,29 +287,24 @@ def dNNNds(r,s,space):
        val[24]=N5r*dN5ds
    if space=='Q5':
        val = np.zeros(36,dtype=np.float64)
-
        N1r=-(625*r**5-625*r**4-250*r**3+250*r**2 +9*r-9)/768 
        N2r= (125*r**5 -75*r**4-130*r**3 +78*r**2 +5*r-3)*25/768
        N3r=-(125*r**5 -25*r**4-170*r**3 +34*r**2+45*r-9)*25/384
        N4r= (125*r**5 +25*r**4-170*r**3 -34*r**2+45*r+9)*25/384
        N5r=-(125*r**5 +75*r**4-130*r**3 -78*r**2 +5*r+3)*25/768
        N6r= (625*r**5+625*r**4-250*r**3-250*r**2 +9*r+9)/768 
-       #print(N1r+N2r+N3r+N4r+N5r+N6r)
-
        N1s= (-3125*s**4+2500*s**3+750*s**2-500*s-9 )/768
        N2s= (  625*s**4- 300*s**3-390*s**2+156*s+5 )*25/768
        N3s=-(  625*s**4- 100*s**3-510*s**2+ 68*s+45)*25/384
        N4s= (  625*s**4+ 100*s**3-510*s**2- 68*s+45)*25/384 
        N5s=-(  625*s**4+ 300*s**3-390*s**2-156*s+5 )*25/768
        N6s= ( 3125*s**4+2500*s**3-750*s**2-500*s+9 )/768 
-
-       val[0]=N1r*N1s  ; val[1]=N2r*N1s  ; val[2]=N3r*N1s  ; val[3]=N4r*N1s  ; val[4]=N5r*N1s  ; val[5]=N6r*N1s  
-       val[6]=N1r*N2s  ; val[7]=N2r*N2s  ; val[8]=N3r*N2s  ; val[9]=N4r*N2s  ; val[10]=N5r*N2s ; val[11]=N6r*N2s 
-       val[12]=N1r*N3s ; val[13]=N2r*N3s ; val[14]=N3r*N3s ; val[15]=N4r*N3s ; val[16]=N5r*N3s ; val[17]=N6r*N3s 
-       val[18]=N1r*N4s ; val[19]=N2r*N4s ; val[20]=N3r*N4s ; val[21]=N4r*N4s ; val[22]=N5r*N4s ; val[23]=N6r*N4s 
-       val[24]=N1r*N5s ; val[25]=N2r*N5s ; val[26]=N3r*N5s ; val[27]=N4r*N5s ; val[28]=N5r*N5s ; val[29]=N6r*N5s 
-       val[30]=N1r*N6s ; val[31]=N2r*N6s ; val[32]=N3r*N6s ; val[33]=N4r*N6s ; val[34]=N5r*N6s ; val[35]=N6r*N6s 
-
+       val[0]=N1r*N1s  ;val[1]=N2r*N1s  ;val[2]=N3r*N1s  ;val[3]=N4r*N1s  ;val[4]=N5r*N1s  ;val[5]=N6r*N1s  
+       val[6]=N1r*N2s  ;val[7]=N2r*N2s  ;val[8]=N3r*N2s  ;val[9]=N4r*N2s  ;val[10]=N5r*N2s ;val[11]=N6r*N2s 
+       val[12]=N1r*N3s ;val[13]=N2r*N3s ;val[14]=N3r*N3s ;val[15]=N4r*N3s ;val[16]=N5r*N3s ;val[17]=N6r*N3s 
+       val[18]=N1r*N4s ;val[19]=N2r*N4s ;val[20]=N3r*N4s ;val[21]=N4r*N4s ;val[22]=N5r*N4s ;val[23]=N6r*N4s 
+       val[24]=N1r*N5s ;val[25]=N2r*N5s ;val[26]=N3r*N5s ;val[27]=N4r*N5s ;val[28]=N5r*N5s ;val[29]=N6r*N5s 
+       val[30]=N1r*N6s ;val[31]=N2r*N6s ;val[32]=N3r*N6s ;val[33]=N4r*N6s ;val[34]=N5r*N6s ;val[35]=N6r*N6s 
    if space=='Q6':
        val = np.zeros(49,dtype=np.float64)
        N1r=  (81*r**6 - 81*r**5 -  45*r**4 + 45*r**3 +  4*r**2 - 4*r)/80 
@@ -332,7 +314,6 @@ def dNNNds(r,s,space):
        N5r=  (27*r**6 +  9*r**5 -  39*r**4 - 13*r**3 + 12*r**2 + 4*r)*9./16
        N6r= -(27*r**6 + 18*r**5 -  30*r**4 - 20*r**3 +  3*r**2 + 2*r)*9./40 
        N7r=  (81*r**6 + 81*r**5 -  45*r**4 - 45*r**3 +  4*r**2 + 4*r)/80
-       #print(N1r+N2r+N3r+N4r+N5r+N6r+N7r)
        N1s=  ( 486*s**5 -405*s**4 - 180*s**3 + 135*s**2 +  8*s -4)/80 
        N2s= -(  81*s**5 - 45*s**4 -  60*s**3 +  30*s**2 +  3*s -1)*9./20
        N3s=  ( 162*s**5 - 45*s**4 - 156*s**3 +  39*s**2 + 24*s -4)*9./16
@@ -347,7 +328,6 @@ def dNNNds(r,s,space):
        val[28]=N1r*N5s ; val[29]=N2r*N5s ; val[30]=N3r*N5s ; val[31]=N4r*N5s ; val[32]=N5r*N5s ; val[33]=N6r*N5s ; val[34]=N7r*N5s
        val[35]=N1r*N6s ; val[36]=N2r*N6s ; val[37]=N3r*N6s ; val[38]=N4r*N6s ; val[39]=N5r*N6s ; val[40]=N6r*N6s ; val[41]=N7r*N6s
        val[42]=N1r*N7s ; val[43]=N2r*N7s ; val[44]=N3r*N7s ; val[45]=N4r*N7s ; val[46]=N5r*N7s ; val[47]=N6r*N7s ; val[48]=N7r*N7s
-
    return val
 
 ###############################################################################
@@ -355,31 +335,31 @@ def dNNNds(r,s,space):
 @jit(nopython=True)
 def density(x,y,R1,R2,k,rho0,g0):
 
-    if use_rho_PREM:
+    if planet_is_Earth and use_rho_PREM:
        radius=np.sqrt(x*x+y*y)
-       x=radius/6371.e3
+       xx=radius/6371.e3
        if radius>6371e3:
           densprem=0
        elif radius<=1221.5e3:
-           densprem=13.0885-8.8381*x**2
+           densprem=13.0885-8.8381*xx**2
        elif radius<=3480e3:
-           densprem=12.5815-1.2638*x-3.6426*x**2-5.5281*x**3
+           densprem=12.5815-1.2638*xx-3.6426*xx**2-5.5281*xx**3
        elif radius<=3630.e3:
-          densprem=7.9565-6.4761*x+5.5283*x**2-3.0807*x**3
+          densprem=7.9565-6.4761*xx+5.5283*xx**2-3.0807*xx**3
        elif radius<=5600.e3:
-          densprem=7.9565-6.4761*x+5.5283*x**2-3.0807*x**3
+          densprem=7.9565-6.4761*xx+5.5283*xx**2-3.0807*xx**3
        elif radius<=5701.e3:
-          densprem=7.9565-6.4761*x+5.5283*x**2-3.0807*x**3
+          densprem=7.9565-6.4761*xx+5.5283*xx**2-3.0807*xx**3
        elif radius<=5771.e3:
-          densprem=5.3197-1.4836*x
+          densprem=5.3197-1.4836*xx
        elif radius<=5971.e3:
-          densprem=11.2494-8.0298*x
+          densprem=11.2494-8.0298*xx
        elif radius<=6151.e3:
-          densprem=7.1089-3.8045*x
+          densprem=7.1089-3.8045*xx
        elif radius<=6291.e3:
-          densprem=2.6910+0.6924*x
+          densprem=2.6910+0.6924*xx
        elif radius<=6346.e3:
-          densprem=2.6910+0.6924*x
+          densprem=2.6910+0.6924*xx
        elif radius<=6356.e3:
           densprem=2.9
        elif radius<=6368.e3:
@@ -390,7 +370,33 @@ def density(x,y,R1,R2,k,rho0,g0):
     else:
        val=rho0
 
+    #-------------------------------------
+    if planet_is_Earth and use_rho_AK135F:
+       depth=R2-np.sqrt(x**2+y**2)
+       cell_index=144
+       for kk in range(0,145):
+           if depth<depth_ak135f[kk+1]:
+              cell_index=kk
+              break
+           #end if
+       #end for
+       val=(depth-depth_ak135f[cell_index])/(depth_ak135f[cell_index+1]-depth_ak135f[cell_index])\
+          *(rho_ak135f[cell_index+1]-rho_ak135f[cell_index])+rho_ak135f[cell_index]
 
+    #-------------------------------------
+    if planet_is_Earth and use_rho_ST105W:
+       depth=R2-np.sqrt(x**2+y**2)
+       cell_index=49
+       for kk in range(0,50):
+           if depth<depth_st105w[kk+1]:
+              cell_index=kk
+              break
+           #end if
+       #end for
+       val=(depth-depth_st105w[cell_index])/(depth_st105w[cell_index+1]-depth_st105w[cell_index])\
+          *(rho_st105w[cell_index+1]-rho_st105w[cell_index])+rho_st105w[cell_index]
+
+    #-------------------------------------
     if exp==0:
        r=np.sqrt(x*x+y*y)
        theta=math.atan2(y,x)
@@ -412,6 +418,7 @@ def density(x,y,R1,R2,k,rho0,g0):
        if np.sqrt(x**2+(y-yblob)**2)<Rblob:
           val*=rhoblobstar
        #val-=rho0
+       #val=abs(val)
 
     return val
 
@@ -473,7 +480,6 @@ def viscosity(x,y,R1,R2):
        val=eta_m
 
     return val       
-
 
 ###############################################################################
 ###############################################################################
@@ -604,7 +610,8 @@ def gy(x,y,g0):
     return val
 
 ###############################################################################
-      
+
+year=365.25*3600*24
 
 print("-----------------------------")
 print("--------stone 152------------")
@@ -617,7 +624,6 @@ ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
 stop_here=False
-
 if int(len(sys.argv) == 12):
    exp         = int(sys.argv[1])
    nelr        = int(sys.argv[2])
@@ -630,7 +636,6 @@ if int(len(sys.argv) == 12):
    yblob       = float(sys.argv[9])
    Rblob       = float(sys.argv[10])
    etalithstar = float(sys.argv[11])
-
    if mapping==1: mapping='Q1'
    if mapping==2: mapping='Q2'
    if mapping==3: mapping='Q3'
@@ -649,17 +654,19 @@ else:
    # exp=1: aquarium
    # exp=2: blob
    # exp=3: pancake pi/8
-   exp         = 0
-   nelr        = 16 # Q1 cells!
+   exp         = 2
+   nelr        = 100 # Q1 cells!
    visu        = 1
    nqperdim    = 3
    mapping     = 'Q2' 
-   xi          = 4
+   xi          = 6
    etablobstar = 1
-   rhoblobstar = 1 #.99
+   rhoblobstar = 0.9 
    yblob       = 4900e3
    Rblob       = 400e3
-   etalithstar = 100
+   etalithstar = 1
+
+dt=250*year
 
 normal_type=1
 
@@ -681,7 +688,7 @@ else:
    eta_ref=1e21
    eta_m=1e21
    rho_m=4000.
-   vel_unit=0.01/365.25/3600/24
+   vel_unit=0.01/year
    velunit='cm/year'
 
 eps=1.e-10
@@ -694,7 +701,11 @@ debug=False
 compute_sr1=False
 compute_sr3=False
 
+
 ###############################################################################
+###############################################################################
+start = timing.time()
+
 if planet_is_Earth:
    R1=3480e3
    R2=6371e3
@@ -753,20 +764,63 @@ if planet_is_Earth:
           depths_stho08[counter]=columns[0]
           visc_stho08[counter]=columns[1]
           counter+=1
-
+      #end for
       depths_stho08[:]=6371e3*(1-depths_stho08[:])
       depths_stho08[:]=np.flip(depths_stho08)
       visc_stho08[:]=np.flip(visc_stho08)
 
       np.savetxt('stho08.ascii',np.array([depths_stho08,visc_stho08]).T)
 
-      print(depths_stho08[22]-depths_stho08[0])
-
       print('read eta_stho08.ascii ok')
 
+   #-----------------
+   if use_rho_AK135F:
+      depth_ak135f = np.empty(145,dtype=np.float64)
+      rho_ak135f = np.empty(145,dtype=np.float64)
+      f = open('DATA/EARTH/rho_ak135f.ascii','r')
+      counter=0
+      for line in f:
+          line=line.strip()
+          columns=line.split()
+          depth_ak135f[counter]=columns[0]
+          rho_ak135f[counter]=columns[1]
+          counter+=1
+      #end for
+      depth_ak135f[:]*=1000
+      rho_ak135f[:]*=1000
 
+      np.savetxt('density_ak135f.ascii',np.array([depth_ak135f,rho_ak135f]).T)
+
+      print('read rho_ak135f.ascii ok')
+
+   #-----------------
+   if use_rho_ST105W:
+      depth_st105w = np.empty(750,dtype=np.float64)
+      rho_st105w = np.empty(750,dtype=np.float64)
+      f = open('DATA/EARTH/rho_st105w.ascii','r')
+      counter=0
+      for line in f:
+          line=line.strip()
+          columns=line.split()
+          depth_st105w[counter]=columns[0]
+          rho_st105w[counter]=columns[1]
+          counter+=1
+      #end for
+
+      depth_st105w[:]=6371e3-depth_st105w[:]
+      depth_st105w[:]=np.flip(depth_st105w)
+      rho_st105w[:]=np.flip(rho_st105w)
+
+      np.savetxt('density_st105w.ascii',np.array([depth_st105w,rho_st105w]).T)
+
+      print('read rho_st105w.ascii ok')
+
+print("read EARTH data (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
+###############################################################################
+start = timing.time()
+
 if planet_is_Mars:
    R1=1700e3
    R2=3390e3
@@ -774,10 +828,10 @@ if planet_is_Mars:
 
    if use_steinberger:
       R1=R2-1967e3
-      R_disc1 = R_outer-49.5e3
-      R_disc2 = R_outer-1111.5e3
-      R_disc3 = R_outer-1160e3
-      R_disc4 = R_outer-1951.5e3
+      R_disc1 = R2-49.5e3
+      R_disc2 = R2-1111.5e3
+      R_disc3 = R2-1160e3
+      R_disc4 = R2-1951.5e3
       eta_max=1e25
 
    if use_samuelA:
@@ -796,10 +850,10 @@ if planet_is_Mars:
       R_disc4 = 1822.5068139999998e3
       eta_max=1e25
 
+print("read MARS data (%.3fs)" % (timing.time() - start))
 
-
-
-
+###############################################################################
+# quadrature points and associated weights
 ###############################################################################
 
 if nqperdim==2:
@@ -829,32 +883,20 @@ if nqperdim==5:
    weights=[qw5a,qw5b,qw5c,qw5b,qw5a]
 
 if nqperdim==6:
-   coords=[-0.932469514203152,\
-           -0.661209386466265,\
-           -0.238619186083197,\
-           +0.238619186083197,\
-           +0.661209386466265,\
-           +0.932469514203152]
-   weights=[0.171324492379170,\
-            0.360761573048139,\
-            0.467913934572691,\
-            0.467913934572691,\
-            0.360761573048139,\
-            0.171324492379170]
+   coords=[-0.932469514203152,-0.661209386466265,\
+           -0.238619186083197,+0.238619186083197,\
+           +0.661209386466265,+0.932469514203152]
+   weights=[0.171324492379170,0.360761573048139,\
+            0.467913934572691,0.467913934572691,\
+            0.360761573048139,0.171324492379170]
 if nqperdim==7:
-   coords=[-0.949107912342759,\
-           -0.741531185599394,\
-           -0.405845151377397,\
-            0.000000000000000,\
-            0.405845151377397,\
-            0.741531185599394,\
+   coords=[-0.949107912342759,-0.741531185599394,\
+           -0.405845151377397,0.000000000000000,\
+            0.405845151377397,0.741531185599394,\
             0.949107912342759]
-   weights=[0.129484966168870,\
-            0.279705391489277,\
-            0.381830050505119,\
-            0.417959183673469,\
-            0.381830050505119,\
-            0.279705391489277,\
+   weights=[0.129484966168870,0.279705391489277,\
+            0.381830050505119,0.417959183673469,\
+            0.381830050505119,0.279705391489277,\
             0.129484966168870]
 
 nqel=nqperdim**2
@@ -968,6 +1010,7 @@ print("coordinate arrays (%.3fs)" % (timing.time() - start))
 ###############################################################################
 # build iconQ1 array needed for vtu file
 ###############################################################################
+start = timing.time()
 
 iconQ1 =np.zeros((4,nel),dtype=np.int32)
 
@@ -1001,7 +1044,6 @@ else:
            iconQ1[2,counter] = i + 1 + (j + 1) * (nelt + 1)
            iconQ1[3,counter] = i + (j + 1) * (nelt + 1)
            counter += 1
-
 
 if debug:
    vtufile=open("mesh_Q1.vtu","w")
@@ -1040,11 +1082,14 @@ if debug:
    vtufile.write("</VTKFile>\n")
    vtufile.close()
 
+print("build iconQ1 (%.3fs)" % (timing.time() - start))
+
 ###############################################################################
 # now that the grid has been built as if it was a Q1 grid, 
 # we can simply use these same points to arrive at a Q2 
 # connectivity array with 4 times less elements.
 ###############################################################################
+start = timing.time()
 
 nelr=nelr//2
 nelt=nelt//2
@@ -1059,20 +1104,21 @@ NfemV=NV*ndofV   # Total number of degrees of V freedom
 NfemP=NP*ndofP   # Total number of degrees of P freedom
 Nfem=NfemV+NfemP # total number of dofs
 
-print('nelr=',nelr)
-print('nelt=',nelt)
-print('nel=',nel)
-print('NfemV=',NfemV)
-print('NfemP=',NfemP)
-print('Nfem=',Nfem)
-print('nqel=',nqel)
-print('mapping=',mapping)
-print('axisymmetric=',axisymmetric)
-print('exp=',exp)
-print('xi=',xi)
-print("-----------------------------")
+print('  nelr=',nelr)
+print('  nelt=',nelt)
+print('  nel=',nel)
+print('  NfemV=',NfemV)
+print('  NfemP=',NfemP)
+print('  Nfem=',Nfem)
+print('  nqel=',nqel)
+print('  mapping=',mapping)
+print('  axisymmetric=',axisymmetric)
+print('  exp=',exp)
+print('  xi=',xi)
 
-h_r=(R2-R1)/nelr
+h_r=(R2-R1)/nelr # radial resolution
+
+print("compute nekr,nelt,nel... (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
 # connectivity
@@ -1174,10 +1220,10 @@ print("connectivity array (%.3fs)" % (timing.time() - start))
     #yV[iconV[8,iel]]=0.0625*(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]]+yV[iconV[3,iel]]+\
     #                         3*yV[iconV[4,iel]]+3*yV[iconV[5,iel]]+3*yV[iconV[6,iel]]+3*yV[iconV[7,iel]])
 
-
 ###############################################################################
-#now that I have both connectivity arrays I can easily build xP,yP
+#now that I have both connectivity arrays I can easily build xP,yP (Q1 space)
 ###############################################################################
+start = timing.time()
 
 xP=np.empty(NP,dtype=np.float64)  # x coordinates
 yP=np.empty(NP,dtype=np.float64)  # y coordinates
@@ -1245,7 +1291,6 @@ if mapping=='Q3':
                ymapping[counter,iel]=math.cos(ttt)*rrr
                #print(xmapping[counter,iel],ymapping[counter,iel])
                counter+=1
-
 
 if mapping=='Q4':
    if not axisymmetric:
@@ -1364,7 +1409,6 @@ nx1=np.zeros(NV,dtype=np.float64)
 ny1=np.zeros(NV,dtype=np.float64) 
 nx2=np.zeros(NV,dtype=np.float64) 
 ny2=np.zeros(NV,dtype=np.float64) 
-   
 
 if normal_type==1:
 
@@ -1380,8 +1424,9 @@ if normal_type==1:
           nx1[i]=np.sin(theta[i])
           ny1[i]=np.cos(theta[i])
 
-   np.savetxt('normal1a.ascii',np.array([xV[surfaceV],yV[surfaceV],\
-                                      nx1[surfaceV],ny1[surfaceV],theta[surfaceV]]).T)
+   if debug:
+      np.savetxt('normal1a.ascii',np.array([xV[surfaceV],yV[surfaceV],\
+                                            nx1[surfaceV],ny1[surfaceV],theta[surfaceV]]).T)
 
 if normal_type==2:
    #compute normal 2 type
@@ -1440,26 +1485,27 @@ if normal_type==2:
    np.savetxt('normal2a.ascii',np.array([xV[surfaceV],yV[surfaceV],\
                                          nx2[surfaceV],ny2[surfaceV],theta[surfaceV]]).T)
 
+if axisymmetric:
+   for i in range(0,NV):
+       if xV[i]/R1<eps and yV[i]/R2>1-eps:
+          nx1[i]=0
+          ny1[i]=0
+          nx2[i]=0
+          ny2[i]=0
+       if xV[i]/R1<eps and yV[i]/R2<-1+eps:
+          nx1[i]=0
+          ny1[i]=0
+          nx2[i]=0
+          ny2[i]=0
 
-for i in range(0,NV):
-    if xV[i]/R1<eps and yV[i]/R2>1-eps:
-       nx1[i]=0
-       ny1[i]=0
-       nx2[i]=0
-       ny2[i]=0
-    if xV[i]/R1<eps and yV[i]/R2<-1+eps:
-       nx1[i]=0
-       ny1[i]=0
-       nx2[i]=0
-       ny2[i]=0
+if debug:
+   np.savetxt('normal_diff.ascii',np.array([xV[surfaceV],yV[surfaceV],\
+                                            nx2[surfaceV]-nx1[surfaceV],\
+                                            ny2[surfaceV]-ny1[surfaceV],theta[surfaceV]]).T)
 
-np.savetxt('normal_diff.ascii',np.array([xV[surfaceV],yV[surfaceV],\
-                                         nx2[surfaceV]-nx1[surfaceV],\
-                                         ny2[surfaceV]-ny1[surfaceV],theta[surfaceV]]).T)
-
-np.savetxt('normal_dot.ascii',np.array([xV[surfaceV],yV[surfaceV],\
-                                        nx2[surfaceV]*nx1[surfaceV]+\
-                                        ny2[surfaceV]*ny1[surfaceV],theta[surfaceV]]).T)
+   np.savetxt('normal_dot.ascii',np.array([xV[surfaceV],yV[surfaceV],\
+                                           nx2[surfaceV]*nx1[surfaceV]+\
+                                           ny2[surfaceV]*ny1[surfaceV],theta[surfaceV]]).T)
 
 nx=np.zeros(NV,dtype=np.float64) 
 ny=np.zeros(NV,dtype=np.float64) 
@@ -1494,19 +1540,6 @@ for i in range(0,NV):
        if rad[i]/R2>1-eps:
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 #also v=0 for 2 pts
           #bc_fix[i*ndofV] = False 
-
-#for iel in range(0,nel):
-#    if surface_element[iel]:
-#       if xV[iconV[0,iel]]/R1<eps:
-          #i=iconV[0,iel]        
-          #bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0
-          #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
-          #i=iconV[3,iel]        
-          #bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0
-          #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
-          #i=iconV[6,iel]        
-          #bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0
-          #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0
 
 print("defining boundary conditions (%.3fs)" % (timing.time() - start))
 
@@ -1553,6 +1586,25 @@ if True:
 print("compute elements areas: %.3f s" % (timing.time() - start))
 
 if stop_here: exit()
+
+###############################################################################
+# compute element center coordinates
+###############################################################################
+start = timing.time()
+
+xc=np.zeros(nel,dtype=np.float64)
+yc=np.zeros(nel,dtype=np.float64)
+thetac=np.zeros(nel,dtype=np.float64)
+
+for iel in range(0,nel):
+       rq=0
+       sq=0
+       NNNV=NNN(rq,sq,mapping)
+       xc[iel]=np.dot(NNNV[:],xmapping[:,iel])
+       yc[iel]=np.dot(NNNV[:],ymapping[:,iel])
+       thetac[iel]=np.pi/2-math.atan2(yc[iel],xc[iel])
+
+print("compute center coords (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
 # compute array for assembly
@@ -1602,6 +1654,22 @@ for iel in range(0,nel):
 
 print("fill I,J arrays: %.3f s" % (timing.time() - start))
 
+###################################################################################################
+###################################################################################################
+###################################################################################################
+# time stepping
+###################################################################################################
+###################################################################################################
+###################################################################################################
+
+istep=0
+
+#for istep in range(0,nstep):
+
+print('******************************')
+print('********* istep='+str(istep)+' ************')
+print('******************************')
+
 ###############################################################################
 # build FE matrix
 ###############################################################################
@@ -1612,6 +1680,10 @@ h_rhs = np.zeros(NfemP,dtype=np.float64)
 dNNNVdx  = np.zeros(mV,dtype=np.float64) 
 dNNNVdy  = np.zeros(mV,dtype=np.float64) 
 jcb=np.zeros((2,2),dtype=np.float64)
+massq  = np.zeros(nel*nqel,dtype=np.float64) 
+radq  = np.zeros(nel*nqel,dtype=np.float64) 
+thetaq  = np.zeros(nel*nqel,dtype=np.float64) 
+zq  = np.zeros(nel*nqel,dtype=np.float64) 
 
 if axisymmetric:
    #c_mat=np.array([[2,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,1]],dtype=np.float64) 
@@ -1624,6 +1696,7 @@ else:
    N_mat= np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
 
 counter=0
+counterq=0
 for iel in range(0,nel):
 
     f_el =np.zeros((mV*ndofV),dtype=np.float64)
@@ -1640,6 +1713,9 @@ for iel in range(0,nel):
         NNNV=NNN(rq,sq,mapping)
         xq=np.dot(NNNV[:],xmapping[:,iel])
         yq=np.dot(NNNV[:],ymapping[:,iel])
+        zq[counterq]=yq
+        radq[counterq]=np.sqrt(xq**2+yq**2)
+        thetaq[counterq]=np.pi/2-np.arctan2(yq,xq)
 
         #compute jacobian matrix
         dNNNVdr=dNNNdr(rq,sq,mapping)
@@ -1688,23 +1764,27 @@ for iel in range(0,nel):
                N_mat[0,i]=NNNP[i]
                N_mat[1,i]=NNNP[i]
 
-        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq,yq,R1,R2)*coeffq
+        #K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq,yq,R1,R2)*coeffq
+        K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xc[iel],yc[iel],R1,R2)*coeffq
 
         G_el-=b_mat.T.dot(N_mat)*coeffq
 
         # compute elemental rhs vector
+        rhoq=density(xq,yq,R1,R2,kk,rho_m,g0)
         for i in range(0,mV):
-            f_el[ndofV*i  ]+=NNNV[i]*coeffq*gx(xq,yq,g0)*density(xq,yq,R1,R2,kk,rho_m,g0)
-            f_el[ndofV*i+1]+=NNNV[i]*coeffq*gy(xq,yq,g0)*density(xq,yq,R1,R2,kk,rho_m,g0)
+            f_el[ndofV*i  ]+=NNNV[i]*coeffq*gx(xq,yq,g0)*rhoq
+            f_el[ndofV*i+1]+=NNNV[i]*coeffq*gy(xq,yq,g0)*rhoq
         #end for 
-        print(xq,yq,gx(xq,yq,g0),gy(xq,yq,g0),jcob,coeffq,viscosity(xq,yq,R1,R2))
+
+        massq[counterq]=rhoq*coeffq
+    
+        #print(xq,yq,gx(xq,yq,g0),gy(xq,yq,g0),jcob,coeffq,viscosity(xq,yq,R1,R2))
+
+        counterq+=1
 
     #end for kq
 
     G_el*=eta_ref/h_r
-    #print('K',np.min(K_el),np.max(K_el),
-    #      'G',np.min(G_el),np.max(G_el),
-    #      'f',np.min(f_el),np.max(f_el))
 
     #Kmax=np.max(abs(K_el))
     #Gmax=np.max(abs(G_el))
@@ -1719,7 +1799,8 @@ for iel in range(0,nel):
     if surface_free_slip and surface_element[iel]==1:
        for k in range(0,mV):
            inode=iconV[k,iel]
-           if surfaceV[inode] and xV[inode]>0 and (not bc_fix[inode*ndofV]):
+           #if surfaceV[inode] and xV[inode]>0 and (not bc_fix[inode*ndofV]):
+           if surfaceV[inode] and (not bc_fix[inode*ndofV]):
 
               #print(xV[inode],yV[inode],np.arctan2(nx[inode],ny[inode]),theta[inode])
               #alpha=-np.arctan2(nx[inode],ny[inode])
@@ -1780,9 +1861,6 @@ for iel in range(0,nel):
             #end if 
         #end for 
     #end for 
-
-    #print(np.min(K_el),np.max(K_el))
-    #print(np.min(G_el),np.max(G_el))
 
     # assemble matrix K_mat and right hand side rhs
     for ikk in range(ndofV_el):
@@ -1848,30 +1926,16 @@ vel[:]=np.sqrt(u[:]**2+v[:]**2)
 print("reshape solution (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
-# compute element center coordinates
+# compute elemental pressure
 ###############################################################################
 start = timing.time()
 
-xc=np.zeros(nel,dtype=np.float64)
-yc=np.zeros(nel,dtype=np.float64)
 pc=np.zeros(nel,dtype=np.float64)
-thetac=np.zeros(nel,dtype=np.float64)
 
 for iel in range(0,nel):
-       rq=0
-       sq=0
-       #compute coords of quadrature points
-       NNNV=NNN(rq,sq,mapping)
-       xq=np.dot(NNNV[:],xmapping[:,iel])
-       yq=np.dot(NNNV[:],ymapping[:,iel])
-       xc[iel]=xq
-       yc[iel]=yq
-       thetac[iel]=np.pi/2-math.atan2(yq,xq)
        pc[iel]=np.sum(p[iconP[0:4,iel]])/4
-       #if (not axisymmetric) and thetac[iel]<0.: thetac[iel]+=2.*math.pi
 
-
-print("compute center coords (%.3fs)" % (timing.time() - start))
+print("compute elemental pressure (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
 # compute strain rate - center to nodes - method 1
@@ -2032,8 +2096,9 @@ print("     -> Lyy2 (m,M) %e %e " %(np.min(Lyy2),np.max(Lyy2)))
 print("     -> Lxy2 (m,M) %e %e " %(np.min(Lxy2),np.max(Lxy2)))
 print("     -> Lxy2 (m,M) %e %e " %(np.min(Lyx2),np.max(Lyx2)))
 
-#np.savetxt('pressure.ascii',np.array([xV,yV,q]).T)
-#np.savetxt('strainrate.ascii',np.array([xV,yV,Lxx,Lyy,Lxy,Lyx]).T)
+if debug:
+   np.savetxt('pressure.ascii',np.array([xV,yV,q]).T)
+   np.savetxt('strainrate.ascii',np.array([xV,yV,Lxx,Lyy,Lxy,Lyx]).T)
 
 exx2 = np.zeros(NV,dtype=np.float64)  
 eyy2 = np.zeros(NV,dtype=np.float64)  
@@ -2188,7 +2253,6 @@ else:
    eyy3=np.zeros(NV,dtype=np.float64)  
    exy3=np.zeros(NV,dtype=np.float64)  
 
-
 print("compute strain rate meth-3 (%.3fs)" % (timing.time() - start))
 
 ###############################################################################
@@ -2328,19 +2392,15 @@ leftV=np.zeros(NV,dtype=bool)
 for i in range(0,NV):
     if xV[i]<eps and yV[i]<0: leftV[i]=True
 
-sr1=np.zeros(NV,dtype=np.float64)  
 sr2=np.zeros(NV,dtype=np.float64)  
-sr3=np.zeros(NV,dtype=np.float64)  
-src=np.zeros(nel,dtype=np.float64)  
-sr1[:]=np.sqrt(0.5*(exx1[:]**2+eyy1[:]**2)+exy1[:]**2)
 sr2[:]=np.sqrt(0.5*(exx2[:]**2+eyy2[:]**2)+exy2[:]**2)
-sr3[:]=np.sqrt(0.5*(exx3[:]**2+eyy3[:]**2)+exy3[:]**2)
-src[:]=np.sqrt(0.5*(exxc[:]**2+eyyc[:]**2)+exyc[:]**2)
 
-np.savetxt('pc_R2.ascii',np.array([thetac[surface_element],pc[surface_element]]).T)
-np.savetxt('src_R2.ascii',np.array([thetac[surface_element],src[surface_element]]).T)
-np.savetxt('errc_R2.ascii',np.array([thetac[surface_element],e_rrc[surface_element]]).T)
-np.savetxt('d_tc_R2.ascii',np.array([thetac[surface_element],dyn_topo_eltal[surface_element]]).T)
+#src=np.zeros(nel,dtype=np.float64)  
+#src[:]=np.sqrt(0.5*(exxc[:]**2+eyyc[:]**2)+exyc[:]**2)
+#np.savetxt('pc_R2.ascii',np.array([thetac[surface_element],pc[surface_element]]).T)
+#np.savetxt('src_R2.ascii',np.array([thetac[surface_element],src[surface_element]]).T)
+#np.savetxt('errc_R2.ascii',np.array([thetac[surface_element],e_rrc[surface_element]]).T)
+#np.savetxt('d_tc_R2.ascii',np.array([thetac[surface_element],dyn_topo_eltal[surface_element]]).T)
 
 #np.savetxt('qqq_R1.ascii',np.array([xV[0:nnt],yV[0:nnt],q[0:nnt],theta[0:nnt]]).T)
 #np.savetxt('sr2_R1.ascii',np.array([xV[0:nnt],yV[0:nnt],sr2[0:nnt],theta[0:nnt]]).T)
@@ -2355,10 +2415,14 @@ np.savetxt('err_R2.ascii',np.array([theta[surfaceQ2],e_rr2[surfaceQ2]]).T)
 np.savetxt('d_t_R2.ascii',np.array([theta[surfaceQ2],dyn_topo_nodal[surfaceQ2]]).T)
 
 if compute_sr1:
+   sr1=np.zeros(NV,dtype=np.float64)  
+   sr1[:]=np.sqrt(0.5*(exx1[:]**2+eyy1[:]**2)+exy1[:]**2)
    np.savetxt('sr1_R1.ascii',np.array([xV[0:nnt],yV[0:nnt],sr1[0:nnt],theta[0:nnt]]).T)
    np.savetxt('sr1_R2.ascii',np.array([xV[surfaceQ2],yV[surfaceQ2],sr1[surfaceQ2],theta[surfaceQ2]]).T)
 
 if compute_sr3:
+   sr3=np.zeros(NV,dtype=np.float64)  
+   sr3[:]=np.sqrt(0.5*(exx3[:]**2+eyy3[:]**2)+exy3[:]**2)
    np.savetxt('sr3_R1.ascii',np.array([xV[0:nnt],yV[0:nnt],sr3[0:nnt],theta[0:nnt]]).T)
    np.savetxt('sr3_R2.ascii',np.array([xV[surfaceQ2],yV[surfaceQ2],sr3[surfaceQ2],theta[surfaceQ2]]).T)
 
@@ -2470,9 +2534,9 @@ else:
 
 print('     -> nelr= %6d ; vrms= %.14e' %(nelr,vrms/vel_unit))
 print("     -> nelr= %6d ; errv= %.14e ; errp= %.14e ; errq= %.14e" %(nelr,errv,errp,errq))
-print("     -> nelr= %6d ; errexx1= %.14e ; erreyy1= %.14e ; errexy1= %.14e" %(nelr,errexx1,erreyy1,errexy1))
-print("     -> nelr= %6d ; errexx2= %.14e ; erreyy2= %.14e ; errexy2= %.14e" %(nelr,errexx2,erreyy2,errexy2))
-print("     -> nelr= %6d ; errexx3= %.14e ; erreyy3= %.14e ; errexy3= %.14e" %(nelr,errexx3,erreyy3,errexy3))
+#print("     -> nelr= %6d ; errexx1= %.14e ; erreyy1= %.14e ; errexy1= %.14e" %(nelr,errexx1,erreyy1,errexy1))
+#print("     -> nelr= %6d ; errexx2= %.14e ; erreyy2= %.14e ; errexy2= %.14e" %(nelr,errexx2,erreyy2,errexy2))
+#print("     -> nelr= %6d ; errexx3= %.14e ; erreyy3= %.14e ; errexy3= %.14e" %(nelr,errexx3,erreyy3,errexy3))
 
 print("compute errors (%.3fs)" % (timing.time() - start))
 
@@ -2566,7 +2630,8 @@ start = timing.time()
 
 if visu==1:
 
-   vtufile=open("solutionQ2_mapping"+mapping+".vtu","w")
+   #vtufile=open("solutionQ2_mapping"+mapping+".vtu","w")
+   vtufile=open("solutionQ2.vtu","w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
    vtufile.write("<UnstructuredGrid> \n")
    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
@@ -2586,7 +2651,7 @@ if visu==1:
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal1' Format='ascii'> \n")
-   for i in range(0,NV):
+   for i in range(0,NV):       
        vtufile.write("%e %e %e \n" %(nx1[i],ny1[i],0.))
    vtufile.write("</DataArray>\n")
    #--
@@ -2722,7 +2787,8 @@ if visu==1:
 
    ####################################
 
-   vtufile=open("solutionQ1_mapping"+mapping+".vtu","w")
+   #vtufile=open("solutionQ1_mapping"+mapping+".vtu","w")
+   vtufile=open("solutionQ1.vtu","w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
    vtufile.write("<UnstructuredGrid> \n")
    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,4*nel))
@@ -2835,7 +2901,7 @@ if visu==1:
    for i in range(0,NV):
        vtufile.write("%e \n" %exy2[i])
    vtufile.write("</DataArray>\n")
-
+   #--
    if compute_sr3:
       vtufile.write("<DataArray type='Float32' Name='sr3' Format='ascii'> \n")
       for i in range(0,NV):
@@ -2917,6 +2983,138 @@ if visu==1:
 
 print("EARTH4D | nelr= %d | v_r  %.5f %.5f  v_t  %.5f %.5f v_rms: %.5f " %\
 (nelr,np.min(vr)/vel_unit,np.max(vr)/vel_unit,np.min(vt)/vel_unit,np.max(vt)/vel_unit,vrms/vel_unit))
+
+###############################################################################
+# M is in (x,z) y=0 plane, so yM=0
+# massq contains factor 2 pi too much, so we must divide by 2*pi here
+###############################################################################
+
+if compute_gravity and axisymmetric:
+
+   print("-----------------------------")
+
+   np_grav=32 # nb of satellites positions
+   height=250e3
+   nel_phi=4
+   Ggrav=6.67430e-11
+   dphi=2*np.pi/nel_phi
+
+   xM=np.zeros(np_grav,dtype=np.float64)     
+   zM=np.zeros(np_grav,dtype=np.float64)     
+   gvect_x=np.zeros(np_grav,dtype=np.float64)   
+   gvect_y=np.zeros(np_grav,dtype=np.float64)   
+   gvect_z=np.zeros(np_grav,dtype=np.float64)   
+   angleM=np.zeros(np_grav,dtype=np.float64)   
+
+   for i in range(0,np_grav):
+
+       start=timing.time()
+
+       angleM[i]=np.pi/(np_grav-1)*i
+       xM[i]=(R2+height)*np.sin(angleM[i])
+       zM[i]=(R2+height)*np.cos(angleM[i])
+
+       gx=0.
+       gy=0.
+       gz=0.
+       counterq=0
+       for iel in range(0,nel):
+           for kq in range (0,nqel):
+               for jel in range(0,nel_phi):
+                   x_c=radq[counterq]*np.sin(thetaq[counterq])*np.cos(jel*dphi)
+                   y_c=radq[counterq]*np.sin(thetaq[counterq])*np.sin(jel*dphi)
+                   dist=np.sqrt((xM[i]-x_c)**2 + (-y_c)**2 + (zM[i]-zq[counterq])**2)
+                   #print(x_c,y_c,zq[counterq],radq[counterq],thetaq[counterq])
+                   Kernel=Ggrav/dist**3*massq[counterq]*dphi
+                   gx-= Kernel*(xM[i]-x_c)
+                   gy-= Kernel*(     -y_c)
+                   gz-= Kernel*(zM[i]-zq[counterq] )
+               #end for
+               counterq+=1
+           #end for
+       #end for
+       gvect_x[i]=gx/(2*np.pi)
+       gvect_y[i]=gy/(2*np.pi)
+       gvect_z[i]=gz/(2*np.pi)
+  
+       tend=timing.time()
+       print("point ",i," out of ",np_grav,\
+             " -> time: %.3fs, time per element: %.6fs" % (tend-start,(tend-start)/nel))
+   #end for i
+
+   gvect=np.sqrt(gvect_x**2+gvect_y**2+gvect_z**2)
+   gvect_avrg=np.sum(gvect)/np_grav
+   rM=np.sqrt(xM**2+zM**2)
+
+   if exp==1:
+      grav_th=Ggrav*4*np.pi/3*(R2**3-R1**3)*rho_m/(R2+height)**2
+      print('grav (th)',grav_th)
+      print('grav (m/M)',np.min(gvect),np.max(gvect))
+   else:
+      grav_th=1
+
+   gravfile1 = 'gravity_{:04d}.ascii'.format(istep)
+   np.savetxt(gravfile1,np.array([xM,zM,rM,angleM,gvect_x,gvect_y,gvect_z,\
+              gvect,(gvect-grav_th)/grav_th]).T,fmt='%.6e',\
+              header='# 1:xM, 2:zM, 3:rM, 4:angleM, 5:gvect_x, 6:gvect_y,\
+                       7:gvect_z, 8:gvect, 9: error')
+
+   filename = 'gravity_{:04d}.vtu'.format(istep)
+   vtufile=open(filename,"w")
+   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+   vtufile.write("<UnstructuredGrid> \n")
+   vtufile.write("<Piece NumberOfPoints='%5d' NumberOfCells='%5d'> \n" %(np_grav,np_grav))
+   #####
+   vtufile.write("<Points> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+   for i in range(0,np_grav):
+       vtufile.write("%e %e %e \n" %(xM[i],zM[i],0.))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Points> \n")
+   vtufile.write("<PointData Scalars='scalars'>\n")
+   #####
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='gravity' Format='ascii'> \n")
+   for i in range(0,np_grav):
+       vtufile.write("%e %e %e \n" %(gvect_x[i],gvect_z[i],0))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</PointData>\n")
+   #####
+   vtufile.write("<Cells>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+   for i in range (0,np_grav):
+       vtufile.write("%d \n" %(i))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+   for i in range (0,np_grav):
+       vtufile.write("%d \n" %(i+1))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+   for iel in range (0,np_grav):
+       vtufile.write("%d \n" %1)
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("</Cells>\n")
+   #####
+   vtufile.write("</Piece>\n")
+   vtufile.write("</UnstructuredGrid>\n")
+   vtufile.write("</VTKFile>\n")
+   vtufile.close()
+
+###############################################################################
+# mesh advection
+###############################################################################
+
+np.savetxt('grid_before_advection_{:04d}.ascii'.format(istep),np.array([xV,yV]).T,header='# x,y')
+
+for i in range(0,NV):    # do a better job for all nodes use v_r, v_theta then back xV,yV
+    xV[i]+=u[i]*dt
+    yV[i]+=v[i]*dt
+
+np.savetxt('grid_after_advection_{:04d}.ascii'.format(istep),np.array([xV,yV]).T,header='# x,y')
+np.savetxt('grid_distortion_{:04d}.ascii'.format(istep),np.array([xV,yV,u*dt,v*dt]).T,header='# x,y')
 
 print("-----------------------------")
 print("------------the end----------")
