@@ -1,0 +1,8 @@
+export exx1 and exx3 to outside function
+clean their code too?
+remove call to math
+bottom free slip
+better advection?
+
+
+by default code now uses elemental rho and eta. it changes things wrt exp0 benchmark results!

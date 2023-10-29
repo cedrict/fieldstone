@@ -223,10 +223,10 @@ The {\tt script\_normals} bash script runs the required models - note that the
 $Q_1$ mapping and nqperdim=2 have been removed from the loops.
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_152/results/normals/nx}
-\includegraphics[width=8cm]{python_codes/fieldstone_152/results/normals/ny}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_152/results/normals/nnx}
-\includegraphics[width=8cm]{python_codes/fieldstone_152/results/normals/nny}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/normals/nx}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/normals/ny}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/normals/nnx}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/normals/nny}\\
 {\captionfont components of the normal vector on the hull (first line),
 on the surface (second line). Mesh is 8x96.}
 \end{center}
@@ -236,7 +236,7 @@ and that on the curved parts they match their geometrical counterparts $\vec{n}_
 These normal vectors are shown here:
 
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_152/results/normals/normals}
+\includegraphics[width=6cm]{python_codes/fieldstone_152/RESULTS/normals/normals}
 \end{center}
 
 Obviously, we need to look closer at the four nodes that belong to the surface and the cmb with $x=0$.
@@ -1189,27 +1189,46 @@ Model is run on 4 cores on my laptop.
 \subsection*{Gravity benchmark}
 
 Gravity is computed at a height of 250km above the surface. 
-Parameters are 
-\begin{lstlisting}
-nelr=64
-nqperdim=3
-mapping='Q2'
-xi=6
-np_grav=32
-height=250e3
-nel_phi=200
-\end{lstlisting}
+Results are obtained with {\tt script\_gravity\_exp1}.
+Gravity is computed at 48 points for $\theta\in[0,\pi/2]$ (i.e. North pole to equator).
+Resolution is nelr=16 $Q_2$ elements.
 
 \begin{center}
-\includegraphics[width=8.cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/gravity.pdf}
-\includegraphics[width=8.cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/gravity_error.pdf}
+\includegraphics[width=12cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr32/gravity.pdf}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr32/gravity_64m.pdf}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr32/gravity_128m.pdf}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr32/gravity_256m.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr32/gravity_64nq.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr32/gravity_128nq.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr32/gravity_192nq.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr32/gravity_256nq.pdf}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr32/gravity_error.pdf}
+\end{center}
+
+Clearly the mapping does not influence results at all. The number of quadrature points does!
+However the controlling factor for accuracy is the number of repetitions of the slice controlled
+by {\tt nel\_phi}.
+
+Let us now run similar experiments at higher resolution...
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr64/gravity.pdf}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr64/gravity_64m.pdf}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr64/gravity_128m.pdf}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr64/gravity_256m.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr64/gravity_64nq.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr64/gravity_128nq.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr64/gravity_192nq.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr64/gravity_256nq.pdf}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_152/RESULTS/exp1/gravity/nelr64/gravity_error.pdf}
 \end{center}
 
 
-
-
-
-
+We see that at higher resolution increasing {\tt nel\_phi} 
+increases accuracy away from the pole, while 
+the influence of the quadrature is now virtually inexistant.
+Also, given that $g_{th}\simeq 5$, this means that the absolute error in the measurements 
+are about $5\times 10^{-10}$, i.e. less than a $\mu Gal$.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1404,23 +1423,37 @@ much
 \subsection*{Gravity benchmark}
 
 Gravity is computed at a height of 250km above the surface. 
-Parameters are 
-\begin{lstlisting}
-nelr=64
-nqperdim=3
-mapping='Q2'
-xi=6
-np_grav=32
-height=250e3
-nel_phi=200
-\end{lstlisting}
+Note that we have here modified the {\python density.py} function so 
+that the mantle has zero density and the blob 400. 
+Results are obtained with {\tt script\_gravity\_exp2}.
+All other parameters are identical to previous experiments.
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_152/RESULTS/exp2/gravity/gravity.png}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/exp2/gravity/gravity.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_152/RESULTS/exp2/gravity/gravity.png}
 \end{center}
 
+The issue here is that the density is elemental. At medium resolution, the blob is not 
+very well discretised so that its actual mass is not equal to its analytical value. 
+In the following plots the 'true' measured mass is used, as computed by the code.  
+We set the resolution to {\python nelr=32}.
 
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_152/RESULTS/exp2/gravity/nelr32/gravity.pdf}
+\includegraphics[width=12cm]{python_codes/fieldstone_152/RESULTS/exp2/gravity/nelr32/gravity_error.pdf}
+\end{center}
+
+Setting now {\python nelr=64} (left) and {\python nelr=96} (right):
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/exp2/gravity/nelr64/gravity.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/exp2/gravity/nelr96/gravity.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/exp2/gravity/nelr64/gravity_error.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_152/RESULTS/exp2/gravity/nelr96/gravity_error.pdf}\\
+\end{center}
+
+Conclusion: The benchmark is succesfull. 
+The accuracy will be first and foremost controlled by how well the blob can be discretised, 
+i.e. the resolution of the mesh. 
 
 
 
