@@ -13,20 +13,25 @@
 #   compute_g   = int(sys.argv[12])
 #   nel_phi     = int(sys.argv[13])
 
-for l in 8 10 12 16 24 32 40 48 64 ; do
-   for nqperdim in 3 4 5 6 7 ; do
-      for mapping in 1 2 3 4 5 6; do
-          for xi in 6 ; do
+rm errors_*
+rm vrms_* 
+rm u_err_*
+rm v_err_*
+rm p_err_*
 
-              echo nelr= $l - nqperdim= $nqperdim - mapping= $mapping - xi= $xi
+xi=6
+l=192
 
-              python3 stone.py -1 $l 0 $nqperdim $mapping $xi 1 1 0 0 1 > opla
+for nelphi in 16 32 64 128 192 256 ; do
+  for nqperdim in 3   ; do
+    for mapping in  3  ; do
 
-              grep area opla | grep meas >> area_${nqperdim}_${mapping}
-              grep volume opla | grep meas >> volume_${nqperdim}_${mapping}
+      echo nqperdim= $nqperdim - mapping= $mapping - nel_phi= $nelphi
 
-         done
-      done
-   done
+      python3 stone.py 2 $l 0 $nqperdim $mapping $xi 1 0.999 4900000 400000 1 1 $nelphi #> opla
+
+      mv gravity_0000.ascii gravity_nq${nqperdim}_m${mapping}_nelphi${nelphi}.ascii 
+
+    done
+  done
 done
-

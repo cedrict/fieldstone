@@ -9,6 +9,8 @@
 #   yblob       = float(sys.argv[8])
 #   Rblob       = float(sys.argv[9])
 #   etalithstar = float(sys.argv[10])
+#   compute_g   = int(sys.argv[12])
+#   nel_phi     = int(sys.argv[13])
 
 nqperdim=3
 mapping=4

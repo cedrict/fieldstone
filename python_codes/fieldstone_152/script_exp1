@@ -10,6 +10,8 @@
 #   yblob       = float(sys.argv[9])
 #   Rblob       = float(sys.argv[10])
 #   etalithstar = float(sys.argv[11])
+#   compute_g   = int(sys.argv[12])
+#   nel_phi     = int(sys.argv[13])
 
 for l in 16 32 64 128; do
    for nqperdim in 3 4 5 6 7; do
@@ -21,13 +23,13 @@ for l in 16 32 64 128; do
 
               python3 stone.py 1 $l 0 $nqperdim $mapping $xi 1 1 0 0 1 > opla_${l}_${xi}_${nqperdim}_${mapping}
 
-              mv vel_R2.ascii vel_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
-              mv qqq_R2.ascii qqq_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
-              mv err_R2.ascii err_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
-              mv d_t_R2.ascii d_t_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
-              mv sr2_R2.ascii sr2_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
-              mv v_r_R2.ascii v_r_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
-              mv v_t_R2.ascii v_t_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
+              mv vel_R2_0.ascii vel_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
+              mv qqq_R2_0.ascii qqq_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
+              mv err_R2_0.ascii err_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
+              mv d_t_R2_0.ascii d_t_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
+              mv sr2_R2_0.ascii sr2_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
+              mv v_r_R2_0.ascii v_r_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
+              mv v_t_R2_0.ascii v_t_R2.ascii_${l}_xi${xi}_nq${nqperdim}_m${mapping}
 
          done
       done
