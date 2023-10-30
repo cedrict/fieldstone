@@ -101,8 +101,8 @@ def density(x,y,R1,R2,k,rho0,rho_model,exp,rhoblobstar,yblob,Rblob):
     else:
        if np.sqrt(x**2+(y-yblob)**2)<Rblob:
           val*=rhoblobstar
-       val-=rho0
-       val=abs(val)
+       #val-=rho0
+       #val=abs(val)
 
     return val
 

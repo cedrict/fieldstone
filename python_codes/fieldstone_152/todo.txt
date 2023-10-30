@@ -4,5 +4,10 @@ remove call to math
 bottom free slip
 better advection?
 
+self-gravittation?
+
+aspect with GMG ?
+
+compute moment of inertia
 
 by default code now uses elemental rho and eta. it changes things wrt exp0 benchmark results!

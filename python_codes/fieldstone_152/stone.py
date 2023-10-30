@@ -27,6 +27,8 @@ axisymmetric=True
 
 surface_free_slip=True
 
+solve_stokes=False
+
 ###############################################################################
 # list of available Earth density and viscosity profiles
 ###############################################################################
@@ -35,7 +37,7 @@ planet_is_Earth=False
 
 rho_model=0 # constant
 #rho_model=1 # PREM
-#rho_model=2 # ST105W
+#rho_model=2 # STW105
 #rho_model=3 # AK135F
 
 eta_model=0 # constant
@@ -96,7 +98,6 @@ if int(len(sys.argv) == 14):
    if mapping==5: mapping='Q5'
    if mapping==6: mapping='Q6'
 
-   print(compute_g,compute_g==1)
    compute_gravity=(compute_g==1)
 
    if exp==-1:
@@ -111,7 +112,7 @@ else:
    # exp=2: blob
    # exp=3: pancake pi/8
    exp         = 1
-   nelr        = 64 # Q1 cells!
+   nelr        = 256 # Q1 cells!
    visu        = 1
    nqperdim    = 3
    mapping     = 'Q2' 
@@ -260,26 +261,26 @@ if planet_is_Earth:
       print('     -> read rho_ak135f.ascii ok')
 
    #-----------------
-   if rho_model==2: #ST105W
-      depth_st105w = np.empty(750,dtype=np.float64)
-      rho_st105w = np.empty(750,dtype=np.float64)
-      f = open('DATA/EARTH/rho_st105w.ascii','r')
+   if rho_model==2: #STW105
+      depth_stw105 = np.empty(750,dtype=np.float64)
+      rho_stw105 = np.empty(750,dtype=np.float64)
+      f = open('DATA/EARTH/rho_stw105.ascii','r')
       counter=0
       for line in f:
           line=line.strip()
           columns=line.split()
-          depth_st105w[counter]=columns[0]
-          rho_st105w[counter]=columns[1]
+          depth_stw105[counter]=columns[0]
+          rho_stw105[counter]=columns[1]
           counter+=1
       #end for
 
-      depth_st105w[:]=6371e3-depth_st105w[:]
-      depth_st105w[:]=np.flip(depth_st105w)
-      rho_st105w[:]=np.flip(rho_st105w)
+      depth_stw105[:]=6371e3-depth_stw105[:]
+      depth_stw105[:]=np.flip(depth_stw105)
+      rho_stw105[:]=np.flip(rho_stw105)
 
-      np.savetxt('density_st105w.ascii',np.array([depth_st105w,rho_st105w]).T)
+      np.savetxt('density_stw105.ascii',np.array([depth_stw105,rho_stw105]).T)
 
-      print('     -> read rho_st105w.ascii ok')
+      print('     -> read rho_stw105.ascii ok')
 
 print("read EARTH data (%.3fs)" % (timing.time() - start))
 
@@ -1046,49 +1047,6 @@ for istep in range(0,nstep):
     print("define mapping (%.3fs)" % (timing.time() - start))
 
     ###############################################################################
-    # compute area and volume of elements
-    # note that for the volume calculation we only consider the elements x>0
-    ###############################################################################
-    start = timing.time()
-
-    area=np.zeros(nel,dtype=np.float64) 
-    vol=np.zeros(nel,dtype=np.float64) 
-
-    jcb=np.zeros((2,2),dtype=np.float64)
-    for iel in range(0,nel):
-        for kq in range(0,nqel):
-            rq=qcoords_r[kq]
-            sq=qcoords_s[kq]
-            weightq=qweights[kq]
-            NNNV=NNN(rq,sq,mapping)
-            dNNNVdr=dNNNdr(rq,sq,mapping)
-            dNNNVds=dNNNds(rq,sq,mapping)
-            xq=np.dot(NNNV[:],xmapping[:,iel])
-            jcb[0,0]=np.dot(dNNNVdr[:],xmapping[:,iel])
-            jcb[0,1]=np.dot(dNNNVdr[:],ymapping[:,iel])
-            jcb[1,0]=np.dot(dNNNVds[:],xmapping[:,iel])
-            jcb[1,1]=np.dot(dNNNVds[:],ymapping[:,iel])
-            jcob = np.linalg.det(jcb)
-            area[iel]+=jcob*weightq
-            if xq>0: vol[iel]+=jcob*weightq*2*np.pi*xq
-       #end for
-    #end for
-
-    print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
-    print("     -> total area (meas) %.12e | nel= %d" %(area.sum(),nel))
-    if not axisymmetric:
-       print("     -> total area (anal) %e " %(np.pi*(R2**2-R1**2)))
-    else:
-       print("     -> total area (anal) %e " %(np.pi*(R2**2-R1**2)/2))
-
-    print("     -> total volume (meas) %.12e | nel= %d" %(vol.sum(),nel))
-    print("     -> total volume (anal) %.12e" %(4*np.pi/3*(R2**3-R1**3)))
-    
-    print("compute elements areas: %.3f s" % (timing.time() - start))
-    
-    if stop_here: exit()
-
-    ###############################################################################
     # compute element center coordinates
     # compute elemental and nodal viscosity
     ###############################################################################
@@ -1126,12 +1084,67 @@ for istep in range(0,nstep):
        density_nodal/=counter
        viscosity_nodal/=counter
 
-    print("     -> total mass (meas) %.12e | nel= %d" %(np.sum(density_elemental*vol),nel))
 
     if debug:
        np.savetxt('xycenter'+mapping+'.ascii',np.array([xc,yc,density_elemental,viscosity_elemental]).T)
 
     print("compute center coords & fields (%.3fs)" % (timing.time() - start))
+
+    ###############################################################################
+    # compute area and volume of elements
+    # note that for the volume calculation we only consider the elements x>0
+    ###############################################################################
+    start = timing.time()
+
+    area=np.zeros(nel,dtype=np.float64) 
+    vol=np.zeros(nel,dtype=np.float64) 
+    massq  = np.zeros(nel*nqel,dtype=np.float64) 
+    radq  = np.zeros(nel*nqel,dtype=np.float64) 
+    thetaq  = np.zeros(nel*nqel,dtype=np.float64) 
+    zq  = np.zeros(nel*nqel,dtype=np.float64) 
+
+    counterq=0
+    jcb=np.zeros((2,2),dtype=np.float64)
+    for iel in range(0,nel):
+        for kq in range(0,nqel):
+            rq=qcoords_r[kq]
+            sq=qcoords_s[kq]
+            weightq=qweights[kq]
+            NNNV=NNN(rq,sq,mapping)
+            dNNNVdr=dNNNdr(rq,sq,mapping)
+            dNNNVds=dNNNds(rq,sq,mapping)
+            xq=np.dot(NNNV[:],xmapping[:,iel])
+            yq=np.dot(NNNV[:],ymapping[:,iel])
+            zq[counterq]=yq
+            radq[counterq]=np.sqrt(xq**2+yq**2)
+            thetaq[counterq]=np.pi/2-np.arctan2(yq,xq)
+            jcb[0,0]=np.dot(dNNNVdr[:],xmapping[:,iel])
+            jcb[0,1]=np.dot(dNNNVdr[:],ymapping[:,iel])
+            jcb[1,0]=np.dot(dNNNVds[:],xmapping[:,iel])
+            jcb[1,1]=np.dot(dNNNVds[:],ymapping[:,iel])
+            jcob = np.linalg.det(jcb)
+            area[iel]+=jcob*weightq
+            massq[counterq]=density_elemental[iel]*weightq*jcob*2*np.pi*xq
+            if xq>0: vol[iel]+=jcob*weightq*2*np.pi*xq
+            counterq+=1
+       #end for
+    #end for
+
+    print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
+    print("     -> total area (meas) %.12e | nel= %d" %(area.sum(),nel))
+    if not axisymmetric:
+       print("     -> total area (anal) %e " %(np.pi*(R2**2-R1**2)))
+    else:
+       print("     -> total area (anal) %e " %(np.pi*(R2**2-R1**2)/2))
+
+    print("     -> total volume (meas) %.12e | nel= %d" %(vol.sum(),nel))
+    print("     -> total volume (anal) %.12e" %(4*np.pi/3*(R2**3-R1**3)))
+
+    print("     -> total mass (meas) %.12e | nel= %d" %(np.sum(density_elemental*vol),nel))
+    
+    print("compute elements areas: %.3f s" % (timing.time() - start))
+    
+    if stop_here: exit()
 
     ###############################################################################
     # build FE matrix
@@ -1143,10 +1156,6 @@ for istep in range(0,nstep):
     dNNNVdx  = np.zeros(mV,dtype=np.float64) 
     dNNNVdy  = np.zeros(mV,dtype=np.float64) 
     jcb=np.zeros((2,2),dtype=np.float64)
-    massq  = np.zeros(nel*nqel,dtype=np.float64) 
-    radq  = np.zeros(nel*nqel,dtype=np.float64) 
-    thetaq  = np.zeros(nel*nqel,dtype=np.float64) 
-    zq  = np.zeros(nel*nqel,dtype=np.float64) 
 
     if axisymmetric:
        #c_mat=np.array([[2,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,1]],dtype=np.float64) 
@@ -1162,6 +1171,8 @@ for istep in range(0,nstep):
     counterq=0
     for iel in range(0,nel):
 
+        if not solve_stokes: break 
+
         f_el =np.zeros((mV*ndofV),dtype=np.float64)
         K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
         G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
@@ -1176,9 +1187,9 @@ for istep in range(0,nstep):
             NNNV=NNN(rq,sq,mapping)
             xq=np.dot(NNNV[:],xmapping[:,iel])
             yq=np.dot(NNNV[:],ymapping[:,iel])
-            zq[counterq]=yq
-            radq[counterq]=np.sqrt(xq**2+yq**2)
-            thetaq[counterq]=np.pi/2-np.arctan2(yq,xq)
+            #zq[counterq]=yq
+            #radq[counterq]=np.sqrt(xq**2+yq**2)
+            #thetaq[counterq]=np.pi/2-np.arctan2(yq,xq)
 
             #compute jacobian matrix
             dNNNVdr=dNNNdr(rq,sq,mapping)
@@ -1239,7 +1250,7 @@ for istep in range(0,nstep):
                 f_el[ndofV*i+1]+=NNNV[i]*coeffq*gy(xq,yq,g0)*rhoq
             #end for 
 
-            massq[counterq]=rhoq*coeffq
+            #massq[counterq]=rhoq*coeffq
 
             counterq+=1
 
@@ -1350,13 +1361,18 @@ for istep in range(0,nstep):
     ###############################################################################
     start = timing.time()
 
-    rhs=np.zeros(Nfem,dtype=np.float64)
-    rhs[0:NfemV]=f_rhs
-    rhs[NfemV:NfemV+NfemP]=h_rhs
-   
-    sparse_matrix = sparse.coo_matrix((V,(I,J)),shape=(Nfem,Nfem)).tocsr()
+    if solve_stokes:
 
-    sol=sps.linalg.spsolve(sparse_matrix,rhs)
+       rhs=np.zeros(Nfem,dtype=np.float64)
+       rhs[0:NfemV]=f_rhs
+       rhs[NfemV:NfemV+NfemP]=h_rhs
+       sparse_matrix = sparse.coo_matrix((V,(I,J)),shape=(Nfem,Nfem)).tocsr()
+       sol=sps.linalg.spsolve(sparse_matrix,rhs)
+
+    else:
+
+       sol=np.zeros(Nfem,dtype=np.float64)  
+
 
     print("solving system ( %.3fs ) | nel= %d" % (timing.time() - start,nel))
 
@@ -2024,6 +2040,10 @@ for istep in range(0,nstep):
        export_gravity_to_vtu(istep,np_grav,xM,zM,gvect_x,gvect_z)
 
     #end if compute gravity
+
+    ###############################################################################
+    # export the nel_phi slices as vtu file for educational purposes
+    ###############################################################################
 
     export_slices(nel_phi,NV,nel,rad,theta,iconV,density_elemental)
 
