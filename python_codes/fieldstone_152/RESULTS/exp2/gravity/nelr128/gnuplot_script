@@ -29,9 +29,10 @@ plot[][]\
 set ylabel '|g-g_{th}|/g_{th}'
 set output 'gravity_error.pdf'
 plot[][]\
-'gravity_nq3_m3_nelphi32.ascii' u 4:(abs($8- Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))/(Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))) w lp lt 1 dt 2 t 'nelphi=32, nq=3',\
-'gravity_nq3_m3_nelphi64.ascii' u 4:(abs($8- Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))/(Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))) w lp lt 2 dt 2 t 'nelphi=64, nq=3',\
-'gravity_nq3_m3_nelphi128.ascii' u 4:(abs($8- Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))/(Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))) w lp lt 3 dt 2 t 'nelphi=128, nq=3',\
-'gravity_nq3_m3_nelphi192.ascii' u 4:(abs($8- Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))/(Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))) w lp lt 3 dt 2 t 'nelphi=192, nq=3',\
+'gravity_nq3_m3_nelphi16.ascii'  u 4:(abs($8- Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))/(Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))) w lp lt 1 dt 2 t 'nelphi=16, nq=3',\
+'gravity_nq3_m3_nelphi32.ascii'  u 4:(abs($8- Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))/(Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))) w lp lt 2 dt 2 t 'nelphi=32, nq=3',\
+'gravity_nq3_m3_nelphi64.ascii'  u 4:(abs($8- Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))/(Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))) w lp lt 3 dt 2 t 'nelphi=64, nq=3',\
+'gravity_nq3_m3_nelphi128.ascii' u 4:(abs($8- Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))/(Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))) w lp lt 4 dt 2 t 'nelphi=128, nq=3',\
+'gravity_nq3_m3_nelphi192.ascii' u 4:(abs($8- Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))/(Ggrav*mass/( $1**2 + ($2-z_blob )**2 ))) w lp lt 5 dt 2 t 'nelphi=192, nq=3',\
 
 

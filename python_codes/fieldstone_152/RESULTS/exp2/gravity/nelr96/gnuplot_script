@@ -6,10 +6,8 @@ set key outside
 set xlabel 'co-latitude {/Symbol q}'
 
 z_blob=4900e3
-mass=(400e3**3)*4*pi/3*4
 Ggrav = 6.67430e-11
-
-mass=1.082810944358e+18
+mass=1.0723303e+18
 
 ##############################################################
 
