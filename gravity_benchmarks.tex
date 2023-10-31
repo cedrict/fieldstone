@@ -1,9 +1,11 @@
+\begin{flushright} {\tiny {\color{gray} gravity\_benchmarks.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 There are many analytical solutions for buried bodies of simple shape.
 Hereafter are the most common ones:
 
 %...................................
-\subsubsection{Buried sphere (3D)}
+\subsection{Buried sphere (3D)}
 
 To calculate the pull of gravity, we can use the fact that a sphere has the same
 gravitational pull as a point mass located at its centre. The distance between 
@@ -36,7 +38,7 @@ FINISH , derive $x_{1/2}$
 
 
 %...............................................
-\subsubsection{Buried horizontal cylinder (3D)} 
+\subsection{Buried horizontal cylinder (3D)} 
 
 anticline can be approximated by a horizontal cylinder
 \[
@@ -50,7 +52,7 @@ Cannot distinguish a buried sphere from a cylinder with just a single profile. N
 collect gravity on a grid and make a map.
 
 %............................
-\subsubsection{Buried column (2D)}
+\subsection{Buried column (2D)}
 
 \[
 g_z=2 {\cal G} \Delta \rho b \ln \frac{r_2}{r_1}
@@ -61,7 +63,7 @@ g_z=2 {\cal G} \Delta \rho b \ln \frac{r_2}{r_1}
 \end{center}
 
 %...................................
-\subsubsection{Buried columns (2D)}
+\subsection{Buried columns (2D)}
 
 \[
 g_z=2 {\cal G} \sum_i  \Delta \rho_i  b_i  \ln \frac{r_{2,i}}{r_{1,i}}
@@ -77,7 +79,7 @@ g_z=2 {\cal G} \sum_i  \Delta \rho_i  b_i  \ln \frac{r_{2,i}}{r_{1,i}}
 
 
 %....................................
-\subsubsection{Uniform layer of rock}
+\subsection{Uniform layer of rock}
 
 A layer of rock has an infinite extent, thickness $\Delta z$ 
 and a density $\rho$. The gravitational
@@ -91,7 +93,7 @@ Note that g z does not depend on the distance from the layer to the measurement 
 
 \newpage
 %............................................................
-\subsubsection{A constant density shell (Root \etal, 2021)}
+\subsection{A constant density shell (Root \etal, 2021)}
 
 Results \& raw data in {\tt ./images/benchmark\_gravity/bench1}
 
@@ -219,7 +221,7 @@ TODO RUN 2 and 5 km shells !
 
 \newpage
 %................................................
-\subsubsection{The WINTERC mono-layer benchmark (Root \etal, 2021)}
+\subsection{The WINTERC mono-layer benchmark (Root \etal, 2021)}
 
 A single data file is used,  {\tt rho\_56km\_SH\_W32.txt}, 
 stored in {\tt images/benchmark\_gravity/bench2}. 
@@ -297,7 +299,7 @@ level & avrg density & total mass & number of cells & time \\
 
 \newpage
 %....................................
-\subsubsection{Moho benchmark (Root \etal, 2021)}
+\subsection{Moho benchmark (Root \etal, 2021)}
 
 We consider an 80km thick shell with a density interface inside, using CRUST1.0 Moho 
 for the boundary (upper dens = 2900kg/m3, lower dens = 3300 kg/m3).
@@ -313,6 +315,168 @@ right ASPECT format.
 {\tiny {\color{gray} in ./images/benchmark\_gravity/bench3/}}
 }
 \end{center}
+
+
+\newpage
+%....................................
+\subsection{Gravity potential and gravity field of a two-layer 
+spherically symmetric planet}
+
+
+Let us assume that the planet consists of two layers: 
+the core (of density $\rho_c$) and the mantle (of density $\rho_m$).
+Its outer radius is $R_2$ and the cmb is at $R_1$.
+We wish to compute the gravitational potential of this system
+and we start from the spherically symmetric Poisson equation:
+\begin{equation}
+\frac{1}{r^2} \frac{\partial}{\partial r}\left( r^2 \frac{\partial U}{\partial r} \right)
+=
+4 \pi {\cal G} \rho
+\label{poissonpde}
+\end{equation}
+
+We have three domains on the $r$-axis ($a$ stands for air): 
+\begin{itemize}
+\item $r\in [0,R_1]$, density $\rho_c$
+\item $r\in [R_1,R_2]$, density $\rho_m$
+\item $r\in [R_2,+\infty)$, density $\rho_a=0$
+\end{itemize}
+
+We denote $\hat{\rho}=4 \pi {\cal G} \rho$. In the end we have to solve 
+Eq.~\ref{poissonpde} in all three domains:
+\begin{eqnarray}
+\frac{1}{r^2} \frac{\partial}{\partial r}\left( r^2 \frac{\partial U}{\partial r} \right)
+&= \hat{\rho}_c & r\in[0,R_1]\\
+\frac{1}{r^2} \frac{\partial}{\partial r}\left( r^2 \frac{\partial U}{\partial r} \right)
+&= \hat{\rho}_m & r\in[R_1,R_2]\\
+\frac{1}{r^2} \frac{\partial}{\partial r}\left( r^2 \frac{\partial U}{\partial r} \right)
+&= 0 & r\in[R_2,+\infty)]
+\end{eqnarray}
+
+The generic solution of Eq.~(\ref{poissonpde}) is obtained as follows:
+\begin{eqnarray}
+&& \frac{1}{r^2} \frac{\partial}{\partial r}\left( r^2 \frac{\partial U}{\partial r} \right)
+= \hat{\rho}  \\
+&\Rightarrow & \frac{\partial}{\partial r}\left( r^2 \frac{\partial U}{\partial r} \right) = \hat{\rho} r^2  \\
+&\Rightarrow &  r^2 \frac{\partial U}{\partial r} = \frac{1}{3}\hat{\rho}r^3 + A \\
+&\Rightarrow &  \frac{\partial U}{\partial r}= \frac{1}{3}\hat{\rho}r +\frac{A}{r^2} =g(r)\\
+&\Rightarrow &  U(r)= \frac{1}{6}\hat{\rho}r^2  -\frac{A}{r} + B 
+\end{eqnarray}
+
+So now we have the following set of equations:
+\begin{eqnarray}
+g(r)= \frac{1}{3}\hat{\rho}_c r +\frac{A}{r^2} \qquad\qquad
+U(r)= \frac{1}{6}\hat{\rho}_c r^2  -\frac{A}{r} + B & \quad r\in[0,R_1]\\ 
+g(r)= \frac{1}{3}\hat{\rho}_m r +\frac{C}{r^2} \qquad\qquad
+U(r)= \frac{1}{6}\hat{\rho}_m r^2  -\frac{C}{r} + D & \quad  r\in[R_1,R_2]\\ 
+g(r)= \frac{1}{3}\hat{\rho}_a r +\frac{E}{r^2} \qquad\qquad
+U(r)= \frac{1}{6}\hat{\rho}_a r^2  -\frac{E}{r} + F & \quad r\in[R_2,+\infty) 
+\end{eqnarray}
+
+We know that $\rho_a=0$ and we additionally impose
+\[
+\lim_{r\rightarrow 0} g(r) = 0 
+\qquad
+\qquad
+\lim_{r\rightarrow +\infty} U(r) = 0 
+\]
+which automatically leads to $A=F=0$.
+
+In the end we have:
+\begin{eqnarray}
+g(r)= \frac{1}{3}\hat{\rho}_c r  \qquad\qquad
+U(r)= \frac{1}{6}\hat{\rho}_c r^2   + B & \quad r\in[0,R_1]\\ 
+g(r)= \frac{1}{3}\hat{\rho}_m r +\frac{C}{r^2} \qquad\qquad
+U(r)= \frac{1}{6}\hat{\rho}_m r^2  -\frac{C}{r} + D & \quad  r\in[R_1,R_2]\\ 
+g(r)= \frac{E}{r^2} \qquad\qquad
+U(r)= -\frac{E}{r}  & \quad r\in[R_2,+\infty) 
+\end{eqnarray}
+
+We have now four unknowns $B,C,D,E$. Since the two fields $g$ and $U$
+must be continuous at $r=R_1$ and $r=R_2$, then we have four constraints and 
+that will allow us to determine the four unknowns.
+
+Let us start with the continuity at $r=R_1$:
+\begin{eqnarray}
+g(r=R_1) &=& \frac{1}{3}\hat{\rho}_c R_1 =  
+\frac{1}{3}\hat{\rho}_m R_1 +\frac{C}{R_1^2} \\
+U(r=R_1)&=& \frac{1}{6}\hat{\rho}_c R_1^2   + B =
+\frac{1}{6}\hat{\rho}_m R_1^2  -\frac{C}{R_1} + D 
+\end{eqnarray}
+The first equation yields
+\[
+C=\frac{R_1^3}{3} (\hat{\rho}_c-\hat{\rho}_m)
+\]
+which we plug in the second equation:
+\[
+\frac{1}{6}\hat{\rho}_c R_1^2   + B =
+\frac{1}{6}\hat{\rho}_m R_1^2  -\frac{R_1^2}{3} (\hat{\rho}_c-\hat{\rho}_m)   + D 
+\]
+\[
+\frac{1}{6}(\hat{\rho}_c-\hat{\rho}_m) R_1^2   + B =
+ -\frac{R_1^2}{3} (\hat{\rho}_c-\hat{\rho}_m)   + D 
+\]
+\[
+(\frac{1}{6}+\frac13)(\hat{\rho}_c-\hat{\rho}_m) R_1^2   + B = D 
+\]
+\[
+\frac12(\hat{\rho}_c-\hat{\rho}_m) R_1^2   + B = D 
+\]
+We cannot go any further so we turn to $r=R_2$:
+\begin{eqnarray}
+g(r=R_2)&=& \frac{1}{3}\hat{\rho}_m R_2 +\frac{C}{R_2^2}= \frac{E}{R_2^2} \\
+U(r=R_2)&=& \frac{1}{6}\hat{\rho}_m R_2^2  -\frac{C}{R_2} + D = -\frac{E}{R_2}   
+\end{eqnarray}
+in which we insert the known value of $C$:
+\begin{eqnarray}
+\frac{1}{3}\hat{\rho}_m R_2 +\frac{1}{R_2^2} \frac{R_1^3}{3} (\hat{\rho}_c-\hat{\rho}_m)   = \frac{E}{R_2^2} \\
+\frac{1}{6}\hat{\rho}_m R_2^2  -\frac{1}{R_2}\frac{R_1^3}{3} (\hat{\rho}_c-\hat{\rho}_m) + D = -\frac{E}{R_2}   
+\end{eqnarray}
+Multiplying the first equation by $R_2^2$ and the second one by $R_2$:
+\begin{eqnarray}
+\frac{1}{3}\hat{\rho}_m R_2^3 +  \frac{R_1^3}{3} (\hat{\rho}_c-\hat{\rho}_m) = E \\
+\frac{1}{6}\hat{\rho}_m R_2^3  -\frac{R_1^3}{3} (\hat{\rho}_c-\hat{\rho}_m) + D R_2=-E
+\end{eqnarray}
+The first equation then gives us $E$:
+\[
+E=\frac13 \hat{\rho}_m (R_2^3-R_1^3) +  \frac13 R_1^3 \hat{\rho}_c
+\]
+So in the end, we have
+\begin{eqnarray}
+C &=&\frac{R_1^3}{3} (\hat{\rho}_c-\hat{\rho}_m) \\
+E &=& \frac13 \hat{\rho}_m (R_2^3-R_1^3) +  \frac13 R_1^3 \hat{\rho}_c \\
+D 
+&=& \frac{1}{R_2}\left( -E -\frac{1}{6}\hat{\rho}_m R_2^3  +\frac{R_1^3}{3} (\hat{\rho}_c-\hat{\rho}_m) \right)\\
+&=& \frac{1}{R_2}\left( -\frac13 \hat{\rho}_m (R_2^3-R_1^3) -  \frac13 R_1^3 \hat{\rho}_c -\frac{1}{6}\hat{\rho}_m R_2^3  +\frac{R_1^3}{3} (\hat{\rho}_c-\hat{\rho}_m) \right)\\
+&=& \frac{1}{6 R_2}  \left[
+( -2R_2^3 + 2R_1^3 - R_2^3 -2 R_1^3 )\hat{\rho}_m +
+( -2R_1^3 + 2R_1^3 )\hat{\rho}_c 
+\right] \\
+&=& \frac{1}{6 R_2}  \left( -3R_2^3 \hat{\rho}_m \right) \\
+&=& -\frac{R_2^2}{2}  \hat{\rho}_m  \\
+B &=& D-\frac12(\hat{\rho}_c-\hat{\rho}_m) R_1^2  \\
+&=&  -\frac{R_2^2}{2}  \hat{\rho}_m   -\frac12(\hat{\rho}_c-\hat{\rho}_m) R_1^2  \\
+&=& \frac12 ( R_1^2 -R_2^2 ) \hat{\rho}_m - \frac12  R_1^2  \hat{\rho}_c
+\end{eqnarray}
+
+We set $R_1=3400$km, $R_2=6400km$, $\rho_c=6000$kg/m3 and $\rho_m=4000$kg/m3
+and obtain the following fields:  
+
+\begin{center}
+\includegraphics[width=12cm]{images/gravity_benchmark2/g.pdf}\\
+\includegraphics[width=12cm]{images/gravity_benchmark2/U.pdf}
+\end{center}
+
+We find that the fields fulfill all conditions and are continuous, as expected.
+
+Also, setting $\rho_c=0$ (i.e. the planet is a hollow sphere), 
+we recover the following fields:
+\begin{center}
+\includegraphics[width=8cm]{images/gravity_benchmark2/g0.pdf}
+\includegraphics[width=8cm]{images/gravity_benchmark2/U0.pdf}
+\end{center}
+
+These are similar to the results presented in Appendix A of \textcite{thie18}.
 
 
 
