@@ -663,6 +663,86 @@ for i in range(0,NV):
 Note that in our case $\rho_0=1$ and $g_0=1$ so that in fact the dynamic topography 
 is simply $-\sigma_{rr}$.
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Thoughts about computing gravity inside the domain}
+
+Following Appendix A of \textcite{thie18}, the gravity and
+gravity potential of a hollow sphere of constant 
+density is given by:
+\[
+g(r)=\frac{{\cal G}M}{r^2}
+\qquad
+U(r)=-\frac{{\cal G}M}{r}
+\]
+for $r\ge R_2$, by 
+\[
+g(r)=\frac{4 \pi}{3} {\cal G} \rho_0 (r-\frac{R_1^3}{r^2})
+\qquad
+U(r)=\frac{4\pi}{3}{\cal G} \rho_0 \left( \frac{r^2}{2}+ \frac{R_1^3}{r} \right)
+-2 \pi \rho_0 {\cal G}R_2^2
+\]
+for $R_1\le r \le R_2$ and by 
+\[
+g(r)=0
+\qquad
+U(r)=2\pi {\cal G} \rho_0 (R_1^2-R_2^2)
+\]
+for $r\le R_1$.
+
+
+We start from 
+\[
+\Delta U = 4 \pi \rho {\cal G}
+\]
+or 
+\[
+\vec\nabla \cdot \vec\nabla  U = 4 \pi \rho {\cal G}
+\]
+In cylindrical coordinates we have
+\[
+\vec\nabla\cdot \vec{g} 
+= \frac{1}{r} \frac{\partial }{\partial r} (r g_r) 
++\frac{\partial g_z}{\partial z}  = 4\pi \rho {\cal G}
+\]
+or, 
+\[
+\frac{g_r}{r} + \frac{\partial g_r}{\partial r} 
++\frac{\partial g_z}{\partial z}  = \hat{\rho}
+\]
+It would be tempting to go ahead and try to establish the 
+weak form of this equations since it is $\vec{g}$ we would 
+like to compute and not $U$, BUT it is hopeless as the equation 
+itself is not well posed. We have 2 unknowns and only one equation!
+
+Let us denote $\hat{\rho}=4\pi {\cal G} \rho$ and start again from 
+\[
+\Delta U = \hat{\rho}
+\]
+We could look at the expression for the Laplace operator
+in cylindrical coordinates but we recognise the same type of 
+PDE as the steady state heat diffusion equation, so we
+will adopt the same methodology, i.e. multiplying by a test function
+$W$, integrating over the domain and then integrating by parts.
+\[
+\int_V W \Delta U dV = \int_V W \hat{\rho} dV
+\]
+\[
+- \int_V \vec\nabla W \cdot \vec\nabla U dV = \int_V W \hat{\rho} dV + rhs
+\]
+However, let us think a bit more about the boundary conditions in the 
+case where the solution is not known. 
+On the inner boundary we have $g=0$ for a hollow sphere, 
+i.e. $vec\nabla U\cdot \vec{n}=0$, 
+which we get for free by not imposing any Dirichlet bc on this boundary.
+On the outer boundary, we are facing a problem: we do not know what $U$
+is, so we can't prescribe it (no Dirichlet bc), and we don't know 
+what its derivative is (i.e. the gravity vector) so no Neumann bc possible.
+The inescapable conclusion is that *if* we would want to 
+use FE to compute the gravity fields, we would need a very large domain 
+($r\rightarrow \infty$) where we could prescribe $U\simeq 0$ there.
+
+
 
 
 \newpage

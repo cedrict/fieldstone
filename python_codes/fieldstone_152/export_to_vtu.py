@@ -253,6 +253,11 @@ def export_solutionQ2_to_vtu(istep,NV,nel,xV,yV,vel_unit,u,v,viscosity_nodal,\
        vtufile.write("%e \n" %viscosity_nodal[i])
    vtufile.write("</DataArray>\n")
    #--
+   #vtufile.write("<DataArray type='Float32' Name='grav. pot.' Format='ascii'> \n")
+   #for i in range(0,NV):
+   #    vtufile.write("%e \n" %U[i])
+   #vtufile.write("</DataArray>\n")
+   #--
    vtufile.write("<DataArray type='Float32' Name='hull' Format='ascii'> \n")
    for i in range(0,NV):
        if hull[i]:

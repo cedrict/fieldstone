@@ -3,7 +3,7 @@ clean their code too?
 remove call to math
 bottom free slip
 better advection?
-
+change y for z in stone
 self-gravittation?
 
 aspect with GMG ?

@@ -5,6 +5,7 @@ import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg import *
 import time as timing
+import matplotlib.pyplot as plt
 from scipy import sparse
 from numba import jit
 
@@ -28,6 +29,11 @@ axisymmetric=True
 surface_free_slip=True
 
 solve_stokes=False
+
+use_elemental_density=False
+use_elemental_viscosity=False
+
+self_gravitation=False # do not use!
 
 ###############################################################################
 # list of available Earth density and viscosity profiles
@@ -112,7 +118,7 @@ else:
    # exp=2: blob
    # exp=3: pancake pi/8
    exp         = 1
-   nelr        = 256 # Q1 cells!
+   nelr        = 24 # Q1 cells!
    visu        = 1
    nqperdim    = 3
    mapping     = 'Q2' 
@@ -1102,6 +1108,8 @@ for istep in range(0,nstep):
     radq  = np.zeros(nel*nqel,dtype=np.float64) 
     thetaq  = np.zeros(nel*nqel,dtype=np.float64) 
     zq  = np.zeros(nel*nqel,dtype=np.float64) 
+    rhoq = np.zeros(nel*nqel,dtype=np.float64) 
+    etaq = np.zeros(nel*nqel,dtype=np.float64) 
 
     counterq=0
     jcb=np.zeros((2,2),dtype=np.float64)
@@ -1126,6 +1134,18 @@ for istep in range(0,nstep):
             area[iel]+=jcob*weightq
             massq[counterq]=density_elemental[iel]*weightq*jcob*2*np.pi*xq
             if xq>0: vol[iel]+=jcob*weightq*2*np.pi*xq
+
+            if use_elemental_density:
+               rhoq[counterq]=density_elemental[iel]
+            else:
+               rhoq[counterq]=density(xq,yq,R1,R2,kk,rho_m,rho_model,\
+                                      exp,rhoblobstar,yblob,Rblob)
+
+            if use_elemental_viscosity:
+               etaq[counterq]=viscosity_elemental[iel]
+            else:
+               etaq[counterq]=viscosity(xq,yq,R1,R2,eta_m,eta_model)
+
             counterq+=1
        #end for
     #end for
@@ -1140,6 +1160,8 @@ for istep in range(0,nstep):
     print("     -> total volume (meas) %.12e | nel= %d" %(vol.sum(),nel))
     print("     -> total volume (anal) %.12e" %(4*np.pi/3*(R2**3-R1**3)))
 
+    print("     -> rhoq (m,M) %.6e %.6e " %(np.min(rhoq),np.max(rhoq)))
+    print("     -> etaq (m,M) %.6e %.6e " %(np.min(etaq),np.max(etaq)))
     print("     -> total mass (meas) %.12e | nel= %d" %(np.sum(density_elemental*vol),nel))
     
     print("compute elements areas: %.3f s" % (timing.time() - start))
@@ -1238,19 +1260,14 @@ for istep in range(0,nstep):
                    N_mat[0,i]=NNNP[i]
                    N_mat[1,i]=NNNP[i]
 
-            #K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq,yq,R1,R2,eta_model)*coeffq
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity_elemental[iel]*coeffq
+            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq[counterq]*coeffq
 
             G_el-=b_mat.T.dot(N_mat)*coeffq
 
-            # compute elemental rhs vector
-            rhoq=density_elemental[iel]
             for i in range(0,mV):
-                f_el[ndofV*i  ]+=NNNV[i]*coeffq*gx(xq,yq,g0)*rhoq
-                f_el[ndofV*i+1]+=NNNV[i]*coeffq*gy(xq,yq,g0)*rhoq
+                f_el[ndofV*i  ]+=NNNV[i]*coeffq*gx(xq,yq,g0)*rhoq[counterq]
+                f_el[ndofV*i+1]+=NNNV[i]*coeffq*gy(xq,yq,g0)*rhoq[counterq]
             #end for 
-
-            #massq[counterq]=rhoq*coeffq
 
             counterq+=1
 
@@ -1936,6 +1953,112 @@ for istep in range(0,nstep):
     print("compute errors (%.3fs)" % (timing.time() - start))
 
     ###############################################################################
+    # compute self gravity field inside the planet based on rho(r,theta)
+    # solving Poisson's equation for the gravitational potential U
+    ###############################################################################
+
+    if self_gravitation:
+
+       Ubc=self_U(R1,R1,R2,rho_m)
+
+       B_mat=np.zeros((2,mV),dtype=np.float64)
+       A_mat=np.zeros((NV,NV),dtype=np.float64) # FE matrix 
+       rhs=np.zeros(NV,dtype=np.float64) 
+
+       counterq=0
+       for iel in range(0,nel):
+           a_el=np.zeros((mV,mV),dtype=np.float64)
+           b_el=np.zeros(mV,dtype=np.float64)
+
+           for kq in range(0,nqel):
+               rq=qcoords_r[kq]
+               sq=qcoords_s[kq]
+               weightq=qweights[kq]
+
+               #compute coords of quadrature points
+               NNNV=NNN(rq,sq,mapping)
+               xq=np.dot(NNNV[:],xmapping[:,iel])
+               yq=np.dot(NNNV[:],ymapping[:,iel])
+
+               #compute jacobian matrix
+               dNNNVdr=dNNNdr(rq,sq,mapping)
+               dNNNVds=dNNNds(rq,sq,mapping)
+               jcb[0,0]=np.dot(dNNNVdr[:],xmapping[:,iel])
+               jcb[0,1]=np.dot(dNNNVdr[:],ymapping[:,iel])
+               jcb[1,0]=np.dot(dNNNVds[:],xmapping[:,iel])
+               jcb[1,1]=np.dot(dNNNVds[:],ymapping[:,iel])
+               jcob=np.linalg.det(jcb)
+               jcbi=np.linalg.inv(jcb)
+
+               #basis functions
+               NNNV=NNN(rq,sq,'Q2')
+               dNNNVdr=dNNNdr(rq,sq,'Q2')
+               dNNNVds=dNNNds(rq,sq,'Q2')
+
+               # compute dNdx & dNdy
+               for k in range(0,mV):
+                   dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                   dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+               #end for 
+               B_mat[0,0:mV]=dNNNVdx[:]
+               B_mat[1,0:mV]=dNNNVdy[:]
+
+               coeffq=weightq*jcob #*2*np.pi*xq
+
+               a_el+=B_mat.T.dot(B_mat)*coeffq
+
+               b_el+=NNNV*4*np.pi*Ggrav*rhoq[counterq]*coeffq
+
+               counterq+=1
+
+           #end for kq
+
+           # apply boundary conditions
+           for k1 in range(0,mV):
+               m1=iconV[k1,iel]
+               if cmbV[m1]:
+                  Aref=a_el[k1,k1]
+                  for k2 in range(0,mV):
+                      m2=iconV[k2,iel]
+                      b_el[k2]-=a_el[k2,k1]*Ubc
+                      a_el[k1,k2]=0
+                      a_el[k2,k1]=0
+                  #end for
+                  a_el[k1,k1]=Aref
+                  b_el[k1]=Aref*Ubc
+               #end for
+           #end for
+
+           # assemble matrix A_mat and right hand side rhs
+           for k1 in range(0,mV):
+               m1=iconV[k1,iel]
+               for k2 in range(0,mV):
+                   m2=iconV[k2,iel]
+                   A_mat[m1,m2]+=a_el[k1,k2]
+               #end for
+               rhs[m1]+=b_el[k1]
+           #end for
+
+       #end for iel
+
+       #plt.spy(A_mat)
+       #plt.savefig('matrix.pdf', bbox_inches='tight')
+
+       U = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
+
+       U_th=np.zeros(NV,dtype=np.float64) 
+       for i in range(0,NV):
+           U_th[i] = self_U(rad[i],R1,R2,rho_m)
+
+       np.savetxt('grav_pot_{:04d}.ascii'.format(istep),np.array([xV,yV,U,U_th,rad]).T)
+
+    else:
+
+       U=np.zeros(NV,dtype=np.float64) 
+
+    print("     -> U (m,M) %.4e %.4e " %(np.min(U),np.max(U)))
+
+    ###############################################################################
     # plot of solution
     ###############################################################################
     start = timing.time()
@@ -2045,34 +2168,44 @@ for istep in range(0,nstep):
     # export the nel_phi slices as vtu file for educational purposes
     ###############################################################################
 
-    export_slices(nel_phi,NV,nel,rad,theta,iconV,density_elemental)
+    #export_slices(nel_phi,NV,nel,rad,theta,iconV,density_elemental)
+
+
+
+
+
+
+
+
 
     ###############################################################################
     # mesh advection
     ###############################################################################
     start = timing.time()
 
-    if debug:
-       np.savetxt('grid_before_advection_{:04d}.ascii'.format(istep),np.array([xV,yV]).T,header='# x,y')
+    if nstep>1:
 
-    for i in range(0,NV): 
-        if not surfaceV[i]:
-           xV[i]+=u[i]*dt
-           yV[i]+=v[i]*dt
+       if debug:
+          np.savetxt('grid_before_advection_{:04d}.ascii'.format(istep),np.array([xV,yV]).T,header='# x,y')
 
-    for iel in range(0,nel):
-        xP[iconP[0,iel]]=xV[iconV[0,iel]]
-        xP[iconP[1,iel]]=xV[iconV[1,iel]]
-        xP[iconP[2,iel]]=xV[iconV[2,iel]]
-        xP[iconP[3,iel]]=xV[iconV[3,iel]]
-        yP[iconP[0,iel]]=yV[iconV[0,iel]]
-        yP[iconP[1,iel]]=yV[iconV[1,iel]]
-        yP[iconP[2,iel]]=yV[iconV[2,iel]]
-        yP[iconP[3,iel]]=yV[iconV[3,iel]]
+       for i in range(0,NV): 
+           if not surfaceV[i]:
+              xV[i]+=u[i]*dt
+              yV[i]+=v[i]*dt
 
-    if debug:
-       np.savetxt('grid_after_advection_{:04d}.ascii'.format(istep),np.array([xV,yV]).T,header='# x,y')
-       np.savetxt('grid_distortion_{:04d}.ascii'.format(istep),np.array([xV,yV,u*dt,v*dt]).T,header='# x,y')
+       for iel in range(0,nel):
+           xP[iconP[0,iel]]=xV[iconV[0,iel]]
+           xP[iconP[1,iel]]=xV[iconV[1,iel]]
+           xP[iconP[2,iel]]=xV[iconV[2,iel]]
+           xP[iconP[3,iel]]=xV[iconV[3,iel]]
+           yP[iconP[0,iel]]=yV[iconV[0,iel]]
+           yP[iconP[1,iel]]=yV[iconV[1,iel]]
+           yP[iconP[2,iel]]=yV[iconV[2,iel]]
+           yP[iconP[3,iel]]=yV[iconV[3,iel]]
+
+       if debug:
+          np.savetxt('grid_after_advection_{:04d}.ascii'.format(istep),np.array([xV,yV]).T,header='# x,y')
+          np.savetxt('grid_distortion_{:04d}.ascii'.format(istep),np.array([xV,yV,u*dt,v*dt]).T,header='# x,y')
 
     print("advection step (%.3fs)" % (timing.time() - start))
 

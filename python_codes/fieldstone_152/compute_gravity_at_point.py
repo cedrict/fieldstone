@@ -31,4 +31,25 @@ def compute_gravity_at_point(xM,zM,nel,nqel,zq,radq,thetaq,massq,nel_phi):
     return gx/(2*np.pi)*dphi,gy/(2*np.pi)*dphi,gz/(2*np.pi)*dphi
 
 ###############################################################################
+# analytical solution for g and U, hollow sphere, see Thieulot 2018
+###############################################################################
 
+def self_U(r,R1,R2,rho0):
+    if r<=R1:
+       val=2*np.pi*Ggrav*rho0*(R1**2-R2**2)
+    elif r<=R2:
+       val=4*np.pi/3*Ggrav*rho0*(r**2/2+R1**3/r)-2*np.pi*rho0*Ggrav*R2**2
+    else:
+       val=-4*np.pi/3*rho0*(R2**3-R1**3)*Ggrav/r
+    return val
+
+def self_g(r,R1,R2,rho0):
+    if r<=R1:
+       val=0
+    elif r<=R2:
+       val=4*np.pi/3*rho0*(r-R1**3/r**2)*Ggrav
+    else:
+       val=4*np.pi/3*rho0*(R2**3-R1**3)*Ggrav/r**2
+    return val
+
+###############################################################################
