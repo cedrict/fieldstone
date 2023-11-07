@@ -3,7 +3,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_18/keywords.ascii}
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_18/keywords.key}
 
 \begin{center}
 \inpython
@@ -13,9 +13,7 @@
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection*{Donea \& Huerta benchmark}
-The details of the numerical setup are presented in Section \ref{MMM-mms1}.
-
+The code relies on \QtwoQone elements.
 Each element has $m_V=9$ vertices so in total $ndof_V\times m_V=18$ velocity dofs and 
 $ndof_P*m_P=4$ pressure dofs. The total number of 
 velocity dofs is therefore $NfemV=NV \times ndofV$ while the total number of
@@ -24,13 +22,17 @@ pressure dofs is $NfemP=NP\times ndofP$. The total number of dofs is then $Nfem=
 As a consequence, matrix $\K$ has size $NfemV,NfemV$ and matrix $\G$ has size $NfemV,NfemP$.
 Vector $f$ is of size $NfemV$ and vector $h$ is of size $NfemP$.  
 
-The pressure nullspace is removed in two different ways:
-(i) by setting $p=p_{th}(L_x,L_y)=-1/6$ on the last node, or (ii)
+When needed the pressure nullspace is removed 
 by imposing (Lagrange multiplier) that $\int_\Omega p \; dV=0$.
 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_18/images/q2q1setup}
 \end{center}
+
+%-----------------------------------------
+\subsection*{Donea \& Huerta benchmark}
+The details of the numerical setup are presented in Section \ref{MMM-mms1}.
+It is triggered by setting {\python bench=1}.
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_18/results/mms/vel}
@@ -46,7 +48,7 @@ techniques. The zero average pressure approach yields smaller errors.}
 
 
 %-----------------------------------------
-\subsubsection*{Burman \& Hansbo manufactured solution}
+\subsection*{Burman \& Hansbo manufactured solution}
 
 The details of the numerical setup are presented in Section \ref{MMM-ss:mms_buha06}.
 
@@ -65,9 +67,10 @@ No good reason to run such higher numbers of quadrature points.
 
 
 %-----------------------------------------
-\subsubsection*{Stokes sphere benchmark}
+\subsection*{Stokes sphere benchmark}
 
 The setup is described in Section~\ref{MMM-ss:stokes_sphere2D}.
+It is triggered by setting {\python bench=2}.
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_18/results/sphere/vel}
@@ -77,11 +80,12 @@ quadrature points per element.}
 \end{center}
 
 %-----------------------------------------
-\subsubsection*{Sinking block benchmark}
+\subsection*{Sinking block benchmark}
 
 The setup is described in Section~\ref{MMM-ss:sinking_block}.
+It is triggered by setting {\python bench=3}.
 
-\paragraph{Free slip boundary conditions (FS)}
+\subsubsection*{Free slip boundary conditions (FS)}
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_18/results/block/FS/vel}
@@ -105,9 +109,7 @@ quadrature points per element.}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/block/profile_p_FS}
 \end{center}
 
-\paragraph{No slip boundary conditions (NS)}
-
-
+\subsubsection*{No slip boundary conditions (NS)}
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/block/profile_u_NS}
