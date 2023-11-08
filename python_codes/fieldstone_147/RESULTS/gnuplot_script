@@ -1,0 +1,57 @@
+#
+set terminal pdf enhanced font "Times,12pt" ps .23
+set grid
+set log xy
+set xlabel 'nel'
+set ylabel 'time (s)'
+set output 'solve.pdf'
+set key outside
+plot[][]\
+'solve_1.ascii'  u 6:3 w lp lt 1 t 'solver=1 (SPSOLVE)',\
+'solve_2.ascii'  u 6:3 w lp lt 2 t 'solver=2 (GMRES)',\
+'solve_3.ascii'  u 6:3 w lp lt 3 t 'solver=3 (LGMRES)',\
+'solve_4.ascii'  u 6:3 w lp lt 4 t 'solver=4 (SCHUR CPL)',\
+'solve_6.ascii'  u 6:3 w lp lt 6 t 'solver=6 (QMR)',\
+'solve_8.ascii'  u 6:3 w lp lt 8 t 'solver=8 (GCROTMK)',\
+'solve_9.ascii'  u 6:3 w lp lt 9 t 'solver=9 (BICG)',\
+'solve_11.ascii'  u 6:3 w lp lt 11 t 'solver=11 (UMFPACK)',\
+x**2/100000 lt -1 dt 2,\
+x/5000 lt -1 dt 3 
+
+set ylabel 'error'
+set xlabel 'h'
+set output 'errors.pdf'
+plot[0.005:][:0.01]\
+'errors_1.ascii' u (1/sqrt($3)):6 w lp lt 1 t 'solver=1 (SPSOLVE)',\
+'errors_2.ascii' u (1/sqrt($3)):6 w lp lt 2 t 'solver=2 (GMRES)',\
+'errors_3.ascii' u (1/sqrt($3)):6 w lp lt 3 t 'solver=3 (LGMRES)',\
+'errors_4.ascii' u (1/sqrt($3)):6 w lp lt 4 t 'solver=4 (SCHUR CPL)',\
+'errors_5.ascii' u (1/sqrt($3)):6 w lp lt 5 t 'solver=5 (MINRES)',\
+'errors_6.ascii' u (1/sqrt($3)):6 w lp lt 6 t 'solver=6 (QMR)',\
+'errors_8.ascii' u (1/sqrt($3)):6 w lp lt 8 t 'solver=8 (GCROTMK)',\
+'errors_9.ascii' u (1/sqrt($3)):6 w lp lt 9 t 'solver=9 (BICG)',\
+'errors_11.ascii' u (1/sqrt($3)):6 w lp lt 11 t 'solver=11 (UMFPACK)',\
+'errors_1.ascii' u (1/sqrt($3)):9 w lp lt 1 notitle,\
+'errors_2.ascii' u (1/sqrt($3)):9 w lp lt 2 notitle,\
+'errors_3.ascii' u (1/sqrt($3)):9 w lp lt 3 notitle,\
+'errors_4.ascii' u (1/sqrt($3)):9 w lp lt 4 notitle,\
+'errors_5.ascii' u (1/sqrt($3)):9 w lp lt 5 notitle,\
+'errors_6.ascii' u (1/sqrt($3)):9 w lp lt 6 notitle,\
+'errors_8.ascii' u (1/sqrt($3)):9 w lp lt 8 notitle,\
+'errors_9.ascii' u (1/sqrt($3)):9 w lp lt 9 notitle,\
+'errors_11.ascii' u (1/sqrt($3)):9 w lp lt 11 notitle,\
+x**3/50 lt -1 dt 2 t 'h^3',\
+x**2/50 lt -1 dt 2 t 'h^2'
+
+
+
+unset log x
+set xlabel 'iteration #k'
+set ylabel 'xi'
+set output 'convergence_schur_cpl.pdf'
+plot[][]\
+'solver_convergence_4_8.ascii'  u 1:2 w lp t 'nelx=8',\
+'solver_convergence_4_16.ascii' u 1:2 w lp t 'nelx=16',\
+'solver_convergence_4_24.ascii' u 1:2 w lp t 'nelx=24',\
+'solver_convergence_4_32.ascii' u 1:2 w lp t 'nelx=32',\
+'solver_convergence_4_40.ascii' u 1:2 w lp t 'nelx=40',\
