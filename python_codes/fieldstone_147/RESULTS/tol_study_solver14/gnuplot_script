@@ -1,0 +1,36 @@
+#
+set terminal pdf enhanced font "Times,12pt" ps .2 lw .6
+set grid
+set log xy
+set key outside
+
+set ylabel 'error in L_2 norm'
+set xlabel 'h'
+set output 'errors.pdf'
+plot[][]\
+'tol1e-4/errors.ascii' u (1/sqrt($3)):6 w lp lt 1 t 'tol=1e-4',\
+'tol1e-4/errors.ascii' u (1/sqrt($3)):9 w lp lt 1 t 'tol=1e-4',\
+'tol1e-5/errors.ascii' u (1/sqrt($3)):6 w lp lt 2 t 'tol=1e-5',\
+'tol1e-5/errors.ascii' u (1/sqrt($3)):9 w lp lt 2 t 'tol=1e-5',\
+'tol1e-6/errors.ascii' u (1/sqrt($3)):6 w lp lt 3 t 'tol=1e-6',\
+'tol1e-6/errors.ascii' u (1/sqrt($3)):9 w lp lt 3 t 'tol=1e-6',\
+'tol1e-7/errors.ascii' u (1/sqrt($3)):6 w lp lt 4 t 'tol=1e-7',\
+'tol1e-7/errors.ascii' u (1/sqrt($3)):9 w lp lt 4 t 'tol=1e-7',\
+'tol1e-8/errors.ascii' u (1/sqrt($3)):6 w lp lt 5 t 'tol=1e-8',\
+'tol1e-8/errors.ascii' u (1/sqrt($3)):9 w lp lt 5 t 'tol=1e-8',\
+x**3/50 lt -1 dt 2 t 'h^3',\
+x**2/10 lt -1 dt 2 t 'h^2'
+
+#############################################################
+
+set xlabel 'nel'
+set ylabel 'solve time (s)'
+set output 'solve.pdf'
+set key outside
+plot[][]\
+'tol1e-4/solve.ascii'  u 6:3 w lp lt 1 t 'tol=1e-4',\
+'tol1e-5/solve.ascii'  u 6:3 w lp lt 2 t 'tol=1e-5',\
+'tol1e-6/solve.ascii'  u 6:3 w lp lt 3 t 'tol=1e-6',\
+'tol1e-7/solve.ascii'  u 6:3 w lp lt 4 t 'tol=1e-7',\
+'tol1e-8/solve.ascii'  u 6:3 w lp lt 5 t 'tol=1e-8',\
+x**1.42/50000 lt -1 dt 3 t 'x^{1.42}' 
