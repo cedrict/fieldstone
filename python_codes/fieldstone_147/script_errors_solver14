@@ -1,0 +1,23 @@
+#!/bin/bash
+
+rm statistics*.ascii
+rm errors*.ascii
+rm solve*.ascii
+
+nq=3
+
+for res in 8 12 16 20 24 28 32 40 48 56 64 96 112 128 144 160 176 192; do
+
+    for solver in 14 ; do 
+
+        echo $res x $res  solver=$solver
+
+        python3 stone.py $res $res 0 $nq $solver > opla
+
+        grep errv opla >> errors.ascii
+        grep bench opla >> statistics.ascii
+        grep solve opla >> solve.ascii
+
+    done
+
+done

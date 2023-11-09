@@ -9,7 +9,7 @@
 
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_147/text.tex}} \end{flushright}
 
-%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/template_keywords.key}
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_147/keywords.key}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -23,30 +23,75 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The idea behind this \stone is the comparison of various approaches to solve the 
-Stokes system.
-We have three methods:
+Stokes system. We here consider simple setups in a 2D rectangular domain. 
+The code relies on the \QtwoQone element pair.
+and is based on \stone~\ref{f18}.
+
+In almost all previous stones I have used {\python spsolve} to solve the linear system
+but looking online we find that there are many more methods 
+available\footnote{\url{https://docs.scipy.org/doc/scipy/reference/sparse.linalg.html}}.
+Of all available I highlight the following ones:
+
 \begin{itemize}
-\item build the system as a single (sparse) two-dimensional array and use 
-spsolve\footnote{\url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.spsolve.html}}. It looks like it is the SuperLU solver\footnote{\url{https://caam37830.github.io/book/02_linear_algebra/sparse_linalg.html}} 
-\item use UMFPACK option of spsolve
-\item build the system as a single (sparse) two-dimensional array and use (l)gmres;
-\item build the $\K$ and $\G$ blocks and use conjugate gradient method on 
-the Schur complement equation ('SC-CG'), as explained in Section~\ref{MMM-ss:schurpcg}.
-This solver is is {\tt schur\_complement\_cg\_solver.py}
+\item Direct methods for linear equation systems
+\begin{itemize}
+\item {\python spsolve}:  
+It looks like it is the SuperLU solver\footnote{\url{https://caam37830.github.io/book/02_linear_algebra/sparse_linalg.html}}. 
+\item {\python spsolve+UMFPACK}: ({\python solver=11}) 
 \end{itemize}
-All three methods should also be used with a preconditioner.
+\item Iterative methods for linear equation systems:
+\begin{itemize}
+\item {\python bicg}(A, b[, x0, tol, maxiter, M, callback, atol]) ({\python solver=9})
+\item {\python bicgstab}(A, b[, x0, tol, maxiter, M, ...]) ({\python solver=10})
+\item {\python cg}(A, b[, x0, tol, maxiter, M, callback, atol])
+\item {\python cgs}(A, b[, x0, tol, maxiter, M, callback, atol])  ({\python solver=12})
+\item {\python gmres}(A, b[, x0, tol, restart, maxiter, M, ...]) ({\python solver=2})
+\item {\python lgmres}(A, b[, x0, tol, maxiter, M, ...]) ({\python solver=3})
+\item {\python minres}(A, b[, x0, shift, tol, maxiter, M, ...]) ({\python solver=5})
+\item {\python qmr}(A, b[, x0, tol, maxiter, M1, M2, ...]) ({\python solver=6})
+\item {\python gcrotmk}(A, b[, x0, tol, maxiter, M, ...]) ({\python solver=8})
+\item {\python tfqmr}(A, b[, x0, tol, maxiter, M, callback, ...]) ({\python solver=7})
+\end{itemize}
+\end{itemize}
 
-This \stone is \stone~\ref{f18}.
+If we build the system as a single (sparse) two-dimensional array 
+we can right away rule out {\python cg} which requires 
+a SPD matrix\footnote{\url{https://en.wikipedia.org/wiki/Conjugate_gradient_method}}. 
+We will then try all the other ones.
 
-%==================================
-\section*{Without preconditioner}
+Additionally we can build the $\K$ and $\G$ blocks and use conjugate gradient method on 
+the Schur complement equation ('SC-CG'), as explained in Section~\ref{MMM-ss:schurpcg}.
+This solver is implemented in {\tt schur\_complement\_cg\_solver.py}.
+It requires an inner solver called once per iteration on the $\K$ block.
+We then have the choice between using a direct solver ({\python solver=4})
+or using a conjugate gradient
+approach since $\K$ is SPD ({\python solve=13}). 
+By using CG we pretty much ensure that memory 
+requirements remain very low.
+Another variant consists in acknowledging that inside the iterations the 
+block $\K$ does not change, so that we can compute its LU decomposition
+and use this decomposition every time that we need to solve a linear
+system with $\K$. This is {\python solver=14}. 
+This option means that the LU factors are stored in the memory longer than in the standard
+case but with equal memory use.
+
+All these methods should also be used with a preconditioner, which we will 
+investigate later on.
+
+Iterative solver require a tolerance value and it is set to 1e-7 unless mentioned
+otherwise.
+
+\newpage
+%====================================================
+\section*{Donea \& Huerta mms Without preconditioner}
 
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_147/RESULTS/errors.pdf}
 \end{center}
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_147/RESULTS/solve.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/solve.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/solve2.pdf}\\
 {\captionfont Time to solve linear system. Only results for usable solvers are shown.}
 \end{center}
 
@@ -55,21 +100,84 @@ This \stone is \stone~\ref{f18}.
 {\captionfont Convergence of the SC-CG solver as function of resolution.}
 \end{center}
 
+On the following figure I plot the velocity and pressure errors for SC-CG+ilu solver 
+for different values of the relative tolerance. We find that the solve time is not 
+much influenced by the tolerance, but unsurprisingly the accuracy of the solution is: 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_147/RESULTS/tol_study_solver4/errors.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/tol_study_solver14/errors.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/tol_study_solver14/solve.pdf}\\
 {\captionfont Influence of the relative tolerance on the accuracy of the solution obtained 
-with the SC-CG solver.}
+with the SC-CG+ilu ({\python solver=14}).}
 \end{center}
+It appears that a relative tolerance of 1e-6 is enough, but I set it to 1e-7 default
+to be on the safe side (when looking closley at high resolution it looks like the 
+blue curve of 1e-6  seems to separate from the orange one from 1e-7).
+
 
 Conclusions:
 
 \begin{itemize}
-\item my own Schur complement CG solver rivals other LINALG solvers 
-\item MINRES, even with very low tolerance, ultimately fails
-\item TFQMR simply no
-\item BICGSTAB simply no
-\item GCROTMK usable but slowest, also crashes sometimes
+\item direct method spsolve about 10x faster than all others (except solver 14!)
+\item UMFPACK option in spsolve does not yield substantial differences
+\item my own Schur complement CG solver rivals other LINALG solvers (solver 4, 13) ! 
+\item MINRES, even with very low tolerance 1e-10, ultimately fails
+\item LGMRES seems to work fine, very similar to GMRES but does not always converge.
+\item TFQMR, BICGSTAB, CGS are out: they fail to converge and/or return 
+very wrong results
+\item GCROTMK usable but slowest, also fails at high resolution 
+\item number of iterations of SC-CG is independent of resolution, as expected
+from a stable element pair (for isoviscous flow)
+\item solve time for iterative method rather comparable, no clear best
+\item SC-CG with direct or cg inner solve are comparable in terms of 
+solve time. There is still something wrong about my having to 
+set tol of cg extremely low, and even then it ends up crashing at nel=52 ...
+\item my own SC-CG+ilu is faster than spsolve!
 \end{itemize}
+
+In the end, I keep SPSOLVE, SC-CG, GMRES, QMR, BICG.
+
+\newpage
+%====================================================
+\section*{Donea \& Huerta mms With preconditioner}
+
+Following this site\footnote{\url{https://caam37830.github.io/book/02_linear_algebra/sparse_linalg.html}}
+we build an ILU preconditioner as follows:
+\begin{lstlisting}
+ILUfact = sla.spilu(sparse_matrix)
+M = sla.LinearOperator(
+    shape = sparse_matrix.shape,
+    matvec = lambda b: ILUfact.solve(b))
+\end{lstlisting}
+However, I find that the preconditioner does not work with gmres, minres, cg, ...
+
+This means that I need to build my own preconditioner. 
+For the SC-CG 
+
+We have designed X preconditioners:
+\begin{itemize}
+\item {\tt precond\_type=0} It is the unit matrix (so it does nothing). 
+%\item {\tt precond\_type=1} This is a very simple one as it is
+%diagonal and built element by element:
+%\[
+%M_{e,e} = \frac{h_x h_y}{\eta_e} 
+%\]
+%where $e$ is an element and $\eta_e$ the viscosity evaluated in its center. Note that 
+%averages based on quadrature point values could also be considered (or any other kind of projection).
+
+\item {\tt precond\_type=2}
+\[
+{\bm M} = \G^T (diag [\K]  )^{-1} \G 
+\]
+\item {\tt precond\_type=3} 
+\[
+{\bm M} = diag \left[ \G^T (diag [\K]  )^{-1} \G \right]
+\]
+\item {\tt precond\_type=4} Same as 2, but instead of using the 
+diagonal of $ \G^T (diag [\K]  )^{-1} \G$ we lump the matrix instead.
+
+\end{itemize}
+
+{\Large unfinished}
 
 
 

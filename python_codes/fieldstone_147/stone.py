@@ -2,10 +2,11 @@ import numpy as np
 import sys as sys
 import scipy.sparse as sps
 from scipy.sparse.linalg import *
-from scipy.sparse import csr_matrix, lil_matrix
+from scipy.sparse import csr_matrix,csc_matrix,lil_matrix
 import scipy 
 import time as time
 from schur_complement_cg_solver import *
+import scipy.sparse.linalg as sla
 
 ###############################################################################
 # 1: donea & huerta
@@ -168,11 +169,11 @@ if int(len(sys.argv) == 6):
    nqperdim = int(sys.argv[4])
    solver = int(sys.argv[5])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 192
+   nely = 192
    visu = 1
    nqperdim=3
-   solver=11
+   solver=1
     
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
@@ -193,7 +194,7 @@ bench=1
 
 use_precond=False
 precond_type=0
-tolerance=1e-7
+tolerance=1e-8
 niter_max=100
 
 ###########################################################
@@ -446,18 +447,17 @@ print("setup: boundary conditions: %.3f s" % (time.time() - start))
 ###############################################################################
 start = time.time()
 
-a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)   # matrix of Ax=b
 K_mat = lil_matrix((NfemV,NfemV),dtype=np.float64) # matrix K 
 G_mat = lil_matrix((NfemV,NfemP),dtype=np.float64) # matrix GT
-f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
-h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
-
-b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
-N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
-dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVdr = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+f_rhs = np.zeros(NfemV,dtype=np.float64)           # right hand side f 
+h_rhs = np.zeros(NfemP,dtype=np.float64)           # right hand side h 
+b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64)  # gradient matrix B 
+N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64)  # matrix  
+dNNNVdx = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
+dNNNVdy = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
+dNNNVdr = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
+dNNNVds = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 for iel in range(0,nel):
@@ -586,11 +586,16 @@ start = time.time()
 rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
-#a_mat[0:NfemV,0:NfemV]=K_mat
-#a_mat[0:NfemV,NfemV:Nfem]=G_mat
-#a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
 
 print("assemble blocks: %.3f s" % (time.time() - start))
+
+######################################################################
+# compute preconditioner
+
+Mprec = lil_matrix((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+for i in range(0,Nfem):
+    Mprec[i,i]=10
+Mprec=csr_matrix(Mprec)
 
 ######################################################################
 # compute Schur preconditioner
@@ -599,22 +604,22 @@ start = time.time()
 
 M_mat = lil_matrix((NfemP,NfemP),dtype=np.float64)  # matrix of Ax=b
    
-if precond_type==0:
-   for i in range(0,NfemP):
-       M_mat[i,i]=1
+#if precond_type==0:
+#   for i in range(0,NfemP):
+#       M_mat[i,i]=1
 
-if precond_type==1:
-   for iel in range(0,nel):
-       M_mat[iel,iel]=hx*hy/eta(xc[iel],yc[iel])
+#if precond_type==1:
+#   for iel in range(0,nel):
+#       M_mat[iel,iel]=hx*hy/eta(xc[iel],yc[iel])
 
 if precond_type==2:
-   Km1    = np.zeros((NfemV,NfemV),dtype=np.float64) 
+   Km1 = np.zeros((NfemV,NfemV),dtype=np.float64) 
    for i in range(0,NfemV):
        Km1[i,i]=1./K_mat[i,i] 
    M_mat=G_mat.T.dot(Km1.dot(G_mat))
 
 if precond_type==3:
-   Km1    = np.zeros((NfemV,NfemV),dtype=np.float64) 
+   Km1 = np.zeros((NfemV,NfemV),dtype=np.float64) 
    for i in range(0,NfemV):
        Km1[i,i]=1./K_mat[i,i] 
    M_mat=G_mat.T.dot(Km1.dot(G_mat))
@@ -624,7 +629,7 @@ if precond_type==3:
               M_mat[i,j]=0.
 
 if precond_type==4:
-   Km1    = np.zeros((NfemV,NfemV),dtype=np.float64) 
+   Km1 = np.zeros((NfemV,NfemV),dtype=np.float64) 
    for i in range(0,NfemV):
        Km1[i,i]=1./K_mat[i,i] 
    M_mat=G_mat.T.dot(Km1.dot(G_mat))
@@ -642,12 +647,32 @@ print("build Schur matrix precond: %e s, nel= %d" % (time.time() - start, nel))
 ###############################################################################
 start = time.time()
 
-K_mat=csr_matrix(K_mat)
+if solver==14:
+   K_mat=csc_matrix(K_mat)
+else:
+   K_mat=csr_matrix(K_mat)
 G_mat=csr_matrix(G_mat)
 M_mat=csr_matrix(M_mat)
-sparse_matrix=sps.csr_matrix(a_mat)
+sparse_matrix=sps.csc_matrix(a_mat)
 
 print("convert to CSR: %.3f s, nel= %d" % (time.time() - start, nel))
+
+###############################################################################
+#start = time.time()
+
+#ILUfact = sla.spilu(sparse_matrix)
+#M = sla.LinearOperator(
+#    shape = sparse_matrix.shape,
+#    matvec = lambda b: ILUfact.solve(b)
+#)
+
+#other option from 
+#https://stackoverflow.com/questions/58895934/how-to-implement-ilu-precondioner-in-scipy
+#sA_iLU = sparse.linalg.spilu(sA)
+#M = sparse.linalg.LinearOperator((nrows,ncols), sA_iLU.solve)
+#also does nto work
+
+print("generate ILU precond: %.3f s, nel= %d" % (time.time() - start, nel))
 
 ###############################################################################
 # solve system
@@ -655,14 +680,15 @@ print("convert to CSR: %.3f s, nel= %d" % (time.time() - start, nel))
 start = time.time()
 
 if solver==1:
-   sol=sps.linalg.spsolve(sparse_matrix,rhs)
+   sol=sps.linalg.spsolve(sparse_matrix,rhs,use_umfpack=False)
 elif solver==2:
-   sol = scipy.sparse.linalg.gmres(sparse_matrix, rhs, restart=2000,tol=tolerance)[0]
+   sol,info = scipy.sparse.linalg.gmres(sparse_matrix, rhs, restart=2000,tol=tolerance,M=Mprec)
+   if info!=0: exit('gmres did not converge')
 elif solver==3:
    sol = scipy.sparse.linalg.lgmres(sparse_matrix, rhs,atol=1e-16,tol=tolerance)[0]
 elif solver==4:
    solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
-                                           NfemV,NfemP,niter_max,tolerance,use_precond)
+                                           NfemV,NfemP,niter_max,tolerance,use_precond,'direct')
 elif solver==5:
    sol = scipy.sparse.linalg.minres(sparse_matrix, rhs, tol=1e-10)[0]
 elif solver==6:
@@ -677,7 +703,14 @@ elif solver==10:
    sol = scipy.sparse.linalg.bicgstab(sparse_matrix, rhs, tol=tolerance)[0]
 elif solver==11:
    sol=sps.linalg.spsolve(sparse_matrix,rhs,use_umfpack=True)
-
+elif solver==12:
+   sol = scipy.sparse.linalg.cgs(sparse_matrix, rhs, tol=tolerance)[0]
+elif solver==13:
+   solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
+                                           NfemV,NfemP,niter_max,tolerance,use_precond,'cg')
+elif solver==14:
+   solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
+                                           NfemV,NfemP,niter_max,tolerance,use_precond,'splu')
 else:
    exit('solver unknown')
 
@@ -688,7 +721,7 @@ print("solve time: %.3f s, nel= %d" % (time.time()-start,nel))
 ###############################################################################
 start = time.time()
 
-if solver==4: 
+if solver==4 or solver==13 or solver==14: 
    u,v=np.reshape(solV,(NV,2)).T
 else:
    u,v=np.reshape(sol[0:NfemV],(NV,2)).T
@@ -701,7 +734,6 @@ print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 #np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
 print("split vel into u,v: %.3f s" % (time.time() - start))
-
 
 ###############################################################################
 #normalise pressure
@@ -718,7 +750,6 @@ for iel in range (0,nel):
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
 
-            NNNV=NNV(rq,sq)
             dNNNVdr=dNNVdr(rq,sq)
             dNNNVds=dNNVds(rq,sq)
             NNNP=NNP(rq,sq)

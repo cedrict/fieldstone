@@ -6,11 +6,11 @@ rm solve*.ascii
 
 nq=3
 
-for res in 8 9 10 11 12 13 14 15 16 18 19 20 21 22 23 24 26 28 30 32 36 40 44 48 52 56 60 64 68 72 76 80 96 128; do
+for res in 8 9 10 11 12 13 14 15 16 18 19 20 21 22 23 24 26 28 30 32 36 40 44 48 52 56 60 64 68 72 76 80 96 112 128 144 160 192; do
 
     echo mesh $res x $res  
 
-    for solver in 9 11 ; do #1 2 3 4 5 6 7 8 ; do 
+    for solver in 14 ; do # 1 2 3 4 5 6 7 8 9 11 13 14; do 
 
         echo -solver=$solver
 
@@ -20,6 +20,14 @@ for res in 8 9 10 11 12 13 14 15 16 18 19 20 21 22 23 24 26 28 30 32 36 40 44 48
         grep bench opla >> statistics_${solver}.ascii
         grep solve opla >> solve_${solver}.ascii
         if [ $solver -eq 4 ] 
+        then
+           mv solver_convergence.ascii solver_convergence_${solver}_${res}.ascii
+        fi
+        if [ $solver -eq 13 ] 
+        then
+           mv solver_convergence.ascii solver_convergence_${solver}_${res}.ascii
+        fi
+        if [ $solver -eq 14 ] 
         then
            mv solver_convergence.ascii solver_convergence_${solver}_${res}.ascii
         fi

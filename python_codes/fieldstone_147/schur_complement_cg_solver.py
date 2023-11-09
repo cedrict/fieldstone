@@ -1,9 +1,12 @@
 import numpy as np
 import scipy.sparse as sps
 from numba import jit
+import scipy.sparse.linalg as sla
+
+############################################################################### 
 
 def schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
-                               NfemV,NfemP,niter,tol,use_precond):
+                               NfemV,NfemP,niter,tol,use_precond,inner):
 
    #the function implicitely assumes matrices in csr format
    print('-------------------------')
@@ -22,19 +25,33 @@ def schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
    conv_file=open("solver_convergence.ascii","w")
 
    # carry out solve
-   solV=sps.linalg.spsolve(K_mat,f_rhs)                         # compute V_0
-   rvect_k=G_mat.T.dot(solV)-h_rhs              # compute r_0
+   if inner=='direct':
+      solV=sps.linalg.spsolve(K_mat,f_rhs)                          # compute V_0
+   elif inner=='cg':
+      solV=sps.linalg.cg(K_mat,f_rhs,tol=1e-6)[0] 
+   elif inner=='splu':
+      LU = sla.splu(K_mat)
+      solV=LU.solve(f_rhs)
+   else:
+      exit('unknown inner solver')
+
+   rvect_k=G_mat.T.dot(solV)-h_rhs                                  # compute r_0
    rvect_0=np.linalg.norm(rvect_k) # 2-norm by default
    if use_precond:
-      zvect_k=sps.linalg.spsolve(M_mat,rvect_k)                 # compute z_0
+      zvect_k=sps.linalg.spsolve(M_mat,rvect_k)                     # compute z_0
    else:
       zvect_k=rvect_k
-   pvect_k=zvect_k                                              #compute p_0
+   pvect_k=zvect_k                                                  #compute p_0
 
    for k in range (0,niter): #--------------------------------------#
                                                                     #
        ptildevect_k=G_mat.dot(pvect_k)                              # 
-       dvect_k=sps.linalg.spsolve(K_mat,ptildevect_k)               #
+       if inner=='direct':                                          #
+          dvect_k=sps.linalg.spsolve(K_mat,ptildevect_k)            #
+       elif inner=='cg':                                            #
+          dvect_k=sps.linalg.cg(K_mat,ptildevect_k,tol=1e-6)[0]     #
+       elif inner=='splu':                                          #
+          dvect_k=LU.solve(ptildevect_k)                            #
        alpha=(rvect_k.dot(zvect_k))/(ptildevect_k.dot(dvect_k))     #
        solP+=alpha*pvect_k                                          #
        solV-=alpha*dvect_k                                          #
@@ -53,7 +70,7 @@ def schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
        xi=np.linalg.norm(rvect_k)/rvect_0                           #
        conv_file.write("%d %6e \n"  %(k,xi))                        #
        conv_file.flush()                                            #
-       print('iter %3d xi= %e' %(k,xi))                            #
+       print('iter %3d xi= %e' %(k,xi))                             #
        if xi<tol:                                                   #
           break                                                     #
                                                                     #
@@ -64,4 +81,5 @@ def schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
    print('-------------------------')
     
    return solV,solP,k
- 
+
+############################################################################### 
