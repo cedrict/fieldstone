@@ -322,6 +322,7 @@ right ASPECT format.
 \subsection{Gravity potential and gravity field of a two-layer 
 spherically symmetric planet}
 
+Note: see also problem 16 in previous section.
 
 Let us assume that the planet consists of two layers: 
 the core (of density $\rho_c$) and the mantle (of density $\rho_m$).
@@ -477,6 +478,38 @@ we recover the following fields:
 \end{center}
 
 These are similar to the results presented in Appendix A of \textcite{thie18}.
+
+We can also consider the case of a constant density planet, 
+i.e. $\rho_m=\rho_c=\rho_0=5000$kg/m3
+In that case $C=0$,
+\[
+E=\frac13 \hat{\rho}_0 R_2^3 = \frac{4\pi}{3} {\cal G} \rho_0 R_2^3 = M {\cal G}
+\]
+\[
+D=-\frac12 R_2^2 \hat{\rho}_0
+\]
+\[
+B=-\frac12 R_2^2 \hat{\rho}_0
+\]
+so that 
+
+\begin{eqnarray}
+g(r)= \frac{4 \pi}{3}{\cal G} \rho_0 r  \qquad\qquad
+U(r)= \frac{1}{6}\hat{\rho}_0 r^2   -\frac12 R_22 \hat{\rho}_0 & \quad r\in[0,R_1]\\ 
+g(r)= \frac{4\pi}{3} {\cal G} \rho_0 r  \qquad\qquad
+U(r)= \frac{1}{6}\hat{\rho}_0 r^2  -\frac12 R_2^2 \hat{\rho}_0 & \quad  r\in[R_1,R_2]\\ 
+g(r)= \frac{{\cal G} M}{r^2} \qquad\qquad
+U(r)= -\frac{{\cal G}M}{r}  & \quad r\in[R_2,+\infty) 
+\end{eqnarray}
+Unsurprisingly we obtain the same expressions inside the core and the mantle
+and we recover the expressions of problem 14 (see previous section).
+
+In the end the fields are as follows:
+\begin{center}
+\includegraphics[width=8cm]{images/gravity_benchmark2/g1.pdf}
+\includegraphics[width=8cm]{images/gravity_benchmark2/U1.pdf}
+\end{center}
+
 
 
 

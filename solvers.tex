@@ -100,7 +100,7 @@ Diagonal preconditioners in \cite{shrb01}, \cite{babc94}.
 Pragmatic solvers for 3D Stokes problems with heterogeneous coefficients \cite{samb20}
 
 %...................................................
-\subsubsection{When using the penalty formulation}
+\subsection{When using the penalty formulation}
 
 In this case we are only solving for 
 velocity since pressure has been eliminated and is later recovered in a post-processing step:
@@ -140,7 +140,7 @@ This explains why direct solvers are often used for 2D problems and rarely in 3D
 exceptions \cite{thfb08,yahb09,brya10,lobh10,alht11,alht12,alhf13,whbb14,neew18}. 
 
 %....................................................................
-\subsubsection{Uzawa algorithms and the Schur complement approach }
+\subsection{Uzawa algorithms and the Schur complement approach }
 
 \index{general}{Uzawa algorithm}
 
@@ -376,7 +376,7 @@ For $k=0,1,2,...$, compute
 
 
 %...................................................
-\subsubsection{Conjugate gradient and the Schur complement approach }
+\subsection{Conjugate gradient and the Schur complement approach }
 \label{ss:schurpcg}
 
 \index{general}{CG} \index{general}{Conjugate Gradient}
@@ -633,7 +633,7 @@ These two preconditioners and two other variants are implemented in \stone 16 fo
 $Q_1\times P_0$ elements.
 
 %......................................................
-\subsubsection{Generalized Conjugate Residual approach (Geenen \etal (2009))}
+\subsection{Generalized Conjugate Residual approach (Geenen \etal (2009))}
 
 This approach is presented in Geenen \etal (2009) \cite{geum09}. 
 The saddle point problem arising from the constrained Stokes equation is 
@@ -712,7 +712,7 @@ state that ``Using AMG as a preconditioner to CG for the subsystem solution
 guarantees $h$-independent convergence of the solver during the preconditioner construction phase.''
 
 %......................................................
-\subsubsection{Using MINRES a la Burstedde \etal (2008)}
+\subsection{Using MINRES a la Burstedde \etal (2008)}
 
 This approach is presented in Burstedde \etal (2008) \cite{bugg08}.
 They state that neglecting the off-diagonal blocks motivates use of the symmetric
@@ -744,7 +744,7 @@ Burstedde \etal (2013) \cite{busa13}.
 The same solver structure based on MINRES is used in these articles too.
 
 %---------------------------------------------
-\subsubsection{The Augmented Lagrangian approach}
+\subsection{The Augmented Lagrangian approach}
 \index{general}{Augmented Lagrangian}
 
 see LaCoDe paper \cite{demh19}.
@@ -845,7 +845,7 @@ If $\lambda >> \max_\Omega{\eta}$ then the matrix $\tilde{\K}$ is ill-conditione
 \end{remark}
 
 %------------------------------------------------------------------------------
-\subsubsection{The SIMPLE method}
+\subsection{The SIMPLE method}
 
 The SIMPLE method (Semi-Implicit Method for Pressure-Linked Equations)
 has been introduced by Patankar \& Spalding (1972) \cite{pasp72} as an iterative method to solve
@@ -1284,7 +1284,7 @@ see Ur Rehman \etal (2009) \cite{urvs09} for SIMPLE(R) algorithm. See also \cite
 
 
 %...................................................
-\subsubsection{The GMRES approach - NOT FINISHED}
+\subsection{The GMRES approach - NOT FINISHED}
 
 The Generalized Minimal Residual method \cite{sasc86} 
 is an extension of MINRES (which is only applicable to symmetric systems) to unsymmetric systems. 
