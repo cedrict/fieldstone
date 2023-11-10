@@ -10,4 +10,3 @@ plastic_rheology
 residual
 paraview_output
 pressure_scaling
-schur_complement

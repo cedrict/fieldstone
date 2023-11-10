@@ -366,17 +366,6 @@ nq=9*nel
 
 eta_ref=1.e23      # scaling of G blocks
 scaling_coeff=eta_ref/Ly
-solver = 2 
-if solver==1:
-   use_SchurComplementApproach=True
-   use_preconditioner=True
-   niter_stokes=250
-   solver_tolerance=1e-6
-else:
-   use_SchurComplementApproach=False
-if use_SchurComplementApproach:
-   ls_conv_file=open("linear_solver_convergence.ascii","w")
-   ls_niter_file=open("linear_solver_niter.ascii","w")
    
 use_srn_diff=True
 
@@ -471,7 +460,7 @@ start = timing.time()
 
 u     =np.zeros(NV,dtype=np.float64)    # x-component velocity
 v     =np.zeros(NV,dtype=np.float64)    # y-component velocity
-bc_fix=np.zeros(NfemV,dtype=np.bool)    # boundary condition, yes/no
+bc_fix=np.zeros(NfemV,dtype=bool)    # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64) # boundary condition, value
 
 if benchmark==1: # simple brick

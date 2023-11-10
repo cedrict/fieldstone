@@ -28,6 +28,10 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+{\Large This stone is abandoned and has been superseded by stone 152}.
+
+
 The domain is a half annulus and there are 6 materials in the domain: 
 5 concentric layers and a 'blob', a half disc which center lies on the $z$-axis,  
 as shown in the following figure.
@@ -318,54 +322,6 @@ in the {\tt arear} array.
 Look at Morgan (1965) \cite{morg65} for gravity anomalies above sinking sphere. 
 
 Open question: what is an optimal value for {\tt nel\_phi} ?
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Benchmarking}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{gravity benchmark \#1: hollow sphere}
-
-The planet has an inner radius of 3000km and an outer radius of 6000km.
-All 5 layers and blob have the same density of 3000kg/m3.
-Gravity is computed at a height of 10km above the surface.
-
-{\tt script\_hollow\_sphere}
-
-\begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/gravity_hollow_sphere/rho}
-\end{center}
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_96/results/gravity_hollow_sphere/grav.pdf}
-\end{center}
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{gravity benchmark \#2: only blob}
-
-The planet has an inner radius of 3000km and an outer radius of 6000km,
-although it does not matter since all 5 layers have a zero density. 
-The blob is situated 1000km below the surface, and it has a radius of 400km and density of 200kg/m3.
-Gravity is computed at a height of 10km above the surface.
-
-{\tt script\_only\_blob}
-
-\begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_96/results/gravity_only_blob/rho}
-\end{center}
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_96/results/gravity_only_blob/grav.pdf}
-\end{center}
-
-
 
 
 

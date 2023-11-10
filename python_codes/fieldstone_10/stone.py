@@ -4,7 +4,6 @@ import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 import time as time
-import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix, lil_matrix
 
 #------------------------------------------------------------------------------
@@ -242,7 +241,7 @@ print("connectivity setup: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-bc_fix=np.zeros(Nfem,dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros(Nfem,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=float)  # boundary condition, value
 
 if experiment==1 or experiment==2 or experiment==3 or experiment==4:
