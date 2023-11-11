@@ -9,17 +9,22 @@ or Visit \footnote{https://wci.llnl.gov/simulation/computer-codes/visit/}.
 Unfortunately it is my experience that no simple tutorial exists about how to build 
 such files. There is an official document which describes the vtk 
 format\footnote{https://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf}
-but it delivers the information in a convoluted way. I therefore describe hereafter 
-how fieldstone builds the vtk files. 
+but it delivers the information in a convoluted way\footnote{I only later realised
+it was also limited!}. I therefore describe hereafter 
+how fieldstone builds the vtk/vtu files\footnote{I have found the following
+information about vtk vs. vtu: VTK denotes the simple legacy format file.
+VTU denotes a Serial Unstructured Grid format information for the XML-based syntax.}. 
 
-I hereunder show vtk file corresponding to a 3x2 grid made of linear elements.
+I hereunder show vtk file corresponding to a $3\times 2$ grid made of linear elements.
 In this particular example there are:
 \begin{itemize}
 \item 12 nodes and 6 elements
-\item 1 elemental field (the pressure {\tt p}
-\item 2 nodal fields: 1 scalar (the smoothed pressure {\tt q}), 1 vector (the velocity field {\tt u,v,0})
+\item 1 elemental field (the pressure {\python p})
+\item 2 nodal fields: 1 scalar (the smoothed pressure {\python q}), 
+1 vector (the velocity field {\python u,v,0})
 \end{itemize}
-Note that vtk files are inherently 3D so that even in the case of a 2D simulation the $z$-coordinate 
+Note that vtk files are inherently 3D so that even in the case of 
+a 2D simulation the $z$-coordinate 
 of the points and for instance their $z$-velocity component must be provided.
 The file, usually called {\filenamefont solution.vtk} starts with a header:
 
@@ -44,7 +49,7 @@ The second must be understood as follows:
 when reading the connectivity information in a linear manner the offset values 
 indicate the beginning of each element (omitting the zero value). The third is simply the type of element 
 as given in the vtk format document (9 corresponds to a generic quadrilateral with an 
-internal numbering consistent with ours). 
+internal numbering consistent with ours - more on this later). 
 
 \lstinputlisting[language=python,firstline=60,lastline=85]{images/vtk/solution.vtu}
 
@@ -54,7 +59,7 @@ The file is then closed with
 
 The {\sl solution.vtu}\footnote{\url{https://raw.githubusercontent.com/cedrict/fieldstone/master/images/vtk/solution.vtu}}  
 can then be opened with ParaView, MayaVi or Visit and the reader 
-is advised to find tutorials online on how to install and use these softwares. Also check Appendix~\ref{app:paraview}.
+is advised to find tutorials online on how to install and use these softwares. Also check Appendix~\ref{app:paraview} on how to use ParaView.
 
 \begin{center}
 \includegraphics[width=4cm]{images/vtk/grid}
@@ -63,8 +68,17 @@ is advised to find tutorials online on how to install and use these softwares. A
 \end{center}
 
 In the same folder {\tt images/vtk} there is the python script 
-{\pythonfile makevtu.py}\footnote{\url{https://raw.githubusercontent.com/cedrict/fieldstone/master/images/vtk/makevtu.py}} which produces 3 different vtu files. The first one {\sl solution1.vtu} is a similar to the one above: an \lstinline{nelx*nely} quadrilateral-based mesh in a unit square. 
-The second one ({\sl solution2.vtu}) looks identical when opened in Paraview but it is rather different: each element is exported as its own sub-mesh, so that if the mesh counts nel elements the number of vertices is \lstinline{4*nel}, and not \lstinline{(nelx+1)(nely+1)}. As such this file is larger. The icon array is needed to write down the positions of the four vertices of each element but not to write down the connectivity since the first 4 points are making the 1st element, the next four points are making the second element, etc ...
+{\pythonfile makevtu.py}\footnote{\url{https://raw.githubusercontent.com/cedrict/fieldstone/master/images/vtk/makevtu.py}} 
+which produces 3 different vtu files. The first one {\sl solution1.vtu} is a 
+similar to the one above: an {\python nelx*nely} quadrilateral-based mesh in a unit square. 
+The second one ({\sl solution2.vtu}) looks identical when opened in Paraview but 
+it is rather different: each element is exported as its own sub-mesh, so that if 
+the mesh counts {\python nel} elements the number of vertices is 
+{\python 4*nel}, and not {\python (nelx+1)*(nely+1)}. 
+As such this file is larger. The icon array is needed to write down the positions of 
+the four vertices of each element but not to write down the connectivity 
+since the first 4 points are making the 1st element, 
+the next four points are making the second element, etc ...
 
 \begin{lstlisting}
 vtufile.write("<Points> \n")
@@ -84,9 +98,18 @@ vtufile.write("</DataArray>\n")
 vtufile.write("</Cells>\n")
 \end{lstlisting}
 
-This format is rather practical in the case of linear or higher order discontinuous fields. For example, in the case of the $Q_2\times P_{-1}$ element pair, the pressure is linear inside each element and discontinuous across element edges. One can then assign pressure values at the four vertices of each element.
+This format is rather practical in the case of linear or higher order 
+discontinuous fields. For example, in the case of the $Q_2\times P_{-1}$ 
+element pair, the pressure is linear inside each element and discontinuous 
+across element edges. One can then assign pressure values at the four 
+vertices of each element. 
 
-Finally a third mesh {\sl solution3.vtu} is produced. It is based on the 2nd one, but since elements are now somewhat de-coupled, then one can export only a subset of the mesh. For instance one could not show elements which are two distorted, or below a certain line, or outside a certain volume, etc ... In {\pythonfile makevtu.py} all elements which center is inside a circle are flagged and will not be exported into the vtu file:
+Finally a third mesh {\sl solution3.vtu} is produced. It is based on the 
+2nd one, but since elements are now somewhat de-coupled, then one can export 
+only a subset of the mesh. For instance one could not show elements which 
+are too distorted, or below a certain line, or outside a certain volume, etc ... 
+In {\pythonfile makevtu.py} all elements whose center is inside a circle 
+are flagged and will not be exported into the vtu file:
 \begin{lstlisting}
 for iel in range(0,nel):
     flag[iel]= (xc[iel]-0.333*Lx)**2+(yc[iel]-0.666*Ly)**2<0.234**2
@@ -94,9 +117,66 @@ nel_flagged=np.sum(flag)
 nel_left=nel-nel_flagged
 \end{lstlisting}
 
+Once opened in ParaView this is how it looks like:
 \begin{center}
 \includegraphics[width=11cm]{images/vtk/mesh3}
 \end{center}
+
+
+We can find at this address\footnote{\url{https://vtk.org/doc/nightly/html/vtkCellType_8h_source.html}} 
+a list of supported cell types (although their internal numbering is not mentioned so 
+enjoy the guess work).
+Here is a subset of these that can be relevant in our case:
+\begin{verbatim}
+   // Linear cells
+   VTK_EMPTY_CELL = 0,
+   VTK_VERTEX = 1,
+   VTK_POLY_VERTEX = 2,
+   VTK_LINE = 3,
+   VTK_POLY_LINE = 4,
+   VTK_TRIANGLE = 5,
+   VTK_TRIANGLE_STRIP = 6,
+   VTK_POLYGON = 7,
+   VTK_PIXEL = 8,
+   VTK_QUAD = 9,
+   VTK_TETRA = 10,
+   VTK_VOXEL = 11,
+   VTK_HEXAHEDRON = 12,
+   VTK_WEDGE = 13,
+   VTK_PYRAMID = 14,
+   VTK_PENTAGONAL_PRISM = 15,
+   VTK_HEXAGONAL_PRISM = 16,
+   // Quadratic, isoparametric cells
+   VTK_QUADRATIC_EDGE = 21,
+   VTK_QUADRATIC_TRIANGLE = 22,
+   VTK_QUADRATIC_QUAD = 23,
+   VTK_QUADRATIC_POLYGON = 36,
+   VTK_QUADRATIC_TETRA = 24,
+   VTK_QUADRATIC_HEXAHEDRON = 25,
+   VTK_QUADRATIC_WEDGE = 26,
+   VTK_QUADRATIC_PYRAMID = 27,
+   VTK_BIQUADRATIC_QUAD = 28,
+   VTK_TRIQUADRATIC_HEXAHEDRON = 29,
+   VTK_TRIQUADRATIC_PYRAMID = 37,
+   VTK_QUADRATIC_LINEAR_QUAD = 30,
+   VTK_QUADRATIC_LINEAR_WEDGE = 31,
+   VTK_BIQUADRATIC_QUADRATIC_WEDGE = 32,
+   VTK_BIQUADRATIC_QUADRATIC_HEXAHEDRON = 33,
+   VTK_BIQUADRATIC_TRIANGLE = 34,
+   // Cubic, isoparametric cell
+   VTK_CUBIC_LINE = 35,
+\end{verbatim}
+
+Fortunately these cell types seem to coincide with those in this document
+\footnote{https://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf}
+mentioned earlier where we find these schematics:
+
+\begin{center}
+\includegraphics[width=8cm]{images/vtk/types1}
+\includegraphics[width=8cm]{images/vtk/types2}
+\end{center}
+
+
 
 
 
