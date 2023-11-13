@@ -16,7 +16,9 @@ Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fields
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-{\sl This stone was developed in collaboration with Erik van der Wiel}. \index{contributors}{E. van der Wiel}
+{\sl This stone was developed in collaboration with Erik van der Wiel and is used in the 
+appendix of the submitted paper \url{https://doi.org/10.31223/X56971}}. 
+\index{contributors}{E. van der Wiel}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -29,18 +31,18 @@ The joint probability that a particle of species $c$
 is in bin $j$ can be calculated by dividing $n_{j,c}$ by the overall system population.
 
 \begin{equation}
-p_{j,c} = \frac{\frac{n_{j,c}}{P_c}}{\sum\limits_{i=1}^M \sum\limits_{c=1}^C \frac{n_{i,c}}{P_c}}
+p_{j,c} = \frac{\frac{n_{j,c}}{N_c}}{\sum\limits_{i=1}^M \sum\limits_{c=1}^C \frac{n_{i,c}}{N_c}}
 \label{eq:shannon1}
 \end{equation}
 with 
 \[
-P_c = \frac{n_c}{M}
+N_c = \frac{n_c}{M}
 \]
 where $n_c$ is the total number of particles of $c$ in the domain.
 
 In the code, we define
 \[
-{\tt denom1}=\sum\limits_{i=1}^M \sum\limits_{c=1}^C \frac{n_{i,c}}{P_c}
+{\tt denom1}=\sum\limits_{i=1}^M \sum\limits_{c=1}^C \frac{n_{i,c}}{N_c}
 \]
 
 Using the joint probabilities of the equation above we then calculate the entropy:
@@ -65,15 +67,15 @@ p_{j,c} = p_{c|j}p_j
 \qquad
 \text{with}
 \qquad
-p_{c|j}=\frac{\frac{n_{j,c}}{P_c}}{\sum\limits_{c=1}^C \frac{n_{j,c}}{P_c}}
+p_{c|j}=\frac{\frac{n_{j,c}}{N_c}}{\sum\limits_{c=1}^C \frac{n_{j,c}}{N_c}}
 \qquad
 \text{and}
 \qquad
-p_j=\frac{\sum\limits_{c=1}^C \frac{n_{j,c}}{P_c}}{\sum\limits_{i=1}^M \sum\limits_{c=1}^C \frac{n_{i,c}}{P_c}} 
+p_j=\frac{\sum\limits_{c=1}^C \frac{n_{j,c}}{N_c}}{\sum\limits_{i=1}^M \sum\limits_{c=1}^C \frac{n_{i,c}}{N_c}} 
 \]
 In the code we define 
 \[
-{\tt denom2}[j]=\sum\limits_{c=1}^C \frac{n_{j,c}}{P_c}
+{\tt denom2}[j]=\sum\limits_{c=1}^C \frac{n_{j,c}}{N_c}
 \]
 
 
@@ -96,8 +98,6 @@ p_j \sum_{c=1}^C p_{c|j} \ln p_{c|j}
 &=& 
 \underbrace{S_{location}(species)}_{S_3} + \underbrace{S(location)}_{S_2}
 \end{eqnarray}
-
-
 
 As specified in the paper we also use a 4th order Runge-Kutta (in space only here)
 with a fixed timestep $\delta t$.

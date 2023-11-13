@@ -67,15 +67,15 @@ print('number of tracers:',njc.sum())
 print('njc=\n',njc)
 
 ###############################################################################
-# compute Pc
+# compute Nc
 ###############################################################################
 
-Pc=np.zeros((ncolor,1),dtype=np.float64)
+Nc=np.zeros((ncolor,1),dtype=np.float64)
 
 for icolor in range(0,ncolor):
-    Pc[icolor,0]=np.sum(njc[icolor,:])/ncell
+    Nc[icolor,0]=np.sum(njc[icolor,:])/ncell
 
-print('Pc=\n',Pc)
+print('Nc=\n',Nc)
 
 ###############################################################################
 # compute A  - equation 1
@@ -86,7 +86,7 @@ print('Pc=\n',Pc)
 A=np.zeros((ncolor,ncell),dtype=np.float64)
 
 for icell in range(0,ncell):
-    A[:,icell]=njc[:,icell]/Pc[:,0]
+    A[:,icell]=njc[:,icell]/Nc[:,0]
 
 print('A=\n',A)
 
@@ -142,14 +142,14 @@ for icolor in range(0,ncolor):
 print('Pjc=\n',Pjc)
 
 ###############################################################################
-# compute Slocation - equation 4
+# compute Spd - equation 4
 ###############################################################################
 
-Slocation=0
+Spd=0
 for icell in range(0,ncell):
-    Slocation-=Pj[icell]*np.log(Pj[icell])
+    Spd-=Pj[icell]*np.log(Pj[icell])
 
-print('Slocation=',Slocation)
+print('Spd=',Spd)
 
 ###############################################################################
 # compute Sj - equation 5
@@ -178,9 +178,9 @@ print('S_global=',S_global,' (=-log(1/2)')
 # apply normalisation
 ###############################################################################
 
-Slocation/=np.log(ncell)
+Spd/=np.log(ncell)
 
-print('after normalisation: Slocation=',Slocation)
+print('after normalisation: Spd=',Spd)
 
 Sj/=np.log(ncolor)
 
