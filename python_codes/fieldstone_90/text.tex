@@ -5,7 +5,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_90/keywords.ascii}
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_90/keywords.key}
 
 \begin{center}
 Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_90}
@@ -15,20 +15,23 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This axisymmetric elastic probem is common in the literature, see for instance Sadd \cite{sadd14}.
-A hollow thick-walled cylinder is placed under the
+This axisymmetric elastic probem is common in the literature, see for 
+instance Sadd \cite{sadd14}. A hollow thick-walled cylinder is placed under the
 action of uniform internal and external pressure loadings, as shown here:
 
 \begin{center}
 \includegraphics[width=4cm]{python_codes/fieldstone_90/images/sadda}\\
 {\captionfont Taken from Sadd \cite{sadd14}}
 \end{center}
+
+
+\section*{Analytical solution}
+
 One can easily show that the stress components are such that
 \begin{eqnarray}
 \sigma_{rr} &=& \frac{A}{r^2} + B \\
 \sigma_{\theta\theta} &=& -\frac{A}{r^2} + B
 \end{eqnarray}
-
 Applying the boundary conditions 
 $\sigma_r(r_1)=-p_1$ and $\sigma_r=-p_2$ 
 creates two equations
@@ -42,7 +45,7 @@ Substituting these values back into relations above gives the final result for t
 
 Taking $r_1=0.5$, $r_2=1$, $p_2=0$ and $p_1=p$, we can plot these:
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_90/images/saddb}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_90/images/saddb}\\
 {\captionfont Taken from Sadd \cite{sadd14}}
 \end{center}
 
@@ -73,6 +76,8 @@ It then follows that
 \qquad
 \sigma_{rz} = 2 \mu \varepsilon_{rz} 
 \]
+
+\section*{Implementation}
 
 We approach this problem by assuming that the cylinder is infinite in the direction perpendicular 
 to the page. We have an obvious axisymmetry: 
@@ -117,10 +122,12 @@ we will then recover strain and stress components.
 
 Results for displacement, strain and stress as a function of $r$ are shown hereunder:
 \begin{center}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_90/results/displacement.pdf}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_90/results/strain.pdf}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_90/results/stress.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_90/results/displacement.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_90/results/strain.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_90/results/stress.pdf}
 \end{center}
 The match is perfect and shows that the axisymmetric formulation presented in 
 Section~\ref{MMM-ss:fem_elast_axis} is correct.
+
+ToDo: error calculations are not finished !
 
