@@ -5,19 +5,19 @@ rm errors*.ascii
 rm solve*.ascii
 
 nq=3
+solver=14
 
-for res in 8 12 16 20 24 28 32 40 48 56 64 96 112 128 144 160 176 192; do
+for res in 8 12 16 20 24 28 32 40 48 56 64 96 112 116 120 124 128 136 144 152 160 168 176 184 192 200 256; do
 
-    for solver in 14 ; do 
+#for res in {8..112} ; do
 
-        echo $res x $res  solver=$solver
+    echo $res x $res  solver=$solver
 
-        python3 stone.py $res $res 0 $nq $solver > opla
+    python3 stone.py $res $res 0 $nq $solver > opla
 
-        grep errv opla >> errors.ascii
-        grep bench opla >> statistics.ascii
-        grep solve opla >> solve.ascii
+    grep errv opla >> errors.ascii
+    grep bench opla >> statistics.ascii
+    grep solve opla >> solve.ascii
 
-    done
 
 done

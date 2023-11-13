@@ -113,8 +113,13 @@ It appears that a relative tolerance of 1e-6 is enough, but I set it to 1e-7 def
 to be on the safe side (when looking closley at high resolution it looks like the 
 blue curve of 1e-6  seems to separate from the orange one from 1e-7).
 
+I have also run \aspect on the same problem (with the same type of elements) and on only 
+1 core (while the spsolve inner solve tends to use all available cores of my laptop). 
+We find that the solver outperforms mine (obviously!) and more importantly that 
+is scales linearly with the number of elements.
 
-Conclusions:
+%-------------------------
+\subsection*{Conclusions}
 
 \begin{itemize}
 \item direct method spsolve about 10x faster than all others (except solver 14!)

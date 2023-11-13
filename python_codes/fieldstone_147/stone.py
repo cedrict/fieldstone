@@ -194,7 +194,7 @@ bench=1
 
 use_precond=False
 precond_type=0
-tolerance=1e-8
+tolerance=1e-7
 niter_max=100
 
 ###########################################################

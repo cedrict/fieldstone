@@ -33,4 +33,6 @@ plot[][]\
 'tol1e-6/solve.ascii'  u 6:3 w lp lt 3 t 'tol=1e-6',\
 'tol1e-7/solve.ascii'  u 6:3 w lp lt 4 t 'tol=1e-7',\
 'tol1e-8/solve.ascii'  u 6:3 w lp lt 5 t 'tol=1e-8',\
-x**1.42/50000 lt -1 dt 3 t 'x^{1.42}' 
+'aspect.ascii' u 1:($2+$3+$4) w lp lt 6 t 'aspect',\
+x**1.42/50000 lt -1 dt 2 t 'nel^{1.42}',\
+x/4500 lt -1 dt 3 t 'nel^1' 
