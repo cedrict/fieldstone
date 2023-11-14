@@ -106,17 +106,23 @@ much influenced by the tolerance, but unsurprisingly the accuracy of the solutio
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/tol_study_solver14/errors.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/tol_study_solver14/solve.pdf}\\
-{\captionfont Influence of the relative tolerance on the accuracy of the solution obtained 
-with the SC-CG+ilu ({\python solver=14}).}
+{\captionfont Left: Influence of the relative tolerance on the accuracy of the solution obtained 
+with the SC-CG+ilu ({\python solver=14}). Right: solve time in seconds.}
 \end{center}
-It appears that a relative tolerance of 1e-6 is enough, but I set it to 1e-7 default
+It appears that a relative tolerance of $10^{-6}$ is enough, but I set it to $10^{-7}$ default
 to be on the safe side (when looking closley at high resolution it looks like the 
-blue curve of 1e-6  seems to separate from the orange one from 1e-7).
+blue curve of $10^{-6}$  seems to separate from the orange one from $10^{-7}$).
 
 I have also run \aspect on the same problem (with the same type of elements) and on only 
 1 core (while the spsolve inner solve tends to use all available cores of my laptop). 
+Since \aspect reports the assembly time, the preconditioner time and the solve
+time separately I add them together.
 We find that the solver outperforms mine (obviously!) and more importantly that 
-is scales linearly with the number of elements.
+is scales linearly with the number of elements. 
+The highest resolutions so far are $300\times 300$ elements and the memory requirements 
+were about half of my laptop RAM, so about 16Gb, and $400\times 400$ which requires
+about 20+ Gb.
+
 
 %-------------------------
 \subsection*{Conclusions}

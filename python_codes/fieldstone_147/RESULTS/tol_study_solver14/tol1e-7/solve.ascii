@@ -101,3 +101,5 @@ solve time: 58.142 s, nel= 33856
 solve time: 56.518 s, nel= 36864
 solve time: 68.973 s, nel= 40000
 solve time: 184.307 s, nel= 65536
+solve time: 338.593 s, nel= 90000
+solve time: 723.718 s, nel= 160000

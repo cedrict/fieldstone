@@ -89,5 +89,6 @@ plot[][]\
 'solver_convergence_14_128.ascii' u 1:2 w lp t 'nelx=128',\
 'solver_convergence_14_160.ascii' u 1:2 w lp t 'nelx=160',\
 'solver_convergence_14_192.ascii' u 1:2 w lp t 'nelx=192',\
+'solver_convergence_14_400.ascii' u 1:2 w lp t 'nelx=400',\
 
 
