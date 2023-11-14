@@ -427,7 +427,7 @@ Bottom row: I don't know anymore.}
 \begin{center}
 \includegraphics[height=5cm]{images/meshes/gari09_a}
 \includegraphics[height=5cm]{images/meshes/gari09_b}\\
-{\captionfont Taken from Garimella (2009) \cite{gari09}.}
+{\captionfont Taken from \textcite{gari09} (2009).}
 \end{center}
 
 \begin{center}
@@ -443,19 +443,20 @@ Bottom row: I don't know anymore.}
 \url{https://cubit.sandia.gov/public/14.0/help_manual/WebHelp/mesh_generation/mesh_modification/mesh_refinement.htm}
 \end{center}
 
-\Literature: 
-D{\"u}ster \& Rank \cite{dura01},
-Harris \etal (2004) \cite{habo04},
-Anderson \etal (2009) \cite{anbo09},
-Anderson \cite{ande09}, 
-Garimella (2009) \cite{gari09},
-Nicolas \& Fouquet (2013) \cite{nifo13,nifo13b}.
-Parrish \cite{parr07}, 
-Schneiders \cite{schn00,schn96,schn96b,schn99},
-Schneiders \etal \cite{scde95},
-Staten \& Canann \cite{stca97},
-book by Ramm \etal \cite{rarr03}.
-
+\Literature:
+\begin{itemize}
+\item D{\"u}ster \& Rank \cite{dura01},
+\item Harris \etal (2004) \cite{habo04},
+\item Anderson \etal (2009) \cite{anbo09},
+\item Anderson \cite{ande09}, 
+\item Garimella (2009) \cite{gari09},
+\item Nicolas \& Fouquet (2013) \cite{nifo13,nifo13b}.
+\item Parrish \cite{parr07}, 
+\item Schneiders \cite{schn00,schn96,schn96b,schn99},
+\item Schneiders \etal \cite{scde95},
+\item Staten \& Canann \cite{stca97},
+\item book by Ramm \etal \cite{rarr03}.
+\end{itemize}
 
 %.......................................
 \subsubsection{Stretching the mesh}
@@ -554,7 +555,7 @@ Brandenburg \etal \cite{brhv08,brva07a}}
 %.......................................
 \subsubsection{Meshes in/on a hollow sphere}
 
-The following is for the most part published in Thieulot (2018) \cite{thie18}.
+The following is for the most part published in Thieulot (2018) \textcite{thie18} (2018).
 
 To a first approximation the Earth is a sphere: the Earth's polar diameter is 
 about 43 kilometers shorter than its equatorial diameter, a negligible difference of 
@@ -562,7 +563,7 @@ about 0.3\%. As a consequence, modelling physical processes
 which take place in the planet require the discretisation of a sphere. 
 Furthermore, because core dynamics occur on vastly difference time scales than mantle dynamics, mantle 
 modelling usually leaves the core out, thereby requiring simulations to be run on a hollow sphere mesh
-(with the noticeable exception of \cite{geyu07}).
+(with the noticeable exception of \textcite{geyu07}).
 
 Although so-called latitude-longitude grids would seem appealing, 
 they suffer from the convergence of meridians at the poles
@@ -589,7 +590,7 @@ of approximately similar volumes.
 
 \begin{center}
 \includegraphics[width=12cm]{images/meshes/kaks08}\\
-{\captionfont Example of Yin-Yang grid. Taken from Kameyama \etal (2008) \cite{kaks08}.}
+{\captionfont Example of Yin-Yang grid. Taken from \textcite{kaks08} (2008).}
 \end{center}
 
 How such meshes are built is often not discussed in the literature. It is 

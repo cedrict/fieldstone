@@ -1287,18 +1287,20 @@ see Ur Rehman \etal (2009) \cite{urvs09} for SIMPLE(R) algorithm. See also \cite
 \subsection{The GMRES approach - NOT FINISHED}
 
 The Generalized Minimal Residual method \cite{sasc86} 
-is an extension of MINRES (which is only applicable to symmetric systems) to unsymmetric systems. 
+is an extension of MINRES (which is only applicable to symmetric systems) 
+to unsymmetric systems. 
 Like MINRES, it generates a sequence of orthogonal vectors and 
 combines these through a least-squares solve and update. However, 
 in the absence of symmetry this can no longer be done with short recurrences. As a consequence, 
 all previously computed vectors in the orthogonal sequence have to be retained and 
 for this reason ''restarted'' versions of the method are used.
 
-It must be said that the (preconditioned) GMRES method is actually much more difficult to implement 
+It must be said that the (preconditioned) GMRES method is actually 
+much more difficult to implement 
 than the (preconditioned) Conjugate Gradient method.
 However, since it can deal with unsymmetric matrices, it means that it can be applied 
-directly to the Stokes system matrix (as opposed to the CG method which is used on the Schur complement
-equation).
+directly to the Stokes system matrix (as opposed to the CG method which 
+is used on the Schur complement equation).
 
  
 %In what follows we wish to solve the linear system ${\bm A}\cdot \vec x = \vec b$ and use the preconditioner 
@@ -1337,6 +1339,10 @@ equation).
 %end 
 
 
+\begin{center}
+\includegraphics[width=8cm]{images/solvers/GMRESR}\\
+{\captionfont Taken from ur Rehman, vuik \& Segal.}
+\end{center}
 
 the FGMRES approach \cite{deit13}
 

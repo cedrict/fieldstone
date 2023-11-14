@@ -2,7 +2,7 @@
 
 
 %------------------------------------------
-\subsubsection{Linear basis functions ($Q_1$) \label{sec:bf1}}
+\subsection{Linear basis functions ($Q_1$) \label{sec:bf1}}
 \index{general}{$Q_1$}
 
 Let $f(r)$ be a $C^1$ function on the interval $[-1:1]$ with $f(-1)=f_1$  and $f(1)=f_2$.
@@ -46,7 +46,7 @@ N_2(r) &=& \frac{1}{2} (1+r)
 
 \newpage
 %------------------------------------------
-\subsubsection{Quadratic basis functions ($Q_2$) \label{sec:bf2}}
+\subsection{Quadratic basis functions ($Q_2$) \label{sec:bf2}}
 \index{general}{$Q_2$}
 
 Let $f(r)$ be a $C^1$ function on the interval $[-1:1]$ with $f(-1)=f_1$, $f(0)=f_2$ and $f(1)=f_3$.
@@ -106,7 +106,7 @@ We will later need the first-order derivatives of these functions:
 
 
 %------------------------------------------
-\subsubsection{Cubic basis functions ($Q_3$) \label{sec:bf3}}
+\subsection{Cubic basis functions ($Q_3$) \label{sec:bf3}}
 \index{general}{$Q_3$}
 
 We proceed as previously by assuming that the third-order 
@@ -260,7 +260,7 @@ as expected.
 \end{itemize}
 
 %---------------------------------------------------------------
-\subsubsection{Quartic basis functions ($Q_4$) \label{sec:bf4}}
+\subsection{Quartic basis functions ($Q_4$) \label{sec:bf4}}
 \index{general}{$Q_4$}
 
 The 1D basis polynomial is given by
@@ -410,7 +410,7 @@ The basis functions derivative are given by
 
 
 %---------------------------------------------------------------
-\subsubsection{Fifth-order basis functions ($Q_5$) \label{sec:bf5}}
+\subsection{Fifth-order basis functions ($Q_5$) \label{sec:bf5}}
 \index{general}{$Q_5$}
 
 Following the methodology presented hereafter for $Q_6$, we arrive at 
@@ -461,13 +461,8 @@ with the derivatives given by
 
 These functions are used in \stone~\ref{f152}.
 
-
-
-
-
-
 %---------------------------------------------------------------
-\subsubsection{Sixth-order basis functions ($Q_6$) \label{sec:bf6}}
+\subsection{Sixth-order basis functions ($Q_6$) \label{sec:bf6}}
 \index{general}{$Q_6$}
 
 The 1D basis polynomial is given by
@@ -695,6 +690,58 @@ Using WolframAlpha\footnote{\url{https://www.wolframalpha.com/}}, we arrive at
 
 These functions are used in \stone~\ref{f152}.
 
+
+
+
+
+%---------------------------------------------------------------
+\subsection{A generic approach to 1D basis functions \label{sec:bfgeneric}}
+
+In order to define basis functions of order $n$ each element 
+must have $n+1$ nodes.
+The $i-th$ basis function for an $n-th$ order approximation
+is given by:
+\[
+\bN_i(r) = 
+\frac{
+\prod_{j=0,j \ne i}^n (r-r_j)
+}
+{
+\prod_{j=0,j \ne i}^n (r_i-r_j)
+}
+\]
+
+Let us see in practice how this works and start with $n=2$ (i.e. $Q_2$ basis functions).
+In the reference element we have $r_0=-1$, $r_1=0$ and $r_2=+1$, so that 
+\begin{eqnarray}
+\bN_0 
+&=& \frac{(r-r_1)(r-r_2)}{(r_0-r_1)(r_0-r_2)} \nn\\
+&=& \frac{(r-0)(r-1)}{(-1-0)(-1-1)} \nn\\
+&=& \frac12 r(r-1) \nn\\
+\bN_1
+&=& \frac{(r-r_0)(r-r_2)}{(r_1-r_0)(r_1-r_2)} \nn\\
+&=& \frac{(r+1)(r-1)}{(0+1)(0-1)} \nn\\
+&=& 1-r^2 \nn\\
+\bN_2 
+&=& \frac{(r-r_0)(r-r_1)}{(r_2-r_0)(r_2-r_1)} \nn\\
+&=& \frac{(r+1)(r-0)}{(1+1)(1-0)} \nn\\
+&=& \frac12 r(r+1) 
+\end{eqnarray}
+These are the basis functions obtained in Section~\ref{sec:bf2}.
+
+\todo[inline]{What about derivatives?}
+
+
+
+
+
+
+
+
+
+
+
+
 \newpage
 
 Remark:
@@ -705,8 +752,3 @@ priate only when working with low-degree polynomials. The main diﬃculty
 comes from the oscillatory nature of the Lagrange polynomials as the num-
 ber of interpolation nodes grows. This phenomenon is often referred to as the
 Runge phenomenon [359] (see also Meray [313]''
-
-
-
-
-
