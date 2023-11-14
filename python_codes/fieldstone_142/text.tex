@@ -100,7 +100,7 @@ end
 \end{verbatim}
 This looks like a discretised diffusion operator...
 
-\item no real benchmarking, no error convergence on SolVi, instead: instead eyeball norm
+\item no real benchmarking, no error convergence on SolVi, instead: eyeball norm
 \item no solver in code ... why use Richardson rather than backslah operator of matlab? This finally explained in Discussion but
 this should have been addressed earlier in the paper since it is rather uncommon.  
 \item no comment on viscous relaxation in fig 7 ?
@@ -123,7 +123,6 @@ because “the geometrical form of the competent
 inclusion clearly has an influence on the pattern of stress orientations in the
 surrounding medium”. Yet not a single stress or principal stress components calculations in the wole paper? 
 
-\item Why are tensor notations not used ? (why eqs 1,2,3 and 4,5,6 ?)
 
 \item 'spacial' ? 'quadratic model domain' ?
 
@@ -144,7 +143,7 @@ to us when it comes to nonlinear rheologies as they cannot be used for compariso
 \item often in figure captions: 'The arrows display the velocity field, they are not to scale and only for direction.'
 However looking at the figures arrows have various lengths which reflect the velocity field.
 
-\item in some plots, $Dxx$ is described as 'horizontal strain rate'. meh 
+\item in some plots, $Dxx$ is described as 'horizontal strain rate'. Not a common name imo
 
 \end{itemize}
 
@@ -152,7 +151,7 @@ However looking at the figures arrows have various lengths which reflect the vel
 %----------------------------------------
 \subsection*{Comments about the \stone}
 
-The code solves the incompressible Stokes equations with the Finite Element Method
+My code solves the incompressible Stokes equations with the Finite Element Method
 on an unstructured grid that is built so that it fits the shape of the inclusion(s).
 $P_2\times P_1$ or Crouzeix-Raviart elements can be used.
 The Delaunay triangulation is explained in \stone 131, and 
@@ -192,7 +191,7 @@ The circle radius is 0.15 times the model width.}
 {\captionfont Left: solution using Crouzeix-Raviart elements; Right: analytical solution.}
 \end{center}
 
-This proves that the code is correct. One should obviously do a proper error analysis as a function 
+This proves that the code is correct. One should do a proper error analysis as a function 
 of resolution but this has been done before in many other stones (see \stone~\ref{f07} for example). 
 
 \newpage
@@ -302,7 +301,7 @@ the error looks like:
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_142/results/case2/error}
 \end{center}
-In summary, {\color{red} the solver is not converging} and the results above are meaningless!
+In summary, {\color{red} the solver is not converging} and the results above are suspicious.
 
 
 \begin{center}
