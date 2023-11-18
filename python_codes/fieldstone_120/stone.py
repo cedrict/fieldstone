@@ -7,9 +7,10 @@ import matplotlib.pyplot as plt
 import sys 
 from scipy.sparse import lil_matrix
 from scipy.sparse.linalg import spsolve
+from scipy import sparse
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
+###############################################################################
 
 ndofV=2
 ndofP=1
@@ -17,17 +18,17 @@ ndofP=1
 Lx=1
 Ly=1
 
-nelx=40
+nelx=64
 
 Vspace='P2'
-Pspace='P-1'
+Pspace='P1'
 
 visu=1
 
-experiment='solvi'
+experiment='solcx'
 
 unstructured=1
-meshtype='solvi'
+meshtype='solcx'
 
 isoparametric=True
 randomize_mesh=False
@@ -35,9 +36,11 @@ randomize_mesh=False
 etastar=1
 drho=0.01
 
-#--------------------------------------------------------------------
+ass_method=2
+
+###############################################################################
 # allowing for argument parsing through command line
-#--------------------------------------------------------------------
+###############################################################################
 
 if int(len(sys.argv) == 6):
    print("arguments:",sys.argv)
@@ -59,8 +62,6 @@ if int(len(sys.argv) == 8):
    drho=float(sys.argv[7])
    visu=0
 
-
-
 nely=nelx
 
 unstructured=(unstructured==1) 
@@ -78,18 +79,18 @@ if experiment=='solkz'          : import mms_solkz as mms
 if experiment=='solvi'          : import mms_solvi as mms
 if experiment=='RT'             : import mms_RT as mms
 
-
 if experiment=='solvi'       : meshtype='solvi'
-if experiment=='solcx'       : meshtype='solcx'
+#if experiment=='solcx'       : meshtype='solcx'
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
 
 nqpts=Q.nqpts_default(Vspace)
 
-#--------------------------------------------------------------------
+###############################################################################
 # mesh: node layout and connectivity
-#--------------------------------------------------------------------
+###############################################################################
+
 start = timing.time()
 
 mV=FE.NNN_m(Vspace)
@@ -101,7 +102,7 @@ if not unstructured:
    NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
    NP,nel,xP,yP,iconP=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Pspace)
 else:
-   nel,NV,NP,xV,yV,iconV,xP,yP,iconP=Tools.read_mesh(Vspace,Pspace,nelx,meshtype)
+   nel,NV,NP,xV,yV,iconV,xP,yP,iconP=Tools.generate_random_mesh(Lx,nelx,Vspace,Pspace)  
 
 nq=nqel*nel
 NfemV=NV*ndofV
@@ -109,30 +110,28 @@ NfemP=NP*ndofP
 Nfem=NfemV+NfemP
 
 print("*****************************")
-print("           daSTONE           ")
-print("*****************************")
-print ('Vspace       =',Vspace)
-print ('Pspace       =',Pspace)
-print ('space1       =',FE.mapping(Vspace))
-print ('nqpts        =',nqpts)
-print ('nqel         =',nqel)
-print ('nelx         =',nelx)
-print ('nely         =',nely)
-print ('NV           =',NV)
-print ('NP           =',NP)
-print ('nel          =',nel)
-print ('NfemV        =',NfemV)
-print ('NfemP        =',NfemP)
-print ('Nfem         =',Nfem)
-print ('experiment   =',experiment)
-print ('unstructured =',unstructured)
+print('Vspace       =',Vspace)
+print('Pspace       =',Pspace)
+print('space1       =',FE.mapping(Vspace))
+print('nqpts        =',nqpts)
+print('nqel         =',nqel)
+print('nelx         =',nelx)
+print('nely         =',nely)
+print('NV           =',NV)
+print('NP           =',NP)
+print('nel          =',nel)
+print('NfemV        =',NfemV)
+print('NfemP        =',NfemP)
+print('Nfem         =',Nfem)
+print('experiment   =',experiment)
+print('unstructured =',unstructured)
 print("*****************************")
 
 print("mesh setup: %.3f s" % (timing.time() - start))
 
-#--------------------------------------------------------------------
+###############################################################################
 # create arrays containing analytical solution
-#--------------------------------------------------------------------
+###############################################################################
 start = timing.time()
 
 uth = np.zeros(NV,dtype=np.float64)
@@ -148,20 +147,21 @@ for i in range(NP):
 
 print("analytical solution: %.3f s" % (timing.time() - start))
 
-#--------------------------------------------------------------------
+###############################################################################
 # boundary conditions setup 
-#--------------------------------------------------------------------
+###############################################################################
 start = timing.time()
 
 bc_fix,bc_val=Tools.bc_setup(xV,yV,uth,vth,Lx,Ly,ndofV,mms.left_bc,mms.right_bc,mms.bottom_bc,mms.top_bc)
 
 print("bc setup: %.3f s" % (timing.time() - start))
 
-#--------------------------------------------------------------------
+###############################################################################
 # build Q1 or P1 background mesh
 # all variables ending with '1' (nel1, icon1, x1, y1, ...) are those pertaining 
 # to the background mesh of either Q1 or P1 elements used for mapping.
-#--------------------------------------------------------------------
+###############################################################################
+start = timing.time()
 
 space1=FE.mapping(Vspace)
 m1=FE.NNN_m(space1)
@@ -180,7 +180,9 @@ if experiment=='RT':
    Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xV,yV,iconV,nel,Vspace)
    Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xP,yP,iconP,nel,Pspace)
 
-#--------------------------------------------------------------------
+print("build Q1/P1 mesh: %.3f s" % (timing.time() - start))
+
+###############################################################################
 # compute area of elements 
 # This can be a good test because it uses the quadrature points and 
 # weights as well as the shape functions (if non-isoparametric
@@ -188,7 +190,7 @@ if experiment=='RT':
 # negative or zero, or if the sum does not equal to the area of the 
 # whole domain then there is a major problem which needs to 
 # be addressed before FE matrix building process is carried out. 
-#--------------------------------------------------------------------
+###############################################################################
 start = timing.time()
 
 area=np.zeros(nel,dtype=np.float64) 
@@ -221,11 +223,59 @@ print("     -> total area anal %.8e " %(Lx*Ly))
 
 print("compute elements areas: %.3f s" % (timing.time() - start))
 
-#--------------------------------------------------------------------
+###############################################################################
+# compute array for assembly
+###############################################################################
+start = timing.time()
+
+ndofV_el=mV*ndofV
+local_to_globalV=np.zeros((ndofV_el,nel),dtype=np.int32)
+
+for iel in range(0,nel):
+    for k1 in range(0,mV):
+        for i1 in range(0,ndofV):
+            ikk=ndofV*k1          +i1
+            m1 =ndofV*iconV[k1,iel]+i1
+            local_to_globalV[ikk,iel]=m1
+    
+print("compute local_to_global: %.3fs" % (timing.time() - start))
+
+###############################################################################
+# fill I,J arrays
+###############################################################################
+start = timing.time()
+
+bignb=nel*( (mV*ndofV)**2 + 2*(mV*ndofV*mP) )
+
+I=np.zeros(bignb,dtype=np.int32)
+J=np.zeros(bignb,dtype=np.int32)
+V=np.zeros(bignb,dtype=np.float64)
+
+counter=0
+for iel in range(0,nel):
+    for ikk in range(ndofV_el):
+        m1=local_to_globalV[ikk,iel]
+        for jkk in range(ndofV_el):
+            m2=local_to_globalV[jkk,iel]
+            I[counter]=m1
+            J[counter]=m2
+            counter+=1
+        for jkk in range(0,mP):
+            m2 =iconP[jkk,iel]+NfemV
+            I[counter]=m1
+            J[counter]=m2
+            counter+=1
+            I[counter]=m2
+            J[counter]=m1
+            counter+=1
+
+print("fill I,J arrays: %.3fs" % (timing.time() - start))
+
+###############################################################################
 # build FE matrix
 # |K   G|.|V|=|f|
 # |G^T 0| |P| |h|
-#--------------------------------------------------------------------
+###############################################################################
 start = timing.time()
 
 A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
@@ -242,6 +292,7 @@ etaq = np.zeros(nq,dtype=np.float64)
 dNNNVdx= np.zeros(mV,dtype=np.float64)
 dNNNVdy= np.zeros(mV,dtype=np.float64)
 
+counter=0 ; time_ass=0
 counterq=0
 
 for iel in range(0,nel): # loop over elements
@@ -307,32 +358,65 @@ for iel in range(0,nel): # loop over elements
     # apply bc
     Tools.apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel)
 
-    # assemble
-    Tools.assemble_K(K_el,A_sparse,iconV,mV,ndofV,iel)
-    Tools.assemble_G(G_el,A_sparse,iconV,iconP,NfemV,mV,mP,ndofV,ndofP,iel)
-    Tools.assemble_f(f_el,rhs,iconV,mV,ndofV,iel)
-    Tools.assemble_h(h_el,rhs,iconP,mP,NfemV,iel)
+    if ass_method==1:
+       start1 = timing.time()
+       Tools.assemble_K(K_el,A_sparse,iconV,mV,ndofV,iel)
+       Tools.assemble_G(G_el,A_sparse,iconV,iconP,NfemV,mV,mP,ndofV,ndofP,iel)
+       Tools.assemble_f(f_el,rhs,iconV,mV,ndofV,iel)
+       Tools.assemble_h(h_el,rhs,iconP,mP,NfemV,iel)
+       time_ass+= timing.time()-start1
+
+    if ass_method==2:
+       start1 = timing.time()
+       for ikk in range(ndofV_el):
+           m1=local_to_globalV[ikk,iel]
+           for jkk in range(ndofV_el):
+               V[counter]=K_el[ikk,jkk]
+               counter+=1
+           for jkk in range(0,mP):
+               V[counter]=G_el[ikk,jkk]
+               counter+=1
+               V[counter]=G_el[ikk,jkk]
+               counter+=1
+           rhs[m1]+=f_el[ikk]
+       for k2 in range(0,mP):
+           m2=iconP[k2,iel]
+           rhs[NfemV+m2]+=h_el[k2]
+       time_ass+= timing.time()-start1
 
 #end for iel
+
+print("     -> assembly: %.3f s" % (time_ass))
 
 print("build FE matrix: %.3f s" % (timing.time() - start))
 
 #plt.spy(A_sparse,markersize=1)
 #plt.savefig('matrix_'+Vspace+'_'+Pspace+'.pdf', bbox_inches='tight')
 
-#------------------------------------------------------------------------------
-# solve system
-#------------------------------------------------------------------------------
+###############################################################################
+# convert to csr 
+###############################################################################
 start = timing.time()
 
-matrix=A_sparse.tocsr()
-sol=spsolve(matrix,rhs)
+if ass_method==1:
+   sparse_matrix=A_sparse.tocsr()
+else:
+   sparse_matrix = sparse.coo_matrix((V,(I,J)),shape=(Nfem,Nfem)).tocsr()
+
+print("convert matrix to csr: %.3f s" % (timing.time() - start))
+
+###############################################################################
+# solve system
+###############################################################################
+start = timing.time()
+
+sol=spsolve(sparse_matrix,rhs)
 
 print("solve time: %.3f s" % (timing.time() - start))
 
-#------------------------------------------------------------------------------
+###############################################################################
 # put solution into separate x,y velocity arrays
-#------------------------------------------------------------------------------
+###############################################################################
 start = timing.time()
 
 u,v=np.reshape(sol[0:NfemV],(NV,2)).T
@@ -344,9 +428,9 @@ print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))
 
-#------------------------------------------------------------------------------
+###############################################################################
 # normalise pressure 
-#------------------------------------------------------------------------------
+###############################################################################
 start = timing.time()
 
 if mms.pnormalise and Pspace=='Q1+Q0':
@@ -417,9 +501,9 @@ if mms.pnormalise:
             
    print("pressure normalisation: %.3f s" % (timing.time() - start))
 
-#------------------------------------------------------------------------------
+###############################################################################
 # compute h 
-#------------------------------------------------------------------------------
+###############################################################################
 
 if Vspace[0]=='Q':
    hmin=min(np.sqrt(area))
@@ -430,11 +514,11 @@ else:
    hmax=max(np.sqrt(2*area))
    havrg=sum(np.sqrt(2*area))/nel
 
-print('     -> h (m,M,avrg)=',hmin,hmax,havrg)
+print('     -> h (m,M,avrg)= %e %e %e ' %(hmin,hmax,havrg))
 
-#------------------------------------------------------------------------------
+###############################################################################
 # compute vrms and errors
-#------------------------------------------------------------------------------
+###############################################################################
 start = timing.time()
 
 uq = np.zeros(nq,dtype=np.float64)
@@ -483,12 +567,12 @@ errv=np.sqrt(errv/(Lx*Ly))
 errp=np.sqrt(errp/(Lx*Ly))
 errdivv=np.sqrt(errdivv/(Lx*Ly))
 
-print("     -> nel= %6d ; vrms= %.8e | vrms_th= %.8e | %7d %7d %e" %(nel,vrms,mms.vrms_th(),NfemV,NfemP,hmin))
-print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errdivv= %.8e | %7d %7d %.8e" %(nel,errv,errp,errdivv,NfemV,NfemP,hmin))
+print("     -> nel= %6d ; vrms= %.8e ; vrms_th= %.8e ; %6d %6d %e" %(nel,vrms,mms.vrms_th(),NfemV,NfemP,havrg))
+print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errdivv= %.8e | %6d %6d %.8e" %(nel,errv,errp,errdivv,NfemV,NfemP,havrg))
 
 print("compute vrms & errors: %.3f s" % (timing.time() - start))
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 eps=1e-6
 
@@ -566,7 +650,7 @@ if experiment=='solvi':
    Tools.export_swarm_to_ascii(xbottom[sort],pbottom[sort],\
                                'solvi_p_profile'+Vspace+'x'+Pspace+'_'+str(nelx)+'.ascii')
             
-#------------------------------------------------------------------------------
+###############################################################################
 
 if experiment=='sinker' or experiment=='sinker_reduced' or experiment=='sinker_open':
 
@@ -652,9 +736,7 @@ if experiment=='RT':
 
    print('     -> rt_wave',np.max(abs(v)),phi1,etastar,drho,nelx,val)
    
-#------------------------------------------------------------------------------
-# 
-#------------------------------------------------------------------------------
+###############################################################################
 
 bxc = np.zeros(nel,dtype=np.float64)
 byc = np.zeros(nel,dtype=np.float64)
@@ -667,11 +749,13 @@ for iel in range(0,nel):
     byc[iel]=mms.by(xc,yc,drho)
     etac[iel]=mms.eta(xc,yc,etastar)
 
-#------------------------------------------------------------------------------
+###############################################################################
+
+Tools.export_swarm_vector_to_ascii(xV,yV,u,v,'solution_velocity.ascii')
+Tools.export_swarm_scalar_to_ascii(xP,yP,p,'solution_pressure.ascii')
+Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu',area,bxc,byc,etac)
 
 if visu:
-
-   Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu',area,bxc,byc,etac)
    Tools.export_elements_to_vtu(xP,yP,iconP,Pspace,'meshP.vtu',area,bxc,byc,etac)
    if not isoparametric: Tools.export_elements_to_vtu(x1,y1,icon1,space1,'mesh1.vtu')
 
@@ -696,9 +780,7 @@ if visu:
    Tools.export_swarm_scalar_to_vtu(xP,yP,p,'solution_pressure.vtu')
    Tools.export_swarm_scalar_to_vtu(xP,yP,pth,'pressure_analytical.vtu')
 
-   Tools.export_swarm_vector_to_ascii(xV,yV,u,v,'solution_velocity.ascii')
    Tools.export_swarm_vector_to_ascii(xV,yV,uth,vth,'velocity_analytical.ascii')
-   Tools.export_swarm_scalar_to_ascii(xP,yP,p,'solution_pressure.ascii')
    Tools.export_swarm_scalar_to_ascii(xP,yP,pth,'pressure_analytical.ascii')
 
    Tools.export_connectivity_array_to_ascii(xV,yV,iconV,'iconV.ascii')
@@ -706,3 +788,5 @@ if visu:
 
 print("*****************************")
 print("*****************************")
+
+###############################################################################

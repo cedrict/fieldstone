@@ -39,7 +39,7 @@ pnormalise=True
 
 ###############################################################################
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def SolCxSolution(xcoord,zcoord):
     eta_A=1.0
     eta_B=1.e6

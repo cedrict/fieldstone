@@ -54,7 +54,6 @@ def deyydy(x,y):
 def bx(x,y):
     return 0 
 
-
 def vrms_th():
     return 0
 

@@ -1,5 +1,7 @@
 import math as math
 import numpy as np
+import numba
+from numba import jit
 
 def u_th(x,y):
     uu,vv,pp=SolKzSolution(x,y)
@@ -34,6 +36,7 @@ pnormalise=True
 
 ###############################################################################
 
+#@jit(nopython=True)
 def SolKzSolution(posx,posy):
 
     n=3

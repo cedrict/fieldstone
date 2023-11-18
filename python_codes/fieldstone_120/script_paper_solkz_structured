@@ -22,9 +22,13 @@ for e in 3 4 5 9 15 18 ; do
 
     echo ---------- $Vspace X $Pspace ----------
 
-    for n in 20 30 40 50 60 70 80 90 100; do
+    for n in 16 32 48 64 96 128 ; do
         echo mesh: $n X $n 
+        start=`date +%s.%N`
         python3 stone.py $n $Vspace $Pspace solkz 0 >> opla
+        end=`date +%s.%N`
+        runtime=$( echo "$end - $start" | bc -l )
+        echo '     -> ' $runtime ' s'
     done
     grep errv opla > errors_${Vspace}_${Pspace}
     grep vrms= opla > vrms_${Vspace}_${Pspace}
@@ -35,68 +39,4 @@ done
 mv err* paperresults/solkz/structured
 mv opla* paperresults/solkz/structured
 mv vrms* paperresults/solkz/structured
-#mv *.vtu paperresults/solkz/structured
-#mv *.ascii paperresults/solkz/structured
-
-echo =================solkz====================unstructured
-rm -f opla*
-rm -f vrms*
-rm -f errors* 
-mkdir paperresults/solkz
-mkdir paperresults/solkz/unstructured
-
-for e in 3 5 9 18 ; do 
-
-    if test $e == 3  ; then Vspace=P2    Pspace=P0  ; fi
-    if test $e == 5  ; then Vspace=P2    Pspace=P1  ; fi
-    if test $e == 9  ; then Vspace=P1+   Pspace=P1  ; fi
-    if test $e == 18 ; then Vspace=P2+   Pspace=P-1 ; fi
-
-    echo ---------- $Vspace X $Pspace ----------
-
-    for n in 20 30 40 50 60 70 80 90 100; do
-        echo mesh: $n X $n 
-        python3 stone.py $n $Vspace $Pspace solkz 1 >> opla
-    done
-    grep errv opla > errors_${Vspace}_${Pspace}
-    grep vrms= opla > vrms_${Vspace}_${Pspace}
-    mv opla opla_${Vspace}_${Pspace}
-
-done
-
-mv err* paperresults/solkz/unstructured
-mv opla* paperresults/solkz/unstructured
-mv vrms* paperresults/solkz/unstructured
-#mv *.vtu paperresults/solkz/unstructured
-#mv *.ascii paperresults/solkz/unstructured
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

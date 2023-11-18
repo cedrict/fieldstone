@@ -22,11 +22,11 @@ So far the boundary conditions of this exercise are:
 \item Incompressible isothermal Stokes flow, but not isoviscous
 \item Most of commonly used element pairs for Stokes equations + some rarer ones 
 \item Dirichlet boundary conditions 
-\item Isoparametric mapping or (bi)-linear mapping? 
+\item Isoparametric mapping 
 \item Interior nodes positions with added randomness
-\item Stokes matrix fully built and sequential direct solver is used
-\item No stabilised formulations, i.e. no ${\bm Q}_1\times Q_1$-stab, ${\bm Q}_1\times P_0$-stab, or 
-      $P_1\times P_1$-stab
+\item Stokes matrix fully built and sequential direct solver is used (REVISIT)
+\item No stabilised formulations, i.e. no ${\bm Q}_1\times Q_1$-stab, 
+      ${\bm Q}_1\times P_0$-stab, or $P_1\times P_1$-stab
 \item No $P_1isoP_2$ or similar spaces
 \end{itemize}
 \item Run a suite of manufactured solution benchmarks with all 
@@ -35,17 +35,21 @@ these finite element pairs and assess their accuracy.
 total number of dofs (as in \textcite{cakp15} (2015))
 \end{itemize}
 
-
-{\bf Remark 1}:For reasons explained in \textcite{bocg12} (2012) I use 
+\begin{remark}
+{\bf 1)} For reasons explained in \textcite{bocg12} (2012) I use 
 a symmetric grid ('SYMM') for triangular elements:
 \begin{center} 
 \includegraphics[width=10cm]{python_codes/fieldstone_120/images/bocg12}\\
 {\captionfont Taken from \textcite{bocg12} (2012).}
 \end{center} 
+\end{remark}
 
+\begin{remark}
+Unless specified we set nelx=nely.
+\end{remark}
 
-%-----------------------------------------------------------------------------
-\subsection*{Finite element pairs for the Stokes equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Finite element pairs for the Stokes equation}
 
 \begin{center}
 \begin{tabular}{p{1cm}p{2cm}p{3.5cm}p{2.25cm}p{5cm}}
@@ -53,61 +57,76 @@ a symmetric grid ('SYMM') for triangular elements:
  &pair & other name & information & remark \\
 \hline
 \hline
- 1&${\bm Q}_1\times Q_0$   & ${\bm Q}_1\times P_0$  & Section~\ref{ss:pairq1p0} & NOT LBB STABLE but usable\\
- 2&${\bm Q}_2\times Q_0$   &                  & Section~\ref{ss:pairq2q0}\\
- 3&${\bm P}_2\times P_0$   &                  & Section~\ref{ss:p2p0}\\ 
- 4&${\bm Q}_2\times Q_1$       &                  & Section~\ref{ss:pairq2q1}\\
- 5&${\bm P}_2\times P_1$       &                  & Section~\ref{ss:p2p1}\\
- 6&${\bm Q}_3\times Q_2$       &                  & Section~\ref{ss:q32d}\\
- 7&${\bm P}_3\times P_2$       &                  & Section~\ref{ss:p3p2}\\
- 8&${\bm Q}_1^+\times Q_1$     & Quad. MINI       & Section~\ref{ss:quadmini}\\
- 9&${\bm P}_1^{+}\times P_{1}$ & MINI             & Section~\ref{pair:mini}\\
-10&$RT_1\times Q_0$      &                  & Section~\ref{ss:RTq1p0}\\
-11&$RT_2\times Q_0$      &                  & Section~\ref{ss:RTq1p0}\\
-12&$DSSY_1\times Q_0$    &                  & Section~\ref{ss:pair_dssy2D}\\
-13&$DSSY_2\times Q_0$    &                  & Section~\ref{ss:pair_dssy2D}\\
-14&$Han\times Q_0$       &                  & Section~\ref{ss:han}\\
-15&${\bm Q}_2\times P_{-1}$    &                  & Section~\ref{ss:pairq2pm1}\\
-16&${\bm Q}_2\times P_{-1}(u)$ &                  & Section~\ref{ss:pairq2pm1}\\
-17&${\bm Q}_2^{(8)}\times Q_1$ & Serendipity      & Section~\ref{sec:serendipity2D}\\
-18&${\bm P}_2^+\times P_{-1}$  & Crouzeix-Raviart & Section~\ref{sec:crouzeix-raviart}\\
-19&${\bm P}_2^+\times P_{1}$   &                  & Section~\ref{ss:p2pp1}\\
-20&${\bm P}_2\times (P_1+P_0)$ & Augmented $P_2\times P_1$ & Section~\ref{ss:p2p1p0}\\
-21&${\bm P}_1^{NC}\times P_0$  & Crouzeix-Raviart & Section~\ref{ss:p1ncp0}\\
-22&${\bm P}_1\times P_0$       &                  & Section~\ref{ss:p1p0}  &NOT LBB STABLE and unusable\\
-23&${\bm Q}_2\times Q_{-1}$    &                  & Section~\ref{ss:pair_q2qm1} & NOT LBB STABLE\\
-24&${\bm Q}_2\times Q_1+Q_0$   & Augmented ${\bm Q}_2\times Q_1$ & Section~\ref{ss:q2q1q0} \\
-25&$Chen\times Q_0$      &                  & Section~\ref{ss:chenq0} & NOT SURE \\
-26&${\bm Q}_4\times Q_3$       &                  & Section~\ref{ss:q42d}\\
-27&${\bm P}_4\times P_3$       &                  & Section~\ref{ss:p42d}\\
+ 1&${\bm Q}_1\times Q_0$       & ${\bm Q}_1\times P_0$       & Section~\ref{MMM-ss:pairq1p0} & NOT LBB STABLE but usable\\
+ 2&${\bm Q}_2\times Q_0$       &                             & Section~\ref{MMM-ss:pairq2q0}\\
+ 3&${\bm P}_2\times P_0$       &                             & Section~\ref{MMM-ss:p2p0}\\ 
+ 4&${\bm Q}_2\times Q_1$       &                             & Section~\ref{MMM-ss:pairq2q1}\\
+ 5&${\bm P}_2\times P_1$       &                             & Section~\ref{MMM-ss:p2p1}\\
+ 6&${\bm Q}_3\times Q_2$       &                             & Section~\ref{MMM-ss:q32d}\\
+ 7&${\bm P}_3\times P_2$       &                             & Section~\ref{MMM-ss:p3p2}\\
+ 8&${\bm Q}_1^+\times Q_1$     & Quad. MINI                  & Section~\ref{MMM-ss:quadmini}\\
+ 9&${\bm P}_1^+\times P_1$     & MINI                        & Section~\ref{MMM-pair:mini}\\
+10&$RT_1\times Q_0$            &                             & Section~\ref{MMM-ss:RTq1p0}\\
+11&$RT_2\times Q_0$            &                             & Section~\ref{MMM-ss:RTq1p0}\\
+12&$DSSY_1\times Q_0$          &                             & Section~\ref{MMM-ss:pair_dssy2D}\\
+13&$DSSY_2\times Q_0$          &                             & Section~\ref{MMM-ss:pair_dssy2D}\\
+14&$Han\times Q_0$             &                             & Section~\ref{MMM-ss:han}\\
+15&${\bm Q}_2\times P_{-1}$    &                             & Section~\ref{MMM-ss:pairq2pm1}\\
+16&${\bm Q}_2\times P_{-1}(u)$ &                             & Section~\ref{MMM-ss:pairq2pm1}\\
+17&${\bm Q}_2^{(8)}\times Q_1$ & Serendipity                 & Section~\ref{MMM-sec:serendipity2D}\\
+18&${\bm P}_2^+\times P_{-1}$  & Crouzeix-Raviart            & Section~\ref{MMM-sec:crouzeix-raviart}\\
+19&${\bm P}_2^+\times P_{1}$   &                             & Section~\ref{MMM-ss:p2pp1}\\
+20&${\bm P}_2\times (P_1+P_0)$ & Augm. $P_2\times P_1$       & Section~\ref{MMM-ss:p2p1p0}\\
+21&${\bm P}_1^{NC}\times P_0$  & Crouzeix-Raviart            & Section~\ref{MMM-ss:p1ncp0}\\
+22&${\bm P}_1\times P_0$       &                             & Section~\ref{MMM-ss:p1p0}  &NOT LBB STABLE and unusable\\
+23&${\bm Q}_2\times Q_{-1}$    &                             & Section~\ref{MMM-ss:pair_q2qm1} & NOT LBB STABLE\\
+24&${\bm Q}_2\times Q_1+Q_0$   & Augm. ${\bm Q}_2\times Q_1$ & Section~\ref{MMM-ss:q2q1q0} \\
+25&$Chen\times Q_0$            &                             & Section~\ref{MMM-ss:chenq0} & NOT SURE \\
+26&${\bm Q}_4\times Q_3$       &                             & Section~\ref{MMM-ss:q42d}\\
+27&${\bm P}_4\times P_3$       &                             & Section~\ref{MMM-ss:p42d}\\
 \hline
 \end{tabular}
 \end{center}
 
-
-{\bf Remark 2}: I have indeed built support for 3 unstable elements but 
+\begin{remark}
+{\bf 2)} I have indeed built support for 3 unstable elements but 
 these should not be included in the publication. 
+\end{remark}
 
-{\bf Remark 3}: The augmented ${\bm P}_2\times (P_1+P_0)$ element pair is LBB stable 
+\begin{remark}
+{\bf 3)} The augmented ${\bm P}_2\times (P_1+P_0)$ element pair is LBB stable 
 but special care must be taken with respect to the rank-deficiency 
 as explained in \textcite{bocg12} (2012). The same applies to ${\bm Q}_2\times (Q_1+Q_0)$. 
 I propose a simple fix later. 
+\end{remark}
 
-{\bf Remark 4}: The nonconforming ${\bm P}_1^{NC}\times P_0$ gives me a headache and does not 
+\begin{remark}
+{\bf 4)} The nonconforming ${\bm P}_1^{NC}\times P_0$ gives me a headache and does not 
 yield accurate results (esp. the pressure). Not sure why... Coercivity/Korn stuff? I
 have yet to find an article using the element 'as is'.
+\end{remark}
 
-{\bf Remark 5} Following \textcite{john16} book, I could also do 
+\begin{remark}
+{\bf 5)} Following \textcite{john16} book, I could also do 
 ${\bm P}_3^+\times P_{-2}$, ${\bm Q}_3\times P_{-2}$. 
+\end{remark}
 
-{\bf Remark 6}: A modified $Q_2$ Serendipity element was proposed by \textcite{zhxi20} (2020) 
-(see Section~\ref{sec:serendipity2Db}) but it is only different from the standard serendipity 
+\begin{remark}
+{\bf 6)} A modified $Q_2$ Serendipity element was proposed by \textcite{zhxi20} (2020) 
+(see Section~\ref{MMM-sec:serendipity2Db}) but it is only different from the standard serendipity 
 element when the elements are not rectangles. 
+\end{remark}
 
-{\bf Remark 7}: Using high-order element spaces ($Q_4$, $P_4$, ...) only makes sense in this context
-if the manufactured solution is also a high-order polynomial or contains non-polynomial terms.
+\begin{remark}
+{\bf 7)} Using high-order element spaces ($Q_4$, $P_4$, ...) only makes 
+sense in this context if the manufactured solution is also a high-order polynomial 
+or contains non-polynomial terms.
+\end{remark}
 
-\vspace{0.5cm}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{velocity-pressure pair spaces}
 
 \begin{center}
 Quadrilateral elements\\
@@ -140,16 +159,19 @@ $P_{-1}$ & $\times$ & $\sqrt{}$ & ?         &          &  ?        & $\sqrt{}$ &
 \end{tabular}
 \end{center}
 
-\newpage
-%-----------------------------------
+\vspace{2cm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{An attempt at classification}
 
 \input{python_codes/fieldstone_120/tikz_potatoes}
 
 $P_1^{nc} \times P_0$ belongs to non-conforming but it does not work.
 
 \newpage
-%-----------------------------------
-\subsection*{The libraries}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{The libraries}
 
 There are three files which contain all the required tools to build most of a FE code:
 
@@ -219,8 +241,9 @@ a tikz drawing of the nodes layout. Only works for 3x3 meshes.
 \end{itemize}
 
 \newpage
-%--------------------------------------------------------------------
-\subsection*{Supported element spaces}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Supported element spaces}
 
 These figures are obtained by running \lstinline{tester6.py}.
 
@@ -238,14 +261,88 @@ These figures are obtained by running \lstinline{tester6.py}.
 \includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P2_nodes}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P3_nodes}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P4_nodes}
-\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P1+_nodes}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P1+_nodes}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P1NC_nodes}
 \includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P2+_nodes}
 \end{center}
 
 \newpage
-%--------------------------------------------------------------------
-\subsection*{$3\times 2$ meshes with velocity nodes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{List of scripts}
+
+The main code {\pythonfile stone.py} accepts either 5 or 7 arguments.
+
+\begin{itemize}
+\item 5 arguments: \lstinline{nelx,Vspace,Pspace,experiment,unstructured}
+\item 7 arguments: \lstinline{nelx,Vspace,Pspace,experiment,unstructured,etastar,drho}
+\end{itemize} 
+
+The \lstinline{experiment} is as follows:
+\begin{lstlisting}
+if experiment=='dh'             : import mms_dh as mms 
+if experiment=='jolm17'         : import mms_jolm17 as mms 
+if experiment=='sinker'         : import mms_sinker as mms 
+if experiment=='sinker_reduced' : import mms_sinker_reduced as mms 
+if experiment=='sinker_open'    : import mms_sinker_open as mms 
+if experiment=='poiseuille'     : import mms_poiseuille as mms 
+if experiment=='johnbook'       : import mms_johnbook as mms 
+if experiment=='bocg12'         : import mms_bocg12 as mms 
+if experiment=='solcx'          : import mms_solcx as mms 
+if experiment=='solkz'          : import mms_solkz as mms 
+if experiment=='solvi'          : import mms_solvi as mms 
+if experiment=='RT'             : import mms_RT as mms 
+\end{lstlisting}
+Note that for \lstinline{solvi,solcx} specific meshes are used:
+\begin{lstlisting}
+if experiment=='solvi'       : meshtype='solvi'
+if experiment=='solcx'       : meshtype='solcx'
+\end{lstlisting}
+
+
+In the main folder there are many scripts that allow us to run the code
+for a wide range of parameter values (like resolution, element type, ...)
+
+
+There are several scripts specifically written for 
+\textcite{thba24} (In prep.).
+\begin{itemize}
+\item {\tt script\_paper\_dh}: Donea \& Huerta benchmark.
+Elements are 3, 4, 5, 9, 15, 18. 
+Resolutions are nelx=20, 30, 40, 50, 60, 70, 80, 90, 100.
+This is carried out for both structured and unstructured meshes.
+\end{itemize}
+
+\begin{verbatim}
+script_paper
+script_paper_rt
+script_paper_sinker
+script_paper_sinker_open
+script_paper_sinker_reduced
+script_paper_solcx
+script_paper_solkz
+script_paper_solvi
+script_run
+\end{verbatim}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Python testers}
+
+\begin{itemize}
+\item {\pythonfile tester1.py}: checks that each basis function is 1 on its support node and zero at all other nodes.
+\item {\pythonfile tester2.py}: computes the area of each element by means of numerical quadrature. The domain is 3x2 and there are 3x2 elements so that we expect 1 for quadrilateral elements and 0.5 for triangular elements.  
+\item {\pythonfile tester3.py}: computes the space derivatives of each coordinate minus one, so that we expect zero (down to machine precision). It returns 'passed' if the results is less than $10^{-12}$.   
+\item {\pythonfile tester4.py}: computes the gradient of $x^2/2$ and $y^2/2$ (i.e. resp. $x$ and $y$) to which the coordinate of the quadrature point is subtracted so that one expect zero again. This test can only be passed by quadratic and higher order elements.
+\item {\pythonfile tester5.py}: produces 3x2 tikz files and corresponding iconV files. 
+\item {\pythonfile tester6.py}: produces pdf files of reference elements.
+\end{itemize}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{$3\times 2$ meshes with velocity nodes}
 
 %------------------
 \begin{multicols}{2}
@@ -274,7 +371,7 @@ These figures are obtained by running \lstinline{tester6.py}.
 \end{tiny}
 \end{multicols}
 
-\newpage
+
 %------------------
 \begin{multicols}{2}
 \input{python_codes/fieldstone_120/spaces/3x2_P4}
@@ -285,9 +382,6 @@ These figures are obtained by running \lstinline{tester6.py}.
 \end{multicols}
 
 
-
-
-\newpage
 %------------------
 \begin{multicols}{2}
 \input{python_codes/fieldstone_120/spaces/3x2_P1+}
@@ -315,7 +409,7 @@ These figures are obtained by running \lstinline{tester6.py}.
 \end{tiny}
 \end{multicols}
 
-\newpage
+
 %------------------
 \begin{multicols}{2}
 \input{python_codes/fieldstone_120/spaces/3x2_Q1}
@@ -352,7 +446,7 @@ These figures are obtained by running \lstinline{tester6.py}.
 \end{tiny}
 \end{multicols}
 
-\newpage
+
 %------------------
 \begin{multicols}{2}
 \input{python_codes/fieldstone_120/spaces/3x2_Q1+}
@@ -410,23 +504,16 @@ These figures are obtained by running \lstinline{tester6.py}.
 
 
 
-\newpage
-%-----------------------------------------------------------------------------
-\subsection*{Python testers}
 
-\begin{itemize}
-\item \lstinline{tester1.py}: checks that each basis function is 1 on its support node and zero at all other nodes.
-\item \lstinline{tester2.py}: computes the area of each element by means of numerical quadrature. The domain is 3x2 and there are 3x2 elements so that we expect 1 for quadrilateral elements and 0.5 for triangular elements.  
-\item \lstinline{tester3.py}: computes the space derivatives of each coordinate minus one, so that we expect zero (down to machine precision). It returns 'passed' if the results is less than $10^{-12}$.   
-\item \lstinline{tester4.py}: computes the gradient of $x^2/2$ and $y^2/2$ (i.e. resp. $x$ and $y$) to which the coordinate of the quadrature point is subtracted so that one expect zero again. This test can only be passed by quadratic and higher order elements.
-\item \lstinline{tester5.py}: produces 3x2 tikz files and corresponding iconV files. 
-\item \lstinline{tester6.py}: produces pdf files of reference elements.
-\end{itemize}
+
+
+
 
 
 \newpage
-%-----------------------------------------------------------------------------
-\subsection*{Pressure normalisation for augmented Taylor-Hood elements}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Pressure normalisation for augmented Taylor-Hood elements}
 
 
 I tried both ${\bm P}_2\times (P_1+P_0)$ and ${\bm Q}_2\times (Q_1+Q_0)$ on different manufactured solutions 
@@ -436,7 +523,7 @@ seemed a constant (bottom green points), and the $Q_0$ field (top green points) 
 very different than the $Q_1$ pressure:
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/images/q2q1q0pb}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/images/q2q1q0pb}
 \end{center}
 
 I of course make sure in my code that the pressure fulfills $\int p dV=0$ but since 
@@ -465,7 +552,7 @@ In this case the 'doubly normalised' pressure agrees with the analytical solutio
 and I obtain the following error convergence plot:
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/images/q2q1q0}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_120/images/q2q1q0}\\
 {\captionfont 'doubly normalised' pressure error convergence is quadratic (blue line) and 
 velocity error convergence is cubic (purple line). The green line is the 'wrong/raw' pressure. }
 \end{center}
@@ -474,8 +561,9 @@ velocity error convergence is cubic (purple line). The green line is the 'wrong/
 
 
 \newpage
-%-----------------------------------------------------------------------------
-\subsection*{Breakdown of the code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Breakdown of the code}
 
 One starts by loading the required finite element functions 
 for the basis functions, the numerical quadrature and various tools:
@@ -632,6 +720,75 @@ for iel in range(0,nel):
 
 FINISH!!!
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{NEW Results - Donea \& Huerta}
+
+{\tt script\_paper\_dh\_structured} and {\tt script\_paper\_dh\_unstructured}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_structured_errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_structured_errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_structured_vrms.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_unstructured_errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_unstructured_errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_unstructured_vrms.pdf}
+\end{center}
+
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/unstructured16}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/unstructured32}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/unstructured48}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/unstructured64}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{NEW Results - SolKz}
+
+{\tt script\_paper\_solkz\_structured} and {\tt script\_paper\_solkz\_unstructured}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solkz_structured_errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solkz_structured_errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solkz_structured_vrms.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solkz_unstructured_errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solkz_unstructured_errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solkz_unstructured_vrms.pdf}
+\end{center}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{NEW Results - SolCx}
+
+{\tt script\_paper\_solcx\_structured} and {\tt script\_paper\_solcx\_unstructured}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solcx_structured_errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solcx_structured_errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solcx_structured_vrms.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solcx_unstructured_errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solcx_unstructured_errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solcx_unstructured_vrms.pdf}
+\end{center}
+
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solcx/unstructured/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solcx/unstructured/press}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -644,12 +801,12 @@ v(x,y) &=& -1000 2x(1-3x) (1-x)^3  y^3(1-y)^2   \\
 p(x,y) &=& \pi^2 [xy^3 \cos(2\pi x^2 y) - x^2y \sin(2\pi xy) ]+1/8
 \end{eqnarray}
 
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/errors-velocity-all}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/errors-pressure-all}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/errors-divv-all}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/vrms_zoom}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/errors-velocity-all}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/errors-pressure-all}\\
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/errors-divv-all}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/vrms_zoom}
+%\end{center}
 
 
 \begin{center} 
@@ -671,146 +828,146 @@ p(x,y) &=& 10\left[(x-1/2)^3y^2+(1-x)^3(y-1/2)^3 \right] \nn
 The highest polynomial terms for the velocity are quartic and cubic for the pressure.
 
 
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/errors-velocity-all}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/errors-pressure-all}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/errors-divv-all}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/vrms_zoom}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/errors-velocity-all}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/errors-pressure-all}\\
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/errors-divv-all}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/vrms_zoom}
+%\end{center}
 
 %1----------------------------
 \subsection*{$Q_1\times Q_0$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1Q0-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1Q0-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1Q0-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1Q0-vp-Nfem.pdf}
+%\end{center}
 
 %2----------------------------
 \subsection*{$Q_2\times Q_0$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q0-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q0-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q0-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q0-vp-Nfem.pdf}
+%\end{center}
 
 %3----------------------------
 \subsection*{$P_2\times P_0$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P0-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P0-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P0-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P0-vp-Nfem.pdf}
+%\end{center}
 
 %4----------------------------
 \subsection*{$Q_2\times Q_1$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q1-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q1-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q1-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q1-vp-Nfem.pdf}
+%\end{center}
 
 %5----------------------------
 \subsection*{$P_2\times P_1$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P1-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P1-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P1-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P1-vp-Nfem.pdf}
+%\end{center}
 
 %6----------------------------
 \subsection*{$Q_3\times Q_2$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q3Q2-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q3Q2-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q3Q2-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q3Q2-vp-Nfem.pdf}
+%\end{center}
 
 %7----------------------------
 \subsection*{$P_3\times P_2$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P3P2-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P3P2-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P3P2-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P3P2-vp-Nfem.pdf}
+%\end{center}
 
 \newpage
 %8----------------------------
 \subsection*{$Q_1^+\times Q_1$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1+Q1-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1+Q1-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1+Q1-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1+Q1-vp-Nfem.pdf}
+%\end{center}
 
 %9----------------------------
 \subsection*{$P_1^+\times P_1$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P1+P1-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P1+P1-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P1+P1-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P1+P1-vp-Nfem.pdf}
+%\end{center}
 
 %10----------------------------
 \subsection*{$RT_1\times Q_0$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT1Q0-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT1Q0-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT1Q0-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT1Q0-vp-Nfem.pdf}
+%\end{center}
 
 %11----------------------------
 \subsection*{$RT_2\times Q_0$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT2Q0-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT2Q0-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT2Q0-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT2Q0-vp-Nfem.pdf}
+%\end{center}
 
 %12----------------------------
 \subsection*{$DSSY_1\times Q_0$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY1Q0-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY1Q0-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY1Q0-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY1Q0-vp-Nfem.pdf}
+%\end{center}
 
 %13----------------------------
 \subsection*{$DSSY_2\times Q_0$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY2Q0-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY2Q0-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY2Q0-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY2Q0-vp-Nfem.pdf}
+%\end{center}
 
 %14----------------------------
 \subsection*{$Han\times Q_0$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/HanQ0-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/HanQ0-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/HanQ0-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/HanQ0-vp-Nfem.pdf}
+%\end{center}
 
 %15----------------------------
 \subsection*{$Q_2\times P_{-1}$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1-vp-Nfem.pdf}
+%\end{center}
 
 %16----------------------------
 \subsection*{$Q_2\times P_{-1}(u)$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1u-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1u-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1u-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1u-vp-Nfem.pdf}
+%\end{center}
 
 %17----------------------------
 \subsection*{$Q_2^{(8)}\times Q_1$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2sQ1-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2sQ1-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2sQ1-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2sQ1-vp-Nfem.pdf}
+%\end{center}
 
 %18----------------------------
 \subsection*{$P_2^+\times P_{-1}$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P-1-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P-1-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P-1-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P-1-vp-Nfem.pdf}
+%\end{center}
 
 %19----------------------------
 \subsection*{$P_2^+\times P_{1}$}
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P1-vp-h.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P1-vp-Nfem.pdf}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P1-vp-h.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P1-vp-Nfem.pdf}
+%\end{center}
 
 
 
@@ -877,18 +1034,18 @@ $\rho_s=1.001$. Gravity is $\vec{g}=-\vec{e}_y$.
 There is no analytical solution so by setting $\vec{\upnu}^{th}=\vec{0}$ and 
 $p^{th}=0$ the computed errors are in fact the vrms and prms shown hereunder.
 
-\begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_120/results_sinker/velocity}
-\includegraphics[width=6cm]{python_codes/fieldstone_120/results_sinker/pressure}\\
-{\captionfont Velocity and pressure field on $64\times 64$ mesh of $Q_2\times Q_1$ elements.}
-\end{center}
+%\begin{center}
+%\includegraphics[width=6cm]{python_codes/fieldstone_120/results_sinker/velocity}
+%\includegraphics[width=6cm]{python_codes/fieldstone_120/results_sinker/pressure}\\
+%{\captionfont Velocity and pressure field on $64\times 64$ mesh of $Q_2\times Q_1$ elements.}
+%\end{center}
 
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results_sinker/errors-velocity-all}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results_sinker/errors-pressure-all}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results_sinker/errors-divv-all}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/results_sinker/vrms_zoom}
-\end{center}
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_sinker/errors-velocity-all}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_sinker/errors-pressure-all}\\
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_sinker/errors-divv-all}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_sinker/vrms_zoom}
+%\end{center}
 
 
 
@@ -916,18 +1073,18 @@ Korn stuff.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results - SolKz}
 
-\begin{center}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/solkz/errors-velocity-all.pdf}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/solkz/errors-pressure-all.pdf}\\
-\end{center}
+%\begin{center}
+%\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/solkz/errors-velocity-all.pdf}
+%\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/solkz/errors-pressure-all.pdf}\\
+%\end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results - SolCx}
 
-\begin{center}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/solcx/errors-velocity-all.pdf}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/solcx/errors-pressure-all.pdf}\\
-\end{center}
+%\begin{center}
+%\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/solcx/errors-velocity-all.pdf}
+%\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/solcx/errors-pressure-all.pdf}\\
+%\end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results - SolVi}

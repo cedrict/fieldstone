@@ -2,8 +2,7 @@ import numpy as np
 import random 
 import FEbasis2D as FE
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def cartesian_mesh(Lx,Ly,nelx,nely,space):
 
@@ -1147,8 +1146,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
 
     return N,nel,x,y,icon
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
+# REMOVE THIS ?!
 
 def read_meshXX(Vspace,Pspace):
 
@@ -1217,7 +1216,6 @@ def read_meshXX(Vspace,Pspace):
              iconV[5,counter]=int(columns[5])-1
              counter+=1
 
-
     xP=np.zeros(NP,dtype=np.float64)
     yP=np.zeros(NP,dtype=np.float64)
     counter=0
@@ -1239,13 +1237,161 @@ def read_meshXX(Vspace,Pspace):
              iconP[2,counter]=int(columns[2])-1
              counter+=1
 
-
     return nel,NV,NP,xV,yV,iconV,xP,yP,iconP
 
+###############################################################################
+# mostly borrowed from stone 131!
+
+def compute_segs(InputCoords):
+    segs = np.stack([np.arange(len(InputCoords)),np.arange(len(InputCoords))+1],axis=1)%len(InputCoords)
+    return segs
+
+def generate_random_mesh(L,nelx,Vspace,Pspace): 
+
+   import triangle as tr
+   import matplotlib.pyplot as plt
+
+   areatarget=(L/nelx)**2 #; arguments='pqa'+str(areatarget)
+   arguments="pqa%.8f s" % (areatarget)
+   print(arguments)
+
+   square_vertices = np.array([[0,0],[0,L],[L,L],[L,0]])
+   square_edges = compute_segs(square_vertices)
+
+   O1 = {'vertices' : square_vertices, 'segments' : square_edges}
+   T1 = tr.triangulate(O1,arguments) # tr.triangulate() computes the main dictionary 
+
+   #tr.compare(plt, O1, T1) # The tr.compare() function always takes plt as its 1st argument
+   #plt.savefig('ex1.pdf', bbox_inches='tight')
+   #plt.show()
+
+   #area=compute_triangles_area(T1['vertices'], T1['triangles'])
+   iconP1=T1['triangles'] ; iconP1=iconP1.T
+   xP1=T1['vertices'][:,0] 
+   yP1=T1['vertices'][:,1] 
+   NP1=np.size(xP1)
+   mP1,nel=np.shape(iconP1)
+
+   print('nel=',nel)
+   print('NP1=',NP1)
+
+   iconP2 =np.zeros((6,nel),dtype=np.int32)
+   matrix =np.zeros((NP1,NP1),dtype=np.int32)
+
+   counter=NP1
+   for iel in range(0,nel): #loop over elements
+       iconP2[0,iel]=iconP1[0,iel]
+       iconP2[1,iel]=iconP1[1,iel]
+       iconP2[2,iel]=iconP1[2,iel]
+       for k in range(0,mP1): # loop over faces
+           noode1=iconP1[k,iel]
+           noode2=iconP1[(k+1)%3,iel]
+           node1=min(noode1,noode2)
+           node2=max(noode1,noode2)
+           if matrix[node1,node2]==0:
+              matrix[node1,node2]=counter
+              counter+=1
+           iconP2[k+3,iel]=matrix[node1,node2]
+       #end for
+   #end for
+   NP2=counter
+
+   print('NP2=',NP1)
+
+   xP2 = np.zeros(NP2,dtype=np.float64)  
+   yP2 = np.zeros(NP2,dtype=np.float64)  
+   xP2[0:NP1]=xP1[0:NP1]
+   yP2[0:NP1]=yP1[0:NP1]
+
+   for iel in range(0,nel): #loop over elements
+       xP2[iconP2[3,iel]]=0.5*(xP2[iconP2[0,iel]]+xP2[iconP2[1,iel]])
+       xP2[iconP2[4,iel]]=0.5*(xP2[iconP2[1,iel]]+xP2[iconP2[2,iel]])
+       xP2[iconP2[5,iel]]=0.5*(xP2[iconP2[2,iel]]+xP2[iconP2[0,iel]])
+       yP2[iconP2[3,iel]]=0.5*(yP2[iconP2[0,iel]]+yP2[iconP2[1,iel]])
+       yP2[iconP2[4,iel]]=0.5*(yP2[iconP2[1,iel]]+yP2[iconP2[2,iel]])
+       yP2[iconP2[5,iel]]=0.5*(yP2[iconP2[2,iel]]+yP2[iconP2[0,iel]])
+
+   if Vspace=='P2':
+      NV=NP2 
+      xV=xP2 
+      yV=yP2 
+      iconV=iconP2
+   elif Vspace=='P2+':
+      NV=NP2+nel
+      xV=np.zeros(NV,dtype=np.float64)  
+      yV=np.zeros(NV,dtype=np.float64)  
+      iconV=np.zeros((7,nel),dtype=np.int32)
+      xV[0:NP2]=xP2[0:NP2]
+      yV[0:NP2]=yP2[0:NP2]
+      iconV[0,0:nel]=iconP2[0,0:nel]
+      iconV[1,0:nel]=iconP2[1,0:nel]
+      iconV[2,0:nel]=iconP2[2,0:nel]
+      iconV[3,0:nel]=iconP2[3,0:nel]
+      iconV[4,0:nel]=iconP2[4,0:nel]
+      iconV[5,0:nel]=iconP2[5,0:nel]
+      for iel in range(0,nel):
+          xV[NP2+iel]=np.sum(xP1[iconP1[:,iel]])/3
+          yV[NP2+iel]=np.sum(yP1[iconP1[:,iel]])/3
+          iconV[6,iel]=NP2+iel
+
+   elif Vspace=='P1+':
+      NV=NP1+nel
+      xV=np.zeros(NV,dtype=np.float64)  
+      yV=np.zeros(NV,dtype=np.float64)  
+      iconV=np.zeros((4,nel),dtype=np.int32)
+      xV[0:NP1]=xP1[0:NP1]
+      yV[0:NP1]=yP1[0:NP1]
+      iconV[0,0:nel]=iconP1[0,0:nel]
+      iconV[1,0:nel]=iconP1[1,0:nel]
+      iconV[2,0:nel]=iconP1[2,0:nel]
+      for iel in range(0,nel):
+          xV[NP1+iel]=np.sum(xP1[iconP1[:,iel]])/3
+          yV[NP1+iel]=np.sum(yP1[iconP1[:,iel]])/3
+          iconV[3,iel]=NP1+iel
+
+   else:
+      exit('unknown Vspace in generate_random_mesh')
+
+   if Pspace=='P1':
+      NP=NP1 
+      xP=xP1 
+      yP=yP1 
+      iconP=iconP1
+   elif Pspace=='P0':
+      NP=nel
+      xP=np.zeros(NP,dtype=np.float64)  
+      yP=np.zeros(NP,dtype=np.float64)  
+      iconP=np.zeros((1,nel),dtype=np.int32)
+      for iel in range(0,nel):
+          xP[iel]=np.sum(xP1[iconP1[:,iel]])/3
+          yP[iel]=np.sum(yP1[iconP1[:,iel]])/3
+          iconP[0,iel]=iel
+   elif Pspace=='P-1':
+      NP=3*nel
+      xP=np.zeros(NP,dtype=np.float64)  
+      yP=np.zeros(NP,dtype=np.float64)  
+      iconP=np.zeros((3,nel),dtype=np.int32)
+      counter=0
+      for iel in range(0,nel):
+          xP[counter]=xP1[iconP1[0,iel]]
+          yP[counter]=yP1[iconP1[0,iel]]
+          iconP[0,iel]=counter
+          counter+=1
+          xP[counter]=xP1[iconP1[1,iel]]
+          yP[counter]=yP1[iconP1[1,iel]]
+          iconP[1,iel]=counter
+          counter+=1
+          xP[counter]=xP1[iconP1[2,iel]]
+          yP[counter]=yP1[iconP1[2,iel]]
+          iconP[2,iel]=counter
+          counter+=1
+   else:
+      exit('unknown Pspace in generate_random_mesh')
 
 
+   return nel,NV,NP,xV,yV,iconV,xP,yP,iconP
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def read_mesh(Vspace,Pspace,nelx,meshtype):
 
@@ -1274,7 +1420,7 @@ def read_mesh(Vspace,Pspace,nelx,meshtype):
     icon_P2[3,:]-=1
     icon_P2[4,:]-=1
     icon_P2[5,:]-=1
-    P1bool=np.zeros(N_P2,dtype=np.bool) 
+    P1bool=np.zeros(N_P2,dtype=bool) 
     for iel in range(0,nel):
         P1bool[icon_P2[0,iel]]=True
         P1bool[icon_P2[1,iel]]=True
@@ -1385,8 +1531,7 @@ def read_mesh(Vspace,Pspace,nelx,meshtype):
 
     return nel,NV,NP,xV,yV,iconV,xP,yP,iconP
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def randomize_background_mesh(x1,y1,hx,hy,N1,Lx,Ly):
     alpha=0.1
@@ -1419,8 +1564,7 @@ def deform_mesh_RT(x1,y1,N1,Lx,Ly,nelx,nely):
                y1[counter]=ya+(j-nely/2)*dy
             counter+=1
 
-
-
+###############################################################################
 
 def adapt_FE_mesh(x1,y1,icon1,m1,space1,x,y,icon,nel,space):
     r=FE.NNN_r(space)
@@ -1432,26 +1576,22 @@ def adapt_FE_mesh(x1,y1,icon1,m1,space1,x,y,icon,nel,space):
             x[icon[i,iel]]=NNN1.dot(x1[icon1[0:m1,iel]])
             y[icon[i,iel]]=NNN1.dot(y1[icon1[0:m1,iel]])
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def export_swarm_to_ascii(x,y,filename):
     np.savetxt(filename,np.array([x,y]).T,header='# x,y')
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def export_swarm_scalar_to_ascii(x,y,f,filename):
     np.savetxt(filename,np.array([x,y,f]).T,header='# x,y,field')
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def export_swarm_vector_to_ascii(x,y,u,v,filename):
     np.savetxt(filename,np.array([x,y,u,v]).T,header='# x,y,vx,vy')
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def export_connectivity_array_to_ascii(x,y,icon,filename):
     m,nel=np.shape(icon)
@@ -1459,7 +1599,8 @@ def export_connectivity_array_to_ascii(x,y,icon,filename):
     for iel in range (0,nel):
         iconfile.write('--------elt:'+str(iel)+'-------\n')
         for k in range(0,m):
-            iconfile.write("node "+str(k)+' | '+str(icon[k,iel])+" at pos. "+str(x[icon[k,iel]])+','+str(y[icon[k,iel]])+'\n')
+            iconfile.write("node "+str(k)+' | '+str(icon[k,iel])+" at pos. "+\
+                           str(x[icon[k,iel]])+','+str(y[icon[k,iel]])+'\n')
 
 def export_connectivity_array_elt1_to_ascii(x,y,icon,filename):
     m,nel=np.shape(icon)
@@ -1467,10 +1608,10 @@ def export_connectivity_array_elt1_to_ascii(x,y,icon,filename):
     iel=0
     iconfile.write('--------elt:'+str(iel)+'-------\n')
     for k in range(0,m):
-        iconfile.write("node "+str(k)+' | '+str(icon[k,iel])+" at pos. "+str(x[icon[k,iel]])+','+str(y[icon[k,iel]])+'\n')
+        iconfile.write("node "+str(k)+' | '+str(icon[k,iel])+" at pos. "+\
+                       str(x[icon[k,iel]])+','+str(y[icon[k,iel]])+'\n')
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def export_elements_to_vtu(x,y,icon,space,filename,area,bx,by,eta):
     N=np.size(x)
@@ -1550,7 +1691,8 @@ def export_elements_to_vtu(x,y,icon,space,filename,area,bx,by,eta):
         if m==3:
            vtufile.write("%d %d %d \n" %(icon[node0,iel],icon[node1,iel],icon[node2,iel]))
         if m==4:
-           vtufile.write("%d %d %d %d \n" %(icon[node0,iel],icon[node1,iel],icon[node2,iel],icon[node3,iel]))
+           vtufile.write("%d %d %d %d \n" %(icon[node0,iel],icon[node1,iel],\
+                                            icon[node2,iel],icon[node3,iel]))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
@@ -1573,7 +1715,7 @@ def export_elements_to_vtu(x,y,icon,space,filename,area,bx,by,eta):
     vtufile.write("</VTKFile>\n")
     vtufile.close()
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def export_V_to_vtu(NV,xV,yV,iconV,Vspace,filename,u,v,Pspace,p,iconP):
     mV,nel=np.shape(iconV)
@@ -1650,133 +1792,127 @@ def export_V_to_vtu(NV,xV,yV,iconV,Vspace,filename,u,v,Pspace,p,iconP):
     vtufile.write("</VTKFile>\n")
     vtufile.close()
 
-
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def export_swarm_to_vtu(x,y,filename):
-       N=np.size(x)
-       vtufile=open(filename,"w")
-       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-       vtufile.write("<UnstructuredGrid> \n")
-       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(N,N))
-       #--
-       vtufile.write("<Points> \n")
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
-       for i in range(0,N):
+    N=np.size(x)
+    vtufile=open(filename,"w")
+    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+    vtufile.write("<UnstructuredGrid> \n")
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(N,N))
+    #--
+    vtufile.write("<Points> \n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+    for i in range(0,N):
            vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("</Points> \n")
-       vtufile.write("<Cells>\n")
-       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-       for i in range(0,N):
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Points> \n")
+    vtufile.write("<Cells>\n")
+    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+    for i in range(0,N):
            vtufile.write("%d " % i)
-       vtufile.write("</DataArray>\n")
-       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-       for i in range(0,N):
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+    for i in range(0,N):
            vtufile.write("%d " % (i+1))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-       for i in range(0,N):
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+    for i in range(0,N):
            vtufile.write("%d " % 1)
-       vtufile.write("</DataArray>\n")
-       vtufile.write("</Cells>\n")
-       vtufile.write("</Piece>\n")
-       vtufile.write("</UnstructuredGrid>\n")
-       vtufile.write("</VTKFile>\n")
-       vtufile.close()
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Cells>\n")
+    vtufile.write("</Piece>\n")
+    vtufile.write("</UnstructuredGrid>\n")
+    vtufile.write("</VTKFile>\n")
+    vtufile.close()
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def export_swarm_vector_to_vtu(x,y,vx,vy,filename):
-       N=np.size(x)
-       vtufile=open(filename,"w")
-       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-       vtufile.write("<UnstructuredGrid> \n")
-       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(N,N))
-       vtufile.write("<Points> \n")
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
-       for i in range(0,N):
+    N=np.size(x)
+    vtufile=open(filename,"w")
+    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+    vtufile.write("<UnstructuredGrid> \n")
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(N,N))
+    vtufile.write("<Points> \n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+    for i in range(0,N):
            vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("</Points> \n")
-       vtufile.write("<PointData Scalars='scalars'>\n")
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-       for i in range(0,N):
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Points> \n")
+    vtufile.write("<PointData Scalars='scalars'>\n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+    for i in range(0,N):
            vtufile.write("%10e %10e %10e \n" %(vx[i],vy[i],0.))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("</PointData>\n")
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</PointData>\n")
 
-       vtufile.write("<Cells>\n")
-       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-       for i in range(0,N):
+    vtufile.write("<Cells>\n")
+    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+    for i in range(0,N):
            vtufile.write("%d " % i)
-       vtufile.write("</DataArray>\n")
-       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-       for i in range(0,N):
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+    for i in range(0,N):
            vtufile.write("%d " % (i+1))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-       for i in range(0,N):
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+    for i in range(0,N):
            vtufile.write("%d " % 1)
-       vtufile.write("</DataArray>\n")
-       vtufile.write("</Cells>\n")
-       vtufile.write("</Piece>\n")
-       vtufile.write("</UnstructuredGrid>\n")
-       vtufile.write("</VTKFile>\n")
-       vtufile.close()
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Cells>\n")
+    vtufile.write("</Piece>\n")
+    vtufile.write("</UnstructuredGrid>\n")
+    vtufile.write("</VTKFile>\n")
+    vtufile.close()
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def export_swarm_scalar_to_vtu(x,y,scalar,filename):
-       N=np.size(x)
-       vtufile=open(filename,"w")
-       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-       vtufile.write("<UnstructuredGrid> \n")
-       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(N,N))
-       #--
-       vtufile.write("<Points> \n")
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
-       for i in range(0,N):
+    N=np.size(x)
+    vtufile=open(filename,"w")
+    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+    vtufile.write("<UnstructuredGrid> \n")
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(N,N))
+    #--
+    vtufile.write("<Points> \n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+    for i in range(0,N):
            vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("</Points> \n")
-       vtufile.write("<PointData Scalars='scalars'>\n")
-       vtufile.write("<DataArray type='Float32' Name='field' Format='ascii'> \n")
-       for i in range(0,N):
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Points> \n")
+    vtufile.write("<PointData Scalars='scalars'>\n")
+    vtufile.write("<DataArray type='Float32' Name='field' Format='ascii'> \n")
+    for i in range(0,N):
            vtufile.write("%10e \n" %(scalar[i]))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("</PointData>\n")
-       vtufile.write("<Cells>\n")
-       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-       for i in range(0,N):
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</PointData>\n")
+    vtufile.write("<Cells>\n")
+    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+    for i in range(0,N):
            vtufile.write("%d " % i)
-       vtufile.write("</DataArray>\n")
-       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-       for i in range(0,N):
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+    for i in range(0,N):
            vtufile.write("%d " % (i+1))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-       for i in range(0,N):
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+    for i in range(0,N):
            vtufile.write("%d " % 1)
-       vtufile.write("</DataArray>\n")
-       vtufile.write("</Cells>\n")
-       vtufile.write("</Piece>\n")
-       vtufile.write("</UnstructuredGrid>\n")
-       vtufile.write("</VTKFile>\n")
-       vtufile.close()
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Cells>\n")
+    vtufile.write("</Piece>\n")
+    vtufile.write("</UnstructuredGrid>\n")
+    vtufile.write("</VTKFile>\n")
+    vtufile.close()
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def bc_setup(x,y,u,v,Lx,Ly,ndof,left,right,bottom,top):
     eps=1e-8
     N=np.size(x)
     Nfem=2*N
-    bc_fix = np.zeros(Nfem, dtype=np.bool)     # boundary condition, yes/no
+    bc_fix = np.zeros(Nfem, dtype=bool)        # boundary condition, yes/no
     bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
     for i in range(0,N):
 
@@ -1836,8 +1972,7 @@ def bc_setup(x,y,u,v,Lx,Ly,ndof,left,right,bottom,top):
 
     return bc_fix,bc_val
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def J(m,dNdr,dNds,x,y):
     jcb=np.zeros((2,2),dtype=np.float64)
@@ -1850,8 +1985,7 @@ def J(m,dNdr,dNds,x,y):
     if jcob<0: exit('jcob<0')
     return jcob,jcbi
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def assemble_K(K_el,A_sparse,iconV,mV,ndofV,iel):
 
@@ -1865,8 +1999,7 @@ def assemble_K(K_el,A_sparse,iconV,mV,ndofV,iel):
                     m2 =ndofV*iconV[k2,iel]+i2
                     A_sparse[m1,m2] += K_el[ikk,jkk]
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def assemble_G(G_el,A_sparse,iconV,iconP,NfemV,mV,mP,ndofV,ndofP,iel):
 
@@ -1879,8 +2012,7 @@ def assemble_G(G_el,A_sparse,iconV,iconP,NfemV,mV,mP,ndofV,ndofP,iel):
                 A_sparse[m1,NfemV+m2]+=G_el[ikk,k2]
                 A_sparse[NfemV+m2,m1]+=G_el[ikk,k2]
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def assemble_f(f_el,rhs,iconV,mV,ndofV,iel):
     for k1 in range(0,mV):
@@ -1889,16 +2021,14 @@ def assemble_f(f_el,rhs,iconV,mV,ndofV,iel):
             m1 =ndofV*iconV[k1,iel]+i1
             rhs[m1]+=f_el[ikk]
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def assemble_h(h_el,rhs,iconP,mP,NfemV,iel):
     for k2 in range(0,mP):
         m2=iconP[k2,iel]
         rhs[NfemV+m2]+=h_el[k2]
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel):
     for k1 in range(0,mV):
@@ -1916,8 +2046,7 @@ def apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel):
                h_el[:]-=G_el[ikk,:]*bc_val[m1]
                G_el[ikk,:]=0
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
 
 def visualise_with_tikz(x,y,space):
     N=np.size(x)
@@ -1949,5 +2078,4 @@ def visualise_with_tikz(x,y,space):
     tikzfile.write("\\end{center} \n")
     tikzfile.close()
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################

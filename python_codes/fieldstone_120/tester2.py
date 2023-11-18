@@ -15,9 +15,8 @@ print('=========================================')
 print(' tester 2: areas')
 print('=========================================')
 
-#for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','Chen',\
-#               'P1','P1+','P1NC','P2','P2+','P3','P4']:
-for Vspace in ['P2','P2+','P3','P4']:
+for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','Chen',\
+               'P1','P1+','P1NC','P2','P2+','P3','P4']:
 
     print('=========================================')
     print(' '+Vspace)
