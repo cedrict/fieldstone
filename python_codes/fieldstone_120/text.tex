@@ -281,28 +281,22 @@ The main code {\pythonfile stone.py} accepts either 5 or 7 arguments.
 The \lstinline{experiment} is as follows:
 \begin{lstlisting}
 if experiment=='dh'             : import mms_dh as mms 
-if experiment=='jolm17'         : import mms_jolm17 as mms 
-if experiment=='sinker'         : import mms_sinker as mms 
-if experiment=='sinker_reduced' : import mms_sinker_reduced as mms 
-if experiment=='sinker_open'    : import mms_sinker_open as mms 
-if experiment=='poiseuille'     : import mms_poiseuille as mms 
-if experiment=='johnbook'       : import mms_johnbook as mms 
-if experiment=='bocg12'         : import mms_bocg12 as mms 
 if experiment=='solcx'          : import mms_solcx as mms 
 if experiment=='solkz'          : import mms_solkz as mms 
 if experiment=='solvi'          : import mms_solvi as mms 
 if experiment=='RT'             : import mms_RT as mms 
+if experiment=='sinker'         : import mms_sinker as mms 
+if experiment=='sinker_reduced' : import mms_sinker_reduced as mms 
+if experiment=='johnbook'       : import mms_johnbook as mms 
+.................................
+if experiment=='jolm17'         : import mms_jolm17 as mms 
+if experiment=='sinker_open'    : import mms_sinker_open as mms 
+if experiment=='poiseuille'     : import mms_poiseuille as mms 
+if experiment=='bocg12'         : import mms_bocg12 as mms 
 \end{lstlisting}
-Note that for \lstinline{solvi,solcx} specific meshes are used:
-\begin{lstlisting}
-if experiment=='solvi'       : meshtype='solvi'
-if experiment=='solcx'       : meshtype='solcx'
-\end{lstlisting}
-
 
 In the main folder there are many scripts that allow us to run the code
 for a wide range of parameter values (like resolution, element type, ...)
-
 
 There are several scripts specifically written for 
 \textcite{thba24} (In prep.).
@@ -317,7 +311,6 @@ This is carried out for both structured and unstructured meshes.
 script_paper
 script_paper_rt
 script_paper_sinker
-script_paper_sinker_open
 script_paper_sinker_reduced
 script_paper_solcx
 script_paper_solkz
@@ -776,10 +769,93 @@ FINISH!!!
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/solcx/unstructured/press}
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{NEW Results - square sinker}
+
+Unit square. Free-slip boundary conditions. domain filled with fluid with $\eta_f=1$ and $\rho_f=1$.
+Square sinker in the middle of the domain of size $0.25\times 0.25$ with $\eta_s=100$ and
+$\rho_s=1.001$. Gravity is $\vec{g}=-\vec{e}_y$. 
+Resolutions nelx=16, 32, 64, 128 
+are chosen so that element boundaries align with sinker boundaries 
+(material averaging is irrelevant). 
+
+%There is no analytical solution so by setting $\vec{\upnu}^{th}=\vec{0}$ and 
+%$p^{th}=0$ the computed errors are in fact the vrms and prms shown hereunder.
+
+%-------------------------------
+\subsubsection*{structured mesh}
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_16}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_32}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_48}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_64}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_16}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_32}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_48}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_64}
+\end{center}
+
+%-------------------------------
+\subsubsection*{unstructured mesh}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{NEW Results - square sinker (reduced density)}
+
+%----------------------------
+\subsection*{Structured mesh}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_16}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_32}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_48}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_64}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_80}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_96}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_16}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_32}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_48}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_64}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_80}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_96}
+\end{center}
 
 
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{NEW Results - SolVi}
+
+%-------------------------------
+\subsection*{structured mesh}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/solvi_structured_errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/solvi_structured_errorsP.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/solvi_p_profile_structured_32.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/solvi_p_profile_structured_96.pdf}
+\end{center}
+
+
+%-------------------------------
+\subsection*{unstructured mesh}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/solvi_unstructured_errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/solvi_unstructured_errorsP.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/solvi_p_profile_unstructured_32.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/solvi_p_profile_unstructured_96.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/solvi/unstructured/mesh}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/solvi/unstructured/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/solvi/unstructured/press}\\
+{\captionfont P2+P-1, nelx=32}
+\end{center}
 
 
 
@@ -792,185 +868,82 @@ FINISH!!!
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Results - mms from John's book}
+\section*{NEW Results - mms from John's book}
 
-It is derived in Section~\ref{ss:mms_johnbook}. The velocity and pressure fields are:
+It is derived in Section~\ref{MMM-ss:mms_johnbook}. The velocity and pressure fields are:
 \begin{eqnarray}
 u(x,y) &=& 1000 x^2(1-x)^4  y^2 (3-5y) (1-y) \\
 v(x,y) &=& -1000 2x(1-3x) (1-x)^3  y^3(1-y)^2   \\
 p(x,y) &=& \pi^2 [xy^3 \cos(2\pi x^2 y) - x^2y \sin(2\pi xy) ]+1/8
 \end{eqnarray}
 
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/errors-velocity-all}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/errors-pressure-all}\\
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/errors-divv-all}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_johnbook/vrms_zoom}
-%\end{center}
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/johnbook_structured_errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/johnbook_structured_errorsP.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/johnbook_unstructured_errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/johnbook_unstructured_errorsP.pdf}\\
+\end{center}
 
 
 \begin{center} 
-\includegraphics[width=8.5cm]{python_codes/fieldstone_120/images/john_a}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_120/images/john_b}\\
+\includegraphics[width=8.5cm]{python_codes/fieldstone_120/images/john_b}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_120/images/john_a}\\
 {\captionfont Taken from \textcite{john16} (book).}
 \end{center} 
 
+\todo[inline]{check the type of grid used in the book}
+
+Comparison between my results and John's. 
+Between parenthesis are the rates obtained by John. happy!
+Rather interestingly he and I (on structured grid) find that CR pressure errors are much 
+higher (more than 2 orders of magnitude!) than all other elements 
+that converge quadratically. 
+
+
+\begin{center}
+\begin{tabular}{lcc}
+\hline
+     & vel & p \\
+\hline
+${\bm Q}_2\times Q_1$ & 3(3) & 2(2)   \\
+${\bm Q}_2\times P_{-1}$  & 3(3) & 2(2)   \\
+${\bm P}_1^+\times P_1$ & 2(2) & 1.5 (1.5) \\
+${\bm P}_2\times P_1$ & 3(3) & 2(2)   \\
+${\bm P}_2\times P_0$ & 2(x) & 1 (x)   \\
+${\bm P}_2^+\times P_{-1}$   & 3(3) & 2(2)   \\
+\hline
+\end{tabular}
+\end{center}
+
+check rate of mini that seems to have decreased!
+
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Results - \textcite{jolm17} manufactured solution}
+\section*{NEW Results - Rayleigh-Taylor wave}
 
-This benchmark comes from John \etal \cite{jolm17} and is presented in Section~\ref{ss:mms_jolm17}:
-\begin{eqnarray}
-u(x,y) &=& 200x^2(1-x)^2y(1-y)(1-2y) \nn\\
-v(x,y) &=& -200x(1-x)(1-2x)y^2(1-y)^2 \nn\\
-p(x,y) &=& 10\left[(x-1/2)^3y^2+(1-x)^3(y-1/2)^3 \right] \nn
-\end{eqnarray}
-The highest polynomial terms for the velocity are quartic and cubic for the pressure.
+\begin{center}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_120/paperresults/rt/rt_setup}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_120/paperresults/rt/rt_vel}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_120/paperresults/rt/rt_press}
+\end{center}
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_Q2Q1.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_Q2Pm1.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_P1+P1.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_P2P1.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_P2P0.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_P2+P-1.pdf} \\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_all.pdf}
+\end{center}
 
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/errors-velocity-all}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/errors-pressure-all}\\
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/errors-divv-all}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_jolm17/vrms_zoom}
-%\end{center}
-
-%1----------------------------
-\subsection*{$Q_1\times Q_0$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1Q0-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1Q0-vp-Nfem.pdf}
-%\end{center}
-
-%2----------------------------
-\subsection*{$Q_2\times Q_0$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q0-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q0-vp-Nfem.pdf}
-%\end{center}
-
-%3----------------------------
-\subsection*{$P_2\times P_0$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P0-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P0-vp-Nfem.pdf}
-%\end{center}
-
-%4----------------------------
-\subsection*{$Q_2\times Q_1$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q1-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Q1-vp-Nfem.pdf}
-%\end{center}
-
-%5----------------------------
-\subsection*{$P_2\times P_1$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P1-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2P1-vp-Nfem.pdf}
-%\end{center}
-
-%6----------------------------
-\subsection*{$Q_3\times Q_2$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q3Q2-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q3Q2-vp-Nfem.pdf}
-%\end{center}
-
-%7----------------------------
-\subsection*{$P_3\times P_2$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P3P2-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P3P2-vp-Nfem.pdf}
-%\end{center}
-
-\newpage
-%8----------------------------
-\subsection*{$Q_1^+\times Q_1$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1+Q1-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q1+Q1-vp-Nfem.pdf}
-%\end{center}
-
-%9----------------------------
-\subsection*{$P_1^+\times P_1$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P1+P1-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P1+P1-vp-Nfem.pdf}
-%\end{center}
-
-%10----------------------------
-\subsection*{$RT_1\times Q_0$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT1Q0-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT1Q0-vp-Nfem.pdf}
-%\end{center}
-
-%11----------------------------
-\subsection*{$RT_2\times Q_0$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT2Q0-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/RT2Q0-vp-Nfem.pdf}
-%\end{center}
-
-%12----------------------------
-\subsection*{$DSSY_1\times Q_0$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY1Q0-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY1Q0-vp-Nfem.pdf}
-%\end{center}
-
-%13----------------------------
-\subsection*{$DSSY_2\times Q_0$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY2Q0-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/DSSY2Q0-vp-Nfem.pdf}
-%\end{center}
-
-%14----------------------------
-\subsection*{$Han\times Q_0$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/HanQ0-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/HanQ0-vp-Nfem.pdf}
-%\end{center}
-
-%15----------------------------
-\subsection*{$Q_2\times P_{-1}$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1-vp-Nfem.pdf}
-%\end{center}
-
-%16----------------------------
-\subsection*{$Q_2\times P_{-1}(u)$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1u-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2Pm1u-vp-Nfem.pdf}
-%\end{center}
-
-%17----------------------------
-\subsection*{$Q_2^{(8)}\times Q_1$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2sQ1-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/Q2sQ1-vp-Nfem.pdf}
-%\end{center}
-
-%18----------------------------
-\subsection*{$P_2^+\times P_{-1}$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P-1-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P-1-vp-Nfem.pdf}
-%\end{center}
-
-%19----------------------------
-\subsection*{$P_2^+\times P_{1}$}
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P1-vp-h.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results/P2+P1-vp-Nfem.pdf}
-%\end{center}
+\todo[inline]{verify mid edge node position along wave}
 
 
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 optimal quadrature \& convergence orders:
 
@@ -1069,35 +1042,14 @@ RETRIEVE email correspondance with Rannacher! show velocity field modes. Has smt
 Korn stuff.
 \end{itemize}
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Results - SolKz}
 
-%\begin{center}
-%\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/solkz/errors-velocity-all.pdf}
-%\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/solkz/errors-pressure-all.pdf}\\
-%\end{center}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Results - SolCx}
 
-%\begin{center}
-%\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/solcx/errors-velocity-all.pdf}
-%\includegraphics[width=8.5cm]{python_codes/fieldstone_120/results/solcx/errors-pressure-all.pdf}\\
-%\end{center}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Results - SolVi}
 
-Write about meshing
 
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_solvi/errorsV.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_solvi/errorsP.pdf}\\
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_solvi/errorsV2.pdf}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_solvi/errorsP2.pdf}\\
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/results_solvi/vrms.pdf}
-%\end{center}
+
+
 
 
 

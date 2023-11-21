@@ -51,7 +51,7 @@ def dexydy(x,y):
 def deyydy(x,y):
     return 0 
 
-def bx(x,y):
+def bx(x,y,dum):
     return 0 
 
 def vrms_th():

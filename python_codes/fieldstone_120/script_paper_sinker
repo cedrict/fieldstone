@@ -24,7 +24,7 @@ for e in 3 4 5 9 15 18 ; do
 
     echo ---------- $Vspace X $Pspace ----------
 
-    for n in 16 32 48 64; do
+    for n in 16 32 48 64 80 96; do
         for eta in -4 -3 -2 -1 0 1 2 3 4 ; do
             for drho in 0.0025 0.01 0.4  ; do
                 echo mesh: $n X $n '; etastar=' $eta '; drho=' $drho

@@ -18,17 +18,16 @@ ndofP=1
 Lx=1
 Ly=1
 
-nelx=64
+nelx=32
 
-Vspace='P2'
-Pspace='P1'
+Vspace='Q2'
+Pspace='Q1'
 
 visu=1
 
-experiment='solcx'
+experiment='RT'
 
-unstructured=1
-meshtype='solcx'
+unstructured=0
 
 isoparametric=True
 randomize_mesh=False
@@ -79,9 +78,6 @@ if experiment=='solkz'          : import mms_solkz as mms
 if experiment=='solvi'          : import mms_solvi as mms
 if experiment=='RT'             : import mms_RT as mms
 
-if experiment=='solvi'       : meshtype='solvi'
-#if experiment=='solcx'       : meshtype='solcx'
-
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
 
@@ -102,7 +98,8 @@ if not unstructured:
    NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
    NP,nel,xP,yP,iconP=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Pspace)
 else:
-   nel,NV,NP,xV,yV,iconV,xP,yP,iconP=Tools.generate_random_mesh(Lx,nelx,Vspace,Pspace)  
+   nel,NV,NP,xV,yV,iconV,xP,yP,iconP=Tools.generate_random_mesh(Lx,nelx,\
+                                                 Vspace,Pspace,experiment)  
 
 nq=nqel*nel
 NfemV=NV*ndofV
@@ -754,12 +751,11 @@ for iel in range(0,nel):
 Tools.export_swarm_vector_to_ascii(xV,yV,u,v,'solution_velocity.ascii')
 Tools.export_swarm_scalar_to_ascii(xP,yP,p,'solution_pressure.ascii')
 Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu',area,bxc,byc,etac)
+Tools.export_V_to_vtu(NV,xV,yV,iconV,Vspace,'visu_V.vtu',u,v,Pspace,p,iconP)
 
 if visu:
    Tools.export_elements_to_vtu(xP,yP,iconP,Pspace,'meshP.vtu',area,bxc,byc,etac)
    if not isoparametric: Tools.export_elements_to_vtu(x1,y1,icon1,space1,'mesh1.vtu')
-
-   Tools.export_V_to_vtu(NV,xV,yV,iconV,Vspace,'visu_V.vtu',u,v,Pspace,p,iconP)
 
    Tools.export_swarm_to_ascii(xV,yV,'Vnodes.ascii')
    Tools.export_swarm_to_ascii(xP,yP,'Pnodes.ascii')

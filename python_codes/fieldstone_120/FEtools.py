@@ -1246,17 +1246,27 @@ def compute_segs(InputCoords):
     segs = np.stack([np.arange(len(InputCoords)),np.arange(len(InputCoords))+1],axis=1)%len(InputCoords)
     return segs
 
-def generate_random_mesh(L,nelx,Vspace,Pspace): 
+def generate_random_mesh(L,nelx,Vspace,Pspace,experiment): 
 
    import triangle as tr
    import matplotlib.pyplot as plt
 
    areatarget=(L/nelx)**2 #; arguments='pqa'+str(areatarget)
    arguments="pqa%.8f s" % (areatarget)
-   print(arguments)
+   #print(arguments)
 
-   square_vertices = np.array([[0,0],[0,L],[L,L],[L,0]])
+   square_vertices = [[0,0],[0,L],[L,L],[L,0]]
    square_edges = compute_segs(square_vertices)
+   if experiment=='solvi':
+      Rsolvi=0.2
+      nelt=int(np.pi/2*Rsolvi*nelx)+2
+      for i in range(0,nelt):
+          xp=Rsolvi*np.cos(np.pi/2*i/(nelt-1))
+          yp=Rsolvi*np.sin(np.pi/2*i/(nelt-1))
+          if i==0: yp=0
+          if i==nelt-1: xp=0
+          square_vertices.append([xp,yp])
+      
 
    O1 = {'vertices' : square_vertices, 'segments' : square_edges}
    T1 = tr.triangulate(O1,arguments) # tr.triangulate() computes the main dictionary 
@@ -1310,6 +1320,30 @@ def generate_random_mesh(L,nelx,Vspace,Pspace):
        yP2[iconP2[3,iel]]=0.5*(yP2[iconP2[0,iel]]+yP2[iconP2[1,iel]])
        yP2[iconP2[4,iel]]=0.5*(yP2[iconP2[1,iel]]+yP2[iconP2[2,iel]])
        yP2[iconP2[5,iel]]=0.5*(yP2[iconP2[2,iel]]+yP2[iconP2[0,iel]])
+
+   if experiment=='solvi':
+      for iel in range(0,nel):
+          if abs(np.sqrt(xP2[iconP2[0,iel]]**2+yP2[iconP2[0,iel]]**2)-Rsolvi)<1e-6 and\
+             abs(np.sqrt(xP2[iconP2[1,iel]]**2+yP2[iconP2[1,iel]]**2)-Rsolvi)<1e-6 :
+             angle=np.arctan2(yP2[iconP2[3,iel]],xP2[iconP2[3,iel]])
+             xP2[iconP2[3,iel]]=Rsolvi*np.cos(angle)
+             yP2[iconP2[3,iel]]=Rsolvi*np.sin(angle)
+          if abs(np.sqrt(xP2[iconP2[1,iel]]**2+yP2[iconP2[1,iel]]**2)-Rsolvi)<1e-6 and\
+             abs(np.sqrt(xP2[iconP2[2,iel]]**2+yP2[iconP2[2,iel]]**2)-Rsolvi)<1e-6 :
+             angle=np.arctan2(yP2[iconP2[4,iel]],xP2[iconP2[4,iel]])
+             xP2[iconP2[4,iel]]=Rsolvi*np.cos(angle)
+             yP2[iconP2[4,iel]]=Rsolvi*np.sin(angle)
+          if abs(np.sqrt(xP2[iconP2[0,iel]]**2+yP2[iconP2[0,iel]]**2)-Rsolvi)<1e-6 and\
+             abs(np.sqrt(xP2[iconP2[2,iel]]**2+yP2[iconP2[2,iel]]**2)-Rsolvi)<1e-6 :
+             angle=np.arctan2(yP2[iconP2[5,iel]],xP2[iconP2[5,iel]])
+             xP2[iconP2[5,iel]]=Rsolvi*np.cos(angle)
+             yP2[iconP2[5,iel]]=Rsolvi*np.sin(angle)
+
+
+
+
+
+
 
    if Vspace=='P2':
       NV=NP2 

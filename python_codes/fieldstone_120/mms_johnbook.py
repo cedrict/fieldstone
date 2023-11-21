@@ -76,16 +76,16 @@ def deyydy(x,y):
 
 #----------------------------------------
 
-def bx(x,y):
+def bx(x,y,dum):
     return dpdx_th(x,y)-2*dexxdx(x,y)-2*dexydy(x,y)
 
-def by(x,y):
+def by(x,y,dum):
     return dpdy_th(x,y)-2*dexydx(x,y)-2*deyydy(x,y)
 
 def vrms_th():
     return 1.4953325891041323968540981
 
-def eta(x,y):
+def eta(x,y,dum):
     return 1.
 
 left_bc  ='no_slip'

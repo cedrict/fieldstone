@@ -1,0 +1,43 @@
+#!/bin/bash
+
+###############################################################################
+# solvi
+###############################################################################
+
+echo =================solvi====================unstructured
+rm -f opla*
+rm -f vrms*
+rm -f errors* 
+mkdir paperresults/solvi
+mkdir paperresults/solvi/unstructured
+
+for e in 3 5 9 18 ; do 
+
+    if test $e == 3  ; then Vspace=P2    Pspace=P0  ; fi
+    if test $e == 5  ; then Vspace=P2    Pspace=P1  ; fi
+    if test $e == 9  ; then Vspace=P1+   Pspace=P1  ; fi
+    if test $e == 18 ; then Vspace=P2+   Pspace=P-1 ; fi
+
+    echo ---------- $Vspace X $Pspace ----------
+
+    for n in 16 24 32 48 64 80 96 128 160; do
+        echo mesh: $n X $n 
+        start=`date +%s.%N`
+        python3 stone.py $n $Vspace $Pspace solvi 1 >> opla
+        end=`date +%s.%N`
+        runtime=$( echo "$end - $start" | bc -l )
+        echo '     -> ' $runtime ' s'
+        mv visu_V.vtu visu_V_${n}_${Vspace}_${Pspace}.vtu 
+    done
+    grep errv opla > errors_${Vspace}_${Pspace}
+    grep vrms= opla > vrms_${Vspace}_${Pspace}
+    mv opla opla_${Vspace}_${Pspace}
+
+done
+
+mv err* paperresults/solvi/unstructured
+mv opla* paperresults/solvi/unstructured
+mv vrms* paperresults/solvi/unstructured
+mv solvi_p_* paperresults/solvi/unstructured
+mv *.vtu paperresults/solvi/unstructured
+#mv *.ascii paperresults/solvi/unstructured
