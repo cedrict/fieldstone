@@ -1266,7 +1266,15 @@ def generate_random_mesh(L,nelx,Vspace,Pspace,experiment):
           if i==0: yp=0
           if i==nelt-1: xp=0
           square_vertices.append([xp,yp])
-      
+
+   if experiment=='solcx':
+      hy=L/nelx
+      for i in range(0,nelx+1):
+          xp=0.5
+          yp=i*hy
+          if i==0: yp=0
+          if i==nelx: yp=L
+          square_vertices.append([xp,yp])
 
    O1 = {'vertices' : square_vertices, 'segments' : square_edges}
    T1 = tr.triangulate(O1,arguments) # tr.triangulate() computes the main dictionary 
@@ -1321,29 +1329,23 @@ def generate_random_mesh(L,nelx,Vspace,Pspace,experiment):
        yP2[iconP2[4,iel]]=0.5*(yP2[iconP2[1,iel]]+yP2[iconP2[2,iel]])
        yP2[iconP2[5,iel]]=0.5*(yP2[iconP2[2,iel]]+yP2[iconP2[0,iel]])
 
-   if experiment=='solvi':
-      for iel in range(0,nel):
-          if abs(np.sqrt(xP2[iconP2[0,iel]]**2+yP2[iconP2[0,iel]]**2)-Rsolvi)<1e-6 and\
-             abs(np.sqrt(xP2[iconP2[1,iel]]**2+yP2[iconP2[1,iel]]**2)-Rsolvi)<1e-6 :
-             angle=np.arctan2(yP2[iconP2[3,iel]],xP2[iconP2[3,iel]])
-             xP2[iconP2[3,iel]]=Rsolvi*np.cos(angle)
-             yP2[iconP2[3,iel]]=Rsolvi*np.sin(angle)
-          if abs(np.sqrt(xP2[iconP2[1,iel]]**2+yP2[iconP2[1,iel]]**2)-Rsolvi)<1e-6 and\
-             abs(np.sqrt(xP2[iconP2[2,iel]]**2+yP2[iconP2[2,iel]]**2)-Rsolvi)<1e-6 :
-             angle=np.arctan2(yP2[iconP2[4,iel]],xP2[iconP2[4,iel]])
-             xP2[iconP2[4,iel]]=Rsolvi*np.cos(angle)
-             yP2[iconP2[4,iel]]=Rsolvi*np.sin(angle)
-          if abs(np.sqrt(xP2[iconP2[0,iel]]**2+yP2[iconP2[0,iel]]**2)-Rsolvi)<1e-6 and\
-             abs(np.sqrt(xP2[iconP2[2,iel]]**2+yP2[iconP2[2,iel]]**2)-Rsolvi)<1e-6 :
-             angle=np.arctan2(yP2[iconP2[5,iel]],xP2[iconP2[5,iel]])
-             xP2[iconP2[5,iel]]=Rsolvi*np.cos(angle)
-             yP2[iconP2[5,iel]]=Rsolvi*np.sin(angle)
-
-
-
-
-
-
+   #if experiment=='solvi':
+   #   for iel in range(0,nel):
+   #       if abs(np.sqrt(xP2[iconP2[0,iel]]**2+yP2[iconP2[0,iel]]**2)-Rsolvi)<1e-6 and\
+   #          abs(np.sqrt(xP2[iconP2[1,iel]]**2+yP2[iconP2[1,iel]]**2)-Rsolvi)<1e-6 :
+   #          angle=np.arctan2(yP2[iconP2[3,iel]],xP2[iconP2[3,iel]])
+   #          xP2[iconP2[3,iel]]=Rsolvi*np.cos(angle)
+   #          yP2[iconP2[3,iel]]=Rsolvi*np.sin(angle)
+   #       if abs(np.sqrt(xP2[iconP2[1,iel]]**2+yP2[iconP2[1,iel]]**2)-Rsolvi)<1e-6 and\
+   #          abs(np.sqrt(xP2[iconP2[2,iel]]**2+yP2[iconP2[2,iel]]**2)-Rsolvi)<1e-6 :
+   #          angle=np.arctan2(yP2[iconP2[4,iel]],xP2[iconP2[4,iel]])
+   #          xP2[iconP2[4,iel]]=Rsolvi*np.cos(angle)
+   #          yP2[iconP2[4,iel]]=Rsolvi*np.sin(angle)
+   #       if abs(np.sqrt(xP2[iconP2[0,iel]]**2+yP2[iconP2[0,iel]]**2)-Rsolvi)<1e-6 and\
+   #          abs(np.sqrt(xP2[iconP2[2,iel]]**2+yP2[iconP2[2,iel]]**2)-Rsolvi)<1e-6 :
+   #          angle=np.arctan2(yP2[iconP2[5,iel]],xP2[iconP2[5,iel]])
+   #          xP2[iconP2[5,iel]]=Rsolvi*np.cos(angle)
+   #          yP2[iconP2[5,iel]]=Rsolvi*np.sin(angle)
 
    if Vspace=='P2':
       NV=NP2 
@@ -1576,7 +1578,7 @@ def randomize_background_mesh(x1,y1,hx,hy,N1,Lx,Ly):
            x1[i]+=hx*psi*alpha
            y1[i]+=hy*phi*alpha
 
-def deform_mesh_RT(x1,y1,N1,Lx,Ly,nelx,nely):
+def deform_mesh_RTwave(x1,y1,N1,Lx,Ly,nelx,nely):
     hx=Lx/nelx
     hy=Ly/nely
     eps=1e-8

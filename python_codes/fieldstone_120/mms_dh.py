@@ -3,14 +3,19 @@
 def eta(x,y,param):
     return 1.
 
-def u_th(x,y):
-    return x**2*(1.-x)**2*(2*y-6*y**2+4*y**3)
+def solution(x,y):
+    return   x**2*(1.-x)**2*(2*y-6*y**2+4*y**3),\
+            -y**2*(1.-y)**2*(2*x-6*x**2+4*x**3),\
+             x*(1-x)-1./6.
 
-def v_th(x,y):
-    return -y**2*(1.-y)**2*(2*x-6*x**2+4*x**3)
+#def u_th(x,y):
+#    return x**2*(1.-x)**2*(2*y-6*y**2+4*y**3)
 
-def p_th(x,y):
-    return x*(1-x)-1./6.
+#def v_th(x,y):
+#    return -y**2*(1.-y)**2*(2*x-6*x**2+4*x**3)
+
+#def p_th(x,y):
+#    return x*(1-x)-1./6.
 
 def dpdx_th(x,y):
     return 1.-2.*x

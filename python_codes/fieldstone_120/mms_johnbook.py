@@ -30,16 +30,21 @@ def gppp(y):
 
 #----------------------------------------
 
-def u_th(x,y):
-    return 1000*f(x)*gp(y) 
+def solution(x,y):
+    return 1000*f(x)*gp(y),\
+          -1000*fp(x)*g(y),\
+          np.pi**2*(x*y**3*np.cos(2*np.pi*x**2*y) - x**2*y*np.sin(2*np.pi*x*y) )+1/8 
 
-def v_th(x,y):
-    return -1000*fp(x)*g(y)
+#def u_th(x,y):
+#    return 1000*f(x)*gp(y) 
+
+#def v_th(x,y):
+#    return -1000*fp(x)*g(y)
+
+#def p_th(x,y):
+#    return np.pi**2*(x*y**3*np.cos(2*np.pi*x**2*y) - x**2*y*np.sin(2*np.pi*x*y) )+1/8 
 
 #----------------------------------------
-
-def p_th(x,y):
-    return np.pi**2*(x*y**3*np.cos(2*np.pi*x**2*y) - x**2*y*np.sin(2*np.pi*x*y) )+1/8 
 
 def dpdx_th(x,y):
     return np.pi**2*(y**3*np.cos(2*np.pi*x**2*y) -4*np.pi*x**2*y**4*np.sin(2*np.pi*x**2*y) \

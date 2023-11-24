@@ -3,17 +3,17 @@ import numpy as np
 import numba
 from numba import jit
 
-def u_th(x,y):
-    uu,vv,pp=SolKzSolution(x,y)
-    return uu
+#def u_th(x,y):
+#    uu,vv,pp=SolKzSolution(x,y)
+#    return uu
 
-def v_th(x,y):
-    uu,vv,pp=SolKzSolution(x,y)
-    return vv
+#def v_th(x,y):
+#    uu,vv,pp=SolKzSolution(x,y)
+#    return vv
 
-def p_th(x,y):
-    uu,vv,pp=SolKzSolution(x,y)
-    return pp
+#def p_th(x,y):
+#    uu,vv,pp=SolKzSolution(x,y)
+#    return pp
 
 def eta(x,y,param):
     return np.exp(13.8155*y) 
@@ -36,8 +36,7 @@ pnormalise=True
 
 ###############################################################################
 
-#@jit(nopython=True)
-def SolKzSolution(posx,posy):
+def solution(posx,posy):
 
     n=3
     B=0.5*math.log(1e6)

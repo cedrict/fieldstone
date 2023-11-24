@@ -29,6 +29,7 @@ for e in 3 4 5 9 15 18 ; do
         end=`date +%s.%N`
         runtime=$( echo "$end - $start" | bc -l )
         echo '     -> ' $runtime ' s'
+        mv visu_V.vtu visu_V_${Vspace}_${Pspace}_${n}.vtu
     done
     grep errv opla > errors_${Vspace}_${Pspace}
     grep vrms= opla > vrms_${Vspace}_${Pspace}

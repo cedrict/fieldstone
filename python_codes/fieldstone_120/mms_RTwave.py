@@ -15,14 +15,8 @@ def by(x,y,drho):
     else:
        return -1
 
-def u_th(x,y):
-    return 0
-
-def v_th(x,y):
-    return 0 
-
-def p_th(x,y):
-    return 0 
+def solution(x,y):
+    return 0,0,0
 
 def dpdx_th(x,y):
     return 0 

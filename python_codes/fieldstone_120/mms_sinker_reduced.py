@@ -13,13 +13,7 @@ def by(x,y,drho):
        return 0
 
 def u_th(x,y):
-    return 0
-
-def v_th(x,y):
-    return 0 
-
-def p_th(x,y):
-    return 0 
+    return 0,0,0
 
 def dpdx_th(x,y):
     return 0 

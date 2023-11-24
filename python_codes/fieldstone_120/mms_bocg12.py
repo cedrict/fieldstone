@@ -26,14 +26,10 @@ def gppp(y):
 
 ###################################3
 
-def u_th(x,y):
-    return f(x)*gp(y)
-
-def v_th(x,y):
-    return -fp(x)*g(y)
-
-def p_th(x,y):
-    return 0.5*x**2-1/6 
+def solution(x,y):
+    return f(x)*gp(y),\
+          -fp(x)*g(y),\
+           0.5*x**2-1/6 
 
 ###################################3
 

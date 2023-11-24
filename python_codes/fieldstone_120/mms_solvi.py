@@ -1,17 +1,17 @@
 import numpy as np
 import math as math
 
-def u_th(x,y):
-    uu,vv,pp=SolViSolution(x,y)
-    return uu
+#def u_th(x,y):
+#    uu,vv,pp=SolViSolution(x,y)
+#    return uu
 
-def v_th(x,y):
-    uu,vv,pp=SolViSolution(x,y)
-    return vv
+#def v_th(x,y):
+#    uu,vv,pp=SolViSolution(x,y)
+#    return vv
 
-def p_th(x,y):
-    uu,vv,pp=SolViSolution(x,y)
-    return pp
+#def p_th(x,y):
+#    uu,vv,pp=SolViSolution(x,y)
+#    return pp
 
 def eta(x,y,param):
     if (np.sqrt(x*x+y*y) < 0.2):
@@ -37,7 +37,7 @@ pnormalise=True
 
 ###############################################################################
 
-def SolViSolution(x,y):
+def solution(x,y):
     min_eta = 1.
     max_eta = 1.e3
     epsilon = 1.

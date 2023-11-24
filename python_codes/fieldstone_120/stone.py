@@ -133,14 +133,11 @@ start = timing.time()
 
 uth = np.zeros(NV,dtype=np.float64)
 vth = np.zeros(NV,dtype=np.float64)
-pth = np.zeros(NP,dtype=np.float64)
 
 for i in range(NV):        
-    uth[i]=mms.u_th(xV[i],yV[i])
-    vth[i]=mms.v_th(xV[i],yV[i])
-
-for i in range(NP):        
-    pth[i]=mms.p_th(xP[i],yP[i])
+    #uth[i]=mms.u_th(xV[i],yV[i])
+    #vth[i]=mms.v_th(xV[i],yV[i])
+    uth[i],vth[i],dum=mms.solution(xV[i],yV[i])
 
 print("analytical solution: %.3f s" % (timing.time() - start))
 
@@ -548,9 +545,15 @@ for iel in range(0,nel):
         vq[counterq]=NNNV.dot(v[iconV[0:mV,iel]])
         pq[counterq]=NNNP.dot(p[iconP[0:mP,iel]])
         vrms+=(uq[counterq]**2+vq[counterq]**2)*weightq*jcob
-        errv+=(uq[counterq]-mms.u_th(xq[counterq],yq[counterq]))**2*weightq*jcob+\
-              (vq[counterq]-mms.v_th(xq[counterq],yq[counterq]))**2*weightq*jcob
-        errp+=(pq[counterq]-mms.p_th(xq[counterq],yq[counterq]))**2*weightq*jcob
+
+        uthq,vthq,pthq=mms.solution(xq[counterq],yq[counterq])
+        errv+=(uq[counterq]-uthq)**2*weightq*jcob+\
+              (vq[counterq]-vthq)**2*weightq*jcob
+        errp+=(pq[counterq]-pthq)**2*weightq*jcob
+
+        #errv+=(uq[counterq]-mms.u_th(xq[counterq],yq[counterq]))**2*weightq*jcob+\
+        #      (vq[counterq]-mms.v_th(xq[counterq],yq[counterq]))**2*weightq*jcob
+        #errp+=(pq[counterq]-mms.p_th(xq[counterq],yq[counterq]))**2*weightq*jcob
         exxq=dNNNVdx.dot(u[iconV[0:mV,iel]])
         eyyq=dNNNVdy.dot(v[iconV[0:mV,iel]])
         divvq=exxq+eyyq
@@ -774,13 +777,17 @@ if visu:
    Tools.export_swarm_vector_to_vtu(xV,yV,u,v,'solution_velocity.vtu')
    Tools.export_swarm_vector_to_vtu(xV,yV,uth,vth,'velocity_analytical.vtu')
    Tools.export_swarm_scalar_to_vtu(xP,yP,p,'solution_pressure.vtu')
-   Tools.export_swarm_scalar_to_vtu(xP,yP,pth,'pressure_analytical.vtu')
 
    Tools.export_swarm_vector_to_ascii(xV,yV,uth,vth,'velocity_analytical.ascii')
-   Tools.export_swarm_scalar_to_ascii(xP,yP,pth,'pressure_analytical.ascii')
 
    Tools.export_connectivity_array_to_ascii(xV,yV,iconV,'iconV.ascii')
    Tools.export_connectivity_array_to_ascii(xP,yP,iconP,'iconP.ascii')
+
+   #pth = np.zeros(NP,dtype=np.float64)
+   #for i in range(NP):        
+   #    pth[i]=mms.p_th(xP[i],yP[i])
+   #Tools.export_swarm_scalar_to_vtu(xP,yP,pth,'pressure_analytical.vtu')
+   #Tools.export_swarm_scalar_to_ascii(xP,yP,pth,'pressure_analytical.ascii')
 
 print("*****************************")
 print("*****************************")

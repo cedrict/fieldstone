@@ -1,19 +1,19 @@
 import math as math
 import numpy as np
 import numba
-from numba import jit
+from numba import jit,njit,float64
 
-def u_th(x,y):
-    uu,vv,pp=SolCxSolution(x,y)
-    return uu
+#def u_th(x,y):
+#    uu,vv,pp=SolCxSolution(x,y)
+#    return uu
 
-def v_th(x,y):
-    uu,vv,pp=SolCxSolution(x,y)
-    return vv
+#def v_th(x,y):
+#    uu,vv,pp=SolCxSolution(x,y)
+#    return vv
 
-def p_th(x,y):
-    uu,vv,pp=SolCxSolution(x,y)
-    return pp
+#def p_th(x,y):
+#    uu,vv,pp=SolCxSolution(x,y)
+#    return pp
 
 def eta(x,y,param):
     if x<0.5:
@@ -40,7 +40,10 @@ pnormalise=True
 ###############################################################################
 
 #@jit(nopython=True)
-def SolCxSolution(xcoord,zcoord):
+#@njit
+#@jit
+#@jit(float64(float64, float64),nopython=True)
+def solution(xcoord,zcoord):
     eta_A=1.0
     eta_B=1.e6
     xc=0.5
