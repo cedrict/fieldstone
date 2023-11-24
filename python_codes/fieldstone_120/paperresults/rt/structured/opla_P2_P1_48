@@ -1,7 +1,5 @@
 arguments: ['stone.py', '48', 'P2', 'P1', 'RT', '0', '2', '0.1']
 *****************************
-           daSTONE           
-*****************************
 Vspace       = P2
 Pspace       = P1
 space1       = P1
@@ -18,26 +16,31 @@ Nfem         = 21219
 experiment   = RT
 unstructured = False
 *****************************
-mesh setup: 0.011 s
+mesh setup: 0.052 s
 analytical solution: 0.010 s
-bc setup: 0.017 s
+bc setup: 0.009 s
+build Q1/P1 mesh: 0.279 s
      -> area (m,M) 2.126736e-04 2.213542e-04 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 1.274 s
-build FE matrix: 12.843 s
-solve time: 0.770 s
+compute elements areas: 1.109 s
+compute local_to_global: 0.132s
+fill I,J arrays: 0.801s
+     -> assembly: 0.474 s
+build FE matrix: 4.203 s
+convert matrix to csr: 0.019 s
+solve time: 2.259 s
      -> u (m,M) -1.4385e-07 1.4385e-07 
      -> v (m,M) -3.9110e-07 3.9233e-07 
-     -> p (m,M) -1.2493e+00 -1.9935e-01 
+     -> p (m,M) -5.1429e-01 5.3571e-01 
 split vel into u,v: 0.000 s
-     -> avrg_p= -0.7118516882447404
+     -> avrg_p= 0.023204931663324133
      -> p (m,M) -0.5375 0.5125 
-pressure normalisation: 1.044 s
-     -> h (m,M,avrg)= 0.02062394778460747 0.021040635288254547 0.020832812451163852
-     -> nel=   4608 ; vrms= 1.35304733e-07 | vrms_th= 0.00000000e+00 |   18818    2401 2.062395e-02
-     -> nel=   4608 ; errv= 1.35304733e-07 ; errp= 3.03194744e-01 ; errdivv= 3.38428258e-08 |   18818    2401 2.06239478e-02
-compute vrms & errors: 1.969 s
-     -> rt_wave 3.923280785568738e-07 6.283185307179586 100.0 0.1 48 3.9369379342347727e-07
+pressure normalisation: 1.462 s
+     -> h (m,M,avrg)= 2.062395e-02 2.104064e-02 2.083281e-02 
+     -> nel=   4608 ; vrms= 1.35304734e-07 ; vrms_th= 0.00000000e+00 ;  18818   2401 2.083281e-02
+     -> nel=   4608 ; errv= 1.35304734e-07 ; errp= 3.03194744e-01 ; errdivv= 3.38428257e-08 |  18818   2401 2.08328125e-02
+compute vrms & errors: 2.427 s
+     -> rt_wave 3.9232807841333263e-07 6.283185307179586 100.0 0.1 48 3.9369379342347727e-07
 *****************************
 *****************************

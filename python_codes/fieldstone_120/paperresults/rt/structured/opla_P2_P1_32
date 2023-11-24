@@ -1,6 +1,4 @@
-arguments: ['stone.py', '32', 'P2', 'P1', 'RT', '0', '2', '0.1']
-*****************************
-           daSTONE           
+arguments: ['stone.py', '32', 'P2', 'P1', 'RTwave', '0', '2', '0.1']
 *****************************
 Vspace       = P2
 Pspace       = P1
@@ -15,29 +13,34 @@ nel          = 2048
 NfemV        = 8450
 NfemP        = 1089
 Nfem         = 9539
-experiment   = RT
+experiment   = RTwave
 unstructured = False
 *****************************
-mesh setup: 0.005 s
-analytical solution: 0.004 s
-bc setup: 0.007 s
+mesh setup: 0.025 s
+analytical solution: 0.009 s
+bc setup: 0.004 s
+build Q1/P1 mesh: 0.125 s
      -> area (m,M) 4.785156e-04 4.980469e-04 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 0.517 s
-build FE matrix: 5.275 s
-solve time: 0.218 s
+compute elements areas: 0.497 s
+compute local_to_global: 0.066s
+fill I,J arrays: 0.368s
+     -> assembly: 0.197 s
+build FE matrix: 1.830 s
+convert matrix to csr: 0.008 s
+solve time: 0.341 s
      -> u (m,M) -1.4298e-07 1.4298e-07 
      -> v (m,M) -3.8686e-07 3.9040e-07 
-     -> p (m,M) -5.1257e-01 5.3744e-01 
+     -> p (m,M) -5.9898e-01 4.5102e-01 
 split vel into u,v: 0.000 s
-     -> avrg_p= 0.024929681747853285
+     -> avrg_p= -0.06148238231888059
      -> p (m,M) -0.5375 0.5125 
-pressure normalisation: 0.463 s
-     -> h (m,M,avrg)= 0.03093592167691129 0.031560952932381675 0.031249218676744978
-     -> nel=   2048 ; vrms= 1.34368187e-07 | vrms_th= 0.00000000e+00 |    8450    1089 3.093592e-02
-     -> nel=   2048 ; errv= 1.34368187e-07 ; errp= 3.03194753e-01 ; errdivv= 4.42698450e-08 |    8450    1089 3.09359217e-02
-compute vrms & errors: 0.877 s
-     -> rt_wave 3.9040065202212104e-07 6.283185307179586 100.0 0.1 32 3.9369379342347727e-07
+pressure normalisation: 0.506 s
+     -> h (m,M,avrg)= 3.093592e-02 3.156095e-02 3.124922e-02 
+     -> nel=   2048 ; vrms= 1.34368187e-07 ; vrms_th= 0.00000000e+00 ;   8450   1089 3.124922e-02
+     -> nel=   2048 ; errv= 1.34368187e-07 ; errp= 3.03194753e-01 ; errdivv= 4.42698451e-08 |   8450   1089 3.12492187e-02
+compute vrms & errors: 0.819 s
+     -> rt_wave 3.904006521448849e-07 6.283185307179586 100.0 0.1 32 3.9369379342347727e-07
 *****************************
 *****************************
