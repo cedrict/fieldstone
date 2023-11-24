@@ -20,14 +20,14 @@ Ly=1
 
 nelx=32
 
-Vspace='Q2'
-Pspace='Q1'
+Vspace='P2'
+Pspace='P1'
 
 visu=1
 
-experiment='RT'
+experiment='solcx'
 
-unstructured=0
+unstructured=1
 
 isoparametric=True
 randomize_mesh=False
@@ -76,7 +76,7 @@ if experiment=='bocg12'         : import mms_bocg12 as mms
 if experiment=='solcx'          : import mms_solcx as mms
 if experiment=='solkz'          : import mms_solkz as mms
 if experiment=='solvi'          : import mms_solvi as mms
-if experiment=='RT'             : import mms_RT as mms
+if experiment=='RTwave'         : import mms_RTwave as mms
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
@@ -172,8 +172,8 @@ if randomize_mesh:
    Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xV,yV,iconV,nel,Vspace)
    Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xP,yP,iconP,nel,Pspace)
 
-if experiment=='RT':
-   Tools.deform_mesh_RT(x1,y1,N1,Lx,Ly,nelx,nely)
+if experiment=='RTwave':
+   Tools.deform_mesh_RTwave(x1,y1,N1,Lx,Ly,nelx,nely)
    Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xV,yV,iconV,nel,Vspace)
    Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xP,yP,iconP,nel,Pspace)
 
@@ -710,7 +710,7 @@ if experiment=='sinker' or experiment=='sinker_reduced' or experiment=='sinker_o
           if abs(xP[i]-0.5)<eps and abs(yP[i]-0.75)<eps:
              print('     -> sinker_press',xP[i],yP[i],p[i],etastar,drho,nelx)
 
-if experiment=='RT':
+if experiment=='RTwave':
    llambda=0.5
    amplitude=0.01
    phi1=2.*np.pi*(Ly/2.)/llambda

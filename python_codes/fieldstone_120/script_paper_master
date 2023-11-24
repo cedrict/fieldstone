@@ -3,9 +3,10 @@
 ./script_paper_dh_structured
 ./script_paper_dh_unstructured
 
-./script_paper_rt
+./script_paper_rtwave
 
 ./script_paper_sinker
+
 ./script_paper_sinker_reduced
 
 ./script_paper_solcx_structured
@@ -16,4 +17,8 @@
 
 ./script_paper_solvi_structured
 ./script_paper_solvi_unstructured
+
+./script_paper_johnbook_structured
+./script_paper_johnbook_unstructured
+
 

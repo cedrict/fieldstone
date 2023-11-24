@@ -24,7 +24,7 @@ for e in 3 4 5 9 15 18 ; do
 
     echo ---------- $Vspace X $Pspace ----------
 
-    for n in 16 32 48 64 80 96; do
+    for n in 16 32 64 128; do
         for eta in -4 -3 -2 -1 0 1 2 3 4 ; do
             for drho in 0.0025 0.01 0.4  ; do
                 echo mesh: $n X $n '; etastar=' $eta '; drho=' $drho
@@ -34,6 +34,7 @@ for e in 3 4 5 9 15 18 ; do
                 grep sinker_vel opla >> sinker_vel_${Vspace}_${Pspace}_${n}
                 grep sinker_press opla >> sinker_press_${Vspace}_${Pspace}_${n}
                 mv opla opla_${Vspace}_${Pspace}_${n}
+                mv visu_V.vtu visu_V_${n}_${Vspace}_${Pspace}.vtu 
             done
         done
     done
@@ -44,5 +45,5 @@ mv err* paperresults/sinker/structured
 mv opla* paperresults/sinker/structured
 mv vrms* paperresults/sinker/structured
 mv sinker* paperresults/sinker/structured
-
+mv visu_*.vtu paperresults/sinker/structured
 

@@ -20,7 +20,7 @@ for e in 3 5 9 18 ; do
 
     echo ---------- $Vspace X $Pspace ----------
 
-    for n in 16 32 48 64 96 128 ; do
+    for n in 16 24 32 48 64 96 128 160 ; do
         echo mesh: $n X $n 
         start=`date +%s.%N`
         python3 stone.py $n $Vspace $Pspace johnbook 1 >> opla

@@ -21,14 +21,15 @@ for e in 3 5 9 18 ; do
 
     echo ---------- $Vspace X $Pspace ----------
 
-    for n in 16 32 48 64 96 128 ; do
+    for n in 16 24 32 40 48 56 64 80 96 112 128 160 ; do
         echo mesh: $n X $n 
 
         start=`date +%s.%N`
-        python3 stone.py $n $Vspace $Pspace solcx 0 >> opla
+        python3 stone.py $n $Vspace $Pspace solcx 1 >> opla
         end=`date +%s.%N`
         runtime=$( echo "$end - $start" | bc -l )
         echo '     -> ' $runtime ' s'
+        mv visu_V.vtu visu_V_${Vspace}_${Pspace}_${n}.vtu
 
     done
     grep errv opla > errors_${Vspace}_${Pspace}
@@ -40,6 +41,5 @@ done
 mv err* paperresults/solcx/unstructured
 mv opla* paperresults/solcx/unstructured
 mv vrms* paperresults/solcx/unstructured
-
-
+mv visu*.vtu paperresults/solcx/structured
 
