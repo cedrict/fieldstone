@@ -11,8 +11,6 @@ a geodynamical context requires a lot of additional techniques.
 \newpage %-----------------------------------------------------------------------------------------
 \section{Strain weakening} \label{sec:strainweakening} \input{strainweakening} %----------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{The SUPG formulation for the energy equation} \label{ss:supg} \input{supg} %-----------
-\newpage %-----------------------------------------------------------------------------------------
 \section{Assigning values to quadrature points \label{ss:averagings}} \input{averagings} %------
 \newpage %-----------------------------------------------------------------------------------------
 \section{Matrix (Sparse) storage} \input{storage} %---------------------------------------------
@@ -25,7 +23,6 @@ a geodynamical context requires a lot of additional techniques.
 \newpage %-----------------------------------------------------------------------------------------
 \section{Pressure scaling \label{pscaling}} \input{pressure_scaling} %-----------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Pressure normalisation, nullspace\label{ss_pnorm}} \input{pressure_normalisation} %-------
 \newpage %-----------------------------------------------------------------------------------------
 \section{The value of the timestep}\label{ss:cfl} \input{cfl} %------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
@@ -41,16 +38,6 @@ a geodynamical context requires a lot of additional techniques.
 \newpage %-----------------------------------------------------------------------------------------
 \section{The initial temperature field} \input{initial_temperature} %------------------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Kinematic boundary conditions}\label{kin_bc} \input{kinematic_bc} %-----------------------
-\newpage %-----------------------------------------------------------------------------------------
-\section{Periodic boundary conditions\label{ss_periodic}}\input{periodic} %------------------------
-\newpage %-----------------------------------------------------------------------------------------
-\section{Imposing boundary conditions \label{ss:howtobc}} \input{howtobc} %------------------------
-\newpage %-----------------------------------------------------------------------------------------
-\section{Open boundary conditions}\label{ss:openbc}\input{openbc} %--------------------------------
-\newpage %-----------------------------------------------------------------------------------------
-\section{Free-slip boundary conditions on annulus}\label{ss:fsbc_annulus}\input{fsbc_annulus} %----
-\newpage %-----------------------------------------------------------------------------------------
 \section{The consistent boundary flux (CBF) \label{ss:cbf}} \input{CBF} %--------------------------
 \newpage %-----------------------------------------------------------------------------------------
 \section{Computing gradients - the recovery process \label{ss:gradrecovery}} \input{recovery} %----
@@ -60,8 +47,6 @@ a geodynamical context requires a lot of additional techniques.
 \section{Static condensation} \input{static_condensation} %----------------------------------------
 \newpage %-----------------------------------------------------------------------------------------
 \section{Measuring incompressibility \label{ss_incomp}} \input{incomp} %---------------------------
-\newpage %-----------------------------------------------------------------------------------------
-\section{Removing rotational nullspace\label{ss_nullspace}} \input{nullspace} %-----------------
 \newpage %-----------------------------------------------------------------------------------------
 \section{Picard and Newton \label{ss_nonlinear}} \input{nonlinear} %----------------------------
 \newpage %-----------------------------------------------------------------------------------------
@@ -91,8 +76,6 @@ a geodynamical context requires a lot of additional techniques.
 \newpage %-----------------------------------------------------------------------------------------
 \section{Interpolation inside an element} \label{ss:bern} \input{bernstein} %----------------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{From 1D tomography to density/temperature} \input{dlvsdlnro} %----------------------------
-\newpage %-----------------------------------------------------------------------------------------
 \section{Conservative Velocity Interpolation (CVI)} \label{sec:cvi}\input{cvi} %-------------------
 \newpage %-----------------------------------------------------------------------------------------
 \section{Computing field derivatives -WIP} \label{ss:nodderiv} \input{nodal_derivatives} %---------
@@ -101,16 +84,6 @@ a geodynamical context requires a lot of additional techniques.
 \newpage %-----------------------------------------------------------------------------------------
 \section{Weak seeds in extension modelling \label{ss:weakseeds}} \input{weakseeds} %---------------
 \newpage %-----------------------------------------------------------------------------------------
-\section{Earth radial viscosity profile \label{ss:viscprof}} \input{viscosity_profile} %-----------
-\newpage %-----------------------------------------------------------------------------------------
-\section{Earth radial temperature profile \label{ss:adiab}} \input{adiabatic} %--------------------
-\newpage %-----------------------------------------------------------------------------------------
-\section{Earth radial thermal expansion profile} \input{thermal_expansion_profile} %---------------
-\newpage %-----------------------------------------------------------------------------------------
-\section{Earth radial density profile} \input{density_profile} %-----------------------------------
-\newpage %-----------------------------------------------------------------------------------------
-\section{Earth radial thermal conductivity profile} \input{thermal_conductivity_profile} %---------
-\newpage %-----------------------------------------------------------------------------------------
 \section{Computing the volume of a hexahedron} \input{volume_hexahedron} %-------------------------
 \newpage %-----------------------------------------------------------------------------------------
 \section{Bandwidth reduction, matrix reordering} \input{reordering} %------------------------------
@@ -118,7 +91,5 @@ a geodynamical context requires a lot of additional techniques.
 \section{Scaling between dimensioned and dimensionless quantities} \input{scalingKs} %-------------
 \newpage %-----------------------------------------------------------------------------------------
 \section{Spectral methods} \input{spectral_methods}
-
-
 
 %\section{Steady state thermal problems \label{ss_ss}} \input{steadystate} %-

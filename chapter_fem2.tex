@@ -1,6 +1,6 @@
 \chapter{Solving the flow equations with the FEM} \label{solvingFEM} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{flushright} {\tiny {\color{gray} chapter6.tex}} \end{flushright}
+\begin{flushright} {\tiny {\color{gray} chapter\_fem2.tex}} \end{flushright}
 
 \input{incompressible} %---------------------------------------------------------------------------
 \section{Strong and weak forms} \input{strongweak} %--------------------------------------------
@@ -18,3 +18,19 @@
 \section{$Q_1\times P_0$ macro-elements} \label{ss:meshtopos} \input{meshtopos} %------------------
 \newpage
 \section{Solving the Stokes system \label{sec:solvers}} \input{solvers} %--------------------------
+\newpage
+\section{Boundary conditions}
+\subsection{Imposing Dirichlet boundary conditions \label{ss:howtobc}} \input{howtobc} %-----------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{In-out flux boundary conditions for lithospheric models}\label{kin_bc} \input{kinematic_bc} 
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Periodic boundary conditions\label{ss_periodic}}\input{periodic} %---------------------
+\newpage %-----------------------------------------------------------------------------------------
+\subsection{Free-slip boundary conditions on annulus}\label{ss:fsbc_annulus}\input{fsbc_annulus} %-
+\newpage %-----------------------------------------------------------------------------------------
+\section{Open boundary conditions}\label{ss:openbc}\input{openbc} %--------------------------------
+\newpage %-----------------------------------------------------------------------------------------
+\section{About nullspaces} 
+\subsection{Pressure normalisation, nullspace\label{ss_pnorm}} \input{pressure_normalisation} %----
+\subsection{Removing rotational nullspace\label{ss_nullspace}} \input{nullspace} %-----------------
+

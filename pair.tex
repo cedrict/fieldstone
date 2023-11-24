@@ -3,13 +3,13 @@
 The success of a mixed finite element formulation crucially depends on a proper choice of the local interpolations of the velocity and the pressure. 
 
 %........................................................................................
-\subsubsection{The compatibility condition (or LBB condition, or inf-sup condition)} \label{ss:LBBcond}
+\subsection{The compatibility condition (or LBB condition, or inf-sup condition)} \label{ss:LBBcond}
 \index{general}{LBB} \index{general}{Optimal Rate}
 
 \input{lbb}
 
 %........................................................................................
-\subsubsection{Families}
+\subsection{Families}
 \index{general}{Taylor-Hood}
 
 The family of {\color{olive} Taylor-Hood} finite element spaces on triangular/tetrahedral 
@@ -33,51 +33,51 @@ has also been proved to be LBB stable. These are also called {\color{olive} Sere
 \end{remark}
 
 %........................................................................................
-\subsubsection{The bi/tri-linear velocity - constant pressure element ($Q_1\times P_0$)}
+\subsection{The bi/tri-linear velocity - constant pressure element ($Q_1\times P_0$)}
 \label{ss:pairq1p0}
 \input{pair_q1p0}
 
 %----------------------------------------------------------------------
-\subsubsection{The bi/tri-quadratic velocity - bi/tri-linear pressure element ($Q_2 \times Q_1$)}
+\subsection{The bi/tri-quadratic velocity - bi/tri-linear pressure element ($Q_2 \times Q_1$)}
 \label{ss:pairq2q1}
 \input{pair_q2q1}
 
 %----------------------------------------------------------------------
-\subsubsection{The bi/tri-quadratic velocity - discontinuous linear pressure element ($Q_2 \times P_{-1}$)}
+\subsection{The bi/tri-quadratic velocity - discontinuous linear pressure element ($Q_2 \times P_{-1}$)}
 \label{ss:pairq2pm1}
 \input{pair_q2pm1}
 
 %----------------------------------------------------------------------
-\subsubsection{The biquadratic velocity - discontinuous bilinear pressure element ($Q_2 \times Q_{-1}$)}
+\subsection{The biquadratic velocity - discontinuous bilinear pressure element ($Q_2 \times Q_{-1}$)}
 \label{ss:pair_q2qm1}
 \input{pair_q2qm1}
 
 %----------------------------------------------------------------------
-\subsubsection{The stabilised bi/tri-linear velocity - constant pressure element ($Q_1\times P_0$-stab)}
+\subsection{The stabilised bi/tri-linear velocity - constant pressure element ($Q_1\times P_0$-stab)}
 \label{ss:pairq1p0stab}
 \input{pair_q1p0stab}
 
 
 %--------------------------------------------------------------------------------------------------
-\subsubsection{The stabilised bi/tri-linear velocity - bi/tri-linear pressure element ($Q_1\times Q_1$-stab)}
+\subsection{The stabilised bi/tri-linear velocity - bi/tri-linear pressure element ($Q_1\times Q_1$-stab)}
 \label{ss:pairq1q1stab}
 \input{pair_q1q1stab}
 
 
 %-----------------------------------------------------------------
-\subsubsection{The Rannacher-Turek element - rotated ${ Q}_1\times P_0$} \label{ss:RTq1p0}
+\subsection{The Rannacher-Turek element - rotated ${ Q}_1\times P_0$} \label{ss:RTq1p0}
 \input{pair_rannacher_turek}
 
 %------------------------------------------------------------------
-\subsubsection{The ${ P}_1\times P_0$ pair} \label{ss:p1p0}
+\subsection{The ${ P}_1\times P_0$ pair} \label{ss:p1p0}
 \input{pair_p1p0}
 
 %------------------------------------------------------------------
-\subsubsection{The ${ P}_2\times P_0$ pair} \label{ss:p2p0}
+\subsection{The ${ P}_2\times P_0$ pair} \label{ss:p2p0}
 \input{pair_p2p0}
 
 %------------------------------------------------------------------
-\subsubsection{The ${ Q}_2\times Q_0$ pair} \label{ss:pairq2q0}
+\subsection{The ${ Q}_2\times Q_0$ pair} \label{ss:pairq2q0}
 \index{general}{${\bm Q}_2 \times Q_0$}
 
 Quadratic velocities, constant pressure. The element satisfies the inf-sup condition, 
@@ -86,7 +86,7 @@ source?
 
 
 %------------------------------------------------------------------
-\subsubsection{The ${ P}_1\times P_1$-stabilised pair} \label{ss:P1P1stab}
+\subsection{The ${ P}_1\times P_1$-stabilised pair} \label{ss:P1P1stab}
 
 Like its quadrilateral counterpart ${\bm Q}_1\times Q_1$, the 
 $P_1\times P_1$ pair is not stable and needs to be stabilised \cite{nosi98,tasu00}.
@@ -95,79 +95,79 @@ TerraNeo code uses stabilised with PSPG \cite{babd20}.
 \textcite{nosi98}
 
 %--------------------------------------------------------------------------------------------------
-\subsubsection{The ${ P}_1^+\times P_1$ (MINI) pair in 2D \& 3D \label{pair:mini}}
+\subsection{The ${ P}_1^+\times P_1$ (MINI) pair in 2D \& 3D \label{pair:mini}}
 \input{pair_mini}
 
 %--------------------------------------------------------------------------------------------------
-\subsubsection{The ${ P}_2\times P_1$ pair \label{ss:p2p1}}
+\subsection{The ${ P}_2\times P_1$ pair \label{ss:p2p1}}
 \input{pair_p2p1}
 
 %----------------------------------------------------------------------
-\subsubsection{The ${ P}_2^+\times P_{-1}$ pair  (Crouzeix-Raviart) }
+\subsection{The ${ P}_2^+\times P_{-1}$ pair  (Crouzeix-Raviart) }
 \label{sec:crouzeix-raviart}
 \input{pair_crouzeixraviart}
 
 %----------------------------------------------------------------------
-\subsubsection{The ${ P}_2^+\times P_{1}$ pair \label{ss:p2pp1}}
+\subsection{The ${ P}_2^+\times P_{1}$ pair \label{ss:p2pp1}}
 \input{pair_p2pp1}
 
 %------------------------------------------------------------------
-\subsubsection{The ${ P}_2\times (P_1+P_0)$ pair} \label{ss:p2p1p0}
+\subsection{The ${ P}_2\times (P_1+P_0)$ pair} \label{ss:p2p1p0}
 \input{pair_p2p1p0}
 
 %------------------------------------------------------------------
-\subsubsection{The ${ Q}_2\times (Q_1+Q_0)$ pair} \label{ss:q2q1q0}
+\subsection{The ${ Q}_2\times (Q_1+Q_0)$ pair} \label{ss:q2q1q0}
 \input{pair_q2q1q0}
 
 %------------------------------------------------------------------
-\subsubsection{The ${ P}_3\times P_2$ pair} \label{ss:p3p2}
+\subsection{The ${ P}_3\times P_2$ pair} \label{ss:p3p2}
 \input{pair_p3p2}
 
 %------------------------------------------------------------------
-\subsubsection{The Raviart-Thomas family} \label{ss:raviart_thomas}
+\subsection{The Raviart-Thomas family} \label{ss:raviart_thomas}
 \input{pair_raviart_thomas}
 
 %------------------------------------------------------------------
-\subsubsection{The Bernaudi-Raugel pair} \label{ss:bernaudi_raugel}
+\subsection{The Bernaudi-Raugel pair} \label{ss:bernaudi_raugel}
 \input{pair_bernaudi_raugel}
 
 %------------------------------------------------------------------
-\subsubsection{The Scott-Vogelius pair} \label{ss:scott_vogelius}
+\subsection{The Scott-Vogelius pair} \label{ss:scott_vogelius}
 \input{pair_scott_vogelius}
 
 %------------------------------------------------------------------
-\subsubsection{The BDM (Brezzi-Douglas-Marini) pair} \label{ss:bdm}
+\subsection{The BDM (Brezzi-Douglas-Marini) pair} \label{ss:bdm}
 \index{general}{BDM element}
 \input{pair_bdm}
 
 %------------------------------------------------------------------
-\subsubsection{The DSSY pair} \label{ss:pair_dssy2D}
+\subsection{The DSSY pair} \label{ss:pair_dssy2D}
 \index{general}{Nonconforming element}
 \index{general}{DSSY element}
 \input{pair_dssy2D}
 
 %------------------------------------------------------------------
-\subsubsection{The Han pair} \label{ss:han}
+\subsection{The Han pair} \label{ss:han}
 \index{general}{Han element}
 \index{general}{Nonconforming element}
 \input{pair_han}
 
 %------------------------------------------------------------------
-\subsubsection{The Divergence-free nonconforming $P_1^{NC}\times P_0$ pair} \label{ss:p1ncp0}
+\subsection{The Divergence-free nonconforming $P_1^{NC}\times P_0$ pair} \label{ss:p1ncp0}
 \input{pair_p1ncp0}
 
 %------------------------------------------------------------------
-\subsubsection{The Chen nonconforming ${ Q}_1\times Q_0$ pair (?)} \label{ss:chenq0}
+\subsection{The Chen nonconforming ${ Q}_1\times Q_0$ pair (?)} \label{ss:chenq0}
 \input{pair_chen}
 
 %----------------------------
-\subsubsection{Other FE element pairs}
+\subsection{Other FE element pairs}
 
 \begin{itemize}
 
 \item ${\bm Q}_2\times Q_2$: This element is never used, probably because 
 a) it is unstable, b) it is very costly. 
-There is one reference to it in \cite{hufb86}.
+There is one reference to it in \textcite{hufb86} (1986).
 
 \item ${\bm Q}_1\times P_{-1}$ Bilinear velocities,  piecewise linear discontinuous polynomial pressure.
 
@@ -183,7 +183,7 @@ ${\bm Q}_1^+ \times P_0$
 \end{itemize}
 
 %.........................................................................
-\subsubsection{A note about incompressibility and standard mixed methods}
+\subsection{A note about incompressibility and standard mixed methods}
 
 What follows is nicely explained and demonstrated in John \etal \cite{jolm17}. In their 
 example 1.1 they look at the velocity error of benchmark VJ2 (see Section~\ref{mms9}) 
