@@ -1,21 +1,12 @@
 # functions for the Volker John III benchmark (vj3)
 
-def eta(x,y):
+def eta(x,y,dum):
     return 1.
 
 def solution(x,y):
     return 200*x**2*(1-x)**2*y*(1-y)*(1-2*y),\
           -200*x*(1-x)*(1-2*x)*y**2*(1-y)**2,\
            10*( (x-1./2.)**3*y**2+(1-x)**3*(y-1./2.)**3 )
-
-#def u_th(x,y):
-#    return 200*x**2*(1-x)**2*y*(1-y)*(1-2*y) 
-
-#def v_th(x,y):
-#    return -200*x*(1-x)*(1-2*x)*y**2*(1-y)**2 
-
-#def p_th(x,y):
-#    return 10*( (x-1./2.)**3*y**2+(1-x)**3*(y-1./2.)**3 )
 
 def dpdx_th(x,y):
     return 30*(x-1./2.)**2*y**2-30*(1-x)**2*(y-1./2.)**3
@@ -44,10 +35,10 @@ def dexydy(x,y):
 def deyydy(x,y):
     return -400*x*(2*x**2-3*x+1)*(6*y**2-6*y+1)
 
-def bx(x,y):
+def bx(x,y,dum):
     return dpdx_th(x,y)-2*dexxdx(x,y)-2*dexydy(x,y)
 
-def by(x,y):
+def by(x,y,dum):
     return dpdy_th(x,y)-2*dexydx(x,y)-2*deyydy(x,y)
 
 def vrms_th():

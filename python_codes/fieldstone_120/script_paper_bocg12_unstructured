@@ -6,12 +6,12 @@
 #donea & huerta
 ###############################################################################
 
-echo =================dh====================unstructured
+echo =================bocg12====================unstructured
 rm -f opla*
 rm -f vrms*
 rm -f errors* 
-mkdir paperresults/dh
-mkdir paperresults/dh/unstructured
+mkdir paperresults/bocg12
+mkdir paperresults/bocg12/unstructured
 
 for e in 3 5 9 18 ; do 
 
@@ -25,12 +25,10 @@ for e in 3 5 9 18 ; do
     for n in 16 20 24 28 32 40 48 56 64 80 96 128 160 256; do
         echo mesh: $n X $n 
         start=`date +%s.%N`
-        python3 stone.py $n $Vspace $Pspace dh 1 >> opla
+        python3 stone.py $n $Vspace $Pspace bocg12 1 >> opla
         end=`date +%s.%N`
         runtime=$( echo "$end - $start" | bc -l )
         echo '     -> ' $runtime ' s'
-        mv solution_velocity.ascii solution_velocity_${n}_${Vspace}_${Pspace}.ascii 
-        mv solution_pressure.ascii solution_pressure_${n}_${Vspace}_${Pspace}.ascii 
         mv visu_V.vtu visu_V_${Vspace}_${Pspace}_${n}.vtu
     done
     grep errv opla > errors_${Vspace}_${Pspace}
@@ -39,10 +37,8 @@ for e in 3 5 9 18 ; do
 
 done
 
-mv err* paperresults/dh/unstructured
-mv opla* paperresults/dh/unstructured
-mv vrms* paperresults/dh/unstructured
-mv solution_velocity* paperresults/dh/unstructured
-mv solution_pressure* paperresults/dh/unstructured
-mv visu*.vtu paperresults/dh/structured
+mv err* paperresults/bocg12/unstructured
+mv opla* paperresults/bocg12/unstructured
+mv vrms* paperresults/bocg12/unstructured
+mv visu*.vtu paperresults/bocg12/unstructured
 

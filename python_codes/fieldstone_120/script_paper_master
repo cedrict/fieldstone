@@ -21,4 +21,8 @@
 ./script_paper_johnbook_structured
 ./script_paper_johnbook_unstructured
 
+./script_paper_jolm17_structured
+
+./script_paper_bocg12_structured
+./script_paper_bocg12_unstructured
 

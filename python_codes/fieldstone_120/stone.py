@@ -18,16 +18,16 @@ ndofP=1
 Lx=1
 Ly=1
 
-nelx=32
+nelx=64
 
-Vspace='P2'
-Pspace='P1'
+Vspace='Q2'
+Pspace='Q1'
 
 visu=1
 
-experiment='solcx'
+experiment='jolm17'
 
-unstructured=1
+unstructured=0
 
 isoparametric=True
 randomize_mesh=False
