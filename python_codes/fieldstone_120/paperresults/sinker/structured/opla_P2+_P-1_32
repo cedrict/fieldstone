@@ -1,7 +1,5 @@
 arguments: ['stone.py', '32', 'P2+', 'P-1', 'sinker', '0', '4', '0.4']
 *****************************
-           daSTONE           
-*****************************
 Vspace       = P2+
 Pspace       = P-1
 space1       = P1
@@ -18,32 +16,37 @@ Nfem         = 18690
 experiment   = sinker
 unstructured = False
 *****************************
-mesh setup: 0.013 s
-analytical solution: 0.011 s
-bc setup: 0.012 s
+mesh setup: 0.039 s
+analytical solution: 0.009 s
+bc setup: 0.007 s
+build Q1/P1 mesh: 0.002 s
      -> area (m,M) 4.882812e-04 4.882812e-04 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 0.963 s
-build FE matrix: 7.950 s
-solve time: 0.525 s
+compute elements areas: 0.703 s
+compute local_to_global: 0.062s
+fill I,J arrays: 0.419s
+     -> assembly: 0.260 s
+build FE matrix: 2.261 s
+convert matrix to csr: 0.011 s
+solve time: 1.353 s
      -> u (m,M) -1.1323e-03 1.1323e-03 
      -> v (m,M) -7.8931e-04 6.7801e-04 
-     -> p (m,M) -1.8615e-01 8.6197e-01 
+     -> p (m,M) -6.0239e-01 4.4573e-01 
 split vel into u,v: 0.000 s
-     -> avrg_p= 0.3562163324581615
+     -> avrg_p= -0.06002702147935233
      -> p (m,M) -0.5424 0.5058 
-pressure normalisation: 0.805 s
-     -> h (m,M,avrg)= 0.03124999999999354 0.03124999999999394 0.031249999999993033
-     -> nel=   2048 ; vrms= 4.59621238e-04 | vrms_th= 0.00000000e+00 |   12546    6144 3.125000e-02
-     -> nel=   2048 ; errv= 4.59621238e-04 ; errp= 2.95593497e-01 ; errdivv= 1.95275014e-04 |   12546    6144 3.12500000e-02
-compute vrms & errors: 1.432 s
-     -> sinker_vel 0.5 0.75 -0.0007893027674368287 10000.0 0.4 32
-     -> sinker_press 0.5 0.75 -0.25875107916872225 10000.0 0.4 32
-     -> sinker_press 0.5 0.75 -0.2587510791639356 10000.0 0.4 32
-     -> sinker_press 0.5 0.75 -0.2545397624787404 10000.0 0.4 32
-     -> sinker_press 0.5 0.75 -0.26013858534750706 10000.0 0.4 32
-     -> sinker_press 0.5 0.75 -0.25453976249342386 10000.0 0.4 32
-     -> sinker_press 0.5 0.75 -0.26013858539510204 10000.0 0.4 32
+pressure normalisation: 0.724 s
+     -> h (m,M,avrg)= 3.125000e-02 3.125000e-02 3.125000e-02 
+     -> nel=   2048 ; vrms= 4.59621241e-04 ; vrms_th= 0.00000000e+00 ;  12546   6144 3.125000e-02
+     -> nel=   2048 ; errv= 4.59621241e-04 ; errp= 2.95593497e-01 ; errdivv= 1.95275015e-04 |  12546   6144 3.12500000e-02
+compute vrms & errors: 1.164 s
+     -> sinker_vel 0.5 0.75 -0.0007893027719620343 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.2587510794906951 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.25875107922367774 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.25453976349655794 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.2601385855501642 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.2545397623377579 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.26013858564120274 10000.0 0.4 32
 *****************************
 *****************************

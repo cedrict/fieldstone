@@ -1,7 +1,5 @@
 arguments: ['stone.py', '64', 'Q2', 'Q1', 'sinker', '0', '4', '0.4']
 *****************************
-           daSTONE           
-*****************************
 Vspace       = Q2
 Pspace       = Q1
 space1       = Q1
@@ -18,27 +16,32 @@ Nfem         = 37507
 experiment   = sinker
 unstructured = False
 *****************************
-mesh setup: 0.016 s
-analytical solution: 0.016 s
-bc setup: 0.028 s
+mesh setup: 0.051 s
+analytical solution: 0.019 s
+bc setup: 0.016 s
+build Q1/P1 mesh: 0.005 s
      -> area (m,M) 2.441406e-04 2.441406e-04 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 2.001 s
-build FE matrix: 23.256 s
-solve time: 2.526 s
+compute elements areas: 1.690 s
+compute local_to_global: 0.165s
+fill I,J arrays: 1.410s
+     -> assembly: 0.805 s
+build FE matrix: 6.121 s
+convert matrix to csr: 0.032 s
+solve time: 5.106 s
      -> u (m,M) -1.1322e-03 1.1322e-03 
      -> v (m,M) -8.0806e-04 6.9031e-04 
-     -> p (m,M) -3.7592e-01 6.7193e-01 
+     -> p (m,M) -9.8919e-01 5.8654e-02 
 split vel into u,v: 0.000 s
-     -> avrg_p= 0.16613554171052974
+     -> avrg_p= -0.44713915777326946
      -> p (m,M) -0.5421 0.5058 
-pressure normalisation: 1.788 s
-     -> h (m,M,avrg)= 0.015624999999999944 0.015625000000000125 0.015625
-     -> nel=   4096 ; vrms= 4.67383915e-04 | vrms_th= 0.00000000e+00 |   33282    4225 1.562500e-02
-     -> nel=   4096 ; errv= 4.67383915e-04 ; errp= 2.95650692e-01 ; errdivv= 2.42637090e-04 |   33282    4225 1.56250000e-02
-compute vrms & errors: 3.055 s
-     -> sinker_vel 0.5 0.75 -0.0008080525113701531 10000.0 0.4 64
-     -> sinker_press 0.5 0.75 -0.2576419034287323 10000.0 0.4 64
+pressure normalisation: 1.775 s
+     -> h (m,M,avrg)= 1.562500e-02 1.562500e-02 1.562500e-02 
+     -> nel=   4096 ; vrms= 4.67383922e-04 ; vrms_th= 0.00000000e+00 ;  33282   4225 1.562500e-02
+     -> nel=   4096 ; errv= 4.67383922e-04 ; errp= 2.95650692e-01 ; errdivv= 2.42637094e-04 |  33282   4225 1.56250000e-02
+compute vrms & errors: 2.888 s
+     -> sinker_vel 0.5 0.75 -0.0008080525230781321 10000.0 0.4 64
+     -> sinker_press 0.5 0.75 -0.25764190398671344 10000.0 0.4 64
 *****************************
 *****************************

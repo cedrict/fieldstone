@@ -1,7 +1,5 @@
 arguments: ['stone.py', '32', 'P2', 'P0', 'sinker', '0', '4', '0.4']
 *****************************
-           daSTONE           
-*****************************
 Vspace       = P2
 Pspace       = P0
 space1       = P1
@@ -18,26 +16,37 @@ Nfem         = 10498
 experiment   = sinker
 unstructured = False
 *****************************
-mesh setup: 0.005 s
-analytical solution: 0.005 s
-bc setup: 0.008 s
+mesh setup: 0.019 s
+analytical solution: 0.015 s
+bc setup: 0.012 s
+build Q1/P1 mesh: 0.001 s
      -> area (m,M) 4.882812e-04 4.882813e-04 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 0.625 s
-build FE matrix: 5.312 s
-solve time: 0.280 s
+compute elements areas: 0.396 s
+compute local_to_global: 0.046s
+fill I,J arrays: 0.187s
+     -> assembly: 0.127 s
+build FE matrix: 1.306 s
+convert matrix to csr: 0.006 s
+solve time: 0.344 s
      -> u (m,M) -1.1519e-03 1.1519e-03 
      -> v (m,M) -8.3979e-04 6.8428e-04 
-     -> p (m,M) -3.7248e-01 6.5524e-01 
+     -> p (m,M) -5.3839e-01 4.8933e-01 
 split vel into u,v: 0.000 s
-     -> avrg_p= 0.15973303327497826
+     -> avrg_p= -0.006176062113392622
      -> p (m,M) -0.5322 0.4955 
-pressure normalisation: 0.542 s
-     -> h (m,M,avrg)= 0.031249999999999875 0.031250000000000104 0.031249999999999997
-     -> nel=   2048 ; vrms= 4.61563940e-04 | vrms_th= 0.00000000e+00 |    8450    2048 3.125000e-02
-     -> nel=   2048 ; errv= 4.61563940e-04 ; errp= 2.95509503e-01 ; errdivv= 3.57431807e-03 |    8450    2048 3.12500000e-02
-compute vrms & errors: 1.044 s
-     -> sinker_vel 0.5 0.75 -0.0008000835826571466 10000.0 0.4 32
+pressure normalisation: 0.438 s
+     -> h (m,M,avrg)= 3.125000e-02 3.125000e-02 3.125000e-02 
+     -> nel=   2048 ; vrms= 4.61563941e-04 ; vrms_th= 0.00000000e+00 ;   8450   2048 3.125000e-02
+     -> nel=   2048 ; errv= 4.61563941e-04 ; errp= 2.95509503e-01 ; errdivv= 3.57431807e-03 |   8450   2048 3.12500000e-02
+compute vrms & errors: 0.711 s
+     -> sinker_vel 0.5 0.75 -0.0008000835833629344 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.24803437010265506 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.24803437007482226 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.26769187063065086 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.27689209147422156 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.2676918705691807 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.27689209152096994 10000.0 0.4 32
 *****************************
 *****************************
