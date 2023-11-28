@@ -114,7 +114,7 @@ for j in range(0, nely):
 
 print("defining boundary conditions")
 
-bc_fix = np.zeros(Nfem, dtype=np.bool)  # boundary condition, yes/no
+bc_fix = np.zeros(Nfem, dtype=bool)  # boundary condition, yes/no
 bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
 for i in range(0, nnp):
     if x[i]<eps:

@@ -12,14 +12,20 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This \stone showcases the MINI (Section~\ref{pair:mini}), 
-$P_2\times P_1$ (Section~\ref{ss:p2p1}), $Q_2\times Q_1$ (Section~\ref{ss:pairq2q1}), 
-$Q_2\times P_{-1}$ (Section~\ref{ss:pairq2pm1} - unmapped approach, see \stone~76) 
-and Crouzeix-Raviart  (Section~\ref{sec:crouzeix-raviart}) elements.
+\index{stopics}{Donea \& Huerta mms}
+\index{stopics}{$P_1^+\times P_1$}
+\index{stopics}{$Q_2 \times Q_1$}
+\index{stopics}{$Q_2 \times P_{-1}$}
+\index{stopics}{$P_2^+ \times P_{-1}$}
+
+This \stone showcases the MINI (Section~\ref{MMM-pair:mini}), 
+$P_2\times P_1$ (Section~\ref{MMM-ss:p2p1}), $Q_2\times Q_1$ (Section~\ref{MMM-ss:pairq2q1}), 
+$Q_2\times P_{-1}$ (Section~\ref{MMM-ss:pairq2pm1} - unmapped approach, see \stone~\ref{f76}) 
+and Crouzeix-Raviart  (Section~\ref{MMM-sec:crouzeix-raviart}) elements.
 All experiments take place in the unit square (except SolVg). 
 
-The mesh is composed of $nel_x \times nel_y$ cells which are cut in half via the same 
-diagonal (NW-SE) into 2 triangles for simplicity\footnote{I revisit this for SolVi} 
+The mesh is composed of $nel_x \times nel_y$ cells which are cut in half via a  
+diagonal (NW-SE or SO-NE) into 2 triangles for simplicity\footnote{I revisit this for SolVi} 
 when triangular elements are used: 
 
 \begin{center}
@@ -37,12 +43,12 @@ the entire Stokes matrix to the solver).
 
 These are the important numerical parameters which allow to control the type of calculation in the code:
 \begin{itemize}
-\item {\tt elt}=MINI, P2P1, CR, Q2Q1 or Q2P1.
-\item {\tt experiment}: 1$\rightarrow$ Donea \& Huerta manufactured solution;
+\item {\python elt}=MINI, P2P1, CR, Q2Q1 or Q2P1.
+\item {\python experiment}: 1$\rightarrow$ Donea \& Huerta manufactured solution;
 2 $\rightarrow$ high viscosity sinker; 3$\rightarrow$ SolCx; 4$\rightarrow$ SolCx; 
 5$\rightarrow$ SolVi; 6$\rightarrow$ SolVg (viscosity grooves).
-\item {\tt nelx,nely}:  the number of cells in each direction
-\item {\tt randomize\_mesh} allows to add a small random perturbation to the nodes
+\item {\python nelx,nely}:  the number of cells in each direction
+\item {\python randomize\_mesh} allows to add a small random perturbation to the nodes
 \end{itemize}
 
 In order to test simplicial meshes with a topology that is not as regular as the one
