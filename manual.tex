@@ -18,6 +18,7 @@
 \usepackage{listings}
 \usepackage{stmaryrd}
 \usepackage{multicol}
+\usepackage{makeidx} 
 
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 
@@ -91,7 +92,6 @@ urlcolor=black}
 \usepackage{multind}
 \makeindex{general}
 \makeindex{contributors}
-\makeindex{topics}
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -268,4 +268,9 @@ doi = "10.5194/egusphere-egu23-14212"}
 \chapter{Directional derivative, total and material derivative \label{app:ders}} \input{app_ders} %
 
 \printbibliography
+
+\newpage
+\printindex{general}{General index}
+\printindex{contributors}{Contributors}
+
 \end{document}

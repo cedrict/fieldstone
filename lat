@@ -1,10 +1,4 @@
 biber --output-safechars manual
 pdflatex manual.tex
+makeindex general
 
-#makeindex general
-#makeindex contributors 
-#makeindex topics
-
-#authorindex manual
-#makeindex manual.idx
-#pdflatex manual.tex
