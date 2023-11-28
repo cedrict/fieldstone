@@ -8,10 +8,13 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\index{stopics}{$Q_1^+\times Q_1$}
 
-\subsection*{Manufactured solution \#1}
 
-The analytical solution originates in Lamichhane (2017) \cite{lami17}.
+%--------------------------------------
+\section*{Manufactured solution \#1}
+
+The analytical solution originates in \textcite{lami17} (2017).
 The velocity and pressure are given by
 \begin{eqnarray}
 u(x,y)&=&-2x^2y(2y-1)(x-1)^2(y-1) \\
@@ -49,8 +52,8 @@ author measured could be different than what I measure (see Table 1,2 in \cite{l
 The trends are similar though, with $b_2$ performing better than $b_1$:
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms/errors_v}
-\includegraphics[width=7cm]{python_codes/fieldstone_72/results/mms/errors_p}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_72/results/mms/errors_v}
+\includegraphics[width=8cm]{python_codes/fieldstone_72/results/mms/errors_p}\\
 {\captionfont Left: velocity error in $L_2$ norm; Right: pressure error in $L_2$ norm.
 Resolutions from $8\times8$ until $80\times80$.}
 \end{center}
@@ -61,31 +64,32 @@ As above we see that $b_2$ performs better than $b_1$:
 \includegraphics[width=9cm]{python_codes/fieldstone_72/results/mms/vrms}
 \end{center}
 
-\vspace{.5cm}
 
-\underline{Influence of mesh nodes position:} I have also repeated these 
+%................................................
+\subsubsection{Influence of mesh nodes position:} 
+I have also repeated these 
 experiments with a mesh whose internal nodes have been 
 randomly moved by up to $\pm$20\% of $h_x$ or $h_y$ around the initial position. 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/area16}
-\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/area32}
-\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/area64}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_72/results/mms/area16}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_72/results/mms/area32}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_72/results/mms/area64}\\
 {\captionfont area of elements for randomized meshes. Left to right: 16x16, 32x32, 64x64}
 \end{center}
 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/errors_v_rand}
-\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/errors_p_rand}
-\includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/vrms_rand}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_72/results/mms/errors_v_rand}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_72/results/mms/errors_p_rand}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_72/results/mms/vrms_rand}
 \end{center}
 
 We find that the error convergence rate is unchanged for velocities but is now less 
 for pressure (higher than 1, lower than 1.5). 
 
-\vspace{.5cm}
-\underline{Another bubble?} 
+%..............................
+\subsubsection{Another bubble?} 
 To make the point that the bubble function must contain the (bi-)linear term, 
 I have created a third bubble function which is simply $b_3(r,s)=(1-r^2)(1-s^2)$.
 Technically it is zero on the sides and 1 in the middle so it fulfills the 
@@ -98,16 +102,18 @@ showcases a typical error mode:
 {\captionfont Left: pressure field as obtained with $b_3$; right: pressure error.}
 \end{center}
 
-\vspace{.5cm}
 
-\underline{influence of $\beta$:} Finally, I use a $2\times 2$ quadrature and look at 
+%..............................
+\subsubsection{influence of $\beta$:} Finally, 
+I use a $2\times 2$ quadrature and look at 
 the errors and the vrms for various values of $\beta$:
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/errors_v_beta}
 \includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/errors_p_beta}
 \includegraphics[width=5cm]{python_codes/fieldstone_72/results/mms/vrms_beta}
 \end{center}
-It looks like $\beta\in[0.0001,0.01]$ does better than all other higher values. Also, looking at the 
+It looks like $\beta\in[0.0001,0.01]$ does better than all other higher values. 
+Also, looking at the 
 field in Paraview, no trace of the error modes as we just saw above.
 The difference between 0.01 and 0.25 is somewhat small, but values of $\beta$ above 0.5 
 clearly yield less accurate results. 
@@ -127,9 +133,9 @@ would be a better choice but the question remains whether these
 conclusions hold for other benchmarks. We will see later 
 that $\beta=1/4$ is actually preferable to these very low values.
 
-\vspace{.4cm}
 
-\underline{Looking at the condition number of the $\K$ matrix} (remember: $\K$ is the 1,1 block of the
+\subsubsection{Looking at the condition number of the $\K$ matrix} 
+(remember: $\K$ is the 1,1 block of the
 Stokes matrix). 
 I have computed the condition number of the $\K$ matrix for both bubbles and for various mesh resolutions. 
 We see that the bubble 1 yields condition numbers substantially higher than bubble 2, both increasing 
@@ -141,7 +147,7 @@ is used on this matrix.
 \end{center}
 
 %_____________________________________
-\subsection*{Manufactured solution \#2}
+\section*{Manufactured solution \#2}
 
 This is the second manufactured solution 
 mentioned in Lamichhane \cite{lami17}. It is presented in Section~\ref{MMM-ss:mms2}.
@@ -214,7 +220,7 @@ with bubble 1 showcases strong ripples in the upper right corner.
 
 
 %_____________________________________
-\subsection*{The SolCx benchmark}
+\section*{The SolCx benchmark}
 
 Because of the viscosity jump at $x=L_x/2$, it has been widely reported that 
 error convergence rates depend on wheter the number of element in the $x-$direction 
@@ -245,7 +251,7 @@ along the interface.
 
 
 %_____________________________________
-\subsection*{The SolKz benchmark}
+\section*{The SolKz benchmark}
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_72/results/solkz/errors_v}
@@ -258,7 +264,7 @@ once again $b_2$ better than $b_1$.
 
 
 %_____________________________________
-\subsection*{The SolVi benchmark}
+\section*{The SolVi benchmark}
 
 
 \begin{center}
@@ -277,7 +283,7 @@ once again $b_2$ better than $b_1$.
 
 
 %_____________________________________
-\subsection*{The Stokes Sphere}
+\section*{The Stokes Sphere}
 
 This experiment is the benchmark of Section~\ref{MMM-ss:stokes_sphere2D}. 
 The density is assigned directly to the 
@@ -335,7 +341,7 @@ One can also prescribe an open boundary condition at the top:
 
 
 %_____________________________________
-\subsection*{Rayleigh-Taylor instability}
+\section*{Rayleigh-Taylor instability}
 
 This benchmark is carried out in Appendix D of Thieulot (2011) \cite{thie11}.
 It consists of a two-layer system driven by gravity.
@@ -358,7 +364,7 @@ Resolution and $\eta_2$ are varied on the following figures:
 Bubble 2 does better than bubble 1. Also, $\beta$ does not seem to play a role.
 
 %_____________________________________
-\subsection*{Sinking block}
+\section*{Sinking block}
 This is the very same experiment as in Stone 53. It consists of a negatively buoyant 
 square object falling in a fluid in a square domain. 
 This particular experiment proved to be the 'downfall' of the $Q_1\times Q_1-stab$ element
@@ -369,7 +375,7 @@ density variations (Thieulot \& Bangerth, in prep.).
 Unless specified otherwise bubble 2 has $\beta=0.25$ by default.
 
 %............................
-\subsubsection*{Full density} 
+\subsection*{Full density} 
 Results indicate that the element performs adequately, especially the 
 pressure field which looks smooth.  
 
@@ -412,7 +418,7 @@ We can conclude that the bubble type and the value of $\beta$ do not seem to sig
 the pressure profile in this case.
 
 %............................
-\subsubsection*{Reduced density} 
+\subsection*{Reduced density} 
 This is the same experiment as above but $\rho_1$ has been removed from the density
 everywhere in the domain, so that the surrounding material has zero density 
 and the block has a density $\delta \rho$.
@@ -466,7 +472,7 @@ It looks like $\beta \geq 0.25$ actually yield near identical results to those o
 but $\beta=1$ or $\beta=2$ also yields unwanted oscillations.
 
 %_____________________________________
-\subsection*{Free surface benchmark}
+\section*{Free surface benchmark}
 
 The setup originates in Crameri et al (2012) \cite{crsg12}. It consists of 
 a cosine-shaped layer of homogeneous lithosphere overlaying a homogeneous layer of mantle.
@@ -492,5 +498,282 @@ I only report the velocity field at $t=0$:
 
 It is clear that the velocity is (visually) what we expect. The presence of the free surface 
 does not seem to introduce any kind of abnormal behaviour. 
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{NEW stuff}
+
+all in {\tt /study} folder.
+
+Following \textcite{lami17} (2017), we consider the case of a 4x4 element mesh (macro-element).
+We prescribe u and v boundary conditions on all sides (8 nodes) so that
+16 lines of the G matrix are zero. Since the original G matrix is (9+4)*2=26 dofs, 
+there are only 26-8*2 lines left, i.e. a 9*10 matrix like the D one of the paper.
+
+%-----------------------
+\subsection*{bubble 0}
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_72/images/mat1}\\
+{\captionfont ${\bm G}$ matrix obtained with the $(1-x^2)(1-y^2)$ bubble}
+\end{center}
+
+\[
+D=
+\left(
+\begin{array}{cccccccccc}
+\frac29 & \frac29 & 0 & 0 & 0 & 0 & 0 & 0 & \frac{1}{12} & \frac{1}{12} \\ \\
+-\frac29 & \frac29 & \frac29 & \frac29 & 0 & 0 & 0 & 0 & 0 & \frac13 \\ \\
+0 & 0 & -\frac29 & \frac29 & 0 & 0 & 0 & 0 & -\frac{1}{12} & \frac{1}{12} \\ \\
+\frac29 & -\frac29 & 0 & 0 & 0 & 0 & \frac29 & \frac29 & \frac13  & 0 \\ \\ 
+-\frac29 & -\frac29 & \frac29 & -\frac29 & \frac29 & \frac29 & -\frac29 & \frac29  &0 &0\\ \\
+0 & 0 & -\frac29 & -\frac29 & -\frac29 & \frac29 & 0 & 0 & -\frac13 & 0 \\ \\
+0 & 0 & 0 & 0 & 0 & 0 & \frac29 & -\frac29 & \frac{1}{12} & -\frac{1}{12} \\ \\
+0 & 0 & 0 & 0 & \frac29 & -\frac29 & -\frac29 & -\frac29 & 0 & -\frac13 \\ \\ 
+0 & 0 & 0 & 0 & -\frac29 & -\frac29 & 0 & 0 & -\frac{1}{12} & -\frac{1}{12}
+\end{array}
+\right)
+\]
+which we can multiply by 9: 
+\[
+D=
+\left(
+\begin{array}{cccccccccc}
+2 & 2 & 0 & 0 & 0 & 0 & 0 & 0 & \frac{3}{4} & \frac{3}{4} \\ \\
+-2 & 2 & 2 & 2 & 0 & 0 & 0 & 0 & 0 & 3 \\ \\
+0 & 0 & -2 & 2 & 0 & 0 & 0 & 0 & -\frac{3}{4} & \frac{3}{4} \\ \\
+2 & -2 & 0 & 0 & 0 & 0 & 2 & 2 & 3  & 0 \\ \\ 
+-2 & -2 & 2 & -2 & 2 & 2 & -2 & 2  &0 &0\\ \\
+0 & 0 & -2 & -2 & -2 & 2 & 0 & 0 & -3 & 0 \\ \\
+0 & 0 & 0 & 0 & 0 & 0 & 2 & -2 & \frac{3}{4} & -\frac{3}{4} \\ \\
+0 & 0 & 0 & 0 & 2 & -2 & -2 & -2 & 0 & -3 \\ \\ 
+0 & 0 & 0 & 0 & -2 & -2 & 0 & 0 & -\frac{3}{4} & -\frac{3}{4}
+\end{array}
+\right)
+\]
+
+
+Here is what I obtain (matrix multiplied by 9). Structure is good.
+First 8 columns are perfect BUT last two columns are off, and not just 
+by a single constant...rank is found to be 7 as in the paper.
+
+\begin{verbatim}
+[[ 2.    2.   -0.   -0.   -0.   -0.   -0.   -0.    0.25  0.25]
+ [-2.    2.    2.    2.   -0.   -0.   -0.   -0.   -0.    2.  ]
+ [-0.   -0.   -2.    2.   -0.   -0.   -0.   -0.   -0.25  0.25]
+ [ 2.   -2.   -0.   -0.   -0.   -0.    2.    2.    2.   -0.  ]
+ [-2.   -2.    2.   -2.    2.    2.   -2.    2.   -0.   -0.  ]
+ [-0.   -0.   -2.   -2.   -2.    2.   -0.   -0.   -2.   -0.  ]
+ [-0.   -0.   -0.   -0.   -0.   -0.    2.   -2.    0.25 -0.25]
+ [-0.   -0.   -0.   -0.    2.   -2.   -2.   -2.   -0.   -2.  ]
+ [-0.   -0.   -0.   -0.   -2.   -2.   -0.   -0.   -0.25 -0.25]]
+\end{verbatim}
+
+Let us investigate further and go back to the paper:
+\begin{center}
+\includegraphics[width=13cm]{python_codes/fieldstone_72/images/mat4}\\
+\end{center}
+
+In my notations:
+\[
+\left[
+\iint \partial_x b_1 \bN_j^p dV,
+\iint \partial_y b_1 \bN_j^p dV,
+\iint \partial_x b_2 \bN_j^p dV,
+\iint \partial_y b_2 \bN_j^p dV, ...
+\iint \partial_x b_5 \bN_j^p dV,
+\iint \partial_y b_5 \bN_j^p dV
+\right]
+\]
+where the subscript of the bubble refers to the element and the integrals over the domain. 
+
+Let us look at $j=1$ (i.e. first line of the matrix). Since function $N_1^p$ has compact support 
+over element 1 only, we obtain
+\begin{align}
+\iint_{domain} \partial_x b_1 \bN_1^p dV
+&= \iint_{elt 1} \partial_x b_1 \bN_1^p dV \\
+&= \frac14 \iint_{ref elt} 2\partial_r b_1 \bN_1^p drds \\
+&= \frac14 2\int_{-1}^{+1} \int_{-1}^{+1}  \partial_r [(1-r^2)(1-s^2)] \bN_1^p    dr ds \\
+&= \frac14 2\int_{-1}^{+1}   \int_{-1}^{+1}  -2r (1-s^2) \frac14(1-r)(1-s)   dr ds \\
+&= \frac14 2\int_{-1}^{+1} -2r(1-r) dr \cdot  \int_{-1}^{+1}  (1-s^2) (1-s) ds \\
+&= \frac14 2 \frac43  \frac43  \\
+&= \frac29
+\end{align}
+
+Let us now focus on $j=1$ again but this time we use the 
+velocity basis function at node 5 (in the middle of the domain --see fig above).
+In element 1 this node is node 3 with basis function $\frac14(1+r)(1+s)$.
+Same story as above, pressure basis function compact support on elt 1 only
+\begin{align}
+\iint_{domain} \partial_x N_5 \bN_1^p dV
+&= \iint_{elt1} \partial_x N_5 \bN_1^p dV \\
+&= \frac14 \iint_{ref} 2 \partial_r [\frac14(1+r)(1+s)] \frac14 (1-r)(1-s) dV \\
+&= \frac14 \frac14 \frac14 2 \int_{-1}^{+1}   \int_{-1}^{+1} (1+s)  (1-r)(1-s) dV \\
+&= \frac14 \frac14 \frac14 2 \int_{-1}^{+1} (1-r) dr \int_{-1}^{+1} (1-s^2) ds \\
+&= \frac14 \frac14 \frac14 2 2 \frac43 \\
+&= \frac{1}{12} 
+\end{align}
+Although it aligns with the values in the paper, I believe it is {\it wrong}. 
+Indeed, the basis function for node 3 in element 1 is not $\frac14(1+r)(1+s)$
+but $\frac14(1+r)(1+s)-\frac14 b(r,s)$ (see Section~\ref{MMM-eq:miniN12345}).
+In this case, 
+\begin{align}
+\iint_{domain} \partial_x N_5 \bN_1^p dV
+&= \iint_{elt1} \partial_x N_5 \bN_1^p dV \\
+&= \frac14 \iint_{ref} 2 \partial_r \left[\frac14(1+r)(1+s) -\frac14b(r,s) \right] \frac14 (1-r)(1-s) dr ds \\
+&=  \frac14 \frac14 \frac14 2 \int_{-1}^{+1} \int_{-1}^{+1} (1+s)  (1-r)(1-s) dr ds
+- \frac14 \frac14 \frac14 2 \int_{-1}^{+1} \int_{-1}^{+1} \partial_r b(r,s) (1-r)(1-s) dr ds
+\end{align}
+and in the case of bubble 0:
+\begin{align}
+&\frac14 \frac14 \frac14 2 \int_{-1}^{+1} \int_{-1}^{+1} \partial_r b(r,s) (1-r)(1-s) dV \nonumber\\ 
+&= \frac14 \frac14 \frac14 2 \int_{-1}^{+1} \int_{-1}^{+1} \partial_r [(1-r^2)(1-s^2)] (1-r)(1-s) dr ds \nonumber\\ 
+&= \frac14 \frac14 \frac14 2 \int_{-1}^{+1} \int_{-1}^{+1} -2r(1-s^2) (1-r)(1-s) dr ds \nonumber\\ 
+&= \frac14 \frac14 \frac14 2 \int_{-1}^{+1}  -2r(1-r)  dr \int_{-1}^{+1} (1-s^2) (1-s) ds \nonumber\\ 
+&= \frac14 \frac14 \frac14 2 \frac43 \frac43 \nonumber\\
+&= \frac{1}{18}
+\end{align}
+In the end, 
+\[
+\iint_{domain} \partial_x N_5 \bN_1^p dV
+= \frac{1}{12} - \frac{1}{18}
+= \frac{3}{36} - \frac{2}{36} 
+= \frac{1}{36}
+= \frac{1}{9} \frac{1}{4}
+\]
+and we recover the value $1/4$. 
+
+Let us now turn to the second line ($j=2$). The pressure basis function has compact support
+over elements 1 and 2. In elt 1 it is $\frac14(1+r)(1-s)$ and in elt2 it is $\frac14(1-r)(1-s)$.
+The velocity basis fct at node 5 is $\frac14(1+r)(1+s)-\frac14 b$ in element 1 and 
+$\frac14(1-r)(1+s) -\frac14 b$ in elt 2. In the end:
+
+\begin{align}
+&\iint_{domain} \partial_x N_5 \bN_2^p dV \nonumber\\
+&= \iint_{elt1} \partial_x N_5 \bN_2^p dV + \iint_{elt2} \partial_x N_5 \bN_2^p dV \nonumber\\
+&= 
+\frac14 \iint_{elt1} 2\partial_r [\frac14(1+r)(1+s)-\frac14 b] \frac14(1+r)(1-s) drds +
+\frac14 \iint_{elt2} 2\partial_r [\frac14(1-r)(1+s)-\frac14 b] \frac14(1-r)(1-s) drds \nonumber\\
+&=
+\frac14\frac14\frac14 2 
+\left[ 
+\iint_{elt1} \partial_r [(1+r)(1+s)-b] (1+r)(1-s) drds +
+\iint_{elt2} \partial_r [(1-r)(1+s)-b] (1-r)(1-s) drds 
+\right] \nonumber\\
+&=
+\frac14\frac14\frac14 2 
+\left[ 
+\int_{-1}^{+1} \int_{-1}^{+1}  [ (1+s)-\partial_r b] (1+r)(1-s) drds +
+\int_{-1}^{+1} \int_{-1}^{+1}  [-(1+s)-\partial_r b] (1-r)(1-s) drds 
+\right] \nonumber\\
+&= 
+\frac14\frac14\frac14 2 
+\left[ 
+\int_{-1}^{+1} \int_{-1}^{+1}  [ (1+s) +2r(1-s^2)] (1+r)(1-s) drds +
+\int_{-1}^{+1} \int_{-1}^{+1}  [-(1+s) +2r(1-s^2)] (1-r)(1-s) drds
+\right] \nonumber\\ 
+&= 4.4444... -4.44444 \nonumber\\ 
+&= 0
+\end{align}
+(thank you Wolfram Alpha)
+
+
+
+
+
+\newpage
+%-----------------------
+\subsection*{bubble 1}
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_72/images/mat2}\\
+{\captionfont ${\bm G}$ matrix obtained with the $(1-x^2)(1-y^2)(1-x)(1-y)$ bubble}
+\end{center}
+
+after multiplying by 27/4
+\begin{verbatim}
+[[ 2.      2.     -0.     -0.     -0.     -0.     -0.     -0.      0.0625  0.0625]
+ [-2.      1.      2.      2.     -0.     -0.     -0.     -0.     -0.      1.5   ]
+ [-0.     -0.     -2.      1.     -0.     -0.     -0.     -0.     -0.0625  0.3125]
+ [ 1.     -2.     -0.     -0.     -0.     -0.      2.      2.      1.5    -0.    ]
+ [-1.     -1.      1.     -2.      2.      2.     -2.      1.     -0.     -0.    ]
+ [-0.     -0.     -1.     -1.     -2.      1.     -0.     -0.     -1.5    -0.    ]
+ [-0.     -0.     -0.     -0.     -0.     -0.      1.     -2.      0.3125 -0.0625]
+ [-0.     -0.     -0.     -0.      1.     -2.     -1.     -1.     -0.     -1.5   ]
+ [-0.     -0.     -0.     -0.     -1.     -1.     -0.     -0.     -0.3125 -0.3125]]
+\end{verbatim}
+
+rank is 8
+
+
+
+%-----------------------
+\subsection*{bubble 2}
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_72/images/mat3}\\
+{\captionfont ${\bm G}$ matrix obtained with the $(1-x^2)(1-y^2)(1+x/4+y/4)$ bubble}
+\end{center}
+
+after multiplying by 18*3
+\begin{verbatim}
+[[ 11.    11.    -0.    -0.    -0.    -0.    -0.    -0.     1.75   1.75]
+ [-11.    13.    11.    11.    -0.    -0.    -0.    -0.    -0.    12.  ]
+ [ -0.    -0.   -11.    13.    -0.    -0.    -0.    -0.    -1.75   1.25]
+ [ 13.   -11.    -0.    -0.    -0.    -0.    11.    11.    12.    -0.  ]
+ [-13.   -13.    13.   -11.    11.    11.   -11.    13.    -0.    -0.  ]
+ [ -0.    -0.   -13.   -13.   -11.    13.    -0.    -0.   -12.    -0.  ]
+ [ -0.    -0.    -0.    -0.    -0.    -0.    13.   -11.     1.25  -1.75]
+ [ -0.    -0.    -0.    -0.    13.   -11.   -13.   -13.    -0.   -12.  ]
+ [ -0.    -0.    -0.    -0.   -13.   -13.    -0.    -0.    -1.25  -1.25]]
+\end{verbatim}
+
+rank is 8
+
+
+\newpage
+%---------------------------------
+\subsection*{let us reflect....}
+
+Bubbles are postulated to be of the form
+\[
+b(r,s) = (1-r^2)(1-s^2) (1 + ar + bs + crs  )
+\]
+Bubble 0 corresponds to $a=b=c=0$. 
+Bubble 1 corresponds to $a=-1$, $b=-1$, $c=1$
+Bubble 2 corresponds to $a=\frac14$, $b=\frac14$, $c=0$
+
+Bubble 0 does not yield a stable formulation, while bubbles 1\&2 do. 
+The question is then: how many $a,b,c$ combinations yield stable formulations?
+
+In order to answer this, I need to compute the $D$ matrix of the paper
+as a function of $a,b,c$. Then I need to establish its rank as a function of $a,b,c$...
+
+For example, I can run {\tt script\_run\_beta} for $\beta\in [0..100]$. 
+I seems that any nonzero value of $\beta$ yields a rank equal to 8.
+\begin{verbatim}
+beta= 0.0 rank= 7
+beta= 1e-06 rank= 8
+beta= 2e-06 rank= 8
+beta= 5e-06 rank= 8
+beta= 1e-05 rank= 8
+beta= 5e-05 rank= 8
+beta= 0.0001 rank= 8
+beta= 0.0005 rank= 8
+beta= 0.001 rank= 8
+beta= 0.005 rank= 8
+beta= 0.01 rank= 8
+beta= 0.02 rank= 8
+beta= 0.05 rank= 8
+beta= 0.1 rank= 8
+beta= 0.25 rank= 8
+beta= 0.5 rank= 8
+beta= 1.0 rank= 8
+beta= 2.0 rank= 8
+beta= 5.0 rank= 8
+beta= 10.0 rank= 8
+beta= 100.0 rank= 8
+\end{verbatim}
 
 

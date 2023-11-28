@@ -1,0 +1,15 @@
+#! /bin/bash
+
+rm ranks.ascii 
+
+for beta in 0 0.000001 0.000002 0.000005 0.00001 0.00005 0.0001 0.0005 0.001 0.005 0.01 0.02 0.05 0.1 0.25 0.5 1. 2. 5. 10. 100.; do
+
+    echo beta= $beta
+
+    python3 stone.py $beta > opla
+
+    grep rank opla >> ranks.ascii 
+
+done
+
+rm opla
