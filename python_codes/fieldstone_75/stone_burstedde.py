@@ -2,113 +2,163 @@ import numpy as np
 import sys as sys
 import scipy
 import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
 import time as timing
 import matplotlib.pyplot as plt
 from scipy.sparse import lil_matrix
 from scipy.linalg import null_space
+from scipy.sparse.linalg import spsolve
 
 np.set_printoptions(linewidth=220)                                                                                                                                                                               
-#------------------------------------------------------------------------------
+###############################################################################
+# experiment=1: burstedde
+# experiment=2: generic 3D
+
+experiment=2
 
 def bx(x,y,z,beeta):
-    mu=np.exp(1-beeta*(x*(1-x)+y*(1-y)+z*(1-z)) )
-    mux=-beeta*(1-2*x)*mu
-    muy=-beeta*(1-2*y)*mu
-    muz=-beeta*(1-2*z)*mu
-    val=-(y*z+3*x**2*y**3*z) + mu * (2+6*x*y) \
-        +(2+4*x+2*y+6*x**2*y) * mux \
-        +(x+x**3+y+2*x*y**2 ) * muy \
-        +(-3*z-10*x*y*z     ) * muz
+    if experiment==1:
+       mu=np.exp(1-beeta*(x*(1-x)+y*(1-y)+z*(1-z)) )
+       mux=-beeta*(1-2*x)*mu
+       muy=-beeta*(1-2*y)*mu
+       muz=-beeta*(1-2*z)*mu
+       val=-(y*z+3*x**2*y**3*z) + mu * (2+6*x*y) \
+           +(2+4*x+2*y+6*x**2*y) * mux \
+           +(x+x**3+y+2*x*y**2 ) * muy \
+           +(-3*z-10*x*y*z     ) * muz
+    if experiment==2:
+       val=4*(2*y-1)*(2*z-1)
     return val
 
 def by(x,y,z,beeta):
-    mu=np.exp(1-beeta*(x*(1-x)+y*(1-y)+z*(1-z)) )
-    mux=-beeta*(1-2*x)*mu
-    muy=-beeta*(1-2*y)*mu
-    muz=-beeta*(1-2*z)*mu
-    val=-(x*z+3*x**3*y**2*z) + mu * (2 +2*x**2 + 2*y**2) \
-       +(x+x**3+y+2*x*y**2   ) * mux \
-       +(2+2*x+4*y+4*x**2*y  ) * muy \
-       +(-3*z-5*x**2*z       ) * muz 
+    if experiment==1:
+       mu=np.exp(1-beeta*(x*(1-x)+y*(1-y)+z*(1-z)) )
+       mux=-beeta*(1-2*x)*mu
+       muy=-beeta*(1-2*y)*mu
+       muz=-beeta*(1-2*z)*mu
+       val=-(x*z+3*x**3*y**2*z) + mu * (2 +2*x**2 + 2*y**2) \
+          +(x+x**3+y+2*x*y**2   ) * mux \
+          +(2+2*x+4*y+4*x**2*y  ) * muy \
+          +(-3*z-5*x**2*z       ) * muz 
+    if experiment==2:
+       val=4*(2*x-1)*(2*z-1)
     return val
 
 def bz(x,y,z,beeta):
-    mu=np.exp(1-beeta*(x*(1-x)+y*(1-y)+z*(1-z)) )
-    mux=-beeta*(1-2*x)*mu
-    muy=-beeta*(1-2*y)*mu
-    muz=-beeta*(1-2*z)*mu
-    val=-(x*y+x**3*y**3) + mu * (-10*y*z) \
-       +(-3*z-10*x*y*z        ) * mux \
-       +(-3*z-5*x**2*z        ) * muy \
-       +(-4-6*x-6*y-10*x**2*y ) * muz 
+    if experiment==1:
+       mu=np.exp(1-beeta*(x*(1-x)+y*(1-y)+z*(1-z)) )
+       mux=-beeta*(1-2*x)*mu
+       muy=-beeta*(1-2*y)*mu
+       muz=-beeta*(1-2*z)*mu
+       val=-(x*y+x**3*y**3) + mu * (-10*y*z) \
+          +(-3*z-10*x*y*z        ) * mux \
+          +(-3*z-5*x**2*z        ) * muy \
+          +(-4-6*x-6*y-10*x**2*y ) * muz 
+    if experiment==2:
+       val=-2*(2*x-1)*(2*y-1)
     return val
 
 def eta(x,y,z,beeta):
-    val=np.exp(1-beeta*(x*(1-x)+y*(1-y)+z*(1-z)) )
+    if experiment==1:
+       val=np.exp(1-beeta*(x*(1-x)+y*(1-y)+z*(1-z)) )
+    if experiment==2:
+       val=1
     return val
 
 def uth(x,y,z):
-    val=x+x*x+x*y+x*x*x*y
+    if experiment==1:
+       val=x+x*x+x*y+x*x*x*y
+    if experiment==2:
+       val=x*(1-x)*(1-2*y)*(1-2*z)
     return val
 
 def vth(x,y,z):
-    val=y+x*y+y*y+x*x*y*y
+    if experiment==1:
+       val=y+x*y+y*y+x*x*y*y
+    if experiment==2:
+       val=(1-2*x)*y*(1-y)*(1-2*z)
     return val
 
 def wth(x,y,z):
-    val=-2*z-3*x*z-3*y*z-5*x*x*y*z
+    if experiment==1:
+       val=-2*z-3*x*z-3*y*z-5*x*x*y*z
+    if experiment==2:
+       val=-2*(1-2*x)*(1-2*y)*z*(1-z)
     return val
 
 def pth(x,y,z):
-    val=x*y*z+x*x*x*y*y*y*z-5./32.
+    if experiment==1:
+       val=x*y*z+x*x*x*y*y*y*z-5./32.
+    if experiment==2:
+       val=(2*x-1)*(2*y-1)*(2*z-1)
     return val
 
 def exx_th(x,y,z):
-    val=1.+2.*x+y+3.*x*x*y
+    if experiment==1:
+       val=1.+2.*x+y+3.*x*x*y
+    if experiment==2:
+       val=0
     return val
 
 def eyy_th(x,y,z):
-    val=1.+x+2.*y+2.*x*x*y
+    if experiment==1:
+       val=1.+x+2.*y+2.*x*x*y
+    if experiment==2:
+       val=0
     return val
 
 def ezz_th(x,y,z):
-    val=-2.-3.*x-3.*y-5.*x*x*y
+    if experiment==1:
+       val=-2.-3.*x-3.*y-5.*x*x*y
+    if experiment==2:
+       val=0
     return val
 
 def exy_th(x,y,z):
-    val=(x+y+2*x*y*y+x*x*x)/2
+    if experiment==1:
+       val=(x+y+2*x*y*y+x*x*x)/2
+    if experiment==2:
+       val=0
     return val
 
 def exz_th(x,y,z):
-    val=(-3*z-10*x*y*z)/2
+    if experiment==1:
+       val=(-3*z-10*x*y*z)/2
+    if experiment==2:
+       val=0
     return val
 
 def eyz_th(x,y,z):
-    val=(-3*z-5*x*x*z)/2
+    if experiment==1:
+       val=(-3*z-5*x*x*z)/2
+    if experiment==2:
+       val=0
     return val
 
-#------------------------------------------------------------------------------
-# only bubble 1 and 2 are real (they come from Lamichhane 2017) 
+###############################################################################
+# only bubble 1 and 2 are 'real' (they are after Lamichhane 2017) 
 # but I cannot show they yield a stable element.
-# The others are tryouts
-#------------------------------------------------------------------------------
+# The others are tryouts.
+###############################################################################
 
 def BB(r,s,t):
     return a0 + a1*r + b1*s + c1*t +\
            a2* r**2 + b2* s**2 + c2* t**2 + \
            d2* r*s + e2*s*t + f2*r*t +\
-           a3* r**3 + b3* s**3 + c3* t**3 + d3* r**2 *s + e3* r**2 *t + f3* r* s**2 + g3* s**2 *t +\
+           a3* r**3 + b3* s**3 + c3* t**3 + d3* r**2 *s + e3* r**2 *t +\
+           f3* r* s**2 + g3* s**2 *t +\
            h3* r*t**2 + i3* s*t**2 + j3* r*s*t 
 
 def dBBdr(r,s,t):
-    return a1 + 2*a2*r + d2*s  + f2*t + 3*a3*r**2 + 2*d3*r*s + 2*e3*r*t + f3*s**2 + h3*t**2 + j3*s*t
+    return a1 + 2*a2*r + d2*s  + f2*t + 3*a3*r**2 + 2*d3*r*s + 2*e3*r*t +\
+           f3*s**2 + h3*t**2 + j3*s*t
 
 def dBBds(r,s,t):
-    return b1  + 2*b2*s  + d2*r + e2*t +  3*b3*s**2  + d3*r**2  +  2*f3*r*s + 2*g3*s*t  + i3*t**2 + j3*r*t  
+    return b1  + 2*b2*s  + d2*r + e2*t +  3*b3*s**2  + d3*r**2 + 2*f3*r*s +\
+           2*g3*s*t  + i3*t**2 + j3*r*t  
 
 def dBBdt(r,s,t):
-    return c1  + 2*c2*t +  e2*s + f2*r + 3*c3*t**2 + e3*r**2  + g3*s**2  + 2*h3*r*t + 2*i3*s*t + j3*r*s
+    return c1  + 2*c2*t +  e2*s + f2*r + 3*c3*t**2 + e3*r**2  + g3*s**2 +\
+           2*h3*r*t + 2*i3*s*t + j3*r*s
 
 #------------------------------------------------------------------------------
 
@@ -220,7 +270,7 @@ def NNV(r,s,t):
     N_6=0.125*(1+r)*(1+s)*(1+t) -0.125*B(r,s,t)
     N_7=0.125*(1-r)*(1+s)*(1+t) -0.125*B(r,s,t)
     N_8= B(r,s,t)
-    return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8
+    return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
 
 def dNNVdr(r,s,t):
     dNdr_0=-0.125*(1-s)*(1-t) -0.125*dBdr(r,s,t) 
@@ -232,7 +282,7 @@ def dNNVdr(r,s,t):
     dNdr_6=+0.125*(1+s)*(1+t) -0.125*dBdr(r,s,t) 
     dNdr_7=-0.125*(1+s)*(1+t) -0.125*dBdr(r,s,t) 
     dNdr_8= dBdr(r,s,t)
-    return dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8
+    return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8],dtype=np.float64)
 
 def dNNVds(r,s,t):
     dNds_0=-0.125*(1-r)*(1-t) -0.125*dBds(r,s,t) 
@@ -244,7 +294,7 @@ def dNNVds(r,s,t):
     dNds_6=+0.125*(1+r)*(1+t) -0.125*dBds(r,s,t) 
     dNds_7=+0.125*(1-r)*(1+t) -0.125*dBds(r,s,t) 
     dNds_8= dBds(r,s,t)
-    return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8
+    return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8],dtype=np.float64)
 
 def dNNVdt(r,s,t):
     dNdt_0=-0.125*(1-r)*(1-s) -0.125*dBdt(r,s,t) 
@@ -256,7 +306,7 @@ def dNNVdt(r,s,t):
     dNdt_6=+0.125*(1+r)*(1+s) -0.125*dBdt(r,s,t) 
     dNdt_7=+0.125*(1-r)*(1+s) -0.125*dBdt(r,s,t) 
     dNdt_8= dBdt(r,s,t)
-    return dNdt_0,dNdt_1,dNdt_2,dNdt_3,dNdt_4,dNdt_5,dNdt_6,dNdt_7,dNdt_8
+    return np.array([dNdt_0,dNdt_1,dNdt_2,dNdt_3,dNdt_4,dNdt_5,dNdt_6,dNdt_7,dNdt_8],dtype=np.float64)
 
 def NNP(r,s,t):
     N_0=0.125*(1-r)*(1-s)*(1-t) 
@@ -267,7 +317,7 @@ def NNP(r,s,t):
     N_5=0.125*(1+r)*(1-s)*(1+t) 
     N_6=0.125*(1+r)*(1+s)*(1+t) 
     N_7=0.125*(1-r)*(1+s)*(1+t) 
-    return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7
+    return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 
@@ -291,20 +341,15 @@ if int(len(sys.argv) == 6):
    nqperdim=int(sys.argv[4])
    bubble=int(sys.argv[5])
 else:
-   nelx =2  # do not exceed 20 
+   nelx = 10  # do not exceed 20 
    nely =nelx
    nelz =nelx
-   nqperdim=3
-   bubble=9
-#end if
-
-gx=0
-gy=0
-gz=-1
+   nqperdim=2
+   bubble=2
 
 visu=1
 
-pnormalise=True
+#pnormalise=False
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
@@ -332,7 +377,7 @@ aa=1.15
 bb=2.3
 cc=-1.25
 
-sparse=False
+sparse=True
 
 beeta=0 # beta parameter for mms
 
@@ -398,7 +443,6 @@ if nqperdim==10:
              0.149451349150581,\
              0.066671344308688]
 
-
 rVnodes=[-1,+1,+1,-1,-1,+1,+1,-1,0]
 sVnodes=[-1,-1,+1,+1,-1,-1,+1,+1,0]
 tVnodes=[-1,-1,-1,-1,+1,+1,+1,+1,0]
@@ -406,6 +450,7 @@ tVnodes=[-1,-1,-1,-1,+1,+1,+1,+1,0]
 #################################################################
 #################################################################
 
+print("experiment=",experiment)
 print("Lx",Lx)
 print("Ly",Ly)
 print("Lz",Lz)
@@ -474,6 +519,7 @@ print("build connectivity: %.3f s" % (timing.time() - start))
 #################################################################
 # bubble node position 
 #################################################################
+start = timing.time()
 
 for iel in range(0,nel):
     xV[iconV[8,iel]]=0.125*xV[iconV[0,iel]]+0.125*xV[iconV[1,iel]]\
@@ -490,6 +536,8 @@ for iel in range(0,nel):
                     +0.125*zV[iconV[6,iel]]+0.125*zV[iconV[7,iel]]
 
 #np.savetxt('gridV.ascii',np.array([xV,yV,zV]).T,header='# x,y,z')
+
+print("compute bubble coords: %.3f s" % (timing.time() - start))
 
 #################################################################
 # build pressure grid and iconP 
@@ -563,7 +611,7 @@ print("compute elements volumes: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-bc_fix=np.zeros(Nfem,dtype=np.bool)    # boundary condition, yes/no
+bc_fix=np.zeros(Nfem,dtype=bool)    # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=np.float64) # boundary condition, value
 
 for i in range(0,NV):
@@ -589,10 +637,7 @@ print("define b.c.: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 if sparse:
-   if pnormalise:
-      A_sparse = lil_matrix((Nfem+1,Nfem+1),dtype=np.float64)
-   else:
-      A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
+   A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
 else:   
    K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
    G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
@@ -618,6 +663,12 @@ dNNNVdt = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 
 c_mat[0,0]=2. ; c_mat[1,1]=2. ; c_mat[2,2]=2.
 c_mat[3,3]=1. ; c_mat[4,4]=1. ; c_mat[5,5]=1.
+                
+jcbi=np.zeros((3,3),dtype=np.float64)
+jcbi[0,0]=2/hx
+jcbi[1,1]=2/hy
+jcbi[2,2]=2/hy
+jcob=hx*hy*hz/8
 
 for iel in range(0, nel):
 
@@ -645,20 +696,20 @@ for iel in range(0, nel):
                 NNNP[0:mP]=NNP(rq,sq,tq)
 
                 # calculate jacobian matrix
-                jcb=np.zeros((3,3),dtype=np.float64)
-                for k in range(0,mV):
-                    jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-                    jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
-                    jcb[0,2]+=dNNNVdr[k]*zV[iconV[k,iel]]
-                    jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-                    jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
-                    jcb[1,2]+=dNNNVds[k]*zV[iconV[k,iel]]
-                    jcb[2,0]+=dNNNVdt[k]*xV[iconV[k,iel]]
-                    jcb[2,1]+=dNNNVdt[k]*yV[iconV[k,iel]]
-                    jcb[2,2]+=dNNNVdt[k]*zV[iconV[k,iel]]
+                #jcb=np.zeros((3,3),dtype=np.float64)
+                #for k in range(0,mV):
+                #    jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+                #    jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
+                #    jcb[0,2]+=dNNNVdr[k]*zV[iconV[k,iel]]
+                #    jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+                #    jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+                #    jcb[1,2]+=dNNNVds[k]*zV[iconV[k,iel]]
+                #    jcb[2,0]+=dNNNVdt[k]*xV[iconV[k,iel]]
+                #    jcb[2,1]+=dNNNVdt[k]*yV[iconV[k,iel]]
+                #    jcb[2,2]+=dNNNVdt[k]*zV[iconV[k,iel]]
                 #end for
-                jcob = np.linalg.det(jcb)
-                jcbi = np.linalg.inv(jcb)
+                #jcob = np.linalg.det(jcb)
+                #jcbi = np.linalg.inv(jcb)
 
                 # compute dNdx, dNdy, dNdz
                 xq=0.0
@@ -686,22 +737,19 @@ for iel in range(0, nel):
                 K_el += b_mat.T.dot(c_mat.dot(b_mat))*eta(xq,yq,zq,beeta)*weightq*jcob
 
                 for i in range(0,mV):
-                    f_el[ndofV*i+0]-=NNNV[i]*jcob*weightq*bx(xq,yq,zq,beeta)
-                    f_el[ndofV*i+1]-=NNNV[i]*jcob*weightq*by(xq,yq,zq,beeta)
-                    f_el[ndofV*i+2]-=NNNV[i]*jcob*weightq*bz(xq,yq,zq,beeta)
+                    f_el[ndofV*i+0]+=NNNV[i]*jcob*weightq*bx(xq,yq,zq,beeta)
+                    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*by(xq,yq,zq,beeta)
+                    f_el[ndofV*i+2]+=NNNV[i]*jcob*weightq*bz(xq,yq,zq,beeta)
                 #end for
 
                 for i in range(0,mP):
                     N_mat[0,i]=NNNP[i]
                     N_mat[1,i]=NNNP[i]
                     N_mat[2,i]=NNNP[i]
-                    N_mat[3,i]=0.
-                    N_mat[4,i]=0.
-                    N_mat[5,i]=0.
 
                 G_el-=b_mat.T.dot(N_mat)*weightq*jcob
 
-                NNNNP[:]+=NNNP[:]*jcob*weightq
+                #NNNNP[:]+=NNNP[:]*jcob*weightq
 
             #end for kq
         #end for jq
@@ -759,10 +807,10 @@ for iel in range(0, nel):
     for k2 in range(0,mP):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
-        constr[m2]+=NNNNP[k2]
-        if sparse and pnormalise:
-           A_sparse[Nfem,NfemV+m2]=constr[m2]
-           A_sparse[NfemV+m2,Nfem]=constr[m2]
+        #constr[m2]+=NNNNP[k2]
+        #if sparse and pnormalise:
+        #   A_sparse[Nfem,NfemV+m2]=constr[m2]
+        #   A_sparse[NfemV+m2,Nfem]=constr[m2]
 
 #end for iel
 
@@ -777,19 +825,19 @@ print("build FE matrix: %.3f s" % (timing.time() - start))
 #print(G2.astype(int))
 #G_mat*=27*50*16
 
-G2 = np.zeros((27,NfemP),dtype=np.float64) 
-G2[0:3,:]=G_mat[39:42,:] 
-G2[3:,:]=G_mat[81:,:]    
-ns = null_space(G2)
+#G2 = np.zeros((27,NfemP),dtype=np.float64) 
+#G2[0:3,:]=G_mat[39:42,:] 
+#G2[3:,:]=G_mat[81:,:]    
+#ns = null_space(G2)
 
 
-print('===============================================bubble = ',bubble,'================')
-G2[0:3,:]=np.round(G_mat[39:42,:], decimals=4)
-G2[3:,:]=np.round(G_mat[81:,:], decimals=4)
-print(G2)
-opla=ns.shape
+#print('===============================================bubble = ',bubble,'================')
+#G2[0:3,:]=np.round(G_mat[39:42,:], decimals=4)
+#G2[3:,:]=np.round(G_mat[81:,:], decimals=4)
+#print(G2)
+#opla=ns.shape
 #print(ns.shape)
-print('size of nullspace=',opla[1])
+#print('size of nullspace=',opla[1])
 
 #G3 = np.zeros((27,NfemP),dtype=np.int32) 
 #for i in range(27):
@@ -802,7 +850,7 @@ print('size of nullspace=',opla[1])
 #print(np.round(ns,decimals=4))
 #print(ns.shape)
 
-exit()
+#exit()
 
 
 
@@ -812,28 +860,22 @@ exit()
 start = timing.time()
 
 if not sparse:
-   if pnormalise:
-      a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
-      rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
-      a_mat[0:NfemV,0:NfemV]=K_mat
-      a_mat[0:NfemV,NfemV:Nfem]=G_mat
-      a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-      a_mat[Nfem,NfemV:Nfem]=constr
-      a_mat[NfemV:Nfem,Nfem]=constr
-   else:
-      a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-      rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-      a_mat[0:NfemV,0:NfemV]=K_mat
-      a_mat[0:NfemV,NfemV:Nfem]=G_mat
-      a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+   #if pnormalise:
+   #   a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
+   #   rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
+   #   a_mat[0:NfemV,0:NfemV]=K_mat
+   #   a_mat[0:NfemV,NfemV:Nfem]=G_mat
+   #   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
+   #   a_mat[Nfem,NfemV:Nfem]=constr
+   #   a_mat[NfemV:Nfem,Nfem]=constr
+   #else:
+   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+   a_mat[0:NfemV,0:NfemV]=K_mat
+   a_mat[0:NfemV,NfemV:Nfem]=G_mat
+   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
    #end if
-else:
-   if pnormalise:
-      rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
-   else:
-      rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-#else:
 
+rhs= np.zeros(Nfem,dtype=np.float64)   
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
 
@@ -867,14 +909,30 @@ p=sol[NfemV:Nfem]
 print("     -> uu (m,M) %.7f %.7f %.7f" %(np.min(u),np.max(u),hx))
 print("     -> vv (m,M) %.7f %.7f %.7f" %(np.min(v),np.max(v),hx))
 print("     -> ww (m,M) %.7f %.7f %.7f" %(np.min(w),np.max(w),hx))
-print("     -> pp (m,M) %.7f %.7f %.7f" %(np.min(p),np.max(p),hx))
+print("     -> p  (m,M) %.7f %.7f %.7f" %(np.min(p),np.max(p),hx))
 
-if pnormalise:
-   print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
+#if pnormalise:
+#   print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
 
 #np.savetxt('velocity.ascii',np.array([xV,yV,zV,u,v,w]).T,header='# x,y,z,u,v,w')
 
 print("transfer solution: %.3f s" % (timing.time() - start))
+
+#####################################################################
+# normalise pressure (simple)
+#####################################################################
+start = timing.time()
+
+pavrg=0
+for iel in range(0,nel):
+    pavrg+=np.sum(p[iconP[:,iel]])*0.125*hx*hy*hz
+pavrg/=(Lx*Ly*Lz)
+
+p-=pavrg
+
+print("     -> pp (m,M) %.7f %.7f %.7f" %(np.min(p),np.max(p),hx))
+
+print("normalise pressure: %.3f s" % (timing.time() - start))
 
 #####################################################################
 # compute density and viscosity at center of element 
@@ -981,6 +1039,7 @@ print("compute strainrate: %.3f s" % (timing.time() - start))
 # compute error fields for plotting
 # only on Q1 nodes, bubble not needed for plotting
 #################################################################
+start = timing.time()
 
 error_u=np.empty(NP,dtype=np.float64)
 error_v=np.empty(NP,dtype=np.float64)
@@ -993,6 +1052,8 @@ for i in range(0,NP):
     error_w[i]=w[i]-wth(xV[i],yV[i],zV[i])
     error_p[i]=p[i]-pth(xV[i],yV[i],zV[i])
 #end for
+
+print("compute error fields: %.3f s" % (timing.time() - start))
 
 #################################################################
 # compute error in L2 norm 
@@ -1144,17 +1205,6 @@ if visu==1:
    for iel in range (0,nel):
        vtufile.write("%f\n" % visc[iel])
    vtufile.write("</DataArray>\n")
-
-   #--
-   #vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
-   #for iel in range (0,nel):
-   #    vtufile.write("%f\n" % sr[iel])
-   #vtufile.write("</DataArray>\n")
-   #--
-   #vtufile.write("<DataArray type='Float32' NumberOfComponents='6' Name='strainrate' Format='ascii'> \n")
-   #for iel in range (0,nel):
-   #    vtufile.write("%f %f %f %f %f %f\n" % (exx[iel], eyy[iel], ezz[iel], exy[iel], eyz[iel], exz[iel]))
-   #vtufile.write("</DataArray>\n")
    #--
    vtufile.write("</CellData>\n")
    #####
@@ -1216,17 +1266,6 @@ if visu==1:
    for i in range (0,nnx*nny*nnz):
        vtufile.write("%f\n" % eyz[i])
    vtufile.write("</DataArray>\n")
-
-
-
-
-
-
-
-
-
-
-
    #--
    vtufile.write("</PointData>\n")
    #####
@@ -1255,9 +1294,6 @@ if visu==1:
    vtufile.write("</VTKFile>\n")
    vtufile.close()
    print("export to vtu: %.3f s" % (timing.time() - start))
-
-
-
 
 print("-----------------------------")
 print("------------the end----------")

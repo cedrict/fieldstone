@@ -365,7 +365,7 @@ aa=1.15
 bb=2.3
 cc=-1.25
 
-sparse=False
+sparse=True
 
 beeta=0 # beta parameter for mms
 
@@ -1249,17 +1249,6 @@ if visu==1:
    for i in range (0,nnx*nny*nnz):
        vtufile.write("%f\n" % eyz[i])
    vtufile.write("</DataArray>\n")
-
-
-
-
-
-
-
-
-
-
-
    #--
    vtufile.write("</PointData>\n")
    #####
@@ -1288,9 +1277,6 @@ if visu==1:
    vtufile.write("</VTKFile>\n")
    vtufile.close()
    print("export to vtu: %.3f s" % (timing.time() - start))
-
-
-
 
 print("-----------------------------")
 print("------------the end----------")

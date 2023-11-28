@@ -11,11 +11,11 @@ rm errors*.ascii
 rm vrms*.ascii
 
 for bb in 1 2; do
-    for nq in  3 4 ; do
-        for rs in 4 5 6 7 8 9 10 11 12 13 14 15 16; do
-            echo bb=$bb nq=$nq rs=$rs
+    for nq in  2 3 4; do
+        for rs in 4 5 6 7 8 9 10 11 12 13 14 15 16 ; do
+            echo bb=$bb nq=$nq resolution=${rs}x${rs}x${rs}
 
-            python3 stone_mms3.py $rs $rs $rs $nq $bb > opla
+            python3 stone_burstedde.py $rs $rs $rs $nq $bb > opla
             grep exx opla | grep M >> exx_stats_bb${bb}_nq${nq}.ascii
             grep eyy opla | grep M >> eyy_stats_bb${bb}_nq${nq}.ascii
             grep ezz opla | grep M >> ezz_stats_bb${bb}_nq${nq}.ascii

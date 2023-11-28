@@ -1,40 +1,61 @@
-set term pdf enhanced font "Times,11pt"
+#
+set term pdf enhanced font "Times,12pt"
 set key outside
 set log xy
 set xlabel 'h'
 set pointsize 0.5
+set grid
 
 set ylabel 'error vel'
-set output 'errors_v.pdf'
+set output 'errorsV.pdf'
 plot[][]\
-'errors_bb1_nq3.ascii' u (1./sqrt($3)):6 w lp pt 1 t 'bb1',\
-'errors_bb2_nq3.ascii' u (1./sqrt($3)):6 w lp pt 2 t 'bb2',\
-x**1.5/5 w l lt -1 dashtype 3 t 'x^{1.5}'
+'errors_bb1_nq2.ascii' u (1/($3)**0.3333):6 w lp lt 1 pt 1 t 'bb1, nq=2',\
+'errors_bb1_nq3.ascii' u (1/($3)**0.3333):6 w lp lt 1 pt 2 t 'bb1, nq=3',\
+'errors_bb1_nq4.ascii' u (1/($3)**0.3333):6 w lp lt 1 pt 3 t 'bb1, nq=4',\
+'errors_bb2_nq2.ascii' u (1/($3)**0.3333):6 w lp lt 2 pt 1 t 'bb2, nq=2',\
+'errors_bb2_nq3.ascii' u (1/($3)**0.3333):6 w lp lt 2 pt 2 t 'bb2, nq=3',\
+'errors_bb2_nq4.ascii' u (1/($3)**0.3333):6 w lp lt 2 pt 3 t 'bb2, nq=4',\
+'errors6.ascii'        u (1/($3)**0.3333):6 w lp lt 4 lw .5 pt 1 ps .5 t 'stone 10, {/Symbol l}=10^6',\
+x**2/10 w l lt -1 dt 2 t 'x^2'
 
 set ylabel 'error p'
-set output 'errors_p.pdf'
+set output 'errorsP.pdf'
 plot[][]\
-'errors_bb1_nq3.ascii' u (1./sqrt($3)):9 w lp pt 1 t 'bb1',\
-'errors_bb2_nq3.ascii' u (1./sqrt($3)):9 w lp pt 2 t 'bb2',\
-x**1.5*40 w l lt -1 dashtype 2 t 'x^{1.5}'
+'errors_bb1_nq2.ascii' u (1/($3)**0.3333):9 w lp lt 1 pt 1 t 'bb1, nq=2',\
+'errors_bb1_nq3.ascii' u (1/($3)**0.3333):9 w lp lt 1 pt 2 t 'bb1, nq=3',\
+'errors_bb1_nq4.ascii' u (1/($3)**0.3333):9 w lp lt 1 pt 3 t 'bb1, nq=4',\
+'errors_bb2_nq2.ascii' u (1/($3)**0.3333):9 w lp lt 2 pt 1 t 'bb2, nq=2',\
+'errors_bb2_nq3.ascii' u (1/($3)**0.3333):9 w lp lt 2 pt 2 t 'bb2, nq=3',\
+'errors_bb2_nq4.ascii' u (1/($3)**0.3333):9 w lp lt 2 pt 3 t 'bb2, nq=4',\
+'errors6.ascii' u (1/($3)**0.3333):9 w lp lt 4 lw .5 pt 2 ps .5 t 'stone 10, {/Symbol l}=10^6',\
+x**1/5 w l lt -1 dashtype 2 t 'x^{1}',\
+x**2*30 w l lt -1 dt 3
 
 set ylabel 'vrms'
 unset log y
 set output 'vrms.pdf'
 plot[:]\
-'vrms_bb1_nq3.ascii' u (1./sqrt($3)):6 w lp pt 1 t 'bb1',\
-'vrms_bb2_nq3.ascii' u (1./sqrt($3)):6 w lp pt 2 t 'bb2',\
-0.1490712 lt -1 t 'analytical'
+'vrms_bb1_nq2.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'bb1, nq=2',\
+'vrms_bb1_nq3.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'bb1, nq=3',\
+'vrms_bb1_nq4.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 3 t 'bb1, nq=4',\
+'vrms_bb2_nq2.ascii' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'bb2, nq=2',\
+'vrms_bb2_nq3.ascii' u (1./sqrt($3)):6 w lp lt 2 pt 2 t 'bb2, nq=3',\
+'vrms_bb2_nq4.ascii' u (1./sqrt($3)):6 w lp lt 2 pt 3 t 'bb2, nq=4',\
+0.1490712 lt -1 dt 2 t 'analytical'
 
 set ylabel 'min/max pressure'
 set output 'p_stats.pdf'
 plot[][]\
-'p_stats_bb1_nq3.ascii' u 6:4 w lp lt 1 pt 1 t 'min(p), bb1',\
-'p_stats_bb1_nq3.ascii' u 6:5 w lp lt 1 pt 1 t 'max(p), bb1',\
-'p_stats_bb2_nq3.ascii' u 6:4 w lp lt 2 pt 2 t 'min(p), bb2',\
-'p_stats_bb2_nq3.ascii' u 6:5 w lp lt 2 pt 2 t 'max(p), bb2',\
--1 lt -1 dashtype 2 t 'min(p)',\
-+1 lt -1 dashtype 4 t 'max(p)'
+'p_stats_bb1_nq2.ascii' u 6:4 w lp lt 1 pt 1 t 'bb1, nq=2',\
+'p_stats_bb1_nq2.ascii' u 6:5 w lp lt 1 pt 1 t 'bb1, nq=2',\
+'p_stats_bb1_nq3.ascii' u 6:4 w lp lt 1 pt 2 t 'bb1, nq=3',\
+'p_stats_bb1_nq3.ascii' u 6:5 w lp lt 1 pt 2 t 'bb1, nq=3',\
+'p_stats_bb2_nq2.ascii' u 6:4 w lp lt 2 pt 1 t 'bb2, nq=2',\
+'p_stats_bb2_nq2.ascii' u 6:5 w lp lt 2 pt 1 t 'bb2, nq=2',\
+'p_stats_bb2_nq3.ascii' u 6:4 w lp lt 2 pt 2 t 'bb2, nq=3',\
+'p_stats_bb2_nq3.ascii' u 6:5 w lp lt 2 pt 2 t 'bb2, nq=3',\
+-1 lt -1 dt 3 t 'min(p)',\
++1 lt -1 dt 4 t 'max(p)'
 
 set ylabel 'min/max {/Symbol e}_{xx}'
 set output 'exx_stats.pdf'
