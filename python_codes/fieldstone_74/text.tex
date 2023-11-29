@@ -8,12 +8,13 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\index{stopics}{$Q_1^+\times Q_1$}
 
 The benchmark is described fully in Section~\ref{MMM-ss:anconv}. 
 The following results have been obtained with $k=4$.
 MINI $Q_1^+ \times Q_1$ elements are used with an isoparametric mapping. 
 
-The layout of the points is borrowed from \stone 9 which 
+The layout of the points is borrowed from \stone~\ref{f09} which 
 showcases $Q_1 \times P_0$ elements. 
 Special care should be taken with the placement of the bubble node.  
 If placed at 
@@ -31,9 +32,17 @@ r_4 = \frac{1}{4}(r_0+r_1+r_2+r_3)
 \]
 and then $\vec{r}_4=(x_4,y_4)=(r_4 \cos\theta_4,r_4 \sin\theta_4)$.
 
+\begin{lstlisting}
+for iel in range(0,nel):
+    r[iconV[4,iel]]=r[iconV[0,iel]]+dr/2
+    theta[iconV[4,iel]]=theta[iconV[0,iel]]-dtheta/2
+    xV[iconV[4,iel]]=r[iconV[4,iel]]*np.cos(theta[iconV[4,iel]])
+    yV[iconV[4,iel]]=r[iconV[4,iel]]*np.sin(theta[iconV[4,iel]])
+\end{lstlisting}
+
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_74/results/Vnodes}
-\includegraphics[width=6cm]{python_codes/fieldstone_74/results/pressures}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_74/results/Vnodes}
+\includegraphics[width=7cm]{python_codes/fieldstone_74/results/pressures}\\
 {\captionfont Left: Velocity nodes in the mesh. Right: 
 Difference in pressure field when the bubble is placed
 at the wrong location (left half of the annulus) and at the right location (right half).}
@@ -41,7 +50,8 @@ at the wrong location (left half of the annulus) and at the right location (righ
 
 The pressure nullspace is removed by means of a Lagrange multiplier.
 
-As is fielstone 21, I here compute the velocity gradient tensor first ${\bm L}(\vec\upnu)=\vec\nabla\vec\upnu$.
+As in \stone~\ref{f21}, I here compute the velocity gradient tensor 
+first ${\bm L}(\vec\upnu)=\vec\nabla\vec\upnu$.
 I loop over elements. For each element I loop over its velocity nodes and use the $Q_2$ 
 shape function derivatives to compute the four components $L_{xx},L_{xy},L_{yx},L_{yy}$ at 
 the node and add this value to the node (while keeping track of how many times a value
@@ -94,9 +104,9 @@ Higher quadratures do not yield any improvement.
 I fix the quadrature at $3\times 3$ points. 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_74/results/errors_v}
-\includegraphics[width=5cm]{python_codes/fieldstone_74/results/errors_p}
-\includegraphics[width=5cm]{python_codes/fieldstone_74/results/vrms.pdf}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_74/results/errors_v}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_74/results/errors_p}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_74/results/vrms.pdf}
 \end{center}
 
 We see that the value of $\beta$ does not really matter, although 0.5 is probably too large.
