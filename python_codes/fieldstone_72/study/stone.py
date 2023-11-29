@@ -412,13 +412,15 @@ for i in range(0,NfemP):
     D[i,8]=G_mat[ 8,i]
     D[i,9]=G_mat[ 9,i]
 
-print(D)
+print(D.T)
 print('-----------------------')
 
-ns = null_space(D)
+ns = null_space(D.T)
+print(ns)
 opla=ns.shape
 print('size of nullspace=',opla[1])
 
 print('beta=',beta,'rank=',matrix_rank(D))
+print('beta=',beta,'rank=',matrix_rank(D.T))
 
 ######################################################################

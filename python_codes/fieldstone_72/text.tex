@@ -514,11 +514,12 @@ there are only 26-8*2 lines left, i.e. a 9*10 matrix like the D one of the paper
 %-----------------------
 \subsection*{bubble 0}
 
-\begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_72/images/mat1}\\
-{\captionfont ${\bm G}$ matrix obtained with the $(1-x^2)(1-y^2)$ bubble}
-\end{center}
+%\begin{center}
+%\includegraphics[width=10cm]{python_codes/fieldstone_72/images/mat1}\\
+%{\captionfont ${\bm G}$ matrix obtained with the $(1-x^2)(1-y^2)$ bubble}
+%\end{center}
 
+The matrix shown in the paper is
 \[
 D=
 \left(
@@ -535,9 +536,10 @@ D=
 \end{array}
 \right)
 \]
-which we can multiply by 9: 
+which we can write: 
 \[
 D=
+\frac19
 \left(
 \begin{array}{cccccccccc}
 2 & 2 & 0 & 0 & 0 & 0 & 0 & 0 & \frac{3}{4} & \frac{3}{4} \\ \\
@@ -679,8 +681,25 @@ $\frac14(1-r)(1+s) -\frac14 b$ in elt 2. In the end:
 (thank you Wolfram Alpha)
 
 
+Note that in the case of a pressure field, its gradient should be zero. 
+This means that the sum of all numbers on a given column of this matrix 
+should be zero, which is the case for both my and his matrix.
 
-
+Interestingly, we can compute the null space of the $D^T$ matrix (.i.e $\G$).
+We obtain
+\begin{verbatim}
+[[-0.11773066 -0.43143886]
+ [ 0.48236331 -0.13162688]
+ [-0.11773066 -0.43143886]
+ [ 0.48236331 -0.13162688]
+ [-0.11773066 -0.43143886]
+ [ 0.48236331 -0.13162688]
+ [-0.11773066 -0.43143886]
+ [ 0.48236331 -0.13162688]
+ [-0.11773066 -0.43143886]]
+\end{verbatim}
+It is of size two, which is problematic since the only vector in the 
+null space should be the vector of constant pressures.
 
 \newpage
 %-----------------------
@@ -704,8 +723,26 @@ after multiplying by 27/4
  [-0.     -0.     -0.     -0.     -1.     -1.     -0.     -0.     -0.3125 -0.3125]]
 \end{verbatim}
 
+For reasons being made evident in the bubble 0 case, I cannot obtain the same 
+matrix as he does in the paper. I should still at some point investigate in detail why
+and do a few calculations to be sure I understand how he obtained his coeffs. 
+
 rank is 8
 
+We can compute the null space of the $D^T$ matrix (.i.e $\G$).
+We obtain
+\begin{verbatim}
+[[-0.33333333]
+ [-0.33333333]
+ [-0.33333333]
+ [-0.33333333]
+ [-0.33333333]
+ [-0.33333333]
+ [-0.33333333]
+ [-0.33333333]
+ [-0.33333333]]
+\end{verbatim}
+It is of size one and is the vector of constant pressures, as expected.
 
 
 %-----------------------
@@ -729,7 +766,27 @@ after multiplying by 18*3
  [ -0.    -0.    -0.    -0.   -13.   -13.    -0.    -0.    -1.25  -1.25]]
 \end{verbatim}
 
+For reasons being made evident in the bubble 0 case, I cannot obtain the same 
+matrix as he does in the paper. 
+
 rank is 8
+
+We can compute the null space of the $D^T$ matrix (.i.e $\G$).
+We obtain
+\begin{verbatim}
+[[0.33333333]
+ [0.33333333]
+ [0.33333333]
+ [0.33333333]
+ [0.33333333]
+ [0.33333333]
+ [0.33333333]
+ [0.33333333]
+ [0.33333333]]
+\end{verbatim}
+It is of size one and is the vector of constant pressures, as expected.
+
+
 
 
 \newpage
