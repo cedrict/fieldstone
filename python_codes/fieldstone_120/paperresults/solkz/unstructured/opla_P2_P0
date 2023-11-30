@@ -20,30 +20,78 @@ experiment   = solkz
 unstructured = True
 *****************************
 mesh setup: 0.011 s
-analytical solution: 0.097 s
+analytical solution: 0.039 s
 bc setup: 0.001 s
 build Q1/P1 mesh: 0.000 s
      -> area (m,M) 1.372126e-03 3.906250e-03 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 0.100 s
-compute local_to_global: 0.011s
+compute elements areas: 0.099 s
+compute local_to_global: 0.012s
 fill I,J arrays: 0.041s
-     -> assembly: 0.031 s
-build FE matrix: 0.354 s
+     -> assembly: 0.030 s
+build FE matrix: 0.408 s
 convert matrix to csr: 0.002 s
-solve time: 0.017 s
+solve time: 0.020 s
      -> u (m,M) -1.0759e-04 1.1302e-04 
      -> v (m,M) -7.1369e-05 6.7538e-05 
-     -> p (m,M) -1.0149e-01 1.0035e-01 
+     -> p (m,M) -2.0100e-01 8.4882e-04 
 split vel into u,v: 0.000 s
-     -> avrg_p= -0.0016799377704991598
+     -> avrg_p= -0.10118217505884963
      -> p (m,M) -0.0998 0.1020 
-pressure normalisation: 0.092 s
+pressure normalisation: 0.087 s
      -> h (m,M,avrg)= 5.238561e-02 8.838835e-02 7.012712e-02 
      -> nel=    401 ; vrms= 2.56505737e-05 ; vrms_th= 0.00000000e+00 ;   1688    401 7.012712e-02
      -> nel=    401 ; errv= 2.67523639e-06 ; errp= 8.48953590e-03 ; errdivv= 1.18829736e-04 |   1688    401 7.01271227e-02
-compute vrms & errors: 0.578 s
+compute vrms & errors: 0.326 s
+*****************************
+*****************************
+arguments: ['stone.py', '20', 'P2', 'P0', 'solkz', '1']
+nel= 620
+NP1= 338
+NP2= 338
+*****************************
+Vspace       = P2
+Pspace       = P0
+space1       = P1
+nqpts        = 6
+nqel         = 6
+nelx         = 20
+nely         = 20
+NV           = 1295
+NP           = 620
+nel          = 620
+NfemV        = 2590
+NfemP        = 620
+Nfem         = 3210
+experiment   = solkz
+unstructured = True
+*****************************
+mesh setup: 0.018 s
+analytical solution: 0.060 s
+bc setup: 0.002 s
+build Q1/P1 mesh: 0.001 s
+     -> area (m,M) 9.336599e-04 2.497949e-03 
+     -> total area meas 1.00000000e+00 
+     -> total area anal 1.00000000e+00 
+compute elements areas: 0.159 s
+compute local_to_global: 0.022s
+fill I,J arrays: 0.066s
+     -> assembly: 0.047 s
+build FE matrix: 0.669 s
+convert matrix to csr: 0.003 s
+solve time: 0.035 s
+     -> u (m,M) -1.0848e-04 1.0724e-04 
+     -> v (m,M) -6.4773e-05 6.6032e-05 
+     -> p (m,M) -1.6621e-01 3.7427e-02 
+split vel into u,v: 0.000 s
+     -> avrg_p= -0.06481694438232136
+     -> p (m,M) -0.1014 0.1022 
+pressure normalisation: 0.146 s
+     -> h (m,M,avrg)= 4.321250e-02 7.068167e-02 5.646340e-02 
+     -> nel=    620 ; vrms= 2.53507883e-05 ; vrms_th= 0.00000000e+00 ;   2590    620 5.646340e-02
+     -> nel=    620 ; errv= 1.68928319e-06 ; errp= 7.12693309e-03 ; errdivv= 9.74811503e-05 |   2590    620 5.64633974e-02
+compute vrms & errors: 0.521 s
 *****************************
 *****************************
 arguments: ['stone.py', '24', 'P2', 'P0', 'solkz', '1']
@@ -67,31 +115,79 @@ Nfem         = 4603
 experiment   = solkz
 unstructured = True
 *****************************
-mesh setup: 0.022 s
-analytical solution: 0.203 s
-bc setup: 0.001 s
+mesh setup: 0.024 s
+analytical solution: 0.084 s
+bc setup: 0.003 s
 build Q1/P1 mesh: 0.001 s
      -> area (m,M) 6.101774e-04 1.734280e-03 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 0.201 s
-compute local_to_global: 0.024s
-fill I,J arrays: 0.099s
-     -> assembly: 0.062 s
-build FE matrix: 0.686 s
+compute elements areas: 0.214 s
+compute local_to_global: 0.026s
+fill I,J arrays: 0.087s
+     -> assembly: 0.068 s
+build FE matrix: 0.909 s
 convert matrix to csr: 0.005 s
-solve time: 0.090 s
+solve time: 0.056 s
      -> u (m,M) -1.1105e-04 1.1712e-04 
      -> v (m,M) -6.4744e-05 6.4474e-05 
-     -> p (m,M) -1.1570e-01 8.6231e-02 
+     -> p (m,M) -1.2092e-01 8.1006e-02 
 split vel into u,v: 0.000 s
-     -> avrg_p= -0.014402257075068042
+     -> avrg_p= -0.019627265852986287
      -> p (m,M) -0.1013 0.1006 
-pressure normalisation: 0.235 s
+pressure normalisation: 0.196 s
      -> h (m,M,avrg)= 3.493358e-02 5.889448e-02 4.695506e-02 
      -> nel=    895 ; vrms= 2.53658934e-05 ; vrms_th= 0.00000000e+00 ;   3708    895 4.695506e-02
      -> nel=    895 ; errv= 1.05524721e-06 ; errp= 5.99727750e-03 ; errdivv= 7.76799516e-05 |   3708    895 4.69550627e-02
-compute vrms & errors: 1.248 s
+compute vrms & errors: 0.728 s
+*****************************
+*****************************
+arguments: ['stone.py', '28', 'P2', 'P0', 'solkz', '1']
+nel= 1236
+NP1= 654
+NP2= 654
+*****************************
+Vspace       = P2
+Pspace       = P0
+space1       = P1
+nqpts        = 6
+nqel         = 6
+nelx         = 28
+nely         = 28
+NV           = 2543
+NP           = 1236
+nel          = 1236
+NfemV        = 5086
+NfemP        = 1236
+Nfem         = 6322
+experiment   = solkz
+unstructured = True
+*****************************
+mesh setup: 0.033 s
+analytical solution: 0.117 s
+bc setup: 0.004 s
+build Q1/P1 mesh: 0.001 s
+     -> area (m,M) 3.770727e-04 1.271743e-03 
+     -> total area meas 1.00000000e+00 
+     -> total area anal 1.00000000e+00 
+compute elements areas: 0.309 s
+compute local_to_global: 0.036s
+fill I,J arrays: 0.124s
+     -> assembly: 0.092 s
+build FE matrix: 1.268 s
+convert matrix to csr: 0.006 s
+solve time: 0.093 s
+     -> u (m,M) -1.0907e-04 1.1162e-04 
+     -> v (m,M) -6.4502e-05 6.4350e-05 
+     -> p (m,M) -1.3374e-01 6.7619e-02 
+split vel into u,v: 0.000 s
+     -> avrg_p= -0.033214050223269044
+     -> p (m,M) -0.1005 0.1008 
+pressure normalisation: 0.284 s
+     -> h (m,M,avrg)= 2.746171e-02 5.043298e-02 3.994652e-02 
+     -> nel=   1236 ; vrms= 2.53163324e-05 ; vrms_th= 0.00000000e+00 ;   5086   1236 3.994652e-02
+     -> nel=   1236 ; errv= 8.20850314e-07 ; errp= 5.05849035e-03 ; errdivv= 6.85740186e-05 |   5086   1236 3.99465211e-02
+compute vrms & errors: 1.042 s
 *****************************
 *****************************
 arguments: ['stone.py', '32', 'P2', 'P0', 'solkz', '1']
@@ -115,31 +211,79 @@ Nfem         = 8143
 experiment   = solkz
 unstructured = True
 *****************************
-mesh setup: 0.039 s
-analytical solution: 0.366 s
-bc setup: 0.003 s
+mesh setup: 0.043 s
+analytical solution: 0.149 s
+bc setup: 0.005 s
 build Q1/P1 mesh: 0.002 s
      -> area (m,M) 3.352332e-04 9.761656e-04 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 0.337 s
-compute local_to_global: 0.039s
-fill I,J arrays: 0.156s
-     -> assembly: 0.103 s
-build FE matrix: 1.196 s
-convert matrix to csr: 0.007 s
-solve time: 0.307 s
+compute elements areas: 0.397 s
+compute local_to_global: 0.050s
+fill I,J arrays: 0.163s
+     -> assembly: 0.119 s
+build FE matrix: 1.663 s
+convert matrix to csr: 0.008 s
+solve time: 0.163 s
      -> u (m,M) -1.1131e-04 1.1156e-04 
      -> v (m,M) -6.3232e-05 6.2758e-05 
-     -> p (m,M) 1.3021e-01 3.3226e-01 
+     -> p (m,M) 1.3885e-02 2.1594e-01 
 split vel into u,v: 0.000 s
-     -> avrg_p= 0.23119318581756435
+     -> avrg_p= 0.11487238223287938
      -> p (m,M) -0.1010 0.1011 
-pressure normalisation: 0.387 s
+pressure normalisation: 0.376 s
      -> h (m,M,avrg)= 2.589336e-02 4.418519e-02 3.517858e-02 
      -> nel=   1595 ; vrms= 2.52882941e-05 ; vrms_th= 0.00000000e+00 ;   6548   1595 3.517858e-02
      -> nel=   1595 ; errv= 5.85410933e-07 ; errp= 4.43034963e-03 ; errdivv= 5.86179663e-05 |   6548   1595 3.51785761e-02
-compute vrms & errors: 2.215 s
+compute vrms & errors: 1.388 s
+*****************************
+*****************************
+arguments: ['stone.py', '40', 'P2', 'P0', 'solkz', '1']
+nel= 2472
+NP1= 1289
+NP2= 1289
+*****************************
+Vspace       = P2
+Pspace       = P0
+space1       = P1
+nqpts        = 6
+nqel         = 6
+nelx         = 40
+nely         = 40
+NV           = 5049
+NP           = 2472
+nel          = 2472
+NfemV        = 10098
+NfemP        = 2472
+Nfem         = 12570
+experiment   = solkz
+unstructured = True
+*****************************
+mesh setup: 0.066 s
+analytical solution: 0.229 s
+bc setup: 0.007 s
+build Q1/P1 mesh: 0.003 s
+     -> area (m,M) 1.500603e-04 6.243145e-04 
+     -> total area meas 1.00000000e+00 
+     -> total area anal 1.00000000e+00 
+compute elements areas: 0.621 s
+compute local_to_global: 0.090s
+fill I,J arrays: 0.269s
+     -> assembly: 0.188 s
+build FE matrix: 2.686 s
+convert matrix to csr: 0.013 s
+solve time: 0.353 s
+     -> u (m,M) -1.0921e-04 1.1241e-04 
+     -> v (m,M) -6.2934e-05 6.2535e-05 
+     -> p (m,M) -1.1345e-01 8.7973e-02 
+split vel into u,v: 0.000 s
+     -> avrg_p= -0.01275928178705018
+     -> p (m,M) -0.1007 0.1007 
+pressure normalisation: 0.568 s
+     -> h (m,M,avrg)= 1.732399e-02 3.533595e-02 2.824294e-02 
+     -> nel=   2472 ; vrms= 2.52737752e-05 ; vrms_th= 0.00000000e+00 ;  10098   2472 2.824294e-02
+     -> nel=   2472 ; errv= 4.32310732e-07 ; errp= 3.68306663e-03 ; errdivv= 5.02673802e-05 |  10098   2472 2.82429379e-02
+compute vrms & errors: 2.096 s
 *****************************
 *****************************
 arguments: ['stone.py', '48', 'P2', 'P0', 'solkz', '1']
@@ -163,31 +307,79 @@ Nfem         = 18130
 experiment   = solkz
 unstructured = True
 *****************************
-mesh setup: 0.107 s
-analytical solution: 0.752 s
-bc setup: 0.006 s
-build Q1/P1 mesh: 0.003 s
+mesh setup: 0.100 s
+analytical solution: 0.329 s
+bc setup: 0.011 s
+build Q1/P1 mesh: 0.004 s
      -> area (m,M) 1.519473e-04 4.339692e-04 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 0.737 s
-compute local_to_global: 0.086s
-fill I,J arrays: 0.318s
-     -> assembly: 0.233 s
-build FE matrix: 2.635 s
-convert matrix to csr: 0.014 s
-solve time: 1.156 s
+compute elements areas: 0.890 s
+compute local_to_global: 0.110s
+fill I,J arrays: 0.369s
+     -> assembly: 0.270 s
+build FE matrix: 3.724 s
+convert matrix to csr: 0.018 s
+solve time: 0.627 s
      -> u (m,M) -1.0926e-04 1.0994e-04 
      -> v (m,M) -6.2205e-05 6.2357e-05 
-     -> p (m,M) -8.7665e-02 1.1368e-01 
+     -> p (m,M) -5.5664e-02 1.4568e-01 
 split vel into u,v: 0.000 s
-     -> avrg_p= 0.013064243402418211
+     -> avrg_p= 0.045064667207252614
      -> p (m,M) -0.1007 0.1006 
-pressure normalisation: 0.751 s
+pressure normalisation: 0.835 s
      -> h (m,M,avrg)= 1.743257e-02 2.946079e-02 2.349895e-02 
      -> nel=   3576 ; vrms= 2.52537679e-05 ; vrms_th= 0.00000000e+00 ;  14554   3576 2.349895e-02
      -> nel=   3576 ; errv= 2.74027767e-07 ; errp= 2.98912560e-03 ; errdivv= 4.02413548e-05 |  14554   3576 2.34989507e-02
-compute vrms & errors: 4.281 s
+compute vrms & errors: 3.002 s
+*****************************
+*****************************
+arguments: ['stone.py', '56', 'P2', 'P0', 'solkz', '1']
+nel= 4902
+NP1= 2518
+NP2= 2518
+*****************************
+Vspace       = P2
+Pspace       = P0
+space1       = P1
+nqpts        = 6
+nqel         = 6
+nelx         = 56
+nely         = 56
+NV           = 9937
+NP           = 4902
+nel          = 4902
+NfemV        = 19874
+NfemP        = 4902
+Nfem         = 24776
+experiment   = solkz
+unstructured = True
+*****************************
+mesh setup: 0.130 s
+analytical solution: 0.456 s
+bc setup: 0.016 s
+build Q1/P1 mesh: 0.005 s
+     -> area (m,M) 4.287851e-05 3.188521e-04 
+     -> total area meas 1.00000000e+00 
+     -> total area anal 1.00000000e+00 
+compute elements areas: 1.258 s
+compute local_to_global: 0.147s
+fill I,J arrays: 0.503s
+     -> assembly: 0.363 s
+build FE matrix: 5.165 s
+convert matrix to csr: 0.024 s
+solve time: 1.169 s
+     -> u (m,M) -1.0936e-04 1.1009e-04 
+     -> v (m,M) -6.1997e-05 6.1677e-05 
+     -> p (m,M) -1.5544e-01 4.6185e-02 
+split vel into u,v: 0.000 s
+     -> avrg_p= -0.054674679902794544
+     -> p (m,M) -0.1008 0.1009 
+pressure normalisation: 1.148 s
+     -> h (m,M,avrg)= 9.260508e-03 2.525280e-02 2.006334e-02 
+     -> nel=   4902 ; vrms= 2.52447600e-05 ; vrms_th= 0.00000000e+00 ;  19874   4902 2.006334e-02
+     -> nel=   4902 ; errv= 2.04303809e-07 ; errp= 2.57095056e-03 ; errdivv= 3.45826060e-05 |  19874   4902 2.00633383e-02
+compute vrms & errors: 4.155 s
 *****************************
 *****************************
 arguments: ['stone.py', '64', 'P2', 'P0', 'solkz', '1']
@@ -211,31 +403,79 @@ Nfem         = 32163
 experiment   = solkz
 unstructured = True
 *****************************
-mesh setup: 0.158 s
-analytical solution: 1.377 s
-bc setup: 0.010 s
+mesh setup: 0.169 s
+analytical solution: 0.589 s
+bc setup: 0.019 s
 build Q1/P1 mesh: 0.006 s
      -> area (m,M) 5.887363e-05 2.438729e-04 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 1.370 s
-compute local_to_global: 0.139s
-fill I,J arrays: 0.589s
-     -> assembly: 0.404 s
-build FE matrix: 4.597 s
-convert matrix to csr: 0.023 s
-solve time: 3.426 s
+compute elements areas: 1.608 s
+compute local_to_global: 0.198s
+fill I,J arrays: 0.649s
+     -> assembly: 0.487 s
+build FE matrix: 6.514 s
+convert matrix to csr: 0.030 s
+solve time: 1.707 s
      -> u (m,M) -1.0920e-04 1.0989e-04 
      -> v (m,M) -6.1822e-05 6.1814e-05 
-     -> p (m,M) -1.0346e-01 9.8129e-02 
+     -> p (m,M) -7.8322e-02 1.2326e-01 
 split vel into u,v: 0.000 s
-     -> avrg_p= -0.002730453375789211
+     -> avrg_p= 0.022403712228779828
      -> p (m,M) -0.1007 0.1009 
-pressure normalisation: 1.344 s
+pressure normalisation: 1.436 s
      -> h (m,M,avrg)= 1.085114e-02 2.208497e-02 1.760700e-02 
      -> nel=   6367 ; vrms= 2.52381638e-05 ; vrms_th= 0.00000000e+00 ;  25796   6367 1.760700e-02
      -> nel=   6367 ; errv= 1.58753985e-07 ; errp= 2.27573967e-03 ; errdivv= 3.06758707e-05 |  25796   6367 1.76070041e-02
-compute vrms & errors: 7.836 s
+compute vrms & errors: 5.257 s
+*****************************
+*****************************
+arguments: ['stone.py', '80', 'P2', 'P0', 'solkz', '1']
+nel= 9899
+NP1= 5061
+NP2= 5061
+*****************************
+Vspace       = P2
+Pspace       = P0
+space1       = P1
+nqpts        = 6
+nqel         = 6
+nelx         = 80
+nely         = 80
+NV           = 20020
+NP           = 9899
+nel          = 9899
+NfemV        = 40040
+NfemP        = 9899
+Nfem         = 49939
+experiment   = solkz
+unstructured = True
+*****************************
+mesh setup: 0.255 s
+analytical solution: 0.910 s
+bc setup: 0.029 s
+build Q1/P1 mesh: 0.010 s
+     -> area (m,M) 3.477511e-05 1.562142e-04 
+     -> total area meas 1.00000000e+00 
+     -> total area anal 1.00000000e+00 
+compute elements areas: 2.387 s
+compute local_to_global: 0.290s
+fill I,J arrays: 0.977s
+     -> assembly: 0.756 s
+build FE matrix: 10.051 s
+convert matrix to csr: 0.050 s
+solve time: 3.473 s
+     -> u (m,M) -1.0895e-04 1.0933e-04 
+     -> v (m,M) -6.1456e-05 6.1538e-05 
+     -> p (m,M) -8.8585e-02 1.1290e-01 
+split vel into u,v: 0.000 s
+     -> avrg_p= 0.012131770239431877
+     -> p (m,M) -0.1007 0.1008 
+pressure normalisation: 2.274 s
+     -> h (m,M,avrg)= 8.339677e-03 1.767564e-02 1.412438e-02 
+     -> nel=   9899 ; vrms= 2.52300482e-05 ; vrms_th= 0.00000000e+00 ;  40040   9899 1.412438e-02
+     -> nel=   9899 ; errv= 9.93890319e-08 ; errp= 1.83556513e-03 ; errdivv= 2.41134486e-05 |  40040   9899 1.41243838e-02
+compute vrms & errors: 8.126 s
 *****************************
 *****************************
 arguments: ['stone.py', '96', 'P2', 'P0', 'solkz', '1']
@@ -259,31 +499,31 @@ Nfem         = 72189
 experiment   = solkz
 unstructured = True
 *****************************
-mesh setup: 0.331 s
-analytical solution: 3.039 s
-bc setup: 0.023 s
-build Q1/P1 mesh: 0.014 s
+mesh setup: 0.384 s
+analytical solution: 1.372 s
+bc setup: 0.043 s
+build Q1/P1 mesh: 0.015 s
      -> area (m,M) 2.175018e-05 1.084956e-04 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 2.915 s
-compute local_to_global: 0.306s
-fill I,J arrays: 1.303s
-     -> assembly: 0.930 s
-build FE matrix: 10.369 s
-convert matrix to csr: 0.049 s
-solve time: 14.355 s
+compute elements areas: 3.586 s
+compute local_to_global: 0.426s
+fill I,J arrays: 1.451s
+     -> assembly: 1.122 s
+build FE matrix: 14.563 s
+convert matrix to csr: 0.076 s
+solve time: 7.097 s
      -> u (m,M) -1.0905e-04 1.0940e-04 
      -> v (m,M) -6.1411e-05 6.1362e-05 
-     -> p (m,M) -1.1517e-01 8.6299e-02 
+     -> p (m,M) -1.3156e-01 6.9915e-02 
 split vel into u,v: 0.000 s
-     -> avrg_p= -0.014445033878261607
+     -> avrg_p= -0.030829296224232368
      -> p (m,M) -0.1007 0.1007 
-pressure normalisation: 3.207 s
+pressure normalisation: 3.218 s
      -> h (m,M,avrg)= 6.595481e-03 1.473062e-02 1.173452e-02 
      -> nel=  14337 ; vrms= 2.52242862e-05 ; vrms_th= 0.00000000e+00 ;  57852  14337 1.173452e-02
      -> nel=  14337 ; errv= 6.76418275e-08 ; errp= 1.52092914e-03 ; errdivv= 2.00199420e-05 |  57852  14337 1.17345174e-02
-compute vrms & errors: 19.462 s
+compute vrms & errors: 11.900 s
 *****************************
 *****************************
 arguments: ['stone.py', '128', 'P2', 'P0', 'solkz', '1']
@@ -307,31 +547,31 @@ Nfem         = 128584
 experiment   = solkz
 unstructured = True
 *****************************
-mesh setup: 0.651 s
-analytical solution: 5.733 s
-bc setup: 0.052 s
-build Q1/P1 mesh: 0.031 s
+mesh setup: 0.660 s
+analytical solution: 2.336 s
+bc setup: 0.076 s
+build Q1/P1 mesh: 0.026 s
      -> area (m,M) 1.477881e-05 6.103757e-05 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 5.623 s
-compute local_to_global: 0.598s
-fill I,J arrays: 2.682s
-     -> assembly: 1.908 s
-build FE matrix: 21.070 s
-convert matrix to csr: 0.087 s
-solve time: 40.666 s
+compute elements areas: 6.225 s
+compute local_to_global: 0.758s
+fill I,J arrays: 2.596s
+     -> assembly: 1.964 s
+build FE matrix: 26.108 s
+convert matrix to csr: 0.146 s
+solve time: 20.450 s
      -> u (m,M) -1.0892e-04 1.0911e-04 
      -> v (m,M) -6.1346e-05 6.1286e-05 
-     -> p (m,M) -2.8262e-02 1.7319e-01 
+     -> p (m,M) -1.1387e-01 8.7585e-02 
 split vel into u,v: 0.000 s
-     -> avrg_p= 0.07244671816453681
+     -> avrg_p= -0.013160970778897038
      -> p (m,M) -0.1007 0.1007 
-pressure normalisation: 5.887 s
+pressure normalisation: 5.639 s
      -> h (m,M,avrg)= 5.436692e-03 1.104876e-02 8.783740e-03 
      -> nel=  25582 ; vrms= 2.52208598e-05 ; vrms_th= 0.00000000e+00 ; 103002  25582 8.783740e-03
-     -> nel=  25582 ; errv= 3.92148412e-08 ; errp= 1.14042188e-03 ; errdivv= 1.51384248e-05 | 103002  25582 8.78374036e-03
-compute vrms & errors: 33.259 s
+     -> nel=  25582 ; errv= 3.92148412e-08 ; errp= 1.14042189e-03 ; errdivv= 1.51384248e-05 | 103002  25582 8.78374036e-03
+compute vrms & errors: 20.872 s
 *****************************
 *****************************
 arguments: ['stone.py', '160', 'P2', 'P0', 'solkz', '1']
@@ -355,30 +595,78 @@ Nfem         = 199909
 experiment   = solkz
 unstructured = True
 *****************************
-mesh setup: 1.052 s
-analytical solution: 9.460 s
-bc setup: 0.068 s
-build Q1/P1 mesh: 0.041 s
+mesh setup: 1.055 s
+analytical solution: 3.686 s
+bc setup: 0.119 s
+build Q1/P1 mesh: 0.040 s
      -> area (m,M) 1.271256e-05 3.905954e-05 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 9.464 s
-compute local_to_global: 0.983s
-fill I,J arrays: 4.027s
-     -> assembly: 2.748 s
-build FE matrix: 31.163 s
-convert matrix to csr: 0.137 s
-solve time: 82.817 s
+compute elements areas: 9.874 s
+compute local_to_global: 1.217s
+fill I,J arrays: 3.984s
+     -> assembly: 2.990 s
+build FE matrix: 40.304 s
+convert matrix to csr: 0.230 s
+solve time: 40.726 s
      -> u (m,M) -1.0897e-04 1.0895e-04 
      -> v (m,M) -6.1269e-05 6.1281e-05 
-     -> p (m,M) -1.7667e-01 2.4774e-02 
-split vel into u,v: 0.000 s
-     -> avrg_p= -0.07594668958373678
+     -> p (m,M) -9.8700e-02 1.0274e-01 
+split vel into u,v: 0.001 s
+     -> avrg_p= 0.00202313290476487
      -> p (m,M) -0.1007 0.1007 
-pressure normalisation: 9.556 s
+pressure normalisation: 8.939 s
      -> h (m,M,avrg)= 5.042333e-03 8.838500e-03 7.041127e-03 
      -> nel=  39809 ; vrms= 2.52182866e-05 ; vrms_th= 0.00000000e+00 ; 160100  39809 7.041127e-03
-     -> nel=  39809 ; errv= 2.48580008e-08 ; errp= 9.20521666e-04 ; errdivv= 1.20908111e-05 | 160100  39809 7.04112683e-03
-compute vrms & errors: 53.257 s
+     -> nel=  39809 ; errv= 2.48580009e-08 ; errp= 9.20521665e-04 ; errdivv= 1.20908111e-05 | 160100  39809 7.04112683e-03
+compute vrms & errors: 32.679 s
+*****************************
+*****************************
+arguments: ['stone.py', '256', 'P2', 'P0', 'solkz', '1']
+nel= 101715
+NP1= 51193
+NP2= 51193
+*****************************
+Vspace       = P2
+Pspace       = P0
+space1       = P1
+nqpts        = 6
+nqel         = 6
+nelx         = 256
+nely         = 256
+NV           = 204100
+NP           = 101715
+nel          = 101715
+NfemV        = 408200
+NfemP        = 101715
+Nfem         = 509915
+experiment   = solkz
+unstructured = True
+*****************************
+mesh setup: 2.685 s
+analytical solution: 9.263 s
+bc setup: 0.296 s
+build Q1/P1 mesh: 0.106 s
+     -> area (m,M) 3.038710e-06 1.525991e-05 
+     -> total area meas 1.00000000e+00 
+     -> total area anal 1.00000000e+00 
+compute elements areas: 25.076 s
+compute local_to_global: 3.016s
+fill I,J arrays: 10.454s
+     -> assembly: 7.726 s
+build FE matrix: 104.389 s
+convert matrix to csr: 0.595 s
+solve time: 194.030 s
+     -> u (m,M) -1.0892e-04 1.0896e-04 
+     -> v (m,M) -6.1228e-05 6.1249e-05 
+     -> p (m,M) -1.8683e-01 1.4604e-02 
+split vel into u,v: 0.001 s
+     -> avrg_p= -0.0861124276136508
+     -> p (m,M) -0.1007 0.1007 
+pressure normalisation: 23.873 s
+     -> h (m,M,avrg)= 2.465242e-03 5.524475e-03 4.405007e-03 
+     -> nel= 101715 ; vrms= 2.52158741e-05 ; vrms_th= 0.00000000e+00 ; 408200 101715 4.405007e-03
+     -> nel= 101715 ; errv= 9.49227869e-09 ; errp= 5.74285923e-04 ; errdivv= 7.47406881e-06 | 408200 101715 4.40500702e-03
+compute vrms & errors: 83.415 s
 *****************************
 *****************************
