@@ -1,0 +1,49 @@
+#! /bin/bash
+
+rm nullspace_me
+
+for a1 in 0 0.25 1 ; do
+ for b1 in 0 0.25 1 ; do
+  for c1 in 0 0.25 1 ; do
+   for a2 in 0 1 ; do
+    for b2 in 0 1 ; do
+     for c2 in 0 1 ; do
+      for d2 in 0 1 ; do
+       for e2 in 0 1 ; do
+        for f2 in 0 1 ; do
+         for a3 in 0 1 ; do
+          for b3 in 0 1 ; do
+           for c3 in 0 1 ; do
+            for d3 in 0 1 ; do
+             for e3 in 0 1 ; do
+              for f3 in 0 1 ; do
+               for g3 in 0 1 ; do
+                for h3 in 0 1 ; do
+                 for i3 in 0 1 ; do
+                  for j3 in 0 1 ; do
+
+                  echo $a1 $b1 $c1  $a2 $b2 $c2 $d2 $e2 $f2  $a3 $b3 $c3 $d3 $e3 $f3 $g3 $h3 $i3 $j3 
+  
+                  echo -n $a1 $b1 $c1  $a2 $b2 $c2 $d2 $e2 $f2  $a3 $b3 $c3 $d3 $e3 $f3 $g3 $h3 $i3 $j3  >> nullspace_me 
+                  echo -n " "  >> nullspace_me 
+                  python3 stone.py $a1 $b1 $c1  $a2 $b2 $c2 $d2 $e2 $f2  $a3 $b3 $c3 $d3 $e3 $f3 $g3 $h3 $i3 $j3  | grep nullspace >> nullspace_me 
+                  done
+                 done
+                done
+               done
+              done
+             done
+            done
+           done
+          done
+         done
+        done
+       done
+      done
+     done
+    done
+   done
+  done
+ done
+done
+
