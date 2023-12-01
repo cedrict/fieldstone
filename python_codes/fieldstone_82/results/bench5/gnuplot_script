@@ -1,4 +1,4 @@
-set term pdf enhanced font "Times,11pt"
+set term pdf enhanced font "Times,12pt"
 set grid
 set key outside
 set pointsize .4 
@@ -15,6 +15,7 @@ plot[][]\
 
 
 unset log y
+set ylabel 'pressure'
 set output 'p_stats.pdf'
 plot[][]\
 'press_nq2.ascii' u 3:1 w lp lt 1 lw .5 t 'min(p), nq=2^3',\
@@ -25,6 +26,7 @@ plot[][]\
 'press_nq4.ascii' u 3:2 w lp lt 3 lw .5 t 'max(p), nq=4^3',\
 
 set log y
+set ylabel 'time (s)'
 set output 'times.pdf'
 plot[][]\
 'solve_nq2.ascii' u 6:3 w lp t 'solve, bq=2^3',\

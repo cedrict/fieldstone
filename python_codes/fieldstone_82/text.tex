@@ -1,3 +1,30 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/3d}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_82/text.tex}} \end{flushright}
+
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_82/keywords.key}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_82}}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+{\bf \color{teal} Purpose}: implement and document the $Q_1^{++}\times Q_1$ element.
+
+\index{stopics}{$Q_1^{++} \times Q_1$}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The basis functions for this element is presented in Section~\ref{MMM-ss:Q1Q1bb_3D}.
 This element is presented in \textcite{kahp20} (2020). 
@@ -7,22 +34,21 @@ There are two bubble functions/nodes per element so we then have
 NV=nnx*nny*nnz+2*nel 
 NP=nnx*nny*nnz
 \end{lstlisting}
-For a 8x8x8=512 element grid, there are $9^3=729$ nodes, and 1024 bubble nodes.
+For a $8\times 8 \times 8=512$ element grid, there are $9^3=729$ nodes, and 1024 bubble nodes.
 We then have $3\cdot 729=2157$ $Q_1$ velocity dofs and 3072 velocity dofs attached 
 to the bubbles.
 Since the bubble nodes are stored last the structure of the matrix is as follows:
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_82/results/matrix_8x8x8_bef_bc}
-\includegraphics[width=6cm]{python_codes/fieldstone_82/results/matrix_8x8x8_aft_bc}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_82/results/matrix_8x8x8_bef_bc}
+\includegraphics[width=7cm]{python_codes/fieldstone_82/results/matrix_8x8x8_aft_bc}\\
 {\captionfont Sparsity pattern of the matrix for a 8x8x8 grid.
 NV= 1753, NP=729.\\ Left:
 before boundary conditions are applied. 
 Right: after boundary conditions are applied.} 
 \end{center}
 
-
 %......................................
-\subsubsection*{Manufactured solution (bench=1)}
+\subsection*{Manufactured solution (bench=1)}
 
 This benchmark begins by postulating a polynomial solution 
 to the 3D Stokes equation (see Dohrmann \& Bochev (2004) \cite{dobo04}):
@@ -59,26 +85,26 @@ around 1.8. Also, the $2\times 2\times 2$
 quadrature yields better results than the $3\times 3\times 3$ or $4\times 4 \times 4$.
 
 %......................................
-\subsubsection*{Horizontal shear (bench=2)}
+\subsection*{Horizontal shear (bench=2)}
 
 This is a simple kinematical test: gravity is set to zero, no boundary 
 conditions on the sides and $\vec\upnu=(-1,0,0)$ prescribed on the top, and 
 $\vec\upnu=(+1,0,0)$ prescribed on the bottom.
 
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_82/results/bench2/vel}
-\includegraphics[width=6cm]{python_codes/fieldstone_82/results/bench2/press}\\
-{\captionfont 20x20x20 mesh.} 
+\includegraphics[width=8cm]{python_codes/fieldstone_82/results/bench2/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_82/results/bench2/press}\\
+{\captionfont $20\times 20 \times 20$ mesh.} 
 \end{center}
 
 %......................................
-\subsubsection*{Stokes sphere (bench=3)}
+\subsection*{Stokes sphere (bench=3)}
 
 This is the benchmark of Section~\ref{MMM-ss:stokes_sphere3D}.
 A sphere of radius 0.123456789 is placed in the middle of the domain. 
 It has a density excess $\delta\rho=0.01$
 with respect to the surrounding fluid which has a density $\rho_{fluid}=1$. 
-The sphere viscosity is 1000 why the fluid viscosity is 1.
+The sphere viscosity is 1000 while the fluid viscosity is 1.
 Boundary conditions are no slip on all sides. Gravity is $\vec{g}=-\vec{e}_z$.
 
 \begin{center}
@@ -100,7 +126,7 @@ All velocity and pressure statistics are presented in Section~\ref{MMM-ss:stokes
 \end{center}
 
 %......................................
-\subsubsection*{Sinking cube (bench=4)}
+\subsection*{Sinking cube (bench=4)}
 
 This is the same experiment as the Stokes sphere with the exception of the geometry of the sinker which 
 is $0.25\times 0.25 \times 0.25$ in size so that its edges align with boundary edges 
@@ -154,7 +180,7 @@ It seems that the somewhat anisotropic placement of the bubbles does not introdu
 a form of asymmetry in the solution.
 
 %......................................
-\subsubsection*{Manufactured solution (bench=5)}
+\subsection*{Manufactured solution (bench=5)}
 
 We here consider the manufactured solution which is introduced in Section~\ref{MMM-ss:mms3Dgen}.
 The velocity and pressure fields are:
@@ -198,7 +224,7 @@ that can be used:
 \end{center}
 
 %..............................................................................
-\subsubsection*{bench=-1: computing Ker($\G$) on a $2\times 2 \times 2$ mesh}
+\subsection*{bench=-1: computing Ker($\G$) on a $2\times 2 \times 2$ mesh}
 
 We consider a mesh composed of $2\times 2\times 2$ elements. We prescribe no slip boundary conditions 
 on all sides, so that only the node in the middle has 3 velocity dofs left, in addition 
