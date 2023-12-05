@@ -72,44 +72,27 @@ allocate(Kdiag(NfemV))
 allocate(Cmat(ndim2,ndim2)) ; Cmat=0d0
 allocate(Kmat(ndim2,ndim2)) ; Kmat=0d0
 if (ndim==2) then
-Cmat(1,1)=2d0
-Cmat(2,2)=2d0
-Cmat(3,3)=1d0
-Kmat(1,1)=1d0
-Kmat(1,2)=1d0
-Kmat(2,1)=1d0
-Kmat(2,2)=1d0
+Cmat(1,1)=2d0 ; Cmat(2,2)=2d0 ; Cmat(3,3)=1d0
+Kmat(1,1)=1d0 ; Kmat(1,2)=1d0 ; Kmat(2,1)=1d0 ; Kmat(2,2)=1d0
 end if
 if (ndim==3) then
-Cmat(1,1)=2d0
-Cmat(2,2)=2d0
-Cmat(3,3)=2d0
-Cmat(4,4)=1d0
-Cmat(5,5)=1d0
-Cmat(6,6)=1d0
-Kmat(1,1)=1d0
-Kmat(1,2)=1d0
-Kmat(1,3)=1d0
-Kmat(2,1)=1d0
-Kmat(2,2)=1d0
-Kmat(2,3)=1d0
-Kmat(3,1)=1d0
-Kmat(3,2)=1d0
-Kmat(3,3)=1d0
+Cmat(1,1)=2d0 ; Cmat(2,2)=2d0 ; Cmat(3,3)=2d0 ; Cmat(4,4)=1d0 ; Cmat(5,5)=1d0 ; Cmat(6,6)=1d0 
+Kmat(1,1)=1d0 ; Kmat(1,2)=1d0 ; Kmat(1,3)=1d0 
+Kmat(2,1)=1d0 ; Kmat(2,2)=1d0 ; Kmat(2,3)=1d0 
+Kmat(3,1)=1d0 ; Kmat(3,2)=1d0 ; Kmat(3,3)=1d0
 end if
-
-
 
 call define_material_properties
 
-
 call spacer
+call initialise_elements
 select case (geometry)
 case('cartesian') 
    if (ndim==2) call setup_cartesian2D
    if (ndim==3) call setup_cartesian3D
 case('spherical')
 end select
+
 call output_mesh
 call quadrature_setup
 call test_basis_functions

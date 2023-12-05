@@ -54,13 +54,24 @@ Nq=nqel*nel
 !==============================================================================!
 
 do iel=1,nel
-   allocate(mesh(iel)%xq(nqel),mesh(iel)%yq(nqel),mesh(iel)%zq(nqel))
-   allocate(mesh(iel)%weightq(nqel),mesh(iel)%JxWq(nqel))
-   allocate(mesh(iel)%rq(nqel),mesh(iel)%sq(nqel),mesh(iel)%tq(nqel))
-   allocate(mesh(iel)%gxq(nqel),mesh(iel)%gyq(nqel),mesh(iel)%gzq(nqel))
-   allocate(mesh(iel)%rhoq(nqel),mesh(iel)%etaq(nqel))
-   allocate(mesh(iel)%hcondq(nqel),mesh(iel)%hcapaq(nqel),mesh(iel)%hprodq(nqel))
-   allocate(mesh(iel)%pq(nqel),mesh(iel)%thetaq(nqel))
+   allocate(mesh(iel)%xq(nqel))
+   allocate(mesh(iel)%yq(nqel))
+   allocate(mesh(iel)%zq(nqel))
+   allocate(mesh(iel)%JxWq(nqel))
+   allocate(mesh(iel)%weightq(nqel))
+   allocate(mesh(iel)%rq(nqel))
+   allocate(mesh(iel)%sq(nqel))
+   allocate(mesh(iel)%tq(nqel))
+   allocate(mesh(iel)%gxq(nqel))
+   allocate(mesh(iel)%gyq(nqel))
+   allocate(mesh(iel)%gzq(nqel))
+   allocate(mesh(iel)%pq(nqel))
+   allocate(mesh(iel)%thetaq(nqel))
+   allocate(mesh(iel)%etaq(nqel))
+   allocate(mesh(iel)%rhoq(nqel))
+   allocate(mesh(iel)%hcondq(nqel))
+   allocate(mesh(iel)%hcapaq(nqel))
+   allocate(mesh(iel)%hprodq(nqel))
    mesh(iel)%JxWq(:)=0d0
 end do
 
@@ -74,7 +85,7 @@ if (ndim==2) then
          counter=counter+1
          rq=qcoords(iq)
          sq=qcoords(jq)
-         call NNL(rq,sq,0,NNNL(1:mV),mV,ndim,pair)
+         call NNL(rq,sq,0.d0,NNNL(1:mV),mV,ndim,pair)
          mesh(iel)%xq(counter)=sum(mesh(iel)%xV(1:mV)*NNNL(1:mV))
          mesh(iel)%yq(counter)=sum(mesh(iel)%yV(1:mV)*NNNL(1:mV))
          mesh(iel)%zq(counter)=0.d0

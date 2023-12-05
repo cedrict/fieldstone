@@ -17,7 +17,8 @@ use module_timing
 
 implicit none
 
-integer i,im,iq,idummy,ipvt2D(3),ipvt3D(4),job
+integer i,im,iq,ipvt2D(3),ipvt3D(4),job
+integer(1) idummy
 real(8) x(1000),y(1000),z(1000),rho(1000),eta(1000),rcond
 real(8) A2D(3,3),B2D(3),work2D(3),A3D(4,4),B3D(4),work3D(4),NNNT(mT),NNNP(mP)
 real(8) pm,Tm,exxm,eyym,ezzm,exym,exzm,eyzm,NNNV(mV)

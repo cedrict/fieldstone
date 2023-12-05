@@ -35,8 +35,6 @@ hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
 
-allocate(mesh(nel))
-
 counter=0    
 do ielz=1,nelz    
    do iely=1,nely    
@@ -49,12 +47,12 @@ do ielz=1,nelz
          mesh(counter)%hy=hy
          mesh(counter)%hz=hz
          mesh(counter)%vol=hx*hy*hz
-         if (ielx==1)    mesh(counter)%bnd1=.true.
-         if (ielx==nelx) mesh(counter)%bnd2=.true.
-         if (iely==1)    mesh(counter)%bnd3=.true.
-         if (iely==nely) mesh(counter)%bnd4=.true.
-         if (ielz==1)    mesh(counter)%bnd5=.true.
-         if (ielz==nelz) mesh(counter)%bnd6=.true.
+         if (ielx==1)    mesh(counter)%bnd1_elt=.true.
+         if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
+         if (iely==1)    mesh(counter)%bnd3_elt=.true.
+         if (iely==nely) mesh(counter)%bnd4_elt=.true.
+         if (ielz==1)    mesh(counter)%bnd5_elt=.true.
+         if (ielz==nelz) mesh(counter)%bnd6_elt=.true.
       end do    
    end do    
 end do
@@ -281,11 +279,13 @@ if (pair=='q1p0') then
 end if
 
 if (pair=='q1q1') then
+   do iel=1,nel
    do i=1,mP
-      mesh(1:nel)%xP(i)=mesh(1:nel)%xV(i)
-      mesh(1:nel)%yP(i)=mesh(1:nel)%yV(i)
-      mesh(1:nel)%zP(i)=mesh(1:nel)%zV(i)
-      mesh(1:nel)%iconP(i)=mesh(1:nel)%iconV(i)
+      mesh(iel)%xP(i)=mesh(iel)%xV(i)
+      mesh(iel)%yP(i)=mesh(iel)%yV(i)
+      mesh(iel)%zP(i)=mesh(iel)%zV(i)
+      mesh(iel)%iconP(i)=mesh(iel)%iconV(i)
+   end do
    end do
 end if
 
@@ -340,11 +340,13 @@ end if
 !==========================================================
 ! temperature 
 
+do iel=1,nel
 do k=1,mT
-   mesh(1:nel)%xT(k)=mesh(1:nel)%xV(k)
-   mesh(1:nel)%yT(k)=mesh(1:nel)%yV(k)
-   mesh(1:nel)%zT(k)=mesh(1:nel)%zV(k)
-   mesh(1:nel)%iconT(k)=mesh(1:nel)%iconV(k)
+   mesh(iel)%xT(k)=mesh(iel)%xV(k)
+   mesh(iel)%yT(k)=mesh(iel)%yV(k)
+   mesh(iel)%zT(k)=mesh(iel)%zV(k)
+   mesh(iel)%iconT(k)=mesh(iel)%iconV(k)
+end do
 end do
 
 !==========================================================

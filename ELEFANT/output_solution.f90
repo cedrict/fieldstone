@@ -56,7 +56,7 @@ write(123,'(a)') '<CellData Scalars="scalars">'
 if (output_boundary_indicators) then
 write(123,*) '<DataArray type="Float32" Name="boundary: 1" Format="ascii">'
 do iel=1,nel
-if (mesh(iel)%bnd1) then
+if (mesh(iel)%bnd1_elt) then
    write(123,'(i1)') 1
 else
    write(123,'(i1)') 0
@@ -68,7 +68,7 @@ end if
 if (output_boundary_indicators) then
 write(123,*) '<DataArray type="Float32" Name="boundary: 2" Format="ascii">'
 do iel=1,nel
-if (mesh(iel)%bnd2) then
+if (mesh(iel)%bnd2_elt) then
    write(123,'(i1)') 1
 else
    write(123,'(i1)') 0
@@ -80,7 +80,7 @@ end if
 if (output_boundary_indicators) then
 write(123,*) '<DataArray type="Float32" Name="boundary: 3" Format="ascii">'
 do iel=1,nel
-if (mesh(iel)%bnd3) then
+if (mesh(iel)%bnd3_elt) then
    write(123,'(i1)') 1
 else
    write(123,'(i1)') 0
@@ -92,7 +92,7 @@ end if
 if (output_boundary_indicators) then
 write(123,*) '<DataArray type="Float32" Name="boundary: 4" Format="ascii">'
 do iel=1,nel
-if (mesh(iel)%bnd4) then
+if (mesh(iel)%bnd4_elt) then
    write(123,'(i1)') 1
 else
    write(123,'(i1)') 0
@@ -104,7 +104,7 @@ end if
 if (output_boundary_indicators .and. ndim==3) then
 write(123,*) '<DataArray type="Float32" Name="boundary: 5" Format="ascii">'
 do iel=1,nel
-if (mesh(iel)%bnd5) then
+if (mesh(iel)%bnd5_elt) then
    write(123,'(i1)') 1
 else
    write(123,'(i1)') 0
@@ -116,7 +116,7 @@ end if
 if (output_boundary_indicators .and. ndim==3) then
 write(123,*) '<DataArray type="Float32" Name="boundary: 6" Format="ascii">'
 do iel=1,nel
-if (mesh(iel)%bnd6) then
+if (mesh(iel)%bnd6_elt) then
    write(123,'(i1)') 1
 else
    write(123,'(i1)') 0

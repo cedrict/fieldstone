@@ -67,15 +67,6 @@ if (iproc==0) then
 hx=Lx/nelx
 hy=Ly/nely
 
-allocate(mesh(nel))
-do iel=1,nel
-   mesh(iel)%u=0.d0
-   mesh(iel)%v=0.d0
-   mesh(iel)%w=0.d0
-   mesh(iel)%T=0.d0
-   mesh(iel)%p=0.d0
-   mesh(iel)%q=0.d0
-end do
 
 !==========================================================
 !velocity 
@@ -114,10 +105,10 @@ if (pair=='q1p0' .or. pair=='q1q1') then
          mesh(counter)%hx=hx
          mesh(counter)%hy=hy
          mesh(counter)%vol=hx*hy
-         if (ielx==1)    mesh(counter)%bnd1=.true.
-         if (ielx==nelx) mesh(counter)%bnd2=.true.
-         if (iely==1)    mesh(counter)%bnd3=.true.
-         if (iely==nely) mesh(counter)%bnd4=.true.
+         if (ielx==1)    mesh(counter)%bnd1_elt=.true.
+         if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
+         if (iely==1)    mesh(counter)%bnd3_elt=.true.
+         if (iely==nely) mesh(counter)%bnd4_elt=.true.
       end do    
    end do    
 end if
@@ -182,10 +173,10 @@ if (pair=='q2q1') then
          mesh(counter)%hx=hx
          mesh(counter)%hy=hy
          mesh(counter)%vol=hx*hy
-         if (ielx==1)    mesh(counter)%bnd1=.true.
-         if (ielx==nelx) mesh(counter)%bnd2=.true.
-         if (iely==1)    mesh(counter)%bnd3=.true.
-         if (iely==nely) mesh(counter)%bnd4=.true.
+         if (ielx==1)    mesh(counter)%bnd1_elt=.true.
+         if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
+         if (iely==1)    mesh(counter)%bnd3_elt=.true.
+         if (iely==nely) mesh(counter)%bnd4_elt=.true.
       end do    
    end do    
 end if
@@ -206,10 +197,12 @@ if (pair=='q1p0') then
 end if
 
 if (pair=='q1q1') then
+   do iel=1,nel
    do i=1,4
-      mesh(1:nel)%xP(i)=mesh(1:nel)%xV(i)
-      mesh(1:nel)%yP(i)=mesh(1:nel)%yV(i)
-      mesh(1:nel)%iconP(i)=mesh(1:nel)%iconV(i)
+      mesh(iel)%xP(i)=mesh(iel)%xV(i)
+      mesh(iel)%yP(i)=mesh(iel)%yV(i)
+      mesh(iel)%iconP(i)=mesh(iel)%iconV(i)
+   end do
    end do
 end if
 
@@ -237,10 +230,12 @@ end if
 !==========================================================
 ! temperature 
 
+do iel=1,nel
 do i=1,4
-   mesh(1:nel)%xT(i)=mesh(1:nel)%xV(i)
-   mesh(1:nel)%yT(i)=mesh(1:nel)%yV(i)
-   mesh(1:nel)%iconT(i)=mesh(1:nel)%iconV(i)
+   mesh(iel)%xT(i)=mesh(iel)%xV(i)
+   mesh(iel)%yT(i)=mesh(iel)%yV(i)
+   mesh(iel)%iconT(i)=mesh(iel)%iconV(i)
+end do
 end do
 
 !==========================================================

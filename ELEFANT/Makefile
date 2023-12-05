@@ -19,7 +19,7 @@ compute_elemental_rho_eta_vol.o compute_gravity.o compute_elemental_matrix_energ
 output_mesh.o output_swarm.o output_solution.o output_qpoints.o output_solution_python.o\
 header.o\
 impose_boundary_conditions_stokes.o impose_boundary_conditions_energy.o int_to_char.o\
-initialise_mumps_V.o interpolate_onto_nodes.o\
+initialise_mumps_V.o interpolate_onto_nodes.o initialise_elements.o\
 locate_point.o\
 make_matrix_stokes.o make_matrix_energy.o \
 matrix_setup_K.o matrix_setup_GT.o matrix_setup_MV.o matrix_setup_MP.o matrix_setup_A.o\

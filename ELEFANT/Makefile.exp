@@ -3,13 +3,13 @@
 #manufactured solution in 2D
 ############################
 
-object_experiment = EXPERIMENTS/mms2D_solvi/experiment.o 
+#object_experiment = EXPERIMENTS/mms2D_solvi/experiment.o 
 
 #object_experiment = EXPERIMENTS/mms2D_solcx/experiment.o 
 
 #object_experiment = EXPERIMENTS/mms2D_solkz/experiment.o 
 
-#object_experiment = EXPERIMENTS/mms2D_donea_huerta/experiment.o 
+object_experiment = EXPERIMENTS/mms2D_donea_huerta/experiment.o 
 
 #object_experiment = EXPERIMENTS/mms2D_temperature_diffusion/experiment.o
 
