@@ -66,6 +66,21 @@ by using a single vector bubble function per element."
 
 \end{itemize}
 
+-------------------------------
+
+Let us consider a square mesh with $nelx^2$ elements for simplicity. 
+The number of V dofs for a $Q_1$ space would be $(nelx+1)^2=nelx^2 + 2nelx + 1$.
+The number of V dofs for a $Q_1^+$ space would be $(nelx+1)^2+nelx^2=2nelx^2 + 2nelx + 1$.
+The number of V dofs for a $Q_2$ space would be $(2*nelx+1)^2=4nelx^2 + 4nelx +1$.
+Asymptotically, for large values of $nelx$, we find that a $Q_1^+$ space requires twice as many dofs as $Q_1$
+while $Q_2$ requires 4 times as many.
+
+\begin{center}
+\includegraphics[width=8cm]{images/basis_q1p/NfemV_2D.pdf}
+\end{center}
+
+
+
 
 \Literature: 
 \begin{itemize}

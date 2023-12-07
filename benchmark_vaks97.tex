@@ -8,17 +8,19 @@ Data pertaining to this section are to be found at:
 \vspace{1cm}
 
 
-This numerical experiment was first presented in \cite{vaks97}.
+This numerical experiment was first presented in \textcite{vaks97} (1997).
 It consists of an isothermal Rayleigh-Taylor instability in a two-dimensional box
 of size $Lx=0.9142$ and $L_y=1$.
 
-Two Newtonian fluids are present in the system: the buoyant layer is placed at the bottom of 
-the box and the interface between both fluids is given by 
+Two Newtonian fluids are present in the system: the buoyant layer is 
+placed at the bottom of the box and the interface between both fluids 
+is given by 
 \begin{equation}
 y(x)=0.2+0.02\cos \left( \frac{\pi x}{L_x}  \right)
 \end{equation}
-The bottom fluid is parametrised by its mass density $\rho_1=1000$ and its viscosity $\eta_1$, 
-while the layer above is parametrised by $\rho_2=1010$ and $\eta_2=100$.
+The bottom fluid is parametrised by its density $\rho_1=1000$ and 
+its viscosity $\eta_1$, while the layer above is parametrised 
+by $\rho_2=1010$ and $\eta_2=100$.
 This experiment is to be carried out for various viscosity constrasts between the 
 two layers, i.e. $\eta_1=\{1,10,100\}$.
 
@@ -40,27 +42,31 @@ One can measure the following quantities:
 
 \begin{itemize}
 
-\item the root mean square velocity $v_{rms}$ in the domain as a function of time:
+\item the root mean square velocity $\upnu_{rms}$ in the domain as a function of time:
 \begin{equation}
-v_{rms}= \sqrt{ \frac{1}{L_xL_y} \int \int |{\bm v}|^2 dxdy}
+\upnu_{rms}= \sqrt{ \frac{1}{L_xL_y} \int \int |{\vec \upnu}|^2 dxdy}
 \end{equation}
 
-\item the maximum (or local maxima) of the $v_{rms}$ and its (their) corresponding time(s)
+\item the maximum (or local maxima) of the $\upnu_{rms}$ and 
+its (their) corresponding time(s)
 
 \item the growth rate of the instability at $t=0$.
-From linear stability analysis, the analytical growth rate can be calculated \cite{ramb68,ramb81}: 
+From linear stability analysis, the analytical growth rate can 
+be calculated \cite{ramb68,ramb81}: 
 $\gamma_{th}=0.01094019$, which is valid for an infinitesimal perturbation. 
-For each model run, the growth rate $\gamma$ is measured by fitting the $v_{rms}$ and/or (?) the maximum 
+For each model run, the growth rate $\gamma$ is measured by fitting 
+the $\upnu_{rms}$ and/or (?) the maximum 
 vertical velocity measurements for a short time $t$. 
 
-\item the total mass of the system $M(t)$ as a function of time. Since there is no chemical diffusion in the 
-system (pure advection equation) the amount of material in the system is to remain constant, and 
-therefore its mass.
+\item the total mass of the system $M(t)$ as a function of time. 
+Since there is no chemical diffusion in the 
+system (pure advection equation) the amount of material in the system 
+is to remain constant, and therefore its mass too.
 \begin{equation}
 M(t) = \int \int \rho(x,y,t) dxdy
 \end{equation}
-Given the layout described in the previous paragraph, the exact analytical initial mass $M_0$ of the system 
-is given by 
+Given the layout described in the previous paragraph, the exact 
+analytical initial mass $M_0$ of the system is given by 
 \[
 M_0=0.9142 \times (0.2 \times 1000 + 0.8\times 1010) = 921.5136
 \]
@@ -83,20 +89,18 @@ which is equal to
 \]
 with $y(x)=0.2+0.02\cos(\pi x/L)$. Using WolframAlpha, we find
 \[
-{\cal L}(0)= \frac{L}{\pi} \int_0^\pi \sqrt{1 + \left(0.02\frac{\pi}{L}\sin(\pi x /L) \right)^2} dx
+{\cal L}(0)= \frac{L}{\pi} \int_0^\pi \sqrt{1 + 
+\left(0.02\frac{\pi}{L}\sin(\pi x /L) \right)^2} dx
 \simeq 0.9152786349
 \]
 
 \end{itemize}
 
 
-
-
 \paragraph{Instantaneous results}.
-Results obtained with stone 25 ($Q_2\times Q_1$ element) 
-and stone 93 ($P_2^+\times P_{-1}$ element), 
+Results obtained with \stone~\ref{f25} ($Q_2\times Q_1$ element) 
+and \stone~\ref{f93} ($P_2^+\times P_{-1}$ element), 
 both with mesh fitted so as to follow the interface between both fluids.
-
 
 \begin{center}
 \begin{tabular}{llp{4cm}p{4cm}p{4cm}}
@@ -428,6 +432,12 @@ by \cite{vaks97} but results are therefore not consistent with those of \cite{va
 \includegraphics[width=7cm]{images/benchmark_vaks97/MVEP2/vrms.pdf}
 \end{center}
 
+\item \textcite{buoa24} (2024).
+
+\begin{center}
+\includegraphics[width=12cm]{images/benchmark_vaks97/buoa24/buoa24_1}\\
+\includegraphics[width=7cm]{images/benchmark_vaks97/buoa24/buoa24_2}
+\end{center}
 
 
 

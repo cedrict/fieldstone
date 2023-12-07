@@ -43,6 +43,14 @@ c) the interface with MUMPS is seamless.
 \item Newton solver (?)
 \end{itemize}
 
+Limitations: all elements are of the same type, with the same number of 
+quadrature points, etc ...
+for now T is Q1
+
+store sparse in COO with duplicates and then convert to CSR?
+
+store basis fct values at quad pts
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Philosophy}
 \begin{itemize}
@@ -62,7 +70,7 @@ The whole code is built around a few modules and objects:
 
 \begin{itemize}
 \item {\filenamefont module\_parameters.f90}\\
-\lstinputlisting[language=Fortran]{ELEFANT/module_parameters.f90}
+\lstinputlisting[language=Fortran,basicstyle=\tiny]{ELEFANT/module_parameters.f90}
 
 \item {\filenamefont module\_gravity.f90}\\
 \lstinputlisting[language=Fortran]{ELEFANT/module_gravity.f90}
