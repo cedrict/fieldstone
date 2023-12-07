@@ -16,37 +16,37 @@ Nfem         = 18690
 experiment   = sinker
 unstructured = False
 *****************************
-mesh setup: 0.039 s
-analytical solution: 0.009 s
-bc setup: 0.007 s
+mesh setup: 0.012 s
+analytical solution: 0.004 s
+bc setup: 0.009 s
 build Q1/P1 mesh: 0.002 s
      -> area (m,M) 4.882812e-04 4.882812e-04 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 0.703 s
-compute local_to_global: 0.062s
-fill I,J arrays: 0.419s
-     -> assembly: 0.260 s
-build FE matrix: 2.261 s
-convert matrix to csr: 0.011 s
-solve time: 1.353 s
+compute elements areas: 0.759 s
+compute local_to_global: 0.070s
+fill I,J arrays: 0.400s
+     -> assembly: 0.242 s
+build FE matrix: 2.531 s
+convert matrix to csr: 0.012 s
+solve time: 0.647 s
      -> u (m,M) -1.1323e-03 1.1323e-03 
      -> v (m,M) -7.8931e-04 6.7801e-04 
-     -> p (m,M) -6.0239e-01 4.4573e-01 
+     -> p (m,M) -6.1982e+01 -6.0934e+01 
 split vel into u,v: 0.000 s
-     -> avrg_p= -0.06002702147935233
+     -> avrg_p= -61.439834046389926
      -> p (m,M) -0.5424 0.5058 
-pressure normalisation: 0.724 s
+pressure normalisation: 0.685 s
      -> h (m,M,avrg)= 3.125000e-02 3.125000e-02 3.125000e-02 
-     -> nel=   2048 ; vrms= 4.59621241e-04 ; vrms_th= 0.00000000e+00 ;  12546   6144 3.125000e-02
-     -> nel=   2048 ; errv= 4.59621241e-04 ; errp= 2.95593497e-01 ; errdivv= 1.95275015e-04 |  12546   6144 3.12500000e-02
-compute vrms & errors: 1.164 s
-     -> sinker_vel 0.5 0.75 -0.0007893027719620343 10000.0 0.4 32
-     -> sinker_press 0.5 0.75 -0.2587510794906951 10000.0 0.4 32
-     -> sinker_press 0.5 0.75 -0.25875107922367774 10000.0 0.4 32
-     -> sinker_press 0.5 0.75 -0.25453976349655794 10000.0 0.4 32
-     -> sinker_press 0.5 0.75 -0.2601385855501642 10000.0 0.4 32
-     -> sinker_press 0.5 0.75 -0.2545397623377579 10000.0 0.4 32
-     -> sinker_press 0.5 0.75 -0.26013858564120274 10000.0 0.4 32
+     -> nel=   2048 ; vrms= 4.59621229e-04 ; vrms_th= 0.00000000e+00 ;  12546   6144 3.125000e-02
+     -> nel=   2048 ; errv= 4.59621229e-04 ; errp= 2.95593496e-01 ; errdivv= 1.95275010e-04 |  12546   6144 3.12500000e-02
+compute vrms & errors: 1.267 s
+     -> sinker_vel 0.5 0.75 -0.0007893027523327916 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.25875109494385384 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.2587510653922038 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.2545398166626782 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.26013858374707155 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.2545398428785788 10000.0 0.4 32
+     -> sinker_press 0.5 0.75 -0.26013859979681087 10000.0 0.4 32
 *****************************
 *****************************

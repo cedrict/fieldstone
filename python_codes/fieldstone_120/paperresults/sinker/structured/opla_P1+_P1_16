@@ -16,32 +16,32 @@ Nfem         = 1891
 experiment   = sinker
 unstructured = False
 *****************************
-mesh setup: 0.007 s
-analytical solution: 0.003 s
-bc setup: 0.003 s
-build Q1/P1 mesh: 0.002 s
+mesh setup: 0.002 s
+analytical solution: 0.000 s
+bc setup: 0.001 s
+build Q1/P1 mesh: 0.000 s
      -> area (m,M) 1.953125e-03 1.953125e-03 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 0.195 s
-compute local_to_global: 0.009s
-fill I,J arrays: 0.052s
+compute elements areas: 0.118 s
+compute local_to_global: 0.011s
+fill I,J arrays: 0.048s
      -> assembly: 0.029 s
-build FE matrix: 0.358 s
-convert matrix to csr: 0.001 s
-solve time: 0.022 s
+build FE matrix: 0.412 s
+convert matrix to csr: 0.002 s
+solve time: 0.023 s
      -> u (m,M) -1.1718e-03 1.1718e-03 
      -> v (m,M) -6.6922e-04 5.8559e-04 
-     -> p (m,M) -7.6019e-01 2.9985e-01 
+     -> p (m,M) -7.6618e-01 2.9386e-01 
 split vel into u,v: 0.000 s
-     -> avrg_p= -0.20595399084105828
+     -> avrg_p= -0.2119473727902708
      -> p (m,M) -0.5542 0.5058 
-pressure normalisation: 0.122 s
+pressure normalisation: 0.117 s
      -> h (m,M,avrg)= 6.250000e-02 6.250000e-02 6.250000e-02 
      -> nel=    512 ; vrms= 3.98080911e-04 ; vrms_th= 0.00000000e+00 ;   1602    289 6.250000e-02
-     -> nel=    512 ; errv= 3.98080911e-04 ; errp= 2.95526012e-01 ; errdivv= 9.71040297e-04 |   1602    289 6.25000000e-02
-compute vrms & errors: 0.217 s
-     -> sinker_vel 0.5 0.75 -0.0006656949387466951 10000.0 0.4 16
-     -> sinker_press 0.5 0.75 -0.2690711091837922 10000.0 0.4 16
+     -> nel=    512 ; errv= 3.98080911e-04 ; errp= 2.95526012e-01 ; errdivv= 9.71040296e-04 |   1602    289 6.25000000e-02
+compute vrms & errors: 0.229 s
+     -> sinker_vel 0.5 0.75 -0.0006656949383790248 10000.0 0.4 16
+     -> sinker_press 0.5 0.75 -0.26907110909575305 10000.0 0.4 16
 *****************************
 *****************************
