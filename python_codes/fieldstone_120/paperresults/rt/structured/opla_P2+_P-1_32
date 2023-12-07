@@ -16,31 +16,31 @@ Nfem         = 18690
 experiment   = RTwave
 unstructured = False
 *****************************
-mesh setup: 0.042 s
-analytical solution: 0.011 s
-bc setup: 0.005 s
-build Q1/P1 mesh: 0.129 s
+mesh setup: 0.013 s
+analytical solution: 0.004 s
+bc setup: 0.009 s
+build Q1/P1 mesh: 0.132 s
      -> area (m,M) 4.785156e-04 4.980469e-04 
      -> total area meas 1.00000000e+00 
      -> total area anal 1.00000000e+00 
-compute elements areas: 0.605 s
-compute local_to_global: 0.064s
-fill I,J arrays: 0.410s
-     -> assembly: 0.221 s
-build FE matrix: 2.074 s
-convert matrix to csr: 0.010 s
-solve time: 0.975 s
+compute elements areas: 0.742 s
+compute local_to_global: 0.070s
+fill I,J arrays: 0.401s
+     -> assembly: 0.245 s
+build FE matrix: 2.737 s
+convert matrix to csr: 0.012 s
+solve time: 0.635 s
      -> u (m,M) -1.4261e-07 1.4261e-07 
      -> v (m,M) -3.8895e-07 3.9018e-07 
-     -> p (m,M) 2.0997e-01 1.2600e+00 
+     -> p (m,M) -5.1942e-01 5.3058e-01 
 split vel into u,v: 0.000 s
-     -> avrg_p= 0.7474707212982892
+     -> avrg_p= 0.018075852227317248
      -> p (m,M) -0.5375 0.5125 
-pressure normalisation: 0.615 s
+pressure normalisation: 0.679 s
      -> h (m,M,avrg)= 3.093592e-02 3.156095e-02 3.124922e-02 
      -> nel=   2048 ; vrms= 1.34243973e-07 ; vrms_th= 0.00000000e+00 ;  12546   6144 3.124922e-02
      -> nel=   2048 ; errv= 1.34243973e-07 ; errp= 3.03194729e-01 ; errdivv= 1.57636283e-08 |  12546   6144 3.12492187e-02
-compute vrms & errors: 1.003 s
-     -> rt_wave 3.9018197553475353e-07 6.283185307179586 100.0 0.1 32 3.9369379342347727e-07
+compute vrms & errors: 1.280 s
+     -> rt_wave 3.901819866202044e-07 6.283185307179586 100.0 0.1 32 3.9369379342347727e-07
 *****************************
 *****************************
