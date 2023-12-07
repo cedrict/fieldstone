@@ -189,7 +189,7 @@ print("build connectivity: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-bc_fixV=np.zeros(Nfem,dtype=np.bool)  # boundary condition, yes/no
+bc_fixV=np.zeros(Nfem,dtype=bool)  # boundary condition, yes/no
 bc_valV=np.zeros(Nfem,dtype=np.float64)  # boundary condition, value
 
 for i in range(0,NV):
@@ -237,7 +237,7 @@ print("build grid T: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-bc_fixT=np.zeros(NfemT,dtype=np.bool) # boundary condition, yes/no
+bc_fixT=np.zeros(NfemT,dtype=bool) # boundary condition, yes/no
 bc_valT=np.zeros(NfemT,dtype=np.float64)  # boundary condition, value
 
 for i in range(0,NT):

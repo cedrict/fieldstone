@@ -281,7 +281,7 @@ print("setup: connectivity: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
 if case==1 or case==2 or case==5:

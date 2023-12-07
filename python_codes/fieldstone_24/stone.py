@@ -167,7 +167,7 @@ print("setup: connectivity: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-bc_fixV=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+bc_fixV=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_valV=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
 for i in range(0, nnp):
@@ -180,7 +180,7 @@ for i in range(0, nnp):
     if y[i]/Ly>1-eps:
        bc_fixV[i*ndofV+1] = True ; bc_valV[i*ndofV+1] = 0
 
-bc_fixT=np.zeros(NfemT,dtype=np.bool) # boundary condition, yes/no
+bc_fixT=np.zeros(NfemT,dtype=bool) # boundary condition, yes/no
 bc_valT=np.zeros(NfemT,dtype=np.float64)  # boundary condition, value
 
 for i in range(0,nnp):
