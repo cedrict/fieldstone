@@ -18,16 +18,16 @@ ndofP=1
 Lx=1
 Ly=1
 
-nelx=64
+nelx=100
 
-Vspace='Q2'
-Pspace='Q1'
+Vspace='P2+'
+Pspace='P-1'
 
 visu=1
 
-experiment='jolm17'
+experiment='jokn16'
 
-unstructured=0
+unstructured=1
 
 isoparametric=True
 randomize_mesh=False
@@ -36,6 +36,7 @@ etastar=1
 drho=0.01
 
 ass_method=2
+
 
 ###############################################################################
 # allowing for argument parsing through command line
@@ -77,6 +78,7 @@ if experiment=='solcx'          : import mms_solcx as mms
 if experiment=='solkz'          : import mms_solkz as mms
 if experiment=='solvi'          : import mms_solvi as mms
 if experiment=='RTwave'         : import mms_RTwave as mms
+if experiment=='jokn16'         : import mms_jokn16 as mms
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
@@ -567,7 +569,7 @@ errv=np.sqrt(errv/(Lx*Ly))
 errp=np.sqrt(errp/(Lx*Ly))
 errdivv=np.sqrt(errdivv/(Lx*Ly))
 
-print("     -> nel= %6d ; vrms= %.8e ; vrms_th= %.8e ; %6d %6d %e" %(nel,vrms,mms.vrms_th(),NfemV,NfemP,havrg))
+print("     -> nel= %6d ; vrms= %.8e ; vrms= %.8e ; %6d %6d %e" %(nel,vrms,mms.vrms(),NfemV,NfemP,havrg))
 print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errdivv= %.8e | %6d %6d %.8e" %(nel,errv,errp,errdivv,NfemV,NfemP,havrg))
 
 print("compute vrms & errors: %.3f s" % (timing.time() - start))
@@ -776,6 +778,7 @@ if visu:
 
    Tools.export_swarm_vector_to_vtu(xV,yV,u,v,'solution_velocity.vtu')
    Tools.export_swarm_vector_to_vtu(xV,yV,uth,vth,'velocity_analytical.vtu')
+   Tools.export_swarm_vector_to_vtu(xV,yV,u-uth,v-vth,'velocity_error.vtu')
    Tools.export_swarm_scalar_to_vtu(xP,yP,p,'solution_pressure.vtu')
 
    Tools.export_swarm_vector_to_ascii(xV,yV,uth,vth,'velocity_analytical.ascii')

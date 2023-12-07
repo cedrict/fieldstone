@@ -1,17 +1,7 @@
 import numpy as np
 import math as math
 
-#def u_th(x,y):
-#    uu,vv,pp=SolViSolution(x,y)
-#    return uu
-
-#def v_th(x,y):
-#    uu,vv,pp=SolViSolution(x,y)
-#    return vv
-
-#def p_th(x,y):
-#    uu,vv,pp=SolViSolution(x,y)
-#    return pp
+###############################################################################
 
 def eta(x,y,param):
     if (np.sqrt(x*x+y*y) < 0.2):
@@ -19,14 +9,20 @@ def eta(x,y,param):
     else:
        return 1e0
 
-def vrms_th():
+###############################################################################
+
+def vrms():
     return 0 
+
+###############################################################################
 
 def bx(x,y,param):
     return 0 
 
 def by(x,y,param):
     return 0 
+
+###############################################################################
 
 left_bc  ='analytical'
 right_bc ='analytical'
@@ -65,4 +61,4 @@ def solution(x,y):
 
     return vx,vy,p
 
-#------------------------------------------------------------------------------
+###############################################################################

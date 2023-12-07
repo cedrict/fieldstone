@@ -21,7 +21,7 @@ def eta(x,y,param):
     else:
        return 1e6
 
-def vrms_th():
+def vrms():
     return 0 
 
 def bx(x,y,param):

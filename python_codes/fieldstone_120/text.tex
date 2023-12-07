@@ -11,6 +11,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\index{stopics}{Donea \& Huerta mms}
+
 The rationale behind this stone is as follows:
 \begin{itemize}
 \item create a library of basis functions and quadrature rules, as well as 
@@ -727,10 +729,10 @@ FINISH!!!
 \end{center}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/unstructured16}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/unstructured32}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/unstructured48}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/unstructured64}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/images/unstructured16}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/images/unstructured32}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/images/unstructured48}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/images/unstructured64}
 \end{center}
 
 
@@ -807,18 +809,16 @@ Resolutions nelx=16, 32, 64, 128 are chosen so that element boundaries align wit
 \subsection*{Structured mesh}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_16}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_32}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_48}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_64}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_80}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_96}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_16}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_32}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_48}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_64}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_80}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_96}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_16}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_32}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_64}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_128}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_vel_160}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_16}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_32}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_64}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_128}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker_reduced/structured/sinker_reduced_press_160}\\
 \end{center}
 
 
@@ -850,9 +850,9 @@ Resolutions nelx=16, 32, 64, 128 are chosen so that element boundaries align wit
 \end{center}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/solvi/unstructured/mesh}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/solvi/unstructured/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/solvi/unstructured/press}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_120/images/solvi_mesh2}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/images/solvi_vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/images/solvi_press}\\
 {\captionfont P2+P-1, nelx=32}
 \end{center}
 
@@ -879,6 +879,8 @@ u(x,y) &=& 1000 x^2(1-x)^4  y^2 (3-5y) (1-y) \\
 v(x,y) &=& -1000 2x(1-3x) (1-x)^3  y^3(1-y)^2   \\
 p(x,y) &=& \pi^2 [xy^3 \cos(2\pi x^2 y) - x^2y \sin(2\pi xy) ]+1/8
 \end{eqnarray}
+In this case the viscosity is constant $\eta=1$. The same fields 
+with non-constant viscosity is explored in the jokn16 benchmark here after.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/johnbook_structured_errorsV.pdf}
@@ -926,9 +928,9 @@ check rate of mini that seems to have decreased!
 \section*{NEW Results - Rayleigh-Taylor wave}
 
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_120/paperresults/rt/rt_setup}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_120/paperresults/rt/rt_vel}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_120/paperresults/rt/rt_press}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_120/images/rt_setup}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_120/images/rt_vel}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_120/images/rt_press}
 \end{center}
 
 \begin{center}
@@ -955,7 +957,7 @@ p(x,y) &=& \frac12 x^2 -\frac16 \nn
 \end{eqnarray}
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_120/images/bocg12tab}
+\includegraphics[width=13cm]{python_codes/fieldstone_120/images/bocg12tab}
 \end{center}
 
 {\tt script\_paper\_bocg12\_structured} and {\tt script\_paper\_bocg12\_unstructured}
@@ -969,8 +971,8 @@ p(x,y) &=& \frac12 x^2 -\frac16 \nn
 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/bocg12/structured/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/bocg12/structured/press}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/images/bocg12_vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/images/bocg12_press}
 \end{center}
 
 
@@ -981,9 +983,51 @@ p(x,y) &=& \frac12 x^2 -\frac16 \nn
 It originates in \textcite{jolm17} (2017), see Section~\ref{MMM-ss:mms_jolm17}.
 I recall here the solution:
 
+\begin{eqnarray}
+u(x,y) &=& 200x^2(1-x)^2y(1-y)(1-2y) \\
+v(x,y) &=& -200x(1-x)(1-2x)y^2(1-y)^2 \\
+p(x,y) &=& 10\left[(x-1/2)^3y^2+(1-x)^3(y-1/2)^3 \right]
+\end{eqnarray}
+
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/jolm17/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_120/paperresults/jolm17/press}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/images/jolm17_vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/images/jolm17_press}
+\end{center}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{NEW Results - jokn16 mms}
+
+{\tt script\_paper\_jokn16\_structured} and {\tt script\_paper\_jokn16\_unstructured}
+
+This benchmark is presented in Section~\ref{MMM-ss:mms_jokn16}.
+\begin{eqnarray}
+u(x,y) &=&  1000 x^2(1-x)^4  y^2 (3-5y) (1-y) \nonumber\\
+v(x,y) &=& -1000 2x(1-3x) (1-x)^3  y^3(1-y)^2 \nonumber\\
+p(x,y) &=& \pi^2 [xy^3 \cos(2\pi x^2 y) - x^2y \sin(2\pi xy) ]+1/8 \nonumber\\
+\eta_1(x,y) &=& \eta_{min}+(\eta_{max}-\eta_{min}) x^2 (1-x)y^2(1-y)\frac{721}{16} 
+\nonumber
+\end{eqnarray}
+with $\eta_{min}=1$ and $\eta_{max}=10^p$.
+
+Note that this is the 1st benchmark with viscosity contrast where the 
+rhs (forcing term) actually contains the derivative of the viscosity.
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/images/jokn16_vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/images/jokn16_press}
+\includegraphics[width=5cm]{python_codes/fieldstone_120/images/jokn16_eta}
+\end{center}
+
+RERUN STRUCTURED!!
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/jokn16_structured_errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/jokn16_structured_errorsP.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/jokn16_unstructured_errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/jokn16_unstructured_errorsP.pdf}\\
+{\captionfont obtained with $p=1,2,3$}
 \end{center}
 
 
@@ -994,7 +1038,7 @@ I recall here the solution:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\section{Summary of mms results}
+\section*{Summary of mms results}
 
 
 we have $e_{\bm u}=||u-u_h||_{L_2} \propto h^m$ and $e_p=||p-p_h||_{L_2} \propto h^n$
@@ -1004,16 +1048,16 @@ In what follows I report the rates $m$ and $n$ of the velocity and pressure erro
 \subsection*{Structured mesh}
 
 \begin{center}
-\begin{tabular}{|l|cc|cc|cc|cc|cc|cc|}
+\begin{tabular}{|l|cc|cc|cc|cc|cc|cc|cc|}
 \hline
-element pair          & D\&H && SolKz  &&  John  && SolCx &&  SolVi && bocg12\\
-                      & m&n& m&n& m&n& m&n& m&n   & m&n\\
-$Q_2\times Q_1$       & 3&2    & 3&2     & 3&2    & 3&0.5   & 1 & 0.5 & 3&2 \\ 
-$Q_2\times P_{-1}$    & 3&2    & 3&2     & 3&2    & 3&2     & 1 & 0.5 & 3&2 \\ 
-$P_1^+\times P_{1}$   & 2&1.5  & 2&1.5   & 2&1.5  & 2&0.5   & 1 & 0.5 & 2&1.5 \\ 
-$P_2\times P_1$       & 3&2    & 3&2     & 3&2    & 3&0.5   & 1 & 0.5 & 3&2 \\ 
-$P_2\times P_0$       & 2&1    & 2&1     & 2&1    & 2&1     & 1 & 0.5 & 2&1 \\ 
-$P_2^+\times P_{-1}$  & 3&2    & 3&2     & 3&2    & 3&2     & 1 & 0.5 & 3&2 \\ 
+element pair          & D\&H && SolKz  &&  John  && SolCx &&  SolVi && bocg12&& jokn16 &\\
+                      & m&n& m&n& m&n& m&n& m&n   & m&n &m&n \\
+$Q_2\times Q_1$       & 3&2    & 3&2     & 3&2    & 3&0.5   & 1 & 0.5 & 3&2   & 3&2  \\ 
+$Q_2\times P_{-1}$    & 3&2    & 3&2     & 3&2    & 3&2     & 1 & 0.5 & 3&2   & 3&2  \\ 
+$P_1^+\times P_{1}$   & 2&1.5  & 2&1.5   & 2&1.5  & 2&0.5   & 1 & 0.5 & 2&1.5 & 2&1.5  \\ 
+$P_2\times P_1$       & 3&2    & 3&2     & 3&2    & 3&0.5   & 1 & 0.5 & 3&2   & 3&2  \\ 
+$P_2\times P_0$       & 2&1    & 2&1     & 2&1    & 2&1     & 1 & 0.5 & 2&1   & 2(?)&1  \\ 
+$P_2^+\times P_{-1}$  & 3&2    & 3&2     & 3&2    & 3&2     & 1 & 0.5 & 3&2   & 3&2  \\ 
 \hline
 \end{tabular}
 \end{center}
@@ -1022,16 +1066,17 @@ $P_2^+\times P_{-1}$  & 3&2    & 3&2     & 3&2    & 3&2     & 1 & 0.5 & 3&2 \\
 \subsection*{Unstructured mesh}
 
 \begin{center}
-\begin{tabular}{|l|cc|cc|cc|cc|cc|cc|}
+\begin{tabular}{|l|cc|cc|cc|cc|cc|cc|cc|}
 \hline
-element pair          & D\&H && SolKz  &&  John  && SolCx &&  SolVi && bocg12 \\
+element pair          & D\&H && SolKz  &&  John  && SolCx &&  SolVi && bocg12&&jokn16 & \\
                       & m&n& m&n& m&n& m&n& m&n& m&n \\
-$Q_2\times Q_1$       &  -&- & -&- &  -&- &  -&-   & -&-\\
-$Q_2\times P_{-1}$    &  -&- & -&- &  -&- &  -&-   & -&-\\
-$P_1^+\times P_{1}$   &  2&1 & 2&1 &  2&? &  2&0.5 & 2 & 0.5 &2&1\\
-$P_2\times P_1$       &  3&2 & 3&2 &  3&2 &  3&0.5 & 3 & 0.5 &3&2\\
-$P_2\times P_0$       &  2&1 & 2&1 &  2&1 &  2&1   & 2 & 1   &2&1\\
-$P_2^+\times P_{-1}$  &  3&2 & 3&2 &  3&2 &  3&2   & 3 & 2   &3&2\\
+\hline
+$Q_2\times Q_1$       &  -&- & -&- &  -&- &  -&-   & -&-&-&-&-&-\\
+$Q_2\times P_{-1}$    &  -&- & -&- &  -&- &  -&-   & -&-&-&-&-&-\\
+$P_1^+\times P_{1}$   &  2&1 & 2&1 &  2&? &  2&0.5 & 2&0.5 &2&1 & 2&1\\
+$P_2\times P_1$       &  3&2 & 3&2 &  3&2 &  3&0.5 & 3&0.5 &3&2 & {\bf 2}&2\\
+$P_2\times P_0$       &  2&1 & 2&1 &  2&1 &  2&1   & 2&1   &2&1 & ?&1\\
+$P_2^+\times P_{-1}$  &  3&2 & 3&2 &  3&2 &  3&2   & 3&2   &3&2 & {\bf 2}&2\\
 \hline
 \end{tabular}
 \end{center}

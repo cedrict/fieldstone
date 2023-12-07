@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# sudo apt-get install bc
+
+###############################################################################
+
+echo =================jokn16====================unstructured
+rm -f opla*
+rm -f vrms*
+rm -f errors* 
+mkdir paperresults/jokn16
+mkdir paperresults/jokn16/unstructured
+
+for e in 3 5 9 18 ; do 
+
+    if test $e == 3  ; then Vspace=P2    Pspace=P0  ; fi
+    if test $e == 5  ; then Vspace=P2    Pspace=P1  ; fi
+    if test $e == 9  ; then Vspace=P1+   Pspace=P1  ; fi
+    if test $e == 18 ; then Vspace=P2+   Pspace=P-1 ; fi
+
+    echo ---------- $Vspace X $Pspace ----------
+
+    #for n in 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 88 96 104 112 128 144 160 192 224 256; do
+    for n in 16 20 24 28 32 36 40 44 48 64 80 96 112 128 160; do
+        echo mesh: $n X $n 
+        start=`date +%s.%N`
+        python3 stone.py $n $Vspace $Pspace jokn16 1 >> opla
+        end=`date +%s.%N`
+        runtime=$( echo "$end - $start" | bc -l )
+        echo '     -> ' $runtime ' s'
+    done
+    grep errv opla > errors_${Vspace}_${Pspace}
+    grep vrms= opla > vrms_${Vspace}_${Pspace}
+    mv opla opla_${Vspace}_${Pspace}
+
+done
+
+#mv err* paperresults/jokn16/unstructured
+#mv opla* paperresults/jokn16/unstructured
+#mv vrms* paperresults/jokn16/unstructured

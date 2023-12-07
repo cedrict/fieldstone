@@ -46,7 +46,7 @@ def bx(x,y,drho):
     return 0 
 
 
-def vrms_th():
+def vrms():
     return 0
 
 left_bc  ='free_slip'

@@ -41,7 +41,7 @@ def bx(x,y,dum):
 def by(x,y,dum):
     return dpdy_th(x,y)-2*dexydx(x,y)-2*deyydy(x,y)
 
-def vrms_th():
+def vrms():
     return 0.777615791
 
 left_bc  ='no_slip'

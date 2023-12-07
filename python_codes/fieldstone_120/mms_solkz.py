@@ -1,38 +1,23 @@
 import math as math
 import numpy as np
-import numba
-from numba import jit
 
-#def u_th(x,y):
-#    uu,vv,pp=SolKzSolution(x,y)
-#    return uu
-
-#def v_th(x,y):
-#    uu,vv,pp=SolKzSolution(x,y)
-#    return vv
-
-#def p_th(x,y):
-#    uu,vv,pp=SolKzSolution(x,y)
-#    return pp
+###############################################################################
 
 def eta(x,y,param):
     return np.exp(13.8155*y) 
 
-def vrms_th():
+###############################################################################
+
+def vrms():
     return 0 
+
+###############################################################################
 
 def bx(x,y,param):
     return 0 
 
 def by(x,y,param):
     return np.sin(2.*y)*np.cos(3.*np.pi*x)
-
-left_bc  ='free_slip'
-right_bc ='free_slip'
-bottom_bc='free_slip'
-top_bc   ='free_slip'
-
-pnormalise=True
 
 ###############################################################################
 
@@ -471,3 +456,14 @@ def solution(posx,posy):
     strain_rate3 = (sum4)/(2.0*ZZZ);
 
     return velx,vely,presssure
+
+###############################################################################
+
+left_bc  ='free_slip'
+right_bc ='free_slip'
+bottom_bc='free_slip'
+top_bc   ='free_slip'
+
+pnormalise=True
+
+###############################################################################

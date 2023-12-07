@@ -35,15 +35,6 @@ def solution(x,y):
           -1000*fp(x)*g(y),\
           np.pi**2*(x*y**3*np.cos(2*np.pi*x**2*y) - x**2*y*np.sin(2*np.pi*x*y) )+1/8 
 
-#def u_th(x,y):
-#    return 1000*f(x)*gp(y) 
-
-#def v_th(x,y):
-#    return -1000*fp(x)*g(y)
-
-#def p_th(x,y):
-#    return np.pi**2*(x*y**3*np.cos(2*np.pi*x**2*y) - x**2*y*np.sin(2*np.pi*x*y) )+1/8 
-
 #----------------------------------------
 
 def dpdx_th(x,y):
@@ -87,7 +78,7 @@ def bx(x,y,dum):
 def by(x,y,dum):
     return dpdy_th(x,y)-2*dexydx(x,y)-2*deyydy(x,y)
 
-def vrms_th():
+def vrms():
     return 1.4953325891041323968540981
 
 def eta(x,y,dum):
