@@ -1,5 +1,6 @@
 results
-results_sinker
-results_jolm17
-results_johnbook
-literature
+*.vtu
+*.ascii
+*.png
+vrms*
+opla*

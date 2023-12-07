@@ -42,5 +42,5 @@ done
 mv err* paperresults/dh/structured
 mv opla* paperresults/dh/structured
 mv vrms* paperresults/dh/structured
-mv visu*.vtu paperresults/dh/structured
+#mv visu*.vtu paperresults/dh/structured
 
