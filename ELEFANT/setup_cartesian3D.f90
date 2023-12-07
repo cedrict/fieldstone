@@ -99,9 +99,9 @@ if (pair=='q1p0' .or. pair=='q1q1') then
             mesh(counter)%zV(7)=(ielz-1)*hz+hz
             mesh(counter)%zV(8)=(ielz-1)*hz+hz
 
-            mesh(counter)%xL(1:mL)=mesh(counter)%xV(1:8)
-            mesh(counter)%yL(1:mL)=mesh(counter)%yV(1:8)
-            mesh(counter)%zL(1:mL)=mesh(counter)%zV(1:8)
+            !mesh(counter)%xL(1:mL)=mesh(counter)%xV(1:8)
+            !mesh(counter)%yL(1:mL)=mesh(counter)%yV(1:8)
+            !mesh(counter)%zL(1:mL)=mesh(counter)%zV(1:8)
 
             mesh(counter)%xc=(ielx-1)*hx+hx/2
             mesh(counter)%yc=(iely-1)*hy+hy/2
@@ -341,19 +341,19 @@ end if
 ! temperature 
 
 do iel=1,nel
-do k=1,mT
-   mesh(iel)%xT(k)=mesh(iel)%xV(k)
-   mesh(iel)%yT(k)=mesh(iel)%yV(k)
-   mesh(iel)%zT(k)=mesh(iel)%zV(k)
-   mesh(iel)%iconT(k)=mesh(iel)%iconV(k)
-end do
+   do k=1,mT
+      mesh(iel)%xT(k)=mesh(iel)%xV(k)
+      mesh(iel)%yT(k)=mesh(iel)%yV(k)
+      mesh(iel)%zT(k)=mesh(iel)%zV(k)
+      mesh(iel)%iconT(k)=mesh(iel)%iconV(k)
+   end do
 end do
 
 !==========================================================
 ! flag nodes on boundaries
 
 do iel=1,nel
-   do i=1,ncorners
+   do i=1,mV
       mesh(iel)%bnd1_node(i)=(abs(mesh(iel)%xV(i)-0 )<eps*Lx)
       mesh(iel)%bnd2_node(i)=(abs(mesh(iel)%xV(i)-Lx)<eps*Lx)
       mesh(iel)%bnd3_node(i)=(abs(mesh(iel)%yV(i)-0 )<eps*Ly)

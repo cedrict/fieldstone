@@ -74,6 +74,7 @@ else
 
       csrK%N=NfemV
 
+      !----------------------------------------------------------------------------------
       if (geometry=='cartesian' .and. ndim==2) then
 
          nnx=nelx+1
@@ -151,17 +152,18 @@ else
 
       end if ! cartesian 2D
 
+      !----------------------------------------------------------------------------------
       if (geometry=='cartesian' .and. ndim==3) then
 
          nnx=nelx+1
          nny=nely+1
          nnz=nelz+1
-         csrK%nz=8*8                                              &! 8 corners with 8 neighbours
-             +(nnx-2)*(nny-2)*(nnz-2)*27           &! all the inside nodes with 27 neighbours
-             +(4*(nnx-2)+4*(nny-2)+4*(nnz-2))*12   &! the edge nodes with 12 neighbours  
-             +2*(nnx-2)*(nny-2)*18                      &! 2 faces
-             +2*(nnx-2)*(nnz-2)*18                      &! 2 faces
-             +2*(nny-2)*(nnz-2)*18                       ! 2 faces
+         csrK%nz=8*8                                  &! 8 corners with 8 neighbours
+                +(nnx-2)*(nny-2)*(nnz-2)*27           &! all the inside nodes with 27 neighbours
+                +(4*(nnx-2)+4*(nny-2)+4*(nnz-2))*12   &! the edge nodes with 12 neighbours  
+                +2*(nnx-2)*(nny-2)*18                 &! 2 faces
+                +2*(nnx-2)*(nnz-2)*18                 &! 2 faces
+                +2*(nny-2)*(nnz-2)*18                  ! 2 faces
          csrK%nz=csrK%nz*(ndofV**2)                                ! matrix expands 3fold twice 
 
          if (.not. csrK%full_matrix_storage) csrK%nz=(csrK%nz-csrK%n)/2+csrK%n

@@ -16,13 +16,14 @@ use module_timing
 implicit none
 
 integer :: iq
-real(8) :: r_min,r_max,e_min,e_max
+real(8) :: dens_min,dens_max,visc_min,visc_max
 
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{compute\_elemental\_rho\_eta\_vol}
 !@@ This subroutine computes the elemental volume, the average density and 
-!@@ viscosity using the values already stored on the quadrature points. 
+!@@ viscosity (using arithmetic averaging) using the values already stored on the quadrature points. 
+!@@ It also returns the min/max values of these quantities.
 !==================================================================================================!
 
 if (iproc==0) then
@@ -31,10 +32,10 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-r_min=+1d30
-r_max=-1d30
-e_min=+1d30
-e_max=-1d30
+dens_min=+1d30
+dens_max=-1d30
+visc_min=+1d30
+visc_max=-1d30
 vol_min=+1d30
 vol_max=-1d30
 
@@ -49,16 +50,16 @@ do iel=1,nel
    end do
    mesh(iel)%rho_avrg=mesh(iel)%rho_avrg/mesh(iel)%vol
    mesh(iel)%eta_avrg=mesh(iel)%eta_avrg/mesh(iel)%vol
-   r_min=min(r_min,mesh(iel)%rho_avrg)
-   r_max=max(r_max,mesh(iel)%rho_avrg)
-   e_min=min(e_min,mesh(iel)%eta_avrg)
-   e_max=max(e_max,mesh(iel)%eta_avrg)
+   dens_min=min(dens_min,mesh(iel)%rho_avrg)
+   dens_max=max(dens_max,mesh(iel)%rho_avrg)
+   visc_min=min(visc_min,mesh(iel)%eta_avrg)
+   visc_max=max(visc_max,mesh(iel)%eta_avrg)
    vol_min=min(vol_min,mesh(iel)%vol)
    vol_max=max(vol_max,mesh(iel)%vol)
 end do
 
-write(*,'(a,2es10.3)') shift//'rho_avrg (m/M):',r_min,r_max
-write(*,'(a,2es10.3)') shift//'eta_avrg (m/M):',e_min,e_max
+write(*,'(a,2es10.3)') shift//'rho_avrg (m/M):',dens_min,dens_max
+write(*,'(a,2es10.3)') shift//'eta_avrg (m/M):',visc_min,visc_max
 
 !==============================================================================!
 

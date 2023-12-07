@@ -91,6 +91,8 @@ case('cartesian')
    if (ndim==2) call setup_cartesian2D
    if (ndim==3) call setup_cartesian3D
 case('spherical')
+   !if (ndim==2) call setup_annulus
+   !if (ndim==3) call setup_shell
 end select
 
 call output_mesh
