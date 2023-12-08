@@ -51,7 +51,7 @@ is formulated as a function of strain (not strain rate).
 
 
 
-\subsection{Basic equations}
+\section{Basic equations}
 
 The strong form of the PDE that governs force balance in a medium is given by
 \[
@@ -504,7 +504,7 @@ The expression above is to be found at \url{https://en.wikipedia.org/wiki/Linear
 
 \newpage
 %............................
-\subsection{Plane strain \label{ss:elpstrain}}
+\section{Plane strain \label{ss:elpstrain}}
 Typically one of the spatial dimensions (e.g. $z$)
 is very large compared to the other two. 
 As a consequence displacements $\upupsilon_z$ and 
@@ -778,7 +778,7 @@ In the case of a (near-)incompressible material, $\nu\rightarrow \frac12$ then $
 
 
 %............................
-\subsection{Plane stress}
+\section{Plane stress}
 
 For thin geometries. Let $z$ be the direction perpendicular to the plate.
 Tractions  on the $z$-surface are assumed to be negligible, e.g.
@@ -883,7 +883,7 @@ The stiffness matrix for plane stress is {\it not} found by removing columns and
 
 
 %.........................................................
-\subsection{The axisymmetric case} \label{ss:fem_elast_axissymm}
+\section{The axisymmetric case} \label{ss:fem_elast_axissymm}
 
 We start from 
 \begin{equation}
@@ -1343,7 +1343,7 @@ Note that in practice the matrix ${\bm D}$ is computed as follows (see for examp
 
 \newpage
 %-------------------------------------------------------------
-\subsection{FEM: Incompressible formulation from Zienkiewicz \& Taylor book}
+\section{FEM: Incompressible formulation from Zienkiewicz \& Taylor book}
 
 This is from Volume 1-The Basis, page 307. Note that the authors use a different sign convention for pressure so that what follows is adapted from the book.
 
@@ -1498,7 +1498,7 @@ $p=-\lambda \vec\nabla\cdot\vec{\upupsilon}$ (as opposed to $p=-K \vec\nabla\cdo
 
 \newpage
 %----------------------------------------------------
-\subsection{Elastic parameter values for Earth materials}
+\section{Elastic parameter values for Earth materials}
 
 
 what are $E$, $\nu$, $\mu$, etc ... for Earth ? bounds ? etc ...
@@ -1522,5 +1522,19 @@ steel &	2.1 &	0.83 \\
 
 Note that 1bar = 0.1MPa, so $10^6$bar=$10^5$MPa.
 
-In \textcite{famc14}, we find ``Elastic properties within the lithosphere and mantle are relatively well constrained with a shear modulus between $10^{10}$ and $10^{11}$ Pa.''
+In \textcite{famc14} (2014), we find ``Elastic properties within the 
+lithosphere and mantle are relatively well constrained with a shear 
+modulus between $10^{10}$ and $10^{11}$ Pa.''
+
+
+%==============================================================================
+\section{Benchmarks and analytical solutions}
+
+\begin{itemize}
+\item Cook's membrane problem (see \textcite{lami09} (2009) and refs therein; 
+see \textcite{lami14} (2014)).
+\item Rectangular beam problem (see \textcite{lami09} (2009) and refs therein; 
+see \textcite{lami14} (2014)).
+\item Thick-walled sphere under internal pressure (see \textcite{lami09} (2009) and refs therein).
+\end{itemize}
 

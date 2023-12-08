@@ -6,7 +6,7 @@
 %==================================================================================================
 %==================================================================================================
 %==================================================================================================
-\subsection{A remark}
+\section{A remark}
 
 In the absence of gravity, density does not enter the equations. 
 As such compressible elasticity is fine. 
@@ -19,10 +19,10 @@ meaning that they are reproducible or valid only for incompressible elastic (and
 %==================================================================================================
 %==================================================================================================
 %==================================================================================================
-\subsection{Analytical Benchmarks}
+\section{Analytical Benchmarks}
 
 %..........................................................
-\subsubsection{the 1D solution}
+\subsection{the 1D solution}
 We wish to find the general solution $\tau(t)$ of from the first order ODE
 \[
 \frac{1}{2\mu} \frac{d\tau}{dt} + \frac{1}{2\eta} \tau = \dot\varepsilon_0
@@ -153,7 +153,7 @@ since $t_M=\eta/\mu$.
 
 
 %..........................................................
-\subsubsection{Pure shear}
+\subsection{Pure shear}
 
 
 {\color{orange} fully incompressible}
@@ -236,10 +236,10 @@ Also check Gerya's book page 358 2nd edition ?
 
 
 %..........................................................
-\subsubsection{simple shear}
+\subsection{simple shear}
 
 %..........................................................
-\subsubsection{Rayleigh-Taylor instability}
+\subsection{Rayleigh-Taylor instability}
 
 {\color{orange} fully incompressible}
 
@@ -293,7 +293,7 @@ $A_0=1~\si{\km}$, $\lambda=L_x$.
 
 
 %..........................................................
-\subsubsection{stress build-up inside an elastic inclusion in a viscous matrix (Beuchert \& Podlachikov}
+\subsection{stress build-up inside an elastic inclusion in a viscous matrix (Beuchert \& Podlachikov}
 
 {\color{orange} fully incompressible}
 
@@ -336,7 +336,7 @@ inside a viscous inclusion (dashed horizontal line ‘viscous limit’).
 
 
 %..........................................................
-\subsubsection{Viscoelastic flow past a cylinder in a channel (Beuchert \& Podlachikov)}
+\subsection{Viscoelastic flow past a cylinder in a channel (Beuchert \& Podlachikov)}
 
 This is presented in Section 5.4 of \textcite{bepo10} (2010).
 
@@ -396,7 +396,7 @@ on a regular, structured grid at resolution $600 \times 200$ nodes.
 
 
 %-------------------------------------------------------
-\subsubsection{Elastic Simple Shear,  \textcite{vosc15} (2015)}
+\subsection{Elastic Simple Shear,  \textcite{vosc15} (2015)}
 
 
 
@@ -433,7 +433,7 @@ distribution becomes inhomogeneous and the simulation crashes for high strain.}
 
 
 %..........................................................
-\subsubsection{Response to load from ice sheet - Nakiboglu and Lambeck (1982)}
+\subsection{Response to load from ice sheet - Nakiboglu and Lambeck (1982)}
 
 The domain is $500\times500$km. Vertical gravity is 9.8, density is 3300, viscosity 
 is $3\cdot10^{20}~\si{\pascal\second}$, 
@@ -473,10 +473,10 @@ It was run with ASPECT: prm file in stone 64 results folder.
 %==================================================================================================
 %==================================================================================================
 %==================================================================================================
-\subsection{Numerical Benchmarks}
+\section{Numerical Benchmarks}
 
 %..........................................................
-\subsubsection{Bending of elastic slab (Gerya's book)}
+\subsection{Bending of elastic slab (Gerya's book)}
 
 The sinking slab benchmark consists of a beam of elastic material which is placed 
 in a weak and viscous surrounding medium. The initially unstressed beam is attached to the left domain boundary through boundary conditions. A stress is then applied to the beam in the form of gravity. The applied gravity force results in the deformation of the beam through bending. After 20 kyr, the gravity field is turned off and the elastic properties of the beam will then force itself to its original position. The set-up of the benchmark is given in the following figure:
@@ -518,7 +518,7 @@ visco-elasticity factor $Z$      \ [-]         & 0.9999999369280039      &  1.58
 
 
 %..........................................................
-\subsubsection{Flexure of elastic plate (Choi et al) \label{sec:chtl13}}
+\subsection{Flexure of elastic plate (Choi et al) \label{sec:chtl13}}
 
 
 This benchmark is presented in \textcite{chtl13} (2013). 
@@ -565,7 +565,7 @@ on top of the plate or a deformable mesh (ALE formulation, see Section~\ref{sss:
 
 
 %..........................................................
-\subsubsection{Elastic beam in viscous matrix - von Tscharner and Schmalholz}
+\subsection{Elastic beam in viscous matrix - von Tscharner and Schmalholz}
 
 
 What follows is taken from \textcite{vosc15} (2015).
@@ -602,7 +602,7 @@ tensor $\tau_{II}$.}
 
 
 %..........................................................
-\subsubsection{Elastic beam in viscous matrix - Keller, May, and Kaus}
+\subsection{Elastic beam in viscous matrix - Keller, May, and Kaus}
 
 
 This benchmark comes from Appendix B of Keller et al (2013) \cite{kemk13}.
@@ -647,7 +647,7 @@ After 50kyr, the gravity ($|\vec{g}|=10$) is switched off and the model is ran f
 
 
 %..........................................................
-\subsubsection{Boxcar load on an incompressible viscoelastic lithosphere - Wu (1992)}
+\subsection{Boxcar load on an incompressible viscoelastic lithosphere - Wu (1992)}
 
 {\color{orange} fully incompressible}
 
@@ -673,7 +673,7 @@ also explore Wu \& Peltier \cite{wupe82} (1982).
 
 
 %..........................................................
-\subsubsection{Boxcar load on an incompressible viscoelastic lithosphere - Hampel et al. (2019)}
+\subsection{Boxcar load on an incompressible viscoelastic lithosphere - Hampel et al. (2019)}
 
 
 \textcite{halk19} (2019)
@@ -694,7 +694,7 @@ the load coincides with the origin of the coordinate system at the beginning of 
 
 
 %..........................................................
-\subsubsection{Kusznir and Bott (1977) experiment}
+\subsection{Kusznir and Bott (1977) experiment}
 
 The domain is a $\SI{2000}{\km}\times\SI{80}{\km}$ Cartesian box. 
 However since there is a vertical axis of symmetry it is then reduced to 
@@ -777,7 +777,7 @@ the setup figure above. probably should be reversed}
 
 
 %..........................................................
-\subsubsection{Parallel-Plate Viscometer Problem - SNAC manual \label{v-e-snac}}
+\subsection{Parallel-Plate Viscometer Problem - SNAC manual \label{v-e-snac}}
 
 A parallel-plate viscometer problem is simulated, in which viscoelastic material is squeezed between two
 parallel plates. The plates are moving at a constant velocity, $v_0$. Each plate has the length of $2L$ and 
@@ -821,7 +821,7 @@ E=\frac{9K\mu}{3K+\mu}
 
 
 %..........................................................
-\subsubsection{Relaxation after extention - Hassani syllabus}
+\subsection{Relaxation after extention - Hassani syllabus}
 
 
 {\color{orange} compressible $\nu=0.25$}
@@ -858,7 +858,7 @@ to reduce the maximum stress by a factor $e$.
 
 
 %-------------------------------------------------------------------------
-\subsubsection{Role of elasticity in slab bending - \textcite{fogm14} (2014)}
+\subsection{Role of elasticity in slab bending - \textcite{fogm14} (2014)}
 
 \begin{center}
 \includegraphics[width=8cm]{images/viscoelasticity/fogm14b}
@@ -877,7 +877,7 @@ to reduce the maximum stress by a factor $e$.
 
 
 %-------------------------------------------------------------------------
-\subsubsection{Shear test in 2D - \textcite{famc14} (2014)}
+\subsection{Shear test in 2D - \textcite{famc14} (2014)}
 
 This experiment consists of a viscoelastic material undergoing simple shear at a constant 
 rate from a time $t_0$ though to $t_{max}$. At $t_{max}$, the shearing velocity is taken 
@@ -934,7 +934,7 @@ applied strain rate.
 
 
 %-------------------------------------------------------------------------
-\subsubsection{Tortion test in 3D - \textcite{famc14} (2014)}
+\subsection{Tortion test in 3D - \textcite{famc14} (2014)}
 
 insert here eq 9 of paper
 
@@ -998,7 +998,7 @@ would then be required for consistency.
 
 
 %-------------------------------------------------------------------------
-\subsubsection{Cylindrical tunnel - Segall book (?)}
+\subsection{Cylindrical tunnel - Segall book (?)}
 
 {\color{orange} compressible $\nu=0.25$}
 
@@ -1031,7 +1031,7 @@ thin line is analytic, points are numeric.
 
 
 %..........................................................
-\subsubsection{Relevant literature \& various notes}
+\subsection{Relevant literature \& various notes}
 
 
 
