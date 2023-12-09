@@ -7,11 +7,11 @@ switch =  -fbounds-check -fcheck=all -ffree-line-length-none  -Wall -Wno-unused-
 #switch =  -ffree-line-length-none -O3 -cpp #-DUseMUMPS
 libs = -lblas 
 
+
 objects = module_mesh.o module_parameters.o module_constants.o module_timing.o module_arrays.o\
 module_statistics.o module_gravity.o module_sparse.o module_materials.o module_swarm.o\
 mylapack.o\
 assign_values_to_qpoints.o\
-basis_functions_V.o basis_functions_P.o basis_functions_T.o basis_functions_L.o\
 compute_elemental_matrix_stokes.o compute_timestep.o\
 compute_dNdx_dNdy.o compute_dNdx_dNdy_dNdz.o compute_temperature_gradient.o\
 compute_dNTdx_dNTdy.o compute_dNTdx_dNTdy_dNTdz.o\
@@ -24,6 +24,7 @@ locate_point.o\
 make_matrix_stokes.o make_matrix_energy.o \
 matrix_setup_K.o matrix_setup_GT.o matrix_setup_MV.o matrix_setup_MP.o matrix_setup_A.o\
 mgmres.o\
+NNN.o dNNNdr.o dNNNds.o dNNNdt.o\
 output_matrix_tikz.o\
 postprocessors.o project_V_onto_L.o\
 prescribe_stokes_solution.o paint_swarm.o pcg_solver_csr.o\
@@ -31,6 +32,10 @@ quadrature_setup.o\
 recover_pressure_penalty.o read_command_line_options.o\
 setup_cartesian2D.o setup_cartesian3D.o sloan.o\
 set_default_values.o set_global_parameters_pair.o swarm_setup.o\
+set_global_parameters_spaceV.o\
+set_global_parameters_spaceP.o\
+set_global_parameters_spaceT.o\
+set_global_parameters_mapping.o\
 test_basis_functions.o\
 solve_stokes.o solve_energy.o spmv_kernels.o solve_KV_eq_f.o\
 write_stats.o\

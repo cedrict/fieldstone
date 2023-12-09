@@ -6,75 +6,33 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine set_default_values
-
-use module_parameters
-use module_gravity
+subroutine dNNNdt(r,s,t,dNdt,m,ndim,space)
 
 implicit none
+integer, intent(in) :: m,ndim
+real(8), intent(in) :: r,s,t
+real(8), intent(out) :: dNdt(m)
+character(len=4), intent(in) :: space
+!real(8) Nmr,Nlr,Nrr,Nls,Nms,Nrs,Nlt,Nmt,Nrt
+!real(8) b1,b2
+!real(8) N1r,N1s,N2r,N2s
+!real(8) N3r,N3s,N4r,N4s
+!real(8) N5r,N5s
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{set\_default\_values}
-!@@ This subroutine assigns default values to many of the global variables.
+!@@ \subsubsection{dNNNdr}
+!@@ Spaces supported so far:
+!@@ 3D: Q1, Q2, Q1++
 !==================================================================================================!
 
-if (iproc==0) then
-
-!==============================================================================!
-
-ndim=2
-
-CFL_nb=0.25
-
-geometry='cartesian'
-spaceV='__Q2'
-spaceP='__Q1'
-spaceT='__Q2'
-mapping=spaceV !isoparametric
-
-use_swarm=.false.
-nmarker_per_dim=5 
-init_marker_random=.false. 
-
-nstep=1
-
-solve_stokes_system=.true. 
-
-geometry='cartesian'
-
-use_MUMPS=.false.
-
-debug=.false.
-
-use_T=.false.
-
-nmat=1
-
-penalty=1e6
-use_penalty=.False.
-
-nxstripes=1
-nystripes=1
-nzstripes=1
-
-nmarker=0
-
-use_ALE=.false.
-
-grav_pointmass=.false. 
-grav_prism=.false.
-plane_nnx=0
-plane_nny=0
-line_nnp=0
-
-normalise_pressure=.false.
-
-output_freq=1
-
-write(*,'(a)') 'set_default_values '
-
-end if ! iproc
+select case(space)
+case('__Q1')
+case('__Q2')
+case('Q1++')
+case default
+   stop 'unknown 3D space in dNNNdr'
+end select
 
 end subroutine
 

@@ -1,5 +1,5 @@
  \subsubsection{assign\_values\_to\_qpoints.f90}
-
+ This subroutine assigns 
  \subsubsection{basis\_functions\_L.f90}
  This file contains the basis functions associated with the vertices/corners
  of the element, i.e. P1 for triangles, Q1 for quads. 
@@ -21,7 +21,7 @@
  This subroutine computes $\partial{\bN^\uptheta}/\partial x$ 
  and $\partial{\bN^\uptheta}/\partial y$  at a location $r,s$ passed as argument.
  \subsubsection{compute\_elemental\_matrix\_energy}
- This subroutine buils the elemental matrix ${\bm A}_{el}$ and its corresponding 
+ This subroutine builds the elemental matrix ${\bm A}_{el}$ and its corresponding 
  right hand side $\vec{b}_{el}$. 
  \subsubsection{compute\_elemental\_matrix\_stokes.f90}
  Note that when the material model is called directly on the quadrature points and 
@@ -30,11 +30,25 @@
  the element. 
  \subsubsection{compute\_elemental\_rho\_eta\_vol}
  This subroutine computes the elemental volume, the average density and 
- viscosity using the values already stored on the quadrature points. 
+ viscosity (using arithmetic averaging) using the values already stored on the quadrature points. 
+ It also returns the min/max values of these quantities.
  \subsubsection{compute\_gravity}
+
+ \subsubsection{compute\_temperature\_gradient}
 
  \subsubsection{compute\_timestep}
  See Section~\ref{ss:cfl}.
+ \subsubsection{dNNNdr}
+ Spaces supported so far:
+ 2D: Q1, Q2, Q3, Q4, Q1+
+ 3D: Q1, Q2, Q1++
+ \subsubsection{dNNNds}
+ Spaces supported so far:
+ 2D: Q1, Q2, Q3, Q4, Q1+
+ 3D: Q1, Q2, Q1++
+ \subsubsection{dNNNdr}
+ Spaces supported so far:
+ 3D: Q1, Q2, Q1++
  \subsubsection{impose\_boundary\_conditions\_energy}
  This routine takes as argument the elemental matrices and vectors Ael, Bel
  and applies the boundary conditions to them.
@@ -42,7 +56,10 @@
  This subroutine modifies the elemental $\K$, $\G$ and $\C$ matrices as well as the 
  elemental rhs $f_{el}$ and $h_{el}$ and returns them modified after imposing
  velocity Dirichlet boundary conditions.
- \subsubsection{template}
+ \subsubsection{initialise\_elements}
+ This subroutine allocates pretty much all element-based arrays (node coordinates,velocity,
+ strain rate, ...).
+ \subsubsection{initialise\_mumps\_V}
 
  \subsubsection{interpolate\_onto\_nodes.f90}
  This subroutine interpolates the components of the strain rate tensor on the velocity nodes.
@@ -74,6 +91,10 @@
  This subroutine computes the structure of the pressure mass matrix. 
  \subsubsection{matrix\_setup\_MV}
  See Section~\ref{ss:symmcsrss}. 
+ \subsubsection{NNN}
+ Spaces supported so far:
+ 2D: Q0, Q1, Q2, Q3, Q4, Q1+
+ 3D: Q0, Q1, Q2, Q1++
  \subsubsection{output\_matrix\_tikz}
 
  \subsubsection{output\_mesh.f90}
@@ -133,10 +154,13 @@
 
  \subsubsection{template}
 
+ \subsubsection{template}
+
  \subsubsection{quadrature\_setup.f90}
  This subroutine allocates all GLQ-related arrays for each element.
  It further computes the real $(x_q,y_q,z_q)$ and reduced $(r_q,s_q,t_q)$
- coordinates of the GLQ points, and assigns them their weights.
+ coordinates of the GLQ points, and assigns them their weights and
+ jacobian values.
  \subsubsection{read\_command\_line\_options}
 
  \subsubsection{recover\_pressure\_penalty}
@@ -145,7 +169,25 @@
  \subsubsection{set\_default\_values}
  This subroutine assigns default values to many of the global variables.
  \subsubsection{set\_global\_parameters\_pair}
-
+ This subroutine computes {\tt mV,mP,mT,mL}.
+ \subsubsection{set\_global\_parameters\_spaceP}
+ This subroutine computes mP,NP and assigns rP,sP,tP
+ \begin{itemize}
+ \item supported spaces in 2D: Q0,Q1,Q2
+ \item supported spaces in 3D: Q0,Q1,Q2
+ \end{itemize}
+ \subsubsection{set\_global\_parameters\_spaceT}
+ This subroutine computes mT,NT and assigns rT,sT,tT
+ \begin{itemize}
+ \item supported spaces in 2D: Q1,Q2
+ \item supported spaces in 3D: Q1,Q2
+ \end{itemize}
+ \subsubsection{set\_global\_parameters\_spaceV}
+ This subroutine computes mV,nel,NV and assigns rV,sV,tV
+ \begin{itemize}
+ \item supported spaces in 2D: Q1,Q2,Q1+
+ \item supported spaces in 3D: Q1,Q2,Q1++
+ \end{itemize}
  \subsubsection{setup\_cartesian2D.f90}
  This subroutine assigns to every element the coordinates of the its velocity, pressure,
  and temperature nodes, the velocity, pressure and temperature connectivity arrays,

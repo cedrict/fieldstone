@@ -46,7 +46,7 @@ do iel=1,nel
       rq=mesh(iel)%rq(iq)
       sq=mesh(iel)%sq(iq)
       tq=mesh(iel)%tq(iq)
-      call NNV(rq,sq,tq,NNNV(1:mV),mV,ndim,pair)
+      call NNN(rq,sq,tq,NNNV,mV,ndim,spaceV)
       uq=sum(NNNV(1:mV)*mesh(iel)%u(1:mV)) 
       vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV)) 
       wq=sum(NNNV(1:mV)*mesh(iel)%w(1:mV)) 
@@ -70,7 +70,7 @@ do iel=1,nel
       rq=mesh(iel)%rq(iq)
       sq=mesh(iel)%sq(iq)
       tq=mesh(iel)%tq(iq)
-      call NNV(rq,sq,tq,NNNV(1:mV),mV,ndim,pair)
+      call NNN(rq,sq,tq,NNNV(1:mV),mV,ndim,spaceV)
       uq=sum(NNNV(1:mV)*mesh(iel)%u(1:mV)) 
       vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV)) 
       wq=sum(NNNV(1:mV)*mesh(iel)%w(1:mV)) 
@@ -94,7 +94,7 @@ do iel=1,nel
       rq=mesh(iel)%rq(iq)
       sq=mesh(iel)%sq(iq)
       tq=mesh(iel)%tq(iq)
-      call NNV(rq,sq,tq,NNNV(1:mV),mV,ndim,pair)
+      call NNN(rq,sq,tq,NNNV(1:mV),mV,ndim,spaceV)
       uq=sum(NNNV(1:mV)*mesh(iel)%u(1:mV)) 
       vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV)) 
       wq=sum(NNNV(1:mV)*mesh(iel)%w(1:mV)) 
@@ -118,7 +118,7 @@ do iel=1,nel
       rq=mesh(iel)%rq(iq)
       sq=mesh(iel)%sq(iq)
       tq=mesh(iel)%tq(iq)
-      call NNV(rq,sq,tq,NNNV(1:mV),mV,ndim,pair)
+      call NNN(rq,sq,tq,NNNV(1:mV),mV,ndim,spaceV)
       uq=sum(NNNV(1:mV)*mesh(iel)%u(1:mV)) 
       vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV)) 
       wq=sum(NNNV(1:mV)*mesh(iel)%w(1:mV)) 
@@ -140,7 +140,7 @@ do iel=1,nel
       rq=mesh(iel)%rq(iq)
       sq=mesh(iel)%sq(iq)
       tq=mesh(iel)%tq(iq)
-      call NNP(rq,sq,tq,NNNP(1:mP),mP,ndim,pair)
+      call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spaceP)
       pq=sum(NNNP(1:mP)*mesh(iel)%p(1:mP)) 
       write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),pq
    end do
@@ -154,7 +154,7 @@ do iel=1,nel
       rq=mesh(iel)%rq(iq)
       sq=mesh(iel)%sq(iq)
       tq=mesh(iel)%tq(iq)
-      call NNP(rq,sq,tq,NNNP(1:mP),mP,ndim,pair)
+      call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spaceP)
       pq=sum(NNNP(1:mP)*mesh(iel)%p(1:mP)) 
       write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),pq
    end do
@@ -168,7 +168,7 @@ do iel=1,nel
       rq=mesh(iel)%rq(iq)
       sq=mesh(iel)%sq(iq)
       tq=mesh(iel)%tq(iq)
-      call NNP(rq,sq,tq,NNNP(1:mP),mP,ndim,pair)
+      call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spaceP)
       pq=sum(NNNP(1:mP)*mesh(iel)%p(1:mP)) 
       write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),pq
    end do
@@ -182,7 +182,7 @@ do iel=1,nel
       rq=mesh(iel)%rq(iq)
       sq=mesh(iel)%sq(iq)
       tq=mesh(iel)%tq(iq)
-      call NNP(rq,sq,tq,NNNP(1:mP),mP,ndim,pair)
+      call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spaceP)
       pq=sum(NNNP(1:mP)*mesh(iel)%p(1:mP)) 
       write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),pq
    end do
@@ -196,7 +196,7 @@ do iel=1,nel
       rq=mesh(iel)%rq(iq)
       sq=mesh(iel)%sq(iq)
       tq=mesh(iel)%tq(iq)
-      call NNT(rq,sq,tq,NNNT(1:mT),mT,ndim)
+      call NNN(rq,sq,tq,NNNT(1:mT),mT,ndim,spaceT)
       Tq=sum(NNNT(1:mT)*mesh(iel)%T(1:mT)) 
       write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),Tq
    end do
@@ -210,7 +210,7 @@ do iel=1,nel
       rq=mesh(iel)%rq(iq)
       sq=mesh(iel)%sq(iq)
       tq=mesh(iel)%tq(iq)
-      call NNT(rq,sq,tq,NNNT(1:mT),mT,ndim)
+      call NNN(rq,sq,tq,NNNT(1:mT),mT,ndim,spaceT)
       Tq=sum(NNNT(1:mT)*mesh(iel)%T(1:mT)) 
 
       if (ndim==2) call compute_dNTdx_dNTdy(rq,sq,dNdx(1:mT),dNdy(1:mT),jcob)

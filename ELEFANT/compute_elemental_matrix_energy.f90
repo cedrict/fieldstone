@@ -39,8 +39,8 @@ do iq=1,nqel
    sq=mesh(iel)%sq(iq)
    tq=mesh(iel)%tq(iq)
 
-   call NNV(rq,sq,tq,NNNV(1:mV),mV,ndim,pair)
-   call NNT(rq,sq,tq,NNNT(1:mT),mT,ndim)
+   call NNN(rq,sq,tq,NNNV(1:mV),mV,ndim,spaceV)
+   call NNN(rq,sq,tq,NNNT(1:mT),mT,ndim,spaceT)
 
    if (ndim==2) then
       call compute_dNTdx_dNTdy(rq,sq,dNdx,dNdy,jcob)

@@ -1,6 +1,7 @@
 module module_parameters
 implicit none
 
+integer :: mmapping            ! number of nodes for mapping 
 integer :: mV                  ! number of velocity nodes per element
 integer :: mP                  ! number of pressure nodes per element
 integer :: mT                  ! number of temperature nodes per element
@@ -49,6 +50,10 @@ real(8) :: dparam1,dparam2,dparam3
 character(len=10) :: geometry  ! type of domain geometry
 character(len=4) :: pair       ! type of element pair
 character(len=6) :: cistep
+character(len=4) :: spaceV     ! finite element space for velocity
+character(len=4) :: spaceP     ! finite element space for pressure
+character(len=4) :: spaceT     ! finite element space for temperature
+character(len=4) :: mapping    ! type of mapping 
 
 integer :: iel
 integer :: istep           

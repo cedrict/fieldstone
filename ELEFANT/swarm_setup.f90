@@ -8,7 +8,7 @@
 
 subroutine swarm_setup
 
-use module_parameters
+use module_parameters, only: nmarker,ndim,debug,iel,iproc,use_swarm,spaceV,mV,nel,nmarker_per_dim,init_marker_random
 use module_swarm 
 use module_mesh 
 use module_timing
@@ -16,7 +16,7 @@ use module_timing
 implicit none
 
 integer i,ii,jj,kk,counter,counter2
-real(8) chi,eta,psi,NNNT(mT)
+real(8) chi,eta,psi,NNNV(mV)
 
 !==================================================================================================!
 !==================================================================================================!
@@ -58,10 +58,10 @@ if (init_marker_random) then
          swarm(counter)%r=(eta-0.5d0)*2d0
          swarm(counter)%s=(chi-0.5d0)*2d0
          swarm(counter)%t=(psi-0.5d0)*2d0
-         call NNT(swarm(counter)%r,swarm(counter)%s,swarm(counter)%t,NNNT(1:mT),mT,ndim)
-         swarm(counter)%x=sum(NNNT(1:mT)*mesh(iel)%xV(1:mT))
-         swarm(counter)%y=sum(NNNT(1:mT)*mesh(iel)%yV(1:mT))
-         swarm(counter)%z=sum(NNNT(1:mT)*mesh(iel)%zV(1:mT))
+         call NNN(swarm(counter)%r,swarm(counter)%s,swarm(counter)%t,NNNV(1:mV),mV,ndim,spaceV)
+         swarm(counter)%x=sum(NNNV(1:mV)*mesh(iel)%xV(1:mV))
+         swarm(counter)%y=sum(NNNV(1:mV)*mesh(iel)%yV(1:mV))
+         swarm(counter)%z=sum(NNNV(1:mV)*mesh(iel)%zV(1:mV))
          mesh(iel)%list_of_markers(i)=counter
          swarm(counter)%iel=iel
       end do
@@ -80,9 +80,9 @@ else
             swarm(counter)%r=((ii-0.5)/nmarker_per_dim-0.5)*2
             swarm(counter)%s=((jj-0.5)/nmarker_per_dim-0.5)*2
             swarm(counter)%t=0d0
-            call NNT(swarm(counter)%r,swarm(counter)%s,swarm(counter)%t,NNNT(1:mT),mT,ndim)
-            swarm(counter)%x=sum(NNNT(1:mT)*mesh(iel)%xV(1:mT))
-            swarm(counter)%y=sum(NNNT(1:mT)*mesh(iel)%yV(1:mT))
+            call NNN(swarm(counter)%r,swarm(counter)%s,swarm(counter)%t,NNNV(1:mV),mV,ndim,spaceV)
+            swarm(counter)%x=sum(NNNV(1:mV)*mesh(iel)%xV(1:mV))
+            swarm(counter)%y=sum(NNNV(1:mV)*mesh(iel)%yV(1:mV))
             swarm(counter)%z=0d0
             mesh(iel)%list_of_markers(counter2)=counter
             swarm(counter)%iel=iel
@@ -103,10 +103,10 @@ else
             swarm(counter)%r=((ii-0.5)/nmarker_per_dim-0.5)*2
             swarm(counter)%s=((jj-0.5)/nmarker_per_dim-0.5)*2
             swarm(counter)%t=((kk-0.5)/nmarker_per_dim-0.5)*2
-            call NNT(swarm(counter)%r,swarm(counter)%s,swarm(counter)%t,NNNT(1:mT),mT,ndim)
-            swarm(counter)%x=sum(NNNT(1:mT)*mesh(iel)%xV(1:mT))
-            swarm(counter)%y=sum(NNNT(1:mT)*mesh(iel)%yV(1:mT))
-            swarm(counter)%z=sum(NNNT(1:mT)*mesh(iel)%zV(1:mT))
+            call NNN(swarm(counter)%r,swarm(counter)%s,swarm(counter)%t,NNNV(1:mV),mV,ndim,spaceV)
+            swarm(counter)%x=sum(NNNV(1:mV)*mesh(iel)%xV(1:mV))
+            swarm(counter)%y=sum(NNNV(1:mV)*mesh(iel)%yV(1:mV))
+            swarm(counter)%z=sum(NNNV(1:mV)*mesh(iel)%zV(1:mV))
             mesh(iel)%list_of_markers(counter2)=counter
             swarm(counter)%iel=iel
          end do

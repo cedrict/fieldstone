@@ -49,13 +49,13 @@ if (use_swarm) then
 
          im=mesh(iel)%list_of_markers(i)
 
-         call NNP(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNP(1:mP),mP,ndim,pair)
+         call NNN(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNP(1:mP),mP,ndim,spaceP)
          pm=sum(NNNP(1:mP)*mesh(iel)%p(1:mP))
 
-         call NNT(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNT(1:mT),mT,ndim)
+         call NNN(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNT(1:mT),mT,ndim,spaceT)
          Tm=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
 
-         call NNV(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNV(1:mV),mV,ndim,pair)
+         call NNN(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNV(1:mV),mV,ndim,spaceV)
          exxm=sum(NNNV(1:mV)*mesh(iel)%exx(1:mV))
          eyym=sum(NNNV(1:mV)*mesh(iel)%eyy(1:mV))
          ezzm=sum(NNNV(1:mV)*mesh(iel)%ezz(1:mV))
@@ -213,13 +213,13 @@ else
 
       do iq=1,nqel
 
-         call NNP(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim,pair)
+         call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim,spaceP)
          mesh(iel)%pq(iq)=sum(NNNP(1:mP)*mesh(iel)%p(1:mP))
 
-         call NNT(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim)
+         call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim,spaceT)
          mesh(iel)%thetaq(iq)=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
 
-         call NNV(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNV(1:mV),mV,ndim,pair)
+         call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNV(1:mV),mV,ndim,spaceV)
          exxq=sum(NNNV(1:mV)*mesh(iel)%exx(1:mV))
          eyyq=sum(NNNV(1:mV)*mesh(iel)%eyy(1:mV))
          ezzq=sum(NNNV(1:mV)*mesh(iel)%ezz(1:mV))

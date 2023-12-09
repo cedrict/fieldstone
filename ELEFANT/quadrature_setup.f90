@@ -8,7 +8,7 @@
 
 subroutine quadrature_setup
 
-use module_parameters
+use module_parameters, only: ndim,mmapping,nq_per_dim,Nq,nel,nqel,iproc,iel,debug,spaceV,mapping
 use module_mesh 
 use module_constants
 use module_timing
@@ -16,22 +16,25 @@ use module_timing
 implicit none
 
 integer iq,jq,kq,counter
-real(8) rq,sq,tq,NNNL(mL),dNdx(mV),dNdy(mV),dNdz(mV),jcob
+real(8) rq,sq,tq,jcob
+real(8) NNNM(mmapping),dNNNMdx(mmapping),dNNNMdy(mmapping),dNNNMdz(mmapping)
 real(8), dimension(:), allocatable :: qcoords,qweights
+!real(8), dimension(:), allocatable :: NNNM,dNNNMdx,dNNNMdy,dNNNMdz
 
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{quadrature\_setup.f90}
 !@@ This subroutine allocates all GLQ-related arrays for each element.
 !@@ It further computes the real $(x_q,y_q,z_q)$ and reduced $(r_q,s_q,t_q)$
-!@@ coordinates of the GLQ points, and assigns them their weights.
+!@@ coordinates of the GLQ points, and assigns them their weights and
+!@@ jacobian values.
 !==================================================================================================!
 
 if (iproc==0) then
 
 call system_clock(counti,count_rate)
 
-if (pair=='q1p0' .or. pair=='q1q1') then
+if (spaceV=='__Q1') then
    nq_per_dim=2
    allocate(qcoords(nq_per_dim))
    allocate(qweights(nq_per_dim))
@@ -39,12 +42,20 @@ if (pair=='q1p0' .or. pair=='q1q1') then
    qweights=(/1d0,1d0/)
 end if
 
-if (pair=='q2q1') then
+if (spaceV=='__Q2') then
    nq_per_dim=3
    allocate(qcoords(nq_per_dim))
    allocate(qweights(nq_per_dim))
    qcoords=(/-sqrt(3d0/5d0),0d0,sqrt(3d0/5d0)/)
-   qweights=(/ 5d0/9d0,8d0/9d0,5d0/9d0 /)
+   qweights=(/5d0/9d0,8d0/9d0,5d0/9d0/)
+end if
+
+if (spaceV=='__Q3') then
+   nq_per_dim=4
+   allocate(qcoords(nq_per_dim))
+   allocate(qweights(nq_per_dim))
+   qcoords=(/-qc4a,-qc4b,qc4b,qc4a/)
+   qweights=(/qw4a,qw4b,qw4b,qw4a/)
 end if
 
 nqel=nq_per_dim**ndim
@@ -54,25 +65,24 @@ Nq=nqel*nel
 !==============================================================================!
 
 do iel=1,nel
-   allocate(mesh(iel)%xq(nqel))
-   allocate(mesh(iel)%yq(nqel))
-   allocate(mesh(iel)%zq(nqel))
-   allocate(mesh(iel)%JxWq(nqel))
-   allocate(mesh(iel)%weightq(nqel))
-   allocate(mesh(iel)%rq(nqel))
-   allocate(mesh(iel)%sq(nqel))
-   allocate(mesh(iel)%tq(nqel))
-   allocate(mesh(iel)%gxq(nqel))
-   allocate(mesh(iel)%gyq(nqel))
-   allocate(mesh(iel)%gzq(nqel))
-   allocate(mesh(iel)%pq(nqel))
-   allocate(mesh(iel)%thetaq(nqel))
-   allocate(mesh(iel)%etaq(nqel))
-   allocate(mesh(iel)%rhoq(nqel))
-   allocate(mesh(iel)%hcondq(nqel))
-   allocate(mesh(iel)%hcapaq(nqel))
-   allocate(mesh(iel)%hprodq(nqel))
-   mesh(iel)%JxWq(:)=0d0
+   allocate(mesh(iel)%xq(nqel))      ; mesh(iel)%xq(:)=0 
+   allocate(mesh(iel)%yq(nqel))      ; mesh(iel)%yq(:)=0 
+   allocate(mesh(iel)%zq(nqel))      ; mesh(iel)%zq(:)=0 
+   allocate(mesh(iel)%JxWq(nqel))    ; mesh(iel)%JxWq(:)=0 
+   allocate(mesh(iel)%weightq(nqel)) ; mesh(iel)%weightq(:)=0 
+   allocate(mesh(iel)%rq(nqel))      ; mesh(iel)%rq(:)=0 
+   allocate(mesh(iel)%sq(nqel))      ; mesh(iel)%sq(:)=0 
+   allocate(mesh(iel)%tq(nqel))      ; mesh(iel)%tq(:)=0 
+   allocate(mesh(iel)%gxq(nqel))     ; mesh(iel)%gxq(:)=0 
+   allocate(mesh(iel)%gyq(nqel))     ; mesh(iel)%gyq(:)=0 
+   allocate(mesh(iel)%gzq(nqel))     ; mesh(iel)%gzq(:)=0 
+   allocate(mesh(iel)%pq(nqel))      ; mesh(iel)%pq(:)=0 
+   allocate(mesh(iel)%thetaq(nqel))  ; mesh(iel)%thetaq(:)=0 
+   allocate(mesh(iel)%etaq(nqel))    ; mesh(iel)%etaq(:)=0 
+   allocate(mesh(iel)%rhoq(nqel))    ; mesh(iel)%rhoq(:)=0 
+   allocate(mesh(iel)%hcondq(nqel))  ; mesh(iel)%hcondq(:)=0 
+   allocate(mesh(iel)%hcapaq(nqel))  ; mesh(iel)%hcapaq(:)=0 
+   allocate(mesh(iel)%hprodq(nqel))  ; mesh(iel)%hprodq(:)=0 
 end do
 
 !--------------------------------------
@@ -85,15 +95,13 @@ if (ndim==2) then
          counter=counter+1
          rq=qcoords(iq)
          sq=qcoords(jq)
-         call NNL(rq,sq,0.d0,NNNL(1:mV),mV,ndim,pair)
-         mesh(iel)%xq(counter)=sum(mesh(iel)%xV(1:mV)*NNNL(1:mV))
-         mesh(iel)%yq(counter)=sum(mesh(iel)%yV(1:mV)*NNNL(1:mV))
-         mesh(iel)%zq(counter)=0.d0
+         call NNN(rq,sq,0.d0,NNNM,mmapping,ndim,mapping)
+         mesh(iel)%xq(counter)=sum(mesh(iel)%xM*NNNM)
+         mesh(iel)%yq(counter)=sum(mesh(iel)%yM*NNNM)
          mesh(iel)%weightq(counter)=qweights(iq)*qweights(jq)
          mesh(iel)%rq(counter)=rq
          mesh(iel)%sq(counter)=sq
-         mesh(iel)%tq(counter)=0
-         call compute_dNdx_dNdy(rq,sq,dNdx,dNdy,jcob)
+         call compute_dNdx_dNdy(rq,sq,dNNNMdx,dNNNMdy,jcob)
          mesh(iel)%JxWq(counter)=jcob*mesh(iel)%weightq(counter)
       end do
       end do
@@ -112,20 +120,26 @@ if (ndim==3) then
          rq=qcoords(iq)
          sq=qcoords(jq)
          tq=qcoords(kq)
-         call NNL(rq,sq,tq,NNNL(1:mV),mV,ndim,pair)
-         mesh(iel)%xq(counter)=sum(mesh(iel)%xV(1:mV)*NNNL(1:mV))
-         mesh(iel)%yq(counter)=sum(mesh(iel)%yV(1:mV)*NNNL(1:mV))
-         mesh(iel)%zq(counter)=sum(mesh(iel)%zV(1:mV)*NNNL(1:mV))
+         call NNN(rq,sq,tq,NNNM,mmapping,ndim,mapping)
+         mesh(iel)%xq(counter)=sum(mesh(iel)%xM*NNNM)
+         mesh(iel)%yq(counter)=sum(mesh(iel)%yM*NNNM)
+         mesh(iel)%zq(counter)=sum(mesh(iel)%zM*NNNM)
          mesh(iel)%weightq(counter)=qweights(iq)*qweights(jq)*qweights(kq)
          mesh(iel)%rq(counter)=rq
          mesh(iel)%sq(counter)=sq
          mesh(iel)%tq(counter)=tq
-         call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNdx,dNdy,dNdz,jcob)
+         call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNNNMdx,dNNNMdy,dNNNMdz,jcob)
          mesh(iel)%JxWq(counter)=jcob*mesh(iel)%weightq(counter)
       end do
       end do
       end do
    end do
+end if
+
+if (debug) then
+print *,'nq_per_dim=',nq_per_dim
+print *,'nqel=',nqel
+print *,'Nq=',Nq
 end if
 
 !==============================================================================!

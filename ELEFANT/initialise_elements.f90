@@ -18,7 +18,8 @@ implicit none
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{initialise\_elements}
-!@@ This subroutine 
+!@@ This subroutine allocates pretty much all element-based arrays (node coordinates,velocity,
+!@@ strain rate, ...).
 !==================================================================================================!
 
 if (iproc==0) then
@@ -55,7 +56,6 @@ do iel=1,nel
    allocate(mesh(iel)%fix_v(mV))
    allocate(mesh(iel)%fix_w(mV))
 
-
    allocate(mesh(iel)%iconP(mP)) 
    allocate(mesh(iel)%p(mP)) ; mesh(iel)%p=0.d0
    allocate(mesh(iel)%xP(mP))
@@ -72,14 +72,16 @@ do iel=1,nel
    allocate(mesh(iel)%qz(mT))
    allocate(mesh(iel)%fix_T(mT))
 
-
    allocate(mesh(iel)%xL(mV))
    allocate(mesh(iel)%yL(mV))
    allocate(mesh(iel)%zL(mV))
-  !real(8), allocatable :: xM(:),yM(:),zM(:)   ! coordinates of mapping nodes
+
+   allocate(mesh(iel)%xM(mmapping))
+   allocate(mesh(iel)%yM(mmapping))
+   allocate(mesh(iel)%zM(mmapping))
+
 
 end do
-
 
 !==============================================================================!
 

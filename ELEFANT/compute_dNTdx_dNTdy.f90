@@ -28,8 +28,8 @@ real(8), parameter :: t=0d0
 !@@ and $\partial{\bN^\uptheta}/\partial y$ !@@ at a location $r,s$ passed as argument.
 !==================================================================================================!
 
-call dNNTdr(r,s,t,dNNNTdr(1:mT),mT,ndim)
-call dNNTds(r,s,t,dNNNTds(1:mT),mT,ndim)
+call dNNNdr(r,s,t,dNNNTdr(1:mT),mT,ndim,spaceT)
+call dNNNds(r,s,t,dNNNTds(1:mT),mT,ndim,spaceT)
 
 jcb2D=0.d0 
 do k=1,mT 

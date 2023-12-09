@@ -35,6 +35,7 @@ if (iproc==0 .and. mod(istep,output_freq)==0) then
 call system_clock(counti,count_rate)
 
 !==============================================================================!
+ncorners=2**ndim
 
 open(unit=123,file='OUTPUT/solution_'//cistep//'.vtu',status='replace',form='formatted')
 write(123,'(a)') '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian">'

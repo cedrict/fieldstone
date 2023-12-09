@@ -28,9 +28,9 @@ real(8) jcb(3,3),jcbi(3,3)
 !@@ $\partial{\bN^\uptheta}/\partial z$ at a location $r,s,t$ passed as argument.
 !==================================================================================================!
 
-call dNNTdr(r,s,t,dNNNTdr(1:mT),mT,ndim)
-call dNNTds(r,s,t,dNNNTds(1:mT),mT,ndim)
-call dNNTdt(r,s,t,dNNNTdt(1:mT),mT,ndim)
+call dNNNdr(r,s,t,dNNNTdr(1:mT),mT,ndim,spaceT)
+call dNNNds(r,s,t,dNNNTds(1:mT),mT,ndim,spaceT)
+call dNNNdt(r,s,t,dNNNTdt(1:mT),mT,ndim,spaceT)
 
 jcb=0.d0 
 do k=1,mT 

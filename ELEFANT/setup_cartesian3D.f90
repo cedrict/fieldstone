@@ -60,7 +60,7 @@ end do
 !==========================================================
 !velocity 
 
-if (pair=='q1p0' .or. pair=='q1q1') then
+if (spaceV=='__Q1' .or. spaceV=='Q1++') then
    counter=0    
    do ielz=1,nelz    
       do iely=1,nely    
@@ -98,11 +98,6 @@ if (pair=='q1p0' .or. pair=='q1q1') then
             mesh(counter)%zV(6)=(ielz-1)*hz+hz
             mesh(counter)%zV(7)=(ielz-1)*hz+hz
             mesh(counter)%zV(8)=(ielz-1)*hz+hz
-
-            !mesh(counter)%xL(1:mL)=mesh(counter)%xV(1:8)
-            !mesh(counter)%yL(1:mL)=mesh(counter)%yV(1:8)
-            !mesh(counter)%zL(1:mL)=mesh(counter)%zV(1:8)
-
             mesh(counter)%xc=(ielx-1)*hx+hx/2
             mesh(counter)%yc=(iely-1)*hy+hy/2
             mesh(counter)%zc=(ielz-1)*hz+hz/2
@@ -111,7 +106,7 @@ if (pair=='q1p0' .or. pair=='q1q1') then
    end do    
 end if
 
-if (pair=='q1q1') then ! add bubble node
+if (spaceV=='Q1++') then ! add bubble node
    do iel=1,nel
       mesh(iel)%xV(9)=mesh(iel)%xV(1)+hx/3
       mesh(iel)%yV(9)=mesh(iel)%yV(1)+hy/3
@@ -125,7 +120,7 @@ if (pair=='q1q1') then ! add bubble node
    end do
 end if
 
-if (pair=='q2q1') then
+if (spaceV=='__Q2') then
    nnx=2*nelx+1
    nny=2*nely+1
    nnz=2*nelz+1
@@ -263,7 +258,7 @@ end if
 !==========================================================
 ! pressure 
 
-if (pair=='q1p0') then
+if (spaceP=='__Q0') then
    counter=0    
    do ielz=1,nelz
       do iely=1,nely    
@@ -278,18 +273,7 @@ if (pair=='q1p0') then
    end do    
 end if
 
-if (pair=='q1q1') then
-   do iel=1,nel
-   do i=1,mP
-      mesh(iel)%xP(i)=mesh(iel)%xV(i)
-      mesh(iel)%yP(i)=mesh(iel)%yV(i)
-      mesh(iel)%zP(i)=mesh(iel)%zV(i)
-      mesh(iel)%iconP(i)=mesh(iel)%iconV(i)
-   end do
-   end do
-end if
-
-if (pair=='q2q1') then
+if (spaceP=='__Q1') then
    counter=0    
    do ielz=1,nelz    
       do iely=1,nely    
@@ -340,14 +324,187 @@ end if
 !==========================================================
 ! temperature 
 
-do iel=1,nel
-   do k=1,mT
-      mesh(iel)%xT(k)=mesh(iel)%xV(k)
-      mesh(iel)%yT(k)=mesh(iel)%yV(k)
-      mesh(iel)%zT(k)=mesh(iel)%zV(k)
-      mesh(iel)%iconT(k)=mesh(iel)%iconV(k)
+if (spaceT=='__Q1') then
+   counter=0    
+   do ielz=1,nelz    
+      do iely=1,nely    
+         do ielx=1,nelx    
+            counter=counter+1    
+
+            mesh(counter)%iconT(1)=(nelx+1)*(nely+1)*(ielz-1)+ (iely-1)*(nelx+1) + ielx
+            mesh(counter)%iconT(2)=(nelx+1)*(nely+1)*(ielz-1)+ (iely-1)*(nelx+1) + ielx+1
+            mesh(counter)%iconT(3)=(nelx+1)*(nely+1)*(ielz-1)+ (iely  )*(nelx+1) + ielx+1
+            mesh(counter)%iconT(4)=(nelx+1)*(nely+1)*(ielz-1)+ (iely  )*(nelx+1) + ielx
+            mesh(counter)%iconT(5)=(nelx+1)*(nely+1)*(ielz  )+ (iely-1)*(nelx+1) + ielx
+            mesh(counter)%iconT(6)=(nelx+1)*(nely+1)*(ielz  )+ (iely-1)*(nelx+1) + ielx+1
+            mesh(counter)%iconT(7)=(nelx+1)*(nely+1)*(ielz  )+ (iely  )*(nelx+1) + ielx+1
+            mesh(counter)%iconT(8)=(nelx+1)*(nely+1)*(ielz  )+ (iely  )*(nelx+1) + ielx
+
+            mesh(counter)%xT(1)=(ielx-1)*hx
+            mesh(counter)%xT(2)=(ielx-1)*hx+hx
+            mesh(counter)%xT(3)=(ielx-1)*hx+hx
+            mesh(counter)%xT(4)=(ielx-1)*hx
+            mesh(counter)%xT(5)=(ielx-1)*hx
+            mesh(counter)%xT(6)=(ielx-1)*hx+hx
+            mesh(counter)%xT(7)=(ielx-1)*hx+hx
+            mesh(counter)%xT(8)=(ielx-1)*hx
+
+            mesh(counter)%yT(1)=(iely-1)*hy
+            mesh(counter)%yT(2)=(iely-1)*hy
+            mesh(counter)%yT(3)=(iely-1)*hy+hy
+            mesh(counter)%yT(4)=(iely-1)*hy+hy
+            mesh(counter)%yT(5)=(iely-1)*hy
+            mesh(counter)%yT(6)=(iely-1)*hy
+            mesh(counter)%yT(7)=(iely-1)*hy+hy
+            mesh(counter)%yT(8)=(iely-1)*hy+hy
+
+            mesh(counter)%zT(1)=(ielz-1)*hz
+            mesh(counter)%zT(2)=(ielz-1)*hz
+            mesh(counter)%zT(3)=(ielz-1)*hz
+            mesh(counter)%zT(4)=(ielz-1)*hz
+            mesh(counter)%zT(5)=(ielz-1)*hz+hz
+            mesh(counter)%zt(6)=(ielz-1)*hz+hz
+            mesh(counter)%zt(7)=(ielz-1)*hz+hz
+            mesh(counter)%zT(8)=(ielz-1)*hz+hz
+         end do
+      end do
    end do
-end do
+end if
+
+if (spaceT=='__Q2') then
+   nnx=2*nelx+1
+   nny=2*nely+1
+   nnz=2*nelz+1
+   counter=0    
+   do ielz=1,nelz    
+      do iely=1,nely    
+         do ielx=1,nelx    
+            counter=counter+1    
+
+            mesh(counter)%iconT(1)=(ielx-1)*2+1+(iely-1)*2*nnx                   + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(2)=(ielx-1)*2+2+(iely-1)*2*nnx                   + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(3)=(ielx-1)*2+3+(iely-1)*2*nnx                   + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(4)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx               + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(5)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx               + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(6)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx               + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(7)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx*2             + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(8)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx*2             + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(9)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx*2             + 2*nnx*nny*(ielz-1)
+ 
+            mesh(counter)%iconT(10)=(ielx-1)*2+1+(iely-1)*2*nnx        + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(11)=(ielx-1)*2+2+(iely-1)*2*nnx        + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(12)=(ielx-1)*2+3+(iely-1)*2*nnx        + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(13)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx    + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(14)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx    + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(15)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx    + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(16)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx*2  + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(17)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx*2  + nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(18)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx*2  + nnx*nny + 2*nnx*nny*(ielz-1)
+
+            mesh(counter)%iconT(19)=(ielx-1)*2+1+(iely-1)*2*nnx        + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(20)=(ielx-1)*2+2+(iely-1)*2*nnx        + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(21)=(ielx-1)*2+3+(iely-1)*2*nnx        + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(22)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx    + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(23)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx    + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(24)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx    + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(25)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx*2  + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(26)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx*2  + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+            mesh(counter)%iconT(27)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx*2  + 2*nnx*nny + 2*nnx*nny*(ielz-1)
+
+            mesh(counter)%xT(01)=(ielx-1)*hx
+            mesh(counter)%xT(02)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xT(03)=(ielx-1)*hx+hx
+            mesh(counter)%xT(04)=(ielx-1)*hx
+            mesh(counter)%xT(05)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xT(06)=(ielx-1)*hx+hx
+            mesh(counter)%xT(07)=(ielx-1)*hx
+            mesh(counter)%xT(08)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xT(09)=(ielx-1)*hx+hx
+
+            mesh(counter)%xT(10)=(ielx-1)*hx
+            mesh(counter)%xT(11)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xT(12)=(ielx-1)*hx+hx
+            mesh(counter)%xT(13)=(ielx-1)*hx
+            mesh(counter)%xT(14)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xT(15)=(ielx-1)*hx+hx
+            mesh(counter)%xT(16)=(ielx-1)*hx
+            mesh(counter)%xT(17)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xT(18)=(ielx-1)*hx+hx
+
+            mesh(counter)%xT(19)=(ielx-1)*hx
+            mesh(counter)%xT(20)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xT(21)=(ielx-1)*hx+hx
+            mesh(counter)%xT(22)=(ielx-1)*hx
+            mesh(counter)%xT(23)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xT(24)=(ielx-1)*hx+hx
+            mesh(counter)%xT(25)=(ielx-1)*hx
+            mesh(counter)%xT(26)=(ielx-1)*hx+hx/2d0
+            mesh(counter)%xT(27)=(ielx-1)*hx+hx
+
+            mesh(counter)%yT(01)=(iely-1)*hy
+            mesh(counter)%yT(02)=(iely-1)*hy
+            mesh(counter)%yT(03)=(iely-1)*hy
+            mesh(counter)%yT(04)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yT(05)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yT(06)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yT(07)=(iely-1)*hy+hy
+            mesh(counter)%yT(08)=(iely-1)*hy+hy
+            mesh(counter)%yT(09)=(iely-1)*hy+hy
+
+            mesh(counter)%yT(10)=(iely-1)*hy
+            mesh(counter)%yT(11)=(iely-1)*hy
+            mesh(counter)%yT(12)=(iely-1)*hy
+            mesh(counter)%yT(13)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yT(14)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yT(15)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yT(16)=(iely-1)*hy+hy
+            mesh(counter)%yT(17)=(iely-1)*hy+hy
+            mesh(counter)%yT(18)=(iely-1)*hy+hy
+
+            mesh(counter)%yT(19)=(iely-1)*hy
+            mesh(counter)%yT(20)=(iely-1)*hy
+            mesh(counter)%yT(21)=(iely-1)*hy
+            mesh(counter)%yT(22)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yT(23)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yT(24)=(iely-1)*hy+hy/2d0
+            mesh(counter)%yT(25)=(iely-1)*hy+hy
+            mesh(counter)%yT(26)=(iely-1)*hy+hy
+            mesh(counter)%yT(27)=(iely-1)*hy+hy
+
+            mesh(counter)%zT(01)=(ielz-1)*hz
+            mesh(counter)%zT(02)=(ielz-1)*hz
+            mesh(counter)%zT(03)=(ielz-1)*hz
+            mesh(counter)%zT(04)=(ielz-1)*hz
+            mesh(counter)%zT(05)=(ielz-1)*hz
+            mesh(counter)%zT(06)=(ielz-1)*hz
+            mesh(counter)%zT(07)=(ielz-1)*hz
+            mesh(counter)%zT(08)=(ielz-1)*hz
+            mesh(counter)%zT(09)=(ielz-1)*hz
+
+            mesh(counter)%zT(10)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zT(11)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zT(12)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zT(13)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zT(14)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zT(15)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zT(16)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zT(17)=(ielz-1)*hz+hz/2d0
+            mesh(counter)%zT(18)=(ielz-1)*hz+hz/2d0
+
+            mesh(counter)%zT(19)=(ielz-1)*hz+hz
+            mesh(counter)%zT(20)=(ielz-1)*hz+hz
+            mesh(counter)%zT(21)=(ielz-1)*hz+hz
+            mesh(counter)%zT(22)=(ielz-1)*hz+hz
+            mesh(counter)%zT(23)=(ielz-1)*hz+hz
+            mesh(counter)%zT(24)=(ielz-1)*hz+hz
+            mesh(counter)%zT(25)=(ielz-1)*hz+hz
+            mesh(counter)%zT(26)=(ielz-1)*hz+hz
+            mesh(counter)%zT(27)=(ielz-1)*hz+hz
+
+         end do
+      end do
+   end do
+end if
 
 !==========================================================
 ! flag nodes on boundaries
@@ -376,9 +533,27 @@ end do
 if (debug) then
    do iel=1,nel
    print *,'--------------------------------------------------'
-   print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),' | iconP',mesh(iel)%iconP(1:mP)
+   print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV)
    do k=1,mV
       write(777,*) mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
+   end do
+   end do
+   print *,'--------------------------------------------------'
+   print *,'--------------------------------------------------'
+   do iel=1,nel
+   print *,'--------------------------------------------------'
+   print *,'elt:',iel,' | iconP',mesh(iel)%iconP(1:mP)
+   do k=1,mP
+      write(777,*) mesh(iel)%xP(k),mesh(iel)%yP(k),mesh(iel)%zP(k)
+   end do
+   end do
+   print *,'--------------------------------------------------'
+   print *,'--------------------------------------------------'
+   do iel=1,nel
+   print *,'--------------------------------------------------'
+   print *,'elt:',iel,' | iconT',mesh(iel)%iconT(1:mT)
+   do k=1,mT
+      write(777,*) mesh(iel)%xT(k),mesh(iel)%yT(k),mesh(iel)%zT(k)
    end do
    end do
 end if

@@ -49,8 +49,8 @@ do iq=1,nqel
    call gravity_model(mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
                       mesh(iel)%gxq(iq),mesh(iel)%gyq(iq),mesh(iel)%gzq(iq))
 
-   call NNV(rq,sq,tq,NNNV(1:mV),mV,ndim,pair)
-   call NNP(rq,sq,tq,NNNP(1:mP),mP,ndim,pair)
+   call NNN(rq,sq,tq,NNNV(1:mV),mV,ndim,spaceV)
+   call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spaceP)
 
    if (ndim==2) then
 

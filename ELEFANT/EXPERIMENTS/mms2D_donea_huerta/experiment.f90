@@ -16,13 +16,15 @@ ndim=2
 Lx=1
 Ly=1
 
-nelx=64
-nely=64
+nelx=6
+nely=6
 
 use_penalty=.true.
 penalty=1d7
 
-debug=.false.
+debug=.true.
+
+
 
 end subroutine
 

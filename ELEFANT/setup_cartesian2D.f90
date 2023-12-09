@@ -71,7 +71,7 @@ hy=Ly/nely
 !==========================================================
 !velocity 
 
-if (pair=='q1p0' .or. pair=='q1q1') then
+if (spaceV=='__Q1' .or. spaceV=='_Q1+') then
    counter=0    
    do iely=1,nely    
       do ielx=1,nelx    
@@ -113,7 +113,7 @@ if (pair=='q1p0' .or. pair=='q1q1') then
    end do    
 end if
 
-if (pair=='q1q1') then ! add bubble node
+if (spaceV=='_Q1+') then ! add bubble node
    do iel=1,nel
       mesh(iel)%xV(5)=mesh(iel)%xc
       mesh(iel)%yV(5)=mesh(iel)%yc
@@ -121,7 +121,7 @@ if (pair=='q1q1') then ! add bubble node
    end do
 end if
 
-if (pair=='q2q1') then
+if (spaceV=='__Q2') then
    nnx=2*nelx+1
    nny=2*nely+1
    counter=0    
@@ -158,16 +158,6 @@ if (pair=='q2q1') then
          mesh(counter)%yV(8)=(iely-1)*hy+hy
          mesh(counter)%yV(9)=(iely-1)*hy+hy
 
-         !mesh(counter)%xL(1)=mesh(counter)%xV(1)
-         !mesh(counter)%xL(2)=mesh(counter)%xV(3)
-         !mesh(counter)%xL(3)=mesh(counter)%xV(9)
-         !mesh(counter)%xL(4)=mesh(counter)%xV(7)
-
-         !mesh(counter)%yL(1)=mesh(counter)%yV(1)
-         !mesh(counter)%yL(2)=mesh(counter)%yV(3)
-         !mesh(counter)%yL(3)=mesh(counter)%yV(9)
-         !mesh(counter)%yL(4)=mesh(counter)%yV(7)
-
          mesh(counter)%xc=(ielx-1)*hx+hx/2
          mesh(counter)%yc=(iely-1)*hy+hy/2
          mesh(counter)%hx=hx
@@ -184,7 +174,7 @@ end if
 !==========================================================
 ! pressure 
 
-if (pair=='q1p0') then
+if (spaceP=='__Q0') then
    counter=0    
    do iely=1,nely    
       do ielx=1,nelx    
@@ -196,17 +186,7 @@ if (pair=='q1p0') then
    end do    
 end if
 
-if (pair=='q1q1') then
-   do iel=1,nel
-   do i=1,4
-      mesh(iel)%xP(i)=mesh(iel)%xV(i)
-      mesh(iel)%yP(i)=mesh(iel)%yV(i)
-      mesh(iel)%iconP(i)=mesh(iel)%iconV(i)
-   end do
-   end do
-end if
-
-if (pair=='q2q1') then
+if (spaceP=='__Q1') then
    counter=0    
    do iely=1,nely    
       do ielx=1,nelx    
@@ -230,13 +210,68 @@ end if
 !==========================================================
 ! temperature 
 
-do iel=1,nel
-   do i=1,mT
-      mesh(iel)%xT(i)=mesh(iel)%xV(i)
-      mesh(iel)%yT(i)=mesh(iel)%yV(i)
-      mesh(iel)%iconT(i)=mesh(iel)%iconV(i)
+if (use_T) then
+
+if (spaceT=='__Q1') then
+   counter=0    
+   do iely=1,nely    
+      do ielx=1,nelx    
+         counter=counter+1    
+         mesh(counter)%iconT(1)=ielx+(iely-1)*(nelx+1)    
+         mesh(counter)%iconT(2)=ielx+1+(iely-1)*(nelx+1)    
+         mesh(counter)%iconT(3)=ielx+1+iely*(nelx+1)    
+         mesh(counter)%iconT(4)=ielx+iely*(nelx+1)    
+         mesh(counter)%xT(1)=(ielx-1)*hx
+         mesh(counter)%xT(2)=(ielx-1)*hx+hx
+         mesh(counter)%xT(3)=(ielx-1)*hx+hx
+         mesh(counter)%xT(4)=(ielx-1)*hx
+         mesh(counter)%yT(1)=(iely-1)*hy
+         mesh(counter)%yT(2)=(iely-1)*hy
+         mesh(counter)%yT(3)=(iely-1)*hy+hy
+         mesh(counter)%yT(4)=(iely-1)*hy+hy
+      end do
    end do
-end do
+end if
+
+if (spaceT=='__Q2') then
+   nnx=2*nelx+1
+   nny=2*nely+1
+   counter=0    
+   do iely=1,nely    
+      do ielx=1,nelx    
+         counter=counter+1    
+         mesh(counter)%iconT(1)=(ielx-1)*2+1+(iely-1)*2*nnx
+         mesh(counter)%iconT(2)=(ielx-1)*2+2+(iely-1)*2*nnx
+         mesh(counter)%iconT(3)=(ielx-1)*2+3+(iely-1)*2*nnx
+         mesh(counter)%iconT(4)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx
+         mesh(counter)%iconT(5)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx
+         mesh(counter)%iconT(6)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx
+         mesh(counter)%iconT(7)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx*2
+         mesh(counter)%iconT(8)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx*2
+         mesh(counter)%iconT(9)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx*2
+         mesh(counter)%xT(1)=(ielx-1)*hx
+         mesh(counter)%xT(2)=(ielx-1)*hx+hx/2
+         mesh(counter)%xT(3)=(ielx-1)*hx+hx
+         mesh(counter)%xT(4)=(ielx-1)*hx
+         mesh(counter)%xT(5)=(ielx-1)*hx+hx/2
+         mesh(counter)%xT(6)=(ielx-1)*hx+hx
+         mesh(counter)%xT(7)=(ielx-1)*hx
+         mesh(counter)%xT(8)=(ielx-1)*hx+hx/2
+         mesh(counter)%xT(9)=(ielx-1)*hx+hx
+         mesh(counter)%yT(1)=(iely-1)*hy
+         mesh(counter)%yT(2)=(iely-1)*hy
+         mesh(counter)%yT(3)=(iely-1)*hy
+         mesh(counter)%yT(4)=(iely-1)*hy+hy/2
+         mesh(counter)%yT(5)=(iely-1)*hy+hy/2
+         mesh(counter)%yT(6)=(iely-1)*hy+hy/2
+         mesh(counter)%yT(7)=(iely-1)*hy+hy
+         mesh(counter)%yT(8)=(iely-1)*hy+hy
+         mesh(counter)%yT(9)=(iely-1)*hy+hy
+      end do    
+   end do    
+end if
+
+end if ! use_T
 
 !==========================================================
 ! flag nodes on boundaries
