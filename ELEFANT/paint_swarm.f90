@@ -71,13 +71,16 @@ if (use_swarm) then
       stop 'geometry not supported in paint_swarm'
    end if
 
+else
+   write(*,'(a)') shift//'bypassed since use_swarm=False'
+
 end if ! use_markers
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'paint_swarm ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'paint swarm (',elapsed,' s)'
 
 end if ! iproc
 

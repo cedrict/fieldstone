@@ -16,10 +16,13 @@ ndim=2
 Lx=1
 Ly=1
 
-nelx=6
-nely=6
+spaceV='__Q1'
+spaceP='__Q0'
+nelx=3
+nely=2
+mapping='__Q1'
 
-use_penalty=.true.
+!use_penalty=.true.
 penalty=1d7
 
 debug=.true.

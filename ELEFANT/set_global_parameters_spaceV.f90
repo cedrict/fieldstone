@@ -114,21 +114,18 @@ end if
 
 
 !----------------------------------------------------------
-!if (debug) then
-!   print *,'*************************'
-!   print *,'**********debug**********'
-!   print *,'mV=',mV
-!   print *,'nel=',nel
-!   print *,'NV=',NV
-!   print *,allocated(rV)
-!   print *,allocated(sV)
-!   print *,allocated(tV)
-!   print *,'rV=',rV
-!   print *,'sV=',sV
-!   print *,'tV=',tV
-!   print *,'**********debug**********'
-!   print *,'*************************'
-!end if
+if (debug) then
+write(2345,*) limit//'set_global_parameters_spaceV'//limit
+write(2345,*) 'mV=',mV
+write(2345,*) 'nel=',nel
+write(2345,*) 'NV=',NV
+write(2345,*) allocated(rV)
+write(2345,*) allocated(sV)
+write(2345,*) allocated(tV)
+write(2345,*) 'rV=',rV
+write(2345,*) 'sV=',sV
+write(2345,*) 'tV=',tV
+end if
 
 !==============================================================================!
 

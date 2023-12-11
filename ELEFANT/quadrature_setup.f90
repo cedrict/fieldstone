@@ -141,18 +141,15 @@ if (ndim==3) then
    end do
 end if
 
-!if (debug) then
-!print *,'*************************'
-!print *,'**********debug**********'
-!print *,'nq_per_dim=',nq_per_dim
-!print *,'nqel=',nqel
-!print *,'Nq=',Nq
-!print *,minval(mesh(1)%xq),maxval(mesh(1)%xq)
-!print *,minval(mesh(1)%yq),maxval(mesh(1)%yq)
-!print *,minval(mesh(1)%zq),maxval(mesh(1)%zq)
-!print *,'**********debug**********'
-!print *,'*************************'
-!end if
+if (debug) then
+write(2345,*) limit//'quadrature_setup'//limit
+write(2345,*) 'nq_per_dim=',nq_per_dim
+write(2345,*) 'nqel=',nqel
+write(2345,*) 'Nq=',Nq
+write(2345,*) minval(mesh(1)%xq),maxval(mesh(1)%xq)
+write(2345,*) minval(mesh(1)%yq),maxval(mesh(1)%yq)
+write(2345,*) minval(mesh(1)%zq),maxval(mesh(1)%zq)
+end if
 
 !==============================================================================!
 

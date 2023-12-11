@@ -72,13 +72,18 @@ if (geometry=='cartesian' .and. ndim==2) then
       end do
    end do
 
-   if (debug) then
-   write(*,*) '          nz=',nz
-   write(*,*) '          csrMV%ia (m/M)',minval(csrMV%ia), maxval(csrMV%ia)
-   write(*,*) '          csrMV%ja (m/M)',minval(csrMV%ja), maxval(csrMV%ja)
-   end if
+else
+
+   stop 'pb in matrix_setup_MV'
 
 end if ! cartesian 2D
+   
+if (debug) then
+write(2345,*) limit//'matrix_setup_MV'//limit
+write(2345,*) 'csrMV%nz=',csrMV%nz
+write(2345,*) 'csrMV%ia (m/M)',minval(csrMV%ia), maxval(csrMV%ia)
+write(2345,*) 'csrMV%ja (m/M)',minval(csrMV%ja), maxval(csrMV%ja)
+end if
 
 !==============================================================================!
 

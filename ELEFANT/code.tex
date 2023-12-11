@@ -1,12 +1,5 @@
  \subsubsection{assign\_values\_to\_qpoints.f90}
  This subroutine assigns 
- \subsubsection{basis\_functions\_L.f90}
- This file contains the basis functions associated with the vertices/corners
- of the element, i.e. P1 for triangles, Q1 for quads. 
- I have used the 'L' letter ('Linear') because 'V' for vertices or 'C' for 
- corners was problematic.
- \subsubsection{basis\_functions\_V.f90}
- This file contains 3 functions: 
  \subsubsection{compute\_dNdx\_dNdy\_dNdz.f90}
  This subroutine computes $\partial{\bN^\upnu}/\partial x$, $\partial{\bN^\upnu}/\partial y$ and
  $\partial{\bN^\upnu}/\partial z$ at a location $r,s,t$ passed as argument.
@@ -99,7 +92,7 @@
 
  \subsubsection{output\_mesh.f90}
  This subroutine produces the {\filenamefont meshV.vtu} file which only 
- contains the corner nodes.
+ contains the corner nodes (4 in 2D, 8 in 3D).
  \subsubsection{output\_qpoints}
 
  \subsubsection{output\_solution}
@@ -141,8 +134,6 @@
  This subroutine computes the root mean square velocity
  and each of the average velocity components. It also 
  computes the volume using GLQ.
- There is still probably a bit of an inconsistency since I use the 
- temperature basis functions to compute $q$ at quadrature points...
  \subsubsection{prescribe\_stokes\_solution.f90}
  This subroutine prescribes the velocity, pressure, temperature and strain rate components
  on the corners of each element via the {\sl analytical\_solution} subroutine.
@@ -161,6 +152,8 @@
  It further computes the real $(x_q,y_q,z_q)$ and reduced $(r_q,s_q,t_q)$
  coordinates of the GLQ points, and assigns them their weights and
  jacobian values.
+ The required constants for the higher order quadrature schemes are in 
+ {\filenamefont module\_constants.f90}.
  \subsubsection{read\_command\_line\_options}
 
  \subsubsection{recover\_pressure\_penalty}
@@ -168,6 +161,12 @@
  very cheap and very accurate. 
  \subsubsection{set\_default\_values}
  This subroutine assigns default values to many of the global variables.
+ \subsubsection{set\_global\_parameters\_mapping}
+ This subroutine computes mT,NT and assigns rT,sT,tT
+ \begin{itemize}
+ \item supported spaces in 2D: Q1,Q2
+ \item supported spaces in 3D: Q1,Q2
+ \end{itemize}
  \subsubsection{set\_global\_parameters\_pair}
  This subroutine computes {\tt mV,mP,mT,mL}.
  \subsubsection{set\_global\_parameters\_spaceP}

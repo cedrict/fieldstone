@@ -21,6 +21,7 @@ integer nnx,nny,nnz
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsubsection{matrix\_setup\_A}
+!@@ Matrix A is the energy equation matrix.
 !@@ If the geometry is Cartesian then the number of nonzeros in the matrix and its sparsity 
 !@@ structures are computed in a very efficient way. 
 !==================================================================================================!
@@ -35,7 +36,7 @@ if (use_T) then
 
 csrA%N=NfemT
 
-if (pair=='q1p0' .or. pair=='q1q1') then
+if (spaceT=='__Q1') then
 
    if (geometry=='cartesian' .and. ndim==2) then
       nnx=nelx+1
@@ -57,7 +58,7 @@ if (pair=='q1p0' .or. pair=='q1q1') then
 
 else
 
-   stop 'matrix_setup_A: pb1'
+   stop 'matrix_setup_A: spaceT not supported yet'
 
 end if
 
@@ -123,6 +124,9 @@ end if
 
 !print *,csrA%ja
 !print *,csrA%ia
+
+else
+   write(*,'(a)') shift//'bypassed since use_T=False'
 
 end if ! use_T
 

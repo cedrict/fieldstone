@@ -207,7 +207,7 @@ if (use_swarm) then
 
    end do ! iel
 
-else
+else ! use_swarm
 
    do iel=1,nel
 
@@ -216,8 +216,12 @@ else
          call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim,spaceP)
          mesh(iel)%pq(iq)=sum(NNNP(1:mP)*mesh(iel)%p(1:mP))
 
-         call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim,spaceT)
-         mesh(iel)%thetaq(iq)=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
+         if (use_T) then
+            call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim,spaceT)
+            mesh(iel)%thetaq(iq)=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
+         else
+            mesh(iel)%thetaq(iq)=0
+         end if
 
          call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNV(1:mV),mV,ndim,spaceV)
          exxq=sum(NNNV(1:mV)*mesh(iel)%exx(1:mV))
@@ -239,7 +243,7 @@ else
                              mesh(iel)%hcondq(iq),&
                              mesh(iel)%hcapaq(iq),&
                              mesh(iel)%hprodq(iq))
-      end do
+      end do !nqel
 
       etaq_min=min(minval(mesh(iel)%etaq(:)),etaq_min)
       etaq_max=max(maxval(mesh(iel)%etaq(:)),etaq_max)
@@ -250,7 +254,7 @@ else
       hcondq_min=min(minval(mesh(iel)%hcondq(:)),hcondq_min)
       hcondq_max=max(maxval(mesh(iel)%hcondq(:)),hcondq_max)
 
-   end do
+   end do !nel
 
 end if
 

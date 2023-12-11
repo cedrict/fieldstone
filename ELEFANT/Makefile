@@ -23,10 +23,10 @@ initialise_mumps_V.o interpolate_onto_nodes.o initialise_elements.o\
 locate_point.o\
 make_matrix_stokes.o make_matrix_energy.o \
 matrix_setup_K.o matrix_setup_GT.o matrix_setup_MV.o matrix_setup_MP.o matrix_setup_A.o\
-mgmres.o\
+mgmres.o mapping_setup.o\
 NNN.o dNNNdr.o dNNNds.o dNNNdt.o\
 output_matrix_tikz.o\
-postprocessors.o project_V_onto_L.o\
+postprocessors.o project_V_onto_L.o print_parameters.o\
 prescribe_stokes_solution.o paint_swarm.o pcg_solver_csr.o\
 quadrature_setup.o\
 recover_pressure_penalty.o read_command_line_options.o\

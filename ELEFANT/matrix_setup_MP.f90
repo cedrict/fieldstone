@@ -32,10 +32,10 @@ if (geometry=='cartesian' .and. ndim==2) then
 
    csrMP%n=NP
 
-   select case(pair)
-   case('q1p0')
+   select case(spaceP)
+   case('__Q0','__P0')
       csrMP%NZ=NP
-   case('q1q1','q2q1')
+   case('__Q1')
       nnx=nelx+1
       nny=nely+1
       csrMP%NZ=(4*4+(2*(nnx-2)+2*(nny-2))*6+(nnx-2)*(nny-2)*9)
@@ -52,14 +52,14 @@ if (geometry=='cartesian' .and. ndim==2) then
    allocate(csrMP%ja(csrMP%nz))   
    allocate(csrMP%mat(csrMP%nz))  
 
-   select case(pair)
-   case('q1p0')
+   select case(spaceP)
+   case('__Q0','__P0')
       csrMP%ia(1)=1
       do iel=1,nel
          csrMP%ja(iel)=iel
          csrMP%ia(iel+1)=csrMP%ia(iel)+1
       end do
-   case('q1q1','q2q1')
+   case('__Q1')
       nz=0
       csrMP%ia(1)=1
       do j1=1,nny
@@ -87,11 +87,8 @@ if (geometry=='cartesian' .and. ndim==2) then
       stop 'matrix_setup_MP: pair not implemented'
    end select 
 
-end if ! cartesian 2D
-
 !----------------------------------------------------------
-
-if (geometry=='cartesian' .and. ndim==3) then
+elseif (geometry=='cartesian' .and. ndim==3) then
 
    csrMP%n=NP
 
@@ -161,14 +158,20 @@ if (geometry=='cartesian' .and. ndim==3) then
       stop 'matrix_setup_MP: pair not implemented'
    end select 
 
+else
+
+   stop 'pb in matrix_setup_MP'
+
 end if
 
 !----------------------------------------------------------
    
 if (debug) then
-   write(*,*) '          nz=',nz
-   write(*,*) '          csrMP%ia (m/M)',minval(csrMP%ia), maxval(csrMP%ia)
-   write(*,*) '          csrMP%ja (m/M)',minval(csrMP%ja), maxval(csrMP%ja)
+write(2345,*) limit//'matrix_setup_MP'//limit
+write(2345,*) 'csrMP%nz=',csrMP%nz
+write(2345,*) 'csrMP%ia (m/M)',minval(csrMP%ia), maxval(csrMP%ia)
+write(2345,*) 'csrMP%ja (m/M)',minval(csrMP%ja), maxval(csrMP%ja)
+write(2345,*) 'csrMP%ia ',csrMP%ia
 end if
 
 !==============================================================================!

@@ -23,6 +23,7 @@ open(unit=1237,file="OUTPUT/STATS/statistics_T.ascii")
 open(unit=1238,file="OUTPUT/STATS/statistics_VP.ascii")
 open(unit=1239,file="OUTPUT/STATS/statistics_pmgmres.ascii")
 open(unit=1240,file="OUTPUT/STATS/statistics_rheology.ascii")
+open(unit=2345,file="debug.ascii")
 
 call header
 
@@ -48,7 +49,6 @@ call set_global_parameters_spaceP
 call set_global_parameters_spaceT
 call set_global_parameters_mapping
 
-call print_parameters
 
 !----------------------------------------------------------
 
@@ -92,43 +92,13 @@ call swarm_setup
 call swarm_material_layout
 call paint_swarm
 call matrix_setup_K
-stop
-call matrix_setup_GT
-call matrix_setup_MV
 call matrix_setup_MP
+call matrix_setup_MV
+call matrix_setup_GT
 call matrix_setup_A
 !call output_matrix_tikz
 call initial_temperature
-
-!----------------------------------------------------------
-write(*,'(a)') '..................................'
-                 write(*,'(a,i10)')    '        ndim        =',ndim
-                 write(*,'(a,a11)')    '        geometry    =',geometry
-                 write(*,'(a,a10)')    '        pair        =',pair
-                 write(*,'(a,f10.3)')  '        Lx          =',Lx
-                 write(*,'(a,f10.3)')  '        Ly          =',Ly
-if (ndim==3)     write(*,'(a,f10.3)')  '        Lz          =',Lz
-                 write(*,'(a,i10)')    '        nelx        =',nelx
-                 write(*,'(a,i10)')    '        nely        =',nely
-if (ndim==3)     write(*,'(a,i10)')    '        nelz        =',nelz
-                 write(*,'(a,i10)')    '        nel         =',nel
-                 write(*,'(a,i10)')    '        nqel        =',nqel
-                 write(*,'(a,i10)')    '        mV          =',mV
-                 write(*,'(a,i10)')    '        mP          =',mP
-                 write(*,'(a,i10)')    '        mT          =',mT
-                 write(*,'(a,i10)')    '        NV          =',NV
-                 write(*,'(a,i10)')    '        NP          =',NP
-if (use_T)       write(*,'(a,i10)')    '        NT          =',NT
-                 write(*,'(a,i10)')    '        NfemV       =',NfemV
-                 write(*,'(a,i10)')    '        NfemP       =',NfemP
-if (use_T)       write(*,'(a,i10)')    '        NfemT       =',NfemT
-                 write(*,'(a,i10)')    '        Nq          =',Nq
-                 write(*,'(a,l10)')    '        use_MUMPS   =',use_MUMPS
-                 write(*,'(a,i10)')    '        nmat        =',nmat
-                 write(*,'(a,l10)')    '        use_penalty =',use_penalty
-if (use_penalty) write(*,'(a,es10.3)') '        penalty     =',penalty
-if (use_ALE)     write(*,'(a,l10)')    '        use_ALE     =',penalty
-!----------------------------------------------------------
+call print_parameters
 
 do istep=1,nstep !-----------------------------------------
                                                           !

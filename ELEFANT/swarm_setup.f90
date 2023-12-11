@@ -117,6 +117,9 @@ else
 
 end if ! init_marker_random
 
+else
+   write(*,'(a)') shift//'bypassed since use_swarm=False'
+
 end if ! use_swarm
 
 !==============================================================================!

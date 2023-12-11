@@ -154,18 +154,16 @@ else
          end do
          end do
 
-         if (debug) then
-         print *,'*************************'
-         print *,'**********debug**********'
-         write(*,*) 'nz=',nz
-         write(*,*) 'csrK%ia (m/M)',minval(csrK%ia), maxval(csrK%ia)
-         write(*,*) 'csrK%ja (m/M)',minval(csrK%ja), maxval(csrK%ja)
-         print *,'csrK%ia=',csrK%ia
-         !print *,csrK%rnr(1:NfemV)
-         !print *,csrK%snr(1:NfemV)
-         print *,'**********debug**********'
-         print *,'*************************'
-         end if
+         !if (debug) then
+         !print *,'*************************'
+         !print *,'**********debug**********'
+         !write(*,*) 'nz=',nz
+         !write(*,*) 'csrK%ia (m/M)',minval(csrK%ia), maxval(csrK%ia)
+         !write(*,*) 'csrK%ja (m/M)',minval(csrK%ja), maxval(csrK%ja)
+         !print *,'csrK%ia=',csrK%ia
+         !print *,'**********debug**********'
+         !print *,'*************************'
+         !end if
 
       !----------------------------------------------------------------------------------
       else if (geometry=='cartesian' .and. ndim==3 .and. spaceV=='__Q1') then
@@ -355,13 +353,13 @@ else
          write(*,'(a,2i9)') shift//'csrK%ia',minval(csrK%ia), maxval(csrK%ia)
          write(*,'(a,2i9)') shift//'csrK%ja',minval(csrK%ja), maxval(csrK%ja)
 
-         if (debug) then
-            print *,'*************************'
-            print *,'**********debug**********'
-            print *,'csrK%ia=',csrK%ia
-            print *,'**********debug**********'
-            print *,'*************************'
-         end if
+         !if (debug) then
+         !   print *,'*************************'
+         !   print *,'**********debug**********'
+         !   print *,'csrK%ia=',csrK%ia
+         !   print *,'**********debug**********'
+         !   print *,'*************************'
+         !end if
 
 
       end if 
