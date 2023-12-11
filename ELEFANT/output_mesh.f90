@@ -20,7 +20,7 @@ integer i
 !==================================================================================================!
 !@@ \subsubsection{output\_mesh.f90}
 !@@ This subroutine produces the {\filenamefont meshV.vtu} file which only 
-!@@ contains the corner nodes.
+!@@ contains the corner nodes (4 in 2D, 8 in 3D).
 !==================================================================================================!
 
 if (iproc==0) then

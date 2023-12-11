@@ -68,7 +68,7 @@ hx=Lx/nelx
 hy=Ly/nely
 
 
-!==========================================================
+!----------------------------------------------------------
 !velocity 
 
 if (spaceV=='__Q1' .or. spaceV=='_Q1+') then
@@ -171,7 +171,7 @@ if (spaceV=='__Q2') then
    end do    
 end if
 
-!==========================================================
+!----------------------------------------------------------
 ! pressure 
 
 if (spaceP=='__Q0') then
@@ -207,7 +207,7 @@ if (spaceP=='__Q1') then
    end do
 end if
 
-!==========================================================
+!----------------------------------------------------------
 ! temperature 
 
 if (use_T) then
@@ -273,7 +273,7 @@ end if
 
 end if ! use_T
 
-!==========================================================
+!----------------------------------------------------------
 ! flag nodes on boundaries
 
 do iel=1,nel
@@ -285,7 +285,7 @@ do iel=1,nel
    end do
 end do
 
-!==========================================================
+!----------------------------------------------------------
 ! initialise boundary arrays
 
 do iel=1,nel
@@ -295,16 +295,20 @@ do iel=1,nel
    mesh(iel)%fix_T=.false.
 end do
 
-!==========================================================
+!----------------------------------------------------------
 
-if (debug) then
-   do iel=1,nel
-   print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),'iconP',mesh(iel)%iconP(1:mP)
-   do k=1,mV
-      write(777,*) mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
-   end do
-   end do
-end if
+!if (debug) then
+!   print *,'*************************'
+!   print *,'**********debug**********'
+!   do iel=1,nel
+!   print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),'iconP',mesh(iel)%iconP(1:mP)
+!   do k=1,mV
+!      write(777,*) mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
+!   end do
+!   end do
+!   print *,'**********debug**********'
+!   print *,'*************************'
+!end if
 
 !==============================================================================!
 

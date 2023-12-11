@@ -87,7 +87,7 @@ if (ndim==2) then
       stop 'unknown 2D space in NNN'
    end select
 
-else
+else ! ndim=3
 
    select case(space)
    case('__Q0')

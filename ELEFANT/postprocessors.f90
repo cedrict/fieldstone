@@ -25,8 +25,6 @@ real(8) uth,vth,wth,pth,Tth,dum
 !@@ This subroutine computes the root mean square velocity
 !@@ and each of the average velocity components. It also 
 !@@ computes the volume using GLQ.
-!@@ There is still probably a bit of an inconsistency since I use the 
-!@@ temperature basis functions to compute $q$ at quadrature points...
 !==================================================================================================!
 
 if (iproc==0) then

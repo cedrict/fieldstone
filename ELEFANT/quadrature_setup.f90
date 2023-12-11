@@ -10,7 +10,7 @@ subroutine quadrature_setup
 
 use module_parameters, only: ndim,mmapping,nq_per_dim,Nq,nel,nqel,iproc,iel,debug,spaceV,mapping
 use module_mesh 
-use module_constants
+use module_constants, only: sqrt3,qc4a,qc4b,qw4a,qw4b
 use module_timing
 
 implicit none
@@ -19,7 +19,6 @@ integer iq,jq,kq,counter
 real(8) rq,sq,tq,jcob
 real(8) NNNM(mmapping),dNNNMdx(mmapping),dNNNMdy(mmapping),dNNNMdz(mmapping)
 real(8), dimension(:), allocatable :: qcoords,qweights
-!real(8), dimension(:), allocatable :: NNNM,dNNNMdx,dNNNMdy,dNNNMdz
 
 !==================================================================================================!
 !==================================================================================================!
@@ -28,6 +27,8 @@ real(8), dimension(:), allocatable :: qcoords,qweights
 !@@ It further computes the real $(x_q,y_q,z_q)$ and reduced $(r_q,s_q,t_q)$
 !@@ coordinates of the GLQ points, and assigns them their weights and
 !@@ jacobian values.
+!@@ The required constants for the higher order quadrature schemes are in 
+!@@ {\filenamefont module\_constants.f90}.
 !==================================================================================================!
 
 if (iproc==0) then
@@ -62,7 +63,7 @@ nqel=nq_per_dim**ndim
 
 Nq=nqel*nel
 
-!==============================================================================!
+!===============================================================================
 
 do iel=1,nel
    allocate(mesh(iel)%xq(nqel))      ; mesh(iel)%xq(:)=0 
@@ -85,7 +86,7 @@ do iel=1,nel
    allocate(mesh(iel)%hprodq(nqel))  ; mesh(iel)%hprodq(:)=0 
 end do
 
-!--------------------------------------
+!===============================================================================
 
 if (ndim==2) then
    do iel=1,nel
@@ -96,6 +97,10 @@ if (ndim==2) then
          rq=qcoords(iq)
          sq=qcoords(jq)
          call NNN(rq,sq,0.d0,NNNM,mmapping,ndim,mapping)
+         !print *,'------'
+         !print *,iel,counter,rq,sq
+         !print *,iel,counter,mesh(iel)%xM
+         !print *,iel,counter,NNNM
          mesh(iel)%xq(counter)=sum(mesh(iel)%xM*NNNM)
          mesh(iel)%yq(counter)=sum(mesh(iel)%yM*NNNM)
          mesh(iel)%weightq(counter)=qweights(iq)*qweights(jq)
@@ -136,11 +141,18 @@ if (ndim==3) then
    end do
 end if
 
-if (debug) then
-print *,'nq_per_dim=',nq_per_dim
-print *,'nqel=',nqel
-print *,'Nq=',Nq
-end if
+!if (debug) then
+!print *,'*************************'
+!print *,'**********debug**********'
+!print *,'nq_per_dim=',nq_per_dim
+!print *,'nqel=',nqel
+!print *,'Nq=',Nq
+!print *,minval(mesh(1)%xq),maxval(mesh(1)%xq)
+!print *,minval(mesh(1)%yq),maxval(mesh(1)%yq)
+!print *,minval(mesh(1)%zq),maxval(mesh(1)%zq)
+!print *,'**********debug**********'
+!print *,'*************************'
+!end if
 
 !==============================================================================!
 

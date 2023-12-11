@@ -34,6 +34,8 @@ real(8) NNNV(mV),NNNP(mP),dNdx(mV),dNdy(mV),dNdz(mV)
 !@@ the element. 
 !==================================================================================================!
 
+NNNmat=0.d0
+
 K_el=0.d0
 G_el=0.d0
 f_el=0.d0
@@ -86,7 +88,6 @@ do iq=1,nqel
       do k=1,mP
          NNNmat(1,k)=NNNp(k)
          NNNmat(2,k)=NNNp(k)
-         NNNmat(3,k)=0.d0
       end do
 
    else
@@ -130,9 +131,6 @@ do iq=1,nqel
          NNNmat(1,k)=NNNp(k)
          NNNmat(2,k)=NNNp(k)
          NNNmat(3,k)=NNNp(k)
-         NNNmat(4,k)=0.d0
-         NNNmat(5,k)=0.d0
-         NNNmat(6,k)=0.d0
       end do
 
    end if

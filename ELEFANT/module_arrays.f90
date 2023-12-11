@@ -13,4 +13,7 @@ real(8), dimension(:), allocatable :: rP,sP,tP
 real(8), dimension(:), allocatable :: rT,sT,tT
 real(8), dimension(:), allocatable :: rmapping,smapping,tmapping
 
+integer(4), dimension(:,:), allocatable :: vdof_belongs_to
+integer(4), dimension(:,:), allocatable :: pdof_belongs_to
+
 end module

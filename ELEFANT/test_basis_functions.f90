@@ -60,6 +60,7 @@ do iel=1,nel
    end do
 end do
 close(123)
+print *,'-> produced OUTPUT/TEST/test_basis_functions_V_constant.ascii'
 
 open(unit=123,file='OUTPUT/TEST/test_basis_functions_V_linear.ascii',action='write')
 do iel=1,nel
@@ -84,6 +85,7 @@ do iel=1,nel
    end do
 end do
 close(123)
+print *,'-> produced OUTPUT/TEST/test_basis_functions_V_linear.ascii'
 
 open(unit=123,file='OUTPUT/TEST/test_basis_functions_V_quadratic.ascii',action='write')
 do iel=1,nel
@@ -108,6 +110,7 @@ do iel=1,nel
    end do
 end do
 close(123)
+print *,'-> produced OUTPUT/TEST/test_basis_functions_V_quadratic.ascii'
 
 open(unit=123,file='OUTPUT/TEST/test_basis_functions_V_cubic.ascii',action='write')
 do iel=1,nel
@@ -132,6 +135,7 @@ do iel=1,nel
    end do
 end do
 close(123)
+print *,'-> produced OUTPUT/TEST/test_basis_functions_V_cubic.ascii'
 
 open(unit=123,file='OUTPUT/TEST/test_basis_functions_P_constant.ascii',action='write')
 do iel=1,nel
@@ -146,6 +150,7 @@ do iel=1,nel
    end do
 end do
 close(123)
+print *,'-> produced OUTPUT/TEST/test_basis_functions_P_constant.ascii'
 
 open(unit=123,file='OUTPUT/TEST/test_basis_functions_P_linear.ascii',action='write')
 do iel=1,nel
@@ -160,6 +165,7 @@ do iel=1,nel
    end do
 end do
 close(123)
+print *,'-> produced OUTPUT/TEST/test_basis_functions_P_linear.ascii'
 
 open(unit=123,file='OUTPUT/TEST/test_basis_functions_P_quadratic.ascii',action='write')
 do iel=1,nel
@@ -174,6 +180,7 @@ do iel=1,nel
    end do
 end do
 close(123)
+print *,'-> produced OUTPUT/TEST/test_basis_functions_P_quadratic.ascii'
 
 open(unit=123,file='OUTPUT/TEST/test_basis_functions_P_cubic.ascii',action='write')
 do iel=1,nel
@@ -188,7 +195,9 @@ do iel=1,nel
    end do
 end do
 close(123)
+print *,'-> produced OUTPUT/TEST/test_basis_functions_P_cubic.ascii'
 
+if (use_T) then
 open(unit=123,file='OUTPUT/TEST/test_basis_functions_T_constant.ascii',action='write')
 do iel=1,nel
    mesh(iel)%T=1
@@ -222,8 +231,7 @@ do iel=1,nel
    end do
 end do
 close(123)
-
-
+end if
 
 
 end if

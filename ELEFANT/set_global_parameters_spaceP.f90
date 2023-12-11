@@ -94,16 +94,20 @@ end if
 
 !----------------------------------------------------------
 
-if (debug) then
-   print *,'mP=',mP
-   print *,'NP=',NP
-   print *,allocated(rP)
-   print *,allocated(sP)
-   print *,allocated(tP)
-   print *,'rP=',rP
-   print *,'sP=',sP
-   print *,'tP=',tP
-end if
+!if (debug) then
+!   print *,'*************************'
+!   print *,'**********debug**********'
+!   print *,'mP=',mP
+!   print *,'NP=',NP
+!   print *,allocated(rP)
+!   print *,allocated(sP)
+!   print *,allocated(tP)
+!   print *,'rP=',rP
+!   print *,'sP=',sP
+!   print *,'tP=',tP
+!   print *,'**********debug**********'
+!   print *,'*************************'
+!end if
 
 !==============================================================================!
 

@@ -79,6 +79,7 @@ do iel=1,nel
    allocate(mesh(iel)%xM(mmapping))
    allocate(mesh(iel)%yM(mmapping))
    allocate(mesh(iel)%zM(mmapping))
+   allocate(mesh(iel)%iconM(mmapping))
 
 
 end do

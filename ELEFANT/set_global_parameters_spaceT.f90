@@ -82,16 +82,20 @@ end if
 
 !----------------------------------------------------------
 
-if (debug) then
-   print *,'mT=',mT
-   print *,'NT=',NT
-   print *,allocated(rT)
-   print *,allocated(sT)
-   print *,allocated(tT)
-   print *,'rT=',rT
-   print *,'sT=',sT
-   print *,'tT=',tT
-end if
+!if (debug) then
+!   print *,'*************************'
+!   print *,'**********debug**********'
+!   print *,'mT=',mT
+!   print *,'NT=',NT
+!   print *,allocated(rT)
+!   print *,allocated(sT)
+!   print *,allocated(tT)
+!   print *,'rT=',rT
+!   print *,'sT=',sT
+!   print *,'tT=',tT
+!   print *,'**********debug**********'
+!   print *,'*************************'
+!end if
 
 !==============================================================================!
 

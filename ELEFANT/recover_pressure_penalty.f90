@@ -8,8 +8,8 @@
 
 subroutine recover_pressure_penalty
 
-use module_parameters
-use module_statistics 
+use module_parameters, only: mP,mV,penalty,normalise_pressure,nel,ndim,debug,iel,NV
+use module_statistics, only: p_min,p_max,q_min,q_max 
 use module_mesh 
 use module_timing
 use module_arrays, only : solP
@@ -89,11 +89,15 @@ q_max=maxval(q)
 !----------------------------------------------------------
 
 if (debug) then
+   print *,'*************************'
+   print *,'**********debug**********'
    do iel=1,nel
    do k=1,mV
       write(777,*) mesh(iel)%xV(k),mesh(iel)%yV(k),solP(iel),mesh(iel)%q(k)
    end do
    end do
+   print *,'**********debug**********'
+   print *,'*************************'
 end if
 
 end subroutine

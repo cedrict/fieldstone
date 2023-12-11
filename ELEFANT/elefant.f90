@@ -48,6 +48,7 @@ call set_global_parameters_spaceP
 call set_global_parameters_spaceT
 call set_global_parameters_mapping
 
+call print_parameters
 
 !----------------------------------------------------------
 
@@ -62,31 +63,13 @@ NfemV=NV*ndofV
 NfemP=NP
 NfemT=NT
 
-!nq_per_dim=2
-!nqel=nq_per_dim**ndim
-!Nq=nqel*nel
-if (ndim==2) ndim2=3
-if (ndim==3) ndim2=6
 allocate(solV(NfemV))
 allocate(solP(NfemP))
 allocate(rhs_f(NfemV))
-if (.not.use_penalty) allocate(rhs_h(NfemP))
+allocate(rhs_h(NfemP))
 allocate(materials(nmat))
 allocate(Kdiag(NfemV))
 
-allocate(Cmat(ndim2,ndim2)) ; Cmat=0d0
-allocate(Kmat(ndim2,ndim2)) ; Kmat=0d0
-if (ndim==2) then
-Cmat(1,1)=2d0 ; Cmat(2,2)=2d0 ; Cmat(3,3)=1d0
-Kmat(1,1)=1d0 ; Kmat(1,2)=1d0 ; Kmat(2,1)=1d0 ; Kmat(2,2)=1d0
-end if
-if (ndim==3) then
-Cmat(1,1)=2d0 ; Cmat(2,2)=2d0 ; Cmat(3,3)=2d0 
-Cmat(4,4)=1d0 ; Cmat(5,5)=1d0 ; Cmat(6,6)=1d0 
-Kmat(1,1)=1d0 ; Kmat(1,2)=1d0 ; Kmat(1,3)=1d0 
-Kmat(2,1)=1d0 ; Kmat(2,2)=1d0 ; Kmat(2,3)=1d0 
-Kmat(3,1)=1d0 ; Kmat(3,2)=1d0 ; Kmat(3,3)=1d0
-end if
 
 call define_material_properties
 
@@ -102,12 +85,14 @@ case('spherical')
 end select
 
 call output_mesh
+call mapping_setup
 call quadrature_setup
 call test_basis_functions
 call swarm_setup
 call swarm_material_layout
 call paint_swarm
 call matrix_setup_K
+stop
 call matrix_setup_GT
 call matrix_setup_MV
 call matrix_setup_MP

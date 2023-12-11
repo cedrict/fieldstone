@@ -19,7 +19,7 @@ implicit none
 !@@ \subsubsection{set\_global\_parameters\_spaceV}
 !@@ This subroutine computes mV,nel,NV and assigns rV,sV,tV
 !@@ \begin{itemize}
-!@@ \item supported spaces in 2D: Q1,Q2,Q1+
+!@@ \item supported spaces in 2D: Q1,Q2,Q1+,Q3
 !@@ \item supported spaces in 3D: Q1,Q2,Q1++
 !@@ \end{itemize}
 !==================================================================================================!
@@ -59,6 +59,15 @@ if (ndim==2) then
       NV=(nelx+1)*(nely+1)+nel
       rV=(/-1d0,+1d0,+1d0,-1d0,0d0/)
       sV=(/-1d0,-1d0,+1d0,+1d0,0d0/)
+   case('__Q3')
+      mV=2**ndim+1
+      allocate(rV(mV)) ; rV=0.d0
+      allocate(sV(mV)) ; sV=0.d0
+      allocate(tV(mV)) ; tV=0.d0
+      NV=(3*nelx+1)*(3*nely+1)
+      !missing rV
+      !missing sV
+      !missing tV
    case default
       stop 'spaceV not supported in set_global_parameters_spaceV'
    end select
@@ -105,18 +114,21 @@ end if
 
 
 !----------------------------------------------------------
-print *,debug
-if (debug) then
-   print *,'mV=',mV
-   print *,'nel=',nel
-   print *,'NV=',NV
-   print *,allocated(rV)
-   print *,allocated(sV)
-   print *,allocated(tV)
-   print *,'rV=',rV
-   print *,'sV=',sV
-   print *,'tV=',tV
-end if
+!if (debug) then
+!   print *,'*************************'
+!   print *,'**********debug**********'
+!   print *,'mV=',mV
+!   print *,'nel=',nel
+!   print *,'NV=',NV
+!   print *,allocated(rV)
+!   print *,allocated(sV)
+!   print *,allocated(tV)
+!   print *,'rV=',rV
+!   print *,'sV=',sV
+!   print *,'tV=',tV
+!   print *,'**********debug**********'
+!   print *,'*************************'
+!end if
 
 !==============================================================================!
 

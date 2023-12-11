@@ -6,22 +6,19 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine prescribe_stokes_solution
+subroutine mapping_setup
 
-use module_parameters, only: nel,mV,iproc,iel
+use module_parameters, only: iel,spaceV,mapping,nel,iproc,debug
 use module_mesh 
 use module_timing
 
 implicit none
 
-integer k
-real(8) dum 
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{prescribe\_stokes\_solution.f90}
-!@@ This subroutine prescribes the velocity, pressure, temperature and strain rate components
-!@@ on the nodes of each element via the {\sl analytical\_solution} subroutine.
+!@@ \subsubsection{template}
+!@@
 !==================================================================================================!
 
 if (iproc==0) then
@@ -30,31 +27,37 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-do iel=1,nel
-   do k=1,mV
-      call analytical_solution(mesh(iel)%xV(k),&
-                               mesh(iel)%yV(k),&
-                               mesh(iel)%zV(k),&
-                               mesh(iel)%u(k),&
-                               mesh(iel)%v(k),&
-                               mesh(iel)%w(k),&
-                               mesh(iel)%q(k),&
-                               dum,&
-                               mesh(iel)%exx(k),&
-                               mesh(iel)%eyy(k),&
-                               mesh(iel)%ezz(k),&
-                               mesh(iel)%exy(k),&
-                               mesh(iel)%exz(k),&
-                               mesh(iel)%eyz(k))
-
+if (mapping==spaceV) then
+   
+   do iel=1,nel
+      mesh(iel)%xM=mesh(iel)%xV   
+      mesh(iel)%yM=mesh(iel)%yV   
+      mesh(iel)%zM=mesh(iel)%zV   
+      mesh(iel)%iconM=mesh(iel)%iconV 
    end do
-end do
+
+else
+
+   stop 'non isoparametric mapping not supported yet'
+
+end if
+
+!if (debug) then
+!print *,'*************************'
+!print *,'**********debug**********'
+!print *,minval(mesh(1)%xM),maxval(mesh(1)%xM)
+!print *,minval(mesh(1)%yM),maxval(mesh(1)%yM)
+!print *,minval(mesh(1)%zM),maxval(mesh(1)%zM)
+!print *,mesh(1)%iconM
+!print *,'**********debug**********'
+!print *,'*************************'
+!end if
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') '     >> prescribe_stokes_solution ',elapsed,' s'
+write(*,'(a,f6.2,a)') 'mapping_setup (',elapsed,' s)'
 
 end if ! iproc
 

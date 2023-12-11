@@ -8,7 +8,7 @@
 
 subroutine paint_swarm
 
-use module_parameters
+use module_parameters, only: use_swarm,nmarker,nxstripes,nystripes,nzstripes,ndim,geometry,Lx,Ly,Lz,iproc
 use module_swarm 
 use module_timing
 
@@ -62,6 +62,14 @@ if (use_swarm) then
       end if
 
    end if ! cartesian
+
+   if (geometry=='annulus') then
+      stop 'geometry not supported in paint_swarm'
+   end if
+
+   if (geometry=='shell') then
+      stop 'geometry not supported in paint_swarm'
+   end if
 
 end if ! use_markers
 
