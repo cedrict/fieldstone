@@ -1,3 +1,6 @@
+\begin{flushright} {\tiny {\color{gray} storage.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 The FE matrix (or the blocks which compose it) 
 is the result of the assembly process of all elemental matrices. 
 Its size can become quite large when the resolution is being increased (from thousands
@@ -20,7 +23,7 @@ I focus on  the CSR format in what follows since it is the most common format
 and it is the one used in \elefant. 
 
 %..............................................................................
-\subsubsection{2D domain - One degree of freedom per node}
+\subsection{2D domain - $Q_1$ - One degree of freedom per node}
 
 Let us consider again the  $3\times2$ element grid which counts 12 nodes.
 
@@ -109,7 +112,7 @@ RWPTR &=&(0,4,10,16, ... )   \nn
 
 
 %..............................................................................
-\subsubsection{2D domain - Symmetric matrix CSR storage} \label{ss:symmcsrss}
+\subsection{2D domain - $Q_1$ - Symmetric matrix CSR storage} \label{ss:symmcsrss}
 
 If the matrix is symmetric, i.e. ${\bm M}={\bm M}^T$, then we may wish to 
 only store half of it, always in the interest of saving memory. 
@@ -154,11 +157,12 @@ ia=RWPTR &=&(1, 5, 10, 15, 18, 22, 27, 32, 35, 37, 39, 41, 42)  \nn
 \end{eqnarray}
 
 %..............................................................................
-\subsubsection{2D domain - Two degrees of freedom per node}
+\subsection{2D domain - $Q_1$ - Two degrees of freedom per node}
 
-When there are now two degrees of freedom per node, such as in the case of the Stokes equation
-in two-dimensions, the size of the $\K$ matrix is given $NfemV=nnx*nny*ndofV$  
-where $NfemV$ is the total number of velocity degrees of freedom.
+When there are now two degrees of freedom per node, such as in the case 
+of the Stokes equation in two-dimensions, the size of the $\K$ matrix 
+is given $NfemV=nnx*nny*ndofV$ where $NfemV$ is the total number of 
+velocity degrees of freedom.
 
 \begin{center}
 \input{tikz/tikz_3x2_two}
@@ -278,11 +282,133 @@ which are coupled to 24 velocity dofs:
 \end{equation} 
 \end{scriptsize}
 
+%..............................................................................
+\subsection{2D domain - $Q_2$ - Two degrees of freedom per node}
+
+
+When there are now two degrees of freedom per node, such as in the case 
+of the Stokes equation in two-dimensions, the size of the $\K$ matrix 
+is given $NfemV=nnx*nny*ndofV$ where $NfemV$ is the total number of 
+velocity degrees of freedom. What is different here is that for $Q_2$
+elements we have $nnx=2*nelx+1$ and $nny=2*nely+1$.
+
+\begin{center}
+\input{tikz/tikz_3x2_two_Q2}
+\end{center}
+
+In the case of the small grid above, we have then 
+$nelx=3$, $nely=2$, so that $nnx=7$ and $nny=5$, and then
+$NfemV=7*5*2=70$ and elemental matrices are now $18\times18$ in size.
+
+
+\begin{center}
+\input{tikz/tikz_3x2_Q2.tex}
+\end{center}
+
+
+Concretely here:
+\begin{itemize}
+\item nodes {\color{teal} 0,6,28,34} see 9 nodes (corners)
+\item nodes 1,3,5,7,8,10,12,13,21,22,24,26,27,29,31,33 see 9 nodes
+\item nodes 2,4,9,11,14,15,17,19,20,23,25,30,32, see 15 nodes
+\item nodes 16,18 see 25 nodes
+\end{itemize}
+
+If there was only one dof per node, we would find 
+the number of non zeros as follow:
+\[
+NZ=4*9 + 16*9 + 13*15 + 2*25 = 36+144 + 195 + 50 = 425
+\]
+But since there are two velocity dofs per node, we find that 
+the total number of nonzeros is 4 times higher, i.e.
+\[
+NZ=1700
+\] 
+And if we choose for a symmetric CSR storage:
+\[
+NZ_{symm} = \frac{NZ-n}{2}+n = \frac{1700-70}{2} + 70 = 885 
+\]
+
+Let us now turn to the real case of 2 dofs per node and establish 
+who sees who:
+
+\begin{tabular}{lp{14.5cm}l}
+dof &  sees other dofs & total\\
+\hline
+0 & 0,1,2,3,4,5,14,15,16,17,18,19,28,29,30,31,32,33 & 18 \\
+1 & 0,1,2,3,4,5,14,15,16,17,18,19,28,29,30,31,32,33 & 18 \\
+2 & 0,1,2,3,4,5,14,15,16,17,18,19,28,29,30,31,32,33 & 18 \\
+3 & 0,1,2,3,4,5,14,15,16,17,18,19,28,29,30,31,32,33 & 18 \\
+4 & 0,1,2,3,4,5,6,7,8,9,14,15,16,17,18,19,20,21,22,23,28,29,30,31,32,33,34,35,36,37 & 30 \\
+5 & 0,1,2,3,4,5,6,7,8,9,14,15,16,17,18,19,20,21,22,23,28,29,30,31,32,33,34,35,36,37 & 30 \\
+6 & 4,5,6,7,8,9,18,19,20,21,22,23,32,33,34,35,36,37 & 18 \\
+7 & 4,5,6,7,8,9,18,19,20,21,22,23,32,33,34,35,36,37 & 18 \\
+8 & 4,5,6,7,8,9,10,11,12,13,18,19,20,21,22,23,24,25,26,27,32,33,34,35,36,37,38,39,40,41 & 30 \\
+9 & 4,5,6,7,8,9,10,11,12,13,18,19,20,21,22,23,24,25,26,27,32,33,34,35,36,37,38,39,40,41 & 30 \\
+10 & 8,9,10,11,12,13,22,23,24,25,26,27,36,37,38,39,40,41 & 18\\
+11 & 8,9,10,11,12,13,22,23,24,25,26,27,36,37,38,39,40,41 & 18\\
+12 & 8,9,10,11,12,13,22,23,24,25,26,27,36,37,38,39,40,41 & 18\\
+13 & 8,9,10,11,12,13,22,23,24,25,26,27,36,37,38,39,40,41 & 18\\
+14 & 0,1,2,3,4,5,14,15,16,17,18,19,28,29,30,31,32,33 & 18 \\
+15 & 0,1,2,3,4,5,14,15,16,17,18,19,28,29,30,31,32,33 & 18 \\
+16 & 0,1,2,3,4,5,14,15,16,17,18,19,28,29,30,31,32,33 & 18 \\
+17 & 0,1,2,3,4,5,14,15,16,17,18,19,28,29,30,31,32,33 & 18 \\
+ ... & ... & ... \\
+68 & 36,37,38,39,50,51,52,53,54,55,64,65,66,67,68,69 & 18 \\
+69 & 36,37,38,39,50,51,52,53,54,55,64,65,66,67,68,69 & 18 \\
+\hline
+\end{tabular}
+
+The second column of this array is the content of the ja array.
+
+
+In order establish a pattern we will need a bigger mesh:
+
+\begin{center}
+\input{tikz/tikz_4x3_Q2.tex}
+\end{center}
+
+
+
+We have
+\begin{itemize}
+\item {\color{teal} 4} corner nodes which have 9 neighbours
+\item {\color{green} $nel$} mid-element nodes which have 9 neighbours
+\item {\color{violet} $2*nelx+2*nely$} mid-edge nodes on sides which have 9 neighbours
+\item {\color{carrotorange} $(nelx-1)*nely+nelx*(nely-1)$} internal mid-edges nodes which have 15 neighbours
+\item {\color{chestnut} $2*(nelx-1)+2*(nely-1)$} side nodes that have 15 neighbours 
+\item {\color{blue} $(nelx-1)*(nely-1)$} nodes which have 25 neighbours
+\end{itemize}
+In the end, the number of non-zeros ($Q_1$) is given by
+\begin{eqnarray}
+NZ 
+&=& {\color{teal} 4 }*9 \nn\\
+&+& {\color{green} nel }*9 \nn\\
+&+& {\color{violet} (2*nelx+2*nely) }*9 \nn\\
+&+& {\color{carrotorange} [(nelx-1)*nely+nelx*(nely-1)] }*15 \nn\\
+&+& {\color{chestnut} [2*(nelx-1)+2*(nely-1)] }*15 \nn\\
+&+& {\color{blue} (nelx-1)*(nely-1) }*25 \nn
+\end{eqnarray}
+Verification: $nelx=3$, $nely=2$:
+\begin{eqnarray}
+NZ
+&=& 4*9 + 6*9 + (2*3+2*2)*9 + [(3-1)*2+3*(2-1)]*15
++ [2*(3-1)+2*(2-1)]*15 + (3-1)*(2-1)*25 \nn\\
+&=& 36 + 54 + 10*9 + 7*15 + 6*15 + 2*25 \nn\\
+&=& 36 + 54 + 90 + 105 + 90 + 50  \nn\\
+&=& 425 \nn
+\end{eqnarray}
+as expected.
+
+
+
+
+
 
 
 
 %..............................................................................
-\subsubsection{3D domain - CSR- Q1 - One degree of freedom}
+\subsection{3D domain - $Q_1$ - CSR storage - One degree of freedom}
 
 Let us consider a $3\times4\times2$ grid which counts 
 $nnx\cdot nny \cdot nnz = 5 \cdot 4\cdot 3=60$ nodes.
@@ -308,7 +434,7 @@ The total number of nonzeros in the case $ndof=1$ would be decomposed as follows
 \end{itemize}
 
 %..............................................................................
-\subsubsection{3D domain - CSR- Q2 - one degree of freedom}
+\subsection{3D domain - $Q_2$ - CSR storage - one degree of freedom}
 
 
 \begin{center}
@@ -320,9 +446,9 @@ The total number of nonzeros in the case $ndof=1$ would be decomposed as follows
 
 
 %..............................................................................
-\subsubsection{Matrix Storage in fieldstone}
+\subsection{Matrix Storage in fieldstone}
 
-The majority of the codes have the FE matrix being a full array
+The majority of the early codes have the FE matrix being a full array
 \begin{lstlisting}
 a_mat = np.zeros((Nfem,Nfem),dtype=np.float64) 
 \end{lstlisting}
@@ -339,7 +465,7 @@ A conversion to CSR format is still necessary before calling the solver.
 
 
 %..............................................................................
-\subsubsection{About Sparse Matrix-Vector multiplication} \label{ss:spmv}
+\subsection{About Sparse Matrix-Vector multiplication} \label{ss:spmv}
 \index{general}{SpMV} \index{general}{Sparse Matrix-Vector Multiplication}
 
 When/if the matrix ${\bm M}$ is stored in a two-dimensional array, 
@@ -414,7 +540,7 @@ or multiple threads has given rise to a lot of literature.
 Williams \etal (2008) \cite{widc08}
 
 %..............................................................................
-\subsubsection{SpMV and SpMV-T with the CSR format - a concrete example}
+\subsection{SpMV and SpMV-T with the CSR format - a concrete example}
 
 (What follows was orignally written for \elefant so that code excerpts and loop indexing 
 are those of Fortran.)
