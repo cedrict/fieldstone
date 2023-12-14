@@ -33,7 +33,6 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-
 avrg_u=0d0
 avrg_v=0d0
 avrg_w=0d0
@@ -55,15 +54,19 @@ do iel=1,nel
       uq=sum(NNNV(1:mV)*mesh(iel)%u(1:mV))
       vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV))
       wq=sum(NNNV(1:mV)*mesh(iel)%w(1:mV))
-      qq=sum(NNNV(1:mT)*mesh(iel)%q(1:mV))
+      qq=sum(NNNV(1:mV)*mesh(iel)%q(1:mV))
 
       !compute pq
       call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim,spaceP)
       pq=sum(NNNP(1:mP)*mesh(iel)%p(1:mP))
 
-      !compute qq and Tq
-      call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim,spaceT)
-      Tq=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
+      !compute Tq
+      if (use_T) then
+         call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim,spaceT)
+         Tq=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
+      else
+         Tq=0
+      end if
 
       avrg_u=avrg_u+uq*mesh(iel)%JxWq(iq)
       avrg_v=avrg_v+vq*mesh(iel)%JxWq(iq)

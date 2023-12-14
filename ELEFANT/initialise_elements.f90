@@ -46,6 +46,8 @@ do iel=1,nel
    allocate(mesh(iel)%exy(mV))
    allocate(mesh(iel)%exz(mV))
    allocate(mesh(iel)%eyz(mV))
+   allocate(mesh(iel)%rho(mV))
+   allocate(mesh(iel)%eta(mV))
    allocate(mesh(iel)%bnd1_node(mV))
    allocate(mesh(iel)%bnd2_node(mV))
    allocate(mesh(iel)%bnd3_node(mV))
@@ -71,10 +73,6 @@ do iel=1,nel
    allocate(mesh(iel)%qy(mT))
    allocate(mesh(iel)%qz(mT))
    allocate(mesh(iel)%fix_T(mT))
-
-   allocate(mesh(iel)%xL(mV))
-   allocate(mesh(iel)%yL(mV))
-   allocate(mesh(iel)%zL(mV))
 
    allocate(mesh(iel)%xM(mmapping))
    allocate(mesh(iel)%yM(mmapping))

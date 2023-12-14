@@ -11,7 +11,6 @@ type element
   integer :: list_of_markers(200)             ! list of markers inside the element
   real(8), allocatable :: xV(:),yV(:),zV(:)   ! coordinates of velocity nodes
   real(8), allocatable :: xT(:),yT(:),zT(:)   ! coordinates of temperature nodes
-  real(8), allocatable :: xL(:),yL(:),zL(:)   ! coordinates of vertices/corners
   real(8), allocatable :: xP(:),yP(:),zP(:)   ! coordinates of pressure nodes
   real(8), allocatable :: xM(:),yM(:),zM(:)   ! coordinates of mapping nodes
   real(8), allocatable :: u(:),v(:),w(:)      ! velocity degrees of freedom
@@ -20,6 +19,8 @@ type element
   real(8), allocatable :: qx(:),qy(:),qz(:)   ! nodal heat flux vector
   real(8), allocatable :: exx(:),eyy(:),exy(:)! strain rate components for 2D
   real(8), allocatable :: ezz(:),exz(:),eyz(:)! additional strain rate components for 3D
+  real(8), allocatable :: rho(:)              ! density on V nodes 
+  real(8), allocatable :: eta(:)              ! viscosity on V nodes 
   real(8) :: a_eta,b_eta,c_eta,d_eta          ! least square coeffs for viscosity
   real(8) :: a_rho,b_rho,c_rho,d_rho          ! least square coeffs for density
   real(8) :: vol                              ! volume of the element

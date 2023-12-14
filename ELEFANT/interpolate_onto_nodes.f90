@@ -64,9 +64,9 @@ if (ndim==2) then
       end do
    end do
 
-   write(*,'(a,2es13.5)') shift//'exx(m/M)  =',minval(exx),maxval(exx)
-   write(*,'(a,2es13.5)') shift//'eyy(m/M)  =',minval(eyy),maxval(eyy)
-   write(*,'(a,2es13.5)') shift//'exy(m/M)  =',minval(exy),maxval(exy)
+   write(*,'(a,2es13.5)') shift//'exx(m/M)',minval(exx),maxval(exx)
+   write(*,'(a,2es13.5)') shift//'eyy(m/M)',minval(eyy),maxval(eyy)
+   write(*,'(a,2es13.5)') shift//'exy(m/M)',minval(exy),maxval(exy)
 
 end if
 

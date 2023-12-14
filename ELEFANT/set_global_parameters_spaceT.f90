@@ -82,20 +82,17 @@ end if
 
 !----------------------------------------------------------
 
-!if (debug) then
-!   print *,'*************************'
-!   print *,'**********debug**********'
-!   print *,'mT=',mT
-!   print *,'NT=',NT
-!   print *,allocated(rT)
-!   print *,allocated(sT)
-!   print *,allocated(tT)
-!   print *,'rT=',rT
-!   print *,'sT=',sT
-!   print *,'tT=',tT
-!   print *,'**********debug**********'
-!   print *,'*************************'
-!end if
+if (debug) then
+write(2345,*) limit//'set_global_parameters_spaceT'//limit
+write(2345,*) 'mT=',mT
+write(2345,*) 'NT=',NT
+write(2345,*) allocated(rT)
+write(2345,*) allocated(sT)
+write(2345,*) allocated(tT)
+write(2345,*) 'rT=',rT
+write(2345,*) 'sT=',sT
+write(2345,*) 'tT=',tT
+end if
 
 !==============================================================================!
 

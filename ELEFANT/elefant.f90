@@ -8,6 +8,7 @@
 
 program elefant
 
+
 use module_parameters
 use module_arrays
 use module_mesh
@@ -15,6 +16,9 @@ use module_sparse
 use module_materials
 
 implicit none
+
+include 'dmumps_struc.h'
+type(dmumps_struc) idV
 
 open(unit=1234,file="OUTPUT/STATS/statistics.ascii")
 open(unit=1235,file="OUTPUT/STATS/statistics_energy_system.ascii")
@@ -42,38 +46,12 @@ call spacer
 call set_default_values
 call declare_main_parameters
 call read_command_line_options
-
-!call set_global_parameters_pair ! replace by
 call set_global_parameters_spaceV
 call set_global_parameters_spaceP
 call set_global_parameters_spaceT
 call set_global_parameters_mapping
-
-
-!----------------------------------------------------------
-
-if (use_penalty) then
-   csrK%full_matrix_storage=.true. ! y12m solver 
-else
-   csrK%full_matrix_storage=.false. ! pcg_solver 
-end if
-
-ndofV=ndim
-NfemV=NV*ndofV
-NfemP=NP
-NfemT=NT
-
-allocate(solV(NfemV))
-allocate(solP(NfemP))
-allocate(rhs_f(NfemV))
-allocate(rhs_h(NfemP))
-allocate(materials(nmat))
-allocate(Kdiag(NfemV))
-
-
+call allocate_memory
 call define_material_properties
-
-call spacer
 call initialise_elements
 select case (geometry)
 case('cartesian') 
@@ -98,6 +76,7 @@ call matrix_setup_GT
 call matrix_setup_A
 !call output_matrix_tikz
 call initial_temperature
+call spacer
 call print_parameters
 
 do istep=1,nstep !-----------------------------------------

@@ -41,7 +41,7 @@ if (geometry=='cartesian' .and. ndim==2) then
       csrMP%NZ=(4*4+(2*(nnx-2)+2*(nny-2))*6+(nnx-2)*(nny-2)*9)
       csrMP%nz=(csrMP%nz-csrMP%n)/2+csrMP%n
    case default
-      stop 'matrix_setup_MP: pair not implemented'
+      stop 'matrix_setup_MP: spaceP not supported'
    end select 
 
    write(*,'(a)')     shift//'CSR matrix format symm' 
@@ -84,7 +84,7 @@ if (geometry=='cartesian' .and. ndim==2) then
          end do
       end do
    case default
-      stop 'matrix_setup_MP: pair not implemented'
+      stop 'matrix_setup_MP: spaceP not implemented'
    end select 
 
 !----------------------------------------------------------
@@ -107,7 +107,7 @@ elseif (geometry=='cartesian' .and. ndim==3) then
               +2*(nny-2)*(nnz-2)*18                 ! 2 faces
       csrMP%nz=(csrMP%nz-csrMP%n)/2+csrMP%n
    case default
-      stop 'matrix_setup_MP: pair not implemented'
+      stop 'matrix_setup_MP: spaceP not implemented'
    end select 
 
    write(*,'(a)')     shift//'CSR matrix format symm' 
@@ -155,7 +155,7 @@ elseif (geometry=='cartesian' .and. ndim==3) then
       end do
       end do
    case default
-      stop 'matrix_setup_MP: pair not implemented'
+      stop 'matrix_setup_MP: spaceP not implemented'
    end select 
 
 else

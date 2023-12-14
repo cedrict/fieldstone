@@ -4,6 +4,7 @@ integer, parameter :: one=1
 integer, parameter :: two=2
 integer, parameter :: three=3
 integer, parameter :: four=4
+real(8), parameter :: zero=1d0
 real(8), parameter :: mm=1.d-3
 real(8), parameter :: cm=1.d-2
 real(8), parameter :: km=1.d+3

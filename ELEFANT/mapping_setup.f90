@@ -42,16 +42,13 @@ else
 
 end if
 
-!if (debug) then
-!print *,'*************************'
-!print *,'**********debug**********'
-!print *,minval(mesh(1)%xM),maxval(mesh(1)%xM)
-!print *,minval(mesh(1)%yM),maxval(mesh(1)%yM)
-!print *,minval(mesh(1)%zM),maxval(mesh(1)%zM)
-!print *,mesh(1)%iconM
-!print *,'**********debug**********'
-!print *,'*************************'
-!end if
+if (debug) then
+write(2345,*) limit//'mapping_setup'//limit
+write(2345,*) minval(mesh(1)%xM),maxval(mesh(1)%xM)
+write(2345,*) minval(mesh(1)%yM),maxval(mesh(1)%yM)
+write(2345,*) minval(mesh(1)%zM),maxval(mesh(1)%zM)
+write(2345,*) mesh(1)%iconM
+end if
 
 !==============================================================================!
 

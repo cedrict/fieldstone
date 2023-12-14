@@ -40,6 +40,14 @@ if (iproc==0) call system_clock(counti,count_rate)
 
 !==============================================================================!
 
+if (use_penalty) then
+   csrK%full_matrix_storage=.true. ! y12m solver 
+else
+   csrK%full_matrix_storage=.false. ! pcg_solver 
+end if
+
+!----------------------------------------------------------
+
 if (use_MUMPS) then
 
    Nel=ndofV*mV          ! size of an elemental matrix
@@ -154,16 +162,13 @@ else
          end do
          end do
 
-         !if (debug) then
-         !print *,'*************************'
-         !print *,'**********debug**********'
-         !write(*,*) 'nz=',nz
-         !write(*,*) 'csrK%ia (m/M)',minval(csrK%ia), maxval(csrK%ia)
-         !write(*,*) 'csrK%ja (m/M)',minval(csrK%ja), maxval(csrK%ja)
-         !print *,'csrK%ia=',csrK%ia
-         !print *,'**********debug**********'
-         !print *,'*************************'
-         !end if
+         if (debug) then
+         write(2345,*) limit//'matrix_setup_K'//limit
+         write(2345,*) 'nz=',nz
+         write(2345,*) 'csrK%ia (m/M)',minval(csrK%ia), maxval(csrK%ia)
+         write(2345,*) 'csrK%ja (m/M)',minval(csrK%ja), maxval(csrK%ja)
+         write(2345,*) 'csrK%ia=',csrK%ia
+         end if
 
       !----------------------------------------------------------------------------------
       else if (geometry=='cartesian' .and. ndim==3 .and. spaceV=='__Q1') then
@@ -242,13 +247,10 @@ else
          end do
 
          if (debug) then
-         print *,'*************************'
-         print *,'**********debug**********'
-         write(*,*) 'nz=',nz
-         write(*,*) 'csrK%ia (m/M)',minval(csrK%ia), maxval(csrK%ia)
-         write(*,*) 'csrK%ja (m/M)',minval(csrK%ja), maxval(csrK%ja)
-         print *,'**********debug**********'
-         print *,'*************************'
+         write(2345,*) limit//'matrix_setup_K'//limit
+         write(2345,*) 'nz=',nz
+         write(2345,*) 'csrK%ia (m/M)',minval(csrK%ia), maxval(csrK%ia)
+         write(2345,*) 'csrK%ja (m/M)',minval(csrK%ja), maxval(csrK%ja)
          end if
 
       !----------------------------------------------------------------------------------
@@ -272,13 +274,10 @@ else
          end do
 
          if (debug) then
-            print *,'*************************'
-            print *,'**********debug**********'
-            do iV=1,NV
-               print *,'node',iV,'belongs to ',vdof_belongs_to(1,iV),' elts | ',vdof_belongs_to(2:,iV)
-            end do
-            print *,'**********debug**********'
-            print *,'*************************'
+         write(2345,*) limit//'matrix_setup_K'//limit
+         do iV=1,NV
+         write(2345,*) 'node',iV,'belongs to ',vdof_belongs_to(1,iV),' elts | ',vdof_belongs_to(2:,iV)
+         end do
          end if
 
          imod=NV/10
@@ -353,13 +352,10 @@ else
          write(*,'(a,2i9)') shift//'csrK%ia',minval(csrK%ia), maxval(csrK%ia)
          write(*,'(a,2i9)') shift//'csrK%ja',minval(csrK%ja), maxval(csrK%ja)
 
-         !if (debug) then
-         !   print *,'*************************'
-         !   print *,'**********debug**********'
-         !   print *,'csrK%ia=',csrK%ia
-         !   print *,'**********debug**********'
-         !   print *,'*************************'
-         !end if
+         if (debug) then
+         write(2345,*) limit//'matrix_setup_K'//limit
+         write(2345,*) 'csrK%ia=',csrK%ia
+         end if
 
 
       end if 

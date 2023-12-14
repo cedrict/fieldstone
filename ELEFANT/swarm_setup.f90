@@ -8,7 +8,7 @@
 
 subroutine swarm_setup
 
-use module_parameters, only: nmarker,ndim,debug,iel,iproc,use_swarm,spaceV,mV,nel,nmarker_per_dim,init_marker_random
+use module_parameters, only: nmarker,ndim,iel,iproc,use_swarm,spaceV,mV,nel,nmarker_per_dim,init_marker_random
 use module_swarm 
 use module_mesh 
 use module_timing

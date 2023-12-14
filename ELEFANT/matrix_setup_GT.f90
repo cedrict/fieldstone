@@ -76,6 +76,9 @@ write(2345,*) 'csrGT%ja (m/M)',minval(csrGt%ja), maxval(csrGT%ja)
 write(2345,*) 'csrGT%ia ',csrGT%ia
 end if
 
+else
+   write(*,'(a)') shift//'bypassed since use_penalty=True'
+
 end if !use_penalty
 
 !==============================================================================!

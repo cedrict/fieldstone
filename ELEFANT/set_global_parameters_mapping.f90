@@ -78,19 +78,16 @@ end if
 
 !----------------------------------------------------------
 
-!if (debug) then
-!print *,'*************************'
-!print *,'**********debug**********'
-!print *,'mmapping=',mmapping
-!print *,allocated(rmapping)
-!print *,allocated(smapping)
-!print *,allocated(tmapping)
-!print *,'rmapping=',rmapping
-!print *,'smapping=',smapping
-!print *,'tmapping=',tmapping
-!print *,'**********debug**********'
-!print *,'*************************'
-!end if
+if (debug) then
+write(2345,*) limit//'set_global_parameters_mapping'//limit
+write(2345,*) 'mmapping=',mmapping
+write(2345,*) allocated(rmapping)
+write(2345,*) allocated(smapping)
+write(2345,*) allocated(tmapping)
+write(2345,*) 'rmapping=',rmapping
+write(2345,*) 'smapping=',smapping
+write(2345,*) 'tmapping=',tmapping
+end if
 
 !==============================================================================!
 

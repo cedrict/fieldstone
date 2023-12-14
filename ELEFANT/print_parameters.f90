@@ -21,7 +21,6 @@ implicit none
 
 if (iproc==0) then
 
-write(*,'(a)') '..................................'
                  write(*,'(a,i10)')    '        ndim        =',ndim
                  write(*,'(a,a11)')    '        geometry    =',geometry
                  write(*,'(a,a10)')    '        spaceV      =',spaceV
@@ -51,7 +50,6 @@ if (use_T)       write(*,'(a,i10)')    '        NfemT       =',NfemT
                  write(*,'(a,l10)')    '        use_penalty =',use_penalty
 if (use_penalty) write(*,'(a,es10.3)') '        penalty     =',penalty
 if (use_ALE)     write(*,'(a,l10)')    '        use_ALE     =',penalty
-write(*,'(a)') '..................................'
 
 end if ! iproc
 

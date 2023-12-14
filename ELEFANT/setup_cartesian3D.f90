@@ -530,35 +530,32 @@ do iel=1,nel
 end do
 
 if (debug) then
-   print *,'*************************'
-   print *,'**********debug**********'
-   do iel=1,nel
-   print *,'--------------------------------------------------'
-   print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV)
-   do k=1,mV
-      write(777,*) mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
-   end do
-   end do
-   print *,'--------------------------------------------------'
-   print *,'--------------------------------------------------'
-   do iel=1,nel
-   print *,'--------------------------------------------------'
-   print *,'elt:',iel,' | iconP',mesh(iel)%iconP(1:mP)
-   do k=1,mP
-      write(777,*) mesh(iel)%xP(k),mesh(iel)%yP(k),mesh(iel)%zP(k)
-   end do
-   end do
-   print *,'--------------------------------------------------'
-   print *,'--------------------------------------------------'
-   do iel=1,nel
-   print *,'--------------------------------------------------'
-   print *,'elt:',iel,' | iconT',mesh(iel)%iconT(1:mT)
-   do k=1,mT
-      write(777,*) mesh(iel)%xT(k),mesh(iel)%yT(k),mesh(iel)%zT(k)
-   end do
-   end do
-   print *,'**********debug**********'
-   print *,'*************************'
+write(2345,*) limit//'setup_cartesian3D'//limit
+do iel=1,nel
+print *,'--------------------------------------------------'
+print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV)
+do k=1,mV
+write(2345,*) mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
+end do
+end do
+print *,'--------------------------------------------------'
+print *,'--------------------------------------------------'
+do iel=1,nel
+print *,'--------------------------------------------------'
+print *,'elt:',iel,' | iconP',mesh(iel)%iconP(1:mP)
+do k=1,mP
+write(2345,*) mesh(iel)%xP(k),mesh(iel)%yP(k),mesh(iel)%zP(k)
+end do
+end do
+print *,'--------------------------------------------------'
+print *,'--------------------------------------------------'
+do iel=1,nel
+print *,'--------------------------------------------------'
+print *,'elt:',iel,' | iconT',mesh(iel)%iconT(1:mT)
+do k=1,mT
+write(2345,*) mesh(iel)%xT(k),mesh(iel)%yT(k),mesh(iel)%zT(k)
+end do
+end do
 end if
 
 !==============================================================================!

@@ -1,3 +1,5 @@
 *.o
 *.mod
+debug.ascii
+MUMPS
 elefant

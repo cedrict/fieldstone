@@ -5,18 +5,34 @@ f90comp = gfortran
 switch =  -fbounds-check -fcheck=all -ffree-line-length-none  -Wall -Wno-unused-dummy-argument -cpp #-DUseMUMPS
 #switch = -cpp 
 #switch =  -ffree-line-length-none -O3 -cpp #-DUseMUMPS
+
+#MUMPS    = /home/thieulot/work/LIBRARIES/MUMPS_5.0.2/lib
+#MUMPS2   = /home/thieulot/work/LIBRARIES/MUMPS_5.0.2/libseq
+#PORD     = /home/thieulot/work/LIBRARIES/MUMPS_5.0.2/PORD
+#METIS    = /home/thieulot/work/LIBRARIES/metis-5.1.0/build/Linux-x86_64/libmetis 
+
+#LIBS = \
+#-L$(MUMPS) -ldmumps -lmumps_common\
+#-L$(MUMPS2) -lmpiseq \
+#-L$(PORD) -lpord \
+#-L$(METIS) -lmetis \
+#-lblas 
+
+
+
+
 libs = -lblas 
 
 
 objects = module_mesh.o module_parameters.o module_constants.o module_timing.o module_arrays.o\
 module_statistics.o module_gravity.o module_sparse.o module_materials.o module_swarm.o\
 mylapack.o\
-assign_values_to_qpoints.o\
-compute_elemental_matrix_stokes.o compute_timestep.o\
+assign_values_to_qpoints.o allocate_memory.o\
+compute_elemental_matrix_stokes.o compute_timestep.o compute_abcd.o\
 compute_dNdx_dNdy.o compute_dNdx_dNdy_dNdz.o compute_temperature_gradient.o\
 compute_dNTdx_dNTdy.o compute_dNTdx_dNTdy_dNTdz.o\
 compute_elemental_rho_eta_vol.o compute_gravity.o compute_elemental_matrix_energy.o \
-output_mesh.o output_swarm.o output_solution.o output_qpoints.o output_solution_python.o\
+output_mesh.o output_swarm.o output_solution.o output_qpoints.o \
 header.o\
 impose_boundary_conditions_stokes.o impose_boundary_conditions_energy.o int_to_char.o\
 initialise_mumps_V.o interpolate_onto_nodes.o initialise_elements.o\
@@ -26,12 +42,12 @@ matrix_setup_K.o matrix_setup_GT.o matrix_setup_MV.o matrix_setup_MP.o matrix_se
 mgmres.o mapping_setup.o\
 NNN.o dNNNdr.o dNNNds.o dNNNdt.o\
 output_matrix_tikz.o\
-postprocessors.o project_V_onto_L.o print_parameters.o\
+postprocessors.o print_parameters.o\
 prescribe_stokes_solution.o paint_swarm.o pcg_solver_csr.o\
 quadrature_setup.o\
 recover_pressure_penalty.o read_command_line_options.o\
 setup_cartesian2D.o setup_cartesian3D.o sloan.o\
-set_default_values.o set_global_parameters_pair.o swarm_setup.o\
+set_default_values.o swarm_setup.o\
 set_global_parameters_spaceV.o\
 set_global_parameters_spaceP.o\
 set_global_parameters_spaceT.o\

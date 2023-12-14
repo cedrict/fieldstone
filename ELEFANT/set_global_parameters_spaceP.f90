@@ -94,20 +94,17 @@ end if
 
 !----------------------------------------------------------
 
-!if (debug) then
-!   print *,'*************************'
-!   print *,'**********debug**********'
-!   print *,'mP=',mP
-!   print *,'NP=',NP
-!   print *,allocated(rP)
-!   print *,allocated(sP)
-!   print *,allocated(tP)
-!   print *,'rP=',rP
-!   print *,'sP=',sP
-!   print *,'tP=',tP
-!   print *,'**********debug**********'
-!   print *,'*************************'
-!end if
+if (debug) then
+write(2345,*) limit//'set_global_parameters_spaceP'//limit
+write(2345,*) 'mP=',mP
+write(2345,*) 'NP=',NP
+write(2345,*) allocated(rP)
+write(2345,*) allocated(sP)
+write(2345,*) allocated(tP)
+write(2345,*) 'rP=',rP
+write(2345,*) 'sP=',sP
+write(2345,*) 'tP=',tP
+end if
 
 !==============================================================================!
 

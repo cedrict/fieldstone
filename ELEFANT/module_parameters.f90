@@ -5,7 +5,6 @@ integer :: mmapping            ! number of nodes for mapping
 integer :: mV                  ! number of velocity nodes per element
 integer :: mP                  ! number of pressure nodes per element
 integer :: mT                  ! number of temperature nodes per element
-integer :: mL                  ! number of vertices/corners of basic shape
 integer :: nelx,nely,nelz      ! number of elements in each direction
 integer :: nel                 ! total number of elements
 integer :: ndim                ! number of dimensions

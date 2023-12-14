@@ -89,15 +89,11 @@ q_max=maxval(q)
 !----------------------------------------------------------
 
 if (debug) then
-   print *,'*************************'
-   print *,'**********debug**********'
-   do iel=1,nel
-   do k=1,mV
-      write(777,*) mesh(iel)%xV(k),mesh(iel)%yV(k),solP(iel),mesh(iel)%q(k)
-   end do
-   end do
-   print *,'**********debug**********'
-   print *,'*************************'
+do iel=1,nel
+do k=1,mV
+write(2345,*) mesh(iel)%xV(k),mesh(iel)%yV(k),solP(iel),mesh(iel)%q(k)
+end do
+end do
 end if
 
 end subroutine

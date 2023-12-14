@@ -17,11 +17,10 @@ use module_timing
 
 implicit none
 
-integer i,im,iq,ipvt2D(3),ipvt3D(4),job
+integer i,im,iq,k
 integer(1) idummy
-real(8) x(1000),y(1000),z(1000),rho(1000),eta(1000),rcond
-real(8) A2D(3,3),B2D(3),work2D(3),A3D(4,4),B3D(4),work3D(4),NNNT(mT),NNNP(mP)
-real(8) pm,Tm,exxm,eyym,ezzm,exym,exzm,eyzm,NNNV(mV)
+real(8) x(1000),y(1000),z(1000),rho(1000),eta(1000)
+real(8) pm,Tm,exxm,eyym,ezzm,exym,exzm,eyzm,NNNV(mV),NNNT(mT),NNNP(mP)
 real(8) exxq,eyyq,ezzq,exyq,exzq,eyzq
 
 !==================================================================================================!
@@ -85,107 +84,17 @@ if (use_swarm) then
       end do 
 
       if (ndim==2) then 
+         call compute_abcd_2D(mesh(iel)%nmarker,x,y,rho,eta,&
+                           mesh(iel)%a_rho,mesh(iel)%b_rho,mesh(iel)%c_rho,mesh(iel)%d_rho,&
+                           mesh(iel)%a_eta,mesh(iel)%b_eta,mesh(iel)%c_eta,mesh(iel)%d_eta)
+      else
+         call compute_abcd_3D(mesh(iel)%nmarker,x,y,z,rho,eta,&
+                           mesh(iel)%a_rho,mesh(iel)%b_rho,mesh(iel)%c_rho,mesh(iel)%d_rho,&
+                           mesh(iel)%a_eta,mesh(iel)%b_eta,mesh(iel)%c_eta,mesh(iel)%d_eta)
+      end if
 
-        A2D(1,1)=mesh(iel)%nmarker
-        A2D(1,2)=sum(x(1:mesh(iel)%nmarker)) 
-        A2D(1,3)=sum(y(1:mesh(iel)%nmarker)) 
-        A2D(2,1)=sum(x(1:mesh(iel)%nmarker)) 
-        A2D(2,2)=sum(x(1:mesh(iel)%nmarker)*x(1:mesh(iel)%nmarker)) 
-        A2D(2,3)=sum(x(1:mesh(iel)%nmarker)*y(1:mesh(iel)%nmarker)) 
-        A2D(3,1)=sum(y(1:mesh(iel)%nmarker)) 
-        A2D(3,2)=sum(y(1:mesh(iel)%nmarker)*x(1:mesh(iel)%nmarker)) 
-        A2D(3,3)=sum(y(1:mesh(iel)%nmarker)*y(1:mesh(iel)%nmarker))
-        call DGECO (A2D, three, three, ipvt2D, rcond, work2D)
-
-        ! build rhs for density and solve
-        B2D(1)=sum(rho(1:mesh(iel)%nmarker))
-        B2D(2)=sum(x(1:mesh(iel)%nmarker)*rho(1:mesh(iel)%nmarker))
-        B2D(3)=sum(y(1:mesh(iel)%nmarker)*rho(1:mesh(iel)%nmarker))
-
-        job=0
-        call DGESL (A2D, three, three, ipvt2D, B2D, job)
-        mesh(iel)%a_rho=B2D(1)
-        mesh(iel)%b_rho=B2D(2)
-        mesh(iel)%c_rho=B2D(3)
-        mesh(iel)%d_rho=0d0
-
-        ! build rhs for viscosity and solve
-        B2D(1)=sum(eta(1:mesh(iel)%nmarker))
-        B2D(2)=sum(x(1:mesh(iel)%nmarker)*eta(1:mesh(iel)%nmarker))
-        B2D(3)=sum(y(1:mesh(iel)%nmarker)*eta(1:mesh(iel)%nmarker))
-        job=0
-        call DGESL (A2D, three, three, ipvt2D, B2D, job)
-        mesh(iel)%a_eta=B2D(1)
-        mesh(iel)%b_eta=B2D(2)
-        mesh(iel)%c_eta=B2D(3)
-        mesh(iel)%d_eta=0d0
-
-        ! filter for over/undershoot
-
-        mesh(iel)%b_rho=0 
-        mesh(iel)%c_rho=0 
-
-        mesh(iel)%b_eta=0 
-        mesh(iel)%c_eta=0 
-
-      end if ! ndim=2
-
-      if (ndim==3) then 
-
-        A3D(1,1)=mesh(iel)%nmarker
-        A3D(1,2)=sum(x(1:mesh(iel)%nmarker)) 
-        A3D(1,3)=sum(y(1:mesh(iel)%nmarker)) 
-        A3D(1,4)=sum(z(1:mesh(iel)%nmarker)) 
-        A3D(2,1)=sum(x(1:mesh(iel)%nmarker)) 
-        A3D(2,2)=sum(x(1:mesh(iel)%nmarker)*x(1:mesh(iel)%nmarker)) 
-        A3D(2,3)=sum(x(1:mesh(iel)%nmarker)*y(1:mesh(iel)%nmarker)) 
-        A3D(2,4)=sum(x(1:mesh(iel)%nmarker)*z(1:mesh(iel)%nmarker)) 
-        A3D(3,1)=sum(y(1:mesh(iel)%nmarker)) 
-        A3D(3,2)=sum(y(1:mesh(iel)%nmarker)*x(1:mesh(iel)%nmarker)) 
-        A3D(3,3)=sum(y(1:mesh(iel)%nmarker)*y(1:mesh(iel)%nmarker))
-        A3D(3,4)=sum(y(1:mesh(iel)%nmarker)*z(1:mesh(iel)%nmarker))
-        A3D(4,1)=sum(z(1:mesh(iel)%nmarker)) 
-        A3D(4,2)=sum(z(1:mesh(iel)%nmarker)*x(1:mesh(iel)%nmarker)) 
-        A3D(4,3)=sum(z(1:mesh(iel)%nmarker)*y(1:mesh(iel)%nmarker))
-        A3D(4,4)=sum(z(1:mesh(iel)%nmarker)*z(1:mesh(iel)%nmarker))
-        call DGECO (A3D, four, four, ipvt3D, rcond, work3D)
-
-        ! build rhs for density and solve
-        B3D(1)=sum(rho(1:mesh(iel)%nmarker))
-        B3D(2)=sum(x(1:mesh(iel)%nmarker)*rho(1:mesh(iel)%nmarker))
-        B3D(3)=sum(y(1:mesh(iel)%nmarker)*rho(1:mesh(iel)%nmarker))
-        B3D(4)=sum(z(1:mesh(iel)%nmarker)*rho(1:mesh(iel)%nmarker))
-
-        job=0
-        call DGESL (A3D, four, four, ipvt3D, B3D, job)
-        mesh(iel)%a_rho=B3D(1)
-        mesh(iel)%b_rho=B3D(2)
-        mesh(iel)%c_rho=B3D(3)
-        mesh(iel)%d_rho=B3D(4)
-
-        ! build rhs for viscosity and solve
-        B3D(1)=sum(eta(1:mesh(iel)%nmarker))
-        B3D(2)=sum(x(1:mesh(iel)%nmarker)*eta(1:mesh(iel)%nmarker))
-        B3D(3)=sum(y(1:mesh(iel)%nmarker)*eta(1:mesh(iel)%nmarker))
-        B3D(3)=sum(z(1:mesh(iel)%nmarker)*eta(1:mesh(iel)%nmarker))
-        job=0
-        call DGESL (A3D, four, four, ipvt3D, B3D, job)
-        mesh(iel)%a_eta=B3D(1)
-        mesh(iel)%b_eta=B3D(2)
-        mesh(iel)%c_eta=B3D(3)
-        mesh(iel)%d_eta=B3D(4)
-
-        ! filter for over/undershoot
-
-        mesh(iel)%b_rho=0 
-        mesh(iel)%c_rho=0 
-        mesh(iel)%d_rho=0 
-
-        mesh(iel)%b_eta=0 
-        mesh(iel)%c_eta=0 
-        mesh(iel)%d_eta=0 
-
-      end if ! ndim=3
+      !print *,mesh(iel)%a_rho,mesh(iel)%b_rho,mesh(iel)%c_rho,mesh(iel)%d_rho
+      !print *,mesh(iel)%a_eta,mesh(iel)%b_eta,mesh(iel)%c_eta,mesh(iel)%d_eta
 
       ! project values on quadrature points
 
@@ -198,6 +107,17 @@ if (use_swarm) then
                             mesh(iel)%b_rho*(mesh(iel)%xq(iq)-mesh(iel)%xc)+&
                             mesh(iel)%c_rho*(mesh(iel)%yq(iq)-mesh(iel)%yc)+&
                             mesh(iel)%d_rho*(mesh(iel)%zq(iq)-mesh(iel)%zc)
+      end do
+
+      do k=1,mV
+         mesh(iel)%rho(k)=mesh(iel)%a_rho+&
+                          mesh(iel)%b_rho*(mesh(iel)%xV(iq)-mesh(iel)%xc)+&
+                          mesh(iel)%c_rho*(mesh(iel)%yV(iq)-mesh(iel)%yc)+&
+                          mesh(iel)%d_rho*(mesh(iel)%zV(iq)-mesh(iel)%zc)
+         mesh(iel)%eta(k)=mesh(iel)%a_eta+&
+                          mesh(iel)%b_eta*(mesh(iel)%xV(iq)-mesh(iel)%xc)+&
+                          mesh(iel)%c_eta*(mesh(iel)%yV(iq)-mesh(iel)%yc)+&
+                          mesh(iel)%d_eta*(mesh(iel)%zV(iq)-mesh(iel)%zc)
       end do
 
       etaq_min=min(minval(mesh(iel)%etaq(:)),etaq_min)
@@ -244,6 +164,34 @@ else ! use_swarm
                              mesh(iel)%hcapaq(iq),&
                              mesh(iel)%hprodq(iq))
       end do !nqel
+
+
+      if (ndim==2) then 
+         call compute_abcd_2D(nqel,mesh(iel)%xq,mesh(iel)%yq,mesh(iel)%rhoq,mesh(iel)%etaq,&
+                           mesh(iel)%a_rho,mesh(iel)%b_rho,mesh(iel)%c_rho,mesh(iel)%d_rho,&
+                           mesh(iel)%a_eta,mesh(iel)%b_eta,mesh(iel)%c_eta,mesh(iel)%d_eta)
+      else
+         call compute_abcd_3D(nqel,mesh(iel)%xq,mesh(iel)%yq,mesh(iel)%zq,mesh(iel)%rhoq,mesh(iel)%etaq,&
+                           mesh(iel)%a_rho,mesh(iel)%b_rho,mesh(iel)%c_rho,mesh(iel)%d_rho,&
+                           mesh(iel)%a_eta,mesh(iel)%b_eta,mesh(iel)%c_eta,mesh(iel)%d_eta)
+      end if
+
+
+
+
+
+
+      do k=1,mV
+         mesh(iel)%rho(k)=mesh(iel)%a_rho+&
+                          mesh(iel)%b_rho*(mesh(iel)%xV(k)-mesh(iel)%xc)+&
+                          mesh(iel)%c_rho*(mesh(iel)%yV(k)-mesh(iel)%yc)+&
+                          mesh(iel)%d_rho*(mesh(iel)%zV(k)-mesh(iel)%zc)
+         mesh(iel)%eta(k)=mesh(iel)%a_eta+&
+                          mesh(iel)%b_eta*(mesh(iel)%xV(k)-mesh(iel)%xc)+&
+                          mesh(iel)%c_eta*(mesh(iel)%yV(k)-mesh(iel)%yc)+&
+                          mesh(iel)%d_eta*(mesh(iel)%zV(k)-mesh(iel)%zc)
+      end do
+
 
       etaq_min=min(minval(mesh(iel)%etaq(:)),etaq_min)
       etaq_max=max(maxval(mesh(iel)%etaq(:)),etaq_max)

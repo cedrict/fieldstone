@@ -3,6 +3,7 @@
       implicit double precision (a-b,g,p,t-y), integer (c,f,h-n,r-s,z)
       double precision a(nn), pivot(n), aflag(8),b(n),tbeg,tend
       integer snr(nn), rnr(nn1), ha(iha,11), iflag(10)
+      character(len=17), parameter :: shift='                '
       aflag(1)=16.0d0
       aflag(2)=1.d-12
       aflag(3)=1.d+16
@@ -14,18 +15,18 @@
       call cpu_time(tbeg)
       call y12mbf(n,z,a,snr,nn,rnr,nn1,ha,iha,aflag,iflag,ifail)
       call cpu_time(tend)
-      write(*,'(a,f6.2,a)')'y12mbf ',tend-tbeg,' s'
+      write(*,'(a,f6.2,a)') shift//shift//'| y12mbf ',tend-tbeg,' s'
       if(ifail.ne.0)go to 1
       call cpu_time(tbeg)
       call y12mcf(n,z,a,snr,nn,rnr,nn1,pivot,b,ha,iha,aflag,iflag,
      1 ifail)
       call cpu_time(tend)
-      write(*,'(a,f6.2,a)')'y12mcf ',tend-tbeg,' s'
+      write(*,'(a,f6.2,a)') shift//shift//'| y12mcf ',tend-tbeg,' s'
       if(ifail.ne.0)go to 1
       call cpu_time(tbeg)
       call y12mdf(n,a,nn,b,pivot,snr,ha,iha,iflag,ifail)
       call cpu_time(tend)
-      write(*,'(a,f6.2,a)')'y12mdf ',tend-tbeg,' s'
+      write(*,'(a,f6.2,a)') shift//shift//'| y12mdf ',tend-tbeg,' s'
 1     return
       end
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc

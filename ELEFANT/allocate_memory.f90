@@ -6,21 +6,19 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine compute_temperature_gradient
+subroutine allocate_memory
 
-use module_parameters
-use module_mesh 
-use module_arrays
+use module_parameters, only: NV,NP,NT,ndofV,NfemV,NfemP,NfemT,iproc,nmat,ndim,debug
+use module_arrays, only: solV,solP,rhs_f,rhs_h,Kdiag
+use module_materials
 use module_timing
 
 implicit none
 
-integer k,node
-real(8) qx(NT),qy(NT),cc(NT),dNdx(mT),dNdy(mT),jcob
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{compute\_temperature\_gradient}
+!@@ \subsubsection{allocate\_memory}
 !@@
 !==================================================================================================!
 
@@ -30,56 +28,27 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-if (ndim==2) then
+ndofV=ndim
+NfemV=NV*ndofV
+NfemP=NP
+NfemT=NT
 
-   qx=0d0
-   qy=0d0
-   cc=0d0
+allocate(solV(NfemV))
+allocate(solP(NfemP))
+allocate(rhs_f(NfemV))
+allocate(rhs_h(NfemP))
+allocate(materials(nmat))
+allocate(Kdiag(NfemV))
 
-   do iel=1,nel
-      do k=1,mT
-         call compute_dNTdx_dNTdy(rT(k),sT(k),dNdx(1:mT),dNdy(1:mT),jcob)
-         node=mesh(iel)%iconT(k)
-         qx(node)=qx(node)+sum(dNdx*mesh(iel)%T(1:mT))         
-         qy(node)=qy(node)+sum(dNdy*mesh(iel)%T(1:mT))         
-         cc(node)=cc(node)+1d0
-      end do
-   end do
-
-   qx=qx/cc
-   qy=qy/cc
-
-   do iel=1,nel
-      do k=1,mT
-         node=mesh(iel)%iconT(k)
-         mesh(iel)%qx(k)=qx(node)
-         mesh(iel)%qy(k)=qy(node)
-         mesh(iel)%qz(k)=0d0
-      end do
-   end do
-
-   write(*,'(a,2es13.5)') shift//'qx(m/M)  =',minval(qx),maxval(qx)
-   write(*,'(a,2es13.5)') shift//'qy(m/M)  =',minval(qy),maxval(qy)
-
+if (debug) then
+write(2345,*) limit//'allocate_memory'//limit
 end if
-
-!----------------------------------------------------------
-
-if (ndim==3) then
-
-   stop 'compute_temperature_gradient: 3D not done'
-
-end if
-
-
-
-
 
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'compute_temperature_gradient (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'allocate_memory (',elapsed,' s)'
 
 end if ! iproc
 

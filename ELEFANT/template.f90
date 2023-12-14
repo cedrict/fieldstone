@@ -13,6 +13,7 @@ subroutine name
 !use module_constants
 !use module_swarm
 !use module_materials
+!use module_arrays
 use module_timing
 
 implicit none
@@ -39,10 +40,7 @@ call system_clock(counti,count_rate)
 
 
 if (debug) then
-print *,'*************************'
-print *,'**********debug**********'
-print *,'**********debug**********'
-print *,'*************************'
+write(2345,*) limit//'name'//limit
 end if
 
 !==============================================================================!

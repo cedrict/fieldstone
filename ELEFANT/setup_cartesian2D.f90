@@ -90,20 +90,11 @@ if (spaceV=='__Q1' .or. spaceV=='_Q1+') then
          mesh(counter)%yV(2)=(iely-1)*hy
          mesh(counter)%yV(3)=(iely-1)*hy+hy
          mesh(counter)%yV(4)=(iely-1)*hy+hy
-
-         mesh(counter)%xL(1)=mesh(counter)%xV(1)
-         mesh(counter)%xL(2)=mesh(counter)%xV(2)
-         mesh(counter)%xL(3)=mesh(counter)%xV(3)
-         mesh(counter)%xL(4)=mesh(counter)%xV(4)
-         mesh(counter)%yL(1)=mesh(counter)%yV(1)
-         mesh(counter)%yL(2)=mesh(counter)%yV(2)
-         mesh(counter)%yL(3)=mesh(counter)%yV(3)
-         mesh(counter)%yL(4)=mesh(counter)%yV(4)
-
          mesh(counter)%xc=(ielx-1)*hx+hx/2
          mesh(counter)%yc=(iely-1)*hy+hy/2
          mesh(counter)%hx=hx
          mesh(counter)%hy=hy
+         mesh(counter)%hz=0
          mesh(counter)%vol=hx*hy
          if (ielx==1)    mesh(counter)%bnd1_elt=.true.
          if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
@@ -297,18 +288,18 @@ end do
 
 !----------------------------------------------------------
 
-!if (debug) then
-!   print *,'*************************'
-!   print *,'**********debug**********'
-!   do iel=1,nel
-!   print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),'iconP',mesh(iel)%iconP(1:mP)
-!   do k=1,mV
-!      write(777,*) mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
-!   end do
-!   end do
-!   print *,'**********debug**********'
-!   print *,'*************************'
-!end if
+if (debug) then
+write(2345,*) limit//'setup_cartesian2D'//limit
+do iel=1,nel
+write(2345,*) 'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),'iconP',mesh(iel)%iconP(1:mP)
+do k=1,mV
+write(2345,*) mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
+end do
+end do
+do iel=1,nel
+write(2345,*) 'iel,hx,hy,',iel,mesh(iel)%hx,mesh(iel)%hy
+end do
+end if
 
 !==============================================================================!
 

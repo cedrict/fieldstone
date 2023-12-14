@@ -37,8 +37,6 @@ call system_clock(counti,count_rate)
 
 if (ndim==3 .and. geometry=='cartesian') then 
 
-if (pair=='q2q1') stop 'compute_gravity: potential pb in called fct'
-
 plane_nnp=plane_nnx*plane_nny
 
 if (plane_nnp>0) then
