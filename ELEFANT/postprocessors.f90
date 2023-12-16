@@ -77,7 +77,7 @@ do iel=1,nel
       vrms=vrms+(uq**2+vq**2+wq**2)*mesh(iel)%JxWq(iq)
       volume=volume+mesh(iel)%JxWq(iq)
 
-      call analytical_solution(mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
+      call experiment_analytical_solution(mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
                                uth,vth,wth,pth,Tth,dum,dum,dum,dum,dum,dum)
       errv=errv+((uq-uth)**2+(vq-vth)**2+(wq-wth)**2)*mesh(iel)%JxWq(iq)
       errp=errp+(pq-pth)**2*mesh(iel)%JxWq(iq)

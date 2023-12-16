@@ -12,10 +12,13 @@ use module_parameters
 use module_mesh 
 use module_timing
 use module_sparse, only : csrGT
+use module_arrays, only: pnode_belongs_to
 
 implicit none
 
-integer inode,k,nz,i,ii,nsees
+integer inode,k,nz,i,ii,nsees,k2,jp,ip,imod
+logical, dimension(:), allocatable :: alreadyseen
+real(8) t3,t4
 
 !==================================================================================================!
 !==================================================================================================!
@@ -34,10 +37,33 @@ if (.not.use_penalty) then
 csrGT%nr=NfemP ! number of rows
 csrGT%nc=NfemV ! number of columns
 
-if (spaceP=='__Q0' .or. spaceP=='__P0') then ! is pressure discontinuous
-   csrGT%NZ=mV*ndofV*nel
+if (spaceP=='__Q0' .or. spaceP=='__P0' .or. spaceP=='_P-1') then ! is pressure discontinuous
+   csrGT%NZ=mV*ndofV*nel*mP
+
 else
-   stop 'matrix_setup_GT: not done for q1q1'
+
+   allocate(alreadyseen(NfemV))
+   nz=0
+   do ip=1,NP
+      nsees=0
+      alreadyseen=.false.
+      do k=1,pnode_belongs_to(1,ip)
+         iel=pnode_belongs_to(1+k,ip)  ! elt seen by p node
+         do i=1,mV
+            jp=mesh(iel)%iconV(i)
+            if (.not.alreadyseen(jp)) then
+               !print *,'pnode ',ip,'sees vnode ',jp
+               do k2=1,ndofV
+                  nz=nz+1
+               end do
+               alreadyseen(jp)=.true.
+            end if
+         end do
+      end do    
+   end do
+   deallocate(alreadyseen)    
+   csrGT%NZ=nz
+
 end if
 
 write(*,'(a,i8)') shift//'matrix GT%nr=',csrGT%nr
@@ -66,7 +92,40 @@ if (spaceP=='__Q0' .or. spaceP=='__P0') then ! is pressure discontinuous
       csrGT%ia(iel+1)=csrGT%ia(iel)+nsees
    end do
 
+else
+
+   imod=NP/4
+
+   call cpu_time(t3)
+   allocate(alreadyseen(NfemV))
+   nz=0
+   csrGT%ia(1)=1
+   do ip=1,NP
+      if (mod(ip,imod)==0) write(*,'(TL10, F6.1,a)',advance='no') real(ip)/real(NP)*100.,'%'
+      nsees=0
+      alreadyseen=.false.
+      do k=1,pnode_belongs_to(1,ip)
+         iel=pnode_belongs_to(1+k,ip)  ! elt seen by pdof
+         do i=1,mV
+            jp=mesh(iel)%iconV(i)
+            if (.not.alreadyseen(jp)) then
+               !print *,'pnode ',ip,'sees vnode ',jp
+               do k2=1,ndofV
+                  nz=nz+1
+                  csrGT%ja(nz)=ndofV*(jp-1) + k2 ! address in the matrix
+                  nsees=nsees+1
+               end do
+               alreadyseen(jp)=.true.
+            end if
+         end do
+      end do
+      csrGT%ia(ip+1)=csrGT%ia(ip)+nsees
+   end do
+   call cpu_time(t4) ; write(*,'(f10.3,a)') t4-t3,'s'
+
 end if
+
+!------------------------------------------------------------------------------
 
 if (debug) then
 write(2345,*) limit//'matrix_setup_GT'//limit
@@ -74,6 +133,9 @@ write(2345,*) 'csrGT%nz=',csrGT%nz
 write(2345,*) 'csrGT%ia (m/M)',minval(csrGT%ia), maxval(csrGT%ia)
 write(2345,*) 'csrGT%ja (m/M)',minval(csrGt%ja), maxval(csrGT%ja)
 write(2345,*) 'csrGT%ia ',csrGT%ia
+do i=1,NfemP
+write(2345,*) i,'th line: csrGT%ja=',csrGT%ja(csrGT%ia(i):csrGT%ia(i+1)-1)-1
+end do
 end if
 
 else

@@ -31,7 +31,6 @@ integer :: nzstripes           ! nb of paint stripes in z direction
 logical :: solve_stokes_system ! whether the Stokes system is solved or not
 logical :: use_swarm           ! whether markers are used or not
 logical :: init_marker_random  ! whether markers are initally randomised
-logical :: use_MUMPS           ! whether MUMPS is used for inner solve 
 logical :: use_T               ! whether the code solves the energy equation
 logical :: debug               ! triggers lots of additional checks & prints
 logical :: use_penalty         ! whether the penalty formulation is used
@@ -46,13 +45,14 @@ real(8) :: dt,dt_prev          ! time step
 real(8) :: CFL_nb
 real(8) :: dparam1,dparam2,dparam3 
 
-character(len=10) :: geometry  ! type of domain geometry
-character(len=4) :: pair       ! type of element pair
+character(len=10) :: geometry    ! type of domain geometry
+character(len=4) :: pair         ! type of element pair
 character(len=6) :: cistep
-character(len=4) :: spaceV     ! finite element space for velocity
-character(len=4) :: spaceP     ! finite element space for pressure
-character(len=4) :: spaceT     ! finite element space for temperature
-character(len=4) :: mapping    ! type of mapping 
+character(len=4) :: spaceV       ! finite element space for velocity
+character(len=4) :: spaceP       ! finite element space for pressure
+character(len=4) :: spaceT       ! finite element space for temperature
+character(len=4) :: mapping      ! type of mapping 
+character(len=6) :: inner_solver_type ! which type of solver for the inner solve 
 
 integer :: iel
 integer :: istep           

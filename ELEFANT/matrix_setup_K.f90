@@ -12,12 +12,13 @@ use module_parameters
 use module_mesh
 use module_timing
 use module_sparse, only : csrK
-use module_arrays, only: vdof_belongs_to
+use module_arrays, only: vnode_belongs_to
+use module_MUMPS
 
 implicit none
 
 real(8) :: t3,t4
-integer :: counter,idof,LELTVAR,NA_ELT,inode,nnx,nny,nnz,imod,iV
+integer :: counter,idof,LELTVAR,NA_ELT,inode,nnx,nny,nnz,imod,NNel
 integer :: i1,i2,nsees,nz,ip,i,ii,j,j1,j2,jj,jp,l,k,k1,k2,kk
 logical, dimension(:), allocatable :: alreadyseen
 
@@ -27,10 +28,6 @@ logical, dimension(:), allocatable :: alreadyseen
 !@@
 !@@ If MUMPS is not used, this subroutine allocates arrays ia, ja, and mat of csrK, 
 !@@ and builds arrays ia and ja.
-!@@ This subroutine allocates and fills the {\sl vdof\_belongs\_to} array.
-!@@ For a given node {\sl ip},
-!@@ {\sl vdof\_belongs\_to(1,ip)} is the number of elements that {\sl ip} belongs to.
-!@@ Furthermore, {\sl vdof\_belongs\_to(2:9,ip)} is the actual list of elements.
 
 ! see matrix_setup_K_MUMPS.f90 in old ELEFANT
 ! see matrix_setup_K_SPARSKIT.f90 in old ELEFANT
@@ -48,30 +45,30 @@ end if
 
 !----------------------------------------------------------
 
-if (use_MUMPS) then
+if (inner_solver_type=='_MUMPS') then
 
-   Nel=ndofV*mV          ! size of an elemental matrix
+   NNel=ndofV*mV          ! size of an elemental matrix
 
-   !idV%N=NfemV
+   idV%N=NfemV
 
-   !idV%NELT=nel
-   LELTVAR=nel*Nel           ! nb of elts X size of elemental matrix
-   NA_ELT=nel*Nel*(Nel+1)/2  ! nb of elts X nb of nbs in elemental matrix
+   idV%NELT=nel
+   LELTVAR=nel*NNel           ! nb of elts X size of elemental matrix
+   NA_ELT=nel*NNel*(NNel+1)/2  ! nb of elts X nb of nbs in elemental matrix
 
-   !allocate(idV%A_ELT (NA_ELT)) 
-   !allocate(idV%RHS   (idV%N))  
+   allocate(idV%A_ELT (NA_ELT)) 
+   allocate(idV%RHS   (idV%N))  
 
    if (iproc==0) then
 
-      !allocate(idV%ELTPTR(idV%NELT+1)) 
-      !allocate(idV%ELTVAR(LELTVAR))    
+      allocate(idV%ELTPTR(idV%NELT+1)) 
+      allocate(idV%ELTVAR(LELTVAR))    
 
       !=====[building ELTPTR]=====
 
-      !do iel=1,nel
-      !   idV%ELTPTR(iel)=1+(iel-1)*(ndofV*mV)
-      !end do
-      !idV%ELTPTR(iel)=1+nel*(ndofV*mV)
+      do iel=1,nel
+         idV%ELTPTR(iel)=1+(iel-1)*(ndofV*mV)
+      end do
+      idV%ELTPTR(iel)=1+nel*(ndofV*mV)
 
       !=====[building ELTVAR]=====
 
@@ -81,7 +78,7 @@ if (use_MUMPS) then
             inode=mesh(iel)%iconV(k)
             do idof=1,ndofV
                counter=counter+1
-               !idV%ELTVAR(counter)=(inode-1)*ndofV+idof
+               idV%ELTVAR(counter)=(inode-1)*ndofV+idof
             end do
          end do
       end do
@@ -256,31 +253,7 @@ else
       !----------------------------------------------------------------------------------
       else ! use generic approach
 
-         allocate(vdof_belongs_to(9,NV)) !9 = max nb of elements a node can belong to
-
-         vdof_belongs_to=0
-         do iel=1,nel
-            !print *,'elt:',iel
-            do i=1,mV
-               inode=mesh(iel)%iconV(i)
-               !print *,'->',inode
-               vdof_belongs_to(1,inode)=vdof_belongs_to(1,inode)+1
-               if (vdof_belongs_to(1,inode)>9) then
-                  print *, 'matrix_setup_K: array too small'
-                  stop
-               end if
-               vdof_belongs_to(1+vdof_belongs_to(1,inode),inode)=iel
-            end do
-         end do
-
-         if (debug) then
-         write(2345,*) limit//'matrix_setup_K'//limit
-         do iV=1,NV
-         write(2345,*) 'node',iV,'belongs to ',vdof_belongs_to(1,iV),' elts | ',vdof_belongs_to(2:,iV)
-         end do
-         end if
-
-         imod=NV/10
+         imod=NV/4
 
          call cpu_time(t3)
          allocate(alreadyseen(NV*ndofV))
@@ -288,8 +261,8 @@ else
          do ip=1,NV
             if (mod(ip,imod)==0) write(*,'(TL10, F6.1,a)',advance='no') real(ip)/real(NV)*100.,'%'
             alreadyseen=.false.
-            do k=1,vdof_belongs_to(1,ip)
-               iel=vdof_belongs_to(1+k,ip)
+            do k=1,vnode_belongs_to(1,ip)
+               iel=vnode_belongs_to(1+k,ip)
                do i=1,mV
                   jp=mesh(iel)%iconV(i)
                   if (.not.alreadyseen(jp)) then
@@ -304,11 +277,9 @@ else
          deallocate(alreadyseen)
          call cpu_time(t4) ; write(*,'(f10.3,a)') t4-t3,'s'
 
-         write(*,'(a)') '----------------------------------------------------------------------'
-         write(*,'(a)')       shift//'=====[Stokes system]================||'
-         write(*,'(a)')       shift//'CSR matrix format SYMMETRIC         ||'
-         write(*,'(a,i11,a)') shift//'csrK%N       =',csrK%N,'            ||'
-         write(*,'(a,i11,a)') shift//'csrK%nz      =',csrK%nz,'            ||'
+         write(*,'(a)')       shift//'CSR matrix format SYMMETRIC  '
+         write(*,'(a,i11,a)') shift//'csrK%N       =',csrK%N,' '
+         write(*,'(a,i11,a)') shift//'csrK%nz      =',csrK%nz,' '
 
          allocate(csrK%ia(csrK%N+1))   
          allocate(csrK%ja(csrK%NZ))     
@@ -319,13 +290,13 @@ else
          nz=0
          csrK%ia(1)=1
          do ip=1,NV
-            if (mod(ip,imod)==0) write(*,'(TL10, F6.1,a)',advance='no') real(ip)/real(np)*100.,'%'
+            if (mod(ip,imod)==0) write(*,'(TL10, F6.1,a)',advance='no') real(ip)/real(NV)*100.,'%'
             do k1=1,ndofV
                ii=ndofV*(ip-1) + k1 ! address in the matrix
                nsees=0
                alreadyseen=.false.
-               do k=1,vdof_belongs_to(1,ip)
-                  iel=vdof_belongs_to(1+k,ip)
+               do k=1,vnode_belongs_to(1,ip)
+                  iel=vnode_belongs_to(1+k,ip)
                      do i=1,mV
                         jp=mesh(iel)%iconV(i)
                         if (.not.alreadyseen(jp)) then
@@ -353,8 +324,11 @@ else
          write(*,'(a,2i9)') shift//'csrK%ja',minval(csrK%ja), maxval(csrK%ja)
 
          if (debug) then
-         write(2345,*) limit//'matrix_setup_K'//limit
+         write(2345,'(a)') limit//'matrix_setup_K'//limit
          write(2345,*) 'csrK%ia=',csrK%ia
+         do i=1,NfemV
+         write(2345,*) i,'th line: csrK%ja=',csrK%ja(csrK%ia(i):csrK%ia(i+1)-1)-1
+         end do
          end if
 
 
@@ -362,7 +336,7 @@ else
    
    end if ! iproc=0
 
-end if ! use_MUMPS
+end if 
 
 !==============================================================================!
 

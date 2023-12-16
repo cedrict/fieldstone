@@ -48,12 +48,23 @@ do iel=1,nel
    allocate(mesh(iel)%eyz(mV))
    allocate(mesh(iel)%rho(mV))
    allocate(mesh(iel)%eta(mV))
-   allocate(mesh(iel)%bnd1_node(mV))
-   allocate(mesh(iel)%bnd2_node(mV))
-   allocate(mesh(iel)%bnd3_node(mV))
-   allocate(mesh(iel)%bnd4_node(mV))
-   allocate(mesh(iel)%bnd5_node(mV))
-   allocate(mesh(iel)%bnd6_node(mV))
+
+
+   select case (geometry)
+   case('cartesian') 
+      allocate(mesh(iel)%bnd1_node(mV))
+      allocate(mesh(iel)%bnd2_node(mV))
+      allocate(mesh(iel)%bnd3_node(mV))
+      allocate(mesh(iel)%bnd4_node(mV))
+      allocate(mesh(iel)%bnd5_node(mV))
+      allocate(mesh(iel)%bnd6_node(mV))
+   case('spherical')
+      allocate(mesh(iel)%inner_node(mV))
+      allocate(mesh(iel)%inner_node(mV))
+   case default
+      stop 'initialise_elements: unknown geometry'
+   end select
+
    allocate(mesh(iel)%fix_u(mV))
    allocate(mesh(iel)%fix_v(mV))
    allocate(mesh(iel)%fix_w(mV))
@@ -78,7 +89,6 @@ do iel=1,nel
    allocate(mesh(iel)%yM(mmapping))
    allocate(mesh(iel)%zM(mmapping))
    allocate(mesh(iel)%iconM(mmapping))
-
 
 end do
 

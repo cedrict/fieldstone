@@ -420,7 +420,7 @@ end if
 write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Name="velocity (analytical)" Format="ascii">'
 do iel=1,nel
    do k=1,mV
-      call analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
+      call experiment_analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
                                uth,vth,wth,dum,dum,dum,dum,dum,dum,dum,dum)
       write(123,'(3es12.5)') uth,vth,wth
    end do
@@ -431,7 +431,7 @@ if (solve_stokes_system) then
 write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Name="velocity (error)" Format="ascii">'
 do iel=1,nel
    do k=1,mV
-      call analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
+      call experiment_analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
                                uth,vth,wth,dum,dum,dum,dum,dum,dum,dum,dum)
       write(123,'(3es12.5)') mesh(iel)%u(k)-uth,mesh(iel)%v(k)-vth,mesh(iel)%w(k)-wth
    end do
@@ -442,7 +442,7 @@ end if
 write(123,*) '<DataArray type="Float32" Name="pressure q (analytical)" Format="ascii">'
 do iel=1,nel
    do k=1,mV
-      call analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
+      call experiment_analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
                                uth,vth,wth,pth,dum,dum,dum,dum,dum,dum,dum)
       write(123,'(es12.4)') pth
    end do
@@ -453,7 +453,7 @@ if (solve_stokes_system) then
 write(123,*) '<DataArray type="Float32" Name="pressure q (error)" Format="ascii">'
 do iel=1,nel
    do k=1,mV
-      call analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
+      call experiment_analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
                                uth,vth,wth,pth,dum,dum,dum,dum,dum,dum,dum)
       write(123,'(es12.4)') mesh(iel)%q(k)-pth
    end do

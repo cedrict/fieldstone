@@ -13,6 +13,7 @@ use module_arrays
 use module_mesh 
 use module_timing
 use module_sparse, only : csrGT,csrK,csrMP
+use module_MUMPS
 
 implicit none
 
@@ -59,8 +60,8 @@ end if
 C_el=0.d0
 
 counter_mumps=0
-!idV%RHS=0.d0
-!idV%A_ELT=0.d0
+idV%RHS=0.d0
+idV%A_ELT=0.d0
 Kdiag=0d0
 rhs_f=0.
 if (allocated(rhs_h)) rhs_h=0.
@@ -96,11 +97,11 @@ do iel=1,nel
             do k2=1,mP
                jkk=k2                 ! local coordinate of pressure dof
                m2=mesh(iel)%iconP(k2) ! global coordinate of pressure dof
-!               do k=csrGT%ia(m2),csrGT%ia(m2+1)-1    
-!                  if (csrGT%ja(k)==m1) then  
-!                     csrGT%mat(k)=csrGT%mat(k)+G_el(ikk,jkk)  
-!                  end if    
-!               end do    
+               do k=csrGT%ia(m2),csrGT%ia(m2+1)-1    
+                  if (csrGT%ja(k)==m1) then  
+                     csrGT%mat(k)=csrGT%mat(k)+G_el(ikk,jkk)  
+                  end if    
+               end do    
             end do
          end do
          end do
@@ -118,7 +119,7 @@ do iel=1,nel
    ! assemble K
    !--------------------
 
-   if (use_MUMPS) then
+   if (inner_solver_type=='_MUMPS') then
       do k1=1,mV
          ik=mesh(iel)%iconV(k1)
          do i1=1,ndofV
@@ -130,7 +131,7 @@ do iel=1,nel
                   jkk=ndofV*(k2-1)+i2
                   if (jkk>=ikk) then
                      counter_mumps=counter_mumps+1
-!                     idV%A_ELT(counter_mumps)=K_el(ikk,jkk)
+                     idV%A_ELT(counter_mumps)=K_el(ikk,jkk)
                   end if
                end do
             end do

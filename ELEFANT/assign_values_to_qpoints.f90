@@ -62,18 +62,15 @@ if (use_swarm) then
          exzm=sum(NNNV(1:mV)*mesh(iel)%exz(1:mV))
          eyzm=sum(NNNV(1:mV)*mesh(iel)%eyz(1:mV))
 
-         call material_model(swarm(im)%x,&
-                             swarm(im)%y,&
-                             swarm(im)%z,&
-                             pm,&
-                             Tm,&
-                             exxm,eyym,ezzm,exym,exzm,eyzm,&
-                             swarm(im)%mat,one,&
-                             swarm(im)%eta,&
-                             swarm(im)%rho,&
-                             swarm(im)%hcond,&
-                             swarm(im)%hcapa,&
-                             swarm(im)%hprod)
+         call experiment_material_model(swarm(im)%x,swarm(im)%y,swarm(im)%z,&
+                                        pm,Tm,&
+                                        exxm,eyym,ezzm,exym,exzm,eyzm,&
+                                        swarm(im)%mat,one,&
+                                        swarm(im)%eta,&
+                                        swarm(im)%rho,&
+                                        swarm(im)%hcond,&
+                                        swarm(im)%hcapa,&
+                                        swarm(im)%hprod)
 
          x(i)=swarm(im)%x-mesh(iel)%xc
          y(i)=swarm(im)%y-mesh(iel)%yc
@@ -151,12 +148,9 @@ else ! use_swarm
          exzq=sum(NNNV(1:mV)*mesh(iel)%exz(1:mV))
          eyzq=sum(NNNV(1:mV)*mesh(iel)%eyz(1:mV))
 
-         call material_model(mesh(iel)%xq(iq),&
-                             mesh(iel)%yq(iq),&
-                             mesh(iel)%zq(iq),&
-                             mesh(iel)%pq(iq),&
-                             mesh(iel)%thetaq(iq),&
-                             exxq,eyyq,ezzq,exyq,exzq,eyzq,&
+         call experiment_material_model(mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
+                                        mesh(iel)%pq(iq),mesh(iel)%thetaq(iq),&
+                                        exxq,eyyq,ezzq,exyq,exzq,eyzq,&
                              idummy,one,&
                              mesh(iel)%etaq(iq),&
                              mesh(iel)%rhoq(iq),&

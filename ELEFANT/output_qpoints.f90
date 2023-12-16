@@ -100,8 +100,6 @@ do iel=1,nel
    end do
 end do
 write(123,*) '</DataArray>'
-
-
 !-----
 write(123,*) '</PointData>'
 !=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

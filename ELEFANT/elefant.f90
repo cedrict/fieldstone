@@ -8,17 +8,14 @@
 
 program elefant
 
-
-use module_parameters
-use module_arrays
-use module_mesh
-use module_sparse
-use module_materials
+use module_parameters, only: geometry,nstep,dt,cistep,use_T,istep,time,ndim,solve_stokes_system
+!use module_arrays
+!use module_mesh
+!use module_sparse
+!use module_materials
 
 implicit none
 
-include 'dmumps_struc.h'
-type(dmumps_struc) idV
 
 open(unit=1234,file="OUTPUT/STATS/statistics.ascii")
 open(unit=1235,file="OUTPUT/STATS/statistics_energy_system.ascii")
@@ -44,21 +41,21 @@ print *,'no MUMPS support'
 
 call spacer
 call set_default_values
-call declare_main_parameters
+call experiment_declare_main_parameters
 call read_command_line_options
 call set_global_parameters_spaceV
 call set_global_parameters_spaceP
 call set_global_parameters_spaceT
 call set_global_parameters_mapping
 call allocate_memory
-call define_material_properties
+call experiment_define_material_properties
 call initialise_elements
 select case (geometry)
 case('cartesian') 
    if (ndim==2) call setup_cartesian2D
    if (ndim==3) call setup_cartesian3D
 case('spherical')
-   !if (ndim==2) call setup_annulus
+   if (ndim==2) call setup_annulus
    !if (ndim==3) call setup_shell
 end select
 
@@ -67,15 +64,16 @@ call mapping_setup
 call quadrature_setup
 call test_basis_functions
 call swarm_setup
-call swarm_material_layout
+call experiment_swarm_material_layout
 call paint_swarm
+call compute_belongs
 call matrix_setup_K
 call matrix_setup_MP
-call matrix_setup_MV
+!call matrix_setup_MV
 call matrix_setup_GT
 call matrix_setup_A
 !call output_matrix_tikz
-call initial_temperature
+call experiment_initial_temperature
 call spacer
 call print_parameters
 
@@ -85,7 +83,7 @@ do istep=1,nstep !-----------------------------------------
    call spacer_istep                                      !
    call assign_values_to_qpoints                          !
    call compute_elemental_rho_eta_vol                     !
-   call define_bcV                                        !
+   call experiment_define_bcV                             !
                                                           !
    if (solve_stokes_system) then                          !
       call make_matrix_stokes                             !
@@ -98,7 +96,7 @@ do istep=1,nstep !-----------------------------------------
    call compute_timestep                                  !
                                                           !
    if (use_T) then                                        !
-      call define_bcT                                     !
+      call experiment_define_bcT                          !
       call make_matrix_energy                             !
       call solve_energy                                   !
       call compute_temperature_gradient                   !
@@ -107,7 +105,6 @@ do istep=1,nstep !-----------------------------------------
    call compute_gravity                                   !
    call postprocessors                                    !
    call output_solution                                   !
-   !call output_solution_python                            !
    call output_qpoints                                    !
    call output_swarm                                      !
    call write_stats                                       !

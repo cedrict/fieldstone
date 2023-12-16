@@ -6,7 +6,7 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine declare_main_parameters
+subroutine experiment_declare_main_parameters
 
 use module_parameters
 
@@ -22,7 +22,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine define_material_properties
+subroutine experiment_define_material_properties
 
 implicit none
 
@@ -35,7 +35,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine material_model(x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz,imat,mode,&
+subroutine experiment_material_model(x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz,imat,mode,&
                           eta,rho,hcond,hcapa,hprod)
 
 implicit none
@@ -53,7 +53,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine swarm_material_layout 
+subroutine experiment_swarm_material_layout 
 
 implicit none
 
@@ -66,7 +66,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine define_bcV
+subroutine experiment_define_bcV
 
 use module_parameters, only: iel,nel,mV
 use module_mesh
@@ -82,7 +82,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine define_bcT
+subroutine experiment_define_bcT
 
 implicit none
 
@@ -95,7 +95,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine initial_temperature
+subroutine experiment_initial_temperature
 
 implicit none
 
@@ -138,7 +138,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine gravity_model(x,y,z,gx,gy,gz)
+subroutine experiment_gravity_model(x,y,z,gx,gy,gz)
 
 implicit none
 
@@ -157,7 +157,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine test
+subroutine experiment_test
 
 implicit none
 
@@ -171,7 +171,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine postprocessor_experiment
+subroutine experiment_postprocessor_experiment
 
 implicit none
 

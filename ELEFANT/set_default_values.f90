@@ -43,7 +43,7 @@ solve_stokes_system=.true.
 
 geometry='cartesian'
 
-use_MUMPS=.false.
+inner_solver_type='__y12m'
 
 debug=.false.
 

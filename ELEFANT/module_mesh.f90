@@ -21,6 +21,9 @@ type element
   real(8), allocatable :: ezz(:),exz(:),eyz(:)! additional strain rate components for 3D
   real(8), allocatable :: rho(:)              ! density on V nodes 
   real(8), allocatable :: eta(:)              ! viscosity on V nodes 
+  real(8), allocatable :: rV(:)               ! 
+  real(8), allocatable :: thetaV(:)           !
+  real(8), allocatable :: phiV(:)             !
   real(8) :: a_eta,b_eta,c_eta,d_eta          ! least square coeffs for viscosity
   real(8) :: a_rho,b_rho,c_rho,d_rho          ! least square coeffs for density
   real(8) :: vol                              ! volume of the element
@@ -34,12 +37,16 @@ type element
   logical(1) :: bnd4_elt                      ! true if element on y=Ly boundary 
   logical(1) :: bnd5_elt                      ! true if element on z=0 boundary 
   logical(1) :: bnd6_elt                      ! true if element on z=Lz boundary 
+  logical(1) :: inner_elt                     ! true if element is on inner annulus/sphere boundary
+  logical(1) :: outer_elt                     ! true if element is on outer annulus/sphere boundary
   logical(1), allocatable :: bnd1_node(:)     ! flags for nodes on x=0 boundary  
   logical(1), allocatable :: bnd2_node(:)     ! flags for nodes on x=Lx boundary  
   logical(1), allocatable :: bnd3_node(:)     ! flags for nodes on y=0 boundary  
   logical(1), allocatable :: bnd4_node(:)     ! flags for nodes on y=Ly boundary  
   logical(1), allocatable :: bnd5_node(:)     ! flags for nodes on z=0 boundary  
   logical(1), allocatable :: bnd6_node(:)     ! flags for nodes on z=Lz boundary  
+  logical(1), allocatable :: inner_node(:)    ! flags for nodes on inner boundary of annulus/shell
+  logical(1), allocatable :: outer_node(:)    ! flags for nodes on outer boundary of annulus/shell
   logical(1), allocatable :: fix_u(:)         ! whether a given velocity dof is prescribed
   logical(1), allocatable :: fix_v(:)         ! whether a given velocity dof is prescribed
   logical(1), allocatable :: fix_w(:)         ! whether a given velocity dof is prescribed
@@ -49,7 +56,7 @@ type element
   real(8),allocatable :: weightq(:)           ! weight of q. points
   real(8),allocatable :: rq(:),sq(:),tq(:)    ! reduced coordinates of q. points
   real(8),allocatable :: gxq(:),gyq(:),gzq(:) ! gravity vector at q. point
-  real(8),allocatable :: pq(:),thetaq(:)      ! pressure and temperature at q. points
+  real(8),allocatable :: pq(:),tempq(:)      ! pressure and temperature at q. points
   real(8),allocatable :: etaq(:),rhoq(:)      ! viscosity and density at q. points
   real(8),allocatable :: hcondq(:)            ! heat conductivity at q. points 
   real(8),allocatable :: hcapaq(:)            ! heat capacity at q. points 
