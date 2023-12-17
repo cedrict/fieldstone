@@ -135,9 +135,9 @@ else ! use_swarm
 
          if (use_T) then
             call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim,spaceT)
-            mesh(iel)%thetaq(iq)=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
+            mesh(iel)%tempq(iq)=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
          else
-            mesh(iel)%thetaq(iq)=0
+            mesh(iel)%tempq(iq)=0
          end if
 
          call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNV(1:mV),mV,ndim,spaceV)
@@ -149,7 +149,7 @@ else ! use_swarm
          eyzq=sum(NNNV(1:mV)*mesh(iel)%eyz(1:mV))
 
          call experiment_material_model(mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
-                                        mesh(iel)%pq(iq),mesh(iel)%thetaq(iq),&
+                                        mesh(iel)%pq(iq),mesh(iel)%tempq(iq),&
                                         exxq,eyyq,ezzq,exyq,exzq,eyzq,&
                              idummy,one,&
                              mesh(iel)%etaq(iq),&

@@ -33,9 +33,9 @@ allocate(mesh(nel))
 do iel=1,nel  
 
    allocate(mesh(iel)%iconV(mV)) 
-   allocate(mesh(iel)%xV(mV))
-   allocate(mesh(iel)%yV(mV))
-   allocate(mesh(iel)%zV(mV))
+   allocate(mesh(iel)%xV(mV)) ; mesh(iel)%xV=0.d0
+   allocate(mesh(iel)%yV(mV)) ; mesh(iel)%yV=0.d0
+   allocate(mesh(iel)%zV(mV)) ; mesh(iel)%zV=0.d0
    allocate(mesh(iel)%u(mV)) ; mesh(iel)%u=0.d0
    allocate(mesh(iel)%v(mV)) ; mesh(iel)%v=0.d0
    allocate(mesh(iel)%w(mV)) ; mesh(iel)%w=0.d0
@@ -60,7 +60,10 @@ do iel=1,nel
       allocate(mesh(iel)%bnd6_node(mV))
    case('spherical')
       allocate(mesh(iel)%inner_node(mV))
-      allocate(mesh(iel)%inner_node(mV))
+      allocate(mesh(iel)%outer_node(mV))
+      allocate(mesh(iel)%rV(mV))
+      allocate(mesh(iel)%thetaV(mV))
+      allocate(mesh(iel)%phiV(mV))
    case default
       stop 'initialise_elements: unknown geometry'
    end select

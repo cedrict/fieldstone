@@ -31,6 +31,7 @@ type element
   real(8) :: eta_avrg                         ! average viscosity inside the element
   real(8) :: xc,yc,zc                         ! coordinates of element center
   real(8) :: hx,hy,hz                         ! element size (Cartesian geom)
+  real(8) :: hr,htheta,hphi
   logical(1) :: bnd1_elt                      ! true if element on x=0 boundary 
   logical(1) :: bnd2_elt                      ! true if element on x=Lx boundary 
   logical(1) :: bnd3_elt                      ! true if element on y=0 boundary 

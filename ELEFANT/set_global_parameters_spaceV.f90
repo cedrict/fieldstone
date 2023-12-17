@@ -8,7 +8,7 @@
 
 subroutine set_global_parameters_spaceV
 
-use module_parameters, only: spaceV,debug,mV,NV,nelx,nely,nelz,iproc,ndim,nel
+use module_parameters, only: spaceV,debug,mV,NV,nelx,nely,nelz,iproc,ndim,nel,geometry,nelr,nelphi
 use module_timing
 use module_arrays, only: rV,sV,tV
 
@@ -33,38 +33,82 @@ call system_clock(counti,count_rate)
 if (ndim==2) then
 
    select case(spaceV)
+   !-----------
    case('__Q1')
       mV=2**ndim
       allocate(rV(mV)) ; rV=0.d0
       allocate(sV(mV)) ; sV=0.d0
       allocate(tV(mV)) ; tV=0.d0
-      nel=nelx*nely
-      NV=(nelx+1)*(nely+1)
       rV=(/-1d0,+1d0,+1d0,-1d0/)
       sV=(/-1d0,-1d0,+1d0,+1d0/)
+      select case(geometry)
+      case('cartesian')
+         if (nelx==0) stop 'set_global_parameters_spaceV: nelx=0'
+         if (nely==0) stop 'set_global_parameters_spaceV: nely=0'
+         nel=nelx*nely
+         NV=(nelx+1)*(nely+1)
+      case('spherical')
+         if (nelr==0) stop 'set_global_parameters_spaceV: nelr=0'
+         if (nelphi==0) stop 'set_global_parameters_spaceV: nelphi=0'
+         nel=nelr*nelphi
+         NV=(nelr+1)*nelphi
+      case default
+         stop 'set_global_parameters_spaceV: unknown geometry'
+      end select
+   !-----------
    case('__Q2')
       mV=3**ndim
       allocate(rV(mV)) ; rV=0.d0
       allocate(sV(mV)) ; sV=0.d0
       allocate(tV(mV)) ; tV=0.d0
-      nel=nelx*nely
-      NV=(2*nelx+1)*(2*nely+1)
+      select case(geometry)
+      case('cartesian')
+         if (nelx==0) stop 'set_global_parameters_spaceV: nelx=0'
+         if (nely==0) stop 'set_global_parameters_spaceV: nely=0'
+         nel=nelx*nely
+         NV=(2*nelx+1)*(2*nely+1)
+      case('spherical')
+         if (nelr==0) stop 'set_global_parameters_spaceV: nelr=0'
+         if (nelphi==0) stop 'set_global_parameters_spaceV: nelphi=0'
+         nel=nelr*nelphi
+         NV=(2*nelr+1)*(2*nelphi)
+      case default
+         stop 'set_global_parameters_spaceV: unknown geometry'
+      end select
       rV=(/-1d0,0d0,+1d0,-1d0,0d0,+1d0,-1d0,0d0,+1d0/)
       sV=(/-1d0,-1d0,-1d0,0d0,0d0,0d0,+1d0,+1d0,+1d0/)
+   !-----------
    case('_Q1+')
       mV=2**ndim+1
       allocate(rV(mV)) ; rV=0.d0
       allocate(sV(mV)) ; sV=0.d0
       allocate(tV(mV)) ; tV=0.d0
-      NV=(nelx+1)*(nely+1)+nel
+      select case(geometry)
+      case('cartesian')
+         if (nelx==0) stop 'set_global_parameters_spaceV: nelx=0'
+         if (nely==0) stop 'set_global_parameters_spaceV: nely=0'
+         nel=nelx*nely
+         NV=(nelx+1)*(nely+1)+nel
+      case default
+         stop 'set_global_parameters_spaceV: unknown geometry'
+      end select
       rV=(/-1d0,+1d0,+1d0,-1d0,0d0/)
       sV=(/-1d0,-1d0,+1d0,+1d0,0d0/)
+   !-----------
    case('__Q3')
       mV=2**ndim+1
       allocate(rV(mV)) ; rV=0.d0
       allocate(sV(mV)) ; sV=0.d0
       allocate(tV(mV)) ; tV=0.d0
-      NV=(3*nelx+1)*(3*nely+1)
+      select case(geometry)
+      case('cartesian')
+         if (nelx==0) stop 'set_global_parameters_spaceV: nelx=0'
+         if (nely==0) stop 'set_global_parameters_spaceV: nely=0'
+         nel=nelx*nely
+         NV=(3*nelx+1)*(3*nely+1)
+      case default
+         stop 'set_global_parameters_spaceV: unknown geometry'
+      end select
       !missing rV
       !missing sV
       !missing tV
@@ -112,6 +156,12 @@ else
 
 end if
 
+if (nel==0) stop 'set_global_parameters_spaceV: nel=0'
+if (NV==0)  stop 'set_global_parameters_spaceV: NV=0'
+
+write(*,'(a,a)') shift//'spaceV=',spaceV
+write(*,'(a,i5)') shift//'nel=',nel
+write(*,'(a,i5)') shift//'NV=',NV
 
 !----------------------------------------------------------
 if (debug) then
@@ -131,7 +181,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'set_global_parameters_spaceV (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'set_global_params_spaceV:',elapsed,' s'
 
 end if ! iproc
 

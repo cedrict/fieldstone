@@ -8,7 +8,7 @@
 
 subroutine set_global_parameters_spaceP
 
-use module_parameters, only: iproc,debug,ndim,mP,nelx,nely,nelz,NP,spaceP
+use module_parameters, only: iproc,debug,ndim,mP,nelx,nely,nelz,NP,spaceP,nelr,nelphi,geometry
 use module_timing
 use module_arrays, only: rP,sP,tP
 
@@ -33,28 +33,64 @@ call system_clock(counti,count_rate)
 if (ndim==2) then
 
    select case(spaceP)
+   !------------
    case('__Q0')
       mP=1
       allocate(rP(mP)) ; rP=0.d0
       allocate(sP(mP)) ; sP=0.d0
       allocate(tP(mP)) ; tP=0.d0
-      NP=nelx*nely
+      select case(geometry)
+      case('cartesian')
+         if (nelx==0) stop 'set_global_parameters_spaceP: nelx=0'
+         if (nely==0) stop 'set_global_parameters_spaceP: nely=0'
+         NP=nelx*nely
+      case('spherical')
+         if (nelr==0) stop 'set_global_parameters_spaceP: nelr=0'
+         if (nelphi==0) stop 'set_global_parameters_spaceP: nelphi=0'
+         NP=nelr*nelphi
+      case default
+         stop 'set_global_parameters_spaceP: unknown geometry'
+      end select
+
+   !------------
    case('__Q1')
       mP=2**ndim
       allocate(rP(mP)) ; rP=0.d0
       allocate(sP(mP)) ; sP=0.d0
       allocate(tP(mP)) ; tP=0.d0
-      NP=(nelx+1)*(nely+1)
+      select case(geometry)
+      case('cartesian')
+         if (nelx==0) stop 'set_global_parameters_spaceP: nelx=0'
+         if (nely==0) stop 'set_global_parameters_spaceP: nely=0'
+         NP=(nelx+1)*(nely+1)
+      case('spherical')
+         if (nelr==0) stop 'set_global_parameters_spaceP: nelr=0'
+         if (nelphi==0) stop 'set_global_parameters_spaceP: nelphi=0'
+         NP=(nelr+1)*nelphi
+      case default
+         stop 'set_global_parameters_spaceP: unknown geometry'
+      end select
       rP=(/-1d0,+1d0,+1d0,-1d0/)
       sP=(/-1d0,-1d0,+1d0,+1d0/)
+
+   !------------
    case('__Q2')
       mP=3**ndim
       allocate(rP(mP)) ; rP=0.d0
       allocate(sP(mP)) ; sP=0.d0
       allocate(tP(mP)) ; tP=0.d0
-      NP=(2*nelx+1)*(2*nely+1)
+      select case(geometry)
+      case('cartesian')
+         if (nelx==0) stop 'set_global_parameters_spaceP: nelx=0'
+         if (nely==0) stop 'set_global_parameters_spaceP: nely=0'
+         NP=(2*nelx+1)*(2*nely+1)
+      case default
+         stop 'set_global_parameters_spaceP: unknown geometry'
+      end select
       rP=(/-1d0,0d0,+1d0,-1d0,0d0,+1d0,-1d0,0d0,+1d0/)
       sP=(/-1d0,-1d0,-1d0,0d0,0d0,0d0,+1d0,+1d0,+1d0/)
+
+   !------------
    case default
       stop 'spaceP not supported in set_global_parameters_spaceP'
    end select
@@ -62,35 +98,68 @@ if (ndim==2) then
 else
 
    select case(spaceP)
+
+   !------------
    case('__Q0')
       mP=1
       allocate(rP(mP)) ; rP=0.d0
       allocate(sP(mP)) ; sP=0.d0
       allocate(tP(mP)) ; tP=0.d0
-      NP=nelx*nely*nelz
+      select case(geometry)
+      case('cartesian')
+         if (nelx==0) stop 'set_global_parameters_spaceP: nelx=0'
+         if (nely==0) stop 'set_global_parameters_spaceP: nely=0'
+         NP=nelx*nely*nelz
+      case default
+         stop 'set_global_parameters_spaceP: unknown geometry'
+      end select
+
+   !------------
    case('__Q1')
       mP=2**ndim
       allocate(rP(mP)) ; rP=0.d0
       allocate(sP(mP)) ; sP=0.d0
       allocate(tP(mP)) ; tP=0.d0
-      NP=(nelx+1)*(nely+1)*(nelz+1)
+      select case(geometry)
+      case('cartesian')
+         if (nelx==0) stop 'set_global_parameters_spaceP: nelx=0'
+         if (nely==0) stop 'set_global_parameters_spaceP: nely=0'
+         NP=(nelx+1)*(nely+1)*(nelz+1)
+      case default
+         stop 'set_global_parameters_spaceP: unknown geometry'
+      end select
       rP=(/-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0,-1d0/)
       sP=(/-1d0,-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0/)
       tP=(/-1d0,-1d0,-1d0,-1d0,+1d0,+1d0,+1d0,+1d0/)
+
+   !------------
    case('__Q2')
       mP=3**ndim
       allocate(rP(mP)) ; rP=0.d0
       allocate(sP(mP)) ; sP=0.d0
       allocate(tP(mP)) ; tP=0.d0
-      NP=(2*nelx+1)*(2*nely+1)*(2*nelz+1)
+      select case(geometry)
+      case('cartesian')
+         if (nelx==0) stop 'set_global_parameters_spaceP: nelx=0'
+         if (nely==0) stop 'set_global_parameters_spaceP: nely=0'
+         NP=(2*nelx+1)*(2*nely+1)*(2*nelz+1)
+      case default
+         stop 'set_global_parameters_spaceP: unknown geometry'
+      end select
       !missing rP
       !missing sP
       !missing tP
+
    case default
       stop 'spaceP not supported in set_global_parameters_spaceP'
    end select
 
 end if
+
+if (NP==0)  stop 'set_global_parameters_spaceP: NP=0'
+
+write(*,'(a,a)') shift//'spaceP=',spaceP
+write(*,'(a,i5)') shift//'NP=',NP
 
 !----------------------------------------------------------
 
@@ -110,7 +179,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'set_global_parameters_spaceP (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'set_global_params_spaceP:',elapsed,' s'
 
 end if ! iproc
 

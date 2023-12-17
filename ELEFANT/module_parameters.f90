@@ -6,6 +6,8 @@ integer :: mV                  ! number of velocity nodes per element
 integer :: mP                  ! number of pressure nodes per element
 integer :: mT                  ! number of temperature nodes per element
 integer :: nelx,nely,nelz      ! number of elements in each direction
+integer :: nelr                ! number of elements in r direction (annulus)
+integer :: nelphi              ! number of elements in phi direction (annulus)
 integer :: nel                 ! total number of elements
 integer :: ndim                ! number of dimensions
 integer :: nq_per_dim          ! number of quadrature points per dimension
@@ -44,6 +46,7 @@ real(8) :: time                ! real human/model time
 real(8) :: dt,dt_prev          ! time step 
 real(8) :: CFL_nb
 real(8) :: dparam1,dparam2,dparam3 
+real(8) :: outer_radius,inner_radius 
 
 character(len=10) :: geometry    ! type of domain geometry
 character(len=4) :: pair         ! type of element pair

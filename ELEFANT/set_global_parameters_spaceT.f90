@@ -80,6 +80,9 @@ else
 
 end if
 
+write(*,'(a,a)') shift//'spaceT=',spaceT
+write(*,'(a,i5)') shift//'NT=',NT
+
 !----------------------------------------------------------
 
 if (debug) then

@@ -195,9 +195,10 @@ end do
 !csrGT%mat=csrGT%mat*block_scaling_coeff
 !rhs_h=rhs_h*block_scaling_coeff
 
-                         write(*,'(a,2es12.4)') shift//'rhs_f (m/M):   ',minval(rhs_f),maxval(rhs_f)
-if (allocated(csrK%mat)) write(*,'(a,2es12.4)') shift//'csrK%mat (m/M):',minval(csrK%mat),maxval(csrK%mat)
-                         write(*,'(a,2es12.4)') shift//'Kdiag (m/M):   ',minval(Kdiag),maxval(Kdiag)
+                         write(*,'(a,2es12.4)') shift//'rhs_f (m/M):    ',minval(rhs_f),maxval(rhs_f)
+if (allocated(csrK%mat)) write(*,'(a,2es12.4)') shift//'csrK%mat (m/M): ',minval(csrK%mat),maxval(csrK%mat)
+                         write(*,'(a,2es12.4)') shift//'Kdiag (m/M):    ',minval(Kdiag),maxval(Kdiag)
+if (inner_solver_type=='_MUMPS') write(*,'(a,2es15.4)') shift//'idV%A_ELT (m/M):',minval(idV%A_ELT),maxval(idV%A_ELT)
 
 write(1236,'(4es12.4)') minval(rhs_f),maxval(rhs_f),minval(Kdiag),maxval(Kdiag)
 call flush(1236)
