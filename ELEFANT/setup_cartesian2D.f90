@@ -165,7 +165,8 @@ end if
 !----------------------------------------------------------
 ! pressure 
 
-if (spaceP=='__Q0') then
+select case(spaceP)
+case('__Q0','__P0')
    counter=0    
    do iely=1,nely    
       do ielx=1,nelx    
@@ -175,9 +176,8 @@ if (spaceP=='__Q0') then
          mesh(counter)%yP(1)=mesh(counter)%yC
       end do    
    end do    
-end if
 
-if (spaceP=='__Q1') then
+case('__Q1')
    counter=0    
    do iely=1,nely    
       do ielx=1,nelx    
@@ -196,7 +196,10 @@ if (spaceP=='__Q1') then
          mesh(counter)%yP(4)=(iely-1)*hy+hy
       end do
    end do
-end if
+
+case default
+   stop 'setup_cartesian2D: spaceP unknwown'
+end select
 
 !----------------------------------------------------------
 ! temperature 

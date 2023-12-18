@@ -49,6 +49,11 @@ do iel=1,nel
    allocate(mesh(iel)%rho(mV))
    allocate(mesh(iel)%eta(mV))
 
+   allocate(mesh(iel)%iconP(mP)) 
+   allocate(mesh(iel)%p(mP)) ; mesh(iel)%p=0.d0
+   allocate(mesh(iel)%xP(mP))
+   allocate(mesh(iel)%yP(mP))
+   allocate(mesh(iel)%zP(mP))
 
    select case (geometry)
    case('cartesian') 
@@ -64,6 +69,9 @@ do iel=1,nel
       allocate(mesh(iel)%rV(mV))
       allocate(mesh(iel)%thetaV(mV))
       allocate(mesh(iel)%phiV(mV))
+      allocate(mesh(iel)%rP(mP))
+      allocate(mesh(iel)%thetaP(mP))
+      allocate(mesh(iel)%phiP(mP))
    case default
       stop 'initialise_elements: unknown geometry'
    end select
@@ -71,12 +79,6 @@ do iel=1,nel
    allocate(mesh(iel)%fix_u(mV))
    allocate(mesh(iel)%fix_v(mV))
    allocate(mesh(iel)%fix_w(mV))
-
-   allocate(mesh(iel)%iconP(mP)) 
-   allocate(mesh(iel)%p(mP)) ; mesh(iel)%p=0.d0
-   allocate(mesh(iel)%xP(mP))
-   allocate(mesh(iel)%yP(mP))
-   allocate(mesh(iel)%zP(mP))
 
    allocate(mesh(iel)%iconT(mT)) 
    allocate(mesh(iel)%xT(mT))

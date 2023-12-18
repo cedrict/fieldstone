@@ -134,8 +134,6 @@ close(123)
 
 
 
-
-
 write(*,'(a)') shift//'produced OUTPUT/meshV.vtu' 
 
 end if

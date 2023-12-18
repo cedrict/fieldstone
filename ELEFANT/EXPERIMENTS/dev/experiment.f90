@@ -6,7 +6,7 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine declare_main_parameters
+subroutine experiment_declare_main_parameters
 
 use module_parameters
 
@@ -14,19 +14,28 @@ implicit none
 
 !----------------------------------------------------------
 
+geometry='spherical'
+ndim=2
+nelr=2
+nelphi=8
+inner_radius=1
+outer_radius=2
+
+inner_solver_type='_MUMPS'
+
 Lx=1
 Ly=1
 
-nelx=16
-nely=16
+nelx=3
+nely=2
 
-spaceV='__Q1'
-spaceP='__Q0'
-mapping='__Q1'
+spaceV='__Q2'
+spaceP='__Q1'
+mapping='__Q2'
 
 debug=.true.
 
-use_penalty=.true.
+use_penalty=.false.
 penalty=1d6
 
 
@@ -36,7 +45,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine define_material_properties
+subroutine experiment_define_material_properties
 
 implicit none
 
@@ -49,7 +58,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine material_model(x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz,imat,mode,&
+subroutine experiment_material_model(x,y,z,p,T,exx,eyy,ezz,exy,exz,eyz,imat,mode,&
                           eta,rho,hcond,hcapa,hprod)
 
 implicit none
@@ -69,7 +78,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine swarm_material_layout 
+subroutine experiment_swarm_material_layout 
 
 implicit none
 
@@ -82,7 +91,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine define_bcV
+subroutine experiment_define_bcV
 
 use module_parameters, only: iel,nel,mV
 use module_mesh
@@ -96,34 +105,6 @@ integer k
 do iel=1,nel
    mesh(iel)%fix_u(:)=.false. 
    mesh(iel)%fix_v(:)=.false. 
-   !left boundary
-   do k=1,mV
-      if (mesh(iel)%bnd1_node(k)) then
-         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0.d0
-         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0.d0
-      end if
-   end do
-   !right boundary
-   do k=1,mV
-      if (mesh(iel)%bnd2_node(k)) then
-         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0.d0
-         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0.d0
-      end if
-   end do
-   !bottom boundary
-   do k=1,mV
-      if (mesh(iel)%bnd3_node(k)) then
-         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0.d0
-         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0.d0
-      end if
-   end do
-   !top boundary
-   do k=1,mV
-      if (mesh(iel)%bnd4_node(k)) then
-         mesh(iel)%fix_u(k)=.true. ; mesh(iel)%u(k)=0.d0
-         mesh(iel)%fix_v(k)=.true. ; mesh(iel)%v(k)=0.d0
-      end if
-   end do
 end do
 
 !----------------------------------------------------------
@@ -132,7 +113,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine define_bcT
+subroutine experiment_define_bcT
 
 implicit none
 
@@ -145,7 +126,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine initial_temperature
+subroutine experiment_initial_temperature
 
 implicit none
 
@@ -159,7 +140,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine analytical_solution(x,y,z,u,v,w,p,T,exx,eyy,ezz,exy,exz,eyz)
+subroutine experiment_analytical_solution(x,y,z,u,v,w,p,T,exx,eyy,ezz,exy,exz,eyz)
 
 implicit none
 

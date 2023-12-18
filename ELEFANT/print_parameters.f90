@@ -30,9 +30,21 @@ if (use_T)       write(*,'(a,a10)')    '        spaceT      =',spaceT
                  write(*,'(a,f10.3)')  '        Lx          =',Lx
                  write(*,'(a,f10.3)')  '        Ly          =',Ly
 if (ndim==3)     write(*,'(a,f10.3)')  '        Lz          =',Lz
+
+select case(geometry)
+case('cartesian2D')
                  write(*,'(a,i10)')    '        nelx        =',nelx
                  write(*,'(a,i10)')    '        nely        =',nely
-if (ndim==3)     write(*,'(a,i10)')    '        nelz        =',nelz
+case('cartesian3D')
+                 write(*,'(a,i10)')    '        nelx        =',nelx
+                 write(*,'(a,i10)')    '        nely        =',nely
+                 write(*,'(a,i10)')    '        nelz        =',nelz
+case('spherical')
+                 write(*,'(a,i10)')    '        nelr        =',nelr
+                 write(*,'(a,i10)')    '        neltheta    =',neltheta
+                 write(*,'(a,i10)')    '        nelphi      =',nelphi
+end select
+
                  write(*,'(a,i10)')    '        nel         =',nel
                  write(*,'(a,i10)')    '        nqel        =',nqel
                  write(*,'(a,i10)')    '        mV          =',mV

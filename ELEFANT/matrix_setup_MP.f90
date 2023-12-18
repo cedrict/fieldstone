@@ -94,7 +94,7 @@ if (geometry=='cartesian' .and. ndim==2) then
 !----------------------------------------------------------
 elseif (geometry=='cartesian' .and. ndim==3) then
 
-   csrMP%n=NP
+   csrMP%N=NP
 
    select case(spaceP)
    case('__Q0','__P0')
@@ -164,9 +164,8 @@ elseif (geometry=='cartesian' .and. ndim==3) then
 
 else
 
-   print *,'sdfghjsdfghjsdfghj'
-
    imod=NP/4
+   csrMP%N=NP
 
    call cpu_time(t3)
    allocate(alreadyseen(NP))
@@ -178,8 +177,10 @@ else
          iel=pnode_belongs_to(1+k,ip)
          do i=1,mP
             jp=mesh(iel)%iconP(i)
+            print *,ip,iel,jp
             if (.not.alreadyseen(jp)) then
                alreadyseen(jp)=.true.
+               NZ=NZ+1
             end if
          end do
       end do

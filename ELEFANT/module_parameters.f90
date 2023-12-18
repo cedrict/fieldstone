@@ -7,6 +7,7 @@ integer :: mP                  ! number of pressure nodes per element
 integer :: mT                  ! number of temperature nodes per element
 integer :: nelx,nely,nelz      ! number of elements in each direction
 integer :: nelr                ! number of elements in r direction (annulus)
+integer :: neltheta            ! number of elements in theta direction (annulus,shell)
 integer :: nelphi              ! number of elements in phi direction (annulus)
 integer :: nel                 ! total number of elements
 integer :: ndim                ! number of dimensions

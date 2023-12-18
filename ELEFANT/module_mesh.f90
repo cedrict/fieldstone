@@ -21,9 +21,9 @@ type element
   real(8), allocatable :: ezz(:),exz(:),eyz(:)! additional strain rate components for 3D
   real(8), allocatable :: rho(:)              ! density on V nodes 
   real(8), allocatable :: eta(:)              ! viscosity on V nodes 
-  real(8), allocatable :: rV(:)               ! 
-  real(8), allocatable :: thetaV(:)           !
-  real(8), allocatable :: phiV(:)             !
+  real(8), allocatable :: rV(:),rP(:)         ! 
+  real(8), allocatable :: thetaV(:),thetaP(:) !
+  real(8), allocatable :: phiV(:),phiP(:)     !
   real(8) :: a_eta,b_eta,c_eta,d_eta          ! least square coeffs for viscosity
   real(8) :: a_rho,b_rho,c_rho,d_rho          ! least square coeffs for density
   real(8) :: vol                              ! volume of the element

@@ -8,7 +8,8 @@
 
 subroutine setup_annulus
 
-use module_parameters, only: iproc,debug,spaceV,nelphi,nelr,inner_radius,outer_radius,NV,mV
+use module_parameters, only: iproc,debug,spaceV,nelphi,nelr,inner_radius,outer_radius,NV,mV,iel,&
+                             nel,mP,spaceP,use_T,NP
 use module_mesh 
 use module_constants, only: pi
 !use module_swarm
@@ -52,6 +53,8 @@ case('__Q1','_Q1+')
    do ielphi=1,nelphi    
       do ielr=1,nelr    
          counter=counter+1    
+         mesh(counter)%hr=hr
+         mesh(counter)%hphi=hphi
          mesh(counter)%iconV(1)=ielr+(ielphi-1)*(nelr+1)    
          mesh(counter)%iconV(2)=ielr+1+(ielphi-1)*(nelr+1)    
          mesh(counter)%iconV(3)=ielr+1+ielphi*(nelr+1)    
@@ -100,6 +103,8 @@ case('__Q2')
    do ielphi=1,nelphi    
       do ielr=1,nelr    
          counter=counter+1    
+         mesh(counter)%hr=hr
+         mesh(counter)%hphi=hphi
          mesh(counter)%iconV(1)=(ielr-1)*2+1+(ielphi-1)*2*nnx
          mesh(counter)%iconV(2)=(ielr-1)*2+2+(ielphi-1)*2*nnx
          mesh(counter)%iconV(3)=(ielr-1)*2+3+(ielphi-1)*2*nnx
@@ -164,10 +169,104 @@ case default
 
 end select
 
-!=====================
+
+!----------------------------------------------------------
+! pressure 
+
+select case(spaceP)
+case('__Q0','__P0')
+   counter=0    
+   do ielphi=1,nelphi    
+      do ielr=1,nelr    
+         counter=counter+1    
+         mesh(counter)%iconP(1)=counter
+         mesh(counter)%xP(1)=mesh(counter)%xC
+         mesh(counter)%yP(1)=mesh(counter)%yC
+      end do    
+   end do    
+
+case('__Q1')
+   counter=0    
+   do ielphi=1,nelphi    
+      do ielr=1,nelr    
+         counter=counter+1    
+         mesh(counter)%iconP(1)=ielr+(ielphi-1)*(nelr+1)    
+         mesh(counter)%iconP(2)=ielr+1+(ielphi-1)*(nelr+1)    
+         mesh(counter)%iconP(3)=ielr+1+ielphi*(nelr+1)    
+         mesh(counter)%iconP(4)=ielr+ielphi*(nelr+1)    
+         if (mesh(counter)%iconP(3)>NP) mesh(counter)%iconP(3)=mesh(counter)%iconP(3)-NP
+         if (mesh(counter)%iconP(4)>NP) mesh(counter)%iconP(4)=mesh(counter)%iconP(4)-NP
+
+         mesh(counter)%rP(1)=inner_radius+(ielr-1)*hr
+         mesh(counter)%rP(2)=inner_radius+(ielr-1)*hr+hr
+         mesh(counter)%rP(3)=inner_radius+(ielr-1)*hr+hr
+         mesh(counter)%rP(4)=inner_radius+(ielr-1)*hr
+
+         mesh(counter)%phiP(1)=(ielphi-1)*hphi
+         mesh(counter)%phiP(2)=(ielphi-1)*hphi
+         mesh(counter)%phiP(3)=(ielphi-1)*hphi+hphi
+         mesh(counter)%phiP(4)=(ielphi-1)*hphi+hphi
+
+         do k=1,mP
+            mesh(counter)%xP(k)=mesh(counter)%rP(k)*cos(mesh(counter)%phiP(k))
+            mesh(counter)%yP(k)=mesh(counter)%rP(k)*sin(mesh(counter)%phiP(k))
+         end do
+
+      end do
+   end do
+
+case default
+   stop 'setup_annulus: unknwon spaceP'
+end select 
+
+!----------------------------------------------------------
+! temperature (assumption: spaceV~spaceV) 
+
+if (use_T) then
+select case(spaceV)
+case('__Q1','__Q2','__Q3','__P1','__P2','__P3')
+   do iel=1,nel
+      mesh(iel)%xT=mesh(iel)%xV
+      mesh(iel)%yT=mesh(iel)%yV
+      mesh(iel)%zT=mesh(iel)%zV
+      mesh(iel)%iconT=mesh(iel)%iconV
+   end do
+case('_Q1+')
+   do iel=1,nel
+      mesh(iel)%xT=mesh(iel)%xV(1:4)
+      mesh(iel)%yT=mesh(iel)%yV(1:4)
+      mesh(iel)%zT=mesh(iel)%zV(1:4)
+      mesh(iel)%iconT=mesh(iel)%iconV(1:4)
+   end do
+case default
+   stop 'setup_annulus: spaceT/spaceV problem'
+end select
+
+end if
+
+!----------------------------------------------------------
+! initialise boundary arrays
+
+do iel=1,nel
+   mesh(iel)%fix_u=.false.
+   mesh(iel)%fix_v=.false.
+   mesh(iel)%fix_w=.false.
+   mesh(iel)%fix_T=.false.
+end do
+
+!----------------------------------------------------------
 
 if (debug) then
-write(2345,*) limit//'name'//limit
+write(2345,*) limit//'setup_annulus'//limit
+do iel=1,nel
+write(2345,*) 'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),'iconP',mesh(iel)%iconP(1:mP)
+do k=1,mV
+write(2345,*) mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
+end do
+end do
+do iel=1,nel
+write(2345,*) 'iel,hr,hphi,',iel,mesh(iel)%hr,mesh(iel)%hphi
+end do
 end if
 
 !==============================================================================!
