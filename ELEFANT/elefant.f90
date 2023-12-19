@@ -69,7 +69,6 @@ call paint_swarm
 call compute_belongs
 call matrix_setup_K
 call matrix_setup_MP
-!call matrix_setup_MV
 call matrix_setup_GT
 call matrix_setup_A
 !call output_matrix_tikz

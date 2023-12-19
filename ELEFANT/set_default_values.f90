@@ -31,20 +31,6 @@ geometry='cartesian'
 spaceV='__Q2'
 spaceP='__Q1'
 
-select case(spaceV)
-case('__Q1','_Q1+')
-   spaceT='__Q1'
-case('__Q2')
-   spaceT='__Q2'
-case('__Q3')
-   spaceT='__Q3'
-case('__P1')
-   spaceT='__P1'
-case('__P2')
-   spaceT='__P2'
-case default
-   stop 'set_default_values: spaceV/spaceT pb'
-end select
 
 mapping=spaceV !isoparametric
 

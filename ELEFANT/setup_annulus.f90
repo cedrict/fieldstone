@@ -44,7 +44,7 @@ hphi=2*pi/nelphi
 select case(spaceV)
 
 !------------------
-case('__Q1','_Q1+')
+case('__Q1')
 
    counter=0    
    do ielphi=1,nelphi    
@@ -166,9 +166,9 @@ case default
 
 end select
 
-
 !----------------------------------------------------------
 ! pressure 
+!----------------------------------------------------------
 
 select case(spaceP)
 case('__Q0','__P0')
@@ -217,7 +217,8 @@ case default
 end select 
 
 !----------------------------------------------------------
-! temperature (assumption: spaceV~spaceV) 
+! temperature (assumption: spaceT~spaceV) 
+!----------------------------------------------------------
 
 if (use_T) then
 select case(spaceV)
