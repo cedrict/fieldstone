@@ -12,9 +12,6 @@ use module_parameters, only: iproc,debug,spaceV,nelphi,nelr,inner_radius,outer_r
                              nel,mP,spaceP,use_T,NP
 use module_mesh 
 use module_constants, only: pi
-!use module_swarm
-!use module_materials
-!use module_arrays
 use module_timing
 
 implicit none

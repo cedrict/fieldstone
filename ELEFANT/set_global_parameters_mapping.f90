@@ -33,6 +33,23 @@ call system_clock(counti,count_rate)
 if (ndim==2) then
 
    select case(mapping)
+   !-----------
+   case('__P1')
+      mmapping=3
+      allocate(rmapping(mmapping)) ; rmapping=0.d0
+      allocate(smapping(mmapping)) ; smapping=0.d0
+      allocate(tmapping(mmapping)) ; tmapping=0.d0
+      rmapping=(/0d0,1d0,0d0/)
+      smapping=(/0d0,0d0,1d0/)
+   !-----------
+   case('__P2')
+      mmapping=6
+      allocate(rmapping(mmapping)) ; rmapping=0.d0
+      allocate(smapping(mmapping)) ; smapping=0.d0
+      allocate(tmapping(mmapping)) ; tmapping=0.d0
+      rmapping=(/0d0,1d0,0d0,0.5d0,0.5d0,0d0/)
+      smapping=(/0d0,0d0,1d0,0d0,0.5d0,0.5d0/)
+   !-----------
    case('__Q1')
       mmapping=2**ndim
       allocate(rmapping(mmapping)) ; rmapping=0.d0
@@ -40,6 +57,7 @@ if (ndim==2) then
       allocate(tmapping(mmapping)) ; tmapping=0.d0
       rmapping=(/-1d0,+1d0,+1d0,-1d0/)
       smapping=(/-1d0,-1d0,+1d0,+1d0/)
+   !-----------
    case('__Q2')
       mmapping=3**ndim
       allocate(rmapping(mmapping)) ; rmapping=0.d0
@@ -47,6 +65,7 @@ if (ndim==2) then
       allocate(tmapping(mmapping)) ; tmapping=0.d0
       rmapping=(/-1d0,0d0,+1d0,-1d0,0d0,+1d0,-1d0,0d0,+1d0/)
       smapping=(/-1d0,-1d0,-1d0,0d0,0d0,0d0,+1d0,+1d0,+1d0/)
+   !-----------
    case default
       stop 'mapping not supported in set_global_parameters_mapping'
    end select

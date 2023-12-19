@@ -51,9 +51,9 @@ do iel=1,nel
 
    allocate(mesh(iel)%iconP(mP)) 
    allocate(mesh(iel)%p(mP)) ; mesh(iel)%p=0.d0
-   allocate(mesh(iel)%xP(mP))
-   allocate(mesh(iel)%yP(mP))
-   allocate(mesh(iel)%zP(mP))
+   allocate(mesh(iel)%xP(mP)) ; mesh(iel)%xP=0.d0
+   allocate(mesh(iel)%yP(mP)) ; mesh(iel)%yP=0.d0
+   allocate(mesh(iel)%zP(mP)) ; mesh(iel)%zP=0.d0
 
    select case (geometry)
    case('cartesian') 
