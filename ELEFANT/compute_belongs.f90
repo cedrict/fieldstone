@@ -24,7 +24,6 @@ integer :: inode,i,iV,iP
 !@@ arrays. For a given node {\sl ip},
 !@@ {\sl vnode\_belongs\_to(1,ip)} is the number of elements that {\sl ip} belongs to.
 !@@ Furthermore, {\sl vnode\_belongs\_to(2:9,ip)} is the actual list of elements.
-!@@ I NEED TO CHANGE NAMES ..not vnode but vnode!! 
 !==================================================================================================!
 
 if (iproc==0) then
@@ -43,7 +42,7 @@ do iel=1,nel
       !print *,'->',inode
       vnode_belongs_to(1,inode)=vnode_belongs_to(1,inode)+1
       if (vnode_belongs_to(1,inode)>9) then
-         print *, 'compute_belongs: array too small'
+         print *, 'compute_belongs: vnode_belongs_to array too small'
          stop
       end if
       vnode_belongs_to(1+vnode_belongs_to(1,inode),inode)=iel
@@ -60,7 +59,7 @@ do iel=1,nel
       !print *,'->',inode
       pnode_belongs_to(1,inode)=pnode_belongs_to(1,inode)+1
       if (pnode_belongs_to(1,inode)>9) then
-         print *, 'compute_belongs: array too small'
+         print *, 'compute_belongs: pnode_belongs_to array too small'
          stop
       end if
       pnode_belongs_to(1+pnode_belongs_to(1,inode),inode)=iel

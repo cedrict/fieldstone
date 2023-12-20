@@ -24,8 +24,8 @@ real(8) chi,eta,psi,NNNV(mV)
 !@@ This subroutine generates the swarm of particles. The layout is controled 
 !@@ by the {\tt init\_marker\_random} parameter.
 !@@ \begin{center}
-!@@ \includegraphics[width=5cm]{ELEFANT/images/swarm_reg} 
-!@@ \includegraphics[width=5cm]{ELEFANT/images/swarm_rand} 
+!@@ \includegraphics[width=6cm]{ELEFANT/images/swarm_reg} 
+!@@ \includegraphics[width=6cm]{ELEFANT/images/swarm_rand} 
 !@@ \end{center}
 !==================================================================================================!
 

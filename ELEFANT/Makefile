@@ -37,7 +37,7 @@ matrix_setup_K.o matrix_setup_GT.o matrix_setup_MV.o matrix_setup_MP.o matrix_se
 mgmres.o mapping_setup.o\
 NNN.o dNNNdr.o dNNNds.o dNNNdt.o\
 output_matrix_tikz.o\
-postprocessors.o print_parameters.o\
+postprocessors.o print_parameters.o process_bc.o\
 prescribe_stokes_solution.o paint_swarm.o pcg_solver_csr.o\
 quadrature_setup.o\
 recover_pressure_penalty.o read_command_line_options.o\

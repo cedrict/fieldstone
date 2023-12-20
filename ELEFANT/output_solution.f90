@@ -28,6 +28,8 @@ logical, parameter :: output_fixed_boundaries=.false. ! careful with these for h
 !@@ \subsubsection{output\_solution}
 !@@ This subroutine generates the {\filenamefont solution.vtu} in the {\foldernamefont OUTPUT}
 !@@ folder. It also generates the basic ascii file {\filenamefont solution.ascii}
+!@@
+!@@ \begin{center}
 !@@ \begin{tabular}{lcc}
 !@@ & 2D & 3D \\
 !@@ $P_1$ & 5 & 10 \\
@@ -36,6 +38,7 @@ logical, parameter :: output_fixed_boundaries=.false. ! careful with these for h
 !@@ $Q_2$ & 23 & 25 \\
 !@@ \hline
 !@@ \end{tabular}
+!@@ \end{center}
 !==================================================================================================!
 
 if (iproc==0 .and. mod(istep,output_freq)==0) then

@@ -29,40 +29,6 @@ call system_clock(counti,count_rate)
 !@@ and temperature nodes, the velocity, pressure and temperature connectivity arrays,
 !@@ the coordinates of its center (xc,yc), its integer coordinates (ielx, iely),
 !@@ and its dimensions (hx,hy).
-!@@ \begin{center}
-!@@ \input{tikz/tikz_3x2_q1}
-!@@ \end{center}
-!@@ \begin{verbatim}
-!@@ elt:  1  | iconV  1  2  6   5  iconP  1
-!@@ elt:  2  | iconV  2  3  7   6  iconP  2
-!@@ elt:  3  | iconV  3  4  8   7  iconP  3
-!@@ elt:  4  | iconV  5  6  10  9  iconP  4
-!@@ elt:  5  | iconV  6  7  11  10 iconP  5
-!@@ elt:  6  | iconV  7  8  12  11 iconP  6
-!@@ \end{verbatim}
-!@@ \begin{center}
-!@@ \input{tikz/tikz_3x2_mini}
-!@@ \end{center}
-!@@ \begin{verbatim}
-!@@ elt:  1  | iconV  1  2  6   5   13 iconP  1  2  6   5
-!@@ elt:  2  | iconV  2  3  7   6   14 iconP  2  3  7   6
-!@@ elt:  3  | iconV  3  4  8   7   15 iconP  3  4  8   7
-!@@ elt:  4  | iconV  5  6  10  9   16 iconP  5  6  10  9
-!@@ elt:  5  | iconV  6  7  11  10  17 iconP  6  7  11  10
-!@@ elt:  6  | iconV  7  8  12  11  18 iconP  7  8  12  11
-!@@ \end{verbatim}
-!@@ \begin{center}
-!@@ \input{tikz/tikz_3x2_q2}
-!@@ \end{center}
-!@@ \begin{verbatim}
-!@@ elt:  1  | iconV  1   2   3   8   9   10  15  16  17 iconP 1  2  6  5
-!@@ elt:  2  | iconV  3   4   5   10  11  12  17  18  19 iconP 2  3  7  6
-!@@ elt:  3  | iconV  5   6   7   12  13  14  19  20  21 iconP 3  4  8  7
-!@@ elt:  4  | iconV  15  16  17  22  23  24  29  30  31 iconP 5  6 10  9
-!@@ elt:  5  | iconV  17  18  19  24  25  26  31  32  33 iconP 6  7 11 10
-!@@ elt:  6  | iconV  19  20  21  26  27  28  33  34  35 iconP 7  8 12 11
-!@@ \end{verbatim}
-!@@ When adding a space: set iconV,xV,yV,xc,yc,vol + boundary nodes, element info
 !==================================================================================================!
 
 if (iproc==0) then

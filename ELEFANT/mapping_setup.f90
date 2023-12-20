@@ -17,7 +17,7 @@ implicit none
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{template}
+!@@ \subsubsection{mapping\_setup}
 !@@
 !==================================================================================================!
 
@@ -38,7 +38,7 @@ if (mapping==spaceV) then
 
 else
 
-   stop 'non isoparametric mapping not supported yet'
+   stop 'mapping_setup: non isoparametric mapping not supported yet'
 
 end if
 

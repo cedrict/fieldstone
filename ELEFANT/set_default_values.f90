@@ -27,10 +27,12 @@ ndim=2
 
 CFL_nb=0.25
 
+nelx=8
+nely=8
 geometry='cartesian'
 spaceV='__Q2'
 spaceP='__Q1'
-
+inner_solver_type='__y12m'
 
 mapping=spaceV !isoparametric
 
@@ -41,10 +43,6 @@ init_marker_random=.false.
 nstep=1
 
 solve_stokes_system=.true. 
-
-geometry='cartesian'
-
-inner_solver_type='__y12m'
 
 debug=.false.
 
@@ -72,6 +70,11 @@ line_nnp=0
 normalise_pressure=.false.
 
 output_freq=1
+
+bnd1_bcV_type='noslip'
+bnd2_bcV_type='noslip'
+bnd3_bcV_type='noslip'
+bnd4_bcV_type='noslip'
 
 write(*,'(a)') 'set_default_values '
 

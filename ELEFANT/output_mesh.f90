@@ -35,6 +35,7 @@ open(unit=123,file='OUTPUT/meshV.vtu',status='replace',form='formatted')
 write(123,*) '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian">'
 write(123,*) '<UnstructuredGrid>'
 write(123,'(a,i8,a,i7,a)') '<Piece NumberOfPoints="',mV*nel,'" NumberOfCells="',nel,'">'
+!-----
 write(123,'(a)') '<Points>'
 write(123,'(a)') '<DataArray type="Float32" NumberOfComponents="3" Format="ascii">'
 do iel=1,nel
@@ -44,7 +45,74 @@ do iel=1,nel
 end do
 write(123,'(a)') '</DataArray>'
 write(123,'(a)') '</Points>'
+!-----
+write(123,'(a)') '<CellData Scalars="scalars">'
+
+write(123,*) '<DataArray type="Float32" Name="boundary: 1" Format="ascii">'
+do iel=1,nel
+if (mesh(iel)%bnd1_elt) then
+   write(123,'(i1)') 1
+else
+   write(123,'(i1)') 0
+end if
+end do
+write(123,*) '</DataArray>'
+
+
+write(123,*) '<DataArray type="Float32" Name="boundary: 2" Format="ascii">'
+do iel=1,nel
+if (mesh(iel)%bnd2_elt) then
+   write(123,'(i1)') 1
+else
+   write(123,'(i1)') 0
+end if
+end do
+write(123,*) '</DataArray>'
+
+write(123,*) '<DataArray type="Float32" Name="boundary: 3" Format="ascii">'
+do iel=1,nel
+if (mesh(iel)%bnd3_elt) then
+   write(123,'(i1)') 1
+else
+   write(123,'(i1)') 0
+end if
+end do
+write(123,*) '</DataArray>'
+
+write(123,*) '<DataArray type="Float32" Name="boundary: 4" Format="ascii">'
+do iel=1,nel
+if (mesh(iel)%bnd4_elt) then
+   write(123,'(i1)') 1
+else
+   write(123,'(i1)') 0
+end if
+end do
+write(123,*) '</DataArray>'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+write(123,*) '</CellData>'
+
 write(123,*) '<Cells>'
+!-----
 write(123,*) '<DataArray type="Int32" Name="connectivity" Format="ascii">'
 select case(spaceV)
 case('__Q1','__P1','__P2')
@@ -69,6 +137,7 @@ case default
    stop 'output_mesh: spaceV unknown'
 end select
 write(123,*) '</DataArray>'
+!-----
 write(123,*) '<DataArray type="Int32" Name="offsets" Format="ascii">'
 select case(spaceV)
 case('__Q1')
@@ -91,6 +160,7 @@ case default
    stop 'pb in output_solution: cell offset unknown'
 end select
 write(123,*) '</DataArray>'
+!-----
 write(123,*) '<DataArray type="Int32" Name="types" Format="ascii">'
 select case(spaceV)
 case('__Q1')
@@ -113,6 +183,7 @@ case default
    stop 'pb in output_solution: cell type unknown'
 end select
 write(123,*) '</DataArray>'
+!-----
 write(123,*) '</Cells>'
 write(123,*) '</Piece>'
 write(123,*) '</UnstructuredGrid>'

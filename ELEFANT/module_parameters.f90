@@ -57,6 +57,12 @@ character(len=4) :: spaceP       ! finite element space for pressure
 character(len=4) :: spaceT       ! finite element space for temperature
 character(len=4) :: mapping      ! type of mapping 
 character(len=6) :: inner_solver_type ! which type of solver for the inner solve 
+character(len=6) :: bnd1_bcV_type
+character(len=6) :: bnd2_bcV_type
+character(len=6) :: bnd3_bcV_type
+character(len=6) :: bnd4_bcV_type
+character(len=6) :: bnd5_bcV_type
+character(len=6) :: bnd6_bcV_type
 
 integer :: iel
 integer :: istep           

@@ -115,7 +115,7 @@ if (use_T)   write(*,'(a,es12.5)') shift//'errT =',errT
 if (use_T)   write(*,'(a,es12.5)') shift//'<T>  =',avrg_T
              write(*,'(a,es12.5)') shift//'vol  =',volume
 
-call postprocessor_experiment
+call experiment_postprocessor
 
 !==============================================================================!
 

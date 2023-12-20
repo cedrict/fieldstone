@@ -48,8 +48,8 @@ do iq=1,nqel
    sq=mesh(iel)%sq(iq)
    tq=mesh(iel)%tq(iq)
 
-   call gravity_model(mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
-                      mesh(iel)%gxq(iq),mesh(iel)%gyq(iq),mesh(iel)%gzq(iq))
+   call experiment_gravity_model(mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
+                                 mesh(iel)%gxq(iq),mesh(iel)%gyq(iq),mesh(iel)%gzq(iq))
 
    call NNN(rq,sq,tq,NNNV(1:mV),mV,ndim,spaceV)
    call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spaceP)
