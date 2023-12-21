@@ -21,7 +21,7 @@ real(8) :: guess(NfemV)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{solve\_stokes}
+!@@ \subsection{solve\_stokes}
 !@@ This subroutine solves the Stokes system: if it is a saddle point problem 
 !@@ it does so using the preconditioned conjugate gradient (PCG) applied 
 !@@ to the Schur complement $\SSS$ !@@ (see Section~\ref{ss:schurpcg}).
@@ -40,7 +40,7 @@ guess=0
 
 if (use_penalty) then
 
-   call inner_solver(rhs_f,solV)
+   call inner_solver(rhs_f,guess,solV)
 
    !transfer velocity onto elements
    do iel=1,nel
@@ -57,8 +57,11 @@ if (use_penalty) then
 
 else !-----------------------------------------------------
 
-
-
+   select case(outer_solver_type)
+   case('pcg')
+   case default
+      stop 'solve_stokes: unknown outer_solver_type'
+   end select 
 
 
 

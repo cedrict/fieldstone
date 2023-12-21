@@ -21,7 +21,7 @@ real(8) uth,vth,wth,pth,Tth,dum
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{postprocessors.f90}
+!@@ \subsection{postprocessors.f90}
 !@@ This subroutine computes the root mean square velocity
 !@@ and each of the average velocity components. It also 
 !@@ computes the volume using GLQ.

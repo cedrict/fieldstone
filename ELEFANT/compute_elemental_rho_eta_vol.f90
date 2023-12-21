@@ -20,7 +20,7 @@ real(8) :: dens_min,dens_max,visc_min,visc_max
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{compute\_elemental\_rho\_eta\_vol}
+!@@ \subsection{compute\_elemental\_rho\_eta\_vol}
 !@@ This subroutine computes the elemental volume, the average density and 
 !@@ viscosity (using arithmetic averaging) using the values already stored on the quadrature points. 
 !@@ It also returns the min/max values of these quantities.

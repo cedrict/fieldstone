@@ -6,10 +6,9 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine inner_solver(rhs,guess)
+subroutine inner_solver(rhs,guess,solution)
 
 use module_parameters, only: inner_solver_type,NfemV,nproc,iproc
-use module_arrays, only: solV
 use module_timing
 use module_sparse, only : csrK
 use module_MUMPS
@@ -17,7 +16,8 @@ use module_MUMPS
 implicit none
 
 real(8), intent(inout) :: rhs(NfemV)
-real(8), intent(in) :: guess(NfemV)
+real(8), intent(in)    :: guess(NfemV)
+real(8), intent(out)   :: solution(NfemV)
 
 integer, dimension(:,:), allocatable :: ha
 integer, dimension(:), allocatable :: rnr,snr
@@ -29,8 +29,8 @@ real(8) :: pta,ta,tf,ptf,ts,pts,aflag(8)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{inner\_solver}
-!@@ This subroutine solves the system $\K\cdot \vec{V} = \vec{f}$. The matrix is 
+!@@ \subsection{inner\_solver}
+!@@ This subroutine solves the system $\K\cdot \vec{\cal V} = \vec{f}$. The matrix is 
 !@@ implicit passed as argument via the module but the rhs and the guess vector are 
 !@@ passed as arguments.
 !@@ If MUMPS is used the system is solved via MUMPS (the guess is vector
@@ -178,6 +178,8 @@ case('_MUMPS')
       end if
       end if
 
+      solution=idV%rhs
+
    end if
 
 !-------------
@@ -202,7 +204,7 @@ case('__y12m')
    if (ifail/=0) print *,'ifail=',ifail
    if (ifail/=0) stop 'inner_solver: problem with y12m solver'
 
-   solV=rhs
+   solution=rhs
 
    deallocate(ha)
    deallocate(pivot)

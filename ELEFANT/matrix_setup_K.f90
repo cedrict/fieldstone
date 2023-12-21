@@ -24,7 +24,7 @@ logical, dimension(:), allocatable :: alreadyseen
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{matrix\_setup\_K}
+!@@ \subsection{matrix\_setup\_K}
 !@@
 !@@ If MUMPS is not used, this subroutine allocates arrays ia, ja, and mat of csrK, 
 !@@ and builds arrays ia and ja.

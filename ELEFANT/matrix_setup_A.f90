@@ -20,7 +20,7 @@ integer nnx,nny,nnz
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{matrix\_setup\_A}
+!@@ \subsection{matrix\_setup\_A}
 !@@ Matrix A is the energy equation matrix.
 !@@ If the geometry is Cartesian then the number of nonzeros in the matrix and its sparsity 
 !@@ structures are computed in a very efficient way. 

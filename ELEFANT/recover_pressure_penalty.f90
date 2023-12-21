@@ -22,7 +22,7 @@ real(8) dNdx(mV),dNdy(mV),dNdz(mV),div_v,q(NV),c(NV)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{recover\_pressure\_penalty}
+!@@ \subsection{recover\_pressure\_penalty}
 !@@ This is scheme 4 in Section~\ref{psmoothing} (see \stone~12) which was proven to be 
 !@@ very cheap and very accurate. 
 !==================================================================================================!

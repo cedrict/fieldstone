@@ -22,7 +22,7 @@ integer ipvt2D(3),job
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{compute\_abcd\_2D}
+!@@ \subsection{compute\_abcd\_2D}
 !@@ This subroutine computes the coefficients $a_\rho$ ,$b_\rho$, $c_\rho$,
 !@@ and $a_\eta$, $b_\eta$, $c\_eta$ for each element so that 
 !@@ inside the element the density and viscosity and linear fields given by
@@ -92,7 +92,7 @@ integer ipvt3D(4),job
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{compute\_abcd\_3D}
+!@@ \subsection{compute\_abcd\_3D}
 !@@ This subroutine computes the coefficients $a_\rho$, $b_\rho$, $c_\rho$, $d_\rho$
 !@@ and $a_\eta$, $b_\eta$, $c\_eta$, $d_\eta$ for each element so that 
 !@@ inside the element the density and viscosity and linear fields given by

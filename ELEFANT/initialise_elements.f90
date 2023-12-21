@@ -17,7 +17,7 @@ implicit none
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{initialise\_elements}
+!@@ \subsection{initialise\_elements}
 !@@ This subroutine allocates pretty much all element-based arrays (node coordinates,velocity,
 !@@ strain rate, ...).
 !==================================================================================================!
@@ -56,7 +56,7 @@ do iel=1,nel
    allocate(mesh(iel)%zP(mP)) ; mesh(iel)%zP=0.d0
 
    select case (geometry)
-   case('cartesian') 
+   case('cartesian','john') 
       allocate(mesh(iel)%bnd1_node(mV))
       allocate(mesh(iel)%bnd2_node(mV))
       allocate(mesh(iel)%bnd3_node(mV))

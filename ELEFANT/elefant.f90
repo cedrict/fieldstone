@@ -8,7 +8,7 @@
 
 program elefant
 
-use module_parameters, only: geometry,nstep,dt,cistep,use_T,istep,time,ndim,solve_stokes_system
+use module_parameters, only: geometry,nstep,dt,cistep,use_T,istep,time,ndim,solve_stokes_system,write_params
 !use module_arrays
 !use module_mesh
 !use module_sparse
@@ -58,6 +58,8 @@ case('cartesian')
 case('spherical')
    if (ndim==2) call setup_annulus
    !if (ndim==3) call setup_shell
+case('john')
+   call setup_john
 end select
 
 call output_mesh
@@ -75,7 +77,7 @@ call matrix_setup_A
 !call output_matrix_tikz
 call experiment_initial_temperature
 call spacer
-call print_parameters
+call write_params 
 
 do istep=1,nstep !-----------------------------------------
                                                           !
@@ -83,6 +85,7 @@ do istep=1,nstep !-----------------------------------------
    call spacer_istep                                      !
    call assign_values_to_qpoints                          !
    call compute_elemental_rho_eta_vol                     !
+   call compute_block_scaling_coefficient                 !
    call experiment_define_bcV                             !
                                                           !
    if (solve_stokes_system) then                          !

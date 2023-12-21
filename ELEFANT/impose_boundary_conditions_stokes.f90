@@ -23,7 +23,7 @@ real(8) bcvalue,Kref
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{impose\_boundary\_conditions\_stokes}
+!@@ \subsection{impose\_boundary\_conditions\_stokes}
 !@@ This subroutine modifies the elemental $\K$, $\G$ and $\C$ matrices as well as the 
 !@@ elemental rhs $f_{el}$ and $h_{el}$ and returns them modified after imposing
 !@@ velocity Dirichlet boundary conditions.

@@ -19,7 +19,7 @@ integer :: inode,i,iV,iP
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{compute\_belongs}
+!@@ \subsection{compute\_belongs}
 !@@ This subroutine allocates and fills the {\sl vnode\_belongs\_to} and {\sl pnode\_belongs\_to} 
 !@@ arrays. For a given node {\sl ip},
 !@@ {\sl vnode\_belongs\_to(1,ip)} is the number of elements that {\sl ip} belongs to.

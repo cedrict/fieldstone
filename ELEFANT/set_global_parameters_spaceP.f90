@@ -16,7 +16,7 @@ implicit none
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{set\_global\_parameters\_spaceP}
+!@@ \subsection{set\_global\_parameters\_spaceP}
 !@@ This subroutine computes mP,NP and assigns rP,sP,tP
 !@@ \begin{itemize}
 !@@ \item supported spaces in 2D: Q0,Q1,Q2,P1
@@ -40,18 +40,6 @@ if (ndim==2) then
       allocate(sP(mP)) ; sP=0.d0
       allocate(tP(mP)) ; tP=0.d0
       NP=nel
-      !select case(geometry)
-      !case('cartesian')
-      !   if (nelx==0) stop 'set_global_parameters_spaceP: nelx=0'
-      !   if (nely==0) stop 'set_global_parameters_spaceP: nely=0'
-      !   NP=nelx*nely
-      !case('spherical')
-      !   if (nelr==0) stop 'set_global_parameters_spaceP: nelr=0'
-      !   if (nelphi==0) stop 'set_global_parameters_spaceP: nelphi=0'
-      !   NP=nelr*nelphi
-      !case default
-      !   stop 'set_global_parameters_spaceP: unknown geometry'
-      !end select
 
    !------------
    case('__Q1')
@@ -68,6 +56,8 @@ if (ndim==2) then
          if (nelr==0) stop 'set_global_parameters_spaceP: nelr=0'
          if (nelphi==0) stop 'set_global_parameters_spaceP: nelphi=0'
          NP=(nelr+1)*nelphi
+      case('john')
+         stop 'set_global_parameters_spaceP: john geometry not supported'
       case default
          stop 'set_global_parameters_spaceP: unknown geometry'
       end select
@@ -85,6 +75,8 @@ if (ndim==2) then
          if (nelx==0) stop 'set_global_parameters_spaceP: nelx=0'
          if (nely==0) stop 'set_global_parameters_spaceP: nely=0'
          NP=(2*nelx+1)*(2*nely+1)
+      case('john')
+         stop 'set_global_parameters_spaceP: john geometry not supported'
       case default
          stop 'set_global_parameters_spaceP: unknown geometry'
       end select
@@ -116,13 +108,13 @@ if (ndim==2) then
          if (nelr==0) stop 'set_global_parameters_spaceP: nelr=0'
          if (nelphi==0) stop 'set_global_parameters_spaceP: nelphi=0'
          NP=(nelr+1)*nelphi
+      case('john')
+         NP=8 
       case default
          stop 'set_global_parameters_spaceP: unknown geometry'
       end select
       rP=(/0d0,1d0,0d0/)
       sP=(/0d0,0d0,1d0/)
-
-
 
    !------------
    case default

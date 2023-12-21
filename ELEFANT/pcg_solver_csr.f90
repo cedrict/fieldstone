@@ -27,7 +27,7 @@ real(8) R(csrMat%N),RR(csrMat%N),P(csrMat%N),phi(csrMat%N),Z(csrMat%N),ZZ(csrMat
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{pcg\_solver\_csr}
+!@@ \subsection{pcg\_solver\_csr}
 !@@ The subroutine solves $A\cdot = b$ by means f the preconditioned Conjugate Gradient method
 !@@ and the implementation follows algorithm 2.2 on page 82 of Elman, Silvester \&
 !@@ Wathen \cite{elsw}:

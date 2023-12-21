@@ -21,7 +21,7 @@ real(8) fixt,Aref
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{impose\_boundary\_conditions\_energy}
+!@@ \subsection{impose\_boundary\_conditions\_energy}
 !@@ This routine takes as argument the elemental matrices and vectors Ael, Bel
 !@@ and applies the boundary conditions to them.
 !==================================================================================================!

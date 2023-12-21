@@ -21,7 +21,7 @@ real(8) :: Ael(mT,mT),bel(mT)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{make\_matrix\_energy}
+!@@ \subsection{make\_matrix\_energy}
 !@@ This subroutine builds the linear system for the energy equation. 
 !@@ It loops over each element, builds its elemental matrix ${\bm A}_{el}$
 !@@ and right hand side $\vec{b}_{el}$, applies boundary conditions, 

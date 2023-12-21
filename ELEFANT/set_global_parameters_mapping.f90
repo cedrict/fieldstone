@@ -16,7 +16,7 @@ implicit none
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{set\_global\_parameters\_mapping}
+!@@ \subsection{set\_global\_parameters\_mapping}
 !@@ This subroutine computes mT,NT and assigns rT,sT,tT
 !@@ \begin{itemize}
 !@@ \item supported spaces in 2D: Q1,Q2

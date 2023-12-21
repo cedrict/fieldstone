@@ -20,7 +20,7 @@ real(8) chi,eta,psi,NNNV(mV)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{swarm\_setup.f90}
+!@@ \subsection{swarm\_setup.f90}
 !@@ This subroutine generates the swarm of particles. The layout is controled 
 !@@ by the {\tt init\_marker\_random} parameter.
 !@@ \begin{center}

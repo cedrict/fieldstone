@@ -21,7 +21,7 @@ logical, parameter :: output_rst=.false.
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{output\_swarm.f90}
+!@@ \subsection{output\_swarm.f90}
 !@@ This subroutine produces the {\filenamefont swarm.vtu} file in the 
 !@@ {\foldernamefont OUTPUT} folder which contains the 
 !@@ swarm of particles with all their properties.

@@ -22,7 +22,7 @@ real(8) jcb(3,3),jcbi(3,3)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{compute\_dNdx\_dNdy\_dNdz.f90}
+!@@ \subsection{compute\_dNdx\_dNdy\_dNdz.f90}
 !@@ This subroutine computes $\partial{\bN^\uptheta}/\partial x$, 
 !@@ $\partial{\bN^\uptheta}/\partial y$ and
 !@@ $\partial{\bN^\uptheta}/\partial z$ at a location $r,s,t$ passed as argument.

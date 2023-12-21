@@ -22,7 +22,7 @@ logical, dimension(:), allocatable :: alreadyseen
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{matrix\_setup\_MP}
+!@@ \subsection{matrix\_setup\_MP}
 !@@ This subroutine computes the structure of the pressure mass matrix. 
 !==================================================================================================!
 
@@ -32,7 +32,7 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-if (geometry=='cartesian' .and. ndim==2) then
+if (geometry=='XXXcartesian' .and. ndim==2) then
 
    csrMP%n=NP
 
@@ -92,7 +92,7 @@ if (geometry=='cartesian' .and. ndim==2) then
    end select 
 
 !----------------------------------------------------------
-elseif (geometry=='cartesian' .and. ndim==3) then
+elseif (geometry=='XXXcartesian' .and. ndim==3) then
 
    csrMP%N=NP
 
@@ -167,6 +167,8 @@ else
    imod=NP/4
    csrMP%N=NP
 
+   ! I could insert here typical combinations for which NZ can be computed analytically
+
    call cpu_time(t3)
    allocate(alreadyseen(NP))
    NZ=0
@@ -177,7 +179,7 @@ else
          iel=pnode_belongs_to(1+k,ip)
          do i=1,mP
             jp=mesh(iel)%iconP(i)
-            print *,ip,iel,jp
+            !print *,ip,iel,jp
             if (.not.alreadyseen(jp)) then
                alreadyseen(jp)=.true.
                NZ=NZ+1

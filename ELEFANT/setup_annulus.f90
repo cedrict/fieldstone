@@ -21,7 +21,7 @@ real(8) hr,hphi
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{setup\_annulus}
+!@@ \subsection{setup\_annulus}
 !@@ The annulus is placed in the equatorial plane (x,y).
 !@@ We then use the cylindrical coordinates $r,\phi$ which correspond
 !@@ to the spherical coordinates with $\theta=\pi/2$ (equator).

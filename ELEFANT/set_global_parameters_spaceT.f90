@@ -8,7 +8,7 @@
 
 subroutine set_global_parameters_spaceT
 
-use module_parameters, only: iproc,debug,ndim,mT,nelx,nely,nelz,NT,spaceT,geometry,nelr,nelphi,spaceV
+use module_parameters, only: iproc,debug,ndim,mT,nelx,nely,nelz,NT,spaceT,geometry,nelr,nelphi,spaceV,use_T
 use module_timing
 use module_arrays, only: rT,sT,tT
 
@@ -16,7 +16,7 @@ implicit none
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{set\_global\_parameters\_spaceT}
+!@@ \subsection{set\_global\_parameters\_spaceT}
 !@@ This subroutine computes mT,NT and assigns rT,sT,tT
 !@@ \begin{itemize}
 !@@ \item supported spaces in 2D: Q1,Q2
@@ -43,6 +43,8 @@ end select
 
 !----------------------------------------------------------
 
+if (.not.use_T) return
+
 if (ndim==2) then
 
    select case(spaceT)
@@ -61,6 +63,8 @@ if (ndim==2) then
          if (nelr==0) stop 'set_global_parameters_spaceT: nelr=0'
          if (nelphi==0) stop 'set_global_parameters_spaceT: nelphi=0'
          NT=(nelr+1)*nelphi
+      case('john')
+         stop 'set_global_parameters_spaceT: john geometry not supported'
       case default
          stop 'set_global_parameters_spaceT: unknown geometry'
       end select
@@ -81,6 +85,8 @@ if (ndim==2) then
          if (nelr==0) stop 'set_global_parameters_spaceT: nelr=0'
          if (nelphi==0) stop 'set_global_parameters_spaceT: nelphi=0'
          NT=(2*nelr+1)*(2*nelphi)
+      case('john')
+         stop 'set_global_parameters_spaceT: john geometry not supported'
       case default
          stop 'set_global_parameters_spaceT: unknown geometry'
       end select
@@ -101,6 +107,8 @@ if (ndim==2) then
          if (nelr==0) stop 'set_global_parameters_spaceT: nelr=0'
          if (nelphi==0) stop 'set_global_parameters_spaceT: nelphi=0'
          NT=(nelr+1)*nelphi
+      case('john')
+         stop 'set_global_parameters_spaceT: john geometry not supported'
       case default
          stop 'set_global_parameters_spaceT: unknown geometry'
       end select
@@ -117,6 +125,8 @@ if (ndim==2) then
          NT=(2*nelx+1)*(2*nely+1)
       case('spherical')
          NT=(2*nelr+1)*(2*nelphi)
+      case('john')
+         stop 'set_global_parameters_spaceT: john geometry not supported'
       case default
          stop 'set_global_parameters_spaceT: unknown geometry'
       end select

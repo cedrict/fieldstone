@@ -22,7 +22,7 @@ real(8), dimension(:), allocatable :: qcoords,qweights
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{quadrature\_setup.f90}
+!@@ \subsection{quadrature\_setup.f90}
 !@@ This subroutine allocates all GLQ-related arrays for each element.
 !@@ It further computes the real $(x_q,y_q,z_q)$ and reduced $(r_q,s_q,t_q)$
 !@@ coordinates of the GLQ points, and assigns them their weights and

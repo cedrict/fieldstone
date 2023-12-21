@@ -19,7 +19,7 @@ real(8) dum
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{prescribe\_stokes\_solution.f90}
+!@@ \subsection{prescribe\_stokes\_solution.f90}
 !@@ This subroutine prescribes the velocity, pressure, temperature and strain rate components
 !@@ on the nodes of each element via the {\sl experiment\_analytical\_solution} subroutine.
 !==================================================================================================!

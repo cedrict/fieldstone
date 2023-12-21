@@ -27,7 +27,7 @@ real(8) :: S_el(mP,mP)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{make\_matrix\_stokes.f90}
+!@@ \subsection{make\_matrix\_stokes.f90}
 !@@ This subroutine loops over all elements, build their elemental matrices and rhs, 
 !@@ apply the boundary conditions ont these elemental matrices, and then 
 !@@ assembles them in the global matrix, either in CSR or in MUMPS format.
@@ -82,12 +82,12 @@ do iel=1,nel
 
    if (.not.use_penalty) then
 
-      if (pair=='q1p0') then
+      select case(spaceP)
+      case('__Q0','__P0')
       csrGT%mat(csrGT%ia(iel):csrGT%ia(iel+1)-1)=G_el(:,1)
       rhs_h(iel)=rhs_h(iel)+h_el(1)
-      end if
 
-      if (pair=='q1q1') then
+      case default
 
          do k1=1,mV
          ik=mesh(iel)%iconV(k1)
@@ -111,7 +111,7 @@ do iel=1,nel
             rhs_h(m2)=rhs_h(m2)+h_el(k2)
          end do
 
-      end if
+      end select
 
    end if
 

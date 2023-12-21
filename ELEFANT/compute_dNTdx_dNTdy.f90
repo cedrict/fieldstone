@@ -23,7 +23,7 @@ real(8), parameter :: t=0d0
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{compute\_dNTdx\_dNTdy.f90}
+!@@ \subsection{compute\_dNTdx\_dNTdy.f90}
 !@@ This subroutine computes $\partial{\bN^\uptheta}/\partial x$ 
 !@@ and $\partial{\bN^\uptheta}/\partial y$ !@@ at a location $r,s$ passed as argument.
 !==================================================================================================!

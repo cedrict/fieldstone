@@ -19,8 +19,9 @@ integer :: k
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{process\_bc}
-!@@
+!@@ \subsection{process\_bc}
+!@@ This subroutine 'translates' the bnd1\_bcV\_type and other variables into booleans in 
+!@@ arrays fix\_u and others.
 !==================================================================================================!
 
 if (iproc==0) then
@@ -33,7 +34,7 @@ if (ndim==2) then
 
    select case(geometry)
 
-   case('cartesian')
+   case('cartesian','john')
 
       do iel=1,nel
          mesh(iel)%fix_u(:)=.false. 

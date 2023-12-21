@@ -16,7 +16,7 @@ implicit none
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{set\_global\_parameters\_spaceV}
+!@@ \subsection{set\_global\_parameters\_spaceV}
 !@@ This subroutine computes mV,nel,NV and assigns rV,sV,tV
 !@@ \begin{itemize}
 !@@ \item supported spaces in 2D: Q1,Q2,Q1+,Q3,P1,P2
@@ -29,6 +29,8 @@ if (iproc==0) then
 call system_clock(counti,count_rate)
 
 !==============================================================================!
+
+write(*,'(a,a)') shift//'spaceV=',spaceV
 
 if (ndim==2) then
 
@@ -52,6 +54,8 @@ if (ndim==2) then
          if (nelphi==0) stop 'set_global_parameters_spaceV: nelphi=0'
          nel=nelr*nelphi
          NV=(nelr+1)*nelphi
+      case('john')
+         stop 'set_global_parameters_spaceV: john geometry not supported'
       case default
          stop 'set_global_parameters_spaceV: unknown geometry'
       end select
@@ -72,6 +76,8 @@ if (ndim==2) then
          if (nelphi==0) stop 'set_global_parameters_spaceV: nelphi=0'
          nel=nelr*nelphi
          NV=(2*nelr+1)*(2*nelphi)
+      case('john')
+         stop 'set_global_parameters_spaceV: john geometry not supported'
       case default
          stop 'set_global_parameters_spaceV: unknown geometry'
       end select
@@ -89,6 +95,8 @@ if (ndim==2) then
          if (nely==0) stop 'set_global_parameters_spaceV: nely=0'
          nel=nelx*nely
          NV=(nelx+1)*(nely+1)+nel
+      case('john')
+         stop 'set_global_parameters_spaceV: john geometry not supported'
       case default
          stop 'set_global_parameters_spaceV: unknown geometry'
       end select
@@ -111,6 +119,8 @@ if (ndim==2) then
          if (nelphi==0) stop 'set_global_parameters_spaceV: nelphi=0'
          nel=nelr*nelphi
          NV=(3*nelr+1)*(3*nelphi)
+      case('john')
+         stop 'set_global_parameters_spaceV: john geometry not supported'
       case default
          stop 'set_global_parameters_spaceV: unknown geometry'
       end select
@@ -139,6 +149,9 @@ if (ndim==2) then
          if (nelphi==0) stop 'set_global_parameters_spaceV: nelphi=0'
          nel=2*nelr*nelphi
          NV=(nelr+1)*nelphi
+      case('john')
+         nel=9
+         NV=8
       case default
          stop 'set_global_parameters_spaceV: unknown geometry'
       end select
@@ -161,6 +174,9 @@ if (ndim==2) then
          if (nelphi==0) stop 'set_global_parameters_spaceV: nelphi=0'
          nel=2*nelr*nelphi
          NV=(2*nelr+1)*(2*nelphi)
+      case('john')
+         nel=9
+         NV=24
       case default
          stop 'set_global_parameters_spaceV: unknown geometry'
       end select
@@ -216,7 +232,6 @@ end if
 if (nel==0) stop 'set_global_parameters_spaceV: nel=0'
 if (NV==0)  stop 'set_global_parameters_spaceV: NV=0'
 
-write(*,'(a,a)') shift//'spaceV=',spaceV
 write(*,'(a,i5)') shift//'nel=',nel
 write(*,'(a,i5)') shift//'NV=',NV
 

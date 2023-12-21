@@ -24,7 +24,6 @@ integer :: Nq                  ! total number of quadrature points
 integer :: nmarker_per_dim     ! initial number of markers per dimension
 integer :: nmarker             ! total number of markers
 integer :: nmat                ! number of materials in the domain
-integer :: ncorners            ! number of corners an element has
 integer :: nstep               ! number of time steps 
 integer :: nproc               ! number of threads/processors 
 integer :: ndim2               ! size of G_el (3 in 2D, 6 in 3D) 
@@ -49,23 +48,57 @@ real(8) :: CFL_nb
 real(8) :: dparam1,dparam2,dparam3 
 real(8) :: outer_radius,inner_radius 
 
-character(len=10) :: geometry    ! type of domain geometry
-character(len=4) :: pair         ! type of element pair
-character(len=6) :: cistep
-character(len=4) :: spaceV       ! finite element space for velocity
-character(len=4) :: spaceP       ! finite element space for pressure
-character(len=4) :: spaceT       ! finite element space for temperature
-character(len=4) :: mapping      ! type of mapping 
+character(len=10) :: geometry         ! type of domain geometry
+character(len=6) :: cistep            ! istep parameter in string
+character(len=4) :: spaceV            ! finite element space for velocity
+character(len=4) :: spaceP            ! finite element space for pressure
+character(len=4) :: spaceT            ! finite element space for temperature
+character(len=4) :: mapping           ! type of mapping 
 character(len=6) :: inner_solver_type ! which type of solver for the inner solve 
-character(len=6) :: bnd1_bcV_type
-character(len=6) :: bnd2_bcV_type
-character(len=6) :: bnd3_bcV_type
-character(len=6) :: bnd4_bcV_type
-character(len=6) :: bnd5_bcV_type
-character(len=6) :: bnd6_bcV_type
+character(len=6) :: outer_solver_type ! which type of solver for the outer solve 
+character(len=6) :: bnd1_bcV_type     ! type of velocity b.c. on bnd 1
+character(len=6) :: bnd2_bcV_type     ! type of velocity b.c. on bnd 2
+character(len=6) :: bnd3_bcV_type     ! type of velocity b.c. on bnd 3
+character(len=6) :: bnd4_bcV_type     ! type of velocity b.c. on bnd 4
+character(len=6) :: bnd5_bcV_type     ! type of velocity b.c. on bnd 5
+character(len=6) :: bnd6_bcV_type     ! type of velocity b.c. on bnd 6
 
 integer :: iel
 integer :: istep           
 integer :: iproc
 integer :: output_freq
+
+contains
+
+subroutine write_params
+implicit none
+write(*,'(a,3i10)')    ' ndim,ndim2,ndofV        =',ndim,ndim,ndofV
+write(*,'(a,a11)')     ' geometry                =',geometry
+write(*,'(a,3a10)')    ' spaceV,spaceP,spaceT    =',spaceV,spaceP,spaceT
+write(*,'(a,a10,i10)') ' mapping,mmaping         =',mapping,mmapping
+write(*,'(a,3f10.3)')  ' Lx,Ly,Lz                =',Lx,Ly,Lz
+write(*,'(a,4i10)')    ' nelx,nely,nelz,nel      =',nelx,nely,nelz,nel
+write(*,'(a,3i10)')    ' nelr,neltheta,nelphi    =',nelr,neltheta,nelphi
+write(*,'(a,3i10)')    ' mV, mP, mT              =',mV,mP,mT
+write(*,'(a,3i10)')    ' NV,NP,NT                =',NV,NP,NT
+write(*,'(a,3i10)')    ' NfemV,NfemP,NfemT       =',NfemV,NfemP,NfemT
+write(*,'(a,3i10)')    ' nq_per_dim,nqel,Nq      =',nq_per_dim,nqel,Nq
+write(*,'(a,a10)')     ' inner_solver_type       =',inner_solver_type
+write(*,'(a,a10)')     ' outer_solver_type       =',outer_solver_type
+write(*,'(a,i10)')     ' nmat                    =',nmat
+write(*,'(a,l10)')     ' use_penalty             =',use_penalty
+write(*,'(a,es10.3)')  ' penalty                 =',penalty
+write(*,'(a,l10)')     ' use_ALE                 =',use_ALE
+write(*,'(a,l10)')     ' use_swarm               =',use_swarm
+write(*,'(a,l10)')     ' use_T                   =',use_T
+write(*,'(a,l10)')     ' normalise_pressure      =',normalise_pressure  
+write(*,'(a,2i10)')    ' nmarker_per_dim,nmarker =',nmarker_per_dim,nmarker
+write(*,'(a,i10)')     ' nstep                   =',nstep
+write(*,'(a,i10)')     ' nproc                   =',nproc
+write(*,'(a,l10)')     ' debug                   =',debug
+write(*,'(a,l10)')     ' solve_stokes_system     =',solve_stokes_system
+write(*,'(a,l10)')     ' init_marker_random      =',init_marker_random
+
+end subroutine
+
 end module

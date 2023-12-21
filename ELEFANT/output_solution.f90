@@ -25,7 +25,7 @@ logical, parameter :: output_fixed_boundaries=.false. ! careful with these for h
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{output\_solution}
+!@@ \subsection{output\_solution}
 !@@ This subroutine generates the {\filenamefont solution.vtu} in the {\foldernamefont OUTPUT}
 !@@ folder. It also generates the basic ascii file {\filenamefont solution.ascii}
 !@@

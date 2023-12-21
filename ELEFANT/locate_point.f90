@@ -21,7 +21,7 @@ integer ielx,iely,ielz
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{locate\_point}
+!@@ \subsection{locate\_point}
 !@@ This file contains a few simple subroutines which deal with the localisation of a point 
 !@@ in the mesh. The {\tt locate\_point} subroutine receives the coordinates of a point as argument 
 !@@ and returns its reduced coordinates and the id of the element it sits in.

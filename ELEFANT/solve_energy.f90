@@ -26,7 +26,7 @@ real(8) :: sol(NfemT)
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsubsection{solve\_energy}
+!@@ \subsection{solve\_energy}
 !@@ This routine solves the energy equation using a GMRES solver obtained from 
 !@@ \url{https://people.sc.fsu.edu/~jburkardt/f_src/mgmres/mgmres.html} 
 !==================================================================================================!
