@@ -40,7 +40,7 @@ showme
 *.1.node
 ELEFANT/OLD/
 literature.pdf
-
+elefant.pdf
 
 # C extensions
 *.so

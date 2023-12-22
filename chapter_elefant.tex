@@ -1,289 +1,35 @@
-\chapter{ELEFANT} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-This version on \elefant is different than the one I built from 2012 until 2018.
-It incorporates many features and contains many identical algorithms with the original 
-one but in a more streamlined version. Also the number of solvers, marker projections, 
-element types, geometries, etc ... has been greatly reduced. 
-
-\begin{center}
-\includegraphics[width=7cm]{images/elefant/logo_elefant_small}
-\end{center}
-
-This code is in Fortran because a) this is the language I know best; b) it is (really) fast;
-c) the interface with MUMPS is seamless.  
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Principal features}
-
-\begin{itemize}
-\item 4 geometries:
-\begin{itemize}
-\item Cartesian box 2D
-\item Cartesian box 3D
-\item Annulus
-\item Hollow Sphere
-\end{itemize}
-\item 3 elements:
-\begin{itemize}
-\item $Q_1\times P_0$
-\item $Q_1\times Q_1$-MINI
-\item $Q_2\times Q_1$
-\end{itemize}
-\item Particle-in-Cell
-\begin{itemize}
-\item random or regular distribution of markers
-\item paint  
-\item elemental least square projection
-\end{itemize}
-\item penalty approach if Q1P0 used
-\item Outer solver: Preconditioned Conjugate Gradients applied to Schur complement equation.
-\item Inner solver: MUMPS or Preconditioned Conjugate Gradients.
-\item free surface
-\item open boundary conditions
-\item Nonlinear rheologies (viscous-viscoplastic)
-\item Newton solver (?)
-\end{itemize}
-
-Limitations: all elements are of the same type, with the same number of 
-quadrature points, etc ...
-
-store sparse in COO with duplicates and then convert to CSR?
-
-store basis fct values at quad pts
-
-spaceT is default spaceV
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Philosophy}
-\begin{itemize}
-\item readability
-\item not memory efficient/optimised
-\item object oriented fortran
-\item using modules which contain 99\% of the arrays
-\item export to vtu 
-\item testing
-\item similar notations to python codes of fieldstone
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The physics}
-
-\begin{align}
--\vec\nabla \cdot \left[ 2\eta \left(\dot\varepsilon(\vec \upnu) - \frac{1}{3}(\vec\nabla \cdot \vec{\upnu}) \mathbf 1\right) \right] + \vec\nabla p &=  \rho \vec{g}
-  &
-  & \textrm{in $\Omega$},
-  \\  
-  \vec\nabla \cdot (\rho \vec{\upnu}) &= 0
-  &
-  & \textrm{in $\Omega$}
-\end{align}
-The second equation can be rewritten 
-$\vec\nabla \cdot (\rho \vec{\upnu}) =  \rho \vec\nabla \cdot \vec{\upnu} + \vec{\upnu} \cdot {\vec \nabla} \rho=0$
-or, 
-\[
-\vec\nabla \cdot \vec{\upnu} + \frac{1}{\rho} \vec{\upnu} \cdot {\vec \nabla}\rho=0
-\]
-
-In the case of a compressible flow the strain rate tensor and the deviatoric strain rate tensor are no more equal (since ${\vec \nabla}\cdot{\vec\upnu} \neq 0$).
-The deviatoric strainrate tensor is given by\footnote{See the ASPECT manual for a justification of the 3 value in the denominator in 2D and 3D.} 
-\[
-\dot{\bm \varepsilon}^d({\vec \upnu})=
-\dot{\bm \varepsilon}({\vec \upnu})-\frac{1}{3} Tr(\dot{\bm \varepsilon}) {\bm 1}
-=\dot{\bm \varepsilon}({\vec\upnu})-\frac{1}{3} ({\vec \nabla}\cdot{\vec\upnu}) {\bm 1}
-\]
-In that case:
-\begin{eqnarray}
-\dot{\varepsilon}_{xx}^d 
-&=& \frac{\partial u}{\partial x}
--\frac{1}{3} \left( \frac{\partial u}{\partial x} + \frac{\partial v}{\partial y} \right) 
-= \frac{2}{3}\frac{\partial u}{\partial x}
--\frac{1}{3} \frac{\partial v}{\partial y}
-%=
-%\frac{2}{3} \sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  u_i 
-%-\frac{1}{3} \sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  v_i 
-\\
-\dot{\varepsilon}_{yy}^d 
-&=& \frac{\partial v}{\partial y}
--\frac{1}{3} \left( \frac{\partial u}{\partial x} + \frac{\partial v}{\partial y} \right) 
-=-\frac{1}{3} \frac{\partial u}{\partial x} 
-+ \frac{2}{3} \frac{\partial v}{\partial y} 
-%=-\frac{1}{3}  \sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  u_i
-%+ \frac{2}{3} \sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  v_i
-\\
-2\dot{\varepsilon}_{xy}^d 
-&=& 
-\frac{\partial u}{\partial y} 
-+\frac{\partial v}{\partial x} 
-%= \sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  u_i
-%+ \sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  v_i
-\end{eqnarray}
-and then 
-\[
-\dot{\bm \varepsilon}^d({\vec\upnu})
-=
-\left(
-\begin{array}{cc}
-\frac{2}{3} \frac{\partial u}{\partial x} -\frac{1}{3} \frac{\partial v}{\partial y} &
-\frac{1}{2}\frac{\partial u}{\partial y} + \frac{1}{2}\frac{\partial v}{\partial x}  \\ \\
-\frac{1}{2}\frac{\partial u}{\partial y} + \frac{1}{2}\frac{\partial v}{\partial x}  &
--\frac{1}{3} \frac{\partial u}{\partial x} +\frac{2}{3} \frac{\partial v}{\partial y} 
-\end{array}
-\right)
-\]
-
-From $\vec{\tau} = 2\eta \vec{\varepsilon}^d$ we arrive at:
-\[
-\left(
-\begin{array}{c}
-\tau_{xx}\\
-\tau_{yy}\\
-\tau_{xy}\\
-\end{array}
-\right)
-=
-2\eta
-\left(
-\begin{array}{c}
-\dot{\varepsilon}_{xx}^d \\
-\dot{\varepsilon}_{yy}^d \\
-\dot{\varepsilon}_{xy}^d 
-\end{array}
-\right)
-=2 \eta
-\left(
-\begin{array}{ccc}
-2/3 & -1/3& 0 \\
--1/3 & 2/3 & 0 \\
-0 & 0 & 1/2 \\
-\end{array}
-\right)
-\cdot 
-\left(
-\begin{array}{c}
-\frac{\partial u}{\partial x} \\ 
-\frac{\partial v}{\partial y} \\ 
-\frac{\partial u}{\partial y}\! +\! \frac{\partial v}{\partial x} \\
-\end{array}
-\right)
-=
-\eta
-\left(
-\begin{array}{ccc}
-4/3 & -2/3& 0 \\
--2/3 & 4/3 & 0 \\
-0 & 0 & 1 \\
-\end{array}
-\right)
-\cdot 
-\left(
-\begin{array}{c}
-\frac{\partial u}{\partial x} \\ 
-\frac{\partial v}{\partial y} \\ 
-\frac{\partial u}{\partial y}\! +\! \frac{\partial v}{\partial x} \\
-\end{array}
-\right)
-\]
-or, 
-\[
-\vec{\tau} = {\bm C}_\eta \cdot  {\bm B} \cdot \vec{\cal V}
-\]
+\section{ELEFANT} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
 
 
-After linearisation, the density depends on temperature and pressure as follows:
-\[
-\rho(T,p) = \rho_0 \left((1 - \alpha(T-T_0) + \beta_T p \right)
-\]
-where $\alpha$ is the coefficient of thermal expansion, also called 
-thermal expansivity: 
-\[
-\alpha=-\frac{1}{\rho}\left( \frac{\partial \rho}{\partial T} \right)_p
-\]
-$\alpha$ is the percentage increase in volume of a material per degree of temperature increase; the
-subscript $p$ means that the pressure is held fixed.
-
-$\beta_T$ is the isothermal compressibility of the fluid, which is given by 
-\[
-\beta_T = \frac{1}{K} = \frac{1}{\rho}\left( \frac{\partial \rho}{\partial P} \right)_T
-\]
-with $K$ the bulk modulus. 
-%aspect manual
-Values of $\beta_T=10^{-12}-10^{-11}$ Pa$^{-1}$ are reasonable for Earth's mantle, with values decreasing by about a
-factor of 5 between the shallow lithosphere and core-mantle boundary.
-This is the percentage increase in density per unit change in pressure at constant temperature.
-Both the coefficient of thermal expansion and the isothermal compressibility can be obtained
-from the equation of state.
-
-The full set of equations we wish to solve is given by
-
-\begin{eqnarray}
--\vec\nabla \cdot \left[2\eta \dot{\bm \varepsilon}^d({\vec\upnu}) \right] + \vec \nabla p &=& \rho_0 \left((1 - \alpha(T-T_0) + \beta_T p \right) {\vec g} \quad\quad \textrm{in $\Omega$}  \label{eq:stokes-1a_} \\
-\vec\nabla \cdot {\vec\upnu} + \frac{1}{\rho} {\vec\upnu} \cdot {\vec \nabla}\rho&=&0 \quad\quad  \textrm{in $\Omega$}   \label{eq:stokes-2a_} \\
-\rho C_p \left(\frac{\partial T}{\partial t} + \vec{\upnu}\cdot \vec\nabla T\right) - \vec\nabla\cdot k\vec\nabla T   &=& 
-  \rho H  +  2\eta \dot{\bm \varepsilon}^d : \dot{\bm \varepsilon}^d    +\alpha T \left( \frac{\partial p}{\partial t}+  \vec{\upnu} \cdot \vec\nabla p \right) 
-\quad\quad   \textrm{in $\Omega$},
-  \label{eq:temperature_}
-\end{eqnarray}
 
 
 
 
-We use a mixed formulation and therefore  
-keep both velocity and pressure as unknowns. We end up having to solve 
-the following system:
-\[
-\left(
-\begin{array}{cc}
-\K & \G+\W \\ \G^T+\Z & 0 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{c}
-\vec{\cal V} \\ \vec{\cal P}
-\end{array}
-\right)
-=
-\left(
-\begin{array}{c}
-\vec{f} \\ \vec{h}
-\end{array}
-\right)
-\quad\quad
-{\rm or,}
-\quad\quad
-\A \cdot \vec{X} = \vec{b}
-\]
-Where $\K$ is the stiffness matrix, $\G$ is the discrete gradient operator, 
-$\G^T$ is the discrete divergence operator, $\vec{\cal V}$ the velocity vector, 
-$\vec{\cal P}$ the pressure vector.
-Note that the term $\Z{\cal V}$ derives from term ${\vec\upnu} \cdot {\vec \nabla} \rho$ in the continuity equation
-and that the term $\W$ derives from the pressure dependence of the density.
 
- 
-{\bf Remark 1}: the terms $\Z\cdot \vec{\cal V}$ and $\W\cdot \vec{\cal P}$ are 
-often put in the rhs (i.e. added to $\vec{f}$ or $\vec{h}$) so that 
-the matrix $\A$ retains the same structure as in the incompressible case. This is indeed 
-how it is implemented in \aspect, see also appendix A of \textcite{lezh08} (2008). 
-This however requires more work since the rhs depends 
-on the solution and some form of iterations is needed (in practice we arrive at the 
-solution by outer iterations). 
 
-{\bf Remark 2}: Very often the adiabatic heating term  
-$\alpha T \left( \bm v \cdot \nabla p \right)$ is simplified as follows:
-%aspect manual
-If you assume the vertical component of the gradient of the dynamic pressure to be small compared to the
-gradient of the total pressure (in other words, the gradient is dominated by the gradient of the hydrostatic
-pressure), then $-\rho {\vec g} \simeq {\vec \nabla}p$ and then 
-$\alpha T \left( \vec\upnu \cdot \vec\nabla p \right) \simeq  
--\alpha\rho T {\vec\upnu}\cdot{\vec g}$. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 \newpage
+%---------------------------------------------------
 \subsection{$Q_1\times P_0$ cartesian identity card}
 
 Check Section~\ref{sec:sparse_storage}
@@ -333,12 +79,177 @@ node  12 belongs to  1  elts | 6           0           0           0
 
 
 
+\newpage
+%---------------------------------------------------
+\subsection{$Q_1\times P_0$ annulus identity card}
+
+\begin{center}
+\includegraphics[width=7cm]{images/ELEFANT/annulus_Q1}
+\end{center}
+
+
+
+
+\newpage
+%---------------------------------------------------
+\subsection{$Q_2\times Q_1$ annulus identity card}
+
+\begin{small}
+\begin{verbatim}
+spaceV='__Q2'
+spaceP='__Q1'
+nelr=2
+nelphi=8
+nel=8
+NV=80
+NP=24
+\end{verbatim}
+\end{small}
+
+\begin{center}
+\includegraphics[width=7cm]{images/ELEFANT/annulus_Q2}
+\end{center}
+
+\begin{verbatim}
+
+                 25           15
+                 24         14
+                 23       13
+                 22     12
+                 21   11
+                  |     
+                  |
+45 44 43 42 41----+------1-2-3-4-5
+\end{verbatim}
+
+
+
+
+\begin{small}
+\begin{verbatim}
+V node     1 belongs to  2 elts:       1    15     0     0     0     0     0     0
+V node     2 belongs to  2 elts:       1    15     0     0     0     0     0     0
+V node     3 belongs to  4 elts:       1     2    15    16     0     0     0     0
+V node     4 belongs to  2 elts:       2    16     0     0     0     0     0     0
+V node     5 belongs to  2 elts:       2    16     0     0     0     0     0     0
+V node     6 belongs to  1 elts:       1     0     0     0     0     0     0     0
+V node     7 belongs to  1 elts:       1     0     0     0     0     0     0     0
+V node     8 belongs to  2 elts:       1     2     0     0     0     0     0     0
+V node     9 belongs to  1 elts:       2     0     0     0     0     0     0     0
+V node    10 belongs to  1 elts:       2     0     0     0     0     0     0     0
+V node    11 belongs to  2 elts:       1     3     0     0     0     0     0     0
+V node    12 belongs to  2 elts:       1     3     0     0     0     0     0     0
+V node    13 belongs to  4 elts:       1     2     3     4     0     0     0     0
+V node    14 belongs to  2 elts:       2     4     0     0     0     0     0     0
+V node    15 belongs to  2 elts:       2     4     0     0     0     0     0     0
+V node    16 belongs to  1 elts:       3     0     0     0     0     0     0     0
+V node    17 belongs to  1 elts:       3     0     0     0     0     0     0     0
+V node    18 belongs to  2 elts:       3     4     0     0     0     0     0     0
+V node    19 belongs to  1 elts:       4     0     0     0     0     0     0     0
+V node    20 belongs to  1 elts:       4     0     0     0     0     0     0     0
+V node    21 belongs to  2 elts:       3     5     0     0     0     0     0     0
+V node    22 belongs to  2 elts:       3     5     0     0     0     0     0     0
+V node    23 belongs to  4 elts:       3     4     5     6     0     0     0     0
+V node    24 belongs to  2 elts:       4     6     0     0     0     0     0     0
+V node    25 belongs to  2 elts:       4     6     0     0     0     0     0     0
+V node    26 belongs to  1 elts:       5     0     0     0     0     0     0     0
+V node    27 belongs to  1 elts:       5     0     0     0     0     0     0     0
+V node    28 belongs to  2 elts:       5     6     0     0     0     0     0     0
+V node    29 belongs to  1 elts:       6     0     0     0     0     0     0     0
+V node    30 belongs to  1 elts:       6     0     0     0     0     0     0     0
+V node    31 belongs to  2 elts:       5     7     0     0     0     0     0     0
+V node    32 belongs to  2 elts:       5     7     0     0     0     0     0     0
+V node    33 belongs to  4 elts:       5     6     7     8     0     0     0     0
+V node    34 belongs to  2 elts:       6     8     0     0     0     0     0     0
+V node    35 belongs to  2 elts:       6     8     0     0     0     0     0     0
+V node    36 belongs to  1 elts:       7     0     0     0     0     0     0     0
+V node    37 belongs to  1 elts:       7     0     0     0     0     0     0     0
+V node    38 belongs to  2 elts:       7     8     0     0     0     0     0     0
+V node    39 belongs to  1 elts:       8     0     0     0     0     0     0     0
+V node    40 belongs to  1 elts:       8     0     0     0     0     0     0     0
+V node    41 belongs to  2 elts:       7     9     0     0     0     0     0     0
+V node    42 belongs to  2 elts:       7     9     0     0     0     0     0     0
+V node    43 belongs to  4 elts:       7     8     9    10     0     0     0     0
+V node    44 belongs to  2 elts:       8    10     0     0     0     0     0     0
+V node    45 belongs to  2 elts:       8    10     0     0     0     0     0     0
+V node    46 belongs to  1 elts:       9     0     0     0     0     0     0     0
+V node    47 belongs to  1 elts:       9     0     0     0     0     0     0     0
+V node    48 belongs to  2 elts:       9    10     0     0     0     0     0     0
+V node    49 belongs to  1 elts:      10     0     0     0     0     0     0     0
+V node    50 belongs to  1 elts:      10     0     0     0     0     0     0     0
+V node    51 belongs to  2 elts:       9    11     0     0     0     0     0     0
+V node    52 belongs to  2 elts:       9    11     0     0     0     0     0     0
+V node    53 belongs to  4 elts:       9    10    11    12     0     0     0     0
+V node    54 belongs to  2 elts:      10    12     0     0     0     0     0     0
+V node    55 belongs to  2 elts:      10    12     0     0     0     0     0     0
+V node    56 belongs to  1 elts:      11     0     0     0     0     0     0     0
+V node    57 belongs to  1 elts:      11     0     0     0     0     0     0     0
+V node    58 belongs to  2 elts:      11    12     0     0     0     0     0     0
+V node    59 belongs to  1 elts:      12     0     0     0     0     0     0     0
+V node    60 belongs to  1 elts:      12     0     0     0     0     0     0     0
+V node    61 belongs to  2 elts:      11    13     0     0     0     0     0     0
+V node    62 belongs to  2 elts:      11    13     0     0     0     0     0     0
+V node    63 belongs to  4 elts:      11    12    13    14     0     0     0     0
+V node    64 belongs to  2 elts:      12    14     0     0     0     0     0     0
+V node    65 belongs to  2 elts:      12    14     0     0     0     0     0     0
+V node    66 belongs to  1 elts:      13     0     0     0     0     0     0     0
+V node    67 belongs to  1 elts:      13     0     0     0     0     0     0     0
+V node    68 belongs to  2 elts:      13    14     0     0     0     0     0     0
+V node    69 belongs to  1 elts:      14     0     0     0     0     0     0     0
+V node    70 belongs to  1 elts:      14     0     0     0     0     0     0     0
+V node    71 belongs to  2 elts:      13    15     0     0     0     0     0     0
+V node    72 belongs to  2 elts:      13    15     0     0     0     0     0     0
+V node    73 belongs to  4 elts:      13    14    15    16     0     0     0     0
+V node    74 belongs to  2 elts:      14    16     0     0     0     0     0     0
+V node    75 belongs to  2 elts:      14    16     0     0     0     0     0     0
+V node    76 belongs to  1 elts:      15     0     0     0     0     0     0     0
+V node    77 belongs to  1 elts:      15     0     0     0     0     0     0     0
+V node    78 belongs to  2 elts:      15    16     0     0     0     0     0     0
+V node    79 belongs to  1 elts:      16     0     0     0     0     0     0     0
+V node    80 belongs to  1 elts:      16     0     0     0     0     0     0     0
+
+P node     1 belongs to  2 elts:       1    15     0     0     0     0     0     0
+P node     2 belongs to  4 elts:       1     2    15    16     0     0     0     0
+P node     3 belongs to  2 elts:       2    16     0     0     0     0     0     0
+P node     4 belongs to  2 elts:       1     3     0     0     0     0     0     0
+P node     5 belongs to  4 elts:       1     2     3     4     0     0     0     0
+P node     6 belongs to  2 elts:       2     4     0     0     0     0     0     0
+P node     7 belongs to  2 elts:       3     5     0     0     0     0     0     0
+P node     8 belongs to  4 elts:       3     4     5     6     0     0     0     0
+P node     9 belongs to  2 elts:       4     6     0     0     0     0     0     0
+P node    10 belongs to  2 elts:       5     7     0     0     0     0     0     0
+P node    11 belongs to  4 elts:       5     6     7     8     0     0     0     0
+P node    12 belongs to  2 elts:       6     8     0     0     0     0     0     0
+P node    13 belongs to  2 elts:       7     9     0     0     0     0     0     0
+P node    14 belongs to  4 elts:       7     8     9    10     0     0     0     0
+P node    15 belongs to  2 elts:       8    10     0     0     0     0     0     0
+P node    16 belongs to  2 elts:       9    11     0     0     0     0     0     0
+P node    17 belongs to  4 elts:       9    10    11    12     0     0     0     0
+P node    18 belongs to  2 elts:      10    12     0     0     0     0     0     0
+P node    19 belongs to  2 elts:      11    13     0     0     0     0     0     0
+P node    20 belongs to  4 elts:      11    12    13    14     0     0     0     0
+P node    21 belongs to  2 elts:      12    14     0     0     0     0     0     0
+P node    22 belongs to  2 elts:      13    15     0     0     0     0     0     0
+P node    23 belongs to  4 elts:      13    14    15    16     0     0     0     0
+P node    24 belongs to  2 elts:      14    16     0     0     0     0     0     0
+\end{verbatim}
+\end{small}
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 \newpage
+%---------------------------------------------------
 \subsection{$Q_2 \times Q_1$ cartesian identity card}
 \begin{small}
 \begin{verbatim}
@@ -371,41 +282,54 @@ elt: 6  | iconV  19 20 21 26 27 28 33 34 35 iconP 7 8 12 11
 
 a node belongs to at most 4 elements:
 
-node   1 belongs to  1  elts |  1           0           0           0
-node   2 belongs to  1  elts |  1           0           0           0
-node   3 belongs to  2  elts |  1           2           0           0
-node   4 belongs to  1  elts |  2           0           0           0
-node   5 belongs to  2  elts |  2           3           0           0
-node   6 belongs to  1  elts |  3           0           0           0
-node   7 belongs to  1  elts |  3           0           0           0
-node   8 belongs to  1  elts |  1           0           0           0
-node   9 belongs to  1  elts |  1           0           0           0
-node  10 belongs to  2  elts |  1           2           0           0
-node  11 belongs to  1  elts |  2           0           0           0
-node  12 belongs to  2  elts |  2           3           0           0
-node  13 belongs to  1  elts |  3           0           0           0
-node  14 belongs to  1  elts |  3           0           0           0
-node  15 belongs to  2  elts |  1           4           0           0
-node  16 belongs to  2  elts |  1           4           0           0
-node  17 belongs to  4  elts |  1           2           4           5
-node  18 belongs to  2  elts |  2           5           0           0
-node  19 belongs to  4  elts |  2           3           5           6
-node  20 belongs to  2  elts |  3           6           0           0
-node  21 belongs to  2  elts |  3           6           0           0
-node  22 belongs to  1  elts |  4           0           0           0
-node  23 belongs to  1  elts |  4           0           0           0
-node  24 belongs to  2  elts |  4           5           0           0
-node  25 belongs to  1  elts |  5           0           0           0
-node  26 belongs to  2  elts |  5           6           0           0
-node  27 belongs to  1  elts |  6           0           0           0
-node  28 belongs to  1  elts |  6           0           0           0
-node  29 belongs to  1  elts |  4           0           0           0
-node  30 belongs to  1  elts |  4           0           0           0
-node  31 belongs to  2  elts |  4           5           0           0
-node  32 belongs to  1  elts |  5           0           0           0
-node  33 belongs to  2  elts |  5           6           0           0
-node  34 belongs to  1  elts |  6           0           0           0
-node  35 belongs to  1  elts |  6           0           0           0
+V node     1 belongs to  1 elts:       1     0     0     0     0     0     0     0
+V node     2 belongs to  1 elts:       1     0     0     0     0     0     0     0
+V node     3 belongs to  2 elts:       1     2     0     0     0     0     0     0
+V node     4 belongs to  1 elts:       2     0     0     0     0     0     0     0
+V node     5 belongs to  2 elts:       2     3     0     0     0     0     0     0
+V node     6 belongs to  1 elts:       3     0     0     0     0     0     0     0
+V node     7 belongs to  1 elts:       3     0     0     0     0     0     0     0
+V node     8 belongs to  1 elts:       1     0     0     0     0     0     0     0
+V node     9 belongs to  1 elts:       1     0     0     0     0     0     0     0
+V node    10 belongs to  2 elts:       1     2     0     0     0     0     0     0
+V node    11 belongs to  1 elts:       2     0     0     0     0     0     0     0
+V node    12 belongs to  2 elts:       2     3     0     0     0     0     0     0
+V node    13 belongs to  1 elts:       3     0     0     0     0     0     0     0
+V node    14 belongs to  1 elts:       3     0     0     0     0     0     0     0
+V node    15 belongs to  2 elts:       1     4     0     0     0     0     0     0
+V node    16 belongs to  2 elts:       1     4     0     0     0     0     0     0
+V node    17 belongs to  4 elts:       1     2     4     5     0     0     0     0
+V node    18 belongs to  2 elts:       2     5     0     0     0     0     0     0
+V node    19 belongs to  4 elts:       2     3     5     6     0     0     0     0
+V node    20 belongs to  2 elts:       3     6     0     0     0     0     0     0
+V node    21 belongs to  2 elts:       3     6     0     0     0     0     0     0
+V node    22 belongs to  1 elts:       4     0     0     0     0     0     0     0
+V node    23 belongs to  1 elts:       4     0     0     0     0     0     0     0
+V node    24 belongs to  2 elts:       4     5     0     0     0     0     0     0
+V node    25 belongs to  1 elts:       5     0     0     0     0     0     0     0
+V node    26 belongs to  2 elts:       5     6     0     0     0     0     0     0
+V node    27 belongs to  1 elts:       6     0     0     0     0     0     0     0
+V node    28 belongs to  1 elts:       6     0     0     0     0     0     0     0
+V node    29 belongs to  1 elts:       4     0     0     0     0     0     0     0
+V node    30 belongs to  1 elts:       4     0     0     0     0     0     0     0
+V node    31 belongs to  2 elts:       4     5     0     0     0     0     0     0
+V node    32 belongs to  1 elts:       5     0     0     0     0     0     0     0
+V node    33 belongs to  2 elts:       5     6     0     0     0     0     0     0
+V node    34 belongs to  1 elts:       6     0     0     0     0     0     0     0
+V node    35 belongs to  1 elts:       6     0     0     0     0     0     0     0
+
+P node     1 belongs to  1 elts:       1     0     0     0     0     0     0     0
+P node     2 belongs to  2 elts:       1     2     0     0     0     0     0     0
+P node     3 belongs to  2 elts:       2     3     0     0     0     0     0     0
+P node     4 belongs to  1 elts:       3     0     0     0     0     0     0     0
+P node     5 belongs to  2 elts:       1     4     0     0     0     0     0     0
+P node     6 belongs to  4 elts:       1     2     4     5     0     0     0     0
+P node     7 belongs to  4 elts:       2     3     5     6     0     0     0     0
+P node     8 belongs to  2 elts:       3     6     0     0     0     0     0     0
+P node     9 belongs to  1 elts:       4     0     0     0     0     0     0     0
+P node    10 belongs to  2 elts:       4     5     0     0     0     0     0     0
+P node    11 belongs to  2 elts:       5     6     0     0     0     0     0     0
+P node    12 belongs to  1 elts:       6     0     0     0     0     0     0     0
 
 csrK%NZ=885
 
@@ -426,6 +350,22 @@ csrK%ia=           1          19          36          52          67          93
                  814         822         829         835         840         844
                  847         853         858         862         865         871
                  876         880         883         885         886
+
+P node 1   sees V nodes 1 2 3 8 9 10 15 16 17 | 9
+P node 2   sees V nodes 1 2 3 4 5 8 9 10 11 12 15 16 17 18 19 | 15
+P node 3   sees V nodes 3 4 5 6 7 10 11 12 13 14 17 18 19 20 21 | 15
+P node 4   sees V nodes 5 6 7 12 13 14 19 20 21 | 9
+P node 5   sees V nodes 1 2 3 8 9 10 15 16 17 22 23 24 29 30 31 | 15
+P node 6   sees V nodes 1 2 3 4 5 8 9 10 11 12 15 16 17 18 19 22 23 24 25 26 29 30 31 32 33 | 25
+P node 7   sees V nodes 3 4 5 6 7 10 11 12 13 14 17 18 19 20 21 24 25 26 27 28 31 32 33 34 35 | 25
+P node 8   sees V nodes 5 6 7 12 13 14 19 20 21 26 27 28 33 34 35 | 15 
+P node 9   sees V nodes 15 16 17 22 23 24 29 30 31 | 9
+P node 10  sees V nodes 15 16 17 18 19 22 23 24 25 26 29 30 31 32 33 | 15 
+P node 11  sees V nodes 17 18 19 20 21 24 25 26 27 28 31 32 33 34 35 | 15
+P node 12  sees V nodes 19 20 21 26 27 28 33 34 35 | 9
+
+csrGT%NZ=(4*9+6*15+2*25=36+90+50)*2=176*2=352
+
 \end{verbatim}
 \end{small}
 
@@ -445,7 +385,11 @@ csrK%ia=           1          19          36          52          67          93
 
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The tests}
 
+\input{ELEFANT/TESTS/tests}
 
 
 
@@ -479,7 +423,7 @@ The whole code is built around a few modules and objects:
 \lstinputlisting[language=Fortran]{ELEFANT/module_materials.f90}
 
 \item {\filenamefont module\_mesh.f90}\\
-\lstinputlisting[language=Fortran]{ELEFANT/module_mesh.f90}
+\lstinputlisting[language=Fortran,basicstyle=\tiny]{ELEFANT/module_mesh.f90}
 
 \item {\filenamefont module\_sparse.f90}\\
 \lstinputlisting[language=Fortran]{ELEFANT/module_sparse.f90}
@@ -542,10 +486,6 @@ copy dmumps\_struc.h and dmumps\_root.h to main elefant folder.
 \subsection{Parallel install}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{List of subroutines}
-
-\input{ELEFANT/code.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Setting up an experiment/benchmark/cookbook}
@@ -559,6 +499,22 @@ opla
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{To do list}
 \input{ELEFANT/todo}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{How to install LAPACK}
+
+\begin{verbatim}
+mkdir lapack-Sandbox 
+cd lapack-sandbox
+git clone https://github.com/Reference-LAPACK/lapack.git
+mkdir lapack-build
+cd lapack-build
+cmake ../lapack
+make
+\end{verbatim}
+You will find in /lib the desired libblas.a and liblapack.a libraries.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%

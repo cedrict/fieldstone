@@ -1,0 +1,3 @@
+pdflatex elefant.tex
+biber --output-safechars elefant
+pdflatex elefant.tex
