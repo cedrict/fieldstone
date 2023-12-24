@@ -2,14 +2,24 @@ module module_mesh
 implicit none
 
 type element
-  integer, allocatable :: iconV(:)            ! connectivity array for velocity nodes
+  integer, allocatable :: iconu(:)            ! connectivity array for velocity nodes
+  integer, allocatable :: iconv(:)            ! connectivity array for velocity nodes
+  integer, allocatable :: iconw(:)            ! connectivity array for velocity nodes
+  real(8), allocatable :: xu(:),yu(:),zu(:)   ! coordinates of x component of velocity nodes
+  real(8), allocatable :: xv(:),yv(:),zv(:)   ! coordinates of y component of velocity nodes
+  real(8), allocatable :: xw(:),yw(:),zw(:)   ! coordinates of z component of velocity nodes
+
+
+
+
+  !integer, allocatable :: iconV(:)            ! connectivity array for velocity nodes
   integer, allocatable :: iconT(:)            ! connectivity array for temperature nodes 
   integer, allocatable :: iconP(:)            ! connectivity array for pressure nodes
   integer, allocatable :: iconM(:)            ! connectivity array for mapping nodes
   integer :: ielx,iely,ielz                   ! integer coords of the elt (Cartesian geom.)
   integer :: nmarker                          ! number of markers in element
   integer :: list_of_markers(200)             ! list of markers inside the element
-  real(8), allocatable :: xV(:),yV(:),zV(:)   ! coordinates of velocity nodes
+  !real(8), allocatable :: xV(:),yV(:),zV(:)   ! coordinates of velocity nodes
   real(8), allocatable :: xT(:),yT(:),zT(:)   ! coordinates of temperature nodes
   real(8), allocatable :: xP(:),yP(:),zP(:)   ! coordinates of pressure nodes
   real(8), allocatable :: xM(:),yM(:),zM(:)   ! coordinates of mapping nodes

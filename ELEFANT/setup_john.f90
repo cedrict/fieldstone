@@ -8,8 +8,9 @@
 
 subroutine setup_john
 
-use module_parameters, only: ndim,iproc,debug,nel,use_T,iel,mV,spaceV,spaceP,mP
+use module_parameters, only: ndim,iproc,debug,nel,use_T,iel,mV,spaceV,spaceP,mP,Lx,Ly
 use module_mesh 
+use module_constants, only: eps 
 use module_timing
 
 implicit none
@@ -75,7 +76,7 @@ icon(1:6,9)=(/1,7,4, 24,22,23/)
 
 select case(spaceV)
 
-!------------------
+!-----------
 case('__P1')
    do iel=1,nel
       mesh(iel)%iconV=icon(1:mV,iel)
@@ -87,7 +88,7 @@ case('__P1')
       mesh(iel)%yc=sum(mesh(iel)%yV)/mV
    end do
 
-!------------------
+!-----------
 case('__P2')
    do iel=1,nel
       mesh(iel)%iconV=icon(1:mV,iel)
@@ -99,7 +100,6 @@ case('__P2')
       mesh(iel)%yc=sum(mesh(iel)%yV)/mV
    end do
 
-
 case default
    stop 'setup_john: spaceV not supported yet'
 
@@ -110,7 +110,8 @@ end select
 !----------------------------------------------------------
 
 select case(spaceP)
-!------------------
+
+!-----------
 case('__P0')
    do iel=1,nel
       mesh(iel)%iconP(1)=iel
@@ -118,7 +119,7 @@ case('__P0')
       mesh(iel)%yP(1)=mesh(iel)%yc
    end do
 
-!------------------
+!-----------
 case('__P1')
    do iel=1,nel
       mesh(iel)%iconP=icon(1:mP,iel)
@@ -139,10 +140,27 @@ end select
 
 if (use_T) stop 'setup_john: temperature not supported yet'
 
+!----------------------------------------------------------
+! flag nodes on boundaries
 
+do iel=1,nel
+   do k=1,mV
+      mesh(iel)%bnd1_node(k)=(abs(mesh(iel)%xV(k)-0 )<eps*Lx)
+      mesh(iel)%bnd2_node(k)=(abs(mesh(iel)%xV(k)-Lx)<eps*Lx)
+      mesh(iel)%bnd3_node(k)=(abs(mesh(iel)%yV(k)-0 )<eps*Ly)
+      mesh(iel)%bnd4_node(k)=(abs(mesh(iel)%yV(k)-Ly)<eps*Ly)
+   end do
+end do
 
+!----------------------------------------------------------
+! initialise boundary arrays
 
-
+do iel=1,nel
+   mesh(iel)%fix_u=.false.
+   mesh(iel)%fix_v=.false.
+   mesh(iel)%fix_w=.false.
+   mesh(iel)%fix_T=.false.
+end do
 
 !----------------------------------------------------------
 

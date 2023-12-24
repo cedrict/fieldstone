@@ -26,11 +26,9 @@ real(8), parameter :: twopi = 2d0*pi
 real(8), parameter :: fourpi = 4d0*pi
 real(8), parameter :: eotvos=1d-9
 real(8), parameter :: mGal=0.01d-3 ! m/s^2
-!-------------------------------------------------------------------
-real(8), parameter:: qc4a=sqrt(3./7.+2./7.*sqrt(6./5.))
-real(8), parameter:: qc4b=sqrt(3./7.-2./7.*sqrt(6./5.))
-real(8), parameter:: qw4a=(18-sqrt(30.))/36.
-real(8), parameter:: qw4b=(18+sqrt(30.))/36
+
+
+
 !-------------------------------------------------------------------
 real(8), parameter :: aa=8d0/27d0  ! for Q1++
 real(8), parameter :: bb=10d0/21d0 ! for Q1++

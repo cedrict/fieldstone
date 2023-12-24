@@ -76,6 +76,7 @@ call matrix_setup_GT
 call matrix_setup_A
 !call output_matrix_tikz
 call experiment_initial_temperature
+call estimate_memory_use
 call spacer
 call write_params 
 
@@ -91,6 +92,7 @@ do istep=1,nstep !-----------------------------------------
    if (solve_stokes_system) then                          !
       call make_matrix_stokes                             !
       call solve_stokes                                   !
+   stop 'aaa'
       call interpolate_onto_nodes                         !
    else                                                   !
       call prescribe_stokes_solution                      !

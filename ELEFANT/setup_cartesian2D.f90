@@ -10,7 +10,7 @@ subroutine setup_cartesian2D
 
 use module_parameters
 use module_mesh 
-use module_constants 
+use module_constants, only: eps 
 use module_timing
 
 implicit none

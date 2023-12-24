@@ -58,7 +58,7 @@ if (use_penalty) then
 else !-----------------------------------------------------
 
    select case(outer_solver_type)
-   case('pcg')
+   case('___pcg')
    case default
       stop 'solve_stokes: unknown outer_solver_type'
    end select 

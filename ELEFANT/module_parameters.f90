@@ -11,13 +11,15 @@ integer :: neltheta            ! number of elements in theta direction (annulus,
 integer :: nelphi              ! number of elements in phi direction (annulus)
 integer :: nel                 ! total number of elements
 integer :: ndim                ! number of dimensions
-integer :: nq_per_dim          ! number of quadrature points per dimension
+integer :: nqpts               ! number of quadrature points (Q: per dim; T: per elt)  
 integer :: nqel                ! number of quadrature points per element
 integer :: ndofV               ! number of dofs per velocity node
 integer :: NfemV               ! total number of velocity dofs
 integer :: NfemP               ! total number of pressure dofs
 integer :: NfemT               ! total number of temperature dofs
-integer :: NV                  ! total number of velocity nodes
+integer :: NU                  ! total number of u velocity nodes
+integer :: NV                  ! total number of V velocity nodes
+integer :: NW                  ! total number of W velocity nodes
 integer :: NP                  ! total number of pressure nodes
 integer :: NT                  ! total number of temperature nodes
 integer :: Nq                  ! total number of quadrature points
@@ -82,7 +84,7 @@ write(*,'(a,3i10)')    ' nelr,neltheta,nelphi    =',nelr,neltheta,nelphi
 write(*,'(a,3i10)')    ' mV, mP, mT              =',mV,mP,mT
 write(*,'(a,3i10)')    ' NV,NP,NT                =',NV,NP,NT
 write(*,'(a,3i10)')    ' NfemV,NfemP,NfemT       =',NfemV,NfemP,NfemT
-write(*,'(a,3i10)')    ' nq_per_dim,nqel,Nq      =',nq_per_dim,nqel,Nq
+write(*,'(a,3i10)')    ' nqpts,nqel,Nq           =',nqpts,nqel,Nq
 write(*,'(a,a10)')     ' inner_solver_type       =',inner_solver_type
 write(*,'(a,a10)')     ' outer_solver_type       =',outer_solver_type
 write(*,'(a,i10)')     ' nmat                    =',nmat

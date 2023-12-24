@@ -18,7 +18,10 @@ implicit none
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{mapping\_setup}
-!@@
+!@@ This subroutine computes the coordinates of the mapping nodes for each element, as well as
+!@@ the corresponding connectivity array.
+!@@ If the mapping polynomial space is identical to the velocity polynomial space, then 
+!@@ the mapping nodes are the velocity nodes.
 !==================================================================================================!
 
 if (iproc==0) then
@@ -43,6 +46,8 @@ else
    stop 'mapping_setup: non isoparametric mapping not supported yet'
 
 end if
+
+!----------------------------------------------------------
 
 if (debug) then
 write(2345,*) limit//'mapping_setup'//limit

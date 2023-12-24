@@ -23,8 +23,10 @@ real(8) db1dr,db2dr
 !==================================================================================================!
 !@@ \subsection{dNNNdr}
 !@@ Spaces supported so far:
-!@@ 2D: Q1, Q2, Q3, Q4, Q1+
-!@@ 3D: Q1, Q2, Q1++
+!@@ \begin{itemize}
+!@@ \item 2D: Q1, Q2, Q1+, P1, P1+, P2, P2+
+!@@ \item 3D: Q1, Q2, Q1++
+!@@ \end{itemize}
 !==================================================================================================!
 
 if (ndim==2) then
@@ -51,8 +53,30 @@ if (ndim==2) then
       dNdr(3)=+0.25*(1+s)-0.25d0*dBubbledr(r,s)
       dNdr(4)=-0.25*(1+s)-0.25d0*dBubbledr(r,s)
       dNdr(5)=dBubbledr(r,s)      
-   case('__Q3')
-   case('__Q4')
+   case('__P1')
+      dNdr(1)=-1
+      dNdr(2)=1
+      dNdr(3)=0
+   case('_P1+')
+      dNdr(1)= -1-9*(1-2*r-s)*s
+      dNdr(2)=  1-9*(1-2*r-s)*s
+      dNdr(3)=   -9*(1-2*r-s)*s
+      dNdr(4)=   27*(1-2*r-s)*s
+   case('__P2')
+      dNdr(1)= -3+4*r+4*s
+      dNdr(2)= -1+4*r
+      dNdr(3)= 0
+      dNdr(4)= 4-8*r-4*s
+      dNdr(5)= 4*s
+      dNdr(6)= -4*s
+   case('_P2+')
+      dNdr(1)= r*(4-6*s)-3*s**2+7*s-3
+      dNdr(2)= r*(4-6*s)-3*s**2+3*s-1
+      dNdr(3)= -3*s*(2*r+s-1)
+      dNdr(4)= 4*(3*s-1)*(2*r+s-1)
+      dNdr(5)= 4*s*(6*r+3*s-2)
+      dNdr(6)= 4*s*(6*r+3*s-4)
+      dNdr(7)=-27*s*(2*r+s-1)
    case default
       stop 'unknown 2D space in dNNNdr'
    end select

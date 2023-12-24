@@ -8,7 +8,7 @@
 
 subroutine make_matrix_stokes
 
-use module_parameters
+use module_parameters, only: mV,mP,iproc,debug,iel,ndofV,spaceP,ndim2,inner_solver_type,ndim,nel,use_penalty
 use module_arrays
 use module_mesh 
 use module_timing
@@ -39,6 +39,9 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
+write(*,'(a,i3)') shift//'mV=',mV
+write(*,'(a,i3)') shift//'mP=',mP
+
 if (ndim==2) ndim2=3
 if (ndim==3) ndim2=6
 allocate(Cmat(ndim2,ndim2)) ; Cmat=0d0
@@ -59,9 +62,11 @@ end if
 
 C_el=0.d0
 
-counter_mumps=0
-idV%RHS=0.d0
-idV%A_ELT=0.d0
+if (inner_solver_type=='_MUMPS') then
+   counter_mumps=0
+   idV%RHS=0.d0
+   idV%A_ELT=0.d0
+end if
 Kdiag=0d0
 rhs_f=0.
 if (allocated(rhs_h)) rhs_h=0.
@@ -71,6 +76,8 @@ if (allocated(csrGT%mat)) csrGT%mat=0d0
 !----------------------------------------------------------
 
 do iel=1,nel
+
+   print *,'building elemental matrix for',iel
 
    call compute_elemental_matrix_stokes(K_el,G_el,f_el,h_el)
 
@@ -194,6 +201,8 @@ end do
 
 !csrGT%mat=csrGT%mat*block_scaling_coeff
 !rhs_h=rhs_h*block_scaling_coeff
+
+!----------------------------------------------------------
 
                          write(*,'(a,2es12.4)') shift//'rhs_f (m/M):    ',minval(rhs_f),maxval(rhs_f)
 if (allocated(csrK%mat)) write(*,'(a,2es12.4)') shift//'csrK%mat (m/M): ',minval(csrK%mat),maxval(csrK%mat)

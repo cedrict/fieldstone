@@ -124,7 +124,7 @@ if (use_swarm) then
 
    end do ! iel
 
-else ! use_swarm
+else ! use_swarm=F
 
    do iel=1,nel
 
@@ -157,6 +157,9 @@ else ! use_swarm
                              mesh(iel)%hcondq(iq),&
                              mesh(iel)%hcapaq(iq),&
                              mesh(iel)%hprodq(iq))
+
+         !print *,mesh(iel)%etaq(iq),mesh(iel)%rhoq(iq)
+  
       end do !nqel
 
 
