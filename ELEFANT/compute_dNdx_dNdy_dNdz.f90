@@ -18,6 +18,9 @@ real(8), intent(out) :: dNdx(mmapping),dNdy(mmapping),dNdz(mmapping),jcob
 
 integer k
 real(8) dNNNMdr(mmapping),dNNNMds(mmapping),dNNNMdt(mmapping)
+real(8) dNNNUdr(mU),dNNNUds(mU),dNNNUdt(mU)
+real(8) dNNNVdr(mV),dNNNVds(mV),dNNNVdt(mV)
+real(8) dNNNWdr(mW),dNNNWds(mW),dNNNWdt(mW)
 real(8) jcb(3,3),jcbi(3,3)
 
 !==================================================================================================!

@@ -74,7 +74,7 @@ icon(1:6,9)=(/1,7,4, 24,22,23/)
 !velocity 
 !----------------------------------------------------------
 
-select case(spaceV)
+select case(spaceVelocity)
 
 !-----------
 case('__P1')
@@ -86,6 +86,9 @@ case('__P1')
       end do
       mesh(iel)%xc=sum(mesh(iel)%xV)/mV
       mesh(iel)%yc=sum(mesh(iel)%yV)/mV
+      mesh(iel)%xU=mesh(iel)%xV
+      mesh(iel)%yU=mesh(iel)%yV
+      mesh(iel)%iconU=mesh(iel)%iconV
    end do
 
 !-----------
@@ -98,6 +101,9 @@ case('__P2')
       end do
       mesh(iel)%xc=sum(mesh(iel)%xV)/mV
       mesh(iel)%yc=sum(mesh(iel)%yV)/mV
+      mesh(iel)%xU=mesh(iel)%xV
+      mesh(iel)%yU=mesh(iel)%yV
+      mesh(iel)%iconU=mesh(iel)%iconV
    end do
 
 case default
@@ -144,11 +150,17 @@ if (use_T) stop 'setup_john: temperature not supported yet'
 ! flag nodes on boundaries
 
 do iel=1,nel
+   do k=1,mU
+      mesh(iel)%bnd1_Unode(k)=(abs(mesh(iel)%xU(k)-0 )<eps*Lx)
+      mesh(iel)%bnd2_Unode(k)=(abs(mesh(iel)%xU(k)-Lx)<eps*Lx)
+      mesh(iel)%bnd3_Unode(k)=(abs(mesh(iel)%yU(k)-0 )<eps*Ly)
+      mesh(iel)%bnd4_Unode(k)=(abs(mesh(iel)%yU(k)-Ly)<eps*Ly)
+   end do
    do k=1,mV
-      mesh(iel)%bnd1_node(k)=(abs(mesh(iel)%xV(k)-0 )<eps*Lx)
-      mesh(iel)%bnd2_node(k)=(abs(mesh(iel)%xV(k)-Lx)<eps*Lx)
-      mesh(iel)%bnd3_node(k)=(abs(mesh(iel)%yV(k)-0 )<eps*Ly)
-      mesh(iel)%bnd4_node(k)=(abs(mesh(iel)%yV(k)-Ly)<eps*Ly)
+      mesh(iel)%bnd1_Vnode(k)=(abs(mesh(iel)%xV(k)-0 )<eps*Lx)
+      mesh(iel)%bnd2_Vnode(k)=(abs(mesh(iel)%xV(k)-Lx)<eps*Lx)
+      mesh(iel)%bnd3_Vnode(k)=(abs(mesh(iel)%yV(k)-0 )<eps*Ly)
+      mesh(iel)%bnd4_Vnode(k)=(abs(mesh(iel)%yV(k)-Ly)<eps*Ly)
    end do
 end do
 

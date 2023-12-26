@@ -32,53 +32,84 @@ allocate(mesh(nel))
 
 do iel=1,nel  
 
+   allocate(mesh(iel)%iconU(mU)) 
    allocate(mesh(iel)%iconV(mV)) 
+   allocate(mesh(iel)%iconW(mW)) 
+
+   allocate(mesh(iel)%xU(mU)) ; mesh(iel)%xU=0.d0
+   allocate(mesh(iel)%yU(mU)) ; mesh(iel)%yU=0.d0
+   allocate(mesh(iel)%zU(mU)) ; mesh(iel)%zU=0.d0
    allocate(mesh(iel)%xV(mV)) ; mesh(iel)%xV=0.d0
    allocate(mesh(iel)%yV(mV)) ; mesh(iel)%yV=0.d0
    allocate(mesh(iel)%zV(mV)) ; mesh(iel)%zV=0.d0
-   allocate(mesh(iel)%u(mV)) ; mesh(iel)%u=0.d0
+   allocate(mesh(iel)%xW(mW)) ; mesh(iel)%xW=0.d0
+   allocate(mesh(iel)%yW(mW)) ; mesh(iel)%yW=0.d0
+   allocate(mesh(iel)%zW(mW)) ; mesh(iel)%zW=0.d0
+
+   allocate(mesh(iel)%u(mU)) ; mesh(iel)%u=0.d0
    allocate(mesh(iel)%v(mV)) ; mesh(iel)%v=0.d0
-   allocate(mesh(iel)%w(mV)) ; mesh(iel)%w=0.d0
-   allocate(mesh(iel)%q(mV)) ; mesh(iel)%q=0.d0
-   allocate(mesh(iel)%exx(mV))
-   allocate(mesh(iel)%eyy(mV))
-   allocate(mesh(iel)%ezz(mV))
-   allocate(mesh(iel)%exy(mV))
-   allocate(mesh(iel)%exz(mV))
-   allocate(mesh(iel)%eyz(mV))
-   allocate(mesh(iel)%rho(mV))
-   allocate(mesh(iel)%eta(mV))
+   allocate(mesh(iel)%w(mW)) ; mesh(iel)%w=0.d0
+
+
+   allocate(mesh(iel)%q(mV)) ; mesh(iel)%q=0.d0  ! I dont know what to do here
+
+!   allocate(mesh(iel)%exx(mV)) ! same problem!
+!   allocate(mesh(iel)%eyy(mV)) ! PB ?
+!   allocate(mesh(iel)%ezz(mV)) ! PB ?
+!   allocate(mesh(iel)%exy(mV)) ! PB ?
+!   allocate(mesh(iel)%exz(mV)) ! PB ?
+!   allocate(mesh(iel)%eyz(mV)) ! PB ?
+!   allocate(mesh(iel)%rho(mV)) ! PB ?
+!   allocate(mesh(iel)%eta(mV)) ! PB ?
 
    allocate(mesh(iel)%iconP(mP)) 
-   allocate(mesh(iel)%p(mP)) ; mesh(iel)%p=0.d0
+   allocate(mesh(iel)%p(mP))  ; mesh(iel)%p=0.d0
    allocate(mesh(iel)%xP(mP)) ; mesh(iel)%xP=0.d0
    allocate(mesh(iel)%yP(mP)) ; mesh(iel)%yP=0.d0
    allocate(mesh(iel)%zP(mP)) ; mesh(iel)%zP=0.d0
 
    select case (geometry)
    case('cartesian','john') 
-      allocate(mesh(iel)%bnd1_node(mV))
-      allocate(mesh(iel)%bnd2_node(mV))
-      allocate(mesh(iel)%bnd3_node(mV))
-      allocate(mesh(iel)%bnd4_node(mV))
-      allocate(mesh(iel)%bnd5_node(mV))
-      allocate(mesh(iel)%bnd6_node(mV))
+      allocate(mesh(iel)%bnd1_Unode(mU))
+      allocate(mesh(iel)%bnd2_Unode(mU))
+      allocate(mesh(iel)%bnd3_Unode(mU))
+      allocate(mesh(iel)%bnd4_Unode(mU))
+      allocate(mesh(iel)%bnd5_Unode(mU))
+      allocate(mesh(iel)%bnd6_Unode(mU))
+      allocate(mesh(iel)%bnd1_Vnode(mV))
+      allocate(mesh(iel)%bnd2_Vnode(mV))
+      allocate(mesh(iel)%bnd3_Vnode(mV))
+      allocate(mesh(iel)%bnd4_Vnode(mV))
+      allocate(mesh(iel)%bnd5_Vnode(mV))
+      allocate(mesh(iel)%bnd6_Vnode(mV))
+      allocate(mesh(iel)%bnd1_Wnode(mW))
+      allocate(mesh(iel)%bnd2_Wnode(mW))
+      allocate(mesh(iel)%bnd3_Wnode(mW))
+      allocate(mesh(iel)%bnd4_Wnode(mW))
+      allocate(mesh(iel)%bnd5_Wnode(mW))
+      allocate(mesh(iel)%bnd6_Wnode(mW))
    case('spherical')
-      allocate(mesh(iel)%inner_node(mV))
-      allocate(mesh(iel)%outer_node(mV))
-      allocate(mesh(iel)%rV(mV))
-      allocate(mesh(iel)%thetaV(mV))
-      allocate(mesh(iel)%phiV(mV))
-      allocate(mesh(iel)%rP(mP))
-      allocate(mesh(iel)%thetaP(mP))
-      allocate(mesh(iel)%phiP(mP))
+      allocate(mesh(iel)%inner_Unode(mV))
+      allocate(mesh(iel)%outer_Unode(mV))
+      allocate(mesh(iel)%inner_Vnode(mV))
+      allocate(mesh(iel)%outer_Vnode(mV))
+      allocate(mesh(iel)%inner_Wnode(mV))
+      allocate(mesh(iel)%outer_Wnode(mV))
+      allocate(mesh(iel)%rV(mV))           ! PB ?
+      allocate(mesh(iel)%thetaV(mV))           ! PB ?
+      allocate(mesh(iel)%phiV(mV))           ! PB ?
+      allocate(mesh(iel)%rP(mP))           ! PB ?
+      allocate(mesh(iel)%thetaP(mP))           ! PB ?
+      allocate(mesh(iel)%phiP(mP))           ! PB ?
    case default
       stop 'initialise_elements: unknown geometry'
    end select
 
-   allocate(mesh(iel)%fix_u(mV))
+
+
+   allocate(mesh(iel)%fix_u(mU))
    allocate(mesh(iel)%fix_v(mV))
-   allocate(mesh(iel)%fix_w(mV))
+   allocate(mesh(iel)%fix_w(mW))
 
    allocate(mesh(iel)%iconT(mT)) 
    allocate(mesh(iel)%xT(mT))

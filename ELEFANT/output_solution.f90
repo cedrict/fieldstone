@@ -294,33 +294,33 @@ end do
 write(123,*) '</DataArray>'
 end if
 !-----
-if (output_boundary_indicators .and. ndim==3) then
-write(123,*) '<DataArray type="Float32" Name="boundary: 5" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      if (mesh(iel)%bnd5_node(k)) then
-         write(123,'(i1)') 1
-      else
-         write(123,'(i1)') 0
-      end if
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (output_boundary_indicators .and. ndim==3) then
+!write(123,*) '<DataArray type="Float32" Name="boundary: 5" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      if (mesh(iel)%bnd5_node(k)) then
+!         write(123,'(i1)') 1
+!      else
+!         write(123,'(i1)') 0
+!      end if
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
-if (output_boundary_indicators .and. ndim==3) then
-write(123,*) '<DataArray type="Float32" Name="boundary: 6" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      if (mesh(iel)%bnd6_node(k)) then
-         write(123,'(i1)') 1
-      else
-         write(123,'(i1)') 0
-      end if
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (output_boundary_indicators .and. ndim==3) then
+!write(123,*) '<DataArray type="Float32" Name="boundary: 6" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      if (mesh(iel)%bnd6_node(k)) then
+!         write(123,'(i1)') 1
+!      else
+!         write(123,'(i1)') 0
+!      end if
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
 if (output_boundary_indicators) then
 write(123,*) '<DataArray type="Float32" Name="boundary: 1" Format="ascii">'
@@ -464,65 +464,65 @@ end do
 write(123,*) '</DataArray>'
 end if
 !-----
-if (solve_stokes_system) then
-write(123,*) '<DataArray type="Float32" Name="exx" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      write(123,*) mesh(iel)%exx(k)
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (solve_stokes_system) then
+!write(123,*) '<DataArray type="Float32" Name="exx" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      write(123,*) mesh(iel)%exx(k)
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
-if (solve_stokes_system) then
-write(123,*) '<DataArray type="Float32" Name="eyy" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      write(123,'(es12.5)') mesh(iel)%eyy(k)
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (solve_stokes_system) then
+!write(123,*) '<DataArray type="Float32" Name="eyy" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      write(123,'(es12.5)') mesh(iel)%eyy(k)
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
-if (solve_stokes_system .and. ndim==3) then
-write(123,*) '<DataArray type="Float32" Name="ezz" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      write(123,'(es12.5)') mesh(iel)%ezz(k)
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (solve_stokes_system .and. ndim==3) then
+!write(123,*) '<DataArray type="Float32" Name="ezz" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      write(123,'(es12.5)') mesh(iel)%ezz(k)
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
-if (solve_stokes_system) then
-write(123,*) '<DataArray type="Float32" Name="exy" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      write(123,'(es12.5)') mesh(iel)%exy(k)
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (solve_stokes_system) then
+!write(123,*) '<DataArray type="Float32" Name="exy" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      write(123,'(es12.5)') mesh(iel)%exy(k)
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
-if (solve_stokes_system .and. ndim==3) then
-write(123,*) '<DataArray type="Float32" Name="exz" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      write(123,'(es12.5)') mesh(iel)%exz(k)
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (solve_stokes_system .and. ndim==3) then
+!write(123,*) '<DataArray type="Float32" Name="exz" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      write(123,'(es12.5)') mesh(iel)%exz(k)
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
-if (solve_stokes_system .and. ndim==3) then
-write(123,*) '<DataArray type="Float32" Name="eyz" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      write(123,'(es12.5)') mesh(iel)%eyz(k)
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (solve_stokes_system .and. ndim==3) then
+!write(123,*) '<DataArray type="Float32" Name="eyz" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      write(123,'(es12.5)') mesh(iel)%eyz(k)
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
 write(123,*) '</PointData>'
 !=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

@@ -40,7 +40,7 @@ hy=Ly/nely
 !velocity 
 !----------------------------------------------------------
 
-select case(spaceV)
+select case(spaceVelocity)
 
 !------------------
 case('__Q1','_Q1+')
@@ -68,6 +68,9 @@ case('__Q1','_Q1+')
          mesh(counter)%hy=hy
          mesh(counter)%hz=0
          mesh(counter)%vol=hx*hy
+         mesh(counter)%iconU(:)=mesh(counter)%iconV(:)
+         mesh(counter)%xU(:)=mesh(counter)%xV(:)
+         mesh(counter)%yU(:)=mesh(counter)%yV(:)
          if (ielx==1)    mesh(counter)%bnd1_elt=.true.
          if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
          if (iely==1)    mesh(counter)%bnd3_elt=.true.
@@ -75,7 +78,7 @@ case('__Q1','_Q1+')
       end do    
    end do    
 
-   if (spaceV=='_Q1+') then ! add bubble node
+   if (spaceVelocity=='_Q1+') then ! add bubble node
    do iel=1,nel
       mesh(iel)%xV(5)=mesh(iel)%xc
       mesh(iel)%yV(5)=mesh(iel)%yc
@@ -126,6 +129,9 @@ case('__Q2')
          mesh(counter)%hx=hx
          mesh(counter)%hy=hy
          mesh(counter)%vol=hx*hy
+         mesh(counter)%iconU(:)=mesh(counter)%iconV(:)
+         mesh(counter)%xU(:)=mesh(counter)%xV(:)
+         mesh(counter)%yU(:)=mesh(counter)%yV(:)
          if (ielx==1)    mesh(counter)%bnd1_elt=.true.
          if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
          if (iely==1)    mesh(counter)%bnd3_elt=.true.
@@ -156,6 +162,9 @@ case('__P1','_P1+')
             mesh(counter)%yc=sum(mesh(counter)%yV)/3
             mesh(counter)%hx=hx ; mesh(counter)%hy=hy ; mesh(counter)%hz=0
             mesh(counter)%vol=hx*hy/2
+         mesh(counter)%iconU(:)=mesh(counter)%iconV(:)
+         mesh(counter)%xU(:)=mesh(counter)%xV(:)
+         mesh(counter)%yU(:)=mesh(counter)%yV(:)
             if (ielx==1)    mesh(counter)%bnd1_elt=.true.
             if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
             if (iely==1)    mesh(counter)%bnd3_elt=.true.
@@ -170,6 +179,9 @@ case('__P1','_P1+')
             mesh(counter)%yc=sum(mesh(counter)%yV)/3
             mesh(counter)%hx=hx ; mesh(counter)%hy=hy ; mesh(counter)%hz=0
             mesh(counter)%vol=hx*hy/2
+         mesh(counter)%iconU(:)=mesh(counter)%iconV(:)
+         mesh(counter)%xU(:)=mesh(counter)%xV(:)
+         mesh(counter)%yU(:)=mesh(counter)%yV(:)
             if (ielx==1)    mesh(counter)%bnd1_elt=.true.
             if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
             if (iely==1)    mesh(counter)%bnd3_elt=.true.
@@ -185,6 +197,9 @@ case('__P1','_P1+')
             mesh(counter)%yc=sum(mesh(counter)%yV)/3
             mesh(counter)%hx=hx ; mesh(counter)%hy=hy ; mesh(counter)%hz=0
             mesh(counter)%vol=hx*hy/2
+         mesh(counter)%iconU(:)=mesh(counter)%iconV(:)
+         mesh(counter)%xU(:)=mesh(counter)%xV(:)
+         mesh(counter)%yU(:)=mesh(counter)%yV(:)
             if (ielx==1)    mesh(counter)%bnd1_elt=.true.
             if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
             if (iely==1)    mesh(counter)%bnd3_elt=.true.
@@ -199,6 +214,9 @@ case('__P1','_P1+')
             mesh(counter)%yc=sum(mesh(counter)%yV)/3
             mesh(counter)%hx=hx ; mesh(counter)%hy=hy ; mesh(counter)%hz=0
             mesh(counter)%vol=hx*hy/2
+         mesh(counter)%iconU(:)=mesh(counter)%iconV(:)
+         mesh(counter)%xU(:)=mesh(counter)%xV(:)
+         mesh(counter)%yU(:)=mesh(counter)%yV(:)
             if (ielx==1)    mesh(counter)%bnd1_elt=.true.
             if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
             if (iely==1)    mesh(counter)%bnd3_elt=.true.
@@ -207,11 +225,14 @@ case('__P1','_P1+')
       end do    
    end do    
 
-   if (spaceV=='_P1+') then
+   if (spaceVelocity=='_P1+') then
       do iel=1,nel
          mesh(iel)%iconV(4)=(nelx+1)*(nely+1)+iel
          mesh(iel)%xV(4)=mesh(iel)%xc
          mesh(iel)%yV(4)=mesh(iel)%yc
+         mesh(iel)%iconU(:)=mesh(iel)%iconV(:)
+         mesh(iel)%xU(:)=mesh(iel)%xV(:)
+         mesh(iel)%yU(:)=mesh(iel)%yV(:)
       end do
    end if
 
@@ -265,6 +286,9 @@ case('__P2')
             mesh(counter)%yc=sum(mesh(counter)%yV)/6
             mesh(counter)%hx=hx ; mesh(counter)%hy=hy ; mesh(counter)%hz=0
             mesh(counter)%vol=hx*hy/2
+         mesh(counter)%iconU(:)=mesh(counter)%iconV(:)
+         mesh(counter)%xU(:)=mesh(counter)%xV(:)
+         mesh(counter)%yU(:)=mesh(counter)%yV(:)
             if (ielx==1)    mesh(counter)%bnd1_elt=.true.
             if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
             if (iely==1)    mesh(counter)%bnd3_elt=.true.
@@ -282,6 +306,9 @@ case('__P2')
             mesh(counter)%yc=sum(mesh(counter)%yV)/6
             mesh(counter)%hx=hx ; mesh(counter)%hy=hy ; mesh(counter)%hz=0
             mesh(counter)%vol=hx*hy/2
+         mesh(counter)%iconU(:)=mesh(counter)%iconV(:)
+         mesh(counter)%xU(:)=mesh(counter)%xV(:)
+         mesh(counter)%yU(:)=mesh(counter)%yV(:)
             if (ielx==1)    mesh(counter)%bnd1_elt=.true.
             if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
             if (iely==1)    mesh(counter)%bnd3_elt=.true.
@@ -300,6 +327,9 @@ case('__P2')
             mesh(counter)%yc=sum(mesh(counter)%yV)/6
             mesh(counter)%hx=hx ; mesh(counter)%hy=hy ; mesh(counter)%hz=0
             mesh(counter)%vol=hx*hy/2
+         mesh(counter)%iconU(:)=mesh(counter)%iconV(:)
+         mesh(counter)%xU(:)=mesh(counter)%xV(:)
+         mesh(counter)%yU(:)=mesh(counter)%yV(:)
             if (ielx==1)    mesh(counter)%bnd1_elt=.true.
             if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
             if (iely==1)    mesh(counter)%bnd3_elt=.true.
@@ -317,6 +347,9 @@ case('__P2')
             mesh(counter)%yc=sum(mesh(counter)%yV)/6
             mesh(counter)%hx=hx ; mesh(counter)%hy=hy ; mesh(counter)%hz=0
             mesh(counter)%vol=hx*hy/2
+         mesh(counter)%iconU(:)=mesh(counter)%iconV(:)
+         mesh(counter)%xU(:)=mesh(counter)%xV(:)
+         mesh(counter)%yU(:)=mesh(counter)%yV(:)
             if (ielx==1)    mesh(counter)%bnd1_elt=.true.
             if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
             if (iely==1)    mesh(counter)%bnd3_elt=.true.
@@ -325,16 +358,19 @@ case('__P2')
       end do    
    end do    
 
-   if (spaceV=='_P2+') then
+   if (spaceVelocity=='_P2+') then
       do iel=1,nel
          mesh(iel)%iconV(7)=nnx*nny+iel
          mesh(iel)%xV(7)=mesh(iel)%xc
          mesh(iel)%yV(7)=mesh(iel)%yc
+         mesh(iel)%iconU(:)=mesh(iel)%iconV(:)
+         mesh(iel)%xU(:)=mesh(iel)%xV(:)
+         mesh(iel)%yU(:)=mesh(iel)%yV(:)
       end do
    end if
 
 case default
-   stop 'setup_cartesian2D: unknown spaceV'
+   stop 'setup_cartesian2D: unknown spaceVelocity'
 
 end select
 
@@ -417,12 +453,12 @@ case default
 end select
 
 !----------------------------------------------------------
-! temperature (assumption: spaceT~spaceV) 
+! temperature (assumption: spaceT~spaceVelocity) 
 !----------------------------------------------------------
 
 if (use_T) then
 
-select case(spaceV)
+select case(spaceVelocity)
 case('__Q1','__Q2','__Q3','__P1','__P2','__P3')
    do iel=1,nel
       mesh(iel)%xT=mesh(iel)%xV
@@ -445,7 +481,7 @@ case('_P2+')
       mesh(iel)%iconT=mesh(iel)%iconV(1:6)
    end do
 case default
-   stop 'setup_cartesian2D: spaceT/spaceV problem'
+   stop 'setup_cartesian2D: spaceT/spaceVelocity problem'
 end select
 
 end if ! use_T
@@ -454,11 +490,17 @@ end if ! use_T
 ! flag nodes on boundaries
 
 do iel=1,nel
+   do i=1,mU
+      mesh(iel)%bnd1_Unode(i)=(abs(mesh(iel)%xU(i)-0 )<eps*Lx)
+      mesh(iel)%bnd2_Unode(i)=(abs(mesh(iel)%xU(i)-Lx)<eps*Lx)
+      mesh(iel)%bnd3_Unode(i)=(abs(mesh(iel)%yU(i)-0 )<eps*Ly)
+      mesh(iel)%bnd4_Unode(i)=(abs(mesh(iel)%yU(i)-Ly)<eps*Ly)
+   end do
    do i=1,mV
-      mesh(iel)%bnd1_node(i)=(abs(mesh(iel)%xV(i)-0 )<eps*Lx)
-      mesh(iel)%bnd2_node(i)=(abs(mesh(iel)%xV(i)-Lx)<eps*Lx)
-      mesh(iel)%bnd3_node(i)=(abs(mesh(iel)%yV(i)-0 )<eps*Ly)
-      mesh(iel)%bnd4_node(i)=(abs(mesh(iel)%yV(i)-Ly)<eps*Ly)
+      mesh(iel)%bnd1_Vnode(i)=(abs(mesh(iel)%xV(i)-0 )<eps*Lx)
+      mesh(iel)%bnd2_Vnode(i)=(abs(mesh(iel)%xV(i)-Lx)<eps*Lx)
+      mesh(iel)%bnd3_Vnode(i)=(abs(mesh(iel)%yV(i)-0 )<eps*Ly)
+      mesh(iel)%bnd4_Vnode(i)=(abs(mesh(iel)%yV(i)-Ly)<eps*Ly)
    end do
 end do
 
@@ -478,6 +520,9 @@ if (debug) then
 write(2345,*) limit//'setup_cartesian2D'//limit
 do iel=1,nel
 write(2345,*) 'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),'iconP',mesh(iel)%iconP(1:mP)
+do k=1,mU
+write(2345,*) mesh(iel)%xU(k),mesh(iel)%yU(k),mesh(iel)%zU(k)
+end do
 do k=1,mV
 write(2345,*) mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
 end do

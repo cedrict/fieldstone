@@ -11,6 +11,7 @@ subroutine output_mesh
 use module_parameters, only: mV,mP,spaceV,spaceP,debug,iel,nel,iproc,ndim
 use module_mesh
 use module_timing
+use module_export_vtu
 
 implicit none
 
@@ -47,6 +48,8 @@ write(123,'(a)') '</DataArray>'
 write(123,'(a)') '</Points>'
 !-----
 write(123,'(a)') '<CellData Scalars="scalars">'
+
+
 
 write(123,*) '<DataArray type="Float32" Name="boundary: 1" Format="ascii">'
 do iel=1,nel
@@ -88,26 +91,6 @@ else
 end if
 end do
 write(123,*) '</DataArray>'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 write(123,*) '</CellData>'
 

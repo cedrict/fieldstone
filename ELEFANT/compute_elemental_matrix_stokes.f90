@@ -8,7 +8,7 @@
 
 subroutine compute_elemental_matrix_stokes(K_el,G_el,f_el,h_el)
 
-use module_parameters, only: mV,mP,use_penalty,spaceV,spaceP,iel,penalty,nqel,ndofV,ndim,ndim2
+use module_parameters, only: mU,mV,mW,mP,use_penalty,spaceU,spaceV,spaceW,spaceP,iel,penalty,nqel,ndofV,ndim,ndim2
 use module_arrays
 use module_mesh
 use module_constants
@@ -23,7 +23,7 @@ real(8), intent(out) :: h_el(mP)
 integer iq,k,i1,i2,i3
 real(8) Bmat(ndim2,mV*ndofV),NNNmat(ndim2,mP)
 real(8) rq,sq,tq,jcob,weightq
-real(8) NNNV(mV),NNNP(mP),dNdx(mV),dNdy(mV),dNdz(mV)
+real(8) NNNU(mU),NNNV(mV),NNNW(mW),NNNP(mP),dNdx(mV),dNdy(mV),dNdz(mV)
 
 !==================================================================================================!
 !==================================================================================================!
@@ -51,10 +51,11 @@ do iq=1,nqel
    call experiment_gravity_model(mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
                                  mesh(iel)%gxq(iq),mesh(iel)%gyq(iq),mesh(iel)%gzq(iq))
 
-   call NNN(rq,sq,tq,NNNV(1:mV),mV,ndim,spaceV)
-   call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spaceP)
-
    if (ndim==2) then
+
+      call NNN(rq,sq,tq,NNNU(1:mU),mU,ndim,spaceU)
+      call NNN(rq,sq,tq,NNNV(1:mV),mV,ndim,spaceV)
+      call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spaceP)
 
       call compute_dNdx_dNdy(rq,sq,dNdx,dNdy,jcob)
 
@@ -78,7 +79,7 @@ do iq=1,nqel
       do k=1,mV    
          i1=ndofV*k-1
          i2=ndofV*k
-         f_el(i1)=f_el(i1)+NNNV(k)*mesh(iel)%gxq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
+         f_el(i1)=f_el(i1)+NNNU(k)*mesh(iel)%gxq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
          f_el(i2)=f_el(i2)+NNNV(k)*mesh(iel)%gyq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
       end do
 
@@ -91,6 +92,11 @@ do iq=1,nqel
       end do
 
    else
+
+      call NNN(rq,sq,tq,NNNU(1:mU),mU,ndim,spaceU)
+      call NNN(rq,sq,tq,NNNV(1:mV),mV,ndim,spaceV)
+      call NNN(rq,sq,tq,NNNW(1:mW),mW,ndim,spaceW)
+      call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spaceP)
 
       call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNdx(1:mV),dNdy(1:mV),dNdz(1:mV),jcob)
 

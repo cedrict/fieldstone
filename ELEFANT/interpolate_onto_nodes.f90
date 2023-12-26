@@ -58,9 +58,9 @@ if (ndim==2) then
    do iel=1,nel
       do k=1,mV
          node=mesh(iel)%iconV(k)
-         mesh(iel)%exx(k)=exx(node)
-         mesh(iel)%eyy(k)=eyy(node)
-         mesh(iel)%exy(k)=exy(node)
+!         mesh(iel)%exx(k)=exx(node)
+!         mesh(iel)%eyy(k)=eyy(node)
+!         mesh(iel)%exy(k)=exy(node)
       end do
    end do
 
@@ -109,12 +109,12 @@ if (ndim==3) then
    do iel=1,nel
       do k=1,mV
          node=mesh(iel)%iconV(k)
-         mesh(iel)%exx(k)=exx(node)
-         mesh(iel)%eyy(k)=eyy(node)
-         mesh(iel)%ezz(k)=ezz(node)
-         mesh(iel)%exy(k)=exy(node)
-         mesh(iel)%exz(k)=exz(node)
-         mesh(iel)%eyz(k)=eyz(node)
+!         mesh(iel)%exx(k)=exx(node)
+!         mesh(iel)%eyy(k)=eyy(node)
+!         mesh(iel)%ezz(k)=ezz(node)
+!         mesh(iel)%exy(k)=exy(node)
+!         mesh(iel)%exz(k)=exz(node)
+!         mesh(iel)%eyz(k)=eyz(node)
       end do
    end do
 

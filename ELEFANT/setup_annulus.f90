@@ -8,7 +8,7 @@
 
 subroutine setup_annulus
 
-use module_parameters, only: iproc,debug,spaceV,nelphi,nelr,inner_radius,outer_radius,NV,mV,iel,&
+use module_parameters, only: iproc,debug,spaceVelocity,nelphi,nelr,inner_radius,outer_radius,NV,mV,iel,&
                              nel,mP,spaceP,use_T,NP
 use module_mesh 
 use module_constants, only: pi
@@ -41,7 +41,7 @@ if (outer_radius<inner_radius) stop 'setup_annulus: outer_radius<inner_radius'
 hr=(outer_radius-inner_radius)/nelr
 hphi=2*pi/nelphi
 
-select case(spaceV)
+select case(spaceVelocity)
 
 !------------------
 case('__Q1')
@@ -81,13 +81,21 @@ case('__Q1')
          mesh(counter)%outer_elt=(ielr==nelr)
 
          if (mesh(counter)%inner_elt) then
-            mesh(counter)%inner_node(1)=.true.
-            mesh(counter)%outer_node(4)=.true.
+            mesh(counter)%inner_Unode(1)=.true.
+            mesh(counter)%outer_Unode(4)=.true.
+            mesh(counter)%inner_Vnode(1)=.true.
+            mesh(counter)%outer_Vnode(4)=.true.
          end if
          if (mesh(counter)%outer_elt) then
-            mesh(counter)%outer_node(2)=.true.
-            mesh(counter)%outer_node(3)=.true.
+            mesh(counter)%outer_Unode(2)=.true.
+            mesh(counter)%outer_Unode(3)=.true.
+            mesh(counter)%outer_Vnode(2)=.true.
+            mesh(counter)%outer_Vnode(3)=.true.
          end if
+
+         mesh(counter)%iconU=mesh(counter)%iconV
+         mesh(counter)%xU=mesh(counter)%xV
+         mesh(counter)%yU=mesh(counter)%yV
 
       end do
    end do
@@ -147,15 +155,25 @@ case('__Q2')
          mesh(counter)%outer_elt=(ielr==nelr)
 
          if (mesh(counter)%inner_elt) then
-            mesh(counter)%inner_node(1)=.true.
-            mesh(counter)%outer_node(4)=.true.
-            mesh(counter)%outer_node(7)=.true.
+            mesh(counter)%inner_Unode(1)=.true.
+            mesh(counter)%outer_Unode(4)=.true.
+            mesh(counter)%outer_Unode(7)=.true.
+            mesh(counter)%inner_Vnode(1)=.true.
+            mesh(counter)%outer_Vnode(4)=.true.
+            mesh(counter)%outer_Vnode(7)=.true.
          end if
          if (mesh(counter)%outer_elt) then
-            mesh(counter)%outer_node(3)=.true.
-            mesh(counter)%outer_node(6)=.true.
-            mesh(counter)%outer_node(9)=.true.
+            mesh(counter)%outer_Unode(3)=.true.
+            mesh(counter)%outer_Unode(6)=.true.
+            mesh(counter)%outer_Unode(9)=.true.
+            mesh(counter)%outer_Vnode(3)=.true.
+            mesh(counter)%outer_Vnode(6)=.true.
+            mesh(counter)%outer_Vnode(9)=.true.
          end if
+
+         mesh(counter)%iconU=mesh(counter)%iconV
+         mesh(counter)%xU=mesh(counter)%xV
+         mesh(counter)%yU=mesh(counter)%yV
 
       end do
    end do
@@ -217,11 +235,11 @@ case default
 end select 
 
 !----------------------------------------------------------
-! temperature (assumption: spaceT~spaceV) 
+! temperature (assumption: spaceT~spaceVelocity) 
 !----------------------------------------------------------
 
 if (use_T) then
-select case(spaceV)
+select case(spaceVelocity)
 case('__Q1','__Q2','__Q3','__P1','__P2','__P3')
    do iel=1,nel
       mesh(iel)%xT=mesh(iel)%xV
@@ -237,7 +255,7 @@ case('_Q1+')
       mesh(iel)%iconT=mesh(iel)%iconV(1:4)
    end do
 case default
-   stop 'setup_annulus: spaceT/spaceV problem'
+   stop 'setup_annulus: spaceT/spaceVelocity problem'
 end select
 
 end if

@@ -6,18 +6,20 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine compute_dNdx_dNdy(r,s,dNdx,dNdy,jcob)
+subroutine compute_dNdx_dNdy(r,s,dNUdx,dNUdy,dNVdx,dNVdy,jcob)
 
-use module_parameters
+use module_parameters, only: mU,mV,mmapping,iel,mapping,ndim,spaceU,spaceV
 use module_mesh 
 
 implicit none
 
 real(8), intent(in) :: r,s
-real(8), intent(out) :: dNdx(mmapping),dNdy(mmapping),jcob
+real(8), intent(out) :: dNUdx(mU),dNUdy(mU),dNVdx(mV),dNVdy(mV),jcob
 
 integer k
 real(8) dNNNMdr(mmapping),dNNNMds(mmapping)
+real(8) dNNNUdr(mU),dNNNUds(mU)
+real(8) dNNNVdr(mV),dNNNVds(mV)
 real(8) jcb2D(2,2),jcbi2D(2,2)
 real(8), parameter :: t=0d0
 
@@ -46,10 +48,15 @@ jcbi2D(1,2)=  - jcb2D(1,2) /jcob
 jcbi2D(2,1)=  - jcb2D(2,1) /jcob    
 jcbi2D(2,2)=    jcb2D(1,1) /jcob    
 
-do k=1,mmapping
-   dNdx(k)=jcbi2D(1,1)*dNNNMdr(k)+jcbi2D(1,2)*dNNNMds(k) 
-   dNdy(k)=jcbi2D(2,1)*dNNNMdr(k)+jcbi2D(2,2)*dNNNMds(k)  
-end do
+call dNNNdr(r,s,t,dNNNUdr(1:mU),mU,ndim,spaceU)
+call dNNNds(r,s,t,dNNNUds(1:mU),mU,ndim,spaceU)
+call dNNNdr(r,s,t,dNNNMdr(1:mV),mV,ndim,spaceV)
+call dNNNds(r,s,t,dNNNMds(1:mV),mV,ndim,spaceV)
+
+!do k=1,mmapping
+!   dNdx(k)=jcbi2D(1,1)*dNNNMdr(k)+jcbi2D(1,2)*dNNNMds(k) 
+!   dNdy(k)=jcbi2D(2,1)*dNNNMdr(k)+jcbi2D(2,2)*dNNNMds(k)  
+!end do
 
 end subroutine
 

@@ -2,7 +2,7 @@ module module_parameters
 implicit none
 
 integer :: mmapping            ! number of nodes for mapping 
-integer :: mV                  ! number of velocity nodes per element
+integer :: mU,mV,mW            ! number of velocity nodes per element
 integer :: mP                  ! number of pressure nodes per element
 integer :: mT                  ! number of temperature nodes per element
 integer :: nelx,nely,nelz      ! number of elements in each direction
@@ -13,13 +13,11 @@ integer :: nel                 ! total number of elements
 integer :: ndim                ! number of dimensions
 integer :: nqpts               ! number of quadrature points (Q: per dim; T: per elt)  
 integer :: nqel                ! number of quadrature points per element
-integer :: ndofV               ! number of dofs per velocity node
+integer :: ndofU,ndofV,ndofW   ! number of dofs per velocity node
 integer :: NfemV               ! total number of velocity dofs
 integer :: NfemP               ! total number of pressure dofs
 integer :: NfemT               ! total number of temperature dofs
-integer :: NU                  ! total number of u velocity nodes
-integer :: NV                  ! total number of V velocity nodes
-integer :: NW                  ! total number of W velocity nodes
+integer :: NU,NV,NW            ! total number of V velocity nodes
 integer :: NP                  ! total number of pressure nodes
 integer :: NT                  ! total number of temperature nodes
 integer :: Nq                  ! total number of quadrature points
@@ -52,7 +50,10 @@ real(8) :: outer_radius,inner_radius
 
 character(len=10) :: geometry         ! type of domain geometry
 character(len=6) :: cistep            ! istep parameter in string
+character(len=4) :: spaceU            ! finite element space for velocity
 character(len=4) :: spaceV            ! finite element space for velocity
+character(len=4) :: spaceW            ! finite element space for velocity
+character(len=4) :: spaceVelocity     ! finite element space for velocity
 character(len=4) :: spaceP            ! finite element space for pressure
 character(len=4) :: spaceT            ! finite element space for temperature
 character(len=4) :: mapping           ! type of mapping 
@@ -76,14 +77,16 @@ subroutine write_params
 implicit none
 write(*,'(a,3i10)')    ' ndim,ndim2,ndofV        =',ndim,ndim,ndofV
 write(*,'(a,a11)')     ' geometry                =',geometry
-write(*,'(a,3a10)')    ' spaceV,spaceP,spaceT    =',spaceV,spaceP,spaceT
+write(*,'(a,3a10)')    ' spaceU,spaceV,spaceW    =',spaceU,spaceV,spaceW
+write(*,'(a,2a10)')    ' spaceP,spaceT           =',spaceP,spaceT
 write(*,'(a,a10,i10)') ' mapping,mmaping         =',mapping,mmapping
 write(*,'(a,3f10.3)')  ' Lx,Ly,Lz                =',Lx,Ly,Lz
 write(*,'(a,4i10)')    ' nelx,nely,nelz,nel      =',nelx,nely,nelz,nel
 write(*,'(a,3i10)')    ' nelr,neltheta,nelphi    =',nelr,neltheta,nelphi
-write(*,'(a,3i10)')    ' mV, mP, mT              =',mV,mP,mT
-write(*,'(a,3i10)')    ' NV,NP,NT                =',NV,NP,NT
-write(*,'(a,3i10)')    ' NfemV,NfemP,NfemT       =',NfemV,NfemP,NfemT
+write(*,'(a,3i10)')    ' mU,mV,mW,mP,mT          =',mU,mV,mW,mP,mT
+write(*,'(a,3i10)')    ' NU,NV,NW,NP,NT          =',NU,NV,NW,NP,NT
+write(*,'(a,i10)')     ' NfemV                   =',NfemV
+write(*,'(a,2i10)')    ' NfemP,NfemT             =',NfemP,NfemT
 write(*,'(a,3i10)')    ' nqpts,nqel,Nq           =',nqpts,nqel,Nq
 write(*,'(a,a10)')     ' inner_solver_type       =',inner_solver_type
 write(*,'(a,a10)')     ' outer_solver_type       =',outer_solver_type

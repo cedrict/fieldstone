@@ -8,13 +8,12 @@
 
 subroutine allocate_memory
 
-use module_parameters, only: NV,NP,NT,ndofV,NfemV,NfemP,NfemT,iproc,nmat,ndim,debug
+use module_parameters, only: NU,NV,NW,NP,NT,NfemV,NfemP,NfemT,iproc,nmat,ndim,debug
 use module_arrays, only: solV,solP,rhs_f,rhs_h,Kdiag
 use module_materials
 use module_timing
 
 implicit none
-
 
 !==================================================================================================!
 !==================================================================================================!
@@ -28,10 +27,13 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-ndofV=ndim
-NfemV=NV*ndofV
+NfemV=NU+NV+NW
 NfemP=NP
 NfemT=NT
+
+write(*,'(a,i7)') shift//'NfemV=',NfemV
+write(*,'(a,i7)') shift//'NfemP=',NfemP
+write(*,'(a,i7)') shift//'NfemT=',NfemT
 
 allocate(solV(NfemV))
 allocate(solP(NfemP))

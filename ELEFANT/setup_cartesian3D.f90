@@ -61,7 +61,7 @@ end do
 !velocity 
 !----------------------------------------------------------
 
-select case(spaceV)
+select case(spaceVelocity)
 
 !------------------
 case('__Q1','Q1++')
@@ -105,6 +105,14 @@ case('__Q1','Q1++')
             mesh(counter)%xc=(ielx-1)*hx+hx/2
             mesh(counter)%yc=(iely-1)*hy+hy/2
             mesh(counter)%zc=(ielz-1)*hz+hz/2
+            mesh(counter)%iconU=mesh(counter)%iconV
+            mesh(counter)%xU=mesh(counter)%xV
+            mesh(counter)%yU=mesh(counter)%yV
+            mesh(counter)%zU=mesh(counter)%zV
+            mesh(counter)%iconW=mesh(counter)%iconV
+            mesh(counter)%xW=mesh(counter)%xV
+            mesh(counter)%yW=mesh(counter)%yV
+            mesh(counter)%zW=mesh(counter)%zV
          end do    
       end do    
    end do    
@@ -120,6 +128,14 @@ case('__Q1','Q1++')
       mesh(iel)%zV(10)=mesh(iel)%zV(1)+2*hz/3
       mesh(counter)%iconV(10)=(nelx+1)*(nely+1)*(nelz+1)+2*(iel-1)+2
       !write(888,*) mesh(iel)%xV(9),mesh(iel)%yV(9),mesh(iel)%zV(9)
+      mesh(iel)%iconU=mesh()%iconV
+      mesh(iel)%xU=mesh(iel)%xV
+      mesh(iel)%yU=mesh(iel)%yV
+      mesh(iel)%zU=mesh(iel)%zV
+      mesh(iel)%iconW=mesh(iel)%iconV
+      mesh(iel)%xW=mesh(iel)%xV
+      mesh(iel)%yW=mesh(iel)%yV
+      mesh(iel)%zW=mesh(iel)%zV
    end do
    end if
 
@@ -254,6 +270,15 @@ case('__Q2')
             mesh(counter)%zV(26)=(ielz-1)*hz+hz
             mesh(counter)%zV(27)=(ielz-1)*hz+hz
 
+            mesh(counter)%iconU=mesh(counter)%iconV
+            mesh(counter)%xU=mesh(counter)%xV
+            mesh(counter)%yU=mesh(counter)%yV
+            mesh(counter)%zU=mesh(counter)%zV
+            mesh(counter)%iconW=mesh(counter)%iconV
+            mesh(counter)%xW=mesh(counter)%xV
+            mesh(counter)%yW=mesh(counter)%yV
+            mesh(counter)%zW=mesh(counter)%zV
+
          end do
       end do
    end do
@@ -361,13 +386,29 @@ end if ! use_T
 ! flag nodes on boundaries
 
 do iel=1,nel
+   do i=1,mU
+      mesh(iel)%bnd1_Unode(i)=(abs(mesh(iel)%xU(i)-0 )<eps*Lx)
+      mesh(iel)%bnd2_Unode(i)=(abs(mesh(iel)%xU(i)-Lx)<eps*Lx)
+      mesh(iel)%bnd3_Unode(i)=(abs(mesh(iel)%yU(i)-0 )<eps*Ly)
+      mesh(iel)%bnd4_Unode(i)=(abs(mesh(iel)%yU(i)-Ly)<eps*Ly)
+      mesh(iel)%bnd5_Unode(i)=(abs(mesh(iel)%zU(i)-0 )<eps*Lz)
+      mesh(iel)%bnd6_Unode(i)=(abs(mesh(iel)%zU(i)-Lz)<eps*Lz)
+   end do
    do i=1,mV
-      mesh(iel)%bnd1_node(i)=(abs(mesh(iel)%xV(i)-0 )<eps*Lx)
-      mesh(iel)%bnd2_node(i)=(abs(mesh(iel)%xV(i)-Lx)<eps*Lx)
-      mesh(iel)%bnd3_node(i)=(abs(mesh(iel)%yV(i)-0 )<eps*Ly)
-      mesh(iel)%bnd4_node(i)=(abs(mesh(iel)%yV(i)-Ly)<eps*Ly)
-      mesh(iel)%bnd5_node(i)=(abs(mesh(iel)%zV(i)-0 )<eps*Lz)
-      mesh(iel)%bnd6_node(i)=(abs(mesh(iel)%zV(i)-Lz)<eps*Lz)
+      mesh(iel)%bnd1_Vnode(i)=(abs(mesh(iel)%xV(i)-0 )<eps*Lx)
+      mesh(iel)%bnd2_Vnode(i)=(abs(mesh(iel)%xV(i)-Lx)<eps*Lx)
+      mesh(iel)%bnd3_Vnode(i)=(abs(mesh(iel)%yV(i)-0 )<eps*Ly)
+      mesh(iel)%bnd4_Vnode(i)=(abs(mesh(iel)%yV(i)-Ly)<eps*Ly)
+      mesh(iel)%bnd5_Vnode(i)=(abs(mesh(iel)%zV(i)-0 )<eps*Lz)
+      mesh(iel)%bnd6_Vnode(i)=(abs(mesh(iel)%zV(i)-Lz)<eps*Lz)
+   end do
+   do i=1,mW
+      mesh(iel)%bnd1_Wnode(i)=(abs(mesh(iel)%xW(i)-0 )<eps*Lx)
+      mesh(iel)%bnd2_Wnode(i)=(abs(mesh(iel)%xW(i)-Lx)<eps*Lx)
+      mesh(iel)%bnd3_Wnode(i)=(abs(mesh(iel)%yW(i)-0 )<eps*Ly)
+      mesh(iel)%bnd4_Wnode(i)=(abs(mesh(iel)%yW(i)-Ly)<eps*Ly)
+      mesh(iel)%bnd5_Wnode(i)=(abs(mesh(iel)%zW(i)-0 )<eps*Lz)
+      mesh(iel)%bnd6_Wnode(i)=(abs(mesh(iel)%zW(i)-Lz)<eps*Lz)
    end do
 end do
 

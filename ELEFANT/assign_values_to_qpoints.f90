@@ -55,12 +55,12 @@ if (use_swarm) then
          Tm=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
 
          call NNN(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNV(1:mV),mV,ndim,spaceV)
-         exxm=sum(NNNV(1:mV)*mesh(iel)%exx(1:mV))
-         eyym=sum(NNNV(1:mV)*mesh(iel)%eyy(1:mV))
-         ezzm=sum(NNNV(1:mV)*mesh(iel)%ezz(1:mV))
-         exym=sum(NNNV(1:mV)*mesh(iel)%exy(1:mV))
-         exzm=sum(NNNV(1:mV)*mesh(iel)%exz(1:mV))
-         eyzm=sum(NNNV(1:mV)*mesh(iel)%eyz(1:mV))
+         !exxm=sum(NNNV(1:mV)*mesh(iel)%exx(1:mV))
+         !eyym=sum(NNNV(1:mV)*mesh(iel)%eyy(1:mV))
+         !ezzm=sum(NNNV(1:mV)*mesh(iel)%ezz(1:mV))
+         !exym=sum(NNNV(1:mV)*mesh(iel)%exy(1:mV))
+         !exzm=sum(NNNV(1:mV)*mesh(iel)%exz(1:mV))
+         !eyzm=sum(NNNV(1:mV)*mesh(iel)%eyz(1:mV))
 
          call experiment_material_model(swarm(im)%x,swarm(im)%y,swarm(im)%z,&
                                         pm,Tm,&
@@ -141,12 +141,12 @@ else ! use_swarm=F
          end if
 
          call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNV(1:mV),mV,ndim,spaceV)
-         exxq=sum(NNNV(1:mV)*mesh(iel)%exx(1:mV))
-         eyyq=sum(NNNV(1:mV)*mesh(iel)%eyy(1:mV))
-         ezzq=sum(NNNV(1:mV)*mesh(iel)%ezz(1:mV))
-         exyq=sum(NNNV(1:mV)*mesh(iel)%exy(1:mV))
-         exzq=sum(NNNV(1:mV)*mesh(iel)%exz(1:mV))
-         eyzq=sum(NNNV(1:mV)*mesh(iel)%eyz(1:mV))
+         !exxq=sum(NNNV(1:mV)*mesh(iel)%exx(1:mV))
+         !eyyq=sum(NNNV(1:mV)*mesh(iel)%eyy(1:mV))
+         !ezzq=sum(NNNV(1:mV)*mesh(iel)%ezz(1:mV))
+         !exyq=sum(NNNV(1:mV)*mesh(iel)%exy(1:mV))
+         !exzq=sum(NNNV(1:mV)*mesh(iel)%exz(1:mV))
+         !eyzq=sum(NNNV(1:mV)*mesh(iel)%eyz(1:mV))
 
          call experiment_material_model(mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
                                         mesh(iel)%pq(iq),mesh(iel)%tempq(iq),&
