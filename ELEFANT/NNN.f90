@@ -6,7 +6,7 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine NNN(r,s,t,N,m,ndim,space)
+subroutine NNN(r,s,t,N,m,ndim,space,caller)
 
 use module_constants, only: aa,bb,cc,dd,ee
 
@@ -15,6 +15,7 @@ integer, intent(in) :: m,ndim
 real(8), intent(in) :: r,s,t
 real(8), intent(out) :: N(m)
 character(len=4), intent(in) :: space
+integer, intent(in) :: caller
 real(8), external :: Bubble
 real(8) Nmr,Nlr,Nrr,Nls,Nms,Nrs,Nlt,Nmt,Nrt
 real(8) b1,b2
@@ -29,6 +30,8 @@ real(8) N1r,N1s,N2r,N2s,N3r,N3s,N4r,N4s,N5r,N5s
 !@@ \item 3D: Q0, Q1, Q2, Q1++
 !@@ \end{itemize}
 !==================================================================================================!
+
+!print *,'->',caller,space
 
 if (ndim==2) then
 

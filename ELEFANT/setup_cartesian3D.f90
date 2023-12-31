@@ -128,7 +128,7 @@ case('__Q1','Q1++')
       mesh(iel)%zV(10)=mesh(iel)%zV(1)+2*hz/3
       mesh(counter)%iconV(10)=(nelx+1)*(nely+1)*(nelz+1)+2*(iel-1)+2
       !write(888,*) mesh(iel)%xV(9),mesh(iel)%yV(9),mesh(iel)%zV(9)
-      mesh(iel)%iconU=mesh()%iconV
+      mesh(iel)%iconU=mesh(iel)%iconV
       mesh(iel)%xU=mesh(iel)%xV
       mesh(iel)%yU=mesh(iel)%yV
       mesh(iel)%zU=mesh(iel)%zV
@@ -292,7 +292,7 @@ end select
 ! pressure 
 !----------------------------------------------------------
 
-select case(spaceP)
+select case(spacePressure)
 
 !-----------
 case('__Q0')
@@ -352,7 +352,7 @@ case('__Q1')
 
 !-----------
 case default
-   stop 'setup_cartesian3D: spaceP unknwown'
+   stop 'setup_cartesian3D: spacePressure unknwown'
 end select
 
 !----------------------------------------------------------

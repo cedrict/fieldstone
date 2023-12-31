@@ -23,8 +23,8 @@ type element
   real(8), allocatable :: qx(:),qy(:),qz(:)   ! nodal heat flux vector
   !real(8), allocatable :: exx(:),eyy(:),exy(:)! strain rate components for 2D
   !real(8), allocatable :: ezz(:),exz(:),eyz(:)! additional strain rate components for 3D
-  real(8), allocatable :: rho(:)              ! density on V nodes 
-  real(8), allocatable :: eta(:)              ! viscosity on V nodes 
+  !real(8), allocatable :: rho(:)              ! density on V nodes 
+  !real(8), allocatable :: eta(:)              ! viscosity on V nodes 
   real(8), allocatable :: rV(:),rP(:)         ! 
   real(8), allocatable :: thetaV(:),thetaP(:) !
   real(8), allocatable :: phiV(:),phiP(:)     !

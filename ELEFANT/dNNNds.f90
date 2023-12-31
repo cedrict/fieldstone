@@ -6,7 +6,7 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine dNNNds(r,s,t,dNds,m,ndim,space)
+subroutine dNNNds(r,s,t,dNds,m,ndim,space,caller)
 
 use module_constants, only: aa,bb,cc,dd,ee
 
@@ -15,6 +15,7 @@ integer, intent(in) :: m,ndim
 real(8), intent(in) :: r,s,t
 real(8), intent(out) :: dNds(m)
 character(len=4), intent(in) :: space
+integer, intent(in) :: caller
 real(8), external :: dBubbleds
 real(8) Nmr,Nlr,Nrr,dNls,dNms,dNrs,Nlt,Nmt,Nrt
 real(8) db1ds,db2ds
@@ -28,6 +29,8 @@ real(8) db1ds,db2ds
 !@@ \item 3D: Q1, Q2, Q1++
 !@@ \end{itemize}
 !==================================================================================================!
+
+!print *,'->',caller,space
 
 if (ndim==2) then
 

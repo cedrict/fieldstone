@@ -37,10 +37,12 @@ if (.not.use_penalty) then
 csrGT%nr=NfemP ! number of rows
 csrGT%nc=NfemV ! number of columns
 
-if (spaceP=='__Q0' .or. spaceP=='__P0' .or. spaceP=='_P-1') then ! is pressure discontinuous
+select case(spacePressure)
+
+case('__Q0','__P0','_P-1') ! is pressure discontinuous
    csrGT%NZ=mV*ndofV*nel*mP
 
-else
+case default
 
    allocate(alreadyseen(NfemV))
    nz=0
@@ -64,7 +66,7 @@ else
    deallocate(alreadyseen)    
    csrGT%NZ=nz
 
-end if
+end select
 
 write(*,'(a,i8)') shift//'matrix GT%nr=',csrGT%nr
 write(*,'(a,i8)') shift//'matrix GT%nc=',csrGT%nc
@@ -74,7 +76,9 @@ allocate(csrGT%ia(csrGT%nr+1))
 allocate(csrGT%ja(csrGT%NZ))  
 allocate(csrGT%mat(csrGT%NZ)) 
 
-if (spaceP=='__Q0' .or. spaceP=='__P0') then ! is pressure discontinuous
+select case(spacePressure)
+
+case('__Q0','__P0') ! is pressure discontinuous
 
    nz=0
    csrGT%ia(1)=1
@@ -92,7 +96,7 @@ if (spaceP=='__Q0' .or. spaceP=='__P0') then ! is pressure discontinuous
       csrGT%ia(iel+1)=csrGT%ia(iel)+nsees
    end do
 
-else
+case default
 
    imod=NP/4
 
@@ -123,7 +127,7 @@ else
    end do
    call cpu_time(t4) ; write(*,'(f10.3,a)') t4-t3,'s'
 
-end if
+end select
 
 !------------------------------------------------------------------------------
 
@@ -147,7 +151,7 @@ end if !use_penalty
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'matrix_setup_GT (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'matrix_setup_GT:',elapsed,' s                |'
 
 end if ! iproc
 

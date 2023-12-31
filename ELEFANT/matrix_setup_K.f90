@@ -256,7 +256,7 @@ else
          imod=NV/4
 
          call cpu_time(t3)
-         allocate(alreadyseen(NV*ndofV))
+         allocate(alreadyseen(NU+NV+NW))
          NZ=0
          do ip=1,NV
             if (mod(ip,imod)==0) write(*,'(TL10, F6.1,a)',advance='no') real(ip)/real(NV)*100.,'%'
@@ -281,12 +281,12 @@ else
          write(*,'(a,i11,a)') shift//'csrK%N       =',csrK%N,' '
          write(*,'(a,i11,a)') shift//'csrK%nz      =',csrK%nz,' '
 
-         allocate(csrK%ia(csrK%N+1))   
-         allocate(csrK%ja(csrK%NZ))     
-         allocate(csrK%mat(csrK%NZ))    
+         allocate(csrK%ia(csrK%N+1)) ; csrK%ia=0 
+         allocate(csrK%ja(csrK%NZ))  ; csrK%ja=0 
+         allocate(csrK%mat(csrK%NZ)) ; csrK%mat=0 
 
          call cpu_time(t3)
-         allocate(alreadyseen(NV*ndofV))
+         allocate(alreadyseen(NU+NV+NW))
          nz=0
          csrK%ia(1)=1
          do ip=1,NV
@@ -344,7 +344,7 @@ if (iproc==0) then
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'matrix_setup_K (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'matrix_setup_K:',elapsed,' s                 |'
 
 end if
 

@@ -132,7 +132,7 @@ end do
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'initialise_elements (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'initialise_elements:',elapsed,' s            |'
 
 end if ! iproc
 

@@ -8,7 +8,8 @@
 
 subroutine set_global_parameters_spaceT
 
-use module_parameters, only: iproc,debug,ndim,mT,nelx,nely,nelz,NT,spaceT,geometry,nelr,nelphi,spaceV,use_T
+use module_parameters, only: iproc,debug,ndim,mT,nelx,nely,nelz,NT,spaceTemperature,&
+                             geometry,nelr,nelphi,spaceVelocity,use_T
 use module_timing
 use module_arrays, only: rT,sT,tT
 
@@ -30,15 +31,15 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-select case(spaceV)
+select case(spaceVelocity)
 case('__Q1','__Q2','__Q3','__P1','__P2','__P3')
-   spaceT=spaceV
+   spaceTemperature=spaceVelocity
 case('_Q1+')
-   spaceT='__Q1'
+   spaceTemperature='__Q1'
 case('_P2+')
-   spaceT='__P2'
+   spaceTemperature='__P2'
 case default
-   stop 'set_global_parameters_spaceT: spaceV/spaceT pb'
+   stop 'set_global_parameters_spaceT: spaceVelocity/spaceTemperature pb'
 end select
 
 !----------------------------------------------------------
@@ -47,7 +48,7 @@ if (.not.use_T) return
 
 if (ndim==2) then
 
-   select case(spaceT)
+   select case(spaceTemperature)
    !-----------
    case('__Q1')
       mT=2**ndim
@@ -139,7 +140,7 @@ if (ndim==2) then
 
 else
 
-   select case(spaceT)
+   select case(spaceTemperature)
 
    !-----------
    case('__Q1')
@@ -186,7 +187,7 @@ else
 
 end if
 
-write(*,'(a,a)') shift//'spaceT=',spaceT
+write(*,'(a,a)') shift//'spaceTemperature=',spaceTemperature
 write(*,'(a,i5)') shift//'NT=',NT
 
 !----------------------------------------------------------
@@ -207,7 +208,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'set_global_parameters_spaceT (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'set_global_parameters_spaceT (',elapsed,' s)     |'
 
 end if ! iproc
 

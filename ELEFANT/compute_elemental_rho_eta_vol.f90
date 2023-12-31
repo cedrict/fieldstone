@@ -48,6 +48,7 @@ do iel=1,nel
       mesh(iel)%eta_avrg=mesh(iel)%eta_avrg+mesh(iel)%etaq(iq)*mesh(iel)%JxWq(iq)
       mesh(iel)%vol     =mesh(iel)%vol     +                   mesh(iel)%JxWq(iq)
    end do
+   print *,mesh(iel)%vol
    mesh(iel)%rho_avrg=mesh(iel)%rho_avrg/mesh(iel)%vol
    mesh(iel)%eta_avrg=mesh(iel)%eta_avrg/mesh(iel)%vol
    dens_min=min(dens_min,mesh(iel)%rho_avrg)

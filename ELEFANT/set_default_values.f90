@@ -32,11 +32,11 @@ Lz=1
 nelx=8
 nely=8
 geometry='cartesian'
-spaceV='__Q2'
-spaceP='__Q1'
+spaceVelocity='__Q2'
+spacePressure='__Q1'
 inner_solver_type='__y12m'
 outer_solver_type='___pcg'
-mapping=spaceV !isoparametric
+mapping=spaceVelocity !isoparametric
 use_swarm=.false.
 nmarker_per_dim=5 
 init_marker_random=.false. 
@@ -64,7 +64,7 @@ bnd2_bcV_type='noslip'
 bnd3_bcV_type='noslip'
 bnd4_bcV_type='noslip'
 
-write(*,'(a)') 'set_default_values '
+write(*,'(a)') 'set_default_values                      |'
 
 end if ! iproc
 

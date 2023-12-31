@@ -79,6 +79,7 @@ call experiment_initial_temperature
 call estimate_memory_use
 call spacer
 call write_params 
+call spacer
 
 do istep=1,nstep !-----------------------------------------
                                                           !

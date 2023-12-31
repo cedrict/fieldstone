@@ -8,7 +8,8 @@
 
 subroutine setup_john
 
-use module_parameters, only: ndim,iproc,debug,nel,use_T,iel,mV,spaceV,spaceP,mP,Lx,Ly
+use module_parameters, only: ndim,iproc,debug,nel,use_T,iel,mU,mV,spaceVelocity,&
+                             spacePressure,mP,Lx,Ly,nelx,nely,nelz
 use module_mesh 
 use module_constants, only: eps 
 use module_timing
@@ -33,6 +34,10 @@ call system_clock(counti,count_rate)
 !==============================================================================!
 
 if (ndim==3) stop 'setup_john: ndim=3'
+
+nelx=0
+nely=0
+nelz=0
 
 xpts( 1)=0d0    ; ypts(1)=0d0
 xpts( 2)=1d0    ; ypts(2)=0d0
@@ -107,7 +112,7 @@ case('__P2')
    end do
 
 case default
-   stop 'setup_john: spaceV not supported yet'
+   stop 'setup_john: spaceVelocity not supported yet'
 
 end select
 
@@ -115,7 +120,7 @@ end select
 !pressure
 !----------------------------------------------------------
 
-select case(spaceP)
+select case(spacePressure)
 
 !-----------
 case('__P0')
@@ -136,7 +141,7 @@ case('__P1')
    end do
 
 case default
-   stop 'setup_john: spaceP not supported yet'
+   stop 'setup_john: spacePressure not supported yet'
 
 end select
 
@@ -184,7 +189,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'setup_john (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'setup_john:',elapsed,' s                     |'
 
 end if ! iproc
 

@@ -8,22 +8,30 @@
 
 subroutine compute_elemental_matrix_stokes(K_el,G_el,f_el,h_el)
 
-use module_parameters, only: mU,mV,mW,mP,use_penalty,spaceU,spaceV,spaceW,spaceP,iel,penalty,nqel,ndofV,ndim,ndim2
+use module_parameters, only: mU,mV,mW,mP,use_penalty,spaceU,spaceV,spaceW,spacePressure,&
+                             iel,penalty,nqel,ndofV,ndim,ndim2
 use module_arrays
 use module_mesh
 use module_constants
 
 implicit none
 
-real(8), intent(out) :: K_el(mV*ndofV,mV*ndofV)
-real(8), intent(out) :: G_el(mV*ndofV,mP)
-real(8), intent(out) :: f_el(mV*ndofV)
+real(8), intent(out) :: K_el(mU+mV+mW,mU*mV+mW)
+real(8), intent(out) :: G_el(mU+mV+mW,mP)
+real(8), intent(out) :: f_el(mU+mV+mW)
 real(8), intent(out) :: h_el(mP)
 
 integer iq,k,i1,i2,i3
-real(8) Bmat(ndim2,mV*ndofV),NNNmat(ndim2,mP)
+real(8) Bmat(ndim2,mU+mV+mW),NNNmat(ndim2,mP)
 real(8) rq,sq,tq,jcob,weightq
-real(8) NNNU(mU),NNNV(mV),NNNW(mW),NNNP(mP),dNdx(mV),dNdy(mV),dNdz(mV)
+real(8) NNNU(mU),NNNV(mV),NNNW(mW),NNNP(mP)
+real(8) dNUdx(mU),dNUdy(mU),dNUdz(mU)
+real(8) dNVdx(mV),dNVdy(mV),dNVdz(mV)
+real(8) dNWdx(mW),dNWdy(mW),dNWdz(mW)
+integer, parameter :: caller_id01=801
+integer, parameter :: caller_id02=802
+integer, parameter :: caller_id03=803
+integer, parameter :: caller_id04=804
 
 !==================================================================================================!
 !==================================================================================================!
@@ -32,6 +40,8 @@ real(8) NNNU(mU),NNNV(mV),NNNW(mW),NNNP(mP),dNdx(mV),dNdy(mV),dNdz(mV)
 !@@ the penalty formulation is used then the viscosity at the reduced quadrature location 
 !@@ is obtained by taking the maximum viscosity value carried by the quadrature points of 
 !@@ the element. 
+!@@ Note that implicitely here it is assumed that the number of dofs in all 2 (or 3)
+!@@ dimensions are equal (to ndofV).
 !==================================================================================================!
 
 NNNmat=0.d0
@@ -53,32 +63,24 @@ do iq=1,nqel
 
    if (ndim==2) then
 
-      call NNN(rq,sq,tq,NNNU(1:mU),mU,ndim,spaceU)
-      call NNN(rq,sq,tq,NNNV(1:mV),mV,ndim,spaceV)
-      call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spaceP)
+      call NNN(rq,sq,tq,NNNU(1:mU),mU,ndim,spaceU,caller_id01)
+      call NNN(rq,sq,tq,NNNV(1:mV),mV,ndim,spaceV,caller_id02)
+      call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spacePressure,caller_id03)
 
-      call compute_dNdx_dNdy(rq,sq,dNdx,dNdy,jcob)
+      call compute_dNdx_dNdy(rq,sq,dNUdx,dNUdy,dNVdx,dNVdy,jcob)
 
       mesh(iel)%JxWq(iq)=jcob*mesh(iel)%weightq(iq)
 
-      !-------------------------
-      ! building gradient matrix
-      !-------------------------
+      !------------------------------------------
+      ! building gradient matrix and compute f_el
+      !------------------------------------------
       do k=1,mV    
          i1=ndofV*k-1    
          i2=ndofV*k    
-         Bmat(1,i1)=dNdx(k) 
-         Bmat(2,i2)=dNdy(k)
-         Bmat(3,i1)=dNdy(k) 
-         Bmat(3,i2)=dNdx(k)
-      end do 
-
-      !---------------
-      ! compute f_el
-      !---------------
-      do k=1,mV    
-         i1=ndofV*k-1
-         i2=ndofV*k
+         Bmat(1,i1)=dNUdx(k) 
+         Bmat(2,i2)=dNVdy(k)
+         Bmat(3,i1)=dNUdy(k) 
+         Bmat(3,i2)=dNVdx(k)
          f_el(i1)=f_el(i1)+NNNU(k)*mesh(iel)%gxq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
          f_el(i2)=f_el(i2)+NNNV(k)*mesh(iel)%gyq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
       end do
@@ -93,42 +95,33 @@ do iq=1,nqel
 
    else
 
-      call NNN(rq,sq,tq,NNNU(1:mU),mU,ndim,spaceU)
-      call NNN(rq,sq,tq,NNNV(1:mV),mV,ndim,spaceV)
-      call NNN(rq,sq,tq,NNNW(1:mW),mW,ndim,spaceW)
-      call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spaceP)
+      call NNN(rq,sq,tq,NNNU(1:mU),mU,ndim,spaceU,caller_id01)
+      call NNN(rq,sq,tq,NNNV(1:mV),mV,ndim,spaceV,caller_id02)
+      call NNN(rq,sq,tq,NNNW(1:mW),mW,ndim,spaceW,caller_id03)
+      call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spacePressure,caller_id04)
 
-      call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNdx(1:mV),dNdy(1:mV),dNdz(1:mV),jcob)
+      call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNUdx,dNUdy,dNUdz,dNVdx,dNVdy,dNVdz,dNWdx,dNWdy,dNWdz,jcob)
 
       mesh(iel)%JxWq(iq)=jcob*mesh(iel)%weightq(iq)
 
-      !-------------------------
-      ! building gradient matrix
-      !-------------------------
+      !------------------------------------------
+      ! building gradient matrix and compute f_el
+      !------------------------------------------
       Bmat=0
       do k=1,mV    
          i1=ndofV*k-2    
          i2=ndofV*k-1    
          i3=ndofV*k    
-         Bmat(1,i1)=dNdx(k)
-         Bmat(2,i2)=dNdy(k)
-         Bmat(3,i3)=dNdz(k)
-         Bmat(4,i1)=dNdy(k) ; Bmat(4,i2)=dNdx(k)
-         Bmat(5,i1)=dNdz(k) ; Bmat(5,i3)=dNdx(k)
-         Bmat(6,i2)=dNdz(k) ; Bmat(6,i3)=dNdy(k)
-      end do 
-
-      !---------------
-      ! compute f_el
-      !---------------
-      do k=1,mV    
-         i1=ndofV*k-2
-         i2=ndofV*k-1
-         i3=ndofV*k
-         f_el(i1)=f_el(i1)+NNNV(k)*mesh(iel)%gxq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
+         Bmat(1,i1)=dNUdx(k)
+         Bmat(2,i2)=dNVdy(k)
+         Bmat(3,i3)=dNWdz(k)
+         Bmat(4,i1)=dNUdy(k) ; Bmat(4,i2)=dNVdx(k)
+         Bmat(5,i1)=dNUdz(k) ; Bmat(5,i3)=dNWdx(k)
+         Bmat(6,i2)=dNVdz(k) ; Bmat(6,i3)=dNWdy(k)
+         f_el(i1)=f_el(i1)+NNNU(k)*mesh(iel)%gxq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
          f_el(i2)=f_el(i2)+NNNV(k)*mesh(iel)%gyq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
-         f_el(i3)=f_el(i3)+NNNV(k)*mesh(iel)%gzq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
-      end do
+         f_el(i3)=f_el(i3)+NNNW(k)*mesh(iel)%gzq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
+      end do 
 
       !---------------
       ! compute NNNmat 
@@ -141,11 +134,9 @@ do iq=1,nqel
 
    end if
 
-   K_el=K_el+matmul(transpose(Bmat(1:ndim2,1:mV*ndofV)),&
-                    matmul(Cmat,Bmat(1:ndim2,1:mV*ndofV)))&
-                    *mesh(iel)%etaq(iq)*mesh(iel)%JxWq(iq)
+   K_el=K_el+matmul(transpose(Bmat),matmul(Cmat,Bmat))*mesh(iel)%etaq(iq)*mesh(iel)%JxWq(iq)
 
-   G_el=G_el-matmul(transpose(Bmat(1:ndim2,1:mV*ndofV)),NNNmat(1:ndim2,1:mP))*mesh(iel)%JxWq(iq)
+   G_el=G_el-matmul(transpose(Bmat),NNNmat)*mesh(iel)%JxWq(iq)
 
 end do ! nqel
 
@@ -160,38 +151,36 @@ if (use_penalty) then
 
    if (ndim==2) then
 
-      call compute_dNdx_dNdy(rq,sq,dNdx,dNdy,jcob)
+      call compute_dNdx_dNdy(rq,sq,dNUdx,dNUdy,dNVdx,dNVdy,jcob)
 
       do k=1,mV    
          i1=ndofV*k-1    
          i2=ndofV*k    
-         Bmat(1,i1)=dNdx(k) 
-         Bmat(2,i2)=dNdy(k)
-         Bmat(3,i1)=dNdy(k) 
-         Bmat(3,i2)=dNdx(k)
+         Bmat(1,i1)=dNUdx(k) 
+         Bmat(2,i2)=dNVdy(k)
+         Bmat(3,i1)=dNUdy(k) 
+         Bmat(3,i2)=dNVdx(k)
       end do 
 
    else
 
-      call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNdx,dNdy,dNdz,jcob)
+      call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNUdx,dNUdy,dNUdz,dNVdx,dNVdy,dNVdz,dNWdx,dNWdy,dNWdz,jcob)
 
       do k=1,mV    
+         Bmat(1,i1)=dNUdx(k)
+         Bmat(2,i2)=dNVdy(k)
+         Bmat(3,i3)=dNWdz(k)
+         Bmat(4,i1)=dNUdy(k) ; Bmat(4,i2)=dNVdx(k)
+         Bmat(5,i1)=dNUdz(k) ; Bmat(5,i3)=dNWdx(k)
+         Bmat(6,i2)=dNVdz(k) ; Bmat(6,i3)=dNWdy(k)
          i1=ndofV*k-2    
          i2=ndofV*k-1    
          i3=ndofV*k    
-         Bmat(1,i1)=dNdx(k)
-         Bmat(2,i2)=dNdy(k)
-         Bmat(3,i3)=dNdz(k)
-         Bmat(4,i1)=dNdy(k) ; Bmat(4,i2)=dNdx(k)
-         Bmat(5,i1)=dNdz(k) ; Bmat(5,i3)=dNdx(k)
-         Bmat(6,i2)=dNdz(k) ; Bmat(6,i3)=dNdy(k)
       end do 
 
    end if
 
-   K_el=K_el+matmul(transpose(Bmat(1:ndim2,1:mV*ndofV)),&
-                    matmul(Kmat,Bmat(1:ndim2,1:mV*ndofV)))&
-                    *penalty*mesh(iel)%eta_avrg*jcob*weightq
+   K_el=K_el+matmul(transpose(Bmat),matmul(Kmat,Bmat))*penalty*mesh(iel)%eta_avrg*jcob*weightq
 
 end if ! penalty
 

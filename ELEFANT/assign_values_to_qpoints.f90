@@ -8,7 +8,8 @@
 
 subroutine assign_values_to_qpoints
 
-use module_parameters 
+use module_parameters, only: mU,mV,mW,mP,mT,ndim,iel,use_T,nqel,iproc,nel,&
+                             spacePressure,spaceTemperature,use_swarm
 use module_mesh
 use module_swarm
 use module_statistics
@@ -21,7 +22,12 @@ integer i,im,iq,k
 integer(1) idummy
 real(8) x(1000),y(1000),z(1000),rho(1000),eta(1000)
 real(8) pm,Tm,exxm,eyym,ezzm,exym,exzm,eyzm,NNNV(mV),NNNT(mT),NNNP(mP)
-real(8) exxq,eyyq,ezzq,exyq,exzq,eyzq
+real(8) exxq,eyyq,ezzq,exyq,exzq,eyzq,jcob
+real(8) :: dNUdx(mU),dNUdy(mU),dNUdz(mU) 
+real(8) :: dNVdx(mV),dNVdy(mV),dNVdz(mV) 
+real(8) :: dNWdx(mW),dNWdy(mW),dNWdz(mW) 
+integer, parameter :: caller_id01=501
+integer, parameter :: caller_id02=502
 
 !==================================================================================================!
 !==================================================================================================!
@@ -48,13 +54,17 @@ if (use_swarm) then
 
          im=mesh(iel)%list_of_markers(i)
 
-         call NNN(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNP(1:mP),mP,ndim,spaceP)
+         call NNN(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNP(1:mP),mP,ndim,spacePressure,caller_id01)
          pm=sum(NNNP(1:mP)*mesh(iel)%p(1:mP))
 
-         call NNN(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNT(1:mT),mT,ndim,spaceT)
-         Tm=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
+         if (use_T) then
+            call NNN(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNT(1:mT),mT,ndim,spaceTemperature,caller_id02)
+            Tm=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
+         else
+            Tm=0
+         end if
 
-         call NNN(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNV(1:mV),mV,ndim,spaceV)
+         !call NNN(swarm(im)%r,swarm(im)%s,swarm(im)%t,NNNV(1:mV),mV,ndim,spaceVelocity,caller_id03)
          !exxm=sum(NNNV(1:mV)*mesh(iel)%exx(1:mV))
          !eyym=sum(NNNV(1:mV)*mesh(iel)%eyy(1:mV))
          !ezzm=sum(NNNV(1:mV)*mesh(iel)%ezz(1:mV))
@@ -106,16 +116,16 @@ if (use_swarm) then
                             mesh(iel)%d_rho*(mesh(iel)%zq(iq)-mesh(iel)%zc)
       end do
 
-      do k=1,mV
-         mesh(iel)%rho(k)=mesh(iel)%a_rho+&
-                          mesh(iel)%b_rho*(mesh(iel)%xV(iq)-mesh(iel)%xc)+&
-                          mesh(iel)%c_rho*(mesh(iel)%yV(iq)-mesh(iel)%yc)+&
-                          mesh(iel)%d_rho*(mesh(iel)%zV(iq)-mesh(iel)%zc)
-         mesh(iel)%eta(k)=mesh(iel)%a_eta+&
-                          mesh(iel)%b_eta*(mesh(iel)%xV(iq)-mesh(iel)%xc)+&
-                          mesh(iel)%c_eta*(mesh(iel)%yV(iq)-mesh(iel)%yc)+&
-                          mesh(iel)%d_eta*(mesh(iel)%zV(iq)-mesh(iel)%zc)
-      end do
+      !do k=1,mV
+      !   mesh(iel)%rho(k)=mesh(iel)%a_rho+&
+      !                    mesh(iel)%b_rho*(mesh(iel)%xV(iq)-mesh(iel)%xc)+&
+      !                    mesh(iel)%c_rho*(mesh(iel)%yV(iq)-mesh(iel)%yc)+&
+      !                    mesh(iel)%d_rho*(mesh(iel)%zV(iq)-mesh(iel)%zc)
+      !   mesh(iel)%eta(k)=mesh(iel)%a_eta+&
+      !                    mesh(iel)%b_eta*(mesh(iel)%xV(iq)-mesh(iel)%xc)+&
+      !                    mesh(iel)%c_eta*(mesh(iel)%yV(iq)-mesh(iel)%yc)+&
+      !                    mesh(iel)%d_eta*(mesh(iel)%zV(iq)-mesh(iel)%zc)
+      !end do
 
       etaq_min=min(minval(mesh(iel)%etaq(:)),etaq_min)
       etaq_max=max(maxval(mesh(iel)%etaq(:)),etaq_max)
@@ -130,33 +140,36 @@ else ! use_swarm=F
 
       do iq=1,nqel
 
-         call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim,spaceP)
+         call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim,spacePressure,caller_id01)
          mesh(iel)%pq(iq)=sum(NNNP(1:mP)*mesh(iel)%p(1:mP))
 
          if (use_T) then
-            call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim,spaceT)
+            call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim,spaceTemperature,caller_id02)
             mesh(iel)%tempq(iq)=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
          else
             mesh(iel)%tempq(iq)=0
          end if
 
-         call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNV(1:mV),mV,ndim,spaceV)
-         !exxq=sum(NNNV(1:mV)*mesh(iel)%exx(1:mV))
-         !eyyq=sum(NNNV(1:mV)*mesh(iel)%eyy(1:mV))
-         !ezzq=sum(NNNV(1:mV)*mesh(iel)%ezz(1:mV))
-         !exyq=sum(NNNV(1:mV)*mesh(iel)%exy(1:mV))
-         !exzq=sum(NNNV(1:mV)*mesh(iel)%exz(1:mV))
-         !eyzq=sum(NNNV(1:mV)*mesh(iel)%eyz(1:mV))
+         call compute_dNdx_dNdy_dNdz(mesh(iel)%rq,mesh(iel)%sq,mesh(iel)%tq,&
+                                     dNUdx,dNUdy,dNUdz,dNVdx,dNVdy,dNVdz,dNWdx,dNWdy,dNWdz,jcob)
+         exxq=sum(dNUdx*mesh(iel)%u)
+         eyyq=sum(dNVdy*mesh(iel)%v)
+         ezzq=sum(dNWdz*mesh(iel)%w)
+         exyq=0.5d0*sum(dNUdy*mesh(iel)%u + dNVdx*mesh(iel)%v)
+         exzq=0.5d0*sum(dNUdz*mesh(iel)%u + dNWdx*mesh(iel)%w)
+         eyzq=0.5d0*sum(dNVdz*mesh(iel)%v + dNWdy*mesh(iel)%w)
+
+         mesh(iel)%JxWq(iq)=jcob*mesh(iel)%weightq(iq)
 
          call experiment_material_model(mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
                                         mesh(iel)%pq(iq),mesh(iel)%tempq(iq),&
                                         exxq,eyyq,ezzq,exyq,exzq,eyzq,&
-                             idummy,one,&
-                             mesh(iel)%etaq(iq),&
-                             mesh(iel)%rhoq(iq),&
-                             mesh(iel)%hcondq(iq),&
-                             mesh(iel)%hcapaq(iq),&
-                             mesh(iel)%hprodq(iq))
+                                        idummy,one,&
+                                        mesh(iel)%etaq(iq),&
+                                        mesh(iel)%rhoq(iq),&
+                                        mesh(iel)%hcondq(iq),&
+                                        mesh(iel)%hcapaq(iq),&
+                                        mesh(iel)%hprodq(iq))
 
          !print *,mesh(iel)%etaq(iq),mesh(iel)%rhoq(iq)
   
@@ -173,22 +186,16 @@ else ! use_swarm=F
                            mesh(iel)%a_eta,mesh(iel)%b_eta,mesh(iel)%c_eta,mesh(iel)%d_eta)
       end if
 
-
-
-
-
-
-      do k=1,mV
-         mesh(iel)%rho(k)=mesh(iel)%a_rho+&
-                          mesh(iel)%b_rho*(mesh(iel)%xV(k)-mesh(iel)%xc)+&
-                          mesh(iel)%c_rho*(mesh(iel)%yV(k)-mesh(iel)%yc)+&
-                          mesh(iel)%d_rho*(mesh(iel)%zV(k)-mesh(iel)%zc)
-         mesh(iel)%eta(k)=mesh(iel)%a_eta+&
-                          mesh(iel)%b_eta*(mesh(iel)%xV(k)-mesh(iel)%xc)+&
-                          mesh(iel)%c_eta*(mesh(iel)%yV(k)-mesh(iel)%yc)+&
-                          mesh(iel)%d_eta*(mesh(iel)%zV(k)-mesh(iel)%zc)
-      end do
-
+      !do k=1,mV
+      !   mesh(iel)%rho(k)=mesh(iel)%a_rho+&
+      !                    mesh(iel)%b_rho*(mesh(iel)%xV(k)-mesh(iel)%xc)+&
+      !                    mesh(iel)%c_rho*(mesh(iel)%yV(k)-mesh(iel)%yc)+&
+      !                    mesh(iel)%d_rho*(mesh(iel)%zV(k)-mesh(iel)%zc)
+      !   mesh(iel)%eta(k)=mesh(iel)%a_eta+&
+      !                    mesh(iel)%b_eta*(mesh(iel)%xV(k)-mesh(iel)%xc)+&
+      !                    mesh(iel)%c_eta*(mesh(iel)%yV(k)-mesh(iel)%yc)+&
+      !                    mesh(iel)%d_eta*(mesh(iel)%zV(k)-mesh(iel)%zc)
+      !end do
 
       etaq_min=min(minval(mesh(iel)%etaq(:)),etaq_min)
       etaq_max=max(maxval(mesh(iel)%etaq(:)),etaq_max)

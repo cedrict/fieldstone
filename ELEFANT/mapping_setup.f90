@@ -8,7 +8,7 @@
 
 subroutine mapping_setup
 
-use module_parameters, only: iel,spaceV,mapping,nel,iproc,debug
+use module_parameters, only: iel,spaceVelocity,mapping,nel,iproc,debug
 use module_mesh 
 use module_timing
 
@@ -32,7 +32,7 @@ call system_clock(counti,count_rate)
 
 write(*,'(a)') shift//'mapping='//mapping
 
-if (mapping==spaceV) then
+if (mapping==spaceVelocity) then
    
    do iel=1,nel
       mesh(iel)%xM=mesh(iel)%xV   
@@ -61,7 +61,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'mapping_setup (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'mapping_setup:',elapsed,' s                  |'
 
 end if ! iproc
 

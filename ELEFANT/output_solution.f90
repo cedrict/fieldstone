@@ -50,18 +50,18 @@ call system_clock(counti,count_rate)
 open(unit=123,file='OUTPUT/solution_'//cistep//'.vtu',status='replace',form='formatted')
 write(123,'(a)') '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian">'
 write(123,'(a)') '<UnstructuredGrid>'
-write(123,'(a,i8,a,i7,a)') '<Piece NumberOfPoints="',mV*nel,'" NumberOfCells="',nel,'">'
-!=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+write(123,'(a,i8,a,i7,a)') '<Piece NumberOfPoints="',mmapping*nel,'" NumberOfCells="',nel,'">'
+!------------------
 write(123,'(a)') '<Points>'
 write(123,'(a)') '<DataArray type="Float32" NumberOfComponents="3" Format="ascii">'
 do iel=1,nel
-   do k=1,mV
-      write(123,'(3es12.4)') mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
+   do k=1,mmapping
+      write(123,'(3es12.4)') mesh(iel)%xM(k),mesh(iel)%yM(k),mesh(iel)%zM(k)
    end do
 end do
 write(123,'(a)') '</DataArray>'
 write(123,'(a)') '</Points>'
-!=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+!------------------
 write(123,'(a)') '<CellData Scalars="scalars">'
 !-----
 if (debug .or. output_boundary_indicators) then
@@ -156,53 +156,41 @@ end do
 write(123,'(a)') '</DataArray>'
 end if
 !-----
-if (use_swarm) then
 write(123,*) '<DataArray type="Float32" Name="least squares: a_rho" Format="ascii">'
 do iel=1,nel
    write(123,*) mesh(iel)%a_rho
 end do
 write(123,*) '</DataArray>'
-end if
 !-----
-if (use_swarm) then
 write(123,*) '<DataArray type="Float32" Name="least squares: b_rho" Format="ascii">'
 do iel=1,nel
    write(123,*) mesh(iel)%b_rho
 end do
 write(123,*) '</DataArray>'
-end if
 !-----
-if (use_swarm) then
 write(123,*) '<DataArray type="Float32" Name="least squares: c_rho" Format="ascii">'
 do iel=1,nel
    write(123,*) mesh(iel)%c_rho
 end do
 write(123,*) '</DataArray>'
-end if
 !-----
-if (use_swarm) then
 write(123,*) '<DataArray type="Float32" Name="least squares: a_eta" Format="ascii">'
 do iel=1,nel
    write(123,*) mesh(iel)%a_eta
 end do
 write(123,*) '</DataArray>'
-end if
 !-----
-if (use_swarm) then
 write(123,*) '<DataArray type="Float32" Name="least squares: b_eta" Format="ascii">'
 do iel=1,nel
    write(123,*) mesh(iel)%b_eta
 end do
 write(123,*) '</DataArray>'
-end if
 !-----
-if (use_swarm) then
 write(123,*) '<DataArray type="Float32" Name="least squares: c_eta" Format="ascii">'
 do iel=1,nel
    write(123,*) mesh(iel)%c_eta
 end do
 write(123,*) '</DataArray>'
-end if
 !-----
 write(123,'(a)') '<DataArray type="Float32" Name="rho (avrg)" Format="ascii">'
 do iel=1,nel
@@ -216,26 +204,26 @@ do iel=1,nel
 end do
 write(123,*) '</DataArray>'
 !-----
-if (solve_stokes_system) then
-write(123,*) '<DataArray type="Float32" Name="div(v)" Format="ascii">'
-do iel=1,nel
-   if (ndim==2) then
-      call compute_dNdx_dNdy(zero,zero,dNdx,dNdy,jcob)
-      div_v=sum(dNdx(1:mV)*mesh(iel)%u(1:mV))&
-           +sum(dNdy(1:mV)*mesh(iel)%v(1:mV))
-   else
-      call compute_dNdx_dNdy_dNdz(zero,zero,zero,dNdx,dNdy,dNdz,jcob)
-      div_v=sum(dNdx(1:mV)*mesh(iel)%u(1:mV))&
-           +sum(dNdy(1:mV)*mesh(iel)%v(1:mV))&
-           +sum(dNdz(1:mV)*mesh(iel)%w(1:mV))
-   end if
-   write(123,*) div_v
-end do
-write(123,*) '</DataArray>'
-end if
+!if (solve_stokes_system) then
+!write(123,*) '<DataArray type="Float32" Name="div(v)" Format="ascii">'
+!do iel=1,nel
+!   if (ndim==2) then
+!      call compute_dNdx_dNdy(zero,zero,dNdx,dNdy,jcob)
+!      div_v=sum(dNdx(1:mV)*mesh(iel)%u(1:mV))&
+!           +sum(dNdy(1:mV)*mesh(iel)%v(1:mV))
+!   else
+!      call compute_dNdx_dNdy_dNdz(zero,zero,zero,dNdx,dNdy,dNdz,jcob)
+!      div_v=sum(dNdx(1:mV)*mesh(iel)%u(1:mV))&
+!           +sum(dNdy(1:mV)*mesh(iel)%v(1:mV))&
+!           +sum(dNdz(1:mV)*mesh(iel)%w(1:mV))
+!   end if
+!   write(123,*) div_v
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
 write(123,*) '</CellData>'
-!=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+!------------------
 write(123,*) '<PointData Scalars="scalars">'
 !-----
 if (solve_stokes_system) then
@@ -248,51 +236,51 @@ end do
 write(123,*) '</DataArray>'
 end if
 !-----
-if (solve_stokes_system) then
-write(123,*) '<DataArray type="Float32" Name="pressure (q)" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      write(123,'(es12.4)') mesh(iel)%q(k)
-   end do
-end do
-write(123,*) '</DataArray>'
-end if 
+!if (solve_stokes_system) then
+!write(123,*) '<DataArray type="Float32" Name="pressure (q)" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      write(123,'(es12.4)') mesh(iel)%q(k)
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if 
 !-----
-write(123,*) '<DataArray type="Float32" Name="rho" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      write(123,'(es12.4)') mesh(iel)%rho(k)
-   end do
-end do
-write(123,*) '</DataArray>'
+!write(123,*) '<DataArray type="Float32" Name="rho" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      write(123,'(es12.4)') mesh(iel)%rho(k)
+!   end do
+!end do
+!write(123,*) '</DataArray>'
 !-----
-write(123,*) '<DataArray type="Float32" Name="eta" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      write(123,'(es12.4)') mesh(iel)%eta(k)
-   end do
-end do
-write(123,*) '</DataArray>'
+!write(123,*) '<DataArray type="Float32" Name="eta" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      write(123,'(es12.4)') mesh(iel)%eta(k)
+!   end do
+!end do
+!write(123,*) '</DataArray>'
 !-----
-if (use_T) then 
-write(123,*) '<DataArray type="Float32" Name="temperature (T)" Format="ascii">'
-do iel=1,nel
-   do k=1,mT
-      write(123,'(es12.4)') mesh(iel)%T(k)
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (use_T) then 
+!write(123,*) '<DataArray type="Float32" Name="temperature (T)" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mT
+!      write(123,'(es12.4)') mesh(iel)%T(k)
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
-if (use_T) then 
-write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Name="heat flux" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      write(123,'(3es12.4)') mesh(iel)%qx(k),mesh(iel)%qy(k),mesh(iel)%qz(k)
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (use_T) then 
+!write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Name="heat flux" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      write(123,'(3es12.4)') mesh(iel)%qx(k),mesh(iel)%qy(k),mesh(iel)%qz(k)
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
 !if (output_boundary_indicators .and. ndim==3) then
 !write(123,*) '<DataArray type="Float32" Name="boundary: 5" Format="ascii">'
@@ -322,147 +310,147 @@ end if
 !write(123,*) '</DataArray>'
 !end if
 !-----
-if (output_boundary_indicators) then
-write(123,*) '<DataArray type="Float32" Name="boundary: 1" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      if (mesh(iel)%bnd1_node(k)) then
-         write(123,'(i1)') 1
-      else
-         write(123,'(i1)') 0
-      end if
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (output_boundary_indicators) then
+!write(123,*) '<DataArray type="Float32" Name="boundary: 1" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      if (mesh(iel)%bnd1_node(k)) then
+!         write(123,'(i1)') 1
+!      else
+!         write(123,'(i1)') 0
+!      end if
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
-if (output_boundary_indicators) then
-write(123,*) '<DataArray type="Float32" Name="boundary: 2" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      if (mesh(iel)%bnd2_node(k)) then
-         write(123,'(i1)') 1
-      else
-         write(123,'(i1)') 0
-      end if
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (output_boundary_indicators) then
+!write(123,*) '<DataArray type="Float32" Name="boundary: 2" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      if (mesh(iel)%bnd2_node(k)) then
+!         write(123,'(i1)') 1
+!      else
+!         write(123,'(i1)') 0
+!      end if
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
-if (output_boundary_indicators) then
-write(123,*) '<DataArray type="Float32" Name="boundary: 3" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      if (mesh(iel)%bnd3_node(k)) then
-         write(123,'(i1)') 1
-      else
-         write(123,'(i1)') 0
-      end if
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (output_boundary_indicators) then
+!write(123,*) '<DataArray type="Float32" Name="boundary: 3" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      if (mesh(iel)%bnd3_node(k)) then
+!         write(123,'(i1)') 1
+!      else
+!         write(123,'(i1)') 0
+!      end if
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
-if (output_boundary_indicators) then
-write(123,*) '<DataArray type="Float32" Name="boundary: 4" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      if (mesh(iel)%bnd4_node(k)) then
-         write(123,'(i1)') 1
-      else
-         write(123,'(i1)') 0
-      end if
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (output_boundary_indicators) then
+!write(123,*) '<DataArray type="Float32" Name="boundary: 4" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      if (mesh(iel)%bnd4_node(k)) then
+!         write(123,'(i1)') 1
+!      else
+!         write(123,'(i1)') 0
+!      end if
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
-if (output_fixed_boundaries) then
-write(123,*) '<DataArray type="Float32" Name="fix_u" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      if (mesh(iel)%fix_u(k)) then
-         write(123,'(i1)') 1
-      else
-         write(123,'(i1)') 0
-      end if
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (output_fixed_boundaries) then
+!write(123,*) '<DataArray type="Float32" Name="fix_u" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      if (mesh(iel)%fix_u(k)) then
+!         write(123,'(i1)') 1
+!      else
+!         write(123,'(i1)') 0
+!      end if
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
-if (output_fixed_boundaries) then
-write(123,*) '<DataArray type="Float32" Name="fix_v" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      if (mesh(iel)%fix_v(k)) then
-         write(123,'(i1)') 1
-      else
-         write(123,'(i1)') 0
-      end if
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (output_fixed_boundaries) then
+!write(123,*) '<DataArray type="Float32" Name="fix_v" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      if (mesh(iel)%fix_v(k)) then
+!         write(123,'(i1)') 1
+!      else
+!         write(123,'(i1)') 0
+!      end if
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
-if (output_fixed_boundaries .and. ndim==3) then
-write(123,*) '<DataArray type="Float32" Name="fix_w" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      if (mesh(iel)%fix_w(k)) then
-         write(123,'(i1)') 1
-      else
-         write(123,'(i1)') 0
-      end if
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (output_fixed_boundaries .and. ndim==3) then
+!write(123,*) '<DataArray type="Float32" Name="fix_w" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      if (mesh(iel)%fix_w(k)) then
+!         write(123,'(i1)') 1
+!      else
+!         write(123,'(i1)') 0
+!      end if
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
 write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Name="velocity (analytical)" Format="ascii">'
 do iel=1,nel
-   do k=1,mV
-      call experiment_analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
-                               uth,vth,wth,dum,dum,dum,dum,dum,dum,dum,dum)
+   do k=1,mmapping
+      call experiment_analytical_solution(mesh(iel)%xM(k),mesh(iel)%yM(k),mesh(iel)%zM(k),&
+                                          uth,vth,wth,dum,dum,dum,dum,dum,dum,dum,dum)
       write(123,'(3es12.5)') uth,vth,wth
    end do
 end do
 write(123,*) '</DataArray>'
 !-----
-if (solve_stokes_system) then
-write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Name="velocity (error)" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      call experiment_analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
-                               uth,vth,wth,dum,dum,dum,dum,dum,dum,dum,dum)
-      write(123,'(3es12.5)') mesh(iel)%u(k)-uth,mesh(iel)%v(k)-vth,mesh(iel)%w(k)-wth
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (solve_stokes_system) then
+!write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Name="velocity (error)" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mmapping
+!      call experiment_analytical_solution(mesh(iel)%xM(k),mesh(iel)%yM(k),mesh(iel)%zM(k),&
+!                                          uth,vth,wth,dum,dum,dum,dum,dum,dum,dum,dum)
+!      write(123,'(3es12.5)') mesh(iel)%u(k)-uth,mesh(iel)%v(k)-vth,mesh(iel)%w(k)-wth
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
-write(123,*) '<DataArray type="Float32" Name="pressure q (analytical)" Format="ascii">'
+write(123,*) '<DataArray type="Float32" Name="pressure (analytical)" Format="ascii">'
 do iel=1,nel
-   do k=1,mV
-      call experiment_analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
+   do k=1,mmapping
+      call experiment_analytical_solution(mesh(iel)%xM(k),mesh(iel)%yM(k),mesh(iel)%zM(k),&
                                uth,vth,wth,pth,dum,dum,dum,dum,dum,dum,dum)
       write(123,'(es12.4)') pth
    end do
 end do
 write(123,*) '</DataArray>'
 !-----
-if (solve_stokes_system) then
-write(123,*) '<DataArray type="Float32" Name="pressure q (error)" Format="ascii">'
-do iel=1,nel
-   do k=1,mV
-      call experiment_analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
-                               uth,vth,wth,pth,dum,dum,dum,dum,dum,dum,dum)
-      write(123,'(es12.4)') mesh(iel)%q(k)-pth
-   end do
-end do
-write(123,*) '</DataArray>'
-end if
+!if (solve_stokes_system) then
+!write(123,*) '<DataArray type="Float32" Name="pressure q (error)" Format="ascii">'
+!do iel=1,nel
+!   do k=1,mV
+!      call experiment_analytical_solution(mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k),&
+!                               uth,vth,wth,pth,dum,dum,dum,dum,dum,dum,dum)
+!      write(123,'(es12.4)') mesh(iel)%q(k)-pth
+!   end do
+!end do
+!write(123,*) '</DataArray>'
+!end if
 !-----
 !if (solve_stokes_system) then
 !write(123,*) '<DataArray type="Float32" Name="exx" Format="ascii">'
@@ -525,17 +513,17 @@ end if
 !end if
 !-----
 write(123,*) '</PointData>'
-!=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+!------------------
 write(123,*) '<Cells>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="connectivity" Format="ascii">'
 do iel=1,nel
-   write(123,*) ( (iel-1)*mV+i-1,i=1,mV) 
+   write(123,*) ( (iel-1)*mmapping+i-1,i=1,mmapping) 
 end do
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="offsets" Format="ascii">'
-select case(spaceV)
+select case(mapping)
 case('__Q1')
    if (ndim==2) write(123,*) (iel*4,iel=1,nel)
    if (ndim==3) write(123,*) (iel*8,iel=1,nel)
@@ -548,17 +536,13 @@ case('__P1')
 case('__P2')
    if (ndim==2) write(123,*) (iel*6,iel=1,nel)
    if (ndim==3) write(123,*) (iel*10,iel=1,nel)
-case('_Q1+')
-   write(123,*) (iel*4,iel=1,nel)
-case('Q1++')
-   write(123,*) (iel*8,iel=1,nel)
 case default
    stop 'pb in output_solution: cell offset unknown'
 end select
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="types" Format="ascii">'
-select case(spaceV)
+select case(mapping)
 case('__Q1')
    if (ndim==2) write(123,*) (9,iel=1,nel)
    if (ndim==3) write(123,*) (12,iel=1,nel)
@@ -571,17 +555,13 @@ case('__P1')
 case('__P2')
    if (ndim==2) write(123,*) (22,iel=1,nel)
    if (ndim==3) write(123,*) (24,iel=1,nel)
-case('_Q1+')
-   write(123,*) (9,iel=1,nel)
-case('Q1++')
-   write(123,*) (12,iel=1,nel)
 case default
    stop 'pb in output_solution: cell type unknown'
 end select
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '</Cells>'
-!=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+!------------------
 write(123,*) '</Piece>'
 write(123,*) '</UnstructuredGrid>'
 write(123,*) '</VTKFile>'

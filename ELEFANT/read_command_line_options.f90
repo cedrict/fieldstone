@@ -91,7 +91,7 @@ if (numarg>0) then
 
 end if
 
-write(*,'(a)') 'read_command_line_options'
+write(*,'(a)') 'read_command_line_options               |'
 
 end if ! iproc
 

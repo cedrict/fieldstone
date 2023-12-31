@@ -31,7 +31,7 @@ case('__Q1')
 case('__Q2')
 case('Q1++')
 case default
-   stop 'unknown 3D space in dNNNdr'
+   stop 'unknown 3D space in dNNNdt'
 end select
 
 end subroutine

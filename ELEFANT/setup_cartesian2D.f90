@@ -378,7 +378,7 @@ end select
 ! pressure 
 !----------------------------------------------------------
 
-select case(spaceP)
+select case(spacePressure)
 
 !------------------
 case('__Q0','__P0')
@@ -449,7 +449,7 @@ case('__P1')
 
 !-----------
 case default
-   stop 'setup_cartesian2D: spaceP unknwown'
+   stop 'setup_cartesian2D: spacePressure unknwown'
 end select
 
 !----------------------------------------------------------

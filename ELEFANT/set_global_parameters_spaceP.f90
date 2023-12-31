@@ -8,7 +8,7 @@
 
 subroutine set_global_parameters_spaceP
 
-use module_parameters, only: iproc,debug,ndim,mP,nelx,nely,nelz,NP,spaceP,nelr,nelphi,geometry,nel
+use module_parameters, only: iproc,debug,ndim,mP,nelx,nely,nelz,NP,spacePressure,nelr,nelphi,geometry,nel
 use module_timing
 use module_arrays, only: rP,sP,tP
 
@@ -32,7 +32,7 @@ call system_clock(counti,count_rate)
 
 if (ndim==2) then
 
-   select case(spaceP)
+   select case(spacePressure)
    !------------
    case('__Q0')
       mP=1
@@ -123,7 +123,7 @@ if (ndim==2) then
 
 else
 
-   select case(spaceP)
+   select case(spacePressure)
 
    !------------
    case('__Q0')
@@ -177,7 +177,7 @@ end if
 
 if (NP==0)  stop 'set_global_parameters_spaceP: NP=0'
 
-write(*,'(a,a)') shift//'spaceP=',spaceP
+write(*,'(a,a)') shift//'spacePressure=',spacePressure
 write(*,'(a,i5)') shift//'NP=',NP
 
 !----------------------------------------------------------
@@ -198,7 +198,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'set_global_params_spaceP:',elapsed,' s'
+write(*,'(a,f6.2,a)') 'set_global_params_spaceP:',elapsed,' s       |'
 
 end if ! iproc
 

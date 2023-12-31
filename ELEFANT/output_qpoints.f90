@@ -31,7 +31,7 @@ call system_clock(counti,count_rate)
 open(unit=123,file='OUTPUT/qpoints.vtu',status='replace',form='formatted')
 write(123,*) '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian">'
 write(123,*) '<UnstructuredGrid>'
-write(123,*) '<Piece NumberOfPoints="',Nq,'" NumberOfCells="',Nq,'">'
+write(123,*) '<Piece NumberOfPoints="',NQ,'" NumberOfCells="',NQ,'">'
 !=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 write(123,*) '<Points>'
 write(123,*) '<DataArray type="Float32" NumberOfComponents="3" Format="ascii">'
@@ -106,19 +106,19 @@ write(123,*) '</PointData>'
 write(123,*) '<Cells>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="connectivity" Format="ascii">'
-do iq=1,Nq
+do iq=1,NQ
 write(123,'(i8)') iq-1
 end do
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="offsets" Format="ascii">'
-do iq=1,Nq
+do iq=1,NQ
 write(123,'(i8)') iq
 end do
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="types" Format="ascii">'
-do iq=1,Nq
+do iq=1,NQ
 write(123,'(i1)') 1
 end do
 write(123,*) '</DataArray>'

@@ -8,7 +8,7 @@
 
 subroutine matrix_setup_MP
 
-use module_parameters, only: NP,nelx,nely,nelz,spaceP,iproc,debug,geometry,ndim,iel,mP,nel 
+use module_parameters, only: NP,nelx,nely,nelz,spacePressure,iproc,debug,geometry,ndim,iel,mP,nel 
 use module_timing
 use module_mesh
 use module_sparse, only: csrMP
@@ -36,7 +36,7 @@ if (geometry=='XXXcartesian' .and. ndim==2) then
 
    csrMP%n=NP
 
-   select case(spaceP)
+   select case(spacePressure)
    case('__Q0','__P0')
       csrMP%NZ=NP
    case('__Q1')
@@ -45,7 +45,7 @@ if (geometry=='XXXcartesian' .and. ndim==2) then
       csrMP%NZ=(4*4+(2*(nnx-2)+2*(nny-2))*6+(nnx-2)*(nny-2)*9)
       csrMP%nz=(csrMP%nz-csrMP%n)/2+csrMP%n
    case default
-      stop 'matrix_setup_MP: spaceP not supported'
+      stop 'matrix_setup_MP: spacePressure not supported'
    end select 
 
    write(*,'(a)')     shift//'CSR matrix format symm' 
@@ -56,7 +56,7 @@ if (geometry=='XXXcartesian' .and. ndim==2) then
    allocate(csrMP%ja(csrMP%nz))   
    allocate(csrMP%mat(csrMP%nz))  
 
-   select case(spaceP)
+   select case(spacePressure)
    case('__Q0','__P0')
       csrMP%ia(1)=1
       do iel=1,nel
@@ -88,7 +88,7 @@ if (geometry=='XXXcartesian' .and. ndim==2) then
          end do
       end do
    case default
-      stop 'matrix_setup_MP: spaceP not implemented'
+      stop 'matrix_setup_MP: spacePressure not implemented'
    end select 
 
 !----------------------------------------------------------
@@ -96,7 +96,7 @@ elseif (geometry=='XXXcartesian' .and. ndim==3) then
 
    csrMP%N=NP
 
-   select case(spaceP)
+   select case(spacePressure)
    case('__Q0','__P0')
       csrMP%NZ=NP
    case('__Q1')
@@ -111,7 +111,7 @@ elseif (geometry=='XXXcartesian' .and. ndim==3) then
               +2*(nny-2)*(nnz-2)*18                 ! 2 faces
       csrMP%nz=(csrMP%nz-csrMP%n)/2+csrMP%n
    case default
-      stop 'matrix_setup_MP: spaceP not implemented'
+      stop 'matrix_setup_MP: spacePressure not implemented'
    end select 
 
    write(*,'(a)')     shift//'CSR matrix format symm' 
@@ -122,7 +122,7 @@ elseif (geometry=='XXXcartesian' .and. ndim==3) then
    allocate(csrMP%ja(csrMP%nz))   
    allocate(csrMP%mat(csrMP%nz))  
 
-   select case(spaceP)
+   select case(spacePressure)
    case('__Q0','__P0')
       csrMP%ia(1)=1
       do iel=1,nel
@@ -159,7 +159,7 @@ elseif (geometry=='XXXcartesian' .and. ndim==3) then
       end do
       end do
    case default
-      stop 'matrix_setup_MP: spaceP not implemented'
+      stop 'matrix_setup_MP: spacePressure not implemented'
    end select 
 
 else
@@ -251,7 +251,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'matrix_setup_MP (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'matrix_setup_MP:',elapsed,' s                |'
 
 end if ! iproc
 

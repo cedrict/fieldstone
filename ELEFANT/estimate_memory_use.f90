@@ -65,8 +65,8 @@ if (allocated(mesh(1)%qz))  mem=mem+size(mesh(1)%qz)*8
 !if (allocated(mesh(1)%exy)) mem=mem+size(mesh(1)%exy)*8
 !if (allocated(mesh(1)%exz)) mem=mem+size(mesh(1)%exz)*8
 !if (allocated(mesh(1)%eyz)) mem=mem+size(mesh(1)%eyz)*8
-if (allocated(mesh(1)%rho)) mem=mem+size(mesh(1)%rho)*8
-if (allocated(mesh(1)%eta))     mem=mem+size(mesh(1)%eta)*8
+!if (allocated(mesh(1)%rho)) mem=mem+size(mesh(1)%rho)*8
+!if (allocated(mesh(1)%eta))     mem=mem+size(mesh(1)%eta)*8
 if (allocated(mesh(1)%rV))      mem=mem+size(mesh(1)%rV)*8
 if (allocated(mesh(1)%rP))      mem=mem+size(mesh(1)%rP)*8
 if (allocated(mesh(1)%thetaV))  mem=mem+size(mesh(1)%thetaV)*8
@@ -158,7 +158,7 @@ mem=mem+8
 
 mem=mem*nel
 
-write(*,*) shift//'mem mesh=',mem,'bytes'
+write(*,'(a,i7,a)') shift//'mem mesh=',mem,'bytes'
 
 
 
@@ -170,7 +170,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'estimate_memory_use (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'estimate_memory_use:',elapsed,' s            |'
 
 end if ! iproc
 

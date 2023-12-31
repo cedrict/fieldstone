@@ -30,6 +30,8 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
+write(*,'(a,a)') shift//'mapping=',mapping
+
 if (ndim==2) then
 
    select case(mapping)
@@ -51,7 +53,7 @@ if (ndim==2) then
       smapping=(/0d0,0d0,1d0,0d0,0.5d0,0.5d0/)
    !-----------
    case('__Q1')
-      mmapping=2**ndim
+      mmapping=4
       allocate(rmapping(mmapping)) ; rmapping=0.d0
       allocate(smapping(mmapping)) ; smapping=0.d0
       allocate(tmapping(mmapping)) ; tmapping=0.d0
@@ -59,7 +61,7 @@ if (ndim==2) then
       smapping=(/-1d0,-1d0,+1d0,+1d0/)
    !-----------
    case('__Q2')
-      mmapping=3**ndim
+      mmapping=9
       allocate(rmapping(mmapping)) ; rmapping=0.d0
       allocate(smapping(mmapping)) ; smapping=0.d0
       allocate(tmapping(mmapping)) ; tmapping=0.d0
@@ -74,7 +76,7 @@ else
 
    select case(mapping)
    case('__Q1')
-      mmapping=2**ndim
+      mmapping=8
       allocate(rmapping(mmapping)) ; rmapping=0.d0
       allocate(smapping(mmapping)) ; smapping=0.d0
       allocate(tmapping(mmapping)) ; tmapping=0.d0
@@ -82,7 +84,7 @@ else
       smapping=(/-1d0,-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0/)
       tmapping=(/-1d0,-1d0,-1d0,-1d0,+1d0,+1d0,+1d0,+1d0/)
    case('__Q2')
-      mmapping=3**ndim
+      mmapping=27
       allocate(rmapping(mmapping)) ; rmapping=0.d0
       allocate(smapping(mmapping)) ; smapping=0.d0
       allocate(tmapping(mmapping)) ; tmapping=0.d0
@@ -112,7 +114,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'set_global_parameters_mapping (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'set_global_parameters_mapping:',elapsed,' s  |'
 
 end if ! iproc
 

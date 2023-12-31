@@ -20,7 +20,7 @@ integer :: NfemT               ! total number of temperature dofs
 integer :: NU,NV,NW            ! total number of V velocity nodes
 integer :: NP                  ! total number of pressure nodes
 integer :: NT                  ! total number of temperature nodes
-integer :: Nq                  ! total number of quadrature points
+integer :: NQ                  ! total number of quadrature points
 integer :: nmarker_per_dim     ! initial number of markers per dimension
 integer :: nmarker             ! total number of markers
 integer :: nmat                ! number of materials in the domain
@@ -54,8 +54,8 @@ character(len=4) :: spaceU            ! finite element space for velocity
 character(len=4) :: spaceV            ! finite element space for velocity
 character(len=4) :: spaceW            ! finite element space for velocity
 character(len=4) :: spaceVelocity     ! finite element space for velocity
-character(len=4) :: spaceP            ! finite element space for pressure
-character(len=4) :: spaceT            ! finite element space for temperature
+character(len=4) :: spacePressure     ! finite element space for pressure
+character(len=4) :: spaceTemperature  ! finite element space for temperature
 character(len=4) :: mapping           ! type of mapping 
 character(len=6) :: inner_solver_type ! which type of solver for the inner solve 
 character(len=6) :: outer_solver_type ! which type of solver for the outer solve 
@@ -78,16 +78,16 @@ implicit none
 write(*,'(a,3i10)')    ' ndim,ndim2,ndofV        =',ndim,ndim,ndofV
 write(*,'(a,a11)')     ' geometry                =',geometry
 write(*,'(a,3a10)')    ' spaceU,spaceV,spaceW    =',spaceU,spaceV,spaceW
-write(*,'(a,2a10)')    ' spaceP,spaceT           =',spaceP,spaceT
+write(*,'(a,2a10)')    ' spacePressure           =',spacePressure
+write(*,'(a,2a10)')    ' spaceTemperature        =',spaceTemperature
 write(*,'(a,a10,i10)') ' mapping,mmaping         =',mapping,mmapping
 write(*,'(a,3f10.3)')  ' Lx,Ly,Lz                =',Lx,Ly,Lz
 write(*,'(a,4i10)')    ' nelx,nely,nelz,nel      =',nelx,nely,nelz,nel
 write(*,'(a,3i10)')    ' nelr,neltheta,nelphi    =',nelr,neltheta,nelphi
-write(*,'(a,3i10)')    ' mU,mV,mW,mP,mT          =',mU,mV,mW,mP,mT
-write(*,'(a,3i10)')    ' NU,NV,NW,NP,NT          =',NU,NV,NW,NP,NT
-write(*,'(a,i10)')     ' NfemV                   =',NfemV
-write(*,'(a,2i10)')    ' NfemP,NfemT             =',NfemP,NfemT
-write(*,'(a,3i10)')    ' nqpts,nqel,Nq           =',nqpts,nqel,Nq
+write(*,'(a,5i10)')    ' mU,mV,mW,mP,mT          =',mU,mV,mW,mP,mT
+write(*,'(a,5i10)')    ' NU,NV,NW,NP,NT          =',NU,NV,NW,NP,NT
+write(*,'(a,3i10)')    ' NfemV,NfemP,NfemT       =',NfemV,NfemP,NfemT
+write(*,'(a,3i10)')    ' nqpts,nqel,NQ           =',nqpts,nqel,NQ
 write(*,'(a,a10)')     ' inner_solver_type       =',inner_solver_type
 write(*,'(a,a10)')     ' outer_solver_type       =',outer_solver_type
 write(*,'(a,i10)')     ' nmat                    =',nmat

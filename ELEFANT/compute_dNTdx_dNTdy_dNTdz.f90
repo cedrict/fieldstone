@@ -19,6 +19,9 @@ real(8), intent(out) :: dNdx(mT),dNdy(mT),dNdz(mT),jcob
 integer k
 real(8) dNNNTdr(mT),dNNNTds(mT),dNNNTdt(mT)
 real(8) jcb(3,3),jcbi(3,3)
+integer, parameter :: caller_id01=401
+integer, parameter :: caller_id02=402
+integer, parameter :: caller_id03=403
 
 !==================================================================================================!
 !==================================================================================================!
@@ -28,9 +31,9 @@ real(8) jcb(3,3),jcbi(3,3)
 !@@ $\partial{\bN^\uptheta}/\partial z$ at a location $r,s,t$ passed as argument.
 !==================================================================================================!
 
-call dNNNdr(r,s,t,dNNNTdr(1:mT),mT,ndim,spaceT)
-call dNNNds(r,s,t,dNNNTds(1:mT),mT,ndim,spaceT)
-call dNNNdt(r,s,t,dNNNTdt(1:mT),mT,ndim,spaceT)
+call dNNNdr(r,s,t,dNNNTdr(1:mT),mT,ndim,spaceTemperature,caller_id01)
+call dNNNds(r,s,t,dNNNTds(1:mT),mT,ndim,spaceTemperature,caller_id02)
+call dNNNdt(r,s,t,dNNNTdt(1:mT),mT,ndim,spaceTemperature,caller_id03)
 
 jcb=0.d0 
 do k=1,mT 

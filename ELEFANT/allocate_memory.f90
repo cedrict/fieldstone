@@ -8,7 +8,7 @@
 
 subroutine allocate_memory
 
-use module_parameters, only: NU,NV,NW,NP,NT,NfemV,NfemP,NfemT,iproc,nmat,ndim,debug
+use module_parameters, only: NU,NV,NW,NP,NT,NfemV,NfemP,NfemT,iproc,nmat,debug
 use module_arrays, only: solV,solP,rhs_f,rhs_h,Kdiag
 use module_materials
 use module_timing
@@ -50,7 +50,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'allocate_memory (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'allocate_memory:',elapsed,' s                |'
 
 end if ! iproc
 

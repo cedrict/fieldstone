@@ -8,7 +8,8 @@
 
 subroutine make_matrix_stokes
 
-use module_parameters, only: mV,mP,iproc,debug,iel,ndofV,spaceP,ndim2,inner_solver_type,ndim,nel,use_penalty
+use module_parameters, only: mU,mV,mW,mP,iproc,iel,ndofV,spacePressure,ndim2,inner_solver_type,&
+                             ndim,nel,use_penalty
 use module_arrays
 use module_mesh 
 use module_timing
@@ -19,9 +20,9 @@ implicit none
 
 integer counter_mumps,k1,k2,ikk,jkk,i1,i2,m1,m2,ik,k,jk ! <- too many ?!
 real(8) :: h_el(mP)
-real(8) :: f_el(mV*ndofV)
-real(8) :: K_el(mV*ndofV,mV*ndofV)
-real(8) :: G_el(mV*ndofV,mP)
+real(8) :: f_el(mU+mV+mW)
+real(8) :: K_el(mU+mV+mW,mU+mV+mW)
+real(8) :: G_el(mU+mV+mW,mP)
 real(8) :: C_el(mP,mP)
 real(8) :: S_el(mP,mP)
 
@@ -39,7 +40,9 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
+write(*,'(a,i3)') shift//'mU=',mU
 write(*,'(a,i3)') shift//'mV=',mV
+write(*,'(a,i3)') shift//'mW=',mW
 write(*,'(a,i3)') shift//'mP=',mP
 
 if (ndim==2) ndim2=3
@@ -79,7 +82,9 @@ do iel=1,nel
 
    print *,'building elemental matrix for',iel
 
+
    call compute_elemental_matrix_stokes(K_el,G_el,f_el,h_el)
+   stop '==='
 
    call impose_boundary_conditions_stokes(K_el,G_el,f_el,h_el)
 
@@ -89,7 +94,7 @@ do iel=1,nel
 
    if (.not.use_penalty) then
 
-      select case(spaceP)
+      select case(spacePressure)
       case('__Q0','__P0')
       csrGT%mat(csrGT%ia(iel):csrGT%ia(iel+1)-1)=G_el(:,1)
       rhs_h(iel)=rhs_h(iel)+h_el(1)

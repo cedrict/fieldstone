@@ -8,7 +8,7 @@
 
 subroutine compute_timestep
 
-use module_parameters
+use module_parameters, only: spaceVelocity,CFL_nb,iproc,use_T,dt
 use module_statistics 
 use module_timing
 
@@ -32,8 +32,14 @@ maxv=max(abs(u_min),abs(u_max),abs(v_min),abs(v_max),abs(w_min),abs(w_max))
 
 hmin=(vol_min)**(1./3.)
 
-if (spaceV=='__Q1' .or. spaceV=='_Q1+' .or. spaceV=='Q1++') p=1d0
-if (spaceV=='__Q2') p=2d0
+select case(spaceVelocity)
+case('__Q1','_Q1+','Q1++') 
+   p=1d0
+case('__Q2') 
+   p=2d0
+case default
+   stop 'compute_timestep: spaceVelocity unsupported'
+end select
 
 if (maxv>1d-15) then
    dt=CFL_nb*hmin/p/maxv

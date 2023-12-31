@@ -20,16 +20,19 @@ integer k
 real(8) dNNNTdr(mT),dNNNTds(mT)
 real(8) jcb2D(2,2),jcbi2D(2,2)
 real(8), parameter :: t=0d0
+integer, parameter :: caller_id01=301
+integer, parameter :: caller_id02=302
 
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{compute\_dNTdx\_dNTdy.f90}
 !@@ This subroutine computes $\partial{\bN^\uptheta}/\partial x$ 
-!@@ and $\partial{\bN^\uptheta}/\partial y$ !@@ at a location $r,s$ passed as argument.
+!@@ and $\partial{\bN^\uptheta}/\partial y$ 
+!@@ at a location $r,s$ passed as argument.
 !==================================================================================================!
 
-call dNNNdr(r,s,t,dNNNTdr(1:mT),mT,ndim,spaceT)
-call dNNNds(r,s,t,dNNNTds(1:mT),mT,ndim,spaceT)
+call dNNNdr(r,s,t,dNNNTdr(1:mT),mT,ndim,spaceTemperature,caller_id01)
+call dNNNds(r,s,t,dNNNTds(1:mT),mT,ndim,spaceTemperature,caller_id02)
 
 jcb2D=0.d0 
 do k=1,mT 

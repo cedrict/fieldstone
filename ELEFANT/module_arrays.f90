@@ -15,7 +15,9 @@ real(8), dimension(:), allocatable :: rP,sP,tP
 real(8), dimension(:), allocatable :: rT,sT,tT
 real(8), dimension(:), allocatable :: rmapping,smapping,tmapping
 
-integer(4), dimension(:,:), allocatable :: vnode_belongs_to
-integer(4), dimension(:,:), allocatable :: pnode_belongs_to
+integer(4), dimension(:,:), allocatable :: Unode_belongs_to
+integer(4), dimension(:,:), allocatable :: Vnode_belongs_to
+integer(4), dimension(:,:), allocatable :: Wnode_belongs_to
+integer(4), dimension(:,:), allocatable :: Pnode_belongs_to
 
 end module

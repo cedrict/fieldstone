@@ -8,22 +8,22 @@
 
 subroutine compute_belongs
 
-use module_parameters, only: nel,iproc,NV,NP,iel,debug,mV,mP
+use module_parameters, only: nel,iproc,NU,NV,NW,NP,iel,debug,mU,mV,mW,mP
 use module_mesh 
-use module_arrays, only: vnode_belongs_to,pnode_belongs_to
+use module_arrays, only: Unode_belongs_to,Vnode_belongs_to,Wnode_belongs_to,Pnode_belongs_to
 use module_timing
 
 implicit none
 
-integer :: inode,i,iV,iP
+integer :: inode,i,iU,iV,iW,iP
 
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{compute\_belongs}
-!@@ This subroutine allocates and fills the {\sl vnode\_belongs\_to} and {\sl pnode\_belongs\_to} 
-!@@ arrays. For a given node {\sl ip},
-!@@ {\sl vnode\_belongs\_to(1,ip)} is the number of elements that {\sl ip} belongs to.
-!@@ Furthermore, {\sl vnode\_belongs\_to(2:9,ip)} is the actual list of elements.
+!@@ This subroutine allocates and fills the {\sl U,V,Wnode\_belongs\_to} and {\sl Pnode\_belongs\_to} 
+!@@ arrays. For a given Unode {\sl ip},
+!@@ {\sl Unode\_belongs\_to(1,ip)} is the number of elements that {\sl ip} belongs to.
+!@@ Furthermore, {\sl Unode\_belongs\_to(2:9,ip)} is the actual list of elements.
 !==================================================================================================!
 
 if (iproc==0) then
@@ -32,37 +32,62 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-allocate(vnode_belongs_to(9,NV)) !9 = max nb of elements a node can belong to
+write(*,'(a,3i5)') shift//'NU,NV,NW=',NU,NV,NW
 
-vnode_belongs_to=0
+allocate(unode_belongs_to(9,NU)) ; Unode_belongs_to=0
+allocate(vnode_belongs_to(9,NV)) ; Vnode_belongs_to=0
+allocate(wnode_belongs_to(9,NW)) ; Wnode_belongs_to=0
+
 do iel=1,nel
-   !print *,'elt:',iel
-   do i=1,mV
-      inode=mesh(iel)%iconV(i)
-      !print *,'->',inode
-      vnode_belongs_to(1,inode)=vnode_belongs_to(1,inode)+1
-      if (vnode_belongs_to(1,inode)>9) then
-         print *, 'compute_belongs: vnode_belongs_to array too small'
+
+   do i=1,mU
+      inode=mesh(iel)%iconU(i)
+      Unode_belongs_to(1,inode)=Unode_belongs_to(1,inode)+1
+      if (Unode_belongs_to(1,inode)>9) then
+         print *, 'compute_belongs: Unode_belongs_to array too small'
          stop
       end if
-      vnode_belongs_to(1+vnode_belongs_to(1,inode),inode)=iel
+      Unode_belongs_to(1+Unode_belongs_to(1,inode),inode)=iel
    end do
+
+   do i=1,mV
+      inode=mesh(iel)%iconV(i)
+      Vnode_belongs_to(1,inode)=Vnode_belongs_to(1,inode)+1
+      if (Vnode_belongs_to(1,inode)>9) then
+         print *, 'compute_belongs: Vnode_belongs_to array too small'
+         stop
+      end if
+      Vnode_belongs_to(1+Vnode_belongs_to(1,inode),inode)=iel
+   end do
+
+   do i=1,mW
+      inode=mesh(iel)%iconW(i)
+      Wnode_belongs_to(1,inode)=Wnode_belongs_to(1,inode)+1
+      if (Wnode_belongs_to(1,inode)>9) then
+         print *, 'compute_belongs: Wnode_belongs_to array too small'
+         stop
+      end if
+      Wnode_belongs_to(1+Wnode_belongs_to(1,inode),inode)=iel
+   end do
+
 end do
 
-allocate(pnode_belongs_to(9,NV)) !9 = max nb of elements a node can belong to
+!----------------------------------------------------------
 
-pnode_belongs_to=0
+allocate(Pnode_belongs_to(9,NV)) !9 = max nb of elements a node can belong to
+
+Pnode_belongs_to=0
 do iel=1,nel
    !print *,'elt:',iel
    do i=1,mP
       inode=mesh(iel)%iconP(i)
       !print *,'->',inode
-      pnode_belongs_to(1,inode)=pnode_belongs_to(1,inode)+1
-      if (pnode_belongs_to(1,inode)>9) then
-         print *, 'compute_belongs: pnode_belongs_to array too small'
+      Pnode_belongs_to(1,inode)=Pnode_belongs_to(1,inode)+1
+      if (Pnode_belongs_to(1,inode)>9) then
+         print *, 'compute_belongs: Pnode_belongs_to array too small'
          stop
       end if
-      pnode_belongs_to(1+pnode_belongs_to(1,inode),inode)=iel
+      Pnode_belongs_to(1+Pnode_belongs_to(1,inode),inode)=iel
    end do
 end do
 
@@ -70,8 +95,14 @@ end do
 
 if (debug) then
 write(2345,'(a)') limit//'compute_belongs'//limit
+do iU=1,NU
+write(2345,'(a,i6,a,i2,a,9i6)') 'U node',iU,' belongs to ',Unode_belongs_to(1,iU),' elts:  ',Unode_belongs_to(2:,iU)
+end do
 do iV=1,NV
-write(2345,'(a,i6,a,i2,a,9i6)') 'V node',iV,' belongs to ',vnode_belongs_to(1,iV),' elts:  ',vnode_belongs_to(2:,iV)
+write(2345,'(a,i6,a,i2,a,9i6)') 'V node',iV,' belongs to ',Vnode_belongs_to(1,iV),' elts:  ',Vnode_belongs_to(2:,iV)
+end do
+do iV=1,NW
+write(2345,'(a,i6,a,i2,a,9i6)') 'W node',iW,' belongs to ',Wnode_belongs_to(1,iW),' elts:  ',Wnode_belongs_to(2:,iW)
 end do
 do iP=1,NP
 write(2345,'(a,i6,a,i2,a,9i6)') 'P node',iP,' belongs to ',pnode_belongs_to(1,iP),' elts:  ',pnode_belongs_to(2:,iP)
@@ -82,7 +113,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'compute_belongs (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'compute_belongs:',elapsed,' s                |'
 
 end if ! iproc
 

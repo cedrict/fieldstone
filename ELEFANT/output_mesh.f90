@@ -8,7 +8,7 @@
 
 subroutine output_mesh
 
-use module_parameters, only: mV,mP,spaceV,spaceP,debug,iel,nel,iproc,ndim
+use module_parameters, only: mV,mP,spaceVelocity,spacePressure,debug,iel,nel,iproc,ndim
 use module_mesh
 use module_timing
 use module_export_vtu
@@ -97,7 +97,7 @@ write(123,*) '</CellData>'
 write(123,*) '<Cells>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="connectivity" Format="ascii">'
-select case(spaceV)
+select case(spaceVelocity)
 case('__Q1','__P1','__P2')
    if (ndim==2) then 
       do iel=1,nel
@@ -117,12 +117,12 @@ case('__Q2')
       stop 'output_mesh: pb1'
    end if
 case default
-   stop 'output_mesh: spaceV unknown'
+   stop 'output_mesh: spaceVelocity unknown'
 end select
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="offsets" Format="ascii">'
-select case(spaceV)
+select case(spaceVelocity)
 case('__Q1')
    if (ndim==2) write(123,*) (iel*4,iel=1,nel)
    if (ndim==3) write(123,*) (iel*8,iel=1,nel)
@@ -145,7 +145,7 @@ end select
 write(123,*) '</DataArray>'
 !-----
 write(123,*) '<DataArray type="Int32" Name="types" Format="ascii">'
-select case(spaceV)
+select case(spaceVelocity)
 case('__Q1')
    if (ndim==2) write(123,*) (9,iel=1,nel)
    if (ndim==3) write(123,*) (12,iel=1,nel)
@@ -173,7 +173,7 @@ write(123,*) '</UnstructuredGrid>'
 write(123,*) '</VTKFile>'
 close(123)
 
-write(*,'(a)') shift//'produced OUTPUT/meshV.vtu' 
+write(*,'(a)') shift//'-> OUTPUT/meshV.vtu' 
 
 !----------------------------------------------------------
 
@@ -192,7 +192,7 @@ write(123,'(a)') '</DataArray>'
 write(123,'(a)') '</Points>'
 write(123,*) '<Cells>'
 write(123,*) '<DataArray type="Int32" Name="connectivity" Format="ascii">'
-select case(spaceP)
+select case(spacePressure)
 case('__Q0','__P0')
    if (ndim==2) then 
       do iel=1,nel
@@ -220,11 +220,11 @@ case('__Q2')
       stop 'output_mesh: pb3'
    end if
 case default
-   stop 'output_mesh: spaceP unknown'
+   stop 'output_mesh: spacePressure unknown'
 end select
 write(123,*) '</DataArray>'
 write(123,*) '<DataArray type="Int32" Name="offsets" Format="ascii">'
-select case(spaceP)
+select case(spacePressure)
 case('__Q0','__P0')
    if (ndim==2) write(123,*) (iel,iel=1,nel)
    if (ndim==3) write(123,*) (iel,iel=1,nel)
@@ -245,7 +245,7 @@ case default
 end select
 write(123,*) '</DataArray>'
 write(123,*) '<DataArray type="Int32" Name="types" Format="ascii">'
-select case(spaceP)
+select case(spacePressure)
 case('__Q0','__P0')
    if (ndim==2) write(123,*) (1,iel=1,nel)
    if (ndim==3) write(123,*) (1,iel=1,nel)
@@ -271,7 +271,7 @@ write(123,*) '</UnstructuredGrid>'
 write(123,*) '</VTKFile>'
 close(123)
 
-write(*,'(a)') shift//'produced OUTPUT/meshP.vtu' 
+write(*,'(a)') shift//'-> OUTPUT/meshP.vtu' 
 
 
 end if
@@ -280,7 +280,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'output_mesh (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'output_mesh:',elapsed,' s                    |'
 
 end if ! iproc
 

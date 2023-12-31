@@ -16,7 +16,7 @@ use module_timing
 implicit none
 
 integer iq
-real(8) uq,vq,wq,pq,qq,Tq,NNNV(mV),NNNP(mP),NNNT(mT)
+real(8) uq,vq,wq,pq,Tq,NNNU(mU),NNNV(mV),NNNW(mW),NNNP(mP),NNNT(mT)
 real(8) uth,vth,wth,pth,Tth,dum
 
 !==================================================================================================!
@@ -50,19 +50,20 @@ do iel=1,nel
    do iq=1,nqel
 
       !compute uq,vq,wq
+      call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNU(1:mU),mU,ndim,spaceU)
       call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNV(1:mV),mV,ndim,spaceV)
-      uq=sum(NNNV(1:mV)*mesh(iel)%u(1:mV))
+      call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNW(1:mW),mW,ndim,spaceW)
+      uq=sum(NNNU(1:mU)*mesh(iel)%u(1:mU))
       vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV))
-      wq=sum(NNNV(1:mV)*mesh(iel)%w(1:mV))
-      qq=sum(NNNV(1:mV)*mesh(iel)%q(1:mV))
+      wq=sum(NNNW(1:mW)*mesh(iel)%w(1:mW))
 
       !compute pq
-      call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim,spaceP)
+      call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim,spacePressure)
       pq=sum(NNNP(1:mP)*mesh(iel)%p(1:mP))
 
       !compute Tq
       if (use_T) then
-         call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim,spaceT)
+         call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim,spaceTemperature)
          Tq=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
       else
          Tq=0
@@ -73,7 +74,6 @@ do iel=1,nel
       avrg_w=avrg_w+wq*mesh(iel)%JxWq(iq)
       avrg_T=avrg_T+Tq*mesh(iel)%JxWq(iq)
       avrg_p=avrg_p+pq*mesh(iel)%JxWq(iq)
-      avrg_q=avrg_q+qq*mesh(iel)%JxWq(iq)
       vrms=vrms+(uq**2+vq**2+wq**2)*mesh(iel)%JxWq(iq)
       volume=volume+mesh(iel)%JxWq(iq)
 
@@ -81,7 +81,6 @@ do iel=1,nel
                                uth,vth,wth,pth,Tth,dum,dum,dum,dum,dum,dum)
       errv=errv+((uq-uth)**2+(vq-vth)**2+(wq-wth)**2)*mesh(iel)%JxWq(iq)
       errp=errp+(pq-pth)**2*mesh(iel)%JxWq(iq)
-      errq=errq+(qq-pth)**2*mesh(iel)%JxWq(iq)
       errT=errT+(Tq-Tth)**2*mesh(iel)%JxWq(iq)
 
    end do
@@ -89,7 +88,6 @@ end do
 
 errv=sqrt(errv)
 errp=sqrt(errp)
-errq=sqrt(errq)
 errT=sqrt(errT)
 vrms=sqrt(vrms/volume)
 avrg_u=avrg_u/volume
@@ -97,7 +95,6 @@ avrg_v=avrg_v/volume
 avrg_w=avrg_w/volume
 avrg_T=avrg_T/volume
 avrg_p=avrg_p/volume
-avrg_q=avrg_q/volume
 
 if (solve_stokes_system) then 
              write(*,'(a,es12.5)') shift//'vrms =',vrms

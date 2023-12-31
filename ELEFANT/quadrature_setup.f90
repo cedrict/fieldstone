@@ -8,7 +8,7 @@
 
 subroutine quadrature_setup
 
-use module_parameters, only: ndim,mmapping,nqpts,Nq,nel,nqel,iproc,iel,debug,spaceV,mapping
+use module_parameters, only: ndim,mmapping,nqpts,NQ,nel,nqel,iproc,iel,debug,spaceVelocity,mapping
 use module_mesh 
 use module_constants, only: sqrt3
 use module_timing
@@ -20,6 +20,7 @@ integer iq,jq,kq,counter
 real(8) rq,sq,tq,jcob
 real(8) NNNM(mmapping),dNNNMdx(mmapping),dNNNMdy(mmapping),dNNNMdz(mmapping)
 real(8), dimension(:), allocatable :: qcoords,qweights
+integer, parameter :: caller_id01=601
 
 !==================================================================================================!
 !==================================================================================================!
@@ -37,22 +38,23 @@ if (iproc==0) then
 call system_clock(counti,count_rate)
 
 !----------------------------------------------------------
-! compute nqel and Nq
+! compute nqel and NQ
 !----------------------------------------------------------
 
-select case(spaceV)
+select case(spaceVelocity)
 case('__Q1','__Q2','__Q3','_Q1+','Q1++')
    nqel=nqpts**ndim
 case('__P1','__P2','__P3','_P1+','_P2+')
    nqel=nqpts
 case default
-   stop 'quadrature_setup: spaceV not supported yet'
+   stop 'quadrature_setup: spaceVelocity not supported yet'
 end select
 
-Nq=nqel*nel ! total number of quadrature points
+NQ=nqel*nel ! total number of quadrature points
 
 write(*,'(a,i5)') shift//'nqel=',nqel
-write(*,'(a,i5)') shift//'Nq=',Nq
+write(*,'(a,i5)') shift//'NQ=',NQ
+
 
 !----------------------------------------------------------
 ! allocate quadrature-related arrays for each element
@@ -82,8 +84,9 @@ end do
 allocate(qcoords(nqpts))
 allocate(qweights(nqpts))
 
+
 !----------------------------------------------------------
-select case(spaceV)
+select case(spaceVelocity)
 case('__Q1','__Q2','__Q3','_Q1+','Q1++')
 
    !compute qcoords & qweights
@@ -120,6 +123,7 @@ case('__Q1','__Q2','__Q3','_Q1+','Q1++')
       stop 'quadrature_setup: nqpts not supported for Q elts' 
    end select
 
+   !-------------------------------------------------------
 
    if (ndim==2) then
    do iel=1,nel
@@ -129,7 +133,7 @@ case('__Q1','__Q2','__Q3','_Q1+','Q1++')
          counter=counter+1
          rq=qcoords(iq)
          sq=qcoords(jq)
-         call NNN(rq,sq,0.d0,NNNM,mmapping,ndim,mapping)
+         call NNN(rq,sq,0.d0,NNNM,mmapping,ndim,mapping,caller_id01)
          !print *,'------'
          !print *,iel,counter,rq,sq
          !print *,iel,counter,mesh(iel)%xM
@@ -139,12 +143,14 @@ case('__Q1','__Q2','__Q3','_Q1+','Q1++')
          mesh(iel)%weightq(counter)=qweights(iq)*qweights(jq)
          mesh(iel)%rq(counter)=rq
          mesh(iel)%sq(counter)=sq
-         call compute_dNdx_dNdy(rq,sq,dNNNMdx,dNNNMdy,jcob)
-         mesh(iel)%JxWq(counter)=jcob*mesh(iel)%weightq(counter)
+         !call compute_dNdx_dNdy(rq,sq,dNNNMdx,dNNNMdy,jcob)
+         !mesh(iel)%JxWq(counter)=jcob*mesh(iel)%weightq(counter)
       end do
       end do
    end do
    end if
+
+   !-------------------------------------------------------
 
    if (ndim==3) then
    do iel=1,nel
@@ -156,7 +162,7 @@ case('__Q1','__Q2','__Q3','_Q1+','Q1++')
          rq=qcoords(iq)
          sq=qcoords(jq)
          tq=qcoords(kq)
-         call NNN(rq,sq,tq,NNNM,mmapping,ndim,mapping)
+         call NNN(rq,sq,tq,NNNM,mmapping,ndim,mapping,caller_id01)
          mesh(iel)%xq(counter)=sum(mesh(iel)%xM*NNNM)
          mesh(iel)%yq(counter)=sum(mesh(iel)%yM*NNNM)
          mesh(iel)%zq(counter)=sum(mesh(iel)%zM*NNNM)
@@ -164,8 +170,8 @@ case('__Q1','__Q2','__Q3','_Q1+','Q1++')
          mesh(iel)%rq(counter)=rq
          mesh(iel)%sq(counter)=sq
          mesh(iel)%tq(counter)=tq
-         call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNNNMdx,dNNNMdy,dNNNMdz,jcob)
-         mesh(iel)%JxWq(counter)=jcob*mesh(iel)%weightq(counter)
+         !call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNNNMdx,dNNNMdy,dNNNMdz,jcob)
+         !mesh(iel)%JxWq(counter)=jcob*mesh(iel)%weightq(counter)
       end do
       end do
       end do
@@ -258,11 +264,11 @@ case('__P1','__P2','__P3','_P1+','_P2+')
 
    do iel=1,nel
       do kq=1,nqel
-         call NNN(mesh(iel)%rq(kq),mesh(iel)%sq(kq),0.d0,NNNM,mmapping,ndim,mapping)
+         call NNN(mesh(iel)%rq(kq),mesh(iel)%sq(kq),0.d0,NNNM,mmapping,ndim,mapping,caller_id01)
          mesh(iel)%xq(kq)=sum(mesh(iel)%xM*NNNM)
          mesh(iel)%yq(kq)=sum(mesh(iel)%yM*NNNM)
-         call compute_dNdx_dNdy(mesh(iel)%rq(kq),mesh(iel)%sq(kq),dNNNMdx,dNNNMdy,jcob)
-         mesh(iel)%JxWq(kq)=jcob*mesh(iel)%weightq(kq)
+         !call compute_dNdx_dNdy(mesh(iel)%rq(kq),mesh(iel)%sq(kq),dNNNMdx,dNNNMdy,jcob)
+         !mesh(iel)%JxWq(kq)=jcob*mesh(iel)%weightq(kq)
       end do
    end do
 
@@ -274,7 +280,7 @@ case('__P1','__P2','__P3','_P1+','_P2+')
 
 
 case default
-   stop 'quadrature_setup: spaceV not supported yet'
+   stop 'quadrature_setup: spaceVelocity not supported yet'
 end select
 
 deallocate(qcoords)
@@ -286,7 +292,7 @@ if (debug) then
 write(2345,*) limit//'quadrature_setup'//limit
 write(2345,*) 'nqpts=',nqpts
 write(2345,*) 'nqel=',nqel
-write(2345,*) 'Nq=',Nq
+write(2345,*) 'NQ=',NQ
 write(2345,*) minval(mesh(1)%xq),maxval(mesh(1)%xq)
 write(2345,*) minval(mesh(1)%yq),maxval(mesh(1)%yq)
 write(2345,*) minval(mesh(1)%zq),maxval(mesh(1)%zq)
@@ -296,7 +302,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'quadrature_setup (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'quadrature_setup:',elapsed,' s               |'
 
 end if ! iproc
 

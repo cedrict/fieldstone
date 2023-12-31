@@ -36,7 +36,7 @@ if (use_T) then
 
 csrA%N=NfemT
 
-if (spaceT=='__Q1') then
+if (spaceTemperature=='__Q1') then
 
    if (geometry=='cartesian' .and. ndim==2) then
       nnx=nelx+1
@@ -58,7 +58,7 @@ if (spaceT=='__Q1') then
 
 else
 
-   stop 'matrix_setup_A: spaceT not supported yet'
+   stop 'matrix_setup_A: spaceTemperature not supported yet'
 
 end if
 
@@ -134,7 +134,7 @@ end if ! use_T
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'matrix_setup_A (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'matrix_setup_A:',elapsed,' s                 |'
 
 end if ! iproc
 
