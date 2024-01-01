@@ -10,6 +10,7 @@ subroutine assign_values_to_qpoints
 
 use module_parameters, only: mU,mV,mW,mP,mT,ndim,iel,use_T,nqel,iproc,nel,&
                              spacePressure,spaceTemperature,use_swarm
+use module_arrays, only: dNNNUdx,dNNNUdy,dNNNUdz,dNNNVdx,dNNNVdy,dNNNVdz,dNNNWdx,dNNNWdy,dNNNWdz
 use module_mesh
 use module_swarm
 use module_statistics
@@ -23,9 +24,6 @@ integer(1) idummy
 real(8) x(1000),y(1000),z(1000),rho(1000),eta(1000)
 real(8) pm,Tm,exxm,eyym,ezzm,exym,exzm,eyzm,NNNV(mV),NNNT(mT),NNNP(mP)
 real(8) exxq,eyyq,ezzq,exyq,exzq,eyzq,jcob
-real(8) :: dNUdx(mU),dNUdy(mU),dNUdz(mU) 
-real(8) :: dNVdx(mV),dNVdy(mV),dNVdz(mV) 
-real(8) :: dNWdx(mW),dNWdy(mW),dNWdz(mW) 
 integer, parameter :: caller_id01=501
 integer, parameter :: caller_id02=502
 
@@ -105,6 +103,8 @@ if (use_swarm) then
 
       ! project values on quadrature points
 
+      !!!!!!WHY AM I USING XC HERE>?!?!
+
       do iq=1,nqel
          mesh(iel)%etaq(iq)=mesh(iel)%a_eta+&
                             mesh(iel)%b_eta*(mesh(iel)%xq(iq)-mesh(iel)%xc)+&
@@ -151,13 +151,13 @@ else ! use_swarm=F
          end if
 
          call compute_dNdx_dNdy_dNdz(mesh(iel)%rq,mesh(iel)%sq,mesh(iel)%tq,&
-                                     dNUdx,dNUdy,dNUdz,dNVdx,dNVdy,dNVdz,dNWdx,dNWdy,dNWdz,jcob)
-         exxq=sum(dNUdx*mesh(iel)%u)
-         eyyq=sum(dNVdy*mesh(iel)%v)
-         ezzq=sum(dNWdz*mesh(iel)%w)
-         exyq=0.5d0*sum(dNUdy*mesh(iel)%u + dNVdx*mesh(iel)%v)
-         exzq=0.5d0*sum(dNUdz*mesh(iel)%u + dNWdx*mesh(iel)%w)
-         eyzq=0.5d0*sum(dNVdz*mesh(iel)%v + dNWdy*mesh(iel)%w)
+                                     dNNNUdx,dNNNUdy,dNNNUdz,dNNNVdx,dNNNVdy,dNNNVdz,dNNNWdx,dNNNWdy,dNNNWdz,jcob)
+         exxq=sum(dNNNUdx*mesh(iel)%u)
+         eyyq=sum(dNNNVdy*mesh(iel)%v)
+         ezzq=sum(dNNNWdz*mesh(iel)%w)
+         exyq=0.5d0*sum(dNNNUdy*mesh(iel)%u + dNNNVdx*mesh(iel)%v)
+         exzq=0.5d0*sum(dNNNUdz*mesh(iel)%u + dNNNWdx*mesh(iel)%w)
+         eyzq=0.5d0*sum(dNNNVdz*mesh(iel)%v + dNNNWdy*mesh(iel)%w)
 
          mesh(iel)%JxWq(iq)=jcob*mesh(iel)%weightq(iq)
 

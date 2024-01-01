@@ -8,8 +8,9 @@
 
 subroutine allocate_memory
 
-use module_parameters, only: NU,NV,NW,NP,NT,NfemV,NfemP,NfemT,iproc,nmat,debug
-use module_arrays, only: solV,solP,rhs_f,rhs_h,Kdiag
+use module_parameters, only: NU,NV,NW,NP,NT,NfemV,NfemP,NfemT,iproc,nmat,debug,mU,mV,mW,mP,mT
+use module_arrays, only: dNNNUdx,dNNNUdy,dNNNUdz,dNNNVdx,dNNNVdy,dNNNVdz,dNNNWdx,dNNNWdy,dNNNWdz,&
+                         NNNU,NNNV,NNNW,NNNP,NNNT,dNNNTdx,dNNNTdy,dNNNTdz,solV,solP,rhs_f,rhs_h,Kdiag
 use module_materials
 use module_timing
 
@@ -41,6 +42,27 @@ allocate(rhs_f(NfemV))
 allocate(rhs_h(NfemP))
 allocate(materials(nmat))
 allocate(Kdiag(NfemV))
+
+allocate(NNNU(mU))
+allocate(NNNV(mV))
+allocate(NNNW(mW))
+allocate(NNNT(mT))
+allocate(NNNP(mP))
+
+allocate(dNNNUdx(mU))
+allocate(dNNNVdx(mV))
+allocate(dNNNWdx(mW))
+allocate(dNNNTdx(mT))
+
+allocate(dNNNUdy(mU))
+allocate(dNNNVdy(mV))
+allocate(dNNNWdy(mW))
+allocate(dNNNTdy(mT))
+
+allocate(dNNNUdz(mU))
+allocate(dNNNVdz(mV))
+allocate(dNNNWdz(mW))
+allocate(dNNNTdz(mT))
 
 if (debug) then
 write(2345,*) limit//'allocate_memory'//limit

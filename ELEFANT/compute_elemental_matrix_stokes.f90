@@ -24,10 +24,6 @@ real(8), intent(out) :: h_el(mP)
 integer iq,k,i1,i2,i3
 real(8) Bmat(ndim2,mU+mV+mW),NNNmat(ndim2,mP)
 real(8) rq,sq,tq,jcob,weightq
-real(8) NNNU(mU),NNNV(mV),NNNW(mW),NNNP(mP)
-real(8) dNUdx(mU),dNUdy(mU),dNUdz(mU)
-real(8) dNVdx(mV),dNVdy(mV),dNVdz(mV)
-real(8) dNWdx(mW),dNWdy(mW),dNWdz(mW)
 integer, parameter :: caller_id01=801
 integer, parameter :: caller_id02=802
 integer, parameter :: caller_id03=803
@@ -67,7 +63,7 @@ do iq=1,nqel
       call NNN(rq,sq,tq,NNNV(1:mV),mV,ndim,spaceV,caller_id02)
       call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spacePressure,caller_id03)
 
-      call compute_dNdx_dNdy(rq,sq,dNUdx,dNUdy,dNVdx,dNVdy,jcob)
+      call compute_dNdx_dNdy(rq,sq,dNNNUdx,dNNNUdy,dNNNVdx,dNNNVdy,jcob)
 
       mesh(iel)%JxWq(iq)=jcob*mesh(iel)%weightq(iq)
 
@@ -77,10 +73,10 @@ do iq=1,nqel
       do k=1,mV    
          i1=ndofV*k-1    
          i2=ndofV*k    
-         Bmat(1,i1)=dNUdx(k) 
-         Bmat(2,i2)=dNVdy(k)
-         Bmat(3,i1)=dNUdy(k) 
-         Bmat(3,i2)=dNVdx(k)
+         Bmat(1,i1)=dNNNUdx(k) 
+         Bmat(2,i2)=dNNNVdy(k)
+         Bmat(3,i1)=dNNNUdy(k) 
+         Bmat(3,i2)=dNNNVdx(k)
          f_el(i1)=f_el(i1)+NNNU(k)*mesh(iel)%gxq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
          f_el(i2)=f_el(i2)+NNNV(k)*mesh(iel)%gyq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
       end do
@@ -100,7 +96,7 @@ do iq=1,nqel
       call NNN(rq,sq,tq,NNNW(1:mW),mW,ndim,spaceW,caller_id03)
       call NNN(rq,sq,tq,NNNP(1:mP),mP,ndim,spacePressure,caller_id04)
 
-      call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNUdx,dNUdy,dNUdz,dNVdx,dNVdy,dNVdz,dNWdx,dNWdy,dNWdz,jcob)
+      call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNNNUdx,dNNNUdy,dNNNUdz,dNNNVdx,dNNNVdy,dNNNVdz,dNNNWdx,dNNNWdy,dNNNWdz,jcob)
 
       mesh(iel)%JxWq(iq)=jcob*mesh(iel)%weightq(iq)
 
@@ -112,12 +108,12 @@ do iq=1,nqel
          i1=ndofV*k-2    
          i2=ndofV*k-1    
          i3=ndofV*k    
-         Bmat(1,i1)=dNUdx(k)
-         Bmat(2,i2)=dNVdy(k)
-         Bmat(3,i3)=dNWdz(k)
-         Bmat(4,i1)=dNUdy(k) ; Bmat(4,i2)=dNVdx(k)
-         Bmat(5,i1)=dNUdz(k) ; Bmat(5,i3)=dNWdx(k)
-         Bmat(6,i2)=dNVdz(k) ; Bmat(6,i3)=dNWdy(k)
+         Bmat(1,i1)=dNNNUdx(k)
+         Bmat(2,i2)=dNNNVdy(k)
+         Bmat(3,i3)=dNNNWdz(k)
+         Bmat(4,i1)=dNNNUdy(k) ; Bmat(4,i2)=dNNNVdx(k)
+         Bmat(5,i1)=dNNNUdz(k) ; Bmat(5,i3)=dNnNWdx(k)
+         Bmat(6,i2)=dNNNVdz(k) ; Bmat(6,i3)=dNNNWdy(k)
          f_el(i1)=f_el(i1)+NNNU(k)*mesh(iel)%gxq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
          f_el(i2)=f_el(i2)+NNNV(k)*mesh(iel)%gyq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
          f_el(i3)=f_el(i3)+NNNW(k)*mesh(iel)%gzq(iq)*mesh(iel)%rhoq(iq)*mesh(iel)%JxWq(iq)
@@ -151,28 +147,28 @@ if (use_penalty) then
 
    if (ndim==2) then
 
-      call compute_dNdx_dNdy(rq,sq,dNUdx,dNUdy,dNVdx,dNVdy,jcob)
+      call compute_dNdx_dNdy(rq,sq,dNNNUdx,dNNNUdy,dNNNVdx,dNNNVdy,jcob)
 
       do k=1,mV    
          i1=ndofV*k-1    
          i2=ndofV*k    
-         Bmat(1,i1)=dNUdx(k) 
-         Bmat(2,i2)=dNVdy(k)
-         Bmat(3,i1)=dNUdy(k) 
-         Bmat(3,i2)=dNVdx(k)
+         Bmat(1,i1)=dNNNUdx(k) 
+         Bmat(2,i2)=dNNNVdy(k)
+         Bmat(3,i1)=dNNNUdy(k) 
+         Bmat(3,i2)=dNNNVdx(k)
       end do 
 
    else
 
-      call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNUdx,dNUdy,dNUdz,dNVdx,dNVdy,dNVdz,dNWdx,dNWdy,dNWdz,jcob)
+      call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNNNUdx,dNNNUdy,dNNNUdz,dNNNVdx,dNNNVdy,dNNNVdz,dNNNWdx,dNNNWdy,dNNNWdz,jcob)
 
       do k=1,mV    
-         Bmat(1,i1)=dNUdx(k)
-         Bmat(2,i2)=dNVdy(k)
-         Bmat(3,i3)=dNWdz(k)
-         Bmat(4,i1)=dNUdy(k) ; Bmat(4,i2)=dNVdx(k)
-         Bmat(5,i1)=dNUdz(k) ; Bmat(5,i3)=dNWdx(k)
-         Bmat(6,i2)=dNVdz(k) ; Bmat(6,i3)=dNWdy(k)
+         Bmat(1,i1)=dNNNUdx(k)
+         Bmat(2,i2)=dNNNVdy(k)
+         Bmat(3,i3)=dNNNWdz(k)
+         Bmat(4,i1)=dNNNUdy(k) ; Bmat(4,i2)=dNNNVdx(k)
+         Bmat(5,i1)=dNNNUdz(k) ; Bmat(5,i3)=dNNNWdx(k)
+         Bmat(6,i2)=dNNNVdz(k) ; Bmat(6,i3)=dNNNWdy(k)
          i1=ndofV*k-2    
          i2=ndofV*k-1    
          i3=ndofV*k    

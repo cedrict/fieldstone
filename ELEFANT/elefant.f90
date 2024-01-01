@@ -107,7 +107,8 @@ do istep=1,nstep !-----------------------------------------
       call solve_energy                                   !
       call compute_temperature_gradient                   !
    end if                                                 !
-                                                          !
+
+   call compute_elemental_strain_rate                     !
    call compute_gravity                                   !
    call postprocessors                                    !
    call output_solution                                   !

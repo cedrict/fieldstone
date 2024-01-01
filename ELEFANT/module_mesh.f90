@@ -21,13 +21,11 @@ type element
   real(8), allocatable :: p(:),q(:)           ! pressure dofs and projected pressure q 
   real(8), allocatable :: T(:)                ! temperature degrees of freedom
   real(8), allocatable :: qx(:),qy(:),qz(:)   ! nodal heat flux vector
-  !real(8), allocatable :: exx(:),eyy(:),exy(:)! strain rate components for 2D
-  !real(8), allocatable :: ezz(:),exz(:),eyz(:)! additional strain rate components for 3D
-  !real(8), allocatable :: rho(:)              ! density on V nodes 
-  !real(8), allocatable :: eta(:)              ! viscosity on V nodes 
   real(8), allocatable :: rV(:),rP(:)         ! 
   real(8), allocatable :: thetaV(:),thetaP(:) !
   real(8), allocatable :: phiV(:),phiP(:)     !
+  real(8) :: exx,eyy,exy                      ! strain rate components for 2D
+  real(8) :: ezz,exz,eyz                      ! additional strain rate components for 3D
   real(8) :: a_eta,b_eta,c_eta,d_eta          ! least square coeffs for viscosity
   real(8) :: a_rho,b_rho,c_rho,d_rho          ! least square coeffs for density
   real(8) :: vol                              ! volume of the element

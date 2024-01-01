@@ -15,6 +15,12 @@ real(8), dimension(:), allocatable :: rP,sP,tP
 real(8), dimension(:), allocatable :: rT,sT,tT
 real(8), dimension(:), allocatable :: rmapping,smapping,tmapping
 
+real(8), dimension(:), allocatable :: NNNU,dNNNUdx,dNNNUdy,dNNNUdz
+real(8), dimension(:), allocatable :: NNNV,dNNNVdx,dNNNVdy,dNNNVdz
+real(8), dimension(:), allocatable :: NNNW,dNNNWdx,dNNNWdy,dNNNWdz
+real(8), dimension(:), allocatable :: NNNT,dNNNTdx,dNNNTdy,dNNNTdz
+real(8), dimension(:), allocatable :: NNNP
+
 integer(4), dimension(:,:), allocatable :: Unode_belongs_to
 integer(4), dimension(:,:), allocatable :: Vnode_belongs_to
 integer(4), dimension(:,:), allocatable :: Wnode_belongs_to

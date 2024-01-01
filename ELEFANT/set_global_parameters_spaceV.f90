@@ -81,11 +81,13 @@ if (ndim==2) then
          if (nelx==0) stop 'set_global_parameters_spaceV: nelx=0'
          if (nely==0) stop 'set_global_parameters_spaceV: nely=0'
          nel=nelx*nely
+         NU=(2*nelx+1)*(2*nely+1)
          NV=(2*nelx+1)*(2*nely+1)
       case('spherical')
          if (nelr==0) stop 'set_global_parameters_spaceV: nelr=0'
          if (nelphi==0) stop 'set_global_parameters_spaceV: nelphi=0'
          nel=nelr*nelphi
+         NU=(2*nelr+1)*(2*nelphi)
          NV=(2*nelr+1)*(2*nelphi)
       case('john')
          stop 'set_global_parameters_spaceV: john geometry not supported'
@@ -134,11 +136,13 @@ if (ndim==2) then
          if (nelx==0) stop 'set_global_parameters_spaceV: nelx=0'
          if (nely==0) stop 'set_global_parameters_spaceV: nely=0'
          nel=nelx*nely
+         NU=(3*nelx+1)*(3*nely+1)
          NV=(3*nelx+1)*(3*nely+1)
       case('spherical')
          if (nelr==0) stop 'set_global_parameters_spaceV: nelr=0'
          if (nelphi==0) stop 'set_global_parameters_spaceV: nelphi=0'
          nel=nelr*nelphi
+         NU=(3*nelr+1)*(3*nelphi)
          NV=(3*nelr+1)*(3*nelphi)
       case('john')
          stop 'set_global_parameters_spaceV: john geometry not supported'

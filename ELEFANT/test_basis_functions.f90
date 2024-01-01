@@ -10,18 +10,15 @@ subroutine test_basis_functions
 
 use module_parameters, only: nel,iproc,debug,nqel,mU,mV,mW,mT,mP,ndim,use_T,iel,&
                              spaceU,spaceV,spaceW,spacePressure,spaceTemperature
+use module_arrays, only: dNNNUdx,dNNNUdy,dNNNUdz,dNNNVdx,dNNNVdy,dNNNVdz,dNNNWdx,dNNNWdy,dNNNWdz,&
+                         NNNU,NNNV,NNNW,NNNP,NNNT,dNNNTdx,dNNNTdy,dNNNTdz
 use module_mesh 
 use module_timing
 
 implicit none
 
 integer iq
-real(8) NNNu(1:mU),NNNV(1:mV),NNNW(1:mV),rq,sq,tq,uq,vq,wq,exxq,eyyq,ezzq,pq,dTdxq,dTdyq
-real(8) dNUdx(mU),dNUdy(mU),dNUdz(mU)
-real(8) dNVdx(mV),dNVdy(mV),dNVdz(mV)
-real(8) dNWdx(mW),dNWdy(mW),dNWdz(mW)
-real(8) dNTdx(mT),dNTdy(mT),dNTdz(mT)
-real(8) jcob,NNNP(1:mP),NNNT(1:mT)
+real(8) rq,sq,tq,uq,vq,wq,exxq,eyyq,ezzq,pq,dTdxq,dTdyq,jcob
 integer, parameter :: caller_id01=701
 integer, parameter :: caller_id02=702
 integer, parameter :: caller_id03=703
@@ -63,12 +60,12 @@ do iel=1,nel
       uq=sum(NNNU(1:mU)*mesh(iel)%u(1:mU)) 
       vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV)) 
       wq=sum(NNNW(1:mW)*mesh(iel)%w(1:mW)) 
-      if (ndim==2) call compute_dNdx_dNdy(rq,sq,dNUdx,dNUdy,dNVdx,dNVdy,jcob)
-      if (ndim==3) call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNUdx,dNUdy,dNUdz,dNVdx,dNVdy,dNVdz,&
-                                               dNWdx,dNWdy,dNWdz,jcob)
-      exxq=sum(dNUdx(1:mU)*mesh(iel)%u(1:mU)) 
-      eyyq=sum(dNVdy(1:mV)*mesh(iel)%v(1:mV)) 
-      ezzq=sum(dNWdz(1:mW)*mesh(iel)%w(1:mW)) 
+      if (ndim==2) call compute_dNdx_dNdy(rq,sq,dNNNUdx,dNNNUdy,dNNNVdx,dNNNVdy,jcob)
+      if (ndim==3) call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNNNUdx,dNNNUdy,dNNNUdz,dNNNVdx,dNNNVdy,dNNNVdz,&
+                                               dNNNWdx,dNNNWdy,dNNNWdz,jcob)
+      exxq=sum(dNNNUdx(1:mU)*mesh(iel)%u(1:mU)) 
+      eyyq=sum(dNNNVdy(1:mV)*mesh(iel)%v(1:mV)) 
+      ezzq=sum(dNNNWdz(1:mW)*mesh(iel)%w(1:mW)) 
       write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
                    uq,vq,wq,exxq,eyyq,ezzq
    end do
@@ -94,12 +91,12 @@ do iel=1,nel
       uq=sum(NNNU(1:mU)*mesh(iel)%u(1:mU)) 
       vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV)) 
       wq=sum(NNNW(1:mW)*mesh(iel)%w(1:mW)) 
-      if (ndim==2) call compute_dNdx_dNdy(rq,sq,dNUdx,dNUdy,dNVdx,dNVdy,jcob)
-      if (ndim==3) call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNUdx,dNUdy,dNUdz,dNVdx,dNVdy,dNVdz,&
-                                               dNWdx,dNWdy,dNWdz,jcob)
-      exxq=sum(dNUdx(1:mU)*mesh(iel)%u(1:mU)) 
-      eyyq=sum(dNVdy(1:mV)*mesh(iel)%v(1:mV)) 
-      ezzq=sum(dNWdz(1:mW)*mesh(iel)%w(1:mW)) 
+      if (ndim==2) call compute_dNdx_dNdy(rq,sq,dNNNUdx,dNNNUdy,dNNNVdx,dNNNVdy,jcob)
+      if (ndim==3) call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNNNUdx,dNNNUdy,dNNNUdz,dNNNVdx,dNNNVdy,dNNNVdz,&
+                                               dNnNWdx,dNNNWdy,dNNNWdz,jcob)
+      exxq=sum(dNNNUdx(1:mU)*mesh(iel)%u(1:mU)) 
+      eyyq=sum(dNNNVdy(1:mV)*mesh(iel)%v(1:mV)) 
+      ezzq=sum(dNNNWdz(1:mW)*mesh(iel)%w(1:mW)) 
       write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
                    uq,vq,wq,exxq,eyyq,ezzq
    end do
@@ -125,12 +122,12 @@ do iel=1,nel
       uq=sum(NNNU(1:mU)*mesh(iel)%u(1:mU)) 
       vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV)) 
       wq=sum(NNNW(1:mW)*mesh(iel)%w(1:mW)) 
-      if (ndim==2) call compute_dNdx_dNdy(rq,sq,dNUdx,dNUdy,dNVdx,dNVdy,jcob)
-      if (ndim==3) call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNUdx,dNUdy,dNUdz,dNVdx,dNVdy,dNVdz,&
-                                               dNWdx,dNWdy,dNWdz,jcob)
-      exxq=sum(dNUdx(1:mU)*mesh(iel)%u(1:mU)) 
-      eyyq=sum(dNVdy(1:mV)*mesh(iel)%v(1:mV)) 
-      ezzq=sum(dNWdz(1:mW)*mesh(iel)%w(1:mW)) 
+      if (ndim==2) call compute_dNdx_dNdy(rq,sq,dNNNUdx,dNNNUdy,dNNNVdx,dNNNVdy,jcob)
+      if (ndim==3) call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNNNUdx,dNNNUdy,dNNNUdz,dNNNVdx,dNNNVdy,dNNNVdz,&
+                                               dNNNWdx,dNNNWdy,dNNNWdz,jcob)
+      exxq=sum(dNNNUdx(1:mU)*mesh(iel)%u(1:mU)) 
+      eyyq=sum(dNNNVdy(1:mV)*mesh(iel)%v(1:mV)) 
+      ezzq=sum(dNNNWdz(1:mW)*mesh(iel)%w(1:mW)) 
       write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
                    uq,vq,wq,exxq,eyyq,ezzq
    end do
@@ -156,12 +153,12 @@ do iel=1,nel
       uq=sum(NNNU(1:mU)*mesh(iel)%u(1:mU)) 
       vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV)) 
       wq=sum(NNNW(1:mW)*mesh(iel)%w(1:mW)) 
-      if (ndim==2) call compute_dNdx_dNdy(rq,sq,dNUdx,dNUdy,dNVdx,dNVdy,jcob)
-      if (ndim==3) call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNUdx,dNUdy,dNUdz,dNVdx,dNVdy,dNVdz,&
-                                               dNWdx,dNWdy,dNWdz,jcob)
-      exxq=sum(dNUdx(1:mU)*mesh(iel)%u(1:mU)) 
-      eyyq=sum(dNVdy(1:mV)*mesh(iel)%v(1:mV)) 
-      ezzq=sum(dNWdz(1:mW)*mesh(iel)%w(1:mW)) 
+      if (ndim==2) call compute_dNdx_dNdy(rq,sq,dNNNUdx,dNNNUdy,dNNNVdx,dNNNVdy,jcob)
+      if (ndim==3) call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNNNUdx,dNNNUdy,dNNNUdz,dNNNVdx,dNNNVdy,dNNNVdz,&
+                                               dNNNWdx,dNNNWdy,dNNNWdz,jcob)
+      exxq=sum(dNNNUdx(1:mU)*mesh(iel)%u(1:mU)) 
+      eyyq=sum(dNNNVdy(1:mV)*mesh(iel)%v(1:mV)) 
+      ezzq=sum(dNNNWdz(1:mW)*mesh(iel)%w(1:mW)) 
       write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),&
                    uq,vq,wq,exxq,eyyq,ezzq
    end do
@@ -266,10 +263,10 @@ do iel=1,nel
       call NNN(rq,sq,tq,NNNT(1:mT),mT,ndim,spaceTemperature,caller_id05)
       Tq=sum(NNNT(1:mT)*mesh(iel)%T(1:mT)) 
 
-      if (ndim==2) call compute_dNTdx_dNTdy(rq,sq,dNTdx(1:mT),dNTdy(1:mT),jcob)
-      !if (ndim==3) call compute_dNTdx_dNTdy_dNTdz(rq,sq,tq,dNdx,dNdy,dNdz,jcob)
-      dTdxq=sum(dNTdx(1:mT)*mesh(iel)%T(1:mT)) 
-      dTdyq=sum(dNTdy(1:mT)*mesh(iel)%T(1:mT)) 
+      if (ndim==2) call compute_dNTdx_dNTdy(rq,sq,dNNNTdx(1:mT),dNNNTdy(1:mT),jcob)
+      !if (ndim==3) call compute_dNNNTdx_dNTdy_dNTdz(rq,sq,tq,dNdx,dNdy,dNdz,jcob)
+      dTdxq=sum(dNNNTdx(1:mT)*mesh(iel)%T(1:mT)) 
+      dTdyq=sum(dNNNTdy(1:mT)*mesh(iel)%T(1:mT)) 
 
       write(123,*) mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq),Tq,dTdxq,dTdyq
    end do

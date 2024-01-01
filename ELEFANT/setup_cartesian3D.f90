@@ -27,6 +27,14 @@ call system_clock(counti,count_rate)
 !@@ and temperature nodes, the velocity, pressure and temperature connectivity arrays,
 !@@ the coordinates of its center (xc,yc,zc), its integer coordinates (ielx,iely,ielz),
 !@@ and its dimensions (hx,hy,hz).
+!@@ Supported velocity space:
+!@@ \begin{itemize}
+!@@ \item $Q_1$, $Q_1^{++}$, $Q_2$ 
+!@@ \end{itemize}
+!@@ Supported pressure space:
+!@@ \begin{itemize}
+!@@ \item $Q_0$, $Q_1$
+!@@ \end{itemize}
 !==================================================================================================!
 
 if (iproc==0) then

@@ -18,15 +18,15 @@ character(len=4), intent(in) :: space
 integer, intent(in) :: caller
 real(8), external :: dBubbledr
 real(8) dNmr,dNlr,dNrr,Nls,Nms,Nrs,Nlt,Nmt,Nrt
-real(8) db1dr,db2dr
+real(8) db1dr,db2dr,N1s,N2s,N3s,N4s,dN1rdr,dN2rdr,dN3rdr,dN4rdr
 
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{dNNNdr}
 !@@ Spaces supported so far:
 !@@ \begin{itemize}
-!@@ \item 2D: Q1, Q2, Q1+, P1, P1+, P2, P2+
-!@@ \item 3D: Q1, Q2, Q1++
+!@@ \item 2D: $Q_1$, $Q_2$, $Q_3$, $Q_1^+$, $P_1$, $P_1^+$, $P_2$, $P_2^+$
+!@@ \item 3D: $Q_1$, $Q_2$, $Q_1^{++}$
 !@@ \end{itemize}
 !==================================================================================================!
 
@@ -50,6 +50,31 @@ if (ndim==2) then
       dNdr(7)= 05d0*(2d0*r-1.d0) * 0.5d0*t*(t+1)
       dNdr(8)=          (-2d0*r) * 0.5d0*t*(t+1)
       dNdr(9)= 05d0*(2d0*r+1.d0) * 0.5d0*t*(t+1)
+   case('__Q3')
+      dN1rdr=( +1d0 +18d0*r -27d0*r**2)/16d0
+      dN2rdr=(-27d0 -18d0*r +81d0*r**2)/16d0
+      dN3rdr=(+27d0 -18d0*r -81d0*r**2)/16d0
+      dN4rdr=( -1d0 +18d0*r +27d0*r**2)/16d0
+      N1s=(-1d0      +s +9d0*s**2 - 9d0*s**3)/16d0
+      N2s=(+9d0 -27d0*s -9d0*s**2 +27d0*s**3)/16d0
+      N3s=(+9d0 +27d0*s -9d0*s**2 -27d0*s**3)/16d0
+      N4s=(-1d0      -s +9d0*s**2 + 9d0*s**3)/16d0
+      dNdr(01)=dN1rdr*N1s 
+      dNdr(02)=dN2rdr*N1s 
+      dNdr(03)=dN3rdr*N1s 
+      dNdr(04)=dN4rdr*N1s
+      dNdr(05)=dN1rdr*N2s 
+      dNdr(06)=dN2rdr*N2s 
+      dNdr(07)=dN3rdr*N2s 
+      dNdr(08)=dN4rdr*N2s
+      dNdr(09)=dN1rdr*N3s 
+      dNdr(10)=dN2rdr*N3s 
+      dNdr(11)=dN3rdr*N3s 
+      dNdr(12)=dN4rdr*N3s
+      dNdr(13)=dN1rdr*N4s 
+      dNdr(14)=dN2rdr*N4s 
+      dNdr(15)=dN3rdr*N4s 
+      dNdr(16)=dN4rdr*N4s
    case('_Q1+')
       dNdr(1)=-0.25*(1-s)-0.25d0*dBubbledr(r,s)
       dNdr(2)=+0.25*(1-s)-0.25d0*dBubbledr(r,s)

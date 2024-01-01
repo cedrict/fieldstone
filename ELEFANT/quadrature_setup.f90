@@ -17,8 +17,8 @@ use module_quadrature
 implicit none
 
 integer iq,jq,kq,counter
-real(8) rq,sq,tq,jcob
-real(8) NNNM(mmapping),dNNNMdx(mmapping),dNNNMdy(mmapping),dNNNMdz(mmapping)
+real(8) rq,sq,tq
+real(8) NNNM(mmapping)
 real(8), dimension(:), allocatable :: qcoords,qweights
 integer, parameter :: caller_id01=601
 
@@ -143,8 +143,6 @@ case('__Q1','__Q2','__Q3','_Q1+','Q1++')
          mesh(iel)%weightq(counter)=qweights(iq)*qweights(jq)
          mesh(iel)%rq(counter)=rq
          mesh(iel)%sq(counter)=sq
-         !call compute_dNdx_dNdy(rq,sq,dNNNMdx,dNNNMdy,jcob)
-         !mesh(iel)%JxWq(counter)=jcob*mesh(iel)%weightq(counter)
       end do
       end do
    end do
@@ -170,8 +168,6 @@ case('__Q1','__Q2','__Q3','_Q1+','Q1++')
          mesh(iel)%rq(counter)=rq
          mesh(iel)%sq(counter)=sq
          mesh(iel)%tq(counter)=tq
-         !call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNNNMdx,dNNNMdy,dNNNMdz,jcob)
-         !mesh(iel)%JxWq(counter)=jcob*mesh(iel)%weightq(counter)
       end do
       end do
       end do
@@ -267,8 +263,6 @@ case('__P1','__P2','__P3','_P1+','_P2+')
          call NNN(mesh(iel)%rq(kq),mesh(iel)%sq(kq),0.d0,NNNM,mmapping,ndim,mapping,caller_id01)
          mesh(iel)%xq(kq)=sum(mesh(iel)%xM*NNNM)
          mesh(iel)%yq(kq)=sum(mesh(iel)%yM*NNNM)
-         !call compute_dNdx_dNdy(mesh(iel)%rq(kq),mesh(iel)%sq(kq),dNNNMdx,dNNNMdy,jcob)
-         !mesh(iel)%JxWq(kq)=jcob*mesh(iel)%weightq(kq)
       end do
    end do
 

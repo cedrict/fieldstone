@@ -29,6 +29,16 @@ call system_clock(counti,count_rate)
 !@@ and temperature nodes, the velocity, pressure and temperature connectivity arrays,
 !@@ the coordinates of its center (xc,yc), its integer coordinates (ielx, iely),
 !@@ and its dimensions (hx,hy).
+!@@ Supported velocity space:
+!@@ \begin{itemize}
+!@@ \item $Q_1$, $Q_1^+$, $Q_2$, $Q_3$
+!@@ \item $P_1$, $P_1^+$, $P_2$, $P_2^+$
+!@@ \end{itemize}
+!@@ Supported pressure space:
+!@@ \begin{itemize}
+!@@ \item $Q_0$, $Q_1$
+!@@ \item $P_0$, $P_1$
+!@@ \end{itemize}
 !==================================================================================================!
 
 if (iproc==0) then
@@ -123,6 +133,81 @@ case('__Q2')
          mesh(counter)%yV(7)=(iely-1)*hy+hy
          mesh(counter)%yV(8)=(iely-1)*hy+hy
          mesh(counter)%yV(9)=(iely-1)*hy+hy
+
+         mesh(counter)%xc=(ielx-1)*hx+hx/2
+         mesh(counter)%yc=(iely-1)*hy+hy/2
+         mesh(counter)%hx=hx
+         mesh(counter)%hy=hy
+         mesh(counter)%vol=hx*hy
+         mesh(counter)%iconU(:)=mesh(counter)%iconV(:)
+         mesh(counter)%xU(:)=mesh(counter)%xV(:)
+         mesh(counter)%yU(:)=mesh(counter)%yV(:)
+         if (ielx==1)    mesh(counter)%bnd1_elt=.true.
+         if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
+         if (iely==1)    mesh(counter)%bnd3_elt=.true.
+         if (iely==nely) mesh(counter)%bnd4_elt=.true.
+      end do    
+   end do    
+
+!-----------
+case('__Q3')
+   nnx=3*nelx+1
+   nny=3*nely+1
+   counter=0    
+   do iely=1,nely    
+      do ielx=1,nelx    
+         counter=counter+1    
+         mesh(counter)%ielx=ielx
+         mesh(counter)%iely=iely
+         mesh(counter)%iconV(01)=(ielx-1)*3+1+(iely-1)*3*nnx+nnx*0
+         mesh(counter)%iconV(02)=(ielx-1)*3+2+(iely-1)*3*nnx+nnx*0
+         mesh(counter)%iconV(03)=(ielx-1)*3+3+(iely-1)*3*nnx+nnx*0
+         mesh(counter)%iconV(04)=(ielx-1)*3+4+(iely-1)*3*nnx+nnx*0
+         mesh(counter)%iconV(05)=(ielx-1)*3+1+(iely-1)*3*nnx+nnx*1
+         mesh(counter)%iconV(06)=(ielx-1)*3+2+(iely-1)*3*nnx+nnx*1
+         mesh(counter)%iconV(07)=(ielx-1)*3+3+(iely-1)*3*nnx+nnx*1
+         mesh(counter)%iconV(08)=(ielx-1)*3+4+(iely-1)*3*nnx+nnx*1
+         mesh(counter)%iconV(09)=(ielx-1)*3+1+(iely-1)*3*nnx+nnx*2
+         mesh(counter)%iconV(10)=(ielx-1)*3+2+(iely-1)*3*nnx+nnx*2
+         mesh(counter)%iconV(11)=(ielx-1)*3+3+(iely-1)*3*nnx+nnx*2
+         mesh(counter)%iconV(12)=(ielx-1)*3+4+(iely-1)*3*nnx+nnx*2
+         mesh(counter)%iconV(13)=(ielx-1)*3+1+(iely-1)*3*nnx+nnx*3
+         mesh(counter)%iconV(14)=(ielx-1)*3+2+(iely-1)*3*nnx+nnx*3
+         mesh(counter)%iconV(15)=(ielx-1)*3+3+(iely-1)*3*nnx+nnx*3
+         mesh(counter)%iconV(16)=(ielx-1)*3+4+(iely-1)*3*nnx+nnx*3
+
+         mesh(counter)%xV(01)=(ielx-1)*hx
+         mesh(counter)%xV(02)=(ielx-1)*hx+hx/3
+         mesh(counter)%xV(03)=(ielx-1)*hx+hx/3*2
+         mesh(counter)%xV(04)=(ielx-1)*hx+hx
+         mesh(counter)%xV(05)=(ielx-1)*hx
+         mesh(counter)%xV(06)=(ielx-1)*hx+hx/3
+         mesh(counter)%xV(07)=(ielx-1)*hx+hx/3*2
+         mesh(counter)%xV(08)=(ielx-1)*hx+hx
+         mesh(counter)%xV(09)=(ielx-1)*hx
+         mesh(counter)%xV(10)=(ielx-1)*hx+hx/3
+         mesh(counter)%xV(11)=(ielx-1)*hx+hx/3*2
+         mesh(counter)%xV(12)=(ielx-1)*hx+hx
+         mesh(counter)%xV(13)=(ielx-1)*hx
+         mesh(counter)%xV(14)=(ielx-1)*hx+hx/3
+         mesh(counter)%xV(15)=(ielx-1)*hx+hx/3*2
+         mesh(counter)%xV(16)=(ielx-1)*hx+hx
+         mesh(counter)%yV(01)=(iely-1)*hy
+         mesh(counter)%yV(02)=(iely-1)*hy
+         mesh(counter)%yV(03)=(iely-1)*hy
+         mesh(counter)%yV(04)=(iely-1)*hy
+         mesh(counter)%yV(05)=(iely-1)*hy+hy/3
+         mesh(counter)%yV(06)=(iely-1)*hy+hy/3
+         mesh(counter)%yV(07)=(iely-1)*hy+hy/3
+         mesh(counter)%yV(08)=(iely-1)*hy+hy/3
+         mesh(counter)%yV(09)=(iely-1)*hy+hy/3*2
+         mesh(counter)%yV(10)=(iely-1)*hy+hy/3*2
+         mesh(counter)%yV(11)=(iely-1)*hy+hy/3*2
+         mesh(counter)%yV(12)=(iely-1)*hy+hy/3*2
+         mesh(counter)%yV(13)=(iely-1)*hy+hy
+         mesh(counter)%yV(14)=(iely-1)*hy+hy
+         mesh(counter)%yV(15)=(iely-1)*hy+hy
+         mesh(counter)%yV(16)=(iely-1)*hy+hy
 
          mesh(counter)%xc=(ielx-1)*hx+hx/2
          mesh(counter)%yc=(iely-1)*hy+hy/2

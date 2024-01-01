@@ -36,7 +36,7 @@ real(8) N1r,N1s,N2r,N2s,N3r,N3s,N4r,N4s,N5r,N5s
 if (ndim==2) then
 
    select case(space)
-   case('__Q0')
+   case('__Q0','__P0')
       N(1)=1
    case('__Q1')
       N(1)=0.25*(1-r)*(1-s)

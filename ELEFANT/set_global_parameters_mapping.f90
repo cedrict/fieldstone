@@ -68,6 +68,20 @@ if (ndim==2) then
       rmapping=(/-1d0,0d0,+1d0,-1d0,0d0,+1d0,-1d0,0d0,+1d0/)
       smapping=(/-1d0,-1d0,-1d0,0d0,0d0,0d0,+1d0,+1d0,+1d0/)
    !-----------
+   case('__Q3')
+      mmapping=16
+      allocate(rmapping(mmapping)) ; rmapping=0.d0
+      allocate(smapping(mmapping)) ; smapping=0.d0
+      allocate(tmapping(mmapping)) ; tmapping=0.d0
+      rmapping=(/-1d0,-1d0/3d0,1d0/3d0,1d0,&
+           -1d0,-1d0/3d0,1d0/3d0,1d0,&
+           -1d0,-1d0/3d0,1d0/3d0,1d0,&
+           -1d0,-1d0/3d0,1d0/3d0,1d0/)
+      smapping=(/-1d0,-1d0,-1d0,-1d0,&
+           -1d0/3d0,-1d0/3d0,-1d0/3d0,-1d0/3d0,&
+           1d0/3d0,1d0/3d0,1d0/3d0,1d0/3d0,&
+           1d0,1d0,1d0,1d0/)
+   !-----------
    case default
       stop 'mapping not supported in set_global_parameters_mapping'
    end select

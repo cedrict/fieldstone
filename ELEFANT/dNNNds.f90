@@ -18,15 +18,15 @@ character(len=4), intent(in) :: space
 integer, intent(in) :: caller
 real(8), external :: dBubbleds
 real(8) Nmr,Nlr,Nrr,dNls,dNms,dNrs,Nlt,Nmt,Nrt
-real(8) db1ds,db2ds
+real(8) db1ds,db2ds,N1r,N2r,N3r,N4r,dN1sds,dN2sds,dN3sds,dN4sds
 
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{dNNNds}
 !@@ Spaces supported so far:
 !@@ \begin{itemize}
-!@@ \item 2D: Q1, Q2, Q1+
-!@@ \item 3D: Q1, Q2, Q1++
+!@@ \item 2D: $Q_1$, $Q_2$, $Q_3$, $Q_1^+$, $P_1$, $P_1^+$, $P_2$, $P_2^+$
+!@@ \item 3D: $Q_1$, $Q_2$, $Q_1^{++}$
 !@@ \end{itemize}
 !==================================================================================================!
 
@@ -50,6 +50,31 @@ if (ndim==2) then
       dNds(7)= 0.5d0*r*(r-1.d0) * 0.5d0*(2d0*s+1d0)
       dNds(8)=      (1.d0-r**2) * 0.5d0*(2d0*s+1d0)
       dNds(9)= 0.5d0*r*(r+1.d0) * 0.5d0*(2d0*s+1d0)
+   case('__Q3')
+       N1r=(-1    +r +9*r**2 - 9*r**3)/16
+       N2r=(+9 -27*r -9*r**2 +27*r**3)/16
+       N3r=(+9 +27*r -9*r**2 -27*r**3)/16
+       N4r=(-1    -r +9*r**2 + 9*r**3)/16
+       dN1sds=( +1 +18*s -27*s**2)/16
+       dN2sds=(-27 -18*s +81*s**2)/16
+       dN3sds=(+27 -18*s -81*s**2)/16
+       dN4sds=( -1 +18*s +27*s**2)/16
+       dNds(01)=N1r*dN1sds 
+       dNds(02)=N2r*dN1sds 
+       dNds(03)=N3r*dN1sds 
+       dNds(04)=N4r*dN1sds
+       dNds(05)=N1r*dN2sds 
+       dNds(06)=N2r*dN2sds 
+       dNds(07)=N3r*dN2sds 
+       dNds(08)=N4r*dN2sds
+       dNds(09)=N1r*dN3sds 
+       dNds(10)=N2r*dN3sds 
+       dNds(11)=N3r*dN3sds 
+       dNds(12)=N4r*dN3sds
+       dNds(13)=N1r*dN4sds 
+       dNds(14)=N2r*dN4sds 
+       dNds(15)=N3r*dN4sds 
+       dNds(16)=N4r*dN4sds
    case('_Q1+')
       dNds(1)=-0.25*(1-r)-0.25d0*dBubbleds(r,s)
       dNds(2)=-0.25*(1+r)-0.25d0*dBubbleds(r,s)
