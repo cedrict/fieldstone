@@ -18,10 +18,10 @@ implicit none
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{set\_global\_parameters\_spaceT}
-!@@ This subroutine computes mT,NT and assigns rT,sT,tT
+!@@ This subroutine computes {\tt mT}, {\tt NT} and assigns {\tt rT,sT,tT}.
 !@@ \begin{itemize}
-!@@ \item supported spaces in 2D: Q1,Q2
-!@@ \item supported spaces in 3D: Q1,Q2
+!@@ \item supported spaces in 2D: $Q_1$, $Q_2$
+!@@ \item supported spaces in 3D: $Q_1$, $Q_2$
 !@@ \end{itemize}
 !==================================================================================================!
 
@@ -34,7 +34,7 @@ call system_clock(counti,count_rate)
 select case(spaceVelocity)
 case('__Q1','__Q2','__Q3','__P1','__P2','__P3')
    spaceTemperature=spaceVelocity
-case('_Q1+')
+case('_Q1+','_Q1F')
    spaceTemperature='__Q1'
 case('_P2+')
    spaceTemperature='__P2'
@@ -141,7 +141,6 @@ if (ndim==2) then
 else
 
    select case(spaceTemperature)
-
    !-----------
    case('__Q1')
       mT=2**ndim
@@ -160,7 +159,6 @@ else
       rT=(/-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0,-1d0/)
       sT=(/-1d0,-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0/)
       tT=(/-1d0,-1d0,-1d0,-1d0,+1d0,+1d0,+1d0,+1d0/)
-
    !-----------
    case('__Q2')
       mT=3**ndim
@@ -179,7 +177,6 @@ else
       !missing rT
       !missing sT
       !missing tT
-
    !-----------
    case default
       stop 'spaceT not supported in set_global_parameters_spaceT'

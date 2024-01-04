@@ -17,7 +17,7 @@ implicit none
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{set\_global\_parameters\_spaceP}
-!@@ This subroutine computes mP,NP and assigns rP,sP,tP
+!@@ This subroutine computes {\tt mP,NP} and assigns {\tt rP,sP,tP}
 !@@ \begin{itemize}
 !@@ \item supported spaces in 2D: $Q_0$,$Q_1$,$Q_2$,$P_0$,$P_1$,$P_2$
 !@@ \item supported spaces in 3D: $Q_0$,$Q_1$,$Q_2$
@@ -40,7 +40,6 @@ if (ndim==2) then
       allocate(sP(mP)) ; sP=0.d0
       allocate(tP(mP)) ; tP=0.d0
       NP=nel
-
    !------------
    case('__Q1')
       mP=2**ndim
@@ -63,7 +62,6 @@ if (ndim==2) then
       end select
       rP=(/-1d0,+1d0,+1d0,-1d0/)
       sP=(/-1d0,-1d0,+1d0,+1d0/)
-
    !------------
    case('__Q2')
       mP=3**ndim
@@ -82,7 +80,6 @@ if (ndim==2) then
       end select
       rP=(/-1d0,0d0,+1d0,-1d0,0d0,+1d0,-1d0,0d0,+1d0/)
       sP=(/-1d0,-1d0,-1d0,0d0,0d0,0d0,+1d0,+1d0,+1d0/)
-
    !------------
    case('__P0')
       mP=1
@@ -92,7 +89,6 @@ if (ndim==2) then
       NP=nel
       rP=(/ 1d0/3d0 /)
       sP=(/ 1d0/3d0 /)
-
    !------------
    case('__P1')
       mP=3
@@ -115,7 +111,6 @@ if (ndim==2) then
       end select
       rP=(/0d0,1d0,0d0/)
       sP=(/0d0,0d0,1d0/)
-
    !-----------
    case('__P2')
       mP=6
@@ -138,7 +133,6 @@ if (ndim==2) then
       end select
       rP=(/0d0,1d0,0d0,0.5d0,0.5d0,0d0/)
       sP=(/0d0,0d0,1d0,0d0,0.5d0,0.5d0/)
-
    !------------
    case default
       stop 'spaceP not supported in set_global_parameters_spaceP'
@@ -147,7 +141,6 @@ if (ndim==2) then
 else
 
    select case(spacePressure)
-
    !------------
    case('__Q0')
       mP=1
@@ -155,7 +148,6 @@ else
       allocate(sP(mP)) ; sP=0.d0
       allocate(tP(mP)) ; tP=0.d0
       NP=nel
-
    !------------
    case('__Q1')
       mP=2**ndim
@@ -173,7 +165,6 @@ else
       rP=(/-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0,-1d0/)
       sP=(/-1d0,-1d0,+1d0,+1d0,-1d0,-1d0,+1d0,+1d0/)
       tP=(/-1d0,-1d0,-1d0,-1d0,+1d0,+1d0,+1d0,+1d0/)
-
    !------------
    case('__Q2')
       mP=3**ndim
@@ -191,7 +182,7 @@ else
       !missing rP
       !missing sP
       !missing tP
-
+   !------------
    case default
       stop 'spaceP not supported in set_global_parameters_spaceP'
    end select

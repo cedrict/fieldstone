@@ -38,6 +38,7 @@ logical :: debug               ! triggers lots of additional checks & prints
 logical :: use_penalty         ! whether the penalty formulation is used
 logical :: use_ALE             ! whether the ALE (free surface) is used
 logical :: normalise_pressure  ! 
+logical :: isoparametric_mapping ! 
 
 real(8) :: Lx,Ly,Lz            ! cartesian domain size
 real(8) :: block_scaling_coeff ! scaling coefficient for the G block
@@ -96,6 +97,7 @@ write(*,'(a,es10.3)')  ' penalty                 =',penalty
 write(*,'(a,l10)')     ' use_ALE                 =',use_ALE
 write(*,'(a,l10)')     ' use_swarm               =',use_swarm
 write(*,'(a,l10)')     ' use_T                   =',use_T
+write(*,'(a,l10)')     ' isoparametric_mapping   =',isoparametric_mapping
 write(*,'(a,l10)')     ' normalise_pressure      =',normalise_pressure  
 write(*,'(a,2i10)')    ' nmarker_per_dim,nmarker =',nmarker_per_dim,nmarker
 write(*,'(a,i10)')     ' nstep                   =',nstep

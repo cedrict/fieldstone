@@ -18,7 +18,7 @@ type element
   real(8), allocatable :: xP(:),yP(:),zP(:)   ! coordinates of pressure nodes
   real(8), allocatable :: xM(:),yM(:),zM(:)   ! coordinates of mapping nodes
   real(8), allocatable :: u(:),v(:),w(:)      ! velocity degrees of freedom
-  real(8), allocatable :: p(:),q(:)           ! pressure dofs and projected pressure q 
+  real(8), allocatable :: p(:)                ! pressure dofs
   real(8), allocatable :: T(:)                ! temperature degrees of freedom
   real(8), allocatable :: qx(:),qy(:),qz(:)   ! nodal heat flux vector
   real(8), allocatable :: rV(:),rP(:)         ! 

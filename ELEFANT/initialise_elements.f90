@@ -51,7 +51,6 @@ do iel=1,nel
    allocate(mesh(iel)%w(mW)) ; mesh(iel)%w=0.d0
 
 
-   allocate(mesh(iel)%q(mV)) ; mesh(iel)%q=0.d0  ! I dont know what to do here
 
 !   allocate(mesh(iel)%exx(mV)) ! same problem!
 !   allocate(mesh(iel)%eyy(mV)) ! PB ?

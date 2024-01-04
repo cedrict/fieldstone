@@ -47,6 +47,7 @@ use_T=.false.
 nmat=1
 penalty=1e6
 use_penalty=.False.
+isoparametric_mapping=.True.
 nxstripes=1
 nystripes=1
 nzstripes=1

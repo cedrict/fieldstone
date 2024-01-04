@@ -25,7 +25,7 @@ integer, parameter :: caller_id03=403
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{compute\_dNdx\_dNdy\_dNdz.f90}
+!@@ \subsection{compute\_dNTdx\_dNTdy\_dNTdz.f90}
 !@@ This subroutine computes $\partial{\bN^\uptheta}/\partial x$, 
 !@@ $\partial{\bN^\uptheta}/\partial y$ and
 !@@ $\partial{\bN^\uptheta}/\partial z$ at a location $r,s,t$ passed as argument.

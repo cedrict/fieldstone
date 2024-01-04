@@ -19,7 +19,8 @@ implicit none
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{allocate\_memory}
-!@@
+!@@ This subroutine essentially allocates all arrays in the {\tt module\_arrays}, i.e.
+!@@ {\tt NNNU,NNNV,NNNW,NNNP,NNNT} and all space derivatives.
 !==================================================================================================!
 
 if (iproc==0) then
@@ -63,10 +64,6 @@ allocate(dNNNUdz(mU))
 allocate(dNNNVdz(mV))
 allocate(dNNNWdz(mW))
 allocate(dNNNTdz(mT))
-
-if (debug) then
-write(2345,*) limit//'allocate_memory'//limit
-end if
 
 !==============================================================================!
 

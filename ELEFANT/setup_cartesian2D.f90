@@ -97,6 +97,84 @@ case('__Q1','_Q1+')
    end if
 
 !-----------
+case('_Q1F')
+
+   !    u        v
+   ! 4-----3  4--6--3
+   ! |     |  |     |
+   ! 5     6  |     |
+   ! |     |  |     |
+   ! 1-----2  1--5--2
+
+   nnx=nelx+1
+   nny=nely+1
+   counter=0    
+   do iely=1,nely    
+      do ielx=1,nelx    
+         counter=counter+1    
+         mesh(counter)%ielx=ielx
+         mesh(counter)%iely=iely
+
+         mesh(counter)%xU(1)=(ielx-1)*hx
+         mesh(counter)%xU(2)=(ielx-1)*hx+hx
+         mesh(counter)%xU(3)=(ielx-1)*hx+hx
+         mesh(counter)%xU(4)=(ielx-1)*hx
+         mesh(counter)%xU(5)=(ielx-1)*hx
+         mesh(counter)%xU(6)=(ielx-1)*hx+hx
+
+         mesh(counter)%yU(1)=(iely-1)*hy
+         mesh(counter)%yU(2)=(iely-1)*hy
+         mesh(counter)%yU(3)=(iely-1)*hy+hy
+         mesh(counter)%yU(4)=(iely-1)*hy+hy
+         mesh(counter)%yU(5)=(iely-1)*hy+0.5*hy
+         mesh(counter)%yU(6)=(iely-1)*hy+0.5*hy
+
+         mesh(counter)%xV(1)=(ielx-1)*hx
+         mesh(counter)%xV(2)=(ielx-1)*hx+hx
+         mesh(counter)%xV(3)=(ielx-1)*hx+hx
+         mesh(counter)%xV(4)=(ielx-1)*hx
+         mesh(counter)%xV(5)=(ielx-1)*hx+0.5*hx
+         mesh(counter)%xV(6)=(ielx-1)*hx+0.5*hx
+
+         mesh(counter)%yV(1)=(iely-1)*hy
+         mesh(counter)%yV(2)=(iely-1)*hy
+         mesh(counter)%yV(3)=(iely-1)*hy+hy
+         mesh(counter)%yV(4)=(iely-1)*hy+hy
+         mesh(counter)%yV(5)=(iely-1)*hy
+         mesh(counter)%yV(6)=(iely-1)*hy+hy
+        
+         mesh(counter)%iconU(1)=ielx+(iely-1)*(nelx+1)    
+         mesh(counter)%iconU(2)=ielx+1+(iely-1)*(nelx+1)    
+         mesh(counter)%iconU(3)=ielx+1+iely*(nelx+1)    
+         mesh(counter)%iconU(4)=ielx+iely*(nelx+1)    
+         mesh(counter)%iconU(5)=nnx*nny + (ielx-1) + (iely-1)*nnx +1 
+         mesh(counter)%iconU(6)=nnx*nny + (ielx-1) +1+ (iely-1)*nnx +1 
+
+         !print *,mesh(counter)%iconU-1
+      
+         mesh(counter)%iconV(1)=ielx+(iely-1)*(nelx+1)    
+         mesh(counter)%iconV(2)=ielx+1+(iely-1)*(nelx+1)    
+         mesh(counter)%iconV(3)=ielx+1+iely*(nelx+1)    
+         mesh(counter)%iconV(4)=ielx+iely*(nelx+1)    
+         mesh(counter)%iconV(5)=nnx*nny + nnx*nely + (ielx-1)  + (iely-1)*nelx +1
+         mesh(counter)%iconV(6)=nnx*nny + nnx*nely + nelx + (ielx-1)+ (iely-1)*nelx +1
+
+         print *,mesh(counter)%iconV-1
+      
+         mesh(counter)%xc=(ielx-1)*hx+hx/2
+         mesh(counter)%yc=(iely-1)*hy+hy/2
+         mesh(counter)%hx=hx
+         mesh(counter)%hy=hy
+         mesh(counter)%hz=0
+         mesh(counter)%vol=hx*hy
+         if (ielx==1)    mesh(counter)%bnd1_elt=.true.
+         if (ielx==nelx) mesh(counter)%bnd2_elt=.true.
+         if (iely==1)    mesh(counter)%bnd3_elt=.true.
+         if (iely==nely) mesh(counter)%bnd4_elt=.true.
+      end do    
+   end do    
+
+!-----------
 case('__Q2')
    nnx=2*nelx+1
    nny=2*nely+1
@@ -496,7 +574,6 @@ case('__Q1')
 
 !-----------
 case('__P1')
-
    counter=0    
    do iely=1,nely    
       do ielx=1,nelx    
@@ -604,7 +681,9 @@ end do
 if (debug) then
 write(2345,*) limit//'setup_cartesian2D'//limit
 do iel=1,nel
-write(2345,*) 'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV),'iconP',mesh(iel)%iconP(1:mP)
+write(2345,*) 'elt:',iel,' | iconU',mesh(iel)%iconU(1:mU)
+write(2345,*) 'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV)
+write(2345,*) 'elt:',iel,' | iconP',mesh(iel)%iconP(1:mP)
 do k=1,mU
 write(2345,*) mesh(iel)%xU(k),mesh(iel)%yU(k),mesh(iel)%zU(k)
 end do

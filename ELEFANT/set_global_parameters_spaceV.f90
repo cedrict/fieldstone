@@ -18,10 +18,11 @@ implicit none
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{set\_global\_parameters\_spaceV}
-!@@ This subroutine computes mU,mV,mW,nel,NU,NV,NW and assigns rU,sU,tU,rV,sV,tV,rW,sW,tW
+!@@ This subroutine computes {\tt mU,mV,mW,nel,NU,NV,NW} and assigns 
+!@@ {\tt rU,sU,tU,rV,sV,tV,rW,sW,tW}.
 !@@ \begin{itemize}
-!@@ \item supported spaces in 2D: Q1,Q2,Q1+,Q3,P1,P2
-!@@ \item supported spaces in 3D: Q1,Q2,Q1++
+!@@ \item supported spaces in 2D: $Q_1$, $Q_2$, $Q_1^+$, $Q_3$, $P_1$, $P_2$
+!@@ \item supported spaces in 3D: $Q_1$, $Q_2$, $Q_1^{++}$
 !@@ \end{itemize}
 !==================================================================================================!
 
@@ -35,12 +36,13 @@ write(*,'(a,a)') shift//'spaceVelocity=',spaceVelocity
 
 if (ndim==2) then
 
+   mW=0 ; NW=0
+
    select case(spaceVelocity)
    !-----------
    case('__Q1')
       mU=4
       mV=4
-      mW=0
       allocate(rU(mU)) ; rU=0.d0
       allocate(sU(mU)) ; sU=0.d0
       allocate(rV(mV)) ; rV=0.d0
@@ -68,10 +70,31 @@ if (ndim==2) then
       spaceU='__Q1'
       spaceV='__Q1'
    !-----------
+   case('_Q1F')
+      mU=6
+      mV=6
+      allocate(rU(mU)) ; rU=0.d0
+      allocate(sU(mU)) ; sU=0.d0
+      allocate(rV(mV)) ; rV=0.d0
+      allocate(sV(mV)) ; sV=0.d0
+      rU=(/-1d0,+1d0,+1d0,-1d0,-1d0,+1d0/) ; sU=(/-1d0,-1d0,+1d0,+1d0,0.d0,0.d0/)
+      rV=(/-1d0,+1d0,+1d0,-1d0,0.d0,0.d0/) ; sV=(/-1d0,-1d0,+1d0,+1d0,-1d0,+1d0/)
+      select case(geometry)
+      case('cartesian')
+         if (nelx==0) stop 'set_global_parameters_spaceV: nelx=0'
+         if (nely==0) stop 'set_global_parameters_spaceV: nely=0'
+         nel=nelx*nely
+         NU=(nelx+1)*(nely+1)+(nelx+1)*nely
+         NV=(nelx+1)*(nely+1)+(nely+1)*nelx
+      case default
+         stop 'set_global_parameters_spaceV: unknown geometry'
+      end select
+      spaceU='Q1Fu'
+      spaceV='Q1Fv'
+   !-----------
    case('__Q2')
       mU=9
       mV=9
-      mW=0
       allocate(rU(mU)) ; rU=0.d0
       allocate(sU(mU)) ; sU=0.d0
       allocate(rV(mV)) ; rV=0.d0
@@ -102,7 +125,6 @@ if (ndim==2) then
    case('_Q1+')
       mU=5
       mV=5
-      mW=0
       allocate(rU(mU)) ; rU=0.d0
       allocate(sU(mU)) ; sU=0.d0
       allocate(rV(mV)) ; rV=0.d0
@@ -112,6 +134,7 @@ if (ndim==2) then
          if (nelx==0) stop 'set_global_parameters_spaceV: nelx=0'
          if (nely==0) stop 'set_global_parameters_spaceV: nely=0'
          nel=nelx*nely
+         NU=(nelx+1)*(nely+1)+nel
          NV=(nelx+1)*(nely+1)+nel
       case('john')
          stop 'set_global_parameters_spaceV: john geometry not supported'
@@ -120,13 +143,12 @@ if (ndim==2) then
       end select
       rV=(/-1d0,+1d0,+1d0,-1d0,0d0/)
       sV=(/-1d0,-1d0,+1d0,+1d0,0d0/)
-      !spaceU='__Q2'
-      !spaceV='__Q2'
+      spaceU='_Q1+'
+      spaceV='_Q1+'
    !-----------
    case('__Q3')
       mu=16
       mV=16
-      mW=0
       allocate(rU(mU)) ; rU=0.d0
       allocate(sU(mU)) ; sU=0.d0
       allocate(rV(mV)) ; rV=0.d0
@@ -163,7 +185,6 @@ if (ndim==2) then
    case('__P1')
       mu=3
       mV=3
-      mW=0
       allocate(rU(mU)) ; rU=0.d0
       allocate(sU(mU)) ; sU=0.d0
       allocate(rV(mV)) ; rV=0.d0
@@ -173,11 +194,13 @@ if (ndim==2) then
          if (nelx==0) stop 'set_global_parameters_spaceV: nelx=0'
          if (nely==0) stop 'set_global_parameters_spaceV: nely=0'
          nel=2*nelx*nely
+         NU=(nelx+1)*(nely+1)
          NV=(nelx+1)*(nely+1)
       case('spherical')
          if (nelr==0) stop 'set_global_parameters_spaceV: nelr=0'
          if (nelphi==0) stop 'set_global_parameters_spaceV: nelphi=0'
          nel=2*nelr*nelphi
+         NU=(nelr+1)*nelphi
          NV=(nelr+1)*nelphi
       case('john')
          nel=9
@@ -193,7 +216,6 @@ if (ndim==2) then
    case('__P2')
       mu=6
       mV=6
-      mW=0
       allocate(rU(mU)) ; rU=0.d0
       allocate(sU(mU)) ; sU=0.d0
       allocate(rV(mV)) ; rV=0.d0
@@ -205,19 +227,16 @@ if (ndim==2) then
          nel=2*nelx*nely
          NU=(2*nelx+1)*(2*nely+1)
          NV=(2*nelx+1)*(2*nely+1)
-         NW=0
       case('spherical')
          if (nelr==0) stop 'set_global_parameters_spaceV: nelr=0'
          if (nelphi==0) stop 'set_global_parameters_spaceV: nelphi=0'
          nel=2*nelr*nelphi
          NU=(2*nelr+1)*(2*nelphi)
          NV=(2*nelr+1)*(2*nelphi)
-         NW=0
       case('john')
          nel=9
          NU=24
          NV=24
-         NW=0
       case default
          stop 'set_global_parameters_spaceV: unknown geometry'
       end select
@@ -316,6 +335,7 @@ else
       !spaceU='__Q2'
       !spaceV='__Q2'
       !spaceW='__Q2'
+   !-----------
    case default
       stop 'spaceV not supported in set_global_parameters_spaceV'
    end select

@@ -62,8 +62,8 @@ case('john')
    call setup_john
 end select
 
+call setup_mapping
 call output_mesh
-call mapping_setup
 call quadrature_setup
 call test_basis_functions
 call swarm_setup
@@ -93,8 +93,6 @@ do istep=1,nstep !-----------------------------------------
    if (solve_stokes_system) then                          !
       call make_matrix_stokes                             !
       call solve_stokes                                   !
-   stop 'aaa'
-      call interpolate_onto_nodes                         !
    else                                                   !
       call prescribe_stokes_solution                      !
    end if                                                 !

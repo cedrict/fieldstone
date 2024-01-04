@@ -8,7 +8,7 @@
 
 subroutine compute_belongs
 
-use module_parameters, only: nel,iproc,NU,NV,NW,NP,iel,debug,mU,mV,mW,mP
+use module_parameters, only: nel,iproc,NU,NV,NW,NP,iel,debug,mU,mV,mW,mP,ndim
 use module_mesh 
 use module_arrays, only: Unode_belongs_to,Vnode_belongs_to,Wnode_belongs_to,Pnode_belongs_to
 use module_timing
@@ -39,7 +39,6 @@ allocate(vnode_belongs_to(9,NV)) ; Vnode_belongs_to=0
 allocate(wnode_belongs_to(9,NW)) ; Wnode_belongs_to=0
 
 do iel=1,nel
-
    do i=1,mU
       inode=mesh(iel)%iconU(i)
       Unode_belongs_to(1,inode)=Unode_belongs_to(1,inode)+1
@@ -49,7 +48,9 @@ do iel=1,nel
       end if
       Unode_belongs_to(1+Unode_belongs_to(1,inode),inode)=iel
    end do
+end do
 
+do iel=1,nel
    do i=1,mV
       inode=mesh(iel)%iconV(i)
       Vnode_belongs_to(1,inode)=Vnode_belongs_to(1,inode)+1
@@ -59,7 +60,10 @@ do iel=1,nel
       end if
       Vnode_belongs_to(1+Vnode_belongs_to(1,inode),inode)=iel
    end do
+end do
 
+if (ndim>2) then
+do iel=1,nel
    do i=1,mW
       inode=mesh(iel)%iconW(i)
       Wnode_belongs_to(1,inode)=Wnode_belongs_to(1,inode)+1
@@ -69,8 +73,8 @@ do iel=1,nel
       end if
       Wnode_belongs_to(1+Wnode_belongs_to(1,inode),inode)=iel
    end do
-
 end do
+end if
 
 !----------------------------------------------------------
 

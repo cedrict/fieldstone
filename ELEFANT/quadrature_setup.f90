@@ -42,7 +42,7 @@ call system_clock(counti,count_rate)
 !----------------------------------------------------------
 
 select case(spaceVelocity)
-case('__Q1','__Q2','__Q3','_Q1+','Q1++')
+case('__Q1','__Q2','__Q3','_Q1+','Q1++','_Q1F')
    nqel=nqpts**ndim
 case('__P1','__P2','__P3','_P1+','_P2+')
    nqel=nqpts
@@ -54,7 +54,6 @@ NQ=nqel*nel ! total number of quadrature points
 
 write(*,'(a,i5)') shift//'nqel=',nqel
 write(*,'(a,i5)') shift//'NQ=',NQ
-
 
 !----------------------------------------------------------
 ! allocate quadrature-related arrays for each element
@@ -84,14 +83,15 @@ end do
 allocate(qcoords(nqpts))
 allocate(qweights(nqpts))
 
-
 !----------------------------------------------------------
 select case(spaceVelocity)
-case('__Q1','__Q2','__Q3','_Q1+','Q1++')
+case('__Q1','__Q2','__Q3','_Q1+','Q1++','_Q1F')
 
    !compute qcoords & qweights
    select case(nqpts)
    case(1)
+      qcoords=(/0.d0/)
+      qweights=(/2.d0/)
    case(2)
       qcoords=(/-qc2a,qc2a/)
       qweights=(/qw2a,qw2a/)

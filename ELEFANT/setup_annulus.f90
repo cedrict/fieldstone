@@ -22,8 +22,8 @@ real(8) hr,hphi
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{setup\_annulus}
-!@@ The annulus is placed in the equatorial plane (x,y).
-!@@ We then use the cylindrical coordinates $r,\phi$ which correspond
+!@@ The annulus is placed in the equatorial plane $(x,y)$.
+!@@ We then use the cylindrical coordinates $(r,\phi)$ which correspond
 !@@ to the spherical coordinates with $\theta=\pi/2$ (equator).
 !@@ The mesh is built in the $(r,\phi)$ space.
 !==================================================================================================!
@@ -41,11 +41,13 @@ if (outer_radius<inner_radius) stop 'setup_annulus: outer_radius<inner_radius'
 hr=(outer_radius-inner_radius)/nelr
 hphi=2*pi/nelphi
 
+write(*,'(a,es12.4)') shift//'hr=',hr
+write(*,'(a,es12.4)') shift//'hphi=',hphi
+
 select case(spaceVelocity)
 
-!------------------
+!-----------
 case('__Q1')
-
    counter=0    
    do ielphi=1,nelphi    
       do ielr=1,nelr    
@@ -100,7 +102,7 @@ case('__Q1')
       end do
    end do
 
-!------------
+!-----------
 case('__Q2')
 
    nnx=2*nelr+1
@@ -178,8 +180,8 @@ case('__Q2')
       end do
    end do
 
+!-----------
 case default
-
    stop 'setup_annulus: geometry unknown'
 
 end select
@@ -189,6 +191,8 @@ end select
 !----------------------------------------------------------
 
 select case(spacePressure)
+
+!------------------
 case('__Q0','__P0')
    counter=0    
    do ielphi=1,nelphi    
@@ -200,6 +204,7 @@ case('__Q0','__P0')
       end do    
    end do    
 
+!-----------
 case('__Q1')
    counter=0    
    do ielphi=1,nelphi    
@@ -230,8 +235,10 @@ case('__Q1')
       end do
    end do
 
+!-----------
 case default
    stop 'setup_annulus: unknwon spacePressure'
+
 end select 
 
 !----------------------------------------------------------
@@ -253,6 +260,13 @@ case('_Q1+')
       mesh(iel)%yT=mesh(iel)%yV(1:4)
       mesh(iel)%zT=mesh(iel)%zV(1:4)
       mesh(iel)%iconT=mesh(iel)%iconV(1:4)
+   end do
+case('Q1++')
+   do iel=1,nel
+      mesh(iel)%xT=mesh(iel)%xV(1:8)
+      mesh(iel)%yT=mesh(iel)%yV(1:8)
+      mesh(iel)%zT=mesh(iel)%zV(1:8)
+      mesh(iel)%iconT=mesh(iel)%iconV(1:8)
    end do
 case default
    stop 'setup_annulus: spaceT/spaceVelocity problem'

@@ -54,7 +54,6 @@ if (allocated(mesh(1)%u))   mem=mem+size(mesh(1)%u)*8
 if (allocated(mesh(1)%v))   mem=mem+size(mesh(1)%v)*8
 if (allocated(mesh(1)%w))   mem=mem+size(mesh(1)%w)*8
 if (allocated(mesh(1)%p))   mem=mem+size(mesh(1)%p)*8
-if (allocated(mesh(1)%q))   mem=mem+size(mesh(1)%q)*8
 if (allocated(mesh(1)%T))   mem=mem+size(mesh(1)%T)*8
 if (allocated(mesh(1)%qx))  mem=mem+size(mesh(1)%qx)*8
 if (allocated(mesh(1)%qy))  mem=mem+size(mesh(1)%qy)*8

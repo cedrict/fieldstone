@@ -105,9 +105,8 @@ end do
              write(*,'(a,2es12.4)') shift//'v (m,M)',v_min,v_max
 if (ndim==3) write(*,'(a,2es12.4)') shift//'w (m,M)',w_min,w_max
              write(*,'(a,2es12.4)') shift//'p (m,M)',p_min,p_max
-             write(*,'(a,2es12.4)') shift//'q (m,M)',q_min,q_max
 
-write(1238,'(10es12.4)') u_min,u_max,v_min,v_max,w_min,w_max,p_min,p_max,q_min,q_max
+write(1238,'(8es12.4)') u_min,u_max,v_min,v_max,w_min,w_max,p_min,p_max
 call flush(1238)
 
 !==============================================================================!

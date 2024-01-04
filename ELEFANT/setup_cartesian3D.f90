@@ -377,7 +377,7 @@ case('__Q1','__Q2','__Q3','__P1','__P2','__P3')
       mesh(iel)%zT=mesh(iel)%zV
       mesh(iel)%iconT=mesh(iel)%iconV
    end do
-case('_Q1++')
+case('Q1++')
    do iel=1,nel
       mesh(iel)%xT=mesh(iel)%xV(1:8)
       mesh(iel)%yT=mesh(iel)%yV(1:8)

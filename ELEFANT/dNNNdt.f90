@@ -13,23 +13,17 @@ integer, intent(in) :: m,ndim
 real(8), intent(in) :: r,s,t
 real(8), intent(out) :: dNdt(m)
 character(len=4), intent(in) :: space
-!real(8) Nmr,Nlr,Nrr,Nls,Nms,Nrs,Nlt,Nmt,Nrt
-!real(8) b1,b2
-!real(8) N1r,N1s,N2r,N2s
-!real(8) N3r,N3s,N4r,N4s
-!real(8) N5r,N5s
 
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{dNNNdt}
-!@@ Spaces supported so far:
-!@@ 3D: Q1, Q2, Q1++
+!@@ Spaces supported so far: NONE
 !==================================================================================================!
 
 select case(space)
-case('__Q1')
-case('__Q2')
-case('Q1++')
+!case('__Q1')
+!case('__Q2')
+!case('Q1++')
 case default
    stop 'unknown 3D space in dNNNdt'
 end select
