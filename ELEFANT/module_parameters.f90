@@ -40,6 +40,8 @@ logical :: use_ALE             ! whether the ALE (free surface) is used
 logical :: normalise_pressure  ! 
 logical :: isoparametric_mapping ! 
 
+
+
 real(8) :: Lx,Ly,Lz            ! cartesian domain size
 real(8) :: block_scaling_coeff ! scaling coefficient for the G block
 real(8) :: penalty             ! penalty parameter
@@ -66,6 +68,7 @@ character(len=6) :: bnd3_bcV_type     ! type of velocity b.c. on bnd 3
 character(len=6) :: bnd4_bcV_type     ! type of velocity b.c. on bnd 4
 character(len=6) :: bnd5_bcV_type     ! type of velocity b.c. on bnd 5
 character(len=6) :: bnd6_bcV_type     ! type of velocity b.c. on bnd 6
+character(len=10) :: K_storage,G_storage,RHS_storage
 
 integer :: iel
 integer :: istep           

@@ -25,6 +25,14 @@ real(8), dimension(24) :: xpts,ypts
 !==================================================================================================!
 !@@ \subsection{setup\_john}
 !@@ 
+!@@ Supported velocity space:
+!@@ \begin{itemize}
+!@@ \item $P_1$, $P_2$
+!@@ \end{itemize}
+!@@ Supported pressure space:
+!@@ \begin{itemize}
+!@@ \item $P_0$, $P_1$
+!@@ \end{itemize}
 !==================================================================================================!
 
 if (iproc==0) then

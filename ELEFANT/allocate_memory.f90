@@ -65,6 +65,24 @@ allocate(dNNNVdz(mV))
 allocate(dNNNWdz(mW))
 allocate(dNNNTdz(mT))
 
+!----------------------------------------------------------
+
+if (ndim==2) ndim2=3
+if (ndim==3) ndim2=6
+allocate(Cmat(ndim2,ndim2)) ; Cmat=0d0
+allocate(Kmat(ndim2,ndim2)) ; Kmat=0d0
+if (ndim==2) then
+Cmat(1,1)=2d0 ; Cmat(2,2)=2d0 ; Cmat(3,3)=1d0
+Kmat(1,1)=1d0 ; Kmat(1,2)=1d0 ; Kmat(2,1)=1d0 ; Kmat(2,2)=1d0
+end if
+if (ndim==3) then
+Cmat(1,1)=2d0 ; Cmat(2,2)=2d0 ; Cmat(3,3)=2d0 
+Cmat(4,4)=1d0 ; Cmat(5,5)=1d0 ; Cmat(6,6)=1d0 
+Kmat(1,1)=1d0 ; Kmat(1,2)=1d0 ; Kmat(1,3)=1d0 
+Kmat(2,1)=1d0 ; Kmat(2,2)=1d0 ; Kmat(2,3)=1d0 
+Kmat(3,1)=1d0 ; Kmat(3,2)=1d0 ; Kmat(3,3)=1d0
+end if
+
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)

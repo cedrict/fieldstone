@@ -23,7 +23,6 @@ real(8) :: h_el(mP)
 real(8) :: f_el(mU+mV+mW)
 real(8) :: K_el(mU+mV+mW,mU+mV+mW)
 real(8) :: G_el(mU+mV+mW,mP)
-real(8) :: C_el(mP,mP)
 real(8) :: S_el(mP,mP)
 
 !==================================================================================================!
@@ -45,36 +44,34 @@ write(*,'(a,i3)') shift//'mV=',mV
 write(*,'(a,i3)') shift//'mW=',mW
 write(*,'(a,i3)') shift//'mP=',mP
 
-if (ndim==2) ndim2=3
-if (ndim==3) ndim2=6
-allocate(Cmat(ndim2,ndim2)) ; Cmat=0d0
-allocate(Kmat(ndim2,ndim2)) ; Kmat=0d0
-if (ndim==2) then
-Cmat(1,1)=2d0 ; Cmat(2,2)=2d0 ; Cmat(3,3)=1d0
-Kmat(1,1)=1d0 ; Kmat(1,2)=1d0 ; Kmat(2,1)=1d0 ; Kmat(2,2)=1d0
-end if
-if (ndim==3) then
-Cmat(1,1)=2d0 ; Cmat(2,2)=2d0 ; Cmat(3,3)=2d0 
-Cmat(4,4)=1d0 ; Cmat(5,5)=1d0 ; Cmat(6,6)=1d0 
-Kmat(1,1)=1d0 ; Kmat(1,2)=1d0 ; Kmat(1,3)=1d0 
-Kmat(2,1)=1d0 ; Kmat(2,2)=1d0 ; Kmat(2,3)=1d0 
-Kmat(3,1)=1d0 ; Kmat(3,2)=1d0 ; Kmat(3,3)=1d0
-end if
-
 !----------------------------------------------------------
 
-C_el=0.d0
+rhs_f=0.
+rhs_h=0.
 
-if (inner_solver_type=='_MUMPS') then
+select case(G_storage)
+case('matrix_CSR')
+   csrGT%mat=0d0
+case('blocks_CSR')
+   csrGxT%mat=0d0
+   csrGyT%mat=0d0
+   csrGzT%mat=0d0
+case default
+   stop 'make_matrix_stokes: unknown G_storage'
+end select
+
+select case(K_storage)
+case('matrix_MUMPS')
    counter_mumps=0
    idV%RHS=0.d0
    idV%A_ELT=0.d0
-end if
-Kdiag=0d0
-rhs_f=0.
-if (allocated(rhs_h)) rhs_h=0.
-if (allocated(csrK%mat)) csrK%mat=0d0 
-if (allocated(csrGT%mat)) csrGT%mat=0d0
+case('blocks_MUMPS')
+case('matrix_CSR')
+   csrK%mat=0d0 
+case('blocks_CSR')
+case default
+   stop 'make_matrix_stokes: unknown K_storage'
+end select
 
 !----------------------------------------------------------
 
@@ -82,125 +79,13 @@ do iel=1,nel
 
    print *,'building elemental matrix for',iel
 
-
    call compute_elemental_matrix_stokes(K_el,G_el,f_el,h_el)
-   stop '==='
-
+   call compute_elemental_schur_complement(K_el,G_el,S_el)
    call impose_boundary_conditions_stokes(K_el,G_el,f_el,h_el)
-
-   !--------------------
-   !assemble GT, f and h
-   !--------------------
-
-   if (.not.use_penalty) then
-
-      select case(spacePressure)
-      case('__Q0','__P0')
-      csrGT%mat(csrGT%ia(iel):csrGT%ia(iel+1)-1)=G_el(:,1)
-      rhs_h(iel)=rhs_h(iel)+h_el(1)
-
-      case default
-
-         do k1=1,mV
-         ik=mesh(iel)%iconV(k1)
-         do i1=1,ndofV
-            ikk=ndofV*(k1-1)+i1 ! local coordinate of velocity dof
-            m1=ndofV*(ik-1)+i1  ! global coordinate of velocity dof                             
-            do k2=1,mP
-               jkk=k2                 ! local coordinate of pressure dof
-               m2=mesh(iel)%iconP(k2) ! global coordinate of pressure dof
-               do k=csrGT%ia(m2),csrGT%ia(m2+1)-1    
-                  if (csrGT%ja(k)==m1) then  
-                     csrGT%mat(k)=csrGT%mat(k)+G_el(ikk,jkk)  
-                  end if    
-               end do    
-            end do
-         end do
-         end do
-
-         do k2=1,mP
-            m2=mesh(iel)%iconP(k2) ! global coordinate of pressure dof
-            rhs_h(m2)=rhs_h(m2)+h_el(k2)
-         end do
-
-      end select
-
-   end if
-
-   !--------------------
-   ! assemble K
-   !--------------------
-
-   if (inner_solver_type=='_MUMPS') then
-      do k1=1,mV
-         ik=mesh(iel)%iconV(k1)
-         do i1=1,ndofV
-            ikk=ndofV*(k1-1)+i1
-            m1=ndofV*(ik-1)+i1
-            Kdiag(m1)=Kdiag(m1)+K_el(ikk,ikk)
-            do k2=1,mV
-               do i2=1,ndofV
-                  jkk=ndofV*(k2-1)+i2
-                  if (jkk>=ikk) then
-                     counter_mumps=counter_mumps+1
-                     idV%A_ELT(counter_mumps)=K_el(ikk,jkk)
-                  end if
-               end do
-            end do
-            rhs_f(m1)=rhs_f(m1)+f_el(ikk)
-         end do
-      end do
-   else
-      do k1=1,mV    
-         ik=mesh(iel)%iconV(k1)
-         do i1=1,ndofV    
-            ikk=ndofV*(k1-1)+i1    
-            m1=ndofV*(ik-1)+i1    
-            Kdiag(m1)=Kdiag(m1)+K_el(ikk,ikk)
-            do k2=1,mV    
-               jk=mesh(iel)%iconV(k2)
-               do i2=1,ndofV    
-                  jkk=ndofV*(k2-1)+i2    
-                  m2=ndofV*(jk-1)+i2    
-                  ! ikk,jkk local integer coordinates in the elemental matrix
-                  do k=csrK%ia(m1),csrK%ia(m1+1)-1    
-                     if (csrK%ja(k)==m2) then  
-                        csrK%mat(k)=csrK%mat(k)+K_el(ikk,jkk)  
-                     end if    
-                  end do    
-               end do    
-            end do    
-            rhs_f(m1)=rhs_f(m1)+f_el(ikk)    
-         end do    
-      end do   
-
-   end if
-
-   ! build elemental approximate Schur complement
-   ! only keep diagonal of K
-   ! should this happen before bc are applied?
-   ! add C_el ?
-   do k1=1,mV
-   do k2=1,mV
-      if (k1/=k2) K_el(k1,k2)=0d0
-      if (k1==k2) K_el(k1,k2)=1d0/K_el(k1,k2)
-   end do
-   end do
-   S_el=matmul(transpose(G_el),matmul(K_el,G_el))
-
-   !assemble approx Schur complement
-
-   do k1=1,mP
-      m1=mesh(iel)%iconP(k1) ! global coordinate of pressure dof
-      do k2=1,mP
-         m2=mesh(iel)%iconP(k2) ! global coordinate of pressure dof
-         do k=csrMP%ia(m1),csrMP%ia(m1+1)-1    
-            if (csrMP%ja(k)==m2) then  
-               csrMP%mat(k)=csrMP%mat(k)+S_el(k1,k2)  
-            end if    
-         end do
-      end do
-   end do
+   call assemble_G(G_el)
+   call assemble_K(K_el)
+   call assemble_RHS(f_el,h_el)
+   call assemble_S(S_el)
 
 end do
 
@@ -209,16 +94,9 @@ end do
 
 !----------------------------------------------------------
 
-                         write(*,'(a,2es12.4)') shift//'rhs_f (m/M):    ',minval(rhs_f),maxval(rhs_f)
-if (allocated(csrK%mat)) write(*,'(a,2es12.4)') shift//'csrK%mat (m/M): ',minval(csrK%mat),maxval(csrK%mat)
-                         write(*,'(a,2es12.4)') shift//'Kdiag (m/M):    ',minval(Kdiag),maxval(Kdiag)
-if (inner_solver_type=='_MUMPS') write(*,'(a,2es15.4)') shift//'idV%A_ELT (m/M):',minval(idV%A_ELT),maxval(idV%A_ELT)
-
-write(1236,'(4es12.4)') minval(rhs_f),maxval(rhs_f),minval(Kdiag),maxval(Kdiag)
-call flush(1236)
-
-deallocate(Cmat)
-deallocate(Kmat)
+!                         write(*,'(a,2es12.4)') shift//'rhs_f (m/M):    ',minval(rhs_f),maxval(rhs_f)
+!if (allocated(csrK%mat)) write(*,'(a,2es12.4)') shift//'csrK%mat (m/M): ',minval(csrK%mat),maxval(csrK%mat)
+!if () write(*,'(a,2es15.4)') shift//'idV%A_ELT (m/M):',minval(idV%A_ELT),maxval(idV%A_ELT)
 
 !==============================================================================!
 

@@ -156,8 +156,8 @@ case('_Q1F')
          mesh(counter)%iconV(2)=ielx+1+(iely-1)*(nelx+1)    
          mesh(counter)%iconV(3)=ielx+1+iely*(nelx+1)    
          mesh(counter)%iconV(4)=ielx+iely*(nelx+1)    
-         mesh(counter)%iconV(5)=nnx*nny + nnx*nely + (ielx-1)  + (iely-1)*nelx +1
-         mesh(counter)%iconV(6)=nnx*nny + nnx*nely + nelx + (ielx-1)+ (iely-1)*nelx +1
+         mesh(counter)%iconV(5)=nnx*nny + (ielx-1)  + (iely-1)*nelx +1
+         mesh(counter)%iconV(6)=nnx*nny + nelx + (ielx-1)+ (iely-1)*nelx +1
 
          print *,mesh(counter)%iconV-1
       
