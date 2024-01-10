@@ -6,46 +6,50 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine assemble_RHS(f_el,h_el)
+subroutine setup_K_blocks_MUMPS
 
-use module_parameters, only: mU,mV,mW,mP,iel,ndofV,mVel
-use module_mesh 
+!use module_parameters
+!use module_mesh 
 !use module_constants
 !use module_swarm
 !use module_materials
-use module_arrays, only: rhs_f,rhs_h
+!use module_arrays
 use module_timing
 
 implicit none
 
-real(8), intent(out) :: f_el(mVel)
-real(8), intent(out) :: h_el(mP)
-
-integer :: m1,m2,k1,k2,ik,ikk,i1
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{assemble\_RHS}
+!@@ \subsection{setup\_K\_blocks\_MUMPS}
 !@@
 !==================================================================================================!
 
-      do k1=1,mV
-         ik=mesh(iel)%iconV(k1)
-         do i1=1,ndofV
-            ikk=ndofV*(k1-1)+i1
-            m1=ndofV*(ik-1)+i1
-            rhs_f(m1)=rhs_f(m1)+f_el(ikk)
-         end do
-      end do
+if (iproc==0) then
 
-         do k2=1,mP
-            m2=mesh(iel)%iconP(k2) ! global coordinate of pressure dof
-            rhs_h(m2)=rhs_h(m2)+h_el(k2)
-         end do
+call system_clock(counti,count_rate)
+
+!==============================================================================!
 
 
 
 
+
+
+
+
+
+if (debug) then
+write(2345,*) limit//'name'//limit
+end if
+
+!==============================================================================!
+
+call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
+
+write(*,'(a,f6.2,a)') 'setup_K_blocks_MUMPS:',elapsed,' s'
+
+end if ! iproc
 
 end subroutine
 

@@ -3,6 +3,7 @@ implicit none
 
 integer :: mmapping            ! number of nodes for mapping 
 integer :: mU,mV,mW            ! number of velocity nodes per element
+integer :: mVel
 integer :: mP                  ! number of pressure nodes per element
 integer :: mT                  ! number of temperature nodes per element
 integer :: nelx,nely,nelz      ! number of elements in each direction
@@ -68,7 +69,7 @@ character(len=6) :: bnd3_bcV_type     ! type of velocity b.c. on bnd 3
 character(len=6) :: bnd4_bcV_type     ! type of velocity b.c. on bnd 4
 character(len=6) :: bnd5_bcV_type     ! type of velocity b.c. on bnd 5
 character(len=6) :: bnd6_bcV_type     ! type of velocity b.c. on bnd 6
-character(len=10) :: K_storage,G_storage,RHS_storage
+character(len=10) :: K_storage,GT_storage,RHS_storage
 
 integer :: iel
 integer :: istep           
@@ -88,7 +89,7 @@ write(*,'(a,a10,i10)') ' mapping,mmaping         =',mapping,mmapping
 write(*,'(a,3f10.3)')  ' Lx,Ly,Lz                =',Lx,Ly,Lz
 write(*,'(a,4i10)')    ' nelx,nely,nelz,nel      =',nelx,nely,nelz,nel
 write(*,'(a,3i10)')    ' nelr,neltheta,nelphi    =',nelr,neltheta,nelphi
-write(*,'(a,5i10)')    ' mU,mV,mW,mP,mT          =',mU,mV,mW,mP,mT
+write(*,'(a,5i10)')    ' mU,mV,mW,mP,mT,mVel     =',mU,mV,mW,mP,mT,mVel
 write(*,'(a,5i10)')    ' NU,NV,NW,NP,NT          =',NU,NV,NW,NP,NT
 write(*,'(a,3i10)')    ' NfemV,NfemP,NfemT       =',NfemV,NfemP,NfemT
 write(*,'(a,3i10)')    ' nqpts,nqel,NQ           =',nqpts,nqel,NQ

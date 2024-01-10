@@ -9,7 +9,7 @@
 subroutine set_global_parameters_spaceV
 
 use module_parameters, only: spaceVelocity,debug,mU,mV,mW,NU,NV,NW,nelx,nely,nelz,iproc,ndim,&
-                             nel,geometry,nelr,nelphi,spaceU,spaceV,spaceW,ndofV
+                             nel,geometry,nelr,nelphi,spaceU,spaceV,spaceW,ndofV,mVel
 use module_timing
 use module_arrays, only: rU,sU,tU,rV,sV,tV,rW,sW,tW
 
@@ -363,10 +363,12 @@ write(*,'(a,3i5)') shift//'NU,NV,NW=',NU,NV,NW
 
 ndofV = ndim
 
+mVel=mU+mV+mW
+
 !----------------------------------------------------------
 if (debug) then
 write(2345,*) limit//'set_global_parameters_spaceV'//limit
-write(2345,*) 'mU,mV,mW=',mU,mV,mW
+write(2345,*) 'mU,mV,mW,mVel=',mU,mV,mW,mVel
 write(2345,*) 'nel=',nel
 write(2345,*) 'NU,NV,NW=',NU,NV,NW
 end if

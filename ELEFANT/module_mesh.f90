@@ -8,6 +8,7 @@ type element
   integer, allocatable :: iconT(:)            ! connectivity array for temperature nodes 
   integer, allocatable :: iconP(:)            ! connectivity array for pressure nodes
   integer, allocatable :: iconM(:)            ! connectivity array for mapping nodes
+  integer, allocatable :: iconVel(:)          ! connectivity array for all velocity dofs
   integer :: ielx,iely,ielz                   ! integer coords of the elt (Cartesian geom.)
   integer :: nmarker                          ! number of markers in element
   integer :: list_of_markers(200)             ! list of markers inside the element

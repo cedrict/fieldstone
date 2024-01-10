@@ -8,9 +8,9 @@
 
 subroutine solve_stokes
 
-use module_parameters
+use module_parameters, only: NU,NV,NW,NfemV,ndim,mU,mV,mW,mP,iproc,iel,use_penalty,nel,outer_solver_type
 use module_statistics 
-use module_arrays, only: rhs_f,solV,solP
+use module_arrays, only: rhs_f,solVel,solP,solU,solV,solW
 use module_mesh
 use module_timing
 
@@ -34,22 +34,28 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-solV=0
+solVel=0
 solP=0
 guess=0
 
 if (use_penalty) then
 
-   call inner_solver(rhs_f,guess,solV)
+   call inner_solver(rhs_f,guess,solVel)
+
+   SolU=SolVel(1:NU)   
+   SolV=SolVel(1+NU:NU+NV)   
+   SolW=SolVel(1+NU+NV:NU+NV+NW)   
 
    !transfer velocity onto elements
    do iel=1,nel
+      do k=1,mU
+         mesh(iel)%u(k)=SolU(mesh(iel)%iconU(k))
+      end do
       do k=1,mV
-         inode=mesh(iel)%iconV(k)
-         mesh(iel)%u(k)=solV((inode-1)*ndofV+1)
-         mesh(iel)%v(k)=solV((inode-1)*ndofV+2)
-         if (ndim==3) &
-         mesh(iel)%w(k)=solV((inode-1)*ndofV+3)
+         mesh(iel)%v(k)=SolV(mesh(iel)%iconV(k))
+      end do
+      do k=1,mW
+         mesh(iel)%w(k)=SolW(mesh(iel)%iconW(k))
       end do
    end do
 
@@ -66,19 +72,16 @@ else !-----------------------------------------------------
 
 
 
-
-   !transfer solution onto elements
+   !transfer velocity onto elements
    do iel=1,nel
-      do k=1,mV
-         inode=mesh(iel)%iconV(k)
-         mesh(iel)%u(k)=solV((inode-1)*ndofV+1)
-         mesh(iel)%v(k)=solV((inode-1)*ndofV+2)
-         if (ndim==3) &
-         mesh(iel)%w(k)=solV((inode-1)*ndofV+3)
+      do k=1,mU
+         mesh(iel)%u(k)=SolU(mesh(iel)%iconU(k))
       end do
-      do k=1,mP
-         inode=mesh(iel)%iconP(k)
-         mesh(iel)%p(k)=solP(inode)
+      do k=1,mV
+         mesh(iel)%v(k)=SolV(mesh(iel)%iconV(k))
+      end do
+      do k=1,mW
+         mesh(iel)%w(k)=SolW(mesh(iel)%iconW(k))
       end do
    end do
 

@@ -6,42 +6,29 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine assemble_RHS(f_el,h_el)
+subroutine assemble_MP
 
-use module_parameters, only: mU,mV,mW,mP,iel,ndofV,mVel
-use module_mesh 
+!use module_parameters
+!use module_mesh 
 !use module_constants
 !use module_swarm
 !use module_materials
-use module_arrays, only: rhs_f,rhs_h
+!use module_arrays
 use module_timing
 
 implicit none
 
-real(8), intent(out) :: f_el(mVel)
-real(8), intent(out) :: h_el(mP)
-
-integer :: m1,m2,k1,k2,ik,ikk,i1
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{assemble\_RHS}
+!@@ \subsection{assemble\_MP}
 !@@
 !==================================================================================================!
 
-      do k1=1,mV
-         ik=mesh(iel)%iconV(k1)
-         do i1=1,ndofV
-            ikk=ndofV*(k1-1)+i1
-            m1=ndofV*(ik-1)+i1
-            rhs_f(m1)=rhs_f(m1)+f_el(ikk)
-         end do
-      end do
 
-         do k2=1,mP
-            m2=mesh(iel)%iconP(k2) ! global coordinate of pressure dof
-            rhs_h(m2)=rhs_h(m2)+h_el(k2)
-         end do
+
+
+
 
 
 

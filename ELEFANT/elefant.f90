@@ -70,10 +70,15 @@ call swarm_setup
 call experiment_swarm_material_layout
 call paint_swarm
 call compute_belongs
-call matrix_setup_K
-call matrix_setup_MP
-call matrix_setup_GT
-call matrix_setup_A
+
+call setup_K   !new
+call setup_GT  !new
+call setup_A   !new
+call setup_MP  !new
+
+
+
+!call matrix_setup_GT
 !call output_matrix_tikz
 call experiment_initial_temperature
 call estimate_memory_use

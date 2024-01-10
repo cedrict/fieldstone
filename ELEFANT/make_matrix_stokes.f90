@@ -9,20 +9,20 @@
 subroutine make_matrix_stokes
 
 use module_parameters, only: mU,mV,mW,mP,iproc,iel,ndofV,spacePressure,ndim2,inner_solver_type,&
-                             ndim,nel,use_penalty
+                             ndim,nel,use_penalty,K_storage,GT_storage,mVel
 use module_arrays
 use module_mesh 
 use module_timing
-use module_sparse, only : csrGT,csrK,csrMP
+use module_sparse, only : csrGT,csrK,csrMP,csrGxT,csrGyT,csrGzT
 use module_MUMPS
 
 implicit none
 
 integer counter_mumps,k1,k2,ikk,jkk,i1,i2,m1,m2,ik,k,jk ! <- too many ?!
 real(8) :: h_el(mP)
-real(8) :: f_el(mU+mV+mW)
-real(8) :: K_el(mU+mV+mW,mU+mV+mW)
-real(8) :: G_el(mU+mV+mW,mP)
+real(8) :: f_el(mVel)
+real(8) :: K_el(mVel,mVel)
+real(8) :: G_el(mVel,mP)
 real(8) :: S_el(mP,mP)
 
 !==================================================================================================!
@@ -49,7 +49,7 @@ write(*,'(a,i3)') shift//'mP=',mP
 rhs_f=0.
 rhs_h=0.
 
-select case(G_storage)
+select case(GT_storage)
 case('matrix_CSR')
    csrGT%mat=0d0
 case('blocks_CSR')
@@ -57,7 +57,7 @@ case('blocks_CSR')
    csrGyT%mat=0d0
    csrGzT%mat=0d0
 case default
-   stop 'make_matrix_stokes: unknown G_storage'
+   stop 'make_matrix_stokes: unknown GT_storage'
 end select
 
 select case(K_storage)
@@ -80,12 +80,13 @@ do iel=1,nel
    print *,'building elemental matrix for',iel
 
    call compute_elemental_matrix_stokes(K_el,G_el,f_el,h_el)
-   call compute_elemental_schur_complement(K_el,G_el,S_el)
    call impose_boundary_conditions_stokes(K_el,G_el,f_el,h_el)
-   call assemble_G(G_el)
+   call assemble_GT(G_el)
    call assemble_K(K_el)
    call assemble_RHS(f_el,h_el)
-   call assemble_S(S_el)
+   call compute_elemental_schur_complement(K_el,G_el,S_el)
+   !call assemble_S(S_el)
+   call assemble_MP
 
 end do
 

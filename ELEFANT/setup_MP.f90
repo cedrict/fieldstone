@@ -6,13 +6,13 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine matrix_setup_MP
+subroutine setup_MP
 
 use module_parameters, only: NP,nelx,nely,nelz,spacePressure,iproc,debug,geometry,ndim,iel,mP,nel 
-use module_timing
 use module_mesh
 use module_sparse, only: csrMP
 use module_arrays, only: pnode_belongs_to
+use module_timing
 
 implicit none
 
@@ -22,7 +22,7 @@ logical, dimension(:), allocatable :: alreadyseen
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{matrix\_setup\_MP}
+!@@ \subsection{setup\_MP}
 !@@ This subroutine computes the structure of the pressure mass matrix. 
 !==================================================================================================!
 
@@ -237,7 +237,7 @@ end if
 !----------------------------------------------------------
    
 if (debug) then
-write(2345,*) limit//'matrix_setup_MP'//limit
+write(2345,*) limit//'setup_MP'//limit
 write(2345,*) 'csrMP%nz=',csrMP%nz
 write(2345,*) 'csrMP%ia (m/M)',minval(csrMP%ia), maxval(csrMP%ia)
 write(2345,*) 'csrMP%ja (m/M)',minval(csrMP%ja), maxval(csrMP%ja)
@@ -251,7 +251,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'matrix_setup_MP:',elapsed,' s                |'
+write(*,'(a,f6.2,a)') 'setup_MP:',elapsed,' s'
 
 end if ! iproc
 

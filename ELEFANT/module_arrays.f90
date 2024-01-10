@@ -1,8 +1,8 @@
 module module_arrays
 implicit none
 
-real(8), dimension(:), allocatable :: rhs_f,rhs_h,rhs_b
-real(8), dimension(:), allocatable :: solV,solP
+real(8), dimension(:), allocatable :: rhs_f,rhs_h,rhs_b,rhs_fx,rhs_fy,rhs_fz
+real(8), dimension(:), allocatable :: solVel,solP,solU,solV,solW
 real(8), dimension(:), allocatable :: Kdiag
 
 real(8), dimension(:,:), allocatable :: Cmat
@@ -25,5 +25,8 @@ integer(4), dimension(:,:), allocatable :: Unode_belongs_to
 integer(4), dimension(:,:), allocatable :: Vnode_belongs_to
 integer(4), dimension(:,:), allocatable :: Wnode_belongs_to
 integer(4), dimension(:,:), allocatable :: Pnode_belongs_to
+
+real(8), dimension(:,:), allocatable :: K_matrix
+real(8), dimension(:,:), allocatable :: GT_matrix
 
 end module

@@ -6,7 +6,7 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine assemble_G(Gel)
+subroutine setup_K_matrix_MUMPS
 
 !use module_parameters
 !use module_mesh 
@@ -21,49 +21,69 @@ implicit none
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{template}
+!@@ \subsection{setup\_K\_matrix\_MUMPS}
 !@@
+! see matrix_setup_K_MUMPS.f90 in old ELEFANT
+! see matrix_setup_K_SPARSKIT.f90 in old ELEFANT
 !==================================================================================================!
 
-if (use_penalty) exit
+if (iproc==0) then
 
-select case(G_storage)
+call system_clock(counti,count_rate)
 
-case(matrix_CSR)
+!==============================================================================!
 
-      select case(spacePressure)
+NNel=mVel         ! size of an elemental matrix
 
-      case('__Q0','__P0')
-      csrGT%mat(csrGT%ia(iel):csrGT%ia(iel+1)-1)=G_el(:,1)
-      rhs_h(iel)=rhs_h(iel)+h_el(1)
+idV%N=NfemV
 
-      case default
+idV%NELT=nel
+LELTVAR=nel*NNel           ! nb of elts X size of elemental matrix
+NA_ELT=nel*NNel*(NNel+1)/2  ! nb of elts X nb of nbs in elemental matrix
 
-         do k1=1,mV
-         ik=mesh(iel)%iconV(k1)
-         do i1=1,ndofV
-            ikk=ndofV*(k1-1)+i1 ! local coordinate of velocity dof
-            m1=ndofV*(ik-1)+i1  ! global coordinate of velocity dof                             
-            do k2=1,mP
-               jkk=k2                 ! local coordinate of pressure dof
-               m2=mesh(iel)%iconP(k2) ! global coordinate of pressure dof
-               do k=csrGT%ia(m2),csrGT%ia(m2+1)-1    
-                  if (csrGT%ja(k)==m1) then  
-                     csrGT%mat(k)=csrGT%mat(k)+G_el(ikk,jkk)  
-                  end if    
-               end do    
+allocate(idV%A_ELT (NA_ELT)) 
+allocate(idV%RHS   (idV%N))  
+
+   if (iproc==0) then
+
+      allocate(idV%ELTPTR(idV%NELT+1)) 
+      allocate(idV%ELTVAR(LELTVAR))    
+
+      !=====[building ELTPTR]=====
+
+      do iel=1,nel
+         idV%ELTPTR(iel)=1+(iel-1)*(ndofV*mV)
+      end do
+      idV%ELTPTR(iel)=1+nel*(ndofV*mV)
+
+      !=====[building ELTVAR]=====
+
+      counter=0
+      do iel=1,nel
+         do k=1,mV
+            inode=mesh(iel)%iconV(k)
+            do idof=1,ndofV
+               counter=counter+1
+               idV%ELTVAR(counter)=(inode-1)*ndofV+idof
             end do
          end do
-         end do
+      end do
 
-      end select
+   end if
 
-case(blocks_CSR)
 
-case default
-   stop 'assemble_G: unknown G_storage'
-end select
 
+if (debug) then
+write(2345,*) limit//'name'//limit
+end if
+
+!==============================================================================!
+
+call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
+
+write(*,'(a,f6.2,a)') 'setup_K_matrix_MUMPS:',elapsed,' s'
+
+end if ! iproc
 
 end subroutine
 

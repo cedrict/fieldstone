@@ -9,20 +9,20 @@
 subroutine compute_elemental_matrix_stokes(K_el,G_el,f_el,h_el)
 
 use module_parameters, only: mU,mV,mW,mP,use_penalty,spaceU,spaceV,spaceW,spacePressure,&
-                             iel,penalty,nqel,ndofV,ndim,ndim2
+                             iel,penalty,nqel,ndofV,ndim,ndim2,mVel
 use module_arrays
 use module_mesh
 use module_constants
 
 implicit none
 
-real(8), intent(out) :: K_el(mU+mV+mW,mU*mV+mW)
-real(8), intent(out) :: G_el(mU+mV+mW,mP)
-real(8), intent(out) :: f_el(mU+mV+mW)
+real(8), intent(out) :: K_el(mVel,mVel)
+real(8), intent(out) :: G_el(mVel,mP)
+real(8), intent(out) :: f_el(mVel)
 real(8), intent(out) :: h_el(mP)
 
 integer iq,k,i1,i2,i3
-real(8) Bmat(ndim2,mU+mV+mW),NNNmat(ndim2,mP)
+real(8) Bmat(ndim2,mVel),NNNmat(ndim2,mP)
 real(8) rq,sq,tq,jcob,weightq
 integer, parameter :: caller_id01=801
 integer, parameter :: caller_id02=802

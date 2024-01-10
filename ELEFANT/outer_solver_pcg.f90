@@ -14,7 +14,7 @@ use module_parameters, only: NfemV,NfemP,iproc,debug
 !use module_swarm
 !use module_materials
 use module_sparse, only : csrGT
-use module_arrays, only: SolV, SolP, rhs_f,rhs_h
+use module_arrays, only: SolVel, SolP, rhs_f,rhs_h
 use module_timing
 
 implicit none
@@ -54,15 +54,15 @@ allocate(GP(NfemV,1))
 allocate(guess(NfemV)) 
 
 
-solP=0.d0 ! we assume that the guess pressure is zero.
-solV=0.d0
+SolP=0.d0 ! we assume that the guess pressure is zero.
+SolVel=0.d0
 guess=0.d0
 
 call spmvT(NfemP,NfemV,csrGT%nz,SolP,GP(1:NfemV,1),csrGT%mat,csrGT%ja,csrGT%ia)  ! compute G.P_0
 
-call inner_solver(rhs_f-GP(:,1),guess,solV)                                      ! solve K V_0 = f - G.P_0
+call inner_solver(rhs_f-GP(:,1),guess,SolVel)                                    ! solve K V_0 = f - G.P_0
 
-call spmv (NfemP,NfemV,csrGT%nz,SolV,GTV(:,1),csrGT%mat,csrGT%ja,csrGT%ia)
+call spmv (NfemP,NfemV,csrGT%nz,SolVel,GTV(:,1),csrGT%mat,csrGT%ja,csrGT%ia)
 rvect_k(:,1)=GTV(:,1)-rhs_h                                                      ! compute r_0
 
 rvect_0=sqrt(dot_product(rvect_k(:,1),rvect_k(:,1)))                             ! compute |r_0|_2 

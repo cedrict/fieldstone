@@ -6,24 +6,26 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine matrix_setup_GT
+subroutine setup_GT_matrix_CSR
 
-use module_parameters
+use module_parameters, only: spacePressure,mU,mV,mW,mP,NfemV,NP,nel,ndofV,NfemP,iel,debug,iproc,mVel
 use module_mesh 
-use module_timing
-use module_sparse, only : csrGT
+!use module_arrays
+use module_sparse, only: csrGT
 use module_arrays, only: pnode_belongs_to
+use module_timing
 
 implicit none
 
-integer inode,k,nz,i,ii,nsees,k2,jp,ip,imod
+integer :: k,k1,k2,ik,ikk,jkk,ip,i,ii,imod,jp,nz,nsees,inode
+real(8) :: t3,t4
 logical, dimension(:), allocatable :: alreadyseen
-real(8) t3,t4
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{matrix\_setup\_GT.f90}
-!@@ This subroutine is executed if {\sl use\_penalty} is False.
+!@@ \subsection{setup\_GT\_matrix\_CSR}
+!@@ This subroutine computes the number of non zeros of the matrix $\G$
+!@@ and fills the corresponding arrays {\tt csrGT\%ia} and {\tt csrGT\%ja}.
 !==================================================================================================!
 
 if (iproc==0) then
@@ -32,16 +34,16 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-if (.not.use_penalty) then
-
 csrGT%nr=NfemP ! number of rows
 csrGT%nc=NfemV ! number of columns
 
 select case(spacePressure)
 
+!-------------------------
 case('__Q0','__P0','_P-1') ! is pressure discontinuous
-   csrGT%NZ=mV*ndofV*nel*mP
+   csrGT%NZ=mVel*nel*mP
 
+!-----------
 case default
 
    allocate(alreadyseen(NfemV))
@@ -76,8 +78,11 @@ allocate(csrGT%ia(csrGT%nr+1))
 allocate(csrGT%ja(csrGT%NZ))  
 allocate(csrGT%mat(csrGT%NZ)) 
 
+!----------------------------------------------------------
+
 select case(spacePressure)
 
+!------------------
 case('__Q0','__P0') ! is pressure discontinuous
 
    nz=0
@@ -96,6 +101,7 @@ case('__Q0','__P0') ! is pressure discontinuous
       csrGT%ia(iel+1)=csrGT%ia(iel)+nsees
    end do
 
+!-----------
 case default
 
    imod=NP/4
@@ -142,16 +148,11 @@ write(2345,*) i,'th line: csrGT%ja=',csrGT%ja(csrGT%ia(i):csrGT%ia(i+1)-1)-1
 end do
 end if
 
-else
-   write(*,'(a)') shift//'bypassed since use_penalty=True'
-
-end if !use_penalty
-
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'matrix_setup_GT:',elapsed,' s                |'
+write(*,'(a,f6.2,a)') 'setup_GT_matrix_CSR:',elapsed,' s'
 
 end if ! iproc
 

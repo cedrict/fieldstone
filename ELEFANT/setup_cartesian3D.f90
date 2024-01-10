@@ -296,6 +296,12 @@ case default
    stop 'setup_cartesian3D: spaceV unknwown'
 end select
 
+do iel=1,nel
+   mesh(iel)%iconVel(1:mU)=mesh(iel)%iconU(1:mU)
+   mesh(iel)%iconVel(1+mU:mU+mV)=mesh(iel)%iconV(1:mU)+NU
+   mesh(iel)%iconVel(1+mU+mV:mU+mV+mW)=mesh(iel)%iconW(1:mW)+NV
+end do
+
 !----------------------------------------------------------
 ! pressure 
 !----------------------------------------------------------
@@ -434,11 +440,33 @@ if (debug) then
 write(2345,*) limit//'setup_cartesian3D'//limit
 do iel=1,nel
 print *,'--------------------------------------------------'
+print *,'elt:',iel,' | iconU',mesh(iel)%iconU(1:mU)
+do k=1,mU
+write(2345,*) mesh(iel)%xU(k),mesh(iel)%yU(k),mesh(iel)%zU(k)
+end do
+end do
+
+do iel=1,nel
+print *,'--------------------------------------------------'
 print *,'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV)
 do k=1,mV
 write(2345,*) mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
 end do
 end do
+
+do iel=1,nel
+print *,'--------------------------------------------------'
+print *,'elt:',iel,' | iconW',mesh(iel)%iconW(1:mW)
+do k=1,mW
+write(2345,*) mesh(iel)%xW(k),mesh(iel)%yW(k),mesh(iel)%zW(k)
+end do
+end do
+
+do iel=1,nel
+print *,'--------------------------------------------------'
+print *,'elt:',iel,' | iconVel',mesh(iel)%iconVel(1:mVel)
+end do
+
 print *,'--------------------------------------------------'
 print *,'--------------------------------------------------'
 do iel=1,nel

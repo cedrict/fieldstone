@@ -6,10 +6,9 @@
 !==================================================================================================!
 !==================================================================================================!
 
-subroutine matrix_setup_A
+subroutine setup_A
 
-use module_parameters
-use module_arrays, only: rhs_b
+use module_parameters, only: spaceTemperature,geometry,use_T,iproc,ndim,nelx,nely,nelz,NfemT
 use module_sparse, only: csrA
 use module_timing
 
@@ -20,7 +19,7 @@ integer nnx,nny,nnz
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{matrix\_setup\_A}
+!@@ \subsection{setup\_A}
 !@@ Matrix A is the energy equation matrix.
 !@@ If the geometry is Cartesian then the number of nonzeros in the matrix and its sparsity 
 !@@ structures are computed in a very efficient way. 
@@ -65,10 +64,11 @@ end if
 write(*,'(a,i8)') shift//'csrA%N =',csrA%N
 write(*,'(a,i8)') shift//'csrA%NZ=',csrA%NZ
 
+!----------------------------------------------------------
+
 allocate(csrA%ia(csrA%N+1)) 
 allocate(csrA%ja(csrA%NZ))   
 allocate(csrA%mat(csrA%NZ))  
-allocate(rhs_b(csrA%N))  
 
 if (geometry=='cartesian' .and. ndim==2) then
    nz=0
@@ -134,7 +134,7 @@ end if ! use_T
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'matrix_setup_A:',elapsed,' s                 |'
+write(*,'(a,f6.2,a)') 'setup_A:',elapsed,' s'
 
 end if ! iproc
 

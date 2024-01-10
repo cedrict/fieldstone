@@ -8,7 +8,7 @@
 
 subroutine initialise_elements
 
-use module_parameters
+use module_parameters, only: mU,mV,mW,mT,mVel,mP,geometry,nel,iel,iproc,mmapping
 use module_mesh 
 !use module_constants
 use module_timing
@@ -35,6 +35,7 @@ do iel=1,nel
    allocate(mesh(iel)%iconU(mU)) 
    allocate(mesh(iel)%iconV(mV)) 
    allocate(mesh(iel)%iconW(mW)) 
+   allocate(mesh(iel)%iconVel(mvel)) 
 
    allocate(mesh(iel)%xU(mU)) ; mesh(iel)%xU=0.d0
    allocate(mesh(iel)%yU(mU)) ; mesh(iel)%yU=0.d0

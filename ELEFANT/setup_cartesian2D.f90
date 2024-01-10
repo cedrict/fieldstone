@@ -90,6 +90,9 @@ case('__Q1','_Q1+')
 
    if (spaceVelocity=='_Q1+') then ! add bubble node
    do iel=1,nel
+      mesh(iel)%xU(5)=mesh(iel)%xc
+      mesh(iel)%yU(5)=mesh(iel)%yc
+      mesh(iel)%iconU(5)=(nelx+1)*(nely+1)+iel
       mesh(iel)%xV(5)=mesh(iel)%xc
       mesh(iel)%yV(5)=mesh(iel)%yc
       mesh(iel)%iconV(5)=(nelx+1)*(nely+1)+iel
@@ -537,6 +540,11 @@ case default
 
 end select
 
+do iel=1,nel
+   mesh(iel)%iconVel(1:mU)=mesh(iel)%iconU(1:mU)
+   mesh(iel)%iconVel(mU+1:mU+mV)=mesh(iel)%iconV(1:mU)+NU
+end do
+
 !----------------------------------------------------------
 ! pressure 
 !----------------------------------------------------------
@@ -684,6 +692,7 @@ do iel=1,nel
 write(2345,*) 'elt:',iel,' | iconU',mesh(iel)%iconU(1:mU)
 write(2345,*) 'elt:',iel,' | iconV',mesh(iel)%iconV(1:mV)
 write(2345,*) 'elt:',iel,' | iconP',mesh(iel)%iconP(1:mP)
+write(2345,*) 'elt:',iel,' | iconVel',mesh(iel)%iconVel(1:mVel)
 do k=1,mU
 write(2345,*) mesh(iel)%xU(k),mesh(iel)%yU(k),mesh(iel)%zU(k)
 end do
