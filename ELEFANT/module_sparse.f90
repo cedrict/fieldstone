@@ -19,17 +19,17 @@ type compressedrowstorage_rec
    real(8),dimension(:),allocatable :: mat
 end type compressedrowstorage_rec
 
-type(compressedrowstorage_sqr) csrK  ! (1,1) block of Stokes matrix
-type(compressedrowstorage_sqr) csrKxx
+type(compressedrowstorage_sqr) csrK    ! (1,1) block of Stokes matrix
+type(compressedrowstorage_sqr) csrKxx  
 type(compressedrowstorage_sqr) csrKxy
 type(compressedrowstorage_sqr) csrKyx
 type(compressedrowstorage_sqr) csrKyy
-type(compressedrowstorage_rec) csrGT ! (2,1) block of Stokes matrix
+type(compressedrowstorage_rec) csrGT   ! (2,1) block of Stokes matrix
 type(compressedrowstorage_rec) csrGxT 
 type(compressedrowstorage_rec) csrGyT 
 type(compressedrowstorage_rec) csrGzT 
-type(compressedrowstorage_sqr) csrMV ! velocity mass matrix
-type(compressedrowstorage_sqr) csrMP ! pressure mass matrix 
-type(compressedrowstorage_sqr) csrA  ! energy matrix
+type(compressedrowstorage_sqr) csrMV   ! velocity mass matrix
+type(compressedrowstorage_sqr) csrMP   ! pressure mass matrix 
+type(compressedrowstorage_sqr) csrA    ! energy matrix
 
 end module

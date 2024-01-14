@@ -54,12 +54,12 @@ open(unit=123,file='OUTPUT/TIKZ/csrStokes.tex')
 !matrix K
 write(123,'(a)') '\begin{tikzpicture}'
 write(123,'(a,f6.1,a,f6.1,a,f6.1,a,f6.1,a)') '\draw[] (',0.1,',',0.1+real(NfemP)/10,') rectangle (',&
-            real(NfemV)/10+0.1,',',real(NfemP+NfemV)/10+0.1,');'
-do i=1,NfemV
+            real(NfemVel)/10+0.1,',',real(NfemP+NfemVel)/10+0.1,');'
+do i=1,NfemVel
    do k=csrK%ia(i),csrK%ia(i+1)-1
       j=csrK%ja(k)
       ii=j
-      jj=NfemV-i+1 + NfemP
+      jj=NfemVel-i+1 + NfemP
       ii=ii/10
       jj=jj/10 
       write(123,'(a,f6.1,a,f6.1,a,f6.1,a,f6.1,a)') '\draw[fill=teal!20] (',ii,',',jj,') rectangle (',ii+.1,',',jj+0.1,');'
@@ -67,13 +67,13 @@ do i=1,NfemV
 end do
 
 !matrix G
-write(123,'(a,f6.1,a,f6.1,a,f6.1,a,f6.1,a)') '\draw[] (',0.1+real(NfemV)/10,',',0.1+real(NfemP)/10,&
-              ') rectangle (',real(NfemV+NfemP)/10+0.1,',',real(NfemV+NfemP)/10+0.1,');'
+write(123,'(a,f6.1,a,f6.1,a,f6.1,a,f6.1,a)') '\draw[] (',0.1+real(NfemVel)/10,',',0.1+real(NfemP)/10,&
+              ') rectangle (',real(NfemVel+NfemP)/10+0.1,',',real(NfemVel+NfemP)/10+0.1,');'
 do i=1,NfemP
    do k=csrGT%ia(i),csrGT%ia(i+1)-1
       j=csrGT%ja(k)
       jj=j + NfemP
-      ii=NfemP-i+1 + NfemV
+      ii=NfemP-i+1 + NfemVel
       ii=ii/10
       jj=jj/10 
       write(123,'(a,f6.1,a,f6.1,a,f6.1,a,f6.1,a)') '\draw[fill=olive!20] (',ii,',',jj,') rectangle (',ii+.1,',',jj+0.1,');'
@@ -81,7 +81,7 @@ do i=1,NfemP
 end do
 
 !matrix GT
-write(123,'(a,f6.1,a,f6.1,a,f6.1,a,f6.1,a)') '\draw[] (',0.1,',',0.1,') rectangle (',real(NfemV)/10+0.1,',',real(NfemP)/10+0.1,');'
+write(123,'(a,f6.1,a,f6.1,a,f6.1,a,f6.1,a)') '\draw[] (',0.1,',',0.1,') rectangle (',real(NfemVel)/10+0.1,',',real(NfemP)/10+0.1,');'
 do i=1,NfemP
    do k=csrGT%ia(i),csrGT%ia(i+1)-1
       j=csrGT%ja(k)

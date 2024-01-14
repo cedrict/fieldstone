@@ -8,7 +8,7 @@
 
 subroutine allocate_memory
 
-use module_parameters, only: NU,NV,NW,NP,NT,NfemV,NfemP,NfemT,iproc,nmat,mU,mV,mW,mP,mT,ndim,ndim2,use_T
+use module_parameters, only: NU,NV,NW,NP,NT,NfemVel,NfemP,NfemT,iproc,nmat,mU,mV,mW,mP,mT,ndim,ndim2,use_T
 use module_arrays, only: dNNNUdx,dNNNUdy,dNNNUdz,dNNNVdx,dNNNVdy,dNNNVdz,dNNNWdx,dNNNWdy,dNNNWdz,&
                          NNNU,NNNV,NNNW,NNNP,NNNT,dNNNTdx,dNNNTdy,dNNNTdz,solVel,solP,rhs_f,rhs_h,&
                          Kdiag,Cmat,Kmat,rhs_b,SolU,SolV,SolW
@@ -30,23 +30,23 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-NfemV=NU+NV+NW
+NfemVel=NU+NV+NW
 NfemP=NP
 NfemT=NT
 
-write(*,'(a,i7)') shift//'NfemV=',NfemV
+write(*,'(a,i7)') shift//'NfemVel=',NfemVel
 write(*,'(a,i7)') shift//'NfemP=',NfemP
 write(*,'(a,i7)') shift//'NfemT=',NfemT
 
 allocate(solU(NU))
 allocate(solV(NV))
 allocate(solW(NW))
-allocate(solVel(NfemV))
+allocate(solVel(NfemVel))
 allocate(solP(NfemP))
-allocate(rhs_f(NfemV))
+allocate(rhs_f(NfemVel))
 allocate(rhs_h(NfemP))
 allocate(materials(nmat))
-allocate(Kdiag(NfemV))
+allocate(Kdiag(NfemVel))
 
 if (use_T) allocate(rhs_b(NfemT))  
 

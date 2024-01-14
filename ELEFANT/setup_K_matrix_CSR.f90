@@ -8,12 +8,8 @@
 
 subroutine setup_K_matrix_CSR
 
-use module_parameters, only: penalty
-!use module_mesh 
-!use module_constants
-!use module_swarm
-!use module_materials
-!use module_arrays
+use module_parameters, only: use_penalty,NfemVel,ndim,spaceV,NU,NV,NW,mV,iproc,debug,geometry,nelx,nely,nelz,ndofV
+use module_mesh 
 use module_sparse, only : csrK
 use module_arrays, only: vnode_belongs_to
 use module_timing
@@ -22,7 +18,7 @@ implicit none
 
 real(8) :: t3,t4
 integer :: counter,idof,LELTVAR,NA_ELT,inode,nnx,nny,nnz,imod,NNel
-integer :: i1,i2,nsees,nz,ip,i,ii,j,j1,j2,jj,jp,l,k,k1,k2,kk
+integer :: i1,i2,nsees,nz,ip,i,ii,j,j1,j2,jj,jp,l,k,k1,k2,kk,iel
 logical, dimension(:), allocatable :: alreadyseen
 
 !==================================================================================================!
@@ -46,7 +42,7 @@ end if
 
 
 
-      csrK%N=NfemV
+      csrK%N=NfemVel
 
       !----------------------------------------------------------------------------------
       if (geometry=='cartesian' .and. ndim==2 .and. spaceV=='__Q1') then
@@ -283,7 +279,7 @@ end if
          if (debug) then
          write(2345,'(a)') limit//'matrix_setup_K'//limit
          write(2345,*) 'csrK%ia=',csrK%ia
-         do i=1,NfemV
+         do i=1,NfemVel
          write(2345,*) i,'th line: csrK%ja=',csrK%ja(csrK%ia(i):csrK%ia(i+1)-1)-1
          end do
          end if

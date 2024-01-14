@@ -8,7 +8,7 @@
 
 subroutine outer_solver_pcg
 
-use module_parameters, only: NfemV,NfemP,iproc,debug
+use module_parameters, only: NfemVel,NfemP,iproc,debug
 !use module_mesh 
 !use module_constants
 !use module_swarm
@@ -48,21 +48,21 @@ allocate(pvect_k(NfemP,1))
 allocate(zvect_k(NfemP,1))
 allocate(zvect_k(NfemP,1))
 allocate(GTV(NfemP,1))
-allocate(ptildevect_k(NfemV,1))
-allocate(dvect_k(NfemV,1))
-allocate(GP(NfemV,1)) 
-allocate(guess(NfemV)) 
+allocate(ptildevect_k(NfemVel,1))
+allocate(dvect_k(NfemVel,1))
+allocate(GP(NfemVel,1)) 
+allocate(guess(NfemVel)) 
 
 
 SolP=0.d0 ! we assume that the guess pressure is zero.
 SolVel=0.d0
 guess=0.d0
 
-call spmvT(NfemP,NfemV,csrGT%nz,SolP,GP(1:NfemV,1),csrGT%mat,csrGT%ja,csrGT%ia)  ! compute G.P_0
+call spmvT(NfemP,NfemVel,csrGT%nz,SolP,GP(1:NfemVel,1),csrGT%mat,csrGT%ja,csrGT%ia)  ! compute G.P_0
 
 call inner_solver(rhs_f-GP(:,1),guess,SolVel)                                    ! solve K V_0 = f - G.P_0
 
-call spmv (NfemP,NfemV,csrGT%nz,SolVel,GTV(:,1),csrGT%mat,csrGT%ja,csrGT%ia)
+call spmv (NfemP,NfemVel,csrGT%nz,SolVel,GTV(:,1),csrGT%mat,csrGT%ja,csrGT%ia)
 rvect_k(:,1)=GTV(:,1)-rhs_h                                                      ! compute r_0
 
 rvect_0=sqrt(dot_product(rvect_k(:,1),rvect_k(:,1)))                             ! compute |r_0|_2 

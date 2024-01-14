@@ -8,7 +8,7 @@
 
 subroutine setup_GT
 
-use module_parameters, only: GT_storage,NfemV,NfemP,use_penalty,iproc
+use module_parameters, only: GT_storage,NfemVel,NfemP,use_penalty,iproc
 use module_arrays, only: GT_matrix
 use module_timing
 
@@ -37,7 +37,7 @@ select case(GT_storage)
 !------------------
 case('matrix_FULL')
 
-   allocate(GT_matrix(NfemP,NfemV)) ; GT_matrix=0.d0
+   allocate(GT_matrix(NfemP,NfemVel)) ; GT_matrix=0.d0
 
 !------------------
 case('matrix_CSR')

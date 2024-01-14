@@ -8,7 +8,8 @@
 
 subroutine swarm_setup
 
-use module_parameters, only: nmarker,ndim,iel,iproc,use_swarm,spaceV,mV,nel,nmarker_per_dim,init_marker_random
+use module_parameters, only: nmarker,ndim,iel,iproc,use_swarm,spaceV,mV,nel,&
+                             nmarker_per_dim,init_marker_random
 use module_swarm 
 use module_mesh 
 use module_timing
@@ -117,7 +118,8 @@ else
 
 end if ! init_marker_random
 
-else
+else ! use_swarm
+
    write(*,'(a)') shift//'bypassed since use_swarm=False'
 
 end if ! use_swarm

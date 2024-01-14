@@ -8,7 +8,7 @@
 
 subroutine setup_GT_matrix_CSR
 
-use module_parameters, only: spacePressure,mU,mV,mW,mP,NfemV,NP,nel,ndofV,NfemP,iel,debug,iproc,mVel
+use module_parameters, only: spacePressure,mU,mV,mW,mP,NfemVel,NP,nel,ndofV,NfemP,iel,debug,iproc,mVel
 use module_mesh 
 !use module_arrays
 use module_sparse, only: csrGT
@@ -35,7 +35,7 @@ call system_clock(counti,count_rate)
 !==============================================================================!
 
 csrGT%nr=NfemP ! number of rows
-csrGT%nc=NfemV ! number of columns
+csrGT%nc=NfemVel ! number of columns
 
 select case(spacePressure)
 
@@ -46,7 +46,7 @@ case('__Q0','__P0','_P-1') ! is pressure discontinuous
 !-----------
 case default
 
-   allocate(alreadyseen(NfemV))
+   allocate(alreadyseen(NfemVel))
    nz=0
    do ip=1,NP
       nsees=0
@@ -107,7 +107,7 @@ case default
    imod=NP/4
 
    call cpu_time(t3)
-   allocate(alreadyseen(NfemV))
+   allocate(alreadyseen(NfemVel))
    nz=0
    csrGT%ia(1)=1
    do ip=1,NP

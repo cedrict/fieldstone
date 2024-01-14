@@ -17,8 +17,7 @@ use module_quadrature
 implicit none
 
 integer iq,jq,kq,counter
-real(8) rq,sq,tq
-real(8) NNNM(mmapping)
+real(8) rq,sq,tq,NNNM(mmapping)
 real(8), dimension(:), allocatable :: qcoords,qweights
 integer, parameter :: caller_id01=601
 
@@ -84,7 +83,11 @@ allocate(qcoords(nqpts))
 allocate(qweights(nqpts))
 
 !----------------------------------------------------------
+!----------------------------------------------------------
+
 select case(spaceVelocity)
+
+!----------------------------------------------
 case('__Q1','__Q2','__Q3','_Q1+','Q1++','_Q1F')
 
    !compute qcoords & qweights
@@ -174,6 +177,7 @@ case('__Q1','__Q2','__Q3','_Q1+','Q1++','_Q1F')
    end do
    end if
 
+!---------------------------------------
 case('__P1','__P2','__P3','_P1+','_P2+')
 
    !compute qcoords & qweights
@@ -272,9 +276,10 @@ case('__P1','__P2','__P3','_P1+','_P2+')
 
    end if
 
-
 case default
+
    stop 'quadrature_setup: spaceVelocity not supported yet'
+
 end select
 
 deallocate(qcoords)

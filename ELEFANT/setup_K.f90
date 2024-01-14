@@ -30,11 +30,17 @@ select case(K_storage)
 !------------------
 case('matrix_FULL')
 
+   call setup_K_matrix_FULL
+
 !------------------
 case('matrix_MUMPS')
 
+   call setup_K_matrix_MUMPS
+
 !------------------
 case('matrix_CSR')
+
+   call setup_K_matrix_CSR
 
 !------------------
 case('blocks_MUMPS')

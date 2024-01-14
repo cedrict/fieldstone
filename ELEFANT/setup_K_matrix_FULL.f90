@@ -8,7 +8,7 @@
 
 subroutine setup_K_matrix_FULL
 
-use module_parameters, only: NfemV
+use module_parameters, only: NfemVel,iproc
 !use module_mesh 
 !use module_constants
 !use module_swarm
@@ -32,7 +32,7 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-allocate(K_matrix(NfemV,NfemV)) ; K_matrix=0.d0
+allocate(K_matrix(NfemVel,NfemVel)) ; K_matrix=0.d0
 
 !==============================================================================!
 

@@ -8,16 +8,16 @@
 
 subroutine inner_solver(rhs,guess,solution)
 
-use module_parameters, only: inner_solver_type,NfemV,nproc,iproc
+use module_parameters, only: inner_solver_type,NfemVel,nproc,iproc
 use module_timing
 use module_sparse, only : csrK
 use module_MUMPS
 
 implicit none
 
-real(8), intent(inout) :: rhs(NfemV)
-real(8), intent(in)    :: guess(NfemV)
-real(8), intent(out)   :: solution(NfemV)
+real(8), intent(inout) :: rhs(NfemVel)
+real(8), intent(in)    :: guess(NfemVel)
+real(8), intent(out)   :: solution(NfemVel)
 
 integer, dimension(:,:), allocatable :: ha
 integer, dimension(:), allocatable :: rnr,snr
@@ -187,8 +187,8 @@ case('__y12m')
 
    aflag=0
    iflag=0
-   allocate(ha(NfemV,11))
-   allocate(pivot(NfemV))
+   allocate(ha(NfemVel,11))
+   allocate(pivot(NfemVel))
    allocate(mat(15*csrK%NZ)) ; mat=0d0
    allocate(snr(15*csrK%NZ)) 
    allocate(rnr(15*csrK%NZ)) 
@@ -199,7 +199,7 @@ case('__y12m')
    rnr(1:csrK%NZ)=csrK%rnr(1:csrK%NZ)
    snr(1:csrK%NZ)=csrK%snr(1:csrK%NZ)
 
-   call y12maf(NfemV,csrK%NZ,mat,snr,nn,rnr,nn1,pivot,ha,NfemV,aflag,iflag,rhs,ifail)
+   call y12maf(NfemVel,csrK%NZ,mat,snr,nn,rnr,nn1,pivot,ha,NfemVel,aflag,iflag,rhs,ifail)
 
    if (ifail/=0) print *,'ifail=',ifail
    if (ifail/=0) stop 'inner_solver: problem with y12m solver'

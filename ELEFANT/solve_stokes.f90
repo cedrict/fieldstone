@@ -8,7 +8,7 @@
 
 subroutine solve_stokes
 
-use module_parameters, only: NU,NV,NW,NfemV,ndim,mU,mV,mW,mP,iproc,iel,use_penalty,nel,outer_solver_type
+use module_parameters, only: NU,NV,NW,NfemVel,ndim,mU,mV,mW,mP,iproc,iel,use_penalty,nel,outer_solver_type
 use module_statistics 
 use module_arrays, only: rhs_f,solVel,solP,solU,solV,solW
 use module_mesh
@@ -17,7 +17,7 @@ use module_timing
 implicit none
 
 integer inode,k
-real(8) :: guess(NfemV)
+real(8) :: guess(NfemVel)
 
 !==================================================================================================!
 !==================================================================================================!

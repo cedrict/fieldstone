@@ -8,16 +8,18 @@
 
 subroutine setup_K_matrix_MUMPS
 
-!use module_parameters
-!use module_mesh 
+use module_parameters, only: mVel,NfemVel,iproc,mV,ndofV,debug,nel
+use module_mesh 
 !use module_constants
 !use module_swarm
 !use module_materials
 !use module_arrays
 use module_timing
+use module_MUMPS
 
 implicit none
 
+integer :: inode,iel,k,idof,LELTVAR,NA_ELT,counter
 
 !==================================================================================================!
 !==================================================================================================!
@@ -33,13 +35,11 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-NNel=mVel         ! size of an elemental matrix
-
-idV%N=NfemV
+idV%N=NfemVel
 
 idV%NELT=nel
-LELTVAR=nel*NNel           ! nb of elts X size of elemental matrix
-NA_ELT=nel*NNel*(NNel+1)/2  ! nb of elts X nb of nbs in elemental matrix
+LELTVAR=nel*mVel           ! nb of elts X size of elemental matrix
+NA_ELT=nel*mVel*(mVel+1)/2  ! nb of elts X nb of nbs in elemental matrix
 
 allocate(idV%A_ELT (NA_ELT)) 
 allocate(idV%RHS   (idV%N))  
@@ -52,9 +52,9 @@ allocate(idV%RHS   (idV%N))
       !=====[building ELTPTR]=====
 
       do iel=1,nel
-         idV%ELTPTR(iel)=1+(iel-1)*(ndofV*mV)
+         idV%ELTPTR(iel)=1+(iel-1)*(mVel)
       end do
-      idV%ELTPTR(iel)=1+nel*(ndofV*mV)
+      idV%ELTPTR(iel)=1+nel*(mVel)
 
       !=====[building ELTVAR]=====
 
