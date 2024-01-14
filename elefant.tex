@@ -36,6 +36,9 @@ urlcolor=black}
 
 \input{newcommands}
 
+\usepackage{amsthm}
+\newtheorem*{remark}{Remark}
+
 %Bibliography stuff
 \usepackage[maxnames=6]{biblatex}
 \addbibresource{biblio_geosciences.bib}
@@ -96,18 +99,21 @@ c) the interface with MUMPS is seamless.
 \item compressible and incompressible flow
 \item visco-plastic rheology
 \end{itemize}
-\item 4 geometries:
+\item 5 geometries:
 \begin{itemize}
 \item Cartesian box 2D
 \item Cartesian box 3D
 \item Annulus
 \item Hollow Sphere
+\item V. John 2D simplices
 \end{itemize}
-\item 3 elements:
+\item many FE element pairs:
 \begin{itemize}
 \item $Q_1\times P_0$
-\item $Q_1^+\times Q_1$ and $Q_1^{++}\times Q_1$
+\item $Q_1^+\times Q_1$ (2D) and $Q_1^{++}\times Q_1$ (3D)
+\item $Q_1^F \times P_0$ 
 \item $Q_2\times Q_1$
+\item $P_2 \times P_1$
 \end{itemize}
 \item Particle-in-Cell
 \begin{itemize}
@@ -122,31 +128,32 @@ c) the interface with MUMPS is seamless.
 \item open boundary conditions
 \item Nonlinear rheologies (viscous-viscoplastic)
 \item Newton solver (?)
+\item implementation allows for nodes with only a component of velocity
 \end{itemize}
 
 
 \begin{center}
-\begin{tabular}{|l|cccc|}
+\begin{tabular}{|l|ccccc|}
 \hline
-       & cart 2D & cart 3D & annulus & shell \\
+       & cart 2D & cart 3D & annulus & shell & John\\
 \hline
-spaceV   & &&& \\ 
-$Q_1$    & \checkmark & \checkmark &\checkmark & \\ 
-$Q_1^{+(+)}$  & \checkmark & \checkmark & & \\ 
-$Q_2$    & \checkmark & \checkmark  &\checkmark& \\ 
-$Q_3$    &    &&& \\
-$P_1$    & \checkmark &&& \\ 
-$P_1^+$  & \checkmark &&& \\ 
-$P_2$    & \checkmark &&& \\ 
-$P_2^+$  & \checkmark &&& \\
+spaceV   & &&&& \\ 
+$Q_1$    & \checkmark & \checkmark &\checkmark && X\\ 
+$Q_1^{+(+)}$  & \checkmark & \checkmark & && X\\ 
+$Q_2$    & \checkmark & \checkmark  &\checkmark& &X\\ 
+$Q_3$    &    &&&& X\\
+$P_1$    & \checkmark &&&& \checkmark \\ 
+$P_1^+$  & \checkmark &&&& \\ 
+$P_2$    & \checkmark &&&& \checkmark\\ 
+$P_2^+$  & \checkmark &&&& \\
 \hline 
-spaceP   & &&& \\
-$Q_0$    & \checkmark & \checkmark  & \checkmark & \\ 
-$Q_1$    & \checkmark & \checkmark  & \checkmark & \\ 
-$Q_2$    & &&& \\ 
-$P_0$    & &&& \\ 
-$P_1$    & \checkmark &&& \\ 
-$P_{-1}$ & &&& \\ 
+spaceP   & &&&& \\
+$Q_0$    & \checkmark & \checkmark  & \checkmark && X\\ 
+$Q_1$    & \checkmark & \checkmark  & \checkmark && X\\ 
+$Q_2$    & &&&& X \\ 
+$P_0$    & &&&& \checkmark \\ 
+$P_1$    & \checkmark &&&& \checkmark\\ 
+$P_{-1}$ & &&&& \\ 
 \hline 
 \end{tabular}
 \end{center}
@@ -327,6 +334,225 @@ The full set of equations we wish to solve is given by
 \end{eqnarray}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Discretisation - mixed formulation}
+
+
+Unlike virtually all stones, we here do not assume that all node inside an element carry all components of the 
+velocity (typically $u,v$ in 2D and $u,v,w$ in 3D).
+The 2D velocity inside an element is then given by 
+\begin{eqnarray}
+u^h({\vec r}) &=& \sum_{i=1}^{m_u} \bN_i^u({\vec r})\;  u_i \\
+v^h({\vec r}) &=& \sum_{i=1}^{m_v} \bN_i^v({\vec r})\;  v_i
+\end{eqnarray}
+where $\bN_i^u$ and $\bN_i^v$ are the polynomial basis functions for the $u$- and $v-$component of the velocity
+respectively, and the summation runs over the $m_u$ and $m_v$, i.e. the corresponding velocity nodes composing the element.
+
+A similar expression is used for pressure:
+\begin{equation}
+p^h({\vec r})=\sum_{i=1}^{m_p} \bN_i^p({\vec r}) \; p_i
+\end{equation}
+
+
+We have previously established that the strain rate vector $\vec{\dot \varepsilon}$ is:
+\begin{eqnarray}
+\vec{\dot\varepsilon}^h &=&
+\left(
+\begin{array}{c}
+\frac{\partial u^h}{\partial x} \\ \\
+\frac{\partial v^h}{\partial y} \\ \\
+\frac{\partial w^h}{\partial z} \\ \\
+\frac{\partial u^h}{\partial y}\! +\! \frac{\partial v^h}{\partial x} \\ \\
+\frac{\partial u^h}{\partial z}\! +\! \frac{\partial w^h}{\partial x} \\ \\
+\frac{\partial v^h}{\partial z}\! +\! \frac{\partial w^h}{\partial y} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\sum\limits_i \frac{\partial \bN_i^u}{\partial x} u_i \\ \\
+\sum\limits_i \frac{\partial \bN_i^v}{\partial y} v_i \\ \\
+\sum\limits_i \frac{\partial \bN_i^w}{\partial z} w_i \\ \\
+\sum\limits_i (\frac{\partial \bN_i^u}{\partial y} u_i\! +\! 
+\frac{\partial \bN_i^v}{\partial x} v_i) \\ \\
+\sum\limits_i (\frac{\partial \bN_i^u}{\partial z} u_i\! +\! 
+\frac{\partial \bN_i^w}{\partial x} w_i) \\ \\
+\sum\limits_i (\frac{\partial \bN_i^v}{\partial z} v_i\! +\! 
+\frac{\partial \bN_i^w}{\partial y} w_i) 
+\end{array}
+\right) \nn\\
+&=&
+\underbrace{
+\left(
+\begin{array}{cccccccccccccc}
+\frac{\partial \bN_1^u}{\partial x} & \frac{\partial \bN_2^u}{\partial x} & 
+\dots & \frac{\partial \bN_{m_u}^u}{\partial x} & 0 & 0 & \dots & 0 & 0 & 0 & \dots & 0 
+\\ \\ 
+0 & 0 & \dots  & 0 & \frac{\partial \bN_1^v}{\partial y} & \frac{\partial \bN_2^v}{\partial y} & 
+\dots & \frac{\partial \bN_{m_v}^v}{\partial y} & 0 & 0 & \dots & 0  
+\\  \\
+0 & 0 & \dots & 0 & 0 & 0 & \dots  & 0 & \frac{\partial \bN_1^w}{\partial z} & \frac{\partial \bN_2^w}{\partial z} & \dots & \frac{\partial \bN_{m_w}^w}{\partial z} 
+\\  \\
+\frac{\partial \bN_1^u}{\partial y} & \frac{\partial \bN_2^u}{\partial y} & 
+\dots & \frac{\partial \bN_{m_u}^u}{\partial y} & 
+\frac{\partial \bN_1^v}{\partial x} & \frac{\partial \bN_2^v}{\partial x} & 
+\dots & \frac{\partial \bN_{m_v}^v}{\partial x} & 0 & 0 & \dots & 0  
+\\  \\
+\frac{\partial \bN_1^u}{\partial z} & \frac{\partial \bN_2^u}{\partial z} & 
+\dots & \frac{\partial \bN_{m_u}^u}{\partial z} & 0 & 0 & \dots & 0 & 
+\frac{\partial \bN_1^w}{\partial x} & \frac{\partial \bN_2^w}{\partial x} & 
+\dots & \frac{\partial \bN_{m_w}^w}{\partial x} 
+\\ \\
+0 & 0 & \dots  & 0 & \frac{\partial \bN_1^v}{\partial z} & \frac{\partial \bN_2^v}{\partial z} & 
+\dots & \frac{\partial \bN_{m_v}^v}{\partial z} & 
+\frac{\partial \bN_1^w}{\partial y} & \frac{\partial \bN_2^w}{\partial y} & \dots & \frac{\partial \bN_{m_w}^w}{\partial y} 
+\end{array}
+\right) 
+}_{\bm B}
+\!
+\cdot
+\!
+\underbrace{
+\left(
+\begin{array}{c}
+u_1 \\ u_2 \\ \dots \\ u_{m_u} \\ 
+v_1 \\ v_2 \\ \dots \\ v_{m_v} \\ 
+w_1 \\ w_2 \\ \dots \\ w_{m_w} 
+\end{array}
+\right)
+}_{\vec{\cal V}} \nonumber
+\end{eqnarray}
+
+
+or, $\vec{\dot \varepsilon}={\bm B}\cdot \vec{\cal V}$ where ${\bm B}$ is the gradient 
+matrix and $\vec{\cal V}$ is the vector of all velocity degrees of freedom for the 
+element. The matrix ${\bm B}$ is then of size $6 \times m_{vel}$ with 
+$m_{vel}=m_u + m_v + m_w$ and the vector $\vec{\cal V}$ is $m_{vel}$ long.
+
+This translates as follows in the {\tt compute\_elemental\_matrix\_stokes} subroutine\footnote{Here
+too if mU, mV, and mW are not equal this piece of code cannot be saved}:
+
+\begin{lstlisting}
+Bmat=0
+do k=1,mV    
+   i1=ndofV*k-2    
+   i2=ndofV*k-1    
+   i3=ndofV*k    
+   Bmat(1,i1)=dNUdx(k)
+   Bmat(2,i2)=dNVdy(k)
+   Bmat(3,i3)=dNWdz(k)
+   Bmat(4,i1)=dNUdy(k) ; Bmat(4,i2)=dNVdx(k)
+   Bmat(5,i1)=dNUdz(k) ; Bmat(5,i3)=dNWdx(k)
+   Bmat(6,i2)=dNVdz(k) ; Bmat(6,i3)=dNWdy(k)
+end do 
+\end{lstlisting}
+
+
+
+\[
+\dot{\varepsilon}_{xx}^h 
+= \frac{\partial u^h}{\partial x}
+= \frac{\partial }{\partial x} \sum_{i=1}^{m_u} \bN_i^u u_i
+= \sum_{i=1}^{m_u} \frac{\partial \bN_i^u }{\partial x} u_i
+\]
+
+\[
+\dot{\varepsilon}_{yy}^h 
+= \frac{\partial v^h}{\partial y}
+= \frac{\partial }{\partial y} \sum_{i=1}^{m_v} \bN_i^v v_i
+= \sum_{i=1}^{m_v} \frac{\partial \bN_i^v }{\partial y} v_i
+\]
+
+\[
+\dot{\varepsilon}_{zz}^h 
+= \frac{\partial w^h}{\partial z}
+= \frac{\partial }{\partial z} \sum_{i=1}^{m_w} \bN_i^w w_i
+= \sum_{i=1}^{m_w} \frac{\partial \bN_i^w }{\partial z} w_i
+\]
+
+
+
+\[
+\dot{\varepsilon}_{xy}^h 
+= \frac12 \left( \frac{\partial u^h}{\partial y}
++ \frac{\partial v^h}{\partial x} \right)
+= \frac12 \left(
+\frac{\partial }{\partial y} \sum_{i=1}^{m_u} \bN_i^u u_i
++
+\frac{\partial }{\partial x} \sum_{i=1}^{m_v} \bN_i^v v_i
+\right)
+= \frac12 \left(
+\sum_{i=1}^{m_u} \frac{\partial \bN_i^u}{\partial y} u_i
++
+\sum_{i=1}^{m_v} \frac{\partial \bN_i^v}{\partial x} v_i
+\right)
+\]
+
+\[
+\dot{\varepsilon}_{xz}^h 
+= \frac12 \left( \frac{\partial u^h}{\partial z}
++ \frac{\partial w^h}{\partial x} \right)
+= \frac12 \left(
+\frac{\partial }{\partial z} \sum_{i=1}^{m_u} \bN_i^u u_i
++
+\frac{\partial }{\partial x} \sum_{i=1}^{m_w} \bN_i^w w_i
+\right)
+= \frac12 \left(
+\sum_{i=1}^{m_u} \frac{\partial \bN_i^u}{\partial z} u_i
++
+\sum_{i=1}^{m_w} \frac{\partial \bN_i^w}{\partial x} w_i
+\right)
+\]
+
+\[
+\dot{\varepsilon}_{yz}^h 
+= \frac12 \left( \frac{\partial v^h}{\partial z}
++ \frac{\partial w^h}{\partial y} \right)
+= \frac12 \left(
+\frac{\partial }{\partial z} \sum_{i=1}^{m_v} \bN_i^v v_i
++
+\frac{\partial }{\partial y} \sum_{i=1}^{m_w} \bN_i^w w_i
+\right)
+= \frac12 \left(
+\sum_{i=1}^{m_v} \frac{\partial \bN_i^v}{\partial z} v_i
++
+\sum_{i=1}^{m_w} \frac{\partial \bN_i^w}{\partial y} w_i
+\right)
+\]
+
+This translates as follows in the code ({\tt compute\_elemental\_strain\_rate} subroutine):
+\begin{lstlisting}
+do iel=1,nel
+   call compute_dNdx_dNdy_dNdz(rc,sc,tc,dNNNUdx,dNNNUdy,dNNNUdz,&
+                                        dNNNVdx,dNNNVdy,dNNNVdz,&
+                                        dNNNWdx,dNNNWdy,dNNNWdz,jcob)
+   mesh(iel)%exx=sum(dNNNUdx*mesh(iel)%u)
+   mesh(iel)%eyy=sum(dNNNVdy*mesh(iel)%v)
+   mesh(iel)%ezz=sum(dNNNWdz*mesh(iel)%w)
+   mesh(iel)%exy=0.5d0*sum(dNNNUdy*mesh(iel)%u + dNNNVdx*mesh(iel)%v)
+   mesh(iel)%exz=0.5d0*sum(dNNNUdz*mesh(iel)%u + dNNNWdx*mesh(iel)%w)
+   mesh(iel)%eyz=0.5d0*sum(dNNNVdz*mesh(iel)%v + dNNNWdy*mesh(iel)%w)
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+
 We use a mixed formulation and therefore  
 keep both velocity and pressure as unknowns. We end up having to solve 
 the following system:
@@ -381,18 +607,487 @@ $\alpha T \left( \vec\upnu \cdot \vec\nabla p \right) \simeq
 
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Outer Solvers}
+
+
+\[
+\left(
+\begin{array}{ccc}
+\K_{xx} & \K_{xy} & \G_x \\
+\K_{yx} & \K_{yy} & \G_y \\
+\G_x^T & \G_y^T & 0 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal U} \\ \vec{\cal V} \\ \vec{\cal P}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{f}_x \\ \vec{f}_y \\ \vec{g}
+\end{array}
+\right)
+\]
+
+
+%----------------------------------------------------------
+\subsection{PCG}
+
+Pc, PP and PU originate in \textcite{haeh93} (1993).
+
+%----------------------------------------------------------
+\subsection{Pressure Correction (PC)}
+
+From the equation above we can write
+\[
+\K_{xx}\cdot\vec{\cal U} + \G_x \cdot \vec{P} 
+= \underbrace{\vec{f}_x - \K_{xy} \cdot \vec{\cal V}}_{= \vec{\cal F}_x} 
+\]
+and
+\[
+\K_{yy}\cdot\vec{\cal V} + \G_y \cdot \vec{P} 
+= \underbrace{\vec{f}_y - \K_{yx} \cdot \vec{\cal U}}_{= \vec{\cal F}_y} 
+\]
+
+[Taken from \cite{haeh93}] 
+The PC algorithm is a direct finite element counterpart of the 
+well-established SIMPLE algorithm. The SIMPLE algorithm and the steps
+leading to its derivation are discussed in detail by Patankar CITE!
+
+In the SIMPLE algorithm the velocities and pressures are assumed to 
+be decomposed into primary and corrective components. As convergence 
+is approached, the corrective components vanish and the primary 
+components asymptote towards the final solution. The primary components 
+of velocity are obtained from the solution of the momentum equations 
+using the latest pressures and velocities. In general, the updated 
+velocities will not satisfy continuity and when substituted in the 
+discretized continuity equation will produce a non-zero residual. This residual
+is used to drive an equation for the pressure correction $\Delta \vec{\cal P}$, which 
+is obtained from manipulations of the discretized momentum and 
+continuity equations. The pressure correction is consequently
+used to update the pressure and to obtain the correction velocities 
+which mass-adjust the velocity field to satisfy continuity. As the above 
+sequence is repeated and convergence is approached, the
+continuity equation is more closely satisfied which in turn leads to 
+smaller pressure corrections and consequently smaller velocity corrections. 
+At convergence the velocities and pressures
+simultaneously satisfy the discretized momentum and continuity equations.
+The implementation of our version of the SIMPLE algorithm may be summarized in the
+following algorithmic steps:
+
+Given an initial or guess solution field 
+($\vec{\cal U}_0$, $\vec{\cal V}_0$, $\vec{\cal P}_0$), 
+for i=0,1,2,3,... until convergence, the following steps should be taken:
+
+\begin{enumerate}
+\item solve SCPE for pressure correction $\Delta \vec{\cal P}$
+\[
+\left[
+\G_x^T \cdot ( \tilde{\K}_{xx}^{-1})^\star \cdot \G_x
++
+\G_y^T \cdot ( \tilde{\K}_{yy}^{-1})^\star \cdot \G_y
+\right]
+\cdot
+\Delta \vec{\cal P}^{i+1/2} 
+= -\G_x^T \cdot \vec{\cal U}^i - \G_y^T \cdot \vec{\cal V}^i + \vec{g} 
+\]
+
+\item mass-adjust velocity field and increment pressure via
+
+\begin{eqnarray}
+\vec{\cal U}^{i+1/2} &=& \vec{\cal U}^i + (\tilde{\K}_{xx}^{-1})^\star \cdot 
+\G_x \cdot \Delta \vec{\cal P}^{i+1/2} \\
+\vec{\cal V}^{i+1/2} &=& \vec{\cal V}^i + (\tilde{\K}_{yy}^{-1})^\star \cdot 
+\G_y \cdot \Delta \vec{\cal P}^{i+1/2} \\
+\vec{\cal P}^{i+1} &=& \vec{\cal P}^i + (1-\alpha_p) \Delta \vec{\cal P}^{i+1/2}
+\end{eqnarray}
+
+\item solve $x$-momentum equation for $\vec{\cal U}$
+\[
+\left[
+\frac{\alpha_u}{1-\alpha_u} \tilde{\K}_{xx} + \K_{xx}
+\right]^\star
+\cdot
+\vec{\cal U}^{i+1} = \vec{\cal F}_x^\star + \G_x \cdot \vec{\cal P}^{i+1}
++\frac{\alpha_u}{1-\alpha_u} \tilde{\K}_{xx}^\star\cdot \vec{\cal U}^{i+1/2}
+\]
+\item solve $y$-momentum equation for $\vec{\cal V}$
+\[
+\left[
+\frac{\alpha_v}{1-\alpha_v} \tilde{\K}_{yy} + \K_{yy}
+\right]^\star
+\cdot
+\vec{\cal V}^{i+1} = \vec{\cal F}_y^\star + \G_y \cdot \vec{\cal P}^{i+1}
++\frac{\alpha_v}{1-\alpha_v} \tilde{\K}_{yy}^\star\cdot \vec{\cal V}^{i+1/2}
+\]
+\end{enumerate}
+
+{\color{red} check against haeh93}
+
+In the above equations the superscripts $i$, $i+1/2$ and $i+1$ 
+denote previous, intermediate and latest iterate levels, respectively, 
+while the superscript $^\star$ denotes an expression involving latest
+available field variables. The $\tilde{\K}$ matrices are some convenient 
+approximation to their corresponding $\K$ matrices. These are used both 
+for the construction of the SCPM for $\Delta \vec{\cal P}$, and on either side of
+the momentum and energy equations to relax these equations. 
+The exact definition of the R matrices are given in Remark 2.4 of the paper. 
+Finally, the $\alpha$'s appearing in the above equations are
+relaxation factors which assume values between 0 and 1; 
+the former producing no relaxation and
+latter producing infinite relaxation (i.e. no change in solution).
+
+Note that in the original formulation temperature is also taken into account.
+
+%----------------------------------------------------------
+\subsection{Pressure Projection (PP)}
+
+[Taken from \cite{haeh93}] 
+The PP algorithm is a consistent finite element
+counterpart of the SIMPLER algorithm. The important difference between this
+version of the segregated algorithm and the correction version above 
+is that the pressure is obtained directly from the solution of a SCPE. 
+The algorithm comprises three main steps. At the
+beginning of a given iteration, an approximation to the pressure is 
+obtained from the solution of a SCPE using the latest available field 
+variables. The various components of the momentum
+equations and any other conservation equations present in the 
+flow problem are then solved in
+a sequential manner using the most recent field data. Finally, at 
+the end of the algorithmic sequence the velocity field is mass-adjusted 
+(i.e. forced to satisfy the discretized continuity
+equation) via an irrotational projection onto a divergence-free sub-space. 
+This last step, which is similar to a least-squares mass adjustment, 
+requires the solution of a further SCPE system for
+a pseudo-pressure $\vec{\cal P}^s$. The SIMPLER algorithm is known to have superior 
+convergence characteristics compared to the SIMPLE algorithm.
+The implementation of our version of the SIMPLER algorithm may be summarized in the
+following algorithmic steps.
+
+Given an initial or guess solution field 
+($\vec{\cal U}_0$, $\vec{\cal V}_0$, $\vec{\cal P}_0$), 
+for i=0,1,2,3,... until convergence, the following steps should be taken:
+
+\begin{enumerate}
+\item solve SCPE for pressure $\vec{\cal P}$ 
+
+\[
+\left[
+\G_x^T \cdot ( \tilde{\K}_{xx}^{-1})^\star \cdot \G_x
++
+\G_y^T \cdot ( \tilde{\K}_{yy}^{-1})^\star \cdot \G_y
+\right]
+\cdot
+\vec{\cal P}^{i+1/2} 
+= -\G_x^T \cdot (\tilde{\K}_{xx}^{-1})^\star \cdot 
+(\vec{\cal F}_x^\star - \K_{xx}^\star \cdot \vec{\cal U}^i)
+  -\G_y^T \cdot (\tilde{\K}_{yy}^{-1})^\star \cdot 
+(\vec{\cal F}_y^\star - \K_{yy}^\star \cdot \vec{\cal V}^i)
++ \vec{g} 
+\]
+
+\item relax pressure via
+\[
+\vec{\cal P}^{i+1} = \alpha_p \vec{\cal P}^i + (1-\alpha_p) \vec{\cal P}^{i+1/2}
+\]
+
+\item solve $x$-momentum equation for $\vec{\cal U}$
+\[
+\left[
+\frac{\alpha_u}{1-\alpha_u} \tilde{\K}_{xx} + \K_{xx}
+\right]^\star
+\cdot
+\vec{\cal U}^{i+1/2} = \vec{\cal F}_x^\star + \G_x \cdot \vec{\cal P}^{i+1}
++\frac{\alpha_u}{1-\alpha_u} \tilde{\K}_{xx}^\star\cdot \vec{\cal U}^{i}
+\]
+
+\item solve $y$-momentum equation for $\vec{\cal V}$,
+\[
+\left[
+\frac{\alpha_v}{1-\alpha_v} \tilde{\K}_{yy} + \K_{yy}
+\right]^\star
+\cdot
+\vec{\cal V}^{i+1/2} = \vec{\cal F}_y^\star + \G_y \cdot \vec{\cal P}^{i+1}
++\frac{\alpha_v}{1-\alpha_v} \tilde{\K}_{yy}^\star\cdot \vec{\cal V}^{i}
+\]
+
+\item solve SCPE for $\vec{\cal P}^s$
+\[
+\left[
+\G_x^T \cdot ( \tilde{\K}_{xx}^{-1})^\star \cdot \G_x
++
+\G_y^T \cdot ( \tilde{\K}_{yy}^{-1})^\star \cdot \G_y
+\right]
+\cdot
+\vec{\cal P}^{s} 
+= -\G_x^T \cdot \vec{\cal U}^{i+1/2} - \G_y^T \cdot \vec{\cal V}^{i+1/2} + \vec{g} 
+\]
+
+\item mass adjust velocity field via
+\begin{eqnarray}
+\vec{\cal U}^{i+1} &=& \vec{\cal U}^{i+1/2} 
++ (\tilde{\K}_{xx}^{-1})^\star \cdot \G_x \cdot \vec{\cal P}^s \\
+\vec{\cal V}^{i+1} &=& \vec{\cal V}^{i+1/2} 
++ (\tilde{\K}_{yy}^{-1})^\star \cdot \G_y \cdot \vec{\cal P}^s 
+\end{eqnarray}
+\end{enumerate}
+
+{\color{red} check against haeh93}
+
+
+In the above equations the definition of the superscripts and 
+$\tilde{\K}$ matrices is the same as in the PC algorithm.
+
+
+%----------------------------------------------------------
+\subsection{Pressure update (PU)}
+
+While in the PP and PC algorithms the incompressibility constraint 
+was being satisfied via mass-adjusting the velocity field using a pressure
+correction or pseudo-pressure field, in the PU algorithm continuity is 
+satisfied through penalizing
+the continuity equation on the right-hand side of the SCPE. 
+We will not attempt its detailed
+derivation here except to say that it was conceived from the notion 
+of a pseudo-temporal approach applied to the momentum equations. 
+The change in the momentum equations from one
+iteration to the other is considered to be along some type of 
+pseudo-time dimension which
+advances at different rates in different physical locations of 
+the discretized domain. In a real transient approach the mass matrix, 
+multiplied by the inverse of the time step, appears on both
+sides of the discretized momentum equations. In this pseudo-temporal 
+approach the above product (i.e. mass matrix divided by $\Delta t$) is 
+replaced by the $\tilde{\K}$ matrices. The pseudo-momentum
+equations are not used directly to solve for velocities; rather they are 
+employed to arrive at
+a SCPE for pressure which contains on its right-hand side the 
+discretized continuity equation at
+both the current and the advanced iterate levels. Finally, the desired 
+SCPE is obtained by
+requiring that continuity be satisfied at the advanced iterate level.
+The algorithmic steps involved in this version of the segregated 
+algorithm are as follows.
+
+Given an initial or guess solution field 
+($\vec{\cal U}_0$, $\vec{\cal V}_0$, $\vec{\cal P}_0$), 
+for i=0,1,2,3,... until convergence, the following steps should be taken:
+
+\begin{enumerate}
+\item solve SCPE for pressure $\vec{\cal P}$, 
+\[
+\left[
+\G_x^T \cdot (\tilde{\K}_{xx}^{-1})^\star \cdot \G_x +
+\G_y^T \cdot (\tilde{\K}_{yy}^{-1})^\star \cdot \G_y 
+\right]
+\cdot \vec{\cal P}^{i+1/2}
+= 
+-\G_x^T \cdot (\tilde{\K}_{xx}^{-1})^\star \cdot 
+(\vec{\cal F}^\star_x-\K_{xx}^\star \cdot \vec{\cal U}^i )
+-\G_y^T \cdot (\tilde{\K}_{yy}^{-1})^\star \cdot 
+(\vec{\cal F}^\star_y-\K_{yy}^\star \cdot \vec{\cal V}^i )
+- \lambda_p ( \G_x^T \cdot \vec{\cal U}^i + \G_y^T \cdot \vec{\cal V}^i -\vec{g} )
+\]
+
+\item relax pressure via
+\[
+\vec{\cal P}^{i+1} = \alpha_p \vec{\cal P}^i + (1-\alpha_p) \vec{\cal P}^{i+1/2}
+\] 
+\item solve $x$-momentum equation for $\vec{\cal U}$,
+\[
+\left[
+\frac{\alpha_u}{1-\alpha_u} \tilde{\K}_u + \K_u
+\right]^\star \cdot 
+\vec{\cal U}^{i+1}
+= \vec{\cal F}_x^\star + \G_x \cdot \vec{\cal P}^{i+1}
++ \frac{\alpha_u}{1-\alpha_u} \tilde{K}_u^\star \cdot \vec{\cal U}^i
+\]
+ 
+\item solve $y$-momentum equation for $\vec{\cal V}$,
+\[
+\left[
+\frac{\alpha_v}{1-\alpha_v} \tilde{\K}_v + \K_v
+\right]^\star \cdot 
+\vec{\cal V}^{i+1}
+= \vec{\cal F}_y^\star + \G_y \cdot \vec{\cal P}^{i+1}
++ \frac{\alpha_v}{1-\alpha_v} \tilde{K}_v^\star \cdot \vec{\cal V}^i
+\]
+ 
+
+{\color{red} check against haeh93}
+
+
+
+\end{enumerate}
+
+
+
+
+The notation convention used in the above equations is the same as that 
+used in the PC and PP algorithms above. However, note the appearance 
+of the dimensionless coefficient $\lambda_p$, on the
+right-hand side of the pressure equation. This may be thought of 
+as a penalty parameter which
+controls the penalization of the continuity constraint in the pressure 
+equation. The value of $\lambda_p$,
+should be chosen large enough to adequately enforce the continuity 
+constraint. However, too
+large a value may lead to large pressure perturbations and destabilize 
+the convergence behaviour.
+Our testing has shown the range $0.1 < \lambda_p <1$ 
+to work well for most problems and we have
+consequently adopted a default value of $\lambda_p=0.2$.
+
+%------------------------------------------
+\subsection{How to compute $\tilde{\K}$}
+
+The $\tilde{\K}$ matrices in the above algorithms are diagonal 
+matrices and are obtained from the
+following expressions:
+\[
+(\tilde{\K}_{xx})_{ii} = \sum_e \sum_j | (\K_{xx})_{ij} |
+\]
+\[
+(\tilde{\K}_{yy})_{ii} = \sum_e \sum_j | (\K_{yy})_{ij} |
+\]
+where $\sum_e$ denotes a sum or assembly of element-level contributions.
+
+Since the abeove $\tilde{\K}$ matrices are diagonal, their inversion 
+is trivial and inexpensive. As
+a result the SCPMs appearing in the above algorithms are 
+substantially less expensive to
+construct and solve compared to the FCPM in equation (3b).
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Inner Solvers}
+
+%----------------------------------------------------------
+\subsection{MUMPS}
+
+
+%----------------------------------------------------------
+\subsection{PCG}
+
+
+%----------------------------------------------------------
+\subsection{Successive block overrelaxation (SBOR) method}
+
+We start from 
+\[
+\left(
+\begin{array}{c}
+\vec{R}(\vec{\cal U},\vec{\cal V},\vec{\cal W}) \\ 
+\vec{S}(\vec{\cal U},\vec{\cal V},\vec{\cal W}) \\ 
+\vec{T}(\vec{\cal U},\vec{\cal V},\vec{\cal W}) \\ 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{ccc}
+\K_{xx} & \K_{xy} & \K_{xz} \\
+\K_{yx} & \K_{yy} & \K_{yz} \\
+\K_{zx} & \K_{zy} & \K_{zz} \\
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal U}\\
+\vec{\cal V}\\
+\vec{\cal W}
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c}
+\vec{f}_x\\
+\vec{f}_y\\
+\vec{f}_z
+\end{array}
+\right)
+\]
+As explained in \textcite{lefr87}:
+the objective is to factor only $\K_{xx}$, $\K_{yy}$, and $\K_{zz}$
+thus reducing the cost of Gaussian elimination. This is accomplished
+by block Gauss-Seidel iteration of the form
+
+\begin{eqnarray}
+\vec{\cal U}_{i+1} 
+&=& \vec{\cal U}_i + \omega \; \K_{xx}^{-1} \cdot \vec{R}(\vec{\cal U}_i,\vec{\cal V}_i,\vec{\cal W}_i) \\
+\vec{\cal V}_{i+1} 
+&=& \vec{\cal V}_{i} + \omega \; \K_{yy}^{-1} \cdot \vec{S}(\vec{\cal U}_{i+1},\vec{\cal V}_i,\vec{\cal W}_i) \\
+\vec{\cal W}_{i+1} 
+&=& \vec{\cal W}_{i} + \omega \; \K_{zz}^{-1} \cdot \vec{T}(\vec{\cal U}_{i+1},\vec{\cal V}_{i+1},\vec{\cal W}_i) 
+\end{eqnarray}
+
+where $\omega$ is the overrelaxation parameter. Therefore, this scheme represents a successive-block-overrelaxation
+(SBOR) algorithm (Jennings, 1977, p. 202). This technique is similar to the nonlinear block iterative method presented
+by Cooke and Blanchard (1977).
+
+(also see Spronk guided research)
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
+
+
+\section{Q1P0 a la fortin}
+
+\input{python_codes/fieldstone_80/tikz_mesh4x3_u}
+
+iconU:
+\begin{verbatim}
+           0           1           6           5          20          21
+           1           2           7           6          21          22
+           2           3           8           7          22          23
+           3           4           9           8          23          24
+           5           6          11          10          25          26
+           6           7          12          11          26          27
+           7           8          13          12          27          28
+           8           9          14          13          28          29
+          10          11          16          15          30          31
+          11          12          17          16          31          32
+          12          13          18          17          32          33
+          13          14          19          18          33          34
+\end{verbatim}
+
+
+\input{python_codes/fieldstone_80/tikz_mesh4x3_v}
+
+iconV:
+\begin{verbatim}
+           0           1           6           5          20          24
+           1           2           7           6          21          25
+           2           3           8           7          22          26
+           3           4           9           8          23          27
+           5           6          11          10          24          28
+           6           7          12          11          25          29
+           7           8          13          12          26          30
+           8           9          14          13          27          31
+          10          11          16          15          28          32
+          11          12          17          16          29          33
+          12          13          18          17          30          34
+          13          14          19          18          31          35
+\end{verbatim}
 
 
 
 
 
 
-
-
-
-
-
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{List of subroutines}
 

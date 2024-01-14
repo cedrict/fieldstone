@@ -29,7 +29,7 @@ Computational geodynamics, with a noticeable exception \cite{hans03}.
 \end{remark}
 
 %............................................
-\subsubsection{Quadrilateral-based meshes}
+\subsection{Quadrilateral-based meshes}
 
 Let us now focus on the case of a rectangular computational domain of size 
 {\tt Lx} $\times$ {\tt Ly} with a regular mesh composed of {\tt nelx}$\times${\tt nely}={\tt nel}
@@ -155,7 +155,7 @@ employed in a boundary-fitted way, as shown hereunder:
 \Literature: \textcite{jole97} (1997)
 
 %...................................................
-\subsubsection{Delaunay triangulation and Voronoi cells, and triangle-based meshes}
+\subsection{Delaunay triangulation and Voronoi cells, and triangle-based meshes}
 
 The topic of Delaunay\footnote{The triangulation is named after 
 Boris Delaunay for his work on this topic from 1934.}
@@ -203,8 +203,10 @@ Triangle-based meshes are obviously better suited for simulations of complex geo
 \begin{center}
 \includegraphics[height=4cm]{images/meshes/tr1}
 \includegraphics[height=4cm]{images/meshes/dolfin}\\
-\includegraphics[height=3.8cm]{images/meshes/gebk12}\cite{gebk12}
-\includegraphics[height=3.8cm]{images/meshes/rost05a}\cite{rost05a}
+\includegraphics[height=3.8cm]{images/meshes/rost05a}
+\includegraphics[height=3.8cm]{images/meshes/gebk12}\\
+{\captionfont Bottom row. Left: \textcite{rost05a} (2005),
+Right: \textcite{gebk12} (2012).}
 \end{center}
 
 A very practical 2D triangle mesher is the 
@@ -224,14 +226,15 @@ towards the right edge.}
 
 \begin{center}
 \includegraphics[width=13cm]{images/meshes/bafl16}\\
-{\captionfont Numerical model setup of the 2D axisymmetric half-space with all applied 
+{\captionfont Taken from \textcite{bafl16} (2016). 
+Numerical model setup of the 2D axisymmetric half-space with all applied 
 boundary conditions to study the effects of ice-cap unloading
-on shallow volcanic systems \cite{bafl16}}
+on shallow volcanic systems.}
 \end{center}
 
 \begin{center}
 \includegraphics[width=13cm]{images/meshes/fegh14}\\
-{\captionfont Taken from \cite{fegh14}. Modelling of slow
+{\captionfont Taken from \textcite{fegh14} (2014). Modelling of slow
 landslides. Finite element mesh in the initial and excavated configuration.}
 \end{center}
 
@@ -239,14 +242,35 @@ Although it is rarely used in practice it is possible to produce meshes which co
 both quadrilateral and triangular elements:
 \begin{center}
 \includegraphics[width=13cm]{images/meshes/fige95}\\
-{\captionfont Mesh used to analayse the stress distribution around a pressurized crack in a layered 
-elastic medium \cite{fige95}}
+{\captionfont Taken from \textcite{fige95}. 
+Mesh used to analayse the stress distribution around a pressurized crack in a layered 
+elastic medium.}
 \end{center}
 
-\Literature \fullcite{musd15}\fullcite{vemm09}
+
+\paragraph{Mesh quality} 
+In \textcite{cibo19} (2019) the authors check the mesh quality of their triangulation
+by computing the following mesaures per element 
+(they also refer to \textcite{fiel00}):
+\[
+q_1 = \frac{(b+c-a)(c+a-b)(a+b-c)}{abc}
+\]
+\[
+q_2 = \frac{4\sqrt{3} A_T}{a^2+b^2+c^2}
+\]
+where $a$, $b$, $c$ are the triangle side lengths and $A_T$ is the triangle area. 
+An equilateral triangle has $q_1 = q_2 = 1$ while a
+degenerate, zero area triangle has $q_1 = q_2 = 0$. 
+As a rule-of-thumb, in a good quality mesh all triangles should have $q_1$ , $q_2$
+above about 0.4-0.5.
+
+\vspace{1cm}
+
+\Literature: \fullcite{musd15}\fullcite{vemm09}
 
 \begin{remark} 
-The Natural Neighbour Interpolation method of Sambridge \etal \cite{sabm95,sabm96} is based on the Delaunay triangulation.
+The Natural Neighbour Interpolation method of Sambridge \etal \cite{sabm95,sabm96} 
+is based on the Delaunay triangulation.
 \end{remark}
 
 \begin{remark} 
@@ -266,7 +290,7 @@ selected to sample the details of the regionalization.}
 
 
 %...........................
-\subsubsection{Tetrahedra}
+\subsection{Tetrahedra}
 
 \begin{center}
 \includegraphics[width=5cm]{images/meshes/glacier}
@@ -282,7 +306,8 @@ Right: Normalized velocities of a STEP subduction model \textcite{gowo05} (2005)
 \includegraphics[width=8cm]{images/meshes/tokv09}\\
 {\captionfont 
 Left: 3D finite element grid in Damintun area, including prescribed faults, \textcite{guyr16} (2016);
-Right: Structural reactivation in plate tectonics controlled by olivine crystal anisotropy, \textcite{tokv09} (2009).
+Right: Structural reactivation in plate tectonics controlled by olivine 
+crystal anisotropy, \textcite{tokv09} (2009) - based on $\P_1^+\times P_1$ elements.
 }
 \end{center}
 
@@ -309,7 +334,7 @@ lines, and colors indicate computational domains assigned to separate processors
 Check TetGen mesher \fullcite{si15}. 
 
 %............................................
-\subsubsection{Hexahedra}
+\subsection{Hexahedra}
 
 A hexahedron is a convex polytope isomorphic to the cube $[0,1]^3$.
 Edges are line segments, facets are strictly {\bf planar} convex polygons.
@@ -322,7 +347,7 @@ Edges are line segments, facets are strictly {\bf planar} convex polygons.
 \Literature Efficient Volume computation for Three- Dimensional hexahedral Cells \cite{duko88,gran97}
 
 %.......................................
-\subsubsection{Adaptive Mesh Refinement}
+\subsection{Adaptive Mesh Refinement}
 \index{general}{AMR} \index{general}{Adaptive Mesh Refinement}
 
 Let us do a simple calculation and assume we wish to model mantle convection on Earth. 
@@ -392,7 +417,7 @@ For further reading I suggest you read the review by May, Schellart \& Moresi on
 
 
 %.......................................
-\subsubsection{Conformal Mesh Refinement \label{ss:cmr}}
+\subsection{Conformal Mesh Refinement \label{ss:cmr}}
 \index{general}{Conformal Mesh Refinement}
 
 The quadtree/octree mesh refinement presented above is one option
@@ -461,7 +486,7 @@ Bottom row: I don't know anymore.}
 \end{itemize}
 
 %.......................................
-\subsubsection{Stretching the mesh}
+\subsection{Stretching the mesh}
 
 In some cases the topology of the mesh can be regular but one can for instance stretch 
 the mesh such that (for instance) the vertical resolution is higher at the top than at the bottom, 
@@ -543,7 +568,7 @@ Finally both transformations can be applied to the same mesh:
 This approach is used in \stone 67.
 
 %.......................................
-\subsubsection{Meshes in an annulus}
+\subsection{Meshes in an annulus}
 
 
 \begin{center}
@@ -555,7 +580,7 @@ Brandenburg \etal \cite{brhv08,brva07a}}
 
 
 %.......................................
-\subsubsection{Meshes in/on a hollow sphere}
+\subsection{Meshes in/on a hollow sphere}
 
 The following is for the most part published in Thieulot (2018) \textcite{thie18} (2018).
 

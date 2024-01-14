@@ -18,7 +18,7 @@ As before, velocity inside an element is given by
 {\vec \upnu}^h({\vec r})=\sum_{i=1}^{m_v} \bN_i^\upnu({\vec r})\;  {\vec \upnu}_i
 \label{mixed01}
 \end{equation}
-where $N_i^{\upnu}$ are the polynomial basis functions for the velocity,
+where $\bN_i^{\upnu}$ are the polynomial basis functions for the velocity,
 and the summation runs over the $m_v$ velocity nodes composing the element.
 A similar expression is used for pressure:
 \begin{equation}
@@ -166,8 +166,7 @@ vector $\vec{\dot \varepsilon}$ is:
 \frac{\partial \bN_{m_v}^\upnu}{\partial z} 
 \\ \\
 \frac{\partial \bN_1^\upnu}{\partial y} &  \frac{\partial \bN_1^\upnu}{\partial x} &  
-0 & \cdots  &\frac{\partial N_{m_v}^\upnu}{\partial x} 
-& \frac{\partial \bN_{m_v}^\upnu}{\partial x} & 0 \\ \\
+0 & \cdots  &\frac{\partial N_{m_v}^\upnu}{\partial y} & \frac{\partial \bN_{m_v}^\upnu}{\partial x} & 0 \\ \\
 \frac{\partial \bN_1^\upnu}{\partial z} & 0 & \frac{\partial \bN_1^\upnu}{\partial x} & \cdots &
 \frac{\partial \bN_{m_v}^\upnu}{\partial z} & 0 & \frac{\partial \bN_{m_v}^\upnu}{\partial x} \\  \\
 0 &  \frac{\partial \bN_1^\upnu}{\partial z}  & \frac{\partial \bN_1^\upnu}{\partial y} & \cdots &

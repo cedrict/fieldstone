@@ -1332,6 +1332,30 @@ It is implemented in \stone 14, 18 and 115.
 
 
 %..........................................................
+\subsection{2D analytical benchmark from Cioncolini \& Boffi (2019)}
+\label{ss:mms_cibo19}
+
+This is Test \#1 presented in \textcite{cibo19} (2019). 
+The domain is a unit square and the solution is given by
+\begin{eqnarray}
+u(x,y)&=& x^2(1-x)^2 2y(1-y)(2y-1) \nn\\
+v(x,y)&=& y^2(1-y)^22x(1-x)(1-2x)  \nn\\
+p(x,y)&=& x(1-x)(1-y)-1/12 \nn\\
+b_x &=& -\eta \left\{ 4y (1-y)(2y - 1)[(1 - 2x)^2 - 2x(1-x)] 
++ 12x^2 (1 - x)^2 (1 - 2y) \right\} + (1 - 2x) (1 - y) \\
+b_y &=& 
+\end{eqnarray}
+with no-slip boundary conditions on all sides.
+Note that the veloity solution is close to the mms of Section~\ref{}
+
+
+
+
+
+
+
+
+%..........................................................
 \subsection{3D Analytical benchmark XIII}\label{ss:sofo87_3D}
 
 This is presented in Soulaimani \etal (1987) \cite{sofo87}. 

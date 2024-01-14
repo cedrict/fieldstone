@@ -161,7 +161,7 @@ ia=RWPTR &=&(1, 5, 10, 15, 18, 22, 27, 32, 35, 37, 39, 41, 42)  \nn
 
 When there are now two degrees of freedom per node, such as in the case 
 of the Stokes equation in two-dimensions, the size of the $\K$ matrix 
-is given $NfemV=nnx*nny*ndofV$ where $NfemV$ is the total number of 
+is given by $NfemV=nnx*nny*ndofV$ where $NfemV$ is the total number of 
 velocity degrees of freedom.
 
 \begin{center}
@@ -281,6 +281,75 @@ which are coupled to 24 velocity dofs:
 \right)
 \end{equation} 
 \end{scriptsize}
+
+If now the velocity dofs are organised as follows 
+\[
+(u_0,u_1,u_2,...,u_{11},v_0,v_1,v_2,...,v_{11})
+\]
+then the sparsity pattern of the assembled $\K$ matrix looks like 
+
+
+\begin{equation}
+\left(
+\begin{array}{cccccccccccccccccccccccc}
+u & u & u & u & u & u & u & u & u & u & u & u & 
+v & v & v & v & v & v & v & v & v & v & v & v \\
+1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 &
+1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+\Box& \Box & & & \Box & \Box  &  &  & & & & & \Box & \Box &  &  & \Box & \Box &  &  &  &  &  &  \\ %01
+\Box & \Box & \Box & & \Box & \Box & \Box &  & & & & & \Box & \Box & \Box &  & \Box & \Box & \Box &  &  &  &  &  \\ %02
+ & \Box &  \Box & \Box &  & \Box & \Box & \Box & & & &  & & \Box & \Box & \Box &  & \Box & \Box & \Box &  &  &  &  \\ %#03
+& & \Box & \Box &  &  & \Box & \Box & & & & &  &  &  \Box & \Box &  &  & \Box & \Box &  &  &  \\ %#04
+\Box& \Box & & & \Box & \Box &  &  & \Box & \Box & & & \Box& \Box & & & \Box & \Box &  &  & \Box & \Box & &   \\ %05
+\Box& \Box& \Box& & \Box & \Box & \Box &  & \Box & \Box & \Box & &
+\Box& \Box& \Box& & \Box & \Box & \Box &  & \Box & \Box & \Box & \\ %06
+& \Box& \Box& \Box&  & \Box & \Box  & \Box  & & \Box& \Box& \Box& & \Box& \Box& \Box&  & \Box & \Box  & \Box  & & \Box& \Box& \Box \\ %07
+& & \Box & \Box &  &  & \Box & \Box & & & \Box & \Box & & & \Box & \Box &  &  & \Box & \Box & & & \Box & \Box \\ %08
+& & & & \Box & \Box &  &  & \Box & \Box & & &  &  &  &  & \Box & \Box &  &  & \Box & \Box &  \\ %#09
+& & & & \Box & \Box & \Box &  & \Box & \Box & \Box & &  &  &  &  & \Box & \Box & \Box &  & \Box & \Box & \Box &  \\ %#10
+& & & &  & \Box & \Box & \Box & &  \Box & \Box& \Box &  &  &  &  &  & \Box & \Box & \Box & &\Box & \Box & \Box \\ %#11
+& & & &  &  & \Box & \Box & & & \Box & \Box &  &  &  &  &  &  & \Box & \Box &  &  & \Box &  \Box\\ %#12
+\Box& \Box & & & \Box & \Box  &  &  & & & & & \Box & \Box &  &  & \Box & \Box &  &  &  &  &  &  \\ %01
+\Box & \Box & \Box & & \Box & \Box & \Box &  & & & & & \Box & \Box & \Box &  & \Box & \Box & \Box &  &  &  &  &  \\ %02
+ & \Box &  \Box & \Box &  & \Box & \Box & \Box & & & &  & & \Box & \Box & \Box &  & \Box & \Box & \Box &  &  &  &  \\ %#03
+& & \Box & \Box &  &  & \Box & \Box & & & & &  &  &  \Box & \Box &  &  & \Box & \Box &  &  &  \\ %#04
+\Box& \Box & & & \Box & \Box &  &  & \Box & \Box & & & \Box& \Box & & & \Box & \Box &  &  & \Box & \Box & &   \\ %05
+\Box& \Box& \Box& & \Box & \Box & \Box &  & \Box & \Box & \Box & &
+\Box& \Box& \Box& & \Box & \Box & \Box &  & \Box & \Box & \Box & \\ %06
+& \Box& \Box& \Box&  & \Box & \Box  & \Box  & & \Box& \Box& \Box& & \Box& \Box& \Box&  & \Box & \Box  & \Box  & & \Box& \Box& \Box \\ %07
+& & \Box & \Box &  &  & \Box & \Box & & & \Box & \Box & & & \Box & \Box &  &  & \Box & \Box & & & \Box & \Box \\ %08
+& & & & \Box & \Box &  &  & \Box & \Box & & &  &  &  &  & \Box & \Box &  &  & \Box & \Box &  \\ %#09
+& & & & \Box & \Box & \Box &  & \Box & \Box & \Box & &  &  &  &  & \Box & \Box & \Box &  & \Box & \Box & \Box &  \\ %#10
+& & & &  & \Box & \Box & \Box & &  \Box & \Box& \Box &  &  &  &  &  & \Box & \Box & \Box & &\Box & \Box & \Box \\ %#11
+& & & &  &  & \Box & \Box & & & \Box & \Box &  &  &  &  &  &  & \Box & \Box &  &  & \Box &  \Box  %#12
+\end{array}
+\right)
+\end{equation}
+
+We see that in this case the matrix is composed of 4 identical blocks, the same blocks we have previously obtained when each node only had a single dof.
+In other words,
+\[
+\K=
+\left(
+\begin{array}{cc} \K_{xx} & \K_{xy} \\ \K_{yx} & \K_{yy}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc} \K_1 & \K_1 \\ \K_1 & \K_1
+\end{array}
+\right)
+\]
+
+
+
+
+
+
+
+
+
+
 
 %..............................................................................
 \subsection{2D domain - $Q_2$ - Two degrees of freedom per node}
