@@ -262,8 +262,8 @@ if int(len(sys.argv) == 8):
    eta1=10.**(float(sys.argv[6]))
    eta2=10.**(float(sys.argv[7]))
 else:
-   nelx = 96
-   nely = nelx
+   nelx = 4#96
+   nely = 3#nelx
    visu = 1
    nqperdim = 2
    drho=8
@@ -469,7 +469,7 @@ for iel in range(0,nel):
 #################################################################
 start = time.time()
 
-bc_fix=np.zeros((mV*ndofV,nel),dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros((mV*ndofV,nel),dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros((mV*ndofV,nel),dtype=np.float64)  # boundary condition, value
 
 if benchmark==5 or benchmark==8: #free slip
@@ -557,7 +557,7 @@ for iel in range(0,nel):
                 sq=qcoords[jq]
                 weightq=qweights[iq]*qweights[jq]
 
-                # compute xq,yq
+                # compute xq,yq, using linear mapping
                 N[0]=0.25*(1.-rq)*(1.-sq)
                 N[1]=0.25*(1.+rq)*(1.-sq)
                 N[2]=0.25*(1.+rq)*(1.+sq)
