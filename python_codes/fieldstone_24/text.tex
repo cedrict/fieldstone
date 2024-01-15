@@ -19,7 +19,6 @@ This work is part of the MSc thesis of T. Weir (2018).
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\Literature \cite{itki94,tagu07,lezh08,kilv10,lezh11,lizh13,hedg17,civj17}
 
 %------------------------
 \subsection*{The physics}
@@ -102,6 +101,11 @@ $\G^T$ is the discrete divergence operator, ${\cal V}$ the velocity vector,
 ${\cal P}$ the pressure vector.
 Note that the term $\Z{\cal V}$ derives from term ${\bm v} \cdot {\bm \nabla} \rho$ in the continuity equation. 
 
+
+
+
+
+
 As perfectly explained in the step 32 of deal.ii\footnote{https://www.dealii.org/9.0.0/doxygen/deal.II/step\_32.html},
 we need to scale the $\G$ term since it is many orders of magnitude smaller than $\K$, which introduces large inaccuracies in the solving process to the point that the solution is nonsensical. This scaling coefficient is $\eta/L$. After building the $\G$ block, it is then scaled as follows: $\G'=\frac{\eta}{L}\G$ so that we now solve 
 
@@ -138,7 +142,8 @@ build the full Stokes matrix $\A$.
 {\bf Remark 1}: the terms $\Z {\cal V}$ and $\W {\cal P}$ are 
 often put in the rhs (i.e. added to $h$) so that 
 the matrix $\A$ retains the same structure as in the incompressible case. This is indeed 
-how it is implemented in ASPECT, see also appendix A of \cite{lezh08}. This however requires more work since the rhs depends 
+how it is implemented in ASPECT, see also appendix A of \textcite{lezh08} (2008). 
+This however requires more work since the rhs depends 
 on the solution and some form of iterations is needed. 
 
 {\bf Remark 2}: Very often the adiabatic heating term  
@@ -446,10 +451,16 @@ In light thereof, it will be very difficult to recover the values of King et al 
 
 \vspace{3cm}
 
-
-Relevant literature: \cite{besg92,itki94,tagu07,lezh08,kilv10,lezh11,lizh13,hedg17}
-
-%\includegraphics[width=16cm]{python_codes/fieldstone_saddlepoint/solution.pdf}
+\Literature: 
+\textcite{besg92},
+\textcite{itki94},
+\textcite{tagu07},
+\textcite{lezh08},
+\textcite{kilv10},
+\textcite{lezh11},
+\textcite{lizh13},
+\textcite{civj17},
+\textcite{hedg17}.
 
 ToDo: 
 \begin{itemize}
