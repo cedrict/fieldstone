@@ -1014,7 +1014,7 @@ for iel in range(0, nel):
                 #print(xq,yq,zq)
 
                 # compute dNdx, dNdy, dNdz
-                for k in range(0,mV):
+                for k in range(0,mV):                     # bug here?!
                     dNNNVudx[k]=jcbi[0,0]*dNNNVudr[k]
                     dNNNVudy[k]=jcbi[1,1]*dNNNVuds[k]
                     dNNNVudz[k]=jcbi[2,2]*dNNNVudt[k]
