@@ -28,6 +28,8 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
+
+
 open(unit=123,file='OUTPUT/qpoints.vtu',status='replace',form='formatted')
 write(123,*) '<VTKFile type="UnstructuredGrid" version="0.1" byte_order="BigEndian">'
 write(123,*) '<UnstructuredGrid>'
@@ -130,11 +132,22 @@ write(123,*) '</UnstructuredGrid>'
 write(123,*) '</VTKFile>'
 close(123)
 
+!----------------------------------------------------------
+
+open(unit=123,file='OUTPUT/ASCII/qpoints.ascii',status='replace',form='formatted')
+do iel=1,nel
+   do iq=1,nqel
+      write(123,'(3es12.4)') mesh(iel)%xq(iq),mesh(iel)%yq(iq),mesh(iel)%zq(iq)
+   end do
+end do
+close(123)
+write(*,'(a)') shift//'-> OUTPUT/ASCII/qpoints.ascii'
+
 !==============================================================================!
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'output_qpoints (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'output_qpoints:',elapsed,' s                 |'
 
 end if ! iproc
 

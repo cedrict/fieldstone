@@ -10,9 +10,6 @@ subroutine assemble_GT(G_el)
 
 use module_parameters, only: GT_storage,spacePressure,mP,iel,use_penalty,mVel
 use module_mesh 
-!use module_constants
-!use module_swarm
-!use module_materials
 use module_arrays, only: GT_matrix
 use module_sparse, only: csrGT
 use module_timing
@@ -40,7 +37,7 @@ case('matrix_FULL')
       kkV=mesh(iel)%iconVel(kV)
       do kP=1,mP
          kkP=mesh(iel)%iconP(kP) 
-         GT_matrix(kkP,kkV)=G_el(kV,kP)  
+         GT_matrix(kkP,kkV)=GT_matrix(kkP,kkV)+G_el(kV,kP)  
       end do
    end do
 
@@ -73,7 +70,7 @@ case('matrix_CSR')
 !------------------
 case('blocks_CSR')
 
-
+   stop 'assemble_GT: blocks_CSR not supported'
 
 !-----------
 case default
@@ -81,7 +78,6 @@ case default
    stop 'assemble_GT: unknown GT_storage'
 
 end select
-
 
 end subroutine
 

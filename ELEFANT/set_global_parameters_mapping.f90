@@ -32,7 +32,11 @@ call system_clock(counti,count_rate)
 
 write(*,'(a,a)') shift//'mapping=',mapping
 
-isoparametric_mapping=(mapping==spaceVelocity)
+if (isoparametric_mapping) then 
+   mapping=spaceVelocity
+else
+   stop 'abcdgerf'
+end if
 
 write(*,'(a,l1)') shift//'isoparametric_mapping=',isoparametric_mapping
 
@@ -63,6 +67,16 @@ if (ndim==2) then
       allocate(tmapping(mmapping)) ; tmapping=0.d0
       rmapping=(/-1d0,+1d0,+1d0,-1d0/)
       smapping=(/-1d0,-1d0,+1d0,+1d0/)
+
+   !-----------
+   case('_Q1+')
+      mmapping=5
+      allocate(rmapping(mmapping)) ; rmapping=0.d0
+      allocate(smapping(mmapping)) ; smapping=0.d0
+      allocate(tmapping(mmapping)) ; tmapping=0.d0
+      rmapping=(/-1d0,+1d0,+1d0,-1d0,0d0/)
+      smapping=(/-1d0,-1d0,+1d0,+1d0,0d0/)
+
    !-----------
    case('__Q2')
       mmapping=9

@@ -8,7 +8,7 @@
 
 subroutine setup_K
 
-use module_parameters, only: K_storage,iproc
+use module_parameters, only: K_storage,iproc,solve_stokes_system
 use module_timing
 
 implicit none
@@ -22,6 +22,8 @@ implicit none
 if (iproc==0) then
 
 !==============================================================================!
+
+if (solve_stokes_system) then 
 
 write(*,'(a)') shift//K_storage
 
@@ -51,9 +53,16 @@ case('blocks_CSR')
 !------------------
 case default
 
+   print *,K_storage
    stop 'setup_K: unknown K_storage value'
 
 end select
+
+else !solve_stokes_system
+
+   write(*,'(a)') shift//'setup_K bypassed'
+
+end if
 
 !==============================================================================!
 

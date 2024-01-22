@@ -10,9 +10,6 @@ subroutine assemble_RHS(f_el,h_el)
 
 use module_parameters, only: mU,mV,mW,mP,iel,mVel
 use module_mesh 
-!use module_constants
-!use module_swarm
-!use module_materials
 use module_arrays, only: rhs_f,rhs_h
 use module_timing
 
@@ -26,7 +23,7 @@ integer :: kV,kP,kkV,kkP
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{assemble\_RHS}
-!@@
+!@@ This subroutine assembles the elemental right hand side vectors into $\vec{f}$ and $\vec{h}$.
 !==================================================================================================!
 
 do kV=1,mVel

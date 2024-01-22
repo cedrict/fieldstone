@@ -10,7 +10,7 @@ program elefant
 
 use module_parameters, only: geometry,nstep,dt,cistep,use_T,istep,time,ndim,solve_stokes_system,write_params
 !use module_arrays
-!use module_mesh
+use module_mesh
 !use module_sparse
 !use module_materials
 
@@ -65,6 +65,7 @@ end select
 call setup_mapping
 call output_mesh
 call quadrature_setup
+call output_qpoints 
 call test_basis_functions
 call swarm_setup
 call experiment_swarm_material_layout
@@ -76,8 +77,7 @@ call setup_GT  !new
 call setup_A   !new
 call setup_MP  !new
 
-
-
+call output_matrix_for_paraview
 !call matrix_setup_GT
 !call output_matrix_tikz
 call experiment_initial_temperature
@@ -85,6 +85,7 @@ call estimate_memory_use
 call spacer
 call write_params 
 call spacer
+      
 
 do istep=1,nstep !-----------------------------------------
                                                           !

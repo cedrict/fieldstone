@@ -20,10 +20,9 @@ type compressedrowstorage_rec
 end type compressedrowstorage_rec
 
 type(compressedrowstorage_sqr) csrK    ! (1,1) block of Stokes matrix
-type(compressedrowstorage_sqr) csrKxx  
-type(compressedrowstorage_sqr) csrKxy
-type(compressedrowstorage_sqr) csrKyx
-type(compressedrowstorage_sqr) csrKyy
+type(compressedrowstorage_sqr) csrKxx,csrKxy,csrKxz
+type(compressedrowstorage_sqr) csrKyx,csrKyy,csrKyz
+type(compressedrowstorage_sqr) csrKzx,csrKzy,csrKzz
 type(compressedrowstorage_rec) csrGT   ! (2,1) block of Stokes matrix
 type(compressedrowstorage_rec) csrGxT 
 type(compressedrowstorage_rec) csrGyT 

@@ -13,7 +13,8 @@ use module_parameters, only: mU,mV,mW,mP,iproc,iel,ndofV,spacePressure,ndim2,inn
 use module_arrays
 use module_mesh 
 use module_timing
-use module_sparse, only : csrGT,csrK,csrMP,csrGxT,csrGyT,csrGzT
+use module_sparse, only : csrGT,csrK,csrMP,csrGxT,csrGyT,csrGzT,csrKxx,csrKxy,csrKxz,&
+                          csrKyx,csrKyy,csrKyz,csrKzx,csrKzy,csrKzz
 use module_MUMPS
 
 implicit none
@@ -39,17 +40,20 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-write(*,'(a,i3)') shift//'mU=',mU
-write(*,'(a,i3)') shift//'mV=',mV
-write(*,'(a,i3)') shift//'mW=',mW
-write(*,'(a,i3)') shift//'mP=',mP
+write(*,'(a,4i3)') shift//'mU,mV,mW,mP=',mU,mV,mW,mP
+write(*,'(a,a)') shift//'K_storage: ',K_storage
+write(*,'(a,a)') shift//'GT_storage: ',GT_storage
 
+!----------------------------------------------------------
+! zero matrix arrays
 !----------------------------------------------------------
 
 rhs_f=0.
 rhs_h=0.
 
 select case(GT_storage)
+case('matrix_FULL')
+   GT_matrix=0.d0
 case('matrix_CSR')
    csrGT%mat=0d0
 case('blocks_CSR')
@@ -61,6 +65,8 @@ case default
 end select
 
 select case(K_storage)
+case('matrix_FULL')
+   K_matrix=0.d0
 case('matrix_MUMPS')
    counter_mumps=0
    idV%RHS=0.d0
@@ -69,15 +75,19 @@ case('blocks_MUMPS')
 case('matrix_CSR')
    csrK%mat=0d0 
 case('blocks_CSR')
+   csrKxx%mat=0d0 ; csrKxy%mat=0d0 ; csrKxz%mat=0d0 
+   csrKyx%mat=0d0 ; csrKyy%mat=0d0 ; csrKzy%mat=0d0 
+   csrKzx%mat=0d0 ; csrKzy%mat=0d0 ; csrKzy%mat=0d0 
 case default
    stop 'make_matrix_stokes: unknown K_storage'
 end select
 
 !----------------------------------------------------------
+!----------------------------------------------------------
 
 do iel=1,nel
 
-   print *,'building elemental matrix for',iel
+   write(*,'(a,i4)') shift//'build eltal matrix for',iel
 
    call compute_elemental_matrix_stokes(K_el,G_el,f_el,h_el)
    call impose_boundary_conditions_stokes(K_el,G_el,f_el,h_el)
@@ -90,10 +100,42 @@ do iel=1,nel
 
 end do
 
-!csrGT%mat=csrGT%mat*block_scaling_coeff
-!rhs_h=rhs_h*block_scaling_coeff
+!----------------------------------------------------------
+
+select case(K_storage)
+case('matrix_FULL')
+   write(*,'(a,2es12.5)') shift//'K (m,M):',minval(K_matrix),maxval(K_matrix)
+case('matrix_MUMPS')
+   write(*,'(a,2es12.5)') shift//'K (m,M):',minval(idV%A_ELT),maxval(idV%A_ELT)
+   idV%A_ELT=0.d0
+case('blocks_MUMPS')
+case('matrix_CSR')
+   csrK%mat=0d0 
+case('blocks_CSR')
+case default
+   stop 'make_matrix_stokes: unknown K_storage'
+end select
+
+select case(GT_storage)
+case('matrix_FULL')
+   write(*,'(a,2es12.5)') shift//'GT (m,M):',minval(GT_matrix),maxval(GT_matrix)
+case('matrix_CSR')
+   csrGT%mat=0d0
+case('blocks_CSR')
+   csrGxT%mat=0d0
+   csrGyT%mat=0d0
+   csrGzT%mat=0d0
+case default
+   stop 'make_matrix_stokes: unknown GT_storage'
+end select
+
+write(*,'(a,2es12.5)') shift//'f (m,M):',minval(rhs_f),maxval(rhs_f)
+write(*,'(a,2es12.5)') shift//'h (m,M):',minval(rhs_h),maxval(rhs_h)
 
 !----------------------------------------------------------
+!----------------------------------------------------------
+!csrGT%mat=csrGT%mat*block_scaling_coeff
+!rhs_h=rhs_h*block_scaling_coeff
 
 !                         write(*,'(a,2es12.4)') shift//'rhs_f (m/M):    ',minval(rhs_f),maxval(rhs_f)
 !if (allocated(csrK%mat)) write(*,'(a,2es12.4)') shift//'csrK%mat (m/M): ',minval(csrK%mat),maxval(csrK%mat)
@@ -103,7 +145,7 @@ end do
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'make_matrix_stokes (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'make_matrix_stokes:',elapsed,' s             |'
 
 end if ! iproc
 

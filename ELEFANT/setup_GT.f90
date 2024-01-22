@@ -8,7 +8,7 @@
 
 subroutine setup_GT
 
-use module_parameters, only: GT_storage,NfemVel,NfemP,use_penalty,iproc
+use module_parameters, only: GT_storage,NfemVel,NfemP,use_penalty,iproc,solve_stokes_system
 use module_arrays, only: GT_matrix
 use module_timing
 
@@ -29,6 +29,8 @@ if (iproc==0) then
 !==============================================================================!
 
 if (use_penalty) return
+
+if (solve_stokes_system) then 
 
 write(*,'(a)') shift//GT_storage
 
@@ -54,6 +56,13 @@ case default
    stop 'setup_GT: unknown GT_storage value'
 
 end select
+
+else !solve_stokes_system
+
+   write(*,'(a)') shift//'setup_GT bypassed'
+
+end if
+
 
 !==============================================================================!
 

@@ -36,7 +36,7 @@ call system_clock(counti,count_rate)
 !@@ \end{itemize}
 !@@ Supported pressure space:
 !@@ \begin{itemize}
-!@@ \item $Q_0$, $Q_1$
+!@@ \item $Q_0$, $Q_1$, $Q_2$
 !@@ \item $P_0$, $P_1$
 !@@ \end{itemize}
 !==================================================================================================!
@@ -581,6 +581,46 @@ case('__Q1')
    end do
 
 !-----------
+case('__Q2')
+   nnx=2*nelx+1
+   nny=2*nely+1
+   counter=0    
+   do iely=1,nely    
+      do ielx=1,nelx    
+         counter=counter+1    
+         mesh(counter)%ielx=ielx
+         mesh(counter)%iely=iely
+         mesh(counter)%iconP(1)=(ielx-1)*2+1+(iely-1)*2*nnx
+         mesh(counter)%iconP(2)=(ielx-1)*2+2+(iely-1)*2*nnx
+         mesh(counter)%iconP(3)=(ielx-1)*2+3+(iely-1)*2*nnx
+         mesh(counter)%iconP(4)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx
+         mesh(counter)%iconP(5)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx
+         mesh(counter)%iconP(6)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx
+         mesh(counter)%iconP(7)=(ielx-1)*2+1+(iely-1)*2*nnx+nnx*2
+         mesh(counter)%iconP(8)=(ielx-1)*2+2+(iely-1)*2*nnx+nnx*2
+         mesh(counter)%iconP(9)=(ielx-1)*2+3+(iely-1)*2*nnx+nnx*2
+         mesh(counter)%xP(1)=(ielx-1)*hx
+         mesh(counter)%xP(2)=(ielx-1)*hx+hx/2
+         mesh(counter)%xP(3)=(ielx-1)*hx+hx
+         mesh(counter)%xP(4)=(ielx-1)*hx
+         mesh(counter)%xP(5)=(ielx-1)*hx+hx/2
+         mesh(counter)%xP(6)=(ielx-1)*hx+hx
+         mesh(counter)%xP(7)=(ielx-1)*hx
+         mesh(counter)%xP(8)=(ielx-1)*hx+hx/2
+         mesh(counter)%xP(9)=(ielx-1)*hx+hx
+         mesh(counter)%yP(1)=(iely-1)*hy
+         mesh(counter)%yP(2)=(iely-1)*hy
+         mesh(counter)%yP(3)=(iely-1)*hy
+         mesh(counter)%yP(4)=(iely-1)*hy+hy/2
+         mesh(counter)%yP(5)=(iely-1)*hy+hy/2
+         mesh(counter)%yP(6)=(iely-1)*hy+hy/2
+         mesh(counter)%yP(7)=(iely-1)*hy+hy
+         mesh(counter)%yP(8)=(iely-1)*hy+hy
+         mesh(counter)%yP(9)=(iely-1)*hy+hy
+      end do    
+   end do    
+
+!-----------
 case('__P1')
    counter=0    
    do iely=1,nely    
@@ -709,7 +749,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'setup_cartesian2D (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'setup_cartesian2D:',elapsed,' s              |'
 
 end if ! iproc
 

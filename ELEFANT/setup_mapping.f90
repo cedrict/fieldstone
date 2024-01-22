@@ -9,7 +9,7 @@
 subroutine setup_mapping
 
 use module_parameters, only: iel,spaceVelocity,mapping,nel,iproc,debug,isoparametric_mapping,ndim,&
-                             nelx,nely,geometry,mapping,iel
+                             nelx,nely,geometry,mapping,iel,mmapping
 use module_constants, only: frac23,frac13,frac12
 use module_mesh 
 use module_timing
@@ -38,7 +38,7 @@ write(*,'(a)') shift//'mapping='//mapping
 if (isoparametric_mapping) then
 
    if (spaceVelocity=='_Q1F') stop 'setup_mapping: isoparametric not possible'
-   if (spaceVelocity=='_Q1+') stop 'setup_mapping: isoparametric not possible'
+   !if (spaceVelocity=='_Q1+') stop 'setup_mapping: isoparametric not possible'
    if (spaceVelocity=='Q1++') stop 'setup_mapping: isoparametric not possible'
    
    do iel=1,nel
@@ -197,10 +197,9 @@ end if
 
 if (debug) then
 write(2345,*) limit//'setup_mapping'//limit
-write(2345,*) minval(mesh(1)%xM),maxval(mesh(1)%xM)
-write(2345,*) minval(mesh(1)%yM),maxval(mesh(1)%yM)
-write(2345,*) minval(mesh(1)%zM),maxval(mesh(1)%zM)
-write(2345,*) mesh(1)%iconM
+do iel=1,nel
+write(2345,*) 'elt:',iel,' | iconM',mesh(iel)%iconM(1:mmapping)
+end do
 end if
 
 !==============================================================================!

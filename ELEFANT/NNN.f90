@@ -32,6 +32,8 @@ real(8) N1r,N1s,N2r,N2s,N3r,N3s,N4r,N4s,N5r,N5s
 !@@ \end{itemize}
 !==================================================================================================!
 
+if (space=='____') return
+
 !print *,'->',caller,space
 
 if (ndim==2) then
@@ -186,6 +188,7 @@ if (ndim==2) then
       N(15)=(-3*s+22*s**2-48*s**3+32*s**4)/3
    !-----------
    case default
+      print *,'->',caller,space
       stop 'unknown 2D space in NNN'
    end select
 

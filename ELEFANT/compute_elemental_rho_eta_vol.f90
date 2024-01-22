@@ -23,6 +23,9 @@ real(8) :: dens_min,dens_max,visc_min,visc_max
 !@@ \subsection{compute\_elemental\_rho\_eta\_vol}
 !@@ This subroutine computes the elemental volume, the average density and 
 !@@ viscosity (using arithmetic averaging) using the values already stored on the quadrature points. 
+!@@ \[
+!@@ \langle \rho \rangle_e =\frac{1}{V_e} \int_{\Omega_e} \rho dV
+!@@ \]
 !@@ It also returns the min/max values of these quantities.
 !==================================================================================================!
 
@@ -48,7 +51,6 @@ do iel=1,nel
       mesh(iel)%eta_avrg=mesh(iel)%eta_avrg+mesh(iel)%etaq(iq)*mesh(iel)%JxWq(iq)
       mesh(iel)%vol     =mesh(iel)%vol     +                   mesh(iel)%JxWq(iq)
    end do
-   print *,mesh(iel)%vol
    mesh(iel)%rho_avrg=mesh(iel)%rho_avrg/mesh(iel)%vol
    mesh(iel)%eta_avrg=mesh(iel)%eta_avrg/mesh(iel)%vol
    dens_min=min(dens_min,mesh(iel)%rho_avrg)
@@ -66,7 +68,7 @@ write(*,'(a,2es10.3)') shift//'eta_avrg (m/M):',visc_min,visc_max
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'comp_eltal_rho_eta_vol (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'comp_elemental_rho_eta_vol:',elapsed,' s     |'
 
 end if ! iproc
 

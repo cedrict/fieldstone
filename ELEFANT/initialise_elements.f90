@@ -28,39 +28,32 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
+write(*,'(a,i6)')  shift//'nel=',nel
+write(*,'(a,3i3)') shift//'mU,mV,mW=',mU,mV,mW
+
 allocate(mesh(nel))
 
 do iel=1,nel  
 
    allocate(mesh(iel)%iconU(mU)) 
-   allocate(mesh(iel)%iconV(mV)) 
-   allocate(mesh(iel)%iconW(mW)) 
-   allocate(mesh(iel)%iconVel(mvel)) 
-
    allocate(mesh(iel)%xU(mU)) ; mesh(iel)%xU=0.d0
    allocate(mesh(iel)%yU(mU)) ; mesh(iel)%yU=0.d0
    allocate(mesh(iel)%zU(mU)) ; mesh(iel)%zU=0.d0
+   allocate(mesh(iel)%u(mU)) ; mesh(iel)%u=0.d0
+
+   allocate(mesh(iel)%iconV(mV)) 
    allocate(mesh(iel)%xV(mV)) ; mesh(iel)%xV=0.d0
    allocate(mesh(iel)%yV(mV)) ; mesh(iel)%yV=0.d0
    allocate(mesh(iel)%zV(mV)) ; mesh(iel)%zV=0.d0
+   allocate(mesh(iel)%v(mV)) ; mesh(iel)%v=0.d0
+
+   allocate(mesh(iel)%iconW(mW)) 
    allocate(mesh(iel)%xW(mW)) ; mesh(iel)%xW=0.d0
    allocate(mesh(iel)%yW(mW)) ; mesh(iel)%yW=0.d0
    allocate(mesh(iel)%zW(mW)) ; mesh(iel)%zW=0.d0
-
-   allocate(mesh(iel)%u(mU)) ; mesh(iel)%u=0.d0
-   allocate(mesh(iel)%v(mV)) ; mesh(iel)%v=0.d0
    allocate(mesh(iel)%w(mW)) ; mesh(iel)%w=0.d0
 
-
-
-!   allocate(mesh(iel)%exx(mV)) ! same problem!
-!   allocate(mesh(iel)%eyy(mV)) ! PB ?
-!   allocate(mesh(iel)%ezz(mV)) ! PB ?
-!   allocate(mesh(iel)%exy(mV)) ! PB ?
-!   allocate(mesh(iel)%exz(mV)) ! PB ?
-!   allocate(mesh(iel)%eyz(mV)) ! PB ?
-!   allocate(mesh(iel)%rho(mV)) ! PB ?
-!   allocate(mesh(iel)%eta(mV)) ! PB ?
+   allocate(mesh(iel)%iconVel(mvel)) 
 
    allocate(mesh(iel)%iconP(mP)) 
    allocate(mesh(iel)%p(mP))  ; mesh(iel)%p=0.d0

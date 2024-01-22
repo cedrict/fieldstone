@@ -38,13 +38,13 @@ write(*,'(a,i7)') shift//'NfemVel=',NfemVel
 write(*,'(a,i7)') shift//'NfemP=',NfemP
 write(*,'(a,i7)') shift//'NfemT=',NfemT
 
-allocate(solU(NU))
-allocate(solV(NV))
-allocate(solW(NW))
-allocate(solVel(NfemVel))
-allocate(solP(NfemP))
-allocate(rhs_f(NfemVel))
-allocate(rhs_h(NfemP))
+allocate(solU(NU))        ; solU=0d0
+allocate(solV(NV))        ; solV=0d0
+allocate(solW(NW))        ; solW=0d0
+allocate(solVel(NfemVel)) ; SolVel=0d0
+allocate(solP(NfemP))     ; SolP=0d0
+allocate(rhs_f(NfemVel))  ; rhs_f=0d0
+allocate(rhs_h(NfemP))    ; rhs_h=0d0
 allocate(materials(nmat))
 allocate(Kdiag(NfemVel))
 

@@ -36,7 +36,6 @@ spaceVelocity='__Q2'
 spacePressure='__Q1'
 inner_solver_type='__y12m'
 outer_solver_type='___pcg'
-mapping=spaceVelocity !isoparametric
 use_swarm=.false.
 nmarker_per_dim=5 
 init_marker_random=.false. 
@@ -64,6 +63,8 @@ bnd1_bcV_type='noslip'
 bnd2_bcV_type='noslip'
 bnd3_bcV_type='noslip'
 bnd4_bcV_type='noslip'
+K_storage='matrix_FULL'
+GT_storage='matrix_FULL'
 
 write(*,'(a)') 'set_default_values                      |'
 

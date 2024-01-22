@@ -39,7 +39,7 @@ call flush(1234)
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'write_stats (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'write_stats:',elapsed,' s                    |'
 
 end if ! iproc
 

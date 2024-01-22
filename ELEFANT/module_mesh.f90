@@ -25,6 +25,7 @@ type element
   real(8), allocatable :: rV(:),rP(:)         ! 
   real(8), allocatable :: thetaV(:),thetaP(:) !
   real(8), allocatable :: phiV(:),phiP(:)     !
+  real(8), allocatable :: xvisu(:),yvisu(:),zvisu(:)   !
   real(8) :: exx,eyy,exy                      ! strain rate components for 2D
   real(8) :: ezz,exz,eyz                      ! additional strain rate components for 3D
   real(8) :: a_eta,b_eta,c_eta,d_eta          ! least square coeffs for viscosity

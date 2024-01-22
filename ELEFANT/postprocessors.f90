@@ -19,6 +19,12 @@ integer iq
 real(8) uq,vq,wq,pq,Tq,NNNU(mU),NNNV(mV),NNNW(mW),NNNP(mP),NNNT(mT)
 real(8) uth,vth,wth,pth,Tth,dum
 
+integer, parameter :: caller_id01=1001
+integer, parameter :: caller_id02=1002
+integer, parameter :: caller_id03=1003
+integer, parameter :: caller_id04=1004
+integer, parameter :: caller_id05=1005
+
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{postprocessors.f90}
@@ -50,20 +56,26 @@ do iel=1,nel
    do iq=1,nqel
 
       !compute uq,vq,wq
-      call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNU(1:mU),mU,ndim,spaceU)
-      call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNV(1:mV),mV,ndim,spaceV)
-      call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNW(1:mW),mW,ndim,spaceW)
+      call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNU(1:mU),mU,ndim,spaceU,caller_id01)
       uq=sum(NNNU(1:mU)*mesh(iel)%u(1:mU))
+
+      call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNV(1:mV),mV,ndim,spaceV,caller_id02)
       vq=sum(NNNV(1:mV)*mesh(iel)%v(1:mV))
-      wq=sum(NNNW(1:mW)*mesh(iel)%w(1:mW))
+
+      if (ndim==3) then
+         call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNW(1:mW),mW,ndim,spaceW,caller_id03)
+         wq=sum(NNNW(1:mW)*mesh(iel)%w(1:mW))
+      else
+         wq=0d0
+      end if
 
       !compute pq
-      call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim,spacePressure)
+      call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNP(1:mP),mP,ndim,spacePressure,caller_id04)
       pq=sum(NNNP(1:mP)*mesh(iel)%p(1:mP))
 
       !compute Tq
       if (use_T) then
-         call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim,spaceTemperature)
+         call NNN(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),NNNT(1:mT),mT,ndim,spaceTemperature,caller_id05)
          Tq=sum(NNNT(1:mT)*mesh(iel)%T(1:mT))
       else
          Tq=0
@@ -118,7 +130,7 @@ call experiment_postprocessor
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'postprocessors (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'postprocessors:',elapsed,' s                 |'
 
 end if ! iproc
 

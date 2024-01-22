@@ -24,7 +24,7 @@ integer :: k,kV1,kV2,kkV1,kkV2,counter_mumps
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{assemble\_K}
-!@@
+!@@ This subroutine receives as argument $\K_e$ and assembles it into the global matrix $\K$.
 !==================================================================================================!
 
 select case(K_storage)
@@ -36,12 +36,12 @@ case('matrix_FULL')
       kkV1=mesh(iel)%iconVel(kV1)
       do kV2=1,mVel
          kkV2=mesh(iel)%iconVel(kV2)
-         K_matrix(kkV1,kkV2)=K_el(kV1,kV2)
+         K_matrix(kkV1,kkV2)=K_matrix(kkV1,kkV2)+K_el(kV1,kV2)
       end do
    end do
 
 !-------------------
-case('matrix_MUMPS')
+case('matrix_MUMPS') ! symmetric storage
 
    counter_mumps=0
    do kV1=1,mVel
@@ -77,6 +77,8 @@ case('matrix_CSR')
 
 !-------------------
 case('blocks_CSR')
+
+   stop 'assemble_K: blocks_CSR not available yet'
 
 !-----------
 case default

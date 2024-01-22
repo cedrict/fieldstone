@@ -68,7 +68,7 @@ character(len=6) :: bnd3_bcV_type     ! type of velocity b.c. on bnd 3
 character(len=6) :: bnd4_bcV_type     ! type of velocity b.c. on bnd 4
 character(len=6) :: bnd5_bcV_type     ! type of velocity b.c. on bnd 5
 character(len=6) :: bnd6_bcV_type     ! type of velocity b.c. on bnd 6
-character(len=10) :: K_storage,GT_storage,RHS_storage
+character(len=11) :: K_storage,GT_storage,RHS_storage
 
 integer :: iel
 integer :: istep           

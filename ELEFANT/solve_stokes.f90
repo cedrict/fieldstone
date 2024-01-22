@@ -69,9 +69,6 @@ else !-----------------------------------------------------
       stop 'solve_stokes: unknown outer_solver_type'
    end select 
 
-
-
-
    !transfer velocity onto elements
    do iel=1,nel
       do k=1,mU
@@ -91,17 +88,19 @@ end if
 
 u_max=-1d30
 u_min=+1d30
+
 v_max=-1d30
 v_min=+1d30
+
 v_max=-1d30
 v_min=+1d30
 do iel=1,nel
-   u_max=max(maxval(mesh(iel)%u(1:mV)),u_max)
-   u_min=min(minval(mesh(iel)%u(1:mV)),u_min)
+   u_max=max(maxval(mesh(iel)%u(1:mU)),u_max)
+   u_min=min(minval(mesh(iel)%u(1:mU)),u_min)
    v_max=max(maxval(mesh(iel)%v(1:mV)),v_max)
    v_min=min(minval(mesh(iel)%v(1:mV)),v_min)
-   w_max=max(maxval(mesh(iel)%w(1:mV)),w_max)
-   w_min=min(minval(mesh(iel)%w(1:mV)),w_min)
+   w_max=max(maxval(mesh(iel)%w(1:mW)),w_max)
+   w_min=min(minval(mesh(iel)%w(1:mW)),w_min)
 end do
 
              write(*,'(a,2es12.4)') shift//'u (m,M)',u_min,u_max
@@ -116,7 +115,7 @@ call flush(1238)
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'solve_stokes (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'solve_stokes:',elapsed,' s                   |'
 
 end if ! iproc
 

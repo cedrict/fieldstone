@@ -53,7 +53,7 @@ write(*,'(a,es12.4)') shift//'block_scaling_coeff=',block_scaling_coeff
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'compute_block_scaling_coefficient (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'compute_block_scaling_coeff:',elapsed,' s    |'
 
 end if ! iproc
 

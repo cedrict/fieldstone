@@ -206,52 +206,52 @@ write(*,'(a)') shift//'-> OUTPUT/nodesM.vtu'
 
 !----------------------------------------------------------
 
-open(unit=123,file='OUTPUT/nodesU.ascii',status='replace',form='formatted')
+open(unit=123,file='OUTPUT/ASCII/nodesU.ascii',status='replace',form='formatted')
 do iel=1,nel
    do k=1,mU
       write(123,'(3es12.4)') mesh(iel)%xU(k),mesh(iel)%yU(k),mesh(iel)%zU(k)
    end do
 end do
 close(123)
-write(*,'(a)') shift//'-> OUTPUT/nodesU.ascii'
+write(*,'(a)') shift//'-> OUTPUT/ASCII/nodesU.ascii'
 
-open(unit=123,file='OUTPUT/nodesV.ascii',status='replace',form='formatted')
+open(unit=123,file='OUTPUT/ASCII/nodesV.ascii',status='replace',form='formatted')
 do iel=1,nel
    do k=1,mU
       write(123,'(3es12.4)') mesh(iel)%xV(k),mesh(iel)%yV(k),mesh(iel)%zV(k)
    end do
 end do
 close(123)
-write(*,'(a)') shift//'-> OUTPUT/nodesV.ascii'
+write(*,'(a)') shift//'-> OUTPUT/ASCII/nodesV.ascii'
 
 if (ndim>2) then
-open(unit=123,file='OUTPUT/nodesW.ascii',status='replace',form='formatted')
+open(unit=123,file='OUTPUT/ASCII/nodesW.ascii',status='replace',form='formatted')
 do iel=1,nel
    do k=1,mU
       write(123,'(3es12.4)') mesh(iel)%xW(k),mesh(iel)%yW(k),mesh(iel)%zW(k)
    end do
 end do
 close(123)
-write(*,'(a)') shift//'-> OUTPUT/nodesW.ascii'
+write(*,'(a)') shift//'-> OUTPUT/ASCII/nodesW.ascii'
 end if
 
-open(unit=123,file='OUTPUT/nodesP.ascii',status='replace',form='formatted')
+open(unit=123,file='OUTPUT/ASCII/nodesP.ascii',status='replace',form='formatted')
 do iel=1,nel
    do k=1,mP
       write(123,'(3es12.4)') mesh(iel)%xP(k),mesh(iel)%yP(k),mesh(iel)%zP(k)
    end do
 end do
 close(123)
-write(*,'(a)') shift//'-> OUTPUT/nodesP.ascii'
+write(*,'(a)') shift//'-> OUTPUT/ASCII/nodesP.ascii'
 
-open(unit=123,file='OUTPUT/nodesM.ascii',status='replace',form='formatted')
+open(unit=123,file='OUTPUT/ASCII/nodesM.ascii',status='replace',form='formatted')
 do iel=1,nel
    do k=1,mmapping
       write(123,'(3es12.4)') mesh(iel)%xM(k),mesh(iel)%yM(k),mesh(iel)%zM(k)
    end do
 end do
 close(123)
-write(*,'(a)') shift//'-> OUTPUT/nodesM.ascii'
+write(*,'(a)') shift//'-> OUTPUT/ASCII/nodesM.ascii'
 
 !==============================================================================!
 

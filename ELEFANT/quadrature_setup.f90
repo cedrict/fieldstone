@@ -30,6 +30,8 @@ integer, parameter :: caller_id01=601
 !@@ jacobian values.
 !@@ The required constants for the quadrature schemes are in 
 !@@ {\filenamefont module\_quadrature.f90}.
+!@@ Quadrature rules for triangles up to order 20 are in \textcite{duna85} (1985) 
+!@@ and also up to order 10 at \href{https://mathsfromnothing.au/triangle-quadrature-rules/}.
 !==================================================================================================!
 
 if (iproc==0) then
@@ -137,10 +139,6 @@ case('__Q1','__Q2','__Q3','_Q1+','Q1++','_Q1F')
          rq=qcoords(iq)
          sq=qcoords(jq)
          call NNN(rq,sq,0.d0,NNNM,mmapping,ndim,mapping,caller_id01)
-         !print *,'------'
-         !print *,iel,counter,rq,sq
-         !print *,iel,counter,mesh(iel)%xM
-         !print *,iel,counter,NNNM
          mesh(iel)%xq(counter)=sum(mesh(iel)%xM*NNNM)
          mesh(iel)%yq(counter)=sum(mesh(iel)%yM*NNNM)
          mesh(iel)%weightq(counter)=qweights(iq)*qweights(jq)
@@ -239,7 +237,7 @@ case('__P1','__P2','__P3','_P1+','_P2+')
          mesh(iel)%rq(12)=0.31286549600487 ; mesh(iel)%sq(12)=0.04869031542532 ; mesh(iel)%weightq(12)=0.07711376089026/2
          mesh(iel)%rq(13)=0.04869031542532 ; mesh(iel)%sq(13)=0.63844418856981 ; mesh(iel)%weightq(13)=0.07711376089026/2
       end do
-   case(16) 
+   case(16) !8th order 
       do iel=1,nel
          mesh(iel)%rq( 1)=0.33333333333333 ; mesh(iel)%sq( 1)=0.33333333333333 ; mesh(iel)%weightq( 1)=0.14431560767779/2
          mesh(iel)%rq( 2)=0.45929258829272 ; mesh(iel)%sq( 2)=0.45929258829272 ; mesh(iel)%weightq( 2)=0.09509163426728/2

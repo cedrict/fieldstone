@@ -35,8 +35,10 @@ hmin=(vol_min)**(1./3.)
 select case(spaceVelocity)
 case('__Q1','_Q1+','Q1++') 
    p=1d0
-case('__Q2') 
+case('__Q2','__P2') 
    p=2d0
+case('__Q3') 
+   p=3d0
 case default
    stop 'compute_timestep: spaceVelocity unsupported'
 end select
@@ -58,7 +60,7 @@ write(*,'(a,es12.4)') shift//'dt=',dt
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'compute_timestep (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'compute_timestep:',elapsed,' s               |'
 
 end if ! iproc
 

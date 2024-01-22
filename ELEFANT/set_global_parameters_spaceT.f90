@@ -44,7 +44,7 @@ end select
 
 !----------------------------------------------------------
 
-if (.not.use_T) return
+if (use_T) then
 
 if (ndim==2) then
 
@@ -187,6 +187,12 @@ end if
 write(*,'(a,a)') shift//'spaceTemperature=',spaceTemperature
 write(*,'(a,i5)') shift//'NT=',NT
 
+else ! use_T
+
+   write(*,'(a)') shift//'not solving temperature equation'
+
+end if
+
 !----------------------------------------------------------
 
 if (debug) then
@@ -205,7 +211,7 @@ end if
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'set_global_parameters_spaceT (',elapsed,' s)     |'
+write(*,'(a,f6.2,a)') 'set_global_parameters_spaceT:',elapsed,' s   |'
 
 end if ! iproc
 

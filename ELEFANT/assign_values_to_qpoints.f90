@@ -141,16 +141,33 @@ else ! use_swarm=F
             mesh(iel)%tempq(iq)=0
          end if
 
-         call compute_dNdx_dNdy_dNdz(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),&
-                                     dNNNUdx,dNNNUdy,dNNNUdz,&
-                                     dNNNVdx,dNNNVdy,dNNNVdz,&
-                                     dNNNWdx,dNNNWdy,dNNNWdz,jcob)
-         exxq=sum(dNNNUdx*mesh(iel)%u)
-         eyyq=sum(dNNNVdy*mesh(iel)%v)
-         ezzq=sum(dNNNWdz*mesh(iel)%w)
-         exyq=0.5d0*sum(dNNNUdy*mesh(iel)%u + dNNNVdx*mesh(iel)%v)
-         exzq=0.5d0*sum(dNNNUdz*mesh(iel)%u + dNNNWdx*mesh(iel)%w)
-         eyzq=0.5d0*sum(dNNNVdz*mesh(iel)%v + dNNNWdy*mesh(iel)%w)
+         if (ndim==2) then
+
+            call compute_dNdx_dNdy(mesh(iel)%rq(iq),mesh(iel)%sq(iq),&
+                                   dNNNUdx,dNNNUdy,dNNNVdx,dNNNVdy,jcob)
+
+            exxq=sum(dNNNUdx*mesh(iel)%u)
+            eyyq=sum(dNNNVdy*mesh(iel)%v)
+            ezzq=0
+            exyq=0.5d0*sum(dNNNUdy*mesh(iel)%u + dNNNVdx*mesh(iel)%v)
+            exzq=0
+            eyzq=0
+
+         else
+
+            call compute_dNdx_dNdy_dNdz(mesh(iel)%rq(iq),mesh(iel)%sq(iq),mesh(iel)%tq(iq),&
+                                        dNNNUdx,dNNNUdy,dNNNUdz,&
+                                        dNNNVdx,dNNNVdy,dNNNVdz,&
+                                        dNNNWdx,dNNNWdy,dNNNWdz,jcob)
+
+            exxq=sum(dNNNUdx*mesh(iel)%u)
+            eyyq=sum(dNNNVdy*mesh(iel)%v)
+            ezzq=sum(dNNNWdz*mesh(iel)%w)
+            exyq=0.5d0*sum(dNNNUdy*mesh(iel)%u + dNNNVdx*mesh(iel)%v)
+            exzq=0.5d0*sum(dNNNUdz*mesh(iel)%u + dNNNWdx*mesh(iel)%w)
+            eyzq=0.5d0*sum(dNNNVdz*mesh(iel)%v + dNNNWdy*mesh(iel)%w)
+
+         end if
 
          mesh(iel)%JxWq(iq)=jcob*mesh(iel)%weightq(iq)
 
@@ -168,12 +185,12 @@ else ! use_swarm=F
 
       if (ndim==2) then 
          call compute_abcd_2D(nqel,mesh(iel)%xq,mesh(iel)%yq,mesh(iel)%rhoq,mesh(iel)%etaq,&
-                           mesh(iel)%a_rho,mesh(iel)%b_rho,mesh(iel)%c_rho,mesh(iel)%d_rho,&
-                           mesh(iel)%a_eta,mesh(iel)%b_eta,mesh(iel)%c_eta,mesh(iel)%d_eta)
+                              mesh(iel)%a_rho,mesh(iel)%b_rho,mesh(iel)%c_rho,mesh(iel)%d_rho,&
+                              mesh(iel)%a_eta,mesh(iel)%b_eta,mesh(iel)%c_eta,mesh(iel)%d_eta)
       else
          call compute_abcd_3D(nqel,mesh(iel)%xq,mesh(iel)%yq,mesh(iel)%zq,mesh(iel)%rhoq,mesh(iel)%etaq,&
-                           mesh(iel)%a_rho,mesh(iel)%b_rho,mesh(iel)%c_rho,mesh(iel)%d_rho,&
-                           mesh(iel)%a_eta,mesh(iel)%b_eta,mesh(iel)%c_eta,mesh(iel)%d_eta)
+                              mesh(iel)%a_rho,mesh(iel)%b_rho,mesh(iel)%c_rho,mesh(iel)%d_rho,&
+                              mesh(iel)%a_eta,mesh(iel)%b_eta,mesh(iel)%c_eta,mesh(iel)%d_eta)
       end if
 
       etaq_min=min(minval(mesh(iel)%etaq(:)),etaq_min)
@@ -204,7 +221,7 @@ write(1240,'(4es12.4)') rhoq_min,rhoq_max,etaq_min,etaq_max
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'assign_vals_to_qpoints (',elapsed,' s)'
+write(*,'(a,f6.2,a)') 'assign_values_to_qpoints:',elapsed,' s       |'
 
 end if ! iproc
 
