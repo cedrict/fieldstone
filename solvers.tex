@@ -844,8 +844,12 @@ This method has obvious ties with the penalty method.
 If $\lambda >> \max_\Omega{\eta}$ then the matrix $\tilde{\K}$ is ill-conditioned and an iterative solver must be used.
 \end{remark}
 
+\newpage
 %------------------------------------------------------------------------------
 \subsection{The SIMPLE method}
+
+
+{\tiny {\color{gray} I have no idea where I got what follows ...}} 
 
 The SIMPLE method (Semi-Implicit Method for Pressure-Linked Equations)
 has been introduced by Patankar \& Spalding (1972) \cite{pasp72} as an iterative method to solve
@@ -1242,7 +1246,7 @@ or,
 \delta \vec{\cal P}_k &=& \delta^\star \vec{\cal P}^k
 \end{eqnarray}
 
-\newpage
+
 The final algorithm will then look as follows:
 
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -1265,8 +1269,14 @@ The final algorithm will then look as follows:
 \end{mdframed}
 where the parameters $\omega_{\cal V}$ and $\omega_{\cal P}$ are between 0 and 1. 
 
-\Literature: Echevarria Serur (2013) \cite{eche13}, Braess \& Sarazin (1997) \cite{brsa97b}, 
-see Ur Rehman \etal (2009) \cite{urvs09} for SIMPLE(R) algorithm. See also \cite{tack10}.
+\Literature: 
+\begin{itemize}
+\item \fullcite{eche13}, 
+\item \fullcite{brsa97b}, 
+\item \fullcite{urvs09} for SIMPLE(R) algorithm, 
+\item \fullcite{tack10}
+\item \fullcite{john16}, page 666. 
+\end{itemize}
 
 
 
@@ -1282,7 +1292,7 @@ see Ur Rehman \etal (2009) \cite{urvs09} for SIMPLE(R) algorithm. See also \cite
 
 
 
-
+\newpage
 %...................................................
 \subsection{The GMRES approach - NOT FINISHED}
 
