@@ -10,6 +10,7 @@ subroutine inner_solver(rhs,guess,solution)
 
 use module_parameters, only: inner_solver_type,NfemVel,nproc,iproc
 use module_timing
+use module_arrays, only : K_matrix
 use module_sparse, only : csrK
 use module_MUMPS
 
@@ -21,11 +22,14 @@ real(8), intent(out)   :: solution(NfemVel)
 
 integer, dimension(:,:), allocatable :: ha
 integer, dimension(:), allocatable :: rnr,snr
-integer :: iflag(10), ifail,nn1,nn
+integer :: iflag(10), ifail,nn1,nn,job
 integer :: icount1,icount2,countrate,imode(3),verbose,ierr
+integer, dimension(:), allocatable :: ipvt
 real(8), dimension(:), allocatable :: pivot
 real(8), dimension(:), allocatable :: mat 
 real(8) :: pta,ta,tf,ptf,ts,pts,aflag(8)
+real(8), dimension(:),   allocatable :: work
+real(8) rcond
 
 !==================================================================================================!
 !==================================================================================================!
@@ -34,14 +38,29 @@ real(8) :: pta,ta,tf,ptf,ts,pts,aflag(8)
 !@@ implicit passed as argument via the module but the rhs and the guess vector are 
 !@@ passed as arguments.
 !@@ If MUMPS is used the system is solved via MUMPS (the guess is vector
-!@@ is then neglected). Same if y12m solver is used. 
+!@@ is then neglected). Same if y12m solver or linpack solver is used. 
 !@@ Otherwise a call is made to the {\tt pcg\_solver\_csr} subroutine.
 !==================================================================================================!
 
+write(*,'(a,a)') shift//'inner_solver_type=',inner_solver_type
+
 select case(inner_solver_type)
 
-!-------------
-case('_MUMPS') 
+!-----------------
+case('___LINPACK') 
+
+   job=0
+   allocate(work(NfemVel))
+   allocate(ipvt(NfemVel))
+   call DGECO (K_matrix, NfemVel, NfemVel, ipvt, rcond, work)
+   call DGESL (K_matrix, NfemVel, NfemVel, ipvt, rhs, job)
+   deallocate(ipvt)
+   deallocate(work)
+
+   solution=rhs
+
+!-----------------
+case('_____MUMPS') 
 
    !-----------------------
    ! Specify element entry
@@ -182,8 +201,8 @@ case('_MUMPS')
 
    end if
 
-!-------------
-case('__y12m')
+!-----------------
+case('______y12m')
 
    aflag=0
    iflag=0
@@ -212,8 +231,8 @@ case('__y12m')
    deallocate(rnr)
    deallocate(snr)
 
-!-------------
-case('__pcg')
+!-----------------
+case('_______PCG')
 
    !call pcg_solver_csr(csrK,guess,rhs,Kdiag)
 

@@ -8,7 +8,7 @@
 
 subroutine setup_K_matrix_CSR
 
-use module_parameters, only: use_penalty,NfemVel,ndim,spaceV,NU,NV,NW,mV,iproc,debug,geometry,nelx,nely,nelz,ndofV
+use module_parameters, only: stokes_solve_strategy,NfemVel,ndim,spaceV,NU,NV,NW,mV,iproc,debug,geometry,nelx,nely,nelz,ndofV
 use module_mesh 
 use module_sparse, only : csrK
 use module_arrays, only: vnode_belongs_to
@@ -34,7 +34,7 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-if (use_penalty) then
+if (stokes_solve_strategy=='___penalty') then 
    csrK%full_matrix_storage=.true. ! y12m solver 
 else
    csrK%full_matrix_storage=.false. ! pcg_solver 

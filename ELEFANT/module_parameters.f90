@@ -36,7 +36,6 @@ logical :: use_swarm              ! whether markers are used or not
 logical :: init_marker_random     ! whether markers are initally randomised
 logical :: use_T                  ! whether the code solves the energy equation
 logical :: debug                  ! triggers lots of additional checks & prints
-logical :: use_penalty            ! whether the penalty formulation is used
 logical :: use_ALE                ! whether the ALE (free surface) is used
 logical :: normalise_pressure     ! 
 logical :: isoparametric_mapping  ! 
@@ -60,8 +59,8 @@ character(len=4) :: spaceVelocity     ! finite element space for velocity
 character(len=4) :: spacePressure     ! finite element space for pressure
 character(len=4) :: spaceTemperature  ! finite element space for temperature
 character(len=4) :: mapping           ! type of mapping 
-character(len=6) :: inner_solver_type ! which type of solver for the inner solve 
-character(len=6) :: outer_solver_type ! which type of solver for the outer solve 
+character(len=10) :: inner_solver_type ! which type of solver for the inner solve 
+character(len=10) :: stokes_solve_strategy ! which type of stokes solver
 character(len=6) :: bnd1_bcV_type     ! type of velocity b.c. on bnd 1
 character(len=6) :: bnd2_bcV_type     ! type of velocity b.c. on bnd 2
 character(len=6) :: bnd3_bcV_type     ! type of velocity b.c. on bnd 3
@@ -93,9 +92,8 @@ write(*,'(a,5i10)')    ' NU,NV,NW,NP,NT          =',NU,NV,NW,NP,NT
 write(*,'(a,3i10)')    ' NfemVel,NfemP,NfemT     =',NfemVel,NfemP,NfemT
 write(*,'(a,3i10)')    ' nqpts,nqel,NQ           =',nqpts,nqel,NQ
 write(*,'(a,a10)')     ' inner_solver_type       =',inner_solver_type
-write(*,'(a,a10)')     ' outer_solver_type       =',outer_solver_type
+write(*,'(a,a10)')     ' stokes_solve_strategy   =',stokes_solve_strategy
 write(*,'(a,i10)')     ' nmat                    =',nmat
-write(*,'(a,l10)')     ' use_penalty             =',use_penalty
 write(*,'(a,es10.3)')  ' penalty                 =',penalty
 write(*,'(a,l10)')     ' use_ALE                 =',use_ALE
 write(*,'(a,l10)')     ' use_swarm               =',use_swarm

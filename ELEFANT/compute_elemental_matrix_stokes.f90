@@ -8,8 +8,8 @@
 
 subroutine compute_elemental_matrix_stokes(K_el,G_el,f_el,h_el)
 
-use module_parameters, only: mU,mV,mW,mP,use_penalty,spaceU,spaceV,spaceW,spacePressure,&
-                             iel,penalty,nqel,ndim,ndim2,mVel
+use module_parameters, only: mU,mV,mW,mP,spaceU,spaceV,spaceW,spacePressure,&
+                             iel,penalty,nqel,ndim,ndim2,mVel,stokes_solve_strategy
 use module_arrays
 use module_mesh
 use module_constants
@@ -163,7 +163,7 @@ end do ! nqel
 
 !----------------------------------------------------------
 
-if (use_penalty) then
+if (stokes_solve_strategy=='___penalty') then
 
    rq=0d0
    sq=0d0

@@ -8,7 +8,7 @@
 
 subroutine solve_stokes
 
-use module_parameters, only: NU,NV,NW,NfemVel,ndim,mU,mV,mW,mP,iproc,iel,use_penalty,nel,outer_solver_type
+use module_parameters, only: NU,NV,NW,NfemVel,ndim,mU,mV,mW,mP,iproc,iel,nel,stokes_solve_strategy
 use module_statistics 
 use module_arrays, only: rhs_f,solVel,solP,solU,solV,solW
 use module_mesh
@@ -22,10 +22,16 @@ real(8) :: guess(NfemVel)
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{solve\_stokes}
-!@@ This subroutine solves the Stokes system: if it is a saddle point problem 
+!@@ This subroutine solves the Stokes system. 
+!@@ The employed strategy is as follows:
+!@@ \begin{itemize}
+!@@ \item {\tt stokes\_solve\_strategy='___penalty'}: it calls the inner solver subroutine. 
+!@@ \item {\tt stokes\_solve\_strategy='_______PCG'}:
 !@@ it does so using the preconditioned conjugate gradient (PCG) applied 
 !@@ to the Schur complement $\SSS$ !@@ (see Section~\ref{ss:schurpcg}).
-!@@ If the penalty method is used 
+!@@ \item {\tt stokes\_solve\_strategy='____SIMPLE'}:
+!@@ \item {\tt stokes\_solve\_strategy='segregated'}:
+!@@ \end{itemize}
 !==================================================================================================!
 
 if (iproc==0) then
@@ -34,11 +40,16 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
+write(*,'(a,a)') shift//'stokes_solve_strategy: ',stokes_solve_strategy
+
 solVel=0
 solP=0
 guess=0
 
-if (use_penalty) then
+select case(stokes_solve_strategy)
+
+!--------------
+case('___penalty')
 
    call inner_solver(rhs_f,guess,solVel)
 
@@ -46,39 +57,59 @@ if (use_penalty) then
    SolV=SolVel(1+NU:NU+NV)   
    SolW=SolVel(1+NU+NV:NU+NV+NW)   
 
-   !transfer velocity onto elements
-   do iel=1,nel
-      do k=1,mU
-         mesh(iel)%u(k)=SolU(mesh(iel)%iconU(k))
-      end do
-      do k=1,mV
-         mesh(iel)%v(k)=SolV(mesh(iel)%iconV(k))
-      end do
-      do k=1,mW
-         mesh(iel)%w(k)=SolW(mesh(iel)%iconW(k))
-      end do
+!-------------
+case('_______PCG')
+
+   !call solve_stokes_PCG
+
+!-------------
+case('____SIMPLE')
+
+   !call solve_stokes_SIMPLE
+
+!-----------------
+case('segregated')
+
+
+
+!-----------
+case default
+
+   print *,'****************************************'
+   print *,'solve_stokes: unknown stokes_solve_strategy'
+   print *,'available values are'
+   print *,'___penalty, _______PCG, ____SIMPLE, segregated'
+   stop 
+
+end select 
+
+!----------------------------------------------------------
+!transfer velocity onto elements
+
+do iel=1,nel
+   do k=1,mU
+      mesh(iel)%u(k)=SolU(mesh(iel)%iconU(k))
    end do
+   do k=1,mV
+      mesh(iel)%v(k)=SolV(mesh(iel)%iconV(k))
+   end do
+   do k=1,mW
+      mesh(iel)%w(k)=SolW(mesh(iel)%iconW(k))
+   end do
+end do
+
+!----------------------------------------------------------
+!transfer/compute pressure onto elements
+
+if (stokes_solve_strategy=='___penalty') then
 
    call recover_pressure_penalty
 
-else !-----------------------------------------------------
+else
 
-   select case(outer_solver_type)
-   case('___pcg')
-   case default
-      stop 'solve_stokes: unknown outer_solver_type'
-   end select 
-
-   !transfer velocity onto elements
    do iel=1,nel
-      do k=1,mU
-         mesh(iel)%u(k)=SolU(mesh(iel)%iconU(k))
-      end do
-      do k=1,mV
-         mesh(iel)%v(k)=SolV(mesh(iel)%iconV(k))
-      end do
-      do k=1,mW
-         mesh(iel)%w(k)=SolW(mesh(iel)%iconW(k))
+      do k=1,mP
+         mesh(iel)%p(k)=SolP(mesh(iel)%iconP(k))
       end do
    end do
 

@@ -8,7 +8,8 @@
 
 subroutine setup_MP
 
-use module_parameters, only: NP,nelx,nely,nelz,spacePressure,iproc,debug,geometry,ndim,iel,mP,nel 
+use module_parameters, only: NP,nelx,nely,nelz,spacePressure,iproc,debug,geometry,ndim,iel,mP,nel,&
+                             stokes_solve_strategy
 use module_mesh
 use module_sparse, only: csrMP
 use module_arrays, only: pnode_belongs_to
@@ -27,6 +28,8 @@ logical, dimension(:), allocatable :: alreadyseen
 !==================================================================================================!
 
 if (iproc==0) then
+
+if (stokes_solve_strategy=='___penalty') return
 
 call system_clock(counti,count_rate)
 

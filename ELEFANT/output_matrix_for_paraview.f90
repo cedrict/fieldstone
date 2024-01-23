@@ -34,6 +34,10 @@ if (.not.solve_stokes_system) return
 select case(GT_storage)
 
 !------------------
+case('_______none')
+
+
+!------------------
 case('matrix_FULL')
 
     nz=count(abs(GT_matrix)>1e-8)
@@ -262,7 +266,7 @@ end select
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'output_matrix_for_paraview:',elapsed,' s'
+write(*,'(a,f6.2,a)') 'output_matrix_for_paraview:',elapsed,' s     |'
 
 end if ! iproc
 

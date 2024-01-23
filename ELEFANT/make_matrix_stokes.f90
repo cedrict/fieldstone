@@ -8,8 +8,8 @@
 
 subroutine make_matrix_stokes
 
-use module_parameters, only: mU,mV,mW,mP,iproc,iel,ndofV,spacePressure,ndim2,inner_solver_type,&
-                             ndim,nel,use_penalty,K_storage,GT_storage,mVel
+use module_parameters, only: mU,mV,mW,mP,iproc,iel,ndofV,spacePressure,ndim2,&
+                             ndim,nel,K_storage,GT_storage,mVel
 use module_arrays
 use module_mesh 
 use module_timing
@@ -52,11 +52,12 @@ rhs_f=0.
 rhs_h=0.
 
 select case(GT_storage)
+case('_______none')
 case('matrix_FULL')
    GT_matrix=0.d0
-case('matrix_CSR')
+case('_matrix_CSR')
    csrGT%mat=0d0
-case('blocks_CSR')
+case('_blocks_CSR')
    csrGxT%mat=0d0
    csrGyT%mat=0d0
    csrGzT%mat=0d0
@@ -117,14 +118,11 @@ case default
 end select
 
 select case(GT_storage)
+case('_______none')
 case('matrix_FULL')
    write(*,'(a,2es12.5)') shift//'GT (m,M):',minval(GT_matrix),maxval(GT_matrix)
 case('matrix_CSR')
-   csrGT%mat=0d0
 case('blocks_CSR')
-   csrGxT%mat=0d0
-   csrGyT%mat=0d0
-   csrGzT%mat=0d0
 case default
    stop 'make_matrix_stokes: unknown GT_storage'
 end select

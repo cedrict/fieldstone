@@ -43,6 +43,7 @@ call spacer
 call set_default_values
 call experiment_declare_main_parameters
 call read_command_line_options
+call process_inputs
 call process_bc
 call set_global_parameters_spaceV
 call set_global_parameters_spaceP

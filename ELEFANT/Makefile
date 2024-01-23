@@ -36,17 +36,25 @@ compute_elemental_schur_complement.o\
 dgesl.o dgeco.o dgefa.o directsolver.o\
 estimate_memory_use.o\
 header.o\
-impose_boundary_conditions_stokes.o impose_boundary_conditions_energy.o int_to_char.o\
-initialise_mumps_V.o initialise_elements.o inner_solver.o\
+impose_boundary_conditions_stokes.o\
+impose_boundary_conditions_energy.o\
+int_to_char.o\
+initialise_mumps_V.o\
+initialise_elements.o\
+inner_solver.o\
 locate_point.o\
-make_matrix_stokes.o make_matrix_energy.o \
+make_matrix_stokes.o\
+make_matrix_energy.o \
 matrix_setup_MV.o \
 mgmres.o \
 NNN.o dNNNdr.o dNNNds.o dNNNdt.o\
 output_mesh.o output_swarm.o output_solution.o output_qpoints.o \
 output_matrix_tikz.o outer_solver_pcg.o output_matrix_for_paraview.o\
 postprocessors.o process_bc.o\
-prescribe_stokes_solution.o paint_swarm.o pcg_solver_csr.o\
+prescribe_stokes_solution.o\
+paint_swarm.o\
+pcg_solver_csr.o\
+process_inputs.o\
 quadrature_setup.o\
 recover_pressure_penalty.o read_command_line_options.o\
 sloan.o\

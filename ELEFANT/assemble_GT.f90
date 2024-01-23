@@ -8,7 +8,7 @@
 
 subroutine assemble_GT(G_el)
 
-use module_parameters, only: GT_storage,spacePressure,mP,iel,use_penalty,mVel
+use module_parameters, only: GT_storage,spacePressure,mP,iel,mVel,stokes_solve_strategy
 use module_mesh 
 use module_arrays, only: GT_matrix
 use module_sparse, only: csrGT
@@ -22,11 +22,11 @@ integer :: k,kV,kP,kkV,kkP
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{assemble_GT}
+!@@ \subsection{assemble\_GT}
 !@@ {\tt G\_el}is of size mVel*mP
 !==================================================================================================!
 
-if (use_penalty) return
+if (stokes_solve_strategy=='___penalty') return
 
 select case(GT_storage)
 

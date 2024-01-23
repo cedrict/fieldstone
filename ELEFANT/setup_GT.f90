@@ -8,7 +8,7 @@
 
 subroutine setup_GT
 
-use module_parameters, only: GT_storage,NfemVel,NfemP,use_penalty,iproc,solve_stokes_system
+use module_parameters, only: GT_storage,NfemVel,NfemP,iproc,solve_stokes_system,stokes_solve_strategy
 use module_arrays, only: GT_matrix
 use module_timing
 
@@ -20,7 +20,7 @@ real(8) t3,t4
 
 !==================================================================================================!
 !==================================================================================================!
-!@@ \subsection{setup_GT}
+!@@ \subsection{setup\_GT}
 !@@
 !==================================================================================================!
 
@@ -28,34 +28,27 @@ if (iproc==0) then
 
 !==============================================================================!
 
-if (use_penalty) return
+if (stokes_solve_strategy=='___penalty') return
 
 if (solve_stokes_system) then 
 
-write(*,'(a)') shift//GT_storage
+   write(*,'(a)') shift//GT_storage
 
-select case(GT_storage)
+   select case(GT_storage)
+   !------------------
+   case('matrix_FULL')
+      allocate(GT_matrix(NfemP,NfemVel)) ; GT_matrix=0.d0
+   !------------------
+   case('matrix_CSR')
+      call setup_GT_matrix_CSR
+   !-----------------
+   case('blocks_CSR')
 
-!------------------
-case('matrix_FULL')
+   !-----------
+   case default
+      stop 'setup_GT: unknown GT_storage value'
 
-   allocate(GT_matrix(NfemP,NfemVel)) ; GT_matrix=0.d0
-
-!------------------
-case('matrix_CSR')
-
-   call setup_GT_matrix_CSR
-
-!-----------------
-case('blocks_CSR')
-
-
-
-case default
-
-   stop 'setup_GT: unknown GT_storage value'
-
-end select
+   end select
 
 else !solve_stokes_system
 

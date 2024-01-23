@@ -12,13 +12,13 @@ use module_parameters, only: mP,mV,penalty,normalise_pressure,nel,ndim,debug,iel
 use module_statistics, only: p_min,p_max
 use module_mesh 
 use module_timing
-use module_arrays, only : solP
+use module_arrays, only : solP,dNNNUdx,dNNNUdy,dNNNUdz,dNNNVdx,dNNNVdy,dNNNVdz,dNNNWdx,dNNNWdy,dNNNWdz
 
 implicit none
 
 integer k,inode
 real(8) rq,sq,tq,jcob,pp
-real(8) dNdx(mV),dNdy(mV),dNdz(mV),div_v,q(NV),c(NV)
+real(8) div_v,q(NV),c(NV)
 
 !==================================================================================================!
 !==================================================================================================!
@@ -34,14 +34,16 @@ do iel=1,nel
    tq=0d0
 
    if (ndim==2) then
-      call compute_dNdx_dNdy(rq,sq,dNdx,dNdy,jcob)
-      div_v=sum(dNdx(1:mV)*mesh(iel)%u(1:mV))&
-           +sum(dNdy(1:mV)*mesh(iel)%v(1:mV))
+      call compute_dNdx_dNdy(rq,sq,dNNNUdx,dNNNUdy,dNNNVdx,dNNNVdy,jcob)
+      div_v=sum(dNNNUdx*mesh(iel)%u)&
+           +sum(dNNNVdy*mesh(iel)%v)
    else
-      call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNdx,dNdy,dNdz,jcob)
-      div_v=sum(dNdx(1:mV)*mesh(iel)%u(1:mV))&
-           +sum(dNdy(1:mV)*mesh(iel)%v(1:mV))&
-           +sum(dNdz(1:mV)*mesh(iel)%w(1:mV))
+      call compute_dNdx_dNdy_dNdz(rq,sq,tq,dNNNUdx,dNNNUdy,dNNNUdz,&
+                                           dNNNVdx,dNNNVdy,dNNNVdz,&
+                                           dNNNWdx,dNNNWdy,dNNNWdz,jcob)
+      div_v=sum(dNNNUdx*mesh(iel)%u)&
+           +sum(dNNNVdy*mesh(iel)%v)&
+           +sum(dNNNWdz*mesh(iel)%w)
    end if 
    solP(iel)=-penalty*mesh(iel)%eta_avrg*div_v
 

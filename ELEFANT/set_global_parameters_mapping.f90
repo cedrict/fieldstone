@@ -30,13 +30,14 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-write(*,'(a,a)') shift//'mapping=',mapping
 
 if (isoparametric_mapping) then 
    mapping=spaceVelocity
 else
    stop 'abcdgerf'
 end if
+
+write(*,'(a,a)') shift//'mapping=',mapping
 
 write(*,'(a,l1)') shift//'isoparametric_mapping=',isoparametric_mapping
 

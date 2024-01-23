@@ -42,10 +42,16 @@ call system_clock(counti,count_rate)
 ! compute nqel and NQ
 !----------------------------------------------------------
 
+
 select case(spaceVelocity)
-case('__Q1','__Q2','__Q3','_Q1+','Q1++','_Q1F')
+case('__Q1')
+   nqpts=2
+   nqel=nqpts**ndim
+case('__Q2','__Q3','_Q1+','Q1++','_Q1F')
+   nqpts=3
    nqel=nqpts**ndim
 case('__P1','__P2','__P3','_P1+','_P2+')
+   nqpts=6
    nqel=nqpts
 case default
    stop 'quadrature_setup: spaceVelocity not supported yet'

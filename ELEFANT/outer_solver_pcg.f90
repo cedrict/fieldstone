@@ -9,10 +9,6 @@
 subroutine outer_solver_pcg
 
 use module_parameters, only: NfemVel,NfemP,iproc,debug
-!use module_mesh 
-!use module_constants
-!use module_swarm
-!use module_materials
 use module_sparse, only : csrGT
 use module_arrays, only: SolVel, SolP, rhs_f,rhs_h
 use module_timing
