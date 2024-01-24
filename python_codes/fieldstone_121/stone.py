@@ -1,18 +1,26 @@
 import numpy as np
 import scipy.optimize as optimize
 import matplotlib.pyplot as plt
+import math
 
 Rgas = 8.314 # gas constant (J mol^-1 K^-1)
 
 ##################################################################
 
-sr = 1e-16 # strain rate (s^-1)
+sr = 1e-15 # strain rate (s^-1)
 
 Tmin=380   # temperature (C) 
-Tmax=1300  # temperature (C)
+Tmax=1610  # temperature (C)
 
 dmin=10    # grain size (microns)
 dmax=1e4   # grain size (microns)
+
+print("-----------------------------")
+print("---------- stone 121 --------")
+print("-----------------------------")
+print('sr=',sr)
+print('T range=',Tmin,Tmax)
+print('d range=',dmin,dmax)
 
 ##################################################################
 # definition of newton raphson function
@@ -44,19 +52,21 @@ def compute_sr(x,sr,gs,T):
 # Rheological parameters (A in MPa^-n s^-1, Q in J/mol)
 ##################################################################
 
-Adis = 1.1e5   ; ndis = 3.5  ;           Edis = 530e3  # Olivine, Hirth & Kohlstedt 2003 
+Adis = 1.1e5    ; ndis = 3.5  ;           Edis = 530e3  # Olivine, Hirth & Kohlstedt 2003 
 Adiff = 10**7.6 ; ndiff = 1.0 ; mdiff=3 ; Ediff = 370e3 # Olivine, Hirth & Kohlstedt, 2003, corrected in Hansen
-Agbs = 6.5e3   ; ngbs = 3.5  ; mgbs=2  ; Egbs = 400e3  # Olivine, Hirth & Kohlstedt, 2003
+Agbs = 6.5e3    ; ngbs = 3.5  ; mgbs=2  ; Egbs = 400e3  # Olivine, Hirth & Kohlstedt, 2003
 
 AlowT = 5.7e11 ; plowT=1; qlowT=2; ElowT=535e3; taulowT=8500; # Goetze, carefull define only for T<700°C!!!
-TlowT=700;
+TlowT=700; #set to negative value to never trigger it
 
 ##################################################################
 # build temperature array(s) 
 ##################################################################
-dT=2.5
+dT=2
 temp= np.arange(Tmin,Tmax,dT,dtype=np.float64) 
 ntemp=len(temp)
+
+print('dT,nvalues=',dT,ntemp)
 
 ##################################################################
 # grain size values array
@@ -66,25 +76,42 @@ nd=500
 d= np.linspace(np.log10(dmin),np.log10(dmax),nd,dtype=np.float64) 
 d=10**d
 
+print('grain size nvalues=',nd)
+
 ##################################################################
 # Storing arrays
+# Create array that stores which mechanism is dominant for a 
+# certain temp, tau and d. Last dimension is 4 to store temp, 
+# tau, d and dominant mechanism type
+# 00 version is used to plot lines every 100 degrees
 ##################################################################
 
-# Create array that stores which mechanism is dominant for a certain temp, tau and d
-# Last dimension is 4 to store temp, tau, d and dominant mechanism type
 dom_mech = np.empty((ntemp,nd,4))
 
-#%%
+Tmax00=math.floor(Tmax/100)*100
+Tmin00=math.ceil(Tmin/100)*100
+ntemp00=int((Tmax00-Tmin00)/100+1)
+dom_mech00 = np.empty((ntemp00,nd,4))
+
+#print(Tmin00,Tmax00,ntemp00)
+
 ##################################################################
 # Calculations
 ##################################################################
 
-# Loop on temperature
-for i in range(len(temp)):
+#outpuut_all = open('sr_all.ascii', 'w')
+#outpuut_all.write('#gs tau mechanism \n') 
+
+for i in range(ntemp): # Loop on temperature
     t=temp[i]
-    # Loop on grain size
-    for j in range(nd):
+
+    #outpuut = open('sr_'+str(int(t))+'.ascii', 'w')
+    #outpuut.write('#gs tau T sr_dsl sr_df sr_gbs sr_lowT \n') 
+
+    for j in range(nd): # Loop on grain size
         gs=d[j]
+
+        #print('======================================================')
         
         # Assume all strainrate is produced by each mechanism and calculate stress
         sigdis=(sr/Adis)**(1/ndis) * np.exp(Edis/ (ndis*Rgas*(t+273)))
@@ -96,9 +123,10 @@ for i in range(len(temp)):
         sig=min(sigdis,sigdiff,siggbs)
         if t<TlowT: sig=min(sigdis,sigdiff,siggbs,siglowT)
 
-        # NewtonRaphson Loop
-        tau_NR = optimize.newton(f,sig,args=(sr,gs,t),tol=1e-3, maxiter=10,fprime=None,fprime2=None)
-        
+        # Newton-Raphson Loop
+        # https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.newton.html
+        tau_NR = optimize.newton(f,sig,args=(sr,gs,t),tol=1e-5, maxiter=100,fprime=None,fprime2=None,disp=True) #,full_output=True)
+
         # Strain rates for each deformation mechanisms
         # The values are not stored but the code can be adapted to do so
         computed_sr = compute_sr(tau_NR,sr,gs,t) 
@@ -106,16 +134,71 @@ for i in range(len(temp)):
         # Find position of largest strain rate, this is the dominant mechanism
         # Translation key: dis = 0, diff = 1, gbs = 2, lowT = 3
         max_mech = np.argmax(computed_sr)
+
+        #outpuut.write("%e %e %e %e %e %e %e %d\n" %(gs,tau_NR,t,computed_sr[0],computed_sr[1],computed_sr[2],computed_sr[3],max_mech))
+        #outpuut_all.write("%e %e %d\n" %(gs,tau_NR,max_mech))
         
         # Storing of results, along with coordinates for plotting
         dom_mech[i,j,0] = t
         dom_mech[i,j,1] = gs
         dom_mech[i,j,2] = tau_NR
         dom_mech[i,j,3] = max_mech
+
+        if t%100==0:
+           ii=int((t-Tmin00)/100)
+           dom_mech00[ii,j,0] = t
+           dom_mech00[ii,j,1] = gs
+           dom_mech00[ii,j,2] = tau_NR
+           dom_mech00[ii,j,3] = max_mech
+
     # end loop on grain size
 # end loop on temperature
 
-#%%
+##################################################################
+# new plotting 
+##################################################################
+
+print('gs  (m/M):',np.min(dom_mech[0:ntemp,0:nd,1]),np.max(dom_mech[0:ntemp,0:nd,1]))
+print('tau (m/M):',np.min(dom_mech[0:ntemp,0:nd,2]),np.max(dom_mech[0:ntemp,0:nd,2]))
+
+#all data
+x=np.log10(np.ravel(dom_mech[0:ntemp,0:nd,1]))
+y=np.log10(np.ravel(dom_mech[0:ntemp,0:nd,2]))
+colors=np.ravel(dom_mech[0:ntemp,0:nd,3])
+plt.xlim(1,4)
+plt.ylim(0,3.5)
+cmap = plt.get_cmap('Greys', 4) 
+plt.scatter(x,y,c=colors,cmap=cmap,s=5,vmax=3)
+
+#lines
+x=np.log10(np.ravel(dom_mech00[:,0:nd,1]))
+y=np.log10(np.ravel(dom_mech00[:,0:nd,2]))
+colors=np.ravel(dom_mech00[0:ntemp,0:nd,0])
+cmap = plt.get_cmap('plasma', ntemp00) 
+plt.scatter(x,y,s=3,c=colors,cmap=cmap,vmin=Tmin00-50,vmax=Tmax00+50)
+#plt.colorbar(ticks=(400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600))
+
+plt.text(1.5, 2.5, 'GBS', fontsize="15")
+plt.text(1.5, 0.7, 'DIFF', fontsize="15")
+plt.text(3, 1.8, 'DISL', fontsize="15")
+
+if TlowT>0:
+   plt.text(3.5, 3, 'LowT', fontsize="15")
+
+for i in range(ntemp00):
+    if np.log10(dom_mech00[i,-1,2])<3.5 and np.log10(dom_mech00[i,-1,2])>0 :
+       plt.text(np.log10(dom_mech00[i,-1,1])-0.35,np.log10(dom_mech00[i,-1,2])+0.035,str(i*100+Tmin00)+'C')
+
+plt.xlabel('grain size (microns) - Log scale')
+plt.ylabel('Stress (Pa) - Log scale')
+plt.title("Olivine Deformation mechanism map, sr="+str(sr))
+#plt.colorbar(ticks=(0.75,1.5,2.25))
+plt.savefig('deformation_map.png',bbox_inches='tight', dpi=200)
+
+plt.show()
+
+exit()
+
 ##################################################################
 # Plotting
 ##################################################################
@@ -131,7 +214,7 @@ def plotDefMechMap(filledareas=True):
     ipl=0
     
     # Set temperatures that will be labeled
-    ipllabel=[400,500,600,700,800,900,1000,1100,1200,1300]
+    ipllabel=[400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700]
     
     for i in range(ntemp):
         # Plot an isotherm every 20 degrees
