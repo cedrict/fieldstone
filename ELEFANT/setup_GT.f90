@@ -14,21 +14,19 @@ use module_timing
 
 implicit none
 
-integer inode,k,nz,i,ii,nsees,k2,jp,ip,imod
-logical, dimension(:), allocatable :: alreadyseen
-real(8) t3,t4
-
 !==================================================================================================!
 !==================================================================================================!
 !@@ \subsection{setup\_GT}
-!@@
+!@@ This subroutine is a switch. Based on the value {\tt GT\_storage}, it will call the 
+!@@ appropriate subroutine.
+!@@ Note that if {\tt stokes\_solve\_strategy=='penalty'} then this subroutine is bypassed.
 !==================================================================================================!
 
 if (iproc==0) then
 
 !==============================================================================!
 
-if (stokes_solve_strategy=='___penalty') return
+if (stokes_solve_strategy=='penalty') return
 
 if (solve_stokes_system) then 
 
@@ -37,15 +35,20 @@ if (solve_stokes_system) then
    select case(GT_storage)
    !------------------
    case('matrix_FULL')
+
       allocate(GT_matrix(NfemP,NfemVel)) ; GT_matrix=0.d0
+
    !------------------
    case('matrix_CSR')
+
       call setup_GT_matrix_CSR
+
    !-----------------
    case('blocks_CSR')
 
    !-----------
    case default
+
       stop 'setup_GT: unknown GT_storage value'
 
    end select

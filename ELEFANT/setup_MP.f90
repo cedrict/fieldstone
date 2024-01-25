@@ -29,7 +29,7 @@ logical, dimension(:), allocatable :: alreadyseen
 
 if (iproc==0) then
 
-if (stokes_solve_strategy=='___penalty') return
+if (stokes_solve_strategy=='penalty') return
 
 call system_clock(counti,count_rate)
 

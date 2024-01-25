@@ -34,8 +34,8 @@ nely=8
 geometry='cartesian'
 spaceVelocity='__Q2'
 spacePressure='__Q1'
-inner_solver_type='___LINPACK'
-stokes_solve_strategy='___pcg'
+inner_solver_type='LINPACK'
+stokes_solve_strategy='PCG'
 use_swarm=.false.
 nmarker_per_dim=5 
 init_marker_random=.false. 
@@ -66,8 +66,6 @@ K_storage='matrix_FULL'
 GT_storage='matrix_FULL'
 
 write(*,'(a)') 'set_default_values                      |'
-
-print *,inner_solver_type
 
 end if ! iproc
 

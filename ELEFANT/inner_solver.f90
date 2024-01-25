@@ -23,7 +23,7 @@ real(8), intent(out)   :: solution(NfemVel)
 integer, dimension(:,:), allocatable :: ha
 integer, dimension(:), allocatable :: rnr,snr
 integer :: iflag(10), ifail,nn1,nn,job
-integer :: icount1,icount2,countrate,imode(3),verbose,ierr
+integer :: icount1,icount2,imode(3),verbose
 integer, dimension(:), allocatable :: ipvt
 real(8), dimension(:), allocatable :: pivot
 real(8), dimension(:), allocatable :: mat 
@@ -37,9 +37,22 @@ real(8) rcond
 !@@ This subroutine solves the system $\K\cdot \vec{\cal V} = \vec{f}$. The matrix is 
 !@@ implicit passed as argument via the module but the rhs and the guess vector are 
 !@@ passed as arguments.
-!@@ If MUMPS is used the system is solved via MUMPS (the guess is vector
-!@@ is then neglected). Same if y12m solver or linpack solver is used. 
-!@@ Otherwise a call is made to the {\tt pcg\_solver\_csr} subroutine.
+!@@ Which solver is used is determined by the value of the {\tt inner\_solver\_type} parameter.
+!@@ There are four options:
+!@@ \begin{itemize}
+!@@ \item 'MUMPS' (specific storage)
+!@@ \item 'LINPACK' (full matrix storage)
+!@@ \item 'Y12M' (CSR storage): Y12M is a package of Fortran subroutines. It was developed at
+!@@ the Regional Computing Centre at the University of Copenhagen (RECKU) by \textcite{zlws81}. One
+!@@ can obtain the code from Netlib and the documentation is at {\tt https://www.netlib.org/y12m/doc}.
+!@@ About {\tt ifail}: Error diagnostic parameter. The content of parameter IFAIL is modified  
+!@@ by subroutine Y12MA.  On exit IFAIL = 0 if the subroutine has not detected any error.  
+!@@ Positive  values  of IFAIL on  exit  show  that some error has been
+!@@ detected by the subroutine. 
+!@@ \item 'PCG' (symmetric CSR storage ?)
+!@@ \end{itemize}
+!@@ Note that there is directsolver.f90 too that is for now not used.
+!@@ I should also explore MA28 by Duff ! 
 !==================================================================================================!
 
 write(*,'(a,a)') shift//'inner_solver_type=',inner_solver_type
@@ -47,7 +60,7 @@ write(*,'(a,a)') shift//'inner_solver_type=',inner_solver_type
 select case(inner_solver_type)
 
 !-----------------
-case('___LINPACK') 
+case('LINPACK') 
 
    job=0
    allocate(work(NfemVel))
@@ -60,7 +73,9 @@ case('___LINPACK')
    solution=rhs
 
 !-----------------
-case('_____MUMPS') 
+case('MUMPS') 
+
+   verbose=0
 
    !-----------------------
    ! Specify element entry
@@ -202,7 +217,11 @@ case('_____MUMPS')
    end if
 
 !-----------------
-case('______y12m')
+case('Y12M')
+
+   write(*,'(a)') shift//'Y12M solver'
+   write(*,'(a,i5)') shift//'NfemVel=',NfemVel
+   write(*,'(a,i5)') shift//'csrK%NZ=',csrK%NZ
 
    aflag=0
    iflag=0
@@ -221,7 +240,7 @@ case('______y12m')
    call y12maf(NfemVel,csrK%NZ,mat,snr,nn,rnr,nn1,pivot,ha,NfemVel,aflag,iflag,rhs,ifail)
 
    if (ifail/=0) print *,'ifail=',ifail
-   if (ifail/=0) stop 'inner_solver: problem with y12m solver'
+   if (ifail/=0) stop 'inner_solver: problem with Y12M solver'
 
    solution=rhs
 
@@ -232,7 +251,7 @@ case('______y12m')
    deallocate(snr)
 
 !-----------------
-case('_______PCG')
+case('PCG')
 
    !call pcg_solver_csr(csrK,guess,rhs,Kdiag)
 

@@ -163,7 +163,7 @@ end do ! nqel
 
 !----------------------------------------------------------
 
-if (stokes_solve_strategy=='___penalty') then
+if (stokes_solve_strategy=='penalty') then
 
    rq=0d0
    sq=0d0

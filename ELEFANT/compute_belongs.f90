@@ -34,9 +34,9 @@ call system_clock(counti,count_rate)
 
 write(*,'(a,3i5)') shift//'NU,NV,NW=',NU,NV,NW
 
-allocate(unode_belongs_to(9,NU)) ; Unode_belongs_to=0
-allocate(vnode_belongs_to(9,NV)) ; Vnode_belongs_to=0
-allocate(wnode_belongs_to(9,NW)) ; Wnode_belongs_to=0
+allocate(Unode_belongs_to(9,NU)) ; Unode_belongs_to=0
+allocate(Vnode_belongs_to(9,NV)) ; Vnode_belongs_to=0
+allocate(Wnode_belongs_to(9,NW)) ; Wnode_belongs_to=0
 
 do iel=1,nel
    do i=1,mU

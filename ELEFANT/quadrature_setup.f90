@@ -42,7 +42,6 @@ call system_clock(counti,count_rate)
 ! compute nqel and NQ
 !----------------------------------------------------------
 
-
 select case(spaceVelocity)
 case('__Q1')
    nqpts=2
@@ -229,7 +228,7 @@ case('__P1','__P2','__P3','_P1+','_P2+')
       end do
     case(13) !7th order
       do iel=1,nel
-         mesh(iel)%rq( 1)=0.33333333333333 ; mesh(iel)%sq( 1)=0.33333333333333 ; mesh(iel)%weightq( 1)=-0.14957004446768/2  !suspicious!!
+         mesh(iel)%rq( 1)=0.33333333333333 ; mesh(iel)%sq( 1)=0.33333333333333 ; mesh(iel)%weightq( 1)=-0.14957004446768/2 
          mesh(iel)%rq( 2)=0.26034596607904 ; mesh(iel)%sq( 2)=0.26034596607904 ; mesh(iel)%weightq( 2)=0.17561525743321/2
          mesh(iel)%rq( 3)=0.26034596607904 ; mesh(iel)%sq( 3)=0.47930806784192 ; mesh(iel)%weightq( 3)=0.17561525743321/2
          mesh(iel)%rq( 4)=0.47930806784192 ; mesh(iel)%sq( 4)=0.26034596607904 ; mesh(iel)%weightq( 4)=0.17561525743321/2

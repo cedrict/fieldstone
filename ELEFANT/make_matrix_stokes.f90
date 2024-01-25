@@ -52,10 +52,10 @@ rhs_f=0.
 rhs_h=0.
 
 select case(GT_storage)
-case('_______none')
+case('none')
 case('matrix_FULL')
    GT_matrix=0.d0
-case('_matrix_CSR')
+case('matrix_CSR')
    csrGT%mat=0d0
 case('_blocks_CSR')
    csrGxT%mat=0d0
@@ -88,7 +88,7 @@ end select
 
 do iel=1,nel
 
-   write(*,'(a,i4)') shift//'build eltal matrix for',iel
+   !write(*,'(a,i4)') shift//'build eltal matrix for',iel
 
    call compute_elemental_matrix_stokes(K_el,G_el,f_el,h_el)
    call impose_boundary_conditions_stokes(K_el,G_el,f_el,h_el)
@@ -111,14 +111,14 @@ case('matrix_MUMPS')
    idV%A_ELT=0.d0
 case('blocks_MUMPS')
 case('matrix_CSR')
-   csrK%mat=0d0 
+   write(*,'(a,2es12.5)') shift//'K (m,M):',minval(csrK%mat),maxval(csrK%mat)
 case('blocks_CSR')
 case default
    stop 'make_matrix_stokes: unknown K_storage'
 end select
 
 select case(GT_storage)
-case('_______none')
+case('none')
 case('matrix_FULL')
    write(*,'(a,2es12.5)') shift//'GT (m,M):',minval(GT_matrix),maxval(GT_matrix)
 case('matrix_CSR')

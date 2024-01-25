@@ -26,7 +26,7 @@ integer :: k,kV,kP,kkV,kkP
 !@@ {\tt G\_el}is of size mVel*mP
 !==================================================================================================!
 
-if (stokes_solve_strategy=='___penalty') return
+if (stokes_solve_strategy=='penalty') return
 
 select case(GT_storage)
 

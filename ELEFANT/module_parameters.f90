@@ -100,11 +100,13 @@ write(*,'(a,l10)')     ' use_swarm               =',use_swarm
 write(*,'(a,l10)')     ' use_T                   =',use_T
 write(*,'(a,l10)')     ' isoparametric_mapping   =',isoparametric_mapping
 write(*,'(a,l10)')     ' normalise_pressure      =',normalise_pressure  
+if (use_swarm) &
 write(*,'(a,2i10)')    ' nmarker_per_dim,nmarker =',nmarker_per_dim,nmarker
 write(*,'(a,i10)')     ' nstep                   =',nstep
 write(*,'(a,i10)')     ' nproc                   =',nproc
 write(*,'(a,l10)')     ' debug                   =',debug
 write(*,'(a,l10)')     ' solve_stokes_system     =',solve_stokes_system
+if (use_swarm) &
 write(*,'(a,l10)')     ' init_marker_random      =',init_marker_random
 
 end subroutine

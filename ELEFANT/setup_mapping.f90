@@ -38,7 +38,6 @@ write(*,'(a)') shift//'mapping='//mapping
 if (isoparametric_mapping) then
 
    if (spaceVelocity=='_Q1F') stop 'setup_mapping: isoparametric not possible'
-   !if (spaceVelocity=='_Q1+') stop 'setup_mapping: isoparametric not possible'
    if (spaceVelocity=='Q1++') stop 'setup_mapping: isoparametric not possible'
    
    do iel=1,nel

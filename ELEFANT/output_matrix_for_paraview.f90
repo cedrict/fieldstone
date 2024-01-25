@@ -34,7 +34,7 @@ if (.not.solve_stokes_system) return
 select case(GT_storage)
 
 !------------------
-case('_______none')
+case('none')
 
 
 !------------------

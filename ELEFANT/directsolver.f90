@@ -7,6 +7,7 @@
 !==================================================================================================!
 !@@ \subsection{directsolver}
 !@@  I do not know where this solver comes from. It works with full matrices.
+!@@ Could it be that it comes from the brown meshless methods book?
 
    SUBROUTINE SolverBand(ak,fp,neq,nmat)
 !------------------------------------------------------------------

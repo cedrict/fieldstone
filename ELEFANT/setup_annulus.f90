@@ -8,8 +8,8 @@
 
 subroutine setup_annulus
 
-use module_parameters, only: iproc,debug,spaceVelocity,nelphi,nelr,inner_radius,outer_radius,NV,mV,iel,&
-                             nel,mP,spacePressure,use_T,NP
+use module_parameters, only: iproc,debug,spaceVelocity,nelphi,nelr,inner_radius,outer_radius,NV,&
+                             mV,iel,nel,mP,spacePressure,use_T,NP
 use module_mesh 
 use module_constants, only: pi
 use module_timing

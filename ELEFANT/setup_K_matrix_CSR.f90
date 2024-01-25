@@ -8,10 +8,11 @@
 
 subroutine setup_K_matrix_CSR
 
-use module_parameters, only: stokes_solve_strategy,NfemVel,ndim,spaceV,NU,NV,NW,mV,iproc,debug,geometry,nelx,nely,nelz,ndofV
+use module_parameters, only: stokes_solve_strategy,NfemVel,ndim,spaceV,NU,NV,NW,mU,mV,mW,&
+                             iproc,debug,geometry,nelx,nely,nelz,ndofV
 use module_mesh 
 use module_sparse, only : csrK
-use module_arrays, only: vnode_belongs_to
+use module_arrays, only: Unode_belongs_to,Vnode_belongs_to,Wnode_belongs_to
 use module_timing
 
 implicit none
@@ -34,7 +35,7 @@ call system_clock(counti,count_rate)
 
 !==============================================================================!
 
-if (stokes_solve_strategy=='___penalty') then 
+if (stokes_solve_strategy=='penalty') then 
    csrK%full_matrix_storage=.true. ! y12m solver 
 else
    csrK%full_matrix_storage=.false. ! pcg_solver 
@@ -45,7 +46,7 @@ end if
       csrK%N=NfemVel
 
       !----------------------------------------------------------------------------------
-      if (geometry=='cartesian' .and. ndim==2 .and. spaceV=='__Q1') then
+      if (geometry=='XXcartesian' .and. ndim==2 .and. spaceV=='__Q1') then
 
          nnx=nelx+1
          nny=nely+1
@@ -121,7 +122,7 @@ end if
          end if
 
       !----------------------------------------------------------------------------------
-      else if (geometry=='cartesian' .and. ndim==3 .and. spaceV=='__Q1') then
+      else if (geometry=='XXcartesian' .and. ndim==3 .and. spaceV=='__Q1') then
 
          nnx=nelx+1
          nny=nely+1
@@ -206,28 +207,141 @@ end if
       !----------------------------------------------------------------------------------
       else ! use generic approach
 
-         imod=NV/4
 
          call cpu_time(t3)
          allocate(alreadyseen(NU+NV+NW))
          NZ=0
-         do ip=1,NV
-            if (mod(ip,imod)==0) write(*,'(TL10, F6.1,a)',advance='no') real(ip)/real(NV)*100.,'%'
+
+
+
+
+
+         !xx,xy,xz
+         imod=NU/4
+         do ip=1,NU
+            if (mod(ip,imod)==0) write(*,'(TL10, F6.1,a)',advance='no') real(ip)/real(NU)*100.,'%'
             alreadyseen=.false.
-            do k=1,vnode_belongs_to(1,ip)
-               iel=vnode_belongs_to(1+k,ip)
-               do i=1,mV
-                  jp=mesh(iel)%iconV(i)
+            do k=1,Unode_belongs_to(1,ip)
+               iel=Unode_belongs_to(1+k,ip)
+               !-------- 
+               do i=1,mU
+                  jp=mesh(iel)%iconU(i)
                   if (.not.alreadyseen(jp)) then
-                     NZ=NZ+ndofV**2
+                     NZ=NZ+1
+                     alreadyseen(jp)=.true.
+                  end if
+               end do
+               !-------- 
+               do i=1,mV
+                  jp=mesh(iel)%iconV(i)+NU
+                  if (.not.alreadyseen(jp)) then
+                     NZ=NZ+1
+                     alreadyseen(jp)=.true.
+                  end if
+               end do
+               !-------- 
+               do i=1,mW
+                  jp=mesh(iel)%iconW(i)+NU+NV
+                  if (.not.alreadyseen(jp)) then
+                     NZ=NZ+1
                      alreadyseen(jp)=.true.
                   end if
                end do
             end do
          end do
-         csrK%NZ=NZ
-         csrK%nz=(csrK%nz-csrK%N)/2+csrK%N
+         print *,NZ
+
+         !yx,yy,yz
+         imod=NV/4
+         do ip=1,NV
+            if (mod(ip,imod)==0) write(*,'(TL10, F6.1,a)',advance='no') real(ip)/real(NV)*100.,'%'
+            alreadyseen=.false.
+            do k=1,Vnode_belongs_to(1,ip)
+               iel=Vnode_belongs_to(1+k,ip)
+               !-------- 
+               do i=1,mU
+                  jp=mesh(iel)%iconU(i)
+                  if (.not.alreadyseen(jp)) then
+                     NZ=NZ+1
+                     alreadyseen(jp)=.true.
+                  end if
+               end do
+               !-------- 
+               do i=1,mV
+                  jp=mesh(iel)%iconV(i)+NU
+                  if (.not.alreadyseen(jp)) then
+                     NZ=NZ+1
+                     alreadyseen(jp)=.true.
+                  end if
+               end do
+               !-------- 
+               do i=1,mW
+                  jp=mesh(iel)%iconW(i)+NU+NV
+                  if (.not.alreadyseen(jp)) then
+                     NZ=NZ+1
+                     alreadyseen(jp)=.true.
+                  end if
+               end do
+            end do
+         end do
+         print *,NZ
+
+         !zx,zy,zz
+         imod=NW/4
+         do ip=1,NW
+            if (mod(ip,imod)==0) write(*,'(TL10, F6.1,a)',advance='no') real(ip)/real(NW)*100.,'%'
+            alreadyseen=.false.
+            do k=1,Wnode_belongs_to(1,ip)
+               iel=Wnode_belongs_to(1+k,ip)
+               !-------- 
+               do i=1,mU
+                  jp=mesh(iel)%iconU(i)
+                  if (.not.alreadyseen(jp)) then
+                     NZ=NZ+1
+                     alreadyseen(jp)=.true.
+                  end if
+               end do
+               !-------- 
+               do i=1,mV
+                  jp=mesh(iel)%iconV(i)+NU
+                  if (.not.alreadyseen(jp)) then
+                     NZ=NZ+1
+                     alreadyseen(jp)=.true.
+                  end if
+               end do
+               !-------- 
+               do i=1,mW
+                  jp=mesh(iel)%iconW(i)+NU+NV
+                  if (.not.alreadyseen(jp)) then
+                     NZ=NZ+1
+                     alreadyseen(jp)=.true.
+                  end if
+               end do
+            end do
+         end do
+         print *,NZ
+
+         stop 'aaaa'         
+
+
+         !do ip=1,NV
+         !   if (mod(ip,imod)==0) write(*,'(TL10, F6.1,a)',advance='no') real(ip)/real(NV)*100.,'%'
+         !   alreadyseen=.false.
+         !   do k=1,vnode_belongs_to(1,ip)
+         !      iel=vnode_belongs_to(1+k,ip)
+         !      do i=1,mV
+         !         jp=mesh(iel)%iconV(i)
+         !         if (.not.alreadyseen(jp)) then
+         !            NZ=NZ+ndofV**2
+         !            alreadyseen(jp)=.true.
+         !         end if
+         !      end do
+         !   end do
+         !end do
+
          deallocate(alreadyseen)
+         csrK%NZ=NZ
+         csrK%NZ=(csrK%NZ-csrK%N)/2+csrK%N
          call cpu_time(t4) ; write(*,'(f10.3,a)') t4-t3,'s'
 
          write(*,'(a)')       shift//'CSR matrix format SYMMETRIC  '
@@ -242,8 +356,35 @@ end if
          allocate(alreadyseen(NU+NV+NW))
          nz=0
          csrK%ia(1)=1
+         do ip=1,NU
+            ii=ip ! address in the matrix
+            nsees=0
+            alreadyseen=.false.
+            do k=1,Unode_belongs_to(1,ip)
+               iel=Unode_belongs_to(1+k,ip)
+               do i=1,mU
+                  jp=mesh(iel)%iconU(i)
+                  if (.not.alreadyseen(jp)) then
+                     jj=jp
+                     if (jj>=ii) then
+                        nz=nz+1
+                        csrK%ja(nz)=jj
+                        nsees=nsees+1
+                        !print *,ip,jp,ii,jj
+                     end if
+                     alreadyseen(jp)=.true.
+                  end if
+               end do
+            end do    
+            csrK%ia(ii+1)=csrK%ia(ii)+nsees    
+         end do    
+         deallocate(alreadyseen)    
+         call cpu_time(t4) ; write(*,'(f10.3,a)') t4-t3,'s'
+
+
+
+
          do ip=1,NV
-            if (mod(ip,imod)==0) write(*,'(TL10, F6.1,a)',advance='no') real(ip)/real(NV)*100.,'%'
             do k1=1,ndofV
                ii=ndofV*(ip-1) + k1 ! address in the matrix
                nsees=0

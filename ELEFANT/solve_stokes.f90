@@ -25,11 +25,11 @@ real(8) :: guess(NfemVel)
 !@@ This subroutine solves the Stokes system. 
 !@@ The employed strategy is as follows:
 !@@ \begin{itemize}
-!@@ \item {\tt stokes\_solve\_strategy='___penalty'}: it calls the inner solver subroutine. 
-!@@ \item {\tt stokes\_solve\_strategy='_______PCG'}:
+!@@ \item {\tt stokes\_solve\_strategy='penalty'}: it calls the inner solver subroutine. 
+!@@ \item {\tt stokes\_solve\_strategy='PCG'}:
 !@@ it does so using the preconditioned conjugate gradient (PCG) applied 
 !@@ to the Schur complement $\SSS$ !@@ (see Section~\ref{ss:schurpcg}).
-!@@ \item {\tt stokes\_solve\_strategy='____SIMPLE'}:
+!@@ \item {\tt stokes\_solve\_strategy='SIMPLE'}:
 !@@ \item {\tt stokes\_solve\_strategy='segregated'}:
 !@@ \end{itemize}
 !==================================================================================================!
@@ -49,7 +49,7 @@ guess=0
 select case(stokes_solve_strategy)
 
 !--------------
-case('___penalty')
+case('penalty')
 
    call inner_solver(rhs_f,guess,solVel)
 
@@ -58,12 +58,12 @@ case('___penalty')
    SolW=SolVel(1+NU+NV:NU+NV+NW)   
 
 !-------------
-case('_______PCG')
+case('PCG')
 
    !call solve_stokes_PCG
 
 !-------------
-case('____SIMPLE')
+case('SIMPLE')
 
    !call solve_stokes_SIMPLE
 
@@ -78,7 +78,7 @@ case default
    print *,'****************************************'
    print *,'solve_stokes: unknown stokes_solve_strategy'
    print *,'available values are'
-   print *,'___penalty, _______PCG, ____SIMPLE, segregated'
+   print *,'penalty, PCG, SIMPLE, segregated'
    stop 
 
 end select 
@@ -101,7 +101,7 @@ end do
 !----------------------------------------------------------
 !transfer/compute pressure onto elements
 
-if (stokes_solve_strategy=='___penalty') then
+if (stokes_solve_strategy=='penalty') then
 
    call recover_pressure_penalty
 
