@@ -7,21 +7,17 @@ rm solve.ascii
 rm solve_stats.ascii
 rm build.ascii
 
-for res in {4..32}; do
-
-    for l in {1..3}; do
+for res in {4..16}; do
 
         echo $res x $res x $res
 
-        python3 stone.py $res 0 > opla
+        python3 stoneQ2.py $res 0 > opla
 
         grep bench opla >> statistics.ascii  
         grep errv opla >> errors.ascii
         grep vrms opla >> vrms.ascii
         grep solve opla >> solve.ascii
         grep build opla >> build.ascii
-
-    done
 
 done
 

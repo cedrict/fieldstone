@@ -3,7 +3,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_10/keywords.ascii}
+\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_10/keywords.key}
 
 \begin{center}
 \inpython
@@ -60,6 +60,27 @@ I need to find a better way!!
 {\captionfont Matrix building and system solve times for both python and julia codes.
 Obtained with penalty=1e6. Each resolution is run 3 times.}
 \end{center}
+
+
+%----------------------------------------------------------
+\subsection*{Aquarium ({\tt experiment=0})}
+
+FS on all sides, $\rho=\eta=g_z=1$, $\lambda=10^6$
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/results/exp0/stats_uv}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/results/exp0/stats_w}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/results/exp0/stats_p}\\
+{\captionfont Statistics of $u,v,w,p$.}
+\end{center}
+
+We expect a zero velocity field. This is the case (down to machine precision) for the $u$
+and $v$ components, but since the penalty method yields a weakly compressible flow, 
+the vertical component $w$ is larger but remains small.
+The pressure is expected to be lithostatic and it should be -0.5 at the top and +0.5 at 
+the bottom. Pressure statistics seem to converge towards these values. 
+
+
 
 
 
@@ -139,11 +160,66 @@ to the full cube ones, but at a much lower cost.
 \end{center}
 
 
-
-
 \begin{center}
 \includegraphics[width=7cm]{images/stokes_sphere3D/vrms_FS}
 \includegraphics[width=7cm]{images/stokes_sphere3D/vrms_NS}\\
 {\captionfont Left: FS; Right: NS. Results obtained with this stones and other ones, as well as ASPECT.
 See Section~\ref{MMM-ss:stokes_sphere_3D} for all results.}
 \end{center}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Trying $Q_2\times Q_0$+penalty... because why not}
+
+Based on a discussion with A. Regorda I have coded a $Q_2\times Q_0$
+(still with penalty) version: {\tt stoneQ2Q0.py}.
+The following results are obtained with {\tt script\_Q2Q0}.
+
+%----------------------------------------------------------
+\subsection*{Aquarium ({\tt experiment=0})}
+
+FS on all sides, $\rho=\eta=g_z=1$, $\lambda=10^6$
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp0/stats_uv}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp0/stats_w}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp0/stats_p}\\
+{\captionfont Statistics of $u,v,w,p$.}
+\end{center}
+
+We expect a zero velocity field. This is the case (down to machine precision) for the $u$
+and $v$ components, but since the penalty method yields a weakly compressible flow, 
+the vertical component $w$ is rather large at low resolution and decreases at higher resolutions.
+The pressure is expected to be lithostatic and it should be -0.5 at the top and +0.5 at 
+the bottom. Pressure statistics seem to converge towards these values. 
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_10/resultsQ2/exp0/press}
+\includegraphics[width=7cm]{python_codes/fieldstone_10/resultsQ2/exp0/w}\\
+{\captionfont $w$ and $p$ for resolution $20\times 20 \times 20$.}
+\end{center}
+
+We expect a zero velocity field. This is the case (down to machine precision) for the $u$
+
+Note that at resolution 20x20x20 build time is 10min, and solve time is 48 min!
+Given this 'performance' this will limit a lot the tests we can carry out...
+
+%----------------------------------------------------------
+\subsection*{Manufactured solution ({\tt experiment=5})}
+
+\begin{center}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_10/resultsQ2/exp5/vrms}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_10/resultsQ2/exp5/conv}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_10/resultsQ2/exp5/p_stats}
+\end{center}
+
+It looks like velocity and pressure do converge.  
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_10/resultsQ2/exp5/press}
+\includegraphics[width=7cm]{python_codes/fieldstone_10/resultsQ2/exp5/vel}\\
+{\captionfont $||\vec\upnu||$ and $p$ for resolution $20\times 20 \times 20$.}
+\end{center}
+
+
+

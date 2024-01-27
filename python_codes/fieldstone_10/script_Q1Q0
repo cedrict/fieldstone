@@ -1,0 +1,22 @@
+#! /bin/bash
+
+rm statistics.ascii
+rm vrms.ascii
+rm errors.ascii
+rm solve.ascii
+rm solve_stats.ascii
+rm build.ascii
+
+for res in {4..32}; do
+
+    echo $res X $res X $res
+
+    python3 stone.py $res 0 > opla
+
+    grep bench opla >> statistics.ascii  
+    grep errv opla >> errors.ascii
+    grep vrms opla >> vrms.ascii
+    grep solve opla >> solve.ascii
+    grep build opla >> build.ascii
+
+done

@@ -1,0 +1,23 @@
+set term pdf enhanced
+set grid
+set key outside
+set xlabel 'h'
+
+set output 'stats_uv.pdf'
+plot[][]\
+'statistics.ascii' u 2:5 w lp t 'min(u)',\
+'statistics.ascii' u 2:6 w lp t 'max(u)',\
+'statistics.ascii' u 2:7 w lp t 'min(v)',\
+'statistics.ascii' u 2:8 w lp t 'max(v)'
+
+set output 'stats_w.pdf'
+plot[][-0.01:]\
+'statistics.ascii' u 2:9  w lp t 'min(w)',\
+'statistics.ascii' u 2:10 w lp t 'max(w)',\
+
+set output 'stats_p.pdf'
+plot[][-0.6:0.6]\
+'statistics.ascii' u 2:13 w lp t 'min(p)',\
+'statistics.ascii' u 2:14 w lp t 'max(p)',\
+-0.5 lt -1 notitle, 0.5 lt -1 notitle
+
