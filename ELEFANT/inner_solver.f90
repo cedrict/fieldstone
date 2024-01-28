@@ -10,8 +10,8 @@ subroutine inner_solver(rhs,guess,solution)
 
 use module_parameters, only: inner_solver_type,NfemVel,nproc,iproc
 use module_timing
-use module_arrays, only : K_matrix
-use module_sparse, only : csrK
+use module_arrays, only : K_matrix,Kdiag
+use module_sparse, only : csrK,cooK
 use module_MUMPS
 
 implicit none
@@ -221,23 +221,16 @@ case('Y12M')
 
    write(*,'(a)') shift//'Y12M solver'
    write(*,'(a,i5)') shift//'NfemVel=',NfemVel
-   write(*,'(a,i5)') shift//'csrK%NZ=',csrK%NZ
+   write(*,'(a,i5)') shift//'cooK%NZ=',cooK%NZ
 
    aflag=0
    iflag=0
    allocate(ha(NfemVel,11))
    allocate(pivot(NfemVel))
-   allocate(mat(15*csrK%NZ)) ; mat=0d0
-   allocate(snr(15*csrK%NZ)) 
-   allocate(rnr(15*csrK%NZ)) 
-   nn=size(snr)
-   nn1=size(rnr)
+   nn=15*cooK%NZ
+   nn1=15*cooK%NZ
 
-   mat(1:csrK%NZ)=csrK%mat(1:csrK%NZ)
-   rnr(1:csrK%NZ)=csrK%rnr(1:csrK%NZ)
-   snr(1:csrK%NZ)=csrK%snr(1:csrK%NZ)
-
-   call y12maf(NfemVel,csrK%NZ,mat,snr,nn,rnr,nn1,pivot,ha,NfemVel,aflag,iflag,rhs,ifail)
+   call y12maf(NfemVel,cooK%NZ,cooK%mat,cooK%snr,nn,cooK%rnr,nn1,pivot,ha,NfemVel,aflag,iflag,rhs,ifail)
 
    if (ifail/=0) print *,'ifail=',ifail
    if (ifail/=0) stop 'inner_solver: problem with Y12M solver'
@@ -253,7 +246,7 @@ case('Y12M')
 !-----------------
 case('PCG')
 
-   !call pcg_solver_csr(csrK,guess,rhs,Kdiag)
+   call pcg_solver_csr(csrK,guess,rhs,Kdiag)
 
 !-------------
 case default

@@ -190,6 +190,10 @@ case('matrix_MUMPS')
     write(*,'(a)') shift//'cannot export K matrix'
 
 !------------------
+case('matrix_COO')
+
+
+!------------------
 case('matrix_CSR')
 
     open(unit=123,file='OUTPUT/MATRIX/matrix_K.vtu',status='replace',form='formatted')

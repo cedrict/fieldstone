@@ -10,9 +10,6 @@ subroutine setup_K_blocks_CSR
 
 use module_parameters, only: iproc,NU,NV,NW,mU,mV,mW,ndim,spaceVelocity
 use module_mesh 
-!use module_constants
-!use module_swarm
-!use module_materials
 use module_arrays, only: Unode_belongs_to,Vnode_belongs_to
 use module_sparse, only: csrKxx,csrKxy,csrKxz,csrKyx,csrKyy,csrKyz,csrKzx,csrKzy,csrKzz
 use module_timing
@@ -20,7 +17,6 @@ use module_timing
 implicit none
 
 integer ip,jp,iel,NZ,i,k,nsees
-real(8) t3,t4
 logical, dimension(:), allocatable :: alreadyseen
 
 !==================================================================================================!
@@ -28,6 +24,7 @@ logical, dimension(:), allocatable :: alreadyseen
 !@@ \subsection{setup\_K\_blocks\_CSR}
 !@@ probably some improvement to be found by only recomputing the ia,ja of all blocks only 
 !@@ for a few specific velocity spaces. otherwise do it once and copy paste!
+!@@ also the values in ja are not ordered from small to large.
 !==================================================================================================!
 
 if (iproc==0) then
@@ -35,7 +32,7 @@ if (iproc==0) then
 call system_clock(counti,count_rate)
 
 !==============================================================================!
-
+!attribute sizes to all blocks
 
 csrKxx%nr=NU ; csrKxy%nr=NU ; csrKxy%nr=NU
 csrKxx%nc=NU ; csrKxy%nc=NV ; csrKxz%nc=NW
@@ -63,7 +60,9 @@ write(*,'(a,i6,i6)') shift//'Kzy size:',csrKzy%NR,csrKzy%NC
 if (ndim==3) &
 write(*,'(a,i6,i6)') shift//'Kzz size:',csrKzz%NR,csrKzz%NC
 
-!---------------------------------------------------------- Kxx
+!----------------------------------------------------------
+! Kxx
+!----------------------------------------------------------
 
 call cpu_time(t3)
 allocate(alreadyseen(NU))
@@ -85,13 +84,15 @@ do ip=1,NU
 end do
 call cpu_time(t4)
 
-write(*,'(a,i6,a,f10.3,a)') shift//'Kxx: NZ=',NZ,' | ',t4-t3,'s'
+write(*,'(a,i6,a,f7.3,a)') shift//'Kxx: NZ=',NZ,' | ',t4-t3,'s'
 
 csrKxx%NZ=NZ
 
 deallocate(alreadyseen)
 
-!---------------------------------------------------------- Kxy
+!----------------------------------------------------------
+! Kxy
+!----------------------------------------------------------
 
 call cpu_time(t3)
 allocate(alreadyseen(NV))
@@ -113,13 +114,15 @@ do ip=1,NU
 end do
 call cpu_time(t4)
 
-write(*,'(a,i6,a,f10.3,a)') shift//'Kxy: NZ=',NZ,' | ',t4-t3,'s'
+write(*,'(a,i6,a,f7.3,a)') shift//'Kxy: NZ=',NZ,' | ',t4-t3,'s'
 
 csrKxy%NZ=NZ
 
 deallocate(alreadyseen)
 
-!---------------------------------------------------------- Kyx
+!----------------------------------------------------------
+! Kyx
+!----------------------------------------------------------
 
 call cpu_time(t3)
 allocate(alreadyseen(NU))
@@ -140,13 +143,15 @@ do ip=1,NV
 end do
 call cpu_time(t4) 
 
-write(*,'(a,i6,a,f10.3,a)') shift//'Kyx: NZ=',NZ,' | ',t4-t3,'s'
+write(*,'(a,i6,a,f7.3,a)') shift//'Kyx: NZ=',NZ,' | ',t4-t3,'s'
 
 csrKyx%NZ=NZ
 
 deallocate(alreadyseen)
 
-!---------------------------------------------------------- Kyy
+!---------------------------------------------------------- 
+! Kyy
+!----------------------------------------------------------
 
 call cpu_time(t3)
 allocate(alreadyseen(NV))
@@ -167,7 +172,7 @@ do ip=1,NV
 end do
 call cpu_time(t4) 
 
-write(*,'(a,i6,a,f10.3,a)') shift//'Kyy: NZ=',NZ,' | ',t4-t3,'s'
+write(*,'(a,i6,a,f7.3,a)') shift//'Kyy: NZ=',NZ,' | ',t4-t3,'s'
 
 csrKyy%NZ=NZ
 
@@ -236,7 +241,6 @@ do ip=1,NU
             nz=nz+1
             csrKxx%ja(nz)=jp
             nsees=nsees+1
-            !print *,ip,jp
             alreadyseen(jp)=.true.
          end if
       end do
@@ -246,17 +250,21 @@ end do
 deallocate(alreadyseen)    
 call cpu_time(t4) ; write(*,'(f10.3,a)') t4-t3,'s'
 
-print *,csrKxx%ia
-print *,csrKxx%ja
+!print *,csrKxx%ia
+!print *,csrKxx%ja
 
 write(*,'(a,2i9)') shift//'csrKxx%ia',minval(csrKxx%ia), maxval(csrKxx%ia)
 write(*,'(a,2i9)') shift//'csrKxx%ja',minval(csrKxx%ja), maxval(csrKxx%ja)
 
-if (spaceVelocity=='_Q1F') then
+select case(spaceVelocity)
+
+!-----------
+case('_Q1F')
 
    stop 'setup_K_blocks_CSR: pb'
 
-else
+!-------------------------------------------------------------
+case('__Q1','__Q2','__Q3','__P1','_P1+','__P2','__P2+','__P3')
 
    csrKxy%ia=csrKxx%ia
    csrKxy%ja=csrKxx%ja
@@ -267,18 +275,29 @@ else
    csrKyy%ia=csrKxx%ia
    csrKyy%ja=csrKxx%ja
 
-   if (ndim==3) stop 'setup_K_blocks_CSR: pb 3D'
+   csrKzz%ia=csrKxx%ia
+   csrKzz%ja=csrKxx%ja
 
-end if
+   csrKxz%ia=csrKxx%ia
+   csrKxz%ja=csrKxx%ja
 
+   csrKzx%ia=csrKxx%ia
+   csrKzx%ja=csrKxx%ja
 
+   csrKyz%ia=csrKxx%ia
+   csrKyz%ja=csrKxx%ja
+
+   csrKzy%ia=csrKxx%ia
+   csrKzy%ja=csrKxx%ja
+
+case default
+
+   stop 'setup_K_blocks_CSR: unknown spaceVelocity'
+
+end select
 
 
 stop 'the end'
-
-
-
-
 
 !==============================================================================!
 

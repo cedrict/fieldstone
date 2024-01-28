@@ -8,18 +8,16 @@
 
 subroutine make_matrix_stokes
 
-use module_parameters, only: mU,mV,mW,mP,iproc,iel,ndofV,spacePressure,ndim2,&
-                             ndim,nel,K_storage,GT_storage,mVel
+use module_parameters, only: mU,mV,mW,mP,iproc,iel,nel,K_storage,GT_storage,mVel
 use module_arrays
 use module_mesh 
 use module_timing
-use module_sparse, only : csrGT,csrK,csrMP,csrGxT,csrGyT,csrGzT,csrKxx,csrKxy,csrKxz,&
-                          csrKyx,csrKyy,csrKyz,csrKzx,csrKzy,csrKzz
+use module_sparse, only : csrGT,csrK,csrGxT,csrGyT,csrGzT,csrKxx,csrKxy,csrKxz,&
+                          csrKyx,csrKyy,csrKyz,csrKzx,csrKzy,csrKzz,cooK
 use module_MUMPS
 
 implicit none
 
-integer counter_mumps,k1,k2,ikk,jkk,i1,i2,m1,m2,ik,k,jk ! <- too many ?!
 real(8) :: h_el(mP)
 real(8) :: f_el(mVel)
 real(8) :: K_el(mVel,mVel)
@@ -57,7 +55,7 @@ case('matrix_FULL')
    GT_matrix=0.d0
 case('matrix_CSR')
    csrGT%mat=0d0
-case('_blocks_CSR')
+case('blocks_CSR')
    csrGxT%mat=0d0
    csrGyT%mat=0d0
    csrGzT%mat=0d0
@@ -69,16 +67,17 @@ select case(K_storage)
 case('matrix_FULL')
    K_matrix=0.d0
 case('matrix_MUMPS')
-   counter_mumps=0
    idV%RHS=0.d0
    idV%A_ELT=0.d0
-case('blocks_MUMPS')
 case('matrix_CSR')
    csrK%mat=0d0 
+case('matrix_COO')
+   cooK%mat=0d0 
 case('blocks_CSR')
    csrKxx%mat=0d0 ; csrKxy%mat=0d0 ; csrKxz%mat=0d0 
-   csrKyx%mat=0d0 ; csrKyy%mat=0d0 ; csrKzy%mat=0d0 
-   csrKzx%mat=0d0 ; csrKzy%mat=0d0 ; csrKzy%mat=0d0 
+   csrKyx%mat=0d0 ; csrKyy%mat=0d0 ; csrKyz%mat=0d0 
+   csrKzx%mat=0d0 ; csrKzy%mat=0d0 ; csrKzz%mat=0d0 
+!case('blocks_MUMPS')
 case default
    stop 'make_matrix_stokes: unknown K_storage'
 end select
@@ -95,9 +94,9 @@ do iel=1,nel
    call assemble_GT(G_el)
    call assemble_K(K_el)
    call assemble_RHS(f_el,h_el)
-   call compute_elemental_schur_complement(K_el,G_el,S_el)
-   !call assemble_S(S_el)
-   call assemble_MP
+   !call compute_elemental_schur_complement(K_el,G_el,S_el_el)
+   !call assemble_S(S_el)  not needed
+   !call assemble_MP  not needed
 
 end do
 
@@ -113,6 +112,15 @@ case('blocks_MUMPS')
 case('matrix_CSR')
    write(*,'(a,2es12.5)') shift//'K (m,M):',minval(csrK%mat),maxval(csrK%mat)
 case('blocks_CSR')
+   write(*,'(a,2es12.5)') shift//'Kxx (m,M):',minval(csrKxx%mat),maxval(csrKxx%mat)
+   write(*,'(a,2es12.5)') shift//'Kxy (m,M):',minval(csrKxy%mat),maxval(csrKxy%mat)
+   write(*,'(a,2es12.5)') shift//'Kxz (m,M):',minval(csrKxz%mat),maxval(csrKxz%mat)
+   write(*,'(a,2es12.5)') shift//'Kyx (m,M):',minval(csrKyx%mat),maxval(csrKyx%mat)
+   write(*,'(a,2es12.5)') shift//'Kyy (m,M):',minval(csrKyy%mat),maxval(csrKyy%mat)
+   write(*,'(a,2es12.5)') shift//'Kyz (m,M):',minval(csrKyz%mat),maxval(csrKyz%mat)
+   write(*,'(a,2es12.5)') shift//'Kzx (m,M):',minval(csrKzx%mat),maxval(csrKzx%mat)
+   write(*,'(a,2es12.5)') shift//'Kzy (m,M):',minval(csrKzy%mat),maxval(csrKzy%mat)
+   write(*,'(a,2es12.5)') shift//'Kzz (m,M):',minval(csrKzz%mat),maxval(csrKzz%mat)
 case default
    stop 'make_matrix_stokes: unknown K_storage'
 end select
@@ -129,6 +137,11 @@ end select
 
 write(*,'(a,2es12.5)') shift//'f (m,M):',minval(rhs_f),maxval(rhs_f)
 write(*,'(a,2es12.5)') shift//'h (m,M):',minval(rhs_h),maxval(rhs_h)
+
+write(*,'(a,f6.3,a)') shift//'assemble_K   :',time_assemble_K,'s'
+write(*,'(a,f6.3,a)') shift//'assemble_S   :',time_assemble_S,'s'
+write(*,'(a,f6.3,a)') shift//'assemble_GT  :',time_assemble_GT,'s'
+write(*,'(a,f6.3,a)') shift//'assemble_RHS :',time_assemble_RHS,'s'
 
 !----------------------------------------------------------
 !----------------------------------------------------------

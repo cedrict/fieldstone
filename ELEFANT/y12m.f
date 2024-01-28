@@ -3,7 +3,7 @@
       implicit double precision (a-b,g,p,t-y), integer (c,f,h-n,r-s,z)
       double precision a(nn), pivot(n), aflag(8),b(n),tbeg,tend
       integer snr(nn), rnr(nn1), ha(iha,11), iflag(10)
-      character(len=17), parameter :: shift='                '
+      character(len=20), parameter :: shift='                   '
       aflag(1)=16.0d0
       aflag(2)=1.d-12
       aflag(3)=1.d+16

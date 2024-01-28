@@ -18,7 +18,6 @@ use module_timing
 implicit none
 
 integer :: k,k1,k2,ik,ikk,jkk,ip,i,ii,imod,jp,nz,nsees,inode
-real(8) :: t3,t4
 logical, dimension(:), allocatable :: alreadyseen
 
 !==================================================================================================!

@@ -9,15 +9,10 @@
 subroutine setup_K_matrix_FULL
 
 use module_parameters, only: NfemVel,iproc
-!use module_mesh 
-!use module_constants
-!use module_swarm
-!use module_materials
 use module_arrays, only: K_matrix
 use module_timing
 
 implicit none
-
 
 !==================================================================================================!
 !==================================================================================================!
@@ -38,7 +33,7 @@ allocate(K_matrix(NfemVel,NfemVel)) ; K_matrix=0.d0
 
 call system_clock(countf) ; elapsed=dble(countf-counti)/dble(count_rate)
 
-write(*,'(a,f6.2,a)') 'setup_K_matrix_FULL:',elapsed,' s'
+write(*,'(a,f6.2,a)') 'setup_K_matrix_FULL:',elapsed,' s            |'
 
 end if ! iproc
 

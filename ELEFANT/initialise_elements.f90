@@ -10,7 +10,6 @@ subroutine initialise_elements
 
 use module_parameters, only: mU,mV,mW,mT,mVel,mP,geometry,nel,iel,iproc,mmapping
 use module_mesh 
-!use module_constants
 use module_timing
 
 implicit none
@@ -98,8 +97,6 @@ do iel=1,nel
       stop 'initialise_elements: unknown geometry'
    end select
 
-
-
    allocate(mesh(iel)%fix_u(mU))
    allocate(mesh(iel)%fix_v(mV))
    allocate(mesh(iel)%fix_w(mW))
@@ -120,6 +117,11 @@ do iel=1,nel
    allocate(mesh(iel)%iconM(mmapping))
 
 end do
+
+time_assemble_S=0d0
+time_assemble_K=0d0
+time_assemble_GT=0d0
+time_assemble_RHS=0d0
 
 !==============================================================================!
 

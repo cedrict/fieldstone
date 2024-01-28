@@ -65,7 +65,7 @@ case('PCG')
 !-------------
 case('SIMPLE')
 
-   !call solve_stokes_SIMPLE
+   call solve_stokes_SIMPLE
 
 !-----------------
 case('segregated')

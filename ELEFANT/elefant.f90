@@ -72,21 +72,16 @@ call swarm_setup
 call experiment_swarm_material_layout
 call paint_swarm
 call compute_belongs
-
-call setup_K   !new
-call setup_GT  !new
-call setup_A   !new
-call setup_MP  !new
-
+call setup_K  
+call setup_GT 
+call setup_A  
+call setup_MP_and_S 
 call output_matrix_for_paraview
-!call matrix_setup_GT
-!call output_matrix_tikz
 call experiment_initial_temperature
 call estimate_memory_use
 call spacer
 call write_params 
 call spacer
-      
 
 do istep=1,nstep !-----------------------------------------
                                                           !
@@ -99,6 +94,7 @@ do istep=1,nstep !-----------------------------------------
                                                           !
    if (solve_stokes_system) then                          !
       call make_matrix_stokes                             !
+      call extract_K_diagonal                             !
       call solve_stokes                                   !
    else                                                   !
       call prescribe_stokes_solution                      !
@@ -125,7 +121,7 @@ do istep=1,nstep !-----------------------------------------
                                                           !
 end do !---------------------------------------------------
 
-!call spacer_end
+call spacer_end
 
 call footer
 

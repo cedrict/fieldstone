@@ -28,6 +28,8 @@ integer :: k,kV,kP,kkV,kkP
 
 if (stokes_solve_strategy=='penalty') return
 
+call cpu_time(t3)
+
 select case(GT_storage)
 
 !------------------
@@ -78,6 +80,8 @@ case default
    stop 'assemble_GT: unknown GT_storage'
 
 end select
+
+call cpu_time(t4) ; time_assemble_GT=time_assemble_GT+t4-t3
 
 end subroutine
 

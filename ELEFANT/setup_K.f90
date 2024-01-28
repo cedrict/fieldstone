@@ -31,36 +31,16 @@ if (solve_stokes_system) then
    write(*,'(a,a)') shift//'K_storage=',K_storage
 
    select case(K_storage)
-
-   !------------------
-   case('matrix_FULL')
-
-      call setup_K_matrix_FULL
-
-   !------------------
-   case('matrix_MUMPS')
-
-      call setup_K_matrix_MUMPS
-
-   !------------------
-   case('matrix_CSR')
-
-      call setup_K_matrix_CSR
-
-   !------------------
-   !case('blocks_MUMPS')
-
-   !------------------
-   case('blocks_CSR')
-
-      call setup_K_blocks_CSR
-
-   !------------------
+   case('matrix_FULL')  ; call setup_K_matrix_FULL
+   case('matrix_MUMPS') ; call setup_K_matrix_MUMPS
+   case('matrix_CSR')   ; call setup_K_matrix_CSR
+   case('matrix_COO')   ; call setup_K_matrix_COO
+   !case('blocks_MUMPS') ; call setup_K_blocks_MUMPS
+   !case('blocks_COO')   ; call setup_K_blocks_COO
+   case('blocks_FULL')  ; call setup_K_blocks_FULL
+   case('blocks_CSR')   ; call setup_K_blocks_CSR
    case default
-
-      print *,K_storage
       stop 'setup_K: unknown K_storage value'
-
    end select
 
 else !solve_stokes_system

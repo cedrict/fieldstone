@@ -11,7 +11,7 @@ subroutine allocate_memory
 use module_parameters, only: NU,NV,NW,NP,NT,NfemVel,NfemP,NfemT,iproc,nmat,mU,mV,mW,mP,mT,ndim,ndim2,use_T
 use module_arrays, only: dNNNUdx,dNNNUdy,dNNNUdz,dNNNVdx,dNNNVdy,dNNNVdz,dNNNWdx,dNNNWdy,dNNNWdz,&
                          NNNU,NNNV,NNNW,NNNP,NNNT,dNNNTdx,dNNNTdy,dNNNTdz,solVel,solP,rhs_f,rhs_h,&
-                         Kdiag,Cmat,Kmat,rhs_b,SolU,SolV,SolW
+                         Kdiag,Cmat,Kmat,rhs_b,SolU,SolV,SolW,Kxxdiag,Kyydiag,Kzzdiag
 use module_materials
 use module_timing
 
@@ -47,6 +47,9 @@ allocate(rhs_f(NfemVel))  ; rhs_f=0d0
 allocate(rhs_h(NfemP))    ; rhs_h=0d0
 allocate(materials(nmat))
 allocate(Kdiag(NfemVel))
+allocate(Kxxdiag(NU))
+allocate(Kyydiag(NV))
+allocate(Kzzdiag(NW))
 
 if (use_T) allocate(rhs_b(NfemT))  
 
