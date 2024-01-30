@@ -4,11 +4,32 @@ is for a large part based on a syllabus by Dr. A.P. van den Berg and Prof. N.J. 
 and on material from the book “Mantle convection in the Earth and Planets” by Schubert, Turcotte,
 and Olson, Cambridge University Press, 2002.
 
+
+Additional resources:
+
+\begin{center}
+\includegraphics[height=4.5cm]{images/literature/newman}
+\includegraphics[height=4.5cm]{images/literature/sto_book} \\
+{\captionfont Left: \fullcite{newman2012}; Right: \fullcite{scto01}.}
+\end{center}
+
+In what follows (and in the entire fieldstone document) vectors are denoted by an arrow, e.g. $\vec{v}$,
+while tensors are denoted by a bold font, e.g. ${\bm \sigma}$.
+It is also my experience that each book/syllabus uses its own set of notations. In particular, 
+and rather to my own confusion, some books coin the full stress tensor ${\bm \tau}$ and not 
+${\bm \sigma}$, and coin the deviatoric stress ${\bm \sigma}$. Some sources
+make no difference between the viscous stress tensor and the deviatoric stress tensor.
+Also it happens (especially in the mathematical literature) that the strain 
+rate tensor is called ${\bm D}$ instead of ${\bm \varepsilon}$ or $\dot{\bm \varepsilon}$, 
+and that the stress tensor is called ${\bm T}$. 
+
+
+
 %---------------------------------------------------------------
 \section{Review of some essentials of continuum mechanics}
 
 
-Newtonian mechanics deals with particles and rigid (undeformable) bodies on which
+Newtonian mechanics deal with particles and rigid (undeformable) bodies on which
 forces are acting. The application of Newtonian mechanics to realistic media (gases,
 fluids, solids) is undoable simply because of the many particles (atoms, molecules)
 involved. Continuum mechanics tackles this problem by assuming that physical fields
@@ -27,9 +48,9 @@ The forces involved in the deformation of a continuum are postulated to be
 $\vec{b}$ [\si{\newton\per\cubic\meter}], 
 such that $\vec{b}dV$ is the force acting on the infinitesimal 
 volume $dV$, and surface 
-{\bf tractions} $\vec{t}^{\vec n}$ [\si{\newton\per\square\meter}]
+{\bf tractions} $\vec{t}^{\;\vec n}$ [\si{\newton\per\square\meter}]
 (e.g. internal friction, applied surface tractions), 
-such that $\vec{t}^{\vec n} dS$ is the
+such that $\vec{t}^{\;\vec n} dS$ is the
 force acting on the infinitesimal surface $dS$. 
 It is usual to write $\vec{b} = \rho \vec{g}$, 
 with $\rho$ [\si{\kg\per\cubic\meter}] the
@@ -37,7 +58,7 @@ mass density and with $\vec{g}$ [\si{\meter\per\square\second}]
 the acceleration due to the body force, which in
 mantle dynamics is gravity. 
 
-$\vec{b}$ and $\vec{t}^{\vec n}$
+$\vec{b}$ and $\vec{t}^{\;\vec n}$
 are force densities which after integration over a
 volume or a surface, respectively, lead to net forces acting on 
 the volume or surface.
@@ -55,7 +76,7 @@ forces [\si{\newton}] that are applied at the
 $\vec{n}$-side of $\Delta S$ to atoms at the other side of the surface. 
 To maintain equilibrium, by the
 third law of Newton, the traction applied to the $-\vec{n}-side$ of the surface 
-is $\vec{t}^{-{\vec n}} = -\vec{t}^{\vec n}$.
+is $\vec{t}^{-{\vec n}} = -\vec{t}^{\;\vec n}$.
 Tractions depend on the orientation of the surface. In principle, one can draw an
 infinite number of oriented surfaces through one point, each associated with a different
 traction.
@@ -64,11 +85,11 @@ traction.
 
 
 Tractions are usually separated into the thermodynamic pressure force $p \vec{n}$ and the traction $\vec{\tau}$
-related to mechanical deformation: $\vec{t}^{\vec n} = -p \vec{n} + \vec{\tau} \quad (p>0)$. The thermodynamic pressure
+related to mechanical deformation: $\vec{t}^{\;\vec n} = -p \vec{n} + \vec{\tau} \quad (p>0)$. The thermodynamic pressure
 (a traction always acting perpendicular to any surface) is obtained from the equation of
 state $f(\rho,p,T)$ relating thermodynamic quantities density, pressure, and temperature of a
-continuum. The sign convention in continuum mechanics is that compression is negative
-and tension is positive (in geology this is usually the other way around).
+continuum. The sign convention in continuum mechanics is that {\bf compression is negative
+and tension is positive} (in geology this is usually the other way around).
 
 %.....................
 \subsection{Stress} 
@@ -80,7 +101,7 @@ Assume a Cartesian coordinate frame in a point of interest for which the coordin
 axis are spanned by three unit orthogonal vectors $\vec{e}_i \quad (i = 1,2,3)$,
 \item Imagine a tiny cube centered about the origin and with its faces parallel to the
 coordinate planes,
-\item Consider the 3 tractions $\vec{t}^{\vec{e}_i}$ that are acting on the three positive 
+\item Consider the 3 tractions $\vec{t}^{\;\vec{e}_i}$ that are acting on the three positive 
 faces of the cube (i.e. the faces which have the normal vectors $\vec{e}_i$),
 \item Lastly, define the components $\sigma_{ij}$ of the stress tensor ${\bm \sigma}$ as
 \begin{equation}
@@ -100,7 +121,8 @@ a coordinate system. These
 numbers are dependent on the frame adopted like the components of a flow vector (a first
 order tensor) are frame dependent. Second order tensors follow (by definition) the
 coordinate transformation rules of $3 \times 3$ matrices. From an analysis of force and force-
-moment balance it can be demonstrated that the stress tensor is symmetric: $\sigma_{ij}=\sigma_{ji}$. 
+moment balance it can be demonstrated that the stress tensor is symmetric: 
+${\bm \sigma} = {\bm \sigma}^T$ or $\sigma_{ij}=\sigma_{ji}$. 
 
 An eigenvalue-eigenvector analysis leads to the three principal stresses $\sigma_k$ (eigenvalues) and
 the corresponding three corresponding principal directions $\vec{q}_k$ (eigenvectors of unit
@@ -118,14 +140,14 @@ and the traction $\vec{t}^{\vec n}$  acting on
 an (arbitrarily) oriented tiny surface $\Delta S$
 with unit normal $\vec{n}$:
 \begin{equation}
-{\bm \sigma} \cdot \vec{n} = \vec{t}^{\vec n}
+{\bm \sigma} \cdot \vec{n} = \vec{t}^{\; \vec n}
 \label{eq:md02}
 \end{equation}
 or in components $\sigma_{ij} n_j = t_i^{\vec n}$ (summation convention implied).
 This relation states how traction can be computed from the local stress and conversely,
 that from known tractions on independently oriented surfaces the stress tensor can be
 constructed by solving Eq.~\eqref{eq:md02}.
-Note that it is required that $\vec{n}$ is a unit normal, i.e. $\vec{n}\cdot\vec{n}=1$.
+Note that it is required that $\vec{n}$ is a unit normal, i.e. $\vec{n}\cdot\vec{n}=n_jn_j=1$.
 
 \vspace{0.5cm}
 \fbox{
@@ -175,13 +197,13 @@ one arrives at
 \]
 Because $V$ is an
 arbitrary volume the integrant must equal 0, which leads to the 
-{\bf equilibrium equation}:
+{\bf equilibrium equation} (or momentum conservation equation):
 \begin{equation}
 \vec\nabla \cdot {\bm\sigma} +  \rho \vec{g} = \vec{0} 
 \qquad
 \text{or,}
 \qquad
-\frac{\partial \sigma_ij}{\partial x_j} + \rho g_i = 0
+\frac{\partial \sigma_{ij}}{\partial x_j} + \rho g_i = 0
 \label{eq:md04}
 \end{equation}
 
@@ -197,7 +219,7 @@ tensor. In this case the equilibrium equation is
 \[
 \int_V \rho \vec{r} \times \vec{g}  dV 
 + 
-\int_S \vec{r} \times \vec{t}^{\vec n} dS = \vec{0},
+\int_S \vec{r} \times \vec{t}^{\;\vec n} dS = \vec{0},
 \]
 where $\vec{r}$ is the position vector 
 $\vec{r}=(x_1,x_2,x_3)^T$. The cross products can be written in
@@ -211,7 +233,12 @@ This leads to the following notation of the
 cross product of two vectors 
 $\vec{a}\times \vec{b}= \epsilon_{ijk} \vec{e}_i a_j b_k$
 and per component 
-$(\vec{a}\times \vec{b})=\epsilon_{ijk} a_j b_k$.
+$(\vec{a}\times \vec{b})=\epsilon_{ijk} a_j b_k$
+leading to the torque balance for component $i$:
+\[
+\int_V \rho \epsilon_{ijk} x_j g_k dV + \int_S \epsilon_{ijk} x_j t^{\vec{n}}_k dS=0.
+\]
+
 
 %exercise 2:
 \vspace{0.5cm}
@@ -242,7 +269,7 @@ these 4 parameters we can write the total differential
 \footnote{See any basic textbook on Calculus.}
 \begin{equation}
 dT = \frac{\partial T}{\partial t} dt + 
-\sum_i \frac{\partial T}{\partial x_j} dx_j
+\sum_j \frac{\partial T}{\partial x_j} dx_j
 \label{eq:md05}
 \end{equation}
 This equation can be interpreted as follows: 
@@ -264,7 +291,7 @@ in this direction with respect to a
 specified parameter. Particularly, we can consider the 
 rate of change of $T$ with the time
 parameter $t$ and (spatially) in the direction of 
-the velocity field $\vec{v}(\vec{r}, t)$. This time-
+the velocity field $\vec{\upnu}(\vec{r}, t)$. This time-
 derivative is easily obtained from \eqref{eq:md05}
 by coupling $dt$ and the spatial increment $d\vec{r}$ such
 that $d\vec{r} = \vec{v}dt$. 
@@ -274,30 +301,30 @@ velocity vector:
 \begin{equation}
 \frac{DT}{Dt} = 
 \frac{\partial T}{\partial t} 
-+\vec{v} \cdot \vec\nabla T
++\vec{\upnu} \cdot \vec\nabla T
 =
 \frac{\partial T}{\partial t} 
-+\sum_j v_j \cdot \frac{\partial T}{\partial x_j} 
++\sum_j \upnu_j \frac{\partial T}{\partial x_j} 
 \qquad
 \text{with}
 \qquad
-\vec{v} =\frac{d \vec{r}}{dt}
+\vec{\upnu} =\frac{d \vec{r}}{dt}
 \label{eq:md06}
 \end{equation}
 which is called the material derivative of $T$ 
 giving the rate of change of $T$ with time in
-the direction of the flow $\vec{v}(\vec{r},t)$ 
+the direction of the flow $\vec{\upnu}(\vec{r},t)$ 
 at a certain point $(\vec{r}, t)$. 
 The lhs of \eqref{eq:md06} treats $T$ as a
 function of $t$ only in the point $(\vec{r}(t), t)$ 
 whereas the rhs of \eqref{eq:md06} shows how this can be
 computed from the partial derivatives of $T(\vec{r}, t)$
-and the local velocity $\vec{v}(\vec{r}, t)$. The partial
+and the local velocity $\vec{\upnu}(\vec{r}, t)$. The partial
 derivative $\partial T/\partial t$
 gives the temporal rate of change at fixed position 
 $\vec{r}$, while the second term
 gives the spatial contribution at fixed time, i.e
-$\vec{v} \cdot \vec\nabla T$
+$\vec{\upnu} \cdot \vec\nabla T$
 expresses the advective contribution
 (carried with the flow) to $DT/Dt$.
 
@@ -305,15 +332,15 @@ Without reference to a particular scalar function the material
 derivative (operator) is:
 \begin{equation}
 \frac{D}{Dt} = \frac{\partial }{\partial t}
-+\vec{v} \cdot \vec\nabla 
++\vec{\upnu} \cdot \vec\nabla 
 \label{eq:md07}
 \end{equation}
 The material derivative holds for any scalar function, 
 particularly, for the components $v_i$
 of the velocity field leading to the particle acceleration:
 \begin{equation}
-\frac{D \vec{v}}{Dt} 
-= \frac{\partial \vec{v}}{\partial t} + \vec\nabla \vec{v} \cdot \vec{v}
+\frac{D \vec{\upnu}}{Dt} 
+= \frac{\partial \vec{\upnu}}{\partial t} + \vec{\upnu} \cdot \vec\nabla \vec{\upnu}
 \label{eq:md08}
 \end{equation}
 Note that if the velocity field is time-stationary, i.e. 
@@ -330,13 +357,13 @@ still changes in space, although the velocity is a constant vector in each point
 \begin{exercise}
 {\small \it 
 Assume 2-D space. Let the temperature field $T$ be given by
-\begin{equation}
+\[
 T(\vec{r},t)= T_0 \frac{1}{r} \exp(-t) \qquad t>0, r>0
-\end{equation}
+\]
 The temperature field belongs to a flow field given
 by $\vec{\upnu}(\vec{r},t)=\frac{1}{r^2}\exp(-t) \vec{r}$.\\
-a) Determine the divergence of the velocity field.
-b) Compute the acceleration.
+a) Determine the divergence of the velocity field.\\
+b) Compute the acceleration. \\
 c) Compute the material derivate of $T$ at any position and time.
 }
 \end{exercise}
@@ -347,7 +374,7 @@ c) Compute the material derivate of $T$ at any position and time.
 %....................................................................
 \subsection{The material derivative of a material volume integral}
 Let $V$ be a material volume, i.e. a
-volume that encompasses for all $t$ the same flow particles. 
+volume that encompasses for all $t$ the {\bf same flow particles}. 
 This volume is following the
 flow, possibly being deformed, while there is no material exchange 
 with the region outside $V$. Let $T$ be again a scalar function 
@@ -412,7 +439,7 @@ coefficient and $c$ the concentration of the substance.
 %....................................
 \subsection{The continuity equation} 
 
-The continuity equation is also called Conservation of mass or 
+The continuity equation is also called mass conservation equation or
 Reynold’s transport theorem.
 Consider an arbitrary material volume $V$ within a continuum. 
 By definition of a material
@@ -594,7 +621,7 @@ Recall that
 \[
 \frac{D\vec\upnu}{Dt} = \frac{\partial \vec\upnu}{\partial t}
 +
-\vec\nabla \vec\upnu \cdot \vec\upnu
+\vec \upnu \cdot \vec\nabla \vec\upnu
 \]
 is the material derivative of velocity which renders \eqref{eq:md12} to
 be a non-linear equation in the unknown velocity field.
@@ -703,18 +730,20 @@ is the so-called vorticity.
 \subsection{Pressure and stress}
 Similar to traction, the total stress ${\bm \sigma}(\vec{r}, t)$ 
 is usually separated in the {\bf thermodynamic
-pressure} $p$ and the rheological (mechanical) stress ${\bm\tau}(\vec{r}, t)$:
+pressure} $p$ and the rheological (mechanical) stress ${\bm \uppi}(\vec{r}, t)$ (
+also commonly called viscous stress tensor):
 \begin{equation}
-\sigma_{ij}=-p \delta_{ij} + \tau_{ij}
+\sigma_{ij}=-p \delta_{ij} + \uppi_{ij}
 \qquad
 \qquad
 \bigg\rvert
 \qquad
 \qquad
-{\bm\sigma} = -p {\bm 1} + {\bm \tau}
+{\bm\sigma} = -p {\bm 1} + {\bm \uppi}
 \label{eq:md13}
 \end{equation}
-\todo[inline]{tau is not dev stress here !!}
+Note: ${\bm \uppi}$ is {\it not} the deviatoric stress. Keep reading.
+
 In absence of deforming stresses ${\bm\sigma}=-p {\bm 1}$ 
 and in the equilibrium state (0 inertial force),
 Eq.~\eqref{eq:md12} reduces to the hydrostatic equation
@@ -745,7 +774,7 @@ where $d\vec{r}$ is a line element of $C$. \\
 b) Assume that the continuum is a spherically symmetric body: Show that the pressure
 difference between $B$ and $A$ is: $p(r_B ) - p(r_A) = -\int_{r_A}^{r_B} \rho g(r) dr$ 
 where quantities only depend on the radius.\\
-c) Show that the density field $\rho$ should satisfy $\vec\nabla // \vec\nabla \Phi$ 
+c) Show that the density field $\rho$ should satisfy $\vec\nabla // \vec\nabla \Phi$
 where $\Phi$ is the gravitational
 energy potential implicitly defined by $\vec{g}=-\vec\nabla \Phi$. 
 [Hint: take the curl of the hydrostatic equation]\\
@@ -756,13 +785,14 @@ d) Show that surfaces of constant pressure, density and gravitational potential 
 }
 \vspace{0.5cm}
 
+\todo[inline]{parallel bars above ?!} 
 
 %%%%%%%%%%%%%%%%%%%%%%
 
 The average pressure is defined as $\overline{p} = -\frac13 \sigma_{kk}$. 
 Using \eqref{eq:md13} we find 
 \begin{equation}
-p - \overline{p} = \frac13 \tau_{kk} 
+p - \overline{p} = \frac13 \uppi_{kk} 
 \label{eq:md15}
 \end{equation}
 which demonstrates that local thermodynamic pressure $p$ can be
@@ -770,18 +800,24 @@ perturbed by the isotropic part of mechanical stress.
 In fluids this situation can occur in
 locations of local convergence or divergence of flow (see below).
 
-The deviatoric stress is defined as
+The deviatoric stress ${\bm \tau}$ is defined as
 \begin{equation}
-\sigma_{ij}'=\sigma_{ij}-\frac13 \sigma_{kk} \delta_{ij}
+\tau_{ij}=\sigma_{ij}'=\sigma_{ij}-\frac13 \sigma_{kk} \delta_{ij}
+\qquad
+\qquad
+\bigg\rvert
+\qquad
+\qquad
+{\bm \tau}={\bm \sigma}'={\bm \sigma}-\frac13 Tr[{\bm \sigma}] {\bm 1}
 \label{eq:md16}
 \end{equation}
 The deviatoric stress describes the state of stress relative to the ambient (average)
 pressure. Substituting \eqref{eq:md13} we have
 \begin{equation}
-\sigma_{ij}' = -(p-\overline{p})\delta_{ij} + \tau_{ij}
+\sigma_{ij}' = -(p-\overline{p})\delta_{ij} + \uppi_{ij}
 \label{eq:md17}
 \end{equation}
-Notice that ${\bm \sigma}' = {\bm \tau}$ 
+Notice that ${\bm \tau} = {\bm \sigma}' = {\bm \uppi}$ 
 when $p = \overline{p}$ , i.e. when the mechanical stress does not change the
 pressure.
 
@@ -823,7 +859,8 @@ stresses $\sigma_i$ as: $\sigma_i'=\sigma_i +p$
 \subsection{Constitutive equations}
 
 The mass conservation equation \eqref{eq:md10} and the momentum equation \eqref{eq:md12} constitute 4
-equations in 10 unknowns $\rho,\vec{v},{\bm \sigma}$. 
+equations in 10 unknowns $\rho,\vec{v},{\bm \sigma}$ (remember: the stress tensor is symmetric so there are
+only 6 independent terms out of the 9 it contains). 
 Later we will add the energy equation but this also
 adds the temperature $T$ as additional unknown. We require knowledge of at least 6
 additional independent equations. These are provided for a particular material by
@@ -844,36 +881,36 @@ temperature, and pressure is the subject of {\bf rheology}.
 
 The thermodynamic pressure $p$ is taken to be independent of mechanical deformation.
 The thermodynamic pressure gives the state of stress in a static medium which may have
-a uniform velocity (either linear, angular of both), i.e. ${\bm\varepsilon}={\bm 0}$. 
+a uniform velocity (either linear, angular of both), i.e. $\cdot{\bm\varepsilon}={\bm 0}$. 
 Therefore, constitutive equations take the general form
 \begin{equation}
-{\bm \sigma}({\bm\varepsilon}) = -p {\bm 1} + {\bm \tau}({\bm\varepsilon})
+{\bm \sigma}(\cdot{\bm\varepsilon}) = -p {\bm 1} + {\bm \uppi}(\cdot{\bm\varepsilon})
 \label{eq:md18}
 \end{equation}
-with ${\bm \tau}({\bm 0})={\bm 0}$, showing that stress and strain rate can be interdependent.
+with ${\bm \uppi}({\bm 0})={\bm 0}$, showing that stress and strain rate can be interdependent.
 
 %...............................
 \subsection{Linear rheology}
 
 The most general form of linear rheology leading to a linear viscous
-fluid (also called a Newtonian fluid) is $\tau_{ij}=C_{ijkl} \dot{\varepsilon}_{kl}$, 
+fluid (also called a Newtonian fluid) is $\uppi_{ij}=C_{ijkl} \dot{\varepsilon}_{kl}$, 
 where $C_{ijkl}$ is the anisotropic viscosity tensor. 
 This relation breaks down to the following law for a purely isotropic
 linearly viscous fluid:
 \begin{equation}
-\tau_{ij} = \lambda \dot{\varepsilon}_{kk} \delta_{ij} + 2 \eta  \dot{\varepsilon}_{ij}
+\uppi_{ij} = \lambda \dot{\varepsilon}_{kk} \delta_{ij} + 2 \eta  \dot{\varepsilon}_{ij}
 \qquad
 \qquad
 \bigg\rvert
 \qquad
 \qquad
-{\bm \tau} = \lambda \dot{\varepsilon}_{kk} {\bm 1} + 2 \eta  \dot{\bm\varepsilon}
+{\bm \uppi} = \lambda Tr[\dot{\bm \varepsilon}] {\bm 1} + 2 \eta  \dot{\bm\varepsilon}
 \label{eq:md19}
 \end{equation}
 where $\eta$ is the dynamic viscosity [\si{\pascal\second}] and $\lambda$ is a viscosity
 parameter without a specific name.
 
-The mechanical, or rheological, stress $\tau_{ij}$ quantifies the internal friction of the flow. By
+The mechanical, or rheological, stress $\uppi_{ij}$ quantifies the internal friction of the flow. By
 computing the trace of the rheological stress we find, using \eqref{eq:md15},
 \begin{equation}
 p - \overline{p} = \left(\lambda + \frac23 \eta \right) \dot{\varepsilon}_{kk} 
@@ -886,22 +923,34 @@ Relation \eqref{eq:md20} demonstrates clearly that for a Newtonian fluid the dif
 thermodynamic pressure and average pressure is flow induced, i.e. by either local
 convergence or divergence of flow (i.e. $\vec\nabla\cdot \vec\upnu \neq 0$).
 
+\begin{remark}
 For incompressible fluids $\vec\nabla\cdot \vec\upnu = 0$. 
 Then, according to \eqref{eq:md20}: $p = \overline{p}$. Furthermore, \eqref{eq:md17}
-leads to $\sigma_{ij}'=\tau_{ij}=\tau_{ij}'$. In the case that the bulk viscosity 
-is assumed 0 ({\bf Stokes condition}), we have $p = \overline{p}$ 
-independent of (in)compressibility. Evidently: $p - \overline{p} \longleftrightarrow =0$
-or $\vec\nabla \cdot \vec\upnu= 0$.
+leads to $\sigma_{ij}'=\tau_{ij}=\uppi_{ij}$.
+\end{remark}
 
-In terms of bulk viscosity and dynamic viscosity \eqref{eq:md19} reads
+\begin{remark}
+In the case that the bulk viscosity $\xi$ is assumed 0 ({\bf Stokes condition}, or Stokes hypothesis), we have $p = \overline{p}$ 
+independent of (in)compressibility. Evidently: $p - \overline{p} \leftrightarrow \xi=0$
+or $\vec\nabla \cdot \vec\upnu= 0$.
+In geodynamics the Stokes hypothesis is assumed so that in practice we never distinguish $\overline{p}$ from $p$
+and in this case $\uppi=\tau$ so that the equations are formulated as a function of $p$ and $\tau$ (also in the 
+compressible case!).
+Note that in some books/publications one can find a different formulation of the Stokes hypothesis.
+For example in \textcite{caod86} (1986) we find that ``Stokes' hypothesis is that ${\bm\uppi}$ is a function
+only of the deformation rate tensor $\dot{\bm\varepsilon}$''.
+\end{remark}
+
+In terms of bulk viscosity and dynamic viscosity Eq.~\eqref{eq:md19} reads
 \begin{equation}
-\tau_{ij} = (\xi-\frac23 \eta) \dot\varepsilon_{kk} \delta_{ij} + 2\eta \dot\varepsilon_{ij}.
+\uppi_{ij} = \left(\xi-\frac23 \eta \right) \dot\varepsilon_{kk} \delta_{ij} + 2\eta \dot\varepsilon_{ij}.
 \qquad
 \qquad
 \bigg\rvert
 \qquad
 \qquad
-{\bm \tau} = (\xi-\frac23 \eta) \dot\varepsilon_{kk} {\bm 1} + 2\eta \dot{\bm \varepsilon}.
+{\bm \uppi} = \left(\xi-\frac23 \eta \right) \dot\varepsilon_{kk} {\bm 1} + 2\eta \dot{\bm \varepsilon}.
+\label{eq:piij}
 \end{equation}
 By using the equation of deviatoric strain rate,
 \begin{equation}
@@ -913,27 +962,27 @@ By using the equation of deviatoric strain rate,
 \qquad
 \dot{\bm \varepsilon} = \dot{\bm \varepsilon} - \frac13 \dot\varepsilon_{kk} {\bm 1}
 \end{equation}
-we obtain as alternative expression for \eqref{eq:md19}
+we obtain as alternative expression for Eq.~\eqref{eq:md19}
 \begin{equation}
-\tau_{ij} = \xi  \dot\varepsilon_{kk} \delta_{ij} + 2 \eta \dot\varepsilon_{ij}'
+\uppi_{ij} = \xi  \dot\varepsilon_{kk} \delta_{ij} + 2 \eta \dot\varepsilon_{ij}'
 \qquad
 \qquad
 \bigg\rvert
 \qquad
 \qquad
-{\bm \tau} = \xi \dot\varepsilon_{kk} {\bm 1} + 2 \eta \dot{\bm \varepsilon}'
+{\bm \uppi} = \xi \dot\varepsilon_{kk} {\bm 1} + 2 \eta \dot{\bm \varepsilon}'
 \label{eq:md21}
 \end{equation}
 which explicitly shows the role of bulk viscosity and dynamic viscosity. In particular, for
 an incompressible fluid we have
 \begin{equation}
-\tau_{ij}=\tau_{ij}'=2\eta \dot\varepsilon_{ij}' = 2 \eta \dot\varepsilon_{ij}
+\tau_{ij}=\uppi_{ij}=2\eta \dot\varepsilon_{ij}' = 2 \eta \dot\varepsilon_{ij}
 \qquad
 \qquad
 \bigg\rvert
 \qquad
 \qquad
-{\bm \tau} = {\bm \tau}' = 2 \eta \dot{\bm \varepsilon}
+{\bm \tau} = {\bm \uppi} = 2 \eta \dot{\bm \varepsilon}
 \label{eq:md22}
 \end{equation}
 
@@ -1023,7 +1072,7 @@ contributions from the different mechanisms active under the same rheological st
 \dot\varepsilon_{ij} 
 = \sum_k \dot\varepsilon_{ij}^{(k)} 
 = \frac12 \sum_k (\eta^{(k)})^{-1} \tau_{ij}
-= \frac12 \tau_ij \sum_k (\eta^{(k)})^{-1}
+= \frac12 \tau_{ij} \sum_k (\eta^{(k)})^{-1}
 = \frac{\tau_{ij}}{2 \eta_{eff}} 
 \]
 where the effective viscosity is
@@ -1033,7 +1082,7 @@ where the effective viscosity is
 \end{equation}
 
 A constitutive equation, more detailed than \eqref{eq:md23}, encompassing both power law creep and
-pure diffusion creep is:
+pure diffusion creep is (see for example \textcite{kawu93} (1993)):
 \begin{equation}
 \dot\varepsilon_{ij} = A \left( \frac{b}{d}\right)^m 
 \exp \left( - \frac{Q + pV}{RT} \right) 
@@ -1099,47 +1148,47 @@ Recalling the general equation of motion \eqref{eq:md12}
 and the separation of
 the total stress in the thermodynamic pressure and mechanical stress \eqref{eq:md13}
 \begin{equation}
-\sigma_{ij} = -p \delta_{ij} + \tau_{ij},
+\sigma_{ij} = -p \delta_{ij} + \uppi_{ij},
 \qquad
 \qquad
 \bigg\rvert
 \qquad
 \qquad
-{\bm \sigma} = - p {\bm 1} + {\bm \tau} 
+{\bm \sigma} = - p {\bm 1} + {\bm \uppi} 
 \end{equation}
 we find after substitution:
 \begin{equation}
-\rho \frac{D\upnu_i}{Dt}=\rho g_i -\frac{\partial p}{\partial x_i}+\frac{\partial \tau_{ij}}{\partial x_j}
+\rho \frac{D\upnu_i}{Dt}=\rho g_i -\frac{\partial p}{\partial x_i}+\frac{\partial \uppi_{ij}}{\partial x_j}
 \qquad
 \qquad
 \bigg\rvert
 \qquad
 \qquad
-\rho \frac{D \vec\upnu}{Dt}= \rho \vec{g} - \vec\nabla p + \vec\nabla\cdot {\bm \tau}
+\rho \frac{D \vec\upnu}{Dt}= \rho \vec{g} - \vec\nabla p + \vec\nabla\cdot {\bm \uppi}
 \label{eq:md31}
 \end{equation}
-Adopting the constitutive equation for linear rheology
+Adopting the constitutive equation \eqref{eq:piij} for linear rheology
 \begin{equation}
-\tau_{ij} = \left(\xi - \frac23 \eta \right) \dot\varepsilon_{kk} \delta_{ij} + 2\eta \dot\varepsilon_{ij}
+\uppi_{ij} = \left(\xi - \frac23 \eta \right) \dot\varepsilon_{kk} \delta_{ij} + 2\eta \dot\varepsilon_{ij}
 \qquad
 \qquad
 \bigg\rvert
 \qquad
 \qquad
-{\bm \tau}= \left(\xi - \frac23 \eta \right) \dot\varepsilon_{kk} {\bm 1} + 2\eta \dot{\bm \varepsilon}
+{\bm \uppi}= \left(\xi - \frac23 \eta \right) \dot\varepsilon_{kk} {\bm 1} + 2\eta \dot{\bm \varepsilon}
 \end{equation}
 and assuming that viscosities do not
 depend on the spatial coordinates we find that 
 \begin{equation}
 \rho \frac{D\upnu_i}{Dt}=\rho g_i -\frac{\partial p}{\partial x_i}+ \eta \vec\nabla^2 \upnu_i
-+ (\xi+\frac13 \eta) \frac{\partial}{\partial x_i} \vec\nabla\cdot\vec\upnu
++ \left(\xi+\frac13 \eta \right) \frac{\partial}{\partial x_i} \vec\nabla\cdot\vec\upnu
 \qquad
 \qquad
 \bigg\rvert
 \qquad
 \qquad
 \rho \frac{D \vec\upnu}{Dt} = \rho \vec{g} -\vec\nabla p + \eta  \vec\nabla^2 \vec\upnu
-+ (\xi+\frac13 \eta) \vec\nabla( \vec\nabla\cdot\vec\upnu)  
++ \left(\xi+\frac13 \eta \right) \vec\nabla( \vec\nabla\cdot\vec\upnu)  
 \label{eq:md33}
 \end{equation}
 This is the {\bf Navier-Stokes equation} for a fluid with constant viscosities.
@@ -1167,12 +1216,12 @@ Derive \eqref{eq:md33}
 \begin{exercise}
 {\small \it 
 Consider a flat layered lithosphere-asthenosphere system with thickness L and h
-respectively. Assume the lithosphere is rigid and moving with a horizontal velocity v 0 .
+respectively. Assume the lithosphere is rigid and moving with a horizontal velocity $\upnu_0$.
 Further, assume a constant viscosity of the asthenosphere and an incompressible fluid.
-Take the z-coordinate positive down with z=-L corresponding to the top of the
-lithosphere, z=0 with the base of the lithosphere and z=h with the base of the
+Take the $z$-coordinate positive down with $z=-L$ corresponding to the top of the
+lithosphere, $z=0$ with the base of the lithosphere and $z=h$ with the base of the
 asthenosphere.\\
-a) Derive the velocity profile with depth z by solving the Navier-Stokes equation using a
+a) Derive the velocity profile with depth $z$ by solving the Navier-Stokes equation using a
 zero material derivative of velocity (an assumption which is valid for mantle convection).
 The velocity at the base of the asthenosphere should be taken 0 (as a boundary
 condition).\\
@@ -1181,7 +1230,8 @@ a). Assume that the net amount of mass going through a vertical cross section is
 mass balance constraint). Use this constraint to determine the horizontal pressure
 gradient and determine the velocity profile.\\
 c) Determine for the model under b) the shear stress at the base of the lithosphere.
-Determine its value using 4.10 19 Pas for the viscosity, $100~\si{\kilo\meter}$ thickness for the
+Determine its value using $4\cdot 10^{19}~\si{\pascal\second}$
+for the viscosity, $100~\si{\kilo\meter}$ thickness for the
 lithosphere and for the asthenosphere and a lithosphere velocity of $5~\si{\cm\per\year}$.
 }
 \end{exercise}
@@ -1216,7 +1266,7 @@ The hydrostatic quantities obey the equilibrium equation:
 \bigg\rvert
 \qquad
 \qquad
-\vec{0} = \vec\nabla p_0 + \rho_0 \vec{g}^0
+\vec{0} = \vec\nabla p_0 + \rho_0 \vec{g}^{\; 0}
 \end{equation}
 We separate quantities in the dynamic state in a hydrostatic contribution and a
 perturbation:
@@ -1226,12 +1276,12 @@ p(\vec{r}) &=& p_0(\vec{r}) + {\color{violet} p}(\vec{r}) \nn\\
 \vec{g}(\vec{r}) &=& \vec{g}_0(\vec{r}) + {\color{violet}\vec{g}}(\vec{r}) \nn
 \end{eqnarray}
 where ${\color{violet} p}(\vec{r})$ is the so-called dynamic pressure.
-Note that the mechanical stress ${\bm \tau}$ is by
+Note that the mechanical stress ${\bm \uppi}$ is by
 itself a perturbation with respect to the hydrostatic state. After substitution in the equation
 of motion the hydrostatic terms cancel and we find:
 \begin{equation}
 (\rho_0 + {\color{violet}\rho})  \frac{D\upnu_i}{Dt}
-= -\frac{\partial {\color{violet} p}}{\partial x_i} + \frac{\partial \tau_{ij}}{\partial x_j}
+= -\frac{\partial {\color{violet} p}}{\partial x_i} + \frac{\partial \uppi_{ij}}{\partial x_j}
 + {\color{violet} \rho} g_i^0 +  {\color{violet} \rho} {\color{violet} g_i}
 + \rho_0  {\color{violet} g_i}
 \label{eq:md34a}
@@ -1241,7 +1291,7 @@ neglected as a small second order
 perturbation leading to the perturbation equation
 \begin{equation}
 \rho_0   \frac{D\upnu_i}{Dt}
-= -\frac{\partial {\color{violet} p}}{\partial x_i} + \frac{\partial \tau_{ij}}{\partial x_j}
+= -\frac{\partial {\color{violet} p}}{\partial x_i} + \frac{\partial \uppi_{ij}}{\partial x_j}
 + {\color{violet} \rho} g_i^0 
 \qquad
 \qquad
@@ -1250,7 +1300,7 @@ perturbation leading to the perturbation equation
 \qquad
 \rho_0   \frac{D\vec\upnu}{Dt}
 =
--\vec\nabla {\color{violet} p} + \vec\nabla \cdot {\bm \tau} + {\color{violet}\rho} \vec{g}
+-\vec\nabla {\color{violet} p} + \vec\nabla \cdot {\bm \uppi} + {\color{violet}\rho} \vec{g}
 \label{eq:md34b}
 \end{equation}
 This equation shows explicitly that density perturbations and not the total density field
@@ -1282,9 +1332,9 @@ or, for the dynamic quantities deviating from the hydrostatic state
 Assume a spherically symmetric non-rotating Earth in hydrostatic
 equilibrium. In spherical coordinates the divergence of a vector field 
 $\vec{a}(r)$, which only depends on the radius $r$ is
-%[
-%\vec\nabla \cdot \vec{a} = \frac{1}{r^2} \frac{d}{dr} (r^1 a_r)
-%\]
+\[
+\vec\nabla \cdot \vec{a} = \frac{1}{r^2} \frac{d}{dr} (r^1 a_r)
+\]
 a) Prove that the acceleration of gravity at radius $r$ only depends on the mass contained
 in the sphere of radius $R$.\\
 b) Assume that the mass of the Earth’s core is $M_c$. Assume a linear density profile for
@@ -1310,7 +1360,8 @@ attributes (e.g. phase transitions, boundary layers). Of course, before the age 
 speed computers, flow calculations where done mostly analytically which is easier in 2-D
 than in 3-D.
 
-In 2-D we have the 4 unknowns: $\upnu_x, \upnu_y,\rho$ and $p$. 
+In 2-D we have the 4 unknowns: $\upnu_x, \upnu_y,\rho$ and $p$\footnote{Here too we assume 
+Stokes hypothesis, so that $\overline{p}=p$ and ${\bm \uppi}={\bm \tau}$}. 
 By assuming incompressibility we can
 satisfy this equation trivially by defining the stream function $\psi(x,y)$ as follows:
 \begin{eqnarray}
@@ -1469,10 +1520,10 @@ Substitution in \eqref{eq:md40} leads to
 \frac{d^4Y}{dy^4} - 2k^2 \frac{d^2Y}{dy^2} + k^4 Y = 0
 \label{eq:md43}
 \end{equation}
-This is an ordinary differential equation with constant coefficients. Substituting 
+This is an ordinary differential equation (ODE) with constant coefficients. Substituting 
 $Y(y)=Y_0 \exp (m y)$ gives 
 \[
-m^4 - 2k^2 m^2 + k^4 = (m^2-k^2)^=0
+m^4 - 2k^2 m^2 + k^4 = (m^2-k^2)=0
 \]
 hence $m=\pm k$ with multiplicity 2.
 The multiplicity requires two additional solutions $y \exp (\pm ky)$. The general solution is then
@@ -1493,9 +1544,9 @@ solution
 
 The second boundary condition concerns the motion of the surface. We expect that the
 deflection $w_k(x,t)$ primarily leads to a vertical motion for small wave number $k$
-(large wavelength $\lambda$) and assume that horizontal motion is negligibly small. From modern
+(large wavelength $\lambda$) and assume that horizontal motion is negligibly small\footnote{From modern
 GPS research on surface motions in Scandinavia we know that horizontal surface motions
-are between 10-20\% of the vertical motion. The condition $\upnu_x(x,y)=0$ for $z=w_k(x,t)$
+are between 10-20\% of the vertical motion}. The condition $\upnu_x(x,y)=0$ for $z=w_k(x,t)$
 is only a crude approximation. Still, for Haskell’s problem it helps finding an
 analytical solution. Using \eqref{eq:md37} we find for the velocity components:
 \begin{eqnarray}
@@ -1522,7 +1573,7 @@ $k w_k = 2\pi w_k/\lambda <<1$ because $w_k$ is on the order of $1~\si{\km}$
 while $\lambda$ is on the order of $3000~\si{\km}$.
 This leads to the following results:
 \begin{eqnarray}
-\psi(x,y) &=& A(1=ky)\exp (-ky) \sin kx \\
+\psi(x,y) &=& A(1+ky)\exp (-ky) \sin kx \\
 \upnu_x &=& -A k^2 y \exp (-ky) \sin kx \\
 \upnu_z &=& -Ak(1+ky) \exp(-ky) \cos kx \label{eq:md47}
 \end{eqnarray}
@@ -1609,6 +1660,14 @@ acceleration of gravity, we find for the viscosity $\eta \simeq 10^{21}~\si{\pas
 a number that still stands
 today as an average value for the 600 to 1000 km of the mantle.
 
+\begin{center}
+\includegraphics[width=10.5cm]{images/viscosity_profile/civs12-fig1}
+\includegraphics[width=5cm]{images/viscosity_profile/nemi23}\\
+{\captionfont Left: Taken from Ciskova \etal \cite{civs12} (2012); 
+Right: Taken from \textcite{nemi23} (2023).}
+\end{center}
+
+
 Modern modeling concentrates on the complex global problem of Global Isostatic
 Adjustment (GIA) which also involves the global variation of sea-level which is coupled
 to ice-sheet formation and melting. Both are functions of time and surface coordinates
@@ -1644,7 +1703,7 @@ mechanical processes and the heat input $\Delta Q$ to the system resulting from 
 heat production (we disregard here the energy contribution from chemical and electro-
 magnetic processes):
 \begin{equation}
-\Delta E = \delta W + \Delta Q
+\Delta E = \Delta W + \Delta Q
 \label{eq:md53}
 \end{equation}
 For processes developing continuously in time we can write \eqref{eq:md53} in terms of the power
@@ -1662,7 +1721,17 @@ forces $\rho g_i$ and the boundary tractions $t_i^n$ is
 By substituting the Cauchy relation \eqref{eq:md02}, $t_i^n = \sigma_{ij}n_j$, 
 with $n_j$ the outward pointing normal
 on $S$, and next applying the divergence theorem, the surface integral is transformed to a
-volume integral. After rearranging terms we get
+volume integral:
+\begin{eqnarray}
+\frac{DW}{Dt} 
+&=& \int_V \rho \vec{\upnu}\cdot \vec{g} dV + \int_S \vec\upnu\cdot  ({\bm \sigma} \cdot \vec{n}) dS \nn\\
+&=& \int_V \rho \vec{\upnu}\cdot \vec{g} dV + \int_S (\vec\upnu\cdot  {\bm \sigma}) \cdot \vec{n} dS \nn\\
+&=& \int_V \rho \vec{\upnu}\cdot \vec{g} dV + \int_V \vec\nabla \cdot ( \vec\upnu \cdot  {\bm \sigma} ) dV \nn\\
+&=& \int_V \rho \vec{\upnu}\cdot \vec{g} dV 
++ \int_V \vec\nabla \vec\upnu \cdot   {\bm \sigma}  dV 
++ \int_V \vec\upnu \cdot \vec\nabla\cdot  {\bm \sigma}  dV \nn
+\end{eqnarray}
+After rearranging terms we get
 \begin{equation}
 \frac{DW}{Dt} = \int_V 
 \left[ \upnu_i ( \rho g_i + \frac{\partial\sigma_{ij}}{\partial x_j}  ) 
@@ -1675,14 +1744,14 @@ to arrive at the second equality.
 Next, we can apply \eqref{eq:md11} to the first term in the last equality which leads to
 \begin{eqnarray}
 \frac{DW}{Dt} &=& 
-\int_V \upnu_i \left( \rho g_i +  \frac{\partial\sigma_{ij}}{\partial x_j}  \right) 
-+ \sigma_{ij} \frac{\partial \upnu_i }{\partial x_j} \nn\\
+\int_V \left[ \upnu_i \left( \rho g_i +  \frac{\partial\sigma_{ij}}{\partial x_j}  \right) 
++ \sigma_{ij} \frac{\partial \upnu_i }{\partial x_j}  \right] dV \nn\\
 &=& \int_V \left(\rho \upnu_i \frac{D\upnu_i}{Dt} 
 + \sigma_{ij}  \frac{\partial \upnu_i }{\partial x_j} \right) dV \\
 &=& \int_V \left(\frac12 \rho \frac{D (\upnu_i\upnu_i)}{Dt} 
 + \sigma_{ij}  \frac{\partial \upnu_i }{\partial x_j} \right) dV \\
 &=& \frac{D}{Dt} \int_V \frac12 \rho \upnu_i\upnu_i dV + 
-\int_V  + \sigma_{ij}  \frac{\partial \upnu_i }{\partial x_j}  dV 
+\int_V   \sigma_{ij}  \frac{\partial \upnu_i }{\partial x_j}  dV 
 \label{eq:md57}
 \end{eqnarray}
 The first term in \eqref{eq:md57} 
@@ -1702,8 +1771,8 @@ obtained by integration of the heat production over the volume and by integratio
 normal component of heat flow over the surface $S$
 \begin{eqnarray}
 \frac{DQ}{Dt} 
-&=& \int_V \rho H dV - \int_S \vec{q} \cdot \vec{n} dS \\
-&=& \int_V \rho H dV + \int_S k \vec\nabla T  \cdot \vec{n} dS \\
+&=& \int_V \rho H dV - \int_S \vec{q} \cdot \vec{n} \; dS \\
+&=& \int_V \rho H dV + \int_S k \vec\nabla T  \cdot \vec{n} \; dS \\
 &=& \int_V \left(  \rho H + \vec\nabla \cdot (  k \vec\nabla T )  \right) dV 
 \label{eq:md58}
 \end{eqnarray}
@@ -1714,10 +1783,11 @@ therefore required in front of the heat flow integral in the first equality. In 
 equality, the Fourier law for heat conduction is substituted. Application of the divergence
 theorem leads to the last equality.
 
-The total energy $E$ in \eqref{eq:md54} is now separated in to two contributions: the kinetic energy and
-the internal energy $e$ (\si{\joule\per\kg}):
+The total energy $E$ in \eqref{eq:md54} is now separated into 
+two contributions: the kinetic energy and
+the internal energy $e$ (\si{\joule\per\kg})\footnote{$[e]=L^2T^{-2}$}:
 \begin{equation}
-E = \int_V (\frac{1}{2} \upnu_i \upnu_i + \rho e)dV
+E = \int_V (\frac{1}{2} \rho \upnu_i \upnu_i + \rho e)dV
 \label{eq:md59}
 \end{equation}
 Taking the time derivative leads to
@@ -1737,30 +1807,49 @@ energy terms cancel. As $V$ is chosen arbitrary we find the {\bf energy (or heat
 \begin{equation}
 \rho \frac{De}{Dt} = \sigma_{ij} \frac{\partial \upnu_i}{\partial x_j} + 
 \frac{\partial }{\partial x_j} (k \frac{\partial T}{\partial x_j}) + \rho H
+\qquad
+\bigg\rvert
+\qquad
+\rho \frac{De}{Dt} = {\bm \sigma}: \vec\nabla \vec\upnu
++\vec\nabla \cdot (k \vec\nabla T) + \rho H
 \label{eq:md61}
 \end{equation}
 which states that the rate of change of internal energy equals the sum of viscous heat
-dissipation, thermal conduction, and heat production 
-(in \si{\joule\per\second\cubic\meter} {\color{red}check!} ).
+dissipation, thermal conduction, and heat production.
+
+\begin{remark}
+Looking at units:
+We have the internal energy $e$ given in J/kg, i.e. $[e]=ML^2T^{-2}/M=L^2T^{-2}$.
+Then $[\rho De/Dt]= ML^{-3}(L^2T^{-2})T^{-1} = M L^{-1} T^{-3}$,
+$[{\bm \sigma}: \vec\nabla \vec\upnu] = ML^{-1}T^{-2}  L^{-1} LT^{-1}=ML^{-1} T^{-3}$,
+$[\vec\nabla \cdot (k \vec\nabla T)]=L^{-1} L M T^{-3} \theta^-1 L^{-1} \theta
+= M L^{-1} T^{-3}$ and $[\rho H]= M L^{-1} T^{-3} $ so that $[H]=  L^{2} T^{-3}$.
+\end{remark}
 
 Taking the usual separation of the stress tensor in the thermodynamic stress and the
-mechanical stress, i.e $\sigma_{ij} = -p \delta_{ij} + \tau_{ij}$, we get
+mechanical stress, i.e $\sigma_{ij} = -p \delta_{ij} + \uppi_{ij}$, we get
 \begin{equation}
 \rho \frac{De}{Dt} + p \frac{\partial \upnu_j}{\partial x_j} 
-= \tau_{ij} \frac{\partial \upnu_i}{\partial x_j} + 
+= \uppi_{ij} \frac{\partial \upnu_i}{\partial x_j} + 
 \frac{\partial }{\partial x_j} (k \frac{\partial T}{\partial x_j}) + \rho H
 \label{eq:md62}
 \end{equation}
-
+Note that under the Stokes hypothesis (see before), we have
+\[
+\rho \frac{De}{Dt} + p \vec\nabla \cdot \vec\upnu 
+= {\bm \tau} : \vec\nabla\vec\upnu  
++\vec\nabla \cdot (k \vec\nabla T) + \rho H
+\]
 From thermodynamic considerations\footnote{See for 
-instance \url{https://en.wikipedia.org/wiki/Maxwell_relations}} (not treated here) we have the relation
+instance \url{https://en.wikipedia.org/wiki/Maxwell_relations}} 
+(not treated here) we have the relation
 $de=TdS-p dv$ between internal energy $e$, the entropy $S$, 
 and the specific volume $v=1/\rho$. 
-This relation is used to transform Eq.~\eqref{eq:md62} in to the entropy form of the energy
-equation:
+This relation is used to transform Eq.~\eqref{eq:md62} in to 
+the entropy form of the energy equation:
 \begin{equation}
 \rho T \frac{DS}{Dt} = 
-\tau_{ij} \frac{\partial \upnu_i}{\partial x_j} + 
+\uppi_{ij} \frac{\partial \upnu_i}{\partial x_j} + 
 \frac{\partial }{\partial x_j} (k \frac{\partial T}{\partial x_j}) + \rho H
 \label{eq:md63}
 \end{equation}
@@ -1775,9 +1864,183 @@ A fluid particle flowing in an adiabatic mantle assumes at any time the temperat
 of the ambient mantle. Therefore there is no conductive heat exchange in the adiabatic
 state.
 
+Another useful thermodynamic relation is 
+\begin{eqnarray}
+dS 
+&=& \left(\frac{\partial S}{\partial T} \right)_V dT  + \left(\frac{\partial S}{\partial V} \right)_T dV \\ 
+&=& \frac{C_p}{T} dT - \frac{\alpha}{\rho} dp 
+\end{eqnarray}
+with $C_p$ the heat capacity (\si{\joule\per\kelvin}) at
+constant pressure and $\alpha$ the thermal expansion coefficient (\si{\per\kelvin}). 
 
--------------------------------------
+\begin{remark}
+Let us look again at the dimensions of these quantities.
+The entropy $S$ is in \si{\joule\per\kelvin}, or $[S]=ML^2T^{-2}\theta^{-1}$, 
+and we know that $C_p$ has the same unit.
+We have $[\alpha]=\theta^{-1}$, $[\rho]=ML^{-3}$ and $[dp]=ML^{-1}T^{-2}$ so 
+we indeed recover $[\alpha dp /\rho]= \theta^{-1} ML^{-1}T^{-2} M^{-1}L^{3}=$.
+All in well.
+\end{remark}
 
+Applying this relation to \eqref{eq:md63}
+leads to the temperature form of the heat equation
+\begin{equation}
+\rho C_p \frac{DT}{Dt} - \alpha T \frac{Dp}{Dt} = 
+\uppi_{ij} \frac{\partial \upnu_i}{\partial x_j} + 
+\frac{\partial }{\partial x_j} (k \frac{\partial T}{\partial x_j}) + \rho H
+\label{eq:md64}
+\end{equation}
+The lhs of this equation is zero for an adiabatic state. In this case we find that
+\begin{equation}
+\frac{dT_a}{dp} = \frac{\alpha T_a}{\rho C_p}
+\label{eq:md65}
+\end{equation}
+which gives how temperature changes due to pure adiabatic (de)compression.
+
+A mantle in the adiabatic state satisfies the equilibrium equation $\vec\nabla p = \rho \vec{g}$.
+Assuming spherical symmetry we have $dp/dr=-\rho g$. Substitution in \eqref{eq:md65} gives
+\begin{equation}
+\frac{dT_a}{dr} = -\frac{\alpha T_a g}{C_p},
+\label{eq:md66}
+\end{equation}
+i.e. the {\bf adiabatic temperature gradient}.
+
+Along similar lines, for a mantle in motion we can approximate the second term on the
+lhs of \eqref{eq:md64} (the adiabatic (de)compression term) as
+\begin{equation}
+\alpha T \frac{dp}{dr} \simeq \alpha T \frac{\rho \vec{g}\cdot d\vec{r}}{dt} 
+= -\alpha \rho T \vec{g} \cdot \vec{\upnu}
+\simeq -\alpha \rho T g_r \upnu_r 
+\label{eq:md67}
+\end{equation}
+where $g_r$ and $\upnu_r$ are the radial
+components of gravity and velocity, respectively.
+
+%exercise 27
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+Derive equation \eqref{eq:md63} from \eqref{eq:md62}.
+}
+\end{exercise}
+\end{minipage}
+}
+
+\vspace{0.5cm}
+
+%exercise 28
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+Determine the temperature as a function of depth for a particle that is being
+transported through the center of a vertical mantle upwelling. Assume adiabatic
+conditions and a constant vertical flow velocity.
+}
+\end{exercise}
+\end{minipage}
+}
+
+\vspace{0.5cm}
+
+%exercise 29
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+Show that for a Newtonian fluid the dissipation term
+$\Phi=\uppi_{ij}\partial \upnu_i/\partial x_j$
+can be written as $\Phi=\uppi_{ij}\dot\varepsilon_{ij}=
+2 \eta \dot\varepsilon_{ij}'\dot\varepsilon_{ij}' + \xi (\dot\varepsilon_{kk})^2$.
+What can one conclude for the two viscosities?
+}
+\end{exercise}
+\end{minipage}
+}
+
+\vspace{0.5cm}
+
+%exercise 30
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+Demonstrate that for 2D laminar flow (as in exercise 19) the dissipation
+function can be written as
+$\Phi=\eta (\partial \upnu_x/\partial z)^2$.
+Use this to evaluate the dissipative heat production in the flow of exercise 19a assuming
+zero horizontal pressure gradient (Couette flow).
+Calculate a numerical value of this heat production using values of $h=200~\si{\kilo\meter}$, 
+$\eta =10^{21}~\si{\pascal\second}$, $\upnu_0= 1~\si{\cm\per\year}$. 
+Compare this to estimates of radiogenic heat production in the
+upper mantle of $8.4\cdot 10^{-9} \si{\joule\per\second\per\cubic\meter}$.
+}
+\end{exercise}
+\end{minipage}
+}
+
+\vspace{0.5cm}
+
+%exercise 31
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+The Navier-Stokes equation for perturbations relative to a hydrostatic
+reference state is in Cartesian coordinates
+\[
+\rho_0 \frac{D\upnu_i}{Dt} = - \frac{\partial {\color{violet} p}}{\partial x_i} +
+\frac{\partial \uppi_{ij}}{\partial x_j} + {\color{violet} \rho} g_i^0
+\]
+(see equation \ref{eq:md34b}).
+The density perturbation is driving the flow of a medium contained in the material
+volume $V$. Assume that gravity is only working vertical
+$\vec{g}=(0,0,g)^T$ and that the
+velocity field is $\vec\upnu=(u,v,w)^T$. Assume incompressible flow and that the inertial term
+can be neglected.\\
+a) Derive the following energy conservation law relating the dissipation of gravitational
+energy into the energy released due to frictional flow:
+\[
+\int_V {\color{violet} \rho} g w \; dV = \int_V \uppi_{ij} 
+\frac{\partial \upnu_i}{\partial x_j} \; dV
+\]
+Hint: Take the inner product of the equation of motion with the velocity field and
+integrate the result over $V$. Assume an impermeable boundary $S$ of $V$ (i.e. $\vec\upnu\cdot\vec{n}=0$) 
+and that the boundary is shear stress free (free slip) or has no-slip ($\vec\upnu=\vec{0}$).\\
+b) Show by substitution of the Newtonian rheology that the rhs of this equation is positive
+and show that the lhs of the equation equals the created power due to the change in
+gravitational potential energy as a result of ${\color{violet} \rho}$ w.r.t. $\rho_0$.
+}
+\end{exercise}
+\end{minipage}
+}
+
+\vspace{0.5cm}
+
+%exercise 32
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{exercise}
+{\small \it 
+a) Derive the heat equation for a static medium ($\vec\upnu=\vec{0}$) from the conservation law of
+thermal energy. (Hint: Create the heat balance for a fixed control volume based on
+internal energy, heat production and heat flow through the boundary of the volume).\\
+b) Next, assume there is a flow field $\vec\upnu$ and extend the result under a) with a term
+involving the flow density of thermal energy $\vec{J} = \rho C_p T \vec\upnu$ 
+(assume $\rho C_p$ to be constant and $\vec\nabla\cdot \vec\upnu=0$).\\
+The result is the heat equation for an incompressible medium in which adiabatic
+compression and viscous dissipation are neglected.
+}
+\end{exercise}
+\end{minipage}
+}
+
+
+\newpage
+
+\todo[inline]{SORT IT OUT before start of class}
 {\bf what follows is not from Wim's handouts}
 
 Let us start from the heat transport equation as shown in Eq.(6.9.1)
@@ -1873,170 +2136,21 @@ See discussions about shear heating (``viscous dissipation'') -- meaning and app
 \textcite{wint87} (1987),
 \textcite{madu98} (1998).
 
--------------------------------------
 
 
-Another useful thermodynamic relation is 
-\begin{eqnarray}
-dS 
-&=& \left(\frac{\partial S}{\partial T} \right)_V dT  + \left(\frac{\partial S}{\partial V} \right)_T dV \\ 
-&=& c_p/T dT -\alpha/\rho dp 
-\end{eqnarray}
-with $c_p$ the specific heat \todo{very weird - units pb - dont trust this} at
-constant pressure and $\alpha$ the thermal expansion coefficient. 
-Applying this relation to \eqref{eq:md63}
-leads to the temperature form of the heat equation
-\begin{equation}
-\rho c_p \frac{DT}{Dt} - \alpha T \frac{Dp}{Dt} = 
-\tau_{ij} \frac{\partial \upnu_i}{\partial x_j} + 
-\frac{\partial }{\partial x_j} (k \frac{\partial T}{\partial x_j}) + \rho H
-\label{eq:md64}
-\end{equation}
-The lhs of this equation is zero for an adiabatic state. In this case we find that
-\begin{equation}
-\frac{dT_a}{dp} = \frac{\alpha T_a}{\rho c_p}
-\label{eq:md65}
-\end{equation}
-which gives how temperature changes due to pure adiabatic (de)compression.
 
-A mantle in the adiabatic state satisfies the equilibrium equation $\vec\nabla p = \rho \vec{g}$.
-Assuming spherical symmetry we have $dp/dr=-\rho g$. Substitution in \eqref{eq:md65} gives
-\begin{equation}
-\frac{dT_a}{dr} = -\frac{\alpha T_a g}{c_p},
-\label{eq:md66}
-\end{equation}
-i.e. the {\bf adiabatic temperature gradient}.
 
-Along similar lines, for a mantle in motion we can approximate the second term on the
-lhs of \eqref{eq:md64} (the adiabatic (de)compression term) as
-\begin{equation}
-\alpha T \frac{dp}{dr} \simeq \alpha T \frac{\rho \vec{g}\cdot d\vec{r}}{dt} 
-= -\alpha \rho T \vec{g} \cdot \vec{\upnu}
-\simeq -\alpha \rho T g_r \upnu_r 
-\label{eq:md67}
-\end{equation}
-where $g_r$ and $\upnu_r$ are the radial
-components of gravity and velocity, respectively.
+\newpage
 
-%exercise 27
-\vspace{0.5cm}
-\fbox{
-\begin{minipage}{0.9\textwidth}
-\begin{exercise}
-{\small \it 
-Derive equation \eqref{eq:md63} from \eqref{eq:md62}.
-}
-\end{exercise}
-\end{minipage}
-}
 
-\vspace{0.5cm}
 
-%exercise 28
-\fbox{
-\begin{minipage}{0.9\textwidth}
-\begin{exercise}
-{\small \it 
-Determine the temperature as a function of depth for a particle that is being
-transported through the center of a vertical mantle upwelling. Assume adiabatic
-conditions and a constant vertical flow velocity.
-}
-\end{exercise}
-\end{minipage}
-}
 
-\vspace{0.5cm}
 
-%exercise 29
-\fbox{
-\begin{minipage}{0.9\textwidth}
-\begin{exercise}
-{\small \it 
-Show that for a Newtonian fluid the dissipation term
-$\Phi=\tau_{ij}\partial \upnu_i/\partial x_j$
-can be written as $\Phi=\tau_{ij}\dot\varepsilon_{ij}=
-2 \eta \dot\varepsilon_{ij}'\dot\varepsilon_{ij}' + \xi (\dot\varepsilon_{kk})^2$.
-What can one conclude for the two viscosities?
-}
-\end{exercise}
-\end{minipage}
-}
 
-\vspace{0.5cm}
 
-%exercise 30
-\fbox{
-\begin{minipage}{0.9\textwidth}
-\begin{exercise}
-{\small \it 
-Demonstrate that for 2D laminar flow (as in exercise 19) the dissipation
-function can be written as
-$\Phi=\eta (\partial \upnu_x/\partial z)^2$.
-Use this to evaluate the dissipative heat production in the flow of exercise 19a assuming
-zero horizontal pressure gradient (Couette flow).
-Calculate a numerical value of this heat production using values of $h=200km$, 
-$\eta =10^{21}~\si{\pascal\second}$, $\upnu_0= 1~\si{\cm\per\year}$. 
-Compare this to estimates of radiogenic heat production in the
-upper mantle of $8.4\cdot 10^{-9} J/(s m^3 )$.
-}
-\end{exercise}
-\end{minipage}
-}
 
-\vspace{0.5cm}
 
-%exercise 31
-\fbox{
-\begin{minipage}{0.9\textwidth}
-\begin{exercise}
-{\small \it 
-The Navier-Stokes equation for perturbations relative to a hydrostatic
-reference state is in Cartesian coordinates
-\[
-\rho_0 \frac{D\upnu_i}{Dt} = - \frac{\partial {\color{violet} p}}{\partial x_i} +
-\frac{\partial \tau_{ij}}{\partial x_j} + {\color{violet} \rho} g_i^0
-\]
-(see equation \ref{eq:md34b}).
-The density perturbation is driving the flow of a medium contained in the material
-volume $V$. Assume that gravity is only working vertical
-$\vec{g}=(0,0,g)^T$ and that the
-velocity field is $\vec\upnu=(u,v,w)^T$. Assume incompressible flow and that the inertial term
-can be neglected.\\
-a) Derive the following energy conservation law relating the dissipation of gravitational
-energy into the energy released due to frictional flow:
-\[
-\int_V {\color{violet} \rho} g w \; dV = \int_V \tau_{ij} \frac{\partial \upnu_i}{\partial x_j} \; dV
-\]
-Hint: Take the inner product of the equation of motion with the velocity field and
-integrate the result over $V$. Assume an impermeable boundary $S$ of $V$ (i.e. $\vec\upnu\cdot\vec{n}=0$) 
-and that the boundary is shear stress free (free slip) or has no-slip ($\vec\upnu=\vec{0}$).\\
-b) Show by substitution of the Newtonian rheology that the rhs of this equation is positive
-and show that the lhs of the equation equals the created power due to the change in
-gravitational potential energy as a result of ${\color{violet} \rho}$ w.r.t. $\rho_0$.
-}
-\end{exercise}
-\end{minipage}
-}
 
-\vspace{0.5cm}
-
-%exercise 32
-\fbox{
-\begin{minipage}{0.9\textwidth}
-\begin{exercise}
-{\small \it 
-a) Derive the heat equation for a static medium ($\vec\upnu=\vec{0}$) from the conservation law of
-thermal energy. (Hint: Create the heat balance for a fixed control volume based on
-internal energy, heat production and heat flow through the boundary of the volume).\\
-b) Next, assume there is a flow field $\vec\upnu$ and extend the result under a) with a term
-involving the flow density of thermal energy $\vec{J} = \rho c_p T \vec\upnu$ 
-(assume $\rho c_p$ to be constant and $\vec\nabla\cdot \vec\upnu=0$).\\
-The result is the heat equation for an incompressible medium in which adiabatic
-compression and viscous dissipation are neglected.
-}
-\end{exercise}
-\end{minipage}
-}
 
 %----------------------------------------------------------
 \subsection{The equation of state}
@@ -2071,7 +2185,9 @@ d\rho =
 \]
 where $\alpha$ is the thermal expansion coefficient and 
 $K_T$ the isothermal incompressibility, or isothermal bulk
-modulus. Assuming linearity, this relation is up-scaled to the macroscopic mantle to
+modulus\footnote{The bulk modulus of a substance is a measure of the resistance of a substance to bulk 
+compression. It is defined as the ratio of the infinitesimal pressure increase to the resulting relative 
+decrease of the volume} (units: \si{\pascal}). Assuming linearity, this relation is up-scaled to the macroscopic mantle to
 obtain the equation of state
 \begin{equation}
 \rho(\vec{r},t) = \rho_0(\vec{r}) (1-\alpha {\color{violet}T} + K_T^{-1} {\color{violet}p} )
@@ -2120,7 +2236,7 @@ reference state with constant thermodynamic parameters the following equations s
 \end{eqnarray}
 More complex reference states involving depth variable thermodynamic parameters
 require internally consistent relations between thermodynamic parameters such as
-$\alpha$, $K_T$, $c_p$ $k$ and temperature, density, and pressure.
+$\alpha$, $K_T$, $C_p$ $k$ and temperature, density, and pressure.
 
 \vspace{0.5cm}
 
@@ -2155,13 +2271,13 @@ The heat equation in terms of ${\color{violet}T}$
 \begin{equation}
 \rho c_p \frac{D {\color{violet} T}}{Dt} = \frac{\partial }{\partial x_j} 
 \left( k \frac{\partial {\color{violet}T}}{\partial x_j}  \right)
-+ \rho H + \tau_{ij}\frac{\partial \upnu_i}{\partial x_j} + \alpha T \frac{Dp}{Dt}
++ \rho H + \uppi_{ij}\frac{\partial \upnu_i}{\partial x_j} + \alpha T \frac{Dp}{Dt}
 \label{eq:md71b}
 \end{equation}
 The equation of motion is in terms of ${\color{violet}p},{\color{violet}\rho},{\color{violet}T}$:
 \begin{equation}
 \rho \frac{D \upnu_i}{Dt} = -\frac{\partial {\color{violet}p}}{\partial x_i}
-+\frac{\partial \tau_{ij}}{\partial x_j}
++\frac{\partial \uppi_{ij}}{\partial x_j}
 -\rho_0 (\alpha {\color{violet} T} + K_T^{-1} {\color{violet}p}) g_i
 \label{eq:md71c}
 \end{equation}
@@ -2203,21 +2319,23 @@ t = t' \frac{h^2}{\kappa}
 \qquad
 \rho = \rho' \rho_m 
 \]
-where $h$ is the mantle thickness, $\kappa=k/(\rho c_p)$
+where $h$ is the mantle thickness, $\kappa=k/(\rho C_p)$
 is the thermal diffusivity, $\Delta T_m$ is the
 temperature difference between the Core-Mantle boundary and the surface,
-$\eta$ is the dynamic viscosity and $\rho_m$ is a scaling density.
+$\eta$ is the dynamic viscosity\footnote{Note that the viscosity varies by 
+many orders of magnitude in the mantle and lithosphere, so finding the appropriate scaling 
+value is necessary.} and $\rho_m$ is a scaling density.
 
 Note that on Earth, we have
 $\alpha \sim 3\cdot 10^{-5}~\si{\per\kelvin}$,
 $K_T \sim 3\cdot 10^{12}~\si{\pascal}$,
 $\Delta T_m \sim 10^3~\si{\kelvin}$,
-$c_p \sim 10^3~\si{\joule\per\kg\per\kelvin}$,
+$C_p \sim 10^3~\si{\joule\per\kg\per\kelvin}$,
 $k\sim 4~\si{\watt\per\meter\per\kelvin}$,
 $\kappa \sim 1.2\times 10^{-6}~\si{\square\meter\per\second}$.
 
 The primed quantities are dimensionless and are of the order 1 if the scaling is correct for
-the problem at hand.
+the problem at hand\footnote{except for the viscosity}.
 Application of scaling to the equation of state \eqref{eq:md71a} leads to
 \begin{equation}
 \rho' = \rho_0' \left(  1 - \alpha \Delta T_m {\color{violet} T}' + 
@@ -2231,12 +2349,14 @@ which leads us to conclude that
 thermal perturbations of density are much more important than pressure perturbations
 (assuming the equation of state and scaling are correct for the convection problem). We
 note that the scaling factor of pressure is about 100 Pa, i.e. perturbations of hydrostatic
-pressure are expected to be small compared to the rheological stress (1-100 MPa).
+pressure are expected to be small compared to the rheological stress (1-100~\si{\mega\pascal}).
 
 The coefficient $K_T^{-1}\eta \kappa/h^2$ can be written as 
-$\eta c_p/k \cdot k^2 K_T^{-1}/c_p^2/\rho_m h^2 = \Prnb \cdot \Mnb^2$
+$\eta C_p/k \cdot k^2 K_T^{-1}/C_p^2/\rho_m h^2 = \Prnb \cdot \Mnb^2$
 where where $\Prnb$ is the
-Prandtl number and $\Mnb$ the Mach number. $\Mnb$ gives the ratio between flow speed and
+Prandtl number\footnote{\url{https://en.wikipedia.org/wiki/Prandtl_number}} 
+and $\Mnb$ the Mach number\footnote{\url{https://en.wikipedia.org/wiki/Mach_number}}. 
+$\Mnb$ gives the ratio between flow speed and
 sound speed which is about $10^{-16}$ for mantle convection. The Prandtl number is about $10^{24}$
 and will appear in the coefficient of the inertial term of the dimensionless equation of
 motion.
@@ -2293,13 +2413,15 @@ conservation of mass \eqref{eq:md73c} is being used in convection modeling of co
 %----------------------------------------------------------
 \subsection{The Boussinesq approximation}
 
+The Boussinesq\footnote{\url{https://en.wikipedia.org/wiki/Joseph_Valentin_Boussinesq}} 
+approximation is ubiquitous in computational geodynamics.
 This approximation leads to a set of simplified equations that are easier to solve for some
 analytical problems and in numerical modeling of convective flow. The following
 approximations are being made:
 \begin{itemize}
 \item Neglect the effect of density variations with respect to a reference state except in terms
 related to the driving force of convection
-\item assume that the divergence of the velocity field is 0.
+\item assume that the divergence of the velocity field is 0 (in this case ${\bm \uppi}={\bm \tau}$.
 \item Only concern temperature changes resulting from diffusion and advection (i.e. neglect
 terms related to adiabatic compression, and heat dissipation)
 \end{itemize}
@@ -2392,7 +2514,7 @@ $\tau_{xz}(x,z=0)=\tau_{xz}(x,z=h)=0$ and
 $\eta \partial u/\partial z (x,z=0) = \eta \partial u/\partial z (x,z=h) = 0$.
 The scaling of the equation of motion gives
 \begin{equation}
-\frac{1}{Pr} \frac{D\upnu_i'}{Dt'} = -\frac{\partial {\color{violet} p'}}{\partial \partial x_i'}
+\frac{1}{Pr} \frac{D\upnu_i'}{Dt'} = -\frac{\partial {\color{violet} p'}}{\partial x_i'}
 +(\nabla')^2 \upnu_i' - \Ranb {\color{violet}T'} \delta_{zi}
 \label{eq:md78}
 \end{equation}
@@ -2407,10 +2529,9 @@ for convenience):
 \label{eq:md79}
 \end{equation}
 in which $\Ranb$ is the only free parameter. Recall that ${\color{violet}p}$ 
-is the pressure anomaly w.r.t. $p_0$. 
-The Rayleigh number determines the magnitude of the force driving convection.
-
-
+is the pressure anomaly with regards to $p_0$. 
+The Rayleigh number determines the magnitude of the force driving convection (see computer 
+practical!).
 
 Because we considerer a 2-D situation of an incompressible fluid we can adopt the stream
 function approach with $u=\partial \Psi/\partial z$ and $w=-\partial \Psi/\partial x$ which 
@@ -2576,9 +2697,9 @@ which assumes a minimum value for $n=1$. This minimum
 critical Rayleigh number is $\Ranb_{c,min}$ and is attained for a non-dimensional horizontal
 wavelength $\lambda \simeq 2.8$. These numbers hold for a model with boundaries that are
 isothermal, impermeable, and free slip. Adopting other boundary conditions leads to
-different critical numbers. For instance, in the extreme of having fixed boundaries one
+different critical numbers. For instance, in the extreme of having fixed (no slip) boundaries one
 obtains $\Ranb \simeq 1300$ and $\lambda \simeq 2.5$ demonstrating that it is more difficult to initiate
-convection compared to slip-free boundaries.
+convection compared to free slip boundaries.
 
 When conducting a similar analysis in a spherical shell, minimum critical Rayleigh
 numbers prove to be much larger. Free slip (rigid) conditions at the surface and bottom
@@ -2590,9 +2711,9 @@ the layer and more cooling at the surface compared to less heat input at the bot
 
 For realistic values of the physical parameters defining the Rayleigh number and a
 realistic layer thickness, the only quantity that changes the Rayleigh number is the
-temperature difference $\Delta T$ between top and bottom. The critical minimum Rayleigh
+temperature difference $\Delta T$ between top and bottom. {\bf The critical minimum Rayleigh
 number thus determines the critical $\Delta T$ below which no convection occurs and above
-which convection is enhanced. The analysis above is only valid in the linear regime, i.e.
+which convection is enhanced}. The analysis above is only valid in the linear regime, i.e.
 near the critical Rayleigh number. The temporal exponential growth in the amplitude (not
 the pattern) of convection disappears if the non-linear term $\vec\upnu\cdot\vec\nabla {\color{violet}T_1}$ 
 (the advection of temperature) is incorporated in the analysis.
