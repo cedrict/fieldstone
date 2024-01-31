@@ -86,12 +86,12 @@ print('grain size nvalues=',nd)
 # 00 version is used to plot lines every 100 degrees
 ##################################################################
 
-dom_mech = np.empty((ntemp,nd,4))
+dom_mech = np.empty((ntemp,nd,5))
 
 Tmax00=math.floor(Tmax/100)*100
 Tmin00=math.ceil(Tmin/100)*100
 ntemp00=int((Tmax00-Tmin00)/100+1)
-dom_mech00 = np.empty((ntemp00,nd,4))
+dom_mech00 = np.empty((ntemp00,nd,5))
 
 #print(Tmin00,Tmax00,ntemp00)
 
@@ -143,6 +143,7 @@ for i in range(ntemp): # Loop on temperature
         dom_mech[i,j,1] = gs
         dom_mech[i,j,2] = tau_NR
         dom_mech[i,j,3] = max_mech
+        dom_mech[i,j,4] = computed_sr[max_mech]
 
         if t%100==0:
            ii=int((t-Tmin00)/100)
@@ -150,6 +151,7 @@ for i in range(ntemp): # Loop on temperature
            dom_mech00[ii,j,1] = gs
            dom_mech00[ii,j,2] = tau_NR
            dom_mech00[ii,j,3] = max_mech
+           dom_mech00[ii,j,4] = computed_sr[max_mech]
 
     # end loop on grain size
 # end loop on temperature
@@ -196,6 +198,53 @@ plt.title("Olivine Deformation mechanism map, sr="+str(sr))
 plt.savefig('deformation_map.png',bbox_inches='tight', dpi=200)
 
 plt.show()
+plt.close()
+
+##################################################################
+# new plotting 
+##################################################################
+
+plt.clf()
+
+#all data
+x=np.log10(np.ravel(dom_mech[0:ntemp,0:nd,1]))
+y=np.log10(np.ravel(dom_mech[0:ntemp,0:nd,2]))
+colors=np.ravel(dom_mech[0:ntemp,0:nd,4])
+plt.xlim(1,4)
+plt.ylim(0,3.5)
+cmap = plt.get_cmap('summer') #, 16) 
+plt.scatter(x,y,c=colors,cmap=cmap,s=5) #,vmax=3)
+
+#lines
+#x=np.log10(np.ravel(dom_mech00[:,0:nd,1]))
+#y=np.log10(np.ravel(dom_mech00[:,0:nd,2]))
+#colors=np.ravel(dom_mech00[0:ntemp,0:nd,0])
+#cmap = plt.get_cmap('plasma', ntemp00) 
+#plt.scatter(x,y,s=3,c=colors,cmap=cmap,vmin=Tmin00-50,vmax=Tmax00+50)
+#plt.colorbar(ticks=(400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600))
+
+plt.text(1.5, 2.5, 'GBS', fontsize="15")
+plt.text(1.5, 0.7, 'DIFF', fontsize="15")
+plt.text(3, 1.8, 'DISL', fontsize="15")
+
+if TlowT>0:
+   plt.text(3.5, 3, 'LowT', fontsize="15")
+
+#for i in range(ntemp00):
+#    if np.log10(dom_mech00[i,-1,2])<3.5 and np.log10(dom_mech00[i,-1,2])>0 :
+#       plt.text(np.log10(dom_mech00[i,-1,1])-0.35,np.log10(dom_mech00[i,-1,2])+0.035,str(i*100+Tmin00)+'C')
+
+plt.xlabel('grain size (microns) - Log scale')
+plt.ylabel('Stress (Pa) - Log scale')
+plt.title("Olivine Deformation mech. map, sr="+str(sr))
+plt.colorbar() #ticks=(0.75,1.5,2.25))
+plt.savefig('deformation_map2.png',bbox_inches='tight', dpi=200)
+
+plt.show()
+
+
+
+
 
 exit()
 
