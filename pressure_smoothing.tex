@@ -38,7 +38,7 @@ c) elemental pressure and smoothed pressure for the punch experiment \cite{thfb0
 \end{center}
 
 %----------------------------------------------------------------------
-\paragraph{Scheme 1}.
+\subsection{Scheme 1}
 
 The easiest post-processing step that can be used (especially when a regular grid is used) 
 is explained in Thieulot \etal (2008) \cite{thfb08}: "The element-to-node interpolation is performed by
@@ -107,7 +107,7 @@ q=q/count
 
 
 %----------------------------------------------------------------------
-\paragraph{Schemes 2,3}.
+\subsection{Schemes 2,3}
 
 {\sl Schemes 2,3} are very similar and are presented in Sani \etal (1981) \cite{sagl81a,sagl81b}.
 Scheme 2 uses the areas of the surrounding elements as weights for the arithmetic averaging
@@ -183,7 +183,9 @@ Schemes 1,2,3 are identical if all elements are rectangles of identical dimensio
 
 
 %----------------------------------------------------------------------
-\paragraph{Scheme 4} This scheme has been designed by me. 
+\subsection{Scheme 4} 
+
+This scheme has been designed by me. 
 It resembles the last three ones, but the weighing is in this case different.
 
 Let us consider a 1D problem:
@@ -250,7 +252,9 @@ Likewise the pressure $p_M$ at the corner node is obtained through the pressures
 
 
 %------------------------------------------------------------------------------
-\paragraph{Scheme 5 - Least squares} This scheme is presented (among other places) in Lee \etal (1979)
+\subsection{Scheme 5 - Least squares} 
+
+This scheme is presented (among other places) in Lee \etal (1979)
 \cite{legs79}. 
 Let us start from the patch of 4 $Q_1$ elements counting 9 nodes: 
 
@@ -390,20 +394,21 @@ elemental systems:
 
 
 %------------------------------------------------------------------------------
-\paragraph{Scheme 6 - Consistent pressure recovery}
+\subsection{Scheme 6 - Consistent pressure recovery \label{ss:cpr}}
 
-This is the method presented in Zienkiewicz \& Nakazawa (1982) \cite{zina82}. In the second part 
-of this publication the authors wish to establish a simple and effective numerical method to calculate 
-variables eliminated by the penalisation process. 
-The method involves an additional finite element solution for the nodal pressures using 
-the same finite element basis and numerical quadrature as used for the velocity.
+This is the method presented in \textcite{zina82} (1982). In the second part 
+of this publication the authors wish to establish a simple and effective 
+numerical method to calculate variables eliminated by the penalisation process. 
+The method involves an additional finite element solution for the nodal 
+pressures using the same finite element basis and numerical quadrature 
+as used for the velocity.
 
 Let us start with\footnote{I here voluntarily use $q$ instead of $p$}:
 \[
 q = -\lambda \vec\nabla\cdot \vec\upnu
 \]
-We are going to treat this equation like any other PDE in the context of the FE method, i.e. 
-we are going to establish its weak form. 
+We are going to treat this equation like any other PDE in the context 
+of the FE method, i.e. we are going to establish its weak form. 
 We assume that the pressure is given inside an element by
 \[
 q(x,y) = \sum_{i=1}^{m_\upnu} \bN_i(x,y) q_i = \vec{\bN} \cdot \vec{q}
@@ -575,26 +580,27 @@ This  scheme is identical to the least square scheme!
 
 
 %--------------------------------------------------------------
-\paragraph{Scheme 7}
+\subsection{Scheme 7}
 
 Same as scheme 6, but with lumped mass matrix.  
 
 
 %--------------------------------------------------------------
-\paragraph{Scheme 8 - bilinear interpolation} Let us assume that the centers of the 
+\subsection{Scheme 8 - bilinear interpolation} 
+
+Let us assume that the centers of the 
 four elements make a $Q_1$ quadrilateral element, as shown on this figure:
 
 \input{tikz/tikz_pscheme8}
 
-
-
 The values at the corners are $p_1$,
-$p_2$, $p_3$ and $p_4$. Assuming that the pressure inside this element can be represented 
-by a bilinear field, we have 
+$p_2$, $p_3$ and $p_4$. Assuming that the pressure inside this element 
+can be represented by a bilinear field, we have 
 \[
 p(x,y)= a+ bx +cy +dxy
 \]
-where the coefficients will be determined by ensuring that $p(x_i,y_i)=p_i$ for $i=1,2,3,4$, or:
+where the coefficients will be determined by ensuring that 
+$p(x_i,y_i)=p_i$ for $i=1,2,3,4$, or:
 \begin{eqnarray}
 a+bx_1+cy_1+dx_1y_1 &=& p_1 \\
 a+bx_2+cy_2+dx_2y_2 &=& p_2 \\
@@ -624,10 +630,12 @@ p_1\\p_2\\p_3\\p_4
 \right)
 \]
 
-There remains an issue with nodes which are on the boundaries of the domain. These are of course not 
-'surrounded' by four pressure values so the above algorithm does not apply directly. However, looking 
-at the above figure, and assuming that node 1 is a lower left corner of a 2D domain, we can use the 
-bilinear interpolation based on elements 1,2,3,4 to extrapolate a nodal pressure value at node 1. 
+There remains an issue with nodes which are on the boundaries of the 
+domain. These are of course not 'surrounded' by four pressure values 
+so the above algorithm does not apply directly. However, looking 
+at the above figure, and assuming that node 1 is a lower left corner 
+of a 2D domain, we can use the bilinear interpolation based on elements 
+1,2,3,4 to extrapolate a nodal pressure value at node 1. 
 The same would apply for nodes 2 and 4 for example. 
 
 \begin{remark}

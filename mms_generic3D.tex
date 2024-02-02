@@ -180,7 +180,7 @@ w(x,y,z) &=& -2(1-2x)(1-2y)z(1-z)
 
 Finally we postulate 
 \[
-p(x,y,z) = (2x-1)(2y-1)(2z-1)
+p(x,y,z) = -f'g'h'=(2x-1)(2y-1)(2z-1)
 \]
 with $\int_\Omega p(x,y,z) dx dy dz =0$, so
 \[ 
@@ -189,6 +189,14 @@ with $\int_\Omega p(x,y,z) dx dy dz =0$, so
 \partial_x p \\ \\
 \partial_y p \\ \\
 \partial_z p 
+\end{array}
+\right) 
+=
+\left(
+\begin{array}{c}
+-f''g'h' \\\\
+-f'g''h' \\\\
+-f'g'h'' 
 \end{array}
 \right) 
 =
@@ -206,11 +214,27 @@ Then we find that
 =
 \left(
 \begin{array}{c}
-2(2y-1)(2z-1) -(-2)(1-2y)(1-2z) \\
-2(2x-1)(2z-1) -(1-2x)(-2)(1-2z) \\
-2(2x-1)(2y-1) +2(1-2x)(1-2y)(-2)
+-f''g'h' \\\\
+-f'g''h' \\\\
+-f'g'h''
 \end{array}
 \right)
+-
+\left(
+\begin{array}{c}
+f''g' h'     \\ \\
+f'g'' h'    \\ \\
+-2f'g'h''
+\end{array}
+\right) 
+=
+\left(
+\begin{array}{c}
+-2f''g' h'     \\ \\
+-2f'g'' h'    \\ \\
+f'g'h''
+\end{array}
+\right) 
 =
 \left(
 \begin{array}{c}
@@ -233,9 +257,9 @@ and then
 \upnu_{vrms} =\sqrt{\frac{6}{270}} \simeq 0.1490712
 \]
 
-This benchmark is implemented in \stone~\ref{f10} ($Q_1\times P_0$), 
-\stone~\ref{f75} (MINI-1 bubble) 
-and \stone~\ref{f82} (MINI-2 bubbles).  
+This benchmark is implemented in \stone~{10} ($Q_1\times P_0$), 
+\stone~{75} (MINI-1 bubble) 
+and \stone~{82} (MINI-2 bubbles).  
 The code is available in {\tt /mms/mms3D.py}.
 
 \begin{center}
@@ -244,6 +268,7 @@ The code is available in {\tt /mms/mms3D.py}.
 {\captionfont Error convergence and pressure statistics}
 \end{center}
 
+\newpage
 %..................................
 \paragraph{Second application}
 
@@ -283,14 +308,114 @@ w(x,y,z)
 \end{eqnarray}
 We choose
 \[
-p(x,y,z)=f'g'h' = 2x(2x^2-3x+1)  2y(2y^2-3y+1)  2z(2z^2-3z+1) 
+p(x,y,z)=-f'g'h' = - \; 2x(2x^2-3x+1) \;  2y(2y^2-3y+1) \;  2z(2z^2-3z+1) 
+\]
+The rhs vector is then
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+b_x \\ \\ b_y \\ \\ b_z
+\end{array}
+\right) 
+&=&
+\left(
+\begin{array}{c}
+\partial_x p \\ \\
+\partial_y p \\ \\
+\partial_z p 
+\end{array}
+\right) 
+-
+\left(
+\begin{array}{c}
+f''g' h'  + fg''' h'  +  fg'h'''   \\ \\
+f''' g h' + f'g'' h'  +  f'gh'''  \\ \\
+-2f''' g' h     -2f' g''' h -2f'g'h''
+\end{array}
+\right) 
+\nn\\
+&=& 
+-
+\left(
+\begin{array}{c}
+f''g'h' \\ \\
+f'g''h' \\ \\
+f'g'h''
+\end{array}
+\right) 
+-
+\left(
+\begin{array}{c}
+f''g' h'  + fg''' h'  +  fg'h'''   \\ \\
+f''' g h' + f'g'' h'  +  f'gh'''  \\ \\
+-2f''' g' h     -2f' g''' h -2f'g'h''
+\end{array}
+\right)  \nn\\
+&=& 
+-
+\left(
+\begin{array}{c}
+2f''g' h'  + fg''' h'  +  fg'h'''   \\ \\
+f''' g h' + 2f'g'' h'  +  f'gh'''  \\ \\
+-2f''' g' h     -2f' g''' h - f'g'h''
+\end{array}
+\right) 
+\end{eqnarray}
+
+Let us look at the root mean square velocity:
+\begin{eqnarray}
+\upnu_{rms}^2 
+&=& \iiint   (u^2+v^2+w^2) dxdydz \nn\\
+&=& \iiint   u^2 dxdydz
++ \iiint   v^2 dxdydz
++ \iiint   w^2 dxdydz \nn\\
+&=& \iiint  (f(x)g'(y)h'(z))^2 dxdydz
++ \iiint   (f'(x)g(y)h'(z))^2 dxdydz
++ \iiint   (-2f'(x)g'(y)h(z))^2 dxdydz \nn\\
+&=& 
+\left( \int_0^1 f(x)^2 dx \right)
+\left( \int_0^1 g'(y)^2 dy \right)
+\left( \int_0^1 h'(z)^2 dz \right) \nn\\
+&+&
+\left( \int_0^1 f'(x)^2 dx \right)
+\left( \int_0^1 g(y)^2 dy \right)
+\left( \int_0^1 h'(z)^2 dz \right) \nn\\
+&+&4
+\left( \int_0^1 f'(x)^2 dx \right)
+\left( \int_0^1 g'(y)^2 dy \right)
+\left( \int_0^1 h(z)^2 dz \right) \nn\\
+\end{eqnarray}
+
+Since 
+\[
+\int_0^1 f(x)^2 dx  =  \int_0^1 g(y)^2 dy
+= \int_0^1 h(z)^2 dz
+\]
+and
+\[
+\int_0^1 g'(y)^2 dy = \int_0^1 f'(x)^2 dx  =  \int_0^1 h'(z)^2 dz
+\]
+we only have 2 integrals to compute and using WolframAlpha we find:
+\begin{eqnarray}
+\left( \int_0^1 f(x)^2 dx \right) &=& \frac{1}{630}\nn\\
+\left( \int_0^1 f'(x)^2 dx \right) &=& \frac{2}{105} \nn
+\end{eqnarray}
+so that 
+\begin{eqnarray}
+\upnu_{rms}^2 
+&=&
+\frac{1}{630} \frac{2}{105}\frac{2}{105}
++\frac{2}{105} \frac{1}{630} \frac{2}{105}
++ 4 \frac{1}{630} \frac{2}{105} \frac{1}{630} \nn\\
+&=& 6 \frac{1}{630} \frac{2}{105}\frac{2}{105} \nn\\
+&=&  \frac{1}{105} \frac{2}{105}\frac{2}{105} 
+\end{eqnarray}
+In the end:
+\[
+\upnu_{rms} \simeq 0.00185885728
 \]
 
-
-
-
-
-
+This benchmark is carried out in Stone~10.
 
 
 

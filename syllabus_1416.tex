@@ -1,8 +1,10 @@
-Note: 
+
+\begin{remark}
 This handout was written by W. Spakman and 
 is for a large part based on a syllabus by Dr. A.P. van den Berg and Prof. N.J. Vlaar
 and on material from the book “Mantle convection in the Earth and Planets” by Schubert, Turcotte,
 and Olson, Cambridge University Press, 2002.
+\end{remark}
 
 
 Additional resources:
@@ -16,12 +18,13 @@ Additional resources:
 In what follows (and in the entire fieldstone document) vectors are denoted by an arrow, e.g. $\vec{v}$,
 while tensors are denoted by a bold font, e.g. ${\bm \sigma}$.
 It is also my experience that each book/syllabus uses its own set of notations. In particular, 
-and rather to my own confusion, some books coin the full stress tensor ${\bm \tau}$ and not 
-${\bm \sigma}$, and coin the deviatoric stress ${\bm \sigma}$. Some sources
+and rather to my own confusion, some books call the full stress tensor ${\bm \tau}$ and not 
+${\bm \sigma}$, and call the deviatoric stress ${\bm \sigma}$. Some sources
 make no difference between the viscous stress tensor and the deviatoric stress tensor.
 Also it happens (especially in the mathematical literature) that the strain 
 rate tensor is called ${\bm D}$ instead of ${\bm \varepsilon}$ or $\dot{\bm \varepsilon}$, 
 and that the stress tensor is called ${\bm T}$. 
+All in all be careful when reading additional sources.
 
 
 
@@ -908,7 +911,7 @@ linearly viscous fluid:
 \label{eq:md19}
 \end{equation}
 where $\eta$ is the dynamic viscosity [\si{\pascal\second}] and $\lambda$ is a viscosity
-parameter without a specific name.
+parameter without a specific name\footnote{It is often called the 'second viscosity coefficient'.}.
 
 The mechanical, or rheological, stress $\uppi_{ij}$ quantifies the internal friction of the flow. By
 computing the trace of the rheological stress we find, using \eqref{eq:md15},
@@ -917,7 +920,17 @@ p - \overline{p} = \left(\lambda + \frac23 \eta \right) \dot{\varepsilon}_{kk}
 = \xi \vec\nabla\cdot\vec\upnu
 \label{eq:md20}
 \end{equation}
-where $\xi=\lambda + \frac23 \eta$ is the {\bf bulk-viscosity}.
+where 
+\[
+\xi=\lambda + \frac23 \eta
+\]
+is the {\bf bulk-viscosity}.
+\textcite{bure15} (2015) states: ``We may then interpret $\xi \vec\nabla\cdot\vec\upnu$ 
+as the difference between the thermodynamic pressure and the opposite of the average of 
+the normal stresses acting on any three orthogonal
+planes passing through a point in the fluid, which is usually referred to as the mechanical pressure.
+This difference is generally considered to be due to the time lag with which the thermodynamic 
+equilibrium condition is reached in a motion that implies an isotropic dilatation of a fluid element.''
 
 Relation \eqref{eq:md20} demonstrates clearly that for a Newtonian fluid the difference between
 thermodynamic pressure and average pressure is flow induced, i.e. by either local
@@ -930,12 +943,22 @@ leads to $\sigma_{ij}'=\tau_{ij}=\uppi_{ij}$.
 \end{remark}
 
 \begin{remark}
-In the case that the bulk viscosity $\xi$ is assumed 0 ({\bf Stokes condition}, or Stokes hypothesis), we have $p = \overline{p}$ 
+In the case that the bulk viscosity $\xi$ is assumed 0 ({\bf Stokes condition} - or Stokes hypothesis), 
+we have $p = \overline{p}$ 
 independent of (in)compressibility. Evidently: $p - \overline{p} \leftrightarrow \xi=0$
 or $\vec\nabla \cdot \vec\upnu= 0$.
-In geodynamics the Stokes hypothesis is assumed so that in practice we never distinguish $\overline{p}$ from $p$
-and in this case $\uppi=\tau$ so that the equations are formulated as a function of $p$ and $\tau$ (also in the 
+In geodynamics the Stokes hypothesis is assumed so that in practice we never 
+distinguish $\overline{p}$ from $p$
+and in this case $\uppi=\tau$ so that the equations are formulated as a function 
+of $p$ and $\tau$ (also in the 
 compressible case!).
+\textcite{bure15} (2015) states: ``It implies that the thermodynamic pressure
+coincides with the mechanical pressure and characterizes the isotropic part of 
+the complete stress tensor; furthermore, the viscous stress tensor becomes a purely 
+deviatoric tensor and corresponds to the deviatoric part of ${\bm \sigma}$. 
+In other words, assuming the validity of this hypothesis is equivalent to state that isotropic dilatations
+of an elementary volume of fluid do not produce viscous stresses.''
+
 Note that in some books/publications one can find a different formulation of the Stokes hypothesis.
 For example in \textcite{caod86} (1986) we find that ``Stokes' hypothesis is that ${\bm\uppi}$ is a function
 only of the deformation rate tensor $\dot{\bm\varepsilon}$''.
@@ -986,6 +1009,10 @@ an incompressible fluid we have
 \label{eq:md22}
 \end{equation}
 
+From Eq.~\eqref{eq:md21} we can write
+\[
+{\bm\sigma} = (-p + \xi \vec\nabla\cdot\upnu){\bm 1} + 2 \eta \dot{\bm \varepsilon}'
+\]
 
 %%%ex15
 \vspace{0.5cm}
