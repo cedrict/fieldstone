@@ -5,6 +5,8 @@ import scipy.sparse as sps
 import time as time
 from scipy.sparse import csr_matrix, lil_matrix
 from scipy.sparse.linalg import spsolve
+import matplotlib.pyplot as plt
+
 
 #------------------------------------------------------------------------------
 
@@ -145,6 +147,14 @@ def bx(x,y,z):
        val=0
     if experiment==5:
        val=4*(2*y-1)*(2*z-1)
+    if experiment==6:
+       fpp=2*(6*x**2-6*x+1)
+       gp=2*y*(2*y**2-3*y+1)
+       gppp=24*y-12
+       hppp=24*z-12
+       hp=2*z*(2*z**2-3*z+1)
+       f=x**2*(1-x)**2
+       val=-(2*fpp*gp*hp+f*gppp*hp+f*gp*hppp)
     return val
 
 def by(x,y,z):
@@ -154,11 +164,19 @@ def by(x,y,z):
        val=0
     if experiment==5:
        val=4*(2*x-1)*(2*z-1)
+    if experiment==6:
+       fp=2*x*(2*x**2-3*x+1)
+       fppp=24*x-12
+       g=y**2*(1-y)**2 
+       gpp=2*(6*y**2-6*y+1) 
+       hp=2*z*(2*z**2-3*z+1)
+       hppp=24*z-12
+       val=-(fppp*g*hp+2*fp*gpp*hp+fp*g*hppp)
     return val
 
 def bz(x,y,z):
     if experiment==0:
-       val=1
+       val=-1
     if experiment==1 or experiment==2 or experiment==3 or experiment==4:
        if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123456789**2:
           val=1.01*gz +1
@@ -166,6 +184,14 @@ def bz(x,y,z):
           val=1.*gz +1
     if experiment==5:
        val=-2*(2*x-1)*(2*y-1) 
+    if experiment==6:
+       fp=2*x*(2*x**2-3*x+1)
+       fppp=24*x-12
+       gp=2*y*(2*y**2-3*y+1)
+       gppp=24*y-12
+       h=z**2*(1-z)**2 
+       hpp=2*(6*z**2-6*z+1)
+       val=2*fppp*gp*h+2*fp*gppp*h+fp*gp*hpp
     return val
 
 #------------------------------------------------------------------------------
@@ -180,29 +206,53 @@ def viscosity(x,y,z):
           val=1.
     if experiment==5:
        val=1.
+    if experiment==6:
+       val=1.
     return val
 
 #------------------------------------------------------------------------------
 
 def uth(x,y,z):
-    val=x*(1-x)*(1-2*y)*(1-2*z)
+    if experiment==0:
+       val=0
+    if experiment==5:
+       val=x*(1-x)*(1-2*y)*(1-2*z)
+    if experiment==6:
+       val=x**2*(1-x)**2* 2*y*(2*y**2-3*y+1)* 2*z*(2*z**2-3*z+1)
     return val
 
 def vth(x,y,z):
-    val=(1-2*x)*y*(1-y)*(1-2*z)
+    if experiment==0:
+       val=0
+    if experiment==5:
+       val=(1-2*x)*y*(1-y)*(1-2*z)
+    if experiment==6:
+       val=2*x*(2*x**2-3*x+1)* y**2*(1-y)**2 *2*z*(2*z**2-3*z+1)
     return val
 
 def wth(x,y,z):
-    val=-2*(1-2*x)*(1-2*y)*z*(1-z)
+    if experiment==0:
+       val=0
+    if experiment==5:
+       val=-2*(1-2*x)*(1-2*y)*z*(1-z)
+    if experiment==6:
+       val=-2* 2*x*(2*x**2-3*x+1)* 2*y*(2*y**2-3*y+1)* z**2*(1-z)**2
     return val
 
 def pth(x,y,z):
-    val=(2*x-1)*(2*y-1)*(2*z-1)
+    if experiment==0:
+       val=0.5-z
+    if experiment==5:
+       val=(2*x-1)*(2*y-1)*(2*z-1)
+    if experiment==6:
+       val=-2*x*(2*x**2-3*x+1)\
+           *2*y*(2*y**2-3*y+1)\
+           *2*z*(2*z**2-3*z+1)
     return val
 
 #------------------------------------------------------------------------------
 
-experiment=5
+experiment=6
 
 print("-----------------------------")
 print("--------- stone 10 ----------")
@@ -211,26 +261,22 @@ print("-----------------------------")
 m=27    # number of velocity nodes making up an element
 ndofV=3  # number of velocity degrees of freedom per node
 
-if int(len(sys.argv) == 3):
+if int(len(sys.argv) == 4):
    nelx = int(sys.argv[1])
    visu = int(sys.argv[2])
+   nq_per_dimP= int(sys.argv[3])
 else:
-   nelx = 20
+   nelx = 10
    visu = 1
+   nq_per_dimP=2
 
-if experiment==0:
-   quarter=False
-if experiment==1:
-   quarter=False
-if experiment==2:
-   quarter=False
-if experiment==3:
-   quarter=False
-if experiment==4:
-   quarter=True
-if experiment==5:
-   quarter=False
-
+if experiment==0: quarter=False
+if experiment==1: quarter=False
+if experiment==2: quarter=False
+if experiment==3: quarter=False
+if experiment==4: quarter=True
+if experiment==5: quarter=False
+if experiment==6: quarter=False
 
 if quarter:
    nely=nelx
@@ -265,12 +311,32 @@ eps=1.e-10
 
 gz=-1.  # gravity vector, z component
 
-qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
-qweights=[5./9.,8./9.,5./9.]
-
 hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
+
+#################################################################
+
+qcoords3=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
+qweights3=[5./9.,8./9.,5./9.]
+
+qcoords2=[-np.sqrt(1./3.),np.sqrt(1./3.)]
+qweights2=[1.,1.]
+
+qcoords1=[0.]
+qweights1=[2.]
+
+nq_per_dimV=3
+
+if nq_per_dimP==1:
+   qcoordsP=qcoords1
+   qweightsP=qweights1
+if nq_per_dimP==2:
+   qcoordsP=qcoords2
+   qweightsP=qweights2
+if nq_per_dimP==3:
+   qcoordsP=qcoords3
+   qweightsP=qweights3
 
 #################################################################
 
@@ -281,7 +347,9 @@ print('nelx=',nelx)
 print('nely=',nely)
 print('nelz=',nelz)
 print('nel=',nel)
+print('NV=',NV)
 print('Nfem=',Nfem)
+print('nq_per_dimP=',nq_per_dimP)
 print("-----------------------------")
 
 #################################################################
@@ -410,7 +478,7 @@ if experiment==0 or experiment==1 or experiment==2 or experiment==3 or experimen
              bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]= 0.
       #end for
 
-if experiment==5:
+if experiment==5 or experiment==6:
       for i in range(0,NV):
           if x[i]<eps:
              bc_fix[i*ndofV+0]=True ; bc_val[i*ndofV+0]= uth(x[i],y[i],z[i])
@@ -465,6 +533,7 @@ u     = np.zeros(NV,dtype=np.float64)            # x-component velocity
 v     = np.zeros(NV,dtype=np.float64)            # y-component velocity
 w     = np.zeros(NV,dtype=np.float64)            # z-component velocity
 jcb   = np.zeros((3,3),dtype=np.float64)
+jcbi  = np.zeros((3,3),dtype=np.float64)
 k_mat = np.zeros((6,6),dtype=np.float64) 
 c_mat = np.zeros((6,6),dtype=np.float64) 
 
@@ -475,6 +544,11 @@ k_mat[2,0]=1. ; k_mat[2,1]=1. ; k_mat[2,2]=1.
 c_mat[0,0]=2. ; c_mat[1,1]=2. ; c_mat[2,2]=2.
 c_mat[3,3]=1. ; c_mat[4,4]=1. ; c_mat[5,5]=1.
 
+jcob=hx*hy*hz/8 
+jcbi[0,0]=2/hx
+jcbi[1,1]=2/hy
+jcbi[2,2]=2/hz
+
 for iel in range(0, nel):
 
     # set 2 arrays to 0 every loop
@@ -482,15 +556,15 @@ for iel in range(0, nel):
     a_el=np.zeros((m*ndofV,m*ndofV),dtype=np.float64)
 
     # integrate viscous term at 3*3*3 quadrature points
-    for iq in [0,1,2]:
-        for jq in [0,1,2]:
-            for kq in [0,1,2]:
+    for iq in range(0,nq_per_dimV):
+        for jq in range(0,nq_per_dimV):
+            for kq in range(0,nq_per_dimV):
 
                 # position & weight of quad. point
-                rq=qcoords[iq]
-                sq=qcoords[jq]
-                tq=qcoords[kq]
-                weightq=qweights[iq]*qweights[jq]*qweights[kq]
+                rq=qcoords3[iq]
+                sq=qcoords3[jq]
+                tq=qcoords3[kq]
+                weightq=qweights3[iq]*qweights3[jq]*qweights3[kq]
 
                 # calculate shape functions
                 N[0:m]=NNN(rq,sq,tq)
@@ -499,21 +573,19 @@ for iel in range(0, nel):
                 dNdt[0:m]=dNNNdt(rq,sq,tq)
 
                 # calculate jacobian matrix
-                jcb[0,0]=dNdr.dot(x[icon[0:m,iel]])
-                jcb[0,1]=dNdr.dot(y[icon[0:m,iel]])
-                jcb[0,2]=dNdr.dot(z[icon[0:m,iel]])
-                jcb[1,0]=dNds.dot(x[icon[0:m,iel]])
-                jcb[1,1]=dNds.dot(y[icon[0:m,iel]])
-                jcb[1,2]=dNds.dot(z[icon[0:m,iel]])
-                jcb[2,0]=dNdt.dot(x[icon[0:m,iel]])
-                jcb[2,1]=dNdt.dot(y[icon[0:m,iel]])
-                jcb[2,2]=dNdt.dot(z[icon[0:m,iel]])
-
+                #jcb[0,0]=dNdr.dot(x[icon[0:m,iel]])
+                #jcb[0,1]=dNdr.dot(y[icon[0:m,iel]])
+                #jcb[0,2]=dNdr.dot(z[icon[0:m,iel]])
+                #jcb[1,0]=dNds.dot(x[icon[0:m,iel]])
+                #jcb[1,1]=dNds.dot(y[icon[0:m,iel]])
+                #jcb[1,2]=dNds.dot(z[icon[0:m,iel]])
+                #jcb[2,0]=dNdt.dot(x[icon[0:m,iel]])
+                #jcb[2,1]=dNdt.dot(y[icon[0:m,iel]])
+                #jcb[2,2]=dNdt.dot(z[icon[0:m,iel]])
                 # calculate the determinant of the jacobian
-                jcob = np.linalg.det(jcb)
-
+                #jcob = np.linalg.det(jcb)
                 # calculate inverse of the jacobian matrix
-                jcbi = np.linalg.inv(jcb)
+                #jcbi = np.linalg.inv(jcb)
 
                 # compute coordinates of quadrature points
                 xq=N.dot(x[icon[0:m,iel]])
@@ -527,7 +599,7 @@ for iel in range(0, nel):
                     dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
                 #end for 
 
-                # construct 3x8 b_mat matrix
+                # construct b_mat matrix
                 for i in range(0, m):
                     b_mat[0:6, 3*i:3*i+3] = [[dNdx[i],0.     ,0.     ],
                                              [0.     ,dNdy[i],0.     ],
@@ -551,50 +623,62 @@ for iel in range(0, nel):
         #end for jq  
     #end for iq  
 
-    # integrate penalty term at 1 point
-    rq=0.
-    sq=0.
-    tq=0.
-    weightq=2.*2.*2.
+    for iq in range(0,nq_per_dimP):
+        for jq in range(0,nq_per_dimP):
+            for kq in range(0,nq_per_dimP):
 
-    # calculate shape functions
-    N[0:m]=NNN(rq,sq,tq)
-    dNdr[0:m]=dNNNdr(rq,sq,tq)
-    dNds[0:m]=dNNNds(rq,sq,tq)
-    dNdt[0:m]=dNNNdt(rq,sq,tq)
+                rq=qcoordsP[iq]
+                sq=qcoordsP[jq]
+                tq=qcoordsP[kq]
+                weightq=qweightsP[iq]*qweightsP[jq]*qweightsP[kq]
 
-    # calculate jacobian matrix
-    jcb[0,0]=dNdr.dot(x[icon[0:m,iel]])
-    jcb[0,1]=dNdr.dot(y[icon[0:m,iel]])
-    jcb[0,2]=dNdr.dot(z[icon[0:m,iel]])
-    jcb[1,0]=dNds.dot(x[icon[0:m,iel]])
-    jcb[1,1]=dNds.dot(y[icon[0:m,iel]])
-    jcb[1,2]=dNds.dot(z[icon[0:m,iel]])
-    jcb[2,0]=dNdt.dot(x[icon[0:m,iel]])
-    jcb[2,1]=dNdt.dot(y[icon[0:m,iel]])
-    jcb[2,2]=dNdt.dot(z[icon[0:m,iel]])
-    jcob = np.linalg.det(jcb)
-    jcbi = np.linalg.inv(jcb)
+                # calculate shape functions
+                N[0:m]=NNN(rq,sq,tq)
+                dNdr[0:m]=dNNNdr(rq,sq,tq)
+                dNds[0:m]=dNNNds(rq,sq,tq)
+                dNdt[0:m]=dNNNdt(rq,sq,tq)
 
-    # compute dNdx and dNdy
-    for k in range(0,m):
-        dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
-        dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]+jcbi[1,2]*dNdt[k]
-        dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
-    #end for
+                # calculate jacobian matrix
+                #jcb[0,0]=dNdr.dot(x[icon[0:m,iel]])
+                #jcb[0,1]=dNdr.dot(y[icon[0:m,iel]])
+                #jcb[0,2]=dNdr.dot(z[icon[0:m,iel]])
+                #jcb[1,0]=dNds.dot(x[icon[0:m,iel]])
+                #jcb[1,1]=dNds.dot(y[icon[0:m,iel]])
+                #jcb[1,2]=dNds.dot(z[icon[0:m,iel]])
+                #jcb[2,0]=dNdt.dot(x[icon[0:m,iel]])
+                #jcb[2,1]=dNdt.dot(y[icon[0:m,iel]])
+                #jcb[2,2]=dNdt.dot(z[icon[0:m,iel]])
+                #jcob = np.linalg.det(jcb)
+                #jcbi = np.linalg.inv(jcb)
 
-    # compute gradient matrix
-    for i in range(0,m):
-        b_mat[0:6, 3*i:3*i+3] = [[dNdx[i],0.     ,0.     ],
-                                 [0.     ,dNdy[i],0.     ],
-                                 [0.     ,0.     ,dNdz[i]],
-                                 [dNdy[i],dNdx[i],0.     ],
-                                 [dNdz[i],0.     ,dNdx[i]],
-                                 [0.     ,dNdz[i],dNdy[i]]]
-    #end for
+                # compute coordinates of quadrature points
+                xq=N.dot(x[icon[0:m,iel]])
+                yq=N.dot(y[icon[0:m,iel]])
+                zq=N.dot(z[icon[0:m,iel]])
 
-    # compute elemental matrix
-    a_el += b_mat.T.dot(k_mat.dot(b_mat))*penalty*weightq*jcob
+                # compute dNdx, dNdy, dNdz
+                for k in range(0, m):
+                    dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
+                    dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]+jcbi[1,2]*dNdt[k]
+                    dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
+                #end for 
+
+                # construct b_mat matrix
+                for i in range(0, m):
+                    b_mat[0:6, 3*i:3*i+3] = [[dNdx[i],0.     ,0.     ],
+                                             [0.     ,dNdy[i],0.     ],
+                                             [0.     ,0.     ,dNdz[i]],
+                                             [dNdy[i],dNdx[i],0.     ],
+                                             [dNdz[i],0.     ,dNdx[i]],
+                                             [0.     ,dNdz[i],dNdy[i]]]
+                #end for 
+
+                # compute elemental matrix
+                a_el += b_mat.T.dot(k_mat.dot(b_mat))*penalty*weightq*jcob
+
+            #end for kq 
+        #end for jq  
+    #end for iq  
 
     # apply boundary conditions
     for k1 in range(0,m):
@@ -666,6 +750,131 @@ print("transfer solution: %.3f s" % (time.time() - start))
 #####################################################################
 start = time.time()
 
+M_mat = lil_matrix((NV,NV),dtype=np.float64) # matrix of Ax=b
+rhs   = np.zeros(NV,dtype=np.float64)        # right hand side of Ax=b
+
+for iel in range(0,nel):
+
+    M_el=np.zeros((m,m),dtype=np.float64)
+    b_el=np.zeros(m,dtype=np.float64)
+
+    # integrate mass matrix at 3x3x3 quadrature points
+    for iq in range(0,nq_per_dimV):
+        for jq in range(0,nq_per_dimV):
+            for kq in range(0,nq_per_dimV):
+
+                # position & weight of quad. point
+                rq=qcoords3[iq]
+                sq=qcoords3[jq]
+                tq=qcoords3[kq]
+                weightq=qweights3[iq]*qweights3[jq]*qweights3[kq]
+
+                # calculate shape functions
+                N[0:m]=NNN(rq,sq,tq)
+                dNdr[0:m]=dNNNdr(rq,sq,tq)
+                dNds[0:m]=dNNNds(rq,sq,tq)
+                dNdt[0:m]=dNNNdt(rq,sq,tq)
+
+                # calculate jacobian matrix
+                #jcb[0,0]=dNdr.dot(x[icon[0:m,iel]])
+                #jcb[0,1]=dNdr.dot(y[icon[0:m,iel]])
+                #jcb[0,2]=dNdr.dot(z[icon[0:m,iel]])
+                #jcb[1,0]=dNds.dot(x[icon[0:m,iel]])
+                #jcb[1,1]=dNds.dot(y[icon[0:m,iel]])
+                #jcb[1,2]=dNds.dot(z[icon[0:m,iel]])
+                #jcb[2,0]=dNdt.dot(x[icon[0:m,iel]])
+                #jcb[2,1]=dNdt.dot(y[icon[0:m,iel]])
+                #jcb[2,2]=dNdt.dot(z[icon[0:m,iel]])
+                #jcob = np.linalg.det(jcb)
+                #jcbi = np.linalg.inv(jcb)
+ 
+                for k1 in range(0,m):
+                    for k2 in range(0,m):
+                        M_el[k1,k2]+=N[k1]*N[k2]*weightq*jcob
+
+            #end for kq 
+        #end for jq  
+    #end for iq  
+
+    #----------------------------------
+    for iq in range(0,nq_per_dimP):
+        for jq in range(0,nq_per_dimP):
+            for kq in range(0,nq_per_dimP):
+
+                rq=qcoordsP[iq]
+                sq=qcoordsP[jq]
+                tq=qcoordsP[kq]
+                weightq=qweightsP[iq]*qweightsP[jq]*qweightsP[kq]
+
+                # calculate shape functions
+                N[0:m]=NNN(rq,sq,tq)
+                dNdr[0:m]=dNNNdr(rq,sq,tq)
+                dNds[0:m]=dNNNds(rq,sq,tq)
+                dNdt[0:m]=dNNNdt(rq,sq,tq)
+
+                # calculate jacobian matrix
+                #jcb[0,0]=dNdr.dot(x[icon[0:m,iel]])
+                #jcb[0,1]=dNdr.dot(y[icon[0:m,iel]])
+                #jcb[0,2]=dNdr.dot(z[icon[0:m,iel]])
+                #jcb[1,0]=dNds.dot(x[icon[0:m,iel]])
+                #jcb[1,1]=dNds.dot(y[icon[0:m,iel]])
+                #jcb[1,2]=dNds.dot(z[icon[0:m,iel]])
+                #jcb[2,0]=dNdt.dot(x[icon[0:m,iel]])
+                #jcb[2,1]=dNdt.dot(y[icon[0:m,iel]])
+                #jcb[2,2]=dNdt.dot(z[icon[0:m,iel]])
+                #jcob = np.linalg.det(jcb)
+                #jcbi = np.linalg.inv(jcb)
+
+                # compute dNdx, dNdy, dNdz
+                for k in range(0, m):
+                    dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
+                    dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]+jcbi[1,2]*dNdt[k]
+                    dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
+                #end for 
+
+                dudxq=np.sum(dNdx*u[icon[:,iel]]) 
+                dvdyq=np.sum(dNdy*v[icon[:,iel]]) 
+                dwdzq=np.sum(dNdz*w[icon[:,iel]]) 
+
+                # compute elemental rhs vector
+                for i in range(0, m):
+                    b_el[i]-=N[i]*jcob*weightq*(dudxq+dvdyq+dwdzq)*penalty
+                #end for 
+
+            #end for kq 
+        #end for jq  
+    #end for iq  
+
+    # assemble matrix a_mat and right hand side rhs
+    for k1 in range(0,m):
+        m1 =icon[k1,iel]
+        for k2 in range(0,m):
+            m2 =icon[k2,iel]
+            M_mat[m1,m2]+=M_el[k1,k2]
+        #end for
+        rhs[m1]+=b_el[k1]
+    #end for
+
+#end for iel
+
+M_mat=csr_matrix(M_mat)
+
+#plt.spy(M_mat, markersize=0.01)
+#plt.savefig('M.pdf', bbox_inches='tight')
+
+q = sps.linalg.spsolve(M_mat,rhs)
+
+np.savetxt('pressure.ascii',np.array([x,y,z,q]).T,header='# x,y,z,q')
+
+print("     -> q (m,M) %.5e %.5e " %(np.min(q),np.max(q)))
+
+print("compute q: %.3f s" % (time.time() - start))
+
+#####################################################################
+# retrieve pressure
+#####################################################################
+start = time.time()
+
 xc = np.zeros(nel,dtype=np.float64)  
 yc = np.zeros(nel,dtype=np.float64)  
 zc = np.zeros(nel,dtype=np.float64)  
@@ -683,6 +892,10 @@ jcb=np.zeros((3,3),dtype=np.float64)
 
 for iel in range(0,nel):
 
+    xc[iel]=x[icon[0,iel]]+hx/2
+    yc[iel]=y[icon[0,iel]]+hy/2
+    zc[iel]=z[icon[0,iel]]+hz/2
+
     rq=0.
     sq=0.
     tq=0.
@@ -693,16 +906,16 @@ for iel in range(0,nel):
     dNds[0:m]=dNNNds(rq,sq,tq)
     dNdt[0:m]=dNNNdt(rq,sq,tq)
 
-    jcb[0,0]=dNdr.dot(x[icon[0:m,iel]])
-    jcb[0,1]=dNdr.dot(y[icon[0:m,iel]])
-    jcb[0,2]=dNdr.dot(z[icon[0:m,iel]])
-    jcb[1,0]=dNds.dot(x[icon[0:m,iel]])
-    jcb[1,1]=dNds.dot(y[icon[0:m,iel]])
-    jcb[1,2]=dNds.dot(z[icon[0:m,iel]])
-    jcb[2,0]=dNdt.dot(x[icon[0:m,iel]])
-    jcb[2,1]=dNdt.dot(y[icon[0:m,iel]])
-    jcb[2,2]=dNdt.dot(z[icon[0:m,iel]])
-    jcbi=np.linalg.inv(jcb)
+    #jcb[0,0]=dNdr.dot(x[icon[0:m,iel]])
+    #jcb[0,1]=dNdr.dot(y[icon[0:m,iel]])
+    #jcb[0,2]=dNdr.dot(z[icon[0:m,iel]])
+    #jcb[1,0]=dNds.dot(x[icon[0:m,iel]])
+    #jcb[1,1]=dNds.dot(y[icon[0:m,iel]])
+    #jcb[1,2]=dNds.dot(z[icon[0:m,iel]])
+    #jcb[2,0]=dNdt.dot(x[icon[0:m,iel]])
+    #jcb[2,1]=dNdt.dot(y[icon[0:m,iel]])
+    #jcb[2,2]=dNdt.dot(z[icon[0:m,iel]])
+    #jcbi=np.linalg.inv(jcb)
 
     for k in range(0,m):
         dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
@@ -711,9 +924,6 @@ for iel in range(0,nel):
     #end for
 
     for k in range(0,m):
-        xc[iel]+=N[k]*x[icon[k,iel]]
-        yc[iel]+=N[k]*y[icon[k,iel]]
-        zc[iel]+=N[k]*z[icon[k,iel]]
         exx[iel]+=dNdx[k]*u[icon[k,iel]]
         eyy[iel]+=dNdy[k]*v[icon[k,iel]]
         ezz[iel]+=dNdz[k]*w[icon[k,iel]]
@@ -730,7 +940,7 @@ for iel in range(0,nel):
     
 #end for
 
-print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+print("     -> p   (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
 print("     -> ezz (m,M) %.4e %.4e " %(np.min(ezz),np.max(ezz)))
@@ -740,47 +950,49 @@ print("     -> eyz (m,M) %.4e %.4e " %(np.min(eyz),np.max(eyz)))
 print("     -> visc (m,M) %.4e %.4e " %(np.min(visc),np.max(visc)))
 print("     -> dens (m,M) %.4e %.4e " %(np.min(dens),np.max(dens)))
 
-np.savetxt('pressure.ascii',np.array([xc,yc,zc,p]).T,header='# xc,yc,zc,p')
-np.savetxt('strainrate.ascii',np.array([xc,yc,zc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+np.savetxt('strainrate.ascii',np.array([xc,yc,zc,exx,eyy,exy]).T,header='# xc,yc,zc,exx,eyy,exy')
 
 print("compute p and strainrate: %.3f s" % (time.time() - start))
 
 #####################################################################
-# compute vrms
+# compute vrms and errors
 #####################################################################
 
 errv=0
 errp=0
+errq=0
 vrms=0.
 
 for iel in range(0,nel):
 
-    # integrate viscous term at 3*3*3 quadrature points
-    for iq in [0,1,2]:
-        for jq in [0,1,2]:
-            for kq in [0,1,2]:
-                # position & weight of quad. point
-                rq=qcoords[iq]
-                sq=qcoords[jq]
-                tq=qcoords[kq]
-                weightq=qweights[iq]*qweights[jq]*qweights[kq]
+    # integrate 3x3x3 quadrature points
+    for iq in range(0,nq_per_dimV):
+        for jq in range(0,nq_per_dimV):
+            for kq in range(0,nq_per_dimV):
 
+                # position & weight of quad. point
+                rq=qcoords3[iq]
+                sq=qcoords3[jq]
+                tq=qcoords3[kq]
+                weightq=qweights3[iq]*qweights3[jq]*qweights3[kq]
+
+                # calculate shape functions
                 N[0:m]=NNN(rq,sq,tq)
                 dNdr[0:m]=dNNNdr(rq,sq,tq)
                 dNds[0:m]=dNNNds(rq,sq,tq)
                 dNdt[0:m]=dNNNdt(rq,sq,tq)
 
                 # calculate jacobian matrix
-                jcb[0,0]=dNdr.dot(x[icon[0:m,iel]])
-                jcb[0,1]=dNdr.dot(y[icon[0:m,iel]])
-                jcb[0,2]=dNdr.dot(z[icon[0:m,iel]])
-                jcb[1,0]=dNds.dot(x[icon[0:m,iel]])
-                jcb[1,1]=dNds.dot(y[icon[0:m,iel]])
-                jcb[1,2]=dNds.dot(z[icon[0:m,iel]])
-                jcb[2,0]=dNdt.dot(x[icon[0:m,iel]])
-                jcb[2,1]=dNdt.dot(y[icon[0:m,iel]])
-                jcb[2,2]=dNdt.dot(z[icon[0:m,iel]])
-                jcob = np.linalg.det(jcb)
+                #jcb[0,0]=dNdr.dot(x[icon[0:m,iel]])
+                #jcb[0,1]=dNdr.dot(y[icon[0:m,iel]])
+                #jcb[0,2]=dNdr.dot(z[icon[0:m,iel]])
+                #jcb[1,0]=dNds.dot(x[icon[0:m,iel]])
+                #jcb[1,1]=dNds.dot(y[icon[0:m,iel]])
+                #jcb[1,2]=dNds.dot(z[icon[0:m,iel]])
+                #jcb[2,0]=dNdt.dot(x[icon[0:m,iel]])
+                #jcb[2,1]=dNdt.dot(y[icon[0:m,iel]])
+                #jcb[2,2]=dNdt.dot(z[icon[0:m,iel]])
+                #jcob = np.linalg.det(jcb)
 
                 xq=N.dot(x[icon[:,iel]])
                 yq=N.dot(y[icon[:,iel]])
@@ -788,12 +1000,15 @@ for iel in range(0,nel):
                 uq=N.dot(u[icon[:,iel]])
                 vq=N.dot(v[icon[:,iel]])
                 wq=N.dot(w[icon[:,iel]])
+                qq=N.dot(q[icon[:,iel]])
 
                 vrms+=(uq**2+vq**2+wq**2)*jcob*weightq
 
                 errv+=((uq-uth(xq,yq,zq))**2+\
                        (vq-vth(xq,yq,zq))**2+\
                        (wq-wth(xq,yq,zq))**2)*weightq*jcob
+
+                errq+=(qq-pth(xq,yq,zq))**2*weightq*jcob
 
                 errp+=(p[iel]-pth(xq,yq,zq))**2*weightq*jcob
 
@@ -804,10 +1019,11 @@ for iel in range(0,nel):
 
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
+errq=np.sqrt(errq)
 
 vrms=np.sqrt(vrms/Lx/Ly/Lz)
 
-print("     -> nel= %6d ; errv: %e ; errp: %e " %(nel,errv,errp))
+print("     -> nel= %6d ; errv: %e ; errp: %e ; errq: %e " %(nel,errv,errp,errq))
 
 print("     -> nel= %6d ; vrms: %e" % (nel,vrms))
 
@@ -822,6 +1038,7 @@ print('bench ',Lx/nelx,nel,Nfem,\
       np.min(w),np.max(w),\
       np.min(vel),np.max(vel),\
       np.min(p),np.max(p),
+      np.min(q),np.max(q),
       vrms)
 
 #####################################################################
@@ -863,6 +1080,20 @@ if visu==1:
    for iel in range (0,nel):
        vtufile.write("%f\n" % visc[iel])
    vtufile.write("</DataArray>\n")
+
+   vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%f\n" % exx[iel])
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%f\n" % eyy[iel])
+   vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='ezz' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%f\n" % ezz[iel])
+   vtufile.write("</DataArray>\n")
+
    vtufile.write("<DataArray type='Float32' Name='strainrate' Format='ascii'> \n")
    for iel in range (0,nel):
        vtufile.write("%f\n" % sr[iel])
@@ -874,9 +1105,13 @@ if visu==1:
    for i in range (0,NV):
        vtufile.write("%f\n" % pth(x[i],y[i],z[i]))
    vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%f\n" % q[i])
+   vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
    for i in range(0,NV):
-       vtufile.write("%10f %10f %10f \n" %(u[i],v[i],w[i]))
+       vtufile.write("%e %e %e \n" %(u[i],v[i],w[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (th)' Format='ascii'> \n")
    for i in range(0,NV):

@@ -172,34 +172,60 @@ See Section~\ref{MMM-ss:stokes_sphere_3D} for all results.}
 \section*{Trying $Q_2\times Q_0$+penalty... because why not}
 
 Based on a discussion with A. Regorda I have coded a $Q_2\times Q_0$
-(still with penalty) version: {\tt stoneQ2Q0.py}.
+(still with penalty) version of the \stone: {\tt stoneQ2Q0.py}.
 The following results are obtained with {\tt script\_Q2Q0}.
+
+I first naively used a 1 point integration (as for the 
+$Q_1 \times P_0$ element) only for the 
+penalty term, only to realise that the penalty term $\K_\lambda$ should be 
+under-integrated, but not necessarily using a single point. 
+
+This sparked the study on the influence of the quadrature rule 
+of the penalty term on the accuracy of results.
+
+I also implemented the consistent pressure recovery described 
+in Section~\ref{MMM-ss:cpr}.
+This results in a nodal pressure field (which I call $q$) which is 
+solution of 
+\[
+{\bm M} \cdot \vec{Q} = \vec{f}
+\]
+where ${\bm M}$ is the $Q_2$ mass matrix that 
+is integrated with the same quadrature as the viscous block $\K_\eta$
+but the rhs $\vec{f}$ is integrated with the same quadrature as 
+the penalty block $\K_\lambda$.
+In the end I also keep the pressure $p$ computed in the middle of the element
+using $p= \lambda \vec\nabla\cdot \vec\upnu$.
+
+Finally to save time I have used the fact that the Jacobian of the 
+coordinate change for cuboids is a diagonal matrix containing terms $h_x/2$,
+$h_y/2$, $h_z/2$ on the diagonal. This means that this can be computed once
+and for all for all elements. 
 
 %----------------------------------------------------------
 \subsection*{Aquarium ({\tt experiment=0})}
 
-FS on all sides, $\rho=\eta=g_z=1$, $\lambda=10^6$
+Fress slip on all sides, $\rho=\eta=g_z=1$, $\lambda=10^6$
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp0/stats_uv}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp0/stats_w}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp0/stats_p}\\
-{\captionfont Statistics of $u,v,w,p$.}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp0/errv}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp0/errp}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp0/errq}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_10/resultsQ2/exp0/p_stats}
 \end{center}
 
-We expect a zero velocity field. This is the case (down to machine precision) for the $u$
-and $v$ components, but since the penalty method yields a weakly compressible flow, 
-the vertical component $w$ is rather large at low resolution and decreases at higher resolutions.
-The pressure is expected to be lithostatic and it should be -0.5 at the top and +0.5 at 
-the bottom. Pressure statistics seem to converge towards these values. 
+We expect a zero velocity field. This is the case (down to machine precision) 
+for the $u$ and $v$ components, but since the penalty method yields a 
+weakly compressible flow, the vertical component $w$ is much larger 
+then $u$ and $v$.
+The pressure is expected to be lithostatic and it should be -0.5 at the top 
+and +0.5 at the bottom. Pressure statistics to converge towards these values. 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_10/resultsQ2/exp0/press}
-\includegraphics[width=7cm]{python_codes/fieldstone_10/resultsQ2/exp0/w}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_10/resultsQ2/exp0/press}
+\includegraphics[width=5cm]{python_codes/fieldstone_10/resultsQ2/exp0/w}\\
 {\captionfont $w$ and $p$ for resolution $20\times 20 \times 20$.}
 \end{center}
-
-We expect a zero velocity field. This is the case (down to machine precision) for the $u$
 
 Note that at resolution 20x20x20 build time is 10min, and solve time is 48 min!
 Given this 'performance' this will limit a lot the tests we can carry out...
@@ -207,19 +233,78 @@ Given this 'performance' this will limit a lot the tests we can carry out...
 %----------------------------------------------------------
 \subsection*{Manufactured solution ({\tt experiment=5})}
 
-\begin{center}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_10/resultsQ2/exp5/vrms}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_10/resultsQ2/exp5/conv}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_10/resultsQ2/exp5/p_stats}
-\end{center}
-
-It looks like velocity and pressure do converge.  
+See Section~\ref{MMM-ss:mms3Dgen} for the analytical expressions 
+of the velocity, pressure and body force vector.
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_10/resultsQ2/exp5/press}
-\includegraphics[width=7cm]{python_codes/fieldstone_10/resultsQ2/exp5/vel}\\
-{\captionfont $||\vec\upnu||$ and $p$ for resolution $20\times 20 \times 20$.}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp5/errv}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp5/errp}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp5/errq}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_10/resultsQ2/exp5/vrms}
+\includegraphics[width=8cm]{python_codes/fieldstone_10/resultsQ2/exp5/p_stats}
 \end{center}
 
+Since the analytical solution of this experiment is quadratic then the 
+velocity basis functions can exactly represent the solution inside each
+element and the accuracy of the velocity solution depends on the penalty parameter and
+not on resolution.
+We clearly see that using only one integration point for the penalty term results
+in lesser accurate velocities.
+Interestingly we obtain a superconvergence (third order) of the $q$ error 
+for a 2x2x2 quadrature and only a linear convergence for the $q$ error
+for a 3x3x3 quadrature.
+The pressure $q$ obtained with only 1 quad point yields results that are so off
+that they do not show on the plots.
+Finally we note that we obtain pressures that often exceed the analytical 
+bounds for min and max pressure except for $q$ with 2x2x2 quadrature.
+This seems to indicate that a 2x2x2 quadrature is preferable.
+We keep investigating in the next section with a more suitable manufactured
+solution benchmark.
 
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp5/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp5/p}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp5/q}\\
+{\captionfont $||\vec\upnu||$, $p$ and $q$ for resolution $20\times 20 \times 20$.}
+\end{center}
+
+%----------------------------------------------------------
+\subsection*{Manufactured solution ({\tt experiment=6})}
+
+After the observations made about the previsous experiment we then turn to 
+another 3D manufactured solution as described in Section~\ref{MMM-ss:mms3Dgen}.
+
+\begin{eqnarray}
+f(x) &=& x^2(1-x)^2 \\
+g(y) &=& y^2(1-y)^2 \\
+h(z) &=& z^2(1-z)^2 \\
+u(x,y,z) &=& fg'h' \\
+v(x,y,z) &=& f'gh'  \\
+w(x,y,z) &=& -2f'g'h \\
+p(x,y,z) &=& -f'g'h'
+\end{eqnarray}
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp6/errv}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp6/errp}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp6/errq}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp6/vrms}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp6/p_stats}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_10/resultsQ2/exp6/q_stats}
+\end{center}
+
+We find that:
+\begin{itemize}
+\item The velocity error exhibits cubic convergence {\it only} 
+for $2\times 2\times 2$ quadrature and is the smallest.
+\item the convergence of the $p$ pressure is puzzling
+\item the convergence of the $q$ pressure is second order (!) for 
+$2\times 2\times 2$ quadrature and is also the smallest.   
+\end{itemize}
+
+The conclusion is clear: {\color{violet}the penalty term $\K_\lambda$ 
+must be integrated with $2\times 2\times 2$ quadrature}.
+
+TODO: determine analytical min max of pressure
 
