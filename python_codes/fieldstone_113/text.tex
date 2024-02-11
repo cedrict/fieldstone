@@ -26,7 +26,8 @@ The volume integrals are transformed via the Gauss divergence theorem, into surf
 U = \frac12 {\cal G} \rho_0 \iint_S \vec{n} \cdot \frac{\vec{r}}{r} \; dS
 \]
 Ultimately this integral will involve face integrals and edges integrals.
-The paper is somewhat complex but well written. There is however no point re-typing all the derivations and I present in the next section the finalised equations of their Section~2.6.
+The paper is somewhat complex but well written. There is however no point re-typing all 
+the derivations and I present in the next section the finalised equations of their Section~2.6.
 
 
 %--------------------------------------------------------
@@ -269,7 +270,9 @@ z_N - z_M
 \right)
 \]
 
-Function \verb|compute_gravity_tetrahedron_pointmass| receives coordinates of the four vertices {\color{teal}1}, {\color{teal}2}, {\color{teal}3}, {\color{teal}4},  its density and the coordinates of the measurement point.
+Function \verb|compute_gravity_tetrahedron_pointmass| receives coordinates of the four 
+vertices {\color{teal}1}, {\color{teal}2}, {\color{teal}3}, {\color{teal}4},  its 
+density and the coordinates of the measurement point.
 
 \begin{enumerate}
 \item compute coordinates $x_N,y_N,z_N$ of center of gravity with Eq.~\eqref{eq:tet:centerN}
@@ -278,12 +281,6 @@ $\rightarrow$ \verb|xN,yN,zN|
 \item compute volume $V$ of tetrahedron with Eq.~\ref{eq:tet:vol}$ \rightarrow$ \verb|Vol| 
 \item compute $\vec{g}_{pm}$
 \end{enumerate}
-
-
-
-
-
-
 
 %--------------------------------
 \subsection*{Full tetrahedron}
@@ -401,7 +398,7 @@ $\rightarrow$ \verb|vec_rA|, \verb|vec_rB|, \verb|vec_rC|, \verb|vec_rD|
 
 \[
 \vec{g}_f
-= {\cal G} \rho_0 \sum_f \omega_f {\bm F}_f\cdot \vec{r}_f \nn\\
+= {\cal G} \rho_0 \sum_f \omega_f {\bm F}_f\cdot \vec{r}_f 
 = {\cal G} \rho_0 \left(
 \omega_A {\bm F}_A\cdot \vec{r}_A +
 \omega_B {\bm F}_B\cdot \vec{r}_B +
@@ -454,7 +451,8 @@ L_{\color{purple}6} = L_{\color{teal}34}
 \end{eqnarray}
 
 
-\item compute $\vec{r}_{\color{teal}12,13,14,23,24,34}$. As specified in Section~2.1.8 of their paper ``$\vec{r}_e$ is a vector from the field point to any point on edge $e$ or its infinite extension''
+\item compute $\vec{r}_{\color{teal}12,13,14,23,24,34}$. As specified in Section~2.1.8 of their 
+paper ``$\vec{r}_e$ is a vector from the field point to any point on edge $e$ or its infinite extension''
 $\rightarrow$ \verb|vec_r12|, \verb|vec_r13|, \verb|vec_r13|, etc ...  
 
 

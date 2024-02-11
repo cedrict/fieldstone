@@ -470,7 +470,7 @@ for iel in range(0,nel):
     h_el=np.zeros(mP*ndofP,dtype=np.float64)
     NNNP= np.zeros(mP*ndofP,dtype=np.float64)           # int of shape functions P
 
-    # integrate viscous term at 4 quadrature points
+    # integrate viscous term at 3*3*3 quadrature points
     for iq in [0,1,2]:
         for jq in [0,1,2]:
             for kq in [0,1,2]:
