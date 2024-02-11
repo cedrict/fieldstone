@@ -1,24 +1,41 @@
 \chapter{Solving the flow equations with the FEM} \label{solvingFEM} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \begin{flushright} {\tiny {\color{gray} chapter\_fem2.tex}} \end{flushright}
-\section{A quick tour of similar literature} \input{similar} %-------------------------------------
 
+\section{A quick tour of similar literature} 
+\input{similar} 
 \input{incompressible} %---------------------------------------------------------------------------
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Strong and weak forms} \input{strongweak} %--------------------------------------------
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Which velocity-pressure pair for Stokes?}\label{ss:pair}\input{pair} %-----------------
 
-\newpage
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The penalty approach for viscous flow}\label{sec:penalty}\input{penalty} %-------------
-\newpage
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The mixed FEM for viscous flow} \label{sec:mixed} \input{mixed} %----------------------
-\newpage
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Mappings \& Jacobians \label{ss:mappings}} \input{mappings} %-----------------------------
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Solving the elastic equations} \input{fem_elastic} %--------------------------------------
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The case against the $Q_1\times P_0$ element} \input{case_against_q1p0} %-----------------
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Isoviscous Stokes for incompressible flow}\label{ss:isovisc} \input{isoviscous_stokes} %--
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{$Q_1\times P_0$ macro-elements} \label{ss:meshtopos} \input{meshtopos} %------------------
-\newpage
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Solving the Stokes system \label{sec:solvers}} \input{solvers} %--------------------------
-\newpage
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Boundary conditions}
 \subsection{Imposing Dirichlet boundary conditions \label{ss:howtobc}} \input{howtobc} %-----------
 \newpage %-----------------------------------------------------------------------------------------
@@ -27,9 +44,11 @@
 \subsection{Periodic boundary conditions\label{ss_periodic}}\input{periodic} %---------------------
 \newpage %-----------------------------------------------------------------------------------------
 \subsection{Free-slip boundary conditions on annulus}\label{ss:fsbc_annulus}\input{fsbc_annulus} %-
-\newpage %-----------------------------------------------------------------------------------------
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Open boundary conditions}\label{ss:openbc}\input{openbc} %--------------------------------
-\newpage %-----------------------------------------------------------------------------------------
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{About nullspaces} 
 \subsection{Pressure normalisation, nullspace\label{ss_pnorm}} \input{pressure_normalisation} %----
 \subsection{Removing rotational nullspace\label{ss_nullspace}} \input{nullspace} %-----------------

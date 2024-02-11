@@ -199,6 +199,11 @@ The right hand side is $ndof \times ndim = 8\times 3 = 24$ long.
 \includegraphics[width=5.5cm]{images/openbc/drawing3D.png}
 \end{center}
 
+\todo[inline]{figure above has two node 6! 
+there are two y axis in the figure and no z.
+redo with tikz}
+
+
 \begin{itemize}
 \item The face $r=-1$ is made of nodes 1,4,5,8, so $\vec{n}=(-1,0,0)$.
 Since $t_y=0$ and $t_z=0$ and $\bN_2=\bN_3=\bN_6=\bN_7$ on this face:
@@ -297,7 +302,7 @@ t_x
 \end{array}
 \right)
 =
-\frac{h_yh_y t_x}{4}
+\frac{h_yh_z t_x}{4}
 \left(
 \begin{array}{c}
 1 \\
