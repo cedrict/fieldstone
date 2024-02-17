@@ -118,8 +118,8 @@ The first row of coefficients at the bottom of the table gives the fifth-order a
 %....................................................................................
 \subsubsection{Using RK methods to advect particles/markers \label{sec:rkparticles}}
 
-In the context of geodynamical modelling, one is usually confronted to the following problem:
-now that I have a velocity field on my FE mesh, how can I use it to advect the Lagrangian 
+In the context of geodynamical modelling, one is usually faced with the following problem:
+now that I have a velocity field on my FE (or FD) mesh, how can I use it to advect the Lagrangian 
 markers?
 
 Runge-Kutta methods are used to this effect but only their spatial component is used:
@@ -214,9 +214,5 @@ The advection is computed using the fourth-order Runge-Kutta scheme. Taken from 
 Advection was computed using (A) the fourth-order Runge-Kutta scheme, (B) the mid-
 point method, (C) Heun's method and (D) the explicit Euler method. Taken from \cite{maie12}}
 \end{center}
-
-
-\bscthesis \index{general}{BSc Thesis}
-
 
 

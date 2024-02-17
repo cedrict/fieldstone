@@ -366,7 +366,7 @@ T(\vec{r},t)= T_0 \frac{1}{r} \exp(-t) \qquad t>0, r>0
 The temperature field belongs to a flow field given
 by $\vec{\upnu}(\vec{r},t)=\frac{1}{r^2}\exp(-t) \vec{r}$.\\
 a) Determine the divergence of the velocity field.\\
-b) Compute the acceleration. \\
+b) Compute the particle acceleration. \\
 c) Compute the material derivate of $T$ at any position and time.
 }
 \end{exercise}
@@ -631,12 +631,13 @@ be a non-linear equation in the unknown velocity field.
 
 %..................................................................
 \subsection{Velocity gradient, strain rate, and rotation rate}
-The velocity gradient tensor is $\vec\nabla\vec\upnu = \partial \upnu_i/\partial x_j$
+The velocity gradient tensor is $\vec\nabla\vec\upnu = \partial \upnu_j/\partial x_i$
 and can be separated in a symmetric part, the strain rate tensor 
 \[
 \dot\varepsilon_{ij}=\frac12 \left(
+\frac{\partial \upnu_j}{\partial x_i}
++ 
 \frac{\partial \upnu_i}{\partial x_j}
-+ \frac{\partial \upnu_j}{\partial x_i}
 \right)
 \qquad
 \qquad
@@ -777,9 +778,10 @@ where $d\vec{r}$ is a line element of $C$. \\
 b) Assume that the continuum is a spherically symmetric body: Show that the pressure
 difference between $B$ and $A$ is: $p(r_B ) - p(r_A) = -\int_{r_A}^{r_B} \rho g(r) dr$ 
 where quantities only depend on the radius.\\
-c) Show that the density field $\rho$ should satisfy $\vec\nabla // \vec\nabla \Phi$
+c) Show that the density field $\rho$ should satisfy $\vec\nabla \rho // \vec\nabla \Phi$
 where $\Phi$ is the gravitational
-energy potential implicitly defined by $\vec{g}=-\vec\nabla \Phi$. 
+energy potential implicitly defined by $\vec{g}=-\vec\nabla \Phi$, i.e.
+the gradient of rho and the gradient of $\Phi$ are parallel. 
 [Hint: take the curl of the hydrostatic equation]\\
 d) Show that surfaces of constant pressure, density and gravitational potential coincide.
 }
@@ -787,8 +789,6 @@ d) Show that surfaces of constant pressure, density and gravitational potential 
 \end{minipage}
 }
 \vspace{0.5cm}
-
-\todo[inline]{parallel bars above ?!} 
 
 %%%%%%%%%%%%%%%%%%%%%%
 
@@ -884,10 +884,10 @@ temperature, and pressure is the subject of {\bf rheology}.
 
 The thermodynamic pressure $p$ is taken to be independent of mechanical deformation.
 The thermodynamic pressure gives the state of stress in a static medium which may have
-a uniform velocity (either linear, angular of both), i.e. $\cdot{\bm\varepsilon}={\bm 0}$. 
+a uniform velocity (either linear, angular of both), i.e. $\dot{\bm\varepsilon}={\bm 0}$. 
 Therefore, constitutive equations take the general form
 \begin{equation}
-{\bm \sigma}(\cdot{\bm\varepsilon}) = -p {\bm 1} + {\bm \uppi}(\cdot{\bm\varepsilon})
+{\bm \sigma}(\dot{\bm\varepsilon}) = -p {\bm 1} + {\bm \uppi}(\dot{\bm\varepsilon})
 \label{eq:md18}
 \end{equation}
 with ${\bm \uppi}({\bm 0})={\bm 0}$, showing that stress and strain rate can be interdependent.
@@ -1151,8 +1151,7 @@ effective viscosity derived from a superposition of competing deformation mechan
 \begin{exercise}
 {\small \it 
 Discuss the effects of temperature and pressure (as a function of depth) for
-the constitutive equation (30).
-}
+the constitutive equation \eqref{eq:md30}}
 \end{exercise}
 \end{minipage}
 }
@@ -1520,7 +1519,7 @@ This analysis will lead to a first estimate of the viscosity of the mantle.
 Assume an infinite 2-D half-space filled with an incompressible Newtonian fluid of
 constant viscosity and with density independent of spatial coordinates. The $y$-axis is taken
 positive downward. The equations to solve are \eqref{eq:md40} for the stream function and next \eqref{eq:md38}
-for the pressure. As density is constant the right-hand-side of (40)\todo{fix number} is zero. Furthermore,
+for the pressure. As density is constant the right-hand-side of \eqref{eq:md40} is zero. Furthermore,
 we assume that the horizontal component of gravity is 0 which allows for a
 straightforward solution of \eqref{eq:md38} when the stream function is known.
 Because \eqref{eq:md40} is a linear differential equation we assume a spectral approach in which

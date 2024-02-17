@@ -3,12 +3,11 @@
 
 
 To my knowledge the conservative velocity interpolation (CVI) was introduced to 
-the computational geodynamics community in Wang \etal (2015) \cite{waav15}. 
-As mentioned in the paper 
-``An improved velocity interpolation scheme that conserves the divergence of the flow field has 
-been developed by Jenny \etal (2001) \cite{jepm01} and the simplified scheme for incompressible 
+the computational geodynamics community in \textcite{waav15} (2015). 
+As mentioned in the paper  ``An improved velocity interpolation scheme that conserves the divergence 
+of the flow field has been developed by \textcite{jepm01} (2001) and the simplified scheme for incompressible 
 flow (i.e., divergence free) has been demonstrated that it largely eliminates the spurious 
-distribution of particles for 2D incompressible flow problem (see Meyer and Jenny (2004) \cite{meje04}).''
+distribution of particles for 2D incompressible flow problem (see \textcite{meje04} (2004)).''
 
 Additional more recent publications on the topic of accurate marker 
 advection: \textcite{simw21} (2021), \textcite{siwv22} (2022).
@@ -16,11 +15,10 @@ advection: \textcite{simw21} (2021), \textcite{siwv22} (2022).
 %-------------------------------------------------------------
 \subsubsection{A few remarks about Wang \etal (2015)}
 
-The article by Wang \etal (2015) comes with supplementary material with more details on the 
-derivation of the corrective velocities but that material is a Word
+The article by \textcite{waav15} (2015) comes with supplementary material with more details 
+on the derivation of the corrective velocities but that material is a Word
 document printed to pdf with an annoying layout of equations, different font sizes,
-lack of alignment, etc ... 
-Also, Fig.~1 of the paper is reproduced here:
+lack of alignment, etc ... Also, Fig.~1 of the paper is reproduced here:
 \begin{center}
 \includegraphics[width=4cm]{images/cvi/wang15}
 \end{center}
@@ -102,8 +100,7 @@ the arrow tips are an artefact of their visualisation software (!).
 \Literature: 
 McNally (2011) \cite{mcna11} proposed
 a divergence-free interpolation of vector fields from point values in the context 
-of magnetohydrodynamics.
-Pusok \etal (2016) \cite{pukp16} has applied the CVI to staggered grid FDM.
+of magnetohydrodynamics. \textcite{pukp16} (2016) has applied the CVI to staggered grid FDM.
 
  
 %-------------------------------------------------------------
@@ -625,7 +622,7 @@ We start again from
 \end{array}
 \right)
 \]
-We then postulate 
+where $\tilde{\bm J}$ is the inverse of the Jacobian matrix ${\bm J}$. We then postulate 
 \begin{eqnarray}
 u^h(r,s,t)&=&\sum_i \bN_i(r,s,t) u_i + (a s + b t +c)(1-r)(1+r) \nn\\
 v^h(r,s,t)&=&\sum_i \bN_i(r,s,t) v_i + (d r + e t +f)(1-s)(1+s) \nn\\
@@ -713,12 +710,33 @@ where for any function $f$:
 &=& f_{t1} + f_{t2}r + f_{t3}s + f_{t4} rs \nn
 \end{eqnarray}
 The velocity divergence is then 
-\[
- \frac{\partial u}{\partial x} 
+\begin{eqnarray}
+&& \frac{\partial u}{\partial x} 
 +\frac{\partial v}{\partial y} 
-+\frac{\partial w}{\partial z} 
-= C_0 +C_1 r + C_2 s + C_3 t + C_4 rs + C_5 st + C_6 rt + C_7r^2 + C_8 s^2 + C_9 t ^2 =0
-\]
++\frac{\partial w}{\partial z} \nn\\ 
+&=&  
+\tilde{J}_{xx} \left[\sum_i \frac{\partial \bN_i}{\partial r} u_i + (a s + b t +c)(-2r)  \right]
++\tilde{J}_{xy} \left[\sum_i \frac{\partial \bN_i}{\partial s} u_i + a (1-r^2)  \right]
++\tilde{J}_{xz} \left[\sum_i \frac{\partial \bN_i}{\partial t} u_i + b (1-r^2)  \right] \nn\\
+&+& 
+\tilde{J}_{yx} \left[\sum_i \frac{\partial \bN_i}{\partial r} v_i + d (1-s^2)  \right]
++\tilde{J}_{yy} \left[\sum_i \frac{\partial \bN_i}{\partial s} v_i + (d r + e t +f)(-2s) \right]
++\tilde{J}_{yz} \left[\sum_i \frac{\partial \bN_i}{\partial t} v_i + e (1-s^2)  \right]  \nn\\
+&+&
+\tilde{J}_{zx} \left[\sum_i \frac{\partial \bN_i}{\partial r} w_i + g (1-t^2)  \right]
++\tilde{J}_{zy} \left[\sum_i \frac{\partial \bN_i}{\partial s} w_i + h (1-t^2) \right]  
++\tilde{J}_{zz} \left[\sum_i \frac{\partial \bN_i}{\partial t} w_i + (g r + h s +i)(-2t)  \right] \nn\\
+&=&\tilde{J}_{xx} \left[ u_{r1} + u_{r2}s + u_{r3}t + u_{r4} st + (a s + b t +c)(-2r)  \right] \nn\\
+&+&\tilde{J}_{xy} \left[ u_{s1} + u_{s2}r + u_{s3}t + u_{s4} rt  + a (1-r^2)  \right] \nn\\
+&+&\tilde{J}_{xz} \left[ u_{t1} + u_{t2}r + u_{t3}s + u_{t4} rs  + b (1-r^2)  \right] \nn\\
+&+&\tilde{J}_{yx} \left[ v_{r1} + v_{r2}s + v_{r3}t + v_{r4} st    + d (1-s^2)  \right] \nn\\
+&+&\tilde{J}_{yy} \left[ v_{s1} + v_{s2}r + v_{s3}t + v_{s4} rt   + (d r + e t +f)(-2s) \right] \nn\\
+&+&\tilde{J}_{yz} \left[ v_{t1} + v_{t2}r + v_{t3}s + v_{t4} rs   + e (1-s^2)  \right]  \nn\\
+&+&\tilde{J}_{zx} \left[ w_{r1} + w_{r2}s + w_{r3}t + w_{r4} st   + g (1-t^2)  \right] \nn\\
+&+&\tilde{J}_{zy} \left[ w_{s1} + w_{s2}r + w_{s3}t + w_{s4} rt   + h (1-t^2) \right] \nn\\ 
+&+&\tilde{J}_{zz} \left[ w_{t1} + w_{t2}r + w_{t3}s + w_{t4} rs   + (g r + h s +i)(-2t)  \right] \nn\\
+&=& C_0 +C_1 r + C_2 s + C_3 t + C_4 rs + C_5 st + C_6 rt + C_7r^2 + C_8 s^2 + C_9 t ^2 =0 
+\end{eqnarray}
 with:
 \begin{eqnarray}
 C_0 &=&
@@ -727,35 +745,75 @@ C_0 &=&
 \tilde{J}_{zx} w_{r1} + \tilde{J}_{zy} w_{s1} + \tilde{J}_{zz} w_{t1} \nn\\
 &+&\tilde{J}_{xy} a+\tilde{J}_{xz} b + \tilde{J}_{yx} d + \tilde{J}_{yz} e + \tilde{J}_{zx} g + \tilde{J}_{zy} h \nn\\
 C_1 &=& 
-J_{xy} u_{s2} + J_{xz} u_{t2} + 
-J_{yy} v_{s2} + J_{yz} v_{t2} + 
-J_{zy} w_{s2} + J_{zz} w_{t2} -J_{xx} 2c \nn \\ % r
+\tilde{J}_{xy} u_{s2} + \tilde{J}_{xz} u_{t2} + 
+\tilde{J}_{yy} v_{s2} + \tilde{J}_{yz} v_{t2} + 
+\tilde{J}_{zy} w_{s2} + \tilde{J}_{zz} w_{t2} -\tilde{J}_{xx} 2c \nn \\ % r
 C_2 &=&
-J_{xx} u_{r2} + J_{xz} u_{t3} +
-J_{yx} v_{r2} + J_{yz} v_{t3} +
-J_{zx} w_{r2} + J_{zz} w_{t3} -J_{yy} 2f \nn\\ % s 
+\tilde{J}_{xx} u_{r2} + \tilde{J}_{xz} u_{t3} +
+\tilde{J}_{yx} v_{r2} + \tilde{J}_{yz} v_{t3} +
+\tilde{J}_{zx} w_{r2} + \tilde{J}_{zz} w_{t3} -\tilde{J}_{yy} 2f \nn\\ % s 
 C_3 &=&
-J_{xx} u_{r3} + J_{xy} u_{s3} +
-J_{yx} v_{r3} + J_{yy} v_{s3} +
-J_{zy} w_{r3} + J_{zy} w_{s3} -J_{zz} 2i \nn\\ % t 
-C_4 &=& J_{xz} u_{t4} + J_{yz} v_{t4} + J_{zz} w_{t4} -J_{xx} 2a - J_{yy} 2d  \nn\\ % rs
-C_5 &=& J_{xx} u_{r4} + J_{yx} v_{r4} + J_{zx} w_{r4} -J_{yy} 2e - J_{zz} 2h  \nn\\ % st
-C_6 &=& J_{xy} u_{s4} + J_{yy} v_{s4} + J_{zy} w_{s4} -J_{xx} 2b - J_{zz} 2g  \nn\\ % rt
+\tilde{J}_{xx} u_{r3} + \tilde{J}_{xy} u_{s3} +
+\tilde{J}_{yx} v_{r3} + \tilde{J}_{yy} v_{s3} +
+\tilde{J}_{zx} w_{r3} + \tilde{J}_{zy} w_{s3} -\tilde{J}_{zz} 2i \nn\\ % t 
+C_4 &=& \tilde{J}_{xz} u_{t4} + \tilde{J}_{yz} v_{t4} + \tilde{J}_{zz} w_{t4} -\tilde{J}_{xx} 2a - \tilde{J}_{yy} 2d  \nn\\ % rs
+C_5 &=& \tilde{J}_{xx} u_{r4} + \tilde{J}_{yx} v_{r4} + \tilde{J}_{zx} w_{r4} -\tilde{J}_{yy} 2e - \tilde{J}_{zz} 2h  \nn\\ % st
+C_6 &=& \tilde{J}_{xy} u_{s4} + \tilde{J}_{yy} v_{s4} + \tilde{J}_{zy} w_{s4} -\tilde{J}_{xx} 2b - \tilde{J}_{zz} 2g  \nn\\ % rt
 C_7 &=& - \tilde{J}_{xy} a - \tilde{J}_{xz} b  \nn\\ % r^2 
 C_8 &=& - \tilde{J}_{yx} d - \tilde{J}_{yz} e  \nn\\ % s^2 
 C_9 &=& - \tilde{J}_{zx} g - \tilde{J}_{zy} h  \nn   % t^2
 \end{eqnarray}
-It is then trivial to obtain $c,f,i$. 
+Of course what we want is a point-wise zero velocity divergence so we would 
+need $C_0=C_1=...C_9=0$.
+However we have 10 $C$ coefficients/equations  and only 9 variables $a,b,c,d,e,f,g,h,i$.
+We leave the $C_0$ equation alone and hope for the best (see 2D case). In other words we hope that 
+if/when we have found $a,b,c,d,e,f,g,h,i$ so that $C_1=...C_9=0$ then $C_0$ is 'small' 
+(whatever that means).
+
+It is then trivial to obtain $c,f,i$ from the equations of $C_1,C_2,C_3$:
+\begin{eqnarray}
+C_1=0 &\Rightarrow&
+\tilde{J}_{xy} u_{s2} + \tilde{J}_{xz} u_{t2} + 
+\tilde{J}_{yy} v_{s2} + \tilde{J}_{yz} v_{t2} + 
+\tilde{J}_{zy} w_{s2} + \tilde{J}_{zz} w_{t2} -\tilde{J}_{xx} 2c =0 \nn\\
+&& c= \frac{1}{2 \tilde{J}_{xx}} (
+\tilde{J}_{xy} u_{s2} + \tilde{J}_{xz} u_{t2} + 
+\tilde{J}_{yy} v_{s2} + \tilde{J}_{yz} v_{t2} + 
+\tilde{J}_{zy} w_{s2} + \tilde{J}_{zz} w_{t2} ) \nn\\
+C_2=0 &\Rightarrow&
+\tilde{J}_{xx} u_{r2} + \tilde{J}_{xz} u_{t3} +
+\tilde{J}_{yx} v_{r2} + \tilde{J}_{yz} v_{t3} +
+\tilde{J}_{zx} w_{r2} + \tilde{J}_{zz} w_{t3} -\tilde{J}_{yy} 2f =0 \nn\\
+&& f= \frac{1}{2 \tilde{J}_{yy}} (  
+\tilde{J}_{xx} u_{r2} + \tilde{J}_{xz} u_{t3} +
+\tilde{J}_{yx} v_{r2} + \tilde{J}_{yz} v_{t3} +
+\tilde{J}_{zx} w_{r2} + \tilde{J}_{zz} w_{t3} ) \nn\\
+C_3=0 &\Rightarrow&
+\tilde{J}_{xx} u_{r3} + \tilde{J}_{xy} u_{s3} +
+\tilde{J}_{yx} v_{r3} + \tilde{J}_{yy} v_{s3} +
+\tilde{J}_{zx} w_{r3} + \tilde{J}_{zy} w_{s3} -\tilde{J}_{zz} 2i =0 \nn\\
+&& i= \frac{1}{2 \tilde{J}_{zz}} (  
+\tilde{J}_{xx} u_{r3} + \tilde{J}_{xy} u_{s3} +
+\tilde{J}_{yx} v_{r3} + \tilde{J}_{yy} v_{s3} +
+\tilde{J}_{zx} w_{r3} + \tilde{J}_{zy} w_{s3} ) \nn
+\end{eqnarray}
+From the last three equations for $C_7,C_8,C_9$ we have 
+\[
+b=-\frac{\tilde{J}_{xy}}{\tilde{J}_{xz}} a \quad\quad
+e=-\frac{\tilde{J}_{yx}}{\tilde{J}_{yz}} d \quad\quad
+h=-\frac{\tilde{J}_{zx}}{\tilde{J}_{zy}} g
+\]
+
 Concerning $a,b,d,e,g,h$ we are left with 6 equations for 6 unknowns, which can be cast as follows:
 \[
 \left(
 \begin{array}{cccccc}
-J_{xx} & & J_{yy} & & & \\
- & & & J_{yy} & &  J_{zz}\\ 
- & J_{xx} & & & J_{zz} & \\ 
-J_{xy} &  J_{xz} & & & & \\ 
- & & J_{yx} & J_{yz} & \\ 
- & & & & -J_{zx} & J_{zy} \\ 
+\tilde{J}_{xx} & & \tilde{J}_{yy} & & & \\
+ & & & \tilde{J}_{yy} & &  \tilde{J}_{zz}\\ 
+ & \tilde{J}_{xx} & & & \tilde{J}_{zz} & \\ 
+ \tilde{J}_{xy} &  \tilde{J}_{xz} & & & & \\ 
+ & & \tilde{J}_{yx} & \tilde{J}_{yz} & \\ 
+ & & & & \tilde{J}_{zx} & \tilde{J}_{zy} \\ 
 \end{array}
 \right)
 \left(
@@ -767,29 +825,97 @@ a \\b\\ d\\ e\\ g\\ h
 \frac{1}{2}
 \left(
 \begin{array}{c}
- J_{xz} u_{t4} + J_{yz} v_{t4} + J_{zz} w_{t4} \\
- J_{xx} u_{r4} + J_{yx} v_{r4} + J_{zx} w_{r4} \\
- J_{xy} u_{s4} + J_{yy} v_{s4} + J_{zy} w_{s4} \\
+ \tilde{J}_{xz} u_{t4} + \tilde{J}_{yz} v_{t4} + \tilde{J}_{zz} w_{t4} \\
+ \tilde{J}_{xx} u_{r4} + \tilde{J}_{yx} v_{r4} + \tilde{J}_{zx} w_{r4} \\
+ \tilde{J}_{xy} u_{s4} + \tilde{J}_{yy} v_{s4} + \tilde{J}_{zy} w_{s4} \\
  0 \\ 0 \\  0
 \end{array}
 \right)
 \]
-In the case of a regular grid with nodes aligned with the x,y,z axis, this 
-system is indefinite as $J_{xy}=J_{yx}=J_{xz}=...=0$.
 
-We can approach it simply:
-from the last three equations we have 
-\[
-b=-\frac{J_{xy}}{J_{xz}} a \quad\quad
-e=-\frac{J_{yx}}{J_{yz}} d \quad\quad
-h=-\frac{J_{zx}}{J_{zy}} g
-\]
 The equations involving $C_4$, $C_5$, $C_6$ become:
 \begin{eqnarray}
-C_4 &=& J_{xz} u_{t4} + J_{yz} v_{t4} + J_{zz} w_{t4} -J_{xx} 2a - J_{yy} 2d  \nn\\ % rs
-C_5 &=& J_{xx} u_{r4} + J_{yx} v_{r4} + J_{zx} w_{r4} +2J_{yy} \frac{J_{yx}}{J_{yz}} d + 2J_{zz} \frac{J_{zx}}{J_{zy}}  \nn\\ % st
-C_6 &=& J_{xy} u_{s4} + J_{yy} v_{s4} + J_{zy} w_{s4} +2J_{xx} \frac{J_{xy}}{J_{xz}} a - J_{zz} 2g  \nn\\ % rt
+C_4 &=& \tilde{J}_{xz} u_{t4} + \tilde{J}_{yz} v_{t4} + \tilde{J}_{zz} w_{t4} - \tilde{J}_{xx} 2a - \tilde{J}_{yy} 2d  \nn\\ % rs
+C_5 &=& \tilde{J}_{xx} u_{r4} + \tilde{J}_{yx} v_{r4} + \tilde{J}_{zx} w_{r4} +2\tilde{J}_{yy} \frac{\tilde{J}_{yx}}{\tilde{J}_{yz}} d + 2\tilde{J}_{zz} \frac{\tilde{J}_{zx}}{\tilde{J}_{zy}} g \nn\\ % st
+C_6 &=& \tilde{J}_{xy} u_{s4} + \tilde{J}_{yy} v_{s4} + \tilde{J}_{zy} w_{s4} +2\tilde{J}_{xx} \frac{\tilde{J}_{xy}}{\tilde{J}_{xz}} a - \tilde{J}_{zz} 2g  
 \end{eqnarray}
+
+---------------------------------
+
+In the case of a regular grid with nodes aligned with the $x,y,z$ axis, this 
+system is indefinite as $\tilde{J}_{xy}=\tilde{J}_{yx}=\tilde{J}_{xz}=...=0$.
+Let us then rewrite the $C$ equations again in this specific case:
+
+\begin{eqnarray}
+C_0 &=& \tilde{J}_{xx} u_{r1} + \tilde{J}_{yy} v_{s1} +\tilde{J}_{zz} w_{t1} \nn\\
+C_1 &=& \tilde{J}_{yy} v_{s2} + \tilde{J}_{zz} w_{t2} -\tilde{J}_{xx} 2c \nn \\ % r
+C_2 &=& \tilde{J}_{xx} u_{r2} + \tilde{J}_{zz} w_{t3} -\tilde{J}_{yy} 2f \nn\\ % s 
+C_3 &=& \tilde{J}_{xx} u_{r3} + \tilde{J}_{yy} v_{s3} -\tilde{J}_{zz} 2i \nn\\ % t 
+C_4 &=& \tilde{J}_{zz} w_{t4} - \tilde{J}_{xx} 2a - \tilde{J}_{yy} 2d  \nn\\ % rs
+C_5 &=& \tilde{J}_{xx} u_{r4} - \tilde{J}_{yy} 2e - \tilde{J}_{zz} 2h  \nn\\ % st
+C_6 &=& \tilde{J}_{yy} v_{s4} - \tilde{J}_{xx} 2b - \tilde{J}_{zz} 2g  \nn\\ % rt
+C_7 &=& 0  \nn\\ 
+C_8 &=& 0  \nn\\ 
+C_9 &=& 0  \nn\
+\end{eqnarray}
+We see that the condition $C_7=C_8=C_9=0$ are automatically satisfied.
+$c,f,i$ are obtained as in the general case above. We are left with the 
+equations for $C_4,C_5,C_6$ (we leave the $C_0$ equation alone - note that 
+it does not contain any coefficient $a,b,c...$ anymore anyways).
+
+Also, elements are cuboids of size $h_x\times h_y \times h_z$, 
+so that their Jacobian matrix is 
+\[
+{\bm J} =
+\left(
+\begin{array}{ccc}
+h_x/2 & 0 & 0 \\
+0 & h_y/2 & 0 \\
+0 & 0 & h_z/2
+\end{array}
+\right) 
+\]
+and its inverse:
+\[
+\tilde{\bm J} = 
+\left(
+\begin{array}{ccc}
+2/h_x & 0 & 0 \\
+0 & 2/h_y & 0 \\
+0 & 0 & 2/h_z
+\end{array}
+\right) 
+\]
+Then the $C_4$,$C_5$,$C_6$ equations become 
+\begin{eqnarray}
+C_4 &=& \frac{2}{h_z} w_{t4} - \frac{2}{h_x} 2a - \frac{2}{h_y}  2d =0 \nn\\ % rs
+C_5 &=& \frac{2}{h_x} u_{r4} - \frac{2}{h_y} 2e - \frac{2}{h_z}  2h =0 \nn\\ % st
+C_6 &=& \frac{2}{h_y} v_{s4} - \frac{2}{h_x} 2b - \frac{2}{h_z}  2g =0 \nn\\ % rt
+\end{eqnarray}
+
+This is problematic since I am left with 6 unknowns and 3 equations
+So we should probably go back to the original definition of 
+\begin{eqnarray}
+u^h(r,s,t)&=&\sum_i \bN_i(r,s,t) u_i + (a s + b t +c)(1-r)(1+r) \nn\\
+v^h(r,s,t)&=&\sum_i \bN_i(r,s,t) v_i + (d r + e t +f)(1-s)(1+s) \nn\\
+w^h(r,s,t)&=&\sum_i \bN_i(r,s,t) w_i + (g r + h s +i)(1-t)(1+t) \nn
+\end{eqnarray}
+and simply choose 3 of the 6 coefficients $a,b,d,e,g,h$ to be zero ? 
+This feels a bit arbitrary?
+
+May be better: take a=b, d=e and g=h? then, keeping only a,d,g
+\begin{eqnarray}
+u^h(r,s,t)&=&\sum_i \bN_i(r,s,t) u_i + (a (s + t) +c)(1-r)(1+r) \nn\\
+v^h(r,s,t)&=&\sum_i \bN_i(r,s,t) v_i + (d (r + t) +f)(1-s)(1+s) \nn\\
+w^h(r,s,t)&=&\sum_i \bN_i(r,s,t) w_i + (g (r + s) +i)(1-t)(1+t) \nn
+\end{eqnarray}
+Then the $C_4$,$C_5$,$C_6$ equations become 
+\begin{eqnarray}
+C_4 &=& \frac{2}{h_z} w_{t4} - \frac{2}{h_x} 2a - \frac{2}{h_y}  2d =0 \nn\\ % rs
+C_5 &=& \frac{2}{h_x} u_{r4} - \frac{2}{h_y} 2d - \frac{2}{h_z}  2g =0 \nn\\ % st
+C_6 &=& \frac{2}{h_y} v_{s4} - \frac{2}{h_x} 2a - \frac{2}{h_z}  2g =0 \nn\\ % rt
+\end{eqnarray}
+and we have 3 eqs and 3 unknowns
 
 %-------------------------------------------------------------------
 \subsubsection{Comparison with Wang \etal (2015) for 3D}

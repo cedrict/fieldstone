@@ -1,0 +1,118 @@
+\documentclass[a4paper]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Bibliography stuff
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[maxnames=6]{biblatex}
+\addbibresource{biblio_geosciences.bib}
+ 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Improvements to FieldStone itself}
+
+\begin{itemize}
+\item write axisymm energy eq 
+\item sort our s40rts stones/theory
+\item change cell type in all stones containing Q2
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Ideas for new stones}
+
+\begin{itemize}
+\item DF, FEM of 1D, 2D wave equation
+\item write FVM code
+\item write Navier-Stokes solver
+\item translate ibuprofem (surface tension code)
+\item redo  cookbook 'convection in 2d box w phase transitions'
+based on \textcite{chyu85}. 
+\item write stone with phase change a la van den Berg \textcite{vava08}
+\item Hollow sphere under internal pressure with analytical solution
+. elastic and elasto-plastic solution  - see pdf document
+\item Flow past a sphere(disc) \textcite{demj04} (2004); 
+      \textcite{gafp17}). 
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{BSc topics}
+
+\begin{itemize}
+\item run stone 88 (convection in 2D box) and look at configurational entropy 
+(stone 137). Look at todo list at the end of stone 88.
+\item compute elemental matrices of most common spaces with sympy
+\item build library of mms, tester
+\item biblio: for example, what are the sub-themes of subduction ? 
+or mantle convection. re-organise biblio around these themes
+\item structural geology: 2 and 3 layer (non)linear viscous folding
+\item \fullcite{wiwh91}
+\item Gravity of cuboid: Sort out the mess by \textcite{duti16} and \textcite{zhhu17}.
+\item implement RK1,2,3,4,5,6...
+\item write stone for Kovasznay mms
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{MSc topics, guided research}
+
+\begin{itemize}
+\item Computational structural geology. Redo \fullcite{trla00} \\
+Find collaborator (Alissa? Martin Drury? ...)
+\item Write 3D T solver for geothermal problems. Look at/incorporate
+mammoth code.
+\item \textcite{vaks97} (1997) Rayleigh-Taylor problem with triangles, and remeshing.
+\item produce python code for my GHOST code \textcite{thie18} 3D mesher, for Q1, Q2, P1,P2.
+\item Hernlund \& Tackley pseudo annulus \fullcite{heta08}. See \textcite{josv21}
+\item nonlinear viscosimeter. annulus geometry, different rheologies.
+\item paper 2023 two phase flow fantom with huismans may
+\item dyn topo vs true free surface... who wins?
+\item build ASPECT stokes solver in python (pyamg?)
+\item Biharmonic equation for stream function approach with FEM. check Schmalzl phd thesis
+\item anisotropic viscosity , see \textcite{leha08}.
+redo the Rayleigh-Taylor instabilities with 
+anisotropic lithospheric viscosity.
+Look at the three methods listed in the other article by \textcite{leha08b}. 
+Check Appendix B.2.2 or \textcite{perr19} for additional results.
+
+\item redo \fullcite{clau82}
+\item anisotropic heat conduction, see  Reddy \cite[p121]{reddybook2}, Reddy \cite[p143]{reddybook2} 
+\item pressure smoothing for Q1. Get relevant literature, digest it, implement all variants in stone 12.
+look at remark in \textcite{lumh24}.
+\index{general}{MSc Thesis} 
+
+\item implement a simple Newton solver and apply it to a few nonlinear 
+benchmarks. 
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Questions I have, Things I need to (better) understand}
+
+These are not particularly well posed. 
+
+\begin{itemize}
+\item how does FLAC work?
+\item how does propagator matrix work?
+\item in FEM, time derivative handled by FDM but not FEM?
+\item why not ok to prescribe T on outflow boundary. check aspect manual
+\item the need to underintegrate penalty term
+\item pseudo-transient methods
+\end{itemize}
+
+
+
+
+
+
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
