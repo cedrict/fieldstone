@@ -6,64 +6,105 @@ import time as time
 import random
 
 #------------------------------------------------------------------------------
+# velocity components
+#------------------------------------------------------------------------------
 
 def u_th(x,y,z):
-    val=2*np.sin(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
-    #val=(y+z)*(1-x**2)
-    #val=(2-x**2-x**4)*(3*y+3*y**3)*(z+2*z*3)
+    if vfield==1:
+       val=(y+z)*(1-x**2)
+    elif vfield==2:
+       val=(2-x**2-x**4)*(3*y+3*y**3)*(z+2*z*3)
+    elif vfield==3:
+       val=2*np.sin(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
+    elif vfield==4:
+       val=0.5*np.sin(2*np.pi*x)*np.cos(4*np.pi*y)*np.cos(np.pi*z) \
+          +np.sin(np.pi*x)*np.cos(2*np.pi*y)*np.cos(np.pi*z)
     return val
 
 def v_th(x,y,z):
-    val=-np.sin(np.pi*y)*np.cos(np.pi*x)*np.cos(np.pi*z)
-    #val=(-x+z)*(1-y**2)
-    val=(2-y**2-y**4)*(x+2*x**3)*(-z-2*z**3)
+    if vfield==1:
+       val=(-x+z)*(1-y**2)
+    elif vfield==2:
+       val=(2-y**2-y**4)*(x+2*x**3)*(-z-2*z**3)
+    elif vfield==3:
+       val=-np.sin(np.pi*y)*np.cos(np.pi*x)*np.cos(np.pi*z)
+    elif vfield==4:
+       val=0.25*np.cos(2*np.pi*x)*np.sin(4*np.pi*y)*np.cos(np.pi*z) \
+          +0.5*np.cos(np.pi*x)*np.sin(2*np.pi*y)*np.cos(np.pi*z) 
     return val
 
 def w_th(x,y,z):
-    val=-np.sin(np.pi*z)*np.cos(np.pi*x)*np.cos(np.pi*y)
-    #val=(-x-y)*(1-z**2)
-    val=(2-z**2-z**4)*(-x-2*x**3)*(2*y+y**3)
+    if vfield==1:
+       val=(-x-y)*(1-z**2)
+    elif vfield==2:
+       val=(2-z**2-z**4)*(-x-2*x**3)*(2*y+y**3)
+    elif vfield==3:
+       val=-np.sin(np.pi*z)*np.cos(np.pi*x)*np.cos(np.pi*y)
+    elif vfield==4:
+       val=-2*np.cos(2*np.pi*x)*np.cos(4*np.pi*y)*np.sin(np.pi*z) \
+          -2*np.cos(np.pi*x)*np.cos(2*np.pi*y)*np.sin(np.pi*z)
     return val
 
+#------------------------------------------------------------------------------
+# strain rate components
+#------------------------------------------------------------------------------
+
 def exx_th(x,y,z):
-    val=2.*np.pi*np.cos(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
-    #val=-2*x*(y+z)
-    #val=(-2*x-4*x**3)*(3*y+3*y**3)*(z+2*z**3)
+    if vfield==1:
+       val=-2*x*(y+z)
+    elif vfield==2:
+       val=(-2*x-4*x**3)*(3*y+3*y**3)*(z+2*z**3)
+    else:
+       val=2.*np.pi*np.cos(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
     return val
 
 def eyy_th(x,y,z):
-    val=-np.pi*np.cos(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
-    #val=-2*y*(-x+z)
-    val=(-2*y-4*y**3)*(x+2*x**3)*(-z-2*z**3)
+    if vfield==1:
+       val=-2*y*(-x+z)
+    elif vfield==2:
+       val=(-2*y-4*y**3)*(x+2*x**3)*(-z-2*z**3)
+    else:
+       val=-np.pi*np.cos(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
     return val
 
 def ezz_th(x,y,z):
-    val=-np.pi*np.cos(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
-    #val=-2*z*(-x-z)
-    #val=(-2*z-4*z**3)*(-x-2*x**3)*(2*y+y**3)
+    if vfield==1:
+       val=-2*z*(-x-z)
+    elif vfield==2:
+       val=(-2*z-4*z**3)*(-x-2*x**3)*(2*y+y**3)
+    else:
+       val=-np.pi*np.cos(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
     return val
 
-#def divv_th(x,y,z):
-#    val=(-2.*x-4.*x**3.)*(3.*y+3.*y**3.)*(   z+2.*z**3.)\
-#       +(-2.*y-4.*y**3.)*(   x+2.*x**3.)*(  -z-2.*z**3.)\
-#       +(-2.*z-4.*z**3.)*(  -x-2.*x**3.)*(2.*y+   y**3.)
-#    return val
-
 def exy_th(x,y,z):
-    val=-0.5*np.pi*np.sin(np.pi*x)*np.sin(np.pi*y)*np.cos(np.pi*z)
-    #val=0.5*(y**2-x**2)
+    if vfield==1:
+       val=0.5*(y**2-x**2)
+    elif vfield==2:
+       val=0.
+    else:
+       val=0.
     return val
 
 def exz_th(x,y,z):
-    val=0.
-    #val=0.5*(z**2-x**2)
+    if vfield==1:
+       val=0.5*(z**2-x**2)
+    elif vfield==2:
+       val=0.
+    else:
+       val=0.
     return val
 
 def eyz_th(x,y,z):
-    val=0.
-    #val=0.5*(y**2-x**2)
+    if vfield==1:
+       val=0.5*(y**2-x**2)
+    elif vfield==2:
+       val=0.
+    else:
+       val=0.
     return val
 
+#------------------------------------------------------------------------------
+# Q1 basis functions
 #------------------------------------------------------------------------------
 
 def NQ1(rq,sq,tq):
@@ -75,7 +116,7 @@ def NQ1(rq,sq,tq):
     N5=0.125*(1.+rq)*(1.-sq)*(1.+tq)
     N6=0.125*(1.+rq)*(1.+sq)*(1.+tq)
     N7=0.125*(1.-rq)*(1.+sq)*(1.+tq)
-    return N0,N1,N2,N3,N4,N5,N6,N7
+    return np.array([N0,N1,N2,N3,N4,N5,N6,N7],dtype=np.float64)
 
 def dNQ1dr(rq,sq,tq):
     dNdr0=-0.125*(1.-sq)*(1.-tq) 
@@ -86,7 +127,7 @@ def dNQ1dr(rq,sq,tq):
     dNdr5=+0.125*(1.-sq)*(1.+tq)
     dNdr6=+0.125*(1.+sq)*(1.+tq)
     dNdr7=-0.125*(1.+sq)*(1.+tq)
-    return dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,dNdr6,dNdr7
+    return np.array([dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,dNdr6,dNdr7],dtype=np.float64)
 
 def dNQ1ds(rq,sq,tq):
     dNds0=-0.125*(1.-rq)*(1.-tq) 
@@ -97,7 +138,7 @@ def dNQ1ds(rq,sq,tq):
     dNds5=-0.125*(1.+rq)*(1.+tq)
     dNds6=+0.125*(1.+rq)*(1.+tq)
     dNds7=+0.125*(1.-rq)*(1.+tq)
-    return dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6,dNds7
+    return np.array([dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6,dNds7],dtype=np.float64)
 
 def dNQ1dt(rq,sq,tq):
     dNdt0=-0.125*(1.-rq)*(1.-sq) 
@@ -108,7 +149,11 @@ def dNQ1dt(rq,sq,tq):
     dNdt5=+0.125*(1.+rq)*(1.-sq)
     dNdt6=+0.125*(1.+rq)*(1.+sq)
     dNdt7=+0.125*(1.-rq)*(1.+sq)
-    return dNdt0,dNdt1,dNdt2,dNdt3,dNdt4,dNdt5,dNdt6,dNdt7
+    return np.array([dNdt0,dNdt1,dNdt2,dNdt3,dNdt4,dNdt5,dNdt6,dNdt7],dtype=np.float64)
+
+#------------------------------------------------------------------------------
+# Q1 basis functions
+#------------------------------------------------------------------------------
 
 def NQ2(rq,sq,tq):
     NV_00= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.) * 0.5*tq*(tq-1.) 
@@ -138,9 +183,9 @@ def NQ2(rq,sq,tq):
     NV_24= 0.5*rq*(rq-1.) * (1.-sq**2)     * (1.-tq**2)
     NV_25= (1.-rq**2)     * (1.-sq**2)     * 0.5*tq*(tq+1.)
     NV_26= (1.-rq**2)     * (1.-sq**2)     * (1.-tq**2)
-    return NV_00,NV_01,NV_02,NV_03,NV_04,NV_05,NV_06,NV_07,NV_08,\
-           NV_09,NV_10,NV_11,NV_12,NV_13,NV_14,NV_15,NV_16,NV_17,\
-           NV_18,NV_19,NV_20,NV_21,NV_22,NV_23,NV_24,NV_25,NV_26
+    return np.array([NV_00,NV_01,NV_02,NV_03,NV_04,NV_05,NV_06,NV_07,NV_08,\
+                     NV_09,NV_10,NV_11,NV_12,NV_13,NV_14,NV_15,NV_16,NV_17,\
+                     NV_18,NV_19,NV_20,NV_21,NV_22,NV_23,NV_24,NV_25,NV_26],dtype=np.float64)
 
 def dNQ2dr(rq,sq,tq):
     dNVdr_00= 0.5*(2*rq-1.) * 0.5*sq*(sq-1.) * 0.5*tq*(tq-1.) 
@@ -170,9 +215,9 @@ def dNQ2dr(rq,sq,tq):
     dNVdr_24= 0.5*(2*rq-1.) * (1.-sq**2)     * (1.-tq**2) 
     dNVdr_25= (-2*rq)       * (1.-sq**2)     * 0.5*tq*(tq+1.) 
     dNVdr_26= (-2*rq)       * (1.-sq**2)     * (1.-tq**2) 
-    return dNVdr_00,dNVdr_01,dNVdr_02,dNVdr_03,dNVdr_04,dNVdr_05,dNVdr_06,dNVdr_07,dNVdr_08,\
-           dNVdr_09,dNVdr_10,dNVdr_11,dNVdr_12,dNVdr_13,dNVdr_14,dNVdr_15,dNVdr_16,dNVdr_17,\
-           dNVdr_18,dNVdr_19,dNVdr_20,dNVdr_21,dNVdr_22,dNVdr_23,dNVdr_24,dNVdr_25,dNVdr_26
+    return np.array([dNVdr_00,dNVdr_01,dNVdr_02,dNVdr_03,dNVdr_04,dNVdr_05,dNVdr_06,dNVdr_07,dNVdr_08,\
+                     dNVdr_09,dNVdr_10,dNVdr_11,dNVdr_12,dNVdr_13,dNVdr_14,dNVdr_15,dNVdr_16,dNVdr_17,\
+                     dNVdr_18,dNVdr_19,dNVdr_20,dNVdr_21,dNVdr_22,dNVdr_23,dNVdr_24,dNVdr_25,dNVdr_26],dtype=np.float64)
 
 def dNQ2ds(rq,sq,tq):
     dNVds_00= 0.5*rq*(rq-1.) * 0.5*(2*sq-1.) * 0.5*tq*(tq-1.) 
@@ -202,9 +247,9 @@ def dNQ2ds(rq,sq,tq):
     dNVds_24= 0.5*rq*(rq-1.) * (-2*sq)       * (1.-tq**2) 
     dNVds_25= (1.-rq**2)     * (-2*sq)       * 0.5*tq*(tq+1.) 
     dNVds_26= (1.-rq**2)     * (-2*sq)       * (1.-tq**2) 
-    return dNVds_00,dNVds_01,dNVds_02,dNVds_03,dNVds_04,dNVds_05,dNVds_06,dNVds_07,dNVds_08,\
-           dNVds_09,dNVds_10,dNVds_11,dNVds_12,dNVds_13,dNVds_14,dNVds_15,dNVds_16,dNVds_17,\
-           dNVds_18,dNVds_19,dNVds_20,dNVds_21,dNVds_22,dNVds_23,dNVds_24,dNVds_25,dNVds_26
+    return np.array([dNVds_00,dNVds_01,dNVds_02,dNVds_03,dNVds_04,dNVds_05,dNVds_06,dNVds_07,dNVds_08,\
+                     dNVds_09,dNVds_10,dNVds_11,dNVds_12,dNVds_13,dNVds_14,dNVds_15,dNVds_16,dNVds_17,\
+                     dNVds_18,dNVds_19,dNVds_20,dNVds_21,dNVds_22,dNVds_23,dNVds_24,dNVds_25,dNVds_26],dtype=np.float64)
 
 def dNQ2dt(rq,sq,tq):
     dNVdt_00= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.) * 0.5*(2*tq-1.) 
@@ -234,9 +279,11 @@ def dNQ2dt(rq,sq,tq):
     dNVdt_24= 0.5*rq*(rq-1.) * (1.-sq**2)     * (-2*tq) 
     dNVdt_25= (1.-rq**2)     * (1.-sq**2)     * 0.5*(2*tq+1.) 
     dNVdt_26= (1.-rq**2)     * (1.-sq**2)     * (-2*tq) 
-    return dNVdt_00,dNVdt_01,dNVdt_02,dNVdt_03,dNVdt_04,dNVdt_05,dNVdt_06,dNVdt_07,dNVdt_08,\
-           dNVdt_09,dNVdt_10,dNVdt_11,dNVdt_12,dNVdt_13,dNVdt_14,dNVdt_15,dNVdt_16,dNVdt_17,\
-           dNVdt_18,dNVdt_19,dNVdt_20,dNVdt_21,dNVdt_22,dNVdt_23,dNVdt_24,dNVdt_25,dNVdt_26
+    return np.array([dNVdt_00,dNVdt_01,dNVdt_02,dNVdt_03,dNVdt_04,dNVdt_05,dNVdt_06,dNVdt_07,dNVdt_08,\
+                     dNVdt_09,dNVdt_10,dNVdt_11,dNVdt_12,dNVdt_13,dNVdt_14,dNVdt_15,dNVdt_16,dNVdt_17,\
+                     dNVdt_18,dNVdt_19,dNVdt_20,dNVdt_21,dNVdt_22,dNVdt_23,dNVdt_24,dNVdt_25,dNVdt_26],dtype=np.float64)
+
+#------------------------------------------------------------------------------
 
 def interpolate_vel_on_pt(xm,ym,zm,x,y,z,u,v,w,icon,Lx,Ly,Lz,nelx,nely,nelz,m,Q):
     ielx=int((xm+Lxoffset)/Lx*nelx)
@@ -400,9 +447,11 @@ Lx=2.  # x- extent of the domain
 Ly=2.  # y- extent of the domain 
 Lz=2.  # z- extent of the domain 
 
-Lxoffset=1.
-Lyoffset=1.
-Lzoffset=1.
+Lxoffset=0.
+Lyoffset=0.
+Lzoffset=0.
+
+vfield=4
 
 if int(len(sys.argv) == 5):
    nelx           =int(sys.argv[1])
@@ -421,7 +470,7 @@ else:
    nely = 16
    nelz = 16
    visu = 1
-   nmarker_per_dim=5
+   nmarker_per_dim=4
    random_markers=0
    CFL_nb=0.4  
    RKorder=1
@@ -440,17 +489,18 @@ if Q==2:
    nnz=2*nelz+1  # number of elements, z direction
    m=27    # number of velocity nodes making up an element
 
-nnp=nnx*nny*nnz  # number of nodes
+NV=nnx*nny*nnz  # number of nodes
 nel=nelx*nely*nelz  # number of elements, total
 
 hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
 
-nstep=1
+nstep=100
 every=1      # vtu output frequency
 
 tijd=0.
+
 #################################################################
 #################################################################
 
@@ -461,7 +511,7 @@ print("nel",nel)
 print("nnx=",nnx)
 print("nny=",nny)
 print("nnz=",nnz)
-print("nnp=",nnp)
+print("NV=",NV)
 print("Q=",Q)
 print("RKorder=",RKorder)
 print("option=",option)
@@ -490,9 +540,9 @@ m0file=open("marker0_nelx"+str(nelx)+\
 ######################################################################
 start = time.time()
 
-x = np.empty(nnp,dtype=np.float64)  # x coordinates
-y = np.empty(nnp,dtype=np.float64)  # y coordinates
-z = np.empty(nnp,dtype=np.float64)  # z coordinates
+x = np.empty(NV,dtype=np.float64)  # x coordinates
+y = np.empty(NV,dtype=np.float64)  # y coordinates
+z = np.empty(NV,dtype=np.float64)  # z coordinates
 
 if Q==1:
    counter=0
@@ -579,11 +629,11 @@ print("build connectivity: %.3f s" % (time.time() - start))
 #################################################################
 # assign nodal field values 
 #################################################################
-u = np.empty(nnp,dtype=np.float64)
-v = np.empty(nnp,dtype=np.float64)
-w = np.empty(nnp,dtype=np.float64)
+u = np.empty(NV,dtype=np.float64)
+v = np.empty(NV,dtype=np.float64)
+w = np.empty(NV,dtype=np.float64)
 
-for i in range(0,nnp):
+for i in range(0,NV):
     u[i]=u_th(x[i],y[i],z[i]) 
     v[i]=v_th(x[i],y[i],z[i]) 
     w[i]=w_th(x[i],y[i],z[i]) 
@@ -847,8 +897,8 @@ for istep in range (0,nstep):
     print("     -> count (m,M) %.5d %.5d " %(np.min(count),np.max(count)))
 
     countfile.write(" %e %d %d %e %e\n" % (tijd, np.min(count),np.max(count),\
-                                                 np.min(count)/nmarker_per_dim**2,\
-                                                 np.max(count)/nmarker_per_dim**2 ))
+                                                 np.min(count)/nmarker_per_dim**3,\
+                                                 np.max(count)/nmarker_per_dim**3 ))
 
     countfile.flush()
 
@@ -935,11 +985,11 @@ for istep in range (0,nstep):
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
-       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nnp,nel))
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
        #####
        vtufile.write("<Points> \n")
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-       for i in range(0,nnp):
+       for i in range(0,NV):
            vtufile.write("%10f %10f %10f \n" %(x[i],y[i],z[i]))
        vtufile.write("</DataArray>\n")
        vtufile.write("</Points> \n")
@@ -961,37 +1011,37 @@ for istep in range (0,nstep):
        vtufile.write("<PointData Scalars='scalars'>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-       for i in range(0,nnp):
+       for i in range(0,NV):
            vtufile.write("%10e %10e %10e \n" % (u[i],v[i],w[i]) )
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exx' Format='ascii'> \n")
-       for i in range(0,nnp):
+       for i in range(0,NV):
            vtufile.write("%10e \n" %(exx_th(x[i],y[i],z[i]) ))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='eyy' Format='ascii'> \n")
-       for i in range(0,nnp):
+       for i in range(0,NV):
            vtufile.write("%10e \n" %(eyy_th(x[i],y[i],z[i]) ))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='ezz' Format='ascii'> \n")
-       for i in range(0,nnp):
+       for i in range(0,NV):
            vtufile.write("%10e \n" %(ezz_th(x[i],y[i],z[i]) ))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exy' Format='ascii'> \n")
-       for i in range(0,nnp):
+       for i in range(0,NV):
            vtufile.write("%10e \n" %(exy_th(x[i],y[i],z[i]) ))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='exz' Format='ascii'> \n")
-       for i in range(0,nnp):
+       for i in range(0,NV):
            vtufile.write("%10e \n" %(exz_th(x[i],y[i],z[i]) ))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='eyz' Format='ascii'> \n")
-       for i in range(0,nnp):
+       for i in range(0,NV):
            vtufile.write("%10e \n" %(eyz_th(x[i],y[i],z[i]) ))
        vtufile.write("</DataArray>\n")
        #--
