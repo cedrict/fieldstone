@@ -19,6 +19,8 @@ def u_th(x,y,z):
     elif vfield==4:
        val=0.5*np.sin(2*np.pi*x)*np.cos(4*np.pi*y)*np.cos(np.pi*z) \
           +np.sin(np.pi*x)*np.cos(2*np.pi*y)*np.cos(np.pi*z)
+    elif vfield==5:
+       val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
     return val
 
 def v_th(x,y,z):
@@ -31,6 +33,8 @@ def v_th(x,y,z):
     elif vfield==4:
        val=0.25*np.cos(2*np.pi*x)*np.sin(4*np.pi*y)*np.cos(np.pi*z) \
           +0.5*np.cos(np.pi*x)*np.sin(2*np.pi*y)*np.cos(np.pi*z) 
+    elif vfield==5:
+       val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
     return val
 
 def w_th(x,y,z):
@@ -43,6 +47,8 @@ def w_th(x,y,z):
     elif vfield==4:
        val=-2*np.cos(2*np.pi*x)*np.cos(4*np.pi*y)*np.sin(np.pi*z) \
           -2*np.cos(np.pi*x)*np.cos(2*np.pi*y)*np.sin(np.pi*z)
+    elif vfield==5:
+       val=0
     return val
 
 #------------------------------------------------------------------------------
@@ -50,56 +56,74 @@ def w_th(x,y,z):
 #------------------------------------------------------------------------------
 
 def exx_th(x,y,z):
+    val=0
     if vfield==1:
        val=-2*x*(y+z)
     elif vfield==2:
        val=(-2*x-4*x**3)*(3*y+3*y**3)*(z+2*z**3)
-    else:
+    elif vfield==3:
+       val=0.
+    elif vfield==4:
        val=2.*np.pi*np.cos(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
     return val
 
 def eyy_th(x,y,z):
+    val=0
     if vfield==1:
        val=-2*y*(-x+z)
     elif vfield==2:
        val=(-2*y-4*y**3)*(x+2*x**3)*(-z-2*z**3)
-    else:
+    elif vfield==3:
+       val=0.
+    elif vfield==4:
        val=-np.pi*np.cos(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
     return val
 
 def ezz_th(x,y,z):
+    val=0
     if vfield==1:
        val=-2*z*(-x-z)
     elif vfield==2:
        val=(-2*z-4*z**3)*(-x-2*x**3)*(2*y+y**3)
-    else:
+    elif vfield==3:
+       val=0.
+    elif vfield==4:
        val=-np.pi*np.cos(np.pi*x)*np.cos(np.pi*y)*np.cos(np.pi*z)
     return val
 
 def exy_th(x,y,z):
+    val=0
     if vfield==1:
        val=0.5*(y**2-x**2)
     elif vfield==2:
        val=0.
-    else:
+    elif vfield==3:
+       val=0.
+    elif vfield==4:
        val=0.
     return val
 
 def exz_th(x,y,z):
+    val=0
     if vfield==1:
        val=0.5*(z**2-x**2)
     elif vfield==2:
        val=0.
-    else:
+    elif vfield==3:
+       val=0.
+    elif vfield==4:
        val=0.
     return val
 
 def eyz_th(x,y,z):
+    val=0
     if vfield==1:
        val=0.5*(y**2-x**2)
     elif vfield==2:
        val=0.
-    else:
+    elif vfield==3:
+       val=0.
+    elif vfield==4:
        val=0.
     return val
 
@@ -215,9 +239,11 @@ def dNQ2dr(rq,sq,tq):
     dNVdr_24= 0.5*(2*rq-1.) * (1.-sq**2)     * (1.-tq**2) 
     dNVdr_25= (-2*rq)       * (1.-sq**2)     * 0.5*tq*(tq+1.) 
     dNVdr_26= (-2*rq)       * (1.-sq**2)     * (1.-tq**2) 
-    return np.array([dNVdr_00,dNVdr_01,dNVdr_02,dNVdr_03,dNVdr_04,dNVdr_05,dNVdr_06,dNVdr_07,dNVdr_08,\
-                     dNVdr_09,dNVdr_10,dNVdr_11,dNVdr_12,dNVdr_13,dNVdr_14,dNVdr_15,dNVdr_16,dNVdr_17,\
-                     dNVdr_18,dNVdr_19,dNVdr_20,dNVdr_21,dNVdr_22,dNVdr_23,dNVdr_24,dNVdr_25,dNVdr_26],dtype=np.float64)
+    return np.array([dNVdr_00,dNVdr_01,dNVdr_02,dNVdr_03,dNVdr_04,dNVdr_05,\
+                     dNVdr_06,dNVdr_07,dNVdr_08,dNVdr_09,dNVdr_10,dNVdr_11,\
+                     dNVdr_12,dNVdr_13,dNVdr_14,dNVdr_15,dNVdr_16,dNVdr_17,\
+                     dNVdr_18,dNVdr_19,dNVdr_20,dNVdr_21,dNVdr_22,dNVdr_23,\
+                     dNVdr_24,dNVdr_25,dNVdr_26],dtype=np.float64)
 
 def dNQ2ds(rq,sq,tq):
     dNVds_00= 0.5*rq*(rq-1.) * 0.5*(2*sq-1.) * 0.5*tq*(tq-1.) 
@@ -247,9 +273,11 @@ def dNQ2ds(rq,sq,tq):
     dNVds_24= 0.5*rq*(rq-1.) * (-2*sq)       * (1.-tq**2) 
     dNVds_25= (1.-rq**2)     * (-2*sq)       * 0.5*tq*(tq+1.) 
     dNVds_26= (1.-rq**2)     * (-2*sq)       * (1.-tq**2) 
-    return np.array([dNVds_00,dNVds_01,dNVds_02,dNVds_03,dNVds_04,dNVds_05,dNVds_06,dNVds_07,dNVds_08,\
-                     dNVds_09,dNVds_10,dNVds_11,dNVds_12,dNVds_13,dNVds_14,dNVds_15,dNVds_16,dNVds_17,\
-                     dNVds_18,dNVds_19,dNVds_20,dNVds_21,dNVds_22,dNVds_23,dNVds_24,dNVds_25,dNVds_26],dtype=np.float64)
+    return np.array([dNVds_00,dNVds_01,dNVds_02,dNVds_03,dNVds_04,dNVds_05,\
+                     dNVds_06,dNVds_07,dNVds_08,dNVds_09,dNVds_10,dNVds_11,\
+                     dNVds_12,dNVds_13,dNVds_14,dNVds_15,dNVds_16,dNVds_17,\
+                     dNVds_18,dNVds_19,dNVds_20,dNVds_21,dNVds_22,dNVds_23,\
+                     dNVds_24,dNVds_25,dNVds_26],dtype=np.float64)
 
 def dNQ2dt(rq,sq,tq):
     dNVdt_00= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.) * 0.5*(2*tq-1.) 
@@ -279,9 +307,11 @@ def dNQ2dt(rq,sq,tq):
     dNVdt_24= 0.5*rq*(rq-1.) * (1.-sq**2)     * (-2*tq) 
     dNVdt_25= (1.-rq**2)     * (1.-sq**2)     * 0.5*(2*tq+1.) 
     dNVdt_26= (1.-rq**2)     * (1.-sq**2)     * (-2*tq) 
-    return np.array([dNVdt_00,dNVdt_01,dNVdt_02,dNVdt_03,dNVdt_04,dNVdt_05,dNVdt_06,dNVdt_07,dNVdt_08,\
-                     dNVdt_09,dNVdt_10,dNVdt_11,dNVdt_12,dNVdt_13,dNVdt_14,dNVdt_15,dNVdt_16,dNVdt_17,\
-                     dNVdt_18,dNVdt_19,dNVdt_20,dNVdt_21,dNVdt_22,dNVdt_23,dNVdt_24,dNVdt_25,dNVdt_26],dtype=np.float64)
+    return np.array([dNVdt_00,dNVdt_01,dNVdt_02,dNVdt_03,dNVdt_04,dNVdt_05,\
+                     dNVdt_06,dNVdt_07,dNVdt_08,dNVdt_09,dNVdt_10,dNVdt_11,\
+                     dNVdt_12,dNVdt_13,dNVdt_14,dNVdt_15,dNVdt_16,dNVdt_17,\
+                     dNVdt_18,dNVdt_19,dNVdt_20,dNVdt_21,dNVdt_22,dNVdt_23,\
+                     dNVdt_24,dNVdt_25,dNVdt_26],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 
@@ -312,41 +342,8 @@ def interpolate_vel_on_pt(xm,ym,zm,x,y,z,u,v,w,icon,Lx,Ly,Lz,nelx,nely,nelz,m,Q)
         wm+=N[k]*w[icon[k,iel]]
     return um,vm,wm,rm,sm,tm,iel 
 
-def compute_CVI_corr (u,v,w,icon,rm,sm,tm,iel,use_cvi,Q,option):
+def compute_CVI_corr (u,v,w,icon,rm,sm,tm,iel,use_cvi,Q,option,Jt):
     if use_cvi==1 and Q==1:
-       #dNdr=dNQ1dr(rm,sm,tm)
-       #dNds=dNQ1ds(rm,sm,tm)
-       #dNdt=dNQ1dt(rm,sm,tm)
-       #jcb=np.zeros((3,3),dtype=np.float64)
-       #for k in range(0,m):
-       #    jcb[0,0] += dNdr[k]*x[icon[k,iel]]
-       #    jcb[0,1] += dNdr[k]*y[icon[k,iel]]
-       #    jcb[0,2] += dNdr[k]*z[icon[k,iel]]
-       #    jcb[1,0] += dNds[k]*x[icon[k,iel]]
-       #    jcb[1,1] += dNds[k]*y[icon[k,iel]]
-       #    jcb[1,2] += dNds[k]*z[icon[k,iel]]
-       #    jcb[2,0] += dNdt[k]*x[icon[k,iel]]
-       #    jcb[2,1] += dNdt[k]*y[icon[k,iel]]
-       #    jcb[2,2] += dNdt[k]*z[icon[k,iel]]
-       #jcbi = np.linalg.inv(jcb)
-       #Jxx=jcbi[0,0] ; Jxy=jcbi[0,1] ; Jxz=jcbi[0,2]
-       #Jyx=jcbi[1,0] ; Jyy=jcbi[1,1] ; Jyz=jcbi[1,2]
-       #Jzx=jcbi[2,0] ; Jzy=jcbi[2,1] ; Jzz=jcbi[2,2]
-       #Jxx=jcbi[0,0]
-       #Jyy=jcbi[1,1]
-       #Jzz=jcbi[2,2]
-       #print (Jxx,Jyy,Jzz)
-
-       Jxyt=0.
-       Jxzt=0.
-       Jyxt=0.
-       Jzxt=0.
-       Jyzt=0.
-       Jzyt=0.
-
-       Jxxt=12.
-       Jyyt=12.
-       Jzzt=12.       
 
        u1=u[icon[0,iel]] ; v1=v[icon[0,iel]] ; w1=w[icon[0,iel]] 
        u2=u[icon[1,iel]] ; v2=v[icon[1,iel]] ; w2=w[icon[1,iel]] 
@@ -357,79 +354,42 @@ def compute_CVI_corr (u,v,w,icon,rm,sm,tm,iel,use_cvi,Q,option):
        u7=u[icon[6,iel]] ; v7=v[icon[6,iel]] ; w7=w[icon[6,iel]] 
        u8=u[icon[7,iel]] ; v8=v[icon[7,iel]] ; w8=w[icon[7,iel]] 
 
-       U1=Jxxt*u1+Jyxt*v1+Jzxt*w1
-       U2=Jxxt*u2+Jyxt*v2+Jzxt*w2
-       U3=Jxxt*u3+Jyxt*v3+Jzxt*w3
-       U4=Jxxt*u4+Jyxt*v4+Jzxt*w4
-       U5=Jxxt*u5+Jyxt*v5+Jzxt*w5
-       U6=Jxxt*u6+Jyxt*v6+Jzxt*w6
-       U7=Jxxt*u7+Jyxt*v7+Jzxt*w7
-       U8=Jxxt*u8+Jyxt*v8+Jzxt*w8
+       u21=(u2-u1)/8 ; v41=(v4-v1)/8 ; w51=(w5-w1)/8
+       u65=(u6-u5)/8 ; v32=(v3-v2)/8 ; w62=(w6-w2)/8
+       u34=(u3-u4)/8 ; v85=(v8-v5)/8 ; w73=(w7-w3)/8
+       u78=(u7-u8)/8 ; v76=(v7-v6)/8 ; w84=(w8-w4)/8
 
-       V1=Jxyt*u1+Jyyt*v1+Jzyt*w1
-       V2=Jxyt*u2+Jyyt*v2+Jzyt*w2
-       V3=Jxyt*u3+Jyyt*v3+Jzyt*w3
-       V4=Jxyt*u4+Jyyt*v4+Jzyt*w4
-       V5=Jxyt*u5+Jyyt*v5+Jzyt*w5
-       V6=Jxyt*u6+Jyyt*v6+Jzyt*w6
-       V7=Jxyt*u7+Jyyt*v7+Jzyt*w7
-       V8=Jxyt*u8+Jyyt*v8+Jzyt*w8
+       ur2= -u21 - u65 + u34 + u78
+       ur3= -u21 + u65 - u34 + u78
+       ur4=  u21 - u65 - u34 + u78
 
-       W1=Jxzt*u1+Jyzt*v1+Jzzt*w1
-       W2=Jxzt*u2+Jyzt*v2+Jzzt*w2
-       W3=Jxzt*u3+Jyzt*v3+Jzzt*w3
-       W4=Jxzt*u4+Jyzt*v4+Jzzt*w4
-       W5=Jxzt*u5+Jyzt*v5+Jzzt*w5
-       W6=Jxzt*u6+Jyzt*v6+Jzzt*w6
-       W7=Jxzt*u7+Jyzt*v7+Jzzt*w7
-       W8=Jxzt*u8+Jyzt*v8+Jzzt*w8
+       vs2= -v41 + v32 - v85 + v76
+       vs3= -v41 - v32 + v85 + v76
+       vs4=  v41 - v32 - v85 + v76
 
-       D1=( V1-V2+V3-V4+V5-V6+V7-V8 + W1-W2-W3+W4-W5+W6+W7-W8 )*0.125
-       D2=( U1-U2+U3-U4+U5-U6+U7-U8 + W1+W2-W3-W4-W5-W6+W7+W8 )*0.125
-       D3=( U1-U2-U3+U4-U5+U6+U7-U8 + V1+V2-V3-V4-V5-V6+V7+V8 )*0.125
-       D4=(-W1+W2-W3+W4+W5-W6+W7-W8 )*0.125
-       D5=(-V1+V2-V3+V4+V5-V6+V7-V8 )*0.125
-       D6=(-U1+U2-U3+U4+U5-U6+U7-U8 )*0.125
+       wt2= -w51 + w62 + w73 - w84
+       wt3= -w51 - w62 + w73 + w84
+       wt4=  w51 - w62 + w73 - w84
 
-       c=D1/Jxxt/2.
-       f=D2/Jyyt/2.
-       i=D3/Jzzt/2.
+       beta_r=0.5*(hx/hy*vs2+hx/hz*wt2)
+       beta_s=0.5*(hy/hx*ur2+hy/hz*wt3)
+       beta_t=0.5*(hz/hx*ur3+hz/hy*vs3)
 
-       if option==1:
-          a=D4/2./Jxxt
-          b=0
-          d=0
-          e=D6/2./Jyyt
-          g=D5/2./Jzzt
-          h=0
+       alpha_r=0.25*(-ur4+hx/hy*vs4+hx/hz*wt4)
+       alpha_s=0.25*( hy/hx*ur4-vs4+hy/hz*wt4)
+       alpha_t=0.25*( hz/hx*ur4+hz/hy*vs4-wt4)
 
-       if option==2:
-          a=Jzz*wt4/2./(Jxx+Jyy)
-          b=Jyy*vs4/2./(Jxx+Jzz)
-          d=a
-          e=Jxx*ur4/2./(Jyy+Jzz)
-          g=b
-          h=e
+       u_corr=(1.-rm**2)*(alpha_r*(sm+tm)+beta_r)
+       v_corr=(1.-sm**2)*(alpha_s*(sm+tm)+beta_s)
+       w_corr=(1.-tm**2)*(alpha_t*(sm+tm)+beta_t)
 
-       if option==3:
-          a=(-Jxx*ur4+Jyy*vs4+Jzz*wt4)/Jxx/4.
-          b=a
-          d=( Jxx*ur4-Jyy*vs4+Jzz*wt4)/Jyy/4.
-          e=d
-          g=( Jxx*ur4+Jyy*vs4-Jzz*wt4)/Jzz/4.
-          h=g
+       #Jtxx=Jt[0,0] ; Jtxy=Jt[0,1] ; Jtxz=Jt[0,2]
+       #Jtyx=Jt[1,0] ; Jtyy=Jt[1,1] ; Jtyz=Jt[1,2]
+       #Jtzx=Jt[2,0] ; Jtzy=Jt[2,1] ; Jtzz=Jt[2,2]
+       #c=0.5*(Jtxy*us2+Jtxz*ut2+Jtyy*vs2+Jtyz*vt2+Jtzy*ws2+Jtzz*wt2)/Jtxx
+       #f=0.5*(Jtxx*ur2+Jtxz*ut3+Jtyx*vr2+Jtyz*vt3+Jtzx*wr2+Jtzz*wt3)/Jtyy
+       #i=0.5*(Jtxx*ur3+Jtxy*us3+Jtyx*vr3+Jtyy*vs3+Jtzx*wr3+Jtzy*ws3)/Jtzz
 
-       if option==4:
-          a=0
-          b=0
-          d=0
-          e=0
-          g=0
-          h=0
-
-       u_corr=(1.-rm**2)*(a*sm+b*tm+c)
-       v_corr=(1.-sm**2)*(d*rm+e*tm+f)
-       w_corr=(1.-tm**2)*(g*rm+h*sm+i)
     else:
        u_corr=0.
        v_corr=0.
@@ -443,15 +403,15 @@ print("----------FIELDSTONE----------")
 print("------------------------------")
 
 
-Lx=2.  # x- extent of the domain 
-Ly=2.  # y- extent of the domain 
-Lz=2.  # z- extent of the domain 
+Lx=1.  # x- extent of the domain 
+Ly=1.  # y- extent of the domain 
+Lz=1.  # z- extent of the domain 
 
 Lxoffset=0.
 Lyoffset=0.
 Lzoffset=0.
 
-vfield=4
+vfield=5
 
 if int(len(sys.argv) == 5):
    nelx           =int(sys.argv[1])
@@ -459,7 +419,7 @@ if int(len(sys.argv) == 5):
    nelz           =int(sys.argv[3])
    visu           =int(sys.argv[4])
    nmarker_per_dim=int(sys.argv[5])
-   random_markers =int(sys.argv[6])
+   markers_distr  =int(sys.argv[6])
    CFL_nb         =float(sys.argv[7])
    RKorder        =int(sys.argv[8])
    use_cvi        =int(sys.argv[9])
@@ -470,9 +430,9 @@ else:
    nely = 16
    nelz = 16
    visu = 1
-   nmarker_per_dim=4
-   random_markers=0
-   CFL_nb=0.4  
+   nmarker_per_dim=2
+   markers_distr=3
+   CFL_nb=0.25  
    RKorder=1
    use_cvi=1
    Q=1
@@ -519,21 +479,21 @@ print("------------------------------")
 
 countfile=open("markercount_stats_nelx"+str(nelx)+\
                                   '_nm'+str(nmarker_per_dim)+\
-                                "_rand"+str(random_markers)+\
+                                "_rand"+str(markers_distr)+\
                                 "_CFL_"+str(CFL_nb)+\
                                   "_rk"+str(RKorder)+\
                                  "_cvi"+str(use_cvi)+\
                                    "_Q"+str(Q)+\
                               "_option"+str(option)+".ascii","w")
 
-m0file=open("marker0_nelx"+str(nelx)+\
-                     '_nm'+str(nmarker_per_dim)+\
-                   "_rand"+str(random_markers)+\
-                   "_CFL_"+str(CFL_nb)+\
-                     "_rk"+str(RKorder)+\
-                    "_cvi"+str(use_cvi)+\
-                      "_Q"+str(Q)+\
-                 "_option"+str(option)+".ascii","w")
+#m0file=open("marker0_nelx"+str(nelx)+\
+#                     '_nm'+str(nmarker_per_dim)+\
+#                   "_rand"+str(markers_distr)+\
+#                   "_CFL_"+str(CFL_nb)+\
+#                     "_rk"+str(RKorder)+\
+#                    "_cvi"+str(use_cvi)+\
+#                      "_Q"+str(Q)+\
+#                 "_option"+str(option)+".ascii","w")
 
 ######################################################################
 # grid point setup
@@ -655,6 +615,9 @@ nmarker=nel*nmarker_per_element
 swarm_x=np.empty(nmarker,dtype=np.float64)  
 swarm_y=np.empty(nmarker,dtype=np.float64)  
 swarm_z=np.empty(nmarker,dtype=np.float64)  
+swarm_dx=np.empty(nmarker,dtype=np.float64)  
+swarm_dy=np.empty(nmarker,dtype=np.float64)  
+swarm_dz=np.empty(nmarker,dtype=np.float64)  
 swarm_u=np.zeros(nmarker,dtype=np.float64)  
 swarm_v=np.zeros(nmarker,dtype=np.float64)  
 swarm_w=np.zeros(nmarker,dtype=np.float64)  
@@ -666,7 +629,7 @@ xx=np.zeros(m,dtype=np.float64)
 yy=np.zeros(m,dtype=np.float64)
 zz=np.zeros(m,dtype=np.float64)
 
-if random_markers==1:
+if markers_distr==1:
    counter=0
    for iel in range(0,nel):
        xx[0:m]=x[icon[0:m,iel]]
@@ -686,7 +649,7 @@ if random_markers==1:
            swarm_z[counter]=sum(N[0:m]*zz[0:m])
            counter+=1
 
-else:
+elif markers_distr==2:
    counter=0
    for iel in range(0,nel):
        xx[0:m]=x[icon[0:m,iel]]
@@ -707,7 +670,27 @@ else:
                    swarm_z[counter]=sum(N[0:m]*zz[0:m])
                    counter+=1
 
-np.savetxt('markers.ascii',np.array([swarm_x,swarm_y,swarm_z]).T,header='# x,y,z')
+elif markers_distr==3:
+   for k in range(0,nmarker):
+       swarm_x[k]=random.uniform(0,1)*Lx
+       swarm_y[k]=random.uniform(0,1)*Ly
+       swarm_z[k]=0 #((swarm_x[k]-Lx/2)+(swarm_y[k]-Ly/2))/4 + Lz/2
+
+elif markers_distr==4:
+   radius_spiral=0.666
+   npts_spiral=nmarker
+   golden_ratio = (1. + np.sqrt(5.))/2.
+   golden_angle = 2. * np.pi * (1. - 1./golden_ratio)
+
+   for i in range(0,npts_spiral):
+       theta_spiral = np.arccos(1. - 2. * i / (npts_spiral - 1.))
+       phi_spiral = np.fmod((i*golden_angle), 2.*np.pi)
+       swarm_x[i]=radius_spiral*np.sin(theta_spiral)*np.cos(phi_spiral)+Lx/2
+       swarm_y[i]=radius_spiral*np.sin(theta_spiral)*np.sin(phi_spiral)+Ly/2
+       swarm_z[i]=radius_spiral*np.cos(theta_spiral)+Lz/2
+
+
+#np.savetxt('markers.ascii',np.array([swarm_x,swarm_y,swarm_z]).T,header='# x,y,z')
 
 print("     -> swarm_x (m,M) %.4e %.4e " %(np.min(swarm_x),np.max(swarm_x)))
 print("     -> swarm_y (m,M) %.4e %.4e " %(np.min(swarm_y),np.max(swarm_y)))
@@ -719,39 +702,39 @@ print("marker setup: %.3f s" % (time.time() - start))
 # compute population stats
 #################################################################
 
-count=np.zeros(nel,dtype=np.int32)
-for im in range (0,nmarker):
-    ielx=int((swarm_x[im]+Lxoffset)/Lx*nelx)
-    iely=int((swarm_y[im]+Lyoffset)/Ly*nely)
-    ielz=int((swarm_z[im]+Lzoffset)/Lz*nelz)
-    iel=nely*nelz*ielx+nelz*iely+ielz
-    count[iel]+=1
+#count=np.zeros(nel,dtype=np.int32)
+#for im in range (0,nmarker):
+#    ielx=int((swarm_x[im]+Lxoffset)/Lx*nelx)
+#    iely=int((swarm_y[im]+Lyoffset)/Ly*nely)
+#    ielz=int((swarm_z[im]+Lzoffset)/Lz*nelz)
+#    iel=nely*nelz*ielx+nelz*iely+ielz
+#    count[iel]+=1
 
-print("     -> count (m,M) %.5d %.5d " %(np.min(count),np.max(count)))
+#print("     -> count (m,M) %.5d %.5d " %(np.min(count),np.max(count)))
     
-countfile.write(" %e %d %d %e %e\n" % (tijd, np.min(count),np.max(count),\
-                                             np.min(count)/nmarker_per_dim**3,\
-                                             np.max(count)/nmarker_per_dim**3 ))
+#countfile.write(" %e %d %d %e %e\n" % (tijd, np.min(count),np.max(count),\
+#                                             np.min(count)/nmarker_per_element,\
+#                                             np.max(count)/nmarker_per_element ))
 
 #################################################################
 # marker paint
 #################################################################
 swarm_mat=np.zeros(nmarker,dtype=np.int32)  
 
-for i in [0,2,4,6,8,10,12,14]:
-    dx=Lx/16
+for i in [0,2,4,6,8,10,12,14,16]:
+    dx=Lx/17
     for im in range (0,nmarker):
         if swarm_x[im]>-Lxoffset+i*dx and swarm_x[im]<-Lxoffset+(i+1)*dx:
            swarm_mat[im]+=1
 
-for i in [0,2,4,6,8,10,12,14]:
-    dy=Ly/16
+for i in [0,2,4,6,8,10,12,14,16]:
+    dy=Ly/17
     for im in range (0,nmarker):
         if swarm_y[im]>-Lyoffset+i*dy and swarm_y[im]<-Lyoffset+(i+1)*dy:
            swarm_mat[im]+=1
 
-for i in [0,2,4,6,8,10,12,14]:
-    dz=Lz/16
+for i in [0,2,4,6,8,10,12,14,16]:
+    dz=Lz/17
     for im in range (0,nmarker):
         if swarm_z[im]>-Lzoffset+i*dz and swarm_z[im]<-Lzoffset+(i+1)*dz:
            swarm_mat[im]+=1
@@ -762,9 +745,15 @@ for i in [0,2,4,6,8,10,12,14]:
 ################################################################################################
 ################################################################################################
 
-N = np.zeros(m,dtype=np.float64) # shape functions
+#u[:]=x[:]
+#v[:]=y[:]
+#w[:]=z[:]
 
 for istep in range (0,nstep):
+
+    swarm_exx=np.zeros(nmarker,dtype=np.float64)  
+    swarm_eyy=np.zeros(nmarker,dtype=np.float64)  
+    swarm_ezz=np.zeros(nmarker,dtype=np.float64)  
 
     print("----------------------------------")
     print("istep= ", istep)
@@ -778,9 +767,9 @@ for istep in range (0,nstep):
            swarm_u[im]=u_th(swarm_x[im],swarm_y[im],swarm_z[im]) 
            swarm_v[im]=v_th(swarm_x[im],swarm_y[im],swarm_z[im]) 
            swarm_w[im]=w_th(swarm_x[im],swarm_y[im],swarm_z[im]) 
-           swarm_x[im]+=swarm_u[im]*dt
-           swarm_y[im]+=swarm_v[im]*dt
-           swarm_z[im]+=swarm_w[im]*dt
+           swarm_dx[im]=swarm_u[im]*dt
+           swarm_dy[im]=swarm_v[im]*dt
+           swarm_dz[im]=swarm_w[im]*dt
 
     if RKorder==1:
 
@@ -790,21 +779,58 @@ for istep in range (0,nstep):
            interpolate_vel_on_pt(swarm_x[im],swarm_y[im],swarm_z[im],\
                                  x,y,z,u,v,w,icon,Lx,Ly,Lz,nelx,nely,nelz,m,Q)
 
-           swarm_u_corr[im],swarm_v_corr[im],swarm_w_corr[im]=\
-           compute_CVI_corr(u,v,w,icon,rm,sm,tm,iel,use_cvi,Q,option)
+       
+           dNdr=dNQ1dr(rm,sm,tm)
+           dNds=dNQ1ds(rm,sm,tm)
+           dNdt=dNQ1dt(rm,sm,tm)
+           jcb=np.zeros((3,3),dtype=np.float64)
+           for k in range(0,m):
+               jcb[0,0] += dNdr[k]*x[icon[k,iel]]
+               jcb[0,1] += dNdr[k]*y[icon[k,iel]]
+               jcb[0,2] += dNdr[k]*z[icon[k,iel]]
+               jcb[1,0] += dNds[k]*x[icon[k,iel]]
+               jcb[1,1] += dNds[k]*y[icon[k,iel]]
+               jcb[1,2] += dNds[k]*z[icon[k,iel]]
+               jcb[2,0] += dNdt[k]*x[icon[k,iel]]
+               jcb[2,1] += dNdt[k]*y[icon[k,iel]]
+               jcb[2,2] += dNdt[k]*z[icon[k,iel]]
+           jcbi=np.linalg.inv(jcb)
+           Jxx=jcbi[0,0] ; Jxy=jcbi[0,1] ; Jxz=jcbi[0,2]
+           Jyx=jcbi[1,0] ; Jyy=jcbi[1,1] ; Jyz=jcbi[1,2]
+           Jzx=jcbi[2,0] ; Jzy=jcbi[2,1] ; Jzz=jcbi[2,2]
 
-           swarm_x[im]+=(swarm_u[im]+swarm_u_corr[im])*dt
-           swarm_y[im]+=(swarm_v[im]+swarm_v_corr[im])*dt
-           swarm_z[im]+=(swarm_w[im]+swarm_w_corr[im])*dt
+           dNdx=np.zeros(m,dtype=np.float64)
+           dNdy=np.zeros(m,dtype=np.float64)
+           dNdz=np.zeros(m,dtype=np.float64)
+           for k in range(0,m):
+               dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
+               dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]+jcbi[1,2]*dNdt[k]
+               dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
+           #end for
+
+           for k in range(0, m):
+               swarm_exx[im] += dNdx[k]*u[icon[k,iel]]
+               swarm_eyy[im] += dNdy[k]*v[icon[k,iel]]
+               swarm_ezz[im] += dNdz[k]*w[icon[k,iel]]
+               #swarm_exy[] += 0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
+           #end for
+
+           swarm_u_corr[im],swarm_v_corr[im],swarm_w_corr[im]=\
+           compute_CVI_corr(u,v,w,icon,rm,sm,tm,iel,use_cvi,Q,option,jcbi)
+
+           swarm_dx[im]=(swarm_u[im]+swarm_u_corr[im])*dt
+           swarm_dy[im]=(swarm_v[im]+swarm_v_corr[im])*dt
+           swarm_dz[im]=(swarm_w[im]+swarm_w_corr[im])*dt
 
        # end for im
     
        #print("     -> u (m,M) %e %e " %(np.min(swarm_u),np.max(swarm_u)))
        #print("     -> v (m,M) %e %e " %(np.min(swarm_v),np.max(swarm_v)))
        #print("     -> w (m,M) %e %e " %(np.min(swarm_w),np.max(swarm_w)))
-       print("     -> u_corr (m,M) %e %e " %(np.min(swarm_u_corr),np.max(swarm_u_corr)))
-       print("     -> v_corr (m,M) %e %e " %(np.min(swarm_v_corr),np.max(swarm_v_corr)))
-       print("     -> w_corr (m,M) %e %e " %(np.min(swarm_w_corr),np.max(swarm_w_corr)))
+       if use_cvi==1:
+          print("     -> u_corr (m,M) %e %e " %(np.min(swarm_u_corr),np.max(swarm_u_corr)))
+          print("     -> v_corr (m,M) %e %e " %(np.min(swarm_v_corr),np.max(swarm_v_corr)))
+          print("     -> w_corr (m,M) %e %e " %(np.min(swarm_w_corr),np.max(swarm_w_corr)))
 
     elif RKorder==2:
 
@@ -830,9 +856,9 @@ for istep in range (0,nstep):
            vB+=vBcorr
            wB+=wBcorr
            #--------------
-           swarm_x[im]=xA+uB*dt
-           swarm_y[im]=yA+vB*dt
-           swarm_z[im]=zA+wB*dt
+           swarm_dx[im]=uB*dt
+           swarm_dy[im]=vB*dt
+           swarm_dz[im]=wB*dt
        # end for im
 
     elif RKorder==3:
@@ -869,18 +895,16 @@ for istep in range (0,nstep):
            vC+=vCcorr
            wC+=wCcorr
            #--------------
-           swarm_x[im]=xA+(uA+4*uB+uC)*dt/6.
-           swarm_y[im]=yA+(vA+4*vB+vC)*dt/6.
-           swarm_z[im]=zA+(wA+4*wB+wC)*dt/6.
+           swarm_dx[im]=(uA+4*uB+uC)*dt/6.
+           swarm_dy[im]=(vA+4*vB+vC)*dt/6.
+           swarm_dz[im]=(wA+4*wB+wC)*dt/6.
        # end for im
 
-    print("     -> x (m,M) %e %e " %(np.min(swarm_x),np.max(swarm_x)))
-    print("     -> y (m,M) %e %e " %(np.min(swarm_y),np.max(swarm_y)))
-    print("     -> z (m,M) %e %e " %(np.min(swarm_z),np.max(swarm_z)))
+    print("     -> x (m,M) %e %e " %(np.min(swarm_dx),np.max(swarm_dx)))
+    print("     -> y (m,M) %e %e " %(np.min(swarm_dy),np.max(swarm_dy)))
+    print("     -> z (m,M) %e %e " %(np.min(swarm_dz),np.max(swarm_dz)))
 
-    tijd+=dt
-
-    print("advection: %.3f s" % (time.time() - start))
+    print("compute dx,dy,dz: %.3f s" % (time.time() - start))
 
     #############################
     # compute population stats
@@ -897,15 +921,15 @@ for istep in range (0,nstep):
     print("     -> count (m,M) %.5d %.5d " %(np.min(count),np.max(count)))
 
     countfile.write(" %e %d %d %e %e\n" % (tijd, np.min(count),np.max(count),\
-                                                 np.min(count)/nmarker_per_dim**3,\
-                                                 np.max(count)/nmarker_per_dim**3 ))
+                                                 np.min(count)/nmarker_per_element,\
+                                                 np.max(count)/nmarker_per_element ))
 
     countfile.flush()
 
     #############################
 
-    m0file.write(" %e %e %e %e\n" % (tijd,swarm_x[0],swarm_y[0],swarm_z[0]))
-    m0file.flush()
+    #m0file.write(" %e %e %e %e\n" % (tijd,swarm_x[0],swarm_y[0],swarm_z[0]))
+    #m0file.flush()
 
     #############################
     # export markers to vtk file
@@ -947,6 +971,27 @@ for istep in range (0,nstep):
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (correction)' Format='ascii'> \n")
        for im in range(0,nmarker):
            vtufile.write("%e %e %e \n" %(swarm_u_corr[im],swarm_v_corr[im],swarm_w_corr[im]))
+       vtufile.write("</DataArray>\n")
+
+       #--
+       vtufile.write("<DataArray type='Float32'  Name='exx' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           vtufile.write("%e \n" %(swarm_exx[im]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32'  Name='eyy' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           vtufile.write("%e \n" %(swarm_eyy[im]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32'  Name='ezz' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           vtufile.write("%e \n" %(swarm_ezz[im]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32'  Name='exx+eyy+ezz' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           vtufile.write("%e \n" %(swarm_exx[im]+swarm_eyy[im]+swarm_ezz[im]))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='paint' Format='ascii'> \n")
@@ -1089,6 +1134,13 @@ for istep in range (0,nstep):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
        print("export to vtu: %.3f s" % (time.time() - start))
+
+
+    swarm_x[:]+=swarm_dx[:]
+    swarm_y[:]+=swarm_dy[:]
+    swarm_z[:]+=swarm_dz[:]
+
+    tijd+=dt
 
 countfile.close()
 print("-----------------------------")
