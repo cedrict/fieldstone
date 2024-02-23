@@ -60,7 +60,7 @@ compare these values with the analytical solutions we derived for simple spheric
 
 {\color{red} All quantities in the code(s) must be expressed in S.I. units, i.e. \si{\metre}, \si{\second}, \si{\kilo\gram}. }
 
-
+\fbox{NO JUPYTER NOTEBOOK}
 
 %........................................
 \subsubsection*{Exercise 1: Full sphere}
@@ -77,29 +77,52 @@ partitioned in $N\times N \times N$ cells as shown in the following figure.
 
 
 Store in {\tt NP} the total number of points as a function of {\tt N}.
-Compute the associated volume {\tt dV} of a point as a function of $R$ and $N$ and  
+Compute the associated volume {\tt dV} of a point (i.e. the volume of the cell the point is in) 
+as a function of $R$ and $N$ and  
 compute the size of a cell {\tt h} as a function of $R$ and $N$. 
+\begin{lstlisting}
+N=10
+NP=
+h=
+dV=
+\end{lstlisting}
 
 \item[(1B)] 
 In the middle of each cell we place a point. Compute and store the coordinates 
 of the $N^3$ points (use $R=6371~\si{\kilo\metre}$). Please use 
 arrays {\tt x}, {\tt y} and {\tt z} to store the coordinates.
-Important: these arrays are $N^3$ long because they contain the coordinates of {\it all} points (cell centers).\\
-Help: draw on paper a $3\times3\times3$ grid. Place the axis system on the plot and explicitely write the arrays 
+\begin{lstlisting}
+x = np.empty(NP,dtype=np.float64) # x coordinates of all points
+y = np.empty(NP,dtype=np.float64) # y coordinates of all points
+z = np.empty(NP,dtype=np.float64) # z coordinates of all points
+\end{lstlisting}
+
+Important: these arrays are $N^3$ long because they contain the coordinates 
+of {\it all} points (cell centers).\\
+Help: draw on paper a $3\times3\times3$ elements grid. Place the axis system on the plot and explicitely write the arrays 
 for all 27 points. Example:
 \begin{verbatim}
-x[0]=..... y[1]=..... z[0]=.....
-x[1]=..... y[2]=..... z[1]=.....
-x[2]=..... y[3]=..... z[2]=.....
+x[0]=..... y[0]=..... z[0]=.....
+x[1]=..... y[1]=..... z[1]=.....
+x[2]=..... y[2]=..... z[2]=.....
 ...
+x[26]=.... y[26]=.... z[26]=.....
 \end{verbatim}
-Once you have done so, run your code for $N=3$, print the arrays and compare their content with what you 
-have on paper.
+Once you have done so, run your code for $N=3$, print the arrays and 
+compare their content with what you 
+have on paper (tip: for this test temporarily set $R=3$).
 
 
-\item[(1C)] For points inside a sphere of radius $R$ assign a 
-density $\rho_0=3000~\si{\kilo\gram\per\cubic\metre}$ 
-and zero otherwise, store these values in the {\tt rho} array.
+\item[(1C)] Assign a density $\rho_0=3000~\si{\kilo\gram\per\cubic\metre}$ to points (cells) 
+inside a sphere of radius $R$ and zero otherwise, store these values in the {\tt rho} array.
+
+\begin{center}
+\includegraphics[width=5.2cm]{images/geodynamics/rho10}
+\includegraphics[width=5.2cm]{images/geodynamics/rho50}
+\includegraphics[width=5.2cm]{images/geodynamics/rho150}\\
+{\captionfont Example of density field ($\rho=1$) for a $10^3$, $50^3$ and $150^3$ mesh.}
+\end{center}
+
 
 \item[(1D)] Fix $N=10$. Compute the total mass of the sphere
 \[
@@ -123,9 +146,14 @@ with respect to rotation axis $z$ using Eq.~\eqref{eq:momI}.
 \item[(1F)] Repeat the last measurements (1D \& 1E) with different values of $N\in(20,30,40,50,...?)$ .
 For both the mass and moment of inertia report on the relative error as a function of $h$.
 
-\item[(1G)] Compute the coordinates of 5 points situated at $z=10^m$ meters 
+\item[(1G)] Compute the coordinates of 6 points situated at $z=10^m$ meters 
 {\it above the north pole} with $m=0,1,2,3,4,5$ and 
 store these coordinates in arrays {\tt xm}, {\tt ym} {\tt zm}. 
+\begin{lstlisting}
+xm = np.empty(6,dtype=np.float64) # x coordinates of all points
+ym = np.empty(6,dtype=np.float64) # y coordinates of all points
+zm = np.empty(6,dtype=np.float64) # z coordinates of all points
+\end{lstlisting}
 
 \item[(1H)] Fix $N=10$ for now. Compute the gravity potential $U$ and acceleration vector 
 components $g_x,g_y,g_z$ at each of these 5 points using Eq.~\eqref{eq:gUexo} (actually its 

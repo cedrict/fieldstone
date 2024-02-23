@@ -14,7 +14,7 @@ where $\vec{n}$ is the outward pointing normal vector.
 
 A uniform sphere of mass $M$ and radius $a$ (and therefore density $\rho=M/(4\pi a^3/3)$) 
 has the potential
-\[
+\begin{equation}
 U(r) =
 \left\{
 \begin{array}{cc}
@@ -22,8 +22,9 @@ U(r) =
 -{\cal G} M/r & r\ge a
 \end{array}
 \right.
-\]
-VERIFY!
+\label{grav_meh1}
+\end{equation}
+
 
 Outside the sphere the potential is Keplerian, while inside it has the form of a parabola; 
 both the potential and its derivative are continuous at the surface of the sphere.
@@ -33,10 +34,53 @@ A sphere with density profile
 \rho(r) = \rho_0 (r/r_0)^{-2}
 \]
 has the potential 
-\[
+\begin{equation}
 U(r) = 4\pi {\cal G} \rho_0 r_0^2 \ln (r/r_0)
+\label{grav_meh2}
+\end{equation}
+
+
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{problem}
+ {\small \it
+Verify \eqref{grav_meh1} and \eqref{grav_meh2}. 
+Sketch the density field and the resulting gravity field and potential.
+ }
+\end{problem}
+\end{minipage}
+}
+
+
+
+
+
+\vspace{0.5cm}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\begin{problem}
+{\small \it  
+Assume a spherically symmetric non-rotating Earth in hydrostatic
+equilibrium. In spherical coordinates the divergence of a vector field 
+$\vec{a}(r)$, which only depends on the radius $r$ is
+\[
+\vec\nabla \cdot \vec{a} = \frac{1}{r^2} \frac{d}{dr} (r^2 a_r)
 \]
-VERIFY!
+a) Prove that the acceleration of gravity at radius $r$ only depends on the mass contained in the sphere of radius $R$i. Hint: start from $\vec\nabla\cdot\vec{g}$.\\
+b) Assume that the mass of the Earth’s core is $M_c$. Assume a linear density profile for
+the crust and mantle and determine the acceleration of gravity as a function of the radius
+in the mantle.
+}
+\end{problem}
+\end{minipage}
+}
+
+
+
+
+
+\vspace{0.5cm}
 
 As it turns out, pairs of functions related by Poisson's equation provide 
 convenient building-blocks for galaxy models. 
@@ -63,5 +107,6 @@ U(r)=-\frac{{\cal G}M}{r+a}
 U(r)=\frac{{\cal G}M}{a} \ln \frac{a}{r+a}
 \]
 \end{itemize}
-VERIFY!
+
+(VERIFY?)
 

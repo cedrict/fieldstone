@@ -13,7 +13,7 @@ Additional more recent publications on the topic of accurate marker
 advection: \textcite{simw21} (2021), \textcite{siwv22} (2022).
 
 %-------------------------------------------------------------
-\subsubsection{A few remarks about Wang \etal (2015)}
+\subsection{A few remarks about Wang \etal (2015)}
 
 The article by \textcite{waav15} (2015) comes with supplementary material with more details 
 on the derivation of the corrective velocities but that material is a Word
@@ -104,7 +104,7 @@ of magnetohydrodynamics. \textcite{pukp16} (2016) has applied the CVI to stagger
 
  
 %-------------------------------------------------------------
-\subsubsection{In 2D with $Q_1$ basis functions - Naive approach}
+\subsection{In 2D with $Q_1$ basis functions - Naive approach}
 
 Let us start directly in reduced coordinates $(r,s)\in [-1:1]^2$ (i.e. the reference element).
 The velocity components inside of the element are given by:
@@ -249,11 +249,11 @@ velocity field above:
 A point must then be made crystal clear: the divergence is
 {\it not} zero. The quantity above is constant inside the element 
 (it does not depend on $r$ nor $s$). 
-All what the CVI algorithm does is to remove the spatial dependence
-of the velocity divergence inside the element.
+{\bf All what the CVI algorithm does is to remove the spatial dependence
+of the velocity divergence inside the element}.
 
 %-------------------------------------------------------------------
-\subsubsection{In 2D with $Q_1$ basis functions - better approach}
+\subsection{In 2D with $Q_1$ basis functions - better approach}
 
 We now consider a generic quadrilateral in the $x,y$-coordinate space and its equivalent in the 
 reference space $r,s$. One can easily show that the gradient of a field $f$ verifies 
@@ -321,8 +321,9 @@ that this is not possible}, each $C$ coefficient has
 to be independently null.
 
 This immediately yields $a=c=0$ (since the components of the $\tilde{\bm J}$ tensor
-are not necessarily zero - and if $J_{xy}$ and $J_{yr}$ are zero then the equation 
-for $C_3$ remains and we would still take $a=c=0$ for simplicity) and the equation for $C_3$ is immediately satisfied.
+are not necessarily zero - and if $J_{xy}$ and $J_{yx}$ are zero then the equation 
+for $C_3$ remains and we would still take $a=c=0$ for simplicity) 
+and the equation for $C_3$ is immediately satisfied.
 We then have:
 \begin{eqnarray}
 b&=&\frac{1}{2J_{xx}} ( J_{xy} (u_{14} - u_{23}) + J_{yy} (v_{14} - v_{23})  )  \nn\\
@@ -347,7 +348,7 @@ and finally the velocity correction is
 \end{eqnarray}
 
 %-------------------------------------------------------------------
-\subsubsection{Comparison with Wang \etal (2015) for 2D}
+\subsection{Comparison with Wang \etal (2015) for 2D}
 
 Rather annoyingly Wang \etal (2015) use a reference element that is $[0,1]\times[0,1]$
 as opposed to the standard $[-1,1]\times[-1,1]$:
@@ -414,7 +415,11 @@ zero''. Their own equations prove that this is not the case.
 
 
 %-----------------------------------------------------------------
-\subsubsection{In 3D with $Q_1$ basis functions - Naive approach}
+\subsection{In 3D with $Q_1$ basis functions - Naive approach}
+
+In this case we are addressing the case of the divergence being as close 
+to zero as possible in the reference element. We'll treat the  
+case of a generic hexahedron in the next section. 
 
 Let us start directly in reduced coordinates $(r,s,t)\in [-1:1]^3$:
 \begin{eqnarray}
@@ -601,7 +606,7 @@ w^h(r,s,t)&=&\sum_i \bN_i(r,s,t) w_i + [\alpha_t (r+s) +\beta_t](1-t)(1+t) \nn
 
 
 %-------------------------------------------------------------------
-\subsubsection{In 3D with $Q_1$ basis functions - better approach}
+\subsection{In 3D with $Q_1$ basis functions - better approach}
 
 We start again from 
 \[
@@ -768,7 +773,8 @@ need $C_0=C_1=...C_9=0$.
 However we have 10 $C$ coefficients/equations  and only 9 variables $a,b,c,d,e,f,g,h,i$.
 We leave the $C_0$ equation alone and hope for the best (see 2D case). In other words we hope that 
 if/when we have found $a,b,c,d,e,f,g,h,i$ so that $C_1=...C_9=0$ then $C_0$ is 'small' 
-(whatever that means).
+(whatever that means). As mentioned earlier, the CVI only removes the 
+spatial dependence of the velocity divergence inside an element, it does not zero it.
 
 It is then trivial to obtain $c,f,i$ from the equations of $C_1,C_2,C_3$:
 \begin{eqnarray}
@@ -797,12 +803,6 @@ C_3=0 &\Rightarrow&
 \tilde{J}_{yx} v_{r3} + \tilde{J}_{yy} v_{s3} +
 \tilde{J}_{zx} w_{r3} + \tilde{J}_{zy} w_{s3} ) \nn
 \end{eqnarray}
-From the last three equations for $C_7,C_8,C_9$ we have 
-\[
-b=-\frac{\tilde{J}_{xy}}{\tilde{J}_{xz}} a \quad\quad
-e=-\frac{\tilde{J}_{yx}}{\tilde{J}_{yz}} d \quad\quad
-h=-\frac{\tilde{J}_{zx}}{\tilde{J}_{zy}} g
-\]
 
 Concerning $a,b,d,e,g,h$ we are left with 6 equations for 6 unknowns, which can be cast as follows:
 \[
@@ -832,18 +832,117 @@ a \\b\\ d\\ e\\ g\\ h
 \end{array}
 \right)
 \]
+At this stage we can only hope that the system is not ill-posed and that 
+a solution exists.
+Obviously solving a $6\times 6$ linear system for every marker/particle/etc ... 
+will turn out to be costly. Let's see if we cannot do better.
 
-The equations involving $C_4$, $C_5$, $C_6$ become:
+From the last three equations for $C_7,C_8,C_9$ we have 
+\[
+b=-\frac{\tilde{J}_{xy}}{\tilde{J}_{xz}} a \quad\quad
+d=-\frac{\tilde{J}_{yz}}{\tilde{J}_{yx}} e \quad\quad
+h=-\frac{\tilde{J}_{zx}}{\tilde{J}_{zy}} g
+\]
+At this stage we have determined $c,f,i$ entirely and have expressed 
+$b,d,h$ as functions of $a,e,g$. There only remain three unknowns $a,e,g$
+and the equations involving $C_4$, $C_5$, $C_6$ become:
 \begin{eqnarray}
-C_4 &=& \tilde{J}_{xz} u_{t4} + \tilde{J}_{yz} v_{t4} + \tilde{J}_{zz} w_{t4} - \tilde{J}_{xx} 2a - \tilde{J}_{yy} 2d  \nn\\ % rs
-C_5 &=& \tilde{J}_{xx} u_{r4} + \tilde{J}_{yx} v_{r4} + \tilde{J}_{zx} w_{r4} +2\tilde{J}_{yy} \frac{\tilde{J}_{yx}}{\tilde{J}_{yz}} d + 2\tilde{J}_{zz} \frac{\tilde{J}_{zx}}{\tilde{J}_{zy}} g \nn\\ % st
-C_6 &=& \tilde{J}_{xy} u_{s4} + \tilde{J}_{yy} v_{s4} + \tilde{J}_{zy} w_{s4} +2\tilde{J}_{xx} \frac{\tilde{J}_{xy}}{\tilde{J}_{xz}} a - \tilde{J}_{zz} 2g  
+0=C_4 
+&=& \underbrace{\tilde{J}_{xz}u_{t4}+\tilde{J}_{yz}v_{t4}+\tilde{J}_{zz}w_{t4}}_{2T} 
+-\tilde{J}_{xx} 2a - \tilde{J}_{yy} 2d  
+= 2T  -\tilde{J}_{xx} 2a + \tilde{J}_{yy} 2\frac{\tilde{J}_{yz}}{\tilde{J}_{yx}} e  \nn\\ % rs
+0=C_5 
+&=& \underbrace{\tilde{J}_{xx}u_{r4}+\tilde{J}_{yx}v_{r4}+\tilde{J}_{zx}w_{r4}}_{2R} 
+-\tilde{J}_{yy} 2e - \tilde{J}_{zz} 2h  
+= 2R -\tilde{J}_{yy} 2e + \tilde{J}_{zz} 2\frac{\tilde{J}_{zx}}{\tilde{J}_{zy}} g  \nn\\ % st
+0=C_6 
+&=& \underbrace{\tilde{J}_{xy}u_{s4}+\tilde{J}_{yy}v_{s4}+\tilde{J}_{zy}w_{s4}}_{2S} 
+-\tilde{J}_{xx} 2b - \tilde{J}_{zz} 2g  
+= 2S +\tilde{J}_{xx} 2\frac{\tilde{J}_{xy}}{\tilde{J}_{xz}} a - \tilde{J}_{zz} 2g   % rt
 \end{eqnarray}
+This is much more manageable:
+\[
+\left(
+\begin{array}{ccc}
+\tilde{J}_{xx} & - \tilde{J}_{yy} \tilde{J}_{yz}/\tilde{J}_{yx} & 0 \\
+0 & \tilde{J}_{yy} & - \tilde{J}_{zz} \tilde{J}_{zx}/\tilde{J}_{zy} \\
+- \tilde{J}_{xx} \tilde{J}_{xy} / \tilde{J}_{xz} & 0 & \tilde{J}_{zz}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+a \\ e \\ g
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+T \\ R \\ S
+\end{array}
+\right)
+\]
+or,
+\[
+\left(
+\begin{array}{ccc}
+A_{11} & A_{12} & 0 \\
+0 & A_{22} & A_{23} \\
+A_{31} & 0 & A_{33}
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+a \\ e \\ g
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+T \\ R \\ S
+\end{array}
+\right)
+\]
+The solution is not super-elegant, so I stop here 
+and we might solve the 3x3 system on the fly.
 
----------------------------------
+Could there be a case where some off-diagonal $\tilde{J}$ terms
+are zero and some are not?
 
-In the case of a regular grid with nodes aligned with the $x,y,z$ axis, this 
-system is indefinite as $\tilde{J}_{xy}=\tilde{J}_{yx}=\tilde{J}_{xz}=...=0$.
+
+Summary
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+u^h(r,s,t)&=&\sum_i \bN_i(r,s,t) u_i + (a s + b t +c)(1-r)(1+r) \nn\\
+v^h(r,s,t)&=&\sum_i \bN_i(r,s,t) v_i + (d r + e t +f)(1-s)(1+s) \nn\\
+w^h(r,s,t)&=&\sum_i \bN_i(r,s,t) w_i + (g r + h s +i)(1-t)(1+t) \nn\\
+a&=& ... \\
+b&=&-\frac{\tilde{J}_{xy}}{\tilde{J}_{xz}} a \nn\\ 
+c&=& \frac{1}{2 \tilde{J}_{xx}} (
+\tilde{J}_{xy} u_{s2} + \tilde{J}_{xz} u_{t2} + 
+\tilde{J}_{yy} v_{s2} + \tilde{J}_{yz} v_{t2} + 
+\tilde{J}_{zy} w_{s2} + \tilde{J}_{zz} w_{t2} ) \nn\\
+d&=&-\frac{\tilde{J}_{yz}}{\tilde{J}_{yx}} e \nn\\
+e&=& ... \\
+f&=& \frac{1}{2 \tilde{J}_{yy}} (  
+\tilde{J}_{xx} u_{r2} + \tilde{J}_{xz} u_{t3} +
+\tilde{J}_{yx} v_{r2} + \tilde{J}_{yz} v_{t3} +
+\tilde{J}_{zx} w_{r2} + \tilde{J}_{zz} w_{t3} ) \nn\\
+g&=& ... \\
+h&=&-\frac{\tilde{J}_{zx}}{\tilde{J}_{zy}} g \nn\\
+i&=& \frac{1}{2 \tilde{J}_{zz}} (  
+\tilde{J}_{xx} u_{r3} + \tilde{J}_{xy} u_{s3} +
+\tilde{J}_{yx} v_{r3} + \tilde{J}_{yy} v_{s3} +
+\tilde{J}_{zx} w_{r3} + \tilde{J}_{zy} w_{s3} ) \nn
+\end{eqnarray}
+\end{mdframed}
+
+%-------------------------------------------------
+\paragraph{Case of a regular grid made of cuboids}
+
+In the case of a regular grid with nodes aligned with the $x,y,z$ axis, the $6\times 6$ 
+system above is indefinite as $\tilde{J}_{xy}=\tilde{J}_{yx}=\tilde{J}_{xz}=...=0$.
 Let us then rewrite the $C$ equations again in this specific case:
 
 \begin{eqnarray}
@@ -859,7 +958,7 @@ C_8 &=& 0  \nn\\
 C_9 &=& 0  \nn\
 \end{eqnarray}
 We see that the condition $C_7=C_8=C_9=0$ are automatically satisfied.
-$c,f,i$ are obtained as in the general case above. We are left with the 
+The $c,f,i$ coefficients are obtained as in the general case above. We are left with the 
 equations for $C_4,C_5,C_6$ (we leave the $C_0$ equation alone - note that 
 it does not contain any coefficient $a,b,c...$ anymore anyways).
 
@@ -888,12 +987,12 @@ and its inverse:
 \]
 Then the $C_4$,$C_5$,$C_6$ equations become 
 \begin{eqnarray}
-C_4 &=& \frac{2}{h_z} w_{t4} - \frac{2}{h_x} 2a - \frac{2}{h_y}  2d =0 \nn\\ % rs
-C_5 &=& \frac{2}{h_x} u_{r4} - \frac{2}{h_y} 2e - \frac{2}{h_z}  2h =0 \nn\\ % st
-C_6 &=& \frac{2}{h_y} v_{s4} - \frac{2}{h_x} 2b - \frac{2}{h_z}  2g =0 \nn\\ % rt
+0=C_4 &=& \frac{2}{h_z} w_{t4} - \frac{2}{h_x} 2a - \frac{2}{h_y}  2d  \nn\\ 
+0=C_5 &=& \frac{2}{h_x} u_{r4} - \frac{2}{h_y} 2e - \frac{2}{h_z}  2h  \nn\\ 
+0=C_6 &=& \frac{2}{h_y} v_{s4} - \frac{2}{h_x} 2b - \frac{2}{h_z}  2g  
 \end{eqnarray}
 
-This is problematic since I am left with 6 unknowns and 3 equations
+This is problematic since we are left with 6 unknowns and 3 equations
 So we should probably go back to the original definition of 
 \begin{eqnarray}
 u^h(r,s,t)&=&\sum_i \bN_i(r,s,t) u_i + (a s + b t +c)(1-r)(1+r) \nn\\
@@ -901,24 +1000,257 @@ v^h(r,s,t)&=&\sum_i \bN_i(r,s,t) v_i + (d r + e t +f)(1-s)(1+s) \nn\\
 w^h(r,s,t)&=&\sum_i \bN_i(r,s,t) w_i + (g r + h s +i)(1-t)(1+t) \nn
 \end{eqnarray}
 and simply choose 3 of the 6 coefficients $a,b,d,e,g,h$ to be zero ? 
-This feels a bit arbitrary?
+May be better, as proposed earlier: take $\alpha_r=a=b$, 
+$\alpha_s=d=e$ and $\alpha_t=g=h$? Then, keeping only $\alpha_r,\alpha_s,\alpha_t$:
+\begin{eqnarray}
+u^h(r,s,t)&=&\sum_i \bN_i(r,s,t) u_i + (\alpha_r (s + t) +c)(1-r)(1+r) \nn\\
+v^h(r,s,t)&=&\sum_i \bN_i(r,s,t) v_i + (\alpha_s (r + t) +f)(1-s)(1+s) \nn\\
+w^h(r,s,t)&=&\sum_i \bN_i(r,s,t) w_i + (\alpha_t (r + s) +i)(1-t)(1+t) \nn
+\end{eqnarray}
+The $C_4$,$C_5$,$C_6$ equations become 
+\begin{eqnarray}
+0=C_4 &=& \frac{2}{h_z} w_{t4} - \frac{2}{h_x} 2\alpha_r - \frac{2}{h_y}  2\alpha_s  \nn\\ % rs
+0=C_5 &=& \frac{2}{h_x} u_{r4} - \frac{2}{h_y} 2\alpha_s - \frac{2}{h_z}  2\alpha_t  \nn\\ % st
+0=C_6 &=& \frac{2}{h_y} v_{s4} - \frac{2}{h_x} 2\alpha_r - \frac{2}{h_z}  2\alpha_t  \nn % rt
+\end{eqnarray}
+and we have 3 equations and 3 unknowns:
+\[
+\left(
+\begin{array}{ccc}
+2h_z/h_x & 2h_z/h_y & 0 \\
+0        & 2h_x/h_y & 2h_x/h_z \\
+2h_y/h_x & 0        & 2h_y/h_z
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\alpha_r \\ \alpha_s \\ \alpha_t
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+w_{t4} \\
+u_{r4} \\
+v_{s4} 
+\end{array}
+\right)
+\]
 
-May be better: take a=b, d=e and g=h? then, keeping only a,d,g
+multiply last line by $h_z/h_y$:
+\[
+\left(
+\begin{array}{ccc}
+2h_z/h_x & 2h_z/h_y & 0 \\
+0        & 2h_x/h_y & 2h_x/h_z \\
+h_z/h_y \cdot 2h_y/h_x & 0        & h_z/h_y \cdot 2h_y/h_z
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\alpha_r \\ \alpha_s \\ \alpha_t
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+w_{t4} \\
+u_{r4} \\
+h_z/h_y \cdot v_{s4} 
+\end{array}
+\right)
+\]
+\[
+\left(
+\begin{array}{ccc}
+2h_z/h_x & 2h_z/h_y & 0 \\
+0        & 2h_x/h_y & 2h_x/h_z \\
+2h_z/h_x & 0        & 2 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\alpha_r \\ \alpha_s \\ \alpha_t
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+w_{t4} \\
+u_{r4} \\
+h_z/h_y \cdot v_{s4} 
+\end{array}
+\right)
+\]
+subtract line 3 from line 1 and put in in line 3:
+\[
+\left(
+\begin{array}{ccc}
+2h_z/h_x & 2h_z/h_y & 0 \\
+0        & 2h_x/h_y & 2h_x/h_z \\
+0        & -2h_z/h_y & 2
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\alpha_r \\ \alpha_s \\ \alpha_t
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+w_{t4} \\
+u_{r4} \\
+h_z/h_y \cdot v_{s4} - w_{t4}
+\end{array}
+\right)
+\]
+now multiply 3rd line by $h_x/h_z$
+\[
+\left(
+\begin{array}{ccc}
+2h_z/h_x & 2h_z/h_y & 0 \\
+0        & 2h_x/h_y & 2h_x/h_z \\
+0        &h_x/h_z \cdot -2h_z/h_y & h_x/h_z 2
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\alpha_r \\ \alpha_s \\ \alpha_t
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+w_{t4} \\
+u_{r4} \\
+h_x/h_z (h_z/h_y \cdot v_{s4} - w_{t4})
+\end{array}
+\right)
+\]
+\[
+\left(
+\begin{array}{ccc}
+2h_z/h_x & 2h_z/h_y & 0 \\
+0        & 2h_x/h_y & 2h_x/h_z \\
+0        & -2h_x/h_y & 2h_x/h_z 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\alpha_r \\ \alpha_s \\ \alpha_t
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+w_{t4} \\
+u_{r4} \\
+h_x/h_y \cdot v_{s4} - h_x/h_z w_{t4}
+\end{array}
+\right)
+\]
+Add line 2 to line 3:
+\[
+\left(
+\begin{array}{ccc}
+2h_z/h_x & 2h_z/h_y & 0 \\
+0        & 2h_x/h_y & 2h_x/h_z \\
+0        & 0 & 4h_x/h_z 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\alpha_r \\ \alpha_s \\ \alpha_t
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+w_{t4} \\
+u_{r4} \\
+u_{r4} + h_x/h_y \cdot v_{s4} - h_x/h_z w_{t4}
+\end{array}
+\right)
+\]
+From the third line we obtain:
+\[
+\alpha_t = \frac14 \frac{h_z}{h_x} \left(u_{r4} + \frac{h_x}{h_y} v_{s4} - \frac{h_x}{h_z} w_{t4} \right)
+= \frac14 \left(  \frac{h_z}{h_x} u_{r4} +\frac{h_z}{h_y} v_{s4}-  w_{t4}  \right)
+\]
+Then
+\[
+2 \frac{h_x}{h_y} \alpha_s + 2\frac{h_x}{h_z} \alpha_t = u_{r4}
+\]
 \begin{eqnarray}
-u^h(r,s,t)&=&\sum_i \bN_i(r,s,t) u_i + (a (s + t) +c)(1-r)(1+r) \nn\\
-v^h(r,s,t)&=&\sum_i \bN_i(r,s,t) v_i + (d (r + t) +f)(1-s)(1+s) \nn\\
-w^h(r,s,t)&=&\sum_i \bN_i(r,s,t) w_i + (g (r + s) +i)(1-t)(1+t) \nn
+\alpha_s  
+&=& \frac{h_y}{h_x} \left( \frac12 u_{r4} -  \frac{h_x}{h_z} \alpha_t \right) \nn \\
+&=& \frac12 \frac{h_y}{h_x} u_{r4} - \frac{h_y}{h_z} \alpha_t \nn\\ 
+&=& \frac12 \frac{h_y}{h_x} u_{r4} - \frac{h_y}{h_z} \frac14 \left(  \frac{h_z}{h_x} u_{r4} +\frac{h_z}{h_y} v_{s4}-  w_{t4}  \right)\nn \\
+&=& \frac12 \frac{h_y}{h_x} u_{r4} -  \frac14 \left(  \frac{h_y}{h_x} u_{r4} + v_{s4}-  \frac{h_y}{h_z} w_{t4}  \right) \nn\\
+&=& \frac14 \frac{h_y}{h_x} u_{r4} - \frac14 v_{s4} + \frac14 \frac{h_y}{h_z} w_{t4}  \nn\\
+&=& \frac14 \left( \frac{h_y}{h_x} u_{r4} - v_{s4} +  \frac{h_y}{h_z} w_{t4}  \right) \nn
 \end{eqnarray}
-Then the $C_4$,$C_5$,$C_6$ equations become 
+and finally:
+\[
+2 \frac{h_z}{h_x} \alpha_r + 2 \frac{h_z}{h_y} \alpha_s = w_{t4}
+\]
 \begin{eqnarray}
-C_4 &=& \frac{2}{h_z} w_{t4} - \frac{2}{h_x} 2a - \frac{2}{h_y}  2d =0 \nn\\ % rs
-C_5 &=& \frac{2}{h_x} u_{r4} - \frac{2}{h_y} 2d - \frac{2}{h_z}  2g =0 \nn\\ % st
-C_6 &=& \frac{2}{h_y} v_{s4} - \frac{2}{h_x} 2a - \frac{2}{h_z}  2g =0 \nn\\ % rt
+\alpha_r 
+&=& \frac{h_x}{h_z} \left(\frac12 w_{t4} -  \frac{h_z}{h_y} \alpha_s\right) \nn\\
+&=& \frac12 \frac{h_x}{h_z} w_{t4} - \frac{h_x}{h_y} \alpha_s \nn \\
+&=& \frac12 \frac{h_x}{h_z} w_{t4} - \frac{h_x}{h_y} \left(
+\frac14 \frac{h_y}{h_x} u_{r4} - \frac14 v_{s4} + \frac14 \frac{h_y}{h_z} w_{t4}  \right)\nn \\
+&=& \frac12 \frac{h_x}{h_z} w_{t4} -  \left(
+\frac14  u_{r4} - \frac14 \frac{h_x}{h_y}v_{s4} + \frac14 \frac{h_x}{h_z} w_{t4}  \right)\nn \\
+&=& -\frac14 u_{r4} + \frac14 \frac{h_x}{h_y}v_{s4} + \frac14\frac{h_x}{h_z} w_{t4} \nn\\
+&=& \frac14 \left( - u_{r4} +  \frac{h_x}{h_y}v_{s4} + \frac{h_x}{h_z} w_{t4}    \right) \nn
 \end{eqnarray}
-and we have 3 eqs and 3 unknowns
+
+
+\begin{eqnarray}
+\beta_r 
+&=& \frac{1}{2 \tilde{J}_{xx}} ( \tilde{J}_{yy} v_{s2} + \tilde{J}_{zz} w_{t2} ) \nn\\
+&=& \frac{h_x}{4} \left( \frac{2}{h_y} v_{s2} + \frac{2}{h_z} w_{t2} \right) \nn\\
+&=& \frac{1}{2} \left( \frac{h_x}{h_y} v_{s2} + \frac{h_x}{h_z} w_{t2} \right) \nn\\
+\beta_s 
+&=& \frac{1}{2 \tilde{J}_{yy}} ( \tilde{J}_{xx} u_{r2} + \tilde{J}_{zz} w_{t3} ) \nn\\
+&=& \frac{h_y}{4} \left(\frac{2}{h_x} u_{r2} + \frac{2}{h_z}  w_{t3} \right) \nn\\
+&=& \frac{1}{2} \left(\frac{h_y}{h_x} u_{r2} + \frac{h_y}{h_z}  w_{t3} \right) \nn\\
+\beta_t 
+&=& \frac{1}{2 \tilde{J}_{zz}} ( \tilde{J}_{xx} u_{r3} + \tilde{J}_{yy} v_{s3} ) \nn\\
+&=& \frac{h_z}{4} \left( \frac{2}{h_x} u_{r3} + \frac{2}{h_y}  v_{s3} \right) \nn\\
+&=& \frac{1}{2} \left( \frac{h_z}{h_x} u_{r3} + \frac{h_z}{h_y}  v_{s3} \right) \nn
+\end{eqnarray}
+
+
+To recap,
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+u^h(r,s,t)&=&\sum_i \bN_i(r,s,t) u_i + (\alpha_r (s + t) +\beta_r)(1-r)(1+r) \nn\\
+v^h(r,s,t)&=&\sum_i \bN_i(r,s,t) v_i + (\alpha_s (r + t) +\beta_s)(1-s)(1+s) \nn\\
+w^h(r,s,t)&=&\sum_i \bN_i(r,s,t) w_i + (\alpha_t (r + s) +\beta_t)(1-t)(1+t) \nn\\
+\alpha_r &=& \frac14 \left( - u_{r4} +  \frac{h_x}{h_y}v_{s4} + \frac{h_x}{h_z} w_{t4}    \right) \nn\\
+\alpha_s &=& \frac14 \left( \frac{h_y}{h_x} u_{r4} - v_{s4} +  \frac{h_y}{h_z} w_{t4}  \right) \nn\\
+\alpha_t &=& \frac14 \left(  \frac{h_z}{h_x} u_{r4} +\frac{h_z}{h_y} v_{s4}-  w_{t4}  \right) \nn\\
+\beta_r &=& \frac{1}{2} \left( \frac{h_x}{h_y} v_{s2} + \frac{h_x}{h_z} w_{t2} \right) \nn\\
+\beta_s &=& \frac{1}{2} \left(\frac{h_y}{h_x} u_{r2} + \frac{h_y}{h_z}  w_{t3} \right) \nn\\
+\beta_t &=& \frac{1}{2} \left( \frac{h_z}{h_x} u_{r3} + \frac{h_z}{h_y}  v_{s3} \right) \nn
+\end{eqnarray}
+\end{mdframed}
+
+
+
 
 %-------------------------------------------------------------------
-\subsubsection{Comparison with Wang \etal (2015) for 3D}
+\subsection{Comparison with Wang \etal (2015) for 3D}
 
 The following is taken from the supplementary material of Wang \etal (2015):
 \begin{center}
@@ -1083,7 +1415,7 @@ a divergence-free velocity field over the cell'' on page 3 of the article.
 Their entire paper is based on a false premise.
 
 %------------------------------------------------------------------------
-\subsubsection{In 2D with $P_1$ basis functions - what about triangles?}
+\subsection{In 2D with $P_1$ basis functions - what about triangles?}
 
 
 The reference linear element is: 
@@ -1351,7 +1683,7 @@ no space dependent correction can be designed.
 
 
 %-------------------------------------------------------------
-\subsubsection{In 2D with $Q_2$ basis functions - Naive approach}
+\subsection{In 2D with $Q_2$ basis functions - Naive approach}
 
 \begin{verbatim}
  03===06===02  
