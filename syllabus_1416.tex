@@ -2034,26 +2034,6 @@ we have the thermodynamical relationship
 \frac{C_p}{T}\frac{DT}{Dt} - \frac{\alpha}{\rho} \frac{Dp}{Dt}\nn
 \end{eqnarray}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \begin{remark}
 Let us look again at the dimensions of these quantities.
 The entropy $S$ is in \si{\joule\per\kelvin}, or $[S]=ML^2T^{-2}\theta^{-1}$, 
@@ -2289,8 +2269,8 @@ compression and viscous dissipation are neglected.
 
 
 
-%----------------------------------------------------------
-\subsection{The equation of state}
+%===============================
+\section{The equation of state}
 
 An equation of state relates basic thermodynamic parameters such as density,
 temperature, pressure, or entropy. For an isochemical fluid, we can choose two
@@ -2300,18 +2280,15 @@ Mantle convection is
 usually studied relative to some motionless hydrostatic reference state either with a
 conductive or with an adiabatic geotherm. The perturbations with respect to this state are
 related to the convective state of the mantle. 
-Therefore, we write $\rho(T,p) = \rho_0(T_0,p_0) 
-+ {\color{violet}\rho}({\color{violet}T},{\color{violet} p} )$
+Therefore, we write $\rho(T,p) = \rho_0(T_0,p_0) + \tilde{\rho}(\tilde{T},\tilde{p})$
 with 
-$T = T_0 + {\color{violet}T}$ and 
-$p = p_0 + {\color{violet}p}$ 
+$T = T_0 + \tilde{T}$ and 
+$p = p_0 + \tilde{p}$ 
 where the 0-subscript denotes reference
-state quantities and the {\color{violet}colored} variables 
-the perturbations with respect to the reference state\footnote{One would typically 
-write ${\color{violet}\rho}=\delta \rho$, but I find that using color enables me
-to do away with the cumbersome and sometimes confusing $\delta$ character in the equations.}. 
+state quantities and the 'tilde' variables 
+the perturbations with respect to the reference state.
 The reference state quantities do not depend on time but can depend on the spatial
-coordinates. The usual assumption is that ${\color{violet}\rho}({\color{violet}T},{\color{violet} p})$ 
+coordinates. The usual assumption is that $\tilde{\rho}(\tilde{T},\tilde{p})$ 
 depends linearly on the perturbations in temperature and pressure. 
 In this case one can use the thermodynamic relation
 \[
@@ -2327,12 +2304,12 @@ compression. It is defined as the ratio of the infinitesimal pressure increase t
 decrease of the volume} (units: \si{\pascal}). Assuming linearity, this relation is up-scaled to the macroscopic mantle to
 obtain the equation of state
 \begin{equation}
-\rho(\vec{r},t) = \rho_0(\vec{r}) (1-\alpha {\color{violet}T} + K_T^{-1} {\color{violet}p} )
+\rho(\vec{r},t) = \rho_0(\vec{r}) (1-\alpha \tilde{T} + K_T^{-1} \tilde{p} )
 \label{eq:md68}
 \end{equation}
 hence
 \[
-{\color{violet} \rho} = -\alpha \rho_0 \alpha {\color{violet}T} +  K_T^{-1} \rho_0 {\color{violet}p} 
+\tilde{\rho} = -\alpha \rho_0 \alpha \tilde{T}  +  K_T^{-1} \rho_0 \tilde{p}  
 \]
 A simple extension to a 2-phase medium consisting of materials with reference
 densities $\rho_0$ and $\rho_1$ is obtained by assuming that the dependence of density of $T$ and $p$ 
@@ -2340,18 +2317,19 @@ is the same for both phases. Then, only an addition factor is needed to account 
 density of a mixed composition
 \begin{equation}
 \rho(\vec{r},t) = \rho_0(\vec{r})\left(1+\Gamma(\frac{\rho_1-\rho_0}{\rho_0}) \right) 
-(1-\alpha {\color{violet}T} + K_T^{-1} {\color{violet}p} )
+(1-\alpha \tilde{T} + K_T^{-1} \tilde{p} )
 \label{eq:md69}
 \end{equation}
 Taking $\rho_1>\rho_0$, the phase distribution $\Gamma$ can assume values between 0 and 1.
+
+\vspace{.5cm}
 
 %exercise 33
 \fbox{
 \begin{minipage}{0.9\textwidth}
 \begin{exercise}
 {\small \it 
-Assume an isothermal $({\color{violet}T} = 0)$ 
-and incompressible fluid ($K_T^{-1}=0$) and
+Assume an isothermal (i.e. $\tilde{T}=0$) and incompressible fluid ($K_T^{-1}=0$) and
 derive from the conservation law of mass, the conservation law
 $D\Gamma/Dt=0$ for the phase distribution function.
 }
@@ -2366,10 +2344,9 @@ of the reference state depends on the problem studied. Usually the reference tem
 is chosen constant or to follow a mantle adiabat or a conductive geotherm. For a simple
 reference state with constant thermodynamic parameters the following equations suffice:
 \begin{eqnarray}
-\vec\nabla p_0 &=& -\rho_0 \vec\nabla U_0 \\
-\vec\nabla^2 U_0 &=& 4\pi {\cal G} \rho_0 \\
-\vec\nabla \cdot ( k \vec\nabla T_0) &=& 0 \qquad \frac{DT_0}{Dt}=0
-\label{eq:md70}
+\vec\nabla p_0 &=& -\rho_0 \vec\nabla U_0  \label{eq:md70a}\\
+\vec\nabla^2 U_0 &=& 4\pi {\cal G} \rho_0  \label{eq:md70b}\\
+\vec\nabla \cdot ( k \vec\nabla T_0) &=& 0 \qquad \frac{DT_0}{Dt}=0 \label{eq:md70c}
 \end{eqnarray}
 More complex reference states involving depth variable thermodynamic parameters
 require internally consistent relations between thermodynamic parameters such as
@@ -2396,44 +2373,44 @@ for the reference state.
 
 The following equations \eqref{eq:md71a},\eqref{eq:md71b},\eqref{eq:md71c},\eqref{eq:md71d},\eqref{eq:md71e} 
 give the relevant equations in terms of the perturbations w.r.t. the
-adiabatic reference state as defined with equations \eqref{eq:md70}. By use of \eqref{eq:md70} 
-some terms cancel in the general equations; no approximations have been made. This leads to:
+adiabatic reference state as defined with equations 
+\eqref{eq:md70a}, \eqref{eq:md70b} and \eqref{eq:md70c}. 
+Some terms then cancel in the general equations; no approximations have been made. This leads to:
 
 The equation of state is
 \begin{equation}
-\rho(\vec{r},t) = \rho(\vec{r}) \left(1-\alpha {\color{violet} T} + K_T^{-1} {\color{violet}p} \right) 
+\rho(\vec{r},t) = \rho_0(\vec{r}) \left(1-\alpha \tilde{T} + K_T^{-1} \tilde{p}  \right) 
 \label{eq:md71a}
 \end{equation}
-The heat equation in terms of ${\color{violet}T}$
+The heat equation in terms of $\tilde{T}$
 \begin{equation}
-\rho c_p \frac{D {\color{violet} T}}{Dt} = \frac{\partial }{\partial x_j} 
-\left( k \frac{\partial {\color{violet}T}}{\partial x_j}  \right)
+\rho c_p \frac{D \tilde{T} }{Dt} = \frac{\partial }{\partial x_j} 
+\left( k \frac{\partial \tilde{T} }{\partial x_j}  \right)
 + \rho H + \uppi_{ij}\frac{\partial \upnu_i}{\partial x_j} + \alpha T \frac{Dp}{Dt}
 \label{eq:md71b}
 \end{equation}
-The equation of motion is in terms of ${\color{violet}p},{\color{violet}\rho},{\color{violet}T}$:
+The equation of motion is in terms of $\tilde{p},\tilde{\rho},\tilde{T}$:
 \begin{equation}
-\rho \frac{D \upnu_i}{Dt} = -\frac{\partial {\color{violet}p}}{\partial x_i}
+\rho \frac{D \upnu_i}{Dt} = -\frac{\partial \tilde{p} }{\partial x_i}
 +\frac{\partial \uppi_{ij}}{\partial x_j}
--\rho_0 (\alpha {\color{violet} T} + K_T^{-1} {\color{violet}p}) g_i
+-\rho_0 (\alpha \tilde{T} + K_T^{-1} \tilde{p} ) g_i
 \label{eq:md71c}
 \end{equation}
-The Poisson equation in terms of ${\color{violet}U}$ and ${\color{violet}\rho}$:
+The Poisson equation in terms of $\tilde{U}$ and $\tilde{\rho}$:
 \begin{equation}
-\vec\nabla^2 {\color{violet} U} = 4 \pi {\cal G} {\color{violet} \rho}
+\vec\nabla^2 \tilde{U} = 4 \pi {\cal G} \tilde{\rho} 
 \label{eq:md71d}
 \end{equation}
-and, finally, the continuity equation in terms of ${\color{violet}\rho}$ reads
+and, finally, the continuity equation in terms of $\tilde{\rho}$ reads
 \begin{equation}
-\frac{\partial {\color{violet}\rho} }{\partial t} + 
-\frac{\partial (\rho_0 + {\color{violet}\rho}) \upnu_j }{\partial x_j} =0
+\frac{\partial \tilde{\rho} }{\partial t} + 
+\frac{\partial (\rho_0 + \tilde{\rho} ) \upnu_j }{\partial x_j} =0
 \label{eq:md71e}
 \end{equation}
 
 
-
-%----------------------------------------------------------
-\subsection{Scaling of equations}
+%===============================
+\section{Scaling of equations}
 
 
 An important subject is the scaling of equations by means of scaling the relevant
@@ -2450,9 +2427,9 @@ t = t' \frac{h^2}{\kappa}
 \qquad
 \upnu_i = \upnu_i' \frac{\kappa}{h} 
 \qquad
-{\color{violet} T} = {\color{violet} T}' \Delta T_m
+{\tilde T} = {\tilde T}' \Delta T_m
 \qquad
-{\color{violet} p} = {\color{violet} p}' \frac{\eta \kappa}{h^2}
+{\tilde p} = {\tilde p}' \frac{\eta \kappa}{h^2}
 \qquad
 \rho = \rho' \rho_m 
 \]
@@ -2460,7 +2437,8 @@ where $h$ is the mantle thickness, $\kappa=k/(\rho C_p)$
 is the thermal diffusivity, $\Delta T_m$ is the
 temperature difference between the Core-Mantle boundary and the surface,
 $\eta$ is the dynamic viscosity\footnote{Note that the viscosity varies by 
-many orders of magnitude in the mantle and lithosphere, so finding the appropriate scaling 
+many orders of magnitude, i.e. between $\sim 10^{17}$ and $\sim 10^{26}$ 
+in the mantle and lithosphere, so finding the appropriate scaling 
 value is necessary.} and $\rho_m$ is a scaling density.
 
 Note that on Earth, we have
@@ -2471,12 +2449,12 @@ $C_p \sim 10^3~\si{\joule\per\kg\per\kelvin}$,
 $k\sim 4~\si{\watt\per\meter\per\kelvin}$,
 $\kappa \sim 1.2\times 10^{-6}~\si{\square\meter\per\second}$.
 
-The primed quantities are dimensionless and are of the order 1 if the scaling is correct for
-the problem at hand\footnote{except for the viscosity}.
+The primed quantities are {\bf dimensionless} and are of the order 1 if the scaling is correct for
+the problem at hand\footnote{Except for the viscosity, obviously}.
 Application of scaling to the equation of state \eqref{eq:md71a} leads to
 \begin{equation}
-\rho' = \rho_0' \left(  1 - \alpha \Delta T_m {\color{violet} T}' + 
-\frac{K_T^{-1}\eta \kappa }{h^2} {\color{violet} p}' \right)
+\rho' = \rho_0' \left(  1 - \alpha \Delta T_m {\tilde T}' + 
+\frac{K_T^{-1}\eta \kappa }{h^2} {\tilde p}' \right)
 \label{eq:md72}
 \end{equation}
 The coefficients of the primed-quantities determine the relative importance of the terms
@@ -2501,8 +2479,8 @@ motion.
 Scaling of the continuity equation \eqref{eq:md71e} leads to some basic insight into the problem of
 (in-)compressibility. The dimensionless version is
 \begin{equation}
-\frac{\partial {\color{violet}\rho}'}{\partial t'} + 
-\frac{\partial (\rho_0' + {\color{violet}\rho})\upnu_j'  }{\partial x_j'} = 0
+\frac{\partial {\tilde \rho}'}{\partial t'} + 
+\frac{\partial (\rho_0' + {\tilde \rho})\upnu_j'  }{\partial x_j'} = 0
 \qquad
 ; \qquad
 \rho_0' = \frac{\rho_0(\vec{r})}{\rho_m}
@@ -2527,10 +2505,10 @@ Derive Eq.~\eqref{eq:md73a}.
 Substitution of the equation of state \eqref{eq:md71a} 
 and taking the limit $Pr \cdot M^2 \rightarrow \infty$ leads to
 \begin{equation}
--\rho_0' \alpha \Delta T_m \frac{\partial {\color{violet} T}'  }{\partial t'} + 
+-\rho_0' \alpha \Delta T_m \frac{\partial {\tilde T}'  }{\partial t'} + 
 \frac{\partial }{\partial x_j'} 
 \left[
-(\rho_0' - \rho_0' \alpha \Delta T_m {\color{violet} T}') \upnu_j'
+(\rho_0' - \rho_0' \alpha \Delta T_m {\tilde T}') \upnu_j'
 \right] = 0
 \label{eq:md73b}
 \end{equation}
@@ -2544,11 +2522,15 @@ which is the equation of anelastic conservation of mass. Compared to \eqref{eq:m
 effectively replaced the density by the reference density. The time derivative of density
 has disappeared. This derivative is primarily related to the propagation of seismic waves.
 This process occurs at totally different time scales than mantle convection. The anelastic
-conservation of mass \eqref{eq:md73c} is being used in convection modeling of compressible fluids.
+conservation of mass \eqref{eq:md73c} is being used in convection modeling of compressible fluids,
+see for instance the equations of the \aspect code\footnote{\url{https://aspect-documentation.readthedocs.io/en/latest/user/methods/basic-equations/index.html}}:
 
+\begin{center}
+\includegraphics[width=8cm]{images/chapter_md/aspect_eqs}
+\end{center}
 
 %----------------------------------------------------------
-\subsection{The Boussinesq approximation}
+\section{The Boussinesq approximation}
 
 The Boussinesq\footnote{\url{https://en.wikipedia.org/wiki/Joseph_Valentin_Boussinesq}} 
 approximation is ubiquitous in computational geodynamics.
@@ -2558,12 +2540,13 @@ approximations are being made:
 \begin{itemize}
 \item Neglect the effect of density variations with respect to a reference state except in terms
 related to the driving force of convection
-\item assume that the divergence of the velocity field is 0 (in this case ${\bm \uppi}={\bm \tau}$.
+\item assume that the divergence of the velocity field is 0 (in this case ${\bm \uppi}={\bm \tau}$).
 \item Only concern temperature changes resulting from diffusion and advection (i.e. neglect
 terms related to adiabatic compression, and heat dissipation)
 \end{itemize}
 
-This simplifies equations (71)\todo{fix nb} to
+This simplifies Eqs.~\eqref{eq:md71a},\eqref{eq:md71b},\eqref{eq:md71c},\eqref{eq:md71d},\eqref{eq:md71e} 
+to
 \begin{eqnarray}
 \rho(\vec{r},t) &=& \rho_0 (1-\alpha {\color{violet}T}) \\
 \rho_0 c_p \frac{D {\color{violet}T} }{Dt} &=& \frac{\partial}{\partial x_j}
@@ -2575,13 +2558,17 @@ This simplifies equations (71)\todo{fix nb} to
 \end{eqnarray}
 
 %----------------------------------------------------------
-\subsection{The Rayleigh-Benard convection}
+\subsection{The Rayleigh-B{\'e}nard convection}
 
 This is the classical example of a laterally unlimited fluid layer of thickness $h$ in a gravity
-field. We derive here the pertinent equations in the Boussinesq\footnote{
-\url{https://en.wikipedia.org/wiki/Joseph_Valentin_Boussinesq}} approximation and the
+field. We derive here the pertinent equations in the Boussinesq approximation and the
 boundary conditions. In the next section these equations are being used to study the
 problem of onset of convection.
+
+\begin{center}
+\includegraphics[width=5cm]{images/chapter_md/RBconv}\\
+{\captionfont Convection cells in a gravity field. Taken from \url{https://en.wikipedia.org/wiki/Rayleigh_Benard_convection}}
+\end{center}
 
 Gravity is directed along the positive $z$-axis. The top and bottom of the layer are kept at a
 constant temperature:
@@ -2622,8 +2609,8 @@ The condition of zero vertical velocity is only approximately valid at the Earth
 Vertical motions can now be measured by geodetic techniques and are generally one
 order of magnitude less than horizontal motions. Also from the geological past we know
 that horizontal motions have had much larger amplitude than vertical motions. If the
-Earth would have a pure fluid behavior (has it?) then mantle flow can induce dynamic
-surface topography. The vertical velocity $\upnu_z$ equals the local time derivative
+Earth would have a pure fluid behavior (has it?) then mantle flow can induce {\bf dynamic
+surface topography}. The vertical velocity $\upnu_z$ equals the local time derivative
 $\partial d/\partial t$ of the vertical surface deflection $d(t)$. 
 In numerical solutions (with impermeable boundaries
 along which pressure variation can accumulate) the deflection is often computed a
@@ -2634,11 +2621,11 @@ conductivity, constant heat capacity and no heat production and we adopt the Bou
 approximation. Then we have the following equations for Rayleigh-Benard convection:
 
 \begin{eqnarray}
-{\color{violet} \rho} &=& -\rho_0 \alpha {\color{violet}T} \\
-\frac{D {\color{violet}T}}{Dt} &=& \kappa \vec\nabla^2 {\color{violet}T} \\
-\rho_0 \frac{D\upnu_i}{Dt} &=& -\frac{\partial {\color{violet} p}}{\partial x_i}
-+ \eta \vec\nabla^2 \upnu_i - \rho_0 \alpha {\color{violet}T} g_i \\
-\vec\nabla^2 {\color{violet}U} &=& -4 \pi {\cal G} \rho_0 \alpha {\color{violet}T} \\
+{\tilde \rho} &=& -\rho_0 \alpha {\tilde T} \\
+\frac{D {\tilde T}}{Dt} &=& \kappa \vec\nabla^2 {\tilde T} \\
+\rho_0 \frac{D\upnu_i}{Dt} &=& -\frac{\partial {\tilde p}}{\partial x_i}
++ \eta \vec\nabla^2 \upnu_i - \rho_0 \alpha {\tilde T} g_i \\
+\vec\nabla^2 {\tilde U} &=& -4 \pi {\cal G} \rho_0 \alpha {\tilde T} \\
 \frac{\partial \upnu_j}{\partial x_j} &=& 0
 \end{eqnarray}
 The reference temperature is assumed to be constant or following an adiabat or is a time
@@ -2651,30 +2638,30 @@ $\tau_{xz}(x,z=0)=\tau_{xz}(x,z=h)=0$ and
 $\eta \partial u/\partial z (x,z=0) = \eta \partial u/\partial z (x,z=h) = 0$.
 The scaling of the equation of motion gives
 \begin{equation}
-\frac{1}{Pr} \frac{D\upnu_i'}{Dt'} = -\frac{\partial {\color{violet} p'}}{\partial x_i'}
-+(\nabla')^2 \upnu_i' - \Ranb {\color{violet}T'} \delta_{zi}
+\frac{1}{\Prnb} \frac{D\upnu_i'}{Dt'} = -\frac{\partial {\tilde p}'}{\partial x_i'}
++(\nabla')^2 \upnu_i' - \Ranb {\tilde T}' \delta_{zi}
 \label{eq:md78}
 \end{equation}
-where the Prandtl number is $Pr=\eta c_p/k= \eta/\rho_0 \kappa$ and the 
+where the Prandtl number is $\Prnb=\eta C_p/k= \eta/\rho_0 \kappa$ and the 
 Rayleigh number is $\Ranb=\rho_0 \alpha g \Delta T h^3 / \eta \kappa$.
 For the Earth's mantle $Pr \sim 10^{24}$ and $\Ranb\sim 10^7$ 
 which leads to the conclusion that the inertial
 term can be neglected. We arrive at the non-dimensional equation (dropping the primes
 for convenience):
 \begin{equation}
-0 = -\vec\nabla {\color{violet} p} + \vec\nabla^2 \vec\upnu - \Ranb {\color{violet}T} \vec{e}_z
+0 = -\vec\nabla {\tilde p} + \vec\nabla^2 \vec\upnu - \Ranb {\tilde T} \vec{e}_z
 \label{eq:md79}
 \end{equation}
-in which $\Ranb$ is the only free parameter. Recall that ${\color{violet}p}$ 
+in which $\Ranb$ is the only free parameter. Recall that ${\tilde p}$ 
 is the pressure anomaly with regards to $p_0$. 
 The Rayleigh number determines the magnitude of the force driving convection (see computer 
-practical!).
+practical).
 
 Because we considerer a 2-D situation of an incompressible fluid we can adopt the stream
 function approach with $u=\partial \Psi/\partial z$ and $w=-\partial \Psi/\partial x$ which 
 leads to
 \begin{equation}
-\vec\nabla^4 \Psi = -\Ranb \frac{\partial {\color{violet}T}}{\partial x}
+\vec\nabla^4 \Psi = -\Ranb \frac{\partial {\tilde T}}{\partial x}
 \label{eq:md80}
 \end{equation}
 (to be compared with \eqref{eq:md40}) with boundary conditions $\Psi(x,z=0)=\Psi(x,1)=0$
@@ -2682,7 +2669,7 @@ and $\partial^2 \Psi/\partial z^2 (x,y=0)=\partial^2 \Psi/\partial z^2 (x,y=1)=0
 
 The energy equation becomes after scaling
 \begin{equation}
-\frac{D{\color{violet}T}}{Dt} = \vec\nabla^2 {\color{violet}T}
+\frac{D{\tilde T}}{Dt} = \vec\nabla^2 {\tilde T}
 \label{eq:md81}
 \end{equation}
 Equation \eqref{eq:md80} and \eqref{eq:md81} are coupled non-linear equations
@@ -2690,18 +2677,16 @@ which usually need to be solved numerically.
 
 
 
-Recall that the temperature ${\color{violet}T}$ 
+Recall that the temperature ${\tilde T}$ 
 is the deviation from either a constant temperature of from
-adiabatic temperature ${\color{violet}T} = T-T_a$. 
+adiabatic temperature ${\tilde T} = T-T_a$. 
 Advective transport of adiabatic temperature does not
-lead to temperature changes with the surroundings and therefore  ${\color{violet}T}$ is the temperature
+lead to temperature changes with the surroundings and therefore  ${\tilde T}$ is the temperature
 associated with convective flow. In convective flow that assumes a (non-adiabatic)
-conductive geotherm in the background we can separate ${\color{violet}T}$ 
-as  ${\color{violet}T}={\color{violet}T_0}+{\color{violet}T_1}$ 
-where  ${\color{violet}T}_0$ , is the
-geotherm of the conductive reference state and 
- ${\color{violet}T}_1$ is the perturbation of the temperature
-field.
+conductive geotherm in the background we can separate ${\tilde T}$ 
+as  ${\tilde T}={\tilde T_0}+{\tilde T_1}$ 
+where  ${\tilde T}_0$ , is the geotherm of the conductive reference state and 
+ ${\tilde T}_1$ is the perturbation of the temperature field.
 
 %exercise 38
 \vspace{0.5cm}
@@ -2710,7 +2695,7 @@ field.
 \begin{exercise}
 {\small \it 
 Derive the stationary conductive reference temperature profile 
-${\color{violet}T_0'}(z')=z'$
+${\tilde T_0'}(z')=z'$
 using the temperature boundary conditions given earlier 
 (with $T_{surface}=0$).
 }

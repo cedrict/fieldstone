@@ -1,0 +1,2 @@
+pdflatex todo.tex
+biber --output-safechars todo
