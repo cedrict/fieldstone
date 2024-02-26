@@ -75,11 +75,11 @@ partitioned in $N\times N \times N$ cells as shown in the following figure.
 %\includegraphics[width=3cm]{images/gravity/rubik}
 \end{center}
 
-
-Store in {\tt NP} the total number of points as a function of {\tt N}.
-Compute the associated volume {\tt dV} of a point (i.e. the volume of the cell the point is in) 
+Compute the total number of points {\tt NP} as a function of {\tt N},
+the associated volume {\tt dV} of a point (i.e. the volume of the cell the point is in) 
 as a function of $R$ and $N$ and  
-compute the size of a cell {\tt h} as a function of $R$ and $N$. 
+the size of a cell {\tt h} as a function of $R$ and $N$. Here is 
+how your code should look like:
 \begin{lstlisting}
 N=10
 NP=
@@ -87,20 +87,34 @@ h=
 dV=
 \end{lstlisting}
 
-\item[(1B)] 
+\item[(1B-1)] To get started, start in 1D. Assume that we consider a 1D cube, i.e. the
+segment $[-R,R]$ that is divided into $N$ cells. What is $h$?
+First, using the {\tt linspace} function compute the $x$-coordinates of the $N$
+cell centers. 
+Second, compute the same array {\tt x} using a single for loop. 
+This second approach will be the building block of the next question.
+
+\item[(1B-2)] 
 In the middle of each cell we place a point. Compute and store the coordinates 
 of the $N^3$ points (use $R=6371~\si{\kilo\metre}$). Please use 
 arrays {\tt x}, {\tt y} and {\tt z} to store the coordinates.
+how your code should look like:
 \begin{lstlisting}
 x = np.empty(NP,dtype=np.float64) # x coordinates of all points
 y = np.empty(NP,dtype=np.float64) # y coordinates of all points
 z = np.empty(NP,dtype=np.float64) # z coordinates of all points
+for i in range(?):
+    for j in range(?):
+        for k in range(?):
+            x[?]=?
+            y[?]=?
+            z[?]=?
 \end{lstlisting}
 
 Important: these arrays are $N^3$ long because they contain the coordinates 
 of {\it all} points (cell centers).\\
-Help: draw on paper a $3\times3\times3$ elements grid. Place the axis system on the plot and explicitely write the arrays 
-for all 27 points. Example:
+Help: draw on paper a $3\times3\times3$ elements grid. Place the axis system 
+on the plot and explicitely write the arrays for all 27 points. Example:
 \begin{verbatim}
 x[0]=..... y[0]=..... z[0]=.....
 x[1]=..... y[1]=..... z[1]=.....

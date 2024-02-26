@@ -1346,28 +1346,28 @@ The hydrostatic quantities obey the equilibrium equation:
 We separate quantities in the dynamic state in a hydrostatic contribution and a
 perturbation:
 \begin{eqnarray}
-p(\vec{r}) &=& p_0(\vec{r}) + {\color{violet} p}(\vec{r}) \nn\\
-\rho(\vec{r}) &=& \rho_0(\vec{r}) + {\color{violet}\rho}(\vec{r}) \nn\\
-\vec{g}(\vec{r}) &=& \vec{g}_0(\vec{r}) + {\color{violet}\vec{g}}(\vec{r}) \nn
+p(\vec{r}) &=& p_0(\vec{r}) + {\tilde p}(\vec{r}) \nn\\
+\rho(\vec{r}) &=& \rho_0(\vec{r}) + {\tilde\rho}(\vec{r}) \nn\\
+\vec{g}(\vec{r}) &=& \vec{g}_0(\vec{r}) + \vec{\tilde{g}}(\vec{r}) \nn
 \end{eqnarray}
-where ${\color{violet} p}(\vec{r})$ is the so-called dynamic pressure.
+where ${\tilde p}(\vec{r})$ is the so-called dynamic pressure.
 Note that the mechanical stress ${\bm \uppi}$ is by
 itself a perturbation with respect to the hydrostatic state. After substitution in the equation
 of motion the hydrostatic terms cancel and we find:
 \begin{equation}
-(\rho_0 + {\color{violet}\rho})  \frac{D\upnu_i}{Dt}
-= -\frac{\partial {\color{violet} p}}{\partial x_i} + \frac{\partial \uppi_{ij}}{\partial x_j}
-+ {\color{violet} \rho} g_i^0 +  {\color{violet} \rho} {\color{violet} g_i}
-+ \rho_0  {\color{violet} g_i}
+(\rho_0 + {\tilde\rho})  \frac{D\upnu_i}{Dt}
+= -\frac{\partial {\tilde p}}{\partial x_i} + \frac{\partial \uppi_{ij}}{\partial x_j}
++ {\tilde\rho} g_i^0 +  {\tilde\rho} {\tilde{g}_i}
++ \rho_0  \tilde{g}_i
 \label{eq:md34a}
 \end{equation}
-The term $ {\color{violet}\rho} D\upnu_i/Dt$ and the the last two terms can often be 
+The term $ {\tilde\rho} D\upnu_i/Dt$ and the the last two terms can often be 
 neglected as a small second order
 perturbation leading to the perturbation equation
 \begin{equation}
 \rho_0   \frac{D\upnu_i}{Dt}
-= -\frac{\partial {\color{violet} p}}{\partial x_i} + \frac{\partial \uppi_{ij}}{\partial x_j}
-+ {\color{violet} \rho} g_i^0 
+= -\frac{\partial {\tilde p}}{\partial x_i} + \frac{\partial \uppi_{ij}}{\partial x_j}
++ {\tilde\rho} g_i^0 
 \qquad
 \qquad
 \bigg\rvert
@@ -1375,7 +1375,7 @@ perturbation leading to the perturbation equation
 \qquad
 \rho_0   \frac{D\vec\upnu}{Dt}
 =
--\vec\nabla {\color{violet} p} + \vec\nabla \cdot {\bm \uppi} + {\color{violet}\rho} \vec{g}
+-\vec\nabla {\tilde p} + \vec\nabla \cdot {\bm \uppi} + {\tilde\rho} \vec{g}
 \label{eq:md34b}
 \end{equation}
 This equation shows explicitly that density perturbations and not the total density field
@@ -1393,7 +1393,7 @@ we obtain the {\bf Poisson equation}:
 \end{equation}
 or, for the dynamic quantities deviating from the hydrostatic state
 \begin{equation}
-\vec\nabla^2 {\color{violet} U} = 4\pi {\cal G} {\color{violet} \rho}
+\vec\nabla^2 {\tilde U} = 4\pi {\cal G} {\tilde \rho}
 \label{eq:md36}
 \end{equation}
 
@@ -1843,7 +1843,7 @@ Next, we can apply \eqref{eq:md11} to the first term in the last equality which 
 +{\bm \sigma} : \vec\nabla\vec\upnu \right] dV \nn\\
 &=&\int_V \left[ \vec\upnu\cdot ( \rho \frac{D \vec{\upnu}}{Dt} )
 +{\bm \sigma} : \vec\nabla\vec\upnu \right] dV \nn\\
-&=& \int_V \left[ \rho \frac{D (\frac12 \vec\upnu\cdot\vec{\upnu} )}{Dt} )
+&=& \int_V \left[ \rho \frac{D (\frac12 \vec\upnu\cdot\vec{\upnu} )}{Dt} 
 +{\bm \sigma} : \vec\nabla\vec\upnu \right] dV \nn\\
 &=&\frac{D}{Dt} \int_V  \rho \frac12 \vec\upnu\cdot\vec{\upnu}\;  dV
 +\int_V {\bm \sigma} : \vec\nabla\vec\upnu \; dV 
@@ -1879,7 +1879,7 @@ normal component of heat flow over the surface $S$
 \begin{eqnarray}
 \frac{DQ}{Dt} 
 &=& \int_V \rho H dV - \int_S \vec{q} \cdot \vec{n} \; dS \\
-&=& \int_V \rho H dV + \int_S k \vec\nabla T  \cdot \vec{n} \; dS \\
+&=& \int_V \rho H dV - \int_V \vec\nabla \cdot \vec{q}  \; dV \\
 &=& \int_V \left(  \rho H + \vec\nabla \cdot (  k \vec\nabla T )  \right) dV 
 \label{eq:md58}
 \end{eqnarray}
@@ -1892,7 +1892,8 @@ theorem leads to the last equality.
 
 The total energy $E$ in \eqref{eq:md54} is now separated into 
 two contributions: the kinetic energy and
-the internal energy $e$ (\si{\joule\per\kg})\footnote{$[e]=L^2T^{-2}$}:
+the internal energy\footnote{\url{https://en.wikipedia.org/wiki/Internal_energy}} 
+$e$ (\si{\joule\per\kg})\footnote{$[e]=L^2T^{-2}$}:
 \begin{equation}
 E = \int_V (\frac{1}{2} \rho \upnu_i \upnu_i + \rho e)dV
 \qquad
@@ -1908,7 +1909,7 @@ Taking the time derivative leads to
 \frac{DE}{Dt} 
 &=& \frac{D}{Dt} \left( \int_V \frac12 \rho \vec\upnu\cdot\vec\upnu dV   \right)
 + \frac{D}{Dt} \left( \int_V \rho e dV  \right) \nn\\
-&=& \frac{D}{Dt} \left( \int_V \frac12 \rho \upnu_i \upnu_i dV   \right)
+&=& \frac{D}{Dt} \left( \int_V \frac12 \rho \vec\upnu \cdot \vec\upnu dV   \right)
 + \left( \int_V \rho \frac{De}{Dt} dV  \right) 
 \label{eq:md60}
 \end{eqnarray}
@@ -1942,7 +1943,7 @@ $[\vec\nabla \cdot (k \vec\nabla T)]=L^{-1} L M T^{-3} \theta^-1 L^{-1} \theta
 \end{remark}
 
 Taking the usual separation of the stress tensor in the thermodynamic stress and the
-mechanical stress, i.e $\sigma_{ij} = -p \delta_{ij} + \uppi_{ij}$, we get
+mechanical stress, i.e ${\bm \sigma} = -p {\bm 1} + {\bm \uppi}$, we get
 \begin{equation}
 \rho \frac{De}{Dt} + p \frac{\partial \upnu_j}{\partial x_j} 
 = \uppi_{ij} \frac{\partial \upnu_i}{\partial x_j} + 
@@ -2013,7 +2014,7 @@ C_p = T \left(\frac{\partial S}{\partial T} \right)_P
 \]
 while for the second one we use 
 \[
-\left( \frac{\partial s}{\partial p}  \right)_T
+\left( \frac{\partial S}{\partial p}  \right)_T
 = -\left( \frac{\partial (1/\rho)}{\partial T}  \right)_p
 = \frac{1}{\rho^2} \left(  \frac{\partial \rho}{\partial T} \right)_p
 \] 
@@ -2526,7 +2527,8 @@ conservation of mass \eqref{eq:md73c} is being used in convection modeling of co
 see for instance the equations of the \aspect code\footnote{\url{https://aspect-documentation.readthedocs.io/en/latest/user/methods/basic-equations/index.html}}:
 
 \begin{center}
-\includegraphics[width=8cm]{images/chapter_md/aspect_eqs}
+\includegraphics[width=8cm]{images/chapter_md/aspect_eqs}\\
+{\captionfont Taken from the \aspect website. Note that the equations are not dimensionless.}
 \end{center}
 
 %----------------------------------------------------------
