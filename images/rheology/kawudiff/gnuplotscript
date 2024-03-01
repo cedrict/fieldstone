@@ -1,9 +1,11 @@
+#
 set term pdf enhanced font "Times,12pt"
 
+pbott=540e3*10*3300
 
 T(x,w)=1200+(x-120e3)/(660e3-120e3)*(w-1300) +273
 
-p(x)=4e9+(x-120e3)/(660e3-120e3)*(20e9-4e9)
+p(x)=4e9+(x-120e3)/(660e3-120e3)*(pbott-4e9)
 
 A=8.5e15
 m=2.5
@@ -15,16 +17,18 @@ eta(x,y,z,w)=0.5*exp((300e3+p(x)*z)/8.314/T(x,w)) * (A/mu*(b/y)**m )**(-1)
 
 set xtics 100e3
 set xlabel 'depth'
-set ylabel 'eff. viscosity'
 
+set ylabel 'pressure (GPa)'
 set output 'pressure.pdf'
 plot[120e3:660e3][]\
-p(x) lw 2 
+p(x)/1e9 lw 2 notitle 
 
+set ylabel 'temperature (K)'
 set output 'temperature.pdf'
 plot[120e3:660e3][]\
-T(x,1550)
+T(x,1550) lw 2 notitle
 
+set ylabel 'eff. viscosity'
 set key bottom 
 set log y
 set output 'viscosity1.pdf'
