@@ -1,7 +1,8 @@
 
 
 The system is a layer of fluid between $y=0$ and $y=h$, with boundary conditions $T(x,y=0)=T_b$ 
-and $T(x,y=h)=0$, characterized by $\rho_0$, $C_p$, $k$, $\eta_0$. 
+and $T(x,y=h)=0$, characterized by $\rho_0$, $C_p$, $k$, $\eta_0$ which are assumed to be constant
+(in space and time). 
 
 The Rayleigh number of the system is 
 \[
@@ -34,10 +35,8 @@ we have
 \]
 and then 
 \begin{equation}
-\boxed{
 \nabla^4 \Psi= -\frac{\rho_0 g_0 \alpha}{\eta_0} \frac{\partial T}{\partial x} 
 %= -Ra \frac{\partial T}{\partial x} 
-}
 \end{equation}
 For small perturbations of the conductive state $T_c(y)=(1-y/h)T_b$ 
 we define the temperature perturbation $\tilde{T}(x,y)$ such that 
@@ -47,7 +46,14 @@ T(x,y)=T_c(y)+\tilde{T}(x,y)
 Note that the temperature perturbation $\tilde{T}$ must satisfy the homogeneous boundary 
 conditions $\tilde{T}(x,y=0)=0$ and $\tilde{T}(x,y=h)=0$.
 
-In the absence of heat production, the temperature equation is 
+We then have 
+\[
+\boxed{
+\nabla^4 \Psi= -\frac{\rho_0 g_0 \alpha}{\eta_0} \frac{\partial \tilde{T}}{\partial x} 
+}
+\]
+
+In the absence of heat production, the temperature equation (in the Boussinesq approx.) is 
 \begin{eqnarray}
 && \rho_0 C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T \right) 
 = k \Delta T \nn\\
@@ -56,9 +62,13 @@ In the absence of heat production, the temperature equation is
 (T_c+\tilde{T}) \right) 
 = k \Delta (T_c+\tilde{T})
 \end{eqnarray}
-Since a) $T_c$ does not depend on time, b) $\Delta T_c=0$, c) we assume the nonlinear 
+First we start by acknowledging that $T_c$ does not depend on time, 
+so that $\partial T/\partial t = 0$.
+Then, $\Delta T_c=0$ since $T_c$ is a linear function of $y$.
+Finally, we assume the nonlinear 
 term ${\vec \upnu}\cdot {\vec \nabla} \tilde{T} $ to be second order (temperature perturbations and 
-coupled velocity changes are assumed to be small), it can be simplified as follows:
+coupled velocity changes are assumed to be small).
+In the end the energy equation can be simplified as follows:
 \[
 \rho_0 C_p \left( \frac{\partial \tilde{T}}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T_c \right) 
 = k \Delta \tilde{T}
@@ -68,11 +78,11 @@ coupled velocity changes are assumed to be small), it can be simplified as follo
 \frac{\partial \tilde{T}}{\partial t} + {\vec \upnu}\cdot {\vec \nabla} T_c 
 = \kappa \Delta \tilde{T}
 \]
-since $\kappa =k/\rho_0 C_p$.
+since the heat diffusion coefficient $\kappa$ is fiven by $\kappa =k/\rho_0 C_p$.
 
 Using the relationship between velocity and stream function
-$v=-\partial_x \Psi$
-and since $\vec\nabla T_c = - (T_b/h) \vec{e}_y$ then
+$\vec\upnu=(u,v)=(\partial_y \Psi, -\partial_x \Psi)$ and 
+since $\vec\nabla T_c = - (T_b/h) \vec{e}_y$ then
 \[
 {\vec \upnu}\cdot {\vec \nabla} T_c =  \frac{T_b}{h}   \frac{\partial \Psi}{\partial x} 
 \]
@@ -87,6 +97,8 @@ and finally:
 %\[
 %{\bm \nabla}^4 \Psi = -Ra \frac{\partial T_1}{\partial %x}
 %\]
+Note: This is the same equation as in Turcotte \& Schubert, eq 6.309.
+
 Looking at these equations, we immediately think about a separation of variables approach to solve these
 equations. Both equations showcase the Laplace operator $\Delta$, and the eigenfunctions of the biharmonic operator and the Laplace operator are the same. 
 We then pose that $\Psi$ and $\tilde{T}$ can be written:
@@ -94,40 +106,70 @@ We then pose that $\Psi$ and $\tilde{T}$ can be written:
 \Psi(x,y,t) &=& \Psi_0 \exp(pt)\exp(\pm i k_x x) \exp(\pm i k_y y) \\ %= \Psi_0 E_\psi(x,y,t) \\
 \tilde{T}(x,y,t) &=& \tilde{T}_0 \exp(pt) \exp(\pm i k_x x) \exp(\pm i k_y y) %=\tilde{T}_0 E_T(x,y,t) 
 \end{eqnarray}
-where $\Psi_0$ and $\tilde{T}_0$ are constants and with the notation
+where $\Psi_0$ and $\tilde{T}_0$ are constants, and with the notation
 \[
 \exp (\pm i k x) = a_k \exp (i k_x x) + b_k \exp (-i k_x x )
 \]
+where $a_k,b_k$ are coefficients. 
 
 %where $k_x=2\pi/L_x$ and $k_y=2\pi/L_y$ are the horizontal and vertical wave number respectively.
 It follows that
-\[
-\nabla^2 \Psi = -(k_x^2+k_y^2) \Psi
-\quad\quad
-\nabla^2 \tilde{T} = -(k_x^2+k_y^2) \tilde{T}
-\]
+\begin{eqnarray}
+\nabla^2 \Psi &=& -(k_x^2+k_y^2) \Psi \nn\\
+\nabla^2 \tilde{T} &=& -(k_x^2+k_y^2) \tilde{T} \nn
+\end{eqnarray}
 
-The boundary conditions on $\tilde{T}$, 
-coupled with a choice of a real function for the $x$ dependence 
-yields\footnote{We assume here that temperature is a real quantity, not a complex one.}:
+Let us explicitely write the temperature:
+\[
+\tilde{T}(x,y,t) = \tilde{T}_0 \exp(pt) 
+(a_k \exp(i k_x x) + b_k \exp(-i k_x x) ) 
+(c_k \exp(i k_y y) + d_k \exp(-i k_y y) ) 
+\]
+or, 
+\[
+\tilde{T}(x,y,t) = \tilde{T}_0 \exp(pt) 
+\left[a_k \cos(k_x x) + i b_k \sin(k_x x) \right]
+\left[c_k \cos(k_y y) + i d_k \sin(k_y y) \right]
+\]
+The boundary conditions on $\tilde{T}$ are $\tilde{T}(y=0)=\tilde{T}(y=h)=0$.
+From the first one it follows immediately that $c_k=0$. 
+From the second, we arrive at $k_y h = n \pi$, which yields $\sin ( n \pi y/h)$
+where $n$ is an integer.
+Finally we assume here that temperature is a real quantity, not a complex one, so 
+we set $b_k=0$. In the end,
 \[
 \tilde{T}(x,y,t) = \tilde{T}_0 \exp(pt) \cos (k_x x) \sin \left(n\pi \frac{y}{h} \right).
 \]
-where $n$ is an integer number and $k_y=n \pi = 2 \pi/ \lambda_y$. 
+where $n$ is an integer number.
+Note that the $a_k$ and $d_k$ have been absorbed in the $\tilde{T}_0$ term. 
+\todo[inline]{isn't it the case that because of $i$ in front of $d_k$ we should
+instead set $a_k$ to zero so that the $i$ in front of $b_k$ multiplies with the one
+in front of $d_k$ ?}
 
-The vertical velocity component is given by:
+
+Let us now turn to the vertical component of the velocity:
 \begin{eqnarray}
 %u &=& \frac{\partial \Psi}{\partial y} \\
 %  &=& \frac{\partial }{\partial y} \left[ A_\Psi \exp(pt)\exp(\pm i k_x x) \exp(\pm i k_y y) \right]  \\
 %  &=& A_\Psi \exp(pt)\exp(\pm i k_x x) (\pm i k_y) \exp(\pm i k_y y)   \\
-v &=& -\frac{\partial \Psi}{\partial x}  \\
-  &=& -\frac{\partial }{\partial x} \left[  \Psi_0 \exp(pt)\exp(\pm i k_x x) \exp(\pm i k_y y) \right] \\
-  &=& - \Psi_0 \exp(pt) (\pm i k_x) \exp(\pm i k_x x) \exp(\pm i k_y y)
+v 
+&=& -\frac{\partial \Psi}{\partial x}  \\
+&=& -\frac{\partial }{\partial x} \left[  \Psi_0 \exp(pt) 
+\left[a_k \cos(k_x x) + i b_k \sin(k_x x) \right]
+\left[c_k \cos(k_y y) + i d_k \sin(k_y y) \right] 
+\right] \\
+&=& - \Psi_0 \exp(pt) 
+\left[- a_k k_x \sin(k_x x) + i b_k k_x \cos(k_x x) \right]
+\left[c_k \cos(k_y y) + i d_k \sin(k_y y) \right] 
 \end{eqnarray}
-The velocity boundary conditions are $v(x,y=0)=0$ and $v(x,y=h)=0$ 
-which imposes conditions on $\partial \Psi/\partial x$ and we find that we 
-can use the same $y$ dependence as for $\tilde{T}$. 
-Choosing again for a real function for the $x$ dependence yields:
+The boundary condition at the bottom is $v(y=0)=0$, so that $c_k=0$.
+The boundary condition at the top is $v(y=h)=0$, so that $ky h = n \pi=0$ as before.
+Here to we impose that $v$ be real, so that $a_k=0$.
+In the end,
+\[
+v =  \Psi_0 \exp(pt) \cos (k_x x) \sin(n \pi y /h)
+\]
+and then $\Psi$ is of the form
 \[
 \Psi(x,y,t) = \Psi_0 \exp(pt) \sin(k_x x) \sin(n\pi y/h)
 \]

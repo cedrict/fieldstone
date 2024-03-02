@@ -100,9 +100,9 @@ of the $N^3$ points (use $R=6371~\si{\kilo\metre}$). Please use
 arrays {\tt x}, {\tt y} and {\tt z} to store the coordinates.
 how your code should look like:
 \begin{lstlisting}
-x = np.empty(NP,dtype=np.float64) # x coordinates of all points
-y = np.empty(NP,dtype=np.float64) # y coordinates of all points
-z = np.empty(NP,dtype=np.float64) # z coordinates of all points
+x = np.zeros(NP,dtype=np.float64) # x coordinates of all points
+y = np.zeros(NP,dtype=np.float64) # y coordinates of all points
+z = np.zeros(NP,dtype=np.float64) # z coordinates of all points
 for i in range(?):
     for j in range(?):
         for k in range(?):
@@ -164,9 +164,9 @@ For both the mass and moment of inertia report on the relative error as a functi
 {\it above the north pole} with $m=0,1,2,3,4,5$ and 
 store these coordinates in arrays {\tt xm}, {\tt ym} {\tt zm}. 
 \begin{lstlisting}
-xm = np.empty(6,dtype=np.float64) # x coordinates of all points
-ym = np.empty(6,dtype=np.float64) # y coordinates of all points
-zm = np.empty(6,dtype=np.float64) # z coordinates of all points
+xm = np.zeros(6,dtype=np.float64) # x coordinates of all points
+ym = np.zeros(6,dtype=np.float64) # y coordinates of all points
+zm = np.zeros(6,dtype=np.float64) # z coordinates of all points
 \end{lstlisting}
 
 \item[(1H)] Fix $N=10$ for now. Compute the gravity potential $U$ and acceleration vector 
@@ -209,7 +209,7 @@ with steps of $R/100$.
 %....................................................
 \subsubsection*{Exercise 3: Full sphere - revisited}
 
-...NOT for 2022...
+...NOT for 2024...
 
 We are now going to re-do the first exercise but this time we do not want any point outside of the sphere. 
 We shall therefore use the spherical coordinates (see Section~\ref{ss:sphercoord}).
@@ -234,7 +234,7 @@ these in arrays {\tt r}, {\tt theta}, {\tt phi}.
 The report should contain results from exercises 1 and 2. I expect one pdf file per pair of students
 (maximum 10 pages) and the corresponding python file(s), all delivered in a single zip file.
 Your report does not have to follow questions 1A to 1K in sequential order. 
-Please send all files in a single email per {\bf April 3rd, 2022, 23:59}. 
+Please send all files in a single email per {\bf March 29th, 2024, 23:59}. 
 
 You should have the following guidelines in mind when writing your report:
 \begin{itemize}
