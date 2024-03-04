@@ -103,7 +103,7 @@ if int(len(sys.argv) == 4):
    Ra_nb = float(sys.argv[2])
    nstep = int(sys.argv[3])
 else:
-   nelx = 32
+   nelx = 24
    Ra_nb= 1e4
    nstep= 100
 
@@ -301,7 +301,7 @@ for j in range(0,nely+1):
     #end for
  #end for
 
-np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
 
 print("build P grid: %.3f s" % (timing.time() - start))
 
@@ -1054,7 +1054,8 @@ for istep in range(0,nstep):
     start = timing.time()
 
     if converged: 
-       filename = 'solution_{:04d}.vtu'.format(istep)
+       #filename = 'solution_{:04d}.vtu'.format(istep)
+       filename = 'solution.vtu'
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
@@ -1104,21 +1105,21 @@ for istep in range(0,nstep):
            vtufile.write("%.15f \n" % (2*eta(T[i],xV[i],yV[i],eta0)*np.sqrt(exx_n[i]**2+eyy_n[i]**2+exy_n[i]**2)))
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='adiab heating (linearised)' Format='ascii'> \n")
-       for i in range(0,NV):
-           vtufile.write("%.15f \n" % (alphaT*T[i]*rho0*v[i]*gy))
-       vtufile.write("</DataArray>\n")
+       #vtufile.write("<DataArray type='Float32' Name='adiab heating (linearised)' Format='ascii'> \n")
+       #for i in range(0,NV):
+       #    vtufile.write("%.15f \n" % (alphaT*T[i]*rho0*v[i]*gy))
+       #vtufile.write("</DataArray>\n")
        #
-       vtufile.write("<DataArray type='Float32' Name='adiab heating (true)' Format='ascii'> \n")
-       for i in range(0,NV):
-           vtufile.write("%.15f \n" % (alphaT*T[i]*(u[i]*dpdx_n[i]+v[i]*dpdy_n[i]))) 
-       vtufile.write("</DataArray>\n")
+       #vtufile.write("<DataArray type='Float32' Name='adiab heating (true)' Format='ascii'> \n")
+       #for i in range(0,NV):
+       #    vtufile.write("%.15f \n" % (alphaT*T[i]*(u[i]*dpdx_n[i]+v[i]*dpdy_n[i]))) 
+       #vtufile.write("</DataArray>\n")
        #
-       vtufile.write("<DataArray type='Float32' Name='adiab heating (diff)' Format='ascii'> \n")
-       for i in range(0,NV):
-           vtufile.write("%.15f \n" % (alphaT*T[i]*(u[i]*dpdx_n[i]+v[i]*dpdy_n[i])-\
-                                       alphaT*T[i]*rho0*v[i]*gy))
-       vtufile.write("</DataArray>\n")
+       #vtufile.write("<DataArray type='Float32' Name='adiab heating (diff)' Format='ascii'> \n")
+       #for i in range(0,NV):
+       #    vtufile.write("%.15f \n" % (alphaT*T[i]*(u[i]*dpdx_n[i]+v[i]*dpdy_n[i])-\
+       #                                alphaT*T[i]*rho0*v[i]*gy))
+       #vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux' Format='ascii'> \n")
        for i in range(0,NV):
