@@ -1447,38 +1447,37 @@ Please check that we have indeed $\vec\nabla\cdot\vec\upnu=0$.
 This definition does not impose any restriction on the velocity
 field or the stream function (apart from being a differentiable function).
 
+
+
 Furthermore, assume (for now) that the viscosity is constant and that
-$\rho D\upnu_i/DT \sim 0$ for mantle
+$\rho D\vec\upnu /DT \sim 0$ for mantle
 convection (this will be demonstrated later). Then, the Navier-Stokes equation \eqref{eq:md33}
 reduces to $-\vec\nabla p + \eta \vec\nabla^2 \vec\upnu + \rho \vec{g} =\vec{0}$ and then :
 \begin{eqnarray}
-0 &=& -\frac{\partial p}{\partial x} + \eta \left( 
-\frac{\partial^3 \psi}{\partial y^3}  + \frac{\partial^3 \psi}{\partial x^2 \partial y}  
+0 &=& -\frac{\partial p}{\partial x} + \eta \left(
+\frac{\partial^3 \psi}{\partial y^3}  + \frac{\partial^3 \psi}{\partial x^2 \partial y}
 \right) + \rho g_x \nn\\
-0 &=& -\frac{\partial p}{\partial y} - \eta \left( 
-\frac{\partial^3 \psi}{\partial x^3}  + \frac{\partial^3 \psi}{\partial y^2 \partial x}  
-\right) + \rho g_y 
+0 &=& -\frac{\partial p}{\partial y} - \eta \left(
+\frac{\partial^3 \psi}{\partial x^3}  + \frac{\partial^3 \psi}{\partial y^2 \partial x}
+\right) + \rho g_y
 \label{eq:md38}
 \end{eqnarray}
 
 
-\vspace{0.5cm}
-\fbox{
-\begin{minipage}{0.9\textwidth}
-\begin{exercise}
-{\small \it 
-Derive equation \eqref{eq:md38}.
-}
-\end{exercise}
-\end{minipage}
-}
-\vspace{0.5cm}
-
-The pressure terms in \eqref{eq:md38} can be removed by first differentiating 
-the first line w.r.t. $y$ and the second line w.r.t. $x$, 
+The pressure terms in \eqref{eq:md38} can be removed by first differentiating
+the first line w.r.t. $y$ and the second line w.r.t. $x$,
+\begin{eqnarray}
+0 &=& -\frac{\partial^2 p}{\partial x\partial y} + \eta \left(
+\frac{\partial^4 \psi}{\partial y^4}  + \frac{\partial^4 \psi}{\partial x^2 \partial y^2}
+\right) + \frac{\partial (\rho g_x)}{\partial y} \nn\\
+0 &=& -\frac{\partial^2 p}{\partial y \partial x} - \eta \left(
+\frac{\partial^4 \psi}{\partial x^4}  + \frac{\partial^4 \psi}{\partial y^2 \partial x^2}
+\right) + \frac{\partial (\rho g_y)}{\partial x}
+\label{eq:md38b}
+\end{eqnarray}
 and next by subtracting the resulting equations, leading to:
 \begin{equation}
-0 = \eta 
+0 = \eta
 \left(
 \frac{\partial^4 \psi}{\partial x^4}
 +

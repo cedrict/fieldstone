@@ -1,0 +1,19 @@
+#
+set terminal pdf enhanced font "Times,12pt"
+set grid
+
+set key outside
+set output 'Ra.pdf'
+set xlabel '2 {/Symbol p} h/{/Symbol l}'
+set ylabel 'Ra_c'
+
+set arrow from 2.2214, graph 0 to 2.2214, graph 1 nohead dt 2
+set xtics 1 
+
+set label 1 "unstable" at 4,3000
+set label 2 "stable" at 6,1250
+
+
+plot[0:7.5][0:5000]\
+(x**2+pi**2)**3/x**2 lw 3 notitle,\
+ 27*pi**4/4 lt -1 dt 2 notitle

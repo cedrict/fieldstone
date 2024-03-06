@@ -5,14 +5,14 @@ In parameterized convection models for planetary thermal evolution the heat tran
 of the convecting mantle are formulated in a pseudo steady state approximation. 
 This is done by parameterization of the surface heatflux as a function of convective vigor, 
 through the non-dimensional Nusselt number $\Nunb$. 
-$\Nunb$ is usually expressed in terms of the 
+In the convective regime $\Nunb$ is usually expressed in terms of the 
 Rayleigh number $\Ranb$ as $\Nunb \sim C\, \Ranb^\beta$, where $C$ is a 
 constant depending on the domain geometry
-(please do read section 1 of Wolstencroft \etal (2009) \cite{wodd09} 
-for more information, check also Plumley \& Julien (2019) \cite{plju19} and references therein, 
-also Korenaga (2003) \cite{kore03}).
+(please read section 1 of \textcite{wodd09} (2009)
+for more information, check also \textcite{plju19} (2019) and references therein, 
+also \textcite{kore03} (2003)).
 
-In this lab exercise you will investigate the characteristics of steady-state Rayleigh-Benard convection 
+In this lab exercise you will investigate the characteristics of steady-state Rayleigh-B{\'e}nard convection 
 and determine the relation between the Nusselt and Rayleigh number experimentally, 
 by means of numerical modelling. In particular you will measure the heatflow through the top surface of 
 a 2D model of a convecting layer, as a function of the Rayleigh number, expressed in the temperature 
@@ -33,7 +33,7 @@ the momentum and thermal boundary layers. When Pr is small, it means that the he
 quickly compared to the velocity (momentum).}.
 
 In what follows, the assumption is made that geological materials can be treated as fluids (with 
-special properties) within the realm of continuum fluid mechanics.
+special properties) within the realm of continuum fluid mechanics and under the Stokes hypothesis.
 A Boussinesq approximation is applied, neglecting density variations in the equations except 
 in the buoyancy term of the momentum conservation equation. We consider two-dimensional problems.
 
@@ -87,8 +87,7 @@ $k$ & heat conductivity (\si{\watt\per\meter\per\kelvin}) \\
 $C_p$ & heat capacity (\si{\joule\per\kelvin})\\
 $\alpha$ & thermal expansion (\si{\per\kelvin}) \\
 \hline
-\end{tabular}\\
-{\captionfont Nomenclature}
+\end{tabular}
 \end{center}
 
 
@@ -98,12 +97,13 @@ $\alpha$ & thermal expansion (\si{\per\kelvin}) \\
 Introduced in the late 1950s, the finite element method (FEM) \cite{hugh,zita1,zita2,zita3} 
 has emerged as one of the most powerful numerical methods so far devised. 
 
-A thorough mathematical treatment of the finite element formulation of the equations gouverning the physics of the system is beyond the scope of this 
-computer practical, and has been exposed rigorously in Section~\ref{solvingFEM} 
+A thorough mathematical treatment of the finite element formulation of the 
+equations gouverning the physics of the system is beyond the scope of this 
+computer practical, and has been exposed in Section~\ref{solvingFEM} 
 and in various textbooks such as \cite{dohu03} or \cite{gunz89}.
 
 We wish to study the system at steady state, which means that it no more changes in time. 
-In practice, only he heat transport equation contains a time (derivative) term so we actually wish 
+In practice, only the heat transport equation contains a time (derivative) term so we actually wish 
 to solve these three (coupled) equations:
 
 \begin{eqnarray}
@@ -120,7 +120,7 @@ We therefore have to design a strategy (an algorithm) which will allow us to sol
 equations. 
 
 One simple approach is as follows: the equations are not solved in a coupled manner. 
-The obtention of a new set of variables $({\bm v},p,T)$ is the product of a two-stage process:
+but rather the obtention of a new set of variables $({\bm v},p,T)$ is the product of a two-stage process:
 \begin{enumerate}
 \item assume temperature known, solve for velocity (and pressure) field (the first two equations)
 \item assume velocity known, solve for temperature (the last equation).
@@ -128,8 +128,8 @@ The obtention of a new set of variables $({\bm v},p,T)$ is the product of a two-
 
 These two steps need to be repeated as long as the system has not converged to a steady solution. 
 The code therefore implements iterations and these iterations stop when either the maximum number 
-of iterations nstep is reached or convergence has been reached (i.e. temperature does not change 
-substantially between two consecutive iterations). The structure of the code 
+of iterations nstep is reached or convergence has been reached (i.e. temperature and velocity 
+do not change substantially between two consecutive iterations). The structure of the code 
 is then as follows:
 
 \input{tikz/tikz_md1416}
@@ -142,7 +142,8 @@ is then as follows:
 
 This benchmark deals with the 2-D thermal convection of a fluid 
 of infinite Prandtl number in a rectangular closed cell.
-In what follows, we will focus on the case 1a, 1b, and 1c experiments as shown in \cite{blbc89}:
+In what follows, we will focus on the case 1a, 1b, and 1c experiments as shown 
+in \textcite{blbc89} (1989):
 steady convection with constant viscosity in a square box.
 
 The temperature is fixed to zero on top and to $\Delta T$ at the bottom, 
@@ -201,11 +202,12 @@ bottom is prescribed to be 1.
 %various grid resolutions with $Ra=10^4$ and %is shown in Fig. (\ref{fig_blankenbach4}).
 %was found to decrease quadratically with the element size.
 
-Finally, the steady state root mean square velocity and Nusselt number measurements
-are indicated in the followiug table alongside those of \textcite{blbc89} (1989)
+Finally, the steady state root mean square velocity $\upnu_{rms}$ and Nusselt number measurements
+are indicated in the following table alongside those of \textcite{blbc89} (1989)
 and \textcite{tack94} (1994).
-(Note that this benchmark was also carried out and published in 
-other publications \cite{trha98,albe00,gery10,dawk11,lezh11} but since they did not provide  a complete set 
+(Note that this benchmark was also carried out and its results published in 
+many other publications \cite{trha98,albe00,gery10,dawk11,lezh11} but since 
+they did not provide  a complete set 
 of measurement values, they are not included in the table.)
 
 \begin{center} 
@@ -249,7 +251,7 @@ https://raw.githubusercontent.com/cedrict/fieldstone/master/python_codes/md/ston
 \end{verbatim}
 }
 in the address bar of your web browser, select all, paste it in a file on your computer which 
-you save as {\tt stone.py}.
+you save as {\tt stone.py} in a dedicated folder.
 
 You can run the code in a terminal, in Anaconda, Spyder, etc ... 
 
@@ -258,7 +260,7 @@ You can run the code in a terminal, in Anaconda, Spyder, etc ...
 
 To conduct the exercise you can change the following parameters (and run the code until convergence):
 \begin{itemize}
-\item {\tt Lx}: horizontal extent of the domain
+\item {\tt Lx}: horizontal extent of the domain (do not change {\tt Ly})
 \item {\tt Ra\_nb}: the Rayleigh number $\Ranb$
 \item {\tt tol\_ss}: the steady state detection tolerance
 \item {\tt nelx,nely}: the number of elements in $x$ and $y$ directions 
@@ -271,9 +273,15 @@ To conduct the exercise you can change the following parameters (and run the cod
 Results are written out to {\sl .ascii} files and to {\sl .vtu} files. You can produce 
 plots with python (matplotlib), gnuplot or even excel, as long as these are not pixelated in your report, 
 that they are labeled, captioned, and their axes too.  
+You will find in Appendix~\ref{app:plot}.
+
+
 Have a thorough look at the code, read {\bf all} instructions, and carry out the following tasks:
 
 \begin{enumerate}
+
+\item Determine analytically the expected value of the Nusselt number when there is no convection.
+
 \item Determine the Nusselt number at steady state for a range of Rayleigh numbers, 
 starting from a subcritical value. 
 Produce a plot of $\Nunb$ against $\Ranb$ using double logarithmic axes. 
@@ -319,6 +327,8 @@ curves showcases two boundary layers. Measure their thickness as a function of $
 
 \item Bonus: change the viscosity function so that the viscosity is 1 in the lower half of the domain 
 and $10^m$ in the upper half with $m>1$. Explore \& discuss ...
+
+%\item Bonus: Can you arrive at a 
 
 \end{enumerate}
 
