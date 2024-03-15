@@ -6,7 +6,7 @@ in the square domain $\Omega=[0,1]\times[0,1]$, which possesses a closed-form an
 solution. The problem consists of determining the incompressible flow velocity field ${\vec \upnu} = (u,v)$ 
 and the pressure $p$ such that 
 \begin{eqnarray}
-\vec\nabla (2 \eta \dot{\bm \varepsilon}({\vec \upnu})) -{\vec \nabla} p + {\vec b} &=& \vec 0 \quad\quad {\rm in} \; \Omega\\
+\vec\nabla \cdot (2 \eta \dot{\bm \varepsilon}({\vec \upnu})) -{\vec \nabla} p + {\vec b} &=& \vec 0 \quad\quad {\rm in} \; \Omega\\
 \vec{\nabla} \cdot \vec{v} &=& 0 \quad\quad {\rm in} \; \Omega\\
 \vec{v}&=&\vec{0} \quad\quad {\rm on} \; \Gamma_D
 \end{eqnarray}
@@ -20,8 +20,14 @@ b_y &=& (8 - 48y + 48 y^2) x^3 + (-12 + 72y - 72y^2) x^2  \nonumber\\
 \end{eqnarray}
 With this prescribed body force, the exact solution is 
 \begin{eqnarray}
-u(x,y) &=& x^2(1- x)^2 (2y - 6y^2 + 4y^3) = x^2(1-x)^2 2y (1-3y+2y^2) \nonumber\\
-v(x,y) &=& -y^2 (1 - y)^2 (2x - 6x^2 + 4x^3) = -y^2 (1 - y)^2 2x (1-3x+2x^2) \nonumber\\
+u(x,y) 
+&=& x^2(1- x)^2 (2y - 6y^2 + 4y^3)  \nn\\
+&=& x^2(1-x)^2 2y (1-3y+2y^2) \nonumber\\
+&=& x^2(1-x)^2 2y (y-1)(2y-1) \nonumber\\
+v(x,y) 
+&=& -y^2 (1 - y)^2 (2x - 6x^2 + 4x^3) \nn\\
+&=& -y^2 (1 - y)^2 2x (1-3x+2x^2) \nonumber\\
+&=& -y^2 (1 - y)^2 2x (x-1)(2x-1) \nonumber\\
 p(x,y) &=& x(1 -x)- 1/6 \nonumber 
 \end{eqnarray}
 Note that the pressure obeys $\int_{\Omega} p \; dV = 0$.
@@ -94,9 +100,9 @@ Taking into account that the proposed problem has got analytical solution, it is
 
 One can also compute the stress components:
 \begin{eqnarray}
-\sigma_{xx} &=&  2x^2(2x - 2)(4y^3 - 6y^2 + 2y) + 4x(-x + 1)^2*(4y^3 - 6y^2 + 2y) - x(-x + 1) + 1/6 \\
-\sigma_{xy} &=&  x^2(-x + 1)^2*(12y^2 - 12y + 2) - y^2(-y + 1)^2*(12x^2 - 12x + 2) \\
-\sigma_{yy} &=&  -x(-x + 1) - 2y^2(2y - 2)(4x^3 - 6x^2 + 2x) - 4y(-y + 1)^2(4x^3 - 6x^2 + 2x) + 1/6
+\sigma_{xx} &=&  2x^2(2x - 2)(4y^3 - 6y^2 + 2y) + 4x(-x + 1)^2(4y^3 - 6y^2 + 2y) - x(-x + 1) + 1/6 \nn\\
+\sigma_{xy} &=&  x^2(-x + 1)^2(12y^2 - 12y + 2) - y^2(-y + 1)^2(12x^2 - 12x + 2) \nn\\
+\sigma_{yy} &=&  -x(-x + 1) - 2y^2(2y - 2)(4x^3 - 6x^2 + 2x) - 4y(-y + 1)^2(4x^3 - 6x^2 + 2x) + 1/6\nn
 \end{eqnarray}
 
 All the necessary functions to do this benchmark are in {\tt mms/dh.py}:
@@ -123,7 +129,7 @@ of the velocity is given by
 \begin{eqnarray}
 \langle u \rangle (y) 
 &=& \frac{1}{L_x} \int_0^{L_x} u(x,y)\; dx \nn\\
-&=& \int_0^{L_x} x^2(1-x)^2 2y (1-3y+2y^2) ; dx \nn\\
+&=& \int_0^{L_x} x^2(1-x)^2 2y (1-3y+2y^2) \; dx \nn\\
 &=& \left( \int_0^{1} x^2(1-x)^2 \; dx \right) \;   2y (1-3y+2y^2)  \nn\\
 &=& \frac{1}{30}2y (1-3y+2y^2) 
 \end{eqnarray}

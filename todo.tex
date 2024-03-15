@@ -21,6 +21,8 @@
 \item write axisymm energy eq 
 \item sort our s40rts stones/theory
 \item change cell type in all stones containing Q2
+\item convert literature to html page?
+\item find Dave Whipp vids
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -41,6 +43,8 @@ based on \textcite{chyu85}.
       \textcite{gafp17}). 
 \item wave equation stone, look at becker and kaus syllabus matlab file
 \item revisit stone 114 (inversion stokes+grav), use msc thesis 
+\item hous90 method ?
+\item ELEFANT:  parallel iterative solver w/ Arie. slice it with nthreads, parallel PCG
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,7 +63,7 @@ or mantle convection. re-organise biblio around these themes
 \item Gravity of cuboid: Sort out the mess by \textcite{duti16} and \textcite{zhhu17}.
 \item implement RK1,2,3,4,5,6...
 \item write stone for Kovasznay mms
-\item find Dave Whipp vids
+\item symbolic calculations for FE matrices
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,6 +102,19 @@ look at remark in \textcite{lumh24}.
 \item gravity of tesseroid , stone 98
 \item look/redo/expand \fullcite{shpp13}. Pb: they have 12 orders of magnitude viscosity variations.
 Use axisymmetic ? annulus?
+
+\item in \textcite{chri84} (1984) he talks about the effective Rayleigh number 
+that is evaluated using a squared strain-rate averaged viscosity:
+\[
+\langle \eta \rangle_2 = \int \eta \dot{\varepsilon}^2 dV/\int \dot{\varepsilon}^2 dV
+\]
+implement in stones and aspect ?
+
+\item CVI 2D and 3D
+
+\item mixing . entropy mixed with convection stone
+
+\item STREAM + CVI + mixing ?
 
 \end{itemize}
 
