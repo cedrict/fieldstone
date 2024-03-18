@@ -1,0 +1,131 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/under_construction}
+\includegraphics[height=1.25cm]{images/pictograms/FDM}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_153/text.tex}} \end{flushright}
+
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/template_keywords.key}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_153}}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%{\sl This stone was developed in collaboration with Donald Duck}. \index{contributors}{D. Duck}
+%\par\noindent\rule{\textwidth}{0.4pt}
+
+{\bf \color{teal} Purpose}: implement and document bla bla 
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This \stone is inspired by Exercise 5.2 of \textcite{gery19book}.
+
+We start from
+\begin{equation}
+\vec\nabla^2 \omega = -\frac{1}{\eta_0} \left( -\frac{\partial (\rho g_x)}{\partial y}
++\frac{\partial (\rho g_y)}{\partial x} \right)
+\end{equation}
+In what follows we assume that the domain is a Cartesian box aligned 
+with the $x,y$ axis. The gravity is constant and vertical so that $g_x=0$ and
+then 
+\begin{equation}
+\vec\nabla^2 \omega 
+= -\frac{g_y}{\eta_0} 
+\frac{\partial \rho}{\partial x} 
+\end{equation}
+
+
+As shown in Section~\ref{MMM-ss:fdm_diff2D}, the Laplacian of $\omega$
+can be discretised with a second order central difference stencil:
+\[
+\vec\nabla^2 \omega |_{i,j} 
+= \frac{\omega_{i+1,j} -2\omega_{i,j} + 2\omega_{i-1,j}}{h_x^2}
++ \frac{\omega_{i,j+1} -2\omega_{i,j} + 2\omega_{i,j-1}}{h_y^2}
++{\cal O}(h_x^2,h_y^2)
+\]
+while the density gradient is approximated by a second order
+central difference:
+\[
+\frac{\partial \rho}{\partial x}|_{i,j} 
+= \frac{\rho_{i+1,j}-\rho_{i-1,j}}{2 h_x} + {\cal O}(h_x^2)
+\]
+In the end, 
+\[
+\frac{\omega_{i+1,j} -2\omega_{i,j} + 2\omega_{i-1,j}}{h_x^2}
++ \frac{\omega_{i,j+1} -2\omega_{i,j} + 2\omega_{i,j-1}}{h_y^2}
+= -\frac{g_y}{\eta_0} 
+\frac{\rho_{i+1,j}-\rho_{i-1,j}}{2 h_x} 
+\]
+We then define the global indices
+\begin{eqnarray}
+k  &=& j \cdot nnx + i \nn\\
+k_E &=& j \cdot nnx + i+1 \nn\\
+k_W &=& j \cdot nnx + i-1 \nn\\
+k_N &=& (j+1) \cdot nnx + i \nn\\
+k_S &=& (j-1) \cdot nnx + i \nn
+\end{eqnarray}
+so that 
+\[
+\frac{\omega_{k_E} -2\omega_{k} + 2\omega_{k_W}}{h_x^2}
++ 
+\frac{\omega_{k_N} -2\omega_{k} + 2\omega_{k_S}}{h_y^2}
+= -\frac{g_y}{\eta_0} 
+\frac{\rho_{k_E}-\rho_{k_W}}{2 h_x} 
+\]
+or, 
+\[
+\frac{\omega_{k_E}}{h_x^2}+
+\frac{\omega_{k_W}}{h_x^2}+
+\frac{\omega_{k_N}}{h_y^2}+
+\frac{\omega_{k_S}}{h_y^2}-
+\left(\frac{2}{h_x^2} + \frac{2}{h_y^2} \right) \omega_k
+= -\frac{g_y}{\eta_0} 
+\frac{\rho_{k_E}-\rho_{k_W}}{2 h_x} 
+\]
+This stencil is used for all interior nodes. All nodes on the boundaries 
+have $\omega=0$.
+
+Having obtained $\omega$ we can solve for $\Psi$ by solving
+$\vec\nabla^2 \Psi = -\omega$
+
+Finally we can recover the velocity field with $u=\partial_y \Psi$ and $v=-\partial_x \Psi$.
+Once again using a second order centered approach:
+\[
+u_{i,j} = \frac{\Psi_{i,j+i}-\Psi_{i,j-i}}{2 h_y}
+\]
+\[
+v_{i,j} = - \frac{\Psi_{i+1,j}-\Psi_{i-1,j}}{2 h_x}
+\]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\vspace{.5cm}
+
+\begin{center}
+\fbox{\begin{minipage}{0.9\textwidth}
+{\color{teal}To Do, open questions, future work?}
+\begin{itemize}
+\item do smthg
+\end{itemize}
+\end{minipage}}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{.5cm}
+
+\Literature:\\
+\fullcite{xxxxYY}
+
+
