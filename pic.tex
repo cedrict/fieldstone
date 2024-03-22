@@ -28,7 +28,10 @@ distribution of particles. Taken from Crameri \etal (2012) \cite{crsg12}.}
 \end{center}
 
 Samuel (2018) \cite{samu18} does a great job at explaining 
-the core problem with PIC: {\it the method requires the method requires particle-mesh 
+the core problem with PIC: 
+\begin{displayquote}
+{\color{darkgray}
+The method requires the method requires particle-mesh 
 and mesh-particle mappings to be specified. These critical operations constitute a
 major source of inaccuracy in the PIC solution \cite{mona85,dumg11,thmk14}. 
 Indeed, while the Lagrangian advection alone is not prone
@@ -63,6 +66,7 @@ Lagrangian particles, even if the particles locations are perfectly
 known.
 \end{itemize}
 }
+\end{displayquote}
 
 
 The basic methodology goes as follows:
@@ -79,6 +83,7 @@ The basic methodology goes as follows:
 As it turns out each step above needs to be carefully executed and is more difficult 
 than it first looks. 
 
+%..........
 \paragraph{Distributing particles in the domain} 
 Let us assume we wish to distribute $N_p$ particles
 in the domain. How large must $N_p$ be? To simplify, one end member could be 'as many particles as possible that fit in memory' 
@@ -94,6 +99,7 @@ with each tracer perturbed from its grid position by a random amount of up to
 $\pm$ half a grid spacing, in order to eliminate artifacts due to tracer alignment."
 
 
+%..........
 \paragraph{Averaging and projection} 
 This is a very critical step. Unfortunately, there is no community-wide
 agreed-upon method. The problem at hand boils down to: at a given location $(\vec r)$ in space I need a
@@ -397,6 +403,7 @@ with a tracer repositioning algorithm designed to promote even tracer
 coverage \cite{trlb20}. 
 \end{remark}
 
+Also look at \textcite{yamm21} and \textcite{bolc17}.
 
 
 See \stone 67 for a concrete example of Particle-In-Cell use and a detailed 

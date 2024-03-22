@@ -464,6 +464,8 @@ are surfaces of constant stream function. In other words, since flow is parallel
 In the end we have to account for three physical types of boundary conditions:
 free slip, no slip, and prescribed velocity (yes, technically the last one encompasses the second one).
 
+Check \textcite{napq99} (1999) for a A review of vorticity conditions in the numerical solution of the vorticity-stream function equations.
+
 %---------------------------------------------------------------
 \subsection{Free slip, 'stress free' boundary conditions}
 
@@ -536,6 +538,9 @@ velocities value along the boundary:
 (iii) Replacing no-slip with slip with friction.
 ''}
 \end{displayquote}
+\textcite{dedz03} (2023) present ``an analysis of penalty method application to imposing no-slip boundary
+condition. The approach used herein consists to express the vorticity boundary condition through
+the natural boundary condition depending on the solid wall tangential velocity component.''
 
 Let us consider the bottom boundary. No-slip means $u=v=0$, i.e.
 $\frac{\partial \Psi}{\partial y}=\frac{\partial \Psi}{\partial x}=0$. 
@@ -614,6 +619,7 @@ is not properly taken into account.
 \end{displayquote}
 
 
+
 %------------------------------
 \subsection{Stress b.c.}
 
@@ -629,15 +635,10 @@ the interior solution.
 
 
 
-
-
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Pressure Poisson Equation for the isoviscous N-S equation}
 
-This section is inspired by Salih.
+This section is inspired by \textcite{sali13}.
 
 The PPE can be derived by taking the divergence of vector form of momentum equation
 \begin{equation}
@@ -793,6 +794,9 @@ In \textcite{reddybook2} we find at page 163:  The pressure, if required, may be
 
 
 
+Check \textcite{gupe88} (1988) which ``describe an alternate method of recovering the 
+pressure which does not encounter any of the above difficulties; in particular, absolutely 
+no boundary conditions on the pressure are needed at solid walls.''
 
 
 
@@ -1317,6 +1321,7 @@ van Keken then proceeds to use 2 different methods: a non-conforming type of ele
 \textcite{haeb84} (1984), and a bicubic spline FE method \textcite{woid78} (1978), \textcite{kopi79} (1979).
 
 \item check \textcite{comn94} (1994) for N-S implementation.
+\item check \textcite{gupe88} (1988) for 2D, 3D implementation
 
 \end{itemize}
 
@@ -1378,6 +1383,7 @@ ToDo:
 \item derive B spline equation, implement, python fct? check for example \cite{kopi79}
 \item derive equation above
 \item work out the 2 formulations of vKK phd thesis
+\item check book by Gunzburger \& Peterson for splines + FEM
 \end{itemize}
 }
 
@@ -1509,11 +1515,13 @@ from a velocity field obtained via the FEM.
 %systematically already done 
 %1970,1971,1972,1973,1974,1975,1976,1977,1978,1979
 %1980,1981,1982,1983,1984,1985,1986,1987,1988,1989
-%1990,1991,1992,1993,1994
+%1990,1991,1992,1993,1994,1995
 
 
 \begin{scriptsize}
 \begin{itemize}
+\item[\nineteensixtyone]
+ \textbullet \fullcite{kuo61}
 \item[\nineteensixtyseven]
  \textbullet \fullcite{tuox67}
 \item[\nineteensixtynine]
@@ -1593,6 +1601,7 @@ from a velocity field obtained via the FEM.
 \item[\nineteeneightyeight]
  \textbullet \fullcite{fobe88}\\
  \textbullet \fullcite{viyu88}\\
+ \textbullet \fullcite{gupe88}\\
  \textbullet \fullcite{davi88}\\
  \textbullet \fullcite{haeb88}
 \item[\nineteeneightynine]
@@ -1650,8 +1659,26 @@ from a velocity field obtained via the FEM.
  \textbullet \fullcite{hayu94}
 \item[\nineteenninetyfive]
  \textbullet \fullcite{schh95}
+ \textbullet \fullcite{bisc95}
+ \textbullet \fullcite{rict95}
+ \textbullet \fullcite{styu95}
+ \textbullet \fullcite{dehu95}
+ \textbullet \fullcite{loja95}
+ \textbullet \fullcite{solo95}
 \item[\nineteenninetysix] 
  \textbullet \fullcite{laym96}
+ \textbullet \fullcite{baho96}
+ \textbullet \fullcite{berc96}
+ \textbullet \fullcite{brzy96}
+ \textbullet \fullcite{chri96}
+ \textbullet \fullcite{leka96}
+ \textbullet \fullcite{loja96}
+ \textbullet \fullcite{mipb96}
+ \textbullet \fullcite{ribe96}
+ \textbullet \fullcite{schh96}
+ \textbullet \fullcite{vayu96}
+ \textbullet \fullcite{zhgm96}
+ \textbullet \fullcite{zhon96}
 \item[\nineteenninetyseven] 
  \textbullet \fullcite{laym97}\\
  \textbullet \fullcite{olwh97}\\
