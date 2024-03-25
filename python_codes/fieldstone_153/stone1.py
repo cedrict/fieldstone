@@ -1,10 +1,13 @@
 import numpy as np
 import time
-
 import scipy.sparse as sps
 
 cm=0.01
 year=365.25*3600*24
+
+print("-----------------------------")
+print("---------- stone 153 --------")
+print("-----------------------------")
 
 ###############################################################################
 
@@ -14,7 +17,7 @@ Ly=1000e3
 nnx=51
 nny=41
 
-gy=-10
+gy=10
 
 eta0=1e21
 
@@ -40,6 +43,8 @@ for j in range(0,nny):
         y[counter]=j*hy
         counter+=1
 
+print("Nodes setup: %.5f s" % (time.time() - start))
+
 ###############################################################################
 # assign density to nodes
 ###############################################################################
@@ -53,6 +58,8 @@ for i in range(0,N):
     else:
        rho[i]=3300
 
+print("Assign density: %.5f s" % (time.time() - start))
+
 ###############################################################################
 # build matrix
 ###############################################################################
@@ -65,49 +72,56 @@ for j in range(0,nny):
     for i in range(0,nnx):
 
         k=j*nnx+i
-        k_west=j*nnx+(i-1)
-        k_east=j*nnx+(i+1)
-        k_north=(j+1)*nnx+i
-        k_south=(j-1)*nnx+i
+        kW=j*nnx+(i-1)
+        kE=j*nnx+(i+1)
+        kN=(j+1)*nnx+i
+        kS=(j-1)*nnx+i
 
-        #print (k,k_west,k_east,k_south,k_north)
+        #print (k,kW,kE,kS,kN)
 
         if i==0 or i==nnx-1 or j==0 or j==nny-1:
            A[k,k]=1
            b[k]=0
         else:
            A[k,k]=-2/hx**2-2/hy**2
-           A[k,k_west]=1/hx**2
-           A[k,k_east]=1/hx**2
-           A[k,k_north]=1/hy**2
-           A[k,k_south]=1/hy**2
-           b[k]=-gy/eta0*(rho[k_west]-rho[k_east])/(2*hx)
+           A[k,kW]=1/hx**2
+           A[k,kE]=1/hx**2
+           A[k,kN]=1/hy**2
+           A[k,kS]=1/hy**2
+           b[k]=-gy/eta0*(rho[kW]-rho[kE])/(2*hx)
         #end if
 
     #end for
 #end for
 
+print("Build matrix: %.5f s" % (time.time() - start))
 
 ###############################################################################
-# solve system
+# solve system for omega
 ###############################################################################
 start = time.time()
 
 omega=sps.linalg.spsolve(sps.csr_matrix(A),b)
 
-print("Solve linear system: %.5f s" % (time.time() - start))
+print("     -> omega (m,M) %e %e " %(np.min(omega),np.max(omega)))
 
-np.savetxt('omega.ascii',np.array([x,y,omega]).T)
+print("Solve linear system omega: %.5f s" % (time.time() - start))
 
 ###############################################################################
+# solve system for Psi
+###############################################################################
+start = time.time()
 
 Psi=sps.linalg.spsolve(sps.csr_matrix(A),-omega)
 
-np.savetxt('psi.ascii',np.array([x,y,Psi]).T)
+print("     -> psi (m,M) %.4f %.4f " %(np.min(Psi),np.max(Psi)))
+
+print("Solve linear system psi: %.5f s" % (time.time() - start))
 
 ###############################################################################
 # recover velocity
 ###############################################################################
+start = time.time()
 
 u=np.zeros(N,dtype=np.float64)
 v=np.zeros(N,dtype=np.float64)
@@ -116,49 +130,42 @@ for j in range(0,nny):
     for i in range(0,nnx):
 
         k=j*nnx+i
-        k_west=j*nnx+(i-1)
-        k_east=j*nnx+(i+1)
-        k_north=(j+1)*nnx+i
-        k_south=(j-1)*nnx+i
+        kW=j*nnx+(i-1)
+        kE=j*nnx+(i+1)
+        kN=(j+1)*nnx+i
+        kS=(j-1)*nnx+i
 
-        if i==0 and j==0:
-           u[k]=0
-           v[k]=0
-        elif i==nnx-1 and j==0:
-           u[k]=0
-           v[k]=0
-        elif i==nnx-1 and j==nny-1:
-           u[k]=0
-           v[k]=0
-        elif i==0 and j==nny-1:
-           u[k]=0
-           v[k]=0
-        elif i==0 or i==nnx-1: #left,right 
-           u[k]=0
-           #v[k]=-(Psi[k_east] -Psi[k_west] )/(hx)
-        elif j==0 or j==nny-1: #bottom, top
-           #u[k]=(Psi[k_north]-Psi[k_south])/(hy)
-           v[k]=0
+        if i==0: #left
+           v[k]=-(Psi[kE] -Psi[k] )/hx
+        elif i==nnx-1: #right   
+           v[k]=-(Psi[k] -Psi[kW] )/hx
+        elif j==0: #bottom
+           u[k]= (Psi[kN]-Psi[k])/hy
+        elif j==nny-1: #top
+           u[k]= (Psi[k]-Psi[kS])/hy
         else:
-           u[k]= (Psi[k_north]-Psi[k_south])/(2*hy)
-           v[k]=-(Psi[k_east] -Psi[k_west] )/(2*hx)
+           u[k]= (Psi[kN]-Psi[kS])/(2*hy)
+           v[k]=-(Psi[kE] -Psi[kW] )/(2*hx)
         #end if
 
     #end for
 #end for
 
-np.savetxt('velocity.ascii',np.array([x,y,u/cm*year,v/cm*year]).T)
+print("     -> u (m,M) %.4f %.4f cm/year" %(np.min(u)/cm*year,np.max(u)/cm*year))
+print("     -> v (m,M) %.4f %.4f cm/year" %(np.min(v)/cm*year,np.max(v)/cm*year))
+
+
+print("Compute velocity: %.5f s" % (time.time() - start))
 
 ###############################################################################
 # export fields to vtu
 ###############################################################################
+start = time.time()
 
 m=4
-
 nelx=nnx-1
 nely=nny-1
-nel=(nnx-1)*(nny-1)
-
+nel=nelx*nely
 
 icon =np.zeros((m,nel),dtype=np.int32)
 counter = 0
@@ -169,7 +176,6 @@ for j in range(0, nely):
         icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
         icon[3, counter] = i + (j + 1) * (nelx + 1)
         counter += 1
-
 
 filename = 'solution.vtu'
 vtufile=open(filename,"w")
@@ -195,9 +201,9 @@ vtufile.write("</Points> \n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")
 #--
-vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (cm/year)' Format='ascii'> \n")
 for i in range(0,N):
-    vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+    vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='omega' Format='ascii'> \n")
@@ -214,8 +220,6 @@ vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
 for i in range(0,N):
     vtufile.write("%10e \n" %rho[i])
 vtufile.write("</DataArray>\n")
-
-
 #--
 vtufile.write("</PointData>\n")
 #####
@@ -242,6 +246,12 @@ vtufile.write("</Piece>\n")
 vtufile.write("</UnstructuredGrid>\n")
 vtufile.write("</VTKFile>\n")
 vtufile.close()
+
+print("Export to vtu: %.5f s" % (time.time() - start))
+
+#np.savetxt('omega.ascii',np.array([x,y,omega]).T)
+#np.savetxt('psi.ascii',np.array([x,y,Psi]).T)
+#np.savetxt('velocity.ascii',np.array([x,y,u/cm*year,v/cm*year]).T)
 
 print("-----------------------------")
 print("------------the end----------")

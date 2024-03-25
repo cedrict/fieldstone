@@ -23,15 +23,16 @@
 %{\sl This stone was developed in collaboration with Donald Duck}. \index{contributors}{D. Duck}
 %\par\noindent\rule{\textwidth}{0.4pt}
 
-{\bf \color{teal} Purpose}: implement and document bla bla 
+%{\bf \color{teal} Purpose}: implement and document bla bla 
 
-\par\noindent\rule{\textwidth}{0.4pt}
+%\par\noindent\rule{\textwidth}{0.4pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This \stone is inspired by Exercise 5.2 of \textcite{gery19book}.
+The theory and derivations of the vorticity-stream function approach is 
+presented in detail in Chapter~\ref{MMM-chapt:streamfunction}.
 
-We start from
+We start from the Poisson equation for the vorticity $\omega$
 \begin{equation}
 \vec\nabla^2 \omega = -\frac{1}{\eta_0} \left( -\frac{\partial (\rho g_x)}{\partial y}
 +\frac{\partial (\rho g_y)}{\partial x} \right)
@@ -44,7 +45,6 @@ then
 = -\frac{g_y}{\eta_0} 
 \frac{\partial \rho}{\partial x} 
 \end{equation}
-
 
 As shown in Section~\ref{MMM-ss:fdm_diff2D}, the Laplacian of $\omega$
 can be discretised with a second order central difference stencil:
@@ -97,16 +97,342 @@ This stencil is used for all interior nodes. All nodes on the boundaries
 have $\omega=0$.
 
 Having obtained $\omega$ we can solve for $\Psi$ by solving
-$\vec\nabla^2 \Psi = -\omega$
-
+$\vec\nabla^2 \Psi = -\omega$.
 Finally we can recover the velocity field with $u=\partial_y \Psi$ and $v=-\partial_x \Psi$.
-Once again using a second order centered approach:
+Once again using a second order centered approach for the internal nodes:
 \[
 u_{i,j} = \frac{\Psi_{i,j+i}-\Psi_{i,j-i}}{2 h_y}
 \]
 \[
 v_{i,j} = - \frac{\Psi_{i+1,j}-\Psi_{i-1,j}}{2 h_x}
 \]
+For the nodes on the boundary we see that these formulations are not suited:
+indeed, for example, if $j=0$ (bottom boundary), then $u$ is not zero (free slip b.c.)
+and should be computed, but in the equation above we find the term $\Psi_{i,j-1}$ 
+which is undefined. In the end, 
+for each node on the boundary we use a first order stencil that uses only 
+internal nodes.
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Experiment 1}
+
+This is inspired by Exercise 5.2 of \textcite{gery19book} which reads as 
+follows:
+
+Solve the momentum and continuity equations with ﬁnite differences using the stream
+function-vorticity formulation 
+on a regular grid of $51\times 41$ points. 
+%({\color{teal} minus sign issue?!}):
+%\[
+%\Delta \omega = \frac{1}{\eta} (\partial_x \rho g_y- \partial_y \rho g_x)
+%\qquad
+%\omega = \Delta \Psi
+%\]
+
+Program a numerical model for buoyancy-driven ﬂow in a vertical 
+gravity ﬁeld ($g_x=0$, $g_y=10~\si{\meter\per\square\second}$) 
+for a density structure with two vertical layers 
+(3200~\si{\kg\per\cubic\meter} and 3300~\si{\kg\per\cubic\meter} 
+for the left and right layers, respectively). The model size is 
+$1000~\si{\km} \times 1500~\si{\km}$.
+Use a constant viscosity $\eta = 10^{21}~\si{\pascal\second}$ 
+for the entire model.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_153/results/exp1/rho}
+\end{center}
+
+
+Compose a matrix of coefﬁcients $\K$ and a right hand side vector $\vec{b}$ 
+and obtain the solution vector $\vec{X}$ 
+for the two Poisson equations (ﬁrst for $\omega$, then for $\Psi$). 
+
+%A ﬁnite difference representation of the Poisson equations
+%in 2D can be formulated as follows:
+%\[
+%\frac{\omega_{i,j-1}-2\omega_{i,j}+\omega_{i,j+1}}{h_x^2}
+%+
+%\frac{\omega_{i-1,j}-2\omega_{i,j}+\omega_{i+i,j}}{h_y^2}
+%= \frac{g_y}{\eta} \frac{\rho_{i,j+1}-\rho_{i,j-1}}{2 h_x}
+%\]
+%\[
+%\frac{\Psi_{i,j-1}-2\Psi_{i,j}+\Psi_{i,j+1}}{h_x^2}
+%+
+%\frac{\Psi_{i-1,j}-2\Psi_{i,j}+\Psi_{i+i,j}}{h_y^2}
+%= \omega_{i,j}
+%\]
+%or,
+%\[
+%\frac{\omega_{i,j-1}}{h_x^2} 
+%+\frac{\omega_{i,j+1}}{h_x^2}
+%+\frac{\omega_{i-1,j}}{h_y^2}
+%+\frac{\omega_{i+i,j}}{h_y^2}
+%-\left(\frac{2}{h_x^2} + \frac{2}{h_y^2} \right)\omega_{i,j}
+%=
+%= \frac{g_y}{\eta} \frac{\rho_{i,j+1}-\rho_{i,j-1}}{2 h_x}
+%\]
+
+Use $\omega = 0$ and $\Psi = 0$ as boundary conditions for all 
+external nodes of the grid.
+Note that velocity components should only be computed for the internal 
+nodes of the grid (i.e. for 49$\times$39 points).
+
+%After obtaining the solution for the stream function, convert it into 
+%the velocity field using finite differences 
+%\[
+%u_{i,j}=\frac{\Psi_{i+1,j}-\Psi_{i-1,j}}{2 h_y} 
+%\qquad
+%v_{i,j}=-\frac{\Psi_{i,j+1}-\Psi_{i,j-1}}{2 h_x} 
+%\]
+
+The MATLAB code of the book is reproduced hereafter: 
+\begin{lstlisting}
+xsize=1000000; % Horizontal
+ysize=1500000; % Vertical
+xnum=41; % Horizontal
+ynum=31; % Vertical
+xstp=xsize/(xnum-1); % Horizontal
+ystp=ysize/(ynum-1); % Vertical
+eta=1e+21;
+gy=10; % m/s^2
+
+% Making vectors for nodal points positions
+x=0:xstp:xsize; % Horizontal
+y=0:ystp:ysize; % Vertical
+
+% Creating array for density structure (two vertical layers)
+rho=zeros(ynum,xnum);
+for i=1:1:ynum
+  for j=1:1:xnum
+    % Horizontal position of the nodal point
+    if(x(j)<xsize/2)
+        rho(i,j)=3200;  % left layer
+    else
+        rho(i,j)=3300;  % right layer
+    end
+  end
+end
+
+% Matrix of coefficients initialization
+L=sparse(xnum*ynum,xnum*ynum);
+R=zeros(xnum*ynum,1);
+
+% Solving Poisson equation for worticity
+% d2OMEGA/dx2+d2OMEGA/dy2=gy*dRHO/dx
+% Composing matrix of coefficients L()
+% and vector (column) of right parts R()
+% Boundary conditions: OMEGA=0
+% Process all Grid points
+for i=1:1:ynum
+  for j=1:1:xnum
+    % Global index for current node
+    k=(j-1)*ynum+i;
+    %Boundary nodes OMEGA=0
+    if(i==1 || i==ynum || j==1 || j==xnum)
+        L(k,k)=1;
+        R(k,1)=0;
+    %Internal nodes
+    else
+        %Left part: d2OMEGA/dx2+d2OMEGA/dy2
+        L(k,k-ynum)=1/xstp^2;
+        L(k,k-1)=1/ystp^2;
+        L(k,k)=-2/xstp^2-2/ystp^2;
+        L(k,k+1)=1/ystp^2;
+        L(k,k+ynum)=1/xstp^2;
+        % Right part: gy*dRHO/dx
+        R(k,1)=gy/eta*(rho(i,j+1)-rho(i,j-1))/2/xstp;
+    end
+  end
+end
+   
+%Obtaining vector of solutions S()
+S=L\R;
+
+% Reload solutions S() to 2D vorticity array OMEGA()
+OMEGA=zeros(ynum,xnum);
+% Process all Grid points
+for i=1:1:ynum
+  for j=1:1:xnum
+    % Global index for current node
+    k=(j-1)*ynum+i;
+    OMEGA(i,j)=S(k);
+  end
+end
+
+% Solving Poisson equation for stream function
+% d2PSI/dx2+d2PSI/dy2=OMEGA
+% Simplified procedure as below is only possible 
+% when boundary conditions for OMEGA and PSI are the same
+% othervise i,j cycle is needed as in the previous case
+%L=L; % Left parts remain the same
+R=S; % Creates right parts from previous solution
+
+%Obtaining vector of solutions S()
+S=L\R;
+
+% Reload solutions S() to 2D stream function array PSI()
+PSI=zeros(ynum,xnum);
+% Process all Grid points
+for i=1:1:ynum
+  for j=1:1:xnum
+    % Global index for current node
+    k=(j-1)*ynum+i;
+    PSI(i,j)=S(k);
+  end
+end
+
+% Compute vx,vy for internal nodes
+vx=zeros(ynum,xnum);
+vy=zeros(ynum,xnum);
+% Process internal Grid points
+for i=2:1:ynum-1
+  for j=2:1:xnum-1
+    % vx=dPSI/dy
+    vx(i,j)=(PSI(i+1,j)-PSI(i-1,j))/2/xstp;
+     % vy=-dPSI/dx
+    vy(i,j)=-(PSI(i,j+1)-PSI(i,j-1))/2/xstp;
+  end
+end
+
+\end{lstlisting}
+
+Our code is much more compact but very similar in structure.
+Results for $\omega$ and $\Psi$ are shown here:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/omega}
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/psi}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/u}
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/v}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/vel2}\\
+{\captionfont Top row: $\omega$ and $\Psi$ fields.
+Middle row: $u$ and $v$ fields. 
+Bottom row: velocity magnitude. Velocity glyphs on $\Psi$ isocontours.}
+\end{center}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Experiment 2 - Donea \& Huerta manufactured solution}
+
+
+
+We start from the biharmonic equation 
+\[
+\vec\nabla^4 \Psi = \frac{1}{\eta_0} \left( -\frac{\partial b_x}{\partial y}
++\frac{\partial b_y}{\partial x} \right)
+\]
+
+In Section~\ref{ss:mms_bocg12} we find the stream function 
+defined in the unit square
+\[
+\Psi (x,y)=f(x) \cdot g(y)=x^2(x-1)^2 \cdot y^2(y-1)^2, 
+\]
+with 
+\begin{eqnarray}
+f'(x)
+&=&2x(x-1)^2+2x^2(x-1) \nn\\
+&=&2(x-1)[x(x-1)+x^2]  \nn\\
+&=&2(x-1)(2x^2 -x)  \nn\\
+&=&2x(x-1)(2x -1)  \nn\\
+f''(x)
+&=& 2 [ (x-1)(2x -1) + x(2x-1)+2x(x-1)] \nn\\
+&=& 2 (2x^2 -x-2x+1 + 2x^2-x+2x^2-2x) \nn\\
+&=& 2 (6x^2 -6x +1) \nn\\
+f'''(x) &=& 12(2x-1) \nn\\
+f''''(x) &=& 24 \nn\\
+g'(y)
+&=& 2y (y-1)^2 + 2y^2(y-1)  \nn\\
+&=& 2(y-1)[y(y-1)+y^2] \nn\\
+&=& 2(y-1)(2y^2-y) \nn\\
+&=& 2y(y-1)(2y-1) \nn\\
+g''(y) 
+&=& 2[ (y-1)(2y-1) +y(2y-1)+2y(y-1) ] \nn\\
+&=& 2[ 2y^2 - 3y +1 +2y^2-y +2y^2-2y] \nn\\
+&=& 2(6y^2 -6y+1) \nn\\
+g'''(y) &=& 2(12y-1) \nn\\
+g''''(y) &=& 24 \nn
+\end{eqnarray}
+
+In what follows we wish to verify that once we have postulated 
+a pressure field this stream function is compatible with the 
+$\vec{b}$ vector of the Donea \& Huerta benchmark of Section~\ref{mms1}.
+
+We then must compute:
+\begin{eqnarray}
+\vec\nabla^2 \Psi 
+&=& \frac{\partial^2 \Psi}{\partial x^2} +\frac{\partial^2 \Psi}{\partial y^2} \nn\\
+&=& \frac{\partial^2 }{\partial x^2} (fg)  +\frac{\partial^2 }{\partial y^2} (fg)\nn\\
+&=& f''g+ fg'' \nn\\
+\vec\nabla^4 \Psi 
+&=& \vec\nabla^2 (f''g+fg'') \nn\\
+&=& f''''g +2f''g'' + fg'''' \nn\\
+&=&24 y^2(y-1)^2 + 2 \cdot  2 (6x^2 -6x +1)  \cdot 2(6y^2 -6y+1)  + 24 x^2(x-1)^2\nn\\
+&=&24 (y^4-2y^3+y^2)+8 (6x^2 -6x +1)  (6y^2 -6y+1)  + 24(x^4 -2x^3 +x^2)\nn\\
+&=&24 (y^4-2y^3+y^2)+(288x^2y^2 -288 x^2y +48x^2 -288xy^2 +288xy-48x + 48y^2 -48y+8)+24(x^4 -2x^3+x^2)\nn\\
+&=& 8 -48x -48y 
++ 288xy + (48+24)x^2 +(24+48)y^2 
+-288x^2y -288xy^2 -48x^3 -48y^3 
++ 288x^2y^2+24x^4 + 24y^4\nn\\
+&=& 8 -48x -48y + 288xy + 72x^2 +72y^2  -288x^2y -288xy^2 -48x^3 -48y^3 
++ 288x^2y^2+24x^4 + 24y^4 \nn
+\end{eqnarray}
+Assuming $\eta_0=1$ the stream function above yields the Donea \& Huerta velocity field:
+\begin{eqnarray}
+u(x,y) &=& \partial_y \Psi = f(x)g'(y) = x^2(x-1)^2 2y(y-1)(2y-1) \nn\\
+v(x,y) &=& -\partial_x \Psi = -f'(x)g(y) = -2x(x-1)(2x -1)y^2(y-1)^2 
+\end{eqnarray}
+As we have seen when deriving the biharmonic equation the pressure 
+entirely disappears by cancellation so we can postulate the pressure field to be 
+\[
+p(x,y) = \frac12 x^2 -\frac16
+\]
+Note that the $1/6$ offset is such that $\int p dV = 0$.
+
+The right hand side $\vec{b}$ is to be found in Section~\ref{mms1}:
+\begin{eqnarray}
+b_x &=& (12 - 24y) x^4 + (-24 + 48y) x^3 + (-48y + 72y^2 - 48 y^3 + 12) x^2 \nonumber\\
+    && + (-2 + 24y -72y^2+48y^3)x + 1-4y + 12y^2-8y^3 \nonumber\\ 
+b_y &=& (8 - 48y + 48 y^2) x^3 + (-12 + 72y - 72y^2) x^2  \nonumber\\
+    && + (4 - 24y + 48y^2 - 48y^3 + 24y^4) x - 12y^2 + 24y^3 - 12y^4  \nonumber
+\end{eqnarray}
+so that we can compute 
+\begin{eqnarray}
+\frac{\partial b_x}{\partial y}
+&=& -24 x^4 + 48 x^3 + (-48 + 144y - 144 y^2 ) x^2  + ( 24 -144 y+ 144y^2)x -4 + 24y-24y^2 \nn\\ 
+&=& -24 x^4 + 48 x^3 -48x^2 + 144x^2y - 144 x^2y^2 +  24x -144x y+ 144xy^2  -4 + 24y-24y^2 \nn\\ 
+\frac{\partial b_y}{\partial x} 
+&=& (8 - 48y + 48 y^2) 3x^2 + (-12 + 72y - 72y^2) 2x  + (4 - 24y + 48y^2 - 48y^3 + 24y^4)   \nn\\
+&=& 24x^2 - 144x^2y + 144x^2 y^2 -24x + 144xy - 144xy^2 + 4 - 24y + 48y^2 - 48y^3 + 24y^4   \nn
+\end{eqnarray}
+and then 
+\begin{eqnarray}
+&&{\cal F}(x,y)\nn\\
+&=&-\frac{\partial b_x}{\partial y}
++\frac{\partial b_y}{\partial x} \nn\\
+&=&(4+4)+(-24-24)x+(-24-24)y+ \nn\\
+&&(48+24)x^2 + (24+48)y^2 +(144+144)xy \nn\\
+&&+ (-144-144)x^2y + (-144-144)xy^2 + (-48)x^3 + (-48)y^3 \nn\\
+&& (144+144)x^2y^2  +(24)x^4+(24)y^4 \nn\\
+&=& 8 -48x-48y + 72x^2 +72y^2 + 288 xy -288x^2y -288 xy^2 -48x^3-48y^3 + 288x^2y^2 +24x^4 +24 y^4 \nn
+\end{eqnarray}
+
+
+In the end we wish to solve $\vec\nabla^2 \omega = -{\cal F}(x,y)$ since $\eta_0=1$.
+
+One of the major differences with the first experiment is the 
+fact that this experiment requires no-slip boundary conditions.
+
+%We start from 
+%\[
+%\vec\nabla^2 \omega = -\frac{1}{\eta_0} \left( -\frac{\partial b_x}{\partial y}
+%+\frac{\partial b_y}{\partial x} \right)
+%\]
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -117,7 +443,7 @@ v_{i,j} = - \frac{\Psi_{i+1,j}-\Psi_{i-1,j}}{2 h_x}
 \fbox{\begin{minipage}{0.9\textwidth}
 {\color{teal}To Do, open questions, future work?}
 \begin{itemize}
-\item do smthg
+\item compute pressure via PPE
 \end{itemize}
 \end{minipage}}
 \end{center}
