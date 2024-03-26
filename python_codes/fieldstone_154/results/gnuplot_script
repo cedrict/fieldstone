@@ -1,0 +1,14 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set log y 
+set xlabel 'iteration'
+set ylabel 'xi'
+set output 'conv.pdf'
+
+plot[][]\
+'conv.ascii' u 2 w lp ps 0.3 t 'u',\
+'conv.ascii' u 3 w lp ps 0.3 t 'v',\
+'conv.ascii' u 4 w lp ps 0.3 t 'psi',\
+'conv.ascii' u 5 w lp ps 0.3 t 'omega'
+
+
