@@ -2,12 +2,13 @@ import numpy as np
 import sys as sys
 import scipy
 import math as math
-import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
+#import scipy.sparse as sps
+#from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import lil_matrix
 import time as timing
 import random
 from scipy import special
+import scipy.sparse as sps
 
 ###############################################################################
 
@@ -23,8 +24,8 @@ def interpolate_vel_on_pt(xm,ym):
     #if iely>=nely:
     #   exit('iely>nely')
     iel=nelx*(iely)+ielx
-    xmin=xV[iconV[0,iel]] ; xmax=xV[iconV[8,iel]]
-    ymin=yV[iconV[0,iel]] ; ymax=yV[iconV[8,iel]]
+    xmin=xV[iconV[0,iel]] ; xmax=xmin+hx #xV[iconV[8,iel]]
+    ymin=yV[iconV[0,iel]] ; ymax=ymin+hy #yV[iconV[8,iel]]
     rm=((xm-xmin)/(xmax-xmin)-0.5)*2
     sm=((ym-ymin)/(ymax-ymin)-0.5)*2
     NNNV[0:mV]=NNV(rm,sm,order)
@@ -42,6 +43,9 @@ def interpolate_vel_on_pt(xm,ym):
 def eta(T,e,y):
     TT=min(T,1)
     TT=max(T,0)
+    if viscosity_model==0: # constant
+       val=1
+       rh=0
 
     if viscosity_model==1: # bugg08
        if y <= 0.77:
@@ -51,6 +55,7 @@ def eta(T,e,y):
           val=0.8*np.exp(-6.9*TT) # upper mantle
           rh=1
        else:
+          sigma_y=1.5e5  
           eta_v=10*np.exp(-6.9*TT)
           eta_p=sigma_y/2/e
           if eta_v<eta_p:
@@ -79,7 +84,7 @@ def eta(T,e,y):
        else:
           val=(-6.24837*y + 6.8)*np.exp(9.2103*(0.5-TT))
 
-    if viscosity_model==4: #mayv11
+    if viscosity_model==4: #mayw11
        rh=0
        etaref=0.01
        z=Ly-y
@@ -106,7 +111,7 @@ def eta(T,e,y):
 #  Q2          Q1
 #  6---7---8   2-------3
 #  |       |   |       |
-#  3   4   5   |       |    etc ...
+#  3   4   5   |       | 
 #  |       |   |       |
 #  0---1---2   0-------1
 #
@@ -459,29 +464,30 @@ if int(len(sys.argv) == 7):
    Ra    = float(sys.argv[5])
    nstep = int(sys.argv[6])
 else:
-   nelx = 64  # number of elements in x direction
-   nely = 32  # number of elements in y direction
-   visu = 1   # trigger for vtu output
-   order= 2   # polynomial order for velocity
-   Ra = 1e6   # Rayleigh number
-   nstep=10 # number of time steps
+   nelx = 96   # number of elements in x direction
+   nely = 32   # number of elements in y direction
+   visu = 1    # trigger for vtu output
+   order= 1    # polynomial order for velocity
+   Ra   = 1e4  # Rayleigh number
+   nstep= 1000 # number of time steps
 
 nmarker_per_dim=4 
 random_markers=True
-RKorder=1 # cheap!
 
 ###################
 # viscosity model:
+# 0: constant
 # 1: bugg08
 # 2: brhv08
 # 3: budt14
 # 4: mayv11
-viscosity_model=4
-sigma_y=1.5e5     #only model 1
+viscosity_model=1
 
-tfinal=1.5e-2
 
-CFL_nb=0.5
+tfinal=1e2
+
+CFL_nb=0.9
+
 apply_filter=False # Lenardic & Kaula filter
 
 # streamline upwind stabilisation
@@ -575,20 +581,6 @@ if nqperdim==5:
    qw5c=128./225.
    qcoords=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
    qweights=[qw5a,qw5b,qw5c,qw5b,qw5a]
-
-if nqperdim==6:
-   qcoords=[-0.932469514203152,\
-            -0.661209386466265,\
-            -0.238619186083197,\
-            +0.238619186083197,\
-            +0.661209386466265,\
-            +0.932469514203152]
-   qweights=[0.171324492379170,\
-             0.360761573048139,\
-             0.467913934572691,\
-             0.467913934572691,\
-             0.360761573048139,\
-             0.171324492379170]
 
 ###############################################################################
 # open output files
@@ -873,9 +865,9 @@ if random_markers:
    counter=0
    for iel in range(0,nel):
        x1=xV[iconV[0,iel]] ; y1=yV[iconV[0,iel]]
-       x2=xV[iconV[2,iel]] ; y2=yV[iconV[2,iel]]
-       x3=xV[iconV[8,iel]] ; y3=yV[iconV[8,iel]]
-       x4=xV[iconV[6,iel]] ; y4=yV[iconV[6,iel]]
+       x2=x1+hx            ; y2=y1
+       x3=x1+hx            ; y3=y1+hy
+       x4=x1               ; y4=y1+hy
        for im in range(0,nmarker_per_element):
            # generate random numbers r,s between 0 and 1
            r=random.uniform(-1.,+1)
@@ -893,9 +885,9 @@ else:
    counter=0
    for iel in range(0,nel):
        x1=xV[iconV[0,iel]] ; y1=yV[iconV[0,iel]]
-       x2=xV[iconV[2,iel]] ; y2=yV[iconV[2,iel]]
-       x3=xV[iconV[8,iel]] ; y3=yV[iconV[8,iel]]
-       x4=xV[iconV[6,iel]] ; y4=yV[iconV[6,iel]]
+       x2=x1+hx            ; y2=y1
+       x3=x1+hx            ; y3=y1+hy
+       x4=x1               ; y4=y1+hy
        for j in range(0,nmarker_per_dim):
            for i in range(0,nmarker_per_dim):
                r=-1.+i*2./nmarker_per_dim + 1./nmarker_per_dim
@@ -932,11 +924,14 @@ for i in [0,2,4,6,8,10,12,14]:
         if swarm_x[im]>i*dx and swarm_x[im]<(i+1)*dx:
            swarm_mat[im]+=1
 
-for i in [0,2]:
+for i in [0,2,4,6,8]:
     dy=Ly/4
     for im in range (0,nmarker):
         if swarm_y[im]>i*dy and swarm_y[im]<(i+1)*dy:
            swarm_mat[im]+=1
+
+swarm_y0=np.zeros(nmarker,dtype=np.float64)  
+swarm_y0[:]=swarm_y[:]
 
 print("markers paint: %.3f s" % (timing.time() - start))
 
@@ -1125,22 +1120,6 @@ for istep in range(0,nstep):
 
     print("assemble blocks: %.3f s" % (timing.time() - start))
 
-    ######################################################################
-    # assign extra pressure b.c. to remove null space
-    ######################################################################
-    #if sparse:
-    #   A_sparse[Nfem-1,:]=0
-    #   A_sparse[:,Nfem-1]=0
-    #   A_sparse[Nfem-1,Nfem-1]=1
-    #   rhs[Nfem-1]=0
-    #else:
-    #   a_mat[Nfem-1,:]=0
-    #   a_mat[:,Nfem-1]=0
-    #   a_mat[Nfem-1,Nfem-1]=1
-    #   rhs[Nfem-1]=0
-    #end if
-
-
     ###########################################################################
     # solve system
     ###########################################################################
@@ -1178,10 +1157,12 @@ for istep in range(0,nstep):
     # normalise pressure
     ###########################################################################
 
-    #TODO
-    if order==1:
+    if order==1: 
 
-       print('not done')
+       avrgP=0
+       for iel in range(0,nel):
+           if top[iel]:
+              avrgP+=p[iel]*hx
 
     elif order==2:
        avrgP=0
@@ -1197,7 +1178,7 @@ for istep in range(0,nstep):
                   avrgP+=pq*qweights[iq]*jcob
 
     avrgP/=Lx
-    print('********************',avrgP)
+    #print('********************',avrgP)
 
     p[:]-=avrgP
 
@@ -1574,6 +1555,8 @@ for istep in range(0,nstep):
     #####################################################################
     start = timing.time()
 
+    RKorder=1 # cheap!
+
     if RKorder==1: 
 
        for im in range(0,nmarker):
@@ -1720,21 +1703,19 @@ for istep in range(0,nstep):
        #####
        vtufile.write("<PointData Scalars='scalars'>\n")
        #--
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-       for im in range(0,nmarker):
-           vtufile.write("%10e %10e %10e \n" %(swarm_u[im],swarm_v[im],0.))
-       vtufile.write("</DataArray>\n")
-       #--
-       #vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='error' Format='ascii'> \n")
+       #vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
        #for im in range(0,nmarker):
-       #    ui=velocity_x(swarm_x[im],swarm_y[im]) 
-       #    vi=velocity_y(swarm_x[im],swarm_y[im]) 
-       #    vtufile.write("%10e %10e %10e \n" %(swarm_u[im]-ui,swarm_v[im]-vi,0.))
+       #    vtufile.write("%10e %10e %10e \n" %(swarm_u[im],swarm_v[im],0.))
        #vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='paint' Format='ascii'> \n")
        for im in range(0,nmarker):
            vtufile.write("%10e \n" % swarm_mat[im])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='y0' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           vtufile.write("%e \n" % swarm_y0[im])
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</PointData>\n")
