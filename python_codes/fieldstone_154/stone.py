@@ -3,11 +3,27 @@ import time
 import scipy.sparse as sps
 from numpy import linalg as LA
 
+###############################################################################
+
+def u_th(x,y):
+    return y*(1-y)
+
+def v_th(x,y):
+    return 0
+
+def psi_th(x,y):
+    return y**2/2-y**3/3
+
+def omega_th(x,y):
+    return -1+2*y
+
+###############################################################################
+
 Re=400                 # Reynolds Number
 Lx=5                   # Length of domain
 Ly=1                   # Height of domain
 nny=21                 # Number of points in x direction 
-nnx=101                 # Number of points in y direction
+nnx=101                # Number of points in y direction
 hx=Lx/(nnx-1)          # Step size in length
 hy=Ly/(nny-1)          # Step size in height
 dt=0.002               # Time step size
@@ -15,14 +31,14 @@ tfinal=5               # Simulation end time
 nstep=int(tfinal/dt)   # Number of time steps
 u0=1                   # Inlet uniform velocity
 niter=250
-tol=1e-10
+tol=1e-8
 
 nstep=1
 
 beta = 0.33 # 1=no relaxation
 
-physics='ssNS'
-#physics='Stokes'
+#physics='ssNS'
+physics='Stokes'
 
 ###############################################################################
 
@@ -41,6 +57,7 @@ print('N=  ',N)
 
 statsfile=open('stats.ascii',"w")
 convfile=open('conv.ascii',"w")
+errfile=open('errors.ascii',"w")
 
 ###############################################################################
 # mesh nodes layout 
@@ -265,11 +282,25 @@ for istep in range(0,nstep):
                                                          min(omega),max(omega)))
 
         #######################################################################
+        psi_analytical=np.zeros(N,dtype=np.float64)
+        omega_analytical=np.zeros(N,dtype=np.float64)
+   
+        for i in range(0,N):
 
-        xi_u=LA.norm(u-umem,2)
-        xi_v=LA.norm(v-vmem,2)
-        xi_psi=LA.norm(psi-psimem,2)
-        xi_omega=LA.norm(omega-omegamem,2)
+            psi_analytical[i]=psi_th(x[i],y[i])
+            omega_analytical[i]=omega_th(x[i],y[i])
+
+        err_psi=LA.norm(psi-psi_analytical,2)
+        err_omega=LA.norm(omega-omega_analytical,2)
+
+        errfile.write("%e %e %e\n" %(istep+iter/100,err_psi,err_omega))
+
+        #######################################################################
+
+        xi_u=LA.norm(u-umem,2)/LA.norm(u,2)
+        xi_v=LA.norm(v-vmem,2)/LA.norm(v,2)
+        xi_psi=LA.norm(psi-psimem,2)/LA.norm(psi,2)
+        xi_omega=LA.norm(omega-omegamem,2)/LA.norm(omega,2)
 
         convfile.write("%e %e %e %e %e\n" %(istep+iter/100,xi_u,xi_v,xi_psi,xi_omega))
         print("     -> xi_u= %.5e " %(xi_u))
@@ -291,20 +322,6 @@ for istep in range(0,nstep):
     #end for iter
 
 #end for istep
-
-###############################################################################
-
-def u_th(x,y):
-    return y*(1-y)
-
-def v_th(x,y):
-    return 0
-
-def psi_th(x,y):
-    return y**2/2-y**3/3
-
-def omega_th(x,y):
-    return -1+2*y
 
 ###############################################################################
 # export fields to vtu

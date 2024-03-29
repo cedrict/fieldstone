@@ -3,6 +3,7 @@
 \includegraphics[height=1.25cm]{images/pictograms/under_construction}
 \includegraphics[height=1.25cm]{images/pictograms/FDM}
 \includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/streamfunction}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -25,16 +26,21 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Poiseuille flow benchmark}
+
 In what follows we consider a 2D domain of dimensions $L_x \times L_y$ in which 
 a fluid flows in the absence of gravitational forces (the flow is entirely driven by 
-the boundary conditions). The domain is discretised by means of a regular grid 
+the boundary conditions impose on the left - the 'inlet'). The domain is discretised by means of a regular grid 
 of $nnx \times nny$ points. 
 
 The default parameters are $L_x=5$, $L_y=1$, $\delta t=0.002$, $t_{\text{final}}=5$,
-$u_0=1$, mesh is $41\times 21$ nodes,$\Renb=400$.
+$u(y)=y(1-y)$, mesh is $101\times 21$ nodes,$\Renb=400$.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Boundary conditions}
+\subsection*{Boundary conditions}
 
 
 In the context of this experiment, we have four boundaries (left, right, bottom and top). 
@@ -113,7 +119,7 @@ Also $u=\frac{\partial \Psi}{\partial y}=0$ and $v=-\frac{\partial \Psi}{\partia
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{The algorithm}
+\subsection*{The algorithm}
 
 
 
@@ -296,16 +302,14 @@ Eqs.~\eqref{eq:omega1},\eqref{eq:omega2},\eqref{eq:omega3},\eqref{eq:omega4} abo
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Manufactured solution benchmark}
-
+\subsection*{benchmark}
 
 
 Before we solve the problem above we need to make sure that the code is correct. 
 After all, we are solving to PDEs with somewhat complex boundary conditions inside a
 convergence loop. We here focus on the steady state Navier-Stokes equation and on the Stokes equation. 
 
-In what follows I set $L_y=1$ for simplicity.
-Let us no prescribe $u(y)=y(1-y)$ on the inlet, i.e. a flow with a parabolic profile. 
+Let us now prescribe $u(y)=y(1-y)$ on the inlet, i.e. a flow with a parabolic profile. 
 Since the velocity is independent of the $x$-coordinate this implies that all derivatives with respect to $x$ will vanish. 
 We then expect this velocity everywhere in the domain since it is solution of the steady state Navier-Stokes and Stokes equations ({\color{orange} todo}), so that 
 $\omega (x,y)
@@ -355,17 +359,19 @@ for iter in range(0,niter):
     omegamem[:]=omega[:]
 \end{verbatim}
 where $\beta$ controls the relaxation. If equal to one, there is none. If $\beta\rightarrow 0$ there is little progress being made in the loop towards convergence.
-We find that $\beta=0.5$ still diverges but $\beta=0.25$ yields a successful iteration.
+We find that $\beta=0.5$ still diverges but $\beta=0.33$ yields a successful iteration.
 
-\begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_154/results/conv.pdf}
-\end{center}
-
-Another avenue could be to think about the first PDE $\Delta \Psi = -\omega$.
+Remark: Another avenue could be to think about the first PDE $\Delta \Psi = -\omega$.
 Although it is true that we do not know $\omega$ everywhere in the domain it 
 could be still beneficial to start with a field $\omega$ that reflects the boundary conditions, i.e. apply the b.c. for $\omega$. Of course some of these b.c. depend on $\Psi$ inside the domain which we obviously do not know, but we can nevertheless give it a try. On 2nd thought, it is somewhat stupid: i can only compute $\omega$ on the boundary which is precisely where psi b.c. are prescribed so that these values 
 of omega are not used in the end.
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_154/results/conv.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_154/results/errors.pdf}\\
+{\captionfont Left: convergence of $u$, $v$, $\psi$ and $\omega$ during the iterations. Right: 2-norm of the error fields (i.e. 
+computed fields - analytical solution)}
+\end{center}
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_154/results/u}
@@ -373,6 +379,130 @@ of omega are not used in the end.
 \includegraphics[width=8cm]{python_codes/fieldstone_154/results/psi}
 \includegraphics[width=8cm]{python_codes/fieldstone_154/results/omega}
 \end{center}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_154/results/stats_u}
+\includegraphics[width=8cm]{python_codes/fieldstone_154/results/stats_v}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_154/results/stats_psi}
+\includegraphics[width=8cm]{python_codes/fieldstone_154/results/stats_omega}
+\end{center}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Donea \& Huerta manufactured solution}
+
+We start from the biharmonic equation 
+\[
+\vec\nabla^4 \Psi = \frac{1}{\eta_0} \left( -\frac{\partial b_x}{\partial y}
++\frac{\partial b_y}{\partial x} \right)
+\]
+
+In Section~\ref{ss:mms_bocg12} we find the stream function 
+defined in the unit square
+\[
+\Psi (x,y)=f(x) \cdot g(y)=x^2(x-1)^2 \cdot y^2(y-1)^2, 
+\]
+with 
+\begin{eqnarray}
+f'(x)
+&=&2x(x-1)^2+2x^2(x-1) \nn\\
+&=&2(x-1)[x(x-1)+x^2]  \nn\\
+&=&2(x-1)(2x^2 -x)  \nn\\
+&=&2x(x-1)(2x -1)  \nn\\
+f''(x)
+&=& 2 [ (x-1)(2x -1) + x(2x-1)+2x(x-1)] \nn\\
+&=& 2 (2x^2 -x-2x+1 + 2x^2-x+2x^2-2x) \nn\\
+&=& 2 (6x^2 -6x +1) \nn\\
+f'''(x) &=& 12(2x-1) \nn\\
+f''''(x) &=& 24 \nn\\
+g'(y)
+&=& 2y (y-1)^2 + 2y^2(y-1)  \nn\\
+&=& 2(y-1)[y(y-1)+y^2] \nn\\
+&=& 2(y-1)(2y^2-y) \nn\\
+&=& 2y(y-1)(2y-1) \nn\\
+g''(y) 
+&=& 2[ (y-1)(2y-1) +y(2y-1)+2y(y-1) ] \nn\\
+&=& 2[ 2y^2 - 3y +1 +2y^2-y +2y^2-2y] \nn\\
+&=& 2(6y^2 -6y+1) \nn\\
+g'''(y) &=& 2(12y-1) \nn\\
+g''''(y) &=& 24 \nn
+\end{eqnarray}
+
+In what follows we wish to verify that once we have postulated 
+a pressure field this stream function is compatible with the 
+$\vec{b}$ vector of the Donea \& Huerta benchmark of Section~\ref{mms1}.
+
+We then must compute:
+\begin{eqnarray}
+\vec\nabla^2 \Psi 
+&=& \frac{\partial^2 \Psi}{\partial x^2} +\frac{\partial^2 \Psi}{\partial y^2} \nn\\
+&=& \frac{\partial^2 }{\partial x^2} (fg)  +\frac{\partial^2 }{\partial y^2} (fg)\nn\\
+&=& f''g+ fg'' \nn\\
+\vec\nabla^4 \Psi 
+&=& \vec\nabla^2 (f''g+fg'') \nn\\
+&=& f''''g +2f''g'' + fg'''' \nn\\
+&=&24 y^2(y-1)^2 + 2 \cdot  2 (6x^2 -6x +1)  \cdot 2(6y^2 -6y+1)  + 24 x^2(x-1)^2\nn\\
+&=&24 (y^4-2y^3+y^2)+8 (6x^2 -6x +1)  (6y^2 -6y+1)  + 24(x^4 -2x^3 +x^2)\nn\\
+&=&24 (y^4-2y^3+y^2)+(288x^2y^2 -288 x^2y +48x^2 -288xy^2 +288xy-48x + 48y^2 -48y+8)+24(x^4 -2x^3+x^2)\nn\\
+&=& 8 -48x -48y 
++ 288xy + (48+24)x^2 +(24+48)y^2 
+-288x^2y -288xy^2 -48x^3 -48y^3 
++ 288x^2y^2+24x^4 + 24y^4\nn\\
+&=& 8 -48x -48y + 288xy + 72x^2 +72y^2  -288x^2y -288xy^2 -48x^3 -48y^3 
++ 288x^2y^2+24x^4 + 24y^4 \nn
+\end{eqnarray}
+Assuming $\eta_0=1$ the stream function above yields the Donea \& Huerta velocity field:
+\begin{eqnarray}
+u(x,y) &=& \partial_y \Psi = f(x)g'(y) = x^2(x-1)^2 2y(y-1)(2y-1) \nn\\
+v(x,y) &=& -\partial_x \Psi = -f'(x)g(y) = -2x(x-1)(2x -1)y^2(y-1)^2 
+\end{eqnarray}
+As we have seen when deriving the biharmonic equation the pressure 
+entirely disappears by cancellation so we can postulate the pressure field to be 
+\[
+p(x,y) = \frac12 x^2 -\frac16
+\]
+Note that the $1/6$ offset is such that $\int p dV = 0$.
+
+The right hand side $\vec{b}$ is to be found in Section~\ref{mms1}:
+\begin{eqnarray}
+b_x &=& (12 - 24y) x^4 + (-24 + 48y) x^3 + (-48y + 72y^2 - 48 y^3 + 12) x^2 \nonumber\\
+    && + (-2 + 24y -72y^2+48y^3)x + 1-4y + 12y^2-8y^3 \nonumber\\ 
+b_y &=& (8 - 48y + 48 y^2) x^3 + (-12 + 72y - 72y^2) x^2  \nonumber\\
+    && + (4 - 24y + 48y^2 - 48y^3 + 24y^4) x - 12y^2 + 24y^3 - 12y^4  \nonumber
+\end{eqnarray}
+so that we can compute 
+\begin{eqnarray}
+\frac{\partial b_x}{\partial y}
+&=& -24 x^4 + 48 x^3 + (-48 + 144y - 144 y^2 ) x^2  + ( 24 -144 y+ 144y^2)x -4 + 24y-24y^2 \nn\\ 
+&=& -24 x^4 + 48 x^3 -48x^2 + 144x^2y - 144 x^2y^2 +  24x -144x y+ 144xy^2  -4 + 24y-24y^2 \nn\\ 
+\frac{\partial b_y}{\partial x} 
+&=& (8 - 48y + 48 y^2) 3x^2 + (-12 + 72y - 72y^2) 2x  + (4 - 24y + 48y^2 - 48y^3 + 24y^4)   \nn\\
+&=& 24x^2 - 144x^2y + 144x^2 y^2 -24x + 144xy - 144xy^2 + 4 - 24y + 48y^2 - 48y^3 + 24y^4   \nn
+\end{eqnarray}
+and then 
+\begin{eqnarray}
+&&{\cal F}(x,y)\nn\\
+&=&-\frac{\partial b_x}{\partial y}
++\frac{\partial b_y}{\partial x} \nn\\
+&=&(4+4)+(-24-24)x+(-24-24)y+ \nn\\
+&&(48+24)x^2 + (24+48)y^2 +(144+144)xy \nn\\
+&&+ (-144-144)x^2y + (-144-144)xy^2 + (-48)x^3 + (-48)y^3 \nn\\
+&& (144+144)x^2y^2  +(24)x^4+(24)y^4 \nn\\
+&=& 8 -48x-48y + 72x^2 +72y^2 + 288 xy -288x^2y -288 xy^2 -48x^3-48y^3 + 288x^2y^2 +24x^4 +24 y^4 \nn
+\end{eqnarray}
+
+In the end we wish to solve $\vec\nabla^2 \omega = -{\cal F}(x,y)$ since $\eta_0=1$.
+
+
+
+
+
+
+
+
+
 
 
 
@@ -385,8 +515,7 @@ of omega are not used in the end.
 \fbox{\begin{minipage}{0.9\textwidth}
 {\color{teal}To Do, open questions, future work?}
 \begin{itemize}
-\item normalise xi !
-\item time dependent ?
+\item N-S case i.e. time dependent ?
 \item do original bench
 \end{itemize}
 \end{minipage}}

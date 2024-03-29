@@ -11,4 +11,34 @@ plot[][]\
 'conv.ascii' u 4 w lp ps 0.3 t 'psi',\
 'conv.ascii' u 5 w lp ps 0.3 t 'omega'
 
+set output 'errors.pdf'
+plot[][]\
+'errors.ascii' u 2 w lp ps 0.3 t 'psi',\
+'errors.ascii' u 3 w lp ps 0.3 t 'omega'
+
+unset log 
+
+set ylabel 'u'
+set output 'stats_u.pdf'
+plot[][-0.05:0.30]\
+'stats.ascii' u 2 w lp ps 0.3 t 'min',\
+'stats.ascii' u 3 w lp ps 0.3 t 'max'
+
+set ylabel 'v'
+set output 'stats_v.pdf'
+plot[][]\
+'stats.ascii' u 4 w lp ps 0.3 t 'min',\
+'stats.ascii' u 5 w lp ps 0.3 t 'max'
+
+set ylabel 'psi'
+set output 'stats_psi.pdf'
+plot[][]\
+'stats.ascii' u 6 w lp ps 0.3 t 'min',\
+'stats.ascii' u 7 w lp ps 0.3 t 'max'
+
+set ylabel 'omega'
+set output 'stats_omega.pdf'
+plot[][]\
+'stats.ascii' u 8 w lp ps 0.3 t 'min',\
+'stats.ascii' u 9 w lp ps 0.3 t 'max'
 
