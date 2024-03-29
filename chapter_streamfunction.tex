@@ -37,9 +37,23 @@ the use of an initial flow field noncontinuous at the boundary of the domain.
 
 
 
+\begin{center}
+\fbox{
+\begin{minipage}{0.9\textwidth}
+\includegraphics[width=0.6cm]{images/flagNL} 
+
+\begin{tabular}{lcl}
+Stream function &$\leftrightarrow$& Stroomfunctie \\ 
+Vorticity &$\leftrightarrow$& vorticiteit \\ 
+\end{tabular}
+\end{minipage}}
+\end{center}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Vorticity-stream function formulation of the isoviscous Navier-Stokes equation}
+\label{ss:streamfunctionNS}
 
 What follows is adapted from \textcite{glte87} (1987).
 The vorticity transport equation can be obtained by taking the curl of the
@@ -1205,6 +1219,26 @@ linear equations must be solved.
 '' }
 \end{displayquote}
 
+At the moment (and before a thorough literature review) here is 
+how I see things when it comes to numerical methods:
+
+\begin{verbatim}
+
+                          Biharmonic equation
+                                   |
+                --------------------------------------
+                |                                     |
+          --------------                        -------------
+            split into                           solve as is
+          2 Poisson eqs                         -------------
+          --------------                        |            |
+          |            |                        FE           FD
+         FE           FD              |---------|            |
+                                B-splines     regular
+\end{verbatim}
+
+
+
 %--------------------------------
 \subsection{Finite differences}
 
@@ -1515,7 +1549,8 @@ from a velocity field obtained via the FEM.
 %systematically already done 
 %1970,1971,1972,1973,1974,1975,1976,1977,1978,1979
 %1980,1981,1982,1983,1984,1985,1986,1987,1988,1989
-%1990,1991,1992,1993,1994,1995
+%1990,1991,1992,1993,1994,1995,1996,1997
+
 
 
 \begin{scriptsize}
@@ -1658,31 +1693,40 @@ from a velocity field obtained via the FEM.
  \textbullet \fullcite{zhgu94b}\\
  \textbullet \fullcite{hayu94}
 \item[\nineteenninetyfive]
- \textbullet \fullcite{schh95}
- \textbullet \fullcite{bisc95}
- \textbullet \fullcite{rict95}
- \textbullet \fullcite{styu95}
- \textbullet \fullcite{dehu95}
- \textbullet \fullcite{loja95}
+ \textbullet \fullcite{schh95}\\
+ \textbullet \fullcite{bisc95}\\
+ \textbullet \fullcite{rict95}\\
+ \textbullet \fullcite{styu95}\\
+ \textbullet \fullcite{dehu95}\\
+ \textbullet \fullcite{loja95}\\
  \textbullet \fullcite{solo95}
 \item[\nineteenninetysix] 
- \textbullet \fullcite{laym96}
- \textbullet \fullcite{baho96}
- \textbullet \fullcite{berc96}
- \textbullet \fullcite{brzy96}
- \textbullet \fullcite{chri96}
- \textbullet \fullcite{leka96}
- \textbullet \fullcite{loja96}
- \textbullet \fullcite{mipb96}
- \textbullet \fullcite{ribe96}
- \textbullet \fullcite{schh96}
- \textbullet \fullcite{vayu96}
- \textbullet \fullcite{zhgm96}
+ \textbullet \fullcite{laym96}\\
+ \textbullet \fullcite{baho96}\\
+ \textbullet \fullcite{berc96}\\
+ \textbullet \fullcite{brzy96}\\
+ \textbullet \fullcite{chri96}\\
+ \textbullet \fullcite{leka96}\\
+ \textbullet \fullcite{loja96}\\
+ \textbullet \fullcite{mipb96}\\
+ \textbullet \fullcite{ribe96}\\
+ \textbullet \fullcite{schh96}\\
+ \textbullet \fullcite{vayu96}\\
+ \textbullet \fullcite{zhgm96}\\
  \textbullet \fullcite{zhon96}
 \item[\nineteenninetyseven] 
  \textbullet \fullcite{laym97}\\
  \textbullet \fullcite{olwh97}\\
+ \textbullet \fullcite{wahe97}\\
+ \textbullet \fullcite{brys97}\\
+ \textbullet \fullcite{deja97}\\
+ \textbullet \fullcite{layu97}\\
+ \textbullet \fullcite{layu97b}\\
+ \textbullet \fullcite{vaks97}\\
+ \textbullet \fullcite{vayu97}\\
  \textbullet \fullcite{wahe97}
+
+
 \item[\nineteenninetyeight] 
  \textbullet \fullcite{hard98}  \\
  \textbullet \fullcite{scsc98}  \\
