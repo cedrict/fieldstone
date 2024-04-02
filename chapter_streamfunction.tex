@@ -66,6 +66,7 @@ The vorticity transport equation can be obtained by taking the curl of the
 \label{eq:sf01}
 \end{equation}
 with $\nu = \eta/\rho$.
+{\color{orange} i need to propagate gravity in what follows}
 Computing term-by-term, we have
 \[
 \vec\nabla \times 
@@ -202,7 +203,7 @@ from the no-slip and no-penetration conditions.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Vorticity-stream function formulation of the isoviscous Stokes equation in 2d}
+\section{Vorticity-stream function formulation of the isoviscous Stokes equation in 2d \label{ss:vsf1}}
 
 In two dimensions the velocity is obtained as follows:
 \begin{equation}
@@ -217,6 +218,12 @@ this automatically insures that the flow is incompressible:
 =
 \frac{\partial^2 \Psi}{\partial xy} - \frac{\partial^2 \Psi}{\partial xy} =0 
 \end{equation}
+Also, we have
+\[
+\vec\upnu \cdot \vec\nabla \Psi = \vec\upnu \cdot
+\left( \frac{\partial \Psi}{\partial x},\frac{\partial \Psi}{\partial y} \right) 
+=(u,v) \cdot (-v,u) =0
+\]
 Assuming constant viscosity, the Stokes equation writes:
 \begin{equation}
 -{\vec \nabla}p + \eta_0 \Delta {\vec \upnu} + \rho {\vec g} = \vec{0}
@@ -231,10 +238,10 @@ or, in each dimension:
 Using Eq.~\eqref{eq:streeam1}, we can write 
 \begin{eqnarray}
 0 &=& -\frac{\partial p}{\partial x} + \eta_0 \left(
-\frac{\partial^3 \psi}{\partial y^3}  + \frac{\partial^3 \psi}{\partial x^2 \partial y}
+\frac{\partial^3 \Psi}{\partial y^3}  + \frac{\partial^3 \Psi}{\partial x^2 \partial y}
 \right) + \rho g_x \nn\\
 0 &=& -\frac{\partial p}{\partial y} - \eta_0 \left(
-\frac{\partial^3 \psi}{\partial x^3}  + \frac{\partial^3 \psi}{\partial y^2 \partial x}
+\frac{\partial^3 \Psi}{\partial x^3}  + \frac{\partial^3 \Psi}{\partial y^2 \partial x}
 \right) + \rho g_y
 \end{eqnarray}
 
@@ -243,32 +250,32 @@ The pressure terms in both equations can be removed by first differentiating
 the first line with regards to $y$ and the second line with regards to $x$, 
 \begin{eqnarray}
 0 &=& -\frac{\partial^2 p}{\partial x\partial y} + \eta_0 \left(
-\frac{\partial^4 \psi}{\partial y^4}  + \frac{\partial^4 \psi}{\partial x^2 \partial y^2} 
+\frac{\partial^4 \Psi}{\partial y^4}  + \frac{\partial^4 \Psi}{\partial x^2 \partial y^2} 
 \right) + \frac{\partial (\rho g_x)}{\partial y} \nn\\
 0 &=& -\frac{\partial^2 p}{\partial y \partial x} - \eta_0 \left(
-\frac{\partial^4 \psi}{\partial x^4}  + \frac{\partial^4 \psi}{\partial y^2 \partial x^2} 
+\frac{\partial^4 \Psi}{\partial x^4}  + \frac{\partial^4 \Psi}{\partial y^2 \partial x^2} 
 \right) + \frac{\partial (\rho g_y)}{\partial x}
 \end{eqnarray}
 and next by subtracting the resulting equations, leading to:
 \begin{equation}
 0 = \eta_0
 \left(
-\frac{\partial^4 \psi}{\partial x^4} 
+\frac{\partial^4 \Psi}{\partial x^4} 
 +
-2\frac{\partial^4 \psi}{\partial x^2\partial y^2} 
+2\frac{\partial^4 \Psi}{\partial x^2\partial y^2} 
 +
-\frac{\partial^4 \psi}{\partial y^4}
+\frac{\partial^4 \Psi}{\partial y^4}
 \right)
 +\frac{\partial (\rho g_x)}{\partial y}
 -\frac{\partial (\rho g_y)}{\partial x}
 \end{equation}
 or
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-\boxed{
-\vec\nabla^4 \psi = \frac{1}{\eta_0} \left( -\frac{\partial (\rho g_x)}{\partial y}
+\vec\nabla^4 \Psi = \frac{1}{\eta_0} \left( -\frac{\partial (\rho g_x)}{\partial y}
 +\frac{\partial (\rho g_y)}{\partial x} \right)
-}
 \end{equation}
+\end{mdframed}
 where
 \[
 \vec\nabla^4 =
@@ -695,7 +702,7 @@ Adding both equations together, i.e. taking the divergence of the first equation
 + \frac{\partial v}{\partial x} \frac{\partial u}{\partial y}+ v \frac{\partial^2 u}{\partial x\partial y}
 \frac{\partial^2 v}{\partial y \partial t}  
 + \frac{\partial u}{\partial y} \frac{\partial v}{\partial x}+ u \frac{\partial^2 v}{\partial y\partial x}
-+ \frac{\partial v}{\partial y} \frac{\partial v}{\partial y}+ v \frac{\partial^2 v}{\partial y^2} \\
++ \frac{\partial v}{\partial y} \frac{\partial v}{\partial y}+ v \frac{\partial^2 v}{\partial y^2} \nn\\
 &=&
 -\frac{1}{\rho} \frac{\partial^2 p}{\partial x^2} 
 + \nu \frac{\partial }{\partial x} \left( \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} \right) 
@@ -710,7 +717,7 @@ Adding both equations together, i.e. taking the divergence of the first equation
 + \frac{\partial v}{\partial x} \frac{\partial u}{\partial y}
 + \frac{\partial v}{\partial y} \frac{\partial v}{\partial y}
 + u (\underbrace{\frac{\partial^2 u}{\partial x^2} +  \frac{\partial^2 v}{\partial y\partial x}}_{A} )
-+ v (\underbrace{\frac{\partial^2 v}{\partial y^2} +  \frac{\partial^2 u}{\partial x\partial y}}_{B} )\\
++ v (\underbrace{\frac{\partial^2 v}{\partial y^2} +  \frac{\partial^2 u}{\partial x\partial y}}_{B} ) \nn\\
 &=&
 -\frac{1}{\rho} (\frac{\partial^2 p}{\partial x^2} + \frac{\partial^2 p}{\partial y^2})
 + \nu \frac{\partial }{\partial x} \left( \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} \right) 
@@ -1111,11 +1118,11 @@ The azimuthal velocity component $\upnu_\phi$ is not a function of the Stokes st
 
 The vorticity is defined as:
 \[
-\vec\omega = \vec\nabla \times \vec\upnu = \vec\nabla\times\vec\nabla\times \psi
+\vec\omega = \vec\nabla \times \vec\upnu = \vec\nabla\times\vec\nabla\times \Psi
 \qquad
 {\text with}
 \qquad
-\psi = -\frac{\Psi}{r \sin \theta} \vec{e}_\phi
+\Psi = -\frac{\Psi}{r \sin \theta} \vec{e}_\phi
 \]
 From the definition of the curl in spherical coordinates\footnote{\url{https://en.wikipedia.org/wiki/Del_in_cylindrical_and_spherical_coordinates}}:
 \begin{eqnarray}
@@ -1449,10 +1456,95 @@ using equations $\omega_z = \partial_x v- \partial_y u$ and $\Delta \Psi = -\ome
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The nondimensional equations}
 
-For the isoviscous case, and omitting the primes:
+\subsection{Isoviscous case}
+
+We start from the equations \eqref{eq:adimmm1},\eqref{eq:adimmm2},\eqref{eq:adimmm3}:
+\begin{eqnarray}
+-{\color{teal} \vec\nabla} {\color{teal}p} + {\color{teal} \vec\nabla} \cdot 2  {\color{teal} \dot{\bm\varepsilon}}
++ \Ranb  {\color{teal} T} \vec{e}_y &=& \vec{0} \\
+{\color{teal} \vec\nabla } \cdot  {\color{teal}\vec\upnu} &=& 0 \\
+\frac{ {\color{teal} \partial T}}{ {\color{teal} \partial t}} 
++ {\color{teal} \vec\upnu} \cdot  {\color{teal}\vec\nabla} {\color{teal}T} 
+&=&  {\color{teal} \kappa} {\color{teal}\Delta} {\color{teal}T}
+\end{eqnarray}
+
+If the viscosity is constant then $\eta=\eta_0=\eta_{ref}$ so ${\color{teal}\eta}=1$ we can also write these as
+\begin{eqnarray}
+-{\color{teal} \vec\nabla} {\color{teal}p} + {\color{teal} \vec\nabla^2 \vec\upnu} 
++ \Ranb  {\color{teal} T} \vec{e}_y &=& \vec{0} \\
+{\color{teal} \vec\nabla } \cdot  {\color{teal}\vec\upnu} &=& 0 \\
+\frac{ {\color{teal} \partial T}}{ {\color{teal} \partial t}} 
++ {\color{teal} \vec\upnu} \cdot  {\color{teal}\vec\nabla} {\color{teal}T} 
+&=&  {\color{teal} \kappa} {\color{teal}\Delta} {\color{teal}T}
+\end{eqnarray}
+
+
+
+Following the approach in Section~\ref{ss:vsf1}, and omitting the colors to indicate dimensionless values:
+
+
+or, in each dimension:
+\begin{eqnarray}
+0&=&-\frac{\partial p}{\partial x} 
++ \left( \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial x^y} \right)  \\
+0&=&-\frac{\partial p}{\partial y} 
++ \left(\frac{\partial^2 v}{\partial x^2} + \frac{\partial^2 v}{\partial y^2} \right) + \Ranb T  
+\end{eqnarray}
+Using Eq.~\eqref{eq:streeam1}, we can write 
+\begin{eqnarray}
+0 &=& -\frac{\partial p}{\partial x} +  \left(
+\frac{\partial^3 \Psi}{\partial y^3}  + \frac{\partial^3 \Psi}{\partial x^2 \partial y}
+\right)  \nn\\
+0 &=& -\frac{\partial p}{\partial y} -  \left(
+\frac{\partial^3 \Psi}{\partial x^3}  + \frac{\partial^3 \Psi}{\partial y^2 \partial x}
+\right) + \Ranb T 
+\end{eqnarray}
+
+
+The pressure terms in both equations can be removed by first differentiating
+the first line with regards to $y$ and the second line with regards to $x$, 
+
+\begin{eqnarray}
+0 &=& -\frac{\partial^2 p}{\partial x\partial y} +  \left(
+\frac{\partial^4 \Psi}{\partial y^4}  + \frac{\partial^4 \Psi}{\partial x^2 \partial y^2} 
+\right)  \nn\\
+0 &=& -\frac{\partial^2 p}{\partial y \partial x} -  \left(
+\frac{\partial^4 \Psi}{\partial x^4}  + \frac{\partial^4 \Psi}{\partial y^2 \partial x^2} 
+\right) + \frac{\partial (\Ranb T)}{\partial x}
+\end{eqnarray}
+and next by subtracting the resulting equations, leading to:
+\begin{equation}
+0 = 
+\left(
+\frac{\partial^4 \Psi}{\partial x^4} 
++
+2\frac{\partial^4 \Psi}{\partial x^2\partial y^2} 
++
+\frac{\partial^4 \Psi}{\partial y^4}
+\right)
+- \Ranb \frac{\partial T}{\partial x}
+\end{equation}
+or
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+\vec\nabla^4 \Psi = \Ranb  
+\frac{\partial  T}{\partial x} 
+\end{equation}
+\end{mdframed}
+
+Introducing again the vorticity $\omega=-\vec\nabla^2 \Psi$, then we must solve
 \[
-\vec\nabla^4 \Psi = Ra \frac{\partial T}{\partial x}
+\vec\nabla^2 \omega = -\Ranb  
+\frac{\partial  T}{\partial x}
+\qquad
+\text{and}
+\qquad
+\vec\nabla^2 \Psi =-\omega
 \]
+
+---------------------------------------------------
+
+{\color{red} check further}
 
 The vorticity equation is
 \[

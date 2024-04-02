@@ -404,6 +404,19 @@ set format y "10^{%L}"
 %----------------------------------------
 \subsubsection*{Least square fit}
 
+Assuming we have a file containing data, e.g. {\tt data.ascii}, that 
+we want to fit by means of a linear relationship over the range $[-1,+1]$:
+\begin{verbatim}
+f(x)=a*x+b 
+fit [-1:1] f(x) 'data.ascii' u 1:2 via a,b
+\end{verbatim}
+This should return a few lines in the console indicating whether 
+convergence was reached and then also the $a$ and $b$ values. 
+In order to plot the line, simply do:
+\begin{verbatim}
+plot[] 'data.ascii' u 1:2, f(x)
+\end{verbatim}
+
 
 %----------------------------------------
 \subsubsection*{coloring areas}
