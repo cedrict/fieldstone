@@ -40,10 +40,7 @@ The temperature is fixed to zero on top and to $\Delta T$ at the bottom,
 with reflecting symmetry at the sidewalls (i.e. $\partial_x T=0$) 
 and there are no internal heat sources. 
 Free-slip conditions are implemented on all boundaries. 
-
-
-$L_x=L_y=1$,
-and I run the model with $Ra=10^4,10^{5}$ and $10^6$.
+I run the model with $Ra=10^4,10^{5}$ and $10^6$.
 
 The initial temperature field is given by 
 \begin{equation}
@@ -53,7 +50,7 @@ The perturbation in the initial temperature fields leads to
 a perturbation of the density field and sets the fluid in motion. 
 Depending on the initial Rayleigh number, the system ultimately reaches a 
 steady state after some time. 
-Note that at t=0, we have
+Note that at $t=0$, we have
 \[
 \frac{\partial T}{\partial x} = 0.01 \pi \sin(\pi x)
 \]
@@ -73,28 +70,34 @@ only diffusion is taking place
 and the steady state temperature field is then $T(y)=1-y$, 
 so that $\partial_y T=-1$ and we find that the Nusselt number is simply 1.
 
-In the end, the system of coupled steady-state equations to solve is:
-
 \begin{eqnarray}
-\vec\nabla^2 \omega &=& \Ranb \frac{\partial T}{\partial x} \\
-\vec\nabla^2 \Psi   &=&  -\omega \\
-\vec\nabla^2 T      &=&  \vec\upnu \cdot \vec\nabla T
-\end{eqnarray}
-
-Since we are looking for the steady state 
-solution and this will involve iterations, 
-I have decided (for now\footnote{as an experiment}) 
-to keep the advection term of the 
-energy equation in the rhs, so I then must solve: 
-
-\begin{eqnarray}
-\vec\nabla^2 \omega^{k} &=& \Ranb \frac{\partial T^{k-1}}{\partial x} \\
+\vec\nabla^2 \omega^{k} &=& -\Ranb \frac{\partial T^{k-1}}{\partial x} \\
 \vec\nabla^2 \Psi^{k}   &=&  -\omega^{k} \\
-\vec\nabla^2 T^k        &=& \vec\upnu^k \cdot \vec\nabla T^{k-1}
+\frac{\partial T}{\partial t} + \vec\upnu^k \cdot \vec\nabla T^{k} - \vec\nabla^2 T^k   &=& 0
 \qquad \text{with} \qquad 
 \vec\upnu^k=(\partial \Psi^k/\partial y,-\partial \Psi^k / \partial x)
 \end{eqnarray}
 where the upperscript $k$ denotes the iteration counter.
+
+The energy equation is discretised as follows:
+\[
+\frac{T_{i,j}^k-T_{i,j}^{k-1}}{\delta t} 
++ u^k_{i,j} \frac{T^k_{i+1,j}-T^k_{i-1,j}}{2h_x}
++ v^k_{i,j} \frac{T^k_{i,j+1}-T^k_{i,j-1}}{2h_y}
+- \frac{T^k_{i+1,j}-2T^k_{i,j}+T^k_{i-1,j}}{h_x^2}
+- \frac{T^k_{i,j+1}-2T^k_{i,j}+T^k_{i,j-1}}{h_y^2}
+=0
+\]
+or,
+\[
+\left(1 +\frac{2 \delta t}{h_x^2} +\frac{2 \delta t}{h_y^2} \right)  T^k_{i,j}+
+\left(-\frac{u_{i,j} \delta t}{2h_x} -\frac{\delta t}{h_x^2} \right) T^k_{i-1,j}+
+\left(-\frac{v_{i,j} \delta t}{2h_y} -\frac{\delta t}{h_y^2} \right) T^k_{i,j-1}+
+\left(\frac{u_{i,j} \delta t}{2h_x} -\frac{\delta t}{h_x^2} \right)  T^k_{i+1,j}+
+\left(\frac{v_{i,j} \delta t}{2h_y} -\frac{\delta t}{h_y^2} \right)  T^k_{i,j+1}
+=
+T_{i,j}^{k-1}
+\]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Boundary conditions}
@@ -108,12 +111,10 @@ and $\Psi=0$ on all sides (second PDE).
 
 Concerning the temperature equation, 
 we prescribe $T=1$ at the bottom and $T=0$ at the top. 
-We also prescribe $\partial T/\partia x=0$ on the sides.
-
+We also prescribe $\partial T/\partial x=0$ on the sides.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Code structure}
-
 
 Inside the time stepping loop the following five steps are necessary
 \begin{enumerate}
@@ -124,21 +125,75 @@ Inside the time stepping loop the following five steps are necessary
 \item compute temperature gradient
 \end{enumerate}
 
-
 \newpage
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_155/stats_u}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_155/stats_v}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_155/stats_T}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_155/stats_psi}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_155/stats_omega}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_155/avrg_u}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_155/avrg_v}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_155/avrg_T}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_155/avrg_psi}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_155/avrg_omega}
-\end{center}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Results: $\Ranb=10^{3,4,5,6}$, CFL=0.5}
 
+\begin{center}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_u_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_u_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_u_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_u_Ra1e6}\\
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_v_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_v_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_v_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_v_Ra1e6}\\
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_T_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_T_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_T_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_T_Ra1e6}\\
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_psi_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_psi_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_psi_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_psi_Ra1e6}\\
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_omega_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_omega_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_omega_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/stats_omega_Ra1e6}
+\\
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/avrg_u_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/avrg_u_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/avrg_u_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/avrg_u_Ra1e6}\\
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/avrg_v_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/avrg_v_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/avrg_v_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/avrg_v_Ra1e6}\\
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/avrg_T_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/avrg_T_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/avrg_T_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/avrg_T_Ra1e6}
+\\
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/vrms_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/vrms_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/vrms_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/vrms_Ra1e6}\\
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/Nu_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/Nu_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/Nu_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/Nu_Ra1e6}
+\\
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_u_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_u_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_u_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_u_Ra1e6}\\
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_v_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_v_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_v_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_v_Ra1e6}\\
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_T_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_T_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_T_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_T_Ra1e6}\\
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_psi_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_psi_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_psi_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_psi_Ra1e6}\\
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_omega_Ra1e3}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_omega_Ra1e4}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_omega_Ra1e5}
+\includegraphics[width=3.97cm]{python_codes/fieldstone_155/results/conv_omega_Ra1e6}\\
+\end{center}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -149,15 +204,11 @@ Inside the time stepping loop the following five steps are necessary
 \fbox{\begin{minipage}{0.9\textwidth}
 {\color{teal}To Do, open questions, future work?}
 \begin{itemize}
-\item do smthg
+\item compute dTdx,dTdy with second order accurate stencil on boundary too
+\item run all to steady state
+\item implement Crank Nicolson!
 \end{itemize}
 \end{minipage}}
 \end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\vspace{.5cm}
-
-\Literature:\\
-\fullcite{xxxxYY}
 
 
