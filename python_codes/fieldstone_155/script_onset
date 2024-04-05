@@ -1,0 +1,13 @@
+#! /bin/bash
+
+for n in 97; do
+    for Ra in 600 650 700 750 780 790 791 792 793 794 795 796 797 798 799 800 803 805 806 807 808 809 810 820 825 850 875  900 950 1000; do 
+
+        echo n= $n -Ra= $Ra
+        python3 stone.py $n $Ra  > opla
+        grep ssss opla >> ssss_n${n}
+
+    done
+done
+
+mv ssss_* results_onset

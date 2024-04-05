@@ -1,0 +1,20 @@
+#! /bin/bash
+
+for n in 33 65 97 129 161 193 257; do
+
+    for Ra in 1000 10000 100000 1000000; do 
+
+        mkdir ${Ra}_${n}
+
+        echo n= $n -Ra= $Ra
+        python3 stone.py $n $Ra  > opla
+        grep ssss opla >> ssss_Ra${Ra}
+
+        mv Nu*.ascii ${Ra}_${n}
+        mv vrms*.ascii ${Ra}_${n}
+
+    done
+
+done
+
+mv ssss_* results_SS

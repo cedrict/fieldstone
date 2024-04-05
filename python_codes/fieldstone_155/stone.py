@@ -15,17 +15,19 @@ if int(len(sys.argv) == 3):
    nnx = int(sys.argv[1])
    Ra = int(sys.argv[2])
 else:
-   nnx=97
-   Ra=1e6
+   nnx=33
+   Ra=806
 
 Lx=1
 Ly=1
-nstep=250
+nstep=1000
 nny=nnx
 tol=1e-7
 CFL_nb=0.5
 every=100
 dt_min=1e-5
+
+steady_state=True
 
 ###############################################################################
 
@@ -240,16 +242,22 @@ for istep in range(0,nstep):
     # compute time step
     ###########################################################################
 
-    dt=CFL_nb*min(hx,hy)/np.max(np.sqrt(u**2+v**2))
+    if steady_state:
 
-    if istep<10:
-       dt=dt_min
-    elif istep<50 and dt>dt_mem:
-       dt=min(1.25*dt_mem,dt)
+       dt=1
 
-    dt_mem=dt
+    else:
 
-    print('     -> dt  = %.6f' %dt)
+       dt=CFL_nb*min(hx,hy)/np.max(np.sqrt(u**2+v**2))
+
+       if istep<10:
+          dt=dt_min
+       elif istep<50 and dt>dt_mem:
+          dt=min(1.25*dt_mem,dt)
+
+       dt_mem=dt
+
+       print('     -> dt  = %.6f' %dt)
 
     total_time+=dt
 
@@ -284,12 +292,33 @@ for istep in range(0,nstep):
                MB[k,k]=1
                b[k]=0
             else:                                   #internal
-               MB[k,k]=1+2*dt/hx**2+2*dt/hy**2
-               MB[k,kW]=-u[k]*dt/2/hx-dt/hx**2
-               MB[k,kE]= u[k]*dt/2/hx-dt/hx**2
-               MB[k,kN]= v[k]*dt/2/hy-dt/hy**2
-               MB[k,kS]=-v[k]*dt/2/hy-dt/hy**2
-               b[k]=T[k]
+
+               if steady_state:
+                  MB[k,k]=2*dt/hx**2+2*dt/hy**2
+                  MB[k,kW]=-u[k]*dt/2/hx-dt/hx**2
+                  MB[k,kS]=-v[k]*dt/2/hy-dt/hy**2
+                  MB[k,kE]= u[k]*dt/2/hx-dt/hx**2
+                  MB[k,kN]= v[k]*dt/2/hy-dt/hy**2
+
+               #fully implicit
+               #MB[k,k]=1+2*dt/hx**2+2*dt/hy**2
+               #MB[k,kW]=-u[k]*dt/2/hx-dt/hx**2
+               #MB[k,kS]=-v[k]*dt/2/hy-dt/hy**2
+               #MB[k,kE]= u[k]*dt/2/hx-dt/hx**2
+               #MB[k,kN]= v[k]*dt/2/hy-dt/hy**2
+               #b[k]=T[k]
+               #crank-nicolson
+               #MB[k,k]=1+dt/hx**2+dt/hy**2
+               #MB[k,kW]=-u[k]*dt/4/hx-dt/2/hx**2
+               #MB[k,kS]=-v[k]*dt/4/hy-dt/2/hy**2
+               #MB[k,kE]= u[k]*dt/4/hx-dt/2/hx**2
+               #MB[k,kN]= v[k]*dt/4/hy-dt/2/hy**2
+               #b[k]=(1-dt/hx**2-dt/hy**2)*T[k]\
+               #    +( u[k]*dt/4/hx+dt/2/hx**2)*T[kW]\
+               #    +( v[k]*dt/4/hy+dt/2/hy**2)*T[kS]\
+               #    +(-u[k]*dt/4/hx+dt/2/hx**2)*T[kE]\
+               #    +(-v[k]*dt/4/hy+dt/2/hy**2)*T[kN]
+
             #end if
             #---------------------------------------
         #end for
@@ -508,13 +537,15 @@ for istep in range(0,nstep):
     omega_mem[:]=omega[:]
     T_mem[:]=T[:]
 
-    if xi_u<tol and xi_v<tol and xi_psi<tol and xi_omega<tol:
+    if (xi_u<tol and xi_v<tol and xi_psi<tol and xi_omega<tol) or vrms<1e-2:
        print('**********')
        print('converged!')
        print('**********')
        break
 
 #end for istep
+       
+print('sssss:',Ra,nelx,Nu,vrms)
 
 print("-----------------------------")
 print("------------the end----------")
