@@ -1,0 +1,22 @@
+#
+set term pdf enhanced font "Times,12pt"
+set xlabel 'Ra'
+set ylabel 'Nu' 
+set grid
+
+set output 'Ra_Nu.pdf'
+set key outside
+plot[][0.9:]\
+'ssss_n33' u 2:4 w lp ps .2 pt 5  t 'nnx=33',\
+'ssss_n49' u 2:4 w lp ps .2 pt 5  t 'nnx=49',\
+'ssss_n65' u 2:4 w lp ps .2 pt 5  t 'nnx=65',\
+'ssss_n97' u 2:4 w lp ps .2 pt 5  t 'nnx=97',\
+
+set xtics 10
+set output 'Ra_Nu_zoom.pdf'
+set key outside
+plot[780:815][0.99:]\
+'ssss_n33' u 2:4 w lp ps .2 pt 5  t 'nnx=33',\
+'ssss_n49' u 2:4 w lp ps .2 pt 5  t 'nnx=49',\
+'ssss_n65' u 2:4 w lp ps .2 pt 5  t 'nnx=65',\
+'ssss_n97' u 2:4 w lp ps .2 pt 5  t 'nnx=97',\

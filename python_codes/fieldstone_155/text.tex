@@ -297,13 +297,16 @@ I have therefore added $\upnu_{rms}<10^{-2}$ as a test for steady state converge
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results: Onset of convection Steady state approach}
 
-Results are obtained with {\tt script\_onset}. 
+Results are obtained with {\tt script\_onset}, having set {\python steady\_state=True}.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_155/results_onset/Ra_Nu.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_155/results_onset/Ra_Nu_zoom.pdf}
 \end{center}
 
+Rather interestingly, we find that the critical Rayleigh number very much depends on resolution.
+It here looks like a resolution of $97^2$ nodes is nowhere near enough to capture resolution-independent
+values.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
