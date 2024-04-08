@@ -379,9 +379,9 @@ def compute_CVI_corr (u,v,w,icon,rm,sm,tm,iel,use_cvi,Q,option,Jt):
        alpha_s=0.25*( hy/hx*ur4-vs4+hy/hz*wt4)
        alpha_t=0.25*( hz/hx*ur4+hz/hy*vs4-wt4)
 
-       u_corr=(1.-rm**2)*(alpha_r*(sm+tm)+beta_r)
-       v_corr=(1.-sm**2)*(alpha_s*(sm+tm)+beta_s)
-       w_corr=(1.-tm**2)*(alpha_t*(sm+tm)+beta_t)
+       u_corr=(1-rm**2)*(alpha_r*(sm+tm)+beta_r)
+       v_corr=(1-sm**2)*(alpha_s*(rm+tm)+beta_s)
+       w_corr=(1-tm**2)*(alpha_t*(rm+sm)+beta_t)
 
        #Jtxx=Jt[0,0] ; Jtxy=Jt[0,1] ; Jtxz=Jt[0,2]
        #Jtyx=Jt[1,0] ; Jtyy=Jt[1,1] ; Jtyz=Jt[1,2]
@@ -434,7 +434,7 @@ else:
    markers_distr=3
    CFL_nb=0.25  
    RKorder=1
-   use_cvi=1
+   use_cvi=0
    Q=1
    option=4
 
@@ -524,7 +524,7 @@ if Q==2:
                z[counter]=k*hz/2-Lzoffset
                counter += 1
 
-np.savetxt('grid.ascii',np.array([x,y,z]).T,header='# x,y,z')
+#np.savetxt('grid.ascii',np.array([x,y,z]).T,header='# x,y,z')
 
 print("grid points setup: %.3f s" % (time.time() - start))
 
@@ -621,9 +621,9 @@ swarm_dz=np.empty(nmarker,dtype=np.float64)
 swarm_u=np.zeros(nmarker,dtype=np.float64)  
 swarm_v=np.zeros(nmarker,dtype=np.float64)  
 swarm_w=np.zeros(nmarker,dtype=np.float64)  
-swarm_u_corr=np.zeros(nmarker,dtype=np.float64)  
-swarm_v_corr=np.zeros(nmarker,dtype=np.float64)  
-swarm_w_corr=np.zeros(nmarker,dtype=np.float64)  
+swarm_u_correction=np.zeros(nmarker,dtype=np.float64)  
+swarm_v_correction=np.zeros(nmarker,dtype=np.float64)  
+swarm_w_correction=np.zeros(nmarker,dtype=np.float64)  
 N=np.zeros(m,dtype=np.float64)
 xx=np.zeros(m,dtype=np.float64)
 yy=np.zeros(m,dtype=np.float64)
@@ -754,6 +754,9 @@ for istep in range (0,nstep):
     swarm_exx=np.zeros(nmarker,dtype=np.float64)  
     swarm_eyy=np.zeros(nmarker,dtype=np.float64)  
     swarm_ezz=np.zeros(nmarker,dtype=np.float64)  
+    swarm_exy=np.zeros(nmarker,dtype=np.float64)  
+    swarm_exz=np.zeros(nmarker,dtype=np.float64)  
+    swarm_eyz=np.zeros(nmarker,dtype=np.float64)  
 
     print("----------------------------------")
     print("istep= ", istep)
@@ -779,7 +782,6 @@ for istep in range (0,nstep):
            interpolate_vel_on_pt(swarm_x[im],swarm_y[im],swarm_z[im],\
                                  x,y,z,u,v,w,icon,Lx,Ly,Lz,nelx,nely,nelz,m,Q)
 
-       
            dNdr=dNQ1dr(rm,sm,tm)
            dNds=dNQ1ds(rm,sm,tm)
            dNdt=dNQ1dt(rm,sm,tm)
@@ -808,19 +810,21 @@ for istep in range (0,nstep):
                dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
            #end for
 
-           for k in range(0, m):
-               swarm_exx[im] += dNdx[k]*u[icon[k,iel]]
-               swarm_eyy[im] += dNdy[k]*v[icon[k,iel]]
-               swarm_ezz[im] += dNdz[k]*w[icon[k,iel]]
-               #swarm_exy[] += 0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
+           for k in range(0,m):
+               swarm_exx[im]+=dNdx[k]*u[icon[k,iel]]
+               swarm_eyy[im]+=dNdy[k]*v[icon[k,iel]]
+               swarm_ezz[im]+=dNdz[k]*w[icon[k,iel]]
+               swarm_exy[im]+=0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
+               swarm_exz[im]+=0.5*dNdz[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*w[icon[k,iel]]
+               swarm_eyz[im]+=0.5*dNdy[k]*w[icon[k,iel]]+ 0.5*dNdz[k]*v[icon[k,iel]]
            #end for
 
-           swarm_u_corr[im],swarm_v_corr[im],swarm_w_corr[im]=\
+           swarm_u_correction[im],swarm_v_correction[im],swarm_w_correction[im]=\
            compute_CVI_corr(u,v,w,icon,rm,sm,tm,iel,use_cvi,Q,option,jcbi)
 
-           swarm_dx[im]=(swarm_u[im]+swarm_u_corr[im])*dt
-           swarm_dy[im]=(swarm_v[im]+swarm_v_corr[im])*dt
-           swarm_dz[im]=(swarm_w[im]+swarm_w_corr[im])*dt
+           swarm_dx[im]=(swarm_u[im]+swarm_u_correction[im])*dt
+           swarm_dy[im]=(swarm_v[im]+swarm_v_correction[im])*dt
+           swarm_dz[im]=(swarm_w[im]+swarm_w_correction[im])*dt
 
        # end for im
     
@@ -828,9 +832,9 @@ for istep in range (0,nstep):
        #print("     -> v (m,M) %e %e " %(np.min(swarm_v),np.max(swarm_v)))
        #print("     -> w (m,M) %e %e " %(np.min(swarm_w),np.max(swarm_w)))
        if use_cvi==1:
-          print("     -> u_corr (m,M) %e %e " %(np.min(swarm_u_corr),np.max(swarm_u_corr)))
-          print("     -> v_corr (m,M) %e %e " %(np.min(swarm_v_corr),np.max(swarm_v_corr)))
-          print("     -> w_corr (m,M) %e %e " %(np.min(swarm_w_corr),np.max(swarm_w_corr)))
+          print("     -> u_corr (m,M) %e %e " %(np.min(swarm_u_correction),np.max(swarm_u_correction)))
+          print("     -> v_corr (m,M) %e %e " %(np.min(swarm_v_correction),np.max(swarm_v_correction)))
+          print("     -> w_corr (m,M) %e %e " %(np.min(swarm_w_correction),np.max(swarm_w_correction)))
 
     elif RKorder==2:
 
@@ -970,9 +974,15 @@ for istep in range (0,nstep):
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (correction)' Format='ascii'> \n")
        for im in range(0,nmarker):
-           vtufile.write("%e %e %e \n" %(swarm_u_corr[im],swarm_v_corr[im],swarm_w_corr[im]))
+           vtufile.write("%e %e %e \n" %(swarm_u_correction[im],swarm_v_correction[im],swarm_w_correction[im]))
        vtufile.write("</DataArray>\n")
-
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (corrected)' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           vtufile.write("%e %e %e \n" %(swarm_u[im]+swarm_u_correction[im],\
+                                         swarm_v[im]+swarm_v_correction[im],\
+                                         swarm_w[im]+swarm_w_correction[im]))
+       vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32'  Name='exx' Format='ascii'> \n")
        for im in range(0,nmarker):
