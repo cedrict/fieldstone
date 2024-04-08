@@ -1,0 +1,705 @@
+#
+set term pdf enhanced font "Times,14pt"
+set grid
+set xlabel 'time'
+set key outside
+
+##################################################
+
+set ylabel 'u'
+
+set title 'Ra=10^3'
+set output 'stats_u_Ra1e3.pdf'
+plot[][]\
+'1000_33/stats.ascii'  u 1:2 w l lt 1  t '33^2',\
+'1000_33/stats.ascii'  u 1:3 w l lt 1  notitle,\
+'1000_65/stats.ascii'  u 1:2 w l lt 2  t '65^2',\
+'1000_65/stats.ascii'  u 1:3 w l lt 2  notitle,\
+'1000_97/stats.ascii'  u 1:2 w l lt 3  t '97^2',\
+'1000_97/stats.ascii'  u 1:3 w l lt 3  notitle,\
+'1000_129/stats.ascii' u 1:2 w l lt 4  t '129^2',\
+'1000_129/stats.ascii' u 1:3 w l lt 4  notitle
+
+set title 'Ra=10^4'
+set output 'stats_u_Ra1e4.pdf'
+plot[][]\
+'10000_33/stats.ascii'  u 1:2 w l lt 1  t '33^2',\
+'10000_33/stats.ascii'  u 1:3 w l lt 1  notitle,\
+'10000_65/stats.ascii'  u 1:2 w l lt 2  t '65^2',\
+'10000_65/stats.ascii'  u 1:3 w l lt 2  notitle,\
+'10000_97/stats.ascii'  u 1:2 w l lt 3  t '97^2',\
+'10000_97/stats.ascii'  u 1:3 w l lt 3  notitle,\
+'10000_129/stats.ascii' u 1:2 w l lt 4  t '129^2',\
+'10000_129/stats.ascii' u 1:3 w l lt 4  notitle
+
+set title 'Ra=10^5'
+set output 'stats_u_Ra1e5.pdf'
+plot[][]\
+'100000_33/stats.ascii'  u 1:2 w l lt 1  t '33^2',\
+'100000_33/stats.ascii'  u 1:3 w l lt 1  notitle,\
+'100000_65/stats.ascii'  u 1:2 w l lt 2  t '65^2',\
+'100000_65/stats.ascii'  u 1:3 w l lt 2  notitle,\
+'100000_97/stats.ascii'  u 1:2 w l lt 3  t '97^2',\
+'100000_97/stats.ascii'  u 1:3 w l lt 3  notitle,\
+'100000_129/stats.ascii' u 1:2 w l lt 4  t '129^2',\
+'100000_129/stats.ascii' u 1:3 w l lt 4  notitle
+
+set title 'Ra=10^6'
+set output 'stats_u_Ra1e6.pdf'
+plot[][]\
+'1000000_33/stats.ascii'  u 1:2 w l lt 1  t '33^2',\
+'1000000_33/stats.ascii'  u 1:3 w l lt 1  notitle,\
+'1000000_65/stats.ascii'  u 1:2 w l lt 2  t '65^2',\
+'1000000_65/stats.ascii'  u 1:3 w l lt 2  notitle,\
+'1000000_97/stats.ascii'  u 1:2 w l lt 3  t '97^2',\
+'1000000_97/stats.ascii'  u 1:3 w l lt 3  notitle,\
+'1000000_129/stats.ascii' u 1:2 w l lt 4  t '129^2',\
+'1000000_129/stats.ascii' u 1:3 w l lt 4  notitle
+
+##################################################
+
+set ylabel 'v'
+
+set title 'Ra=10^3'
+set output 'stats_v_Ra1e3.pdf'
+plot[][]\
+'1000_33/stats.ascii'  u 1:4 w l lt 1  t '33^2',\
+'1000_33/stats.ascii'  u 1:5 w l lt 1  notitle,\
+'1000_65/stats.ascii'  u 1:4 w l lt 2  t '65^2',\
+'1000_65/stats.ascii'  u 1:5 w l lt 2  notitle,\
+'1000_97/stats.ascii'  u 1:4 w l lt 3  t '97^2',\
+'1000_97/stats.ascii'  u 1:5 w l lt 3  notitle,\
+'1000_129/stats.ascii' u 1:4 w l lt 4  t '129^2',\
+'1000_129/stats.ascii' u 1:5 w l lt 4  notitle
+
+set title 'Ra=10^4'
+set output 'stats_v_Ra1e4.pdf'
+plot[][]\
+'10000_33/stats.ascii'  u 1:4 w l lt 1  t '33^2',\
+'10000_33/stats.ascii'  u 1:5 w l lt 1  notitle,\
+'10000_65/stats.ascii'  u 1:4 w l lt 2  t '65^2',\
+'10000_65/stats.ascii'  u 1:5 w l lt 2  notitle,\
+'10000_97/stats.ascii'  u 1:4 w l lt 3  t '97^2',\
+'10000_97/stats.ascii'  u 1:5 w l lt 3  notitle,\
+'10000_129/stats.ascii' u 1:4 w l lt 4  t '129^2',\
+'10000_129/stats.ascii' u 1:5 w l lt 4  notitle
+
+set title 'Ra=10^5'
+set output 'stats_v_Ra1e5.pdf'
+plot[][]\
+'100000_33/stats.ascii'  u 1:4 w l lt 1  t '33^2',\
+'100000_33/stats.ascii'  u 1:5 w l lt 1  notitle,\
+'100000_65/stats.ascii'  u 1:4 w l lt 2  t '65^2',\
+'100000_65/stats.ascii'  u 1:5 w l lt 2  notitle,\
+'100000_97/stats.ascii'  u 1:4 w l lt 3  t '97^2',\
+'100000_97/stats.ascii'  u 1:5 w l lt 3  notitle,\
+'100000_129/stats.ascii' u 1:4 w l lt 4  t '129^2',\
+'100000_129/stats.ascii' u 1:5 w l lt 4  notitle
+
+set title 'Ra=10^6'
+set output 'stats_v_Ra1e6.pdf'
+plot[][]\
+'1000000_33/stats.ascii'  u 1:4 w l lt 1  t '33^2',\
+'1000000_33/stats.ascii'  u 1:5 w l lt 1  notitle,\
+'1000000_65/stats.ascii'  u 1:4 w l lt 2  t '65^2',\
+'1000000_65/stats.ascii'  u 1:5 w l lt 2  notitle,\
+'1000000_97/stats.ascii'  u 1:4 w l lt 3  t '97^2',\
+'1000000_97/stats.ascii'  u 1:5 w l lt 3  notitle,\
+'1000000_129/stats.ascii' u 1:4 w l lt 4  t '129^2',\
+'1000000_129/stats.ascii' u 1:5 w l lt 4  notitle
+
+##################################################
+
+set ylabel 'T'
+
+set title 'Ra=10^3'
+set output 'stats_T_Ra1e3.pdf'
+plot[][-0.1:1.1]\
+'1000_33/stats.ascii'  u 1:10 w l lt 1  t '33^2',\
+'1000_33/stats.ascii'  u 1:11 w l lt 1  notitle,\
+'1000_65/stats.ascii'  u 1:10 w l lt 2  t '65^2',\
+'1000_65/stats.ascii'  u 1:11 w l lt 2  notitle,\
+'1000_97/stats.ascii'  u 1:10 w l lt 3  t '97^2',\
+'1000_97/stats.ascii'  u 1:11 w l lt 3  notitle,\
+'1000_129/stats.ascii' u 1:10 w l lt 4  t '129^2',\
+'1000_129/stats.ascii' u 1:11 w l lt 4  notitle
+
+set title 'Ra=10^4'
+set output 'stats_T_Ra1e4.pdf'
+plot[][-0.1:1.1]\
+'10000_33/stats.ascii'  u 1:10 w l lt 1  t '33^2',\
+'10000_33/stats.ascii'  u 1:11 w l lt 1  notitle,\
+'10000_65/stats.ascii'  u 1:10 w l lt 2  t '65^2',\
+'10000_65/stats.ascii'  u 1:11 w l lt 2  notitle,\
+'10000_97/stats.ascii'  u 1:10 w l lt 3  t '97^2',\
+'10000_97/stats.ascii'  u 1:11 w l lt 3  notitle,\
+'10000_129/stats.ascii' u 1:10 w l lt 4  t '129^2',\
+'10000_129/stats.ascii' u 1:11 w l lt 4  notitle
+
+set title 'Ra=10^5'
+set output 'stats_T_Ra1e5.pdf'
+plot[][-0.1:1.1]\
+'100000_33/stats.ascii'  u 1:10 w l lt 1  t '33^2',\
+'100000_33/stats.ascii'  u 1:11 w l lt 1  notitle,\
+'100000_65/stats.ascii'  u 1:10 w l lt 2  t '65^2',\
+'100000_65/stats.ascii'  u 1:11 w l lt 2  notitle,\
+'100000_97/stats.ascii'  u 1:10 w l lt 3  t '97^2',\
+'100000_97/stats.ascii'  u 1:11 w l lt 3  notitle,\
+'100000_129/stats.ascii' u 1:10 w l lt 4  t '129^2',\
+'100000_129/stats.ascii' u 1:11 w l lt 4  notitle
+
+set title 'Ra=10^6'
+set output 'stats_T_Ra1e6.pdf'
+plot[][-0.1:1.1]\
+'1000000_33/stats.ascii'  u 1:10 w l lt 1  t '33^2',\
+'1000000_33/stats.ascii'  u 1:11 w l lt 1  notitle,\
+'1000000_65/stats.ascii'  u 1:10 w l lt 2  t '65^2',\
+'1000000_65/stats.ascii'  u 1:11 w l lt 2  notitle,\
+'1000000_97/stats.ascii'  u 1:10 w l lt 3  t '97^2',\
+'1000000_97/stats.ascii'  u 1:11 w l lt 3  notitle,\
+'1000000_129/stats.ascii' u 1:10 w l lt 4  t '129^2',\
+'1000000_129/stats.ascii' u 1:11 w l lt 4  notitle
+
+##################################################
+
+set ylabel 'psi'
+
+set title 'Ra=10^3'
+set output 'stats_psi_Ra1e3.pdf'
+plot[][]\
+'1000_33/stats.ascii'  u 1:6 w l lt 1  t '33^2',\
+'1000_33/stats.ascii'  u 1:7 w l lt 1  notitle,\
+'1000_65/stats.ascii'  u 1:6 w l lt 2  t '65^2',\
+'1000_65/stats.ascii'  u 1:7 w l lt 2  notitle,\
+'1000_97/stats.ascii'  u 1:6 w l lt 3  t '97^2',\
+'1000_97/stats.ascii'  u 1:7 w l lt 3  notitle,\
+'1000_129/stats.ascii' u 1:6 w l lt 4  t '129^2',\
+'1000_129/stats.ascii' u 1:7 w l lt 4  notitle
+
+set title 'Ra=10^4'
+set output 'stats_psi_Ra1e4.pdf'
+plot[][]\
+'10000_33/stats.ascii'  u 1:6 w l lt 1  t '33^2',\
+'10000_33/stats.ascii'  u 1:7 w l lt 1  notitle,\
+'10000_65/stats.ascii'  u 1:6 w l lt 2  t '65^2',\
+'10000_65/stats.ascii'  u 1:7 w l lt 2  notitle,\
+'10000_97/stats.ascii'  u 1:6 w l lt 3  t '97^2',\
+'10000_97/stats.ascii'  u 1:7 w l lt 3  notitle,\
+'10000_129/stats.ascii' u 1:6 w l lt 4  t '129^2',\
+'10000_129/stats.ascii' u 1:7 w l lt 4  notitle
+
+set title 'Ra=10^5'
+set output 'stats_psi_Ra1e5.pdf'
+plot[][]\
+'100000_33/stats.ascii'  u 1:6 w l lt 1  t '33^2',\
+'100000_33/stats.ascii'  u 1:7 w l lt 1  notitle,\
+'100000_65/stats.ascii'  u 1:6 w l lt 2  t '65^2',\
+'100000_65/stats.ascii'  u 1:7 w l lt 2  notitle,\
+'100000_97/stats.ascii'  u 1:6 w l lt 3  t '97^2',\
+'100000_97/stats.ascii'  u 1:7 w l lt 3  notitle,\
+'100000_129/stats.ascii' u 1:6 w l lt 4  t '129^2',\
+'100000_129/stats.ascii' u 1:7 w l lt 4  notitle
+
+set title 'Ra=10^6'
+set output 'stats_psi_Ra1e6.pdf'
+plot[][]\
+'1000000_33/stats.ascii'  u 1:6 w l lt 1  t '33^2',\
+'1000000_33/stats.ascii'  u 1:7 w l lt 1  notitle,\
+'1000000_65/stats.ascii'  u 1:6 w l lt 2  t '65^2',\
+'1000000_65/stats.ascii'  u 1:7 w l lt 2  notitle,\
+'1000000_97/stats.ascii'  u 1:6 w l lt 3  t '97^2',\
+'1000000_97/stats.ascii'  u 1:7 w l lt 3  notitle,\
+'1000000_129/stats.ascii' u 1:6 w l lt 4  t '129^2',\
+'1000000_129/stats.ascii' u 1:7 w l lt 4  notitle
+
+##################################################
+
+set ylabel 'omega'
+
+set title 'Ra=10^3'
+set output 'stats_omega_Ra1e3.pdf'
+plot[][]\
+'1000_33/stats.ascii'  u 1:8 w l lt 1  t '33^2',\
+'1000_33/stats.ascii'  u 1:9 w l lt 1  notitle,\
+'1000_65/stats.ascii'  u 1:8 w l lt 2  t '65^2',\
+'1000_65/stats.ascii'  u 1:9 w l lt 2  notitle,\
+'1000_97/stats.ascii'  u 1:8 w l lt 3  t '97^2',\
+'1000_97/stats.ascii'  u 1:9 w l lt 3  notitle,\
+'1000_129/stats.ascii' u 1:8 w l lt 4  t '129^2',\
+'1000_129/stats.ascii' u 1:9 w l lt 4  notitle
+
+set title 'Ra=10^4'
+set output 'stats_omega_Ra1e4.pdf'
+plot[][]\
+'10000_33/stats.ascii'  u 1:8 w l lt 1  t '33^2',\
+'10000_33/stats.ascii'  u 1:9 w l lt 1  notitle,\
+'10000_65/stats.ascii'  u 1:8 w l lt 2  t '65^2',\
+'10000_65/stats.ascii'  u 1:9 w l lt 2  notitle,\
+'10000_97/stats.ascii'  u 1:8 w l lt 3  t '97^2',\
+'10000_97/stats.ascii'  u 1:9 w l lt 3  notitle,\
+'10000_129/stats.ascii' u 1:8 w l lt 4  t '129^2',\
+'10000_129/stats.ascii' u 1:9 w l lt 4  notitle
+
+set title 'Ra=10^5'
+set output 'stats_omega_Ra1e5.pdf'
+plot[][]\
+'100000_33/stats.ascii'  u 1:8 w l lt 1  t '33^2',\
+'100000_33/stats.ascii'  u 1:9 w l lt 1  notitle,\
+'100000_65/stats.ascii'  u 1:8 w l lt 2  t '65^2',\
+'100000_65/stats.ascii'  u 1:9 w l lt 2  notitle,\
+'100000_97/stats.ascii'  u 1:8 w l lt 3  t '97^2',\
+'100000_97/stats.ascii'  u 1:9 w l lt 3  notitle,\
+'100000_129/stats.ascii' u 1:8 w l lt 4  t '129^2',\
+'100000_129/stats.ascii' u 1:9 w l lt 4  notitle
+
+set title 'Ra=10^6'
+set output 'stats_omega_Ra1e6.pdf'
+plot[][]\
+'1000000_33/stats.ascii'  u 1:8 w l lt 1  t '33^2',\
+'1000000_33/stats.ascii'  u 1:9 w l lt 1  notitle,\
+'1000000_65/stats.ascii'  u 1:8 w l lt 2  t '65^2',\
+'1000000_65/stats.ascii'  u 1:9 w l lt 2  notitle,\
+'1000000_97/stats.ascii'  u 1:8 w l lt 3  t '97^2',\
+'1000000_97/stats.ascii'  u 1:9 w l lt 3  notitle,\
+'1000000_129/stats.ascii' u 1:8 w l lt 4  t '129^2',\
+'1000000_129/stats.ascii' u 1:9 w l lt 4  notitle
+
+##################################################
+
+set ylabel '<u>'
+
+set title 'Ra=10^3'
+set output 'avrg_u_Ra1e3.pdf'
+plot[][]\
+'1000_33/avrgs.ascii'  u 1:2 w l  t '33^2',\
+'1000_65/avrgs.ascii'  u 1:2 w l  t '65^2',\
+'1000_97/avrgs.ascii'  u 1:2 w l  t '97^2',\
+'1000_129/avrgs.ascii' u 1:2 w l  t '129^2'
+
+set title 'Ra=10^4'
+set output 'avrg_u_Ra1e4.pdf'
+plot[][]\
+'10000_33/avrgs.ascii'  u 1:2 w l  t '33^2',\
+'10000_65/avrgs.ascii'  u 1:2 w l  t '65^2',\
+'10000_97/avrgs.ascii'  u 1:2 w l  t '97^2',\
+'10000_129/avrgs.ascii' u 1:2 w l  t '129^2'
+
+set title 'Ra=10^5'
+set output 'avrg_u_Ra1e5.pdf'
+plot[][]\
+'100000_33/avrgs.ascii'  u 1:2 w l  t '33^2',\
+'100000_65/avrgs.ascii'  u 1:2 w l  t '65^2',\
+'100000_97/avrgs.ascii'  u 1:2 w l  t '97^2',\
+'100000_129/avrgs.ascii' u 1:2 w l  t '129^2'
+
+set title 'Ra=10^6'
+set output 'avrg_u_Ra1e6.pdf'
+plot[][]\
+'1000000_33/avrgs.ascii'  u 1:2 w l  t '33^2',\
+'1000000_65/avrgs.ascii'  u 1:2 w l  t '65^2',\
+'1000000_97/avrgs.ascii'  u 1:2 w l  t '97^2',\
+'1000000_129/avrgs.ascii' u 1:2 w l  t '129^2'
+
+##################################################
+
+set ylabel '<v>'
+
+set title 'Ra=10^3'
+set output 'avrg_v_Ra1e3.pdf'
+plot[][]\
+'1000_33/avrgs.ascii'  u 1:3 w l  t '33^2',\
+'1000_65/avrgs.ascii'  u 1:3 w l  t '65^2',\
+'1000_97/avrgs.ascii'  u 1:3 w l  t '97^2',\
+'1000_129/avrgs.ascii' u 1:3 w l  t '97^2'
+
+set title 'Ra=10^4'
+set output 'avrg_v_Ra1e4.pdf'
+plot[][]\
+'10000_33/avrgs.ascii'  u 1:3 w l  t '33^2',\
+'10000_65/avrgs.ascii'  u 1:3 w l  t '65^2',\
+'10000_97/avrgs.ascii'  u 1:3 w l  t '97^2',\
+'10000_129/avrgs.ascii' u 1:3 w l  t '97^2'
+
+set title 'Ra=10^5'
+set output 'avrg_v_Ra1e5.pdf'
+plot[][]\
+'100000_33/avrgs.ascii'  u 1:3 w l  t '33^2',\
+'100000_65/avrgs.ascii'  u 1:3 w l  t '65^2',\
+'100000_97/avrgs.ascii'  u 1:3 w l  t '97^2',\
+'100000_129/avrgs.ascii' u 1:3 w l  t '97^2'
+
+set title 'Ra=10^6'
+set output 'avrg_v_Ra1e6.pdf'
+plot[][]\
+'1000000_33/avrgs.ascii'  u 1:3 w l  t '33^2',\
+'1000000_65/avrgs.ascii'  u 1:3 w l  t '65^2',\
+'1000000_97/avrgs.ascii'  u 1:3 w l  t '97^2',\
+'1000000_129/avrgs.ascii' u 1:3 w l  t '97^2'
+
+##################################################
+
+set ylabel '<psi>'
+
+set title 'Ra=10^3'
+set output 'avrg_psi_Ra1e3.pdf'
+plot[][]\
+'1000_33/avrgs.ascii'  u 1:4 w l  t '33^2',\
+'1000_65/avrgs.ascii'  u 1:4 w l  t '65^2',\
+'1000_97/avrgs.ascii'  u 1:4 w l  t '97^2',\
+'1000_129/avrgs.ascii' u 1:4 w l  t '97^2'
+
+set title 'Ra=10^4'
+set output 'avrg_psi_Ra1e4.pdf'
+plot[][]\
+'10000_33/avrgs.ascii'  u 1:4 w l  t '33^2',\
+'10000_65/avrgs.ascii'  u 1:4 w l  t '65^2',\
+'10000_97/avrgs.ascii'  u 1:4 w l  t '97^2',\
+'10000_129/avrgs.ascii' u 1:4 w l  t '97^2'
+
+set title 'Ra=10^5'
+set output 'avrg_psi_Ra1e5.pdf'
+plot[][]\
+'100000_33/avrgs.ascii'  u 1:4 w l  t '33^2',\
+'100000_65/avrgs.ascii'  u 1:4 w l  t '65^2',\
+'100000_97/avrgs.ascii'  u 1:4 w l  t '97^2',\
+'100000_129/avrgs.ascii' u 1:4 w l  t '97^2'
+
+set title 'Ra=10^6'
+set output 'avrg_psi_Ra1e6.pdf'
+plot[][]\
+'1000000_33/avrgs.ascii'  u 1:4 w l  t '33^2',\
+'1000000_65/avrgs.ascii'  u 1:4 w l  t '65^2',\
+'1000000_97/avrgs.ascii'  u 1:4 w l  t '97^2',\
+'1000000_129/avrgs.ascii' u 1:4 w l  t '97^2'
+
+##################################################
+
+set ylabel 'omega'
+
+set title 'Ra=10^3'
+set output 'avrg_omega_Ra1e3.pdf'
+plot[][]\
+'1000_33/avrgs.ascii'  u 1:5 w l  t '33^2',\
+'1000_65/avrgs.ascii'  u 1:5 w l  t '65^2',\
+'1000_97/avrgs.ascii'  u 1:5 w l  t '97^2',\
+'1000_129/avrgs.ascii' u 1:5 w l  t '129^2'
+
+set title 'Ra=10^4'
+set output 'avrg_omega_Ra1e4.pdf'
+plot[][]\
+'10000_33/avrgs.ascii'  u 1:5 w l  t '33^2',\
+'10000_65/avrgs.ascii'  u 1:5 w l  t '65^2',\
+'10000_97/avrgs.ascii'  u 1:5 w l  t '97^2',\
+'10000_129/avrgs.ascii' u 1:5 w l  t '129^2'
+
+set title 'Ra=10^5'
+set output 'avrg_omega_Ra1e5.pdf'
+plot[][]\
+'100000_33/avrgs.ascii'  u 1:5 w l  t '33^2',\
+'100000_65/avrgs.ascii'  u 1:5 w l  t '65^2',\
+'100000_97/avrgs.ascii'  u 1:5 w l  t '97^2',\
+'100000_129/avrgs.ascii' u 1:5 w l  t '129^2'
+
+set title 'Ra=10^6'
+set output 'avrg_omega_Ra1e6.pdf'
+plot[][]\
+'1000000_33/avrgs.ascii'  u 1:5 w l  t '33^2',\
+'1000000_65/avrgs.ascii'  u 1:5 w l  t '65^2',\
+'1000000_97/avrgs.ascii'  u 1:5 w l  t '97^2',\
+'1000000_129/avrgs.ascii' u 1:5 w l  t '129^2'
+
+##################################################
+
+set ylabel '<T>'
+
+set title 'Ra=10^3'
+set output 'avrg_T_Ra1e3.pdf'
+plot[][]\
+'1000_33/avrgs.ascii'  u 1:6 w l  t '33^2',\
+'1000_65/avrgs.ascii'  u 1:6 w l  t '65^2',\
+'1000_97/avrgs.ascii'  u 1:6 w l  t '97^2',\
+'1000_129/avrgs.ascii' u 1:6 w l  t '129^2'
+
+set title 'Ra=10^4'
+set output 'avrg_T_Ra1e4.pdf'
+plot[][]\
+'10000_33/avrgs.ascii'  u 1:6 w l  t '33^2',\
+'10000_65/avrgs.ascii'  u 1:6 w l  t '65^2',\
+'10000_97/avrgs.ascii'  u 1:6 w l  t '97^2',\
+'10000_129/avrgs.ascii' u 1:6 w l  t '129^2'
+
+set title 'Ra=10^5'
+set output 'avrg_T_Ra1e5.pdf'
+plot[][]\
+'100000_33/avrgs.ascii'  u 1:6 w l  t '33^2',\
+'100000_65/avrgs.ascii'  u 1:6 w l  t '65^2',\
+'100000_97/avrgs.ascii'  u 1:6 w l  t '97^2',\
+'100000_129/avrgs.ascii' u 1:6 w l  t '129^2'
+
+set title 'Ra=10^6'
+set output 'avrg_T_Ra1e6.pdf'
+plot[][]\
+'1000000_33/avrgs.ascii'  u 1:6 w l  t '33^2',\
+'1000000_65/avrgs.ascii'  u 1:6 w l  t '65^2',\
+'1000000_97/avrgs.ascii'  u 1:6 w l  t '97^2',\
+'1000000_129/avrgs.ascii' u 1:6 w l  t '129^2'
+
+##################################################
+
+set ylabel 'v_{rms}'
+
+set title 'Ra=10^3'
+set output 'vrms_Ra1e3.pdf'
+plot[][]\
+'1000_33/vrms.ascii'  u 1:2 w l t '33^2',\
+'1000_65/vrms.ascii'  u 1:2 w l t '65^2',\
+'1000_97/vrms.ascii'  u 1:2 w l t '97^2',\
+'1000_129/vrms.ascii' u 1:2 w l t '129^2',\
+
+set title 'Ra=10^4'
+set output 'vrms_Ra1e4.pdf'
+plot[][]\
+'10000_33/vrms.ascii'  u 1:2 w l t '33^2',\
+'10000_65/vrms.ascii'  u 1:2 w l t '65^2',\
+'10000_97/vrms.ascii'  u 1:2 w l t '97^2',\
+'10000_129/vrms.ascii' u 1:2 w l t '129^2',\
+42.865 lt -1 dt 2
+
+set title 'Ra=10^5'
+set output 'vrms_Ra1e5.pdf'
+plot[][]\
+'100000_33/vrms.ascii'  u 1:2 w l t '33^2',\
+'100000_65/vrms.ascii'  u 1:2 w l t '65^2',\
+'100000_97/vrms.ascii'  u 1:2 w l t '97^2',\
+'100000_129/vrms.ascii' u 1:2 w l t '129^2',\
+193.21454 lt -1 dt 2
+
+set title 'Ra=10^6'
+set output 'vrms_Ra1e6.pdf'
+plot[][]\
+'1000000_33/vrms.ascii'  u 1:2 w l t '33^2',\
+'1000000_65/vrms.ascii'  u 1:2 w l t '65^2',\
+'1000000_97/vrms.ascii'  u 1:2 w l t '97^2',\
+'1000000_129/vrms.ascii' u 1:2 w l t '129^2',\
+833.98977 lt -1 dt 2 
+
+##################################################
+
+set ylabel 'Nu'
+
+set title 'Ra=10^3'
+set output 'Nu_Ra1e3.pdf'
+plot[][]\
+'1000_33/Nu.ascii'  u 1:2 w l t '33^2',\
+'1000_65/Nu.ascii'  u 1:2 w l t '65^2',\
+'1000_97/Nu.ascii'  u 1:2 w l t '97^2',\
+'1000_129/Nu.ascii' u 1:2 w l t '129^2',\
+
+set title 'Ra=10^4'
+set output 'Nu_Ra1e4.pdf'
+plot[][]\
+'10000_33/Nu.ascii'  u 1:2 w l t '33^2',\
+'10000_65/Nu.ascii'  u 1:2 w l t '65^2',\
+'10000_97/Nu.ascii'  u 1:2 w l t '97^2',\
+'10000_129/Nu.ascii' u 1:2 w l t '129^2',\
+4.8844 lt -1 dt 2 
+
+set title 'Ra=10^5'
+set output 'Nu_Ra1e5.pdf'
+plot[][]\
+'100000_33/Nu.ascii'  u 1:2 w l t '33^2',\
+'100000_65/Nu.ascii'  u 1:2 w l t '65^2',\
+'100000_97/Nu.ascii'  u 1:2 w l t '97^2',\
+'100000_129/Nu.ascii' u 1:2 w l t '129^2',\
+10.534095 lt -1 dt 2 
+
+set title 'Ra=10^6'
+set output 'Nu_Ra1e6.pdf'
+plot[][]\
+'1000000_33/Nu.ascii'  u 1:2 w l t '33^2',\
+'1000000_65/Nu.ascii'  u 1:2 w l t '65^2',\
+'1000000_97/Nu.ascii'  u 1:2 w l t '97^2',\
+'1000000_129/Nu.ascii' u 1:2 w l t '129^2',\
+21.972465 lt -1 dt 2 
+
+##################################################
+
+set log y 
+set key outside
+
+set ylabel 'xi(u)'
+
+set title 'Ra=10^3'
+set output 'conv_u_Ra1e3.pdf'
+plot[][]\
+'1000_33/conv.ascii'  u 1:2 w l  t '33^2',\
+'1000_65/conv.ascii'  u 1:2 w l  t '65^2',\
+'1000_97/conv.ascii'  u 1:2 w l  t '97^2',\
+'1000_129/conv.ascii' u 1:2 w l  t '129^2',\
+
+set title 'Ra=10^4'
+set output 'conv_u_Ra1e4.pdf'
+plot[][]\
+'10000_33/conv.ascii'  u 1:2 w l  t '33^2',\
+'10000_65/conv.ascii'  u 1:2 w l  t '65^2',\
+'10000_97/conv.ascii'  u 1:2 w l  t '97^2',\
+'10000_129/conv.ascii' u 1:2 w l  t '129^2',\
+
+set title 'Ra=10^5'
+set output 'conv_u_Ra1e5.pdf'
+plot[][]\
+'100000_33/conv.ascii'  u 1:2 w l  t '33^2',\
+'100000_65/conv.ascii'  u 1:2 w l  t '65^2',\
+'100000_97/conv.ascii'  u 1:2 w l  t '97^2',\
+'100000_129/conv.ascii' u 1:2 w l  t '129^2',\
+
+set title 'Ra=10^6'
+set output 'conv_u_Ra1e6.pdf'
+plot[][]\
+'1000000_33/conv.ascii'  u 1:2 w l  t '33^2',\
+'1000000_65/conv.ascii'  u 1:2 w l  t '65^2',\
+'1000000_97/conv.ascii'  u 1:2 w l  t '97^2',\
+'1000000_129/conv.ascii' u 1:2 w l  t '129^2',\
+
+##################################################
+set ylabel 'xi(v)'
+
+set title 'Ra=10^3'
+set output 'conv_v_Ra1e3.pdf'
+plot[][]\
+'1000_33/conv.ascii'  u 1:3 w l  t '33^2',\
+'1000_65/conv.ascii'  u 1:3 w l  t '65^2',\
+'1000_97/conv.ascii'  u 1:3 w l  t '97^2',\
+'1000_129/conv.ascii' u 1:3 w l  t '129^2',\
+
+set title 'Ra=10^4'
+set output 'conv_v_Ra1e4.pdf'
+plot[][]\
+'10000_33/conv.ascii'  u 1:3 w l  t '33^2',\
+'10000_65/conv.ascii'  u 1:3 w l  t '65^2',\
+'10000_97/conv.ascii'  u 1:3 w l  t '97^2',\
+'10000_129/conv.ascii' u 1:3 w l  t '129^2',\
+
+set title 'Ra=10^5'
+set output 'conv_v_Ra1e5.pdf'
+plot[][]\
+'100000_33/conv.ascii'  u 1:3 w l  t '33^2',\
+'100000_65/conv.ascii'  u 1:3 w l  t '65^2',\
+'100000_97/conv.ascii'  u 1:3 w l  t '97^2',\
+'100000_129/conv.ascii' u 1:3 w l  t '129^2',\
+
+set title 'Ra=10^6'
+set output 'conv_v_Ra1e6.pdf'
+plot[][]\
+'1000000_33/conv.ascii'  u 1:3 w l  t '33^2',\
+'1000000_65/conv.ascii'  u 1:3 w l  t '65^2',\
+'1000000_97/conv.ascii'  u 1:3 w l  t '97^2',\
+'1000000_129/conv.ascii' u 1:3 w l  t '129^2',\
+
+##################################################
+set ylabel 'xi(psi)'
+
+set title 'Ra=10^3'
+set output 'conv_psi_Ra1e3.pdf'
+plot[][]\
+'1000_33/conv.ascii'  u 1:4 w l  t '33^2',\
+'1000_65/conv.ascii'  u 1:4 w l  t '65^2',\
+'1000_97/conv.ascii'  u 1:4 w l  t '97^2',\
+'1000_129/conv.ascii' u 1:4 w l  t '129^2',\
+
+set title 'Ra=10^4'
+set output 'conv_psi_Ra1e4.pdf'
+plot[][]\
+'10000_33/conv.ascii'  u 1:4 w l  t '33^2',\
+'10000_65/conv.ascii'  u 1:4 w l  t '65^2',\
+'10000_97/conv.ascii'  u 1:4 w l  t '97^2',\
+'10000_129/conv.ascii' u 1:4 w l  t '129^2',\
+
+set title 'Ra=10^5'
+set output 'conv_psi_Ra1e5.pdf'
+plot[][]\
+'100000_33/conv.ascii'  u 1:4 w l  t '33^2',\
+'100000_65/conv.ascii'  u 1:4 w l  t '65^2',\
+'100000_97/conv.ascii'  u 1:4 w l  t '97^2',\
+'100000_129/conv.ascii' u 1:4 w l  t '129^2',\
+
+set title 'Ra=10^6'
+set output 'conv_psi_Ra1e6.pdf'
+plot[][]\
+'1000000_33/conv.ascii'  u 1:4 w l  t '33^2',\
+'1000000_65/conv.ascii'  u 1:4 w l  t '65^2',\
+'1000000_97/conv.ascii'  u 1:4 w l  t '97^2',\
+'1000000_129/conv.ascii' u 1:4 w l  t '129^2',\
+
+##################################################
+set ylabel 'xi(omega)'
+
+set title 'Ra=10^3'
+set output 'conv_omega_Ra1e3.pdf'
+plot[][]\
+'1000_33/conv.ascii'  u 1:5 w l  t '33^2',\
+'1000_65/conv.ascii'  u 1:5 w l  t '65^2',\
+'1000_97/conv.ascii'  u 1:5 w l  t '97^2',\
+'1000_129/conv.ascii' u 1:5 w l  t '129^2',\
+
+set title 'Ra=10^4'
+set output 'conv_omega_Ra1e4.pdf'
+plot[][]\
+'10000_33/conv.ascii'  u 1:5 w l  t '33^2',\
+'10000_65/conv.ascii'  u 1:5 w l  t '65^2',\
+'10000_97/conv.ascii'  u 1:5 w l  t '97^2',\
+'10000_129/conv.ascii' u 1:5 w l  t '129^2',\
+
+set title 'Ra=10^5'
+set output 'conv_omega_Ra1e5.pdf'
+plot[][]\
+'100000_33/conv.ascii'  u 1:5 w l  t '33^2',\
+'100000_65/conv.ascii'  u 1:5 w l  t '65^2',\
+'100000_97/conv.ascii'  u 1:5 w l  t '97^2',\
+'100000_129/conv.ascii' u 1:5 w l  t '129^2',\
+
+set title 'Ra=10^6'
+set output 'conv_omega_Ra1e6.pdf'
+plot[][]\
+'1000000_33/conv.ascii'  u 1:5 w l  t '33^2',\
+'1000000_65/conv.ascii'  u 1:5 w l  t '65^2',\
+'1000000_97/conv.ascii'  u 1:5 w l  t '97^2',\
+'1000000_129/conv.ascii' u 1:5 w l  t '129^2',\
+
+##################################################
+set ylabel 'xi(T)'
+
+set title 'Ra=10^3'
+set output 'conv_T_Ra1e3.pdf'
+plot[][]\
+'1000_33/conv.ascii'  u 1:6 w l  t '33^2',\
+'1000_65/conv.ascii'  u 1:6 w l  t '65^2',\
+'1000_97/conv.ascii'  u 1:6 w l  t '97^2',\
+'1000_129/conv.ascii' u 1:6 w l  t '129^2'
+
+set title 'Ra=10^4'
+set output 'conv_T_Ra1e4.pdf'
+plot[][]\
+'10000_33/conv.ascii'  u 1:6 w l  t '33^2',\
+'10000_65/conv.ascii'  u 1:6 w l  t '65^2',\
+'10000_97/conv.ascii'  u 1:6 w l  t '97^2',\
+'10000_129/conv.ascii' u 1:6 w l  t '129^2'
+
+set title 'Ra=10^5'
+set output 'conv_T_Ra1e5.pdf'
+plot[][]\
+'100000_33/conv.ascii'  u 1:6 w l  t '33^2',\
+'100000_65/conv.ascii'  u 1:6 w l  t '65^2',\
+'100000_97/conv.ascii'  u 1:6 w l  t '97^2',\
+'100000_129/conv.ascii' u 1:6 w l  t '129^2'
+
+set title 'Ra=10^6'
+set output 'conv_T_Ra1e6.pdf'
+plot[][]\
+'1000000_33/conv.ascii'  u 1:6 w l  t '33^2',\
+'1000000_65/conv.ascii'  u 1:6 w l  t '65^2',\
+'1000000_97/conv.ascii'  u 1:6 w l  t '97^2',\
+'1000000_129/conv.ascii' u 1:6 w l  t '129^2'
+
+
+
