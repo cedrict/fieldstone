@@ -1,0 +1,73 @@
+#
+set term pdf enhanced font 'Times,13pt'
+set xlabel 'x'
+set ylabel 'z'
+set size square
+set grid
+
+Rout=6371e3
+
+############################################
+
+set title 'P_1 mapping'
+set output 'xz_P1.pdf'
+plot[0:Rout][0:Rout]\
+'xz_P1.ascii' w d notitle,\
+sqrt(Rout**2-x**2) lt -1 notitle
+
+set title 'P_2 mapping'
+set output 'xz_P2.pdf'
+plot[0:Rout][0:Rout]\
+'xz_P2.ascii' w d notitle,\
+sqrt(Rout**2-x**2) lt -1 notitle
+
+set title 'DJ mapping'
+set output 'xz_DJ.pdf'
+plot[0:Rout][0:Rout]\
+'xz_DJ.ascii' w d notitle,\
+sqrt(Rout**2-x**2) lt -1 notitle
+
+############################################
+
+set title 'P_1 mapping'
+set output 'xz_P1_boundary.pdf'
+plot[0:Rout/2][Rout/2:]\
+'xz_P1_boundary.ascii' w d notitle,\
+sqrt(Rout**2-x**2) lt -1 notitle
+
+set title 'P_2 mapping'
+set output 'xz_P2_boundary.pdf'
+plot[0:Rout/2][Rout/2:]\
+'xz_P2_boundary.ascii' w d notitle,\
+sqrt(Rout**2-x**2) lt -1 notitle
+
+set title 'DJ mapping'
+set output 'xz_DJ_boundary.pdf'
+plot[0:Rout/2][Rout/2:]\
+'xz_DJ_boundary.ascii' w d notitle,\
+sqrt(Rout**2-x**2) lt -1 notitle
+
+############################################
+set xlabel 'x (km)'
+
+set title 'P_1 mapping'
+set output 'xz_P1_boundary_error.pdf'
+plot[][]\
+'xz_P1_boundary.ascii' u ($1/1000):($3-Rout) w d notitle,\
+
+set title 'P_2 mapping'
+set output 'xz_P2_boundary_error.pdf'
+plot[][]\
+'xz_P2_boundary.ascii' u ($1/1000):($3-Rout) w d notitle,\
+
+set title 'DJ mapping'
+set output 'xz_DJ_boundary_error.pdf'
+plot[][]\
+'xz_DJ_boundary.ascii' u ($1/1000):($3-Rout) w d notitle,\
+
+############################################
+
+
+
+
+

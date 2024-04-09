@@ -1163,8 +1163,6 @@ nqperdim=3.}
 Area does not depend on position of middle node?!
 
 
-
-
 \vspace{1cm}
 
 \Literature 
@@ -1172,7 +1170,595 @@ Area does not depend on position of middle node?!
 \item \fullcite{yuhy94}
 \end{itemize}
 
+%.............................................................
+\subsection{The Double Jacobian approach}
 
+What follows is 90\% borrowed from \textcite{moth20} (2020) with slight changes in the notations.
+
+The basic idea behind this approach is to compute the local to Cartesian mapping as a two-stage process, hence the name ``Double Jacobian''. 
+
+\begin{enumerate}
+\item 
+The first stage maps from local to polar/spherical coordinates and back. This mapping is typically 
+to a straight-edged polar or spherical element for which the Jacobian partial derivatives are constant within the element. The mapping and its inverse are given by straightforward analytical matrix expressions. 
+\item The second stage maps from polar/spherical to Cartesian coordinates (and back) and is also a simple analytical mapping. 
+\end{enumerate}
+The net Jacobian from local finite element coordinates to a cylindrical or spherical element in Cartesian geometry (or any other analytically mapped geometry) is simply the matrix product of two easy-to-compute inverse Jacobian matrices. Because the net Jacobian has an analytical form, it can be more rapidly computed than a general isoparametric or superparametric finite
+element mapping.
+
+Remark: in what follows I will denote the polar coordinates by $\upvarrho,\uptheta$ so as to avoid confusion with the reduced/local coordinates $r,s$.
+
+
+As we have seen so far the standard approach is as follows:
+The relationship between the derivatives of the basis functions with respect to the Cartesian coordinates and the same derivatives with respect to the local coordinates is given by:
+\[
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial x} \\ \\
+\frac{\partial \bN_i}{\partial z} 
+\end{array}
+\right)
+= 
+\underbrace{\left(
+\begin{array}{cc}
+\frac{\partial r}{\partial x}  & 
+\frac{\partial s}{\partial x}   \\ \\
+\frac{\partial r}{\partial z}  & 
+\frac{\partial s}{\partial z}  
+\end{array}
+\right)}_{J_{LC}}
+\cdot
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial r} \\ \\
+\frac{\partial \bN_i}{\partial s} 
+\end{array}
+\right)
+\]
+where $\bN$ are the shape functions, $i$ is the local node numbering of the element, $(x,z)$ are the Cartesian coordinates, and $(r,s)$ are the local coordinates within the reference element.
+
+
+\begin{verbatim}
+              J_LC
+            --------->          
+local (r,s)            Cartesian (x,z)
+           <---------          
+              J_CL
+\end{verbatim}
+
+
+%-----------------------------
+\subsubsection{DJ: First Jacobian}
+
+
+\begin{verbatim}
+             J_LP
+           --------->                       ---------->
+local (r,s)           linear Polar (r,theta)           cartesian (x,z)
+          <---------                        <----------
+            J_PL
+\end{verbatim}
+
+
+The Double Jacobian approach uses the standard finite element approach to first map from local to linear polar coordinates (i.e. $\uprho,\uptheta$). The first Jacobian for a cylindrical (polar) mapping is analogous to the standard Jacobian, where $x$ and $z$ are now changed to $\uptheta$ and $\uprho$, 
+respectively, $\uptheta$ being the angle measured from the positive $z$-axis 
+in clockwise direction (i.e. the colatitude) and $\uprho$ being the radius.
+The global derivatives may be expressed in matrix form as
+\begin{equation}
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial \uptheta} \\ \\
+\frac{\partial \bN_i}{\partial \uprho} 
+\end{array}
+\right)
+= 
+\underbrace{\left(
+\begin{array}{cc}
+\frac{\partial r}{\partial \uptheta}  & 
+\frac{\partial s}{\partial \uptheta}   \\ \\
+\frac{\partial r}{\partial \uprho}  & 
+\frac{\partial s}{\partial \uprho}  
+\end{array}
+\right)}_{{\bm J}_{LP}}
+\cdot
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial r} \\ \\
+\frac{\partial \bN_i}{\partial s} 
+\end{array}
+\right)
+\label{eq:DJ1}
+\end{equation}
+where $\bN_i$ are the shape functions and ${\bm J}_{LP}$ 
+is the Jacobian of the transformation from local to polar coordinates.
+
+The derivatives of these shape functions with respect to local coordinates $r,s$ (i.e. the rhs vector)
+can be computed explicitly since the basis functions are chosen/built for a given element type and formulated
+as a function of the local coordinates.
+However, the terms of the Jacobian ${\bm J}_{LP}$ cannot be directly computed since 
+explicit expressions for $r(\uptheta, \uprho)$ and $s(\uptheta, \uprho)$ do not exist.
+A wonderful ``trick'' in finite element programming (discovered by Bruce Irons in the mid-60s \cite{eriz68}) is to make use of the inverse coordinate transformation
+\begin{equation}
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial r} \\ \\
+\frac{\partial \bN_i}{\partial s} 
+\end{array}
+\right)
+= 
+\underbrace{\left(
+\begin{array}{cc}
+\frac{\partial \uptheta}{\partial r}  & 
+\frac{\partial \uprho}{\partial r}  \\ \\
+\frac{\partial \uptheta}{\partial s}  & 
+\frac{\partial \uprho}{\partial s}
+\end{array}
+\right)}_{{\bm J}_{PL}}
+\cdot
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial \uptheta} \\ \\
+\frac{\partial \bN_i}{\partial \uprho} 
+\end{array}
+\right)
+\label{eq:DJ2}
+\end{equation}
+where $J_{PL}$ is the Jacobian of the transformation from polar to local coordinates.
+
+From Equations \eqref{eq:DJ1} and \eqref{eq:DJ2}, we have ${\bm J}_{LP}={\bm J}_{PL}^{-1}$.
+Using Cramer's rule, the inverse of the Jacobian from polar to local coordinates is given by
+\[
+{\bm J}_{LP}={\bm J}_{PL}^{-1} = \frac{1}{|{\bm J}_{PL}|} 
+\left(
+\begin{array}{cc}
+\frac{\partial \uprho}{\partial s}  & 
+-\frac{\partial \uprho}{\partial r}  \\ \\
+-\frac{\partial \uptheta}{\partial s}  & 
+\frac{\partial \uptheta}{\partial r}
+\end{array}
+\right)
+\]
+
+
+The polar coordinates for each element are related with local coordinates through the shape functions:
+\begin{eqnarray}
+\uptheta(r,s) &=& \sum_{i=1}^m \bN_i(r,s) \; \uptheta_i\\
+\uprho(r,s) &=&  \sum_{i=1}^m \bN_i(r,s) \; \uprho_i
+\end{eqnarray}
+where $m$ is the number of nodes in the element.
+Then
+\begin{eqnarray}
+\frac{\partial\uptheta}{\partial r}(r,s) &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial r}(r,s)\; \uptheta_i\\
+\frac{\partial\uptheta}{\partial s}(r,s) &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uptheta_i\\
+\frac{\partial\uprho}{\partial r}(r,s)   &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial r}(r,s)\; \uprho_i \\
+\frac{\partial\uprho}{\partial s}(r,s)   &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uprho_i
+\end{eqnarray}
+
+
+
+%-----------------------------
+\subsubsection{DJ: Second jacobian}
+
+The second Jacobian in the DJ method is the analytical mapping from polar coordinates to Cartesian coordinates. The derivatives expressed in matrix form are given by
+\begin{equation}
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial x} \\ \\
+\frac{\partial \bN_i}{\partial z} 
+\end{array}
+\right)
+= 
+\underbrace{\left(
+\begin{array}{cc}
+\frac{\partial \uptheta}{\partial x}  & 
+\frac{\partial \uprho}{\partial x}   \\ \\
+\frac{\partial \uptheta}{\partial z}  & 
+\frac{\partial \uprho}{\partial z}  
+\end{array}
+\right)}_{{\bm J}_{PC}}
+\cdot
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial \uptheta} \\ \\
+\frac{\partial \bN_i}{\partial \uprho} 
+\end{array}
+\right)
+\label{eq:DJ3}
+\end{equation}
+where ${\bm J}_{PC}$ is the Jacobian from polar to Cartesian coordinates. The analytical expressions for 
+$\uptheta(x,z)$ and $\uprho(x,z)$ are known; however, it is again easier to use the inverse transformation
+
+\begin{equation}
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial \uptheta} \\ \\
+\frac{\partial \bN_i}{\partial \uprho} 
+\end{array}
+\right)
+= 
+\underbrace{\left(
+\begin{array}{cc}
+\frac{\partial x}{\partial \uptheta}  & 
+\frac{\partial z}{\partial \uptheta}  \\ \\
+\frac{\partial x}{\partial \uprho}   &
+\frac{\partial z}{\partial \uprho}
+\end{array}
+\right)}_{{\bm J}_{CP}}
+\cdot
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial x} \\ \\
+\frac{\partial \bN_i}{\partial y} 
+\end{array}
+\right)
+\label{eq:DJ4}
+\end{equation}
+where ${\bm J}_{CP}$ is the Jacobian from Cartesian to polar coordinates. 
+From Equations \eqref{eq:DJ3} and \eqref{eq:DJ4}, ${\bm J}_{PC}={\bm J}_{CP}^{-1} $. The inverse
+of the Jacobian from Cartesian to polar coordinates is given by
+\[
+{\bm J}_{PC}= {\bm J}_{CP}^{-1}=
+\frac{1}{|{\bm J}_{CP}|}
+\left(
+\begin{array}{cc}
+\frac{\partial z}{\partial \uprho} & 
+-\frac{\partial z}{\partial \uptheta}  \\ \\
+-\frac{\partial x}{\partial \uprho}   &
+\frac{\partial x}{\partial \uptheta}
+\end{array}
+\right)
+\]
+Cartesian coordinates are related with polar coordinates by:
+\begin{eqnarray}
+x(\uptheta,\uprho) &=& \uprho \sin \uptheta \\
+z(\uptheta,\uprho) &=& \uprho \cos \uptheta 
+\end{eqnarray}
+so that 
+\begin{eqnarray}
+\frac{\partial x}{\partial \uptheta} (\uptheta,\uprho) &=& \uprho \cos \uptheta \\
+\frac{\partial x}{\partial \uprho} (\uptheta,\uprho) &=&  \sin \uptheta \\
+\frac{\partial z}{\partial \uptheta} (\uptheta,\uprho) &=& -\uprho \sin \uptheta \\
+\frac{\partial z}{\partial \uprho} (\uptheta,\uprho) &=& \cos \uptheta 
+\end{eqnarray}
+The inverse of the Jacobian from Cartesian coordinates to polar coordinates can then be written 
+as a function of polar coordinates:
+\begin{equation}
+\boxed{
+{\bm J}_{CP}^{-1} 
+= 
+\frac{1}{\uprho}
+\left(
+\begin{array}{cc}
+\cos \uptheta & \uprho\sin\uptheta \\
+-\sin\uptheta & \uprho\cos\uptheta
+\end{array}
+\right)}
+\label{eq:DJ6}
+\end{equation}
+where $\uptheta$ and $\uprho$ are evaluated at each integration point (ip).
+
+Remark: this Jacobian is independent of the choice of basis functions.
+
+
+%--------------------------------------------------------
+\subsubsection{DJ: Combining both}
+
+Making use of the matrix product of the two inverse Jacobians,
+global Cartesian derivatives can be expressed as a matrix product of the local derivatives in the local to polar and polar to Cartesian coordinate mappings. Substituting Equation \eqref{eq:DJ1} into Equation \eqref{eq:DJ3} yields
+
+\[
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial x} \\ \\
+\frac{\partial \bN_i}{\partial z} 
+\end{array}
+\right)
+= 
+{\bm J}_{PC} \cdot 
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial \uptheta} \\ \\
+\frac{\partial \bN_i}{\partial \uprho} 
+\end{array}
+\right)
+=
+{\bm J}_{PC} \cdot 
+{\bm J}_{LP} \cdot 
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial r} \\ \\
+\frac{\partial \bN_i}{\partial s} 
+\end{array}
+\right)
+=
+%\]
+%which is equivalent to
+%\begin{eqnarray}
+%\left(
+%\begin{array}{c}
+%\frac{\partial \bN_i}{\partial x} \\ \\
+%\frac{\partial \bN_i}{\partial y} 
+%\end{array}
+%\right)
+%&=&
+{\bm J}_{CP}^{-1} \cdot 
+{\bm J}_{PL}^{-1} \cdot 
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial r} \\ \\
+\frac{\partial \bN_i}{\partial s} 
+\end{array}
+\right)
+\]
+%\end{eqnarray}
+
+Note that the 2D DJ approach will ensure a perfect mapping to the circular-arc edges of the 
+elements of a cylindrical annulus mesh.
+Any point on the edge of a boundary element of the mesh is mapped to its true position along 
+a circular arc.
+
+The major drawback from this is the fact that (as we will see) the Jacobian is no more a polynomial
+so special care must be taken with regards to the integration.
+
+%..................................................
+\subsubsection{Triangles}
+
+For linear triangles ($P_1$) the basis functions are
+\begin{eqnarray}
+\bN_1(r,s)&=&1-r-s \\
+\bN_2(r,s)&=&r \\
+\bN_3(r,s)&=&s
+\end{eqnarray}
+and their derivatives:
+\begin{eqnarray}
+\frac{\partial\uptheta}{\partial r}(r,s) &=& \uptheta_2-\uptheta_1 = \uptheta_{21}\\
+\frac{\partial\uptheta}{\partial s}(r,s) &=& \uptheta_3-\uptheta_1 = \uptheta_{31}\\
+\frac{\partial\uprho}{\partial r}(r,s) &=& \uprho_2-\uprho_1 = \uprho_{21}\\
+\frac{\partial\uprho}{\partial s}(r,s) &=& \uprho_3-\uprho_1 = \uprho_{31}
+\end{eqnarray}
+In this case we have 
+\begin{equation}
+\boxed{
+{\bm J}_{LP}={\bm J}_{PL}^{-1} = \frac{1}{\uptheta_{21}\uprho_{31}-\uprho_{21}\uptheta_{31}} 
+\left(
+\begin{array}{cc}
+\uprho_{31} & -\uprho_{21} \\
+-\uptheta_{31} & \uptheta_{21}
+\end{array}
+\right)}
+\label{eq:DJ5}
+\end{equation}
+
+
+
+Substituting Equations \eqref{eq:DJ5} and \eqref{eq:DJ6} into the equation above, the analytical expression for this mapping is
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}    
+\frac{\partial \bN_i}{\partial x} \\ \\
+\frac{\partial \bN_i}{\partial z} 
+\end{array}
+\right)
+&=&
+\frac{1}{\uprho}
+\left(
+\begin{array}{cc}
+\cos \uptheta & \uprho\sin\uptheta \\
+-\sin\uptheta & \uprho\cos\uptheta
+\end{array}
+\right)\cdot
+\frac{1}{\uptheta_{21}\uprho_{31}-\uprho_{21}\uptheta_{31}} 
+\left(
+\begin{array}{cc}
+\uprho_{31} & -\uprho_{21} \\
+-\uptheta_{31} & \uptheta_{21}
+\end{array}
+\right)
+\nn\\
+&=&
+\frac{1}{\uptheta_{21}\uprho_{31}-\uprho_{21}\uptheta_{31}} 
+\left(
+\begin{array}{cc}
+ \frac{\uprho_{31} }{\uprho} \cos\uptheta -\uptheta_{31}\sin\uptheta &  
+-\frac{\uprho_{21} }{\uprho} \cos\uptheta +\uptheta_{21}\sin\uptheta \\ \\
+-\frac{\uprho_{31} }{\uprho} \sin\uptheta -\uptheta_{31}\cos\uptheta &
+ \frac{\uprho_{21} }{\uprho} \sin\uptheta +\uptheta_{21}\cos\uptheta 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial r} \\ \\
+\frac{\partial \bN_i}{\partial s} 
+\end{array}
+\right)
+\end{eqnarray}
+which is Eq. (19) of \textcite{moth20}.
+This expression could be problematic if $\uprho=0$ but since it will be evaluated at the 
+quadrature points this case is extremely unlikely.
+
+
+Based on Fig 2 of \textcite{moth20}, we consider an annulus of outer diameter
+6371km. Visually from 2A we infer $\uprho_1=4700$km, $\uprho_2=\uprho_3=6371$km, and 
+$\uptheta_1=14.5$, $\uptheta_2=22$ and $\uptheta_3=0$.
+
+If quadratic basis functions are used, we'll define 
+$r_4=\frac12(r_1+r_2)$,
+$r_5=\frac12(r_2+r_3)$,
+$r_6=\frac12(r_3+r_1)$, and likewise for the $\uptheta_{4,5,6}$ values.
+
+We'll then proceed to generate 1000 random points in the reference triangle and plot their image
+in the Cartesian plane, either using the DJ method, a linear mapping $P_1$ or a quadratic mapping $P_2$.
+
+Unsurprisingly the $P_1$ mapping yields a triangle which 2-3 edge does not conform to the edge of the domain.
+The $P_2$ mapping does a much better job and so does the DJ mapping.
+\begin{center}
+\includegraphics[width=5.7cm]{images/mappings/DJ/triangles/xz_P1.pdf}
+\includegraphics[width=5.7cm]{images/mappings/DJ/triangles/xz_P2.pdf}
+\includegraphics[width=5.7cm]{images/mappings/DJ/triangles/xz_DJ.pdf}
+\end{center}
+
+Let us now generate 1000 points on the 2-3 edge of the reference triangle and study their image 
+with the three mappings:
+\begin{center}
+\includegraphics[width=5.7cm]{images/mappings/DJ/triangles/xz_P1_boundary.pdf}
+\includegraphics[width=5.7cm]{images/mappings/DJ/triangles/xz_P2_boundary.pdf}
+\includegraphics[width=5.7cm]{images/mappings/DJ/triangles/xz_DJ_boundary.pdf}
+\end{center}
+We cannot see any different between P2 and DJ. 
+Let us now plot the error, i.e. the distance of the image point to the true surface $\uprho=6371$km
+as a function of $x$:
+\begin{center}
+\includegraphics[width=5.7cm]{images/mappings/DJ/triangles/xz_P1_boundary_error.pdf}
+\includegraphics[width=5.7cm]{images/mappings/DJ/triangles/xz_P2_boundary_error.pdf}
+\includegraphics[width=5.7cm]{images/mappings/DJ/triangles/xz_DJ_boundary_error.pdf}
+\end{center}
+We find that the maximum error for $P_1$ is about 120km, the error for $P_2$ is about 260m, 
+and the error for DJ is effectively about $10^{-9}$m.
+
+
+
+
+%..................................................
+\subsubsection{Quadrilaterals}
+
+
+For linear quadrilaterals ($Q_1$) the basis functions are: 
+\begin{eqnarray}
+\bN_1(r,s)&=& \frac14(1-r)(1-s)\\
+\bN_2(r,s)&=& \frac14(1+r)(1-s)\\
+\bN_3(r,s)&=& \frac14(1+r)(1+s)\\
+\bN_4(r,s)&=& \frac14(1-r)(1+s)
+\end{eqnarray}
+\begin{eqnarray}
+\frac{\partial\uptheta}{\partial r}(r,s) 
+&=& -\frac14 \uptheta_1 + \frac14 \uptheta_2 + \frac14 \uptheta_3 - \frac14 \uptheta_4 
+= \frac14 (-\uptheta_1 + \uptheta_2 + \uptheta_3 - \uptheta_4) =\tilde{\uptheta}_{1234}\\
+\frac{\partial\uptheta}{\partial s}(r,s) 
+&=& -\frac14 \uptheta_1 - \frac14 \uptheta_2 + \frac14 \uptheta_3 + \frac14 \uptheta_4 
+= \frac14 (-\uptheta_1 - \uptheta_2 + \uptheta_3 + \uptheta_4) = \bar{\uptheta}_{1234}\\
+\frac{\partial\uprho}{\partial r}(r,s)   
+&=& -\frac14 \uprho_1 + \frac14 \uprho_2 + \frac14 \uprho_3 - \frac14 \uprho_4 
+= \frac14 (-\uprho_1 + \uprho_2 + \uprho_3 - \uprho_4) = \tilde{\uprho}_{1234}\\
+\frac{\partial\uprho}{\partial s}(r,s)   
+&=& -\frac14 \uprho_1 - \frac14 \uprho_2 + \frac14 \uprho_3 + \frac14 \uprho_4 
+= \frac14 (-\uprho_1 - \uprho_2 + \uprho_3 + \uprho_4) = \bar{\uprho}_{1234}
+\end{eqnarray}
+
+In this case we have 
+\begin{equation}
+\boxed{
+{\bm J}_{LP}={\bm J}_{PL}^{-1} = \frac{1}{ \tilde{\uptheta}_{1234} \bar{\uprho}_{1234} - \bar{\uptheta}_{1234} \tilde{\uprho}_{1234} } 
+\left(
+\begin{array}{cc}
+\bar{\uprho}_{1234} & -\tilde{\uprho}_{1234} \\
+-\bar{\uptheta}_{1234} & \tilde{\uptheta}_{1234}
+\end{array}
+\right)}
+\end{equation}
+
+
+{\bf SPECIAL CASE}: In the element we have $\uptheta_1=\uptheta_4$, $\uptheta_2=\uptheta_3$, $\uptheta_2-\uptheta_1=\uptheta_3-\uptheta_4=\tilde{\uptheta}$.
+Likewise, $\uprho_1=\uprho_2$, $\uprho_3=\uprho_4$ and $\uprho_4-\uprho_1=\uprho_3-\uprho_2=\tilde{\uprho}$
+In this case:
+\begin{eqnarray}
+\frac{\partial\uptheta}{\partial r}(r,s) 
+&=& \frac14 (-\uptheta_1 + \uptheta_2 + \uptheta_3 - \uptheta_4) = \frac12 \tilde{\uptheta}\\
+\frac{\partial\uptheta}{\partial s}(r,s) 
+&=& \frac14 (-\uptheta_1 - \uptheta_2 + \uptheta_3 + \uptheta_4) =0\\
+\frac{\partial}{\partial r}\uprho(r,s)   
+&=& \frac14 (-\uprho_1 + \uprho_2 + \uprho_3 - \uprho_4) = 0\\
+\frac{\partial}{\partial s}\uprho(r,s)   
+&=& \frac14 (-\uprho_1 - \uprho_2 + \uprho_3 + \uprho_4) = \frac12 \bar{\uprho}
+\end{eqnarray}
+and
+\begin{equation}
+\boxed{
+{\bm J}_{LP}={\bm J}_{PL}^{-1} 
+= \frac{1}{\frac12 \bar{\uprho} \frac12 \tilde{\uptheta}} 
+\left(
+\begin{array}{cc}
+\frac12 \bar{\uprho} & 0 \\
+0 & \frac12 \tilde{\uptheta}
+\end{array}
+\right)
+=2
+\left(
+\begin{array}{cc}
+\tilde{\uptheta}^{-1} & 0 \\
+0 &  \bar{\uprho}^{-1}
+\end{array}
+\right)}
+\end{equation}
+
+
+
+\begin{eqnarray}
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial x} \\ \\
+\frac{\partial \bN_i}{\partial z} 
+\end{array}
+\right)
+&=&
+\frac{1}{\uprho}
+\left(
+\begin{array}{cc}
+\cos \uptheta & \uprho\sin\uptheta \\ 
+-\sin\uptheta & \uprho\cos\uptheta
+\end{array}
+\right)
+\cdot
+2
+\left(
+\begin{array}{cc}
+\tilde{\uptheta}^{-1} & 0 \\
+0 &  \bar{\uprho}^{-1}
+\end{array}
+\right)
+\cdot 
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial r} \\ \\
+\frac{\partial \bN_i}{\partial s} 
+\end{array}
+\right)  \nn\\
+&=&
+\frac{2}{\uprho}
+\left(
+\begin{array}{cc}
+\tilde{\uptheta}^{-1} \cos\uptheta & \uprho \bar{\uprho}^{-1} \sin \uptheta\\ \\
+-\tilde{\uptheta}^{-1} \sin\uptheta & \uprho \bar{\uprho}^{-1} \cos \uptheta
+\end{array}
+\right)
+\cdot 
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial r} \\ \\
+\frac{\partial \bN_i}{\partial s} 
+\end{array}
+\right)  
+\end{eqnarray}
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{images/mappings/DJ/quadrilaterals/xz_P1.pdf}
+\includegraphics[width=5.7cm]{images/mappings/DJ/quadrilaterals/xz_P2.pdf}
+\includegraphics[width=5.7cm]{images/mappings/DJ/quadrilaterals/xz_DJ.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{images/mappings/DJ/quadrilaterals/xz_P1_boundary.pdf}
+\includegraphics[width=5.7cm]{images/mappings/DJ/quadrilaterals/xz_P2_boundary.pdf}
+\includegraphics[width=5.7cm]{images/mappings/DJ/quadrilaterals/xz_DJ_boundary.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{images/mappings/DJ/quadrilaterals/xz_P1_boundary_error.pdf}
+\includegraphics[width=5.7cm]{images/mappings/DJ/quadrilaterals/xz_P2_boundary_error.pdf}
+\includegraphics[width=5.7cm]{images/mappings/DJ/quadrilaterals/xz_DJ_boundary_error.pdf}
+\end{center}
 
 
 

@@ -22,6 +22,8 @@
 \item sort our s40rts stones/theory
 \item change cell type in all stones containing Q2
 \item find Dave Whipp vids
+\item scan biblio of Yuen, Olson, Turcotte, Travis
+\item produce appendix about making presentations dos/donts 
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -31,7 +33,7 @@
 \begin{itemize}
 \item DF, FEM of 1D, 2D wave equation
 \item write FVM code
-\item write Navier-Stokes solver
+\item write Navier-Stokes solver FEM or FDM
 \item translate ibuprofem (surface tension code)
 \item redo  cookbook 'convection in 2d box w phase transitions'
 based on \textcite{chyu85}. 
@@ -44,6 +46,8 @@ based on \textcite{chyu85}.
 \item revisit stone 114 (inversion stokes+grav), use msc thesis 
 \item hous90 method ?
 \item ELEFANT:  parallel iterative solver w/ Arie. slice it with nthreads, parallel PCG
+\item revive f90 code FDM stokes staggered grid, translate it to python 
+(in 1427 folder)
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,7 +87,7 @@ mammoth code.
 \item build ASPECT stokes solver in python (pyamg?)
 \item Biharmonic equation for stream function approach with FEM. check Schmalzl phd thesis.
 check vorticity stream function formulation, see glte87.
-Also check \url{https://fenicsproject.org/olddocs/dolfin/1.6.0/python/demo/documented/biharmonic/python/documentation.html} for biharmonic + disc galerkin
+Also check \url{https://fenicsproject.org/olddocs/dolfin/1.6.0/python/demo/documented/biharmonic/python/documentation.html} for biharmonic + disc galerkin. Can I solve Poisson eqs super fast?
 \item anisotropic viscosity , see \textcite{leha08}.
 redo the Rayleigh-Taylor instabilities with 
 anisotropic lithospheric viscosity.
