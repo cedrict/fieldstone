@@ -1,6 +1,9 @@
 \begin{flushright} {\tiny {\color{gray} quadrature.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+\chapter{Numerical integration} \label{sec:quadrature}
+
+
 As we will see later, using the Finite Element method to solve problems involves 
 computing integrals which are more often than not too complex to be computed 
 analytically/exactly. We will then need to compute them numerically.
@@ -48,9 +51,11 @@ I=\int_a^b f(x) dx = \int_a^b C \; dx  = C \int_a^b dx = C(b-a)
 We see that the area of the gray domain in simply the product of its length $b-a$ by its height $c$
 and we indeed recover $I=C(b-a)$.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{In 1 dimension}
 
 %-------------------------------------------------------------------------
-\subsubsection{in 1D - Midpoint and Trepezoidal rules  \label{sec:quad1D}}
+\subsection{Midpoint and Trepezoidal rules  \label{sec:quad1D}}
 
 The simplest method of this type is to let the interpolating function be 
 a constant function (a polynomial of degree zero) that passes through the point $((a+b)/2, f((a+b)/2))$.
@@ -125,7 +130,7 @@ yields the Newton-Cotes formulas, of which the rectangle rule and the trapezoida
 \index{general}{Newton-Cotes}
 
 %-----------------------------
-\subsubsection{in 1D - Gauss-Legendre quadrature  \label{sec:quad1Dglq}}
+\subsection{in 1D - Gauss-Legendre quadrature  \label{sec:quad1Dglq}}
 
 If we allow the intervals between interpolation points to vary, we find another group of quadrature formulas, such as 
 the Gauss(ian) quadrature formulas. \index{general}{Gauss-Legendre Quadrature}
@@ -145,7 +150,8 @@ The domain of integration for such a rule is conventionally taken as $[-1,1]$, s
 \]
 \end{mdframed}
 In this formula the $x_{i_q}$ coordinate is 
-the $i$-th root of the {\color{olive} Legendre polynomial} $P_n(x)$\todo{what are these ?}. \index{general}{Legendre Polynomial}
+the $i$-th root of the {\color{olive} Legendre polynomial}\footnote{\url{https://en.wikipedia.org/wiki/Legendre_polynomials}} $P_n(x)$. 
+\index{general}{Legendre Polynomial}
 
 It is important to note that a Gaussian quadrature will only produce good results if the function $f(x)$
 is well approximated by a polynomial function within the range $[-1,1]$.
@@ -237,7 +243,7 @@ and then
 \end{mdframed}
 
 %--------------------
-\subsubsection{A probably naive way of finding the quadrature points coordinates and weights}
+\subsection{A probably naive way of finding the quadrature points coordinates and weights}
 
 We start from the assumption that the quadrature must be exact for polynomials $f(r)$, that it is 
 written
@@ -330,9 +336,9 @@ nor why the quadrature points are the zeros of the Legendre polynomials...
 
 
 %--------------------
-\subsubsection{in 1D - examples}
+\subsection{Examples}
 
-\paragraph{example 1}
+\subsubsection{Example 1}
 
 Since we know how to carry out any required change of variables, we choose for simplicity 
 $a=-1$, $b=+1$.
@@ -354,7 +360,7 @@ Since the actual number of points was never specified, this result is valid for 
 quadrature rules.
 
 
-\paragraph{example 2}
+\subsubsection{Example 2}
 
 Let us now take $f(r)=m r+ p$ and repeat the same exercise:
 \[
@@ -373,7 +379,7 @@ integrates a first order polynomial like the one above.
 
 
 
-\paragraph{example 3}
+\subsubsection{Example 3}
 
 Let us now take $f(r)=r^2$. We have 
 \[
@@ -392,8 +398,13 @@ I_{gq}=\int_{-1}^{+1} f(r) dr
 \item It also works $\forall n_q>2$ !
 \end{itemize}
 
-%-----------------------------
-\subsubsection{in 2D/3D - theory}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{In 2 \& 3 dimensions}
+
+%-----------------------------------
+\subsection{On the reference square}
 
 Let us now turn to a two-dimensional integral of the form
 \[
@@ -414,8 +425,58 @@ I=\int_{a}^{+b}\int_{c}^{+d} f(r,s) dr ds
 \end{equation}
 \end{mdframed}
 
+
+
+%--------------------------------------
+\subsection{On a generic quadrilateral}
+
+Let $K$ be a quadrilateral element with straight boundary lines and with vertices 
+arranged as follows:
+
+IMAGE
+
+We wish to evaluate
+\[
+I =\iint_K f(x,y) dx dy
+\]
+In order to do so we will first transform the element $K$ to the 
+reference square element and then apply the quadrature of the previous section.
+This transformation can be carried out by means of the $Q_1$ basis functions, 
+see Section~\ref{ss:q12d}. We construct a linear mapping between the 
+quadrilateral element $K$ and the reference square element:
+\begin{eqnarray}
+x(r,s) &=& \sum_{i=1}^4 \bN_i(r,s) x_i \\
+y(r,s) &=& \sum_{i=1}^4 \bN_i(r,s) y_i 
+\end{eqnarray}
+Then we have
+\[
+I=\iint_K f(x,y) dx dy = \int_{-1}^{+1}\int_{-1}^{+1} f(x(r,s),y(r,s)) |{\bm J}(r,s)| dr ds
+\]
+where ${\bm J}(r,s)$ is the Jacobian of the transformation defined by
+\[
+{\bm J}(r,s) = 
+\left(
+\begin{array}{cc}
+\frac{\partial x}{\partial r} & \frac{\partial y}{\partial r} \\ \\
+\frac{\partial x}{\partial s} & \frac{\partial y}{\partial s} 
+\end{array}
+\right)
+\]
+Finally applying the Gaussian quadrature yields:
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+I=\iint_K f(x,y) dx dy \simeq 
+\sum_{i_q=1}^{n_q}\sum_{j_q}^{n_q} f(x(r_{i_q},s_{j_q}),y(r_{i_q},s_{j_q}))
+\; |{\bm J}(r_{i_q},s_{j_q})|  \; w_{i_q} w_{j_q}
+\]
+\end{mdframed}
+
+
+
+
+
 %-----------------------------
-\subsubsection{Exercises}
+\subsection{Exercises}
 
 %-------------
 \begin{center}
@@ -472,7 +533,7 @@ The following Fortran program is an example of how Gauss quadrature
 can be implemented:
 
 \begin{center}
-\includegraphics[width=8cm]{images/quadrature/gq3} 
+\includegraphics[width=9cm]{images/quadrature/gq3} 
 \end{center}
 
 Modify/translate this previous program to use 5 quadrature points instead of two.
@@ -521,15 +582,15 @@ by means of a $2\times 2$, $3\times 3$ or $4\times 4$ Gauss-Legendre quadrature 
 
 
 
-
+\newpage
 %----------------------------------------
-\subsubsection{Quadrature on triangles}
+\subsection{Quadrature on triangles}
 \input{quadrature_triangles}
 
 
 
 %----------------------------------------
-\subsubsection{A mathematical recreation: computing the volume of a tetrahedron}
+\subsection{A mathematical recreation: computing the volume of a tetrahedron}
 
 Let us find the volume of tetrahedron bounded by the planes passing through the points 
 A(1,0,0), B(0,1,0), C(0,0,1) and the coordinate planes Oxy, Oxz and Oyz.
@@ -553,13 +614,13 @@ V
 We will use this result in the following section.
 
 %----------------------------------------
-\subsubsection{Quadrature on tetrahedra}
+\subsection{Quadrature on tetrahedra}
 \input{quadrature_tetrahedra}
 
 
 
 %------------------------------------------
-\subsubsection{The Gauss-Lobatto approach \label{sec:loba}}
+\subsection{The Gauss-Lobatto approach \label{sec:loba}}
 
 All what we have seen above falls under the Gauss-Legendre quadrature method. There is however another 
 somewhat common quadrature method: the Gauss-Lobatto  quadrature. \index{general}{Gauss-Lobatto}.
@@ -597,7 +658,7 @@ n & $x_{iq}$ & $w_{iq}$ & $x_{iq}$ (approx) & $w_{iq}$ (approx) \\
 
  
 %-------------------------------------------------------------------------
-\subsubsection{Computing the 'real' coordinates of the quadrature points and other considerations}
+\subsection{Computing the 'real' coordinates of the quadrature points and other considerations}
 
 The quadrature point coordinates are always given in (what I call) reduced coordinates, i.e. between 
 -1 and 1.

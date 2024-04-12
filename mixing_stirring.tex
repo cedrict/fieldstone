@@ -1,6 +1,80 @@
 \index{general}{Lyapunov Time}
 \begin{flushright} {\tiny {\color{gray} lyapunov.tex}} \end{flushright}
 
+Many approaches are taken in the literature when it comes 
+to studying mixing/stirring in fluids, and in our case the mantle.
+
+For example, \textcite{sato12} (2012) 
+measure the convective stirring efficiency using two Lagrangian methods: 
+the first determines the mixing time associated with
+different wavelengths of heterogeneity following the approach of \textcite{feri01} (2001)
+The second determines the value of
+the maximum Finite Time Lyapunov Exponents (FTLE) as described in 
+\textcite{fasa03} (2003), and measures the rate at
+which heterogeneities are stretched by mantle motions.
+
+In \textcite{taxi02} (2002) we read: 
+
+\begin{displayquote}
+{\color{darkgray}
+``
+Two-dimensional simulations of simple mantle convection (\textcite{chri89}, 1989; 
+\textcite{ketu90}, 1990; \textcite{scha94}) suggest that for whole-mantle 
+convection the mantle should be homogenized in a time-scale of less than 1 Gyr, although
+unmixed islands may remain. Non-Newtonian rheology, which is thought to be 
+important in the upper mantle \cite{kawu93}, may somewhat inhibit mixing (\textcite{tepy98}, 1998). 
+The rate at which blobs of anomalous (e.g. primitive) material are stretched
+and assimilated into the ﬂow depends on their relative viscosity; very viscous blobs
+can survive intact for many mantle overturns (\textcite{mang96}, 1996).
+\\
+In three-dimensional geometry with only poloidal ﬂow, mixing may be signiﬁcantly
+less efficient than in two dimensions (\textcite{schh95}, 1995; \textcite{schh96}, 1996) 
+but, if the toroidal ﬂow associated with plate motions is 
+included (\textcite{gaot91}, 1991), mixing can instead be more efficient 
+(\textcite{feri98} (1998)).
+\\
+High viscosity in the deep mantle is not suﬃcient to maintain diﬀerent reservoirs
+over geological time-scales (\textcite{feri01}, 2001; van Keken \& Ballentine 1998,
+1999), in contrast to predictions from earlier calculations at lower convective vigour
+(\textcite{guda86b}, 1986). Part of the reason for this apparent discrepancy is that
+the latter study used a kinematically driven ﬂow rather than buoyancy-driven ﬂow.
+Since a viscosity jump does not aﬀect densities, thermal buoyancy-driven ﬂow has no
+problem crossing it, so substantial mass exchange occurs between upper and lower
+mantles. Buoyancy is thus necessary to maintain separate reservoirs.
+''
+}
+\end{displayquote}
+
+
+In \textcite{gowh06} (2006) we find
+\begin{displayquote}
+{\color{darkgray}
+``
+Heterogeneities in a convecting ﬂuid are deformed by
+stirring and ﬁnally erased by diffusive mixing. Chemical diﬀusion in mantle rock
+acts on the scale of centimetres over the lifetime of the Earth, but our models
+resolve km-scales. Therefore this paper deals only with convective stirring. Some
+nice studies about mantle stirring and mixing in 2-d have been done (e.g. 
+\cite{chri89,guda86b,kest91,ketu90,mebo95,olyb84,olyb84b,teyl96,teyp97,tepy98}).
+Unfortunately, results from studies in 2-d can be extrapolated to 3-d only in a limited
+manner. Tracers in 3-d poloidal stationary convection move on 2-d toruslike
+surfaces. Stirring is constrained to these surfaces. Cross-cell stirring becomes possible
+in time-dependent ﬂows, but may not be very efficient \cite{schh96}. Large-scale stirring is
+enhanced by a toroidal component, but convectively isolated islands of laminar
+stirring may remain \cite{feri98}. Convection in the Earth is time-dependent and the surface
+planform shows a strong toroidal component today. Since there is currently no
+general understanding about the stirring behaviour of the mantle, a case-by-case
+study of different models is necessary.
+''
+}
+\end{displayquote}
+
+
+
+
+%---------------------------------
+\subsection{The Lyapunov exponent}
+
 %from wiki
 
 Simply put, the Lyapunov time is the characteristic timescale on which a dynamical system is chaotic.
@@ -44,10 +118,7 @@ However, the limits in the above equation are difficult to evaluate and the inte
 of the 'finite-time' Luyaponov exponent, where both limits are truncated, is difficult to formalize.
 
 
-Two approaches are taken in the literature when it comes to studying mixing/stirring and/or measuring Lyapunov quantities::
-
-\begin{itemize}
-\item using marker advection: in \textcite{vazh99} (1999) the authors use a steady state velocity
+In \textcite{vazh99} (1999) the authors use a steady state velocity
 pattern obtained for a model of present-day mantle convection. The velocity model is
 based on the solution of the Stokes equations in a 3D spherical model with variable rheology.
 To study mixing, they release particles in the velocity model and follow 
@@ -65,7 +136,7 @@ Taken from \textcite{vazh99} (1999).}
 
 Rather than calculating the exponents explicitly, the authors 
 use an approximation to the finite-time,
-finite-length Luyaponov exponent by evaluating the distance between two points that are closely spaced
+finite-length Lyaponov exponent by evaluating the distance between two points that are closely spaced
 at time $t=0$. For this they compute the advection of a
 large number of 10 km long line segments that were
 originally at 1500 km depth. The length of these segments is approximated by the distance between the
@@ -85,44 +156,64 @@ Taken from \textcite{vazh99} (1999).}
 \end{center}
 
 
-\item twin experiments: \fullcite{becr14} (2014)
-\end{itemize}
+In \textcite{becr14} (2014) the authors estimate for the ﬁrst time the limit of predictability of Earth’s
+mantle convection. Following the twin experiment method, we compute the Lyapunov time (i.e., e-folding
+time) for state of the art 3-D spherical convection models, varying rheology, and Rayleigh number.
 
-Talk about configurational entropy \fullcite{gobo02},\fullcite{nake07} (2007), van der Wiel et al.
-\fullcite{cakm06} 
 
-Talk about retrodiction (reconstructions of past states of Earth's mantle obtained using present information)
-\textcite{cobs15} (2015),
-\textcite{cogb18} (2018).
-
-\Literature: 
-\textcite{ridn82} (1982),
-\textcite{gurn86} (1986),
-\textcite{chri89} (1989),
-\textcite{scha94} (1994),
-\textcite{schh96} (1996),
-\textcite{vazh99} (1999),
-\textcite{falt02} (2002),
-\textcite{cosc06} (2006),
-\textcite{fasa03} (2003),
-\textcite{saad11} (2011),
-
-\textcite{sato12} (2012) measure the convective stirring efficiency using two Lagrangian methods: 
-the first determines the mixing time associated with
-different wavelengths of heterogeneity following the approach of
-Ferrachat and Ricard (2001). The second determines the value of
-the maximum Finite Time Lyapunov Exponents (FTLE) as de-
-scribed in Farnetani and Samuel (2003), and measures the rate at
-which heterogeneities are stretched by mantle motions.
+Reconstruction of mantle convection and surface tectonics with (ensemble) Kalman filter:
+\textcite{bocf16} (2016),
+\textcite{bofc18} (2018).
 
 Investigating the initial condition
 of mantle models using data assimilation. PhD thesis. \textcite{pric16} (2016).
 
-Reconstruction of mantle convection and surface tectonics with (ensemble) Kalman filter:
-\fullcite{bocf16} (2016),
-\fullcite{bofc18} (2018).
 
-Stirring: \fullcite{gowh06} 
+\Literature
 
-Lyapunov exponent: \textcite{pier91} (1991)
+\textcite{pier91} (1991)
+\textcite{cobs15} (2015),
+
+%-----------------------------------------------
+\subsection{configurational 'Shannon' entropy}
+
+\textcite{gobo02} (2002), 
+\textcite{cakm06} (2006),
+\textcite{nake07} (2007), 
+van der Wiel et al. (2024). 
+
+
+
+%-------------------------------------------
+\subsection{Literature to sort out}
+
+
+\textcite{ridn82} (1982),
+
+\textcite{gurn86} (1986),
+
+\textcite{chri89} (1989),
+
+\textcite{hayk92} (1992),
+
+\textcite{scha94} (1994),
+
+\textcite{vazh99} (1999),
+
+\textcite{falt02} (2002),
+
+\textcite{fasa03} (2003),
+
+\textcite{cosc06} (2006),
+
+\textcite{huda07b} (2007),
+
+\textcite{mang10} (2010),
+
+\textcite{saad11} (2011),
+
+\textcite{vavt24} (2024)
+
+\textcite{thsf24} (2024)
+
 

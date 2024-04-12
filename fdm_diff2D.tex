@@ -126,7 +126,7 @@ combinations of $nnx$ and $nny$.
 
 
 %.............................
-\paragraph{Explicit scheme} The simplest approach is an {\color{olive} FTCS} 
+\subsection{Explicit scheme} The simplest approach is an {\color{olive} FTCS} 
 (forward time, centered space) explicit method like in 1D:
 \begin{equation}
 \frac{T_{{\color{brown}i,j}}^{n+1}-T_{{\color{brown}i,j}}^n}{\delta t}
@@ -230,7 +230,7 @@ prescribe on the boundary the analytical solution.
 
 
 %...........................
-\paragraph{Implicit scheme} 
+\subsection{Implicit scheme} 
 If we now employ a fully implicit, unconditionally stable discretization scheme, the discretised 
 PDE becomes:
 \begin{equation}
@@ -654,4 +654,95 @@ Rearranging terms with $n+1$ on the left and terms with $n$ on the right hand si
 %-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 
+
+%.........................................................
+\subsection{The 9-point stencil for the Laplace operator} 
+
+
+What follows is mostly borrowed from Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Nine-point_stencil}}.
+
+If we discretize the 2D Laplacian by using central-difference methods, we obtain the commonly used five-point stencil, represented by the following convolution kernel: 
+\[
+D=
+\left[
+\begin{array}{ccc}
+0 & 1 & 0 \\
+1 & -4 & 1 \\
+0 & 1 & 0 
+\end{array}
+\right]
+\]
+or,
+\[
+D T_{i,j} = \frac{1}{h^2} (T_{i-1,j} + T_{i+1,j,} +  T_{i,j-1} + T_{i,j+1,} -4T_{i,j} )
+\]
+Even though it is simple to obtain and computationally lighter, the central difference kernel possess an undesired intrinsic anisotropic property, since it doesn't take into account the diagonal neighbours.
+
+The two most commonly used isotropic nine-point stencils are displayed below, in their convolution kernel forms. They can be obtained by the following formula
+\[
+D = (1-\gamma) 
+\left[
+\begin{array}{ccc}
+0 &1 &0 \\
+1 &-4 &1 \\
+0 &1 &0
+\end{array}
+\right]
++\gamma
+\left[
+\begin{array}{ccc}
+1/2 &0 & 1/2 \\
+0 & -2 & 0 \\
+1/2 &0 & 1/2 
+\end{array}
+\right]
+\]
+The first one is known by Oono-Puri,and it is obtained when $\gamma=1/2$:
+\[
+D=
+\left[
+\begin{array}{ccc}
+1/4 & 2/4 & 1/4 \\
+2/4 &-12/4 & 2/4 \\
+1/4 & 2/4 & 1/4 
+\end{array}
+\right]
+=
+\frac14
+\left[
+\begin{array}{ccc}
+1 & 2 & 1 \\
+2 &-12 & 2 \\
+1 & 2 & 1 
+\end{array}
+\right]
+\]
+The second one is known by Patra-Karttunen or Mehrstellen, and it is obtained when $\gamma=1/3$:
+\[
+D=
+\left[
+\begin{array}{ccc}
+1/6 & 4/6 & 1/6 \\
+4/6 & -20/6 & 4/6 \\
+1/6 & 4/6 & 1/6 
+\end{array}
+\right]
+=
+\frac16
+\left[
+\begin{array}{ccc}
+1 & 4 & 1 \\
+4 & -20 & 4 \\
+1 & 4 & 1 
+\end{array}
+\right]
+\]
+or,
+\[
+\vec\nabla^2 T_{i,j} = \frac{1}{6h^2} (T_{i+1,j+1} + T_{i-1,j+1} + T_{i+i,j-1,} + T_{i-1,j-1}
++4 (T_{i+1,j}+T_{i-1,j})
++4 (T_{i,j+1}+T_{i,j-1})
+-20 T_{i,j} )
+\]
+Both are isotropic forms of discrete Laplacian, and in the limit of small $h$, they all become equivalent. This form is the one we find in \textcite[p64]{leveque}.
 
