@@ -38,7 +38,7 @@ over geological time-scales (\textcite{feri01}, 2001; van Keken \& Ballentine 19
 1999), in contrast to predictions from earlier calculations at lower convective vigour
 (\textcite{guda86b}, 1986). Part of the reason for this apparent discrepancy is that
 the latter study used a kinematically driven ﬂow rather than buoyancy-driven ﬂow.
-Since a viscosity jump does not aﬀect densities, thermal buoyancy-driven ﬂow has no
+Since a viscosity jump does not affect densities, thermal buoyancy-driven ﬂow has no
 problem crossing it, so substantial mass exchange occurs between upper and lower
 mantles. Buoyancy is thus necessary to maintain separate reservoirs.
 ''
@@ -70,6 +70,208 @@ study of different models is necessary.
 \end{displayquote}
 
 
+\textcite{kest91} (1991) looked into chaotic mixing and state:
+\begin{displayquote}
+{\color{darkgray}
+``
+The extent of mixing is quantitatively measured by 
+calculating the deformation undergone by passive, elliptical
+strain markers. Deformation of a marker is characterized by
+its elongation $a/a_0$, where $a$ is the length of the semimajor
+axis and $a_0$, is the initial length. For infinitesimal markers,
+deformation is controlled by the local flow field and is 
+obtained by integrating the strain rate tensor along the particle's 
+trajectory \cite{ketu90}. The aspect ratio $\epsilon$ and orientation $\theta$ 
+of the ellipse vary with the nondimensional time according to
+\begin{equation}
+\frac{d\epsilon}{dt}=2 \epsilon (\bar{\alpha} \cos 2\theta + \bar{\beta} \sin 2\theta)
+\label{eq:mixx1}
+\end{equation}
+and
+\begin{equation}
+\frac{d\theta}{dt}=\left(\frac{\epsilon^2 +1}{\epsilon^2-1} \right)
+(-\bar{\alpha} \sin 2\theta + \bar{\beta} \cos 2\theta) + \bar{\omega}.
+\label{eq:mixx2}
+\end{equation}
+The components of the nondimensional strain tensor $\bar{\alpha}$,
+$\bar{\beta}$ and $\bar{\omega}$ are defined by
+\begin{eqnarray}
+\bar{\alpha} &=& \frac{\partial u}{\partial x} \\
+\bar{\beta}  &=& \frac12\left( \frac{\partial u}{\partial y}+\frac{\partial v}{\partial x}\right)\\
+\bar{\omega} &=& \frac12\left( \frac{\partial u}{\partial y}-\frac{\partial v}{\partial x}\right)
+\end{eqnarray}
+These equations define the evolution of an infinites`imal
+strain marker in an arbitrary, two-dimensional flow. Given
+the path of a particle in any flow, we can evaluatei
+$\bar{\alpha}$, $\bar{\beta}$ and $\bar{\omega}$
+at each position of the particle, and integrate \eqref{eq:mixx1} and \eqref{eq:mixx2}
+along the particle path to obtain the deformation history of a
+strain marker.
+''
+}
+\end{displayquote}
+{\color{orange} replicate?}
+
+
+Check fasa03
+
+In \textcite{saad11} (2011) we find:
+\begin{displayquote}
+{\color{darkgray}
+``
+We measure the convective stirring efficiency using
+two Lagrangian methods: \\
+the first determines the mixing
+time associated with different wavelengths of heterogeneity
+following the approach of \textcite{feri01} (2001).\\
+The second determines the value of the maximum Finite Time
+Lyapunov Exponents (FTLE), $\lambda^+$ as described by 
+\textcite{fasa03} (2003), and measures the rate at which 
+heterogeneities will be stretched by mantle motions. These methods
+were applied after each experiment had reached statistical
+steady state.
+''
+}
+\end{displayquote}
+
+
+\textcite{colt05} (2005) looked at 
+convective mixing in degassing the Earth's mantle
+and describes his methodology as follows:
+\begin{displayquote}
+{\color{darkgray}
+``
+To follow stretching and mimic the chemical
+evolution of the system, passive particles are tracked
+into the flow. Their position x into the convection box
+evolves according to
+\[
+\frac{\partial x}{\partial t} = u(x,t),
+\]
+$u$ being the local velocity. To solve this equation, a
+time integration method and an interpolation of the
+velocity between grid nodes are needed. For sake of
+consistency, the velocity of a particle lying between
+grid nodes is naturally interpolated with the bilinear
+shape functions of the finite element formulation in
+ConMan. A fifth-order Runge–Kutta scheme is
+used for the time integration. In the simulations, I
+have checked that the number of particles is always
+statistically sufficient (increasing this number does
+not change the results).
+
+Two simple models can describe the two end-
+members of mixing dynamics: regular (or laminar)
+and chaotic (or turbulent) mixing \cite{olyb84b}. Regular
+mixing occurs in 2D steady-state flows where the
+trajectories of particles are identical to streamlines. In
+this regime, an initial distance $l_0$ between two
+particles is stretched into a new distance $l$ that
+increases linearly with time and proportionally to the
+strain rate. The stretching of a distance is parameterized by
+\[
+\epsilon= l/l_0
+\]
+which depends linearly on the time as
+\begin{equation}\label{eq:mixx:05}
+\epsilon(t) = 1+\dot \varepsilon t
+\end{equation}
+where $\dot{\varepsilon}$ is the Lagrangian strain rate. 
+The Lagrangian strain rate is the strain rate experienced locally
+by the line as it is moving into the flow. In the
+calculations, the Lagrangian strain rate is always
+lower than the Eulerian strain rate which is the
+second invariant of the local strain rate tensor.
+
+Chaotic mixing occurs when the dimensionality of
+the system is larger and where particle trajectories get
+more complex. In 2D, time-dependent systems show
+this behavior and two particles can follow completely
+different path-lines though they were infinitely close
+initially. In 3D, even steady flows can produce chaotic
+Lagrangian mixing, enhanced by the presence of a
+toroidal component \cite{feri98}. Stretching in such a flow
+evolves exponentially with time
+\[
+\epsilon (t) = \exp (\dot \varepsilon t)
+\]
+The simplicity of these models is that they only
+depend on one parameter, the Lagrangian strain rate $\dot\varepsilon$.
+This parameter is chosen to be the quantitative
+measurement of average mixing in the numerical
+experiments. 
+
+
+\begin{center}
+\includegraphics[width=6cm]{images/mixing/colt05}\\
+Strain as a function of time in two convection simulations
+illustrating regular mixing (internal heating, Ra i = 106) and chaotic
+mixing (basal heating, Ra b = 105).
+\end{center}
+
+
+As illustrated by the figure above, the numerical
+experiments display strain evolutions that can be well
+explained by one of the two end-members of mixing
+dynamics
+
+To compute the local stretching $\epsilon$ around a particle,
+I follow the distance between two initially very close
+particles. The larger the distance, the larger the error
+on the local stretching. Hence, this distance has to be
+renormalized along the direction of stretching at every
+time step \cite{feri98}. At a time $t$, the estimate of the
+Lagrangian strain rate is
+\[
+\dot\varepsilon = \frac{\log (\epsilon)}{t}
+\]
+The bulk Lagrangian strain rate is the average over
+all the couples of particles (20,000 were sufficient). In
+regular mixing flows, the computed ė would be much
+lower than the theoretical $\dot{\varepsilon}$ of Eq.~
+\eqref{eq:mixx:05}.
+''
+}
+\end{displayquote}
+
+
+
+\textcite{cosc06} (2006)
+show that mixing in 3-D time-dependent convection is as efficient as
+in 2-D, and only depends on convective vigor.
+compute mixing times of thermal and chemical heterogeneities in
+the early Earth of 10 and 100 Myrs respectively.
+They write:
+\begin{displayquote}
+{\color{darkgray}
+``
+To compute the Lagrangian strain rates, we follow the
+distance d(t) between particle twins advected in the flow
+using a 4th-order Runge-Kutta scheme. The Lagrangian
+strain rate, i.e. finite-time Lyapunov exponent, is computed
+assuming that for each couple of tracers, stretching $d(t)/d(0)$
+occurs as
+\[
+\frac{d(t)}{d(0)} = \exp ( \dot\varepsilon t)
+\]
+Averaging $\dot{\varepsilon}$ over the tracer couples gives the bulk
+Lagrangian strain rate characterizing the stretching ability
+of the flow \cite{colt05}. If the computed bulk
+Lagrangian strain rate tends toward 0, mixing is regular,
+otherwise it is chaotic. To start the experiment, the
+distribution of the couples of tracers is homogeneous
+throughout the box. In the 3-D calculations, up to
+10,000,000 tracers are used for an accurate description of
+the Lagrangian strain-rate field in 3-D.
+''
+}
+\end{displayquote}
+
+
+
+
+Based on these, we need to look at the Lyapunov exponent (and the 
+Finite Time Lyapunov Exponent, i.e. FTLE).
 
 
 %---------------------------------
@@ -182,6 +384,7 @@ of mantle models using data assimilation. PhD thesis. \textcite{pric16} (2016).
 \textcite{nake07} (2007), 
 van der Wiel et al. (2024). 
 
+based on results obtained in \textcite{vavt24} (2024)
 
 
 %-------------------------------------------
@@ -204,16 +407,14 @@ van der Wiel et al. (2024).
 
 \textcite{fasa03} (2003),
 
-\textcite{cosc06} (2006),
-
 \textcite{huda07b} (2007),
 
-\textcite{mang10} (2010),
-
-\textcite{saad11} (2011),
-
-\textcite{vavt24} (2024)
+\textcite{mang10} (2010): Low-viscosity mantle blobs are sampled preferentially at regions of surface
+divergence and stirred rapidly into the mantle.
 
 \textcite{thsf24} (2024)
+
+GET: Ricard and Coltice [2005]
+
 
 

@@ -1180,17 +1180,20 @@ The basic idea behind this approach is to compute the local to Cartesian mapping
 \begin{enumerate}
 \item 
 The first stage maps from local to polar/spherical coordinates and back. This mapping is typically 
-to a straight-edged polar or spherical element for which the Jacobian partial derivatives are constant within the element. The mapping and its inverse are given by straightforward analytical matrix expressions. 
+to a straight-edged polar or spherical element for which the Jacobian partial derivatives 
+are constant within the element. The mapping and its inverse are given by straightforward analytical matrix expressions. 
 \item The second stage maps from polar/spherical to Cartesian coordinates (and back) and is also a simple analytical mapping. 
 \end{enumerate}
-The net Jacobian from local finite element coordinates to a cylindrical or spherical element in Cartesian geometry (or any other analytically mapped geometry) is simply the matrix product of two easy-to-compute inverse Jacobian matrices. Because the net Jacobian has an analytical form, it can be more rapidly computed than a general isoparametric or superparametric finite
-element mapping.
+The net Jacobian from local finite element coordinates to a cylindrical or spherical element in Cartesian geometry 
+(or any other analytically mapped geometry) is simply the matrix product of two easy-to-compute inverse Jacobian matrices. 
+Because the net Jacobian has an analytical form, it can be more rapidly computed than a general 
+isoparametric or superparametric finite element mapping.
 
 Remark: in what follows I will denote the polar coordinates by $\upvarrho,\uptheta$ so as to avoid confusion with the reduced/local coordinates $r,s$.
 
-
 As we have seen so far the standard approach is as follows:
-The relationship between the derivatives of the basis functions with respect to the Cartesian coordinates and the same derivatives with respect to the local coordinates is given by:
+The relationship between the derivatives of the basis functions with respect to the Cartesian coordinates and the same 
+derivatives with respect to the local coordinates is given by:
 \[
 \left(
 \begin{array}{c}
@@ -1206,7 +1209,7 @@ The relationship between the derivatives of the basis functions with respect to 
 \frac{\partial r}{\partial z}  & 
 \frac{\partial s}{\partial z}  
 \end{array}
-\right)}_{J_{LC}}
+\right)}_{{\bm J}_{LC}}
 \cdot
 \left(
 \begin{array}{c}
@@ -1215,7 +1218,106 @@ The relationship between the derivatives of the basis functions with respect to 
 \end{array}
 \right)
 \]
-where $\bN$ are the shape functions, $i$ is the local node numbering of the element, $(x,z)$ are the Cartesian coordinates, and $(r,s)$ are the local coordinates within the reference element.
+where $\bN$ are the shape functions, $i$ is the local node numbering of the element, 
+$(x,z)$ are the Cartesian coordinates, and $(r,s)$ are the local coordinates within the reference element.
+We of course have
+\[
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial r} \\ \\
+\frac{\partial \bN_i}{\partial s} 
+\end{array}
+\right)
+= 
+\underbrace{\left(
+\begin{array}{cc}
+\frac{\partial x}{\partial r}  & 
+\frac{\partial z}{\partial r}   \\ \\
+\frac{\partial x}{\partial s}  & 
+\frac{\partial z}{\partial s}  
+\end{array}
+\right)}_{{\bm J}_{CL}}
+\cdot
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial x} \\ \\
+\frac{\partial \bN_i}{\partial z} 
+\end{array}
+\right)
+\]
+Using an isoparameteric mapping:
+\[
+{\bm J}_{CL}
+=
+\left(
+\begin{array}{cc}
+\frac{\partial x}{\partial r}  & 
+\frac{\partial z}{\partial r}   \\ \\
+\frac{\partial x}{\partial s}  & 
+\frac{\partial z}{\partial s}  
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\frac{\partial \sum_i \bN_i x_i}{\partial r}  & 
+\frac{\partial \sum_i \bN_i z_i}{\partial r}   \\ \\
+\frac{\partial \sum_i \bN_i x_i}{\partial s}  & 
+\frac{\partial \sum_i \bN_i z_i}{\partial s}  
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\sum_i\frac{\partial \bN_i}{\partial r}x_i  & 
+\sum_i\frac{\partial \bN_i}{\partial r}z_i   \\ \\
+\sum_i\frac{\partial \bN_i}{\partial s}x_i  & 
+\sum_i\frac{\partial \bN_i}{\partial s}z_i  
+\end{array}
+\right)
+\]
+
+In the end
+\begin{equation}
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial x} \\ \\
+\frac{\partial \bN_i}{\partial z} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\sum_i\frac{\partial \bN_i}{\partial r}x_i  & 
+\sum_i\frac{\partial \bN_i}{\partial r}z_i   \\ \\
+\sum_i\frac{\partial \bN_i}{\partial s}x_i  & 
+\sum_i\frac{\partial \bN_i}{\partial s}z_i  
+\end{array}
+\right)^{-1}
+\cdot
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial r} \\ \\
+\frac{\partial \bN_i}{\partial s} 
+\end{array}
+\right)
+\label{eq:mappDJ1}
+\end{equation}
+
+In many stones this is coded as follows:
+\begin{lstlisting}
+jcb=np.zeros((2,2),dtype=np.float64)
+for k in range(0,mV):
+    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+jcob = np.linalg.det(jcb)
+jcbi = np.linalg.inv(jcb)
+for k in range(0,mV):
+    dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+    dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+\end{lstlisting}
 
 
 \begin{verbatim}
@@ -1240,10 +1342,12 @@ local (r,s)           linear Polar (r,theta)           cartesian (x,z)
 \end{verbatim}
 
 
-The Double Jacobian approach uses the standard finite element approach to first map from local to linear polar coordinates (i.e. $\uprho,\uptheta$). The first Jacobian for a cylindrical (polar) mapping is analogous to the standard Jacobian, where $x$ and $z$ are now changed to $\uptheta$ and $\uprho$, 
-respectively, $\uptheta$ being the angle measured from the positive $z$-axis 
-in clockwise direction (i.e. the colatitude) and $\uprho$ being the radius.
-The global derivatives may be expressed in matrix form as
+The Double Jacobian approach uses the standard finite element approach to first map 
+from local to linear polar coordinates (i.e. $\uprho,\uptheta$). The first Jacobian for 
+a cylindrical (polar) mapping is analogous to the standard Jacobian, where $x$ and $z$ 
+are now changed to $\uptheta$ and $\uprho$, respectively, $\uptheta$ being the angle 
+measured from the positive $z$-axis in clockwise direction (i.e. the colatitude) 
+and $\uprho$ being the radius. The global derivatives may be expressed in matrix form as
 \begin{equation}
 \left(
 \begin{array}{c}
@@ -1740,6 +1844,70 @@ and
 \end{array}
 \right)  
 \end{eqnarray}
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial x} \\ \\
+\frac{\partial \bN_i}{\partial z} 
+\end{array}
+\right)
+=
+\underbrace{
+\frac{2}{\uprho}
+\left(
+\begin{array}{cc}
+\tilde{\uptheta}^{-1} \cos\uptheta & \uprho \bar{\uprho}^{-1} \sin \uptheta\\ \\
+-\tilde{\uptheta}^{-1} \sin\uptheta & \uprho \bar{\uprho}^{-1} \cos \uptheta
+\end{array}
+\right)
+}_{{\bm J}_{LC}}
+\cdot 
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial r} \\ \\
+\frac{\partial \bN_i}{\partial s} 
+\end{array}
+\right)  
+\end{equation}
+\end{mdframed}
+This equation is to be compared with Eq.~\eqref{eq:mappDJ1}
+
+If matrix ${\bm A}$ is invertible then ${\bm A}\cdot {\bm A}^{-1}={\bm 1}$, 
+and since $det({\bm A}\cdot {\bm B}) = det({\bm A})\; det ({\bm B})$, then
+$det({\bm A}\cdot {\bm A}^{-1})= det({\bm A})\; det ({\bm A}^{-1}) =1$.
+This means that 
+$
+det({\bm J}_{CL})=
+det({\bm J}_{LC}^{-1})=
+[det({\bm J}_{LC})]^{-1}=
+$
+with 
+\[
+det({\bm J}_{LC})
+=
+\frac{2}{\uprho}
+\left[
+\tilde{\uptheta}^{-1} \cos\uptheta 
+ \uprho \bar{\uprho}^{-1} \cos \uptheta
++ 
+\tilde{\uptheta}^{-1} \sin\uptheta 
+\uprho \bar{\uprho}^{-1} \sin \uptheta \right]
+=
+\frac{2}{\uprho}
+\left[
+\tilde{\uptheta}^{-1} \uprho \bar{\uprho}^{-1} 
++  \tilde{\uptheta}^{-1} \uprho \bar{\uprho}^{-1} 
+\right]
+=
+\frac{4}{\tilde{\uptheta}  \bar{\uprho}}
+\]
+In the end 
+\[
+det({\bm J}_{CL})=
+\frac{\tilde{\uptheta}  \bar{\uprho}}{4}
+\]
 
 
 \begin{center}
