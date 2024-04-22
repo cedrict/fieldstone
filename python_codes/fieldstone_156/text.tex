@@ -26,7 +26,9 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This \stone is inspired by \textcite{ketu90}. Most of what follows is copied verbatim from the paper.
+This \stone is inspired by and is meant to be an incomplete 
+replication of \textcite{ketu90}. Most of what follows is copied verbatim from the paper.
+The code is mine.
 
 Major goals of this work are to generate a flow in two
 dimensions that is chaotic in both space and time and
@@ -131,7 +133,7 @@ which contains a projection of the solution of the Lorenz equations
 onto the $B-C$ plane:
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_156/images/ketu90a}\\
+\includegraphics[width=10cm]{python_codes/fieldstone_156/images/ketu90a}\\
 {\captionfont Evolution of the Lorenz variables $B$ and $C$,
 which govern the time-dependent flow of equation \eqref{eq:ketupsi}.
 This is the solution to the Lorenz equations
@@ -197,12 +199,15 @@ Looking at the first figure in $B-C$ space we see that the values are constraine
 $[-30,30]\times[0,50]$ so we can set $B=0.5$ and $C=25$ at $t'=0$. 
 For now we also set $A=0$ at startup. 
 
+At the moment markers are set on a 40x40 grid in a square of size 0.025x0.025
+placed in the middle of the domain, and they are advected by means of a simple Euler step. 
+
 
 The code then must solve Eqs.~\eqref{eq:Lorenz1},\eqref{eq:Lorenz2},\eqref{eq:Lorenz3}.
 These are coupled first-order nonlinear equations. This is no good news and 
 specific numerical techniques should be used in this case. 
 To get things started I nevertheless opt for a simplistic approach. 
-The time derivatives are discretised by means of 1st order explicit formulas:
+The time derivatives are discretised by means of 1st order explicit formulas ({\tt scheme 1}):
 \begin{eqnarray}
 \frac{A^{n+1}-A^n}{\delta t} &=& -\sigma A^n + \sigma B^n \\
 \frac{B^{n+1}-B^n}{\delta t} &=& -A^n C^n + rA^n -B^n  \\
@@ -215,16 +220,61 @@ velocity field and to drive the flow.
 
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/A.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/B.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/C.pdf}\\
-\includegraphics[width=9cm]{python_codes/fieldstone_156/results/BC.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/scheme1/A.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/scheme1/B.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/scheme1/C.pdf}\\
+\includegraphics[width=9cm]{python_codes/fieldstone_156/results/scheme1/BC.pdf}\\
 {\captionfont Given the simplistic integration scheme, we find that 
 even using very small time steps results diverge after $t'=10$.}
 \end{center}
 
 Based on these encouraging results, it is now time to look at a more appropriate
 scheme to solve the equations.
+
+We can try something very simple, i.e. use updated values of $B$ and $C$ when possible ({\tt scheme 2}):
+\begin{eqnarray}
+\frac{A^{n+1}-A^n}{\delta t} &=& -\sigma A^n + \sigma B^n \\
+\frac{B^{n+1}-B^n}{\delta t} &=& -A^{n+1} C^n + rA^{n+1} -B^n  \\
+\frac{C^{n+1}-C^n}{\delta t} &=& A^{n+1} B^{n+1} - bC^n \label{eq:Lorenz3}
+\end{eqnarray}
+i.e.
+\begin{eqnarray}
+A^{n+1} &=& (-\sigma A^n + \sigma B^n) \delta t + A^n \\
+B^{n+1} &=& (-A^{n+1} C^n + rA^{n+1} -B^n ) \delta t+ B^n \\
+C^{n+1} &=& (A^{n+1} B^{n+1} - bC^n ) \delta t + C^n
+\end{eqnarray}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/scheme2/A.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/scheme2/B.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/scheme2/C.pdf}\\
+\includegraphics[width=9cm]{python_codes/fieldstone_156/results/scheme2/BC.pdf}\\
+\end{center}
+
+This is somewhat better, lines with 'large' $\delta t$ are closer to the reference
+$\delta t=5\cdot 10^{-5}$ line. 
+
+\url{https://www.youtube.com/watch?v=Bd9rRSSbH1o}
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/scheme2/psi0000}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/scheme2/psi0100}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/scheme2/psi0200}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/scheme2/psi0300}\\
+{\captionfont Markers, stream function field and velocity arrows. Obtained with $\delta t=10^{-4}$.}
+\end{center}
+
+Scheme 3 does iterations at each time step:
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/scheme3/A.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/scheme3/B.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_156/results/scheme3/C.pdf}\\
+\includegraphics[width=9cm]{python_codes/fieldstone_156/results/scheme3/BC.pdf}\\
+{\captionfont Not sure what to make of it... looks different than the other two...}
+\end{center}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -236,15 +286,12 @@ scheme to solve the equations.
 \fbox{\begin{minipage}{0.9\textwidth}
 {\color{teal}To Do, open questions, future work?}
 \begin{itemize}
-\item do smthg
+\item export ABC only at steps of 0.01 for lighter files
+\item implement high accuracy scheme for PDEs integration
+\item implement high accuracy for markers advection
 \end{itemize}
 \end{minipage}}
 \end{center}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\vspace{.5cm}
-
-\Literature:\\
-\fullcite{xxxxYY}
 
 
