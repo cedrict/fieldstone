@@ -5,7 +5,7 @@
 %
 
 
-The 1D hyperbloic advection equation is:
+The 1D hyperbolic advection equation is:
 \begin{equation}
 \rho C_p \left( \frac{\partial T}{\partial t}  
 + u \frac{\partial T}{\partial x} \right)=0 
@@ -21,14 +21,48 @@ Let us consider the FTCS scheme (Forward in Time, Central in Space).
 \frac{T_{\color{teal}i}^{n+1}-T^n_{\color{teal}i}}{\delta t} 
 + u_i \frac{T^n_{\color{teal}i+1} - T^n_{{\color{teal}i-1}}}{2h} =0 
 \]
+or,
+\[
+T_i^{n+1} = T_i^n - \frac{u_i \delta t}{2 h} (T_{i+1}^n-T_{i-1}^n)
+\]
 Note that although the velocity $u$ is prescribed, it can vary in space, hence
 the subscript $i$. 
+
+
 
 There is however a major problem: 
 the FTCS method is in this case {\bf unconditionally} {\bf un}stable (see Section 6.2.1 
 of \cite{hoch}, section 4.3.1 of \cite{pell08}), i.e., it blows up for any $\delta t$.
 The instability is related to the fact that this scheme produces negative diffusion, 
 which is numerically unstable.
+
+
+Finally, The Crank-Nicolson implicit scheme for solving the diffusion equation 
+can be adapted to solve the advection equation:
+
+\[
+\frac{T_{\color{teal}i}^{n+1}-T^n_{\color{teal}i}}{\delta t} 
+=- u_i 
+\frac12 \left(
+\frac{T^n_{\color{teal}i+1} - T^n_{{\color{teal}i-1}}}{2h} 
++
+\frac{T^{n+1}_{\color{teal}i+1} - T^{n+1}_{{\color{teal}i-1}}}{2h} 
+\right)
+\]
+or,
+\[
+T_{\color{teal}i}^{n+1} + \frac{u_i \delta t}{4h} (T_{{\color{teal}i+1}}^{n+1}-T_{{\color{teal}i-1}}^{n+1}) 
+= T_{\color{teal}i}^n - \frac{u \delta t}{4h} (T_{{\color{teal}i+1}}^{n}-T_{{\color{teal}i-1}}^{n}) 
+\]
+which then makes the method implicit.
+
+
+
+
+
+
+
+
 We could also consider the FTFS method:
 \[
 \frac{T_{\color{teal}i}^{n+1}-T^n_{\color{teal}i}}{\delta t} 
@@ -41,7 +75,7 @@ We will now look at to methods which alleviate this problem:
 \index{general}{Lax-Friedrichs method}
 \begin{itemize}
 \item The {\color{olive} Lax-Friedrichs method}\footnote{Named after Peter Lax 
-and Kurt O. Friedrichs} consists of replacing the $T_{\color{teal}i}^n$ 
+and Kurt O. Friedrichs. \url{https://en.wikipedia.org/wiki/Lax-Friedrichs_method}} consists of replacing the $T_{\color{teal}i}^n$ 
 in the time derivative term with $(T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)/2$
 (see for instance Section 4.3.1 of \cite{pell08} in the context of surface processes). 
 The resulting equation is
@@ -69,20 +103,31 @@ depends on the sign of the velocity:
 \]
 In fact, we have replaced central with forward or backward derivatives, depending on the flow direction. 
 This method is stable when $C=u \delta t/h \leq 1$. 
+
+\item {\color{olive} Lax-Wendroff method}\footnote{Named after Peter Lax 
+and Burton Wendroff \url{https://en.wikipedia.org/wiki/Lax-Wendroff_method}} \cite{hoch}.
+is second-order accurate in both space and time. 
+This method is an example of explicit time integration where the function that defines the governing equation is evaluated at the current time. 
+\[
+T^{n+1}_i = T_i^n - \frac{u \delta t}{2 h} (T_{i+1}^n-T_{i-1}^n)
++ \frac{u^2 dt^2}{2 h^2} (T_{i+1}^n-2 T_i^n+T_{i-1}^n)
+\]
+
+
+
+
+
+
+
+
 \end{itemize}
-These are not the only possibilities, see for instance the {\color{olive} leapfrog method} or the 
-{\color{olive} Lax-Wendroff method} \cite{hoch}.
+These are not the only possibilities, see for instance 
+the {\color{olive} leapfrog method} or the
+MacCormack method\footnote{\url{https://en.wikipedia.org/wiki/MacCormack_method}} (well suited for nonlinear equations).  
 \index{general}{Leapfrog method}
 \index{general}{Lax-Wendroff method}
 
 
-Finally, The Crank-Nicolson implicit scheme for solving the diffusion equation 
-can be adapted to solve the advection equation:
-\[
-T_{\color{teal}i}^{n+1} + \frac{u \delta t}{4h} (T_{{\color{teal}i+1}}^{n+1}-T_{{\color{teal}i-1}}^{n+1}) 
-= T_{\color{teal}i}^n - \frac{u \delta t}{4h} (T_{{\color{teal}i+1}}^{n}-T_{{\color{teal}i-1}}^{n}) 
-\]
-TODO: write about how we obtain this.
 
 
 %-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/

@@ -140,9 +140,88 @@ $T=200\degree$C at $x=L_x$. The initial temperature is $T(x,t=0)=123$
 and $\kappa=10^{-6}$. 
 Time stepping will be carried out until steady state is reached.
 
-$\rightarrow$ 
-\href{http://cedricthieulot.net/images/compgeo/Exercise_2_FDM.ipynb}
-{\tt Exercise\_2\_FDM.ipynb}
+\begin{verbatim}
+import numpy as np
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
+# Finish the following function which returns the analytical solution 
+# to the 1D steady-state diffusion problem.
+
+def analytical_solution(x,Lx,Tleft,Tright):
+    return ...
+
+Lx=1e3
+nnx=10
+kappa=1e-6
+nstep=2
+Tleft=100
+Tright=200
+epsilon=0.1
+
+h=
+print('h=',h)
+dt=
+print('dt=',dt)
+
+# Declare the array 'x' which will contain the coordinate of all 
+# nnx points #and then fill this array.
+x=
+
+\end{verbatim}
+
+We will need to store at least two temperature fields: the one we already know $\vec{T}^n$ (the initial temperature or a previously computed field at time $n$), and the one we want to compute $\vec{T}^{n+1}$ 
+(We choose not to store all transient fields as we are only interested in the final steady state field). We therefore use only two arrays: $Told$ and $Tnew$, both of length $nnx$. Declare these arrays. Fill $Told$ with the value for $\vec{T}^0$.
+
+\begin{verbatim}
+Told=
+Tnew=
+\end{verbatim}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+{\color{orange}Exercise FDM-2 (continued)}
+\end{center}
+
+At each timestep $n$ compute from $Told$ the new temperature $Tnew$, using boundary conditions and the explicit scheme. Having done so, compute the average error between $Tnew$ and the real analytical solution. Stop the timestepping loop if this (absolute) error is smaller than $\epsilon$
+
+\begin{verbatim}
+for n in range(0,nstep):
+
+    for i in range (0,nnx):
+
+        # compute Tnew[i]
+
+    #compute error
+    
+    #print min/max
+    print("timestep #",n,' min/max Tnew=',np.min(Tnew),np.max(Tnew))        
+
+    #transfer new solution into Told array
+    Told[:]=Tnew[:]
+    
+\end{verbatim}
+
+What follows is an example of how to plot the temperature field $Tnew$.
+
+\begin{verbatim}
+plt.figure(figsize=(6,5)) 
+plt.title('Steady state temperature')
+plt.plot(x,Tnew,color='black')
+plt.xlabel('x (m)')
+plt.ylabel('T (K)')
+plt.grid()
+plt.savefig('Temperature.pdf')
+\end{verbatim}
+
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}

@@ -104,15 +104,46 @@ Its Butcher tableau is as follows:
 \end{mdframed}
 
 
-The first row of coefficients at the bottom of the table gives the fifth-order accurate method, and the second row gives the fourth-order accurate method. 
+The first row of coefficients at the bottom of the table gives the fifth-order 
+accurate method, and the second row gives the fourth-order accurate method. 
+
+The particularity of this method is that from the same Butcher Tableau one 
+can produce a 4th-order approximation $\tilde{A}$ and a 5th-order approximation $A$:
+\begin{eqnarray}
+\tilde{A}_{n+1}&=&A_n + \frac{25}{216}A_1 + \frac{1408}{2565}A_3+\frac{2197}{4101}A_4 -\frac15 A_5 \nn\\
+A_{n+1}&=&A_n + \frac{16}{135}A_1 + \frac{6656}{12825}A_3+\frac{28561}{56430}A_4 \nn
+-\frac{9}{50} A_5 + \frac{2}{55} A_6
+\end{eqnarray}
+One can define 
+\[
+R=\frac{1}{h} | \tilde{A}_{n+1} - A_{n+1} | \nn\\
+\qquad\qquad
+\delta = \left( \frac{tol}{R \sqrt 2} \right)^{1/4}
+\]
+where $h$ is the current step.
+If $R \le tol$ keep $A$ as the current step solution and move to the next step with step size $\delta  \cdot h$.
+If $R > tol$ recalculate the current step with step size $\delta  \cdot h$. 
+
+
+
+In the literature we can also find even higher order methods 
+based on the same principle:
 
 \begin{center}
-\includegraphics[width=7cm]{images/rungekutta/fe7}
-\includegraphics[width=8.5cm]{images/rungekutta/dp87}\\
-{\captionfont Left: 7th order Fehlberg method; Right: 8/7th order Dormand-Prince method.}
+\includegraphics[width=8cm]{images/rungekutta/fe7}\\
+\includegraphics[width=10cm]{images/rungekutta/prdo81a}\\
+\includegraphics[width=14cm]{images/rungekutta/prdo81b}\\
+{\captionfont Top: 7th order Fehlberg method; 
+Middle and bottom: 6/5th and 8/7th order Dormand-Prince methods from \cite{prdo81}.}
 \end{center}
 
-\Literature \cite{fehl85,hanw93,dopr80,dopr86,prdo81,caka90,butcher03}
+\Literature:
+\textcite{dopr80} (1980),
+\textcite{fehl85} (1985),
+\textcite{dopr86} (1986),
+\textcite{caka90} (1990),
+\textcite{hanw93} (1993),
+\textcite{butcher03}.
 
 
 %....................................................................................

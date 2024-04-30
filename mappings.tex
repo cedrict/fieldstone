@@ -1443,7 +1443,9 @@ Then
 %-----------------------------
 \subsubsection{DJ: Second jacobian}
 
-The second Jacobian in the DJ method is the analytical mapping from polar coordinates to Cartesian coordinates. The derivatives expressed in matrix form are given by
+The second Jacobian in the DJ method is the {\it analytical} 
+mapping from polar coordinates to Cartesian coordinates. The derivatives 
+expressed in matrix form are given by
 \begin{equation}
 \left(
 \begin{array}{c}
@@ -1541,7 +1543,7 @@ as a function of polar coordinates:
 \end{equation}
 where $\uptheta$ and $\uprho$ are evaluated at each integration point (ip).
 
-Remark: this Jacobian is independent of the choice of basis functions.
+Remark: this Jacobian is independent of the choice of basis functions since it is analytical.
 
 
 %--------------------------------------------------------
@@ -1684,15 +1686,15 @@ quadrature points this case is extremely unlikely.
 
 
 Based on Fig 2 of \textcite{moth20}, we consider an annulus of outer diameter
-6371km. Visually from 2A we infer $\uprho_1=4700$km, $\uprho_2=\uprho_3=6371$km, and 
-$\uptheta_1=14.5$, $\uptheta_2=22$ and $\uptheta_3=0$.
+6371km. Visually from 2A we infer $\uprho_1=4700~\si{\km}$, $\uprho_2=\uprho_3=6371~\si{\km}$, and 
+$\uptheta_1=14.5^\circ$, $\uptheta_2=22^\circ$ and $\uptheta_3=0^\circ$.
 
-If quadratic basis functions are used, we'll define 
+If quadratic basis functions are used, we define 
 $r_4=\frac12(r_1+r_2)$,
 $r_5=\frac12(r_2+r_3)$,
 $r_6=\frac12(r_3+r_1)$, and likewise for the $\uptheta_{4,5,6}$ values.
 
-We'll then proceed to generate 1000 random points in the reference triangle and plot their image
+We then proceed to generate 1000 random points in the reference triangle and plot their image
 in the Cartesian plane, either using the DJ method, a linear mapping $P_1$ or a quadratic mapping $P_2$.
 
 Unsurprisingly the $P_1$ mapping yields a triangle which 2-3 edge does not conform to the edge of the domain.
@@ -1763,41 +1765,43 @@ In this case we have
 \end{equation}
 
 
-{\bf SPECIAL CASE}: In the element we have $\uptheta_1=\uptheta_4$, $\uptheta_2=\uptheta_3$, $\uptheta_2-\uptheta_1=\uptheta_3-\uptheta_4=\tilde{\uptheta}$.
-Likewise, $\uprho_1=\uprho_2$, $\uprho_3=\uprho_4$ and $\uprho_4-\uprho_1=\uprho_3-\uprho_2=\tilde{\uprho}$
+{\bf SPECIAL CASE}: In the element we have 
+$\uptheta_1=\uptheta_4$, $\uptheta_2=\uptheta_3$, 
+$\uptheta_2-\uptheta_1=\uptheta_3-\uptheta_4=\tilde{\uptheta}$.
+Likewise, 
+$\uprho_1=\uprho_2$, $\uprho_3=\uprho_4$ and 
+$\uprho_4-\uprho_1=\uprho_3-\uprho_2=\bar{\uprho}$
 In this case:
 \begin{eqnarray}
 \frac{\partial\uptheta}{\partial r}(r,s) 
-&=& \frac14 (-\uptheta_1 + \uptheta_2 + \uptheta_3 - \uptheta_4) = \frac12 \tilde{\uptheta}\\
+&=& \frac14 (-\uptheta_1 + \uptheta_2 + \uptheta_3 - \uptheta_4) =\frac12 \tilde{\uptheta}\\
 \frac{\partial\uptheta}{\partial s}(r,s) 
 &=& \frac14 (-\uptheta_1 - \uptheta_2 + \uptheta_3 + \uptheta_4) =0\\
 \frac{\partial}{\partial r}\uprho(r,s)   
 &=& \frac14 (-\uprho_1 + \uprho_2 + \uprho_3 - \uprho_4) = 0\\
 \frac{\partial}{\partial s}\uprho(r,s)   
-&=& \frac14 (-\uprho_1 - \uprho_2 + \uprho_3 + \uprho_4) = \frac12 \bar{\uprho}
+&=& \frac14 (-\uprho_1 - \uprho_2 + \uprho_3 + \uprho_4) =\frac12 \bar{\uprho}
 \end{eqnarray}
 and
 \begin{equation}
 \boxed{
 {\bm J}_{LP}={\bm J}_{PL}^{-1} 
-= \frac{1}{\frac12 \bar{\uprho} \frac12 \tilde{\uptheta}} 
+= \frac{1}{\frac12\bar{\uprho} \frac12\tilde{\uptheta}} 
 \left(
 \begin{array}{cc}
 \frac12 \bar{\uprho} & 0 \\
-0 & \frac12 \tilde{\uptheta}
+0 & \frac12\tilde{\uptheta}
 \end{array}
 \right)
-=2
+=
 \left(
 \begin{array}{cc}
-\tilde{\uptheta}^{-1} & 0 \\
-0 &  \bar{\uprho}^{-1}
+2\tilde{\uptheta}^{-1} & 0 \\
+0 &  2\bar{\uprho}^{-1}
 \end{array}
 \right)}
 \end{equation}
-
-
-
+Bringing things together:
 \begin{eqnarray}
 \left(
 \begin{array}{c}
@@ -1814,26 +1818,10 @@ and
 \end{array}
 \right)
 \cdot
-2
 \left(
 \begin{array}{cc}
-\tilde{\uptheta}^{-1} & 0 \\
-0 &  \bar{\uprho}^{-1}
-\end{array}
-\right)
-\cdot 
-\left(
-\begin{array}{c}
-\frac{\partial \bN_i}{\partial r} \\ \\
-\frac{\partial \bN_i}{\partial s} 
-\end{array}
-\right)  \nn\\
-&=&
-\frac{2}{\uprho}
-\left(
-\begin{array}{cc}
-\tilde{\uptheta}^{-1} \cos\uptheta & \uprho \bar{\uprho}^{-1} \sin \uptheta\\ \\
--\tilde{\uptheta}^{-1} \sin\uptheta & \uprho \bar{\uprho}^{-1} \cos \uptheta
+2\tilde{\uptheta}^{-1} & 0 \\
+0 &  2\bar{\uprho}^{-1}
 \end{array}
 \right)
 \cdot 
@@ -1843,6 +1831,22 @@ and
 \frac{\partial \bN_i}{\partial s} 
 \end{array}
 \right)  
+%\nn\\
+%&=&
+%\frac{2}{\uprho}
+%\left(
+%\begin{array}{cc}
+%\tilde{\uptheta}^{-1} \cos\uptheta & \uprho \bar{\uprho}^{-1} \sin \uptheta\\ \\
+%-\tilde{\uptheta}^{-1} \sin\uptheta & \uprho \bar{\uprho}^{-1} \cos \uptheta
+%\end{array}
+%\right)
+%\cdot 
+%\left(
+%\begin{array}{c}
+%\frac{\partial \bN_i}{\partial r} \\ \\
+%\frac{\partial \bN_i}{\partial s} 
+%\end{array}
+%\right)  
 \end{eqnarray}
 
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -1875,40 +1879,108 @@ and
 This equation is to be compared with Eq.~\eqref{eq:mappDJ1}
 
 If matrix ${\bm A}$ is invertible then ${\bm A}\cdot {\bm A}^{-1}={\bm 1}$, 
-and since $det({\bm A}\cdot {\bm B}) = det({\bm A})\; det ({\bm B})$, then
+and since $det({\bm A}\cdot {\bm B}) = det({\bm A}) det ({\bm B})$, then
 $det({\bm A}\cdot {\bm A}^{-1})= det({\bm A})\; det ({\bm A}^{-1}) =1$.
 This means that 
 $
 det({\bm J}_{CL})=
 det({\bm J}_{LC}^{-1})=
-[det({\bm J}_{LC})]^{-1}=
+[det({\bm J}_{LC})]^{-1}
 $
 with 
-\[
+\begin{eqnarray}
 det({\bm J}_{LC})
-=
-\frac{2}{\uprho}
+&=&
+\frac{4}{\uprho^2}
 \left[
 \tilde{\uptheta}^{-1} \cos\uptheta 
- \uprho \bar{\uprho}^{-1} \cos \uptheta
-+ 
+ \uprho \bar{\uprho}^{-1} \cos \uptheta+ 
 \tilde{\uptheta}^{-1} \sin\uptheta 
-\uprho \bar{\uprho}^{-1} \sin \uptheta \right]
-=
-\frac{2}{\uprho}
+\uprho \bar{\uprho}^{-1} \sin \uptheta \right] \nn\\
+&=&
+\frac{4}{\uprho^2}
 \left[
-\tilde{\uptheta}^{-1} \uprho \bar{\uprho}^{-1} 
-+  \tilde{\uptheta}^{-1} \uprho \bar{\uprho}^{-1} 
-\right]
-=
-\frac{4}{\tilde{\uptheta}  \bar{\uprho}}
-\]
+\tilde{\uptheta}^{-1} 
+ \uprho \bar{\uprho}^{-1} \cos^2 \uptheta+ 
+\tilde{\uptheta}^{-1}  
+\uprho \bar{\uprho}^{-1} \sin^2 \uptheta \right] \nn\\
+&=&
+\frac{4}{\uprho^2}
+\tilde{\uptheta}^{-1} \uprho \bar{\uprho}^{-1} \nn\\
+&=&
+\frac{4}{\uprho \tilde{\uptheta}  \bar{\uprho}}
+\end{eqnarray}
 In the end 
 \[
-det({\bm J}_{CL})=
-\frac{\tilde{\uptheta}  \bar{\uprho}}{4}
+det({\bm J}_{CL})= \frac14 \uprho \tilde{\uptheta}  \bar{\uprho}
+\]
+Note that the area of such element can easily be computed:
+\[
+{\cal A}_e 
+= \iint_{\Omega_e} \uprho d\uprho d\uptheta 
+= \int_{\uprho_1}^{\uprho_3}\int_{\uptheta_1}^{\uptheta_3} \uprho d\uprho d\uptheta 
+= (\uptheta_3-\uptheta_1) \frac12 (\uprho_3^2-\uprho_1^2)
 \]
 
+We can now compute the same area but using a numerical quadrature:
+
+%We have $\bar{\uprho}=\frac12 (\uprho_4-\uprho_1)=\frac12 \delta\uprho$ and
+%$\tilde{\uptheta}=\frac12 (\uptheta_2-\uptheta_1) = \frac12 \delta \uptheta$.
+
+(iq: in theta direction, jq in r direction) sum w= 2
+
+\begin{eqnarray}
+{\cal A}_e
+&=&\iint_{\Omega_e} dV  \nn\\
+&=&\sum_{iq=1}^{n_q} \sum_{jq=1}^{n_q}   w_{iq} w_{jq} det({\bm J})|_{i_q} \nn\\
+&=&\sum_{iq=1}^{n_q} \sum_{jq=1}^{n_q}   w_{iq} w_{jq} (\frac14 \uprho \bar{\uprho} \tilde{\uptheta} ) \nn\\
+&=&(\frac14 \tilde{\uptheta} \bar{\uprho})  \sum_{iq=1}^{n_q} \sum_{jq=1}^{n_q}   w_{iq} w_{jq} \uprho_{iq,jq} \nn\\
+&=&\frac14 \tilde{\uptheta}   \bar{\uprho} \;  2  \sum_{jq=1}^{n_q}  w_{jq} \uprho_{jq} 
+\end{eqnarray}
+
+We have, since $\uprho = mr+p $ with $p=\frac12 (\uprho_1+\uprho_3)$ in the element (see Example 2 in Section~\ref{ss:quad:examples}):
+\[ 
+\sum_{jq=1}^{n_q}  w_{jq} \uprho_{jq} = \frac12 (\uprho_1+\uprho_3)  \cdot 2 = \uprho_1+\uprho_3
+\]
+so that 
+\begin{eqnarray}
+{\cal A}_e
+&=&\frac12 \delta \uptheta  \frac12 (\uprho_3-\uprho_1)  2 (\uprho_1+\uprho_3) \nn\\
+&=&\frac12 \delta \uptheta (\uprho_3^2-\uprho_1^2) 
+\end{eqnarray}
+which is indeed the area of an element.
+
+
+
+
+
+
+\newpage
+Let us consider an annulus with inner radius $R_1$ and outer radius $R_2$. Let us assume it is tesselated 
+by means of non-overlapping elements, all characterised by the same $\delta\uprho$ and $\delta\uptheta$ 
+dimensions.
+
+
+\begin{eqnarray}
+{\cal A}
+&=&\iint_\Omega dV  \nn\\
+&=&\sum_e \iint_{\Omega_e} dV  \nn\\
+&=&\sum_e \sum_{iq=1}^{n_q} \sum_{jq=1}^{n_q}   w_{iq} w_{jq} det({\bm J})|_{i_q} \nn\\
+&=&\sum_e \sum_{iq=1}^{n_q} \sum_{jq=1}^{n_q}   w_{iq} w_{jq} (\uprho  \frac12 \delta \uptheta  \frac12 \delta\uprho ) \nn\\
+&=&\sum_e  (\frac12 \delta \uptheta  \frac12 \delta\uprho)_e  \sum_{iq=1}^{n_q} \sum_{jq=1}^{n_q}   w_{iq} w_{jq} \uprho_{iq,jq} \nn\\
+&=&\sum_e  (\frac12 \delta \uptheta  \frac12 \delta\uprho)_e  2  \sum_{jq=1}^{n_q}  w_{jq} \uprho_{jq} \nn\\
+\end{eqnarray}
+
+
+
+
+\newpage 
+We can carry out the same exercise as before.
+The element is defined by 
+$\uptheta_1=\uptheta_4=10^\circ$,
+$\uptheta_2=\uptheta_3=25^\circ$,
+$\uprho_1=\uprho_2=4700~\si{\km}$,
+$\uprho_3=\uprho_4=6371~\si{\km}$.
 
 \begin{center}
 \includegraphics[width=5.7cm]{images/mappings/DJ/quadrilaterals/xz_P1.pdf}
@@ -1928,9 +2000,3 @@ det({\bm J}_{CL})=
 \includegraphics[width=5.7cm]{images/mappings/DJ/quadrilaterals/xz_DJ_boundary_error.pdf}
 \end{center}
 
-
-
-
-
-
- 

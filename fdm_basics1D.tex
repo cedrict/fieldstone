@@ -107,6 +107,7 @@ p_0 = \rho g \; 3h = \rho g L_y.
 \end{minipage}
 \end{center}
 
+\newpage
 This brings us to our first exercise:
 
 \begin{center}
@@ -122,9 +123,31 @@ We will now put the previous example into practice and write a
 python code which uses forward differences to compute the 1D pressure
 field inside the crust.
 
-$\rightarrow$ 
-\href{http://cedricthieulot.net/images/compgeo/Exercise_1_FDM.ipynb}
-{\tt Exercise\_1\_FDM.ipynb}
+\begin{verbatim}
+import numpy as np
+import matplotlib as mpl 
+import matplotlib.pyplot as plt 
+Ly=30e3
+nny=10
+g=9.81
+rho=3000
+#Compute , the distance between nodes
+h=
+#declare/fill the y array 
+y=
+
+#Set the pressure at the top to zero and work backwards to compute the pressure at the remaining nodes.
+
+#Print the expected value at the bottom next to the computed value at y=0
+
+plt.figure(figsize=(6,5)) #Size of figure in inches (or 'freedom units'), x,y
+plt.title('Pressure Profile')
+plt.plot(p,y,color='black')
+plt.xlabel('Pressure (N/m2)')
+plt.ylabel('Vertical Profile (m)')
+plt.grid()
+plt.savefig('PressureProfile.pdf')
+\end{verbatim}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
@@ -132,10 +155,7 @@ $\rightarrow$
 %/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 
-
-
-
-
+\newpage
 
 \noindent We can also expand the Taylor series backward (i.e. looking 'left' of $x_0$)
 \begin{equation}
