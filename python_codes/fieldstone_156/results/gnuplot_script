@@ -1,0 +1,26 @@
+set term pdf enhanced font "Times,12pt" size 7,1.3
+set grid
+set key outside
+set xlabel 'time (t)'
+
+set ylabel 'A'
+set output 'A.pdf'
+plot[][]\
+'scheme1/ABC_1e-7.ascii' u 1:2 w l t 'scheme 1',\
+'scheme2/ABC_1e-7.ascii' u 1:2 w l t 'scheme 2',\
+'scheme3/ABC_1e-7.ascii' u 1:2 w l t 'scheme 3',\
+
+set ylabel 'B'
+set output 'B.pdf'
+plot[][]\
+'scheme1/ABC_1e-7.ascii' u 1:3 w l t 'scheme 1',\
+'scheme2/ABC_1e-7.ascii' u 1:3 w l t 'scheme 2',\
+'scheme3/ABC_1e-7.ascii' u 1:3 w l t 'scheme 3',\
+
+set ylabel 'C'
+set output 'C.pdf'
+plot[][]\
+'scheme1/ABC_1e-7.ascii' u 1:4 w l t 'scheme 1',\
+'scheme2/ABC_1e-7.ascii' u 1:4 w l t 'scheme 2',\
+'scheme3/ABC_1e-7.ascii' u 1:4 w l t 'scheme 3',\
+
