@@ -13,6 +13,30 @@ the maximum Finite Time Lyapunov Exponents (FTLE) as described in
 \textcite{fasa03} (2003), and measures the rate at
 which heterogeneities are stretched by mantle motions.
 
+In the review of \textcite{vatv24} by Nicolas Coltice, his review reads:
+\begin{displayquote}
+{\color{darkgray}
+``
+The first studies of mantle mixing date back to the 1980’s and one of the 
+difficulty was to deal with scales. So 2 approaches were taken: one dealing explicitly 
+with scales, such as the authors do here with configurational entropy. It was in 
+relationship with the observations of heterogeneities at all scales (marble cake like at 
+first, more comprehensive nowadays with mid-ocean ridge heterogeneities etc…). 
+The other approach is to work with the theory of dynamic systems, because mantle convection 
+is chaotic. The use of Lyapunov exponent characterize the local and global properties of 
+stretching of heterogeneities. Mixing happens when an heterogeneity is stretched at a 
+scale at which chemical diffusion operates. This scale for the Earth is about 1cm I 
+would say (some papers talk about it). Lyapunov exponent are a form of stretching rate 
+when mixing is chaotic. Configurational entropy and Lyapunov exponent can be related 
+with Ergodicity theory. 
+''
+}
+\end{displayquote}
+
+
+
+
+
 In \textcite{taxi02} (2002) we read: 
 
 \begin{displayquote}
@@ -107,13 +131,25 @@ $\bar{\alpha}$, $\bar{\beta}$ and $\bar{\omega}$
 at each position of the particle, and integrate \eqref{eq:mixx1} and \eqref{eq:mixx2}
 along the particle path to obtain the deformation history of a
 strain marker.
+These equations are derived in \textcite{kell93} (1993).
 ''
 }
 \end{displayquote}
-{\color{orange} replicate?}
+
+In \textcite{fasa03} we find this important distinction:
+\begin{displayquote}
+{\color{darkgray}
+``
+Stirring involves the repeated action of stretching 
+and folding of a fluid element, while mixing
+also involves diffusion at small scales. The
+term stirring is more appropriate for the mantle,
+since rocks chemical diffusivity is only $10^{-15}-10^{-20}$.
+''
+}
+\end{displayquote}
 
 
-Check fasa03
 
 In \textcite{saad11} (2011) we find:
 \begin{displayquote}
@@ -267,12 +303,8 @@ the Lagrangian strain-rate field in 3-D.
 }
 \end{displayquote}
 
-
-
-
 Based on these, we need to look at the Lyapunov exponent (and the 
 Finite Time Lyapunov Exponent, i.e. FTLE).
-
 
 %---------------------------------
 \subsection{The Lyapunov exponent}
@@ -373,8 +405,37 @@ of mantle models using data assimilation. PhD thesis. \textcite{pric16} (2016).
 
 \Literature
 
-\textcite{pier91} (1991)
+\textcite{pier91} (1991),
 \textcite{cobs15} (2015),
+\textcite{thsf24} (2024).
+
+%-----------------------------------------------
+\subsection{Following patches of passively advected markers}
+
+In \textcite{gurn86} (1986) the stirring
+of a small, passive
+heterogeneity
+in an unsteady circulation
+is investigated by following
+the boundary of the heterogeneity;
+the circulation mimics features
+of plate-scale flow.
+After initial release,
+the heterogeneity is stirred
+and subsequently consists of at least one
+large "blob" connected to long, but thin tendrils.
+
+\begin{center}
+\includegraphics[width=9cm]{images/mixing/gurn86}
+\end{center}
+
+%-----------------------------------------------
+\subsection{Hyperbolic persistence time method}
+
+This method is presented in \textcite{fasa03} (2003).
+Looks complex, and too long to copy paste here.
+
+
 
 %-----------------------------------------------
 \subsection{configurational 'Shannon' entropy}
@@ -385,36 +446,5 @@ of mantle models using data assimilation. PhD thesis. \textcite{pric16} (2016).
 van der Wiel et al. (2024). 
 
 based on results obtained in \textcite{vavt24} (2024)
-
-
-%-------------------------------------------
-\subsection{Literature to sort out}
-
-
-\textcite{ridn82} (1982),
-
-\textcite{gurn86} (1986),
-
-\textcite{chri89} (1989),
-
-\textcite{hayk92} (1992),
-
-\textcite{scha94} (1994),
-
-\textcite{vazh99} (1999),
-
-\textcite{falt02} (2002),
-
-\textcite{fasa03} (2003),
-
-\textcite{huda07b} (2007),
-
-\textcite{mang10} (2010): Low-viscosity mantle blobs are sampled preferentially at regions of surface
-divergence and stirred rapidly into the mantle.
-
-\textcite{thsf24} (2024)
-
-GET: Ricard and Coltice [2005]
-
 
 

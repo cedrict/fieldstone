@@ -40,7 +40,7 @@ Or, using a Crank-Nicolson approach:
 
 As we have seen before, the advection term is a source of problems and multiple 
 methods have been designed to stabilise the pure advection equation. 
-The {\color{olive}Fiadeiro \& Veronis method} \cite{five77}, works as follows for the (steady state)
+The {\color{olive}Fiadeiro \& Veronis method} \cite{five77,wrig92}, works as follows for the (steady state)
 advection-diffusion equation (see also p315 of \textcite{boudreau}):
 \[
 \kappa \frac{T_{i+1}-2T_i + T_{i-1}}{h^2}
@@ -61,6 +61,7 @@ Thus, if $\sigma = 0$ (diffusion dominated), then pure central differencing is o
 $\sigma = 1$ (advection dominated), then pure backward differencing results. Interestingly
 enough, this blended or weighted scheme is second-order accurate even as it switches
 to backward differencing \cite{five77}. 
+Note that it is essentially the known streamline upwind method used in FEM.
 
 Adding a FT time derivative term, the equation above can be rewritten (a source
 term has been added):
@@ -70,6 +71,7 @@ term has been added):
 \kappa \frac{T_{i+1}^n-2T_i + T_{i-1}^n}{h^2}
 - u \frac{(1-\sigma) T_{i+1}^n+2\sigma T_i^n -(1+\sigma)T_{i-1}^n}{2 h} +H 
 \]
+
 
 
 \paragraph{A simple example} Let us consider the domain $0<x<1$.
@@ -108,8 +110,9 @@ A very similar example is implemented in \stone~65 (albeit with FEM).
 {\color{orange}Exercise FDM-7}
 \end{center}
 
-Prove that Eq.~\eqref{eq:fdmadvdiff1} is indeed solution of Eq.~\eqref{eq:fdmadvdiff2}. 
-Code the FTCS and FTFV methods and reproduce the figure above (i.e. only forward in time/explicit methods).
+Prove that Eq.~\eqref{eq:fdmadvdiff1} is indeed solution of 
+Eq.~\eqref{eq:fdmadvdiff2}. Code the FTCS and FTFV methods and reproduce 
+the figure above (i.e. only forward in time/explicit methods).
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}

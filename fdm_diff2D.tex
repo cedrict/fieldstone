@@ -98,7 +98,7 @@ ${\color{brown}i}=4$ and ${\color{brown}j}=1$ corresponds to node \# 9, etc ...
 
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise FDM-7}
+{\color{orange}Exercise FDM-8}
 \end{center}
 
 In a new code declare and assign values to 
@@ -189,7 +189,7 @@ where $T_{bc}$ is the prescribed temperature.
 \par\noindent\rule{\textwidth}{0.4pt}
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise FDM-8}
+{\color{orange}Exercise FDM-9}
 \end{center}
 
 A simple (time-dependent) analytical solution for the temperature equation exists for 
@@ -513,10 +513,10 @@ Note also that this is a simplified matrix since we assumed that $s_x=s_y$.
 \par\noindent\rule{\textwidth}{0.4pt}
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise FDM-9}
+{\color{orange}Exercise FDM-10}
 \end{center}
 
-Same exercise as exercise FDM-8, but now with implicit method.
+Same exercise as exercise FDM-9, but now with implicit method.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
@@ -746,3 +746,57 @@ or,
 \]
 Both are isotropic forms of discrete Laplacian, and in the limit of small $h$, they all become equivalent. This form is the one we find in \textcite[p64]{leveque}.
 
+%..............................................................
+\subsection{The alternating-direction-implicit (ADI) technique}
+
+This is borroed from Anderson's book, section 6.7.
+
+We start again from the Crank-Nicolson version of the implicit scheme:
+\begin{eqnarray}
+\frac{T_{{\color{brown}i},{\color{brown}j}}^{n+1}-T_{\color{brown}i,j}^n}{\delta t}
+&=& \frac12 \kappa
+\left(
+\frac{ T_{{\color{brown}i-1,j}}^{n+1}-2T_{{\color{brown}i,j}}^{n+1}+T_{{\color{brown}i+1,j}}^{n+1} }{h_x^2} + 
+\frac{ T_{{\color{brown}i,j-1}}^{n+1}-2T_{{\color{brown}i,j}}^{n+1}+T_{{\color{brown}i,j+1}}^{n+1} }{h_y^2}
+\right) \nn\\
+&+& \frac12 \kappa
+\left(
+\frac{ T_{{\color{brown}i-1,j}}^{n}-2T_{{\color{brown}i,j}}^{n}+T_{{\color{brown}i+1,j}}^{n} }{h_x^2} + 
+\frac{ T_{{\color{brown}i,j-1}}^{n}-2T_{{\color{brown}i,j}}^{n}+T_{{\color{brown}i,j+1}}^{n} }{h_y^2}
+\right)
+\end{eqnarray}
+Although it is usable `as is', there was an incentive a few decennia to keep the matrix 
+tridiagonal (as opposed to pentadiagonal in this case) so that the Thomas algorithm\footnote{
+\url{https://en.wikipedia.org/wiki/Tridiagonal_matrix_algorithm}.
+See also appendix A of Anderson's book.} could be used.
+
+The ADI method arrives at the solution in a two-step process, where intermediate values
+of $T$ are found at an intermediate time $t+\delta t/2$, as follows. For each step a tridiagonal 
+matrix is generated.
+
+In the first step replace the spatial derivative with central differences where only the $x$ derivative is treated 
+implicitely:
+
+\begin{eqnarray}
+\frac{T_{{\color{brown}i},{\color{brown}j}}^{n+1/2}-T_{\color{brown}i,j}^n}{\delta t/2}
+&=& \kappa \frac{ T_{{\color{brown}i-1,j}}^{n+1/2}-2T_{{\color{brown}i,j}}^{n+1/2}+T_{{\color{brown}i+1,j}}^{n+1/2} }{h_x^2} 
++\kappa \frac{ T_{{\color{brown}i,j-1}}^{n}-2T_{{\color{brown}i,j}}^{n}+T_{{\color{brown}i,j+1}}^{n} }{h_y^2}
+\end{eqnarray}
+
+The second step of the ADI scheme takes the solution to $t+\delta t$, using the known values 
+at time $t+\delta t/2$:
+
+\begin{eqnarray}
+\frac{T_{{\color{brown}i},{\color{brown}j}}^{n+1}-T_{\color{brown}i,j}^{n+1/2}}{\delta t/2}
+&=& \kappa \frac{ T_{{\color{brown}i-1,j}}^{n+1/2}-2T_{{\color{brown}i,j}}^{n+1/2}+T_{{\color{brown}i+1,j}}^{n+1/2} }{h_x^2} 
++\kappa 
+\frac{ T_{{\color{brown}i,j-1}}^{n+1}-2T_{{\color{brown}i,j}}^{n+1}+T_{{\color{brown}i,j+1}}^{n+1} }{h_y^2}
+\end{eqnarray}
+
+The ADI method is second order in time and space.
+
+
+
+
+
+ 
