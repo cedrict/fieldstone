@@ -1,0 +1,48 @@
+#
+set term pdf enhanced font "Times,12pt" size 7,1.3
+set grid
+set key outside
+
+##########################################
+set xlabel 'time (t)'
+
+set ylabel 'A'
+set output 'A.pdf'
+plot[:35][]\
+'ABC_1e-5.ascii' u 1:2 w l t 'tol=1e-5',\
+'ABC_1e-6.ascii' u 1:2 w l t 'tol=1e-6',\
+'ABC_1e-7.ascii' u 1:2 w l t 'tol=1e-7',\
+'ABC_1e-8.ascii' u 1:2 w l t 'tol=1e-8',\
+'ABC_1e-9.ascii' u 1:2 w l t 'tol=1e-9',\
+'ABC_1e-10.ascii' u 1:2 w l t 'tol=1e-10',\
+'ABC_1e-11.ascii' u 1:2 w l t 'tol=1e-11',\
+'ABC_1e-12.ascii' u 1:2 w l t 'tol=1e-12',\
+'ABC_1e-13.ascii' u 1:2 w l t 'tol=1e-13',\
+
+set ylabel 'B'
+set output 'B.pdf'
+plot[:35][]\
+'ABC_1e-5.ascii' u 1:3 w l t 'tol=1e-5',\
+'ABC_1e-6.ascii' u 1:3 w l t 'tol=1e-6',\
+'ABC_1e-7.ascii' u 1:3 w l t 'tol=1e-7',\
+'ABC_1e-8.ascii' u 1:3 w l t 'tol=1e-8',\
+'ABC_1e-9.ascii' u 1:3 w l t 'tol=1e-9',\
+'ABC_1e-10.ascii' u 1:3 w l t 'tol=1e-10',\
+'ABC_1e-11.ascii' u 1:3 w l t 'tol=1e-11',\
+'ABC_1e-12.ascii' u 1:3 w l t 'tol=1e-12',\
+'ABC_1e-13.ascii' u 1:3 w l t 'tol=1e-13',\
+
+set ylabel 'C'
+set output 'C.pdf'
+plot[:35][]\
+'ABC_1e-5.ascii' u 1:4 w l t 'tol=1e-5',\
+'ABC_1e-6.ascii' u 1:4 w l t 'tol=1e-6',\
+'ABC_1e-7.ascii' u 1:4 w l t 'tol=1e-7',\
+'ABC_1e-8.ascii' u 1:4 w l t 'tol=1e-8',\
+'ABC_1e-9.ascii' u 1:4 w l t 'tol=1e-9',\
+'ABC_1e-10.ascii' u 1:4 w l t 'tol=1e-10',\
+'ABC_1e-11.ascii' u 1:4 w l t 'tol=1e-11',\
+'ABC_1e-12.ascii' u 1:4 w l t 'tol=1e-12',\
+'ABC_1e-13.ascii' u 1:4 w l t 'tol=1e-13',\
+
+
