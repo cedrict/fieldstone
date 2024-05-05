@@ -55,7 +55,7 @@ newton_tol=1e-5
 
 dmin=10    # grain size (microns)
 dmax=1e4   # grain size (microns)
-nd=500     # number of grain size values
+nd=1000     # number of grain size values
 
 print('grain size range=',dmin,dmax)
 print('grain size nvalues=',nd)
@@ -68,7 +68,7 @@ if constant_strainrate:
    sr=1e-15   # strain rate (s^-1)
    Tmin=380   # temperature (C) 
    Tmax=1610  # temperature (C)
-   dT=2       # temperature interval  ( integer >= 1)
+   dT=1       # temperature interval  ( integer >= 1)
 else:
    t=800      # temperature in Celsius
    srmin=-18  # strain rate
