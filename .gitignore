@@ -42,6 +42,19 @@ showme
 ELEFANT/OLD/
 literature.pdf
 elefant.pdf
+li*.svg
+literature.4ct
+literature.4tc
+literature.css
+literature.dvi
+literature.html
+literature.idv
+literature.lg
+literature.tmp
+literature.xref
+literature2.html
+
+
 
 # C extensions
 *.so

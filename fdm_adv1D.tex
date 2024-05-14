@@ -107,12 +107,22 @@ This method is stable when $C=u \delta t/h \leq 1$.
 \item {\color{olive} Lax-Wendroff method}\footnote{Named after Peter Lax 
 and Burton Wendroff \url{https://en.wikipedia.org/wiki/Lax-Wendroff_method}} \cite{hoch}
 is second-order accurate in both space and time. 
-This method is an example of explicit time integration where the function that defines the governing equation is evaluated at the current time. 
+This method is an example of explicit time integration where the function that defines 
+the governing equation is evaluated at the current time. 
+\index{general}{Lax-Wendroff method}
 \[
 T^{n+1}_i = T_i^n - \frac{u \delta t}{2 h} (T_{i+1}^n-T_{i-1}^n)
 + \frac{u^2 dt^2}{2 h^2} (T_{i+1}^n-2 T_i^n+T_{i-1}^n)
 \]
-
+In \cite{boudreau} we find:
+``
+The Lax-Wendroff scheme has found considerable use in various applications; yet it
+is still somewhat diffusive and does not preserve sharp gradients as they are advected
+(see Rood, 1987, for an example). Another problem is what to do at the base of the
+grid (i=n). In an advective problem there is no boundary condition here; so if we
+apply the Lax-Wendroff at this point, it will contain the nonexistent concen-tration
+Bi+1 that cannot be eliminated with a boundary condition. One can apply [forward in time and
+backward in space equation] at this point and hope it does not perturb the scheme.''
 
 
 
@@ -125,7 +135,19 @@ These are not the only possibilities, see for instance
 the {\color{olive} leapfrog method} or the
 MacCormack method\footnote{\url{https://en.wikipedia.org/wiki/MacCormack_method}} (well suited for nonlinear equations).  
 \index{general}{Leapfrog method}
-\index{general}{Lax-Wendroff method}
+In p.346 of \cite{boudreau} we find:
+``
+The Leapfrog formulas are second order in both time and space, and they have no
+numerical dispersion. Nevertheless, they are not perfect because they generate
+spurious oscillations when they encounter sharp gradients, termed computational
+modes. These can grow and come to dominate the solution. Furthermore, the
+Leapfrog scheme inapplicable at the first time step; so a different start-up scheme
+needs to be used to generate the first set of data. This will introduce some small
+amount (we hope) of the bias in the result. In addition, as with the Lax-Wendroff,
+leapfrogging has a problem at the final point of the grid. Accepting that no classic
+scheme is perfect, Press et al. (1992) still prefer the Leapfrog scheme, at least when
+sharp gradients (shocks) are not involved.
+''
 
 
 

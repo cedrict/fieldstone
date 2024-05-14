@@ -40,7 +40,9 @@ print(LA.cond(A_mat))
 %--------------------------
 \subsection{Weird stuff}
 
-Python is touted as the one language students should learn and master. However it is a language which allows *way* too much liberty in its syntax and encourages students to be sloppy. 
+Python is touted as the one language students should learn 
+and master. However it is a language which allows *way* too 
+much liberty in its syntax and encourages students to be sloppy. 
 
 For instance the following code runs just fine:
 
@@ -53,7 +55,38 @@ for k in range(0,5):
 
 This alone should disqualify this language. It is easy to see the obvious problem with this code, but adding a few lines of code in between each 'for' line hides the problem and the absence of any warning makes this code a nightmare to debug.
 
+Here is another example:
 
+\begin{lstlisting}
+import numpy as np
+
+Told=np.full(10,123)
+
+Tnew=np.zeros(10)
+for i in range(0,10):
+    Tnew[i]=np.sqrt(i**5)
+
+print(Tnew)
+
+Told[:]=Tnew[:]
+
+print(Told)
+\end{lstlisting}
+If Told is not defined explicitely as a float, then the 
+numer 123 will decide of its type (in this case 
+integer). If `123' is changed into `123.' then the 
+array will be initialised as an array of floats.
+In the first case 
+\begin{verbatim}
+Told is [  0   1   5  15  32  55  88 129 181 243]
+\end{verbatim}
+while in the second case it is equal to 
+\begin{verbatim}
+[  0.           1.           5.65685425  15.58845727  32.
+  55.90169944  88.18163074 129.64181424 181.01933598 243.        ] 
+\end{verbatim}
+This is very dangerous since our students are not taught 
+number representation.
 
 \begin{verbatim}
 https://www.w3schools.com/python/default.asp
