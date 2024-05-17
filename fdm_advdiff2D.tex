@@ -42,17 +42,13 @@ a function of the heat diffusivity $\kappa$:
 \frac{\partial^2 T}{\partial x^2} 
 + \frac{\partial^2 T}{\partial y^2} \right) +Q
 \end{equation}
-Since we have already seen how to deal with 'pure' diffusion equations in the 
-previous section, let us now turn to 'pure' advection equations:
+Since we have already seen how to deal with `pure' diffusion equations in the 
+previous section, let us now turn to the `pure' advection equations:
 
-\begin{equation}
-\frac{\partial T}{\partial t}  + u \frac{\partial T}{\partial x} = 0
-\end{equation}
-or
 \begin{equation}
 \frac{\partial T}{\partial t}  + u \frac{\partial T}{\partial x} + v \frac{\partial T}{\partial y}= 0
 \end{equation}
-where we assume $\vec\upnu=(u,v)$ known. 
+where we assume the velocity field $\vec\upnu=(u,v)$ known. 
 
 Even though the equations appear simple, it is quite tricky to solve them accurately, 
 more so than for the diffusion problem. 
@@ -94,6 +90,191 @@ The Crank-Nicolson approach is then easily derived by taking:
 +\frac{v_{i,j}}{2} \frac{T^{n+1}_{\color{teal}i,j+1} - T^{n+1}_{{\color{teal}i,j-1}}}{2h_y} 
 =0 
 \end{equation}
+
+Let us now put advection and diffusion together:
+Let us consider again the FTCS scheme (Forward in Time, Central in Space).
+\begin{equation}
+\frac{T_{\color{teal}i,j}^{n+1}-T^n_{\color{teal}i,j}}{\delta t} 
++ u_{i,j} \frac{T^n_{\color{teal}i+1,j} - T^n_{{\color{teal}i-1,j}}}{2h_x} 
++ v_{i,j} \frac{T^n_{\color{teal}i,j+1} - T^n_{{\color{teal}i,j-1}}}{2h_y} =
+\kappa 
+\left(
+\frac{ T_{{\color{teal}i-1,j}}^{n}-2T_{{\color{teal}i,j}}^{n}+T_{{\color{teal}i+1,j}}^{n}  }{h_x^2} + 
+\frac{ T_{{\color{teal}i,j-1}}^{n}-2T_{{\color{teal}i,j}}^{n}+T_{{\color{teal}i,j+1}}^{n}  }{h_y^2}
+\right)
+\end{equation}
+We multiply by $\delta t$:
+\begin{eqnarray}
+&&T_{{\color{teal}i,j}}^{n+1}-T^n_{\color{teal}i,j}
++ \underbrace{\frac{u_{i,j} \delta t}{2h_x}}_{c^u_{i,j}} (T^n_{\color{teal}i+1,j} - T^n_{{\color{teal}i-1,j}}) 
++ \underbrace{\frac{v_{i,j} \delta t}{2h_y}}_{c^v_{i,j}} (T^n_{\color{teal}i,j+1} - T^n_{{\color{teal}i,j-1}}) \nn\\
+&=&
+\underbrace{\frac{\kappa   \delta t}{h_x^2}}_{s_x}
+\left(
+ T_{{\color{teal}i-1,j}}^{n}-2T_{{\color{teal}i,j}}^{n}+T_{{\color{teal}i+1,j}}^{n}
+\right) +
+\underbrace{\frac{\kappa   \delta t}{h_y^2}}_{s_y}
+\left(
+T_{{\color{teal}i,j-1}}^{n}-2T_{{\color{teal}i,j}}^{n}+T_{{\color{teal}i,j+1}}^{n} 
+\right)
+\end{eqnarray}
+and in the end:
+\begin{eqnarray}
+&&T_{{\color{teal}i,j}}^{n+1}-T^n_{\color{teal}i,j}
++ c^u_{{\color{teal} i,j}} (T^n_{\color{teal}i+1,j} - T^n_{{\color{teal}i-1,j}}) 
++ c^v_{{\color{teal} i,j}} (T^n_{\color{teal}i,j+1} - T^n_{{\color{teal}i,j-1}}) \nn\\
+&=&
+s_x
+\left(
+ T_{{\color{teal}i-1,j}}^{n}-2T_{{\color{teal}i,j}}^{n}+T_{{\color{teal}i+1,j}}^{n}
+\right) +
+s_y
+\left(
+T_{{\color{teal}i,j-1}}^{n}-2T_{{\color{teal}i,j}}^{n}+T_{{\color{teal}i,j+1}}^{n} 
+\right)
+\end{eqnarray}
+or,
+\begin{eqnarray}
+T_{{\color{teal}i,j}}^{n+1}
+&=&T^n_{\color{teal}i,j}
+- c^u_{{\color{teal} i,j}} (T^n_{\color{teal}i+1,j} - T^n_{{\color{teal}i-1,j}}) 
+- c^v_{{\color{teal} i,j}} (T^n_{\color{teal}i,j+1} - T^n_{{\color{teal}i,j-1}}) \nn\\
+&+&
+s_x
+\left(
+ T_{{\color{teal}i-1,j}}^{n}-2T_{{\color{teal}i,j}}^{n}+T_{{\color{teal}i+1,j}}^{n}
+\right) +
+s_y
+\left(
+T_{{\color{teal}i,j-1}}^{n}-2T_{{\color{teal}i,j}}^{n}+T_{{\color{teal}i,j+1}}^{n} 
+\right)
+\end{eqnarray}
+and in the end the explicit form of the 2d advection-diffusion equation is:
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+T_{{\color{teal}i,j}}^{n+1}
+=(1-2s_x-2s_y)T^n_{\color{teal}i,j}
++(-c^u_{{\color{teal} i,j}}+s_x)T^n_{\color{teal}i+1,j}
++(c^u_{{\color{teal} i,j}}+s_x)T^n_{{\color{teal}i-1,j}}
++(-c^v_{{\color{teal} i,j}}+s_y)T^n_{\color{teal}i,j+1}
++(c^v_{{\color{teal} i,j}}+s_y)T^n_{{\color{teal}i,j-1}}
+\]
+\end{mdframed}
+Likewise the implicit form of the 2d advection-diffusion equation is:
+\[
+\frac{T_{\color{teal}i,j}^{n+1}-T^n_{\color{teal}i,j}}{\delta t} 
++ u_{i,j} \frac{T^{n+1}_{\color{teal}i+1,j} - T^{n+1}_{{\color{teal}i-1,j}}}{2h_x} 
++ v_{i,j} \frac{T^{n+1}_{\color{teal}i,j+1} - T^{n+1}_{{\color{teal}i,j-1}}}{2h_y} =
+\kappa 
+\left(
+\frac{ T_{{\color{teal}i-1,j}}^{n+1}-2T_{{\color{teal}i,j}}^{n+1}+T_{{\color{teal}i+1,j}}^{n+1}  }{h_x^2} + 
+\frac{ T_{{\color{teal}i,j-1}}^{n+1}-2T_{{\color{teal}i,j}}^{n+1}+T_{{\color{teal}i,j+1}}^{n+1}  }{h_y^2}
+\right)
+\]
+which ultimately leads to write
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+(1+2s_x+2s_y)T_{{\color{teal}i,j}}^{n+1}
++(c^u_{{\color{teal} i,j}}-s_x)T_{{\color{teal}i+1,j}}^{n+1}
++(-c^u_{{\color{teal} i,j}}-s_x)T_{{\color{teal}i-1,j}}^{n+1}
++(c^v_{{\color{teal} i,j}}-s_y)T_{{\color{teal}i,j+1}}^{n+1}
++(-c^v_{{\color{teal} i,j}}-s_y)T_{{\color{teal}i,j-1}}^{n+1}
+=T^n_{\color{teal}i,j}
+\]
+\end{mdframed}
+or
+\[
+(1+2s_x+2s_y)T_{k}^{n+1}
++(c^u_{k}-s_x)T_{kright}^{n+1}
++(-c^u_{k}-s_x)T_{kleft}^{n+1}
++(c^v_{k}-s_y)T_{ktop}^{n+1}
++(-c^v_{k}-s_y)T_{kbot}^{n+1}
+=T^n_{k}
+\]
+Note that if one solves the steady state equation then this becomes
+\[
+(2s_x+2s_y)T_{k}
++(c^u_{k}-s_x)T_{kright}
++(-c^u_{k}-s_x)T_{kleft}
++(c^v_{k}-s_y)T_{ktop}
++(-c^v_{k}-s_y)T_{kbot}
+=0
+\]
+If Dirichlet boundary conditions are prescribed on all sides then the 
+equation above can be used on the interior nodes and once the matrix and the 
+rhs are built the linear system can be solved. 
+
+If however a boundary (or a portion of the boundary) is not set to a given value (Dirichlet boundary condition) but instead is free of any constraint, then one must be careful with 
+the centered scheme. Instead backward or forward schemes might be needed. 
+
+Let us assume that no boundary condition is applied at the bottom of the domain (characterised by $j=0$). The centered approach for the $\partial^2 T/ \partial x^2$ is fine (but not in the corners!) but one must use a forward scheme for the $y$ derivative:
+\[
+\frac{\partial^2 T}{\partial y^2}  \simeq \frac{T_{i,j}-2T_{i,j+1}+T_{i,j+2}}{h_y^2}
+\]
+and of course also for the advection term:
+\[
+\frac{\partial T}{\partial y}  \simeq  \frac{T_{i,j+1}-T_{i,j}}{h_y}
+\]
+
+In this case the discretised advection-diffusion equation will be (in the implicit case)
+\[
+\frac{T_{\color{teal}i,j}^{n+1}-T^n_{\color{teal}i,j}}{\delta t} 
++ u_{i,j} \frac{T^{n+1}_{\color{teal}i+1,j} - T^{n+1}_{{\color{teal}i-1,j}}}{2h_x} 
++ v_{i,j} \frac{T_{i,j+1}^{n+1}-T_{i,j}^{n+1}}{h_y}
+=
+\kappa 
+\left(
+\frac{ T_{{\color{teal}i-1,j}}^{n+1}-2T_{{\color{teal}i,j}}^{n+1}+T_{{\color{teal}i+1,j}}^{n+1}  }{h_x^2} + 
+\frac{T_{{\color{teal}i,j}}^{n+1}-2T_{{\color{teal}i,j+1}}^{n+1}+T_{{\color{teal}i,j+2}}^{n+1}}{h_y^2}
+\right)
+\]
+We multiply by $\delta t$: 
+\begin{eqnarray}
+&&T_{{\color{teal}i,j}}^{n+1}-T^n_{\color{teal}i,j}
++ \underbrace{\frac{u_{i,j} \delta t}{2h_x}}_{c^u_{i,j}} 
+(T^{n+1}_{\color{teal}i+1,j} - T^{n+1}_{{\color{teal}i-1,j}}) 
++ 2\underbrace{\frac{v_{i,j} \delta t}{2h_y}}_{c^v_{i,j}} 
+(T^{n+1}_{\color{teal}i,j+1} - T^{n+1}_{{\color{teal}i,j}}) \nn\\
+&=&
+\underbrace{\frac{\kappa   \delta t}{h_x^2}}_{s_x}
+\left(
+ T_{{\color{teal}i-1,j}}^{n+1}-2T_{{\color{teal}i,j}}^{n+1}+T_{{\color{teal}i+1,j}}^{n+1}
+\right) +
+\underbrace{\frac{\kappa   \delta t}{h_y^2}}_{s_y}
+\left(
+T_{{\color{teal}i,j}}^{n+1}-2T_{{\color{teal}i,j+1}}^{n+1}+T_{{\color{teal}i,j+2}}^{n+1} 
+\right)
+\end{eqnarray}
+and ultimately obtain
+\[
+(1-2c^v_{i,j}+2s_x-s_y)T_{{\color{teal}i,j}}^{n+1}
++(c^u_{{\color{teal} i,j}}-s_x)T_{{\color{teal}i+1,j}}^{n+1}
++(-c^u_{{\color{teal} i,j}}-s_x)T_{{\color{teal}i-1,j}}^{n+1}
++(2c^v_{{\color{teal} i,j}}+2s_y)T_{{\color{teal}i,j+1}}^{n+1}
++(-s_y)T_{{\color{teal}i,j+2}}^{n+1}
+=T^n_{\color{teal}i,j}
+\]
+The same reasoning holds for any boundary, one then must be careful about whether
+backward or forward approximations are needed for dervatives with respect to $x$ or $y$.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -273,7 +273,7 @@ so we now turn to these and
 define $f_i''=f''(x_i) = \frac{\partial^2 f}{\partial x^2} (x_i)$. 
 
 %______________________________
-\paragraph{Second order forward} 
+\paragraph{Second order derivative - forward} 
 Let us define a function $g(x)$ such that $g=f'$. Then we have seen that the forward 
 difference formula leads to write: 
 \begin{equation}
@@ -302,14 +302,14 @@ In order to compute $f''(x_i)$ we need the value of $f$ at $x_i$ but also at two
 other locations right of this location.
 
 %______________________________
-\paragraph{Second order backward}
+\paragraph{Second order derivative - backward}
 Likewise, we obtain the following formula when using the backward derivative twice:
 
 \begin{equation}
 f_{i}'' 
 = \frac{f_{i}'-f_{i-1}'}{h} 
 %+ {\cal O}(h^2)
-= \frac{\frac{f_{i}-f_{i-1}}{h}- \frac{f_{i-2}-f_{i-1}}{h}  }{h} 
+= \frac{\frac{f_{i}-f_{i-1}}{h}- \frac{f_{i-1}-f_{i-2}}{h}  }{h} 
 %+ {\cal O}(h^2)
 = \frac{f_{i}-2f_{i-1}+f_{i-2}}{h^2} 
 %+ {\cal O}(h^2)

@@ -44,19 +44,19 @@ INSERT TEXT
 
 Also, here is a rather handy code snippet which should allow you to make nice plots of the coming exercises.
 
-\begin{lstlisting}
-       filename = 'solution_{:04d}.pdf'.format(istep) 
-       fig = plt.figure ()
-       #ax = fig.gca(projection='3d')
-       ax = fig.add_subplot(projection='3d')
-       ax.plot_surface(x.reshape ((nny,nnx)),y.reshape((nny,nnx)),T.reshape((nny,nnx)),color = 'darkseagreen')
-       ax.set_xlabel ( 'X [ m ] ')
-       ax.set_ylabel ( 'Y [ m ] ')
-       ax.set_zlabel ( ' Temperature  [ C ] ')
-       plt.title('Timestep  %.2d' %(istep),loc='right')
-       plt.grid ()
-       plt.savefig(filename)
-       #plt.show ()
-       plt.close()
-\end{lstlisting}
+\begin{verbatim}
+filename = 'solution_{:04d}.pdf'.format(istep) 
+fig = plt.figure ()
+#ax = fig.gca(projection='3d')
+ax = fig.add_subplot(projection='3d')
+ax.plot_surface(x.reshape ((nny,nnx)),y.reshape((nny,nnx)),T.reshape((nny,nnx)),color = 'darkseagreen')
+ax.set_xlabel ( 'X [ m ] ')
+ax.set_ylabel ( 'Y [ m ] ')
+ax.set_zlabel ( ' Temperature  [ C ] ')
+plt.title('Timestep  %.2d' %(istep),loc='right')
+plt.grid ()
+plt.savefig(filename)
+#plt.show ()
+plt.close()
+\end{verbatim}
 

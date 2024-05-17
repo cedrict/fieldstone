@@ -41,11 +41,13 @@ which can be written as follows:
 \[
 \frac{\partial \vec{T}}{\partial t} = \vec{\cal F}(\vec{T}) 
 \] 
+where $\vec{T}$ contains all the temperature values at the nodes.
 
 In \textcite{boudreau} (from which this idea is borrowed, see p328 )
-this method is called the Method of Lines (MoL) and we read:
+this method is called the Method of Lines (MoL)\footnote{\url{http://var.scholarpedia.org/article/Method_of_lines}} and we read:
 ``
-There are significant advantages in solving diagenetic equations by the MoL: 
+There are significant advantages in solving diagenetic equations\footnote{These
+are advection-diffusion-reaction equations.} by the MoL: 
 i) stiff problems caused by fast reactions are handled readily; 
 ii) highly nonlinear problems can be solved with no fuss; 
 iii) the initial guess is not all that important when solving for the steady state; 
@@ -86,16 +88,16 @@ If Dirichlet boundary conditions are prescribed at both ends of the domain,
 then the temperature is constant there in time and then $\frac{\partial T_i}{\partial t}=0$ there.
 This translates as follows:
 \begin{lstlisting}
-def F(x,T):
-    dT_dt=np.zeros(nnx,dtype=np.float64)
-    for i in range(0,nnx):
-        if i==0:
-           dT_dt[i]=0
-        elif i==nnx-1: 
-           dT_dt[i]=0
-        else:
-           dT_dt[i]=kappa*(T[i+1]-2*T[i]+T[i-1])/h**2
-    return dT_dt
+   def F(t,T,kappa):
+       dT_dt=np.zeros(nnx,dtype=np.float64)
+       for i in range(0,nnx):
+           if i==0:
+              dT_dt[i]=0
+           elif i==nnx-1: 
+              dT_dt[i]=0
+           else:
+              dT_dt[i]=kappa*(T[i+1]-2*T[i]+T[i-1])/h**2
+       return dT_dt
 \end{lstlisting}
 
 The time evolution of the temperature is shown hereunder and we find that 
@@ -117,29 +119,32 @@ under consideration but there is none):
 \[
 \frac{\partial T_i}{\partial t} = \kappa \frac{T_{i}-2T_{i-1}+T_{i-2}}{h^2}
 \]
-On this node the boundary condition writes
+On this node the boundary condition writes (again, a backward formulation is necessary)
 \[
 \frac{T_i-T_{i-1}}{h}=0
 \]
 which, when incorporated in the equation above, leads to:
 \[
-\frac{\partial T_i}{\partial t} = \kappa \frac{-T_{i-1}+T_{i-2}}{h^2}
+\frac{\partial T_i}{\partial t} 
+= \kappa \frac{(T_{i}-T_{i-1})-T_{i-1}+T_{i-2}}{h^2}
+= \kappa \frac{-T_{i-1}+T_{i-2}}{h^2}
 \]
 The function $\vec{\cal F}$ then writes
 \begin{lstlisting}
-def F(x,T):
-    dT_dt=np.zeros(nnx,dtype=np.float64)
-    for i in range(0,nnx):
-        if i==0:
-           dT_dt[i]=0
-        elif i==nnx-1: 
-           dT_dt[i]=kappa*(-T[i-1]+T[i-2])/h**2
-        else:
-           dT_dt[i]=kappa*(T[i+1]-2*T[i]+T[i-1])/h**2
-    return dT_dt
+   def F(t,T,kappa):
+       dT_dt=np.zeros(nnx,dtype=np.float64)
+       for i in range(0,nnx):
+           if i==0:
+              dT_dt[i]=0
+           elif i==nnx-1: 
+              dT_dt[i]=kappa*(-T[i-1]+T[i-2])/h**2
+           else:
+              dT_dt[i]=kappa*(T[i+1]-2*T[i]+T[i-1])/h**2
+       return dT_dt
 \end{lstlisting}
 
-The steady-state solution is actually $T(x)=1$ and we find that our solution slowly converges towards it.
+The steady-state solution is actually $T(x)=1$ and we find that our solution slowly converges towards it
+while maintaining a zero derivative on the right side of the domain.
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_157/results/option2/T.pdf}
 \end{center}
