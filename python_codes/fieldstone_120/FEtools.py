@@ -1252,7 +1252,7 @@ def generate_random_mesh(L,nelx,Vspace,Pspace,experiment):
    import matplotlib.pyplot as plt
 
    areatarget=(L/nelx)**2 #; arguments='pqa'+str(areatarget)
-   arguments="pqa%.8f s" % (areatarget)
+   arguments="pq32a%.8f s" % (areatarget)
    #print(arguments)
 
    square_vertices = [[0,0],[0,L],[L,L],[L,0]]
@@ -1292,6 +1292,196 @@ def generate_random_mesh(L,nelx,Vspace,Pspace,experiment):
 
    print('nel=',nel)
    print('NP1=',NP1)
+
+   #----------------------------------------
+   # identify & fix corner(s) that are problematic
+   # 1) find corner points that only belongs to pnly one P1 triangle
+   # 2) find neighbour triangle
+   # 3) flip edges
+
+   counterSW=0
+   counterSE=0
+   counterNE=0
+   counterNW=0
+
+   for iel in range(0,nel):
+       # lower left
+       if abs(xP1[iconP1[0,iel]]-0)<1e-8 and abs(yP1[iconP1[0,iel]]-0)<1e-8: 
+          counterSW+=1 ; iel_SW=iel ; inode_SW=0
+       if abs(xP1[iconP1[1,iel]]-0)<1e-8 and abs(yP1[iconP1[1,iel]]-0)<1e-8: 
+          counterSW+=1 ; iel_SW=iel ; inode_SW=1
+       if abs(xP1[iconP1[2,iel]]-0)<1e-8 and abs(yP1[iconP1[2,iel]]-0)<1e-8: 
+          counterSW+=1 ; iel_SW=iel ; inode_SW=2
+       # lower right
+       if abs(xP1[iconP1[0,iel]]-1)<1e-8 and abs(yP1[iconP1[0,iel]]-0)<1e-8: 
+          counterSE+=1 ; iel_SE=iel ; inode_SE=0
+       if abs(xP1[iconP1[1,iel]]-1)<1e-8 and abs(yP1[iconP1[1,iel]]-0)<1e-8:
+          counterSE+=1 ; iel_SE=iel ; inode_SE=1
+       if abs(xP1[iconP1[2,iel]]-1)<1e-8 and abs(yP1[iconP1[2,iel]]-0)<1e-8:
+          counterSE+=1 ; iel_SE=iel ; inode_SE=2
+       # upper right
+       if abs(xP1[iconP1[0,iel]]-1)<1e-8 and abs(yP1[iconP1[0,iel]]-1)<1e-8: 
+          counterNE+=1 ; iel_NE=iel ; inode_NE=0
+       if abs(xP1[iconP1[1,iel]]-1)<1e-8 and abs(yP1[iconP1[1,iel]]-1)<1e-8:
+          counterNE+=1 ; iel_NE=iel ; inode_NE=1
+       if abs(xP1[iconP1[2,iel]]-1)<1e-8 and abs(yP1[iconP1[2,iel]]-1)<1e-8:
+          counterNE+=1 ; iel_NE=iel ; inode_NE=2
+       # upper left
+       if abs(xP1[iconP1[0,iel]]-0)<1e-8 and abs(yP1[iconP1[0,iel]]-1)<1e-8: 
+          counterNW+=1 ; iel_NW=iel ; inode_NW=0
+       if abs(xP1[iconP1[1,iel]]-0)<1e-8 and abs(yP1[iconP1[1,iel]]-1)<1e-8:
+          counterNW+=1 ; iel_NW=iel ; inode_NW=1
+       if abs(xP1[iconP1[2,iel]]-0)<1e-8 and abs(yP1[iconP1[2,iel]]-1)<1e-8:
+          counterNW+=1 ; iel_NW=iel ; inode_NW=2
+   #end if
+
+   fix_SW = (counterSW==1)
+   fix_SE = (counterSE==1)
+   fix_NE = (counterNE==1)
+   fix_NW = (counterNW==1)
+
+   print('counterSW=',counterSW,' fix_SW:',fix_SW)
+   print('counterSE=',counterSE,' fix_SE:',fix_SE)
+   print('counterNE=',counterNE,' fix_NE:',fix_NE)
+   print('counterNW=',counterNW,' fix_NW:',fix_NW)
+
+   if fix_NW:
+      print('fixing NW corner')
+      inodeD=iconP1[inode_NW,iel_NW] 
+      if inode_NW==0:
+         inodeA=iconP1[2,iel_NW] 
+         inodeB=iconP1[1,iel_NW] 
+      if inode_NW==1:
+         inodeA=iconP1[0,iel_NW] 
+         inodeB=iconP1[2,iel_NW] 
+      if inode_NW==2:
+         inodeA=iconP1[1,iel_NW] 
+         inodeB=iconP1[0,iel_NW] 
+      for iel in range(0,nel):
+          if iconP1[0,iel]==inodeA and iconP1[1,iel]==inodeB:
+             iel_NW_neighb=iel ; inodeC=iconP1[2,iel]
+             #print('found it',iel)
+             break
+          if iconP1[1,iel]==inodeA and iconP1[2,iel]==inodeB: 
+             iel_NW_neighb=iel ; inodeC=iconP1[0,iel]
+             #print('found it',iel)
+             break
+          if iconP1[2,iel]==inodeA and iconP1[0,iel]==inodeB: 
+             iel_NW_neighb=iel ; inodeC=iconP1[1,iel]
+             #print('found it',iel)
+             break
+      #end for
+      #print(iel_NW,iel_NW_neighb)
+      iconP1[0,iel_NW]=inodeB
+      iconP1[1,iel_NW]=inodeC
+      iconP1[2,iel_NW]=inodeD
+      iconP1[0,iel_NW_neighb]=inodeA
+      iconP1[1,iel_NW_neighb]=inodeD
+      iconP1[2,iel_NW_neighb]=inodeC
+
+
+   if fix_NE:
+      print('fixing NE corner')
+      inodeD=iconP1[inode_NE,iel_NE] 
+      if inode_NE==0:
+         inodeA=iconP1[1,iel_NE] 
+         inodeB=iconP1[2,iel_NE] 
+      if inode_NE==1:
+         inodeA=iconP1[2,iel_NE] 
+         inodeB=iconP1[0,iel_NE] 
+      if inode_NE==2:
+         inodeA=iconP1[0,iel_NE] 
+         inodeB=iconP1[1,iel_NE] 
+      for iel in range(0,nel):
+          if iconP1[0,iel]==inodeB and iconP1[1,iel]==inodeA:
+             iel_NE_neighb=iel ; inodeC=iconP1[2,iel]
+             print('found it',iel)
+             break
+          if iconP1[1,iel]==inodeB and iconP1[2,iel]==inodeA: 
+             iel_NE_neighb=iel ; inodeC=iconP1[0,iel]
+             print('found it',iel)
+             break
+          if iconP1[2,iel]==inodeB and iconP1[0,iel]==inodeA: 
+             iel_NE_neighb=iel ; inodeC=iconP1[1,iel]
+             print('found it',iel)
+             break
+      #end for
+      #print(iel_NE,iel_NE_neighb)
+      iconP1[0,iel_NE]=inodeC
+      iconP1[1,iel_NE]=inodeB
+      iconP1[2,iel_NE]=inodeD
+      iconP1[0,iel_NE_neighb]=inodeC
+      iconP1[1,iel_NE_neighb]=inodeD
+      iconP1[2,iel_NE_neighb]=inodeA
+
+   if fix_SE:
+      print('fixing SE corner')
+      inodeD=iconP1[inode_SE,iel_SE] 
+      if inode_SE==0:
+         inodeA=iconP1[1,iel_SE] 
+         inodeB=iconP1[2,iel_SE] 
+      if inode_SE==1:
+         inodeA=iconP1[2,iel_SE] 
+         inodeB=iconP1[0,iel_SE] 
+      if inode_SE==2:
+         inodeA=iconP1[0,iel_SE] 
+         inodeB=iconP1[1,iel_SE] 
+      for iel in range(0,nel):
+          if iconP1[0,iel]==inodeB and iconP1[1,iel]==inodeA:
+             iel_SE_neighb=iel ; inodeC=iconP1[2,iel]
+             print('found it',iel)
+             break
+          if iconP1[1,iel]==inodeB and iconP1[2,iel]==inodeA: 
+             iel_SE_neighb=iel ; inodeC=iconP1[0,iel]
+             print('found it',iel)
+             break
+          if iconP1[2,iel]==inodeB and iconP1[0,iel]==inodeA: 
+             iel_SE_neighb=iel ; inodeC=iconP1[1,iel]
+             print('found it',iel)
+             break
+      #end for
+      #print(iel_SE,iel_SE_neighb)
+      iconP1[0,iel_SE]=inodeC
+      iconP1[1,iel_SE]=inodeD
+      iconP1[2,iel_SE]=inodeA
+      iconP1[0,iel_SE_neighb]=inodeB
+      iconP1[1,iel_SE_neighb]=inodeD
+      iconP1[2,iel_SE_neighb]=inodeC
+
+   if fix_SW:
+      print('fixing SW corner')
+      inodeD=iconP1[inode_SW,iel_SW] 
+      if inode_SW==0:
+         inodeA=iconP1[1,iel_SW] 
+         inodeB=iconP1[2,iel_SW] 
+      if inode_SW==1:
+         inodeA=iconP1[2,iel_SW] 
+         inodeB=iconP1[0,iel_SW] 
+      if inode_SW==2:
+         inodeA=iconP1[0,iel_SW] 
+         inodeB=iconP1[1,iel_SW] 
+      for iel in range(0,nel):
+          if iconP1[0,iel]==inodeB and iconP1[1,iel]==inodeA:
+             iel_SW_neighb=iel ; inodeC=iconP1[2,iel]
+             print('found it',iel)
+             break
+          if iconP1[1,iel]==inodeB and iconP1[2,iel]==inodeA: 
+             iel_SW_neighb=iel ; inodeC=iconP1[0,iel]
+             print('found it',iel)
+             break
+          if iconP1[2,iel]==inodeB and iconP1[0,iel]==inodeA: 
+             iel_SW_neighb=iel ; inodeC=iconP1[1,iel]
+             print('found it',iel)
+             break
+      #end for
+      iconP1[0,iel_SW]=inodeD
+      iconP1[1,iel_SW]=inodeC
+      iconP1[2,iel_SW]=inodeB
+      iconP1[0,iel_SW_neighb]=inodeD
+      iconP1[1,iel_SW_neighb]=inodeA
+      iconP1[2,iel_SW_neighb]=inodeC
+
+   #----------------------------------------
 
    iconP2 =np.zeros((6,nel),dtype=np.int32)
    matrix =np.zeros((NP1,NP1),dtype=np.int32)
@@ -1649,7 +1839,7 @@ def export_connectivity_array_elt1_to_ascii(x,y,icon,filename):
 
 ###############################################################################
 
-def export_elements_to_vtu(x,y,icon,space,filename,area,bx,by,eta):
+def export_elements_to_vtu(x,y,icon,space,filename,area,bx,by,eta,q1,q2):
     N=np.size(x)
     m,nel=np.shape(icon)
  
@@ -1718,6 +1908,16 @@ def export_elements_to_vtu(x,y,icon,space,filename,area,bx,by,eta):
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (eta[iel]))
     vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='q1' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (q1[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='q2' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (q2[iel]))
+    vtufile.write("</DataArray>\n")
+
+
     vtufile.write("</CellData>\n")
     #####
     vtufile.write("<Cells>\n")

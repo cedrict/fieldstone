@@ -33,24 +33,21 @@ def quadrature(space,nqpts):
        val_s = np.zeros(nq,dtype=np.float64) 
        val_w = np.zeros(nq,dtype=np.float64) 
 
-       if nq==1: #linear 1st order
+       if nq==1: #linear 1st order - confirmed
           val_r[0]=1/3 ; val_s[0]=1/3 ; val_w[0]=1/2
 
-       elif nq==3: #quadratic 2nd order
+       elif nq==3: #quadratic 2nd order - confirmed
           val_r[0]=1/6 ; val_s[0]=1/6 ; val_w[0]=1/3/2
           val_r[1]=2/3 ; val_s[1]=1/6 ; val_w[1]=1/3/2
           val_r[2]=1/6 ; val_s[2]=2/3 ; val_w[2]=1/3/2
 
-       #if nq==4: #cubic - 3rd order                         
-       #   val_r[0]=1/3 ; val_r[0]=1/3 ; val_w[0]=-27/48/2 #suspicious ?!
-       #   val_r[1]=1/5 ; val_r[1]=3/5 ; val_w[1]= 25/48/2
-       #   val_r[2]=1/5 ; val_r[2]=1/5 ; val_w[2]= 25/48/2
-       #   val_r[3]=3/5 ; val_r[3]=1/5 ; val_w[3]= 25/48/2
+       elif nq==4: #cubic 3rd order - confirmed 
+          val_r[0]=1/3 ; val_r[0]=1/3 ; val_w[0]=-27/48/2
+          val_r[1]=1/5 ; val_r[1]=3/5 ; val_w[1]= 25/48/2
+          val_r[2]=1/5 ; val_r[2]=1/5 ; val_w[2]= 25/48/2
+          val_r[3]=3/5 ; val_r[3]=1/5 ; val_w[3]= 25/48/2
 
-       elif nq==5:
-          val_r[:]=0 ; val_s[:]=0 ; val_w[:]=0
-
-       elif nq==6: #4th order
+       elif nq==6: #4th order - confirmed
           val_r[0]=0.091576213509771 ; val_s[0]=0.091576213509771 ; val_w[0]=0.109951743655322/2.0 
           val_r[1]=0.816847572980459 ; val_s[1]=0.091576213509771 ; val_w[1]=0.109951743655322/2.0 
           val_r[2]=0.091576213509771 ; val_s[2]=0.816847572980459 ; val_w[2]=0.109951743655322/2.0 
@@ -58,7 +55,7 @@ def quadrature(space,nqpts):
           val_r[4]=0.108103018168070 ; val_s[4]=0.445948490915965 ; val_w[4]=0.223381589678011/2.0 
           val_r[5]=0.445948490915965 ; val_s[5]=0.108103018168070 ; val_w[5]=0.223381589678011/2.0 
 
-       elif nq==7: #5th order
+       elif nq==7: #5th order - confirmed
           val_r[0]=0.1012865073235 ; val_s[0]=0.1012865073235 ; val_w[0]=0.0629695902724 
           val_r[1]=0.7974269853531 ; val_s[1]=0.1012865073235 ; val_w[1]=0.0629695902724 
           val_r[2]=0.1012865073235 ; val_s[2]=0.7974269853531 ; val_w[2]=0.0629695902724 
@@ -67,7 +64,7 @@ def quadrature(space,nqpts):
           val_r[5]=0.0597158717898 ; val_s[5]=0.4701420641051 ; val_w[5]=0.0661970763942 
           val_r[6]=0.3333333333333 ; val_s[6]=0.3333333333333 ; val_w[6]=0.1125000000000 
 
-       elif nq==12: #6th order
+       elif nq==12: #6th order - confirmed
           val_r[ 0]=0.24928674517091 ; val_s[ 0]=0.24928674517091 ; val_w[ 0]=0.11678627572638/2
           val_r[ 1]=0.24928674517091 ; val_s[ 1]=0.50142650965818 ; val_w[ 1]=0.11678627572638/2
           val_r[ 2]=0.50142650965818 ; val_s[ 2]=0.24928674517091 ; val_w[ 2]=0.11678627572638/2
@@ -81,7 +78,7 @@ def quadrature(space,nqpts):
           val_r[10]=0.31035245103378 ; val_s[10]=0.05314504984482 ; val_w[10]=0.08285107561837/2
           val_r[11]=0.05314504984482 ; val_s[11]=0.63650249912140 ; val_w[11]=0.08285107561837/2
 
-       elif nq==13: #7th order
+       elif nq==13: #7th order - confirmed
 
           val_r[ 0]=0.33333333333333 ; val_s[ 0]=0.33333333333333 ; val_w[ 0]=-0.14957004446768/2
           val_r[ 1]=0.26034596607904 ; val_s[ 1]=0.26034596607904 ; val_w[ 1]=0.17561525743321/2
@@ -97,7 +94,7 @@ def quadrature(space,nqpts):
           val_r[11]=0.31286549600487 ; val_s[11]=0.04869031542532 ; val_w[11]=0.07711376089026/2
           val_r[12]=0.04869031542532 ; val_s[12]=0.63844418856981 ; val_w[12]=0.07711376089026/2
 
-       elif nq==16: #8th order
+       elif nq==16: #8th order - confirmed
 
           val_r[ 0]=0.33333333333333 ; val_s[ 0]=0.33333333333333 ; val_w[ 0]=0.14431560767779/2
           val_r[ 1]=0.45929258829272 ; val_s[ 1]=0.45929258829272 ; val_w[ 1]=0.09509163426728/2
@@ -115,6 +112,30 @@ def quadrature(space,nqpts):
           val_r[13]=0.72849239295540 ; val_s[13]=0.26311282963464 ; val_w[13]=0.02723031417443/2
           val_r[14]=0.26311282963464 ; val_s[14]=0.00839477740996 ; val_w[14]=0.02723031417443/2
           val_r[15]=0.00839477740996 ; val_s[15]=0.72849239295540 ; val_w[15]=0.02723031417443/2
+
+       elif nq==19: #9th order - duna85
+           #https://mathsfromnothing.au/triangle-quadrature-rules/?i=1
+
+           val_r[ 1]=0. ; val_s[ 1]=0. ; val_w[ 1]=0.097135796282799 /2
+           val_r[ 2]=0. ; val_s[ 2]=0. ; val_w[ 2]=0.031334700227139 /2
+           val_r[ 3]=0. ; val_s[ 3]=0. ; val_w[ 3]=0.031334700227139 /2
+           val_r[ 4]=0. ; val_s[ 4]=0. ; val_w[ 4]=0.031334700227139 /2
+           val_r[ 5]=0. ; val_s[ 5]=0. ; val_w[ 5]=0.077827541004774 /2
+           val_r[ 6]=0. ; val_s[ 6]=0. ; val_w[ 6]=0.077827541004774/2
+           val_r[ 7]=0. ; val_s[ 7]=0. ; val_w[ 7]=0.077827541004774 /2
+           val_r[ 8]=0. ; val_s[ 8]=0. ; val_w[ 8]=0.079647738927210 /2
+           val_r[ 9]=0. ; val_s[ 9]=0. ; val_w[ 9]=0.079647738927210 /2
+           val_r[10]=0. ; val_s[10]=0. ; val_w[10]=0.079647738927210 /2
+           val_r[11]=0. ; val_s[11]=0. ; val_w[11]=0.043283539377289 /2
+           val_r[12]=0. ; val_s[12]=0. ; val_w[12]=0.043283539377289 /2
+           val_r[13]=0. ; val_s[13]=0. ; val_w[13]=0.043283539377289 /2
+           val_r[14]=0. ; val_s[14]=0. ; val_w[14]=0.043283539377289 /2
+           val_r[15]=0. ; val_s[15]=0. ; val_w[15]=0.043283539377289 /2
+           val_r[16]=0. ; val_s[16]=0. ; val_w[16]=0.043283539377289 /2
+           val_r[17]=0. ; val_s[17]=0. ; val_w[17]=0.025577675658698 /2
+           val_r[18]=0. ; val_s[18]=0. ; val_w[18]=0.025577675658698 /2
+           val_r[19]=0. ; val_s[19]=0. ; val_w[19]=0.025577675658698 /2
+
 
        else:
           exit('quadrature: nqpts not available')
@@ -340,13 +361,13 @@ def nqpts_default(space):
     elif space=='P1':    
        nqpts=3
     elif space=='P2':    
-       nqpts=6
+       nqpts=7 #6
     elif space=='P3':    
        nqpts=6
     elif space=='P4':    
        nqpts=12
     elif space=='P1+':   
-       nqpts=6
+       nqpts=7 #6
     elif space=='P2+':   
        nqpts=7
     elif space=='P1NC':  

@@ -40,8 +40,8 @@ for e in 3 4 5 9 15 18 ; do
 
 done
 
-mv err* paperresults/sinker_reduced/structured
-mv opla* paperresults/sinker_reduced/structured
-mv vrms* paperresults/sinker_reduced/structured
-mv sinker* paperresults/sinker_reduced/structured
+#mv err* paperresults/sinker_reduced/structured
+#mv opla* paperresults/sinker_reduced/structured
+#mv vrms* paperresults/sinker_reduced/structured
+#mv sinker* paperresults/sinker_reduced/structured
 

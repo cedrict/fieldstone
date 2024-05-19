@@ -18,10 +18,10 @@ ndofP=1
 Lx=1
 Ly=1
 
-nelx=100
+nelx=45
 
-Vspace='P2+'
-Pspace='P-1'
+Vspace='P1+'
+Pspace='P1'
 
 visu=1
 
@@ -37,6 +37,7 @@ drho=0.01
 
 ass_method=2
 
+eta_ref=1
 
 ###############################################################################
 # allowing for argument parsing through command line
@@ -135,11 +136,12 @@ start = timing.time()
 
 uth = np.zeros(NV,dtype=np.float64)
 vth = np.zeros(NV,dtype=np.float64)
+qth = np.zeros(NV,dtype=np.float64)
 
 for i in range(NV):        
     #uth[i]=mms.u_th(xV[i],yV[i])
     #vth[i]=mms.v_th(xV[i],yV[i])
-    uth[i],vth[i],dum=mms.solution(xV[i],yV[i])
+    uth[i],vth[i],qth[i]=mms.solution(xV[i],yV[i])
 
 print("analytical solution: %.3f s" % (timing.time() - start))
 
@@ -351,6 +353,8 @@ for iel in range(0,nel): # loop over elements
 
     #end for iq
 
+    G_el*=eta_ref/Lx
+
     # apply bc
     Tools.apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel)
 
@@ -416,7 +420,7 @@ print("solve time: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 u,v=np.reshape(sol[0:NfemV],(NV,2)).T
-p=sol[NfemV:Nfem]
+p=sol[NfemV:Nfem]*(eta_ref/Lx)
 
 print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
@@ -521,6 +525,10 @@ uq = np.zeros(nq,dtype=np.float64)
 vq = np.zeros(nq,dtype=np.float64)
 pq = np.zeros(nq,dtype=np.float64)
 
+#nqts=12
+#nqel,qcoords_r,qcoords_s,qweights=Q.quadrature(Vspace,nqpts)
+#nq=nqel*nel
+
 errdivv=0
 errv=0
 errp=0
@@ -543,6 +551,12 @@ for iel in range(0,nel):
            jcob,jcbi=Tools.J(m1,dNNN1dr,dNNN1ds,x1[icon1[0:m1,iel]],y1[icon1[0:m1,iel]])
         dNNNVdx[:]=jcbi[0,0]*dNNNVdr[:]+jcbi[0,1]*dNNNVds[:]
         dNNNVdy[:]=jcbi[1,0]*dNNNVdr[:]+jcbi[1,1]*dNNNVds[:]
+
+        #if Vspace=='P1+':
+        #   NNNV=FE.NNN(rq,sq,'P1')
+        #   uq[counterq]=NNNV.dot(u[iconV[0:3,iel]])
+        #   vq[counterq]=NNNV.dot(v[iconV[0:3,iel]])
+        #else:   
         uq[counterq]=NNNV.dot(u[iconV[0:mV,iel]])
         vq[counterq]=NNNV.dot(v[iconV[0:mV,iel]])
         pq[counterq]=NNNP.dot(p[iconP[0:mP,iel]])
@@ -553,9 +567,6 @@ for iel in range(0,nel):
               (vq[counterq]-vthq)**2*weightq*jcob
         errp+=(pq[counterq]-pthq)**2*weightq*jcob
 
-        #errv+=(uq[counterq]-mms.u_th(xq[counterq],yq[counterq]))**2*weightq*jcob+\
-        #      (vq[counterq]-mms.v_th(xq[counterq],yq[counterq]))**2*weightq*jcob
-        #errp+=(pq[counterq]-mms.p_th(xq[counterq],yq[counterq]))**2*weightq*jcob
         exxq=dNNNVdx.dot(u[iconV[0:mV,iel]])
         eyyq=dNNNVdy.dot(v[iconV[0:mV,iel]])
         divvq=exxq+eyyq
@@ -752,14 +763,49 @@ for iel in range(0,nel):
     etac[iel]=mms.eta(xc,yc,etastar)
 
 ###############################################################################
+start = timing.time()
+
+q1 = np.zeros(nel,dtype=np.float64)
+q2 = np.zeros(nel,dtype=np.float64)
+
+if visu:
+
+   for iel in range(0,nel):
+       a=np.sqrt((xV[iconV[0,iel]]-xV[iconV[1,iel]])**2+(yV[iconV[0,iel]]-yV[iconV[1,iel]])**2)
+       b=np.sqrt((xV[iconV[0,iel]]-xV[iconV[2,iel]])**2+(yV[iconV[0,iel]]-yV[iconV[2,iel]])**2)
+       c=np.sqrt((xV[iconV[1,iel]]-xV[iconV[2,iel]])**2+(yV[iconV[1,iel]]-yV[iconV[2,iel]])**2)
+       q1[iel]=(b+c-a)*(c+a-b)*(a+b-c)/(a*b*c)
+       q2[iel]=4*np.sqrt(3)*area[iel]/(a**2+b**2+c**2)
+
+   print('     -> q1 (m,M):',np.min(q1),np.max(q1))
+   print('     -> q2 (m,M):',np.min(q2),np.max(q2))
+
+   plt.clf()
+   plt.title("q1 histogram")
+   plt.hist(q1, bins=50) 
+   plt.savefig('histogram_q1.pdf', bbox_inches='tight')
+
+   plt.clf()
+   plt.hist(q2, bins=50) 
+   plt.title("q2 histogram")
+   plt.savefig('histogram_q2.pdf', bbox_inches='tight')
+
+   plt.clf()
+   plt.hist(area, bins=50) 
+   plt.title("area histogram")
+   plt.savefig('histogram_area.pdf', bbox_inches='tight')
+
+print("compute q1,q2 : %.3f s" % (timing.time() - start))
+
+###############################################################################
 
 Tools.export_swarm_vector_to_ascii(xV,yV,u,v,'solution_velocity.ascii')
 Tools.export_swarm_scalar_to_ascii(xP,yP,p,'solution_pressure.ascii')
-Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu',area,bxc,byc,etac)
+Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu',area,bxc,byc,etac,q1,q2)
 Tools.export_V_to_vtu(NV,xV,yV,iconV,Vspace,'visu_V.vtu',u,v,Pspace,p,iconP)
 
 if visu:
-   Tools.export_elements_to_vtu(xP,yP,iconP,Pspace,'meshP.vtu',area,bxc,byc,etac)
+   Tools.export_elements_to_vtu(xP,yP,iconP,Pspace,'meshP.vtu',area,bxc,byc,etac,q1,q2)
    if not isoparametric: Tools.export_elements_to_vtu(x1,y1,icon1,space1,'mesh1.vtu')
 
    Tools.export_swarm_to_ascii(xV,yV,'Vnodes.ascii')
@@ -779,6 +825,7 @@ if visu:
    Tools.export_swarm_vector_to_vtu(xV,yV,u,v,'solution_velocity.vtu')
    Tools.export_swarm_vector_to_vtu(xV,yV,uth,vth,'velocity_analytical.vtu')
    Tools.export_swarm_vector_to_vtu(xV,yV,u-uth,v-vth,'velocity_error.vtu')
+   Tools.export_swarm_scalar_to_vtu(xV,yV,qth,'pressure_analytical.vtu')
    Tools.export_swarm_scalar_to_vtu(xP,yP,p,'solution_pressure.vtu')
 
    Tools.export_swarm_vector_to_ascii(xV,yV,uth,vth,'velocity_analytical.ascii')

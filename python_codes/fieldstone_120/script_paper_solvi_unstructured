@@ -20,7 +20,7 @@ for e in 3 5 9 18 ; do
 
     echo ---------- $Vspace X $Pspace ----------
 
-    for n in 16 20 24 28 32 36 40 44 48 56 64 72 80 88 96 104 112 128 160 256; do
+    for n in 16 20 24 28 32 36 40 44 48 56 60 64 68 72 76 80 88 96 104 112 128 144 160 256; do
         echo mesh: $n X $n 
         start=`date +%s.%N`
         python3 stone.py $n $Vspace $Pspace solvi 1 >> opla
@@ -35,9 +35,9 @@ for e in 3 5 9 18 ; do
 
 done
 
-mv err* paperresults/solvi/unstructured
-mv opla* paperresults/solvi/unstructured
-mv vrms* paperresults/solvi/unstructured
-mv solvi_p_* paperresults/solvi/unstructured
-mv *.vtu paperresults/solvi/unstructured
-#mv *.ascii paperresults/solvi/unstructured
+#mv err* paperresults/solvi/unstructured
+#mv opla* paperresults/solvi/unstructured
+#mv vrms* paperresults/solvi/unstructured
+#mv solvi_p_* paperresults/solvi/unstructured
+#mv *.vtu paperresults/solvi/unstructured
+##mv *.ascii paperresults/solvi/unstructured

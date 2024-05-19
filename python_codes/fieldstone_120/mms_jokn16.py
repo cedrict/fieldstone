@@ -61,7 +61,7 @@ def solution(x,y):
           np.pi**2*(x*y**3*np.cos(2*np.pi*x**2*y) - x**2*y*np.sin(2*np.pi*x*y) )+1/8 
 
 ###############################################################################
-eta_max=1e4
+eta_max=1000
 eta_min=1#e-4
 
 def eta(x,y,dum):
