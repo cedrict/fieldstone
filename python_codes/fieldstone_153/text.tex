@@ -115,7 +115,28 @@ for each node on the boundary we use a first order stencil that uses only
 internal nodes.
 
 %%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Experiment}
+\section*{Experiment 1}
+
+The domain is a square of size 600~\si{\km}.  
+It contains two fluids, the `mantle'  and the `slab'. 
+The mantle has a density of 3200~\si{\kg\per\cubic\meter} 
+and fills the domain except for a circle (the slab) of radius 100~\si{\km} 
+centered at $x=L_x/2$ and $y=\frac23 L_y$  of density 
+3300~\si{\kg\per\cubic\meter}. $g_0=10~\si{\meter\per\square\second}$ 
+and $\eta_0=10^{21}~\si{\pascal\second}$.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/rho}
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/omega}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/psi}
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/vel}\\
+{\captionfont Obtained on 101x101 mesh.} 
+\end{center}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Experiment 2}
 
 This is inspired by Exercise 5.2 of \textcite{gery19book} which reads as 
 follows:
@@ -140,9 +161,8 @@ Use a constant viscosity $\eta = 10^{21}~\si{\pascal\second}$
 for the entire model.
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_153/results/exp1/rho}
+\includegraphics[width=7cm]{python_codes/fieldstone_153/results/exp2/rho}
 \end{center}
-
 
 Compose a matrix of coefﬁcients $\K$ and a right hand side vector $\vec{b}$ 
 and obtain the solution vector $\vec{X}$ 
@@ -301,12 +321,12 @@ Our code is much more compact but very similar in structure.
 Results for $\omega$ and $\Psi$ are shown here:
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/omega}
-\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/psi}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/u}
-\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/v}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/vel}
-\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp1/vel2}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp2/omega}
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp2/psi}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp2/u}
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp2/v}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp2/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_153/results/exp2/vel2}\\
 {\captionfont Top row: $\omega$ and $\Psi$ fields.
 Middle row: $u$ and $v$ fields. 
 Bottom row: velocity magnitude. Velocity glyphs on $\Psi$ isocontours.}

@@ -11,11 +11,19 @@ print("-----------------------------")
 
 ###############################################################################
 
-Lx=1500e3
-Ly=1000e3
+experiment=2
 
-nnx=51
-nny=41
+if experiment==1:
+   Lx=600e3
+   Ly=600e3
+   nnx=101
+   nny=101
+
+if experiment==2:
+   Lx=1500e3
+   Ly=1000e3
+   nnx=151
+   nny=101
 
 gy=10
 
@@ -52,11 +60,19 @@ start = time.time()
 
 rho=np.zeros(N,dtype=np.float64)
 
-for i in range(0,N):
-    if x[i]<Lx/2:
-       rho[i]=3200
-    else:
-       rho[i]=3300
+if experiment==1:
+   for i in range(0,N):
+       if (x[i]-Lx/2)**2+(y[i]-2*Ly/3)**2<1e5**2:
+          rho[i]=3300
+       else:
+          rho[i]=3200
+
+if experiment==2:
+   for i in range(0,N):
+       if x[i]<Lx/2:
+          rho[i]=3200
+       else:
+          rho[i]=3300
 
 print("Assign density: %.5f s" % (time.time() - start))
 
