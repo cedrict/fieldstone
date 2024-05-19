@@ -617,7 +617,7 @@ for istep in range(0,nstep):
 
         # end for iq
 
-        G_el*=eta0/Lx
+        G_el*=eta_ref/Lx
 
         # impose b.c. 
         for ikk in range(0,ndofV_el):
@@ -676,7 +676,7 @@ for istep in range(0,nstep):
     start = timing.time()
 
     u,v=np.reshape(sol[0:NfemV],(NV,2)).T
-    p=sol[NfemV:Nfem]*(eta0/Lx)
+    p=sol[NfemV:Nfem]*(eta_ref/Lx)
 
     print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
     print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
