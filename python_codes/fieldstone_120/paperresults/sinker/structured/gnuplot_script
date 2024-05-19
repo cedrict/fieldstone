@@ -13,84 +13,84 @@ set format x "10^{%L}"
 set title '16x16'
 set output 'sinker_vel_16.pdf'
 plot[1e-4:1e4][-0.01:0]\
-'sinker_vel_Q2_Q1_16'   u 6:($5/$7) w lp t 'Q_2xQ_1',\
-'sinker_vel_Q2_Pm1_16'  u 6:($5/$7) w lp t 'Q_2xP_{-1}',\
-'sinker_vel_P1+_P1_16'  u 6:($5/$7) w lp t 'P_1^+xP_1',\
-'sinker_vel_P2_P1_16'   u 6:($5/$7) w lp t 'P_2xP_1',\
-'sinker_vel_P2_P0_16'   u 6:($5/$7) w lp t 'P_2xP_0',\
-'sinker_vel_P2+_P-1_16' u 6:($5/$7) w lp t 'P_2^+xP_{-1}',\
+'sinker_vel_Q2_Q1_16'   u 6:($5/$7) w lp lt 1 t 'Q_2xQ_1',\
+'sinker_vel_Q2_Pm1_16'  u 6:($5/$7) w lp lt 2 t 'Q_2xP_{-1}',\
+'sinker_vel_P1+_P1_16'  u 6:($5/$7) w lp lt 3 t 'P_1^+xP_1',\
+'sinker_vel_P2_P1_16'   u 6:($5/$7) w lp lt 4 t 'P_2xP_1',\
+'sinker_vel_P2_P0_16'   u 6:($5/$7) w  p lt 7 t 'P_2xP_0',\
+'sinker_vel_P2+_P-1_16' u 6:($5/$7) w lp lt 6 t 'P_2^+xP_{-1}',\
 'my_point_values_8.dat' u ($2/1e21):($8/($3-3200)*12) w l lt -1 dt 2 t 'ASPECT'
 
 set output 'sinker_press_16.pdf'
 plot[][-0.32:-0.22]\
-'sinker_press_Q2_Q1_16'   u 6:($5) w p t 'Q_2xQ_1',\
-'sinker_press_Q2_Pm1_16'  u 6:($5) w p t 'Q_2xP_{-1}',\
-'sinker_press_P1+_P1_16'  u 6:($5) w p t 'P_1^+xP_1',\
-'sinker_press_P2_P1_16'   u 6:($5) w p t 'P_2xP_1',\
-'sinker_press_P2_P0_16'   u 6:($5) w p t 'P_2xP_0',\
-'sinker_press_P2+_P-1_16' u 6:($5) w p t 'P_2^+xP_{-1}',\
+'sinker_press_Q2_Q1_16'   u 6:($5) w p lt 1 t 'Q_2xQ_1',\
+'sinker_press_Q2_Pm1_16'  u 6:($5) w p lt 2 t 'Q_2xP_{-1}',\
+'sinker_press_P1+_P1_16'  u 6:($5) w p lt 3 t 'P_1^+xP_1',\
+'sinker_press_P2_P1_16'   u 6:($5) w p lt 4 t 'P_2xP_1',\
+'sinker_press_P2_P0_16'   u 6:($5) w p lt 7 t 'P_2xP_0',\
+'sinker_press_P2+_P-1_16' u 6:($5) w p lt 6 t 'P_2^+xP_{-1}',\
 
 ##################################################################
 set title '32x32'
 set output 'sinker_vel_32.pdf'
 plot[][-0.01:0]\
-'sinker_vel_Q2_Q1_32'   u 6:($5/$7) w lp t 'Q_2xQ_1',\
-'sinker_vel_Q2_Pm1_32'  u 6:($5/$7) w lp t 'Q_2xP_{-1}',\
-'sinker_vel_P1+_P1_32'  u 6:($5/$7) w lp t 'P_1^+xP_1',\
-'sinker_vel_P2_P1_32'   u 6:($5/$7) w lp t 'P_2xP_1',\
-'sinker_vel_P2_P0_32'   u 6:($5/$7) w lp t 'P_2xP_0',\
-'sinker_vel_P2+_P-1_32' u 6:($5/$7) w lp t 'P_2^+xP_{-1}',\
+'sinker_vel_Q2_Q1_32'   u 6:($5/$7) w lp lt 1 t 'Q_2xQ_1',\
+'sinker_vel_Q2_Pm1_32'  u 6:($5/$7) w lp lt 2 t 'Q_2xP_{-1}',\
+'sinker_vel_P1+_P1_32'  u 6:($5/$7) w lp lt 3 t 'P_1^+xP_1',\
+'sinker_vel_P2_P1_32'   u 6:($5/$7) w lp lt 4 t 'P_2xP_1',\
+'sinker_vel_P2_P0_32'   u 6:($5/$7) w  p lt 7 t 'P_2xP_0',\
+'sinker_vel_P2+_P-1_32' u 6:($5/$7) w lp lt 6 t 'P_2^+xP_{-1}',\
 'my_point_values_8.dat' u ($2/1e21):($8/($3-3200)*12) w l lt -1 dt 2 t 'ASPECT'
 
 set output 'sinker_press_32.pdf'
 plot[][-0.32:-0.22]\
-'sinker_press_Q2_Q1_32'   u 6:($5) w p t 'Q_2xQ_1',\
-'sinker_press_Q2_Pm1_32'  u 6:($5) w p t 'Q_2xP_{-1}',\
-'sinker_press_P1+_P1_32'  u 6:($5) w p t 'P_1^+xP_1',\
-'sinker_press_P2_P1_32'   u 6:($5) w p t 'P_2xP_1',\
-'sinker_press_P2_P0_32'   u 6:($5) w p t 'P_2xP_0',\
-'sinker_press_P2+_P-1_32' u 6:($5) w p t 'P_2^+xP_{-1}',\
+'sinker_press_Q2_Q1_32'   u 6:($5) w p lt 1 t 'Q_2xQ_1',\
+'sinker_press_Q2_Pm1_32'  u 6:($5) w p lt 2 t 'Q_2xP_{-1}',\
+'sinker_press_P1+_P1_32'  u 6:($5) w p lt 3 t 'P_1^+xP_1',\
+'sinker_press_P2_P1_32'   u 6:($5) w p lt 4 t 'P_2xP_1',\
+'sinker_press_P2_P0_32'   u 6:($5) w p lt 7 t 'P_2xP_0',\
+'sinker_press_P2+_P-1_32' u 6:($5) w p lt 6 t 'P_2^+xP_{-1}',\
 
 ##################################################################
 set title '64x64'
 set output 'sinker_vel_64.pdf'
 plot[1e-4:1e4][-0.01:0]\
-'sinker_vel_Q2_Q1_64'   u 6:($5/$7) w lp t 'Q_2xQ_1',\
-'sinker_vel_Q2_Pm1_64'  u 6:($5/$7) w lp t 'Q_2xP_{-1}',\
-'sinker_vel_P1+_P1_64'  u 6:($5/$7) w lp t 'P_1^+xP_1',\
-'sinker_vel_P2_P1_64'   u 6:($5/$7) w lp t 'P_2xP_1',\
-'sinker_vel_P2_P0_64'   u 6:($5/$7) w lp t 'P_2xP_0',\
-'sinker_vel_P2+_P-1_64' u 6:($5/$7) w lp t 'P_2^+xP_{-1}',\
+'sinker_vel_Q2_Q1_64'   u 6:($5/$7) w lp lt 1 t 'Q_2xQ_1',\
+'sinker_vel_Q2_Pm1_64'  u 6:($5/$7) w lp lt 2 t 'Q_2xP_{-1}',\
+'sinker_vel_P1+_P1_64'  u 6:($5/$7) w lp lt 3 t 'P_1^+xP_1',\
+'sinker_vel_P2_P1_64'   u 6:($5/$7) w lp lt 4 t 'P_2xP_1',\
+'sinker_vel_P2_P0_64'   u 6:($5/$7) w  p lt 7 t 'P_2xP_0',\
+'sinker_vel_P2+_P-1_64' u 6:($5/$7) w lp lt 6 t 'P_2^+xP_{-1}',\
 'my_point_values_8.dat' u ($2/1e21):($8/($3-3200)*12) w l lt -1 dt 2 t 'ASPECT'
 
 set output 'sinker_press_64.pdf'
 plot[][-0.32:-0.22]\
-'sinker_press_Q2_Q1_64'   u 6:($5) w p t 'Q_2xQ_1',\
-'sinker_press_Q2_Pm1_64'  u 6:($5) w p t 'Q_2xP_{-1}',\
-'sinker_press_P1+_P1_64'  u 6:($5) w p t 'P_1^+xP_1',\
-'sinker_press_P2_P1_64'   u 6:($5) w p t 'P_2xP_1',\
-'sinker_press_P2_P0_64'   u 6:($5) w p t 'P_2xP_0',\
-'sinker_press_P2+_P-1_64' u 6:($5) w p t 'P_2^+xP_{-1}',\
+'sinker_press_Q2_Q1_64'   u 6:($5) w p lt 1 t 'Q_2xQ_1',\
+'sinker_press_Q2_Pm1_64'  u 6:($5) w p lt 2 t 'Q_2xP_{-1}',\
+'sinker_press_P1+_P1_64'  u 6:($5) w p lt 3 t 'P_1^+xP_1',\
+'sinker_press_P2_P1_64'   u 6:($5) w p lt 4 t 'P_2xP_1',\
+'sinker_press_P2_P0_64'   u 6:($5) w p lt 7 t 'P_2xP_0',\
+'sinker_press_P2+_P-1_64' u 6:($5) w p lt 6 t 'P_2^+xP_{-1}',\
 
 ##################################################################
 set title '128x128'
 set output 'sinker_vel_128.pdf'
 plot[][-0.01:0]\
-'sinker_vel_Q2_Q1_128'   u 6:($5/$7) w lp t 'Q_2xQ_1',\
-'sinker_vel_Q2_Pm1_128'  u 6:($5/$7) w lp t 'Q_2xP_{-1}',\
-'sinker_vel_P1+_P1_128'  u 6:($5/$7) w lp t 'P_1^+xP_1',\
-'sinker_vel_P2_P1_128'   u 6:($5/$7) w lp t 'P_2xP_1',\
-'sinker_vel_P2_P0_128'   u 6:($5/$7) w lp t 'P_2xP_0',\
-'sinker_vel_P2+_P-1_128' u 6:($5/$7) w lp t 'P_2^+xP_{-1}',\
+'sinker_vel_Q2_Q1_128'   u 6:($5/$7) w lp lt 1 t 'Q_2xQ_1',\
+'sinker_vel_Q2_Pm1_128'  u 6:($5/$7) w lp lt 2 t 'Q_2xP_{-1}',\
+'sinker_vel_P1+_P1_128'  u 6:($5/$7) w lp lt 3 t 'P_1^+xP_1',\
+'sinker_vel_P2_P1_128'   u 6:($5/$7) w lp lt 4 t 'P_2xP_1',\
+'sinker_vel_P2_P0_128'   u 6:($5/$7) w  p lt 7 t 'P_2xP_0',\
+'sinker_vel_P2+_P-1_128' u 6:($5/$7) w lp lt 6 t 'P_2^+xP_{-1}',\
 'my_point_values_8.dat' u ($2/1e21):($8/($3-3200)*12) w l lt -1 dt 2 t 'ASPECT'
 
 set output 'sinker_press_128.pdf'
 plot[][-0.32:-0.22]\
-'sinker_press_Q2_Q1_128'   u 6:($5) w p t 'Q_2xQ_1',\
-'sinker_press_Q2_Pm1_128'  u 6:($5) w p t 'Q_2xP_{-1}',\
-'sinker_press_P1+_P1_128'  u 6:($5) w p t 'P_1^+xP_1',\
-'sinker_press_P2_P1_128'   u 6:($5) w p t 'P_2xP_1',\
-'sinker_press_P2_P0_128'   u 6:($5) w p t 'P_2xP_0',\
-'sinker_press_P2+_P-1_128' u 6:($5) w p t 'P_2^+xP_{-1}',\
+'sinker_press_Q2_Q1_128'   u 6:($5) w p lt 1 t 'Q_2xQ_1',\
+'sinker_press_Q2_Pm1_128'  u 6:($5) w p lt 2 t 'Q_2xP_{-1}',\
+'sinker_press_P1+_P1_128'  u 6:($5) w p lt 3 t 'P_1^+xP_1',\
+'sinker_press_P2_P1_128'   u 6:($5) w p lt 4 t 'P_2xP_1',\
+'sinker_press_P2_P0_128'   u 6:($5) w p lt 7 t 'P_2xP_0',\
+'sinker_press_P2+_P-1_128' u 6:($5) w p lt 6 t 'P_2^+xP_{-1}',\
 
 
