@@ -56,12 +56,24 @@ blending is dictated by the value of the parameter $\sigma$, defined as
 The parameter $\sigma$ has the property that
 $\sigma \rightarrow 0$ when $\Penb \rightarrow 0$ and 
 $\sigma \rightarrow 1$ when $\Penb \rightarrow \infty$.
+The equation above can also be rewritten:
+\[
+\kappa \frac{T_{i+1}-2T_i + T_{i-1}}{h^2}
+- u \frac{1 T_{i+1}-T_{i-1}}{2 h} = 0
++ \frac{u \sigma h}{2} \frac{T_{i+1}-2 T_i +T_{i-1}}{h^2} = 0
+\]
+which makes the action of this stabilisation term more obvious: it is a diffusion term whose 
+diffusion coefficient goes away when $h\rightarrow 0$. 
 
 Thus, if $\sigma = 0$ (diffusion dominated), then pure central differencing is obtained, and if
 $\sigma = 1$ (advection dominated), then pure backward differencing results. Interestingly
 enough, this blended or weighted scheme is second-order accurate even as it switches
 to backward differencing \cite{five77}. 
-Note that it is essentially the known streamline upwind method used in FEM.
+Note that it is essentially the known streamline upwind method used in FEM or FDM (see
+Section~\ref{ss:fdm_adv1D}). 
+Also, when $\kappa \rightarrow 0$ (no physical diffusion at all)
+then $\sigma$ tends to $\pm 1$, and more precisely: $\sigma = sign(u)$, which allows for a simple 
+and elegant implementation. 
 
 Adding a FT time derivative term, the equation above can be rewritten (a source
 term has been added):

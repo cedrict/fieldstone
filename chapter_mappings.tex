@@ -1,4 +1,6 @@
-\begin{flushright} {\tiny {\color{gray} mappings.tex}} \end{flushright}
+\chapter{Mapping \& Jacobians} \label{ss:mappings} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} chapter\_mappings.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \index{general}{Isoparametric}
@@ -14,7 +16,7 @@ then the element is termed {\sl subparametric} when $n_g<n_e$ and
 {\sl superparametric} when $n_g>n_e$.
 
 %...........................................
-\subsection{General case}
+\section{General case}
 
 What follows is written for the 2d case but extending it to 3d is trivial.
 
@@ -153,7 +155,7 @@ of the Gauss-Legendre quadrature.
 
 
 %...........................................
-\subsection{Linear mapping on a triangle}
+\section{Linear mapping on a triangle}
 
 
 
@@ -350,7 +352,7 @@ c_y& -b_y \\
 
 
 %................................................
-\subsection{Bilinear mapping ($Q_1$) on a quadrilateral}
+\section{Bilinear mapping ($Q_1$) on a quadrilateral}
 
 The \index{general}{reference element} reference element 
 is in the $(r,s)$ space. It is a square of size $2\times2$ 
@@ -477,7 +479,7 @@ C= (A_1 + A_2s)(B_3 + B_4r)-(A_3 + A_4r)(B_1 + B_2s)
 
 
 %---------------------------------
-\subsubsection{A concrete example}
+\subsection{A concrete example}
 
 Let us look at this by means of a simple example and let us consider the following 
 element:
@@ -531,7 +533,7 @@ is zero for $r-s=2/5$. This mapping is invalid!
 
 
 %.............................................................................
-\subsubsection{the special case of squares, quadrilaterals and parallelograms}
+\subsection{the special case of squares, quadrilaterals and parallelograms}
 
 In this case the parameters A2, A4, B2, B4 are all equal to zero.
 which yields:
@@ -654,7 +656,7 @@ as a function of space coordinates and not just at the quadrature points.
 
 
 %.................................................................
-\subsection{Biquadratic mapping of a straight-edge face $Q_2$ element }
+\section{Biquadratic mapping of a straight-edge face $Q_2$ element }
 
 \begin{center}
 \includegraphics[width=8cm]{images/mappings/biquadratic/mapping1}
@@ -805,9 +807,9 @@ Note that the coordinates of point 5 are defined being those of the barycenter
 of the quadrilateral. More on this choice later.
 
 \begin{center}
-a)\includegraphics[width=5.6cm]{images/mappings/biquadratic/rs.pdf}
-b)\includegraphics[width=5.6cm]{images/mappings/biquadratic/xyQ1.pdf}
-c)\includegraphics[width=5.6cm]{images/mappings/biquadratic/xyQ2.pdf}\\
+a)\includegraphics[width=5.45cm]{images/mappings/biquadratic/rs.pdf}
+b)\includegraphics[width=5.45cm]{images/mappings/biquadratic/xyQ1.pdf}
+c)\includegraphics[width=5.45cm]{images/mappings/biquadratic/xyQ2.pdf}\\
 {\captionfont a) 10,000 random points in the reference element; 
 b,c) image of these points by means of a bilinear and biquadratic mapping 
 respectively.\\ When the sides of the element
@@ -815,7 +817,7 @@ are straight we see that a $Q_1$ mapping is sufficient.}
 \end{center}
 
 %.................................................................
-\subsection{Biquadratic mapping of a not-so straight-line face $Q_2$ element }
+\section{Biquadratic mapping of a not-so straight-line face $Q_2$ element }
 
 We now carry out the same exercise as before but nodes 2 and 8 are no more 
 in the middle of nodes 1-3 and 7-9 respectively.
@@ -842,7 +844,7 @@ y5=(y1+y2+y3+y4+y6+y7+y8+y9)/8.
 We will come back to this later.
 
 %.......................................................................
-\subsection{Bilinear, biquadratic and bicubic mapping in an annulus }
+\section{Bilinear, biquadratic and bicubic mapping in an annulus }
 
 In the light of what precedes, we can now ask ourselves how this translates to 
 a real geodynamic case. Let us then consider the case of an annular domain, 
@@ -968,7 +970,7 @@ Here again the $Q_4$ mapping makes quite the difference.
 \newpage
 
 %..................................................................
-\subsection{Biquadratic mapping - the middle node conundrum}
+\section{Biquadratic mapping - the middle node conundrum}
 
 Python code at {\tt images/mappings/biquadratic3}.
 
@@ -1170,8 +1172,9 @@ Area does not depend on position of middle node?!
 \item \fullcite{yuhy94}
 \end{itemize}
 
+\newpage
 %.............................................................
-\subsection{The Double Jacobian approach}
+\section{The Double Jacobian approach}
 
 What follows is 90\% borrowed from \textcite{moth20} (2020) with slight changes in the notations.
 
@@ -1189,7 +1192,18 @@ The net Jacobian from local finite element coordinates to a cylindrical or spher
 Because the net Jacobian has an analytical form, it can be more rapidly computed than a general 
 isoparametric or superparametric finite element mapping.
 
-Remark: in what follows I will denote the polar coordinates by $\upvarrho,\uptheta$ so as to avoid confusion with the reduced/local coordinates $r,s$.
+Remark: in what follows I will denote the polar coordinates by $\upvarrho,\uptheta$ 
+so as to avoid confusion with the reduced/local coordinates $r,s$.
+
+\begin{verbatim}
+              J_LC
+            --------->          
+local (r,s)            Cartesian (x,z)
+           <---------          
+              J_CL
+\end{verbatim}
+
+
 
 As we have seen so far the standard approach is as follows:
 The relationship between the derivatives of the basis functions with respect to the Cartesian coordinates and the same 
@@ -1218,7 +1232,7 @@ derivatives with respect to the local coordinates is given by:
 \end{array}
 \right)
 \]
-where $\bN$ are the shape functions, $i$ is the local node numbering of the element, 
+where $\bN_i$ are the shape functions, $i$ is the local node numbering of the element, 
 $(x,z)$ are the Cartesian coordinates, and $(r,s)$ are the local coordinates within the reference element.
 We of course have
 \[
@@ -1260,10 +1274,10 @@ Using an isoparameteric mapping:
 =
 \left(
 \begin{array}{cc}
-\frac{\partial \sum_i \bN_i x_i}{\partial r}  & 
-\frac{\partial \sum_i \bN_i z_i}{\partial r}   \\ \\
-\frac{\partial \sum_i \bN_i x_i}{\partial s}  & 
-\frac{\partial \sum_i \bN_i z_i}{\partial s}  
+\frac{\partial (\sum_i \bN_i x_i)}{\partial r}  & 
+\frac{\partial (\sum_i \bN_i z_i)}{\partial r}   \\ \\
+\frac{\partial (\sum_i \bN_i x_i)}{\partial s}  & 
+\frac{\partial (\sum_i \bN_i z_i)}{\partial s}  
 \end{array}
 \right)
 =
@@ -1304,6 +1318,8 @@ In the end
 \label{eq:mappDJ1}
 \end{equation}
 
+\vspace{.5cm}
+
 In many stones this is coded as follows:
 \begin{lstlisting}
 jcb=np.zeros((2,2),dtype=np.float64)
@@ -1320,25 +1336,17 @@ for k in range(0,mV):
 \end{lstlisting}
 
 
-\begin{verbatim}
-              J_LC
-            --------->          
-local (r,s)            Cartesian (x,z)
-           <---------          
-              J_CL
-\end{verbatim}
-
 
 %-----------------------------
-\subsubsection{DJ: First Jacobian}
+\subsection{First Jacobian}
 
 
 \begin{verbatim}
-             J_LP
-           --------->                       ---------->
-local (r,s)           linear Polar (r,theta)           cartesian (x,z)
-          <---------                        <----------
-            J_PL
+                J_LP
+              --------->                       ---------->
+   local (r,s)           linear Polar (r,theta)           cartesian (x,z)
+             <---------                        <----------
+               J_PL
 \end{verbatim}
 
 
@@ -1441,7 +1449,7 @@ Then
 
 
 %-----------------------------
-\subsubsection{DJ: Second jacobian}
+\subsection{Second jacobian}
 
 The second Jacobian in the DJ method is the {\it analytical} 
 mapping from polar coordinates to Cartesian coordinates. The derivatives 
@@ -1471,8 +1479,9 @@ expressed in matrix form are given by
 \right)
 \label{eq:DJ3}
 \end{equation}
-where ${\bm J}_{PC}$ is the Jacobian from polar to Cartesian coordinates. The analytical expressions for 
-$\uptheta(x,z)$ and $\uprho(x,z)$ are known; however, it is again easier to use the inverse transformation
+where ${\bm J}_{PC}$ is the Jacobian from polar to Cartesian coordinates. 
+The analytical expressions for $\uptheta(x,z)$ and $\uprho(x,z)$ are known; 
+however, it is again easier to use the inverse transformation
 
 \begin{equation}
 \left(
@@ -1516,8 +1525,8 @@ of the Jacobian from Cartesian to polar coordinates is given by
 \]
 Cartesian coordinates are related with polar coordinates by:
 \begin{eqnarray}
-x(\uptheta,\uprho) &=& \uprho \sin \uptheta \\
-z(\uptheta,\uprho) &=& \uprho \cos \uptheta 
+x(\uptheta,\uprho) &=& \uprho \sin \uptheta \nn\\
+z(\uptheta,\uprho) &=& \uprho \cos \uptheta \nn
 \end{eqnarray}
 so that 
 \begin{eqnarray}
@@ -1547,12 +1556,12 @@ Remark: this Jacobian is independent of the choice of basis functions since it i
 
 
 %--------------------------------------------------------
-\subsubsection{DJ: Combining both}
+\subsection{Combining both}
 
 Making use of the matrix product of the two inverse Jacobians,
 global Cartesian derivatives can be expressed as a matrix product of the local derivatives in the local to polar and polar to Cartesian coordinate mappings. Substituting Equation \eqref{eq:DJ1} into Equation \eqref{eq:DJ3} yields
 
-\[
+\begin{equation}
 \left(
 \begin{array}{c}
 \frac{\partial \bN_i}{\partial x} \\ \\
@@ -1577,7 +1586,6 @@ global Cartesian derivatives can be expressed as a matrix product of the local d
 \end{array}
 \right)
 =
-%\]
 %which is equivalent to
 %\begin{eqnarray}
 %\left(
@@ -1595,7 +1603,8 @@ global Cartesian derivatives can be expressed as a matrix product of the local d
 \frac{\partial \bN_i}{\partial s} 
 \end{array}
 \right)
-\]
+\label{eq:DJ123}
+\end{equation}
 %\end{eqnarray}
 
 Note that the 2D DJ approach will ensure a perfect mapping to the circular-arc edges of the 
@@ -1607,20 +1616,22 @@ The major drawback from this is the fact that (as we will see) the Jacobian is n
 so special care must be taken with regards to the integration.
 
 %..................................................
-\subsubsection{Triangles}
+\subsection{Linear triangles ($P_1$)}
 
-For linear triangles ($P_1$) the basis functions are
+For linear triangles ($P_1$) the basis functions are (see Section~\ref{ss:p1}):
 \begin{eqnarray}
-\bN_1(r,s)&=&1-r-s \\
-\bN_2(r,s)&=&r \\
-\bN_3(r,s)&=&s
+\bN_1(r,s)&=&1-r-s \nn\\
+\bN_2(r,s)&=&r  \nn\\
+\bN_3(r,s)&=&s \nn
 \end{eqnarray}
 and their derivatives:
+
+
 \begin{eqnarray}
-\frac{\partial\uptheta}{\partial r}(r,s) &=& \uptheta_2-\uptheta_1 = \uptheta_{21}\\
-\frac{\partial\uptheta}{\partial s}(r,s) &=& \uptheta_3-\uptheta_1 = \uptheta_{31}\\
-\frac{\partial\uprho}{\partial r}(r,s) &=& \uprho_2-\uprho_1 = \uprho_{21}\\
-\frac{\partial\uprho}{\partial s}(r,s) &=& \uprho_3-\uprho_1 = \uprho_{31}
+\frac{\partial\uptheta}{\partial r}(r,s) &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial r}(r,s)\; \uptheta_i = \uptheta_2-\uptheta_1 = \uptheta_{21}\nn\\
+\frac{\partial\uptheta}{\partial s}(r,s) &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uptheta_i = \uptheta_3-\uptheta_1 = \uptheta_{31}\nn\\
+\frac{\partial\uprho}{\partial r}(r,s)   &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial r}(r,s)\; \uprho_i   = \uprho_2-\uprho_1 = \uprho_{21}\nn\\
+\frac{\partial\uprho}{\partial s}(r,s)   &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uprho_i   = \uprho_3-\uprho_1 = \uprho_{31}\nn
 \end{eqnarray}
 In this case we have 
 \begin{equation}
@@ -1635,9 +1646,7 @@ In this case we have
 \label{eq:DJ5}
 \end{equation}
 
-
-
-Substituting Equations \eqref{eq:DJ5} and \eqref{eq:DJ6} into the equation above, the analytical expression for this mapping is
+Substituting Equations \eqref{eq:DJ5} and \eqref{eq:DJ6} into Eq.~\eqref{eq:DJ123}, the analytical expression for this mapping is
 
 \begin{eqnarray}
 \left(
@@ -1663,7 +1672,7 @@ Substituting Equations \eqref{eq:DJ5} and \eqref{eq:DJ6} into the equation above
 \right)
 \nn\\
 &=&
-\frac{1}{\uptheta_{21}\uprho_{31}-\uprho_{21}\uptheta_{31}} 
+\frac{1}{\uptheta_{21}\uprho_{31}-\uprho_{21}\uptheta_{31}} \!
 \left(
 \begin{array}{cc}
  \frac{\uprho_{31} }{\uprho} \cos\uptheta -\uptheta_{31}\sin\uptheta &  
@@ -1672,7 +1681,9 @@ Substituting Equations \eqref{eq:DJ5} and \eqref{eq:DJ6} into the equation above
  \frac{\uprho_{21} }{\uprho} \sin\uptheta +\uptheta_{21}\cos\uptheta 
 \end{array}
 \right)
+\!
 \cdot
+\!
 \left(
 \begin{array}{c}
 \frac{\partial \bN_i}{\partial r} \\ \\
@@ -1696,6 +1707,7 @@ $r_6=\frac12(r_3+r_1)$, and likewise for the $\uptheta_{4,5,6}$ values.
 
 We then proceed to generate 1000 random points in the reference triangle and plot their image
 in the Cartesian plane, either using the DJ method, a linear mapping $P_1$ or a quadratic mapping $P_2$.
+The python code is in {\tt images/mappings/DJ/triangles}.
 
 Unsurprisingly the $P_1$ mapping yields a triangle which 2-3 edge does not conform to the edge of the domain.
 The $P_2$ mapping does a much better job and so does the DJ mapping.
@@ -1721,87 +1733,148 @@ as a function of $x$:
 \includegraphics[width=5.7cm]{images/mappings/DJ/triangles/xz_DJ_boundary_error.pdf}
 \end{center}
 We find that the maximum error for $P_1$ is about 120km, the error for $P_2$ is about 260m, 
-and the error for DJ is effectively about $10^{-9}$m.
-
-
+and the error for DJ is effectively about $<10^{-9}$m.
 
 
 %..................................................
-\subsubsection{Quadrilaterals}
+\subsection{Bilinear quadrilaterals ($Q_1$)}
+
 
 
 For linear quadrilaterals ($Q_1$) the basis functions are: 
 \begin{eqnarray}
-\bN_1(r,s)&=& \frac14(1-r)(1-s)\\
-\bN_2(r,s)&=& \frac14(1+r)(1-s)\\
-\bN_3(r,s)&=& \frac14(1+r)(1+s)\\
-\bN_4(r,s)&=& \frac14(1-r)(1+s)
+\bN_1(r,s)&=& \frac14(1-r)(1-s) \nn\\
+\bN_2(r,s)&=& \frac14(1+r)(1-s) \nn\\
+\bN_3(r,s)&=& \frac14(1+r)(1+s) \nn\\
+\bN_4(r,s)&=& \frac14(1-r)(1+s) \nn
 \end{eqnarray}
+
+
 \begin{eqnarray}
 \frac{\partial\uptheta}{\partial r}(r,s) 
-&=& -\frac14 \uptheta_1 + \frac14 \uptheta_2 + \frac14 \uptheta_3 - \frac14 \uptheta_4 
-= \frac14 (-\uptheta_1 + \uptheta_2 + \uptheta_3 - \uptheta_4) =\tilde{\uptheta}_{1234}\\
+&=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial r}(r,s)\; \uptheta_i \nn\\
+&=& -\frac14 (1-s) \uptheta_1 + \frac14 (1-s)\uptheta_2 + \frac14(1+s) \uptheta_3 - \frac14(1+s) \uptheta_4 \nn\\
+&=& \frac14 (-\uptheta_1 + \uptheta_2 + \uptheta_3 - \uptheta_4) 
++\frac14 s(\uptheta_1-\uptheta_2+\uptheta_3-\uptheta_4) \nn\\
+&=&\tilde{\uptheta}_{1234} + \underline{\uptheta}_{1234}s
+\nn\\
 \frac{\partial\uptheta}{\partial s}(r,s) 
-&=& -\frac14 \uptheta_1 - \frac14 \uptheta_2 + \frac14 \uptheta_3 + \frac14 \uptheta_4 
-= \frac14 (-\uptheta_1 - \uptheta_2 + \uptheta_3 + \uptheta_4) = \bar{\uptheta}_{1234}\\
+&=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uptheta_i  \nn\\
+&=&-\frac14 (1-r)\uptheta_1 - \frac14(1+r) \uptheta_2 + \frac14 (1+r)\uptheta_3 + \frac14(1-r) \uptheta_4 \nn\\
+&=& \frac14 (-\uptheta_1 - \uptheta_2 + \uptheta_3 + \uptheta_4)  
++\frac14 r (\uptheta_1 -\uptheta_2  +\uptheta_3 -\uptheta_4 ) \nn\\
+&=& \bar{\uptheta}_{1234} + \underline{\uptheta}_{1234}r
+\nn\\
 \frac{\partial\uprho}{\partial r}(r,s)   
-&=& -\frac14 \uprho_1 + \frac14 \uprho_2 + \frac14 \uprho_3 - \frac14 \uprho_4 
-= \frac14 (-\uprho_1 + \uprho_2 + \uprho_3 - \uprho_4) = \tilde{\uprho}_{1234}\\
+&=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial r}(r,s)\; \uprho_i   \nn\\
+&=&-\frac14 (1-s)\uprho_1 + \frac14 (1-s)\uprho_2 + \frac14 (1+s)\uprho_3 - \frac14 (1+s)\uprho_4 \nn\\
+&=& \frac14 (-\uprho_1 + \uprho_2 + \uprho_3 - \uprho_4) 
++\frac14 s (\uprho_1 - \uprho_2 + \uprho_3 - \uprho_4) \nn\\
+&=& \tilde{\uprho}_{1234} + \underline{\uprho}_{1234} s
+\nn\\
 \frac{\partial\uprho}{\partial s}(r,s)   
-&=& -\frac14 \uprho_1 - \frac14 \uprho_2 + \frac14 \uprho_3 + \frac14 \uprho_4 
-= \frac14 (-\uprho_1 - \uprho_2 + \uprho_3 + \uprho_4) = \bar{\uprho}_{1234}
+&=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uprho_i    \nn\\
+&=& -\frac14 (1-r)\uprho_1 - \frac14(1+r) \uprho_2 + \frac14(1+r) \uprho_3 + \frac14 (1-r)\uprho_4  \nn\\
+&=& \frac14 (-\uprho_1 - \uprho_2 + \uprho_3 + \uprho_4) 
++ \frac14 r (\uprho_1 - \uprho_2 + \uprho_3 - \uprho_4) \nn\\
+&=& \bar{\uprho}_{1234} + \underline{\uprho}_{1234} r
 \end{eqnarray}
 
-In this case we have 
-\begin{equation}
-\boxed{
-{\bm J}_{LP}={\bm J}_{PL}^{-1} = \frac{1}{ \tilde{\uptheta}_{1234} \bar{\uprho}_{1234} - \bar{\uptheta}_{1234} \tilde{\uprho}_{1234} } 
+\[
+{\bm J}_{PL}=
 \left(
 \begin{array}{cc}
-\bar{\uprho}_{1234} & -\tilde{\uprho}_{1234} \\
--\bar{\uptheta}_{1234} & \tilde{\uptheta}_{1234}
-\end{array}
-\right)}
-\end{equation}
-
-
-{\bf SPECIAL CASE}: In the element we have 
-$\uptheta_1=\uptheta_4$, $\uptheta_2=\uptheta_3$, 
-$\uptheta_2-\uptheta_1=\uptheta_3-\uptheta_4=\tilde{\uptheta}$.
-Likewise, 
-$\uprho_1=\uprho_2$, $\uprho_3=\uprho_4$ and 
-$\uprho_4-\uprho_1=\uprho_3-\uprho_2=\bar{\uprho}$
-In this case:
-\begin{eqnarray}
-\frac{\partial\uptheta}{\partial r}(r,s) 
-&=& \frac14 (-\uptheta_1 + \uptheta_2 + \uptheta_3 - \uptheta_4) =\frac12 \tilde{\uptheta}\\
-\frac{\partial\uptheta}{\partial s}(r,s) 
-&=& \frac14 (-\uptheta_1 - \uptheta_2 + \uptheta_3 + \uptheta_4) =0\\
-\frac{\partial}{\partial r}\uprho(r,s)   
-&=& \frac14 (-\uprho_1 + \uprho_2 + \uprho_3 - \uprho_4) = 0\\
-\frac{\partial}{\partial s}\uprho(r,s)   
-&=& \frac14 (-\uprho_1 - \uprho_2 + \uprho_3 + \uprho_4) =\frac12 \bar{\uprho}
-\end{eqnarray}
-and
-\begin{equation}
-\boxed{
-{\bm J}_{LP}={\bm J}_{PL}^{-1} 
-= \frac{1}{\frac12\bar{\uprho} \frac12\tilde{\uptheta}} 
-\left(
-\begin{array}{cc}
-\frac12 \bar{\uprho} & 0 \\
-0 & \frac12\tilde{\uptheta}
+\frac{\partial \uptheta}{\partial r}  & 
+\frac{\partial \uprho}{\partial r}  \\ \\
+\frac{\partial \uptheta}{\partial s}  & 
+\frac{\partial \uprho}{\partial s}
 \end{array}
 \right)
 =
 \left(
 \begin{array}{cc}
-2\tilde{\uptheta}^{-1} & 0 \\
-0 &  2\bar{\uprho}^{-1}
+\tilde{\uptheta}_{1234} + \underline{\uptheta}_{1234}s &  \tilde{\uprho}_{1234} + \underline{\uprho}_{1234} s \\\\
+\bar{\uptheta}_{1234} + \underline{\uptheta}_{1234}r & \bar{\uprho}_{1234} + \underline{\uprho}_{1234} r
 \end{array}
-\right)}
+\right)
+\]
+
+
+In this case we have ${\bm J}_{LP}={\bm J}_{PL}^{-1}$ with
+\begin{equation}
+{\bm J}_{LP}= \frac{1}{ 
+(\tilde{\uptheta}_{1234} + \underline{\uptheta}_{1234}s)
+( \bar{\uprho}_{1234} + \underline{\uprho}_{1234} r)
+- 
+(\bar{\uptheta}_{1234} + \underline{\uptheta}_{1234}r)
+(\tilde{\uprho}_{1234} + \underline{\uprho}_{1234} s)
+} 
+\left(
+\begin{array}{cc}
+\bar{\uprho}_{1234}+ \underline{\uprho}_{1234} r & -\tilde{\uprho}_{1234} - \underline{\uprho}_{1234} s \\
+-\bar{\uptheta}_{1234} -\underline{\uptheta}_{1234}r& \tilde{\uptheta}_{1234}+ \underline{\uptheta}_{1234}s
+\end{array}
+\right)
 \end{equation}
-Bringing things together:
+
+
+{\bf SPECIAL CASE}: In the element we have
+$\uptheta_1=\uptheta_4$, $\uptheta_2=\uptheta_3$,
+and we define $\tilde{\uptheta}$ such that 
+$\frac12(\uptheta_2-\uptheta_1)=\frac12(\uptheta_3-\uptheta_4)=\tilde{\uptheta}$.
+Likewise,
+$\uprho_1=\uprho_2$, $\uprho_3=\uprho_4$ and
+we define $\bar{\uprho}$ such that $\frac12(\uprho_4-\uprho_1)=\frac12(\uprho_3-\uprho_2)=\bar{\uprho}$
+In this case:
+\begin{eqnarray}
+\tilde{\uptheta}_{1234}     &=&\frac14\left( -\uptheta_1 +\uptheta_2 + \uptheta_3 -\uptheta_4 \right) =\tilde{\uptheta}\nn\\
+\underline{\uptheta}_{1234} &=&\frac14\left(  \uptheta_1 -\uptheta_2 + \uptheta_3 -\uptheta_4 \right)=0\nn\\
+\bar{\uptheta}_{1234}       &=&\frac14\left( -\uptheta_1 -\uptheta_2 + \uptheta_3 +\uptheta_4 \right)=0 \nn\\
+\tilde{\uprho}_{1234}       &=&\frac14\left( -\uprho_1 +\uprho_2 + \uprho_3 -\uprho_4\right) =0\nn\\
+\underline{\uprho}_{1234}   &=&\frac14\left(  \uprho_1 -\uprho_2 + \uprho_3 -\uprho_4\right) =0\nn\\
+\bar{\uprho}_{1234}         &=&\frac14\left( -\uprho_1 -\uprho_2 + \uprho_3 +\uprho_4\right) = \bar\rho 
+\end{eqnarray}
+so that 
+
+\[
+{\bm J}_{PL}=
+\left(
+\begin{array}{cc}
+\frac{\partial \uptheta}{\partial r}  & 
+\frac{\partial \uprho}{\partial r}  \\ \\
+\frac{\partial \uptheta}{\partial s}  & 
+\frac{\partial \uprho}{\partial s}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\tilde{\uptheta}  &  0 \\\\
+0 & \bar{\uprho}
+\end{array}
+\right)
+\]
+We then  have
+\begin{equation}
+{\bm J}_{LP}={\bm J}_{PL}^{-1} 
+= \frac{1}{ \tilde{\uptheta} \bar{\uprho} } 
+\left(
+\begin{array}{cc}
+\bar{\uprho}& 0 \\
+0 &  \tilde{\uptheta}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\tilde{\uptheta}^{-1}& 0 \\
+0 & \bar{\uprho} ^{-1}
+\end{array}
+\right)
+\end{equation}
+
+
+Bringing things together in Eq.~\eqref{eq:DJ123}:
 \begin{eqnarray}
 \left(
 \begin{array}{c}
@@ -1809,6 +1882,13 @@ Bringing things together:
 \frac{\partial \bN_i}{\partial z} 
 \end{array}
 \right)
+={\bm J}_{CP}^{-1}\cdot {\bm J}_{PL}^{-1}\cdot 
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial r} \\ \\
+\frac{\partial \bN_i}{\partial s} 
+\end{array}
+\right)  
 &=&
 \frac{1}{\uprho}
 \left(
@@ -1820,8 +1900,8 @@ Bringing things together:
 \cdot
 \left(
 \begin{array}{cc}
-2\tilde{\uptheta}^{-1} & 0 \\
-0 &  2\bar{\uprho}^{-1}
+\tilde{\uptheta}^{-1} & 0 \\
+0 &  \bar{\uprho}^{-1}
 \end{array}
 \right)
 \cdot 
@@ -1859,7 +1939,7 @@ Bringing things together:
 \right)
 =
 \underbrace{
-\frac{2}{\uprho}
+\frac{1}{\uprho}
 \left(
 \begin{array}{cc}
 \tilde{\uptheta}^{-1} \cos\uptheta & \uprho \bar{\uprho}^{-1} \sin \uptheta\\ \\
@@ -1878,43 +1958,47 @@ Bringing things together:
 \end{mdframed}
 This equation is to be compared with Eq.~\eqref{eq:mappDJ1}
 
-If matrix ${\bm A}$ is invertible then ${\bm A}\cdot {\bm A}^{-1}={\bm 1}$, 
+
+If matrix ${\bm A}$ is invertible then ${\bm A}\cdot {\bm A}^{-1}={\bm 1}$,
 and since $det({\bm A}\cdot {\bm B}) = det({\bm A}) det ({\bm B})$, then
 $det({\bm A}\cdot {\bm A}^{-1})= det({\bm A})\; det ({\bm A}^{-1}) =1$.
-This means that 
+This means that
 $
 det({\bm J}_{CL})=
 det({\bm J}_{LC}^{-1})=
 [det({\bm J}_{LC})]^{-1}
 $
-with 
+with
 \begin{eqnarray}
 det({\bm J}_{LC})
 &=&
-\frac{4}{\uprho^2}
+\frac{1}{\uprho^2}
 \left[
-\tilde{\uptheta}^{-1} \cos\uptheta 
- \uprho \bar{\uprho}^{-1} \cos \uptheta+ 
-\tilde{\uptheta}^{-1} \sin\uptheta 
-\uprho \bar{\uprho}^{-1} \sin \uptheta \right] \nn\\
+(\tilde{\uptheta}^{-1} \cos\uptheta )
+( \uprho \bar{\uprho}^{-1} \cos \uptheta)+ 
+(\tilde{\uptheta}^{-1} \sin\uptheta) 
+(\uprho \bar{\uprho}^{-1} \sin \uptheta) \right] \nn\\
 &=&
-\frac{4}{\uprho^2}
+\frac{1}{\uprho^2}
 \left[
 \tilde{\uptheta}^{-1} 
  \uprho \bar{\uprho}^{-1} \cos^2 \uptheta+ 
 \tilde{\uptheta}^{-1}  
 \uprho \bar{\uprho}^{-1} \sin^2 \uptheta \right] \nn\\
 &=&
-\frac{4}{\uprho^2}
+\frac{1}{\uprho^2}
 \tilde{\uptheta}^{-1} \uprho \bar{\uprho}^{-1} \nn\\
 &=&
-\frac{4}{\uprho \tilde{\uptheta}  \bar{\uprho}}
+\frac{1}{\uprho \tilde{\uptheta}  \bar{\uprho}}
 \end{eqnarray}
-In the end 
+In the end
 \[
-det({\bm J}_{CL})= \frac14 \uprho \tilde{\uptheta}  \bar{\uprho}
+det({\bm J}_{CL})=  \uprho \tilde{\uptheta}  \bar{\uprho}
 \]
-Note that the area of such element can easily be computed:
+
+
+
+Note that the area of such element can easily be computed analytically:
 \[
 {\cal A}_e 
 = \iint_{\Omega_e} \uprho d\uprho d\uptheta 
@@ -1922,31 +2006,33 @@ Note that the area of such element can easily be computed:
 = (\uptheta_3-\uptheta_1) \frac12 (\uprho_3^2-\uprho_1^2)
 \]
 
+
 We can now compute the same area but using a numerical quadrature:
 
 %We have $\bar{\uprho}=\frac12 (\uprho_4-\uprho_1)=\frac12 \delta\uprho$ and
 %$\tilde{\uptheta}=\frac12 (\uptheta_2-\uptheta_1) = \frac12 \delta \uptheta$.
 
-(iq: in theta direction, jq in r direction) sum w= 2
+(iq: in theta direction, jq in r direction) sum w= 2 
 
 \begin{eqnarray}
 {\cal A}_e
 &=&\iint_{\Omega_e} dV  \nn\\
 &=&\sum_{iq=1}^{n_q} \sum_{jq=1}^{n_q}   w_{iq} w_{jq} det({\bm J})|_{i_q} \nn\\
-&=&\sum_{iq=1}^{n_q} \sum_{jq=1}^{n_q}   w_{iq} w_{jq} (\frac14 \uprho \bar{\uprho} \tilde{\uptheta} ) \nn\\
-&=&(\frac14 \tilde{\uptheta} \bar{\uprho})  \sum_{iq=1}^{n_q} \sum_{jq=1}^{n_q}   w_{iq} w_{jq} \uprho_{iq,jq} \nn\\
-&=&\frac14 \tilde{\uptheta}   \bar{\uprho} \;  2  \sum_{jq=1}^{n_q}  w_{jq} \uprho_{jq} 
+&=&\sum_{iq=1}^{n_q} \sum_{jq=1}^{n_q}   w_{iq} w_{jq} ( \uprho \bar{\uprho} \tilde{\uptheta} ) \nn\\
+&=& \tilde{\uptheta} \bar{\uprho}  \sum_{iq=1}^{n_q} \sum_{jq=1}^{n_q}   w_{iq} w_{jq} \uprho_{iq,jq} \nn\\
+&=& \tilde{\uptheta}   \bar{\uprho} \;  2  \sum_{jq=1}^{n_q}  w_{jq} \uprho_{jq} 
 \end{eqnarray}
 
 We have, since $\uprho = mr+p $ with $p=\frac12 (\uprho_1+\uprho_3)$ in the element (see Example 2 in Section~\ref{ss:quad:examples}):
 \[ 
 \sum_{jq=1}^{n_q}  w_{jq} \uprho_{jq} = \frac12 (\uprho_1+\uprho_3)  \cdot 2 = \uprho_1+\uprho_3
 \]
-so that 
+so that
 \begin{eqnarray}
 {\cal A}_e
-&=&\frac12 \delta \uptheta  \frac12 (\uprho_3-\uprho_1)  2 (\uprho_1+\uprho_3) \nn\\
-&=&\frac12 \delta \uptheta (\uprho_3^2-\uprho_1^2) 
+&=&\tilde{\uptheta}   \bar{\uprho}   2 (\uprho_1+\uprho_3) \nn\\
+&=&\frac12 (\uptheta_3-\uptheta_1)  \frac12 (\uprho_3-\uprho_1)  2 (\uprho_1+\uprho_3) \nn\\
+&=&\frac12 (\uptheta_3-\uptheta_1)   (\uprho_3^2-\uprho_1^2) 
 \end{eqnarray}
 which is indeed the area of an element.
 
@@ -1955,7 +2041,15 @@ which is indeed the area of an element.
 
 
 
-\newpage
+
+
+
+
+
+
+
+\vspace{.5cm}
+
 Let us consider an annulus with inner radius $R_1$ and outer radius $R_2$. Let us assume it is tesselated 
 by means of non-overlapping elements, all characterised by the same $\delta\uprho$ and $\delta\uptheta$ 
 dimensions.
@@ -1965,17 +2059,19 @@ dimensions.
 {\cal A}
 &=&\iint_\Omega dV  \nn\\
 &=&\sum_e \iint_{\Omega_e} dV  \nn\\
+&=&\sum_e {\cal A}_e   \nn\\
 &=&\sum_e \sum_{iq=1}^{n_q} \sum_{jq=1}^{n_q}   w_{iq} w_{jq} det({\bm J})|_{i_q} \nn\\
 &=&\sum_e \sum_{iq=1}^{n_q} \sum_{jq=1}^{n_q}   w_{iq} w_{jq} (\uprho  \frac12 \delta \uptheta  \frac12 \delta\uprho ) \nn\\
 &=&\sum_e  (\frac12 \delta \uptheta  \frac12 \delta\uprho)_e  \sum_{iq=1}^{n_q} \sum_{jq=1}^{n_q}   w_{iq} w_{jq} \uprho_{iq,jq} \nn\\
 &=&\sum_e  (\frac12 \delta \uptheta  \frac12 \delta\uprho)_e  2  \sum_{jq=1}^{n_q}  w_{jq} \uprho_{jq} \nn\\
 \end{eqnarray}
 
-
+FINISH/CORRECT
 
 
 \newpage 
 We can carry out the same exercise as before.
+The python code is in {\tt images/mappings/DJ/quadrilaterals}.
 The element is defined by 
 $\uptheta_1=\uptheta_4=10^\circ$,
 $\uptheta_2=\uptheta_3=25^\circ$,
@@ -1999,4 +2095,203 @@ $\uprho_3=\uprho_4=6371~\si{\km}$.
 \includegraphics[width=5.7cm]{images/mappings/DJ/quadrilaterals/xz_P2_boundary_error.pdf}
 \includegraphics[width=5.7cm]{images/mappings/DJ/quadrilaterals/xz_DJ_boundary_error.pdf}
 \end{center}
+
+
+%.................................................
+\subsubsection{Quadratic quadrilaterals ($Q_2$)}
+The layout of the nodes is as follows:
+\begin{verbatim}
+4 7 3
+8 9 6
+1 5 2
+\end{verbatim}
+The basis functions are given by 
+\begin{eqnarray}
+\bN_1(r,s)&=& \frac{1}{2}r(r-1)  \frac{1}{2}s(s-1)\nonumber\\
+\bN_2(r,s)&=& \frac{1}{2}r(r+1)  \frac{1}{2}s(s-1)\nonumber\\
+\bN_3(r,s)&=& \frac{1}{2}r(r+1)  \frac{1}{2}s(s+1)\nonumber\\
+\bN_4(r,s)&=& \frac{1}{2}r(r-1)  \frac{1}{2}s(s+1)\nonumber\\
+\bN_5(r,s)&=&     (1-r^2)  \frac{1}{2}s(s-1)\nonumber\\
+\bN_6(r,s)&=& \frac{1}{2}r(r+1)      (1-s^2)\nonumber\\
+\bN_7(r,s)&=&     (1-r^2)  \frac{1}{2}s(s+1)\nonumber\\
+\bN_8(r,s)&=& \frac{1}{2}r(r-1)      (1-s^2)\nonumber\\
+\bN_9(r,s)&=&     (1-r^2)      (1-s^2)\nonumber
+\end{eqnarray}
+with the following derivatives:
+\begin{align}
+\frac{\partial \bN_1}{\partial r}&= \frac{1}{2}(2r-1)  \frac{1}{2}s(s-1) &
+\frac{\partial \bN_1}{\partial s}&= \frac{1}{2}r(r-1)  \frac{1}{2}(2s-1)\nonumber\\
+\frac{\partial \bN_2}{\partial r}&= \frac{1}{2}(2r+1)  \frac{1}{2}s(s-1) &
+\frac{\partial \bN_2}{\partial s}&= \frac{1}{2}r(r+1)  \frac{1}{2}(2s-1)\nonumber\\
+\frac{\partial \bN_3}{\partial r}&= \frac{1}{2}(2r+1)  \frac{1}{2}s(s+1) &
+\frac{\partial \bN_3}{\partial s}&= \frac{1}{2}r(r+1)  \frac{1}{2}(2s+1)\nonumber\\
+\frac{\partial \bN_4}{\partial r}&= \frac{1}{2}(2r-1)  \frac{1}{2}s(s+1) &
+\frac{\partial \bN_4}{\partial s}&= \frac{1}{2}r(r-1)  \frac{1}{2}(2s+1)\nonumber\\
+\frac{\partial \bN_5}{\partial r}&=       (-2r)  \frac{1}{2}s(s-1) &
+\frac{\partial \bN_5}{\partial s}&=     (1-r^2)  \frac{1}{2}(2s-1)\nonumber\\
+\frac{\partial \bN_6}{\partial r}&= \frac{1}{2}(2r+1)     (1-s^2)&
+\frac{\partial \bN_6}{\partial s}&= \frac{1}{2}r(r+1)        (-2s)\nonumber\\
+\frac{\partial \bN_7}{\partial r}&=       (-2r)  \frac{1}{2}s(s+1)&
+\frac{\partial \bN_7}{\partial s}&=     (1-r^2)  \frac{1}{2}(2s+1)\nonumber\\
+\frac{\partial \bN_8}{\partial r}&= \frac{1}{2}(2r-1)     (1-s^2)&
+\frac{\partial \bN_8}{\partial s}&= \frac{1}{2}r(r-1)        (-2s)\nonumber\\
+\frac{\partial \bN_9}{\partial r}&=       (-2r)     (1-s^2)&
+\frac{\partial \bN_9}{\partial s}&=     (1-r^2)        (-2s)\nonumber
+\end{align}
+
+We go straight for the special case: 
+\begin{itemize}
+\item $\uprho_1=\uprho_2=\uprho_5$,
+\item $\uprho_6=\uprho_8=\uprho_9$,
+\item $\uprho_3=\uprho_4=\uprho_7$,
+\item $\uptheta_1=\uptheta_4=\uptheta_8$,
+\item $\uptheta_5=\uptheta_7=\uptheta_9$,
+\item $\uptheta_2=\uptheta_3=\uptheta_6$,
+\item $\frac12(\uptheta_2-\uptheta_1)=\frac12(\uptheta_3-\uptheta_4)=\frac12(\uptheta_6-\uptheta_8)=\tilde{\uptheta}$,
+\item $\frac12(\uprho_4-\uprho_1)=\frac12(\uprho_3-\uprho_2)=\frac12(\uprho_7-\uprho_5)=\bar{\uprho}$ \nn
+\end{itemize}
+We start with
+\begin{eqnarray}
+\frac{\partial\uptheta}{\partial r}(r,s) 
+&=& \sum_i \frac{\partial \bN_i}{\partial r}(r,s)  \uptheta_i \nn\\
+&=& \sum_{i=1,4,8} \frac{\partial \bN_i}{\partial r}(r,s)  \uptheta_i
++\sum_{i=5,7,9} \frac{\partial \bN_i}{\partial r}(r,s)  \uptheta_i
++\sum_{i=2,3,6} \frac{\partial \bN_i}{\partial r}(r,s)  \uptheta_i \nn\\
+&=& \uptheta_1\sum_{i=1,4,8} \frac{\partial \bN_i}{\partial r}(r,s) 
++\uptheta_5\sum_{i=5,7,9} \frac{\partial \bN_i}{\partial r}(r,s)  
++\uptheta_2\sum_{i=2,3,6} \frac{\partial \bN_i}{\partial r}(r,s)  
+\end{eqnarray}
+We find that 
+\begin{eqnarray}
+\sum_{i=1,4,8} \frac{\partial \bN_i}{\partial r}(r,s)
+&=& \frac{1}{2}(2r-1)  \frac{1}{2}s(s-1)
++ \frac{1}{2}(2r-1)  \frac{1}{2}s(s+1) 
++ \frac{1}{2}(2r-1)     (1-s^2) \nn\\
+&=& \frac{1}{2}(2r-1) \left[ \frac{1}{2}s(s-1) + \frac{1}{2}s(s+1) +   (1-s^2)\right] \nn\\
+&=& \frac{1}{2}(2r-1) \left[ s^2 +   (1-s^2)\right] \nn\\
+&=& \frac{1}{2}(2r-1) 
+\nn\\
+\sum_{i=5,7,9} \frac{\partial \bN_i}{\partial r}(r,s) 
+&=& -2r \frac{1}{2}s(s-1)
+-2r \frac{1}{2}s(s+1) 
+-2r    (1-s^2) \nn\\
+&=& -2r \nn\\
+\sum_{i=2,3,6} \frac{\partial \bN_i}{\partial r}(r,s) 
+&=& \frac{1}{2}(2r+1)  \frac{1}{2}s(s-1)
++ \frac{1}{2}(2r+1)  \frac{1}{2}s(s+1) 
++ \frac{1}{2}(2r+1)     (1-s^2) \nn\\
+&=& \frac{1}{2}(2r+1)  \nn
+\end{eqnarray}
+Then 
+\begin{eqnarray}
+\frac{\partial\uptheta}{\partial r}(r,s) 
+&=& \uptheta_1\sum_{i=1,4,8} \frac{\partial \bN_i}{\partial r}(r,s) 
++\uptheta_5\sum_{i=5,7,9} \frac{\partial \bN_i}{\partial r}(r,s)  
++\uptheta_2\sum_{i=2,3,6} \frac{\partial \bN_i}{\partial r}(r,s)  \nn\\
+&=&  \frac{1}{2}(2r-1) \uptheta_1 -2r \uptheta_5 + \frac{1}{2}(2r+1) \uptheta_2
+\end{eqnarray}
+Using $\uptheta_5=\frac12 (\uptheta_1+\uptheta_2)$, then
+\begin{eqnarray}
+\frac{\partial\uptheta}{\partial r}(r,s) 
+&=&  \frac{1}{2}(2r-1) \uptheta_1 -2r \uptheta_5 + \frac{1}{2}(2r+1) \uptheta_2 \nn\\
+&=&  \frac{1}{2}(2r-1) \uptheta_1 -2r \frac12 (\uptheta_1+\uptheta_2) + \frac{1}{2}(2r+1) \uptheta_2 \nn\\
+&=& \frac12 \left[ (2r-1) \uptheta_1 -2r \uptheta_1 -2r\uptheta_2 + (2r+1) \uptheta_2  \right] \nn\\
+&=& \frac12 (\uptheta_2-\uptheta_1) \nn\\
+&=& \tilde{\uptheta}
+\end{eqnarray}
+Then we compute 
+\begin{eqnarray}
+\frac{\partial\uptheta}{\partial s}(r,s) 
+&=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uptheta_i  \nn\\ 
+&=&\sum_{i=1,4,8}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uptheta_i  
++  \sum_{i=5,7,9}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uptheta_i  
++  \sum_{i=2,3,6}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uptheta_i  \nn\\ 
+&=& \uptheta_1 \sum_{i=1,4,8}^m \frac{\partial\bN_i}{\partial s}(r,s) 
++   \uptheta_5 \sum_{i=5,7,9}^m \frac{\partial\bN_i}{\partial s}(r,s) 
++   \uptheta_2 \sum_{i=2,3,6}^m \frac{\partial\bN_i}{\partial s}(r,s) 
+\end{eqnarray}
+We find that 
+\begin{eqnarray}
+\sum_{i=1,4,8} \frac{\partial \bN_i}{\partial s}(r,s)
+&=& \frac{1}{2}r(r-1)  \frac{1}{2}(2s-1) + 
+\frac{1}{2}r(r-1)  \frac{1}{2}(2s+1) +
+\frac{1}{2}r(r-1)        (-2s)  \nn\\
+&=& \frac{1}{2}r(r-1) \left[ \frac{1}{2}(2s-1)+   \frac{1}{2}(2s+1) -2s\right] \nn\\
+&=& 0 \nn\\
+\sum_{i=5,7,9} \frac{\partial \bN_i}{\partial s}(r,s)
+&=&   (1-r^2)  \frac{1}{2}(2s-1) +      (1-r^2)  \frac{1}{2}(2s+1) +  (1-r^2)   +     (-2s)   \nn\\
+&=& 0 \nn\\
+\sum_{i=2,3,6} \frac{\partial \bN_i}{\partial s}(r,s)
+&=&   \frac{1}{2}r(r+1)  \frac{1}{2}(2s-1) + \frac{1}{2}r(r+1)  \frac{1}{2}(2s+1) \frac{1}{2}r(r+1)  (-2s) \nn\\
+&=& 0 
+\end{eqnarray}
+so that 
+\[
+\frac{\partial\uptheta}{\partial s}(r,s)  =0
+\]
+At this stage we are reasonably sure that the components of the Jacobian ${\bm J}_{PL}$ we are computing
+for this $Q_2$ element will turn out to be the same at thos obtained for the $Q_1$ element. 
+Just to be on the safe side, we soldier on:
+
+\begin{eqnarray}
+\frac{\partial\uprho}{\partial s}(r,s) 
+&=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uprho_i  \nn\\ 
+&=&\sum_{i=1,2,5}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uprho_i  
++  \sum_{i=6,8,9}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uprho_i  
++  \sum_{i=3,4,7}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uprho_i  \nn\\ 
+&=&\uprho_1\sum_{i=1,2,5}^m \frac{\partial\bN_i}{\partial s}(r,s)
++  \uprho_6\sum_{i=6,8,9}^m \frac{\partial\bN_i}{\partial s}(r,s)
++  \uprho_3\sum_{i=3,4,7}^m \frac{\partial\bN_i}{\partial s}(r,s) 
+\end{eqnarray}
+with
+\begin{eqnarray}
+\sum_{i=1,2,5}^m \frac{\partial\bN_i}{\partial s}(r,s)
+&=&  \frac{1}{2}r(r-1)  \frac{1}{2}(2s-1) + \frac{1}{2}r(r+1)  \frac{1}{2}(2s-1) +   (1-r^2)  \frac{1}{2}(2s-1) \nn\\
+&=& \frac{1}{2}(2s-1) \left[ \frac{1}{2}r(r-1)   + \frac{1}{2}r(r+1)  +   (1-r^2)  \right] \nn\\
+&=& \frac{1}{2}(2s-1)  \nn\\
+\sum_{i=6,8,9}^m \frac{\partial\bN_i}{\partial s}(r,s)
+&=& \frac{1}{2}r(r+1)        (-2s) + \frac{1}{2}r(r-1)        (-2s) +    (1-r^2)        (-2s)  \nn\\
+&=& -2s \left[ \frac{1}{2}r(r+1)    + \frac{1}{2}r(r-1)    +    (1-r^2)      \right]\nn\\
+&=& -2s  \nn\\
+\sum_{i=3,4,7}^m \frac{\partial\bN_i}{\partial s}(r,s)
+&=& \frac{1}{2}(2s+1)  \left[ \frac{1}{2}r(r+1)  +   \frac{1}{2}r(r-1)   +  (1-r^2)  \right]\nn\\
+&=& \frac{1}{2}(2s+1)  \nn
+\end{eqnarray}
+In the end
+\begin{eqnarray}
+\frac{\partial\uprho}{\partial s}(r,s) 
+&=&\uprho_1\sum_{i=1,2,5}^m \frac{\partial\bN_i}{\partial s}(r,s)
++  \uprho_6\sum_{i=6,8,9}^m \frac{\partial\bN_i}{\partial s}(r,s)
++  \uprho_3\sum_{i=3,4,7}^m \frac{\partial\bN_i}{\partial s}(r,s) \nn\\
+&=& \uprho_1  \frac{1}{2}(2s-1)  + \uprho_6 (-2s) + \uprho_3 \frac{1}{2}(2s+1) \nn
+\end{eqnarray}
+With $\uprho_6=\frac12 (\uprho_1+\uprho_3)$ we find
+\begin{eqnarray}
+\frac{\partial\uprho}{\partial s}(r,s) 
+&=& \uprho_1  \frac{1}{2}(2s-1)  + \frac12 (\uprho_1+\uprho_3) (-2s) + \uprho_3 \frac{1}{2}(2s+1) \nn\\
+&=& \frac12 \left[ \uprho_1 (2s-1)  + (\uprho_1+\uprho_3) (-2s) + \uprho_3 (2s+1)\right] \nn\\
+&=& \frac12 (\uprho_3-\uprho_1) \nn\\
+&=& \bar{\uprho} \nn
+\end{eqnarray}
+Case closed, we find here too that 
+\[
+{\bm J}_{PL}=
+\left(
+\begin{array}{cc}
+\frac{\partial \uptheta}{\partial r}  & 
+\frac{\partial \uprho}{\partial r}  \\ \\
+\frac{\partial \uptheta}{\partial s}  & 
+\frac{\partial \uprho}{\partial s}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\tilde{\uptheta}  &  0 \\\\
+0 & \bar{\uprho}
+\end{array}
+\right)
+\]
+
+
 

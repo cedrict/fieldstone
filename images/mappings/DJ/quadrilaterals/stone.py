@@ -34,10 +34,10 @@ theta=np.zeros(npts,dtype=np.float64)
 
 x_DJ=np.zeros(npts,dtype=np.float64)   
 z_DJ=np.zeros(npts,dtype=np.float64)   
-x_P1=np.zeros(npts,dtype=np.float64)   
-z_P1=np.zeros(npts,dtype=np.float64)   
-x_P2=np.zeros(npts,dtype=np.float64)   
-z_P2=np.zeros(npts,dtype=np.float64)   
+x_Q1=np.zeros(npts,dtype=np.float64)   
+z_Q1=np.zeros(npts,dtype=np.float64)   
+x_Q2=np.zeros(npts,dtype=np.float64)   
+z_Q2=np.zeros(npts,dtype=np.float64)   
 
 for i in range(0,npts):
 
@@ -58,8 +58,8 @@ for i in range(0,npts):
     x_DJ[i]=rad[i]*np.sin(theta[i])
     z_DJ[i]=rad[i]*np.cos(theta[i])
 
-    x_P1[i]=N1*x1+N2*x2+N3*x3+N4*x4
-    z_P1[i]=N1*z1+N2*z2+N3*z3+N4*z4
+    x_Q1[i]=N1*x1+N2*x2+N3*x3+N4*x4
+    z_Q1[i]=N1*z1+N2*z2+N3*z3+N4*z4
 
     N1= 0.5*rr*(rr-1.) * 0.5*ss*(ss-1.)
     N2= 0.5*rr*(rr+1.) * 0.5*ss*(ss-1.)
@@ -71,13 +71,13 @@ for i in range(0,npts):
     N8= 0.5*rr*(rr-1.) *     (1.-ss**2)
     N9=     (1.-rr**2) *     (1.-ss**2)
 
-    x_P2[i]=N1*x1+N2*x2+N3*x3+N4*x4+N5*x5+N6*x6+N7*x7+N8*x8+N9*x9
-    z_P2[i]=N1*z1+N2*z2+N3*z3+N4*z4+N5*z5+N6*z6+N7*z7+N8*z8+N9*z9
+    x_Q2[i]=N1*x1+N2*x2+N3*x3+N4*x4+N5*x5+N6*x6+N7*x7+N8*x8+N9*x9
+    z_Q2[i]=N1*z1+N2*z2+N3*z3+N4*z4+N5*z5+N6*z6+N7*z7+N8*z8+N9*z9
 
 np.savetxt('polar.ascii',np.array([rad,theta]).T)
 np.savetxt('xz_DJ.ascii',np.array([x_DJ,z_DJ]).T)
-np.savetxt('xz_P1.ascii',np.array([x_P1,z_P1]).T)
-np.savetxt('xz_P2.ascii',np.array([x_P2,z_P2]).T)
+np.savetxt('xz_Q1.ascii',np.array([x_Q1,z_Q1]).T)
+np.savetxt('xz_Q2.ascii',np.array([x_Q2,z_Q2]).T)
 
 #----------------------------------------------------------
 # now placing points on 2-3 edge only
@@ -93,10 +93,10 @@ theta=np.zeros(npts,dtype=np.float64)
 
 x_DJ=np.zeros(npts,dtype=np.float64)   
 z_DJ=np.zeros(npts,dtype=np.float64)   
-x_P1=np.zeros(npts,dtype=np.float64)   
-z_P1=np.zeros(npts,dtype=np.float64)   
-x_P2=np.zeros(npts,dtype=np.float64)   
-z_P2=np.zeros(npts,dtype=np.float64)   
+x_Q1=np.zeros(npts,dtype=np.float64)   
+z_Q1=np.zeros(npts,dtype=np.float64)   
+x_Q2=np.zeros(npts,dtype=np.float64)   
+z_Q2=np.zeros(npts,dtype=np.float64)   
 
 for i in range(0,npts):
 
@@ -117,8 +117,8 @@ for i in range(0,npts):
     x_DJ[i]=rad[i]*np.sin(theta[i])
     z_DJ[i]=rad[i]*np.cos(theta[i])
 
-    x_P1[i]=N1*x1+N2*x2+N3*x3+N4*x4
-    z_P1[i]=N1*z1+N2*z2+N3*z3+N4*z4
+    x_Q1[i]=N1*x1+N2*x2+N3*x3+N4*x4
+    z_Q1[i]=N1*z1+N2*z2+N3*z3+N4*z4
 
     N1= 0.5*rr*(rr-1.) * 0.5*ss*(ss-1.)
     N2= 0.5*rr*(rr+1.) * 0.5*ss*(ss-1.)
@@ -130,13 +130,13 @@ for i in range(0,npts):
     N8= 0.5*rr*(rr-1.) *     (1.-ss**2)
     N9=     (1.-rr**2) *     (1.-ss**2)
 
-    x_P2[i]=N1*x1+N2*x2+N3*x3+N4*x4+N5*x5+N6*x6+N7*x7+N8*x8*+N9*x9
-    z_P2[i]=N1*z1+N2*z2+N3*z3+N4*z4+N5*z5+N6*z6+N7*z7+N8*z8*+N9*z9
+    x_Q2[i]=N1*x1+N2*x2+N3*x3+N4*x4+N5*x5+N6*x6+N7*x7+N8*x8*+N9*x9
+    z_Q2[i]=N1*z1+N2*z2+N3*z3+N4*z4+N5*z5+N6*z6+N7*z7+N8*z8*+N9*z9
 
 np.savetxt('polar_boundary.ascii',np.array([rad,theta]).T)
 np.savetxt('xz_DJ_boundary.ascii',np.array([x_DJ,z_DJ,np.sqrt(x_DJ**2+z_DJ**2)]).T)
-np.savetxt('xz_P1_boundary.ascii',np.array([x_P1,z_P1,np.sqrt(x_P1**2+z_P1**2)]).T)
-np.savetxt('xz_P2_boundary.ascii',np.array([x_P2,z_P2,np.sqrt(x_P2**2+z_P2**2)]).T)
+np.savetxt('xz_Q1_boundary.ascii',np.array([x_Q1,z_Q1,np.sqrt(x_Q1**2+z_Q1**2)]).T)
+np.savetxt('xz_Q2_boundary.ascii',np.array([x_Q2,z_Q2,np.sqrt(x_Q2**2+z_Q2**2)]).T)
 
 #----------------------------------------------------------
 
