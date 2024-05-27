@@ -14,6 +14,7 @@
 @string{cmame = {Computer Methods in Applied Mechanics and Engineering}}
 @string{pnas = {Proceedings of the National Academy of Sciences}}
 @string{cageo = {Computers and Geosciences}}
+@string{gmd = {Geosci. Model. Dev.}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BOOKS
@@ -2464,7 +2465,7 @@ year={2010}}
 title={On the sensitivity of 3-D thermal convection codes to numerical 
 discretization: a model intercomparison},
 author={P.A. Arrial and N. Flyer and G.B. Wright and L.H. Kellogg},
-journal={Geosci. Model Dev.},
+journal=gmd,
 volume={7},
 pages={2065--2076},
 doi={10.5194/gmd-7-2065-2014},
@@ -3046,7 +3047,7 @@ title={Benchmarking the vertically integrated ice-sheet
 model IMAU-ICE (version 2.0)},
 author={Berends, Constantijn J and Goelzer, Heiko and Reerink, Thomas J 
 and Stap, Lennert B and Van De Wal, Roderik SW},
-journal={Geoscientific Model Development},
+journal=gmd,
 volume={15},
 number={14},
 pages={5667--5688},
@@ -3241,7 +3242,7 @@ year={2021}}
 @article{begv21,
 title={The Utrecht Finite Volume Ice-Sheet Model: UFEMISM (version 1.0)},
 author={Berends, Constantijn J and Goelzer, Heiko and Van De Wal, Roderik SW},
-journal={Geoscientific Model Development},
+journal=gmd,
 volume={14},
 number={5},
 pages={2443--2470},
@@ -12229,7 +12230,7 @@ year={2021}}
 @article{dakg22,
 title={Towards automatic finite-element methods for geodynamics via Firedrake},
 author={Davies, D Rhodri and Kramer, Stephan C and Ghelichkhan, Sia and Gibson, Angus},
-journal={Geoscientific Model Development},
+journal=gmd,
 volume={15},
 number={13},
 pages={5127--5166},
@@ -13830,7 +13831,7 @@ title={{A hierarchical mesh refinement technique for global 3-D
 spherical mantle convection modelling}},
 author={D.R. Davies and J.H. Davies and  P.C. Bollada and O. Hassan and 
 K. Morgan and P. Nithiarasu},
-journal={Geosci. Model Dev.},
+journal=gmd,
 volume={6},
 pages={1095--1107},
 doi={10.5194/gmd-6-1095-2013},
@@ -14197,7 +14198,7 @@ low to moderate Rayleigh number using ASPECT (version 2.2. 0)
 and CitcomS (version 3.3. 1)},
 author={Euen, Grant Thomas and Liu, Shangxin and Gassm{\"o}ller, Rene 
 and Heister, Timo and King, Scott David},
-journal={Geoscientific Model Development Discussions},
+journal=gmd,
 volume={2022},
 pages={1--34},
 doi={10.5194/gmd-16-3221-2023},
@@ -16717,6 +16718,17 @@ Year = {1981}}
 % GGGG
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+@article{gadb24,
+title={Benchmarking the accuracy of higher order particle methods 
+in geodynamic models of transient flow},
+author={Gassm{\"o}ller, Rene and Dannberg, Juliane and Bangerth, Wolfgang 
+and Puckett, Elbridge Gerry and Thieulot, Cedric},
+journal=gmd,
+volume={17},
+pages={4115--4134},
+doi={10.5194/gmd-17-4115-2024},
+year={2024}}
+
 @article{gupe88,
 title={On finite element approximations of the streamfunction-vorticity 
 and velocity-vorticity equations},
@@ -16897,7 +16909,7 @@ year={2023}}
 title={Capabilities and performance of Elmer/Ice, a new-generation ice sheet model},
 author={Gagliardini, O and Zwinger, T and Gillet-Chaulet, F and Durand, G and Favier, L and 
 De Fleurian, B and Greve, R and Malinen, M and Mart{\'\i}n, C and R{\aa}back, P and others},
-journal={Geoscientific Model Development},
+journal=gmd,
 volume={6},
 number={4},
 pages={1299--1318},
@@ -24790,7 +24802,7 @@ journal = {Science}}
 @article{krdw21,
 title={Analytical solutions for mantle flow in cylindrical and spherical shells},
 author={S.C. Kramer and D.R. Davies and C.R. Wilson},
-journal={Geosci. Model Dev.},
+journal=gmd,
 volume={14},
 pages={1899--1919},
 doi={10.5194/gmd-14-1899-2021},
@@ -24861,7 +24873,7 @@ year={1961}}
 @Article{krdw20,
 AUTHOR = {Kramer, S. C. and Davies, D. R. and Wilson, C. R.},
 TITLE = {Analytical solutions for mantle flow in cylindrical and spherical shells},
-JOURNAL = {Geoscientific Model Development},
+JOURNAL = gmd,
 VOLUME = {14},
 YEAR = {2021},
 NUMBER = {4},
@@ -36849,9 +36861,10 @@ pages="794--802",
 doi="10.1093/gji/ggy466"}
 
 @article{pode12,
-title={{Description of a hybrid ice sheet-shelf model, and application to Antarctica}},
+title={{Description of a hybrid ice sheet-shelf model, 
+and application to Antarctica}},
 author={D. Pollard and R.M. DeConto},
-journal={Geosci. Model Dev.},
+journal=gmd,
 volume={5},
 pages={1273--1295},
 doi={10.5194/gmd-5-1273-2012},
@@ -40311,6 +40324,16 @@ Year = {1988}}
 % SSSS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+@article{smma98,
+title={MPDATA: A finite-difference solver for geophysical flows},
+author={Smolarkiewicz, Piotr K and Margolin, Len G},
+journal={Journal of Computational Physics},
+volume={140},
+number={2},
+pages={459--480},
+doi={10.1006/jcph.1998.5901},
+year={1998}}
+
 @article{stha24,
 title={Onset of plate motion in the presence of chemical heterogeneities in 
 the mantle and the effect of mantle temperature},
@@ -40329,8 +40352,8 @@ author={H. Samuel},
 year={2008}}
 
 @techreport{samu09,
-title={Fast and accurate modelling of sharp discontinuities in geophysical flows using Lagrangian
-implicit surfaces (Annual report BGI)},
+title={Fast and accurate modelling of sharp discontinuities in geophysical 
+flows using Lagrangian implicit surfaces (Annual report BGI)},
 author={H. Samuel},
 year={2009}}
 

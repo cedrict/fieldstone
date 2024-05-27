@@ -1174,11 +1174,12 @@ Area does not depend on position of middle node?!
 
 \newpage
 %.............................................................
-\section{The Double Jacobian approach}
+\section{The Double Jacobian approach \label{ss:doublejac}}
 
-What follows is 90\% borrowed from \textcite{moth20} (2020) with slight changes in the notations.
+What follows is very much inspired by \textcite{moth20} (2020) with slight changes in the notations.
 
-The basic idea behind this approach is to compute the local to Cartesian mapping as a two-stage process, hence the name ``Double Jacobian''. 
+The basic idea behind this approach is to compute the local to Cartesian mapping 
+as a two-stage process, hence the name ``Double Jacobian''. 
 
 \begin{enumerate}
 \item 
@@ -1192,7 +1193,7 @@ The net Jacobian from local finite element coordinates to a cylindrical or spher
 Because the net Jacobian has an analytical form, it can be more rapidly computed than a general 
 isoparametric or superparametric finite element mapping.
 
-Remark: in what follows I will denote the polar coordinates by $\upvarrho,\uptheta$ 
+Remark: in what follows I will denote the polar coordinates by $\uprho,\uptheta$ 
 so as to avoid confusion with the reduced/local coordinates $r,s$.
 
 \begin{verbatim}
@@ -1259,7 +1260,7 @@ We of course have
 \end{array}
 \right)
 \]
-Using an isoparameteric mapping:
+Using an isoparametric mapping:
 \[
 {\bm J}_{CL}
 =
@@ -1297,6 +1298,14 @@ In the end
 \begin{array}{c}
 \frac{\partial \bN_i}{\partial x} \\ \\
 \frac{\partial \bN_i}{\partial z} 
+\end{array}
+\right)
+=
+{\bm J}_{CL}^{-1} \cdot 
+\left(
+\begin{array}{c}
+\frac{\partial \bN_i}{\partial r} \\ \\
+\frac{\partial \bN_i}{\partial s} 
 \end{array}
 \right)
 =
@@ -1353,23 +1362,22 @@ for k in range(0,mV):
 The Double Jacobian approach uses the standard finite element approach to first map 
 from local to linear polar coordinates (i.e. $\uprho,\uptheta$). The first Jacobian for 
 a cylindrical (polar) mapping is analogous to the standard Jacobian, where $x$ and $z$ 
-are now changed to $\uptheta$ and $\uprho$, respectively, $\uptheta$ being the angle 
-measured from the positive $z$-axis in clockwise direction (i.e. the colatitude) 
-and $\uprho$ being the radius. The global derivatives may be expressed in matrix form as
+are now changed to $\uprho$ and $\uptheta$, respectively.
+The global derivatives may be expressed in matrix form as
 \begin{equation}
 \left(
 \begin{array}{c}
-\frac{\partial \bN_i}{\partial \uptheta} \\ \\
-\frac{\partial \bN_i}{\partial \uprho} 
+\frac{\partial \bN_i}{\partial \uprho} \\ \\
+\frac{\partial \bN_i}{\partial \uptheta} 
 \end{array}
 \right)
 = 
 \underbrace{\left(
 \begin{array}{cc}
-\frac{\partial r}{\partial \uptheta}  & 
-\frac{\partial s}{\partial \uptheta}   \\ \\
 \frac{\partial r}{\partial \uprho}  & 
-\frac{\partial s}{\partial \uprho}  
+\frac{\partial s}{\partial \uprho} \\ \\ 
+\frac{\partial r}{\partial \uptheta}  & 
+\frac{\partial s}{\partial \uptheta} 
 \end{array}
 \right)}_{{\bm J}_{LP}}
 \cdot
@@ -1388,8 +1396,9 @@ The derivatives of these shape functions with respect to local coordinates $r,s$
 can be computed explicitly since the basis functions are chosen/built for a given element type and formulated
 as a function of the local coordinates.
 However, the terms of the Jacobian ${\bm J}_{LP}$ cannot be directly computed since 
-explicit expressions for $r(\uptheta, \uprho)$ and $s(\uptheta, \uprho)$ do not exist.
-A wonderful ``trick'' in finite element programming (discovered by Bruce Irons in the mid-60s \cite{eriz68}) is to make use of the inverse coordinate transformation
+explicit expressions for $r(\uprho,\uptheta)$ and $s(\uprho,\uptheta)$ do not exist.
+A wonderful ``trick'' in finite element programming (discovered by Bruce Irons in the 
+mid-60s \cite{eriz68}) is to make use of the inverse coordinate transformation
 \begin{equation}
 \left(
 \begin{array}{c}
@@ -1400,22 +1409,20 @@ A wonderful ``trick'' in finite element programming (discovered by Bruce Irons i
 = 
 \underbrace{\left(
 \begin{array}{cc}
-\frac{\partial \uptheta}{\partial r}  & 
-\frac{\partial \uprho}{\partial r}  \\ \\
-\frac{\partial \uptheta}{\partial s}  & 
-\frac{\partial \uprho}{\partial s}
+\frac{\partial \uprho}{\partial r} & \frac{\partial \uptheta}{\partial r} \\ \\
+\frac{\partial \uprho}{\partial s} & \frac{\partial \uptheta}{\partial s} 
 \end{array}
 \right)}_{{\bm J}_{PL}}
 \cdot
 \left(
 \begin{array}{c}
-\frac{\partial \bN_i}{\partial \uptheta} \\ \\
-\frac{\partial \bN_i}{\partial \uprho} 
+\frac{\partial \bN_i}{\partial \uprho}  \\ \\
+\frac{\partial \bN_i}{\partial \uptheta}
 \end{array}
 \right)
 \label{eq:DJ2}
 \end{equation}
-where $J_{PL}$ is the Jacobian of the transformation from polar to local coordinates.
+where $i{\bm J}_{PL}$ is the Jacobian of the transformation from polar to local coordinates.
 
 From Equations \eqref{eq:DJ1} and \eqref{eq:DJ2}, we have ${\bm J}_{LP}={\bm J}_{PL}^{-1}$.
 Using Cramer's rule, the inverse of the Jacobian from polar to local coordinates is given by
@@ -1423,27 +1430,24 @@ Using Cramer's rule, the inverse of the Jacobian from polar to local coordinates
 {\bm J}_{LP}={\bm J}_{PL}^{-1} = \frac{1}{|{\bm J}_{PL}|} 
 \left(
 \begin{array}{cc}
-\frac{\partial \uprho}{\partial s}  & 
--\frac{\partial \uprho}{\partial r}  \\ \\
--\frac{\partial \uptheta}{\partial s}  & 
-\frac{\partial \uptheta}{\partial r}
+\frac{\partial \uptheta}{\partial s} & -\frac{\partial \uptheta}{\partial r} \\ \\
+-\frac{\partial \uprho}{\partial s}  & \frac{\partial \uprho}{\partial r}  
 \end{array}
 \right)
 \]
 
-
 The polar coordinates for each element are related with local coordinates through the shape functions:
 \begin{eqnarray}
-\uptheta(r,s) &=& \sum_{i=1}^m \bN_i(r,s) \; \uptheta_i\\
-\uprho(r,s) &=&  \sum_{i=1}^m \bN_i(r,s) \; \uprho_i
+\uprho(r,s) &=&  \sum_{i=1}^m \bN_i(r,s) \; \uprho_i \nn\\
+\uptheta(r,s) &=& \sum_{i=1}^m \bN_i(r,s) \; \uptheta_i \nn
 \end{eqnarray}
 where $m$ is the number of nodes in the element.
 Then
 \begin{eqnarray}
-\frac{\partial\uptheta}{\partial r}(r,s) &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial r}(r,s)\; \uptheta_i\\
-\frac{\partial\uptheta}{\partial s}(r,s) &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uptheta_i\\
-\frac{\partial\uprho}{\partial r}(r,s)   &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial r}(r,s)\; \uprho_i \\
-\frac{\partial\uprho}{\partial s}(r,s)   &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uprho_i
+\frac{\partial\uprho}{\partial r}(r,s)   &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial r}(r,s)\; \uprho_i \nn\\
+\frac{\partial\uprho}{\partial s}(r,s)   &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uprho_i \nn\\
+\frac{\partial\uptheta}{\partial r}(r,s) &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial r}(r,s)\; \uptheta_i \nn\\
+\frac{\partial\uptheta}{\partial s}(r,s) &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uptheta_i 
 \end{eqnarray}
 
 
@@ -1464,17 +1468,15 @@ expressed in matrix form are given by
 = 
 \underbrace{\left(
 \begin{array}{cc}
-\frac{\partial \uptheta}{\partial x}  & 
-\frac{\partial \uprho}{\partial x}   \\ \\
-\frac{\partial \uptheta}{\partial z}  & 
-\frac{\partial \uprho}{\partial z}  
+\frac{\partial \uprho}{\partial x} & \frac{\partial \uptheta}{\partial x}  \\ \\ 
+\frac{\partial \uprho}{\partial z} & \frac{\partial \uptheta}{\partial z}  
 \end{array}
 \right)}_{{\bm J}_{PC}}
 \cdot
 \left(
 \begin{array}{c}
-\frac{\partial \bN_i}{\partial \uptheta} \\ \\
-\frac{\partial \bN_i}{\partial \uprho} 
+\frac{\partial \bN_i}{\partial \uprho}  \\ \\
+\frac{\partial \bN_i}{\partial \uptheta}
 \end{array}
 \right)
 \label{eq:DJ3}
@@ -1486,17 +1488,17 @@ however, it is again easier to use the inverse transformation
 \begin{equation}
 \left(
 \begin{array}{c}
-\frac{\partial \bN_i}{\partial \uptheta} \\ \\
-\frac{\partial \bN_i}{\partial \uprho} 
+\frac{\partial \bN_i}{\partial \uprho}  \\ \\
+\frac{\partial \bN_i}{\partial \uptheta}
 \end{array}
 \right)
 = 
 \underbrace{\left(
 \begin{array}{cc}
+\frac{\partial x}{\partial \uprho}   & 
+\frac{\partial z}{\partial \uprho} \\ \\ 
 \frac{\partial x}{\partial \uptheta}  & 
-\frac{\partial z}{\partial \uptheta}  \\ \\
-\frac{\partial x}{\partial \uprho}   &
-\frac{\partial z}{\partial \uprho}
+\frac{\partial z}{\partial \uptheta}  
 \end{array}
 \right)}_{{\bm J}_{CP}}
 \cdot
@@ -1516,25 +1518,44 @@ of the Jacobian from Cartesian to polar coordinates is given by
 \frac{1}{|{\bm J}_{CP}|}
 \left(
 \begin{array}{cc}
-\frac{\partial z}{\partial \uprho} & 
--\frac{\partial z}{\partial \uptheta}  \\ \\
--\frac{\partial x}{\partial \uprho}   &
-\frac{\partial x}{\partial \uptheta}
+\frac{\partial z}{\partial \uptheta}  &  -\frac{\partial z}{\partial \uprho}  \\ \\
+-\frac{\partial x}{\partial \uptheta} &  \frac{\partial x}{\partial \uprho}   
 \end{array}
 \right)
 \]
 Cartesian coordinates are related with polar coordinates by:
 \begin{eqnarray}
-x(\uptheta,\uprho) &=& \uprho \sin \uptheta \nn\\
-z(\uptheta,\uprho) &=& \uprho \cos \uptheta \nn
+x(\uprho,\uptheta) &=& \uprho \cos \uptheta \nn\\
+z(\uprho,\uptheta) &=& \uprho \sin \uptheta \nn
 \end{eqnarray}
 so that 
 \begin{eqnarray}
-\frac{\partial x}{\partial \uptheta} (\uptheta,\uprho) &=& \uprho \cos \uptheta \\
-\frac{\partial x}{\partial \uprho} (\uptheta,\uprho) &=&  \sin \uptheta \\
-\frac{\partial z}{\partial \uptheta} (\uptheta,\uprho) &=& -\uprho \sin \uptheta \\
-\frac{\partial z}{\partial \uprho} (\uptheta,\uprho) &=& \cos \uptheta 
+\frac{\partial x}{\partial \uprho} (\uptheta,\uprho) &=&  \cos \uptheta \\
+\frac{\partial x}{\partial \uptheta} (\uptheta,\uprho) &=& -\uprho \sin \uptheta \\
+\frac{\partial z}{\partial \uprho} (\uptheta,\uprho) &=& \sin \uptheta \\ 
+\frac{\partial z}{\partial \uptheta} (\uptheta,\uprho) &=& \uprho \cos \uptheta 
 \end{eqnarray}
+Then 
+\[
+{\bm J}_{CP}=
+\left(
+\begin{array}{cc}
+\frac{\partial x}{\partial \uprho}   & 
+\frac{\partial z}{\partial \uprho} \\ \\ 
+\frac{\partial x}{\partial \uptheta}  & 
+\frac{\partial z}{\partial \uptheta}  
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+\cos \uptheta & \sin \uptheta \\
+ -\uprho \sin \uptheta  & \uprho \cos \uptheta 
+\end{array}
+\right)
+\]
+with obviously $det({\bm J}_{CP})=\uprho \cos^2 \uptheta+ \uprho \sin^2 \uptheta = \uprho$.
+
 The inverse of the Jacobian from Cartesian coordinates to polar coordinates can then be written 
 as a function of polar coordinates:
 \begin{equation}
@@ -1544,8 +1565,8 @@ as a function of polar coordinates:
 \frac{1}{\uprho}
 \left(
 \begin{array}{cc}
-\cos \uptheta & \uprho\sin\uptheta \\
--\sin\uptheta & \uprho\cos\uptheta
+\uprho\cos\uptheta & -\sin\uptheta \\
+\uprho\sin\uptheta & \cos\uptheta
 \end{array}
 \right)}
 \label{eq:DJ6}
@@ -1554,12 +1575,13 @@ where $\uptheta$ and $\uprho$ are evaluated at each integration point (ip).
 
 Remark: this Jacobian is independent of the choice of basis functions since it is analytical.
 
-
 %--------------------------------------------------------
 \subsection{Combining both}
 
 Making use of the matrix product of the two inverse Jacobians,
-global Cartesian derivatives can be expressed as a matrix product of the local derivatives in the local to polar and polar to Cartesian coordinate mappings. Substituting Equation \eqref{eq:DJ1} into Equation \eqref{eq:DJ3} yields
+global Cartesian derivatives can be expressed as a matrix product of the local 
+derivatives in the local to polar and polar to Cartesian coordinate mappings. 
+Substituting Equation \eqref{eq:DJ1} into Equation \eqref{eq:DJ3} yields
 
 \begin{equation}
 \left(
@@ -1572,8 +1594,8 @@ global Cartesian derivatives can be expressed as a matrix product of the local d
 {\bm J}_{PC} \cdot 
 \left(
 \begin{array}{c}
-\frac{\partial \bN_i}{\partial \uptheta} \\ \\
-\frac{\partial \bN_i}{\partial \uprho} 
+\frac{\partial \bN_i}{\partial \uprho}  \\ \\
+\frac{\partial \bN_i}{\partial \uptheta}
 \end{array}
 \right)
 =
@@ -1618,6 +1640,8 @@ so special care must be taken with regards to the integration.
 %..................................................
 \subsection{Linear triangles ($P_1$)}
 
+{\color{red} I need to revisit this.. this is still with rho and theta as in the paper. }
+
 For linear triangles ($P_1$) the basis functions are (see Section~\ref{ss:p1}):
 \begin{eqnarray}
 \bN_1(r,s)&=&1-r-s \nn\\
@@ -1625,8 +1649,6 @@ For linear triangles ($P_1$) the basis functions are (see Section~\ref{ss:p1}):
 \bN_3(r,s)&=&s \nn
 \end{eqnarray}
 and their derivatives:
-
-
 \begin{eqnarray}
 \frac{\partial\uptheta}{\partial r}(r,s) &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial r}(r,s)\; \uptheta_i = \uptheta_2-\uptheta_1 = \uptheta_{21}\nn\\
 \frac{\partial\uptheta}{\partial s}(r,s) &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uptheta_i = \uptheta_3-\uptheta_1 = \uptheta_{31}\nn\\
@@ -1736,8 +1758,14 @@ We find that the maximum error for $P_1$ is about 120km, the error for $P_2$ is 
 and the error for DJ is effectively about $<10^{-9}$m.
 
 
+\newpage
 %..................................................
 \subsection{Bilinear quadrilaterals ($Q_1$)}
+
+
+
+
+
 
 
 
@@ -1751,20 +1779,6 @@ For linear quadrilaterals ($Q_1$) the basis functions are:
 
 
 \begin{eqnarray}
-\frac{\partial\uptheta}{\partial r}(r,s) 
-&=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial r}(r,s)\; \uptheta_i \nn\\
-&=& -\frac14 (1-s) \uptheta_1 + \frac14 (1-s)\uptheta_2 + \frac14(1+s) \uptheta_3 - \frac14(1+s) \uptheta_4 \nn\\
-&=& \frac14 (-\uptheta_1 + \uptheta_2 + \uptheta_3 - \uptheta_4) 
-+\frac14 s(\uptheta_1-\uptheta_2+\uptheta_3-\uptheta_4) \nn\\
-&=&\tilde{\uptheta}_{1234} + \underline{\uptheta}_{1234}s
-\nn\\
-\frac{\partial\uptheta}{\partial s}(r,s) 
-&=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uptheta_i  \nn\\
-&=&-\frac14 (1-r)\uptheta_1 - \frac14(1+r) \uptheta_2 + \frac14 (1+r)\uptheta_3 + \frac14(1-r) \uptheta_4 \nn\\
-&=& \frac14 (-\uptheta_1 - \uptheta_2 + \uptheta_3 + \uptheta_4)  
-+\frac14 r (\uptheta_1 -\uptheta_2  +\uptheta_3 -\uptheta_4 ) \nn\\
-&=& \bar{\uptheta}_{1234} + \underline{\uptheta}_{1234}r
-\nn\\
 \frac{\partial\uprho}{\partial r}(r,s)   
 &=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial r}(r,s)\; \uprho_i   \nn\\
 &=&-\frac14 (1-s)\uprho_1 + \frac14 (1-s)\uprho_2 + \frac14 (1+s)\uprho_3 - \frac14 (1+s)\uprho_4 \nn\\
@@ -1777,103 +1791,119 @@ For linear quadrilaterals ($Q_1$) the basis functions are:
 &=& -\frac14 (1-r)\uprho_1 - \frac14(1+r) \uprho_2 + \frac14(1+r) \uprho_3 + \frac14 (1-r)\uprho_4  \nn\\
 &=& \frac14 (-\uprho_1 - \uprho_2 + \uprho_3 + \uprho_4) 
 + \frac14 r (\uprho_1 - \uprho_2 + \uprho_3 - \uprho_4) \nn\\
-&=& \bar{\uprho}_{1234} + \underline{\uprho}_{1234} r
+&=& \bar{\uprho}_{1234} + \underline{\uprho}_{1234} r 
+\nn\\
+\frac{\partial\uptheta}{\partial r}(r,s) 
+&=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial r}(r,s)\; \uptheta_i \nn\\
+&=& -\frac14 (1-s) \uptheta_1 + \frac14 (1-s)\uptheta_2 + \frac14(1+s) \uptheta_3 - \frac14(1+s) \uptheta_4 \nn\\
+&=& \frac14 (-\uptheta_1 + \uptheta_2 + \uptheta_3 - \uptheta_4) 
++\frac14 s(\uptheta_1-\uptheta_2+\uptheta_3-\uptheta_4) \nn\\
+&=&\tilde{\uptheta}_{1234} + \underline{\uptheta}_{1234}s
+\nn\\
+\frac{\partial\uptheta}{\partial s}(r,s) 
+&=& \sum_{i=1}^m \frac{\partial\bN_i}{\partial s}(r,s)\; \uptheta_i  \nn\\
+&=&-\frac14 (1-r)\uptheta_1 - \frac14(1+r) \uptheta_2 + \frac14 (1+r)\uptheta_3 + \frac14(1-r) \uptheta_4 \nn\\
+&=& \frac14 (-\uptheta_1 - \uptheta_2 + \uptheta_3 + \uptheta_4)  
++\frac14 r (\uptheta_1 -\uptheta_2  +\uptheta_3 -\uptheta_4 ) \nn\\
+&=& \bar{\uptheta}_{1234} + \underline{\uptheta}_{1234}r \nn
 \end{eqnarray}
-
+which leads to write
 \[
 {\bm J}_{PL}=
 \left(
 \begin{array}{cc}
-\frac{\partial \uptheta}{\partial r}  & 
-\frac{\partial \uprho}{\partial r}  \\ \\
-\frac{\partial \uptheta}{\partial s}  & 
-\frac{\partial \uprho}{\partial s}
+\frac{\partial \uprho}{\partial r} & \frac{\partial \uptheta}{\partial r} \\ \\
+\frac{\partial \uprho}{\partial s} & \frac{\partial \uptheta}{\partial s} 
 \end{array}
 \right)
 =
 \left(
 \begin{array}{cc}
-\tilde{\uptheta}_{1234} + \underline{\uptheta}_{1234}s &  \tilde{\uprho}_{1234} + \underline{\uprho}_{1234} s \\\\
-\bar{\uptheta}_{1234} + \underline{\uptheta}_{1234}r & \bar{\uprho}_{1234} + \underline{\uprho}_{1234} r
+\tilde{\uprho}_{1234} + \underline{\uprho}_{1234} s 
+& \tilde{\uptheta}_{1234} + \underline{\uptheta}_{1234}s \\ \\
+\bar{\uprho}_{1234} + \underline{\uprho}_{1234} r  
+& \bar{\uptheta}_{1234} + \underline{\uptheta}_{1234}r 
 \end{array}
 \right)
 \]
-
-
 In this case we have ${\bm J}_{LP}={\bm J}_{PL}^{-1}$ with
 \begin{equation}
-{\bm J}_{LP}= \frac{1}{ 
-(\tilde{\uptheta}_{1234} + \underline{\uptheta}_{1234}s)
-( \bar{\uprho}_{1234} + \underline{\uprho}_{1234} r)
+{\bm J}_{PL}^{-1}= \frac{1}{ 
+(\tilde{\uprho}_{1234} + \underline{\uprho}_{1234} s )
+(\bar{\uptheta}_{1234} + \underline{\uptheta}_{1234}r )
 - 
-(\bar{\uptheta}_{1234} + \underline{\uptheta}_{1234}r)
-(\tilde{\uprho}_{1234} + \underline{\uprho}_{1234} s)
+(\bar{\uprho}_{1234} + \underline{\uprho}_{1234} r )
+(\tilde{\uptheta}_{1234} + \underline{\uptheta}_{1234}s )
 } 
 \left(
 \begin{array}{cc}
-\bar{\uprho}_{1234}+ \underline{\uprho}_{1234} r & -\tilde{\uprho}_{1234} - \underline{\uprho}_{1234} s \\
--\bar{\uptheta}_{1234} -\underline{\uptheta}_{1234}r& \tilde{\uptheta}_{1234}+ \underline{\uptheta}_{1234}s
+\bar{\uptheta}_{1234} + \underline{\uptheta}_{1234}r
+& -\tilde{\uptheta}_{1234} - \underline{\uptheta}_{1234}s \\ \\
+-\bar{\uprho}_{1234} - \underline{\uprho}_{1234} r  
+&\tilde{\uprho}_{1234} + \underline{\uprho}_{1234} s 
 \end{array}
 \right)
 \end{equation}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-{\bf SPECIAL CASE}: In the element we have
-$\uptheta_1=\uptheta_4$, $\uptheta_2=\uptheta_3$,
+{\bf SPECIAL CASE}: In the element we have 
+$\uptheta_1=\uptheta_2$, $\uptheta_3=\uptheta_4$,
 and we define $\tilde{\uptheta}$ such that 
-$\frac12(\uptheta_2-\uptheta_1)=\frac12(\uptheta_3-\uptheta_4)=\tilde{\uptheta}$.
+$\frac12(\uptheta_4-\uptheta_1)=\frac12(\uptheta_3-\uptheta_2)=\bar{\uptheta}$.
 Likewise,
-$\uprho_1=\uprho_2$, $\uprho_3=\uprho_4$ and
-we define $\bar{\uprho}$ such that $\frac12(\uprho_4-\uprho_1)=\frac12(\uprho_3-\uprho_2)=\bar{\uprho}$
+$\uprho_1=\uprho_4$, $\uprho_2=\uprho_3$ and
+we define $\bar{\uprho}$ such that $\frac12(\uprho_2-\uprho_1)=\frac12(\uprho_3-\uprho_4)=\tilde{\uprho}$
+
+\begin{verbatim}
+uptheta
+|
+|
+|    4---------3
+|    |         |
+|    |         |
+|    |         |
+-----1---------2----------- uprho
+\end{verbatim}
+
+
 In this case:
 \begin{eqnarray}
-\tilde{\uptheta}_{1234}     &=&\frac14\left( -\uptheta_1 +\uptheta_2 + \uptheta_3 -\uptheta_4 \right) =\tilde{\uptheta}\nn\\
-\underline{\uptheta}_{1234} &=&\frac14\left(  \uptheta_1 -\uptheta_2 + \uptheta_3 -\uptheta_4 \right)=0\nn\\
-\bar{\uptheta}_{1234}       &=&\frac14\left( -\uptheta_1 -\uptheta_2 + \uptheta_3 +\uptheta_4 \right)=0 \nn\\
-\tilde{\uprho}_{1234}       &=&\frac14\left( -\uprho_1 +\uprho_2 + \uprho_3 -\uprho_4\right) =0\nn\\
+\tilde{\uprho}_{1234}       &=&\frac14\left( -\uprho_1 +\uprho_2 + \uprho_3 -\uprho_4\right) = \tilde{\uprho}\nn\\
 \underline{\uprho}_{1234}   &=&\frac14\left(  \uprho_1 -\uprho_2 + \uprho_3 -\uprho_4\right) =0\nn\\
-\bar{\uprho}_{1234}         &=&\frac14\left( -\uprho_1 -\uprho_2 + \uprho_3 +\uprho_4\right) = \bar\rho 
+\bar{\uprho}_{1234}         &=&\frac14\left( -\uprho_1 -\uprho_2 + \uprho_3 +\uprho_4\right) =  0 \nn\\
+\tilde{\uptheta}_{1234}     &=&\frac14\left( -\uptheta_1 +\uptheta_2 + \uptheta_3 -\uptheta_4 \right) =0\nn\\
+\underline{\uptheta}_{1234} &=&\frac14\left(  \uptheta_1 -\uptheta_2 + \uptheta_3 -\uptheta_4 \right)=0\nn\\
+\bar{\uptheta}_{1234}       &=&\frac14\left( -\uptheta_1 -\uptheta_2 + \uptheta_3 +\uptheta_4 \right)= \bar{\uptheta}
 \end{eqnarray}
 so that 
-
 \[
 {\bm J}_{PL}=
 \left(
 \begin{array}{cc}
-\frac{\partial \uptheta}{\partial r}  & 
-\frac{\partial \uprho}{\partial r}  \\ \\
-\frac{\partial \uptheta}{\partial s}  & 
-\frac{\partial \uprho}{\partial s}
+\frac{\partial \uprho}{\partial r} & \frac{\partial \uptheta}{\partial r} \\ \\
+\frac{\partial \uprho}{\partial s} & \frac{\partial \uptheta}{\partial s} 
 \end{array}
 \right)
 =
 \left(
 \begin{array}{cc}
-\tilde{\uptheta}  &  0 \\\\
-0 & \bar{\uprho}
+\tilde{\uprho} & 0 \\
+0 & \bar{\uptheta}
+\end{array}
+\right)
+\qquad 
+\Rightarrow
+\qquad
+{\bm J}_{LP}={\bm J}_{PL}^{-1} 
+=
+\left(
+\begin{array}{cc}
+\tilde{\uprho}^{-1}& 0 \\
+0 & \bar{\uptheta} ^{-1}
 \end{array}
 \right)
 \]
-We then  have
-\begin{equation}
-{\bm J}_{LP}={\bm J}_{PL}^{-1} 
-= \frac{1}{ \tilde{\uptheta} \bar{\uprho} } 
-\left(
-\begin{array}{cc}
-\bar{\uprho}& 0 \\
-0 &  \tilde{\uptheta}
-\end{array}
-\right)
-=
-\left(
-\begin{array}{cc}
-\tilde{\uptheta}^{-1}& 0 \\
-0 & \bar{\uprho} ^{-1}
-\end{array}
-\right)
-\end{equation}
-
-
 Bringing things together in Eq.~\eqref{eq:DJ123}:
 \begin{eqnarray}
 \left(
@@ -1893,15 +1923,15 @@ Bringing things together in Eq.~\eqref{eq:DJ123}:
 \frac{1}{\uprho}
 \left(
 \begin{array}{cc}
-\cos \uptheta & \uprho\sin\uptheta \\ 
--\sin\uptheta & \uprho\cos\uptheta
+\uprho\cos\uptheta & -\sin\uptheta \\
+\uprho\sin\uptheta & \cos\uptheta
 \end{array}
 \right)
 \cdot
 \left(
 \begin{array}{cc}
-\tilde{\uptheta}^{-1} & 0 \\
-0 &  \bar{\uprho}^{-1}
+\tilde{\uprho}^{-1} & 0 \\
+0 &  \bar{\uptheta}^{-1}
 \end{array}
 \right)
 \cdot 
@@ -1911,22 +1941,6 @@ Bringing things together in Eq.~\eqref{eq:DJ123}:
 \frac{\partial \bN_i}{\partial s} 
 \end{array}
 \right)  
-%\nn\\
-%&=&
-%\frac{2}{\uprho}
-%\left(
-%\begin{array}{cc}
-%\tilde{\uptheta}^{-1} \cos\uptheta & \uprho \bar{\uprho}^{-1} \sin \uptheta\\ \\
-%-\tilde{\uptheta}^{-1} \sin\uptheta & \uprho \bar{\uprho}^{-1} \cos \uptheta
-%\end{array}
-%\right)
-%\cdot 
-%\left(
-%\begin{array}{c}
-%\frac{\partial \bN_i}{\partial r} \\ \\
-%\frac{\partial \bN_i}{\partial s} 
-%\end{array}
-%\right)  
 \end{eqnarray}
 
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -1939,11 +1953,10 @@ Bringing things together in Eq.~\eqref{eq:DJ123}:
 \right)
 =
 \underbrace{
-\frac{1}{\uprho}
 \left(
 \begin{array}{cc}
-\tilde{\uptheta}^{-1} \cos\uptheta & \uprho \bar{\uprho}^{-1} \sin \uptheta\\ \\
--\tilde{\uptheta}^{-1} \sin\uptheta & \uprho \bar{\uprho}^{-1} \cos \uptheta
+\tilde{\uprho}^{-1}\cos\uptheta & -\bar{\uptheta}^{-1}\uprho^{-1}\sin\uptheta \\
+\tilde{\uprho}^{-1}\sin\uptheta &  \bar{\uptheta}^{-1}\uprho^{-1}\cos\uptheta
 \end{array}
 \right)
 }_{{\bm J}_{LC}}
@@ -1956,54 +1969,116 @@ Bringing things together in Eq.~\eqref{eq:DJ123}:
 \right)  
 \end{equation}
 \end{mdframed}
-This equation is to be compared with Eq.~\eqref{eq:mappDJ1}
-
+with
+\begin{eqnarray}
+det({\bm J}_{LC})
+&=&
+(\tilde{\uprho}^{-1}\cos\uptheta)
+(\bar{\uptheta}^{-1}\uprho^{-1}\cos\uptheta)
++ 
+(\tilde{\uprho}^{-1}\sin\uptheta) 
+(\bar{\uptheta}^{-1}\uprho^{-1}\sin\uptheta)  \nn\\
+&=&
+\uprho^{-1}
+\left[
+\tilde{\uprho}^{-1}
+\bar{\uptheta}^{-1}\cos^2\uptheta
++ 
+\tilde{\uprho}^{-1}
+\bar{\uptheta}^{-1}\sin^2\uptheta  \right] \nn\\
+&=&
+\uprho^{-1} \tilde{\uprho}^{-1} \bar{\uptheta}^{-1}
+\left[
+\cos^2\uptheta
++ 
+\sin^2\uptheta  \right] \nn\\
+&=&
+\frac{1}{\uprho \tilde{\uprho}  \bar{\uptheta}}
+\end{eqnarray}
 
 If matrix ${\bm A}$ is invertible then ${\bm A}\cdot {\bm A}^{-1}={\bm 1}$,
 and since $det({\bm A}\cdot {\bm B}) = det({\bm A}) det ({\bm B})$, then
 $det({\bm A}\cdot {\bm A}^{-1})= det({\bm A})\; det ({\bm A}^{-1}) =1$.
 This means that
-$
-det({\bm J}_{CL})=
-det({\bm J}_{LC}^{-1})=
-[det({\bm J}_{LC})]^{-1}
-$
-with
-\begin{eqnarray}
-det({\bm J}_{LC})
-&=&
-\frac{1}{\uprho^2}
-\left[
-(\tilde{\uptheta}^{-1} \cos\uptheta )
-( \uprho \bar{\uprho}^{-1} \cos \uptheta)+ 
-(\tilde{\uptheta}^{-1} \sin\uptheta) 
-(\uprho \bar{\uprho}^{-1} \sin \uptheta) \right] \nn\\
-&=&
-\frac{1}{\uprho^2}
-\left[
-\tilde{\uptheta}^{-1} 
- \uprho \bar{\uprho}^{-1} \cos^2 \uptheta+ 
-\tilde{\uptheta}^{-1}  
-\uprho \bar{\uprho}^{-1} \sin^2 \uptheta \right] \nn\\
-&=&
-\frac{1}{\uprho^2}
-\tilde{\uptheta}^{-1} \uprho \bar{\uprho}^{-1} \nn\\
-&=&
-\frac{1}{\uprho \tilde{\uptheta}  \bar{\uprho}}
-\end{eqnarray}
-In the end
 \[
-det({\bm J}_{CL})=  \uprho \tilde{\uptheta}  \bar{\uprho}
+det({\bm J}_{CL})
+=det({\bm J}_{LC}^{-1})
+=[det({\bm J}_{LC})]^{-1}
+=  \uprho \tilde{\uprho}  \bar{\uptheta}
 \]
+Finally, 
+from Cramer's rule\footnote{\url{https://en.wikipedia.org/wiki/Cramers_rule}},
+we obtain:
+\begin{eqnarray}
+{\bm J}_{CL} = 
+{\bm J}_{LC}^{-1} &=& 
+\frac{1}{det({\bm J}_{LC})} 
+\left(
+\begin{array}{cc}
+\bar{\uptheta}^{-1}\uprho^{-1}\cos\uptheta & 
+\bar{\uptheta}^{-1}\uprho^{-1}\sin\uptheta \\
+-\tilde{\uprho}^{-1}\sin\uptheta 
+&\tilde{\uprho}^{-1}\cos\uptheta 
+\end{array}
+\right) \nn\\
+&=&
+\uprho \tilde{\uprho}  \bar{\uptheta}
+\left(
+\begin{array}{cc}
+\bar{\uptheta}^{-1}\uprho^{-1}\cos\uptheta & 
+\bar{\uptheta}^{-1}\uprho^{-1}\sin\uptheta \\
+-\tilde{\uprho}^{-1}\sin\uptheta 
+&\tilde{\uprho}^{-1}\cos\uptheta 
+\end{array}
+\right) \nn\\
+&=&
+\tilde{\uprho}  \bar{\uptheta}
+\left(
+\begin{array}{cc}
+\bar{\uptheta}^{-1}\cos\uptheta & 
+\bar{\uptheta}^{-1}\sin\uptheta \\
+-\uprho\tilde{\uprho}^{-1}\sin\uptheta 
+&\uprho\tilde{\uprho}^{-1}\cos\uptheta 
+\end{array}
+\right) \nn\\
+&=&
+\left(
+\begin{array}{cc}
+\tilde{\uprho}\cos\uptheta & 
+\tilde{\uprho}\sin\uptheta \\
+-\uprho\bar{\uptheta}\sin\uptheta 
+&\uprho\bar{\uptheta}\cos\uptheta 
+\end{array}
+\right) 
+\end{eqnarray}
+and of course we recover $det({\bm J}_{CL})=\uprho \bar{\uptheta}  \tilde{\uprho}$.
+Finally:
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+{\bm J}_{CL} = 
+\left(
+\begin{array}{cc}
+\tilde{\uprho}\cos\uptheta & 
+\tilde{\uprho}\sin\uptheta \\
+-\uprho\bar{\uptheta}\sin\uptheta 
+&\uprho\bar{\uptheta}\cos\uptheta 
+\end{array}
+\right) 
+\]
+\end{mdframed}
 
 
+
+
+
+\vspace{1cm}
 
 Note that the area of such element can easily be computed analytically:
 \[
 {\cal A}_e 
 = \iint_{\Omega_e} \uprho d\uprho d\uptheta 
-= \int_{\uprho_1}^{\uprho_3}\int_{\uptheta_1}^{\uptheta_3} \uprho d\uprho d\uptheta 
-= (\uptheta_3-\uptheta_1) \frac12 (\uprho_3^2-\uprho_1^2)
+= \int_{\uprho_1}^{\uprho_3}\int_{\uptheta_3}^{\uptheta_1} \uprho d\uprho d\uptheta 
+= (\uptheta_1-\uptheta_3) \frac12 (\uprho_3^2-\uprho_1^2)
 \]
 
 

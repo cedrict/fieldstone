@@ -31,7 +31,7 @@ gravity ﬁeld ($g_x=0$, $g_y=10~\si{\meter\per\square\second}$)
 for a density structure with two vertical layers 
 (3200~\si{\kg\per\cubic\meter} and 3300~\si{\kg\per\cubic\meter} 
 for the left and right layers, respectively). The model size is  
-$1000~\si{\km} \times 1500~\si{\km}$.
+$1500~\si{\km} \times 1000~\si{\km}$.
 Use a constant viscosity $\eta = 10^{21}~\si{\pascal\second}$ 
 for the entire model.
 \end{itemize}
@@ -109,8 +109,7 @@ with the density overlain by velocity vectors.
 \qquad
 \dot\varepsilon_{yy} =\frac{\partial v}{\partial y} 
 \qquad
-\dot\varepsilon_{xx} = \frac12 \left(\frac{\partial u}{\partial y} 
-+ \frac{\partial u}{\partial y} \right)
+\dot\varepsilon_{xy} = \frac12 \left(\frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right)
 \]
 Visualise these fields and produce then three files {\sl exx.png}, {\sl eyy.png} and {\sl exy.png}.
 
