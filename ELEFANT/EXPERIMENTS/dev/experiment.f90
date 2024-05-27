@@ -14,30 +14,35 @@ implicit none
 
 !----------------------------------------------------------
 
-geometry='spherical'
-ndim=2
-nelr=2
-nelphi=8
-inner_radius=1
-outer_radius=2
+!geometry='spherical'
+!ndim=2
+!nelr=2
+!nelphi=8
+!inner_radius=1
+!outer_radius=2
 
-inner_solver_type='_MUMPS'
+ndim=2
+geometry='cartesian'
+
 
 Lx=1
 Ly=1
 
-nelx=3
-nely=2
+nelx=32
+nely=32
 
-spaceV='__Q2'
-spaceP='__Q1'
-mapping='__Q2'
+spaceVelocity='__Q3'
+spacePressure='__Q2'
+!mapping='__Q3'
 
 debug=.true.
 
 use_penalty=.false.
 penalty=1d6
 
+nqpts=3
+
+solve_stokes_system=.False.
 
 !----------------------------------------------------------
 
@@ -151,10 +156,10 @@ real(8), intent(out) :: u,v,w,p,T,exx,eyy,ezz,exy,exz,eyz
 
 ! your stuff here
 
-u=0
-v=0
+u=1-x**2
+v=1+y**2
 w=0
-p=0
+p=sqrt(x)
 T=0
 exx=0
 eyy=0
@@ -169,7 +174,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine gravity_model(x,y,z,gx,gy,gz)
+subroutine experiment_gravity_model(x,y,z,gx,gy,gz)
 
 implicit none
 
@@ -188,7 +193,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine test
+subroutine experiment_test
 
 implicit none
 
@@ -202,7 +207,7 @@ end subroutine
 
 !==================================================================================================!
 
-subroutine postprocessor_experiment
+subroutine experiment_postprocessor
 
 implicit none
 

@@ -23,6 +23,7 @@ objects = module_mesh.o module_parameters.o module_constants.o module_timing.o m
 module_statistics.o module_gravity.o module_sparse.o module_materials.o module_swarm.o module_MUMPS.o\
 module_quadrature.o module_export_vtu.o\
 assemble_K.o\
+assemble_S.o\
 assemble_GT.o\
 assemble_MP.o\
 assemble_RHS.o\
@@ -32,9 +33,10 @@ compute_dNdx_dNdy.o compute_dNdx_dNdy_dNdz.o compute_temperature_gradient.o\
 compute_dNTdx_dNTdy.o compute_dNTdx_dNTdy_dNTdz.o compute_belongs.o\
 compute_elemental_rho_eta_vol.o compute_gravity.o compute_elemental_matrix_energy.o \
 compute_block_scaling_coefficient.o compute_elemental_strain_rate.o\
-compute_elemental_schur_complement.o\
-dgesl.o dgeco.o dgefa.o directsolver.o\
+dgesl.o dgeco.o dgefa.o \
+directsolver.o\
 estimate_memory_use.o\
+extract_K_diagonal.o\
 header.o\
 impose_boundary_conditions_stokes.o\
 impose_boundary_conditions_energy.o\
@@ -45,7 +47,6 @@ inner_solver.o\
 locate_point.o\
 make_matrix_stokes.o\
 make_matrix_energy.o \
-matrix_setup_MV.o \
 mgmres.o \
 NNN.o dNNNdr.o dNNNds.o dNNNdt.o\
 output_mesh.o output_swarm.o output_solution.o output_qpoints.o \
@@ -70,13 +71,19 @@ setup_john.o setup_mapping.o \
 setup_GT_matrix_CSR.o\
 setup_A.o\
 setup_GT.o\
-setup_MP.o\
+setup_MP_and_S.o\
 setup_K.o\
 setup_K_matrix_FULL.o\
 setup_K_matrix_MUMPS.o\
 setup_K_matrix_CSR.o\
+setup_K_matrix_COO.o\
+setup_K_blocks_CSR.o\
+setup_K_blocks_FULL.o\
 test_basis_functions.o\
-solve_stokes.o solve_energy.o spmv_kernels.o \
+solve_stokes.o\
+solve_stokes_SIMPLE.o\
+solve_energy.o\
+spmv_kernels.o \
 write_stats.o\
 y12m.o\
 elefant.o

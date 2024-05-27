@@ -1,6 +1,7 @@
 
+#object_experiment = TESTS/TEST1/experiment.o 
 
-object_experiment = EXPERIMENTS/dev/experiment.o 
+#object_experiment = EXPERIMENTS/dev/experiment.o 
 
 ############################
 #manufactured solution in 2D
@@ -12,7 +13,7 @@ object_experiment = EXPERIMENTS/dev/experiment.o
 
 #object_experiment = EXPERIMENTS/mms2D_solkz/experiment.o 
 
-#object_experiment = EXPERIMENTS/mms2D_donea_huerta/experiment.o 
+object_experiment = EXPERIMENTS/mms2D_donea_huerta/experiment.o 
 
 #object_experiment = EXPERIMENTS/mms2D_temperature_diffusion/experiment.o
 

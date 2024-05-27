@@ -1,112 +1,193 @@
- \subsubsection{assign\_values\_to\_qpoints.f90}
+ \subsection{allocate\_memory}
+ This subroutine essentially allocates all arrays in the {\tt module\_arrays}, i.e.
+ {\tt NNNU,NNNV,NNNW,NNNP,NNNT} and all space derivatives.
+ \subsection{assemble\_GT}
+ {\tt G\_el}is of size mVel*mP
+ \subsection{assemble\_K}
+ This subroutine receives as argument $\K_e$ and assembles it into the global matrix $\K$.
+ \subsection{assemble\_MP}
+
+ \subsection{assemble\_RHS}
+ This subroutine assembles the elemental right hand side vectors into $\vec{f}$ and $\vec{h}$.
+ \subsection{assemble\_S}
+ This subroutine takes the elemental Schur complement $\hat{\SSS}_{el}$ and assembles
+ it in the global $\hat{\SSS}$ matrix.
+ Use break/exit in the loop?
+ \subsection{assign\_values\_to\_qpoints.f90}
  This subroutine assigns 
- \subsubsection{compute\_dNdx\_dNdy\_dNdz.f90}
- This subroutine computes $\partial{\bN^\upnu}/\partial x$, $\partial{\bN^\upnu}/\partial y$ and
- $\partial{\bN^\upnu}/\partial z$ at a location $r,s,t$ passed as argument.
- \subsubsection{compute\_dNdx\_dNdy.f90}
- This subroutine computes $\partial{\bN^\upnu}/\partial x$ and $\partial{\bN^\upnu}/\partial y$
- at a location $r,s$ passed as argument.
- \subsubsection{compute\_dNdx\_dNdy\_dNdz.f90}
+ \subsection{compute\_abcd\_2D}
+ This subroutine computes the coefficients $a_\rho$ ,$b_\rho$, $c_\rho$,
+ and $a_\eta$, $b_\eta$, $c_\eta$ for each element so that 
+ inside the element the density and viscosity and linear fields given by
+ \[
+ \rho(x,y)=a_\rho + b_\rho x + c_\rho y
+ \qquad\qquad
+ \eta(x,y)=a_\eta + b_\eta x + c_\eta y
+ \]
+ \subsection{compute\_abcd\_3D}
+ This subroutine computes the coefficients $a_\rho$, $b_\rho$, $c_\rho$, $d_\rho$
+ and $a_\eta$, $b_\eta$, $c_\eta$, $d_\eta$ for each element so that 
+ inside the element the density and viscosity and linear fields given by
+ \[
+ \rho(x,y)=a_\rho + b_\rho x + c_\rho y + d_\rho z
+ \qquad\qquad
+ \eta(x,y)=a_\eta + b_\eta x + c_\eta y + d_\eta z
+ \]
+
+ \subsection{compute\_belongs}
+ This subroutine allocates and fills the {\sl U,V,Wnode\_belongs\_to} and {\sl Pnode\_belongs\_to} 
+ arrays. For a given Unode {\sl ip},
+ {\sl Unode\_belongs\_to(1,ip)} is the number of elements that {\sl ip} belongs to.
+ Furthermore, {\sl Unode\_belongs\_to(2:9,ip)} is the actual list of elements.
+ \subsection{compute\_block\_scaling\_coefficient}
+ This subroutine compute the coefficient that multiplies the $\G$ block of the Stokes matrix
+ that is required to ensure accurate pressure calculations, see Section~\ref{pscaling}.
+ At the moment it is computed as $<\eta>/{V}^{1/ndim}$ where $<\eta>$ is the (arithmetic) average 
+ viscosity over the domain and V is the volume of the domain.
+ \subsection{compute\_dNdx\_dNdy\_dNdz.f90}
+ This subroutine computes $\partial{\bN^u}/\partial \{x,y,z\}$, 
+ $\partial{\bN^v}/\partial \{x,y,z\}$ and
+ $\partial{\bN^w}/\partial \{x,y,z\}$ at a location $r,s,t$ passed as argument.
+ \subsection{compute\_dNdx\_dNdy.f90}
+ This subroutine computes $\partial{\bN^u}/\partial \{x,y\}$ and 
+ $\partial{\bN^v}/\partial \{x,y\}$ at a location $r,s$ passed as argument.
+ \subsection{compute\_dNTdx\_dNTdy\_dNTdz.f90}
  This subroutine computes $\partial{\bN^\uptheta}/\partial x$, 
  $\partial{\bN^\uptheta}/\partial y$ and
  $\partial{\bN^\uptheta}/\partial z$ at a location $r,s,t$ passed as argument.
- \subsubsection{compute\_dNTdx\_dNTdy.f90}
+ \subsection{compute\_dNTdx\_dNTdy.f90}
  This subroutine computes $\partial{\bN^\uptheta}/\partial x$ 
- and $\partial{\bN^\uptheta}/\partial y$  at a location $r,s$ passed as argument.
- \subsubsection{compute\_elemental\_matrix\_energy}
+ and $\partial{\bN^\uptheta}/\partial y$ 
+ at a location $r,s$ passed as argument.
+ \subsection{compute\_elemental\_matrix\_energy}
  This subroutine builds the elemental matrix ${\bm A}_{el}$ and its corresponding 
  right hand side $\vec{b}_{el}$. 
- \subsubsection{compute\_elemental\_matrix\_stokes.f90}
+ \subsection{compute\_elemental\_matrix\_stokes.f90}
  Note that when the material model is called directly on the quadrature points and 
  the penalty formulation is used then the viscosity at the reduced quadrature location 
  is obtained by taking the maximum viscosity value carried by the quadrature points of 
  the element. 
- \subsubsection{compute\_elemental\_rho\_eta\_vol}
+ \subsection{compute\_elemental\_rho\_eta\_vol}
  This subroutine computes the elemental volume, the average density and 
  viscosity (using arithmetic averaging) using the values already stored on the quadrature points. 
+ \[
+ \langle \rho \rangle_e =\frac{1}{V_e} \int_{\Omega_e} \rho dV
+ \]
  It also returns the min/max values of these quantities.
- \subsubsection{compute\_gravity}
+ \subsection{compute\_elemental\_strain\_rate}
 
- \subsubsection{compute\_temperature\_gradient}
+ \subsection{compute\_gravity}
 
- \subsubsection{compute\_timestep}
+ \subsection{compute\_temperature\_gradient}
+
+ \subsection{compute\_timestep}
  See Section~\ref{ss:cfl}.
- \subsubsection{dNNNdr}
+ \subsection{directsolver}
+  I do not know where this solver comes from. It works with full matrices.
+ Could it be that it comes from the brown meshless methods book?
+ \subsection{dNNNdr}
  Spaces supported so far:
- 2D: Q1, Q2, Q3, Q4, Q1+
- 3D: Q1, Q2, Q1++
- \subsubsection{dNNNds}
+ \begin{itemize}
+ \item 2D: $Q_1$, $Q_2$, $Q_2^s$, $Q_3$, $Q_1^+$, $P_1$, $P_1^+$, $P_2$, $P_2^+$, $P_3$, $P_4$
+ \item 3D: $Q_1$, $Q_2$, $Q_1^{++}$
+ \end{itemize}
+ \subsection{dNNNds}
  Spaces supported so far:
- 2D: Q1, Q2, Q3, Q4, Q1+
- 3D: Q1, Q2, Q1++
- \subsubsection{dNNNdr}
- Spaces supported so far:
- 3D: Q1, Q2, Q1++
- \subsubsection{impose\_boundary\_conditions\_energy}
+ \begin{itemize}
+ \item 2D: $Q_1$, $Q_1^{F,u}$, $Q_1^{F,v}$, $Q_2$, $Q_2^s$, $Q_3$, $Q_1^+$, 
+ $P_1$, $P_1^+$, $P_2$, $P_2^+$, $P_3$, $P_4$
+ \item 3D: $Q_1$, $Q_2$, $Q_1^{++}$
+ \end{itemize}
+ \subsection{dNNNdt}
+ Spaces supported so far: NONE
+ \subsection{estimate\_memory\_use}
+
+ \subsection{extract\_K\_diagonal}
+ This subroutine extracts the diagonal of the matrix $\K$ or 
+ of the $\K_{xx}$, $\K_{yy}$, $\K_{zz}$ blocks.
+ \subsection{impose\_boundary\_conditions\_energy}
  This routine takes as argument the elemental matrices and vectors Ael, Bel
  and applies the boundary conditions to them.
- \subsubsection{impose\_boundary\_conditions\_stokes}
+ \subsection{impose\_boundary\_conditions\_stokes}
  This subroutine modifies the elemental $\K$, $\G$ and $\C$ matrices as well as the 
  elemental rhs $f_{el}$ and $h_{el}$ and returns them modified after imposing
  velocity Dirichlet boundary conditions.
- \subsubsection{initialise\_elements}
+ \subsection{initialise\_elements}
  This subroutine allocates pretty much all element-based arrays (node coordinates,velocity,
  strain rate, ...).
- \subsubsection{initialise\_mumps\_V}
+ \subsection{initialise\_mumps\_V}
 
- \subsubsection{interpolate\_onto\_nodes.f90}
- This subroutine interpolates the components of the strain rate tensor on the velocity nodes.
- \subsubsection{locate\_point}
+ \subsection{inner\_solver}
+ This subroutine solves the system $\K\cdot \vec{\cal V} = \vec{f}$. The matrix is 
+ implicit passed as argument via the module but the rhs and the guess vector are 
+ passed as arguments.
+ Which solver is used is determined by the value of the {\tt inner\_solver\_type} parameter.
+ There are four options:
+ \begin{itemize}
+ \item 'MUMPS' (specific storage)
+ \item 'LINPACK' (full matrix storage)
+ \item 'Y12M' (CSR storage): Y12M is a package of Fortran subroutines. It was developed at
+ the Regional Computing Centre at the University of Copenhagen (RECKU) by \textcite{zlws81}. One
+ can obtain the code from Netlib and the documentation is at {\tt https://www.netlib.org/y12m/doc}.
+ About {\tt ifail}: Error diagnostic parameter. The content of parameter IFAIL is modified  
+ by subroutine Y12MA.  On exit IFAIL = 0 if the subroutine has not detected any error.  
+ Positive  values  of IFAIL on  exit  show  that some error has been
+ detected by the subroutine. 
+ \item 'PCG' (symmetric CSR storage ?)
+ \end{itemize}
+ Note that there is directsolver.f90 too that is for now not used.
+ I should also explore MA28 by Duff ! 
+ \subsection{locate\_point}
  This file contains a few simple subroutines which deal with the localisation of a point 
  in the mesh. The {\tt locate\_point} subroutine receives the coordinates of a point as argument 
  and returns its reduced coordinates and the id of the element it sits in.
  It relies on 3 other subroutines ({\tt find\_ielx\_r}, {\tt find\_iely\_s}, {\tt find\_ielz\_t})
  which take as argument a coorinate (x,y,z) and return the corresponding reduced
  coordinate (r,s,t) and the integer coordinate (ielx,iely,ielz).
- \subsubsection{make\_matrix\_energy}
+ \subsection{make\_matrix\_energy}
  This subroutine builds the linear system for the energy equation. 
  It loops over each element, builds its elemental matrix ${\bm A}_{el}$
  and right hand side $\vec{b}_{el}$, applies boundary conditions, 
  and assembles these into the global matrix csrA and the corresponding 
  right hand side rhs\_b. 
- \subsubsection{make\_matrix\_stokes.f90}
+ \subsection{make\_matrix\_stokes.f90}
  This subroutine loops over all elements, build their elemental matrices and rhs, 
  apply the boundary conditions ont these elemental matrices, and then 
  assembles them in the global matrix, either in CSR or in MUMPS format.
- \subsubsection{matrix\_setup\_A}
- If the geometry is Cartesian then the number of nonzeros in the matrix and its sparsity 
- structures are computed in a very efficient way. 
- \subsubsection{matrix\_setup\_GT.f90}
-
- \subsubsection{matrix\_setup\_K}
-
- \subsubsection{matrix\_setup\_MP}
- This subroutine computes the structure of the pressure mass matrix. 
- \subsubsection{matrix\_setup\_MV}
- See Section~\ref{ss:symmcsrss}. 
- \subsubsection{NNN}
+ \subsection{NNN}
  Spaces supported so far:
- 2D: Q0, Q1, Q2, Q3, Q4, Q1+
- 3D: Q0, Q1, Q2, Q1++
- \subsubsection{output\_matrix\_tikz}
+ \begin{itemize}
+ \item 2D: $Q_0$, $Q_1$, $Q_1^{F,u}$, $Q_1^{F,v}$, $Q_2$, $Q_2^s$, $Q_3$, $Q_4$, 
+ $Q_1^+$, $P_1$, $P_1^+$, @@ $P_2$, $P_2^+$, $P_3$, $P_4$
+ \item 3D: $Q_0$, $Q_1$, $Q_2$, $Q_1^{++}$
+ \end{itemize}
+ \subsection{outer\_solver\_pcg}
+ \subsection{output\_matrix\_for\_paraview}
 
- \subsubsection{output\_mesh.f90}
- This subroutine produces the {\filenamefont meshV.vtu} file which only 
- contains the corner nodes (4 in 2D, 8 in 3D).
- \subsubsection{output\_qpoints}
+ \subsection{output\_matrix\_tikz}
 
- \subsubsection{output\_solution}
- This subroutine generates the {\filenamefont solution.vtu} in the {\foldernamefont OUTPUT}
+ \subsection{output\_mesh.f90}
+ This subroutine produces the {\filenamefont meshV.vtu} and {\filenamefont meshP.vtu} files. 
+ See subroutine output\_solution for more info.
+ \subsection{output\_qpoints}
+
+ \subsection{output\_solution}
+ This subroutine exports the components of the velocity $u$, $v$ and $w$ in respective vtu 
+ files {\tt u\_XXXX.vtu}, {\tt v\_XXXX.vtu}, {\tt w\_XXXX.vtu} respectively. 
+ This subroutine generates the {\filenamefont solution\_XXXX.vtu} in the {\foldernamefont OUTPUT}
  folder. It also generates the basic ascii file {\filenamefont solution.ascii}
- \subsubsection{output\_solution\_python}
-
- \subsubsection{output\_swarm.f90}
+ It actually export each element separately inside the vtu file (more flexible approach
+ but more costly in terms of memory).
+ Since some element pairs (like the Rannacher-Turek) do not even have velocity nodes at the 
+ corners I have decided to use the Q2 and P2 nodes as basis for the visualisation for 
+ quadrilaterals and simplices respectively, both in 2D and 3D.
+ \subsection{output\_swarm.f90}
  This subroutine produces the {\filenamefont swarm.vtu} file in the 
  {\foldernamefont OUTPUT} folder which contains the 
  swarm of particles with all their properties.
- \subsubsection{paint\_swarm}
+ \subsection{paint\_swarm}
  
- \subsubsection{pcg\_solver\_csr}
+ \subsection{pcg\_solver\_csr}
  The subroutine solves $A\cdot = b$ by means f the preconditioned Conjugate Gradient method
  and the implementation follows algorithm 2.2 on page 82 of Elman, Silvester \&
  Wathen \cite{elsw}:
@@ -130,139 +211,220 @@
  the maximum number of iterations is set to 1000, and the relative tolerance to $tol=10^{-6}$.
  Since the preconditioned is the diagonal of the ${\bm A}$ matrix, then the inverse of 
  ${\bm M}$ is trivial to compute/apply. 
- \subsubsection{postprocessors.f90}
+ \subsection{postprocessors.f90}
  This subroutine computes the root mean square velocity
  and each of the average velocity components. It also 
  computes the volume using GLQ.
- \subsubsection{prescribe\_stokes\_solution.f90}
+ \subsection{prescribe\_stokes\_solution.f90}
  This subroutine prescribes the velocity, pressure, temperature and strain rate components
- on the corners of each element via the {\sl analytical\_solution} subroutine.
- \subsubsection{template}
+ on the nodes of each element via the {\sl experiment\_analytical\_solution} subroutine.
+ \subsection{process\_bc}
+ This subroutine 'translates' the bnd1\_bcV\_type and other variables into booleans in 
+ arrays fix\_u and others.
+ \subsection{process\_inputs}
 
- \subsubsection{template}
-
- \subsubsection{template}
-
- \subsubsection{template}
-
- \subsubsection{template}
-
- \subsubsection{quadrature\_setup.f90}
+ \subsection{quadrature\_setup.f90}
  This subroutine allocates all GLQ-related arrays for each element.
- It further computes the real $(x_q,y_q,z_q)$ and reduced $(r_q,s_q,t_q)$
- coordinates of the GLQ points, and assigns them their weights and
+ It further computes the real coordinates $(x_q,y_q,z_q)$ and reduced 
+ coordinates $(r_q,s_q,t_q)$ of the GLQ points, and assigns them their weights and
  jacobian values.
- The required constants for the higher order quadrature schemes are in 
- {\filenamefont module\_constants.f90}.
- \subsubsection{read\_command\_line\_options}
+ The required constants for the quadrature schemes are in 
+ {\filenamefont module\_quadrature.f90}.
+ Quadrature rules for triangles up to order 20 are in \textcite{duna85} (1985) 
+ and also up to order 10 at \href{https://mathsfromnothing.au/triangle-quadrature-rules/}.
+ \subsection{read\_command\_line\_options}
 
- \subsubsection{recover\_pressure\_penalty}
+ \subsection{recover\_pressure\_penalty}
  This is scheme 4 in Section~\ref{psmoothing} (see \stone~12) which was proven to be 
  very cheap and very accurate. 
- \subsubsection{set\_default\_values}
+ \subsection{set\_default\_values}
  This subroutine assigns default values to many of the global variables.
- \subsubsection{set\_global\_parameters\_mapping}
- This subroutine computes mT,NT and assigns rT,sT,tT
+ \subsection{set\_global\_parameters\_mapping}
+ This subroutine computes {\tt mmapping} and assigns {\tt rmapping,smapping,tmapping}.
  \begin{itemize}
- \item supported spaces in 2D: Q1,Q2
- \item supported spaces in 3D: Q1,Q2
+ \item supported spaces in 2D: $Q_1$, $Q_2$, $Q_3$, $P_1$, $P_2$
+ \item supported spaces in 3D: $Q_1$, $Q_2$
  \end{itemize}
- \subsubsection{set\_global\_parameters\_pair}
- This subroutine computes {\tt mV,mP,mT,mL}.
- \subsubsection{set\_global\_parameters\_spaceP}
- This subroutine computes mP,NP and assigns rP,sP,tP
+ \subsection{set\_global\_parameters\_spaceP}
+ This subroutine computes {\tt mP,NP} and assigns {\tt rP,sP,tP}
  \begin{itemize}
- \item supported spaces in 2D: Q0,Q1,Q2
- \item supported spaces in 3D: Q0,Q1,Q2
+ \item supported spaces in 2D: $Q_0$,$Q_1$,$Q_2$,$P_0$,$P_1$,$P_2$
+ \item supported spaces in 3D: $Q_0$,$Q_1$,$Q_2$
  \end{itemize}
- \subsubsection{set\_global\_parameters\_spaceT}
- This subroutine computes mT,NT and assigns rT,sT,tT
+ \subsection{set\_global\_parameters\_spaceT}
+ This subroutine computes {\tt mT}, {\tt NT} and assigns {\tt rT,sT,tT}.
  \begin{itemize}
- \item supported spaces in 2D: Q1,Q2
- \item supported spaces in 3D: Q1,Q2
+ \item supported spaces in 2D: $Q_1$, $Q_2$
+ \item supported spaces in 3D: $Q_1$, $Q_2$
  \end{itemize}
- \subsubsection{set\_global\_parameters\_spaceV}
- This subroutine computes mV,nel,NV and assigns rV,sV,tV
+ \subsection{set\_global\_parameters\_spaceV}
+ This subroutine computes {\tt mU,mV,mW,nel,NU,NV,NW} and assigns 
+ {\tt rU,sU,tU,rV,sV,tV,rW,sW,tW}.
  \begin{itemize}
- \item supported spaces in 2D: Q1,Q2,Q1+
- \item supported spaces in 3D: Q1,Q2,Q1++
+ \item supported spaces in 2D: $Q_1$, $Q_2$, $Q_1^+$, $Q_3$, $P_1$, $P_2$
+ \item supported spaces in 3D: $Q_1$, $Q_2$, $Q_1^{++}$
  \end{itemize}
- \subsubsection{setup\_cartesian2D.f90}
+ \subsection{setup\_A}
+ Matrix A is the energy equation matrix.
+ If the geometry is Cartesian then the number of nonzeros in the matrix and its sparsity 
+ structures are computed in a very efficient way. 
+ \subsection{setup\_annulus}
+ The annulus is placed in the equatorial plane $(x,y)$.
+ We then use the cylindrical coordinates $(r,\phi)$ which correspond
+ to the spherical coordinates with $\theta=\pi/2$ (equator).
+ The mesh is built in the $(r,\phi)$ space.
+ \subsection{setup\_cartesian2D.f90}
  This subroutine assigns to every element the coordinates of the its velocity, pressure,
  and temperature nodes, the velocity, pressure and temperature connectivity arrays,
  the coordinates of its center (xc,yc), its integer coordinates (ielx, iely),
  and its dimensions (hx,hy).
- \begin{center}
- \input{tikz/tikz_3x2_q1}
- \end{center}
- \begin{verbatim}
- elt:  1  | iconV  1  2  6   5  iconP  1
- elt:  2  | iconV  2  3  7   6  iconP  2
- elt:  3  | iconV  3  4  8   7  iconP  3
- elt:  4  | iconV  5  6  10  9  iconP  4
- elt:  5  | iconV  6  7  11  10 iconP  5
- elt:  6  | iconV  7  8  12  11 iconP  6
- \end{verbatim}
- \begin{center}
- \input{tikz/tikz_3x2_mini}
- \end{center}
- \begin{verbatim}
- elt:  1  | iconV  1  2  6   5   13 iconP  1  2  6   5
- elt:  2  | iconV  2  3  7   6   14 iconP  2  3  7   6
- elt:  3  | iconV  3  4  8   7   15 iconP  3  4  8   7
- elt:  4  | iconV  5  6  10  9   16 iconP  5  6  10  9
- elt:  5  | iconV  6  7  11  10  17 iconP  6  7  11  10
- elt:  6  | iconV  7  8  12  11  18 iconP  7  8  12  11
- \end{verbatim}
- \begin{center}
- \input{tikz/tikz_3x2_q2}
- \end{center}
- \begin{verbatim}
- elt:  1  | iconV  1   2   3   8   9   10  15  16  17 iconP 1  2  6  5
- elt:  2  | iconV  3   4   5   10  11  12  17  18  19 iconP 2  3  7  6
- elt:  3  | iconV  5   6   7   12  13  14  19  20  21 iconP 3  4  8  7
- elt:  4  | iconV  15  16  17  22  23  24  29  30  31 iconP 5  6 10  9
- elt:  5  | iconV  17  18  19  24  25  26  31  32  33 iconP 6  7 11 10
- elt:  6  | iconV  19  20  21  26  27  28  33  34  35 iconP 7  8 12 11
- \end{verbatim}
- \subsubsection{setup\_cartesian3D.f90}
+ Supported velocity space:
+ \begin{itemize}
+ \item $Q_1$, $Q_1^+$, $Q_2$, $Q_3$
+ \item $P_1$, $P_1^+$, $P_2$, $P_2^+$
+ \end{itemize}
+ Supported pressure space:
+ \begin{itemize}
+ \item $Q_0$, $Q_1$, $Q_2$
+ \item $P_0$, $P_1$
+ \end{itemize}
+ \subsection{setup\_cartesian3D.f90}
  This subroutine assigns to every element the coordinates of the its velocity, pressure,
  and temperature nodes, the velocity, pressure and temperature connectivity arrays,
  the coordinates of its center (xc,yc,zc), its integer coordinates (ielx,iely,ielz),
  and its dimensions (hx,hy,hz).
- \subsubsection{solve\_energy}
+ Supported velocity space:
+ \begin{itemize}
+ \item $Q_1$, $Q_1^{++}$, $Q_2$ 
+ \end{itemize}
+ Supported pressure space:
+ \begin{itemize}
+ \item $Q_0$, $Q_1$
+ \end{itemize}
+ \subsection{setup\_GT}
+ This subroutine is a switch. Based on the value {\tt GT\_storage}, it will call the 
+ appropriate subroutine.
+ Note that if {\tt stokes\_solve\_strategy=='penalty'} then this subroutine is bypassed.
+ \subsection{setup\_GT\_matrix\_CSR}
+ This subroutine computes the number of non zeros of the matrix $\G$
+ and fills the corresponding arrays {\tt csrGT\%ia} and {\tt csrGT\%ja}.
+ \subsection{setup\_john}
+ Supported velocity space:
+ \begin{itemize}
+ \item $P_1$, $P_2$
+ \end{itemize}
+ Supported pressure space:
+ \begin{itemize}
+ \item $P_0$, $P_1$
+ \end{itemize}
+ \subsection{setup\_K\_blocks\_CSR}
+ probably some improvement to be found by only recomputing the ia,ja of all blocks only 
+ for a few specific velocity spaces. otherwise do it once and copy paste!
+ also the values in ja are not ordered from small to large.
+ \subsection{setup\_K\_blocks\_FULL}
+ This subroutine allocates (large) arrays which store the $\K_{\alpha,\beta}$ blocks
+ in full array format (not sparse). This should not be used for medium to large resolutions.
+ \subsection{setup\_K\_blocks\_MUMPS}
+
+ \subsection{setup\_K}
+ This subroutine acts as a switch. Depending on the value of {\tt K\_storage} it calls 
+ the appropriate subroutine. 
+ \subsection{setup\_K\_matrix\_COO}
+ This subroutine allocates arrays ia, ja, col, row, and mat of cooK, 
+ and builds arrays ia, ja, col, row.
+ \subsection{setup\_K\_matrix\_CSR}
+ This subroutine allocates arrays ia, ja, and mat of csrK, 
+ and builds arrays ia and ja.
+ \subsection{setup\_K\_matrix\_FULL}
+ This subroutine allocates two (large) arrays which store the $\K$ and $\G^T$ matrices
+ in full array format (not sparse). This should not be used for medium to large resolutions.
+ \subsection{setup\_K\_matrix\_MUMPS}
+
+ \subsection{setup\_mapping}
+ This subroutine computes the coordinates {\tt xM,yM,zM} of the mapping nodes for each element, 
+ as well as the corresponding connectivity array {\tt iconM}.
+ If the mapping polynomial space is identical to the velocity polynomial space, then 
+ the mapping nodes are the velocity nodes (same for connectivity array).
+ \subsection{setup\_MP\_and\_S}
+ This subroutine computes the structure of the pressure mass matrix. 
+ \subsection{solve\_energy}
  This routine solves the energy equation using a GMRES solver obtained from 
  \url{https://people.sc.fsu.edu/~jburkardt/f_src/mgmres/mgmres.html} 
- \subsubsection{solve\_KV\_eq\_f}
- This subroutine solves the system $\K\cdot \vec{V} = \vec{f}$. The matrix is 
- implicit passed as argument via the module but the rhs and the guess vector are 
- passed as arguments.
- If MUMPS is used the system is solved via MUMPS (the guess is vector
- is then neglected). Same if y12m solver is used. 
- Otherwise a call is made to the {\tt pcg\_solver\_csr} subroutine.
- \subsubsection{solve\_stokes}
- This subroutine solves the Stokes system: if it is a saddle point problem 
+ \subsection{solve\_stokes}
+ This subroutine solves the Stokes system. 
+ The employed strategy is as follows:
+ \begin{itemize}
+ \item {\tt stokes\_solve\_strategy='penalty'}: it calls the inner solver subroutine. 
+ \item {\tt stokes\_solve\_strategy='PCG'}:
  it does so using the preconditioned conjugate gradient (PCG) applied 
  to the Schur complement $\SSS$  (see Section~\ref{ss:schurpcg}).
- If the penalty method is used 
- \subsubsection{spmv\_kernels}
+ \item {\tt stokes\_solve\_strategy='SIMPLE'}:
+ \item {\tt stokes\_solve\_strategy='segregated'}:
+ \end{itemize}
+ \subsection{solve\_stokes\_PCG}
+ This outer iteration scheme is the Preconditioned Conjugate Gradient.
+ Let $\tilde{\bm P}_0 \in \mathbb{R}^n$ 
+ and $\tilde{\K}\cdot \tilde{\bm V}_1 = \tilde{f} - \tilde{\G} \cdot\tilde{\bm P}_0$.
+ Set ${\bm d}_1=-{\bm q}_1=\tilde{\G}^T \cdot {\bm V}_1 - \tilde{\bm h}$.
+ For $k=1,2,...$ find 
+ \begin{eqnarray}
+ {\bm \phi}_k &=& \tilde{\G} \cdot {\bm d}_k \\
+ {\bm t}_k    &=& \tilde{\K}^{-1} \cdot {\bm \phi}_k \label{eqinner}\\
+ \alpha_k &=& \frac{{\bm q}_k' \cdot {\bm q}_k}{{\bm \phi}_k' \cdot {\bm t}_k + {\bm d}_k \cdot \tilde{\C} \cdot {\bm d}_k} \\
+ \tilde{\bm P}_k &=& \tilde{\bm P}_{k-1} + \alpha_k {\bm d}_k \\
+ \tilde{\bm V}_{k+1} &=& \tilde{\bm V}_k -\alpha_k {\bm t}_k \\
+ {\bm q}_{k+1} &=& \tilde{\bm h} -(\tilde{\G}^T \cdot \tilde{\bm V}_{k+1} -\tilde{\C}\cdot \tilde{\bm P}_k )\\
+ \beta_k &=& \frac{{\bm q}_{k+1}' \cdot {\bm q}_{k+1}}{{\bm q}_k' \cdot {\bm q}_k } \\
+ {\bm d}_{k+1} &=& -{\bm q}_{k+1} + \beta_k {\bm d}_k
+ \end{eqnarray}
+ Refs: \textcite{elsw}, p82, Algorithm 2.2
+ \subsection{solve\_stokes\_SIMPLE}
+
+ \begin{enumerate}
+ \item compute the residuals 
+ \begin{eqnarray}
+ \vec{r}_{\cal V} &=& \vec{f} - \K \cdot \vec{\cal V}^{(k)} - \G \cdot \vec{\cal P}^{(k)} \nn\\
+ \vec{r}_{\cal P} &=& \vec{h} - \G^T \cdot \vec{\cal V}^{(k)} \nn
+ \end{eqnarray}
+ \item Solve $\K  \cdot \delta^\star \vec{\cal V}^k =  \vec{r}_{\cal V}^k  $
+ \item Solve $\hat{\SSS}\cdot\delta^\star\vec{\cal P}^k =\vec{r}_{\cal P}^k-\G^T\cdot\delta^\star V^k $
+ \item Compute $\delta \vec{\cal V}^k = \delta^\star \vec{\cal V}^k -{\bm D}_\K^{-1} \cdot \G \cdot \delta^\star \vec{\cal P}_k $
+ \item Update $\delta \vec{\cal P}^k = \delta^\star \vec{\cal P}^k$
+ \item Update 
+ \begin{eqnarray}
+ \vec{\cal V}^{(k+1)} &=& \vec{\cal V}^{(k)} + \omega_{\cal V} \delta \vec{\cal V}^{(k)} \nn\\
+ \vec{\cal P}^{(k+1)} &=& \vec{\cal P}^{(k)} + \omega_{\cal P} \delta \vec{\cal P}^{(k)} \nn
+ \end{eqnarray}
+ \end{enumerate}
+ where ${\bm D}_\K=diag(\K)$, $\hat{\SSS} = \G^T \cdot {\bm D}_\K^{-1} \cdot \G$ 
+ and the parameters $\omega_{\cal V}$ and 
+ $\omega_{\cal P}$ are between 0 and 1.
+
+ In the subroutine:
+ \begin{itemize}
+ \item $\vec{r}_{\cal V} \rightarrow$ {\tt resV(1:NfemVel)}
+ \item $\vec{r}_{\cal P} \rightarrow$ {\tt resP(1:NfemP)}
+ \item $\delta \vec{\cal P}^k \rightarrow$ {\tt dP(1:NfemP)}
+ \item $\delta^\star \vec{\cal P}^k \rightarrow$ {\tt dstarP(1:NfemP)}
+ \end{itemize}
+ \subsection{spmv\_kernels}
  This file contains the Sparse Matrix-Vector multiplication kernels (see Section~\ref{ss:spmv}).
- \subsubsection{swarm\_setup.f90}
+ \subsection{swarm\_setup.f90}
  This subroutine generates the swarm of particles. The layout is controled 
  by the {\tt init\_marker\_random} parameter.
  \begin{center}
- \includegraphics[width=5cm]{ELEFANT/images/swarm_reg} 
- \includegraphics[width=5cm]{ELEFANT/images/swarm_rand} 
+ \includegraphics[width=6cm]{ELEFANT/images/swarm_reg} 
+ \includegraphics[width=6cm]{ELEFANT/images/swarm_rand} 
  \end{center}
- \subsubsection{template}
+ \subsection{template}
 
- \subsubsection{test\_basis\_functions}
+ \subsection{test\_basis\_functions}
  This subroutine tests the consistency of the basis functions. 
  An analytical velocity field is prescribed (constant, linear or quadratic) and the 
  corresponding values are computed onto the quadrature points via the 
  (derivatives of the) basis functions.
  It generates three ascii files in the {\foldernamefont OUTPUT} folder which 
  are to be processed with the gnuplot script present there.
- \subsubsection{write\_stats}
+ \subsection{write\_stats}
  This subroutine writes in fort.1234 various statistics (istep, time, vrms, averages, 
  errors, ...) 
