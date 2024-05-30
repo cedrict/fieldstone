@@ -1,17 +1,35 @@
-rm -f errors
-rm -f errors_sr1
-rm -f errors_sr2
-rm -f errors_sr3
-rm -f vrms 
+#! /bin/bash
+rm -f errors*
+rm -f vrms* 
+rm -f area* 
 
-for l in 4 6 8 10 12 14 16 20 ; do
+for l in 4 6 8 10 12 14 16 20 24 28 32 40 48 64 80; do
 
-   python3 stone.py $l 0 > opla  
-   grep errv opla >> errors 
-   grep vrms opla >> vrms 
-   grep errexx1 opla >> errors_sr1 
-   grep errexx2 opla >> errors_sr2 
-   grep errexx3 opla >> errors_sr3 
+    echo nelr=$l 
+
+    echo 3x3 quadrature
+    python3 stone.py $l 0 3 > opla  
+    grep errv opla >> errors_3 
+    grep vrms opla >> vrms_3
+    grep area opla | grep meas >> area_3
+
+    echo 4x4 quadrature
+    python3 stone.py $l 0 4 > opla  
+    grep errv opla >> errors_4 
+    grep vrms opla >> vrms_4 
+    grep area opla | grep meas >> area_4
+
+    echo 5x5 quadrature
+    python3 stone.py $l 0 5 > opla  
+    grep errv opla >> errors_5 
+    grep vrms opla >> vrms_5
+    grep area opla | grep meas >> area_5
+
+    echo 6x6 quadrature
+    python3 stone.py $l 0 6 > opla  
+    grep errv opla >> errors_6 
+    grep vrms opla >> vrms_6
+    grep area opla | grep meas >> area_6
 
 done
 

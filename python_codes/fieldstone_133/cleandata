@@ -1,3 +1,6 @@
 rm *.vtu
 rm *.ascii
+rm area_*
+rm vrms_*
+rm errors_*
 

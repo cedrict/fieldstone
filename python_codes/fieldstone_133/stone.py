@@ -3,122 +3,85 @@ import math as math
 import sys as sys
 import scipy
 import scipy.sparse as sps
-#from scipy.sparse.linalg.dsolve import linsolve
 import time as timing
 import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix,lil_matrix
 
-#------------------------------------------------------------------------------
+benchmark=3
+
+###############################################################################
+
 def density(x,y,R1,R2,k,rho0,g0):
     r=np.sqrt(x*x+y*y)
     theta=math.atan2(y,x)
-    A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    fr=A*r+B/r
-    fpr=A-B/r**2
-    gr=A/2.*r + B/r*math.log(r) - 1./r
-    gpr=A/2.+B/r**2*(1.-math.log(r))+1./r**2
-    gppr=-B/r**3*(3.-2.*math.log(r))-2./r**3
-    alephr=gppr - gpr/r -gr/r**2*(k**2-1.) +fr/r**2  +fpr/r
-    val=k*math.sin(k*theta)*alephr + rho0 
-    return val
-
-def Psi(x,y,R1,R2,k):
-    r=np.sqrt(x*x+y*y)
-    theta=math.atan2(y,x)
-    A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    gr=A/2.*r + B/r*math.log(r) - 1./r
-    val=-r*gr*math.cos(k*theta)
+    if benchmark==1:
+       A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
+       B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
+       fr=A*r+B/r
+       fpr=A-B/r**2
+       gr=A/2.*r + B/r*math.log(r) - 1./r
+       gpr=A/2.+B/r**2*(1.-math.log(r))+1./r**2
+       gppr=-B/r**3*(3.-2.*math.log(r))-2./r**3
+       alephr=gppr - gpr/r -gr/r**2*(k**2-1.) +fr/r**2  +fpr/r
+       val=k*math.sin(k*theta)*alephr + rho0 
+    if benchmark==2:
+       val=1e6
+    if benchmark==3:
+       val=4000
     return val
 
 def velocity_x(x,y,R1,R2,k,rho0,g0):
     r=np.sqrt(x*x+y*y)
     theta=math.atan2(y,x)
-    A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    fr=A*r+B/r
-    fpr=A-B/r**2
-    gr=A/2.*r + B/r*math.log(r) - 1./r
-    hr=(2*gr-fr)/r
-    vr=k *gr * math.sin (k * theta)
-    vtheta = fr *math.cos(k* theta)
-    val=vr*math.cos(theta)-vtheta*math.sin(theta)
+    if benchmark==1:
+       A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
+       B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
+       fr=A*r+B/r
+       fpr=A-B/r**2
+       gr=A/2.*r + B/r*math.log(r) - 1./r
+       hr=(2*gr-fr)/r
+       vr=k *gr * math.sin (k * theta)
+       vtheta = fr *math.cos(k* theta)
+       val=vr*math.cos(theta)-vtheta*math.sin(theta)
+    if benchmark==2:
+       val=0
+    if benchmark==3:
+       val=0
     return val
 
 def velocity_y(x,y,R1,R2,k,rho0,g0):
     r=np.sqrt(x*x+y*y)
     theta=math.atan2(y,x)
-    A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    fr=A*r+B/r
-    fpr=A-B/r**2
-    gr=A/2.*r + B/r*math.log(r) - 1./r
-    hr=(2*gr-fr)/r
-    vr=k *gr * math.sin (k * theta)
-    vtheta = fr *math.cos(k* theta)
-    val=vr*math.sin(theta)+vtheta*math.cos(theta)
+    if benchmark==1:
+       A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
+       B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
+       fr=A*r+B/r
+       fpr=A-B/r**2
+       gr=A/2.*r + B/r*math.log(r) - 1./r
+       hr=(2*gr-fr)/r
+       vr=k *gr * math.sin (k * theta)
+       vtheta = fr *math.cos(k* theta)
+       val=vr*math.sin(theta)+vtheta*math.cos(theta)
+    if benchmark==2:
+       val=0
+    if benchmark==3:
+       val=0
     return val
 
 def pressure(x,y,R1,R2,k,rho0,g0):
     r=np.sqrt(x*x+y*y)
     theta=math.atan2(y,x)
-    A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    fr=A*r+B/r
-    gr=A/2.*r + B/r*math.log(r) - 1./r
-    hr=(2*gr-fr)/r
-    val=k*hr*math.sin(k*theta) + rho0*g0*(r-R2)
-    return val
-
-def sr_xx(x,y,R1,R2,k):
-    r=np.sqrt(x*x+y*y)
-    theta=math.atan2(y,x)
-    A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    gr=A/2.*r + B/r*math.log(r) - 1./r
-    gpr=A/2 + B*((1-math.log(r)) / r**2 ) +1./r**2
-    fr=A*r+B/r
-    fpr=A-B/r**2
-    err=gpr*k*math.sin(k*theta)
-    ert=0.5*(k**2/r*gr+fpr-fr/r)*math.cos(k*theta)
-    ett=(gr-fr)/r*k*math.sin(k*theta)
-    val=err*(math.cos(theta))**2\
-       +ett*(math.sin(theta))**2\
-       -2*ert*math.sin(theta)*math.cos(theta)
-    return val
-
-def sr_yy(x,y,R1,R2,k):
-    r=np.sqrt(x*x+y*y)
-    theta=math.atan2(y,x)
-    A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    gr=A/2.*r + B/r*math.log(r) - 1./r
-    gpr=A/2 + B*((1-math.log(r)) / r**2 ) +1./r**2
-    fr=A*r+B/r
-    fpr=A-B/r**2
-    err=gpr*k*math.sin(k*theta)
-    ert=0.5*(k**2/r*gr+fpr-fr/r)*math.cos(k*theta)
-    ett=(gr-fr)/r*k*math.sin(k*theta)
-    val=err*(math.sin(theta))**2\
-       +ett*(math.cos(theta))**2\
-       +2*ert*math.sin(theta)*math.cos(theta)
-    return val
-
-def sr_xy(x,y,R1,R2,k):
-    r=np.sqrt(x*x+y*y)
-    theta=math.atan2(y,x)
-    A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    gr=A/2.*r + B/r*math.log(r) - 1./r
-    gpr=A/2 + B*((1-math.log(r)) / r**2 ) +1./r**2
-    fr=A*r+B/r
-    fpr=A-B/r**2
-    err=gpr*k*math.sin(k*theta)
-    ert=0.5*(k**2/r*gr+fpr-fr/r)*math.cos(k*theta)
-    ett=(gr-fr)/r*k*math.sin(k*theta)
-    val=ert*(math.cos(theta)**2-math.sin(theta)**2)\
-       +(err-ett)*math.cos(theta)*math.sin(theta)
+    if benchmark==1:
+       A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
+       B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
+       fr=A*r+B/r
+       gr=A/2.*r + B/r*math.log(r) - 1./r
+       hr=(2*gr-fr)/r
+       val=k*hr*math.sin(k*theta) + rho0*g0*(r-R2)
+    if benchmark==2:
+       val=(R2-r)*1e6*g0
+    if benchmark==3:
+       val=(R2-r)*4000*g0
     return val
 
 def gx(x,y,g0):
@@ -129,29 +92,7 @@ def gy(x,y,g0):
     val=-y/np.sqrt(x*x+y*y)*g0
     return val
 
-def temperature(x,y,R1,R2,k):
-    r=np.sqrt(x*x+y*y)
-    theta=math.atan2(y,x)
-    A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    rgr=A/2.*r**2 + B*math.log(r) - 1.
-    val=rgr*math.cos(k*theta)
-    return val
-
-def temperature_grad(x,y,R1,R2,k):
-    r=np.sqrt(x*x+y*y)
-    theta=math.atan2(y,x)
-    A=2.*(math.log(R1)-math.log(R2))/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    B=(R2**2-R1**2)/(R2**2*math.log(R1)-R1**2*math.log(R2) )
-    gr=A/2.*r + B/r*math.log(r) - 1./r
-    fr=A*r+B/r
-    dTdr=fr*math.cos(k*theta)
-    dTdt=-gr*k*math.sin(k*theta)
-    valx=dTdr*math.cos(theta)-dTdt*math.sin(theta)
-    valy=dTdr*math.sin(theta)+dTdt*math.cos(theta)
-    return valx,valy,0.
-
-#------------------------------------------------------------------------------
+###############################################################################
 
 def NNV(rq,sq):
     NV_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
@@ -163,7 +104,8 @@ def NNV(rq,sq):
     NV_6=     (1.-rq**2) * 0.5*sq*(sq+1.)
     NV_7= 0.5*rq*(rq-1.) *     (1.-sq**2)
     NV_8=     (1.-rq**2) *     (1.-sq**2)
-    return NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,NV_6,NV_7,NV_8
+    return np.array([NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,\
+                     NV_6,NV_7,NV_8],dtype=np.float64)
 
 def dNNVdr(rq,sq):
     dNVdr_0= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
@@ -175,7 +117,8 @@ def dNNVdr(rq,sq):
     dNVdr_6=       (-2.*rq) * 0.5*sq*(sq+1)
     dNVdr_7= 0.5*(2.*rq-1.) *    (1.-sq**2)
     dNVdr_8=       (-2.*rq) *    (1.-sq**2)
-    return dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,dNVdr_6,dNVdr_7,dNVdr_8
+    return np.array([dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,\
+                     dNVdr_6,dNVdr_7,dNVdr_8],dtype=np.float64)
 
 def dNNVds(rq,sq):
     dNVds_0= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
@@ -187,19 +130,20 @@ def dNNVds(rq,sq):
     dNVds_6=     (1.-rq**2) * 0.5*(2.*sq+1.)
     dNVds_7= 0.5*rq*(rq-1.) *       (-2.*sq)
     dNVds_8=     (1.-rq**2) *       (-2.*sq)
-    return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8
+    return np.array([dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,\
+                     dNVds_6,dNVds_7,dNVds_8],dtype=np.float64)
 
 def NNP(rq,sq):
     NP_0=0.25*(1-rq)*(1-sq)
     NP_1=0.25*(1+rq)*(1-sq)
     NP_2=0.25*(1+rq)*(1+sq)
     NP_3=0.25*(1-rq)*(1+sq)
-    return NP_0,NP_1,NP_2,NP_3
+    return np.array([NP_0,NP_1,NP_2,NP_3],dtype=np.float64)
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 print("-----------------------------")
-print("--------stone 21-------------")
+print("--------stone 133------------")
 print("-----------------------------")
 
 ndim=2   # number of dimensions
@@ -208,40 +152,84 @@ mP=4     # number of nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-if int(len(sys.argv) == 3):
+if int(len(sys.argv) == 4):
    nelr = int(sys.argv[1])
    visu = int(sys.argv[2])
+   nqperdim = int(sys.argv[3])
 else:
-   nelr = 2
+   nelr = 128
    visu = 1
+   nqperdim=3
 
-R1=1.
-R2=2.
+if benchmark==1 or benchmark==2:
+   R1=1.
+   R2=2.
+   viscosity=1.
+   g0=1.
+   velunit=1
+   vunit=' '
+if benchmark==3:
+   R1=2890e3
+   R2=6370e3
+   viscosity=1e21
+   g0=10
+   velunit=1e-2/365.25/3600/24
+   vunit="cm/year"
 
 dr=(R2-R1)/nelr
-#nelt=12*nelr 
-nelt=4*nelr 
+nelt=12*nelr 
+#nelt=4*nelr 
 nel=nelr*nelt  
 
 rho0=0.
 kk=4
-g0=1.
 
-viscosity=1.  # dynamic viscosity \eta
+DJ=False
 
-eps=1.e-10
+###########################################
+# quadrature parameters
 
-qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
-qweights=[5./9.,8./9.,5./9.]
+if nqperdim==3:
+   qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
+   qweights=[5./9.,8./9.,5./9.]
+
+if nqperdim==4:
+   qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
+   qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
+   qw4a=(18-np.sqrt(30.))/36.
+   qw4b=(18+np.sqrt(30.))/36.
+   qcoords=[-qc4a,-qc4b,qc4b,qc4a]
+   qweights=[qw4a,qw4b,qw4b,qw4a]
+
+if nqperdim==5:
+   qc5a=np.sqrt(5.+2.*np.sqrt(10./7.))/3.
+   qc5b=np.sqrt(5.-2.*np.sqrt(10./7.))/3.
+   qc5c=0.
+   qw5a=(322.-13.*np.sqrt(70.))/900.
+   qw5b=(322.+13.*np.sqrt(70.))/900.
+   qw5c=128./225.
+   qcoords=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
+   qweights=[qw5a,qw5b,qw5c,qw5b,qw5a]
+
+if nqperdim==6:
+   qcoords=[-0.932469514203152,\
+            -0.661209386466265,\
+            -0.238619186083197,\
+            +0.238619186083197,\
+            +0.661209386466265,\
+            +0.932469514203152]
+   qweights=[0.171324492379170,\
+             0.360761573048139,\
+             0.467913934572691,\
+             0.467913934572691,\
+             0.360761573048139,\
+             0.171324492379170]
+
 
 rVnodes=[-1,1,1,-1,0,1,0,-1,0]
 sVnodes=[-1,-1,1,1,-1,0,1,0,0]
 
-sparse=True
-
-DJ=False
-
-#print(nelr,nelt,nel)
+eta_ref=viscosity
 
 #################################################################
 # grid point setup
@@ -310,12 +298,13 @@ for j in range(0, nelr):
         iconQ1[3,counter] = icon2
         counter += 1
     #end for
+#end for
 
-#################################################################
+###############################################################################
 # now that the grid has been built as if it was a Q1 grid, 
 # we can simply use these same points to arrive at a Q2 
 # connectivity array with 4 times less elements.
-#################################################################
+###############################################################################
 
 nelr=nelr//2
 nelt=nelt//2
@@ -345,8 +334,8 @@ for j in range(0, nelr):
         iconV[0,counter]=2*counter +2*j*nelt
         iconV[1,counter]=2*counter +2*j*nelt +4*nelt
         iconV[2,counter]=2*counter +2*j*nelt +4*nelt+2
-        iconV[3,counter]=2*counter +2*j*nelt + 2
-        iconV[4,counter]=2*counter +2*j*nelt + 2*nelt
+        iconV[3,counter]=2*counter +2*j*nelt +2
+        iconV[4,counter]=2*counter +2*j*nelt +2*nelt
         iconV[5,counter]=2*counter +2*j*nelt +4*nelt+1
         iconV[6,counter]=2*counter +2*j*nelt +2*nelt+2
         iconV[7,counter]=2*counter +2*j*nelt +1
@@ -355,7 +344,7 @@ for j in range(0, nelr):
            iconV[2,counter]-=2*nelt
            iconV[3,counter]-=2*nelt
            iconV[6,counter]-=2*nelt
-        print(counter,'|',iconV[0:mV,counter])
+        #print(counter,'|',iconV[0:mV,counter])
         counter += 1
 
 iconP =np.zeros((mP,nel),dtype=np.int32)
@@ -369,10 +358,10 @@ for j in range(0, nelr):
         if i==nelt-1:
            icon2-=nelt
            icon3-=nelt
-        iconP[0,counter] = icon1
-        iconP[1,counter] = icon4
-        iconP[2,counter] = icon3
-        iconP[3,counter] = icon2
+        iconP[0,counter]=icon1
+        iconP[1,counter]=icon4
+        iconP[2,counter]=icon3
+        iconP[3,counter]=icon2
         counter += 1
     #end for
 
@@ -403,14 +392,16 @@ print("building connectivity array (%.3fs)" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
+eps=1.e-10
+
 bc_fix = np.zeros(Nfem, dtype=bool)  
 bc_val = np.zeros(Nfem, dtype=np.float64) 
 
 for i in range(0,nnp):
-    if uprho[i]<R1+eps:
+    if uprho[i]/R1<1+eps:
        bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = velocity_x(xV[i],yV[i],R1,R2,kk,rho0,g0)
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i],R1,R2,kk,rho0,g0)
-    if uprho[i]>(R2-eps):
+    if uprho[i]/R2>(1-eps):
        bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = velocity_x(xV[i],yV[i],R1,R2,kk,rho0,g0)
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i],R1,R2,kk,rho0,g0)
 
@@ -422,13 +413,13 @@ print("defining boundary conditions (%.3fs)" % (timing.time() - start))
 start = timing.time()
 
 area=np.zeros(nel,dtype=np.float64) 
-NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
-dNNNVdr  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-dNNNVds  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
+NNNV    = np.zeros(mV,dtype=np.float64) 
+dNNNVdr = np.zeros(mV,dtype=np.float64) 
+dNNNVds = np.zeros(mV,dtype=np.float64) 
 
 for iel in range(0,nel):
-    for jq in [0,1,2]:
-        for iq in [0,1,2]:
+    for jq in range(0,nqperdim):
+        for iq in range(0,nqperdim):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
@@ -440,13 +431,6 @@ for iel in range(0,nel):
                uprho_tilde=0.5*(R2-R1)/nelr
                uptheta_bar=0.5*(2*np.pi/nelt)
                uprho_q=NNNV.dot(uprho[iconV[:,iel]])
-               uptheta_q=uptheta[iconV[8,iel]]+sq/2*(2*np.pi/nelt)
-               #print(iq,jq,uprho_q,uptheta_q/np.pi*180,uprho_tilde,uptheta_bar/np.pi*180)
-               jcb[0,0] = np.cos(uptheta_q)*uprho_tilde
-               jcb[0,1] = np.sin(uptheta_q)*uprho_tilde
-               jcb[1,0] =-np.sin(uptheta_q)*uprho_q*uptheta_bar
-               jcb[1,1] = np.cos(uptheta_q)*uprho_q*uptheta_bar
-               #end for
                jcob=uprho_q*uprho_tilde*uptheta_bar
             else:
                #this is J_CL
@@ -464,8 +448,8 @@ for iel in range(0,nel):
 #end for
 
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
-print("     -> total area (meas) %.10f " %(area.sum()))
-print("     -> total area (anal) %.10f " %(np.pi*(R2**2-R1**2)))
+print("     -> total area (meas) %.13f | %d" %(area.sum(),nelr))
+print("     -> total area (anal) %.13f " %(np.pi*(R2**2-R1**2)))
 
 print("compute elements areas: %.3f s" % (timing.time() - start))
 
@@ -474,25 +458,20 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-if sparse:
-   A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
-else:   
-   K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-   G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
-f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
-h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
-
-b_mat = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
-N_mat = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
-NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
-NNNP    = np.zeros(mP,dtype=np.float64)           # shape functions P
-dNNNVdx  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-dNNNVdy  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-dNNNVdr  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-dNNNVds  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-u     = np.zeros(nnp,dtype=np.float64)          # x-component velocity
-v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
-c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
+f_rhs    = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
+h_rhs    = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
+b_mat    = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
+N_mat    = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
+NNNV     = np.zeros(mV,dtype=np.float64)           # shape functions V
+NNNP     = np.zeros(mP,dtype=np.float64)           # shape functions P
+dNNNVdx  = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVdy  = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVdr  = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVds  = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+u        = np.zeros(nnp,dtype=np.float64)          # x-component velocity
+v        = np.zeros(nnp,dtype=np.float64)          # y-component velocity
+c_mat    = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 for iel in range(0,nel):
 
@@ -503,8 +482,8 @@ for iel in range(0,nel):
     h_el=np.zeros((mP*ndofP),dtype=np.float64)
 
     # integrate viscous term at 4 quadrature points
-    for jq in [0,1,2]:
-        for iq in [0,1,2]:
+    for jq in range(0,nqperdim):
+        for iq in range(0,nqperdim):
 
             # position & weight of quad. point
             rq=qcoords[iq]
@@ -538,12 +517,9 @@ for iel in range(0,nel):
                jcbi[1,1] = np.cos(uptheta_q)/uptheta_bar/uprho_q
                #end for
                jcob=uprho_q*uprho_tilde*uptheta_bar
-
                xq=uprho_q*np.cos(uptheta_q) 
                yq=uprho_q*np.sin(uptheta_q) 
-
             else:
-
                #this is J_CL
                for k in range(0,mV):
                    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
@@ -553,10 +529,8 @@ for iel in range(0,nel):
                #end for 
                jcob = np.linalg.det(jcb)
                jcbi = np.linalg.inv(jcb) # J_CL
-
                xq=NNNV.dot(xV[iconV[:,iel]])
                yq=NNNV.dot(yV[iconV[:,iel]])
-
             #end if
 
             # compute dNdx & dNdy
@@ -592,6 +566,8 @@ for iel in range(0,nel):
         #end for jq
     #end for iq
 
+    G_el*=eta_ref/R2
+
     # impose b.c. 
     for k1 in range(0,mV):
         for i1 in range(0,ndofV):
@@ -621,18 +597,12 @@ for iel in range(0,nel):
                 for i2 in range(0,ndofV):
                     jkk=ndofV*k2          +i2
                     m2 =ndofV*iconV[k2,iel]+i2
-                    if sparse:
-                       A_sparse[m1,m2] += K_el[ikk,jkk]
-                    else:
-                       K_mat[m1,m2]+=K_el[ikk,jkk]
+                    A_sparse[m1,m2] += K_el[ikk,jkk]
             for k2 in range(0,mP):
                 jkk=k2
                 m2 =iconP[k2,iel]
-                if sparse:
-                   A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
-                   A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
-                else:
-                   G_mat[m1,m2]+=G_el[ikk,jkk]
+                A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
+                A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
             #end for 
             f_rhs[m1]+=f_el[ikk]
         #end for 
@@ -644,12 +614,6 @@ for iel in range(0,nel):
 
 #end for iel
 
-if not sparse:
-   print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
-   print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
-
-#exit()
-
 print("build FE matrixs & rhs (%.3fs)" % (timing.time() - start))
 
 #################################################################
@@ -657,20 +621,11 @@ print("build FE matrixs & rhs (%.3fs)" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-if not sparse:
-   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)
-   a_mat[0:NfemV,0:NfemV]=K_mat
-   a_mat[0:NfemV,NfemV:Nfem]=G_mat
-   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-
 rhs=np.zeros(Nfem,dtype=np.float64)
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
     
-if sparse:
-   sparse_matrix=A_sparse.tocsr()
-else:
-   sparse_matrix=sps.csr_matrix(a_mat)
+sparse_matrix=A_sparse.tocsr()
 
 sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
@@ -682,29 +637,33 @@ print("solving system (%.3fs)" % (timing.time() - start))
 start = timing.time()
 
 u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
-p=sol[NfemV:Nfem]
+p=sol[NfemV:Nfem]*eta_ref/R2
 
-print("     -> u (m,M) %.6f %.6f " %(np.min(u),np.max(u)))
-print("     -> v (m,M) %.6f %.6f " %(np.min(v),np.max(v)))
+print("     -> u (m,M) %.8f %.8f %a" %(np.min(u)/velunit,np.max(u)/velunit,vunit))
+print("     -> v (m,M) %.8f %.8f %a" %(np.min(v)/velunit,np.max(v)/velunit,vunit))
 
 #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 
 vr= np.cos(uptheta)*u+np.sin(uptheta)*v
 vt=-np.sin(uptheta)*u+np.cos(uptheta)*v
     
-print("     -> vr (m,M) %.6f %.6f " %(np.min(vr),np.max(vr)))
-print("     -> vt (m,M) %.6f %.6f " %(np.min(vt),np.max(vt)))
+print("     -> vr (m,M) %.8f %.8f %r" %(np.min(vr)/velunit,np.max(vr)/velunit,vunit))
+print("     -> vt (m,M) %.8f %.8f %r" %(np.min(vt)/velunit,np.max(vt)/velunit,vunit))
 
 print("reshape solution (%.3fs)" % (timing.time() - start))
 
 #################################################################
 # normalise pressure
+#CAREFUL: pressure normalisation is not 100% clean !!!
 #################################################################
 start = timing.time()
 
-poffset=np.sum(p[0:nelt])/(nelt) ### CHECK!!!!!
-
-p-=poffset
+if benchmark==1:
+   poffset=np.sum(p[0:nelt])/(nelt) 
+   p-=poffset
+if benchmark==2 or benchmark==3:
+   poffset=np.sum(p[NP-nelt:NP])/(nelt) 
+   p-=poffset
 
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
@@ -718,24 +677,40 @@ start = timing.time()
 np.savetxt('p_R1.ascii',np.array([xP[0:nelt],yP[0:nelt],p[0:nelt]]).T)
 np.savetxt('p_R2.ascii',np.array([xP[NP-nelt:NP],yP[NP-nelt:NP],p[NP-nelt:NP]]).T)
 
+#compute analytical pressure solution on nodes
+pth=np.zeros(NP,dtype=np.float64)
+for i in range(NP):
+    pth[i]=pressure(xP[i],yP[i],R1,R2,k,rho0,g0)
+
+np.savetxt('pressure.ascii',np.array([xP,yP,p,pth]).T)
+
 print("export p on R1,R2 (%.3fs)" % (timing.time() - start))
+
+#################################################################
+# scale velocities for error calculations and vtu output
+#################################################################
+
+u/=velunit
+v/=velunit
+vr/=velunit
+vt/=velunit
 
 #################################################################
 # compute error
 #################################################################
 start = timing.time()
 
-NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
-dNNNVdr  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-dNNNVds  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
+NNNV    = np.zeros(mV,dtype=np.float64) # shape functions V
+dNNNVdr = np.zeros(mV,dtype=np.float64) # shape functions derivatives
+dNNNVds = np.zeros(mV,dtype=np.float64) # shape functions derivatives
 
 errv=0.
 errp=0.
 vrms=0.
 for iel in range (0,nel):
 
-    for jq in [0,1,2]:
-        for iq in [0,1,2]:
+    for jq in range(0,nqperdim):
+        for iq in range(0,nqperdim):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
@@ -785,8 +760,10 @@ for iel in range (0,nel):
     # end for iq
 # end for iel
 
-errv=np.sqrt(errv)
-errp=np.sqrt(errp)
+areath=np.pi*(R2**2-R1**2)
+
+errv=np.sqrt(errv/areath)
+errp=np.sqrt(errp/areath)
 
 vrms=np.sqrt(vrms/np.pi/(R2**2-R1**2))
 
@@ -825,19 +802,19 @@ if visu==1:
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(x,y)' Format='ascii'> \n")
    for i in range(0,nnp):
-       vtufile.write("%10f %10f %10f \n" %(u[i],v[i],0.))
+       vtufile.write("%e %e %e \n" %(u[i],v[i],0.))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(th)' Format='ascii'> \n")
    for i in range(0,nnp):
-       vtufile.write("%13e %13e %13e \n" %(velocity_x(xV[i],yV[i],R1,R2,kk,rho0,g0),\
-                                           velocity_y(xV[i],yV[i],R1,R2,kk,rho0,g0),0.))
+       vtufile.write("%e %e %e \n" %(velocity_x(xV[i],yV[i],R1,R2,kk,rho0,g0),\
+                                     velocity_y(xV[i],yV[i],R1,R2,kk,rho0,g0),0.))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(error)' Format='ascii'> \n")
    for i in range(0,nnp):
-       vtufile.write("%10f %10f %10f \n" %(u[i]-velocity_x(xV[i],yV[i],R1,R2,kk,rho0,g0),\
-                                           v[i]-velocity_y(xV[i],yV[i],R1,R2,kk,rho0,g0),0.))
+       vtufile.write("%e %e %e \n" %(u[i]-velocity_x(xV[i],yV[i],R1,R2,kk,rho0,g0),\
+                                     v[i]-velocity_y(xV[i],yV[i],R1,R2,kk,rho0,g0),0.))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(r,theta)' Format='ascii'> \n")
@@ -858,36 +835,6 @@ if visu==1:
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='density' Format='ascii'> \n")
    for i in range(0,nnp):
        vtufile.write("%10f \n" %density(xV[i],yV[i],R1,R2,kk,rho0,g0))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='Psi' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10f \n" %Psi(xV[i],yV[i],R1,R2,kk))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='exx (th)' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10f \n" %(sr_xx(xV[i],yV[i],R1,R2,kk)))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='eyy (th)' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10f \n" %(sr_yy(xV[i],yV[i],R1,R2,kk)))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='exy (th)' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10f \n" %(sr_xy(xV[i],yV[i],R1,R2,kk)))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='T (th)' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%10f \n" %(temperature(xV[i],yV[i],R1,R2,kk)))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='T grad' Format='ascii'> \n")
-   for i in range(0,nnp):
-       vtufile.write("%13e %13e %13e \n" %(temperature_grad(xV[i],yV[i],R1,R2,kk)))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' Name='q (th)' Format='ascii'> \n")
