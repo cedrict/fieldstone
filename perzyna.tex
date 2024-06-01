@@ -362,7 +362,9 @@ I find it difficult to wrap my head around this as the continuity equation
 is usually derived by other means. 
 If $C_1$ is not zero, then dilation occurs, the material is not incompressible
 so density should also change...  
-
+On the other hand this is a 'problem' only when the bracket is nonzero, i.e. when
+plasticity is activated. If the Macaulay bracket is zero, then we recover 
+the zero divergence constraint.
 
 %-------------------------------------------------------------------------------------------------
 \subsection{von Mises plasticity following Zienkiewicz (1975)}
@@ -544,10 +546,7 @@ $\eta$ is a scalar viscosity.
 However, if $Q$ is such that $C_3\neq 0$, then we have a problem because 
 even by setting $n=1$ I do not know how to arrive at a scalar viscosity, 
 and even thinking of $\eta$ as a tensor then I am stuck, see Section about 
-Choi \& Petersen (2015).
-
-
-
+Choi \& Petersen (2015) hereafter.
 
 
 \newpage
@@ -557,8 +556,7 @@ Choi \& Petersen (2015).
 For implementation details, please look at \stone~39. 
 
 The original paper \cite{chpe15} is in 2D and focuses on the MC criterion. 
-The authors state that the conservation of mass equation 
-should be 
+The authors state that the mass conservation equation should be 
 \[
 \frac{\partial v_x}{\partial x}
 +
@@ -569,7 +567,7 @@ R=2 \sin \psi \; \dot{\varepsilon}^p
 where where $R$ is the dilation rate, $\Psi$ is the dilation angle and
 $\dot{\varepsilon}^p$ is the square root of the second invariant of the deviatoric plastic strain rate tensor.
 
-After multiple reads, I originally had many questions:
+After multiple reads of their paper, I originally had many questions:
 \begin{itemize}
 \item where does this dilation rate $R$ come from ? 
 \item after reading \textit{many} papers or textbooks on plasticity 
@@ -578,7 +576,7 @@ it from scratch with a coherent set of notations (preferably mine in fieldstone)
 \item is this relationship still valid in 3D?
 \item is it the same term for Drucker-Prager ?
 \end{itemize}
-
+Time to investigate ...
 \vspace{1cm}
 
 Let us first look at their Eq.~(3)  in which  
@@ -712,9 +710,8 @@ Assuming $\phi(x)=x$ for convenience here and the argument of the brackets is po
 \gamma \left(\tau_e - Y \right)
 \frac{1}{2 \tau_e} {\bm \tau}  \label{eq:evpcp15}
 \end{eqnarray}
-If we follow the procedure of Zienkiewicz (1975) , then the deviatoric part
-of the equation above would yield a 
-viscosity
+If we follow the procedure of Zienkiewicz (1975) of the previous section, then the deviatoric part
+of the equation above would yield a viscosity
 \begin{eqnarray}
 \eta 
 &=& \frac{Y}{2  \dot\varepsilon_e^{vp}}
@@ -764,7 +761,7 @@ dilation rate of \textcite{chpe15}!
 \subsection{my take on this in 3D for Drucker-Prager}
 
 
-I have established in Section~\ref{ss:dpcriterion} that in the general 3D case
+I have established in Section~\ref{sec:dpcriterion} that in the general 3D case
 \begin{equation}
 F^{\text{\tiny DP}}= \alpha(\phi,c) {\cal I}_1({\bm \sigma}) + \sqrt{ {\cal I}_2({\bm \tau})  } + k(\phi,c) 
 =\sqrt{  {\cal I}_2({\bm \tau})  } -Y 

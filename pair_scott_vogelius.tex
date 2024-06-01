@@ -1,16 +1,8 @@
 
 It originates in \fullcite{scvo85} (1985). 
 
-\begin{center}
-\includegraphics[width=10cm]{images/pair_scott_vogelius/john_scott_vogelius}\\
-\captionfont{Taken from John \cite[p70]{john16}.} 
-\end{center}
-
-See also \textcite{jolm17} (2017) in which the P2P1, SV (P2P-1), Bernardi-Raugel, and P2+P-1 elements 
-are compared for a thermo-mechanically driven convection problem in a triangle (see \stone~51, 
-although I use the P1+P1 element in this stone).
  
-In Chapter 9 of \textcite{bobm13} we find: 
+In Chapter 9 of \textcite{bobf13} we find: 
 ``
 We also remark that the discontinuous
 pressure version of the Hood–Taylor element typically
@@ -47,4 +39,40 @@ Powell–Sabin split.
 Barycentrically refined triangle (also known as Alfeld split) on the left,
 and Powell–Sabin split on the right. Taken from \textcite{fams21} (2021).}
 \end{center}
+
+\textcite{cael11} (2011) state:
+``
+The SV element pair is not yet very well known,
+and so we now give a brief description of it. In essence, the SV pair is the same as
+the Taylor-Hood pair except that the pressure space is discontinuous and either
+(i) for $k \ge d$, the mesh is a barycenter reﬁnement of a regular mesh, or
+(ii) for $k = 2, d = 3$, the mesh is formed from a barycenter reﬁned mesh by
+connecting the barycenter nodes (i.e., a Powell–Sabin tetrahedralization).
+In short, polynomials of degree $k$ and $k-1$ are used to approximate the velocity
+and pressure spaces, respectively, and the mesh ${\cal T}_h$ that is used must be derived from
+a regular triangulation (tetrahedralization) of $\Omega$, where each element is reﬁned as
+stated above. With these mesh constructions, it was proved by Zhang in [42, 44] that
+the SV elements are LBB stable, and, consequently, also have optimal approximation
+properties. It is well known that the TH pair is LBB stable and admits optimal
+approximation properties for these cases as well [9]. We will restrict our deﬁnition of
+SV elements to these cases where they are LBB stable.
+''
+
+
+
+See also \textcite{jolm17} (2017) in which the $P_2\times P_1$, Scott-Vogelius ($P_2\times P_{-1}$), 
+Bernardi-Raugel, and $P_2^+\times P_{-1}$ elements 
+are compared for a thermo-mechanically driven convection problem in a triangle (see \stone~51, 
+although I use the $P_1^+\times P_1$ element in this stone).
+
+
+\begin{center}
+\includegraphics[width=10cm]{images/pair_scott_vogelius/john_scott_vogelius}\\
+\captionfont{Taken from John \cite[p70]{john16}.} 
+\end{center}
+
+
+In \cite{befh21} the authors use this element as $(P_3)^2-P_2^{\text{disc}}$.
+
+\url{https://defelement.com/elements/scott-vogelius.html}
 
