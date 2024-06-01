@@ -1,10 +1,13 @@
 import numpy as np
 import sys as sys
-import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix, lil_matrix
 import time as timing
 from numpy import linalg as LA
+import scipy
+import scipy.sparse as sps
+import matplotlib.pyplot as plt
+from scipy.sparse import csr_matrix,lil_matrix
+
+method=2
 
 #------------------------------------------------------------------------------
 
@@ -367,7 +370,7 @@ nq=9*nel
 eta_ref=1.e23      # scaling of G blocks
 scaling_coeff=eta_ref/Ly
    
-use_srn_diff=True
+use_srn_diff=False # diffusion plasticity
 
 #################################################################
 
@@ -503,7 +506,12 @@ print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 #------------------------------------------------------------------------------
 # non-linear iterations
 #------------------------------------------------------------------------------
-c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+
+if method==1:
+   c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+else:
+   c_mat = np.array([[4,-2,0],[-2,4,0],[0,0,3]],dtype=np.float64) 
+   c_mat/=3
 
 dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
@@ -542,7 +550,6 @@ for iter in range(0,niter):
    A_sparse= lil_matrix((Nfem,Nfem),dtype=np.float64) # FEM stokes matrix 
    rhs     = np.zeros(Nfem,dtype=np.float64)          # right hand side of Ax=b
    N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64)  # N matrix  
-   M_mat   = np.zeros((NfemP,NfemP),dtype=np.float64) # schur precond
    f_rhs   = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
    h_rhs   = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
    xq      = np.zeros(9*nel,dtype=np.float64)         # x coords of q points 
@@ -561,7 +568,6 @@ for iter in range(0,niter):
        K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
        G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
        h_el=np.zeros((mP*ndofP),dtype=np.float64)
-       M_el=np.zeros((mP,mP),dtype=np.float64)  
 
        # integrate viscous term at 4 quadrature points
        for jq in [0,1,2]:
@@ -635,7 +641,7 @@ for iter in range(0,niter):
                    viscosity(exxq,eyyq,exyq,pq[counter],cohesion,phi,\
                    iter,xq[counter],yq[counter],eta_m,eta_v)
 
-               dilation_rate=two_sin_psi*srq_vp[counter]*0.5
+               dilation_rate=two_sin_psi*srq_vp[counter] #*0.5 ##why *0.5 ?!?!
 
                # compute elemental a_mat matrix
                K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq[counter]*weightq*jcob
@@ -645,10 +651,11 @@ for iter in range(0,niter):
                    f_el[ndofV*i+0]+=NNNV[i]*jcob*weightq*gx(xq,yq)*rho
                    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy(xq,yq)*rho
 
-               #add to it dilation term
-               for i in range(0,mV):
-                   f_el[ndofV*i+0]-=2./3.*dNNNVdx[i]*jcob*weightq*etaq[counter]*dilation_rate
-                   f_el[ndofV*i+1]-=2./3.*dNNNVdy[i]*jcob*weightq*etaq[counter]*dilation_rate
+               #add to it dilation term if method is 1
+               if method==1:
+                  for i in range(0,mV):
+                      f_el[ndofV*i+0]-=2./3.*dNNNVdx[i]*jcob*weightq*etaq[counter]*dilation_rate
+                      f_el[ndofV*i+1]-=2./3.*dNNNVdy[i]*jcob*weightq*etaq[counter]*dilation_rate
 
                for i in range(0,mP):
                    N_mat[0,i]=NNNP[i]
@@ -658,12 +665,6 @@ for iter in range(0,niter):
                G_el-=b_mat.T.dot(N_mat)*weightq*jcob
                 
                h_el[:]-=NNNP[:]*dilation_rate*weightq*jcob
-
-               for i in range(0,mP):
-                   for j in range(0,mP):
-                       M_el[i,j]+=NNNP[i]*NNNP[j]*weightq*jcob/etaq[counter]
-                   # end for j
-               # end for i
 
                counter+=1
            # end for iq 
@@ -714,10 +715,6 @@ for iter in range(0,niter):
        for k1 in range(0,mP):
            m1=iconP[k1,iel]
            h_rhs[m1]+=h_el[k1]*scaling_coeff
-           for k2 in range(0,mP):
-               m2=iconP[k2,iel]
-               M_mat[m1,m2]+=M_el[k1,k2]
-           #end for k2 
        #end for k1
 
    # end for iel 
@@ -741,7 +738,7 @@ for iter in range(0,niter):
           h_rhs[NfemP-1]=0
 
    ######################################################################
-   # assemble K, G, GT, f, h into A and rhs
+   # assemble f, h into rhs and solve
    ######################################################################
    start = timing.time()
 
