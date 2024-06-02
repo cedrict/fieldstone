@@ -54,17 +54,15 @@ If the flow is incompressible then the deviatoric stress tensor is given by
 One then discards the unnecessary line and column in the tensor, leaving a $2\times 2$ matrix.
 Finding the principal stress components is then trivial since we have done it in 2D already.
 
-
-
 It is important to keep in mind that the invariants we need to implement 
-the rheologies are ${\cal I}_1({\bm \sigma})$,  ${\cal I}_2({\bm \tau})$ and ${\cal I}_3({\bm \tau})$.
-By formulating our yield surfaces with pressure $p=-{\cal I}_1({\bm \sigma})/3$ we can then 
+the rheologies are ${\III}_1({\bm \sigma})$,  ${\III}_2({\bm \tau})$ and ${\III}_3({\bm \tau})$.
+By formulating our yield surfaces with pressure $p=-{\III}_1({\bm \sigma})/3$ we can then 
 avoid confusion, and since the other two invariants are functions of ${\bm \tau}$ the pressure 
 term does not pose any problem: simply set $\tau_{xz}$, $\tau_{yz}$ and $\tau_{zz}$ to zero in the 
 equations of Section~\ref{sec:stress_invariants} and we obtain:
 \begin{eqnarray}
-{\cal I}_2({\bm \tau}) &=&\frac{1}{2}(\tau_{xx}^2 + \tau_{yy}^2 ) + \tau_{xy}^2 \\ 
-{\cal I}_3({\bm \tau}) 
+{\III}_2({\bm \tau}) &=&\frac{1}{2}(\tau_{xx}^2 + \tau_{yy}^2 ) + \tau_{xy}^2 \\ 
+{\III}_3({\bm \tau}) 
 &=& \frac{1}{3} \tau_{xx} (  \tau_{xx}^2 + 3 \tau_{xy}^2 ) 
 + \frac{1}{3} \tau_{yy} (3 \tau_{xy}^2 +   \tau_{yy}^2 )   \nn\\
 &=& \frac{1}{3}(  \tau_{xx}^3 + 3 \tau_{xx}\tau_{xy}^2  
@@ -105,7 +103,7 @@ the $xy$-plane so that the $z$ component of the equation becomes:
 and since we have $\partial_z \rightarrow 0$ anyways this equation 
 is automatically fulfilled. Then, we might as well proceed 
 by considering that the stress tensor is in fact 2D as the third row/column
-has no incidence. In that case the pressure is given by $p=-{\cal I}_1(\bm\sigma)/2$.
+has no incidence. In that case the pressure is given by $p=-{\III}_1(\bm\sigma)/2$.
 In the plasticity yield criterion or plastic potential we will 
 need the full stress ${\bm \sigma}$ only via its first invariant (i.e. the pressure). 
 The other two invariants are those of the deviatoric stress. 
@@ -114,7 +112,7 @@ Let us start from the deviatoric stress tensor:
 \[
 \bm\tau
 =
-\bm\sigma - \frac12 {\cal I}_1(\bm\sigma)
+\bm\sigma - \frac12 {\III}_1(\bm\sigma)
 =
 \left(\begin{array}{cc}
 \sigma_{xx} & \sigma_{xy} \\ 
@@ -154,7 +152,7 @@ and the effective deviatoric stress
 \]
 
 
-Remark: Using the form of ${\cal I}_2(\bm\tau)$ above one arrives at  
+Remark: Using the form of ${\III}_2(\bm\tau)$ above one arrives at  
 \begin{eqnarray}
 \frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{xx}} 
 &=&  2 \frac{1}{2}  \frac{\sigma_{xx}-\sigma_{yy}}{2} = \tau_{xx}\nn \\

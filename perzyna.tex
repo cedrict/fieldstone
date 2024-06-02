@@ -1,6 +1,14 @@
 \begin{flushright} {\tiny {\color{gray} perzyna.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
+The Perzyna formulation is mentioned in \url{
+https://en.wikipedia.org/wiki/Viscoplasticity}.
+It is a rate-dependent plasticity formulation that was proposed in 1966 by Piotr Perzyna \cite{perz66}.
+See also \url{https://neml.readthedocs.io/en/dev/vp_flow/perzyna.html}.
+
+
+
 In what follows I make use of the approach and notations of \textcite{zico74} (and all 
 the 1974-75 papers that follow) and \textcite{owhi}.
 
@@ -43,21 +51,21 @@ ${\bm \varepsilon}^{vp}$ stands for the visco-plastic strain tensor.
 
 The yield condition is given as 
 \[
-F({\bm \sigma},\kappa) 
+{\FFF}({\bm \sigma},\kappa) 
 = \Psi(\bm\sigma,\bm{\dot\varepsilon}) -Y(\kappa) = 0
 \]
-with $F<0$ denoting the purely elastic region, $\kappa$ is a 
+with ${\FFF}<0$ denoting the purely elastic region, $\kappa$ is a 
 history-dependent hardening/softening parameter and $Y(\kappa)$ is a static yield stress.
 $\Psi$ is a function of the stress and/or strain rate invariants.
 
-We borrow from classical viscoplasticity theory (Perzyna \cite{perz66,perz88}) the idea of 
-a plastic potential defined as $Q({\bm \sigma})$ and write
+We borrow from classical viscoplasticity theory (\textcite{perz66} (1966), \textcite{perz88} (1988)) the idea of 
+a plastic potential defined as $\QQQ({\bm \sigma})$ and write
 \begin{equation}
 {\dot{\bm \varepsilon}}^{vp} 
 = \gamma \Big\langle
-\phi\left( F \right) 
+\phi\left( {\FFF} \right) 
 \Big\rangle
-\frac{\partial Q}{\partial \bm\sigma}
+\frac{\partial \QQQ}{\partial \bm\sigma}
 \end{equation}
 where $\gamma$ is a positive, possibly time-dependent fluidity parameter. 
 Note that sometimes the pseudo-viscosity $\bar{\eta}=\gamma^{-1}$ is defined \cite{zigo74}
@@ -65,11 +73,11 @@ so that the equation above writes:
 \begin{equation}
 {\dot{\bm \varepsilon}}^{vp} 
 = \frac{1}{\bar{\eta}} \Big\langle
-\phi\left( F \right) 
+\phi\left( {\FFF} \right) 
 \Big\rangle
-\frac{\partial Q}{\partial \bm\sigma}
+\frac{\partial \QQQ}{\partial \bm\sigma}
 \end{equation}
-$F$ represents the plastic yield condition.
+${\FFF}$ represents the plastic yield condition.
 $\phi(x)$ is a positive scalar-valued monotonic increasing function in the range 
 $x>0$ such that $\phi^{-1}(x)$ exists and possess similar properties in the same range. 
 The notation $\langle \rangle$ denotes the Macaulay 
@@ -81,9 +89,10 @@ a difference with wikipedia!}
 \langle \phi(x) \rangle = \phi(x) & {\rm if} & x>0 \nonumber\\
 \langle \phi(x) \rangle = 0 & {\rm if} & x\le 0 \nonumber
 \end{eqnarray}
-If $Q=F$ then we speak of an associative law and if $Q \neq F$ we have a non-associative situation. 
-The tensor $\frac{\partial Q}{\partial \bm\sigma}$ represents the direction
-of plastic flow and when $F=Q$ it is a vector directed normal to the yield surface
+If ${\QQQ}={\FFF}$ then we speak of an {\it associative} law and if ${\QQQ} \neq {\FFF}$ 
+we have a {\it non-associative} situation. 
+The tensor $\frac{\partial \QQQ}{\partial \bm\sigma}$ represents the direction
+of plastic flow and when ${\FFF}={\QQQ}$ it is a vector directed normal to the yield surface
 at the stress point under consideration. This is potentially problematic in the 
 case of the Tresca and Mohr-Coulomb yield surfaces since the normal is not well defined
 along the apices of the surfaces (see Section~7.6 of \textcite{owhi}).
@@ -92,217 +101,208 @@ principal  stress space during plastic flow is not the same
 as the direction of the vector normal to the yield surface.
 
 In what follows we concentrate our attention on isotropic materials for which 
-both $F$ and $Q$ can be defined in terms of stress invariants.
+both ${\FFF}$ and ${\QQQ}$ can be defined in terms of stress invariants.
 
-According to \textcite{zihl75} (1975):"One of the main stumbling blocks of the 
+According to \textcite{zihl75} (1975):
+\begin{displayquote}
+{\color{darkgray}
+One of the main stumbling blocks of the 
 classical plasticity theory lay in the universal
 assumption, based on Drucker's postulates (Drucker and Prager, 1952), that the plastic 
 behaviour is `associated'. With the use of Mohr-Coulomb type yield envelopes to define the
 limit between states of elasticity and of continuing irreversible deformation,
 the associated behaviour manifestly contradicted observation and gave excessive dilation.
 It became necessary therefore to extend plasticity ideas to a `non-associated'
-form in which the plastic potential and yield surfaces are defined separately".
+form in which the plastic potential and yield surfaces are defined separately.}
+\end{displayquote}
 At the same time, it is worth remembering that these early studies mostly dealt
 with plasticity in metals, and later soils, but not kilometer-scale crustal layers.
 
 Also, the Perzyna model is not the only one, see for instance
 the Duvaut-Lions viscoplastic model or the Consistency model \cite{wasd97,hesd02}.
 
-
-
-
-
-
-%The visco-plastic strain rate is given by 
-%\[
-%\dot{\bm\varepsilon}^{vp} = \gamma \langle \phi(F) \rangle 
-%\frac{\partial Q}{\partial \bm\sigma}
-%\]
-We therefore need to look into the derivative of the plastic potential $Q$
+We therefore need to look into the derivative of the plastic potential ${\QQQ}$
 with respect to the stress tensor. Since the potential 
-is expressed as a function of the stress invariants ${\cal I}_1(\bm\sigma)$,
-${\cal I}_2(\bm\tau)$ and $\theta_L(\bm\tau)$, we then have\footnote{
-The derivative of the Lod\'e angle was obtained in Section~\ref{ss:XXXXXX}}:
+is expressed as a function of the stress invariants ${\III}_1(\bm\sigma)$,
+${\III}_2(\bm\tau)$ and $\theta_L(\bm\tau)$, we then have\footnote{
+The derivative of the Lod\'e angle was obtained in Section~\ref{ss:lode}}:
 
 \begin{eqnarray}
-\frac{\partial Q}{\partial \bm\sigma}
+\frac{\partial \QQQ}{\partial \bm\sigma}
 &=&
-\frac{\partial }{\partial \bm\sigma} Q({\cal I}_1(\bm\sigma),{\cal I}_2(\bm\tau),\theta_{\rm L}(\bm\tau))\nn\\
-%&=&
-%\frac{\partial Q}{\partial {\cal I}_1(\bm\sigma)} 
-%\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} 
-%+
-%\frac{\partial Q}{\partial {\cal I}_2(\bm\tau)} 
-%\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
-%+
-%\frac{\partial Q}{\partial \theta_{\rm L}(\bm\tau)} 
-%\frac{\partial \theta_{\rm L}(\bm\tau)}{\partial \bm\sigma} \nn\\
+\frac{\partial }{\partial \bm\sigma} \QQQ\left({\III}_1(\bm\sigma),{\III}_2(\bm\tau),\theta_{\rm L}(\bm\tau)\right)\nn\\
 &=&
-\frac{\partial Q}{\partial {\cal I}_1(\bm\sigma)} 
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} 
+\frac{\partial \QQQ}{\partial {\III}_1(\bm\sigma)} 
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma} 
 +
-\frac{\partial Q}{\partial \sqrt{{\cal I}_2(\bm\tau)}} 
-\frac{\partial \sqrt{ {\cal I}_2(\bm\tau)}   }{\partial {\cal I}_2(\bm\tau)} 
-\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
+\frac{\partial \QQQ}{\partial \sqrt{{\III}_2(\bm\tau)}} 
+\frac{\partial \sqrt{ {\III}_2(\bm\tau)}   }{\partial {\III}_2(\bm\tau)} 
+\frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} 
 +
-\frac{\partial Q}{\partial \theta_{\rm L}(\bm\tau)} 
+\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)} 
 \frac{\partial \theta_{\rm L}(\bm\tau)}{\partial \bm\sigma} \nn\\
 &=&
-\frac{\partial Q}{\partial {\cal I}_1(\bm\sigma)} 
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} 
+\frac{\partial \QQQ}{\partial {\III}_1(\bm\sigma)} 
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma} 
 +
-\frac{\partial Q}{\partial \sqrt{{\cal I}_2(\bm\tau)}} 
-\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }
-\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
--
-\frac{\partial Q}{\partial \theta_{\rm L}(\bm\tau)} 
-\frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
-\left[
--\frac32  \frac{ {\cal I}_3(\bm\tau)   }{ {\cal I}_2(\bm\tau)^{5/2}}
-\; \frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
-+  \frac{1}{{\cal I}_2(\bm\tau)^{3/2}} 
-\; \frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma} 
-\right] \nn\\
-&=&
-\frac{\partial Q}{\partial {\cal I}_1(\bm\sigma)} 
-\; \frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} 
-+  
-\left(\frac{\partial Q}{\partial \sqrt{{\cal I}_2(\bm\tau)}} 
-\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
-+
-\frac{\partial Q}{\partial \theta_{\rm L}(\bm\tau)} 
-\frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
-\frac32  \frac{ {\cal I}_3(\bm\tau)   }{ {\cal I}_2(\bm\tau)^{5/2}}
-\right)
-\; \frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} \nn\\
+\frac{\partial \QQQ}{\partial \sqrt{{\III}_2(\bm\tau)}} 
+\frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }
+\frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} 
+\nn\\
 &&
 -
-\frac{\partial Q}{\partial \theta_{\rm L}(\bm\tau)} 
+\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)} 
 \frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
-\frac{1}{{\cal I}_2(\bm\tau)^{3/2}} 
-\; \frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma} \nn\\
+\left[
+-\frac32  \frac{ {\III}_3(\bm\tau)   }{ {\III}_2(\bm\tau)^{5/2}}
+\; \frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} 
++  \frac{1}{{\III}_2(\bm\tau)^{3/2}} 
+\; \frac{\partial {\III}_3(\bm\tau)}{\partial \bm\sigma} 
+\right] \nn\\
+&=&
+\frac{\partial \QQQ}{\partial {\III}_1(\bm\sigma)} 
+\; \frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma} 
++  
+\left(\frac{\partial \QQQ}{\partial \sqrt{{\III}_2(\bm\tau)}} 
+\frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }   
++
+\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)} 
+\frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
+\frac32  \frac{ {\III}_3(\bm\tau)   }{ {\III}_2(\bm\tau)^{5/2}}
+\right)
+\; \frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} \nn\\
+&&
+-
+\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)} 
+\frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
+\frac{1}{{\III}_2(\bm\tau)^{3/2}} 
+\; \frac{\partial {\III}_3(\bm\tau)}{\partial \bm\sigma} \nn\\
 &=& 
-C_1  \frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} 
+C_1  \frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma} 
 +
-C_2  \frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
+C_2  \frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} 
 +
-C_3  \frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma} 
+C_3  \frac{\partial {\III}_3(\bm\tau)}{\partial \bm\sigma} 
 \end{eqnarray}
 i.e.
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
-\frac{\partial Q}{\partial \bm\sigma}
+\frac{\partial \QQQ}{\partial \bm\sigma}
 &=& 
 C_1 {\bm a}_1 +
 C_2 {\bm a}_2 +
 C_3 {\bm a}_3 
 =
-C_1  \frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} 
+C_1  \frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma} 
 +
-C_2  \frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
+C_2  \frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} 
 +
-C_3  \frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma} 
+C_3  \frac{\partial {\III}_3(\bm\tau)}{\partial \bm\sigma} 
 \end{eqnarray}
 \end{mdframed}
-where the $C_{1,2,3}$ coefficients depend on the plastic potential $Q$
+where the $C_{1,2,3}$ coefficients depend on the plastic potential $\QQQ$
 and the stress invariants as follows:
 \begin{eqnarray}
-C_1 &=&  \frac{\partial Q}{\partial {\cal I}_1(\bm\sigma)} \\
+C_1 &=&  \frac{\partial \QQQ}{\partial {\III}_1(\bm\sigma)} \\
 C_2 
-&=& \frac{\partial Q}{\partial \sqrt{{\cal I}_2(\bm\tau)}} 
-\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
+&=& \frac{\partial \QQQ}{\partial \sqrt{{\III}_2(\bm\tau)}} 
+\frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }   
 +
-\frac{\partial Q}{\partial \theta_{\rm L}(\bm\tau)} 
+\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)} 
 \frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
-\frac32  \frac{ {\cal I}_3(\bm\tau)   }{ {\cal I}_2(\bm\tau)^{5/2}} \nn\\
+\frac32  \frac{ {\III}_3(\bm\tau)   }{ {\III}_2(\bm\tau)^{5/2}} \nn\\
 &=& 
-\frac{\partial Q}{\partial \sqrt{{\cal I}_2(\bm\tau)}} 
-\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
+\frac{\partial \QQQ}{\partial \sqrt{{\III}_2(\bm\tau)}} 
+\frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }   
 -
 \frac12
-\frac{\tan 3\theta_{\rm L}}{ {\cal I}_2(\bm\tau)}
-\frac{\partial Q}{\partial \theta_{\rm L}(\bm\tau)}  \nn\\
+\frac{\tan 3\theta_{\rm L}}{ {\III}_2(\bm\tau)}
+\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)}  \nn\\
 &=& 
-\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
+\frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }   
 \left(
-\frac{\partial Q}{\partial \sqrt{{\cal I}_2(\bm\tau)}} 
+\frac{\partial \QQQ}{\partial \sqrt{{\III}_2(\bm\tau)}} 
 -
-\frac{\tan 3\theta_{\rm L}}{\sqrt {{\cal I}_2(\bm\tau)}}
-\frac{\partial Q}{\partial \theta_{\rm L}(\bm\tau)}  
-\right)
+\frac{\tan 3\theta_{\rm L}}{\sqrt {{\III}_2(\bm\tau)}}
+\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)}  
+\right) \nn
 \\
 C_3 &=&  
 -
 \frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
-\frac{1}{{\cal I}_2(\bm\tau)^{3/2}} 
-\frac{\partial Q}{\partial \theta_{\rm L}(\bm\tau)} 
+\frac{1}{{\III}_2(\bm\tau)^{3/2}} 
+\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)} 
 \end{eqnarray}
 These are identical to those of Eq.~(7.71) in Owen \& Hinton\footnote{This is 
-not exactly true: the factor  $\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)} }$
+not exactly true: the factor  $\frac{1}{2 \sqrt{ {\III}_2(\bm\tau)} }$
 is absent in their Eq.~(7.71) but it is to be found in their Eq.~(7.70).}:
 \begin{center}
-\fbox{\includegraphics[width=10cm]{images/perzyna/owenhinton2}}
+\fbox{\includegraphics[width=12cm]{images/perzyna/owenhinton2}}
 \end{center}
 
 \noindent Note that we already have established (see Section~\ref{ss:recapInv}) that  
 \begin{eqnarray}
-{\bm a}_1 =\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} &=& {\bm 1} \\
-{\bm a}_2 =\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} &=& {\bm \tau} \\
-{\bm a}_3 =\frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma} 
-&=& \bm\tau\cdot\bm\tau -\frac23  {\cal I}_2(\bm\tau){\bm 1}
+{\bm a}_1 =\frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma} &=& {\bm 1} \nn\\
+{\bm a}_2 =\frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} &=& {\bm \tau} \nn\\
+{\bm a}_3 =\frac{\partial {\III}_3(\bm\tau)}{\partial \bm\sigma} 
+&=& \bm\tau\cdot\bm\tau -\frac23  {\III}_2(\bm\tau){\bm 1} \nn
 \end{eqnarray}
-with
+with (we will need these soon)
 \begin{eqnarray}
 \textrm{Tr}[{\bm a}_1]=
-{\rm tr}\left[ \frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} \right] &=& 3 \\  
+{\rm tr}\left[ \frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma} \right] &=& 3 \\  
 \textrm{Tr}[{\bm a}_2]=
-{\rm tr}\left[ \frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma}   \right] &=& 0 \\
+{\rm tr}\left[ \frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma}   \right] &=& 0 \\
 \textrm{Tr}[{\bm a}_3]=
-{\rm tr}\left[ \frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma}   \right] &=& {\rm tr}[\bm\tau\cdot\bm\tau] - 2  {\cal I}_2(\bm\tau) = 2  {\cal I}_2(\bm\tau) -2  {\cal I}_2(\bm\tau) = 0 
+{\rm tr}\left[ \frac{\partial {\III}_3(\bm\tau)}{\partial \bm\sigma}   \right] &=& 
+{\rm tr}[\bm\tau\cdot\bm\tau] - 2  {\III}_2(\bm\tau) = 2  {\III}_2(\bm\tau) -2  {\III}_2(\bm\tau) = 0 
 \end{eqnarray}
 
-Then the generic form of the plastic potential derivative also reads
+The generic form of the plastic potential derivative then reads 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
-\frac{\partial Q}{\partial \bm\sigma}
+\frac{\partial \QQQ}{\partial \bm\sigma}
 &=&
 C_1 {\bm 1} 
 +
 C_2 {\bm \tau} 
 +
-C_3  \left( \bm\tau\cdot\bm\tau - \frac23  {\cal I}_2(\bm\tau)  {\bm 1} \right)
+C_3  \left( \bm\tau\cdot\bm\tau - \frac23  {\III}_2(\bm\tau)  {\bm 1} \right)
 \end{eqnarray}
 \end{mdframed}
 
 The momentum conservation equation that we solve is 
 \[
 -\vec\nabla p + \vec\nabla \cdot \left[
-2 \eta \dot{\bm\varepsilon}^d 
+2 \eta \dot{\bm\varepsilon}^d(\vec\upnu) 
 \right]+ \rho \vec g = \vec 0
 \]
-so we need the deviatoric strain rate tensor. 
-We here assume for simplicity that there is only a visco-plastic element in the system, 
+so we need the {\it deviatoric} strain rate tensor. 
+We here assume for simplicity that there is only a visco-plastic element in the system
+(or that the other mechanisms are deviatoric), 
 i.e. $\dot{\bm\varepsilon}=\dot{\bm\varepsilon}^{vp}$.
 Then 
 \begin{eqnarray}
 \dot{\bm\varepsilon}^d 
 &=& \dot{\bm\varepsilon}^{vp} - \frac13 {\rm tr}[ \dot{\bm\varepsilon}^{vp}] {\bm 1} \nn\\
-&=& \gamma \langle \phi(F) \rangle 
+&=& \gamma \langle \phi(\FFF) \rangle 
 \left\{
-\left(C_1 \bm 1 + C_2 \bm\tau + C_3 (\bm\tau\cdot\bm\tau-\frac23 {\cal I}_2(\bm\tau)\bm 1)\right)
--\frac13
-{\rm tr}
-\left[C_1 \bm 1 + C_2 \bm\tau + C_3 (\bm\tau\cdot\bm\tau-\frac23 {\cal I}_2(\bm\tau)\bm 1)\right]
-\bm 1
+\left(C_1 {\bm a}_1 + C_2 {\bm a}_2 + C_3 {\bm a}_3 \right)
+-\frac13 {\rm tr} \left(C_1 {\bm a}_1 + C_2 {\bm a}_2 + C_3 {\bm a}_3 \right) {\bm 1}
 \right\} \nn\\
-&=& \gamma \langle \phi(F) \rangle 
+&=& \gamma \langle \phi(\FFF) \rangle 
 \left\{
-\left(C_1 \bm 1 + C_2 \bm\tau + C_3 (\bm\tau\cdot\bm\tau-\frac23 {\cal I}_2(\bm\tau)\bm 1)\right)
--\frac13 3C_1
-\bm 1
+\left(C_1 {\bm a}_1 + C_2 {\bm a}_2 + C_3 {\bm a}_3 \right)
+-\frac13 
+C_1 3  {\bm 1}
 \right\} \nn\\
-&=& \gamma \langle \phi(F) \rangle 
-\left(C_2 \bm\tau + C_3 (\bm\tau\cdot\bm\tau-\frac23 {\cal I}_2(\bm\tau)\bm 1)\right)
+&=& \gamma \langle \phi(\FFF) \rangle 
+\left\{
+\left(C_1 \bm 1 + C_2 \bm\tau + C_3 (\bm\tau\cdot\bm\tau-\frac23 {\III}_2(\bm\tau)\bm 1)\right)
+-C_1 \bm 1
+\right\} \nn\\
+&=& \gamma \langle \phi(\FFF) \rangle 
+\left(C_2 \bm\tau + C_3 (\bm\tau\cdot\bm\tau-\frac23 {\III}_2(\bm\tau)\bm 1)\right)
 \end{eqnarray}
 The $C_{1,2,3}$ coefficients have been computed in 
 Sections~\ref{sec:vMcriterion}, \ref{sec:trcriterion}, \ref{sec:dpcriterion} and 
@@ -312,10 +312,10 @@ Sections~\ref{sec:vMcriterion}, \ref{sec:trcriterion}, \ref{sec:dpcriterion} and
 \begin{footnotesize}
 \begin{tabular}{lccc}
 \hline
-& $C_1$ & $C_2(\times \frac{1}{2 \sqrt{{\cal I}_2({\bm \tau})}})$ & $C_3$ \\
+& $C_1$ & $C_2(\times \frac{1}{2 \sqrt{{\III}_2({\bm \tau})}})$ & $C_3$ \\
               \hline\hline
 Tresca         &0 & $2 \cos\theta_{\rm L} ( 1 + {\color{teal}2} \tan\theta_{\rm L}  \tan 3\theta_{\rm L})$ &
-$\frac{\sqrt{3}}{{\cal I}_2({\bm \tau}) } \frac{\sin\theta_{\rm L} }{\cos 3\theta_{\rm L}}$
+$\frac{\sqrt{3}}{{\III}_2({\bm \tau}) } \frac{\sin\theta_{\rm L} }{\cos 3\theta_{\rm L}}$
 \\ \\
 von Mises      &0& {\color{teal}1}& 0 \\ \\ 
 Mohr-Coulomb   & $\frac13 \sin\phi$ & 
@@ -326,7 +326,7 @@ $
 ( {\color{teal}2}\tan 3\theta_{\rm L} - \tan\theta_{\rm L}) \right]$
 &
 $\frac{\sqrt{3}\sin\theta_{\rm L} +  \sin \phi \cos \theta_{\rm L}}
-{2 {\cal I}_2({\bm \tau}) \cos 3\theta_{\rm L}}$ 
+{2 {\III}_2({\bm \tau}) \cos 3\theta_{\rm L}}$ 
 \\ \\
 Drucker-Prager & $\alpha$ & 1 & 0 \\  
 \hline
@@ -343,16 +343,47 @@ yield value.
 This table supposedly presents all three $C_{1,2,3}$ coefficients 
 for all four plastic potentials/yield functions (associative plasticity).
 This is however not the case: the $C_2$ column is not $C_2$ but 
-$\partial F/\partial\sqrt I_2$!
+$\partial \FFF/\partial\sqrt I_2$!
 }
 \end{center}
 
 
 Also, the continuity equation for incompressible flow contains the divergence 
 of the velocity field, and in this case 
-\[
-\vec\nabla\cdot\vec\upnu = {\rm tr}[\dot{\bm\varepsilon}^{vp}] =  \gamma \langle \phi(F) \rangle  3 C_1
-\]
+\begin{eqnarray}
+\vec\nabla\cdot\vec\upnu 
+&=& {\rm tr}[\dot{\bm\varepsilon}^{vp}]  \nn\\
+&=& {\rm tr}\left[ 
+\gamma \Big\langle
+\phi\left( {\FFF} \right) 
+\Big\rangle
+\frac{\partial \QQQ}{\partial \bm\sigma}
+\right] \nn\\
+&=& 
+\gamma \Big\langle
+\phi\left( {\FFF} \right) 
+\Big\rangle
+{\rm tr}\left[
+C_1  \frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma} 
++
+C_2  \frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} 
++
+C_3  \frac{\partial {\III}_3(\bm\tau)}{\partial \bm\sigma} 
+\right] \nn\\
+&=&
+\gamma \Big\langle
+\phi\left( {\FFF} \right) 
+\Big\rangle
+{\rm tr}\left[
+C_1 {\bm 1} 
++
+C_2 {\bm \tau} 
++
+C_3  \left( \bm\tau\cdot\bm\tau - \frac23  {\III}_2(\bm\tau)  {\bm 1} \right)
+\right] \nn\\
+&=&  \gamma \langle \phi(\FFF) \rangle  3 C_1
+\end{eqnarray}
+
 %If $C_3=0$, as in the vM or DP case, then we have a relationship between
 %deviatoric strain rate and stress that involves a scalar. 
 %If not, then a 4th order tensor is needed. This is bad news. 
@@ -369,47 +400,36 @@ the zero divergence constraint.
 %-------------------------------------------------------------------------------------------------
 \subsection{von Mises plasticity following Zienkiewicz (1975)}
 
-%In this case $F^{\text{\tiny vM}}= \sqrt{{\cal I}_2(\bm\tau)} - Y$.
-%and 
-%$Q^{\text{\tiny vM}}=\sqrt{{\cal I}_2(\bm\tau)}$.
 What follows is borrowed from Zienkiewicz (1975) \cite{zien75}.
-
-%Let us start by recalling the effective deviatoric stress 
-%and strain rates once again:
-%\begin{equation}
-%\tau_{e}=\sqrt{{\cal I}_2({\bm \tau})}
-%\quad\quad\quad
-%\dot{\varepsilon}_{e}=\sqrt{{\cal I}_2(\dot{\bm \varepsilon}^d)}
-%\end{equation}
 
 \begin{center}
 \fbox{\includegraphics[width=6cm]{images/perzyna/zien75}}\\
 {\captionfont Taken from \textcite{zien75}.}
 \end{center}
 
-We start from section 13.4.2 of the paper with the Perzyna formulation of the plastic strain
-\footnote{from which I have removed the unnecessary/uncommon $\sqrt 3$ terms}. 
+We start from section 13.4.2 of the paper with the Perzyna formulation of the plastic 
+strain\footnote{from which I have removed the unnecessary/uncommon $\sqrt 3$ terms}. 
 \[
-\dot{\bm \varepsilon}^{vp} = \gamma \langle \phi(F) \rangle \frac{\partial Q}{\partial \bm\sigma}
+\dot{\bm \varepsilon}^{vp} = \gamma \langle \phi({\FFF}) \rangle \frac{\partial \QQQ}{\partial \bm\sigma}
 \]
-Associative plasticity is used, i.e. $F^{\text{\tiny vM}}=Q^{\text{\tiny vM}}$, and the von Mises yield
-criterion is $F^{\text{\tiny vM}}=\sqrt{{\cal I}_2(\bm \tau)}- Y$ so
+Associative plasticity is used, i.e. ${\FFF}^{\text{\tiny vM}}={\cal \QQQ}^{\text{\tiny vM}}$, and the von Mises yield
+criterion is ${\FFF}^{\text{\tiny vM}}=\sqrt{{\III}_2(\bm \tau)}- Y$ so
 \begin{eqnarray}
 \dot{\bm \varepsilon}^{vp} 
-&=& \gamma \Big\langle \phi\left(\sqrt{{\cal I}_2(\bm \tau)}- Y\right)  \Big\rangle 
-\frac{\partial (\sqrt{{\cal I}_2(\bm \tau)}- Y)}{\partial \bm\sigma} \nn\\
-&=& \gamma \big\langle \phi\left(\sqrt{{\cal I}_2(\bm \tau)}- Y\right)  \Big\rangle 
-\frac{\partial \sqrt{{\cal I}_2(\bm \tau)}}{\partial \bm\sigma} \nn\\
-&=& \gamma \Big\langle \phi\left(\sqrt{{\cal I}_2(\bm \tau)}- Y\right)  \Big\rangle 
-\frac{1}{2 \sqrt{{\cal I}_2(\bm \tau)}} \frac{\partial {\cal I}_2(\bm \tau)}{\partial \bm\sigma}
+&=& \gamma \Big\langle \phi\left(\sqrt{{\III}_2(\bm \tau)}- Y\right)  \Big\rangle 
+\frac{\partial (\sqrt{{\III}_2(\bm \tau)}- Y)}{\partial \bm\sigma} \nn\\
+&=& \gamma \big\langle \phi\left(\sqrt{{\III}_2(\bm \tau)}- Y\right)  \Big\rangle 
+\frac{\partial \sqrt{{\III}_2(\bm \tau)}}{\partial \bm\sigma} \nn\\
+&=& \gamma \Big\langle \phi\left(\sqrt{{\III}_2(\bm \tau)}- Y\right)  \Big\rangle 
+\frac{1}{2 \sqrt{{\III}_2(\bm \tau)}} \frac{\partial {\III}_2(\bm \tau)}{\partial \bm\sigma}
 \end{eqnarray}
 Using results of Section~\ref{ss:recapInv} for the partial derivative of the second invariant
 we find\footnote{This is the same equation as Eq.~(14) of 
 \textcite{zijo78}}:
 \begin{eqnarray}
 \dot{\bm \varepsilon}^{vp} 
-&=& \gamma \Big\langle \phi\left(\sqrt{{\cal I}_2(\bm \tau)}- Y \right)  \Big\rangle 
-\frac{1}{2 \sqrt{{\cal I}_2(\bm \tau)}} {\bm \tau}
+&=& \gamma \Big\langle \phi\left(\sqrt{{\III}_2(\bm \tau)}- Y \right)  \Big\rangle 
+\frac{1}{2 \sqrt{{\III}_2(\bm \tau)}} {\bm \tau}
 \end{eqnarray}
 which we can also write\footnote{There most likely is a confusion in 
 the paper between $\sigma$ and $\tau$ there.}
@@ -419,8 +439,8 @@ the paper between $\sigma$ and $\tau$ there.}
 \qquad
 {\rm with}
 \qquad
-\frac{1}{2\eta} = \gamma \Big\langle \phi(\sqrt{{\cal I}_2(\bm \tau)}- Y) \Big\rangle 
-\frac{1}{2 \sqrt{{\cal I}_2(\bm \tau)}}
+\frac{1}{2\eta} = \gamma \Big\langle \phi(\sqrt{{\III}_2(\bm \tau)}- Y) \Big\rangle 
+\frac{1}{2 \sqrt{{\III}_2(\bm \tau)}}
 \]
 Note that it here follows that the flow is incompressible since 
 the visco-plastic strain rate tensor is proportional to the deviatoric stress tensor
@@ -433,32 +453,32 @@ so it is deviatoric itself!
 
 From the definition of the second moment invariant:
 \[
-{\cal I}_2(\bm\tau)
+{\III}_2(\bm\tau)
 =\frac12 \bm\tau:\bm\tau 
 =\frac12 (2\eta \dot{\bm \varepsilon}^{vp}):(2\eta \dot{\bm \varepsilon}^{vp})
-=4 \eta^2   \frac12 \dot{\bm \varepsilon}^{vp}: \dot{\bm \varepsilon}^{vp}
-=4\eta^2 {\cal I}_2(\dot{\bm \varepsilon}^{vp})
+=4 \eta^2   \left(\frac12 \dot{\bm \varepsilon}^{vp}: \dot{\bm \varepsilon}^{vp}\right)
+=4\eta^2 {\III}_2  \dot{\bm \varepsilon}^{vp}_e
 \]
 from which $\eta$ can be found as a function of strain rates and 
-hence $\bm\Gamma(\dot{\bm\varepsilon})$ becomes available.
+hence $\bm\Gamma(\dot{\bm\varepsilon})$ becomes available (WHAT IS GAMMA?!).
 Note that annoyingly the author defines the second invariant as 
 $2 \dot{\bm\varepsilon}:\dot{\bm\varepsilon}$ in Eq.~(13.50) of the paper.
 
 It follows that 
 \[
-\tau_e =\sqrt{{\cal I}_2(\bm\tau)}=2\eta \dot{\varepsilon}_e^{vp}
+\tau_e =\sqrt{{\III}_2(\bm\tau)}=2\eta \dot{\varepsilon}_e^{vp}
 \]
 
 Then we drop the $\langle \cdot \rangle$ as we assume to be above yield and 
-we also assume a power-law form $\phi(F)=F^n$ so that 
+we also assume a power-law form $\phi(\FFF)=\FFF^n$ so that 
 we can solve explicitly for $\eta$:
 
 \begin{eqnarray}
 \frac{1}{2\eta} 
-&=& \gamma \Big\langle \phi(\sqrt{{\cal I}_2(\bm \tau)}- Y)  \big\rangle 
-\frac{1}{2 \sqrt{{\cal I}_2(\bm \tau)}} \nn\\
+&=& \gamma \Big\langle \phi(\sqrt{{\III}_2(\bm \tau)}- Y)  \big\rangle 
+\frac{1}{2 \sqrt{{\III}_2(\bm \tau)}} \nn\\
 \frac{1}{2\eta} 
-&=& \gamma \left(2\eta \sqrt{{\cal I}_2(\dot{\bm\varepsilon})}- Y\right)^n  \frac{1}{2 \; 2 \eta \sqrt{{\cal I}_2(\dot{\bm\varepsilon})}} \nn\\
+&=& \gamma \left(2\eta \sqrt{{\III}_2(\dot{\bm\varepsilon})}- Y\right)^n  \frac{1}{2 \; 2 \eta \sqrt{{\III}_2(\dot{\bm\varepsilon})}} \nn\\
 \frac{1}{2\eta} 
 &=& \gamma \left(2\eta \dot\varepsilon_e - Y\right)^n  \frac{1}{2 \; 2 \eta \dot\varepsilon_e } \nn\\
 2 \dot\varepsilon_e
@@ -492,7 +512,7 @@ The equation above is then the sum of the 'plastic viscosity' and the 'viscous c
 Note that the expression above is very similar to the one for Bingham or Herschel-Bulkley visco-plastic
 models.
 
-If $n=1$ then we find (as in Vilotte \etal (1982) \cite{vidm82})
+If $n=1$ then we find (as in \textcite{vidm82} (1982))
 \begin{eqnarray}
 \eta 
 &=& \frac{ Y }{2  \dot\varepsilon_e}
@@ -505,23 +525,35 @@ For pure plasticity then $\gamma \rightarrow \infty$ and we have here simply
 \[
 \eta = \frac{Y}{2  \dot\varepsilon_e}
 \]
-As stated in Vilotte etal (1982) \cite{vidm82}: ``The plastic
-flow law of Eq.~\eqref{eq:zien75:a} permits us to
+As stated in Vilotte etal (1982) \cite{vidm82}: 
+\begin{displayquote}
+{\color{darkgray}
+The plastic flow law of Eq.~\eqref{eq:zien75:a} permits us to
 represent in a single expression both the rigid-perfectly plastic flow
 ($\gamma\rightarrow \infty$)
 and the common power creep law without plastic limit ($Y=0$)
-(usually referred to as the Norton-Hoff law)\footnote{\url{https://en.wikipedia.org/wiki/Viscoplasticity}}''.
-\textcite{vidm82} then explain that the fluidity $\gamma$ can depend on 
-temperature $T$ in the form 
+(usually referred to as the Norton-Hoff law)\footnote{\url{https://en.wikipedia.org/wiki/Viscoplasticity}}.}
+\end{displayquote}
+\textcite{vidm82} then explain that the fluidity $\gamma$ can depend on temperature $T$ in the form 
 \[
 \gamma = \gamma_0 \exp(-Q/RT)
 \]
+
+In this case Eq.~\eqref{eq:zien75:a} becomes
+\begin{eqnarray}
+\eta 
+&=& \frac{ Y }{2  \dot\varepsilon_e} + \frac{1 }{2 } ( \gamma_0 \exp(-Q/RT) /2)^{-1/n}  \dot\varepsilon_e^{\frac1n-1}  \nn\\
+&=& \frac{ Y }{2  \dot\varepsilon_e} + \frac{1 }{2 } ( \gamma_0 /2)^{-1/n}  \dot\varepsilon_e^{\frac1n-1}  \exp(Q/nRT) \nn\\
+&=& \frac{ Y }{2  \dot\varepsilon_e} + \frac{1 }{2 } A^{-1/n}  \dot\varepsilon_e^{\frac1n-1}  \exp(Q/nRT) 
+\end{eqnarray}
+where we have defined $A=\gamma_0/2$,
+which is the sum of the 'plastic viscosity' and a 'dislocation creep viscosity'.
+
 In conclusion we find that this formulation allows us to represent linear, power law,
 perfectly plastic and visco-plastic materials.
 Also, we know that the additional term $\bar\eta=\gamma^{-1}$ introduces a length scale
 in the shear bands by limiting the viscosity value in said shear bands.
 
-Remarks:
 %%--------------------------------------------------------------------
 %\subsection{Looking at other yield criteria \& various remarks}
 
@@ -537,25 +569,37 @@ Remarks:
 %}
 %\end{equation}
 
-If we use a non-associative plasticity then often $Q=\sqrt{{\cal I}_2(\bm\tau)}$.
+\begin{remark}
+If we use a non-associative plasticity then often $\QQQ=\sqrt{{\III}_2(\bm\tau)}$.
 and the formulation of the previous section remains valid. In that case 
 we have $C_1=0$ and $C_3=0$ which allows to easily arrive at a relationship 
 of the type $\dot{\bm\varepsilon}^{vp} = \frac{1}{2\eta} \bm\tau$ where 
 $\eta$ is a scalar viscosity. 
 
-However, if $Q$ is such that $C_3\neq 0$, then we have a problem because 
+However, if $\QQQ$ is such that $C_3\neq 0$, then we have a problem because 
 even by setting $n=1$ I do not know how to arrive at a scalar viscosity, 
 and even thinking of $\eta$ as a tensor then I am stuck, see Section about 
 Choi \& Petersen (2015) hereafter.
+\end{remark}
 
 
 \newpage
 %----------------------------------------------------
 \subsection{Dissecting Choi \& Petersen (2015)}
 
-For implementation details, please look at \stone~39. 
+In the paper the author state:
+\begin{displayquote}
+{\color{darkgray}
+In this paper, we conﬁrm that using an associated ﬂow rule is a
+straightforward way of acquiring shear band orientations tightly
+bound around the Coulomb angle in conventional numerical tectonic
+models. We further provide a simple analysis of why an associated
+ﬂow rule constrains shear band orientations more tightly than a non-
+associated counterpart.}
+\end{displayquote}
 
-The original paper \cite{chpe15} is in 2D and focuses on the MC criterion. 
+
+The original paper \cite{chpe15} is in 2D and focuses on the Mohr-Coulomb criterion. 
 The authors state that the mass conservation equation should be 
 \[
 \frac{\partial v_x}{\partial x}
@@ -641,69 +685,69 @@ We start again from the M-C criterion (in this case $\sigma_2$ replaces $\sigma_
 \end{eqnarray}
 In the case of incompressible flow I have established in Section~\ref{ss:plane_strain} that 
 \begin{eqnarray}
-\frac{\sigma_1+\sigma_2}{2} &=& \frac{\sigma_{xx}+\sigma_{yy}}{2} = \frac12 {\cal I}_1(\bm\sigma)\\
+\frac{\sigma_1+\sigma_2}{2} &=& \frac{\sigma_{xx}+\sigma_{yy}}{2} = \frac12 {\III}_1(\bm\sigma)\\
 \frac{\sigma_1-\sigma_2}{2} &=& \sqrt{ \left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2 + \sigma_{xy}^2  }
-=\sqrt{ {\cal I}_2(\bm\tau)  }
+=\sqrt{ {\III}_2(\bm\tau)  }
 \end{eqnarray}
 so that we now have
 \[
-F^{\text{\tiny MC}} 
-= \frac{1}{2}{\cal I}_1(\bm\sigma) \sin\phi  + 
-\sqrt{ {\cal I}_2(\bm\tau)  }
+{\cal \FFF}^{\text{\tiny MC}} 
+= \frac{1}{2}{\III}_1(\bm\sigma) \sin\phi  + 
+\sqrt{ {\III}_2(\bm\tau)  }
 -c \cos \phi 
 \]
-and then the plastic potential $Q$ is given by
+and then the plastic potential $\QQQ$ is given by
 \[
-Q^{\text{\tiny MC}}=\frac{1}{2}{\cal I}_1(\bm\sigma) \sin\psi  + \sqrt{ {\cal I}_2(\bm\tau)  }
+{\QQQ}^{\text{\tiny MC}}=\frac{1}{2}{\III}_1(\bm\sigma) \sin\psi  + \sqrt{ {\III}_2(\bm\tau)  }
 \]
-We will need $\partial Q/\partial \bm\sigma$.
+We will need $\partial {\QQQ}/\partial \bm\sigma$.
 By applying the chain rule we can write
 \begin{eqnarray}
-\frac{\partial Q}{\partial \bm\sigma} 
+\frac{\partial {\QQQ}}{\partial \bm\sigma} 
 &=&
-\frac{\partial Q}{\partial {\cal I}_1(\bm\sigma)} 
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} 
+\frac{\partial {\QQQ}}{\partial {\III}_1(\bm\sigma)} 
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma} 
 +
-\frac{\partial Q}{\partial {\cal I}_2(\bm\tau)} 
-\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} \nn\\
+\frac{\partial {\QQQ}}{\partial {\III}_2(\bm\tau)} 
+\frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} \nn\\
 &=&
-\frac{\partial Q}{\partial {\cal I}_1(\bm\sigma)} 
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} 
+\frac{\partial {\QQQ}}{\partial {\III}_1(\bm\sigma)} 
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma} 
 +
-\frac{\partial Q}{\partial \sqrt{{\cal I}_2(\bm\tau)}} 
-\frac{\partial \sqrt{ {\cal I}_2(\bm\tau)}   }{\partial {\cal I}_2(\bm\tau)} 
-\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} \nn\\
+\frac{\partial {\QQQ}}{\partial \sqrt{{\III}_2(\bm\tau)}} 
+\frac{\partial \sqrt{ {\III}_2(\bm\tau)}   }{\partial {\III}_2(\bm\tau)} 
+\frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} \nn\\
 &=&
-\frac12 \sin\psi \; {\bm 1} + \frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}} 
+\frac12 \sin\psi \; {\bm 1} + \frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}} 
 \bm\tau
 \end{eqnarray}
 
 Ultimately we would like to be able to write $\dot{\bm \varepsilon}^{vp} = \bm\tau /(2\eta)$
 where $\eta$ is the 'viscoplastic' viscosity. However, as opposed to Zienkiewicz (1975) in the 
-previous section, the term $\partial Q/\partial \bm\sigma$
+previous section, the term $\partial {\QQQ}/\partial \bm\sigma$
 is not directly/only proportional to the deviatoric stress $\bm\tau$ and we have instead:
 
 \begin{eqnarray}
 \dot{\bm \varepsilon}^{vp} 
-&=& \gamma \big\langle \phi( F^{\text{\tiny MC}} )  \big\rangle 
-\left(\frac12 \sin\psi \;  {\bm 1} + \frac{1}{2 \sqrt{{\cal I}_2(\bm \tau)}} {\bm \tau} \right)
+&=& \gamma \big\langle \phi( \FFF^{\text{\tiny MC}} )  \big\rangle 
+\left(\frac12 \sin\psi \;  {\bm 1} + \frac{1}{2 \sqrt{{\III}_2(\bm \tau)}} {\bm \tau} \right)
 \end{eqnarray}
 Right away we note that the strain rate tensor above is not deviatoric, i.e. the flow
 is not incompressible.
 Rather conveniently, the M-C criterion in plane strain can also 
-be cast $F^{\text{\tiny MC}} = \sqrt{{\cal I}_2(\bm \tau)} -Y = \tau_e - Y$ as in 
+be cast $\FFF^{\text{\tiny MC}} = \sqrt{{\III}_2(\bm \tau)} -Y = \tau_e - Y$ as in 
 the von Mises case, albeit with 
-$Y= -\frac12 {\cal I}_1(\bm\sigma) \sin\phi + c\cos\phi$.
+$Y= -\frac12 {\III}_1(\bm\sigma) \sin\phi + c\cos\phi$.
 Assuming $\phi(x)=x$ for convenience here and the argument of the brackets is positive, 
 \begin{eqnarray}
 \dot{\bm \varepsilon}^{vp} 
-&=& \gamma \left(\sqrt{{\cal I}_2(\bm\tau)} - Y \right)
-\left(\frac12 \sin\psi \;  {\bm 1} + \frac{1}{2 \sqrt{{\cal I}_2(\bm \tau)}} {\bm \tau} \right) \nn\\
-&=& \gamma \left(\sqrt{{\cal I}_2(\bm\tau)} - Y \right)
+&=& \gamma \left(\sqrt{{\III}_2(\bm\tau)} - Y \right)
+\left(\frac12 \sin\psi \;  {\bm 1} + \frac{1}{2 \sqrt{{\III}_2(\bm \tau)}} {\bm \tau} \right) \nn\\
+&=& \gamma \left(\sqrt{{\III}_2(\bm\tau)} - Y \right)
 \frac12 \sin\psi \;  {\bm 1} 
 +  
-\gamma \left(\sqrt{{\cal I}_2(\bm\tau)} - Y \right)
-\frac{1}{2 \sqrt{{\cal I}_2(\bm \tau)}} {\bm \tau}  \nn\\
+\gamma \left(\sqrt{{\III}_2(\bm\tau)} - Y \right)
+\frac{1}{2 \sqrt{{\III}_2(\bm \tau)}} {\bm \tau}  \nn\\
 &=& \gamma \left(\tau_e - Y \right)
 \frac12 \sin\psi \;  {\bm 1} 
 +  
@@ -751,46 +795,43 @@ div (\vec\upnu)=
 2  \dot\varepsilon_e^{vp}
 \sin\psi 
 \]
-This 
-is identical to the
-dilation rate of \textcite{chpe15}!
+This is identical to the dilation rate of \textcite{chpe15}!
 
-
+For implementation details in a FEM code, please check \stone~39. 
 
 %--------------------------------------------------------
 \subsection{my take on this in 3D for Drucker-Prager}
 
-
 I have established in Section~\ref{sec:dpcriterion} that in the general 3D case
 \begin{equation}
-F^{\text{\tiny DP}}= \alpha(\phi,c) {\cal I}_1({\bm \sigma}) + \sqrt{ {\cal I}_2({\bm \tau})  } + k(\phi,c) 
-=\sqrt{  {\cal I}_2({\bm \tau})  } -Y 
+\FFF^{\text{\tiny DP}}= \alpha(\phi,c) {\III}_1({\bm \sigma}) + \sqrt{ {\III}_2({\bm \tau})  } + k(\phi,c) 
+=\sqrt{  {\III}_2({\bm \tau})  } -Y 
 \end{equation}
 with $\alpha$ and $k$ being functions of the cohesion $c$ and angle of friction $\phi$ 
 (but not from the stress). Then the plastic potential is
 \begin{equation}
-Q^{\text{\tiny DP}}= \alpha(\psi,c) {\cal I}_1({\bm \sigma})   +  \sqrt{  {\cal I}_2({\bm \tau})  } 
+\QQQ^{\text{\tiny DP}}= \alpha(\psi,c) {\III}_1({\bm \sigma})   +  \sqrt{  {\III}_2({\bm \tau})  } 
 \end{equation}
 where $\psi$ is the dilation angle.
 We then have
 \begin{eqnarray}
-\frac{\partial Q}{\partial \bm\sigma} 
+\frac{\partial \QQQ}{\partial \bm\sigma} 
 &=&
-\frac{\partial Q}{\partial {\cal I}_1(\bm\sigma)} 
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} 
+\frac{\partial \QQQ}{\partial {\III}_1(\bm\sigma)} 
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma} 
 +
-\frac{\partial Q}{\partial \sqrt{{\cal I}_2(\bm\tau)}} 
-\frac{\partial \sqrt{ {\cal I}_2(\bm\tau)}   }{\partial {\cal I}_2(\bm\tau)} 
-\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
-=
-\alpha(\psi,c) \; {\bm 1} + \frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}} 
+\frac{\partial \QQQ}{\partial \sqrt{{\III}_2(\bm\tau)}} 
+\frac{\partial \sqrt{ {\III}_2(\bm\tau)}   }{\partial {\III}_2(\bm\tau)} 
+\frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} \nn\\
+&=&
+\alpha(\psi,c) \; {\bm 1} + \frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}} 
 \bm\tau
 \end{eqnarray}
 Then 
 \begin{eqnarray}
 \dot{\bm \varepsilon}^{vp} 
-&=& \gamma \left(\sqrt{{\cal I}_2(\bm\tau)} - Y \right)
-\left(\alpha(\psi,c) \;  {\bm 1} + \frac{1}{2 \sqrt{{\cal I}_2(\bm \tau)}} {\bm \tau} \right) \nn\\
+&=& \gamma \left(\sqrt{{\III}_2(\bm\tau)} - Y \right)
+\left(\alpha(\psi,c) \;  {\bm 1} + \frac{1}{2 \sqrt{{\III}_2(\bm \tau)}} {\bm \tau} \right) \nn\\
 &=& \gamma \left(\tau_e - Y \right)
 \alpha(\psi,c) \;  {\bm 1} 
 +  
@@ -818,41 +859,41 @@ and the non-associative case is whether $\phi=\psi$ or not.
 
 I have established in fieldstone that in the general 3D case
 \begin{equation}
-F^{\text{\tiny MC}}=\frac{1}{3} {\cal I}_1({\bm \sigma}) \sin \phi  + 
-\sqrt{  {\cal I}_2({\bm \tau})  } \left( \cos \theta_{\rm L}(\bm\tau) - 
+\FFF^{\text{\tiny MC}}=\frac{1}{3} {\III}_1({\bm \sigma}) \sin \phi  + 
+\sqrt{  {\III}_2({\bm \tau})  } \left( \cos \theta_{\rm L}(\bm\tau) - 
 \frac{1}{\sqrt{3}} \sin \theta_{\rm L}(\bm\tau)  \sin \phi \right) - c \cos \phi
 \end{equation}
-Note that since $p=-{\cal I}_1(\bm\sigma)/3$ then we recover the usual '$p\sin\phi+c \cos\phi$'.
+Note that since $p=-{\III}_1(\bm\sigma)/3$ then we recover the usual '$p\sin\phi+c \cos\phi$'.
 
 Following Eq.~(4) of the paper the plastic potential would be given by 
 \[
-Q^{\text{\tiny MC}} 
-=\frac{1}{3} {\cal I}_1({\bm \sigma}) \sin \psi  + 
-\sqrt{  {\cal I}_2({\bm \tau})  } 
+\QQQ^{\text{\tiny MC}} 
+=\frac{1}{3} {\III}_1({\bm \sigma}) \sin \psi  + 
+\sqrt{  {\III}_2({\bm \tau})  } 
 \left( \cos \theta_{\rm L}(\bm\tau) -\frac{1}{\sqrt{3}} \sin \theta_{\rm L}(\bm\tau) \sin \psi \right) 
 \]
 The visco-plastic strain rate would then write
 \[
-\dot{\bm\varepsilon}^{vp} = \gamma \langle \phi(F^{\text{\tiny MC}}) \rangle 
-\frac{\partial Q^{\text{\tiny MC}}}{\partial \bm\sigma}
+\dot{\bm\varepsilon}^{vp} = \gamma \langle \phi(\FFF^{\text{\tiny MC}}) \rangle 
+\frac{\partial \QQQ^{\text{\tiny MC}}}{\partial \bm\sigma}
 \]
 We have established that 
 \begin{eqnarray}
-\frac{\partial Q}{\partial \bm\sigma}
+\frac{\partial \QQQ}{\partial \bm\sigma}
 &=& 
-C_1  \frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma} 
+C_1  \frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma} 
 +
-C_2  \frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
+C_2  \frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} 
 +
-C_3  \frac{\partial {\cal I}_3(\bm\tau)}{\partial \bm\sigma}\nn\\
-&=& C_1 {\bm 1} + C_2  {\bm \tau} + C_3 \left( \bm\tau\cdot\bm\tau -\frac23 {\cal I}_2(\bm\tau){\bm 1} \right)
+C_3  \frac{\partial {\III}_3(\bm\tau)}{\partial \bm\sigma}\nn\\
+&=& C_1 {\bm 1} + C_2  {\bm \tau} + C_3 \left( \bm\tau\cdot\bm\tau -\frac23 {\III}_2(\bm\tau){\bm 1} \right)
 \end{eqnarray}
 and in the case of the Mohr-Coulomb criterion:
 \begin{eqnarray}
 C_1^{\text{\tiny MC}} &=& \frac13 \sin\phi  \\ 
 C_2^{\text{\tiny MC}} 
 &=& 
-\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
+\frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }   
 \cos \theta_{\rm L}
 \left[
 (1 +  2\tan \theta_{\rm L}   \tan 3\theta_{\rm L})
@@ -866,30 +907,30 @@ C_3^{\text{\tiny MC}}
 \sqrt{3}\sin\theta_{\rm L}
 +
  \sin \phi \cos \theta_{\rm L}
-}{2 {\cal I}_2({\bm \tau}) \cos 3\theta_{\rm L}}
+}{2 {\III}_2({\bm \tau}) \cos 3\theta_{\rm L}}
 \end{eqnarray}
 
 
 
 \[
-\dot{\bm\varepsilon}^{vp} = \gamma \langle \phi(F) \rangle 
+\dot{\bm\varepsilon}^{vp} = \gamma \langle \phi(\FFF) \rangle 
 \left(
-C_1 {\bm 1} + C_2  {\bm \tau} + C_3 \left( \bm\tau\cdot\bm\tau -\frac23 {\cal I}_2(\bm\tau){\bm 1} \right)
+C_1 {\bm 1} + C_2  {\bm \tau} + C_3 \left( \bm\tau\cdot\bm\tau -\frac23 {\III}_2(\bm\tau){\bm 1} \right)
 \right)
 \]
 Assuming brackets ok, and $\phi(x)=x^n$:
 \[
-\dot{\bm\varepsilon}^{vp} = \gamma (\sqrt{{\cal I}_2(\bm\tau)} - Y)^n 
+\dot{\bm\varepsilon}^{vp} = \gamma (\sqrt{{\III}_2(\bm\tau)} - Y)^n 
 \left(
-C_1 {\bm 1} + C_2  {\bm \tau} + C_3 \left( \bm\tau\cdot\bm\tau -\frac23 {\cal I}_2(\bm\tau){\bm 1} \right)
+C_1 {\bm 1} + C_2  {\bm \tau} + C_3 \left( \bm\tau\cdot\bm\tau -\frac23 {\III}_2(\bm\tau){\bm 1} \right)
 \right)
 \]
 Taking the deviatoric part of this:
 \[
 \dot{\bm\varepsilon}^{vp,d} 
-= \gamma (\sqrt{{\cal I}_2(\bm\tau)} - Y)^n 
+= \gamma (\sqrt{{\III}_2(\bm\tau)} - Y)^n 
 \left(
- C_2  {\bm \tau} + C_3 \left( \bm\tau\cdot\bm\tau -\frac23 {\cal I}_2(\bm\tau){\bm 1} \right)
+ C_2  {\bm \tau} + C_3 \left( \bm\tau\cdot\bm\tau -\frac23 {\III}_2(\bm\tau){\bm 1} \right)
 \right)
 \]
 so I cannot find a \underline{scalar} $\eta$ such that 
@@ -917,14 +958,14 @@ Upon yielding a flow rule is needed to specify the plastic
 behaviour. The plastic strain rate is written as
 \begin{equation}
 \label{eq:lemm08:epsp}
-\dot{\bm \varepsilon}^p = \dot\lambda \frac{\partial Q}{\partial \bm\sigma}
+\dot{\bm \varepsilon}^p = \dot\lambda \frac{\partial \QQQ}{\partial \bm\sigma}
 \end{equation}
-where $\dot\lambda$ is a scalar plastic flow rate and $Q$ is the so-called plastic potential. 
+where $\dot\lambda$ is a scalar plastic flow rate and $\QQQ$ is the so-called plastic potential. 
 Note that in \textcite{hesd02} the authors define $\dot{\lambda}=\langle \phi(x) \rangle/\eta$
 so that the equation above is the Perzyna model. 
-A classical choice for $Q$, in conjunction with the incompressibility constraint, is:
+A classical choice for $\QQQ$, in conjunction with the incompressibility constraint, is:
 \[
-Q = \sqrt{ {\cal I}_2(\bm\tau)}
+\QQQ = \sqrt{ {\III}_2(\bm\tau)}
 \]
 We notice that Eq.~\ref{eq:lemm08:epsp} is different (although obviously not unrelated) 
 than the Perzyna approach above, although
@@ -934,20 +975,20 @@ in the end they arrive at a similar expression as we did before for the von Mise
 If we consider only the deviatoric part of the stress tensor in Eq.~\eqref{eq:abcd}, we thus obtain\footnote{do they assume varepsilon deviatoric too?}
 \begin{equation}
 \bm \tau = 2 \eta (\dot{\bm \varepsilon} -\dot{\bm \varepsilon}^p)
-= 2 \eta \left(\dot{\bm \varepsilon} - \dot\lambda \frac{\partial Q}{\partial \bm\sigma} \right)
-= 2 \eta \left(\dot{\bm \varepsilon} - \dot\lambda \frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}}  \frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} \right)
+= 2 \eta \left(\dot{\bm \varepsilon} - \dot\lambda \frac{\partial \QQQ}{\partial \bm\sigma} \right)
+= 2 \eta \left(\dot{\bm \varepsilon} - \dot\lambda \frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}}  \frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} \right)
 = 
-2 \eta \left(\dot{\bm \varepsilon} - \dot\lambda \frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}} \bm\tau \right) \label{eq:bcde}
+2 \eta \left(\dot{\bm \varepsilon} - \dot\lambda \frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}} \bm\tau \right) \label{eq:bcde}
 \end{equation}
 This equation can be written as
 \[
-\left( 1 + \dot\lambda \frac{\eta }{ \sqrt{ {\cal I}_2(\bm\tau)}} \right) \bm\tau
+\left( 1 + \dot\lambda \frac{\eta }{ \sqrt{ {\III}_2(\bm\tau)}} \right) \bm\tau
 = 2 \eta \dot{\bm \varepsilon}
 \]
 One can then take the square root of the second invariant of this equation:
 \[
-\left( 1 + \dot\lambda \frac{\eta }{ \sqrt{ {\cal I}_2(\bm\tau)}} \right) 
-\sqrt{{\cal I}_2(\bm\tau) }= 2 \eta \sqrt{{\cal I}_2(\dot{\bm \varepsilon})}
+\left( 1 + \dot\lambda \frac{\eta }{ \sqrt{ {\III}_2(\bm\tau)}} \right) 
+\sqrt{{\III}_2(\bm\tau) }= 2 \eta \sqrt{{\III}_2(\dot{\bm \varepsilon})}
 \]
 Then 
 \[
@@ -963,10 +1004,10 @@ so that
 Finally we can insert this expression of $\dot\lambda$ in Eq.~\eqref{eq:bcde}
 \begin{eqnarray}
 \bm \tau 
-&=&2 \eta \left(\dot{\bm \varepsilon} - \dot\lambda \frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}} \bm\tau \right)  \\
+&=&2 \eta \left(\dot{\bm \varepsilon} - \dot\lambda \frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}} \bm\tau \right)  \\
 &=& 2 \eta \left(\dot{\bm \varepsilon} -    
 (2 \dot{ \varepsilon}_e - \frac{\tau_e}{\eta})
-\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}} \bm\tau \right)  \\
+\frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}} \bm\tau \right)  \\
 &=& 2 \eta \left(\dot{\bm \varepsilon} -  
 (2 \dot{ \varepsilon}_e - \frac{\tau_e}{\eta})   \frac{1}{2 \tau_e} \bm\tau \right) \\
 &=& 2 \eta \dot{\bm \varepsilon} -  
@@ -992,7 +1033,7 @@ On yield we have $\tau_e=Y(c,\phi)$ so in the end:
 }_{\eta_p}  \dot{\bm \varepsilon}
 \]
 That last step is poorly documented in the paper!
-This is a cumbersome exercise and it relies heavily on the choice of $Q=\tau_e$.
+This is a cumbersome exercise and it relies heavily on the choice of $\QQQ=\tau_e$.
 
 
 \begin{remark}
@@ -1002,22 +1043,21 @@ but define $\dot{\gamma}=\sqrt{2 D_{ij}D_{ij}}$!
 
 Let us now turn to \textcite{spmw16} (2016).
 In Section~2.1.1 of this paper the authors follow the same path as above. 
-They assume $Q=\tau_e$ but justify their choice by stating that ``The use of incompressible materials mandates that we use a plastic potential g which is not a function of the pressure $p$''
+They assume $\QQQ=\tau_e$ but justify their choice by stating that 
+``The use of incompressible materials mandates that we use a plastic potential g which is not a function of the pressure $p$''
 
 This is indeed very important in the context of our incompressible calculations in geodynamics. 
 
-They define the yield surface, $F(\bm\sigma)$ which is a scalar function defining the failure (yield) state of a material. Yield surfaces are
+They define the yield surface, $\FFF(\bm\sigma)$ which is a scalar function defining the failure (yield) state of a material. Yield surfaces are
 assumed to be of the following form 
 \[
-F(\bm\sigma) =\tau_e - Y(\bm\sigma)
+\FFF(\bm\sigma) =\tau_e - Y(\bm\sigma)
 \]
 where $Y$ is the yield criterion.
 The authors state that ``it is common practice in geodynamics to define the
-plastic multiplier $\dot\lambda$ which exactly satisfies $F=0$, 
+plastic multiplier $\dot\lambda$ which exactly satisfies $\FFF=0$, 
 or equivalently $\tau_e=Y$ \cite{lemm08}''.
 We see that it is then the same as the Lemiale \etal paper.
-
-
 
 
 

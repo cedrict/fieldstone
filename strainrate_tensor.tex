@@ -3,7 +3,8 @@
 
 The strain rate tensor $\dot{\bm\varepsilon}(\vec\upnu)$ is given by
 \begin{equation}
-\dot{\bm \varepsilon}({\vec \upnu}) = \frac{1}{2}( {\vec \nabla}{\vec \upnu}+ ({\vec \nabla}{\vec \upnu})^T) 
+\dot{\bm \varepsilon}({\vec \upnu}) 
+= \frac{1}{2} \left( {\vec \nabla}{\vec \upnu}+ ({\vec \nabla}{\vec \upnu})^T \right) 
 \end{equation}
 
 %.....................................
@@ -21,17 +22,22 @@ The strain rate tensor $\dot{\bm\varepsilon}(\vec\upnu)$ is given by
 \end{eqnarray}
 
 In the \aspect manual there is an interesting discussion about the strain rate tensor in the case of 
-2D models: "The notion we adopt here is to think of two-dimensional models in the following way: 
+2D models: 
+\begin{displayquote}
+{\color{darkgray}
+The notion we adopt here is to think of two-dimensional models in the following way: 
 We assume that the domain we want to solve on is a two-dimensional
 cross section (parameterized by x and y coordinates) that extends infinitely far in both negative and positive
 z direction. Further, we assume that the velocity is zero in z direction and that all variables have no
 variation in z direction. As a consequence, we ought to really think of these two-dimensional models as
-three-dimensional ones in which the z component of the velocity is zero and so are all z derivatives."
+three-dimensional ones in which the z component of the velocity is zero and so are all z derivatives.}
+\end{displayquote}
 
 This of course makes sense but it means that when the deviatoric strain rate tensor needs to be 
 computed, then it is given by
 \[
-\dot{\bm \varepsilon}^d = \dot{\bm \varepsilon}^d - \frac{1}{\bm 3} (\vec\nabla\cdot\vec\upnu) {\bm 1}
+\dot{\bm \varepsilon}^d = \dot{\bm \varepsilon} 
+- \frac{1}{\bm 3} (\vec\nabla\cdot\vec\upnu) {\bm 1}
 =
 \left(
 \begin{array}{ccc}
@@ -86,12 +92,12 @@ As a consequence the shear heating term $\Phi$ is given by
 
 \begin{eqnarray}
 \dot\varepsilon_{rr} 
-&=& \frac{\partial \upnu_r}{\partial r} \\
+&=& \frac{\partial \upnu_r}{\partial r} \nn\\
 \dot\varepsilon_{\theta\theta} 
-&=& \frac{\upnu_r}{r} + \frac{1}{r} \frac{\partial \upnu_\theta}{\partial \theta}  \\
+&=& \frac{\upnu_r}{r} + \frac{1}{r} \frac{\partial \upnu_\theta}{\partial \theta}  \nn\\
 \dot\varepsilon_{\theta r} = \dot\varepsilon_{r\theta} 
 &=& \frac{1}{2} \left(   \frac{\partial \upnu_\theta}{\partial r} - \frac{\upnu_\theta}{r} 
-+\frac{1}{r} \frac{\partial \upnu_r}{\partial \theta}  \right) 
++\frac{1}{r} \frac{\partial \upnu_r}{\partial \theta}  \right)  \nn
 \end{eqnarray}
 
 

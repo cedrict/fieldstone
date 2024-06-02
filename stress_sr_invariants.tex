@@ -2,14 +2,14 @@
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The implementation of the plasticity criterions relies essentially 
-on the invariants of the (deviatoric) stress ${\bm \tau}$ 
+on the (moment) invariants $\III_{1,2,3}$ of the (deviatoric) stress ${\bm \tau}$ 
 and the (deviatoric) strainrate tensors $\dot{\bm \varepsilon}$:
 
 \begin{eqnarray}
-{\cal I}_1({\bm \sigma}) &=& \sigma_{xx}+\sigma_{yy}+\sigma_{zz}\\
-{\cal I}_2({\bm \tau})   
+{\III}_1({\bm \sigma}) &=& \sigma_{xx}+\sigma_{yy}+\sigma_{zz}\\
+{\III}_2({\bm \tau})   
 &=&\frac{1}{2}(\tau_{xx}^2 + \tau_{yy}^2 + \tau_{zz}^2 ) + \tau_{xy}^2 + \tau_{xz}^2 + \tau_{yz}^2  \\
-{\cal I}_3({\bm \tau}) 
+{\III}_3({\bm \tau}) 
 &=& \frac{1}{3} \tau_{xx} (  \tau_{xx}^2 + 3 \tau_{xy}^2 + 3 \tau_{xz}^2  )     \nonumber\\
 &+& \frac{1}{3} \tau_{yy} (3 \tau_{xy}^2 +   \tau_{yy}^2 + 3 \tau_{yz}^2  )     \nonumber\\
 &+& \frac{1}{3} \tau_{zz} (3 \tau_{xz}^2 + 3 \tau_{yz}^2 +   \tau_{zz}^2)       \nonumber\\
@@ -17,7 +17,7 @@ and the (deviatoric) strainrate tensors $\dot{\bm \varepsilon}$:
 \end{eqnarray}
 and also the second invariant of the deviatoric strain rate is:
 \begin{eqnarray}
-{\cal I}_2(\dot{\bm{\varepsilon}}^d)
+{\III}_2(\dot{\bm{\varepsilon}}^d)
 &=& \frac{1}{2} \left[ (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + (\dot{\varepsilon}_{zz}^d)^2   \right] 
 + (\dot{\varepsilon}_{xy}^d)^2  
 + (\dot{\varepsilon}_{xz}^d)^2  
@@ -67,22 +67,22 @@ We have
 \end{eqnarray}
 so that 
 \[
-{\cal I}_2({\bm \tau})   
+{\III}_2({\bm \tau})   
 =\frac{1}{6}\left[(\sigma_{xx}-\sigma_{yy})^2 + (\sigma_{yy}-\sigma_{zz})^2 + (\sigma_{xx}-\sigma_{zz})^2 \right]  
 + \sigma_{xy}^2 + \sigma_{xz}^2 + \sigma_{yz}^2 
 \]
 
 \begin{remark}
-${\cal I}_2({\bm \tau})$ is often called $J_2$ or $J_2'$ so that one sometimes speaks of $J_2$-plasticity.
+${\III}_2({\bm \tau})$ is often called $J_2$ or $J_2'$ so that one sometimes speaks of $J_2$-plasticity.
 \end{remark}
 
 These (second) invariants are almost always used under a square root so we define:
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-\tau_{e}=\sqrt{{\cal I}_2({\bm \tau})}
+\tau_{e}=\sqrt{{\III}_2({\bm \tau})}
 \quad\quad
 \quad\quad
-\dot{\varepsilon}_{e}=\sqrt{{\cal I}_2(\dot{\bm \varepsilon}^d)}
+\dot{\varepsilon}_{e}=\sqrt{{\III}_2(\dot{\bm \varepsilon}^d)}
 \label{eq:tauepse}
 \end{equation}
 \end{mdframed}
@@ -107,10 +107,10 @@ If the stress tensor is such that it is diagonal, i.e.
 \]
 then the invariants are 
 \begin{eqnarray}
-{\cal I}_1({\bm \sigma}) &=& \sigma_1 + \sigma_2+ \sigma_3 \nonumber\\
-{\cal I}_2({\bm \tau}) &=& \frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 
+{\III}_1({\bm \sigma}) &=& \sigma_1 + \sigma_2+ \sigma_3 \nonumber\\
+{\III}_2({\bm \tau}) &=& \frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 
 + (\sigma_{1}-\sigma_{3})^2 \right] \\ 
-{\cal I}_3({\bm \tau}) 
+{\III}_3({\bm \tau}) 
 &=& \tau_1\tau_2\tau_3 \nn\\
 &=& \frac{1}{3} {\rm tr}[{\bm \tau}\cdot{\bm \tau}\cdot {\bm \tau}]  \nn\\
 &=& \frac{1}{3} {\rm tr}
@@ -149,13 +149,13 @@ then the invariants are
 \right) \nn\\
 &=& \frac{1}{3}(\tau_1^3+\tau_2^3+\tau_3^3) \nn\\
 &=&  \frac{1}{3} [ 
-(\sigma_1-{\cal I}_1({\bm \sigma})/3)^3+  
-(\sigma_2-{\cal I}_1({\bm \sigma})/3)^3+
-(\sigma_3-{\cal I}_1({\bm \sigma})/3)^3 ]   \nonumber\\ 
+(\sigma_1-{\III}_1({\bm \sigma})/3)^3+  
+(\sigma_2-{\III}_1({\bm \sigma})/3)^3+
+(\sigma_3-{\III}_1({\bm \sigma})/3)^3 ]   \nonumber\\ 
 &=&  \frac{1}{3\cdot 27} [ 
-(3\sigma_1-{\cal I}_1({\bm \sigma}))^3+  
-(3\sigma_2-{\cal I}_1({\bm \sigma}))^3+
-(3\sigma_3-{\cal I}_1({\bm \sigma}))^3 ]   \nonumber\\ 
+(3\sigma_1-{\III}_1({\bm \sigma}))^3+  
+(3\sigma_2-{\III}_1({\bm \sigma}))^3+
+(3\sigma_3-{\III}_1({\bm \sigma}))^3 ]   \nonumber\\ 
 &=& \frac{1}{81}
 \left[
 (2\sigma_1-\sigma_2-\sigma_3)^3+

@@ -1,6 +1,6 @@
 
-Remember: ${\cal I}_{1,2,3}$ are moment invariants while
-${\cal K}_{1,2,3}$ are principal invariants.
+Remember: ${\III}_{1,2,3}$ are moment invariants while
+${\KKK}_{1,2,3}$ are principal invariants.
 
 \index{general}{Principal Invariant}
 \index{general}{Moment Invariant}
@@ -10,18 +10,18 @@ ${\cal K}_{1,2,3}$ are principal invariants.
 
 Remembering that the deviatoric stress tensor ${\bm \tau}$ is symmetric:
 \begin{eqnarray}
-{\cal I}_2(\bm\tau) 
+{\III}_2(\bm\tau) 
 &=& \frac12 {\bm \tau}:{\bm \tau} \nn\\
 &=& \frac12 ( \tau_{xx}^2 + \tau_{yy}^2 +\tau_{zz}^2 + 2\tau_{xy}^2+ 2\tau_{xz}^2+ 2\tau_{yz}^2) 
 \nn\\
 \nn\\
-{\cal I}_2(\bm\tau) 
+{\III}_2(\bm\tau) 
 &=& \frac12 \sum_{ij} \tau_{ij}\tau_{ji}  \nn\\
 &=& \frac12 \sum_{ij} \tau_{ij}\tau_{ij}  \qquad (\rm{\bm\tau \; is\; symm}) \nn\\
 &=& \frac12 {\bm \tau}:{\bm \tau} 
 \nn\\
 \nn\\
-{\cal I}_2(\bm\tau) 
+{\III}_2(\bm\tau) 
 &=& \frac12 {\rm tr} [{\bm \tau}\cdot {\bm \tau}] \nn\\
 &=& \frac{1}{2}{\rm tr} 
 \left[
@@ -94,55 +94,55 @@ as a function of the invariants of the full stress tensor (just to be sure
 I have carried this out twice in what follows): 
 
 \begin{eqnarray}
-{\cal I}_2(\bm \tau)
+{\III}_2(\bm \tau)
 &=& \frac12 \sum_{ij} \tau_{ij}\tau_{ji}  \nn\\
 &=& \frac12 \sum_{ij} 
-\left(\sigma_{ij}-\frac13 {\cal I}_1(\bm\sigma) \delta_{ij}\right)
-\left(\sigma_{ij}-\frac13 {\cal I}_1(\bm\sigma) \delta_{ij}\right) \nn\\
+\left(\sigma_{ij}-\frac13 {\III}_1(\bm\sigma) \delta_{ij}\right)
+\left(\sigma_{ij}-\frac13 {\III}_1(\bm\sigma) \delta_{ij}\right) \nn\\
 &=& \frac12 \sum_{ij} 
 \left[
 \sigma_{ij}\sigma_{ij} 
 +
 \sigma_{ij}
-\left(-\frac13 {\cal I}_1(\bm\sigma) \delta_{ij}\right)
+\left(-\frac13 {\III}_1(\bm\sigma) \delta_{ij}\right)
 +
 \sigma_{ij}
-\left(-\frac13 {\cal I}_1(\bm\sigma) \delta_{ij}\right)
+\left(-\frac13 {\III}_1(\bm\sigma) \delta_{ij}\right)
 +
-\left(-\frac13 {\cal I}_1(\bm\sigma) \delta_{ij}\right)
-\left(-\frac13 {\cal I}_1(\bm\sigma) \delta_{ij}\right) 
+\left(-\frac13 {\III}_1(\bm\sigma) \delta_{ij}\right)
+\left(-\frac13 {\III}_1(\bm\sigma) \delta_{ij}\right) 
 \right] \nn\\
 &=& \frac12 \sum_{ij} 
 \left[
 \sigma_{ij}\sigma_{ij} 
 -\frac23
-{\cal I}_1(\bm\sigma) 
+{\III}_1(\bm\sigma) 
 \sigma_{ij}
 \delta_{ij}
 +
-\frac19 {\cal I}_1(\bm\sigma)^2 \delta_{ij}
+\frac19 {\III}_1(\bm\sigma)^2 \delta_{ij}
 \right] \nn\\
 &=& 
-\underbrace{\frac12 \sum_{ij} \sigma_{ij}\sigma_{ij} }_{{\cal I}_2(\bm\sigma)}
+\underbrace{\frac12 \sum_{ij} \sigma_{ij}\sigma_{ij} }_{{\III}_2(\bm\sigma)}
 -\frac13
-{\cal I}_1(\bm\sigma) 
-\underbrace{\sum_{ij}  \sigma_{ij}  \delta_{ij}}_{{\cal I}_1(\bm\sigma)}
+{\III}_1(\bm\sigma) 
+\underbrace{\sum_{ij}  \sigma_{ij}  \delta_{ij}}_{{\III}_1(\bm\sigma)}
 +
 \frac{1}{18}
-{\cal I}_1(\bm\sigma)^2 
+{\III}_1(\bm\sigma)^2 
 \underbrace{\sum_{ij} \delta_{ij}}_{3} \nn\\
-&=& {\cal I}_2(\bm\sigma)
-- \frac13  {\cal I}_1(\bm\sigma)^2 + \frac16  {\cal I}_1(\bm\sigma)^2 \nn\\
-&=& -\frac16  {\cal I}_1(\bm\sigma)^2 +  {\cal I}_2(\bm\sigma)
+&=& {\III}_2(\bm\sigma)
+- \frac13  {\III}_1(\bm\sigma)^2 + \frac16  {\III}_1(\bm\sigma)^2 \nn\\
+&=& -\frac16  {\III}_1(\bm\sigma)^2 +  {\III}_2(\bm\sigma)
 \nn\\
 \nn\\
-{\cal I}_2(\bm\tau) 
+{\III}_2(\bm\tau) 
 &=& \frac12 \bm\tau:\bm\tau \nn\\
 &=& \frac12 ( \tau_{xx}^2 + \tau_{yy}^2 +\tau_{zz}^2)  + \tau_{xy}^2+ \tau_{xz}^2+ \tau_{yz}^2 \nn\\
 &=& \frac12 \left(
-(\sigma_{xx}-\frac13{\cal I}_1(\bm\sigma))^2 + 
-(\sigma_{yy}-\frac13{\cal I}_1(\bm\sigma))^2 + 
-(\sigma_{zz}-\frac13{\cal I}_1(\bm\sigma))^2  
+(\sigma_{xx}-\frac13{\III}_1(\bm\sigma))^2 + 
+(\sigma_{yy}-\frac13{\III}_1(\bm\sigma))^2 + 
+(\sigma_{zz}-\frac13{\III}_1(\bm\sigma))^2  
 \right)
 + \sigma_{xy}^2+ \sigma_{xz}^2+ \sigma_{yz}^2 \nn\\
 &=& \frac12 \left(
@@ -154,23 +154,23 @@ I have carried this out twice in what follows):
 &=& \frac12 \left(
 \sigma_{xx}^2 + \sigma_{yy}^2 + \sigma_{zz}^2
 -\frac23(\sigma_{xx}+\sigma_{yy}+\sigma_{zz})
-{\cal I}_1(\bm\sigma) + \frac13 {\cal I}_1(\bm\sigma)^2
+{\III}_1(\bm\sigma) + \frac13 {\III}_1(\bm\sigma)^2
 \right)
 + \sigma_{xy}^2+ \sigma_{xz}^2+ \sigma_{yz}^2 \nn\\
 &=& \frac12 \left(
 \sigma_{xx}^2 + \sigma_{yy}^2 + \sigma_{zz}^2
 -\frac23
-{\cal I}_1(\bm\sigma)^2 + \frac13 {\cal I}_1(\bm\sigma)^2
+{\III}_1(\bm\sigma)^2 + \frac13 {\III}_1(\bm\sigma)^2
 \right)
 + \sigma_{xy}^2+ \sigma_{xz}^2+ \sigma_{yz}^2 \nn\\
 &=& 
 \frac12 \left(
 \sigma_{xx}^2 + \sigma_{yy}^2 + \sigma_{zz}^2
--\frac13 {\cal I}_1(\bm\sigma)^2 
+-\frac13 {\III}_1(\bm\sigma)^2 
 \right)
 + \sigma_{xy}^2+ \sigma_{xz}^2+ \sigma_{yz}^2 \nn\\
 &=&
--\frac16 {\cal I}_1(\bm\sigma)^2 + 
+-\frac16 {\III}_1(\bm\sigma)^2 + 
 \frac12 \left(
 \sigma_{xx}^2 + \sigma_{yy}^2 + \sigma_{zz}^2
 \right)
