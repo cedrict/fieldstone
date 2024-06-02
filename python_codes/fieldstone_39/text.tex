@@ -25,8 +25,7 @@ brought to existing incompressible flow codes. Note that the codes
 featured in that paper also implemented elastic behaviour but this can 
 be easily switched off by setting $Z=1$ in their equations.
 
-Their plasticity implementation starts with a modification of the 
-continuity equation:
+Their plasticity implementation starts with a modification of the continuity equation:
 \[
 \vec\nabla\cdot\vec\upnu = R = 2 \sin\psi \, \dot{\varepsilon}_p
 \]
@@ -123,6 +122,8 @@ The ${\bm C}$ matrix is then
 \right)
 \]
 Note that method 2 bypasses the discussion above about the integration by parts and the surface term. 
+
+My feeling is that method 1 stems from a FDM vision (i.e. from the paper). Method 2 is elegant, simple.
 
 \begin{remark}
 The rhs of the continuity equation is formulated as a function of the (effective) plastic strain rate so that 

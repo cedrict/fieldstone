@@ -94,6 +94,7 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y,eta_m,eta_v):
           eps_vp=0
           mech=1
        else:
+          #see section 4.23
           tau=(Y+2*eta_m*e2)/(1+eta_m/eta_v)
           eps_v=tau/2/eta_v
           eps_vp=e2-eps_v
@@ -228,7 +229,8 @@ def NNV(rq,sq):
     NV_6=     (1.-rq**2) * 0.5*sq*(sq+1.)
     NV_7= 0.5*rq*(rq-1.) *     (1.-sq**2)
     NV_8=     (1.-rq**2) *     (1.-sq**2)
-    return NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,NV_6,NV_7,NV_8
+    return np.array([NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,\
+                     NV_6,NV_7,NV_8],dtype=np.float64)
 
 def dNNVdr(rq,sq):
     dNVdr_0= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
@@ -240,7 +242,8 @@ def dNNVdr(rq,sq):
     dNVdr_6=       (-2.*rq) * 0.5*sq*(sq+1)
     dNVdr_7= 0.5*(2.*rq-1.) *    (1.-sq**2)
     dNVdr_8=       (-2.*rq) *    (1.-sq**2)
-    return dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,dNVdr_6,dNVdr_7,dNVdr_8
+    return np.array([dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,\
+                     dNVdr_6,dNVdr_7,dNVdr_8],dtype=np.float64)
 
 def dNNVds(rq,sq):
     dNVds_0= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
@@ -252,14 +255,15 @@ def dNNVds(rq,sq):
     dNVds_6=     (1.-rq**2) * 0.5*(2.*sq+1.)
     dNVds_7= 0.5*rq*(rq-1.) *       (-2.*sq)
     dNVds_8=     (1.-rq**2) *       (-2.*sq)
-    return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8
+    return np.array([dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,\
+                     dNVds_6,dNVds_7,dNVds_8],dtype=np.float64)
 
 def NNP(rq,sq):
     NP_0=0.25*(1-rq)*(1-sq)
     NP_1=0.25*(1+rq)*(1-sq)
     NP_2=0.25*(1+rq)*(1+sq)
     NP_3=0.25*(1-rq)*(1+sq)
-    return NP_0,NP_1,NP_2,NP_3
+    return np.array([NP_0,NP_1,NP_2,NP_3],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 # benchmark=1: brick with velocity discontinuity at bottom
@@ -302,10 +306,10 @@ else:
    benchmark=1
    every=1
    if benchmark==1:
-      nelx = 128
+      nelx = 240
       phi=30
       psi=30
-      niter=250
+      niter=50
       eta_v=1e25
       eta_m=1e20
       name=''
