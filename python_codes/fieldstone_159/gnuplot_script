@@ -18,15 +18,14 @@ plot[-2.5e7:3.2e7][-2.5e7:3.2e7]\
 'DPc_plane.ascii' u 1:3 w p ps .1 t 'Drucker-Prager (circum), {/Symbol f}=20^o',\
 'DPm_plane.ascii' u 1:3 w p ps .1 t 'Drucker-Prager (mid-circum), {/Symbol f}=20^o',\
 'MC_plane.ascii'  u 1:3 w p ps .1 t 'Mohr-Coulomb, {/Symbol f}=20^o',\
-'pi3_plane.ascii' u 1:3 w p ps .05 t '{/Symbol Q}=60^o',\
-'pi6_plane.ascii' u 1:3 w p ps .05 t '{/Symbol Q}=30^o',\
+'pi0_plane.ascii' u 1:3 w p ps .05 t '{/Symbol Q}_L=0^o',\
+'pi6_plane.ascii' u 1:3 w p ps .05 t '{/Symbol Q}_L=30^o',\
 
 set output 'surfaces_plane2.pdf'
 plot[-2.5e7:3.2e7][-2.5e7:3.2e7]\
 'VM_plane.ascii'  u 1:3 w p ps .125 t 'von Mises',\
 'TR_plane.ascii'  u 1:3 w p ps .125 t 'Tresca',\
-'pi0_plane.ascii' u 1:3 w p ps .05 t '{/Symbol Q}=0^o',\
-'pi3_plane.ascii' u 1:3 w p ps .05 t '{/Symbol Q}=60^o',\
-'pi6_plane.ascii' u 1:3 w p ps .05 t '{/Symbol Q}=30^o',\
+'pi0_plane.ascii' u 1:3 w p ps .05 t '{/Symbol Q}_L=0^o',\
+'pi6_plane.ascii' u 1:3 w p ps .05 t '{/Symbol Q}_L=30^o',\
 
 

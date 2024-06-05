@@ -11,7 +11,7 @@ eps=1e5
 Lx=1
 Ly=1
 Lz=1
-nnx=512
+nnx=600
 nny=nnx
 nnz=nnx
 nelx=nnx-1
@@ -99,9 +99,7 @@ DPcfile_plane=open('DPc_plane.ascii',"w")
 DPmfile_plane=open('DPm_plane.ascii',"w")
 
 ang0file=open('pi0_plane.ascii',"w")
-ang3file=open('pi3_plane.ascii',"w")
 ang6file=open('pi6_plane.ascii',"w")
-
 
 sqrt3=np.sqrt(3)
 onedeg=1./180.*np.pi
@@ -152,14 +150,11 @@ for x in xvals:
             sintheta=np.sin(theta)
             r=np.sqrt(x**2+y**2)
 
-            if sqrtI2tau*(costheta-sintheta*sinphi/sqrt3) < -I1sig/3.*sinphi+c*cosphi:
-               if abs(x+y+z-1e7)<eps:
-                  if abs(theta)<onedeg:
-                     ang0file.write("%10e %10e %10e \n" %(x,y,z))
-                  if abs(theta-np.pi/3.)<onedeg:
-                     ang3file.write("%10e %10e %10e \n" %(x,y,z))
-                  if abs(theta-np.pi/6.)<onedeg:
-                     ang6file.write("%10e %10e %10e \n" %(x,y,z))
+            if abs(x+y+z-1e7)<eps:
+               if abs(theta)<onedeg:
+                  ang0file.write("%10e %10e %10e \n" %(x,y,z))
+               if abs(theta-np.pi/6.)<onedeg:
+                  ang6file.write("%10e %10e %10e \n" %(x,y,z))
 
             #von Mises
             if make_vtu: array_vM[counter]=sqrtI2tau-c
