@@ -5,11 +5,11 @@ set key outside
 
 set output 'surfaces_xy.pdf'
 plot[][]\
-'VM_xy.ascii'  u 1:3 w p ps .125 t 'von Mises',\
-'TR_xy.ascii'  u 1:3 w p ps .125 t 'Tresca',\
-'MC_xy.ascii'  u 1:3 w p ps .125 t 'Mohr-Coulomb, {/Symbol p}=30^o',\
-'DPi_xy.ascii' u 1:3 w p ps .125 t 'Drucker-Prager (i), {/Symbol p}=30^o',\
-'DPc_xy.ascii' u 1:3 w p ps .125 t 'Drucker-Prager (c), {/Symbol p}=30^o',\
+'VM_xy.ascii'  u 1:3 w p ps .25 t 'von Mises',\
+'TR_xy.ascii'  u 1:3 w p ps .25 t 'Tresca',\
+'MC_xy.ascii'  u 1:3 w p ps .25 t 'Mohr-Coulomb, {/Symbol p}=30^o',\
+'DPi_xy.ascii' u 1:3 w p ps .25 t 'Drucker-Prager (i), {/Symbol p}=30^o',\
+'DPc_xy.ascii' u 1:3 w p ps .25 t 'Drucker-Prager (c), {/Symbol p}=30^o',\
 
 set output 'surfaces_plane.pdf'
 plot[-2.5e7:3.2e7][-2.5e7:3.2e7]\
