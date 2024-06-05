@@ -1,0 +1,35 @@
+\index{general}{Strain rate partitioning}
+\begin{flushright} {\tiny {\color{gray} strain\_rate\_partitioning.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When multiple viscous deformation mechanisms are present, one needs more dashpots, and 
+more complicated element diagrams than the ones above occur (also when adding plastic deformation).
+Two important rules are to be remembered:
+1) for parallel components, stresses are additive, strain rates are equal in each; 
+2) for components in series, stresses are equal in each and strain rates are additive. 
+Let us then look in the next subsections at various assemblies of dashpots and plastic elements.
+
+%-----------------------------------------
+\subsection{two viscous dampers in series} 
+\input{strain_rate_partitioning_1}
+
+%-------------------------------------------
+\subsection{two viscous dampers in parallel}
+\input{strain_rate_partitioning_2}
+
+%----------------------------------------------------------------
+\subsection{one viscous damper and a plastic element in parallel}
+\input{strain_rate_partitioning_3}
+
+%-----------------------------------------------------
+\subsection{two viscous dampers and a plastic element} 
+\input{strain_rate_partitioning_4}
+
+%---------------------------------------------------
+\subsection{two nonlinear viscous dampers in series} 
+\input{strain_rate_partitioning_5}
+
+%----------------------------------------------------------
+\subsection{multiple viscous dampers and a plastic element} 
+\input{strain_rate_partitioning_6}
+

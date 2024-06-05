@@ -1,0 +1,121 @@
+
+\begin{center}
+\input{tikz/tikz_dashpotdashpot_series_nl}
+\end{center}
+
+There are two dashpots in series, one accounts for dislocation creep, the other for diffusion creep.
+The algorithm goes then as follows:
+\begin{enumerate}
+\item Assume we know $\dot\varepsilon_T$ (from previous iteration). 
+\item The dashpots are in series so 
+\[
+\dot\varepsilon_T = \dot\varepsilon_{ds} + \dot\varepsilon_{df} 
+\]
+with
+\begin{eqnarray}
+\dot\varepsilon_{ds}  &=& A_{ds} \tau^n \exp \left(-\frac{Q_{ds}+pV_{ds}}{RT}\right) \label{sr_ds1} \\
+\dot\varepsilon_{df}  &=& A_{df} \tau   \exp \left(-\frac{Q_{df}+pV_{df}}{RT}\right) \label{sr_df1} 
+\end{eqnarray}
+such that we are in fact looking for the stress value $\tau$ so that 
+\[
+\dot\varepsilon_T = 
+A_{ds} \tau^n \exp \left(-\frac{Q_{ds}+p V_{ds}}{RT}\right) 
++
+A_{df} \tau   \exp \left(-\frac{Q_{df}+p V_{df}}{RT}\right) 
+\]
+or, we must find the zero of the function ${\cal F}(\tau)$: 
+\[
+{\cal F}(\tau) =  \dot\varepsilon_T 
+- A_{ds} \tau^n \exp \left(-\frac{Q_{ds}+p V_{ds}}{RT}\right) 
+- A_{df} \tau   \exp \left(-\frac{Q_{df}+p V_{df}}{RT}\right) 
+\]
+This equation can be solved with a Newton-Raphson algorithm
+and the iterations will be of the form:
+\[
+\tau_{n+1} = \tau_n - \frac{{\cal F}(\tau_n)}{{\cal F}'(\tau_n)}
+\]
+where the derivative of the function ${\cal F}$ with respect to $\tau$ reads:
+\[
+{\cal F}'(\tau)=\frac{\partial {\cal F}}{\partial \tau}=
+- A_{ds} n \tau^{n-1} \exp\left(-\frac{Q_{ds}+pV_{ds}}{RT}\right)
+- A_{df} \exp\left(-\frac{Q_{df}+pV_{df}}{RT}\right) 
+\]
+Once the value of $\tau$ is found, 
+the strain rate values of Eqs. (\ref{sr_ds1}) and (\ref{sr_df1})
+can be computed and so can the respective effective viscosities:
+\begin{eqnarray}
+\eta_{ds} 
+&=& \frac{1}{2} A_{ds}^{1/n} \dot\varepsilon_{ds}^{\frac{1}{n}-1} \exp \left(\frac{Q_{ds}+pV_{ds}}{nRT}\right) \\
+\eta_{df} 
+&=& \frac{1}{2} A_{df}^{1/n}  \exp \left(\frac{Q_{df}+pV_{df}}{RT}\right) 
+\end{eqnarray}
+Their average effective viscosity $\tilde{\eta}_{eff}$ is given by 
+\[
+\tilde{\eta}_{eff} = \left( \frac{1}{\eta_{ds}} + \frac{1}{\eta_{df}} \right)^{-1}
+\]
+\end{enumerate}
+
+
+Rather importantly, as we will see hereafter, the following variant is implemented 
+in some codes (e.g. \douar, \fantom, \sopale, and probably many others) 
+so as to bypass these costly Newton iterations:
+\begin{enumerate}
+\item compute $\eta_{ds}$ and $\eta_{df}$ with the {\it same} strainrate $\dot\varepsilon_T$, 
+pressure and temperature values
+\item average them by means of an harmonic average
+\end{enumerate}
+In this case, we have
+\[
+\dot{\varepsilon}_{\color{red} T}= 
+A_{df} \tau_{df} \exp\left(-\frac{Q_{df}+pV_{df}}{RT}\right)
+\quad\quad\quad
+\dot{\varepsilon}_{\color{red} T}= 
+A_{ds} \tau_{ds}^n \exp\left(-\frac{Q_{ds}+pV_{ds}}{RT}\right)
+\]
+or, 
+\begin{eqnarray}
+\eta_{ds} 
+&=& \frac{1}{2} A_{ds}^{1/n} \dot\varepsilon_{\color{red}T}^{\frac{1}{n}-1} \exp \left(\frac{Q_{ds}+pV_{ds}}{nRT}\right) \\
+\eta_{df} 
+&=& \frac{1}{2} A_{df}^{1/n}  \exp \left(\frac{Q_{df}+pV_{df}}{RT}\right) 
+\end{eqnarray}
+We see that this simplification has consequences on the dislocation creep viscosity only.
+
+
+\paragraph{A concrete example}
+Let us consider a vertical section of upper mantle, from 660\si{\km} depth to 30\si{\km} depth.
+The lithosphere is assumed to be 90\si{\km} thick. The temperature at the moho (the top
+of the domain) is set to 550C, 1330C at the LMB and 1380C at the bottom.
+A constant strainrate $\dot{\epsilon}_T=10^{-15}\si{\per\second}$ is assumed. 
+We assume that the pressure is lithostatic (for simplicity 
+the density is taken to be constant at 3300kg/m$^3$).
+The temperature and pressure fields are shown hereunder:
+\begin{center}
+\includegraphics[width=6cm]{images/rheology/effvisc/temperature.pdf}
+\includegraphics[width=6cm]{images/rheology/effvisc/pressure.pdf}
+\end{center}
+
+Material properties are taken from Karato \& Wu (1993) \cite{kawu93}.
+The (fortran) code is available in {\tt images/rheology/effvisc/}.
+
+In what follows, the values obtained with Newton iterations are coined 'NR'
+and those obtained without are coined 'CHEAP'.
+The diffusion and dislocation creep viscosities can be
+computed for both algorithms and are shown hereunder
+(As mentioned earlier the diffusion creep viscosity is independent of strain rate so
+is the same for both):
+\begin{center}
+\includegraphics[width=6cm]{images/rheology/effvisc/both_mu_ds.pdf}
+\includegraphics[width=6cm]{images/rheology/effvisc/both_mu_df.pdf}
+\end{center}
+We can also plot the resulting effective viscosity 
+$\eta_{eff}$ for both approaches and we see that the differences 
+are larger than 20\%. This is shown here under on the left, 
+alongside with the partitioning of the strain rate as a function of depth:
+\begin{center}
+\includegraphics[width=8cm]{images/rheology/effvisc/both_mueff.pdf}
+\includegraphics[width=8cm]{images/rheology/effvisc/both_sr.pdf}
+\end{center}
+
+
+

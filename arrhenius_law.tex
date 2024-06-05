@@ -1,0 +1,25 @@
+\index{general}{Arrhenius law}
+\begin{flushright} {\tiny {\color{gray} arrhenius\_law.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A purely temperature-dependent dimensional Arrhenius law that emulates the temperature
+dependence of viscosity in silicate rock is often employed for mantle rocks 
+\cite{albe00,zhzm09,vata11,bogs13b,namu13,stha13,boba19,gult19}:
+\begin{equation}
+\eta(T)=\eta_0 \exp \left( \frac{Q}{R}(\frac{1}{T}-\frac{1}{T_0}) \right)
+\qquad 
+{\rm or}
+\qquad 
+\eta(T)=\eta_0 \exp \left( \frac{Q}{RT} \right)
+\end{equation}
+where $\eta_0$ is a reference viscosity and $T_0$ its corresponding reference 
+temperature.
+
+It can also account for pressure effects as in \cite{lorg18} where the
+diffusion creep viscosity (under the assumption of homogeneous grain size)
+is temperature- and pressure-dependent:
+\[
+\eta(T)=\eta_0 \exp \left( \frac{1}{R}(\frac{Q-pV}{T}-\frac{Q}{T_0}) \right)
+\]
+(I find the minus sign rather suspicious)
+

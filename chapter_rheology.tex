@@ -1,8 +1,143 @@
 \chapter{Rheology}
-\input{rheology} %--------------------------------------------
+
+The reader is referred to Barnes \cite{barn99}
+for a discussion and review of non-linear viscous rheologies and 
+to Coussot \cite{cous14} for a review of experimental data for yield stress fluid
+flows. See also Tanner \& Tanner \cite{tata03} for a summary of Heinrich Hencky's 
+scientific work on rheology. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Relevant literature}
+
+\begin{itemize}
+\item Plasticity and Geomechanics, Davis and Selvadurai. \cite{dase02}
+\item Elasticity and Geomechanics, Davis and Selvadurai. \cite{dase96}
+\item Rheology of the Earth, Ranalli. \cite{ranalli}
+\item Deformation of Earth materials, Karato. \cite{kara08}
+\item Fundamentals of the Theory of Plasticity, Kachanov. \cite{kacha04} 
+\item Computational methods for plasticity, de Souza Neto et al. \cite{depo}
+\item Computer simulation of dynamic phenomena, M. wilkins \cite{wilk}
+\item Continuum theory of plasticity, Khan and Huang \cite{khhu}
+\item Theory of plasticity, Chakrabarty \cite{chakrabarty}
+\item Zienkiewicz Taylor \cite{zita2}
+\item Rheology Principles, Macosko \cite{macosko}
+\item Computational Inelasticity, Simo and Hughes \cite{simohughes} 
+\item Lectures on Visco-Plastic Fluid Mechanics, G. Ovarlez \& S. Hormozi \cite{ovho19}
+\item Complex fluids, P. Saramito \cite{saramito}
+\end{itemize}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Linear viscous aka Newtonian} 
+\input{newtonian_fluids}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Power-law model \label{ss:powerlaw}} 
+\input{powerlaw}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Carreau model}
+\input{carreau_model}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Bingham model} \label{sec:bingham}
+\input{bingham_model}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Herschel-Bulkley visco-plastic model}
+\input{herschel_bulkley_model}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Casson model}
+\input{casson_model}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Ellis model\label{ss:ellis}}
+\input{ellis_model}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{One model to rule them all? \label{ss:cross}}
+\input{rule_them_all}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Dislocation and Diffusion creep}
+\input{dislocation_diffusion_creeps}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The von Mises failure criterion}\label{sec:vMcriterion}
+\input{vMcriterion}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Tresca failure criterion}\label{sec:trcriterion}
+\input{trcriterion}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Mohr-Coulomb failure criterion}\label{sec:mccriterion}
+\input{mccriterion}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Drucker-Prager failure criterion \label{sec:dpcriterion}}
+\input{dpcriterion}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Griffith-Murrell failure criterion}
+\input{griffith_murrell}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Cam-clay failure criterion}
+\input{camclay}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The failure envelope, or yield surface \label{ss:envelope}}
+\input{yield_surface}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Peierls creep}
+\input{peierls}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Stress limiting (pseudo-plastic) rheology}
+\input{pseudo_plastic_rheology}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Arrhenius law} 
+\input{arrhenius_law}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Frank-Kamenetskii rheology}
+\input{frank_kamenetskii}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Glen's law for ice}\label{ss:glen}
+\input{glen_flow_law}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Strain rate partitioning across deformation mechanisms}\label{ss:srpart}
+\input{strain_rate_partitioning}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Anisotropic viscosity}
+\input{anisotropic_viscosity}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Rheology of the lithosphere}
+\input{lithosphere_rheology}
 
 \newpage
-%------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The Perzyna model}\label{sec:perzyna}
 \index{general}{Perzyna Model}
 \input{perzyna}
+
+\input{perzyna_vM}
+
+\input{perzyna_chpe15}
+
+\input{perzyna_others}
+
+
+
+
+
+

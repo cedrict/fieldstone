@@ -1,0 +1,124 @@
+\begin{flushright} {\tiny {\color{gray} perzyna\_others.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Revisiting Lemiale et al (2008) and Spiegelman et al (2016) }
+The authors postulate that the total strain rate is the sum of 
+the viscous deformation and plastic deformation:
+\[
+\dot{\bm \varepsilon} = \dot{\bm \varepsilon}^v + \dot{\bm \varepsilon}^p
+\]
+Then 
+\begin{equation}
+\bm \sigma = -p \bm 1 + 2\eta (\dot{\bm \varepsilon} -\dot{\bm \varepsilon}^p)
+\label{eq:abcd}
+\end{equation}
+Immediately we see that they implicitely assume that the flow is incompressible.
+Upon yielding a flow rule is needed to specify the plastic 
+behaviour. The plastic strain rate is written as
+\begin{equation}
+\label{eq:lemm08:epsp}
+\dot{\bm \varepsilon}^p = \dot\lambda \frac{\partial \QQQ}{\partial \bm\sigma}
+\end{equation}
+where $\dot\lambda$ is a scalar plastic flow rate and $\QQQ$ is the so-called plastic potential. 
+Note that in \textcite{hesd02} the authors define $\dot{\lambda}=\langle \phi(x) \rangle/\eta$
+so that the equation above is the Perzyna model. 
+A classical choice for $\QQQ$, in conjunction with the incompressibility constraint, is:
+\[
+\QQQ = \sqrt{ {\III}_2(\bm\tau)}
+\]
+We notice that Eq.~\ref{eq:lemm08:epsp} is different (although obviously not unrelated) 
+than the Perzyna approach above, although
+in the end they arrive at a similar expression as we did before for the von Mises case.
+
+
+If we consider only the deviatoric part of the stress tensor in Eq.~\eqref{eq:abcd}, we thus obtain\footnote{do they assume varepsilon deviatoric too?}
+\begin{equation}
+\bm \tau = 2 \eta (\dot{\bm \varepsilon} -\dot{\bm \varepsilon}^p)
+= 2 \eta \left(\dot{\bm \varepsilon} - \dot\lambda \frac{\partial \QQQ}{\partial \bm\sigma} \right)
+= 2 \eta \left(\dot{\bm \varepsilon} - \dot\lambda \frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}}  \frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} \right)
+= 
+2 \eta \left(\dot{\bm \varepsilon} - \dot\lambda \frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}} \bm\tau \right) \label{eq:bcde}
+\end{equation}
+This equation can be written as
+\[
+\left( 1 + \dot\lambda \frac{\eta }{ \sqrt{ {\III}_2(\bm\tau)}} \right) \bm\tau
+= 2 \eta \dot{\bm \varepsilon}
+\]
+One can then take the square root of the second invariant of this equation:
+\[
+\left( 1 + \dot\lambda \frac{\eta }{ \sqrt{ {\III}_2(\bm\tau)}} \right) 
+\sqrt{{\III}_2(\bm\tau) }= 2 \eta \sqrt{{\III}_2(\dot{\bm \varepsilon})}
+\]
+Then 
+\[
+\left( 1 + \dot\lambda \frac{\eta }{ \tau_e} \right) 
+\tau_e = 2 \eta \dot{\bm \varepsilon}_e
+\]
+so that 
+\[
+\dot\lambda 
+= \frac{2 \eta \dot{\bm \varepsilon}_e - \tau_e}{\eta}
+= 2 \dot{\bm \varepsilon}_e - \frac{\tau_e}{\eta}
+\]
+Finally we can insert this expression of $\dot\lambda$ in Eq.~\eqref{eq:bcde}
+\begin{eqnarray}
+\bm \tau 
+&=&2 \eta \left(\dot{\bm \varepsilon} - \dot\lambda \frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}} \bm\tau \right)  \\
+&=& 2 \eta \left(\dot{\bm \varepsilon} -    
+(2 \dot{ \varepsilon}_e - \frac{\tau_e}{\eta})
+\frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}} \bm\tau \right)  \\
+&=& 2 \eta \left(\dot{\bm \varepsilon} -  
+(2 \dot{ \varepsilon}_e - \frac{\tau_e}{\eta})   \frac{1}{2 \tau_e} \bm\tau \right) \\
+&=& 2 \eta \dot{\bm \varepsilon} -  
+2\eta \dot{\varepsilon}_e \frac{1}{ \tau_e} \bm\tau 
++ \eta \frac{\tau_e}{\eta}   \frac{1}{ \tau_e} \bm\tau \\
+&=& 2 \eta \dot{\bm \varepsilon} -  
+2\eta \dot{\varepsilon}_e \frac{1}{ \tau_e} \bm\tau +  \bm\tau \\
+\end{eqnarray}
+The term $\bm\tau$ is present on both sides of the equal sign so it cancels out
+and we are left with:
+\[
+\bm 0 = 2 \eta \dot{\bm \varepsilon} -  
+2\eta \dot{\varepsilon}_e \frac{1}{ \tau_e} \bm\tau 
+\]
+or,
+\[
+\bm\tau = \frac{\tau_e}{\dot{\varepsilon}_e}  \dot{\bm \varepsilon}
+\]
+On yield we have $\tau_e=Y(c,\phi)$ so in the end:
+\[
+{\bm\tau} = 2 \underbrace{
+\frac12 \frac{Y(c,\phi)}{ \dot{\varepsilon}_e} 
+}_{\eta_p}  \dot{\bm \varepsilon}
+\]
+That last step is poorly documented in the paper!
+This is a cumbersome exercise and it relies heavily on the choice of $\QQQ=\tau_e$.
+
+
+\begin{remark}
+Lemiale \etal (2008) define $\overline{\tau}=\sqrt{\tau_{ij}\tau_{ij}/2}$
+but define $\dot{\gamma}=\sqrt{2 D_{ij}D_{ij}}$!
+\end{remark}
+
+Let us now turn to \textcite{spmw16} (2016).
+In Section~2.1.1 of this paper the authors follow the same path as above. 
+They assume $\QQQ=\tau_e$ but justify their choice by stating that 
+``The use of incompressible materials mandates that we use a plastic potential g which is not a function of the pressure $p$''
+
+This is indeed very important in the context of our incompressible calculations in geodynamics. 
+
+They define the yield surface, $\FFF(\bm\sigma)$ which is a scalar function defining the failure (yield) state of a material. Yield surfaces are
+assumed to be of the following form 
+\[
+\FFF(\bm\sigma) =\tau_e - Y(\bm\sigma)
+\]
+where $Y$ is the yield criterion.
+The authors state that ``it is common practice in geodynamics to define the
+plastic multiplier $\dot\lambda$ which exactly satisfies $\FFF=0$, 
+or equivalently $\tau_e=Y$ \cite{lemm08}''.
+We see that it is then the same as the Lemiale \etal paper.
+
+
+
+
+

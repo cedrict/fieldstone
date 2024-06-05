@@ -1,0 +1,26 @@
+\begin{flushright} {\tiny {\color{gray} pseudo\_plastic\_rheology.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Taken from van Hunen \etal (2002) \cite{vavv02}:
+\[
+\eta_y = \tau_y \dot{\varepsilon}_y^{-1/n_y} \dot{\varepsilon}_e^{(1/n_y) -1 } 
+\]
+where the yield stress $\tau_y$, the yield strain rate $\dot{\varepsilon}_y$ and the yield exponent $n_y$ are
+prescribed parameters. In this article, $n_y=10$, $\dot{\varepsilon}_y=10^{-15}\si{\per\second}$
+When $n_y=1$ the viscosity is constant and given by $\eta_{eff} = \tau_y / \dot{\epsilon}_y$.
+
+This rheology has also been coined pseudo-plastic in Zhong \etal (1998) \cite{zhgm98}. 
+Their equation is simply  
+\[
+\eta_{eff} = A^{1/n} \dot{\varepsilon}_e^{-1+1/n}
+\]
+where $A$ is the preexponent which depends on temperature, pressure, and composition.
+\begin{center}
+\includegraphics[width=5.5cm]{images/rheology/zhgm98}
+\includegraphics[width=5.8cm]{images/rheology/pseudoplastic/stress}
+\includegraphics[width=5.8cm]{images/rheology/pseudoplastic/eta_eff}\\
+{\captionfont Left figure is taken from \cite{zhgm98}. Authors report $A=7.9\cdot 10^{-8} \si{\pascal^3\second}$ 
+for the $n=3$ case, which makes no sense. See gnuplot script for actual values of $A$.}
+\end{center}
+
+

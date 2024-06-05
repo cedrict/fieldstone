@@ -1,0 +1,53 @@
+\begin{flushright} {\tiny {\color{gray} frank\_kamenetskii.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Many CITCOMs-based publications \cite{bumb10,budt14} 
+have used the following (dimensionless) viscosity for the mantle:
+\[
+\eta(T,z) = \eta_r(r) \exp(A(0.5-T))
+\]
+where $\eta_r$ is a depth-dependent viscosity profile (usually defined as 
+discontinuous linear profiles for various shells)
+
+The non-dimensional activation coefficient is chosen to be $A=9.2103$ in 
+\cite{budt14} which leads to a temperature-induced viscosity contrast of $10^4$ (for 
+$T\in[0,1]$).
+
+This is also called the Frank-Kamenetskii flow rule, as used in \cite{stha13,lemh17}:
+\[
+\eta' = \eta_0 \exp(-\theta T)
+\]
+where the the parameters $\eta_0$, $\theta$ account for the local chemical composition of the rock.
+Note that the Frank-Kamenetskii approximation takes many forms in the literature \cite{nobr13}.
+\index{general}{Frank-Kamenetskii}
+
+Another temperature-dependent common expression is as follows \cite{flyu84}:
+\[
+\eta(T)=\eta_\infty \exp \left( \frac{Q}{R}(\frac{1}{T}-\frac{1}{T_\infty} ) \right)
+\]
+Also, following \cite{flyu84}: For studying transient convection in a non-
+Newtonian rheological fluid, it is expedient from a
+computational point of view to employ a law
+which behaves linearly for low stresses initially
+and becomes gradually non-Newtonian only after
+a certain threshold stress level has been surpassed \cite{chri84,chyu84}:
+\[
+\eta(T,p,\tau_2) =\eta(T,p) \frac{1}{A_2 + A_3 \tau_2^2}
+\]
+where $A_2$ is a parameter describing the linear creep
+at low stress levels and $A_3$ governs the transition
+stress between Newtonian and non-Newtonian rheologies.
+
+Coltice and Sheppard (2018) \cite{cosh18} use a depth- and temperature-dependent 
+viscosity formulation:
+\[
+\eta(z,T)=\eta_0(z) \exp \frac{Q}{RT}
+\]
+Note that this expression is supplemented with a pseudo-plastic formulation \cite{roct12}.
+
+\Literature: \cite{king16}
+
+
+
+
+

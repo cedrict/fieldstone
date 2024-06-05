@@ -1,0 +1,51 @@
+
+\index{general}{Bingham model}
+
+Bingham \cite{bingham} fluids can sustain an applied stress without any motion occuring. Only when the applied stress exceeds
+a yield stress $\tau_0$ then the fluid flows. This translates as follows \cite{reddybook2}:
+
+\begin{eqnarray}
+{\bm \tau} &=& \left(  \frac{\tau_0}{\dot{\varepsilon}} + 2 \eta_0  \right)\dot{\bm \varepsilon}^d \qquad 
+\text{ if } {\tau}_{e}>\tau_0 \\
+{\bm \tau} &=& {\bm 0} \qquad\qquad\qquad\qquad  \text{if } \tau_{e} \leq \tau_0 
+\end{eqnarray}
+When flow occurs, the effective viscosity is then given by:
+\begin{equation}
+\eta(\dot{\varepsilon}_e) = \frac{\tau_0}{\dot{\varepsilon}_e} + 2 \eta_0 
+\end{equation}
+and when the strain rate is large we recover a Newtonian behaviour.
+Typical Bingham fluids are mud, slurry, toothpaste.  
+
+When using a velocity-based FEM code, the implementation of this rheological behaviour 
+is complicated by the no-flow condition under a given stress. However, our codes
+require a relationship between stress and strain rate in the form of an effective viscosity
+which cannot be zero. 
+This difficulty can be circumvented by implementing Bingham fluids as follows \cite{reddybook2}:
+
+\begin{eqnarray}
+{\bm \tau} &=& \left(  \frac{\tau_0(1-\eta/\eta_r)}{\dot{\varepsilon}_e} 
++ 2 \eta_0  \right)\dot{\bm \varepsilon} \qquad \text{ if } \tau_{e}>\tau_0 \\
+{\bm \tau} &=& 2 \eta_r \dot{\bm \varepsilon}  \qquad\qquad\qquad\qquad\qquad\qquad  
+\text{if } \tau_{e} \leq \tau_0 
+\end{eqnarray}
+where $\eta_r$ is a pre-yield viscosity and $\eta/\eta_r<<1$ (typically 1\% or less). This is a form of 
+regularisation, and we will see a similar one in the next section.
+
+Note the interesting paper by Barnes and Walter (1985) \cite{bawa85} who argue that 
+"the yield stress concept is an idealization, and that, given accurate
+measurements, no yield stress exists. The simple Cross model is shown to be a
+useful empiricism for many non-Newtonian fluids, including those which have
+hitherto been thought to possess a yield stress." The Cross model is presented 
+in Section~\ref{ss:cross}.
+ 
+
+\Literature: 
+Papanastasiou (1987) \cite{papa87}, Blackery \& Mitsoulis (1997) \cite{blmi97},
+Mitsoulis \& Zisis (2001) \cite{mizi01}, Mahmood \etal (2017) \cite{maky17},
+Syrakos \etal (2014) \cite{syga14}, Bingham \cite{bingham}, Balmforth \& Rust (2009) \cite{baru09}, 
+Grinevich \& Olshanskii (2009) \cite{grol09}, Sverdrup \etal (2018) \cite{svna18}
+FE method for incompressible non-Newtonian flow (Bercovier \& Engelman (1980) \cite{been80});
+Flow around a rigid sphere (Liu \etal (2002) \cite{limd02}),
+Conduit flow of an incompressible, yield-stress fluid, \textcite{tawi97} (1997).
+
+

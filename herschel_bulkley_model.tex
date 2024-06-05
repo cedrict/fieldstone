@@ -1,0 +1,91 @@
+
+\index{general}{Herschel-Bulkley model}
+
+The Herschel-Bulkley model is effectively a combination of the power-law model and 
+a simple plastic model:
+\begin{eqnarray}
+{\bm \tau} &=& 2 \left(  K \dot{\varepsilon}_e^{n-1} 
++ \frac{\tau_0}{\dot{\varepsilon}}\right)\dot{\bm \varepsilon} \qquad \text{ if } {\tau}_{e}>\tau_0 \\
+\dot{\bm \varepsilon} &=& {\bm 0} \qquad\qquad \text{if }{\tau}_{e} \leq \tau_0 
+\end{eqnarray}
+in which $\tau_0$ is the yield stress, $K$ the consistency, and $n$ is the flow index \index{general}{Flow Index} \cite{demj04}.
+The flow index measures the degree to which the fluid is shear-thinning ($n<1$) or shear-thickening ($n>1$).
+If $n=1$ and $\tau_0=0$ the model reduces to the Newtonian model. 
+
+The term between parenthesis above is the nonlinear effective viscosity. 
+Concretely, the implementation goes as 
+follows\footnote{\url{https://en.wikipedia.org/wiki/Herschel-Bulkley_fluid}}:
+\begin{equation}
+\eta(\dot{\bm \varepsilon}) = 
+\left\{
+\begin{array}{cc}
+\eta_0 & \dot{\varepsilon}_e\leq \dot{\varepsilon}_0 \\ 
+K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e} & \dot{\varepsilon}_e \geq \dot{\varepsilon}_0
+\end{array}
+\right.
+\end{equation}
+The limiting viscosity $\eta_0$ is chosen such that 
+$\eta_0 =  K \dot{\varepsilon}_0^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_0}$
+
+A large limiting viscosity means that the fluid will only flow in response to a large applied force. 
+This feature captures the Bingham-type behaviour of the fluid. 
+Note that when strain rates are large, the power-law behavior dominates. 
+
+As we have seen for Bingham fluids, the equations above are not easily amenable to implementation so that 
+one usually resorts to regularisation, which is a modification of the 
+equations by introducing a new material parameter which controls the exponential 
+growth of stress. This way the equation is valid for both yielded 
+and unyielded areas (Blackery \& Mitsoulis (1997) \cite{blmi97},
+Papanastasiou (1987) \cite{papa87}, Zinani \& Frey (2007) \cite{zifr07}, 
+Sverdrup \etal (2018) \cite{svna18}):
+\begin{equation}
+\eta(\dot{\varepsilon}_e) 
+= K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e} [1 - \exp(-m \dot{\varepsilon}_e)] 
+\end{equation}
+When the strain rate becomes (very) small a Taylor expansion of the regularisation 
+term yields $1- \exp(-m \dot{\varepsilon}) \sim m \dot{\varepsilon} $ so that 
+$\eta_{eff} \rightarrow m \tau_0$.
+However, it seems more physically meaningful to replace $m$ by a reference strain 
+rate value $\dot{\varepsilon}_0$ so that 
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+\eta_{eff}(\dot{\bm \varepsilon}) 
+= K \dot{\varepsilon}_e^{n-1} + \frac{\tau_0}{\dot{\varepsilon}_e} 
+\left[1 - \exp\left(-\frac{\dot{\varepsilon}_e}{\dot{\varepsilon}_0} \right) \right]
+\end{equation}
+\end{mdframed}
+In this case, when strain rate becomes (very) small a Taylor expansion of the regularisation
+term yields
+\begin{equation}
+\frac{\tau_0}{\dot{\varepsilon}_e} \left[1 - 
+\exp\left(-\frac{\dot{\varepsilon}_e}{\dot{\varepsilon}_0} \right) \right]
+\simeq 
+\frac{\tau_0}{\dot{\varepsilon}_e} \frac{\dot{\varepsilon}_e}{\dot{\varepsilon}_0}
+=\frac{\tau_0}{\dot{\varepsilon}_0} 
+\end{equation}
+This has the dimensions of a viscosity and this is effectively the definition 
+of a maximum viscosity $\eta_{max}$.
+
+\noindent\Literature: 
+\begin{itemize}
+\item Viscous flow with large free surface motion (Huerta \& Liu (1988) \cite{huli88});
+\item Numerical simulation of thermal plumes (Massmeyer \etal \cite{madd13}); 
+\item Flows Through a Sudden Axisymmetric Expansion (Machado \etal \cite{mazf}, 
+      Jay \etal (2001) \cite{jamp01}); 
+\item Dam break problem (Ancey \& Cochard (2009) \cite{anco09}, 
+      Cochard \& Ancey (2009) \cite{coan09}, Balmforth \etal \cite{bafp09};
+\item Weakly compressible Poiseuille flow (Taliadorou (2009) \cite{tagm09});
+\item Flow past cylinders in tubes (Mitsoulis \& Galazoulas (2009) \cite{miga09});
+\item Determination of yield surfaces (Burgos \& Alexandrou (1999) \cite{buae99});
+\item Carbopol hydrogel rheology for experimental
+      tectonics and geodynamics \textcite{dicf15} (2015);
+\item Flow past a sphere(disc) \textcite{demj04} (2004); 
+      Gavrilov \etal (2017) \cite{gafp17}). 
+\item Progress in numerical simulation of yield stress fluid flows, \textcite{sawa17} (2017); 
+\item elastoviscoplastic model based on the Herschel–Bulkley viscoplastic model \textcite{sara09} (2019).
+\end{itemize}
+
+
+
+
+

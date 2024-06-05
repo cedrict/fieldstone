@@ -10,7 +10,7 @@
 \usepackage{mdframed}
 \usepackage{amsmath}
 \usepackage{amsfonts}
-\usepackage{xcolor} 
+\usepackage[dvipsnames]{xcolor} 
 \usepackage{dsfont}
 \usepackage{gensymb} %\degree
 \usepackage{listings}
@@ -25,6 +25,8 @@
 \DeclareSIUnit\day{day}
 
 \renewcommand{\chaptername}{Stone}
+
+\input{newcommands}
 
 \usepackage{tikz}
 \usetikzlibrary{arrows, arrows.meta}
@@ -54,7 +56,6 @@ urlcolor=black}
 \newcommand{\injulia}{\fbox{\textbf{\large \color{purple} J}}}
 \newcommand{\infortran}{\fbox{\textbf{\large \color{orange} F}}}
 
-\input{newcommands}
 
 \usepackage{xr}
 \externaldocument[MMM-]{manual}
@@ -650,13 +651,13 @@ Function & meaning \\
 \chapter{Temperature in mantle wedge (van Keken et al 2008) \label{f152}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 152
 \input{python_codes/fieldstone_152/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\chapter{Vorticity-Streamfunction - isoviscous 2D case with free slip\label{f153}} %%%%%%%%%%%%%%%%%%%%%%%%%% 153
+\chapter{Vorticity-Streamfunction - isoviscous 2D case with free slip\label{f153}} %%%%%%%%%%%%%%%%%%%%%%%%%% 153
 %\input{python_codes/fieldstone_153/text}
 
-%\chapter{Vorticity-Streamfunction - isoviscous 2D case with no slip\label{f154}} %%%%%%%%%%%%%%%%%%%%%%%%%%%% 154
+\chapter{Vorticity-Streamfunction - isoviscous 2D case with no slip\label{f154}} %%%%%%%%%%%%%%%%%%%%%%%%%%%% 154
 %\input{python_codes/fieldstone_154/text}
 
-%\chapter{Vorticity-Streamfunction - Convection in 2D box \label{f155}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 155
+\chapter{Vorticity-Streamfunction - Convection in 2D box \label{f155}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 155
 %\input{python_codes/fieldstone_155/text}
 
 \chapter{Vorticity-Streamfunction \& the Lorenz equations - Kellogg \& Turcotte (1990)  \label{f156}} %%%%%%% 156
@@ -665,9 +666,11 @@ Function & meaning \\
 \chapter{Solving the 1D diffusion equation with the Method of Lines  \label{f157}} %%%%%%%%%%%%%%%%%%%%%%%%%% 157
 \input{python_codes/fieldstone_157/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\chapter{Solving the diagenetic A-D-R equations with the Method of Lines \label{f158}} %%%%%%%%%%%%%%%%%%%%%% 158
+\chapter{Solving the diagenetic A-D-R equations with the Method of Lines \label{f158}} %%%%%%%%%%%%%%%%%%%%%% 158
 %\input{python_codes/fieldstone_158/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\chapter{Computing plastic yield envelopes \label{f159}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 159
+\input{python_codes/fieldstone_159/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

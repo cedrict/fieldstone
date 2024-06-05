@@ -1,0 +1,43 @@
+
+\index{general}{Carreau model} 
+
+Note that this model is sometimes called Bird-Carreau in the literature. \index{general}{Bird-Carreau model}
+As explained in Reddy \cite{reddybook2}, the power-law model poses no restriction on 
+how small or large the viscosity may become, which may prove problematic once 
+implemented as it can lead to runaway effects (strain rate becomes large $\rightarrow$
+viscosity becomes smaller $\rightarrow$ strain rate becomes larger, etc ...).
+This problem is alleviated in the so-called Carreau
+\footnote{\url{https://en.wikipedia.org/wiki/Carreau_fluid}} model \cite{carr72} 
+(see for example Zinani \& Frey (2007) \cite{zifr07}). 
+The viscosity is then given by
+\begin{equation}
+\eta(\dot{\varepsilon}_{e}) = \eta_\infty + (\eta_0-\eta_\infty) \left(1 + (\lambda \dot{\varepsilon}_{e})^2 \right)^{(n-1)/2}
+\end{equation}
+where $\eta_0$, $\eta_\infty$, $\lambda$ and $n\in[0,1]$ are material parameters. 
+$\lambda$ is called the relaxation time: it is the inverse of the shear rate at which 
+the fluid changes from Newtonian to power-law behavior.
+
+At low strain rate a Carreau fluid behaves as a Newtonian fluid with viscosity $\eta_0$.
+At intermediate strain rates $\dot{\varepsilon}_{e} \lambda \sim 1$ a Carreau fluid behaves 
+as a Power-law fluid. At high strain rate, a Carreau fluid behaves as a Newtonian fluid 
+again with viscosity $\eta_\infty$.
+ 
+\begin{center}
+\includegraphics[width=7cm]{images/rheology/carreau/carreau.pdf}
+\includegraphics[width=6cm]{images/rheology/carreau/carreau1}\\
+{\captionfont Left: Carreau model effective viscosity as a function of 
+the product $\lambda \dot{\varepsilon}_{e}$. Right: taken from 
+video at \url{https://youtu.be/qErs5zZV4BQ}.}
+\end{center}
+
+Note that the (Bird)-Carreau-Yasuda model \cite{yaac81,osru14} is very similar to the standard (Bird)-Carreau:
+\begin{equation}
+\eta = \eta_\infty + (\eta_0-\eta_\infty) \left(1 + (\lambda \dot{\varepsilon}_{e})^a \right)^{(n-1)/a}
+\end{equation}
+It is for instance used in van de Vosse \etal (2003) \cite{vadv03} to model blood.
+\index{general}{Bird-Carreau-Yasuda model}
+
+Flows in a Lid-Driven Cavity with this rheology are presented in \cite{zifr07,shal09}.
+
+\Literature: Bercovici (1993) \cite{berc93}, Bercovici (1995) \cite{berc95},
+Marcotte (2000) \cite{marc00}, Huerta \& Liu (1988) \cite{huli88}.

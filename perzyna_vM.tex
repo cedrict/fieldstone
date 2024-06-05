@@ -1,0 +1,193 @@
+\begin{flushright} {\tiny {\color{gray} perzyna\_vM.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{von Mises plasticity following Zienkiewicz (1975)}
+
+What follows is borrowed from Zienkiewicz (1975) \cite{zien75}.
+
+\begin{center}
+\fbox{\includegraphics[width=6cm]{images/perzyna/zien75}}\\
+{\captionfont Taken from \textcite{zien75}.}
+\end{center}
+
+We start from section 13.4.2 of the paper with the Perzyna formulation of the plastic 
+strain\footnote{from which I have removed the unnecessary/uncommon $\sqrt 3$ terms}. 
+\[
+\dot{\bm \varepsilon}^{vp} = \gamma \langle \phi({\FFF}) \rangle \frac{\partial \QQQ}{\partial \bm\sigma}
+\]
+Associative plasticity is used, i.e. ${\FFF}^{\text{\tiny vM}}={\cal \QQQ}^{\text{\tiny vM}}$, and the von Mises yield
+criterion is ${\FFF}^{\text{\tiny vM}}=\sqrt{{\III}_2(\bm \tau)}- Y$ so
+\begin{eqnarray}
+\dot{\bm \varepsilon}^{vp} 
+&=& \gamma \Big\langle \phi\left(\sqrt{{\III}_2(\bm \tau)}- Y\right)  \Big\rangle 
+\frac{\partial (\sqrt{{\III}_2(\bm \tau)}- Y)}{\partial \bm\sigma} \nn\\
+&=& \gamma \big\langle \phi\left(\sqrt{{\III}_2(\bm \tau)}- Y\right)  \Big\rangle 
+\frac{\partial \sqrt{{\III}_2(\bm \tau)}}{\partial \bm\sigma} \nn\\
+&=& \gamma \Big\langle \phi\left(\sqrt{{\III}_2(\bm \tau)}- Y\right)  \Big\rangle 
+\frac{1}{2 \sqrt{{\III}_2(\bm \tau)}} \frac{\partial {\III}_2(\bm \tau)}{\partial \bm\sigma}
+\end{eqnarray}
+Using results of Section~\ref{ss:recapInv} for the partial derivative of the second invariant
+we find\footnote{This is the same equation as Eq.~(14) of 
+\textcite{zijo78}}:
+\begin{eqnarray}
+\dot{\bm \varepsilon}^{vp} 
+&=& \gamma \Big\langle \phi\left(\sqrt{{\III}_2(\bm \tau)}- Y \right)  \Big\rangle 
+\frac{1}{2 \sqrt{{\III}_2(\bm \tau)}} {\bm \tau}
+\end{eqnarray}
+which we can also write\footnote{There most likely is a confusion in 
+the paper between $\sigma$ and $\tau$ there.}
+\[
+\dot{\bm \varepsilon}^{vp} =
+\frac{1}{2\eta} \bm\tau
+\qquad
+{\rm with}
+\qquad
+\frac{1}{2\eta} = \gamma \Big\langle \phi(\sqrt{{\III}_2(\bm \tau)}- Y) \Big\rangle 
+\frac{1}{2 \sqrt{{\III}_2(\bm \tau)}}
+\]
+Note that it here follows that the flow is incompressible since 
+the visco-plastic strain rate tensor is proportional to the deviatoric stress tensor
+so it is deviatoric itself!
+
+%Interestingly the author then states:
+%``As mentioned before this form is convenient for solving problems with
+%prescribed tractions. We now seek a form of $\bm\Gamma$ which will 
+%be applicable for prescribed velocity problems.'' Not sure what to make of it, though.
+
+From the definition of the second moment invariant:
+\[
+{\III}_2(\bm\tau)
+=\frac12 \bm\tau:\bm\tau 
+=\frac12 (2\eta \dot{\bm \varepsilon}^{vp}):(2\eta \dot{\bm \varepsilon}^{vp})
+=4 \eta^2   \left(\frac12 \dot{\bm \varepsilon}^{vp}: \dot{\bm \varepsilon}^{vp}\right)
+=4\eta^2 {\III}_2  \dot{\bm \varepsilon}^{vp}_e
+\]
+from which $\eta$ can be found as a function of strain rates and 
+hence $\bm\Gamma(\dot{\bm\varepsilon})$ becomes available (WHAT IS GAMMA?!).
+Note that annoyingly the author defines the second invariant as 
+$2 \dot{\bm\varepsilon}:\dot{\bm\varepsilon}$ in Eq.~(13.50) of the paper.
+
+It follows that 
+\[
+\tau_e =\sqrt{{\III}_2(\bm\tau)}=2\eta \dot{\varepsilon}_e^{vp}
+\]
+
+Then we drop the $\langle \cdot \rangle$ as we assume to be above yield and 
+we also assume a power-law form $\phi(\FFF)=\FFF^n$ so that 
+we can solve explicitly for $\eta$:
+
+\begin{eqnarray}
+\frac{1}{2\eta} 
+&=& \gamma \Big\langle \phi(\sqrt{{\III}_2(\bm \tau)}- Y)  \big\rangle 
+\frac{1}{2 \sqrt{{\III}_2(\bm \tau)}} \nn\\
+\frac{1}{2\eta} 
+&=& \gamma \left(2\eta \sqrt{{\III}_2(\dot{\bm\varepsilon})}- Y\right)^n  \frac{1}{2 \; 2 \eta \sqrt{{\III}_2(\dot{\bm\varepsilon})}} \nn\\
+\frac{1}{2\eta} 
+&=& \gamma \left(2\eta \dot\varepsilon_e - Y\right)^n  \frac{1}{2 \; 2 \eta \dot\varepsilon_e } \nn\\
+2 \dot\varepsilon_e
+&=& \gamma (2\eta \dot\varepsilon_e - Y)^n  \nn\\
+2 \dot\varepsilon_e / \gamma
+&=&  (2\eta \dot\varepsilon_e - Y)^n  \nn\\
+(2 \dot\varepsilon_e / \gamma)^{1/n}
+&=&  2\eta \dot\varepsilon_e - Y \nn\\
+\eta &=& \frac{ Y + (2 \dot\varepsilon_e / \gamma)^{1/n}}{2  \dot\varepsilon_e}
+\end{eqnarray}
+This form is convenient for plastic, visco-plastic and creep phenomena\footnote{Down 
+to various $\sqrt{2}$ or $\sqrt{3}$ coefficients here or there, it 
+is also to be found in Vilotte etal \cite{vidm82,vidm84,vimd86}}.
+This can be re-written
+\begin{eqnarray}
+\eta 
+&=& \frac{ Y + (2 \dot\varepsilon_e / \gamma)^{1/n}}{2  \dot\varepsilon_e} \nn\\
+&=& \frac{ Y }{2  \dot\varepsilon_e}
++ \frac{ (2 \dot\varepsilon_e / \gamma)^{1/n}}{2  \dot\varepsilon_e} \nn\\
+&=& \frac{ Y }{2  \dot\varepsilon_e}
++ \frac{ (2  / \gamma)^{1/n}}{2 }   \dot\varepsilon_e^{\frac1n-1} \nn\\
+&=& \frac{ Y }{2  \dot\varepsilon_e}
++ \frac{1 }{2 } (\gamma/2)^{-1/n}  \dot\varepsilon_e^{\frac1n-1} 
+\label{eq:zien75:a}
+\end{eqnarray}
+We often use dislocation creep/power-law rheologies and these yield an effective 
+viscosity $\frac12 A^{-1/n} \dot\varepsilon_e^{\frac1n-1}$ (the temperature and/or 
+pressure-dependent exponential has been omitted for simplicity - it is a power law rheology).
+The equation above is then the sum of the 'plastic viscosity' and the 'viscous creep viscosity' 
+-- which corresponds to a dashpot and a plastic element in parallel.
+Note that the expression above is very similar to the one for Bingham or Herschel-Bulkley visco-plastic
+models.
+
+If $n=1$ then we find (as in \textcite{vidm82} (1982))
+\begin{eqnarray}
+\eta 
+&=& \frac{ Y }{2  \dot\varepsilon_e}
++ \frac{1 }{\gamma } 
+\end{eqnarray}
+and $\gamma$ is then the inverse of the (linear) viscosity of the dashpot.
+Also if $n=1$ then $\bar\eta=\gamma^{-1}$.
+
+For pure plasticity then $\gamma \rightarrow \infty$ and we have here simply
+\[
+\eta = \frac{Y}{2  \dot\varepsilon_e}
+\]
+As stated in Vilotte etal (1982) \cite{vidm82}: 
+\begin{displayquote}
+{\color{darkgray}
+The plastic flow law of Eq.~\eqref{eq:zien75:a} permits us to
+represent in a single expression both the rigid-perfectly plastic flow
+($\gamma\rightarrow \infty$)
+and the common power creep law without plastic limit ($Y=0$)
+(usually referred to as the Norton-Hoff law)\footnote{\url{https://en.wikipedia.org/wiki/Viscoplasticity}}.}
+\end{displayquote}
+\textcite{vidm82} then explain that the fluidity $\gamma$ can depend on temperature $T$ in the form 
+\[
+\gamma = \gamma_0 \exp(-Q/RT)
+\]
+
+In this case Eq.~\eqref{eq:zien75:a} becomes
+\begin{eqnarray}
+\eta 
+&=& \frac{ Y }{2  \dot\varepsilon_e} + \frac{1 }{2 } ( \gamma_0 \exp(-Q/RT) /2)^{-1/n}  \dot\varepsilon_e^{\frac1n-1}  \nn\\
+&=& \frac{ Y }{2  \dot\varepsilon_e} + \frac{1 }{2 } ( \gamma_0 /2)^{-1/n}  \dot\varepsilon_e^{\frac1n-1}  \exp(Q/nRT) \nn\\
+&=& \frac{ Y }{2  \dot\varepsilon_e} + \frac{1 }{2 } A^{-1/n}  \dot\varepsilon_e^{\frac1n-1}  \exp(Q/nRT) 
+\end{eqnarray}
+where we have defined $A=\gamma_0/2$,
+which is the sum of the 'plastic viscosity' and a 'dislocation creep viscosity'.
+
+In conclusion we find that this formulation allows us to represent linear, power law,
+perfectly plastic and visco-plastic materials.
+Also, we know that the additional term $\bar\eta=\gamma^{-1}$ introduces a length scale
+in the shear bands by limiting the viscosity value in said shear bands.
+
+%%--------------------------------------------------------------------
+%\subsection{Looking at other yield criteria \& various remarks}
+
+%In the previous section the quantity $Y$ does not need to be a constant.
+%For instance, the Drucker-Prager yield criterion can also be cast as
+%$F= \sqrt{{\cal I}_2(\bm\tau)} - Y$ with $\alpha {\cal I}_1(\bm\sigma)+k$.
+%Likewise the Mohr-Coulomb yield criterion of Eq.~\eqref{eq:mcF} can be written:
+%\begin{equation}
+%F^{\text{\tiny MC}}=
+%\sqrt{  {\cal I}_2({\bm \tau})  } 
+%- \frac{ c \cos \phi - \frac{1}{3} {\cal I}_1({\bm \sigma}) \sin \phi }{
+%\cos \theta - \frac{1}{\sqrt{3}} \sin \theta  \sin \phi 
+%}
+%\end{equation}
+
+\begin{remark}
+If we use a non-associative plasticity then often $\QQQ=\sqrt{{\III}_2(\bm\tau)}$.
+and the formulation of the previous section remains valid. In that case 
+we have $C_1=0$ and $C_3=0$ which allows to easily arrive at a relationship 
+of the type $\dot{\bm\varepsilon}^{vp} = \frac{1}{2\eta} \bm\tau$ where 
+$\eta$ is a scalar viscosity. 
+
+However, if $\QQQ$ is such that $C_3\neq 0$, then we have a problem because 
+even by setting $n=1$ I do not know how to arrive at a scalar viscosity, 
+and even thinking of $\eta$ as a tensor then I am stuck, see Section about 
+Choi \& Petersen (2015) hereafter.
+\end{remark}
+
+
+
+
+
+
+

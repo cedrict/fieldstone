@@ -1,0 +1,231 @@
+
+
+\begin{center}
+\input{tikz/tikz_vvp2}
+\end{center}
+
+The algorithm goes then as follows:
+\begin{enumerate}
+\item Assume we know $\dot\varepsilon_T$ (from previous iteration), 
+as well as the plasticity parameters $Y$ (a constant in the case of von Mises, or a pressure-dependent 
+quantity otherwise) and $\eta_m$.
+\item We start by assuming that the plasticity 'block' is not active ($\dot{\varepsilon}_{vp}=0$): we have then three dampers in series. 
+We need their associated strain rates 
+$\dot{\varepsilon}_{df}$ and $\dot{\varepsilon}_{ds}$ which are such that 
+\[
+\dot\varepsilon_T = 
+\dot\varepsilon_v + \dot\varepsilon_{ds} + \dot\varepsilon_{df} 
+\]
+with
+\begin{eqnarray}
+\dot\varepsilon_v &=& \frac{\tau}{2 \eta_v} \label{sr_v} \\
+\dot\varepsilon_{ds}  &=& A_{ds} \tau^n \exp \left(-\frac{Q_{ds}+pV_{ds}}{RT}\right) \label{sr_ds} \\
+\dot\varepsilon_{df}  &=& A_{df} \tau   \exp \left(-\frac{Q_{df}+pV_{df}}{RT}\right) \label{sr_df} 
+\end{eqnarray}
+such that we are in fact looking for the stress value $\tau$ so that 
+\[
+\dot\varepsilon_T = 
+A_{ds} \tau^n \exp \left(-\frac{Q_{ds}+p V_{ds}}{RT}\right) 
++
+A_{df} \tau   \exp \left(-\frac{Q_{df}+p V_{df}}{RT}\right) 
++
+\frac{\tau}{2 \eta_v}
+\]
+or, we must find the zero of the function ${\cal F}$: 
+\[
+{\cal F}(\tau) = 
+\dot\varepsilon_T 
+- A_{ds} \tau^n \exp \left(-\frac{Q_{ds}+p V_{ds}}{RT}\right) 
+- A_{df} \tau   \exp \left(-\frac{Q_{df}+p V_{df}}{RT}\right) 
+- \frac{\tau}{2 \eta_v} 
+\]
+This equation can be solved with a Newton-Raphson algorithm
+and the iterations will be of the form:
+\[
+\tau_{n+1} = \tau_n - \frac{{\cal F}(\tau_n)}{{\cal F}'(\tau_n)}
+\]
+where the derivative of the function ${\cal F}$ with respect to $\tau$ reads:
+\[
+{\cal F}'(\tau)=\frac{\partial {\cal F}}{\partial \tau}=
+- A_{df} \exp\left(-\frac{Q_{df}+pV_{df}}{RT}\right) 
+- A_{ds} n \tau^{n-1} \exp\left(-\frac{Q_{ds}+pV_{ds}}{RT}\right)
+- \frac{1}{2\eta_v}
+\]
+Once the value of $\tau$ is found, 
+the strain rate values of Eqs. (\ref{sr_ds}), (\ref{sr_df}) and (\ref{sr_v}) 
+can be computed and so can the respective effective viscosities:
+\begin{eqnarray}
+\eta_{ds} 
+&=& \frac{1}{2} A_{ds}^{1/n} \dot\varepsilon_{ds}^{\frac{1}{n}-1} \exp \left(\frac{Q_{ds}+pV_{ds}}{nRT}\right) \\
+\eta_{df} 
+&=& \frac{1}{2} A_{df}^{1/n}  \exp \left(\frac{Q_{df}+pV_{df}}{RT}\right) 
+\end{eqnarray}
+Their average effective viscosity $\tilde{\eta}_{eff}$ is given by 
+\[
+\tilde{\eta}_{eff} = \left( \frac{1}{\eta_{ds}} + \frac{1}{\eta_{df}} + \frac{1}{\eta_v} \right)^{-1}
+\]
+
+
+\item if $\tau =2 \tilde{\eta}_{eff} \dot\varepsilon_T < Y$ the stress is below the yield stress value 
+and the plasticity element is indeed not active. Use $\tilde{\eta}_{eff}$ in the material model.
+
+\item if $\tau=2 \tilde{\eta}_{eff} \dot\varepsilon_T > Y$ the stress is above the yield value, which is not 
+allowed. In this case the plastic element must be present and active and the viscous dampers are then 
+in series with the (visco)plastic element. The formers deform 
+with a strain rate $\dot{\varepsilon}_v$, $\dot\epsilon_{ds}$ and $\dot{\epsilon}_{df}$ 
+while the latter with $\dot\epsilon_{vp}$ (all under the same tress $\tau$) 
+and we have  $\dot\varepsilon_T = \dot{\varepsilon}_v + \dot\varepsilon_{ds} + \dot\varepsilon_{df} + \dot\varepsilon_{vp}$ so:
+
+\begin{eqnarray}
+\dot\varepsilon_T - \dot{\varepsilon}_v(\tau) - \dot\varepsilon_{ds}(\tau) - \dot\varepsilon_{df}(\tau)  
+&=& \dot\varepsilon_{vp}  \nonumber\\
+&=& \frac{\tau}{2 \left( \frac{Y}{2\dot\varepsilon_{vp}} + \eta_m  \right)} 
+\nonumber\\
+%&=&  \frac{\tau}{2 \left( \frac{Y}{2 (\dot\varepsilon_T -\dot{\varepsilon}_v(\tau) -\dot\varepsilon_{ds}(\tau) 
+%+ \dot\varepsilon_{df}(\tau)   )} + \eta_m  \right)} 
+%\nonumber\\
+\dot\varepsilon_T -  \dot{\varepsilon}_v(\tau) -\dot\varepsilon_{ds}(\tau) - \dot\varepsilon_{df}(\tau) 
+&=&
+\frac{\tau}{2 \left( \frac{Y}{2 (\dot\varepsilon_T -\dot{\varepsilon}_v(\tau) -\dot\varepsilon_{ds}(\tau) 
++ \dot\varepsilon_{df}(\tau)   )} + \eta_m  \right)} \nonumber
+\\
+2 [\dot\varepsilon_T -\dot{\varepsilon}_v(\tau) -\dot\varepsilon_{ds}(\tau) - \dot\varepsilon_{df}(\tau) ]
+ \left( \frac{Y}{2 (\dot\varepsilon_T -\dot{\varepsilon}_v(\tau) -\dot\varepsilon_{ds}(\tau) + \dot\varepsilon_{df}(\tau)   )} + \eta_m  \right) &=& \tau 
+\nonumber\\
+Y + 2 (\dot\varepsilon_T - \dot{\varepsilon}_v(\tau) -\dot\varepsilon_{ds}(\tau) - \dot\varepsilon_{df}(\tau) ) \eta_m  &=& \tau \nonumber 
+\end{eqnarray}
+As before, we must find the zero of the function ${\cal F}$: 
+\begin{eqnarray}
+{\cal F}(\tau) 
+&=& Y + 2 [\dot\varepsilon_T -\dot{\varepsilon}_v(\tau)- \dot\varepsilon_{ds}(\tau) -\dot\varepsilon_{df}(\tau) ]\eta_m -\tau \nonumber\\
+&=& Y + 2 \left[ 
+\dot\varepsilon_T - \frac{\tau}{2\eta_v}-A_{ds} \tau^n \exp \left(-\frac{Q_{ds}+pV_{ds}}{RT}\right) 
+- A_{df} \tau   \exp \left(-\frac{Q_{df}+pV_{df}}{RT}\right)  
+\right]\eta_m -\tau \nn
+\end{eqnarray}
+Because dislocation creep involves the $n$-th power of the stress we will here also need 
+to find the zero by means of a Newton-Raphson algorithm. 
+
+We have:
+\begin{eqnarray}
+\frac{\partial {\cal F}}{\partial \tau} &=&
+\left[
+- \frac{1}{\eta_v} 
+-2 \frac{\partial  \dot\varepsilon_{ds}(\tau) }{\partial \tau} 
+-2 \frac{\partial  \dot\varepsilon_{df}(\tau) }{\partial \tau} 
+\right] \eta_m - 1
+\end{eqnarray}
+
+\begin{eqnarray}
+{\cal F}(\tau) / 2\eta_m 
+&=& 
+\frac{Y}{2\eta_m}  + \dot\varepsilon_T 
+- \frac{\tau}{2\eta_v}
+- A_{ds}(p,T) \tau^n 
+- A_{df}(p,T) \tau  
+- \frac{\tau}{2\eta_m} \\
+&=& 
+- A_{ds}(p,T) \tau^n - \left(A_{df}(p,T) +  \frac{1}{2\eta_v} -\frac{1}{2\eta_m} \right) \tau
++ 
+\left( \frac{Y}{2\eta_m}  + \dot\varepsilon_T \right) =0
+\end{eqnarray}
+
+
+
+\end{enumerate}
+
+Note that when $\eta_m=0$ we logically recover $\tau=Y$ as the stress cannot exceed the yield strength $Y$.
+
+Although this approach is probably the most consistent in terms of physics, the presence 
+of the Newton-Raphson iterations makes it very expensive since this procedure is to be repeated 
+for every quadrature point or every particle.
+
+Let us consider a concrete example: we set $Y=20\si{\mega\pascal}$, $\eta_v=10^{25}\si{pascal}$, 
+$\eta_m=10^{20}\si{pascal}$. The domain is one-dimensional of depth $660\si{km}$. The density is
+assumed to be constant at $3300\si{\kg\per\cubic\metre}$. Dislocation and diffusion creep parameters
+are taken from Karato \& Wu (1993) \cite{kawu93}. The temperature is linear is $20\si{\celsius}$ 
+at the surface, $550\si{\celsius}$ at $30\si{km}$ depth, $1330\si{celsius}$ at $90\si{\km}$ depth 
+and $1380\si{\celsius}$ at the bottom. Pressure is assumed to be lithostatic. 
+The python program and the gnuplot script are in {\sl images/rheology/example}.
+
+In the code I consider two cases: 'old' and 'new'. The latter is described above. 
+'old' goes as follows: loop over total strain rate values. 
+Compute dislocation and diffusion creep viscosities with it. Compute harmonic 
+average of these with linear viscosity. Compute deviatoric stress value. 
+use it in dislocation and diffusion formulae to arrive at respective strainrates. 
+
+\newpage
+\begin{center}
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_df_old-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_df_new-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_df_diff-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_ds_old-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_ds_new-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_ds_diff-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_v_old-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_v_new-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_sr_v_diff-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/map_etaeff_old-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_etaeff_new-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_etaeff_diff-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/map_tau_old-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_tau_new-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_tau_diff-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/profile_sr-1}
+\includegraphics[width=5.5cm]{images/rheology/example/profile_tau-1}
+\includegraphics[width=5.5cm]{images/rheology/example/profile_etaeff-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/map_isplast_old-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_isplast_new-1}\\
+{\captionfont Viscous branch: (ds+df+v) 'old' stands 
+for the old approach when $\dot{\varepsilon}_T$
+was used for all mechanisms. 'new' stands for the new approach and the right strain rate 
+decomposition.}
+\end{center}
+
+
+
+\newpage
+\begin{center}
+\includegraphics[width=5.5cm]{images/rheology/example/map_etaeff_old_pl-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_etaeff_new_pl-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_etaeff_diff_pl-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/map_tau_old_pl-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_tau_new_pl-1}
+\includegraphics[width=5.5cm]{images/rheology/example/map_tau_diff_pl-1}\\
+\includegraphics[width=5.5cm]{images/rheology/example/profile_sr_pl-1}
+\includegraphics[width=5.5cm]{images/rheology/example/profile_tau_pl-1}
+\includegraphics[width=5.5cm]{images/rheology/example/profile_etaeff_pl-1}\\
+{\captionfont Visco-viscoplastic rheology: (ds+df+v+vp)} 
+\end{center}
+
+
+
+
+
+\begin{remark}
+Chenin \etal (2019) \cite{chmd19}, 
+base their rheological model on the additive decomposition of the following
+deviatoric strain rate tensor ${\bm \varepsilon}^d$:
+\[
+{\bm \varepsilon}^d =
+{\bm \varepsilon}^{el}+
+{\bm \varepsilon}^{pl}+
+{\bm \varepsilon}^{ds}+
+{\bm \varepsilon}^{df}+
+{\bm \varepsilon}^{pe}
+\]
+where the five strain rate terms correspond respectively to the elastic, plastic, 
+and viscous creep (dislocation, diffusion, peierls) contributions. 
+This implies that all these elements are in series and the associated 
+viscosities are then averaged with an harmonic mean. 
+Rather interestingly, it is then stated that "this strain rate equation is nonlinear
+and solved locally on cell centroids and vertices in order to define the current effective viscosity 
+and stress \cite{poso08}."
+\end{remark}
+
+\Literature: \textcite{hoor89,lopr90,homo90,scps01,lova01,anpa19,elga10}
+
+
+
+
+

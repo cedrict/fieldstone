@@ -1,0 +1,31 @@
+
+
+\begin{center}
+\input{tikz/tikz_dashpotdashpot_series}
+\end{center}
+
+Each is subjected to the same stress $\tau$ but deforms 
+with its own strain rate $\dot{\varepsilon}_1$ and $\dot{\varepsilon}_2$ and we have 
+\begin{equation}
+\dot{\varepsilon}_T 
+= \dot{\varepsilon}_1 + \dot{\varepsilon}_2
+= \frac{\tau}{2\eta_1} + \frac{\tau}{2\eta_2}
+\end{equation}
+The effective viscosity of this combination is denoted $\eta_{eff}$ and is such that 
+$\eta_{eff}=\tau/2\dot{\varepsilon}_T$, which means that 
+\[
+\frac{\tau}{2\eta_{eff}} = \frac{\tau}{2\eta_1} + \frac{\tau}{2\eta_2}
+\]
+or, 
+\[
+\eta_{eff}= \left( \frac{1}{\eta_1} + \frac{1}{\eta_2} \right)^{-1}
+\]
+i.e. it follows that the effective viscosity of two or more viscous dampers in series is the harmonic 
+average of the individual viscosities of the dampers.
+
+In general, for n dampers in series:
+\[
+\eta_{eff}= \left( \sum_{i=1}^n \frac{1}{\eta_i} \right)^{-1}
+\]
+
+

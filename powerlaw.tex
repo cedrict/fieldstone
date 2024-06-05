@@ -1,0 +1,23 @@
+\index{general}{Power Law Rheology}
+
+
+One of the simplest non-Newtonian viscosity model is the power law model, 
+for which the viscosity depends on the (effective) deviatoric strain rate as follows:
+\begin{equation}
+\eta(\dot{\varepsilon}_e) = K \dot{\varepsilon}_{e}^{n-1}
+\qquad \text{or } \qquad
+\sigma = 2 K \dot{\varepsilon}_e ^n 
+\end{equation}
+where $n$ and $K$ are parameters. $n$ is called the power law index. $\dot{\varepsilon}_e$ 
+is defined in  \eqref{eq:tauepse} and in the table here above. 
+Note that a Newtonian viscosity is recovered when $n=1$. Also $n$ and $K$ may depend on temperature
+(see Reddy  \cite[p339]{reddybook2}).
+
+A so-called 'generalised' power law rheology is proposed in Iaffaldano \& bunge (2009) \cite{iabu09}:
+\begin{equation}
+\eta = K (\dot{\varepsilon}_{e}+\dot{\varepsilon}_0)^{n-1}
+\end{equation}
+so that in the rigid areas where $\dot{\varepsilon}_e \rightarrow 0$ the rheology 
+uses instead a minimum strain rate value $\dot{\varepsilon}_0$.
+
+\Literature: England \& Molnar (1997) \cite{enmo97}

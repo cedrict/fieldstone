@@ -1,0 +1,72 @@
+\begin{flushright} {\tiny {\color{gray} anisotropic\_viscosity.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Following the paper by Lev and Hager (2008) \cite{leha08}, 
+the anisotropic viscosity enters the equation of momentum through a 'correction'
+term added to the isotropic part of the constitutive equation relating
+stress and strain rate \cite{mumh02}:
+\[
+\sigma_{ij} = -p \delta_{ij} + 2 \eta_N \dot{\varepsilon}_{ij}  - 2(\eta_N-\eta_S)\Lambda_{ijkl}\dot{\varepsilon}_{kl} 
+\]
+where $\eta_N$ is the normal viscosity and $\eta_S$ is the shear viscosity. 
+The fourth order tensor $\Lambda$ reflects the orientation of the directors in space, 
+denoted by $\vec{n}$:
+\[
+\Lambda_{ijkl}=\frac{1}{2} (n_i n_k \delta_{lj} + n_j n_k \delta_{il} 
++ n_i n_l \delta_{kj} n_j n_l \delta_{ik} )
+- 2 n_i n_j n_k n_l 
+\]
+Following \cite{modm03,mumh02}, the 'directors' are advected through the model and are 
+analogous to particles. The directors are
+vector-particles pointing normal to the easy-glide plane or layer,
+thus defining the directions associated with $\eta_N$ and $\eta_S$. 
+In each time step of the calculation, the directors are advected and rotated by the
+flow, and in return determine the viscosity structure for the next time
+step \cite{mumc04}.
+
+\begin{center}
+\includegraphics[width=13cm]{images/rheology/leha08}\\
+{\captionfont Taken from Lev \& Hager (2008) \cite{leha08}.}
+\end{center}
+
+
+{\scriptsize
+\Literature:
+\begin{itemize}
+\item 
+\fullcite{rida78}
+\item 
+\fullcite{saab84}
+\item 
+\fullcite{vatb98}
+\item 
+\fullcite{mumh02}
+\item 
+\fullcite{mumc03}
+\item 
+\fullcite{mumc04}
+\item 
+\fullcite{mima04}
+\item 
+\fullcite{momu06}
+\item 
+\fullcite{mumg10}
+\item 
+\fullcite{muso11}
+\item 
+\fullcite{shmv16}
+\item 
+\fullcite{peka18}
+\item 
+\fullcite{kich20}
+\end{itemize}
+}
+
+
+
+
+
+
+
