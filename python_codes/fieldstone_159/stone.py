@@ -1,17 +1,18 @@
 import numpy as np
 import time
 
-
-make_vtu=False
+make_vtu=True
 
 c=20e6
 phi=20./180.*np.pi
 eps=1e5
 
+c_GM=c/20
+
 Lx=1
 Ly=1
 Lz=1
-nnx=600
+nnx=80#0
 nny=nnx
 nnz=nnx
 nelx=nnx-1
@@ -28,17 +29,17 @@ start = time.time()
 
 if make_vtu:
 
-   x = np.empty(NV,dtype=np.float64)  # x coordinates
-   y = np.empty(NV,dtype=np.float64)  # y coordinates
-   z = np.empty(NV,dtype=np.float64)  # z coordinates
+   xcoords = np.empty(NV,dtype=np.float64)  # x coordinates
+   ycoords = np.empty(NV,dtype=np.float64)  # y coordinates
+   zcoords = np.empty(NV,dtype=np.float64)  # z coordinates
 
    counter=0
    for i in range(0,nnx):
        for j in range(0,nny):
            for k in range(0,nnz):
-               x[counter]=i*Lx/float(nelx)
-               y[counter]=j*Ly/float(nely)
-               z[counter]=k*Lz/float(nelz)
+               xcoords[counter]=i*Lx/float(nelx)
+               ycoords[counter]=j*Ly/float(nely)
+               zcoords[counter]=k*Lz/float(nelz)
                counter += 1
            #end for
        #end for
@@ -83,6 +84,7 @@ MCfile=open('MC.ascii',"w")
 DPifile=open('DPi.ascii',"w")
 DPcfile=open('DPc.ascii',"w")
 DPmfile=open('DPm.ascii',"w")
+GMfile=open('GM.ascii',"w")
 
 VMfile_xy=open('VM_xy.ascii',"w")
 TRfile_xy=open('TR_xy.ascii',"w")
@@ -90,6 +92,7 @@ MCfile_xy=open('MC_xy.ascii',"w")
 DPifile_xy=open('DPi_xy.ascii',"w")
 DPcfile_xy=open('DPc_xy.ascii',"w")
 DPmfile_xy=open('DPm_xy.ascii',"w")
+GMfile_xy=open('GM_xy.ascii',"w")
 
 VMfile_plane=open('VM_plane.ascii',"w")
 TRfile_plane=open('TR_plane.ascii',"w")
@@ -97,6 +100,7 @@ MCfile_plane=open('MC_plane.ascii',"w")
 DPifile_plane=open('DPi_plane.ascii',"w")
 DPcfile_plane=open('DPc_plane.ascii',"w")
 DPmfile_plane=open('DPm_plane.ascii',"w")
+GMfile_plane=open('GM_plane.ascii',"w")
 
 ang0file=open('pi0_plane.ascii',"w")
 ang6file=open('pi6_plane.ascii',"w")
@@ -117,6 +121,7 @@ if make_vtu:
    array_DPc= np.empty(NV,dtype=np.float64)  
    array_DPi= np.empty(NV,dtype=np.float64)  
    array_DPm= np.empty(NV,dtype=np.float64)  
+   array_GM= np.empty(NV,dtype=np.float64)  
 
 counter=0
 for x in xvals:
@@ -209,6 +214,15 @@ for x in xvals:
                   DPifile_xy.write("%10e %10e %10e \n" %(x,y,z))
                if abs(x+y+z-1e7)<eps:
                   DPifile_plane.write("%10e %10e %10e \n" %(x,y,z))
+
+            # Griffith-Murrell
+            if make_vtu: array_GM[counter]= (x-y)**2+(y-z)**2+(z-x)**2+24*c_GM*(x+y+z)
+            if abs( (x-y)**2+(y-z)**2+(z-x)**2+24*c*(x+y+z) )<eps:
+               GMfile.write("%10e %10e %10e \n" %(x,y,z))
+               if abs(x-y)<eps:
+                  GMfile_xy.write("%10e %10e %10e \n" %(x,y,z))
+               if abs(x+y+z-1e7)<eps:
+                  GMfile_plane.write("%10e %10e %10e \n" %(x,y,z))
          
             counter+=1
 
@@ -221,7 +235,8 @@ for x in xvals:
 
 ###############################################################################
 
-if make_vtu: 
+if make_vtu:
+ 
    vtufile=open("solution.vtu","w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
    vtufile.write("<UnstructuredGrid> \n")
@@ -230,7 +245,7 @@ if make_vtu:
    vtufile.write("<Points> \n")
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
    for i in range(0,NV):
-       vtufile.write("%10f %10f %10f \n" %(x[i],y[i],z[i]))
+       vtufile.write("%10f %10f %10f \n" %(xcoords[i],ycoords[i],zcoords[i]))
    vtufile.write("</DataArray>\n")
    vtufile.write("</Points> \n")
    #####
@@ -275,6 +290,11 @@ if make_vtu:
    for i in range (0,NV):
        vtufile.write("%e\n" % array_DPi[i])
    vtufile.write("</DataArray>\n")
+   vtufile.write("<DataArray type='Float32' Name='F(GM)' Format='ascii'> \n")
+   for i in range (0,NV):
+       vtufile.write("%e\n" % array_GM[i])
+   vtufile.write("</DataArray>\n")
+
    vtufile.write("</PointData>\n")
    #####
    vtufile.write("<Cells>\n")

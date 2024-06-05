@@ -92,6 +92,8 @@ I3tau=((2*x-y-z)**3+(2*y-x-z)**3+(2*z-x-y)**3)/81.
 Finally the Lode angle is given by
 \[
 \uptheta_{\rm L} = 
+=\frac{1}{3} \sin^{-1} 
+\left( -\frac{3\sqrt{3}}{2} \frac{{\III}_3({\bm \tau})}{{\III}_2({\bm \tau})^{3/2}} \right)
 \]
 and is implemented as follows:
 \begin{lstlisting}
@@ -101,7 +103,7 @@ theta=max(-0.99999999,theta)
 theta=np.arcsin(theta)/3.
 \end{lstlisting}
 
-
+When ran at high resolution, one can extract the following plots:
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_159/images/surfaces_xy.pdf}
 \includegraphics[width=12cm]{python_codes/fieldstone_159/images/surfaces_plane.pdf}
@@ -109,7 +111,20 @@ theta=np.arcsin(theta)/3.
 {\captionfont Obtained with nnx=512}.
 \end{center}
 
+Using paraview on the {solution.vtu} file, and plotting zero-isocontours of each yield function:
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_159/images/VM}
+\includegraphics[width=6cm]{python_codes/fieldstone_159/images/TR}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_159/images/GM}
+\includegraphics[width=6cm]{python_codes/fieldstone_159/images/MC}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_159/images/DPi}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_159/images/DPm}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_159/images/DPc}
+{\captionfont Obtained with nnx=80}.
+\end{center}
+
 WHy is tresca so far from vM ?
 
-Griifith-Murrell ?
+not sure how to choose the parameter for GM, so after trial and error I took c/20.
+
 
