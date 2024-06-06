@@ -76,11 +76,12 @@ Eq.~\eqref{eq:qq1} yields
 \Rightarrow \qquad 3 \alpha \cos\uptheta - \alpha \sqrt{3}\sin\uptheta \sin\phi = \sin\phi 
 \]
 and finally 
-\[
+\begin{equation}
 \boxed{
 \alpha(\phi) =  \frac{\sin\phi}{ 3 \cos\uptheta - \sqrt{3}\sin\uptheta \sin\phi}
 }
-\]
+\label{eq:dpalpha}
+\end{equation}
 Inserting this into Eq.~\eqref{eq:qq2}:
 \begin{eqnarray}
 - k \cos\uptheta 
@@ -96,11 +97,12 @@ Inserting this into Eq.~\eqref{eq:qq2}:
 \frac{ 3 \cos\uptheta}{ 3 \cos\uptheta - \sqrt{3}\sin\uptheta \sin\phi} \right) \nn
 \end{eqnarray}
 so that 
-\[
+\begin{equation}
 \boxed{
 k(c,\phi) =- \frac{ 3\; c \cos \phi }{ 3 \cos\uptheta - \sqrt{3}\sin\uptheta \sin\phi} 
 }
-\]
+\label{eq:dpk}
+\end{equation}
 %Unsurprisingly we recover the Eqs. 20 and 21 of Wojciechowski \cite{wojc18} by replacing $\theta$ by $-\theta$.
 
 The Drucker-Prager yield criterion which for a given $\theta$ is equal to the Mohr-Coulomb yield is then:
@@ -124,7 +126,7 @@ The Drucker-Prager yield criterion which for a given $\theta$ is equal to the Mo
 which, when multiplied by $\cos\uptheta - \frac{1}{\sqrt{3}}\sin\uptheta \sin\phi$, gives
 the Mohr-Coulomb criterion of Eq.~\eqref{eq:mcF}. 
 
-%-----------------------------------------------
+%------------------------------------
 \subsection{The three standard types}
 
 For $\uptheta=\pi/6$, the DP yield surface {\bf circumscribes} the MC yield 
@@ -198,17 +200,6 @@ With our notations:
 
 The yield surfaces of these three Drucker-Prager formulations are plotted against the Mohr-Coulomb
 yield surface in Section~\ref{ss:envelope}. 
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\paragraph{two-dimensional space}
-
-%By choosing $k=c \cos \phi $ and $\alpha=\frac{1}{2}\sin \phi$ and seeing that that $p=\frac{1}{2} {\cal I}_1({\bm \sigma})$, we can make the Drucker-Prager yield criterion coincide with the Mohr-Coulomb yield criterion
-%so that 
-%\begin{equation}
-%F^{DP,2D} = \tau_e - (p \sin \phi + c \; \cos \phi) 
-%\end{equation}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -290,6 +281,36 @@ here introduced to relax the singularity at the cone's tip of the Drucker-Prager
 \Literature:
 \fullcite{cuwi14}
 
+%-----------------------------------------------------------------------------
+\subsection{What happens when $\phi=0$?}
+
+From \eqref{eq:dpalpha} we obtain $\alpha=0$, and 
+from Eq.~\eqref{eq:dpk} we obtain 
+\[
+k= -\frac{3c }{3 \cos\uptheta_{\rm L}}
+\]
+Then 
+\begin{equation}
+\FFF^{\text{\tiny DP}}= \sqrt{{\cal I}_2({\bm \tau})} -\frac{c }{\cos\uptheta_{\rm L}}  =0  
+\end{equation}
+
+The MC-circumscribing DP formulation ($\uptheta_L=\pi/6$) then becomes
+\begin{equation}
+\FFF^{\text{\tiny DP}} 
+= \sqrt{{\cal I}_2({\bm \tau})} - \frac{ 6\; c }{3 \sqrt{3}} 
+= \sqrt{{\cal I}_2({\bm \tau})} - \frac{ 2 c }{\sqrt{3}} 
+\end{equation}
+We obviously obtain an identical expression 
+for the middle-circumscribing formulation ($\uptheta_L=-\pi/6$).
+
+The MC-inscribing case is then 
+\[
+\FFF^{\text{\tiny DP}}
+= \sqrt{{\cal I}_2({\bm \tau})} - \frac{ 3\; c \cos \phi }{ \sqrt{9} }
+= \sqrt{{\cal I}_2({\bm \tau})}  - c 
+\]
+
+{\color{orange} reconcile with von Mises! }
 
 %.............................................................................
 \subsection{Dissecting the original paper by Drucker and Prager (1952)}

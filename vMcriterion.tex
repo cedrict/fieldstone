@@ -6,7 +6,7 @@
 The von Mises yield criterion suggests that the yielding of materials begins when the second 
 deviatoric stress invariant ${\III}_2({\bm \tau})$ reaches a critical value. 
 For this reason, it is sometimes called the $J_2$-plasticity or $J_2$ flow 
-theory\footnote{$J_2$ is the common notation for ${\III}_2({\bm \tau})$}. 
+theory\footnote{$J_2$ is the common notation for ${\III}_2({\bm \tau})$.}. 
 It is part of a plasticity theory that applies best to ductile materials, such as metals. 
 
 In material science and engineering the von Mises yield criterion can be also formulated in terms of 
@@ -30,20 +30,28 @@ This criterion is also referred to as the Maxwell-Huber-Hencky-von Mises theory.
 The von Mises yield criterion (also known as Prandtl-Reuss yield criterion) 
 is expressed in the principal stresses as
 \[
-\sqrt{{\III}_2({\bm \tau})} = c \quad \text{or}, \quad 
-\frac{1}{6}[(\sigma_1 - \sigma_2)^2 + (\sigma_2 - \sigma_3)^2 + (\sigma_3 - \sigma_1)^2] =  c^2 
+\sqrt{3} \sqrt{{\III}_2({\bm \tau})} = c 
+\]
+or, using the definition of $\III_2(\bm\tau)$ as a function of $\sigma_{1,2,3}$
+(see Eq.~\eqref{eq:I2s123}):
+\[
+\frac{1}{2}[(\sigma_1 - \sigma_2)^2 + (\sigma_2 - \sigma_3)^2 + (\sigma_3 - \sigma_1)^2] =  c^2 
 \]
 where $c$ is the yield stress in uniaxial tension.
+{\color{orange}Note that the $\sqrt{3}$ is necessary so as to match the Tresca yield envelope for an 
+identical $c$ value. It is present also in \url{https://en.wikipedia.org/wiki/Von_Mises_yield_criterion} CHECK/NEW}
+
 The von Mises yield criterion writes:
 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-F^{\text{\tiny VM}}= \sqrt{{\III}_2({\bm \tau})  } - c  \label{vmcrit}
+F^{\text{\tiny VM}}= \sqrt{3} \sqrt{{\III}_2({\bm \tau})  } - c  \label{vmcrit}
 \end{equation}
 \end{mdframed}
-which is the Drucker-Prager criterion with $\phi=0$ (see Section~\ref{sec:dpcriterion}).
+which is very similar to the Drucker-Prager criterion with $\phi=0$ (see Section~\ref{sec:dpcriterion}).
 
-The following figure shows the von Mises yield surface in the three-dimensional space of principal stresses. 
+The following figure shows the von Mises yield surface in the three-dimensional space of principal stresses
+(see \stone~159). 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{images/rheology/vonmises/vonmises.pdf}
 \includegraphics[width=0.4\textwidth]{images/rheology/tresca/owenhinton4}\\
@@ -59,6 +67,8 @@ to the three principal stresses.
 %\begin{center}
 %\includegraphics[width=0.6\textwidth]{RHEOLOGY/viscoplasticity/vMcriterion.pdf}
 %\end{center}
+
+{\color{orange} In the coming paragraph sqrt3 is not taken into account yet}
 \paragraph{The yield surface} Let us try to draw the yield function in 
 the space $\sigma_1,\sigma_2,\sigma_3$. It is given by
 \begin{eqnarray}
@@ -74,7 +84,9 @@ or, temporarily setting $x=\sigma_1$, $y=\sigma_2$ and $z=\sigma_3$:
 (x-y)^2 + y^2 - 2yz + z^2 + x^2 -2xz +z^2 &=& 6c^2\\
 2z^2 - 2(x+y)z + (x-y)^2+x^2+y^2-6c^2 &=& 0
 \end{eqnarray}
-This is a second order polynomial in $z$. Its discriminant $\Delta$ is
+If we wish to plot the envelope in $x,y,z$ space, we need to find (for example)
+a relation $z(x,y)$. We see immediately that this 
+equation is a second order polynomial in $z$. Its discriminant $\Delta$ is
 \begin{eqnarray}
 \Delta 
 &=& 4(x+y)^2 - 4 \cdot 2 \cdot [(x-y)^2+x^2+y^2-6c^2] \nn\\
@@ -118,19 +130,20 @@ The middle of this surface is given by the line $z=(x+y)/2$.
 The plane normal to this line is given by $z=-2(x+y)$.
 
 This approach is reasonably simple for the von Mises criterion but 
-quickly becomes intractable for other criteria.
+quickly becomes intractable for other criteria. {\color{orange} 
+implement in f159?}
 
 \vspace{.5cm}
 
 We now look into the derivatives of the von Mises plastic potential $Q^{\text{\tiny vM}}(\bm\sigma)$.
 We have
 \begin{equation}
-Q^{\text{\tiny vM}}(\bm\sigma) =\sqrt{{\III}_2({\bm \tau})  } - c  
+Q^{\text{\tiny vM}}(\bm\sigma) = \sqrt{3} \sqrt{{\III}_2({\bm \tau})  } - c  
 \end{equation}
 Then
 \begin{eqnarray}
 \frac{\partial Q^{\text{\tiny vM}} }{\partial {\III}_1(\bm\sigma)} &=& 0 \\
-\frac{\partial Q^{\text{\tiny vM}} }{\partial \sqrt{{\III}_2(\bm\tau)}}&=& 1 \\
+\frac{\partial Q^{\text{\tiny vM}} }{\partial \sqrt{{\III}_2(\bm\tau)}}&=& \sqrt{3} \\
 \frac{\partial Q^{\text{\tiny vM}} }{\partial \theta_{\rm L}(\bm\tau)} &=& 0 
 \end{eqnarray}
 so 
@@ -138,7 +151,7 @@ so
 C_1^{\text{\tiny vM}} &=& 0  \\ 
 C_2^{\text{\tiny vM}} 
 &=& \frac{1}{2  \sqrt{{\III}_2(\bm\tau)}   } (1-0) 
-= \frac{1}{2  \sqrt{{\III}_2(\bm\tau)}   } \\ 
+=\sqrt{3} \frac{1}{2  \sqrt{{\III}_2(\bm\tau)}   } \\ 
 C_3^{\text{\tiny vM}} &=& 0  
 \end{eqnarray}
 

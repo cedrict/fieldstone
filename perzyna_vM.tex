@@ -7,7 +7,7 @@ What follows is borrowed from Zienkiewicz (1975) \cite{zien75}.
 
 \begin{center}
 \fbox{\includegraphics[width=6cm]{images/perzyna/zien75}}\\
-{\captionfont Taken from \textcite{zien75}.}
+{\captionfont Taken from Zienkiewicz (1975) \cite{zien75}.}
 \end{center}
 
 We start from section 13.4.2 of the paper with the Perzyna formulation of the plastic 
@@ -27,8 +27,7 @@ criterion is ${\FFF}^{\text{\tiny vM}}=\sqrt{{\III}_2(\bm \tau)}- Y$ so
 \frac{1}{2 \sqrt{{\III}_2(\bm \tau)}} \frac{\partial {\III}_2(\bm \tau)}{\partial \bm\sigma}
 \end{eqnarray}
 Using results of Section~\ref{ss:recapInv} for the partial derivative of the second invariant
-we find\footnote{This is the same equation as Eq.~(14) of 
-\textcite{zijo78}}:
+we find\footnote{This is the same equation as Eq.~(14) of Zienkiewicz et al (1978) \cite{zijo78}}:
 \begin{eqnarray}
 \dot{\bm \varepsilon}^{vp} 
 &=& \gamma \Big\langle \phi\left(\sqrt{{\III}_2(\bm \tau)}- Y \right)  \Big\rangle 
@@ -115,7 +114,7 @@ The equation above is then the sum of the 'plastic viscosity' and the 'viscous c
 Note that the expression above is very similar to the one for Bingham or Herschel-Bulkley visco-plastic
 models.
 
-If $n=1$ then we find (as in \textcite{vidm82} (1982))
+If $n=1$ then we find (as in Vilotte et al (1982) \cite{vidm82} (1982))
 \begin{eqnarray}
 \eta 
 &=& \frac{ Y }{2  \dot\varepsilon_e}
@@ -137,7 +136,7 @@ represent in a single expression both the rigid-perfectly plastic flow
 and the common power creep law without plastic limit ($Y=0$)
 (usually referred to as the Norton-Hoff law)\footnote{\url{https://en.wikipedia.org/wiki/Viscoplasticity}}.}
 \end{displayquote}
-\textcite{vidm82} then explain that the fluidity $\gamma$ can depend on temperature $T$ in the form 
+Vilotte \cite{vidm82} then explain that the fluidity $\gamma$ can depend on temperature $T$ in the form 
 \[
 \gamma = \gamma_0 \exp(-Q/RT)
 \]
@@ -184,10 +183,5 @@ even by setting $n=1$ I do not know how to arrive at a scalar viscosity,
 and even thinking of $\eta$ as a tensor then I am stuck, see Section about 
 Choi \& Petersen (2015) hereafter.
 \end{remark}
-
-
-
-
-
 
 
