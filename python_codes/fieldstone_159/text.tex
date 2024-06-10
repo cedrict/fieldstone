@@ -28,8 +28,9 @@ We will here focus on:
 \item Tresca
 \item Mohr-Coulomb
 \item Drucker-Prager (all three variants)
+\item Griffith-Murrell
 \end{itemize} 
-The four models are parameterized by a cohesion $c$ and an angle of friction $\phi$. 
+All the models are parameterized by a cohesion $c$ and an angle of friction $\phi$. 
 
 The code works as follows: We will explore a stress 
 space $\{\sigma_1,\sigma_2,\sigma_3\}\in[-\sigma_{max},\sigma_{max}]^3$.
@@ -105,7 +106,9 @@ theta=np.arcsin(theta)/3.
 
 When ran at high resolution, one can extract the following plots:
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_159/images/surfaces_xy.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_159/images/surfaces_xy.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_159/images/surfaces_xz.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_159/images/surfaces_yz.pdf}\\
 \includegraphics[width=12cm]{python_codes/fieldstone_159/images/surfaces_plane.pdf}
 \includegraphics[width=12cm]{python_codes/fieldstone_159/images/surfaces_plane2.pdf}\\
 {\captionfont Obtained with nnx=512}.
@@ -123,8 +126,10 @@ Using paraview on the {solution.vtu} file, and plotting zero-isocontours of each
 {\captionfont Obtained with nnx=80}.
 \end{center}
 
-WHy is tresca so far from vM ?
-
 not sure how to choose the parameter for GM, so after trial and error I took c/20.
+cGM influences the 'diameter' of the envelope PLOT!!!
+
+
+Need to run high res again with GM, and add to gnuplot
 
 
