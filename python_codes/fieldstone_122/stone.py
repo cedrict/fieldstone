@@ -1,323 +1,126 @@
 import numpy as np
-import math as math
-import sys as sys
-import scipy
-import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix, lil_matrix 
-import time as time
-import os
-from numpy import linalg as LA
-import matplotlib.pyplot as plt
+import sys
+import time
+import random
 
-#------------------------------------------------------------------------------
-# basic physical constants
-#------------------------------------------------------------------------------
-
-Rgas=8.3145
-Tkelvin=273
-cm=0.01
-year=3600*24*365.25
-MPa=1e6
-
-#------------------------------------------------------------------------------
-#
-#    +-----------------------------------------------------+
-#    |                                                     |
-#    |                      /------\                       |
-#    |                     /        \                      |
-#    |          mat=1      | mat=2  |                      |
-#    |           an        \  cpx   /                      |
-#    |                      \------/                       |   
-#    |                                                     |
-#    +-----------------------------------------------------+
-
-
-#mat 1: A_ab=398.1, n_ab=3, Q_ab=356e3
-#mat 2: A_cpx=6.80220477, Q_cpx=534e3, n_cpx=5.52
-
-eps1=0.5
-eps2=1.5
-weakening_factor_phi=0.5
-weakening_factor_cohesion=0.5
-# INPUT PARAMETERS
-depthkm=40  #FG
-tempdegC=500 # FG
-pf=0.95 # FG
-matrix='Ab_GSI' # FG
-inclusion='DiW_GSI' #FG
-grainsize=100 #FG
-#FG
-
-if matrix=='An_GSI':
-    Am=398.1 ; Qm=356e3; nm=3
-if matrix=='An_GSS':
-    Am=xx ; Qm=xx; nm=xx
-if matrix=='Ab_GSI':
-    Am=2511.886 ; Qm=332e3; nm=3
-if matrix=='Ab_GSS':
-    Am=7943.2823*(grainsize)**(-3) ;Qm=193.1e3; nm=1
-
-A_values=[Am,6.80220477] #FG
-Q_values=[Qm,534e3] #FG
-n_values=[nm,5.52] #FG
-cohesion_values=[20e6,20e6]
-phi_values=[30/180*np.pi,30/180*np.pi]
- 
-depth=depthkm*1.e3 # 30 to 60km FG
-background_pressure=3000*9.81*depth # FG
-background_temperature=tempdegC+273 #between 300 and 500C #FG
-pf_coefficient=pf
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
-
-def viscosity(x,y,ee,T,imat,iter,plastic_strain_marker):
-    if experiment==0:
-       if iter==0:
-          xxxx
-       else:
-          A0=a0+b0*T
-          A1=a1+b1*T
-          A2=a2+b2*T+c2*T**2
-          val = A0/2/ee*(1+np.tanh(A1*(np.log10(ee)-A2)))
-          #val=1e21
-
-    if experiment==1:
-       val=1e21
-
-    if experiment==2:
-       sr=max(1e-19,ee) # minimum strain rate
-
-       eta_dsl=A_values[imat-1]**(-1/n_values[imat-1])*sr**(1/n_values[imat-1]-1)*\
-               np.exp(Q_values[imat-1]/Rgas/T/n_values[imat-1])*MPa
-
-       #strain weakening
-       if plastic_strain_marker <eps1:
-          phi_sw=phi_values[imat-1]
-          c_sw=cohesion_values[imat-1]
-          strain_level=0
-       elif plastic_strain_marker<eps2:
-          phi_sw=phi_values[imat-1]*(weakening_factor_phi-1)/(eps2-eps1)*(plastic_strain_marker-eps1)+phi_values[imat-1] 
-          c_sw=cohesion_values[imat-1]*(weakening_factor_cohesion-1)/(eps2-eps1)*(plastic_strain_marker-eps1)+cohesion_values[imat-1] 
-          strain_level=(plastic_strain_marker-eps1)/(eps2-eps1)
-       else:
-          phi_sw=phi_values[imat-1]*weakening_factor_phi
-          c_sw=cohesion_values[imat-1]*weakening_factor_cohesion
-          strain_level=1
-
-       yield_vM=background_pressure*(1-pf_coefficient)*np.sin(phi_sw)+c_sw*np.cos(phi_sw)
-       if use_plasticity:
-          eta_pl=yield_vM/2/ee
-          val=min(eta_pl,eta_dsl)
-          if eta_pl<eta_dsl: 
-             is_plastic=1 
-          else:
-             is_plastic=0 
-       else:
-          val=eta_dsl
-          is_plastic=0
-
-       #viscosity cutoffs
-       val=min(val,1e26)
-       val=max(val,1e18)
-
-    return val,is_plastic,yield_vM,strain_level
-
-
-#------------------------------------------------------------------------------
-# function which returns a scalar which then mutiplies v0 applied on the boundaries
-# arguments are x,y coordinates, the time step integer, and the real time (in seconds).
-#------------------------------------------------------------------------------
-
-def bc_factor(x,y,istep,total_time):
-    factor=1
-    return factor
-
-
-#------------------------------------------------------------------------------
-#   Vspace=Q2     Pspace=Q1       
-#
-#  3----6----2   3---------2  
-#  |    |    |   |         |  
-#  |    |    |   |         |  
-#  7----8----5   |         |  
-#  |    |    |   |         |  
-#  |    |    |   |         |  
-#  0----4----1   0---------1  
-#------------------------------------------------------------------------------
+###############################################################################
 
 def NNV(rq,sq):
-    NV_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
-    NV_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
-    NV_2= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.)
-    NV_3= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.)
-    NV_4=     (1.-rq**2) * 0.5*sq*(sq-1.)
-    NV_5= 0.5*rq*(rq+1.) *     (1.-sq**2)
-    NV_6=     (1.-rq**2) * 0.5*sq*(sq+1.)
-    NV_7= 0.5*rq*(rq-1.) *     (1.-sq**2)
-    NV_8=     (1.-rq**2) *     (1.-sq**2)
-    return NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,NV_6,NV_7,NV_8
+    N_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
+    N_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
+    N_2= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.)
+    N_3= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.)
+    N_4=     (1.-rq**2) * 0.5*sq*(sq-1.)
+    N_5= 0.5*rq*(rq+1.) *     (1.-sq**2)
+    N_6=     (1.-rq**2) * 0.5*sq*(sq+1.)
+    N_7= 0.5*rq*(rq-1.) *     (1.-sq**2)
+    N_8=     (1.-rq**2) *     (1.-sq**2)
+    return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
 
-def dNNVdr(rq,sq):
-    dNVdr_0= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
-    dNVdr_1= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
-    dNVdr_2= 0.5*(2.*rq+1.) * 0.5*sq*(sq+1)
-    dNVdr_3= 0.5*(2.*rq-1.) * 0.5*sq*(sq+1)
-    dNVdr_4=       (-2.*rq) * 0.5*sq*(sq-1)
-    dNVdr_5= 0.5*(2.*rq+1.) *    (1.-sq**2)
-    dNVdr_6=       (-2.*rq) * 0.5*sq*(sq+1)
-    dNVdr_7= 0.5*(2.*rq-1.) *    (1.-sq**2)
-    dNVdr_8=       (-2.*rq) *    (1.-sq**2)
-    return dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,dNVdr_6,dNVdr_7,dNVdr_8
+def velocity(x,y):
+    return y-2,-(x-2) 
 
-def dNNVds(rq,sq):
-    dNVds_0= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
-    dNVds_1= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
-    dNVds_2= 0.5*rq*(rq+1.) * 0.5*(2.*sq+1.)
-    dNVds_3= 0.5*rq*(rq-1.) * 0.5*(2.*sq+1.)
-    dNVds_4=     (1.-rq**2) * 0.5*(2.*sq-1.)
-    dNVds_5= 0.5*rq*(rq+1.) *       (-2.*sq)
-    dNVds_6=     (1.-rq**2) * 0.5*(2.*sq+1.)
-    dNVds_7= 0.5*rq*(rq-1.) *       (-2.*sq)
-    dNVds_8=     (1.-rq**2) *       (-2.*sq)
-    return dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8
+###############################################################################
 
-def NNP(rq,sq):
-    NP_0=0.25*(1-rq)*(1-sq)
-    NP_1=0.25*(1+rq)*(1-sq)
-    NP_2=0.25*(1+rq)*(1+sq)
-    NP_3=0.25*(1-rq)*(1+sq)
-    return NP_0,NP_1,NP_2,NP_3
+if int(len(sys.argv) == 5):
+   nelx   = int(sys.argv[1])
+   CFL    = float(sys.argv[2])
+   method = sys.argv[3]
+   visu   = int(sys.argv[4])
+else:
+   nelx   = 32
+   CFL    = 0.1
+   method = 'RK4_38'
+   visu   = 1
 
-#------------------------------------------------------------------------------
+Lx=4
+Ly=4
 
-print("-----------------------------")
-print("----------stone 121----------")
-print("-----------------------------")
-
-mV=9     # number of velocity nodes making up an element
-mP=4     # number of pressure nodes making up an element
-ndofV=2  # number of velocity degrees of freedom per node
-ndofP=1  # number of pressure degrees of freedom 
-
-experiment=2 
-
-if experiment==0:
-   Lx=1
-   Ly=1
-   nelx=12
-   nely=12
-   v0=1e-15*Ly # bc velocity so that shear strain rate is 10^-15
-   #time stepping
-   nstep=1
-   CFL_nb=0
-   depth=40e3 # 30 to 60km
-   background_pressure=3000*9.81*depth
-   background_temperature=500+273 #between 300 and 500C
-   nmarker_per_dim=5
-   avrg=3
-   #nonlinear iterations parameters
-   niter=10
-   tol=1e-2
-
-if experiment==2:
-   Lx=4e-2 # horizontal extent of the domain in m 
-   Ly=1e-2 # vertical extent of the domain in m
-   nelx = 50             #number of elements in horizontal direction
-   nely = int(nelx*Ly/Lx) #number of elements in vertical direction
-   v0=1e-15*Ly # bc velocity so that shear strain rate is 10^-15
-   #inclusion parameters
-   x_inclusion=Lx/2
-   y_inclusion=Ly/2
-   a_inclusion=Ly/5
-   b_inclusion=Ly/2.5
-   angle_inclusion=np.pi/10
-   #time stepping
-   nstep=25
-   CFL_nb=0.5
-   #markers parameters
-   nmarker_per_dim=6
-   avrg=3
-   #nonlinear iterations parameters
-   niter=10
-   tol=1e-3
-   use_plasticity=True
-   output_folder='Matrix-'+str(matrix)+str(grainsize)+'Inclusion'+str(inclusion)+'Temp='+str(tempdegC)+'Depth='+str(depthkm)+'pf='+str(pf)+'/'
-
-make_png=False
-
-#################################################################
-    
+nely=nelx
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
+nel=nelx*nely # number of elements
+NV=nnx*nny    # number of nodes
 
-NV=nnx*nny  # number of nodes
-nel=nelx*nely  # number of elements, total
-NP=(nelx+1)*(nely+1)
-
-NfemV=NV*ndofV   # number of velocity dofs
-NfemP=NP*ndofP   # number of pressure dofs
-Nfem=NfemV+NfemP # total number of dofs
-
-nqperdim=3
-qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
-qweights=[5./9.,8./9.,5./9.]
-
-hx=Lx/nelx # size of element
+hx=Lx/nelx
 hy=Ly/nely
 
-gx=0 #gravity vector
-gy=0
+mV=9
 
-if not os.path.isdir(output_folder):
-   print('The results folder '+output_folder+' does not exist. Creating a new one..')
-   print("------------------------------")
-   os.mkdir(output_folder)
-else:
-   print('The results folder '+output_folder+' already exists!')
-   print("------------------------------")
+experiment=1
 
-convfile=open(output_folder+'conv.ascii',"w")
+print('-----------------------------')
+print(nelx,nely,nel,nnx,nny,NV,visu)
 
-nmarker_per_element=nmarker_per_dim**2
-nmarker=nel*nmarker_per_element
+###############################################################################
+#Runge-Kutta-Fehlberg coefficients
+###############################################################################
 
-#################################################################
-#################################################################
+rkf_c2=1./4.      
+rkf_c3=3./8.    
+rkf_c4=12./13.   
+rkf_c5=1.    
+rkf_c6=1./2.    
 
-print("nelx",nelx)
-print("nely",nely)
-print("nel",nel)
-print("nnx=",nnx)
-print("nny=",nny)
-print("NV=",NV)
-print("------------------------------")
+rkf_a21=1./4.    
 
-rVnodes=[-1,+1,+1,-1, 0,+1, 0,-1,0]
-sVnodes=[-1,-1,+1,+1,-1,0,+1,0,0]
+rkf_a31=3./32.   
+rkf_a32=9./32.                                       
 
-eta_ref=1e20 # purely numerical parameter - do not change
+rkf_a41= 1932./2197.                                  
+rkf_a42=-7200./2197.         
+rkf_a43= 7296./2197.        
 
-pnormalise=False 
+rkf_a51= 439./216.         
+rkf_a52=  -8.             
+rkf_a53=3680./513.       
+rkf_a54=-845./4104.     
 
-#################################################################
+rkf_a61=   -8./27.     
+rkf_a62=    2.        
+rkf_a63=-3544./2565. 
+rkf_a64= 1859./4104.
+rkf_a65=  -11./40.  
+
+rkf_b1=16./135.    
+rkf_b3= 6656./12825.  
+rkf_b4=28561./56430. 
+rkf_b5=   -9./50.   
+rkf_b6=    2./55.  
+
+###############################################################################
 # grid point setup
-#################################################################
+###############################################################################
 start = time.time()
 
-xV=np.empty(NV,dtype=np.float64)  # x coordinates
-yV=np.empty(NV,dtype=np.float64)  # y coordinates
+x=np.zeros(NV,dtype=np.float64)  # x coordinates
+y=np.zeros(NV,dtype=np.float64)  # y coordinates
 
 counter = 0
 for j in range(0,nny):
     for i in range(0,nnx):
-        xV[counter]=i*hx/2.
-        yV[counter]=j*hy/2.
+        x[counter]=i*hx/2.
+        y[counter]=j*hy/2.
         counter += 1
     #end for
 #end for
 
+#np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
+
+###############################################################################
+# connectivity
+###############################################################################
+# velocity  
+# 3---6---2 
+# |       | 
+# 7   8   5 
+# |       | 
+# 0---4---1 
+###############################################################################
+start = time.time()
+
 iconV=np.zeros((mV,nel),dtype=np.int32)
+
 counter = 0
 for j in range(0,nely):
     for i in range(0,nelx):
@@ -334,1059 +137,514 @@ for j in range(0,nely):
     #end for
 #end for
 
-print("velocity grid points: %.3f s" % (time.time() - start))
+###############################################################################
+# generate 100 particles
+###############################################################################
 
-#################################################################
-# pressure connectivity array
-#################################################################
-start = time.time()
+nmarker=100
 
-xP=np.zeros(NP,dtype=np.float64)     # x coordinates
-yP=np.zeros(NP,dtype=np.float64)     # y coordinates
-iconP=np.zeros((mP,nel),dtype=np.int32)
-
-counter = 0
-for j in range(0,nely):
-    for i in range(0,nelx):
-        iconP[0,counter]=i+j*(nelx+1)
-        iconP[1,counter]=i+1+j*(nelx+1)
-        iconP[2,counter]=i+1+(j+1)*(nelx+1)
-        iconP[3,counter]=i+(j+1)*(nelx+1)
-        counter += 1
-    #end for
-#end for
-
-counter = 0
-for j in range(0, nely+1):
-    for i in range(0, nelx+1):
-        xP[counter]=i*Lx/float(nelx)
-        yP[counter]=j*Ly/float(nely)
-        counter += 1
-
-print("pressure connectivity & nodes: %.3f s" % (time.time() - start))
-
-#################################################################
-# compute area of elements
-# This is a good test because it uses the quadrature points and 
-# weights as well as the shape functions. If any area comes out
-# negative or zero, or if the sum does not equal to the area of the 
-# whole domain then there is a major problem which needs to 
-# be addressed before FE are set into motion.
-#################################################################
-start = time.time()
-
-area=np.zeros(nel,dtype=np.float64) 
-NNNV=np.zeros(mV,dtype=np.float64)       
-dNNNVdr=np.zeros(mV,dtype=np.float64)   
-dNNNVds= np.zeros(mV,dtype=np.float64) 
-
-for iel in range(0,nel):
-    for iq in range(0,nqperdim):
-        for jq in range(0,nqperdim):
-            rq=qcoords[iq]
-            sq=qcoords[jq]
-            weightq=qweights[iq]*qweights[jq]
-            NNNV[0:mV]=NNV(rq,sq)
-            dNNNVdr[0:mV]=dNNVdr(rq,sq)
-            dNNNVds[0:mV]=dNNVds(rq,sq)
-            jcb=np.zeros((2,2),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-            jcob = np.linalg.det(jcb)
-            area[iel]+=jcob*weightq
-        if area[iel]<0: 
-           for k in range(0,mV):
-               print (xV[iconV[k,iel]],yV[iconV[k,iel]])
-        #end for
-    #end for
-#end for
-
-print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
-print("     -> total area meas %.8e " %(area.sum()))
-print("     -> total area anal %.8e " %(Lx*Ly))
-
-print("compute elements areas: %.3f s" % (time.time() - start))
-
-
-
-
-
-
-#################################################################
-# swarm (=all the particles) setup
-#################################################################
-start = time.time()
-
-swarm_x=np.empty(nmarker,dtype=np.float64)        # x coordinates   
-swarm_y=np.empty(nmarker,dtype=np.float64)        # y coordinates 
-swarm_mat=np.empty(nmarker,dtype=np.int8)         # type of material 
-swarm_paint=np.zeros(nmarker,dtype=np.float64)    # paint to show the virtual deformation of the grid #FG to avoid pb with paraview
-swarm_r=np.empty(nmarker,dtype=np.float64)        # reduced coordinates r
-swarm_s=np.empty(nmarker,dtype=np.float64)        # reduced coordinates s
-swarm_u=np.empty(nmarker,dtype=np.float64)        # velocity x
-swarm_v=np.empty(nmarker,dtype=np.float64)        # velocity y
-swarm_exx=np.empty(nmarker,dtype=np.float64)      # strain rate xx
-swarm_exy=np.empty(nmarker,dtype=np.float64)      # strain rate yy
-swarm_eyy=np.empty(nmarker,dtype=np.float64)      # strain rate xy
-swarm_ee=np.empty(nmarker,dtype=np.float64)       # effective strain rate
-swarm_total_strainxx=np.empty(nmarker,dtype=np.float64) # strain xx
-swarm_total_strainxy=np.empty(nmarker,dtype=np.float64) # strain yy
-swarm_total_strainyy=np.empty(nmarker,dtype=np.float64) # strain xy
-swarm_total_strain_eff=np.empty(nmarker,dtype=np.float64) # effective strain 
-swarm_plastic_strainxx=np.empty(nmarker,dtype=np.float64) # plastic strain xx
-swarm_plastic_strainxy=np.empty(nmarker,dtype=np.float64) # plastic strain yy
-swarm_plastic_strainyy=np.empty(nmarker,dtype=np.float64) # plastic strain xy
-swarm_plastic_strain_eff=np.empty(nmarker,dtype=np.float64) # effective plastic strain xx
-swarm_tauxx=np.empty(nmarker,dtype=np.float64)    # dev stress xx
-swarm_tauxy=np.empty(nmarker,dtype=np.float64)    # dev stress yy
-swarm_tauyy=np.empty(nmarker,dtype=np.float64)    # dev stress xy
-swarm_tau_eff=np.empty(nmarker,dtype=np.float64)     # effective dev stress
-swarm_iel=np.empty(nmarker,dtype=np.int32)        # element identity
-swarm_eta=np.empty(nmarker,dtype=np.float64)      # viscosity
-swarm_p_dyn=np.empty(nmarker,dtype=np.float64)    # computed pressure 
-swarm_yield=np.empty(nmarker,dtype=np.float64)   # yield value
-swarm_is_plastic=np.empty(nmarker,dtype=np.int32)  
-swarm_sw_level=np.empty(nmarker,dtype=np.float64) #level of strain weaking betw. 0 and 1
-swarm_tau_angle=np.empty(nmarker,dtype=np.float64) #principal angle  
-swarm_sigmaxx=np.empty(nmarker,dtype=np.float64)      # strain rate xx
-swarm_sigmaxy=np.empty(nmarker,dtype=np.float64)      # strain rate yy
-swarm_sigmayy=np.empty(nmarker,dtype=np.float64)      # strain rate xy
-swarm_sigma_angle=np.empty(nmarker,dtype=np.float64) #principal angle  
-swarm_sigma1=np.empty(nmarker,dtype=np.float64) #principal stress
-swarm_sigma2=np.empty(nmarker,dtype=np.float64) #principal stress 
-
-counter=0
-for iel in range(0,nel):
-    x1=xV[iconV[0,iel]] ; y1=yV[iconV[0,iel]]
-    x2=xV[iconV[1,iel]] ; y2=yV[iconV[1,iel]]
-    x3=xV[iconV[2,iel]] ; y3=yV[iconV[2,iel]]
-    x4=xV[iconV[3,iel]] ; y4=yV[iconV[3,iel]]
-    for j in range(0,nmarker_per_dim):
-        for i in range(0,nmarker_per_dim):
-            r=-1.+i*2./nmarker_per_dim + 1./nmarker_per_dim
-            s=-1.+j*2./nmarker_per_dim + 1./nmarker_per_dim
-            swarm_r[counter]=r
-            swarm_s[counter]=s
-            N1=0.25*(1-r)*(1-s)
-            N2=0.25*(1+r)*(1-s)
-            N3=0.25*(1+r)*(1+s)
-            N4=0.25*(1-r)*(1+s)
-            swarm_x[counter]=N1*x1+N2*x2+N3*x3+N4*x4
-            swarm_y[counter]=N1*y1+N2*y2+N3*y3+N4*y4
-            counter+=1
-        #end for 
-    #end for 
-#end for 
-
-print("swarm setup: %.3f s" % (time.time() - start))
-
-#################################################################
-# assign material id to markers 
-#################################################################
-start = time.time()
-
-if experiment==0:
-   for im in range (0,nmarker):
-       swarm_mat[im]=1
+swarm_x=np.zeros(nmarker,dtype=np.float64)  
+swarm_y=np.zeros(nmarker,dtype=np.float64) 
+swarm_r=np.zeros(nmarker,dtype=np.float64) 
+swarm_s=np.zeros(nmarker,dtype=np.float64) 
+swarm_rad=np.zeros(nmarker,dtype=np.float64) 
+swarm_x0=np.zeros(nmarker,dtype=np.float64)  
+swarm_y0=np.zeros(nmarker,dtype=np.float64) 
+swarm_iel=np.zeros(nmarker,dtype=np.int16) 
 
 if experiment==1:
-   swarm_mat[:]=1
+
+   theta=random.uniform(-np.pi,+np.pi)
+   theta=np.linspace(0,2*np.pi,num=nmarker)
+   for im in range(0,nmarker):
+       swarm_x[im]=2+np.cos(theta[im])
+       swarm_y[im]=2+np.sin(theta[im])
 
 if experiment==2:
-   for im in range (0,nmarker):
-       swarm_mat[im]=1
-       xxi=swarm_x[im]-x_inclusion
-       yyi=swarm_y[im]-y_inclusion
-       xxxi=xxi*np.cos(-angle_inclusion)-yyi*np.sin(-angle_inclusion)
-       yyyi=xxi*np.sin(-angle_inclusion)+yyi*np.cos(-angle_inclusion)
-       if xxxi**2/a_inclusion**2+yyyi**2/b_inclusion**2<1:
-          swarm_mat[im]=2
-
-       #if (swarm_x[im]-x_inclusion)**2/a_inclusion**2+\
-       #   (swarm_y[im]-y_inclusion)**2/b_inclusion**2<1:
-       #   swarm_mat[im]=2
-
-print("assigning mat to swarm: %.3f s" % (time.time() - start))
-
-#################################################################
-# paint markers 
-#################################################################
-start = time.time()
-
-for im in range (0,nmarker):
-    for i in range(0,11):
-        if abs(swarm_x[im]-i*Lx/10)<hx/4:
-           swarm_paint[im]=1
-    #end for 
-    for i in range(0,5):
-        if abs(swarm_y[im]-i*Ly/4)<hy/4:
-           swarm_paint[im]=1
-    #end for 
-#end for 
-
-print("paint swarm: %.3f s" % (time.time() - start))
-
-###################################################################################################
-###################################################################################################
-# time stepping loop 
-###################################################################################################
-###################################################################################################
-
-total_time=0
-    
-umem=np.zeros(NV,dtype=np.float64)      
-vmem=np.zeros(NV,dtype=np.float64)    
-u   =np.zeros(NV,dtype=np.float64)   
-v   =np.zeros(NV,dtype=np.float64)    
-exx =np.zeros(NV,dtype=np.float64)  
-eyy =np.zeros(NV,dtype=np.float64)  
-exy =np.zeros(NV,dtype=np.float64)  
-
-for istep in range(0,nstep):
-
-    print ('||******************************************************||')
-    print ('||    istep= %i ' %istep)
-    print ('||******************************************************||')
-
-    #################################################################
-    # define boundary conditions
-    #################################################################
-    start = time.time()
-
-    eps=1.e-10
-
-    bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
-    bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
-
-    for i in range(0, NV):
-        #left boundary 
-        if xV[i]<eps:
-           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 # vy
-        #right boundary 
-        if xV[i]/Lx>1-eps:
-           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0 # vy
-        #bottom boundary 
-        if yV[i]/Ly<eps:
-           bc_fix[i*ndofV+0] = True ; bc_val[i*ndofV  ] = -v0*bc_factor(xV[i],yV[i],istep,total_time) # vx
-           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0   # vy
-        #top boundary 
-        if yV[i]/Ly>1-eps:
-           bc_fix[i*ndofV+0] = True ; bc_val[i*ndofV  ] = +v0*bc_factor(xV[i],yV[i],istep,total_time) # vx
-           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0   # vy
-    #end for
-
-    print("setup: boundary conditions: %.3f s" % (time.time() - start))
-
-    #################################################################
-    # localise markers 
-    #################################################################
-    start = time.time()
-
-    nmarker_in_element=np.zeros(nel,dtype=np.int16)
-    list_of_markers_in_element=np.zeros((2*nmarker_per_element,nel),dtype=np.int32)
-    for im in range(0,nmarker):
-        ielx=int(swarm_x[im]/Lx*nelx)
-        iely=int(swarm_y[im]/Ly*nely)
-        iel=nelx*(iely)+ielx
-        list_of_markers_in_element[nmarker_in_element[iel],iel]=im
-        nmarker_in_element[iel]+=1
-        swarm_iel[im]=iel
-    #end for
-
-    print("     localise markers: %.3f s" % (time.time() - start))
-
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # non linear iterations
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    for iter in range(0,niter):
-
-        print('     ----------------------------------')
-        print('     ----- iteration------',iter,'----------')
-        print('     ----------------------------------')
-
-        #################################################################
-        # compute elemental averagings 
-        #################################################################
-        start = time.time()
-        eta_elemental=np.zeros(nel,dtype=np.float64)
-        eta_nodal=np.zeros(NP,dtype=np.float64)
-        nodal_counter=np.zeros(NP,dtype=np.float64)
-        for im in range(0,nmarker):
-            iel=swarm_iel[im]
-            N1=0.25*(1-swarm_r[im])*(1-swarm_s[im])
-            N2=0.25*(1+swarm_r[im])*(1-swarm_s[im])
-            N3=0.25*(1+swarm_r[im])*(1+swarm_s[im])
-            N4=0.25*(1-swarm_r[im])*(1+swarm_s[im])
-            nodal_counter[iconP[0,iel]]+=N1
-            nodal_counter[iconP[1,iel]]+=N2
-            nodal_counter[iconP[2,iel]]+=N3
-            nodal_counter[iconP[3,iel]]+=N4
-            #compute viscosity on marker
-            NNNV[0:mV]=NNV(swarm_r[im],swarm_s[im])
-            swarm_exx[im]=sum(NNNV[0:mV]*exx[iconV[0:mV,iel]])
-            swarm_eyy[im]=sum(NNNV[0:mV]*eyy[iconV[0:mV,iel]])
-            swarm_exy[im]=sum(NNNV[0:mV]*exy[iconV[0:mV,iel]])
-            swarm_ee[im]=np.sqrt(0.5*(swarm_exx[im]**2+swarm_eyy[im]**2+2*swarm_exy[im]**2) ) 
-            swarm_eta[im],swarm_is_plastic[im],swarm_yield[im],dummy=\
-            viscosity(swarm_x[im],swarm_y[im],swarm_ee[im],\
-                      background_temperature,swarm_mat[im],iter,swarm_plastic_strain_eff[im])
-
-            if abs(avrg)==1 : # arithmetic
-               eta_elemental[iel]     +=swarm_eta[im]
-               eta_nodal[iconP[0,iel]]+=swarm_eta[im]*N1
-               eta_nodal[iconP[1,iel]]+=swarm_eta[im]*N2
-               eta_nodal[iconP[2,iel]]+=swarm_eta[im]*N3
-               eta_nodal[iconP[3,iel]]+=swarm_eta[im]*N4
-            if abs(avrg)==2: # geometric
-               eta_elemental[iel]     +=np.log10(swarm_eta[im])
-               eta_nodal[iconP[0,iel]]+=np.log10(swarm_eta[im])*N1
-               eta_nodal[iconP[1,iel]]+=np.log10(swarm_eta[im])*N2
-               eta_nodal[iconP[2,iel]]+=np.log10(swarm_eta[im])*N3
-               eta_nodal[iconP[3,iel]]+=np.log10(swarm_eta[im])*N4
-            if abs(avrg)==3: # harmonic
-               eta_elemental[iel]     +=1/swarm_eta[im]
-               eta_nodal[iconP[0,iel]]+=1/swarm_eta[im]*N1
-               eta_nodal[iconP[1,iel]]+=1/swarm_eta[im]*N2
-               eta_nodal[iconP[2,iel]]+=1/swarm_eta[im]*N3
-               eta_nodal[iconP[3,iel]]+=1/swarm_eta[im]*N4
-        #end for
-        if abs(avrg)==1:
-           eta_nodal/=nodal_counter
-           eta_elemental[:]/=nmarker_in_element[:]
-        if abs(avrg)==2:
-           eta_nodal[:]=10.**(eta_nodal[:]/nodal_counter[:])
-           eta_elemental[:]=10.**(eta_elemental[:]/nmarker_in_element[:])
-        if abs(avrg)==3:
-           eta_nodal[:]=nodal_counter[:]/eta_nodal[:]
-           eta_elemental[:]=nmarker_in_element[:]/eta_elemental[:]
-
-        print("          -> nmarker_in_elt(m,M) %.5e %.5e " %(np.min(nmarker_in_element),np.max(nmarker_in_element)))
-        print("          -> eta_elemental (m,M) %.5e %.5e " %(np.min(eta_elemental),np.max(eta_elemental)))
-        print("          -> eta_nodal     (m,M) %.5e %.5e " %(np.min(eta_nodal),np.max(eta_nodal)))
-
-        print("     markers onto grid: %.3f s" % (time.time() - start))
-
-        #################################################################
-        # build FE matrix
-        # [ K G ][u]=[f]
-        # [GT 0 ][p] [h]
-        #################################################################
-        start = time.time()
-
-        if pnormalise:
-           A_sparse = lil_matrix((Nfem+1,Nfem+1),dtype=np.float64)
-        else:
-           A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
-
-        f_rhs   = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
-        h_rhs   = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
-        constr  = np.zeros(NfemP,dtype=np.float64)         # constraint matrix/vector
-        b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64)  # gradient matrix B 
-        N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64)  # matrix  
-        NNNV    = np.zeros(mV,dtype=np.float64)            # shape functions V
-        NNNP    = np.zeros(mP,dtype=np.float64)            # shape functions P
-        dNNNVdx = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
-        dNNNVdy = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
-        dNNNVdr = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
-        dNNNVds = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
-        c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
-
-        for iel in range(0,nel):
-
-            f_el =np.zeros((mV*ndofV),dtype=np.float64)
-            K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
-            G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
-            h_el=np.zeros((mP*ndofP),dtype=np.float64)
-            NNNNP= np.zeros(mP*ndofP,dtype=np.float64)   
-
-            for iq in range(0,nqperdim):
-                for jq in range(0,nqperdim):
-
-                    # position & weight of quad. point
-                    rq=qcoords[iq]
-                    sq=qcoords[jq]
-                    weightq=qweights[iq]*qweights[jq]
-
-                    NNNV[0:mV]=NNV(rq,sq)
-                    dNNNVdr[0:mV]=dNNVdr(rq,sq)
-                    dNNNVds[0:mV]=dNNVds(rq,sq)
-                    NNNP[0:mP]=NNP(rq,sq)
-
-                    # calculate jacobian matrix
-                    jcb=np.zeros((2,2),dtype=np.float64)
-                    for k in range(0,mV):
-                        jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                        jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                        jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                        jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-                    jcob = np.linalg.det(jcb)
-                    jcbi = np.linalg.inv(jcb)
-
-                    # compute dNdx & dNdy
-                    #xq=0.0
-                    #yq=0.0
-                    for k in range(0,mV):
-                        #xq+=NNNV[k]*xV[iconV[k,iel]]
-                        #yq+=NNNV[k]*yV[iconV[k,iel]]
-                        dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                        dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-
-                    # construct b_mat matrix
-                    for i in range(0,mV):
-                        b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.       ],
-                                                 [0.        ,dNNNVdy[i]],
-                                                 [dNNNVdy[i],dNNNVdx[i]]]
-
-                    etaq=eta_elemental[iel]
-
-                    # compute elemental a_mat matrix
-                    K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq*weightq*jcob
-
-                    # compute elemental rhs vector
-                    #for i in range(0,mV):
-                    #    f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*gx*density(xq,yq)
-                    #    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy*density(xq,yq)
-
-                    for i in range(0,mP):
-                        N_mat[0,i]=NNNP[i]
-                        N_mat[1,i]=NNNP[i]
-                        N_mat[2,i]=0.
-
-                    G_el-=b_mat.T.dot(N_mat)*weightq*jcob
-
-                    #NNNNP[:]+=NNNP[:]*jcob*weightq
-
-                # end for jq
-            # end for iq
-
-            # impose b.c. 
-            for k1 in range(0,mV):
-                for i1 in range(0,ndofV):
-                    ikk=ndofV*k1          +i1
-                    m1 =ndofV*iconV[k1,iel]+i1
-                    if bc_fix[m1]:
-                       K_ref=K_el[ikk,ikk] 
-                       for jkk in range(0,mV*ndofV):
-                           f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
-                           K_el[ikk,jkk]=0
-                           K_el[jkk,ikk]=0
-                       K_el[ikk,ikk]=K_ref
-                       f_el[ikk]=K_ref*bc_val[m1]
-                       h_el[:]-=G_el[ikk,:]*bc_val[m1]
-                       G_el[ikk,:]=0
-                #end for
-            #end for
-
-            G_el*=eta_ref/Ly
-            h_el*=eta_ref/Ly
-
-            # assemble matrix K_mat and right hand side rhs
-            for k1 in range(0,mV):
-                for i1 in range(0,ndofV):
-                    ikk=ndofV*k1          +i1
-                    m1 =ndofV*iconV[k1,iel]+i1
-                    for k2 in range(0,mV):
-                        for i2 in range(0,ndofV):
-                            jkk=ndofV*k2          +i2
-                            m2 =ndofV*iconV[k2,iel]+i2
-                            A_sparse[m1,m2] += K_el[ikk,jkk]
-                        #end for
-                    #end for
-                    for k2 in range(0,mP):
-                        jkk=k2
-                        m2 =iconP[k2,iel]
-                        A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
-                        A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
-                    #end for
-                    f_rhs[m1]+=f_el[ikk]
-                #end for
-            #end for
-            for k2 in range(0,mP):
-                m2=iconP[k2,iel]
-                h_rhs[m2]+=h_el[k2]
-                #constr[m2]+=NNNNP[k2]
-                #if pnormalise:
-                #   A_sparse[Nfem,NfemV+m2]+=constr[m2]
-                #   A_sparse[NfemV+m2,Nfem]+=constr[m2]
-            #end for
-        #end for iel
-
-        print("     build FE matrix: %.3f s" % (time.time() - start))
-
-        ######################################################################
-        # assemble K, G, GT, f, h into A and rhs
-        ######################################################################
-        start = time.time()
-
-        if pnormalise:
-           rhs=np.zeros(Nfem+1,dtype=np.float64) # right hand side of Ax=b
-        else:
-           rhs=np.zeros(Nfem,dtype=np.float64)   # right hand side of Ax=b
-
-        sparse_matrix=A_sparse.tocsr()
-
-        rhs[0:NfemV]=f_rhs
-        rhs[NfemV:Nfem]=h_rhs
-
-        print("     assemble blocks: %.3f s" % (time.time() - start))
-
-        ######################################################################
-        # solve system
-        ######################################################################
-        start = time.time()
-
-        sol=sps.linalg.spsolve(sparse_matrix,rhs)
-
-        print("     solve time: %.3f s" % (time.time() - start))
-
-        ######################################################################
-        # put solution into separate x,y velocity arrays
-        ######################################################################
-        start = time.time()
-
-        u,v=np.reshape(sol[0:NfemV],(NV,2)).T
-        p=sol[NfemV:Nfem]*(eta_ref/Ly)
-
-        print("          -> u (m,M) %.4e %.4e (cm/year)" %(np.min(u)/cm*year,np.max(u)/cm*year))
-        print("          -> v (m,M) %.4e %.4e (cm/year)" %(np.min(v)/cm*year,np.max(v)/cm*year))
-        print("          -> p (m,M) %.4e %.4e (Pa)     " %(np.min(p),np.max(p)))
-
-        #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
-        #np.savetxt('pressure_bef.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
-
-        print("     split vel into u,v: %.3f s" % (time.time() - start))
-
-        ######################################################################
-        #normalise pressure
-        ######################################################################
-        start = time.time()
-
-        avrg_p=0
-        for iel in range(0,nel):
-            for iq in range(0,nqperdim):
-                for jq in range(0,nqperdim):
-                    rq=qcoords[iq]
-                    sq=qcoords[jq]
-                    weightq=qweights[iq]*qweights[jq]
-                    NNNP[0:mP]=NNP(rq,sq)
-                    pq=NNNP.dot(p[iconP[0:mP,iel]])
-                    jcob=hx*hy/4
-                    avrg_p+=pq*jcob*weightq
-
-        print('          -> avrg_p=',avrg_p)
-
-        p-=avrg_p/Lx/Ly
-
-        print("          -> p (m,M) %.4e %.4e (Pa)     " %(np.min(p),np.max(p)))
-
-        #np.savetxt('pressure_aft.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
-            
-        print("     pressure normalisation: %.3f s" % (time.time() - start))
-
-        ######################################################################
-        # compute nodal strainrate 
-        ######################################################################
-        start = time.time()
- 
-        exx = np.zeros(NV,dtype=np.float64)  
-        eyy = np.zeros(NV,dtype=np.float64)  
-        exy = np.zeros(NV,dtype=np.float64)  
-        ee  = np.zeros(NV,dtype=np.float64)  
-        ccc = np.zeros(NV,dtype=np.float64)  
- 
-        for iel in range(0,nel):
-            for k in range(0,mV):
-                rq = rVnodes[k]
-                sq = sVnodes[k]
-                inode=iconV[k,iel]
-                NNNV[0:mV]=NNV(rq,sq)
-                dNNNVdr[0:mV]=dNNVdr(rq,sq)
-                dNNNVds[0:mV]=dNNVds(rq,sq)
-                jcb=np.zeros((2,2),dtype=np.float64)
-                for k in range(0,mV):
-                    jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-                    jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
-                    jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-                    jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
-                jcbi=np.linalg.inv(jcb)
-                for k in range(0,mV):
-                    dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                    dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-                ccc[inode]+=1
-                exx[inode]+=dNNNVdx.dot(u[iconV[:,iel]])
-                eyy[inode]+=dNNNVdy.dot(v[iconV[:,iel]])
-                exy[inode]+=dNNNVdx.dot(v[iconV[:,iel]])*0.5+dNNNVdy.dot(u[iconV[:,iel]])*0.5
-            #end for
-        #end for
-        exx[:]/=ccc[:]
-        eyy[:]/=ccc[:]
-        exy[:]/=ccc[:]
-        ee[:]=np.sqrt(0.5*(exx[:]*exx[:]+eyy[:]*eyy[:])+exy[:]*exy[:])
- 
-        print("          -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
-        print("          -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
-        print("          -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
- 
-        print("     compute strain rate: %.3f s" % (time.time() - start))
-
-        ######################################################################
-        # convergence criterion is based on difference between two consecutively
-        # obtained velocity fields, normalised by the boundary condition velocity
-
-        chi_u=LA.norm(u-umem,2)/v0 # vx convergence indicator
-        chi_v=LA.norm(v-vmem,2)/v0 # vy convergence indicator
-
-        print('          -> convergence u,v: %.3e %.3e | tol= %.2e' %(chi_u,chi_v,tol))
-
-        convfile.write("%f %10e %10e %10e\n" %(istep+iter/200,chi_u,chi_v,tol))
-        convfile.flush()
-
-        umem[:]=u[:]
-        vmem[:]=v[:]
-
-        if chi_u<tol and chi_v<tol:
-           print('     ***converged***')
-           break
-
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    #end for iter
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-    print('     ----------------------------------')
-    print('     end of nl iteration ')
-    print('     ----------------------------------')
-
-    ######################################################################
-    # compute timestep using CFL condition 
-    ######################################################################
-
-    dt=CFL_nb*min(hx,hy)/max(max(abs(u)),max(abs(v)))
-
-    total_time+=dt
-
-    print("     -> dt= %.3e yr" %(dt/year))
-    print("     -> time= %.3e yr" %(total_time/year))
-
-    ######################################################################
-    # advect markers 
-    # a simple one-step Euler method is used so timesteps should
-    # be kept to rather low values, i.e. CFL_nb<=0.25
-    # Periodic boundary conditions are implemented on the markers.
-    ######################################################################
-    start = time.time()
-
-    if True:
-       for im in range(0,nmarker):
-           ielx=int(swarm_x[im]/Lx*nelx)
-           iely=int(swarm_y[im]/Ly*nely)
-           iel=nelx*iely+ielx
-           swarm_r[im]=-1.+2*(swarm_x[im]-xV[iconV[0,iel]])/hx
-           swarm_s[im]=-1.+2*(swarm_y[im]-yV[iconV[0,iel]])/hy
-           NNNV[0:mV]=NNV(swarm_r[im],swarm_s[im])
-           NNNP[0:mP]=NNP(swarm_r[im],swarm_s[im])
-           um=sum(NNNV[0:mV]*u[iconV[0:mV,iel]])
-           vm=sum(NNNV[0:mV]*v[iconV[0:mV,iel]])
-           exxm=sum(NNNV[0:mV]*exx[iconV[0:mV,iel]])
-           eyym=sum(NNNV[0:mV]*eyy[iconV[0:mV,iel]])
-           exym=sum(NNNV[0:mV]*exy[iconV[0:mV,iel]])
-           #assign velocity to marker
-           swarm_u[im]=um 
-           swarm_v[im]=vm
-           #update its position
+
+   x1=0.5-0.25
+   x2=0.5+0.25
+   x3=0.5+0.25
+   x4=0.5-0.25
+
+   y1=0.5-0.25
+   y2=0.5-0.25
+   y3=0.5+0.25
+   y4=0.5+0.25
+
+   for im in range(0,nmarker):
+       r=random.uniform(-1.,+1)
+       s=random.uniform(-1.,+1)
+       N1=0.25*(1-r)*(1-s)
+       N2=0.25*(1+r)*(1-s)
+       N3=0.25*(1+r)*(1+s)
+       N4=0.25*(1-r)*(1+s)
+       swarm_x[im]=N1*x1+N2*x2+N3*x3+N4*x4
+       swarm_y[im]=N1*y1+N2*y2+N3*y3+N4*y4
+
+swarm_x0[:]=swarm_x[:]
+swarm_y0[:]=swarm_y[:]
+
+#np.savetxt('swarm.ascii',np.array([swarm_x,swarm_y]).T,header='# x,y')
+
+###############################################################################
+# prescribe velocity field 
+###############################################################################
+
+u=np.zeros(NV,dtype=np.float64)  # x coordinates
+v=np.zeros(NV,dtype=np.float64)  # y coordinates
+
+for i in range(0,NV):
+    u[i],v[i]=velocity(x[i],y[i])
+
+#np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+
+###############################################################################
+# compute time step dt 
+###############################################################################
+
+vel_max=max(np.sqrt(u**2+v**2))
+
+dt=CFL*hx/vel_max
+
+tfinal=2*np.pi*1
+
+nstep=int(tfinal/dt)
+
+print('vel_max=',vel_max)
+print('dt=',dt)
+print('CFL=',CFL)
+
+###############################################################################
+# advection
+###############################################################################
+
+if method=='RK1':
+   markerRK1file=open('marker_RK1_'+str(CFL)+'.ascii',"w")
+   for istep in range(0,nstep+1):
+       for im in range(nmarker):
+           ielx=int(swarm_x[im]/hx)
+           iely=int(swarm_y[im]/hy)
+           iel=iely*nelx+ielx
+           rm=(swarm_x[im]-x[iconV[0,iel]])/hx-0.5
+           sm=(swarm_y[im]-y[iconV[0,iel]])/hy-0.5
+           swarm_r[im]=rm
+           swarm_s[im]=sm
+           #swarm_iel[im]=iel
+           #NNNV=NNV(rm,sm)
+           #um=NNNV.dot(u[iconV[:,iel]])
+           #vm=NNNV.dot(v[iconV[:,iel]])
+           um,vm=velocity(swarm_x[im],swarm_y[im])
            swarm_x[im]+=um*dt
            swarm_y[im]+=vm*dt
-           #update its strain tensor components
-           swarm_total_strainxx[im]+=exxm*dt
-           swarm_total_strainyy[im]+=eyym*dt
-           swarm_total_strainxy[im]+=exym*dt
-           if swarm_is_plastic[im]==1: 
-              swarm_plastic_strainxx[im]+=exxm*dt
-              swarm_plastic_strainyy[im]+=eyym*dt
-              swarm_plastic_strainxy[im]+=exym*dt
+           swarm_rad[im]=np.sqrt((swarm_x[im]-2)**2+(swarm_y[im]-2)**2)
+       # end for im
+       markerRK1file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep))
 
-           swarm_total_strain_eff[im]  =np.sqrt(0.5*(swarm_total_strainxx[im]**2+swarm_total_strainyy[im]**2+2*swarm_total_strainxy[im]**2))
-           swarm_plastic_strain_eff[im]=np.sqrt(0.5*(swarm_plastic_strainxx[im]**2+swarm_plastic_strainyy[im]**2+2*swarm_plastic_strainxy[im]**2))
+if method=='RK2':
+   markerRK2file=open('marker_RK2_'+str(CFL)+'.ascii',"w")
+   for istep in range(0,nstep+1):
 
-           #assign strain rate tensor components
-           swarm_exx[im]=exxm
-           swarm_eyy[im]=eyym
-           swarm_exy[im]=exym
-           #assign effective strain rate and viscosity
-           swarm_ee[im]=np.sqrt(0.5*(swarm_exx[im]**2+swarm_eyy[im]**2+2*swarm_exy[im]**2) ) 
-           swarm_eta[im],swarm_is_plastic[im],swarm_yield[im],swarm_sw_level[im]=\
-           viscosity(swarm_x[im],swarm_y[im],swarm_ee[im],
-                     background_temperature,swarm_mat[im],iter,swarm_plastic_strain_eff[im])
-           #assign dev stress values
-           swarm_tauxx[im]=2*exxm*swarm_eta[im]
-           swarm_tauyy[im]=2*eyym*swarm_eta[im]
-           swarm_tauxy[im]=2*exym*swarm_eta[im]
-           #assign pressure
-           swarm_p_dyn[im]=NNNP.dot(p[iconP[0:mP,iel]])
+       for im in range(0,nmarker):
+           #--------------
+           xA=swarm_x[im]
+           yA=swarm_y[im]
+           #ielx=int(xA/hx)
+           #iely=int(yA/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xA-x[iconV[0,iel]])/hx-0.5
+           #sm=(yA-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uA=NNNV.dot(u[iconV[:,iel]])
+           #vA=NNNV.dot(v[iconV[:,iel]])
+           uA,vA=velocity(xA,yA)
+           #--------------
+           xB=xA+uA*dt/2.
+           yB=yA+vA*dt/2.
+           #ielx=int(xB/hx)
+           #iely=int(yB/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xB-x[iconV[0,iel]])/hx-0.5
+           #sm=(yB-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uB=NNNV.dot(u[iconV[:,iel]])
+           #vB=NNNV.dot(v[iconV[:,iel]])
+           uB,vB=velocity(xB,yB)
+           #--------------
+           swarm_x[im]=xA+uB*dt
+           swarm_y[im]=yA+vB*dt
+           swarm_rad[im]=np.sqrt((swarm_x[im]-2)**2+(swarm_y[im]-2)**2)
+       # end for im
+       markerRK2file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep))
 
-           if swarm_x[im]>Lx: swarm_x[im]-=Lx #periodic b.c. on right side
-           if swarm_x[im]<0:  swarm_x[im]+=Lx #periodic b.c. on left side
-       #end for
-    #end for
+if method=='RK3':
+   markerRK3file=open('marker_RK3_'+str(CFL)+'.ascii',"w")
+   for istep in range(0,nstep+1):
 
-    swarm_sigmaxx[:]=-swarm_p_dyn[:]+swarm_tauxx[:]
-    swarm_sigmayy[:]=-swarm_p_dyn[:]+swarm_tauyy[:]
-    swarm_sigmaxy[:]=               +swarm_tauxy[:]
-    swarm_sigma_angle[:]=0.5*np.arctan(2*swarm_sigmaxy[:]/(swarm_sigmayy[:]-swarm_sigmaxx[:])) 
+       for im in range(0,nmarker):
+           #--------------
+           xA=swarm_x[im]
+           yA=swarm_y[im]
+           #ielx=int(xA/hx)
+           #iely=int(yA/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xA-x[iconV[0,iel]])/hx-0.5
+           #sm=(yA-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uA=NNNV.dot(u[iconV[:,iel]])
+           #vA=NNNV.dot(v[iconV[:,iel]])
+           uA,vA=velocity(xA,yA)
+           #--------------
+           xB=xA+uA*dt/2.
+           yB=yA+vA*dt/2.
+           #ielx=int(xB/hx)
+           #iely=int(yB/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xB-x[iconV[0,iel]])/hx-0.5
+           #sm=(yB-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uB=NNNV.dot(u[iconV[:,iel]])
+           #vB=NNNV.dot(v[iconV[:,iel]])
+           uB,vB=velocity(xB,yB)
+           #--------------
+           xC=xA+(-uA+2*uB)*dt 
+           yC=yA+(-vA+2*vB)*dt 
+           #ielx=int(xC/hx)
+           #iely=int(yC/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xC-x[iconV[0,iel]])/hx-0.5
+           #sm=(yC-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uC=NNNV.dot(u[iconV[:,iel]])
+           #vC=NNNV.dot(v[iconV[:,iel]])
+           uC,vC=velocity(xC,yC)
+           #--------------
+           swarm_x[im]=xA+(uA+4*uB+uC)*dt/6.
+           swarm_y[im]=yA+(vA+4*vB+vC)*dt/6.
+           swarm_rad[im]=np.sqrt((swarm_x[im]-2)**2+(swarm_y[im]-2)**2)
+       # end for im
+       markerRK3file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep))
 
-    swarm_tau_eff[:]=np.sqrt(0.5*(swarm_tauxx[:]**2+swarm_tauyy[:]**2+2*swarm_tauxy[:]**2))
+if method=='RK4':
+   markerRK4file=open('marker_RK4_'+str(CFL)+'.ascii',"w")
+   for istep in range(0,nstep+1):
+       for im in range(0,nmarker):
+           #--------------
+           xA=swarm_x[im]
+           yA=swarm_y[im]
+           #ielx=int(xA/hx)
+           #iely=int(yA/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xA-x[iconV[0,iel]])/hx-0.5
+           #sm=(yA-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uA=NNNV.dot(u[iconV[:,iel]])
+           #vA=NNNV.dot(v[iconV[:,iel]])
+           uA,vA=velocity(xA,yA)
+           #--------------
+           xB=xA+uA*dt/2.
+           yB=yA+vA*dt/2.
+           #ielx=int(xB/hx)
+           #iely=int(yB/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xB-x[iconV[0,iel]])/hx-0.5
+           #sm=(yB-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uB=NNNV.dot(u[iconV[:,iel]])
+           #vB=NNNV.dot(v[iconV[:,iel]])
+           uB,vB=velocity(xB,yB)
+           #--------------
+           xC=xA+uB*dt/2.
+           yC=yA+vB*dt/2.
+           #ielx=int(xC/hx)
+           #iely=int(yC/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xC-x[iconV[0,iel]])/hx-0.5
+           #sm=(yC-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uC=NNNV.dot(u[iconV[:,iel]])
+           #vC=NNNV.dot(v[iconV[:,iel]])
+           uC,vC=velocity(xC,yC)
+           #--------------
+           xD=xA+uC*dt
+           yD=yA+vC*dt
+           #ielx=int(xD/hx)
+           #iely=int(yD/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xD-x[iconV[0,iel]])/hx-0.5
+           #sm=(yD-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uD=NNNV.dot(u[iconV[:,iel]])
+           #vD=NNNV.dot(v[iconV[:,iel]])
+           uD,vD=velocity(xD,yD)
+           #--------------
+           swarm_x[im]=xA+(uA+2*uB+2*uC+uD)*dt/6.
+           swarm_y[im]=yA+(vA+2*vB+2*vC+vD)*dt/6.
+           swarm_rad[im]=np.sqrt((swarm_x[im]-2)**2+(swarm_y[im]-2)**2)
+       # end for im
+       markerRK4file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep))
 
-    swarm_tau_angle[:]=0.5*np.arctan(2*swarm_tauxy[:]/(swarm_tauyy[:]-swarm_tauxx[:])) 
+if method=='RK4_38':
+   markerRK4file=open('marker_RK4_38_'+str(CFL)+'.ascii',"w")
+   for istep in range(0,nstep+1):
+       for im in range(0,nmarker):
+           #--------------
+           xA=swarm_x[im]
+           yA=swarm_y[im]
+           #ielx=int(xA/hx)
+           #iely=int(yA/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xA-x[iconV[0,iel]])/hx-0.5
+           #sm=(yA-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uA=NNNV.dot(u[iconV[:,iel]])
+           #vA=NNNV.dot(v[iconV[:,iel]])
+           uA,vA=velocity(xA,yA)
+           #--------------
+           xB=xA+uA*dt/3.
+           yB=yA+vA*dt/3.
+           #ielx=int(xB/hx)
+           #iely=int(yB/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xB-x[iconV[0,iel]])/hx-0.5
+           #sm=(yB-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uB=NNNV.dot(u[iconV[:,iel]])
+           #vB=NNNV.dot(v[iconV[:,iel]])
+           uB,vB=velocity(xB,yB)
+           #--------------
+           xC=xA+(-uA/3+uB)*dt
+           yC=yA+(-vA/3+vB)*dt
+           #ielx=int(xC/hx)
+           #iely=int(yC/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xC-x[iconV[0,iel]])/hx-0.5
+           #sm=(yC-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uC=NNNV.dot(u[iconV[:,iel]])
+           #vC=NNNV.dot(v[iconV[:,iel]])
+           uC,vC=velocity(xC,yC)
+           #--------------
+           xD=xA+(uA-uB+uC)*dt
+           yD=yA+(vA-vB+vC)*dt
+           #ielx=int(xD/hx)
+           #iely=int(yD/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xD-x[iconV[0,iel]])/hx-0.5
+           #sm=(yD-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uD=NNNV.dot(u[iconV[:,iel]])
+           #vD=NNNV.dot(v[iconV[:,iel]])
+           uD,vD=velocity(xD,yD)
+           #--------------
+           swarm_x[im]=xA+(uA+3*uB+3*uC+uD)*dt/8.
+           swarm_y[im]=yA+(vA+3*vB+3*vC+vD)*dt/8.
+           swarm_rad[im]=np.sqrt((swarm_x[im]-2)**2+(swarm_y[im]-2)**2)
+       # end for im
+       markerRK4file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep))
 
-    swarm_sigma1[:]=(swarm_sigmaxx[:]+swarm_sigmayy[:])/2. \
-                   + np.sqrt( (swarm_sigmaxx[:]-swarm_sigmayy[:])**2/4 +swarm_sigmaxy[:]**2 ) 
-    swarm_sigma2[:]=(swarm_sigmaxx[:]+swarm_sigmayy[:])/2. \
-                   - np.sqrt( (swarm_sigmaxx[:]-swarm_sigmayy[:])**2/4 +swarm_sigmaxy[:]**2 ) 
+if method=='RKF':# Runge-Kutta Fehlberg method
+   markerRK5file=open('marker_RKF_'+str(CFL)+'.ascii',"w")
+   for istep in range(0,nstep+1):
 
-    print("     advect markers: %.3f s" % (time.time() - start))
+       for im in range(0,nmarker):
+           #--------------
+           xA=swarm_x[im]
+           yA=swarm_y[im]
+           #ielx=int(xA/hx)
+           #iely=int(yA/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xA-x[iconV[0,iel]])/hx-0.5
+           #sm=(yA-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uA=NNNV.dot(u[iconV[:,iel]])
+           #vA=NNNV.dot(v[iconV[:,iel]])
+           uA,vA=velocity(xA,yA)
+           #--------------
+           xB=xA+(uA*rkf_a21)*dt
+           yB=yA+(vA*rkf_a21)*dt
+           #ielx=int(xB/hx)
+           #iely=int(yB/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xB-x[iconV[0,iel]])/hx-0.5
+           #sm=(yB-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uB=NNNV.dot(u[iconV[:,iel]])
+           #vB=NNNV.dot(v[iconV[:,iel]])
+           uB,vB=velocity(xB,yB)
+           #--------------
+           xC=xA+(uA*rkf_a31+uB*rkf_a32)*dt
+           yC=yA+(vA*rkf_a31+vB*rkf_a32)*dt
+           #ielx=int(xC/hx)
+           #iely=int(yC/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xC-x[iconV[0,iel]])/hx-0.5
+           #sm=(yC-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uC=NNNV.dot(u[iconV[:,iel]])
+           #vC=NNNV.dot(v[iconV[:,iel]])
+           uC,vC=velocity(xC,yC)
+           #--------------
+           xD=xA+(uA*rkf_a41+uB*rkf_a42+uC*rkf_a43)*dt
+           yD=yA+(vA*rkf_a41+vB*rkf_a42+vC*rkf_a43)*dt
+           #ielx=int(xD/hx)
+           #iely=int(yD/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xD-x[iconV[0,iel]])/hx-0.5
+           #sm=(yD-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uD=NNNV.dot(u[iconV[:,iel]])
+           #vD=NNNV.dot(v[iconV[:,iel]])
+           uD,vD=velocity(xD,yD)
+           #--------------
+           xE=xA+(uA*rkf_a51+uB*rkf_a52+uC*rkf_a53+uD*rkf_a54)*dt
+           yE=yA+(vA*rkf_a51+vB*rkf_a52+vC*rkf_a53+vD*rkf_a54)*dt
+           #ielx=int(xE/hx)
+           #iely=int(yE/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xE-x[iconV[0,iel]])/hx-0.5
+           #sm=(yE-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uE=NNNV.dot(u[iconV[:,iel]])
+           #vE=NNNV.dot(v[iconV[:,iel]])
+           uE,vE=velocity(xE,yE)
+           #--------------
+           xF=xA+(uA*rkf_a61+uB*rkf_a62+uC*rkf_a63+uD*rkf_a64+uE*rkf_a65)*dt
+           yF=yA+(vA*rkf_a61+vB*rkf_a62+vC*rkf_a63+vD*rkf_a64+vE*rkf_a65)*dt
+           #ielx=int(xF/hx)
+           #iely=int(yF/hy)
+           #iel=iely*nelx+ielx
+           #rm=(xF-x[iconV[0,iel]])/hx-0.5
+           #sm=(yF-y[iconV[0,iel]])/hy-0.5
+           #NNNV=NNV(rm,sm)
+           #uF=NNNV.dot(u[iconV[:,iel]])
+           #vF=NNNV.dot(v[iconV[:,iel]])
+           uF,vF=velocity(xF,yF)
+           #--------------
+           swarm_x[im]=xA+(uA*rkf_b1+uC*rkf_b3+uD*rkf_b4+uE*rkf_b5+uF*rkf_b6)*dt
+           swarm_y[im]=yA+(vA*rkf_b1+vC*rkf_b3+vD*rkf_b4+vE*rkf_b5+vF*rkf_b6)*dt
+           swarm_rad[im]=np.sqrt((swarm_x[im]-2)**2+(swarm_y[im]-2)**2)
+       # end for im
+       markerRK5file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep))
 
-    #####################################################################
-    # interpolate pressure onto velocity grid points
-    #####################################################################
-    start = time.time()
+###########################################################################
+# export swarm to vtu
+###########################################################################
 
-    q=np.zeros(NV,dtype=np.float64)
-    counter=np.zeros(NV,dtype=np.float64)
+if visu==1:
 
-    for iel in range(0,nel):
-        q[iconV[0,iel]]=p[iconP[0,iel]]
-        q[iconV[1,iel]]=p[iconP[1,iel]]
-        q[iconV[2,iel]]=p[iconP[2,iel]]
-        q[iconV[3,iel]]=p[iconP[3,iel]]
-        q[iconV[4,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
-        q[iconV[5,iel]]=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
-        q[iconV[6,iel]]=(p[iconP[2,iel]]+p[iconP[3,iel]])*0.5
-        q[iconV[7,iel]]=(p[iconP[3,iel]]+p[iconP[0,iel]])*0.5
-        q[iconV[8,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]]+p[iconP[2,iel]]+p[iconP[3,iel]])*0.25
+       vtufile=open('markers'+str(istep)+'.vtu',"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nmarker,nmarker))
+       ####
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
+       for i in range(0,nmarker):
+           vtufile.write("%10e %10e %10e \n" %(swarm_x[i],swarm_y[i],0.))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
 
-    print("     project p on Q2: %.3f s" % (time.time() - start))
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='r' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           vtufile.write("%10e \n" % swarm_r[im])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='s' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           vtufile.write("%10e \n" % swarm_s[im])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='iel' Format='ascii'> \n")
+       for im in range(0,nmarker):
+           vtufile.write("%10e \n" % swarm_iel[im])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</PointData>\n")
 
-    #####################################################################
-    # plot of solution
-    #####################################################################
-    # the 9-node Q2 element does not exist in vtk, but the 8-node one 
-    # does, i.e. type=23. 
+       ####
+       vtufile.write("<Cells>\n")
+       #
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       for i in range(0,nmarker):
+           vtufile.write("%d " % i)
+       vtufile.write("</DataArray>\n")
+       #
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       for i in range(0,nmarker):
+           vtufile.write("%d " % (i+1))
+       vtufile.write("</DataArray>\n")
+       #
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       for i in range(0,nmarker):
+           vtufile.write("%d " % 1)
+       vtufile.write("</DataArray>\n")
+       #
+       vtufile.write("</Cells>\n")
+       ####
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
 
-    start = time.time()
+###############################################################################
 
-    #np.savetxt('markers.ascii',np.array([swarm_x,swarm_y,swarm_mat,swarm_eta]).T)
+if experiment==1:
+   #print('CFL,error',CFL,np.max(np.sqrt((swarm_x-swarm_x0)**2+(swarm_y-swarm_y0)**2)),nstep)
+   print('CFL,error',CFL,np.max(abs(swarm_rad-1)),nstep)
 
-    filename = output_folder+'solution_{:04d}.vtu'.format(istep)
-    vtufile=open(filename,"w")
-    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-    vtufile.write("<UnstructuredGrid> \n")
-    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
-    #####
-    vtufile.write("<Points> \n")
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</Points> \n")
-    #####
-    vtufile.write("<CellData Scalars='scalars'>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % eta_elemental[iel]) 
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("</CellData>\n")
-    #####
-    vtufile.write("<PointData Scalars='scalars'>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/s)' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (cm/year)' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e \n" %q[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
-    for i in range (0,NV):
-        vtufile.write("%10e\n" % exx[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
-    for i in range (0,NV):
-        vtufile.write("%10e\n" % eyy[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
-    for i in range (0,NV):
-        vtufile.write("%10e\n" % exy[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='ee' Format='ascii'> \n")
-    for i in range (0,NV):
-        vtufile.write("%10e\n" % ee[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("</PointData>\n")
-    #####
-    vtufile.write("<Cells>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel],iconV[4,iel],\
-                                                    iconV[5,iel],iconV[6,iel],iconV[7,iel]))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d \n" %((iel+1)*8))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-    for iel in range (0,nel):
-        vtufile.write("%d \n" %23)
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("</Cells>\n")
-    #####
-    vtufile.write("</Piece>\n")
-    vtufile.write("</UnstructuredGrid>\n")
-    vtufile.write("</VTKFile>\n")
-    vtufile.close()
+###############################################################################
 
-    filename = output_folder+'swarm_{:04d}.vtu'.format(istep)
-    vtufile=open(filename,"w")
-    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-    vtufile.write("<UnstructuredGrid> \n")
-    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nmarker,nmarker))
-    vtufile.write("<PointData Scalars='scalars'>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='mat' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_mat[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    #vtufile.write("<DataArray type='Float32' Name='iel' Format='ascii'>\n")
-    #for i in range(0,nmarker):
-    #    vtufile.write("%3e \n" %swarm_iel[i])
-    #vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='paint' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_paint[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='total strain (xx)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_total_strainxx[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='total strain (yy)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_total_strainyy[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='total strain (xy)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_total_strainxy[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='total strain (eff.)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" % swarm_total_strain_eff[i] )
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='plastic strain (xx)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_plastic_strainxx[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='plastic strain (yy)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_plastic_strainyy[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='plastic strain (xy)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_plastic_strainxy[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='plastic strain (eff.)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" % swarm_plastic_strain_eff[i] )
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='strain rate (xx)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_exx[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='strain rate (yy)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_eyy[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='strain rate (xy)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %swarm_exy[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='strain rate (eff.)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" % swarm_ee[i] )
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='strain weakening level' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" % swarm_sw_level[i] )
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='is_plastic' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" % swarm_is_plastic[i] )
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='tauxx (MPa)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %(swarm_tauxx[i]/MPa))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='tauyy (MPa)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %(swarm_tauyy[i]/MPa))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='tauxy (MPa)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" %(swarm_tauxy[i]/MPa))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='tau (eff.) (MPa)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" % (swarm_tau_eff[i]/MPa))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='tau angle' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" % (swarm_tau_angle[i]/np.pi*180))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='sigma angle (abs)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%3e \n" % (np.abs(swarm_sigma_angle[i])/np.pi*180))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='sigma 1 (MPa)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%e \n" % (swarm_sigma1[i]/MPa))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='sigma 2 (MPa)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%e \n" % (swarm_sigma2[i]/MPa))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='sigma_1 (dir)' NumberOfComponents='3' Format='ascii'> \n")
-    for i in range(0,nmarker):
-        vtufile.write("%10e %10e %10e \n" %( np.cos(swarm_sigma_angle[i]),np.sin(swarm_sigma_angle[i]),0) )
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='sigma_2 (dir)' NumberOfComponents='3' Format='ascii'> \n")
-    for i in range(0,nmarker):
-        vtufile.write("%10e %10e %10e \n" %( np.cos(swarm_sigma_angle[i]+np.pi/2),np.sin(swarm_sigma_angle[i]+np.pi/2),0) )
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='viscosity (Pa.s)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%10e \n" %swarm_eta[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='pressure dyn. (MPa)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%10e \n" %(swarm_p_dyn[i]/MPa))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='yield value(MPa)' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%10e \n" %(swarm_tau_eff[i]/MPa-swarm_yield[i]/MPa))
-    vtufile.write("</DataArray>\n")
-    #--
-    #vtufile.write("<DataArray type='Float32' Name='r,s,t' NumberOfComponents='3' Format='ascii'>\n")
-    #for i in range(0,nmarker):
-    #    vtufile.write("%5e %5e %5e \n" %(swarm_r[i],swarm_s[i],0.))
-    #vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='velocity (cm/year)' NumberOfComponents='3' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%5e %5e %5e \n" %(swarm_u[i]/cm*year,swarm_v[i]/cm*year,0.))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("</PointData>\n")
-    vtufile.write("<Points> \n")
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%10e %10e %10e \n" %(swarm_x[i],swarm_y[i],0.))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</Points> \n")
-    vtufile.write("<Cells>\n")
-    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-    for i in range(0,nmarker):
-        vtufile.write("%d " % i)
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-    for i in range(0,nmarker):
-        vtufile.write("%d " % (i+1))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-    for i in range(0,nmarker):
-        vtufile.write("%d " % 1)
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</Cells>\n")
-    vtufile.write("</Piece>\n")
-    vtufile.write("</UnstructuredGrid>\n")
-    vtufile.write("</VTKFile>\n")
-    vtufile.close()
+if visu==1:
+   filename = 'solution.vtu'
+   vtufile=open(filename,"w")
+   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+   vtufile.write("<UnstructuredGrid> \n")
+   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+   #####
+   vtufile.write("<Points> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10e %10e %10e \n" %(x[i],y[i],0.))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</Points> \n")
+   #####
+   vtufile.write("<PointData Scalars='scalars'>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("</PointData>\n")
+   #####
+   vtufile.write("<Cells>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%d %d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],\
+                                                      iconV[3,iel],iconV[4,iel],iconV[5,iel],\
+                                                      iconV[6,iel],iconV[7,iel],iconV[8,iel]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+   for iel in range (0,nel):
+       vtufile.write("%d \n" %((iel+1)*9))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+   for iel in range (0,nel):
+       vtufile.write("%d \n" %28)
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("</Cells>\n")
+   #####
+   vtufile.write("</Piece>\n")
+   vtufile.write("</UnstructuredGrid>\n")
+   vtufile.write("</VTKFile>\n")
+   vtufile.close()
 
-    print("     export to vtu: %.3f s" % (time.time() - start))
+###############################################################################
 
-    #----------------------------------
-    if make_png:
-       start = time.time()
-       plt.figure(figsize=(20,5))
-       plt.scatter(swarm_x,swarm_y,c=np.log10(swarm_eta),s=1)
-       plt.title('effective viscosity')
-       plt.xlim([0,Lx])
-       plt.ylim([0,Ly])
-       filename = 'swarm_eta_{:04d}.png'.format(istep)
-       plt.savefig(filename,bbox_inches='tight')
-       plt.figure(figsize=(20,5))
-       plt.scatter(swarm_x,swarm_y,c=swarm_mat,s=1)
-       plt.title('material')
-       plt.xlim([0,Lx])
-       plt.ylim([0,Ly])
-       filename = 'swarm_mat_{:04d}.png'.format(istep)
-       plt.savefig(filename,bbox_inches='tight')
-       print("     export to png: %.3f s" % (time.time() - start))
-
-###################################################################################################
-# end for istep
-###################################################################################################
-
-print("-----------------------------")
-print("------------the end----------")
-print("-----------------------------")

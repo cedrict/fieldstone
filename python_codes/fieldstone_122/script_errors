@@ -1,0 +1,20 @@
+#!/bin/bash
+
+rm errors_*.ascii
+   
+for CFL in 1 0.75 0.5 0.25 .125 0.0625 0.03125 ; do
+
+    for method in RK1 RK2 RK3 RK4 RK4_38 RKF ; do
+
+      echo method= $method CFL= $CFL
+
+      python3 stone.py 16 $CFL  $method 0 > opla
+
+      grep err opla >> errors_${method}.ascii
+
+   done
+
+done
+
+
+

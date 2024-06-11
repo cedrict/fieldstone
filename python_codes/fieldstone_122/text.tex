@@ -1,260 +1,104 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/aspect_logo}
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/pic}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_122/text.tex}} \end{flushright}
 
-%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_01/keywords}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/template_keywords.key}
+
+\par\noindent\rule{\textwidth}{0.4pt}
 
 \begin{center}
-
-\fbox{\textbf{\huge \color{teal} P}}
-Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_122}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_122}}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\sl This stone was developed in collaboration with Donald Duck}. \index{contributors}{D. Duck}
 
-The domain is a 2D Cartesian box of size $L_x \times L_y$ with 
-$L_x=200~\si{\km}$ and $L_y=100~\si{\km}$.
-The isothermal incompressible Stokes equations are solved on a mesh 
-of $nelx\times nely$ $Q_2\times Q_1$ elements (same as \aspect).
- 
+\par\noindent\rule{\textwidth}{0.4pt}
 
-It contains a single fluid characterised by the dislocation creep 
-effective viscosity of \textcite{gatt20} (2020) and \textcite{gath21} (2021):
-\[
-\eta_{disl}(\dot{\varepsilon}_e,T)  = \frac{A_0}{2\dot{\varepsilon}_e}\left[ 
-1 + \tanh\left( A_1 ( \log_{10}   \dot{\varepsilon}_e - A_2 )  \right)
-\right]
-\]
-with 
-\begin{align}
-A_0(T) &= a_0 + b_0 T \nn\\ 
-A_1(T) &= a_1 + b_1 T \nn\\ 
-A_2(T) &= a_2 + b_2 T +c_2T^2 \nn
-\end{align}
-and
-\begin{align}
-a_0 &= 4.4\cdot 10^8 \nn\\
-b_0 &= -5.26\cdot 10^4 \nn\\
-a_1 &= 2.11\cdot 10^{-2} \nn\\
-b_1 &= 1.74\cdot 10^{-4} \nn\\
-a_2 &= -41.8 \nn\\
-b_2 &= 4.21\cdot 10^{-2} \nn\\
-c_2 &= -1.14\cdot 10^{-5} \nn
-\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The setup is similar to the one in \textcite{gupm14} (2014) although the formulation here is purely 
-Eulerian and will rely on periodic boundary conditions when large shear values are used.
-Boundary conditions are $\vec{\upnu}=(+u_0,0)$ on the top, $\vec{\upnu}=(-u_0,0)$ on the 
-bottom, and $v=0$ on the left and right boundaries. We thereby obtain a flow 
-that is parallel to the $x$-axis. $u_0$ is set to $1~\si{\cm\per\year}$.
+This \stone is a replication of the benchmarks found in the supplementary material 
+of \textcite{galh18} (2018). 
 
-The rheology is nonlinear so Picard nonlinear iterations are implemented. These stop
-when the difference between two consecutively obtained velocity fields falls below
-a given tolerance $tol=10^{-3}$. 
-
-The temperature field is set to a constant value $T_0$ throughout the domain.
-
-If no thermal or mechanical inhomogeneity is implemented, this setup results in 
-a velocity field $\vec{\upnu}=(u,v)$ that is such that $v(x,y)=0$, and 
-$u(x,y)=2u_0 (y-L_y/2)/L_y$, with $\dot{\varepsilon}_{xx}=\dot{\varepsilon}_{yy}=0$ 
-and $\dot{\varepsilon}_{xy}=u_0/L_y$. 
+\begin{displayquote}
+We tested the accuracy of the implemented advection
+schemes with two example models that separately show the
+convergence of the integration error in spatially and tem-
+porally variable flow. Both models use an analytically pre-
+scribed velocity function that is evaluated and transferred
+to the finite-element solution vector. By this procedure we
+ensure that the particle algorithm behaves as in a normal
+coupled computation, but retain full control over the veloc-
+ity field that allows us to choose benchmarks with analytical
+solutions, and are independent of the accuracy of the finite
+element solver
+\end{displayquote}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_121/results/vel}
+\includegraphics[width=11cm]{python_codes/fieldstone_122/images/galh18.png}\\
+{\captionfont Taken from the supplementary material of \textcite{galh18} (2018).}
 \end{center}
 
-We therefore need a form of weak seed/zone to localise the deformation and 
-initiate the strain weakening process.
+%%%%%%%%%%%%%%%%%%%%%%
+\section*{Benchmark 1}
 
-I will soon implement a passive set of particles on which strain can be accumulated so as 
-to allow for strain weakening. What form should the strain weakening take?
-
-PIC, markers, averaging 
-
-
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Project rheology: Strain localisation a la \textcite{gupr14}}
-
-The deformation mechanism equations are from \textcite{gupr14} (2014):
-\[
-\dot\varepsilon = \dot\varepsilon_{dsl} + \dot\varepsilon_{dif} + \dot\varepsilon_{gbs} + \dot\varepsilon_{exp} 
-\]
-with
-\begin{eqnarray}
-\dot\varepsilon_{dsl}&=&A_{dsl}\exp\left(-\frac{Q_{dsl}}{RT} \right) \tau^{n_{dsl}}  \\
-\dot\varepsilon_{dif}&=&A_{dif}\exp\left(-\frac{Q_{dif}}{RT} \right) \tau^{n_{dif}} d^{m_{dif}} \\
-\dot\varepsilon_{gbs}&=&A_{gbs}\exp\left(-\frac{Q_{gbs}}{RT} \right) \tau^{n_{gbs}} d^{m_{gbs}} \\
-\dot\varepsilon_{exp}&=&A_{exp}\exp\left[-\frac{Q_{exp}}{RT} \left(1 -\frac{\tau}{\tau_p}\right)^{n_{exp}} \right]   
-\end{eqnarray}
-where $d$ is the grain size, $m$ is the grain size exponent, $\tau_p$ is the Peierls stress defined
-for low-temperature plasticity.
-
-We will come back to how the strain rate partitioning is done later. 
-Assuming the strain rate known (as well as the temperature) these relationships can 
-be reversed so as to give the stress as a function of strain rate and temperature:
-\begin{eqnarray}
-\tau &=& A_{dsl}^{-1/n_{dsl}} \dot\varepsilon_{dsl}^{1/n_{dsl}}  \exp \left(\frac{Q_{dsl}}{n_{dsl} RT} \right)  \\
-\tau &=& A_{dif}^{-1}         \dot\varepsilon_{dif}              \exp \left(\frac{Q_{dsl}}{        RT} \right) d^{-mdif/ndif} \\
-\tau &=& A_{gbs}^{-1}         \dot\varepsilon_{gbs}              \exp \left(\frac{Q_{gbs}}{        RT} \right) d^{-mgbs/ngbs} \\
-\tau &=& A_{exp}
-%\dot\varepsilon_{exp}&=&A_{exp}\exp\left[-\frac{Q_{exp}}{RT} \left(1 -\frac{\tau}{\tau_p}\right)^{n_{exp}} \right]   
-\end{eqnarray}
-
+This benchmark is described as follows:
+\begin{displayquote}
+The first benchmark model consists of a circular flow
+around the center of a two-dimensional box. The model
+end time and velocity of the flow is chosen to match one
+turn-around time around the center. The model contains
+100 particles that are distributed in a ring with a constant
+radius around the model center. The error is measured as
+distance between final and initial position that should approach 
+zero in an analytical solution. To ensure that the
+error is independent of the particle’s starting position we
+plot the maximal error of all particles.
+\end{displayquote}
 
 \begin{center}
-\begin{tabular}{lllllll}
-\hline
-& $A$ & $Q$ & $n$ & $m$ & $\tau_p$ & ref. \\
-\hline\hline
- & $\si{\mega\pascal^{-n}\per\second}$ & $\si{\kilo\joule\per\mole}$ &&& \si{\mega\pascal}?\\
-\textbf{Mantle} (olivine)  &  \\ 
-Dislocation       & $1.1\cdot10^5$    &530& 3.5 & -  &-   &\cite{hiko03}\\
-Diffusion         & $3.98\cdot 10^7$  &370& 1   & 3  &-   &\\
-Dry GBS           & $6.5\cdot10^3$    &400& 3.5 & 2  &-   &\\
-Dry GBS           & $6.31\cdot10^4$   &445& 2.9 & 0.7&-   &\cite{hazk11}\\
-Exponential       & $5.7\cdot10^{11}$ &535& 2   & -  &8500&\cite{goet78}\\
-\hline
-\textbf{Crust} (quartz) &\\
-Dislocation (weak)   &  $3.2\cdot10^{-4}$    & 154 & 2.3&- & - & \cite{kikr87}\\
-Dislocation (strong) &  $6.31\cdot 10^{-12}$ & 135 & 4&- & - & \cite{hitd01}\\
-\hline
-\end{tabular}
+\includegraphics[width=8cm]{python_codes/fieldstone_122/results/exp1/errors.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_122/results/exp1/rad.pdf}\\
+{\captionfont Left: radius error as a function of the CFL number and for various RK methods;
+Right: radius error as a function of time for a given CFL number of 0.5.}
 \end{center}
 
-\begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_121/images/gupr14a}
-\includegraphics[width=7cm]{python_codes/fieldstone_121/images/gupr14b}\\
-{\captionfont Taken from \textcite{gupr14} (2014). Olivine deformation maps 
-(shear stress vs. mean grain size) at a constant strain rate ($10^{-15}~\si{\per\second}$) 
-showing the four deformation mechanisms that compete to control the mantle rheology: 
-low-temperature plasticity (exponential creep), dislocation creep, disGBS
-and diffusion creep. Iso-temperature curves are provided to show stress/grain sizes for
-temperatures ranging from 1000 to 400~\si{\celsius}. 
-A) deformation map including the disGBS
-flow law from \textcite{hiko03} (2003); 
-B) deformation map including the disGBS flow law from \textcite{hazk11} (2011). 
-Hypotheses for the recrystallized grain size are either
-equilibrium (at the boundary between grain size sensitive and grain size insensitive
-creeps, thick dashed line; de Bresser et al., 1998) or experimentally constrained paleo-
-piezometer (thin dashed line; Van der Wal et al., 1993). Values of the ductile flow laws
-are given in the Table above}
-\end{center}
+I do not exactly measure the same thing as in the paper. 
+Ifind that even order RK over perform. Also, not much difference between RK4 and RK4-3/8.
 
+%%%%%%%%%%%%%%%%%%%%%%
+\section*{Benchmark 2}
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Project inclusion}
-
-The domain is $1~\si{\cm}$ thick. It contains two materials:
-\begin{itemize}
-\item material 1: ab $A=$, $n=$, $Q=$ (the matrix)
-\item material 2: cpx $A=$, $n=$, $Q=$ (the inclusion)
-\end{itemize}
-The effective viscosity is computed assuming a dislocation creep mechanism
-in which pressure dependence has been removed:
+This benchmark is described as follows:
+\begin{displayquote}
+The second benchmark model measures the convergence
+in time-variable flow, which is simulated by a model domain 
+with spatially constant but over time exponentially-
+increasing velocity. All particles are generated at random
+positions in the lower-left quadrant of the model domain
+and are advected in a flow of the form
 \[
-\eta_{eff} = A^{-1/n} \dot{\varepsilon}^{-1+1/n} \exp\left( \frac{Q}{nRT}\right)
-\]
-The temperature is assumed to be constant in the domain, i.e. $T=T_{background}$.
-Boundary conditions are $\vec{\upnu}=(+u_0,0)$ on the top, $\vec{\upnu}=(-u_0,0)$ on the 
-bottom, and $v=0$ on the left and right boundaries. We thereby obtain a flow 
-that is parallel to the $x$-axis. $u_0$ is set so that the strain rate is $10^{-15}~\si{\per\second}$.
-
-A single inclusion of radius $R_i$ is placed in the middle of the domain. It 
-is either a disc or an ellipse (semi-axis $a$ and $b$) which can be rotated 
-by an angle $\theta$ and is parameterised by
-\lstinline{x_inclusion,y_inclusion,a_inclusion,b_inclusion,angle_inclusion}.
- 
-
-The particle in cell technique is used here in combination with 
-periodic boundary conditions in the horizontal direction.
-Viscosity is computed on each particle and then these particle-based 
-viscosities are projected onto the quadrature points (note: many options to 
-explore here - elemental averaging is used for now), see Section~\ref{ss:averagings}.
-
-All arrays which name starts with \lstinline{swarm} contain information about 
-the swarm of particles. 
-Each particle has a position $x$ and $y$, a material identity $mat$, a 
-set of reduced coordinates $r$ and $s$, a velocity $u$ and $v$, 
-a strain rate $\dot{\varepsilon}_{xx}$, $\dot{\varepsilon}_{yy}$ and $\dot{\varepsilon}_{xy}$,
-FINISH
+u(t)=1 + e^t \qquad 
+v(t)=1 + e^t 
+\].
+The model end time
+of 1 then leads to an expected final
+position $\vec{x}(1) = \vec{x}(0) + \int_0^1 \vec\upnu(t) \; dt$
+ with a distance between the initial and end position of $d = ||\vec{x}_1-\vec{x}_0 ||_2 = 2e$.
+\end{displayquote}
 
 
 
-Because the viscosity depends on the strain rate, this makes the equations 
-to be solved nonlinear, see Section~\ref{ss_nonlinear}. We deal with this 
-by resorting to Picard iterations. 
-Nonlinear iterations stop when a given tolerance (\lstinline{tol}) is reached or when the 
-allowed maximum number of iterations is reached (\lstinline{niter}).
-
-Time stepping is implemented and the value of the timestep $\delta t$ is obtained 
-by means of a CFL condition (see Section~\ref{ss:cfl}), controlled by the CFL coefficient \lstinline{CFL_nb} which 
-should remain somewhere between 0 and 0.5. For simplicity a first order Euler scheme is implemented 
-for the advection of these particles . 
-
-\vspace{1cm}
 
 
-Following \textcite{begu18} (2018), we 
-express pore fluid pressure variations using Darcy’s law and the fluid mass 
-conservation \cite{grfr03}(Eq.~11) leading to 
-\begin{equation}
-\phi_m C \frac{\partial P_f}{\partial t}
-+\frac{\partial \phi_m}{\partial t}
-= 
-\frac{\partial}{\partial x} K \frac{\partial P_f}{\partial x} + F
-\label{eq:f121_pf}
-\end{equation}
-where $\phi_m$ is the mean porosity, $C$ is the mean matrix-fluid compressibility, 
-$t$ is time, $x$ is the distance across the
-shear zone, $K$ is the permeability, and $F$ is the fluid pumping parameter. 
-We relate porosity and permeability following \textcite{skre16} (2016):
-\[
-K = K_0 \left( \frac{\phi}{\phi_0} \right)^{\alpha_k}
-\]
-where $K_0$ is the permeability at a reference porosity $\phi_0$ 
-and $\alpha_k$ is the permeability exponent
-(set here to 3, see \textcite{skre16})
 
-Observations on midcrustal granitic shear zones show that porosity concentrates
-along grain boundaries and decreases with the distance to the core of the 
-shear zone (Fusseis et al., 2009).
-Therefore, we assume that porosity is inversely proportional 
-to grain size (see supporting information S2).
-
-Finally, we model the enhancement of fluid pumping by ductile deformation as
-\[
-\dot{F} = \phi_f F \dot{\varepsilon}
-\]
-where $F$ is the fluid pumping and $\phi_F$ is the kinematic of the fluid pumping. 
-The strain rate-dependent fluid pumping assumption is required to describe both strong 
-fluid circulation in the core of the shear zone and nearly no fluid circulation at 
-the rim. We set the kinematic of fluid pumping $\phi_F$ to $7\cdot10^4$ in order to have a 
-characteristic time of fluid pumping of 5,000 days (~14 years). 
-Note that a lower fluid pumping rate inhibits strain
-localization described below while a larger fluid pumping rate implies numerical instabilities.
-
-
-Eq.~\eqref{eq:f121_pf} should actually be an advection-diffusion equation for pore fluid 
-pressure expressed in 2D cartesian coordinates. EXPLAIN
-\[
-\phi_m C \left( \frac{\partial P_f}{\partial t} + \vec\upnu \cdot \vec\nabla P_f \right)
-=
-\vec\nabla \cdot ( K \vec\nabla P_f) + F - \frac{\partial \phi_m}{\partial t}
-\]
-Aside from the right hand side term and the nature of the coefficient the FE 
-discretisation of such an equation is explained in Section~\ref{ss:hte_fem}.
-We use a $Q_2$ polynomial space for $P_f$ so that we can use the data
-structures pertaining to the velocity space (location of grid nodes and connectivity).
-
-Questions:
-
-- initial Pf ?
-
-- boundary conditions Pf ? 
-
-- compressibility value?
 
 
