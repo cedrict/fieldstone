@@ -64,15 +64,58 @@ error is independent of the particle’s starting position we
 plot the maximal error of all particles.
 \end{displayquote}
 
+The code is quite simple. First a $nelx \times nely$ mesh of $Q_2$ elements
+is created, alongside with its connectivity.
+Then 100 markers are placed in an equidistant manner on a circle or radius 1, placed in
+the middle of the $2\times 2$ domain. Then a velocity field $\vec\upnu=(y-2,-x+2)$ is considered. 
+Various Runge-Kutta methods are implemented, i.e. RK1, RK2, RK3, RK4, RK4(3/8), RKF and ODE87.
+When the option {\python interpolate} is False, the velocity is computed on each marker and at 
+any sub timestep using the analytical velocity and here are the results\footnote{These results are 
+obtained on a 16x16 mesh but that is not so relevant since it is not used anywhere.}:
+
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_122/results/exp1/errors.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_122/results/exp1/rad.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1/errors.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1/errors2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1/rad.pdf}\\
 {\captionfont Left: radius error as a function of the CFL number and for various RK methods;
+Middle: distance error as a function of CFL number; 
 Right: radius error as a function of time for a given CFL number of 0.5.}
 \end{center}
 
-I do not exactly measure the same thing as in the paper. 
-Ifind that even order RK over perform. Also, not much difference between RK4 and RK4-3/8.
+I find that even order RK methods over perform for distance to center error, not sure I can 
+explain this. When considering the distance between markers after $2\pi$ rotation, we recover the 
+expected rates. Also, not much difference between RK4 and RK4-3/8.
+The performance of ODE87 is remarkable (error at machine precision), but at a conservative 
+CFL number of 0.5, RK4 is near $10^{-8}$. Given that a typical lengthscale for mantle modelling 
+is $\sim 6000km$, then this is already an error of $\sim 10^{-5}km$, or $\sim 10^{-2}$m. 
+In essence such a level of accuracy is not really needed i practice.
+
+If I now first compute the velocity on the mesh and use the basis functions to interpolate the 
+velocity on the markers ({\python interpolate}=True), we get a totally different picture:
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_16/errors.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_16/errors2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_16/rad.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_32/errors.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_32/errors2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_32/rad.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_64/errors.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_64/errors2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_64/rad.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_128/errors.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_128/errors2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_128/rad.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_256/errors.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_256/errors2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_122/results/exp1_256/rad.pdf}\\
+{\captionfont From top to bottom: nelx=16,32,64,128.}
+\end{center}
+
+We find that the error is then 100\% controlled by the mesh size, and high order methods do 
+not deliver {\it all}.
+The conclusion is that any method higher order than RK2 is probably pointless. 
+
 
 %%%%%%%%%%%%%%%%%%%%%%
 \section*{Benchmark 2}
