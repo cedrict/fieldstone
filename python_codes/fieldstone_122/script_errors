@@ -8,7 +8,7 @@ for CFL in 2 1 0.75 0.5 0.25 .125 0.0625 0.03125 ; do
 
       echo method= $method CFL= $CFL
 
-      python3 stone.py 256 $CFL  $method 0 > opla
+      python3 stone.py 16 $CFL  $method 0 > opla
 
       grep err opla >> errors_${method}.ascii
 

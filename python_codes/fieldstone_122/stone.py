@@ -49,7 +49,7 @@ mV=9
 
 experiment=1
 
-interpolate=True
+interpolate=False
 
 print('-----------------------------')
 print(nelx,nely,nel,nnx,nny,NV,visu)
@@ -234,7 +234,7 @@ vel_max=max(np.sqrt(u**2+v**2))
 
 dt=CFL*hx/vel_max
 
-tfinal=2*np.pi*1
+tfinal=(2*np.pi*1)/1
 
 nstep=int(tfinal/dt) 
 
