@@ -139,6 +139,19 @@ to the point that even modern computers with tens of Gb of RAM cannot deal with 
 This explains why direct solvers are often used for 2D problems and rarely in 3D with noticeable 
 exceptions \cite{thfb08,yahb09,brya10,lobh10,alht11,alht12,alhf13,whbb14,neew18}. 
 
+Note that \textcite{pedr24} (2024) conducted a detailed study comapring 
+MUMPS, UMFPACK, and Intel DSS (PARDISO).
+The conclusions are 
+\begin{displayquote}
+``
+1. Intel DSS is not ready for production codes because it computes incorrect results without warnings;\\
+2. UMFPACK reaches the memory limit earlier than the other solvers and must be configured with the automatic
+symmetry strategy to yield correct results; and\\
+3. MUMPS is not thread-safe and, in particular, does not work well with OpenBLAS, which causes thread 'locks' and
+conflicts. However, MUMPS works well with Intel MKL and is the only solver able to tackle massive systems.''
+\end{displayquote}
+
+
 %....................................................................
 \subsection{Uzawa algorithms and the Schur complement approach }
 

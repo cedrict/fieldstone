@@ -48,7 +48,7 @@ Remembering that the deviatoric stress tensor ${\bm \tau}$ is symmetric:
 
 
 \begin{eqnarray}
-{\cal K}_2({\bm \sigma}) 
+{\KKK}_2({\bm \sigma}) 
 &=& \frac{1}{2}[{\rm tr}({\bm \sigma}) ^2 - {\rm tr}({\bm \sigma}^2)] \nonumber\\
 &=& \frac12 \left[  (\sigma_{xx}+\sigma_{yy}+\sigma_{zz})^2  
 - ( \sigma_{xx}^2 + \sigma_{xy}\sigma_{yx} + \sigma_{xz}\sigma_{zx}  
@@ -146,9 +146,9 @@ I have carried this out twice in what follows):
 \right)
 + \sigma_{xy}^2+ \sigma_{xz}^2+ \sigma_{yz}^2 \nn\\
 &=& \frac12 \left(
-\sigma_{xx}^2-\frac23\sigma_{xx}{\cal I}_1(\bm\sigma) + \frac19 {\cal I}_1(\bm\sigma)^2+
-\sigma_{yy}^2-\frac23\sigma_{yy}{\cal I}_1(\bm\sigma) + \frac19 {\cal I}_1(\bm\sigma)^2+
-\sigma_{zz}^2-\frac23\sigma_{zz}{\cal I}_1(\bm\sigma) + \frac19 {\cal I}_1(\bm\sigma)^2
+\sigma_{xx}^2-\frac23\sigma_{xx}{\III}_1(\bm\sigma) + \frac19 {\III}_1(\bm\sigma)^2+
+\sigma_{yy}^2-\frac23\sigma_{yy}{\III}_1(\bm\sigma) + \frac19 {\III}_1(\bm\sigma)^2+
+\sigma_{zz}^2-\frac23\sigma_{zz}{\III}_1(\bm\sigma) + \frac19 {\III}_1(\bm\sigma)^2
 \right)
 + \sigma_{xy}^2+ \sigma_{xz}^2+ \sigma_{yz}^2 \nn\\
 &=& \frac12 \left(
@@ -176,35 +176,35 @@ I have carried this out twice in what follows):
 \right)
 + \sigma_{xy}^2+ \sigma_{xz}^2+ \sigma_{yz}^2 \nn\\
 &=&
--\frac16 {\cal I}_1(\bm\sigma)^2 + {\cal I}_2(\bm\sigma)
+-\frac16 {\III}_1(\bm\sigma)^2 + {\III}_2(\bm\sigma)
 \end{eqnarray}
 So there is no doubt:
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
-{\cal I}_2(\bm\tau) =  -\frac16 {\cal I}_1(\bm\sigma)^2 + {\cal I}_2(\bm\sigma)
+{\III}_2(\bm\tau) =  -\frac16 {\III}_1(\bm\sigma)^2 + {\III}_2(\bm\sigma)
 \]
 \end{mdframed}
 Note that this relationship is often found is a very confusing 
-form where moment invariants ${\cal K}_{1,2,3}$ are used instead of 
-principal invariants ${\cal I}_{1,2,3}$ (although the letter $I$ is used!). 
-We have established that ${\cal I}_2(\bm\sigma)=\frac12 {\cal K}_1(\bm\sigma)^2-{\cal K}_2(\bm\sigma)$
-with ${\cal K}_1(\bm\sigma)={\cal I}_1(\bm\sigma)$ so that 
+form where moment invariants ${\KKK}_{1,2,3}$ are used instead of 
+principal invariants ${\III}_{1,2,3}$ (although the letter $I$ is used!). 
+We have established that ${\III}_2(\bm\sigma)=\frac12 {\KKK}_1(\bm\sigma)^2-{\KKK}_2(\bm\sigma)$
+with ${\KKK}_1(\bm\sigma)={\III}_1(\bm\sigma)$ so that 
 \[
-{\cal I}_2(\bm\tau) 
-= -\frac16 {\cal I}_1(\bm\sigma)^2 + {\cal I}_2(\bm\sigma)
-= -\frac16 {\cal K}_1(\bm\sigma)^2 + \frac12 {\cal K}_1(\bm\sigma)^2-{\cal K}_2(\bm\sigma) 
-= \frac13 {\cal K}_1(\bm\sigma)^2 - {\cal K}_2(\bm\sigma)
+{\III}_2(\bm\tau) 
+= -\frac16 {\III}_1(\bm\sigma)^2 + {\III}_2(\bm\sigma)
+= -\frac16 {\KKK}_1(\bm\sigma)^2 + \frac12 {\KKK}_1(\bm\sigma)^2-{\KKK}_2(\bm\sigma) 
+= \frac13 {\KKK}_1(\bm\sigma)^2 - {\KKK}_2(\bm\sigma)
 \]
 that is:
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
-{\cal I}_2(\bm\tau) =  
-\frac13 {\cal K}_1(\bm\sigma)^2 - {\cal K}_2(\bm\sigma)
+{\III}_2(\bm\tau) =  
+\frac13 {\KKK}_1(\bm\sigma)^2 - {\KKK}_2(\bm\sigma)
 \]
 \end{mdframed}
 
 
-If one replaces ${\cal K}$'s by ${\cal I}$'s then one finds the formula in the literature 
+If one replaces ${\KKK}$'s by ${\III}$'s then one finds the formula in the literature 
 \footnote{\url{https://www.pantelisliolios.com/deviatoric-stress-and-invariants/}}
 \footnote{\url{https://en.wikipedia.org/wiki/Cauchy_stress_tensor}}.
 
@@ -218,7 +218,7 @@ If one replaces ${\cal K}$'s by ${\cal I}$'s then one finds the formula in the l
 
 Let us now look at the third invariant:
 \begin{eqnarray}
-{\cal I}_3(\bm\tau) 
+{\III}_3(\bm\tau) 
 &=& \frac13 \sum_{ijk} \tau_{ij}\tau_{jk}\tau_{ki} \nn\\
 &=& \frac{1}{3}(\tau_{xx}^3 + \tau_{yy}^3 + \tau_{zz}^3) 
 +\tau_{xx}(\tau_{xy}^2 + \tau_{xz}^2 ) 
@@ -362,16 +362,16 @@ I have carried this out twice in what follows):
 
 
 \begin{eqnarray}
-{\cal I}_3(\bm\tau) 
+{\III}_3(\bm\tau) 
 &=& \frac13 \sum_{ijk} \tau_{ij}\tau_{jk}\tau_{ki} \nn\\
 &=& \frac13 \sum_{ijk} 
-\left(\sigma_{ij}-\frac13 {\cal I}_1(\bm\sigma) \delta_{ij}\right)
+\left(\sigma_{ij}-\frac13 {\III}_1(\bm\sigma) \delta_{ij}\right)
 \tau_{jk}\tau_{ki} \nn\\
 &=& \frac13 \sum_{ijk} 
 \left[ 
 \sigma_{ij}
 \tau_{jk}\tau_{ki} 
--\frac13 {\cal I}_1(\bm\sigma) \delta_{ij}
+-\frac13 {\III}_1(\bm\sigma) \delta_{ij}
 \tau_{jk}\tau_{ki} 
 \right]
 \nn\\
@@ -381,7 +381,7 @@ I have carried this out twice in what follows):
 \tau_{jk}\tau_{ki} 
 -\frac19
 \sum_{ijk} 
- {\cal I}_1(\bm\sigma) \delta_{ij}
+ {\III}_1(\bm\sigma) \delta_{ij}
 \tau_{jk}\tau_{ki}
 \nn\\
 &=& \frac13 
@@ -389,7 +389,7 @@ I have carried this out twice in what follows):
 \sigma_{ij}
 \tau_{jk}\tau_{ki} 
 -\frac19
- {\cal I}_1(\bm\sigma) 
+ {\III}_1(\bm\sigma) 
 \sum_{ik} 
 \tau_{ik}\tau_{ki}  
 \nn\\
@@ -398,73 +398,73 @@ I have carried this out twice in what follows):
 \sigma_{ij}
 \tau_{jk}\tau_{ki} 
 -\frac29
- {\cal I}_1(\bm\sigma)  
+ {\III}_1(\bm\sigma)  
 \underbrace{\frac12
 \sum_{ik} 
-\tau_{ik}\tau_{ki}}_{{\cal I}_2(\bm\tau)}
+\tau_{ik}\tau_{ki}}_{{\III}_2(\bm\tau)}
 \nn\\
 &=& \frac13 
 \sum_{ijk} 
 \sigma_{ij}
 \tau_{jk}\tau_{ki} 
--\frac29  {\cal I}_1(\bm\sigma)  {\cal I}_2(\bm\tau)
+-\frac29  {\III}_1(\bm\sigma)  {\III}_2(\bm\tau)
 \nn\\
 &=& \frac13 
 \sum_{ijk} 
 \sigma_{ij}
-\left(\sigma_{jk}-\frac13 {\cal I}_1(\bm\sigma)  \delta_{jk}\right)
-\left(\sigma_{ki}-\frac13 {\cal I}_1(\bm\sigma)  \delta_{ki}\right)
--\frac29  {\cal I}_1(\bm\sigma)    {\cal I}_2(\bm\tau) 
+\left(\sigma_{jk}-\frac13 {\III}_1(\bm\sigma)  \delta_{jk}\right)
+\left(\sigma_{ki}-\frac13 {\III}_1(\bm\sigma)  \delta_{ki}\right)
+-\frac29  {\III}_1(\bm\sigma)    {\III}_2(\bm\tau) 
 \nn\\
 &=& \frac13 
 \sum_{ijk} \left( 
 \sigma_{ij} \sigma_{jk} \sigma_{ki}
--\sigma_{ij}\sigma_{jk}\frac13 {\cal I}_1(\bm\sigma)  \delta_{ki}
--\sigma_{ij}\sigma_{ki}\frac13 {\cal I}_1(\bm\sigma)  \delta_{jk}
-+ \sigma_{ij} \frac19 {\cal I}_1(\bm\sigma) ^2 \delta_{jk} \delta_{ki}
+-\sigma_{ij}\sigma_{jk}\frac13 {\III}_1(\bm\sigma)  \delta_{ki}
+-\sigma_{ij}\sigma_{ki}\frac13 {\III}_1(\bm\sigma)  \delta_{jk}
++ \sigma_{ij} \frac19 {\III}_1(\bm\sigma) ^2 \delta_{jk} \delta_{ki}
 \right)
--\frac29  {\cal I}_1(\bm\sigma)     {\cal I}_2(\bm\tau)
+-\frac29  {\III}_1(\bm\sigma) {\III}_2(\bm\tau)
 \nn\\
 &=& 
 \frac13 \sum_{ijk} \sigma_{ij} \sigma_{jk} \sigma_{ki} 
--\frac13 \sum_{ijk} \sigma_{ij}\sigma_{jk}\frac13 {\cal I}_1(\bm\sigma)  \delta_{ki}
--\frac13 \sum_{ijk} \sigma_{ij}\sigma_{ki}\frac13 {\cal I}_1(\bm\sigma)  \delta_{jk}
-+\frac13 \sum_{ijk}  \sigma_{ij} \frac19 {\cal I}_1(\bm\sigma) ^2 \delta_{jk} \delta_{ki}
--\frac29  {\cal I}_1(\bm\sigma)      {\cal I}_2(\bm\tau)
+-\frac13 \sum_{ijk} \sigma_{ij}\sigma_{jk}\frac13 {\III}_1(\bm\sigma)  \delta_{ki}
+-\frac13 \sum_{ijk} \sigma_{ij}\sigma_{ki}\frac13 {\III}_1(\bm\sigma)  \delta_{jk}
++\frac13 \sum_{ijk}  \sigma_{ij} \frac19 {\III}_1(\bm\sigma) ^2 \delta_{jk} \delta_{ki}
+-\frac29  {\III}_1(\bm\sigma) {\III}_2(\bm\tau)
 \nn\\
 &=& 
-\underbrace{\frac13 \sum_{ijk} \sigma_{ij} \sigma_{jk} \sigma_{ki}}_{{\cal I}_3(\bm\sigma)}
--\frac19 {\cal I}_1(\bm\sigma)  \sum_{ij} \sigma_{ij}\sigma_{ji} 
--\frac19 {\cal I}_1(\bm\sigma)  \sum_{ij} \sigma_{ij}\sigma_{ji} 
-+\frac{1}{27} {\cal I}_1(\bm\sigma) ^2
-\underbrace{\sum_{ijk}  \sigma_{ij}   \delta_{jk} \delta_{ki} }_{{\cal I}_1(\bm\sigma) }
--\frac29  {\cal I}_1(\bm\sigma)      {\cal I}_2(\bm\tau)
+\underbrace{\frac13 \sum_{ijk} \sigma_{ij} \sigma_{jk} \sigma_{ki}}_{{\III}_3(\bm\sigma)}
+-\frac19 {\III}_1(\bm\sigma)  \sum_{ij} \sigma_{ij}\sigma_{ji} 
+-\frac19 {\III}_1(\bm\sigma)  \sum_{ij} \sigma_{ij}\sigma_{ji} 
++\frac{1}{27} {\III}_1(\bm\sigma) ^2
+\underbrace{\sum_{ijk}  \sigma_{ij}   \delta_{jk} \delta_{ki} }_{{\III}_1(\bm\sigma) }
+-\frac29  {\III}_1(\bm\sigma)      {\III}_2(\bm\tau)
 \nn\\
 &=& 
-{\cal I}_3(\bm\sigma)
--\frac29 {\cal I}_1(\bm\sigma)  \underbrace{\frac12 \sum_{ij} \sigma_{ij}\sigma_{ji} }_{{\cal I}_2(\bm\sigma)}
--\frac29 {\cal I}_1(\bm\sigma)  \underbrace{\frac12 \sum_{ij} \sigma_{ij}\sigma_{ji} }_{{\cal I}_2(\bm\sigma)}
-+\frac{1}{27} {\cal I}_1(\bm\sigma)^3
--\frac29  {\cal I}_1(\bm\sigma)   {\cal I}_2(\bm\tau) 
+{\III}_3(\bm\sigma)
+-\frac29 {\III}_1(\bm\sigma)  \underbrace{\frac12 \sum_{ij} \sigma_{ij}\sigma_{ji} }_{{\III}_2(\bm\sigma)}
+-\frac29 {\III}_1(\bm\sigma)  \underbrace{\frac12 \sum_{ij} \sigma_{ij}\sigma_{ji} }_{{\III}_2(\bm\sigma)}
++\frac{1}{27} {\III}_1(\bm\sigma)^3
+-\frac29  {\III}_1(\bm\sigma)   {\III}_2(\bm\tau) 
 \nn\\
 &=& 
-{\cal I}_3(\bm\sigma)
--\frac49 {\cal I}_1(\bm\sigma)  {\cal I}_2(\bm\sigma) 
-+\frac{1}{27} {\cal I}_1(\bm\sigma) ^3
--\frac29  {\cal I}_1(\bm\sigma)     {\cal I}_2(\bm\tau) \nn
+{\III}_3(\bm\sigma)
+-\frac49 {\III}_1(\bm\sigma)  {\III}_2(\bm\sigma) 
++\frac{1}{27} {\III}_1(\bm\sigma) ^3
+-\frac29  {\III}_1(\bm\sigma)     {\III}_2(\bm\tau) \nn
 \end{eqnarray}
-Then we use ${\cal I}_2(\bm\tau) = -\frac16 {\cal I}_1(\bm\sigma)^2 + {\cal I}_2(\bm\sigma)$ so 
+Then we use ${\III}_2(\bm\tau) = -\frac16 {\III}_1(\bm\sigma)^2 + {\III}_2(\bm\sigma)$ so 
 \begin{eqnarray}
-{\cal I}_3(\bm\tau) 
+{\III}_3(\bm\tau) 
 &=& 
-{\cal I}_3(\bm\sigma)  -\frac49 {\cal I}_1(\bm\sigma)  {\cal I}_2   
-+\frac{1}{27} {\cal I}_1(\bm\sigma) ^3   -\frac29  {\cal I}_1(\bm\sigma)   
-\left(-\frac16 {\cal I}_1(\bm\sigma) ^2 + {\cal I}_2(\bm\sigma)   \right) \nn\\
+{\III}_3(\bm\sigma)  -\frac49 {\III}_1(\bm\sigma)  {\III}_2   
++\frac{1}{27} {\III}_1(\bm\sigma) ^3   -\frac29  {\III}_1(\bm\sigma)   
+\left(-\frac16 {\III}_1(\bm\sigma) ^2 + {\III}_2(\bm\sigma)   \right) \nn\\
 &=& 
-{\cal I}_3(\bm\sigma)  -\frac49 {\cal I}_1(\bm\sigma)  {\cal I}_2   +\frac{1}{27} {\cal I}_1(\bm\sigma)^3   
-+\frac{1}{27}  {\cal I}_1(\bm\sigma) ^3  -\frac29  {\cal I}_1(\bm\sigma)   {\cal I}_2(\bm\sigma) \nn\\
-&=& \frac{2}{27} {\cal I}_1(\bm\sigma)^3 
--\frac23 {\cal I}_1(\bm\sigma){\cal I}_2(\bm\sigma) + {\cal I}_3(\bm \sigma) \nn
+{\III}_3(\bm\sigma)  -\frac49 {\III}_1(\bm\sigma) {\III}_2   +\frac{1}{27} {\III}_1(\bm\sigma)^3   
++\frac{1}{27}  {\III}_1(\bm\sigma) ^3  -\frac29  {\III}_1(\bm\sigma) {\III}_2(\bm\sigma) \nn\\
+&=& \frac{2}{27} {\III}_1(\bm\sigma)^3 
+-\frac23 {\III}_1(\bm\sigma){\III}_2(\bm\sigma) + {\III}_3(\bm \sigma) \nn
 \end{eqnarray}
 
 
@@ -477,7 +477,7 @@ Then we use ${\cal I}_2(\bm\tau) = -\frac16 {\cal I}_1(\bm\sigma)^2 + {\cal I}_2
 
 We start this time from
 \begin{eqnarray}
-{\cal I}_3(\bm\tau) 
+{\III}_3(\bm\tau) 
 &=& 
 \frac{1}{3}(\tau_{xx}^3 + \tau_{yy}^2 + \tau_{zz}^3) 
 +\tau_{xx}(\tau_{xy}^2 + \tau_{xz}^2 ) 
@@ -488,11 +488,11 @@ We start this time from
 We have
 \begin{eqnarray}
 \tau_{xx}^3 
-&=& \left(\sigma_{xx}-\frac13 {\cal I}_1(\bm\sigma) \right)^3 \nn\\
+&=& \left(\sigma_{xx}-\frac13 {\III}_1(\bm\sigma) \right)^3 \nn\\
 &=& \sigma_{xx}^3 - 3\sigma_{xx}^2 \frac13 {\cal I}_1(\bm\sigma) 
 + 3 \sigma_{xx} \frac19  {\cal I}_1(\bm\sigma)^2 - \frac{1}{27} {\cal I}_1(\bm\sigma)^3  \nn\\
 \tau_{yy}^3 
-&=& \left(\sigma_{yy}-\frac13 {\cal I}_1(\bm\sigma) \right)^3 \nn\\
+&=& \left(\sigma_{yy}-\frac13 {\III}_1(\bm\sigma) \right)^3 \nn\\
 &=& \sigma_{yy}^3 - 3\sigma_{yy}^2 \frac13 {\cal I}_1(\bm\sigma) 
 + 3 \sigma_{yy} \frac19  {\cal I}_1(\bm\sigma)^2 - \frac{1}{27} {\cal I}_1(\bm\sigma)^3  \nn\\
 \tau_{zz}^3 
@@ -527,7 +527,7 @@ Then
 \end{eqnarray}
 
 \begin{eqnarray}
-{\cal I}_3(\bm\tau) 
+{\III}_3(\bm\tau) 
 &=& 
 \frac{1}{3}(\tau_{xx}^3 + \tau_{yy}^2 + \tau_{zz}^3) 
 +\tau_{xx}(\tau_{xy}^2 + \tau_{xz}^2 ) 
@@ -550,7 +550,7 @@ Then
 +\sigma_{xy}^2 + \sigma_{yz}^2
 +\sigma_{xz}^2 + \sigma_{yz}^2 
 )
-+\frac{2}{27} {\cal I}_1(\bm\sigma)^3 \nn\\
++\frac{2}{27} {\III}_1(\bm\sigma)^3 \nn\\
 && 
 +\sigma_{xx}(\sigma_{xy}^2 + \sigma_{xz}^2 ) 
 +\sigma_{yy}(\sigma_{xy}^2 + \sigma_{yz}^2 ) 
@@ -558,9 +558,9 @@ Then
 +2\sigma_{xy}\sigma_{yz}\sigma_{yz} \nn\\
 &=& 
 \frac{1}{3}(\sigma_{xx}^3 + \sigma_{yy}^3 + \sigma_{zz}^3)
--\frac13{\cal I}_1(\bm\sigma) (\sigma_{xx}^2+\sigma_{yy}^2+\sigma_{zz}^2
+-\frac13{\III}_1(\bm\sigma) (\sigma_{xx}^2+\sigma_{yy}^2+\sigma_{zz}^2
 + 2\sigma_{xy}^2 + 2\sigma_{xz}^2 + 2\sigma_{yz}^2  )
-+\frac{2}{27} {\cal I}_1(\bm\sigma)^3 \nn\\
++\frac{2}{27} {\III}_1(\bm\sigma)^3 \nn\\
 && 
 +\sigma_{xx}(\sigma_{xy}^2 + \sigma_{xz}^2 ) 
 +\sigma_{yy}(\sigma_{xy}^2 + \sigma_{yz}^2 ) 
@@ -568,37 +568,36 @@ Then
 +2\sigma_{xy}\sigma_{yz}\sigma_{yz} \nn\\
 &=& 
 \frac{1}{3}(\sigma_{xx}^3 + \sigma_{yy}^3 + \sigma_{zz}^3)
--\frac23{\cal I}_1(\bm\sigma)
+-\frac23{\III}_1(\bm\sigma)
 \underbrace{\frac12  (\sigma_{xx}^2+\sigma_{yy}^2+\sigma_{zz}^2
-+ 2\sigma_{xy}^2 + 2\sigma_{xz}^2 + 2\sigma_{yz}^2  )}_{{\cal I}_2(\bm\sigma)}
-+\frac{2}{27} {\cal I}_1(\bm\sigma)^3 \nn\\
++ 2\sigma_{xy}^2 + 2\sigma_{xz}^2 + 2\sigma_{yz}^2  )}_{{\III}_2(\bm\sigma)}
++\frac{2}{27} {\III}_1(\bm\sigma)^3 \nn\\
 && 
 +\sigma_{xx}(\sigma_{xy}^2 + \sigma_{xz}^2 ) 
 +\sigma_{yy}(\sigma_{xy}^2 + \sigma_{yz}^2 ) 
 +\sigma_{zz}(\sigma_{xz}^2 + \sigma_{yz}^2 ) 
 +2\sigma_{xy}\sigma_{yz}\sigma_{yz} \nn\\
-&=& \frac{2}{27}  {\cal I}_1(\bm\sigma)^3 - \frac23{\cal I}_1(\bm\sigma) {\cal I}_2(\bm\sigma)
-+{\cal I}_3(\bm\sigma) \nn
+&=& \frac{2}{27}  {\III}_1(\bm\sigma)^3 - \frac23{\III}_1(\bm\sigma) {\III}_2(\bm\sigma)
++{\III}_3(\bm\sigma) \nn
 \end{eqnarray}
 
 Then, without doubt
 
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
-{\cal I}_3(\bm\tau) =
- \frac{2}{27}  {\cal I}_1(\bm\sigma)^3 - \frac23{\cal I}_1(\bm\sigma) {\cal I}_2(\bm\sigma)
-+{\cal I}_3(\bm\sigma)
+{\III}_3(\bm\tau) =
+ \frac{2}{27}  {\III}_1(\bm\sigma)^3 - \frac23{\III}_1(\bm\sigma) {\III}_2(\bm\sigma)
++{\III}_3(\bm\sigma)
 \]
 \end{mdframed}
-
 
 Let us now rewrite this relationship as a function of the principal invariants using the 
 following relationships:
 \begin{eqnarray}
-{\cal I}_1({\bm \sigma})&=& {\cal K}_1({\bm \sigma}) \nn\\ 
-{\cal I}_2({\bm \sigma})&=& \frac{1}{2}{\cal K}_1({\bm \sigma})^2-{\cal K}_2({\bm \sigma}) \nn\\
-{\cal I}_3({\bm \sigma})&=& \frac{1}{3}{\cal K}_1({\bm \sigma})^3-{\cal K}_1({\bm \sigma}) \nn
-{\cal K}_2({\bm \sigma}) +{\cal K}_3({\bm \sigma})
+{\III}_1({\bm \sigma})&=& {\KKK}_1({\bm \sigma}) \nn\\ 
+{\III}_2({\bm \sigma})&=& \frac{1}{2}{\KKK}_1({\bm \sigma})^2-{\KKK}_2({\bm \sigma}) \nn\\
+{\III}_3({\bm \sigma})&=& \frac{1}{3}{\KKK}_1({\bm \sigma})^3-{\KKK}_1({\bm \sigma}) \nn
+{\KKK}_2({\bm \sigma}) +{\KKK}_3({\bm \sigma})
 \end{eqnarray}
 
 \begin{eqnarray}
@@ -621,13 +620,13 @@ following relationships:
 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-{\cal I}_3(\bm\tau) 
+{\III}_3(\bm\tau) 
 = 
-\frac{2}{27} {\cal K}_1(\bm\sigma)^3 -\frac13 {\cal K}_1(\bm\sigma)  {\cal K}_2({\bm \sigma}) +{\cal K}_3({\bm \sigma}) 
+\frac{2}{27} {\KKK}_1(\bm\sigma)^3 -\frac13 {\KKK}_1(\bm\sigma)  {\KKK}_2({\bm \sigma}) +{\KKK}_3({\bm \sigma}) 
 \end{equation}
 \end{mdframed}
 
-If one replaces the ${\cal K}$'s by $I$'s then one finds the formula in the literature 
+If one replaces the ${\KKK}$'s by $I$'s then one finds the formula in the literature 
 \footnote{\url{https://www.pantelisliolios.com/deviatoric-stress-and-invariants/}}
 \footnote{\url{https://en.wikipedia.org/wiki/Cauchy_stress_tensor}}.
 
@@ -679,14 +678,14 @@ Using ${\cal I}_2(\bm\tau) = -\frac16 {\cal I}_1(\bm\sigma)^2 + {\cal I}_2(\bm\s
 &=&
 \bm\tau\cdot\bm\tau
 -
-\frac23  {\cal I}_2(\bm\tau)  {\bm 1}
+\frac23  {\III}_2(\bm\tau)  {\bm 1}
 \end{eqnarray}
 which is the so-called Hill tensor\footnote{\url{https://en.wikipedia.org/wiki/Lode_coordinates}}.
 
 Note that this tensor is deviatoric:
 \[
-{\rm tr}\left[  \bm\tau\cdot\bm\tau - \frac23  {\cal I}_2(\bm\tau)  {\bm 1}  \right] =
-{\rm tr}[\bm\tau\cdot\bm\tau] - 2  {\cal I}_2(\bm\tau) = 2  {\cal I}_2(\bm\tau) -2  {\cal I}_2(\bm\tau) = 0 
+{\rm tr}\left[  \bm\tau\cdot\bm\tau - \frac23  {\III}_2(\bm\tau)  {\bm 1}  \right] =
+{\rm tr}[\bm\tau\cdot\bm\tau] - 2  {\III}_2(\bm\tau) = 2  {\III}_2(\bm\tau) -2  {\III}_2(\bm\tau) = 0 
 \]
 
 \newpage
@@ -698,19 +697,19 @@ are tensors given as follows:
 
 
 \begin{eqnarray}
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \bm\sigma}
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma}
 &=& 
 \left(
 \begin{array}{ccc}
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \sigma_{xx}} & 
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \sigma_{xy}} & 
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \sigma_{xz}} \\
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \sigma_{yx}} & 
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \sigma_{yy}} & 
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \sigma_{yz}} \\
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \sigma_{zx}} & 
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \sigma_{zy}} & 
-\frac{\partial {\cal I}_1(\bm\sigma)}{\partial \sigma_{zz}} 
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \sigma_{xx}} & 
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \sigma_{xy}} & 
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \sigma_{xz}} \\
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \sigma_{yx}} & 
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \sigma_{yy}} & 
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \sigma_{yz}} \\
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \sigma_{zx}} & 
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \sigma_{zy}} & 
+\frac{\partial {\III}_1(\bm\sigma)}{\partial \sigma_{zz}} 
 \end{array}
 \right)
 =
@@ -725,19 +724,19 @@ are tensors given as follows:
 {\bm 1}
 \\
 \nn\\
-\frac{\partial {\cal I}_2(\bm\sigma)}{\partial \bm\sigma}
+\frac{\partial {\III}_2(\bm\sigma)}{\partial \bm\sigma}
 &=& 
 \left(
 \begin{array}{ccc}
-\frac{\partial {\cal I}_2(\bm\sigma)}{\partial \sigma_{xx}} & 
-\frac{\partial {\cal I}_2(\bm\sigma)}{\partial \sigma_{xy}} & 
-\frac{\partial {\cal I}_2(\bm\sigma)}{\partial \sigma_{xz}} \\
-\frac{\partial {\cal I}_2(\bm\sigma)}{\partial \sigma_{yx}} & 
-\frac{\partial {\cal I}_2(\bm\sigma)}{\partial \sigma_{yy}} & 
-\frac{\partial {\cal I}_2(\bm\sigma)}{\partial \sigma_{yz}} \\
-\frac{\partial {\cal I}_2(\bm\sigma)}{\partial \sigma_{zx}} & 
-\frac{\partial {\cal I}_2(\bm\sigma)}{\partial \sigma_{zy}} & 
-\frac{\partial {\cal I}_2(\bm\sigma)}{\partial \sigma_{zz}} 
+\frac{\partial {\III}_2(\bm\sigma)}{\partial \sigma_{xx}} & 
+\frac{\partial {\III}_2(\bm\sigma)}{\partial \sigma_{xy}} & 
+\frac{\partial {\III}_2(\bm\sigma)}{\partial \sigma_{xz}} \\
+\frac{\partial {\III}_2(\bm\sigma)}{\partial \sigma_{yx}} & 
+\frac{\partial {\III}_2(\bm\sigma)}{\partial \sigma_{yy}} & 
+\frac{\partial {\III}_2(\bm\sigma)}{\partial \sigma_{yz}} \\
+\frac{\partial {\III}_2(\bm\sigma)}{\partial \sigma_{zx}} & 
+\frac{\partial {\III}_2(\bm\sigma)}{\partial \sigma_{zy}} & 
+\frac{\partial {\III}_2(\bm\sigma)}{\partial \sigma_{zz}} 
 \end{array}
 \right)
 =
@@ -752,19 +751,19 @@ are tensors given as follows:
 = {\bm \sigma}
 \\
 \nn\\
-\frac{\partial {\cal I}_3(\bm\sigma)}{\partial \bm\sigma}
+\frac{\partial {\III}_3(\bm\sigma)}{\partial \bm\sigma}
 &=& 
 \left(
 \begin{array}{ccc}
-\frac{\partial {\cal I}_3(\bm\sigma)}{\partial \sigma_{xx}} & 
-\frac{\partial {\cal I}_3(\bm\sigma)}{\partial \sigma_{xy}} & 
-\frac{\partial {\cal I}_3(\bm\sigma)}{\partial \sigma_{xz}} \\
-\frac{\partial {\cal I}_3(\bm\sigma)}{\partial \sigma_{yx}} & 
-\frac{\partial {\cal I}_3(\bm\sigma)}{\partial \sigma_{yy}} & 
-\frac{\partial {\cal I}_3(\bm\sigma)}{\partial \sigma_{yz}} \\
-\frac{\partial {\cal I}_3(\bm\sigma)}{\partial \sigma_{zx}} & 
-\frac{\partial {\cal I}_3(\bm\sigma)}{\partial \sigma_{zy}} & 
-\frac{\partial {\cal I}_3(\bm\sigma)}{\partial \sigma_{zz}} 
+\frac{\partial {\III}_3(\bm\sigma)}{\partial \sigma_{xx}} & 
+\frac{\partial {\III}_3(\bm\sigma)}{\partial \sigma_{xy}} & 
+\frac{\partial {\III}_3(\bm\sigma)}{\partial \sigma_{xz}} \\
+\frac{\partial {\III}_3(\bm\sigma)}{\partial \sigma_{yx}} & 
+\frac{\partial {\III}_3(\bm\sigma)}{\partial \sigma_{yy}} & 
+\frac{\partial {\III}_3(\bm\sigma)}{\partial \sigma_{yz}} \\
+\frac{\partial {\III}_3(\bm\sigma)}{\partial \sigma_{zx}} & 
+\frac{\partial {\III}_3(\bm\sigma)}{\partial \sigma_{zy}} & 
+\frac{\partial {\III}_3(\bm\sigma)}{\partial \sigma_{zz}} 
 \end{array}
 \right) \nn\\
 &=&
@@ -796,32 +795,32 @@ The Lod\'e angle $\uptheta_{\rm L}(\bm\tau)$
 is actually a function of ${\III}_2(\bm\tau)$ and ${\III}_3(\bm\tau)$ as follows:
 \[
 \sin 3\uptheta_{\rm L}(\bm\tau) = 
--\frac{3\sqrt{3}}{2}  \frac{{\cal I}_3(\bm\tau)}{{\cal I}_2(\bm\tau)^{3/2}} 
+-\frac{3\sqrt{3}}{2}  \frac{{\III}_3(\bm\tau)}{{\III}_2(\bm\tau)^{3/2}} 
 \]
 Since this quantity unambiguously depends on the deviatoric stress tensor, 
 I will omit the '$(\bm\tau)$' dependency in what follows.
 Then
 \begin{eqnarray}
-\frac{\partial }{\partial {\cal I}_2(\bm\tau)} \sin 3\uptheta_{\rm L}
-&=&3\cos 3\uptheta_{\rm L}(\bm\tau)  \frac{\partial \uptheta_{\rm L}}{\partial {\cal I}_2(\bm\tau)}\nn\\
-\frac{\partial }{\partial {\cal I}_3(\bm\tau)} \sin 3\uptheta_{\rm L}
-&=&3 \cos 3\uptheta_{\rm L}(\bm\tau)  \frac{\partial \uptheta_{\rm L}}{\partial {\cal I}_3(\bm\tau)}\nn
+\frac{\partial }{\partial {\III}_2(\bm\tau)} \sin 3\uptheta_{\rm L}
+&=&3\cos 3\uptheta_{\rm L}(\bm\tau)  \frac{\partial \uptheta_{\rm L}}{\partial {\III}_2(\bm\tau)}\nn\\
+\frac{\partial }{\partial {\III}_3(\bm\tau)} \sin 3\uptheta_{\rm L}
+&=&3 \cos 3\uptheta_{\rm L}(\bm\tau)  \frac{\partial \uptheta_{\rm L}}{\partial {\III}_3(\bm\tau)}\nn
 \end{eqnarray}
 so that 
 \begin{eqnarray}
-\frac{\partial \uptheta_{\rm L}}{\partial {\cal I}_2(\bm\tau)}
+\frac{\partial \uptheta_{\rm L}}{\partial {\III}_2(\bm\tau)}
 &=&\frac{1}{3 \cos 3\uptheta_{\rm L}} 
-\frac{\partial }{\partial {\cal I}_2(\bm\tau)} \sin 3\uptheta_{\rm L}  \nonumber\\
+\frac{\partial }{\partial {\III}_2(\bm\tau)} \sin 3\uptheta_{\rm L}  \nonumber\\
 &=&\frac{1}{3 \cos 3\uptheta_{\rm L}} 
-\frac{\partial }{\partial {\cal I}_2(\bm\tau)}
-\left(-\frac{3\sqrt{3}}{2}  \frac{{\cal I}_3(\bm\tau)}{{\cal I}_2(\bm\tau)^{3/2}} \right) \nonumber\\
+\frac{\partial }{\partial {\III}_2(\bm\tau)}
+\left(-\frac{3\sqrt{3}}{2}  \frac{{\III}_3(\bm\tau)}{{\III}_2(\bm\tau)^{3/2}} \right) \nonumber\\
 &=&\frac{1}{3 \cos 3\uptheta_{\rm L}} 
-\left(-\frac{3\sqrt{3}}{2}  \frac{{\cal I}_3(\bm\tau)}{{\cal I}_2(\bm\tau)^{3/2}} \right)
-\left( -\frac32 \frac{1}{ {\cal I}_2(\bm\tau)}\right) \nonumber\\
+\left(-\frac{3\sqrt{3}}{2}  \frac{{\III}_3(\bm\tau)}{{\III}_2(\bm\tau)^{3/2}} \right)
+\left( -\frac32 \frac{1}{ {\III}_2(\bm\tau)}\right) \nonumber\\
 &=&\frac{1}{3 \cos 3\uptheta_{\rm L}} 
 \sin 3\uptheta_{\rm L}
-\left( -\frac32 \frac{1}{ {\cal I}_2(\bm\tau)}\right) \nonumber\\
-&=& -\frac12 \tan 3\uptheta_{\rm L} \frac{1}{ {\cal I}_2(\bm\tau)}  
+\left( -\frac32 \frac{1}{ {\III}_2(\bm\tau)}\right) \nonumber\\
+&=& -\frac12 \tan 3\uptheta_{\rm L} \frac{1}{ {\III}_2(\bm\tau)}  
 \nn\\
 \nn\\
 \frac{\partial \uptheta_{\rm L}}{\partial {\cal I}_3(\bm\tau)}

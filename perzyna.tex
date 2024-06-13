@@ -124,13 +124,13 @@ the Duvaut-Lions viscoplastic model or the Consistency model \cite{wasd97,hesd02
 We therefore need to look into the derivative of the plastic potential ${\QQQ}$
 with respect to the stress tensor. Since the potential 
 is expressed as a function of the stress invariants ${\III}_1(\bm\sigma)$,
-${\III}_2(\bm\tau)$ and $\theta_L(\bm\tau)$, we then have\footnote{
+${\III}_2(\bm\tau)$ and $\uptheta_L(\bm\tau)$, we then have\footnote{
 The derivative of the Lod\'e angle was obtained in Section~\ref{ss:lode}}:
 
 \begin{eqnarray}
 \frac{\partial \QQQ}{\partial \bm\sigma}
 &=&
-\frac{\partial }{\partial \bm\sigma} \QQQ\left({\III}_1(\bm\sigma),{\III}_2(\bm\tau),\theta_{\rm L}(\bm\tau)\right)\nn\\
+\frac{\partial }{\partial \bm\sigma} \QQQ\left({\III}_1(\bm\sigma),{\III}_2(\bm\tau),\uptheta_{\rm L}(\bm\tau)\right)\nn\\
 &=&
 \frac{\partial \QQQ}{\partial {\III}_1(\bm\sigma)} 
 \frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma} 
@@ -139,8 +139,8 @@ The derivative of the Lod\'e angle was obtained in Section~\ref{ss:lode}}:
 \frac{\partial \sqrt{ {\III}_2(\bm\tau)}   }{\partial {\III}_2(\bm\tau)} 
 \frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} 
 +
-\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)} 
-\frac{\partial \theta_{\rm L}(\bm\tau)}{\partial \bm\sigma} \nn\\
+\frac{\partial \QQQ}{\partial \uptheta_{\rm L}(\bm\tau)} 
+\frac{\partial \uptheta_{\rm L}(\bm\tau)}{\partial \bm\sigma} \nn\\
 &=&
 \frac{\partial \QQQ}{\partial {\III}_1(\bm\sigma)} 
 \frac{\partial {\III}_1(\bm\sigma)}{\partial \bm\sigma} 
@@ -151,8 +151,8 @@ The derivative of the Lod\'e angle was obtained in Section~\ref{ss:lode}}:
 \nn\\
 &&
 -
-\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)} 
-\frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
+\frac{\partial \QQQ}{\partial \uptheta_{\rm L}(\bm\tau)} 
+\frac{\sqrt{3}}{2\cos 3\uptheta_{\rm L}}
 \left[
 -\frac32  \frac{ {\III}_3(\bm\tau)   }{ {\III}_2(\bm\tau)^{5/2}}
 \; \frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} 
@@ -166,15 +166,15 @@ The derivative of the Lod\'e angle was obtained in Section~\ref{ss:lode}}:
 \left(\frac{\partial \QQQ}{\partial \sqrt{{\III}_2(\bm\tau)}} 
 \frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }   
 +
-\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)} 
-\frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
+\frac{\partial \QQQ}{\partial \uptheta_{\rm L}(\bm\tau)} 
+\frac{\sqrt{3}}{2\cos 3\uptheta_{\rm L}}
 \frac32  \frac{ {\III}_3(\bm\tau)   }{ {\III}_2(\bm\tau)^{5/2}}
 \right)
 \; \frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} \nn\\
 &&
 -
-\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)} 
-\frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
+\frac{\partial \QQQ}{\partial \uptheta_{\rm L}(\bm\tau)} 
+\frac{\sqrt{3}}{2\cos 3\uptheta_{\rm L}}
 \frac{1}{{\III}_2(\bm\tau)^{3/2}} 
 \; \frac{\partial {\III}_3(\bm\tau)}{\partial \bm\sigma} \nn\\
 &=& 
@@ -208,30 +208,30 @@ C_2
 &=& \frac{\partial \QQQ}{\partial \sqrt{{\III}_2(\bm\tau)}} 
 \frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }   
 +
-\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)} 
-\frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
+\frac{\partial \QQQ}{\partial \uptheta_{\rm L}(\bm\tau)} 
+\frac{\sqrt{3}}{2\cos 3\uptheta_{\rm L}}
 \frac32  \frac{ {\III}_3(\bm\tau)   }{ {\III}_2(\bm\tau)^{5/2}} \nn\\
 &=& 
 \frac{\partial \QQQ}{\partial \sqrt{{\III}_2(\bm\tau)}} 
 \frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }   
 -
 \frac12
-\frac{\tan 3\theta_{\rm L}}{ {\III}_2(\bm\tau)}
-\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)}  \nn\\
+\frac{\tan 3\uptheta_{\rm L}}{ {\III}_2(\bm\tau)}
+\frac{\partial \QQQ}{\partial \uptheta_{\rm L}(\bm\tau)}  \nn\\
 &=& 
 \frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }   
 \left(
 \frac{\partial \QQQ}{\partial \sqrt{{\III}_2(\bm\tau)}} 
 -
-\frac{\tan 3\theta_{\rm L}}{\sqrt {{\III}_2(\bm\tau)}}
-\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)}  
+\frac{\tan 3\uptheta_{\rm L}}{\sqrt {{\III}_2(\bm\tau)}}
+\frac{\partial \QQQ}{\partial \uptheta_{\rm L}(\bm\tau)}  
 \right) \nn
 \\
 C_3 &=&  
 -
-\frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
+\frac{\sqrt{3}}{2\cos 3\uptheta_{\rm L}}
 \frac{1}{{\III}_2(\bm\tau)^{3/2}} 
-\frac{\partial \QQQ}{\partial \theta_{\rm L}(\bm\tau)} 
+\frac{\partial \QQQ}{\partial \uptheta_{\rm L}(\bm\tau)} 
 \end{eqnarray}
 These are identical to those of Eq.~(7.71) in Owen \& Hinton\footnote{This is 
 not exactly true: the factor  $\frac{1}{2 \sqrt{ {\III}_2(\bm\tau)} }$
@@ -314,19 +314,19 @@ Sections~\ref{sec:vMcriterion}, \ref{sec:trcriterion}, \ref{sec:dpcriterion} and
 \hline
 & $C_1$ & $C_2(\times \frac{1}{2 \sqrt{{\III}_2({\bm \tau})}})$ & $C_3$ \\
               \hline\hline
-Tresca         &0 & $2 \cos\theta_{\rm L} ( 1 + {\color{teal}2} \tan\theta_{\rm L}  \tan 3\theta_{\rm L})$ &
-$\frac{\sqrt{3}}{{\III}_2({\bm \tau}) } \frac{\sin\theta_{\rm L} }{\cos 3\theta_{\rm L}}$
+Tresca         &0 & $2 \cos\uptheta_{\rm L} ( 1 + {\color{teal}2} \tan\uptheta_{\rm L}  \tan 3\uptheta_{\rm L})$ &
+$\frac{\sqrt{3}}{{\III}_2({\bm \tau}) } \frac{\sin\uptheta_{\rm L} }{\cos 3\uptheta_{\rm L}}$
 \\ \\
 von Mises      &0& $\sqrt{3}$ & 0 \\ \\ 
 Mohr-Coulomb   & $\frac13 \sin\phi$ & 
 $
-\cos \theta_{\rm L} \left[
-(1 +  {\color{teal}2}\tan \theta_{\rm L}   \tan 3\theta_{\rm L})
+\cos \uptheta_{\rm L} \left[
+(1 +  {\color{teal}2}\tan \uptheta_{\rm L}   \tan 3\uptheta_{\rm L})
 +\frac{1}{\sqrt{3}} \sin\phi
-( {\color{teal}2}\tan 3\theta_{\rm L} - \tan\theta_{\rm L}) \right]$
+( {\color{teal}2}\tan 3\uptheta_{\rm L} - \tan\uptheta_{\rm L}) \right]$
 &
-$\frac{\sqrt{3}\sin\theta_{\rm L} +  \sin \phi \cos \theta_{\rm L}}
-{2 {\III}_2({\bm \tau}) \cos 3\theta_{\rm L}}$ 
+$\frac{\sqrt{3}\sin\uptheta_{\rm L} +  \sin \phi \cos \uptheta_{\rm L}}
+{2 {\III}_2({\bm \tau}) \cos 3\uptheta_{\rm L}}$ 
 \\ \\
 Drucker-Prager & $\alpha$ & 1 & 0 \\  
 \hline
