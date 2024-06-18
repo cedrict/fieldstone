@@ -1,19 +1,34 @@
 \index{general}{$P_1\times P_0$}
-%---
+\begin{flushright} {\tiny {\color{gray} \tt  pair\_p1p0.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
 example 3.70 in \textcite{john16} (book),
 
 
 Elman Silvester Wathen say (5.3.3) that 
-``it can be readily stabilized using the pressure jump
-stabilization together with an appropriate macroelement subdivision.''
+\begin{displayquote}
+{\color{darkgray}
+It can be readily stabilized using the pressure jump
+stabilization together with an appropriate macroelement subdivision.}
+\end{displayquote}
 See \textcite{nosi98} (1998) for globally and locally stabilised versions. 
 
-\textcite{qizh07b} (2007) states: ``the element is unstable for any mesh since
+\textcite{qizh07b} (2007) state: 
+\begin{displayquote}
+{\color{darkgray}
+The element is unstable for any mesh since
 the dimension of the discrete velocity space is always less than that of the pressure space (with
-Dirichlet boundary condition).'' The authors explain a filter algorithm to make the
-element usable. 
+Dirichlet boundary condition).
+However, this element provides optimal approximations for both
+the velocity and the pressure on many mesh families.} 
+\end{displayquote}
 
-\textcite{arno93} (1993) states: ''Unfortunately, this simplest possible Stokes element is notoriously unstable. On any tri-
+\textcite{arno93} (1993) states: 
+\begin{displayquote}
+{\color{darkgray}
+Unfortunately, this simplest possible Stokes element is notoriously unstable. On any tri-
 angulation with at least three vertices on the boundary the dimension of the pressure
 space exceeds that of the velocity space [...] and the finite
 dimensional problem is singular. 
@@ -22,14 +37,18 @@ determined (as it is for any conforming method for the Stokes problem), for this
 elements $u_h$ belongs to the space of divergence-free fields piecewise linear fields, and on
 many meshes, for example on a uniform diagonal mesh of the square [...],
 this space is known to reduce to zero. So even after accounting for the indeterminancy of
-the pressure we have no convergence.''
+the pressure we have no convergence.}
+\end{displayquote}
 
 Example 3.2 of \textcite{bobf08} (2008) explains neatly the locking phenomenon and how 
 to circumvent it via a so-called cross-grid macroelement. See also 
 \textcite{hokl03} (2003).
 
 In his lecture notes\footnote{\url{https://www.math.tamu.edu/~guermond/}}, 
-Guermond states ``A simple alternative to the 
+Guermond states 
+\begin{displayquote}
+{\color{darkgray}
+A simple alternative to the 
 $Q_1\times P_0$ element consists of using the $P_1\times P_0$ element.
 Let ${\cal T}_h$  be a mesh of $D$ composed of affine simplices, and approximate the 
 velocity with continuous piecewise linear polynomials and the pressure with
@@ -38,7 +57,8 @@ divergence is constant on each simplex. As a result, testing the divergence
 of the velocity with piecewise constants enforces the divergence to be zero
 everywhere. That is to say, the $P_1\times P_0$ finite element yields a velocity 
 approximation that is exactly divergence-free [...]. Unfortunately,
-this pair does not satisfy the inf-sup condition.''
+this pair does not satisfy the inf-sup condition.}
+\end{displayquote}
 
 I have not found a paper yet which showcases its accuracy on a manufactured solution
 and compares it to other element pairs.

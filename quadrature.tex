@@ -114,6 +114,8 @@ the composite trapezoidal rule can be stated as
 \end{equation}
 where the subintervals have the form $[kh,(k+1)h]$, with $h=(b-a)/n$ and $k=0,1,2,\dots,n-1$.
 
+\todo[inline]{add formula for mid-point and details}
+
 
 \begin{center}
 a)\includegraphics[width=7cm]{images/quadrature/int1}
@@ -122,13 +124,14 @@ The interval $[-2,2]$ is broken into 16 sub-intervals. The blue lines correspond
 approximation of the red curve by means of a) the midpoint rule,  b) the trapezoidal rule.
 \end{center}
 
-There are several algorithms for numerical integration (also commonly called ``{\color{olive}numerical quadrature}'', or
+There are several algorithms for numerical integration (also commonly 
+called ``{\color{olive}numerical quadrature}'', or
 simply ``{\color{olive}quadrature}'') \index{general}{Quadrature}.
 Interpolation with polynomials evaluated at equally spaced points in $[a,b]$
 yields the Newton-Cotes formulas, of which the rectangle rule and the trapezoidal rule are examples. 
 \index{general}{Newton-Cotes}
 
-%-----------------------------
+%--------------------------------------------------------------------
 \subsection{in 1D - Gauss-Legendre quadrature  \label{sec:quad1Dglq}}
 
 If we allow the intervals between interpolation points to vary, we find another group of quadrature formulas, such as 
@@ -489,8 +492,9 @@ I=\iint_K f(x,y) dx dy \simeq
 
 Write a program which uses the midpoint rule to compute (subdivide the interval in $n$ subintervals)
 \[
-I=\int_{0}^{\pi/2} f(x) \; dx    \quad \qquad f(x)=x \qquad \text{and} \qquad f(x)=cos(x)
+I=\int_{0}^{\pi/2} f(x) \; dx    \quad \qquad f(x)=x \qquad \text{and} \qquad f(x)=\cos(x)
 \]
+For this you will need to declare and use a function which either returns $x$ or $\cos(x)$.
 Compute and plot the (absolute) error between the measured $I_n$ and the analytical value $I$ as a function of the subinterval size $h$.
 
 Bonus: same as before with $I=\int_{1}^{3}\int_{2}^{4} (x^2y^3 + xy +1)  dx dy$.

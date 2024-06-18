@@ -233,12 +233,13 @@ in the domain at a few times.
 
 
 
-%...........................
+%------------------------------------------------------------------------------
 \subsection{Implicit scheme} 
-If we now employ a fully implicit, unconditionally stable discretization scheme, the discretised 
+If we now employ a fully implicit, unconditionally stable discretization 
+scheme, the discretised 
 PDE becomes:
 \begin{equation}
-\frac{T_{{\color{brown}i},{\color{brown}j}}^{n+1}-T_{\color{brown}i,j}^n}{\delta t}
+\frac{T_{{\color{brown}i},{\color{brown}j}}^{n+1}-T_{{\color{brown}i,j}}^n}{\delta t}
 = \kappa
 \left(
 \frac{ T_{{\color{brown}i-1,j}}^{n+1}-2T_{{\color{brown}i,j}}^{n+1}+T_{{\color{brown}i+1,j}}^{n+1} }{h_x^2} + 
@@ -246,7 +247,8 @@ PDE becomes:
 \right)
 +\frac{Q_{{\color{brown}i,j}}^n}{\rho C_p}
 \end{equation}
-Rearranging terms with $n+1$ on the left and terms with $n$ on the right hand side gives
+Rearranging terms with $n+1$ on the left and terms with $n$ on the right 
+hand side gives
 \begin{equation}
 -s_x\; T_{{\color{brown}i+1,j}}^{n+1}
 -s_y\; T_{{\color{brown}i,j+1}}^{n+1} 
@@ -268,27 +270,36 @@ or
 T_{{\color{teal}k}({\color{brown}i,j})}^n
 +\tilde{Q}_{{\color{teal}k}({\color{brown}i,j})}^n \delta t
 \end{equation}
-which here again yields a linear system of equations written ${\bm A}\cdot {\vec T} = {\vec b}$
+which here again yields a linear system of equations written 
+${\bm A}\cdot {\vec T} = {\vec b}$
 where ${\bm A}$ is a $(nnp \times nnp)$ matrix.
 
-Boundary conditions are $T(x,y)=0$ on all sides, so all nodes 
-on the boundary have a prescribed zero temperature\footnote{We assume
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+\begin{minipage}[t]{\textwidth}
+\begin{center}
+\input{tikz/tikz_fdm5x4mesh2}
+\end{center}
+\end{minipage}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+
+For simplicity boundary conditions are $T(x,y)=T_{bc}$ on all sides, so all nodes 
+on the boundary have a prescribed $T_{bc}$ temperature\footnote{We assume
 here again that these boundary conditions do not change with time.}:
 \begin{eqnarray}
-T_{\color{brown}0,0} = T_{\color{teal} 0} &=& 0 \nn\\
-T_{\color{brown}1,0} = T_{\color{teal} 1} &=& 0 \nn\\
-T_{\color{brown}2,0} = T_{\color{teal} 2} &=& 0 \nn\\
-T_{\color{brown}3,0} = T_{\color{teal} 3} &=& 0 \nn\\
-T_{\color{brown}4,0} = T_{\color{teal} 4} &=& 0 \nn\\
-T_{\color{brown}0,1} = T_{\color{teal} 5} &=& 0 \nn\\
-T_{\color{brown}4,1} = T_{\color{teal} 9} &=& 0 \nn\\
-T_{\color{brown}0,2} = T_{\color{teal} 10} &=& 0 \nn\\
-T_{\color{brown}4,2} = T_{\color{teal} 14} &=& 0 \nn\\
-T_{\color{brown}0,3} = T_{\color{teal} 15} &=& 0 \nn\\
-T_{\color{brown}1,3} = T_{\color{teal} 16} &=& 0 \nn\\
-T_{\color{brown}2,3} = T_{\color{teal} 17} &=& 0 \nn\\
-T_{\color{brown}3,3} = T_{\color{teal} 18} &=& 0 \nn\\
-T_{\color{brown}4,3} = T_{\color{teal} 19} &=& 0 \nn
+T_{\color{brown}0,0} = T_{\color{teal} 0}  &=& T_{bc} \nn\\
+T_{\color{brown}1,0} = T_{\color{teal} 1}  &=& T_{bc} \nn\\
+T_{\color{brown}2,0} = T_{\color{teal} 2}  &=& T_{bc} \nn\\
+T_{\color{brown}3,0} = T_{\color{teal} 3}  &=& T_{bc} \nn\\
+T_{\color{brown}4,0} = T_{\color{teal} 4}  &=& T_{bc} \nn\\
+T_{\color{brown}0,1} = T_{\color{teal} 5}  &=& T_{bc} \nn\\
+T_{\color{brown}4,1} = T_{\color{teal} 9}  &=& T_{bc} \nn\\
+T_{\color{brown}0,2} = T_{\color{teal} 10} &=& T_{bc} \nn\\
+T_{\color{brown}4,2} = T_{\color{teal} 14} &=& T_{bc} \nn\\
+T_{\color{brown}0,3} = T_{\color{teal} 15} &=& T_{bc} \nn\\
+T_{\color{brown}1,3} = T_{\color{teal} 16} &=& T_{bc} \nn\\
+T_{\color{brown}2,3} = T_{\color{teal} 17} &=& T_{bc} \nn\\
+T_{\color{brown}3,3} = T_{\color{teal} 18} &=& T_{bc} \nn\\
+T_{\color{brown}4,3} = T_{\color{teal} 19} &=& T_{bc} \nn
 \end{eqnarray}
 In what follows we assume for simplicity and conciseness of notation that 
 $h_x=h_y=h$ so that $s_x=s_y=s$.
@@ -478,26 +489,26 @@ T_{{\color{teal}19}}^{n+1}
 \underbrace{
 \left(
 \begin{array}{c}
-0\\ 
-0\\ 
-0\\ 
-0\\ 
-0\\ 
-0\\ 
+T_{bc} \\
+T_{bc} \\
+T_{bc} \\
+T_{bc} \\
+T_{bc} \\
+T_{bc} \\
 T_{{\color{teal}6}}^n + \tilde{Q}_{\color{teal}6} \delta t\\ 
 T_{{\color{teal}7}}^n + \tilde{Q}_{\color{teal}7} \delta t\\ 
 T_{{\color{teal}8}}^n + \tilde{Q}_{\color{teal}8} \delta t\\ 
-0\\ 
-0\\ 
+T_{bc} \\
+T_{bc} \\
 T_{{\color{teal}11}}^n + \tilde{Q}_{\color{teal}11} \delta t\\ 
 T_{{\color{teal}12}}^n + \tilde{Q}_{\color{teal}12} \delta t\\ 
 T_{{\color{teal}13}}^n + \tilde{Q}_{\color{teal}13} \delta t\\ 
-0\\ 
-0\\ 
-0\\ 
-0\\ 
-0\\ 
-0 
+T_{bc} \\
+T_{bc} \\
+T_{bc} \\
+T_{bc} \\
+T_{bc} \\
+T_{bc} 
 \end{array}
 \right)
 }_{\vec b}
@@ -505,11 +516,62 @@ T_{{\color{teal}13}}^n + \tilde{Q}_{\color{teal}13} \delta t\\
 Note that we now have five 'diagonals' filled with non-zero entries as opposed to three
 diagonals in the 1D case.
 
-\todo[inline]{replace zeros by some more random value corresponding to Tboundary}
-
-Note also that this is a simplified matrix since we assumed that $s_x=s_y$.
-
+Note again that this is a simplified matrix since we assumed that $s_x=s_y$ (see expressions
+at the beginning of this section).
 \end{landscape}
+
+Let us now focus on a special case: we wish to solve the steady state diffusion equation. 
+The approach is then very similar, but we must discard the time derivative term so that 
+the discretised PDE becomes:
+\begin{equation}
+0
+= \kappa
+\left(
+\frac{ T_{{\color{brown}i-1,j}}-2T_{{\color{brown}i,j}}+T_{{\color{brown}i+1,j}} }{h_x^2} + 
+\frac{ T_{{\color{brown}i,j-1}}-2T_{{\color{brown}i,j}}+T_{{\color{brown}i,j+1}} }{h_y^2}
+\right)
++\frac{Q_{{\color{brown}i,j}}}{\rho C_p}
+\end{equation}
+Note that we have removed the superscript $n$ and $n+1$ since there is no time discretisation.
+
+Rearranging terms, and assuming again that $h_x=h_y$ for simplicity\footnote{We no longer use the $s_x$
+and $s_y$ parameters since those contain the term $\delta t$ which is here meaningless}:
+\begin{equation}
+- T_{{\color{brown}i+1,j}}
+- T_{{\color{brown}i,j+1}}
++4 \; T_{{\color{brown}i,j}}
+-  T_{{\color{brown}i-1,j}}
+-  T_{{\color{brown}i,j-1}}
+=
+\frac{ \tilde{Q}_{{\color{brown}i,j}} h^2} {\kappa }
+\end{equation}
+
+We would then follow the regular procedure of writing this relationship at nodes that are not on the boundary.
+In the end we would obtain a matrix with an identical structure as before, but with slightly different terms
+(esp. on the diagonal). 
+
+A final remark: all this is valid for a a constant heat conductivity (which allowed us to take it out of 
+the gradient terms in the original PDE and form the heat diffusivity term $\kappa$ - also constant in space).
+If not the expression presented in Eq.~\eqref{eq:fdm_discterms} must be used. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 %-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 \begin{center}

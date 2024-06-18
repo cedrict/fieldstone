@@ -31,13 +31,13 @@ more difficult (directional derivatives are needed)
 
 We have already established in Eq.~\eqref{eq:sig13a}:
 \begin{eqnarray}
-\sigma_1 - \sigma_3  &=& 2 \sqrt{{\cal I}_2({\bm \tau})} \cos \theta \nn
+\sigma_1 - \sigma_3  &=& 2 \sqrt{{\III}_2({\bm \tau})} \cos \theta \nn
 \end{eqnarray}
 with $\sigma_1>\sigma_2>\sigma_3$,
 so that the failure criterion is given by
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
-F^{\text{\tiny TR}}=2\sqrt{ {\cal I}_2({\bm \tau})  } \cos \theta - c 
+F^{\text{\tiny TR}}=2\sqrt{ {\III}_2({\bm \tau})  } \cos \theta - c 
 \]
 \end{mdframed}
 
@@ -48,22 +48,22 @@ F^{\text{\tiny TR}}=2\sqrt{ {\cal I}_2({\bm \tau})  } \cos \theta - c
 We now look into the derivatives of the plastic potential $Q^{\text{\tiny Tr}}(\bm\sigma)$.
 We have
 \[
-Q^{\text{\tiny Tr}}=2\sqrt{ {\cal I}_2({\bm \tau})  } \cos \theta_{\rm L}(\bm\tau) - c
+Q^{\text{\tiny Tr}}=2\sqrt{ {\III}_2({\bm \tau})  } \cos \theta_{\rm L}(\bm\tau) - c
 \]
 
 \begin{eqnarray}
-\frac{\partial Q^{\text{\tiny Tr}}    }{\partial {\cal I}_1(\bm\sigma)} 
+\frac{\partial Q^{\text{\tiny Tr}}    }{\partial {\III}_1(\bm\sigma)} 
 &=& 0 \\
-\frac{\partial Q^{\text{\tiny Tr}}    }{\partial \sqrt {{\cal I}_2(\bm\tau)}}
-&=& 2 \cos\theta_{\rm L} - 2 \sqrt{ {\cal I}_2({\bm \tau})  } \sin\theta_{\rm L}  
-\frac{\partial\theta_{\rm L}}{\partial \sqrt{{\cal I}_2(\bm\tau)}} \nonumber\\
-&=& 2 \cos\theta_{\rm L} - 2 \sqrt{ {\cal I}_2({\bm \tau})  } \sin\theta_{\rm L}  
-\frac{\partial\theta_{\rm L}}{\partial {{\cal I}_2(\bm\tau)}} 
-\frac{\partial {{\cal I}_2(\bm\tau)}}{\partial \sqrt{{\cal I}_2(\bm\tau)}}
+\frac{\partial Q^{\text{\tiny Tr}}    }{\partial \sqrt {{\III}_2(\bm\tau)}}
+&=& 2 \cos\theta_{\rm L} - 2 \sqrt{ {\III}_2({\bm \tau})  } \sin\theta_{\rm L}  
+\frac{\partial\theta_{\rm L}}{\partial \sqrt{{\III}_2(\bm\tau)}} \nonumber\\
+&=& 2 \cos\theta_{\rm L} - 2 \sqrt{ {\III}_2({\bm \tau})  } \sin\theta_{\rm L}  
+\frac{\partial\theta_{\rm L}}{\partial {{\III}_2(\bm\tau)}} 
+\frac{\partial {{\III}_2(\bm\tau)}}{\partial \sqrt{{\III}_2(\bm\tau)}}
 \nn\\
-&=& 2 \cos\theta_{\rm L} - 2 \sqrt{ {\cal I}_2({\bm \tau})  } \sin\theta_{\rm L}  
-\left( -\frac12 \tan 3\theta_{\rm L} \frac{1}{ {\cal I}_2(\bm\tau)}  \right)
-2 \sqrt{{\cal I}_2(\bm\tau)}
+&=& 2 \cos\theta_{\rm L} - 2 \sqrt{ {\III}_2({\bm \tau})  } \sin\theta_{\rm L}  
+\left( -\frac12 \tan 3\theta_{\rm L} \frac{1}{ {\III}_2(\bm\tau)}  \right)
+2 \sqrt{{\III}_2(\bm\tau)}
 \nn\\
 &=& 2 \cos\theta_{\rm L} +  2 \sin\theta_{\rm L}  
 \tan 3\theta_{\rm L} 
@@ -71,85 +71,45 @@ Q^{\text{\tiny Tr}}=2\sqrt{ {\cal I}_2({\bm \tau})  } \cos \theta_{\rm L}(\bm\ta
 &=& 2 \cos\theta_{\rm L} ( 1 + \tan\theta_{\rm L}  \tan 3\theta_{\rm L}) \\
 \frac{\partial Q^{\text{\tiny Tr}} }{\partial \theta_{\rm L}(\bm\tau)} 
 &=& 
--2\sqrt{ {\cal I}_2({\bm \tau})  } \sin \theta_{\rm L} 
+-2\sqrt{ {\III}_2({\bm \tau})  } \sin \theta_{\rm L} 
 \end{eqnarray}
 
 so
 \begin{eqnarray}
 C_1^{\text{\tiny Tr}} &=& 0 \\ 
 C_2^{\text{\tiny Tr}} 
-&=& \frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
-\left( \frac{\partial Q}{\partial \sqrt{{\cal I}_2(\bm\tau)}} 
-- \frac{\tan 3\theta_{\rm L}}{\sqrt {{\cal I}_2(\bm\tau)}}
+&=& \frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }   
+\left( \frac{\partial Q}{\partial \sqrt{{\III}_2(\bm\tau)}} 
+- \frac{\tan 3\theta_{\rm L}}{\sqrt {{\III}_2(\bm\tau)}}
 \frac{\partial Q}{\partial \theta_{\rm L}(\bm\tau)}  
 \right) \nn\\
 &=&
-\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
+\frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }   
 \left( 2 \cos\theta_{\rm L} ( 1 + \tan\theta_{\rm L}  \tan 3\theta_{\rm L})
-+ \frac{\tan 3\theta_{\rm L}}{\sqrt {{\cal I}_2(\bm\tau)}}
-2\sqrt{ {\cal I}_2({\bm \tau})  } \sin \theta_{\rm L} 
++ \frac{\tan 3\theta_{\rm L}}{\sqrt {{\III}_2(\bm\tau)}}
+2\sqrt{ {\III}_2({\bm \tau})  } \sin \theta_{\rm L} 
 \right) \nn\\
 &=&
-\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
+\frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }   
 \left( 2 \cos\theta_{\rm L} ( 1 + \tan\theta_{\rm L}  \tan 3\theta_{\rm L})
 + 2 \tan 3\theta_{\rm L} \sin \theta_{\rm L} \right) \nn\\
 &=&
-\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
+\frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }   
 \left( 2 \cos\theta_{\rm L} ( 1 + \tan\theta_{\rm L}  \tan 3\theta_{\rm L})
 + 2 \cos\theta_{\rm L} \tan 3\theta_{\rm L}  \tan \theta_{\rm L} 
 \right) \nn\\
 &=&
-\frac{1}{2 \sqrt{ {\cal I}_2(\bm\tau)}   }   
+\frac{1}{2 \sqrt{ {\III}_2(\bm\tau)}   }   
 \left( 2 \cos\theta_{\rm L} ( 1 + 2 \tan\theta_{\rm L}  \tan 3\theta_{\rm L}) \right) \\
 C_3^{\text{\tiny Tr}} 
 &=&  - \frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
-\frac{1}{{\cal I}_2(\bm\tau)^{3/2}} 
+\frac{1}{{\III}_2(\bm\tau)^{3/2}} 
 \frac{\partial Q}{\partial \theta_{\rm L}(\bm\tau)} \nn\\
 &=&  -
 \frac{\sqrt{3}}{2\cos 3\theta_{\rm L}}
-\frac{1}{{\cal I}_2(\bm\tau)^{3/2}} 
-(-2\sqrt{ {\cal I}_2({\bm \tau})  } \sin \theta_{\rm L} ) \nn\\
-&=& \frac{\sqrt{3}}{{\cal I}_2({\bm \tau}) }
+\frac{1}{{\III}_2(\bm\tau)^{3/2}} 
+(-2\sqrt{ {\III}_2({\bm \tau})  } \sin \theta_{\rm L} ) \nn\\
+&=& \frac{\sqrt{3}}{{\III}_2({\bm \tau}) }
 \frac{\sin\theta_{\rm L} }{\cos 3\theta_{\rm L}}
 \end{eqnarray}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%DO NOT READ FURTHER - 9dec2019
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Using the values of the principal stresses in a two dimensional space, the criterion becomes 
-%\[
-%|\sigma_1 - \sigma_2| =\sqrt{J_2'}  = \sigma_0 
-%\]
-%which is equivalent to the von Mises criterion.
-
-
-\newpage

@@ -132,14 +132,14 @@ Let us start from the deviatoric stress tensor:
 \]
 The second invariant of the deviatoric stress tensor is then 
 \[
-{\cal I}_2(\bm\tau) = \frac12 \bm\tau:\bm\tau
+{\III}_2(\bm\tau) = \frac12 \bm\tau:\bm\tau
 = \frac12 \left( 2 (\sigma_{xx}-\sigma_{yy})^2/4 + 2 \sigma_{xy}^2 \right)
 %= \left(\frac{\sigma_{xx}-\sigma_{yy}}{2} \right)^2 + \sigma_{xy}^2
 \]
 or
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
-{\cal I}_2(\bm\tau) 
+{\III}_2(\bm\tau) 
 = \left(\frac{\sigma_{xx}-\sigma_{yy}}{2} \right)^2 + \sigma_{xy}^2
 \]
 \end{mdframed}
@@ -154,36 +154,36 @@ and the effective deviatoric stress
 
 Remark: Using the form of ${\III}_2(\bm\tau)$ above one arrives at  
 \begin{eqnarray}
-\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{xx}} 
+\frac{\partial {\III}_2(\bm\tau)}{\partial \sigma_{xx}} 
 &=&  2 \frac{1}{2}  \frac{\sigma_{xx}-\sigma_{yy}}{2} = \tau_{xx}\nn \\
-\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{yy}} 
+\frac{\partial {\III}_2(\bm\tau)}{\partial \sigma_{yy}} 
 &=& -2 \frac{1}{2}  \frac{\sigma_{xx}-\sigma_{yy}}{2} = \tau_{yy} \nn\\
-\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{xy}} 
+\frac{\partial {\III}_2(\bm\tau)}{\partial \sigma_{xy}} 
 &=& 2 \sigma_{xy} =  2 \tau_{xy}\nn
 \end{eqnarray}
 which is ...wrong! One should first write the second invariant 
 for the generic case of the deviatoric stress tensor (without 
 assuming it is symmetric):
 \[
-{\cal I}_2(\bm\tau) = \frac12 \bm\tau:\bm\tau
+{\III}_2(\bm\tau) = \frac12 \bm\tau:\bm\tau
 = \frac12 \left( 2 (\sigma_{xx}-\sigma_{yy})^2/4 + \sigma_{xy}^2 + \sigma_{yx}^2 \right)
 = \left(\frac{\sigma_{xx}-\sigma_{yy}}{2} \right)^2 + \frac12\sigma_{xy}^2 + \frac12\sigma_{yx}^2
 \]
 Then
 \begin{eqnarray}
-\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{xx}} 
+\frac{\partial {\III}_2(\bm\tau)}{\partial \sigma_{xx}} 
 &=&  2 \frac{1}{2}  \frac{\sigma_{xx}-\sigma_{yy}}{2} = \tau_{xx} \nn\\
-\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{yy}} 
+\frac{\partial {\III}_2(\bm\tau)}{\partial \sigma_{yy}} 
 &=& -2 \frac{1}{2}  \frac{\sigma_{xx}-\sigma_{yy}}{2} =  \tau_{yy} \nn\\
-\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{xy}} 
+\frac{\partial {\III}_2(\bm\tau)}{\partial \sigma_{xy}} 
 &=&  \sigma_{xy} =  \tau_{xy} \nn\\
-\frac{\partial {\cal I}_2(\bm\tau)}{\partial \sigma_{yx}} 
+\frac{\partial {\III}_2(\bm\tau)}{\partial \sigma_{yx}} 
 &=&  \sigma_{yx} =  \tau_{yx} \nn
 \end{eqnarray}
 which can be simply written as
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
-\frac{\partial {\cal I}_2(\bm\tau)}{\partial \bm\sigma} 
+\frac{\partial {\III}_2(\bm\tau)}{\partial \bm\sigma} 
 =\bm\tau
 \]
 \end{mdframed}
@@ -295,17 +295,17 @@ The 3D framework is then probably the most appropriate.
 Let us now turn to the second invariant of the deviatoric strain rate 
 (see Eq.~\eqref{eq:I2epsd}):
 \begin{eqnarray}
-{\cal I}_2(\dot{\bm{\varepsilon}}^d)
+{\III}_2(\dot{\bm{\varepsilon}}^d)
 &=& \frac{1}{2} \dot{\bm{\varepsilon}}^d:\dot{\bm{\varepsilon}}^d \\
 &=& \frac{1}{2} \left[ (\dot{\varepsilon}_{xx}^d)^2 + (\dot{\varepsilon}_{yy}^d)^2 + (\dot{\varepsilon}_{zz}^d)^2   \right] 
 + (\dot{\varepsilon}_{xy}^d)^2  
 + (\dot{\varepsilon}_{xz}^d)^2  
 + (\dot{\varepsilon}_{yz}^d)^2  
 \end{eqnarray}
-But there is also an expression for ${\cal I}_2(\dot{\bm{\varepsilon}}^d)$ directly as a function of the $\dot{\bm\varepsilon}_{ij}$ components 
+But there is also an expression for ${\III}_2(\dot{\bm{\varepsilon}}^d)$ directly as a function of the $\dot{\bm\varepsilon}_{ij}$ components 
 (see Eq.~\eqref{eq:I2epsd}):
 \begin{eqnarray}
-{\cal I}_2(\dot{\bm{\varepsilon}}^d)
+{\III}_2(\dot{\bm{\varepsilon}}^d)
 &=& \frac{1}{6} \left[ (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{yy})^2 
 + (\dot{\varepsilon}_{yy}-\dot{\varepsilon}_{zz})^2 
 + (\dot{\varepsilon}_{xx}-\dot{\varepsilon}_{zz})^2 \right] 
@@ -366,7 +366,7 @@ or,
 Let us now turn to the second invariant of the deviatoric strain rate 
 (see Section 3.21 in fieldstone)
 \begin{eqnarray}
-{\cal I}_2(\dot{\bm{\varepsilon}}^d)
+{\III}_2(\dot{\bm{\varepsilon}}^d)
 &=& \frac{1}{2} \dot{\bm{\varepsilon}}^d:\dot{\bm{\varepsilon}}^d \nn\\
 &=& \frac{1}{2}[ (\frac{1}{2}\dot{\varepsilon}_{xx} -\frac{1}{2}\dot{\varepsilon}_{yy})^2 + (-\frac{1}{2}\dot{\varepsilon}_{xx} +\frac{1}{2} \dot{\varepsilon}_{yy})^2  ] + \dot{\varepsilon}_{xy}^2 \nn\\
 &=& \frac12 [ \frac14 (2\dot{\varepsilon}_{xx}^2  -4 \dot{\varepsilon}_{xx}\dot{\varepsilon}_{yy} +2\dot{\varepsilon}_{yy}^2 )  ] + \dot{\varepsilon}_{xy}^2 \nn\\

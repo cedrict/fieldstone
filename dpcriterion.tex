@@ -8,13 +8,13 @@ limitation, Drucker and Prager (1952) \cite{drpr52} proposed a revised function 
 
 The Drucker-Prager yield criterion has the function form
 \begin{equation}
-\FFF^{\text{\tiny DP}}({\bm \sigma})=\FFF \left( {\cal I}_1({\bm \sigma}), {\cal I}_2({\bm \tau}) \right) = 0 
+\FFF^{\text{\tiny DP}}({\bm \sigma})=\FFF \left( {\III}_1({\bm \sigma}), {\III}_2({\bm \tau}) \right) = 0 
 \end{equation}
 This criterion is most often used for concrete where both normal and shear stresses 
 can determine failure. The Drucker-Prager yield criterion may be expressed as
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
-\FFF^{\text{\tiny DP}}= \sqrt{{\cal I}_2({\bm \tau})} + \alpha {\cal I}_1({\bm \sigma}) + k =0  
+\FFF^{\text{\tiny DP}}= \sqrt{{\III}_2({\bm \tau})} + \alpha {\III}_1({\bm \sigma}) + k =0  
 \label{dpcriterion} 
 \end{equation}
 \end{mdframed}
@@ -30,11 +30,11 @@ Mohr-Coulomb criterion.
 circumscribes the Mohr-Coulomb one.}
 \end{center}
 
-Using the parameters $\sigma_m$, $\tau_m$, $a=-\sqrt{3}\tan\uptheta$, ${\cal I}_1({\bm \sigma})$ 
-and ${\cal I}_2({\bm \tau})$ of Section~\ref{sec:altinv} we have
+Using the parameters $\sigma_m$, $\tau_m$, $a=-\sqrt{3}\tan\uptheta$, ${\III}_1({\bm \sigma})$ 
+and ${\III}_2({\bm \tau})$ of Section~\ref{sec:altinv} we have
 \begin{eqnarray}
 \FFF^{\text{\tiny DP}}
-&=&  \sqrt{{\cal I}_2({\bm \tau})} + \alpha {\cal I}_1({\bm \sigma}) + k \nn\\
+&=&  \sqrt{{\III}_2({\bm \tau})} + \alpha {\III}_1({\bm \sigma}) + k \nn\\
 &=& \sqrt{\frac{\tau_m^2}{3}(a^2+3)} + \alpha (3\sigma_m-a\tau_m) + k \nn\\ 
 &=& \tau_m \sqrt{(a^2/3+1)} + \alpha (3\sigma_m+\tau_m\sqrt{3}\tan\uptheta ) + k    \qquad ({\rm since }\; \tau_m>0)\nn\\ 
 &=& \tau_m \sqrt{\tan^2\uptheta+1} + \alpha (3\sigma_m+\tau_m\sqrt{3}\tan\uptheta ) + k  \nn\\
@@ -108,19 +108,19 @@ k(c,\phi) =- \frac{ 3\; c \cos \phi }{ 3 \cos\uptheta - \sqrt{3}\sin\uptheta \si
 The Drucker-Prager yield criterion which for a given $\theta$ is equal to the Mohr-Coulomb yield is then:
 \begin{eqnarray}
 \FFF^{\text{\tiny DP}}
-&=& \sqrt{{\cal I}_2({\bm \tau})} + \alpha(\phi) {\cal I}_1({\bm \sigma}) + k(c,\phi)  \nn\\
-&=& \sqrt{{\cal I}_2({\bm \tau})} 
-+ \frac{\sin\phi}{ 3 \cos\uptheta - \sqrt{3}\sin\uptheta \sin\phi}  {\cal I}_1({\bm \sigma})  
+&=& \sqrt{{\III}_2({\bm \tau})} + \alpha(\phi) {\III}_1({\bm \sigma}) + k(c,\phi)  \nn\\
+&=& \sqrt{{\III}_2({\bm \tau})} 
++ \frac{\sin\phi}{ 3 \cos\uptheta - \sqrt{3}\sin\uptheta \sin\phi}  {\III}_1({\bm \sigma})  
 - \frac{ 3\; c \cos \phi }{ 3 \cos\uptheta - \sqrt{3}\sin\uptheta \sin\phi} \nn\\
-&=& \sqrt{{\cal I}_2({\bm \tau})} 
-- \left[ -\frac{3 \sin\phi}{ 3 \cos\uptheta - \sqrt{3}\sin\uptheta \sin\phi}  \frac{{\cal I}_1({\bm \sigma})}{3}
+&=& \sqrt{{\III}_2({\bm \tau})} 
+- \left[ -\frac{3 \sin\phi}{ 3 \cos\uptheta - \sqrt{3}\sin\uptheta \sin\phi}  \frac{{\III}_1({\bm \sigma})}{3}
 + \frac{ 3\; c \cos \phi }{ 3 \cos\uptheta - \sqrt{3}\sin\uptheta \sin\phi} \right] \label{eq:Fdp}\\
-&=& \sqrt{{\cal I}_2({\bm \tau})} 
+&=& \sqrt{{\III}_2({\bm \tau})} 
 - \left[ \frac{3\; p \sin\phi}{ 3 \cos\uptheta - \sqrt{3}\sin\uptheta \sin\phi} 
 + \frac{ 3\; c \cos \phi }{ 3 \cos\uptheta - \sqrt{3}\sin\uptheta \sin\phi} \right] \nn\\
-&=& \sqrt{{\cal I}_2({\bm \tau})}  
+&=& \sqrt{{\III}_2({\bm \tau})}  
 - \frac{3\; p \sin\phi  + 3\; c \cos \phi }{ 3 \cos\uptheta - \sqrt{3}\sin\uptheta \sin\phi} \nn\\ 
-&=& \sqrt{{\cal I}_2({\bm \tau})}  
+&=& \sqrt{{\III}_2({\bm \tau})}  
 - \frac{p \sin\phi  + c \cos \phi }{  \cos\uptheta - \frac{1}{\sqrt{3}}\sin\uptheta \sin\phi} 
 \end{eqnarray}
 which, when multiplied by $\cos\uptheta - \frac{1}{\sqrt{3}}\sin\uptheta \sin\phi$, gives
@@ -133,13 +133,13 @@ For $\uptheta=\pi/6$, the DP yield surface {\bf circumscribes} the MC yield
 surface and Eq.~\eqref{eq:Fdp} writes:
 \begin{eqnarray}
 \FFF^{\text{\tiny DP}}
-&=& \sqrt{{\cal I}_2({\bm \tau})} 
-- \left[ -\frac{3 \sin\phi}{ 3 \sqrt{3}/2 - \sqrt{3}/2 \; \sin\phi}  \frac{{\cal I}_1({\bm \sigma})}{3}
+&=& \sqrt{{\III}_2({\bm \tau})} 
+- \left[ -\frac{3 \sin\phi}{ 3 \sqrt{3}/2 - \sqrt{3}/2 \; \sin\phi}  \frac{{\III}_1({\bm \sigma})}{3}
 + \frac{ 3\; c \cos \phi }{ 3 \sqrt{3}/2 - \sqrt{3}/2 \; \sin\phi} \right] \nn\\
-&=& \sqrt{{\cal I}_2({\bm \tau})} 
-- \left[ -\frac{6 \sin\phi}{\sqrt{3} (3 - \sin\phi) }  \frac{{\cal I}_1({\bm \sigma})}{3}
+&=& \sqrt{{\III}_2({\bm \tau})} 
+- \left[ -\frac{6 \sin\phi}{\sqrt{3} (3 - \sin\phi) }  \frac{{\III}_1({\bm \sigma})}{3}
 + \frac{ 6\; c \cos \phi }{ \sqrt{3}(3 - \sin\phi)} \right] \nn\\
-&=& \sqrt{{\cal I}_2({\bm \tau})} 
+&=& \sqrt{{\III}_2({\bm \tau})} 
 - \frac{ 6 p \sin \phi + 6\; c \cos \phi }{ \sqrt{3}(3 - \sin\phi)} \label{eq:dpc}
 \end{eqnarray}
 i.e.
@@ -152,8 +152,8 @@ i.e.
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
 \FFF^{\text{\tiny DP}}
-= \sqrt{{\cal I}_2({\bm \tau})} 
-+ \frac{ 6 \sin \phi }{ \sqrt{3}(3 - \sin\phi)} \frac{{\cal I}_1({\bm\sigma})}{3}
+= \sqrt{{\III}_2({\bm \tau})} 
++ \frac{ 6 \sin \phi }{ \sqrt{3}(3 - \sin\phi)} \frac{{\III}_1({\bm\sigma})}{3}
 - \frac{ 6\; c \cos \phi }{ \sqrt{3}(3 - \sin\phi)} 
 \end{equation}
 \end{mdframed}
@@ -168,13 +168,13 @@ For $\uptheta=-\pi/6$, the DP yield surface {\bf middle circumscribes} the MC yi
 and Eq.~\eqref{eq:Fdp} writes:
 \begin{eqnarray}
 \FFF^{\text{\tiny DP}}
-&=& \sqrt{{\cal I}_2({\bm \tau})} 
-- \left[ -\frac{3 \sin\phi}{ 3 \sqrt{3}/2 + \sqrt{3}/2 \sin\phi}  \frac{{\cal I}_1({\bm \sigma})}{3}
+&=& \sqrt{{\III}_2({\bm \tau})} 
+- \left[ -\frac{3 \sin\phi}{ 3 \sqrt{3}/2 + \sqrt{3}/2 \sin\phi}  \frac{{\III}_1({\bm \sigma})}{3}
 + \frac{ 3\; c \cos \phi }{ 3 \sqrt{3}/2 + \sqrt{3}/2 \sin\phi} \right] \nn\\
-&=& \sqrt{{\cal I}_2({\bm \tau})} 
-- \left[ -\frac{6 \sin\phi}{\sqrt{3} (3 + \sin\phi) }  \frac{{\cal I}_1({\bm \sigma})}{3}
+&=& \sqrt{{\III}_2({\bm \tau})} 
+- \left[ -\frac{6 \sin\phi}{\sqrt{3} (3 + \sin\phi) }  \frac{{\III}_1({\bm \sigma})}{3}
 + \frac{ 6\; c \cos \phi }{ \sqrt{3}(3 + \sin\phi}) \right] \nn\\
-&=& \sqrt{{\cal I}_2({\bm \tau})} 
+&=& \sqrt{{\III}_2({\bm \tau})} 
 - \frac{6 p \sin\phi + 6 c \cos \phi}{\sqrt{3} (3 + \sin\phi) } 
 \end{eqnarray}
 This is Eq.~(7.19) of \textcite{owhi}.
@@ -193,8 +193,8 @@ With our notations:
 
 \begin{eqnarray}
 \FFF^{\text{\tiny DP}}
-&=& \sqrt{{\cal I}_2({\bm \tau})} 
-- \left[ -\frac{3 \sin\phi}{\sqrt{9+3\sin^2\phi} }  \frac{{\cal I}_1({\bm \sigma})}{3}
+&=& \sqrt{{\III}_2({\bm \tau})} 
+- \left[ -\frac{3 \sin\phi}{\sqrt{9+3\sin^2\phi} }  \frac{{\III}_1({\bm \sigma})}{3}
 + \frac{ 3\; c \cos \phi }{ \sqrt{9+3\sin^2\phi} } \right] \label{eq:dp3}
 \end{eqnarray}
 
@@ -230,7 +230,7 @@ yield surface in Section~\ref{ss:envelope}.
 %\quad\quad\quad  
 %k =  \frac{6c \cos \phi}{\sqrt{3}(3-\sin\phi)} 
 %\]
-%and since $p=\frac{1}{3}{\cal I}_1({\bm \sigma})$:
+%and since $p=\frac{1}{3}{\III}_1({\bm \sigma})$:
 %\begin{mdframed}[backgroundcolor=blue!5]
 %\begin{equation}
 %F^{DP,3D} = \tau_e  - \left[ \frac{6 \sin \phi}{\sqrt{3}(3-\sin\phi)}   p  + 
@@ -263,18 +263,18 @@ Except for the $\sqrt{3}$ this is identical to Eq.~\eqref{eq:dpc}.
 Bui \etal (2008) \cite{bufs08} use yet again another formulation:
 \begin{eqnarray}
 \FFF 
-&=& \sqrt{{\cal I}_2({\bm \tau})} + \frac{\tan \phi}{\sqrt{9 + 12 \tan^2 \phi}} {\cal I}_1({\bm \sigma})
+&=& \sqrt{{\III}_2({\bm \tau})} + \frac{\tan \phi}{\sqrt{9 + 12 \tan^2 \phi}} {\III}_1({\bm \sigma})
 - \frac{3 c}{\sqrt{9 + 12 \tan^2 \phi}} \nn\\
-&=& \sqrt{{\cal I}_2({\bm \tau})} + \frac{\sin \phi}{\sqrt{9\cos^2 \phi + 12 \sin^2 \phi}} {\cal I}_1({\bm \sigma}) - \frac{3 c \; \cos\phi}{\sqrt{9\cos^2\phi + 12 \sin^2 \phi}} \nn\\
-&=& \sqrt{{\cal I}_2({\bm \tau})} + \frac{\sin \phi}{\sqrt{9 + 3 \sin^2 \phi}} {\cal I}_1({\bm \sigma}) - \frac{3 c \; \cos\phi}{\sqrt{9 + 3\sin^2 \phi}} \nn
+&=& \sqrt{{\III}_2({\bm \tau})} + \frac{\sin \phi}{\sqrt{9\cos^2 \phi + 12 \sin^2 \phi}} {\III}_1({\bm \sigma}) - \frac{3 c \; \cos\phi}{\sqrt{9\cos^2\phi + 12 \sin^2 \phi}} \nn\\
+&=& \sqrt{{\III}_2({\bm \tau})} + \frac{\sin \phi}{\sqrt{9 + 3 \sin^2 \phi}} {\III}_1({\bm \sigma}) - \frac{3 c \; \cos\phi}{\sqrt{9 + 3\sin^2 \phi}} \nn
 \end{eqnarray}
 which is identical to \eqref{eq:dp3}.
 \end{remark}
 
 %..............
 \begin{remark}
-Cacace \& Jacquey (2017) \cite{caja17} replace $\sqrt{{\cal I}_2({\bm \tau})}$ by 
-$\sqrt{{\cal I}_2({\bm \tau})+\epsilon_0^2}$ where $\epsilon_0$ is a small non-hardening parameters 
+Cacace \& Jacquey (2017) \cite{caja17} replace $\sqrt{{\III}_2({\bm \tau})}$ by 
+$\sqrt{{\III}_2({\bm \tau})+\epsilon_0^2}$ where $\epsilon_0$ is a small non-hardening parameters 
 here introduced to relax the singularity at the cone's tip of the Drucker-Prager yield envelope.
 \end{remark}
 
@@ -291,14 +291,14 @@ k= -\frac{3c }{3 \cos\uptheta_{\rm L}}
 \]
 Then 
 \begin{equation}
-\FFF^{\text{\tiny DP}}= \sqrt{{\cal I}_2({\bm \tau})} -\frac{c }{\cos\uptheta_{\rm L}}  =0  
+\FFF^{\text{\tiny DP}}= \sqrt{{\III}_2({\bm \tau})} -\frac{c }{\cos\uptheta_{\rm L}}  =0  
 \end{equation}
 
 The MC-circumscribing DP formulation ($\uptheta_L=\pi/6$) then becomes
 \begin{equation}
 \FFF^{\text{\tiny DP}} 
-= \sqrt{{\cal I}_2({\bm \tau})} - \frac{ 6\; c }{3 \sqrt{3}} 
-= \sqrt{{\cal I}_2({\bm \tau})} - \frac{ 2 c }{\sqrt{3}} 
+= \sqrt{{\III}_2({\bm \tau})} - \frac{ 6\; c }{3 \sqrt{3}} 
+= \sqrt{{\III}_2({\bm \tau})} - \frac{ 2 c }{\sqrt{3}} 
 \end{equation}
 We obviously obtain an identical expression 
 for the middle-circumscribing formulation ($\uptheta_L=-\pi/6$).
@@ -306,8 +306,8 @@ for the middle-circumscribing formulation ($\uptheta_L=-\pi/6$).
 The MC-inscribing case is then 
 \[
 \FFF^{\text{\tiny DP}}
-= \sqrt{{\cal I}_2({\bm \tau})} - \frac{ 3\; c \cos \phi }{ \sqrt{9} }
-= \sqrt{{\cal I}_2({\bm \tau})}  - c 
+= \sqrt{{\III}_2({\bm \tau})} - \frac{ 3\; c \cos \phi }{ \sqrt{9} }
+= \sqrt{{\III}_2({\bm \tau})}  - c 
 \]
 
 {\color{orange} reconcile with von Mises! }
@@ -317,7 +317,7 @@ The MC-inscribing case is then
 
 The authors state that a yield function which is a proper generalisation of the M-C hypothesis is:
 \[
-\FFF = \alpha {\cal I}_1(\bm\sigma) + \sqrt{{\cal I}_2(\bm\tau)} - k
+\FFF = \alpha {\III}_1(\bm\sigma) + \sqrt{{\III}_2(\bm\tau)} - k
 \]
 where $\alpha$ and $k$ are positive constants at each point of the material.
 
@@ -329,7 +329,7 @@ corresponding to this yield function is
 where $\dot\varepsilon_{ij}^{p}$ is the plastic strain rate and $\lambda$
 is a positive factor of proportionality which may assume different values in space. Using the above expression for $\FFF$:
 \begin{equation}
-\dot\varepsilon_{ij}^{p} = \lambda \left( \alpha \delta_{ij} + \frac{\tau_{ij}}{2\sqrt{{\cal I}_2(\bm\tau)}} \right)
+\dot\varepsilon_{ij}^{p} = \lambda \left( \alpha \delta_{ij} + \frac{\tau_{ij}}{2\sqrt{{\III}_2(\bm\tau)}} \right)
 \label{eq:dp52:ab}
 \end{equation}
 A very important feature of this equation is that the plastic rate of cubical
@@ -347,22 +347,22 @@ in volume if $\alpha\ne 0$. This property is known as dilatancy.
 We need to establish three expressions.  
 First, from Eq.~\eqref{eq:dp52:ab} we can write 
 \[
-\dot\varepsilon_{zz}^{p} = \lambda \left( \alpha  + \frac{\tau_{zz}}{2\sqrt{{\cal I}_2(\bm\tau)}} \right)
+\dot\varepsilon_{zz}^{p} = \lambda \left( \alpha  + \frac{\tau_{zz}}{2\sqrt{{\III}_2(\bm\tau)}} \right)
 \]
 but since $\dot\varepsilon_{zz}=0$ in plane strain then we find
 \begin{equation}
-\tau_{zz} = - 2 \alpha \sqrt{{\cal I}_2(\bm\tau)}
+\tau_{zz} = - 2 \alpha \sqrt{{\III}_2(\bm\tau)}
 \end{equation}
 which is Eq.~(6) of the paper. 
 
 Second, we start from the definition of the first invariant and use the equation above:
 \begin{eqnarray}
-{\cal I}_1(\bm \sigma)&=& \sigma_{xx}+\sigma_{yy}+\sigma_{zz} \nn\\
-{\cal I}_1(\bm \sigma)&=& \sigma_{xx}+\sigma_{yy}+\tau_{zz}+\frac13 {\cal I}_1(\bm \sigma) \nn\\
-{\cal I}_1(\bm \sigma)&=& \sigma_{xx}+\sigma_{yy}- 2 \alpha \sqrt{{\cal I}_2(\bm\tau)} 
-+\frac13 {\cal I}_1(\bm \sigma)\nn\\
-\frac23 {\cal I}_1(\bm \sigma)&=& \sigma_{xx}+\sigma_{yy}- 2 \alpha \sqrt{{\cal I}_2(\bm\tau)} \nn\\
-{\cal I}_1(\bm \sigma)&=& \frac32(\sigma_{xx}+\sigma_{yy})- 3 \alpha \sqrt{{\cal I}_2(\bm\tau)} 
+{\III}_1(\bm \sigma)&=& \sigma_{xx}+\sigma_{yy}+\sigma_{zz} \nn\\
+{\III}_1(\bm \sigma)&=& \sigma_{xx}+\sigma_{yy}+\tau_{zz}+\frac13 {\III}_1(\bm \sigma) \nn\\
+{\III}_1(\bm \sigma)&=& \sigma_{xx}+\sigma_{yy}- 2 \alpha \sqrt{{\III}_2(\bm\tau)} 
++\frac13 {\III}_1(\bm \sigma)\nn\\
+\frac23 {\III}_1(\bm \sigma)&=& \sigma_{xx}+\sigma_{yy}- 2 \alpha \sqrt{{\III}_2(\bm\tau)} \nn\\
+{\III}_1(\bm \sigma)&=& \frac32(\sigma_{xx}+\sigma_{yy})- 3 \alpha \sqrt{{\III}_2(\bm\tau)} 
 \label{eq:I1dpps}
 \end{eqnarray}
 which is Eq.~(7) of the paper.
@@ -373,43 +373,43 @@ Finally, we start from (and we use the fact that $\sigma_{xx}-\sigma_{yy}=\tau_{
 &=& \frac14 \left(\sigma_{xx}-\sigma_{yy} \right)^2 + \tau_{xy}^2 \nn\\
 &=& \frac14 \left(\sigma_{xx}-\sigma_{yy} \right)^2 
 + \underbrace{\tau_{xy}^2 
-+ \frac12 (\tau_{xx}^2+\tau_{yy}^2+\tau_{zz}^2)}_{{\cal I}_2(\bm\tau)}
++ \frac12 (\tau_{xx}^2+\tau_{yy}^2+\tau_{zz}^2)}_{{\III}_2(\bm\tau)}
 - \frac12 (\tau_{xx}^2+\tau_{yy}^2+\tau_{zz}^2) \nn\\
 &=& \frac14 \left(\tau_{xx}-\tau_{yy} \right)^2 
-+ {\cal I}_2(\bm\tau)
++ {\III}_2(\bm\tau)
 - \frac12 \tau_{xx}^2 -\frac12 \tau_{yy}^2 -\frac12 \tau_{zz}^2 \nn\\
-&=& {\cal I}_2(\bm\tau) +\frac14\tau_{xx}^2 -\frac12\tau_{xx}\tau_{yy} +\frac14\tau_{yy}^2
-- \frac12 \tau_{xx}^2 -\frac12\tau_{yy}^2 -\frac12 4\alpha^2 {\cal I}_2(\bm\tau) \nn\\
-&=& {\cal I}_2(\bm\tau) -\frac14\tau_{xx}^2 -\frac12\tau_{xx}\tau_{yy} -\frac14\tau_{yy}^2
--2\alpha^2 {\cal I}_2(\bm\tau) \nn\\
-&=& {\cal I}_2(\bm\tau) -\frac14(\tau_{xx}^2 +2\tau_{xx}\tau_{yy} +\tau_{yy}^2)
--2\alpha^2 {\cal I}_2(\bm\tau) \nn\\
-&=& {\cal I}_2(\bm\tau) -\frac14(\underbrace{\tau_{xx}+\tau_{yy}}_{-\tau_{zz}})^2
--2\alpha^2 {\cal I}_2(\bm\tau) \nn\\
-&=& {\cal I}_2(\bm\tau) -\frac14 \tau_{zz}^2 -2\alpha^2 {\cal I}_2(\bm\tau) \nn\\
-&=& {\cal I}_2(\bm\tau) -\frac14 4\alpha^2 {\cal I}_2(\bm\tau) -2\alpha^2 {\cal I}_2(\bm\tau) \nn\\
-&=& {\cal I}_2(\bm\tau) -3\alpha^2 {\cal I}_2(\bm\tau) \nn\\
-&=& {\cal I}_2(\bm\tau)(1 -3\alpha^2)
+&=& {\III}_2(\bm\tau) +\frac14\tau_{xx}^2 -\frac12\tau_{xx}\tau_{yy} +\frac14\tau_{yy}^2
+- \frac12 \tau_{xx}^2 -\frac12\tau_{yy}^2 -\frac12 4\alpha^2 {\III}_2(\bm\tau) \nn\\
+&=& {\III}_2(\bm\tau) -\frac14\tau_{xx}^2 -\frac12\tau_{xx}\tau_{yy} -\frac14\tau_{yy}^2
+-2\alpha^2 {\III}_2(\bm\tau) \nn\\
+&=& {\III}_2(\bm\tau) -\frac14(\tau_{xx}^2 +2\tau_{xx}\tau_{yy} +\tau_{yy}^2)
+-2\alpha^2 {\III}_2(\bm\tau) \nn\\
+&=& {\III}_2(\bm\tau) -\frac14(\underbrace{\tau_{xx}+\tau_{yy}}_{-\tau_{zz}})^2
+-2\alpha^2 {\III}_2(\bm\tau) \nn\\
+&=& {\III}_2(\bm\tau) -\frac14 \tau_{zz}^2 -2\alpha^2 {\III}_2(\bm\tau) \nn\\
+&=& {\III}_2(\bm\tau) -\frac14 4\alpha^2 {\III}_2(\bm\tau) -2\alpha^2 {\III}_2(\bm\tau) \nn\\
+&=& {\III}_2(\bm\tau) -3\alpha^2 {\III}_2(\bm\tau) \nn\\
+&=& {\III}_2(\bm\tau)(1 -3\alpha^2)
 \end{eqnarray}
 so that 
 \begin{equation}
-{\cal I}_2(\bm\tau) = \frac{1}{1 -3\alpha^2} \left[\left(\frac{\sigma_{xx}-\sigma_{yy}}{2} \right)^2 + \tau_{xy}^2 \right]
+{\III}_2(\bm\tau) = \frac{1}{1 -3\alpha^2} \left[\left(\frac{\sigma_{xx}-\sigma_{yy}}{2} \right)^2 + \tau_{xy}^2 \right]
 \label{eq:dp52:cd}
 \end{equation}
 which is Eq.~(8) of the paper.
 
 In the paper the authors propose the yield function 
 \[
-\FFF = \alpha {\cal I}_1(\bm\sigma) + \sqrt{{\cal I}_2(\bm\tau)} - k
+\FFF = \alpha {\III}_1(\bm\sigma) + \sqrt{{\III}_2(\bm\tau)} - k
 \]
 We first replace the first (plane strain) invariant (see Eq.~\eqref{eq:I1dpps}):
 \begin{eqnarray}
 \FFF 
-&=& \alpha \left[ \frac32(\sigma_{xx}+\sigma_{yy})- 3 \alpha \sqrt{{\cal I}_2(\bm\tau)} \right]
-+ \sqrt{{\cal I}_2(\bm\tau)} - k \nn\\
-&=&\alpha \frac32(\sigma_{xx}+\sigma_{yy})- 3 \alpha^2 \sqrt{{\cal I}_2(\bm\tau)}
-+ \sqrt{{\cal I}_2(\bm\tau)} - k  \nn\\
-&=&\alpha \frac32(\sigma_{xx}+\sigma_{yy}) +(1- 3 \alpha^2) \sqrt{{\cal I}_2(\bm\tau)} - k \nn
+&=& \alpha \left[ \frac32(\sigma_{xx}+\sigma_{yy})- 3 \alpha \sqrt{{\III}_2(\bm\tau)} \right]
++ \sqrt{{\III}_2(\bm\tau)} - k \nn\\
+&=&\alpha \frac32(\sigma_{xx}+\sigma_{yy})- 3 \alpha^2 \sqrt{{\III}_2(\bm\tau)}
++ \sqrt{{\III}_2(\bm\tau)} - k  \nn\\
+&=&\alpha \frac32(\sigma_{xx}+\sigma_{yy}) +(1- 3 \alpha^2) \sqrt{{\III}_2(\bm\tau)} - k \nn
 \end{eqnarray}
 and we now introduce the second invariant of Eq.~\eqref{eq:dp52:cd}:
 \begin{eqnarray}
@@ -454,7 +454,7 @@ F^{TR}=  \left[\left(\frac{\sigma_{xx}-\sigma_{yy}}{2} \right)^2 + \tau_{xy}^2 \
 \]
 Also, setting $\alpha=0$ in Eq.~\eqref{eq:dp52:cd} yields a criterion that writes
 \[
-F^{vM}=\sqrt{{\cal I}_2(\bm\tau)} - k
+F^{vM}=\sqrt{{\III}_2(\bm\tau)} - k
 \]
 which is the von Mises criterion! 
 
@@ -463,12 +463,12 @@ which is the von Mises criterion!
 We now look into the derivatives of the Drucker-Prager plastic potential $\QQQ^{\text{\tiny DP}}(\bm\sigma)$.
 We have
 \[
-\QQQ^{\text{\tiny DP}} (\bm\sigma)= \sqrt{{\cal I}_2({\bm \tau})} + \alpha {\cal I}_1({\bm \sigma}) + k 
+\QQQ^{\text{\tiny DP}} (\bm\sigma)= \sqrt{{\III}_2({\bm \tau})} + \alpha {\III}_1({\bm \sigma}) + k 
 \]
 Then
 \begin{eqnarray}
-\frac{\partial \QQQ^{\text{\tiny DP}} }{\partial {\cal I}_1(\bm\sigma)} &=& \alpha \\
-\frac{\partial \QQQ^{\text{\tiny DP}} }{\partial \sqrt{{\cal I}_2(\bm\tau)}}&=& 1  \\
+\frac{\partial \QQQ^{\text{\tiny DP}} }{\partial {\III}_1(\bm\sigma)} &=& \alpha \\
+\frac{\partial \QQQ^{\text{\tiny DP}} }{\partial \sqrt{{\III}_2(\bm\tau)}}&=& 1  \\
 \frac{\partial \QQQ^{\text{\tiny DP}} }{\partial \uptheta_{\rm L}(\bm\tau)} &=& 0 
 \end{eqnarray}
 The parameters $\alpha$ and $k$ can be expressed as a function of the angle of friction 
@@ -476,7 +476,7 @@ and cohesion so as to match the Mohr-Coulomb criterion in some sense (see above)
 Then
 \begin{eqnarray}
 C_1^{\text{\tiny DP}} &=& \alpha  \\ 
-C_2^{\text{\tiny DP}} &=& \frac{1}{2  \sqrt{{\cal I}_2(\bm\tau)}   }  \\ 
+C_2^{\text{\tiny DP}} &=& \frac{1}{2  \sqrt{{\III}_2(\bm\tau)}   }  \\ 
 C_3^{\text{\tiny DP}} &=& 0  
 \end{eqnarray}
 

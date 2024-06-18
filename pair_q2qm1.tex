@@ -1,19 +1,33 @@
-This element is shown in Table~3.13-2 of Gresho \& Sani's book \cite{grsa}, 
+\begin{flushright} {\tiny {\color{gray} \tt pair\_q2qm1.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+The ${\bm Q}_2\times Q_{-1}$ element is shown in Table~3.13-2 of Gresho \& Sani's book \cite{grsa}, 
 and discussed in Section~3.13.6b of the book too. It is {\it not} LBB stable
 and has one chequerboard pressure mode.
 
 It is used (alongside many other element pairs) in \textcite{chgs02} (2002) in the context of 
-a flow benchmark in a 2D box. The authors conclude that ``[...] the Q2-Q-1 element fared
+a flow benchmark in a 2D box. The authors conclude that
+\begin{displayquote}
+{\color{darkgray}
+[...] the Q2-Q-1 element fared
 slightly better than the Q2-P-1 . Most surprising, though, were the good results obtained with
-the 'old' Taylor–Hood element, Q2-Q1 .''
+the 'old' Taylor–Hood element, Q2-Q1 .}
+\end{displayquote}
 
 It is also used in \textcite{grsu02} (2002) on a similar benchmark setup (8:1 thermal 
 cavity problem) along with ${\bm Q}_1\times P_0$, ${\bm Q}_2\times P_{-1}$ and 
 ${\bm Q}_2\times Q_1$. The authors state that Q2Q-1 has div- stability problems
-but ``produces excellent results and is still useful in general.''
-They also state ``If the pesky-mode instability could be eciently dealt with, then the Q2xQ-1 element
-should be employed over the Q2xP-1 -especially in 3D (we believe).''
-Authors mention that it was also used in \textcite{dejo83} and that it ``performed
-EXTREMELY WELL.''
+but 
+\begin{displayquote}
+{\color{darkgray}
+produces excellent results and is still useful in general.
+[...]
+If the pesky-mode instability could be effiently dealt with, then the Q2xQ-1 element
+should be employed over the Q2xP-1 -especially in 3D (we believe).}
+\end{displayquote}
 
- 
+Authors mention that it was also used in \textcite{dejo83} (1983) and that it ``performed
+extremely well.''
+
+In \textcite{zhmu16} a special version of the ${\bm Q}_k \times Q_{-(k-1)}$ element is presented.
