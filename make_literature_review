@@ -1,0 +1,6 @@
+rm literature_review.html
+pdflatex literature_review.tex
+biber --output-safechars literature_review
+pdflatex literature_review.tex
+htlatex literature_review.tex
+

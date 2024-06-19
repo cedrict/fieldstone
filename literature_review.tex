@@ -1,0 +1,46 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{xcolor} 
+\usepackage[cm]{fullpage}
+\usepackage{bold-extra} % to get rid of some warnings
+\usepackage{upgreek}
+\usepackage{bm}
+
+\usepackage{hyperref}
+\hypersetup{
+colorlinks,
+citecolor=black,
+filecolor=black,
+linkcolor=violet,
+urlcolor=black}
+
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+
+\input{newcommands}
+
+%Bibliography stuff
+\usepackage[maxnames=6]{biblatex}
+\addbibresource{biblio_geosciences.bib}
+
+\title{Literature}
+\author{C. Thieulot}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\thispagestyle{empty}
+
+\begin{center}
+{\large Literature: Review papers} 
+\end{center}
+
+\tableofcontents
+
+\input{topics_big}
+
+\printbibliography
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

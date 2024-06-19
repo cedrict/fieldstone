@@ -1,0 +1,22 @@
+rm literature_topics.4ct
+rm literature_topics.4tc
+rm literature_topics.css
+rm literature_topics.idv
+rm literature_topics.lg
+rm literature_topics.run.xml
+rm literature_topics.xref
+rm literature_topics.pdf
+rm literature_topics.log
+rm literature_topics.out
+rm literature_topics.svg
+rm literature_topics.html
+rm literature_topics.dvi
+rm literature_topics.aux
+rm literature_topics.blg
+rm literature_topics.tmp
+rm literature_topics.toc
+pdflatex literature_topics.tex
+biber --output-safechars literature_topics
+pdflatex literature_topics.tex
+htlatex literature_topics.tex
+

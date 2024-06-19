@@ -1,0 +1,22 @@
+rm literature_codes.4ct
+rm literature_codes.4tc
+rm literature_codes.css
+rm literature_codes.idv
+rm literature_codes.lg
+rm literature_codes.run.xml
+rm literature_codes.xref
+rm literature_codes.pdf
+rm literature_codes.log
+rm literature_codes.out
+rm literature_codes.svg
+rm literature_codes.html
+rm literature_codes.dvi
+rm literature_codes.aux
+rm literature_codes.blg
+rm literature_codes.tmp
+rm literature_codes.toc
+pdflatex literature_codes.tex
+biber --output-safechars literature_codes
+pdflatex literature_codes.tex
+htlatex literature_codes.tex
+

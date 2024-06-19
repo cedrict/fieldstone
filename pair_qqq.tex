@@ -1,11 +1,62 @@
 \begin{flushright} {\tiny {\color{gray} \tt pair\_qqq.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This element pair is introduced in \textcite{zhan09} (2009).
-In \textcite{huzh11} (2011) we find the following enlightening figure::
+This element pair is introduced in \textcite{zhan09} (2009) where it is 
+shown to be stable for $k\ge 2$ (along with optimal order of convergence). 
+Then in \textcite{huzh11} (2011) it is 
+shown to be stable for $k\ge 1$. 
+Note that in both cases the pressure space is the space of discontinuous 
+polynomials fo separated degree $k$ or less, {\it with spurious modes filtered}.
+To be precise, $Q_k^-$ is the divergence of the discrete velocity space $Q_{k+1,k}\times Q_{k,k+1}$.
+The author states:
+\begin{displayquote}
+{\color{darkgray}
+This is the ﬁrst divergence-free element found on nontriangular grids. }
+\end{displayquote}
+We also read
+\begin{displayquote}
+{\color{darkgray}
+The maximal possible (in space dimension) discrete pressure space
+is the divergence of the discrete velocity space.
+If so, the discrete solution for the
+velocity would be also divergence-free.
+[...]
+to ﬁnd a divergence-free element on rectangular grids, we seek a ﬁnite element space
+whose divergence would be on to the discontinuous $Q_k$ space. This leads to the new
+element, approximating the velocity by continuous $Q_{k+1,k}\times Q_{k,k+1}$ polynomials while
+approximating the pressure by discontinuous polynomials $Q_k^- = div(Q_{k+1,k}\times Q_{k,k+1} )$
+(see eq(2.4) below for the precise deﬁnition where $Q_k^- = P_h$ ).
+We note that, by choosing $div(Q_{k+1,k}\times Q_{k,k+1})$ as the discrete ﬁnite element space for the pressure, the spurious
+modes in discontinuous $Q_k$ space are filtered out automatically. On the other side,
+the discrete velocity is divergence-free if and only if the discrete pressure space is
+the divergence of the discrete velocity space. Because the divergence of a $Q_{k+1,k} \times Q_{k,k+1}$ 
+polynomial is a $Q_k$ polynomial, the new element makes a perfect match for
+the two discrete spaces and produces divergence-free solutions for the velocity.
+}
+\end{displayquote}
+
+
+
+In the 2011 paper we find the following enlightening figure for $Q_{21}\times Q_{12}\times Q_1^-$:
 \begin{center}
 \includegraphics[width=8cm]{images/pair_qqq/huzh11}
 \end{center}
+and we read
+\begin{displayquote}
+{\color{darkgray}
+The velocity
+space is the continuous $Q_{2,1}\times Q_{1,2}$ space, i.e., the ﬁrst component of velocity
+is a piecewise polynomial of degree 2 in $x$ direction but degree 1 in $y$ direction
+while the second component is a rotation of the ﬁrst one. The pressure space
+is the subspace of discontinuous bilinear polynomials, the divergence of the
+velocity, to be explicit.
+[...]
+we decrease the space $Q_1^{dc}$ for the pressure to $Q_1'$ , by removing all spurious modes, i.e.,
+eliminating one degree of freedom at each vertex.
+}
+\end{displayquote}
+I do not understand the second statement (yet).
+
 
 The $u$-space basis functions are given by 
 \[
@@ -74,3 +125,27 @@ Based on the vectors above the numbering is then
 \end{verbatim}
 In total, there are 6 $u$-dofs, 6 $v$-dofs and 4 $p$-dofs per element.
 
+
+The solution strategy is also quite peculiar (and identical to both papers):
+\begin{displayquote}
+{\color{darkgray}
+We have to emphasize
+that the discrete pressure space is introduced for the analysis, but not in the
+computation. By an iterated penalty method, we obtain the discrete solutions
+for the pressure without coding the pressure element, as the pressure
+solution is a byproduct, cf. [30] and Section 4 below. This is an advantage
+of the divergence-free element, which is not carried to other mixed-ﬁnite
+elements, neither to nonconforming (discontinuous) locally-divergence-free
+elements [6,10,12,14,15,17,28].
+}
+\end{displayquote}
+
+
+
+
+
+\todo[inline]{In order to redo zhan09, I need Q32-Q23-Q-2 and Q43-Q43 basis functions!}
+
+Q: quid of 3D for k=1? 
+
+Q: quid of deformed elements?

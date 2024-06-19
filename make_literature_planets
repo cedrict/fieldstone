@@ -1,0 +1,6 @@
+rm literature_planets.html
+pdflatex literature_planets.tex
+biber --output-safechars literature_planets
+pdflatex literature_planets.tex
+htlatex literature_planets.tex
+

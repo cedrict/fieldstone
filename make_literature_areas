@@ -1,0 +1,6 @@
+rm literature_areas.html
+pdflatex literature_areas.tex
+biber --output-safechars literature_areas
+pdflatex literature_areas.tex
+htlatex literature_areas.tex
+
