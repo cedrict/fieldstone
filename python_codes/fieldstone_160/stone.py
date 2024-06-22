@@ -7,6 +7,9 @@ from scipy.sparse.linalg import *
 import datetime
 import numba
 
+rhoc=2300
+rhom=3300
+
 ###############################################################################
 #   Vspace=Q2     Pspace=Q1       
 #
@@ -88,15 +91,18 @@ def viscosity(x,y):
 
 @numba.njit
 def density(x,y):
-    val=3300
-    if y>80e3: val=2300
-    if abs(x-60e3)<15e3 and y>60e3: val=2300
+    val=rhom
+    if y>80e3: val=rhoc
+    if abs(x-60e3)<15e3 and y>60e3: val=rhoc
     return val
 
 ###############################################################################
 
 def lithostatic_pressure(y):
-    val=3300*abs(gy)*(Ly-y)
+    if y>80e3:
+       val=rhoc*abs(gy)*(Ly-y)
+    else:
+       val=rhom*abs(gy)*(80e3-y)+rhoc*abs(gy)*20e3
     return val
 
 ###############################################################################
@@ -129,7 +135,7 @@ eta_ref=1e22 # numerical parameter for FEM
 Lx=120*km
 Ly=100*km
 
-gy=-9.81
+gy=-10
 
 # allowing for argument parsing through command line
 #if int(len(sys.argv) == 11): 
@@ -138,7 +144,7 @@ gy=-9.81
 #   # reference is 20-19-19-23
 #   eta_um=1e20
 
-nelx=240
+nelx=120#*2
 
 Neumann=0
 
@@ -782,7 +788,8 @@ print("compute strain rate: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 np.savetxt('solution_surface.ascii',np.array([xV[top],u[top]/cm*year,\
-                                    q[top],exx[top],ee[top],tauxx[top]]).T,header='# x,u,p,exx,e,tauxx')
+                                    q[top],exx[top],ee[top],tauxx[top],tauyy[top],
+                                    (-q[top]+tauyy[top])/rhoc/gy   ]).T,header='# x,u,p,exx,e,tauxx,tauyy,d.t.')
 
 np.savetxt('solution_middle.ascii',np.array([yV[mid],u[mid]/cm*year,v[mid]/cm*year,\
                                     q[mid],exx[mid],exy[mid],tauxx[mid]]).T,header='# y,u,v,p,exx,exy,tauxx')

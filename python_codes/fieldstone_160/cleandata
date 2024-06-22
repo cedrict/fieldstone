@@ -1,0 +1,2 @@
+rm s*.vtu
+rm s*.ascii
