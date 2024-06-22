@@ -140,12 +140,48 @@ elements [6,10,12,14,15,17,28].
 }
 \end{displayquote}
 
+Turning now to $Q_{3,2}\times Q_{2,3}\times Q_{2}$
+\begin{verbatim}
+9=10=11=12   10=11==12   7===8===9
+|        |   |       |   |       |
+|        |   7   8   9   |       |
+5==6==7==8   |       |   4   5   6
+|        |   4   5   6   |       |
+|        |   |       |   |       |
+1==2==3==4   1===2===3   1===2===3
+
+ u dofs      v dofs       p dofs
+
+\end{verbatim}
+In total, there are 12 $u$-dofs, 12 $v$-dofs and 9 $p$-dofs per element.
+
+The $u$-space basis functions are given by 
+\[
+\vec\bN_u = Q_3 \times Q_2 =
+\left(
+\begin{array}{c}
+\frac{1}{16} (-1+  r+9r^2- 9r^3 ) \\
+\frac{1}{16} ( 9-27r-9r^2+27r^3 ) \\
+\frac{1}{16} ( 9+27r-9r^2-27r^3 ) \\
+\frac{1}{16} (-1-  r+9r^2+ 9r^3 ) 
+\end{array}
+\right)
+\times
+\left(
+\frac12 s(s-1)  \quad
+1-s^2 \quad
+\frac12 s(s+1)
+\right)
+\]
+The other basis functions follow simply from this. Same for $Q_{4,3}$ and $Q_{3,4}$.
+
+
+Open questions:
+\begin{itemize}
+\item 3D is discussed in \cite{zhan09} (2009) for $k\ge 2$ but quid of 3D for $k=1$? (not discussed in 2011 paper) 
+\item quid of deformed elements?
+\end{itemize}
 
 
 
 
-\todo[inline]{In order to redo zhan09, I need Q32-Q23-Q-2 and Q43-Q43 basis functions!}
-
-Q: quid of 3D for k=1? 
-
-Q: quid of deformed elements?

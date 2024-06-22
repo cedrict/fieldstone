@@ -1,19 +1,18 @@
 \begin{flushright} {\tiny {\color{gray} \tt pair\_crouzeixraviart.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Since the $P_2\times P_{-1}$ pair is not LBB stable \cite[p179]{reddybook2}, 
+Since the ${\bm P}_2\times P_{-1}$ pair is not LBB stable \cite[p179]{reddybook2}, 
 (see also table 3.13-1 of \textcite{grsa})
-it is enhanced by a cubic bubble and is therefore called $P_2^+\times P_{-1}$. 
+it is enhanced by a cubic bubble and is therefore called ${\bm P}_2^+\times P_{-1}$. 
 
-This element was first introduced in \cite{crra73}.
+This element was first introduced in \textcite{crra73} (1973).
 It is a seven-node triangle (in 2D) with quadratic velocity shape 
 functions enhanced by a cubic bubble function and discontinuous linear interpolation for 
 the pressure field \cite{cuss86}. 
-This element is LBB stable and no additional stabilization techniques are required\cite{elsw}.
+This element is LBB stable and no additional stabilization techniques are required \cite{elsw}.
 The '+' in its name stands for the bubble while the '-' stands for the discontinuous
-character of the pressure field: once again, it is $P_1$ over the element, but discontinuous
+character of the pressure field: it is $P_1$ over the element, but discontinuous
 across element edges.
-It is the element used in the MILAMIN code \cite{daks08}.
 
 \begin{remark}
 Cuvelier \etal, 1986 \cite{cuss86} recommend a 6-point or 7-point quadrature rule for this element.
@@ -37,23 +36,25 @@ bubble can be eliminated, one can design a modified version of this element.
 
 \begin{remark}
 I have once asked the (main) author of MILAMIN why he chose this element, for 
-example over the $P_2\times P_1$. His answer is as follows:
-"Elements with continuous pressure  are incapable of converging in the Linf 
+example over the ${\bm P}_2\times P_1$. His answer is as follows:
+{\color{darkgray} ``Elements with continuous pressure  are incapable of converging in the Linf 
 norm for mechanical problems exhibiting pressure jumps such as the inclusion-host setup. 
 During my MSc and PhD I was focusing on sharp heterogeneities, so this is why I decided 
-to choose $P_2^+\times P_{-1}$. 
+to choose ${\bm P}_2^+\times P_{-1}$. 
 You will see that it is also easy to invert the pressure mass matrix for such elements, 
-which is really useful (both for the augmentation and preconditioning)."
+which is really useful (both for the augmentation and preconditioning).''}
 \end{remark}
 
-This element is used by Poliakov and Podlachikov \cite{popo92} to study the deformation of 
+This element is used by \textcite{popo92} (1992) to study the deformation of 
 the surface above a rising diapir. Note that they actually use a 
-``13 point integration formula (Hughes 1987) for calculation of the stiffness matrix was 
-used in order to conserve detailed information from the marker field in the coarse FEM mesh''. 
-It is also used in \cite{anmp15} in the context of a new free-surface stabilization scheme. 
-It is the element used in LaCoDe \cite{demh19}.
+{\color{darkgray} ``13 point integration formula (Hughes 1987) for calculation of the stiffness matrix was 
+used in order to conserve detailed information from the marker field in the coarse FEM mesh''}. 
+It is the element used in the MILAMIN code, see \textcite{daks08} (2008).
+It is also featured in \textcite{thba24} (2024).
+It is also used in \textcite{anmp15} (2015) in the context of a new free-surface stabilization scheme. 
+It is the element used in LaCoDe, see \textcite{demh19} (2019).
 It is mentioned in Section~6.2 in \textcite{bobf08} (2008).
-It is compared to the $P_2\times P_1$ element for the Navier-Stokes equations in 
+It is compared to the ${\bm P}_2\times P_1$ element for the Navier-Stokes equations in 
 \textcite{krba05} (2005).
 
 \begin{center}
@@ -102,4 +103,9 @@ So in the end
 \sum_{i=1}^{15} \bN_i = (\bN_1+\bN_2+\bN_3+\bN_4)  + \sum_{i=5}^{15} \bN_i = 0
 \]
 
+\begin{center}
 \url{https://defelement.com/elements/conforming-crouzeix-raviart.html}
+\end{center}
+
+
+
