@@ -3,10 +3,17 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-
+*.html
 #*.vtu
 #*.ascii
-
+*.dvi
+*.4tc
+*.idv
+*.lg
+*.xref
+*.4ct
+*.css
+*.tmp
 *.msh
 *.out
 *.toc

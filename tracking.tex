@@ -10,14 +10,13 @@ The figure below (by B. Hillebrand) illustrates the three main methods used in g
 
 Note that what follows is applicable to FEM, FDM, etc ...
 
-
 A typical test for advection algorithm is the Zalesak disk \cite{zale79}. It is a two dimensional test 
 problem of solid body rotation with a constant angular velocity $\omega$ (in rad/sec):
 
 \begin{center}
 \includegraphics[width=6cm]{images/tracking/zale79a}
 \includegraphics[width=6cm]{images/tracking/zale79b}\\
-{\tiny Taken from \cite{zale79}. Left: Schematic representation of two dimensional 
+{\captionfont Taken from \textcite{zale79} (1979). Left: Schematic representation of two dimensional 
 solid body rotation problem. The field inside the cut out has value 3 and it is 1
 outside. The rotational speed is such that one full revolution is effected in 
 628 cycles. The width of the gap separating the two halves of the cylinder,
@@ -26,16 +25,16 @@ Right: Perspective view of initial conditions for the two dimensional! solid bod
 problem. Note that only a $50\times50$ portion of the mesh centered on the cylinder is displayed.}
 \end{center}
 
-This benchmark is widely used in the literature \cite{stco91,supu00,vasv05,dilp06,basd08,zhbl14}.
+This benchmark is widely used in the literature, see for instance \cite{stco91,supu00,vasv05,dilp06,basd08,zhbl14}.
 Note that the Zalesak disc is often supplemented with a cone and a Gaussian features:
 
 \begin{center}
-\includegraphics[width=6cm]{images/tracking/leve96}\\
-{\tiny Taken from \cite{leve96}. Initial data for solid rotation tests}
+\includegraphics[width=7cm]{images/tracking/leve96}\\
+{\captionfont Taken from \textcite{leve96} (1996). Initial data for solid rotation tests}
 \end{center}
 
 %..............................................
-\subsubsection{The Particle-in-cell technique}\label{ss:pic}
+\section{The Particle-in-cell technique}\label{ss:pic}
 \index{general}{Particle-in-Cell}  
 \index{general}{Marker-and-Cell} 
 \index{general}{PIC} 
@@ -44,7 +43,11 @@ Note that the Zalesak disc is often supplemented with a cone and a Gaussian feat
 \input{pic}
 
 %..............................................
-\subsubsection{The level set function technique}
+\section{The Particle-in-cell technique - CVI style}\label{sec:cvi}
+\input{cvi}
+
+%..............................................
+\section{The level set function technique}
 \index{general}{Level-set Method} 
 \index{general}{Level-set Function} 
 \index{general}{LSM} 
@@ -54,7 +57,7 @@ Note that the Zalesak disc is often supplemented with a cone and a Gaussian feat
 \input{lsf}
 
 %..............................................
-\subsubsection{The field/composition technique \label{sec:compfield}}
+\section{The field/composition technique \label{sec:compfield}}
 \index{general}{Compositional Field}
 
 This is the approach taken by the \aspect{} developers \cite{krhb12,hedg17}. 
@@ -132,7 +135,7 @@ Entropy viscosity method \cite{gupa11}
 
 
 %..............................................
-\subsubsection{The Volume-of-Fluid method} 
+\section{The Volume-of-Fluid method} 
 \index{general}{Volume-of-Fluid Method}
 \index{general}{VOF}
 
@@ -155,14 +158,14 @@ With no interface reconstruction, the thickness of the interfacial region is def
 See review of the method in Robey's phd thesis \cite{robe19}.
 
 %..............................................
-\subsubsection{The method of characteristics}
+\section{The method of characteristics}
 
 \todo[inline]{ask Arie to write something}
 
 \cite{devv00a}
 
 %.............................................
-\subsubsection{The Marker Chain method}
+\section{The Marker Chain method}
 \index{general}{Marker Chain method} 
 
 In two dimensions, the idea is quite simple: each interface is discretised by means of a number
@@ -234,7 +237,7 @@ the stability of the chemical layer."
 Literature: Lin \& van Keken (2006) \cite{liva05,liva06a,liva06b,kaus05,mulyukova}
 
 %..............................................
-\subsubsection{Hybrid methods}
+\section{Hybrid methods}
 
 In Braun \etal \cite{brtf08} a level set method is presented which is based on a 3-D set
 of triangulated points, which makes it a hybrid between tracers and level set functions:
@@ -250,7 +253,7 @@ Note that another very similar approach is used in \cite{saev10}.
 
 
 %..............................................
-\subsubsection{Boundary fitted mesh}
+\section{Boundary fitted mesh}
 
 This method is rather simple to implement and works well for small deformations. It is 
 for instance used by Frehner \cite{freh14} (see online supplementary material) in which it is 
@@ -264,9 +267,6 @@ properties do not change.
 \vspace{2cm} 
 
 \Literature: three-dimensional front tracking method using a triangular mesh \cite{sclo03}.
-
-
-
 
 
 

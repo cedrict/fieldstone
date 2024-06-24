@@ -1,4 +1,20 @@
+rm literature_review.4ct
+rm literature_review.4tc
+rm literature_review.css
+rm literature_review.idv
+rm literature_review.lg
+rm literature_review.run.xml
+rm literature_review.xref
+rm literature_review.pdf
+rm literature_review.log
+rm literature_review.out
+rm literature_review.svg
 rm literature_review.html
+rm literature_review.dvi
+rm literature_review.aux
+rm literature_review.blg
+rm literature_review.tmp
+rm literature_review.toc
 pdflatex literature_review.tex
 biber --output-safechars literature_review
 pdflatex literature_review.tex

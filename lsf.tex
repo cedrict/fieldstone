@@ -1,7 +1,7 @@
-\begin{flushright} {\tiny {\color{gray} lsf.tex}} \end{flushright}
+\begin{flushright} {\tiny \tt {\color{gray} lsf.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This method was developed in the 80's by Stanley Osher and James Sethian \cite{lofo06}
+This method was developed in the 80's by Stanley Osher and James Sethian \cite{lofo06}.
 
 The Level-set Method (LSM), as it is commonly used in Computational Fluid Dynamics -- and especially 
 in Computational Geodynamics -- represents a close curve $\Gamma$ (say, in our case, the 
@@ -27,7 +27,7 @@ and its value is also the distance to the interface.
 The function value indicates on which side of the interface a
 point is located (negative or positive) and this is used to identify materials.
 
-As explained in \cite{hitg14}, the level-set function $\phi$ is advected 
+As explained in \textcite{hitg14} (2014), the level-set function $\phi$ is advected 
 with the velocity $\vec\upnu$ which is obtained by solving the Stokes equations.
 This velocity does not guarantee that after an advection step the signed 
 distance quality of the LSF is preserved. 
@@ -39,21 +39,23 @@ space derivative \cite{ossh91,saev10}.
 
 The level set method has not often been used in the geodynamics 
 community with some notable exceptions.
-Bourgouin et al use this method combined with Finite Differences to model 
+Bourgouin and co-workers use this method combined with Finite Differences to model 
 lava flows \cite{bomh06,bomh07,habm07,grbh07}.
-Braun \etal use a so-called particle based level set methodology in their 
-FEM code in conjunction with AMR \cite{brtf08}.
+\textcite{brtf08} (2008) use a so-called particle based level set methodology in their 
+FEM code in conjunction with Adaptive Mesh Refinement.
 Zlotnik \etal coupled the X-FEM method with level set functions to model 
 slab break-off and Rayleigh-Taylor Diapirism \cite{zlfd08}.
 This same particle level sets are studied by Samuel and Evonuk and applied to geophysical flows \cite{saev10}. 
-In Suckale \etal (2010) \cite{sunh10,suhe10} the authors investigate simulating buoyancy-driven flow in the presence of large viscosity contrasts.
+In Suckale \etal (2010) \cite{sunh10,suhe10} the authors investigate simulating 
+buoyancy-driven flow in the presence of large viscosity contrasts.
 Hale \etal (2010) \cite{hagr10} use the LSM in 3D and sudy the dynamics of slab tear faults.
 An overview of the method and applications can
 be found in \cite{osfe01}.
 
 Several improvements upon the original LSM have been proposed, 
-such as for instance the conservative level set of \cite{zhbl14}.
-The most notable difference between CLS method originally proposed by Olsson \etal \cite{olkr05,olkz07}
+such as for instance the conservative level set of \textcite{zhbl14} (2014).
+The most notable difference between CLS method originally proposed by 
+Olsson \etal \cite{olkr05,olkz07}
 and standard LS method lies in the choice of LS function. Instead of the signed distance function, the
 CLS methods employ the Heaviside function $H(\phi)$ 
 \[
@@ -81,10 +83,14 @@ are computed as follows:
 \eta=\eta_1+(\eta_2-\eta_1)H(\phi)
 \]
 
-\Literature: \cite{vasv05,vasv08,migi07,vasv05b}. 
+\Literature:
 \begin{itemize}
-\item Review of level-set methods \cite{gifo18}
-\item Interactive 3-D computation of fault surfaces using level sets \cite{kadt08}
+\item Review of level-set methods: \fullcite{gifo18}
+\item Interactive 3-D computation of fault surfaces using level sets: \fullcite{kadt08}
+\item \fullcite{vasv05}
+\item \fullcite{vasv08}
+\item \fullcite{migi07}
+\item \fullcite{vasv05b} 
 \end{itemize}
 
 

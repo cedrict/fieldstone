@@ -1,19 +1,19 @@
-\begin{flushright} {\tiny {\color{gray} pic.tex}} \end{flushright}
+\begin{flushright} {\tiny \tt {\color{gray} pic.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \begin{remark}
 The terms 'particle' and 'marker' are commonly (and unfortunately) interchangeably used in the literature 
 in the context of the particle-in-cell technique. However, one should be aware that the marker-and-cell (MAC) 
 technique is something different: it was invented in the early 60's at the Los Alamos Laboratories by 
-Harlow and Welch (1965) \cite{hawe65}. For more information on MAC see the review paper 
-by McKee \etal (2008) \cite{mctf08}. 
-Also, Tackley and King (2003) \cite{taki03} talk about the tracer-ratio method in the context of PIC... 
+\textcite{hawe65} (1965). For more information on the MAC technique see the excellent review paper 
+by McKee \textcite{mctf08} (2008). 
+Also, \textcite{taki03} (2003) talk about the tracer-ratio method in the context of PIC... 
 \end{remark}
 
 The Particle-in-cell method is by far the most widely used in computational geodynamics. 
 In its most basic form it is a rather simple method to implement and this probably owes to its success
-and early adoption \cite{popo92}  in non-parallel codes such as \sopale \cite{full95}, 
-I2VIS \cite{geyu03} or \citcoms \cite{mczh04} (Appendix~\ref{app:codes}).
+and early adoption (e.g. \textcite{popo92} (1992))  in non-parallel codes such as \sopale \cite{full95}, 
+I2VIS \cite{geyu03} or \citcoms \cite{mczh04}.
 It has been implemented in \aspect{} \cite{galh18} and the inherent load balancing issues arising from the 
 parallel implementation as well as from the use of Adaptive Mesh Refinement are discussed. 
 It has also been implemented in the MILAMIN code \cite{daks08} to study LLSVPs \cite{musd15}.
@@ -27,8 +27,7 @@ while the red line is liekly to be the interface one would obtain based on the
 distribution of particles. Taken from Crameri \etal (2012) \cite{crsg12}.}
 \end{center}
 
-Samuel (2018) \cite{samu18} does a great job at explaining 
-the core problem with PIC: 
+\textcite{samu18} (2018) does a great job at explaining the core problem with PIC: 
 \begin{displayquote}
 {\color{darkgray}
 The method requires the method requires particle-mesh 
@@ -68,12 +67,11 @@ known.
 }
 \end{displayquote}
 
-
-The basic methodology goes as follows:
+A basic implementation of the PIC goes as follows:
 \begin{enumerate}
-\item distribute particles in the domain,
+\item distribute particles in the domain at startup,
 \item assign a material identity (and/or any other quantity) to each particle,
-\item project particle quantities on the  nodes of the mesh,
+\item project particle quantities on the  nodes and/orelements of the mesh,
 \item solve the Stokes equations for a new velocity field,
 \item interpolate the velocity onto the particles,
 \item move the particles with their respective velocities, 
@@ -83,8 +81,8 @@ The basic methodology goes as follows:
 As it turns out each step above needs to be carefully executed and is more difficult 
 than it first looks. 
 
-%..........
-\paragraph{Distributing particles in the domain} 
+%___________________________________________________
+\subsection{Distributing particles in the domain} 
 Let us assume we wish to distribute $N_p$ particles
 in the domain. How large must $N_p$ be? To simplify, one end member could be 'as many particles as possible that fit in memory' 
 while the other end member could be 'one per element/cell on average'. While the former does not necessarily guarantee a 
@@ -99,8 +97,8 @@ with each tracer perturbed from its grid position by a random amount of up to
 $\pm$ half a grid spacing, in order to eliminate artifacts due to tracer alignment."
 
 
-%..........
-\paragraph{Averaging and projection} 
+%_______________________________________
+\subsection{Averaging and projection} 
 This is a very critical step. Unfortunately, there is no community-wide
 agreed-upon method. The problem at hand boils down to: at a given location $(\vec r)$ in space I need a
 the value of a field which is carried by the particles. 
@@ -413,7 +411,7 @@ least square method.
 
 
 %.....................................................................
-\paragraph{Interpolation of the velocity onto particles}.
+\subsection{Interpolation of the velocity onto particles}.
 
 Once the particle $i$ has been localised inside a given element (Section~\ref{sec:amiin}) 
 and its reduced coordinates $(r,s,t)$ determined, the velocity at this location can 
@@ -431,7 +429,7 @@ have decided to make a new section about it (Section~\ref{sec:cvi}) rather than 
 here.
 
 %.....................................................................
-\paragraph{Moving the particles}
+\subsection{Moving the particles}
 
 This is discussed in the context of the Runge-Kutta Methods, see Section~\ref{sec:rkparticles}.
 
