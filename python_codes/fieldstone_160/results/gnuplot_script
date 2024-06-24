@@ -1,0 +1,123 @@
+#gnuplot script
+set term pdf enhanced font "Times,12pt"
+set grid
+set xlabel 'x (km)'
+set key outside
+
+set ylabel 'pressure (MPa)'
+set output 'pressure.pdf'
+plot[][]\
+'solution_surface_120.ascii'      u ($1/1e3):($3/1e6)      w l lw .5 t '120x100 (Q_2xP_{-1})',\
+'solution_surface_240.ascii'      u ($1/1e3):($3/1e6)      w l lw .5 t '240x200 (Q_2xP_{-1})',\
+'solution_surface_120_q2q1.ascii' u ($1/1e3):($3/1e6) w l lw .5 t '120x100 (Q_2xQ_1)',\
+'solution_surface_240_q2q1.ascii' u ($1/1e3):($3/1e6) w l lw .5 t '240x200 (Q_2xQ_1)',\
+
+set ylabel 'tau_{yy} (MPa)'
+set output 'tau_yy.pdf'
+plot[][]\
+'solution_surface_120.ascii'      u ($1/1e3):($7/1e6)      w l lw .5 t '120x100 (Q_2xP_{-1})',\
+'solution_surface_240.ascii'      u ($1/1e3):($7/1e6)      w l lw .5 t '240x200 (Q_2xP_{-1})',\
+'solution_surface_120_q2q1.ascii' u ($1/1e3):($7/1e6) w l lw .5 t '120x100 (Q_2xQ_1)',\
+'solution_surface_240_q2q1.ascii' u ($1/1e3):($7/1e6) w l lw .5 t '240x200 (Q_2xQ_1)',\
+
+####################################################################################################
+
+set ylabel 'dynamic topography (m)'
+set output 'dyn_topo.pdf'
+plot[][]\
+'solution_surface_120.ascii'      u ($1/1e3):8 w      l lw .5 t '120x100 (Q_2xP_{-1})',\
+'solution_surface_240.ascii'      u ($1/1e3):8 w      l lw .5 t '240x200 (Q_2xP_{-1})',\
+'solution_surface_120_q2q1.ascii' u ($1/1e3):8 w l lw .5 t '120x100 (Q_2xQ_1)',\
+'solution_surface_240_q2q1.ascii' u ($1/1e3):8 w l lw .5 t '240x200 (Q_2xQ_1)',\
+6060 lt -1 dt 2 t 'analytical'
+
+####################################################################################################
+
+set ylabel 'dynamic topography (m)'
+set output 'dyn_topo2.pdf'
+plot[40:80][]\
+'solution_surface_120.ascii'      u ($1/1e3):8 w l lw .5 t '120x100 (Q_2xP_{-1})',\
+'solution_surface_240.ascii'      u ($1/1e3):8 w l lw .5 t '240x200 (Q_2xP_{-1})',\
+'solution_surface_120_q2q1.ascii' u ($1/1e3):8 w l lw .5 t '120x100 (Q_2xQ_1)',\
+'solution_surface_240_q2q1.ascii' u ($1/1e3):8 w l lw .5 t '240x200 (Q_2xQ_1)',\
+6060 lt -1 dt 2 t 'analytical'
+
+####################################################################################################
+
+set title 'Q_2xP_{-1}, 120x100'
+
+set ylabel 'dynamic topography (m)'
+set output 'dyn_topo3a.pdf'
+plot[][6000:]\
+'visc_wz/solution_surface_16.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{wz}=1e16',\
+'visc_wz/solution_surface_17.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{wz}=1e17',\
+'solution_surface_120.ascii'        u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{wz}=1e18',\
+'visc_wz/solution_surface_19.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{wz}=1e19',\
+6060 lt -1 dt 2 t 'analytical'
+
+set ylabel 'dynamic topography (m)'
+set output 'dyn_topo3b.pdf'
+plot[40:80][6000:]\
+'visc_wz/solution_surface_16.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{wz}=1e16',\
+'visc_wz/solution_surface_17.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{wz}=1e17',\
+'solution_surface_120.ascii'        u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{wz}=1e18',\
+'visc_wz/solution_surface_19.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{wz}=1e19',\
+6060 lt -1 dt 2 t 'analytical'
+
+####################################################################################################
+
+set title 'Q_2xP_{-1}, 120x100'
+set ylabel 'dynamic topography (m)'
+set output 'dyn_topo4a.pdf'
+plot[][]\
+'visc_m/solution_surface_19.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{m}=1e19',\
+'visc_m/solution_surface_20.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{m}=1e20',\
+'visc_m/solution_surface_21.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{m}=1e21',\
+'visc_m/solution_surface_22.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{m}=1e22',\
+'visc_m/solution_surface_23.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{m}=1e23',\
+6060 lt -1 dt 2 t 'analytical',\
+0 lt -1 lw 2 
+
+
+set ylabel 'dynamic topography (m)'
+set output 'dyn_topo4b.pdf'
+plot[40:80][:]\
+'visc_m/solution_surface_19.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{m}=1e19',\
+'visc_m/solution_surface_20.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{m}=1e20',\
+'visc_m/solution_surface_21.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{m}=1e21',\
+'visc_m/solution_surface_22.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{m}=1e22',\
+'visc_m/solution_surface_23.ascii' u ($1/1e3):8 w l lw .5 t '{/Symbol h}_{m}=1e23',\
+6060 lt -1 dt 2 t 'analytical',\
+0 lt -1 lw 2 
+
+####################################################################################################
+
+set title 'Q_2xP_{-1}'
+set ylabel 'dynamic topography (m)'
+set output 'dyn_topo5.pdf'
+plot[][:]\
+'Lx/solution_surface_120km.ascii' u ($1/1e3):8 w l lw .5 t '120x100, Lx=120km',\
+'Lx/solution_surface_140km.ascii' u ($1/1e3):8 w l lw .5 t '140x100, Lx=140km',\
+'Lx/solution_surface_160km.ascii' u ($1/1e3):8 w l lw .5 t '160x100, Lx=160km',\
+'Lx/solution_surface_180km.ascii' u ($1/1e3):8 w l lw .5 t '180x100, Lx=180km',\
+'Lx/solution_surface_200km.ascii' u ($1/1e3):8 w l lw .5 t '200x100, Lx=200km',\
+6060 lt -1 dt 2 t 'analytical',\
+0 lt -1 lw 2 
+
+####################################################################################################
+set title 'Q_2xP_{-1}'
+set ylabel 'dynamic topography (m)'
+set output 'dyn_topo6.pdf'
+plot[][:]\
+'neumann/solution_surface_120km.ascii' u ($1/1e3):8 w l lw .5 t '120x100, Lx=120km',\
+'neumann/solution_surface_140km.ascii' u ($1/1e3):8 w l lw .5 t '140x100, Lx=140km',\
+'neumann/solution_surface_160km.ascii' u ($1/1e3):8 w l lw .5 t '160x100, Lx=160km',\
+'neumann/solution_surface_180km.ascii' u ($1/1e3):8 w l lw .5 t '180x100, Lx=180km',\
+'neumann/solution_surface_200km.ascii' u ($1/1e3):8 w l lw .5 t '200x100, Lx=200km',\
+6060 lt -1 dt 2 t 'analytical',\
+0 lt -1 lw 2 
+
+
+
+
+

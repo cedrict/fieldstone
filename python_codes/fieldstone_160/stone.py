@@ -7,8 +7,13 @@ from scipy.sparse.linalg import *
 import datetime
 import numba
 
+###############################################################################
+
 rhoc=2300
 rhom=3300
+etam=1e21
+etac=1e23
+etawz=1e18
 
 ###############################################################################
 #   Vspace=Q2     Pspace=Q1       
@@ -34,7 +39,8 @@ def NNV(rq,sq):
     NV_6=     (1.-rq**2) * 0.5*sq*(sq+1.)
     NV_7= 0.5*rq*(rq-1.) *     (1.-sq**2)
     NV_8=     (1.-rq**2) *     (1.-sq**2)
-    return np.array([NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,NV_6,NV_7,NV_8],dtype=np.float64)
+    return np.array([NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,\
+                     NV_6,NV_7,NV_8],dtype=np.float64)
 
 @numba.njit
 def dNNVdr(rq,sq):
@@ -47,7 +53,8 @@ def dNNVdr(rq,sq):
     dNVdr_6=       (-2.*rq) * 0.5*sq*(sq+1)
     dNVdr_7= 0.5*(2.*rq-1.) *    (1.-sq**2)
     dNVdr_8=       (-2.*rq) *    (1.-sq**2)
-    return np.array([dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,dNVdr_6,dNVdr_7,dNVdr_8],dtype=np.float64)
+    return np.array([dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,\
+                     dNVdr_6,dNVdr_7,dNVdr_8],dtype=np.float64)
 
 @numba.njit
 def dNNVds(rq,sq):
@@ -60,7 +67,8 @@ def dNNVds(rq,sq):
     dNVds_6=     (1.-rq**2) * 0.5*(2.*sq+1.)
     dNVds_7= 0.5*rq*(rq-1.) *       (-2.*sq)
     dNVds_8=     (1.-rq**2) *       (-2.*sq)
-    return np.array([dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,dNVds_6,dNVds_7,dNVds_8],dtype=np.float64)
+    return np.array([dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,\
+                     dNVds_6,dNVds_7,dNVds_8],dtype=np.float64)
 
 @numba.njit
 def NNP(rq,sq):
@@ -80,11 +88,11 @@ def NNP(rq,sq):
 
 @numba.njit
 def viscosity(x,y):
-    val=1e21
-    if y>80e3: val=1e23
-    if abs(x-60e3)<15e3 and y>60e3: val=1e23
-    if x>44e3 and x<45e3 and y>80e3: val=1e18    
-    if x>75e3 and x<76e3 and y>80e3: val=1e18    
+    val=etam
+    if y>80e3: val=etac
+    if abs(x-Lx/2)<15e3 and y>60e3: val=etac
+    if x>Lx/2-16e3 and x<Lx/2-15e3 and y>80e3: val=etawz   
+    if x>Lx/2+15e3 and x<Lx/2+16e3 and y>80e3: val=etawz   
     return val
 
 ###############################################################################
@@ -93,11 +101,12 @@ def viscosity(x,y):
 def density(x,y):
     val=rhom
     if y>80e3: val=rhoc
-    if abs(x-60e3)<15e3 and y>60e3: val=rhoc
+    if abs(x-Lx/2)<15e3 and y>60e3: val=rhoc
     return val
 
 ###############################################################################
 
+@numba.njit
 def lithostatic_pressure(y):
     if y>80e3:
        val=rhoc*abs(gy)*(Ly-y)
@@ -137,16 +146,9 @@ Ly=100*km
 
 gy=-10
 
-# allowing for argument parsing through command line
-#if int(len(sys.argv) == 11): 
-#   um = int(sys.argv[1])
-#else:
-#   # reference is 20-19-19-23
-#   eta_um=1e20
+nelx=int(Lx/1000)
 
-nelx=120#*2
-
-Neumann=0
+Neumann=1
 
 ###############################################################################
 
@@ -393,14 +395,16 @@ for i in range(0,NV):
     
     if yV[i]/Ly<eps: #bottom
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. 
+       if Neumann and abs(xV[i]-Lx/2)/Lx<eps:
+          bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = 0. 
     
     if yV[i]/Ly>(1-eps): #top
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. 
     
-    if xV[i]/Lx>1-eps: #right boundary  
+    if (not Neumann) and xV[i]/Lx>1-eps: #right boundary  
        bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = 0. 
 
-    if xV[i]/Lx<eps: #left boundary  
+    if (not Neumann) and xV[i]/Lx<eps: #left boundary  
        bc_fix[i*ndofV] = True ; bc_val[i*ndofV] = 0. 
 
 
