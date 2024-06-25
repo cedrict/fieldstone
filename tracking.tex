@@ -134,13 +134,16 @@ Entropy viscosity method \cite{gupa11}
 
 
 
-%..............................................
+%=======================================
 \section{The Volume-of-Fluid method} 
 \index{general}{Volume-of-Fluid Method}
 \index{general}{VOF}
 
 %from Napoleon \etal
-The Volume-Of-Fluid (VOF) method is a fixed-grid approach based on the one-fluid model and considers that the various immiscible fluids (or `phases') can be described as a single fluid whose local physical properties, namely density and viscosity, vary in space and time depending on the volume fraction $C_i$ of each phase $i$ 
+The Volume-Of-Fluid (VOF) method is a fixed-grid approach based on the one-fluid model 
+and considers that the various immiscible fluids (or `phases') can be described as a 
+single fluid whose local physical properties, namely density and viscosity, vary in space 
+and time depending on the volume fraction $C_i$ of each phase $i$ 
 \cite{hini81,youn82}. 
 
 The volume fraction of each fluid intrinsically obeys $\sum \limits_{{i=1}}^n C_i = 1$ where $n$ is the number of phases. 
@@ -157,14 +160,14 @@ With no interface reconstruction, the thickness of the interfacial region is def
 
 See review of the method in Robey's phd thesis \cite{robe19}.
 
-%..............................................
+%==============================================================================
 \section{The method of characteristics}
 
 \todo[inline]{ask Arie to write something}
 
 \cite{devv00a}
 
-%.............................................
+%==============================================================================
 \section{The Marker Chain method}
 \index{general}{Marker Chain method} 
 
@@ -236,12 +239,12 @@ the stability of the chemical layer."
 
 Literature: Lin \& van Keken (2006) \cite{liva05,liva06a,liva06b,kaus05,mulyukova}
 
-%..............................................
+%==============================================================================
 \section{Hybrid methods}
 
-In Braun \etal \cite{brtf08} a level set method is presented which is based on a 3-D set
+In \textcite{brtf08} (2008) a level set method is presented which is based on a 3-D set
 of triangulated points, which makes it a hybrid between tracers and level set functions:
-in the \douar code (Appendix~\ref{app:codes}) the interface is then explicitely tracked by means of the tracers while the LSF is computed 
+in the \douar code the interface is then explicitely tracked by means of the tracers while the LSF is computed 
 on the FE nodes. Although very promising in theory, this method proved to be difficult to use in practice
 since it requires a) a triangulation of the interfaces at $t=0$ which is not trivial if the geometries
 are complex (think about a slab in 3D); b) the addition or removal of tracers because of the interface deformation
@@ -250,9 +253,7 @@ FE node based on the triangle normal vectors.
 This probably explains why the Particle-In-Cell method was later implemented in this code (pers. comm.).
 Note that another very similar approach is used in \cite{saev10}.
 
-
-
-%..............................................
+%==============================================================================
 \section{Boundary fitted mesh}
 
 This method is rather simple to implement and works well for small deformations. It is 
@@ -268,6 +269,10 @@ properties do not change.
 
 \Literature: three-dimensional front tracking method using a triangular mesh \cite{sclo03}.
 
+%==============================================================================
+\section{Runge-Kutta methods \label{ss:rkm}}
+\input{rungekutta} 
 
-
-
+%==============================================================================
+\section{Am I in or not? - finding reduced coordinates}\label{sec:amiin}
+\input{amiin} 
