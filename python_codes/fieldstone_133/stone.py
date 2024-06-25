@@ -157,9 +157,11 @@ if int(len(sys.argv) == 4):
    visu = int(sys.argv[2])
    nqperdim = int(sys.argv[3])
 else:
-   nelr = 128
+   nelr = 20
    visu = 1
    nqperdim=3
+
+DJ=True
 
 if benchmark==1 or benchmark==2:
    R1=1.
@@ -184,7 +186,6 @@ nel=nelr*nelt
 rho0=0.
 kk=4
 
-DJ=False
 
 ###########################################
 # quadrature parameters
@@ -225,11 +226,12 @@ if nqperdim==6:
              0.360761573048139,\
              0.171324492379170]
 
-
 rVnodes=[-1,1,1,-1,0,1,0,-1,0]
 sVnodes=[-1,-1,1,1,-1,0,1,0,0]
 
 eta_ref=viscosity
+L_ref=dr
+#L_ref=R2-R1
 
 #################################################################
 # grid point setup
@@ -319,6 +321,8 @@ print('nelt=',nelt)
 print('nel=',nel)
 print('NfemV=',NfemV)
 print('NfemP=',NfemP)
+print('DJ=',DJ)
+print('nqperdim=',nqperdim)
 
 #################################################################
 # connectivity
@@ -566,7 +570,7 @@ for iel in range(0,nel):
         #end for jq
     #end for iq
 
-    G_el*=eta_ref/R2
+    G_el*=eta_ref/L_ref
 
     # impose b.c. 
     for k1 in range(0,mV):
@@ -637,10 +641,15 @@ print("solving system (%.3fs)" % (timing.time() - start))
 start = timing.time()
 
 u,v=np.reshape(sol[0:NfemV],(nnp,2)).T
-p=sol[NfemV:Nfem]*eta_ref/R2
+p=sol[NfemV:Nfem]*eta_ref/L_ref
 
-print("     -> u (m,M) %.8f %.8f %a" %(np.min(u)/velunit,np.max(u)/velunit,vunit))
-print("     -> v (m,M) %.8f %.8f %a" %(np.min(v)/velunit,np.max(v)/velunit,vunit))
+umin=np.min(u)/velunit
+umax=np.max(u)/velunit
+vmin=np.min(v)/velunit
+vmax=np.max(v)/velunit
+
+print("     -> u (m,M) %.8f %.8f %a" %(umin,umax,vunit))
+print("     -> v (m,M) %.8f %.8f %a" %(vmin,vmax,vunit))
 
 #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 
@@ -681,6 +690,9 @@ np.savetxt('p_R2.ascii',np.array([xP[NP-nelt:NP],yP[NP-nelt:NP],p[NP-nelt:NP]]).
 pth=np.zeros(NP,dtype=np.float64)
 for i in range(NP):
     pth[i]=pressure(xP[i],yP[i],R1,R2,k,rho0,g0)
+
+pmin=np.min(p-pth)
+pmax=np.max(p-pth)
 
 np.savetxt('pressure.ascii',np.array([xP,yP,p,pth]).T)
 
@@ -764,11 +776,10 @@ areath=np.pi*(R2**2-R1**2)
 
 errv=np.sqrt(errv/areath)
 errp=np.sqrt(errp/areath)
-
-vrms=np.sqrt(vrms/np.pi/(R2**2-R1**2))
+vrms=np.sqrt(vrms/areath)
 
 print('     -> nelr=',nelr,' vrms=',vrms)
-print("     -> nelr= %6d ; errv= %.8e ; errp= %.8e" %(nelr,errv,errp))
+print("     -> nelr= %6d ; errv= %.8e ; errp= %.8e ; %e %e %e %e %e %e" %(nelr,errv,errp,umin,umax,vmin,vmax,pmin,pmax))
 
 print("compute errors (%.3fs)" % (timing.time() - start))
 
@@ -819,7 +830,7 @@ if visu==1:
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity(r,theta)' Format='ascii'> \n")
    for i in range(0,nnp):
-       vtufile.write("%10f %10f %10f \n" %(vr[i],vt[i],0.))
+       vtufile.write("%e %e %e \n" %(vr[i],vt[i],0.))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='r' Format='ascii'> \n")

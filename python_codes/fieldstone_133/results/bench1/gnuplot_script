@@ -1,0 +1,54 @@
+set term pdf enhanced
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+set key bottom 
+
+
+
+set output 'errors_v.pdf'
+plot[][]\
+'errors_3' u (1./($3)):6 w lp ps .45 t 'nqperdim=3',\
+'errors_4' u (1./($3)):6 w lp ps .45 t 'nqperdim=4',\
+'errors_5' u (1./($3)):6 w lp ps .45 t 'nqperdim=5',\
+'aspect_k4_q2q1.dat' u (1./$6):4 w lp ps .4 t 'ASPECT, v' ,\
+x**3. w l lt -1 dashtype 4 t 'x^3'
+
+
+set output 'errors_p.pdf'
+plot[][]\
+'errors_3' u (1./($3)):9 w lp ps .35 t 'nqperdim=3',\
+'errors_4' u (1./($3)):9 w lp ps .35 t 'nqperdim=4',\
+'errors_5' u (1./($3)):9 w lp ps .35 t 'nqperdim=5',\
+'aspect_k4_q2q1.dat' u (1./$6):5 w lp ps .4 t 'ASPECT, p',\
+x**2.*3. w l lt -1 dashtype 2 t 'x^2'
+
+
+
+set key outside
+
+
+
+unset title
+
+set pointsize .5
+
+set ylabel 'v_{rms}'
+unset log y
+set output 'vrms.pdf'
+plot[:][]\
+'vrms_3' u (1./($3)):5 w lp t 'nqperdim=3',\
+'vrms_4' u (1./($3)):5 w lp t 'nqperdim=4',\
+'vrms_5' u (1./($3)):5 w lp t 'nqperdim=5',\
+1.083554613 lt -1 dashtype 2 t 'analytical'
+
+areath=pi*(2**2-1**2)
+set output 'area.pdf'
+plot[][]\
+'area_3' u (1/$7):($5-areath) w lp t 'nqperdim=3',\
+'area_4' u (1/$7):($5-areath) w lp t 'nqperdim=4',\
+'area_5' u (1/$7):($5-areath) w lp t 'nqperdim=5',\
+
+
+
+

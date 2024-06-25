@@ -1,0 +1,66 @@
+set term pdf enhanced
+set log xy
+set xlabel 'h'
+set key outside 
+set format y "10^{%L}"
+set title 'DJ - Lref=R_2-R_1'
+set grid
+
+set ylabel 'velocity error'
+set output 'errors_v.pdf'
+plot[0.01:0.5][1e-10:1e-1]\
+'errors_3' u (1./($3)):6 w lp ps .45 t 'nqperdim=3',\
+'errors_4' u (1./($3)):6 w lp ps .45 t 'nqperdim=4',\
+'errors_5' u (1./($3)):6 w lp ps .45 t 'nqperdim=5',\
+'errors_6' u (1./($3)):6 w lp ps .45 t 'nqperdim=6',\
+
+set ylabel 'pressure error'
+set output 'errors_p.pdf'
+plot[0.01:0.5][]\
+'errors_3' u (1./($3)):9 w lp ps .35 t 'nqperdim=3',\
+'errors_4' u (1./($3)):9 w lp ps .35 t 'nqperdim=4',\
+'errors_5' u (1./($3)):9 w lp ps .35 t 'nqperdim=5',\
+'errors_6' u (1./($3)):9 w lp ps .35 t 'nqperdim=6',\
+
+#######################################################
+reset 
+set term pdf enhanced
+set xlabel 'h'
+set key outside
+set grid
+set log x
+set title 'DJ - Lref=R_2-R_1'
+
+unset log y
+set ylabel 'velocity m/M'
+set output 'vel_stats.pdf'
+plot[0.01:0.5][-0.0002:0.0002]\
+'errors_3' u (1./($3)):11 w lp lt 1 ps .45 t 'nqperdim=3',\
+'errors_3' u (1./($3)):12 w lp lt 1 ps .45 notitle,\
+'errors_3' u (1./($3)):13 w lp lt 1 ps .45 notitle,\
+'errors_3' u (1./($3)):14 w lp lt 1 ps .45 notitle,\
+'errors_4' u (1./($3)):11 w lp lt 2 ps .45 t 'nqperdim=4',\
+'errors_4' u (1./($3)):12 w lp lt 2 ps .45 notitle,\
+'errors_4' u (1./($3)):13 w lp lt 2 ps .45 notitle,\
+'errors_4' u (1./($3)):14 w lp lt 2 ps .45 notitle,\
+'errors_5' u (1./($3)):11 w lp lt 3 ps .45 t 'nqperdim=5',\
+'errors_5' u (1./($3)):12 w lp lt 3 ps .45 notitle,\
+'errors_5' u (1./($3)):13 w lp lt 3 ps .45 notitle,\
+'errors_5' u (1./($3)):14 w lp lt 3 ps .45 notitle,\
+'errors_6' u (1./($3)):11 w lp lt 4 ps .45 t 'nqperdim=6',\
+'errors_6' u (1./($3)):12 w lp lt 4 ps .45 notitle,\
+'errors_6' u (1./($3)):13 w lp lt 4 ps .45 notitle,\
+'errors_6' u (1./($3)):14 w lp lt 4 ps .45 notitle,\
+
+set ylabel 'pressure m/M'
+set output 'press_stats.pdf'
+plot[0.01:0.5][-10:10]\
+'errors_3' u (1./($3)):15 w lp lt 1 ps .45 t 'nqperdim=3',\
+'errors_3' u (1./($3)):16 w lp lt 1 ps .45 notitle,\
+'errors_4' u (1./($3)):15 w lp lt 2 ps .45 t 'nqperdim=4',\
+'errors_4' u (1./($3)):16 w lp lt 2 ps .45 notitle,\
+'errors_5' u (1./($3)):15 w lp lt 3 ps .45 t 'nqperdim=5',\
+'errors_5' u (1./($3)):16 w lp lt 3 ps .45 notitle,\
+'errors_6' u (1./($3)):15 w lp lt 4 ps .45 t 'nqperdim=6',\
+'errors_6' u (1./($3)):16 w lp lt 4 ps .45 notitle,\
+
