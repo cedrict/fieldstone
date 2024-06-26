@@ -1,0 +1,10 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set log xy
+set xlabel 'h'
+set ylabel '|pos(t_f)-pos(t_0)|'
+
+set output 'res.pdf'
+plot[][]\
+'res.ascii' u (4/$1):2 w lp notitle,\
+x**1.5 lt -1 dt 2 

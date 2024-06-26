@@ -17,9 +17,9 @@ plot[][1e-16:]\
 'errors_RK4_38.ascii' u 2:3 w lp ps .1 t 'RK4(3/8)',\
 'errors_RKF.ascii' u 2:3 w lp t 'RKF',\
 'errors_ODE87.ascii' u 2:3 w lp t 'ODE87',\
-x lt -1 dt 2 t 'x^1',\
+x/2 lt -1 dt 2 t 'x^1',\
 x**3/1000 lt -1 dt 3 t 'x^3',\
-x**5/10000000 lt -1 dt 4 t 'x^5'
+x**5/1000000 lt -1 dt 4 t 'x^5'
 
 set ylabel '|pos(t_f)-pos(t_0)|'
 set output 'errors2.pdf'
@@ -31,24 +31,24 @@ plot[][1e-16:]\
 'errors_RK4_38.ascii' u 2:4 w lp ps .1 t 'RK4(3/8)',\
 'errors_RKF.ascii'    u 2:4 w lp t 'RKF',\
 'errors_ODE87.ascii'  u 2:4 w lp t 'ODE87',\
-x             lt -1 dt 2 t 'x^1',\
-x**2/80       lt -1 dt 3 t 'x^2',\
-x**3/2500     lt -1 dt 4 t 'x^3',\
-x**4/100000   lt -1 dt 5 t 'x^4',\
-x**5/10000000 lt -1 dt 6 t 'x^5'
+x/2          lt -1 dt 2 t 'x^1',\
+x**2/40      lt -1 dt 3 t 'x^2',\
+x**3/500     lt -1 dt 4 t 'x^3',\
+x**4/10000   lt -1 dt 5 t 'x^4',\
+x**5/700000 lt -1 dt 6 t 'x^5'
 
 set ylabel '|rad(t)-rad(0)|'
-set title 'CFL nb=0.5'
+set title 'nstep=32'
 unset log x
 set xlabel '# time step'
 set output 'rad.pdf'
 plot[][1e-16:1]\
-'marker_RK1_0.5.ascii'    u (abs($3)) w lp ps .25 t 'RK1',\
-'marker_RK2_0.5.ascii'    u (abs($3)) w lp ps .25 t 'RK2',\
-'marker_RK3_0.5.ascii'    u (abs($3)) w lp ps .25 t 'RK3',\
-'marker_RK4_0.5.ascii'    u (abs($3)) w lp ps .25 t 'RK4',\
-'marker_RK4_38_0.5.ascii' u (abs($3)) w lp ps .1 t 'RK4(3/8)',\
-'marker_RKF_0.5.ascii'    u (abs($3)) w lp ps .25 t 'RKF',\
-'marker_ODE87_0.5.ascii'  u (abs($3)) w lp ps .25 t 'ODE87'
+'marker_RK1_32.ascii'    u (abs($3)) w lp ps .25 t 'RK1',\
+'marker_RK2_32.ascii'    u (abs($3)) w lp ps .25 t 'RK2',\
+'marker_RK3_32.ascii'    u (abs($3)) w lp ps .25 t 'RK3',\
+'marker_RK4_32.ascii'    u (abs($3)) w lp ps .25 t 'RK4',\
+'marker_RK4_38_32.ascii' u (abs($3)) w lp ps .1 t 'RK4(3/8)',\
+'marker_RKF_32.ascii'    u (abs($3)) w lp ps .25 t 'RKF',\
+'marker_ODE87_32.ascii'  u (abs($3)) w lp ps .25 t 'ODE87'
 
 

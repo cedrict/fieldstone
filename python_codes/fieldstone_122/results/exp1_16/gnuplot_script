@@ -5,11 +5,12 @@ set xlabel 'CFL number'
 set log xy
 set key outside
 set pointsize .3
-set title '256x256'
+set title '16x16'
+
 
 set ylabel '|pos(t_f)-pos(t_0)|'
 set output 'errors2.pdf'
-plot[1e-2:10][1e-3:]\
+plot[1e-2:10][1e-3:10]\
 'errors_RK1.ascii'    u 2:4 w lp t 'RK1',\
 'errors_RK2.ascii'    u 2:4 w lp t 'RK2',\
 'errors_RK3.ascii'    u 2:4 w lp t 'RK3',\
@@ -18,4 +19,4 @@ plot[1e-2:10][1e-3:]\
 'errors_RKF.ascii'    u 2:4 w lp t 'RKF',\
 'errors_ODE87.ascii'  u 2:4 w lp t 'ODE87',\
 x/2          lt -1 dt 2 t 'x^1',\
-0.0023 lt -1 dt  4
+0.14 lt -1 dt  4

@@ -18,18 +18,23 @@ def NNV(rq,sq):
     return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
 
 def velocity(x,y):
-    return y-2,-(x-2) 
+    return (y-2),-(x-2)
 
 ###############################################################################
 
+print('**********************')
+print('***** stone 122 ******')
+print('**********************')
+
+
 if int(len(sys.argv) == 5):
    nelx   = int(sys.argv[1])
-   CFL    = float(sys.argv[2])
+   nstep  = int(sys.argv[2])
    method = sys.argv[3]
    visu   = int(sys.argv[4])
 else:
    nelx   = 16
-   CFL    = 0.5
+   nstep  = 32 
    method = 'RK1'
    visu   = 1
 
@@ -51,8 +56,12 @@ experiment=1
 
 interpolate=False
 
-print('-----------------------------')
 print(nelx,nely,nel,nnx,nny,NV,visu)
+
+#rVnodes=[-1,1,1,-1,0,1,0,-1,0]
+#sVnodes=[-1,-1,1,1,-1,0,1,0,0]
+#for i in range(0,mV):
+#    print(NNV(rVnodes[i],sVnodes[i]))
 
 ###############################################################################
 #Runge-Kutta-Fehlberg coefficients
@@ -147,6 +156,9 @@ start = time.time()
 
 iconV=np.zeros((mV,nel),dtype=np.int32)
 
+#nelx=3 ; nnx=7
+#nely=2 ; nny=5
+
 counter = 0
 for j in range(0,nely):
     for i in range(0,nelx):
@@ -184,8 +196,12 @@ if experiment==1:
 
    theta=np.linspace(0,2*np.pi,num=nmarker,endpoint=False)
    for im in range(0,nmarker):
+       #swarm_x[im]=2+np.cos(theta[im])#+np.pi/123)
+       #swarm_y[im]=2+np.sin(theta[im])#+np.pi/123)
        swarm_x[im]=2+np.cos(theta[im]+np.pi/123)
        swarm_y[im]=2+np.sin(theta[im]+np.pi/123)
+
+   swarm_rad[:]=1
 
 if experiment==2:
 
@@ -215,6 +231,20 @@ swarm_y0[:]=swarm_y[:]
 #np.savetxt('swarm.ascii',np.array([swarm_x,swarm_y]).T,header='# x,y')
 
 ###############################################################################
+# compute time step dt 
+###############################################################################
+
+vel_max=1
+dt=(2*np.pi/vel_max)/nstep
+CFL=dt*vel_max/hx
+tfinal=nstep*dt
+
+print('vel_max=',vel_max)
+print('dt=',dt)
+print('CFL=',CFL)
+print('nstep=',nstep)
+
+###############################################################################
 # prescribe velocity field 
 ###############################################################################
 
@@ -226,33 +256,19 @@ for i in range(0,NV):
 
 #np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
-###############################################################################
-# compute time step dt 
-###############################################################################
+#########################
 
-vel_max=max(np.sqrt(u**2+v**2))
-
-dt=CFL*hx/vel_max
-
-tfinal=(2*np.pi*1)/1
-
-nstep=int(tfinal/dt) 
-
-dt=tfinal/nstep #adjust dt
-
-print('vel_max=',vel_max)
-print('dt=',dt)
-print('CFL=',CFL)
-print('nstep=',nstep)
-
-#nstep=1
+#vmax=max(np.sqrt(u**2+v**2))
+#print(dt*vel_max/hx)
+#exit()
 
 ###############################################################################
 # advection
 ###############################################################################
 
 if method=='RK1':
-   markerRK1file=open('marker_RK1_'+str(CFL)+'.ascii',"w")
+   markerRK1file=open('marker_RK1_'+str(nstep)+'.ascii',"w")
+   markerRK1file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,0))
    for istep in range(0,nstep):
        for im in range(nmarker):
            if interpolate:
@@ -261,6 +277,14 @@ if method=='RK1':
               if (ielx<0 or ielx>nelx-1): exit()
               if (iely<0 or iely>nely-1): exit()
               iel=iely*nelx+ielx
+
+              if swarm_x[im]<x[iconV[0,iel]] or\
+                 swarm_x[im]>x[iconV[2,iel]] or\
+                 swarm_y[im]<y[iconV[0,iel]] or\
+                 swarm_y[im]>y[iconV[2,iel]]:
+                 exit('big pb')
+
+
               rm=(swarm_x[im]-x[iconV[0,iel]])/hx-0.5
               sm=(swarm_y[im]-y[iconV[0,iel]])/hy-0.5
               if (rm>1 or rm<-1): exit()
@@ -279,10 +303,11 @@ if method=='RK1':
            swarm_y[im]+=vm*dt
            swarm_rad[im]=np.sqrt((swarm_x[im]-2)**2+(swarm_y[im]-2)**2)
        # end for im
-       markerRK1file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep))
+       markerRK1file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep+1))
 
 if method=='RK2':
-   markerRK2file=open('marker_RK2_'+str(CFL)+'.ascii',"w")
+   markerRK2file=open('marker_RK2_'+str(nstep)+'.ascii',"w")
+   markerRK2file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,0))
    for istep in range(0,nstep):
 
        for im in range(0,nmarker):
@@ -293,8 +318,15 @@ if method=='RK2':
               ielx=int(xA/hx)
               iely=int(yA/hy)
               iel=iely*nelx+ielx
+              if xA<x[iconV[0,iel]] or\
+                 xA>x[iconV[2,iel]] or\
+                 yA<y[iconV[0,iel]] or\
+                 yA>y[iconV[2,iel]]:
+                 exit('big pb')
               rm=(xA-x[iconV[0,iel]])/hx-0.5
               sm=(yA-y[iconV[0,iel]])/hy-0.5
+              if (rm>1 or rm<-1): exit()
+              if (sm>1 or sm<-1): exit()
               NNNV=NNV(rm,sm)
               uA=NNNV.dot(u[iconV[:,iel]])
               vA=NNNV.dot(v[iconV[:,iel]])
@@ -307,8 +339,15 @@ if method=='RK2':
               ielx=int(xB/hx)
               iely=int(yB/hy)
               iel=iely*nelx+ielx
+              if xB<x[iconV[0,iel]] or\
+                 xB>x[iconV[2,iel]] or\
+                 yB<y[iconV[0,iel]] or\
+                 yB>y[iconV[2,iel]]:
+                 exit('big pb')
               rm=(xB-x[iconV[0,iel]])/hx-0.5
               sm=(yB-y[iconV[0,iel]])/hy-0.5
+              if (rm>1 or rm<-1): exit()
+              if (sm>1 or sm<-1): exit()
               NNNV=NNV(rm,sm)
               uB=NNNV.dot(u[iconV[:,iel]])
               vB=NNNV.dot(v[iconV[:,iel]])
@@ -319,10 +358,11 @@ if method=='RK2':
            swarm_y[im]=yA+vB*dt
            swarm_rad[im]=np.sqrt((swarm_x[im]-2)**2+(swarm_y[im]-2)**2)
        # end for im
-       markerRK2file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep))
+       markerRK2file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep+1))
 
 if method=='RK3':
-   markerRK3file=open('marker_RK3_'+str(CFL)+'.ascii',"w")
+   markerRK3file=open('marker_RK3_'+str(nstep)+'.ascii',"w")
+   markerRK3file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,0))
    for istep in range(0,nstep):
 
        for im in range(0,nmarker):
@@ -373,10 +413,11 @@ if method=='RK3':
            swarm_y[im]=yA+(vA+4*vB+vC)*dt/6.
            swarm_rad[im]=np.sqrt((swarm_x[im]-2)**2+(swarm_y[im]-2)**2)
        # end for im
-       markerRK3file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep))
+       markerRK3file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep+1))
 
 if method=='RK4':
-   markerRK4file=open('marker_RK4_'+str(CFL)+'.ascii',"w")
+   markerRK4file=open('marker_RK4_'+str(nstep)+'.ascii',"w")
+   markerRK4file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,0))
    for istep in range(0,nstep):
        for im in range(0,nmarker):
            #--------------
@@ -440,10 +481,11 @@ if method=='RK4':
            swarm_y[im]=yA+(vA+2*vB+2*vC+vD)*dt/6.
            swarm_rad[im]=np.sqrt((swarm_x[im]-2)**2+(swarm_y[im]-2)**2)
        # end for im
-       markerRK4file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep))
+       markerRK4file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep+1))
 
 if method=='RK4_38':
-   markerRK4file=open('marker_RK4_38_'+str(CFL)+'.ascii',"w")
+   markerRK4file=open('marker_RK4_38_'+str(nstep)+'.ascii',"w")
+   markerRK4file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,0))
    for istep in range(0,nstep):
        for im in range(0,nmarker):
            #--------------
@@ -507,10 +549,11 @@ if method=='RK4_38':
            swarm_y[im]=yA+(vA+3*vB+3*vC+vD)*dt/8.
            swarm_rad[im]=np.sqrt((swarm_x[im]-2)**2+(swarm_y[im]-2)**2)
        # end for im
-       markerRK4file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep))
+       markerRK4file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep+1))
 
 if method=='RKF':# Runge-Kutta Fehlberg method
-   markerRK5file=open('marker_RKF_'+str(CFL)+'.ascii',"w")
+   markerRK5file=open('marker_RKF_'+str(nstep)+'.ascii',"w")
+   markerRK5file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,0))
    for istep in range(0,nstep):
 
        for im in range(0,nmarker):
@@ -603,12 +646,13 @@ if method=='RKF':# Runge-Kutta Fehlberg method
            swarm_y[im]=yA+(vA*rkf_b1+vC*rkf_b3+vD*rkf_b4+vE*rkf_b5+vF*rkf_b6)*dt
            swarm_rad[im]=np.sqrt((swarm_x[im]-2)**2+(swarm_y[im]-2)**2)
        # end for im
-       markerRK5file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep))
+       markerRK5file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep+1))
 
 
 if method=='ODE87':
 
-   markerODE87file=open('marker_ODE87_'+str(CFL)+'.ascii',"w")
+   markerODE87file=open('marker_ODE87_'+str(nstep)+'.ascii',"w")
+   markerODE87file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,0))
    for istep in range(0,nstep):
 
        for im in range(0,nmarker):
@@ -815,8 +859,7 @@ if method=='ODE87':
                              +1/4*vM)
            swarm_rad[im]=np.sqrt((swarm_x[im]-2)**2+(swarm_y[im]-2)**2)
        # end for im
-       markerODE87file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep))
-
+       markerODE87file.write("%e %e %e %d \n" %(swarm_x[0],swarm_y[0],swarm_rad[0]-1,istep+1))
 
 ###########################################################################
 # export swarm to vtu

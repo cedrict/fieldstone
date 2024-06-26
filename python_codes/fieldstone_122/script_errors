@@ -2,13 +2,13 @@
 
 rm errors_*.ascii
    
-for CFL in 2 1 0.75 0.5 0.25 .125 0.0625 0.03125 ; do
+for nstep in 32 48 64 80 96 112 128 160 192 200 256 300 384 400 512 600 700 800 900 1024 1500 2048; do
 
     for method in RK1 RK2 RK3 RK4 RK4_38 RKF ODE87 ; do
 
-      echo method= $method CFL= $CFL
+      echo method= $method nstep= $nstep
 
-      python3 stone.py 16 $CFL  $method 0 > opla
+      python3 stone.py 192 $nstep  $method 0 > opla
 
       grep err opla >> errors_${method}.ascii
 
