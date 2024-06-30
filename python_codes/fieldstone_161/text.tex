@@ -1,0 +1,96 @@
+We here consider the $Q_{k+1,k}\times Q_{k,k+1} \times Q_{k}^-$ element introduced 
+by \textcite{huzh11} (2011).
+The shape functions in 2D are in derived in Section~\ref{ss:qqq_elt}. 
+
+The list of velocity degrees of freedom per element is as follows:
+\[
+\vec{\cal V} = (u_1,v_1,u_2,v_2,u_3,v_3,u_4,v_4,u_5,v_5,u_6,v_6)
+\]
+with the following internal numbering
+\begin{verbatim}
+
+u dofs      v dofs
+
+4--6--3     4-----3
+|     |     |     |
+|     |     5     6
+|     |     |     |
+1--5--2     1-----2
+
+\end{verbatim}
+It is rather interesting to note that the location of the 'extra' 
+nodes for u and v are opposite of those for the Fortin Q1+P0 element
+(see stne 80).
+
+
+We start with a simple $4\times 3$ element mesh.
+Bubble $u$ dofs are represented in blue and bubble $v$ dofs are shown in red.
+
+\input{python_codes/fieldstone_161/tikz_gridu}
+
+\input{python_codes/fieldstone_161/tikz_gridv}
+
+For this mesh we have 
+
+\begin{lstlisting}
+nel=nelx*nely (=12) 
+NP=nel (=12)
+Nu=nnx*nny+nnx*nely (=20+16=36)
+Nv=nnx*nny+nelx*nny (=20+15=35)
+NV=nnx*nny+nnx*nely+nny*nelx (=20+16+15=51)
+\end{lstlisting}
+
+The total number of velocity dofs is 
+\begin{lstlisting}
+NfemV=ndofV*nnx*nny + nnx*nely + nny*nelx (=71)
+\end{lstlisting}
+while the total number of pressure dofs remains
+\begin{lstlisting}
+NfemP=NP*ndofP (=nel) 
+\end{lstlisting}
+
+What makes this element pair rather awkward to implement is the fact that 
+there are two connectivity arrays {\tt iconu} and {\tt iconv}, both of size $mV\times nel$, where 
+$mV=6$ is the number of nodes linked to an element for each velocity component. 
+For each element, and depending on whether we are considering 
+the polynomial approximation $u^h(x,y)$ or $v^h(x,y)$ in the element, there are the standard 4 $Q_1$ nodes and 2 additional 
+dofs, so $mV=6$.
+\begin{itemize}
+\item content of {\tt iconu}
+\begin{verbatim}
+elt
+0 | [ 0  1  6  5 35 39]
+1 | [ 1  2  7  6 36 40]
+2 | [ 2  3  8  7 37 41]
+3 | [ 3  4  9  8 38 42]
+4 | [ 5  6 11 10 39 43]
+5 | [ 6  7 12 11 40 44]
+6 | [ 7  8 13 12 41 45]
+7 | [ 8  9 14 13 42 46]
+8 | [10 11 16 15 43 47]
+9 | [11 12 17 16 44 48]
+10 | [12 13 18 17 45 49]
+11 | [13 14 19 18 46 50]
+\end{verbatim}
+\item content of {\tt iconv}
+\begin{verbatim}
+elt
+0 | [ 0  1  6  5 20 21]
+1 | [ 1  2  7  6 21 22]
+2 | [ 2  3  8  7 22 23]
+3 | [ 3  4  9  8 23 24]
+4 | [ 5  6 11 10 25 26]
+5 | [ 6  7 12 11 26 27]
+6 | [ 7  8 13 12 27 28]
+7 | [ 8  9 14 13 28 29]
+8 | [10 11 16 15 30 31]
+9 | [11 12 17 16 31 32]
+10 | [12 13 18 17 32 33]
+11 | [13 14 19 18 33 34]
+\end{verbatim}
+\end{itemize}
+
+Remark: given the weird placement of nodes for u and v, it makes sense not to 
+use an isoparameteric mapping, and instead choose a Q2 mapping.
+
+open question: quadrature for penalty term?
