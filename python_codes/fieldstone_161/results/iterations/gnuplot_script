@@ -1,0 +1,167 @@
+set term pdf enhanced font "Times,12pt"
+#set grid
+
+#################################################
+
+set key outside
+set log xy
+set xlabel 'h'
+set format y "10^{%L}"
+
+set output 'errorsV.pdf'
+set ylabel 'velocity error'
+plot[1e-2:][]\
+'errors1' u (1./sqrt($3)):6 w lp ps .35 t 'lambda=10^1',\
+'errors2' u (1./sqrt($3)):6 w lp ps .35 t 'lambda=10^2',\
+'errors3' u (1./sqrt($3)):6 w lp ps .35 t 'lambda=10^3',\
+'errors4' u (1./sqrt($3)):6 w lp ps .35 t 'lambda=10^4',\
+'errors5' u (1./sqrt($3)):6 w lp ps .35 t 'lambda=10^5',\
+'errors6' u (1./sqrt($3)):6 w lp ps .35 t 'lambda=10^6',\
+x**2/20. w l lt -1 dashtype 2 t 'x^2'
+
+set output 'errorsP.pdf'
+set ylabel 'pressure error'
+plot[1e-2:][]\
+'errors1' u (1./sqrt($3)):9 w lp ps .35 t 'lambda=10^1',\
+'errors2' u (1./sqrt($3)):9 w lp ps .35 t 'lambda=10^2',\
+'errors3' u (1./sqrt($3)):9 w lp ps .35 t 'lambda=10^3',\
+'errors4' u (1./sqrt($3)):9 w lp ps .35 t 'lambda=10^4',\
+'errors5' u (1./sqrt($3)):9 w lp ps .35 t 'lambda=10^5',\
+'errors6' u (1./sqrt($3)):9 w lp ps .35 t 'lambda=10^6',\
+x**1/5. w l lt -1 dashtype 3 t 'x^1'
+
+##############################################
+unset log x
+set xlabel '#iter'
+set ylabel 'xi(u), xi(v)'
+set xtics 1
+
+set title 'lambda=10^1'
+set output 'conv1.pdf'
+plot[][]\
+'conv_1_8.ascii'  u 1:2 w lp lt 1 ps .3 t '8x8',\
+'conv_1_8.ascii'  u 1:3 w lp lt 1 ps .3 notitle,\
+'conv_1_16.ascii' u 1:2 w lp lt 2 ps .3 t '16x16',\
+'conv_1_16.ascii' u 1:3 w lp lt 2 ps .3 notitle,\
+'conv_1_32.ascii' u 1:2 w lp lt 3 ps .3 t '32x32',\
+'conv_1_32.ascii' u 1:3 w lp lt 3 ps .3 notitle,\
+'conv_1_48.ascii' u 1:2 w lp lt 4 ps .3 t '48x48',\
+'conv_1_48.ascii' u 1:3 w lp lt 4 ps .3 notitle,\
+'conv_1_64.ascii' u 1:2 w lp lt 5 ps .3 t '64x64',\
+'conv_1_64.ascii' u 1:3 w lp lt 5 ps .3 notitle,\
+'conv_1_96.ascii' u 1:2 w lp lt 6 ps .3 t '96x96',\
+'conv_1_96.ascii' u 1:3 w lp lt 6 ps .3 notitle,\
+1e-9 lt -1 dt 2
+
+set title 'lambda=10^2'
+set output 'conv2.pdf'
+plot[][]\
+'conv_2_8.ascii'  u 1:2 w lp lt 1 ps .3 t '8x8',\
+'conv_2_8.ascii'  u 1:3 w lp lt 1 ps .3 notitle,\
+'conv_2_16.ascii' u 1:2 w lp lt 2 ps .3 t '16x16',\
+'conv_2_16.ascii' u 1:3 w lp lt 2 ps .3 notitle,\
+'conv_2_32.ascii' u 1:2 w lp lt 3 ps .3 t '32x32',\
+'conv_2_32.ascii' u 1:3 w lp lt 3 ps .3 notitle,\
+'conv_2_48.ascii' u 1:2 w lp lt 4 ps .3 t '48x48',\
+'conv_2_48.ascii' u 1:3 w lp lt 4 ps .3 notitle,\
+'conv_2_64.ascii' u 1:2 w lp lt 5 ps .3 t '64x64',\
+'conv_2_64.ascii' u 1:3 w lp lt 5 ps .3 notitle,\
+'conv_2_96.ascii' u 1:2 w lp lt 6 ps .3 t '96x96',\
+'conv_2_96.ascii' u 1:3 w lp lt 6 ps .3 notitle,\
+
+set title 'lambda=10^3'
+set output 'conv3.pdf'
+plot[][]\
+'conv_3_8.ascii'  u 1:2 w lp lt 1 ps .3 t '8x8',\
+'conv_3_8.ascii'  u 1:3 w lp lt 1 ps .3 notitle,\
+'conv_3_16.ascii' u 1:2 w lp lt 2 ps .3 t '16x16',\
+'conv_3_16.ascii' u 1:3 w lp lt 2 ps .3 notitle,\
+'conv_3_32.ascii' u 1:2 w lp lt 3 ps .3 t '32x32',\
+'conv_3_32.ascii' u 1:3 w lp lt 3 ps .3 notitle,\
+'conv_3_48.ascii' u 1:2 w lp lt 4 ps .3 t '48x48',\
+'conv_3_48.ascii' u 1:3 w lp lt 4 ps .3 notitle,\
+'conv_3_64.ascii' u 1:2 w lp lt 5 ps .3 t '64x64',\
+'conv_3_64.ascii' u 1:3 w lp lt 5 ps .3 notitle,\
+'conv_3_96.ascii' u 1:2 w lp lt 6 ps .3 t '96x96',\
+'conv_3_96.ascii' u 1:3 w lp lt 6 ps .3 notitle,\
+
+set title 'lambda=10^4'
+set output 'conv4.pdf'
+plot[][]\
+'conv_4_8.ascii'  u 1:2 w lp lt 1 ps .3 t '8x8',\
+'conv_4_8.ascii'  u 1:3 w lp lt 1 ps .3 notitle,\
+'conv_4_16.ascii' u 1:2 w lp lt 2 ps .3 t '16x16',\
+'conv_4_16.ascii' u 1:3 w lp lt 2 ps .3 notitle,\
+'conv_4_32.ascii' u 1:2 w lp lt 3 ps .3 t '32x32',\
+'conv_4_32.ascii' u 1:3 w lp lt 3 ps .3 notitle,\
+'conv_4_48.ascii' u 1:2 w lp lt 4 ps .3 t '48x48',\
+'conv_4_48.ascii' u 1:3 w lp lt 4 ps .3 notitle,\
+'conv_4_64.ascii' u 1:2 w lp lt 5 ps .3 t '64x64',\
+'conv_4_64.ascii' u 1:3 w lp lt 5 ps .3 notitle,\
+'conv_4_96.ascii' u 1:2 w lp lt 6 ps .3 t '96x96',\
+'conv_4_96.ascii' u 1:3 w lp lt 6 ps .3 notitle,\
+
+set title 'lambda=10^5'
+set output 'conv5.pdf'
+plot[][]\
+'conv_5_8.ascii'  u 1:2 w lp lt 1 ps .3 t '8x8',\
+'conv_5_8.ascii'  u 1:3 w lp lt 1 ps .3 notitle,\
+'conv_5_16.ascii' u 1:2 w lp lt 2 ps .3 t '16x16',\
+'conv_5_16.ascii' u 1:3 w lp lt 2 ps .3 notitle,\
+'conv_5_32.ascii' u 1:2 w lp lt 3 ps .3 t '32x32',\
+'conv_5_32.ascii' u 1:3 w lp lt 3 ps .3 notitle,\
+'conv_5_48.ascii' u 1:2 w lp lt 4 ps .3 t '48x48',\
+'conv_5_48.ascii' u 1:3 w lp lt 4 ps .3 notitle,\
+'conv_5_64.ascii' u 1:2 w lp lt 5 ps .3 t '64x64',\
+'conv_5_64.ascii' u 1:3 w lp lt 5 ps .3 notitle,\
+'conv_5_96.ascii' u 1:2 w lp lt 6 ps .3 t '96x96',\
+'conv_5_96.ascii' u 1:3 w lp lt 6 ps .3 notitle,\
+
+set title 'lambda=10^6'
+set output 'conv6.pdf'
+plot[][]\
+'conv_6_8.ascii'  u 1:2 w lp lt 1 ps .3 t '8x8',\
+'conv_6_8.ascii'  u 1:3 w lp lt 1 ps .3 notitle,\
+'conv_6_16.ascii' u 1:2 w lp lt 2 ps .3 t '16x16',\
+'conv_6_16.ascii' u 1:3 w lp lt 2 ps .3 notitle,\
+'conv_6_32.ascii' u 1:2 w lp lt 3 ps .3 t '32x32',\
+'conv_6_32.ascii' u 1:3 w lp lt 3 ps .3 notitle,\
+'conv_6_48.ascii' u 1:2 w lp lt 4 ps .3 t '48x48',\
+'conv_6_48.ascii' u 1:3 w lp lt 4 ps .3 notitle,\
+'conv_6_64.ascii' u 1:2 w lp lt 5 ps .3 t '64x64',\
+'conv_6_64.ascii' u 1:3 w lp lt 5 ps .3 notitle,\
+'conv_6_96.ascii' u 1:2 w lp lt 6 ps .3 t '96x96',\
+'conv_6_96.ascii' u 1:3 w lp lt 6 ps .3 notitle
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

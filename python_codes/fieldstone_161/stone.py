@@ -2,6 +2,7 @@ import numpy as np
 import time as time
 import numba
 from scipy.sparse import lil_matrix
+import sys as sys
 import scipy.sparse as sps
 
 ###############################################################################
@@ -122,8 +123,18 @@ Ly=1.
 
 eta=1.
 
-nelx = 32#4
-nely = 32#3
+# allowing for argument parsing through command line
+if int(len(sys.argv) == 5):
+   nelx = int(sys.argv[1])
+   nely = int(sys.argv[2])
+   visu = int(sys.argv[3])
+   laambda=int(sys.argv[4])
+   laambda=10**laambda
+else:
+   nelx = 32
+   nely = 32
+   visu = 1
+   laambda=1e3 # penalty parameter, alpha in zhan09
 
 nnx=nelx+1 
 nny=nely+1 
@@ -141,9 +152,8 @@ NfemP=NP*ndofP  # Total number of degrees of freedom
 hx=Lx/nelx
 hy=Ly/nely
 
-laambda=100 # penalty parameter
-
-niter=1
+tol=1e-9
+niter=50
 
 ###############################################################################
 
@@ -169,20 +179,22 @@ nqel=nqperdim**2
 nq=nqel*nel
 
 ###############################################################################
+# check basis functions
+###############################################################################
 
 rVnodes=[-1,+1,+1,-1,0,0]
 sVnodes=[-1,-1,+1,+1,-1,+1]
 
-for i in range(0,mV):
-    print(NNVu(rVnodes[i],sVnodes[i]))
+#for i in range(0,mV):
+#    print(NNVu(rVnodes[i],sVnodes[i]))
 
-print('----------------------')
+#print('----------------------')
 
 rVnodes=[-1,+1,+1,-1,-1,+1]
 sVnodes=[-1,-1,+1,+1,0,0]
 
-for i in range(0,mV):
-    print(NNVv(rVnodes[i],sVnodes[i]))
+#for i in range(0,mV):
+#    print(NNVv(rVnodes[i],sVnodes[i]))
 
 ###############################################################################
 
@@ -204,6 +216,7 @@ print("hy",hy)
 print("nqperdim",nqperdim)
 print("nqel",nqel)
 print("nq",nq)
+print("laambda",laambda)
 print("------------------------------")
 
 #################################################################
@@ -413,23 +426,48 @@ for iely in range(0, nely):
 
 print("boundary conditions setup: %.3f s" % (time.time() - start))
 
-###############################################################################
-# build FE matrix
-###############################################################################
-start = time.time()
+#******************************************************************************
+#******************************************************************************
+# carry out iterations
+#******************************************************************************
+#******************************************************************************
+   
+iterfile=open("conv.ascii","w")
 
-A_sparse = lil_matrix((NfemV,NfemV),dtype=np.float64)
-rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
-b_mat = np.zeros((3,mV*ndofV),dtype=np.float64)  # gradient matrix B 
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 d_mat = np.array([[1,1,0],[1,1,0],[0,0,0]],dtype=np.float64) 
+sum_sol=np.zeros(NfemV,dtype=np.float64) 
+vel_prev=np.zeros(ndofV*mV,dtype=np.float64) 
+u = np.zeros(Nu,dtype=np.float64)            # x-component velocity
+v = np.zeros(Nv,dtype=np.float64)            # y-component velocity
+u_prev = np.zeros(Nu,dtype=np.float64)            # x-component velocity
+v_prev = np.zeros(Nv,dtype=np.float64)            # y-component velocity
 
-counterq=0
 for iter in range(0,niter):
+
+    print('******************************')
+    print('********* iter=',iter,'************')
+    print('******************************')
+
+    ###############################################################################
+    # build FE matrix
+    ###############################################################################
+    start = time.time()
+
+    A_sparse = lil_matrix((NfemV,NfemV),dtype=np.float64)
+    rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
+    b_mat = np.zeros((3,mV*ndofV),dtype=np.float64)  # gradient matrix B 
+
+    counterq=0
     for iel in range(0, nel):
 
         f_el =np.zeros((mV*ndofV),dtype=np.float64)
         K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
+        K_div =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
+
+        for k in range(0,mV):
+            vel_prev[2*k  ]=sum_sol[iconu[k,iel]]
+            vel_prev[2*k+1]=sum_sol[Nu+iconv[k,iel]]
 
         for iq in range(0,nqperdim):
             for jq in range(0,nqperdim):
@@ -447,11 +485,10 @@ for iter in range(0,niter):
                 dNNNVvds=dNNVvds(rq,sq)
 
                 #compute jacobian matrix and determinant
-                jcob=hx*hy/4
-                jcbi[0,0]=2/hx ; jcbi[0,1]=0    
-                jcbi[1,0]=0    ; jcbi[1,1]=2/hy 
+                #jcob=hx*hy/4
+                #jcbi[0,0]=2/hx ; jcbi[0,1]=0    
+                #jcbi[1,0]=0    ; jcbi[1,1]=2/hy 
 
-                # compute dNdx, dNdy
                 for k in range(0,mV):
                     dNNNVudx[k]=jcbi[0,0]*dNNNVudr[k]
                     dNNNVudy[k]=jcbi[1,1]*dNNNVuds[k]
@@ -473,13 +510,15 @@ for iter in range(0,niter):
                     f_el[ndofV*i+1]+=NNNVv[i]*jcob*weightq*by(xq[counterq],yq[counterq])
                 #end for
 
-                K_el += b_mat.T.dot(d_mat.dot(b_mat))*laambda*weightq*jcob
+                K_div+=b_mat.T.dot(d_mat.dot(b_mat))*weightq*jcob
 
                 counterq+=1
 
             #end for jq
         #end for iq
 
+        K_el += laambda*K_div
+        f_el -= laambda*K_div.dot(vel_prev) 
 
         #apply boundary conditions
         for ikk in range(0,mV*ndofV): # loop over lines
@@ -519,45 +558,109 @@ for iter in range(0,niter):
 
     #end for iel
 
+    print("build FE matrix: %.3f s" % (time.time() - start))
+
+    ###############################################################################
+    # solve linear system 
+    ###############################################################################
+    start = time.time()
+
+    sol=sps.linalg.spsolve(sps.csr_matrix(A_sparse),rhs)
+
+    print("solve linear system: %.3f s" % (time.time() - start))
+
+    ###############################################################################
+    # separate fields 
+    ###############################################################################
+    start = time.time()
+
+    u[:]=sol[0:Nu]
+    v[:]=sol[0+Nu:Nv+Nu]
+
+    print("     -> u (m,M) %.5f %.5f " %(np.min(u),np.max(u)))
+    print("     -> v (m,M) %.5f %.5f " %(np.min(v),np.max(v)))
+
+    np.savetxt('solution_u.ascii',np.array([xu,yu,u]).T,header='# x,y')
+    np.savetxt('solution_v.ascii',np.array([xv,yv,v]).T,header='# x,y')
+
+    print("split vel into u,v: %.3f s" % (time.time() - start))
+
+    ###############################################################################
+    # assess convergence
+    ###############################################################################
+
+    xi_u=np.max(abs(u_prev-u))
+    xi_v=np.max(abs(v_prev-v))
+
+    print('     -> xi_u,xi_v,conv= %e %e %s' %(xi_u,xi_v,xi_u<tol and xi_v<tol))
+           
+    iterfile.write("%i %e %e %e\n" %(iter,xi_u,xi_v,tol))
+
+    if xi_u<tol and xi_v<tol:
+       break
+
+    u_prev[:]=u[:]
+    v_prev[:]=v[:]
+    sum_sol[:]+=sol[:]
+
 #end for iter
-
-print("build FE matrix: %.3f s" % (time.time() - start))
-
-###############################################################################
-# solve linear system 
-###############################################################################
-start = time.time()
-
-sol=sps.linalg.spsolve(sps.csr_matrix(A_sparse),rhs)
-
-
-print("solve linear system: %.3f s" % (time.time() - start))
-
-###############################################################################
-# separate fields 
-###############################################################################
-start = time.time()
-
-u = np.zeros(Nu,dtype=np.float64)            # x-component velocity
-v = np.zeros(Nv,dtype=np.float64)            # y-component velocity
-
-u[:]=sol[0:Nu]
-v[:]=sol[0+Nu:Nv+Nu]
-
-print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
-
-print("split vel into u,v: %.3f s" % (time.time() - start))
+    
+print('******************************')
 
 ###############################################################################
 # compute pressure 
 ###############################################################################
+start = time.time()
 
 p = np.zeros(NP,dtype=np.float64)
+divv = np.zeros(NP,dtype=np.float64)
+sum_u=np.zeros(Nu,dtype=np.float64)
+sum_v=np.zeros(Nv,dtype=np.float64)
 
+sum_u[:]=sum_sol[0:Nu]
+sum_v[:]=sum_sol[0+Nu:Nv+Nu]
+
+counter=0
 for iel in range(0,nel):
-    i=1
 
+    for k in range(0,4):
+
+        rq=rVnodes[k]
+        sq=sVnodes[k]
+
+        dNNNVudr=dNNVudr(rq,sq)
+        dNNNVuds=dNNVuds(rq,sq)
+
+        dNNNVvdr=dNNVvdr(rq,sq)
+        dNNNVvds=dNNVvds(rq,sq)
+
+        #compute jacobian matrix and determinant
+        #jcob=hx*hy/4
+        #jcbi[0,0]=2/hx ; jcbi[0,1]=0    
+        #jcbi[1,0]=0    ; jcbi[1,1]=2/hy 
+
+        # compute dNdx, dNdy
+        for k in range(0,mV):
+            dNNNVudx[k]=jcbi[0,0]*dNNNVudr[k]
+            dNNNVudy[k]=jcbi[1,1]*dNNNVuds[k]
+            dNNNVvdx[k]=jcbi[0,0]*dNNNVvdr[k]
+            dNNNVvdy[k]=jcbi[1,1]*dNNNVvds[k]
+        #end for
+        
+        p[counter]=-laambda*(dNNNVudx.dot(sum_u[iconu[:,iel]])+\
+                             dNNNVvdy.dot(sum_v[iconv[:,iel]]))
+
+        divv[counter]=dNNNVudx.dot(u[iconu[:,iel]])+\
+                      dNNNVvdy.dot(v[iconv[:,iel]])
+
+        counter+=1
+
+    #end for
+#end for
+
+print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+
+print("compute pressure: %.3f s" % (time.time() - start))
 
 ###############################################################################
 # normalise pressure
@@ -566,14 +669,102 @@ for iel in range(0,nel):
 
 
 
+###############################################################################
+# compute velocity divergence on swarm of points
+###############################################################################
 
+nmarker_per_dim=5
+nmarker=nmarker_per_dim**2*nel
+
+xm=np.zeros(nmarker,dtype=np.float64)
+ym=np.zeros(nmarker,dtype=np.float64)
+divvm=np.zeros(nmarker,dtype=np.float64)
+
+counter=0
+for iel in range(0,nel):
+
+    for i in range(0,nmarker_per_dim):
+        for j in range(0,nmarker_per_dim):
+
+            rm=-1+(i+0.5)*2/nmarker_per_dim
+            sm=-1+(j+0.5)*2/nmarker_per_dim
+
+            NNNVu=NNVu(rm,sm)
+            NNNVv=NNVv(rm,sm)
+
+            xm[counter]=NNNVu.dot(xu[iconu[0:mV,iel]])
+            ym[counter]=NNNVu.dot(yu[iconu[0:mV,iel]])
+
+            dNNNVudr=dNNVudr(rm,sm)
+            dNNNVvds=dNNVvds(rm,sm)
+
+            for k in range(0,mV):
+                dNNNVudx[k]=jcbi[0,0]*dNNNVudr[k]
+                dNNNVvdy[k]=jcbi[1,1]*dNNNVvds[k]
+            #end for
+
+            exx=dNNNVudx.dot(u[iconu[:,iel]])
+            eyy=dNNNVvdy.dot(v[iconv[:,iel]])
+        
+            divvm[counter]=exx+eyy
+
+            counter+=1
+
+        #end for j
+    #end for i
+#end for iel
+
+np.savetxt('divv.ascii',np.array([xm,ym,divvm]).T,header='# x,y')
+
+###############################################################################
+# compute error in L2 norm
+# here again assuming jcob does not change
+# for pressure I use Q1 basis functions
+###############################################################################
+start = time.time()
+
+N=np.zeros(4,dtype=np.float64)
+
+errv=0.
+errp=0.
+counterq=0
+for iel in range (0,nel):
+    for iq in range(0,nqperdim):
+        for jq in range(0,nqperdim):
+            rq=qcoords[iq]
+            sq=qcoords[jq]
+            weightq=qweights[iq]*qweights[jq]
+            NNNVu=NNVu(rq,sq)
+            NNNVv=NNVv(rq,sq)
+            uq=NNNVu.dot(u[iconu[0:mV,iel]])
+            vq=NNNVv.dot(v[iconv[0:mV,iel]])
+
+            N[0]=0.25*(1.-rq)*(1.-sq)
+            N[1]=0.25*(1.+rq)*(1.-sq)
+            N[2]=0.25*(1.+rq)*(1.+sq)
+            N[3]=0.25*(1.-rq)*(1.+sq)
+            pq=N.dot(p[4*iel:4*iel+4])
+
+            errv+=((uq-velocity_x(xq[counterq],yq[counterq]))**2+(vq-velocity_y(xq[counterq],yq[counterq]))**2)*weightq*jcob
+            errp+=(pq-pressure(xq[counterq],yq[counterq]))**2*weightq*jcob
+            counterq+=1
+        #end for
+    #end for
+#end for
+
+errv=np.sqrt(errv)
+errp=np.sqrt(errp)
+
+print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
+
+print("compute errors: %.3f s" % (time.time() - start))
 
 ###############################################################################
 # plot of solution (given the node layout, the easiest vtu export is Q1)
 ###############################################################################
 start = time.time()
 
-if True:
+if visu==1:
    vtufile=open("solution.vtu","w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
    vtufile.write("<UnstructuredGrid> \n")
@@ -593,16 +784,37 @@ if True:
    #####
    vtufile.write("<PointData Scalars='scalars'>\n")
    #--
-   vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
    for iel in range(0,nel):
        for k in range(0,4):
            vtufile.write("%e  \n" %(p[4*iel+k]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='divv' Format='ascii'> \n")
+   for iel in range(0,nel):
+       for k in range(0,4):
+           vtufile.write("%e  \n" %(divv[4*iel+k]))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='p (error)' Format='ascii'> \n")
+   for iel in range(0,nel):
+       for k in range(0,4):
+           pth=pressure(xu[iconu[k,iel]],yu[iconu[k,iel]])
+           vtufile.write("%e  \n" %(p[4*iel+k]-pth))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel' Format='ascii'> \n")
    for iel in range(0,nel):
        for k in range(0,4):
            vtufile.write("%e %e %e \n" %(u[iconu[k,iel]],v[iconv[k,iel]],0))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel error' Format='ascii'> \n")
+   for iel in range(0,nel):
+       for k in range(0,4):
+           uth=velocity_x(xu[iconu[k,iel]],yu[iconu[k,iel]])
+           vth=velocity_y(xu[iconu[k,iel]],yu[iconu[k,iel]])
+           vtufile.write("%e %e %e \n" %(u[iconu[k,iel]]-uth,v[iconv[k,iel]]-vth,0))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("</PointData>\n")

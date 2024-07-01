@@ -90,7 +90,104 @@ elt
 \end{verbatim}
 \end{itemize}
 
+
+The solution vector $\vec{\cal V}$ is organised as follows:
+\[
+\vec{\cal V} = ( u_1, u_2, ... u_{Nu}, v_1, v_2, ... v_{Nv})
+\]
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Iterated penalty method}
+
+Following \cite{zhan09,huzh11} we implement this method since it 
+
+\begin{displayquote}
+{\color{darkgray}
+it is the special interest
+of the divergence-free ﬁnite element method that the space Ph can be omitted
+in computation and the discrete solutions approximating the pressure function
+in the Stokes equations can be obtained as byproducts, if an iterated penalty
+method is adopted to solve system (2.5).}
+\end{displayquote}
+
+Also in \cite{huzh11}:
+\begin{displayquote}
+{\color{darkgray}
+We do enough iterated penalty iterations (cf. [25,30]) until the iterative error is smaller
+than the truncation error each time.}
+\end{displayquote}
+
+In \cite{zhan09} we find:
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_161/images/iterpen}
+\end{center}
+
+Let us then write the first steps of this algorithm.
+\begin{itemize}
+\item
+For $n=1$:
+\begin{eqnarray}
+a({\bm u}_h^1,{\bm v}_h) + \alpha (\text{div}\; {\bm u}_h^1, \text{div}\; {\bm v}_h) 
+&=& ({\bm f} , {\bm v}_h) - \text{div}\; \left( \alpha {\bm u}_h^0 , \text{div}\; {\bm v}_h \right) \nn\\
+p_h^1 &=& - \text{div}\; [\alpha ( {\bm u}_h^0 + {\bm u}_h^1 )]
+\end{eqnarray}
+\item 
+For $n=2$:
+\begin{eqnarray}
+a({\bm u}_h^2,{\bm v}_h) + \alpha (\text{div}\; {\bm u}_h^2, \text{div}\; {\bm v}_h) 
+&=& ({\bm f} , {\bm v}_h) - \text{div}\; \left( \alpha ({\bm u}_h^0 +{\bm u}_h^1 ), \text{div}\; {\bm v}_h \right) \nn\\
+p_h^2 &=& - \text{div}\; [\alpha ( {\bm u}_h^0 + {\bm u}_h^1 + {\bm u}_h^2)]
+\end{eqnarray}
+\end{itemize}
+
+Concretely, we'll start with ${\bm u}_h^0={\bm 0}$ and we'll compute the pressure only when the 
+iterations have converged.
+
+write abuot conv criterion
+
+\newpage
+%============================
+\section*{Without iterations}
+
+Let us first explore the influence of the $\lambda$ parameter:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_161/results/single/errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_161/results/single/errorsP.pdf}\\
+\end{center}
+
+%============================
+\section*{With iterations}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_161/results/iterations/errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_161/results/iterations/errorsP.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/iterations/conv1.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/iterations/conv2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/iterations/conv3.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/iterations/conv4.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/iterations/conv5.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/iterations/conv6.pdf}
+\end{center}
+
+Q: rates are not what is expected from Q2Q1. 
+Also huzh11 report 2 and 2 rates in L2 norm.
+
+We find that for $\lambda \ge 10^2$ the number of iterations becomes really small.
+Also the number of iterations to reach convergence decreases when $\lambda$ increases. 
+Any value higher than $10^4$ does not improve the convergence.
+
+ 
+
+
+
+\newpage
+
 Remark: given the weird placement of nodes for u and v, it makes sense not to 
 use an isoparameteric mapping, and instead choose a Q2 mapping.
 
 open question: quadrature for penalty term?
+
+open question: quid of mapping, non rectangular elements, 3D?
