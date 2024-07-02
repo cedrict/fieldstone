@@ -5,36 +5,73 @@ from scipy.sparse import lil_matrix
 import sys as sys
 import scipy.sparse as sps
 
+bench=1 # donea-huerta
+#bench=2 # zhan09,huzh11
+
 ###############################################################################
-# bx and by are the body force components
+
+def f(x):
+    return (x-x**2)**2
+
+def fp(x):
+    return 2*(1-2*x)*(x-x**2)
+
+def fpp(x):
+    return 2*(1-6*x+6*x**2)
+
+def fppp(x):
+    return 24*x-12
+
+###############################################################################
+# bx and by are the body force components 
 
 def bx(x, y):
-    val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
-         (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
-         (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
-         1.-4.*y+12.*y*y-8.*y*y*y)
+    match bench:
+       case 1:
+          val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
+              (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
+              (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
+              1.-4.*y+12.*y*y-8.*y*y*y)
+       case 2:
+          val=-fpp(x)*fp(y)-f(x)*fppp(y)-fppp(x)*f(y)
     return val
 
 def by(x, y):
-    val=((8.-48.*y+48.*y*y)*x*x*x+
-         (-12.+72.*y-72.*y*y)*x*x+
-         (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
-         12.*y*y+24.*y*y*y-12.*y**4)
+    match bench:
+       case 1:
+          val=((8.-48.*y+48.*y*y)*x*x*x+
+              (-12.+72.*y-72.*y*y)*x*x+
+              (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
+              12.*y*y+24.*y*y*y-12.*y**4)
+       case 2:
+          val=fppp(x)*f(y)+fp(x)*fpp(y)-fpp(x)*fp(y)
     return val
 
 ###############################################################################
 # analytical solution
 
 def velocity_x(x,y):
-    val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+    match bench:
+       case 1:
+          val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+       case 2:
+          val=f(x)*fp(y)
     return val
 
 def velocity_y(x,y):
-    val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    match bench:
+       case 1:
+          val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+       case 2:
+          val=-fp(x)*f(y)
     return val
 
 def pressure(x,y):
-    val=x*(1.-x)-1./6.
+    match bench:
+       case 1:
+          val=x*(1.-x)-1./6.
+       case 2:
+          val=-fpp(x)*f(y)
     return val
 
 ###############################################################################
@@ -131,8 +168,8 @@ if int(len(sys.argv) == 5):
    laambda=int(sys.argv[4])
    laambda=10**laambda
 else:
-   nelx = 32
-   nely = 32
+   nelx = 8
+   nely = 8
    visu = 1
    laambda=1e3 # penalty parameter, alpha in zhan09
 
@@ -153,7 +190,7 @@ hx=Lx/nelx
 hy=Ly/nely
 
 tol=1e-9
-niter=50
+niter=25
 
 ###############################################################################
 
@@ -580,8 +617,8 @@ for iter in range(0,niter):
     print("     -> u (m,M) %.5f %.5f " %(np.min(u),np.max(u)))
     print("     -> v (m,M) %.5f %.5f " %(np.min(v),np.max(v)))
 
-    np.savetxt('solution_u.ascii',np.array([xu,yu,u]).T,header='# x,y')
-    np.savetxt('solution_v.ascii',np.array([xv,yv,v]).T,header='# x,y')
+    #np.savetxt('solution_u.ascii',np.array([xu,yu,u]).T,header='# x,y')
+    #np.savetxt('solution_v.ascii',np.array([xv,yv,v]).T,header='# x,y')
 
     print("split vel into u,v: %.3f s" % (time.time() - start))
 
@@ -803,18 +840,33 @@ if visu==1:
            vtufile.write("%e  \n" %(p[4*iel+k]-pth))
    vtufile.write("</DataArray>\n")
    #--
+   vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
+   for iel in range(0,nel):
+       for k in range(0,4):
+           pth=pressure(xu[iconu[k,iel]],yu[iconu[k,iel]])
+           vtufile.write("%e  \n" %(pth))
+   vtufile.write("</DataArray>\n")
+   #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel' Format='ascii'> \n")
    for iel in range(0,nel):
        for k in range(0,4):
            vtufile.write("%e %e %e \n" %(u[iconu[k,iel]],v[iconv[k,iel]],0))
    vtufile.write("</DataArray>\n")
    #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel error' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel (error)' Format='ascii'> \n")
    for iel in range(0,nel):
        for k in range(0,4):
            uth=velocity_x(xu[iconu[k,iel]],yu[iconu[k,iel]])
            vth=velocity_y(xu[iconu[k,iel]],yu[iconu[k,iel]])
            vtufile.write("%e %e %e \n" %(u[iconu[k,iel]]-uth,v[iconv[k,iel]]-vth,0))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel (th)' Format='ascii'> \n")
+   for iel in range(0,nel):
+       for k in range(0,4):
+           uth=velocity_x(xu[iconu[k,iel]],yu[iconu[k,iel]])
+           vth=velocity_y(xu[iconu[k,iel]],yu[iconu[k,iel]])
+           vtufile.write("%e %e %e \n" %(uth,vth,0))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("</PointData>\n")

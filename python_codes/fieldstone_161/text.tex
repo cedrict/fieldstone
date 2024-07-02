@@ -1,5 +1,29 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/under_construction}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} \tt python\_codes/fieldstone\_161/text.tex}} \end{flushright}
+
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/template_keywords.key}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_161}}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 We here consider the $Q_{k+1,k}\times Q_{k,k+1} \times Q_{k}^-$ element introduced 
-by \textcite{huzh11} (2011).
+by \textcite{huzh11} (2011) which follows \textcite{zhan09} (2009).
 The shape functions in 2D are in derived in Section~\ref{ss:qqq_elt}. 
 
 The list of velocity degrees of freedom per element is as follows:
@@ -19,12 +43,11 @@ u dofs      v dofs
 
 \end{verbatim}
 It is rather interesting to note that the location of the 'extra' 
-nodes for u and v are opposite of those for the Fortin Q1+P0 element
-(see stne 80).
-
+nodes for u and v are opposite of those for the Fortin $Q_1^+\times P_0$ element, see
+Section \ref{MMM-ss:Q1pP02D} (see also \stone~80).
 
 We start with a simple $4\times 3$ element mesh.
-Bubble $u$ dofs are represented in blue and bubble $v$ dofs are shown in red.
+Bubble $u$ dofs are represented in red and bubble $v$ dofs are shown in blue.
 
 \input{python_codes/fieldstone_161/tikz_gridu}
 
@@ -33,44 +56,40 @@ Bubble $u$ dofs are represented in blue and bubble $v$ dofs are shown in red.
 For this mesh we have 
 
 \begin{lstlisting}
+nelx=4
+nely=3
+nnx=nelx+1
+nny=nely+1
 nel=nelx*nely (=12) 
 NP=nel (=12)
 Nu=nnx*nny+nnx*nely (=20+16=36)
 Nv=nnx*nny+nelx*nny (=20+15=35)
-NV=nnx*nny+nnx*nely+nny*nelx (=20+16+15=51)
 \end{lstlisting}
 
 The total number of velocity dofs is 
 \begin{lstlisting}
 NfemV=ndofV*nnx*nny + nnx*nely + nny*nelx (=71)
 \end{lstlisting}
-while the total number of pressure dofs remains
-\begin{lstlisting}
-NfemP=NP*ndofP (=nel) 
-\end{lstlisting}
 
 What makes this element pair rather awkward to implement is the fact that 
 there are two connectivity arrays {\tt iconu} and {\tt iconv}, both of size $mV\times nel$, where 
 $mV=6$ is the number of nodes linked to an element for each velocity component. 
-For each element, and depending on whether we are considering 
-the polynomial approximation $u^h(x,y)$ or $v^h(x,y)$ in the element, there are the standard 4 $Q_1$ nodes and 2 additional 
-dofs, so $mV=6$.
 \begin{itemize}
 \item content of {\tt iconu}
 \begin{verbatim}
 elt
-0 | [ 0  1  6  5 35 39]
-1 | [ 1  2  7  6 36 40]
-2 | [ 2  3  8  7 37 41]
-3 | [ 3  4  9  8 38 42]
-4 | [ 5  6 11 10 39 43]
-5 | [ 6  7 12 11 40 44]
-6 | [ 7  8 13 12 41 45]
-7 | [ 8  9 14 13 42 46]
-8 | [10 11 16 15 43 47]
-9 | [11 12 17 16 44 48]
-10 | [12 13 18 17 45 49]
-11 | [13 14 19 18 46 50]
+0 | [ 0  1  6  5 20 24]
+1 | [ 1  2  7  6 21 25]
+2 | [ 2  3  8  7 22 26]
+3 | [ 3  4  9  8 23 27]
+4 | [ 5  6 11 10 24 28]
+5 | [ 6  7 12 11 25 29]
+6 | [ 7  8 13 12 26 30]
+7 | [ 8  9 14 13 27 31]
+8 | [10 11 16 15 28 32]
+9 | [11 12 17 16 29 33]
+10 | [12 13 18 17 30 34]
+11 | [13 14 19 18 31 35]
 \end{verbatim}
 \item content of {\tt iconv}
 \begin{verbatim}
@@ -90,14 +109,33 @@ elt
 \end{verbatim}
 \end{itemize}
 
-
-The solution vector $\vec{\cal V}$ is organised as follows:
+Unlike many other codes in this book the solution vector $\vec{\cal V}$ 
+is organised as follows:
 \[
 \vec{\cal V} = ( u_1, u_2, ... u_{Nu}, v_1, v_2, ... v_{Nv})
 \]
 
+As mentioned in the articles\footnote{See also Section~\ref{MMM-ss:qqq_elt}} 
+it appears that 
+\begin{displayquote}
+{\color{darkgray}
+It is difficult to ﬁnd a
+local basis for $P_h$. But on the other side, it is the special interest of the method that
+the space $P_h$ can be omitted in computation and the discrete solutions approximating
+the pressure function in the Stokes equations can be obtained as byproducts, as we
+shall see next.}
+\end{displayquote}
 
-\newpage
+
+Remark: given the weird placement of nodes for u and v, it makes sense not to 
+use an isoparameteric mapping, and instead choose a Q1 mapping.
+
+Remark: the paper does not mention quadrature at all. 
+I choose a 3x3 quadrature as for $Q_2\times Q_1$. 
+Should I use a different quadrature for the div-div term?
+
+Remark: the paper also does not mention 3D, nor non-rectangular elements. 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Iterated penalty method}
 
@@ -106,7 +144,7 @@ Following \cite{zhan09,huzh11} we implement this method since it
 \begin{displayquote}
 {\color{darkgray}
 it is the special interest
-of the divergence-free ﬁnite element method that the space Ph can be omitted
+of the divergence-free ﬁnite element method that the space $P_h$ can be omitted
 in computation and the discrete solutions approximating the pressure function
 in the Stokes equations can be obtained as byproducts, if an iterated penalty
 method is adopted to solve system (2.5).}
@@ -124,52 +162,243 @@ In \cite{zhan09} we find:
 \includegraphics[width=12cm]{python_codes/fieldstone_161/images/iterpen}
 \end{center}
 
-Let us then write the first steps of this algorithm.
+Let us then write the first steps of this algorithm\footnote{For personal reasons
+and to establish a parallel with the penalty method, I replace $\alpha$ by $\lambda$.}.
 \begin{itemize}
 \item
 For $n=1$:
 \begin{eqnarray}
-a({\bm u}_h^1,{\bm v}_h) + \alpha (\text{div}\; {\bm u}_h^1, \text{div}\; {\bm v}_h) 
-&=& ({\bm f} , {\bm v}_h) - \text{div}\; \left( \alpha {\bm u}_h^0 , \text{div}\; {\bm v}_h \right) \nn\\
-p_h^1 &=& - \text{div}\; [\alpha ( {\bm u}_h^0 + {\bm u}_h^1 )]
+a({\bm u}_h^1,{\bm v}_h) + \lambda (\text{div}\; {\bm u}_h^1, \text{div}\; {\bm v}_h) 
+&=& ({\bm f} , {\bm v}_h) - \text{div}\; \left( \lambda {\bm u}_h^0 , \text{div}\; {\bm v}_h \right) \nn\\
+p_h^1 &=& - \text{div}\; [\lambda ( {\bm u}_h^0 + {\bm u}_h^1 )]
 \end{eqnarray}
 \item 
 For $n=2$:
 \begin{eqnarray}
-a({\bm u}_h^2,{\bm v}_h) + \alpha (\text{div}\; {\bm u}_h^2, \text{div}\; {\bm v}_h) 
-&=& ({\bm f} , {\bm v}_h) - \text{div}\; \left( \alpha ({\bm u}_h^0 +{\bm u}_h^1 ), \text{div}\; {\bm v}_h \right) \nn\\
-p_h^2 &=& - \text{div}\; [\alpha ( {\bm u}_h^0 + {\bm u}_h^1 + {\bm u}_h^2)]
+a({\bm u}_h^2,{\bm v}_h) + \lambda (\text{div}\; {\bm u}_h^2, \text{div}\; {\bm v}_h) 
+&=& ({\bm f} , {\bm v}_h) - \text{div}\; \left( \lambda ({\bm u}_h^0 +{\bm u}_h^1 ), \text{div}\; {\bm v}_h \right) \nn\\
+p_h^2 &=& - \text{div}\; [\lambda ( {\bm u}_h^0 + {\bm u}_h^1 + {\bm u}_h^2)]
 \end{eqnarray}
 \end{itemize}
 
-Concretely, we'll start with ${\bm u}_h^0={\bm 0}$ and we'll compute the pressure only when the 
-iterations have converged.
+Concretely, we start with ${\bm u}_h^0={\bm 0}$ and we compute the pressure only when the 
+iterations have converged, i.e. the inf norm of the difference between two consecutive 
+velocity fields is less than a user chosen tolerance:
+\begin{lstlisting}
+xi_u=np.max(abs(u_prev-u))
+xi_v=np.max(abs(v_prev-v))
+if xi_u<tol and xi_v<tol:
+   break
+\end{lstlisting}
 
-write abuot conv criterion
+Once the velocity field has been obtained the pressure is computed 
+at each corner of each element ($Q_{-1}$ representation).
+We will see that it is indeed discontinuous.
+
+
+\newpage
+%==========================================
+\section*{grids and dofs}
+
+In \cite{huzh11} we find the following table:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_161/images/dofs}
+\end{center}
+
+The authors state that ``The initial grid, level one grid, is simply one unit square''
+so that the level 2 grid is a 2x2 element grid:
+\begin{verbatim}
++-----+-----+
+|     |     |
+|     |     |
+|     |     |
++-----+-----+
+|     |     |
+|     |     |
+|     |     |
++-----+-----+
+\end{verbatim}
+with the following velocity dofs:
+\begin{verbatim}
+U--U--U--U--U   V-----V-----V
+|     |     |   |     |     |
+|     |     |   V     V     V
+|     |     |   |     |     |
+U--U--U--U--U   V-----V-----V
+|     |     |   |     |     |
+|     |     |   V     V     V
+|     |     |   |     |     |
+U--U--U--U--U   V-----V-----V
+\end{verbatim}
+Since $u=v=0$ on all boundaries we replace the U,V dofs by x
+to indicate that these are no longer degrees of freedom:
+\begin{verbatim}
+x--x--x--x--x   x-----x-----x
+|     |     |   |     |     |
+|     |     |   x     V     x
+|     |     |   |     |     |
+x--U--U--U--x   x-----V-----x
+|     |     |   |     |     |
+|     |     |   x     V     x
+|     |     |   |     |     |
+x--x--x--x--x   x-----x-----x
+\end{verbatim}
+and we indeed find $\text{dim}~V_h=6$. 
+
+Turning now to pressure dofs, it is supposed to be discontinuous Q1, 
+so I would expect 4x4=16 dofs. 
+Yet, the authors report 6(!) dofs... 
+
+In \cite{huzh11} we read: ``Meanwhile, we decrease the space $Q_1^{dc}$ 
+for the pressure to $Q_1'$, by removing all spurious modes, i.e.,
+eliminating one degree of freedom at each vertex.
+We have to emphasize
+that the discrete pressure space is introduced for the analysis, but not in the
+computation. By an iterated penalty method, we obtain the discrete solutions
+for the pressure without coding the pressure element
+''
+
+I do not understand this at all. Even removing 1 pdof per element, there are 3 left
+per element, i.e. 12 in total.
+
+
+
+%==========================================
+\section*{Manufactured solutions}
+
+In \textcite{huzh11} (2011) the authors propose the 
+following manufactured solution\footnote{I have removed th $2^8 term$}:
+
+\[
+g(x,y)=(x-x^2)^2(y-y^2)^2 =  f(x)h(y)
+\]
+The velocity is given by 
+\[
+\vec\upnu 
+= 
+\left(
+\begin{array}{c}
+g_y \\ -g_x
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+fh' \\
+-f'h
+\end{array}
+\right)
+%=
+%\left(
+%\begin{array}{c}
+%2^9(x-x^2)^2(1-2y)(y-y^2) \\
+%-2^9(1-2x)(x-x^2)(y-y^2)^2 
+%\end{array}
+%\right)
+\]
+and the pressure is defined as
+\[
+p
+= -g_{xx}
+= -f'' h
+\]
+We have (assuming viscosity is 1) 
+\[
+\vec{f} = -\Delta \vec{\upnu} + \vec\nabla p
+%= 
+%\left(
+%\begin{array}{c}
+%- \Delta g_{y} -g_{xxx}\\
+%- \Delta g_{x} -g_{yxx}
+%\end{array}
+%\right)
+%= 
+%\left(
+%\begin{array}{c}
+%- g_{yxx} - g_{yyy} -g_{xxx}\\
+%  g_{xxx} + g_{xyy} -g_{yxx}
+%\end{array}
+%\right)
+=
+\left(
+\begin{array}{c}
+- \Delta (fh') -f''' h  \\
+-\Delta (-f'h) -f''h'
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+- f''h' - fh''' -f''' h  \\
+ f'''h + f'h''  -f''h'
+\end{array}
+\right)
+\]
+with
+\begin{eqnarray}
+f(x)&=& (x-x^2)^2 \nn\\
+f'(x) &=& 2(1-2x)(x-x^2) \nn\\
+f''(x) &=& 2(1-6x+6x^2) \nn\\
+f'''(x) &=& 24x-12 \nn
+\end{eqnarray}
+
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_161/images/mms}\\
+{\captionfont Taken from \cite{zhan09}. Second component of velocity and pressure fields.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/th_u}
+\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/th_v}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/th_vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/th_press}
+\end{center}
+
+
+They also report the following rates:
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_161/images/errors}
+\end{center}
+
+It is quite remarkable that the error convergence rates (in the $L_2$ norm)
+are identical for both velocity and pressure. 
+
+
+
+
+
+
 
 \newpage
 %============================
-\section*{Without iterations}
+\section*{Results}
+
+%------------------------------------------------------------
+\subsection*{Donea \& Huerta manufactured solution (bench=1)}
+
+\subsubsection*{Without iterations}
 
 Let us first explore the influence of the $\lambda$ parameter:
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_161/results/single/errorsV.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_161/results/single/errorsP.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_161/results/bench1/single/errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_161/results/bench1/single/errorsP.pdf}\\
 \end{center}
 
-%============================
-\section*{With iterations}
+\subsubsection*{With iterations}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_161/results/iterations/errorsV.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_161/results/iterations/errorsP.pdf}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/iterations/conv1.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/iterations/conv2.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/iterations/conv3.pdf}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/iterations/conv4.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/iterations/conv5.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/iterations/conv6.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_161/results/bench1/iterations/errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_161/results/bench1/iterations/errorsP.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv1.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv3.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv4.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv5.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv6.pdf}
 \end{center}
 
 Q: rates are not what is expected from Q2Q1. 
@@ -179,15 +408,34 @@ We find that for $\lambda \ge 10^2$ the number of iterations becomes really smal
 Also the number of iterations to reach convergence decreases when $\lambda$ increases. 
 Any value higher than $10^4$ does not improve the convergence.
 
- 
+%------------------------------------------------------------ 
+\subsection*{Huang \& Zhang manufactured solution (bench=2)}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_161/results/bench2/errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_161/results/bench2/errorsP.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/conv1.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/conv2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/conv3.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/conv4.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/conv5.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/conv6.pdf}
+\end{center}
+
+This time, we do recover second order convergence rate for pressure?!
+Note that at high resolution the case $\lambda=10^6$ fails to converge to the 
+desired tolerance. 
 
 
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/press}
+\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/press_error}
+\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/press_error2}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/divv}
+\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/vel_error}\\
+{\captionfont Obtained on 8x8 grid. We find that the divergence is indeed very low.
+Note that Paraview is misleading: it looks like the squares are divived into 2 triangles but
+in reality it is a visualisation artefact!}
+\end{center}
+It looks like pressure is continuous on the edges of the domain!
 
-\newpage
-
-Remark: given the weird placement of nodes for u and v, it makes sense not to 
-use an isoparameteric mapping, and instead choose a Q2 mapping.
-
-open question: quadrature for penalty term?
-
-open question: quid of mapping, non rectangular elements, 3D?
