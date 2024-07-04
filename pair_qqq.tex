@@ -83,6 +83,17 @@ The $u$-space basis functions are given by
 \frac12 r(r+1)  \frac12(1+s)
 \end{array}
 \right)
+=
+\left(
+\begin{array}{c}
+\bN_1^u \\ 
+\bN_2^u \\ 
+\bN_3^u \\ 
+\bN_4^u \\ 
+\bN_5^u \\ 
+\bN_6^u 
+\end{array}
+\right)
 \]
 
 \[
@@ -110,6 +121,17 @@ The $u$-space basis functions are given by
 \frac12(1+r)  \frac12 s(s+1)
 \end{array}
 \right)
+=
+\left(
+\begin{array}{c}
+\bN_1^v \\ 
+\bN_2^v \\ 
+\bN_3^v \\ 
+\bN_4^v \\ 
+\bN_5^v \\ 
+\bN_6^v 
+\end{array}
+\right)
 \]
 The $u$-dofs and $v$-dofs are living on different nodes.
 Based on the vectors above the numbering is then 
@@ -126,7 +148,8 @@ Based on the vectors above the numbering is then
 In total, there are 6 $u$-dofs, 6 $v$-dofs and 4 $p$-dofs per element.
 
 
-The solution strategy is also quite peculiar (and identical to both papers):
+The solution strategy is also quite peculiar (and identical to both papers, but 
+following quote taken from \cite{huzh11}):
 \begin{displayquote}
 {\color{darkgray}
 We have to emphasize
@@ -139,6 +162,36 @@ elements, neither to nonconforming (discontinuous) locally-divergence-free
 elements [6,10,12,14,15,17,28].
 }
 \end{displayquote}
+
+Reading further, we find:
+\begin{displayquote}
+{\color{darkgray}
+It is apparent that the discrete velocity solution is divergence-free if and only if the
+discrete pressure ﬁnite element space is the divergence of the discrete velocity
+ﬁnite element space.
+We note that by (2.4), $P_h$ is a subspace of discontinuous, piecewise bilinear
+polynomials. As singular vertices are present (see [23,24]), $P_h$ is a proper subset
+of the discontinuous piecewise $Q_1$ polynomials. It is possible, but difficult to
+ﬁnd a local basis for $P_h$. However, on the other side, it is the special interest
+of the divergence-free ﬁnite element method that the space $P_h$ can be omitted
+in computation and the discrete solutions approximating the pressure function
+in the Stokes equations can be obtained as byproducts, if an iterated penalty
+method is adopted to solve system (2.5).
+}
+\end{displayquote}
+
+\begin{center}
+\includegraphics[width=4cm]{images/pair_qqq/singular}\\
+{\captionfont ``A 2D vertex
+of a triangulation is singular if all edges meeting at the vertex form two cross 
+lines \cite{zhan11a}}
+\end{center}
+
+The iterated penalty method is described (for now) in \stone~161 where the 
+second order version of this element is implemented.
+
+
+
 
 Turning now to $Q_{3,2}\times Q_{2,3}\times Q_{2}$
 \begin{verbatim}

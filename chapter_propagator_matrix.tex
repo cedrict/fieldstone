@@ -1,0 +1,201 @@
+\chapter{The Propagator matrix method (PMM) in geodynamics} 
+
+\begin{flushright} {\tiny {\color{gray} \tt chapter\_propagator\_matrix.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\begin{verbatim}
+giba66 <--- haoc81(appendix)  <--- riha84  <-- hacr85 
+            haoc78?                riff84
+            haoc79?                hage84
+
+\end{verbatim}
+
+%==============================================================================
+\subsection{Literature}
+
+\begin{itemize}
+
+
+%-----------------------------
+\item \fullcite{giba66}
+
+An early article about the PMM, often cited. Not 
+so useful since it is not concerned with the Stokes equations
+of mantle dynamics.
+
+%-----------------------------
+\item \fullcite{haoc78}
+
+3d formulation based on spherical harmonics. 
+
+\begin{displayquote}
+{\color{darkgray}
+Kinematic models of the large scale flow in the mantle accompanying the observed
+plate motions are calculated by neglecting thermal buoyancy forces. 
+The large scale flow
+is therefore determined by the mass flux imposed by the moving plates. The energy and
+momentum equations decouple, and with the assumption of a radially symmetric 
+Newtonian viscosity, the flow accompanying the plate motions can be obtained using 
+harmonic analysis and propagator matrices.
+[...]
+We also assume that viscosity
+is a function of radius only. This assumption may well neglect some 
+important effects since the mantle temperature distribution is not 
+radially symmetric, and viscosity is highly dependent upon temperature. 
+The flow is assumed to be incompressible.
+}
+\end{displayquote}
+
+%-----------------------------
+\item \fullcite{haoc79}
+
+Very similar in scope and technique to their 1978 paper. 
+
+%-----------------------------
+\item \fullcite{haoc81}
+
+This article is cited a lot when people refer to the PMM. 
+It presents in its appendix the PMM for both 2d and 3d cases.
+
+\begin{displayquote}
+{\color{darkgray}
+The procedure for solving these equations [mass \& momentum
+conservation equations] (givenin the appendix)is to separate 
+the vertical and horizontal dependences
+of the flow parameters. The total variation of these parameters, 
+assumed periodic with horizontal period L, is expressed
+in terms of a Fourier series, with each term containing a 
+coefficient varying with depth multiplied by a harmonic function
+of the horizontal coordinate.The flow equations can be reduced 
+to a coupled set of first-order differential equations in
+depth. These are solved analytically by using the propagator
+matrix technique \cite{giba66}.
+}
+\end{displayquote}
+
+%-----------------------------
+\item \fullcite{riha84}
+
+Refers to \textcite{haoc81} (1981). 
+
+\begin{displayquote}
+{\color{darkgray}
+A familiar and useful property of the propagator matrix
+formulation is that solution vectors can be propagated
+through a seriesof differentmaterial layers by simply forming
+the product of the individual layer matrices [...].
+Therefore changes in viscosity (and density) with depth are
+easily incorporated into this formalism.
+}
+\end{displayquote}
+
+
+%-----------------------------
+\item \fullcite{riff84}
+
+3d, refers to \textcite{haoc78} (1978).
+
+%-----------------------------
+\item \fullcite{hage84}
+
+%-----------------------------
+\item \fullcite{hacr85}
+
+%-----------------------------
+\item \fullcite{ribe18}
+
+Ribe cites Gantmacher as all others, but actually provides 
+more information: vol I, p 120, Eq.~(53).
+The two pages in the book rely heavily on \cite{haoc81}.
+We find the same content in \cite{ribe07}. 
+
+%-----------------------------
+\item \fullcite{zhon96}
+
+\begin{displayquote}
+{\color{darkgray}
+Analytic solutions for 2-D incompressible Stokes' flow with lateral variations in
+viscosity have been developed with a Green’s function method and matrix propagator
+techniques. The analytic solutions are developed based on the observation that lateral
+variations in viscosity only result in mode coupling between viscosity and buoyancy in
+the horizontal dimension and not in the vertical dimension.
+}
+\end{displayquote}
+
+%-----------------------------
+\item \fullcite{mawo98}
+
+%-----------------------------
+\item \fullcite{bugo94}
+
+%-----------------------------
+\item \fullcite{tosi_thesis}
+
+\begin{displayquote}
+{\color{darkgray}
+After introducing the partial differential equations that govern the flow in the
+mantle and the gravitational potential, we briefly review the technique of the
+matrix propagator which is generally employed to solve such equations in a
+spherical geometry under the approximation of laterally homogeneous viscosity.
+The method allows us to obtain an analytical solution in terms of the spherical
+harmonic expansion of the field quantities. In the presence of lateral viscosity
+variations, this method is no longer applicable.
+}
+\end{displayquote}
+
+
+%-----------------------------
+\item \fullcite{lezh08}
+
+%-----------------------------
+\item \fullcite{lizh13}
+
+\begin{displayquote}
+{\color{darkgray}
+For compressible convection with depth-dependent density and
+possibly other depth-dependent thermodynamic properties, propagator 
+matrix method is more effective. The propagator matrix
+method has been used to obtain analytic solution of the Stokes flow
+problem for incompressible (\textcite{haoc81}, 1981) and com-
+pressible (\textcite{lezh08}, 2008) models. With a stream-function
+and vorticity formulation, \textcite{jamc80} (1980) employed the
+propagator matrix method for marginal stability analysis with heat
+flux boundary conditions. \textcite{bugo94} used the propagator
+matrix method for marginal stability analysis for incompressible
+flows with depth-dependent viscosity. In this study, we develop a
+new implementation of propagator matrix method for marginal stability 
+analysis for both incompressible and compressible flows with
+free-slip and isothermal boundary conditions. Our implementation
+is based on a stress-velocity formulation which is similar to that
+in \textcite{lezh08} (2008), but we also incorporate the linearized
+energy equation. The setup of propagator matrix and the solution
+procedure are discussed in Appendix A.
+}
+\end{displayquote}
+
+
+
+%-----------------------------
+\item \fullcite{moko18}
+
+\begin{displayquote}
+{\color{darkgray}
+In this 2-D Cartesian geometry, we expand field variables in the Fourier series assuming the horizontal invariance of material properties.
+}
+\end{displayquote}
+
+{\color{red} redo in a stone?}
+
+
+
+%-----------------------------
+\item \fullcite{qizp18}
+
+\end{itemize}
+
+%==============================================================================
+\subsection{Theory in 2d}
+
+
+%==============================================================================
+\subsection{Theory in 3d}

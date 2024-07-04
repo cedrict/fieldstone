@@ -1,4 +1,21 @@
+
+rm literature_areas.4ct
+rm literature_areas.4tc
+rm literature_areas.css
+rm literature_areas.idv
+rm literature_areas.lg
+rm literature_areas.run.xml
+rm literature_areas.xref
+rm literature_areas.pdf
+rm literature_areas.log
+rm literature_areas.out
+rm literature_areas.svg
 rm literature_areas.html
+rm literature_areas.dvi
+rm literature_areas.aux
+rm literature_areas.blg
+rm literature_areas.tmp
+rm literature_areas.toc
 pdflatex literature_areas.tex
 biber --output-safechars literature_areas
 pdflatex literature_areas.tex
