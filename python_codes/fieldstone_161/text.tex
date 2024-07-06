@@ -187,6 +187,7 @@ xi_v=np.max(abs(v_prev-v))/np.max(abs(v))
 if xi_u<tol and xi_v<tol:
    break
 \end{lstlisting}
+These values are written at every iteration in the {\tt conv.ascii} file.
 
 Once the velocity field has been obtained the pressure is computed 
 at each corner of each element ($Q_{-1}$ representation).
@@ -195,12 +196,12 @@ We will see that it is indeed discontinuous (but not everywhere?!).
 
 \newpage
 %==========================================
-\section*{grids and dofs}
+\section*{Grids and dofs}
 
 In \textcite{huzh11} we find the following table:
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_161/images/dofs}
+\includegraphics[width=10cm]{python_codes/fieldstone_161/images/dofs}
 \end{center}
 
 The authors state that ``The initial grid, level one grid, is simply one unit square''
@@ -244,7 +245,7 @@ x---x---x---x---x   x-------x-------x
 and we indeed find $\text{dim}~V_h=6$. 
 
 \newpage
-Let us now turn to a level 3 grid, i.e. 4x4 elements. 
+Let us now turn to a level 3 grid, i.e. $4\times 4$ elements. 
 The $u$ dofs are placed as follows:
 \begin{verbatim}
 u---u---u---u---u---u---u---u---u
@@ -285,18 +286,17 @@ x---u---u---u---u---u---u---u---x
 |       |       |       |       |
 x---x---x---x---x---x---x---x---x
 \end{verbatim}
-Only 21 $u$ are left, and we will find as many $v$ dofs, so in this case dim($V_h$)=42,
+Only 21 $u$ are left, and we will find as many $v$ dofs, so in this case $\text{dim}(V_h)=21+21=42$,
 in accordance with the table. 
 
 Let us now turn to the pressure dofs. 
 Warning: it is not as simple as the velocity dofs. 
-In \textcite{huzh11} we read: ``Meanwhile, we decrease the space $Q_1^{dc}$ 
+In \textcite{huzh11} we read: ``we decrease the space $Q_1^{dc}$ 
 for the pressure to $Q_1'$, by removing all spurious modes, i.e.,
 eliminating one degree of freedom at each vertex. We have to emphasize
 that the discrete pressure space is introduced for the analysis, but not in the
 computation. By an iterated penalty method, we obtain the discrete solutions
-for the pressure without coding the pressure element
-''
+for the pressure without coding the pressure element''
 and in 
 \textcite{zhan09}:
 ``
@@ -314,19 +314,22 @@ singular vertex (cf. (3.8)), in the discrete pressure space are ﬁltered
 out naturally.
 ''
 
-In order to understand this and arrive at the correct number of pressure dofs, 
-it is useful to look at this part of \cite{huzh11}:
+In order to understand this and arrive at the correct number of pressure dofs
+presented in the table above 
+it is useful to look at this part of \textcite{huzh11}:
 
 \begin{center}
 \fbox{\includegraphics[width=12cm]{python_codes/fieldstone_161/images/pconstraints}}
 \end{center}
 
 We see that all nodes are subjected to a constraint. After the mesh is divided 
-in 2x2 macro-elements we see that there are 3 type of vertices: the corner ones, 
+in $2\times 2$ macro-elements we see that there are 3 type of vertices: the corner ones, 
 the mid-edge ones, and the interior ones. 
-Let us start with the simplest case: a 2x2 element mesh, i.e. a single macro element.
-If the pressure field was a 'true' $Q_{-1}$ field, we would have four pdofs per element,
-so 4x4=16 pdofs in total:
+Let us start with the simplest case: a $2\times 2$ element mesh, i.e. a single macro element.
+If the pressure field was a `true' $Q_{-1}$ field\footnote{
+Same as $Q_1^{dc}$, but I prefer $Q_{-1}$ to remain consistent 
+with the rest of the book.}, we would have 4 pdofs per element,
+so $4\cdot 4=16$ pdofs in total:
 \begin{verbatim}
 +-------+-------+
 |4     3|4     3|
@@ -338,22 +341,24 @@ so 4x4=16 pdofs in total:
 |1     2|1     2|
 +-------+-------+
 \end{verbatim}
-However it is clear from Eq.~(3.7) that the corner nodes are constrained to 0, so we
+However it is clear from the Eq.~(3.7) above that the corner nodes are constrained to 0, so we
 have 4 constraints, i.e. 4 pdofs removed. 
-The same equation tells us that mid edge vertices are constrained (i.e. the pressure 
+The same equation tells us that mid-edge vertices are constrained (i.e. the pressure 
 is continuous at those vertices) so we have again 4 more constraints.
 Finally there is one constraint for the vertex in the middle, and one should not 
 forget that the pressure space is such that  $\int _\Omega p \; dV=0$, which 
 introduces a last constraint. 
 In total, 4+4+1+1=10 constraints, so we are left with 16-10=6 pdofs, which is the 
-number in the table!
+number in the table.
 
-We find in \textcite{zhmu16} a rewording of this above:
+We also find in \textcite{zhmu16}\footnote{That paper is about a different 
+FE pair, that is not divergence-free, but it presents the pressure space
+of our FE element here.} a rewording of the constraints:
 \begin{center}
-\fbox{\includegraphics[width=12cm]{python_codes/fieldstone_161/images/zhmu16}}
+\fbox{\includegraphics[width=14cm]{python_codes/fieldstone_161/images/zhmu16}}
 \end{center}
 
-Let us look at a 4x4 element mesh, i.e. a 2x2 macro element as in the figure above. 
+Let us look at a $4\times 4$ element mesh, i.e. a $2\times 2$ macro element as in the figure above. 
 \begin{verbatim}
 C-------+-------+-------+-------C
 |4     3|4     3|4     3|4     3|
@@ -373,33 +378,34 @@ C-------+-------+-------+-------C
 |1     2|1     2|1     2|1     2|
 C-------+-------+-------+-------C
 \end{verbatim}
-Once again we start from potentially 16x4=64 pdofs. We find that 
-each vertex is subjected to a constraint, either because it on an edge betwen
-or in the middle of four elements. 
+We start from potentially $16\cdot 4=64$ pdofs. We find that 
+{\it all} vertices are subjected to a constraint, either because located on a 
+corner, an edge or in the middle of four elements. 
 This explains the sentence 
 ``we decrease the space $Q_1^{dc}$ for the pressure to $Q_1'$, by removing 
 all spurious modes, i.e., eliminating one degree of freedom at each vertex.''
 In the end each vertex is assigned a constraint, which removes as many 
-pdofs. In thi case, 5x5=25 constraints. Taking into account the zero-average
+pdofs. In this case, $5\cdot 5=25$ constraints. Taking into account the zero-average
 constraint, we are left with 64-25-1=38 pdofs, as in the table!
 
 Concretely if the mesh is composed of $n \times n$ elements, then it 
 counts $4n^2 - (n+1)^2  -1$ pdofs.
 \begin{itemize}
-\item $n=2$:  $4n^2 - (n+1)^2  -1= 16 -9 -1=6 $ (we covered that already)
-\item $n=4$:  $4n^2 - (n+1)^2  -1= 64 -25 -1=38 $ (we covered that already)
-\item $n=8$:  $4n^2 - (n+1)^2  -1= 256 -81 -1=174 $ (value in the table)
-\item $n=16$: $4n^2 - (n+1)^2  -1= 1024 -289 -1= 734$ (value in the table)
+\item $n=2$:  $4n^2 - (n+1)^2 -1= 16 -9 -1=6 $ (we covered that already)
+\item $n=4$:  $4n^2 - (n+1)^2 -1= 64 -25 -1=38 $ (we covered that already)
+\item $n=8$:  $4n^2 - (n+1)^2 -1= 256 -81 -1=174 $ (value in the table)
+\item $n=16$: $4n^2 - (n+1)^2 -1= 1024 -289 -1= 734$ (value in the table)
 \end{itemize}
 
 Having understood this, it is clear that it would be very difficult 
 to come up with analytical expressions for the pressure basis functions. 
 
-Q: what are the consequences of eq(3.7) (i.e. p=0 at corners?!) for 
-generic cases?
+{\color{red} Q: what are the consequences of eq(3.7) (i.e. p=0 at corners?!) for 
+generic cases?}
 
-Q: what if odd number of elts? in practice, this makes no difference in the 
-error values and rates.
+Remark: quid of odd numbers of elts (per side)? I have tried this, 
+and in practice, this makes no difference in the error values nor their 
+convergence rates.
 
 %==========================================
 \section*{Manufactured solutions}
@@ -498,7 +504,7 @@ p(0,0)=p(1,1)=p(0,1)=p(1,0)=0
 
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_161/images/mms}\\
+\fbox{\includegraphics[width=13cm]{python_codes/fieldstone_161/images/mms}}\\
 {\captionfont Taken from \cite{zhan09}. Second component of velocity and pressure fields.}
 \end{center}
 
@@ -525,22 +531,8 @@ are identical for both velocity and pressure.
 
 Taken from \cite{dohu03}. We consider a two-dimensional problem 
 in the square domain $\Omega=[0,1]\times[0,1]$, which possesses a closed-form analytical 
-solution. The problem consists of determining the incompressible flow velocity field ${\vec \upnu} = (u,v)$ 
-and the pressure $p$ such that 
-\begin{eqnarray}
-\vec\nabla \cdot (2 \eta \dot{\bm \varepsilon}({\vec \upnu})) -{\vec \nabla} p + {\vec b} &=& \vec 0 \quad\quad {\rm in} \; \Omega\\
-\vec{\nabla} \cdot \vec{v} &=& 0 \quad\quad {\rm in} \; \Omega\\
-\vec{v}&=&\vec{0} \quad\quad {\rm on} \; \Gamma_D
-\end{eqnarray}
-where the fluid viscosity is taken as $\eta=1$.
-The components of the body force $\vec{b}$ are prescribed as  
-\begin{eqnarray}
-b_x &=& (12 - 24y) x^4 + (-24 + 48y) x^3 + (-48y + 72y^2 - 48 y^3 + 12) x^2 \nonumber\\
-    && + (-2 + 24y -72y^2+48y^3)x + 1-4y + 12y^2-8y^3 \nonumber\\ 
-b_y &=& (8 - 48y + 48 y^2) x^3 + (-12 + 72y - 72y^2) x^2  \nonumber\\
-    && + (4 - 24y + 48y^2 - 48y^3 + 24y^4) x - 12y^2 + 24y^3 - 12y^4  \nonumber
-\end{eqnarray}
-With this prescribed body force, the exact solution is  
+solution. The fluid viscosity is $\eta=1$.
+The velocity and pressure fields are given by:
 \begin{eqnarray}
 u(x,y) 
 &=& x^2(1- x)^2 (2y - 6y^2 + 4y^3)  \nn\\
@@ -554,8 +546,48 @@ p(x,y) &=& x(1 -x)- 1/6 \nonumber
 \end{eqnarray}
 Note that the pressure obeys $\int_{\Omega} p \; dV = 0$.
 
+The components of the body force $\vec{b}$ are then
+\begin{eqnarray}
+b_x &=& (12 - 24y) x^4 + (-24 + 48y) x^3 + (-48y + 72y^2 - 48 y^3 + 12) x^2 \nonumber\\
+    && + (-2 + 24y -72y^2+48y^3)x + 1-4y + 12y^2-8y^3 \nonumber\\ 
+b_y &=& (8 - 48y + 48 y^2) x^3 + (-12 + 72y - 72y^2) x^2  \nonumber\\
+    && + (4 - 24y + 48y^2 - 48y^3 + 24y^4) x - 12y^2 + 24y^3 - 12y^4  \nonumber
+\end{eqnarray}
+
 We find that the velocity fields are identical across 
 both benchmarks. Only the pressure fields differ!
+
+%=========================
+\section*{code structure}
+
+\begin{verbatim}
+build mesh arrays, xu, yu, xv, yv
+build connectivity arrays iconu, iconv
+define boundary conditions
+for iter in range(0,niter):
+    build FE matrix and rhs
+    solve linear system
+    check convergence of u and v fields
+compute Q_{-1} pressure and div(v)
+compute int p dV
+compute divv on markers
+compute L2 errors v,p,div(v)
+export to paraview
+\end{verbatim}
+The chosen format for the vtu file is $Q_{-1}$: each element
+is exported separately, and 4 corner values for 
+each $u$, $v$, $p$, $div(v)$ field.
+
+The {\python bench} parameter allows to choose 
+which benchmark is carried out.
+
+All functions are jitted.
+
+Because all elements are rectangles the mapping is trivial
+and analytical. 
+
+The following results are obtained by running the basch script
+{\tt script\_errors}.
 
 \newpage
 %============================
@@ -571,8 +603,8 @@ Note that in what follows I use a direct solver as provided by scipy.
 Let us first explore the influence of the $\lambda$ parameter:
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_161/results/bench1/single/errorsV.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_161/results/bench1/single/errorsP.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/single/errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/single/errorsP.pdf}
 \end{center}
 
 This is in essence a strong penalty problem, but the accuracy clearly decreases 
@@ -581,8 +613,17 @@ with increasing resolution.
 \subsubsection*{With iterations}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_161/results/bench1/iterations/errorsV.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_161/results/bench1/iterations/errorsP.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/errorsDivv.pdf}
+\end{center}
+
+Rates are not what is expected from this element, since the authors report 
+second-order error rate convergence for both velocity and pressure.
+We fnd that the $L_2$ norm of div(v) is very low and the higher $\lambda$ the lower 
+the divergence.
+
+\begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv1.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv2.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv3.pdf}\\
@@ -591,13 +632,27 @@ with increasing resolution.
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv6.pdf}
 \end{center}
 
-Rates are not what is expected from this element, since the authors report 
-second-order error rate convergence for both velocity and pressure. 
-
 We find that for $\lambda \ge 10^2$ the number of iterations becomes really small.
 Also the number of iterations to reach convergence decreases when $\lambda$ increases. 
 Any value higher than $10^4$ does not improve the convergence, and even worse
 at high resolution $\lambda=10^6$ does not converge anymore. 
+
+Let us set $nelx=nely=16$ and $\lambda=10^3$ and let us look at the error fields, 
+i.e. $v_h-v$ and $p_h-p$:
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/press2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/vel_error}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/press_error}\\
+{\captionfont Left: pressure field; Middle: velocity error; Right: pressure error.} 
+\end{center}
+The analytical pressure field is $p(x,y)=x(1-x)-1/6$. The 1/6=0.16667 term insures that $\int p dV=0$.
+We see that the constraints $p=0$ in the corners yield to an error that is exactly 1/6 there. 
+Everywhere else the error is small, the continuity requirements on the edges do not interfere 
+with the true solution. 
+This is a huge problem that is not discussed in the original paper!
+
+
+
 
 %------------------------------------------------------------ 
 \subsection*{Huang \& Zhang manufactured solution ({\tt bench=2})}
@@ -659,6 +714,10 @@ a direct solver, cheaper than solving matrix coming from mixed formulation
 
 \item with Q2Q1, we must iterate (outer solver to arrive at solution, FGMRES, or PCG. 
 With this element, outer iterations also necessary. What is best?
+
+\item quid of pressure not zero at corners? write Zhang ? try different mms 
+
+\item matrix does not change during the iterations, this can be exploited!
 
 \end{itemize}
 

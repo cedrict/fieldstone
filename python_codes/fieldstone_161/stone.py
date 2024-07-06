@@ -6,7 +6,7 @@ import sys as sys
 import scipy.sparse as sps
 
 bench=1 # donea-huerta
-bench=2 # zhan09,huzh11
+#bench=2 # zhan09,huzh11
 
 ###############################################################################
 
@@ -173,8 +173,8 @@ if int(len(sys.argv) == 5):
    laambda=int(sys.argv[4])
    laambda=10**laambda
 else:
-   nelx = 40
-   nely = 40
+   nelx = 16
+   nely = 16
    visu = 1
    laambda=1e3 # penalty parameter, alpha in zhan09
 
@@ -192,7 +192,7 @@ NfemV=Nu+Nv #ndofV*nnx*nny +nnx*nely+nny*nelx
 hx=Lx/nelx
 hy=Ly/nely
 
-tol=1e-8
+rtol=1e-8
 niter=20
 
 ###############################################################################
@@ -222,19 +222,21 @@ nq=nqel*nel
 # check basis functions
 ###############################################################################
 
-rVnodes=[-1,+1,+1,-1,0,0]
-sVnodes=[-1,-1,+1,+1,-1,+1]
+#location of u nodes
+runodes=[-1,+1,+1,-1,0,0]
+sunodes=[-1,-1,+1,+1,-1,+1]
 
 #for i in range(0,mV):
-#    print(NNVu(rVnodes[i],sVnodes[i]))
+#    print(NNVu(runodes[i],sunodes[i]))
 
 #print('----------------------')
 
-rVnodes=[-1,+1,+1,-1,-1,+1]
-sVnodes=[-1,-1,+1,+1,0,0]
+#location of v nodes
+runodes=[-1,+1,+1,-1,-1,+1]
+sunodes=[-1,-1,+1,+1,0,0]
 
 #for i in range(0,mV):
-#    print(NNVv(rVnodes[i],sVnodes[i]))
+#    print(NNVv(runodes[i],sunodes[i]))
 
 ###############################################################################
 
@@ -333,22 +335,6 @@ for j in range(0, nely):
 #    print(iel,'|',iconv[:,iel])
 
 print("connectivity setup: %.3f s" % (time.time() - start))
-
-###############################################################################
-# compute xc,yc
-###############################################################################
-start = time.time()
-
-xc = np.zeros(nel,dtype=np.float64)  # x coordinates
-yc = np.zeros(nel,dtype=np.float64)  # y coordinates
-
-for iel in range(0,nel):
-    xc[iel]=0.5*(xu[iconu[0,iel]]+xu[iconu[2,iel]])
-    yc[iel]=0.5*(yu[iconu[0,iel]]+yu[iconu[2,iel]])
-
-np.savetxt('gridc.ascii',np.array([xc,yc]).T,header='# x,y')
-
-print("center coordinates: %.3f s" % (time.time() - start))
 
 ###############################################################################
 # compute area of elements
@@ -631,16 +617,16 @@ for iter in range(0,niter):
     xi_u=np.max(abs(u_prev-u))/np.max(abs(u))
     xi_v=np.max(abs(v_prev-v))/np.max(abs(v))
 
-    print('     -> xi_u,xi_v,conv= %e %e %s' %(xi_u,xi_v,xi_u<tol and xi_v<tol))
+    print('     -> xi_u,xi_v,conv= %e %e %s' %(xi_u,xi_v,xi_u<rtol and xi_v<rtol))
            
-    iterfile.write("%i %e %e %e\n" %(iter,xi_u,xi_v,tol))
+    iterfile.write("%i %e %e %e\n" %(iter,xi_u,xi_v,rtol))
 
-    if xi_u<tol and xi_v<tol:
+    if xi_u<rtol and xi_v<rtol:
        break
 
     u_prev[:]=u[:]
     v_prev[:]=v[:]
-    sum_sol[:]+=sol[:]
+    sum_sol[:]+=sol[:] # needed to compute pressure
 
 #end for iter
     
@@ -661,16 +647,12 @@ sum_v[:]=sum_sol[0+Nu:Nv+Nu]
 
 counter=0
 for iel in range(0,nel):
+    for k in range(0,4): #loop over corners
 
-    for k in range(0,4):
-
-        rq=rVnodes[k]
-        sq=sVnodes[k]
+        rq=runodes[k] # coords of corners
+        sq=sunodes[k] #
 
         dNNNVudr=dNNVudr(rq,sq)
-        #dNNNVuds=dNNVuds(rq,sq)
-
-        #dNNNVvdr=dNNVvdr(rq,sq)
         dNNNVvds=dNNVvds(rq,sq)
 
         #compute jacobian matrix and determinant
@@ -699,17 +681,15 @@ for iel in range(0,nel):
 
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
+#pressfile=open("pressure.ascii","w")
+#for iel in range(0,nel):
+#    for k in range(0,4):
+#        pressfile.write("%10f %10f %10f \n" %(xu[iconu[k,iel]],yu[iconu[k,iel]],p[4*iel+k]))
+
 print("compute pressure: %.3f s" % (time.time() - start))
 
-
-pressfile=open("pressure.ascii","w")
-for iel in range(0,nel):
-    for k in range(0,4):
-        pressfile.write("%10f %10f %10f \n" %(xu[iconu[k,iel]],yu[iconu[k,iel]],p[4*iel+k]))
-
-
 ###############################################################################
-# normalise pressure
+# compute int p dV
 ###############################################################################
 start = time.time()
 
@@ -741,12 +721,12 @@ for iel in range(0,nel):
 
 print('int p dV=',int_p)
 
-
 print("compute avrg pressure: %.3f s" % (time.time() - start))
 
 ###############################################################################
 # compute velocity divergence on swarm of points
 ###############################################################################
+start = time.time()
 
 nmarker_per_dim=5
 nmarker=nmarker_per_dim**2*nel
@@ -757,39 +737,34 @@ divvm=np.zeros(nmarker,dtype=np.float64)
 
 counter=0
 for iel in range(0,nel):
-
     for i in range(0,nmarker_per_dim):
         for j in range(0,nmarker_per_dim):
-
             rm=-1+(i+0.5)*2/nmarker_per_dim
             sm=-1+(j+0.5)*2/nmarker_per_dim
-
             NNNVu=NNVu(rm,sm)
             NNNVv=NNVv(rm,sm)
-
             xm[counter]=NNNVu.dot(xu[iconu[0:mV,iel]])
             ym[counter]=NNNVu.dot(yu[iconu[0:mV,iel]])
-
             dNNNVudr=dNNVudr(rm,sm)
             dNNNVvds=dNNVvds(rm,sm)
-
             for k in range(0,mV):
                 dNNNVudx[k]=jcbi[0,0]*dNNNVudr[k]
                 dNNNVvdy[k]=jcbi[1,1]*dNNNVvds[k]
             #end for
-
             exx=dNNNVudx.dot(u[iconu[:,iel]])
             eyy=dNNNVvdy.dot(v[iconv[:,iel]])
-        
             divvm[counter]=exx+eyy
-
             counter+=1
 
         #end for j
     #end for i
 #end for iel
 
+print('     -> divv on markers (m,M) ', np.min(divv),np.max(divv))
+
 np.savetxt('divv.ascii',np.array([xm,ym,divvm]).T,header='# x,y')
+
+print("compute divv on markers: %.3f s" % (time.time() - start))
 
 ###############################################################################
 # compute error in L2 norm
@@ -802,6 +777,7 @@ N=np.zeros(4,dtype=np.float64)
 
 errv=0.
 errp=0.
+errd=0.
 counterq=0
 for iel in range (0,nel):
     for iq in range(0,nqperdim):
@@ -820,8 +796,27 @@ for iel in range (0,nel):
             N[3]=0.25*(1.-rq)*(1.+sq)
             pq=N.dot(p[4*iel:4*iel+4])
 
-            errv+=((uq-velocity_x(xq[counterq],yq[counterq]))**2+(vq-velocity_y(xq[counterq],yq[counterq]))**2)*weightq*jcob
+            errv+=((uq-velocity_x(xq[counterq],yq[counterq]))**2+\
+                   (vq-velocity_y(xq[counterq],yq[counterq]))**2)*weightq*jcob
             errp+=(pq-pressure(xq[counterq],yq[counterq]))**2*weightq*jcob
+
+
+
+            dNNNVudr=dNNVudr(rq,sq)
+            #dNNNVuds=dNNVuds(rq,sq)
+            #dNNNVvdr=dNNVvdr(rq,sq)
+            dNNNVvds=dNNVvds(rq,sq)
+            for k in range(0,mV):
+                dNNNVudx[k]=jcbi[0,0]*dNNNVudr[k]
+                #dNNNVudy[k]=jcbi[1,1]*dNNNVuds[k]
+                #dNNNVvdx[k]=jcbi[0,0]*dNNNVvdr[k]
+                dNNNVvdy[k]=jcbi[1,1]*dNNNVvds[k]
+            #end for
+            errd+=(dNNNVudx.dot(u[iconu[:,iel]])+\
+                   dNNNVvdy.dot(v[iconv[:,iel]]))**2*weightq*jcob
+
+
+
             counterq+=1
         #end for
     #end for
@@ -829,8 +824,9 @@ for iel in range (0,nel):
 
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
+errd=np.sqrt(errd)
 
-print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
+print("     -> nel= %6d ; errv= %e ; errp= %e ; errd= %e" %(nel,errv,errp,errd))
 
 print("compute errors: %.3f s" % (time.time() - start))
 
@@ -838,8 +834,6 @@ print("compute errors: %.3f s" % (time.time() - start))
 # plot of solution (given the node layout, the easiest vtu export is Q1)
 ###############################################################################
 start = time.time()
-
-
 
 if visu==1:
    vtufile=open("solution.vtu","w")
