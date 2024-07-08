@@ -22,7 +22,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-We here consider the $Q_{k+1,k}\times Q_{k,k+1} \times Q_{k}'$ element introduced 
+We here consider the $Q_{2,1}\times Q_{1,2} \times Q_{1}'$ element introduced 
 by \textcite{huzh11} (2011) which follows \textcite{zhan09} (2009).
 The shape functions in 2D are in derived in Section~\ref{MMM-ss:qqq_elt}.
 
@@ -30,6 +30,7 @@ The list of velocity degrees of freedom per element is as follows:
 \[
 \vec{\cal V} = (u_1,v_1,u_2,v_2,u_3,v_3,u_4,v_4,u_5,v_5,u_6,v_6)
 \]
+where $u$ is the $x$-component of the velocity field and $v$ its $y$-component,
 with the following internal numbering
 \begin{verbatim}
 u dofs      v dofs
@@ -40,12 +41,13 @@ u dofs      v dofs
 |     |     |     |
 1--5--2     1-----2
 \end{verbatim}
-It is rather interesting to note that the location of the 'extra' 
+
+Remark: the location of the 'extra' 
 nodes for u and v are opposite of those for the Fortin $Q_1^+\times P_0$ element, see
 Section \ref{MMM-ss:Q1pP02D} (see also \stone~80).
 
 We start with a simple $4\times 3$ element mesh.
-$u$ dofs are represented in red and $v$ dofs are shown in blue.
+$u$ dofs are represented in red and $v$ dofs are shown in blue:
 
 \input{python_codes/fieldstone_161/tikz_gridu}
 
@@ -69,10 +71,11 @@ NfemV=Nu+Nv (=36+35=71)
 \end{lstlisting}
 
 What makes this element pair rather awkward to implement is the fact that 
-there are two connectivity arrays {\tt iconu} and {\tt iconv}, both of size $mV\times nel$, where 
-$mV=6$ is the number of nodes linked to an element for each velocity component. 
+there are two connectivity arrays {\python iconu} and {\python iconv}, both of size 
+{\python mV} $\times$ {\python nel}, where 
+{\python mV=6} is the number of nodes linked to an element for each velocity component. 
 \begin{itemize}
-\item content of {\tt iconu}
+\item content of {\python iconu}
 \begin{verbatim}
 elt udofs 
 0 | [ 0  1  6  5 20 24]
@@ -88,7 +91,7 @@ elt udofs
 10 | [12 13 18 17 30 34]
 11 | [13 14 19 18 31 35]
 \end{verbatim}
-\item content of {\tt iconv}
+\item content of {\python iconv}
 \begin{verbatim}
 elt vdofs 
 0 | [ 0  1  6  5 20 21]
@@ -123,20 +126,20 @@ shall see next.}
 \end{displayquote}
 so I will leave the pressure dofs alone for now, and will come back to it a bit later.
 
-Remark 1: given the weird placement of nodes for u and v, it makes sense not to 
-use an isoparameteric mapping, and instead choose a simple $Q_1$ mapping (this 
+Remark 1: given the weird placement of nodes for $u$ and $v$, it makes sense not to 
+use an isoparameteric 
+mapping\footnote{Would it even be well defined?}, and instead choose a simple $Q_1$ mapping (this 
 is not very important here since all elements are rectangles anyways).
 
 Remark 2: the paper does not mention quadrature at all. 
-I choose a 3x3 quadrature as for $Q_2\times Q_1$. 
-Should I use a different quadrature for the div-div term?
+I choose a $3\times 3$ quadrature as for ${\bm Q}_2\times Q_1$. 
 
 Remark 3: the papers also do not mention 3D, nor non-rectangular elements. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Iterated penalty method}
 
-Following \cite{zhan09,huzh11} we implement this method since
+Following \textcite{zhan09} and \textcite{huzh11} we implement this method since
 
 \begin{displayquote}
 {\color{darkgray}
@@ -150,7 +153,7 @@ method is adopted to solve system (2.5).}
 Also in \textcite{huzh11}:
 \begin{displayquote}
 {\color{darkgray}
-We do enough iterated penalty iterations (cf. [25,30]) until the iterative error is smaller
+We do enough iterated penalty iterations until the iterative error is smaller
 than the truncation error each time.}
 \end{displayquote}
 
@@ -191,8 +194,6 @@ These values are written at every iteration in the {\tt conv.ascii} file.
 
 Once the velocity field has been obtained the pressure is computed 
 at each corner of each element ($Q_{-1}$ representation).
-We will see that it is indeed discontinuous (but not everywhere?!).
-
 
 \newpage
 %==========================================
@@ -245,7 +246,7 @@ x---x---x---x---x   x-------x-------x
 and we indeed find $\text{dim}~V_h=6$. 
 
 \newpage
-Let us now turn to a level 3 grid, i.e. $4\times 4$ elements. 
+We consider now a level 3 grid, i.e. $4\times 4$ elements. 
 The $u$ dofs are placed as follows:
 \begin{verbatim}
 u---u---u---u---u---u---u---u---u
@@ -291,15 +292,15 @@ in accordance with the table.
 
 Let us now turn to the pressure dofs. 
 Warning: it is not as simple as the velocity dofs. 
-In \textcite{huzh11} we read: ``we decrease the space $Q_1^{dc}$ 
+In \textcite{huzh11} we read: {\color{darkgray} ``we decrease the space $Q_1^{dc}$ 
 for the pressure to $Q_1'$, by removing all spurious modes, i.e.,
 eliminating one degree of freedom at each vertex. We have to emphasize
 that the discrete pressure space is introduced for the analysis, but not in the
 computation. By an iterated penalty method, we obtain the discrete solutions
-for the pressure without coding the pressure element''
+for the pressure without coding the pressure element''}
 and in 
 \textcite{zhan09}:
-``
+{\color{darkgray} ``
 We note that, by choosing div($Q_{k+1,k}\times Q_{k,k+1}$) 
 as the discrete ﬁnite element space for the pressure, the spurious
 modes in discontinuous $Q_k$ space are filtered out automatically.
@@ -312,7 +313,7 @@ polynomials. It is difficult to ﬁnd a local basis for $P_h$.
 We note that the spurious (checkerboard) modes, generated at each 
 singular vertex (cf. (3.8)), in the discrete pressure space are ﬁltered
 out naturally.
-''
+''}
 
 In order to understand this and arrive at the correct number of pressure dofs
 presented in the table above 
@@ -322,7 +323,7 @@ it is useful to look at this part of \textcite{huzh11}:
 \fbox{\includegraphics[width=12cm]{python_codes/fieldstone_161/images/pconstraints}}
 \end{center}
 
-We see that all nodes are subjected to a constraint. After the mesh is divided 
+All nodes are subjected to a constraint. After the mesh is divided 
 in $2\times 2$ macro-elements we see that there are 3 type of vertices: the corner ones, 
 the mid-edge ones, and the interior ones. 
 Let us start with the simplest case: a $2\times 2$ element mesh, i.e. a single macro element.
@@ -382,8 +383,8 @@ We start from potentially $16\cdot 4=64$ pdofs. We find that
 {\it all} vertices are subjected to a constraint, either because located on a 
 corner, an edge or in the middle of four elements. 
 This explains the sentence 
-``we decrease the space $Q_1^{dc}$ for the pressure to $Q_1'$, by removing 
-all spurious modes, i.e., eliminating one degree of freedom at each vertex.''
+{\color{darkgray} ``we decrease the space $Q_1^{dc}$ for the pressure to $Q_1'$, by removing 
+all spurious modes, i.e., eliminating one degree of freedom at each vertex.''}
 In the end each vertex is assigned a constraint, which removes as many 
 pdofs. In this case, $5\cdot 5=25$ constraints. Taking into account the zero-average
 constraint, we are left with 64-25-1=38 pdofs, as in the table!
@@ -400,20 +401,22 @@ counts $4n^2 - (n+1)^2  -1$ pdofs.
 Having understood this, it is clear that it would be very difficult 
 to come up with analytical expressions for the pressure basis functions. 
 
-{\color{red} Q: what are the consequences of eq(3.7) (i.e. p=0 at corners?!) for 
-generic cases?}
+At this stage, we can ask ourselves the question of the consequences of eq(3.7) (i.e. p=0 at corners) 
+for generic cases? We shall come back to this later.
 
-Remark: quid of odd numbers of elts (per side)? I have tried this, 
-and in practice, this makes no difference in the error values nor their 
+Remark: Although the constraints are explained by means of 2x2 macro-elements, 
+one could wonder whether using off number of elements per side could yield problems.
+I have tried this, and in practice, this makes no difference in the error values nor their 
 convergence rates.
 
-%==========================================
-\section*{Manufactured solutions}
+\newpage
+%===============================================
+\section*{Manufactured solutions \& experiments}
 
 \subsection*{Huang \& Zhang manufactured solution}
 
 In \textcite{huzh11} (2011) the authors propose the 
-following manufactured solution\footnote{I have removed the $2^8$ term.}:
+following manufactured solution:
 
 \[
 g(x,y)=(x-x^2)^2(y-y^2)^2 = 2^8 f(x)h(y) = 256 f(x) h(y)
@@ -589,82 +592,30 @@ and analytical.
 The following results are obtained by running the basch script
 {\tt script\_errors}.
 
+The code relies on a direct solver as provided by scipy.
+
 \newpage
 %============================
 \section*{Results}
 
-Note that in what follows I use a direct solver as provided by scipy.
-
-%------------------------------------------------------------
-\subsection*{Donea \& Huerta manufactured solution ({\tt bench=1})}
-
-\subsubsection*{Without iterations}
-
-Let us first explore the influence of the $\lambda$ parameter:
-
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/single/errorsV.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/single/errorsP.pdf}
-\end{center}
-
-This is in essence a strong penalty problem, but the accuracy clearly decreases 
-with increasing resolution. 
-
-\subsubsection*{With iterations}
-
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/errorsV.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/errorsP.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/errorsDivv.pdf}
-\end{center}
-
-Rates are not what is expected from this element, since the authors report 
-second-order error rate convergence for both velocity and pressure.
-We fnd that the $L_2$ norm of div(v) is very low and the higher $\lambda$ the lower 
-the divergence.
-
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv1.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv2.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv3.pdf}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv4.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv5.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/conv6.pdf}
-\end{center}
-
-We find that for $\lambda \ge 10^2$ the number of iterations becomes really small.
-Also the number of iterations to reach convergence decreases when $\lambda$ increases. 
-Any value higher than $10^4$ does not improve the convergence, and even worse
-at high resolution $\lambda=10^6$ does not converge anymore. 
-
-Let us set $nelx=nely=16$ and $\lambda=10^3$ and let us look at the error fields, 
-i.e. $v_h-v$ and $p_h-p$:
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/press2}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/vel_error}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/iterations/press_error}\\
-{\captionfont Left: pressure field; Middle: velocity error; Right: pressure error.} 
-\end{center}
-The analytical pressure field is $p(x,y)=x(1-x)-1/6$. The 1/6=0.16667 term insures that $\int p dV=0$.
-We see that the constraints $p=0$ in the corners yield to an error that is exactly 1/6 there. 
-Everywhere else the error is small, the continuity requirements on the edges do not interfere 
-with the true solution. 
-This is a huge problem that is not discussed in the original paper!
-
-
-
-
 %------------------------------------------------------------ 
 \subsection*{Huang \& Zhang manufactured solution ({\tt bench=2})}
 
+The velocity error, pressure error and velocity divergence (in the $L_2$ norm) are 
+measured as follows:  
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_161/results/bench2/errorsV.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_161/results/bench2/errorsP.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/errorsDivv.pdf}
 \end{center}
+As in the publication both velocity and pressure errors converge quadratically.
+However there seems to be a factor 5 between my results and theirs for velocity, 
+and a factor 1.414 between my results and theirs for pressure. I could 
+explain the second by how $h$ is computed (element edge vs. element diagonal), 
+but the first one?
 
-This time, we do recover second order convergence rate for pressure!
-However there seems to be an exact factor 2 between my error and theirs.
-
+On the following plots I show the convergence of the iterated penalty method as 
+a function of resolution for different values of the penalty coefficient $\lambda$:
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/conv1.pdf}
@@ -675,8 +626,8 @@ However there seems to be an exact factor 2 between my error and theirs.
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/conv6.pdf}
 \end{center}
 
-Note that at high resolution the case $\lambda=10^6$ fails to converge to the 
-desired tolerance. 
+Note that at high resolution the cases $\lambda=10^{5,6}$ fails to converge to the 
+desired relative tolerance $10^{-8}$. 
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/press}
@@ -684,7 +635,7 @@ desired tolerance.
 \includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/press_error2}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/divv}
 \includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/vel_error}\\
-{\captionfont Obtained on 8x8 grid (pressure was not x256 back then). 
+{\captionfont Obtained on $8\times8$ grid (factor $2^8$ is absent). 
 We find that the divergence is indeed very low.
 Note that Paraview is misleading: it looks like the squares are divived into 2 triangles but
 in reality it is a visualisation artefact!}
@@ -693,31 +644,140 @@ in reality it is a visualisation artefact!}
 It looks like pressure is continuous on the edges of the domain, 
 which is indeed what we expect.
 
+After having successfully reproduced the results of \textcite{huzh11}
+I now carry out the other manufactured solution.
 
-%----------------------------------
-\section*{Conclusions}
+%------------------------------------------------------------
+\subsection*{Donea \& Huerta manufactured solution ({\tt bench=1})}
+
+On the following gigures I show the velocity error, pressure error and velocity 
+divergence in the $L_2$ norm.
+This time the pressure only convergences linearly.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/errorsDivv.pdf}
+\end{center}
+
+We find that the $L_2$ norm of div(v) is very low and the higher $\lambda$ the lower 
+the divergence.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/conv1.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/conv2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/conv3.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/conv4.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/conv5.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/conv6.pdf}
+\end{center}
+
+We find that for $\lambda \ge 10^2$ the number of iterations becomes really small.
+Also the number of iterations to reach convergence decreases when $\lambda$ increases. 
+Any value higher than $10^4$ does not improve the convergence, and even worse
+at high resolution $\lambda=10^6$ does not converge anymore. 
+
+Let us set $nelx=nely=16$ and $\lambda=10^3$ and let us look at the error fields, 
+i.e. $v_h-v$ and $p_h-p$:
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/press2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/vel_error}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/press_error}\\
+{\captionfont Left: pressure field; Middle: velocity error; Right: pressure error.} 
+\end{center}
+The analytical pressure field is $p(x,y)=x(1-x)-1/6$. The 1/6=0.16667 term insures that $\int p dV=0$.
+We see that the constraints $p=0$ in the corners yield to an error that is exactly 1/6 there. 
+Everywhere else the error is small, the continuity requirements on the edges do not interfere 
+with the true solution. 
+This is a huge problem that is not discussed in the original paper!
+
+Remark: after having computed the pressure the code computes the integral of the pressure 
+on the domain and the recovered values are extremely small ($<10^{-15}$).  
+
+
+%------------------------------------------------------------
+\subsection*{The sinking block ({\tt bench=3})}
+
+This is a typical test designed to check whether a particular 
+FE pair is suitable for buoyancy driven flow (e.g. \textcite{thba22}, 2022).
+In this version I keep the viscosity constant $\eta=1$.
+The body force is as follows: in a square of size 0.25x0.25 in the middle of the domain
+$\rho \vec{g}=-1.001~\vec{e}_y$ while it is $-1~\vec{e}_y$ outside of it:
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_161/results/bench3/by}\\
+{\captionfont vertical component of the body force. 
+It corresponds to a gravity $|\vec{g}|=1$
+and a density difference of 0.1\%.}
+\end{center}
+
+The reason for choosing this very small density difference is justified by our 
+experiments in \textcite{thba22} where it revealed that some FE pairs could not yield 
+an accurate velocity solution in the presence of a background hydrostatic pressure
+dominating the dynamic pressure. 
+
+The boundary conditions are as follows\footnote{The reasons for this 
+peculiar choice will be clear very soon}:
+\begin{itemize}
+\item Left: no slip
+\item Right: free slip
+\item Bottom: no slip
+\item Top: free slip
+\end{itemize}
+
+The solution is as follows (note that this is not a benchmark {\it stricto sensu}
+since there is no analytical solution available):
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench3/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench3/v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench3/vel}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench3/press}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench3/press2}
+\end{center}
+
+We find that the velocity field conforms to the boundary conditions and that 
+the pressure is (visually) hydrostatic, {\it but} it shows two spikes with abnormal 
+values on the top left and bottom left corners (better seen on the right '3d' plot): 
+its value is zero! Rather 
+interestingly this happens on the left side, where no-slip boundary 
+conditions are prescribed, but not on the right side with free-slip.
+This shows the complex interplay between velocity space and the 
+constraint $p=0$ at the corners.
+
+
+
+\newpage
+%===============================================
+\section*{Discussion/Conclusions/Open questions}
 
 \begin{itemize}
 
-\item grid/vertex layout awkward to build. probably need re-ordering to 
-get a matrix with reasonable skyline
+\item The grid/vertex layout is somewhat awkward to build. In practice any naive ordering 
+would need re-ordering (reverse Cuthill-Mckee, Sloan, or other) to get a matrix with a reasonable skyline.
 
-\item pressure field is too complex to build so we have to use iterative penalty method. 
+\item The pressure space is too complex to build so we {\it have} to use iterative penalty method. 
 It seems to converge reasonably nice for $\lambda=10-100$ so this should not 
-be too much of a pb for an iterative solver.
+be too much of a problem for an iterative solver.
 
-\item Q21-Q12 space smaller than than Q2xQ2 so A block smaller for a given number 
-of elements. Also, the linear system is as big as the A-block, so in case one uses 
+\item $Q_{21}\times Q_{12}$ space smaller than than $Q_2\times Q_2$ so the velocity
+block smaller for a given number of elements (although it is not spectacular). 
+Also, the linear system is as big as the viscosity block, so in case one uses 
 a direct solver, cheaper than solving matrix coming from mixed formulation
 
 \item bonus: divergence free element!
 
 \item with Q2Q1, we must iterate (outer solver to arrive at solution, FGMRES, or PCG. 
-With this element, outer iterations also necessary. What is best?
+With this element, outer iterations (iterated penalty method) also necessary. What is best?
 
 \item quid of pressure not zero at corners? write Zhang ? try different mms 
 
-\item matrix does not change during the iterations, this can be exploited!
+\item matrix does not change during the iterations, this can be exploited in case a direct solver
+like MUMPS is used (analysis and factorisation only needed once)!
+
+\item can free surface be envisaged?
+
+\item quid of viscosity constrasts? 
 
 \end{itemize}
 

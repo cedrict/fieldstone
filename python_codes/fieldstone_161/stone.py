@@ -6,7 +6,8 @@ import sys as sys
 import scipy.sparse as sps
 
 bench=1 # donea-huerta
-#bench=2 # zhan09,huzh11
+bench=2 # zhan09,huzh11
+bench=3 # sinking block
 
 ###############################################################################
 
@@ -35,6 +36,8 @@ def bx(x, y):
        case 2:
           val=-fpp(x)*fp(y)-f(x)*fppp(y)-fppp(x)*f(y)
           val*=256
+       case 3:
+          val=0
     return val
 
 def by(x, y):
@@ -47,6 +50,11 @@ def by(x, y):
        case 2:
           val=fppp(x)*f(y)+fp(x)*fpp(y)-fpp(x)*fp(y)
           val*=256
+       case 3:
+          if abs(x-0.5)<0.126 and abs(y-0.5)<0.126:
+             val=-1.001
+          else:
+             val=-1
     return val
 
 ###############################################################################
@@ -59,6 +67,8 @@ def velocity_x(x,y):
        case 2:
           val=f(x)*fp(y)
           val*=256
+       case 3:
+          val=0
     return val
 
 def velocity_y(x,y):
@@ -68,6 +78,8 @@ def velocity_y(x,y):
        case 2:
           val=-fp(x)*f(y)
           val*=256
+       case 3:
+          val=0
     return val
 
 def pressure(x,y):
@@ -77,6 +89,8 @@ def pressure(x,y):
        case 2:
           val=-fpp(x)*f(y)
           val*=256
+       case 3:
+          val=0
     return val
 
 ###############################################################################
@@ -173,8 +187,8 @@ if int(len(sys.argv) == 5):
    laambda=int(sys.argv[4])
    laambda=10**laambda
 else:
-   nelx = 16
-   nely = 16
+   nelx = 80
+   nely = 80
    visu = 1
    laambda=1e3 # penalty parameter, alpha in zhan09
 
@@ -240,6 +254,7 @@ sunodes=[-1,-1,+1,+1,0,0]
 
 ###############################################################################
 
+print('bench=',bench)
 print("Lx",Lx)
 print("Ly",Ly)
 print("nelx",nelx)
@@ -419,35 +434,66 @@ start = time.time()
 
 bc_fix=np.zeros((mV*ndofV,nel),dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros((mV*ndofV,nel),dtype=np.float64)  # boundary condition, value
+    
+if bench==1 or bench==2:
 
-counter = 0
-for iely in range(0, nely):
-    for ielx in range(0, nelx):
-        iel=iely*nelx+ielx
-        if ielx==0: #left boundary element
-           bc_fix[0,iel]=True  ; bc_val[0,iel]=0  # u0=0
-           bc_fix[6,iel]=True  ; bc_val[6,iel]=0  # u3=0
-           bc_fix[1,iel]=True  ; bc_val[1,iel]=0  # v0=0
-           bc_fix[7,iel]=True  ; bc_val[7,iel]=0  # v3=0
-           bc_fix[9,iel]=True  ; bc_val[9,iel]=0  # v4=0
-        if ielx==nelx-1: #right boundary element
-           bc_fix[2,iel]=True  ; bc_val[2,iel]=0  # u1=0
-           bc_fix[4,iel]=True  ; bc_val[4,iel]=0  # u2=0
-           bc_fix[3,iel]=True  ; bc_val[3,iel]=0  # v1=0
-           bc_fix[5,iel]=True  ; bc_val[5,iel]=0  # v2=0
-           bc_fix[11,iel]=True ; bc_val[11,iel]=0 # v5=0
-        if iely==0: #bottom boundary element
-           bc_fix[0,iel]=True  ; bc_val[0,iel]=0  # u0=0
-           bc_fix[2,iel]=True  ; bc_val[2,iel]=0  # u1=0
-           bc_fix[8,iel]=True  ; bc_val[8,iel]=0  # u4=0
-           bc_fix[1,iel]=True  ; bc_val[1,iel]=0  # v0=0
-           bc_fix[3,iel]=True  ; bc_val[3,iel]=0  # v1=0
-        if iely==nely-1: #top boundary element
-           bc_fix[4,iel]=True  ; bc_val[4,iel]=0  # u2=0
-           bc_fix[6,iel]=True  ; bc_val[6,iel]=0  # u3=0
-           bc_fix[10,iel]=True ; bc_val[10,iel]=0 # u5=0
-           bc_fix[5,iel]=True  ; bc_val[5,iel]=0  # v2=0
-           bc_fix[7,iel]=True  ; bc_val[7,iel]=0  # v3=0
+   counter = 0
+   for iely in range(0, nely):
+       for ielx in range(0, nelx):
+           iel=iely*nelx+ielx
+           if ielx==0: #left boundary element
+              bc_fix[0,iel]=True  ; bc_val[0,iel]=0  # u0=0
+              bc_fix[6,iel]=True  ; bc_val[6,iel]=0  # u3=0
+              bc_fix[1,iel]=True  ; bc_val[1,iel]=0  # v0=0
+              bc_fix[7,iel]=True  ; bc_val[7,iel]=0  # v3=0
+              bc_fix[9,iel]=True  ; bc_val[9,iel]=0  # v4=0
+           if ielx==nelx-1: #right boundary element
+              bc_fix[2,iel]=True  ; bc_val[2,iel]=0  # u1=0
+              bc_fix[4,iel]=True  ; bc_val[4,iel]=0  # u2=0
+              bc_fix[3,iel]=True  ; bc_val[3,iel]=0  # v1=0
+              bc_fix[5,iel]=True  ; bc_val[5,iel]=0  # v2=0
+              bc_fix[11,iel]=True ; bc_val[11,iel]=0 # v5=0
+           if iely==0: #bottom boundary element
+              bc_fix[0,iel]=True  ; bc_val[0,iel]=0  # u0=0
+              bc_fix[2,iel]=True  ; bc_val[2,iel]=0  # u1=0
+              bc_fix[8,iel]=True  ; bc_val[8,iel]=0  # u4=0
+              bc_fix[1,iel]=True  ; bc_val[1,iel]=0  # v0=0
+              bc_fix[3,iel]=True  ; bc_val[3,iel]=0  # v1=0
+           if iely==nely-1: #top boundary element
+              bc_fix[4,iel]=True  ; bc_val[4,iel]=0  # u2=0
+              bc_fix[6,iel]=True  ; bc_val[6,iel]=0  # u3=0
+              bc_fix[10,iel]=True ; bc_val[10,iel]=0 # u5=0
+              bc_fix[5,iel]=True  ; bc_val[5,iel]=0  # v2=0
+              bc_fix[7,iel]=True  ; bc_val[7,iel]=0  # v3=0
+
+elif bench==3:
+
+   counter = 0
+   for iely in range(0, nely):
+       for ielx in range(0, nelx):
+           iel=iely*nelx+ielx
+           if ielx==0: #left boundary element
+              bc_fix[0,iel]=True  ; bc_val[0,iel]=0  # u0=0
+              bc_fix[6,iel]=True  ; bc_val[6,iel]=0  # u3=0
+              bc_fix[1,iel]=True  ; bc_val[1,iel]=0  # v0=0
+              bc_fix[7,iel]=True  ; bc_val[7,iel]=0  # v3=0
+              bc_fix[9,iel]=True  ; bc_val[9,iel]=0  # v4=0
+           if ielx==nelx-1: #right boundary element
+              bc_fix[2,iel]=True  ; bc_val[2,iel]=0  # u1=0
+              bc_fix[4,iel]=True  ; bc_val[4,iel]=0  # u2=0
+           if iely==0: #bottom boundary element
+              bc_fix[0,iel]=True  ; bc_val[0,iel]=0  # u0=0
+              bc_fix[2,iel]=True  ; bc_val[2,iel]=0  # u1=0
+              bc_fix[8,iel]=True  ; bc_val[8,iel]=0  # u4=0
+              bc_fix[1,iel]=True  ; bc_val[1,iel]=0  # v0=0
+              bc_fix[3,iel]=True  ; bc_val[3,iel]=0  # v1=0
+           if iely==nely-1: #top boundary element
+              bc_fix[10,iel]=True ; bc_val[10,iel]=0 # u5=0
+              bc_fix[5,iel]=True  ; bc_val[5,iel]=0  # v2=0
+              bc_fix[7,iel]=True  ; bc_val[7,iel]=0  # v3=0
+
+else:
+   exit('bench value unknown')
 
 print("boundary conditions setup: %.3f s" % (time.time() - start))
 
@@ -719,7 +765,7 @@ for iel in range(0,nel):
     #end for
 #end for
 
-print('int p dV=',int_p)
+print('     -> nel=',nel,'int_p dV=',int_p)
 
 print("compute avrg pressure: %.3f s" % (time.time() - start))
 
@@ -879,6 +925,18 @@ if visu==1:
        for k in range(0,4):
            pth=pressure(xu[iconu[k,iel]],yu[iconu[k,iel]])
            vtufile.write("%e  \n" %(pth))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='bx' Format='ascii'> \n")
+   for iel in range(0,nel):
+       for k in range(0,4):
+           vtufile.write("%e  \n" %(bx(xu[iconu[k,iel]],yu[iconu[k,iel]])))
+   vtufile.write("</DataArray>\n")
+   #--
+   vtufile.write("<DataArray type='Float32' Name='by' Format='ascii'> \n")
+   for iel in range(0,nel):
+       for k in range(0,4):
+           vtufile.write("%e  \n" %(by(xu[iconu[k,iel]],yu[iconu[k,iel]])))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel' Format='ascii'> \n")

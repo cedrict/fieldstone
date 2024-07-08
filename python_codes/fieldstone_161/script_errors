@@ -11,6 +11,7 @@ for l in 1 2 3 4 5 6; do
        python3 stone.py  $n $n 0 $l > opla
        grep errv opla >> errors$l
        mv conv.ascii conv_${l}_${n}.ascii
+       grep int_p opla >> pstats_${l}.ascii
        #mv opla opla_${l}_${n}
     done
 
