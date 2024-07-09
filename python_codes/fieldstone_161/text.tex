@@ -26,6 +26,14 @@ We here consider the $Q_{2,1}\times Q_{1,2} \times Q_{1}'$ element introduced
 by \textcite{huzh11} (2011) which follows \textcite{zhan09} (2009).
 The shape functions in 2D are in derived in Section~\ref{MMM-ss:qqq_elt}.
 
+The question we wish to answer is whether this element could be used 
+in the context of computational geodynamics. 
+The element has been proven stable and verified on a simple 
+isoviscous manfufactured solution with trivial boundary conditions,
+but quid of more complex boundary conditions ? free surface ? 
+sharp viscosity transitions?  buoyancy-driven flow? 
+
+
 The list of velocity degrees of freedom per element is as follows:
 \[
 \vec{\cal V} = (u_1,v_1,u_2,v_2,u_3,v_3,u_4,v_4,u_5,v_5,u_6,v_6)
@@ -558,7 +566,7 @@ b_y &=& (8 - 48y + 48 y^2) x^3 + (-12 + 72y - 72y^2) x^2  \nonumber\\
 \end{eqnarray}
 
 We find that the velocity fields are identical across 
-both benchmarks. Only the pressure fields differ!
+both benchmarks (aside from $2^8$ factor). Only the pressure fields differ!
 
 %=========================
 \section*{code structure}
@@ -650,9 +658,9 @@ I now carry out the other manufactured solution.
 %------------------------------------------------------------
 \subsection*{Donea \& Huerta manufactured solution ({\tt bench=1})}
 
-On the following gigures I show the velocity error, pressure error and velocity 
+On the following figures I show the velocity error, pressure error and velocity 
 divergence in the $L_2$ norm.
-This time the pressure only convergences linearly.
+This time the pressure only convergences linearly:
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/errorsV.pdf}
@@ -694,13 +702,12 @@ This is a huge problem that is not discussed in the original paper!
 Remark: after having computed the pressure the code computes the integral of the pressure 
 on the domain and the recovered values are extremely small ($<10^{-15}$).  
 
-
 %------------------------------------------------------------
 \subsection*{The sinking block ({\tt bench=3})}
 
 This is a typical test designed to check whether a particular 
 FE pair is suitable for buoyancy driven flow (e.g. \textcite{thba22}, 2022).
-In this version I keep the viscosity constant $\eta=1$.
+In this version I keep the viscosity constant in the entire domain with $\eta=1$.
 The body force is as follows: in a square of size 0.25x0.25 in the middle of the domain
 $\rho \vec{g}=-1.001~\vec{e}_y$ while it is $-1~\vec{e}_y$ outside of it:
 
@@ -739,11 +746,89 @@ since there is no analytical solution available):
 We find that the velocity field conforms to the boundary conditions and that 
 the pressure is (visually) hydrostatic, {\it but} it shows two spikes with abnormal 
 values on the top left and bottom left corners (better seen on the right '3d' plot): 
-its value is zero! Rather 
+its value is there zero! Rather 
 interestingly this happens on the left side, where no-slip boundary 
 conditions are prescribed, but not on the right side with free-slip.
 This shows the complex interplay between velocity space and the 
-constraint $p=0$ at the corners.
+constraint $p=0$ at the corners, which casts a shadow on the practical use of this element
+in geodynamics where it is common to have no-slip and free-slip boundary conditions on
+various sides of the domain.
+
+%------------------------------------------------------------
+\subsection*{The viscous inclusion ({\tt bench=4})}
+
+This benchmark originates in \textcite{scpo03} (2003) in which the 
+authors derive a simple analytic solution for the pressure and 
+velocity fields for a circular 
+inclusion under simple shear and it was used 
+in \cite{deka08,sunh10,dumg11,krhb12,gemd13}.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench4/eta}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench4/vel_th}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench4/press_th}\\
+{\captionfont Left: viscosity field on $128\times 128$ mesh; Middle: 
+analytical velocity field; Right: analytical pressure field.}
+\end{center}
+
+A characteristic of the analytical solution is that the pressure is zero 
+inside the inclusion (a circle centered on the origin), while outside it follows the relation
+\[
+p_m = 4 \dot{\epsilon}
+\frac{\eta_m(\eta_i-\eta_m)}{\eta_i+\eta_m}
+\frac{r_i^2}{r^2} \cos(2\theta)
+\]
+where $\eta_i = 10^3$ is the viscosity of the inclusion 
+and $\eta_m = 1$ is the viscosity of the background media, $\theta=\tan^{-1}(y/x)$,
+and $\dot{\epsilon}=1$ is the applied strain rate.
+The velocity expression is too complex to write here (see {\python solution\_solvi}
+function in the code).
+
+One important observation with this benchmark is the fact that the 
+velocity is not zero even far 
+away from the inclusion, so that the analytical (velocity) solution must be imposed on the sides.
+Also, because of symmetry, it is often run on the top quadrant $x>0$, $y>0$.
+
+Boundary conditions are free slip on left and bottom boundaries (axes of symmetry)
+and the analytical solution is prescribed on the right and top boundaries.
+Viscosity is prescribed at the elemental level.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_161/results/bench4/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_161/results/bench4/vel_error}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_161/results/bench4/press}
+\includegraphics[width=7cm]{python_codes/fieldstone_161/results/bench4/press2}\\
+{\captionfont Results obtained on $64\times 64$ grid, $\lambda=10^3$. 
+Pressure has been cut off at the analytical min/max for comparison. 
+Measured overshoot undershoot are $\pm16$.}
+\end{center}
+
+In order for this benchmark to be usable in the context of this element implementation (which 
+automatically enforces $\int p \; dV=0$), 
+the analytical solution should verify $\int p\; dV=0$. 
+In the inclusion $p=0$ so we look at the following integral (the constants have been 
+removed for clarity):
+\begin{eqnarray}
+\iint \frac{1}{r^2} \cos(2\theta) \; dV 
+&=& \iint \frac{1}{r^2} ( \cos^2\theta - \sin^2 \theta) dV \nn\\
+&=& \iint \frac{1}{r^2} ( \frac{x^2}{x^2+y^2} - \frac{y^2}{x^2+y^2}) \nn\\
+&=& 0
+\end{eqnarray}
+by symmetry along the diagonal (see also analytical pressure field figure at the 
+beginning of this section).
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench4/errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench4/errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench4/errorsDivv.pdf}
+\end{center}
+We recover a first-order convergence for the velocity error and ${\cal O}(h^{1/2})$ 
+pressure error convergence, as in \textcite{thba22} (2022).
+Unsurprisingly this element does not (cannot) perform any better than
+the $Q_2 \times P_{-1}$ element in terms of error rates, since these are
+controlled by the fact that the viscosity discontinuity does not align with
+element edges.
+
 
 
 
@@ -760,7 +845,7 @@ would need re-ordering (reverse Cuthill-Mckee, Sloan, or other) to get a matrix 
 It seems to converge reasonably nice for $\lambda=10-100$ so this should not 
 be too much of a problem for an iterative solver.
 
-\item $Q_{21}\times Q_{12}$ space smaller than than $Q_2\times Q_2$ so the velocity
+\item $Q_{21}\times Q_{12}$ velocity space smaller than than $Q_2\times Q_2$ so the velocity
 block smaller for a given number of elements (although it is not spectacular). 
 Also, the linear system is as big as the viscosity block, so in case one uses 
 a direct solver, cheaper than solving matrix coming from mixed formulation

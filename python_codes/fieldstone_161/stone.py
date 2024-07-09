@@ -7,7 +7,8 @@ import scipy.sparse as sps
 
 bench=1 # donea-huerta
 bench=2 # zhan09,huzh11
-bench=3 # sinking block
+#bench=3 # sinking block
+bench=4 # solvi
 
 ###############################################################################
 
@@ -23,6 +24,34 @@ def fpp(x):
 def fppp(x):
     return 24*x-12
 
+def solution_solvi(x,y):
+    min_eta = 1.
+    max_eta = 1.e3
+    epsilon = 1.
+    A=min_eta*(max_eta-min_eta)/(max_eta+min_eta)
+    r_inclusion=0.2 
+    r2_inclusion=r_inclusion*r_inclusion
+    r2=x*x+y*y
+    # phi, psi, dphi are complex
+    z=x+y*1j
+    if r2<r2_inclusion:
+       phi=0+0.*1j
+       dphi=0+0.*1j
+       psi=-4*epsilon*(max_eta*min_eta/(min_eta+max_eta))*z
+       visc=1e3
+    else:
+       phi=-2*epsilon*A*r2_inclusion/z
+       dphi=-phi/z
+       psi=-2*epsilon*(min_eta*z+A*r2_inclusion*r2_inclusion/(z*z*z))
+       visc=1.
+
+    v = (phi-z*np.conjugate(dphi)-np.conjugate(psi))/(2.*visc)
+    vx=v.real
+    vy=v.imag
+    p=-2*epsilon*dphi.real
+
+    return vx,vy,p
+
 ###############################################################################
 # bx and by are the body force components 
 
@@ -37,6 +66,8 @@ def bx(x, y):
           val=-fpp(x)*fp(y)-f(x)*fppp(y)-fppp(x)*f(y)
           val*=256
        case 3:
+          val=0
+       case 4:
           val=0
     return val
 
@@ -55,6 +86,25 @@ def by(x, y):
              val=-1.001
           else:
              val=-1
+       case 4:
+          val=0
+    return val
+
+###############################################################################
+
+def viscosity(x,y):
+    match bench:
+       case 1:
+          val=1
+       case 2:
+          val=1
+       case 3:
+          val=1
+       case 4:
+          if (np.sqrt(x*x+y*y) < 0.2):
+             val=1e3
+          else:
+             val=1.
     return val
 
 ###############################################################################
@@ -69,6 +119,8 @@ def velocity_x(x,y):
           val*=256
        case 3:
           val=0
+       case 4:
+          val=solution_solvi(x,y)[0]
     return val
 
 def velocity_y(x,y):
@@ -80,6 +132,8 @@ def velocity_y(x,y):
           val*=256
        case 3:
           val=0
+       case 4:
+          val=solution_solvi(x,y)[1]
     return val
 
 def pressure(x,y):
@@ -91,6 +145,8 @@ def pressure(x,y):
           val*=256
        case 3:
           val=0
+       case 4:
+          val=solution_solvi(x,y)[2]
     return val
 
 ###############################################################################
@@ -177,8 +233,6 @@ mP=4
 Lx=1. 
 Ly=1. 
 
-eta=1.
-
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 5):
    nelx = int(sys.argv[1])
@@ -187,8 +241,8 @@ if int(len(sys.argv) == 5):
    laambda=int(sys.argv[4])
    laambda=10**laambda
 else:
-   nelx = 80
-   nely = 80
+   nelx = 64
+   nely = 64
    visu = 1
    laambda=1e3 # penalty parameter, alpha in zhan09
 
@@ -340,9 +394,18 @@ for j in range(0, nely):
         iconv[4,counter] = nnx*nny + i + j*nnx 
         iconv[5,counter] = nnx*nny + i +1+ j*nnx 
         #----
+
+        if i==0 and j==0: corner_SW=counter
+        if i==nelx-1 and j==0: corner_SE=counter
+        if i==nelx-1 and j==nely-1: corner_NE=counter
+        if i==0 and j==nely-1: corner_NW=counter
+
         counter += 1
+
     #end for
 #end for
+
+print(corner_SW,corner_SE,corner_NE,corner_NW)
 
 #for iel in range(0,nel):
 #    print(iel,'|',iconu[:,iel])
@@ -414,13 +477,32 @@ for iel in range(0,nel):
     #end for
 #end for
 
-np.savetxt('gridq.ascii',np.array([xq,yq]).T,header='# x,y')
+#np.savetxt('gridq.ascii',np.array([xq,yq]).T,header='# x,y')
                 
 print("     -> vol  (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total vol meas %.6f " %(area.sum()))
 print("     -> total vol anal %.6f " %(Lx*Ly))
 
 print("compute elements area: %.3f s" % (time.time() - start))
+
+###############################################################################
+# compute element center coordinates
+###############################################################################
+start = time.time()
+
+xc = np.zeros(nel,dtype=np.float64)  
+yc = np.zeros(nel,dtype=np.float64)  
+
+for iel in range(0,nel):
+    xc[iel]= xu[iconu[0,iel]]+hx/2
+    yc[iel]= yu[iconu[0,iel]]+hy/2
+
+print("     -> xc (m,M) %.6e %.6e " %(np.min(xc),np.max(xc)))
+print("     -> yc (m,M) %.6e %.6e " %(np.min(yc),np.max(yc)))
+
+#np.savetxt('gridc.ascii',np.array([xc,yc]).T,header='# x,y')
+
+print("compute element center coords: %.3f s" % (time.time() - start))
 
 ###############################################################################
 # define boundary conditions
@@ -491,6 +573,37 @@ elif bench==3:
               bc_fix[10,iel]=True ; bc_val[10,iel]=0 # u5=0
               bc_fix[5,iel]=True  ; bc_val[5,iel]=0  # v2=0
               bc_fix[7,iel]=True  ; bc_val[7,iel]=0  # v3=0
+
+elif bench==4:
+
+   counter = 0
+   for iely in range(0, nely):
+       for ielx in range(0, nelx):
+           iel=iely*nelx+ielx
+           if ielx==0: #left boundary element
+              bc_fix[0 ,iel]=True ; bc_val[0 ,iel]=solution_solvi(xu[iconu[0,iel]],yu[iconu[0,iel]])[0] # u0
+              bc_fix[6 ,iel]=True ; bc_val[6 ,iel]=solution_solvi(xu[iconu[3,iel]],yu[iconu[3,iel]])[0] # u3
+              #bc_fix[1 ,iel]=True ; bc_val[1 ,iel]=solution_solvi(xv[iconv[0,iel]],yv[iconv[0,iel]])[1] # v0 
+              #bc_fix[7 ,iel]=True ; bc_val[7 ,iel]=solution_solvi(xv[iconv[3,iel]],yv[iconv[3,iel]])[1] # v3
+              #bc_fix[9 ,iel]=True ; bc_val[9 ,iel]=solution_solvi(xv[iconv[4,iel]],yv[iconv[4,iel]])[1] # v4
+           if ielx==nelx-1: #right boundary element
+              bc_fix[ 2,iel]=True ; bc_val[2 ,iel]=solution_solvi(xu[iconu[1,iel]],yu[iconu[1,iel]])[0] # u1
+              bc_fix[ 4,iel]=True ; bc_val[4 ,iel]=solution_solvi(xu[iconu[2,iel]],yu[iconu[2,iel]])[0] # u2
+              bc_fix[ 3,iel]=True ; bc_val[3 ,iel]=solution_solvi(xv[iconv[1,iel]],yv[iconv[1,iel]])[1] # v1 
+              bc_fix[ 5,iel]=True ; bc_val[5 ,iel]=solution_solvi(xv[iconv[2,iel]],yv[iconv[2,iel]])[1] # v2 
+              bc_fix[11,iel]=True ; bc_val[11,iel]=solution_solvi(xv[iconv[5,iel]],yv[iconv[5,iel]])[1] # v5 
+           if iely==0: #bottom boundary element
+              #bc_fix[0 ,iel]=True ; bc_val[0 ,iel]=solution_solvi(xu[iconu[0,iel]],yu[iconu[0,iel]])[0] # u0
+              #bc_fix[2 ,iel]=True ; bc_val[2 ,iel]=solution_solvi(xu[iconu[1,iel]],yu[iconu[1,iel]])[0] # u1
+              #bc_fix[8 ,iel]=True ; bc_val[8 ,iel]=solution_solvi(xu[iconu[4,iel]],yu[iconu[4,iel]])[0] # u4
+              bc_fix[1 ,iel]=True ; bc_val[1 ,iel]=solution_solvi(xv[iconv[0,iel]],yv[iconv[0,iel]])[1] # v0 
+              bc_fix[3 ,iel]=True ; bc_val[3 ,iel]=solution_solvi(xv[iconv[1,iel]],yv[iconv[1,iel]])[1] # v1 
+           if iely==nely-1: #top boundary element
+              bc_fix[4 ,iel]=True ; bc_val[4 ,iel]=solution_solvi(xu[iconu[2,iel]],yu[iconu[2,iel]])[0] # u2
+              bc_fix[6 ,iel]=True ; bc_val[6 ,iel]=solution_solvi(xu[iconu[3,iel]],yu[iconu[3,iel]])[0] # u3
+              bc_fix[10,iel]=True ; bc_val[10,iel]=solution_solvi(xu[iconu[5,iel]],yu[iconu[5,iel]])[0] # u5
+              bc_fix[5 ,iel]=True ; bc_val[5 ,iel]=solution_solvi(xv[iconv[2,iel]],yv[iconv[2,iel]])[1] # v2 
+              bc_fix[7 ,iel]=True ; bc_val[7 ,iel]=solution_solvi(xv[iconv[3,iel]],yv[iconv[3,iel]])[1] # v3 
 
 else:
    exit('bench value unknown')
@@ -574,6 +687,8 @@ for iter in range(0,niter):
                                              [dNNNVudy[i],dNNNVvdx[i]]]
                 #end for
 
+                #eta=viscosity(xq[counterq],yq[counterq])
+                eta=viscosity(xc[iel],yc[iel])
                 K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta*weightq*jcob
 
                 for i in range(0,mV):
@@ -740,6 +855,7 @@ print("compute pressure: %.3f s" % (time.time() - start))
 start = time.time()
 
 int_p=0
+int_pth=0
 counterq=0
 for iel in range(0,nel):
     for iq in range(0,nqperdim):
@@ -760,12 +876,14 @@ for iel in range(0,nel):
             pq=-laambda*(dNNNVudx.dot(sum_u[iconu[:,iel]])+\
                          dNNNVvdy.dot(sum_v[iconv[:,iel]]))
             int_p+=pq*weightq*jcob
+            pthq=pressure(xq[counterq],yq[counterq])
+            int_pth+=pthq*weightq*jcob
             counterq+=1
         #end for
     #end for
 #end for
 
-print('     -> nel=',nel,'int_p dV=',int_p)
+print('     -> nel=',nel,'int_p dV=',int_p,'int_pth=',int_pth)
 
 print("compute avrg pressure: %.3f s" % (time.time() - start))
 
@@ -774,7 +892,7 @@ print("compute avrg pressure: %.3f s" % (time.time() - start))
 ###############################################################################
 start = time.time()
 
-nmarker_per_dim=5
+nmarker_per_dim=3
 nmarker=nmarker_per_dim**2*nel
 
 xm=np.zeros(nmarker,dtype=np.float64)
@@ -831,38 +949,28 @@ for iel in range (0,nel):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
+            #interpolate velocity 
             NNNVu=NNVu(rq,sq)
             NNNVv=NNVv(rq,sq)
             uq=NNNVu.dot(u[iconu[0:mV,iel]])
             vq=NNNVv.dot(v[iconv[0:mV,iel]])
-
+            errv+=((uq-velocity_x(xq[counterq],yq[counterq]))**2+\
+                   (vq-velocity_y(xq[counterq],yq[counterq]))**2)*weightq*jcob
+            #interpolate pressure
             N[0]=0.25*(1.-rq)*(1.-sq)
             N[1]=0.25*(1.+rq)*(1.-sq)
             N[2]=0.25*(1.+rq)*(1.+sq)
             N[3]=0.25*(1.-rq)*(1.+sq)
             pq=N.dot(p[4*iel:4*iel+4])
-
-            errv+=((uq-velocity_x(xq[counterq],yq[counterq]))**2+\
-                   (vq-velocity_y(xq[counterq],yq[counterq]))**2)*weightq*jcob
             errp+=(pq-pressure(xq[counterq],yq[counterq]))**2*weightq*jcob
-
-
-
+            #interpolate div(v) 
             dNNNVudr=dNNVudr(rq,sq)
-            #dNNNVuds=dNNVuds(rq,sq)
-            #dNNNVvdr=dNNVvdr(rq,sq)
             dNNNVvds=dNNVvds(rq,sq)
             for k in range(0,mV):
                 dNNNVudx[k]=jcbi[0,0]*dNNNVudr[k]
-                #dNNNVudy[k]=jcbi[1,1]*dNNNVuds[k]
-                #dNNNVvdx[k]=jcbi[0,0]*dNNNVvdr[k]
                 dNNNVvdy[k]=jcbi[1,1]*dNNNVvds[k]
-            #end for
             errd+=(dNNNVudx.dot(u[iconu[:,iel]])+\
                    dNNNVvdy.dot(v[iconv[:,iel]]))**2*weightq*jcob
-
-
-
             counterq+=1
         #end for
     #end for
@@ -881,6 +989,17 @@ print("compute errors: %.3f s" % (time.time() - start))
 ###############################################################################
 start = time.time()
 
+if bench==4:
+   print('analytical pressure at 0,0:',pressure(0,0))
+   print('analytical pressure at 1,0:',pressure(1,0))
+   print('analytical pressure at 1,1:',pressure(1,1))
+   print('analytical pressure at 0,1:',pressure(0,1))
+
+   print('measured pressure at 0,0:',p[4*corner_SW+0])
+   print('measured pressure at 1,0:',p[4*corner_SE+1])
+   print('measured pressure at 1,1:',p[4*corner_NE+2])
+   print('measured pressure at 0,1:',p[4*corner_NW+3])
+
 if visu==1:
    vtufile=open("solution.vtu","w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -895,9 +1014,13 @@ if visu==1:
    vtufile.write("</DataArray>\n")
    vtufile.write("</Points> \n")
    #####
-   #vtufile.write("<CellData Scalars='scalars'>\n")
+   vtufile.write("<CellData Scalars='scalars'>\n")
    #--
-   #vtufile.write("</CellData>\n")
+   vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
+   for iel in range(0,nel):
+       vtufile.write("%e \n" %(viscosity(xc[iel],yc[iel])))
+   vtufile.write("</DataArray>\n")
+   vtufile.write("</CellData>\n")
    #####
    vtufile.write("<PointData Scalars='scalars'>\n")
    #--
