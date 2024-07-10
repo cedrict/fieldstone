@@ -323,6 +323,13 @@ singular vertex (cf. (3.8)), in the discrete pressure space are ﬁltered
 out naturally.
 ''}
 
+In \textcite{zhan08} the definition for a singular vertex is given:
+\begin{displayquote}
+{\color{darkgray}
+A vertex is called singular if all edges meeting at the vertex form two cross lines.
+}
+\end{displayquote}
+
 In order to understand this and arrive at the correct number of pressure dofs
 presented in the table above 
 it is useful to look at this part of \textcite{huzh11}:
@@ -417,6 +424,44 @@ one could wonder whether using off number of elements per side could yield probl
 I have tried this, and in practice, this makes no difference in the error values nor their 
 convergence rates.
 
+
+%=========================
+\section*{code structure}
+
+\begin{verbatim}
+build mesh arrays, xu, yu, xv, yv
+build connectivity arrays iconu, iconv
+define boundary conditions
+for iter in range(0,niter):
+    build FE matrix and rhs
+    solve linear system
+    check convergence of u and v fields
+compute Q_{-1} pressure and div(v)
+compute int p dV
+compute divv on markers
+compute L2 errors v,p,div(v)
+export to paraview
+\end{verbatim}
+The chosen format for the vtu file is $Q_{-1}$: each element
+is exported separately, and 4 corner values for 
+each $u$, $v$, $p$, $div(v)$ field.
+
+The {\python bench} parameter allows to choose 
+which benchmark is carried out.
+
+All functions are jitted.
+
+Because all elements are rectangles the mapping is trivial
+and analytical. 
+
+The following results are obtained by running the basch script
+{\tt script\_errors}.
+
+The code relies on a direct solver as provided by scipy.
+
+
+
+
 \newpage
 %===============================================
 \section*{Manufactured solutions \& experiments}
@@ -427,7 +472,7 @@ In \textcite{huzh11} (2011) the authors propose the
 following manufactured solution:
 
 \[
-g(x,y)=(x-x^2)^2(y-y^2)^2 = 2^8 f(x)h(y) = 256 f(x) h(y)
+g(x,y)=2^8(x-x^2)^2(y-y^2)^2 = 2^8 f(x)h(y) = 256 f(x) h(y)
 \]
 The velocity is given by 
 \[
@@ -502,9 +547,9 @@ f'''(x) &=& 24x-12 \nn
 We have 
 \begin{eqnarray}
 \iint_\Omega p(x,y) dxdy 
-&=& -256 \int_{0}^{+1}\int_{0}^{+1} f''(x) h(y) dxdy \nn\\
-&=& -256 \int_{0}^{+1} f''(x) dx \cdot \int_{0}^{+1}  h(y) dy \nn\\
-&=& -256 \int_{0}^{+1} 2(1-6x+6x^2) dx \cdot \int_{0}^{+1}  (y-y^2)^2 dy \nn\\
+&=& -256 \int_{0}^{1}\int_{0}^{1} f''(x) h(y) dxdy \nn\\
+&=& -256 \int_{0}^{1} f''(x) dx \cdot \int_{0}^{1}  h(y) dy \nn\\
+&=& -256 \int_{0}^{1} 2(1-6x+6x^2) dx \cdot \int_{0}^{1}  (y-y^2)^2 dy \nn\\
 &=& -256 \cdot 0 \cdot \frac{1}{30}  \nn\\ 
 &=& 0
 \end{eqnarray}
@@ -520,10 +565,10 @@ p(0,0)=p(1,1)=p(0,1)=p(1,0)=0
 \end{center}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/th_u}
-\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/th_v}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/th_vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/th_press}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_161/results/bench2/th_u}
+\includegraphics[width=6cm]{python_codes/fieldstone_161/results/bench2/th_v}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_161/results/bench2/th_vel}
+\includegraphics[width=6cm]{python_codes/fieldstone_161/results/bench2/th_press}\\
 {\captionfont Figures obtained with Paraview. Visualisation of the analytical solution. 
 factor $2^8$ missing.}
 \end{center}
@@ -534,13 +579,13 @@ They also report the following rates:
 \includegraphics[width=13cm]{python_codes/fieldstone_161/images/errors}
 \end{center}
 
-It is quite remarkable that the error convergence rates (in the $L_2$ norm)
+Note that the error convergence rates (in the $L_2$ norm)
 are identical for both velocity and pressure. 
 
 %-------------------------------------------------
 \subsection*{Donea \& Huerta manufactured solution}
 
-Taken from \cite{dohu03}. We consider a two-dimensional problem 
+Taken from the Donea \& Huerta book \cite{dohu03}. We consider a two-dimensional problem 
 in the square domain $\Omega=[0,1]\times[0,1]$, which possesses a closed-form analytical 
 solution. The fluid viscosity is $\eta=1$.
 The velocity and pressure fields are given by:
@@ -568,39 +613,8 @@ b_y &=& (8 - 48y + 48 y^2) x^3 + (-12 + 72y - 72y^2) x^2  \nonumber\\
 We find that the velocity fields are identical across 
 both benchmarks (aside from $2^8$ factor). Only the pressure fields differ!
 
-%=========================
-\section*{code structure}
 
-\begin{verbatim}
-build mesh arrays, xu, yu, xv, yv
-build connectivity arrays iconu, iconv
-define boundary conditions
-for iter in range(0,niter):
-    build FE matrix and rhs
-    solve linear system
-    check convergence of u and v fields
-compute Q_{-1} pressure and div(v)
-compute int p dV
-compute divv on markers
-compute L2 errors v,p,div(v)
-export to paraview
-\end{verbatim}
-The chosen format for the vtu file is $Q_{-1}$: each element
-is exported separately, and 4 corner values for 
-each $u$, $v$, $p$, $div(v)$ field.
 
-The {\python bench} parameter allows to choose 
-which benchmark is carried out.
-
-All functions are jitted.
-
-Because all elements are rectangles the mapping is trivial
-and analytical. 
-
-The following results are obtained by running the basch script
-{\tt script\_errors}.
-
-The code relies on a direct solver as provided by scipy.
 
 \newpage
 %============================
@@ -610,7 +624,7 @@ The code relies on a direct solver as provided by scipy.
 \subsection*{Huang \& Zhang manufactured solution ({\tt bench=2})}
 
 The velocity error, pressure error and velocity divergence (in the $L_2$ norm) are 
-measured as follows:  
+measured as follows\footnote{$\lambda$ is the penalty parameter.}:  
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/errorsV.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/errorsP.pdf}
@@ -626,23 +640,23 @@ On the following plots I show the convergence of the iterated penalty method as
 a function of resolution for different values of the penalty coefficient $\lambda$:
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/conv1.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/conv2.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/conv3.pdf}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/conv4.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/conv5.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/conv6.pdf}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_161/results/bench2/conv1.pdf}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_161/results/bench2/conv2.pdf}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_161/results/bench2/conv3.pdf}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_161/results/bench2/conv4.pdf}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_161/results/bench2/conv5.pdf}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_161/results/bench2/conv6.pdf}
 \end{center}
 
-Note that at high resolution the cases $\lambda=10^{5,6}$ fails to converge to the 
-desired relative tolerance $10^{-8}$. 
+Note that at high resolution the cases $\lambda=10^{5}$ and $\lambda=10^6$ fail 
+to converge to the desired relative tolerance $10^{-8}$. 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/press}
-\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/press_error}
-\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/press_error2}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/divv}
-\includegraphics[width=5cm]{python_codes/fieldstone_161/results/bench2/vel_error}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/press}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/press_error}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/press_error2}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/divv}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench2/vel_error}\\
 {\captionfont Obtained on $8\times8$ grid (factor $2^8$ is absent). 
 We find that the divergence is indeed very low.
 Note that Paraview is misleading: it looks like the squares are divived into 2 triangles but
@@ -668,7 +682,7 @@ This time the pressure only convergences linearly:
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/errorsDivv.pdf}
 \end{center}
 
-We find that the $L_2$ norm of div(v) is very low and the higher $\lambda$ the lower 
+We find that the $L_2$ norm of velocity divergence is very low and the higher $\lambda$ the lower 
 the divergence.
 
 \begin{center}
@@ -685,7 +699,7 @@ Also the number of iterations to reach convergence decreases when $\lambda$ incr
 Any value higher than $10^4$ does not improve the convergence, and even worse
 at high resolution $\lambda=10^6$ does not converge anymore. 
 
-Let us set $nelx=nely=16$ and $\lambda=10^3$ and let us look at the error fields, 
+Let us use a $16\times 16$ mesh with $\lambda=10^3$ and let us look at the error fields, 
 i.e. $v_h-v$ and $p_h-p$:
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench1/press2}
@@ -694,10 +708,10 @@ i.e. $v_h-v$ and $p_h-p$:
 {\captionfont Left: pressure field; Middle: velocity error; Right: pressure error.} 
 \end{center}
 The analytical pressure field is $p(x,y)=x(1-x)-1/6$. The 1/6=0.16667 term insures that $\int p dV=0$.
-We see that the constraints $p=0$ in the corners yield to an error that is exactly 1/6 there. 
-Everywhere else the error is small, the continuity requirements on the edges do not interfere 
-with the true solution. 
-This is a huge problem that is not discussed in the original paper!
+We see that the constraints $p=0$ in the corners yield an error that is exactly 1/6 there 
+(Everywhere else the error is small, the continuity requirements on the edges do not interfere 
+with the true solution). 
+{\color{red} This is a big problem that is not discussed in the original paper: is there a way around this?}
 
 Remark: after having computed the pressure the code computes the integral of the pressure 
 on the domain and the recovered values are extremely small ($<10^{-15}$).  
@@ -708,12 +722,12 @@ on the domain and the recovered values are extremely small ($<10^{-15}$).
 This is a typical test designed to check whether a particular 
 FE pair is suitable for buoyancy driven flow (e.g. \textcite{thba22}, 2022).
 In this version I keep the viscosity constant in the entire domain with $\eta=1$.
-The body force is as follows: in a square of size 0.25x0.25 in the middle of the domain
+The body force is as follows: in a square of size $0.25\times 0.25$ in the middle of the domain
 $\rho \vec{g}=-1.001~\vec{e}_y$ while it is $-1~\vec{e}_y$ outside of it:
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_161/results/bench3/by}\\
-{\captionfont vertical component of the body force. 
+{\captionfont Vertical component of the body force. 
 It corresponds to a gravity $|\vec{g}|=1$
 and a density difference of 0.1\%.}
 \end{center}
@@ -739,8 +753,8 @@ since there is no analytical solution available):
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench3/u}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench3/v}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench3/vel}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench3/press}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench3/press2}
+\includegraphics[width=7cm]{python_codes/fieldstone_161/results/bench3/press}
+\includegraphics[width=7cm]{python_codes/fieldstone_161/results/bench3/press2}
 \end{center}
 
 We find that the velocity field conforms to the boundary conditions and that 
@@ -749,10 +763,10 @@ values on the top left and bottom left corners (better seen on the right '3d' pl
 its value is there zero! Rather 
 interestingly this happens on the left side, where no-slip boundary 
 conditions are prescribed, but not on the right side with free-slip.
-This shows the complex interplay between velocity space and the 
+{\color{red} This shows the complex interplay between velocity space and the 
 constraint $p=0$ at the corners, which casts a shadow on the practical use of this element
 in geodynamics where it is common to have no-slip and free-slip boundary conditions on
-various sides of the domain.
+various sides of the domain}.
 
 %------------------------------------------------------------
 \subsection*{The viscous inclusion ({\tt bench=4})}
@@ -791,7 +805,8 @@ Also, because of symmetry, it is often run on the top quadrant $x>0$, $y>0$.
 
 Boundary conditions are free slip on left and bottom boundaries (axes of symmetry)
 and the analytical solution is prescribed on the right and top boundaries.
-Viscosity is prescribed at the elemental level.
+Viscosity is prescribed at the elemental level (i.e. all quadrature points inside an element
+are assigned the same viscosity).
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_161/results/bench4/vel}
@@ -809,23 +824,24 @@ the analytical solution should verify $\int p\; dV=0$.
 In the inclusion $p=0$ so we look at the following integral (the constants have been 
 removed for clarity):
 \begin{eqnarray}
-\iint \frac{1}{r^2} \cos(2\theta) \; dV 
+\int p \; dV \propto \iint \frac{1}{r^2} \cos(2\theta) \; dV 
 &=& \iint \frac{1}{r^2} ( \cos^2\theta - \sin^2 \theta) dV \nn\\
 &=& \iint \frac{1}{r^2} ( \frac{x^2}{x^2+y^2} - \frac{y^2}{x^2+y^2}) \nn\\
 &=& 0
 \end{eqnarray}
 by symmetry along the diagonal (see also analytical pressure field figure at the 
 beginning of this section).
+It then makes sense to compute the velocity and pressure error rates:
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench4/errorsV.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench4/errorsP.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_161/results/bench4/errorsDivv.pdf}
 \end{center}
-We recover a first-order convergence for the velocity error and ${\cal O}(h^{1/2})$ 
+We recover ${\cal O}(h^1)$ convergence for the velocity error and ${\cal O}(h^{1/2})$ 
 pressure error convergence, as in \textcite{thba22} (2022).
 Unsurprisingly this element does not (cannot) perform any better than
-the $Q_2 \times P_{-1}$ element in terms of error rates, since these are
+the ${\bm Q}_2 \times P_{-1}$ element in terms of error rates, since these are
 controlled by the fact that the viscosity discontinuity does not align with
 element edges.
 
@@ -854,6 +870,17 @@ a direct solver, cheaper than solving matrix coming from mixed formulation
 
 \item with Q2Q1, we must iterate (outer solver to arrive at solution, FGMRES, or PCG. 
 With this element, outer iterations (iterated penalty method) also necessary. What is best?
+\textcite{zhan08} states: `` 
+. So it is not possible to find a local basis for Ph in general, and it is not possible to
+derive a linear system of equations for (2.6), different from all other mixed finite methods. It
+seems that the definition of Ph (2.5) is not practical to implement th mixed element. But
+on the other side, it is the special interest of the new formulation where the space Ph is not
+implemented at all, and the discrete solutions approximating the pressure function in the Stokes
+equations will be obtained as byproducts. So there will be only one finite element space for 
+the velocity, and the mixed element pair becomes a single element. This does not only greatly 
+simplify the coding work, but also avoids the difficulty of solving non-positive definite systems
+of linear equations encountered in the classic mixed element method.
+''
 
 \item quid of pressure not zero at corners? write Zhang ? try different mms 
 
