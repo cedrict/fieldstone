@@ -711,7 +711,7 @@ The analytical pressure field is $p(x,y)=x(1-x)-1/6$. The 1/6=0.16667 term insur
 We see that the constraints $p=0$ in the corners yield an error that is exactly 1/6 there 
 (Everywhere else the error is small, the continuity requirements on the edges do not interfere 
 with the true solution). 
-{\color{red} This is a big problem that is not discussed in the original paper: is there a way around this?}
+This is a big problem that is not discussed in the original paper: is there a way around this?
 
 Remark: after having computed the pressure the code computes the integral of the pressure 
 on the domain and the recovered values are extremely small ($<10^{-15}$).  
@@ -763,10 +763,10 @@ values on the top left and bottom left corners (better seen on the right '3d' pl
 its value is there zero! Rather 
 interestingly this happens on the left side, where no-slip boundary 
 conditions are prescribed, but not on the right side with free-slip.
-{\color{red} This shows the complex interplay between velocity space and the 
+This shows the complex interplay between velocity space and the 
 constraint $p=0$ at the corners, which casts a shadow on the practical use of this element
 in geodynamics where it is common to have no-slip and free-slip boundary conditions on
-various sides of the domain}.
+various sides of the domain.
 
 %------------------------------------------------------------
 \subsection*{The viscous inclusion ({\tt bench=4})}
@@ -892,4 +892,25 @@ like MUMPS is used (analysis and factorisation only needed once)!
 \item quid of viscosity constrasts? 
 
 \end{itemize}
+
+Upon my contacting Prof. Zhang, his answer was:
+\begin{displayquote}
+{\color{darkgray}
+ As p is the Lagrange multiplier for enforcing div u=0, then p should be in the divergence space of u.
+
+If $u=0$ on the boundary, then $div u=0$ at boundary corners. 
+So, we have to choose the exact solution $p=0$ at corners. 
+
+This way the weak solution in $H^2 \times H^1$ space is the strong solution.
+
+Now if $p \ne 0$ at corners,  one can still find weak solutions in the $H^1 \times L^2$ space.  
+But the current element does not produce an optimal order solution for $p$,  
+(still the optimal order convergence for u).   $p_h$ converges at 1/2 order or so.
+
+To get an optimal order convergent $p_h$ in this case,  we need to add piecewise polynomial 
+bubbles at the corner square elements so that div u is a two piece non-zero constants at each corner.
+}
+\end{displayquote}
+
+Based on this answer, this concludes my study.  
 
