@@ -1,4 +1,4 @@
-set term pdf enhanced font "Times,12pt"
+set term pdf enhanced font "Times,13pt"
 #set grid
 
 #################################################
@@ -17,8 +17,7 @@ plot[3e-3:0.5][]\
 'errors4' u (1./sqrt($3)):6 w lp ps .35 t '{/Symbol l}=10^4',\
 'errors5' u (1./sqrt($3)):6 w lp ps .35 t '{/Symbol l}=10^5',\
 'errors6' u (1./sqrt($3)):6 w lp ps .35 t '{/Symbol l}=10^6',\
-'huzh11.ascii' u (1/2**($1-1)):($2) w lp ps .3  t 'Huang \& Zhang, 2011',\
-x**2/80.*256 w l lt -1 dashtype 2 t 'x^2'
+x**2/180.*16 w l lt -1 dashtype 2 t 'x^2'
 
 set output 'errorsP.pdf'
 set ylabel '||p-p_h||_{L_2}'
@@ -29,8 +28,8 @@ plot[3e-3:0.5][]\
 'errors4' u (1./sqrt($3)):9 w lp ps .35 t '{/Symbol l}=10^4',\
 'errors5' u (1./sqrt($3)):9 w lp ps .35 t '{/Symbol l}=10^5',\
 'errors6' u (1./sqrt($3)):9 w lp ps .35 t '{/Symbol l}=10^6',\
-'huzh11.ascii' u (1/2**($1-1)):($3) w lp ps .3 t 'Huang \& Zhang, 2011',\
-x**2/5.*256 w l lt -1 dashtype 2 t 'x^2'
+x**2/5.*256 w l lt -1 dashtype 2 t 'x^2',\
+x**1/8. w l lt -1 dashtype 3 t 'x^1'
 
 set output 'errorsDivv.pdf'
 set ylabel '||div(v)||_{L_2}'
