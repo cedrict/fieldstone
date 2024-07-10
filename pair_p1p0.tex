@@ -2,17 +2,20 @@
 \begin{flushright} {\tiny {\color{gray} \tt  pair\_p1p0.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-
-
-
-Elman Silvester Wathen say (5.3.3) that 
-\begin{displayquote}
-{\color{darkgray}
-It can be readily stabilized using the pressure jump
-stabilization together with an appropriate macroelement subdivision.}
-\end{displayquote}
-See \textcite{nosi98} (1998) for globally and locally stabilised versions. 
+The standard form of the ${\bm P}_1 \times P_0$ element is as follows:
+\begin{verbatim}
+*          
+|\   P1      |\    P0
+| \          | \
+|  \         |  \
+|   \        |   \
+|    \       |    \
+|     \      |  o  \
+|      \     |      \
+*-------*    ---------
+\end{verbatim}
+The pressure is constant inside the element and discontinuous from element 
+to element.
 
 \textcite{qizh07b} (2007) state: 
 \begin{displayquote}
@@ -25,10 +28,11 @@ the velocity and the pressure on many mesh families.}
 \end{displayquote}
 
 \begin{center}
-\includegraphics[width=12cm]{images/pair_p1p0/qizh07}\\
+\fbox{\includegraphics[width=12cm]{images/pair_p1p0/qizh07}}\\
 {\captionfont A crisscross, a Powell–Sabin, a Powell–Sabin–Heindl and a type-2 grid.
 Taken from \cite{qizh07}.}
 \end{center}
+\index{general}{Powell-Sabin-Heindl grid}
 
 \textcite{arno93} (1993) states: 
 \begin{displayquote}
@@ -45,9 +49,37 @@ this space is known to reduce to zero. So even after accounting for the indeterm
 the pressure we have no convergence.}
 \end{displayquote}
 
-Example 3.2 of \textcite{bobf08} (2008) explains neatly the locking phenomenon and how 
+Example 3.2 of \textcite{bobf08} (2008) explain neatly the locking phenomenon and how 
 to circumvent it via a so-called cross-grid macroelement. See also 
 \textcite{hokl03} (2003).
+
+Note that \textcite{zhan08} (2008) establishes the stability of the ${\bm P}_1\times P_0$
+mixed-element on general Powell-Sabin triangular grids.
+
+\begin{displayquote}
+{\color{darkgray}
+The piecewise linear finite element solution approximating the velocity is
+divergence-free pointwise for the Stokes equations. The finite element solution approximating 
+the pressure in the Stokes equations can be obtained as a byproduct if an iterative
+method is adopted for solving the discrete linear system of equations. Numerical tests are
+presented confirming the theory on the stability and the optimal order of convergence for
+the $P_1$ Powell-Sabin divergence-free finite element method.}
+\end{displayquote}
+
+\begin{center}
+\fbox{\includegraphics[width=12cm]{images/pair_p1p0/hct_ps}}\\
+{\captionfont Taken from \textcite{zhan08}, 2008. Looking at this node layout we see that 
+this element pair will not be trivial to implement since the velocity nodes inside the element
+are placed like for the $P_2^+$ element but instead make up 6 smaller elements.}
+\end{center}
+
+\begin{center}
+\fbox{\includegraphics[width=8cm]{images/pair_p1p0/zhan08}}\\
+{\captionfont Taken from \textcite{zhan08}, 2008.}
+\end{center}
+
+\index{general}{Powell-Sabin grid}
+\index{general}{Hsieh-Clough-Tocher grid}
 
 In his lecture notes\footnote{\url{https://www.math.tamu.edu/~guermond/}}, 
 Guermond states 
@@ -68,5 +100,16 @@ this pair does not satisfy the inf-sup condition.}
 I have not found a paper yet which showcases its accuracy on a manufactured solution
 and compares it to other element pairs.
 
-
 CHECK example 3.70 in \textcite{john16} (book),
+
+Elman Silvester Wathen say (5.3.3) that 
+\begin{displayquote}
+{\color{darkgray}
+It can be readily stabilized using the pressure jump
+stabilization together with an appropriate macroelement subdivision.}
+\end{displayquote}
+See \textcite{nosi98} (1998) for globally and locally stabilised versions.
+
+
+
+ 
