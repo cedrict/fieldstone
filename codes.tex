@@ -188,7 +188,8 @@ uses the Trilinos solver library \cite{hewi12}, and can deal with 2D and 3D geom
                                \textcite{clkl22},  \textcite{baha22}, \textcite{holt22},
                                \textcite{liki22},  \textcite{panb22}, \textcite{xihz22},
                                \textcite{less22},  \textcite{hebe22}, \textcite{mabc22},
-                               \textcite{dagl22},  \textcite{posl22}
+                               \textcite{dagl22},  \textcite{posl22}, \textcite{stcb22}
+                               \textcite{nevr22}
 \item[\twothousandtwentythree] \textcite{hepm23},  \textcite{hoal23}, \textcite{wenc23},
                                \textcite{gusw23},  \textcite{zhzw23}, \textcite{lild23},
                                \textcite{scbg23},  \textcite{lafn23}, \textcite{modg23},
@@ -203,7 +204,7 @@ uses the Trilinos solver library \cite{hewi12}, and can deal with 2D and 3D geom
 \item[\twothousandtwentyfour]  \textcite{vavt24},  \textcite{dohx24}, \textcite{gedn24},
                                \textcite{goho24},  \textcite{xulw24}, \textcite{zhzl24},
                                \textcite{gadb24},  \textcite{mubp24}, \textcite{hesc24},
-                               \textcite{epcs24}
+                               \textcite{epcs24},  \textcite{grbe24}
 \end{itemize}
 \end{small}
 
@@ -1154,16 +1155,49 @@ written entirely in Python.
 \end{small}
 
 %------------------------------------------------------------------------------
-\section{LITMOD2D/3D}
+\section{CAGES, LITMOD2D/3D}
 %------------------------------------------------------------------------------
+
+[Taken from tojn23]
+The initial CAGES algorithm developed by Fernàndez et al. (1990) was improved by
+incorporating the geoid anomaly, which allowed for better control of the density dis-
+tribution at the lithospheric mantle scale. The algorithm was used to study the litho-
+sphere in different geodynamic scenarios, as is the case of the Atlantic margin (Torne
+et al. 1995), the Cantabrian margin (Ayarza et al. 2004), the transition from the Iberian
+Massif to the oceanic crust of the Gulf of Cádiz (Fernàndez et al. 2004), the NW margin
+of Morocco and the Atlas mountains (Zeyen et al. 2005; Jiménez-Munt et al. 2010), the
+Western Mediterranean (Roca et al.2004), or the Variscan terrain of the SW of the Ibe-
+rian Peninsula (Palomeras et al. 2011), among other studies. Subsequently, geochemical
+and petrological data of the mantle were incorporated (Afonso et al. 2008) and the pos-
+sibility of introducing thermal, seismic, or compositional anomalies, or a combination
+of them into the sublithospheric mantle (Kumar et al. 2020), has improved the potential
+of these algorithms (LitMod2D code) considerably. For examples applied to the study of
+the Iberian Peninsula, we refer to the works of Carballo et al. (2015a, b), Pedreira et al.
+(2015), Jiménez-Munt et al. (2019), and Kumar et al. (2021).
+
+See paper for more links to various flavors of this code in 3D.
+
+
 
 \begin{small}
 \begin{itemize}
-\item[\twothousandseven]    \textcite{afrf07}
-\item[\twothousandeight]    \textcite{affr08}
-\item[\twothousandnine]     \textcite{fuac09}
-\item[\twothousandten]      \textcite{fufa10}
-\item[\twothousandnineteen] \textcite{jitf19}
+\item[1990] \textcite{fetz90}
+\item[1994] \textcite{zefe94}
+\item[2004] \textcite{ayma04}, \textcite{femt04}
+\item[2005] \textcite{zeaf05}
+\item[\twothousandseven]      \textcite{afrf07}
+\item[\twothousandeight]      \textcite{affr08}
+\item[\twothousandnine]       \textcite{fuac09}
+\item[\twothousandten]        \textcite{fufa10}, \textcite{jifv10}
+\item[2011] \textcite{paca11}
+\item[\twothousandnineteen]   \textcite{jitf19}
+\item[\twothousandfifteen]    \textcite{fucn15}, \textcite{caft15}, \textcite{cafj15},
+                              \textcite{peap15}
+\item[\twothousandtwenty]     \textcite{kufj20}
+\item[\twothousandtwentyone]  \textcite{kufv21}
+\item[\twothousandtwentytwo]  \textcite{zhjt22}
+\item[\twothousandtwentythree]\textcite{tojn23}
+\item[\twothousandtwentyfour] \textcite{zhjt24}
 \end{itemize}
 \end{small}
 
@@ -1245,10 +1279,13 @@ MC3D is second-order accurate in time and space.
 \section{MARC}
 %------------------------------------------------------------------------------
 
+\url{https://en.wikipedia.org/wiki/MSC_Marc}
+
 \begin{small}
 \begin{itemize}
 \item[\nineteenninetyseven] \textcite{nesg97}
-\item[\nineteenninetynine]  \textcite{nesb99}
+\item[\nineteenninetynine]  \textcite{nesb99}, \textcite{nebc99}, \textcite{dins99}
+\item[2000]  \textcite{gacn00}
 \end{itemize}
 \end{small}
 
@@ -1319,6 +1356,8 @@ package are applicable to a broad class of problems in Earth science. \url{http:
 \textcite{stha14}
 \item[2015]
 \textcite{tosn15}
+\item[2023]
+\textcite{stha23}
 \item[2024]
 \textcite{stha24}
 \end{itemize}
@@ -1550,7 +1589,7 @@ and compressible viscous media.
 \item[\twothousandeighteen]    \textcite{spcv18},  \textcite{chss18}
 \item[\twothousandnineteen]    \textcite{zhdv19},  \textcite{vayu19},  \textcite{casv19}, 
                                \textcite{vaws19},  \textcite{cibi19}
-\item[\twothousandtwenty]      \textcite{moku20},  \textcite{jomv20}
+\item[\twothousandtwenty]      \textcite{moku20},  \textcite{jomv20},  \textcite{bicc20}
 \item[\twothousandtwentyone]   \textcite{pocv21},  \textcite{mota21}
 \item[\twothousandtwentythree] \textcite{pocb23}
 \item[\twothousandtwentyfour]  \textcite{vapc24}
@@ -1572,6 +1611,8 @@ regional or global lithosphere with faults
 \textcite{nebs02}
 \item[2003]
 \textcite{jine03}
+\item[2004]
+\textcite{nejv04}
 \end{itemize}
 \end{small}
 
@@ -1900,11 +1941,53 @@ Not completely up to date (see website)
 \end{small}
 
 
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%------------------------------------------------------------------------------
+\section{TEMESCH} 
+%------------------------------------------------------------------------------
+
+TEMESCH (TEmperature
+and Motion Equation SCHeme) is a MATLAB 2D finite difference code 
+developed by Valera, and others, which
+solves the equations of conservation of mass, momentum and energy
+for an incompressible ﬂuid. Density variations have been neglected in
+the motion equation except when they are coupled to the gravitational
+acceleration in the buoyancy force term. Inertial forces are neglected. 
+The thermal effects of radiogenic heat production and adiabatic heating 
+are included in the energy equation 
+whereas shear heating is neglected.
+
+\begin{small}
+\begin{itemize}
+\item[2008]
+\textcite{vanv08}
+\item[2009]
+\textcite{vale09}
+\item[2011]
+\textcite{vanj11}
+\item[2014]
+\textcite{vanb14}
+\end{itemize}
+\end{small}
+
+%------------------------------------------------------------------------------
+\section{TEMSPOL} 
+%------------------------------------------------------------------------------
+This code permits the calculation of temperature and density anomaly 
+distributions in deep subduction zones, taking into account self-consistently 
+the olivine to spinel phase transformation.
+
+\begin{small}
+\begin{itemize}
+\item[\twothousandfour]  
+\textcite{nevc04}
+\item[\twothousandfive]  
+\textcite{canv05}
+\end{itemize}
+\end{small}
 
 %------------------------------------------------------------------------------
 \section{TDPOIS} 
@@ -1924,9 +2007,6 @@ This code is also called TDCON in \textcite{cosc06} (2006).
 \item[\twothousandsix] \textcite{cosc06}
 \end{itemize}
 \end{small}
-
-
-
 
 %------------------------------------------------------------------------------
 \section{TERRA} 
@@ -1975,7 +2055,7 @@ Particles were added in \textcite{strb02}.
 \item[\twothousandnineteen]    \textcite{prdp19}
 \item[\twothousandtwenty]      \textcite{cobo20}
 \item[\twothousandtwentyone]   \textcite{ghbo21}
-\item[\twothousandtwentytwo]   \textcite{licw22},  \textcite{brcb22}
+\item[\twothousandtwentytwo]   \textcite{licw22},  \textcite{brcb22}, \textcite{pade22}
 \item[\twothousandtwentythree] \textcite{tabs23},  \textcite{padm23}
 \end{itemize}
 \end{small}
@@ -2085,7 +2165,7 @@ Also check \cite{magm20} for Underworld2.
                                \textcite{scsb23}, \textcite{mord23}, \textcite{ligu23a},
                                \textcite{ligu23b}
 \item[\twothousandtwentyfour]  \textcite{deyz24}, \textcite{gucm24}, \textcite{yuga24},
-                               \textcite{comi24}
+                               \textcite{comi24}, \textcite{waxu24}
 
 \end{itemize}
 \end{small}
