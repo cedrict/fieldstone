@@ -1,0 +1,8 @@
+#! /bin/bash
+
+rm -f errors
+
+for res in {7..49}; do 
+    python3 stone.py  $res  $res 0 | grep nel >> errors
+done 
+
