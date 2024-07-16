@@ -11,6 +11,56 @@ bench=1
 
 #------------------------------------------------------------------------------
 
+def NNVu(r,s):
+    N_4=r*(1-r**2)*(1-s**2)
+    N_0=0.25*(1.-r)*(1.-s) #-0.25*N_4
+    N_1=0.25*(1.+r)*(1.-s) #-0.25*N_4
+    N_2=0.25*(1.+r)*(1.+s) #-0.25*N_4
+    N_3=0.25*(1.-r)*(1.+s) #-0.25*N_4
+    return np.array([N_0,N_1,N_2,N_3,N_4],dtype=np.float64)
+
+def dNNVudr(r,s):
+    dNdr_4=(1-3*r**2)*(1-s**2)
+    dNdr_0=-0.25*(1.-s) #-0.25*dNdr_4
+    dNdr_1=+0.25*(1.-s) #-0.25*dNdr_4
+    dNdr_2=+0.25*(1.+s) #-0.25*dNdr_4
+    dNdr_3=-0.25*(1.+s) #-0.25*dNdr_4
+    return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4],dtype=np.float64)
+
+def dNNVuds(r,s):
+    dNds_4=r*(1-r**2)*(-2*s)
+    dNds_0=-0.25*(1.-r) #-0.25*dNds_4
+    dNds_1=-0.25*(1.+r) #-0.25*dNds_4
+    dNds_2=+0.25*(1.+r) #-0.25*dNds_4
+    dNds_3=+0.25*(1.-r) #-0.25*dNds_4
+    return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4],dtype=np.float64)
+
+def NNVv(r,s):
+    N_4=s*(1-r**2)*(1-s**2)
+    N_0=0.25*(1.-r)*(1.-s)-0.25*N_4
+    N_1=0.25*(1.+r)*(1.-s)-0.25*N_4
+    N_2=0.25*(1.+r)*(1.+s)-0.25*N_4
+    N_3=0.25*(1.-r)*(1.+s)-0.25*N_4
+    return np.array([N_0,N_1,N_2,N_3,N_4],dtype=np.float64)
+
+def dNNVvdr(r,s):
+    dNdr_4=s*(-2*r)*(1-s**2)
+    dNdr_0=-0.25*(1.-s) #-0.25*dNdr_4
+    dNdr_1=+0.25*(1.-s) #-0.25*dNdr_4
+    dNdr_2=+0.25*(1.+s) #-0.25*dNdr_4
+    dNdr_3=-0.25*(1.+s) #-0.25*dNdr_4
+    return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4],dtype=np.float64)
+
+def dNNVvds(r,s):
+    dNds_4=(1-r**2)*(1-3*s**2)
+    dNds_0=-0.25*(1.-r) #-0.25*dNds_4
+    dNds_1=-0.25*(1.+r) #-0.25*dNds_4
+    dNds_2=+0.25*(1.+r) #-0.25*dNds_4
+    dNds_3=+0.25*(1.-r) #-0.25*dNds_4
+    return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4],dtype=np.float64)
+
+#------------------------------------------------------------------------------
+
 def bx(x, y):
     if bench==1:
        val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
@@ -88,7 +138,7 @@ nel=nelx*nely  # number of elements, total
 
 eta=1.  # dynamic viscosity 
 
-NfemV=NV*ndofV+nel   # number of velocity dofs
+NfemV=(NV+nel)*ndofV   # number of velocity dofs
 NfemP=nel*ndofP  # number of pressure dofs
 Nfem=NfemV+NfemP # total number of dofs
 
@@ -99,7 +149,7 @@ hy=Ly/nely
 
 ###############################################################################
 
-nqperdimK=2
+nqperdimK=3
 nqperdimG=2
 
 if nqperdimK==1:
@@ -216,7 +266,7 @@ start = time.time()
 
 A_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)# matrix A 
 rhs   = np.zeros(Nfem,dtype=np.float64)  # right hand side 
-b_mat = np.zeros((3,9),dtype=np.float64) # gradient matrix B size=3x9!
+b_mat = np.zeros((3,10),dtype=np.float64) # gradient matrix B size=3x9!
 Nu    = np.zeros(mV,dtype=np.float64)    # shape functions
 Nv    = np.zeros(mV,dtype=np.float64)    # shape functions
 dNudx = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
@@ -233,10 +283,12 @@ jcbi     = np.zeros((2,2),dtype=np.float64)
 
 for iel in range(0,nel):
 
+    #print('===================iel=',iel)
+
     # set arrays to 0 every loop
-    K_el=np.zeros((9,9),dtype=np.float64)
-    G_el=np.zeros((9,1),dtype=np.float64)
-    f_el=np.zeros((9),dtype=np.float64)
+    K_el=np.zeros((10,10),dtype=np.float64)
+    G_el=np.zeros((10,1),dtype=np.float64)
+    f_el=np.zeros((10),dtype=np.float64)
     h_el=np.zeros((1),dtype=np.float64)
 
     # calculate jacobian matrix
@@ -251,30 +303,12 @@ for iel in range(0,nel):
             weightq=qweightsK[iq]*qweightsK[jq]
 
             # calculate shape functions
-            Nu[0]=0.25*(1.-rq)*(1.-sq)
-            Nu[1]=0.25*(1.+rq)*(1.-sq)
-            Nu[2]=0.25*(1.+rq)*(1.+sq)
-            Nu[3]=0.25*(1.-rq)*(1.+sq)
-            Nu[4]=rq*(1-rq**2)*(1-sq**2)
-
-            Nv[0]=0.25*(1.-rq)*(1.-sq)
-            Nv[1]=0.25*(1.+rq)*(1.-sq)
-            Nv[2]=0.25*(1.+rq)*(1.+sq)
-            Nv[3]=0.25*(1.-rq)*(1.+sq)
-            Nv[4]=sq*(1-rq**2)*(1-sq**2)
-
-            # calculate shape function derivatives
-            dNudr[0]=-0.25*(1.-sq)         ; dNuds[0]=-0.25*(1.-rq)
-            dNudr[1]=+0.25*(1.-sq)         ; dNuds[1]=-0.25*(1.+rq)
-            dNudr[2]=+0.25*(1.+sq)         ; dNuds[2]=+0.25*(1.+rq)
-            dNudr[3]=-0.25*(1.+sq)         ; dNuds[3]=+0.25*(1.-rq)
-            dNudr[4]=(1-3*rq**2)*(1-sq**2) ; dNuds[4]=rq*(1-rq**2)*(-2*sq)
-
-            dNvdr[0]=-0.25*(1.-sq)         ; dNvds[0]=-0.25*(1.-rq)
-            dNvdr[1]=+0.25*(1.-sq)         ; dNvds[1]=-0.25*(1.+rq)
-            dNvdr[2]=+0.25*(1.+sq)         ; dNvds[2]=+0.25*(1.+rq)
-            dNvdr[3]=-0.25*(1.+sq)         ; dNvds[3]=+0.25*(1.-rq)
-            dNvdr[4]=sq*(-2*rq)*(1-sq**2)  ; dNvds[4]=(1-rq**2)*(1-3*sq**2)
+            Nu=NNVu(rq,sq)
+            Nv=NNVv(rq,sq)
+            dNudr=dNNVudr(rq,sq)
+            dNuds=dNNVuds(rq,sq)
+            dNvdr=dNNVvdr(rq,sq)
+            dNvds=dNNVvds(rq,sq)
 
             xq=0.0
             yq=0.0
@@ -289,9 +323,9 @@ for iel in range(0,nel):
                 dNvdy[k]=jcbi[1,0]*dNvdr[k]+jcbi[1,1]*dNvds[k]
 
             # construct 3x9 b_mat matrix
-            b_mat[0,:]=[dNudx[0],0       ,dNudx[1],       0,dNudx[2],       0,dNudx[3],       0,dNudx[4]]
-            b_mat[1,:]=[       0,dNvdy[0],       0,dNvdy[1],       0,dNvdy[2],       0,dNvdy[3],dNvdy[4]]
-            b_mat[2,:]=[dNudy[0],dNvdx[0],dNudy[1],dNvdx[1],dNudy[2],dNvdx[2],dNudy[3],dNvdx[3],dNudy[4]+dNvdx[4]]
+            b_mat[0,:]=[dNudx[0],0       ,dNudx[1],       0,dNudx[2],       0,dNudx[3],       0,dNudx[4],0]
+            b_mat[1,:]=[       0,dNvdy[0],       0,dNvdy[1],       0,dNvdy[2],       0,dNvdy[3],0       ,dNvdy[4]]
+            b_mat[2,:]=[dNudy[0],dNvdx[0],dNudy[1],dNvdx[1],dNudy[2],dNvdx[2],dNudy[3],dNvdx[3],dNudy[4],dNvdx[4]]
 
             # compute elemental a_mat matrix
             K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta*weightq*jcob
@@ -305,7 +339,8 @@ for iel in range(0,nel):
             f_el[5]+=Nv[2]*jcob*weightq*by(xq,yq)
             f_el[6]+=Nu[3]*jcob*weightq*bx(xq,yq)
             f_el[7]+=Nv[3]*jcob*weightq*by(xq,yq)
-            f_el[8]+=Nu[4]*jcob*weightq*bx(xq,yq)+Nv[4]*jcob*weightq*by(xq,yq)
+            f_el[8]+=Nu[4]*jcob*weightq*bx(xq,yq)
+            f_el[9]+=Nv[4]*jcob*weightq*by(xq,yq)
 
         #end for jq
     #end for iq
@@ -316,18 +351,12 @@ for iel in range(0,nel):
             sq=qcoordsG[jq]
             weightq=qweightsG[iq]*qweightsG[jq]
 
-            # calculate shape function derivatives
-            dNudr[0]=-0.25*(1.-sq)         ; dNuds[0]=-0.25*(1.-rq)
-            dNudr[1]=+0.25*(1.-sq)         ; dNuds[1]=-0.25*(1.+rq)
-            dNudr[2]=+0.25*(1.+sq)         ; dNuds[2]=+0.25*(1.+rq)
-            dNudr[3]=-0.25*(1.+sq)         ; dNuds[3]=+0.25*(1.-rq)
-            dNudr[4]=(1-3*rq**2)*(1-sq**2) ; dNuds[4]=rq*(1-rq**2)*(-2*sq)
-
-            dNvdr[0]=-0.25*(1.-sq)         ; dNvds[0]=-0.25*(1.-rq)
-            dNvdr[1]=+0.25*(1.-sq)         ; dNvds[1]=-0.25*(1.+rq)
-            dNvdr[2]=+0.25*(1.+sq)         ; dNvds[2]=+0.25*(1.+rq)
-            dNvdr[3]=-0.25*(1.+sq)         ; dNvds[3]=+0.25*(1.-rq)
-            dNvdr[4]=sq*(-2*rq)*(1-sq**2)  ; dNvds[4]=(1-rq**2)*(1-3*sq**2)
+            Nu=NNVu(rq,sq)
+            Nv=NNVv(rq,sq)
+            dNudr=dNNVudr(rq,sq)
+            dNuds=dNNVuds(rq,sq)
+            dNvdr=dNNVvdr(rq,sq)
+            dNvds=dNNVvds(rq,sq)
 
             for k in range(0,5):
                 dNudx[k]=jcbi[0,0]*dNudr[k]+jcbi[0,1]*dNuds[k]
@@ -343,7 +372,8 @@ for iel in range(0,nel):
             G_el[5,0]-=dNvdy[2]*jcob*weightq
             G_el[6,0]-=dNudx[3]*jcob*weightq
             G_el[7,0]-=dNvdy[3]*jcob*weightq
-            G_el[8,0]-=(dNudx[4]*jcob*weightq+dNvdy[4]*jcob*weightq)
+            G_el[8,0]-=dNudx[4]*jcob*weightq
+            G_el[9,0]-=dNvdy[4]*jcob*weightq
 
         #end for jq
     #end for iq
@@ -357,7 +387,7 @@ for iel in range(0,nel):
             m1 =ndofV*icon[k1,iel]+i1
             if bc_fix[m1]:
                K_ref=K_el[ikk,ikk] 
-               for jkk in range(0,9):
+               for jkk in range(0,10):
                    f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
                    K_el[ikk,jkk]=0
                    K_el[jkk,ikk]=0
@@ -367,48 +397,33 @@ for iel in range(0,nel):
                G_el[ikk,0]=0
 
     # assemble matrix K_mat and right hand side rhs
-    for ikk in range(0,9):
+    for ikk in range(0,10):
         match(ikk):
-            case(0):
-               m1=ndofV*icon[0,iel]+0
-            case(1):
-               m1=ndofV*icon[0,iel]+1
-            case(2):
-               m1=ndofV*icon[1,iel]+0
-            case(3):
-               m1=ndofV*icon[1,iel]+1
-            case(4):
-               m1=ndofV*icon[2,iel]+0
-            case(5):
-               m1=ndofV*icon[2,iel]+1
-            case(6):
-               m1=ndofV*icon[3,iel]+0
-            case(7):
-               m1=ndofV*icon[3,iel]+1
-            case(8):
-               m1=2*NV+iel
+            case(0): m1=ndofV*icon[0,iel]+0
+            case(1): m1=ndofV*icon[0,iel]+1
+            case(2): m1=ndofV*icon[1,iel]+0
+            case(3): m1=ndofV*icon[1,iel]+1
+            case(4): m1=ndofV*icon[2,iel]+0
+            case(5): m1=ndofV*icon[2,iel]+1
+            case(6): m1=ndofV*icon[3,iel]+0
+            case(7): m1=ndofV*icon[3,iel]+1
+            case(8): m1=2*NV+2*iel+0
+            case(9): m1=2*NV+2*iel+1
             #end match
-        for jkk in range(0,9):
+        for jkk in range(0,10):
             match(jkk):
-                case(0):
-                   m2=ndofV*icon[0,iel]+0
-                case(1):
-                   m2=ndofV*icon[0,iel]+1
-                case(2):
-                   m2=ndofV*icon[1,iel]+0
-                case(3):
-                   m2=ndofV*icon[1,iel]+1
-                case(4):
-                   m2=ndofV*icon[2,iel]+0
-                case(5):
-                   m2=ndofV*icon[2,iel]+1
-                case(6):
-                   m2=ndofV*icon[3,iel]+0
-                case(7):
-                   m2=ndofV*icon[3,iel]+1
-                case(8):
-                   m2=2*NV+iel
+                case(0): m2=ndofV*icon[0,iel]+0
+                case(1): m2=ndofV*icon[0,iel]+1
+                case(2): m2=ndofV*icon[1,iel]+0
+                case(3): m2=ndofV*icon[1,iel]+1
+                case(4): m2=ndofV*icon[2,iel]+0
+                case(5): m2=ndofV*icon[2,iel]+1
+                case(6): m2=ndofV*icon[3,iel]+0
+                case(7): m2=ndofV*icon[3,iel]+1
+                case(8): m2=2*NV+2*iel+0
+                case(9): m2=2*NV+2*iel+1
             #end match
+            #print(ikk,jkk,m1,m2)
             A_mat[m1,m2]+=K_el[ikk,jkk]
         #end for jkk 
         rhs[m1]+=f_el[ikk]
@@ -441,12 +456,15 @@ start = time.time()
 u,v=np.reshape(sol[0:2*NV],(NV,2)).T
 p=sol[NfemV:Nfem]*Gscaling
 
+uc,vc=np.reshape(sol[2*NV:NfemV],(nel,2)).T
+
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
 np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# x,y,p')
+np.savetxt('velocity_middle.ascii',np.array([xc,yc,uc,vc]).T,header='# x,y,p')
 
 print("split vel into u,v: %.3f s" % (time.time() - start))
 

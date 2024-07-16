@@ -56,7 +56,7 @@ with
 \frac{\partial \overset{\small y}{\bN}_5}{\partial s}(r,s) &=& (1-r^2)(1-3s^2) 
 \end{eqnarray}
 
-basis fcts not finished!!!
+Note that in this form the basis functions are not a partition of unity.
 
 
 %================================
@@ -68,7 +68,6 @@ I then logically organise the unknowns/dofs inside an element as follows:
 \[
 \vec{\cal V}=(u_1,v_1,u_2,v_2,u_3,v_3,u_4,v_4,\alpha)
 \]
-
 I then need to carefully go through the derivations of Section~\ref{MMM-sss:KGGT}:
 \begin{eqnarray}
 \int_\Omega \vec\nabla \vec{\upomega} : {\bm \sigma} \; d\Omega
@@ -79,7 +78,7 @@ I then need to carefully go through the derivations of Section~\ref{MMM-sss:KGGT
 where $\vec\upomega$ and $q$ are the velocity and pressure test functions respectively. 
 
 Since we are going to prescribe the velocity on all sides there is no precribed 
-traction on the boundary so that $\int_\Omega q \vec\nabla \cdot \vec{\upnu} \; d\Omega = 0$.
+traction on the boundary so that $\int_\Gamma \vec\upomega \cdot \vec{t} \; d\Gamma=0$.
 
 Let us first look at the gradient operator ${\bm B}$:
 
@@ -167,8 +166,8 @@ b_x \\ b_y
 %test velocity $\vec{\upomega}$.
 %The sum runs over the dofs inside the element. 
 
-In the case of the ${\bm Q}_1^\star \times P_0$ element, the sum runs over 5 dofs (remember that 
-the 5th one is common to both):
+In the case of the ${\bm Q}_1^\star \times P_0$ element we can write the
+components of the test function as follows:
 \begin{eqnarray}
 \upomega_x(x,y) &=& 
 \overset{\tiny x}{\bN_1}(x,y) \overset{\tiny x}{\upomega_1}+
@@ -176,7 +175,7 @@ the 5th one is common to both):
 \overset{\tiny x}{\bN_3}(x,y) \overset{\tiny x}{\upomega_3}+
 \overset{\tiny x}{\bN_4}(x,y) \overset{\tiny x}{\upomega_4}+
 \overset{\tiny x}{\bN_5}(x,y) \beta \\
-\upomega_y(r,s) &=& 
+\upomega_y(x,y) &=& 
 \overset{\tiny y}{\bN_1}(x,y) \overset{\tiny y}{\upomega_1}+
 \overset{\tiny y}{\bN_2}(x,y) \overset{\tiny y}{\upomega_2}+
 \overset{\tiny y}{\bN_3}(x,y) \overset{\tiny y}{\upomega_3}+
@@ -258,7 +257,7 @@ b_x\; \overset{\tiny x}{\bN_3}(x,y) \\
 b_y\; \overset{\tiny y}{\bN_3}(x,y) \\
 b_x\; \overset{\tiny x}{\bN_4}(x,y) \\
 b_y\; \overset{\tiny y}{\bN_4}(x,y) \\
-b_x\; \overset{\tiny x}{\bN_5}(x,y) +b_y \overset{\tiny y}{\bN_5}(x,y) 
+b_x\; \overset{\tiny x}{\bN_5}(x,y) +b_y\; \overset{\tiny y}{\bN_5}(x,y) 
 \end{array}
 \right)
 }_{\vec{f}}
@@ -269,7 +268,9 @@ We have in the general case:
 \[
 q = \vec{\bN}_p^T \cdot \vec{\cal Q}
 \]
-where $\vec{\bN}_p$ is the vector (of size $(m_P,1)$) of pressure basis functions
+where $\vec{\bN}_p$ is the vector\footnote{Remember that by 
+default all vectors are column vectors.} (of size $(m_P,1)$) 
+of pressure basis functions
 and $\vec{\cal Q}$ is the vector (of size $(m_P,1)$) of test pressure dofs.
 
 Let us now turn to the mass conservation equation.
@@ -282,6 +283,8 @@ Since $\vec{\bN}_p^T \cdot \vec{\cal Q}= \vec{\cal Q}^T \cdot \vec{\bN}_p$ then
 We have 
 \begin{eqnarray}
 \vec\nabla \cdot \vec{\upnu} 
+&=&
+\dot \varepsilon_{xx}(\vec\upnu) + \dot \varepsilon_{yy}(\vec\upnu) \\
 &=& 
 \left(
 \begin{array}{ccc}
@@ -337,6 +340,7 @@ so that
 &=&
 {\bm \bN}^T \cdot {\bm B} \cdot \vec{\cal V}
 \end{eqnarray}
+where ${\bm N}_p$ is a $(m_p \times 3)$ matrix.
 Finally
 \begin{eqnarray}
 \int_\Omega q \vec\nabla \cdot \vec{\upnu} \; d\Omega 
