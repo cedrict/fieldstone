@@ -11,6 +11,58 @@ bench=1
 
 #------------------------------------------------------------------------------
 
+def NNVu(r,s):
+    N_4=r*(1-r**2)*(1-s**2)
+    N_0=0.25*(1.-r)*(1.-s) #-0.25*N_4
+    N_1=0.25*(1.+r)*(1.-s) #-0.25*N_4
+    N_2=0.25*(1.+r)*(1.+s) #-0.25*N_4
+    N_3=0.25*(1.-r)*(1.+s) #-0.25*N_4
+    return np.array([N_0,N_1,N_2,N_3,N_4],dtype=np.float64)
+
+def dNNVudr(r,s):
+    dNdr_4=(1-3*r**2)*(1-s**2)
+    dNdr_0=-0.25*(1.-s) #-0.25*dNdr_4
+    dNdr_1=+0.25*(1.-s) #-0.25*dNdr_4
+    dNdr_2=+0.25*(1.+s) #-0.25*dNdr_4
+    dNdr_3=-0.25*(1.+s) #-0.25*dNdr_4
+    return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4],dtype=np.float64)
+
+def dNNVuds(r,s):
+    dNds_4=r*(1-r**2)*(-2*s)
+    dNds_0=-0.25*(1.-r) #-0.25*dNds_4
+    dNds_1=-0.25*(1.+r) #-0.25*dNds_4
+    dNds_2=+0.25*(1.+r) #-0.25*dNds_4
+    dNds_3=+0.25*(1.-r) #-0.25*dNds_4
+    return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4],dtype=np.float64)
+
+def NNVv(r,s):
+    N_4=s*(1-r**2)*(1-s**2)
+    N_0=0.25*(1.-r)*(1.-s) #-0.25*N_4
+    N_1=0.25*(1.+r)*(1.-s) #-0.25*N_4
+    N_2=0.25*(1.+r)*(1.+s) #-0.25*N_4
+    N_3=0.25*(1.-r)*(1.+s) #-0.25*N_4
+    return np.array([N_0,N_1,N_2,N_3,N_4],dtype=np.float64)
+
+def dNNVvdr(r,s):
+    dNdr_4=s*(-2*r)*(1-s**2)
+    dNdr_0=-0.25*(1.-s) #-0.25*dNdr_4
+    dNdr_1=+0.25*(1.-s) #-0.25*dNdr_4
+    dNdr_2=+0.25*(1.+s) #-0.25*dNdr_4
+    dNdr_3=-0.25*(1.+s) #-0.25*dNdr_4
+    return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4],dtype=np.float64)
+
+def dNNVvds(r,s):
+    dNds_4=(1-r**2)*(1-3*s**2)
+    dNds_0=-0.25*(1.-r) #-0.25*dNds_4
+    dNds_1=-0.25*(1.+r) #-0.25*dNds_4
+    dNds_2=+0.25*(1.+r) #-0.25*dNds_4
+    dNds_3=+0.25*(1.-r) #-0.25*dNds_4
+    return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4],dtype=np.float64)
+
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+
 def bx(x, y):
     if bench==1:
        val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
@@ -251,30 +303,12 @@ for iel in range(0,nel):
             weightq=qweightsK[iq]*qweightsK[jq]
 
             # calculate shape functions
-            Nu[0]=0.25*(1.-rq)*(1.-sq)
-            Nu[1]=0.25*(1.+rq)*(1.-sq)
-            Nu[2]=0.25*(1.+rq)*(1.+sq)
-            Nu[3]=0.25*(1.-rq)*(1.+sq)
-            Nu[4]=rq*(1-rq**2)*(1-sq**2)
-
-            Nv[0]=0.25*(1.-rq)*(1.-sq)
-            Nv[1]=0.25*(1.+rq)*(1.-sq)
-            Nv[2]=0.25*(1.+rq)*(1.+sq)
-            Nv[3]=0.25*(1.-rq)*(1.+sq)
-            Nv[4]=sq*(1-rq**2)*(1-sq**2)
-
-            # calculate shape function derivatives
-            dNudr[0]=-0.25*(1.-sq)         ; dNuds[0]=-0.25*(1.-rq)
-            dNudr[1]=+0.25*(1.-sq)         ; dNuds[1]=-0.25*(1.+rq)
-            dNudr[2]=+0.25*(1.+sq)         ; dNuds[2]=+0.25*(1.+rq)
-            dNudr[3]=-0.25*(1.+sq)         ; dNuds[3]=+0.25*(1.-rq)
-            dNudr[4]=(1-3*rq**2)*(1-sq**2) ; dNuds[4]=rq*(1-rq**2)*(-2*sq)
-
-            dNvdr[0]=-0.25*(1.-sq)         ; dNvds[0]=-0.25*(1.-rq)
-            dNvdr[1]=+0.25*(1.-sq)         ; dNvds[1]=-0.25*(1.+rq)
-            dNvdr[2]=+0.25*(1.+sq)         ; dNvds[2]=+0.25*(1.+rq)
-            dNvdr[3]=-0.25*(1.+sq)         ; dNvds[3]=+0.25*(1.-rq)
-            dNvdr[4]=sq*(-2*rq)*(1-sq**2)  ; dNvds[4]=(1-rq**2)*(1-3*sq**2)
+            Nu=NNVu(rq,sq)
+            Nv=NNVv(rq,sq)
+            dNudr=dNNVudr(rq,sq)
+            dNuds=dNNVuds(rq,sq)
+            dNvdr=dNNVvdr(rq,sq)
+            dNvds=dNNVvds(rq,sq)
 
             xq=0.0
             yq=0.0
@@ -316,18 +350,11 @@ for iel in range(0,nel):
             sq=qcoordsG[jq]
             weightq=qweightsG[iq]*qweightsG[jq]
 
-            # calculate shape function derivatives
-            dNudr[0]=-0.25*(1.-sq)         ; dNuds[0]=-0.25*(1.-rq)
-            dNudr[1]=+0.25*(1.-sq)         ; dNuds[1]=-0.25*(1.+rq)
-            dNudr[2]=+0.25*(1.+sq)         ; dNuds[2]=+0.25*(1.+rq)
-            dNudr[3]=-0.25*(1.+sq)         ; dNuds[3]=+0.25*(1.-rq)
-            dNudr[4]=(1-3*rq**2)*(1-sq**2) ; dNuds[4]=rq*(1-rq**2)*(-2*sq)
-
-            dNvdr[0]=-0.25*(1.-sq)         ; dNvds[0]=-0.25*(1.-rq)
-            dNvdr[1]=+0.25*(1.-sq)         ; dNvds[1]=-0.25*(1.+rq)
-            dNvdr[2]=+0.25*(1.+sq)         ; dNvds[2]=+0.25*(1.+rq)
-            dNvdr[3]=-0.25*(1.+sq)         ; dNvds[3]=+0.25*(1.-rq)
-            dNvdr[4]=sq*(-2*rq)*(1-sq**2)  ; dNvds[4]=(1-rq**2)*(1-3*sq**2)
+            # calculate shape functions
+            dNudr=dNNVudr(rq,sq)
+            dNuds=dNNVuds(rq,sq)
+            dNvdr=dNNVvdr(rq,sq)
+            dNvds=dNNVvds(rq,sq)
 
             for k in range(0,5):
                 dNudx[k]=jcbi[0,0]*dNudr[k]+jcbi[0,1]*dNuds[k]

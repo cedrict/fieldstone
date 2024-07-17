@@ -13,50 +13,50 @@ bench=1
 
 def NNVu(r,s):
     N_4=r*(1-r**2)*(1-s**2)
-    N_0=0.25*(1.-r)*(1.-s) #-0.25*N_4
-    N_1=0.25*(1.+r)*(1.-s) #-0.25*N_4
-    N_2=0.25*(1.+r)*(1.+s) #-0.25*N_4
-    N_3=0.25*(1.-r)*(1.+s) #-0.25*N_4
+    N_0=0.25*(1.-r)*(1.-s) -0.25*N_4
+    N_1=0.25*(1.+r)*(1.-s) -0.25*N_4
+    N_2=0.25*(1.+r)*(1.+s) -0.25*N_4
+    N_3=0.25*(1.-r)*(1.+s) -0.25*N_4
     return np.array([N_0,N_1,N_2,N_3,N_4],dtype=np.float64)
 
 def dNNVudr(r,s):
     dNdr_4=(1-3*r**2)*(1-s**2)
-    dNdr_0=-0.25*(1.-s) #-0.25*dNdr_4
-    dNdr_1=+0.25*(1.-s) #-0.25*dNdr_4
-    dNdr_2=+0.25*(1.+s) #-0.25*dNdr_4
-    dNdr_3=-0.25*(1.+s) #-0.25*dNdr_4
+    dNdr_0=-0.25*(1.-s) -0.25*dNdr_4
+    dNdr_1=+0.25*(1.-s) -0.25*dNdr_4
+    dNdr_2=+0.25*(1.+s) -0.25*dNdr_4
+    dNdr_3=-0.25*(1.+s) -0.25*dNdr_4
     return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4],dtype=np.float64)
 
 def dNNVuds(r,s):
     dNds_4=r*(1-r**2)*(-2*s)
-    dNds_0=-0.25*(1.-r) #-0.25*dNds_4
-    dNds_1=-0.25*(1.+r) #-0.25*dNds_4
-    dNds_2=+0.25*(1.+r) #-0.25*dNds_4
-    dNds_3=+0.25*(1.-r) #-0.25*dNds_4
+    dNds_0=-0.25*(1.-r) -0.25*dNds_4
+    dNds_1=-0.25*(1.+r) -0.25*dNds_4
+    dNds_2=+0.25*(1.+r) -0.25*dNds_4
+    dNds_3=+0.25*(1.-r) -0.25*dNds_4
     return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4],dtype=np.float64)
 
 def NNVv(r,s):
     N_4=s*(1-r**2)*(1-s**2)
-    N_0=0.25*(1.-r)*(1.-s)-0.25*N_4
-    N_1=0.25*(1.+r)*(1.-s)-0.25*N_4
-    N_2=0.25*(1.+r)*(1.+s)-0.25*N_4
-    N_3=0.25*(1.-r)*(1.+s)-0.25*N_4
+    N_0=0.25*(1.-r)*(1.-s) -0.25*N_4
+    N_1=0.25*(1.+r)*(1.-s) -0.25*N_4
+    N_2=0.25*(1.+r)*(1.+s) -0.25*N_4
+    N_3=0.25*(1.-r)*(1.+s) -0.25*N_4
     return np.array([N_0,N_1,N_2,N_3,N_4],dtype=np.float64)
 
 def dNNVvdr(r,s):
     dNdr_4=s*(-2*r)*(1-s**2)
-    dNdr_0=-0.25*(1.-s) #-0.25*dNdr_4
-    dNdr_1=+0.25*(1.-s) #-0.25*dNdr_4
-    dNdr_2=+0.25*(1.+s) #-0.25*dNdr_4
-    dNdr_3=-0.25*(1.+s) #-0.25*dNdr_4
+    dNdr_0=-0.25*(1.-s) -0.25*dNdr_4
+    dNdr_1=+0.25*(1.-s) -0.25*dNdr_4
+    dNdr_2=+0.25*(1.+s) -0.25*dNdr_4
+    dNdr_3=-0.25*(1.+s) -0.25*dNdr_4
     return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4],dtype=np.float64)
 
 def dNNVvds(r,s):
     dNds_4=(1-r**2)*(1-3*s**2)
-    dNds_0=-0.25*(1.-r) #-0.25*dNds_4
-    dNds_1=-0.25*(1.+r) #-0.25*dNds_4
-    dNds_2=+0.25*(1.+r) #-0.25*dNds_4
-    dNds_3=+0.25*(1.-r) #-0.25*dNds_4
+    dNds_0=-0.25*(1.-r) -0.25*dNds_4
+    dNds_1=-0.25*(1.+r) -0.25*dNds_4
+    dNds_2=+0.25*(1.+r) -0.25*dNds_4
+    dNds_3=+0.25*(1.-r) -0.25*dNds_4
     return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4],dtype=np.float64)
 
 #------------------------------------------------------------------------------
@@ -125,20 +125,20 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 64
-   nely = 64
+   nelx = 128
+   nely = 128
    visu = 1
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
 
-NV=nnx*nny  # number of nodes
-
 nel=nelx*nely  # number of elements, total
+
+NV=nnx*nny+nel  # number of nodes
 
 eta=1.  # dynamic viscosity 
 
-NfemV=(NV+nel)*ndofV   # number of velocity dofs
+NfemV=NV*ndofV   # number of velocity dofs
 NfemP=nel*ndofP  # number of pressure dofs
 Nfem=NfemV+NfemP # total number of dofs
 
@@ -176,6 +176,8 @@ if nqperdimG==3:
    qcoordsG=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
    qweightsG=[5./9.,8./9.,5./9.]
 
+nq=nqperdimK**2*nel
+
 ###############################################################################
 
 print('NV=',NV)
@@ -184,6 +186,7 @@ print('NfemP=',NfemP)
 print('Nfem=',Nfem)
 print('nqperdimK',nqperdimK)
 print('nqperdimG',nqperdimG)
+print('nq',nq)
 
 ###############################################################################
 # grid point setup
@@ -194,11 +197,19 @@ x=np.empty(NV,dtype=np.float64)  # x coordinates
 y=np.empty(NV,dtype=np.float64)  # y coordinates
 
 counter = 0
-for j in range(0, nny):
-    for i in range(0, nnx):
-        x[counter]=i*Lx/float(nelx)
-        y[counter]=j*Ly/float(nely)
+for j in range(0,nny):
+    for i in range(0,nnx):
+        x[counter]=i*hx
+        y[counter]=j*hy
         counter += 1
+
+for j in range(0,nely):
+    for i in range(0,nelx):
+        x[counter]=(i+0.5)*hx
+        y[counter]=(j+0.5)*hy
+        counter += 1
+
+#np.savetxt('mesh.ascii',np.array([x,y]).T,header='# x,y')
 
 print("setup: grid points: %.3f s" % (time.time() - start))
 
@@ -207,14 +218,16 @@ print("setup: grid points: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-icon =np.zeros((4,nel),dtype=np.int32)
+icon =np.zeros((mV,nel),dtype=np.int32)
 counter = 0
 for j in range(0, nely):
     for i in range(0, nelx):
-        icon[0, counter] = i + j * (nelx + 1)
-        icon[1, counter] = i + 1 + j * (nelx + 1)
-        icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
-        icon[3, counter] = i + (j + 1) * (nelx + 1)
+        icon[0,counter] = i + j * (nelx + 1)
+        icon[1,counter] = i + 1 + j * (nelx + 1)
+        icon[2,counter] = i + 1 + (j + 1) * (nelx + 1)
+        icon[3,counter] = i + (j + 1) * (nelx + 1)
+        icon[4,counter] = nnx*nny +counter
+        #print(icon[:,counter])
         counter += 1
     #end for
 #end for
@@ -247,6 +260,77 @@ for i in range(0,NV):
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
 ###############################################################################
+# compute area of elements
+###############################################################################
+start = time.time()
+
+xq    = np.zeros(nq,dtype=np.float64) 
+yq    = np.zeros(nq,dtype=np.float64) 
+area  = np.zeros(nel,dtype=np.float64) 
+jcbi  = np.zeros((2,2),dtype=np.float64)
+dNudx = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
+dNudy = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
+dNvdx = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
+dNvdy = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
+
+counterq=0
+for iel in range(0,nel):
+    for iq in range(0,nqperdimK):
+        for jq in range(0,nqperdimK):
+            rq=qcoordsK[iq]
+            sq=qcoordsK[jq]
+            weightq=qweightsK[iq]*qweightsK[jq]
+
+            # calculate shape functions
+            Nu=NNVu(rq,sq)
+            Nv=NNVv(rq,sq)
+            dNudr=dNNVudr(rq,sq)
+            dNuds=dNNVuds(rq,sq)
+            dNvdr=dNNVvdr(rq,sq)
+            dNvds=dNNVvds(rq,sq)
+
+            xq[counterq]=Nu.dot(x[icon[0:mV,iel]])
+            yq[counterq]=Nv.dot(y[icon[0:mV,iel]])
+
+            #compute jacobian matrix and determinant
+            jcob=hx*hy/4
+            jcbi[0,0]=2/hx ; jcbi[0,1]=0    
+            jcbi[1,0]=0    ; jcbi[1,1]=2/hy 
+
+            # compute dNdx, dNdy
+            for k in range(0,mV):
+                dNudx[k]=jcbi[0,0]*dNudr[k]+jcbi[0,1]*dNuds[k]
+                dNudy[k]=jcbi[1,0]*dNudr[k]+jcbi[1,1]*dNuds[k]
+                dNvdx[k]=jcbi[0,0]*dNvdr[k]+jcbi[0,1]*dNvds[k]
+                dNvdy[k]=jcbi[1,0]*dNvdr[k]+jcbi[1,1]*dNvds[k]
+
+            #oneq=dNudx.dot(x[icon[0:mV,iel]])
+            #print(oneq)
+            #oneq=dNudx.dot(y[icon[0:mV,iel]])
+            #print(oneq)
+            #oneq=dNvdy.dot(x[icon[0:mV,iel]])
+            #print(oneq)
+            #oneq=dNvdy.dot(y[icon[0:mV,iel]])
+            #print(oneq)
+
+            area[iel]+=jcob*weightq
+            counterq+=1
+
+        #end for
+    #end for
+#end for
+
+np.savetxt('gridq.ascii',np.array([xq,yq]).T,header='# x,y')
+                
+print("     -> vol  (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
+print("     -> total vol meas %.6f " %(area.sum()))
+print("     -> total vol anal %.6f " %(Lx*Ly))
+
+print("compute elements area: %.3f s" % (time.time() - start))
+
+###############################################################################
+# compute coordinates of element center
+###############################################################################
 start = time.time()
 
 xc = np.zeros(nel,dtype=np.float64)  
@@ -271,12 +355,8 @@ Nu    = np.zeros(mV,dtype=np.float64)    # shape functions
 Nv    = np.zeros(mV,dtype=np.float64)    # shape functions
 dNudx = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
 dNudy = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
-dNudr = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
-dNuds = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
 dNvdx = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
 dNvdy = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
-dNvdr = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
-dNvds = np.zeros(mV,dtype=np.float64)    # shape functions derivatives
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) # a
 #c_mat = np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64)  #b
 jcbi     = np.zeros((2,2),dtype=np.float64)
@@ -310,11 +390,8 @@ for iel in range(0,nel):
             dNvdr=dNNVvdr(rq,sq)
             dNvds=dNNVvds(rq,sq)
 
-            xq=0.0
-            yq=0.0
-            for k in range(0,4):
-                xq+=Nu[k]*x[icon[k,iel]]
-                yq+=Nu[k]*y[icon[k,iel]]
+            xq=Nu.dot(x[icon[0:mV,iel]])
+            yq=Nv.dot(y[icon[0:mV,iel]])
 
             for k in range(0,5):
                 dNudx[k]=jcbi[0,0]*dNudr[k]+jcbi[0,1]*dNuds[k]
@@ -358,7 +435,7 @@ for iel in range(0,nel):
             dNvdr=dNNVvdr(rq,sq)
             dNvds=dNNVvds(rq,sq)
 
-            for k in range(0,5):
+            for k in range(0,mV):
                 dNudx[k]=jcbi[0,0]*dNudr[k]+jcbi[0,1]*dNuds[k]
                 dNudy[k]=jcbi[1,0]*dNudr[k]+jcbi[1,1]*dNuds[k]
                 dNvdx[k]=jcbi[0,0]*dNvdr[k]+jcbi[0,1]*dNvds[k]
@@ -407,8 +484,8 @@ for iel in range(0,nel):
             case(5): m1=ndofV*icon[2,iel]+1
             case(6): m1=ndofV*icon[3,iel]+0
             case(7): m1=ndofV*icon[3,iel]+1
-            case(8): m1=2*NV+2*iel+0
-            case(9): m1=2*NV+2*iel+1
+            case(8): m1=ndofV*icon[4,iel]+0
+            case(9): m1=ndofV*icon[4,iel]+1
             #end match
         for jkk in range(0,10):
             match(jkk):
@@ -420,8 +497,8 @@ for iel in range(0,nel):
                 case(5): m2=ndofV*icon[2,iel]+1
                 case(6): m2=ndofV*icon[3,iel]+0
                 case(7): m2=ndofV*icon[3,iel]+1
-                case(8): m2=2*NV+2*iel+0
-                case(9): m2=2*NV+2*iel+1
+                case(8): m2=ndofV*icon[4,iel]+0
+                case(9): m2=ndofV*icon[4,iel]+1
             #end match
             #print(ikk,jkk,m1,m2)
             A_mat[m1,m2]+=K_el[ikk,jkk]
@@ -456,7 +533,7 @@ start = time.time()
 u,v=np.reshape(sol[0:2*NV],(NV,2)).T
 p=sol[NfemV:Nfem]*Gscaling
 
-uc,vc=np.reshape(sol[2*NV:NfemV],(nel,2)).T
+#uc,vc=np.reshape(sol[2*nnx*nny:NfemV],(nel,2)).T
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
@@ -464,7 +541,7 @@ print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
 np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# x,y,p')
-np.savetxt('velocity_middle.ascii',np.array([xc,yc,uc,vc]).T,header='# x,y,p')
+#np.savetxt('velocity_middle.ascii',np.array([xc,yc,uc,vc]).T,header='# x,y,p')
 
 print("split vel into u,v: %.3f s" % (time.time() - start))
 
@@ -473,8 +550,8 @@ print("split vel into u,v: %.3f s" % (time.time() - start))
 ######################################################################
 start = time.time()
 
-q=np.zeros(NV,dtype=np.float64)  
-count=np.zeros(NV,dtype=np.float64)  
+q=np.zeros(nnx*nny,dtype=np.float64)  
+count=np.zeros(nnx*nny,dtype=np.float64)  
 
 for iel in range(0,nel):
     q[icon[0,iel]]+=p[iel]
@@ -499,12 +576,12 @@ print("compute nodal pressure: %.3f s" % (time.time() - start))
 start = time.time()
 
 
-error_u = np.empty(NV,dtype=np.float64)
-error_v = np.empty(NV,dtype=np.float64)
-error_q = np.empty(NV,dtype=np.float64)
-error_p = np.empty(nel,dtype=np.float64)
+error_u = np.empty(nnx*nny,dtype=np.float64)
+error_v = np.empty(nnx*nny,dtype=np.float64)
+error_q = np.empty(nnx*nny,dtype=np.float64)
+error_p = np.empty(nnx*nny,dtype=np.float64)
 
-for i in range(0,NV): 
+for i in range(0,nnx*nny): 
     error_u[i]=u[i]-velocity_x(x[i],y[i])
     error_v[i]=v[i]-velocity_y(x[i],y[i])
     error_q[i]=q[i]-pressure(x[i],y[i])
@@ -523,39 +600,28 @@ for iel in range (0,nel):
             weightq=qweightsK[iq]*qweightsK[jq]
 
             # calculate shape functions
-            Nu[0]=0.25*(1.-rq)*(1.-sq)
-            Nu[1]=0.25*(1.+rq)*(1.-sq)
-            Nu[2]=0.25*(1.+rq)*(1.+sq)
-            Nu[3]=0.25*(1.-rq)*(1.+sq)
-            Nu[4]=rq*(1-rq**2)*(1-sq**2)
-
-            Nv[0]=0.25*(1.-rq)*(1.-sq)
-            Nv[1]=0.25*(1.+rq)*(1.-sq)
-            Nv[2]=0.25*(1.+rq)*(1.+sq)
-            Nv[3]=0.25*(1.-rq)*(1.+sq)
-            Nv[4]=sq*(1-rq**2)*(1-sq**2)
+            # calculate shape functions
+            Nu=NNVu(rq,sq)
+            Nv=NNVv(rq,sq)
 
             jcob=hx*hy/4
             jcbi[0,0]=2/hx ; jcbi[0,1]=0    
             jcbi[1,0]=0    ; jcbi[1,1]=2/hy 
 
-            xq=0.0
-            yq=0.0
-            for k in range(0,4):
-                xq+=Nu[k]*x[icon[k,iel]]
-                yq+=Nu[k]*y[icon[k,iel]]
+            xq=Nu.dot(x[icon[0:mV,iel]])
+            yq=Nv.dot(y[icon[0:mV,iel]])
 
             uq=Nu[0]*u[icon[0,iel]]+\
                Nu[1]*u[icon[1,iel]]+\
                Nu[2]*u[icon[2,iel]]+\
                Nu[3]*u[icon[3,iel]]+\
-               Nu[4]*sol[2*NV+iel]
+               Nu[4]*u[icon[4,iel]]
 
             vq=Nv[0]*v[icon[0,iel]]+\
                Nv[1]*v[icon[1,iel]]+\
                Nv[2]*v[icon[2,iel]]+\
                Nv[3]*v[icon[3,iel]]+\
-               Nv[4]*sol[2*NV+iel]
+               Nv[4]*v[icon[4,iel]]
 
             errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
             errp+=(p[iel]-pressure(xq,yq))**2*weightq*jcob

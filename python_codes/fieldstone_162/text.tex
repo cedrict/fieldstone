@@ -59,6 +59,101 @@ with
 Note that in this form the basis functions are not a partition of unity.
 
 
+If we write the basis functions as follows
+\begin{eqnarray}
+\overset{x}{\bN}_1(r,s) &=& \frac14(1-r)(1-s)  \\
+\overset{x}{\bN}_2(r,s) &=& \frac14(1+r)(1-s)  \\
+\overset{x}{\bN}_3(r,s) &=& \frac14(1+r)(1+s)  \\
+\overset{x}{\bN}_4(r,s) &=& \frac14(1-r)(1+s)  \\
+\overset{x}{\bN}_5(r,s) &=& r(1-r^2)(1-s^2)
+\end{eqnarray}
+then they fail the zeroth-order consistency check, i.e. for $f(r,s)=C$:
+\begin{equation}
+f^h(r,s) 
+= \sum_{i=1}^5 \overset{x}{\bN}_i(r,s) f_i \\
+= C \sum_{i=1}^5 \overset{x}{\bN}_i(r,s)  \\
+\neq  C
+\end{equation}
+Looking at the $Q_1^+\times Q_1$ of Section~\ref{MMM-ss:quadmini}, which also 
+showcases a bubble in the center of the element of the form 
+$b(r, s) = (1- r^2 )(1 -s^2 ) \phi(r,s)$ where $\phi$ is a bilinear function,
+we can set
+\begin{eqnarray}
+\overset{x}{\bN}_1(r,s) &=& \frac14(1-r)(1-s) -\frac14 b(r,s) \\
+\overset{x}{\bN}_2(r,s) &=& \frac14(1+r)(1-s) -\frac14 b(r,s)  \\
+\overset{x}{\bN}_3(r,s) &=& \frac14(1+r)(1+s) -\frac14 b(r,s)  \\
+\overset{x}{\bN}_4(r,s) &=& \frac14(1-r)(1+s) -\frac14 b(r,s)  \\
+\overset{x}{\bN}_5(r,s) &=&  b(r,s) \\
+b(r,s) &=& r(1-r^2)(1-s^2)
+\end{eqnarray}
+Then these basis functions automatically pass the zeroth-order consistency check, i.e. for $f(r,s)=C$:
+\begin{equation}
+f^h(r,s) 
+= \sum_{i=1}^5 \overset{x}{\bN}_i(r,s) f_i \\
+= C \sum_{i=1}^5 \overset{x}{\bN}_i(r,s)  \\
+=  C
+\end{equation}
+
+First-order consistency check $f(r,s)=r$ (or $f(r,s)=s)$:
+\begin{eqnarray}
+f^h(r,s) 
+&=& \sum_{i=1}^5 \bN_i(r,s) f_i \nn\\
+&=& \sum_{i=1}^5 \bN_i(r,s) r_i \nn\\
+&=& \overset{x}{\bN}_1(r,s) (-1) + \overset{x}{\bN}_2(r,s) (+1) + \overset{x}{\bN}_3(r,s) (+1) + \overset{x}{\bN}_4(r,s) (-1) + \overset{x}{\bN}_5(r,s) (0) \nn\\
+&=& -\overset{x}{\bN}_1(r,s)+\overset{x}{\bN}_2(r,s)+\overset{x}{\bN}_3(r,s)-\overset{x}{\bN}_4(r,s) \nn\\
+&=& r
+\end{eqnarray}
+
+
+Second-order consistency check $f(r,s)=rs$ ($f_1=(-1)(-1)=1$, $f_2=(+1)(-1)=-1$, etc ...)
+\begin{eqnarray}
+f^h(r,s) 
+&=& \sum_{i=1}^5 \overset{x}{\bN}_i(r,s) f_i \nn\\
+&=& \sum_{i=1}^5 \overset{x}{\bN}_i(r,s) r_i s_i \nn\\
+&=& \overset{x}{\bN}_1(r,s) (+1) + \overset{x}{\bN}_2(r,s) (-1) + \overset{x}{\bN}_3(r,s) (+1) + \overset{x}{\bN}_4(r,s) (-1) + \overset{x}{\bN}_5(r,s) (0) \nn\\
+&=& \overset{x}{\bN}_1-\overset{x}{\bN}_2+\overset{x}{\bN}_3-\overset{x}{\bN}_4 \nn\\
+&=& 
+\left(\frac{1}{4}(1-r)(1-s)-\frac{1}{4}b(r,s)\right)
+-\left(\frac{1}{4}(1+r)(1-s)-\frac{1}{4}b(r,s)\right) \nn\\
+&+& 
+\left(\frac{1}{4}(1+r)(1+s)-\frac{1}{4}b(r,s)\right)
+-\left(\frac{1}{4}(1-r)(1+s)-\frac{1}{4}b(r,s)\right) \nn\\
+&=& 
+ \frac{1}{4}(1-r)(1-s)
+-\frac{1}{4}(1+r)(1-s)
++\frac{1}{4}(1+r)(1+s)
+-\frac{1}{4}(1-r)(1+s) \nn\\
+&=&
+ \frac{1}{2}(-r)(1-s)
++\frac{1}{2}(+r)(1+s) \nn\\
+&=& rs
+\end{eqnarray}
+We find that the basis functions can represent  a bilinear field exactly.
+
+Let us now turn to the derivatives. 
+For $f(r,s)=C$, we have
+
+\begin{eqnarray}
+\frac{\partial f}{\partial r}|_h(r,s) 
+&=& \sum_{i=1}^5 \frac{\partial \overset{x}{\bN}_i}{\partial r} f_i \\ 
+&=& C \sum_{i=1}^5 \frac{\partial \overset{x}{\bN}_i}{\partial r} \\
+&=&  C \left[ 
+\frac14(-1)(1-s) -\frac14 \frac{\partial b}{\partial r} + 
+\frac14(+1)(1-s) -\frac14 \frac{\partial b}{\partial r} + 
+\frac14(+1)(1+s) -\frac14 \frac{\partial b}{\partial r} + 
+\frac14(-1)(1+s) -\frac14 \frac{\partial b}{\partial r} + 
+\frac{\partial b}{\partial r} \right] \\
+&=& C \left[ 
+\frac14(-1)(1-s)  + 
+\frac14(+1)(1-s)  + 
+\frac14(+1)(1+s)  + 
+\frac14(-1)(1+s)   \right] \\
+&=& 0
+\end{eqnarray}
+
+
+
+
 %================================
 \section*{Implementation}
 
@@ -440,10 +535,17 @@ so as to reduce the size of the FEM system $\K$ block.
 {\captionfont nonzero pattern for a $3\times 2$ mesh.}
 \end{center}
 
+Note that stone1.py is the code for which there is only 
+1 dof in the middle of each element while stone2.py
+is the code with two dofs in the middle.
+
+
 %============================================
 \section*{Results}
 
+No matter what I try stone1 or stone2: 
+if I use 3x3 quad points on all terms, or 3x3 $\K$ + 2x2 $\G$, velocity is ok, but chequerboard on pressure.
+If I use 1 quad pt for $\G$ velocity not ok, and pressure is wrong.
+If I use 2x2 quad pt for $\K$ I get nonsense or nan!
 
-
-
-
+I wrote Prof Boffi 16 july 2024.

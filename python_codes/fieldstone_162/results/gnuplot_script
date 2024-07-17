@@ -1,0 +1,27 @@
+set term pdf enhanced
+set log xy
+set xlabel 'h'
+set pointsize .25
+set ylabel 'error'
+set key outside
+
+set output 'errV.pdf'
+plot[][:]\
+'errors_1_1' u (1./sqrt($3)):6 w lp t '1+1',\
+'errors_2_1' u (1./sqrt($3)):6 w lp t '2+1',\
+'errors_2_2' u (1./sqrt($3)):6 w lp t '2+2',\
+'errors_3_3' u (1./sqrt($3)):6 w lp t '3+3',\
+'errors_3_1' u (1./sqrt($3)):6 w lp t '3+1',\
+'errors_3_2' u (1./sqrt($3)):6 w lp t '3+2',\
+x**2/10. w l lt -1 dashtype 2 t 'h^2'
+
+
+set output 'errP.pdf'
+plot[][:]\
+'errors_1_1' u (1./sqrt($3)):9 w lp t '1+1',\
+'errors_2_1' u (1./sqrt($3)):9 w lp t '2+1',\
+'errors_2_2' u (1./sqrt($3)):9 w lp t '2+2',\
+'errors_3_3' u (1./sqrt($3)):9 w lp t '3+3',\
+'errors_3_1' u (1./sqrt($3)):9 w lp t '3+1',\
+'errors_3_2' u (1./sqrt($3)):9 w lp t '3+2',\
+x**1/10. w l lt -1 dashtype 3 t 'h^1'
