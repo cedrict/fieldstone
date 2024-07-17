@@ -1,0 +1,85 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize .3
+set xlabel 'depth (km)'
+
+set ylabel 'density (g/cm^3)'
+set output 'rho.pdf'
+plot[][]\
+'Model_10.txt'   u 1:4 w lp notitle,\
+'Model_20.txt'   u 1:4 w lp notitle,\
+'Model_30.txt'   u 1:4 w lp notitle,\
+'Model_40.txt'   u 1:4 w lp notitle,\
+'Model_50.txt'   u 1:4 w lp notitle,\
+'Model_60.txt'   u 1:4 w lp notitle,\
+'Model_70.txt'   u 1:4 w lp notitle,\
+'Model_80.txt'   u 1:4 w lp notitle,\
+'Model_90.txt'   u 1:4 w lp notitle,\
+'Model_100.txt'  u 1:4 w lp notitle,\
+'Model_200.txt'  u 1:4 w lp notitle,\
+'Model_300.txt'  u 1:4 w lp notitle,\
+'Model_400.txt'  u 1:4 w lp notitle,\
+'Model_500.txt'  u 1:4 w lp notitle,\
+'Model_600.txt'  u 1:4 w lp notitle,\
+'Model_700.txt'  u 1:4 w lp notitle,\
+'Model_800.txt'  u 1:4 w lp notitle,\
+'Model_900.txt'  u 1:4 w lp notitle,\
+'Model_1000.txt' u 1:4 w lp notitle
+
+
+set ylabel 'temperature (K)'
+set output 'T.pdf'
+plot[][]\
+'Model_10.txt'   u 1:5 w lp notitle,\
+'Model_20.txt'   u 1:5 w lp notitle,\
+'Model_30.txt'   u 1:5 w lp notitle,\
+'Model_40.txt'   u 1:5 w lp notitle,\
+'Model_50.txt'   u 1:5 w lp notitle,\
+'Model_60.txt'   u 1:5 w lp notitle,\
+'Model_70.txt'   u 1:5 w lp notitle,\
+'Model_80.txt'   u 1:5 w lp notitle,\
+'Model_90.txt'   u 1:5 w lp notitle,\
+'Model_100.txt'  u 1:5 w lp notitle,\
+'Model_200.txt'  u 1:5 w lp notitle,\
+'Model_300.txt'  u 1:5 w lp notitle,\
+'Model_400.txt'  u 1:5 w lp notitle,\
+'Model_500.txt'  u 1:5 w lp notitle,\
+'Model_600.txt'  u 1:5 w lp notitle,\
+'Model_700.txt'  u 1:5 w lp notitle,\
+'Model_800.txt'  u 1:5 w lp notitle,\
+'Model_900.txt'  u 1:5 w lp notitle,\
+'Model_1000.txt' u 1:5 w lp notitle
+
+
+set ylabel 'gravity (m/s^2)'
+set output 'g.pdf'
+plot[][]\
+'Model_10.txt'   u 1:6 w lp notitle,\
+'Model_20.txt'   u 1:6 w lp notitle,\
+'Model_30.txt'   u 1:6 w lp notitle,\
+'Model_40.txt'   u 1:6 w lp notitle,\
+'Model_50.txt'   u 1:6 w lp notitle,\
+'Model_60.txt'   u 1:6 w lp notitle,\
+'Model_70.txt'   u 1:6 w lp notitle,\
+'Model_80.txt'   u 1:6 w lp notitle,\
+'Model_90.txt'   u 1:6 w lp notitle,\
+'Model_100.txt'  u 1:6 w lp notitle,\
+'Model_200.txt'  u 1:6 w lp notitle,\
+'Model_300.txt'  u 1:6 w lp notitle,\
+'Model_400.txt'  u 1:6 w lp notitle,\
+'Model_500.txt'  u 1:6 w lp notitle,\
+'Model_600.txt'  u 1:6 w lp notitle,\
+'Model_700.txt'  u 1:6 w lp notitle,\
+'Model_800.txt'  u 1:6 w lp notitle,\
+'Model_900.txt'  u 1:6 w lp notitle,\
+'Model_1000.txt' u 1:6 w lp notitle
+
+
+
+
+
+
+
+
+
+

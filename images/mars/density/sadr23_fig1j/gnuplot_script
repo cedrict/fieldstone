@@ -1,0 +1,8 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize .4
+set xlabel 'density (kg/m^3)'
+set ylabel 'Planet radius (km)'
+set output 'rho.pdf'
+plot[][]\
+'rho_profile.dat' w lp notitle,\
