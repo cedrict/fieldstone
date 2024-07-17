@@ -1,4 +1,21 @@
+rm literature_planets.4ct
+rm literature_planets.4tc
+rm literature_planets.css
+rm literature_planets.idv
+rm literature_planets.lg
+rm literature_planets.run.xml
+rm literature_planets.xref
+rm literature_planets.pdf
+rm literature_planets.log
+rm literature_planets.out
+rm literature_planets.svg
 rm literature_planets.html
+rm literature_planets.dvi
+rm literature_planets.aux
+rm literature_planets.blg
+rm literature_planets.tmp
+rm literature_planets.toc
+
 pdflatex literature_planets.tex
 biber --output-safechars literature_planets
 pdflatex literature_planets.tex
