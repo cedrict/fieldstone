@@ -1,0 +1,10 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize .4
+set xlabel 'Temperature (K)'
+set ylabel 'Planet radius (km)'
+set output 'T.pdf'
+plot[][]\
+'Tprofile.dat' w lp notitle,\
+'Tliq.dat' w lp t 'liquidus',\
+'Tsol.dat' w lp t 'solidus'
