@@ -62,6 +62,8 @@ It is compared to the ${\bm P}_2\times P_1$ element for the Navier-Stokes equati
 {\captionfont Taken from \textcite{begt92} (1992).}
 \end{center}
 
+This element counts $(4+6+4+1)*3=45$ vdofs and 4 pdofs.
+
 The 3D version of this element is presented in \textcite{begt92} (1992). 
 In their Table III we find the following node coordinates and basis functions:
 \[
@@ -100,7 +102,7 @@ We have
 \end{eqnarray}
 So in the end
 \[
-\sum_{i=1}^{15} \bN_i = (\bN_1+\bN_2+\bN_3+\bN_4)  + \sum_{i=5}^{15} \bN_i = 0
+\sum_{i=1}^{15} \bN_i = (\bN_1+\bN_2+\bN_3+\bN_4)  + \sum_{i=5}^{15} \bN_i = 1
 \]
 
 \begin{center}

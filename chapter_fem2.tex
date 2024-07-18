@@ -5,18 +5,48 @@
 \input{similar} 
 \input{incompressible} %---------------------------------------------------------------------------
 
-\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Strong and weak forms} \input{strongweak} %--------------------------------------------
+%........................................................................................
+\section{The compatibility condition, LBB condition, or inf-sup condition} \label{ss:LBBcond}
+\index{general}{LBB} \index{general}{Optimal Rate}
+\input{lbb}
+
+%------------------------------------------------------------------------------
+\section{A quick word about element families}
+\index{general}{Taylor-Hood}
+
+The family of {\color{olive} Taylor-Hood} finite element spaces on triangular/tetrahedral 
+grids is given by ${\bm P}_k \times P_{k-1}$ with $k\geq 2$, 
+and on quadrilateral/hexahedral grids by ${\bm Q}_k \times Q_{k-1}$ with $k\geq 2$.
+This means that the pressure is then approximated by continuous functions. 
+
+These finite elements are very popular, in particular the pairs for $k=2$, i.e.
+${\bm Q}_2\times Q_1$ and ${\bm P}_2\times P_1$.
+The reason why $k\geq 2$ comes from the fact that the 
+${\bm Q}_1 \times Q_0$ (often referred to as ${\bm Q}_1 \times P_0$) and ${\bm P}_1\times P_0$
+are not stable elements (they are not inf-sup stable), as
+shown in John \cite[p64]{john16} and \cite[p67]{john16}. 
+
+\begin{remark}
+Note that a similar element to ${\bm Q}_2 \times Q_1$ has been proposed
+and used succesfully used in \textcite{taho73} (1973) and \textcite{hota74} (1974): 
+it is denoted by ${\bm Q}_2^{(8)} \times Q_1$ 
+since the center node ('$x^2y^2$') and its associated degrees of freedom have been removed. It 
+has also been proved to be LBB stable. These are also called {\color{olive} Serendipity} elements. 
+\end{remark}
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Which velocity-pressure pair for Stokes?}\label{ss:pair}\input{pair} %-----------------
+\section{Which velocity-pressure pair for Stokes? (quads \& hexa) \label{ss:pair_quads}}
+\input{pair_quads} %-----------------
+
+\newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Which velocity-pressure pair for Stokes? (triangles \& tetra) \label{ss:pair_triangles}}
+\input{pair_triangles} %-----------------
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The penalty approach for viscous flow}\label{sec:penalty}\input{penalty} %-------------
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The mixed FEM for viscous flow} \label{sec:mixed} \input{mixed} %----------------------
-
 
 \newpage %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Solving the elastic equations} \input{fem_elastic} %--------------------------------------

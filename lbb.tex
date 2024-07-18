@@ -1,7 +1,6 @@
 \begin{flushright} {\tiny {\color{gray} lbb.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-WARNING: I am not comfortable (yet) writing about this topic. 
 What follows is a rough attempt at making sense of it.
 
 \hspace{.4cm}
@@ -15,32 +14,53 @@ are unstable, giving rise to artifacts such as spurious oscillations.
 The LBB condition gives criteria for when a discretization of a saddle point problem is stable. 
 It also assures convergence at the optimal rate. 
 
-Bochev \& Gunzburger \cite{bogu09} state: ``
+Bochev \& Gunzburger \cite{bogu09} state: 
+\begin{displayquote}
+{\color{darkgray}
 The terminology 'LBB' originates from the facts that this condition was first explicitly discussed
 in the finite element setting for saddle point problems by Brezzi\footnote{
 \url{https://en.wikipedia.org/wiki/Franco_Brezzi}} \cite{brez74} and that it is a special case of
 the general weak-coercivity condition first discussed for finite element methods by Ivo Babu{\v s}ka\footnote{
 \url{https://en.wikipedia.org/wiki/Ivo_Babuska}}
 \cite{babu71} and that, in the continuous setting of the Stokes equation, this condition was first proved to
-hold by Olga Ladyzhenskaya\footnote{\url{https://en.wikipedia.org/wiki/Olga_Ladyzhenskaya}}; see \cite{lady69}.''
+hold by Olga Ladyzhenskaya\footnote{\url{https://en.wikipedia.org/wiki/Olga_Ladyzhenskaya}}; see \cite{lady69}.
+}
+\end{displayquote}
 
 Unfortunately, to quote Donea \& Huerta \cite{dohu03}: 
-``In the finite element context, it is by no means easy to prove whether or not a given
-velocity-pressure pair satisfies the LBB compatibility condition.''
-Elman \etal state: ``[...] Choosing spaces for which the discrete inf-sup condition holds
+\begin{displayquote}
+{\color{darkgray}
+In the finite element context, it is by no means easy to prove whether or not a given
+velocity-pressure pair satisfies the LBB compatibility condition.
+}
+\end{displayquote}
+
+Elman \etal state: 
+\begin{displayquote}
+{\color{darkgray}
+[...] Choosing spaces for which the discrete inf-sup condition holds
 and is a delicate matter, and seemingly natural choices of velocity and pressure approximation
 do not work. [...] In general, care must be taken to make the velocity space 
-rich enough compared to the pressure space.'' By rich enough the authors essentially mean that 
+rich enough compared to the pressure space.
+}
+\end{displayquote}
+
+By rich enough the authors essentially mean that 
 the order of the polynomials used to represent velocity must be higher than the one used 
 for pressure.
 
 The LBB condition, or inf-sup condition can be proven in different ways, 
 and standard techniques have been designed
-as listed in Boffi \etal (2008) \cite{bobf08}.
+as listed in \textcite{bobf08} (2008).
 
-%p129
-Elman \etal \cite{elsw} state that ``The inf-sup condition is a sufficient condition 
-for the pressure to be unique up to constant in the case of an enclosed flow.''
+
+Elman \etal \cite{elsw} state (p.129) that 
+\begin{displayquote}
+{\color{darkgray}
+The inf-sup condition is a sufficient condition 
+for the pressure to be unique up to constant in the case of an enclosed flow.
+}
+\end{displayquote}
 This can also be proven for other boundary conditions.
 This approach, based on the macro-element technique \cite{sten90} is explored in Appendix \ref{app:Gel}.
 
@@ -129,6 +149,11 @@ problem, then the mixed approximation spaces need to be chosen carefully.
 Specifically, we have to ensure that $\text{null}(\G)=\{1\}$ in the case of enclosed flow,
 and that $\text{null}(\G)=\{0\}$, otherwise.
 
-\textcite{grsa} state: ``LBB stable elements assure the existence of a unique solution to Stokes flow and 
-assure convergence at optimal rate. [...] LBB-unstable elements may not converge, and if they do, they may not do so at the optimal rate.''
-
+\textcite{grsa} state: 
+\begin{displayquote}
+{\color{darkgray}
+LBB stable elements assure the existence of a unique solution to Stokes flow and 
+assure convergence at optimal rate. [...] LBB-unstable elements may not converge, 
+and if they do, they may not do so at the optimal rate.
+}
+\end{displayquote}

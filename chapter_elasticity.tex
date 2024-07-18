@@ -1,6 +1,6 @@
 \chapter{Elasticity: physics, formulations and FEM } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{flushright} {\tiny {\color{gray} chapter17.tex}} \end{flushright}
+\begin{flushright} {\tiny {\color{gray} \tt chapter\_elasticity.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Let us start by clarifying notations:
@@ -1537,4 +1537,60 @@ see \textcite{lami14} (2014)).
 see \textcite{lami14} (2014)).
 \item Thick-walled sphere under internal pressure (see \textcite{lami09} (2009) and refs therein).
 \end{itemize}
+
+
+%--------------------------------------
+\subsection{Cantilever beam}
+
+To be found in \textcite{zhwc14} (2014). 
+A cantilever beam subjected to a parabolic traction $P=1$ at the free end is considered as shown in
+the following figure. The geometry is $L=10$, $D=2$.
+
+\begin{center}
+\includegraphics[width=7cm]{images/chapter_elasticity/cantilever_beam}
+\end{center}
+
+The exact displacement solution of the problem is given by
+\begin{eqnarray}
+u_x&=& \frac{Py}{6 \bar{E} I} \left[
+(6L-3x)x+(2+\bar{\nu})(y^2-D^2/4)\right] \nn\\
+u_y&=&-\frac{P}{\bar{E} I} \left[
+3\bar{\nu}y^2(L-x)+(4+5\bar{\nu}) \frac{D^2x}{4}+(3L-x)x^2 \right] \label{eq:chapel:sols1}
+\end{eqnarray}
+where 
+\begin{itemize}
+\item plane stress: $\bar{E}=E$, $\bar{\nu}=\nu$
+\item plane strain: $\bar{E}=E/(1-\nu^2$, $\bar{\nu}=\nu(1-\nu)$
+\end{itemize}
+The plane strain condition is studied for volumetric locking, and $I=D^3/12$ is the second
+moment of area of the beam. The corresponding stress solutions are
+
+\begin{eqnarray}
+\sigma_{xx}(x,y)&=&\frac{P(L-x)y}{I} \nn\\
+\sigma_{yy}(x,y)&=&0 \nn\\
+\sigma_{xy}(x,y)&=&-\frac{P}{2I}\left( D^2/4 - y^2 \right) \label{eq:chapel:sols2}
+\end{eqnarray}
+
+In computation, analytical displacement solution obtained from Equation \eqref{eq:chapel:sols1}
+is prescribed along the left boundary, and the parabolic traction 
+on the right boundary applies the exact shear stress
+solution provided in Equation \eqref{eq:chapel:sols2}. 
+In the paper the authors use a coarse discretization of $2\times 10$ elements.
+
+%--------------------------------------
+\subsection{Infinite plate with a circular hole}
+
+%--------------------------------------
+\subsection{Cook’s membrane}
+
+%--------------------------------------
+\subsection{Punching problem}
+
+
+
+
+
+
+
+
 

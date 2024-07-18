@@ -3,9 +3,12 @@
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \begin{center}
-\includegraphics[width=6cm]{images/pair_p1pp0/p1pp0}\\
-{\captionfont Taken from \textcite{begt92} (1992).}
+\includegraphics[width=8cm]{images/pair_p1pp0/p1pp0}\\
+{\captionfont Taken from \textcite{begt92} (1992). dots and crosses are
+velocity nodes.}
 \end{center}
+
+This element pair counts $8*3=24$ vdofs and 1 pdof.
 
 In Table I of \textcite{begt92} (1992) we find:
 \begin{eqnarray}
@@ -35,5 +38,15 @@ Note that we can verify that
 &=& 1
 \end{eqnarray}
 
+The authors report a 1st order convergence for the velocity on a manufactured solution.
+
+The authors state:
+\begin{displayquote}
+{\color{darkgray}
+The shape functions of the original $P_1$ basis do not vanish at the newly created mid-face nodes.
+This means that the additional degrees of freedom at these nodes do not represent velocity as
+such, but rather velocity corrections and must be treated accordingly.
+}
+\end{displayquote}
 
 

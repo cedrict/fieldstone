@@ -1,0 +1,786 @@
+\chapter{Numeriek modelleren van geodynamische processen} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} \tt chapter\_syllabus\_arie.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+%==============================================================================
+\section{Inleiding}
+
+De zin en noodzaak van modelexperimenten 
+met betrekking tot geodynamische processen is vooral gelegen in het 
+volgende:
+\begin{itemize}
+\item Beperkte mogelijkheid van direkte (in situ) waarnemingen 
+als aanvulling op indirecte bijv. seismologische- of gravimetrische
+waarnemingen.
+Denk hierbij bijvoorbeeld aan het beperkte bereik van diepboringen.
+\item De extreem lange tijdschaal waarop de processen plaatsvinden
+ - postglaciale opheffing $\sim 10^5 \ yr$, mantelconvectie overturntijd
+ $\sim 10^8 \ yr$.
+Het is dan praktisch onmogelijk om de afloop van de processen 
+voldoende ver in de tijd te volgen.
+\end{itemize}
+
+\noindent
+Verschillende manieren van modelleren die worden toegepast zijn:
+
+\begin{itemize}
+
+\item Fysisch modelleren (laboratorium experimenten).
+voorbeelden van geodynamische toepassingen zijn
+\begin{itemize}
+\item Simulatie van mantelconvectie door bestudering van Rayleigh-Benard
+convectie in tankmodellen.
+\item Bestudering van plastische deformatie van gelaagde structuren in
+centrifuge experimenten.
+\end{itemize}
+
+\item Theoretisch (wiskundig) modelleren.
+Theoretische modellen kunnen worden opgesteld voor geofysische
+problemen door formulering van wiskundige modelvergelijkingen.
+De modelvergelijkingen zijn i.h.a. parti\"{e}le 
+differentiaalvergelijkingen, die kunnen worden afgeleid uit fysische
+behoudswetten.
+Een in het vervolg veelvuldig besproken voorbeeld hiervan is de 
+warmte (diffusie) vergelijking voor een statisch medium 
+- zie bijv. hoofdstukken 2 en 3 -
+die wordt afgeleid uit een thermische energiebalans,
+$$
+\int_V \rho c_p \frac{\partial T}{\partial t} dV =
+\int_{\partial V} - {\bf q} \cdot {\bf n} dA +
+\int_V H dV
+$$
+waarin ${\bf q} \cdot {\bf n}$ de warmtestroomdichtheid door het
+oppervlak $\partial V$ voorstelt en $H$ de interne warmteproduktiviteit.
+
+Dergelijke theoretische modellen hebben voor geofysische
+problemen een lange traditie.
+De gevolgde werkwijze is daarbij voornamelijk analytisch
+geweest.
+De modelvergelijkingen werden analytisch opgelost en de
+resulterende oplossingen - bijvoorbeeld een temperatuurveld
+als oplossing van de warmtevergelijking - kunnen eventueel numeriek
+worden gee\*:valueerd.
+Een voorbeeld hiervan vinden we bij het evalueren van de
+Fourier-reeks oplossing voor een afkoelende laag waarvan 
+onder- en bovenzijde op constante temperatuur gehouden worden,
+$$
+T(z,t) = \sum_{n=1}^{\infty} 
+A_n sin ( n \pi z/d )
+e^{- (n \pi /d)^2 \kappa t}
+$$
+met
+$$
+A_n = \frac{2}{d}
+\int_0^d T(z,0) sin ( n \pi z/d ) dz
+$$
+
+Analytische oplosmethoden zijn vaak alleen geschikt voor gei\*:dealiseerde
+modellen bijvoorbeeld met vereenvoudigde geometrie van het domein
+of (stukwijs) constant veronderstelde fysische parameters die als
+coefficienten in de modelvergelijkingen optreden.
+Een voorbeeld van het laatste is de uniforme warmtediffusiviteit
+$\kappa$ in bovenstaande Fourier oplossing.
+
+In die gevallen waarin de wiskundige vergelijkingen niet analytisch
+kunnen worden opgelost (tot evalueerbare functies worden herleid)
+kan numeriek modelleren uitkomst bieden.
+\end{itemize}
+
+\noindent
+Kenmerkende karakteristieken van numerieke methoden van modelleren zijn:
+\begin{itemize}
+\item
+De oplossing wordt gezocht voor de onbekende veldgrootheden
+(bijv. de temperatuur in de warmtevergelijking) in een discrete
+verzameling punten in het oplossingsdomein (ruimte,tijd) - het rooster.
+Dit wordt aangeduid als de domeindiscretisatie.
+\item
+De continue modelvergelijkingen worden m.b.v. discretisatie methoden
+omgezet in stelsels algebraische vergelijkingen in de
+onbekende roosterpunt waarden.
+\item
+De algebraische vergelijkingen worden numeriek opgelost voor gegeven
+model parameters zoals begin/randvoorwaarden en coefficienten van
+de vergelijkingen (bijvoorbeeld de diffusiviteit in de 
+warmtevergelijking).
+Het resultaat van de berekeningen is een lijst getallen corresponderend
+met de roosterpuntwaarden van de onbekende grootheden.
+Teneinde de resultaten beter te kunnen interpreteren worden zij
+meestal nog in een nabewerkings (post processing) fase grafies 
+weergegeven.
+De numerieke berekeningen worden vanwege de grote omvang m.b.v. een
+computer uitgevoerd.
+\end{itemize}
+\vspace{0.5cm}
+\noindent
+In dit college worden numerieke methoden behandeld die toepasbaar
+zijn voor het modelleren van uiteenlopende geodynamische  processen.
+Onder numeriek modelleren verstaan we hier:
+het onderzoeken van modeleigenschappen, door de opgestelde 
+modelvergelijkingen numeriek op te lossen voor verschillende waarden
+van de modelparameters.
+Technisch gezien komt dit neer op het herhaaldelijk oplossen van de
+betreffende parti\"{e}le differentiaalvergelijkingen m.b.v.
+numeriek wiskundige discretisatie methoden.
+
+\noindent
+Belangrijke geofysiche modellerings problemen waarvoor numerieke 
+methoden worden toegepast zijn:
+\begin{itemize}
+\item (Energie/massa) transportmodellen
+deze worden toegepast bij de bestudering van de warmtehuishouding in 
+lithosfeermodellen of in stromingsmodellen toegepast op mantelconvectie
+of in modellen van poreuze media.
+Deze laatste modellen vinden op grote schaal toepassing in de
+hydrologie en aanverwante takken van millieu engineering en
+in de reservoir engineering i.v.m. de productie van olie en gas.
+\item Stromingsproblemen: - visceuze vloeistof modellen toegepast
+in modellen voor mantelconvectie en postglaciale opheffing.
+\item Deformatie problemen: elastische en plastische deformatie 
+modellen worden toegepast in modellen op uiteenlopende schaal van
+gedetailleerde geologische modellen voor plooiende laagpakketten
+tot grootschalige lithosfeermodellen met meerdere lithosferische
+platen.
+\end{itemize}
+
+\noindent
+De hier te behandelen (geo)fysische toepassingen hebben betrekking op
+het numeriek oplossen van tijd- en plaatsafhankelijke vergelijkingen
+in de vorm van gekoppelde parti\"{e}le differentiaalvergelijkingen.
+In het algemeen wordt het probleem eerst in de ruimte gediscretiseerd.
+Hierbij worden de ruimtelijke coordinaten als onafhankelijke variabelen
+vervangen door over te gaan op een eindig aantal discrete 
+vrijheidsgraden.
+Hiermee vervangt men een parti\"{e}le differentiaal vergelijking door
+een stelsel gewone differentiaalvergelijkingen met de tijd als enige
+onfhankelijke variabele.
+Deze stap wordt wel aangeduid als semi-discretisatie van het probleem.
+Het stelsel gewone differentiaalvergelijkingen wordt dan vervolgens
+in de tijd geintegreerd m.b.v. een numerieke integratie methode.
+Bekende discretisatiemethoden zijn:
+\begin{itemize}
+\item eindige differentie- en eindige volumen methoden
+\item eindige elementen methoden
+\item spectraal methoden
+\end{itemize}
+
+\noindent
+De beide eerste categori\"{e}n zullen hier worden behandeld.
+Enkele integratiemethoden voor gewone differentiaalvergelijkingen
+zijn:
+\begin{itemize}
+\item Euler expliciet/impliciet ook wel aangeduid als 
+Euler voorwaarts/achterwaarts
+\item Crank-Nicolson
+\item Runge-Kutta
+\end{itemize}
+
+\noindent
+De beide eerste methoden zullen hier worden toegepast.
+
+
+%========================================================================================
+%========================================================================================
+%========================================================================================
+%========================================================================================
+%========================================================================================
+
+
+
+%2.0-1
+%==============================================================================
+\section{Modelleren van 1-d warmte problemen}
+
+Als eerste voorbeeld van een probleem dat met numerieke methoden
+wordt gemodelleerd behandelen we het probleem van warmtediffusie
+in een statisch (niet stromend) medium.
+Dit probleem treedt o.a. op bij de bestudering van de
+warmtehuishouding van de lithosfeer van de aarde.
+In latere hoofdstukken zal aandacht worden besteed aan de behandeling
+van het complexer probleem van warmtetransport in een stromend medium
+dat optreedt bij de bestudering van thermische convectie in de 
+aardmantel.
+
+We beperken ons hier voor de overzichtelijkheid tot 1-D problemen.
+1-D formulering van het warmteprobleem voor de lithosfeer is relevant 
+omdat - op voldoende grote schaal - een horizontaal gelaagd model
+toepasbaar is waarin het warmtetransport voornamelijk in
+verticale richting plaatsvindt.
+De te behandelen oplossingsmethoden zijn echter zonder meer uit te 
+breiden naar twee en drie dimensies.
+In hoofdstuk 3 worden vergelijkbare methoden behandeld voor 2-D 
+problemen.
+We gaan uit van de 1-D tijdafhankelijke warmtevergelijking.
+\begin{equation}
+     {\partial  T \over \partial t} \ =\ 
+     \nabla \cdot \kappa \nabla T \ +\  Q \ =\ 
+     {\partial  \over \partial z} \kappa
+     {\partial  T \over \partial z} \ +\ Q
+\end{equation}
+met $T$ de temperatuur, $\kappa$ de warmtediffusiviteit,
+$\kappa = k / \rho c_p$, $k$ de thermische conductiviteit,
+$\rho$ de massadichtheid en $c_p$ de 
+soortelijke warmte.
+
+Een belangrijke toepassing van de 1-D vergelijking voor een statisch
+medium is het halfruimtemodel voor afkoelende en spreidende oceaanlithosfeer
+(Turcotte \& Schubert, 1982).
+De advectieve term in de afgeleide naar de tijd in de warmtevergelijking
+voor het (horizontaal) stromend medium met snelheid $u$,
+$dT/dt = \partial T / \partial t + u \partial T / \partial x$
+wordt hierin m.b.v. een ouderdomstranformatie $\tau = u/x$ omgezet
+in $\partial T/ \partial \tau$.
+Gaan we daarnaast uit van een stationaire toestand met 
+$\partial T / \partial t = 0$ en verwaarlozen we horizontale
+diffusie van warmte $\partial ^2 T / \partial x ^ 2 = 0$ dan
+resulteert de tijdafhankelijke vergelijking met de leeftijd
+$\tau$ in de rol van de tijdparameter.
+
+\vspace{0.5cm}
+\noindent
+\bf Opgave:\rm
+\newline
+\small
+%--------------- hier tekst tussenvoegen
+Leid de bovenstaande warmte vergelijking af uit een behoudswet voor
+thermische energie voor een 1-D statisch medium.
+\normalsize
+\vspace{0.5cm}
+
+Het probleem wordt opgesteld voor een 1-D oplossingsdomein, 
+het interval
+$[z_0 , z_{N+1} ]$.
+Voor het tijdafhankelijke  probleem veronderstellen we de temperatuur gegeven
+voor $t = 0$, d.m.v. de beginvoorwaarde
+\begin{equation}
+T(z ,0) = T_b (z)
+\end{equation}
+Waarin $T_b (z)$ een bekende functie.
+We zullen twee typen randvoorwaarden behandelen (Dirichlet/Neumann)
+ook wel aangeduid als essenti\"{e}le/natuurlijke randvoorwaarden,
+\begin{equation}
+T(z_r ,t) = T_r (t)  \ ,\  type \ 1\ (Dirichlet)
+\end{equation}
+\begin{equation}
+k \frac{\partial T(z_r ,t )}{\partial z} = 
+q_r (t) \  ,\  type \ 2\ (Neumann)
+\end{equation}
+met $q_r$ de voorgeschreven warmtestroom dichtheid.
+We behandelen twee verschillende discretisatie methoden.
+De eerste, gebaseerd op een centrale differentie benadering
+van de ruimtelijke afgeleiden in de warmtevergelijking, is beperkt
+toepasbaar.
+De tweede methode (eindige volume of box methode) is geschikt voor
+meer algemene problemen, bijvoorbeeld bij een variabele 
+geleidingscoefficient $k$.
+
+Voor het stationaire geval $( \partial T / \partial t = 0)$
+leiden beide discretisatie methoden tot een stelsel lineare 
+algebraische vergelijkingen
+dat m.b.v. een computer numeriek kan worden opgelost.
+Voor het tijdafhankelijk geval $( \partial T / \partial t \neq  0)$
+resulteert een stelsel gewone differentiaalvergelijkingen
+met de tijd $t$ als onafhankelijke variabele.
+In een later hoofdstuk zullen een aantal
+integratiemethoden worden behandeld voor dit stelsel 
+gewone differentiaalvergelijkingen.
+%----------------------------------------------------------------
+\subsection{Een differentiemethode met equidistant rooster}
+We bespreken eerst een methode voor een equidistant rooster en met
+uniforme diffusie coefficient $\kappa$.
+Deze methode heeft als voordeel dat hij conceptueel eenvoudig is.
+In volgende secties wordt een algemener toepasbare methode behandeld.
+
+Definieer een 1-D rooster met vaste afstand tussen de roosterpunten
+(equidistant):
+\begin{equation}
+z_i \ =\  z_0 + i \times \Delta z \ ,\  i\ =\ 0,1,2,3, ... , N+1
+\end{equation}
+met randpunten $z_0$ en $z_{N+1}$, gedeeltelijk weergegeven in
+Fig.1.
+
+%\begin{figure}[hb]
+%\epsffile{fig1.eps}
+%\caption{\it Onderdeel van een equidistant 1-D rooster met twee
+%             rooster segmenten van lengte $\Delta z$}.
+%\end{figure}
+
+Definieer vectoren ${\bf T} (t)$, ${\bf Q} (t)$ 
+met als elementen de roosterpuntwaarden
+van de temperatuur 
+$T_i (t) \ =\  T(z_i ,t)$
+en de warmteproductiviteit
+$Q_i (t) \ =\  Q(z_i ,t)$.
+Voor het gemak 
+laten we de aanduiding van de tijdafhankelijkheid weg in de volgende
+formules.
+Benader de afgeleide $\partial^2 T / \partial z^2$ 
+in de warmtevergelijking m.b.v. een centrale differentie formule die
+kan worden afgeleid d.m.v. een Taylor reeks ontwikkeling van de 
+temperatuur,
+\begin{equation}
+T(z\ +\  \Delta z) \ =\  T(z) \ +\  
+\Delta z {\partial T  \over \partial z} \ +\ 
+{\Delta z^2  \over 2 }{\partial^2 T  \over \partial z^2} \ +\ 
+{\Delta z^3  \over 6 }{\partial^3 T  \over \partial z^3} \ +\ 
+{\Delta z^4  \over 24 }{\partial^4 T  \over \partial z^4} \ +\ 
+ ...
+\end{equation}
+\vspace{0.5cm}
+\begin{equation}
+T(z\ -\  \Delta z) \ =\  T(z) \ -\  
+\Delta z {\partial T  \over \partial z} \ +\ 
+{\Delta z^2  \over 2 }{\partial^2 T  \over \partial z^2} \ -\ 
+{\Delta z^3  \over 6 }{\partial^3 T  \over \partial z^3} \ +\ 
+{\Delta z^4  \over 24 }{\partial^4 T  \over \partial z^4} \ -\ 
+ ...
+\end{equation}
+
+\vspace{0.5cm}
+\noindent
+elimineer oneven machten van $\Delta z$:
+\begin{equation}
+T(z\ +\  \Delta z) \ -\  2T(z) \ +\  T(z- \Delta z ) \ =\ 
+{\Delta z^2}         {\partial^2 T  \over \partial z^2} \ +\ 
+{\Delta z^4  \over 12 }{\partial^4 T  \over \partial z^4} \ +\ 
+ ...
+\end{equation}
+
+\vspace{0.5cm}
+\noindent
+\begin{equation}
+{\partial^2 T  \over \partial z^2}
+\ =\ 
+{T(z\ -\  \Delta z) \ -\  2 T(z) \ +\  T(z\ +\  \Delta z)  \over \Delta z^2} 
+\ -\ 
+{\Delta z^2  \over 12 }{\partial^4 T  \over \partial z^4}
+\ +\ 
+ ...
+\end{equation}
+
+\vspace{0.5cm}
+\noindent
+Verwaarloozing in (9) van de termen in $\Delta z^2$, resulteert in een
+discrete warmtevergelijking voor een roosterpunt $z_i$:
+\begin{equation}
+{\partial T_i  \over \partial t} \ =\ 
+{\kappa \over \Delta z^2}
+\left[
+       T_{i-1} \ -\  2 T_i \ +\  T_{i+1}  \ 
+\right]
+\ +\ 
+Q_i
+\end{equation}
+Bij gegeven temperatuur op de randen geldt:
+$T (z_0 ) = T_0$,
+$T (z_{N+1} ) = T_{N+1}$. 
+De vergelijkingen voor het eerste $(i = 1)$ en laatste $(i = N)$
+inwendige roosterpunt krijgen dan een rechterlid bijdrage in de 
+voorgeschreven randtemperatuur $T_0$ en $T_{N+1}$.
+
+\vspace{0.5cm}
+\noindent
+\begin{equation}
+i \ =\  1 \ \ \to\ \ 
+{\partial T_1  \over \partial t} 
+\ =\ 
+{\kappa \over \Delta z^2} 
+\left[
+       -2 T_1 \ +\  T_2 \ 
+\right]
+\ +\ 
+{\kappa \over \Delta z^2} T_0 \ +\  Q_1
+\end{equation}
+\begin{equation}
+i \ =\  N \ \ \to\ \ 
+{\partial T_N  \over \partial t} 
+\ =\ 
+{\kappa \over \Delta z^2} 
+\left[
+       T_{N-1} \ -\  2 T_N \ 
+\right]
+\ +\ 
+{\kappa \over \Delta z^2} T_{N+1} \ +\  Q_N
+\end{equation}
+
+\vspace{0.5cm}
+\noindent
+E.e.a. resulteert in
+een stelsel van precies $N$ gewone differentiaal vergelijkingen
+\begin{equation}
+{\partial {\bf T}   \over \partial t}
+\ =\ 
+{\bf A} {\bf T} \ +\  {\bf R}
+\end{equation}
+met rechterlidvector:
+\begin{equation}
+{\bf R} \ =\  ( 
+Q_1 \ +\  {\kappa \over \Delta z^2} T_0 ,
+Q_2 ,
+ ... ,
+Q_{N-1} ,
+Q_N \ +\  {\kappa \over \Delta z^2} T_{N+1}
+)
+\end{equation}
+en $( N \times N )$ coefficienten matrix:
+\begin{equation}
+{\bf A} \ =\  - {\kappa \over  \Delta z^2}
+\left[
+\begin{array}{cccccccc}
+ 2  &-1 &  0 &  0  & . &  . &  . & . \\
+-1  & 2 & -1 &  0  & . &  . &  . & . \\
+ 0  &-1 &  2 & -1  & . &  . &  . & . \\
+ 0  & 0 & -1 &  2  & . &  . &  . & . \\
+ .  & . &  . &  .  & . &  . &  . & . \\
+ .  & . &  . &  .  & . &  2 & -1 &  0\\
+ .  & . &  . &  .  & . & -1 &  2 & -1\\
+ .  & . &  . &  .  & . &  0 & -1 &  2 
+\end{array}
+\right]
+\end{equation}
+en onbekende vector 
+\begin{equation}
+{\bf T} (t) \ =\  ( T_1 (t), T_2 (t), ... , T_N (t))
+\end{equation}
+%----------------------------------------------------------------
+\subsubsection{Implementatie van natuurlijke randvoorwaarden}
+De behandeling van natuurlijke randvoorwaarden verschilt van die
+voor essentiele randvoorwaarden in de vorige sectie.
+We beschouwen een geval met voorgeschreven warmtestroomdichtheid
+$q_{N+1}$ in het punt $p_{N+1}$.
+De temperatuur in $p_{N+1}$ is nu ook een onbekende (vrijheidsgraad)
+van het gestelde probleem en we moeten de discrete vergelijking (10)
+ook in $p_{N+1}$ evalueren om een volledig stel 
+$(N+1) \times (N+1)$  vergelijkingen te krijgen.
+
+Een eenvoudige methode om de voorgeschreven warmtestroom te
+implementeren is deze uit te drukken in de knooppuntwaarden d.m.v.
+een differentie benadering.
+We benaderen de temperatuurgradient in de uitdrukking voor de
+warmtestroomdichtheid m.b.v. een centrale differentie
+\begin{equation}
+q_{N+1} = k {\partial T \over \partial z} |_{z_{N+1}}
+=
+k \frac {T_{N+2} - T_{N}} { 2 \Delta z}
++
+O( \Delta z  ^2 )
+\end{equation}
+waarin we gebruik maken van een virtueel roosterpunt $p_{N+2}$ op
+afstand $\Delta z$ buiten het oplossingsdomein.
+Voor de temperatuur in het virtuele punt vinden we uit (17)
+\begin{equation}
+T_{N+2} = T_{N} + 2 \frac {q_{N+1}} {k} \Delta z
+\end{equation}
+M.b.v. (18) kan de discrete vergelijking in het randpunt $p_{N+1}$
+worden geevalueerd resulterend in,
+\begin{equation}
+\frac {\partial T_{N+1}} {\partial t} = 
+\frac {2 \kappa} {\Delta z^2}
+     \left [
+             T_N - T_{N+1}
+     \right ]
++
+\frac {2 \kappa} {\Delta z}
+\frac {q_{N+1}} {k} 
++
+Q_{N+1}
+\end{equation}
+We zien dat de inhomogene randvoorwaarde een extra bijdrage tot de
+rechterlidvector levert.
+Merk op dat 
+dat de coefficienten matrix niet meer symmetrisch is.
+De symmetrie is echter eenvoudig te herstellen door de vergelijking
+voor het randpunt door 2 te delen.
+
+\vspace{0.5cm}
+\noindent
+\bf Opgave:\rm
+\newline
+\small
+Laat zien - door Taylor ontwikkeling - dat de gebruikte
+randvoorwaarde inderdaad van de tweede orde is in $\Delta z$.
+Ga na dat een meer voor de hand liggende voorwaartse differentie
+in een eerste orde nauwkeurigheid resulteert.
+\normalsize
+
+
+%========================================================================================
+%========================================================================================
+%========================================================================================
+%========================================================================================
+%========================================================================================
+
+\subsection{Een differentiemethode met variabele roosterafstand}
+
+Bij de afleiding van de eindige differentie methode voor de 
+warmtevergelijking m.b.v. de centrale differentie benadering voor
+de tweede afgeleide term werd er vanuit gegaan dat het gebruikte rooster
+een vaste afstand tussen de roosterpunten heeft (equidistant rooster). 
+We namen bovendien aan dat de warmtegeleidingscoefficient uniform was.
+Om voldoende nauwkeurigheid in de numerieke oplossing te bereiken kan
+het soms noodzakelijk zijn om veel roosterpunten te gebruiken wat direct
+resulteert in grotere rekentijd voor het computerprogramma en een 
+groter beslag op het computergeheugen.
+Deze roosterverfijning wordt bij de equidistante aanpak over het gehele
+domein doorgevoerd terwijl deze in voorkomende gevallen uitsluitend op
+deelgebieden wenselijk is - bijvoorbeeld daar waar de oplossing 
+sterk varieert.
+
+We behandelen hier een methode met variabele roosterafstand waarmee 
+het rooster locaal kan worden verfijnd.
+We zullen tegelijkertijd het algemene geval met variabele coefficient 
+$k(z)$ bespreken.
+We beperken ons weer tot het 1-D geval. Generalisatie tot 2-D en 3-D
+toepassingen zijn direct mogelijk.
+De hier te behandelen methode is bekend als de 
+`eindige volume methode' of ook wel `box methode'.
+We bespreken eerst het stationair probleem en zullen achteraf zien
+hoe het resultaat kan worden uitgebreid voor tijdafhankelijke
+problemen.
+
+%--------------------------------------------------------------------
+\subsubsection{Discretisatie van de vergelijking}
+Bij de box methode wordt de parti\"{e}le differentiaalvergelijking
+geintegreerd over het domein $I = [0,L]$,
+De integratie wordt uitgevoerd over deelintervallen $I_i$
+- de eindige volumen waaraan de methode zijn naam ontleent -
+gecentreerd rond roosterpunt $p_i$,
+$I_i = [z_{m_{i-1}} , z_{m_i} ]$,
+zie Fig.2.
+
+%\begin{figure}[hb]
+%\epsffile{fig2.eps}
+%Figuur 2:\ \it 
+%Onderdeel van een 1-D rooster met twee rooster segmenten en een 
+%integratie interval $I_i$.
+%\end{figure}
+
+Hierin zijn de $m_i$ de midpunten van de roosterintervallen.
+Integratie van de stationaire warmtevergelijking over $I_i$ geeft
+\begin{eqnarray}
+\int_{z_{m_{i-1}}} ^{z_{m_i}}
+    \left [
+          \frac{d}{dz} k(z) 
+          \frac{d}{dz} T
+          \ +\ 
+          H(z)
+    \right ]
+dz
+\ =\ \nonumber \\
+k(z) \frac {dT}{ dz} |_{z_{m_{i-1}}} ^{z_{m_i}}
+\ +\ 
+\int_{z_{m_{i-1}}} ^{z_{m_i}}
+          H(z)
+dz
+= 0
+\end{eqnarray}
+
+Merk op dat de overgebleven afgeleide in (1) wordt geevalueerd in de
+midpunten $m_{i-1}$ en $m_i$.
+We benaderen vervolgens deze afgeleide in de midpunten door een 
+centrale differentie in termen van de aangrenzende knooppunt waarden
+en we definieren nog $k(z_{m_i}) \ =\ k_i$ en 
+$z_{p_{i+1}}\ -\ z_{p_{i}}\ =\ h_i$.
+\begin{equation}
+k \frac {dT} {dz} |_{z_{m_i}}
+\approx
+k_i \frac { T_{i+1}     \ -\ T_i     }
+          { z_{p_{i+1}} \ -\ z_{p_i} }
+\ = \
+k_i \frac { T_{i+1} \ -\ T_i} {h_i}
+\end{equation}
+\begin{equation}
+k \frac {dT} {dz} |_{z_{m_{i-1}} }
+\approx
+k_{i-1} \frac { T_i     \ -\ T_{i-1}     } 
+              { z_{p_i} \ -\ z_{p_{i-1}} }
+\ = \
+k_{i-1} \frac { T_i \ -\ T_{i-1}} {h_{i-1}}
+\end{equation}
+De warmteproduktie wordt bekend verondersteld en we definieren
+\begin{equation}
+\int_{z_{m_{i-1}}} ^{z_{m_i}} H(z) dz \ =\ F_i
+\end{equation}
+Invullen van (2),(3) en (4) in (1) levert,
+\begin{equation}
+- \frac {k_{i-1}} {h_{i-1}} T_{i-1}
+\ +\ 
+\left [
+      \frac{k_{i-1}} {h_{i-1}}
+      \ +\ 
+      \frac{k_{i}} {h_{i}}
+\right ]
+T_i
+\ -\ 
+\frac{k_{i}}{h_{i}} T_{i+1}
+= F_i
+\end{equation}
+Vergelijking (5) is een lineaire algebraische vergelijking in de 
+onbekende roosterpuntenwaarden van de temperatuur $T_i$.
+Door het beschreven integratie procede te herhalen voor alle 
+- $N$ -
+eindige volumen $I_i$ krijgen we een stelsel lineaire vergelijkingen.
+
+\vspace{0.5cm}
+\noindent
+\bf Opgave:\rm
+\newline
+\small
+Ga na dat het stelsel volledig is als we de temperatuur op de randen
+van het interval $[0,L]$ voorschrijven m.b.v. twee essentiele 
+randvoorwaarden.
+Volledig betekent hier dat er evenveel vergelijkingen als onbekenden
+zijn.
+\normalsize
+\vspace{0.5cm}
+
+\vspace{0.5cm}
+\noindent
+\bf Opgave:\rm
+\newline
+\small
+Laat zien dat het stelsel (5) voor het speciaal geval met een 
+equidistant rooster en uniforme coefficient $k$ identiek is aan het
+in de voorgaande sectie afgeleide stelsel 2.1(13).
+Hoe verhouden de rechterlidvectoren zich ?
+\normalsize
+\vspace{0.5cm}
+
+\noindent
+Het stelsel vergelijkingen in matrix vorm geschreven is
+\begin{equation}
+\bf {A T } = \bf F
+\end{equation}
+
+\vspace{0.25in}
+\noindent
+\bf Opgave:\rm
+\newline
+\small
+Toon aan dat de matrix $\bf A$ symmetrisch en tri-diagonaal is, d.w.z.
+$A_{ij}\ =\ A_{ji}$, $A_{ij}\ =\ 0, |i\ -\ j| > 1$.
+\normalsize
+
+\vspace{0.25in}
+\noindent
+\bf Opgave:\rm
+\newline
+\small
+Ga na dat de bovenstaande formulering ook nog toepasbaar is als we de
+coefficient van de differentiaalvergelijking $k(z)$ definieren d.m.v.
+een rij i.h.a. verschillende rooster segmentwaarden d.w.z. als we 
+definieren,
+\begin{equation}
+k(z) \ =\ k_i ,\ z_{p_i} < z < z_{p_{i+1}}
+\end{equation}
+Hiermee kunnen gelaagde modellen met discontinuiteiten in de 
+conductiviteit worden gemodelleerd.
+\normalsize
+
+\vspace{0.25in}
+\noindent
+\bf Opgave:\rm
+\newline
+\small
+Als we de warmteproduktie coefficient $H(z)$ op dezelfde wijze 
+definieren als in de geleidingscoefficient $k(z)$ in bovenstaande opgave
+(stukwijs constant)
+dan kan voor de rechterlidvector $\bf F$ in (4) worden afgeleid (ga na)
+\begin{equation}
+F_i \ =\ 
+\int_{z_{m_{i-1}}} ^{z_{m_{i}}}
+    H(z) dz
+\ =\ 
+\frac {h_{i-1}}{2} H(z_{m_{i-1}} ) \ +\ 
+\frac {h_{i}}  {2} H(z_{m_{i}} )
+\end{equation}
+\normalsize
+
+\vspace{0.25in}
+\noindent
+\bf Opgave:\rm
+\newline
+\small
+Ga na: wanneer de warmteproduktie geconcentreerd is in een vlak
+$z\ =\ z_s$, $H(z)\ =\ H_s \delta (z\ -\ z_s )$
+met $z_{m_{k-1}}\ <\ z_s \ <\ z_{m_{k}}$ - d.w.z.
+$z_s\ \in \ I_k$,
+dan geldt voor de rechterlidvector in (4)
+$F_i\ =\ H_s \delta_{ik}$
+met $\delta_{ik}$ het Kronecker delta symbool.
+\normalsize
+%--------------------------------------------------------------------
+\subsubsection{Behandeling van randvoorwaarden}
+De behandeling van essentiele randvoorwaarden gaat op een vergelijkbare
+manier als bij de discretisatie methode van sectie 2.1.
+Essentiele randvoorwaarden geven een bijdrage tot de rechterlidvector
+en ze reduceren het aantal vrijheidsgraden.
+We behandelen hier de implementatie van een natuurlijke of Neumann 
+randvoorwaarde die optreedt als de warmtestroomdichtheid op de
+rand is voorgeschreven.
+We stellen $k dT/dz |_{z=z_{N+1}} = q_{N+1}$.
+De behandeling verschilt van de in sectie 2.1.1 voor een equidistant
+rooster beschreven methode.
+We werken de behandeling uit van de randvoorwaarde in roosterpunt
+$p_{N+1}$ - zie Fig. 2.3.
+
+%\begin{figure}[hb]
+%\epsffile{fig3.eps}
+%Figuur 3:\ \it 
+%Onderdeel van een 1-D rooster met twee rooster segmenten, een 
+%inwendig integratie interval $I_N$ en een randinterval
+%$I_{N+1}$.
+%\end{figure}
+
+In dit geval is de temperatuur in het randpunt $p_{N+1}$ ook een
+vrijheidsgraad.
+Teneinde een volledig stel vergelijkingen te krijgen moet de 
+discretisatie 2.2(1) ook in het roosterpunt $p_{N+1}$ geevalueerd
+worden.
+We werken de evaluatie uit voor de roosterpunten $p_{N}$ en $p_{N+1}$.
+
+Voor $p_N$ krijgen we m.b.v. 2.2.1(5)
+\begin{equation}
+- \frac {k_{N-1}} {h_{N-1}} T_{N-1}
++ \left [
+          \frac {k_{N-1}} {h_{N-1}}
+          +
+          \frac {k_{N  }} {h_{N  }}
+  \right ]
+T_{N}
+- \frac {k_N} {h_N} T_{N+1}
+= F_N
+\end{equation}
+De randtemperatuur $T_{N+1}$ treedt nu als vrijheidsgraad van het
+probleem in het linkerlid op.
+
+Voor het randpunt met voorgeschreven warmtestroomdichtheid $p_{N+1}$
+gaan we uit van integraaluitdrukking 2.2(1) en we kiezen het
+integratieinterval $I_{N+1} = [z_{m_N} , z_{p_{N+1}} ]$,
+\begin{eqnarray}
+\int_{z_{m_N}} ^{z_{p_{N+1}}}
+\left [ \frac{d}{dz} k \frac{d}{dz} T + H \right ] dz
+= \nonumber \\
+k_N   \frac {dT}{dz} |_{z_{p_{N+1}}} -
+k_N \frac {dT}{dz} |_{z_{m_{N  }}} +
+\int_{z_{m_N}} ^{z_{{p_N+1}}} H(z) dz
+\approx \nonumber \\
+q_{N+1} - 
+k_N \frac{ T_{N+1} - T_{N}} {h_N} + F_{N+1}
+= 0
+\end{eqnarray}
+Waarmee we voor de vergelijking voor roosterpunt $p_{N+1}$ vinden
+\begin{equation}
+- \frac{k_N}{h_N} T_{N  }
++ \frac{k_N}{h_N} T_{N+1}
+=
+F_{N+1} +
+q_{N+1}
+\end{equation}
+We zien dat de voorgeschreven warmtestroomdichtheid $q_{N+1}$
+als extra bijdrage in de rechterlid vector verschijnt.
+
+
+
+

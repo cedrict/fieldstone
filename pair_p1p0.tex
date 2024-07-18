@@ -110,6 +110,28 @@ stabilization together with an appropriate macroelement subdivision.}
 \end{displayquote}
 See \textcite{nosi98} (1998) for globally and locally stabilised versions.
 
-
+In \textcite{caod86} (1986), we read:
+\begin{displayquote}
+{\color{darkgray}
+Another interesting choice is the triangle with linear velocity and 
+piecewise-constant pressure.
+The vertices of the triangle are velocity nodes
+and the element centroids may be taken as pressure nodes.
+This element element would appear to be the simplest and most natural choice
+for a mixed method, but again the consistency condition fails.
+An easy physical interpretation is possible in this case:
+As $h\rightarrow 0$ the number of triangles increases faster than the number
+of vertices. Concequently, the dimension of the pressure space $P^h$
+grows to exceed that of the velocity space $V^h$.
+For example, consider the unit square with an $N\times N$ rectangular mesh
+subdivided into $2N^2$ triangles. We have $2N^2$ pressure nodes
+(and basis functions) but only $2(N-1)^2$ interior velocity degrees of freedom
+(and basis functions) if Dirichlet data is specified. 
+Each pressure equation is a discrete constraint equation, and the 
+problem is overconstrained. The velocity $\vec{\upnu}_h=\vec{0}$, which 
+satisfies the mass constraint but not the momentum equations.
+}
+\end{displayquote}
+ 
 
  

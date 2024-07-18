@@ -1,11 +1,16 @@
+\index{general}{$P_1^{++}\times P_{-1}$}
 \begin{flushright} {\tiny {\color{gray} \tt pair\_p1ppp1.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 \begin{center}
-\includegraphics[width=6cm]{images/pair_p1ppp1/p1ppp1}\\
-{\captionfont Taken from \textcite{begt92} (1992).}
+\includegraphics[width=8cm]{images/pair_p1ppp1/p1ppp1}\\
+{\captionfont Taken from \textcite{begt92} (1992). 
+dots, crosses and Y are all velocity nodes. The black 
+square stands for a discontinous linear pressure.}
 \end{center}
+
+This element pair counts $(4+4+1)*3=27$ vdofs and 3 pdof.
 
 In Table I of \textcite{begt92} (1992) we find:
 \begin{eqnarray}
@@ -36,6 +41,15 @@ Note that we can verify that
 + (-\frac14 -\frac14-\frac14 -\frac14 +1) \bN_9 \nn\\
 &=& 1
 \end{eqnarray}
+The authors report a 1st order convergence for the velocity on a manufactured solution.
 
+The authors state:
+\begin{displayquote}
+{\color{darkgray}
+The shape functions of the original $P_1$ basis do not vanish at the newly created mid-face nodes.
+This means that the additional degrees of freedom at these nodes do not represent velocity as
+such, but rather velocity corrections and must be treated accordingly.
+}
+\end{displayquote}
 
 
