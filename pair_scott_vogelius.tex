@@ -1,3 +1,4 @@
+\index{general}{Scott-Vogelius pair}
 \begin{flushright} {\tiny {\color{gray} \tt pair\_scott\_vogelius.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -51,6 +52,8 @@ Barycentrically refined triangle (also known as Alfeld split) on the left,
 and Powell–Sabin split on the right.\\ Taken from \textcite{fams21} (2021).}
 \end{center}
 
+\index{general}{Powell-Sabin}
+
 \textcite{cael11} (2011) state:
 \begin{displayquote}
 {\color{darkgray}
@@ -71,6 +74,39 @@ SV elements to these cases where they are LBB stable.
 }
 \end{displayquote}
 
+On page 112 of \textcite{john16} we read:
+\begin{displayquote}
+{\color{darkgray}
+The Scott–Vogelius finite element considers still $P_k/P^{disc}_{k-1}$, $k \ge d$, 
+but on special meshes, which allow to show the satisfaction of the 
+discrete inf-sup condition.
+[...]
+This pair of finite element spaces $P_k/P^{disc}_{k-1}$
+are weakly divergence-free, which is a desirable property.
+[...]
+The fulfillment of the discrete inf-sup condition 
+was proved already in \textcite{scvo85} (1985) in the two-dimensional 
+case for $k\ge 4$ if there is no so-called singular vertex in the mesh.
+An internal vertex is said to be singular if edges which meet at the vertex fall onto
+two straight lines.
+
+The basic idea to overcome this problem consists in using meshes 
+without singular vertices. To this end, so-called barycentric-refined 
+grids are constructed. Starting from any admissible triangular mesh, 
+new edges are introduced by connecting all
+vertices of a mesh cell with the barycenter of this mesh cell. 
+This step creates smaller triangles.
+On barycentric-refined meshes, the $P_k/P^{disc}_{k-1}$, $k=2,3$ 
+pair of finite element spaces was shown to satisfy the discrete inf-sup
+condition in Qin (1994) [phd thesis].
+}
+\end{displayquote}
+
+
+\begin{center}
+\includegraphics[width=6cm]{images/pair_scott_vogelius/john16}\\
+{\captionfont Barycentric-refined simplicial grid on the unit square}
+\end{center}
 
 
 See also \textcite{jolm17} (2017) in which the $P_2\times P_1$, Scott-Vogelius ($P_2\times P_{-1}$), 
@@ -85,7 +121,8 @@ although I use the $P_1^+\times P_1$ element in this stone).
 \end{center}
 
 
-In \textcite{befh21} (2021) this element is used in its $(P_3)^2-P_2^{\text{disc}}$ form.
+In \textcite{befh21} (2021) this element is used in its 
+$(P_3)^2-P_2^{\text{disc}}$ form.
 
 \begin{center}
 \url{https://defelement.com/elements/scott-vogelius.html}

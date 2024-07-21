@@ -105,6 +105,24 @@ So in the end
 \sum_{i=1}^{15} \bN_i = (\bN_1+\bN_2+\bN_3+\bN_4)  + \sum_{i=5}^{15} \bN_i = 1
 \]
 
+concerning the 3D version we read in \textcite{john16}:
+\begin{displayquote}
+{\color{darkgray}
+The enrichment proposed in Crouzeix and Raviart (1973) is given
+by all mesh cell bubble functions and all face bubble functions. For a mesh cell
+$K$ with barycentric coordinates $\lambda_1$, $\lambda_2$, $\lambda_3$, 
+$\lambda_4$  a mesh cell bubble function is given
+by $\lambda_1 \lambda_2 \lambda_3 \lambda_4$ and the four 
+face bubble functions are the product of three mutually
+distinct barycentric coordinates, e.g., $\lambda_1 \lambda_2 \lambda_3$. 
+Thus, for each velocity component,
+there are 15 degrees of freedom such that the dimension of the local space for
+enrichment is 45. From the practical point of view one has to take into consideration
+that bubbles are higher degree polynomials and their use requires the application of
+higher order quadrature rules.
+}
+\end{displayquote}
+
 \begin{center}
 \url{https://defelement.com/elements/conforming-crouzeix-raviart.html}
 \end{center}

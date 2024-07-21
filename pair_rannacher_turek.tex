@@ -7,31 +7,37 @@
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This element is the natural quadrilateral analogue
-of the well-known triangular $P_1^{nc} $Stokes element of Crouzeix-Raviart \cite{crra73}.
-This element is sometimes called ${\bm Q}_1^{rot} \times Q_0$ or the Rannacher-Turek element 
+of the well-known triangular $P_1^{nc} $Stokes element of 
+Crouzeix-Raviart \cite{crra73}.
+This element is sometimes called ${\bm Q}_1^{rot} \times Q_0$ 
+or the Rannacher-Turek element 
 \cite[Section 3.6.5]{john16} (see also Appendix~B.4, example B.53 of \textcite{john16}).
-This rectangular nonconforming \cite{crfa89} element is termed the rotated ${\bm Q}_1$ element 
-because of the fact that $r^2-s^2$ can be generated from $rs$ (occurring in the bilinear $Q_1$ 
+This rectangular nonconforming \cite{crfa89} element is termed 
+the rotated ${\bm Q}_1$ element because of the fact that $r^2-s^2$ can 
+be generated from $rs$ (occurring in the bilinear $Q_1$ 
 element) by a rotation of 45$\degree$ \cite[p93]{chen}.
 The velocity approximation is achieved by rotated dim-linear functions that have 
 continuous degrees of freedom on
 the faces of the mesh cells as we have seen in Section~\ref{ss:rq1}.
 This element was introduced in Rannacher \& Turek (1992) \cite{ratu92} 
-has been proven to satisfy the inf-sup condition. It has been studied comprehensively in Schieweck 
-(1997)\footnote{Habilitation thesis in German}, \cite{shzh06} and in Turek \cite{ture94,ture96}.
+has been proven to satisfy the inf-sup condition. It has been 
+studied comprehensively in Schieweck 
+(1997)\footnote{Habilitation thesis in German}, \cite{shzh06} and 
+in Turek \cite{ture94,ture96}.
 Superconvergence properties have also been reported \cite{misx06,misx07}.
-It has been used in 2D \cite{maky17} and 3D \cite{klll96,gekm08} and forms the basis of the FeatFlow 
+It has been used in 2D \cite{maky17} and 3D \cite{klll96,gekm08} and forms 
+the basis of the FeatFlow 
 software\footnote{\url{http://www.featflow.de/en/index.html}}. 
 It is used in the PhD thesis of Gastaldo \cite{gast07} and Ouazzi \cite{ouaz05}.
-It has been 
-successfully coupled to multigrid solvers \cite{chos98,tuos02}.
-This element has been compared to the stabilised ${\bm Q}_1\times P_0$ element \cite{lisi13}.
-It is mentioned in \cite{hans11}
+It has been successfully coupled to multigrid solvers \cite{chos98,tuos02}.
+This element has been compared to the stabilised ${\bm Q}_1\times P_0$ 
+element \cite{lisi13}. It is mentioned in \cite{hans11}
 
 It essentially comes in two flavours, the Middle Point (MP) and the Mid Value (MV) one.
 
 \begin{remark} 
-John \cite{john16} explains that: "For the point-value-oriented non-conforming finite element spaces (MP), 
+John \cite{john16} explains that: "For the point-value-oriented 
+non-conforming finite element spaces (MP), 
 the value of the Dirichlet boundary
 condition in the barycenter of the faces at the boundary is taken. Using the mean-
 value-oriented spaces (MV), one computes the integrals of the boundary condition on
@@ -41,28 +47,49 @@ computed in both ways are zero."
 \end{remark}
 
 \begin{remark} 
-John also makes a very important point: "There are also unmapped (non-parametric) versions of 
-these finite element spaces, which define the polynomials directly on the mesh cell K. It is shown in Rannacher
-and Turek (1992) \cite{ratu92} that these versions are inf-sup stable on more general meshes than
-the mapped (parametric) version of the ${\bm Q}_1^{rot}\times Q_0$ finite element, e.g., on strongly
-nonuniform meshes. Considering all four types of ${\bm Q}_1^{rot}\times Q_0$ finite elements, the
+John also makes a very important point: "There are also unmapped 
+(non-parametric) versions of 
+these finite element spaces, which define the polynomials directly on 
+the mesh cell $K$. It is shown in \textcite{ratu92} (1992) that these 
+versions are inf-sup stable on more general meshes than
+the mapped (parametric) version of the ${\bm Q}_1^{rot}\times Q_0$ 
+finite element, e.g., on strongly
+nonuniform meshes. Considering all four types of ${\bm Q}_1^{rot}\times Q_0$ 
+finite elements, the
 optimal order of convergence on perturbed meshes is achieved only by the mean-
 value-oriented version of the unmapped ${\bm Q}_1^{rot}\times Q_0$   finite element.
 \end{remark}
 
-Mahmood \etal \cite{maky17} mention a very important fact: "The chosen nonconforming element requires
-additional stabilization for handling the deformation tensor formulation due to missing Korn's inequality 
-(see \textcite{horg95} (1995), \textcite{knob00} (2000), \textcite{bren04} (2004) for details 
-about Korn's equality).
-To this end we employ the standard edge oriented stabilization (\textcite{tuos02} (2002), \textcite{tuou07} (2007)) in our simulations."
-This is a rather unfortunate fact that although LBB stable this element needs an additional 
+Mahmood \etal \cite{maky17} mention a very important fact: 
+\begin{displayquote}
+{\color{darkgray}
+The chosen nonconforming element requires
+additional stabilization for handling the deformation tensor 
+formulation due to missing Korn's inequality 
+(see \textcite{horg95} (1995), \textcite{knob00} (2000), \textcite{bren04} (2004) 
+for details about Korn's equality). To this end we employ the standard 
+edge oriented stabilization 
+(\textcite{tuos02} (2002), \textcite{tuou07} (2007)) in our simulations.}
+\end{displayquote}
+This is a rather unfortunate fact that although LBB stable this 
+element needs an additional 
 term in the weak form (see Turek \etal (2002) \cite{tuos02}) 
 so as to suppress parasitic velocity modes when the div-grad formulation 
 of the Stokes equation is used (as opposed to the Laplace formulation -- see \cite[Section 6.5.2]{dohu03}).
 
-This element is used in \textcite{hala01} (2001) in the context of near incompressible elasticity. 
-It is mentioned that it does not fulfill the discrete Korn's inequality. It is then stabilised 
+This element is used in \textcite{hala01} (2001) in the context 
+of near incompressible elasticity. 
+It is mentioned that it does not fulfill the discrete Korn's inequality. 
+It is then stabilised 
 in a discontinuous Galerkin framework.
+
+We find on page 47 of \textcite{john16}:
+\begin{displayquote}
+{\color{darkgray}
+It should be noted that estimates of Korn's type do not hold for all spaces, e.g. they do not hold
+for certain non-conforming finite element spaces.}
+\end{displayquote}
+
 
 \Literature \textcite{shee20} (2020)
 

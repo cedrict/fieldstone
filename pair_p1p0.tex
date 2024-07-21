@@ -100,7 +100,19 @@ this pair does not satisfy the inf-sup condition.}
 I have not found a paper yet which showcases its accuracy on a manufactured solution
 and compares it to other element pairs.
 
-CHECK example 3.70 in \textcite{john16} (book),
+
+\begin{center}
+\includegraphics[width=10cm]{images/pair_p1p0/john16}\\
+{\captionfont Taken from \textcite{john16}, page 65.
+On these meshes, $P_1$ possesses 25 degrees of freedom (number of vertices) whereas $P_0$ has
+even 32 degrees of freedom (number of mesh cells). There is one degree of freedom
+less in the corresponding pressure finite element spaces since the discrete pressure
+has to fulfill the integral mean value condition. Thus, spurious modes have to be
+expected.
+}
+\end{center}
+
+
 
 Elman Silvester Wathen say (5.3.3) that 
 \begin{displayquote}
@@ -110,7 +122,7 @@ stabilization together with an appropriate macroelement subdivision.}
 \end{displayquote}
 See \textcite{nosi98} (1998) for globally and locally stabilised versions.
 
-In \textcite{caod86} (1986), we read:
+In \textcite{caod86} (1986), we read\footnote{page 138}:
 \begin{displayquote}
 {\color{darkgray}
 Another interesting choice is the triangle with linear velocity and 
@@ -130,6 +142,20 @@ subdivided into $2N^2$ triangles. We have $2N^2$ pressure nodes
 Each pressure equation is a discrete constraint equation, and the 
 problem is overconstrained. The velocity $\vec{\upnu}_h=\vec{0}$, which 
 satisfies the mass constraint but not the momentum equations.
+
+[..]
+
+A balance between the dimensions of the velocity and pressure spaces
+should be maintained as the mesh size $h$ decreases.
+That is, if the dimension of the pressure space $P^h$ is too large
+relative to that of the velocity space as the mesh is refined,
+the discrete constraint equations dominate the discrete momentum equations.
+It has been argued from this standpoint that elements should 
+be chosen such that $dim\; P^h < dim\; V^h$. 
+While the underlying reasoning is plausible and this gives a good 
+guideline to follow in practice, it is neither necessary nor sufficient.
+In fact the inf-sup condition provides a mathematical theory 
+for selecting elements.  
 }
 \end{displayquote}
  
