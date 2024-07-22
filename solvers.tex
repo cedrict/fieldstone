@@ -1,4 +1,4 @@
-\begin{flushright} {\tiny {\color{gray} solvers.tex}} \end{flushright}
+\begin{flushright} {\tiny {\color{gray} \tt solvers.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Let us start again from the (full) Stokes system:
@@ -143,14 +143,25 @@ Note that \textcite{pedr24} (2024) conducted a detailed study comapring
 MUMPS, UMFPACK, and Intel DSS (PARDISO).
 The conclusions are 
 \begin{displayquote}
-``
+{\color{darkgray}
 1. Intel DSS is not ready for production codes because it computes incorrect results without warnings;\\
 2. UMFPACK reaches the memory limit earlier than the other solvers and must be configured with the automatic
 symmetry strategy to yield correct results; and\\
 3. MUMPS is not thread-safe and, in particular, does not work well with OpenBLAS, which causes thread 'locks' and
-conflicts. However, MUMPS works well with Intel MKL and is the only solver able to tackle massive systems.''
+conflicts. However, MUMPS works well with Intel MKL and is the only solver able to tackle massive systems.}
 \end{displayquote}
-
+In \textcite{saramito} we find the following table whigh gives the aymptotic computing time versus the 
+size of the sparse matrix $n$ and the geometry dimension $d$:
+\[
+\begin{array}{lcc}
+d& \text{factorize} & \text{solve} \\
+\hline\hline
+1& n & n \\
+2& n^{3/2} & n \log n \\
+3& n^2 & n^{4/3}\\
+\hline
+\end{array}
+\]
 
 %....................................................................
 \subsection{Uzawa algorithms and the Schur complement approach }
@@ -269,11 +280,12 @@ altered the indices of the velocities wrt the book}).
 k=0,1,2, ... \label{uzaa2}
 \end{eqnarray}
 \end{mdframed}
-
+This same algorithm is to be found on page 59 or \cite{saramito}.
 
 This method is rather simple to implement, although
-what makes an appropriate set of $\alpha_k$ values is not straightforward, which is why 
-the conjugate gradient is often preferred, as detailed in the next section. 
+what makes an appropriate set of $\alpha_k$ values is not 
+straightforward, which is why the conjugate gradient is often preferred, 
+as detailed in the next section. 
 
 It is known that such iterations will converge for $0< \alpha < \rho(\SSS)= \lambda_{max}(\SSS)$ 
 where $\rho(\SSS)$ is the spectral radius of the matrix $\SSS$
