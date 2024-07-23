@@ -1,90 +1,14 @@
 
-\begin{flushright} {\tiny {\color{gray} geodynamics\_benchmarks.tex}} \end{flushright}
+\begin{flushright} {\tiny {\color{gray} \tt geodynamics\_benchmarks.tex}} \end{flushright}
 
 Some published numerical experiments have over time become benchmarks for other codes, while some 
 others showcased comparisons between codes. Here is a short list of 'famous' benchmarks' in the 
 computational geodynamics community.
 
+%-----------------------------------
+\subsection{List: Subduction}
+
 \begin{itemize}
-
-\item the 'plastic brick' (See section~\ref{ss:plasticbrick}): \\
-      \textcite{lemm08}, 
-      \textcite{kaus10}, 
-      \textcite{qurj09}, 
-      \textcite{mishin11}, 
-      \textcite{muso11}, 
-      \textcite{maie12}, 
-      \textcite{spmw16} (2016), 
-      \textcite{kapb16} (2016), 
-      \textcite{gltf18} (2018), 
-      \textcite{frbt19} (2019),
-      \textcite{mivg22} (2022).
-
-\item indentor, punch problem (see Section~\ref{sec:punch}):\\
-      Vilotte \etal \cite{vidm82,vidm84,vimd86},
-      Hubert-Ferrari \etal (2003) \cite{hukm03}, 
-      Fournier \etal (2004) \cite{fojd04}, 
-      Thieulot \etal (2008) \cite{thfb08},
-      Gerbault (2012) \cite{gerb12}, 
-      Glerum \etal (2018) \cite{gltf18},
-      Stone 8.
-
-\item 2D Rayleigh-Benard convection (see Section~\ref{ss:blbc89}).
-
-\item 2D Rayleigh-Benard convection, lateral heating, 30+ codes: 
-      \textcite{dejo83} (1983).
-
-\item 2D Rayleigh-Benard convection with nonlinear rheology:  
-      \textcite{tosn15} (2015), \aspect{} manual \cite{aspectmanual}, 
-      \textcite{trbs21} (2021), \stone~28, \textcite{dakg22} (2022),
-      \textcite{siwi20} (2020), \textcite{casd20} (2020).
-
-\item 2D Rayleigh-Benard laminar plumes, comparison of laboratory 
-      and numerical modeling : 
-      \textcite{vavl09} (2009
-)
-\item 2D Cartesian flow with extremely temperature-dependent viscosity:
-      \textcite{moso95} (1995), \textcite{trbs21} (2021).
-
-\item 2D Rayleigh-Taylor convection/instability:\\ 
-      Prosperetti (1981) \cite{pros81},
-      Travis \etal (1990) \cite{trab90},
-      Weinberg \& Schmeling (1992) \cite{wesc92},
-      Poliakov \& Podlachikov (1992) \cite{popo92},
-      Ogawa (1993) \cite{ogaw93},
-      Conrad \& Molnar (1997) \cite{como97},
-      van Keken \etal (1997) \cite{vaks97},
-      de Smet \etal (2000) \cite{devv00a},
-      Soboutia \etal (2001) \cite{soga01},
-      Babeyko \etal (2002) \cite{bast02},
-      \textcite{taki03} (2003),
-      \textcite{bomh06} (2006),
-      \textcite{dadh07} (2007),
-      \textcite{basd08} (2008),
-      \textcite{deka08} (2008),
-      \textcite{qurj09} (2009),
-      \textcite{saev10} (2010),
-      Suckale \etal (2010) \cite{sunh10},
-      Leng \& Zhong (2011) \cite{lezh11},
-      Mishin (2011) \cite{mishin11}, 
-      Logg \etal (2012) \cite{lomw12}, 
-      Maierova (2012) \cite{maie12},
-      Vynnytska \etal (2913) \cite{vyrc13}, 
-      Choi \etal (2013) \cite{chtl13},
-      Robey \& Puckett (2019) \cite{ropu19},
-      Robey (2019) \cite{robe19}, 
-      Fuchs \& Schmeling \cite{fusc13}, 
-      \textcite{demh19} (2019),
-      \textcite{logb20} (2020),
-      \textcite{sctc20} (2020),
-      \textcite{mivg22} (2022),
-      \textcite{buoa24} (2024),
-      \aspect manual \cite{aspectmanual}.
-
-\item 3D Rayleigh-Taylor instability:
-      Furuichi \etal (2008) \cite{fukk08},
-      von Tscharner \& Schmalholtz (2015) \cite{vosc15}
-
 \item subduction problems: \textcite{spka06}, \textcite{scbe08}, 
                            \textcite{vack08}, \textcite{cehg14},
                            \textcite{gltf18}, \textcite{ozrs08},
@@ -93,8 +17,14 @@ computational geodynamics community.
 \item Benchmark of 3D numerical models of subduction against a laboratory experiment: 
       Meriaux \etal (2018)  \cite{memm18}
 
-\item numerical sandbox \cite{bube06,bube06,maie12,busa16,gltf18}
 
+
+\end{itemize}
+
+%-----------------------------------
+\subsection{List: Stokes sphere \& sinkers}
+
+\begin{itemize}
 \item the Stokes sphere: Gale manual \cite{galemanual}, 
       \aspect{} manual \cite{aspectmanual}, 
       in visco-plastic fluid: Liu \etal \cite{limd02}, 
@@ -115,12 +45,50 @@ computational geodynamics community.
       (see Section~\ref{sec:sinker})
 
 \item multiple sinkers \cite{mabl14,mabl15,clhe21}
+\item Sinking cylinder (2D Stokes sphere): 
+      appendix A of \cite{boht08a}, \cite{wali04}.
+\item hot blob problem \cite{bugs09,fumt11} (see Section~\ref{sec:hotblob})
+\end{itemize}
 
-\item Thin layer entrainment (see Section~\ref{sec:tlentr})
 
-\item 1D compression \cite{modm02}
+%-----------------------------------
+\subsection{List: (Visco-)Elastic deformation}
 
-\item 2D compressible Stokes flow problem \cite{itki94,tagu07,lezh08,kilv10,lizh13}
+\begin{itemize}
+
+\item bending of elastic plate/beam \cite{cehg14,boht08a,vosc15,elga10,demh19,modm02,litu02}
+
+\item flexure of finite length elastic plate \cite{chtl13}
+
+\item stress build-up in Maxwell visco-elastic material 
+      \cite{geyu07,chtl13,elga10,demh19}
+\item single layer visco-elastic folding \cite{scps01,vosc15}
+\item viscous(-elastic) flow around a cylinder in a channel (see Section~\ref{sec:flowcyl})
+\item Semi-infinite elastic half plane with a circular hole \cite{verr98}
+\item Uniform strip load on elastic material (see Section~\ref{sec:elaststripload})
+\item Jull and McKenzie (1996) \cite{jumc96} parabolic load on viscoelastic half-space (and melt fractions) 
+\item Stress distribution in elastic sphere under equal and 
+      opposite loads \cite{stro52}
+\item Love's problem: Becker \& Bevis (2004) \cite{bebe04}
+\item Infinite plate with a circular hole \cite{yiha10,rama16}
+\item Square plate with a crack subjected to a horizontal tensile 
+      traction \cite{litu02}
+\item Hollow sphere under internal pressure, see Section~\ref{ss:hollowsphereintpress}
+\end{itemize}
+
+%-----------------------------------
+\subsection{List: Convection}
+
+\begin{itemize}
+\item 2D Rayleigh-Benard convection (see Section~\ref{ss:blbc89}).
+
+\item 2D Rayleigh-Benard convection, lateral heating, 30+ codes: 
+      \textcite{dejo83} (1983).
+
+\item 2D Rayleigh-Benard convection with nonlinear rheology:  
+      \textcite{tosn15} (2015), \aspect{} manual \cite{aspectmanual}, 
+      \textcite{trbs21} (2021), \stone~28, \textcite{dakg22} (2022),
+      \textcite{siwi20} (2020), \textcite{casd20} (2020).
 
 \item 3D convection at infinite Prandtl number with modest viscosity variation:
       \textcite{bucc94} (1994),
@@ -147,51 +115,182 @@ computational geodynamics community.
       in a fluid with strongly
       temperature-dependent viscosity: Ogawa \etal \cite{ogsz91,kaks05} 
 
+\item Convection in 2D-box \cite{galb19} (see Section~\ref{sec:citb})
+\item Onset of convection \cite{aspectmanual}
+\item mantle convection in 3D spherical shell:
+      \textcite{rasz96} (1996),
+      Iwase (1996) \cite{iwas96},
+      Zhong \etal (2000) \cite{zhzm00},
+      Yoshida \& Kageyama \cite{yoka04},
+      Stemmer \etal (2006) \cite{sthh06},
+      Choblet \etal (2007) \cite{chcc07},
+      Zhong \etal (2008) \cite{zhmt08},
+      Kameyama \etal (2008) \cite{kaks08},
+      Wright \etal (2010) \cite{wrfy10},
+      Davies \etal (2013) \cite{dadb13},
+      Burstedde \etal (2013) \cite{busa13},
+      Arrial \etal (2014) \cite{arfw14},
+      \textcite{liki19} (2019),
+      \textcite{trbs21} (2021),
+      \textcite{eulg23} (2023).
+
+\item Mantle convection with reversing mobile plates \cite{kogk05}
+\item A comparison of mantle convection models featuring plates \cite{stlh14}
+
+\end{itemize}
+
+%-----------------------------------
+\subsection{List: Free surface \& interfaces}
+
+\begin{itemize}
+
 \item Free surface evolution: Crameri \etal (2012) \cite{crsg12}, 
       \aspect{} manual \cite{aspectmanual}, \textcite{sctc20} (2020).
 
-\item Love's problem: Becker \& Bevis (2004) \cite{bebe04}
+\item relaxation of sinusoidal interface \cite{crsg12,robh17}
 
+\end{itemize}
+
+
+%-----------------------------------
+\subsection{List: Rayleigh-Taylor}
+
+\begin{itemize}
+\item 2D Rayleigh-Taylor convection/instability:\\ 
+      \textcite{pros81} (1981),
+      \textcite{trab90} (1990),
+      Weinberg \& Schmeling (1992) \cite{wesc92},
+      Poliakov \& Podlachikov (1992) \cite{popo92},
+      Ogawa (1993) \cite{ogaw93},
+      Conrad \& Molnar (1997) \cite{como97},
+      van Keken \etal (1997) \cite{vaks97},
+      de Smet \etal (2000) \cite{devv00a},
+      Soboutia \etal (2001) \cite{soga01},
+      Babeyko \etal (2002) \cite{bast02},
+      \textcite{taki03} (2003),
+      \textcite{bomh06} (2006),
+      \textcite{dadh07} (2007),
+      \textcite{basd08} (2008),
+      \textcite{deka08} (2008),
+      \textcite{qurj09} (2009),
+      \textcite{saev10} (2010),
+      Suckale \etal (2010) \cite{sunh10},
+      Leng \& Zhong (2011) \cite{lezh11},
+      Mishin (2011) \cite{mishin11}, 
+      Logg \etal (2012) \cite{lomw12}, 
+      Maierova (2012) \cite{maie12},
+      \textcite{fusc13} (2013), 
+      \textcite{vyrc13} (2013), 
+      \textcite{chtl13} (2013),
+      \textcite{ropu19} (2019),
+      \textcite{robe19} (2019), 
+      \textcite{demh19} (2019),
+      \textcite{logb20} (2020),
+      \textcite{sctc20} (2020),
+      \textcite{mivg22} (2022),
+      \textcite{buoa24} (2024),
+      \aspect manual \cite{aspectmanual}.
+
+\item 3D Rayleigh-Taylor instability:
+      \textcite{fukk08} (2008),
+      \textcite{vosc15} (2015).
+
+\item Polydiapirism \cite{wesc92,aspectmanual}
+
+\end{itemize}
+
+%-----------------------------------
+\subsection{List: Couette \& Poiseuille flow}
+
+\begin{itemize}
 \item Couette flow with temperature dependent viscosity \cite{elga10,demh19}
-
 \item Couette flow with shear heating \cite{elga10}
-
 \item Couette flow of a power-law fluid, Section 2.4 of  \textcite{saramito}
-
 \item Poiseuille flow: \cite{fojg94,fuku11,tagm09} (see Section~\ref{ss:poiseuille})
-
-\item Poiseuille-Couette flow \cite{fusc13}
-
+\item Poiseuille-Couette flow: \textcite{fusc13} (2013)
 \item Poiseuille flow of a power-law fluid, Section 2.3 of  \textcite{saramito}
+\item Channel flow: \textcite{manc08} (2008)
+\item channel flow (nonlinear): \cite{geyu03,maie12,frbt19,gery10,elga10}
+\item Squeezing flow between moving parallel plates: \textcite{gugu77} (1977)
+\item Flow of a Power Law Fluid Through a Tube - page 87 of \textcite{macosko}
+\end{itemize}
 
-\item Channel flow: Mancktelow (2008) \cite{manc08}
 
+
+%-----------------------------------
+\subsection{List: Thermal problems}
+
+\begin{itemize}
+\item thermal diffusion of half-cooling space (see Section~\ref{sec:hcsp}) 
+\item thermal diffusion of Gaussian distribution (see compgeo notes, elefant manual)
+\item Heat flow around a cylinder (see Section~\ref{sec:hfcyl})
+\end{itemize}
+
+%-----------------------------------
+\subsection{List: lid driven cavity problems}
+
+\begin{itemize}
 \item Lid driven cavity \cite{kawa61,chor67,shry78,foth79,ghgs82,kost84,bope98,xika01,brsa06,ertu09}
 
 \item Lid driven cavity with analytical solution (see Section~\ref{sec:ldc_anal})
 
 \item Lid driven cavity with nonlinear rheology \cite{been80,svna18}
+\end{itemize}
+
+%-----------------------------------
+\subsection{List: visco-plastic problems}
+
+\begin{itemize}
+
+\item the 'plastic brick' (See section~\ref{ss:plasticbrick}): \\
+      \textcite{lemm08} (2008), 
+      \textcite{qurj09} (2009), 
+      \textcite{kaus10} (2010), 
+      \textcite{mishin11} (2011), 
+      \textcite{muso11} (2011), 
+      \textcite{maie12} (2012), 
+      \textcite{spmw16} (2016), 
+      \textcite{kapb16} (2016), 
+      \textcite{gltf18} (2018), 
+      \textcite{frbt19} (2019),
+      \textcite{mivg22} (2022).
+
+\item indentor, punch problem (see Section~\ref{sec:punch}):\\
+      \textcite{vidm82} (1982),
+      \textcite{vidm84} (1984),
+      \textcite{vimd86} (1986),
+      \textcite{hukm03} (2003), 
+      \textcite{fojd04} (2004), 
+      \textcite{thfb08} (2008),
+      \textcite{gerb12} (2012), 
+      \textcite{gltf18} (2018).
+
+\item numerical sandbox \cite{bube06,bube06,maie12,busa16,gltf18}
+\item fractal networks of  shear bands: Poliakov \& Herrmann (1994) \cite{pohe94}
+\end{itemize}
+
+
+%-----------------------------------
+\subsection{List: miscellaneous}
+
+\begin{itemize}
+
+\item 2D Rayleigh-Benard laminar plumes, comparison of laboratory 
+      and numerical modeling : 
+      \textcite{vavl09} (2009
+)
+\item 2D Cartesian flow with extremely temperature-dependent viscosity:
+      \textcite{moso95} (1995), \textcite{trbs21} (2021).
+
+\item Thin layer entrainment (see Section~\ref{sec:tlentr})
+
+\item 1D compression \cite{modm02}
+
+\item 2D compressible Stokes flow problem \cite{itki94,tagu07,lezh08,kilv10,lizh13}
 
 \item Wannier flow \cite{wann50,yemu99,cehg14}
 
-\item bending of elastic plate/beam \cite{cehg14,boht08a,vosc15,elga10,demh19,modm02,litu02}
-
-\item flexure of finite length elastic plate \cite{chtl13}
-
-\item thermal diffusion of half-cooling space (see Section~\ref{sec:hcsp}) 
-
-\item thermal diffusion of Gaussian distribution (see compgeo notes, elefant manual)
-
-\item stress build-up in Maxwell visco-elastic material 
-      \cite{geyu07,chtl13,elga10,demh19}
-
 \item plastic oedometer test  \cite{chtl13}
-
-\item channel flow (nonlinear) \cite{geyu03,maie12,frbt19,gery10,elga10}
-
-\item relaxation of sinusoidal interface \cite{crsg12,robh17}
-
-\item single layer visco-elastic folding \cite{scps01,vosc15}
 
 \item Three-dimensional folding of an embedded viscous layer in 
       pure shear \cite{flet91}
@@ -199,26 +298,9 @@ computational geodynamics community.
 \item dam-break problem 
       \cite{moeb99,bacp07,liir07,lemx08,homa09,anco09,grdn97,hini81,basd08}
 
-\item hot blob problem \cite{bugs09,fumt11} (see Section~\ref{sec:hotblob})
-
-\item viscous(-elastic) flow around a cylinder in a channel (see Section~\ref{sec:flowcyl})
-
-\item Sinking cylinder (2D Stokes sphere): 
-      appendix A of \cite{boht08a}, \cite{wali04}.
-
-\item Infinite plate with a circular hole \cite{yiha10,rama16}
-
-\item Semi-infinite elastic half plane with a circular hole \cite{verr98}
-
 \item Slope stability for elasto-plastic materials \cite{rama16}
 
 \item Time-dependent flow in an annulus \cite{galb19} (see Section \ref{sec:tdba})
-
-\item Convection in 2D-box \cite{galb19} (see Section~\ref{sec:citb})
-
-\item Onset of convection \cite{aspectmanual}
-
-\item Polydiapirism \cite{wesc92,aspectmanual}
 
 \item Slab detachment benchmark (see Section~\ref{sec:slabdetach}) 
 
@@ -241,33 +323,10 @@ computational geodynamics community.
 
 \item Brittle thrust wedges benchmark \cite{busa16,aspectmanual}
 
-\item mantle convection in 3D spherical shell:
-      \textcite{rasz96} (1996),
-      Iwase (1996) \cite{iwas96},
-      Zhong \etal (2000) \cite{zhzm00},
-      Yoshida \& Kageyama \cite{yoka04},
-      Stemmer \etal (2006) \cite{sthh06},
-      Choblet \etal (2007) \cite{chcc07},
-      Zhong \etal (2008) \cite{zhmt08},
-      Kameyama \etal (2008) \cite{kaks08},
-      Wright \etal (2010) \cite{wrfy10},
-      Davies \etal (2013) \cite{dadb13},
-      Burstedde \etal (2013) \cite{busa13},
-      Arrial \etal (2014) \cite{arfw14},
-      \textcite{liki19} (2019),
-      \textcite{trbs21} (2021),
-      \textcite{eulg23} (2023).
-
-\item Heat flow around a cylinder (see Section~\ref{sec:hfcyl})
-
 \item Laplace equation on a semi infinite plate (see Section~\ref{sec:lapplate})
 
 \item 2D Stokes flow over cavity: Popov \& Makeev (2014) \cite{poma14}.
 
-\item fractal networks of  shear bands: Poliakov \& Herrmann (1994) \cite{pohe94}
-
-\item Square plate with a crack subjected to a horizontal tensile 
-      traction \cite{litu02}
 
 \item Analytical solution for solitary porosity waves: \textcite{copo15} (2015)
 
@@ -278,23 +337,12 @@ computational geodynamics community.
 
 \item Deformation caused by a closed vertical volcanic pipe \cite{boda99}
 
-\item Mantle convection with reversing mobile plates \cite{kogk05}
-
-\item A comparison of mantle convection models featuring plates \cite{stlh14}
-
-\item Uniform strip load on elastic material (see Section~\ref{sec:elaststripload})
-
 \item Linear Stability Analysis for Thermal Convections in 
       Spherical Shells \textcite{yuwa19} (2019)
-
 
 \item Viscous half-space loading \cite{hask35}
 
 \item Nakiboglu and Lambeck (1982) has cylindrical load on variety of rheologies \cite{nala82}
-
-\item Jull and McKenzie (1996) \cite{jumc96} parabolic load on viscoelastic half-space (and melt fractions) 
-
-\item Squeezing flow between moving parallel plates \cite{gugu77}
 
 \item generalized half-plane and half-space Cerruti \cite{nowi92,zhga15}
 
@@ -303,11 +351,6 @@ computational geodynamics community.
 \item Sagging viscous bridge \cite{stokes98}
 
 \item Deformation around a terminating fault in a viscous medium \cite{baho96}
-
-\item Stress distribution in elastic sphere under equal and 
-      opposite loads \cite{stro52}
-
-\item Flow of a Power Law Fluid Through a Tube - page 87 of \textcite{macosko}
 
 \end{itemize}
 
@@ -1288,5 +1331,8 @@ This originates in Jenkins \etal (2014) \cite{jejl14}.
 \subsection{Lid-driven cavity in 3D} \label{ss:liddriven3D}
 \input{benchmark_liddriven3D}
 
+%................................................................................
+\subsection{Hollow sphere under internal pressure} \label{ss:hollowsphereintpress}
+\input{benchmark_hollowsphereintpress}
 
 
