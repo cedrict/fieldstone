@@ -3,8 +3,8 @@
 
 This benchmark was inspired by the one at \url{XXX}. 
 A homogenous hollow sphere (internal radius $a$, external radius $b$) is made of an elastic 
-perfectly plastic material (characterised by the Young's modulus $E$ and the Poisson ratio $\nu$, 
-yield stress $\sigma_y$). The yield criterion in von Mises. 
+perfectly plastic material (characterised by the Young's modulus $E$, the Poisson ratio $\nu$ and
+the yield stress $\sigma_y$). The yield criterion in von Mises. 
 Starting from an initial stress-free state the internal pressure rises from $0$ to $p$.
 
 \begin{center}
@@ -14,15 +14,14 @@ growing from the internal surface.}
 \end{center}
 
 Since the body's geometry and the loading present a spherical symmetry, and since the material
-behaviour is isotropic the solution is built in spherical coordinates $(r,\theta,\phi)$.
+behaviour is isotropic the solution is formulated in spherical coordinates $(r,\theta,\phi)$.
 The displacement field is then given by
 \begin{eqnarray}
-u_r &=& h(r) \nn\\
-u_\theta &=& 0 \nn\\
-u_\phi &=& 0  \nn
+u_r &=& f(r) \label{bhse1}\\
+u_\theta &=& 0 \label{bhse2}\\
+u_\phi &=& 0  \label{bhse3}
 \end{eqnarray}
 The strain tensor in spherical coordinates is given by
-
 \begin{eqnarray}
 \varepsilon_{rr} 
 &=& \frac{\partial u_r}{\partial r} \nonumber\\
@@ -40,46 +39,44 @@ The strain tensor in spherical coordinates is given by
 \varepsilon_{\phi \theta} = \varepsilon_{\theta\phi} 
 &=& \frac{1}{2} \left( \frac{\sin \theta}{r} \frac{\partial }{\partial \theta} (\frac{u_\phi}{\sin\theta}) + \frac{1}{r \sin\theta} \frac{\partial u_\theta}{\partial \phi}    \right) \nonumber
 \end{eqnarray}
-which leads to:
+which, given Eqs.~\eqref{bhse1},\eqref{bhse2},\eqref{bhse3}, leads to:
 \begin{eqnarray}
-\varepsilon_{rr}  &=& \frac{\partial u_r}{\partial r} =f_2(r) \nonumber\\
-\varepsilon_{\theta\theta} &=& \frac{u_r}{r} =g_2(r)  \nonumber\\
-\varepsilon_{\phi\phi} &=& \frac{u_r}{r} =g_2(r)  \nonumber\\
+\varepsilon_{rr}  &=& \frac{\partial u_r}{\partial r}  \nonumber\\
+\varepsilon_{\theta\theta} &=& \frac{u_r}{r}   \nonumber\\
+\varepsilon_{\phi\phi} &=& \frac{u_r}{r}   \nonumber\\
 \varepsilon_{\theta r} = \varepsilon_{r\theta}   
 &=& 0 \nn\\ 
 \varepsilon_{\phi r} = \varepsilon_{r\phi}      
 &=& 0 \nn\\ 
 \varepsilon_{\phi \theta} = \varepsilon_{\theta\phi} &=& 0 \nn
 \end{eqnarray}
-because we also have $\partial_\theta \rightarrow 0$ and $\partial_\phi \rightarrow 0$,
-Then
+because we also have $\partial_\theta \rightarrow 0$ and $\partial_\phi \rightarrow 0$.
+Then we can compute a quantity that we will need later:
 \[
 \vec{\nabla}\cdot\vec{u} = \frac{\partial u_r}{\partial r} + 2 \frac{u_r}{r}
 \]
-
-
 Finally the stress tensor is given by 
 \[
 {\bm \sigma}=\lambda (\vec{\nabla}\cdot\vec{u}) {\bm 1} +2\mu {\bm \varepsilon}(\vec{u}) 
 \]
-
+or, more explicitely:
 \begin{eqnarray}
 \sigma_{rr} &=&   \lambda \left(  \frac{\partial u_r}{\partial r} + 2 \frac{u_r}{r} \right)
-+ 2 \mu \frac{\partial u_r}{\partial r} =f_1(r) \nn\\
++ 2 \mu \frac{\partial u_r}{\partial r}  \nn\\
 \sigma_{\theta\theta} &=& \lambda \left(  \frac{\partial u_r}{\partial r} + 2 \frac{u_r}{r} \right)
-+ 2 \mu \frac{u_r}{r} =g_1(r)\nn\\
++ 2 \mu \frac{u_r}{r} \nn\\
 \sigma_{\phi\phi} &=&  \lambda \left(  \frac{\partial u_r}{\partial r} + 2 \frac{u_r}{r} \right)
-+ 2 \mu \frac{u_r}{r} =g_1(r)\nn\\
++ 2 \mu \frac{u_r}{r} \nn\\
 \sigma_{r\theta} &=& 2\mu \varepsilon_{r\theta} = 0 \nn\\ 
 \sigma_{r\phi} &=& 2\mu\varepsilon_{r\phi} = 0 \nn\\ 
-\sigma_{\theta\phi} &=& 2\mu  \varepsilon_{\theta\phi} = 0 \nn\\ 
+\sigma_{\theta\phi} &=& 2\mu  \varepsilon_{\theta\phi} = 0 
 \end{eqnarray}
 
 The strong form of the PDE that governs force balance in a medium is given by
 \[
 \vec\nabla \cdot {\bm \sigma} + \vec{f} = \vec{0}
 \]
-In this case $\vec{f}=\vec{0}$.
+In this case $\vec{f}=\vec{0}$ (no body force).
 The divergence of the stress tensor in spherical coordinates is given 
 by\footnote{\url{https://en.wikipedia.org/wiki/Linear_elasticity}}:
 \begin{eqnarray}
@@ -87,22 +84,24 @@ by\footnote{\url{https://en.wikipedia.org/wiki/Linear_elasticity}}:
 +\frac{1}{r \sin \theta} \frac{\partial \sigma_{r\phi}}{\partial \phi}
 +\frac{1}{r} (2\sigma_{rr} -\sigma_{\theta\theta} -\sigma_{\phi\phi} 
 + \sigma_{r\theta} \cot \theta) &=& 0 
-\\
+\nn\\
 \frac{\partial \sigma_{r\theta}}{\partial r}+
 \frac{1}{r}\frac{\partial \sigma_{\theta\theta}}{\partial \theta}+
 \frac{1}{r \sin \theta} \frac{\partial \sigma_{\theta\phi}}{\partial \phi}
 +\frac{1}{r} \left(
 (\sigma_{\theta\theta}-\sigma_{\phi\phi})\cot \theta + 3 \sigma_{r\theta} 
 \right)&=& 0 
-\\
+\nn\\
 \frac{\partial \sigma_{r\phi}}{\partial r}+
 \frac{1}{r}\frac{\partial \sigma_{\theta\phi}}{\partial \theta}+
 \frac{1}{r \sin \theta} \frac{\partial \sigma_{\phi\phi}}{\partial \phi}
 +\frac{1}{r} \left(
 2\sigma_{\theta\phi} \cot\theta + 3 \sigma_{r\phi}
-\right)&=& 0 
+\right)&=& 0  \nn
 \end{eqnarray}
-Again, using $\partial_\theta \rightarrow 0$ and $\partial_\phi \rightarrow 0$
+
+Using the equations above for the stress components, 
+using $\partial_\theta \rightarrow 0$ and $\partial_\phi \rightarrow 0$
 and remembering that $\sigma_{\theta\theta}=\sigma_{\phi\phi}$
 we find that the lhs of the second and third lines are identically zero,
 and the first line becomes simply
@@ -110,33 +109,20 @@ and the first line becomes simply
 \frac{\partial \sigma_{rr}}{\partial r} + 
 \frac{1}{r} (2\sigma_{rr} -\sigma_{\theta\theta} -\sigma_{\phi\phi} ) = 0 
 \]
-
----- I need to reconcile above with below --- July 23rd, 2024
-
-The equilibrium, the static and kinematic boundary conditions can be expressed as:
-
-
+or, 
 \begin{eqnarray}
-\frac{d\sigma_{rr}}{dr} + \frac{2}{r}(\sigma_{rr}-\sigma_{\theta\theta})&=&0 \\
-\sigma_{rr}(r=a) &=& -p\\
-\sigma_{rr}(r=b) &=& 0 \\
-\varepsilon_{rr} &=& \frac{du_r}{dr} \\
-\varepsilon_{\theta\theta} &=& \frac{u_r}{r} 
+\frac{d\sigma_{rr}}{dr} + \frac{2}{r}(\sigma_{rr}-\sigma_{\theta\theta})&=&0 \label{bhse4}
 \end{eqnarray}
-The elastic constitutive equations also write\footnote{\url{
+The elastic constitutive equations can also be written\footnote{\url{
 https://en.wikipedia.org/wiki/Linear_elasticity}}:
 \[
 \varepsilon_{ij} 
 = \frac{1}{2\mu} \sigma_{ij}  - \frac{\nu}{E} \delta_{ij} \sigma_{kk}
 = \frac{1}{E} \left[ (1+\nu)\sigma_{ij} -\nu\delta_{ij}\sigma_{kk}  \right]
 \]
-We have
-\[
-\sigma_{kk} 
+We have $\sigma_{kk} 
 = \sigma_{rr} + \sigma_{\theta\theta} + \sigma_{\phi\phi}  
-= \sigma_{rr} + 2\sigma_{\theta\theta} 
-\]
-so that explicitely 
+= \sigma_{rr} + 2\sigma_{\theta\theta} $ so that explicitely 
 \begin{eqnarray}
 E \varepsilon_{rr} &=&    (1+\nu)\sigma_{rr} -\nu ( \sigma_{rr} + 2\sigma_{\theta\theta}    )\nn \\
 E \varepsilon_{\theta\theta} &=&    (1+\nu)\sigma_{\theta\theta} -\nu( \sigma_{rr} + 2\sigma_{\theta\theta}) \nn\\
@@ -144,7 +130,7 @@ E \varepsilon_{\phi\phi} &=&   (1+\nu)\sigma_{\phi\phi} -\nu( \sigma_{rr} + 2\si
 \end{eqnarray}
 or (removing the useless third line),
 \begin{eqnarray}
-E \varepsilon_{rr} &=& (\sigma_{rr}-2 \nu \sigma_{\theta\theta}) \nn\\
+E \varepsilon_{rr} &=& \sigma_{rr}-2 \nu \sigma_{\theta\theta} \nn\\
 E \varepsilon_{\theta\theta} &=& \sigma_{\theta\theta} (1-\nu) - \nu \sigma_{rr}
 \end{eqnarray}
 After replacing strain by its expression as a function of displacement, 
@@ -155,7 +141,7 @@ it comes (using $\lambda = E \nu /(1-2\nu)/(1+\nu) )$:
 \sigma_{\theta\theta} &=& \frac{\lambda}{\nu}
 \left(\nu \frac{du_r}{dt} + \frac{u_r}{r}\right)
 \end{eqnarray}
-These two equations can be introduced in the equilibrium equation, leading to :
+These two equations can be introduced in the equilibrium equation \eqref{bhse4}, leading to :
 \[
 \frac{d^2 u_r}{dr^2} + \frac{2}{r} \frac{du_r}{dr} -\frac{2}{r^2}u_r = 0
 \]
@@ -168,14 +154,14 @@ By replacing $u_r$ in the preceding expressions, it comes:
 \sigma_{rr} &=& \frac{\lambda}{\nu}
 \left((1+\nu)C_1 - 2(1-2\nu)\frac{C_2}{r^3}\right) \nn\\
 \sigma_{\theta\theta} &=& \frac{\lambda}{\nu}
-\left((1+\nu)C_1 + (1-2\nu)\frac{C_2}{r^3}\right) 
+\left((1+\nu)C_1 + (1-2\nu)\frac{C_2}{r^3}\right) \nn 
 \end{eqnarray}
-The integration constants $C_1$ and $C_2$ can be determined from the boundary conditions:
+The integration constants $C_1$ and $C_2$ can be determined from the boundary conditions\footnote{I have not 100\% checked these expressions}:
 \begin{eqnarray}
 \sigma_{rr}(r=b)=0 &\Rightarrow& 
-C_2=\frac{1+\nu}{2(1-2\nu)}b^3 C_1 \\
+C_2=\frac{1+\nu}{2(1-2\nu)}b^3 C_1 \nn\\
 \sigma_{rr}(r=a)=-p &\Rightarrow& 
-C_1=\frac{1-2\nu}{E}\frac{a^3}{b^3-a^3}p
+C_1=\frac{1-2\nu}{E}\frac{a^3}{b^3-a^3}p \nn
 \end{eqnarray}
 so that in the end:
 \begin{eqnarray}
@@ -185,27 +171,10 @@ u_r &=& \frac{a^3}{b^3-a^3}
 \left( (1-2\nu)r+(1+\nu)\frac{b^3}{2r^2}  \right)\frac{p}{E}
 \end{eqnarray}
 
-Both criteria are insensitive to hydrostatic pressure. They resulting value is 
-then not affected if a
-spherical tensor is added. In the present case, if the 
-diagonal $\sigma_{rr},\sigma_{\theta\theta},\sigma_{\phi\phi})$ is subtracted from the actual
-tensor the new tensor is simply uniaxial, the only non zero component 
-being $\sigma_{rr}-\sigma_{\theta\theta}$ , which is then
-the value of both von Mises and Tresca criteria. Using the solution 
-of the preceding question, this value
-can be evaluated in the elastic regime, as :
-\[
-\sigma_{\theta\theta} - \sigma_{rr} = \frac32 \frac{a^3}{b^3-a^3} \frac{b^3}{r^3} p
-\]
-The plastic yield is reached when $(\sigma_{\theta\theta} - \sigma_{rr})$, 
-increasing function of $p$, is equal to $\sigma_y$ , the yield limit
-in onedimensional tension. The initial plastic zone is then located in $r=a$, 
-and the value of the pressure $Pe$ is :
-\[
-P_e = \frac23 \left( 1 - \frac{a^3}{b^3} \right)\sigma_y
-\]
+%................................
+\paragraph{Onset of plastic flow}
 
-Let us recall Eq.~\eqref{eq:I2s123}:
+Let us recall Eq.~\eqref{eq:I2s123} for a diagonal stress tensor:
 \[ 
 {\III}_2({\bm \tau}) = \frac{1}{6}\left[(\sigma_{1}-\sigma_{2})^2 + (\sigma_{2}-\sigma_{3})^2 
 + (\sigma_{1}-\sigma_{3})^2 \right] 
@@ -234,8 +203,7 @@ or,
 |\sigma_{rr}-\sigma_{\theta\theta}|
 - \sigma_y = 0
 \]
-Let us compute the lhs:
-
+Let us compute the stress term:
 \begin{eqnarray}
 \sigma_{rr}-\sigma_{\theta\theta}
 &=& 
@@ -250,7 +218,7 @@ Since $b>a$ and $p>0$ then
 \frac{a^3}{b^3-a^3}\frac32 \frac{b^3}{r^3}  p 
 \]
 
-The plastic yield is reached when $(\sigma_{\theta\theta} - \sigma_{rr})$, 
+The plastic yield is reached when $|\sigma_{\theta\theta} - \sigma_{rr}|$, 
 increasing function of $p$, is equal to $\sigma_y$ , the yield limit
 in onedimensional tension. The initial plastic zone is then located in $r=a$, 
 and the value of the pressure $Pe$ is :

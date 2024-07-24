@@ -1,0 +1,6 @@
+
+./script_analyse_bibliography > stats_bib
+
+#../../bibliography/pdfs/assess
+
+gnuplot gnuplot_script

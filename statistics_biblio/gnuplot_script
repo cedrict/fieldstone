@@ -1,0 +1,23 @@
+set term pdf
+set output 'stats.pdf'
+set grid
+set key left
+set ytics 20
+set xtics 5
+plot[1965:2025][]\
+'../../bibliography/pdfs/stats' u 1:2 w lp pt 5 ps .4 t 'pdfs',\
+'stats_bib' u 1:2 w lp pt 5 ps .4 t 'bib file'
+
+set ytics 5
+unset log y
+set output 'journals.pdf'
+plot[1965:2024][]\
+'jgr_stats.txt' u 1:2 w lp pt 5 ps 0.3 t 'JGR',\
+'gji_stats.txt' u 1:2 w lp pt 5 ps 0.3 t 'GJI',\
+'grl_stats.txt' u 1:2 w lp pt 5 ps 0.3 t 'GRL',\
+'g3_stats.txt'  u 1:2 w lp pt 5 ps 0.3 t 'G3',\
+'epsl_stats.txt'  u 1:2 w lp pt 5 ps 0.3 t 'EPSL',\
+'tectonics_stats.txt'  u 1:2 w lp pt 5 ps 0.3 t 'Tectonics',\
+'tectonophysics_stats.txt'  u 1:2 w lp pt 5 ps 0.3 t 'Tectonophysics',\
+'solid_earth_stats.txt' u 1:2 w lp pt 5 ps 0.3 t 'Solid Earth',\
+'geology_stats.txt' u 1:2 w lp pt 5 ps 0.3 t 'Geology',\

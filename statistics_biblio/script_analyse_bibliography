@@ -1,0 +1,133 @@
+#! /bin/bash
+
+echo -n '1960 ' ; grep year ../biblio_geosciences.bib | grep 1960 | wc 
+echo -n '1961 ' ; grep year ../biblio_geosciences.bib | grep 1961 | wc 
+echo -n '1962 ' ; grep year ../biblio_geosciences.bib | grep 1962 | wc 
+echo -n '1963 ' ; grep year ../biblio_geosciences.bib | grep 1963 | wc 
+echo -n '1964 ' ; grep year ../biblio_geosciences.bib | grep 1964 | wc 
+echo -n '1965 ' ; grep year ../biblio_geosciences.bib | grep 1965 | wc 
+echo -n '1966 ' ; grep year ../biblio_geosciences.bib | grep 1966 | wc 
+echo -n '1967 ' ; grep year ../biblio_geosciences.bib | grep 1967 | wc 
+echo -n '1968 ' ; grep year ../biblio_geosciences.bib | grep 1968 | wc 
+echo -n '1969 ' ; grep year ../biblio_geosciences.bib | grep 1969 | wc 
+
+echo -n '1970 ' ; grep year ../biblio_geosciences.bib | grep 1970 | wc 
+echo -n '1971 ' ; grep year ../biblio_geosciences.bib | grep 1971 | wc 
+echo -n '1972 ' ; grep year ../biblio_geosciences.bib | grep 1972 | wc 
+echo -n '1973 ' ; grep year ../biblio_geosciences.bib | grep 1973 | wc 
+echo -n '1974 ' ; grep year ../biblio_geosciences.bib | grep 1974 | wc 
+echo -n '1975 ' ; grep year ../biblio_geosciences.bib | grep 1975 | wc 
+echo -n '1976 ' ; grep year ../biblio_geosciences.bib | grep 1976 | wc 
+echo -n '1977 ' ; grep year ../biblio_geosciences.bib | grep 1977 | wc 
+echo -n '1978 ' ; grep year ../biblio_geosciences.bib | grep 1978 | wc 
+echo -n '1979 ' ; grep year ../biblio_geosciences.bib | grep 1979 | wc 
+
+echo -n '1980 ' ; grep year ../biblio_geosciences.bib | grep 1980 | wc 
+echo -n '1981 ' ; grep year ../biblio_geosciences.bib | grep 1981 | wc 
+echo -n '1982 ' ; grep year ../biblio_geosciences.bib | grep 1982 | wc 
+echo -n '1983 ' ; grep year ../biblio_geosciences.bib | grep 1983 | wc 
+echo -n '1984 ' ; grep year ../biblio_geosciences.bib | grep 1984 | wc 
+echo -n '1985 ' ; grep year ../biblio_geosciences.bib | grep 1985 | wc 
+echo -n '1986 ' ; grep year ../biblio_geosciences.bib | grep 1986 | wc 
+echo -n '1987 ' ; grep year ../biblio_geosciences.bib | grep 1987 | wc 
+echo -n '1988 ' ; grep year ../biblio_geosciences.bib | grep 1988 | wc 
+echo -n '1989 ' ; grep year ../biblio_geosciences.bib | grep 1989 | wc 
+
+echo -n '1990 ' ; grep year ../biblio_geosciences.bib | grep 1990 | wc 
+echo -n '1991 ' ; grep year ../biblio_geosciences.bib | grep 1991 | wc 
+echo -n '1992 ' ; grep year ../biblio_geosciences.bib | grep 1992 | wc 
+echo -n '1993 ' ; grep year ../biblio_geosciences.bib | grep 1993 | wc 
+echo -n '1994 ' ; grep year ../biblio_geosciences.bib | grep 1994 | wc 
+echo -n '1995 ' ; grep year ../biblio_geosciences.bib | grep 1995 | wc 
+echo -n '1996 ' ; grep year ../biblio_geosciences.bib | grep 1996 | wc 
+echo -n '1997 ' ; grep year ../biblio_geosciences.bib | grep 1997 | wc 
+echo -n '1998 ' ; grep year ../biblio_geosciences.bib | grep 1998 | wc 
+echo -n '1999 ' ; grep year ../biblio_geosciences.bib | grep 1999 | wc 
+
+echo -n '2000 ' ; grep year ../biblio_geosciences.bib | grep 2000 | wc 
+echo -n '2001 ' ; grep year ../biblio_geosciences.bib | grep 2001 | wc 
+echo -n '2002 ' ; grep year ../biblio_geosciences.bib | grep 2002 | wc 
+echo -n '2003 ' ; grep year ../biblio_geosciences.bib | grep 2003 | wc 
+echo -n '2004 ' ; grep year ../biblio_geosciences.bib | grep 2004 | wc 
+echo -n '2005 ' ; grep year ../biblio_geosciences.bib | grep 2005 | wc 
+echo -n '2006 ' ; grep year ../biblio_geosciences.bib | grep 2006 | wc 
+echo -n '2007 ' ; grep year ../biblio_geosciences.bib | grep 2007 | wc 
+echo -n '2008 ' ; grep year ../biblio_geosciences.bib | grep 2008 | wc 
+echo -n '2009 ' ; grep year ../biblio_geosciences.bib | grep 2009 | wc 
+
+echo -n '2010 ' ; grep year ../biblio_geosciences.bib | grep 2010 | wc 
+echo -n '2011 ' ; grep year ../biblio_geosciences.bib | grep 2011 | wc 
+echo -n '2012 ' ; grep year ../biblio_geosciences.bib | grep 2012 | wc 
+echo -n '2013 ' ; grep year ../biblio_geosciences.bib | grep 2013 | wc 
+echo -n '2014 ' ; grep year ../biblio_geosciences.bib | grep 2014 | wc 
+echo -n '2015 ' ; grep year ../biblio_geosciences.bib | grep 2015 | wc 
+echo -n '2016 ' ; grep year ../biblio_geosciences.bib | grep 2016 | wc 
+echo -n '2017 ' ; grep year ../biblio_geosciences.bib | grep 2017 | wc 
+echo -n '2018 ' ; grep year ../biblio_geosciences.bib | grep 2018 | wc 
+echo -n '2019 ' ; grep year ../biblio_geosciences.bib | grep 2019 | wc 
+
+echo -n '2020 ' ; grep year ../biblio_geosciences.bib | grep 2020 | wc 
+echo -n '2021 ' ; grep year ../biblio_geosciences.bib | grep 2021 | wc 
+echo -n '2022 ' ; grep year ../biblio_geosciences.bib | grep 2022 | wc 
+echo -n '2023 ' ; grep year ../biblio_geosciences.bib | grep 2023 | wc 
+echo -n '2024 ' ; grep year ../biblio_geosciences.bib | grep 2024 | wc 
+
+#######################################
+
+echo -n 'epsl              ' ; grep epsl        ../biblio_geosciences.bib | grep journal |wc
+echo -n 'g3                ' ; grep g3          ../biblio_geosciences.bib | grep journal |wc
+echo -n 'jgr               ' ; grep jgr         ../biblio_geosciences.bib | grep journal |wc
+echo -n 'grl               ' ; grep grl         ../biblio_geosciences.bib | grep journal |wc
+echo -n 'ijnme             ' ; grep ijnme       ../biblio_geosciences.bib | grep journal |wc
+echo -n 'jcp               ' ; grep jcp         ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Icarus            ' ; grep Icarus      ../biblio_geosciences.bib | grep journal |wc
+echo -n 'cmame             ' ; grep cmame       ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Tectonics         ' ; grep Tectonics   ../biblio_geosciences.bib | grep journal |wc
+echo -n 'pepi              ' ; grep pepi        ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Gondwana Research ' ; grep Gondwana    ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Nature            ' ; grep Nature      ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Solid Earth       ' ; grep solid_earth ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Science           ' ; grep Science     ../biblio_geosciences.bib | grep journal |wc
+
+
+#grep solid_earth ../biblio_geosciences.bib | grep journal > solid_earth.txt
+
+rm *.txt
+
+for n in {1965..2026} ; do
+    echo -n $n >> solid_earth_stats.txt
+    grep solid_earth ../biblio_geosciences.bib | grep journal | grep $n | wc >> solid_earth_stats.txt
+
+    echo -n $n >> jgr_stats.txt 
+    grep jgr ../biblio_geosciences.bib | grep journal | grep $n | wc >> jgr_stats.txt 
+
+    echo -n $n >> gji_stats.txt 
+    grep gji ../biblio_geosciences.bib | grep journal | grep $n | wc >> gji_stats.txt 
+
+    echo -n $n >> grl_stats.txt 
+    grep grl ../biblio_geosciences.bib | grep journal | grep $n | wc >> grl_stats.txt 
+
+    echo -n $n >> g3_stats.txt 
+    grep g3 ../biblio_geosciences.bib | grep journal | grep $n | wc >> g3_stats.txt 
+
+    echo -n $n >> epsl_stats.txt 
+    grep epsl ../biblio_geosciences.bib | grep journal | grep $n | wc >> epsl_stats.txt 
+
+    echo -n $n >> tectonics_stats.txt 
+    grep Tectonics ../biblio_geosciences.bib | grep journal | grep $n | wc >> tectonics_stats.txt 
+
+    echo -n $n >> geology_stats.txt 
+    grep Geology ../biblio_geosciences.bib | grep journal | grep $n | wc >> geology_stats.txt 
+
+    echo -n $n >> tectonophysics_stats.txt 
+    grep Tectonophysics ../biblio_geosciences.bib | grep journal | grep $n | wc >> tectonophysics_stats.txt 
+
+done
+
+
+
+
+
+
+
+
