@@ -1,7 +1,7 @@
 import numpy as np
 import time as time
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def laypts3(x1,y1,z1,x2,y2,z2,x3,y3,z3,n,x,y,z):
     for ip in range(0,n):
@@ -38,7 +38,7 @@ def laypts4(x1,y1,z1,x2,y2,z2,x3,y3,z3,x4,y4,z4,x,y,z,level):
         #end for
     #end for
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def project_on_sphere(radius,n,x,y,z):
     for ip in range(0,n):
@@ -58,10 +58,10 @@ def project_on_sphere_1pt(radius,x,y,z):
     z=radius*np.cos(phi)
     return x,y,z 
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 nblock=20
-level=150
+level=100
 equiangular=True
 radius=6371e3
 vertical_exaggeration=20
@@ -70,8 +70,8 @@ debug=False
 print('nblock=',nblock)
 print('level=',level)
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
+###############################################################################
 
 if nblock==6: 
    block_nel=level**2
@@ -90,8 +90,8 @@ else:
 
 print('np per block',block_np)
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
+###############################################################################
 start = time.time()
 
 block01_x=np.zeros(block_np,dtype=np.float64)
@@ -186,34 +186,34 @@ if nblock==20:
    block19_icon=np.zeros((block_m,block_nel),dtype=np.int32)
    block20_icon=np.zeros((block_m,block_nel),dtype=np.int32)
 
-block01_hull=np.zeros(block_np,dtype=np.bool)
-block02_hull=np.zeros(block_np,dtype=np.bool)
-block03_hull=np.zeros(block_np,dtype=np.bool)
-block04_hull=np.zeros(block_np,dtype=np.bool)
-block05_hull=np.zeros(block_np,dtype=np.bool)
-block06_hull=np.zeros(block_np,dtype=np.bool)
+block01_hull=np.zeros(block_np,dtype=bool)
+block02_hull=np.zeros(block_np,dtype=bool)
+block03_hull=np.zeros(block_np,dtype=bool)
+block04_hull=np.zeros(block_np,dtype=bool)
+block05_hull=np.zeros(block_np,dtype=bool)
+block06_hull=np.zeros(block_np,dtype=bool)
 if nblock==12 or nblock==20:
-   block07_hull=np.zeros(block_np,dtype=np.bool)
-   block08_hull=np.zeros(block_np,dtype=np.bool)
-   block09_hull=np.zeros(block_np,dtype=np.bool)
-   block10_hull=np.zeros(block_np,dtype=np.bool)
-   block11_hull=np.zeros(block_np,dtype=np.bool)
-   block12_hull=np.zeros(block_np,dtype=np.bool)
+   block07_hull=np.zeros(block_np,dtype=bool)
+   block08_hull=np.zeros(block_np,dtype=bool)
+   block09_hull=np.zeros(block_np,dtype=bool)
+   block10_hull=np.zeros(block_np,dtype=bool)
+   block11_hull=np.zeros(block_np,dtype=bool)
+   block12_hull=np.zeros(block_np,dtype=bool)
 if nblock==20:
-   block13_hull=np.zeros(block_np,dtype=np.bool)
-   block14_hull=np.zeros(block_np,dtype=np.bool)
-   block15_hull=np.zeros(block_np,dtype=np.bool)
-   block16_hull=np.zeros(block_np,dtype=np.bool)
-   block17_hull=np.zeros(block_np,dtype=np.bool)
-   block18_hull=np.zeros(block_np,dtype=np.bool)
-   block19_hull=np.zeros(block_np,dtype=np.bool)
-   block20_hull=np.zeros(block_np,dtype=np.bool)
+   block13_hull=np.zeros(block_np,dtype=bool)
+   block14_hull=np.zeros(block_np,dtype=bool)
+   block15_hull=np.zeros(block_np,dtype=bool)
+   block16_hull=np.zeros(block_np,dtype=bool)
+   block17_hull=np.zeros(block_np,dtype=bool)
+   block18_hull=np.zeros(block_np,dtype=bool)
+   block19_hull=np.zeros(block_np,dtype=bool)
+   block20_hull=np.zeros(block_np,dtype=bool)
 
 print("book memory: %.3f s" % (time.time() - start))
 
-#------------------------------------------------------------------------------
+###############################################################################
 # block_node_layout
-#------------------------------------------------------------------------------
+###############################################################################
 start = time.time()
 
 if nblock==6 or nblock==12: #------------------------------
@@ -316,9 +316,9 @@ if nblock==20:
 
 print("block node layout: %.3f s" % (time.time() - start))
 
-#------------------------------------------------------------------------------
+###############################################################################
 # map_blocks
-#------------------------------------------------------------------------------
+###############################################################################
 start = time.time()
 
 if nblock==6:
@@ -653,9 +653,9 @@ if debug:
 
 print("map blocks: %.3f s" % (time.time() - start))
 
-#------------------------------------------------------------------------------
+###############################################################################
 # merge blocks
-#------------------------------------------------------------------------------
+###############################################################################
 start = time.time()
 
 nnp=block_np
@@ -664,7 +664,7 @@ nnel=block_nel
 tempx=np.zeros(nblock*nnp,dtype=np.float64)
 tempy=np.zeros(nblock*nnp,dtype=np.float64)
 tempz=np.zeros(nblock*nnp,dtype=np.float64)
-sides=np.zeros(nblock*nnp,dtype=np.bool)
+sides=np.zeros(nblock*nnp,dtype=bool)
 
 ib=1
 tempx[(ib-1)*nnp:ib*nnp]=block01_x[:] ; tempy[(ib-1)*nnp:ib*nnp]=block01_y[:]
@@ -732,7 +732,7 @@ if nblock==20:
 if debug:
    np.savetxt('temp.ascii',np.array([tempx,tempy,tempz,sides]).T)
 
-doubble=np.zeros(nblock*nnp,dtype=np.bool)
+doubble=np.zeros(nblock*nnp,dtype=bool)
 pointto=np.zeros(nblock*nnp,dtype=np.int32)
 
 for i in range(0,nblock*nnp):
@@ -837,8 +837,9 @@ for iel in range(0,shell_nel):
 print("merge blocks: %.3f s" % (time.time() - start))
 
 
-#------------------------------------------------------------------------------
+###############################################################################
 # compute r,theta,phi
+###############################################################################
 
 shell_r=np.zeros(shell_np,dtype=np.float64)
 shell_theta=np.zeros(shell_np,dtype=np.float64)
@@ -849,8 +850,9 @@ for i in range(0,shell_np):
     shell_theta[i]=np.arccos(shell_z[i]/shell_r[i])
     shell_phi[i]=np.arctan2(shell_y[i],shell_x[i])
 
-#------------------------------------------------------------------------------
+###############################################################################
 # read in topography and displace nodes
+###############################################################################
 
 nlon=1440
 nlat=720
@@ -905,13 +907,9 @@ for i in range(0,shell_np):
 
 #end for
 
-
-
-
-
-
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
+# export shell to vtu
+###############################################################################
 start = time.time()
 
 vtufile=open('shell.vtu',"w")
@@ -949,7 +947,6 @@ for i in range(0,shell_np):
     vtufile.write("%10e \n" %(shell_r[i]-radius))
 vtufile.write("</DataArray>\n")
 
-
 vtufile.write("</PointData>\n")
 
 #####
@@ -986,3 +983,163 @@ vtufile.write("</VTKFile>\n")
 vtufile.close()
 
 print("export to vtu: %.3f s" % (time.time() - start))
+
+###############################################################################
+# assemble shells to make 3D volume. hs=hollow_sphere
+###############################################################################
+start = time.time()
+
+R1=radius/2
+R2=radius
+
+nlayer=8
+
+hs_np=(nlayer+1)*shell_np
+hs_nel=shell_nel*nlayer
+hs_m=shell_m*2
+
+print('nlayer=',nlayer)
+print('hs np =',hs_np)
+print('hs nel=',hs_nel)
+print('hs m=',hs_m)
+
+hs_x=np.zeros(hs_np,dtype=np.float64)
+hs_y=np.zeros(hs_np,dtype=np.float64)
+hs_z=np.zeros(hs_np,dtype=np.float64)
+hs_icon=np.zeros((hs_m,hs_nel),dtype=np.int32)
+
+shelltemp_x=np.zeros(shell_np,dtype=np.float64)
+shelltemp_y=np.zeros(shell_np,dtype=np.float64)
+shelltemp_z=np.zeros(shell_np,dtype=np.float64)
+
+for ilayer in range(0,nlayer+1):
+
+    shelltemp_x[:]=shell_x[:]
+    shelltemp_y[:]=shell_y[:]
+    shelltemp_z[:]=shell_z[:]
+
+    radius=R1+(R2-R1)/nlayer*ilayer 
+    #print('radius=',radius)
+
+    project_on_sphere(radius,shell_np,shelltemp_x,shelltemp_y,shelltemp_z)
+
+    ibeg=ilayer*shell_np
+    iend=(ilayer+1)*shell_np-1
+    #print(ibeg,iend)
+
+    hs_x[ibeg:iend+1]=shelltemp_x[:]
+    hs_y[ibeg:iend+1]=shelltemp_y[:]
+    hs_z[ibeg:iend+1]=shelltemp_z[:]
+
+#end for
+
+#np.savetxt('hs.ascii',np.array([hs_x,hs_y,hs_z]).T)
+
+for ilayer in range(0,nlayer):
+
+    ibeg=1+(ilayer)*shell_nel-1
+    iend=(ilayer+1)*shell_nel-1
+    #print(ibeg,iend)
+
+    hs_icon[0:shell_m,ibeg:iend+1]=shell_icon[0:shell_m,0:shell_nel]\
+                                  +ilayer*shell_np
+
+    hs_icon[shell_m+0:2*shell_m,ibeg:iend+1]=shell_icon[0:shell_m,0:shell_nel]\
+                                            +(ilayer+1)*shell_np
+
+print("build 3D mesh: %.3f s" % (time.time() - start))
+
+###############################################################################
+# compute r,theta,phi
+###############################################################################
+
+hs_r=np.zeros(hs_np,dtype=np.float64)
+hs_theta=np.zeros(hs_np,dtype=np.float64)
+hs_phi=np.zeros(hs_np,dtype=np.float64)
+
+for i in range(0,hs_np):
+    hs_r[i]=np.sqrt(hs_x[i]**2+hs_y[i]**2+hs_z[i]**2)
+    hs_theta[i]=np.arccos(hs_z[i]/hs_r[i])
+    hs_phi[i]=np.arctan2(hs_y[i],hs_x[i])
+
+###############################################################################
+# export shell to vtu
+###############################################################################
+start = time.time()
+
+vtufile=open('hs.vtu',"w")
+vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+vtufile.write("<UnstructuredGrid> \n")
+vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(hs_np,hs_nel))
+#####
+vtufile.write("<Points> \n")
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+for i in range(0,hs_np):
+    vtufile.write("%10e %10e %10e \n" %(hs_x[i],hs_y[i],hs_z[i]))
+vtufile.write("</DataArray>\n")
+vtufile.write("</Points> \n")
+#####
+vtufile.write("<PointData Scalars='scalars'>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='r' Format='ascii'> \n")
+for i in range(0,hs_np):
+    vtufile.write("%10e \n" %hs_r[i])
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='theta' Format='ascii'> \n")
+for i in range(0,hs_np):
+    vtufile.write("%10e \n" %hs_theta[i])
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='phi' Format='ascii'> \n")
+for i in range(0,hs_np):
+    vtufile.write("%10e \n" %hs_phi[i])
+vtufile.write("</DataArray>\n")
+#--
+#vtufile.write("<DataArray type='Float32' Name='topo' Format='ascii'> \n")
+#for i in range(0,shell_np):
+#    vtufile.write("%10e \n" %(shell_r[i]-radius))
+#vtufile.write("</DataArray>\n")
+vtufile.write("</PointData>\n")
+#####
+vtufile.write("<Cells>\n")
+vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+for iel in range (0,hs_nel):
+    if hs_m==6:
+       vtufile.write("%d %d %d %d %d %d\n" %(hs_icon[0,iel],hs_icon[1,iel],hs_icon[2,iel],\
+                                             hs_icon[3,iel],hs_icon[4,iel],hs_icon[5,iel]))
+    if hs_m==8:
+       vtufile.write("%d %d %d %d %d %d %d %d\n" %(hs_icon[0,iel],hs_icon[1,iel],\
+                                                   hs_icon[2,iel],hs_icon[3,iel],\
+                                                   hs_icon[4,iel],hs_icon[5,iel],\
+                                                   hs_icon[6,iel],hs_icon[7,iel]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+for iel in range (0,hs_nel):
+    if hs_m==6:
+       vtufile.write("%d \n" %((iel+1)*6))
+    if hs_m==8:
+       vtufile.write("%d \n" %((iel+1)*8))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+for iel in range (0,hs_nel):
+    if hs_m==6:
+       vtufile.write("%d \n" %13)
+    if hs_m==8:
+       vtufile.write("%d \n" %12)
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("</Cells>\n")
+#####
+vtufile.write("</Piece>\n")
+vtufile.write("</UnstructuredGrid>\n")
+vtufile.write("</VTKFile>\n")
+vtufile.close()
+
+print("export to vtu: %.3f s" % (time.time() - start))
+
+
+###############################################################################
+
