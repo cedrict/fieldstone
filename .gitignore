@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 lit*.pdf
+statistics_biblio/*.txt
 
 *.html
 #*.vtu
