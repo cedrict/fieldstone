@@ -1,0 +1,275 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/under_construction}
+\includegraphics[height=1.25cm]{images/pictograms/tools}
+\includegraphics[height=1.25cm]{images/pictograms/pic}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_163/text.tex}} \end{flushright}
+
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/template_keywords.key}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_163}}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+{\sl This stone was developed in collaboration with Arie van den Berg}. \index{contributors}{A. van den Berg}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The first version of this code considers a mesh of $nelx \times nely$ elements spanning the unit square.
+The coordinates of the nodes are stored in the \verb|x,y| arrays and the connectivity is \verb|icon|. 
+At each node of the mesh the velocity $(u,v)=(-0.5+y,0.5-x)$ is prescribed:
+\begin{verbatim}
+do i=1,np
+   u(i)=-(0.5-y(i))
+   v(i)=(0.5-x(i))
+end do
+\end{verbatim}
+
+Inside the domain \verb|swarm_n| markers are placed randomly:
+\begin{verbatim}
+do i=1,swarm_n
+   call random_number(eta)
+   call random_number(chi)
+   swarm_x(i)=eta*Lx
+   swarm_y(i)=chi*Ly
+end do
+\end{verbatim}
+
+The markers are then localised, i.e. one must find for each the element it resides in.
+The velocity is then computed on the marker by means of $Q_1$ basis functions
+and it is advected with a first order Euler step for simplicity: 
+\begin{verbatim}
+do i=1,swarm_n
+
+   ! find cell
+   ielx=swarm_x(i)/Lx*nelx+1
+   iely=swarm_y(i)/Ly*nely+1
+   iel(i)=nelx*(iely-1)+ielx
+
+   ! find local coordinates in element
+   xmin=x(icon(1,iel(i)))
+   xmax=x(icon(3,iel(i)))
+   ymin=y(icon(1,iel(i)))
+   ymax=y(icon(3,iel(i)))
+   r=((swarm_x(i)-xmin)/(xmax-xmin)-0.5d0)*2.d0
+   s=((swarm_y(i)-ymin)/(ymax-ymin)-0.5d0)*2.d0
+
+   ! evaluate Q1 basis functions
+   N(1)=0.25*(1-r)*(1-s)
+   N(2)=0.25*(1+r)*(1-s)
+   N(3)=0.25*(1+r)*(1+s)
+   N(4)=0.25*(1-r)*(1+s)
+
+   ! compute velocity
+   swarm_u(i)=sum(N*u(icon(:,iel(i))))
+   swarm_v(i)=sum(N*v(icon(:,iel(i))))
+
+   ! advect marker
+   swarm_x(i)=swarm_x(i)+swarm_u(i)*dt
+   swarm_y(i)=swarm_y(i)+swarm_v(i)*dt
+
+end do
+\end{verbatim}
+
+Looking at this code we find that the background resolution of the mesh 
+plays virtually no role, and that this loop is executed for each marker
+but localising and advecting one marker can be done completely 
+independently from another marker. 
+Assuming that a large number of markers is used, say ${\cal O}(10^7)$, 
+one could be tempted to think of parallelisation to improve performance. 
+
+There are usually 2 main paradigms when it comes to parallelization,
+see for example \textcite{vacp22} (2022): openmp and mpi. 
+We fill now focus on mpi and therefore initialise mpi in the code as follows:
+ 
+\begin{verbatim}
+program opla
+use mpi
+[...]
+call mpi_init(ierr)
+call mpi_comm_size (mpi_comm_world,nproc,ierr)
+call mpi_comm_rank (mpi_comm_world,iproc,ierr)
+\end{verbatim}
+
+The code is then compiled with 
+\begin{verbatim}
+> mpif90 -O3 stone.f90
+\end{verbatim}
+and can be run in parallel as follows:
+\begin{verbatim}
+> mpirun -np 4 ./a.out 
+\end{verbatim}
+
+%---------------------------------------------------------------
+\section*{First approach}
+
+Although it is often a bad idea, one could wish to use the code above and
+modify it as little as possible while inserting the required mpi commands. Let us 
+adopt here this (doomed\footnote{spoiler alert}) approach for the sake of learning.
+
+We then proceed to change 
+\begin{verbatim}
+do i=1,swarm_n
+   [...]
+end do
+\end{verbatim}
+into
+\begin{verbatim}
+do i=1+iproc,swarm_n,nproc
+   print *,iproc,i
+   [...]
+end do
+\end{verbatim}
+The reason for this is as follows: let us set \verb|swarm_n|=15 and run the code with nproc=3.
+The print statement returns the following lines\footnote{I have reordered the lines
+for better readibility}:
+\begin{verbatim}
+ iproc=           0 takes care of marker           1
+ iproc=           0 takes care of marker           4
+ iproc=           0 takes care of marker           7
+ iproc=           0 takes care of marker          10
+ iproc=           0 takes care of marker          13
+ iproc=           1 takes care of marker           2
+ iproc=           1 takes care of marker           5
+ iproc=           1 takes care of marker           8
+ iproc=           1 takes care of marker          11
+ iproc=           1 takes care of marker          14
+ iproc=           2 takes care of marker           3
+ iproc=           2 takes care of marker           6
+ iproc=           2 takes care of marker           9
+ iproc=           2 takes care of marker          12
+ iproc=           2 takes care of marker          15
+\end{verbatim}
+We see that each thread only deals with a subset of the markers.
+We then proceed to modify the last two lines of the big loop as follows:
+\begin{verbatim}
+   xtemp(i)=swarm_x(i)+swarm_u(i)*dt
+   ytemp(i)=swarm_y(i)+swarm_v(i)*dt
+\end{verbatim}
+where \verb|xtemp| and \verb|ytemp| are \verb|swarm_n|-long arrays that have been set to zero beforehand.  
+In this case the \verb|xtemp| array would look like this at the end on each thread (the empty spaces indicate
+that nothing was written there):
+\begin{verbatim}
+         ---------------------------------------------------
+iproc=0  | X |  |  | X |  |  | X |  |  | X |  |  | X |  |  |
+         ---------------------------------------------------
+
+         ---------------------------------------------------
+iproc=1  |  | X |  |  | X |  |  | X |  |  | X |  |  | X |  | 
+         ---------------------------------------------------
+
+         ---------------------------------------------------
+iproc=2  |  |  | X |  |  | X |  |  | X |  |  | X |  |  | X |
+         ---------------------------------------------------
+\end{verbatim}
+All we have to do is to do a global summation of these arrays into \verb|swarm_x| across 
+all threads (same for \verb|swarm_y|):
+\begin{verbatim}
+call mpi_allreduce(xtemp,swarm_x,swarm_n,mpi_double_precision,mpi_sum,mpi_comm_world,ierr)
+call mpi_allreduce(ytemp,swarm_y,swarm_n,mpi_double_precision,mpi_sum,mpi_comm_world,ierr)
+\end{verbatim}
+In the end we have parallelized this loop. We finish by adding 
+mpi commands that allow for the timing of sections of code:
+\begin{verbatim}
+start  = MPI_Wtime()
+[...]
+finish  = MPI_Wtime()
+print *,'time=',finish-start,'s'
+\end{verbatim}
+In practice one would use a RK4 algorithm to advect the markers. 
+In order to approximate the cost of RK4 without actually implementing it since 
+we are not interested in the advection itself we can wrap the inside of the loop 
+inside an additional loop that enforces that localisation and advection happen 
+4 times for each marker (similar to RK4):
+\begin{verbatim}
+do i=1+iproc,swarm_n,nproc
+   do k=1,4 ! to mimic cost of RK4
+
+   end do
+end do
+\end{verbatim}
+
+\subsection*{Timings}
+
+We then proceed to run the code on 1,2,3,4 threads\footnote{This 
+was run on my Thinkpad laptop with Intel Core i7-7820HQ CPUi at 2.90GHz.}:
+
+\begin{verbatim}
+advect:  0.19242236700000004             0
+allreduce:   1.4708635000000081E-002     0
+
+advect:  0.13948245200000001             1
+advect:  0.14018181199999999             0
+allreduce:   9.7357410000000005E-002     0
+allreduce:   9.7526858999999994E-002     1
+
+advect:  0.12392915000000000             1
+advect:  0.12359175000000000             0
+advect:  0.12411840600000000             2
+allreduce:  0.19212144400000003          2
+allreduce:  0.20365041300000000          0
+allreduce:  0.20382717899999997          1
+
+advect:  0.13753345000000000             1
+advect:  0.13849821400000001             2
+advect:  0.13913681200000000             3
+advect:  0.13707424700000001             0
+allreduce  0.20147564300000001           3
+allreduce  0.20159588100000003           0
+allreduce  0.20169826699999999           2
+allreduce  0.20180693799999999           1
+\end{verbatim}
+
+We immediately see the problem: when using only 1 thread (i.e. no parallelisation 
+at all) the entire loop over all 10 million markers only takes 0.2s! 
+This raises the question whether we should even have tried to parallelise this 
+bit of code! 
+Second, as soon as multiple threads are used the cost of the allreduce becomes 
+as large as the cost to carry out the big loop. After all 0.2s to for all threads 
+to send each other 2x 10 million double precision numbers is not too surprising.
+
+This approach is doomed, unless the tasks inside the loop over markers would be 
+very costly.
+
+This explains why the above approach was not used in \textcite{thie11} (2011):
+\begin{displayquote}
+{\color{darkgray} 
+In the case of parallel computations, the (grid) domain decomposition leads 
+to a partitioning of
+the cloud across the processes. Each process only stores the part of
+the cloud necessary to compute the part of the FE matrix it needs
+to build. This allows for subsequent memory savings (per process):
+a 128x128x32 grid with an average of 27 points per element
+contains over 14 millions points, whose storage in double precision
+(x, y, z and $\epsilon$ fields) occupies about 430Mb in memory. Using only
+16 processes reduces the memory requirement to less than 27Mb
+per process. Also, most of the algorithms dealing with the cloud
+(advection, strain increment) are in ${\cal O}(N)$, so that the cloud decomposition 
+also improves the overall efﬁciency.
+
+[...]
+
+Also, when a given
+point is advected and enters an element which belongs to two processes, 
+its position must be communicated to the other process. A
+very similar procedure must take place when a point leaves such
+an element: it must be ‘deleted’ from the list of the other process.
+The intrinsic MPI routine \verb|mpi_alltoall| is extensively used to this
+purpose.
+}
+\end{displayquote}
+
+
+
+
+
+
