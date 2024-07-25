@@ -122,6 +122,9 @@ for n in {1965..2026} ; do
     echo -n $n >> tectonophysics_stats.txt 
     grep Tectonophysics ../biblio_geosciences.bib | grep journal | grep $n | wc >> tectonophysics_stats.txt 
 
+    echo -n $n >> pepi_stats.txt 
+    grep pepi ../biblio_geosciences.bib | grep journal | grep $n | wc >> pepi_stats.txt 
+
 done
 
 
