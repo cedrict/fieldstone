@@ -5,6 +5,7 @@ __pycache__/
 
 lit*.pdf
 statistics_biblio/*.txt
+statistics_biblio/*.pdf
 
 *.html
 #*.vtu

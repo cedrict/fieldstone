@@ -332,7 +332,7 @@ In the code we then defined the {\tt theta\_method} parameter:
 
 Concerning the defect Picard method, two main modifications 
 are needed: build a different rhs, and adapt the boundary conditions. 
-The (elemental) rhs is split across two arrays {\codefont f\_el} and {\codefont h\_el}.
+The (elemental) rhs is split across two arrays {\python f\_el} and {\python h\_el}.
 In a standard code $f_el$ receives the contribution of the buoyancy forces at 
 each quadrature point:
 \begin{lstlisting}
@@ -341,12 +341,12 @@ for i in range(0,mV):
     f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy(xq,yq)*rho
 \end{lstlisting}
 This is in fact the $\vec{b}$ term of Eq.\eqref{XXYYZZ}. 
-Also the array {\codefont h\_el} is zero before boundary conditions are
+Also the array {\python h\_el} is zero before boundary conditions are
 applied so there is no direct contribution to it inside the loop over 
 quadrature points.
 
 For each element we store the velocity and pressure field in dedicated arrays
-{\codefont V\_el} and {\codefont p\_el}:
+{\python V\_el} and {\python p\_el}:
 
 \begin{lstlisting}
 V_el=np.zeros((mV*ndofV),dtype=np.float64)
@@ -359,14 +359,14 @@ for i in range(0,mV):
 for i in range(0,mP):
     P_el[i]=p[iconP[i,iel]]
 \end{lstlisting}
-and we then proceed to add the necessary terms to both {\codefont f\_el} and {\codefont h\_el}:
+and we then proceed to add the necessary terms to both {\python f\_el} and {\python h\_el}:
 \begin{lstlisting}
 f_el-=K_el0.dot(V_el)+G_el.dot(P_el) 
 h_el-=G_el.T.dot(V_el)               
 \end{lstlisting}
 
 The second modification concerns the boundary conditions. 
-As per usual in our codes, there is an array {\codefont bc\_val} 
+As per usual in our codes, there is an array {\python bc\_val} 
 which contains the prescribed value of the boundary condition.
 It is then necessary to transfer it to the global solution vector 
 before iterations are carried out:

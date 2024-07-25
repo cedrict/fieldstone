@@ -182,11 +182,11 @@ they are 1 on their respective node, i.e. $B_i(d_j)=\delta_{ij}$}
 
 The structure of the code is as follows: the user chooses the value of three parameters:
 \begin{itemize}
-\item {\codefont degree}: (maximum) degree, i.e. 20 or 40.
-\item {\codefont use\_degree}: a value between 0 and {\codefont degree}
-\item {\codefont depth}: depth in \si{m}.
+\item {\python degree}: (maximum) degree, i.e. 20 or 40.
+\item {\python use\_degree}: a value between 0 and {\python degree}
+\item {\python depth}: depth in \si{m}.
 \end{itemize}
-Based on the value of {\codefont degree}, either {\filenamefont S20RTS.sph} or {\filenamefont S40RTS.sph} is read,
+Based on the value of {\python degree}, either {\filenamefont S20RTS.sph} or {\filenamefont S40RTS.sph} is read,
 and the coefficients are stored in the array
 \begin{verbatim}
 flm = np.empty((degree+1,2*degree+1,nspline),dtype=np.float64)
@@ -203,7 +203,7 @@ at location $r,\theta,\phi$.
 We then compute $X_{lm}(\cos \theta)$, $\cos (m\phi)$, and $\sin (m\phi)$ 
 for all the existing/relevant $(l,m)$ combinations. 
 These are then combined to store the terms multiplying the $a_{lm}$ and $b_{lm}$ coefficients 
-in the arrays {\codefont a\_coeffs} and {\codefont b\_coeffs}
+in the arrays {\python a\_coeffs} and {\python b\_coeffs}
 (remember that the $(-1)^m$ term is inside the \texttt{lpmv} function).
 
 \begin{lstlisting}

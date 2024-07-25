@@ -32,23 +32,23 @@ the following saddle point system:
 \cdot
 \left(
 \begin{array}{c}
-V \\ P
+\vec{\cal V} \\ \vec{P}
 \end{array}
 \right)
 =
 \left(
 \begin{array}{c}
- f \\ h
+\vec{f} \\ \vec{h}
 \end{array}
 \right)
 \quad\quad
 {\rm or,}
 \quad\quad
-\A \cdot X = rhs
+\A \cdot \vec{\cal X} =\vec{b}
 \]
-Each block $\K$, $\G$ and vector $f$, $h$ is built separately for each element 
+Each block $\K$, $\G$ and vector $\vec{f}$, $\vec{h}$ is built separately for each element 
 in the code and assembled into 
-the matrix $\A$ and vector $rhs$ afterwards. $\A$ and $rhs$ are then passed to the solver. 
+the matrix $\A$ and vector $\vec{b}$ which are then passed to the solver. 
 
 Each element has $m_\upnu=4$ vertices so in total $ndofV\times m_\upnu=8$ 
 velocity dofs and a single 
@@ -57,30 +57,31 @@ velocity dofs is therefore $NfemV=NV \times ndofV$ while the total number of
 pressure dofs is $NfemP=nel$. The total number of dofs is then $Nfem=NfemV+NfemP$.
 
 As a consequence, matrix $\K$ has size $(NfemV,NfemV)$ and matrix $\G$ has size $(NfemV,NfemP)$.
-Vector $f$ is of size $NfemV$ and vector $h$ is of size $NfemP$.  
+Vector $\vec{f}$ is of size $NfemV$ and vector $\vec{h}$ is of size $NfemP$.  
 
 The pressure nullspace is removed by imposing that $\int_\Omega p \; dV =0$ through 
 a Lagrange multiplier (see Section~\ref{MMM-ss_pnorm}).
 
 \begin{center}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/dh/vel}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/dh/p}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/dh/sr}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_14/results/dh/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_14/results/dh/p}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_14/results/dh/sr}\\
 {\captionfont From left to right: velocity, pressure and second invariant 
-of strain rate for 32x32 mesh.}
+of strain rate for $32\times 32$ mesh for the Donea \& Huerta manufactured solution.}
 \end{center}
 
 Unlike the results obtained with the penalty formulation (see Section \ref{f01}),
 the pressure showcases a very strong checkerboard pattern, similar to the one 
-in \cite{dohu03}. The amplitude of this checkerboard is unpredictable 
+in \textcite{dohu03} (2003). The amplitude of this checkerboard is unpredictable 
 and changes from one resolution to the other.
 
 \begin{center}
 \includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/dh/doneahuerta}
 \includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/dh/p_3D}
 \includegraphics[width=5.6cm]{python_codes/fieldstone_14/results/dh/q_3D}\\
-{\captionfont Left: pressure solution as shown in \cite{dohu03}; Right: elemental 
-pressure solution obtained with fieldstone on a 32x32 grid. 
+{\captionfont Left: pressure solution as shown in \cite{dohu03}; Middle: elemental 
+pressure solution obtained with fieldstone on a $32\times 32$ grid; 
+Right: nodal pressure. 
 Note that the vtu file was build in such a way so as to allow for 
 this representation of the discontinuous pressure field.}
 \end{center}
@@ -109,17 +110,18 @@ compute $\K$ (see Section~\ref{MMM-sec:mixed}):
 \end{array}
 \right)
 \]
-It seems that option $b$ yields slightly better velocity accuracy, but the pressure 
+It seems that option $(b)$ yields slightly better velocity accuracy, but the pressure 
 checkerboard derails pressure error measurements for both cases:
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_14/results/dh/errors.pdf}
+\includegraphics[width=12cm]{python_codes/fieldstone_14/results/dh/errors.pdf}\\
+{\captionfont Velocity and pressure $L_2$ error as a function of the element size $h$.}
 \end{center}
 
 
 \begin{center}
 \includegraphics[width=15cm]{python_codes/fieldstone_14/results/dh/p128x128}\\
-{\captionfont Elemental pressure for 128x128 mesh.}
+{\captionfont Elemental pressure for $128\times 128$ mesh.}
 \end{center}
 
 \newpage
@@ -135,7 +137,7 @@ Details of this solution are in Section~\ref{MMM-ss:mms_buha06}.
 \includegraphics[width=4cm]{python_codes/fieldstone_14/results/buha06/exx}
 \includegraphics[width=4cm]{python_codes/fieldstone_14/results/buha06/exy}
 \includegraphics[width=4cm]{python_codes/fieldstone_14/results/buha06/eyy}\\
-{\captionfont Mesh is 32x32 - ${\bm C}^{(b)}$}
+{\captionfont Mesh is $32\times 32$ - ${\bm C}^{(b)}$}
 \end{center}
 
 
