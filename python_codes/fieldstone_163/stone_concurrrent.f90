@@ -1,12 +1,11 @@
 program opla
-use mpi
 
 implicit none
 
-integer i,nnx,nny,np,nelx,nely,nel,counter,j,ielx,iely,ierr,iproc,nproc,k
+integer i,nnx,nny,np,nelx,nely,nel,counter,j,ielx,iely,k
 integer, parameter :: m=4 ! nb of nodes per mesh cell
-integer, parameter :: swarm_n=10000000 ! nb of markers
-real(8), dimension(swarm_n) :: swarm_x,swarm_y,swarm_u,swarm_v,xtemp,ytemp
+integer, parameter :: swarm_n=4000000 ! nb of markers
+real(8), dimension(swarm_n) :: swarm_x,swarm_y,swarm_u,swarm_v
 real(8), parameter :: Lx=1 ! domain size
 real(8), parameter :: Ly=1 ! domain size
 real(8), dimension(4):: N ! array of basis functions
@@ -18,16 +17,10 @@ real(8) r,s,xmin,xmax,ymin,ymax,dt
 real(8) chi,eta,start,finish
 
 !==============================================!
-
-call mpi_init(ierr)
-call mpi_comm_size (mpi_comm_world,nproc,ierr)
-call mpi_comm_rank (mpi_comm_world,iproc,ierr)
-
-!==============================================!
 ! mesh parameters
 !==============================================!
 
-nnx=17
+nnx=128
 nny=nnx
 np=nnx*nny
 nelx=nnx-1
@@ -86,6 +79,11 @@ do i=1,swarm_n
    !write(123,*) swarm_x(i),swarm_y(i)
 end do
 
+swarm_x=min(swarm_x,0.999999)
+swarm_y=min(swarm_y,0.999999)
+swarm_x=max(swarm_x,0.000001)
+swarm_y=max(swarm_y,0.000001)
+
 !==============================================!
 !===[assign velocity to nodes]=================!
 !==============================================!
@@ -100,29 +98,28 @@ end do
 !===[localise & advect swarm]==================!
 !==============================================!
 
-start=MPI_Wtime()
+call cpu_time(start)
 
-xtemp=0.d0
-ytemp=0.d0
+do concurrent(i=1:swarm_n)
 
-do i=1+iproc,swarm_n,nproc
+      !ielx=swarm_x(i)/Lx*nelx+1
+      !iely=swarm_y(i)/Ly*nely+1
 
-   !print *,'iproc=',iproc,'takes care of marker',i
+      do k=1,nel
+         xmin=x(icon(1,k))
+         xmax=x(icon(3,k))
+         ymin=y(icon(1,k))
+         ymax=y(icon(3,k))
+         if (xmin<swarm_x(i) .and. &
+             ymin<swarm_y(i) .and. &
+             xmax>swarm_x(i) .and. &
+             ymax>swarm_y(i) ) then
 
-   do k=1,4 ! to mimic cost of RK4
-
-      ! find cell
-      ielx=swarm_x(i)/Lx*nelx+1
-      iely=swarm_y(i)/Ly*nely+1
-      iel(i)=nelx*(iely-1)+ielx 
-
-      ! find local coordinates in element
-      xmin=x(icon(1,iel(i)))
-      xmax=x(icon(3,iel(i)))
-      ymin=y(icon(1,iel(i)))
-      ymax=y(icon(3,iel(i)))
-      r=((swarm_x(i)-xmin)/(xmax-xmin)-0.5d0)*2.d0
-      s=((swarm_y(i)-ymin)/(ymax-ymin)-0.5d0)*2.d0
+            iel(i)=k
+            r=((swarm_x(i)-xmin)/(xmax-xmin)-0.5d0)*2.d0
+            s=((swarm_y(i)-ymin)/(ymax-ymin)-0.5d0)*2.d0
+         end if
+      end do
 
       ! evaluate Q1 basis functions
       N(1)=0.25*(1-r)*(1-s)
@@ -135,32 +132,12 @@ do i=1+iproc,swarm_n,nproc
       swarm_v(i)=sum(N*v(icon(:,iel(i))))
 
       ! advect marker
-      xtemp(i)=swarm_x(i)+swarm_u(i)*dt
-      ytemp(i)=swarm_y(i)+swarm_v(i)*dt
+      swarm_x(i)=swarm_x(i)+swarm_u(i)*dt
+      swarm_y(i)=swarm_y(i)+swarm_v(i)*dt
 
-   end do
 end do
 
-finish=MPI_Wtime()
-
-print *,'advect:',finish-start,iproc
-call mpi_barrier(mpi_comm_world,ierr)
-
-start  = MPI_Wtime()
-
-call mpi_allreduce(xtemp,swarm_x,swarm_n,mpi_double_precision,mpi_sum,mpi_comm_world,ierr)
-call mpi_allreduce(ytemp,swarm_y,swarm_n,mpi_double_precision,mpi_sum,mpi_comm_world,ierr)
-
-finish  = MPI_Wtime()
-   
-!write(123,*) swarm_x(i),swarm_y(i),ielx,iely,iel(i),r,s,swarm_u(i),swarm_v(i)
-
-print *,'allreduce:',finish-start,iproc
-
-!print *,iproc,'|',xtemp
-call mpi_barrier(mpi_comm_world,ierr)
-!print *,xm
-
-call MPI_Finalize(ierr)
+call cpu_time(finish)
+print '("Time = ",f6.3," seconds.")',finish-start
 
 end program 

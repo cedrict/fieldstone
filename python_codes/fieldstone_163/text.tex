@@ -235,7 +235,10 @@ This raises the question whether we should even have tried to parallelise this
 bit of code! 
 Second, as soon as multiple threads are used the cost of the allreduce becomes 
 as large as the cost to carry out the big loop. After all 0.2s to for all threads 
-to send each other 2x 10 million double precision numbers is not too surprising.
+to send each other 2x 10 million double precision numbers is not too 
+surprising\footnote{$10^7$ double precision take $8\cdot 10^7$ byes in memory, 
+i.e. approx 76Mb.}.
+
 
 This approach is doomed, unless the tasks inside the loop over markers would be 
 very costly.
@@ -268,7 +271,9 @@ purpose.
 }
 \end{displayquote}
 
+%\newpage
 
+%gfortran -O3 -ftree-parallelize-loops=2 -fopt-info-loop stone_concurrrent.f90
 
 
 
