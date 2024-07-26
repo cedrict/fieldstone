@@ -78,16 +78,19 @@ echo -n 'epsl              ' ; grep epsl        ../biblio_geosciences.bib | grep
 echo -n 'g3                ' ; grep g3          ../biblio_geosciences.bib | grep journal |wc
 echo -n 'jgr               ' ; grep jgr         ../biblio_geosciences.bib | grep journal |wc
 echo -n 'grl               ' ; grep grl         ../biblio_geosciences.bib | grep journal |wc
-echo -n 'ijnme             ' ; grep ijnme       ../biblio_geosciences.bib | grep journal |wc
-echo -n 'jcp               ' ; grep jcp         ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Icarus            ' ; grep Icarus      ../biblio_geosciences.bib | grep journal |wc
-echo -n 'cmame             ' ; grep cmame       ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Tectonics         ' ; grep Tectonics   ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Lithos            ' ; grep Lithos      ../biblio_geosciences.bib | grep journal |wc
 echo -n 'pepi              ' ; grep pepi        ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Gondwana Research ' ; grep Gondwana    ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Nature            ' ; grep Nature      ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Solid Earth       ' ; grep solid_earth ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Science           ' ; grep Science     ../biblio_geosciences.bib | grep journal |wc
+
+echo -n 'ijnme             ' ; grep ijnme       ../biblio_geosciences.bib | grep journal |wc
+echo -n 'ijnmf             ' ; grep ijnmf       ../biblio_geosciences.bib | grep journal |wc
+echo -n 'cmame             ' ; grep cmame       ../biblio_geosciences.bib | grep journal |wc
+echo -n 'jcp               ' ; grep jcp         ../biblio_geosciences.bib | grep journal |wc
 
 
 #grep solid_earth ../biblio_geosciences.bib | grep journal > solid_earth.txt
@@ -124,6 +127,12 @@ for n in {1965..2026} ; do
 
     echo -n $n >> pepi_stats.txt 
     grep pepi ../biblio_geosciences.bib | grep journal | grep $n | wc >> pepi_stats.txt 
+
+    echo -n $n >> icarus_stats.txt 
+    grep Icarus ../biblio_geosciences.bib | grep journal | grep $n | wc >> icarus_stats.txt 
+
+    echo -n $n >> jcp_stats.txt 
+    grep jcp ../biblio_geosciences.bib | grep journal | grep $n | wc >> jcp_stats.txt 
 
 done
 

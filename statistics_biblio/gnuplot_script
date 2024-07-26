@@ -1,4 +1,5 @@
-set term pdf
+#gnuplot script
+set term pdf enhanced font "Times,10pt"
 set output 'stats.pdf'
 set grid
 set key left
@@ -21,3 +22,49 @@ plot[1965:2024][]\
 'solid_earth_stats.txt' u 1:2 w lp pt 5 ps 0.23 t 'Solid Earth',\
 'geology_stats.txt' u 1:2 w lp pt 5 ps 0.23 t 'Geology',\
 'pepi_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'PEPI',\
+
+#############################################################
+
+set ytics 1
+set boxwidth 0.5
+set style fill solid
+
+set title 'pepi'
+set output 'journal_pepi.pdf'
+plot[1965:2024][]\
+'pepi_stats.txt' u 1:2 with boxes notitle
+
+set title 'grl'
+set output 'journal_grl.pdf'
+plot[1965:2024][]\
+'grl_stats.txt' u 1:2 with boxes notitle
+
+set title 'jgr'
+set output 'journal_jgr.pdf'
+plot[1965:2024][]\
+'jgr_stats.txt' u 1:2 with boxes notitle
+
+set title 'gji'
+set output 'journal_gji.pdf'
+plot[1965:2024][]\
+'gji_stats.txt' u 1:2 with boxes notitle
+
+set title 'jcp'
+set output 'journal_jcp.pdf'
+plot[1965:2024][]\
+'jcp_stats.txt' u 1:2 with boxes notitle
+
+set title 'G3'
+set output 'journal_g3.pdf'
+plot[1965:2024][]\
+'g3_stats.txt' u 1:2 with boxes notitle
+
+set title 'epsl'
+set output 'journal_epsl.pdf'
+plot[1965:2024][]\
+'epsl_stats.txt' u 1:2 with boxes notitle
+
+
+
+
+
