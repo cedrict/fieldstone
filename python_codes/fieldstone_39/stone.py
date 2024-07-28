@@ -4,7 +4,6 @@ import time as timing
 from numpy import linalg as LA
 import scipy
 import scipy.sparse as sps
-import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix,lil_matrix
 
 method=2
@@ -306,10 +305,10 @@ else:
    benchmark=1
    every=1
    if benchmark==1:
-      nelx = 240
+      nelx = 256
       phi=30
       psi=30
-      niter=50
+      niter=5000
       eta_v=1e25
       eta_m=1e20
       name=''
@@ -381,6 +380,7 @@ use_srn_diff=False # diffusion plasticity
 ustats_file=open("stats_u"+name+".ascii","w")
 vstats_file=open("stats_v"+name+".ascii","w")
 pstats_file=open("stats_p"+name+".ascii","w")
+etaqstats_file=open("stats_etaq"+name+".ascii","w")
 
 #################################################################
 #################################################################
@@ -529,11 +529,11 @@ NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
 NNNP    = np.zeros(mP,dtype=np.float64)           # shape functions P
 solP    = np.zeros(NfemP,dtype=np.float64)        # P solution vector 
 solV    = np.zeros(NfemV,dtype=np.float64)        # V solution vector
-exxn=np.zeros(NV,dtype=np.float64)
-eyyn=np.zeros(NV,dtype=np.float64)
-exyn=np.zeros(NV,dtype=np.float64)
-srn=np.zeros(NV,dtype=np.float64)
-etan=np.zeros(NV,dtype=np.float64)
+exxn    = np.zeros(NV,dtype=np.float64)
+eyyn    = np.zeros(NV,dtype=np.float64)
+exyn    = np.zeros(NV,dtype=np.float64)
+srn     = np.zeros(NV,dtype=np.float64)
+etan    = np.zeros(NV,dtype=np.float64)
 
 convfile=open('conv'+name+'.ascii',"w")
 vrmsfile=open('vrms'+name+'.ascii',"w")
@@ -559,6 +559,7 @@ for iter in range(0,niter):
    xq      = np.zeros(9*nel,dtype=np.float64)         # x coords of q points 
    yq      = np.zeros(9*nel,dtype=np.float64)         # y coords of q points 
    etaq    = np.zeros(9*nel,dtype=np.float64)         # viscosity of q points 
+   divvq   = np.zeros(9*nel,dtype=np.float64)         # div velocity on q points 
    pq      = np.zeros(9*nel,dtype=np.float64)         # pressure of q points 
    srq_T   = np.zeros(9*nel,dtype=np.float64)         # total strain rate of q points 
    srq_vp  = np.zeros(9*nel,dtype=np.float64)         # viscoplastic rate of q points 
@@ -619,6 +620,7 @@ for iter in range(0,niter):
                    exyq+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
 
                if use_srn_diff:
+               #if True:
                   exxq=0.0
                   eyyq=0.0
                   exyq=0.0
@@ -626,6 +628,8 @@ for iter in range(0,niter):
                       exxq+=NNNV[k]*exxn[iconV[k,iel]]
                       eyyq+=NNNV[k]*eyyn[iconV[k,iel]]
                       exyq+=NNNV[k]*exyn[iconV[k,iel]]
+
+               divvq[counter]=exxq+eyyq
 
                # effective strain rate at qpoint                
                srq_T[counter]=np.sqrt(0.5*(exxq*exxq+eyyq*eyyq)+exyq*exyq)
@@ -645,7 +649,7 @@ for iter in range(0,niter):
                    viscosity(exxq,eyyq,exyq,pq[counter],cohesion,phi,\
                    iter,xq[counter],yq[counter],eta_m,eta_v)
 
-               dilation_rate=two_sin_psi*srq_vp[counter] #*0.5 ##why *0.5 ?!?!
+               dilation_rate=two_sin_psi*srq_vp[counter] *0.5 ##why *0.5 ?!?!
 
                # compute elemental a_mat matrix
                K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq[counter]*weightq*jcob
@@ -727,6 +731,9 @@ for iter in range(0,niter):
    print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
 
    print("     -> etaq (m,M) %.5e %.5e " %(np.min(etaq),np.max(etaq)))
+
+   etaqstats_file.write("%d %8e %8e \n" %(iter,np.min(etaq),np.max(etaq)))
+   etaqstats_file.flush()
 
    print("build FE matrix: %.3f s" % (timing.time() - start))
 
@@ -946,6 +953,7 @@ for iter in range(0,niter):
    eyyn=np.zeros(NV,dtype=np.float64)
    exyn=np.zeros(NV,dtype=np.float64)
    srn=np.zeros(NV,dtype=np.float64)
+   divvn=np.zeros(NV,dtype=np.float64)
    c=np.zeros(NV,dtype=np.float64)
 
    rVnodes=[-1,+1,1,-1, 0,1,0,-1,0]
@@ -986,12 +994,15 @@ for iter in range(0,niter):
    eyyn/=c
    exyn/=c
 
+   divvn[:]=exxn[:]+eyyn[:]
+
    srn[:]=np.sqrt(0.5*(exxn[:]*exxn[:]+eyyn[:]*eyyn[:])+exyn[:]*exyn[:])
 
-   print("     -> exxn (m,M) %.6e %.6e " %(np.min(exxn),np.max(exxn)))
-   print("     -> eyyn (m,M) %.6e %.6e " %(np.min(eyyn),np.max(eyyn)))
-   print("     -> exyn (m,M) %.6e %.6e " %(np.min(exyn),np.max(exyn)))
-   print("     -> srn  (m,M) %.6e %.6e " %(np.min(srn),np.max(srn)))
+   print("     -> exxn  (m,M) %.6e %.6e " %(np.min(exxn),np.max(exxn)))
+   print("     -> eyyn  (m,M) %.6e %.6e " %(np.min(eyyn),np.max(eyyn)))
+   print("     -> exyn  (m,M) %.6e %.6e " %(np.min(exyn),np.max(exyn)))
+   print("     -> srn   (m,M) %.6e %.6e " %(np.min(srn),np.max(srn)))
+   print("     -> divvn (m,M) %.6e %.6e " %(np.min(divvn),np.max(divvn)))
 
    print("compute nod strain rate: %.3f s" % (timing.time() - start))
 
@@ -1178,7 +1189,7 @@ for iter in range(0,niter):
 
    if iter%every==0 and produce_nl_vtu:
 
-      filename = 'solution_q_nl_{:04d}'.format(iter)+name+'.vtu'
+      filename = 'solution_Q_nl_{:04d}'.format(iter)+name+'.vtu'
       vtufile=open(filename,"w")
       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
       vtufile.write("<UnstructuredGrid> \n")
@@ -1195,6 +1206,10 @@ for iter in range(0,niter):
       vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
       for iq in range(0,nq):
           vtufile.write("%10e \n" % etaq[iq])
+      vtufile.write("</DataArray>\n")
+      vtufile.write("<DataArray type='Float32' Name='div(v)' Format='ascii'> \n")
+      for iq in range(0,nq):
+          vtufile.write("%10e \n" % divvq[iq])
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='strain_rate (T)' Format='ascii'> \n")
       for iq in range(0,nq):
@@ -1234,7 +1249,7 @@ for iter in range(0,niter):
       vtufile.write("</VTKFile>\n")
       vtufile.close()
 
-      filename = 'solution_g_nl_{:04d}.vtu'.format(iter)
+      filename = 'solution_G_nl_{:04d}.vtu'.format(iter)
       vtufile=open(filename,"w")
       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
       vtufile.write("<UnstructuredGrid> \n")
@@ -1279,6 +1294,10 @@ for iter in range(0,niter):
       vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
       for i in range (0,NV):
           vtufile.write("%e\n" % (srn[i]))
+      vtufile.write("</DataArray>\n")
+      vtufile.write("<DataArray type='Float32' Name='div(v)' Format='ascii'> \n")
+      for i in range (0,NV):
+          vtufile.write("%e\n" % (divvn[i]))
       vtufile.write("</DataArray>\n")
 
       vtufile.write("</PointData>\n")

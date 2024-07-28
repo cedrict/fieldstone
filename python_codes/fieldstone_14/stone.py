@@ -198,7 +198,7 @@ for iel in range(0, nel):
     f_el =np.zeros((mV*ndofV),dtype=np.float64)
     K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
     G_el=np.zeros((mV*ndofV,1),dtype=np.float64)
-    h_el=np.zeros((1,1),dtype=np.float64)
+    h_el=np.zeros((1),dtype=np.float64)
 
     # integrate viscous term at 4 quadrature points
     for iq in [-1,1]:
