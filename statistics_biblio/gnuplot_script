@@ -20,21 +20,24 @@ plot[1965:2024][]\
 'tectonics_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'Tectonics',\
 'tectonophysics_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'Tectonophysics',\
 'solid_earth_stats.txt' u 1:2 w lp pt 5 ps 0.23 t 'Solid Earth',\
-'geology_stats.txt' u 1:2 w lp pt 5 ps 0.23 t 'Geology',\
-'pepi_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'PEPI',\
+'geology_stats.txt' u 1:2 w lp pt 1 ps 0.23 t 'Geology',\
+'pepi_stats.txt'  u 1:2 w lp pt 5 lw 1 ps 0.23 t 'PEPI',\
+'terra_nova_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'Terra Nova',\
+'icarus_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'Icarus',\
 
 #############################################################
+set term pdf enhanced font "Times,11pt"
 
 set ytics 1
 set boxwidth 0.5
 set style fill solid
 
-set title 'pepi'
+set title 'Physics of the Earth and Planetary Interiors'
 set output 'journal_pepi.pdf'
 plot[1965:2024][]\
 'pepi_stats.txt' u 1:2 with boxes notitle
 
-set title 'grl'
+set title 'Geophysical Research Letters'
 set output 'journal_grl.pdf'
 plot[1965:2024][]\
 'grl_stats.txt' u 1:2 with boxes notitle
@@ -64,6 +67,36 @@ set output 'journal_epsl.pdf'
 plot[1965:2024][]\
 'epsl_stats.txt' u 1:2 with boxes notitle
 
+set title 'geology'
+set output 'journal_geology.pdf'
+plot[1965:2024][]\
+'geology_stats.txt' u 1:2 with boxes notitle
+
+set title 'Solid Earth'
+set output 'journal_solid_earth.pdf'
+plot[1965:2024][]\
+'solid_earth_stats.txt' u 1:2 with boxes notitle
+
+set title 'Tectonics'
+set output 'journal_tectonics.pdf'
+plot[1965:2024][]\
+'tectonics_stats.txt' u 1:2 with boxes notitle
+
+set title 'Tectonophysics'
+set output 'journal_tectonophysics.pdf'
+plot[1965:2024][]\
+'tectonophysics_stats.txt' u 1:2 with boxes notitle
+
+set title 'Icarus'
+set output 'journal_icarus.pdf'
+plot[1965:2024][]\
+'icarus_stats.txt' u 1:2 with boxes notitle
+
+
+set title 'GMD'
+set output 'journal_gmd.pdf'
+plot[1965:2024][]\
+'gmd_stats.txt' u 1:2 with boxes notitle
 
 
 

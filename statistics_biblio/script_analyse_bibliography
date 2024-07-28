@@ -77,6 +77,7 @@ echo -n '2024 ' ; grep year ../biblio_geosciences.bib | grep 2024 | wc
 echo -n 'epsl              ' ; grep epsl        ../biblio_geosciences.bib | grep journal |wc
 echo -n 'g3                ' ; grep g3          ../biblio_geosciences.bib | grep journal |wc
 echo -n 'jgr               ' ; grep jgr         ../biblio_geosciences.bib | grep journal |wc
+echo -n 'jgr_planets       ' ; grep jgr_planets ../biblio_geosciences.bib | grep journal |wc
 echo -n 'grl               ' ; grep grl         ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Icarus            ' ; grep Icarus      ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Tectonics         ' ; grep Tectonics   ../biblio_geosciences.bib | grep journal |wc
@@ -86,6 +87,7 @@ echo -n 'Gondwana Research ' ; grep Gondwana    ../biblio_geosciences.bib | grep
 echo -n 'Nature            ' ; grep Nature      ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Solid Earth       ' ; grep solid_earth ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Science           ' ; grep Science     ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Terra Nova        ' ; grep Nova        ../biblio_geosciences.bib | grep journal |wc
 
 echo -n 'ijnme             ' ; grep ijnme       ../biblio_geosciences.bib | grep journal |wc
 echo -n 'ijnmf             ' ; grep ijnmf       ../biblio_geosciences.bib | grep journal |wc
@@ -133,6 +135,15 @@ for n in {1965..2026} ; do
 
     echo -n $n >> jcp_stats.txt 
     grep jcp ../biblio_geosciences.bib | grep journal | grep $n | wc >> jcp_stats.txt 
+
+    echo -n $n >> terra_nova_stats.txt 
+    grep Nova ../biblio_geosciences.bib | grep journal | grep $n | wc >> terra_nova_stats.txt 
+
+    echo -n $n >> icarus_stats.txt 
+    grep Icarus ../biblio_geosciences.bib | grep journal | grep $n | wc >> icarus_stats.txt 
+
+    echo -n $n >> gmd_stats.txt 
+    grep gmd ../biblio_geosciences.bib | grep journal | grep $n | wc >> gmd_stats.txt 
 
 done
 
