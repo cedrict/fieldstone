@@ -15,7 +15,7 @@ plot[1965:2024][]\
 'jgr_stats.txt' u 1:2 w lp pt 5 ps 0.23 t 'JGR',\
 'gji_stats.txt' u 1:2 w lp pt 5 ps 0.23 t 'GJI',\
 'grl_stats.txt' u 1:2 w lp pt 5 ps 0.23 t 'GRL',\
-'g3_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'G3',\
+'g3_stats.txt'  u 1:2 w lp pt 5 ps 0.23 lw 3 t 'G3',\
 'epsl_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'EPSL',\
 'tectonics_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'Tectonics',\
 'tectonophysics_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'Tectonophysics',\

@@ -145,6 +145,9 @@ for n in {1965..2026} ; do
     echo -n $n >> gmd_stats.txt 
     grep gmd ../biblio_geosciences.bib | grep journal | grep $n | wc >> gmd_stats.txt 
 
+    echo -n $n >> basin_research_stats.txt 
+    grep Basin ../biblio_geosciences.bib | grep journal | grep $n | wc >> basin_research_stats.txt 
+
 done
 
 
