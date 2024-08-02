@@ -88,6 +88,7 @@ echo -n 'Nature            ' ; grep Nature      ../biblio_geosciences.bib | grep
 echo -n 'Solid Earth       ' ; grep solid_earth ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Science           ' ; grep Science     ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Terra Nova        ' ; grep Nova        ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Computers & Geosc ' ; grep cageo       ../biblio_geosciences.bib | grep journal |wc
 
 echo -n 'ijnme             ' ; grep ijnme       ../biblio_geosciences.bib | grep journal |wc
 echo -n 'ijnmf             ' ; grep ijnmf       ../biblio_geosciences.bib | grep journal |wc
@@ -147,6 +148,10 @@ for n in {1965..2026} ; do
 
     echo -n $n >> basin_research_stats.txt 
     grep Basin ../biblio_geosciences.bib | grep journal | grep $n | wc >> basin_research_stats.txt 
+
+    echo -n $n >> ijnme_stats.txt 
+    grep ijnme ../biblio_geosciences.bib | grep journal | grep $n | wc >> ijnme_stats.txt 
+
 
 done
 
