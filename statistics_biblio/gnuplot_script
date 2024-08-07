@@ -92,12 +92,52 @@ set output 'journal_icarus.pdf'
 plot[1965:2024][]\
 'icarus_stats.txt' u 1:2 with boxes notitle
 
-
 set title 'GMD'
 set output 'journal_gmd.pdf'
 plot[1965:2024][]\
 'gmd_stats.txt' u 1:2 with boxes notitle
 
+set title 'Nature Geoscience'
+set output 'journal_natureG.pdf'
+plot[1965:2024][]\
+'natureG_stats.txt' u 1:2 with boxes notitle
+
+set title 'Nature Communications'
+set output 'journal_natureC.pdf'
+plot[1965:2024][]\
+'natureC_stats.txt' u 1:2 with boxes notitle
+
+set title 'Nature'
+set output 'journal_natureJ.pdf'
+plot[1965:2024][]\
+'natureJ_stats.txt' u 1:2 with boxes notitle
+
+
+set title 'Scientific Reports'
+set output 'journal_scientific_reports.pdf'
+plot[1965:2024][]\
+'scientific_reports_stats.txt' u 1:2 with boxes notitle
+
+set title 'Frontiers in Earth Science'
+set output 'journal_fes.pdf'
+plot[1965:2024][]\
+'fes_stats.txt' u 1:2 with boxes notitle
+
+set title 'Terra Nova'
+set output 'journal_terra_nova.pdf'
+plot[1965:2024][]\
+'terra_nova_stats.txt' u 1:2 with boxes notitle
+
+
+set title 'ijnme'
+set output 'journal_ijnme.pdf'
+plot[1965:2024][]\
+'ijnme_stats.txt' u 1:2 with boxes notitle
+
+set title 'ijnmf'
+set output 'journal_ijnmf.pdf'
+plot[1965:2024][]\
+'ijnmf_stats.txt' u 1:2 with boxes notitle
 
 
 

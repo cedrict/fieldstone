@@ -84,11 +84,15 @@ echo -n 'Tectonics         ' ; grep Tectonics   ../biblio_geosciences.bib | grep
 echo -n 'Lithos            ' ; grep Lithos      ../biblio_geosciences.bib | grep journal |wc
 echo -n 'pepi              ' ; grep pepi        ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Gondwana Research ' ; grep Gondwana    ../biblio_geosciences.bib | grep journal |wc
-echo -n 'Nature            ' ; grep Nature      ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Nature Geo        ' ; grep NatureG     ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Nature Comm       ' ; grep NatureC     ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Nature Journal    ' ; grep NatureJ     ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Solid Earth       ' ; grep solid_earth ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Science           ' ; grep Science     ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Terra Nova        ' ; grep Nova        ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Computers & Geosc ' ; grep cageo       ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Scientific Reports' ; grep ScientificR ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Frontiers in E Sc ' ; grep FES         ../biblio_geosciences.bib | grep journal |wc
 
 echo -n 'ijnme             ' ; grep ijnme       ../biblio_geosciences.bib | grep journal |wc
 echo -n 'ijnmf             ' ; grep ijnmf       ../biblio_geosciences.bib | grep journal |wc
@@ -152,13 +156,23 @@ for n in {1965..2026} ; do
     echo -n $n >> ijnme_stats.txt 
     grep ijnme ../biblio_geosciences.bib | grep journal | grep $n | wc >> ijnme_stats.txt 
 
+    echo -n $n >> ijnmf_stats.txt 
+    grep ijnmf ../biblio_geosciences.bib | grep journal | grep $n | wc >> ijnmf_stats.txt 
+
+    echo -n $n >> natureG_stats.txt 
+    grep NatureG ../biblio_geosciences.bib | grep journal | grep $n | wc >> natureG_stats.txt 
+
+    echo -n $n >> natureC_stats.txt 
+    grep NatureC ../biblio_geosciences.bib | grep journal | grep $n | wc >> natureC_stats.txt 
+
+    echo -n $n >> natureJ_stats.txt 
+    grep NatureJ ../biblio_geosciences.bib | grep journal | grep $n | wc >> natureJ_stats.txt 
+
+    echo -n $n >> scientific_reports_stats.txt 
+    grep ScientificRep ../biblio_geosciences.bib | grep journal | grep $n | wc >> scientific_reports_stats.txt 
+    echo -n $n >> fes_stats.txt 
+    grep FES ../biblio_geosciences.bib | grep journal | grep $n | wc >> fes_stats.txt 
 
 done
-
-
-
-
-
-
 
 
