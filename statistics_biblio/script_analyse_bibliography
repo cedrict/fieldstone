@@ -77,7 +77,8 @@ echo -n '2024 ' ; grep year ../biblio_geosciences.bib | grep 2024 | wc
 echo -n 'epsl              ' ; grep epsl        ../biblio_geosciences.bib | grep journal |wc
 echo -n 'g3                ' ; grep g3          ../biblio_geosciences.bib | grep journal |wc
 echo -n 'jgr               ' ; grep jgr         ../biblio_geosciences.bib | grep journal |wc
-echo -n 'jgr_planets       ' ; grep jgr_planets ../biblio_geosciences.bib | grep journal |wc
+echo -n 'jgr planets       ' ; grep jgr_planets ../biblio_geosciences.bib | grep journal |wc
+echo -n 'jgr earth Surf    ' ; grep jgr_es      ../biblio_geosciences.bib | grep journal |wc
 echo -n 'grl               ' ; grep grl         ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Icarus            ' ; grep Icarus      ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Tectonics         ' ; grep Tectonics   ../biblio_geosciences.bib | grep journal |wc
@@ -93,6 +94,13 @@ echo -n 'Terra Nova        ' ; grep Nova        ../biblio_geosciences.bib | grep
 echo -n 'Computers & Geosc ' ; grep cageo       ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Scientific Reports' ; grep ScientificR ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Frontiers in E Sc ' ; grep FES         ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Pure & Appl Geoph ' ; grep pag         ../biblio_geosciences.bib | grep journal |wc
+echo -n 'J struct Geo      ' ; grep jsg         ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Geology           ' ; grep Geology     ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Earth & Pl. Phys. ' ; grep epp         ../biblio_geosciences.bib | grep journal |wc
+echo -n 'J of Geodynamics  ' ; grep jog         ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Geoscience Front. ' ; grep geoF        ../biblio_geosciences.bib | grep journal |wc
+echo -n 'Earth-Science Rev.' ; grep esr         ../biblio_geosciences.bib | grep journal |wc
 
 echo -n 'ijnme             ' ; grep ijnme       ../biblio_geosciences.bib | grep journal |wc
 echo -n 'ijnmf             ' ; grep ijnmf       ../biblio_geosciences.bib | grep journal |wc
@@ -110,6 +118,9 @@ for n in {1965..2026} ; do
 
     echo -n $n >> jgr_stats.txt 
     grep jgr ../biblio_geosciences.bib | grep journal | grep $n | wc >> jgr_stats.txt 
+
+    echo -n $n >> jgr_planets_stats.txt 
+    grep jgr_planets ../biblio_geosciences.bib | grep journal | grep $n | wc >> jgr_planets_stats.txt 
 
     echo -n $n >> gji_stats.txt 
     grep gji ../biblio_geosciences.bib | grep journal | grep $n | wc >> gji_stats.txt 
@@ -170,9 +181,38 @@ for n in {1965..2026} ; do
 
     echo -n $n >> scientific_reports_stats.txt 
     grep ScientificRep ../biblio_geosciences.bib | grep journal | grep $n | wc >> scientific_reports_stats.txt 
+
     echo -n $n >> fes_stats.txt 
     grep FES ../biblio_geosciences.bib | grep journal | grep $n | wc >> fes_stats.txt 
 
+    echo -n $n >> joss_stats.txt 
+    grep joss ../biblio_geosciences.bib | grep journal | grep $n | wc >> joss_stats.txt 
+
+    echo -n $n >> cageo_stats.txt 
+    grep cageo ../biblio_geosciences.bib | grep journal | grep $n | wc >> cageo_stats.txt 
+
+    echo -n $n >> pag_stats.txt 
+    grep pag ../biblio_geosciences.bib | grep journal | grep $n | wc >> pag_stats.txt 
+
+    echo -n $n >> jsg_stats.txt 
+    grep jsg ../biblio_geosciences.bib | grep journal | grep $n | wc >> jsg_stats.txt 
+
+    echo -n $n >> epp_stats.txt 
+    grep epp ../biblio_geosciences.bib | grep journal | grep $n | wc >> epp_stats.txt 
+
+    echo -n $n >> cmame_stats.txt 
+    grep cmame ../biblio_geosciences.bib | grep journal | grep $n | wc >> cmame_stats.txt 
+
+    echo -n $n >> gondwana_stats.txt 
+    grep Gondwana ../biblio_geosciences.bib | grep journal | grep $n | wc >> gondwana_stats.txt 
+
+    echo -n $n >> jog_stats.txt 
+    grep jog ../biblio_geosciences.bib | grep journal | grep $n | wc >> jog_stats.txt 
+
+    echo -n $n >> geof_stats.txt 
+    grep geoF ../biblio_geosciences.bib | grep journal | grep $n | wc >> geof_stats.txt 
+
+    echo -n $n >> sciad_stats.txt 
+    grep sciad ../biblio_geosciences.bib | grep journal | grep $n | wc >> sciad_stats.txt 
+
 done
-
-

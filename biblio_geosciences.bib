@@ -1,8 +1,6 @@
 @string{joss = {Journal of Open Source Software}}
 @string{aa = {Astron.~Astrophys.}}
 @string{jcp = {J. Comp. Phys.}}
-@string{jgr = {J. Geophys. Res.: Solid Earth}}
-@string{jgr_planets = {J. Geophys. Res.: Planets}}
 @string{epsl = {Earth Planet. Sci. Lett.}}
 @string{grl = {Geophys. Res. Lett.}}
 @string{pepi = {Phys. Earth. Planet. Inter.}}
@@ -21,6 +19,19 @@
 @string{NatureJ = {Nature}}
 @string{ScientificReports = {Scientific Reports}}
 @string{FES = {Frontiers in Earth Science}}
+@string{pag = {Pure Appl. Geophys.}}
+@string{jsg = {Journal of Structural Geology}}
+@string{epp = {Earth and Planetary Physics}}
+@string{jog = {Journal of Geodynamics}}
+@string{geoF = {Geoscience Frontiers}}
+@string{sciad = {Science Advances}}
+@string{esr = {Earth-Science Reviews}}
+
+@string{jgr = {J. Geophys. Res.: Solid Earth}}
+@string{jgr_planets = {J. Geophys. Res.: Planets}}
+@string{jgr_atm = {J. Geophys. Res.: Atmospheres}}
+@string{jgr_es = {J. Geophys. Res.: Earth Surface}}
+@string{jgr_oceans = {J. Geophys. Res.: Oceans}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BOOKS
@@ -1649,7 +1660,7 @@ year={2016}}
 @article{aryt22,
 title={Incipient ocean spreading beneath the Arabian shield},
 author={Artemieva, Irina M and Yang, Haibin and Thybo, Hans},
-journal={Earth-Science Reviews},
+journal=esr, % 2022
 volume={226},
 pages={103955},
 doi={10.1016/j.earscirev.2022.103955},
@@ -1746,7 +1757,7 @@ year={2013}}
 @article{awzh14,
 title={The effects of laterally varying icy shell structure on the tidal response of Ganymede and Europa},
 author={A, Geruo and  Wahr, John and Zhong, Shijie},
-journal={Journal of Geophysical Research (Planets)},
+journal=jgr_planets, % 2014
 volume={119},
 number={3},
 pages={659--678},
@@ -1787,7 +1798,7 @@ year={2022}}
 title={Influence of magma-poor versus magma-rich passive margins on subduction initiation},
 author={Auzemery, Antoine and Yamato, Philippe and Duretz, Thibault and Willingshofer, E 
 and Matenco, L and Porkol{\'a}b, K},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2022
 volume={103},
 pages={172--186},
 doi={10.1016/j.gr.2021.11.012},
@@ -1855,7 +1866,7 @@ year={2021}}
 title={Mantle temperature and density anomalies: The influence of thermodynamic formulation, 
 melt, and anelasticity},
 author={Adam, C and King, SD and Caddick, MJ},
-journal=pepi,
+journal=pepi, % 2021
 pages={106772},
 doi={10.1016/j.pepi.2021.106772},
 year={2021}}
@@ -1894,7 +1905,7 @@ year={2011}}
 @article{atvt16,
 title={Using pattern recognition to infer parameters governing mantle convection},
 author={Atkins, Suzanne and Valentine, Andrew P and Tackley, Paul J and Trampert, Jeannot},
-journal=pepi,
+journal=pepi, % 2016
 volume={257},
 pages={171--186},
 doi={10.1016/j.pepi.2016.05.016},
@@ -1915,7 +1926,7 @@ year={2020}}
 title={At least three scales of convection in a mantle with strongly temperature-dependent viscosity},
 author={Androvandi, Sophie and Davaille, Anne and Limare, Angela and Foucquier, 
 Aur{\'e}lie and Marais, Catherine},
-journal=pepi,
+journal=pepi, % 2011
 volume={188},
 number={3-4},
 pages={132--141},
@@ -2077,7 +2088,7 @@ year={2004}}
 author={Amodeo, J. and Schuberth, B.S.A. and Bunge, H.-P. and Carrez, P. and Cordier, P.},
 title={On the role of thermal heterogeneities on the rheology of MgO under conditions 
 of the Earth's lower mantle},
-journal=pepi,
+journal=pepi, % 2015
 year={2015},
 volume={242},
 pages={1-8},
@@ -2166,7 +2177,7 @@ doi={10.1029/2012JB009227}}
 @ARTICLE{agyj09,
 author={Agard, P. and Yamato, P. and Jolivet, L. and Burov, E.},
 title={Exhumation of oceanic blueschists and eclogites in subduction zones: Timing and mechanisms},
-journal={Earth-Science Reviews},
+journal=esr, % 2009
 year={2009},
 volume={92},
 number={1-2},
@@ -2283,7 +2294,7 @@ year={2014}}
 @article{ains01,
 title={Essential boundary conditions and multi-point constraints in finite element analysis},
 author={M. Ainsworth},
-journal=cmame,
+journal=cmame, % 2001
 volume={190},
 pages={6323--6339},
 doi={10.1016/S0045-7825(01)00236-5},
@@ -2585,7 +2596,7 @@ year={2001}}
 @article{anki14,
 title={Driving the Earth machine ?},
 author={D.L. Anderson and S.D. King},
-journal={Science},
+journal={Science}, % 2014
 volume={346},
 pages={1184--1185},
 doi={10.1126/science.1261831},
@@ -2594,7 +2605,7 @@ year={2014}}
 @article{ande67,
 title={Phase changes in the upper mantle},
 author={Anderson, Don L},
-journal={Science},
+journal={Science}, % 1967
 volume={157},
 number={3793},
 pages={1165--1173},
@@ -2614,7 +2625,7 @@ year={2013}}
 @article{ande01,
 title={Top-down tectonics?},
 author={Anderson, Don L},
-journal={Science},
+journal={Science}, % 2001
 volume={293},
 number={5537},
 pages={2016--2018},
@@ -2724,7 +2735,7 @@ year={2013}}
 @article{adds16,
 title={Folder: A numerical tool to simulate the development of structures in layered media},
 author={M. Adamuszek and M. Dabrowski and D.W. Schmid},
-journal={Journal of Structural Geology},
+journal=jsg, % 2016
 volume={84},
 pages={85-101},
 doi={10.1016/j.jsg.2016.01.001},
@@ -2743,7 +2754,7 @@ year={1979}}
 @Article{aumh17,
 author="Austermann, J. and Mitrovica, J. X. and Huybers, P. and Rovere, A.",
 title="Detection of a dynamic topography signal in last interglacial sea-level records",
-journal="Science Advances",
+journal=sciad, % 2017
 year="2017",
 volume="3",
 number="7",
@@ -2872,7 +2883,7 @@ year={2014}}
 title={Interaction and linkage of extension fractures and normal faults: 
 examples from the rift zone of Iceland},
 author={V. Acocella and A. Gudmundsson and R. Funiciello},
-journal={Journal of Structural Geology},
+journal=jsg, % 2000
 volume={22},
 number={9},
 pages={1233--1246},
@@ -2912,7 +2923,7 @@ year={1996}}
 
 @article{artd05,
 Author = {D. Arcay and E. Tric and M.-P. Doin},
-journal = pepi, 
+journal = pepi, % 2005 
 Pages = {133-153},
 Title = {Numerical simulations of subduction zones. Effect of slab dehydration on the mantle wedge dynamics},
 Volume = {149},
@@ -3566,7 +3577,7 @@ year={2014}}
 @article{beka11,
 title={On the role of anisotropic viscosity for plate-scale flow},
 author={Becker, TW and Kawakatsu, H},
-journal={Geophysical research letters},
+journal=grl, % 2011
 volume={38},
 number={17},
 doi={10.1029/2011GL048584},
@@ -3841,7 +3852,7 @@ doi={10.1016/j.epsl.2021.117056}}
 title={Plate motion and plume-induced subduction initiation},
 author={Baes, Marzieh and Sobolev, Stephan and Gerya, Taras and 
 Stern, Robert and Brune, Sascha},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2021
 volume={98},
 pages={277--288},
 year={2021},
@@ -4118,7 +4129,7 @@ doi={10.1016/S0012-821X(00)00063-7}}
 @ARTICLE{bayr95b,
 author={Balachandar, S. and Yuen, D.A. and Reuteler, D.M. and Lauer, G.S.},
 title={Viscous dissipation in three-dimensional convection with temperature-dependent viscosity},
-journal={Science},
+journal={Science}, % 1995
 year={1995},
 volume={267},
 number={5201},
@@ -4150,7 +4161,7 @@ year={2004}}
 title={Localization of toroidal motion and shear heating in 3-D high Rayleigh 
 number convection with temperature-dependent viscosity},
 author={Balachandar, S and Yuen, David A and Reuteler, DM},
-journal={Geophysical research letters},
+journal=grl, % 1995
 volume={22},
 number={4},
 pages={477--480},
@@ -4265,7 +4276,7 @@ year={2004}}
 @article{brzf00,
 title={The gravity and isostatic Moho undulations in Qinghai--Tibet plateau},
 author={Braitenberg, CARLA and Zadro, MARIA and Fang, J and Wang, Y and Hsu, HT},
-journal={Journal of Geodynamics},
+journal=jog, % 2000
 volume={30},
 number={5},
 pages={489--505},
@@ -4427,7 +4438,7 @@ year={2003}}
 @article{bill20,
 title={Deep slab seismicity limited by rate of deformation in the transition zone},
 author={Billen, Magali I},
-journal={Science Advances},
+journal=sciad, % 2020
 volume={6},
 number={22},
 pages={eaaz7692},
@@ -4597,7 +4608,7 @@ year={2020}}
 @article{bogs04,
 title={Stability of the SUPG finite element method for transient advection--diffusion problems},
 author={Bochev, Pavel B and Gunzburger, Max D and Shadid, John N},
-journal={Computer methods in applied mechanics and engineering},
+journal=cmame, % 2004
 volume={193},
 number={23-26},
 doi={10.1016/j.cma.2004.01.026},
@@ -4691,7 +4702,7 @@ doi={10.1029/2000GL011864}}
 author={Butterworth, N.P. and Talsma, A.S. and M{\"u}ller, R.D. and Seton, M. and Bunge, H.-P. 
 and Schuberth, B.S.A. and Shephard, G.E. and Heine, C.},
 title={Geological, tomographic, kinematic and geodynamic constraints on the dynamics of sinking slabs},
-journal={Journal of Geodynamics},
+journal=jog, % 2014
 year={2014},
 volume={73},
 pages={1-13},
@@ -4852,7 +4863,7 @@ year={2006}}
 title={A geoscience perspective on immersive 3D gridded data visualization},
 author={Billen, Magali I and Kreylos, Oliver and Hamann, Bernd and Jadamec, Margarete A 
 and Kellogg, Louise H and Staadt, Oliver and Sumner, Dawn Y},
-journal={Computers \& Geosciences},
+journal=cageo, % 2008
 volume={34},
 number={9},
 doi={10.1016/j.cageo.2007.11.009},
@@ -4953,7 +4964,7 @@ title={UWGeodynamics: A teaching and research tool for numerical geodynamic mode
 author={Beucher, Romain and Moresi, Louis and Giordani, Julian and Mansour, John and 
 Sandiford, Dan and Farrington, Rebecca and Mondy, Luke and Mallard, Claire and Rey, Patrice 
 and Duclaux, Guillaume and others},
-journal={Journal of Open Source Software},
+journal=joss, % 2019
 volume={4},
 number={36},
 pages={1136},
@@ -5064,7 +5075,7 @@ year={1972}}
 @ARTICLE{bovt14,
 author={Boschman, L.M. and van Hinsbergen, D.J.J. and Torsvik, T.H. and Spakman, W. and Pindell, J.L.},
 title={Kinematic reconstruction of the Caribbean region since the early jurassic},
-journal={Earth-Science Reviews},
+journal=esr, % 2014
 year={2014},
 volume={138},
 pages={102-136},
@@ -5084,7 +5095,7 @@ doi={10.1016/j.lithos.2007.09.014}}
 @ARTICLE{bufy14b,
 author={Burov, E. and Francois, T. and Yamato, P. and Wolf, S.},
 title={Mechanisms of continental subduction and exhumation of HP and UHP rocks},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2014
 year={2014},
 volume={25},
 number={2},
@@ -5374,7 +5385,7 @@ title={A relationship between stabilized finite element methods and the Galerkin
 with bubble functions},
 author={Brezzi, Franco and Bristeau, Marie-Odile and Franca, Leopoldo P and Mallet, Michel 
 and Rog{\'e}, Gilbert},
-journal={Computer Methods in Applied Mechanics and Engineering},
+journal=cmame, % 1992
 volume={96},
 number={1},
 pages={117--129},
@@ -5406,7 +5417,7 @@ year={2001}}
 title={A review of Wilson Cycle plate margins: A role for mantle plumes in continental 
 break-up along sutures?},
 author={Buiter, Susanne JH and Torsvik, Trond H},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2014
 volume={26},
 number={2},
 pages={627--653},
@@ -5449,7 +5460,7 @@ publisher={Geological Society of America}}
 @article{brwr00,
 title={Arbitrary Lagrangian Eulerian finite element analysis of free surface flow},
 author={Braess, Henning and Wriggers, Peter},
-journal={Computer Methods in Applied Mechanics and Engineering},
+journal=cmame, % 2000
 volume={190},
 number={1-2},
 pages={95--109},
@@ -5487,7 +5498,7 @@ year={2014}}
 @article{best93,
 title={On the penetration of the 660 km phase change by mantle downflows},
 author={Bercovici, David and Schubert, Gerald and Tackley, Paul J},
-journal={Geophysical research letters},
+journal=grl, % 1993
 volume={20},
 number={23},
 pages={2599--2602},
@@ -5795,7 +5806,7 @@ pages={485--504}}
 @article{bens89,
 title={An efficient, accurate, simple ALE method for nonlinear finite element programs},
 author={Benson, David J},
-journal={Computer methods in applied mechanics and engineering},
+journal=cmame, % 1989
 volume={72},
 number={3},
 doi={},
@@ -5806,7 +5817,7 @@ year={1989}}
 author = {Broerse, Taco and Riva, Riccardo and Simons, Wim and Govers, Rob and Vermeersen, Bert},
 title = {Postseismic GRACE and GPS observations indicate a rheology contrast above and 
 below the Sumatra slab},
-journal = {Journal Of Geophysical Research},
+journal=jgr, % 2015
 year = {2015},
 volume = {120},
 doi={10.1002/2015JB011951},
@@ -5867,7 +5878,7 @@ year={2010}}
 title={Decoupling of plate-asthenosphere motion caused by non-linear viscosity
 during slab folding in the transition zone},
 author={M.I. Billen and K.M. Arredondo},
-journal=pepi,
+journal=pepi, % 2018
 volume={281},
 doi={10.1016/j.pepi.2018.04.011},
 pages={17--30},
@@ -5982,7 +5993,7 @@ title={Benchmarking numerical models of brittle thrust wedges},
 author={S.J.H. Buiter and G. Schreurs and M. Albertz and T.V. Gerya and B. Kaus and W. Landry 
 and L. {Le Pourhiet} and Y. Mishin and D.L. Egholm and M. Cooke and B. Maillot and C. Thieulot 
 and T. Crook and D. May and P. Souloumiac and C. Beaumont},
-journal={Journal of Structural Geology},
+journal=jsg, % 2016
 volume={92},
 pages={140--177},
 doi={10.1016/j.jsg.2016.03.003},
@@ -6000,7 +6011,7 @@ year={2015}}
 title={Thermochemical Mantle Convection with Drifting Deformable Continents: 
 Main Features of Supercontinent Cycle},
 author={Bobrov, AM and Baranov, AA},
-journal={Pure and Applied Geophysics},
+journal=pag, % 2019
 pages={1--21},
 doi={10.1007/s00024-019-02164-w},
 year={2019},
@@ -6009,7 +6020,7 @@ publisher={Springer}}
 @article{bai97,
 title={The quadrilateral Mini finite element for the Stokes problem},
 author={W. Bai},
-journal=cmame,
+journal=cmame, % 1997
 volume={143},
 pages={41--47},
 doi={10.1016/S0045-7825(96)01146-2},
@@ -6093,7 +6104,7 @@ year={2007}}
 @article{buha06,
 title={Edge stabilization for the generalized Stokes problem: A continuous interior penalty method},
 author={E. Burman and P. Hansbo},
-journal=cmame,
+journal=cmame, % 2006
 volume={195},
 pages={2393--2410},
 doi={10.1016/j.cma.2005.05.009},
@@ -6367,7 +6378,7 @@ year={1998}}
 title={Geodynamics of oceanic plateau and plume head accretion and their 
 role in Phanerozoic orogenic systems of China},
 author={Betts, Peter G and Moresi, Louis and Miller, Meghan S and Willis, David},
-journal={Geoscience Frontiers},
+journal=geoF, % 2015
 volume={6},
 number={1},
 doi={10.1016/j.gsf.2014.07.002},
@@ -6388,7 +6399,7 @@ year={2006}}
 @article{brmy98,
 title={Slab weakening by the exothermic olivine-spinel phase change},
 author={Brunet, David and Machetel, Philippe and Yuen, David A},
-journal={Geophysical research letters},
+journal=grl, % 1998
 volume={25},
 number={17},
 pages={3231--3234},
@@ -6473,9 +6484,9 @@ title = {Fine-Scale Modeling of Global Plate Tectonics},
 volume = {329},
 number = {5995},
 pages = {1020--1021},
-year = {2010},
 doi={10.1126/science.1194858},
-journal = {Science}}
+journal={Science}, % 2010
+year = {2010}}
 
 @article{bupi99,
 title={Landscape evolution: the interactions of tectonics and surface processes},
@@ -6514,8 +6525,7 @@ journal=gji, % 1999
 volume={136},
 number={2},
 pages={403--420},
-year={1999},
-publisher={Blackwell Science Ltd Oxford, UK}}
+year={1999}}
 
 @article{brsh01,
 title={A thin-plate model of Palaeozoic deformation of the Australian lithosphere: 
@@ -6525,8 +6535,7 @@ journal={Geological Society, London, Special Publications},
 volume={184},
 number={1},
 pages={165--193},
-year={2001},
-publisher={Geological Society of London}}
+year={2001}}
 
 @TECHREPORT{bram95,
 author = {Randall Bramley and Xiaoge Wang},
@@ -6656,7 +6665,7 @@ year={2008}}
 @article{bugs09,
 title={{Parallel scalable adjoint-based adaptive solution of variable-viscosity Stokes flow problems}},
 author={C. Burstedde and O. Ghattas and G. Stadler and T. Tu and L.C. Wilcox},
-journal=cmame,
+journal=cmame, % 2009
 volume={198},
 pages={1691--1700},
 doi={10.1016/j.cma.2008.12.015},
@@ -6804,7 +6813,7 @@ year={2008}}
 @article{bumb10,
 title={{Global scale models of the mantle flow field predicted by synthetic tomography models}},
 author={A.L. Bull and A.K. McNamara and T.W. Becker and J. Ritsema},
-journal=pepi,
+journal=pepi, % 2010
 volume={182},
 doi={10.1016/j.pepi.2010.03.004},
 pages={129--138},
@@ -6841,7 +6850,7 @@ year={1979}}
 @article{bogf15,
 title={{Assimilating lithosphere and slab history in 4-D Earth models}},
 author={D.J. Bower and M. Gurnis and N. Flament},
-journal=pepi,
+journal=pepi, % 2015
 volume={238},
 doi={10.1016/j.pepi.2014.10.013},
 pages={8--22},
@@ -6935,7 +6944,7 @@ year={1992}}
 title={{Time scales and heterogeneous structure in geodynamic Earth models}},
 author={H.-P. Bunge and M. Richards and C. Lithgow-Bertelloni and J.R. Baumgardner 
 and S.P. Grand and B. Romanowicz},
-journal={Science},
+journal={Science}, % 1998
 volume={280},
 pages={91--95},
 year={1998}}
@@ -7332,7 +7341,7 @@ year={2012}}
 @article{bogs13b,
 title={{Dynamic origins of seismic wavespeed variation in D"}},
 author={D.J. Bower and M. Gurnis and D. Sun},
-journal=pepi,
+journal=pepi, % 2013
 volume={214},
 pages={74--86},
 doi={10.1016/j.pepi.2012.10.004},
@@ -7342,7 +7351,7 @@ year={2013}}
 title={{Geodynamic regimes of intra-oceanic subduction: Implications for arc 
 extension vs. shortening processes}},
 author={B. Baitsch-Ghirardello and Taras V. Gerya and J.-P. Burg},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2014
 volume={25},
 pages={546--560},
 doi={10.1016/j.gr.2012.11.003},
@@ -7399,7 +7408,7 @@ year={1961}}
 title={{Streamline Upwind/Petrov-Galerkin formulations for convection dominated flows 
 with particular emphasis on the incompressible Navier-Stokes equations}},
 author={A.N. Brooks and T.J.R. Hughes},
-journal={Computer Methods in Applied Mechanics and Engineering},
+journal=cmame, % 1982
 volume={32},
 pages={199-259},
 doi={10.1016/0045-7825(82)90071-8},
@@ -7448,7 +7457,7 @@ year={2013}}
 @article{bodo94,
 title={Transpression and transtension within different structural levels in the central Aegean region},
 author={ K. Boronkay and T. Doutsos},
-journal={Journal of Structural Geology},
+journal=jsg, % 1994
 volume={16},
 number={11},
 pages={1555-1573},
@@ -7727,7 +7736,7 @@ year={2011}}
 @article{beml19,
 title={{A simple toy model for coupled retreat and detachment of subducting slabs}},
 author={D. Bercovici and E. Mulyukova and M.D. Long},
-journal={Journal of Geodynamics},
+journal=jog, % 2019
 volume={129},
 pages={275--289},
 doi={10.1016/j.jog.2018.03.002},
@@ -7805,7 +7814,7 @@ year={1995}}
 title={{Three-dimensional numerical simulations of crustal-scale wrenching using a 
 non-linear failure criterion}},
 author={Jean Braun},
-journal={Journal of Structural Geology},
+journal=jsg, % 1994
 volume={16},
 number={8},
 pages={1173-1186},
@@ -7900,7 +7909,7 @@ Year = {1990}}
 
 @article{braun94,
 Author = {J. Braun},
-journal = {Journal of structural geology},
+journal =jsg, % 1994
 Pages = {1173-1186},
 Title = {Three-dimensional numerical simulations of crustal-scale wrenching using 
 a non-linear failure criterion},
@@ -8271,6 +8280,26 @@ Year = {1997}}
 % CCCC
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+@article{cawj21,
+title={New insights into temperature-dependent ice properties and their 
+effect on ice shell convection for icy ocean worlds},
+author={Carnahan, Evan and Wolfenbarger, Natalie S and Jordan, Jacob S 
+and Hesse, Marc A},
+journal=epsl, % 2021
+volume={563},
+pages={116886},
+doi={10.1016/j.epsl.2021.116886},
+year={2021}}
+
+@article{caks24,
+title={Ishtar Terra highlands on Venus raised by craton-like formation mechanisms},
+author={Capitanio, Fabio A and Kerr, Madeleine and Stegman, Dave R 
+and Smrekar, Suzanne E},
+journal=NatureGeoscience, % 2024
+pages={1--7},
+doi={10.1038/s41561-024-01485-3},
+year={2024}}
+
 @article{crta15,
 title={Parameters controlling dynamically self-consistent plate tectonics 
 and single-sided subduction in global models of mantle convection},
@@ -8299,7 +8328,7 @@ title={Thermal and petrophysical characterization of the lithospheric
 mantle along the northeastern Iberia geo-transect},
 author={Carballo, Alberto and Fernandez, Manel and Torne, Montserrat and 
 Jim{\'e}nez-Munt, Ivone and Villase{\~n}or, Antonio},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2015
 volume={27},
 number={4},
 pages={1430--1445},
@@ -8549,7 +8578,7 @@ title={Geodynamics of progressive growth of arcuate fold-and-thrust belts: Insig
 from numerical modeling of the NE margin of the Qinghai-Tibetan plateau},
 author={Chen, Qizhi and Hu, Caibo and Orellana-Rovirosa, Felipe and Zhang, Kai-Jun 
 and Zhou, Longshou and Zhang, Huai and Shi, Yaolin},
-journal={Journal of Structural Geology},
+journal=jsg, % 2023
 pages={104939},
 volume={175},
 doi={10.1016/j.jsg.2023.104939},
@@ -8956,7 +8985,7 @@ year={2022}}
 title={Make subductions diverse again},
 author={Chelle-Michou, Cyril and McCarthy, Anders and Moyen, Jean-Fran{\c{c}}ois and 
 Cawood, Peter A and Capitanio, Fabio A},
-journal={Earth-Science Reviews},
+journal=esr, % 2022
 volume={226},
 pages={103966},
 year={2022},
@@ -9241,7 +9270,7 @@ year={2020}}
 @article{chcg21,
 title={Time can tell: Secular change in metamorphic timescales and the tectonic implications},
 author={Chowdhury, Priyadarshi and Chakraborty, Sumit and Gerya, Taras V},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2021
 volume={93},
 pages={291--310},
 doi={10.1016/j.gr.2021.02.003},
@@ -9495,7 +9524,7 @@ year={2020}}
 @article{cosc92,
 title={Displacement-length scaling relationship for faults: data synthesis and discussion},
 author={Cowie, Patience A and Scholz, Christopher H},
-journal={Journal of Structural Geology},
+journal=jsg, % 1992
 volume={14},
 number={10},
 pages={1149--1156},
@@ -9719,7 +9748,7 @@ year={2015}}
 @article{codi00,
 title={On stabilized finite element methods for linear systems of convection--diffusion-reaction equations},
 author={Codina, Ramon},
-journal={Computer Methods in Applied Mechanics and Engineering},
+journal=cmame, % 2000
 volume={188},
 number={1-3},
 pages={61--82},
@@ -9792,7 +9821,7 @@ author={Colli, L. and Ghelichkhan, S. and Bunge, H.-P. and Oeser, J.},
 title={Retrodictions of Mid Paleogene mantle flow and dynamic topography 
 in the Atlantic region from compressible high resolution adjoint mantle convection 
 models: Sensitivity to deep mantle viscosity and tomographic input model},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2018
 year={2018},
 volume={53},
 pages={252-272},
@@ -9852,7 +9881,7 @@ year={2016}}
 @article{codh08,
 title={The structure and dynamics of mid-ocean ridge hydrothermal systems},
 author={Coumou, D and Driesner, T and Heinrich, Christoph A},
-journal={Science},
+journal={Science}, % 2008
 volume={321},
 number={5897},
 pages={1825--1828},
@@ -10372,9 +10401,9 @@ author = {Coltice, Nicolas and Husson, Laurent and Faccenna, Claudio and Arnould
 title = {What drives tectonic plates?},
 volume = {5},
 number = {10},
-year = {2019},
+journal=sciad, % 2019
 doi={10.1126/sciadv.aax4295},
-journal = {Science Advances}}
+year = {2019}}
 
 @article{cull60,
 title={Analytical theory of erosion},
@@ -10448,7 +10477,7 @@ year={2014}}
 title={Generation of new continental crust by sublithospheric silicic-magma relamination in arcs: 
 a test of Taylor's andesite model},
 author={Castro, Antonio and Vogt, Katharina and Gerya, Taras},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2013
 volume={23},
 number={4},
 pages={1554--1566},
@@ -10460,7 +10489,7 @@ title={Numerical modeling of eastern Tibetan-type margin: influences of surface 
 lithospheric structure and crustal rheology},
 author={Chen, Lin and Gerya, Taras and Zhang, Zhongjie and Zhu, Guizhi and Duretz, Thibault and 
 Jacoby, Wolfgang R},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2013
 volume={24},
 number={3-4},
 pages={1091--1107},
@@ -10509,7 +10538,7 @@ year={2005}}
 @article{clrw06,
 title={Use of a regional, relict landscape to measure vertical deformation of the eastern Tibetan Plateau},
 author={Clark, M.K. and Royden, LH and Whipple, KX and Burchfiel, BC and Zhang, X and Tang, W},
-journal={Journal of Geophysical Research: Earth Surface},
+journal=jgr_es, % 2006 
 volume={111},
 number={F3},
 doi={10.1029/2005JF000294},
@@ -10707,7 +10736,7 @@ publisher={Blackwell Publishing Ltd Oxford, UK}}
 @article{crwy06,
 title={Predictive modelling of structure evolution in sandbox experiments},
 author={Crook, AJL and Willson, SM and Yu, JG and Owen, DRJ},
-journal={Journal of Structural Geology},
+journal=jsg, % 2006
 volume={28},
 number={5},
 pages={729--744},
@@ -11347,7 +11376,7 @@ year={2017}}
 @article{cogu17,
 title={{A mantle convection perspective on global tectonics}},
 author={N. Coltice and M. Gerault and M. Ulvrova},
-journal={Earth-Science Reviews},
+journal=esr, % 2017
 volume={165},
 doi={10.1016/j.earscirev.2016.11.006},
 pages={120--150},
@@ -11364,10 +11393,12 @@ year={2015}}
 
 @article{clvz10,
 title={{Lithosphere tectonics and thermo-mechanical properties: 
-An integrated modelling approach for Enhanced Geothermal Systems exploration in Europe}},
-author={Cloetingh, SAPL and van Wees, Jan Diederik and Ziegler, PA and Lenkey, L and Beekman, F 
-and Tesauro, M and F{\"o}rster, A and Norden, B and Kaban, M and Hardebol, N and others},
-journal={Earth-Science Reviews},
+An integrated modelling approach for Enhanced Geothermal Systems 
+exploration in Europe}},
+author={Cloetingh, SAPL and van Wees, Jan Diederik and Ziegler, PA 
+and Lenkey, L and Beekman, F and Tesauro, M and F{\"o}rster, A and 
+Norden, B and Kaban, M and Hardebol, N and others},
+journal=esr, % 2010
 volume={102},
 pages={159},
 doi={10.1016/j.earscirev.2010.05.003},
@@ -11737,7 +11768,7 @@ year={2012}}
 @article{clwv89,
 title={{On the Initiation of Subduction Zones}},
 author={S. Cloetingh and R. Wortel and N.J. Vlaar},
-journal={Pure and Applied Geophysics},
+journal=pag, % 1989
 volume={129},
 number={1/2},
 pages={7--25},
@@ -12084,7 +12115,7 @@ title={Implementation of a particle-in-cell method for the energy
 solver in 3D spherical geodynamic modeling},
 author={Dong, Hao and Cao, ZeBin and Liu, LiJun and Li, YanChong and 
 Li, SanZhong and Dai, LiMing and Li, XinYu},
-journal={Earth and Planetary Physics},
+journal=epp, % 2024
 volume={8},
 number={3},
 pages={549--563},
@@ -12631,7 +12662,7 @@ year={1994}}
 title={A possible anorthositic continent of early Mars and the role of planetary size 
 for the inception of Earth-like life},
 author={Dohm, James M and Maruyama, Shigenori and Kido, Motoyuki and Baker, Victor R},
-journal={Geoscience Frontiers},
+journal=geoF, % 2018
 volume={9},
 number={4},
 doi={10.1016/j.gsf.2016.12.003},
@@ -12864,7 +12895,7 @@ year={2000}}
 title={A thick pipe-like heat-transfer mechanism in the mantle: Nonlinear coupling 
 between 3-D convection and variable thermal conductivity},
 author={Dubuffet, Fabien and Yuen, David A},
-journal={Geophysical research letters},
+journal=grl, % 2000
 volume={27},
 number={1},
 pages={17--20},
@@ -13075,7 +13106,7 @@ year={2008}}
 @article{duti16,
 title={Computation of the gravity field and its gradient: Some applications},
 author={Dubey, CP and Tiwari, VM},
-journal={Computers \& geosciences},
+journal=cageo, % 2016
 volume={88},
 pages={83--96},
 doi={10.1016/j.cageo.2015.12.007},
@@ -13104,7 +13135,7 @@ year={2015}}
 @article{dega90,
 title={Current plate motions},
 author={DeMets, Charles and Gordon, R Go and Argus, DF and Stein, Seth},
-journal={Geophysical journal international},
+journal=gji, % 1990
 volume={101},
 number={2},
 pages={425--478},
@@ -13424,7 +13455,7 @@ year={2017}}
 @article{dala09,
 title={Fluvial erosion/transport equation of landscape evolution models revisited},
 author={Davy, Philippe and Lague, Dimitri},
-journal={Journal of Geophysical Research: Earth Surface},
+journal=jgr_es, % 2009
 volume={114},
 number={F3},
 year={2009}}
@@ -13756,7 +13787,7 @@ year={2016}}
 @article{duay16,
 author={T. Duretz and Ph. Agard and Ph. Yamato and C. Ducassou and E.B. Burov and T.V. Gerya},
 title={Thermo-mechanical modeling of the obduction process based on the Oman Ophiolite case},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2016
 year={2016},
 volume={32},
 pages={1-10},
@@ -13799,7 +13830,7 @@ year={1998}}
 title={{Finite element solution of the Navier-Stokes equations for incompressible flow 
 using a segregated algorithm}},
 author={C.G. du Toit},
-journal=cmame,
+journal=cmame, % 1998
 volume={151},
 pages={131--141},
 year={1998}}
@@ -13813,7 +13844,7 @@ year={2004}}
 @article{duto00,
 title={{A segregated finite element solution for non-isothermal flow}},
 author={C.G. du Toit},
-journal=cmame,
+journal=cmame, % 2000
 volume={182},
 pages={457--481},
 year={2000}}
@@ -14217,7 +14248,7 @@ year={2006}}
 @article{dzan81,
 title={{Preliminary reference Earth model}},
 author={A.M. Dziewonski and D.L. Anderson},
-journal=pepi,
+journal=pepi, % 1981
 volume={25},
 pages={297--356},
 doi={10.1016/0031-9201(81)90046-7},
@@ -14255,7 +14286,7 @@ year={1995}}
 title={{The p-version of the finite element method compared to an adaptive h-version 
 for the deformation theory of plasticity}},
 author={A. D\"{u}ster and E. Rank},
-journal=cmame,
+journal=cmame, % 2001
 volume={190},
 pages={1925--1935},
 doi={10.1016/S0045-7825(00)00215-2},
@@ -14398,7 +14429,7 @@ Year = {1952}}
 
 @article{dahlen84,
 Author = {F.A. Dahlen},
-journal = {Journal of geophysical research},
+journal=jgr, % 1984
 Pages = {10125-10133},
 Title = {Noncohesive critical coulomb wedges: an exact solution},
 Volume = {89},
@@ -14481,6 +14512,34 @@ Year = {1996}}
 % EEEE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+@article{evsa12,
+title={Simulating rotating fluid bodies: When is vorticity generation via density-stratification important?},
+author={Evonuk, M and Samuel, H},
+journal=epsl, % 2012
+volume={317},
+pages={1--7},
+doi={10.1016/j.epsl.2011.11.036},
+year={2012}}
+
+@article{evgl06,
+title={A 2D study of the effects of the size of a solid core on the equatorial flow in giant planets},
+author={Evonuk, Martha and Glatzmaier, Gary A},
+journal={Icarus}, % 2006
+volume={181},
+number={2},
+pages={458--464},
+doi={10.1016/j.icarus.2005.12.004},
+year={2006}}
+
+@article{evon15,
+title={Convection in deformed bodies: The effect of equatorial ellipticity on convective behavior},
+author={Evonuk, M},
+journal=epsl, % 2015
+volume={430},
+pages={249--259},
+doi={10.1016/j.epsl.2015.07.047},
+year={2015}}
+
 @article{epcs24,
 title={Evolving subduction zone thermal structure drives extensive forearc mantle wedge hydration},
 author={Epstein, GS and Condit, CB and Stoner, RK and Holt, AF and Guevara, VE},
@@ -14527,7 +14586,7 @@ year={1975}}
 title={Speculations on evolution of the terrestrial lithosphere--asthenosphere 
 system—plumes and plates},
 author={Ernst, WG},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2007
 volume={11},
 number={1-2},
 pages={38--49},
@@ -14845,7 +14904,7 @@ doi="10.1016/S0012-821X(01)00613-6"}
 author="Elkins-Tanton, L. T.",
 title="Continental magmatism, volatile recycling, and a heterogeneous mantle caused by 
 lithospheric gravitational instabilities",
-journal="Journal of Geophysical Research",
+journal=jgr, % 2007
 year="2007",
 volume="112",
 number="B3",
@@ -14877,7 +14936,7 @@ publisher={Oxford University Press}}
 @article{elsp04,
 title={Comparisons between analogue and numerical models of thrust wedge development},
 author={Ellis, Susan and Schreurs, Guido and Panien, Marion},
-journal={Journal of Structural Geology},
+journal=jsg, % 2004
 volume={26},
 number={9},
 pages={1659--1675},
@@ -15211,6 +15270,16 @@ year={2003}}
 % FFFF
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+@article{fori17,
+title={Long-term preservation of early formed mantle heterogeneity by 
+mobile lid convection: importance of grainsize evolution},
+author={Foley, Bradford J and Rizo, Hanika},
+journal=epsl, % 2017
+volume={475},
+pages={94--105},
+doi={10.1016/j.epsl.2017.07.031},
+year={2017}}
+
 @article{femt04,
 title={Lithospheric transition from the Variscan Iberian Massif to the 
 Jurassic oceanic crust of the Central Atlantic},
@@ -15381,7 +15450,7 @@ year={2000}}
 title={On constraining 3D seismic anisotropy in subduction, mid-ocean-ridge, 
 and plume environments with teleseismic body wave data},
 author={Faccenda, Manuele and VanderBeek, Brandon P},
-journal={Journal of Geodynamics},
+journal=jog, % 2023
 volume={158},
 pages={102003},
 doi={10.1016/j.jog.2023.102003},
@@ -15549,7 +15618,7 @@ year={2022}}
 title={The deformation matrix for simultaneous simple shearing, pure shearing and volume change, 
 and its application to transpression-transtension tectonics},
 author={Fossen, Haakon and Tikoff, Basil},
-journal={Journal of Structural Geology},
+journal=jsg, % 1993
 volume={15},
 number={3-5},
 pages={413--422},
@@ -15793,7 +15862,7 @@ year={1991}}
 @article{fabe20,
 title={Topographic expressions of mantle dynamics in the Mediterranean},
 author={Faccenna, Claudio and Becker, Thorsten W},
-journal={Earth-Science Reviews},
+journal=esr, % 2020
 volume={209},
 pages={103327},
 doi={10.1016/j.earscirev.2020.103327},
@@ -16153,7 +16222,7 @@ year={2009}}
 title={Parasitic folds with wrong vergence: How pre-existing geometrical asymmetries can 
 be inherited during multilayer buckle folding},
 author={Frehner, Marcel and Schmid, Timothy},
-journal={Journal of Structural Geology}, % 2016
+journal=jsg, % 2016
 volume={87},
 pages={19--29},
 doi={10.1016/j.jsg.2016.04.004},
@@ -16375,7 +16444,7 @@ year={2011}}
 @article{frsc06,
 title={Numerical simulations of parasitic folding in multilayers},
 author={Frehner, Marcel and Schmalholz, Stefan M},
-journal={Journal of Structural Geology}, % 2006
+journal=jsg, % 2006
 volume={28},
 number={9},
 pages={1647--1657},
@@ -16394,7 +16463,7 @@ publisher={Geological Society of London}}
 @article{freh11,
 title={The neutral lines in buckle folds},
 author={Frehner, Marcel},
-journal={Journal of Structural Geology}, % 2011
+journal=jsg, % 2011
 volume={33},
 number={10},
 pages={1501--1508},
@@ -16403,7 +16472,7 @@ year={2011}}
 @article{flet91,
 title={Three-dimensional folding of an embedded viscous layer in pure shear},
 author={Fletcher, Raymond C},
-journal={Journal of Structural Geology}, % 1991
+journal=jsg, % 1991
 volume={13},
 number={1},
 pages={87--96},
@@ -16441,7 +16510,7 @@ publisher={American Association of Petroleum Geologists (AAPG)}}
 @article{foro16,
 title={Fault linkage and relay structures in extensional settings - A review},
 author={Fossen, Haakon and Rotevatn, Atle},
-journal={Earth-Science Reviews},
+journal=esr, % 2016
 volume={154},
 pages={14--28},
 year={2016}}
@@ -16571,7 +16640,7 @@ year={2017}}
 @article{fige16,
 title={{Early Earth plume-lid tectonics: A high-resolution 3D numerical modelling approach}},
 author={R. Fischer and T. Gerya},
-journal={Journal of Geodynamics}, % 2016
+journal=jog, % 2016
 volume={100},
 doi={10.1016/j.jog.2016.03.004},
 pages={198--214},
@@ -16833,7 +16902,7 @@ year={2019}}
 @Article{frtv19,
 AUTHOR = {Fraters, M. and Thieulot, C. and van den Berg, A. and Spakman, W.},
 TITLE = {The Geodynamic World Builder: a solution for complex initial conditions in numerical modelling},
-JOURNAL = solid_earth, % 2019
+journal = solid_earth, % 2019
 YEAR = {2019},
 PAGES = {1785--1807},
 volume = {10},
@@ -17080,6 +17149,16 @@ Year = {1981}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % GGGG
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+@article{glbm24,
+title={Geodynamic controls on clastic-dominated base metal deposits},
+author={Glerum, Anne C and Brune, Sascha and Magnall, Joseph M and Weis, Philipp and Gleeson, Sarah A},
+journal=solid_earth, % 2024
+volume={15},
+number={8},
+pages={921--944},
+doi={10.5194/se-15-921-2024},
+year={2024}}
 
 @article{gacn00,
 title={Dynamic modelling of the subduction zone of central Mexico},
@@ -17464,7 +17543,7 @@ title={Terrane geodynamics: Evolution on the subduction conveyor from pre-collis
 post-collision and implications on Tethyan orogeny},
 author={G{\"u}n, Erkan and Pysklywec, Russell N and G{\"o}{\u{g}}{\"u}{\c{s}}, O{\u{g}}uz H 
 and Topuz, G{\"u}ltekin},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2022
 volume={105},
 pages={399--415},
 doi={10.1016/j.gr.2021.09.018},
@@ -17572,7 +17651,7 @@ title={Terrane Geodynamics: Evolution on the Subduction Conveyor from Pre-Collis
 Post-Collision and Implications on Tethyan Orogeny},
 author={G{\"u}n, Erkan and Pysklywec, Russell N and G{\"o}{\u{g}}{\"u}{\c{s}}, O{\u{g}}uz H 
 and Topuz, G{\"u}ltekin},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2021
 doi={10.1016/j.gr.2021.09.018},
 year={2021}}
 
@@ -17592,7 +17671,7 @@ title={Crack formation on top of propagating reverse faults of the Chuculay Faul
 northern Chile: Insights from field data and numerical modelling},
 author={Gonz{\'a}lez, Gabriel and Gerbault, Muriel and Martinod, Joseph and Cembrano, Jose 
 and Carrizo, Daniel and Allmendinger, Richard and Espina, Jacob},
-journal={Journal of Structural Geology},
+journal=jsg, % 2008
 volume={30},
 number={6},
 doi={10.1016/j.jsg.2008.02.008},
@@ -17815,7 +17894,7 @@ year={2020}}
 @ARTICLE{grlc20,
 AUTHOR={Grima, Antoniette Greta and Lithgow-Bertelloni, Carolina and Crameri, Fabio},   
 TITLE={Orphaning Regimes: The Missing Link Between Flattened and Penetrating Slab Morphologies},      
-JOURNAL=FES, % 2020
+journal=FES, % 2020
 VOLUME={8},      
 PAGES={374},     
 YEAR={2020},      
@@ -17825,7 +17904,7 @@ doi={10.3389/feart.2020.00374}}
 AUTHOR={Gunawardana, Prasanna M. and Morra, Gabriele and Chowdhury, Priyadarshi and Cawood, Peter A.},   
 TITLE={Calibrating the Yield Strength of Archean Lithosphere Based on the Volume of 
 Tonalite-Trondhjemite-Granodiorite Crust},      
-JOURNAL=FES, % 2020
+journal=FES, % 2020
 VOLUME={8},      
 PAGES={401},     
 YEAR={2020},      
@@ -17884,7 +17963,7 @@ year={2008}}
 @article{gost92,
 title={Global tectonics and space geodesy},
 author={Gordon, Richard G and Stein, Seth},
-journal={Science},
+journal={Science}, % 1992
 volume={256},
 number={5055},
 pages={333--342},
@@ -17935,7 +18014,7 @@ year={2008}}
 title={Effect of lower mantle viscosity on the time-dependence of plate velocities in 
 three-dimensional mantle convection models},
 author={Gait, AD and Lowman, JP},
-journal={Geophysical research letters},
+journal=grl, % 2007
 volume={34},
 number={21},
 doi={10.1029/2007GL031396},
@@ -18096,7 +18175,7 @@ year={2007}}
 title={Simulation of three-dimensional tectonic stress fields and quantitative prediction of 
 tectonic fracture within the Damintun Depression, Liaohe Basin, northeast China},
 author={Guo, Peng and Yao, Leihua and Ren, Desheng},
-journal={Journal of Structural Geology},
+journal=jsg, % 2016
 volume={86},
 pages={211--223},
 doi={10.1016/j.jsg.2016.03.007},
@@ -18165,7 +18244,7 @@ doi={10.1098/rspa.2018.0329}}
 @ARTICLE{ghmc18,
 author={Ghelichkhan, S. and Murb{\"o}ck, M. and Colli, L. and Pail, R. and Bunge, H.-P.},
 title={On the observability of epeirogenic movement in current and future gravity missions},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2018
 year={2018},
 volume={53},
 pages={273-284},
@@ -18432,7 +18511,7 @@ pages={12,211-12,228}}
 title={Geophysical exploration within northern Devils Lane graben, Canyonlands National Park, Utah: 
 implications for sediment thickness and tectonic evolution},
 author={Grosfils, EB and Schultz, RA and Kroeger, G},
-journal={Journal of Structural Geology},
+journal=jsg, % 2003
 volume={25},
 number={3},
 pages={455--467},
@@ -18846,7 +18925,7 @@ year={2009}}
 title={Peeling back the lithosphere: Controlling parameters, surface expressions and the 
 future directions in delamination modeling},
 author={G{\"o}{\u{g}}{\"u}{\c{s}}, O{\u{g}}uz H and Ueda, Kosuke},
-journal={Journal of Geodynamics},
+journal=jog, % 2018
 volume={117},
 pages={21--40},
 year={2018}}
@@ -19455,9 +19534,10 @@ doi={10.1111/j.1365-246X.2012.05426.x},
 year={2012}}
 
 @article{garm18,
-title = "Slab breakoff: A critical appraisal of a geological theory as applied in space and time",
+title = "Slab breakoff: A critical appraisal of a geological theory 
+as applied in space and time",
 author = "E. Garzanti and G. Radeff and M.G. Malus{\`a}",
-journal = "Earth-Science Reviews",
+journal=esr, % 2018
 volume = "177",
 pages = "303--319",
 year = "2018",
@@ -19927,7 +20007,7 @@ year={2008}}
 @article{gosk14,
 title={{Ultra-hot Mesoproterozoic evolution of intracontinental central Australia}},
 author={W. Gorczyk and H. Smithies and F. Korhonen and H. Howard and R. Quentin De Gromard},
-journal={Geoscience Frontiers},
+journal=geoF, % 2014
 volume={6},
 number={1},
 pages={23--37},
@@ -19972,7 +20052,7 @@ year={1982}}
 @article{gery11,
 title={{Future directions in subduction modeling}},
 author={T. Gerya},
-journal={Journal of Geodynamics},
+journal=jog, % 2011
 volume={52},
 pages={344-378},
 year={2011}}
@@ -20024,7 +20104,7 @@ year={2009}}
 title={{Rheological constraints on quartz derived from scaling relationships and numerical models 
 of sheared brittle-ductile quartz veins, central Southern alps, New Zealand}},
 author={S.G. Grigull and S.M. Ellis and T.A. Little and M.P. Hill and S.J.H. Buiter},
-journal={Journal of Structural Geology}, % 2012
+journal=jsg, % 2012
 volume={37},
 pages={200-222},
 year={2012}}
@@ -20092,7 +20172,7 @@ year={2010}}
 
 @article{gepd98,
 Author = {M. Gerbault and A.N.B. Poliakov and M. Daignieres},
-journal = {Journal of Structural Geology}, % 1998
+journal=jsg, % 1998
 Pages = {301-320},
 Title = {Prediction of faulting from the theories of elasticity and plasticity: what are the limits?},
 Volume = {20},
@@ -20413,7 +20493,7 @@ title={Globally distributed subducted materials along the Earth’s core-mantle 
 Implications for ultralow velocity zones},
 author={Hansen, Samantha E and Garnero, Edward J and Li, Mingming and 
 Shim, Sang-Heon and Rost, Sebastian},
-journal={Science Advances},
+journal=sciad, % 2023
 volume={9},
 number={14},
 doi={10.1126/sciadv.add4838},
@@ -20445,7 +20525,7 @@ year={2002}}
 @article{hash05,
 title={Thermo-compositional convection in Europa's icy shell with salinity},
 author={Han, Lijie and Showman, Adam P},
-journal={Geophysical research letters},
+journal=grl, % 2005
 volume={32},
 number={20},
 doi={10.1029/2005GL023979},
@@ -20455,7 +20535,7 @@ year={2005}}
 title={A simple computer program for calculating stress and strain rate in 
 2D viscous inclusion-matrix systems},
 author={Halter, William R and Macherel, Emilie and Schmalholz, Stefan M},
-journal={Journal of Structural Geology},
+journal=jsg, % 2022
 volume={160},
 pages={104617},
 doi={10.1016/j.jsg.2022.104617},
@@ -20513,7 +20593,7 @@ year={2023}}
 @article{hanm23,
 title={Basic structural geology of Venus: A review of the gaps and how to bridge them},
 author={Hanmer, Simon},
-journal={Earth-Science Reviews},
+journal=esr, % 2023
 pages={104331},
 doi={10.1016/j.earscirev.2023.104331},
 year={2023}}
@@ -20605,7 +20685,7 @@ year={2022}}
 title={Finite-element modelling of glacial isostatic adjustment (GIA): 
 Use of elastic foundations at material boundaries versus the geometrically non-linear formulation},
 author={Hampel, Andrea and L{\"u}ke, Jens and Krause, Thomas and Hetzel, Ralf},
-journal={Computers \& geosciences},
+journal=cageo, % 2019
 volume={122},
 pages={1--14},
 doi={10.1016/j.cageo.2018.08.002},
@@ -20844,7 +20924,7 @@ year={2000}}
 @article{hicd92,
 title={Mantle plumes and continental tectonics},
 author={Hill, RI and Campbell, IH and Davies, GF and Griffiths, RW},
-journal={Science},
+journal={Science}, % 1992
 volume={256},
 number={5054},
 pages={186--193},
@@ -20984,7 +21064,7 @@ doi={10.1029/95GL01087}}
 @ARTICLE{hoyu07,
 author={Hofmeister, A.M. and Yuen, D.A.},
 title={Critical phenomena in thermal conductivity: Implications for lower mantle dynamics},
-journal={Journal of Geodynamics},
+journal=jog, % 2007
 year={2007},
 volume={44},
 number={3-5},
@@ -21004,7 +21084,7 @@ year={1984}}
 @ARTICLE{hoyb93,
 author={Honda, S. and Yuen, D.A. and Balachandar, S. and Reuteler, D.},
 title={Three-dimensional instabilities of mantle convection with multiple phase transitions},
-journal={Science},
+journal={Science}, % 1993
 year={1993},
 volume={259},
 number={5099},
@@ -21014,7 +21094,7 @@ doi={10.1126/science.259.5099.1308}}
 @article{huhc98,
 title={Large earthquake nucleation associated with stress exchange between middle and upper crust},
 author={Huc, Mireille and Hassani, Riad and Ch{\'e}ry, Jean},
-journal={Geophysical research letters},
+journal=grl, % 1998
 volume={25},
 number={4},
 pages={551--554},
@@ -21998,7 +22078,7 @@ year={1978}}
 @article{hulz18,
 title={Reproducing past subduction and mantle flow using high-resolution global convection models},
 author={Hu, JiaShun and Liu, LiJun and Zhou, Quan},
-journal={Earth and Planetary Physics},
+journal=epp, % 2018
 volume={2},
 number={3},
 pages={189--207},
@@ -22118,7 +22198,7 @@ year={1981}}
 author = {Herman, Matthew W and Furlong, Kevin P and Govers, Rob},
 title = {{The Accumulation of Slip Deficit in Subduction Zones in the Absence of Mechanical Coupling: 
 Implications for the Behavior of Megathrust Earthquakes}},
-journal = {Journal Of Geophysical Research},
+journal=jgr, % 2018
 year = {2018},
 volume = {123},
 number = {9},
@@ -22128,7 +22208,7 @@ doi={10.1029/2018JB016336}}
 @article{humm86,
 title={A new finite element formulation for computational fluid dynamics: II. Beyond SUPG},
 author={Hughes, Thomas JR and Mallet, Michel and Mizukami, Akira},
-journal={Computer methods in applied mechanics and engineering},
+journal=cmame, % 1986
 volume={54},
 number={3},
 pages={341--355},
@@ -22160,7 +22240,7 @@ year={1996}}
 @article{hulz81,
 title={Lagrangian-Eulerian finite element formulation for incompressible viscous flows},
 author={Hughes, Thomas JR and Liu, Wing Kam and Zimmermann, Thomas K},
-journal={Computer methods in applied mechanics and engineering},
+journal=cmame, % 1981
 volume={29},
 number={3},
 doi={10.1016/0045-7825(81)90049-9},
@@ -22240,7 +22320,7 @@ volume={362},
 number={6410},
 pages={58--61},
 doi={10.1126/science.aat4723},
-journal={Science},
+journal={Science}, % 2018
 year={2018}}
 
 @article{hese07,
@@ -22277,7 +22357,7 @@ year={1984}}
 @article{hans11,
 title={{A nonconforming rotated $Q_1$ approximation on tetrahedra}},
 author={P. Hansbo},
-journal=cmame,
+journal=cmame, % 2011
 volume={200},
 pages={1311--1316},
 doi={10.1016/j.cma.2010.11.002},
@@ -22468,7 +22548,7 @@ year={2007}}
 title={{Complex rifted continental margins explained by dynamical
 models of depth-dependent lithospheric extension}},
 author={R.S. Huismans and C. Beaumont},
-journal={Geology},
+journal={Geology}, % 2008
 volume={36},
 number={2},
 pages={163-166},
@@ -22550,7 +22630,7 @@ year={1952}}
 title={{A discontinuous Galerkin method with a bound preserving limiter for the 
 advection of non-diffusive fields in solid Earth geodynamics}},
 author={Y. He and E.G. Puckett and M.I. Billen},
-journal=pepi,
+journal=pepi, % 2017
 volume={263},
 pages={23--37},
 year={2017}}
@@ -22642,7 +22722,7 @@ year={2012}}
 title={{High-Pressure creep of Serpentine, interseismic deformation, and initiation of subduction}},
 author={N. Hilairet and B. Reynard and Y. Wang and I. Daniel and 
 S. Merkel and N. Nishiyama and S. Petitgirard},
-journal={Science},
+journal={Science}, % 2007
 volume={318},
 pages={1910-1913},
 year={2007}}
@@ -22714,7 +22794,7 @@ year={1997}}
 @article{hond97,
 title={A possible role of weak zone at plate margin on secular mantle cooling},
 author={Honda, S},
-journal={Geophysical research letters},
+journal=grl, % 1997
 volume={24},
 number={22},
 pages={2861--2864},
@@ -22723,7 +22803,7 @@ year={1997}}
 @article{hond96,
 title={Local Rayleigh and Nusselt Numbers for Cartesian convection with temperature-dependent viscosity},
 author={Honda, S},
-journal={Geophysical research letters},
+journal=grl, % 1996
 volume={23},
 number={18},
 pages={2445--2448},
@@ -22740,7 +22820,7 @@ year={2013}}
 @article{huja07,
 title={{Terra infirma: Understanding salt tectonics}},
 author={M.R. Hudec and M.P.A. Jackson},
-journal={Earth-Science Reviews},
+journal=esr, % 2007
 volume={82},
 pages={1--28},
 year={2007}}
@@ -22748,7 +22828,7 @@ year={2007}}
 @article{hutm13,
 title={{An improved formulation of the incompressible Navier-Stokes equations with variable viscosity}},
 author={C. H{\"u}ttig and N. Tosi and W.B. Moore},
-journal=pepi,
+journal=pepi, % 2013
 volume={220},
 pages={11--18},
 year={2013}}
@@ -22795,7 +22875,7 @@ year={1990}}
 title={{Toasting the jelly sandwich: The effect of shear heating on
 lithospheric geotherms and strength  }},
 author={E.H. Hartz and Y.Y. Podlachikov},
-journal={Geology},
+journal={Geology}, % 2008
 volume={36},
 number={4},
 pages={331-334},
@@ -22804,7 +22884,7 @@ year={2008}}
 @article{holj13,
 title={{Earth's thermal evolution with multiple convection modes: A Monte-Carlo approach}},
 author={T. H\"{o}ink and A. Lenardic and A.M. Jellinek},
-journal=pepi,
+journal=pepi, % 2013
 volume={221},
 pages={22-26},
 year={2013}}
@@ -22821,7 +22901,7 @@ year={2010}}
 @article{hebr14,
 title={{Oblique rifting of the Equatorial Atlantic: Why there is no Saharan Atlantic Ocean}},
 author={C. Heine and S. Brune},
-journal={Geology},
+journal={Geology}, % 2014
 volume={42},
 number={3},
 pages={211-214},
@@ -23233,7 +23313,7 @@ year={2005}}
 AUTHOR = {Hillebrand, B. and Thieulot, C. and Geenen, T. and van den Berg, A. P. and Spakman, W.},
 TITLE = {Using the level set method in geodynamical modeling of multi-material flows 
 and Earth's free surface},
-JOURNAL = solid_earth, % 2014
+journal=solid_earth, % 2014
 VOLUME = {5},
 YEAR = {2014},
 NUMBER = {2},
@@ -23313,10 +23393,11 @@ doi={10.1111/bre.12181},
 pages={363--376},
 year={2017}}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % IIII
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 @article{iobr22,
 title={The Impact of Matrix Rheology on Stress Concentration in
@@ -23558,7 +23639,7 @@ doi={10.1016/0012-821X(89)90008-3}}
 title={Shortening viscous pressure ridges, a solution to the enigma of initiating 
 salt 'withdrawal' minibasins},
 author={Ings, Steven J and Beaumont, Christopher},
-journal={Geology},
+journal={Geology}, % 2010
 volume={38},
 number={4},
 doi={10.1130/G30520.1},
@@ -23656,7 +23737,7 @@ year={2007}}
 @article{iwho97,
 title={An interpretation of the Nusselt-Rayleigh number relationship for convection in a spherical shell},
 author={Iwase, Yasuyuki and Honda, Satoru},
-journal={Geophysical journal international},
+journal=gji, % 1997
 volume={130},
 number={3},
 pages={801--804},
@@ -23913,7 +23994,7 @@ year={2019}}
 @article{jart19b,
 title={Growing primordial continental crust self-consistently in global mantle convection models},
 author={Jain, Charitra and Rozel, Antoine B and Tackley, Paul J and Sanan, Patrick and Gerya, Taras V},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2019
 volume={73},
 pages={96--122},
 doi={10.1016/j.gr.2019.03.015},
@@ -23975,7 +24056,7 @@ year={1998}}
 AUTHOR = {Jourdon, A. and May, D. A.},
 TITLE = {An efficient parallel method to compute lithostatic pressure in 
 thermo-mechanical geodynamic models},
-JOURNAL = solid_earth, %2022
+journal=solid_earth, %2022
 volume={13},
 YEAR = {2022},
 pages={1107--1125},
@@ -24341,7 +24422,7 @@ year={2015}}
 @ARTICLE{jabh96,
 author={Jamieson, R.A. and Beaumont, C. and Hamilton, J. and Fullsack, P.},
 title={Tectonic assembly of inverted metamorphic sequences},
-journal={Geology},
+journal={Geology}, % 1996
 year={1996},
 volume={24},
 number={9},
@@ -24584,7 +24665,7 @@ year={2018}}
 title={{On spurious oscillations at layers diminishing (SOLD) methods for 
 convection-diffusion equations: Part I - A review}},
 author={V. John and P. Knobloch},
-journal=cmame,
+journal=cmame, % 2007
 volume={196},
 doi={10.1016/j.cma.2006.11.013},
 pages={2197--2215},
@@ -24594,7 +24675,7 @@ year={2007}}
 title={{On spurious oscillations at layers diminishing (SOLD) methods
 for convection-diffusion equations: Part II - Analysis for $P_1$ and $Q_1$ finite elements}},
 author={V. John and P. Knobloch},
-journal=cmame,
+journal=cmame, % 2008
 volume={197},
 pages={1997--2014},
 doi={10.1016/j.cma.2007.12.019},
@@ -24650,7 +24731,7 @@ year={2016}}
 @Article{jada16,
 author="Jadamec, M. A.",
 title="Insights on Slab-driven Mantle Flow from Advances in Three-dimensional modelling",
-journal="Journal of Geodynamics",
+journal=jog, % 2016
 year="2016",
 issn="0264-3707",
 doi="10.1016/j.jog.2016.07.004"}
@@ -24817,7 +24898,7 @@ organization={ACM}}
 title={{Complex phase distribution and seismic velocity structure of the transition zone: 
 Convection model predictions for a magnesium-endmember olivine-pyroxene mantle}},
 author={M.H.G. Jacobs and A.P. {van den Berg}},
-journal=pepi,
+journal=pepi, % 2011
 volume={186},
 pages={36--48},
 doi={10.1016/j.pepi.2011.02.008},
@@ -24923,6 +25004,16 @@ Year = {2000}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % KKKK
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+@article{kore09,
+title={How does small-scale convection manifest in surface heat flux?},
+author={Korenaga, Jun},
+journal=epsl, % 2009
+volume={287},
+number={3-4},
+pages={329--332},
+doi={10.1016/j.epsl.2009.08.015},
+year={2009}}
 
 @article{kufv21,
 title={Opposite symmetry in the lithospheric structure of the Alboran 
@@ -25426,7 +25517,7 @@ year={1996}}
 title={Geoid and topographic swells over temperature-dependent thermal plumes 
 in spherical-axisymmetric geometry},
 author={King, Scott D},
-journal={Geophysical research letters},
+journal=grl, % 1997
 volume={24},
 number={23},
 doi={10.1029/97GL53154},
@@ -25456,7 +25547,7 @@ year={1961}}
 @Article{krdw20,
 AUTHOR = {Kramer, S. C. and Davies, D. R. and Wilson, C. R.},
 TITLE = {Analytical solutions for mantle flow in cylindrical and spherical shells},
-JOURNAL = gmd,
+journal=gmd, % 2020
 VOLUME = {14},
 YEAR = {2021},
 NUMBER = {4},
@@ -25616,6 +25707,16 @@ pages={1361--1373},
 doi={10.1007/s10712-014-9281-3},
 year={2014}}
 
+@article{kojo01,
+title={Effects of vertical boundaries on infinite Prandtl number thermal convection},
+author={Korenaga, Jun and Jordan, Thomas H},
+journal=gji, % 2001
+volume={147},
+number={3},
+pages={639--659},
+doi={10.1046/j.1365-246x.2001.01561.x},
+year={2001}}
+
 @article{kojo02,
 title={Onset of convection with temperature-and depth-dependent viscosity},
 author={Korenaga, Jun and Jordan, Thomas H},
@@ -25624,6 +25725,16 @@ volume={29},
 number={19},
 pages={29--1},
 doi={10.1029/2002GL015672},
+year={2002}}
+
+@article{kojo02b,
+title={On the state of sublithospheric upper mantle beneath a supercontinent},
+author={Korenaga, Jun and H. Jordan, Thomas},
+journal=gji, % 2002,
+volume={149},
+number={1},
+pages={179--189},
+doi={10.1046/j.1365-246X.2002.01633.x}, 
 year={2002}}
 
 @article{kojo03,
@@ -25699,7 +25810,7 @@ year={1992}}
 @article{katr12,
 title={Density structure of the mantle transition zone and the dynamic geoid},
 author={Kaban, Mikhail K and Trubitsyn, Valeriy},
-journal={Journal of Geodynamics},
+journal=jog, % 2012
 volume={59},
 doi={10.1016/j.jog.2012.02.007},
 pages={183--192},
@@ -25709,7 +25820,7 @@ year={2012}}
 title={Importance of lateral viscosity variations in the whole mantle for modelling 
 of the dynamic geoid and surface velocities},
 author={Kaban, Mikhail K and Rogozhina, Irina and Trubitsyn, Valeriy},
-journal={Journal of Geodynamics},
+journal=jog, % 2007
 volume={43},
 number={2},
 doi={10.1016/j.jog.2006.09.020},
@@ -25738,7 +25849,7 @@ year={2020}}
 @article{kagu04,
 title={Indian punch rifts Tibet},
 author={Kapp, Paul and Guynn, Jerome H},
-journal={Geology},
+journal={Geology}, % 2004
 volume={32},
 number={11},
 pages={993--996},
@@ -25822,7 +25933,7 @@ year = {2019}}
 @article{koma05,
 title={Dynamic reverse modelling of flanking structures: a source of quantitative kinematic information},
 author={Kocher, Thomas and Mancktelow, Neil S},
-journal={Journal of Structural Geology},
+journal=jsg, % 2005
 volume={27},
 number={8},
 doi={10.1016/j.jsg.2005.05.007},
@@ -26057,7 +26168,7 @@ doi={10.1016/j.epsl.2016.08.039}}
 @article{kebb20,
 title={Inherited terrane properties explain enigmatic post-collisional Himalayan-Tibetan evolution},
 author={Kelly, Sean and Beaumont, Christopher and Butler, Jared P},
-journal={Geology},
+journal={Geology}, % 2020
 volume={48},
 number={1},
 pages={8--14},
@@ -26076,7 +26187,7 @@ year={2022}}
 @article{kehv99,
 title={Compositional stratification in the deep mantle},
 author={Kellogg, Louise H and Hager, Bradford H and Van Der Hilst, Rob D},
-journal={Science},
+journal={Science}, % 1999
 volume={283},
 number={5409},
 doi={10.1126/science.283.5409.1881},
@@ -26392,7 +26503,7 @@ year={2018}}
 @article{kiwh12,
 title={Expression of active tectonics in erosional landscapes},
 author={Kirby, Eric and Whipple, Kelin X},
-journal={Journal of Structural Geology}, % 2012
+journal=jsg, % 2012
 volume={44},
 pages={54--75},
 doi={10.1016/j.jsg.2012.07.009},
@@ -26473,7 +26584,7 @@ year={2016}}
 @article{king16,
 title={Reconciling laboratory and observational models of mantle rheology in geodynamic modelling},
 author={King, Scott D},
-journal={Journal of Geodynamics},
+journal=jog, % 2016
 volume={100},
 pages={33--50},
 doi={10.1016/j.jog.2016.03.005},
@@ -26492,7 +26603,7 @@ year={2010}}
 @article{king18,
 title={{Venus Resurfacing Constrained by Geoid and Topography}},
 author={S.D. King},
-journal={JGR: Planets},
+journal=jgr_planets, % 2018
 volume={123},
 pages={1041--1060},
 doi={10.1002/2017JE005475},
@@ -26601,7 +26712,7 @@ year={1991}}
 @article{kalc15,
 title={{A hybridizable discontinuous Galerkin formulation for non-linear elasticity}},
 author={H. Kabaria and A.J. Lew and B. Cockburn},
-journal=cmame,
+journal=cmame, % 2015
 volume={283},
 pages={303--329},
 year={2015}}
@@ -26854,7 +26965,7 @@ year={2011}}
 @article{kaks08,
 title={{Multigrid-based simulation code for mantle convection in spherical shell using Yin-Yang grid}},
 author={M. Kameyama and A. Kageyamab and T. Sato},
-journal=pepi,
+journal=pepi, % 2008
 volume={171},
 pages={19--32},
 year={2008}}
@@ -26883,7 +26994,7 @@ title={{Contrasted continental rifting via plume-craton interaction: Application
 to Central East African Rift}},
 author={A. Koptev and E. Burov and E. Calais and S. Leroy and T. Gerya 
 and L. Guillou-Frottier and S. Cloetingh},
-journal={Geoscience Frontiers},
+journal=geoF, % 2016
 volume={7},
 pages={221-236},
 year={2016}}
@@ -26904,7 +27015,7 @@ author={A. Kiraly and F.A. Capitanio and F. Funiciello and C. Faccenna},
 volume={44},
 number={9},
 pages={715--718},
-journal={Geology},
+journal={Geology}, % 2016
 doi={10.1130/G37912.1},
 year={2016}}
 
@@ -26919,7 +27030,7 @@ year={1998}}
 @article{kiad14,
 title={{Hotspot swells revisited}},
 author={S.D. King and C. Adam},
-journal=pepi,
+journal=pepi, % kiad14
 volume={235},
 pages={66--83},
 year={2014}}
@@ -26979,7 +27090,7 @@ year={2004}}
 title={{ConMan: Vectorizing a finite element code for incompressible 
 two-dimensional convection in the Earth's mantle}},
 author={S.D. King and A. Raefsky and B.H. Hager},
-journal=pepi,
+journal=pepi, % 1990
 volume={59},
 doi={10.1016/0031-9201(90)90225-M},
 pages={195--208},
@@ -27012,7 +27123,7 @@ year={2006}}
 @article{kifr15,
 title={{Why cold slabs stagnate in the transition zone}},
 author={S.D. King and D.J. Frost and D.C. Rubie},
-journal={Geology},
+journal={Geology}, % 2015
 pages={231--234},
 volume={43},
 number={3},
@@ -27067,7 +27178,7 @@ year={2007}}
 title={{Rheological structure and deformation of subducted slabs in the mantle transition zone: 
 implications for mantle circulation and deep earthquakes}},
 author={S. Karato and M.R. Riedel and D.A. Yuen },
-journal=pepi,
+journal=pepi, % 2001
 volume={127},
 pages={83--108},
 doi={10.1016/S0031-9201(01)00223-0},
@@ -27076,7 +27187,7 @@ year={2001}}
 @article{kaka08,
 title={{Low-temperature, high-stress deformation of olivine under water-saturated conditions}},
 author={I. Katayama and S. Karato},
-journal=pepi,
+journal=pepi, % 2008
 volume={168},
 number={3-4},
 pages={125--133},
@@ -27316,7 +27427,7 @@ on the deformation of a viscoelastic shear zone},
  author={M. Kameyama and D.A. Yuen and S.-I. Karato},
 journal=epsl, % 1999
 volume={168},
-doi={10.1016/j.pepi.2006.02.005},
+doi={},
 pages={159--172},
 year={1999}}
 
@@ -27497,7 +27608,7 @@ year={2018}}
 title={Single layer folding in simple shear},
 author={Llorens, Maria-Gema and Bons, Paul D and Griera, Albert and 
 Gomez-Rivas, Enrique and Evans, Lynn A},
-journal={Journal of Structural Geology}, % 2013
+journal=jsg, % 2013
 volume={50},
 pages={209--220},
 doi={10.1016/j.jsg.2012.04.002},
@@ -27671,7 +27782,7 @@ year={2023}}
 title={Reviewing subduction initiation and the origin of plate tectonics: 
 What do we learn from present-day Earth?},
 author={Lu, Gang and Zhao, Liang and Chen, Ling and Wan, Bo and Wu, FuYuan},
-journal={Earth and Planetary Physics},
+journal=epp, % 2021
 volume={5},
 number={2},
 pages={123--140},
@@ -27845,7 +27956,7 @@ year={2023}}
 title={When plateau meets subduction zone: a review of numerical models},
 author={Liu, Ze and Dai, Liming and Li, Sanzhong and Wang, Liangliang and Xing, Huilin and 
 Liu, Yongjiang and Ma, Fangfang and Dong, Hao and Li, Fakun},
-journal={Earth-Science Reviews},
+journal=esr, % 2021
 volume={215},
 pages={103556},
 doi={10.1016/j.earscirev.2021.103556},
@@ -28065,7 +28176,7 @@ year={2022}}
 title={Thermal structure of continental subduction zone: high temperature caused 
 by the removal of the preceding oceanic slab},
 author={Luo, Ting and Leng, Wei},
-journal={Earth and Planetary Physics},
+journal=epp, % 2021
 volume={5},
 number={3},
 pages={290--295},
@@ -28203,7 +28314,7 @@ year={2010}}
 title={Subduction initiation from the earliest stages to self-sustained subduction: 
 Insights from the analysis of 70 Cenozoic sites},
 author={Lallemand, Serge and Arcay, Diane},
-journal={Earth-Science Reviews},
+journal=esr, % 2021
 volume={221},
 pages={103779},
 doi={10.1016/j.earscirev.2021.103779},
@@ -28630,13 +28741,25 @@ doi={10.1016/S0012-821X(96)00247-6},
 pages={393-399}}
 
 @article{lezh10,
-title={Surface subsidence caused by mantle plumes and volcanic loading in large igneous provinces},
+title={Surface subsidence caused by mantle plumes and volcanic 
+loading in large igneous provinces},
 author={Leng, Wei and Zhong, Shijie},
 journal=epsl, % 2010
 volume={291},
 number={1-4},
 pages={207--214},
 doi={10.1016/j.epsl.2010.01.015},
+year={2010}}
+
+@article{lezh10b,
+title={Constraints on viscous dissipation of plate bending 
+from compressible mantle convection},
+author={Leng, Wei and Zhong, Shijie},
+journal=epsl, % 2010
+volume={297},
+number={1-2},
+pages={154--164},
+doi={10.1016/j.epsl.2010.06.016},
 year={2010}}
 
 @article{lecd00,
@@ -28763,7 +28886,7 @@ year={2011}}
 title={Plumes anchored by a high viscosity lower mantle in a 3D mantle 
 convection model featuring dynamically evolving plates},
 author={Lowman, JP and Gait, AD and Gable, CW and Kukreja, H},
-journal={Geophysical research letters},
+journal=grl, % 2008
 volume={35},
 number={19},
 doi={10.1029/2008GL035342},
@@ -28783,7 +28906,7 @@ year={1999}}
 title={Pitfalls among the promises of mechanics-based restoration: 
 Addressing implications of unphysical boundary conditions},
 author={Lovely, Peter and Flodin, Eric and Guzofski, Chris and Maerten, Frantz and Pollard, David D},
-journal={Journal of Structural Geology},
+journal=jsg, % 2012
 volume={41},
 doi={10.1016/j.jsg.2012.02.020},
 pages={47--63},
@@ -29034,7 +29157,7 @@ year={2014}}
 @article{lahd05,
 title={Discharge, discharge variability, and the bedrock channel profile},
 author={Lague, Dimitri and Hovius, Niels and Davy, Philippe},
-journal={Journal of Geophysical Research: Earth Surface},
+journal=jgr_es, % 2005
 volume={110},
 number={F4},
 doi={10.1029/2004JF000259},
@@ -29153,7 +29276,7 @@ doi="10.1038/nature10749"}
 @Article{laki96,
 author="Larson, R. L. and Kincaid, C.",
 title="Onset of mid-Cretaceous volcanism by elevation of the 670 km thermal boundary layer",
-journal="Geology",
+journal="Geology", % 1996
 year="1996",
 volume="24",
 number="6",
@@ -29254,7 +29377,7 @@ doi="10.1016/j.epsl.2011.10.033"}
 @Article{leki10,
 author="Lee, C. and King, S. D.",
 title="Why are high-Mg\# andesites widespread in the western Aleutians? A numerical model approach",
-journal="Geology",
+journal="Geology", % 2010
 year="2010",
 volume="38",
 number="7",
@@ -29431,7 +29554,7 @@ year={1990}}
 @article{lisg08,
 title={Reconstructing Farallon plate subduction beneath North America back to the Late Cretaceous},
 author={Liu, Lijun and Spasojevi{\'c}, Sonja and Gurnis, Michael},
-journal={Science},
+journal={Science}, % 2008
 volume={322},
 number={5903},
 pages={934--938},
@@ -29524,7 +29647,7 @@ publisher={AIP}}
 title={Heat flow scaling for mantle convection below a conducting lid: Resolving seemingly 
 inconsistent modeling results regarding continental heat flow},
 author={Lenardic, Adrian and Moresi, L},
-journal={Geophysical research letters},
+journal=grl, % 2001
 volume={28},
 number={7},
 pages={1311--1314},
@@ -29657,10 +29780,10 @@ doi={10.1016/j.icarus.2009.06.035}}
 title={Interactive editing of 3D geological structures and tectonic history sketching 
 via a rigid element method},
 author={Laurent, Gautier and Caumon, Guillaume and Jessell, Mark},
-journal={Computers \& geosciences},
+journal=cageo, % 2015
 volume={74},
 pages={71--86},
-wdoi={10.1016/j.cageo.2014.10.011},
+doi={10.1016/j.cageo.2014.10.011},
 year={2015}}
 
 @article{lewh19,
@@ -29950,7 +30073,7 @@ year={2019}}
 @article{lige14b,
 title={From continental rifting to seafloor spreading: Insight from 3D thermo-mechanical modeling},
 author={J. Liao and T. Gerya},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2014
 pages={},
 year={2014}}
 
@@ -30011,7 +30134,7 @@ year={2017}}
 @article{leru86,
 title={On the convergence of the bilinear-velocity constant-pressure finite element method in viscous flow},
 author={P. LeTallec and V. Ruas},
-journal=cmame,
+journal=cmame, % 1986
 volume={54},
 pages={235--243},
 year={1986}}
@@ -30019,7 +30142,7 @@ year={1986}}
 @article{leta81,
 title={Compatibility condition and existence results in discrete finite incompressible elasticity},
 author={P. LeTallec},
-journal=cmame,
+journal=cmame, % 1981
 volume={27},
 pages={239--259},
 year={1981}}
@@ -30128,7 +30251,7 @@ year={2005}}
 @article{labp99,
 title={Self-consistent rolling-hinge model for the evolution of large-offset low-angle normal faults},
 author={Lavier, Luc L and Roger Buck, W and Poliakov, Alexei NB},
-journal={Geology},
+journal={Geology}, % 1999
 volume={27},
 number={12},
 pages={1127--1130},
@@ -30264,7 +30387,7 @@ year={2011}}
 title={Supercontinent-superplume coupling, true polar wander and plume mobility: 
 Plate dominance in whole-mantle tectonics},
 author={Z.-X. Lia and S. Zhong},
-journal=pepi,
+journal=pepi, % 2009
 volume={176},
 pages={143--156},
 year={2009}}
@@ -30406,7 +30529,7 @@ year={2015}}
 title={Variability of subducting slab morphologies in the mantle transition zone: 
 Insight from petrological-thermomechanical modeling},
 author={Li, Zhong-Hai and Gerya, Taras and Connolly, James AD},
-journal={Earth-Science Reviews},
+journal=esr, % 2019
 volume={196},
 pages={102874},
 doi={10.1016/j.earscirev.2019.05.018},
@@ -30415,7 +30538,7 @@ year={2019}}
 @article{llor19,
 title={{Stress and strain evolution during single-layer folding under pure and simple shear}},
 author={M.-G. Llorens},
-journal={Journal of Structural Geology},
+journal=jsg, % 2019
 volume={126},
 pages={245--257},
 doi={10.1016/j.jsg.2019.06.009},
@@ -30575,7 +30698,7 @@ Year = {2008}}
 title={Numerical modeling of metamorphic core complex formation: 
 Implications for the destruction of the North China Craton},
 author={Ma, ZiQi and Lu, Gang and Yang, JianFeng and Zhao, Liang},
-journal={Earth and Planetary Physics},
+journal=epp, % 2022
 volume={6},
 number={2},
 pages={191--203},
@@ -30670,7 +30793,7 @@ year={2023}}
 @article{mebo95,
 title={Kinematic considerations for mantle mixing},
 author={Metcalfe, Guy and Bina, Craig R and Ottino, JM},
-journal={Geophysical research letters},
+journal=grl, % 1995 
 volume={22},
 number={7},
 pages={743--746},
@@ -30792,7 +30915,7 @@ title={BurnMan – a Python toolkit for planetary geophysics,
 geochemistry and thermodynamics},
 author={Robert Myhill and Sanne Cottaar and Timo Heister and Ian Rose and 
 Cayman Unterborn and Juliane Dannberg and Rene Gassmoeller},
-journal=joss,
+journal=joss, % 2023
 volume={8},
 number={87},
 pages={5389},
@@ -30813,7 +30936,7 @@ year={2000}}
 @article{mord23,
 title={The role of surface processes in basin inversion and breakup unconformity},
 author={Mondy, Luke S and Rey, Patrice F and Duclaux, Guillaume},
-journal={Geology},
+journal={Geology}, % 2023
 volume={},
 pages={},
 doi={10.1130/G50833.1},
@@ -30895,7 +31018,7 @@ year={2022}}
 @article{mcsd01,
 author = {McKinnon, William B. and Schenk, Paul M. and Dombard, Andrew J.},
 title = "{Chaos on Io: A model for formation of mountain blocks by crustal heating, melting, and tilting}",
-journal = {Geology},
+journal={Geology}, % 2001
 volume = {29},
 number = {2},
 pages = {103-106},
@@ -31008,7 +31131,7 @@ year={2022}}
 title={Along-strike variations of the slip direction on normal faults: 
 Insights from three-dimensional finite-element models},
 author={Maniatis, Georgios and Hampel, Andrea},
-journal={Journal of structural geology},
+journal=jsg, % 2008
 volume={30},
 number={1},
 doi={10.1016/j.jsg.2007.10.002},
@@ -31240,7 +31363,7 @@ year={2002}}
 @article{masb03,
 title={Deformation of ductile inclusions in a multiple inclusion system in pure shear},
 author={Mandal, Nibir and Samanta, Susanta Kumar and Bhattacharyya, Gautam and Chakraborty, Chandan},
-journal={Journal of Structural Geology},
+journal=jsg, % 2003
 volume={25},
 number={9},
 pages={1359--1370},
@@ -31565,7 +31688,7 @@ doi={10.1029/91GL03181}}
 title={Mechanical analysis of a natural example of onland gravity gliding: The 
 role of river incision and deposition},
 author={Messager, Gr{\'e}goire and Hassani, Riad and Nivi{\`e}re, Bertrand},
-journal={Journal of Geophysical Research: Earth Surface},
+journal=jgr_es, % 2014
 volume={119},
 number={7},
 pages={1581--1603},
@@ -31598,7 +31721,7 @@ year={2011}}
 @article{mcna98,
 title={Role of oblique convergence in the active deformation of the Himalayas and southern Tibet plateau},
 author={McCaffrey, Robert and Nabelek, John},
-journal={Geology},
+journal={Geology}, % 1998
 volume={26},
 number={8},
 doi={10.1130/0091-7613(1998)026<0691:ROOCIT>2.3.CO;2},
@@ -31810,7 +31933,7 @@ year={2020}}
 title = {Underworld2: Python Geodynamics Modelling for Desktop, HPC and Cloud},
 author = {John Mansour and Julian Giordani and Louis Moresi and Romain Beucher and 
 Owen Kaluza and Mirko Velic and Rebecca Farrington and Steve Quenette and Adam Beall},
-journal = joss, 
+journal = joss, % 2020 
 doi={10.21105/joss.01797},
 publisher = {The Open Journal},
 volume = {5},
@@ -31873,7 +31996,7 @@ year={2015}}
 title={How collision triggers backarc extension: Insight into Mediterranean style of 
 extension from 3-D numerical models},
 author={Magni, Valentina and Faccenna, Claudio and van Hunen, Jeroen and Funiciello, Francesca},
-journal={Geology},
+journal={Geology}, % 2014
 volume={42},
 number={6},
 pages={511--514},
@@ -31973,7 +32096,7 @@ year={2019}}
 title={Structural styles and decoupling in stratigraphic sequences with double d{\'e}collements 
 during thin-skinned contractional tectonics: Insights from numerical modelling},
 author={Meng, Qingfeng and Hodgetts, David},
-journal={Journal of Structural Geology},
+journal=jsg, % 2019
 volume={127},
 pages={103862},
 doi={10.1016/j.jsg.2019.103862},
@@ -32012,7 +32135,7 @@ year={2003}}
 @article{mocc03,
 title={A computational approach to handle complex microstructure geometries},
 author={Mo{\"e}s, Nicolas and Cloirec, Mathieu and Cartraud, Patrice and Remacle, J-F},
-journal={Computer methods in applied mechanics and engineering},
+journal=cmame, % 2003
 volume={192},
 number={28-30},
 doi={10.1016/S0045-7825(03)00346-3},
@@ -32065,7 +32188,7 @@ year={2015}}
 @article{mead07,
 title={Present-day kinematics at the India-Asia collision zone},
 author={Meade, Brendan J},
-journal={Geology},
+journal={Geology}, % 2007
 volume={35},
 number={1},
 pages={81--84},
@@ -32154,7 +32277,7 @@ year={2019}}
 @article{mont13,
 title={Fabric development as the key for forming ductile shear zones and enabling plate tectonics},
 author={Mont{\'e}si, Laurent GJ},
-journal={Journal of Structural Geology},
+journal=jsg, % 2013
 volume={50},
 pages={254--266},
 doi={10.1016/j.jsg.2012.12.011},
@@ -32173,7 +32296,7 @@ year={2013}}
 @article{moln01,
 title={Climate change, flooding in arid environments, and erosion rates},
 author={Molnar, Peter},
-journal={Geology},
+journal={Geology}, % 2001
 volume={29},
 number={12},
 doi={10.1130/0091-7613(2001)029<1071:CCFIAE>2.0.CO;2},
@@ -32245,7 +32368,7 @@ year={2019}}
 author={Mitrovica, J.X. and Pysklywec, R.N. and Beaumont, C. and Rutty, A.},
 title={The Devonian to Permian sedimentation of the Russian platform: An example of 
 subduction-controlled long-wavelength tilting of continents},
-journal={Journal of Geodynamics},
+journal=jog, % 1996
 year={1996},
 volume={22},
 number={1-2},
@@ -32312,7 +32435,7 @@ year={1995}}
 @article{mord18,
 title={The role of asthenospheric flow during rift propagation and breakup},
 author={Mondy, Luke S and Rey, Patrice F and Duclaux, Guillaume and Moresi, Louis},
-journal={Geology},
+journal={Geology}, % 2018
 volume={46},
 number={2},
 pages={103--106},
@@ -32352,7 +32475,7 @@ year={1993}}
 @Article{mahg11,
 author="Matthews, K. J. and Hale, A. J. and Gurnis, M. and M{\"u}ller, R. D. and DiCaprio, L.",
 title="Dynamic subsidence of Eastern Australia during the Cretaceous",
-journal="Gondwana Research",
+journal="Gondwana Research", % 2011
 year="2011",
 volume="19",
 number="2",
@@ -32616,7 +32739,7 @@ publisher={Oxford University Press}}
 @article{mumc04,
 title={Emergent anisotropy and flow alignment in viscous rock},
 author={M{\"u}hlhaus, H-B and Moresi, L and Cada, Miroslav},
-journal={Pure and Applied Geophysics},
+journal=pag, % 2004
 volume={161},
 number={11-12},
 pages={2451--2463},
@@ -32642,7 +32765,7 @@ year={1999}}
 @article{most98,
 title={Three-dimensional simulations of plume-lithosphere interaction at the Hawaiian swell},
 author={Moore, William B and Schubert, Gerald and Tackley, Paul},
-journal={Science},
+journal={Science}, % 1998
 volume={279},
 number={5353},
 pages={1008--1011},
@@ -32743,7 +32866,7 @@ year={2014}}
 @article{migb08,
 title={Dynamics of double subduction: Numerical modeling},
 author={Y.A. Mishin and T.V. Gerya and J.-P. Burg and J.A.D. Connolly},
-journal=pepi,
+journal=pepi, % 2008
 volume={171},
 pages={280--295},
 doi={10.1016/j.pepi.2008.06.012},
@@ -32837,7 +32960,7 @@ doi={10.1029/2019JB017918}}
 @article{mumh02,
 author={H.-B. M\"{u}hlhaus and  L. Moresi and B. Hobbs and F. Dufour},
 title={Large amplitude folding in finely layered viscoelastic rock structures},
-journal={Pure appl. Geophys.},
+journal=pag, % 2002
 volume={159}, 
 pages={2311--2333},
 year={2002}}
@@ -32873,7 +32996,7 @@ year={2007}}
 author = {Marketos, G and Spiers, C J and Govers, Rob},
 title = {Impact of rock salt creep law choice on subsidence calculations for 
 hydrocarbon reservoirs overlain by evaporite caprocks},
-journal = {Journal Of Geophysical Research},
+journal =jgr, % 2016 
 year = {2016},
 volume = {121},
 number = {6},
@@ -32891,7 +33014,7 @@ publisher={Boulder, Colo.; Geological Society of America; 1999}}
 @article{mapm12,
 title={Chilean flat slab subduction controlled by overriding plate thickness and trench rollback},
 author={Manea, Vlad C and P{\'e}rez-Gussiny{\'e}, Marta and Manea, Marina},
-journal={Geology},
+journal={Geology}, % 2012
 volume={40},
 number={1},
 pages={35--38},
@@ -32901,7 +33024,7 @@ publisher={Geological Society of America}}
 @article{masa95,
 title={The style of the Tyrrhenian subduction},
 author={Marotta, Anna Maria and Sabadini, Roberto},
-journal={Geophysical research letters},
+journal=grl, % 1995
 volume={22},
 number={7},
 pages={747--750},
@@ -33026,7 +33149,7 @@ year={2013}}
 title={Viscosity and thermal fields associated with strongly chaotic 
 non-Newtonian thermal convection},
 author={Malevsky, Andrei V and Yuen, David A and Weyer, LM},
-journal={Geophysical research letters},
+journal=grl, % 1992
 volume={19},
 number={2},
 pages={127--130},
@@ -33199,7 +33322,7 @@ year={1978}}
 title={Benchmark of three-dimensional numerical models of subduction against a
 laboratory experiment},
 author={C.A. M{\'e}riaux and D,A. May and J. Mansour and Z. Chen and O. Kaluza},
-journal=pepi,
+journal=pepi, % 2018
 volume={283},
 doi={},
 pages={110--121},
@@ -33223,7 +33346,7 @@ year={2013}}
 @article{misx07,
 title={A new superconvergence property of nonconforming rotated $Q_1$ element in 3D},
 author={P. Ming and Z-c. Shi and Y. Xu},
-journal=cmame,
+journal=cmame, % 2007
 volume={197},
 doi={},
 pages={95--102},
@@ -33316,7 +33439,7 @@ year={2004}}
 title={How do subduction processes contribute to forearc Andean uplift? Insights from numerical models},
 author={J. Martinod and V. Regard and Y. Letourmy and H. Henry and R. Hassani and 
 S. Baratchart and S. Carretier},
-journal={Journal of Geodynamics},
+journal=jog, % 2016
 volume={96},
 doi={10.1016/j.jog.2015.04.001},
 pages={6--18},
@@ -33335,7 +33458,7 @@ year={2004}}
 title={{A scalable, matrix-free multigrid preconditioner for finite element discretizations 
 of heterogeneous Stokes flow}},
 author={D.A. May and J. Brown and L. {Le~Pourhiet}},
-journal=cmame,
+journal=cmame, % 2015
 volume={290},
 doi={10.1016/j.cma.2015.03.014},
 pages={496--523},
@@ -33444,7 +33567,7 @@ publisher={Taylor \& Francis}}
 title={{Contrasting tectono-metamorphic evolution of orogenic lower crust 
 in the Bohemian Massif: A numerical model}},
 author={P. Maierova and O. Lexa and K. Schulmann and P. Stipska},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2014
 volume={25},
 doi={},
 pages={509--521},
@@ -33500,7 +33623,7 @@ year={2010}}
 @article{maka16,
 title={{Speculations on the impact of catastrophic subduction initiation on the Earth System}},
 author={F.O. Marques and B.J.P. Kaus},
-journal={Journal of Geodynamics},
+journal=jog, % 2016
 volume={93},
 doi={10.1016/j.jog.2015.09.003},
 pages={1--16},
@@ -33538,7 +33661,7 @@ year={2014}}
 @article{moma19,
 title={Stripy: A Python module for (constrained) triangulation in Cartesian coordinates and on a sphere},
 author={Moresi, Louis and Mather, Ben},
-journal=joss,
+journal=joss, % 2019
 doi={10.21105/joss.01410},
 volume={4},
 number={38},
@@ -33577,7 +33700,7 @@ year={1978}}
 title={{Extensional salt tectonics in a contractional orogen: A newly identified 
 tectonic event in the Spanish Pyrenees }},
 author={K. McClay and J.-A. Mu{\~n}oz and J. Garc{\'i}a-Senz},
-journal={Geology},
+journal={Geology}, % 2004
 volume={32},
 doi={10.1130/G20565.1},
 pages={373-740},
@@ -33634,7 +33757,7 @@ year={2013}}
 @article{masm13,
 title={{Overview of adaptive finite element analysis in computational geodynamics}},
 author={D.A. May and W.P. Schellart and L. Moresi},
-journal={Journal of Geodynamics},
+journal=jog, % 2013
 volume={70},
 pages={1-20},
 doi={10.1016/j.jog.2013.04.002},
@@ -33663,7 +33786,7 @@ year={1998}}
 title={{Relation of the tectonics of eastern China to the India-Eurasia collision: 
 Application of the slip-line field theory to large-scale continental tectonics}},
 author={P. Molnar and P. Tapponnier},
-journal={Geology},
+journal={Geology}, % 1977
 volume={5},
 doi={},
 pages={212-216},
@@ -33769,7 +33892,7 @@ year={2007}}
 @article{mizu86,
 title={{A mixed Finite Element method for boundary flux computation}},
 author={A. Mizukami},
-journal=cmame,
+journal=cmame, % 1986
 doi={},
 volume={57},
 pages={239--243},
@@ -33836,7 +33959,7 @@ year={2015}}
 title={{Formation of lithospheric shear zones: Effect of temperature on
 two-phase grain damage}},
 author={E. Mulyukova and D. Bercovici},
-journal=pepi,
+journal=pepi, % 2017
 volume={270},
 pages={195--212},
 doi={10.1016/j.pepi.2017.07.011},
@@ -33883,7 +34006,7 @@ year={1996}}
 title={{Mantle Convection Modeling with Viscoelastic/Brittle Lithosphere: Numerical Methodology
 and Plate Tectonic Modeling}},
 author={L. Moresi and F. Dufour and H.B. M{\"u}hlhaus},
-journal={Pure and Applied Geophysics},
+journal=pag, % 2002
 volume={159},
 pages={159},
 doi={10.1007/s00024-002-8738-3},
@@ -34297,7 +34420,7 @@ year={1999}}
 title={TEMSPOL: a MATLAB thermal model for deep subduction zones including 
 major phase transformations},
 author={Negredo, AM and Valera, JL and Carminati, E},
-journal={Computers \& Geosciences},
+journal=cageo, % 2004
 volume={30},
 number={3},
 pages={249--258},
@@ -34375,7 +34498,7 @@ year={1999}}
 @article{nafo21,
 title={Fold geometry and folding--a review},
 author={Nabavi, Seyed Tohid and Fossen, Haakon},
-journal={Earth-Science Reviews},
+journal=esr, % 2021
 volume={222},
 doi={10.1016/j.earscirev.2021.103812},
 pages={103812},
@@ -34530,7 +34653,7 @@ Morales, J. and Fullea, J.},
 TITLE={Geodynamic Modeling of Edge-Delamination Driven by 
 Subduction-Transform Edge Propagator Faults: 
 The Westernmost Mediterranean Margin (Central Betic Orogen) Case Study},      
-JOURNAL=FES, % 2020
+journal=FES, % 2020
 VOLUME={8},      
 PAGES={435},     
 YEAR={2020},      
@@ -34583,7 +34706,7 @@ year={1997}}
 @article{noto14,
 title={Continental transforms: A view from the Alpine Fault},
 author={Norris, Richard J and Toy, Virginia G},
-journal={Journal of Structural Geology},
+journal=jsg, % 2014
 volume={64},
 pages={3--31},
 doi={10.1016/j.jsg.2014.03.003},
@@ -35008,7 +35131,7 @@ year={2008}}
 title={Analysis of transpression within contractional fault steps using finite-element method},
 author={Nabavi, Seyed Tohid and Alavi, Seyed Ahmad and Mohammadi, Soheil and Ghassemi, Mohammad Reza 
 and Frehner, Marcel},
-journal={Journal of Structural Geology}, % 2017
+journal=jsg, % 2017
 volume={96},
 pages={1--20},
 doi={10.1016/j.jsg.2017.01.004},
@@ -35018,7 +35141,7 @@ year={2017}}
 title={Mechanical evolution of transpression zones affected by fault interactions: insights 
 from 3D elasto-plastic finite element models},
 author={Nabavi, Seyed Tohid and Alavi, Seyed Ahmad and Mohammadi, Soheil and Ghassemi, Mohammad Reza},
-journal={Journal of Structural Geology}, % 2018
+journal=jsg, % 2018
 volume={106},
 pages={19--40},
 doi={10.1016/j.jsg.2017.11.003},
@@ -35490,7 +35613,7 @@ year={2022}}
 @article{onau22,
 title={Destabilization of deep oxidized mantle drove the Great Oxidation Event},
 author={O’Neill, Craig and Aulbach, Sonja},
-journal={Science Advances},
+journal=sciad, % 2022
 volume={8},
 number={7},
 doi={10.1126/sciadv.abg1626},
@@ -35716,7 +35839,7 @@ doi={10.1002/2016GC006460}}
 @ARTICLE{olbi15,
 author={Olive, J.-A. and Behn, M.D. and Ito, G. and Buck, W.R. and Escartin, J. and Howell, S.},
 title={Sensitivity of seafloor bathymetry to climate-driven fluctuations in mid-ocean ridge magma supply},
-journal={Science},
+journal={Science}, % 2015
 year={2015},
 volume={350},
 number={6258},
@@ -35845,7 +35968,7 @@ year={2005}}
 @article{onml05,
 title={Insulation and depletion due to thickened crust: effects on melt production on Mars and Earth},
 author={O'Neill, Craig and Moresi, L and Lenardic, Adrian},
-journal={Geophysical research letters},
+journal=grl, % 2005
 volume={32},
 number={14},
 pages={L14304},
@@ -35884,7 +36007,7 @@ doi="10.1029/2011GC003582"}
 @article{onlj09,
 title={Influence of supercontinents on deep mantle flow},
 author={O'Neill, Craig and Lenardic, Adrian and Jellinek, AM and Moresi, Louis},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2009
 volume={15},
 number={3-4},
 pages={276--287},
@@ -36162,6 +36285,26 @@ Year = {2008}}
 % PPPPP
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+@article{pact20,
+title={Settling of inertial particles in turbulent Rayleigh-B{\'e}nard convection},
+author={Pato{\v{c}}ka, Vojt{\v{e}}ch and Calzavarini, Enrico and Tosi, Nicola},
+journal={Physical Review Fluids},
+volume={5},
+number={11},
+pages={114304},
+doi={10.1103/PhysRevFluids.5.114304},
+year={2020}}
+
+@article{patc22,
+title={Residence time of inertial particles in 3D thermal convection: 
+implications for magma reservoirs},
+author={Pato{\v{c}}ka, Vojt{\v{e}}ch and Tosi, Nicola and Calzavarini, Enrico},
+journal=epsl, % 2022
+volume={591},
+pages={117622},
+doi={10.1016/j.epsl.2022.117622},
+year={2022}}
+
 @article{pagh23,
 title={How the Indian Ocean geoid low was formed},
 author={Pal, Debanjan and Ghosh, Attreyee},
@@ -36176,7 +36319,7 @@ year={2023}}
 title={Importance of global spherical geometry for studying slab dynamics 
 and evolution in models with data assimilation},
 author={Peng, Diandian and Liu, Lijun},
-journal={Earth-Science Reviews},
+journal=esr, % 2023
 volume={241},
 pages={104414},
 doi={10.1016/j.earscirev.2023.104414},
@@ -36534,7 +36677,7 @@ year={2022}}
 @article{peli22,
 title={Quantifying slab sinking rates using global geodynamic models with data-assimilation},
 author={Peng, Diandian and Liu, Lijun},
-journal={Earth-Science Reviews},
+journal=esr, % 2022
 volume={230},
 pages={104039},
 doi={10.1016/j.earscirev.2022.104039},
@@ -37217,7 +37360,7 @@ year = {2006}}
 @article{pena20,
 title={The exhumation detachment factory},
 author={Peron-Pinvidic, Gwenn and Naliboff, John},
-journal={Geology},
+journal={Geology}, % 2020
 year={2020},
 doi={10.1130/G47174.1},
 publisher={Geological Society of America}}
@@ -37225,7 +37368,7 @@ publisher={Geological Society of America}}
 @article{pust20,
 title={The convergence history of India-Eurasia records multiple subduction dynamics processes},
 author={Pusok, Adina E and Stegman, Dave R},
-journal={Science Advances},
+journal=sciad, % 2020
 volume={6},
 number={19},
 pages={eaaz8681},
@@ -37265,7 +37408,7 @@ year={2020}}
 title={The transition from ancient to modern-style tectonics: insights from 
 lithosphere dynamics modelling in compressional regimes},
 author={Poh, Jonathan and Yamato, Philippe and Duretz, Thibault and Gapais, Denis and Ledru, Patrick},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2021
 volume={99},
 pages={77--92},
 doi={10.1016/j.gr.2021.06.016},
@@ -37286,7 +37429,7 @@ title={Geophysical Finite-Element Simulation Tool (GeoFEST): algorithms and
 validation for quasistatic regional faulted crust problems},
 author={Parker, Jay and Lyzenga, Gregory and Norton, Charles and Zuffada, Cinzia and 
 Glasscoe, Margaret and Lou, John and Donnellan, Andrea},
-journal={Pure and Applied Geophysics},
+journal=pag, % 2008
 volume={165},
 number={3-4},
 pages={497--521},
@@ -37297,7 +37440,7 @@ year={2008}}
 title={Seismic consequences of warm versus cool subduction metamorphism: Examples from 
 southwest and northeast Japan},
 author={Peacock, Simon M and Wang, Kelin},
-journal={Science},
+journal={Science}, % 1999
 volume={286},
 number={5441},
 doi={10.1126/science.286.5441.937},
@@ -37318,7 +37461,7 @@ year={2014}}
 @article{pahk12,
 title={The development and evaluation of the Earth Gravitational Model 2008 (EGM2008)},
 author={Pavlis, Nikolaos K and Holmes, Simon A and Kenyon, Steve C and Factor, John K},
-journal={Journal of geophysical research: solid earth},
+journal=jgr, % 2012
 volume={117},
 number={B4},
 doi={10.1029/2011JB008916},
@@ -37656,7 +37799,7 @@ journal=gji, % 2017
 volume={209},
 number={3},
 pages={1462--1475},
-doi={},
+doi={10.1093/gji/ggx102},
 year={2017}}
 
 @article{pact19,
@@ -37666,9 +37809,8 @@ journal=gji, % 2019
 volume={216},
 number={3},
 pages={1740--1760},
-year={2019},
-doi={},
-publisher={Oxford University Press}}
+doi={10.1093/gji/ggy513},
+year={2019}}
 
 @article{pabn18,
 title={Migrating pattern of deformation prior to the Tohoku-Oki earthquake revealed by GRACE data},
@@ -37704,7 +37846,7 @@ year={2014}}
 @article{pobe98,
 title={Arbitrary Lagrangian-Eulerian formulation for element-free Galerkin method},
 author={Ponthot, J-P and Belytschko, Ted},
-journal={Computer methods in applied mechanics and engineering},
+journal=cmame, % 1998
 volume={152},
 number={1-2},
 pages={19--46},
@@ -37850,7 +37992,7 @@ year={2012}}
 @article{pico98,
 title={{Finite element solution of the 3D mold filling problem for viscous incompressible fluid}},
 author={E. Pichelin and T. Coupez},
-journal=cmame,
+journal=cmame, % 1998
 volume={163},
 doi={10.1016/S0045-7825(98)00024-3},
 pages={359--371},
@@ -37942,7 +38084,7 @@ year={2015}}
 @article{pukp16,
 title={{On the Quality of Velocity Interpolation Schemes for Marker-in-Cell Method and Staggered Grids}},
 author={A.E. Pusok and B.J.P. Kaus and A.A. Popov},
-journal={Pure and Applied Geophysics},
+journal=pag, % 2016
 doi={10.1007/s00024-016-1431-8},
 year={2016}}
 
@@ -37958,7 +38100,7 @@ year={1992}}
 @article{pevp15,
 title={{Boudinage as a material instability of elasto-visco-plastic rocks}},
 author={M. Peters and M. Veveakis and T. Poulet and A. Karrech and M. Herwegh and K. Regenauer-Lieb},
-journal={Journal of Structural Geology},
+journal=jsg, % 2015
 volume={78},
 pages={86--102},
 doi={10.1016/j.jsg.2015.06.005},
@@ -37987,7 +38129,7 @@ Year = "1997"}
 @article{phbs09,
 title={{True polar wander in mantle convection models with multiple, mobile continents}},
 author={B.R. Phillips and H.-P. Bunge and K. Schaber},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2009
 volume={15},
 pages={288--296},
 year={2009}}
@@ -38007,7 +38149,7 @@ publisher = {Genetics}}
 @article{pardiso-6.0b,
 author = "Fabio Verbosio and Arne De Coninck and Drosos Kourounis and Olaf Schenk",
 title = "Enhancing the scalability of selected inversion factorization algorithms in genomic prediction",
-journal = "Journal of Computational Science",
+journal="Journal of Computational Science",
 volume = "22",
 number = "Supplement C",
 pages = "99 - 108",
@@ -38139,7 +38281,7 @@ year={2008}}
 title={{Preconditioned conjugate residual methods for mixed spectral 
 discretizations of elasticity and Stokes problems}},
 author={L.F. Pavarino},
-journal=cmame,
+journal=cmame, % 1997
 volume={146},
 pages={19--30},
 year={1997}}
@@ -38186,7 +38328,7 @@ year={1994}}
 @article{puge14,
 title={{Dependence of mid-ocean ridge morphology on spreading rate in numerical 3-D models}},
 author={C. P{\"u}the and T. Gerya },
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2014
 volume={25},
 pages={270--283},
 doi={10.1016/j.gr.2013.04.005},
@@ -38310,7 +38452,7 @@ year={2004}}
 @article{pybf00,
 title={{Modeling the behavior of continental mantle lithosphere during plate convergence}},
 author={R.N. Pysklywec and C. Beaumont and P. Fullsack},
-journal={Geology},
+journal={Geology}, % 2000
 volume={28},
 number={7},
 pages={655-658},
@@ -38392,7 +38534,7 @@ Year = {1980}}
 @article{peso06,
 title={What controls thickness of sediments and lithospheric deformation at a pull-apart basin?},
 author={Petrunin, Alexey and Sobolev, Stephan V},
-journal={Geology},
+journal={Geology}, % 2006
 volume={34},
 number={5},
 pages={389--392},
@@ -38635,7 +38777,7 @@ year={2010}}
 title={An elasto-visco-plastic model using the finite element method for crustal 
 and lithospheric deformation},
 author={J. Quinteros and V.A. Ramos and P.M. Jacovkis},
-journal={Journal of Geodynamics}, % 2009
+journal=jog, % 2009
 volume={48},
 pages={83-94},
 doi={10.1016/j.jog.2009.06.006},
@@ -38772,7 +38914,7 @@ title={Geodynamically corrected Pliocene shoreline elevations in
 Australia consistent with midrange projections of Antarctic ice loss},
 author={Richards, Fred D and Coulson, Sophie L and Hoggard, Mark J 
 and Austermann, Jacqueline and Dyer, Blake and Mitrovica, Jerry X},
-journal={Science Advances},
+journal=sciad, % 2023
 volume={9},
 number={46},
 pages={eadg3035},
@@ -39000,7 +39142,7 @@ year={1983}}
 @article{rojy22,
 title={Effect of Mantle Viscosity Structures on Simulations of Geoid Anomalies in the Ross Sea Area},
 author={Ronghua, Cui and Jian, Fang and Yong, Wang},
-journal={Pure and Applied Geophysics},
+journal=pag, % 2022
 doi={10.1007/s00024-022-03081-1},
 year={2022}}
 
@@ -39359,7 +39501,7 @@ year={1975}}
 @article{raki00,
 title={General complete Lagrange family for the cube in finite element interpolations},
 author={Rathod, HT and Kilari, Sridevi},
-journal={Computer methods in applied mechanics and engineering},
+journal=cmame, % 2000
 volume={181},
 number={1-3},
 doi={10.1016/S0045-7825(99)00080-8},
@@ -39460,7 +39602,7 @@ year={2018}}
 @article{rope18,
 title={Geodynamically consistent inferences on the uniform sampling of Earth's paleomagnetic inclinations},
 author={Rolf, T and Pesonen, LJ},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2018
 volume={63},
 pages={1--14},
 doi={10.1016/j.gr.2018.05.008},
@@ -39488,7 +39630,7 @@ year={2020}}
 @article{retk11,
 title={Viscous collision in channel explains double domes in metamorphic core complexes},
 author={Rey, Patrice F and Teyssier, Christian and Kruckenberg, Seth C and Whitney, Donna L},
-journal={Geology},
+journal={Geology}, % 2011
 volume={39},
 number={4},
 pages={387--390},
@@ -39579,7 +39721,7 @@ doi={10.1130/2007.2430(42)}}
 @article{ride94,
 title={The global hotspot distribution and instability of D''},
 author={Ribe, NM and De Valpine, DP},
-journal={Geophysical research letters},
+journal=grl, % 1994
 volume={21},
 number={14},
 pages={1507--1510},
@@ -39629,7 +39771,7 @@ doi={10.1016/j.pepi.2004.11.004}}
 @ARTICLE{reos10,
 author={Reese, C.C. and Orth, C.P. and Solomatov, V.S.},
 title={Impact origin for the Martian crustal dichotomy: Half emptied or half filled?},
-journal={Journal of Geophysical Research E: Planets},
+journal=jgr_planets, % 2010 
 year={2010},
 volume={115},
 number={5},
@@ -39638,7 +39780,7 @@ doi={10.1029/2009JE003506}}
 @ARTICLE{reso07,
 author={Reese, C.C. and Solomatov, V.S. and Orth, C.P.},
 title={Mechanisms for cessation of magmatic resurfacing on Venus},
-journal={Journal of Geophysical Research E: Planets},
+journal=jgr_planets, % 2007 
 year={2007},
 volume={112},
 number={4},
@@ -39647,7 +39789,7 @@ doi={10.1029/2006JE002782}}
 @ARTICLE{resb04,
 author={Reese, C.C. and Solomatov, V.S. and Baumgardner, J.R. and Stegman, D.R. and Vezolainen, A.V.},
 title={Magmatic evolution of impact-induced Martian mantle plumes and the origin of Tharsis},
-journal={Journal of Geophysical Research E: Planets},
+journal=jgr_planets, % 2004
 year={2004},
 volume={109},
 number={8},
@@ -39657,7 +39799,7 @@ doi={10.1029/2003JE002222}}
 @ARTICLE{resb02,
 author={Reese, C.C. and Solomatov, V.S. and Baumgardner, J.R.},
 title={Survival of impact-induced thermal anomalies in the Martian mantle},
-journal={Journal of Geophysical Research E: Planets},
+journal=jgr_planets, % 2002
 year={2002},
 volume={107},
 number={10},
@@ -39707,7 +39849,7 @@ year={1997}}
 @article{rull15,
 title={Viscosity jump in Earth's mid-mantle},
 author={Rudolph, Maxwell L and Leki{\'c}, Vedran and Lithgow-Bertelloni, Carolina},
-journal={Science},
+journal={Science}, % 2015
 volume={350},
 number={6266},
 doi={10.1126/science.aad4972},
@@ -39816,7 +39958,7 @@ year={2004}}
 @article{rivw99,
 title={Complex shear wave velocity structure imaged beneath Africa and Iceland},
 author={Ritsema, Jeroen and van Heijst, Hendrik Jan and Woodhouse, John H},
-journal={Science},
+journal={Science}, % 1999
 volume={286},
 number={5446},
 doi={10.1126/science.286.5446.1925},
@@ -39849,7 +39991,7 @@ year={2018}}
 title={Analysis of Gravity Recovery and Climate Experiment time-variable mass redistribution signals 
 over North America by means of principal component analysis},
 author={Rangelova, E and van der Wal, W and Braun, A and Sideris, MG and Wu, P},
-journal={Journal of Geophysical Research: Earth Surface},
+journal=jgr_es, % 2007
 volume={112},
 number={F3},
 doi={10.1029/2006JF000615},
@@ -39908,7 +40050,7 @@ year={2011}}
 title={How many subductions in the Variscan orogeny? Insights from numerical models},
 author={Regorda, Alessandro and Lardeaux, Jean-Marc and Roda, Manuel and Marotta, Anna Maria 
 and Spalla, Maria Iole},
-journal={Geoscience Frontiers},
+journal=geoF, % 2020
 volume={11},
 pages={1025--1052},
 year={2020}}
@@ -40105,7 +40247,7 @@ title={The East Anatolia--Lesser Caucasus ophiolite: An exceptional case of larg
 synthesis of data and numerical modelling},
 author={Rolland, Y and H{\"a}ssig, M and Bosch, D and Bruguier, O and Melis, R and Galoyan, G and 
 Topuz, G and Sahakyan, L and Avagyan, A and Sosson, M},
-journal={Geoscience Frontiers},
+journal=geoF, % 2020
 pages={83--108},
 doi={10.1016/j.gsf.2018.12.009},
 volume={11},
@@ -40189,13 +40331,12 @@ year={2006}}
 @article{rey15,
 title={RESEARCH FOCUS: The geodynamics of mantle melting},
 author={Rey, Patrice F},
-journal={Geology},
+journal={Geology}, % 2015
 volume={43},
 number={4},
 pages={367--368},
 doi={10.1130/focus042015.1},
-year={2015},
-publisher={Geological Society of America}}
+year={2015}}
 
 @article{riag15,
 title={Insights for the melt migration, the volcanic activity and the ultrafast lithosphere 
@@ -40288,7 +40429,7 @@ year={1997}}
 author="Ramsay, T. and Pysklywec, R.",
 title="Anomalous bathymetry, 3D edge driven convection, and dynamic topography at the
 western Atlantic passive margin",
-journal="Journal of Geodynamics",
+journal=jog, % 2011
 year="2011",
 volume="52",
 number="1",
@@ -40317,7 +40458,7 @@ doi="10.1016/j.icarus.2011.11.038"}
 @Article{roba12,
 author="Roberts, J. H. and Barnouin, O. S.",
 title="The effect of the Caloris impact on the mantle dynamics and volcanism of Mercury",
-journal="Journal of Geophysical Research: Planets",
+journal=jgr_planets, % 2012
 year="2012",
 volume="117",
 number="E2",
@@ -40449,7 +40590,7 @@ year={1993}}
 author={Thomas Ruedas and Paul J. Tackley and Sean C. Solomon},
 title={Thermal and compositional evolution of the martian mantle: Effects of phase
 transitions and melting},
-journal=pepi,
+journal=pepi, % 2013
 volume={216},
 pages={32--58},
 doi={10.1016/j.pepi.2012.12.002},
@@ -40468,7 +40609,7 @@ year={2013}}
 title={Analogue modelling of different angle thrust-wrench fault interference in a brittle medium},
 author={Rosas, Filipe M and Duarte, Jo{\~a}o C and Schellart, Wouter Pieter and 
 Tomas, Ricardo and Grigorova, Vili and Terrinha, Pedro},
-journal={Journal of Structural Geology},
+journal=jsg, % 2015
 volume={74},
 pages={81--104},
 year={2015}}
@@ -40486,7 +40627,7 @@ year={2014}}
 title={Along-strike variation in subducting plate velocity induced by along-strike variation in overriding 
 plate structure: Insights from 3D numerical models},
 author={Rodr{\'\i}guez-Gonz{\'a}lez, Juan and Billen, Magali I and Negredo, Ana M and Montesi, Laurent GJ},
-journal={Journal of Geodynamics},
+journal=jog, % 2016
 volume={100},
 pages={175--183},
 year={2016}}
@@ -40495,7 +40636,7 @@ year={2016}}
 title={Surface deformation and lower crustal flow in eastern Tibet},
 author={Royden, Leigh H and Burchfiel, B Clark and King, Robert W and Wang, Erchie and 
 Chen, Zhiliang and Shen, Feng and Liu, Yuping},
-journal={science},
+journal={Science}, % 1997
 volume={276},
 number={5313},
 pages={788--790},
@@ -40566,7 +40707,7 @@ year={1978}}
 author = {Riva, Riccardo E M and Govers, Rob},
 title = {Relating viscosities from postseismic relaxation to a realistic viscosity 
 structure for the lithosphere},
-journal = {Geophys. J. Int.},
+journal=gji, % 2009 
 year = {2009},
 volume = {176},
 number = {2},
@@ -40596,7 +40737,7 @@ author={Ran, H. and Bons, P.D. and Wang, G. and Steinbach, F. and Finch, M.A.
 and Griera, A. and Gomez-Rivas, E. and Llorens, M.-G. and Ran, S. and Liang, X. and Zhou, J.},
 title={High-strain deformation of conglomerates: Numerical modelling, strain analysis, and 
 an example from the Wutai Mountains, North China Craton},
-journal={Journal of Structural Geology},
+journal=jsg, % 2018
 year={2018},
 volume={114},
 pages={222-234},
@@ -40615,7 +40756,7 @@ year={2017}}
 @article{rond16,
 title={On a spectral method for forward gravity field modelling},
 author={B.C. Root and P. Novak and D. Dirkx and M. Kaban and W. van der Wal and L.L.A. Vermeersen},
-journal={Journal of Geodynamics},
+journal=jog, % 2016
 volume={97},
 pages={22--30},
 doi={10.1016/j.jog.2016.02.008},
@@ -40666,7 +40807,7 @@ year={2017}}
 @article{risc86,
 title={An equal-order velocity-pressure formulation that does not exhibit spurious pressure modes},
 author={J.G. Rice and R.J. Schnipke},
-journal=cmame,
+journal=cmame, % 1986
 volume={58},
 pages={135--149},
 year={1986}}
@@ -40808,7 +40949,7 @@ year={1994}}
 @article{reyb01,
 title={{The initiation of subduction: Criticality by addition of water ?}},
 author={K. Regenauer-Lieb and D.A. Yuen and J. Branlund},
-journal={Science},
+journal={Science}, % 2001
 volume={294},
 pages={578--580},
 year={2001}}
@@ -40887,7 +41028,7 @@ publisher={Springer}}
 title={{Modeling shear zones in geological and planetary sciences: solid-and 
 fluid-thermal-mechanical approaches}},
 author={K. Regenauer-Lieb and D.A. Yuen},
-journal={Earth-Science Reviews},
+journal=esr, % 2003
 volume={63},
 doi={10.1016/S0012-8252(03)00038-2},
 pages={295-349},
@@ -40924,9 +41065,10 @@ publisher={Oxford University Press}}
 @article{robh17,
 title={{Stability and accuracy of free surface time integration in viscous flows}},
 author={I. Rose and B. Buffet and T. Heister},
-journal=pepi,
+journal=pepi, % 2017
 volume={262},
 pages={90--100},
+doi={},
 year={2017}}
 
 @incollection{reps09,
@@ -41222,7 +41364,7 @@ doi="10.1016/j.pepi.2017.10.003"}
 @article{raab07,
 title={{A simplified mesh-free method for shear bands with cohesive surfaces }},
 author={T. Rabczuk and P.M.A. Areias and T. Belytschko},
-journal={Int. J. Num. Meth. Eng.},
+journal=ijnme, % 2007
 volume={69},
 pages={993--1021},
 doi={10.1002/nme.1797},
@@ -41251,7 +41393,7 @@ year={2012}}
 @article{rana00,
 title={{Rheology of the crust and its role in tectonic reactivation}},
 author={G. Ranalli},
-journal={Journal of Geodynamics},
+journal=jog, % 2000
 volume={30},
 pages={3--15},
 year={2000}}
@@ -41470,7 +41612,7 @@ year={2013}}
 @article{samm22,
 title={DMStag: staggered, structured grids for PETSc},
 author={Sanan, Patrick and May, Dave A and Mills, Richard T and others},
-journal={Journal of Open Source Software},
+journal=joss, % 2022
 volume={7},
 number={79},
 pages={4531},
@@ -41526,7 +41668,7 @@ title={PTt evolution of mantle and associated crustal rocks in
 collisional orogens: Insight from numerical experiments},
 author={Sizova, Elena and Hauzenberger, Christoph A and Fritz, Harald 
 and Gerya, Taras},
-journal={Earth-Science Reviews},
+journal=esr, % 2024
 volume={250},
 pages={104707},
 doi={10.1016/j.earscirev.2024.104707},
@@ -41565,7 +41707,7 @@ year={1972}}
 @article{samz20,
 title={gospl: Global Scalable Paleo Landscape Evolution},
 author={Salles, Tristan and Mallard, Claire and Zahirovic, Sabin},
-journal={Journal of Open Source Software},
+journal=joss, % 2020
 volume={5},
 number={56},
 pages={2804},
@@ -41740,7 +41882,7 @@ year={2023}}
 @article{speg23,
 title={ThermoCodegen: a python/C++ package for the generation of custom thermodynamic models},
 author={Spiegelman, Marc and Evans, Owen and Ghiorso, Mark and Tweed, Lucy and Wilson, Cian},
-journal=joss,
+journal=joss, % 2023
 volume={8},
 number={86},
 pages={4874},
@@ -41751,7 +41893,7 @@ year={2023}}
 title={Did the Western and the Eastern Vardar ophiolites originate through a single intra-oceanic 
 subduction? Insight from numerical modelling},
 author={Stankovi{\'c}, Nikola and Gerya, Taras and Cvetkov, Vesna and Cvetkovi{\'c}, Vladica},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2023
 volume={124},
 pages={124--140},
 doi={10.1016/j.gr.2023.07.005},
@@ -41770,7 +41912,7 @@ year={2023}}
 title={Subduction invasion polarity switch from the Pacific to the Atlantic Ocean: 
 A new geodynamic model of subduction initiation based on the Scotia Sea region},
 author={Schellart, WP and Strak, V and Beniest, A and Duarte, JC and Rosas, FM},
-journal={Earth-Science Reviews},
+journal=esr, % 2023
 volume={236},
 pages={104277},
 doi={10.1016/j.earscirev.2022.104277},
@@ -41820,7 +41962,7 @@ year={2011}}
 title={Formation of accretionary prisms influenced by sediment subduction and 
 supplied by sediments from adjacent continents},
 author={Simpson, Guy DH},
-journal={Geology},
+journal={Geology}, % 2010
 volume={38},
 number={2},
 pages={131--134},
@@ -41874,7 +42016,7 @@ publisher={IEEE}}
 @article{sutr19,
 title={PVGeo: an open-source Python package for geoscientific visualization in VTK and ParaView},
 author={Sullivan, C Bane and Trainor-Guitton, Whitney J},
-journal=joss,
+journal=joss, % 2019
 volume={4},
 number={38},
 pages={1451},
@@ -41885,7 +42027,7 @@ year={2019}}
 title={Hundred million years of landscape dynamics from catchment to global scale},
 author={Salles, Tristan and Husson, Laurent and Rey, Patrice and Mallard, Claire and 
 Zahirovic, Sabin and Boggiani, Beatriz Hadler and Coltice, Nicolas and Arnould, Ma{\"e}lis},
-journal={Science},
+journal={Science}, % 2023
 volume={379},
 number={6635},
 pages={918--923},
@@ -41934,7 +42076,7 @@ year={2011}}
 @article{sica06,
 title={Coupled model of surface water flow, sediment transport and morphological evolution},
 author={Simpson, Guy and Castelltort, S{\'e}bastien},
-journal={Computers \& Geosciences},
+journal=cageo, % 2006
 volume={32},
 number={10},
 pages={1600--1614},
@@ -42209,7 +42351,7 @@ their relative contributions},
 author={Sternai, Pietro and Sue, Christian and Husson, Laurent and Serpelloni, Enrico 
 and Becker, Thorsten W and Willett, Sean D and Faccenna, Claudio and Di Giulio, Andrea 
 and Spada, Giorgio and Jolivet, Laurent and others},
-journal={Earth-Science Reviews},
+journal=esr, % 2019
 volume={190},
 doi={10.1016/j.earscirev.2019.01.005},
 pages={589--604},
@@ -42300,7 +42442,7 @@ year={2022}}
 @article{sasa21,
 title={Lateral flow of thick continental lithospheric mantle during tectonic quiescence},
 author={Salazar-Mora, Claudio Alejandro and Sacek, Victor},
-journal={Journal of Geodynamics},
+journal=jog, % 2021
 volume={145},
 pages={101830},
 doi={10.1016/j.jog.2021.101830},
@@ -42309,7 +42451,7 @@ year={2021}}
 @article{saap22,
 title={Mandyoc: A finite element code to simulate thermochemical convection in parallel},
 author={Sacek, Victor and Assun{\c{c}}{\~a}o, Jamison and Pesce, Agustina and da Silva, Rafael Monteiro},
-journal=joss,
+journal=joss, % 2022
 volume={7},
 number={71},
 pages={4070},
@@ -42434,7 +42576,7 @@ year={2002}}
 title={Focussed time-dependent martian volcanism from chemical differentiation coupled 
 with variable thermal conductivity},
 author={Schott, B and Van den Berg, AP and Yuen, DA},
-journal={Geophysical research letters},
+journal=grl, % 2001
 volume={28},
 number={22},
 pages={4271--4274},
@@ -42478,7 +42620,7 @@ author={Schliffke, Nicholas and van Hunen, Jeroen and Gueydan, Fr{\'e}d{\'e}ric 
 Magni, Valentina and Allen, Mark B},
 doi={10.1130/G48919.1},
 volume={49},
-journal={Geology},
+journal={Geology}, % 2021
 year={2021}}
 
 @article{stro52,
@@ -42544,9 +42686,9 @@ title = {Seismic detection of the martian core},
 volume = {373},
 number = {6553},
 pages = {443--448},
-year = {2021},
 doi={10.1126/science.abi7730},
-journal = {Science}}
+journal={Science}, % 2021
+year = {2021}}
 
 @article{slee94,
 title={Martian plate tectonics},
@@ -42562,7 +42704,7 @@ year={1994}}
 title={The gravity field of Mars: results from Mars Global Surveyor},
 author={Smith, David E and Sjogren, William L and Tyler, G Leonard and Balmino, Georges and 
 Lemoine, Frank G and Konopliv, Alex S},
-journal={Science},
+journal={Science}, % 1999
 volume={286},
 number={5437},
 pages={94--97},
@@ -42642,7 +42784,7 @@ year={1976}}
 @article{sten87,
 title={On some three-dimensional finite elements for incompressible media},
 author={Stenberg, Rolf},
-journal={Computer methods in applied mechanics and engineering},
+journal=cmame, % 1987
 volume={63},
 number={3},
 pages={261--269},
@@ -42795,7 +42937,7 @@ year={2019}}
 @article{sche20,
 AUTHOR={Schellart, Wouter Pieter},   
 TITLE={Control of Subduction Zone Age and Size on Flat Slab Subduction},      
-JOURNAL=FES, % 2020
+journal=FES, % 2020
 VOLUME={8},      
 PAGES={26},     
 YEAR={2020},      
@@ -43032,6 +43174,16 @@ volume={11},
 doi={10.5194/se-11-1909-2020},
 year={2020}}
 
+@Article{sccc24,
+AUTHOR = {Schuh-Senlis, M. and Caumon, G. and Cupillard, P.},
+TITLE = {What does it take to restore geological models with ``natural'' boundary conditions?},
+journal=solid_earth, % 2024
+VOLUME = {15},
+NUMBER = {8},
+PAGES = {945--964},
+DOI = {10.5194/se-15-945-2024},
+YEAR = {2024}}
+
 @article{spbe20,
 title={Control of 3-D tectonic inheritance on fold-and-thrust belts: insights from 3-D numerical 
 models and application to the Helvetic nappe system},
@@ -43141,7 +43293,7 @@ year={2020}}
 @article{szjo95,
 title={Consistent tangent operator for plasticity models based on the plastic strain rate potential},
 author={Szab{\'o}, L{\'a}szl{\'o} and Jonas, John J},
-journal={Computer methods in applied mechanics and engineering},
+journal=cmame, % 1995
 volume={128},
 number={3-4},
 doi={10.1016/0045-7825(95)00884-5},
@@ -43151,7 +43303,7 @@ year={1995}}
 @article{sita85,
 title={Consistent tangent operators for rate-independent elastoplasticity},
 author={Simo, Juan C and Taylor, Robert Leroy},
-journal={Computer methods in applied mechanics and engineering},
+journal=cmame, % 1985
 volume={48},
 number={1},
 doi={10.1016/0045-7825(85)90070-2},
@@ -43221,7 +43373,7 @@ year={2011}}
 title={Towards the inversion of GRACE gravity fields for present-day ice-mass changes and glacial-isostatic 
 adjustment in North America and Greenland},
 author={Sasgen, Ingo and Klemann, Volker and Martinec, Zden{\v{e}}k},
-journal={Journal of Geodynamics},
+journal=jog, % 2012
 doi={10.1016/j.jog.2012.03.004},
 volume={59},
 pages={49--63},
@@ -43250,20 +43402,18 @@ doi={},
 year = {2005}}
 
 @article{stdm08,
-author = {Steffen, Holger and Denker, Heiner and M{\"u}ller, J{\"u}rgen},
-doi={10.1016/j.jog.2008.03.002},
-journal = {Journal of Geodynamics},
-number = {3-5},
-pages = {155--164},
-title = {{Glacial isostatic adjustment in Fennoscandia from GRACE data and comparison 
+title={{Glacial isostatic adjustment in Fennoscandia from GRACE data and comparison 
 with geodynamical models}},
-volume = {46},
+author = {Steffen, Holger and Denker, Heiner and M{\"u}ller, J{\"u}rgen},
+journal=jog, % 2008
+number= {3-5},
+pages={155--164},
+volume= {46},
 doi={10.1016/j.jog.2008.03.002},
-year = {2008}}
+year={2008}}
 
 @article{stei07,
 author = {Steinberger, Bernhard},
-doi={10.1016/j.pepi.2007.04.021},
 journal =pepi, % 2007 
 number = {1-2},
 pages = {2--20},
@@ -43343,7 +43493,7 @@ year={2006}}
 @article{sawy94,
 title={Melt segregation in the continental crust},
 author={Sawyer, EW},
-journal={Geology},
+journal={Geology}, % 1994
 volume={22},
 number={11},
 doi={},
@@ -43407,7 +43557,7 @@ title={On the influence of the asthenospheric flow on the tectonics and topograp
 collision-subduction transition zones: Comparison with the eastern Tibetan margin},
 author={Sternai, Pietro and Avouac, Jean-Philippe and Jolivet, Laurent and Faccenna, Claudio 
 and Gerya, Taras and Becker, Thorsten Wolfgang and Menant, Armel},
-journal={Journal of Geodynamics},
+journal=jog, % 2016
 volume={100},
 doi={10.1016/j.jog.2016.02.009},
 pages={184--197},
@@ -43425,7 +43575,7 @@ year={2006}}
 title={Quantification and visualization of finite strain in 3D viscous numerical models 
 of folding and overthrusting},
 author={Spitz, Richard and Schmalholz, Stefan M and Kaus, Boris JP and Popov, Anton A},
-journal={Journal of Structural Geology},
+journal=jsg, % 2020
 volume={131},
 doi={10.1016/j.jsg.2019.103945},
 pages={103945},
@@ -43660,7 +43810,7 @@ year={2008}}
 title={Global correlations between maximum magnitudes of subduction zone interface thrust 
 earthquakes and physical parameters of subduction zones},
 author={Schellart, Wouter Pieter and Rawlinson, Nick},
-journal=pepi,
+journal=pepi, % 2013
 volume={225},
 doi={},
 pages={41--67},
@@ -43669,7 +43819,7 @@ year={2013}}
 @article{shwl17,
 title={Subduction mode selection during slab and mantle transition zone interaction: Numerical modeling},
 author={Shi, Yanan and Wei, Dongping and Li, Zhong-Hai and Liu, Ming-Qi and Liu, Mengxue},
-journal={Pure Appl. Geophys.},
+journal=pag, % 2017
 doi={10.1007/s00024-017-1762-0}, 
 pages={5--24},
 year={2017}}
@@ -43888,7 +44038,7 @@ year={2013}}
 @article{simp09,
 title={Mechanical modelling of folding versus faulting in brittle--ductile wedges},
 author={Simpson, Guy DH},
-journal={Journal of Structural Geology}, % 2009
+journal=jsg, % 2009
 volume={31},
 number={4},
 pages={369--381},
@@ -43908,7 +44058,7 @@ pages={9280--9312}}
 @Article{sall19,
 AUTHOR = {Salles, T.},
 TITLE = {eSCAPE: Regional to Global Scale Landscape Evolution Model v2.0},
-JOURNAL=gmd, % 2019 
+journal=gmd, % 2019 
 VOLUME = {12},
 YEAR = {2019},
 NUMBER = {9},
@@ -44006,7 +44156,7 @@ year={1974}}
 title={A dynamic model to investigate coupling between erosion, deposition, and 
 three-dimensional (thin-plate) deformation},
 author={Simpson, Guy},
-journal={Journal of Geophysical Research: Earth Surface},
+journal=jgr_es, % 2004
 volume={109},
 number={F2},
 doi={10.1029/2003JF000078},
@@ -44016,7 +44166,7 @@ year={2004}}
 title={Dynamic interactions between erosion, deposition, and three-dimensional deformation 
 in compressional fold belt settings},
 author={Simpson, Guy},
-journal={Journal of Geophysical Research: Earth Surface},
+journal=jgr_es, % 2004
 volume={109},
 number={F3},
 doi={10.1029/2003JF000111},
@@ -44066,7 +44216,7 @@ year={1986}}
 @article{sths13,
 title={Instability of a lithospheric step beneath western North Island, New Zealand},
 author={Stern, Tim and Houseman, Gregory and Salmon, Michelle and Evans, Lynn},
-journal={Geology},
+journal={Geology}, % 2013
 volume={41},
 number={4},
 pages={423--426},
@@ -44166,7 +44316,7 @@ year={2000}}
 @article{strw07,
 title={Controls on the patterns of topography and erosion rate in a critical orogen},
 author={Stolar, Drew and Roe, Gerard and Willett, Sean},
-journal={Journal of Geophysical Research: Earth Surface},
+journal=jgr_es, % 2007
 volume={112},
 number={F4},
 doi={10.1029/2006JF000713},
@@ -44175,7 +44325,7 @@ year={2007}}
 @article{sckb09,
 title={Stress-strength relationship in the lithosphere during continental collision},
 author={Schmalholz, Stefan M and Kaus, Boris JP and Burg, Jean-Pierre},
-journal={Geology},
+journal={Geology}, % 2009
 volume={37},
 number={9},
 pages={775--778},
@@ -44491,7 +44641,7 @@ year={1997}}
 @article{susp07,
 title={Using the material-point method to model sea ice dynamics},
 author={Sulsky, Deborah and Schreyer, Howard and Peterson, Kara and Kwok, Ron and Coon, Max},
-journal={Journal of Geophysical Research: Oceans},
+journal=jgr_oceans, % 2007 
 volume={112},
 number={C2},
 year={2007}}
@@ -44509,7 +44659,7 @@ year={1996}}
 @article{sucs94,
 title={A particle method for history-dependent materials},
 author={Sulsky, Deborah and Chen, Zhen and Schreyer, Howard L},
-journal={Computer methods in applied mechanics and engineering},
+journal=cmame, % 1994 
 volume={118},
 number={1-2},
 pages={179--196},
@@ -44557,7 +44707,7 @@ title={Benchmarking analogue models of brittle thrust wedges},
 author={Schreurs, Guido and Buiter, Susanne JH and Boutelier, Jennifer and Burberry, Caroline 
 and Callot, Jean-Paul and Cavozzi, Cristian and Cerca, Mariano and Chen, Jian-Hong and 
 Cristallini, Ernesto and Cruden, Alexander R and others},
-journal={Journal of structural geology}, % 2016
+journal=jsg, % 2016
 volume={92},
 pages={116--139},
 year={2016}}
@@ -44574,7 +44724,7 @@ doi="10.1029/2011GL049687"}
 @Article{shlm12,
 author="Shephard, G. E. and Liu, L. and M{\"u}ller, R. D. and Gurnis, M.",
 title="Dynamic topography and anomalously negative residual depth of the Argentine Basin",
-journal="Gondwana Research",
+journal="Gondwana Research", % 2012
 year="2012",
 volume="22",
 number="2",
@@ -44595,7 +44745,7 @@ doi="10.1038/ngeo1017"}
 author="Spasojevic, S. and Gurnis, M. and Sutherland, R.",
 title="Inferring mantle properties with an evolving dynamic model of the Antarctica-New Zealand
 region from the Late Cretaceous",
-journal="Journal of Geophysical Research",
+journal=jgr, % 2010
 year="2010",
 volume="115",
 number="B5",
@@ -44633,7 +44783,7 @@ doi="10.1029/2008GL033511"}
 @Article{srzh12,
 author="Sr{\'a}mek, O. and Zhong, S.",
 title="Martian crustal dichotomy and Tharsis formation by partial melting coupled to early plume migration",
-journal="Journal of Geophysical Research: Planets",
+journal=jgr_planets, % 2012
 year="2012",
 volume="117",
 number="E1",
@@ -44643,7 +44793,7 @@ doi="10.1029/2011JE003867"}
 author="Sr{\'a}mek, O. and Zhong, S.",
 title="Long-wavelength stagnant lid convection with hemispheric variation in lithospheric thickness:
 Link between Martian crustal dichotomy and Tharsis?",
-journal="Journal of Geophysical Research",
+journal=jgr, % 2010
 year="2010",
 volume="115",
 number="E9",
@@ -44694,7 +44844,7 @@ doi="10.1016/S0419-0254(99)80008-1"}
 @Article{shha04,
 author="Showman, A. P. and Han, L.",
 title="Numerical simulations of convection in Europa's ice shell: Implications for surface features",
-journal="Journal of Geophysical Research",
+journal=jgr, % 2004
 year="2004",
 volume="109",
 number="E1",
@@ -44735,7 +44885,7 @@ doi="10.1029/1999JB900065"}
 author="Squyres, S. W. and Jankowski, D. G. and Simons, M. and Solomon, S. C. and 
 Hager, B. H. and McGill, G. E.",
 title="Plains tectonism on Venus: The deformation belts of Lavinia Planitia",
-journal="Journal of Geophysical Research",
+journal=jgr, % 1992
 year="1992",
 volume="97",
 number="E8",
@@ -44813,7 +44963,7 @@ publisher={Springer}}
 @article{soba05,
 title={What drives orogeny in the Andes?},
 author={Sobolev, Stephan V and Babeyko, A Yu},
-journal={Geology},
+journal={Geology}, % 2005
 volume={33},
 number={8},
 pages={617--620},
@@ -44889,7 +45039,7 @@ year={2007}}
 @article{scta95,
 title={Mantle dynamics: The strong control of the spinel-perovskite transition at a depth of 660 km},
 author={Schubert, G and Tackley, PJ},
-journal={Journal of geodynamics},
+journal=jog, % 1995
 volume={20},
 number={4},
 pages={417--428},
@@ -44982,7 +45132,7 @@ year={1993}}
 title={A review of analogue modelling of geodynamic processes: Approaches, scaling, 
 materials and quantification, with an application to subduction experiments},
 author={Schellart, Wouter P and Strak, Vincent},
-journal={Journal of Geodynamics},
+journal=jog, % 2016
 volume={100},
 pages={7--32},
 year={2016}}
@@ -45017,7 +45167,7 @@ publisher={SIAM}}
 author = {Schmalzle, G and Dixon, T and Malservisi, R and Govers, Rob},
 title = {{Strain accumulation across the Carrizo segment of the San Andreas Fault, California: 
 Impact of laterally varying crustal properties}},
-journal = {Journal Of Geophysical Research},
+journal=jgr, % 2006
 pages={B05403},
 year = {2006},
 doi={10.1029/2005JB003843},
@@ -45201,7 +45351,7 @@ year    = {1996}}
 title={Impact of grain size evolution on necking in calcite layers deforming by combined 
 diffusion and dislocation creep},
 author={Schmalholz, Stefan M and Duretz, Thibault},
-journal={Journal of Structural Geology}, % 2017
+journal=jsg, % 2017
 volume={103},
 pages={37--56},
 doi={10.1016/j.jsg.2017.08.007},
@@ -45520,7 +45670,7 @@ year={1978}}
 @article{soga01,
 title={{On the advection of sharp material interfaces in geodynamic problems: entrainment of the D'' layer}},
 author={F. Soboutia and A. Ghodsb and J. Arkani-Hamed},
-journal={Journal of Geodynamics},
+journal=jog, % 2001
 volume={31},
 pages={459--479},
 year={2001}}
@@ -45647,6 +45797,8 @@ title={{Relationship between tectonic overpressure, deviatoric stress, driving f
 isostasy and gravitational potential energy}},
 author={S.M. Schmalholz and S. Medvedev and S.M. Lechmann and Y. Podladchikov1},
 journal=gji, % 2014
+volume={197},
+pages={680--696},
 doi={10.1093/gji/ggu040},
 year={2014}}
 
@@ -45791,7 +45943,7 @@ year={1994}}
 @article{scsf08,
 title={{Evolution of pinch-and-swell structures in a power-law layer}},
 author={S.M. Schmalholz and D.W. Schmid and R.C. Fletcher},
-journal={Journal of Structural Geology}, % 2008
+journal=jsg, % 2008
 volume={30},
 number={30},
 doi={10.1016/j.jsg.2008.01.002},
@@ -45835,7 +45987,7 @@ year={2012}}
 @article{scwa02,
 title={{Modeling of grabens extending above evaporites in Canyonlands National Park, Utah}},
 author={D.D. Schultz-Ela and P. Walsh},
-journal={Journal of Structural Geology}, % 2002
+journal=jsg, % 2002
 volume={24},
 number={2},
 doi={10.1016/S0191-8141(01)00066-9},
@@ -46087,7 +46239,7 @@ year={2004}}
 @article{stgb10,
 title={{The dynamics of plate tectonics and mantle flow: from local to global scales}},
 author={G. Stadler and M. Gurnis and C. Burstedde and L.C. Wilcox and L. Alisic and O. Ghattas},
-journal={Science},
+journal={Science}, % 2010
 volume={329},
 doi={10.1126/science.1191223},
 pages={1033-1038},
@@ -46298,7 +46450,7 @@ year={2024}}
 title={The evolution of material surfaces in convection with variable 
 viscosity as monitored by a characteristics-based method},
 author={Ten, Arkady and Yuen, David A and Larsen, Tine B and Malevsky, Andrei V},
-journal={Geophysical research letters},
+journal=grl, % 1996
 volume={23},
 number={16},
 doi={10.1029/96GL02182},
@@ -46309,7 +46461,7 @@ year={1996}}
 title={Fractal features in mixing of non-Newtonian and Newtonian mantle convection},
 author={Ten, Arkady and Yuen, David A and Podladchikov, Yu Yu and Larsen, Tine B 
 and Pachepsky, Elizaveta and Malevsky, Andrei V},
-journal={Earth and planetary science letters},
+journal=epsl, % 1997
 volume={146},
 number={3-4},
 pages={401--414},
@@ -46320,7 +46472,7 @@ year={1997}}
 title={Comparison of mixing properties in convection with the Particle-Line Method},
 author={Ten, Arkady A and Podladchikov, Yuri Yu and Yuen, David A and 
 Larsen, Tine B and Malevsky, Andrei V},
-journal={Geophysical research letters},
+journal=grl, % 1998
 volume={25},
 number={16},
 pages={3205--3208},
@@ -46517,7 +46669,7 @@ year={2016}}
 title={Accretion of oceanic plateaus at continental margins: Numerical modeling},
 author={Tao, Jianli and Dai, Liming and Lou, Da and Li, Zhong-Hai and Zhou, Shuhui and Liu, Ze 
 and Li, Sanzhong and Dong, Hao and Lan, Haoyuan and Wang, Liangliang and others},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2020
 volume={81},
 pages={390--402},
 doi={10.1016/j.gr.2019.11.015},
@@ -46553,7 +46705,7 @@ year={2023}}
 @article{thhl22,
 title={Relative continent/mid-ocean ridge elevation: A reference case for isostasy in geodynamics},
 author={Theunissen, Thomas and Huismans, Ritske S and Lu, Gang and Riel, Nicolas},
-journal={Earth-Science Reviews},
+journal=esr, % 2022
 volume={233},
 pages={104153},
 doi={10.1016/j.earscirev.2022.104153},
@@ -46572,7 +46724,7 @@ year={1999}}
 @article{trmi99b,
 title={Surface loading of a viscoelastic earth—II. Spherical models},
 author={Tromp, Jeroen and Mitrovica, Jerry X},
-journal={Geophysical journal international},
+journal=gji, % 1999
 volume={137},
 number={3},
 pages={856--872},
@@ -46707,7 +46859,7 @@ year={2008}}
 @article{trbs21,
 title={Benchmarking multiphysics software for mantle convection},
 author={Trim, Sean J and Butler, Samuel L and Spiteri, Raymond J},
-journal={Computers \& Geosciences},
+journal=cageo, % 2021
 volume={154},
 pages={104797},
 doi={10.1016/j.cageo.2021.104797},
@@ -46744,7 +46896,7 @@ year={2024}}
 AUTHOR={Tsuchida, Mana and Kameyama, Masanori},   
 TITLE={2-D Numerical Simulations on Formation and Descent of Stagnant Slabs: 
 Important Roles of Trench Migration and Its Temporal Change},      
-JOURNAL=FES, % 2020
+journal=FES, % 2020
 VOLUME={8},      
 PAGES={117},     
 YEAR={2020},      
@@ -46753,7 +46905,7 @@ doi={10.3389/feart.2020.00117}}
 @ARTICLE{thsc20,
 AUTHOR={Thielmann, Marcel and Schmalholz, Stefan M.},   
 TITLE={Contributions of Grain Damage, Thermal Weakening, and Necking to Slab Detachment},      
-JOURNAL=FES, % 2020
+journal=FES, % 2020
 VOLUME={8},      
 PAGES={254},     
 YEAR={2020},      
@@ -46773,7 +46925,7 @@ year={2010}}
 title={The role of history-dependent rheology in plate boundary lubrication for 
 generating one-sided subduction},
 author={Tagawa, Michio and Nakakuki, Tomoeki and Kameyama, Masanori and Tajima, Fumiko},
-journal={Pure and Applied Geophysics},
+journal=pag, % 2007
 volume={164},
 number={5},
 pages={879--907},
@@ -46831,7 +46983,7 @@ year={2004}}
 @article{tact15,
 title={Accelerating DynEarthSol3D on tightly coupled CPU--GPU heterogeneous processors},
 author={Ta, Tuan and Choo, Kyoshin and Tan, Eh and Jang, Byunghyun and Choi, Eunseo},
-journal={Computers \& Geosciences},
+journal=cageo, % 2015
 volume={79},
 pages={27--37},
 doi={10.1016/j.cageo.2015.03.003},
@@ -46861,7 +47013,7 @@ year={2016}}
 @article{tesb01,
 title={Pressure anomalies around cylindrical objects in simple shear},
 author={Tenczer, V and St{\"u}we, K and Barr, TD},
-journal={Journal of Structural Geology}, % 2001
+journal=jsg, % 2001
 volume={23},
 number={5},
 pages={777--788},
@@ -47000,7 +47152,7 @@ year={2020}}
 @article{trrj99,
 title={A self-consistent 2-D model for the dip angle ofmantle downflow beneath an overriding continent},
 author={Trubitsyn, VP and Rykov, VV and Jacoby, WR},
-journal={Journal of Geodynamics},
+journal=jog, % 1999
 volume={28},
 number={2-3},
 pages={215--224},
@@ -47146,7 +47298,7 @@ title={A new strategy for finite element computations involving moving boundarie
 the deforming-spatial-domain/space-time procedure: II. Computation of free-surface flows, 
 two-liquid flows, and flows with drifting cylinders},
 author={Tezduyar, Tayfun E and Behr, Mittal and Mittal, S and Liou, J},
-journal={Computer methods in applied mechanics and engineering},
+journal=cmame, % 1992
 volume={94},
 number={3},
 pages={353--371},
@@ -47166,7 +47318,7 @@ doi={10.1080/03091929608208968}}
 @ARTICLE{tabs09,
 author={Tarduno, J. and Bunge, H.P. and Sleep, N. and Hansen, U.},
 title={The bent hawaiian-emperor hotspot track: inheriting the mantle wind},
-journal={Science},
+journal={Science}, % 2009
 year={2009},
 volume={324},
 number={5923},
@@ -47281,7 +47433,7 @@ year={2015}}
 @article{tomk07,
 title={Coupling glacial erosion and tectonics at active orogens: A numerical modeling study},
 author={Tomkin, Jonathan H},
-journal={Journal of Geophysical Research: Earth Surface},
+journal=jgr_es, % 2007
 volume={112},
 number={F2},
 year={2007}}
@@ -47326,7 +47478,7 @@ year={2013}}
 title={Generation of mega-plumes from the core-mantle boundary in a compressible 
 mantle with temperature-dependent viscosity},
 author={Thompson, Paul F and Tackley, Paul J},
-journal={Geophysical research letters},
+journal=grl, % 1998
 volume={25},
 number={11},
 pages={1999--2002},
@@ -47389,7 +47541,7 @@ year={2019}}
 title={Rapid gravity computations for two-dimensional bodies with application to the 
 Mendocino submarine fracture zone},
 author={Talwani, Manik and Worzel, J Lamar and Landisman, Mark},
-journal={Journal of geophysical research},
+journal=jgr, % 1959 
 volume={64},
 number={1},
 pages={49--59},
@@ -47467,7 +47619,7 @@ year="2002"}
 title={{A stabilized finite element method for the Rayleigh-B\'enard equations with infinite 
 Prandtl number in a spherical shell}},
 author={M. Tabata and A. Suzuki},
-journal=cmame,
+journal=cmame, % 2000
 volume={190},
 pages={387--402},
 year={2000}}
@@ -47515,7 +47667,7 @@ year={2015}}
 title={{Intermediate-depth earthquake generation and shear zone formation caused by 
 grain size reduction and shear heating}},
 author={M. Thielmann and A. Rozel and B.J.P. Kaus and Y. Ricard},
-journal={Geology},
+journal={Geology}, % 2015
 volume={43},
 number={9},
 pages={791--794},
@@ -47785,7 +47937,7 @@ year={1993}}
 @article{tack00b,
 title={Mantle convection and plate tectonics: Toward an integrated physical and chemical theory},
 author={Tackley, Paul J},
-journal={Science},
+journal={Science}, % 2000
 volume={288},
 number={5473},
 pages={2002--2007},
@@ -47815,7 +47967,7 @@ year={1998}}
 title={{Modelling compressible mantle convection with large viscosity contrasts in a 
 three-dimensional spherical shell using the yin-yang grid}},
 author={P.J. Tackley},
-journal=pepi,
+journal=pepi, % 2008
 volume={171},
 pages={7--18},
 year={2008}}
@@ -47824,7 +47976,7 @@ year={2008}}
 title={{Dynamics and evolution of the deep mantle resulting from thermal, 
 chemical, phase and melting effects}},
 author={P.J. Tackley},
-journal={Earth-Science Reviews},
+journal=esr, % 2012
 volume={110},
 pages={1--25},
 doi={10.1016/j.earscirev.2011.10.001},
@@ -47833,7 +47985,7 @@ year={2012}}
 @article{trry95,
 title={A 3-D numerical model of the Wilson cycle},
 author={Trubitsyn, VP and Rykov, VV},
-journal={Journal of geodynamics},
+journal=jog, % 1995
 volume={20},
 number={1},
 pages={63--75},
@@ -47842,7 +47994,7 @@ year={1995}}
 @article{thmk14,
 title={{Discretization errors in the Hybrid Finite Element Particle-In-Cell Method}},
 author={M. Thielmann and D.A. May and B.J.P. Kaus},
-journal={Pure and Applied Geophysics},
+journal=pag, % 2014
 volume={171},
 number={9},
 pages={2164--2184},
@@ -47871,7 +48023,7 @@ year={2002}}
 @article{tibb13,
 title={{A plate tectonics oddity: Caterpillar-walk exhumation of subducted continental crust}},
 author={C. Tirel and J.-P. Brun and E. Burov and M.J.R. Wortel and S. Lebedev},
-journal={Geology},
+journal={Geology}, % 2013
 volume={41},
 number={5},
 pages={555--558},
@@ -47928,7 +48080,7 @@ year={1990}}
 @article{tite94,
 title={{Strain modeling of displacement-field partitioning in transpressional orogens}},
 author={B. Tikoff and C. Teyssier},
-journal={Journal of Structural Geology},
+journal=jsg, % 1994
 volume={16},
 number={11},
 pages={1575--1588},
@@ -48000,7 +48152,7 @@ year={2018}}
 @article{trla00,
 title={{Pure shear deformation of square objects, and applications to geological strain analysis}},
 author={S.H. Treagus and L. Lan},
-journal={Journal of Structural Geology},
+journal=jsg, % 2000
 volume={22},
 pages={105-122},
 doi={10.1016/S0191-8141(99)00143-1},
@@ -48179,7 +48331,7 @@ Title = {High performance finite element computation of fluid dynamics problems}
 @Article{thie17,
 AUTHOR = {C. Thieulot},
 TITLE = {Analytical solution for viscous incompressible Stokes flow in a spherical shell},
-JOURNAL = solid_earth, % 2017
+journal=solid_earth, % 2017
 VOLUME = {8},
 YEAR = {2017},
 PAGES = {1181--1191},
@@ -48189,7 +48341,7 @@ doi={10.5194/se-8-1181-2017}}
 title={{FANTOM: two- and three-dimensional numerical modelling of creeping flows for the solution 
 of geological problems}},
 author={C. Thieulot},
-journal=pepi,
+journal=pepi, % 2011
 volume={188},
 number={1},
 pages={47--68},
@@ -48384,7 +48536,7 @@ year={2008}}
 @article{urgv11,
 title={On iterative methods for the incompressible Stokes problem},
 author={Ur Rehman, M and Geenen, T and Vuik, C and Segal, G and MacLachlan, SP},
-journal={International Journal for Numerical methods in fluids},
+journal=ijnmf, % 2011
 volume={65},
 number={10},
 pages={1180--1200},
@@ -48403,7 +48555,7 @@ year={2015}}
 @article{uegs08,
 title={{Subduction initiation by thermal-chemical plumes: Numerical studies}},
 author={K. Ueda and T. Gerya and S.V. Sobolev},
-journal=pepi,
+journal=pepi, % 2008
 volume={171},
 doi={},
 pages={296--312},
@@ -48412,6 +48564,16 @@ year={2008}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % VVVV
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+@article{vamp24,
+title={Estimates on the possible annual seismicity of Venus},
+author={van Zelst, Iris and Maia, Julia S and Plesa, Ana-Catalina and Ghail, Richard and Sp{\"u}hler, Moritz},
+journal=jgr_planets, % 2024
+volume={129},
+number={7},
+pages={e2023JE008048},
+doi={10.1029/2023JE008048},
+year={2024}}
 
 @article{vanb14,
 title={Lateral migration of a foundering high-density root: Insights 
@@ -48479,7 +48641,7 @@ year={1991}}
 title={The thermal--mechanical evolution of crustal orogenic belts at 
 convergent plate boundaries: A reappraisal of the orogenic cycle},
 author={Vanderhaeghe, Olivier},
-journal={Journal of Geodynamics},
+journal=jog, % 2012
 volume={56},
 pages={124--145},
 doi={10.1016/j.jog.2011.10.004},
@@ -48613,7 +48775,7 @@ of the Drake Passage: When and why?},
 author={van de Lagemaat, Suzanna HA and Swart, Merel LA and Vaes, Bram and Kosters, Martha E 
 and Boschman, Lydian M and Burton-Johnson, Alex and Bijl, Peter K and Spakman, Wim 
 and van Hinsbergen, Douwe JJ},
-journal={Earth-Science Reviews},
+journal=esr, % 2021
 pages={103551},
 doi={10.1016/j.earscirev.2021.103551},
 year={2021}}
@@ -48621,7 +48783,7 @@ year={2021}}
 @article{vusb00,
 title={The Krylov accelerated SIMPLE (R) method for flow problems in industrial furnaces},
 author={Vuik, C and Saghir, A and Boerstoel, GP},
-journal={International Journal for Numerical methods in fluids},
+journal=ijnmf, % 2000
 volume={33},
 number={7},
 pages={1027--1040},
@@ -48702,7 +48864,7 @@ doi={10.1016/j.epsl.2008.04.041}}
 @ARTICLE{vesb04,
 author={Vezolainen, A.V. and Solomatov, V.S. and Basilevsky, A.T. and Head, J.W.},
 title={Uplift of Beta Regio: Three-dimensional models},
-journal={Journal of Geophysical Research E: Planets},
+journal=jgr_planets, % 2004 
 year={2004},
 volume={109},
 number={8},
@@ -48712,7 +48874,7 @@ doi={10.1029/2004JE002259}}
 @ARTICLE{vesh03,
 author={Vezolainen, A.V. and Solomatov, V.S. and Head, J.W. and Basilevsky, A.T. and Moresi, L.-N.},
 title={Timing of formation of Beta Regio and its geodynamical implications},
-journal={Journal of Geophysical Research E: Planets},
+journal=jgr_planets, % 2003
 year={2003},
 volume={108},
 number={1},
@@ -48799,7 +48961,7 @@ year={2020}}
 title={Use of GRACE determined secular gravity rates for glacial isostatic 
 adjustment studies in North-America},
 author={van der Wal, Wouter and Wu, Patrick and Sideris, Michael G and Shum, CK},
-journal={Journal of Geodynamics},
+journal=jog, % 2008
 volume={46},
 number={3-5},
 pages={144--154},
@@ -48831,7 +48993,7 @@ year={2011}}
 title={Asymmetric delamination and convective removal numerical modeling: comparison 
 with evolutionary models for the Alboran Sea region},
 author={Valera, Juan-Luis and Negredo, Ana-Mar{\'\i}a and Villase{\~n}or, Antonio},
-journal={Pure appl. geophys.},
+journal=pag, % 2008
 volume={165},
 pages={1683--1706},
 doi={10.1007/s00024-008-0395-8},
@@ -48906,7 +49068,7 @@ doi={10.1007/s13137-014-0060-6}}
 author={Vibe, Y. and Bunge, H.-P. and Clark, S.R.},
 title={Anomalous subsidence history of the West Siberian Basin as an indicator for episodes of 
 mantle induced dynamic topography},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2018
 year={2018},
 volume={53},
 pages={99-109},
@@ -48984,7 +49146,7 @@ year={2008}}
 title={Compositional heterogeneity in the bottom 1000 kilometers of Earth's mantle: 
 Toward a hybrid convection model},
 author={van der Hilst, Rob D and K{\'a}rason, Hrafnkell},
-journal={Science},
+journal={Science}, % 1999
 volume={283},
 number={5409},
 pages={1885--1888},
@@ -49273,7 +49435,7 @@ year={2011}}
 author="van Hinsbergen, D. J. J. and Steinberger, B. and Doubrovine, P. V. and Gassm{\"{o}}ller, R.",
 title="Acceleration and deceleration of India-Asia convergence since the Cretaceous:
 Roles of mantle plumes and continental collision",
-journal="Journal of Geophysical Research",
+journal=jgr, % 2011 
 year="2011",
 volume="116",
 number="B6",
@@ -49334,7 +49496,7 @@ year={2017}}
 @article{vime12,
 title={Mesozoic rotation of Iberia: subduction in the Pyrenees?},
 author={Vissers, RLM and Meijer, P Th},
-journal={Earth-Science Reviews},
+journal=esr, % 2012
 volume={110},
 number={1-4},
 pages={93--110},
@@ -49476,7 +49638,7 @@ year={1998}}
 @article{vayv94,
 title={Implications for mantle dynamics from the high melting temperature of perovskite},
 author={van Keken, Peter E and Yuen, David A and van den Berg, Arie P},
-journal={Science},
+journal={Science}, % 1994
 volume={264},
 number={5164},
 pages={1437--1439},
@@ -49644,7 +49806,7 @@ year={2002}}
 title={Upwellings from a deep mantle reservoir filtered at the 660 km phase transition in 
 thermo-chemical convection models and implications for intra-plate volcanism},
 author={J.R.G. van Summeren and A.P. van den Berg and R.D. van der Hilst},
-journal=pepi,
+journal=pepi, % 2009
 volume={172},
 pages={210--224},
 doi={10.1016/j.pepi.2008.09.011},
@@ -49692,7 +49854,7 @@ year={2004}}
 @article{vavv04c,
 title={Plate tectonics on the terrestrial planets},
 author={P. van Thienen and N.J. Vlaar and A.P. van den Berg},
-journal=pepi,
+journal=pepi, % 2004
 volume={142},
 pages={61--74},
 doi={10.1016/j.pepi.2003.12.008},
@@ -49713,7 +49875,7 @@ year={2004}}
 title={Assessment of the cooling capacity of plate tectonics and flood volcanism in 
 the evolution of Earth, Mars and Venus},
 author={P. van Thienen and N.J. Vlaar and A.P. van den Berg},
-journal=pepi,
+journal=pepi, % 2005
 volume={150},
 pages={287--315},
 doi={10.1016/j.pepi.2004.11.010},
@@ -49843,7 +50005,7 @@ title={Geodynamical modeling and multiscale seismic expression of
 thermo-chemical heterogeneity and phase transitions in the lowermost mantle},
 author={A.P. van den Berg and M.V. De Hoop and D.A. Yuen and A. Duchkov 
 and R.D. van der Hilst and M.H.G. Jacobs},
-journal=pepi,
+journal=pepi, % 2010
 volume={180},
 pages={244--257},
 doi={10.1016/j.pepi.2010.02.008},
@@ -49979,7 +50141,7 @@ year={1989}}
 @article{vyrc13,
 title={Benchmarking FEniCS for mantle convection simulations},
 author={L. Vynnytska and M.E. Rognes  and S.R. Clark},
-journal={Computers \& Geosciences},
+journal=cageo, % 2013
 volume={50},
 pages={95--105},
 doi={10.1016/j.cageo.2012.05.012},
@@ -50008,7 +50170,7 @@ year={2014}}
 @article{voge14b,
 title={Deep plate serpentinization triggers skinning of subducting slabs},
 author={K. Vogt and T. Gerya},
-journal={Geology},
+journal={Geology}, % 2014
 doi={10.1130/G35565.1},
 year={2014}}
 
@@ -50131,6 +50293,15 @@ Year = {1998}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % WWWW
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+@article{wiko12,
+title={Small-scale convection in the subduction zone mantle wedge},
+author={Wirth, Erin A and Korenaga, Jun},
+journal=epsl, % 2012
+volume={357},
+pages={111--118},
+doi={10.1016/j.epsl.2012.09.010},
+year={2012}}
 
 @article{wuwh22,
 title={Dynamics of the subducted Izanagi-Pacific plates since the Mesozoic 
@@ -50657,7 +50828,7 @@ year={2021}}
 title={Long-lasting viscous drainage of eclogites from the cratonic lithospheric 
 mantle after Archean subduction stacking},
 author={Wang, Zhensheng and Kusky, Timothy M and Wang, Lu},
-journal={Geology},
+journal={Geology}, % 2022
 volume={},
 pages={},
 doi={10.1130/G49793.1},
@@ -50735,7 +50906,7 @@ year={2009}}
 @article{wada21,
 title={A simple picture of mantle wedge flow patterns and temperature variation},
 author={Wada, Ikuko},
-journal={Journal of Geodynamics},
+journal=jog, % 2021
 pages={101848},
 doi={10.1016/j.jog.2021.101848},
 year={2021}}
@@ -50911,7 +51082,7 @@ doi={10.1029/2020GC009286}}
 title={Oceanic plateau of the Hawaiian mantle plume head subducted to the uppermost lower mantle},
 author={Wei, Songqiao Shawn and Shearer, Peter M and Lithgow-Bertelloni, Carolina 
 and Stixrude, Lars and Tian, Dongdong},
-journal={Science},
+journal={Science}, % 2020
 volume={370},
 number={6519},
 pages={983--987},
@@ -51001,7 +51172,7 @@ year={2006}}
 title={Controls on the strength of coupling among climate, erosion, and deformation in 
 two-sided, frictional orogenic wedges at steady state},
 author={Whipple, Kelin X and Meade, Brendan J},
-journal={Journal of Geophysical Research: Earth Surface},
+journal=jgr_es, % 2004
 volume={109},
 number={F1},
 doi={10.1029/2003JF000019},
@@ -51173,7 +51344,7 @@ year={2017}}
 @article{werr07,
 title={Mantle detachment faults and the breakup of cold continental lithosphere},
 author={Weinberg, Roberto F and Regenauer-Lieb, Klaus and Rosenbaum, Gideon},
-journal={Geology},
+journal={Geology}, % 2007
 volume={35},
 number={11},
 pages={1035--1038},
@@ -51331,7 +51502,7 @@ year={2015}}
 title={On the evolution of terrestrial planets: Bi-stability, stochastic effects, 
 and the non-uniqueness of tectonic states},
 author={Weller, Matthew B and Lenardic, Adrian},
-journal={Geoscience Frontiers},
+journal=geoF, % 2018
 volume={9},
 number={1},
 pages={91--102},
@@ -51408,7 +51579,7 @@ doi="10.1038/ncomms9937"}
 @Article{wazh09,
 author="Watters, W. A. and Zuber, M. T. and Hager, B. H.",
 title="Thermal perturbations caused by large impacts and consequences for mantle convection",
-journal="Journal of Geophysical Research",
+journal=jgr, % 2009 
 year="2009",
 volume="114",
 number="E2",
@@ -51444,7 +51615,7 @@ year={1994}}
 @article{wibm03,
 author={Chris Wijns and Fabio Boschetti and Louis Moresi},
 title={Inverse modelling in geology by interactive evolutionary computation},
-journal={Journal of Structural Geology},
+journal=jsg, % 2003
 volume={25},
 pages={1615--1621},
 doi={10.1016/S0191-8141(03)00010-5},
@@ -51538,7 +51709,7 @@ year={1997}}
 @article{webu86,
 title={Modes of extensional tectonics},
 author={B. Wernicke and B.C. Burchfiel},
-journal={Journal of Structural Geology},
+journal=jsg, % 1986
 volume={4},
 number={2},
 pages={105--115},
@@ -51598,7 +51769,7 @@ year={1994}}
 @article{wepo95,
 title={The rise of solid-state diapirs},
 author={R.F. Weinberg},
-journal={Journal of Structural Geology}, % 1995
+journal=jsg, % 1995
 volume={17},
 number={8},
 pages={1183--1195},
@@ -51608,7 +51779,7 @@ year={1995}}
 @article{wesc92,
 title={Polydiapirs: multiwavelength gravity structures},
 author={R.F. Weinberg and H. Schmeling},
-journal={Journal of Structural Geology}, % 1995
+journal=jsg, % 1995
 volume={14},
 number={4},
 pages={425--436},
@@ -52099,7 +52270,7 @@ PAGES = {166--222}}
 
 @article{wibf93,
 Author = {S. Willett and C. Beaumont and P. Fullsack},
-journal = {Geology}, % 1993
+journal={Geology}, % 1993
 Pages = {371-374},
 Title = {Mechanical model for the tectonics of doubly vergent compressional orogens},
 Volume = {21},
@@ -52199,6 +52370,28 @@ year={1999}}
 % XXXX
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+@article{xicx21,
+title={The role of Pre-existing crustal weaknesses in the uplift of the eastern 
+Tibetan Plateau: 2D thermo-mechanical modeling},
+author={Xie, Renxian and Chen, Lin and Xiong, Xiong and Wang, Kai and Yan, Zhiyong},
+journal={Tectonics}, % 2021
+volume={40},
+number={4},
+pages={e2020TC006444},
+doi={10.1029/2020TC006444},
+year={2021}}
+
+@article{xicm24,
+title={Various lithospheric deformation patterns derived from rheological contrasts 
+between continental terranes: insights from 2-D numerical simulations},
+author={Xie, Renxian and Chen, Lin and Morgan, Jason P and Chen, Yongshun John},
+journal=solid_earth, % 2024
+volume={15},
+number={7},
+pages={789--806},
+doi={10.5194/se-15-789-2024},
+year={2024}}
+
 @article{xibg24,
 title={Uplift of the Tibetan Plateau driven by mantle delamination from the overriding plate},
 author={Xie, Yuan and Bal{\'a}zs, Attila and Gerya, Taras and Xiong, Xiong},
@@ -52210,7 +52403,7 @@ year={2024}}
 @article{xiyp02,
 title={Conservative and oscillation-less atmospheric transport schemes based on rational functions},
 author={Xiao, F and Yabe, T and Peng, X and Kobayashi, H},
-journal={Journal of Geophysical Research: Atmospheres},
+journal=jgr_atm, % 2002
 volume={107},
 number={D22},
 pages={ACL--2},
@@ -52343,6 +52536,16 @@ year    = {2009}}
 % YYYY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+@article{yacz24,
+title={Deciphering subduction polarity during ancient arc-continent collisions},
+author={Yan, Zhiyong and Chen, Lin and Zuza, Andrew V and Xiang, Xiao and Xie, Renxian and Ai, Sanxi},
+journal=grl, % 2024
+volume={51},
+number={15},
+pages={e2024GL108761},
+doi={10.1029/2024GL108761},
+year={2024}}
+
 @article{yuga24,
 title={A Giant Impact Origin for the First Subduction on Earth},
 author={Yuan, Qian and Gurnis, Michael and Asimow, Paul D and Li, Yida},
@@ -52395,7 +52598,7 @@ year={2023}}
 @article{yang22,
 title={Subduction initiation triggered by collision: A review based on examples and models},
 author={Yang, Gaoxue},
-journal={Earth-Science Reviews},
+journal=esr, % 2022
 volume={232},
 pages={104129},
 doi={10.1016/j.earscirev.2022.104129},
@@ -52427,7 +52630,7 @@ year={2022}}
 title={Magmatic ignitor kick-starts subduction initiation},
 author={Yang, Jianfeng and Mitchell, Ross N and Spencer, Christopher J 
 and Sun, Baolu and Zhang, Chang and Zhao, Liang},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2023
 volume={122},
 pages={112--124},
 doi={10.1016/j.gr.2023.05.023},
@@ -52543,7 +52746,7 @@ title={Stress Recovery for the Particle-in-cell Finite Element Method},
 author={Yang, Haibin and Moresi, Louis and Mansour, John},
 volume={311},
 year={2021},
-journal=pepi,
+journal=pepi, % 2021
 pages={106637},
 doi={10.1016/j.pepi.2020.106637}}
 
@@ -52560,7 +52763,7 @@ year={1986}}
 @article{yusc77,
 title={Asthenospheric shear flow: thermally stable or unstable?},
 author={Yuen, David A and Schubert, Gerald},
-journal={Geophysical research letters},
+journal=grl, % 1977 
 volume={4},
 number={11},
 pages={503--506},
@@ -52713,7 +52916,7 @@ year={2005}}
 title={The role of hot uprising plumes in the initiation of plate-like regime of 
 three-dimensional mantle convection},
 author={Yoshida, Masaki and Ogawa, Masaki},
-journal={Geophysical research letters},
+journal=grl, % 2004
 volume={31},
 number={5},
 doi={10.1029/2003GL017376},
@@ -52957,10 +53160,14 @@ doi={10.1080/03091920008203715},
 year={2000}}
 
 @article{yuwa19,
-title={Unified linear stability analysis for thermal convections in spherical shells 
-under different boundary conditions and heating modes},
+title={Unified Linear Stability Analysis for Thermal Convections in Spherical 
+Shells Under Different Boundary Conditions and Heating Modes},
 author={Yu, Hongzheng and Wang, Shimin},
 journal={Earth and Space Science},
+volume={6},
+number={9},
+pages={1749--1768},
+doi={10.1029/2019EA000672},
 year={2019}}
 
 @article{yufl85,
@@ -53015,6 +53222,7 @@ author={K.Y. Yuan and Y.S. Huang and H.T. Yang and T.H.H. Pian},
 journal={Computational Mechanics},
 volume={14},
 pages={189--199},
+doi={10.1007/BF00350284},
 year={1994}}
 
 @article{yamg19,
@@ -53042,6 +53250,7 @@ author={C. Yao and F. Deschamps and  J.P. Lowman and C. Sanchez-Valle and P.J. T
 journal=jgr, % 2014
 volume={119},
 pages={1895--1913},
+doi={10.1002/2014JE004653},
 year={2014}}
 
 @article{yosh13,
@@ -53051,15 +53260,17 @@ author={M. Yoshida},
 journal=grl, % 2013
 volume={40},
 pages={5387--5392},
+doi={10.1002/2013GL057578},
 year={2013}}
 
 @article{yakm11,
 title={Dynamic constraints on the crustal-scale rheology of the Zagros fold belt, Iran},
 author={Ph. Yamato and B.J.P. Kaus and F. Mouthereau and S. Castelltort},
-journal={Geology},
+journal={Geology}, % 2011
 volume={39},
 number={9},
 pages={815--818},
+doi={10.1130/G32136.1},
 year={2011}}
 
 @article{yaot02,
@@ -53196,7 +53407,7 @@ Year = {2009}}
 title={Aseismic ridge subduction and flat subduction: Insights 
 from three-dimensional numerical models},
 author={Zhao, Hui and Leng, Wei},
-journal={Earth and Planetary Physics},
+journal=epp, % 2023
 volume={7},
 number={2},
 pages={269--281},
@@ -53513,7 +53724,7 @@ year={2015}}
 @article{zhqa12,
 title={Can tidal tomography be used to unravel the long-wavelength structure of the lunar interior?},
 author={Zhong, Shijie and Qin, Chuan and A, Geruo and Wahr, John},
-journal={Geophysical research letters},
+journal=grl, % 2012
 volume={39},
 number={15},
 doi={10.1029/2012GL052362},
@@ -53705,7 +53916,7 @@ doi={10.1029/GL014i012p01223}}
 @article{zedb98,
 title={Solidus of Earth's deep mantle},
 author={Zerr, A and Diegeler, A and Boehler, R},
-journal={Science},
+journal={Science}, % 1998
 volume={281},
 number={5374},
 pages={243--246},
@@ -53761,11 +53972,11 @@ year={2005}}
 author = {Zhou, Xin and Li, Zhong-Hai and Gerya, Taras V. and Stern, Robert J.},
 title = {Lateral propagation-induced subduction initiation at passive continental 
 margins controlled by preexisting lithospheric weakness},
+journal=sciad, % 2020
 volume = {6},
 number = {10},
-year = {2020},
 doi={10.1126/sciadv.aaz1048},
-journal = {Science Advances}}
+year = {2020}}
 
 @ARTICLE{zhlb15,
 author={Zhou, Z. and Lin, J. and Behn, M.D. and Olive, J.-A.},
@@ -53800,7 +54011,7 @@ year={2017}}
 @article{zwsr20,
 title={Rift propagation in rotational versus orthogonal extension: Insights from 4D analogue models},
 author={Zwaan, Frank and Schreurs, Guido and Rosenau, Matthias},
-journal={Journal of Structural Geology},
+journal=jsg, % 2020
 pages={103946},
 volume={135},
 doi={10.1016/j.jsg.2019.103946},
@@ -53871,7 +54082,7 @@ year={2001}}
 title={Continuous deformation of the Tibetan Plateau from global positioning system data},
 author={Zhang, Pei-Zhen and Shen, Zhengkang and Wang, Min and Gan, Weijun and B{\"u}rgmann, Roland 
 and Molnar, Peter and Wang, Qi and Niu, Zhijun and Sun, Jianzhong and Wu, Jianchun and others},
-journal={Geology},
+journal={Geology}, % 2004
 volume={32},
 number={9},
 doi={10.1130/G20554.1},
@@ -53959,7 +54170,7 @@ doi="10.1029/95GL00782"}
 @Article{zhgu94b,
 author="Zhong, S. and Gurnis, M.",
 title="Role of plates and temperature-dependent viscosity in phase change dynamics",
-journal="Journal of Geophysical Research",
+journal=jgr, % 1994
 year="1994",
 volume="99",
 number="B8",
@@ -54011,7 +54222,7 @@ doi="10.1111/j.1365-246X.1996.tb04049.x"}
 @article{zhho96,
 title={Computer simulation of single-layer buckling},
 author={Zhang, Y and Hobbs, BE and Ord, A and M{\"u}hlhaus, HB},
-journal={Journal of Structural Geology},
+journal=jsg, % 1996
 volume={18},
 number={5},
 pages={643--655},
@@ -54021,7 +54232,7 @@ year={1996}}
 @article{zhhj93,
 title={Crystallographic preferred orientation development in a buckled single layer: a computer simulation},
 author={Zhang, Y and Hobbs, BE and Jessell, MW},
-journal={Journal of structural geology},
+journal=jsg, % 1993 
 volume={15},
 number={3-5},
 pages={265--276},
@@ -54110,7 +54321,7 @@ year={1992}}
 title={Subduction initiation dynamics along a transform fault control
 trench curvature and ophiolite ages},
 author={X. Zhou and Z.-H. Li and T.V. Gerya and R.J. Stern and Z. Xu and J. Zhang},
-journal={Geology},
+journal={Geology}, % 2018
 volume={46},
 number={7},
 pages={607--610},
@@ -54507,7 +54718,7 @@ year={1995}}
 @article{zhgu95,
 title={Mantle convection with plates and Mobile, Faulted Plate Margins},
 author={S. Zhong and M. Gurnis},
-journal={Science},
+journal={Science}, % 1995
 volume={267},
 number={5199},
 pages={838--843},
@@ -54576,7 +54787,7 @@ year={2019}}
 @article{zlfd08,
 title={Modelling gravitational instabilities: slab break-off and Rayleigh-Taylor diapirism},
 author={S. Zlotnik and M. Fernandez and P. Diez and J. Verges},
-journal={Pure appl. geophys.},
+journal=pag, % 2008
 volume={165},
 doi={10.1007/s00024-004-0386-9},
 pages={1491-1510},
@@ -54661,7 +54872,7 @@ Year = {1995}}
 Author = {Pei-Zhen Zhang and Zhengkang Shen and Min Wang and Weijun Gan and Roland B{\"u}rgman 
 and Peter Molnar and Qi Wang and Zhijun Niu and Jianzhong Sun and Jianchun Wu and 
 Sun Hanrong and You Xinzhao},
-journal = {Geology}, % 2004
+journal={Geology}, % 2004
 Month = {9},
 Pages = {809-812},
 Title = {Continuous deformation of the tibetan plateau from global positioning system data},

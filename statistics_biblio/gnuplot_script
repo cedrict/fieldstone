@@ -1,143 +1,457 @@
 #gnuplot script
 set term pdf enhanced font "Times,10pt"
-set output 'stats.pdf'
 set grid
-set key left
 set ytics 20
 set xtics 5
+nmax=32
+
+set key left
+set output 'stats.pdf'
 plot[1965:2025][]\
 '../../bibliography/pdfs/stats' u 1:2 w lp pt 5 ps .4 t 'pdfs',\
 'stats_bib' u 1:2 w lp pt 5 ps .4 t 'bib file'
 
 set ytics 5
 set output 'journals.pdf'
-plot[1965:2024][]\
+plot[1965:2024][:nmax]\
 'jgr_stats.txt' u 1:2 w lp pt 5 ps 0.23 t 'JGR',\
 'gji_stats.txt' u 1:2 w lp pt 5 ps 0.23 t 'GJI',\
+'pepi_stats.txt'  u 1:2 w lp pt 5 lw 1 ps 0.23 t 'PEPI',\
 'grl_stats.txt' u 1:2 w lp pt 5 ps 0.23 t 'GRL',\
 'g3_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'G3',\
 'epsl_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'EPSL',\
-'tectonics_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'Tectonics',\
 'tectonophysics_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'Tectonophysics',\
-'solid_earth_stats.txt' u 1:2 w lp pt 5 ps 0.23 t 'Solid Earth',\
 'geology_stats.txt' u 1:2 w lp pt 1 ps 0.23 t 'Geology',\
-'pepi_stats.txt'  u 1:2 w lp pt 5 lw 1 ps 0.23 t 'PEPI',\
-'terra_nova_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'Terra Nova',\
-'icarus_stats.txt'  u 1:2 w lp pt 5 ps 0.23 t 'Icarus',\
 
 #############################################################
 set term pdf enhanced font "Times,11pt"
 
+
 set ytics 1
-set boxwidth 0.5
+set boxwidth 0.75
 set style fill solid
-
-set title 'Physics of the Earth and Planetary Interiors'
-set output 'journal_pepi.pdf'
-plot[1965:2024][]\
-'pepi_stats.txt' u 1:2 with boxes notitle
-
-set title 'Geophysical Research Letters'
-set output 'journal_grl.pdf'
-plot[1965:2024][]\
-'grl_stats.txt' u 1:2 with boxes notitle
-
-set title 'jgr'
-set output 'journal_jgr.pdf'
-plot[1965:2024][]\
-'jgr_stats.txt' u 1:2 with boxes notitle
-
-set title 'gji'
-set output 'journal_gji.pdf'
-plot[1965:2024][]\
-'gji_stats.txt' u 1:2 with boxes notitle
-
-set title 'jcp'
-set output 'journal_jcp.pdf'
-plot[1965:2024][]\
-'jcp_stats.txt' u 1:2 with boxes notitle
-
-set title 'G3'
-set output 'journal_g3.pdf'
-plot[1965:2024][]\
-'g3_stats.txt' u 1:2 with boxes notitle
-
-set title 'epsl'
-set output 'journal_epsl.pdf'
-plot[1965:2024][]\
-'epsl_stats.txt' u 1:2 with boxes notitle
-
-set title 'geology'
-set output 'journal_geology.pdf'
-plot[1965:2024][]\
-'geology_stats.txt' u 1:2 with boxes notitle
-
-set title 'Solid Earth'
-set output 'journal_solid_earth.pdf'
-plot[1965:2024][]\
-'solid_earth_stats.txt' u 1:2 with boxes notitle
-
-set title 'Tectonics'
-set output 'journal_tectonics.pdf'
-plot[1965:2024][]\
-'tectonics_stats.txt' u 1:2 with boxes notitle
-
-set title 'Tectonophysics'
-set output 'journal_tectonophysics.pdf'
-plot[1965:2024][]\
-'tectonophysics_stats.txt' u 1:2 with boxes notitle
-
-set title 'Icarus'
-set output 'journal_icarus.pdf'
-plot[1965:2024][]\
-'icarus_stats.txt' u 1:2 with boxes notitle
-
-set title 'GMD'
-set output 'journal_gmd.pdf'
-plot[1965:2024][]\
-'gmd_stats.txt' u 1:2 with boxes notitle
-
-set title 'Nature Geoscience'
-set output 'journal_natureG.pdf'
-plot[1965:2024][]\
-'natureG_stats.txt' u 1:2 with boxes notitle
-
-set title 'Nature Communications'
-set output 'journal_natureC.pdf'
-plot[1965:2024][]\
-'natureC_stats.txt' u 1:2 with boxes notitle
-
-set title 'Nature'
-set output 'journal_natureJ.pdf'
-plot[1965:2024][]\
-'natureJ_stats.txt' u 1:2 with boxes notitle
-
-
-set title 'Scientific Reports'
-set output 'journal_scientific_reports.pdf'
-plot[1965:2024][]\
-'scientific_reports_stats.txt' u 1:2 with boxes notitle
 
 set title 'Frontiers in Earth Science'
 set output 'journal_fes.pdf'
-plot[1965:2024][]\
+plot[1964:2024][:nmax]\
 'fes_stats.txt' u 1:2 with boxes notitle
 
-set title 'Terra Nova'
-set output 'journal_terra_nova.pdf'
-plot[1965:2024][]\
-'terra_nova_stats.txt' u 1:2 with boxes notitle
+set title 'Journal of Open Source Software'
+set output 'journal_joss.pdf'
+plot[1964:2024][:nmax]\
+'joss_stats.txt' u 1:2 with boxes notitle
 
+set title 'Pure \& Applied Geophysics'
+set output 'journal_pag.pdf'
+plot[1964:2024][:nmax]\
+'pag_stats.txt' u 1:2 with boxes notitle
 
-set title 'ijnme'
-set output 'journal_ijnme.pdf'
-plot[1965:2024][]\
-'ijnme_stats.txt' u 1:2 with boxes notitle
+set title 'Nature'
+set output 'journal_natureJ.pdf'
+plot[1964:2024][:nmax]\
+'natureJ_stats.txt' u 1:2 with boxes notitle
 
-set title 'ijnmf'
+###############################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Scientific Reports'
+set output 'journal_scientific_reports.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 2010, graph 1
+plot[1964:2024][:nmax]\
+'scientific_reports_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Journal of Structural Geology'
+set output 'journal_jsg.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1978, graph 1
+plot[1964:2024][:nmax]\
+'jsg_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Gondwana Research'
+set output 'journal_gondwana.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1996, graph 1
+plot[1964:2024][:nmax]\
+'gondwana_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Earth and Planetary Physics'
+set output 'journal_epp.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 2016, graph 1
+plot[1964:2024][:nmax]\
+'epp_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Int. J. Num. Meth. Fluids'
 set output 'journal_ijnmf.pdf'
-plot[1965:2024][]\
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1980, graph 1
+plot[1964:2024][:nmax]\
 'ijnmf_stats.txt' u 1:2 with boxes notitle
 
+###########################################################
 
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Journal of Geodynamics'
+set output 'journal_jog.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1983, graph 1
+plot[1964:2024][:nmax]\
+'jog_stats.txt' u 1:2 with boxes notitle
 
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Int. J. Num. Meth. Eng.'
+set output 'journal_ijnme.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1968, graph 1
+plot[1964:2025][:nmax]\
+'ijnme_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Solid Earth'
+set output 'journal_solid_earth.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 2009, graph 1
+plot[1964:2025][:nmax]\
+'solid_earth_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Geosci. Model. Dev.'
+set output 'journal_gmd.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 2007, graph 1
+plot[1964:2025][:nmax]\
+'gmd_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Geophysical Research Letters'
+set output 'journal_grl.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1973, graph 1
+plot[1964:2025][:nmax]\
+'grl_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Geochem. Geophys. Geosyst.'
+set output 'journal_g3.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1999, graph 1
+plot[1964:2025][:nmax]\
+'g3_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Earth Planet. Sci. Lett.'
+set output 'journal_epsl.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1965, graph 1
+plot[1964:2024][:nmax]\
+'epsl_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'J. Geophys. Res.: Solid Earth'
+set output 'journal_jgr.pdf'
+plot[1964:2024][:nmax]\
+'jgr_stats.txt' u 1:2 with boxes notitle
+
+set title 'J. Geophys. Res.: Planets' 
+set output 'journal_jgr_planets.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1990, graph 1
+plot[1964:2024][:nmax]\
+'jgr_planets_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Geophysical Journal International'
+set output 'journal_gji.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1987, graph 1
+plot[1964:2024][:nmax]\
+'gji_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Geology'
+set output 'journal_geology.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1972, graph 1
+plot[1964:2024][:nmax]\
+'geology_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Tectonics'
+set output 'journal_tectonics.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1981, graph 1
+plot[1964:2024][:nmax]\
+'tectonics_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Tectonophysics'
+set output 'journal_tectonophysics.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1963, graph 1
+plot[1964:2024][:nmax]\
+'tectonophysics_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Computers \& Geosciences'
+set output 'journal_cageo.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1974, graph 1
+plot[1964:2024][:nmax]\
+'cageo_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Icarus'
+set output 'journal_icarus.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1961, graph 1
+plot[1964:2024][:nmax]\
+'icarus_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Physics of the Earth and Planetary Interiors'
+set output 'journal_pepi.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1967, graph 1
+plot[1964:2024][:nmax]\
+'pepi_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Journal of Computational Physics'
+set output 'journal_jcp.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1966, graph 1
+plot[1964:2024][:nmax]\
+'jcp_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Terra Nova'
+set output 'journal_terra_nova.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1988, graph 1
+plot[1964:2024][:nmax]\
+'terra_nova_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Computer Methods in Applied Mechanics and Engineering'
+set output 'journal_cmame.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 1971, graph 1
+plot[1964:2024][:nmax]\
+'cmame_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Nature Communications'
+set output 'journal_natureC.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 2009, graph 1
+plot[1964:2024][:nmax]\
+'natureC_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Nature Geoscience'
+set output 'journal_natureG.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 2007, graph 1
+plot[1964:2024][:nmax]\
+'natureG_stats.txt' u 1:2 with boxes notitle
