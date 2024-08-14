@@ -1,0 +1,46 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set xtics 0.25
+
+f(x,y)=cos(2*pi*y)*sin(2*pi*x)
+
+set output 'u_0.pdf'
+set title 't=0'
+plot[0:1][-1:1]\
+f(x,0) lw 2 notitle
+
+set output 'u_1.pdf'
+set title 't=0.1'
+plot[0:1][-1:1]\
+f(x,0.1) lw 2 notitle
+
+set output 'u_2.pdf'
+set title 't=0.2'
+plot[0:1][-1:1]\
+f(x,0.2) lw 2 notitle
+
+set output 'u_3.pdf'
+set title 't=0.3'
+plot[0:1][-1:1]\
+f(x,0.3) lw 2 notitle
+
+set output 'u_4.pdf'
+set title 't=0.4'
+plot[0:1][-1:1]\
+f(x,0.4) lw 2 notitle
+
+set output 'u_5.pdf'
+set title 't=0.5'
+plot[0:1][-1:1]\
+f(x,0.5) lw 2 notitle
+
+set output 'u_6.pdf'
+set title 't=0.6'
+plot[0:1][-1:1]\
+f(x,0.6) lw 2 notitle
+
+set output 'u_7.pdf'
+set title 't=0.7'
+plot[0:1][-1:1]\
+f(x,0.7) lw 2 notitle
+
