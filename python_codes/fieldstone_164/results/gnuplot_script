@@ -1,0 +1,72 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set xtics 0.25
+set pointsize 0.5
+set key outside
+
+f(x,y)=cos(2*pi*y)*sin(2*pi*x)
+
+set output 'u_0.pdf'
+set title 't=0.002'
+plot[0:1][-1:1]\
+'meth1/u_0000.ascii' w p t 'meth 1',\
+'meth2/u_0000.ascii' w p t 'meth 2',\
+'meth3/u_0000.ascii' w p t 'meth 3',\
+'meth1/u_0000.ascii' u 1:3 w l lt -1 t 'analytical' 
+
+set output 'u_1.pdf'
+set title 't=0.333'
+plot[0:1][-1:1]\
+'meth1/u_0331.ascii' w p t 'meth 1',\
+'meth2/u_0331.ascii' w p t 'meth 2',\
+'meth3/u_0332.ascii' w p t 'meth 3',\
+'meth1/u_0331.ascii' u 1:3 w l lt -1 t 'analytical' 
+
+set output 'u_2.pdf'
+set title 't=0.666'
+plot[0:1][-1:1]\
+'meth1/u_0664.ascii' w p t 'meth 1',\
+'meth2/u_0664.ascii' w p t 'meth 2',\
+'meth3/u_0665.ascii' w p t 'meth 3',\
+'meth1/u_0664.ascii' u 1:3 w l lt -1 t 'analytical' 
+
+set output 'u_3.pdf'
+set title 't=1'
+plot[0:1][-1:1]\
+'meth1/u_0998.ascii' w p t 'meth 1',\
+'meth2/u_0998.ascii' w p t 'meth 2',\
+'meth3/u_0999.ascii' w p t 'meth 3',\
+'meth1/u_0998.ascii' u 1:3 w l lt -1 t 'analytical' 
+
+set output 'u_4.pdf'
+set title 't=2'
+plot[0:1][-1:1]\
+'meth1/u_1998.ascii' w p t 'meth 1',\
+'meth2/u_1998.ascii' w p t 'meth 2',\
+'meth3/u_1999.ascii' w p t 'meth 3',\
+'meth1/u_1998.ascii' u 1:3 w l lt -1 t 'analytical' 
+
+set output 'u_5.pdf'
+set title 't=3'
+plot[0:1][-1:1]\
+'meth1/u_2998.ascii' w p t 'meth 1',\
+'meth2/u_2998.ascii' w p t 'meth 2',\
+'meth3/u_2999.ascii' w p t 'meth 3',\
+'meth1/u_2998.ascii' u 1:3 w l lt -1 t 'analytical' 
+
+set output 'u_6.pdf'
+set title 't=4'
+plot[0:1][-1:1]\
+'meth1/u_3998.ascii' w p t 'meth 1',\
+'meth2/u_3998.ascii' w p t 'meth 2',\
+'meth3/u_3999.ascii' w p t 'meth 3',\
+'meth1/u_3998.ascii' u 1:3 w l lt -1 t 'analytical' 
+
+set output 'u_7.pdf'
+set title 't=5'
+plot[0:1][-1:1]\
+'meth1/u_4998.ascii' w p t 'meth 1',\
+'meth2/u_4998.ascii' w p t 'meth 2',\
+'meth3/u_4999.ascii' w p t 'meth 3',\
+'meth1/u_4998.ascii' u 1:3 w l lt -1 t 'analytical' 
+
