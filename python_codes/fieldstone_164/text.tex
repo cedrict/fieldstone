@@ -50,10 +50,8 @@ We start from the following equation
 
 \item method \# 3 
 \end{itemize}
-
 At this stage we notice that the FE matrix is simply the 
 mass matrix for all three methods. 
-
 
 
 
@@ -88,16 +86,24 @@ In the code we declare and initialise them as follows
 \begin{lstlisting}
 u=np.zeros(nnx,dtype=np.float64)    
 uprevprev=np.zeros(nnx,dtype=np.float64) 
-uprev=np.zeros(nnx,dtype=np.float64)    
-udot=np.zeros(nnx,dtype=np.float64)    
+uprev=np.zeros(nnx,dtype=np.float64)     
+udot=np.zeros(nnx,dtype=np.float64)      
 udotprev=np.zeros(nnx,dtype=np.float64) 
-for i in range(0,nnx):
-    uprevprev[i]=u_th(x[i],0)
-    uprev[i]=u_th(x[i],0)+dt*udot_th(x[i],0)
-    udotprev[i]=udot_th(x[i],0)
+if method==1 or method==2:
+   t=2*dt
+   for i in range(0,nnx):
+       uprevprev[i]=u_th(x[i],0)
+       uprev[i]=u_th(x[i],0)+dt*udot_th(x[i],0)
+if method==3:
+   t=dt
+   for i in range(0,nnx):
+       uprev[i]=u_th(x[i],0)
+       udotprev[i]=udot_th(x[i],0)
 \end{lstlisting}
 
-
+Note that methods 1 and 2 require two previous solutions to start, so
+the first solution we obtain is at time $t=2\; dt$, while method 3
+only needs one previous solution so it starts at time $t=dt$.
 
 
 As shown in Section XXX the mass matrix $\M$ and Laplace matrix $\K$ are 
@@ -155,11 +161,13 @@ When assembled we obtain the following FE matrix:
  [0.         0.         0.         0.11111111]]
 \end{verbatim}
 
+The code consists of a time loop, and inside each iteration 
+the FE matrix and rhs are re-built (technically the FE matrix 
+is the same every time), the system solved, and the solution
+exported to an ascii file for later processing.
 
-
-%=====================================================
+%==============================================================================
 \section*{Results}
-
 
 The following results are obtained for $nelx=20$ with all three methods.
 The time step is set to $dt=10^{-3}$. 
@@ -174,6 +182,20 @@ The time step is set to $dt=10^{-3}$.
 \includegraphics[width=8cm]{python_codes/fieldstone_164/results/u_6.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_164/results/u_7.pdf}
 \end{center}
+We find that methods 1 and 2 seem to be more accurate than method 3.
+To make sure I plot the results of Everink obtained with method 3 against mine 
+and recover identical values.
 
-I need to plot everunk's data against mine!
+One can also look at the min/max values of $u$ for all three methods and 
+for various resolutions:
+\begin{center}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_164/results/stats_meth1.pdf}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_164/results/stats_meth2.pdf}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_164/results/stats_meth3.pdf}
+\end{center}
+We find that method 3 is prone to numerical explosion, so
+it should probably be avoided.
+
+
+
 

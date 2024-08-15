@@ -16,10 +16,10 @@ eps=1e-8
 m=2
 
 Lx=1
-nelx=20
+nelx=250
 c=1
 dt=1e-3
-nstep=5000
+nstep=1000
 
 nnx=nelx+1
 hx=Lx/nelx
@@ -95,6 +95,8 @@ b_el=np.zeros(2,dtype=np.float64)
 Me=np.array([[hx/3,hx/6],[hx/6,hx/3]],dtype=np.float64)
 Ke=np.array([[1/hx,-1/hx],[-1/hx,1/hx]],dtype=np.float64)
 
+statsfile=open('u_stats.ascii',"w")
+
 for istep in range(0,nstep):
 
     print('=====istep=',istep,'================')
@@ -139,7 +141,7 @@ for istep in range(0,nstep):
                    a_el[k2,k1]=0
                a_el[k1,k1]=Aref
                b_el[k1]=Aref*bc_val[m1]
-        #    #end if
+            #end if
         #end for
 
         # assemble
@@ -174,6 +176,8 @@ for istep in range(0,nstep):
        R=sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
        udot[:]=udotprev[:]+dt*R[:]
 
+    statsfile.write("%e %e %e \n" %(t,np.min(u),np.max(u)))
+
     print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 
     print("solve time: %.3f s" % (timing.time() - start))
@@ -202,5 +206,4 @@ for istep in range(0,nstep):
        udotprev[:]=udot[:]
 
 #end for
-
 
