@@ -1,0 +1,18 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set xtics 0.25
+set pointsize 0.5
+set key outside
+
+set output 'u.pdf'
+plot[][]\
+'u_0000.ascii' w lp ps .3 t 'istep=0',\
+'u_0030.ascii' w lp ps .3 t 'istep=30',\
+'u_0060.ascii' w lp ps .3 t 'istep=60',\
+'u_0090.ascii' w lp ps .3 t 'istep=90',\
+'u_0120.ascii' w lp ps .3 t 'istep=120',\
+'u_0150.ascii' w lp ps .3 t 'istep=150',\
+'u_0180.ascii' w lp ps .3 t 'istep=180',\
+'u_0210.ascii' w lp ps .3 t 'istep=210',\
+'u_0240.ascii' w lp ps .3 t 'istep=240',\
+

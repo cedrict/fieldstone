@@ -167,20 +167,20 @@ is the same every time), the system solved, and the solution
 exported to an ascii file for later processing.
 
 %==============================================================================
-\section*{Results}
+\section*{Results - Experiment \# 1}
 
 The following results are obtained for $nelx=20$ with all three methods.
 The time step is set to $dt=10^{-3}$. 
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_164/results/u_0.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_164/results/u_1.pdf}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_164/results/u_2.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_164/results/u_3.pdf}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_164/results/u_4.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_164/results/u_5.pdf}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_164/results/u_6.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_164/results/u_7.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_164/results1/u_0.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_164/results1/u_1.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_164/results1/u_2.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_164/results1/u_3.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_164/results1/u_4.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_164/results1/u_5.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_164/results1/u_6.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_164/results1/u_7.pdf}
 \end{center}
 We find that methods 1 and 2 seem to be more accurate than method 3.
 To make sure I plot the results of Everink obtained with method 3 against mine 
@@ -189,12 +189,27 @@ and recover identical values.
 One can also look at the min/max values of $u$ for all three methods and 
 for various resolutions:
 \begin{center}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_164/results/stats_meth1.pdf}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_164/results/stats_meth2.pdf}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_164/results/stats_meth3.pdf}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_164/results1/stats_meth1.pdf}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_164/results1/stats_meth2.pdf}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_164/results1/stats_meth3.pdf}
 \end{center}
 We find that method 3 is prone to numerical explosion, so
 it should probably be avoided.
+
+%==============================================================================
+\section*{Results - Experiment \# 2}
+
+In this case $L_x=1.5\pi$, $t_{final}=240$, 
+\[
+u(x,t=0)=2 \exp\left(-(x-L_x/2)^2 \right)+x/L_x
+\qquad
+\dot{u}(x,t=0)=0 
+\]
+Boundary conditions are given by $u(0)$ on the left and $u(L)$ on the right.
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_164/results2/u.pdf}
+\end{center}
 
 
 
