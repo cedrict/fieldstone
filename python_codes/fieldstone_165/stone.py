@@ -1,15 +1,13 @@
 import numpy as np
 import scipy.sparse as sps
 import time as timing
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
 
 ###############################################################################
 
 def u_th(x,y,exp):
     if exp==1:
        return np.cos((x-1)*np.pi/2)*np.cos((y-1)*np.pi/2)
-    if exp==2:
+    if exp==2 or exp==3:
        if x<=0.5 and y<=0.5:
           return (np.cos((x-0.25)*2*np.pi)*np.cos((y-0.25)*2*np.pi))**2
        else:
@@ -18,7 +16,7 @@ def u_th(x,y,exp):
 def udot_th(x,y,exp):
     if exp==1:
        return 0 
-    if exp==2:
+    if exp==2 or exp==3:
        return 0 
 
 ###############################################################################
@@ -90,7 +88,7 @@ print("----------fieldstone---------")
 print("-----------------------------")
 
 method=1
-experiment=2
+experiment=3
 order=1
 
 if order==1:
@@ -104,19 +102,20 @@ if experiment==1:
    Ly=2
    c=1
    dt=1e-2
-   nstep=50
+   nstep=250
    nelx=20
    nely=20
+   every=1
 
-if experiment==2: 
+if experiment==2 or experiment==3: 
    Lx=2
    Ly=2
    c=1
    dt=1e-2
-   nstep=1000
-   nelx=64
+   nstep=301
+   nelx=48
    nely=nelx
-
+   every=2
 
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
@@ -213,6 +212,20 @@ if experiment==1 or experiment==2:
           bc_fix[i]=True ; bc_val[i]=u_th(x[i],y[i],experiment)
    #end for
 
+if experiment==3:
+   for i in range(0,N):
+       if x[i]/Lx<eps:
+          bc_fix[i]=True ; bc_val[i]=u_th(x[i],y[i],experiment)
+       if x[i]/Lx>(1-eps):
+          bc_fix[i]=True ; bc_val[i]=u_th(x[i],y[i],experiment)
+       if y[i]/Ly<eps:
+          bc_fix[i]=True ; bc_val[i]=u_th(x[i],y[i],experiment)
+       if y[i]/Ly>(1-eps):
+          bc_fix[i]=True ; bc_val[i]=u_th(x[i],y[i],experiment)
+       if abs(x[i]-Lx/2)<eps and y[i]<Ly/2:
+          bc_fix[i]=True ; bc_val[i]=0
+   #end for
+
 print("boundary conditions (%.3fs)" % (timing.time() - start))
 
 #####################################################################
@@ -249,11 +262,6 @@ print("initialse fields (%.3fs)" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
-dNdx  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
-dNdy  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
-dNdr  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
-dNds  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
-NNNT    = np.zeros(m,dtype=np.float64)           # shape functions 
 dNNNTdx = np.zeros(m,dtype=np.float64)           # shape functions derivatives
 dNNNTdy = np.zeros(m,dtype=np.float64)           # shape functions derivatives
 dNNNTdr = np.zeros(m,dtype=np.float64)           # shape functions derivatives
@@ -343,7 +351,6 @@ for istep in range(0,nstep):
             #end for jq
         #end for iq
 
-
         # apply boundary conditions
         for k1 in range(0,m):
             m1=icon[k1,iel]
@@ -404,13 +411,9 @@ for istep in range(0,nstep):
     # visualisation 
     #################################################################
 
-    #if istep%every==0:
-    if True: 
+    if istep%every==0:
 
        start = timing.time()
-
-       #filename = 'T_{:04d}.ascii'.format(istep) 
-       #np.savetxt(filename,np.array([x,y,T]).T,header='# x,y,T')
 
        filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
@@ -442,17 +445,28 @@ for istep in range(0,nstep):
               vtufile.write("%d %d %d %d \n" %(icon[0,iel],icon[1,iel],icon[3,iel],icon[2,iel]))
        if order==2:
           for iel in range (0,nel):
-              vtufile.write("%d %d %d %d \n" %(iconQ1[0,iel],iconQ1[1,iel],iconQ1[2,iel],iconQ1[3,iel]))
+              vtufile.write("%d %d %d %d %d %d %d %d %d\n" %(\
+                            icon[0,iel],icon[2,iel],icon[8,iel],\
+                            icon[6,iel],icon[1,iel],icon[5,iel],
+                            icon[7,iel],icon[3,iel],icon[4,iel]))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%d \n" %((iel+1)*4))
+       if order==1:
+          for iel in range (0,nel):
+              vtufile.write("%d \n" %((iel+1)*4))
+       if order==2:
+          for iel in range (0,nel):
+              vtufile.write("%d \n" %((iel+1)*9))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-       for iel in range (0,nel):
-           vtufile.write("%d \n" %9)
+       if order==1:
+          for iel in range (0,nel):
+              vtufile.write("%d \n" %9)
+       if order==2:
+          for iel in range (0,nel):
+              vtufile.write("%d \n" %28)
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</Cells>\n")
@@ -462,19 +476,6 @@ for istep in range(0,nstep):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
-       #filename = 'solution_{:04d}.pdf'.format(istep) 
-       #fig = plt.figure ()
-       #ax = fig.gca(projection='3d')
-       #ax.plot_surface(x.reshape ((nny,nnx)),y.reshape((nny,nnx)),u.reshape((nny,nnx)),color = 'darkseagreen')
-       #ax.set_xlabel ( 'X [ m ] ')
-       #ax.set_ylabel ( 'Y [ m ] ')
-       #ax.set_zlabel ( ' Temperature  [ C ] ')
-       #plt.title('Timestep  %.2d' %(istep),loc='right')
-       #plt.grid ()
-       #plt.savefig(filename)
-       #plt.show ()
-       #plt.close()
-
        print("export to files: %.3f s" % (timing.time() - start))
 
     #end if
@@ -483,7 +484,6 @@ for istep in range(0,nstep):
 
     model_time+=dt
     print ("model_time=",model_time)
-
 
     if method==1 or method==2:
        uprevprev[:]=uprev[:]
