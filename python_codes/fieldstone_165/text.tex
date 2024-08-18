@@ -51,11 +51,24 @@ if $x,y \le 0.5$ and zero otherwise.
 Same as Experiment \#2, but an additional condition $u=0$ is set for the nodes with $x=L_x/2$
 and $y<L_y/2$.
 
+\item Experiment \#4:
+The domain is the unit square.
+This time the initial wave field is given by 
+\[
+u(x,y,t=0)=\left[\cos\left( (x-0.25)4 \pi \right)\right]^4
+\]
+for $|x-0.25|<0.125$ and zero otherwise.
+Boundary conditions are $u=0$ on the left and right boundaries.
+Additional constraints $u=0$ are placed on nodes $(x=0.5,y<0.43)$
+and $(x=0.5,y>0.57)$.
+
 \end{itemize}
 
 Note that although in what follows the values of $u$ is set to zero 
 on all four boundaries it can also not be fixed on the boundary(ies)
 and therefore yields an implicit Neumann boundary condition $du/dn=0$.
+
+todo: try with zero displacement and initial velocity
 
 %==============================================
 \section*{Results (Experiment \# 1)}
@@ -122,6 +135,44 @@ is ran for 300 time steps. Obtained with 1st order elements.
 \includegraphics[width=5cm]{python_codes/fieldstone_165/results3/uu0100.png}
 \includegraphics[width=5cm]{python_codes/fieldstone_165/results3/uu0150.png}
 \end{center}
+
+%==============================================
+\section*{Results (Experiment \# 4)}
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uu0000.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uu0050.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uu0100.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uu0150.png}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uu0200.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uu0250.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uu0300.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uu0350.png}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uu0400.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uu0500.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uu0600.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uu0650.png}
+\end{center}
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uuu0000.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uuu0050.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uuu0100.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uuu0150.png}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uuu0200.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uuu0250.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uuu0300.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_165/results4/uuu0350.png}
+\end{center}
+
+
+
+
+
+
+
+
+
 
 
 

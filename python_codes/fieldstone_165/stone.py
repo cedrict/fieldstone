@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.sparse as sps
 import time as timing
+from scipy.sparse import lil_matrix
 
 ###############################################################################
 
@@ -12,11 +13,18 @@ def u_th(x,y,exp):
           return (np.cos((x-0.25)*2*np.pi)*np.cos((y-0.25)*2*np.pi))**2
        else:
           return 0
+    if exp==4:
+       if abs(x-0.25)<0.125:
+          return (np.cos((x-0.25)*4*np.pi))**4
+       else:
+          return 0
 
 def udot_th(x,y,exp):
     if exp==1:
        return 0 
     if exp==2 or exp==3:
+       return 0 
+    if exp==4:
        return 0 
 
 ###############################################################################
@@ -88,7 +96,7 @@ print("----------fieldstone---------")
 print("-----------------------------")
 
 method=1
-experiment=3
+experiment=4
 order=1
 
 if order==1:
@@ -113,9 +121,21 @@ if experiment==2 or experiment==3:
    c=1
    dt=1e-2
    nstep=301
-   nelx=48
+   nelx=64
    nely=nelx
    every=2
+
+if experiment==4:
+   Lx=1
+   Ly=1
+   c=1
+   dt=1e-3
+   nstep=1301
+   nelx=128
+   nely=nelx
+   every=2
+
+###############################################################################
 
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
@@ -226,6 +246,18 @@ if experiment==3:
           bc_fix[i]=True ; bc_val[i]=0
    #end for
 
+if experiment==4:
+   for i in range(0,N):
+       if x[i]/Lx<eps:
+          bc_fix[i]=True ; bc_val[i]=0
+       if x[i]/Lx>(1-eps):
+          bc_fix[i]=True ; bc_val[i]=0
+       if abs(x[i]-Lx/2)<eps and y[i]<0.43*Ly:
+          bc_fix[i]=True ; bc_val[i]=0
+       if abs(x[i]-Lx/2)<eps and y[i]>0.57*Ly:
+          bc_fix[i]=True ; bc_val[i]=0
+   #end for
+
 print("boundary conditions (%.3fs)" % (timing.time() - start))
 
 #####################################################################
@@ -289,7 +321,7 @@ for istep in range(0,nstep):
     #################################################################
     start = timing.time()
 
-    A_mat = np.zeros((Nfem,Nfem),dtype=np.float64) # FE matrix 
+    A_mat = lil_matrix((Nfem,Nfem),dtype=np.float64) # FE matrix 
     rhs   = np.zeros(Nfem,dtype=np.float64)        # FE rhs 
     B_mat=np.zeros((2,m),dtype=np.float64)         # gradient matrix B 
     N_mat = np.zeros((m,1),dtype=np.float64)       # shape functions
@@ -377,9 +409,6 @@ for istep in range(0,nstep):
         #end for
 
     #end for iel
-    
-    print("     -> matrix (m,M) %.4e %.4e " %(np.min(A_mat),np.max(A_mat)))
-    print("     -> rhs (m,M) %.4e %.4e " %(np.min(rhs),np.max(rhs)))
 
     print("build FEM matrix: %.3fs" % (timing.time() - start))
 
@@ -483,7 +512,7 @@ for istep in range(0,nstep):
     ###########################################################################
 
     model_time+=dt
-    print ("model_time=",model_time)
+    print ("model_time= %.4f" %model_time)
 
     if method==1 or method==2:
        uprevprev[:]=uprev[:]
