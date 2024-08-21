@@ -22,10 +22,10 @@ So far the boundary conditions of this exercise are:
 \item Two-dimensional Cartesian domain
 \item Continuous Galerkin method
 \item Incompressible isothermal Stokes flow, but not isoviscous
-\item Most of commonly used element pairs for Stokes equations + some rarer ones 
+\item Most of commonly used element pairs for Stokes equations + some more 'exotic' ones 
 \item Dirichlet boundary conditions 
 \item Isoparametric mapping 
-\item Interior nodes positions with added randomness
+\item Interior nodes positions with added randomness (if desired)
 \item Stokes matrix fully built and sequential direct solver is used (REVISIT)
 \item No stabilised formulations, i.e. no ${\bm Q}_1\times Q_1$-stab, 
       ${\bm Q}_1\times P_0$-stab, or $P_1\times P_1$-stab
@@ -47,14 +47,15 @@ a symmetric grid ('SYMM') for triangular elements:
 \end{remark}
 
 \begin{remark}
-Unless specified we set nelx=nely.
+{\bf 2)}Unless specified I set nelx=nely, i.e. the number of (quadrilateral) elements
+in the $x$ and $y$ directions are equal.
 \end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Finite element pairs for the Stokes equation}
 
 \begin{center}
-\begin{tabular}{p{1cm}p{2cm}p{3.5cm}p{2.25cm}p{5cm}}
+\begin{tabular}{p{1cm}p{2.75cm}p{3.5cm}p{2.25cm}p{6cm}}
 \hline
  &pair & other name & information & remark \\
 \hline
@@ -85,42 +86,42 @@ Unless specified we set nelx=nely.
 24&${\bm Q}_2\times Q_1+Q_0$   & Augm. ${\bm Q}_2\times Q_1$ & Section~\ref{MMM-ss:q2q1q0} \\
 25&$Chen\times Q_0$            &                             & Section~\ref{MMM-ss:chenq0} & NOT SURE \\
 26&${\bm Q}_4\times Q_3$       &                             & Section~\ref{MMM-ss:q42d}\\
-27&${\bm P}_4\times P_3$       &                             & Section~\ref{MMM-ss:p42d}\\
+27&${\bm P}_4\times P_3$       &                             & Section~\ref{MMM-ss:p4p3}\\
 \hline
 \end{tabular}
 \end{center}
 
 \begin{remark}
-{\bf 2)} I have indeed built support for 3 unstable elements but 
+{\bf 3)} I have indeed built support for 3 unstable elements but 
 these should not be included in the publication. 
 \end{remark}
 
 \begin{remark}
-{\bf 3)} The augmented ${\bm P}_2\times (P_1+P_0)$ element pair is LBB stable 
+{\bf 4)} The augmented ${\bm P}_2\times (P_1+P_0)$ element pair is LBB stable 
 but special care must be taken with respect to the rank-deficiency 
 as explained in \textcite{bocg12} (2012). The same applies to ${\bm Q}_2\times (Q_1+Q_0)$. 
 I propose a simple fix later. 
 \end{remark}
 
 \begin{remark}
-{\bf 4)} The nonconforming ${\bm P}_1^{NC}\times P_0$ gives me a headache and does not 
+{\bf 5)} The nonconforming ${\bm P}_1^{NC}\times P_0$ gives me a headache and does not 
 yield accurate results (esp. the pressure). Not sure why... Coercivity/Korn stuff? I
 have yet to find an article using the element 'as is'.
 \end{remark}
 
 \begin{remark}
-{\bf 5)} Following \textcite{john16} book, I could also do 
+{\bf 6)} Following \textcite{john16} book, I could also do 
 ${\bm P}_3^+\times P_{-2}$, ${\bm Q}_3\times P_{-2}$. 
 \end{remark}
 
 \begin{remark}
-{\bf 6)} A modified $Q_2$ Serendipity element was proposed by \textcite{zhxi20} (2020) 
+{\bf 7)} A modified $Q_2$ Serendipity element was proposed by \textcite{zhxi20} (2020) 
 (see Section~\ref{MMM-sec:serendipity2Db}) but it is only different from the standard serendipity 
 element when the elements are not rectangles. 
 \end{remark}
 
 \begin{remark}
-{\bf 7)} Using high-order element spaces ($Q_4$, $P_4$, ...) only makes 
+{\bf 8)} Using high-order element spaces ($Q_4$, $P_4$, ...) only makes 
 sense in this context if the manufactured solution is also a high-order polynomial 
 or contains non-polynomial terms.
 \end{remark}
@@ -132,10 +133,10 @@ or contains non-polynomial terms.
 
 \begin{center}
 Quadrilateral elements\\
-\begin{tabular}{lcccccc}
+\begin{tabular}{ccccccc}
 \hline
-Pspace $\downarrow$ / Vspace $\rightarrow$   
-  & ${\bm Q}_1$  & ${\bm Q}_2$     & ${\bm Q}_2^{(8)}$ & ${\bm Q}_3$  & ${\bm Q}_4$ & ${\bm Q}_1^+$       \\ 
+Vspace $\rightarrow$ & ${\bm Q}_1$  & ${\bm Q}_2$ & ${\bm Q}_2^{(8)}$ & ${\bm Q}_3$  & ${\bm Q}_4$ & ${\bm Q}_1^+$ \\ 
+Pspace $\downarrow$ & \\
 $Q_0$       & $\sqrt{}$ & $\sqrt{}$ & ?           & ?         &   & ?          \\
 $Q_1$       & $\times$  & $\sqrt{}$ & $\sqrt{}$   & ?         &   & $\sqrt{}$  \\
 $Q_2$       & $\times$  & $\times$  & $\times$    & $\sqrt{}$ &   & $\times$   \\
@@ -150,8 +151,8 @@ $P_{-1}(u)$ & ?         & $\sqrt{}$ & ?           & ?         &   & ?          \
 Triangular elements\\
 \begin{tabular}{cccccccc}
 \hline
-Pspace $\downarrow$ | Vspace $\rightarrow$   
-         & ${\bm P}_1$    & ${\bm P}_2$     & ${\bm P}_3$     & ${\bm P}_4$    & ${\bm P}_1^+$   & ${\bm P}_2^+$   & ${\bm P}_1^{NC}$  \\
+Vspace $\rightarrow$& ${\bm P}_1$ & ${\bm P}_2$ & ${\bm P}_3$ & ${\bm P}_4$ & ${\bm P}_1^+$ & ${\bm P}_2^+$ & ${\bm P}_1^{NC}$  \\
+Pspace $\downarrow$ & \\
 $P_0$    & $\times$ & $\sqrt{}$ & ?         & $\times$ &  ?        &  ?        & $\sqrt{}$   \\
 $P_1$    & $\times$ & $\sqrt{}$ & ?         & $\times$ & $\sqrt{}$ &  ?        & ?           \\
 $P_2$    & $\times$ & $\times$  & $\sqrt{}$ & $\times$ & $\times$  & $\times$  & $\times$    \\
@@ -161,8 +162,8 @@ $P_{-1}$ & $\times$ & $\sqrt{}$ & ?         &          &  ?        & $\sqrt{}$ &
 \end{tabular}
 \end{center}
 
-\vspace{2cm}
 
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{An attempt at classification}
 
@@ -187,7 +188,39 @@ There are three files which contain all the required tools to build most of a FE
 \item \lstinline{dNNNds(r,s,space)}: returns basis function derivative $\partial_s\bN_i (i=1,...m)$ at position $r,s$.
 \item \lstinline{NNN_r(space)}: returns the $r_i (i=1,...m)$ coordinates of the support nodes.
 \item \lstinline{NNN_s(space)}: returns the $s_i (i=1,...m)$ coordinates of the support nodes.
+
 \item \lstinline{NNN_m(space)}: returns the number of support nodes.
+\begin{lstlisting}
+if space=='Q0':     return 1
+if space=='P0':     return 1
+if space=='Q1':     return 4
+if space=='Q-1':    return 4
+if space=='Q1+':    return 5
+if space=='P1':     return 3
+if space=='P1NC':   return 3
+if space=='P-1':    return 3
+if space=='Pm1':    return 3
+if space=='Pm1u':   return 3
+if space=='P1+':    return 4
+if space=='P1+P0':  return 4
+if space=='Q1+Q0':  return 5
+if space=='Q2':     return 9
+if space=='Q2s':    return 8
+if space=='P2':     return 6
+if space=='P2+':    return 7
+if space=='P3':     return 10
+if space=='P4':     return 15
+if space=='Q3':     return 16
+if space=='Q4':     return 25
+if space=='DSSY1':  return 4
+if space=='DSSY2':  return 4
+if space=='RT1':    return 4
+if space=='RT2':    return 4
+if space=='Han':    return 5
+if space=='Chen':   return 5
+\end{lstlisting}
+
+
 \item \lstinline{mapping(space)}: returns the type of mapping, i.e. $Q_1$ or $P_1$.
 \item \lstinline{visualise_nodes(space)}: generates a png file with the support nodes and the shape of the reference element.
 \item \lstinline{visualise_basis_functions(space)}: is an attempt at making a colormap of the basis functions.
@@ -214,9 +247,14 @@ In that case only 3,6,7,12,13,16 are authorized.
 $\times$\lstinline{nely} elements in the domain $[0,L_x]\times[0,L_y]$. It returns the total 
 number of nodes \lstinline{N}, the number of elements \lstinline{nel}, the coordinates of all the 
 nodes in \lstinline{x,y} arrays and the connectivity array \lstinline{icon}.
+There is currently an internal parameter \lstinline{mtype} which splits elements in 2 triangles 
+if equal to zero and in 4 triagles if equal to 2.
+ 
+
 \item \lstinline{randomize_background_mesh(x1,y1,hx,hy,N1,Lx,Ly)}: this adds a random perturbation
 to the coordinates of all the nodes of the background mesh inside the domain (i.e. not on the boundary!). 
 The amplitude of the perturbation is bounded by $0.1h_x$ and $0.1h_y$ in the $x$ and $y$ direction.
+
 \item \lstinline{adapt_FE_mesh(x1,y1,icon1,m1,space1,x,y,icon,nel,space)}: This makes sure that 
 all the support nodes for a given space are displaced so as to follow the randomized 
 background mesh, using a (bi-)linear mapping.
@@ -245,7 +283,1025 @@ a tikz drawing of the nodes layout. Only works for 3x3 meshes.
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Supported element spaces}
+\section*{tester \#1}
+
+
+
+{\pythonfile tester1.py}: checks that each basis function is 1 on its support node and zero at all other nodes.
+
+
+
+\begin{scriptsize}
+\begin{verbatim}
+=========================================
+ tester 1: nodes
+=========================================
+=========================================
+ Q0
+=========================================
+m= 1
+node 0 : [1.]
+=========================================
+ Q1
+=========================================
+m= 4
+node 0 : [1. 0. 0. 0.]
+node 1 : [0. 1. 0. 0.]
+node 2 : [0. 0. 1. 0.]
+node 3 : [0. 0. 0. 1.]
+=========================================
+ Q1+
+=========================================
+m= 5
+node 0 : [1. 0. 0. 0. 0.]
+node 1 : [0. 1. 0. 0. 0.]
+node 2 : [0. 0. 1. 0. 0.]
+node 3 : [0. 0. 0. 1. 0.]
+node 4 : [0. 0. 0. 0. 1.]
+=========================================
+ Q2
+=========================================
+m= 9
+node 0 : [ 1. -0.  0. -0.  0. -0. -0.  0.  0.]
+node 1 : [ 0.  1. -0. -0.  0.  0. -0.  0.  0.]
+node 2 : [0. 0. 1. 0. 0. 0. 0. 0. 0.]
+node 3 : [ 0. -0. -0.  1.  0. -0.  0.  0.  0.]
+node 4 : [-0.  0. -0.  0.  1.  0. -0. -0.  0.]
+node 5 : [-0. -0.  0.  0. -0.  1.  0.  0.  0.]
+node 6 : [-0.  0.  0. -0.  0.  0.  1. -0.  0.]
+node 7 : [-0.  0. -0.  0. -0. -0.  0.  1.  0.]
+node 8 : [ 0. -0.  0. -0. -0.  0.  0. -0.  1.]
+=========================================
+ Q3
+=========================================
+m= 16
+node 0 : [1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+node 1 : [ 0.00000000e+00  1.00000000e+00 -1.38777878e-17  0.00000000e+00
+  0.00000000e+00  0.00000000e+00 -0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00 -0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00 -0.00000000e+00  0.00000000e+00]
+node 2 : [ 0.00000000e+00 -1.38777878e-17  1.00000000e+00  0.00000000e+00
+  0.00000000e+00 -0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00 -0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00 -0.00000000e+00  0.00000000e+00  0.00000000e+00]
+node 3 : [0. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+node 4 : [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  1.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+ -1.38777878e-17 -0.00000000e+00 -0.00000000e+00 -0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+node 5 : [ 0.00000000e+00  0.00000000e+00 -0.00000000e+00  0.00000000e+00
+  0.00000000e+00  1.00000000e+00 -1.38777878e-17  0.00000000e+00
+ -0.00000000e+00 -1.38777878e-17  1.92592994e-34 -0.00000000e+00
+  0.00000000e+00  0.00000000e+00 -0.00000000e+00  0.00000000e+00]
+node 6 : [ 0.00000000e+00 -0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00 -1.38777878e-17  1.00000000e+00  0.00000000e+00
+ -0.00000000e+00  1.92592994e-34 -1.38777878e-17 -0.00000000e+00
+  0.00000000e+00 -0.00000000e+00  0.00000000e+00  0.00000000e+00]
+node 7 : [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  1.00000000e+00
+ -0.00000000e+00 -0.00000000e+00 -0.00000000e+00 -1.38777878e-17
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+node 8 : [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+ -1.38777878e-17 -0.00000000e+00 -0.00000000e+00 -0.00000000e+00
+  1.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+node 9 : [ 0.00000000e+00  0.00000000e+00 -0.00000000e+00  0.00000000e+00
+ -0.00000000e+00 -1.38777878e-17  1.92592994e-34 -0.00000000e+00
+  0.00000000e+00  1.00000000e+00 -1.38777878e-17  0.00000000e+00
+  0.00000000e+00  0.00000000e+00 -0.00000000e+00  0.00000000e+00]
+node 10 : [ 0.00000000e+00 -0.00000000e+00  0.00000000e+00  0.00000000e+00
+ -0.00000000e+00  1.92592994e-34 -1.38777878e-17 -0.00000000e+00
+  0.00000000e+00 -1.38777878e-17  1.00000000e+00  0.00000000e+00
+  0.00000000e+00 -0.00000000e+00  0.00000000e+00  0.00000000e+00]
+node 11 : [ 0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+ -0.00000000e+00 -0.00000000e+00 -0.00000000e+00 -1.38777878e-17
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  1.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+node 12 : [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0.]
+node 13 : [ 0.00000000e+00  0.00000000e+00 -0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00 -0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00 -0.00000000e+00  0.00000000e+00
+  0.00000000e+00  1.00000000e+00 -1.38777878e-17  0.00000000e+00]
+node 14 : [ 0.00000000e+00 -0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00 -0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00 -0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00 -1.38777878e-17  1.00000000e+00  0.00000000e+00]
+node 15 : [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1.]
+=========================================
+ Q2s
+=========================================
+m= 8
+node 0 : [ 1. -0. -0. -0.  0.  0.  0.  0.]
+node 1 : [-0.  1. -0. -0.  0.  0.  0.  0.]
+node 2 : [-0. -0.  1. -0.  0.  0.  0.  0.]
+node 3 : [-0. -0. -0.  1.  0.  0.  0.  0.]
+node 4 : [ 0.  0. -0. -0.  1.  0.  0.  0.]
+node 5 : [-0.  0.  0. -0.  0.  1.  0.  0.]
+node 6 : [-0. -0.  0.  0.  0.  0.  1.  0.]
+node 7 : [ 0. -0. -0.  0.  0.  0.  0.  1.]
+=========================================
+ P0
+=========================================
+m= 1
+node 0 : [1.]
+=========================================
+ P1
+=========================================
+m= 3
+node 0 : [1. 0. 0.]
+node 1 : [0. 1. 0.]
+node 2 : [0. 0. 1.]
+=========================================
+ P1+
+=========================================
+m= 4
+node 0 : [1. 0. 0. 0.]
+node 1 : [0. 1. 0. 0.]
+node 2 : [0. 0. 1. 0.]
+node 3 : [ 5.55111512e-17 -5.55111512e-17 -5.55111512e-17  1.00000000e+00]
+=========================================
+ P1NC
+=========================================
+m= 3
+node 0 : [1. 0. 0.]
+node 1 : [0. 1. 0.]
+node 2 : [0. 0. 1.]
+=========================================
+ P2
+=========================================
+m= 6
+node 0 : [1. 0. 0. 0. 0. 0.]
+node 1 : [0. 1. 0. 0. 0. 0.]
+node 2 : [0. 0. 1. 0. 0. 0.]
+node 3 : [0. 0. 0. 1. 0. 0.]
+node 4 : [0. 0. 0. 0. 1. 0.]
+node 5 : [0. 0. 0. 0. 0. 1.]
+=========================================
+ P3
+=========================================
+m= 10
+node 0 : [1. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+node 1 : [ 1.11022302e-16  1.00000000e+00  1.11022302e-16 -5.55111512e-17
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00]
+node 2 : [ 4.4408921e-16 -8.8817842e-16  1.0000000e+00 -4.4408921e-16
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00]
+node 3 : [0. 0. 0. 1. 0. 0. 0. 0. 0. 0.]
+node 4 : [ 1.11022302e-16  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  1.00000000e+00  0.00000000e+00  0.00000000e+00  1.11022302e-16
+  0.00000000e+00 -5.55111512e-17]
+node 5 : [ 3.33066907e-16  0.00000000e+00  1.11022302e-16 -5.55111512e-17
+ -1.11022302e-16  1.00000000e+00  0.00000000e+00  1.11022302e-16
+  0.00000000e+00 -5.55111512e-17]
+node 6 : [ 3.33066907e-16 -8.88178420e-16  8.88178420e-16 -4.44089210e-16
+ -1.11022302e-16  0.00000000e+00  1.00000000e+00  1.11022302e-16
+  0.00000000e+00 -5.55111512e-17]
+node 7 : [ 4.4408921e-16  0.0000000e+00  0.0000000e+00  0.0000000e+00
+ -8.8817842e-16  0.0000000e+00  0.0000000e+00  1.0000000e+00
+  0.0000000e+00 -4.4408921e-16]
+node 8 : [ 0.00000000e+00  0.00000000e+00  0.00000000e+00 -5.55111512e-17
+ -8.88178420e-16  0.00000000e+00  0.00000000e+00  8.88178420e-16
+  1.00000000e+00 -4.44089210e-16]
+node 9 : [0. 0. 0. 0. 0. 0. 0. 0. 0. 1.]
+=========================================
+ P4
+=========================================
+m= 15
+node 0 : [1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+node 1 : [0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+node 2 : [0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+node 3 : [0. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+node 4 : [0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+node 5 : [0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+node 6 : [0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0. 0.]
+node 7 : [0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0. 0.]
+node 8 : [0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0.]
+node 9 : [0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0. 0.]
+node 10 : [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0. 0.]
+node 11 : [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0.]
+node 12 : [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0.]
+node 13 : [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1. 0.]
+node 14 : [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 1.]
+=========================================
+ P1+P0
+=========================================
+m= 4
+node 0 : [1. 0. 0. 1.]
+node 1 : [0. 1. 0. 1.]
+node 2 : [0. 0. 1. 1.]
+node 3 : [0.33333333 0.33333333 0.33333333 1.        ]
+=========================================
+ DSSY1
+=========================================
+m= 4
+node 0 : [1. 0. 0. 0.]
+node 1 : [0. 1. 0. 0.]
+node 2 : [0. 0. 1. 0.]
+node 3 : [0. 0. 0. 1.]
+=========================================
+ DSSY2
+=========================================
+m= 4
+node 0 : [1. 0. 0. 0.]
+node 1 : [0. 1. 0. 0.]
+node 2 : [0. 0. 1. 0.]
+node 3 : [0. 0. 0. 1.]
+=========================================
+ RT1
+=========================================
+m= 4
+node 0 : [1. 0. 0. 0.]
+node 1 : [0. 1. 0. 0.]
+node 2 : [0. 0. 1. 0.]
+node 3 : [0. 0. 0. 1.]
+=========================================
+ RT2
+=========================================
+m= 4
+node 0 : [ 1.125 -0.125  0.125 -0.125]
+node 1 : [-0.125  1.125 -0.125  0.125]
+node 2 : [ 0.125 -0.125  1.125 -0.125]
+node 3 : [-0.125  0.125 -0.125  1.125]
+=========================================
+ Han
+=========================================
+m= 5
+node 0 : [ 1.  0.  0. -0.  0.]
+node 1 : [-0.  1.  0. -0.  0.]
+node 2 : [-0.  0.  1. -0.  0.]
+node 3 : [-0.  0.  0.  1.  0.]
+node 4 : [-0.  0.  0. -0.  1.]
+=========================================
+ Chen
+=========================================
+m= 5
+node 0 : [1.   0.   0.   0.   0.25]
+node 1 : [0.   1.   0.   0.   0.25]
+node 2 : [0.   0.   1.   0.   0.25]
+node 3 : [0.   0.   0.   1.   0.25]
+node 4 : [0.25 0.25 0.25 0.25 1.  ]
+
+\end{verbatim}
+\end{scriptsize}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{tester \#2}
+
+
+{\pythonfile tester2.py}: computes the area of each element by means of numerical 
+quadrature. The domain is 3x2 and there are 3x2 elements so that we expect 1 for 
+quadrilateral elements and 0.5 for triangular elements.  
+
+\begin{tiny}
+\begin{verbatim}
+
+=========================================
+ tester 2: areas
+=========================================
+=========================================
+ Q1
+=========================================
+nqel= 9
+iel= 0 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+areas= [1. 1. 1. 1. 1. 1.]
+=========================================
+ Q1+
+=========================================
+nqel= 9
+iel= 0 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 5 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 0 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 7 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 0 | iq= 8 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 1 | iq= 0 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 5 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 1 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 7 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 8 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 2 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 5 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 2 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 2 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 8 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 3 | iq= 0 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 3 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 5 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 3 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 7 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 3 | iq= 8 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 4 | iq= 0 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 4 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 5 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 4 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 7 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 8 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 5 | iq= 0 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 5 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 5 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 5 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 5 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 8 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+areas= [1. 1. 1. 1. 1. 1.]
+=========================================
+ Q2
+=========================================
+nqel= 9
+iel= 0 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 0 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 8 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 0 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 1 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 2 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 2 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 0 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 3 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 3 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 8 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 0 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 4 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 4 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 0 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 5 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 5 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 5 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+areas= [1. 1. 1. 1. 1. 1.]
+=========================================
+ Q3
+=========================================
+nqel= 9
+iel= 0 | iq= 0 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 0 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 2 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 0 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 5 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 0 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 7 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 0 | iq= 8 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 0 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 1 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 2 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 5 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 7 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 1 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 0 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 2 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 5 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 2 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 7 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 2 | iq= 8 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 3 | iq= 0 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 3 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 2 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 3 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 5 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 3 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 7 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 3 | iq= 8 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 0 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 4 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 2 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 5 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 7 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 4 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 0 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 5 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 5 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 5 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 7 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 5 | iq= 8 | jcob= 2.00 0.00 -0.00 2.00 0.25
+areas= [1. 1. 1. 1. 1. 1.]
+=========================================
+ Q2s
+=========================================
+nqel= 9
+iel= 0 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 0 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 8 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 1 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 1 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 8 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 2 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 2 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 8 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 3 | iq= 0 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 3 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 3 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 0 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 4 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 4 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 0 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 5 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 5 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+areas= [1. 1. 1. 1. 1. 1.]
+=========================================
+ DSSY1
+=========================================
+nqel= 9
+iel= 0 | iq= 0 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 0 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 3 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 0 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 0 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 0 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 3 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 0 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 2 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 3 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 2 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 2 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 0 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 3 | iq= 1 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 3 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 3 | iq= 3 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 3 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 3 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 0 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 4 | iq= 1 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 4 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 4 | iq= 3 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 0 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 5 | iq= 1 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 5 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 5 | iq= 3 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 5 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 5 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+areas= [1. 1. 1. 1. 1. 1.]
+=========================================
+ DSSY2
+=========================================
+nqel= 9
+iel= 0 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+areas= [1. 1. 1. 1. 1. 1.]
+=========================================
+ RT1
+=========================================
+nqel= 9
+iel= 0 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 0 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 2 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 3 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 2 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 2 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 0 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 5 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 3 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 5 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 5 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+areas= [1. 1. 1. 1. 1. 1.]
+=========================================
+ RT2
+=========================================
+nqel= 9
+iel= 0 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 0 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 3 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 0 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 3 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+areas= [1. 1. 1. 1. 1. 1.]
+=========================================
+ Han
+=========================================
+nqel= 9
+iel= 0 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 0 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 0 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 3 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 1 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 1 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 0 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 1 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 2 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 2 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 0 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 3 | iq= 1 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 3 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 3 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 3 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 0 | jcob= 2.00 -0.00 -0.00 2.00 0.25
+iel= 4 | iq= 1 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 4 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 4 | iq= 3 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 6 | jcob= 2.00 0.00 -0.00 2.00 0.25
+iel= 4 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 4 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 0 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 5 | iq= 1 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 5 | iq= 2 | jcob= 2.00 -0.00 0.00 2.00 0.25
+iel= 5 | iq= 3 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 5 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 6 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 7 | jcob= 2.00 0.00 0.00 2.00 0.25
+iel= 5 | iq= 8 | jcob= 2.00 0.00 0.00 2.00 0.25
+areas= [1. 1. 1. 1. 1. 1.]
+=========================================
+ Chen
+=========================================
+nqel= 9
+iel= 0 | iq= 0 | jcob= 1.30 -0.70 -0.70 1.30 0.83
+iel= 0 | iq= 1 | jcob= 0.93 -1.07 0.00 2.00 0.54
+iel= 0 | iq= 2 | jcob= -0.32 -2.32 2.32 4.32 0.25
+iel= 0 | iq= 3 | jcob= 2.00 0.00 -1.07 0.93 0.54
+iel= 0 | iq= 4 | jcob= 2.00 0.00 0.00 2.00 0.25
+\end{verbatim}
+\end{tiny}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{tester \#3}
+
+
+{\pythonfile tester3.py}: computes the space derivatives of each coordinate minus one, 
+so that we expect zero (down to machine precision). It returns 'passed' if the results is 
+less than $10^{-12}$.   
+
+
+
+\begin{tiny}
+\begin{verbatim}
+=========================================
+ tester 3: linear fields
+=========================================
+Q1 passed
+Q1+ passed
+Q2 passed
+Q3 passed
+Q2s passed
+DSSY1 passed
+DSSY2 passed
+RT1 passed
+RT2 passed
+Han passed
+jcob<0
+\end{verbatim}
+\end{tiny}
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{tester \#4}
+
+
+{\pythonfile tester4.py}: computes the gradient of $x^2/2$ and $y^2/2$ (i.e. resp. $x$ and $y$) to which the coordinate of the quadrature point is subtracted so that one expect zero again. This test can only be passed by quadratic and higher order elements.
+
+
+
+\begin{tiny}
+\begin{verbatim}
+=========================================
+ tester 4: quadratic fields
+=========================================
+Q2 passed
+Q3 passed
+Q2s passed
+jcob<0
+\end{verbatim}
+\end{tiny}
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{tester \#5}
+
+{\pythonfile tester5.py}: produces 3x2 tikz files and corresponding iconV files. 
+
+\begin{tiny}
+\begin{verbatim}
+=========================================
+ Q1 : NV = 12  nel= 6
+=========================================
+=========================================
+ Q1+ : NV = 18  nel= 6
+=========================================
+=========================================
+ Q2 : NV = 35  nel= 6
+=========================================
+=========================================
+ Q3 : NV = 70  nel= 6
+=========================================
+=========================================
+ Q4 : NV = 117  nel= 6
+=========================================
+=========================================
+ Q2s : NV = 29  nel= 6
+=========================================
+=========================================
+ DSSY1 : NV = 17  nel= 6
+=========================================
+=========================================
+ DSSY2 : NV = 17  nel= 6
+=========================================
+=========================================
+ RT1 : NV = 17  nel= 6
+=========================================
+=========================================
+ RT2 : NV = 17  nel= 6
+=========================================
+=========================================
+ Han : NV = 23  nel= 6
+=========================================
+=========================================
+ Chen : NV = 23  nel= 6
+=========================================
+=========================================
+ P1 : NV = 12  nel= 12
+=========================================
+=========================================
+ P1+ : NV = 24  nel= 12
+=========================================
+=========================================
+ P1NC : NV = 23  nel= 12
+=========================================
+=========================================
+ P2 : NV = 35  nel= 12
+=========================================
+=========================================
+ P2+ : NV = 47  nel= 12
+=========================================
+=========================================
+ P3 : NV = 70  nel= 12
+=========================================
+=========================================
+ P1+P0 : NV = 24  nel= 12
+=========================================
+=========================================
+ P4 : NV = 117  nel= 12
+=========================================
+\end{verbatim}
+\end{tiny}
+
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{tester \#6: Supported element spaces}
+
+{\pythonfile tester6.py}: produces pdf files of reference elements.
 
 These figures are obtained by running \lstinline{tester6.py}.
 
@@ -268,6 +1324,105 @@ These figures are obtained by running \lstinline{tester6.py}.
 \includegraphics[width=4cm]{python_codes/fieldstone_120/spaces/P2+_nodes}
 \end{center}
 
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{tester \#7: zero-th order consistency}
+
+\begin{tiny}
+\begin{verbatim}
+=========================================
+ tester 7: 0th order consistency
+=========================================
+=========================================
+ Q1
+=========================================
+nqel= 49
+=========================================
+ Q1+
+=========================================
+nqel= 49
+=========================================
+ Q2
+=========================================
+nqel= 49
+=========================================
+ Q3
+=========================================
+nqel= 49
+=========================================
+ Q2s
+=========================================
+nqel= 49
+=========================================
+ DSSY1
+=========================================
+nqel= 49
+=========================================
+ DSSY2
+=========================================
+nqel= 49
+=========================================
+ RT1
+=========================================
+nqel= 49
+=========================================
+ RT2
+=========================================
+nqel= 49
+=========================================
+ Han
+=========================================
+nqel= 49
+=========================================
+ Chen
+=========================================
+nqel= 49
+problem
+problem
+problem
+problem
+problem
+problem
+=========================================
+ P1
+=========================================
+nqel= 7
+=========================================
+ P1+
+=========================================
+nqel= 7
+=========================================
+ P2
+=========================================
+nqel= 7
+=========================================
+ P2+
+=========================================
+nqel= 7
+=========================================
+ P3
+=========================================
+nqel= 7
+=========================================
+ P4
+=========================================
+nqel= 7
+\end{verbatim}
+\end{tiny}
+
+
+
+
+
+
+
+
+
+
+
+
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -282,19 +1437,19 @@ The main code {\pythonfile stone.py} accepts either 5 or 7 arguments.
 
 The \lstinline{experiment} is as follows:
 \begin{lstlisting}
-if experiment=='dh'             : import mms_dh as mms 
-if experiment=='solcx'          : import mms_solcx as mms 
-if experiment=='solkz'          : import mms_solkz as mms 
-if experiment=='solvi'          : import mms_solvi as mms 
-if experiment=='RT'             : import mms_RT as mms 
-if experiment=='sinker'         : import mms_sinker as mms 
-if experiment=='sinker_reduced' : import mms_sinker_reduced as mms 
-if experiment=='johnbook'       : import mms_johnbook as mms 
-.................................
-if experiment=='jolm17'         : import mms_jolm17 as mms 
-if experiment=='sinker_open'    : import mms_sinker_open as mms 
-if experiment=='poiseuille'     : import mms_poiseuille as mms 
-if experiment=='bocg12'         : import mms_bocg12 as mms 
+if experiment=='dh'             : import mms_dh as mms
+if experiment=='jolm17'         : import mms_jolm17 as mms
+if experiment=='sinker'         : import mms_sinker as mms
+if experiment=='sinker_reduced' : import mms_sinker_reduced as mms
+if experiment=='sinker_open'    : import mms_sinker_open as mms
+if experiment=='poiseuille'     : import mms_poiseuille as mms
+if experiment=='johnbook'       : import mms_johnbook as mms
+if experiment=='bocg12'         : import mms_bocg12 as mms
+if experiment=='solcx'          : import mms_solcx as mms
+if experiment=='solkz'          : import mms_solkz as mms
+if experiment=='solvi'          : import mms_solvi as mms
+if experiment=='RTwave'         : import mms_RTwave as mms
+if experiment=='jokn16'         : import mms_jokn16 as mms
 \end{lstlisting}
 
 In the main folder there are many scripts that allow us to run the code
@@ -310,28 +1465,31 @@ This is carried out for both structured and unstructured meshes.
 \end{itemize}
 
 \begin{verbatim}
-script_paper
-script_paper_rt
-script_paper_sinker
-script_paper_sinker_reduced
-script_paper_solcx
-script_paper_solkz
-script_paper_solvi
-script_run
+-rwxrwxr-x 1 cedrict cedrict 1,5K nov 27  2023 script_paper_bocg12_structured
+-rwxrwxr-x 1 cedrict cedrict 1,4K nov 27  2023 script_paper_bocg12_unstructured
+-rwxrwxr-x 1 cedrict cedrict 1,5K dec  7  2023 script_paper_dh_structured
+-rwxrwxr-x 1 cedrict cedrict 1,6K jan 14  2024 script_paper_dh_unstructured
+-rwxrwxr-x 1 cedrict cedrict 1,4K nov 27  2023 script_paper_johnbook_structured
+-rwxrwxr-x 1 cedrict cedrict 1,2K nov 27  2023 script_paper_johnbook_unstructured
+-rwxrwxr-x 1 cedrict cedrict 1,4K dec  5  2023 script_paper_jokn16_structured
+-rwxrwxr-x 1 cedrict cedrict 1,3K dec  6  2023 script_paper_jokn16_unstructured
+-rwxrwxr-x 1 cedrict cedrict 1,4K nov 27  2023 script_paper_jolm17_structured
+-rwxrwxr-x 1 cedrict cedrict  528 nov 27  2023 script_paper_master
+-rwxrwxr-x 1 cedrict cedrict 1,6K nov 23  2023 script_paper_rtwave
+-rwxrwxr-x 1 cedrict cedrict 1,7K nov 22  2023 script_paper_sinker
+-rwxrwxr-x 1 cedrict cedrict 1,7K jul  2  2023 script_paper_sinker_open
+-rwxrwxr-x 1 cedrict cedrict 1,7K jan 12  2024 script_paper_sinker_reduced
+-rwxrwxr-x 1 cedrict cedrict 1,4K nov 27  2023 script_paper_solcx_structured
+-rwxrwxr-x 1 cedrict cedrict 1,3K nov 27  2023 script_paper_solcx_unstructured
+-rwxrwxr-x 1 cedrict cedrict 1,4K nov 27  2023 script_paper_solkz_structured
+-rwxrwxr-x 1 cedrict cedrict 1,4K nov 27  2023 script_paper_solkz_unstructured
+-rwxrwxr-x 1 cedrict cedrict 1,6K jan 14  2024 script_paper_solvi_structured
+-rwxrwxr-x 1 cedrict cedrict 1,5K jan 14  2024 script_paper_solvi_unstructured
+-rwxrwxr-x 1 cedrict cedrict 4,3K jul  2  2023 script_run_all
+-rwxrwxr-x 1 cedrict cedrict 1,4K jan 14  2024 script_test_mini
 \end{verbatim}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Python testers}
-
-\begin{itemize}
-\item {\pythonfile tester1.py}: checks that each basis function is 1 on its support node and zero at all other nodes.
-\item {\pythonfile tester2.py}: computes the area of each element by means of numerical quadrature. The domain is 3x2 and there are 3x2 elements so that we expect 1 for quadrilateral elements and 0.5 for triangular elements.  
-\item {\pythonfile tester3.py}: computes the space derivatives of each coordinate minus one, so that we expect zero (down to machine precision). It returns 'passed' if the results is less than $10^{-12}$.   
-\item {\pythonfile tester4.py}: computes the gradient of $x^2/2$ and $y^2/2$ (i.e. resp. $x$ and $y$) to which the coordinate of the quadrature point is subtracted so that one expect zero again. This test can only be passed by quadratic and higher order elements.
-\item {\pythonfile tester5.py}: produces 3x2 tikz files and corresponding iconV files. 
-\item {\pythonfile tester6.py}: produces pdf files of reference elements.
-\end{itemize}
 
 
 \newpage
@@ -376,7 +1534,7 @@ script_run
 \end{tiny}
 \end{multicols}
 
-
+\newpage
 %------------------
 \begin{multicols}{2}
 \input{python_codes/fieldstone_120/spaces/3x2_P1+}
@@ -414,6 +1572,7 @@ script_run
 \end{tiny}
 \end{multicols}
 
+\newpage
 %------------------
 \begin{multicols}{2}
 \input{python_codes/fieldstone_120/spaces/3x2_Q2}
@@ -451,6 +1610,7 @@ script_run
 \end{tiny}
 \end{multicols}
 
+\newpage
 %------------------
 \begin{multicols}{2}
 \input{python_codes/fieldstone_120/spaces/3x2_DSSY1}
@@ -495,6 +1655,26 @@ script_run
 \verbatiminput{python_codes/fieldstone_120/spaces/iconV_elt1_Han.ascii}
 \end{tiny}
 \end{multicols}
+
+
+%------------------
+\begin{multicols}{2}
+\input{python_codes/fieldstone_120/spaces/3x2_P2sv}
+
+%\begin{tiny}
+%\verbatiminput{python_codes/fieldstone_120/spaces/iconV_elt1_Han.ascii}
+%\end{tiny}
+\end{multicols}
+
+%------------------
+\begin{multicols}{2}
+\input{python_codes/fieldstone_120/spaces/3x2_P1sv}
+
+%\begin{tiny}
+%\verbatiminput{python_codes/fieldstone_120/spaces/iconV_elt1_Han.ascii}
+%\end{tiny}
+\end{multicols}
+
 
 
 
@@ -587,8 +1767,9 @@ triangles and there are then $2\times nelx\times nely$ elements.
 
 \begin{lstlisting}
 nelx=16
-nely=16
 \end{lstlisting}
+In practice \lstinline{nely} is always set to the \lstinline{nelx} value.
+
 
 %There are four boundaries to the domain (left, right, bottom and top). For the 
 %benchmark under consideration we need to impose no slip boundary conditions 
@@ -619,11 +1800,15 @@ this parameter:
 isoparametric=False
 \end{lstlisting}
 
-Whether the mesh is randominzed or not is set with 
+Whether the mesh is randomized or not is set with 
 \begin{lstlisting}
 randomize_mesh=True
 \end{lstlisting}
 
+Whether the mesh structured or unstructured is set with 
+\begin{lstlisting}
+unstructured=0
+\end{lstlisting}
 
 A quadrature order must be assigned. If quadrilateral elements are used
 this parameter is the number of quadrature points per dimension. 
@@ -655,8 +1840,12 @@ Likewise there are \lstinline{NP} pressure nodes and their
 coordinates are stored in the \lstinline{xP} and \lstinline{yP} arrays. 
 
 \begin{lstlisting}
-NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
-NP,nel,xP,yP,iconP=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Pspace)
+if not unstructured:
+   NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace,mtype)
+   NP,nel,xP,yP,iconP=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Pspace,mtype)
+else:
+   nel,NV,NP,xV,yV,iconV,xP,yP,iconP=Tools.generate_random_mesh(Lx,nelx,\
+                                                 Vspace,Pspace,experiment)  
 \end{lstlisting}
 
 Now that we know the number of elements and nodes we can compute the 
@@ -678,16 +1867,17 @@ We set \lstinline{bc_fix[i]=True} if the value of a given velocity dof \lstinlin
 and the value of \lstinline{bc_val[i]} is the value of the desired boundary condition.
 
 \begin{lstlisting}
-bc_fix,bc_val=Tools.bc_setup(xV,yV,Lx,Ly,ndofV,mms.left_bc,mms.right_bc,mms.bottom_bc,mms.top_bc)
+bc_fix,bc_val=Tools.bc_setup(xV,yV,uth,vth,Lx,Ly,ndofV,mms.left_bc,mms.right_bc,mms.bottom_bc,mms.top_bc)
 \end{lstlisting}
 
 We then build the background mesh used for the mapping:
 \begin{lstlisting}
 space1=FE.mapping(Vspace)
 m1=FE.NNN_m(space1)
-N1,nel1,x1,y1,icon1=Tools.cartesian_mesh(Lx,Ly,nelx,nely,space1)
+N1,nel1,x1,y1,icon1=Tools.cartesian_mesh(Lx,Ly,nelx,nely,space1,mtype)
 if randomize_mesh:
-   Tools.randomize_background_mesh(x1,y1,hx,hy,N1,Lx,Ly)
+   hx=Lx/nelx
+   hy=Ly/nely
    Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xV,yV,iconV,nel,Vspace)
    Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xP,yP,iconP,nel,Pspace)
 \end{lstlisting}
@@ -701,19 +1891,27 @@ V_e = \int_{\Omega_e} dV = \sum_{iq=1}^{n_q} \omega_{i_q} |J_{i_q}|
 \]
 which translates as follows: 
 \begin{lstlisting}
+area=np.zeros(nel,dtype=np.float64) 
 for iel in range(0,nel):
-  for iq in range(0,nqel):
-    rq=qcoords_r[iq]
-    sq=qcoords_s[iq]
-    weightq=qweights[iq]
-    NNNV=FE.NNN(rq,sq,Vspace)
-    dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
-    dNNNVds=FE.dNNNds(rq,sq,Vspace)
-    jcob,jcbi,dNNNVdx,dNNNVdy=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
-    area[iel]+=jcob*weightq
+    for iq in range(0,nqel):
+        rq=qcoords_r[iq]
+        sq=qcoords_s[iq]
+        weightq=qweights[iq]
+        NNNV=FE.NNN(rq,sq,Vspace)
+        xq=NNNV.dot(xV[iconV[:,iel]]) 
+        yq=NNNV.dot(yV[iconV[:,iel]]) 
+        dNNNVdr=FE.dNNNdr(rq,sq,Vspace)
+        dNNNVds=FE.dNNNds(rq,sq,Vspace)
+        if isoparametric:
+           jcob,jcbi=Tools.J(mV,dNNNVdr,dNNNVds,xV[iconV[0:mV,iel]],yV[iconV[0:mV,iel]])
+        else:
+           dNNN1dr=FE.dNNNdr(rq,sq,space1)
+           dNNN1ds=FE.dNNNds(rq,sq,space1)
+           jcob,jcbi=Tools.J(m1,dNNN1dr,dNNN1ds,x1[icon1[0:m1,iel]],y1[icon1[0:m1,iel]])
+        area[iel]+=jcob*weightq
 \end{lstlisting}
 
-FINISH!!!
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -735,6 +1933,7 @@ FINISH!!!
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/images/unstructured64}
 \end{center}
 
+\includegraphics[width=6cm]{python_codes/fieldstone_120/paperresults/dh_structured_errors_divv.pdf}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1032,6 +2231,27 @@ rhs (forcing term) actually contains the derivative of the viscosity.
 {\captionfont obtained with $p=1,2,3,4$}
 \end{center}
 
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Results - linear pressure 'plin' mms }
+
+Velocity is same as Donea \& Huerta but pressure is given by:
+\[
+p(x,y) = ax+by - \frac12(a+b) = a \left(x-\frac12\right) + b\left(y-\frac12 \right)
+\]
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errors_divv.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errorsV2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errorsP2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errors_divv2.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errorsV3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errorsP3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errors_divv3.pdf}
+\end{center}
 
 
 

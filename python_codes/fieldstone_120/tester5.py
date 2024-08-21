@@ -13,7 +13,7 @@ for Vspace in ['Q1','Q1+','Q2','Q3','Q4','Q2s','DSSY1','DSSY2','RT1','RT2','Han'
                'P1','P1+','P1NC','P2','P2+','P3','P1+P0','P4']:
     print('=========================================')
 
-    NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
+    NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace,mtype)
 
     Tools.export_connectivity_array_to_ascii(xV,yV,iconV,'iconV_'+Vspace+'.ascii')
 

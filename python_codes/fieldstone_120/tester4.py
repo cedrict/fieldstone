@@ -17,10 +17,8 @@ print('=========================================')
 print(' tester 4: quadratic fields')
 print('=========================================')
 
-#for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','Chen',\
-#               'P1','P1+','P1NC','P2','P2+','P3']:
-
-for Vspace in ['P2','P2+','P3','P4']:
+for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','Chen',\
+               'P1','P1+','P1NC','P2','P2+','P3','P4']:
 
     pb=False
 
@@ -30,7 +28,7 @@ for Vspace in ['P2','P2+','P3','P4']:
 
     nqel,qcoords_r,qcoords_s,qweights=Q.quadrature(Vspace,nqpts)
 
-    NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
+    NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace,mtype)
 
     u=xV**2/2
     v=yV**2/2

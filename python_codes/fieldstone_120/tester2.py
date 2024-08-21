@@ -29,7 +29,7 @@ for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','Che
 
     print('nqel=',nqel)
 
-    NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
+    NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace,mtype)
 
     area=np.zeros(nel,dtype=np.float64) 
     for iel in range(0,nel):

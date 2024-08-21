@@ -12,22 +12,24 @@ from scipy import sparse
 ###############################################################################
 ###############################################################################
 
-ndofV=2
-ndofP=1
-
 Lx=1
 Ly=1
 
-nelx=45
+ndofV=2
+ndofP=1
 
-Vspace='P1+'
-Pspace='P1'
+nelx=16
+
+mtype=0 # mesh type (how quads are divided into triangles)
+
+Vspace='P2+'
+Pspace='P-1'
 
 visu=1
 
-experiment='jokn16'
+experiment='plin' #'dh'
 
-unstructured=1
+unstructured=0
 
 isoparametric=True
 randomize_mesh=False
@@ -35,9 +37,10 @@ randomize_mesh=False
 etastar=1
 drho=0.01
 
-ass_method=2
+ass_method=2 # assembly method
 
 eta_ref=1
+
 
 ###############################################################################
 # allowing for argument parsing through command line
@@ -63,6 +66,8 @@ if int(len(sys.argv) == 8):
    drho=float(sys.argv[7])
    visu=0
 
+if Vspace=='P2' and Pspace=='P-1': mtype=3
+
 nely=nelx
 
 unstructured=(unstructured==1) 
@@ -80,6 +85,7 @@ if experiment=='solkz'          : import mms_solkz as mms
 if experiment=='solvi'          : import mms_solvi as mms
 if experiment=='RTwave'         : import mms_RTwave as mms
 if experiment=='jokn16'         : import mms_jokn16 as mms
+if experiment=='plin'           : import mms_plin as mms
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
@@ -98,8 +104,8 @@ mP=FE.NNN_m(Pspace)
 nqel,qcoords_r,qcoords_s,qweights=Q.quadrature(Vspace,nqpts)
 
 if not unstructured:
-   NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
-   NP,nel,xP,yP,iconP=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Pspace)
+   NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace,mtype)
+   NP,nel,xP,yP,iconP=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Pspace,mtype)
 else:
    nel,NV,NP,xV,yV,iconV,xP,yP,iconP=Tools.generate_random_mesh(Lx,nelx,\
                                                  Vspace,Pspace,experiment)  
@@ -125,6 +131,7 @@ print('NfemP        =',NfemP)
 print('Nfem         =',Nfem)
 print('experiment   =',experiment)
 print('unstructured =',unstructured)
+print('mtype        =',mtype)
 print("*****************************")
 
 print("mesh setup: %.3f s" % (timing.time() - start))
@@ -164,7 +171,7 @@ start = timing.time()
 space1=FE.mapping(Vspace)
 m1=FE.NNN_m(space1)
 
-N1,nel1,x1,y1,icon1=Tools.cartesian_mesh(Lx,Ly,nelx,nely,space1)
+N1,nel1,x1,y1,icon1=Tools.cartesian_mesh(Lx,Ly,nelx,nely,space1,mtype)
 
 if randomize_mesh:
    hx=Lx/nelx
@@ -325,7 +332,8 @@ for iel in range(0,nel): # loop over elements
         dNNNVdx[:]=jcbi[0,0]*dNNNVdr[:]+jcbi[0,1]*dNNNVds[:]
         dNNNVdy[:]=jcbi[1,0]*dNNNVdr[:]+jcbi[1,1]*dNNNVds[:]
 
-        NNNP=FE.NNN(rq,sq,Pspace,xxP=xP[iconP[:,iel]],yyP=yP[iconP[:,iel]],xxq=xq[counterq],yyq=yq[counterq])
+        NNNP=FE.NNN(rq,sq,Pspace,xxP=xP[iconP[:,iel]],yyP=yP[iconP[:,iel]],\
+                                 xxq=xq[counterq],yyq=yq[counterq])
 
         for k in range(0,mV): 
             b_mat[0:3,2*k:2*k+2] = [[dNNNVdx[k],0.        ],  
@@ -581,7 +589,7 @@ errp=np.sqrt(errp/(Lx*Ly))
 errdivv=np.sqrt(errdivv/(Lx*Ly))
 
 print("     -> nel= %6d ; vrms= %.8e ; vrms= %.8e ; %6d %6d %e" %(nel,vrms,mms.vrms(),NfemV,NfemP,havrg))
-print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errdivv= %.8e | %6d %6d %.8e" %(nel,errv,errp,errdivv,NfemV,NfemP,havrg))
+print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errdivv= %.8e | %6d %6d %.8e %.8e" %(nel,errv,errp,errdivv,NfemV,NfemP,havrg,Lx/nelx*np.sqrt(2)))
 
 print("compute vrms & errors: %.3f s" % (timing.time() - start))
 
@@ -763,12 +771,16 @@ for iel in range(0,nel):
     etac[iel]=mms.eta(xc,yc,etastar)
 
 ###############################################################################
+# compute q1,q2, see Delaunay subsection. As a rule-of-thumb, in a good quality 
+# mesh all triangles should have q1,q2 above about 0.4-0.5
+###############################################################################
 start = timing.time()
 
 q1 = np.zeros(nel,dtype=np.float64)
 q2 = np.zeros(nel,dtype=np.float64)
+q3 = np.zeros(nel,dtype=np.float64)
 
-if visu:
+if visu and Vspace[0]=='P':
 
    for iel in range(0,nel):
        a=np.sqrt((xV[iconV[0,iel]]-xV[iconV[1,iel]])**2+(yV[iconV[0,iel]]-yV[iconV[1,iel]])**2)
@@ -776,9 +788,11 @@ if visu:
        c=np.sqrt((xV[iconV[1,iel]]-xV[iconV[2,iel]])**2+(yV[iconV[1,iel]]-yV[iconV[2,iel]])**2)
        q1[iel]=(b+c-a)*(c+a-b)*(a+b-c)/(a*b*c)
        q2[iel]=4*np.sqrt(3)*area[iel]/(a**2+b**2+c**2)
+       q3[iel]=max(a,b,c)
 
    print('     -> q1 (m,M):',np.min(q1),np.max(q1))
    print('     -> q2 (m,M):',np.min(q2),np.max(q2))
+   print('     -> q3 (m,M):',np.min(q3),np.max(q3))
 
    plt.clf()
    plt.title("q1 histogram")
@@ -801,11 +815,11 @@ print("compute q1,q2 : %.3f s" % (timing.time() - start))
 
 Tools.export_swarm_vector_to_ascii(xV,yV,u,v,'solution_velocity.ascii')
 Tools.export_swarm_scalar_to_ascii(xP,yP,p,'solution_pressure.ascii')
-Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu',area,bxc,byc,etac,q1,q2)
+Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu',area,bxc,byc,etac,q1,q2,q3)
 Tools.export_V_to_vtu(NV,xV,yV,iconV,Vspace,'visu_V.vtu',u,v,Pspace,p,iconP)
 
 if visu:
-   Tools.export_elements_to_vtu(xP,yP,iconP,Pspace,'meshP.vtu',area,bxc,byc,etac,q1,q2)
+   Tools.export_elements_to_vtu(xP,yP,iconP,Pspace,'meshP.vtu',area,bxc,byc,etac,q1,q2,q3)
    if not isoparametric: Tools.export_elements_to_vtu(x1,y1,icon1,space1,'mesh1.vtu')
 
    Tools.export_swarm_to_ascii(xV,yV,'Vnodes.ascii')

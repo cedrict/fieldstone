@@ -4,9 +4,7 @@ import FEbasis2D as FE
 
 ###############################################################################
 
-def cartesian_mesh(Lx,Ly,nelx,nely,space):
-
-    mtype=0 #make it an argument later
+def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
 
     hx=Lx/nelx
     hy=Ly/nely
@@ -15,8 +13,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
     #---------------------------------
     if space=='Q0':
        N=nelx*nely
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x = np.zeros(N,dtype=np.float64) 
+       y = np.zeros(N,dtype=np.float64)
        counter = 0 
        for j in range(0,nely):
            for i in range(0,nelx):
@@ -35,8 +33,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
     #---------------------------------
     elif space=='Q1':
        N=(nelx+1)*(nely+1)
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x = np.zeros(N,dtype=np.float64) 
+       y = np.zeros(N,dtype=np.float64)
        counter = 0 
        for j in range(0,nely+1):
            for i in range(0,nelx+1):
@@ -58,8 +56,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
     #-----------------------------------
     elif space=='Q1+' or space=='Q1+Q0':
        N=(nelx+1)*(nely+1)+nel
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x = np.zeros(N,dtype=np.float64) 
+       y = np.zeros(N,dtype=np.float64)
        counter = 0
        for j in range(0,nely+1):
            for i in range(0,nelx+1):
@@ -117,7 +115,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
        #end for
 
     #---------------------------------
-    elif space=='Q2s':
+    elif space=='Q2s': #serendipity
        N=(nelx+1)*(nely+1)+nelx*(nely+1)+(nelx+1)*nely
        x=np.empty(N,dtype=np.float64) 
        y=np.empty(N,dtype=np.float64)
@@ -360,6 +358,66 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
         #end for
     #end for
 
+    elif space=='P1' and mtype==3:
+       nel*=6
+       N=(nelx+1)*(nely+1)+2*nelx*nely
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
+       counter=0 
+       for j in range(0,nely+1):
+           for i in range(0,nelx+1):
+               x[counter]=i*hx
+               y[counter]=j*hy
+               counter+=1
+       icon =np.zeros((3,nel),dtype=np.int32)
+       counter = 0 
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               inode0=i+j*(nelx+1)
+               inode1=i+1+j*(nelx+1)
+               inode2=i+1+(j+1)*(nelx+1)
+               inode3=i+(j+1)*(nelx+1)
+               inode4=(nelx+1)*(nely+1)+2*(j*nelx+i)+0
+               inode5=(nelx+1)*(nely+1)+2*(j*nelx+i)+1
+               x[inode4]=(x[inode0]+x[inode1]+x[inode2])/3
+               y[inode4]=(y[inode0]+y[inode1]+y[inode2])/3
+               x[inode5]=(x[inode0]+x[inode2]+x[inode3])/3
+               y[inode5]=(y[inode0]+y[inode2]+y[inode3])/3
+               #C1
+               icon[0,counter]=inode0 
+               icon[1,counter]=inode1
+               icon[2,counter]=inode4
+               counter += 1
+               #C2
+               icon[0,counter]=inode1 
+               icon[1,counter]=inode2
+               icon[2,counter]=inode4
+               counter += 1
+               #C3
+               icon[0,counter]=inode2 
+               icon[1,counter]=inode0
+               icon[2,counter]=inode4
+               counter += 1
+               #D1
+               icon[0,counter]=inode2 
+               icon[1,counter]=inode3
+               icon[2,counter]=inode5
+               counter += 1
+               #D2
+               icon[0,counter]=inode3 
+               icon[1,counter]=inode0
+               icon[2,counter]=inode5
+               counter += 1
+               #D3
+               icon[0,counter]=inode0 
+               icon[1,counter]=inode2
+               icon[2,counter]=inode5
+               counter += 1
+           #end for
+       #end for
+
+
+
     #---------------------------------
     # disc space for Q2Pm1 element
     elif space=='Pm1' or space=='Pm1u': 
@@ -501,6 +559,58 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
            #end for
        #end for
 
+
+    elif space=='P-1' and mtype==3:
+       nel*=6
+       N=3*nel
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
+       icon=np.zeros((3,nel),dtype=np.int32)
+       iel=0
+       counter=0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               x0=i*hx         ; y0=j*hy
+               x1=i*hx+hx      ; y1=j*hy
+               x2=i*hx+hx      ; y2=j*hy+hy
+               x3=i*hx         ; y3=j*hy+hy
+               x4=(x0+x1+x2)/3 ; y4=(y0+y1+y2)/3 
+               x5=(x0+x2+x3)/3 ; y5=(y0+y2+y3)/3 
+
+               # C1
+               x[counter]=x0 ; y[counter]=y0 ; icon[0,iel]=counter ; counter+=1
+               x[counter]=x1 ; y[counter]=y1 ; icon[1,iel]=counter ; counter+=1
+               x[counter]=x4 ; y[counter]=y4 ; icon[2,iel]=counter ; counter+=1
+               iel+=1
+               # C2
+               x[counter]=x1 ; y[counter]=y1 ; icon[0,iel]=counter ; counter+=1
+               x[counter]=x2 ; y[counter]=y2 ; icon[1,iel]=counter ; counter+=1
+               x[counter]=x4 ; y[counter]=y4 ; icon[2,iel]=counter ; counter+=1
+               iel+=1
+               # C3
+               x[counter]=x2 ; y[counter]=y2 ; icon[0,iel]=counter ; counter+=1
+               x[counter]=x0 ; y[counter]=y0 ; icon[1,iel]=counter ; counter+=1
+               x[counter]=x4 ; y[counter]=y4 ; icon[2,iel]=counter ; counter+=1
+               iel+=1
+
+               # D1
+               x[counter]=x2 ; y[counter]=y2 ; icon[0,iel]=counter ; counter+=1
+               x[counter]=x3 ; y[counter]=y3 ; icon[1,iel]=counter ; counter+=1
+               x[counter]=x5 ; y[counter]=y5 ; icon[2,iel]=counter ; counter+=1
+               iel+=1
+               # D2
+               x[counter]=x3 ; y[counter]=y3 ; icon[0,iel]=counter ; counter+=1
+               x[counter]=x0 ; y[counter]=y0 ; icon[1,iel]=counter ; counter+=1
+               x[counter]=x5 ; y[counter]=y5 ; icon[2,iel]=counter ; counter+=1
+               iel+=1
+               # D3
+               x[counter]=x0 ; y[counter]=y0 ; icon[0,iel]=counter ; counter+=1
+               x[counter]=x2 ; y[counter]=y2 ; icon[1,iel]=counter ; counter+=1
+               x[counter]=x5 ; y[counter]=y5 ; icon[2,iel]=counter ; counter+=1
+               iel+=1
+           #end for
+       #end for
+
     #---------------------------------
     elif space=='P1' and mtype==2:
        N=(nelx+1)*(nely+1)+nel
@@ -623,7 +733,7 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
     # | A  \|    |/  C |
     # 0--4--1    0--4--1
 
-    elif space=='P2':
+    elif space=='P2' and mtype==0:
        nel*=2
        N=(2*nelx+1)*(2*nely+1)
        nnx=2*nelx+1
@@ -689,6 +799,114 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space):
               #end if
            #end for
        #end for
+
+
+    elif space=='P2' and mtype==3:
+       nel*=6
+       N=(2*nelx+1)*(2*nely+1)+8*nelx*nely
+       nnx=2*nelx+1
+       nny=2*nely+1
+       x=np.empty(N,dtype=np.float64) 
+       y=np.empty(N,dtype=np.float64)
+       counter = 0
+       for j in range(0,nny):
+           for i in range(0,nnx):
+               x[counter]=i*hx/2.
+               y[counter]=j*hy/2.
+               counter += 1
+           #end for
+       #end for
+       icon=np.zeros((6,nel),dtype=np.int32)
+       counter = 0
+       for j in range(0,nely):
+           for i in range(0,nelx):
+               inode0=(i)*2+1+(j)*2*nnx -1       #0
+               inode1=(i)*2+3+(j)*2*nnx -1       #1
+               inode2=(i)*2+3+(j)*2*nnx+nnx*2 -1 #2
+               inode3=(i)*2+1+(j)*2*nnx+nnx*2 -1 #3
+               inode4=(i)*2+2+(j)*2*nnx -1       #4
+               inode5=(i)*2+3+(j)*2*nnx+nnx -1   #5
+               inode6=(i)*2+2+(j)*2*nnx+nnx*2 -1 #6
+               inode7=(i)*2+1+(j)*2*nnx+nnx -1   #7
+               inode8=(i)*2+2+(j)*2*nnx+nnx -1   #8
+               inode9 =nnx*nny+ 2*(j*nelx+i)+0
+               inode10=nnx*nny+ 2*(j*nelx+i)+1
+               inode11=nnx*nny+ 2*nelx*nely+ 6*(j*nelx+i)+0
+               inode12=nnx*nny+ 2*nelx*nely+ 6*(j*nelx+i)+1
+               inode13=nnx*nny+ 2*nelx*nely+ 6*(j*nelx+i)+2
+               inode14=nnx*nny+ 2*nelx*nely+ 6*(j*nelx+i)+3
+               inode15=nnx*nny+ 2*nelx*nely+ 6*(j*nelx+i)+4
+               inode16=nnx*nny+ 2*nelx*nely+ 6*(j*nelx+i)+5
+
+               x[inode9]=(x[inode0]+x[inode1]+x[inode2])/3
+               y[inode9]=(y[inode0]+y[inode1]+y[inode2])/3
+               x[inode10]=(x[inode0]+x[inode2]+x[inode3])/3
+               y[inode10]=(y[inode0]+y[inode2]+y[inode3])/3
+
+               x[inode11]=(x[inode0]+x[inode9])/2
+               y[inode11]=(y[inode0]+y[inode9])/2
+               x[inode12]=(x[inode1]+x[inode9])/2
+               y[inode12]=(y[inode1]+y[inode9])/2
+               x[inode13]=(x[inode2]+x[inode9])/2
+               y[inode13]=(y[inode2]+y[inode9])/2
+               x[inode14]=(x[inode2]+x[inode10])/2
+               y[inode14]=(y[inode2]+y[inode10])/2
+               x[inode15]=(x[inode3]+x[inode10])/2
+               y[inode15]=(y[inode3]+y[inode10])/2
+               x[inode16]=(x[inode0]+x[inode10])/2
+               y[inode16]=(y[inode0]+y[inode10])/2
+
+               #C1
+               icon[0,counter]=inode0
+               icon[1,counter]=inode1
+               icon[2,counter]=inode9
+               icon[3,counter]=inode4
+               icon[4,counter]=inode12
+               icon[5,counter]=inode11
+               counter+=1
+               #C2
+               icon[0,counter]=inode1
+               icon[1,counter]=inode2
+               icon[2,counter]=inode9
+               icon[3,counter]=inode5
+               icon[4,counter]=inode13
+               icon[5,counter]=inode12
+               counter+=1
+               #C3
+               icon[0,counter]=inode2
+               icon[1,counter]=inode0
+               icon[2,counter]=inode9
+               icon[3,counter]=inode8
+               icon[4,counter]=inode11
+               icon[5,counter]=inode13
+               counter+=1
+               #D1
+               icon[0,counter]=inode2
+               icon[1,counter]=inode3
+               icon[2,counter]=inode10
+               icon[3,counter]=inode6
+               icon[4,counter]=inode15
+               icon[5,counter]=inode14
+               counter += 1
+               #D2
+               icon[0,counter]=inode3
+               icon[1,counter]=inode0
+               icon[2,counter]=inode10
+               icon[3,counter]=inode7
+               icon[4,counter]=inode16
+               icon[5,counter]=inode15
+               counter += 1
+               #D3
+               icon[0,counter]=inode0
+               icon[1,counter]=inode2
+               icon[2,counter]=inode10
+               icon[3,counter]=inode8
+               icon[4,counter]=inode14
+               icon[5,counter]=inode16
+               counter += 1
+           #end for
+       #end for
+
 
     #-----------------
     # 2         
@@ -1839,45 +2057,47 @@ def export_connectivity_array_elt1_to_ascii(x,y,icon,filename):
 
 ###############################################################################
 
-def export_elements_to_vtu(x,y,icon,space,filename,area,bx,by,eta,q1,q2):
+def export_elements_to_vtu(x,y,icon,space,filename,area,bx,by,eta,q1,q2,q3):
     N=np.size(x)
     m,nel=np.shape(icon)
  
     if space=='P0' or space=='Q0' or space=='P-1' or space=='Pm1' or space=='Pm1u':
        return
 
-    if space=='Q1' or space=='Q1+' or space=='Q2' or space=='Q2s' or \
+    elif space=='Q1' or space=='Q1+' or space=='Q2' or space=='Q2s' or \
        space=='RT1' or space=='RT2' or space=='DSSY1' or space=='DSSY2' or\
        space=='Q1+Q0' :
        node0=0 ; node1=1 ; node2=2 ; node3=3
        m=4
-    if space=='Q3':
+    elif space=='Q3':
        node0=0
        node1=3
        node2=12
        node3=15
        m=4
-    if space=='Q4':
+    elif space=='Q4':
        node0=0
        node1=4
        node2=20
        node3=24
        m=4
-    if space=='P1' or space=='P1+' or space=='P2' or space=='P2+' or space=='P1NC':
+    elif space=='P1' or space=='P1+' or space=='P2' or space=='P2+' or space=='P1NC':
        node0=0
        node1=1
        node2=2
        m=3       
-    if space=='P3':
+    elif space=='P3':
        node0=0
        node1=3
        node2=9
        m=3       
-    if space=='P4':
+    elif space=='P4':
        node0=0
        node1=4
        node2=14
        m=3       
+    else:
+       exit('unknown space in export_elements_to_vtu')
 
     vtufile=open(filename,"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -1915,6 +2135,10 @@ def export_elements_to_vtu(x,y,icon,space,filename,area,bx,by,eta,q1,q2):
     vtufile.write("<DataArray type='Float32' Name='q2' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (q2[iel]))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='q3' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%10e\n" % (q3[iel]))
     vtufile.write("</DataArray>\n")
 
 

@@ -11,12 +11,14 @@ nely=2
 
 nqpts=7
 
+mtype=0
+
 print('=========================================')
 print(' tester 7: 0th order consistency')
 print('=========================================')
 
 for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','Chen',\
-               'P1','P1+','P1NC','P2','P2+','P3','P4']:
+               'P1','P1+','P2','P2+','P3','P4']:
 
     print('=========================================')
     print(' '+Vspace)
@@ -29,7 +31,7 @@ for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','Che
 
     print('nqel=',nqel)
 
-    NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace)
+    NV,nel,xV,yV,iconV=Tools.cartesian_mesh(Lx,Ly,nelx,nely,Vspace,mtype)
 
     for iel in range(0,nel):
         for iq in range(0,nqel):
@@ -37,7 +39,10 @@ for Vspace in ['Q1','Q1+','Q2','Q3','Q2s','DSSY1','DSSY2','RT1','RT2','Han','Che
             sq=qcoords_s[iq]
             weightq=qweights[iq]
             NNNV=FE.NNN(rq,sq,Vspace)
-            print(np.sum(NNNV))
+            if abs(np.sum(NNNV)-1)>1e-8: 
+               print('problem')
+               break
+            #print(np.sum(NNNV))
         #end for
     #end for
 #end for

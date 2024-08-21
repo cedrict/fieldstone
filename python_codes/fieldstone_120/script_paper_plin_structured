@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# sudo apt-get install bc
+
+###############################################################################
+#donea & huerta
+###############################################################################
+
+echo =================plin====================structured
+rm -f opla*
+rm -f vrms*
+rm -f errors* 
+mkdir paperresults/plin
+mkdir paperresults/plin/structured
+
+for e in 28 3 4 5 9 15 18; do 
+
+    if test $e == 3  ; then Vspace=P2    Pspace=P0  ; fi
+    if test $e == 4  ; then Vspace=Q2    Pspace=Q1  ; fi
+    if test $e == 5  ; then Vspace=P2    Pspace=P1  ; fi
+    if test $e == 9  ; then Vspace=P1+   Pspace=P1  ; fi
+    if test $e == 15 ; then Vspace=Q2    Pspace=Pm1 ; fi
+    if test $e == 18 ; then Vspace=P2+   Pspace=P-1 ; fi
+    if test $e == 28 ; then Vspace=P2    Pspace=P-1 ; fi
+
+    echo ---------- $Vspace X $Pspace ----------
+
+    #for n in 16 20 24 28 32 40 48 56 64 80 96 128 160 256; do
+    for n in 16 20 24 28 32 40 48 64 80 96; do
+        echo mesh: $n X $n 
+        start=`date +%s.%N`
+        python3 stone.py $n $Vspace $Pspace plin 0 >> opla
+        end=`date +%s.%N`
+        runtime=$( echo "$end - $start" | bc -l )
+        echo '     -> ' $runtime ' s'
+        mv visu_V.vtu visu_V_${Vspace}_${Pspace}_${n}.vtu
+    done
+    grep errv opla > errors_${Vspace}_${Pspace}
+    grep vrms= opla > vrms_${Vspace}_${Pspace}
+    mv opla opla_${Vspace}_${Pspace}
+
+done
+
+mv err* paperresults/plin/structured
+mv opla* paperresults/plin/structured
+mv vrms* paperresults/plin/structured
+
