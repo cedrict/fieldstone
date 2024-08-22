@@ -250,9 +250,38 @@ and its time-derivative as unknowns.
 Note that in all three cases the FE matrix is simply the mass matrix, 
 which is good news since it tends to be nicely conditioned and symmetric.
 
+This is all implemented in \stone~164. 
+
 %==============================================================================
 \section{Solving the two-dimensional wave equation}
 
+
+
+
+It simply writes
+\[
+\frac{\partial^2 u}{\partial t^2} = c^2 
+\left( 
+\frac{\partial^2 u}{\partial x^2} + 
+\frac{\partial^2 u}{\partial y^2} 
+\right)
+\]
+or also sometimes
+\[
+u_{tt} = c^2 (u_{xx} + u_{yy})
+\]
+Here to initial conditions and boundary conditions must be provided.
+
+
+{\color{red} ... include here weak form derivation and discretisation ... }
+
+We arrive again at the following equation
+\begin{equation}
+\M \cdot \vec{\ddot{{\cal U}}}(t) + c^2 \K \cdot \vec{\cal U}(t) = \vec{0}
+\label{ss:waveq2d}
+\end{equation}
+At this stage a decision must be made, i.e. whether quadrilaterals or triangles 
+are used, and whether they are linear, quadratic, etc ...
 
 
 

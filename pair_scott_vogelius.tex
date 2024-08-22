@@ -98,7 +98,14 @@ vertices of a mesh cell with the barycenter of this mesh cell.
 This step creates smaller triangles.
 On barycentric-refined meshes, the $P_k/P^{disc}_{k-1}$, $k=2,3$ 
 pair of finite element spaces was shown to satisfy the discrete inf-sup
-condition in Qin (1994) [phd thesis].
+condition in Qin's phd thesis (1994). [...]
+
+The use of the $P_2/P^{disc}_{1}$ pair of finite element spaces 
+on barycentric-refined meshes can be found occasionally in the literature,
+in particular to demonstrate the advantages of using pairs of finite element 
+spaces which provide weakly divergence-free velocity solutions, 
+e.g. see \textcite{john15} and refs therein.
+
 }
 \end{displayquote}
 
@@ -108,6 +115,11 @@ condition in Qin (1994) [phd thesis].
 {\captionfont Barycentric-refined simplicial grid on the unit square}
 \end{center}
 
+I hereafter present my own internal numbering for the mesh above (used in \stone~120 for example).
+The quadrilateral has been cut once along a diagonal, and then an Alfeld split is used, thereby 
+dividing the square in 6 triangles:
+
+\input{tikz/tikz_sv.tex}
 
 See also \textcite{jolm17} (2017) in which the $P_2\times P_1$, Scott-Vogelius ($P_2\times P_{-1}$), 
 Bernardi-Raugel, and $P_2^+\times P_{-1}$ elements 
@@ -124,7 +136,29 @@ although I use the $P_1^+\times P_1$ element in this stone).
 In \textcite{befh21} (2021) this element is used in its 
 $(P_3)^2-P_2^{\text{disc}}$ form.
 
+Note that some have proposed to use an incenter-based refinement instead of
+a barycenter refinement since it lead to less pronounced aspect ratios\footnote{
+The Scott-Vogelius Method for Stokes Problem on Anisotropic Meshes, K Kean, M Neilan, M Schneier,
+\url{https://doi.org/10.48550/arXiv.2109.14780}}.
+In geometry, the incenter of a triangle is a triangle center, a point defined for 
+any triangle in a way that is independent of the triangle's placement or scale. 
+The incenter may be equivalently defined as the point where the internal angle bisectors 
+of the triangle cross or as the point equidistant from the triangle's sides.
+
+Given the coordinates of the three vertices of a triangle ABC,
+the coordinates of the incenter O are
+\[
+x_O=\frac{ax_A+bx_B+cx_C}{a+b+c}
+\qquad
+y_O=\frac{ay_A+by_B+cy_C}{a+b+c}
+\] 
+where $a$, $b$ and $c$ are the side lengths opposite vertex A, B and C.
+
+ 
+
+
 \begin{center}
 \url{https://defelement.com/elements/scott-vogelius.html}
 \end{center}
+
 

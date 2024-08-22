@@ -1,0 +1,75 @@
+\begin{flushright} {\tiny {\color{gray} mms\_plin.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We consider a two-dimensional problem 
+in the square domain $\Omega=[0,1]\times[0,1]$.
+
+\begin{eqnarray}
+u(x,y) 
+&=& f(x) g'(y) \nn\\
+v(x,y) 
+&=& -f'(x) g(y) \nn\\
+p(x,y) &=& ax+by+c \nonumber 
+\end{eqnarray}
+where $a,b,c$ are three real constants and 
+with
+\begin{eqnarray}
+f(x) &=&  x^2(1- x)^2 \nn\\
+f'(x) &=& 2x -6x^2 +4 x^3 \nn\\
+f''(x) &=& 2-12x+12x^2 \nn\\
+f'''(x) &=& -12+24x \nn\\
+g(y) &=& y^2 (1 - y)^2 \nn\\
+g'(x) &=& 2y -6y^2 +4 y^3 \nn\\
+g''(x) &=& 2-12y+12y^2 \nn\\
+g'''(x) &=& -12+24y \nn
+\end{eqnarray}
+The velocity is the same as in the previous manufactured solution, but the 
+pressure is now linear.
+
+Note that we wish the pressure to be such that $\int_{\Omega} p \; dV = 0$.
+\begin{eqnarray}
+\iint_\Omega p(x,y) dx dy 
+&=& \iint_\Omega (ax+by+c) dx dy \nn\\
+&=& \int_0^1\int_0^1 ax \; dx dy + \int_0^1\int_0^1 by \; dx dy + \int_0^1\int_0^1 c \; dx dy \nn\\
+&=& a \int_0^1 x\; dx + b \int_0^1 y \; dy + c \nn\\
+&=& a \frac12 + b \frac12 + c \nn
+\end{eqnarray}
+which means that we must have $c=-\frac{1}{2}(a+b)$ so that the pressure is given by
+\[
+p(x,y) = ax+by - \frac12(a+b) = a \left(x-\frac12\right) + b\left(y-\frac12 \right)
+\]
+One can turn to the spatial derivatives of the fields:
+\begin{eqnarray}
+\dot{\varepsilon}_{xx}=\frac{\partial u}{\partial x} &=&  f'(x) g'(y)  \nn\\
+\dot{\varepsilon}_{yy}=\frac{\partial v}{\partial y} &=& -f'(x)g'(y)  \nn\\
+\dot{\varepsilon}_{xy}=\frac{1}{2}\left(\frac{\partial u}{\partial y}+\frac{\partial v}{\partial x}\right) 
+&=& \frac12(fg'' - f''g  ) \nn
+\end{eqnarray}
+with of course  ${\vec \nabla} \cdot {\vec \upnu} = \dot{\varepsilon}_{xx} + \dot{\varepsilon}_{yy}=0$.
+We have
+\begin{align}
+\frac{\partial \dot{\varepsilon}_{xx}}{\partial x} &= f''g'  \nn\\
+\frac{\partial \dot{\varepsilon}_{xy}}{\partial y} &= \frac12 (fg'''-f''g')  \nn\\
+\frac{\partial \dot{\varepsilon}_{xy}}{\partial x} &= \frac12 (f'g''-f'''g) \nn\\  
+\frac{\partial \dot{\varepsilon}_{yy}}{\partial y} &= -f'g'' \nn
+\end{align}
+so that the corresponding body force is given by: 
+\begin{eqnarray}
+b_x 
+&=& \frac{\partial p}{\partial x}  
+-2\frac{\partial \dot{\varepsilon}_{xx}}{\partial x} -  2\frac{\partial \dot{\varepsilon}_{xy}}{\partial y} 
+= a -2f''g' -fg'''+f''g' 
+= a -f''g' -fg''' \nn\\
+b_y 
+&=& \frac{\partial p}{\partial y} 
+-2 \frac{\partial \dot{\varepsilon}_{yy}}{\partial y} 
+-2 \frac{\partial \dot{\varepsilon}_{xy}}{\partial x} 
+= b + 2f'g'' - f'g''+f'''g 
+= b + f'g'' + f'''g \nn
+\end{eqnarray}
+
+
+
+
+
+
