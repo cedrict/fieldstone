@@ -56,8 +56,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
     #-----------------------------------
     elif space=='Q1+' or space=='Q1+Q0':
        N=(nelx+1)*(nely+1)+nel
-       x = np.zeros(N,dtype=np.float64) 
-       y = np.zeros(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter = 0
        for j in range(0,nely+1):
            for i in range(0,nelx+1):
@@ -87,8 +87,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
        N=(2*nelx+1)*(2*nely+1)
        nnx=2*nelx+1
        nny=2*nely+1
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter = 0
        for j in range(0,nny):
            for i in range(0,nnx):
@@ -117,8 +117,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
     #---------------------------------
     elif space=='Q2s': #serendipity
        N=(nelx+1)*(nely+1)+nelx*(nely+1)+(nelx+1)*nely
-       x=np.empty(N,dtype=np.float64) 
-       y=np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter = 0
        for j in range(0,nely+1):
            for i in range(0,nelx+1):
@@ -160,8 +160,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
        N=(3*nelx+1)*(3*nely+1)
        nnx=3*nelx+1
        nny=3*nely+1
-       x=np.empty(N,dtype=np.float64) 
-       y=np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter = 0
        for j in range(0,nny):
            for i in range(0,nnx):
@@ -188,8 +188,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
        N=(4*nelx+1)*(4*nely+1)
        nnx=4*nelx+1
        nny=4*nely+1
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter = 0
        for j in range(0,nny):
            for i in range(0,nnx):
@@ -222,8 +222,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
     elif space=='P0' and mtype==0:
        nel*=2
        N=nel
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter = 0 
        for j in range(0,nely):
            for i in range(0,nelx):
@@ -273,8 +273,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
     elif space=='P0' and mtype==2:
        nel*=4
        N=nel
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter = 0 
        for j in range(0,nely):
            for i in range(0,nelx):
@@ -315,8 +315,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
     elif space=='P1' and mtype==0:
        nel*=2
        N=(nelx+1)*(nely+1)
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter = 0 
        for j in range(0,nely+1):
            for i in range(0,nelx+1):
@@ -379,10 +379,17 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
                inode3=i+(j+1)*(nelx+1)
                inode4=(nelx+1)*(nely+1)+2*(j*nelx+i)+0
                inode5=(nelx+1)*(nely+1)+2*(j*nelx+i)+1
+               #barycenter
                x[inode4]=(x[inode0]+x[inode1]+x[inode2])/3
                y[inode4]=(y[inode0]+y[inode1]+y[inode2])/3
                x[inode5]=(x[inode0]+x[inode2]+x[inode3])/3
                y[inode5]=(y[inode0]+y[inode2]+y[inode3])/3
+               #incenter
+               #x[inode4]=x[inode0]+np.sqrt(2)/2*hx
+               #y[inode4]=y[inode0]+hy/(2+np.sqrt(2))
+               #x[inode5]=x[inode0]+hx/(2+np.sqrt(2))
+               #y[inode5]=y[inode0]+np.sqrt(2)/2*hy
+
                #C1
                icon[0,counter]=inode0 
                icon[1,counter]=inode1
@@ -416,14 +423,12 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
            #end for
        #end for
 
-
-
     #---------------------------------
     # disc space for Q2Pm1 element
     elif space=='Pm1' or space=='Pm1u': 
        N=3*nel
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        icon=np.zeros((3,nel),dtype=np.int32)
 
        iel=0
@@ -448,8 +453,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
 
     elif space=='Q-1': 
        N=4*nel
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        icon=np.zeros((4,nel),dtype=np.int32)
 
        iel=0
@@ -489,8 +494,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
     elif space=='P-1' and mtype==0:
        nel*=2
        N=3*nel
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        icon=np.zeros((3,nel),dtype=np.int32)
        iel=0
        counter=0
@@ -574,8 +579,14 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
                x1=i*hx+hx      ; y1=j*hy
                x2=i*hx+hx      ; y2=j*hy+hy
                x3=i*hx         ; y3=j*hy+hy
+               #barycenter
                x4=(x0+x1+x2)/3 ; y4=(y0+y1+y2)/3 
                x5=(x0+x2+x3)/3 ; y5=(y0+y2+y3)/3 
+               #incenter
+               #x4=x0+np.sqrt(2)/2*hx
+               #y4=y0+hy/(2+np.sqrt(2))
+               #x5=x0+hx/(2+np.sqrt(2))
+               #y5=y0+np.sqrt(2)/2*hy
 
                # C1
                x[counter]=x0 ; y[counter]=y0 ; icon[0,iel]=counter ; counter+=1
@@ -615,8 +626,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
     elif space=='P1' and mtype==2:
        N=(nelx+1)*(nely+1)+nel
        nel*=4
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter = 0 
        for j in range(0,nely+1):
            for i in range(0,nelx+1):
@@ -660,8 +671,6 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
            #end for
        #end for
 
-
-
     #---------------------------------
     #    A        B
     #  3---2    3---2
@@ -675,8 +684,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
        N=(nelx+1)*(nely+1)+nel
        nnx=nelx+1
        nny=nely+1
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter = 0 
        for j in range(0,nely+1):
            for i in range(0,nelx+1):
@@ -738,8 +747,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
        N=(2*nelx+1)*(2*nely+1)
        nnx=2*nelx+1
        nny=2*nely+1
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter = 0
        for j in range(0,nny):
            for i in range(0,nnx):
@@ -806,8 +815,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
        N=(2*nelx+1)*(2*nely+1)+8*nelx*nely
        nnx=2*nelx+1
        nny=2*nely+1
-       x=np.empty(N,dtype=np.float64) 
-       y=np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter = 0
        for j in range(0,nny):
            for i in range(0,nnx):
@@ -838,10 +847,16 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
                inode15=nnx*nny+ 2*nelx*nely+ 6*(j*nelx+i)+4
                inode16=nnx*nny+ 2*nelx*nely+ 6*(j*nelx+i)+5
 
+               #barycenter
                x[inode9]=(x[inode0]+x[inode1]+x[inode2])/3
                y[inode9]=(y[inode0]+y[inode1]+y[inode2])/3
                x[inode10]=(x[inode0]+x[inode2]+x[inode3])/3
                y[inode10]=(y[inode0]+y[inode2]+y[inode3])/3
+               #incenter 
+               #x[inode9]=x[inode0]+np.sqrt(2)/2*hx
+               #y[inode9]=y[inode0]+hy/(2+np.sqrt(2))
+               #x[inode10]=x[inode0]+hx/(2+np.sqrt(2))
+               #y[inode10]=y[inode0]+np.sqrt(2)/2*hy
 
                x[inode11]=(x[inode0]+x[inode9])/2
                y[inode11]=(y[inode0]+y[inode9])/2
@@ -922,8 +937,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
        nnx=2*nelx+1
        nny=2*nely+1
        N=nnx*nny+nel
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter=0
        for j in range(0,nny):
            for i in range(0,nnx):
@@ -1010,8 +1025,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
        N=(3*nelx+1)*(3*nely+1)
        nnx=3*nelx+1
        nny=3*nely+1
-       x=np.empty(N,dtype=np.float64) 
-       y=np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter = 0
        for j in range(0,nny):
            for i in range(0,nnx):
@@ -1112,8 +1127,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
        N=(4*nelx+1)*(4*nely+1)
        nnx=4*nelx+1
        nny=4*nely+1
-       x=np.empty(N,dtype=np.float64) 
-       y=np.empty(N,dtype=np.float64)
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter = 0
        for j in range(0,nny):
            for i in range(0,nnx):
@@ -1215,8 +1230,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
     elif space=='DSSY1' or space=='DSSY2' or\
          space=='RT1' or space=='RT2':
        N=(nely+1)*nelx + nely*(nelx+1)
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64) 
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter=0
        for j in range(0,nely):
            # bottom line
@@ -1249,8 +1264,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
     #---------------------------------
     elif space=='Han' or space=='Chen':
        N=(nely+1)*nelx + nely*(nelx+1)+nel
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64) 
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter=0
        for j in range(0,nely):
            # bottom line
@@ -1297,8 +1312,8 @@ def cartesian_mesh(Lx,Ly,nelx,nely,space,mtype):
     elif space=='P1NC':
        N=(nely+1)*nelx + nely*(nelx+1)+nel
        nel*=2
-       x = np.empty(N,dtype=np.float64) 
-       y = np.empty(N,dtype=np.float64) 
+       x=np.zeros(N,dtype=np.float64) 
+       y=np.zeros(N,dtype=np.float64)
        counter=0
        for j in range(0,nely):
            # bottom line

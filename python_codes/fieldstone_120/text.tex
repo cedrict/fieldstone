@@ -2236,22 +2236,164 @@ rhs (forcing term) actually contains the derivative of the viscosity.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results - linear pressure 'plin' mms }
 
-Velocity is same as Donea \& Huerta but pressure is given by:
-\[
-p(x,y) = ax+by - \frac12(a+b) = a \left(x-\frac12\right) + b\left(y-\frac12 \right)
-\]
+This manufactured solution is presented in Section~\ref{MMM-mms_plin}.
 
+The domain is the unit square.
+The velocity field is the same as the Donea \& Huerta benchmark:
+\begin{eqnarray}
+u(x,y) 
+&=& x^2(1- x)^2 (2y - 6y^2 + 4y^3)  \nn\\
+v(x,y) 
+&=& -y^2 (1 - y)^2 (2x - 6x^2 + 4x^3) \nn
+\end{eqnarray}
+but the pressure is different and given by a linear field with zero average 
+over the domain:
+\[
+p(x,y) = a \left(x-\frac12\right) + b\left(y-\frac12 \right)
+\]
+with $a=3$ and $b=5$.
+
+One can plot the errors as a function of the average element size, where the size of an 
+element is computed using the square root of the element area 
+(If the triangles are close to be equilateral this is a reasonable
+assumption, but we know that in the case of the barycentric refinement for the Scott-Vogelius
+we obtain flat triangles).
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errorsV.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errorsP.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errors_divv.pdf}\\
+\end{center}
+
+We can plot the same errors as a function of the total number of dofs in the system, 
+which puts the S-V element at a disadvantage:
+\begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errorsV2.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errorsP2.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errors_divv2.pdf}\\
+\end{center}
+
+Finally we can plot the errors as a function of the maximum element size computed as the longest 
+edge of each triangle (In practice, since we start from a $nelx \times nely$ mesh 
+of square elements subdivided in two, the used mesh size in the plot is simply $Lx/nelx*\sqrt{2}$, i.e.
+the diagonal of a quadrilateral). 
+In this case the S-V element pair is very close to the Crouzeix-Raviart pair and the difference 
+can be explained by the triangle 'aspect ratios' (W wrote: ``
+There is of course the issue that the triangles you use have fairly large
+aspect ratios (or, alternatively, rather large and small angles). That goes
+into the error constant'').
+\begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errorsV3.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errorsP3.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/plin_structured_errors_divv3.pdf}
 \end{center}
+
+If my implementation is correct, this makes the S-V element pair rather useless:
+more costly than C-R, mesh is a pain to build, and accuracy is less than C-R.
+I need to replicate all this on unstructured meshes but I do not hold my breath.
+
+Wolfgang adds:
+``
+so if you can reproduce the exact solution, you've got a pretty good case that
+your implementation is correct. The fact that you get comparable accuracy when
+you measure 'h' as the longest edge length also suggests that the issue is
+simply the use of poorly shaped elements. I think you've found the reason for
+the poor performance.
+
+I will note that the longest edge is not a silly measure. If you try to
+approximate a curved function in 1d with piecewise linears, the size of the
+element clearly matters -- that's what determines the accuracy. In the mesh
+you use, if the exact solution varied quadratically in the direction bottom
+left -- top right, the long edges in this direction are going to be the
+dominant cause of the error. The fact that the elements are smaller than $h^2/2$
+"on average" (with h=longest edge length), or that the mesh size is smaller in
+the direction of the other diagonal is entirely immaterial in that case. That
+mesh is just pretty terrible, and you will probably get poor errors from any
+other element on this mesh as well. 
+''
+
+
+
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_120/paperresults/plin/press_SV}\\
+{\captionfont Pressure field obtained with S-V element based on 16x16 quads.}
+\end{center}
+
+Finally, it was also proposed that the additional node inside each 
+triangle be the incenter and not the barycenter. 
+In our case this yields a mesh with triangles of better quality (
+according to q1 and q2 measurements) but the errors are 
+marginally better for incenter than barycenter.
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Results - Linke \& Rebholz mms }
+
+In the original paper the authors consider the time-dependent Stokes equations:
+\[
+\vec\upnu_t - \nu \Delta \vec\upnu + \vec\nabla p = \vec f 
+\]
+\[
+\vec\nabla \cdot \vec\upnu = 0
+\]
+Since I do not wish to deal with the time derivative I set it to zero (steady state)
+and I also set $t=0$ in their proposed analytical velocity field so that we get
+
+\[
+\vec\upnu (x,y,t) = 
+\left(
+\begin{array}{c}
+\cos y \\
+\sin x
+\end{array}
+\right)
+\]
+\[
+p(x,y,t)=\sin(x+y)
+\]
+
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/lire19_structured_errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/lire19_structured_errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/lire19_structured_errors_divv.pdf}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/lire19_structured_errorsV2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/lire19_structured_errorsP2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/lire19_structured_errors_divv2.pdf}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/lire19_structured_errorsV3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/lire19_structured_errorsP3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/lire19_structured_errors_divv3.pdf}
+\end{center}
+
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/lire19/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/lire19/press}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

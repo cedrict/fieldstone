@@ -26,6 +26,7 @@ set log y
 set format y "10^{%L}"
 set title "structured mesh"
 
+
 set ylabel '||u-u_h||_{L_2}'
 set output 'dh_structured_errorsV.pdf'
 plot[hmin:hmax][]\
@@ -35,6 +36,7 @@ plot[hmin:hmax][]\
 'dh/structured/errors_P2_P1'   u 16:6 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
 'dh/structured/errors_P2_P0'   u 16:6 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
 'dh/structured/errors_P2+_P-1' u 16:6 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'dh/structured/errors_P2_P-1'  u 16:6 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)',\
 x**2/30 lt -1 dt 3 t 'h^2',\
 x**3/35 lt -1 dt 2 t 'h^3'
 
@@ -47,9 +49,67 @@ plot[hmin:hmax][]\
 'dh/structured/errors_P2_P1'   u 16:9 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
 'dh/structured/errors_P2_P0'   u 16:9 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
 'dh/structured/errors_P2+_P-1' u 16:9 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'dh/structured/errors_P2_P-1'  u 16:9 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)',\
 x**1/5 lt -1 dt 5 t 'h^1',\
 x**1.5/3 lt -1 dt 4 t 'h^{1.5}',\
 x**2/3.75 lt -1 dt 3 t 'h^2'
+
+set ylabel '||div(u)||_{L_2}'
+set output 'dh_structured_errors_divv.pdf'
+plot[hmin:hmax][]\
+'dh/structured/errors_Q2_Q1'   u 16:12 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'dh/structured/errors_Q2_Pm1'  u 16:12 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'dh/structured/errors_P1+_P1'  u 16:12 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'dh/structured/errors_P2_P1'   u 16:12 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'dh/structured/errors_P2_P0'   u 16:12 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'dh/structured/errors_P2+_P-1' u 16:12 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'dh/structured/errors_P2_P-1'  u 16:12 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)',\
+x**1/5 lt -1 dt 5 t 'h^1',\
+x**1.5/3 lt -1 dt 4 t 'h^{1.5}',\
+x**2/3.75 lt -1 dt 3 t 'h^2'
+
+
+
+
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'dh_structured_errorsV2.pdf'
+plot[][]\
+'dh/structured/errors_Q2_Q1'   u ($14+$15):6 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'dh/structured/errors_Q2_Pm1'  u ($14+$15):6 w lp ps 0.5 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'dh/structured/errors_P1+_P1'  u ($14+$15):6 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'dh/structured/errors_P2_P1'   u ($14+$15):6 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'dh/structured/errors_P2_P0'   u ($14+$15):6 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'dh/structured/errors_P2+_P-1' u ($14+$15):6 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'dh/structured/errors_P2_P-1'  u ($14+$15):6 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'dh_structured_errorsP2.pdf'
+plot[][]\
+'dh/structured/errors_Q2_Q1'   u ($14+$15):9 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'dh/structured/errors_Q2_Pm1'  u ($14+$15):9 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'dh/structured/errors_P1+_P1'  u ($14+$15):9 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'dh/structured/errors_P2_P1'   u ($14+$15):9 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'dh/structured/errors_P2_P0'   u ($14+$15):9 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'dh/structured/errors_P2+_P-1' u ($14+$15):9 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'dh/structured/errors_P2_P-1'  u ($14+$15):9 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)'
+
+set ylabel '||div(u)||_{L_2}'
+set output 'dh_structured_errors_divv2.pdf'
+plot[][]\
+'dh/structured/errors_Q2_Q1'   u ($14+$15):12 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'dh/structured/errors_Q2_Pm1'  u ($14+$15):12 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'dh/structured/errors_P1+_P1'  u ($14+$15):12 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'dh/structured/errors_P2_P1'   u ($14+$15):12 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'dh/structured/errors_P2_P0'   u ($14+$15):12 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'dh/structured/errors_P2+_P-1' u ($14+$15):12 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'dh/structured/errors_P2_P-1'  u ($14+$15):12 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)',\
+
+
+
+
+
+
 
 #set ylabel 'v_{rms}'
 #unset format y
@@ -98,6 +158,283 @@ x**2/3 lt -1 dt 3 t 'h^2'
 #'dh/unstructured/vrms_P2_P1'   u 13:6 w lp ps .5 lt 4 t 'P_2xP_1',\
 #'dh/unstructured/vrms_P2_P0'   u 13:6 w lp ps .5 lt 7 t 'P_2xP_0',\
 #'dh/unstructured/vrms_P2+_P-1' u 13:6 w lp ps .5 lt 6 t 'P_2^+xP_{-1}'
+
+
+
+
+
+
+
+
+
+#################################################################
+#################################################################
+#################################################################
+
+set title "structured mesh"
+set ylabel '||u-u_h||_{L_2}'
+set output 'plin_structured_errorsV.pdf'
+plot[hmin:hmax][]\
+'plin/structured/errors_Q2_Q1'   u 16:6 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'plin/structured/errors_Q2_Pm1'  u 16:6 w lp ps 0.5 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'plin/structured/errors_P1+_P1'  u 16:6 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'plin/structured/errors_P2_P1'   u 16:6 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'plin/structured/errors_P2_P0'   u 16:6 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'plin/structured/errors_P2+_P-1' u 16:6 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'plin/structured/errors_P2_P-1'  u 16:6 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)',\
+x**2/30 lt -1 dt 3 t 'h^2',\
+x**3/35 lt -1 dt 2 t 'h^3'
+
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'plin_structured_errorsP.pdf'
+plot[hmin:hmax][]\
+'plin/structured/errors_Q2_Q1'   u 16:9 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'plin/structured/errors_Q2_Pm1'  u 16:9 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'plin/structured/errors_P1+_P1'  u 16:9 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'plin/structured/errors_P2_P1'   u 16:9 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'plin/structured/errors_P2_P0'   u 16:9 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'plin/structured/errors_P2+_P-1' u 16:9 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'plin/structured/errors_P2_P-1'  u 16:9 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)',\
+x**1/1 lt -1 dt 5 t 'h^1',\
+x**2/73.75 lt -1 dt 3 t 'h^2',\
+x**4/7 lt -1 dt 4 t 'h^3'
+
+set ylabel '||div(u)||_{L_2}'
+set output 'plin_structured_errors_divv.pdf'
+plot[hmin:hmax][]\
+'plin/structured/errors_Q2_Q1'   u 16:12 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'plin/structured/errors_Q2_Pm1'  u 16:12 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'plin/structured/errors_P1+_P1'  u 16:12 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'plin/structured/errors_P2_P1'   u 16:12 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'plin/structured/errors_P2_P0'   u 16:12 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'plin/structured/errors_P2+_P-1' u 16:12 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'plin/structured/errors_P2_P-1'  u 16:12 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)',\
+x**1/5 lt -1 dt 5 t 'h^1',\
+x**1.5/3 lt -1 dt 4 t 'h^{1.5}',\
+x**2/3.75 lt -1 dt 3 t 'h^2'
+
+set xlabel 'NfemV+NfemP'
+set ylabel '||u-u_h||_{L_2}'
+set output 'plin_structured_errorsV2.pdf'
+plot[][]\
+'plin/structured/errors_Q2_Q1'   u ($14+$15):6 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'plin/structured/errors_Q2_Pm1'  u ($14+$15):6 w lp ps 0.5 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'plin/structured/errors_P1+_P1'  u ($14+$15):6 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'plin/structured/errors_P2_P1'   u ($14+$15):6 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'plin/structured/errors_P2_P0'   u ($14+$15):6 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'plin/structured/errors_P2+_P-1' u ($14+$15):6 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'plin/structured/errors_P2_P-1'  u ($14+$15):6 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'plin_structured_errorsP2.pdf'
+plot[][]\
+'plin/structured/errors_Q2_Q1'   u ($14+$15):9 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'plin/structured/errors_Q2_Pm1'  u ($14+$15):9 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'plin/structured/errors_P1+_P1'  u ($14+$15):9 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'plin/structured/errors_P2_P1'   u ($14+$15):9 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'plin/structured/errors_P2_P0'   u ($14+$15):9 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'plin/structured/errors_P2+_P-1' u ($14+$15):9 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'plin/structured/errors_P2_P-1'  u ($14+$15):9 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)'
+
+set ylabel '||div(u)||_{L_2}'
+set output 'plin_structured_errors_divv2.pdf'
+plot[][]\
+'plin/structured/errors_Q2_Q1'   u ($14+$15):12 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'plin/structured/errors_Q2_Pm1'  u ($14+$15):12 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'plin/structured/errors_P1+_P1'  u ($14+$15):12 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'plin/structured/errors_P2_P1'   u ($14+$15):12 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'plin/structured/errors_P2_P0'   u ($14+$15):12 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'plin/structured/errors_P2+_P-1' u ($14+$15):12 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'plin/structured/errors_P2_P-1'  u ($14+$15):12 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)',\
+
+
+set xlabel 'max(h)'
+set ylabel '||u-u_h||_{L_2}'
+set output 'plin_structured_errorsV3.pdf'
+plot[][]\
+'plin/structured/errors_Q2_Q1'   u 17:6 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'plin/structured/errors_Q2_Pm1'  u 17:6 w lp ps 0.5 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'plin/structured/errors_P1+_P1'  u 17:6 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'plin/structured/errors_P2_P1'   u 17:6 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'plin/structured/errors_P2_P0'   u 17:6 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'plin/structured/errors_P2+_P-1' u 17:6 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'plin/structured/errors_P2_P-1'  u 17:6 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'plin_structured_errorsP3.pdf'
+plot[][]\
+'plin/structured/errors_Q2_Q1'   u 17:9 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'plin/structured/errors_Q2_Pm1'  u 17:9 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'plin/structured/errors_P1+_P1'  u 17:9 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'plin/structured/errors_P2_P1'   u 17:9 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'plin/structured/errors_P2_P0'   u 17:9 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'plin/structured/errors_P2+_P-1' u 17:9 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'plin/structured/errors_P2_P-1'  u 17:9 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)'
+
+set ylabel '||div(u)||_{L_2}'
+set output 'plin_structured_errors_divv3.pdf'
+plot[][]\
+'plin/structured/errors_Q2_Q1'   u 17:12 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'plin/structured/errors_Q2_Pm1'  u 17:12 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'plin/structured/errors_P1+_P1'  u 17:12 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'plin/structured/errors_P2_P1'   u 17:12 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'plin/structured/errors_P2_P0'   u 17:12 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'plin/structured/errors_P2+_P-1' u 17:12 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'plin/structured/errors_P2_P-1'  u 17:12 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)',\
+
+
+
+#################################################################
+#################################################################
+#################################################################
+
+set xlabel '<h>'
+set title "structured mesh"
+set ylabel '||u-u_h||_{L_2}'
+set output 'lire19_structured_errorsV.pdf'
+plot[hmin:hmax][]\
+'lire19/structured/errors_Q2_Q1'   u 16:6 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'lire19/structured/errors_Q2_Pm1'  u 16:6 w lp ps 0.5 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'lire19/structured/errors_P1+_P1'  u 16:6 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'lire19/structured/errors_P2_P1'   u 16:6 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'lire19/structured/errors_P2_P0'   u 16:6 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'lire19/structured/errors_P2+_P-1' u 16:6 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'lire19/structured/errors_P2_P-1'  u 16:6 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)',\
+x**2/30 lt -1 dt 3 t 'h^2',\
+x**3/35 lt -1 dt 2 t 'h^3'
+
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'lire19_structured_errorsP.pdf'
+plot[hmin:hmax][]\
+'lire19/structured/errors_Q2_Q1'   u 16:9 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'lire19/structured/errors_Q2_Pm1'  u 16:9 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'lire19/structured/errors_P1+_P1'  u 16:9 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'lire19/structured/errors_P2_P1'   u 16:9 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'lire19/structured/errors_P2_P0'   u 16:9 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'lire19/structured/errors_P2+_P-1' u 16:9 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'lire19/structured/errors_P2_P-1'  u 16:9 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)',\
+x**1/1 lt -1 dt 5 t 'h^1',\
+x**2/73.75 lt -1 dt 3 t 'h^2'
+
+set ylabel '||div(u)||_{L_2}'
+set output 'lire19_structured_errors_divv.pdf'
+plot[hmin:hmax][]\
+'lire19/structured/errors_Q2_Q1'   u 16:12 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'lire19/structured/errors_Q2_Pm1'  u 16:12 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'lire19/structured/errors_P1+_P1'  u 16:12 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'lire19/structured/errors_P2_P1'   u 16:12 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'lire19/structured/errors_P2_P0'   u 16:12 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'lire19/structured/errors_P2+_P-1' u 16:12 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'lire19/structured/errors_P2_P-1'  u 16:12 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)',\
+x**1/5 lt -1 dt 5 t 'h^1',\
+x**1.5/3 lt -1 dt 4 t 'h^{1.5}',\
+x**2/3.75 lt -1 dt 3 t 'h^2'
+
+set xlabel 'NfemV+NfemP'
+set ylabel '||u-u_h||_{L_2}'
+set output 'lire19_structured_errorsV2.pdf'
+plot[][]\
+'lire19/structured/errors_Q2_Q1'   u ($14+$15):6 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'lire19/structured/errors_Q2_Pm1'  u ($14+$15):6 w lp ps 0.5 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'lire19/structured/errors_P1+_P1'  u ($14+$15):6 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'lire19/structured/errors_P2_P1'   u ($14+$15):6 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'lire19/structured/errors_P2_P0'   u ($14+$15):6 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'lire19/structured/errors_P2+_P-1' u ($14+$15):6 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'lire19/structured/errors_P2_P-1'  u ($14+$15):6 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'lire19_structured_errorsP2.pdf'
+plot[][]\
+'lire19/structured/errors_Q2_Q1'   u ($14+$15):9 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'lire19/structured/errors_Q2_Pm1'  u ($14+$15):9 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'lire19/structured/errors_P1+_P1'  u ($14+$15):9 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'lire19/structured/errors_P2_P1'   u ($14+$15):9 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'lire19/structured/errors_P2_P0'   u ($14+$15):9 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'lire19/structured/errors_P2+_P-1' u ($14+$15):9 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'lire19/structured/errors_P2_P-1'  u ($14+$15):9 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)'
+
+set ylabel '||div(u)||_{L_2}'
+set output 'lire19_structured_errors_divv2.pdf'
+plot[][]\
+'lire19/structured/errors_Q2_Q1'   u ($14+$15):12 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'lire19/structured/errors_Q2_Pm1'  u ($14+$15):12 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'lire19/structured/errors_P1+_P1'  u ($14+$15):12 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'lire19/structured/errors_P2_P1'   u ($14+$15):12 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'lire19/structured/errors_P2_P0'   u ($14+$15):12 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'lire19/structured/errors_P2+_P-1' u ($14+$15):12 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'lire19/structured/errors_P2_P-1'  u ($14+$15):12 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)',\
+
+set xlabel 'max(h)'
+set ylabel '||u-u_h||_{L_2}'
+set output 'lire19_structured_errorsV3.pdf'
+plot[][]\
+'lire19/structured/errors_Q2_Q1'   u 17:6 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'lire19/structured/errors_Q2_Pm1'  u 17:6 w lp ps 0.5 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'lire19/structured/errors_P1+_P1'  u 17:6 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'lire19/structured/errors_P2_P1'   u 17:6 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'lire19/structured/errors_P2_P0'   u 17:6 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'lire19/structured/errors_P2+_P-1' u 17:6 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'lire19/structured/errors_P2_P-1'  u 17:6 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'lire19_structured_errorsP3.pdf'
+plot[][]\
+'lire19/structured/errors_Q2_Q1'   u 17:9 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'lire19/structured/errors_Q2_Pm1'  u 17:9 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'lire19/structured/errors_P1+_P1'  u 17:9 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'lire19/structured/errors_P2_P1'   u 17:9 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'lire19/structured/errors_P2_P0'   u 17:9 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'lire19/structured/errors_P2+_P-1' u 17:9 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'lire19/structured/errors_P2_P-1'  u 17:9 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)'
+
+set ylabel '||div(u)||_{L_2}'
+set output 'lire19_structured_errors_divv3.pdf'
+plot[][]\
+'lire19/structured/errors_Q2_Q1'   u 17:12 w lp ps 1.9 lw 2 lt 1 t 'Q_2xQ_1',\
+'lire19/structured/errors_Q2_Pm1'  u 17:12 w lp ps 1.9 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'lire19/structured/errors_P1+_P1'  u 17:12 w lp ps 0.5 lw 2 lt 3 t 'P_1^+xP_1',\
+'lire19/structured/errors_P2_P1'   u 17:12 w lp ps 0.5 lw 2 lt 4 t 'P_2xP_1',\
+'lire19/structured/errors_P2_P0'   u 17:12 w lp ps 0.5 lw 2 lt 7 t 'P_2xP_0',\
+'lire19/structured/errors_P2+_P-1' u 17:12 w lp ps 0.5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+'lire19/structured/errors_P2_P-1'  u 17:12 w lp ps 0.5 lw 2 lt 8 t 'P_2xP_{-1} (sv)',\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #################################################################

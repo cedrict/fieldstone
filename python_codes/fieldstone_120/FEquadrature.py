@@ -361,7 +361,7 @@ def nqpts_default(space):
     elif space=='P1':    
        nqpts=3
     elif space=='P2':    
-       nqpts=7 #6
+       nqpts=6
     elif space=='P3':    
        nqpts=6
     elif space=='P4':    

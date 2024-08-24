@@ -3,17 +3,17 @@
 # sudo apt-get install bc
 
 ###############################################################################
-#donea & huerta
+# based on section 4.1 Linke & Rebholz, jcp 2019
 ###############################################################################
 
-echo =================dh====================structured
+echo =================lire19====================structured
 rm -f opla*
 rm -f vrms*
 rm -f errors* 
-mkdir paperresults/dh
-mkdir paperresults/dh/structured
+mkdir paperresults/lire19
+mkdir paperresults/lire19/structured
 
-for e in 3 4 5 9 15 18 28; do 
+for e in 28 3 4 5 9 15 18; do 
 
     if test $e == 3  ; then Vspace=P2    Pspace=P0  ; fi
     if test $e == 4  ; then Vspace=Q2    Pspace=Q1  ; fi
@@ -26,10 +26,10 @@ for e in 3 4 5 9 15 18 28; do
     echo ---------- $Vspace X $Pspace ----------
 
     #for n in 16 20 24 28 32 40 48 56 64 80 96 128 160 256; do
-    for n in 16 20 24 28 32 40 48 56 64 80 96; do
+    for n in 16 20 24 28 32 40 48 64 ; do
         echo mesh: $n X $n 
         start=`date +%s.%N`
-        python3 stone.py $n $Vspace $Pspace dh 0 >> opla
+        python3 stone.py $n $Vspace $Pspace lire19 0 >> opla
         end=`date +%s.%N`
         runtime=$( echo "$end - $start" | bc -l )
         echo '     -> ' $runtime ' s'
@@ -41,8 +41,7 @@ for e in 3 4 5 9 15 18 28; do
 
 done
 
-#mv err* paperresults/dh/structured
-#mv opla* paperresults/dh/structured
-#mv vrms* paperresults/dh/structured
-#mv visu*.vtu paperresults/dh/structured
+mv err* paperresults/lire19/structured
+mv opla* paperresults/lire19/structured
+mv vrms* paperresults/lire19/structured
 

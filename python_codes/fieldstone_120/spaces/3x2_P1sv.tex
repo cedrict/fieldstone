@@ -1,0 +1,131 @@
+
+\begin{center} 
+\begin{tikzpicture} 
+
+%\draw[fill=gray!23,gray!23](0,0) rectangle (6,5);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (6,4); %background grid
+
+%ielx=1,iely=1,low
+\draw[thick] (0,0)--(1.33333,0.66667);
+\draw[thick] (2,0)--(1.33333,0.66667);
+\draw[thick] (2,2)--(1.33333,0.66667);
+%ielx=1,iely=1,high
+\draw[thick] (0,0)--(0.666667,1.3333);
+\draw[thick] (0,2)--(0.666667,1.3333);
+\draw[thick] (2,2)--(0.666667,1.3333);
+
+%ielx=2,iely=1,low
+\draw[thick] (2,0)--(3.33333,0.66667);
+\draw[thick] (4,0)--(3.33333,0.66667);
+\draw[thick] (4,2)--(3.33333,0.66667);
+%ielx=2,iely=1,high
+\draw[thick] (2,0)--(2.666667,1.3333);
+\draw[thick] (2,2)--(2.666667,1.3333);
+\draw[thick] (4,2)--(2.666667,1.3333);
+
+%ielx=2,iely=1,high
+\draw[thick] (4,0)--(5.33333,0.66667);
+\draw[thick] (6,0)--(5.33333,0.66667);
+\draw[thick] (6,2)--(5.33333,0.66667);
+%ielx=3,iely=1,high
+\draw[thick] (4,0)--(4.666667,1.3333);
+\draw[thick] (4,2)--(4.666667,1.3333);
+\draw[thick] (6,2)--(4.666667,1.3333);
+
+%ielx=1,iely=2,low
+\draw[thick] (0,2)--(1.33333,2.66667);
+\draw[thick] (2,2)--(1.33333,2.66667);
+\draw[thick] (2,4)--(1.33333,2.66667);
+%ielx=1,iely=1,high
+\draw[thick] (0,2)--(0.666667,3.3333);
+\draw[thick] (0,4)--(0.666667,3.3333);
+\draw[thick] (2,4)--(0.666667,3.3333);
+
+
+%ielx=2,iely=1,low
+\draw[thick] (2,2)--(3.33333,2.66667);
+\draw[thick] (4,2)--(3.33333,2.66667);
+\draw[thick] (4,4)--(3.33333,2.66667);
+%ielx=2,iely=1,high
+\draw[thick] (2,2)--(2.666667,3.3333);
+\draw[thick] (2,4)--(2.666667,3.3333);
+\draw[thick] (4,4)--(2.666667,3.3333);
+
+%ielx=2,iely=1,high
+\draw[thick] (4,2)--(5.33333,2.66667);
+\draw[thick] (6,2)--(5.33333,2.66667);
+\draw[thick] (6,4)--(5.33333,2.66667);
+%ielx=3,iely=1,high
+\draw[thick] (4,2)--(4.666667,3.3333);
+\draw[thick] (4,4)--(4.666667,3.3333);
+\draw[thick] (6,4)--(4.666667,3.3333);
+
+
+
+
+
+\node[violet] at (3,4.5) {P1(sv)}; 
+\draw[thick] (0,0) -- (6,0) -- (6,4) -- (0,4) -- cycle; 
+\draw[thick] (0,2) -- (6,2) ; 
+\draw[thick] (2,0) -- (2,4) ; 
+\draw[thick] (4,0) -- (4,4) ; 
+\draw[thick] (0,2) -- (2,4) ; %diag
+\draw[thick] (0,0) -- (4,4) ; %diag
+\draw[thick] (2,0) -- (6,4) ; %diag
+\draw[thick] (4,0) -- (6,2) ; %diag
+
+%\draw[thick] (6,0) -- (4,2) -- (6,4) ; 
+\draw[black,fill=teal] ( 0.000000 , 0.000000)     circle (2pt); 
+\node[] at ( -0.150000, -0.150000 ) {\tiny 0 }; 
+\draw[black,fill=teal] ( 2.000000 , 0.000000)     circle (2pt); 
+\node[] at ( 1.850000, -0.150000 ) {\tiny 1 }; 
+\draw[black,fill=teal] ( 4.000000 , 0.000000)     circle (2pt); 
+\node[] at ( 3.850000, -0.150000 ) {\tiny 2 }; 
+\draw[black,fill=teal] ( 6.000000 , 0.000000)     circle (2pt); 
+\node[] at ( 5.850000, -0.150000 ) {\tiny 3 }; 
+\draw[black,fill=teal] ( 0.000000 , 2.000000)     circle (2pt); 
+\node[] at ( -0.150000, 1.850000 ) {\tiny 4 }; 
+\draw[black,fill=teal] ( 2.000000 , 2.000000)     circle (2pt); 
+\node[] at ( 1.850000, 1.850000 ) {\tiny 5 }; 
+\draw[black,fill=teal] ( 4.000000 , 2.000000)     circle (2pt); 
+\node[] at ( 3.850000, 1.850000 ) {\tiny 6 }; 
+\draw[black,fill=teal] ( 6.000000 , 2.000000)     circle (2pt); 
+\node[] at ( 5.850000, 1.850000 ) {\tiny 7 }; 
+\draw[black,fill=teal] ( 0.000000 , 4.000000)     circle (2pt); 
+\node[] at ( -0.150000, 3.850000 ) {\tiny 8 }; 
+\draw[black,fill=teal] ( 2.000000 , 4.000000)     circle (2pt); 
+\node[] at ( 1.850000, 3.850000 ) {\tiny 9 }; 
+\draw[black,fill=teal] ( 4.000000 , 4.000000)     circle (2pt); 
+\node[] at ( 3.850000, 3.850000 ) {\tiny 10 }; 
+\draw[black,fill=teal] ( 6.000000 , 4.000000)     circle (2pt); 
+\node[] at ( 5.850000, 3.850000 ) {\tiny 11 }; 
+
+\draw[black,fill=teal] ( 1.333333 , 0.666667)     circle (2pt); 
+\node[] at ( 1.183333, 0.516667 ) {\tiny 12 }; 
+\draw[black,fill=teal] ( 0.666667 , 1.333333)     circle (2pt); 
+\node[] at ( 0.516667, 1.183333 ) {\tiny 13 }; 
+\draw[black,fill=teal] ( 3.333333 , 0.666667)     circle (2pt); 
+\node[] at ( 3.183333, 0.516667 ) {\tiny 14 }; 
+\draw[black,fill=teal] ( 2.666667 , 1.333333)     circle (2pt); 
+\node[] at ( 2.516667, 1.183333 ) {\tiny 15 }; 
+\draw[black,fill=teal] ( 5.333333 , 0.666667)     circle (2pt); 
+\node[] at ( 5.183333, 0.516667 ) {\tiny 16 }; 
+\draw[black,fill=teal] ( 4.666667 , 1.333333)     circle (2pt); 
+\node[] at ( 4.516667, 1.183333 ) {\tiny 17 }; 
+
+\draw[black,fill=teal] ( 1.333333 , 2.666667)     circle (2pt); 
+\node[] at ( 1.183333, 2.516667 ) {\tiny 18 }; 
+\draw[black,fill=teal] ( 0.666667 , 3.333333)     circle (2pt); 
+\node[] at ( 0.516667, 3.183333 ) {\tiny 19 }; 
+\draw[black,fill=teal] ( 3.333333 , 2.666667)     circle (2pt); 
+\node[] at ( 3.183333, 2.516667 ) {\tiny 20 }; 
+\draw[black,fill=teal] ( 2.666667 , 3.333333)     circle (2pt); 
+\node[] at ( 2.516667, 3.183333 ) {\tiny 21 }; 
+\draw[black,fill=teal] ( 5.333333 , 2.666667)     circle (2pt); 
+\node[] at ( 5.183333, 2.516667 ) {\tiny 22 }; 
+\draw[black,fill=teal] ( 4.666667 , 3.333333)     circle (2pt); 
+\node[] at ( 4.516667, 3.183333 ) {\tiny 23 }; 
+
+\end{tikzpicture} 
+\end{center} 
+

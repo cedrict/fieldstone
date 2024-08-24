@@ -52,6 +52,7 @@ for e in 3 5 9 18 ; do # 4 triangles for paper
     if test $e == 25 ; then Vspace=Chen  Pspace=Q0    nq1=2  nq2=3  nq3=4 ; fi
     if test $e == 26 ; then Vspace=Q4    Pspace=Q3    nq1=5  nq2=6  nq3=7 ; fi
     if test $e == 27 ; then Vspace=P4    Pspace=P3    nq1=12 nq2=13 nq3=16; fi
+    if test $e == 28 ; then Vspace=P2    Pspace=P-1   nq1=3  nq2=6  nq3=7 ; fi
 
     echo $n ---------- $Vspace X $Pspace ----------
 

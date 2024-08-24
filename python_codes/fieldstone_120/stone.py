@@ -18,16 +18,16 @@ Ly=1
 ndofV=2
 ndofP=1
 
-nelx=16
+nelx=48
 
 mtype=0 # mesh type (how quads are divided into triangles)
 
-Vspace='P2+'
-Pspace='P-1'
+Vspace='Q2'
+Pspace='Q1'
 
 visu=1
 
-experiment='plin' #'dh'
+experiment='lire19' #'dh'
 
 unstructured=0
 
@@ -40,7 +40,6 @@ drho=0.01
 ass_method=2 # assembly method
 
 eta_ref=1
-
 
 ###############################################################################
 # allowing for argument parsing through command line
@@ -86,6 +85,7 @@ if experiment=='solvi'          : import mms_solvi as mms
 if experiment=='RTwave'         : import mms_RTwave as mms
 if experiment=='jokn16'         : import mms_jokn16 as mms
 if experiment=='plin'           : import mms_plin as mms
+if experiment=='lire19'         : import mms_lire19 as mms
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
@@ -146,8 +146,6 @@ vth = np.zeros(NV,dtype=np.float64)
 qth = np.zeros(NV,dtype=np.float64)
 
 for i in range(NV):        
-    #uth[i]=mms.u_th(xV[i],yV[i])
-    #vth[i]=mms.v_th(xV[i],yV[i])
     uth[i],vth[i],qth[i]=mms.solution(xV[i],yV[i])
 
 print("analytical solution: %.3f s" % (timing.time() - start))
@@ -588,8 +586,8 @@ errv=np.sqrt(errv/(Lx*Ly))
 errp=np.sqrt(errp/(Lx*Ly))
 errdivv=np.sqrt(errdivv/(Lx*Ly))
 
-print("     -> nel= %6d ; vrms= %.8e ; vrms= %.8e ; %6d %6d %e" %(nel,vrms,mms.vrms(),NfemV,NfemP,havrg))
-print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errdivv= %.8e | %6d %6d %.8e %.8e" %(nel,errv,errp,errdivv,NfemV,NfemP,havrg,Lx/nelx*np.sqrt(2)))
+print("     -> nel= %6d ; vrms= %.5e ; vrms(th)= %.5e ; %6d %6d %e" %(nel,vrms,mms.vrms(),NfemV,NfemP,havrg))
+print("     -> nel= %6d ; errv= %.5e ; errp= %.5e ; errdivv= %.5e | %6d %6d %.4e %.4e" %(nel,errv,errp,errdivv,NfemV,NfemP,havrg,Lx/nelx*np.sqrt(2)))
 
 print("compute vrms & errors: %.3f s" % (timing.time() - start))
 
