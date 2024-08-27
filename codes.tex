@@ -205,7 +205,8 @@ uses the Trilinos solver library \cite{hewi12}, and can deal with 2D and 3D geom
                                \textcite{goho24},  \textcite{xulw24}, \textcite{zhzl24},
                                \textcite{gadb24},  \textcite{mubp24}, \textcite{hesc24},
                                \textcite{epcs24},  \textcite{grbe24}, \textcite{wisa24},
-                               \textcite{docl24},  \textcite{glbm24}, \textcite{gehb24}
+                               \textcite{docl24},  \textcite{glbm24}, \textcite{gehb24},
+                               \textcite{wakc24},  \textcite{hebg24}
 \end{itemize}
 \end{small}
 
@@ -1604,23 +1605,36 @@ and compressible viscous media.
 
 
 %------------------------------------------------------------------------------
-\section{SHELLS} 
+\section{SHELLS, PLATES, FAULTS} 
 %------------------------------------------------------------------------------
-It is a thin-shell program for modeling neotectonics of
+
+SHELLS is a thin-shell program for modeling neotectonics of
 regional or global lithosphere with faults
 
 \begin{small}
 \begin{itemize}
 \item[1995]
 \textcite{kobi95}
+\item[1999]
+\textcite{bili99}
+\item[2001]
+\textcite{jibf01}\\
+\textcite{jift01}
 \item[2002]
-\textcite{nebs02}
+\textcite{nebs02}\\
+\textcite{libi02b}\\
+\textcite{libi02}
 \item[2003]
 \textcite{jine03}
 \item[2004]
 \textcite{nejv04}
 \end{itemize}
 \end{small}
+
+PLATES bird96
+FAULTS biko94
+
+
 
 %------------------------------------------------------------------------------
 \section{SISTER}
@@ -2024,6 +2038,15 @@ spherical layers of nodes build the domain in radial direction.
 The first main improvement was being parallelised \textcite{buba95}.
 Particles were added in \textcite{strb02}.
 
+Baumgardner writes on his site:
+``As part of my Ph.D. thesis research at UCLA I developed the 3-D spherical code now 
+known as TERRA for modeling the dynamics of planetary mantles.  This code utilized 
+the then newly discovered multigrid method for solving the large elliptic systems 
+of equations arising in this application.  The efficiency of multigrid plus the advantages 
+of the almost uniform icosahedral grid made such 3-D calculations feasible for the 
+first time.  This code was the first 3-D spherical code of its kind and continues 
+almost 30 years later to be the state of the art and used by several research groups around the world. ''
+
 \begin{small}
 \begin{itemize}
 \item[\nineteeneightythree]    \textcite{baum83}
@@ -2110,6 +2133,26 @@ control and guidance for building reusable and reproducible applications.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%------------------------------------------------------------------------------
+\section{UHURU,UHURUTISC} 
+%------------------------------------------------------------------------------
+
+\url{https://ivone.geo3bcn.csic.es/research_uhuru.html}
+\url{https://github.com/daniggcc/uhurutisc}
+The developed computer program is named UhuruTISC after the 
+two independent codes from
+which it derives: the thin-sheet thermomechanical model Uhuru \cite{jigf05} 
+and an improved version
+of the surface process and flexural isostasy model TISC \cite{garc02}.
+
+
+2005 \textcite{jigf05}
+
+2015 \textcite{gaji15}
+
 
 %------------------------------------------------------------------------------
 \section{UNDERWORLD 1\&2} 

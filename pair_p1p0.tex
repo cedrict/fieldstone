@@ -28,7 +28,7 @@ the velocity and the pressure on many mesh families.}
 \end{displayquote}
 
 \begin{center}
-\fbox{\includegraphics[width=12cm]{images/pair_p1p0/qizh07}}\\
+\fbox{\includegraphics[width=14cm]{images/pair_p1p0/qizh07}}\\
 {\captionfont A crisscross, a Powell–Sabin, a Powell–Sabin–Heindl and a type-2 grid.
 Taken from \cite{qizh07}.}
 \end{center}
@@ -67,16 +67,19 @@ the $P_1$ Powell-Sabin divergence-free finite element method.}
 \end{displayquote}
 
 \begin{center}
-\fbox{\includegraphics[width=12cm]{images/pair_p1p0/hct_ps}}\\
+\fbox{\includegraphics[width=13cm]{images/pair_p1p0/hct_ps}}\\
 {\captionfont Taken from \textcite{zhan08}, 2008. Looking at this node layout we see that 
 this element pair will not be trivial to implement since the velocity nodes inside the element
 are placed like for the $P_2^+$ element but instead make up 6 smaller elements.}
 \end{center}
 
 \begin{center}
-\fbox{\includegraphics[width=8cm]{images/pair_p1p0/zhan08}}\\
+\fbox{\includegraphics[width=9cm]{images/pair_p1p0/zhan08}}\\
 {\captionfont Taken from \textcite{zhan08}, 2008.}
 \end{center}
+Note that the figure above is *very* important: the 'master' triangle is divided into
+6 smaller $P_1$ triangles for the velocity but the pressure is $P_0$ on the master triangle, 
+not on the 6 smaller ones!
 
 \index{general}{Powell-Sabin grid}
 \index{general}{Hsieh-Clough-Tocher grid}

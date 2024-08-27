@@ -2,27 +2,33 @@
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This element pair is discussed in 5.3.3 of Elman, Silvester and Wathen: 
-
-``[Another] possibility is to construct a hybrid pressure approximation by 
-combining the continuous linear pressure approximation with the discontinuous constant pres-
-sure approximation. The resulting mixed method is referred to as the $P_2-P_{-1*}$ 
+\begin{displayquote}
+{\color{darkgray}
+[Another] possibility is to construct a hybrid pressure approximation by 
+combining the continuous linear pressure approximation with the 
+discontinuous constant pressure approximation. The resulting mixed method 
+is referred to as the $P_2-P_{-1*}$ 
 approximation and enjoys the best of both worlds; it has locally 
 incompressibility, and yet it does not have its accuracy compromised by
 the lower order pressure [of $P_2\times P_0$]. 
-Perhaps surprisingly, this element is also uniformly stable.'' 
+Perhaps surprisingly, this element is also uniformly stable.
+}
+\end{displayquote}
 
 \begin{center}
 \includegraphics[width=7cm]{images/pair_p2p1p0/elsw}\\
 {\captionfont Taken from \textcite{elsw}.}
 \end{center}
 
-In Gresho \& Sani table 3.13-1: ``LBB stable yes. Better than P2P1, element mass balance.
+In Gresho \& Sani table 3.13-1: 
+``LBB stable yes. Better than P2P1, element mass balance.
 more work than P2P1. 2 hydrostatic modes. Second order.'' 
 
 \begin{center}
 \includegraphics[width=4cm]{images/pair_p2p1p0/grsa2}
 \includegraphics[width=12cm]{images/pair_p2p1p0/grsa1}\\
-{\captionfont Taken from \textcite{grsa}. Unfortunately they do not provide a source for 
+{\captionfont Taken from \textcite{grsa}. Unfortunately they do not 
+provide a source for 
 its origin, for the LBB-stability proof, or any source at all, actually.}
 \end{center}
 
@@ -55,7 +61,8 @@ and the basis functions are simply
 \bN_2(r,s) &=& r \\
 \bN_3(r,s) &=& s 
 \end{eqnarray}
-with the interpolation requirement $\bN_i(r_j,s_j)=\delta_{ij}$ fulfilled, as well as $\sum_i \bN_i=1$. 
+with the interpolation requirement $\bN_i(r_j,s_j)=\delta_{ij}$ fulfilled, 
+as well as $\sum_i \bN_i=1$. 
 
 Now, following the figure by Gresho and Sani, I build the reference element for the $P_1+P_0$ space:
 \begin{center}
@@ -90,24 +97,34 @@ requirement $\bN_i(r_j,s_j)=\delta_{ij}$ is fulfilled.
 In other words, the element is not interpolatory, i.e., there is no $\delta_{ij}$ property.% W.B. email
 
 With regards to the 'element mass balance', W.B. states : 
-``the mass conservation requires that the function that is constant 1 
+\begin{displayquote}
+{\color{darkgray}
+the mass conservation requires that the function that is constant 1 
 on one cell and zero on all other cells is part of the function space. 
 That is indeed true -- it's the $\bN_4$ function. Indeed, that's the purpose of 
-the enrichment with the $P_0$ part. It is not necessary that {\it all} shape functions are discontinuous.''
+the enrichment with the $P_0$ part. It is not necessary that {\it all} shape functions are discontinuous.
+}
+\end{displayquote}
 
 
 
 
-
-\textcite{bocg12} (2012) state: ``[...] the pressure space $Q_h$ is defined as the sum of two finite 
-element spaces, namely $P_k+P_0$ ($k \ge d- 1$) [...]for the enhanced Hood–Taylor [...]. 
-However, it can be easily observed that the sum is not direct, 
+\textcite{bocg12} (2012) state: 
+\begin{displayquote}
+{\color{darkgray}
+[...] the pressure space $Q_h$ is defined as the sum of two finite 
+element spaces, namely $P_k+P_0$ ($k \ge d- 1$) [...] for the enhanced 
+Hood–Taylor [...]. However, it can be easily observed that the sum is not direct, 
 since globally constant functions can be represented exactly by means of piecewise 
 $P_0$ or continuous $P_k$ ($k \ge 1$) elements.
 Concerning the implementation of the method, we avoid the computation of the basis
-functions of such a finite element by testing the discrete problem (2.3) with the basis 
-functions of the two subspaces separately. By the above discussion it turns out that the resulting
-matrix is rank-deficient, with kernel of dimension 1.''
+functions of such a finite element by testing the discrete problem (2.3) 
+with the basis 
+functions of the two subspaces separately. By the above discussion it 
+turns out that the resulting
+matrix is rank-deficient, with kernel of dimension 1.
+}
+\end{displayquote}
 
-
+The element pair is also discussed in \textcite{chen14} (2014).
 
