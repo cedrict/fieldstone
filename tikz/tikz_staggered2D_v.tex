@@ -1,0 +1,56 @@
+\begin{flushright} {\tiny {\color{gray} (tikz\_staggered2D\_v.tex)}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[fill=gray!23,gray!23](0,0) rectangle (9,8);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (9,8); %background grid
+\draw[thick,black!60] (3,1) -- (3,7) -- (6,7) -- (6,1) -- cycle ; 
+\draw[thick,black!60] (0.5,4) -- (8.5,4)  ;   
+%---------------------------------------------------
+\node[] at (4.5,.8) {\tiny \color{orange} \tt v\_s};
+\node[] at (4.5,7.2) {\tiny \color{orange} \tt v\_n};
+\node[] at (4.5,4.2) {\tiny \color{orange} \tt v};
+\node[] at (1.5,4.2) {\tiny \color{orange} \tt v\_w};
+\node[] at (7.5,4.2) {\tiny \color{orange} \tt v\_e};
+\draw[black,fill=orange] (4.5,1)   circle (2pt);
+\draw[black,fill=orange] (4.5,4)   circle (3pt);
+\draw[black,fill=orange] (4.5,7)   circle (2pt);
+\draw[black,fill=orange] (1.5,4)   circle (2pt);
+\draw[black,fill=orange] (7.5,4)   circle (2pt);
+%--------------------------------------------------
+\draw[black,fill=violet] (3,2.5)   circle (2pt);
+\draw[black,fill=violet] (6,2.5)   circle (2pt);
+\draw[black,fill=violet] (3,5.5)   circle (2pt);
+\draw[black,fill=violet] (6,5.5)   circle (2pt);
+\node[] at (2.5,2.5) {\tiny \color{violet} \tt u\_sw};
+\node[] at (6.5,2.5) {\tiny \color{violet} \tt u\_se};
+\node[] at (2.5,5.5) {\tiny \color{violet} \tt u\_nw};
+\node[] at (6.5,5.5) {\tiny \color{violet} \tt u\_ne};
+%-----------------------------------------------
+\draw[black,fill=black] (3,1)   circle (2pt); 
+\draw[black,fill=black] (3,4)   circle (2pt); 
+\draw[black,fill=black] (3,7)   circle (2pt); 
+\draw[black,fill=black] (6,1)   circle (2pt); 
+\draw[black,fill=black] (6,4)   circle (2pt); 
+\draw[black,fill=black] (6,7)   circle (2pt); 
+%------------------------------------------------
+\draw[black,fill=teal] (4.5,2.5)   circle (2pt);
+\draw[black,fill=teal] (4.5,5.5)   circle (2pt);
+\node[] at (4.5,2.2) {\tiny \color{teal} \tt p\_s};
+\node[] at (4.5,5.7) {\tiny \color{teal} \tt p\_n};
+%-----------------------------------------
+\node[] at (6.27,4.2) {\tiny \tt $\rho$\_e};
+\node[] at (2.7,4.2) {\tiny \tt $\rho$\_w};
+\node[] at (4.5,5.2) {\tiny \tt $\eta$\_n};
+\node[] at (4.5,2.7) {\tiny \tt $\eta$\_s};
+\node[] at (6.3,1) {\tiny \tt $\eta$\_{se}};
+\node[] at (2.7,1) {\tiny \tt $\eta$\_{sw}};
+\node[] at (6.3,7) {\tiny \tt $\eta$\_{ne}};
+\node[] at (2.7,7) {\tiny \tt $\eta$\_{nw}};
+\node[] at (6.3,3.8) {\tiny \tt $\eta$\_{e}};
+\node[] at (2.7,3.8) {\tiny \tt $\eta$\_{w}};
+\end{tikzpicture}
+\end{center}
