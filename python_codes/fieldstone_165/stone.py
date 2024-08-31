@@ -13,18 +13,14 @@ def u_th(x,y,exp):
           return (np.cos((x-0.25)*2*np.pi)*np.cos((y-0.25)*2*np.pi))**2
        else:
           return 0
-    if exp==4:
+    if exp==4 or exp==5:
        if abs(x-0.25)<0.125:
           return (np.cos((x-0.25)*4*np.pi))**4
        else:
           return 0
 
 def udot_th(x,y,exp):
-    if exp==1:
-       return 0 
-    if exp==2 or exp==3:
-       return 0 
-    if exp==4:
+    if exp==1 or exp==2 or exp==3 or exp==4 or exp==5:
        return 0 
 
 ###############################################################################
@@ -96,7 +92,7 @@ print("----------fieldstone---------")
 print("-----------------------------")
 
 method=1
-experiment=4
+experiment=5
 order=1
 
 if order==1:
@@ -125,12 +121,12 @@ if experiment==2 or experiment==3:
    nely=nelx
    every=2
 
-if experiment==4:
+if experiment==4 or experiment==5:
    Lx=1
    Ly=1
    c=1
    dt=1e-3
-   nstep=1301
+   nstep=1001
    nelx=128
    nely=nelx
    every=2
@@ -257,6 +253,26 @@ if experiment==4:
        if abs(x[i]-Lx/2)<eps and y[i]>0.57*Ly:
           bc_fix[i]=True ; bc_val[i]=0
    #end for
+
+if experiment==5:
+   for i in range(0,N):
+       #if x[i]/Lx<eps:
+       #   bc_fix[i]=True ; bc_val[i]=0
+       if x[i]/Lx>(1-eps):
+          bc_fix[i]=True ; bc_val[i]=0
+       if abs(x[i]-Lx/2)<eps and y[i]<0.4*Ly:
+          bc_fix[i]=True ; bc_val[i]=0
+       if abs(x[i]-Lx/2)<eps and abs(y[i]-Ly/2)<0.07*Ly:
+          bc_fix[i]=True ; bc_val[i]=0
+       if abs(x[i]-Lx/2)<eps and y[i]>0.6*Ly:
+          bc_fix[i]=True ; bc_val[i]=0
+   #end for
+
+
+
+
+
+
 
 print("boundary conditions (%.3fs)" % (timing.time() - start))
 
@@ -462,6 +478,11 @@ for istep in range(0,nstep):
        vtufile.write("<DataArray type='Float32' Name='u' Format='ascii'> \n")
        for i in range(0,N):
            vtufile.write("%10f \n" %u[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='bc_fix' Format='ascii'> \n")
+       for i in range(0,N):
+           vtufile.write("%d  \n" %(int(bc_fix[i])))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</PointData>\n")

@@ -1,3 +1,13 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/aspect_logo}
+\includegraphics[height=1.25cm]{images/pictograms/visualisation}
+\includegraphics[height=1.25cm]{images/pictograms/under_construction}
+\includegraphics[height=1.25cm]{images/pictograms/tools}
+\includegraphics[height=1.25cm]{images/pictograms/3d}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{center}
 Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_85}
@@ -13,14 +23,13 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\vspace{1cm}
 
 \index{general}{S20RTS}
 \index{general}{S40RTS}
 
 
 The S20RTS \cite{rivw99} and S40RTS \cite{ridv11} are commonly used shear-velocity models for the mantle.
-The dataset are widely available and used (in Specfem, in Aspect, ...) and come in the form of two 
+The dataset are widely available and used (in Specfem, in \aspect, ...) and come in the form of two 
 files {\sl S20RTS.sph} and {\sl S40RTS.sph} (supplemented by a file with the location of the 
 knots of the 21 splines used for the radial interpolation). 
 Each {\sl .sph} file has a 1 line header, and the first number on this line indicates 
@@ -63,11 +72,14 @@ are spread across many lines, which makes read in the file a bit of nightmare.
 Both S20RTS and S40RTS models are composed of 21 concentric layers (from the moho down 
 to the core-mantle boundary) 
 so the above structure is repeated 21 times in the files. 
-The structure of the file is explained in the \aspect manual (but it remains a mystery 
+
+The structure of the file is explained in the \aspect manual\footnote{
+\url{https://aspect-documentation.readthedocs.io/en/latest/user/cookbooks/cookbooks/initial-condition-S20RTS/doc/initial-condition-S20RTS.html}} (but it remains a mystery 
 as to where this information comes from since it is not explained in the papers) 
 in a cookbook authored by Jacqueline Austermann: \index{contributors}{J. Austermann} 
-{\color{brown}
-"The first number in the first line denotes the maximum degree. This is followed in
+\begin{displayquote}
+{\color{darkgray}
+The first number in the first line denotes the maximum degree. This is followed in
 the next line by the spherical harmonic coefficients from the surface down to the
 CMB. The coefficients are arranged in the following way:\\
 $a_{00}$ \\
@@ -75,7 +87,11 @@ $a_{10}$ $a_{11}$ $b_{11}$ \\
 $a_{20}$ $a_{21}$ $b_{21}$ $a_{22}$ $b_{22}$ \\
 ... \\
 $a_{lm}$ is the cosine coefficient of degree $l$ and order $m$; $b_{lm}$ is
-the sine coefficient of degree $l$ and order $m$."}
+the sine coefficient of degree $l$ and order $m$.}
+\end{displayquote}
+
+The ``Initial temperature model'' subsection of \aspect describing the ``S40RTS perturbation''
+is at \url{https://aspect-documentation.readthedocs.io/en/latest/parameters/Initial_20temperature_20model.html}.
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_85/images/fun}
@@ -92,7 +108,7 @@ f = \sum_{l=0}^\infty \left[a_{l0} X_{l0}(\theta) + \sqrt{2} \sum_{m=1}^l X_{lm}
 \]
 Note however that the implementation of Ritsema does {\it not} include 
 the $\sqrt{2}$ term (go figure...) and this 
-was the nature of a later pull request in Aspect\footnote{\url{https://github.com/geodynamics/aspect/pull/966}} 
+was the nature of a later pull request in \aspect \footnote{\url{https://github.com/geodynamics/aspect/pull/966}} 
 so that the used formula is simply:
 \[
 \boxed{
@@ -117,19 +133,23 @@ In these equations $\theta$ is the colatitude ($0\le\theta\le \pi$ from North po
 is the longitude ($0\le\phi\le 2\pi$) and $P_l^m$ are associated Legendre polynomials. 
 \index{general}{Legendre Polynomials}
 
-This stone uses the {\tt scipy.special.lpmv} function for the product $(-1)^m P_l^m(x)$:
+This \stone uses the {\tt scipy.special.lpmv} function for the product $(-1)^m P_l^m(x)$:
 \begin{center}
 \includegraphics[width=11cm]{python_codes/fieldstone_85/images/lpmv}
 \end{center}
 
-In \textcite{ridv11} (2011), one reads: "We use the same 
+In \textcite{ridv11} (2011), one reads: 
+\begin{displayquote}
+{\color{darkgray}
+"We use the same 
 spline functions as in \textcite{rivw04} (2004) to parametrize vertical 
 variation of shear velocity. The separation of the spline functions
 increases with depth. Relatively dense spline distribution helps to
 accommodate strong vertical shear-velocity variations across the
 lithosphere–asthenosphere boundary and the phase transition in the
 transition zone albeit at the expense of the vertical resolution at
-the base of the mantle."
+the base of the mantle.}
+\end{displayquote}
 Unfortunately the 2004 paper does not reveal the values of the spline knots, but the values
 are available in the {\sl splhsetup.f} file included in the tools available 
 on J. Ritsema's website \url{https://jritsema.earth.lsa.umich.edu/Research.html}.
