@@ -1,8 +1,8 @@
-
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/3d}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_11/keywords.ascii}
 
@@ -86,3 +86,13 @@ the block structure with a zero block for the pressure-pressure entries.
 \includegraphics[width=5.7cm]{python_codes/fieldstone_11/results/sr}\\
 {\captionfont Velocity, pressure and effective strain rate fields for a $20\times 20\times 20$ mesh.}
 \end{center}
+
+
+\underline{Remark}: the matrix building in this \stone is rather naive. The 
+$\K$ and $\G$ matrices are built as full matrices and later assembled
+in {\python a\_mat} which is also a full matrix, only to be converted 
+to CSR format before calling the solver. 
+In subsequent stones I usually only build {\python a\_mat} in {\python lil\_matrix} format.
+
+
+ 
