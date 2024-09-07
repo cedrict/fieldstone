@@ -60,7 +60,7 @@ eps=1.e-10
 sqrt3=np.sqrt(3.)
 
 print("-----------------------------")
-print("----------fieldstone---------")
+print("---------- stone 14 ---------")
 print("-----------------------------")
 
 mV=4     # number of nodes making up an element
@@ -357,10 +357,7 @@ for iel in range(0,nel):
         jcb[1,0]+=dNds[k]*x[icon[k,iel]]
         jcb[1,1]+=dNds[k]*y[icon[k,iel]]
 
-    # calculate determinant of the jacobian
     jcob=np.linalg.det(jcb)
-
-    # calculate the inverse of the jacobian
     jcbi=np.linalg.inv(jcb)
 
     for k in range(0,mV):
@@ -490,9 +487,6 @@ if visu==1:
            vtufile.write("%10f %10f %10f \n" %(x[icon[i,iel]],y[icon[i,iel]],0.))
    vtufile.write("</DataArray>\n")
    vtufile.write("</Points> \n")
-   #####
-   #vtufile.write("<CellData Scalars='scalars'>\n")
-   #vtufile.write("</CellData>\n")
    #####
    vtufile.write("<PointData Scalars='scalars'>\n")
    #--

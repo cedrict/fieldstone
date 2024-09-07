@@ -5,6 +5,7 @@ set xlabel 'h'
 set pointsize .25
 set ylabel 'error'
 set key outside
+set format y "10^{%L}"
 
 plot[][:]\
 'errors_a' u (1./sqrt($3)):6 w lp t 'vel (a)',\

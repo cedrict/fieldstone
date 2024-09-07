@@ -11,6 +11,10 @@
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
+
+Last revision: Sept. 7th, 2024
+
+\par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \index{stopics}{$Q_1\times P_0$}
 \index{stopics}{Donea \& Huerta mms}
@@ -50,10 +54,10 @@ Each block $\K$, $\G$ and vector $\vec{f}$, $\vec{h}$ is built separately for ea
 in the code and assembled into 
 the matrix $\A$ and vector $\vec{b}$ which are then passed to the solver. 
 
-Each element has $m_\upnu=4$ vertices so in total $ndofV\times m_\upnu=8$ 
+Each element has $m_\upnu=4$ vertices so in total $ndofV\cdot m_\upnu=8$ 
 velocity dofs and a single 
-pressure dof, commonly situated in the center of the element. The total number of 
-velocity dofs is therefore $NfemV=NV \times ndofV$ while the total number of
+pressure dof, situated in the center of the element by convention. The total number of 
+velocity dofs is therefore $NfemV=NV \cdot ndofV$ while the total number of
 pressure dofs is $NfemP=nel$. The total number of dofs is then $Nfem=NfemV+NfemP$.
 
 As a consequence, matrix $\K$ has size $(NfemV,NfemV)$ and matrix $\G$ has size $(NfemV,NfemP)$.
@@ -110,8 +114,8 @@ compute $\K$ (see Section~\ref{MMM-sec:mixed}):
 \end{array}
 \right)
 \]
-It seems that option $(b)$ yields slightly better velocity accuracy, but the pressure 
-checkerboard derails pressure error measurements for both cases:
+It seems that option $(b)$ yields a slightly better velocity accuracy, but the pressure 
+checkerboard yields large pressure error measurements in both cases:
 
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_14/results/dh/errors.pdf}\\
@@ -132,16 +136,16 @@ Details of this solution are in Section~\ref{MMM-ss:mms_buha06}.
 
 
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_14/results/buha06/vel}
-\includegraphics[width=6cm]{python_codes/fieldstone_14/results/buha06/p}\\
-\includegraphics[width=4cm]{python_codes/fieldstone_14/results/buha06/exx}
-\includegraphics[width=4cm]{python_codes/fieldstone_14/results/buha06/exy}
-\includegraphics[width=4cm]{python_codes/fieldstone_14/results/buha06/eyy}\\
-{\captionfont Mesh is $32\times 32$ - ${\bm C}^{(b)}$}
+\includegraphics[width=8cm]{python_codes/fieldstone_14/results/buha06/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_14/results/buha06/p}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_14/results/buha06/exx}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_14/results/buha06/exy}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_14/results/buha06/eyy}\\
+{\captionfont Mesh is $32\times 32$ - results obtained with ${\bm C}^{(b)}$}
 \end{center}
 
 
 \begin{center}
-\includegraphics[width=11cm]{python_codes/fieldstone_14/results/buha06/errors.pdf}
+\includegraphics[width=13cm]{python_codes/fieldstone_14/results/buha06/errors.pdf}
 \end{center}
 
