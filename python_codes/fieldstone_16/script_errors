@@ -5,8 +5,8 @@ rm solver_convergence*
 rm build_precond*.ascii
 
 for ps in 0 1 2 3 4; do 
-    for rs in 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 24 28 29 32 40 41 48 56 64 80 96; do
-    #for rs in 6 7 8 9 10 11 12 ; do
+    for rs in 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 24 28 29 32 40 41 48 56 64 80 96 112 128; do
+    #for rs in 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 24 28 29 32 40 41 48 56 64 96; do 
         echo precond $ps res $rs
         python3 stone.py  $rs $rs 0 $ps > opla 
         grep after opla >> niterations_ps${ps}.ascii 

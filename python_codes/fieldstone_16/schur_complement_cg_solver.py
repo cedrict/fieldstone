@@ -52,7 +52,7 @@ def schur_complement_cg_solver(K_mat,G_mat,C_mat,M_mat,f_rhs,h_rhs,NfemV,NfemP,n
        xi=np.linalg.norm(rvect_k)/rvect_0                           #
        conv_file.write("%d %6e \n"  %(k,xi))                        #
        conv_file.flush()                                            #
-       print('iter',k,'xi=',xi)                                     #
+       print('     |iter %4d xi= %.4e' %(k,xi))                     #
        if xi<tol:                                                   #
           break                                                     #
                                                                     #

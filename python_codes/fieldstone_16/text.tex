@@ -1,22 +1,28 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_16/keywords.ascii}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_16/keywords.ascii}
 
 \begin{center}
-\inpython
+\inpython \hspace{.5cm}
 {\small Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_16}}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
+Last revision: Sept. 8th, 2024.
+
+\par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 We are revisiting the 2D Stokes sphere problem, but this time 
 we use the Schur complement approach to solve the Stokes system. 
 We choose an open boundary at the top so that we do not have to deal with the pressure 
 nullspace. No-slip boundary conditions are prescribed on the sides and bottom boundaries.
-Density and viscosity are prescribed directly onto the quadrature points. 
+Density is prescribed directly onto the quadrature points. 
 
 Because there are viscosity contrasts in the domain, it is advisable 
 to use the Preconditioned Conjugate Gradient 
@@ -24,14 +30,23 @@ as presented in Section \ref{MMM-sec:solvers} (see {\bf solver\_pcg}).\\
 The solver is implemented in the {\tt schur\_complement\_cg\_solver.py} file in the same folder.  
 
 \begin{center} 
-\includegraphics[width=5cm]{python_codes/fieldstone_16/results/eta}
-\includegraphics[width=5cm]{python_codes/fieldstone_16/results/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_16/results/exx}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_16/results/rho}
-\includegraphics[width=5cm]{python_codes/fieldstone_16/results/q}
-\includegraphics[width=5cm]{python_codes/fieldstone_16/results/exy}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_1/eta}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_1/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_1/exx}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_1/rho}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_1/q}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_1/exy}\\
 {\captionfont Viscosity, density, velocity and pressure fields, resolution $96\times 96$.}
 \end{center} 
+
+\begin{center} 
+\includegraphics[width=7cm]{python_codes/fieldstone_16/results/visc_field_1/matrix_ps2}
+\includegraphics[width=7cm]{python_codes/fieldstone_16/results/visc_field_1/matrix_ps3}\\
+{\captionfont Resolution 8x8 elements. Matrix sparsity pattern 
+for preconditioner \#2 (left) and preconditioners 0,1,3,4 (right).}
+\end{center}
+
+
 
 We have designed 5 preconditioners:
 \begin{itemize}
@@ -39,51 +54,202 @@ We have designed 5 preconditioners:
 \item {\tt precond\_type=1} This is a very simple one as it is
 diagonal and built element by element:
 \[
-M_{e,e} = \frac{h_x h_y}{\eta_e} 
+\M_{e,e} = \frac{h_x h_y}{\eta_e} 
 \]
 where $e$ is an element and $\eta_e$ the viscosity evaluated in its center. Note that 
 averages based on quadrature point values could also be considered (or any other kind of projection).
 \item {\tt precond\_type=2}
 \[
-{\bm M} = \G^T (diag [\K]  )^{-1} \G 
+{\M} = \G^T (diag [\K]  )^{-1} \G 
 \]
 \item {\tt precond\_type=3} 
 \[
-{\bm M} = diag \left[ \G^T (diag [\K]  )^{-1} \G \right]
+{\M} = diag \left[ \G^T (diag [\K]  )^{-1} \G \right]
 \]
 \item {\tt precond\_type=4} Same as 2, but instead of using the 
 diagonal of $ \G^T (diag [\K]  )^{-1} \G$ we lump the matrix instead.
 
 \end{itemize}
 
+There are also multiple ways to prescribe the viscosity on the 
+quadrature points:
+\begin{itemize}
+\item {\python viscosity\_field=1}: viscosity is directly computed 
+on the quadrature points;
+\item {\python viscosity\_field=2}: viscosity is elemental;
+\item {\python viscosity\_field=3}: viscosity is assigned to nodes and then 
+interpolater onto quadrature points with an arithmetic averaging;
+\item {\python viscosity\_field=4}: viscosity is assigned to nodes and then 
+interpolater onto quadrature points with a geometric averaging;
+\item {\python viscosity\_field=5}: viscosity is assigned to nodes and then 
+interpolater onto quadrature points with a harmonic averaging.
+\end{itemize}
+
+\newpage
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\subsubsection{viscosity\_field=1}
 
 \begin{center} 
-\includegraphics[width=5cm]{python_codes/fieldstone_16/results/matrix_ps2}
-\includegraphics[width=5cm]{python_codes/fieldstone_16/results/matrix_ps3}\\
-{\captionfont Resolution 8x8 elements. Matrix sparsity pattern 
-for preconditioner \#2 (left) and preconditioners 0,1,3,4 (right).}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_1/residual_32x32.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_1/residual_64x64.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_1/residual_96x96.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_1/residual_128x128.pdf}\\
+{\captionfont viscosity\_field=1: Residual inside the solver as a function of the preconditioner type for
+4 mesh resolutions.}
 \end{center}
 
+\begin{center} 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_1/niterations.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_1/solve_time.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_1/build_precond.pdf}\\
+{\captionfont viscosity\_field=1: Left: Number of iterations inside the solver; 
+Middle: time spent in the solver.
+Right: time spent to build the preconditioner matrix.}
+\end{center} 
+
+
+\newpage
+\subsubsection{viscosity\_field=2}
 
 \begin{center} 
-\includegraphics[width=5.4cm]{python_codes/fieldstone_16/results/residual_32x32.pdf}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_16/results/residual_64x64.pdf}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_16/results/residual_96x96.pdf}\\
-{\captionfont Residual inside the solver as a function of the preconditioner type, 
-and for two resolutions 32x32 (left), 64x64 (middle) and 96x96 (right).}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_2/residual_32x32.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_2/residual_64x64.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_2/residual_96x96.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_2/residual_128x128.pdf}\\
+{\captionfont viscosity\_field=2: Residual inside the solver as a function of the preconditioner type for
+4 mesh resolutions.}
 \end{center}
 
-
 \begin{center} 
-\includegraphics[width=5.4cm]{python_codes/fieldstone_16/results/niterations.pdf}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_16/results/solve_time.pdf}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_16/results/build_precond.pdf}\\
-{\captionfont Left: Number of iterations inside the solver; 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_2/niterations.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_2/solve_time.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_2/build_precond.pdf}\\
+{\captionfont viscosity\_field=2: Left: Number of iterations inside the solver; 
 Middle: time spent in the solver.
 Right: time spent to build the preconditioner matrix.
-Note that the maximum number of iterations was set to 500 and this 
-limit is reached when no preconditioner is used at high resolution.}
+}\end{center} 
+
+
+\newpage
+\subsubsection{viscosity\_field=3}
+
+\begin{center} 
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_3/residual_32x32.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_3/residual_64x64.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_3/residual_96x96.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_3/residual_128x128.pdf}\\
+{\captionfont viscosity\_field=3: Residual inside the solver as a function of the preconditioner type for
+4 mesh resolutions.}
+\end{center}
+
+\begin{center} 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_3/niterations.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_3/solve_time.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_3/build_precond.pdf}\\
+{\captionfont viscosity\_field=3: Left: Number of iterations inside the solver; 
+Middle: time spent in the solver.
+Right: time spent to build the preconditioner matrix.}
 \end{center} 
+
+
+
+
+
+\newpage
+\subsubsection{viscosity\_field=4}
+
+\begin{center} 
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_4/residual_32x32.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_4/residual_64x64.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_4/residual_96x96.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_4/residual_128x128.pdf}\\
+{\captionfont viscosity\_field=4: Residual inside the solver as a function of the preconditioner type for
+4 mesh resolutions.}
+\end{center}
+
+
+\begin{center} 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_4/niterations.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_4/solve_time.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_4/build_precond.pdf}\\
+{\captionfont viscosity\_field=4: Left: Number of iterations inside the solver; 
+Middle: time spent in the solver.
+Right: time spent to build the preconditioner matrix.}
+\end{center} 
+
+
+
+
+
+
+
+
+
+
+\newpage
+\subsubsection{viscosity\_field=5}
+
+\begin{center} 
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_5/residual_32x32.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_5/residual_64x64.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_5/residual_96x96.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_5/residual_128x128.pdf}\\
+{\captionfont viscosity\_field=5: Residual inside the solver as a function of the preconditioner type for
+4 mesh resolutions.}
+\end{center}
+
+\begin{center} 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_5/niterations.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_5/solve_time.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_16/results/visc_field_5/build_precond.pdf}\\
+{\captionfont viscosity\_field=5: Left: Number of iterations inside the solver; 
+Middle: time spent in the solver.
+Right: time spent to build the preconditioner matrix.}
+\end{center} 
+
+
+\newpage
+
+On can also plot these same results (here the number of iterations in the outer solver), 
+but this time per preconditioner type:
+
+\begin{center} 
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/niterations_ps0.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/niterations_ps1.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/niterations_ps2.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/niterations_ps3.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/niterations_ps4.pdf}
+\end{center}
+
+
+\newpage
+On can also plot these same results (here the solve time), 
+but this time per preconditioner type:
+
+\begin{center} 
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/solve_time_ps0.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/solve_time_ps1.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/solve_time_ps2.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/solve_time_ps3.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/solve_time_ps4.pdf}
+\end{center}
+
+
+
+
+
+
+
+
+\newpage
 
 These plots essentially prove in a rather concrete way why the $Q_1\times P_0$ element 
 is not an element which should be used: the number of iterations grows with the 
@@ -99,7 +265,7 @@ not reflect this fact as well. It is also expensive to build!
 Finally preconditioners 3 and 4 show extremely similar results, with a little 
 advantage for \#3, i.e. lumping does not help at all.
 
-Since we have used the python solver as a black box inside our solver for $\K$ and ${\bm M}$
+Since we have used the python solver as a black box inside our solver for $\K$ and ${\M}$
 there would be much more to look into in this direction.
 
 \begin{remark}

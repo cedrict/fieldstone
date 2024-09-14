@@ -1,25 +1,21 @@
 import numpy as np
-import math as math
 import sys as sys
-import scipy
 import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix
-import time as time
+import time as clock
 import matplotlib.pyplot as plt
 import schur_complement_cg_solver as cg
-from scipy.sparse import lil_matrix
 
 #------------------------------------------------------------------------------
 
-def rho(x,y):
+def density(x,y):
     if (x-.5)**2+(y-0.5)**2<0.123**2:
        val=2.
     else:
        val=1.
     return val
 
-def eta(x,y):
+def viscosity(x,y):
     if (x-.5)**2+(y-0.5)**2<0.123**2:
        val=1.e3
     else:
@@ -27,32 +23,33 @@ def eta(x,y):
     return val
 
 #------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 def NNV(r,s):
     N_0=0.25*(1.-r)*(1.-s)
     N_1=0.25*(1.+r)*(1.-s)
     N_2=0.25*(1.+r)*(1.+s)
     N_3=0.25*(1.-r)*(1.+s)
-    return N_0,N_1,N_2,N_3
+    return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
 
 def dNNVdr(r,s):
     dNdr_0=-0.25*(1.-s) 
     dNdr_1=+0.25*(1.-s) 
     dNdr_2=+0.25*(1.+s) 
     dNdr_3=-0.25*(1.+s) 
-    return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+    return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3],dtype=np.float64)
 
 def dNNVds(r,s):
     dNds_0=-0.25*(1.-r)
     dNds_1=-0.25*(1.+r)
     dNds_2=+0.25*(1.+r)
     dNds_3=+0.25*(1.-r)
-    return dNds_0,dNds_1,dNds_2,dNds_3
+    return np.array([dNds_0,dNds_1,dNds_2,dNds_3],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 
 print("-----------------------------")
-print("----------fieldstone---------")
+print("---------- stone 16 ---------")
 print("-----------------------------")
 
 mV=4     # number of nodes making up an element
@@ -75,11 +72,11 @@ else:
    visu = 1
    precond_type=2
     
-nnx=nelx+1  # number of elements, x direction
-nny=nely+1  # number of elements, y direction
-NV=nnx*nny  # number of nodes
-nel=nelx*nely  # number of elements, total
-NP=nel
+nnx=nelx+1       # number of elements, x direction
+nny=nely+1       # number of elements, y direction
+NV=nnx*nny       # number of velocity nodes
+nel=nelx*nely    # number of elements, total
+NP=nel           # number of pressure nodes
 NfemV=NV*ndofV   # number of velocity dofs
 NfemP=NP*ndofP   # number of pressure dofs
 Nfem=NfemV+NfemP # total number of dofs
@@ -100,44 +97,54 @@ sqrt3=np.sqrt(3.)
 
 eta_ref=10
 
+# 1: computed on quad points
+# 2: elemental viscosity
+# 3: nodal+Q1 interp arithm
+# 4: nodal+Q1 interp geom
+# 5: nodal+Q1 interp harm
+
+viscosity_field=5
+
 #################################################################
 # grid point setup
 #################################################################
-start = time.time()
+start = clock.time()
 
 xV=np.empty(NV,dtype=np.float64)  # x coordinates
 yV=np.empty(NV,dtype=np.float64)  # y coordinates
+etaV=np.empty(NV,dtype=np.float64) 
 
 counter = 0
 for j in range(0,nny):
     for i in range(0,nnx):
         xV[counter]=i*Lx/float(nelx)
         yV[counter]=j*Ly/float(nely)
+        etaV[counter]=viscosity(xV[counter],yV[counter])
         counter += 1
 
-print("setup: grid points: %.3f s" % (time.time() - start))
+print("setup: grid points: %.3f s" % (clock.time() - start))
 
 #################################################################
 # connectivity
 #################################################################
-start = time.time()
+start = clock.time()
 
 iconV=np.zeros((mV,nel),dtype=np.int32)
 counter = 0
 for j in range(0,nely):
     for i in range(0,nelx):
-        iconV[0,counter] = i + j * (nelx + 1)
-        iconV[1,counter] = i + 1 + j * (nelx + 1)
-        iconV[2,counter] = i + 1 + (j + 1) * (nelx + 1)
-        iconV[3,counter] = i + (j + 1) * (nelx + 1)
+        iconV[0,counter]=i+j * (nelx + 1)
+        iconV[1,counter]=i+1 + j * (nelx + 1)
+        iconV[2,counter]=i+1 + (j + 1) * (nelx + 1)
+        iconV[3,counter]=i+(j + 1) * (nelx + 1)
         counter+=1
 
-print("setup: connectivity: %.3f s" % (time.time() - start))
+print("setup: connectivity: %.3f s" % (clock.time() - start))
 
 #################################################################
 # define boundary conditions: no slip on all sides
 #################################################################
-start = time.time()
+start = clock.time()
 
 bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
@@ -152,24 +159,30 @@ for i in range(0,NV):
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
 
-print("setup: boundary conditions: %.3f s" % (time.time() - start))
+print("setup: boundary conditions: %.3f s" % (clock.time()-start))
 
 #################################################################
 # compute element center coordinates
 #################################################################
+start = clock.time()
 
-xc = np.zeros(nel,dtype=np.float64)  
-yc = np.zeros(nel,dtype=np.float64)  
+xc=np.zeros(nel,dtype=np.float64)  
+yc=np.zeros(nel,dtype=np.float64)  
+etac=np.zeros(nel,dtype=np.float64)  
+
 for iel in range(0,nel):
-    xc[iel] = (xV[iconV[0,iel]]+xV[iconV[2,iel]])*0.5 
-    yc[iel] = (yV[iconV[0,iel]]+yV[iconV[2,iel]])*0.5 
+    xc[iel]=(xV[iconV[0,iel]]+xV[iconV[2,iel]])*0.5 
+    yc[iel]=(yV[iconV[0,iel]]+yV[iconV[2,iel]])*0.5 
+    etac[iel]=viscosity(xc[iel],yc[iel])
+
+print("compute elt center: %.3f s" % (clock.time()-start))
 
 #################################################################
 # build FE matrix
 # [ K  G ][u]=[f]
 # [GT -C ][p] [h]
 #################################################################
-start = time.time()
+start = clock.time()
 
 K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
 G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
@@ -231,6 +244,23 @@ for iel in range(0, nel):
                 dNNNdx[k]=jcbi[0,0]*dNNNdr[k]+jcbi[0,1]*dNNNds[k]
                 dNNNdy[k]=jcbi[1,0]*dNNNdr[k]+jcbi[1,1]*dNNNds[k]
 
+            if viscosity_field==3:
+               etaq=0.0
+               for k in range(0,mV):
+                   etaq+=NNN[k]*etaV[iconV[k,iel]]
+            if viscosity_field==4:
+               etaq=0.0
+               for k in range(0,mV):
+                   etaq+=NNN[k]*np.log10(etaV[iconV[k,iel]])
+               etaq=10.**etaq
+            if viscosity_field==5:
+               etaq=0.0
+               for k in range(0,mV):
+                   etaq+=NNN[k]*1./etaV[iconV[k,iel]]
+               etaq=1./etaq
+
+            #print(xq,yq,etaq)
+
             # construct 3x8 b_mat matrix
             for i in range(0,mV):
                 b_mat[0:3, 2*i:2*i+2] = [[dNNNdx[i],0.     ],
@@ -238,12 +268,17 @@ for iel in range(0, nel):
                                          [dNNNdy[i],dNNNdx[i]]]
 
             # compute elemental K_el matrix
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(xq,yq)*weightq*jcob
+            if viscosity_field==1:    
+               K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq,yq)*weightq*jcob
+            elif viscosity_field==2:    
+               K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etac[iel]*weightq*jcob
+            elif viscosity_field==3 or viscosity_field==4 or viscosity_field==5:
+               K_el+=b_mat.T.dot(c_mat.dot(b_mat))*etaq*weightq*jcob
 
             # compute elemental rhs vector
             for i in range(0,mV):
-                f_el[ndofV*i  ]+=NNN[i]*jcob*weightq*rho(xq,yq)*gx
-                f_el[ndofV*i+1]+=NNN[i]*jcob*weightq*rho(xq,yq)*gy
+                f_el[ndofV*i  ]+=NNN[i]*jcob*weightq*density(xq,yq)*gx
+                f_el[ndofV*i+1]+=NNN[i]*jcob*weightq*density(xq,yq)*gy
                 G_el[ndofV*i  ,0]-=dNNNdx[i]*jcob*weightq
                 G_el[ndofV*i+1,0]-=dNNNdy[i]*jcob*weightq
 
@@ -286,17 +321,17 @@ for iel in range(0, nel):
             G_mat[m1,iel]+=G_el[ikk,0]
         #end for i1
     #end for k1
-    h_rhs[iel]+=h_el[0]
+    h_rhs[iel]+=h_el[0,0]
 
 print("     -> h_rhs (m,M) %.4e %.4e " %(np.min(h_rhs),np.max(h_rhs)))
 print("     -> f_rhs (m,M) %.4e %.4e " %(np.min(f_rhs),np.max(f_rhs)))
 
-print("build FE matrix: %.3f s" % (time.time() - start))
+print("build FE matrix: %.3f s" % (clock.time() - start))
 
 ######################################################################
 # compute Schur preconditioner
 ######################################################################
-start = time.time()
+start = clock.time()
    
 if precond_type==0:
    for i in range(0,NfemP):
@@ -304,7 +339,7 @@ if precond_type==0:
 
 if precond_type==1:
    for iel in range(0,nel):
-       M_mat[iel,iel]=hx*hy/eta(xc[iel],yc[iel])
+       M_mat[iel,iel]=hx*hy/viscosity(xc[iel],yc[iel])
 
 if precond_type==2:
    Km1    = np.zeros((NfemV,NfemV),dtype=np.float64) 
@@ -336,12 +371,12 @@ if precond_type==4:
 #plt.spy(M_mat)
 #plt.savefig('matrix.pdf', bbox_inches='tight')
 
-print("build Schur matrix precond: %e s, nel= %d" % (time.time() - start, nel))
+print("build Schur matrix precond: %e s, nel= %d" % (clock.time() - start, nel))
 
 ######################################################################
 # solve system  
 ######################################################################
-start = time.time()
+start=clock.time()
 
 if use_SchurComplementApproach:
 
@@ -373,12 +408,12 @@ print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
-print("solve time: %.3f s, nel= %d" % (time.time() - start, nel))
+print("solve time: %.3f s, nel= %d" % (clock.time() - start, nel))
 
 ######################################################################
 # compute strainrate 
 ######################################################################
-start = time.time()
+start=clock.time()
 
 exx = np.zeros(nel,dtype=np.float64)  
 eyy = np.zeros(nel,dtype=np.float64)  
@@ -419,11 +454,12 @@ print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
 
-print("compute press & sr: %.3f s" % (time.time() - start))
+print("compute press & sr: %.3f s" % (clock.time()-start))
 
 ######################################################################
 # compute nodal pressure
 ######################################################################
+start=clock.time()
 
 q=np.zeros(NV,dtype=np.float64)  
 count=np.zeros(NV,dtype=np.float64)  
@@ -440,9 +476,12 @@ for iel in range(0,nel):
 
 q=q/count
 
+print("compute nodal p: %.3f s" % (clock.time()-start))
+
 #####################################################################
 # export solution to vtu file
 #####################################################################
+start=clock.time()
 
 filename = 'solution.vtu'
 vtufile=open(filename,"w")
@@ -481,14 +520,14 @@ vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
 for iel in range (0,nel):
-    vtufile.write("%10e\n" % (rho(xc[iel],yc[iel])))
+    vtufile.write("%10e\n" % (density(xc[iel],yc[iel])))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
 for iel in range (0,nel):
-    vtufile.write("%10e\n" % (eta(xc[iel],yc[iel])))
+    vtufile.write("%10e\n" % (etac[iel]))
 vtufile.write("</DataArray>\n")
-
+#
 vtufile.write("</CellData>\n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")
@@ -502,6 +541,12 @@ vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
 for i in range(0,NV):
     vtufile.write("%10e \n" %q[i])
 vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
+for i in range(0,NV):
+    vtufile.write("%10e \n" %etaV[i])
+vtufile.write("</DataArray>\n")
+
 #--
 vtufile.write("</PointData>\n")
 #####
@@ -528,6 +573,8 @@ vtufile.write("</Piece>\n")
 vtufile.write("</UnstructuredGrid>\n")
 vtufile.write("</VTKFile>\n")
 vtufile.close()
+
+print("export to vtu: %.3f s" % (clock.time()-start))
 
 print("-----------------------------")
 print("------------the end----------")
