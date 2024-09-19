@@ -1,5 +1,7 @@
 \begin{flushright} {\tiny {\color{gray} \tt pair\_raviart\_thomas.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+{\color{orange} Work in Progress}
  
 In \textcite{hald03} (2003) we find: 
 \begin{displayquote}
@@ -101,11 +103,44 @@ of basis functions is always invertible).
 
 
 
+In \textcite{kanschat}  we find:
+\begin{displayquote}
+{\color{darkgray}
 
-- Raviart Thomas 0 RT0 \cite{rath77} ? mentioned/defined/drawn in 4.2.2 of 
-Kanschat book. Also exist for quads see 4.2.37
+The Raviart-Thomas element of degree $k\ge 0$ on
+simplices consists of the polynomial space
+\[
+RT_k = {\mathbb P}_k^d + x {\mathbb P}_k.
+\]
 
--Check \textcite{brfo}
+For the simplicial Raviart-Thomas element in $\R^d$
+there holds
+\[
+dim(RT_k) = (d+1) dim({\mathbb P}_k) - dim({\mathbb P}_{k-1})
+\]
+In particular:
+\[
+dim(RT_k)|_{2D} = (k+1)(k+3)
+\]
+\[
+dim(RT_k)|_{3D} = \frac12(k+1)(k+2)(k+4)
+\]
+
+
+\begin{center}
+\includegraphics[width=6cm]{images/pair_raviart-thomas/RT_kanschat_T}
+\includegraphics[width=6cm]{images/pair_raviart-thomas/RT_kanschat_Q}\\
+{\captionfont Examples 4.2.10 and 4.2.37.}
+\end{center}
+
+}
+\end{displayquote}
+
+
+
+
+
+
 
 
 
@@ -144,6 +179,63 @@ implies that the approximation order of the function itself is degree+1, as with
 }
 \end{displayquote}
 
+Elsewhere in the deal.II library\footnote{\url{https://www.dealii.org/current/doxygen/deal.II/classPolynomialsRaviartThomas.html}} we read
+\begin{displayquote}
+{\color{darkgray}
+The Raviart-Thomas polynomials are constructed such that the divergence is 
+in the tensor product polynomial space $Q_k$. Therefore, the polynomial order of each component 
+must be one order higher in the corresponding direction, yielding the polynomial spaces 
+$(Q_{k+1,k}, Q_{k,k+1})$ and $(Q_{k+1,k,k}, Q_{k,k+1,k}, Q_{k,k,k+1})$ in 2d and 3d, resp. 
+}
+\end{displayquote}
+
+
+In John's book \cite{john16} we find:
+\begin{displayquote}
+{\color{darkgray}
+Raviart–Thomas finite elements are a class of vector-valued finite elements that approximate the space
+$H(div,\Omega)=\{ {\bm v} \in L^2(\Omega): \nabla \cdot {\bm v} \in L^2(\Omega)  \}$.
+Details of their definition and important properties can be
+found, e.g., in page 84 of \textcite{bobf13} (2013).
+
+Consider a simplicial triangulation with mesh cells $\{K\}$ and let ${\bm P}_k(K)=(P_k(K))^d$, $k\ge 0$.
+Then, the following local polynomial space is defined directly on $K$:
+\[
+RT_k(K)=\{ {\bm v} \in ({\bm P}_k(K) + {\bm x} P_k(K)) : {\bm v}\cdot{\bm n}_{\partial K} \in R_k(\partial K)\},
+\qquad k\ge 0,
+\]
+where
+\[
+R_k(\partial K)=\{ \phi \in L^2(\partial K): \phi|_E\in P_k(E) \text{ for all faces } E\subset \partial K \}
+\]
+It is noted in \textcite{bobf13} (remark 2.3.1) that this definition of $RT_k(K)$
+is different than the original definition in \textcite{rath77} (1977).
+
+In particular, the Raviart-Thomas element of lowest order is given by
+\[
+RT_0(K)=\{ {\bm v} \in ({\bm P}_0(K)+{\bm x} P_0(K)) : {\bm v} \cdot {\bm n}_{\partial K} \in R_0(\partial K)  \}
+\]
+i.e., it is linear on $K$. Its local functionals are ${\bm v} \cdot {\bm n}_{E_i}$, $i=1,..d+1$. 
+A function from $RT_0(K)$ can be written in the form
+\[
+{\bm v}({\bm x}) = {\bm a} + b {\bm x}, \quad {\bm a}\in \R^d, b\in \R, {\bm x}\in K. \qquad B.21
+\]
+A face $E\subset \partial K$ is a hyperplane that can be represented in the form
+\[
+{\bm x}\cdot {\bm n}_E = c, \qquad c\in \R, \forall {\bm x} \in E.
+\]
+Inserting this representation in (B.21) yields
+\[
+{\bm v}({\bm x})\cdot {\bm n}_E = {\bm a}\cdot {\bm n}_E + b {\bm x} \cdot {\bm n}_E = {\bm a}\cdot {\bm n}_E + bc =const
+\qquad \forall {\bm x}\in E.
+\]
+Thus, the normal component of ${\bm v}$ on each face is a constant.
+
+}
+\end{displayquote}
+
+
+
 On the defelement site\footnote{\url{https://defelement.com/elements/raviart-thomas.html}} we find 
 that it is defined on triangles, tetrahedra, quadilaterals and hexahedra.
 with the number of dofs defined as follows:
@@ -156,28 +248,26 @@ with the number of dofs defined as follows:
 
 
 
+\vspace{.5cm}
 \noindent
+%......................................................................
 \underline{\bf Degree 1 Raviart–Thomas on a triangle - Lagrange variant}
 
 \begin{center}
-\includegraphics[width=3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-1-dofs-large}\\
-{\captionfont Taken from \url{https://defelement.com/}}
-\end{center}
-
-${\cal V}$ is a finite dimensional polynomial space on of dimension $n$ and is spanned by 
-\[
-\left( \begin{array}{c}1 \\ 0  \end{array} \right),
-\left( \begin{array}{c}0 \\ 1  \end{array} \right),
-\left( \begin{array}{c}x \\ y  \end{array} \right)
-\]
-Functionals and basis functions:
-
-\begin{center}
+\includegraphics[width=3.3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-1-dofs-large}
 \includegraphics[width=3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-1-0-large}
 \includegraphics[width=3.3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-1-1-large}
 \includegraphics[width=3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-1-2-large}\\
 {\captionfont Taken from \url{https://defelement.com/}}
 \end{center}
+
+${\cal V}$ is a finite dimensional polynomial space on the element of dimension $3$ and is spanned by 
+\[
+\left( \begin{array}{c} 1 \\ 0  \end{array} \right),
+\left( \begin{array}{c} 0 \\ 1  \end{array} \right),
+\left( \begin{array}{c} r \\ s  \end{array} \right)
+\]
+Functionals and basis functions:
 
 \[
 l_0: {\bm v} \rightarrow \int_{e_0} {\bm v} \cdot (1) \hat{n}_0
@@ -194,37 +284,24 @@ where $e_2$ is the 2nd edge and $\hat{n}_2$ is the normal to facet 2.
 
 We have then
 \[
-{\bm \phi}_0 = \left( \begin{array}{c} -x\\-y  \end{array} \right)
+\vec{\bN}_0(r,s) = \left( \begin{array}{c} -r\\-s  \end{array} \right)
 \qquad
-{\bm \phi}_1 = \left( \begin{array}{c} x-1\\y  \end{array} \right)
+\vec{\bN}_1(r,s) = \left( \begin{array}{c} r-1\\s  \end{array} \right)
 \qquad
-{\bm \phi}_2 = \left( \begin{array}{c} -x \\ 1-y  \end{array} \right)
+\vec{\bN}_2(r,s) = \left( \begin{array}{c} -r \\ 1-s  \end{array} \right)
 \]
 These DOFs are associated with edge 0,1,2 of the reference element.
 
 
 
 
-%-------------------------------------------------------------------------
+\vspace{.5cm}
 \noindent
+%......................................................................
 \underline{\bf Degree 1 Raviart–Thomas on a quadrilateral - Lagrange variant}
 
 \begin{center}
-\includegraphics[width=3cm]{images/pair_raviart-thomas/element-NCF-variant-equispaced-quadrilateral-1-dofs}\\
-{\captionfont Taken from \url{https://defelement.com/}}
-\end{center}
-
-${\cal V}$ is a finite dimensional polynomial space on of dimension $n$ and is spanned by 
-\[
-\left( \begin{array}{c}1 \\ 0  \end{array} \right),
-\left( \begin{array}{c}0 \\ 1  \end{array} \right),
-\left( \begin{array}{c}x \\ 0  \end{array} \right),
-\left( \begin{array}{c}0 \\ y  \end{array} \right)
-\]
-
-Functionals and basis functions:
-
-\begin{center}
+\includegraphics[width=3.5cm]{images/pair_raviart-thomas/element-NCF-variant-equispaced-quadrilateral-1-dofs}
 \includegraphics[width=3cm]{images/pair_raviart-thomas/element-NCF-variant-equispaced-quadrilateral-1-0}
 \includegraphics[width=3.5cm]{images/pair_raviart-thomas/element-NCF-variant-equispaced-quadrilateral-1-1}
 \includegraphics[width=3cm]{images/pair_raviart-thomas/element-NCF-variant-equispaced-quadrilateral-1-2}
@@ -232,6 +309,16 @@ Functionals and basis functions:
 {\captionfont Taken from \url{https://defelement.com/}}
 \end{center}
 
+${\cal V}$ is a finite dimensional polynomial space on the element of dimension $4$ and is spanned by 
+
+\[
+\left( \begin{array}{c} 1 \\ 0  \end{array} \right),
+\left( \begin{array}{c} 0 \\ 1  \end{array} \right),
+\left( \begin{array}{c} r \\ 0  \end{array} \right),
+\left( \begin{array}{c} 0 \\ s  \end{array} \right)
+\]
+
+Functionals and basis functions:
 
 \[
 l_0: {\bm v} \rightarrow \int_{e_0} {\bm v} \cdot (1) \hat{n}_0
@@ -255,18 +342,912 @@ where $e_3$ is the 4th edge and $\hat{n}_3$ is the normal to facet 3.
 
 We have then
 \[
-{\bm \phi}_0 = \left( \begin{array}{c} 0 \\ 1-y  \end{array} \right)
+\vec{\bN}_0(r,s) = \left( \begin{array}{c} 0 \\ 1-s  \end{array} \right)
 \qquad
-{\bm \phi}_1 = \left( \begin{array}{c} x-1 \\0  \end{array} \right)
+\vec{\bN}_1(r,s) = \left( \begin{array}{c} r-1 \\0  \end{array} \right)
 \qquad
-{\bm \phi}_2 = \left( \begin{array}{c} -x \\ 0  \end{array} \right)
+\vec{\bN}_2(r,s) = \left( \begin{array}{c} -r \\ 0  \end{array} \right)
 \qquad
-{\bm \phi}_2 = \left( \begin{array}{c} 0 \\y  \end{array} \right)
+\vec{\bN}_3(r,s) = \left( \begin{array}{c} 0 \\s  \end{array} \right)
 \]
 These DOFs are associated with edge 0,1,2 of the reference element.
 
-----------------------------------------
 
-\fullcite{arbf05}
+\vspace{.5cm}
+%-------------------------------------------------------------------------
+\noindent
+\underline{\bf Degree 1 Raviart–Thomas on a tetrahedron - Lagrange variant}
 
 
+\begin{center}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-tetrahedron-1-dofs}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-tetrahedron-1-0}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-tetrahedron-1-1}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-tetrahedron-1-2}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-tetrahedron-1-3}\\
+{\captionfont Taken from \url{https://defelement.com/}}
+\end{center}
+
+${\cal V}$ is a finite dimensional polynomial space on the element of dimension $4$ and is spanned by 
+\[
+\left( \begin{array}{c} 1 \\ 0 \\ 0  \end{array} \right),
+\left( \begin{array}{c} 0 \\ 1 \\ 0  \end{array} \right),
+\left( \begin{array}{c} 0 \\ 0 \\ 1 \end{array} \right),
+\left( \begin{array}{c} r \\ s \\ t \end{array} \right)
+\]
+
+
+\[
+\vec{\bN}_0(r,s,t) = \left( \begin{array}{c} 2r \\ 2s \\ 2t  \end{array} \right) 
+\quad
+\vec{\bN}_1(r,s,t) = \left( \begin{array}{c} 2-2r \\ -2s \\ -2t  \end{array} \right) 
+\quad
+\vec{\bN}_2(r,s,t) = \left( \begin{array}{c} 2r \\ 2s-2 \\ 2t  \end{array} \right) 
+\quad
+\vec{\bN}_3(r,s,t) = \left( \begin{array}{c} -2r \\ -2s \\ 2-2t  \end{array} \right) 
+\]
+
+
+\vspace{.5cm}
+%-------------------------------------------------------------------------
+\noindent
+\underline{\bf Degree 1 Raviart–Thomas on a hexahedron - Lagrange variant}
+
+
+\begin{center}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/element-NCF-variant-equispaced-hexahedron-1-dofs}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/element-NCF-variant-equispaced-hexahedron-1-0}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/element-NCF-variant-equispaced-hexahedron-1-1}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/element-NCF-variant-equispaced-hexahedron-1-2}\\
+\includegraphics[width=3cm]{images/pair_raviart-thomas/element-NCF-variant-equispaced-hexahedron-1-3}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/element-NCF-variant-equispaced-hexahedron-1-4}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/element-NCF-variant-equispaced-hexahedron-1-5}\\
+{\captionfont Taken from \url{https://defelement.com/}}
+\end{center}
+
+
+${\cal V}$ is a finite dimensional polynomial space on the element of dimension $6$ and is spanned by 
+
+\[
+\left( \begin{array}{c} 1 \\ 0 \\ 0  \end{array} \right),
+\left( \begin{array}{c} 0 \\ 1 \\ 0  \end{array} \right),
+\left( \begin{array}{c} 0 \\ 0 \\ 1 \end{array} \right),
+\left( \begin{array}{c} r \\ 0 \\ 0 \end{array} \right),
+\left( \begin{array}{c} 0 \\ s \\ 0 \end{array} \right),
+\left( \begin{array}{c} 0 \\ 0 \\ t \end{array} \right).
+\]
+
+\[
+\vec{\bN}_0(r,s,t) = \left( \begin{array}{c} 0\\0\\1-t  \end{array} \right) 
+\quad
+\vec{\bN}_1(r,s,t) = \left( \begin{array}{c} 0\\s-1\\0  \end{array} \right) 
+\quad
+\vec{\bN}_2(r,s,t) = \left( \begin{array}{c} 1-r\\0 \\0  \end{array} \right) 
+\]
+\[
+\vec{\bN}_3(r,s,t) = \left( \begin{array}{c} r\\0\\0  \end{array} \right) 
+\quad
+\vec{\bN}_4(r,s,t) = \left( \begin{array}{c} 0\\-s\\0  \end{array} \right) 
+\quad
+\vec{\bN}_5(r,s,t) = \left( \begin{array}{c} 0\\0\\t  \end{array} \right) 
+\]
+
+
+
+\newpage
+What follows is mostly to be found in \textcite{weso19} (2019).
+
+Let us consider a triangulation ${\cal T}_h$ of the domain $\Omega$ 
+using triangles or quadrilaterals in 2D and tetrahedrons or
+hexahedrons in 3D. For simplicity, edges of elements in 2D will be called as faces, 
+and faces in both 2D and 3D will be denoted by $f_j$ . The discrete velocity space is defined as
+\[
+{\cal V}_h = \{ \vec{\upnu} | \vec{\upnu}_{|K}  \in RT_0(K) , K\in {\cal T}_h \text{ and } \vec\in {\cal V} \}
+\]
+with ${\cal V} \subset H(div,\Omega)$ and
+where $RT_0$ is the lowest-order Raviart-Thomas space on the element $K$. 
+Let the basis (shape) functions for the velocity and pressure spaces be denoted $\bN^\upnu_i$ and 
+$\bN^p_j$, respectively. The pressures are approximated by piecewise
+constant basis functions, and we denote by ${\cal Q}_h$ the discrete pressure space. For the velocity degrees of freedom we
+consider the average values of the normal components over the element faces. Specifically, the velocity degrees of
+freedom are defined as
+\begin{equation}
+\frac{1}{|f_j|} \int_{f_j} \vec{\bN}^\upnu_i( \vec{x}_j) \cdot \vec{n}_j \; dl = \delta_{ij} 
+\label{eq:RTbfdef}
+\end{equation}
+where $\delta_{ij}$ is the Kronecker delta, $\vec{n}_j$ is the unit outward normal of face $j$ 
+and $\vec{x}_j$ is its coordinate. In the calculations
+of the basis functions below, we use centers of the corresponding faces.
+
+%----------------------------
+\underline{\bf Triangle, RT0}
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (4.5,4.5); %background grid
+\draw [thick,->] (1,1) -- (3.5,1);
+\draw [thick,->] (1,1) -- (1,3.5);
+\node[] at (3.5,0.65) {$r$};
+\node[] at (0.8,3.65) {$s$};
+\draw[line width=.7mm] (1,1) -- (3,1) -- (1,3) -- (1,1);   
+\draw [thick,teal,->] (2,2) -- (2.5,2.5);
+\draw [thick,teal,->] (2,1) -- (2,0.5);
+\draw [thick,teal,->] (1,2) -- (0.5,2);
+\node[teal] at (2.65,2.5) {$1$};
+\node[teal] at (2.25,0.5) {$3$};
+\node[teal] at (0.5,2.3) {$2$};
+\end{tikzpicture}
+\end{center}
+
+
+The basis functions in the reference triangle are defined as (see John reference earlier)
+\[
+\vec{\bN}_i(r,s)
+=\vec{a} + b  \left(\begin{array}{c} r\\s \end{array}\right)
+=\left(\begin{array}{c} a_1+b r \\ a_2 + b s \end{array}\right)
+\qquad i=1,2,3
+\]
+
+\begin{itemize}
+\item face $j=1$. 
+Using Eq.~\eqref{eq:RTbfdef} we can write for the first face (the middle of this face has coordinates 
+$\vec{x}_1=(1/2,1/2)$, the normal is $\vec{n}_1=(1/\sqrt2,1/\sqrt2)$ and $|f_1|=\sqrt 2$):
+\begin{eqnarray}
+\delta_{i1}=
+\frac{1}{|f_1|} \int_{f_1} \vec{\bN}^\upnu_i( \vec{x}_1) \cdot \vec{n}_1 \; dl
+&=& \frac{1}{\sqrt 2} \int_{f_1} \vec{\bN}^\upnu_i( 1/2,1/2) \cdot 
+\left(\begin{array}{c} 1/\sqrt2 \\1/\sqrt2 \end{array}\right) \; dl \nn\\
+&=& \frac{1}{\sqrt 2} \int_{f_1} 
+\left(\begin{array}{c} a_1+b\cdot 1/2 \\ a_2 + b \cdot 1/2 \end{array}\right)
+\cdot 
+\left(\begin{array}{c} 1/\sqrt2 \\1/\sqrt2 \end{array}\right) \; dl \nn\\
+&=& \frac{1}{\sqrt 2} \frac{1}{\sqrt2} (a_1 + a_2+b) \int_{f_1} 1 \; dl \nn\\
+&=& \frac{1}{\sqrt 2} \frac{1}{\sqrt2} (a_1 + a_2+b) \sqrt 2 \nn\\
+&=& \frac{1}{\sqrt 2}  (a_1 + a_2+b) \label{eq:RT0tri1}
+\end{eqnarray}
+
+
+\item face $j=2$.
+Using Eq.~\eqref{eq:RTbfdef} we can write for the second face (the middle of this face has coordinates $\vec{x}_2=(0,1/2)$, the normal is $\vec{n}_2=(-1,0)$ and $|f_2|=1$):
+
+\begin{eqnarray}
+\delta_{i2}=
+\frac{1}{|f_2|} \int_{f_2} \vec{\bN}^\upnu_i( \vec{x}_2) \cdot \vec{n}_2 \; dl
+&=& 
+ \int_{0}^1  \vec{\bN}^\upnu_i( 0,1/2) \cdot 
+\left(\begin{array}{c} -1 \\0 \end{array}\right) \; ds \nn\\
+&=&  \int_{0}^1 
+\left(\begin{array}{c} a_1 + b \cdot 0 \\ a_2 + b \cdot 1/2 \end{array}\right)
+\cdot 
+\left(\begin{array}{c} -1 \\ 0 \end{array}\right) \; ds \nn\\
+&=& -   a_1 \int_0^1 ds \nn\\
+&=& -   a_1 \label{eq:RT0tri2}
+\end{eqnarray}
+
+
+\item face $j=3$
+Using Eq.~\eqref{eq:RTbfdef} we can write for the third face (the middle of this face has coordinates 
+$\vec{x}_3=(1/2,0)$, the normal is $\vec{n}_3=(0,-1)$  and $|f_3|=1$):
+
+\begin{eqnarray}
+\delta_{i3}=
+\frac{1}{|f_3|} \int_{f_3} \vec{\bN}^\upnu_i( \vec{x}_3) \cdot \vec{n}_3 \; dl
+&=& 
+ \int_{0}^{1} \vec{\bN}^\upnu_i( 1/2,0) \cdot \left(\begin{array}{c} 0 \\-1 \end{array}\right) \; dr \nn\\
+&=&
+ \int_{0}^{1} \left(\begin{array}{c} a_1+b\cdot 1/2 \\ a_2 + b \cdot 0 \end{array}\right) \cdot \left(\begin{array}{c} 0 \\ -1 \end{array}\right) \; dr \nn\\
+&=& -  a_2 \int_{0}^{1}  dr \nn\\
+&=& - a_2  \label{eq:RT0tri3}
+\end{eqnarray}
+\end{itemize}
+
+We can now compute the three basis functions: 
+
+\begin{itemize}
+\item Case $i=1$: Using Eqs.~\eqref{eq:RT0tri1},\eqref{eq:RT0tri2},\eqref{eq:RT0tri3} we can write
+
+\begin{eqnarray}
+\frac{1}{\sqrt 2}  (a_1 + a_2+b)  &=&  1 \nn\\
+-a_1 &=& 0 \nn\\
+-a_2 &=& 0 \nn
+\end{eqnarray}
+which yields $a_1=a_2=0$ and $b=\sqrt 2$, i.e.
+\[
+\vec{\bN}^\upnu_1 (r,s) = \sqrt 2
+\left(
+\begin{array}{c}
+r \\ s
+\end{array}
+\right)
+\]
+
+\item Case $i=2$: Using Eqs.~\eqref{eq:RT0tri1},\eqref{eq:RT0tri2},\eqref{eq:RT0tri3} we can write
+\begin{eqnarray}
+\frac{1}{\sqrt 2}  (a_1 + a_2+b)  &=&  0 \nn\\
+-a_1 &=& 1 \nn\\
+-a_2 &=& 0 \nn
+\end{eqnarray}
+which yields $a_1=-1$, $a_2=0$ and $b=-a_1=1$, i.e.
+\[
+\vec{\bN}^\upnu_2 (r,s) =
+\left(
+\begin{array}{c}
+-1 +r \\ s
+\end{array}
+\right)
+\]
+
+
+\item Case $i=3$: Using Eqs.~\eqref{eq:RT0tri1},\eqref{eq:RT0tri2},\eqref{eq:RT0tri3} we can write
+\begin{eqnarray}
+\frac{1}{\sqrt 2}  (a_1 + a_2+b)  &=&  0 \nn\\
+-a_1 &=& 0 \nn\\
+-a_2 &=& 1 \nn
+\end{eqnarray}
+which yields $a_1=0$, $a_2=-1$ and $b=-a_2=1$, i.e.
+\[
+\vec{\bN}^\upnu_3 (r,s) =
+\left(
+\begin{array}{c}
+ r \\ -1 +  s
+\end{array}
+\right)
+\]
+
+\end{itemize}
+
+
+In the end:
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+\vec{\bN}^\upnu_1 (r,s) = \sqrt 2
+\left(
+\begin{array}{c}
+r \\ s
+\end{array}
+\right)
+\qquad
+\vec{\bN}^\upnu_2 (r,s) =
+\left(
+\begin{array}{c}
+-1 +r \\ s
+\end{array}
+\right)
+\qquad
+\vec{\bN}^\upnu_3 (r,s) =
+\left(
+\begin{array}{c}
+ r \\ -1 +  s
+\end{array}
+\right)
+\]
+\end{mdframed}
+
+
+%----------------------------
+\underline{\bf Quadrilateral, RT0}
+
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (4.5,4.5); %background grid
+\draw [thick,->] (2,2) -- (2.5,2);
+\draw [thick,->] (2,2) -- (2,2.5);
+\node[] at (2.5,1.7) {$r$};
+\node[] at (1.7,2.5) {$s$};
+\draw[line width=.7mm] (1,1) -- (3,1) -- (3,3) -- (1,3) --cycle;   
+\draw [thick,teal,->] (3,2) -- (3.5,2);
+\draw [thick,teal,->] (2,3) -- (2,3.5);
+\draw [thick,teal,->] (2,1) -- (2,0.5);
+\draw [thick,teal,->] (1,2) -- (0.5,2);
+\node[teal] at (3.7,2) {$1$};
+\node[teal] at (2.2,3.7) {$2$};
+\node[teal] at (0.5,2.3) {$3$};
+\node[teal] at (2.25,0.5) {$4$};
+\end{tikzpicture}
+\end{center}
+
+The basis functions are defined as {\color{red} i need a ref, the notations below make little sense}
+\[
+\vec{\bN}_i(r,s)
+=\vec{a} + b  \left(\begin{array}{c} r\\s \end{array}\right)
+=\left(\begin{array}{c} a_1+b_1 r \\ a_2 + b_2 s \end{array}\right)
+\qquad i=1,2,3,4
+\]
+In this case all faces have the same length, i.e. $|f_j|=2$.
+
+\begin{itemize}
+\item face $j=1$. We can write for the first face (the middle of this face has coordinates 
+$\vec{x}_1=(1,0)$, the normal is $\vec{n}_1=(1,0)$):
+
+\begin{eqnarray}
+\delta_{i1}=
+\frac{1}{|f_1|} \int_{f_1}
+\vec{\bN}^\upnu_i( \vec{x}_1) \cdot \vec{n}_1 \; dl
+&=&\frac12  \int_{f_1} \vec{\bN}^\upnu_i( 1,0) \cdot 
+\left(\begin{array}{c} 1 \\ 0 \end{array}\right) \; dl \nn\\
+&=& \frac12\int_{f_1} 
+\left(\begin{array}{c} a_1+b_1\cdot 1 \\ a_2 + b_2 \cdot 0 \end{array}\right)
+\cdot \left(\begin{array}{c} 1 \\ 0 \end{array}\right) \; dl \nn\\
+&=& \frac12 \int_{-1}^{+1} (a_1+b_1) ds \nn\\
+&=& a_1+b_1
+\end{eqnarray}
+
+
+
+\item face $j=2$. We can write for the first face (the middle of this face has coordinates 
+$\vec{x}_2=(0,1)$, the normal is $\vec{n}_2=(0,1)$):
+
+\begin{eqnarray}
+\delta_{i2}=
+\frac{1}{|f_2|} \int_{f_2}
+\vec{\bN}^\upnu_i( \vec{x}_2) \cdot \vec{n}_2 \; dl
+&=&\frac12  \int_{f_1} \vec{\bN}^\upnu_i( 0,1) \cdot 
+\left(\begin{array}{c} 0 \\ 1 \end{array}\right) \; dl \nn\\
+&=& \frac12\int_{f_1} 
+\left(\begin{array}{c} a_1+b_1\cdot 0 \\ a_2 + b_2 \cdot 1 \end{array}\right)
+\cdot \left(\begin{array}{c} 0 \\ 1 \end{array}\right) \; dl \nn\\
+&=& \frac12 \int_{-1}^{+1} (a_2+b_2) dr \nn\\
+&=& a_2+b_2
+\end{eqnarray}
+
+
+\item face $j=3$. We can write for the first face (the middle of this face has coordinates 
+$\vec{x}_3=(-1,0)$, the normal is $\vec{n}_3=(-1,0)$):
+
+
+\begin{eqnarray}
+\delta_{i3}=
+\frac{1}{|f_3|} \int_{f_3}
+\vec{\bN}^\upnu_i( \vec{x}_3) \cdot \vec{n}_3 \; dl
+&=&\frac12  \int_{f_1} \vec{\bN}^\upnu_i( -1,0) \cdot 
+\left(\begin{array}{c} -1 \\ 0 \end{array}\right) \; dl \nn\\
+&=& \frac12\int_{f_1} 
+\left(\begin{array}{c} a_1+b_1\cdot -1 \\ a_2 + b_2 \cdot 0 \end{array}\right)
+\cdot \left(\begin{array}{c} -1 \\ 0 \end{array}\right) \; dl \nn\\
+&=& -\frac12 \int_{-1}^{+1} (a_1-b_1) ds \nn\\
+&=& -a_1+b_1
+\end{eqnarray}
+
+
+
+
+\item face $j=4$. We can write for the first face (the middle of this face has coordinates 
+$\vec{x}_4=(0,-1)$, the normal is $\vec{n}_4=(0,-1)$):
+\end{itemize}
+
+\begin{eqnarray}
+\delta_{i4}=
+\frac{1}{|f_4|} \int_{f_4}
+\vec{\bN}^\upnu_i( \vec{x}_4) \cdot \vec{n}_4 \; dl
+&=&\frac12  \int_{f_1} \vec{\bN}^\upnu_i( 0,-1) \cdot 
+\left(\begin{array}{c} 0 \\ -1 \end{array}\right) \; dl \nn\\
+&=& \frac12\int_{f_1} 
+\left(\begin{array}{c} a_1+b_1\cdot 0 \\ a_2 + b_2 \cdot -1 \end{array}\right)
+\cdot \left(\begin{array}{c} 0 \\ -1 \end{array}\right) \; dl \nn\\
+&=& -\frac12 \int_{-1}^{+1} (a_2-b_2) dr \nn\\
+&=& -a_2+b_2
+\end{eqnarray}
+
+
+
+\begin{itemize}
+\item Case $i=1$. We have to solve
+\[
+\left(\begin{array}{cccc}
+1 & 0 & 1 & 0 \\
+0 & 1 & 0 & 1 \\
+-1 & 0 & 1 & 0\\
+0 & -1 & 0 & 1
+\end{array}\right)
+\cdot
+\left(\begin{array}{c}
+a_1 \\ a_2 \\ b_1 \\ b_2
+\end{array}\right)
+=
+\left(\begin{array}{c}
+1 \\ 0 \\ 0 \\ 0
+\end{array}\right)
+\]
+which yields
+$a_1=1/2$, $b_1=1/2$, $a_2=b_2=0$.
+
+
+\item Case $i=2$. We have to solve
+\[
+\left(\begin{array}{cccc}
+1 & 0 & 1 & 0 \\
+0 & 1 & 0 & 1 \\
+-1 & 0 & 1 & 0\\
+0 & -1 & 0 & 1
+\end{array}\right)
+\cdot
+\left(\begin{array}{c}
+a_1 \\ a_2 \\ b_1 \\ b_2
+\end{array}\right)
+=
+\left(\begin{array}{c}
+0 \\ 1 \\ 0 \\ 0
+\end{array}\right)
+\]
+which yields $a_1=0$, $b_1=0$, $a_2=1/2$, $b_2=1/2$.
+
+
+\item Case $i=3$. We have to solve
+\[
+\left(\begin{array}{cccc}
+1 & 0 & 1 & 0 \\
+0 & 1 & 0 & 1 \\
+-1 & 0 & 1 & 0\\
+0 & -1 & 0 & 1
+\end{array}\right)
+\cdot
+\left(\begin{array}{c}
+a_1 \\ a_2 \\ b_1 \\ b_2
+\end{array}\right)
+=
+\left(\begin{array}{c}
+0 \\ 0 \\ 1 \\ 0
+\end{array}\right)
+\]
+which $a_1=-1/2$, $b_1=1/2$, $a_2=0$, $b_2=0$.
+
+\item Case $i=4$. We have to solve
+\[
+\left(\begin{array}{cccc}
+1 & 0 & 1 & 0 \\
+0 & 1 & 0 & 1 \\
+-1 & 0 & 1 & 0\\
+0 & -1 & 0 & 1
+\end{array}\right)
+\cdot
+\left(\begin{array}{c}
+a_1 \\ a_2 \\ b_1 \\ b_2
+\end{array}\right)
+=
+\left(\begin{array}{c}
+0 \\ 0 \\ 0 \\ 1
+\end{array}\right)
+\]
+which yields 
+$a_1=0$, $b_1=0$, $a_2=-1/2$, $b_2=1/2$.
+
+\end{itemize}
+
+In the end we arrive at the following basis functions:
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\vec{\bN}^\upnu_1 (r,s) &=& 
+\left(\begin{array}{c} \frac12 (1+r) \\ 0 \end{array}\right) \nn\\
+\vec{\bN}^\upnu_2 (r,s) &=& 
+\left(\begin{array}{c} 0 \\ \frac12 (1+s)  \end{array}\right) \nn\\
+\vec{\bN}^\upnu_3 (r,s) &=& 
+\left(\begin{array}{c} \frac12 (-1+r) \\ 0 \end{array}\right) \nn\\
+\vec{\bN}^\upnu_4 (r,s) &=& 
+\left(\begin{array}{c} 0 \\ \frac12 (-1+s)  \end{array}\right)
+\end{eqnarray}
+\end{mdframed}
+
+
+
+%----------------------------
+\underline{\bf Tetrahedron, RT0}
+
+
+The basis functions in the reference triangle are defined as {\color{orange} i need a ref for this}
+\[
+\vec{\bN}_i(r,s,t)
+=\vec{a} + b  \left(\begin{array}{c} r\\s\\t \end{array}\right)
+=\left(\begin{array}{c} a_1+b r \\ a_2 + b s \\ a_3 + b t \end{array}\right)
+\qquad i=1,2,3,4
+\]
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (7,6); %background grid
+\draw [thick,->] (3,2) -- (0.5,0.5);
+\draw [thick,->] (3,2) -- (6.5,1.25);
+\draw [thick,->] (3,2) -- (3,5.5);
+\node[] at (0.5,0.75) {$r$};
+\node[] at (6.5,1.5) {$s$};
+\node[] at (3.25,5.5) {$t$};
+\draw[line width=.7mm] (1.8,1.28) -- (5.1,1.55) -- (3,4.2)  --cycle;   
+\draw [thick,teal,->] (2.7,2.5) -- (1.25,2.75); \node[teal] at (1,2.75) {$3$};
+\draw [thick,teal,->] (3.6,2.5) -- (4.6,3.1); \node[teal] at (4.75,3) {$2$};
+\draw [thick,teal,->] (3.4,2.5) -- (4.2,3.5); \node[teal] at (4,3.7) {$1$};
+\draw [thick,teal,->] (3.25,1.6) -- (3.25,0.35); \node[teal] at (3.5,0.25) {$4$};
+\end{tikzpicture}
+\end{center}
+
+
+
+\begin{itemize}
+\item face $j=1$. We can write for the first face (the middle of this face has coordinates 
+$\vec{x}_1=(1/3,1/3,1/3)$, the normal is $\vec{n}_1=\frac{1}{\sqrt3}(1,1,1)$):
+
+\begin{eqnarray}
+\delta_{i1}=
+\frac{1}{|f_1|} \iint_{f_1}
+\vec{\bN}^\upnu_i( \vec{x}_1) \cdot \vec{n}_1 \; dS
+&=&\frac{1}{|f_1|} \iint_{f_1} \vec{\bN}^\upnu_i( 1/3,1/3,1/3) \cdot 
+\frac{1}{\sqrt3}\left(\begin{array}{c} 1 \\ 1 \\1 \end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_1|} \iint_{f_1} 
+\left(\begin{array}{c} a_1+b\cdot 1/3 \\ a_2 + b \cdot 1/3 \\ a_3 + b \cdot 1/3 \end{array}\right)
+\cdot \frac{1}{\sqrt3} \left(\begin{array}{c} 1 \\ 1 \\ 1 \end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_1|} \iint_{f_1} (a_1+a_2+a_3 + b) dS \nn\\
+&=& \frac{1}{\sqrt 3} (a_1+a_2+a_3+b)
+\end{eqnarray}
+
+\item face $j=2$. We can write for the first face (the middle of this face has coordinates 
+$\vec{x}_1=(0,1/3,1/3)$, the normal is $\vec{n}_1=(-1,0,0)$):
+
+\begin{eqnarray}
+\delta_{i2}=
+\frac{1}{|f_2|} \iint_{f_2}
+\vec{\bN}^\upnu_i( \vec{x}_1) \cdot \vec{n}_1 \; dS
+&=&\frac{1}{|f_2|} \iint_{f_2} \vec{\bN}^\upnu_i( 0,1/3,1/3) \cdot 
+\left(\begin{array}{c} -1\\0\\0 \end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_2|} \iint_{f_2} 
+\left(\begin{array}{c} a_1+b\cdot 0 \\ a_2 + b \cdot 1/3 \\ a_3 + b \cdot 1/3 \end{array}\right)
+\cdot  \left(\begin{array}{c} -1\\0\\0 \end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_2|} \iint_{f_2} (-a_1) dS \nn\\
+&=& -a_1
+\end{eqnarray}
+
+\item face $j=3$. We can write for the first face (the middle of this face has coordinates 
+$\vec{x}_1=(1/3,0,1/3)$, the normal is $\vec{n}_1=(0,-1,0)$):
+
+\begin{eqnarray}
+\delta_{i3}=
+\frac{1}{|f_3|} \iint_{f_3}
+\vec{\bN}^\upnu_i( \vec{x}_1) \cdot \vec{n}_1 \; dS
+&=&\frac{1}{|f_3|} \iint_{f_3} \vec{\bN}^\upnu_i( 1/3,0,1/3) \cdot 
+\left(\begin{array}{c} 0\\-1\\0 \end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_3|} \iint_{f_3} 
+\left(\begin{array}{c} a_1+b\cdot 1/3 \\ a_2 + b \cdot 0 \\ a_3 + b \cdot 1/3 \end{array}\right)
+\cdot  \left(\begin{array}{c} 0\\-1\\0 \end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_3|} \iint_{f_3} (-a_2) dS \nn\\
+&=& -a_2
+\end{eqnarray}
+
+
+
+\item face $j=4$. We can write for the first face (the middle of this face has coordinates 
+$\vec{x}_1=(1/3,1/3,0)$, the normal is $\vec{n}_1=(0,0,-1)$):
+
+\begin{eqnarray}
+\delta_{i4}=
+\frac{1}{|f_4|} \iint_{f_4}
+\vec{\bN}^\upnu_i( \vec{x}_1) \cdot \vec{n}_1 \; dS
+&=&\frac{1}{|f_4|} \iint_{f_4} \vec{\bN}^\upnu_i( 1/3,1/3,0) \cdot 
+\left(\begin{array}{c} 0\\0\\-1 \end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_4|} \iint_{f_4} 
+\left(\begin{array}{c} a_1+b\cdot 1/3 \\ a_2 + b \cdot 1/3 \\ a_3 + b \cdot  0\end{array}\right)
+\cdot  \left(\begin{array}{c} 0\\0\\-1 \end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_4|} \iint_{f_4} (-a_3) dS \nn\\
+&=& -a_3
+\end{eqnarray}
+
+\end{itemize}
+
+
+
+\begin{itemize}
+\item Case $i=1$. We have to solve
+\[
+\left(\begin{array}{cccc}
+1/\sqrt3 & 1/\sqrt3 & 1/\sqrt3 & 1/\sqrt3 \\
+-1 & 0 & 0 & 0 \\
+0 & -1 & 0 & 0 \\
+0 & 0 & -1 & 0
+\end{array}\right)
+\cdot
+\left(\begin{array}{c}
+a_1 \\ a_2 \\ a_3 \\ b
+\end{array}\right)
+=
+\left(\begin{array}{c}
+1 \\ 0 \\ 0 \\ 0
+\end{array}\right)
+\]
+which yields $a_1=a_2=a_3=0$ and $b=1/\sqrt3$.
+
+\item Case $i=2$. We have to solve
+\[
+\left(\begin{array}{cccc}
+1/\sqrt3 & 1/\sqrt3 & 1/\sqrt3 & 1/\sqrt3 \\
+-1 & 0 & 0 & 0 \\
+0 & -1 & 0 & 0 \\
+0 & 0 & -1 & 0
+\end{array}\right)
+\cdot
+\left(\begin{array}{c}
+a_1 \\ a_2 \\ a_3 \\ b
+\end{array}\right)
+=
+\left(\begin{array}{c}
+0 \\ 1 \\ 0 \\ 0
+\end{array}\right)
+\]
+
+which yields $a_2=a_3=0$, $a_1=-1$ and $b=-a_1=1$.
+
+\item Case $i=3$. We have to solve
+\[
+\left(\begin{array}{cccc}
+1/\sqrt3 & 1/\sqrt3 & 1/\sqrt3 & 1/\sqrt3 \\
+-1 & 0 & 0 & 0 \\
+0 & -1 & 0 & 0 \\
+0 & 0 & -1 & 0
+\end{array}\right)
+\cdot
+\left(\begin{array}{c}
+a_1 \\ a_2 \\ a_3 \\ b
+\end{array}\right)
+=
+\left(\begin{array}{c}
+0 \\ 0 \\ 1 \\ 0
+\end{array}\right)
+\]
+which yields $a_1=a_3=0$, $a_2=-1$ and $b=-a_2=1$.
+
+\item Case $i=4$. We have to solve
+\[
+\left(\begin{array}{cccc}
+1/\sqrt3 & 1/\sqrt3 & 1/\sqrt3 & 1/\sqrt3 \\
+-1 & 0 & 0 & 0 \\
+0 & -1 & 0 & 0 \\
+0 & 0 & -1 & 0
+\end{array}\right)
+\cdot
+\left(\begin{array}{c}
+a_1 \\ a_2 \\ a_3 \\ b
+\end{array}\right)
+=
+\left(\begin{array}{c}
+0 \\ 0 \\ 0 \\ 1
+\end{array}\right)
+\]
+which yields $a_1=a_2=0$, $a_3=-1$ and $b=-a_3=1$.
+
+\end{itemize}
+
+In the end
+
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\vec{\bN}^\upnu_1 (r,s) &=& \frac{1}{\sqrt3}
+\left(\begin{array}{c} r \\s \\ t \end{array}\right) \nn\\
+\vec{\bN}^\upnu_2 (r,s) &=& 
+\left(\begin{array}{c} -1+r \\ s \\t\end{array}\right) \nn\\
+\vec{\bN}^\upnu_3 (r,s) &=& 
+\left(\begin{array}{c} r \\ -1+s \\t \end{array}\right) \nn\\
+\vec{\bN}^\upnu_4 (r,s) &=& 
+\left(\begin{array}{c} r\\s\\-1+t \end{array}\right)
+\end{eqnarray}
+\end{mdframed}
+
+
+%----------------------------
+\underline{\bf Hexahedron, RT0}
+
+
+
+The basis functions in the reference triangle are defined as {\color{orange} i need a ref for this}
+\[
+\vec{\bN}_i(r,s,t)
+=\vec{a} + b  \left(\begin{array}{c} r\\s\\t \end{array}\right)
+=\left(\begin{array}{c} a_1+b_1 r \\ a_2 + b_2 s \\ a_3 + b_3 t \end{array}\right)
+\qquad i=1,2,3,4,5,6
+\]
+
+
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (8,7); %background grid
+
+\draw [thin,->] (4,3) -- (1,1.4); % r
+\draw [thin,->] (4,3) -- (7.5,2.45); % s
+\draw [thin,->] (4,3) -- (4,6.5); % t
+
+\node[] at (1,1.2) {$r$};
+\node[] at (7.2,2.2) {$s$};
+\node[] at (4.3,6.6) {$t$};
+\draw[line width=.7mm] (4.5,0.8) -- (6.1,1.8) -- (6.1,4.8) --(4.5,3.8) --cycle; %face 2  
+\draw[line width=.7mm] (4.5,0.8) -- (4.5,3.8) -- (1.9,4.4) --(1.9,1.4) --cycle;  % face 1
+\draw[line width=.7mm] (1.9,4.4) -- (4.5,3.8) -- (6.1,4.8) --(3.5,5.4) --cycle;
+
+\draw[dashed] (1.9,1.4)--(3.5,2.4) -- (6.1,1.8);
+\draw[dashed] (3.5,5.4)--(3.5,2.4) ;
+
+\draw[dashed,gray] (4.5,0.8)--(6.1,4.8) ; %face 2
+\draw[dashed,gray] (4.5,3.8)--(6.1,1.8) ; %face 2
+
+\draw[dashed,gray] (1.9,4.4)--(6.1,4.8) ; %face 3
+\draw[dashed,gray] (3.5,5.4)--(4.5,3.8) ; %face 3
+
+\draw[dashed,gray] (1.9,1.4)--(4.5,3.8); %face 1
+\draw[dashed,gray] (1.9,4.4)--(4.5,0.8); % face1
+
+
+\draw [very thick,teal,->] (3.2,2.6) -- (2.5,2.2); \node[teal] at (2.3,2.5) {$1$};
+\draw [very thick,teal,->] (5.3,2.8) -- (6,2.7); \node[teal] at (5.8,3) {$2$};
+\draw [very thick,teal,->] (4,4.6) -- (4,6); \node[teal] at (4.3,6) {$3$};
+
+\end{tikzpicture}
+\end{center}
+
+
+In this case all faces have the same length, i.e. $|f_j|=4$.
+
+\begin{itemize}
+\item face $j=1$. We can write for the first face (the middle of this face has coordinates 
+$\vec{x}_1=(1,0,0)$, the normal is $\vec{n}_1=(1,0,0)$):
+
+
+\begin{eqnarray}
+\delta_{i1}=
+\frac{1}{|f_1|} \iint_{f_1}
+\vec{\bN}^\upnu_i( \vec{x}_1) \cdot \vec{n}_1 \; dS
+&=&\frac{1}{|f_1|} \iint_{f_1} \vec{\bN}^\upnu_i( 1,0,0) \cdot 
+\left(\begin{array}{c} 1 \\ 0  \\ 0\end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_1|} \iint_{f_1} 
+\left(\begin{array}{c} a_1+b_1\cdot 1 \\ a_2 + b_2 \cdot 0 \\ a_3 + b_3\cdot 0 \end{array}\right)
+\cdot \left(\begin{array}{c} 1 \\ 0 \\ 0 \end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_1|} \iint_{f_1} (a_1+b_1) dS \nn\\
+&=& a_1+b_1
+\end{eqnarray}
+
+
+\item face $j=2$. We can write for the first face (the middle of this face has coordinates 
+$\vec{x}_2=(0,1,0)$, the normal is $\vec{n}_2=(0,1,0)$):
+
+\begin{eqnarray}
+\delta_{i2}=
+\frac{1}{|f_2|} \iint_{f_2}
+\vec{\bN}^\upnu_i( \vec{x}_2) \cdot \vec{n}_2 \; dS
+&=&\frac{1}{|f_2|} \iint_{f_2} \vec{\bN}^\upnu_i( 0,1,0) \cdot 
+\left(\begin{array}{c} 0 \\ 1  \\ 0\end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_2|} \iint_{f_2} 
+\left(\begin{array}{c} a_1+b_1\cdot 0 \\ a_2 + b_2 \cdot 1 \\ a_3 + b_3\cdot 0 \end{array}\right)
+\cdot \left(\begin{array}{c} 0 \\ 1 \\ 0 \end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_2|} \iint_{f_2} (a_2+b_2) dS \nn\\
+&=& a_2+b_2
+\end{eqnarray}
+
+
+\item face $j=3$. We can write for the first face (the middle of this face has coordinates 
+$\vec{x}_3=(0,0,1)$, the normal is $\vec{n}_3=(0,0,1)$):
+
+
+\begin{eqnarray}
+\delta_{i3}=
+\frac{1}{|f_3|} \iint_{f_3}
+\vec{\bN}^\upnu_i( \vec{x}_3) \cdot \vec{n}_3 \; dS
+&=&\frac{1}{|f_3|} \iint_{f_3} \vec{\bN}^\upnu_i( 0,0,1) \cdot 
+\left(\begin{array}{c} 0 \\ 0  \\ 1\end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_3|} \iint_{f_3} 
+\left(\begin{array}{c} a_1+b_1\cdot 0 \\ a_2 + b_2 \cdot 0 \\ a_3 + b_3\cdot 1 \end{array}\right)
+\cdot \left(\begin{array}{c} 0 \\ 0 \\ 1 \end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_3|} \iint_{f_3} (a_3+b_3) dS \nn\\
+&=& a_3+b_3
+\end{eqnarray}
+
+
+
+\item face $j=4$. We can write for the first face (the middle of this face has coordinates 
+$\vec{x}_4=(-1,0,0)$, the normal is $\vec{n}_4=(-1,0,0)$):
+
+
+\begin{eqnarray}
+\delta_{i4}=
+\frac{1}{|f_4|} \iint_{f_1}
+\vec{\bN}^\upnu_i( \vec{x}_4) \cdot \vec{n}_4 \; dS
+&=&\frac{1}{|f_4|} \iint_{f_4} \vec{\bN}^\upnu_i( -1,0,0) \cdot 
+\left(\begin{array}{c} -1 \\ 0  \\ 0\end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_4|} \iint_{f_4} 
+\left(\begin{array}{c} a_1+b_1\cdot -1 \\ a_2 + b_2 \cdot 0 \\ a_3 + b_3\cdot 0 \end{array}\right)
+\cdot \left(\begin{array}{c} -1 \\ 0 \\ 0 \end{array}\right) \; dS \nn\\
+&=& -\frac{1}{|f_4|} \iint_{f_4} (a_1-b_1) dS \nn\\
+&=& -a_1+b_1
+\end{eqnarray}
+
+
+\item face $j=5$. We can write for the first face (the middle of this face has coordinates 
+$\vec{x}_5=(0,-1,0)$, the normal is $\vec{n}_5=(0,-1,0)$):
+
+\begin{eqnarray}
+\delta_{i5}=
+\frac{1}{|f_5|} \iint_{f_5}
+\vec{\bN}^\upnu_i( \vec{x}_5) \cdot \vec{n}_5 \; dS
+&=&\frac{1}{|f_5|} \iint_{f_5} \vec{\bN}^\upnu_i( 0,-1,0) \cdot 
+\left(\begin{array}{c} 0 \\ 1  \\ 0\end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_5|} \iint_{f_5} 
+\left(\begin{array}{c} a_1+b_1\cdot 0 \\ a_2 + b_2 \cdot -1 \\ a_3 + b_3\cdot 0 \end{array}\right)
+\cdot \left(\begin{array}{c} 0 \\ -1 \\ 0 \end{array}\right) \; dS \nn\\
+&=& -\frac{1}{|f_5|} \iint_{f_5} (a_2-b_2) dS \nn\\
+&=& -a_2+b_2
+\end{eqnarray}
+
+
+\item face $j=6$. We can write for the first face (the middle of this face has coordinates 
+$\vec{x}_6=(0,0,-1)$, the normal is $\vec{n}_6=(0,0,-1)$):
+
+
+\begin{eqnarray}
+\delta_{i6}=
+\frac{1}{|f_6|} \iint_{f_6}
+\vec{\bN}^\upnu_i( \vec{x}_6) \cdot \vec{n}_6 \; dS
+&=&\frac{1}{|f_6|} \iint_{f_6} \vec{\bN}^\upnu_i( 0,0,-1) \cdot 
+\left(\begin{array}{c} 0 \\ 0  \\ 1\end{array}\right) \; dS \nn\\
+&=& \frac{1}{|f_6|} \iint_{f_6} 
+\left(\begin{array}{c} a_1+b_1\cdot 0 \\ a_2 + b_2 \cdot 0 \\ a_3 + b_3\cdot -1 \end{array}\right)
+\cdot \left(\begin{array}{c} 0 \\ 0 \\ -1 \end{array}\right) \; dS \nn\\
+&=& -\frac{1}{|f_6|} \iint_{f_6} (a_3-b_3) dS \nn\\
+&=& -a_3+b_3
+\end{eqnarray}
+
+\end{itemize}
+
+
+----------------------------------------------
+
+\begin{itemize}
+\item Case $i=1$. We have to solve
+\[
+\left(\begin{array}{cccccc}
+1 & 0 & 0 & 1 & 0 & 0 \\
+0 & 1 & 0 & 0 & 1 & 0 \\
+0 & 0 & 1 & 0 & 0 & 1 \\
+-1 & 0 & 0 & 1 & 0 & 0 \\
+0 & -1 & 0 & 0 & 1 & 0 \\
+0 & 0 & -1 & 0 & 0 & 1 
+\end{array}\right)
+\cdot
+\left(\begin{array}{c}
+a_1 \\ a_2 \\ a_3 \\ b_1 \\ b_2 \\ b_3
+\end{array}\right)
+=
+\left(\begin{array}{c}
+1 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0
+\end{array}\right)
+\]
+which yields
+$a_1=1/2$, $b_1=1/2$, $a_2=b_2=a_3=b_3=0$.
+
+\item Case $i=2,3,4,5,6$. On the base of what is above and the derivations for the 
+quadrilateral, I need not got through this.
+
+\end{itemize}
+
+The basis functions are then
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\vec{\bN}^\upnu_1 (r,s,t) &=& 
+\left(\begin{array}{c} \frac12 (1+r) \\ 0 \\ 0\end{array}\right) \nn\\
+\vec{\bN}^\upnu_2 (r,s,t) &=& 
+\left(\begin{array}{c} 0 \\ \frac12 (1+s) \\0 \end{array}\right) \nn\\
+\vec{\bN}^\upnu_3 (r,s,t) &=& 
+\left(\begin{array}{c} 0 \\  0 \\\frac12 (1+t)  \end{array}\right) \nn\\
+\vec{\bN}^\upnu_4 (r,s,t) &=& 
+\left(\begin{array}{c} \frac12 (-1+r) \\ 0 \\ 0 \end{array}\right) \nn\\
+\vec{\bN}^\upnu_5 (r,s,t) &=& 
+\left(\begin{array}{c} 0 \\ \frac12 (-1+s)  \\ 0 \end{array}\right) \nn\\
+\vec{\bN}^\upnu_6 (r,s,t) &=& 
+\left(\begin{array}{c} 0 \\ 0 \\\frac12 (-1+t)  \end{array}\right)
+\end{eqnarray}
+\end{mdframed}
+
+
+
+----------------------------------------------------------------
+
+-Check \textcite{brfo}
+
+\Literature: \fullcite{arbf05},
+\fullcite{baca05} , \fullcite{weso19}, 
+\fullcite{rath77} 
