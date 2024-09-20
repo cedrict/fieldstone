@@ -1,8 +1,27 @@
 \begin{flushright} {\tiny {\color{gray} \tt pair\_raviart\_thomas.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-{\color{orange} Work in Progress}
+This element is substantially more complicated than most of the others
+in FieldStone so I have proceeded systematically by 
+scanning the literature (i.e. textbooks mostly) for 
+useful definitions and statements. What follows is mostly a collection
+of relevant/interesting statements.  
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+There is an entire chapter (14) of \textcite{ergu21_72} dedicated to 
+Raviart-Thomas elements and $H(div)$.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Likewise Chapter 3 of \textcite{gatica} is dedicated to Raviart-Thomas spaces.
+
+Conerning the Stokes equations, 
+I have found a reference\footnote{\url{https://lyc102.github.io/ifem/fem/StokesRT0femrate/}}
+that uses the stable element RT0-P0 (the lowest order Raviart-Thomas element for velocity 
+and piecewise constant for pressure) of Stokes equations in 2-D.
+
+
  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In \textcite{hald03} (2003) we find: 
 \begin{displayquote}
 {\color{darkgray}
@@ -14,6 +33,7 @@ the resulting scheme is very close to a finite volume scheme.
 }
 \end{displayquote}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 It is mentioned in \textcite{john16}, appendix B.3, example B.45: 
 \begin{displayquote}
 {\color{darkgray}
@@ -24,6 +44,7 @@ continuous across faces of the mesh cells.
 \end{displayquote}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In \textcite{chen93a} (1993) we read:
 \begin{displayquote}
 {\color{darkgray}
@@ -37,6 +58,7 @@ also for deriving error estimates.
 \end{displayquote}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 There is an entry on Wikipedia\footnote{\url{
 https://en.wikipedia.org/wiki/Raviart-Thomas_basis_functions
 }} but it is short and not so useful, except for
@@ -48,6 +70,7 @@ functions when working in electromagnetics.
 }
 \end{displayquote}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 There is also a useful entry on Stackexchange\footnote{\url{
 https://scicomp.stackexchange.com/questions/20245/raviart-thomas-elements-on-reference-square}}:
 \begin{displayquote}
@@ -103,7 +126,8 @@ of basis functions is always invertible).
 
 
 
-In \textcite{kanschat}  we find:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In \textcite{kanschat17}  we find:
 \begin{displayquote}
 {\color{darkgray}
 
@@ -130,19 +154,29 @@ dim(RT_k)|_{3D} = \frac12(k+1)(k+2)(k+4)
 \begin{center}
 \includegraphics[width=6cm]{images/pair_raviart-thomas/RT_kanschat_T}
 \includegraphics[width=6cm]{images/pair_raviart-thomas/RT_kanschat_Q}\\
-{\captionfont Examples 4.2.10 and 4.2.37.}
+{\captionfont Examples 4.2.10 and 4.2.37 of \textcite{kanschat17}.
+The first members of the Raviart-Thomas family on triangles and quadrilaterals.
+}
 \end{center}
+
+The construction principle of the Raviart-Thomas element on simplices as well
+as on rectangles and cubes can be seen as adding vector polynomials to the
+velocity space until its divergence is equal to ${\mathbb P}_k$ or ${\mathbb Q}_k$ .
+
+The Raviart-Thomas element of degree $k\ge 0$
+on the reference cell $\hat{T}=[-1,1]^d$ consists of the polynomial space
+\[
+RT_k(\hat{T}) = {\mathbb Q}_k^d(\hat{T}) + x {\mathbb Q}_k(\hat{T})
+\]
+and we have
+\[
+dim(RT_k) = d(k+1)^{d-1}(k+2)
+\]
 
 }
 \end{displayquote}
 
-
-
-
-
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This element is implemented in deal.ii and we 
 read\footnote{\url{https://www.dealii.org/current/doxygen/deal.II/classFE__RaviartThomas.html}}:
@@ -179,6 +213,7 @@ implies that the approximation order of the function itself is degree+1, as with
 }
 \end{displayquote}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Elsewhere in the deal.II library\footnote{\url{https://www.dealii.org/current/doxygen/deal.II/classPolynomialsRaviartThomas.html}} we read
 \begin{displayquote}
 {\color{darkgray}
@@ -190,6 +225,7 @@ $(Q_{k+1,k}, Q_{k,k+1})$ and $(Q_{k+1,k,k}, Q_{k,k+1,k}, Q_{k,k,k+1})$ in 2d and
 \end{displayquote}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In John's book \cite{john16} we find:
 \begin{displayquote}
 {\color{darkgray}
@@ -236,6 +272,7 @@ Thus, the normal component of ${\bm v}$ on each face is a constant.
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 On the defelement site\footnote{\url{https://defelement.com/elements/raviart-thomas.html}} we find 
 that it is defined on triangles, tetrahedra, quadilaterals and hexahedra.
 with the number of dofs defined as follows:
@@ -246,12 +283,138 @@ with the number of dofs defined as follows:
 \item hexahedron: $3k^2(k+1)$
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In \textcite{brfo} (1991) we read:
 
 
-\vspace{.5cm}
+\begin{displayquote}
+{\color{darkgray}
+On triangles we know that $RT_0$ is a space of dimension 3 containing polynomials of the form
+\begin{eqnarray}
+q_1(x,y)&=&a+cx \nn\\
+q_2(x,y)&=&b+cy \nn
+\end{eqnarray}
+
+\begin{center}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/brfo1}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/brfo2}
+\end{center}
+The simplest cases of three-dimensional elements are depicted here:
+\begin{center}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/brfo3}
+\includegraphics[width=3cm]{images/pair_raviart-thomas/brfo4}
+\end{center}
+
+We now consider the extension of the previous construction to rectangular 
+elements
+In the present case, the use of a reference element is essential and we shall build
+our space on $\hat{K}=]-1,1[^n$. Contrarily to the simplicial case, it will be
+simpler here to first introduce the approximations of Raviart and Thomas.
+Let us thus define, as in the previous section,
+\[
+RT_{[k]} = (Q_k)^n + \underline{x} Q_k
+\]
+It can be checked that one has
+\begin{eqnarray}
+RT_{[k]}|_{n=2} &=& P_{k+1,k} \times P_{k,k+1} \nn\\
+RT_{[k]}|_{n=3} &=& P_{k+1,k,k} \times P_{k,k+1,k} \times P_{k,k,k+1} \nn
+\end{eqnarray}
+and 
+\[
+dim(RT_{[k]}|_{n=2} = 2(k+1)(k+2)
+\]
+\[
+dim(RT_{[k]}|_{n=3} = 3(k+1)^2(k+2)
+\]
+
+}
+\end{displayquote}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In \textcite{LarsonBengzon} we read: 
+\begin{displayquote}
+{\color{darkgray}
+Not all finite elements are scalar and there are also vector valued elements. As
+the name suggests, vector valued elements are used to approximate vector valued
+functions. One such element is the Raviart-Thomas element, which is designed to
+mimic the Hilbert space
+\[
+H(div; \Omega) = \{ v\in [L^2(\Omega)]^2 : \nabla \cdot v \in L^2(\Omega) \}
+\]
+That is, the space of all vectors with bounded divergence. A simple application
+of Green’s formula shows that all such functions must have continuous normal
+components, which is the basic design feature of the Raviart-Thomas element.
+
+
+
+Actually there is a whole family of Raviart Thomas elements, but we shall only
+study the simplest of them called the RT0 element. On a triangle $K$ the polynomial
+space for $RT_0$ is given by $P=[P_0(K)]^2 + [x_1,x_2]^T P_0(K)$
+, that is, all vectors of the form 
+\[
+v = \left[ \begin{array}{c} a_1 \\ a_2 \end{array} \right]
++ b\left[ \begin{array}{c} x_1 \\ x_2 \end{array} \right]
+\]
+for some coefficients $a_1$ , $a_2$ , and $b$.
+
+If the normal is chosen consistently on each edge in the mesh, then by
+construction is the $RT_0$ shape functions are continuous in the normal direction
+across the edge of any two adjacent elements. This ensures that the $RT_0$ functions
+belong to $H(div,\Omega)$.
+
+The isoparametric map can not be used for $RT_0$ elements, since the divergence
+is not preserved by this mapping.
+
+The Raviart-Thomas elements typically find application in acoustics and
+elasticity.
+
+\begin{center}
+\includegraphics[width=11cm]{images/pair_raviart-thomas/larsonbengzon}
+\end{center}
+
+}
+\end{displayquote}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In \textcite{lomw12} we find:
+\begin{displayquote}
+{\color{darkgray}
+The Sobolev space $H(div)$ consists of vector fields for which the 
+components and the weak divergence are square-integrable. This is a 
+weaker requirement than for a $d$-vector field to be in $[H^1]^d$ (for $d\ge 2$).
+This space naturally occurs in connection with mixed formulations 
+of second-order elliptic problems,
+porous media flow, and elasticity equations. For a finite element 
+family to be $H(div)$-conforming, each component need not be continuous, 
+but the normal component must be continuous. In order
+to ensure such continuity, the degrees of freedom of $H(div)$-conforming 
+elements usually include normal components on element facets.
+The two main families of $H(div)$-conforming elements are the Raviart–Thomas 
+and Brezzi-Douglas-Marini elements.
+
+The Raviart–Thomas element was introduced by Raviart and Thomas (1977). 
+It was the first element to discretize the mixed form of second-order 
+elliptic equations on triangles. Its element space ${\cal V}$
+is designed so that it is the smallest polynomial space 
+${\cal V} \subset {\cal P}_q(T)$, for $q=1,2,...$, from which
+the divergence maps onto ${\cal P}_{q-1}(T)$. 
+Shortly thereafter, it was extended to tetrahedra and boxes by
+Nédélec (1980). It is therefore sometimes referred to as the 
+Raviart-Thomas-Nédélec element.
+}
+\end{displayquote}
+
+
+
+
+\newpage
 \noindent
 %......................................................................
 \underline{\bf Degree 1 Raviart–Thomas on a triangle - Lagrange variant}
+
+\url{https://defelement.com/elements/examples/triangle-raviart-thomas-lagrange-1.html}
 
 \begin{center}
 \includegraphics[width=3.3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-1-dofs-large}
@@ -261,7 +424,7 @@ with the number of dofs defined as follows:
 {\captionfont Taken from \url{https://defelement.com/}}
 \end{center}
 
-${\cal V}$ is a finite dimensional polynomial space on the element of dimension $3$ and is spanned by 
+${\cal V}$ is a finite dimensional polynomial space on the element of dimension $3$ and is spanned by \cite{ergu21_72} 
 \[
 \left( \begin{array}{c} 1 \\ 0  \end{array} \right),
 \left( \begin{array}{c} 0 \\ 1  \end{array} \right),
@@ -291,6 +454,55 @@ We have then
 \vec{\bN}_2(r,s) = \left( \begin{array}{c} -r \\ 1-s  \end{array} \right)
 \]
 These DOFs are associated with edge 0,1,2 of the reference element.
+
+\vspace{.5cm}
+\noindent
+%......................................................................
+\underline{\bf Degree 2 Raviart–Thomas on a triangle - Lagrange variant}
+
+\url{https://defelement.com/elements/examples/triangle-raviart-thomas-lagrange-2.html}
+
+\begin{center}
+\includegraphics[width=3.3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-2-dofs}
+\includegraphics[width=3.3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-2-0}
+\includegraphics[width=3.3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-2-1}
+\includegraphics[width=3.3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-2-2}
+\includegraphics[width=3.3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-2-3}
+\includegraphics[width=3.3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-2-4}
+\includegraphics[width=3.3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-2-5}
+\includegraphics[width=3.3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-2-6}
+\includegraphics[width=3.3cm]{images/pair_raviart-thomas/element-Raviart-Thomas-variant-equispaced-triangle-2-7}\\
+{\captionfont Taken from \url{https://defelement.com/}}
+\end{center}
+
+
+${\cal V}$ is spanned by:
+\[
+\left( \begin{array}{c} 1 \\ 0  \end{array} \right),
+\left( \begin{array}{c} 0 \\ 1  \end{array} \right),
+\left( \begin{array}{c} r \\ 0  \end{array} \right),
+\left( \begin{array}{c} 0 \\ r  \end{array} \right),
+\left( \begin{array}{c} s \\ 0  \end{array} \right),
+\left( \begin{array}{c} 0 \\ s  \end{array} \right),
+\left( \begin{array}{c} r^2 \\ rs  \end{array} \right),
+\left( \begin{array}{c} rs \\ s^2  \end{array} \right)
+\]
+This basis is also found in \cite{ergu21_72}, example 14.5 (p.163).
+
+We have then
+\begin{eqnarray}
+\vec{\bN}_0(r,s) &=& \left( \begin{array}{c} 4r(1-2r)\\2s(1-4r)  \end{array} \right) \nn\\
+\vec{\bN}_1(r,s) &=& \left( \begin{array}{c} 2r(1-4s)\\4s(1-2s)  \end{array} \right) \nn\\
+\vec{\bN}_2(r,s) &=& \left( \begin{array}{c} -8r^2-8rs+12r+6s-4\\2s(-4r-4s+3)  \end{array} \right) \nn\\
+\vec{\bN}_3(r,s) &=& \left( \begin{array}{c} 8rs-2r-6s+2\\4s(2s-1)  \end{array} \right) \nn\\
+\vec{\bN}_4(r,s) &=& \left( \begin{array}{c} 2r(4r+4s-3)\\8rs-6r+8s^2-12s+4  \end{array} \right) \nn\\
+\vec{\bN}_5(r,s) &=& \left( \begin{array}{c} 4r(1-2r)\\-8rs+6r+2s-2  \end{array} \right) \nn\\
+\vec{\bN}_6(r,s) &=& \left( \begin{array}{c} 8r(-2r-s+2)\\8s(-2r-s+1)  \end{array} \right) \nn\\
+\vec{\bN}_7(r,s) &=& \left( \begin{array}{c} 8r(-r-2s+1)\\8s(-r-2s+2)  \end{array} \right) \nn
+\end{eqnarray}
+These DOFs are associated with edge 0,1,2 of the reference element.
+
+
 
 
 
@@ -440,7 +652,8 @@ What follows is mostly to be found in \textcite{weso19} (2019).
 Let us consider a triangulation ${\cal T}_h$ of the domain $\Omega$ 
 using triangles or quadrilaterals in 2D and tetrahedrons or
 hexahedrons in 3D. For simplicity, edges of elements in 2D will be called as faces, 
-and faces in both 2D and 3D will be denoted by $f_j$ . The discrete velocity space is defined as
+and faces in both 2D and 3D will be denoted by $f_j$ . The discrete velocity space is defined as 
+\cite{ergu21_72}
 \[
 {\cal V}_h = \{ \vec{\upnu} | \vec{\upnu}_{|K}  \in RT_0(K) , K\in {\cal T}_h \text{ and } \vec\in {\cal V} \}
 \]
@@ -1246,7 +1459,6 @@ The basis functions are then
 
 ----------------------------------------------------------------
 
--Check \textcite{brfo}
 
 \Literature: \fullcite{arbf05},
 \fullcite{baca05} , \fullcite{weso19}, 
