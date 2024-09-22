@@ -1,6 +1,8 @@
 \begin{flushright} {\tiny {\color{gray} \tt pair\_raviart\_thomas.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+\subsection{What the literature says}
+
 This element is substantially more complicated than most of the others
 in FieldStone so I have proceeded systematically by 
 scanning the literature (i.e. textbooks mostly) for 
@@ -8,12 +10,19 @@ useful definitions and statements. What follows is mostly a collection
 of relevant/interesting statements.  
 
 
+
+\begin{itemize}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
 There is an entire chapter (14) of \textcite{ergu21_72} dedicated to 
-Raviart-Thomas elements and $H(div)$.
+Raviart-Thomas elements and $H(\text{div})$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
 Likewise Chapter 3 of \textcite{gatica} is dedicated to Raviart-Thomas spaces.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
 Conerning the Stokes equations, 
 I have found a reference\footnote{\url{https://lyc102.github.io/ifem/fem/StokesRT0femrate/}}
 that uses the stable element RT0-P0 (the lowest order Raviart-Thomas element for velocity 
@@ -22,18 +31,20 @@ and piecewise constant for pressure) of Stokes equations in 2-D.
 
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
 In \textcite{hald03} (2003) we find: 
 \begin{displayquote}
 {\color{darkgray}
 $P_1^\perp \times P_0$ symbol denotes an element with 
 normal velocity nodes in the middle of each edge of the
 triangulation [...]. This element, also called low order Raviart–Thomas element 
-(Raviart and Thomas, 1977), is based on flux conservation on elements edges and 
+(Raviart and Thomas, 1977 \cite{rath77}), is based on flux conservation on elements edges and 
 the resulting scheme is very close to a finite volume scheme.
 }
 \end{displayquote}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
 It is mentioned in \textcite{john16}, appendix B.3, example B.45: 
 \begin{displayquote}
 {\color{darkgray}
@@ -45,6 +56,7 @@ continuous across faces of the mesh cells.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item
 In \textcite{chen93a} (1993) we read:
 \begin{displayquote}
 {\color{darkgray}
@@ -59,6 +71,7 @@ also for deriving error estimates.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item
 There is an entry on Wikipedia\footnote{\url{
 https://en.wikipedia.org/wiki/Raviart-Thomas_basis_functions
 }} but it is short and not so useful, except for
@@ -71,6 +84,7 @@ functions when working in electromagnetics.
 \end{displayquote}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item
 There is also a useful entry on Stackexchange\footnote{\url{
 https://scicomp.stackexchange.com/questions/20245/raviart-thomas-elements-on-reference-square}}:
 \begin{displayquote}
@@ -127,6 +141,7 @@ of basis functions is always invertible).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item
 In \textcite{kanschat17}  we find:
 \begin{displayquote}
 {\color{darkgray}
@@ -143,16 +158,14 @@ there holds
 dim(RT_k) = (d+1) dim({\mathbb P}_k) - dim({\mathbb P}_{k-1})
 \]
 In particular:
-\[
-dim(RT_k)|_{2D} = (k+1)(k+3)
-\]
-\[
-dim(RT_k)|_{3D} = \frac12(k+1)(k+2)(k+4)
-\]
+\begin{eqnarray}
+dim(RT_k)|_{2D} &=& (k+1)(k+3) \nn\\
+dim(RT_k)|_{3D} &=& \frac12(k+1)(k+2)(k+4)\nn
+\end{eqnarray}
 
 
 \begin{center}
-\includegraphics[width=6cm]{images/pair_raviart-thomas/RT_kanschat_T}
+\includegraphics[width=6.7cm]{images/pair_raviart-thomas/RT_kanschat_T}
 \includegraphics[width=6cm]{images/pair_raviart-thomas/RT_kanschat_Q}\\
 {\captionfont Examples 4.2.10 and 4.2.37 of \textcite{kanschat17}.
 The first members of the Raviart-Thomas family on triangles and quadrilaterals.
@@ -177,18 +190,18 @@ dim(RT_k) = d(k+1)^{d-1}(k+2)
 \end{displayquote}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-This element is implemented in deal.ii and we 
+\item
+This element is implemented in deal.II and we 
 read\footnote{\url{https://www.dealii.org/current/doxygen/deal.II/classFE__RaviartThomas.html}}:
 \begin{displayquote}
 {\color{darkgray}
 The Raviart-Thomas space is designed to solve problems in which the solution only 
-lives in the space $H^{div}=\{ {\bm u} \in L_2 :div({\bm u}) \in L_2\}$, 
+lives in the space $H^{\text{div}}=\{ {\bm u} \in L_2 :\text{div}({\bm u}) \in L_2\}$, 
 rather than in the more commonly used space $H^1=\{ {\bm u} \in L_2 : \nabla {\bm u} \in L_2 \}$. 
 In other words, the solution must be a vector field whose divergence is square integrable, 
 but for which the gradient may not be square integrable. The typical application for this space 
 (and these elements) is to the mixed formulation of the Laplace equation and related situations, 
-see for example step-20. The defining characteristic of functions in  $H^{div}$ is that they are 
+see for example step-20. The defining characteristic of functions in  $H^{\text{div}}$ is that they are 
 in general discontinuous - but that if you draw a line in 2d (or a surface in 3d), 
 then the normal component of the vector field must be continuous across the line (or surface) 
 even though the tangential component may not be. As a consequence, the Raviart-Thomas element 
@@ -197,8 +210,8 @@ discontinuous, but (iii) the normal component of the vector field represented by
 function is continuous across the faces of cells.
 
 Other properties of the Raviart-Thomas element are that 
-(i) it is not a primitive element ; 
-(ii) the shape functions are defined so that certain integrals over the faces are 
+(i) it is not a primitive element; (ii) the shape functions are defined so that 
+certain integrals over the faces are 
 either zero or one, rather than the common case of certain point values being 
 either zero or one. 
 
@@ -214,30 +227,35 @@ implies that the approximation order of the function itself is degree+1, as with
 \end{displayquote}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Elsewhere in the deal.II library\footnote{\url{https://www.dealii.org/current/doxygen/deal.II/classPolynomialsRaviartThomas.html}} we read
+\item 
+Elsewhere in the deal.II library\footnote{\url{https://www.dealii.org/current/doxygen/deal.II/classPolynomialsRaviartThomas.html}} we read\footnote{Note that at the time deal.II only supported quads.}
 \begin{displayquote}
 {\color{darkgray}
 The Raviart-Thomas polynomials are constructed such that the divergence is 
 in the tensor product polynomial space $Q_k$. Therefore, the polynomial order of each component 
 must be one order higher in the corresponding direction, yielding the polynomial spaces 
-$(Q_{k+1,k}, Q_{k,k+1})$ and $(Q_{k+1,k,k}, Q_{k,k+1,k}, Q_{k,k,k+1})$ in 2d and 3d, resp. 
+$(Q_{k+1,k}, Q_{k,k+1})$ and $(Q_{k+1,k,k}, Q_{k,k+1,k}, Q_{k,k,k+1})$ in 2d and 3d, respectively. 
 }
 \end{displayquote}
 
+The Raviart-Thomas element is used in Step-20 (\url{https://www.dealii.org/current/doxygen/deal.II/step_20.html}) and Step-21 (\url{https://www.dealii.org/current/doxygen/deal.II/step_21.html}).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item
 In John's book \cite{john16} we find:
 \begin{displayquote}
 {\color{darkgray}
 Raviart–Thomas finite elements are a class of vector-valued finite elements that approximate the space
-$H(div,\Omega)=\{ {\bm v} \in L^2(\Omega): \nabla \cdot {\bm v} \in L^2(\Omega)  \}$.
+$H(\text{div},\Omega)=\{ {\bm v} \in L^2(\Omega): \nabla \cdot {\bm v} \in L^2(\Omega)  \}$.
 Details of their definition and important properties can be
 found, e.g., in page 84 of \textcite{bobf13} (2013).
 
 Consider a simplicial triangulation with mesh cells $\{K\}$ and let ${\bm P}_k(K)=(P_k(K))^d$, $k\ge 0$.
 Then, the following local polynomial space is defined directly on $K$:
 \[
-RT_k(K)=\{ {\bm v} \in ({\bm P}_k(K) + {\bm x} P_k(K)) : {\bm v}\cdot{\bm n}_{\partial K} \in R_k(\partial K)\},
+RT_k(K)=\{ {\bm v} \in ({\bm P}_k(K) + {\bm x} P_k(K)) : 
+{\bm v}\cdot{\bm n}_{\partial K} \in R_k(\partial K)\},
 \qquad k\ge 0,
 \]
 where
@@ -273,6 +291,7 @@ Thus, the normal component of ${\bm v}$ on each face is a constant.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item 
 On the defelement site\footnote{\url{https://defelement.com/elements/raviart-thomas.html}} we find 
 that it is defined on triangles, tetrahedra, quadilaterals and hexahedra.
 with the number of dofs defined as follows:
@@ -284,8 +303,8 @@ with the number of dofs defined as follows:
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item
 In \textcite{brfo} (1991) we read:
-
 
 \begin{displayquote}
 {\color{darkgray}
@@ -321,10 +340,10 @@ RT_{[k]}|_{n=3} &=& P_{k+1,k,k} \times P_{k,k+1,k} \times P_{k,k,k+1} \nn
 \end{eqnarray}
 and 
 \[
-dim(RT_{[k]}|_{n=2} = 2(k+1)(k+2)
+dim(RT_{[k]}|_{n=2}) = 2(k+1)(k+2)
 \]
 \[
-dim(RT_{[k]}|_{n=3} = 3(k+1)^2(k+2)
+dim(RT_{[k]}|_{n=3}) = 3(k+1)^2(k+2)
 \]
 
 }
@@ -333,6 +352,7 @@ dim(RT_{[k]}|_{n=3} = 3(k+1)^2(k+2)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item
 In \textcite{LarsonBengzon} we read: 
 \begin{displayquote}
 {\color{darkgray}
@@ -341,7 +361,7 @@ the name suggests, vector valued elements are used to approximate vector valued
 functions. One such element is the Raviart-Thomas element, which is designed to
 mimic the Hilbert space
 \[
-H(div; \Omega) = \{ v\in [L^2(\Omega)]^2 : \nabla \cdot v \in L^2(\Omega) \}
+H(\text{div}; \Omega) = \{ v\in [L^2(\Omega)]^2 : \nabla \cdot v \in L^2(\Omega) \}
 \]
 That is, the space of all vectors with bounded divergence. A simple application
 of Green’s formula shows that all such functions must have continuous normal
@@ -362,7 +382,7 @@ for some coefficients $a_1$ , $a_2$ , and $b$.
 If the normal is chosen consistently on each edge in the mesh, then by
 construction is the $RT_0$ shape functions are continuous in the normal direction
 across the edge of any two adjacent elements. This ensures that the $RT_0$ functions
-belong to $H(div,\Omega)$.
+belong to $H(\text{div},\Omega)$.
 
 The isoparametric map can not be used for $RT_0$ elements, since the divergence
 is not preserved by this mapping.
@@ -378,23 +398,24 @@ elasticity.
 \end{displayquote}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item
 In \textcite{lomw12} we find:
 \begin{displayquote}
 {\color{darkgray}
-The Sobolev space $H(div)$ consists of vector fields for which the 
+The Sobolev space $H(\text{div})$ consists of vector fields for which the 
 components and the weak divergence are square-integrable. This is a 
 weaker requirement than for a $d$-vector field to be in $[H^1]^d$ (for $d\ge 2$).
 This space naturally occurs in connection with mixed formulations 
 of second-order elliptic problems,
 porous media flow, and elasticity equations. For a finite element 
-family to be $H(div)$-conforming, each component need not be continuous, 
+family to be $H(\text{div})$-conforming, each component need not be continuous, 
 but the normal component must be continuous. In order
-to ensure such continuity, the degrees of freedom of $H(div)$-conforming 
+to ensure such continuity, the degrees of freedom of $H(\text{div})$-conforming 
 elements usually include normal components on element facets.
-The two main families of $H(div)$-conforming elements are the Raviart–Thomas 
+The two main families of $H(\text{div})$-conforming elements are the Raviart–Thomas 
 and Brezzi-Douglas-Marini elements.
 
-The Raviart–Thomas element was introduced by Raviart and Thomas (1977). 
+The Raviart–Thomas element was introduced by Raviart and Thomas (1977) \cite{rath77}. 
 It was the first element to discretize the mixed form of second-order 
 elliptic equations on triangles. Its element space ${\cal V}$
 is designed so that it is the smallest polynomial space 
@@ -406,13 +427,223 @@ Raviart-Thomas-Nédélec element.
 }
 \end{displayquote}
 
+%------------------------------------------------------------------------------
+\item In \textcite{aubb17}, we find 
+several examples of efficient mixed
+finite element methods, focusing our attention mostly on the
+thermal problem and on the Stokes equation. We read :
+\begin{displayquote}
+{\color{darkgray}
+Throughout this section, we will always suppose that the
+domain $\Omega \subset \R^2$, on which the thermal problem is posed, is
+decomposed by means of a triangular mesh ${\cal T}_h$ with mesh
+size $h$. Moreover, we define ${\cal E}_h$ as the set of all the edges of
+the triangles in ${\cal T}_h$.
+
+We now introduce the simplest
+triangular element proposed for thermal problems.
+For the discretization of the thermal flux ${\bm q}$, we take
+the so-called lowest order Raviart–Thomas element
+($RT_0$ element), presented in Raviart and Thomas, 1977 \cite{rath77},
+accordingly, the approximated flux ${\bm q}^h$ is described as a
+piecewise linear (vectorial) field such that
+\begin{itemize}
+\item[(i)] the normal component ${\bm q}^h\cdot {\bm n}$ is constant on each
+edge $e$ of ${\cal E}_h$;
+\item[(ii)] the normal component ${\bm q}^h\cdot {\bm n}$ is continuous across each
+edge $e$ of ${\cal E}_h$;
+\end{itemize}
+To approximate the temperature, we simply use piecewise constant 
+functions in each element ($P_0$ element).
+On the generic triangle $T\in {\cal T}_h$, a set of element degrees
+of freedom for ${\bm q}^h$ is given by its three normal fluxes on
+the edges of the triangle, that is,
+\[
+\int_e {\bm q}^h \cdot {\bm n} \; ds \qquad \forall e\; \text{edge of}\; T
+\]
+Therefore, the space for the element approximation of ${\bm q}$
+has dimension 3 and a basis is obtained by considering
+the (vectorial) shape functions
+\[
+{\bm N}^{\bm q}_k(x,y) = \frac{1}{2  \; \text{Area}(T)} 
+\left\{
+\begin{array}{c}
+x-x_k \\ y-y_k
+\end{array}
+\right\}
+\qquad k=1,2,3
+\]
+Here, $\{x_k , y_k \}^T$ denotes the position vector of the $k$-th
+vertex (local numbering) of the triangle $T$.
+
+We also remark that, because of the equation above, ${\bm q}^h$ can be locally
+described by
+\[
+{\bm q}^h = {\bm p}_0 + p_0 
+\left\{
+\begin{array}{c}
+x \\y
+\end{array}
+\right\}
+=
+\left\{
+\begin{array}{c}
+a_0+p_0 x \\ b_0 + p_0 y
+\end{array}
+\right\}
+\]
+where $a_0,b_0,p_0 \in \R$.
+
+As far as the approximated temperature $(\theta)$ is concerned, an
+element basis for $\theta^h$ is given by the shape function
+\[
+N^\theta (x,y)=1
+\]
+
+We now present the extension to
+higher orders of the $RT_0-P_0$ method just described (cf.
+Raviart and Thomas, 1977). Given an integer $k \ge 1$ and
+using the definition introduced in Nedelec, 1980 \cite{nede80}; for the
+flux ${\bm q}^h$, we take a field such that ($RT_k$ element) on each
+triangle $T$ of ${\cal T}_h$ , we have
+\[
+{\bm q}^h = {\bm p}_k(x,y) + p_k(x,y)
+\left\{
+\begin{array}{c}
+x \\ y
+\end{array}
+\right\}
+\]
+where 
+${\bm p}_k(x,y)$ is a vectorial polynomial of degree at most $k$ and 
+${p}_k(x,y)$ is a scalar polynomial of degree at most $k$.
+
+Moreover, we require
+that the normal component ${\bm q}^h\cdot {\bm n}$ is continuous across
+each edge $e$ of ${\cal E}_h$. This can be achieved by selecting the
+following element degrees of freedom:
+\begin{itemize}
+\item[(i)] the moments of order up to $k$ of ${\bm q}^h\cdot{\bm n}$ on the edges of $T$;
+\item[(ii)] the moments of order up to $k-1$ of ${\bm q}^h$ on $T$.
+\end{itemize}
+
+For the discretized temperature $\theta^h$, we take piecewise
+polynomials of degree at most $k$ ($P_k$ element).
+The element degrees of freedom for the choice $k = 1$ are
+shown here:
+
+\begin{center}
+\includegraphics[width=4cm]{images/pair_raviart-thomas/aubb17a}
+\end{center}
+
+We now briefly consider the extension of some of the
+methods presented in the previous section to quadrilateral
+meshes. In this case, we define our approximating spaces
+on the reference element $\tilde{K} = [-1,1]^2$ equipped with local
+coordinates $(r,s)$. As far as the flux is concerned, the corresponding 
+approximation space on each physical element $K$
+must be obtained through the use of a suitable transformation
+that preserves the normal component of vectorial functions.
+This is accomplished by the following (contravariant) Piola's
+transformation of vector fields. Suppose that
+\[
+{\bm F}:\tilde{K} \rightarrow K; 
+\qquad
+(x,y) = {\bm F}(r,s)
+\]
+is an invertible map from $\tilde{K}$ onto $K$, with Jacobian matrix
+${\bm J}(r,s)$. Given a vector field ${\bm q}(r,s)$ on $\hat{K}$, 
+its Piola's transform ${\cal P}({\bm q})(x,y)$ is the vector field on $K$
+defined by
+\[
+{\cal P}({\bm q})(x,y) := \frac{1}{|{\bm J}(r,s)|} {\bm J}(r,s) {\bm q}(r,s)
+\qquad 
+(x,y)={\bm F}(r,s)
+\]
+Therefore if
+\[
+{\bm Q}(\tilde{K})=\text{Span}\{ {\bm q}_i^h; \; i=1,...n_{el}  \}
+\]
+is an $n_{el}$-dimensional flux approximation space defined on the
+reference element $\tilde{K}$, the corresponding space on the physical
+element $K$ will be
+\[
+{\bm Q}(K)=\text{Span}\{{\cal P} ({\bm q}_i^h); \; i=1,...n_{el}  \}
+\]
+The $RT_{[0]}-P_0$ element. In the reference element $K$, 
+we prescribe the approximated flux ${\bm q}^h$  as ($RT_{[0]}$ element)
+\[
+{\bm q}^h = 
+\left\{
+\begin{array}{c}
+a+br \\ c+ds
+\end{array}
+\right\}
+, \qquad a,b,c\in \R
+\]
+It is then easily seen from the equation above that the four values
+\[
+\int_e {\bm q}^h \cdot {\bm n} \; ds 
+\qquad \forall e \; \text{edge of} \; \tilde{K}
+\]
+can be chosen as a set of degrees of freedom. Moreover,
+$\text{div} {\bm q}^h$ is constant in $K$,
+suggesting the choice of a constant approximated temperature 
+$\theta^h$ in $\tilde{K}$ ($P_0$ element). The
+degrees of freedom for both ${\bm q}^h$ and $\theta^h$ are shown in
+this figure:
+
+\begin{center}
+\includegraphics[width=5cm]{images/pair_raviart-thomas/aubb17b}
+\end{center}
+
+All the elements presented above have their three-
+dimensional counterpart. In this case, the normal component
+of the approximated flux ${\bm q}^h$ should not exhibit jumps across
+faces of adjacent elements.
+
+In the following figure, we display the tetrahedral version of the
+$RT_0-P_0$ element, consisting of a piecewise
+constant approximation for the temperature $\theta$ and of the
+following element approximating functions for ${\bm q}^h$ (Nedelec,
+1980 \cite{nede80}):
+
+\[
+{\bm q}^h|_T = {\bm p}_0
++p_0
+\left\{\begin{array}{c}
+x\\y\\z
+\end{array}\right\}
+=
+\left\{\begin{array}{c}
+a_0+p_0x\\ 
+b_0+p_0y\\
+c_0+p_0z 
+\end{array}\right\}
+\qquad
+a_0,b_0,c_0 \in \R
+\]
+
+\begin{center}
+\includegraphics[width=5cm]{images/pair_raviart-thomas/aubb17c}
+\end{center}
+
+Therefore, in each tetrahedron $T$, the space for the approximated 
+flux has dimension 4 and the degrees of freedom are
+precisely the values $\int_f {\bm q}^h\cdot {\bm n}\; d\sigma$ 
+on each tetrahedron face $f$.
 
 
 
-\newpage
-\noindent
+}
+\end{displayquote}
+
+
+\end{itemize} %global
+
+
 %......................................................................
-\underline{\bf Degree 1 Raviart–Thomas on a triangle - Lagrange variant}
+\subsection{Degree 1 Raviart–Thomas on a triangle - Lagrange variant}
 
 \url{https://defelement.com/elements/examples/triangle-raviart-thomas-lagrange-1.html}
 
@@ -455,10 +686,8 @@ We have then
 \]
 These DOFs are associated with edge 0,1,2 of the reference element.
 
-\vspace{.5cm}
-\noindent
 %......................................................................
-\underline{\bf Degree 2 Raviart–Thomas on a triangle - Lagrange variant}
+\subsection{Degree 2 Raviart–Thomas on a triangle - Lagrange variant}
 
 \url{https://defelement.com/elements/examples/triangle-raviart-thomas-lagrange-2.html}
 
@@ -502,15 +731,8 @@ We have then
 \end{eqnarray}
 These DOFs are associated with edge 0,1,2 of the reference element.
 
-
-
-
-
-
-\vspace{.5cm}
-\noindent
 %......................................................................
-\underline{\bf Degree 1 Raviart–Thomas on a quadrilateral - Lagrange variant}
+\subsection{Degree 1 Raviart–Thomas on a quadrilateral - Lagrange variant}
 
 \begin{center}
 \includegraphics[width=3.5cm]{images/pair_raviart-thomas/element-NCF-variant-equispaced-quadrilateral-1-dofs}
@@ -565,10 +787,8 @@ We have then
 These DOFs are associated with edge 0,1,2 of the reference element.
 
 
-\vspace{.5cm}
 %-------------------------------------------------------------------------
-\noindent
-\underline{\bf Degree 1 Raviart–Thomas on a tetrahedron - Lagrange variant}
+\subsection{Degree 1 Raviart–Thomas on a tetrahedron - Lagrange variant}
 
 
 \begin{center}
@@ -600,11 +820,8 @@ ${\cal V}$ is a finite dimensional polynomial space on the element of dimension 
 \]
 
 
-\vspace{.5cm}
 %-------------------------------------------------------------------------
-\noindent
-\underline{\bf Degree 1 Raviart–Thomas on a hexahedron - Lagrange variant}
-
+\subsection{Degree 1 Raviart–Thomas on a hexahedron - Lagrange variant}
 
 \begin{center}
 \includegraphics[width=3cm]{images/pair_raviart-thomas/element-NCF-variant-equispaced-hexahedron-1-dofs}
@@ -657,7 +874,7 @@ and faces in both 2D and 3D will be denoted by $f_j$ . The discrete velocity spa
 \[
 {\cal V}_h = \{ \vec{\upnu} | \vec{\upnu}_{|K}  \in RT_0(K) , K\in {\cal T}_h \text{ and } \vec\in {\cal V} \}
 \]
-with ${\cal V} \subset H(div,\Omega)$ and
+with ${\cal V} \subset H(\text{div},\Omega)$ and
 where $RT_0$ is the lowest-order Raviart-Thomas space on the element $K$. 
 Let the basis (shape) functions for the velocity and pressure spaces be denoted $\bN^\upnu_i$ and 
 $\bN^p_j$, respectively. The pressures are approximated by piecewise
@@ -673,7 +890,7 @@ and $\vec{x}_j$ is its coordinate. In the calculations
 of the basis functions below, we use centers of the corresponding faces.
 
 %----------------------------
-\underline{\bf Triangle, RT0}
+\subsection{Triangle, RT0}
 
 \begin{center}
 \begin{tikzpicture}
@@ -838,7 +1055,7 @@ r \\ s
 
 
 %----------------------------
-\underline{\bf Quadrilateral, RT0}
+\subsection{Quadrilateral, RT0}
 
 
 \begin{center}
@@ -860,7 +1077,7 @@ r \\ s
 \end{tikzpicture}
 \end{center}
 
-The basis functions are defined as {\color{red} i need a ref, the notations below make little sense}
+The basis functions are defined as (see literature section earlier on) 
 \[
 \vec{\bN}_i(r,s)
 =\vec{a} + b  \left(\begin{array}{c} r\\s \end{array}\right)
@@ -1044,11 +1261,11 @@ In the end we arrive at the following basis functions:
 
 
 
-%----------------------------
-\underline{\bf Tetrahedron, RT0}
+%-------------------------------
+\subsection{Tetrahedron, RT0}
 
-
-The basis functions in the reference triangle are defined as {\color{orange} i need a ref for this}
+The basis functions in the reference triangle are defined as (see literature section 
+earlier on)
 \[
 \vec{\bN}_i(r,s,t)
 =\vec{a} + b  \left(\begin{array}{c} r\\s\\t \end{array}\right)
@@ -1228,7 +1445,6 @@ which yields $a_1=a_2=0$, $a_3=-1$ and $b=-a_3=1$.
 
 In the end
 
-
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
 \vec{\bN}^\upnu_1 (r,s) &=& \frac{1}{\sqrt3}
@@ -1242,21 +1458,16 @@ In the end
 \end{eqnarray}
 \end{mdframed}
 
+%--------------------------------
+\subsection{Hexahedron, RT0}
 
-%----------------------------
-\underline{\bf Hexahedron, RT0}
-
-
-
-The basis functions in the reference triangle are defined as {\color{orange} i need a ref for this}
+The basis functions in the reference triangle are defined as (see literature section earlier on) 
 \[
 \vec{\bN}_i(r,s,t)
 =\vec{a} + b  \left(\begin{array}{c} r\\s\\t \end{array}\right)
 =\left(\begin{array}{c} a_1+b_1 r \\ a_2 + b_2 s \\ a_3 + b_3 t \end{array}\right)
 \qquad i=1,2,3,4,5,6
 \]
-
-
 
 \begin{center}
 \begin{tikzpicture}
@@ -1405,8 +1616,7 @@ $\vec{x}_6=(0,0,-1)$, the normal is $\vec{n}_6=(0,0,-1)$):
 
 \end{itemize}
 
-
-----------------------------------------------
+We cn now compute the basis functions:
 
 \begin{itemize}
 \item Case $i=1$. We have to solve
@@ -1457,9 +1667,8 @@ The basis functions are then
 
 
 
-----------------------------------------------------------------
-
+\vspace{1cm}
 
 \Literature: \fullcite{arbf05},
 \fullcite{baca05} , \fullcite{weso19}, 
-\fullcite{rath77} 
+\fullcite{rath77} , \fullcite{sten90b}
