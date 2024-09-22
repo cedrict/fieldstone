@@ -25,4 +25,4 @@ plot[][]\
 'solver_convergence_048.ascii' w lp ps 0.35 t '48x48',\
 'solver_convergence_064.ascii' w lp ps 0.35 t '64x64',\
 'solver_convergence_128.ascii' w lp ps 0.35 t '128x128',\
-1e-8 lt -1 lw 2 
+1e-8 lt -1 lw 3 dt 2
