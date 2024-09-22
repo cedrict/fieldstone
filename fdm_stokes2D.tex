@@ -22,7 +22,8 @@ In 2D the strain rate tensor components are given by
 \quad\quad\quad
 \dot{\varepsilon}_{yy}=\frac{\partial v}{\partial y}
 \]
-In the end we obtain the following set of coupled PDEs:
+In the end we obtain the following set of coupled PDEs for the three 
+unknwons $u,v,p$:
 \begin{eqnarray}
 -\frac{\partial p}{\partial x}  
 + 2 \frac{\partial }{\partial x} \left(\eta \frac{\partial u}{\partial x}  \right) 
@@ -35,17 +36,19 @@ In the end we obtain the following set of coupled PDEs:
 \frac{\partial u}{\partial x} + \frac{\partial v}{\partial y}  = 0 
 \end{eqnarray}
 
-Note that in \cite{beka} the authors add the term $p/\lambda$ to the rhs
-of the incompressibility equation: ``
-This is a “trick” called
+Note that in their syllabus \textcite{beka} add the term $p/\lambda$ to the rhs
+of the incompressibility equation: 
+\begin{displayquote}
+{\color{darkgray}
+This is a ``trick'' called
 the penalty method, which ensures that the system of equations does not become ill-
-posed. For this to work, $\lambda$ should be sufficiently large ($\sim 10^4$ or so), so that the condition
-of incompressibility is approximately satisfied.'' 
+posed. For this to work, $\lambda$ should be sufficiently large 
+($\sim 10^4$ or so), so that the condition
+of incompressibility is approximately satisfied.}
+\end{displayquote} 
 
 
-
-
-Then, {\sl if the viscosity is constant} the $x$-component of 
+Then, {\it if the viscosity is constant} the $x$-component of 
 the momentum conservation equation
 \[
 -\frac{\partial p}{\partial x}  + 2\eta \frac{\partial \dot{\varepsilon}_{xx}}{\partial x} +  2\eta \frac{\partial \dot{\varepsilon}_{xy}}{\partial y}  + \rho g_x =0
@@ -95,7 +98,8 @@ There are:
 \item each cell is of size $h_x * h_y$ with $h_x=L_x/{\tt ncellx}$ 
 and $h_y=L_y/{\tt ncelly}$.
 \end{itemize}
-In total there are (not taking boundary conditions into account):
+In total there are (not taking boundary conditions into account)
+$ndof$ unknowns with:
 \[
 ndof= {\tt ncellx}*{\tt ncelly} 
 + {\tt (ncellx+1)}*{\tt ncelly}
@@ -105,7 +109,7 @@ Note: the number of $u$ unknowns is not necessarily equal to the number of $v$
 unknowns! This is nearly always the case with FEM. 
 
 This means that once we have discretised the Stokes equations we will need
-as many (i.e. ndof) equations in order to obtain a linear system with a solution.
+as many (i.e. $ndof$) equations in order to obtain a linear system with a solution.
 
 %--------------------------------------------
 \subsection{Solving the Laplacian formulation}
@@ -127,13 +131,13 @@ as shown here:
 We then have
 
 \begin{eqnarray}
-\left. -\frac{\partial p}{\partial x} \right|
+\left. -\frac{\partial p}{\partial x} \right|_{\tt ku}
 &=& -\frac{{\tt p\_e}-{\tt p\_w}}{\tt hx}       \nn\\
-\left. \eta \frac{\partial^2 u}{\partial x^2} \right|
+\left. \eta \frac{\partial^2 u}{\partial x^2} \right|_{\tt ku}
 &=& \eta \frac{{\tt u\_e} -2{\tt u}+{\tt u\_w}}{{\tt hx}^2}  \nn\\
-\left. \eta \frac{\partial^2 u}{\partial y^2} \right|
+\left. \eta \frac{\partial^2 u}{\partial y^2} \right|_{\tt ku}
 &=& \eta \frac{{\tt u\_n}-2{\tt u}+{\tt u\_s}}{{\tt hy}^2}  \nn\\
-\left. \rho g_x \right| 
+\left. \rho g_x \right|_{\tt ku} 
 &=& \frac{\rho_{\tt n} + \rho_{\tt s}}{2} g_x   \nn
 \end{eqnarray}
 For example, let us consider the $u$-node 9. Then the above stencils put together become:

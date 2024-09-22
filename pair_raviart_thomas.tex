@@ -27,7 +27,23 @@ Conerning the Stokes equations,
 I have found a reference\footnote{\url{https://lyc102.github.io/ifem/fem/StokesRT0femrate/}}
 that uses the stable element RT0-P0 (the lowest order Raviart-Thomas element for velocity 
 and piecewise constant for pressure) of Stokes equations in 2-D.
+In \textcite{lelk15} (2015) we read:
+\begin{displayquote}
+{\color{darkgray}
+As shown in \cite{kans08} for the isoviscous case, the $RT_0-P_0$ element in the 
+corresponding numerical scheme resembles the finite difference (FD) staggered grid 
+stencil. Raviart-Thomas elements of order $k$ can, therefore, be considered a higher-order
+generalization of the FD method working on irregular meshes.
+}
+\end{displayquote}
+Note that the authors compare $Q_1\times P_0$, $Q_2 \times P_{-1}$, $RT_0-P_0$ and 
+$BDM_1-P_0$ for the Stokes equation but the two last ones rely on DG. 
 
+Interestingly enough, the RT elements are described in \cite{aubb17} but 
+only used for thermal problems, not Stokes, while other elements are proposed 
+for Stokes. Could it be bc for RT0-P0 on quads we have $\dot{\varepsilon}^h_{xy}=0$
+due to the formulation of the basis functions ? Is this why \cite{lelk15}
+use it in DG formulation and not CG?
 
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
