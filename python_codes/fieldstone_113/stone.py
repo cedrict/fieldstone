@@ -405,7 +405,7 @@ def compute_gravity_tetrahedron(pt_1,pt_2,pt_3,pt_4,pt_M,rho0):
 
 rho0=1
 
-test = 1
+test=2
 
 if test==1:
    #vertices of a tetrahedron with edge length 2, centered at the origin
@@ -432,7 +432,6 @@ if test==3:
    pt_two=np.array([1,0,0],dtype=np.float64)
    pt_three=np.array([0,0,1],dtype=np.float64)
    pt_four=np.array([0,1,0],dtype=np.float64)
-    
 
 #------------------------------------------------------------------------------
 # export tetrahedron and axes to vtu 
@@ -443,55 +442,66 @@ pt_O=np.array([0,0,0],dtype=np.float64)
 vec_ex=np.array([1,0,0],dtype=np.float64)
 vec_ey=np.array([0,1,1],dtype=np.float64)
 vec_ez=np.array([0,0,1],dtype=np.float64)
-export_vector_to_vtu(pt_O,vec_ex,'e_x')
-export_vector_to_vtu(pt_O,vec_ey,'e_y')
-export_vector_to_vtu(pt_O,vec_ez,'e_z')
+export_vector_to_vtu(pt_O,vec_ex,'unit_vector_e_x')
+export_vector_to_vtu(pt_O,vec_ey,'unit_vector_e_y')
+export_vector_to_vtu(pt_O,vec_ez,'unit_vector_e_z')
 
 #------------------------------------------------------------------------------
 
 if test==2:
 
-   print('***** test 2 *****')
+   print('******* test 2 *******')
 
    pt_meas=np.array([1.25,0.5,0.5])
+   print('pt:',pt_meas)
    vec_g,U = compute_gravity_tetrahedron(pt_one,pt_two,pt_three,pt_four,pt_meas,rho0)
-   print('vec_g   ',vec_g,'norm:',LA.norm(vec_g,2),'| U=',U)
+   print('  : TET vec_g= %.6f %.6f %.6f | norm= %.6f | U= %.4f  ' %(vec_g[0],vec_g[1],vec_g[2],LA.norm(vec_g,2),U))
    vec_g_pm,U_pm = compute_gravity_tetrahedron_pointmass(pt_one,pt_two,pt_three,pt_four,pt_meas,rho0)
-   print('vec_g_pm',vec_g_pm,'norm:',LA.norm(vec_g_pm,2),'| U=',U_pm)
+   print('  : PM vec_g= %.6f %.6f %.6f | norm= %.6f | U= %.4f  ' %(vec_g_pm[0],vec_g_pm[1],vec_g_pm[2],LA.norm(vec_g_pm,2),U_pm))
 
    pt_meas=np.array([1.5,0.5,0.5])
+   print('pt:',pt_meas)
    vec_g,U = compute_gravity_tetrahedron(pt_one,pt_two,pt_three,pt_four,pt_meas,rho0)
-   print('vec_g   ',vec_g,'norm:',LA.norm(vec_g,2),'| U=',U)
+   print('  : TET vec_g= %.6f %.6f %.6f | norm= %.6f | U= %.4f  ' %(vec_g[0],vec_g[1],vec_g[2],LA.norm(vec_g,2),U))
    vec_g_pm,U_pm = compute_gravity_tetrahedron_pointmass(pt_one,pt_two,pt_three,pt_four,pt_meas,rho0)
-   print('vec_g_pm',vec_g_pm,'norm:',LA.norm(vec_g_pm,2),'| U=',U_pm)
+   print('  : PM vec_g= %.6f %.6f %.6f | norm= %.6f | U= %.4f  ' %(vec_g_pm[0],vec_g_pm[1],vec_g_pm[2],LA.norm(vec_g_pm,2),U_pm))
 
    pt_meas=np.array([1.75,0.5,0.5])
+   print('pt:',pt_meas)
    vec_g,U = compute_gravity_tetrahedron(pt_one,pt_two,pt_three,pt_four,pt_meas,rho0)
-   print('vec_g   ',vec_g,'norm:',LA.norm(vec_g,2),'| U=',U)
+   print('  : TET vec_g= %.6f %.6f %.6f | norm= %.6f | U= %.4f  ' %(vec_g[0],vec_g[1],vec_g[2],LA.norm(vec_g,2),U))
    vec_g_pm,U_pm = compute_gravity_tetrahedron_pointmass(pt_one,pt_two,pt_three,pt_four,pt_meas,rho0)
-   print('vec_g_pm',vec_g_pm,'norm:',LA.norm(vec_g_pm,2),'| U=',U_pm)
+   print('  : PM vec_g= %.6f %.6f %.6f | norm= %.6f | U= %.4f  ' %(vec_g_pm[0],vec_g_pm[1],vec_g_pm[2],LA.norm(vec_g_pm,2),U_pm))
 
    pt_meas=np.array([2,0.5,0.5])
+   print('pt:',pt_meas)
    vec_g,U = compute_gravity_tetrahedron(pt_one,pt_two,pt_three,pt_four,pt_meas,rho0)
-   print('vec_g   ',vec_g,'norm:',LA.norm(vec_g,2),'| U=',U)
+   print('  : TET vec_g= %.6f %.6f %.6f | norm= %.6f | U= %.4f  ' %(vec_g[0],vec_g[1],vec_g[2],LA.norm(vec_g,2),U))
    vec_g_pm,U_pm = compute_gravity_tetrahedron_pointmass(pt_one,pt_two,pt_three,pt_four,pt_meas,rho0)
-   print('vec_g_pm',vec_g_pm,'norm:',LA.norm(vec_g_pm,2),'| U=',U_pm)
+   print('  : PM vec_g= %.6f %.6f %.6f | norm= %.6f | U= %.4f  ' %(vec_g_pm[0],vec_g_pm[1],vec_g_pm[2],LA.norm(vec_g_pm,2),U_pm))
 
-#--------------------------------------------------------------------
+   print('**********************')
+
+#------------------------------------------------------------------------------
 # on a line
+#------------------------------------------------------------------------------
 
 pt_N = (pt_one+pt_two+pt_three+pt_four)*0.25
 
 myfile=open('grav.ascii',"w")
+myfile.write('#1 dist to center of gravity\n')
+myfile.write('#2 |g| (tetrahedron)\n')
+myfile.write('#3 |g| (point mass)\n')
+myfile.write('#4 U (tetrahedron)\n')
+myfile.write('#5 U (point mass)\n')
 
 for i in range(0,51):
     if test==1:
        val=0.5+1/50*i
-       print(val,val,0)
        pt_meas = np.array([val,1.1*val,2.2*val],dtype=np.float64)
     if test==2:
        val=1.+4/50*i
-       pt_meas = np.array([val,0.5,0.5],dtype=np.float64)
+       pt_meas = np.array([val,0.456,0.567],dtype=np.float64)
     if test==3:
        val=1.+2/50*i
        pt_meas = np.array([val,val,val],dtype=np.float64)
@@ -504,13 +514,4 @@ for i in range(0,51):
                                        U_pm))
 myfile.close()
 
-
-#--------------------------------------------------------------------
-# on a sphere centered on the center of mass of the tetrahedron
-
-
-
-
-
-
-
+#------------------------------------------------------------------------------
