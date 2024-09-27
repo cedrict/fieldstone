@@ -17,7 +17,7 @@ def NNN(r,s,t):
     N5=0.125*(1.+r)*(1.-s)*(1.+t)
     N6=0.125*(1.+r)*(1.+s)*(1.+t)
     N7=0.125*(1.-r)*(1.+s)*(1.+t)
-    return N0,N1,N2,N3,N4,N5,N6,N7
+    return np.array([N0,N1,N2,N3,N4,N5,N6,N7],dtype=np.float64)
 
 def dNNNdr(r,s,t):
     dNdr0=-0.125*(1.-s)*(1.-t) 
@@ -28,7 +28,7 @@ def dNNNdr(r,s,t):
     dNdr5=+0.125*(1.-s)*(1.+t)
     dNdr6=+0.125*(1.+s)*(1.+t)
     dNdr7=-0.125*(1.+s)*(1.+t)
-    return dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,dNdr6,dNdr7
+    return np.array([dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,dNdr6,dNdr7],dtype=np.float64)
 
 def dNNNds(r,s,t):
     dNds0=-0.125*(1.-r)*(1.-t) 
@@ -39,7 +39,7 @@ def dNNNds(r,s,t):
     dNds5=-0.125*(1.+r)*(1.+t)
     dNds6=+0.125*(1.+r)*(1.+t)
     dNds7=+0.125*(1.-r)*(1.+t)
-    return dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6,dNds7
+    return np.array([dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6,dNds7],dtype=np.float64)
 
 def dNNNdt(r,s,t):
     dNdt0=-0.125*(1.-r)*(1.-s) 
@@ -50,7 +50,7 @@ def dNNNdt(r,s,t):
     dNdt5=+0.125*(1.+r)*(1.-s)
     dNdt6=+0.125*(1.+r)*(1.+s)
     dNdt7=+0.125*(1.-r)*(1.+s)
-    return dNdt0,dNdt1,dNdt2,dNdt3,dNdt4,dNdt5,dNdt6,dNdt7
+    return np.array([dNdt0,dNdt1,dNdt2,dNdt3,dNdt4,dNdt5,dNdt6,dNdt7],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 
@@ -74,7 +74,7 @@ def by(x,y,z):
 
 def bz(x,y,z):
     if experiment==0:
-       val=1
+       val=-1
     if experiment==1 or experiment==2 or experiment==3 or experiment==4:
        if (x-.5)**2+(y-0.5)**2+(z-0.5)**2<0.123456789**2:
           val=1.01*gz
@@ -101,19 +101,31 @@ def viscosity(x,y,z):
 #------------------------------------------------------------------------------
 
 def uth(x,y,z):
-    val=x*(1-x)*(1-2*y)*(1-2*z)
+    if experiment==5:
+       val=x*(1-x)*(1-2*y)*(1-2*z)
+    elif experiment==0:
+       val=0
     return val
 
 def vth(x,y,z):
-    val=(1-2*x)*y*(1-y)*(1-2*z)
+    if experiment==5:
+       val=(1-2*x)*y*(1-y)*(1-2*z)
+    elif experiment==0:
+       val=0
     return val
 
 def wth(x,y,z):
-    val=-2*(1-2*x)*(1-2*y)*z*(1-z)
+    if experiment==5:
+       val=-2*(1-2*x)*(1-2*y)*z*(1-z)
+    elif experiment==0:
+       val=0
     return val
 
 def pth(x,y,z):
-    val=(2*x-1)*(2*y-1)*(2*z-1)
+    if experiment==5:
+       val=(2*x-1)*(2*y-1)*(2*z-1)
+    elif experiment==0:
+       val=0.5-z
     return val
 
 #------------------------------------------------------------------------------
@@ -134,19 +146,12 @@ else:
    nelx = 16
    visu = 1
 
-if experiment==0:
-   quarter=False
-if experiment==1:
-   quarter=False
-if experiment==2:
-   quarter=False
-if experiment==3:
-   quarter=False
-if experiment==4:
-   quarter=True
-if experiment==5:
-   quarter=False
-
+if experiment==0: quarter=False
+if experiment==1: quarter=False
+if experiment==2: quarter=False
+if experiment==3: quarter=False
+if experiment==4: quarter=True
+if experiment==5: quarter=False
 
 if quarter:
    nely=nelx
@@ -165,7 +170,6 @@ else:
 FS=True
 NS=False
 OT=False
-
     
 nnx=nelx+1  # number of elements, x direction
 nny=nely+1  # number of elements, y direction
@@ -202,9 +206,9 @@ print("-----------------------------")
 #################################################################
 start = time.time()
 
-x = np.empty(NV,dtype=np.float64)  # x coordinates
-y = np.empty(NV,dtype=np.float64)  # y coordinates
-z = np.empty(NV,dtype=np.float64)  # z coordinates
+x = np.zeros(NV,dtype=np.float64)  # x coordinates
+y = np.zeros(NV,dtype=np.float64)  # y coordinates
+z = np.zeros(NV,dtype=np.float64)  # z coordinates
 
 counter=0
 for i in range(0,nnx):
@@ -252,7 +256,7 @@ print("connectivity setup: %.3f s" % (time.time() - start))
 start = time.time()
 
 bc_fix=np.zeros(Nfem,dtype=bool)  # boundary condition, yes/no
-bc_val=np.zeros(Nfem,dtype=float)  # boundary condition, value
+bc_val=np.zeros(Nfem,dtype=np.float64)  # boundary condition, value
 
 if experiment==0 or experiment==1 or experiment==2 or experiment==3 or experiment==4:
 
@@ -359,7 +363,7 @@ dNdt  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
 u     = np.zeros(NV,dtype=np.float64)            # x-component velocity
 v     = np.zeros(NV,dtype=np.float64)            # y-component velocity
 w     = np.zeros(NV,dtype=np.float64)            # z-component velocity
-jcb   = np.zeros((3,3),dtype=np.float64)
+jcb   = np.zeros((3,3),dtype=np.float64)         # jacobian matrix
 k_mat = np.zeros((6,6),dtype=np.float64) 
 c_mat = np.zeros((6,6),dtype=np.float64) 
 
@@ -376,10 +380,10 @@ for iel in range(0, nel):
     b_el=np.zeros(m*ndofV,dtype=np.float64)
     a_el=np.zeros((m*ndofV,m*ndofV),dtype=np.float64)
 
-    # integrate viscous term at 4 quadrature points
-    for iq in [-1, 1]:
-        for jq in [-1, 1]:
-            for kq in [-1, 1]:
+    # integrate viscous term at 2*2*2 quadrature points
+    for iq in [-1,1]:
+        for jq in [-1,1]:
+            for kq in [-1,1]:
 
                 # position & weight of quad. point
                 rq=iq/sqrt3
@@ -405,10 +409,10 @@ for iel in range(0, nel):
                 jcb[2,2]=dNdt.dot(z[icon[0:m,iel]])
 
                 # calculate the determinant of the jacobian
-                jcob = np.linalg.det(jcb)
+                jcob=np.linalg.det(jcb)
 
                 # calculate inverse of the jacobian matrix
-                jcbi = np.linalg.inv(jcb)
+                jcbi=np.linalg.inv(jcb)
 
                 # compute coordinates of quadrature points
                 xq=N.dot(x[icon[0:m,iel]])
@@ -416,14 +420,14 @@ for iel in range(0, nel):
                 zq=N.dot(z[icon[0:m,iel]])
 
                 # compute dNdx, dNdy, dNdz
-                for k in range(0, m):
+                for k in range(0,m):
                     dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]+jcbi[0,2]*dNdt[k]
                     dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]+jcbi[1,2]*dNdt[k]
                     dNdz[k]=jcbi[2,0]*dNdr[k]+jcbi[2,1]*dNds[k]+jcbi[2,2]*dNdt[k]
                 #end for 
 
                 # construct 3x8 b_mat matrix
-                for i in range(0, m):
+                for i in range(0,m):
                     b_mat[0:6, 3*i:3*i+3] = [[dNdx[i],0.     ,0.     ],
                                              [0.     ,dNdy[i],0.     ],
                                              [0.     ,0.     ,dNdz[i]],
@@ -436,7 +440,7 @@ for iel in range(0, nel):
                 a_el += b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq,yq,zq)*weightq*jcob
 
                 # compute elemental rhs vector
-                for i in range(0, m):
+                for i in range(0,m):
                     b_el[ndofV*i+0]+=N[i]*jcob*weightq*bx(xq,yq,zq)
                     b_el[ndofV*i+1]+=N[i]*jcob*weightq*by(xq,yq,zq)
                     b_el[ndofV*i+2]+=N[i]*jcob*weightq*bz(xq,yq,zq)
@@ -468,8 +472,8 @@ for iel in range(0, nel):
     jcb[2,0]=dNdt.dot(x[icon[0:m,iel]])
     jcb[2,1]=dNdt.dot(y[icon[0:m,iel]])
     jcb[2,2]=dNdt.dot(z[icon[0:m,iel]])
-    jcob = np.linalg.det(jcb)
-    jcbi = np.linalg.inv(jcb)
+    jcob=np.linalg.det(jcb)
+    jcbi=np.linalg.inv(jcb)
 
     # compute dNdx and dNdy
     for k in range(0,m):
@@ -489,7 +493,7 @@ for iel in range(0, nel):
     #end for
 
     # compute elemental matrix
-    a_el += b_mat.T.dot(k_mat.dot(b_mat))*penalty*weightq*jcob
+    a_el+=b_mat.T.dot(k_mat.dot(b_mat))*penalty*weightq*jcob
 
     # apply boundary conditions
     for k1 in range(0,m):
@@ -537,7 +541,7 @@ print("build FE system: %.3f s | nel= %d" % (time.time() - start,nel))
 #################################################################
 start = time.time()
 
-sol = sps.linalg.spsolve(a_mat,rhs)
+sol=sps.linalg.spsolve(a_mat,rhs)
 
 print("solve time: %.3f s | Nfem= %d " % (time.time() - start,Nfem))
 
@@ -552,7 +556,7 @@ print("     -> u (m,M) %.5e %.5e " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.5e %.5e " %(np.min(v),np.max(v)))
 print("     -> w (m,M) %.5e %.5e " %(np.min(w),np.max(w)))
 
-np.savetxt('velocity.ascii',np.array([x,y,z,u,v,w]).T,header='# x,y,z,u,v,w')
+#np.savetxt('velocity.ascii',np.array([x,y,z,u,v,w]).T,header='# x,y,z,u,v,w')
 
 print("transfer solution: %.3f s" % (time.time() - start))
 
@@ -621,7 +625,7 @@ for iel in range(0,nel):
     visc[iel]=viscosity(xc[iel],yc[iel],zc[iel])
     dens[iel]=bz(xc[iel],yc[iel],zc[iel])
     sr[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel]+ezz[iel]*ezz[iel])
-                    +exy[iel]*exy[iel]+exz[iel]*exz[iel]+eyz[iel]*eyz[iel])
+                        +exy[iel]*exy[iel]+exz[iel]*exz[iel]+eyz[iel]*eyz[iel])
     
 #end for
 
@@ -635,23 +639,24 @@ print("     -> eyz (m,M) %.4e %.4e " %(np.min(eyz),np.max(eyz)))
 print("     -> visc (m,M) %.4e %.4e " %(np.min(visc),np.max(visc)))
 print("     -> dens (m,M) %.4e %.4e " %(np.min(dens),np.max(dens)))
 
-np.savetxt('pressure.ascii',np.array([xc,yc,zc,p]).T,header='# xc,yc,zc,p')
-np.savetxt('strainrate.ascii',np.array([xc,yc,zc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+#np.savetxt('pressure.ascii',np.array([xc,yc,zc,p]).T,header='# xc,yc,zc,p')
+#np.savetxt('strainrate.ascii',np.array([xc,yc,zc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
 print("compute p and strainrate: %.3f s" % (time.time() - start))
 
 #####################################################################
 # compute vrms
 #####################################################################
+start = time.time()
 
 errv=0
 errp=0
 vrms=0.
 
-for iel in range(0, nel):
-    for iq in [-1, 1]:
-        for jq in [-1, 1]:
-            for kq in [-1, 1]:
+for iel in range(0,nel):
+    for iq in [-1,1]:
+        for jq in [-1,1]:
+            for kq in [-1,1]:
                 rq=iq/sqrt3
                 sq=jq/sqrt3
                 tq=kq/sqrt3
@@ -700,14 +705,16 @@ errp=np.sqrt(errp)
 vrms=np.sqrt(vrms/Lx/Ly/Lz)
 
 print("     -> nel= %6d ; errv: %e ; errp: %e " %(nel,errv,errp))
-
 print("     -> nel= %6d ; vrms: %e" % (nel,vrms))
+
+print("compute errors: %.3f s" % (time.time() - start))
 
 #####################################################################
 # export various measurements for stokes sphere benchmark 
 #####################################################################
 
 vel=np.sqrt(u**2+v**2+w**2)
+
 print('bench ',Lx/nelx,nel,Nfem,\
       np.min(u),np.max(u),\
       np.min(v),np.max(v),\
@@ -717,7 +724,7 @@ print('bench ',Lx/nelx,nel,Nfem,\
       vrms)
 
 #####################################################################
-# plot of solution
+# export solution to vtu format
 #####################################################################
 start = time.time()
 
@@ -739,11 +746,11 @@ if visu==1:
    for iel in range (0,nel):
        vtufile.write("%d\n" % iel)
    vtufile.write("</DataArray>\n")
-   vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
    for iel in range (0,nel):
        vtufile.write("%f\n" % p[iel])
    vtufile.write("</DataArray>\n")
-   vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
+   vtufile.write("<DataArray type='Float32' Name='pressure (th)' Format='ascii'> \n")
    for iel in range (0,nel):
        vtufile.write("%f\n" % pth(xc[iel],yc[iel],zc[iel]))
    vtufile.write("</DataArray>\n")
