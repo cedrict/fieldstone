@@ -217,16 +217,16 @@ def compute_gravity_tetrahedron(pt_1,pt_2,pt_3,pt_4,pt_M,rho0):
           r1*np.dot(vec_r2,vec_r3)+\
           r2*np.dot(vec_r3,vec_r1)+\
           r3*np.dot(vec_r1,vec_r2))
-    wA = 2*np.arctan2(num,denom)
+    wA=2*np.arctan2(num,denom)
 
-    num= np.dot(vec_r1,np.cross(vec_r3,vec_r4))
+    num=np.dot(vec_r1,np.cross(vec_r3,vec_r4))
     denom=(r1*r3*r4+\
           r1*np.dot(vec_r3,vec_r4)+\
           r3*np.dot(vec_r4,vec_r1)+\
           r4*np.dot(vec_r1,vec_r3))
-    wB = 2*np.arctan2(num,denom)
+    wB=2*np.arctan2(num,denom)
 
-    num= np.dot(vec_r1,np.cross(vec_r4,vec_r2))
+    num=np.dot(vec_r1,np.cross(vec_r4,vec_r2))
     denom=(r1*r4*r2+\
            r1*np.dot(vec_r4,vec_r2)+\
            r4*np.dot(vec_r2,vec_r1)+\

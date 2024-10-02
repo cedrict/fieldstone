@@ -1,0 +1,34 @@
+set terminal pdf enhanced font "Times,12pt"
+set grid
+set pointsize .3
+set key bottom
+
+set log x
+set xlabel 'npts per dim'
+
+
+set ylabel 'g_x/G'
+set output 'gx.pdf'
+plot[][]\
+'mascons.ascii'    w lp t 'mascons',\
+'quadrature.ascii' w lp t 'quadrature',\
+'faces.ascii' w l lw .5 t 'faces' 
+
+set output 'gx2.pdf'
+plot[3:][]\
+'mascons.ascii'    w lp t 'mascons',\
+'quadrature.ascii' w lp t 'quadrature',\
+'faces.ascii' w l lw .5 t 'faces' 
+
+
+
+
+
+set log y
+set ylabel 'rime(s)'
+set output 'time.pdf'
+plot[][]\
+'mascons.ascii'    u 1:6 w lp t 'mascons',\
+'quadrature.ascii' u 1:6 w lp t 'quadrature',\
+'faces.ascii'   u 1:6 w l t 'faces' 
+
