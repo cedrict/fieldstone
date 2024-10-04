@@ -1458,10 +1458,28 @@ L_{\color{purple}18} {\bm E}_{\color{purple}18}\cdot\vec{r}_{\color{purple}18}
 %===============================================================
 \section*{Hexahedron: mascons}
 
+The volume of the quadrilateral is computed and since its density is 
+constant each mascon has the same mass. 
+The number of mascons is $n^3$ and the mascons are spanning the entire 
+quadrilateral by means of a linear mapping. They are evenly spread in the 
+reference cube $[-1,1]^3$ and then mapped to the real hexahedron.
+This is all happening in the function {\python compute\_gravity\_hexahedron\_mascons}.
+There is however a problem with this approach. Each mascon is assigned the same mass, 
+which is fine if they are all equidistant. They are equidistant in the $r,s,t$ space
+but not necessarily in the $x,y,z$ after the mapping, especially if the sides of the 
+hexahedron are not planes. This yields errors tha cannot be remedied by using 
+more points (see tests 3,4). If the opposite faces of the hexahedron are  
+parallel and planar then mascons work fine, see tests 1\&2.
 
 %===============================================================
 \section*{Hexahedron: Gauss quadrature}
 
+This follows a standard Gauss quadrature procedure as explained
+in Section~\ref{MMM-sec:quadrature}. As we know the 
+kernel that needs to be integrated is not a polynomial so that 
+there is no optimal number of quadrature points. 
+This is implemented in the function {\python compute\_gravity\_hexahedron\_quadrature}.
+Quadratures from $2^3$ up to $8^3$ are implemented.
 
 %===============================================================
 \section*{Hexahedron test 1: the cuboid (prism)}
@@ -1475,16 +1493,26 @@ There is no analytical solution but all three methods do converge to the same va
 (and it is expected that the 'faces' method is exact or at least the most accurate).
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_113/results/hex_test1/gx.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_113/results/hex_test1/time.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_113/results/hex_test1/gx2.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_113/results/hex_test1/gx.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_113/results/hex_test1/time.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_113/results/hex_test1/gx2.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_113/results/hex_test1/gx3.pdf}\\
 {\captionfont Results and cpu time for all three methods as a function of 
 the used number of points (per dimension).}
 \end{center}
 
-Obviously one does not need to run 'exact' function for every value of {\python nm\_per\_dim}
+Obviously one does not need to run 'exact' function for every value of {\python n\_per\_dim}
 since it does not depend on it, but it allows for easier plotting and a sense of the 
 expected variation in the timing measurement from call to call. 
+
+Although none of the functions have been written with efficiency in mind, 
+we can look at the cpu time needed and we find that the {\python faces}
+approach is fastest for {\python n\_per\_dim}$\ge 8$.
+Looking at the accuracy we see that the mascons is the least accurate at low 
+{\python n\_per\_dim}. Gauss quadrature becomes reasonably accurate for 
+{\python n\_per\_dim}=6. 
+Looking at the error convergence (where the value obtained with the faces approach is used 
+as reference) we see that the quadrature approach converges much faster than the mascons approach.
 
 
 %===============================================================
@@ -1497,8 +1525,8 @@ $2\si{\km} \times  2 \si{\km} \times 2 \si{\km}$  was employed.
 The dyke model extends from 0.2 to 0.9 km depth. The 3-D view of buried dyke is shown here:
 
 \begin{center}
-\includegraphics[height=3cm]{python_codes/fieldstone_113/images/uwms19_a}
-\includegraphics[height=3cm]{python_codes/fieldstone_113/images/dyke}
+\includegraphics[height=3.5cm]{python_codes/fieldstone_113/images/uwms19_a}
+\includegraphics[height=3.5cm]{python_codes/fieldstone_113/images/dyke}
 \end{center}
 
 The $11 \times 11$ grid in the horizontal plane with observation
@@ -1511,6 +1539,92 @@ was calculated using the Gauss-Legendre integration, and calculation result is s
 block with the density difference of $+170 \si{\kg\per\cubic\meter}$.}
 \end{center}
 
+At this stage, looking at the figure above, I have my doubts: given the orientation of
+the hexahedron (look at the dashed line) why is gravity higher on the other side of it?
+(check the yellow 'ring'). Something is off, and this is corroborated by my own 
+measurements which yield the same field for all three methods (so only one is shown): 
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test2/ggg1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test2/ggg2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test2/ggg3}\\
+{\captionfont Results obtained in mGal. The asymmetry in the surface signal is not very pronounced.}
+\end{center}
+
+%===============================================================
+\section*{Hexahedron test 3: two buried blocks}
+
+This also originates in \textcite{uwms19} (2019). The coordinates of
+the vertices for both blocks are given in Table 2 of the publication.
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_113/images/uwms19_c}
+\includegraphics[width=5cm]{python_codes/fieldstone_113/images/uwms19_d}\\
+{\captionfont Left: Two blocks model with different densities. The red block 
+has positive density difference ($+400 kg/m3$), and blue block has negative density
+difference ($-400 kg/m3$). Right: Surface gravity anomaly map (top) for the 
+buried blocks with different densities and the gravity profile (bottom) along the A-A' line.
+Since the values range from negative to positive, this is likely the $g_z$
+component that is shown, not $|\vec{g}|$.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_113/images/blocks_1}
+\includegraphics[width=7cm]{python_codes/fieldstone_113/images/blocks_2}
+\end{center}
+
+I use $10^3$ mascons and $7^3$ quadrature points in what follows.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test3/g_faces}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test3/g_mascons}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test3/g_quadrature}\\
+{\captionfont $g_z$ Results obtained on a $71\times71$ grid. From left to right: 
+faces, mascons, quadrature.}
+\end{center}
+
+We find that the three methods yield very similar results and that the range
+of values matches the one in the publication. 
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_113/results/hex_test3/line.pdf}\\
+{\captionfont $g_z$ on the A-A' line of the figure above.}
+\end{center}
+
+Only looking at the section we see that the mascons results are 
+a bit off with regards to the other two methods.
 
 
+%===============================================================
+\section*{Hexahedron test 4: the irregular hexahedron}
+
+This is a simple test which I have designed. The hexahedron is such that 
+none of its faces is a plane, and that opposite faces are obviously 
+not parallel. 
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test4/myblock_2}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test4/myblock_1}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test4/g_faces}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test4/g_mascons}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test4/g_quad}
+\end{center}
+
+
+
+ 
+
+
+
+-----------------------------
+
+TODO:
+
+
+- compute gradients for all three methods.
+
+- find better benchmarks. For regular cuboid, compare with function in stone 84
 

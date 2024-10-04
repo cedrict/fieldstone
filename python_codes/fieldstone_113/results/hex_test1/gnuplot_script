@@ -20,10 +20,6 @@ plot[3:][]\
 'quadrature.ascii' w lp t 'quadrature',\
 'faces.ascii' w l lw .5 t 'faces' 
 
-
-
-
-
 set log y
 set ylabel 'rime(s)'
 set output 'time.pdf'
@@ -31,4 +27,15 @@ plot[][]\
 'mascons.ascii'    u 1:6 w lp t 'mascons',\
 'quadrature.ascii' u 1:6 w lp t 'quadrature',\
 'faces.ascii'   u 1:6 w l t 'faces' 
+
+set ylabel 'error(g_x)/G'
+set key top
+set log y
+set output 'gx3.pdf'
+plot[2:15][1e-8:]\
+'mascons.ascii'     u 1:(abs($2+4.385832e-01)) w lp t 'mascons',\
+'quadrature.ascii'  u 1:(abs($2+4.385832e-01)) w lp t 'quadrature',\
+x**-4/100 lt -1 dt 2 t 'n^{-4}',\
+x**-10    lt -1 dt 3 t 'n^{-10}'
+
 
