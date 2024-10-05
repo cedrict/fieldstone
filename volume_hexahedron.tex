@@ -7,18 +7,16 @@ which is different than the one in the paper:
 
 \begin{center}
 \includegraphics[width=3.4cm]{images/hexahedron/gran97}\\
-{\captionfont Modified from \cite{gran97}}\\
-{\tiny {\color{gray} in ./images/hexahedron/}}
+{\captionfont Modified from \cite{gran97}}
 \end{center}
 
 If the hexahedron is such that some or all the opposite faces are planes parallel to 
 each other than the volume can be arrived at very 
 simply\footnote{\url{https://en.wikipedia.org/wiki/Cuboid}}.
-
 The real catch here is that the four nodes which make up a face are not 
 necessarily co-planar!  
 
-The volume is then computed as follows
+The volume can then be computed as follows
 \begin{eqnarray}
 V &=& [(\vec{r}_6-\vec{r}_1)+(\vec{r}_7-\vec{r}_0),(\vec{r}_6-\vec{r}_3),(\vec{r}_2-\vec{r}_0)] \nn\\
   &+& [(\vec{r}_7-\vec{r}_0),(\vec{r}_6-\vec{r}_3)+(\vec{r}_5-\vec{r}_0),(\vec{r}_6-\vec{r}_4)] \nn\\
@@ -36,18 +34,18 @@ A_z & B_z & C_z
 \end{array}
 \right|
 \]
-It is implemented and used in Stone 98. The code is shown hereunder:
+It is implemented and used in \stone~98. The code is shown hereunder:
 \begin{lstlisting}
 def hexahedron_volume (x,y,z):
-    val = (  triple_product ( x[6]-x[1]+x[7]-x[0], y[6]-y[1]+y[7]-y[0], z[6]-z[1]+z[7]-z[0], \
-                              x[6]-x[3],           y[6]-y[3],           z[6]-z[3],           \
-                              x[2]-x[0],           y[2]-y[0],           z[2]-z[0]           )\
-           + triple_product ( x[7]-x[0],           y[7]-y[0],           z[7]-z[0],           \
-                              x[6]-x[3]+x[5]-x[0], y[6]-y[3]+y[5]-y[0], z[6]-z[3]+z[5]-z[0], \
-                              x[6]-x[4],           y[6]-y[4],           z[6]-z[4]           )\
-           + triple_product ( x[6]-x[1],           y[6]-y[1],           z[6]-z[1],           \
-                              x[5]-x[0],           y[5]-y[0],           z[5]-z[0],           \
-                              x[6]-x[4]+x[2]-x[0], y[6]-y[4]+y[2]-y[0], z[6]-z[4]+z[2]-z[0]  ) )/12.
+    val=(triple_product(x[6]-x[1]+x[7]-x[0],y[6]-y[1]+y[7]-y[0],z[6]-z[1]+z[7]-z[0],\
+                        x[6]-x[3],          y[6]-y[3],          z[6]-z[3],          \
+                        x[2]-x[0],          y[2]-y[0],          z[2]-z[0]          )\
+        +triple_product(x[7]-x[0],          y[7]-y[0],          z[7]-z[0],          \
+                        x[6]-x[3]+x[5]-x[0],y[6]-y[3]+y[5]-y[0],z[6]-z[3]+z[5]-z[0],\
+                        x[6]-x[4],          y[6]-y[4],          z[6]-z[4]          )\
+        +triple_product(x[6]-x[1],          y[6]-y[1],          z[6]-z[1],          \
+                        x[5]-x[0],          y[5]-y[0],          z[5]-z[0],          \
+                        x[6]-x[4]+x[2]-x[0],y[6]-y[4]+y[2]-y[0],z[6]-z[4]+z[2]-z[0]))/12.
     return val
 \end{lstlisting}
 with 
@@ -59,5 +57,5 @@ def triple_product (Ax,Ay,Az,Bx,By,Bz,Cx,Cy,Cz):
     return val
 \end{lstlisting}
 
-\Literature: \cite{duko88}
+\Literature: \fullcite{duko88}
 

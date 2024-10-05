@@ -112,7 +112,10 @@ This means that once we have discretised the Stokes equations we will need
 as many (i.e. $ndof$) equations in order to obtain a linear system with a solution.
 
 %--------------------------------------------
-\subsection{Solving the Laplacian formulation}
+\subsection{Solving the Laplacian formulation - the MAC sheme}
+
+The MAC scheme originates in \textcite{hawe65} (1965) and is nicely
+summed up in \textcite{kans07} (2007).
 
 %...............................................
 \subsubsection{momentum equation: $x$-component}
@@ -243,7 +246,7 @@ Then we set $v_{\tt 1}=v_{\tt 2}=v_{\tt 3}=v_{\tt 4}=v_{\tt 13}=v_{\tt 14}=v_{\t
 and $u_{\tt 1}=u_{\tt 5}=u_{\tt 6}=u_{\tt 10}=u_{\tt 11} = u_{\tt 15}=0$.
 This means that we need not discretise the momentum equation on these nodes.
 
-IS IT CORRECT for free slip ??
+
 
 Since we will need those in what follows, let us recall the forward, centered 
 and backward (from left to right) formulation of a second-order derivative:
