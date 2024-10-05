@@ -1471,6 +1471,12 @@ hexahedron are not planes. This yields errors tha cannot be remedied by using
 more points (see tests 3,4). If the opposite faces of the hexahedron are  
 parallel and planar then mascons work fine, see tests 1\&2.
 
+This lead me to write second function {\python compute\_gravity\_hexahedron\_mascons2}
+which first tesselates the unit cube in {\python n\_per\_dim}$^3$ sub cubes, 
+computes the image of each node via the $Q_1$ mapping and then compute the volume
+of each sub-hexahedron cell by means of the method explained in 
+Section~\ref{MMM-ss:vol_hexahed}.
+
 %===============================================================
 \section*{Hexahedron: Gauss quadrature}
 
@@ -1583,7 +1589,7 @@ I use $10^3$ mascons and $7^3$ quadrature points in what follows.
 faces, mascons, quadrature.}
 \end{center}
 
-We find that the three methods yield very similar results and that the range
+We find that the 3 methods yield very similar results and that the range
 of values matches the one in the publication. 
 
 \begin{center}
@@ -1591,9 +1597,9 @@ of values matches the one in the publication.
 {\captionfont $g_z$ on the A-A' line of the figure above.}
 \end{center}
 
-Only looking at the section we see that the mascons results are 
-a bit off with regards to the other two methods.
-
+Only looking at the section we see that the 'naive' mascons results are 
+a bit off with regards to the other two methods and the 'fancy' mascons method.
+Note that the mascons2 function is much slower than the others.
 
 %===============================================================
 \section*{Hexahedron test 4: the irregular hexahedron}
@@ -1614,8 +1620,33 @@ not parallel.
 \end{center}
 
 
+%===============================================================
+\section*{Hexahedron test 5: reverse faulted blocks}
 
- 
+We are now dealing with a reverse faulted block with the
+hanging wall located at a depth of 2 km and the footwall at a depth
+of 3 km. The footwall block extends to the depth of 6.5 km, and a
+uniform background density of $2600 kg/m^3$ is assumed with a
+density contrast of $-500 kg/m^3$. The model space is 
+$20 km \times  20 km \times 7 km$ 
+in the $x-$, $y-$, and $z-$directions, respectively. 
+The gravity anomaly distribution is calculated and presented in the $xy$-plane.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/images/uwms19_e}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/images/uwms19_f}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test5/blocks1}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test5/blocks2}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test5/gx}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test5/gy}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test5/gz}
+\end{center}
 
 
 

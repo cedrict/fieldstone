@@ -7,4 +7,5 @@ set output 'line.pdf'
 plot[][]\
 'line_faces.ascii' u (sqrt(($1-2000)**2+($2-2000)**2)):5 w l t 'faces',\
 'line_mascons.ascii' u (sqrt(($1-2000)**2+($2-2000)**2)):5 w l t 'mascons',\
+'line_mascons2.ascii' u (sqrt(($1-2000)**2+($2-2000)**2)):5 w l t 'mascons2',\
 'line_quadrature.ascii' u (sqrt(($1-2000)**2+($2-2000)**2)):5 w l t 'quadrature'
