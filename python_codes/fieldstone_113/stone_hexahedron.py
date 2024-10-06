@@ -92,6 +92,12 @@ def export_faces_to_vtu(pt_1,pt_2,pt_3,pt_4,pt_5,pt_6,pt_7,pt_8,name):
     vtufile.write("%10e %10e %10e \n" %(pt_8[0],pt_8[1],pt_8[2]))
     vtufile.write("</DataArray>\n")
     vtufile.write("</Points> \n")
+    vtufile.write("<PointData Scalars='scalars'>\n")
+    vtufile.write("<DataArray type='Int32'  Name='node nb' Format='ascii'> \n")
+    for i in range(0,8):
+        vtufile.write("%d \n" %(i+1))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</PointData>\n")
     vtufile.write("<Cells>\n")
     #--
     vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
@@ -207,7 +213,7 @@ def export_gravity_on_plane(x,y,z,icon,nelx,nely,Np,\
 #--------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------
 
-test=3
+test=1
 
 print('test=',test)
 

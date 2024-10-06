@@ -731,6 +731,9 @@ per-face factor $\omega_f$ is
 {\captionfont Left: unit cube; Right: triangles making up the visible faces.}
 \end{center}
 
+\begin{center}
+\includegraphics[width=15cm]{python_codes/fieldstone_113/images/faces/drawing}
+\end{center}
 
 
 When looking at a face from the outside towards the tetrahedron the numbering 
@@ -925,18 +928,15 @@ pt_midJ=np.zeros(3,dtype=np.float64) ; pt_midJ = (pt_8+pt_5+pt_6)/3
 pt_midK=np.zeros(3,dtype=np.float64) ; pt_midK = (pt_3+pt_1+pt_4)/3
 pt_midL=np.zeros(3,dtype=np.float64) ; pt_midL = (pt_3+pt_2+pt_1)/3
 
-vec_nA=np.zeros(3,dtype=np.float64) ; vec_nA = np.cross( vec_l13, vec_l09) ; vec_nA/=LA.norm(vec_nA,2)
-vec_nB=np.zeros(3,dtype=np.float64) ; vec_nB = np.cross( vec_l10,-vec_l05) ; vec_nB/=LA.norm(vec_nB,2)
-vec_nC=np.zeros(3,dtype=np.float64) ; vec_nC = np.cross(-vec_l10, vec_l02) ; vec_nC/=LA.norm(vec_nC,2)
+vec_nA=np.cross( vec_l13, vec_l09) ; vec_nA/=LA.norm(vec_nA,2)
+vec_nB=np.cross( vec_l10,-vec_l05) ; vec_nB/=LA.norm(vec_nB,2)
+vec_nC=np.cross(-vec_l10, vec_l02) ; vec_nC/=LA.norm(vec_nC,2)
 ...
-vec_nJ=np.zeros(3,dtype=np.float64) ; vec_nJ = np.cross( vec_l01,-vec_l04) ; vec_nJ/=LA.norm(vec_nJ,2)
-vec_nK=np.zeros(3,dtype=np.float64) ; vec_nK = np.cross(-vec_l07, vec_l08) ; vec_nK/=LA.norm(vec_nK,2)
-vec_nL=np.zeros(3,dtype=np.float64) ; vec_nL = np.cross(-vec_l05, vec_l06) ; vec_nL/=LA.norm(vec_nL,2)
+vec_nJ=np.cross( vec_l01,-vec_l04) ; vec_nJ/=LA.norm(vec_nJ,2)
+vec_nK=np.cross(-vec_l07, vec_l08) ; vec_nK/=LA.norm(vec_nK,2)
+vec_nL=np.cross(-vec_l05, vec_l06) ; vec_nL/=LA.norm(vec_nL,2)
 \end{lstlisting}
 }
-
-
-
 
 %.....................................................................................
 \item compute ${\bm F}_{A,B,C,D}$. 
@@ -1072,9 +1072,28 @@ In what follows $r_i=|\vec{r}_i|$.
 
 {\tiny
 \begin{lstlisting}
-num=np.dot(vec_r5,np.cross(vec_r1,vec_r6))
-denom=(r05*r01*r06+r1*np.dot(vec_r06,vec_r05)+r2*np.dot(vec_r03,vec_r01)+r3*np.dot(vec_r01,vec_r02))
+# A: 516
+num=np.dot(vec_r05,np.cross(vec_r01,vec_r06))
+denom=(r05*r01*r06+r05*np.dot(vec_r01,vec_r06)
+      +r01*np.dot(vec_r06,vec_r05)
+      +r06*np.dot(vec_r05,vec_r01))
 wA=2*np.arctan2(num,denom)
+
+# B: 261
+num=np.dot(vec_r02,np.cross(vec_r06,vec_r01))
+denom=(r02*r06*r01+r02*np.dot(vec_r06,vec_r01)
+      +r06*np.dot(vec_r01,vec_r02)
+      +r01*np.dot(vec_r02,vec_r06))
+wB=2*np.arctan2(num,denom)
+
+# C: 627
+num=np.dot(vec_r06,np.cross(vec_r02,vec_r07))
+denom=(r06*r02*r07+r06*np.dot(vec_r02,vec_r07)
+      +r02*np.dot(vec_r07,vec_r06)
+      +r07*np.dot(vec_r06,vec_r02))
+wC=2*np.arctan2(num,denom)
+
+...
 \end{lstlisting}
 }
 
@@ -1190,7 +1209,8 @@ edge & vertices & belongs to \\
 \hline
 \end{tabular}
 \end{center}
-The first letter is the face left of the arrow, the second letter is the face right of the arrow.
+The first letter is the face left of the arrow, the second letter is the face right of the arrow, 
+when going along the arrow.
 
 \begin{center}
 \begin{tikzpicture}
@@ -1458,23 +1478,23 @@ L_{\color{purple}18} {\bm E}_{\color{purple}18}\cdot\vec{r}_{\color{purple}18}
 %===============================================================
 \section*{Hexahedron: mascons}
 
-The volume of the quadrilateral is computed and since its density is 
-constant each mascon has the same mass. 
+The volume of the hexahedron is computed by means of a $2^3$-quadrature and since its density is 
+constant each mascon is assigned the same mass. 
 The number of mascons is $n^3$ and the mascons are spanning the entire 
 quadrilateral by means of a linear mapping. They are evenly spread in the 
-reference cube $[-1,1]^3$ and then mapped to the real hexahedron.
+reference cube $[-1,1]^3$ and then mapped out to the real hexahedron.
 This is all happening in the function {\python compute\_gravity\_hexahedron\_mascons}.
 There is however a problem with this approach. Each mascon is assigned the same mass, 
 which is fine if they are all equidistant. They are equidistant in the $r,s,t$ space
 but not necessarily in the $x,y,z$ after the mapping, especially if the sides of the 
-hexahedron are not planes. This yields errors tha cannot be remedied by using 
+hexahedron are not planes. This yields errors that cannot be remedied by using 
 more points (see tests 3,4). If the opposite faces of the hexahedron are  
-parallel and planar then mascons work fine, see tests 1\&2.
+parallel and planar then this approach works fine, see tests 1\&2.
 
 This lead me to write second function {\python compute\_gravity\_hexahedron\_mascons2}
 which first tesselates the unit cube in {\python n\_per\_dim}$^3$ sub cubes, 
-computes the image of each node via the $Q_1$ mapping and then compute the volume
-of each sub-hexahedron cell by means of the method explained in 
+computes the image of each node via the $Q_1$ mapping (and therefore the mapped out
+sub cube) and then compute the volume of each sub-hexahedron cell by means of the method explained in 
 Section~\ref{MMM-ss:vol_hexahed}.
 
 %===============================================================
@@ -1492,7 +1512,7 @@ Quadratures from $2^3$ up to $8^3$ are implemented.
 
 We first consider the unit cube $[0,1]^3$. Density is $\rho_0=1$ and 
 we set ${\cal G}=1$ for simplicity again.
-The gravity is measured at $M=(2,0.5,0.5)$. Since the point is on a line perpendicular 
+The gravity is measured at point $M=(2,0.5,0.5)$. Since the point is on a line perpendicular 
 to a face that goes through its middle we expect $g_y=g_z$ by symmetry, and 
 we indeed recover this, down to machine precision.
 There is no analytical solution but all three methods do converge to the same value
@@ -1507,7 +1527,8 @@ There is no analytical solution but all three methods do converge to the same va
 the used number of points (per dimension).}
 \end{center}
 
-Obviously one does not need to run 'exact' function for every value of {\python n\_per\_dim}
+Obviously one does not need to run the 
+{\python compute\_gravity\_hexahedron\_mascons} function for every value of {\python n\_per\_dim}
 since it does not depend on it, but it allows for easier plotting and a sense of the 
 expected variation in the timing measurement from call to call. 
 
@@ -1528,14 +1549,16 @@ This originates in \textcite{uwms19} (2019).
 It consists of a dyke with a density difference 
 of $+170 \si{\kg\per\cubic\meter}$, and a model space of 
 $2\si{\km} \times  2 \si{\km} \times 2 \si{\km}$  was employed. 
-The dyke model extends from 0.2 to 0.9 km depth. The 3-D view of buried dyke is shown here:
+The dyke model extends from 0.2 to 0.9 km depth (the coordinates
+of all 8 vertices is given in the article). The 3-D view of buried dyke is shown here:
 
 \begin{center}
 \includegraphics[height=3.5cm]{python_codes/fieldstone_113/images/uwms19_a}
-\includegraphics[height=3.5cm]{python_codes/fieldstone_113/images/dyke}
+\includegraphics[height=3.5cm]{python_codes/fieldstone_113/images/dyke}\\
+{\captionfont Left: figure from the paper; Right: Paraview rendering.}
 \end{center}
 
-The $11 \times 11$ grid in the horizontal plane with observation
+In the paper a $11 \times 11$ grid in the horizontal plane with observation
 points at 0.1-km intervals was used. The gravity anomaly
 was calculated using the Gauss-Legendre integration, and calculation result is shown below:
 
@@ -1567,19 +1590,21 @@ the vertices for both blocks are given in Table 2 of the publication.
 \includegraphics[width=7cm]{python_codes/fieldstone_113/images/uwms19_c}
 \includegraphics[width=5cm]{python_codes/fieldstone_113/images/uwms19_d}\\
 {\captionfont Left: Two blocks model with different densities. The red block 
-has positive density difference ($+400 kg/m3$), and blue block has negative density
-difference ($-400 kg/m3$). Right: Surface gravity anomaly map (top) for the 
+has positive density difference ($+400~\si{\kg\per\cubic\meter}$), and blue block has negative density
+difference ($-400~\si{\kg\per\cubic\meter}$). Right: Surface gravity anomaly map (top) for the 
 buried blocks with different densities and the gravity profile (bottom) along the A-A' line.
 Since the values range from negative to positive, this is likely the $g_z$
 component that is shown, not $|\vec{g}|$.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_113/images/blocks_1}
-\includegraphics[width=7cm]{python_codes/fieldstone_113/images/blocks_2}
+\includegraphics[width=6cm]{python_codes/fieldstone_113/images/blocks_1}
+\includegraphics[width=6cm]{python_codes/fieldstone_113/images/blocks_2}
 \end{center}
 
 I use $10^3$ mascons and $7^3$ quadrature points in what follows.
+We find that all methods yield very similar results and that the range
+of values matches the one in the publication: 
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test3/g_faces}
@@ -1589,29 +1614,31 @@ I use $10^3$ mascons and $7^3$ quadrature points in what follows.
 faces, mascons, quadrature.}
 \end{center}
 
-We find that the 3 methods yield very similar results and that the range
-of values matches the one in the publication. 
+Looking at the $A-A'$ section we see that the 'naive' mascons results are 
+a bit off with regards to the other two methods and the 'fancy' mascons method.
+Note that the mascons2 function is much slower than the others.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_113/results/hex_test3/line.pdf}\\
 {\captionfont $g_z$ on the A-A' line of the figure above.}
 \end{center}
 
-Only looking at the section we see that the 'naive' mascons results are 
-a bit off with regards to the other two methods and the 'fancy' mascons method.
-Note that the mascons2 function is much slower than the others.
 
 %===============================================================
 \section*{Hexahedron test 4: the irregular hexahedron}
 
 This is a simple test which I have designed. The hexahedron is such that 
 none of its faces is a plane, and that opposite faces are obviously 
-not parallel. 
+not parallel. I created this test when I was investigated why the 'naive'
+mascons did not yield identical results as the other 2 methods and this lead me 
+to write the 'clever' mascons approach.
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test4/myblock_2}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test4/myblock_1}
 \end{center}
+
+All three methods agree reasonably well. 
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test4/g_faces}
@@ -1623,11 +1650,14 @@ not parallel.
 %===============================================================
 \section*{Hexahedron test 5: reverse faulted blocks}
 
+This also originates in \textcite{uwms19} (2019). The coordinates of
+the vertices for both blocks are given in Table 2 of the publication.
+
 We are now dealing with a reverse faulted block with the
 hanging wall located at a depth of 2 km and the footwall at a depth
 of 3 km. The footwall block extends to the depth of 6.5 km, and a
-uniform background density of $2600 kg/m^3$ is assumed with a
-density contrast of $-500 kg/m^3$. The model space is 
+uniform background density of $2600~\si{\kg\per\cubic\meter}$ is assumed with a
+density contrast of $-500~\si{\kg\per\cubic\meter}$. The model space is 
 $20 km \times  20 km \times 7 km$ 
 in the $x-$, $y-$, and $z-$directions, respectively. 
 The gravity anomaly distribution is calculated and presented in the $xy$-plane.
@@ -1645,7 +1675,8 @@ The gravity anomaly distribution is calculated and presented in the $xy$-plane.
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test5/gx}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test5/gy}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test5/gz}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_113/results/hex_test5/gz}\\
+{\captionfont Left to right: $g_x$, $g_y$ and $g_z$ components.}
 \end{center}
 
 
@@ -1654,6 +1685,7 @@ The gravity anomaly distribution is calculated and presented in the $xy$-plane.
 
 TODO:
 
+- potential is returned by all functions but never plotted above
 
 - compute gradients for all three methods.
 
