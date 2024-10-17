@@ -597,6 +597,7 @@ Also probably \cite{fari94} and \cite{fari95}.
 \begin{itemize}
 \item[\twothousandeight] \textcite{yosh08}
 \item[\twothousandnine] \textcite{yona09}
+\item[\twothousandten]  \textcite{mohy10}
 \item[\twothousandtwelve] \textcite{yoth12}, \textcite{yosh12}
 \item[\twothousandthirteen] \textcite{yosh13}
 \item[\twothousandtwenty] \textcite{yosy20}
@@ -705,7 +706,7 @@ Section 3 of \cite{qums07} presents the evolutionary path which lead to this cod
 \item[\twothousandthree]     \textcite{modm03},  \textcite{wibm03}
                              \textcite{mumc03},  \textcite{wemv03}
                              \textcite{onmo03},  \textcite{onml03}
-\item[\twothousandfour]      \textcite{wijns2004}
+\item[\twothousandfour]      \textcite{wijns2004}, \textcite{wesm04}
 \item[\twothousandfive]      \textcite{wiwg05},  \textcite{onml05},  \textcite{onmj05}
 \item[\twothousandsix]       \textcite{onmm06} 
 \item[\twothousandseven]     \textcite{moql07},  \textcite{gewm07}
@@ -1234,6 +1235,67 @@ See paper for more links to various flavors of this code in 3D.
 \end{small} 
 
 %------------------------------------------------------------------------------
+\section{MANTLE}
+%------------------------------------------------------------------------------
+
+In \cite{scag95} the authors state that 
+\cite{scan85}, \cite{elsc88}, \cite{scoa89}, 
+\cite{olsa88} \cite{olsa93}.
+In \cite{olsa88} we read: ``
+We use the finite element code MANTLE originally
+developed by E. Thompson \cite{thll69,thha73,thom75,dath78}
+and applied to a variety
+of geodynamical problems by Schubert and Anderson \cite{scan85},
+Thomas and Schubert [1986, 1987],
+Garfunkel et al. \cite{gaas86} and Ellsworth and Schubert \cite{elsc88}.
+
+The code models
+the equations of infinite Prandlt number, incompressible
+viscous flow, and thermal transport.
+It employs s fixed two-dimensional Eulerian grid
+of triangular elements each containing six nodal points.
+This allows for quadratic interpolation
+of velocities and temperatures.
+Galerkin's method is used to produce the numerical
+equations [Sato and Thompson, 1976; Schubert and Anderson, 1985].
+Because of the need for a large number of nodal points to resolve the 
+temperature and velocity fields (approximately 6600 nodes
+and and 3200 elements were employed in each
+calculation), the penalty method, with a penalty
+parameter (bulk viscosity of an element divided
+by shear viscosity) of $10^6$, is used to satisfy
+element incompressibility and to provide
+average pressure in each element.
+The penalty method effectively reduces the number of flow
+equations to be solved at each time step to twice the number of nodal points.
+The accuracy of the penalty method for enforcing incompressibility
+is commensurate with the accuracy obtained using three pressure points per
+element. An implicit backward time-stepping method is employed.
+The temperature-dependent viscosity is determined on an element basis by
+calculating the viscosity at the beginning of a time step and holding 
+it constant over the time step. Additional details concerning the numerical 
+procedure are given in Schubert and Anderson [1985].''
+
+\begin{small}
+\begin{itemize}
+\item[1969] \textcite{thml69} 
+\item[1973] \textcite{thha73} 
+\item[1975] \textcite{thom75} 
+\item[1978] \textcite{dath78}
+\item[1985] \textcite{scan85}
+\item[1986] \textcite{gaas86} 
+\item[1987]
+\item[1988] \textcite{elsc88}, \textcite{olsa88}
+\item[1989] \textcite{scoa89}
+\item[1993] \textcite{olsa93}
+\item[1995] \textcite{scag95}
+\end{itemize}
+\end{small} 
+
+
+
+
+%------------------------------------------------------------------------------
 \section{MC3D}
 %------------------------------------------------------------------------------
 
@@ -1618,14 +1680,14 @@ and compressible viscous media.
 \item[\twothousandthirteen]    \textcite{ancv13},  \textcite{cibi13},  \textcite{bova13}
 \item[\twothousandfourteen]    \textcite{chsg14},  \textcite{mova14},  \textcite{chsv14}
 \item[\twothousandfifteen]     \textcite{vasy15},  \textcite{cibi15},  \textcite{mori15}
-\item[\twothousandseventeen]   \textcite{civj17},  \textcite{wewv17}
-\item[\twothousandeighteen]    \textcite{spcv18},  \textcite{chss18}
+\item[\twothousandseventeen]   \textcite{civj17},  \textcite{wewv17},  \textcite{mova17}
+\item[\twothousandeighteen]    \textcite{spcv18},  \textcite{chss18},  \textcite{mova18}
 \item[\twothousandnineteen]    \textcite{zhdv19},  \textcite{vayu19},  \textcite{casv19}, 
                                \textcite{vaws19},  \textcite{cibi19}
 \item[\twothousandtwenty]      \textcite{moku20},  \textcite{jomv20},  \textcite{bicc20}
 \item[\twothousandtwentyone]   \textcite{pocv21},  \textcite{mota21}
 \item[\twothousandtwentythree] \textcite{pocb23}
-\item[\twothousandtwentyfour]  \textcite{vapc24}
+\item[\twothousandtwentyfour]  \textcite{vapc24},  \textcite{mori24}
 \end{itemize}
 \end{small}
 
@@ -1811,7 +1873,7 @@ For an explanation of nested version of the numerical model, see appendix A of \
                              \textcite{nata05},  \textcite{nata05b}
                              \textcite{nabu05},  \textcite{yoog05}
 \item[\twothousandsix]       \textcite{mita06}
-\item[\twothousandseven]     \textcite{grlt07},  \textcite{grlt07b},
+\item[\twothousandseven]     \textcite{grlt07},  \textcite{grlt07b},  \textcite{homo07},
                              \textcite{heta07},  \textcite{tanh07}
 \item[\twothousandeight]     \textcite{deta08},  \textcite{hets08}
                              \textcite{heta08},  \textcite{sata08}
@@ -1820,7 +1882,7 @@ For an explanation of nested version of the numerical model, see appendix A of \
 \item[\twothousandten]       \textcite{detn10},  \textcite{nata10}
                              \textcite{moht10},  \textcite{sate10},  \textcite{natd10}
 \item[\twothousandeleven]    \textcite{rota11},  \textcite{gokg11},  \textcite{catb11}
-                             \textcite{nata11},  \textcite{dekt11}
+                             \textcite{nata11},  \textcite{dekt11},  \textcite{moho11}
 \item[\twothousandtwelve]    \textcite{roct12},  \textcite{crtm12},
                              \textcite{cosr13},  \textcite{deyt12},
                              \textcite{dect12},  \textcite{arta12},

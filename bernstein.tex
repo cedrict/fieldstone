@@ -58,14 +58,14 @@ we choose $f_0=f(r=-1)=1$, $f_1=f(r=0)=0$, $f_2=f(r=+1)=0$.
 Then, we can compute the value of the field inside of the element 
 as we usually do in the FE methodology:
 \[
-f^h(r) = \sum_{i=0}^2 f_i N_i(r) = f_0 N_0(r) = N_0(r) = \frac{1}{2}r(r-1)
+f^h(r) = \sum_{i=0}^2 \bN_i(r) f_i = f_0 \bN_0(r) = \bN_0(r) = \frac{1}{2}r(r-1)
 \]
 This means that although the field $f$ is always positive (or null) inside the element
 its representation with the basis functions is negative over half (!) of the element
 (see purple curve on the right panel above).
 If we now turn to the Bernstein polynomials:
 \[
-f^h(r) = \sum_{i=0}^2 b_{i,2} = b_{0,2} = \frac{1}{4}(1-r)^2
+f^h(r) = \sum_{i=0}^2 b_{i,2} f_i = b_{0,2} = \frac{1}{4}(1-r)^2
 \]
 which is {\it always} positive over the interval $[-1,+1]$, 
 and looking at the purple curve on the left panel above, 
@@ -87,21 +87,26 @@ the integral while the Bernstein polynomial-based interpolation overestimates it
 
 \paragraph{Example 2}
 
-We now choose $f_0=f(r=-1)=1$, $f_1=f(r=1)=0$, $f_2=f(r=+1)=0$. Then 
+We now choose $f_0=f(r=-1)=1$, $f_1=f(r=0)=1$, $f_2=f(r=1)=0$. Then 
 \[
-f^h(r) = \sum_{i=0}^2 f_i N_i(r) = f_0 N_0(r) f(1) N_1(r) 
-= N_0(r) + N_1(r) = \frac{1}{2}r(r-1) + 1-r^2 = -\frac{1}{2}r^2 -\frac{1}{2}r +1  
+f^h(r) 
+= \sum_{i=0}^2 f_i \bN_i(r) 
+= f_0 \bN_0(r) + f_1 \bN_1(r) 
+= \bN_0(r) + \bN_1(r) 
+= \frac{1}{2}r(r-1) + 1-r^2 = -\frac{1}{2}r^2 -\frac{1}{2}r +1  
 \]
 Looking now at the Bernstein polynomials:
 \[
-f^h(r) = \sum_{i=0}^2 b_{i,2} = b_{0,2} + b_{1,2} = \frac{1}{4}(1-r)^2 + \frac{1}{2}(1-r^2)
+f^h(r) 
+= \sum_{i=0}^2 b_{i,2} f_i 
+= b_{0,2} + b_{1,2} = \frac{1}{4}(1-r)^2 + \frac{1}{2}(1-r^2)
 = -\frac{1}{4}r^2-\frac{1}{2}r+\frac{3}{4}
 \]
 If we now plot both approximations:
 \begin{center}
 \includegraphics[width=7cm]{images/bernstein/N2__.pdf}
 \end{center}
-We see that in this case the basis function-based approximation yields values 
+We see that in this case the $Q_2$ basis function-based approximation yields values 
 above 1 over half of the element while the Bernstein polynomial-based 
 approximation remains between 0 and 1 as expected.
 
@@ -138,11 +143,11 @@ which is not equal to $f(r)$.
 On the other hand it is trivial to show that 
 \begin{eqnarray}
 f^h(r) 
-&=&  \sum_{i=0}^2 f(r_i) N_i(r) \nn \\
-&=&  \sum_{i=0}^2   (ar_i^2+br_i+c)  N_i(r) \nn \\
-&=&  a \sum_{i=0}^2  r_i^2 N_i(r) + b \sum_{i=0}^2 r_i  N_i(r) +  c \sum_{i=0}^2  N_i(r) \nn \\
-&=&  a \sum_{i=0}^2  r_i^2 N_i(r) + b \sum_{i=0}^2 r_i  N_i(r) +  c \nn\\
-&=&  a (N_0(r)+N_2(r)) + b (-N_0(r) +N_2(r)) +  c \nn\\
+&=&  \sum_{i=0}^2 f(r_i) \bN_i(r) \nn \\
+&=&  \sum_{i=0}^2   (ar_i^2+br_i+c)  \bN_i(r) \nn \\
+&=&  a \sum_{i=0}^2  r_i^2 \bN_i(r) + b \sum_{i=0}^2 r_i  \bN_i(r) +  c \sum_{i=0}^2  \bN_i(r) \nn \\
+&=&  a \sum_{i=0}^2  r_i^2 \bN_i(r) + b \sum_{i=0}^2 r_i  \bN_i(r) +  c \nn\\
+&=&  a (N_0(r)+N_2(r)) + b (-\bN_0(r) +\bN_2(r)) +  c \nn\\
 &=&  a r^2  + b r+ c 
 \end{eqnarray}
 
@@ -170,7 +175,10 @@ represent exactly a 2nd-order polynomial field (while basis functions can).
 The positivity can be really critical in geodynamical simulations: a negative density makes no sense, 
 and a negative viscosity even less!
 
-The 2nd-order Bernstein polynomials are used in Stone \ref{f64}. The actual context of this stone is not 
+%...............................................................................
+\paragraph{Example 3}
+
+The 2nd-order Bernstein polynomials are used in \stone~64. The actual context of this stone is not 
 important. Fields such as density and viscosity are known on the 
 9 nodes of the $Q_2$ element and need to be projected onto the 9 quadrature points. 
 For instance, these nodal fields are given by:
@@ -187,13 +195,154 @@ The bottom row is obtained with the basis functions while the top row is obtaine
 polynomials as interpolants. The thin blue line actually indicated points with negative viscosity and 
 on the left the colour bar shows densities below the value of 1890 (lowest density in the domain).
 
+%...............................................................................
+\paragraph{Example 4}
+
+In this example I have created a small python code (in {\tt /images/bernstein})
+which creates a single $Q_2$ element in 2D, i.e. it consists of 9 nodes.
+9 different scenarios are created by assigning some of the nodes either a 
+density value of 1 or 0. 
+The internal numbering is as follows:
+\begin{verbatim}
+3--6--2
+|     |
+7  8  5
+|     |
+0--4--1
+\end{verbatim}
+
+I then proceed to generate 100,000 random points inside the element
+and I use either the $Q_2$ basis functions to interpolate the density onto them
+or the 2nd order Bernstein polynomials.
+The basis functions used are as follows:
+\begin{lstlisting}
+def NNN(r,s):
+    val = np.zeros(9,dtype=np.float64)
+    val[0]= 0.5*r*(r-1.) * 0.5*s*(s-1.)
+    val[1]= 0.5*r*(r+1.) * 0.5*s*(s-1.)
+    val[2]= 0.5*r*(r+1.) * 0.5*s*(s+1.)
+    val[3]= 0.5*r*(r-1.) * 0.5*s*(s+1.)
+    val[4]=    (1.-r**2) * 0.5*s*(s-1.)
+    val[5]= 0.5*r*(r+1.) *    (1.-s**2)
+    val[6]=    (1.-r**2) * 0.5*s*(s+1.)
+    val[7]= 0.5*r*(r-1.) *    (1.-s**2)
+    val[8]=    (1.-r**2) *    (1.-s**2)
+    return val 
+
+def BBB(r,s):
+    val = np.zeros(9,dtype=np.float64)
+    val[0]= 0.25*(1-r)**2  * 0.25*(1-s)**2  
+    val[1]= 0.25*(1+r)**2  * 0.25*(1-s)**2  
+    val[2]= 0.25*(1+r)**2  * 0.25*(1+s)**2  
+    val[3]= 0.25*(1-r)**2  * 0.25*(1+s)**2  
+    val[4]= 0.5*(1-r**2)   * 0.25*(1-s)**2  
+    val[5]= 0.25*(1+r)**2  * 0.5*(1-s**2) 
+    val[6]= 0.5*(1-r**2)   * 0.25*(1+s)**2  
+    val[7]= 0.25*(1-r)**2  * 0.5*(1-s**2) 
+    val[8]= 0.5*(1-r**2)   * 0.5*(1-s**2) 
+    return val 
+\end{lstlisting}
+
 
  
+In the following table I report the min/max values of the density on the 
+swarm of points for both methods and all 9 cases:
 
+\begin{center}
+\begin{tabular}{lllll}
+\hline
+case & min($\rho^h_{Q_2}$) & max($\rho^h_{Q_2}$)  & min($\rho^h_{B_2}$) & max($\rho^h_{B_2}$)  \\ 
+\hline
+\hline
+1 &-0.124978 &0.994484 &0.000000 &0.996320  \\
+2 &-0.124999 &0.998679 &0.000000 &0.499537  \\
+3 &-0.140625 &1.124868 &0.000000 &0.999317  \\
+4 &-0.125000 &0.999997 &0.000000 &0.999998  \\
+5 &-0.187699 &1.124808 &0.000000 &0.999978  \\
+6 & 0.000000 &1.265620 &0.000000 &0.999980  \\
+7 &-0.225000 &1.124911 &0.000000 &0.999996  \\
+8 &-0.124418 &1.224999 &0.000000 &1.000000  \\
+9 & 1.000000 &1.000000 &1.000000 &1.000000  \\
+\hline
+\end{tabular}
+\end{center}
 
+We find that using $Q_2$ basis functions yields values 
+either above 1 or less than 0, which makes little sense, 
+while the $B_2$ functions produce values exactly between 0 and 1. 
+Only case 2 with $B_2$ produces values up to 0.5, which is understandable 
+since the function $B_{2,7}$ (i.e. at node 7) reaches a maximum value of 1/2.
 
+Also, the last case 9 corresponds to assigning all nodes $\rho=1$,
+so that we expect the min/max values to be exactly 1 (sanity check).
 
+I show below from left to right: the nodal values, the $Q_2$-based field,
+where it is negative, and the $B_2$-based field for all nine cases:
 
+\begin{itemize}
+\item Case 1:
+\begin{center}
+\includegraphics[width=4cm]{images/bernstein/nodes0000.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2_0.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2neg_0.png}
+\includegraphics[width=4cm]{images/bernstein/rhoB2_0.png}\\
+\end{center}
+\item Case 2:
+\begin{center}
+\includegraphics[width=4cm]{images/bernstein/nodes0001.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2_1.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2neg_1.png}
+\includegraphics[width=4cm]{images/bernstein/rhoB2_1.png}\\
+\end{center}
+\item Case 3:
+\begin{center}
+\includegraphics[width=4cm]{images/bernstein/nodes0002.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2_2.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2neg_2.png}
+\includegraphics[width=4cm]{images/bernstein/rhoB2_2.png}\\
+\end{center}
+\item Case 4:
+\begin{center}
+\includegraphics[width=4cm]{images/bernstein/nodes0003.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2_3.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2neg_3.png}
+\includegraphics[width=4cm]{images/bernstein/rhoB2_3.png}\\
+\end{center}
+\item Case 5:
+\begin{center}
+\includegraphics[width=4cm]{images/bernstein/nodes0004.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2_4.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2neg_4.png}
+\includegraphics[width=4cm]{images/bernstein/rhoB2_4.png}\\
+\end{center}
+\item Case 6:
+\begin{center}
+\includegraphics[width=4cm]{images/bernstein/nodes0005.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2_5.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2neg_5.png}
+\includegraphics[width=4cm]{images/bernstein/rhoB2_5.png}\\
+\end{center}
+\item Case 7:
+\begin{center}
+\includegraphics[width=4cm]{images/bernstein/nodes0006.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2_6.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2neg_6.png}
+\includegraphics[width=4cm]{images/bernstein/rhoB2_6.png}\\
+\end{center}
+\item Case 8:
+\begin{center}
+\includegraphics[width=4cm]{images/bernstein/nodes0007.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2_7.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2neg_7.png}
+\includegraphics[width=4cm]{images/bernstein/rhoB2_7.png}\\
+\end{center}
+\item Case 9:
+\begin{center}
+\includegraphics[width=4cm]{images/bernstein/nodes0008.png}
+\includegraphics[width=4cm]{images/bernstein/rhoQ2_8.png}
+\includegraphics[width=4cm]{images/bernstein/rhoB2_8.png}\\
+\end{center}
+\end{itemize}
 
 
  
