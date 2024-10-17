@@ -222,7 +222,7 @@ for j in range(0, nely):
 
 print("defining temperature boundary conditions")
 
-bc_fixT=np.zeros(NfemT,dtype=np.bool)  
+bc_fixT=np.zeros(NfemT,dtype=bool)  
 bc_valT=np.zeros(NfemT,dtype=np.float64) 
 
 if experiment==1:

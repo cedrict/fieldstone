@@ -656,7 +656,7 @@ print("build iconP: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
 for i in range(0,NV):
@@ -676,7 +676,7 @@ print("velocity b.c.: %.3f s" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
-bc_fixT=np.zeros(NfemT,dtype=np.bool)  
+bc_fixT=np.zeros(NfemT,dtype=bool)  
 bc_valT=np.zeros(NfemT,dtype=np.float64) 
 
 for i in range(0,NV):

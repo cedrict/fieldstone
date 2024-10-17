@@ -354,7 +354,7 @@ tempy[5*b_NV:6*b_NV]=b6_y[:]
 tempy[6*b_NV:7*b_NV]=b7_y[:]
 tempy[7*b_NV:8*b_NV]=b8_y[:]
 
-doubble=np.zeros(nblock*b_NV,dtype=np.bool)  # boundary condition, yes/no
+doubble=np.zeros(nblock*b_NV,dtype=bool)  # boundary condition, yes/no
 pointto=np.zeros(nblock*b_NV,dtype=np.int32)
 
 for i in range(0,nblock*b_NV):
@@ -453,7 +453,7 @@ print("compute coords.: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-bc_fix = np.zeros(Nfem, dtype=np.bool)  # boundary condition, yes/no
+bc_fix = np.zeros(Nfem, dtype=bool)  # boundary condition, yes/no
 bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
 
 if experiment==1:

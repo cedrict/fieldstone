@@ -446,7 +446,7 @@ print("connectivity: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
 if benchmark==11:
@@ -522,7 +522,7 @@ if benchmark==5:
 print("boundary conditions: %.3f s" % (timing.time() - start))
 
 #################################################################
-surface=np.zeros(NV,dtype=np.bool)  
+surface=np.zeros(NV,dtype=bool)  
 
 if benchmark==4 or benchmark==5:
    for i in range(0,NV):

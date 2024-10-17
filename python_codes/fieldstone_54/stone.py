@@ -232,12 +232,12 @@ print("build P grid: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-bc_fix = np.zeros(NfemV, dtype=np.bool)  # boundary condition, yes/no
+bc_fix = np.zeros(NfemV, dtype=bool)  # boundary condition, yes/no
 bc_val = np.zeros(NfemV, dtype=np.float64)  # boundary condition, value
-on_left_boundary = np.zeros(NV, dtype=np.bool)  
-on_right_boundary = np.zeros(NV, dtype=np.bool) 
-on_bottom_boundary = np.zeros(NV, dtype=np.bool)
-on_top_boundary = np.zeros(NV, dtype=np.bool)
+on_left_boundary = np.zeros(NV, dtype=bool)  
+on_right_boundary = np.zeros(NV, dtype=bool) 
+on_bottom_boundary = np.zeros(NV, dtype=bool)
+on_top_boundary = np.zeros(NV, dtype=bool)
 
 if experiment==1 or experiment==9:
    uleft=0.
@@ -610,7 +610,7 @@ for istep in range(0,nstep):
       v2 = np.zeros(NV,dtype=np.float64)           # y-component velocity
 
       # generate bc for left, ritgh, bottom boundaries 
-      bc_fix2 = np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+      bc_fix2 = np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
       bc_val2 = np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
       for i in range(0,NV):
           if on_left_boundary[i] or on_right_boundary[i]:

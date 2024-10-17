@@ -199,7 +199,7 @@ for iel in range(0,nel):
 #################################################################
 start = time.time()
 
-bc_fix = np.zeros(Nfem, dtype=np.bool)  # boundary condition, yes/no
+bc_fix = np.zeros(Nfem, dtype=bool)  # boundary condition, yes/no
 bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
 
 if experiment==1:

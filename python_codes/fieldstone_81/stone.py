@@ -598,7 +598,7 @@ np.savetxt('gridc.ascii',np.array([xc,yc,zc]).T,header='# x,y,z')
 #################################################################
 start = time.time()
 
-bc_fix=np.zeros((mV*ndofV,nel),dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros((mV*ndofV,nel),dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros((mV*ndofV,nel),dtype=np.float64)  # boundary condition, value
 
 for iel in range(0,nel):

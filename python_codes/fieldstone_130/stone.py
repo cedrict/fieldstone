@@ -119,7 +119,7 @@ for j in range(0,nely):
 #####################################################################
 # define temperature boundary conditions
 #####################################################################
-#bc_fix=np.zeros(Nfem,dtype=np.bool)  
+#bc_fix=np.zeros(Nfem,dtype=bool)  
 #bc_val=np.zeros(Nfem,dtype=np.float64) 
 #for i in range(0,NP):
 #    if y[i]/Ly<eps:

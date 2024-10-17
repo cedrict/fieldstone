@@ -121,7 +121,7 @@ for j in range(0, nely):
 
 print("defining velocity boundary conditions")
 
-bc_fixV=np.zeros(NfemV,dtype=np.bool) 
+bc_fixV=np.zeros(NfemV,dtype=bool) 
 bc_valV=np.zeros(NfemV,dtype=np.float64) 
 
 for i in range(0,nnp):
@@ -141,7 +141,7 @@ for i in range(0,nnp):
 
 print("defining temperature boundary conditions")
 
-bc_fixT=np.zeros(NfemT,dtype=np.bool)  
+bc_fixT=np.zeros(NfemT,dtype=bool)  
 bc_valT=np.zeros(NfemT,dtype=np.float64) 
 
 for i in range(0,nnp):

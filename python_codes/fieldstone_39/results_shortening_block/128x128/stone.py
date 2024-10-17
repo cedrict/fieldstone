@@ -390,7 +390,7 @@ start = timing.time()
 
 u     =np.zeros(NV,dtype=np.float64)    # x-component velocity
 v     =np.zeros(NV,dtype=np.float64)    # y-component velocity
-bc_fix=np.zeros(NfemV,dtype=np.bool)    # boundary condition, yes/no
+bc_fix=np.zeros(NfemV,dtype=bool)    # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64) # boundary condition, value
 
 if benchmark==1:

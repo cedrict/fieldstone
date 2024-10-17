@@ -264,8 +264,8 @@ print("element center coords: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-bc_fix=np.zeros(Nfem,dtype=np.bool)  # boundary condition, yes/no
-bc_val=np.zeros(Nfem,dtype=float)  # boundary condition, value
+bc_fix=np.zeros(Nfem,dtype=bool)  # boundary condition, yes/no
+bc_val=np.zeros(Nfem,dtype=np.float64)  # boundary condition, value
 
 if experiment==1 or experiment==2:
       for i in range(0,NV):

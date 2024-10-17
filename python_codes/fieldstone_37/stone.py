@@ -250,7 +250,7 @@ swarm_x=np.empty(nmarker,dtype=np.float64)
 swarm_y=np.empty(nmarker,dtype=np.float64)  
 swarm_u=np.zeros(nmarker,dtype=np.float64)  
 swarm_v=np.zeros(nmarker,dtype=np.float64)  
-swarm_active=np.zeros(nmarker,dtype=np.bool) 
+swarm_active=np.zeros(nmarker,dtype=bool) 
 
 if random_markers==1:
    counter=0

@@ -204,7 +204,7 @@ if experiment==3:
    voronoi_cell=np.empty(nel,dtype=np.int) # associated V cell 
    voronoi_cell[:]=-1
 
-   iin= np.empty(nvo,dtype=np.bool) 
+   iin= np.empty(nvo,dtype=bool) 
 
    for iel in range(0,nel):
        xc[iel]=0.5*(x[icon[0,iel]]+x[icon[2,iel]])

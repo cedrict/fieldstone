@@ -18,16 +18,16 @@ Ly=1
 ndofV=2
 ndofP=1
 
-nelx=48
+nelx=32
 
 mtype=0 # mesh type (how quads are divided into triangles)
 
-Vspace='Q2'
-Pspace='Q1'
+Vspace='P2+'
+Pspace='P-1'
 
 visu=1
 
-experiment='lire19' #'dh'
+experiment='solcx' #'sinker' #'lire19' #'dh'
 
 unstructured=0
 
@@ -523,6 +523,21 @@ else:
 print('     -> h (m,M,avrg)= %e %e %e ' %(hmin,hmax,havrg))
 
 ###############################################################################
+
+xc = np.zeros(nel,dtype=np.float64)
+yc = np.zeros(nel,dtype=np.float64)
+bxc = np.zeros(nel,dtype=np.float64)
+byc = np.zeros(nel,dtype=np.float64)
+etac = np.zeros(nel,dtype=np.float64)
+
+for iel in range(0,nel):
+    xc[iel]=np.sum(xV[iconV[:,iel]])/mV
+    yc[iel]=np.sum(yV[iconV[:,iel]])/mV
+    bxc[iel]=mms.bx(xc[iel],yc[iel],drho)
+    byc[iel]=mms.by(xc[iel],yc[iel],drho)
+    etac[iel]=mms.eta(xc[iel],yc[iel],etastar)
+
+###############################################################################
 # compute vrms and errors
 ###############################################################################
 start = timing.time()
@@ -539,6 +554,7 @@ errdivv=0
 errv=0
 errp=0
 vrms=0
+vrmss=0
 counterq=0
 for iel in range(0,nel):
     for iq in range(0,nqel):
@@ -568,6 +584,9 @@ for iel in range(0,nel):
         pq[counterq]=NNNP.dot(p[iconP[0:mP,iel]])
         vrms+=(uq[counterq]**2+vq[counterq]**2)*weightq*jcob
 
+        if experiment=='sinker' and abs(xc[iel]-0.5)<0.125 and abs(yc[iel]-0.75)<0.125:
+           vrmss+=(uq[counterq]**2+vq[counterq]**2)*weightq*jcob
+
         uthq,vthq,pthq=mms.solution(xq[counterq],yq[counterq])
         errv+=(uq[counterq]-uthq)**2*weightq*jcob+\
               (vq[counterq]-vthq)**2*weightq*jcob
@@ -585,6 +604,7 @@ vrms=np.sqrt(vrms/(Lx*Ly))
 errv=np.sqrt(errv/(Lx*Ly))
 errp=np.sqrt(errp/(Lx*Ly))
 errdivv=np.sqrt(errdivv/(Lx*Ly))
+vrmss/=0.0625
 
 print("     -> nel= %6d ; vrms= %.5e ; vrms(th)= %.5e ; %6d %6d %e" %(nel,vrms,mms.vrms(),NfemV,NfemP,havrg))
 print("     -> nel= %6d ; errv= %.5e ; errp= %.5e ; errdivv= %.5e | %6d %6d %.4e %.4e" %(nel,errv,errp,errdivv,NfemV,NfemP,havrg,Lx/nelx*np.sqrt(2)))
@@ -673,9 +693,10 @@ if experiment=='solvi':
 
 if experiment=='sinker' or experiment=='sinker_reduced' or experiment=='sinker_open':
 
-   for i in range(0,NV):
-       if abs(xV[i]-0.5)<eps and abs(yV[i]-0.75)<eps:
-          print('     -> sinker_vel',xV[i],yV[i],v[i],etastar,drho,nelx)
+   #for i in range(0,NV):
+   #    if abs(xV[i]-0.5)<eps and abs(yV[i]-0.75)<eps:
+   #       print('     -> sinker_vel',xV[i],yV[i],v[i],etastar,drho,nelx)
+   print('     -> sinker_vel',vrmss,etastar,drho,nelx)
 
    if Vspace+Pspace=='Q2Pm1':
       for iel in range(0,nel):
@@ -755,18 +776,6 @@ if experiment=='RTwave':
 
    print('     -> rt_wave',np.max(abs(v)),phi1,etastar,drho,nelx,val)
    
-###############################################################################
-
-bxc = np.zeros(nel,dtype=np.float64)
-byc = np.zeros(nel,dtype=np.float64)
-etac = np.zeros(nel,dtype=np.float64)
-
-for iel in range(0,nel):
-    xc=np.sum(xV[iconV[:,iel]])/mV
-    yc=np.sum(yV[iconV[:,iel]])/mV
-    bxc[iel]=mms.bx(xc,yc,drho)
-    byc[iel]=mms.by(xc,yc,drho)
-    etac[iel]=mms.eta(xc,yc,etastar)
 
 ###############################################################################
 # compute q1,q2, see Delaunay subsection. As a rule-of-thumb, in a good quality 

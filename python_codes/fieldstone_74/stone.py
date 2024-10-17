@@ -431,7 +431,7 @@ print("building connectivity array (%.3fs)" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-bc_fix = np.zeros(Nfem, dtype=np.bool)  
+bc_fix = np.zeros(Nfem, dtype=bool)  
 bc_val = np.zeros(Nfem, dtype=np.float64) 
 
 for i in range(0,nnp):

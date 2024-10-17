@@ -651,7 +651,7 @@ print("compute element area: %.3f s" % (timing.time() - start))
 #------------------------------------------------------------------------------
 start = timing.time()
 
-bc_fix = np.zeros(N,dtype=np.bool)  # boundary condition, yes/no
+bc_fix = np.zeros(N,dtype=bool)  # boundary condition, yes/no
 bc_val = np.zeros(N,dtype=np.float64)  # boundary condition, value
 
 if experiment==-1:
@@ -791,7 +791,7 @@ if build_gnei=='2a':
 
    for iel in range(0,nel):
        if iel%200==0: print('iel=',iel)
-       found=np.zeros(3,dtype=np.bool) 
+       found=np.zeros(3,dtype=bool) 
        for iface in range(0,3):
            if gnei[iface,iel]>=0: continue
            for jel in range(0,nel):

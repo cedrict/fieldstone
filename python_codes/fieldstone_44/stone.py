@@ -175,12 +175,12 @@ print("setup: grid points: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
-boundary_bottom=np.zeros(nnp,dtype=np.bool) 
-boundary_top=np.zeros(nnp,dtype=np.bool)  
-boundary_left=np.zeros(nnp,dtype=np.bool) 
-boundary_right=np.zeros(nnp,dtype=np.bool)
+boundary_bottom=np.zeros(nnp,dtype=bool) 
+boundary_top=np.zeros(nnp,dtype=bool)  
+boundary_left=np.zeros(nnp,dtype=bool) 
+boundary_right=np.zeros(nnp,dtype=bool)
 
 for i in range(0, nnp):
     if r[i]<4875e3:

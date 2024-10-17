@@ -121,7 +121,7 @@ print("build icon: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-bc_fix=np.zeros(Nfem,dtype=np.bool)    # boundary condition, yes/no
+bc_fix=np.zeros(Nfem,dtype=bool)    # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=np.float64) # boundary condition, value
 
 if bc_type==0:
@@ -208,7 +208,7 @@ for iel in range(0, nel):
             dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
             # calculate jacobian matrix
-            jcb = np.zeros((2, 2),dtype=float)
+            jcb = np.zeros((2, 2),dtype=np.float64)
             for k in range(0,m):
                 jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
                 jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
@@ -263,7 +263,7 @@ for iel in range(0, nel):
     dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
     # compute the jacobian
-    jcb=np.zeros((2,2),dtype=float)
+    jcb=np.zeros((2,2),dtype=np.float64)
     for k in range(0, m):
         jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
@@ -379,7 +379,7 @@ for iel in range(0,nel):
     dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
     dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
-    jcb=np.zeros((2,2),dtype=float)
+    jcb=np.zeros((2,2),dtype=np.float64)
     for k in range(0, m):
         jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
@@ -447,7 +447,7 @@ for iel in range(0, nel):
             dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
             # calculate jacobian matrix
-            jcb = np.zeros((2, 2),dtype=float)
+            jcb = np.zeros((2, 2),dtype=np.float64)
             for k in range(0,m):
                 jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
                 jcb[0, 1] += dNdr[k]*y[icon[k,iel]]

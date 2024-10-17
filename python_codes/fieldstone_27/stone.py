@@ -114,7 +114,7 @@ print("setup: grid points: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-element_on_bd=np.zeros(nel,dtype=np.bool)  # elt boundary indicator
+element_on_bd=np.zeros(nel,dtype=bool)  # elt boundary indicator
 icon =np.zeros((m, nel),dtype=np.int32)
 counter = 0
 for j in range(0, nely):
@@ -140,9 +140,9 @@ print("setup: connectivity: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
-node_on_bd=np.zeros((nnp,4),dtype=np.bool)  # boundary indicator
+node_on_bd=np.zeros((nnp,4),dtype=bool)  # boundary indicator
 
 for i in range(0, nnp):
     if x[i]<eps:

@@ -434,7 +434,7 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)
+bc_fix=np.zeros(NfemV,dtype=bool)
 bc_val=np.zeros(NfemV,dtype=np.float64)
 
 for i in range(0,NV):

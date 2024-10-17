@@ -286,8 +286,8 @@ x=np.empty(nnp,dtype=np.float64)     # x coordinates
 y=np.empty(nnp,dtype=np.float64)     # y coordinates
 r=np.empty(nnp,dtype=np.float64)     # cylindrical coordinate r 
 theta=np.empty(nnp,dtype=np.float64) # cylindrical coordinate theta 
-node_inner = np.zeros(nnp, dtype=np.bool)  
-node_outer = np.zeros(nnp, dtype=np.bool)  
+node_inner = np.zeros(nnp, dtype=bool)  
+node_outer = np.zeros(nnp, dtype=bool)  
 
 Louter=2.*math.pi*R2
 Lr=R2-R1
@@ -329,8 +329,8 @@ for j in range(0,nnr):
 start = time.time()
 
 icon =np.zeros((m, nel),dtype=np.int32)
-elt_inner = np.zeros(nel, dtype=np.bool)  
-elt_outer = np.zeros(nel, dtype=np.bool)  
+elt_inner = np.zeros(nel, dtype=bool)  
+elt_outer = np.zeros(nel, dtype=bool)  
 
 counter = 0
 for j in range(0, nelr):
@@ -368,7 +368,7 @@ print("connectivity (%.3fs)" % (time.time() - start))
 #################################################################
 start = time.time()
 
-bc_fixV = np.zeros(NfemV, dtype=np.bool)  
+bc_fixV = np.zeros(NfemV, dtype=bool)  
 bc_valV = np.zeros(NfemV, dtype=np.float64) 
 
 for i in range(0,nnp):
@@ -395,7 +395,7 @@ print("defining V b.c. (%.3fs)" % (time.time() - start))
 #################################################################
 start = time.time()
 
-bc_fixT = np.zeros(NfemT, dtype=np.bool)  
+bc_fixT = np.zeros(NfemT, dtype=bool)  
 bc_valT = np.zeros(NfemT, dtype=np.float64) 
 
 for i in range(0,nnp):

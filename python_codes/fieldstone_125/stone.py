@@ -232,7 +232,7 @@ start = time.time()
 
 swarm_cell[:]=-1
 
-iin= np.empty(nvo,dtype=np.bool)  # x coordinates
+iin= np.empty(nvo,dtype=bool)  
 
 if ndim==2:
    #this is the not so clever brute force approach

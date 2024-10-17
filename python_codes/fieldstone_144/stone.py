@@ -383,7 +383,7 @@ print("build iconV: %.3f s" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
-bc_fixT=np.zeros(NfemT,dtype=np.bool)  
+bc_fixT=np.zeros(NfemT,dtype=bool)  
 bc_valT=np.zeros(NfemT,dtype=np.float64) 
 
 for i in range(0,NV):

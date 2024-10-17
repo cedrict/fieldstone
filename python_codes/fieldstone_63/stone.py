@@ -167,8 +167,8 @@ start_all = time.time()
 
 x=np.zeros(NV,dtype=np.float64)          # x coordinates
 y=np.zeros(NV,dtype=np.float64)          # y coordinates
-outer_node = np.zeros(NV, dtype=np.bool) # on the outer hull yes/no 
-contact_node = np.zeros(NV, dtype=np.bool) # on the outer hull yes/no 
+outer_node = np.zeros(NV, dtype=bool) # on the outer hull yes/no 
+contact_node = np.zeros(NV, dtype=bool) # on the outer hull yes/no 
 contact_iNV=np.zeros(NV,dtype=np.float64)   
 counter=0
 counter_contact=0
@@ -310,7 +310,7 @@ len_iNV = len(contact_iNV) + len(contact_iNV_cement)
 contact_iNV_new = np.zeros(len_iNV,dtype=np.float) 
 contact_iNV_new[0:len(contact_iNV)] = contact_iNV
 contact_iNV_new[len(contact_iNV):len_iNV] = contact_iNV_cement + NV
-outer_node_new = np.zeros(NV_new, dtype=np.bool) 
+outer_node_new = np.zeros(NV_new, dtype=bool) 
 outer_node_new[0:NV] = outer_node
  
 x = x_new
@@ -328,7 +328,7 @@ print("setup: grid points: %.3f s" % (time.time() - start_grid))
 start_connectivity = time.time()
 
 icon=np.zeros((m,nel),dtype=np.int32)
-outer_elem = np.zeros(nel, dtype=np.bool)
+outer_elem = np.zeros(nel, dtype=bool)
 
 iInner = 1 
 iOuter = nsection+2 
@@ -403,7 +403,7 @@ nel_new = nel+nel_cement
 icon_new = np.zeros((m,nel_new),dtype=np.int32) 
 icon_new[0:3,0:nel] = icon
 icon_new[0:3,nel:nel_new] = icon_cement + NV
-outer_elem_new = np.zeros(nel_new, dtype=np.bool)
+outer_elem_new = np.zeros(nel_new, dtype=bool)
 outer_elem_new[0:nel] = outer_elem
     
 el_type = np.ones(nel_new, dtype=np.int)
@@ -436,7 +436,7 @@ print("setup: disk connectivity: %.3f s" % (time.time() - start_connectivity))
 #################################################################
 start = time.time()
 
-doubble = np.zeros(NV, dtype=np.bool)
+doubble = np.zeros(NV, dtype=bool)
 pointto = np.zeros(NV, dtype=np.int32) 
 
 for ip in range(0,NV):
@@ -520,7 +520,7 @@ print("-----------------------------")
 #################################################################
 start = time.time()
 
-bc_fix = np.zeros(Nfem, dtype=np.bool)  # boundary condition, yes/no
+bc_fix = np.zeros(Nfem, dtype=bool)  # boundary condition, yes/no
 bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
   
 ymin=np.min(y)

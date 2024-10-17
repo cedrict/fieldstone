@@ -329,7 +329,7 @@ print("connectivity (%.3fs)" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
-bc_fixT=np.zeros(NfemT,dtype=np.bool)  
+bc_fixT=np.zeros(NfemT,dtype=bool)  
 bc_valT=np.zeros(NfemT,dtype=np.float64) 
 
 if experiment==1:

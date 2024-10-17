@@ -148,7 +148,7 @@ print("connectivity: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-bc_fix = np.zeros(NT, dtype=np.bool)  # boundary condition, yes/no
+bc_fix = np.zeros(NT, dtype=bool)  # boundary condition, yes/no
 bc_val = np.zeros(NT, dtype=np.float64)  # boundary condition, value
 
 for i in range(0,NT):

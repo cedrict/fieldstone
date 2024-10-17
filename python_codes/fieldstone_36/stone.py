@@ -176,7 +176,7 @@ print("connectivity (%.3fs)" % (time.time() - start))
 #################################################################
 start = time.time()
 
-bc_fix = np.zeros(Nfem, dtype=np.bool)  
+bc_fix = np.zeros(Nfem, dtype=bool)  
 bc_val = np.zeros(Nfem, dtype=np.float64) 
 
 for i in range(0, nnp):
@@ -211,8 +211,8 @@ c_mat = np.array([[2*mu+lambdaa,lambdaa,0],[lambdaa,2*mu+lambdaa,0],[0,0,mu]],dt
 for iel in range(0, nel):
 
     # set 2 arrays to 0 every loop
-    b_el = np.zeros(m * ndof)
-    a_el = np.zeros((m * ndof, m * ndof), dtype=float)
+    b_el = np.zeros((m * ndof), dtype=np.float64)
+    a_el = np.zeros((m*ndof,m*ndof), dtype=np.float64)
 
     # integrate viscous term at 4 quadrature points
     for iq in [-1, 1]:
@@ -236,7 +236,7 @@ for iel in range(0, nel):
             dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
             # calculate jacobian matrix
-            jcb = np.zeros((2, 2),dtype=float)
+            jcb = np.zeros((2, 2),dtype=np.float64)
             for k in range(0,m):
                 jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
                 jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
@@ -359,7 +359,7 @@ for iel in range(0,nel):
     dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
     dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
-    jcb=np.zeros((2,2),dtype=float)
+    jcb=np.zeros((2,2),dtype=np.float64)
     for k in range(0,m):
         jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
         jcb[0,1]+=dNdr[k]*y[icon[k,iel]]

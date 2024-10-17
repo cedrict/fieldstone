@@ -2197,8 +2197,13 @@ def export_V_to_vtu(NV,xV,yV,iconV,Vspace,filename,u,v,Pspace,p,iconP):
 
     if Vspace=='Q2': m=4
     if Vspace=='P2': m=3
+    if Vspace=='DSSY1': m=4
+    if Vspace=='DSSY2': m=4
+    if Vspace=='RT1': m=4
+    if Vspace=='RT2': m=4
     if Vspace=='P2+': m=3
     if Vspace=='P1+': m=3
+    if Vspace=='Q1+': m=4
 
     vtufile=open(filename,"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
@@ -2228,6 +2233,17 @@ def export_V_to_vtu(NV,xV,yV,iconV,Vspace,filename,u,v,Pspace,p,iconP):
            vtufile.write("%10e \n" % p[iconP[0,iel]])
            vtufile.write("%10e \n" % p[iconP[0,iel]])
        vtufile.write("</DataArray>\n")
+
+    if Pspace=='Q0':
+       vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
+       for iel in range(0,nel):
+           vtufile.write("%10e \n" % p[iconP[0,iel]])
+           vtufile.write("%10e \n" % p[iconP[0,iel]])
+           vtufile.write("%10e \n" % p[iconP[0,iel]])
+           vtufile.write("%10e \n" % p[iconP[0,iel]])
+       vtufile.write("</DataArray>\n")
+
+
 
     if Pspace=='P1' or Pspace=='P-1' or Pspace=='Q1':
        vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")

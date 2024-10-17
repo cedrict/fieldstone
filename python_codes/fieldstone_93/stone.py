@@ -317,7 +317,7 @@ print("material layout: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
 for i in range(0, NV):
@@ -349,7 +349,7 @@ print("define boundary conditions: %.3f s" % (timing.time() - start))
 # flag surface nodes
 #################################################################
 
-on_surf=np.zeros(NV,dtype=np.bool)  # boundary condition, yes/no
+on_surf=np.zeros(NV,dtype=bool)  # boundary condition, yes/no
 
 for i in range(0, NV):
     if abs(yV[i]-0.75)<1e-6:

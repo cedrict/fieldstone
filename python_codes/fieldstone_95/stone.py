@@ -403,7 +403,7 @@ for istep in range(0,nstep):
        iconV[5,:]-=1
        # from this information I must now extract the number of nodes 
        # which make the P1 mesh for pressure.
-       P1bool=np.zeros(NV,dtype=np.bool) 
+       P1bool=np.zeros(NV,dtype=bool) 
        for iel in range(0,nel):
            P1bool[iconV[0,iel]]=True
            P1bool[iconV[1,iel]]=True
@@ -489,8 +489,8 @@ for istep in range(0,nstep):
     #################################################################
     start = timing.time()
 
-    interface=np.zeros(NV,dtype=np.bool) 
-    edge_on_interface=np.zeros((3,nel),dtype=np.bool) 
+    interface=np.zeros(NV,dtype=bool) 
+    edge_on_interface=np.zeros((3,nel),dtype=bool) 
 
     for i in range(4,np_surf+4):
         interface[i]=True
@@ -596,7 +596,7 @@ for istep in range(0,nstep):
     #################################################################
     start = timing.time()
 
-    bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+    bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
     bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
     for i in range(0, NV):

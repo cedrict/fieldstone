@@ -80,7 +80,7 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
 
     xc = np.zeros(nel,dtype=np.float64)
     yc = np.zeros(nel,dtype=np.float64)
-    elt_in_sphere=np.zeros(Nfem,dtype=np.bool)  
+    elt_in_sphere=np.zeros(Nfem,dtype=bool)  
 
     for iel in range(0,nel):
         xc[iel]=0.5*(x[icon[0,iel]]+x[icon[2,iel]])
@@ -94,7 +94,7 @@ def compute_misfits(rho0,drho,eta0,eta_star,radius,deltarho,Rsphere):
        # define boundary conditions; free slip on all boundaries
        #################################################################
 
-       bc_fix=np.zeros(Nfem,dtype=np.bool)    # boundary condition, yes/no
+       bc_fix=np.zeros(Nfem,dtype=bool)    # boundary condition, yes/no
        bc_val=np.zeros(Nfem,dtype=np.float64) # boundary condition, value
 
        for i in range(0,NV):

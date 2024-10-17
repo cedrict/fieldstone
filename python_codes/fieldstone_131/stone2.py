@@ -116,7 +116,7 @@ def mesh_P1_to_P2_naive(x,y,icon):
     eps=1e-6*min(max(x)-min(x),max(y)-min(y))
 
     #find out which nodes are present twice
-    double = np.zeros(NVme, dtype=np.bool)  # default is false
+    double = np.zeros(NVme, dtype=bool)  # default is false
     for i in range(0,NVme):
         if not double[i]:
            for j in range(0,NVme):

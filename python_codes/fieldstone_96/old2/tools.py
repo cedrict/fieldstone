@@ -211,7 +211,7 @@ def mesh_P1_to_P2(NV,nel,x,y,icon):
 
     #find out which nodes are present twice
     start = timing.time()
-    double = np.zeros(NVme, dtype=np.bool)  # default is false
+    double = np.zeros(NVme, dtype=bool)  # default is false
     for i in range(0,NVme):
         if not double[i]:
            for j in range(0,NVme):

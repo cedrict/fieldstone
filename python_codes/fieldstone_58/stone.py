@@ -140,7 +140,7 @@ start = time.time()
 
 x=np.zeros(NV,dtype=np.float64)          # x coordinates
 y=np.zeros(NV,dtype=np.float64)          # y coordinates
-outer_node = np.zeros(NV, dtype=np.bool) # on the outer hull yes/no 
+outer_node = np.zeros(NV, dtype=bool) # on the outer hull yes/no 
 
 # by starting at counter=1, we omit counter=0, which is 
 # the center point and it automatically gets x=y=0
@@ -285,7 +285,7 @@ if (experiment==1):
 #################################################################
 start = time.time()
 
-bc_fix = np.zeros(Nfem, dtype=np.bool)  # boundary condition, yes/no
+bc_fix = np.zeros(Nfem, dtype=bool)  # boundary condition, yes/no
 bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
 
 if experiment==1:

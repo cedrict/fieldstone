@@ -179,7 +179,7 @@ print("connectivity (%.3fs)" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
-bc_fixPf=np.zeros(NfemPf,dtype=np.bool)  
+bc_fixPf=np.zeros(NfemPf,dtype=bool)  
 bc_valPf=np.zeros(NfemPf,dtype=np.float64) 
 
 for i in range(0,NV):

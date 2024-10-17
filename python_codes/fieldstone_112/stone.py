@@ -1283,7 +1283,7 @@ if randomize_mesh:
 #------------------------------------------------------------------------------
 start = timing.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
 if experiment==1 or experiment==2:

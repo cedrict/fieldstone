@@ -596,7 +596,7 @@ dNNNVdt = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 ######################################################################
 start = timing.time()
 
-bc_fix=np.zeros(Nfem,dtype=np.bool)    # boundary condition, yes/no
+bc_fix=np.zeros(Nfem,dtype=bool)    # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=np.float64) # boundary condition, value
 
 for i in range(0,NV):

@@ -332,10 +332,10 @@ print("build V grid: %.3f s" % (timing.time() - start))
 #################################################################
 #################################################################
 
-flag_el_1=np.zeros(nel,dtype=np.bool)  
-flag_el_2=np.zeros(nel,dtype=np.bool)  
-flag_el_3=np.zeros(nel,dtype=np.bool)  
-flag_el_4=np.zeros(nel,dtype=np.bool)  
+flag_el_1=np.zeros(nel,dtype=bool)  
+flag_el_2=np.zeros(nel,dtype=bool)  
+flag_el_3=np.zeros(nel,dtype=bool)  
+flag_el_4=np.zeros(nel,dtype=bool)  
 
 counter=0
 for j in range(0,nelr):
@@ -505,13 +505,13 @@ print("build iconP: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-bc_fix=np.zeros(NfemV,dtype=np.bool)  # boundary condition, yes/no
+bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
-flag_1=np.zeros(NV,dtype=np.bool)  
-flag_2=np.zeros(NV,dtype=np.bool)  
-flag_3=np.zeros(NV,dtype=np.bool)  
-flag_4=np.zeros(NV,dtype=np.bool)  
+flag_1=np.zeros(NV,dtype=bool)  
+flag_2=np.zeros(NV,dtype=bool)  
+flag_3=np.zeros(NV,dtype=bool)  
+flag_4=np.zeros(NV,dtype=bool)  
 
 for i in range(0,NV):
     if abs(tV[i]-(4*np.pi/8))<eps: 
@@ -549,7 +549,7 @@ print("velocity b.c.: %.3f s" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
-bc_fixT=np.zeros(NfemT,dtype=np.bool)  
+bc_fixT=np.zeros(NfemT,dtype=bool)  
 bc_valT=np.zeros(NfemT,dtype=np.float64) 
 
 for i in range(0,NV):
