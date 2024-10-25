@@ -6,22 +6,22 @@ import scipy.sparse as sps
 experiment=1
 
 debug=False
-spy=False
+spy=True
 
 ###############################################################################
 
 def density(x,y,experiment):
     if experiment==1:
        val=1
-       if (x-0.5)**2+(y-0.5)**2<0.023:
+       if (x-0.5)**2+(y-0.5)**2<0.15**2:
           val=2
     return val
 
 def viscosity(x,y,experiment):
     if experiment==1:
        val=1
-       if (x-0.5)**2+(y-0.5)**2<0.023:
-          val=2
+       if (x-0.5)**2+(y-0.5)**2<0.15**2:
+          val=10
     return val
 
 ###############################################################################
@@ -32,8 +32,8 @@ Ly=1
 gx=0
 gy=-1
 
-nnx=100
-nny=100
+nnx=5
+nny=4
 
 hx=Lx/(nnx-1)
 hy=Ly/(nny-1)
@@ -50,6 +50,8 @@ Nv=ncellx*nny    # v-nodes
 Np=ncellx*ncelly # p-nodes
 N=Nu+Nv+Np       # total nb of unknowns
 
+avrg=3
+
 print('===========================')
 print('-------- Stone 158 -------')
 print('===========================')
@@ -61,6 +63,7 @@ print('Nu=',Nu)
 print('Nv=',Nv)
 print('Np=',Np)
 print('N=',N)
+print('avrg=',avrg)
 print('===========================')
 
 ###############################################################################
@@ -225,8 +228,16 @@ for i in range(0,Nu):
        index_eta_s=i
        index_eta_se=i+1
 
-       eta_w=(eta[index_eta_nw]+eta[index_eta_sw]+eta[index_eta_n]+eta[index_eta_s])/4
-       eta_e=(eta[index_eta_ne]+eta[index_eta_se]+eta[index_eta_n]+eta[index_eta_s])/4
+       match(avrg):
+          case(1): # arithmetic
+             eta_w=(eta[index_eta_nw]+eta[index_eta_sw]+eta[index_eta_n]+eta[index_eta_s])/4
+             eta_e=(eta[index_eta_ne]+eta[index_eta_se]+eta[index_eta_n]+eta[index_eta_s])/4
+          case(3): # harmonic
+             eta_w=4./(1./eta[index_eta_nw]+1./eta[index_eta_sw]+1./eta[index_eta_n]+1./eta[index_eta_s])
+             eta_e=4./(1./eta[index_eta_ne]+1./eta[index_eta_se]+1./eta[index_eta_n]+1./eta[index_eta_s])
+          case _: 
+             exit('avrg unknown')
+
        eta_n=eta[index_eta_n]
        eta_s=eta[index_eta_s]
 
@@ -336,8 +347,16 @@ for i in range(0,Nv):
        index_eta_e=i+jj+1
        index_eta_ne=i+jj+nnx+1
 
-       eta_n=(eta[index_eta_nw]+eta[index_eta_ne]+eta[index_eta_w]+eta[index_eta_e])/4
-       eta_s=(eta[index_eta_sw]+eta[index_eta_se]+eta[index_eta_w]+eta[index_eta_e])/4
+       match(avrg):
+          case(1): # arithmetic
+             eta_n=(eta[index_eta_nw]+eta[index_eta_ne]+eta[index_eta_w]+eta[index_eta_e])/4
+             eta_s=(eta[index_eta_sw]+eta[index_eta_se]+eta[index_eta_w]+eta[index_eta_e])/4
+          case(3): # harmonic
+             eta_n=4./(1./eta[index_eta_nw]+1./eta[index_eta_ne]+1./eta[index_eta_w]+1./eta[index_eta_e])
+             eta_s=4./(1./eta[index_eta_sw]+1./eta[index_eta_se]+1./eta[index_eta_w]+1./eta[index_eta_e])
+          case _: 
+             exit('avrg unknown')
+
        eta_e=eta[index_eta_e]
        eta_w=eta[index_eta_w]
 
