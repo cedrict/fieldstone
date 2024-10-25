@@ -173,22 +173,34 @@
 \node[] at (3.8,5.8) {\tiny 17};
 \node[] at (5.8,5.8) {\tiny 18};
 \node[] at (7.8,5.8) {\tiny 19};
-%------------------------------------------
-\node[] at (1,-0.75) {\tiny $i=0$};
-\node[] at (3,-0.75) {\tiny $i=1$};
-\node[] at (5,-0.75) {\tiny $i=2$};
-\node[] at (7,-0.75) {\tiny $i=3$};
-
-\node[] at (-1,1) {\tiny $j=0$};
-\node[] at (-1,3) {\tiny $j=1$};
-\node[] at (-1,5) {\tiny $j=2$};
 
 %-------------------------------------------------
 
-\draw[black,fill=black]  (9.5,4)   circle (2pt); \node[] at (9.9,4) {\tiny node};
-\draw[black,fill=teal]   (9.5,3)   circle (2pt); \node[] at (9.8,3) {\tiny $p$};
-\draw[black,fill=orange] (9.5,2)   circle (2pt); \node[] at (9.8,2) {\tiny $v$};
-\draw[black,fill=violet] (9.5,1)   circle (2pt); \node[] at (9.8,1) {\tiny $u$};
+\draw[black,fill=black]  (10.5,5)   circle (2pt); \node[] at (10.9,5) {\tiny node};
+\draw[black,fill=teal]   (10.5,4)   circle (2pt); \node[] at (10.8,4) {\tiny $p$};
+\draw[black,fill=orange] (10.5,3)   circle (2pt); \node[] at (10.8,3) {\tiny $v$};
+\draw[black,fill=violet] (10.5,2)   circle (2pt); \node[] at (10.8,2) {\tiny $u$};
+
+\draw[black,fill=orange!50] (10.5,1)  circle (3pt); \node[] at (11.2,1) {\tiny ghost $v$};
+\draw[black,fill=violet!50] (10.5,0)  circle (3pt); \node[] at (11.2,0) {\tiny ghost $u$};
+
+%boundary u nodes
+\draw[black,fill=violet!50] (2,-1)   circle (3pt); 
+\draw[black,fill=violet!50] (4,-1)   circle (3pt); 
+\draw[black,fill=violet!50] (6,-1)   circle (3pt); 
+\draw[black,fill=violet!50] (2,7)   circle (3pt); 
+\draw[black,fill=violet!50] (4,7)   circle (3pt); 
+\draw[black,fill=violet!50] (6,7)   circle (3pt); 
+
+%boundary u nodes
+\draw[black,fill=orange!50] (-1,2)   circle (3pt); 
+\draw[black,fill=orange!50] (-1,4)   circle (3pt); 
+\draw[black,fill=orange!50] (9,2)   circle (3pt); 
+\draw[black,fill=orange!50] (9,4)   circle (3pt); 
+
+
+
+
 
 \end{tikzpicture}
 \end{center}

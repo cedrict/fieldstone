@@ -2,23 +2,24 @@
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 %---------------------------------------------------------
-\subsection{Incompressible isoviscous 2D Stokes equations}
+\subsection{A quick recap of the incompressible 2D Stokes equations}
 
-
-In the case of an incompressible and isoviscous flow, we can start  from 
-the momentum equation
+In the case of an incompressible and isoviscous flow, we can start  from the momentum equation
 \begin{equation}
 -\vec\nabla p + \vec\nabla \cdot {\bm \tau} + \rho \vec{g} = \vec{0}
 \end{equation}
-with 
-\[
+with\footnote{Since the flow is incompressible we will not distinguish
+between the strain rate tensor and the deviatoric strain rate tensor 
+since they are identical.} 
+\begin{equation}
 {\bm \tau} = 2 \eta \dot{\bm \varepsilon}(\vec\upnu)
-\]
+\end{equation}
 In 2D the strain rate tensor components are given by
 \[
 \dot{\varepsilon}_{xx}=\frac{\partial u}{\partial x}
 \quad\quad\quad
-\dot{\varepsilon}_{xy}=\frac{1}{2} \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right)
+=\dot{\varepsilon}_{yx}
+=\frac{1}{2} \left( \frac{\partial u}{\partial y} + \frac{\partial v}{\partial x} \right)
 \quad\quad\quad
 \dot{\varepsilon}_{yy}=\frac{\partial v}{\partial y}
 \]
@@ -51,16 +52,23 @@ of incompressibility is approximately satisfied.}
 Then, {\it if the viscosity is constant} the $x$-component of 
 the momentum conservation equation
 \[
--\frac{\partial p}{\partial x}  + 2\eta \frac{\partial \dot{\varepsilon}_{xx}}{\partial x} +  2\eta \frac{\partial \dot{\varepsilon}_{xy}}{\partial y}  + \rho g_x =0
+-\frac{\partial p}{\partial x}  
++ 2\eta \frac{\partial \dot{\varepsilon}_{xx}}{\partial x} 
++ 2\eta \frac{\partial \dot{\varepsilon}_{xy}}{\partial y}  + \rho g_x =0
 \]
 becomes
 \[
--\frac{\partial p}{\partial x}  + 2\eta \frac{\partial^2 u}{\partial x^2} +  \eta 
-\left( \frac{\partial^2 u}{\partial y^2 } + \frac{\partial^2 v}{\partial x \partial y} \right)  \rho g_x =0
+-\frac{\partial p}{\partial x}  
++ 2\eta \frac{\partial^2 u}{\partial x^2} 
++ \eta \left( \frac{\partial^2 u}{\partial y^2 } 
++ \frac{\partial^2 v}{\partial x \partial y} \right)  \rho g_x =0
 \]
-Using ${\vec \nabla} \cdot {\vec v} = 0$ to obtain $\frac{\partial u}{\partial x} =  - \frac{\partial v}{\partial y}  $ we arrive at 
+Using ${\vec \nabla} \cdot {\vec v} = 0$ to obtain 
+$\frac{\partial u}{\partial x} =  - \frac{\partial v}{\partial y}  $ we arrive at 
 \[
--\frac{\partial p}{\partial x}  + \eta \left( \frac{\partial^2 u}{\partial x^2} +  \frac{\partial^2 u}{\partial y^2 }  \right)
+-\frac{\partial p}{\partial x}  
++ \eta \left( \frac{\partial^2 u}{\partial x^2} 
++ \frac{\partial^2 u}{\partial y^2 }  \right)
 + \rho g_x =0
 \]
 The same approach can be carried out for the $y$-component of the momentum conservation
@@ -75,7 +83,51 @@ these are the three coupled equations we need to solve
 + \frac{\partial^2 v}{\partial y^2 }  \right) + \rho g_y  &=& 0 \\
 \frac{\partial u}{\partial x} + \frac{\partial v}{\partial y}  = 0 
 \end{eqnarray}
-Note that these must be supplemented by appropriate boundary conditions.
+Of course these PDEs must be supplemented by appropriate boundary conditions.
+
+At this stage we must acknowledge (as in the FEM case) that it would be pointless
+to blindly discretise the equations above. Much work has been done on the topics
+for decades and only certain approaches have proven succesful. 
+The book of Taras Gerya (1st and second edition \cite{gery10,gery19book}) 
+remains the reference in geodynamics and what follows is greatly influenced by this book. 
+
+
+%--------------------------------------------
+\subsection{A quick note about the MAC sheme}
+
+The MAC scheme originates in \textcite{hawe65} (1965) and is nicely
+summed up in \textcite{kans08} (2008) and \textcite{mctf08} (2008).
+Before going any further we need to highlight a few points from the original paper.
+First, 
+\begin{displayquote}
+{\color{darkgray}
+One point should be emphasized. The marker particles introduced into 
+this incompressible flow calculation are only for the purpose 
+of indicating fluid configuration. They show which cells contain fluid
+and especially which cells lie along the free surface. [...]
+They do not participate in the calculation as do the Particle-in-Cell-method
+particles in the Los alamos computer program for compressible flows.
+}
+\end{displayquote}
+Second, looking at ther equations
+\begin{center}
+\fbox{\includegraphics[width=7cm]{images/fdm/hawe65_a}}
+\end{center}
+we read that $\varphi$ is the ratio of the pressure to the (constant) density
+and that $\nu=\eta/\rho$ is the kinematic viscosity coefficient. 
+This constant-density approximation is quite limiting in the context 
+of geodynamics where buoyancy-driven flow is important so 
+we will not pursue this direction further. Likewise the constant-viscosity
+approximation is also not desirable.
+
+Before moving on, it is quite interesting that 
+when looking at their Fig.~2, we find that the spatial 
+layout of the unknowns is of the staggered type:
+\begin{center}
+\fbox{\includegraphics[width=7cm]{images/fdm/hawe65_b}}
+\end{center}
+
+
 
 %------------------------------------
 \subsection{The fully staggered grid}
@@ -91,115 +143,310 @@ This is not a requirement of the method but it allows for more compact notations
 
 There are:
 \begin{itemize}
-\item ${\tt ncellx}*{\tt ncelly}={\tt ncell}$ cells ($5*4$ above)
-\item ${\tt ncell}$ pressure values ($20$ above)
-\item ${\tt (ncellx+1)}*{\tt ncelly}$ $u$ unknowns ($6*4$ above) 
-\item ${\tt ncell}*{\tt (ncelly+1)}$ $v$ unknowns ($5*5$ above) 
+\item ${\tt ncell}={\tt ncellx}*{\tt ncelly}={\tt ncell}$ cells ($5*4$ above)
+\item ${\tt Np}={\tt ncell}$ pressure values ($20$ above)
+\item ${\tt Nu}={\tt (ncellx+1)}*{\tt ncelly}$ $u$ unknowns ($6*4$ above) 
+\item ${\tt Np}={\tt ncell}*{\tt (ncelly+1)}$ $v$ unknowns ($5*5$ above) 
 \item each cell is of size $h_x * h_y$ with $h_x=L_x/{\tt ncellx}$ 
 and $h_y=L_y/{\tt ncelly}$.
 \end{itemize}
 In total there are (not taking boundary conditions into account)
-$ndof$ unknowns with:
+$N$ unknowns with:
 \[
-ndof= {\tt ncellx}*{\tt ncelly} 
-+ {\tt (ncellx+1)}*{\tt ncelly}
+N=N_u+N_v+N_p
+= {\tt (ncellx+1)}*{\tt ncelly}
 + {\tt ncell}*{\tt (ncelly+1)}
++ {\tt ncellx}*{\tt ncelly} 
 \]
 Note: the number of $u$ unknowns is not necessarily equal to the number of $v$
 unknowns! This is nearly always the case with FEM. 
 
 This means that once we have discretised the Stokes equations we will need
-as many (i.e. $ndof$) equations in order to obtain a linear system with a solution.
+as many (i.e. $N$) equations in order to obtain a linear system with a solution.
 
-%--------------------------------------------
-\subsection{Solving the Laplacian formulation - the MAC sheme}
 
-The MAC scheme originates in \textcite{hawe65} (1965) and is nicely
-summed up in \textcite{kans07} (2007).
+\begin{center}
+\includegraphics[width=6cm]{images/fdm/gerya_A}\\
+{\captionfont Taken from Gerya (2019).}
+\end{center}
 
+What follows is mostly borrowed from Taras Gerya's book (second edition). 
+However I do not like the notations of the book (or rather they do not match
+with the ones of this project) so I have changed them (in particular I use 
+the `{\tt n-e-w-s}' system, i.e. north-east-west-south, 
+and I prefer $\tau$ to  $\sigma'$ for the deviatoric stress tensor.
+Also I feel that it makes more sense to start with a regular mesh 
+where all cells have the same size $h_x \times h_y$ (as opposed to the book).
+Finally, in the book the $y$-axis points downwards while 'my' $y$-axis 
+points upwards.
+
+In what follows we assume that we know the value of the density $\rho$
+and viscosity $\eta$ on the (black) nodes of the mesh. We here only focus on the 
+Stokes equations (mass and momentum conservation equations) and leave the energy
+equation aside.
+
+The justification for the particular approach taken below to 
+discretise the equations stems from the concept of conservative 
+finite differences explained in Section 7.3 of Gerya's book. 
+
+
+%\newpage
 %...............................................
-\subsubsection{momentum equation: $x$-component}
+\subsection{momentum equation: $x$-component}
 
 Let us zoom-in on a node which carries a $u$ unknown. 
-We label it ${\tt ku}$. Its right ('east' or {\tt e})  neighbour is then ${\tt ku\_e}$,
-its left ('west' or {\tt w}) neighbour is ${\tt ku\_w}$, 
-its top ('north' or {\tt n}) neighbour is ${\tt ku\_n}$ and 
-its bottom ('south' or {\tt s}) neighbour is ${\tt ku\_s}$.
-Its nearest pressure nodes are ${\tt kp\_e}$ and ${\tt kp\_w}$, and the $v$ nodes
-that surround it are ${\tt kv\_sw}$, ${\tt kv\_se}$, ${\tt kv\_ne}$ and ${\tt kv\_nw}$
-as shown here:
+We label it ${\color{violet}u_\otimes}$. Its right ('east' or {\tt e})  
+neighbour is then ${\color{violet}u_{\tt e}}$,
+its left ('west') neighbour is ${\color{violet}u_{\tt w}}$, 
+its top ('north') neighbour is ${\color{violet}u_{\tt n}}$ and 
+its bottom ('south') neighbour is ${\color{violet}u_{\tt s}}$.
+Its nearest pressure nodes are ${\color{teal}p_{\tt e}}$ and 
+${\color{teal}p_{\tt w}}$, and the $v$ nodes
+that surround it are ${\color{orange}v_{\tt sw}}$, 
+${\color{orange}v_{\tt se}}$, ${\color{orange}v_{\tt ne}}$ and 
+${\color{orange}v_{\tt nw}}$ as shown here:
 
+
+\begin{multicols}{2}
 \input{tikz/tikz_staggered2D_u}
 
-We then have
+{\captionfont Node layout in {n-e-w-s} notations.}
 
-\begin{eqnarray}
-\left. -\frac{\partial p}{\partial x} \right|_{\tt ku}
-&=& -\frac{{\tt p\_e}-{\tt p\_w}}{\tt hx}       \nn\\
-\left. \eta \frac{\partial^2 u}{\partial x^2} \right|_{\tt ku}
-&=& \eta \frac{{\tt u\_e} -2{\tt u}+{\tt u\_w}}{{\tt hx}^2}  \nn\\
-\left. \eta \frac{\partial^2 u}{\partial y^2} \right|_{\tt ku}
-&=& \eta \frac{{\tt u\_n}-2{\tt u}+{\tt u\_s}}{{\tt hy}^2}  \nn\\
-\left. \rho g_x \right|_{\tt ku} 
-&=& \frac{\rho_{\tt n} + \rho_{\tt s}}{2} g_x   \nn
-\end{eqnarray}
-For example, let us consider the $u$-node 9. Then the above stencils put together become:
+\columnbreak
 
+\includegraphics[width=6.5cm]{images/fdm/gerya_B}\\
+\includegraphics[width=7cm]{images/fdm/gerya_D}\\
+\includegraphics[width=4.5cm]{images/fdm/gerya_F}\\
+{\captionfont Taken from Gerya's book}
+\end{multicols}
+
+We start from 
 \[
--\frac{p_{\tt 8}-p_{\tt 7}}{h_x}       
-+
-\eta \frac{u_{\tt 8} -2u_{\tt 9}+u_{\tt 10}}{h_x^2}  
-+ 
-\eta \frac{u_{\tt 3}-2u_{\tt 9}+u_{\tt 15}}{h_y^2}  
-= -
-\frac{\rho_{\tt 9} + \rho_{\tt 15}}{2} g_x  
+\frac{\partial \tau_{xx}}{\partial x}  + 
+\frac{\partial \tau_{xy}}{\partial y}  
+- \frac{\partial p}{\partial x} + \rho g_x = 0
+\]
+which we discretise as follows on the purple node in the middle:
+\[
+\frac{\tau_{xx,{\tt e}}-\tau_{xx,{\tt w}}}{h_x} + \frac{\tau_{xy,{\tt n}}-\tau_{xy,{\tt s}}}{h_y} 
+-\frac{{\color{teal}p_{\tt e}}-{\color{teal}p_{\tt w}}}{h_x} 
+= -\frac{\rho_{\tt n}+\rho_{\tt s}}{2} g_x
+\]
+where
+\begin{eqnarray}
+\tau_{xx,{\tt e}} 
+&=& 2 \eta_{\tt e} \dot{\varepsilon}_{xx,{\tt e}} 
+= 2\eta_{\tt e} \frac{{\color{violet} u_{\tt e}}-{\color{violet} u_\otimes}}{h_x} \nn \\
+\tau_{xx,{\tt w}} 
+&=& 2 \eta_{\tt w} \dot{\varepsilon}_{xx,{\tt w}} 
+= 2\eta_{\tt w} \frac{{\color{violet} u_\otimes}-{\color{violet} u_{\tt w}}}{h_x} \nn\\
+\tau_{xy,{\tt n}} &=& 2 \eta_{\tt n} \dot{\varepsilon}_{xy,{\tt n}} 
+= \eta_{\tt n} \left( \frac{{\color{violet} u_{\tt n}}-{\color{violet} u_\otimes}}{h_y} 
++\frac{{\color{orange} v_{\tt ne}}-{\color{orange} v_{\tt nw}}}{h_x} \right) \nn\\
+\tau_{xy,{\tt s}} &=& 2 \eta_{\tt s} \dot{\varepsilon}_{xy,{\tt s}} 
+= \eta_{\tt s} \left( \frac{{\color{violet} u_\otimes}-{\color{violet} u_{\tt s}}}{h_y} 
++\frac{{\color{orange}v_{\tt se}}-{\color{orange} v_{\tt sw}}}{h_x} \right)  \nn
+\end{eqnarray}
+
+We will discuss later how to arrive at $\eta_{\tt e}$ and $\eta_{\tt w}$.
+Inserting the four equations above into the first one, we obtain:
+\[
+  \frac{1}{h_x} (\tau_{xx,{\tt e}}-\tau_{xx,{\tt w}}) 
++ \frac{1}{h_y} (\tau_{xy,{\tt n}}-\tau_{xy,{\tt s}})
+-\frac{1}{h_x} {\color{teal}p_{\tt e}} + \frac{1}{h_x} {\color{teal}p_{\tt w}}
+= -\frac{\rho_{\tt n}+\rho_{\tt s}}{2} g_x
 \]
 
-The lhs contains 7 unknowns: $p_{\tt 8}$, $p_{\tt 7}$, $u_{\tt 8}$,
-$u_{\tt 9}$, $u_{\tt 10}$, $u_{\tt 3}$ and $u_{\tt 15}$.
+{\footnotesize
+\[
+\frac{1}{h_x} 
+\left(  2\eta_{\tt e} \frac{{\color{violet} u_{\tt e}}-{\color{violet} u_\otimes}}{h_x} -  2\eta_{\tt w} \frac{{\color{violet} u_\otimes}-{\color{violet} u_{\tt w}}}{h_x}\right)
++ \frac{1}{h_y} \left[  
+\eta_{\tt n} \left( \frac{{\color{violet} u_{\tt n}}-{\color{violet} u_\otimes}}{h_y} +\frac{{\color{orange} v_{\tt ne}}-{\color{orange} v_{\tt nw}}}{h_x} \right)
+-
+\eta_{\tt s} \left( \frac{{\color{violet} u_\otimes}-{\color{violet} u_{\tt s}}}{h_y} +\frac{{\color{orange} v_{\tt se}}-{\color{orange} v_{\tt sw}}}{h_x} \right) 
+\right]
+-\frac{1}{h_x} {\color{teal} p_{\tt e}} + \frac{1}{h_x}{\color{teal}p_{\tt w}}
+= -\frac{\rho_{\tt n}+\rho_{\tt s}}{2} g_x
+\]
+}
 
-{\color{red} is density on background mesh for sure?}
+{\footnotesize
+\[
+\frac{2\eta_{\tt e}}{h_x}    
+\frac{{\color{violet} u_{\tt e}}-{\color{violet} u_\otimes}}{h_x} 
+-  \frac{2\eta_{\tt w}}{h_x} \frac{{\color{violet} u_\otimes}-{\color{violet} u_{\tt w}}}{h_x}
++ \frac{\eta_{\tt n}}{h_y}  
+ \left( \frac{{\color{violet} u_{\tt n}}-{\color{violet} u_\otimes}}{h_y} +\frac{{\color{orange} v_{\tt ne}}-{\color{orange} v_{\tt nw}}}{h_x} \right)
+- \frac{\eta_{\tt s}}{h_y} 
+ \left( \frac{{\color{violet} u_\otimes}-{\color{violet} u_{\tt s}}}{h_y} +\frac{{\color{orange} v_{\tt se}}-{\color{orange} v_{\tt sw}}}{h_x} \right) 
+-\frac{1}{h_x} {\color{teal}p_{\tt e}} + \frac{1}{h_x} {\color{teal}p_{\tt w}}
+= -\frac{\rho_{\tt n}+\rho_{\tt s}}{2} g_x
+\]
+}
 
 
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\left( \frac{\eta_{\tt n}}{h_y^2} \right) {\color{violet} u_{\tt n}} + 
+\left( \frac{2\eta_{\tt e}}{h_x^2} \right) {\color{violet} u_{\tt e}} + 
+\left( \frac{2\eta_{\tt w}}{h_x^2} \right) {\color{violet} u_{\tt w}} + 
+\left( \frac{\eta_{\tt s}}{h_y^2} \right) {\color{violet} u_{\tt s}} + 
+\left( -\frac{2\eta_{\tt e}}{h_x^2} -\frac{2\eta_{\tt w}}{h_x^2}  
+-\frac{\eta_{\tt n}}{h_y^2} -\frac{\eta_{\tt s}}{h_y^2}  
+\right) {\color{violet} u_\otimes} \nn\\
++
+\left( \frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt ne}}+ 
+\left(-\frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt nw}}+ 
+\left(-\frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt se}}+ 
+\left( \frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt sw}} 
+- \frac{1}{h_x} {\color{teal}p_{\tt e}} + \frac{1}{h_x} {\color{teal}p_{\tt w}} 
+&=& -\frac{\rho_{\tt n}+\rho_{\tt s}}{2} g_x \nn\\
+\label{eq:fdmstokes1}
+\end{eqnarray}
+\end{mdframed}
+
+
+
+
+\newpage
 %...............................................
-\subsubsection{momentum equation: $y$-component}
+\subsection{momentum equation: $y$-component}
 
-We now focus on a $v$ node with index ${\tt kv}$:
 
+
+\begin{multicols}{2}
 \input{tikz/tikz_staggered2D_v}
 
+{\captionfont Node layout in {n-e-w-s} notations.}
 
+\columnbreak
+\includegraphics[width=6.5cm]{images/fdm/gerya_C}\\
+\includegraphics[width=7cm]{images/fdm/gerya_E}\\
+\includegraphics[width=4.5cm]{images/fdm/gerya_G}\\
+{\captionfont Taken from Gerya's book}
+\end{multicols}
+
+
+We start from 
+\[
+\frac{\partial \tau_{xy}}{\partial x}  + 
+\frac{\partial \tau_{yy}}{\partial y}  
+- \frac{\partial p}{\partial y} + \rho g_y = 0
+\]
+which we discretise as follows on the orange node in the middle
+\[
+\frac{\tau_{xy,{\tt e}}-\tau_{xy,{\tt w}}}{h_x} + \frac{\tau_{yy,{\tt n}}-\tau_{yy,{\tt s}}}{h_y} 
+-\frac{{\color{teal}p_{\tt n}}-{\color{teal}p_{\tt s}}}{h_y} 
+= -\frac{\rho_{\tt e}+\rho_{\tt w}}{2} g_y
+\]
+
+where
 \begin{eqnarray}
-\left. -\frac{\partial p}{\partial y} \right|
-&=& -\frac{{\tt p\_n}-{\tt p\_s}}{h_y}       \nn\\
-\left. \eta \frac{\partial^2 v}{\partial x^2} \right|
-&=& \eta \frac{{\tt v\_e} -2{\tt v}+{\tt v\_w}}{h_x^2}  \nn\\
-\left. \eta \frac{\partial^2 v}{\partial y^2} \right|
-&=& \eta \frac{{\tt v\_n} -2{\tt v}+{\tt v\_s}}{h_y^2}  \nn\\
-\left. \rho g_y \right| 
-&=& \frac{\rho_{\tt w} + \rho_{\tt e}}{2} g_y   \nn
+\tau_{xy,{\tt e}} 
+&=& 2 \eta_{\tt e} \dot{\varepsilon}_{xy,{\tt e}} 
+= \eta_{\tt e} \left( \frac{{\color{violet} u_{\tt ne}}-{\color{violet} u_{\tt se}}}{h_y} 
++\frac{{\color{orange} v_{\tt e}}-{\color{orange} v_\otimes}}{h_x} \right) 
+\nn \\
+\tau_{xy,{\tt w}} 
+&=& 2 \eta_{\tt w} \dot{\varepsilon}_{xy,{\tt w}} 
+= \eta_{\tt w} \left( \frac{{\color{violet} u_{\tt nw}}-{\color{violet} u_{\tt sw}}}{h_y} 
++\frac{{\color{orange} v_\otimes} - {\color{orange} v_{\tt w}}}{h_x} \right) 
+\nn\\
+\tau_{yy,{\tt n}} 
+&=& 2 \eta_{\tt n} \dot{\varepsilon}_{yy,{\tt n}} 
+= 2\eta_{\tt n} \frac{{\color{orange} v_{\tt n}}-{\color{orange} v_\otimes}}{h_y} 
+\nn\\
+\tau_{yy,{\tt s}} 
+&=& 2 \eta_{\tt s} \dot{\varepsilon}_{yy,{\tt s}} 
+= 2\eta_{\tt s} \frac{{\color{orange} v_\otimes} -{\color{orange} v_{\tt s}}}{h_y} 
+ \nn
 \end{eqnarray}
 
-For example, let us consider the $v$-node 13. Then the above stencils put together become:
+Again, we will discuss later how to arrive at $\eta_{\tt n}$ and $\eta_{\tt s}$.
+Inserting the four equations above into the first one, we obtain:
+
+
+
 \[
- -\frac{p_{\tt 13}-p_{\tt 8}}{h_y}       
-+
-\eta \frac{v_{\tt 14} -2v_{\tt 13}+v_{\tt 12}}{h_x^2} 
-+
-\eta \frac{v_{\tt 18} -2v_{\tt 13}+v_{\tt 8}}{h_y^2}  
-= -
-\frac{\rho_{\tt 15} + \rho_{\tt 16}}{2} g_y  
+\frac{1}{h_x} \left(\tau_{xy,{\tt e}}-\tau_{xy,{\tt w}}\right) + 
+\frac{1}{h_y} \left(\tau_{yy,{\tt n}}-\tau_{yy,{\tt s}}\right)
+-\frac{1}{h_y} {\color{teal}p_{\tt n}} + \frac{1}{h_y} {\color{teal}p_{\tt s}}
+= -\frac{\rho_{\tt e}+\rho_{\tt w}}{2} g_y
 \]
-The lhs contains 7 unknowns: $p_{\tt 13}$, $p_{\tt 8}$, $v_{\tt 14}$,
-$v_{\tt 13}$, $v_{\tt 12}$, $v_{\tt 18}$ and $v_{\tt 8}$.
 
 
 
-%...............................................
-\subsubsection{Continuity equation}
+{\footnotesize
+\[
+\frac{1}{h_x} \left[
+\eta_{\tt e} \left( \frac{{\color{violet} u_{\tt ne}}-{\color{violet} u_{\tt se}}}{h_y} 
++\frac{{\color{orange} v_{\tt e}}-{\color{orange} v_\otimes}}{h_x} \right) 
+-
+\eta_{\tt w} \left( \frac{{\color{violet} u_{\tt nw}}-{\color{violet} u_{\tt sw}}}{h_y} 
++\frac{{\color{orange} v_\otimes} - {\color{orange} v_{\tt w}}}{h_x} \right) 
+\right] 
++
+\frac{1}{h_y} \left(
+2\eta_{\tt n} \frac{{\color{orange} v_{\tt n}}-{\color{orange} v_\otimes}}{h_y} 
+-
+2\eta_{\tt s} \frac{{\color{orange} v_\otimes} -{\color{orange} v_{\tt s}}}{h_y}
+\right)
+-\frac{1}{h_y} {\color{teal}p_{\tt n}} + \frac{1}{h_y} {\color{teal}p_{\tt s}}
+= -\frac{\rho_{\tt e}+\rho_{\tt w}}{2} g_y
+\]
+}
 
-In two dimensions the continuity equation
-is 
+
+
+
+
+{\footnotesize
+\[
+\frac{\eta_{\tt e}}{h_x} 
+ \left( \frac{{\color{violet} u_{\tt ne}}-{\color{violet} u_{\tt se}}}{h_y} 
++\frac{{\color{orange} v_{\tt e}}-{\color{orange} v_\otimes}}{h_x} \right) 
+-
+\frac{\eta_{\tt w}}{h_x} \left( \frac{{\color{violet} u_{\tt nw}}-{\color{violet} u_{\tt sw}}}{h_y} 
++\frac{{\color{orange} v_\otimes} - {\color{orange} v_{\tt w}}}{h_x} \right) 
++
+\frac{2\eta_{\tt n}}{h_y} 
+ \frac{{\color{orange} v_{\tt n}}-{\color{orange} v_\otimes}}{h_y} 
+-
+\frac{2\eta_{\tt s}}{h_y}   \frac{{\color{orange} v_\otimes} -{\color{orange} v_{\tt s}}}{h_y}
+-\frac{1}{h_y} {\color{teal}p_{\tt n}} + \frac{1}{h_y} {\color{teal}p_{\tt s}}
+= -\frac{\rho_{\tt e}+\rho_{\tt w}}{2} g_y
+\]
+}
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+\left( \frac{2\eta_{\tt n}}{h_y^2} \right) {\color{orange} v_{\tt n}} +
+\left( \frac{ \eta_{\tt e}}{h_x^2} \right) {\color{orange} v_{\tt e}} +
+\left( \frac{ \eta_{\tt w}}{h_x^2} \right) {\color{orange} v_{\tt w}} +
+\left( \frac{2\eta_{\tt s}}{h_y^2} \right) {\color{orange} v_{\tt s}} +
+\left( 
+-\frac{\eta_{\tt e}}{h_x^2} 
+-\frac{\eta_{\tt w}}{h_x^2} 
+-\frac{2\eta_{\tt n}}{h_y^2} 
+-\frac{2\eta_{\tt s}}{h_y^2} 
+\right) {\color{orange} v_\otimes} \nn\\
++
+\left( \frac{\eta_{\tt e}}{h_x h_y} \right) {\color{violet} u_{\tt ne}} +
+\left(-\frac{\eta_{\tt e}}{h_x h_y} \right) {\color{violet} u_{\tt se}} +
+\left(-\frac{\eta_{\tt w}}{h_x h_y} \right) {\color{violet} u_{\tt nw}} +
+\left( \frac{\eta_{\tt w}}{h_x h_y} \right) {\color{violet} u_{\tt sw}} 
+-\frac{1}{h_y} {\color{teal}p_{\tt n}} + \frac{1}{h_y} {\color{teal}p_{\tt s}}
+&=& -\frac{\rho_{\tt e}+\rho_{\tt w}}{2} g_y \nn\\
+\label{eq:fdmstokes2}
+\end{eqnarray}
+\end{mdframed}
+
+
+%----------------------------------
+\subsection{Continuity equation}
+
+In two dimensions the continuity equation for an incompressible flow is
 \[
 \vec\nabla \cdot \vec\upnu 
 = 
@@ -212,213 +459,590 @@ We can isolate one cell:
 
 \input{tikz/tikz_staggered2D_divv}
 
-
 and discretise the equation above in its middle.
-\[
-\frac{u_{\tt ku\_e}-u_{\tt ku\_w}}{h_x} 
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+\frac{{\color{violet}u_{\tt e}}-{\color{violet}u_{\tt w}}}{h_x} 
 +
-\frac{v_{\tt kv\_n}-v_{\tt kv\_s}}{h_y} 
+\frac{{\color{orange}v_{\tt n}}-{\color{orange}v_{\tt s}}}{h_y} 
 =0
-\]
-For example, let us consider cell 14. Then the above stencil becomes:
+\label{eq:fdmstokes3}
+\end{equation}
+\end{mdframed}
+
+
+
+%--------------------------------------------------
+\subsection{Viscosity at the center of cells}
+
+Following Gerya, the viscosity in the middle of the cells
+can be obtained via averaging (for example arithmetic) of the viscosity values at the corners.
+
+In the case of the $x$-component of the momentum equation:
 \[
-\frac{u_{\tt 17}-u_{\tt 16}}{h_x} + \frac{v_{\tt 19}-v_{\tt 14}}{h_y} =0
+\eta_{\tt w} = \frac{1}{4}(\eta_{\tt sw}+\eta_{\tt s}+\eta_{\tt n} + \eta_{\tt nw})
+\]
+\[
+\eta_{\tt e} = \frac{1}{4}(\eta_{\tt se}+\eta_{\tt s}+\eta_{\tt n} + \eta_{\tt ne})
+\]
+In the case of the $y$-component of the momentum equation:
+\[
+\eta_{\tt n} = \frac{1}{4}(\eta_{\tt w}+\eta_{\tt nw}+\eta_{\tt ne} + \eta_{\tt e})
+\]
+\[
+\eta_{\tt s} = \frac{1}{4}(\eta_{\tt sw}+\eta_{\tt w}+\eta_{\tt e} + \eta_{\tt se})
+\]
+If harmonic averaging is preferred, then for instance
+\[
+\eta_{\tt w} = \frac{4}{1/\eta_{\tt sw}+1/\eta_{\tt s}+1/\eta_{\tt n} + 1/\eta_{\tt nw} }
 \]
 
 
+%--------------------------------------------------
+\subsection{Boundary conditions}
+
+We start with so-called Dirichlet boundary conditions, i.e. we wish 
+to prescribe the value of either velocity components on the boundaries.
+For simplicity we will then focus on free slip and no slip boundary conditions.
+Free slip b.c. are characterised by a) the normal velocity component on the boundary is zero 
+b) the other two components do not change across the boundary (i.e.
+zero shear strain rate and shear stresses along the boundary).
+No slip b.c. require that all velocity components are zero on the boundary.
+
+Gerya presents in Section 7.4 all the types of boundary conditions but is remarkably elusive 
+as to how they should be implemented. Consulting Becker and Kaus, the same conclusion can 
+unfortunately be drawn.
+
+Looking at \textcite{hawe65} (1965)
+we see that the authors discuss free-slip and no-slip boundary conditions:
+\begin{center}
+\fbox{\includegraphics[width=9cm]{images/fdm/hawe65b}}
+\end{center}
+As mentioned in the paper ``a vertical wall therefore passes through the horizontal-velocity mesh points,
+and the velocities at those points vanish at all times for either type of [boundary condition].
+A vertical wall does not pass through vertical-velocity mesh points, but the calculation makes use
+of the values of $v$ at [virtual] mesh points lying just outside of the wall. For a no-slip wall
+the boundary condition is $v'=-v$, while for a free-slip wall it becomes $v'=v$ [on the figure above].''
+
+Let us focus on the bottom of the following mesh:
+\begin{center}
+\begin{tikzpicture}
+%\draw[fill=gray!23,gray!23](0,0) rectangle (12,10);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (12,10); %background grid
+
+\draw[thick] (0,0) -- (10,0) -- (10,2) -- (0,2) -- cycle ; %1-4
+\draw[thick] (0,2) -- (10,2)  ; 
+\draw[thick] (2,0) -- (2,4)  ; 
+\draw[thick] (4,0) -- (4,4)  ; 
+\draw[thick] (6,0) -- (6,4)  ; 
+\draw[thick] (8,0) -- (8,4)  ; 
+\draw[thick] (10,0) -- (10,4)  ; 
+%pressure nodes
+\draw[black,fill=teal] (1,1)   circle (2pt); %1
+\draw[black,fill=teal] (3,1)   circle (2pt); %1
+\draw[black,fill=teal] (5,1)   circle (2pt); %1
+\draw[black,fill=teal] (7,1)   circle (2pt); %1
+\draw[black,fill=teal] (9,1)   circle (2pt); %1
+\draw[black,fill=teal] (1,3)   circle (2pt); %1
+\draw[black,fill=teal] (3,3)   circle (2pt); %1
+\draw[black,fill=teal] (5,3)   circle (2pt); %1
+\draw[black,fill=teal] (7,3)   circle (2pt); %1
+\draw[black,fill=teal] (9,3)   circle (2pt); %1
+\node[] at (0.8,0.8) {\tiny \color{teal} \tt 1};
+\node[] at (2.8,0.8) {\tiny \color{teal} \tt 2};
+\node[] at (4.8,0.8) {\tiny \color{teal} \tt 3};
+\node[] at (6.8,0.8) {\tiny \color{teal} \tt 4};
+\node[] at (8.8,0.8) {\tiny \color{teal} \tt 5};
+\node[] at (0.8,2.8) {\tiny \color{teal} \tt 6};
+\node[] at (2.8,2.8) {\tiny \color{teal} \tt 7};
+\node[] at (4.8,2.8) {\tiny \color{teal} \tt 8};
+\node[] at (6.8,2.8) {\tiny \color{teal} \tt 9};
+\node[] at (8.8,2.8) {\tiny \color{teal} \tt 10};
+
+% u nodes
+\draw[black,fill=violet] (0,1)   circle (2pt); 
+\draw[black,fill=violet] (2,1)   circle (4pt); 
+\draw[black,fill=violet] (4,1)   circle (2pt); 
+\draw[black,fill=violet] (6,1)   circle (2pt); 
+\draw[black,fill=violet] (8,1)   circle (2pt); 
+\draw[black,fill=violet] (10,1)   circle (2pt);
+\draw[black,fill=violet] (0,3)   circle (2pt); 
+\draw[black,fill=violet] (2,3)   circle (2pt); 
+\draw[black,fill=violet] (4,3)   circle (2pt); 
+\draw[black,fill=violet] (6,3)   circle (2pt); 
+\draw[black,fill=violet] (8,3)   circle (2pt); 
+\draw[black,fill=violet] (10,3)   circle (2pt);
+
+
+\node[] at (-0.2,0.8) {\tiny \color{violet} \tt 1};
+\node[] at (1.8,0.8) {\tiny \color{violet} \tt 2};
+\node[] at (3.8,0.8) {\tiny \color{violet} \tt 3};
+\node[] at (5.8,0.8) {\tiny \color{violet} \tt 4};
+\node[] at (7.8,0.8) {\tiny \color{violet} \tt 5};
+\node[] at (9.8,0.8) {\tiny \color{violet} \tt 6};
+\node[] at (-0.2,2.8) {\tiny \color{violet} \tt 7};
+\node[] at (1.8,2.8) {\tiny \color{violet} \tt 8};
+\node[] at (3.8,2.8) {\tiny \color{violet} \tt 9};
+\node[] at (5.8,2.8) {\tiny \color{violet} \tt 10};
+\node[] at (7.8,2.8) {\tiny \color{violet} \tt 11};
+\node[] at (9.8,2.8) {\tiny \color{violet} \tt 12};
+
+% v nodes
+\draw[black,fill=orange] (1,0)   circle (2pt); 
+\draw[black,fill=orange] (3,0)   circle (2pt); 
+\draw[black,fill=orange] (5,0)   circle (2pt); 
+\draw[black,fill=orange] (7,0)   circle (2pt); 
+\draw[black,fill=orange] (9,0)   circle (2pt); 
+
+\draw[black,fill=orange] (1,2)   circle (2pt); 
+\draw[black,fill=orange] (3,2)   circle (2pt); 
+\draw[black,fill=orange] (5,2)   circle (2pt); 
+\draw[black,fill=orange] (7,2)   circle (2pt); 
+\draw[black,fill=orange] (9,2)   circle (2pt); 
+
+\node[] at (0.8,-0.2) {\tiny \color{orange} \tt 1};
+\node[] at (2.8,-0.2) {\tiny \color{orange} \tt 2};
+\node[] at (4.8,-0.2) {\tiny \color{orange} \tt 3};
+\node[] at (6.8,-0.2) {\tiny \color{orange} \tt 4};
+\node[] at (8.8,-0.2) {\tiny \color{orange} \tt 5};
+\node[] at (0.8,1.8) {\tiny \color{orange} \tt 6};
+\node[] at (2.8,1.8) {\tiny \color{orange} \tt 7};
+\node[] at (4.8,1.8) {\tiny \color{orange} \tt 8};
+\node[] at (6.8,1.8) {\tiny \color{orange} \tt 9};
+\node[] at (8.8,1.8) {\tiny \color{orange} \tt 10};
+%------------------------------------------------
+\draw[black,fill=black] (0,0)   circle (2pt); 
+\draw[black,fill=black] (2,0)   circle (2pt); 
+\draw[black,fill=black] (4,0)   circle (2pt); 
+\draw[black,fill=black] (6,0)   circle (2pt); 
+\draw[black,fill=black] (8,0)   circle (2pt); 
+\draw[black,fill=black] (10,0)   circle (2pt); 
+\draw[black,fill=black] (0,2)   circle (2pt); 
+\draw[black,fill=black] (2,2)   circle (2pt); 
+\draw[black,fill=black] (4,2)   circle (2pt); 
+\draw[black,fill=black] (6,2)   circle (2pt); 
+\draw[black,fill=black] (8,2)   circle (2pt); 
+\draw[black,fill=black] (10,2)   circle (2pt); 
+\node[] at (-0.2,-0.2) {\tiny \tt 1};
+\node[] at (1.8,-0.2) {\tiny \tt 2};
+\node[] at (3.8,-0.2) {\tiny \tt 3};
+\node[] at (5.8,-0.2) {\tiny \tt 4};
+\node[] at (7.8,-0.2) {\tiny \tt 5};
+\node[] at (9.8,-0.2) {\tiny \tt 6};
+\node[] at (-0.2,1.8) {\tiny \tt 7};
+\node[] at (1.8,1.8) {\tiny \tt 8};
+\node[] at (3.8,1.8) {\tiny \tt 9};
+\node[] at (5.8,1.8) {\tiny \tt 10};
+\node[] at (7.8,1.8) {\tiny \tt 11};
+\node[] at (9.8,1.8) {\tiny \tt 12};
+%-------------------------------------------------
+\draw[thin,->] (10,0) -- (11,0);  \node[] at (11,-0.25) {$x$};
+\draw[thin,->] (0,2) -- (0,4); \node[] at (-0.25,4) {$y$};
+%-------------------------------------------------
+\draw[black,fill=teal] (11.5,3)   circle (2pt); \node[] at (11.8,3) {\tiny $p$};
+\draw[black,fill=orange] (11.5,2)   circle (2pt); \node[] at (11.8,2) {\tiny $v$};
+\draw[black,fill=violet] (11.5,1)   circle (2pt); \node[] at (11.8,1) {\tiny $u$};
+\end{tikzpicture}
+\end{center}
 
 
 
-%----------------------------------------------------------------
-\subsubsection{Put it all together, let's be concrete}
+\begin{itemize}
+\item \underline{No slip} (at the bottom). We then want $u=v=0$. We can easily zero 
+${\color{orange} v_{\tt 1,2,3,4,5}}$ since the corresponding nodes are on the boundary but this is not enough. Let us consider node ${\color{violet}u_{\tt 2}}$ (bigger on the figure above). 
+We could zero $u_2$ directly but this would not be correct since the node is not on the boundary.
+If we wish to impose $u=0$ exactly on the boundary then its south neighbour ghost value should be set to
+-{\color{violet} $u_2$} and used in the established stencils.
+
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[fill=gray!23,gray!23](0,0) rectangle (12,6);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (12,6); %background grid
+\node[] at (3.5,4) {Free slip};
+\node[] at (8.5,4) {No slip};
+\draw[thick] (1,2) -- (5,2) ; 
+\draw[thick] (6,2) -- (11,2) ; 
+\draw[black,fill=violet] (3.5,1)   circle (2pt); 
+\draw[black,fill=violet] (3.5,3)   circle (2pt); 
+\draw[black,fill=violet] (8.5,1)   circle (2pt); 
+\draw[black,fill=violet] (8.5,3)   circle (2pt); 
+\draw[dashed] (3.5,1) -- (3.5,3) ; 
+\draw[dashed] (8.5,1) -- (8.5,3) ; 
+\draw[thin,dashed] (9.5,3) -- (7.5,1) ; 
+\draw[thick, ->] (3.5,3)--(4.5,3);
+\draw[thick, ->] (3.5,1)--(4.5,1);
+\draw[thick, ->] (8.5,3)--(9.5,3);
+\draw[thick, ->] (8.5,1)--(7.5,1);
+\draw[->] (2,1)--(3.4,1.9);
+\node[] at (1.5,1) {\tiny $\dot\varepsilon_{xx}=0$};
+\draw[->] (10,1)--(8.6,1.9);
+\node[] at (10.5,1) {\tiny $u=0$};
+
+\node[] at (3.9,3.25) {\tiny $u_{\tt 2}$};
+\node[] at (3.9,0.75) {\tiny $u_{\tt 2}$};
+
+
+\node[] at (8.9,3.25) {\tiny $u_{\tt 2}$};
+\node[] at (7.9,0.75) {\tiny $-u_{\tt 2}$};
+
+\end{tikzpicture}
+\end{center}
+
+
+\item \underline{Free slip} (at the bottom). Aside from the zero normal velocity 
+as above, we also need the tangential velocity gradient to be zero on the boundary, 
+which translates into assigning its south neighbour ghost the value +${\color{violet} u_2}$ 
+\end{itemize}
+
+We see that in both cases we will need to create ephemeral boundary nodes outside the domain and assign
+them specific values based on the boundary condition type. 
+This consideration lead Becker \& Kaus to produce this figure in their syllabus:
+
+\begin{center}
+\includegraphics[width=8cm]{images/fdm/bk_A}\\
+{\captionfont Taken from \textcite{beka}: Staggered grid definition with the boundary points. 
+Within the purple domain, the
+finite difference scheme for center points can be applied. At the boundaries, we have to apply a
+special finite difference scheme which employs fictitious boundary nodes.}
+\end{center}
 
 Let us consider a $4\times 3$ mesh.
-We have 12 cells, 15 $u$-nodes, 16 $v$-nodes and 12 $p$-nodes.
-This mesh then counts $ndof=15+16+12=43$ unknowns.
+We have 12 cells, 15 {\color{violet}$u$}-nodes, 
+16 {\color{orange}$v$}-nodes and 12 {\color{teal}$p$}-nodes.
+This mesh then counts $ndof=15+16+12=43$ unknowns\footnote{
+Note that the numbering starts at zero, python-style.}.
 
 \input{tikz/tikz_staggered2D_4x3}
 
-
-
-
-Let us assume that we prescribe free slip on all sides.
-Then we set $v_{\tt 1}=v_{\tt 2}=v_{\tt 3}=v_{\tt 4}=v_{\tt 13}=v_{\tt 14}=v_{\tt 15}=v_{\tt 16}=0$
-and $u_{\tt 1}=u_{\tt 5}=u_{\tt 6}=u_{\tt 10}=u_{\tt 11} = u_{\tt 15}=0$.
+Let us assume that we prescribe free slip or no slip on all sides.
+Then we must set 
+${\color{orange}v_{\tt 0}}={\color{orange}v_{\tt 1}}={\color{orange}v_{\tt 2}}={\color{orange}v_{\tt 3}}={\color{orange}v_{\tt 12}}={\color{orange}v_{\tt 13}}={\color{orange}v_{\tt 14}}={\color{orange}v_{\tt 15}}=0$
+and ${\color{violet} u_{\tt 0}}={\color{violet}u_{\tt 4}}={\color{violet}u_{\tt 5}}
+={\color{violet}u_{\tt 9}}={\color{violet}u_{\tt 10}} = {\color{violet}u_{\tt 14}}=0$.
 This means that we need not discretise the momentum equation on these nodes.
 
+Let us consider node ${\color{violet} u_{7}}$. It has four neighbours so the $x$-component of 
+the momentum equation writes there:
+
+\begin{eqnarray}
+&&
+\left( \frac{\eta_{\tt n}}{h_y^2} \right) {\color{violet} u_{\tt 12}} + 
+\left( \frac{2\eta_{\tt e}}{h_x^2} \right) {\color{violet} u_{\tt 8}} + 
+\left( \frac{2\eta_{\tt w}}{h_x^2} \right) {\color{violet} u_{\tt 5}} + 
+\left( \frac{\eta_{\tt s}}{h_y^2} \right) {\color{violet} u_{\tt 2}} + 
+\left( -\frac{2\eta_{\tt e}}{h_x^2} -\frac{2\eta_{\tt w}}{h_x^2}  
+-\frac{\eta_{\tt n}}{h_y^2} -\frac{\eta_{\tt s}}{h_y^2}  
+\right) {\color{violet} u_7} \nn\\
+&&+
+\left( \frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt 10}}+ 
+\left(-\frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt 9}}+ 
+\left(-\frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt 6}}+ 
+\left( \frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt 5}} 
+- \frac{1}{h_x} {\color{teal}p_{\tt 6}} + \frac{1}{h_x} {\color{teal}p_{\tt 5}} = -\frac{\rho_{\tt 12}+\rho_{\tt 7}}{2} g_x 
+\nn
+\end{eqnarray}
 
 
-Since we will need those in what follows, let us recall the forward, centered 
-and backward (from left to right) formulation of a second-order derivative:
-\[
-f_i''=\frac{f_{i+2}-2f_{i+1}+f_i}{h^2}
-\qquad
-f_i''=\frac{f_{i+1}-2f_{i}+f_{i-1}}{h^2}
-\qquad
-f_i''=\frac{f_{i}-2f_{i-1}+f_{i-2}}{h^2}
-\]
 
-We must write the discretised $x$-momentum equation for the $u$ nodes nodes not on the 
-boundary, so nodes 2,3,4,7,8,9,12,13,14.
-However we must make a distinction between the nodes 2,3,4,12,13,14 and the nodes 7,8,9.
-The latter ones have 4 $u$-node neighbours which allows us to discretise the 
-second-order derivatives with a 
-centered stencil. The former ones will require the use of forward (2,3,4) or backward (12,13,14) formulations.
+
+
+Based on the considerations above pertaining to ghost/virtual nodes
+we turn once more to our $4\times 3$ cell mesh where ghost/virtual nodes have been added:
+
+\input{tikz/tikz_staggered2D_4x3_bc}
 
 \begin{itemize}
-\item nodes 2,3,4
+\item ${\color{violet} u_{\tt 0,5,10}}$: situated on left boundary. Free slip and no slip require ${\color{violet} u}=0$. No need for a ghost node.
+\item ${\color{violet} u_{\tt 4,9,14}}$: situated on right boundary. Free slip and no slip require ${\color{violet} u}=0$. No need for a ghost node.
+\item ${\color{violet} u_{\tt 1,2,3}}$: north, east, west neighbours are present, but south is missing so south ghost nodes are needed.
+
+Let us write the stencil for these nodes:
 \begin{eqnarray}
--\frac{p_{\tt }-p_{\tt }}{h_x}       
-+\eta \frac{u_{\tt } -2u_{\tt }+u_{\tt }}{h_x^2}  
-+\eta \frac{u_{\tt }-2u_{\tt }+u_{\tt }}{h_y^2}  
-&=& - \frac{\rho_{\tt } + \rho_{\tt }}{2} g_x  
-\\
--\frac{p_{\tt }-p_{\tt }}{h_x}       
-+\eta \frac{u_{\tt } -2u_{\tt }+u_{\tt }}{h_x^2}  
-+\eta \frac{u_{\tt }-2u_{\tt }+u_{\tt }}{h_y^2}  
-&=& - \frac{\rho_{\tt } + \rho_{\tt }}{2} g_x  
-\\
--\frac{p_{\tt }-p_{\tt }}{h_x}       
-+\eta \frac{u_{\tt } -2u_{\tt }+u_{\tt }}{h_x^2}  
-+\eta \frac{u_{\tt }-2u_{\tt }+u_{\tt }}{h_y^2}  
-&=& - \frac{\rho_{\tt } + \rho_{\tt }}{2} g_x  
+\left( \frac{\eta_{\tt n}}{h_y^2} \right) {\color{violet} u_{\tt n}} + 
+\left( \frac{2\eta_{\tt e}}{h_x^2} \right) {\color{violet} u_{\tt e}} + 
+\left( \frac{2\eta_{\tt w}}{h_x^2} \right) {\color{violet} u_{\tt w}} + 
+\boxed{\left( \frac{\eta_{\tt s}}{h_y^2} \right) {\color{violet} u_{\tt s}}} + 
+\left( -\frac{2\eta_{\tt e}}{h_x^2} -\frac{2\eta_{\tt w}}{h_x^2}  
+-\frac{\eta_{\tt n}}{h_y^2} -\frac{\eta_{\tt s}}{h_y^2}  
+\right) {\color{violet} u_\otimes} \nn\\
++
+\left( \frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt ne}}+ 
+\left(-\frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt nw}}+ 
+\left(-\frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt se}}+ 
+\left( \frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt sw}} 
+- \frac{1}{h_x} {\color{teal}p_{\tt e}} + \frac{1}{h_x} {\color{teal}p_{\tt w}} 
+&=& -\frac{\rho_{\tt n}+\rho_{\tt s}}{2} g_x \nn
+\end{eqnarray}
+As we have seen earlier there is obviously a problem as ${\color{violet} u_{\tt s}}$ (the boxed term)
+is not defined.
+If we wish to prescribe free slip, we have seen that ${\color{violet} u_{\tt s}}={\color{violet} u_\otimes}$.
+If we wish to prescribe no slip, we have seen that ${\color{violet} u_{\tt s}}=-{\color{violet} u_\otimes}$.
+The stencil then becomes:
+\begin{eqnarray}
+\left( \frac{\eta_{\tt n}}{h_y^2} \right) {\color{violet} u_{\tt n}} + 
+\left( \frac{2\eta_{\tt e}}{h_x^2} \right) {\color{violet} u_{\tt e}} + 
+\left( \frac{2\eta_{\tt w}}{h_x^2} \right) {\color{violet} u_{\tt w}} + 
+\left( -\frac{2\eta_{\tt e}}{h_x^2} -\frac{2\eta_{\tt w}}{h_x^2}  
+-\frac{\eta_{\tt n}}{h_y^2} -(1-\delta_{bc})\frac{\eta_{\tt s}}{h_y^2}
+\right) {\color{violet} u_\otimes} \nn\\
++
+\left( \frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt ne}}+ 
+\left(-\frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt nw}}+ 
+\left(-\frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt se}}+ 
+\left( \frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt sw}} 
+- \frac{1}{h_x} {\color{teal}p_{\tt e}} + \frac{1}{h_x} {\color{teal}p_{\tt w}} 
+&=& -\frac{\rho_{\tt n}+\rho_{\tt s}}{2} g_x \nn
+\end{eqnarray}
+where $\delta_{bc}=1$ (free slip) or -1 (no slip).
+
+
+
+\item ${\color{violet} u_{\tt 11,12,13}}$: south, east, west neighbours are present, but north is missing so north ghost nodes are needed.
+
+Let us write the stencil for these nodes:
+\begin{eqnarray}
+\boxed{\left( \frac{\eta_{\tt n}}{h_y^2} \right) {\color{violet} u_{\tt n}}} + 
+\left( \frac{2\eta_{\tt e}}{h_x^2} \right) {\color{violet} u_{\tt e}} + 
+\left( \frac{2\eta_{\tt w}}{h_x^2} \right) {\color{violet} u_{\tt w}} + 
+\left( \frac{\eta_{\tt s}}{h_y^2} \right) {\color{violet} u_{\tt s}} + 
+\left( -\frac{2\eta_{\tt e}}{h_x^2} -\frac{2\eta_{\tt w}}{h_x^2}  
+-\frac{\eta_{\tt n}}{h_y^2} -\frac{\eta_{\tt s}}{h_y^2}  
+\right) {\color{violet} u_\otimes} \nn\\
++
+\left( \frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt ne}}+ 
+\left(-\frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt nw}}+ 
+\left(-\frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt se}}+ 
+\left( \frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt sw}} 
+- \frac{1}{h_x} {\color{teal}p_{\tt e}} + \frac{1}{h_x} {\color{teal}p_{\tt w}} 
+&=& -\frac{\rho_{\tt n}+\rho_{\tt s}}{2} g_x \nn
+\end{eqnarray}
+Here again there is obviously a problem as ${\color{violet} u_{\tt n}}$ is not defined (boxed term).
+Using the same $\delta_{bc}$ parameter the stencil then becomes:
+\begin{eqnarray}
+\left( \frac{2\eta_{\tt e}}{h_x^2} \right) {\color{violet} u_{\tt e}} + 
+\left( \frac{2\eta_{\tt w}}{h_x^2} \right) {\color{violet} u_{\tt w}} + 
+\left( \frac{\eta_{\tt s}}{h_y^2} \right) {\color{violet} u_{\tt s}} + 
+\left( -\frac{2\eta_{\tt e}}{h_x^2} -\frac{2\eta_{\tt w}}{h_x^2}  
+-(1-\delta_{bc})\frac{\eta_{\tt n}}{h_y^2} -\frac{\eta_{\tt s}}{h_y^2}  
+\right) {\color{violet} u_\otimes} \nn\\
++
+\left( \frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt ne}}+ 
+\left(-\frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt nw}}+ 
+\left(-\frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt se}}+ 
+\left( \frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt sw}} 
+- \frac{1}{h_x} {\color{teal}p_{\tt e}} + \frac{1}{h_x} {\color{teal}p_{\tt w}} 
+&=& -\frac{\rho_{\tt n}+\rho_{\tt s}}{2} g_x \nn
 \end{eqnarray}
 
 
 
-\item nodes 7,8,9
+\item ${\color{violet} u_{\tt 6,7,8}}$: standard stencil applies as these nodes have four 'real' neighbours.
+\item ${\color{orange} v_{\tt 0,1,2,3}}$: situated on bottom boundary. Free slip and no slip require ${\color{orange} v}=0$. No need for a ghost node.
+\item ${\color{orange} v_{\tt 12,13,14,15}}$: situated on top boundary. Free slip and no slip require ${\color{orange} v}=0$. No need for a ghost node.
+
+\item ${\color{orange} v_{\tt 4,8}}$: north, east, south neighbours are present, but west is missing so west ghost nodes are needed.
 \begin{eqnarray}
--\frac{p_{\tt 6}-p_{\tt 5}}{h_x}       
-+\eta \frac{u_{\tt 6} -2u_{\tt 7}+u_{\tt 8}}{h_x^2}  
-+\eta \frac{u_{\tt 2}-2u_{\tt 7}+u_{\tt 12}}{h_y^2}  
-&=& - \frac{\rho_{\tt 7} + \rho_{\tt 12}}{2} g_x  
-\\
--\frac{p_{\tt 7}-p_{\tt 6}}{h_x}       
-+\eta \frac{u_{\tt 7} -2u_{\tt 8}+u_{\tt 9}}{h_x^2}  
-+\eta \frac{u_{\tt 3}-2u_{\tt 8}+u_{\tt 13}}{h_y^2}  
-&=& - \frac{\rho_{\tt 8} + \rho_{\tt 13}}{2} g_x  
-\\
--\frac{p_{\tt 8}-p_{\tt 7}}{h_x}       
-+\eta \frac{u_{\tt 8} -2u_{\tt 9}+u_{\tt 10}}{h_x^2}  
-+\eta \frac{u_{\tt 4}-2u_{\tt 9}+u_{\tt 14}}{h_y^2}  
-&=& - \frac{\rho_{\tt 9} + \rho_{\tt 14}}{2} g_x  
+\left( \frac{2\eta_{\tt n}}{h_y^2} \right) {\color{orange} v_{\tt n}} +
+\left( \frac{ \eta_{\tt e}}{h_x^2} \right) {\color{orange} v_{\tt e}} +
+\boxed{\left( \frac{ \eta_{\tt w}}{h_x^2} \right) {\color{orange} v_{\tt w}}} +
+\left( \frac{2\eta_{\tt s}}{h_y^2} \right) {\color{orange} v_{\tt s}} +
+\left( 
+-\frac{\eta_{\tt e}}{h_x^2} 
+-\frac{\eta_{\tt w}}{h_x^2} 
+-\frac{2\eta_{\tt n}}{h_y^2} 
+-\frac{2\eta_{\tt s}}{h_y^2} 
+\right) {\color{orange} v_\otimes} \nn\\
++
+\left( \frac{\eta_{\tt e}}{h_x h_y} \right) {\color{violet} u_{\tt ne}} +
+\left(-\frac{\eta_{\tt e}}{h_x h_y} \right) {\color{violet} u_{\tt se}} +
+\left(-\frac{\eta_{\tt w}}{h_x h_y} \right) {\color{violet} u_{\tt nw}} +
+\left( \frac{\eta_{\tt w}}{h_x h_y} \right) {\color{violet} u_{\tt sw}} 
+-\frac{1}{h_y} {\color{teal}p_{\tt n}} + \frac{1}{h_y} {\color{teal}p_{\tt s}}
+&=& -\frac{\rho_{\tt e}+\rho_{\tt w}}{2} g_y \nn
+\end{eqnarray}
+leads to
+\begin{eqnarray}
+\left( \frac{2\eta_{\tt n}}{h_y^2} \right) {\color{orange} v_{\tt n}} +
+\left( \frac{ \eta_{\tt e}}{h_x^2} \right) {\color{orange} v_{\tt e}} +
+\left( \frac{2\eta_{\tt s}}{h_y^2} \right) {\color{orange} v_{\tt s}} +
+\left( 
+-\frac{\eta_{\tt e}}{h_x^2} 
+-(1-\delta_{bc})\frac{\eta_{\tt w}}{h_x^2} 
+-\frac{2\eta_{\tt n}}{h_y^2} 
+-\frac{2\eta_{\tt s}}{h_y^2} 
+\right) {\color{orange} v_\otimes} \nn\\
++
+\left( \frac{\eta_{\tt e}}{h_x h_y} \right) {\color{violet} u_{\tt ne}} +
+\left(-\frac{\eta_{\tt e}}{h_x h_y} \right) {\color{violet} u_{\tt se}} +
+\left(-\frac{\eta_{\tt w}}{h_x h_y} \right) {\color{violet} u_{\tt nw}} +
+\left( \frac{\eta_{\tt w}}{h_x h_y} \right) {\color{violet} u_{\tt sw}} 
+-\frac{1}{h_y} {\color{teal}p_{\tt n}} + \frac{1}{h_y} {\color{teal}p_{\tt s}}
+&=& -\frac{\rho_{\tt e}+\rho_{\tt w}}{2} g_y \nn
 \end{eqnarray}
 
 
-\item nodes 12,13,14
 
+\item ${\color{orange} v_{\tt 7,11}}$: south,  west, north neighbours are present, but east is missing so east ghost nodes are needed.
 \begin{eqnarray}
--\frac{p_{\tt }-p_{\tt }}{h_x}       
-+\eta \frac{u_{\tt } -2u_{\tt }+u_{\tt }}{h_x^2}  
-+\eta \frac{u_{\tt }-2u_{\tt }+u_{\tt }}{h_y^2}  
-&=& - \frac{\rho_{\tt } + \rho_{\tt }}{2} g_x  
-\\
--\frac{p_{\tt }-p_{\tt }}{h_x}       
-+\eta \frac{u_{\tt } -2u_{\tt }+u_{\tt }}{h_x^2}  
-+\eta \frac{u_{\tt }-2u_{\tt }+u_{\tt }}{h_y^2}  
-&=& - \frac{\rho_{\tt } + \rho_{\tt }}{2} g_x  
-\\
--\frac{p_{\tt }-p_{\tt }}{h_x}       
-+\eta \frac{u_{\tt } -2u_{\tt }+u_{\tt }}{h_x^2}  
-+\eta \frac{u_{\tt }-2u_{\tt }+u_{\tt }}{h_y^2}  
-&=& - \frac{\rho_{\tt } + \rho_{\tt }}{2} g_x  
+\left( \frac{2\eta_{\tt n}}{h_y^2} \right) {\color{orange} v_{\tt n}} +
+\boxed{\left( \frac{ \eta_{\tt e}}{h_x^2} \right) {\color{orange} v_{\tt e}}} +
+\left( \frac{ \eta_{\tt w}}{h_x^2} \right) {\color{orange} v_{\tt w}} +
+\left( \frac{2\eta_{\tt s}}{h_y^2} \right) {\color{orange} v_{\tt s}} +
+\left( 
+-\frac{\eta_{\tt e}}{h_x^2} 
+-\frac{\eta_{\tt w}}{h_x^2} 
+-\frac{2\eta_{\tt n}}{h_y^2} 
+-\frac{2\eta_{\tt s}}{h_y^2} 
+\right) {\color{orange} v_\otimes} \nn\\
++
+\left( \frac{\eta_{\tt e}}{h_x h_y} \right) {\color{violet} u_{\tt ne}} +
+\left(-\frac{\eta_{\tt e}}{h_x h_y} \right) {\color{violet} u_{\tt se}} +
+\left(-\frac{\eta_{\tt w}}{h_x h_y} \right) {\color{violet} u_{\tt nw}} +
+\left( \frac{\eta_{\tt w}}{h_x h_y} \right) {\color{violet} u_{\tt sw}} 
+-\frac{1}{h_y} {\color{teal}p_{\tt n}} + \frac{1}{h_y} {\color{teal}p_{\tt s}}
+&=& -\frac{\rho_{\tt e}+\rho_{\tt w}}{2} g_y \nn
+\end{eqnarray}
+leads to
+\begin{eqnarray}
+\left( \frac{2\eta_{\tt n}}{h_y^2} \right) {\color{orange} v_{\tt n}} +
+\left( \frac{ \eta_{\tt w}}{h_x^2} \right) {\color{orange} v_{\tt w}} +
+\left( \frac{2\eta_{\tt s}}{h_y^2} \right) {\color{orange} v_{\tt s}} +
+\left( 
+-(1-\delta_{bc})\frac{\eta_{\tt e}}{h_x^2} 
+-\frac{\eta_{\tt w}}{h_x^2} 
+-\frac{2\eta_{\tt n}}{h_y^2} 
+-\frac{2\eta_{\tt s}}{h_y^2} 
+\right) {\color{orange} v_\otimes} \nn\\
++
+\left( \frac{\eta_{\tt e}}{h_x h_y} \right) {\color{violet} u_{\tt ne}} +
+\left(-\frac{\eta_{\tt e}}{h_x h_y} \right) {\color{violet} u_{\tt se}} +
+\left(-\frac{\eta_{\tt w}}{h_x h_y} \right) {\color{violet} u_{\tt nw}} +
+\left( \frac{\eta_{\tt w}}{h_x h_y} \right) {\color{violet} u_{\tt sw}} 
+-\frac{1}{h_y} {\color{teal}p_{\tt n}} + \frac{1}{h_y} {\color{teal}p_{\tt s}}
+&=& -\frac{\rho_{\tt e}+\rho_{\tt w}}{2} g_y \nn
 \end{eqnarray}
 
 
+\item ${\color{orange} v_{\tt 5,6,9,10}}$: standard stencil applies as these nodes have four 'real' neighbours.
+\item pressure nodes are situated inside each cell and are unaffected by the type of boundary conditions
+since the stencil of the continuity equation is always complete (no need for ghost nodes).
 \end{itemize}
 
+Note that if free slip or no slip boundary conditions are prescribed on all four boundaries the 
+pressure solution is only known up to a constant. Often this pressure nullspace is removed 
+from the solution since most solvers will happily solve the linear system even though it is not 
+strictly definite. Gerya advocates to set a zero boundary condition on a node (and then re-normalise the 
+pressure).
 
-Likewise, we must discretise the $y$-momentum equation on $v$-nodes 5,6,7,8,9,10,11,12.
-Nodes 5,9 will require a forward scheme, nodes 8,12 will require a backward scheme, 
-while a centered approach is suitable for nodes 6,7,10,11.
-
-\begin{itemize}
-\item nodes 5,9
-
-\begin{eqnarray}
--\frac{p_{\tt }-p_{\tt }}{h_y}       
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_x^2} 
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_y^2}  
-&=& - \frac{\rho_{\tt } + \rho_{\tt }}{2} g_y   
-\\
--\frac{p_{\tt }-p_{\tt 2}}{h_y}       
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_x^2} 
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_y^2}  
-&=& - \frac{\rho_{\tt } + \rho_{\tt }}{2} g_y   
-\end{eqnarray}
+In practice ghost nodes are never created or used. They are useful in order to 
+establish the corrected stencils but are entirely absent from the coding.
 
 
-\item nodes 8,12
-
-\begin{eqnarray}
--\frac{p_{\tt }-p_{\tt }}{h_y}       
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_x^2} 
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_y^2}  
-&=& - \frac{\rho_{\tt } + \rho_{\tt }}{2} g_y   
-\\
--\frac{p_{\tt }-p_{\tt 2}}{h_y}       
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_x^2} 
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_y^2}  
-&=& - \frac{\rho_{\tt } + \rho_{\tt }}{2} g_y   
-\end{eqnarray}
 
 
-\item nodes 6,7,10,11
+
+
+
+%--------------------------------------------------
+\subsection{A remark about scaling of terms}
+
+The coefficients before the velocity components are all of the form 
+$\eta/h^2$ while those in front of the pressure terms are of the form 
+$1/h$. 
+FINISH
+
+%--------------------------------------------------
+\subsection{Making matrix symmetric again}
+
+Looking at Eq.~\eqref{eq:fdmstokes6} we see that the matrix is not structurally symmetric. In other words $\K_{xy} \neq \K_{yx}$, $\Q_x \neq \G_x^T$, and $\Q_y \neq \G_y^T$, which is obvious only 
+looking at the non zero terms on the figures above. 
+
+This stems from how boundary conditions are applied. So far the matrix is being built line by line.
+Each line corresponding to a node which value is prescribed on the boundary receives a 1 on the diagonal and the required value (often simply zero) in the rhs.
+
+This is for example happening on the line corresponding to node ${\color{violet} u_{10}}$. 
+But if we then turn to node ${\color{violet} u_{11}}$, the stencil equation on this node 
+reads
 
 \begin{eqnarray}
--\frac{p_{\tt }-p_{\tt }}{h_y}       
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_x^2} 
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_y^2}  
-&=& - \frac{\rho_{\tt } + \rho_{\tt }}{2} g_y   
-\\
--\frac{p_{\tt }-p_{\tt }}{h_y}       
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_x^2} 
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_y^2}  
-&=& - \frac{\rho_{\tt } + \rho_{\tt }}{2} g_y   
-\\
--\frac{p_{\tt }-p_{\tt }}{h_y}       
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_x^2} 
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_y^2}  
-&=& - \frac{\rho_{\tt } + \rho_{\tt }}{2} g_y   
-\\
--\frac{p_{\tt }-p_{\tt }}{h_y}       
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_x^2} 
-+ \eta \frac{v_{\tt } -2v_{\tt }+v_{\tt }}{h_y^2}  
-&=& - \frac{\rho_{\tt } + \rho_{\tt }}{2} g_y   
+\left( \frac{\eta_{\tt n}}{h_y^2} \right) {\color{violet} u_{\tt n}} + 
+\left( \frac{2\eta_{\tt e}}{h_x^2} \right) {\color{violet} u_{\tt 12}} + 
+\left( \frac{2\eta_{\tt w}}{h_x^2} \right) {\color{violet} u_{\tt 10}} + 
+\left( \frac{\eta_{\tt s}}{h_y^2} \right) {\color{violet} u_{\tt 6}} + 
+\left( -\frac{2\eta_{\tt e}}{h_x^2} -\frac{2\eta_{\tt w}}{h_x^2}  
+-\frac{\eta_{\tt n}}{h_y^2} -\frac{\eta_{\tt s}}{h_y^2}  
+\right) {\color{violet} u_{11}} \nn\\
++
+\left( \frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt 13}}+ 
+\left(-\frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt 12}}+ 
+\left(-\frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt 9}}+ 
+\left( \frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt 8}} 
+- \frac{1}{h_x} {\color{teal}p_{\tt 9}} + \frac{1}{h_x} {\color{teal}p_{\tt 8}} 
+&=& -\frac{\rho_{\tt 16}+\rho_{\tt 11}}{2} g_x \nn
 \end{eqnarray}
 
-
-\end{itemize}
-
-
-The continuity equation in the middle of each cell yields 12 equations:
+We have of course already seen how to deal with the missing north node which has us write 
 \begin{eqnarray}
-\frac{u_{\tt 2}-u_{\tt 1}}{h_x} + \frac{v_{\tt 4}-v_{\tt 1}}{h_y} &=& 0 \\
-\frac{u_{\tt 3}-u_{\tt 2}}{h_x} + \frac{v_{\tt 5}-v_{\tt 2}}{h_y} &=& 0 \\
-\frac{u_{\tt 4}-u_{\tt 3}}{h_x} + \frac{v_{\tt 6}-v_{\tt 3}}{h_y} &=& 0 \\
-\frac{u_{\tt 5}-u_{\tt 4}}{h_x} + \frac{v_{\tt 7}-v_{\tt 4}}{h_y} &=& 0 
-\\
-\frac{u_{\tt 7}-u_{\tt 6}}{h_x} + \frac{v_{\tt 9}-v_{\tt 5}}{h_y} &=& 0 \\
-\frac{u_{\tt 8}-u_{\tt 7}}{h_x} + \frac{v_{\tt 10}-v_{\tt 6}}{h_y} &=& 0 \\
-\frac{u_{\tt 9}-u_{\tt 8}}{h_x} + \frac{v_{\tt 11}-v_{\tt 7}}{h_y} &=& 0 \\
-\frac{u_{\tt 10}-u_{\tt 9}}{h_x} + \frac{v_{\tt 12}-v_{\tt 8}}{h_y} &=& 0 
-\\
-\frac{u_{\tt 12}-u_{\tt 11}}{h_x} + \frac{v_{\tt 13}-v_{\tt 9}}{h_y} &=& 0 \\
-\frac{u_{\tt 13}-u_{\tt 12}}{h_x} + \frac{v_{\tt 14}-v_{\tt 10}}{h_y} &=& 0 \\
-\frac{u_{\tt 14}-u_{\tt 13}}{h_x} + \frac{v_{\tt 15}-v_{\tt 11}}{h_y} &=& 0 \\
-\frac{u_{\tt 15}-u_{\tt 14}}{h_x} + \frac{v_{\tt 16}-v_{\tt 12}}{h_y} &=& 0 
+\left( \frac{2\eta_{\tt e}}{h_x^2} \right) {\color{violet} u_{\tt 12}} + 
+\boxed{\left( \frac{2\eta_{\tt w}}{h_x^2} \right) {\color{violet} u_{\tt 10}}} + 
+\left( \frac{\eta_{\tt s}}{h_y^2} \right) {\color{violet} u_{\tt 6}} + 
+\left( -\frac{2\eta_{\tt e}}{h_x^2} -\frac{2\eta_{\tt w}}{h_x^2}  
+-(1-\delta_{bc})\frac{\eta_{\tt n}}{h_y^2} -\frac{\eta_{\tt s}}{h_y^2}  
+\right) {\color{violet} u_{11}} \nn\\
++
+\boxed{\left( \frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt 13}}}+ 
+\boxed{\left(-\frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt 12}}}+ 
+\left(-\frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt 9}}+ 
+\left( \frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt 8}} 
+- \frac{1}{h_x} {\color{teal}p_{\tt 9}} + \frac{1}{h_x} {\color{teal}p_{\tt 8}} 
+&=& -\frac{\rho_{\tt 16}+\rho_{\tt 11}}{2} g_x \nn
 \end{eqnarray}
+However, the boxed terms above are {\it also} on the boundary, which means that the 
+values of ${\color{violet} u_{\tt 10}}$, ${\color{orange} v_{\tt 12}}$ and ${\color{orange} v_{\tt 13}}$ are known (typically zero).
+As such these two terms should make their way to the right hand side, thereby removing entries in 
+the matrix and re-establishing the symmetry of the matrix.
+Note that it is not wrong to leave these entries, they just do not serve any real purpose. 
 
-Let us now create the vector $\vec{X}$ that is $ndof=23$ long:
-\[
-\vec{X}^T=(
-u_{\tt 1},u_{\tt 2}, \dots , u_{\tt 15},
-v_{\tt 1},v_{\tt 2}, \dots , v_{\tt 16},
-p_{\tt 1},p_{\tt 2}, \dots, p_{\tt 12})
-\]
-We have 14 boundary conditions and 30 relationships between unknowns which we 
-can write as a linear system.
 
+%------------------------------------------------------------------------
+\subsection{Recovering the strain rate tensor from the velocity solution}
+
+From the discretisation of the continuity equation we know how to compute 
+$\dot{\varepsilon}_{xx}=\partial u/ \partial x$ and
+$\dot{\varepsilon}_{yy}=\partial v/ \partial y$ inside a cell. 
+But quid of $\dot{\varepsilon}_{xy}$ ?
+
+{\color{red} how to FDM people do this?}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
 \begin{landscape}
 {\tiny
 \[
@@ -533,333 +1157,4 @@ can write as a linear system.
 \]
 }
 \end{landscape}
-
-In the end the matrix structure is 
-\[
-\left(
-\begin{array}{ccc}
-\K_{xx} & 0 & \G_x \\
-0 & \K_{yy} & \G_y \\
-\G_x^T & \G_y^T & 0
-\end{array}
-\right)
-\]
-with $\K_{xx}$ of size $N_u \times N_u$, etc ....
-
-%...................................................
-\subsubsection{A different way to deal with b.c.}
-
-See fig 4.19 of beka. 
-Within the purple domain, the
-finite difference scheme for center points can be applied. At the boundaries, we have to apply a
-special finite difference scheme which employ fictious boundary nodes.
-
-
-
-
-
-
-%---------------------------------------------------
-\subsection{generic approach}
-
-\subsubsection{momentum equation: $x$-component}
-
-\begin{center}
-\begin{tikzpicture}
-%\draw[fill=gray!23,gray!23](0,0) rectangle (8,9);
-%\draw[step=0.5cm,gray,very thin] (0,0) grid (8,9); %background grid
-
-\draw[thick,black!60] (1,3) -- (7,3) -- (7,6) -- (1,6) -- cycle ; 
-\draw[thick,black!60] (4,0.5) -- (4,8.5)  ; 
-
-%---------------------------------------------------
-\node[] at (2.5,6.2) {\tiny \color{orange} \tt kv\_nw};
-\node[] at (2.5,3.2) {\tiny \color{orange} \tt kv\_sw};
-\node[] at (5.5,6.2) {\tiny \color{orange} \tt kv\_ne};
-\node[] at (5.5,3.2) {\tiny \color{orange} \tt kv\_se};
-\draw[black,fill=orange] (2.5,6)   circle (2pt);
-\draw[black,fill=orange] (2.5,3)   circle (2pt);
-\draw[black,fill=orange] (5.5,6)   circle (2pt);
-\draw[black,fill=orange] (5.5,3)   circle (2pt);
-
-%--------------------------------------------------
-\draw[black,fill=violet] (4,1.5)   circle (2pt);
-\draw[black,fill=violet] (4,4.5)   circle (3pt);
-\draw[black,fill=violet] (4,7.5)   circle (2pt);
-\draw[black,fill=violet] (1,4.5)   circle (2pt);
-\draw[black,fill=violet] (7,4.5)   circle (2pt);
-\node[] at (4.4,1.5) {\tiny \color{violet} \tt ku\_s};
-\node[] at (4.3,4.5) {\tiny \color{violet} \tt ku};
-\node[] at (4.4,7.5) {\tiny \color{violet} \tt ku\_n};
-\node[] at (1.4,4.5) {\tiny \color{violet} \tt ku\_w};
-\node[] at (7.4,4.5) {\tiny \color{violet} \tt ku\_e};
-
-\draw[black,fill=black] (1,3)   circle (2pt); 
-\draw[black,fill=black] (4,3)   circle (2pt); 
-\draw[black,fill=black] (7,3)   circle (2pt); 
-\draw[black,fill=black] (1,6)   circle (2pt); 
-\draw[black,fill=black] (4,6)   circle (2pt); 
-\draw[black,fill=black] (7,6)   circle (2pt); 
-
-
-%------------------------------------------------
-\draw[black,fill=teal] (2.5,4.5)   circle (2pt);
-\draw[black,fill=teal] (5.5,4.5)   circle (2pt);
-\node[] at (2.5,4.7) {\tiny \color{teal} \tt kp\_w};
-\node[] at (5.5,4.7) {\tiny \color{teal} \tt kp\_e};
-
-\node[] at (5.5,4.3) {\tiny \tt tauxx\_e};
-\node[] at (2.5,4.3) {\tiny \tt tauxx\_w};
-\node[] at (4,2.8) {\tiny \tt tauxy\_s};
-\node[] at (4,6.2) {\tiny \tt tauxy\_n};
-
-\end{tikzpicture}
-\end{center}
-
-
-The $x$-component of the momentum equation is given by
-\[
--\frac{\partial p}{\partial x} + 
-\frac{\partial \tau_{xx}}{\partial x} +
-\frac{\partial \tau_{xy}}{\partial y} + \rho g_x = 0
-\]
-
-
-We have
-\begin{eqnarray}
-\left. -\frac{\partial p}{\partial x} \right|_{ku} 
-&=& \frac{p_{kp\_e}-p_{kp\_w}}{h_x} \nn\\
-\left. \frac{\partial \tau_{xx}}{\partial x}  \right|_{ku} 
-&=&
-\frac{\tau_{xx}|_e - \tau_{xx}|_w}{h_x} \nn\\
-\left. \frac{\partial \tau_{xy}}{\partial y}  \right|_{ku} 
-&=&
-\frac{\tau_{xy}|_n - \tau_{xy}|_s}{h_y}
-\end{eqnarray}
-Since
-\begin{eqnarray}
-\tau_{xx}|_e &=& 2 \eta_e \dot\varepsilon_{xx}|_e \\
-\tau_{xx}|_w &=& 2 \eta_w \dot\varepsilon_{xx}|_w \\
-\tau_{xy}|_n &=& 2 \eta_e \dot\varepsilon_{xy}|_n \\
-\tau_{xy}|_s &=& 2 \eta_w \dot\varepsilon_{xy}|_s
-\end{eqnarray}
-
-
-
-
-
-\begin{eqnarray}
-\dot\varepsilon_{xx}|_e 
-&=& \left.\frac{\partial u}{\partial x} \right|_e
- =\frac{u_{ku\_e}-u_{ku}  }{h_x}
-\nn\\
-\dot\varepsilon_{xx}|_w 
-&=& \left.\frac{\partial u}{\partial x} \right|_w
-=\frac{u_{ku}-u_{ku\_w}  }{h_x}
-\nn\\
-\dot\varepsilon_{xy}|_n &=&  
-\frac12 \left( 
-\left.\frac{\partial u}{\partial y} \right|_n
-+ 
-\left.\frac{\partial v}{\partial x} \right|_n \right)
-=\left(
-\frac{u_{ku\_n}-u_{ku}  }{h_y}
-+
-\frac{v_{kv\_ne}-v_{kv\_nw}  }{h_x}
-\right)
-\nn\\
-\dot\varepsilon_{xy}|_s &=& 
-\frac12 \left( 
-\left.\frac{\partial u}{\partial y} \right|_s
-+ 
-\left.\frac{\partial v}{\partial x} \right|_s \right)
-=\left(
-\frac{u_{ku}-u_{ku\_s}  }{h_y}
-+
-\frac{v_{kv\_se}-v_{kv\_sw}  }{h_x}
-\right)
-\end{eqnarray}
-
-
-
-
-
-
-
-
-then
-\[
-\left. \frac{\partial \tau_{xx}}{\partial x}  \right|_{ku} 
-=
-2 \eta_e \frac{u_{ku\_e}-u_{ku}  }{h_x^2}
--
-2 \eta_w \frac{u_{ku}-u_{ku\_w}  }{h_x^2}
-\]
-
-\[
-\left. \frac{\partial \tau_{xy}}{\partial y}  \right|_{ku} 
-=
- \eta_n \left(
-\frac{u_{ku\_n}-u_{ku}  }{h_y^2}
-+
-\frac{v_{kv\_ne}-v_{kv\_nw}  }{h_xh_y}
-\right)
--
- \eta_s \left(
-\frac{u_{ku}-u_{ku\_s}  }{h_y^2}
-+
-\frac{v_{kv\_se}-v_{kv\_sw}  }{h_xh_y}
-\right)
-\]
-
-
-
-
-\subsubsection{momentum equation: $y$-component}
-
-\begin{center}
-\begin{tikzpicture}
-%\draw[fill=gray!23,gray!23](0,0) rectangle (9,8);
-%\draw[step=0.5cm,gray,very thin] (0,0) grid (9,8); %background grid
-\draw[thick,black!60] (3,1) -- (3,7) -- (6,7) -- (6,1) -- cycle ; 
-\draw[thick,black!60] (0.5,4) -- (8.5,4)  ; 
-%---------------------------------------------------
-\node[] at (4.5,.8) {\tiny \color{orange} \tt kv\_s};
-\node[] at (4.5,7.2) {\tiny \color{orange} \tt kv\_n};
-\node[] at (4.5,4.2) {\tiny \color{orange} \tt kv};
-\node[] at (1.5,4.2) {\tiny \color{orange} \tt kv\_w};
-\node[] at (7.5,4.2) {\tiny \color{orange} \tt kv\_e};
-\draw[black,fill=orange] (4.5,1)   circle (2pt);
-\draw[black,fill=orange] (4.5,4)   circle (2pt);
-\draw[black,fill=orange] (4.5,7)   circle (2pt);
-\draw[black,fill=orange] (1.5,4)   circle (2pt);
-\draw[black,fill=orange] (7.5,4)   circle (2pt);
-%--------------------------------------------------
-\draw[black,fill=violet] (3,2.5)   circle (2pt);
-\draw[black,fill=violet] (6,2.5)   circle (2pt);
-\draw[black,fill=violet] (3,5.5)   circle (2pt);
-\draw[black,fill=violet] (6,5.5)   circle (2pt);
-\node[] at (2.5,2.5) {\tiny \color{violet} \tt ku\_sw};
-\node[] at (6.5,2.5) {\tiny \color{violet} \tt ku\_se};
-\node[] at (2.5,5.5) {\tiny \color{violet} \tt ku\_nw};
-\node[] at (6.5,5.5) {\tiny \color{violet} \tt ku\_ne};
-%-----------------------------------------------
-\draw[black,fill=black] (3,1)   circle (2pt); 
-\draw[black,fill=black] (3,4)   circle (2pt); 
-\draw[black,fill=black] (3,7)   circle (2pt); 
-\draw[black,fill=black] (6,1)   circle (2pt); 
-\draw[black,fill=black] (6,4)   circle (2pt); 
-\draw[black,fill=black] (6,7)   circle (2pt); 
-%------------------------------------------------
-\draw[black,fill=teal] (4.5,2.5)   circle (2pt);
-\draw[black,fill=teal] (4.5,5.5)   circle (2pt);
-\node[] at (4.5,2.2) {\tiny \color{teal} \tt kp\_s};
-\node[] at (4.5,5.7) {\tiny \color{teal} \tt kp\_n};
-%-----------------------------------------
-\node[] at (6,4.3) {\tiny \tt tauxy\_e};
-\node[] at (3,4.3) {\tiny \tt tauxy\_w};
-\node[] at (4.5,2.8) {\tiny \tt tauyy\_s};
-\node[] at (4.5,5.2) {\tiny \tt tauyy\_n};
-\end{tikzpicture}
-\end{center}
-
-
-The $y$-component of the momentum equation is given by
-\[
--\frac{\partial p}{\partial y} + 
-\frac{\partial \tau_{xy}}{\partial x} +
-\frac{\partial \tau_{yy}}{\partial y} + \rho g_y = 0
-\]
-
-
-We have
-\begin{eqnarray}
-\left. -\frac{\partial p}{\partial y} \right|_{kv} 
-&=& 
--\frac{p_{kp\_n}-p_{kp\_s}}{h_y}
-\\
-\left. \frac{\partial \tau_{xy}}{\partial x}  \right|_{kv} 
-&=&
-\frac{\tau_{xy}|_e - \tau_{xy}|_w}{h_x}
-\\
-\left. \frac{\partial \tau_{yy}}{\partial y}  \right|_{kv} 
-&=&
-\frac{\tau_{yy}|_n - \tau_{yy}|_s}{h_y}
-\end{eqnarray}
-Since
-\begin{eqnarray}
-\tau_{xy}|_e &=& 2 \eta_e \dot\varepsilon_{xy}|_e \\
-\tau_{xy}|_w &=& 2 \eta_w \dot\varepsilon_{xy}|_w \\
-\tau_{yy}|_n &=& 2 \eta_e \dot\varepsilon_{yy}|_n \\
-\tau_{yy}|_s &=& 2 \eta_w \dot\varepsilon_{yy}|_s
-\end{eqnarray}
-and 
-\begin{eqnarray}
-\dot\varepsilon_{xy}|_e 
-&=& \frac12 \left( 
-\left.\frac{\partial u}{\partial y} \right|_e
-+ 
-\left.\frac{\partial v}{\partial x} \right|_e \right)
-=
-\frac12 \left(
-\frac{u_{ku\_ne}-u_{ku\_se}}{h_y}
-+
-\frac{v_{kv\_e}-v_{kv}}{h_x}
-\right) 
-\nn\\
-\dot\varepsilon_{xy}|_w 
-&=& \frac12 \left( 
-\left.\frac{\partial u}{\partial y} \right|_w
-+ 
-\left.\frac{\partial v}{\partial x} \right|_w \right)
-=
-\frac12 \left(
-\frac{u_{ku\_nw}-u_{ku\_sw}}{h_y}
-+
-\frac{v_{kv}-v_{kv\_w}}{h_x}
-\right) 
-\nn\\
-\dot\varepsilon_{yy}|_n
-&=& 
-\left. \frac{\partial v}{\partial y}\right|_n = \frac{v_{kv\_n}-v_{kv} }{h_y} \nn\\
-\dot\varepsilon_{yy}|_s
-&=& 
-\left. \frac{\partial v}{\partial y}\right|_s = \frac{v_{kv}-v_{kv\_s} }{h_y} 
-\end{eqnarray}
-In the end the full discretised equation writes
-
-\[
-\left. -\frac{\partial p}{\partial y} \right|_{kv} 
-+
-\left. \frac{\partial \tau_{xy}}{\partial x}  \right|_{kv} 
-+
-\left. \frac{\partial \tau_{yy}}{\partial y}  \right|_{kv} 
-+ \rho_{kv} g_y = 0
-\]
-or, using all the equations above in turn:
-\[
--\frac{p_{kp\_n}-p_{kp\_s}}{h_y}
-+
-\frac{\tau_{xy}|_e - \tau_{xy}|_w}{h_x}
-+
-\frac{\tau_{yy}|_n - \tau_{yy}|_s}{h_y} 
-+ \rho_{kv} g_y = 0
-\]
-\[
--\frac{p_{kp\_n}-p_{kp\_s}}{h_y}
-+ \frac{1}{h_x} \tau_{xy}|_e -\frac{1}{h_x} \tau_{xy}|_w
-+ \frac{1 }{h_y} \tau_{yy}|_n -\frac{1}{h_y} \tau_{yy}|_s
-+ \rho_{kv} g_y = 0
-\]
-\[
--\frac{p_{kp\_n}-p_{kp\_s}}{h_y}
-+ \frac{2 \eta_e}{h_x}  \dot\varepsilon_{xy}|_e 
--\frac{2 \eta_w}{h_x}  \dot\varepsilon_{xy}|_w
-+ \frac{2 \eta_e }{h_y}  \dot\varepsilon_{yy}|_n \\
--\frac{2 \eta_s}{h_y}  \dot\varepsilon_{yy}|_s \\
-+ \rho_{kv} g_y = 0
-\]
-
-
-
 
