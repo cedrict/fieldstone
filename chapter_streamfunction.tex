@@ -826,9 +826,14 @@ no boundary conditions on the pressure are needed at solid walls.''
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Vorticity-stream function formulation in 3D}
 
-The vorticity-streamfunction approach has seen considerable use for two-dimensional incompressible flows. It has become less popular in recent years because its extension to three-dimensional flows is difficult.
+The vorticity-streamfunction approach has seen considerable use for two-dimensional 
+incompressible flows. It has become less popular in recent years because its extension 
+to three-dimensional flows is difficult.
 Both the vorticity and streamfunction become three-component vectors in three dimensions
-so one has a system of six partial differential equations in place of the four that are necessary in a velocity-pressure formulation. It also inherits the difficulties in dealing with variable fluid properties, compressibility, and boundary conditions that were described above for two dimensional flows.
+so one has a system of six partial differential equations in place of the four that are 
+necessary in a velocity-pressure formulation. It also inherits the difficulties in dealing 
+with variable fluid properties, compressibility, and boundary conditions that were 
+described above for two dimensional flows.
 
 In \textcite{reddybook2} we find at page 163: 
 \begin{displayquote}
@@ -894,6 +899,30 @@ of velocity and pressure are currently predominant in
 models of 3-D mantle convection with variable viscosity.
 ''}
 \end{displayquote}
+
+\noindent In \textcite{rars93} (1993) we read:
+\begin{displayquote}
+{\color{darkgray}
+The velocity field being solenoidal, it may be written as the
+sum of a poloidal and a toroidal field derived from the scalar
+functions $Q$ and $S$ such that [Chandrasekhar,1961]
+\begin{eqnarray}
+u &=& \frac{\partial^2 Q}{\partial x \partial z} + \frac{\partial S}{\partial y} \\
+v &=& \frac{\partial^2 Q}{\partial y \partial z} - \frac{\partial S}{\partial x} \\
+w &=& - \left( \frac{\partial^2 Q}{\partial x^2} + \frac{\partial^2 Q}{\partial y^2} \right) 
+\end{eqnarray}
+After elimination of the pressureterms by taking the curl of
+equation (1), we obtain
+\begin{eqnarray}
+\mu_i \vec\nabla^4 Q &=& -\Ranb \theta \\
+\vec\nabla^2 S &=& 0 \\
+p = \mu_i \vec\nabla^2 \frac{\partial Q}{\partial z}
+\end{eqnarray}
+}
+\end{displayquote}
+More details about the notations and the boundary conditions 
+are provided in the paper.
+
 
 
 \vspace{0.5cm}
@@ -1692,6 +1721,7 @@ from a velocity field obtained via the FEM.
  \textbullet \fullcite{yupe80}
 \item[\nineteeneightyone]
  \textbullet \fullcite{jasc81}\\
+ \textbullet \fullcite{jape81}\\
  \textbullet \fullcite{scja81}\\
  \textbullet \fullcite{yups81}\\
  \textbullet \fullcite{rimc81}\\
@@ -1699,6 +1729,7 @@ from a velocity field obtained via the FEM.
 \item[\nineteeneightytwo]
  \textbullet \fullcite{engl82}\\
  \textbullet \fullcite{jape82}\\
+ \textbullet \fullcite{jasc82}\\
  \textbullet \fullcite{spyk82}
 \item[\nineteeneightythree]
  \textbullet \fullcite{mato83}\\
@@ -1707,23 +1738,28 @@ from a velocity field obtained via the FEM.
 \item[\nineteeneightyfour]
  \textbullet \fullcite{chyu84}\\
  \textbullet \fullcite{chri84}\\
+ \textbullet \fullcite{jarv84}\\
  \textbullet \fullcite{haeb84}
 \item[\nineteeneightyfive]
  \textbullet \fullcite{homc85}\\
  \textbullet \fullcite{chyu85}\\
+ \textbullet \fullcite{mija85}\\
  \textbullet \fullcite{hond85}
 \item[\nineteeneightysix]
  \textbullet \fullcite{guda86c}\\
  \textbullet \fullcite{crmc86}\\
  \textbullet \fullcite{dagu86}\\
  \textbullet \fullcite{davi86}\\
+ \textbullet \fullcite{jape86}\\
  \textbullet \fullcite{buck86}
 \item[\nineteeneightyseven]
  \textbullet \fullcite{chri87b}\\
  \textbullet \fullcite{schm87}\\
  \textbullet \fullcite{repa87}\\
  \textbullet \fullcite{spez87}\\
+ \textbullet \fullcite{olso87}\\
  \textbullet \fullcite{spmc87}\\
+ \textbullet \fullcite{mija87}\\
  \textbullet \fullcite{hayu87}
 \item[\nineteeneightyeight]
  \textbullet \fullcite{fobe88}\\
@@ -1745,6 +1781,7 @@ from a velocity field obtained via the FEM.
  \textbullet \fullcite{sope90}\\
  \textbullet \fullcite{trab90}\\
  \textbullet \fullcite{tros90}\\
+ \textbullet \fullcite{jape90}\\
  \textbullet \fullcite{hayu90}
 \item[\nineteenninetyone] 
  \textbullet \fullcite{wiwh91}\\
@@ -1822,9 +1859,10 @@ from a velocity field obtained via the FEM.
 
 
 \item[\nineteenninetyeight] 
- \textbullet \fullcite{hard98}  \\
- \textbullet \fullcite{scsc98}  \\
- \textbullet \fullcite{giju98}
+ \textbullet \fullcite{hard98} \\
+ \textbullet \fullcite{scsc98} \\
+ \textbullet \fullcite{giju98} \\
+ \textbullet \fullcite{naij98}
 \item[\nineteenninetynine] 
  \textbullet \fullcite{wahe99}\\
  \textbullet \fullcite{sola99}

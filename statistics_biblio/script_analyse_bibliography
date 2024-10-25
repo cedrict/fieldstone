@@ -95,6 +95,7 @@ echo -n 'Computers & Geosc ' ; grep cageo       ../biblio_geosciences.bib | grep
 echo -n 'Scientific Reports' ; grep ScientificR ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Frontiers in E Sc ' ; grep FES         ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Pure & Appl Geoph ' ; grep pag         ../biblio_geosciences.bib | grep journal |wc
+echo -n 'PNAS              ' ; grep pnas        ../biblio_geosciences.bib | grep journal |wc
 echo -n 'J struct Geo      ' ; grep jsg         ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Geology           ' ; grep Geology     ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Earth & Pl. Phys. ' ; grep epp         ../biblio_geosciences.bib | grep journal |wc
@@ -106,6 +107,7 @@ echo -n 'ijnme             ' ; grep ijnme       ../biblio_geosciences.bib | grep
 echo -n 'ijnmf             ' ; grep ijnmf       ../biblio_geosciences.bib | grep journal |wc
 echo -n 'cmame             ' ; grep cmame       ../biblio_geosciences.bib | grep journal |wc
 echo -n 'jcp               ' ; grep jcp         ../biblio_geosciences.bib | grep journal |wc
+echo -n 'gafd              ' ; grep gafd        ../biblio_geosciences.bib | grep journal |wc
 
 
 #grep solid_earth ../biblio_geosciences.bib | grep journal > solid_earth.txt
@@ -194,6 +196,9 @@ for n in {1965..2026} ; do
     echo -n $n >> pag_stats.txt 
     grep pag ../biblio_geosciences.bib | grep journal | grep $n | wc >> pag_stats.txt 
 
+    echo -n $n >> pnas_stats.txt 
+    grep pnas ../biblio_geosciences.bib | grep journal | grep $n | wc >> pnas_stats.txt 
+
     echo -n $n >> jsg_stats.txt 
     grep jsg ../biblio_geosciences.bib | grep journal | grep $n | wc >> jsg_stats.txt 
 
@@ -214,5 +219,8 @@ for n in {1965..2026} ; do
 
     echo -n $n >> sciad_stats.txt 
     grep sciad ../biblio_geosciences.bib | grep journal | grep $n | wc >> sciad_stats.txt 
+
+    echo -n $n >> gafd_stats.txt 
+    grep gafd ../biblio_geosciences.bib | grep journal | grep $n | wc >> gafd_stats.txt 
 
 done

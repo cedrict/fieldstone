@@ -46,6 +46,11 @@ set output 'journal_pag.pdf'
 plot[1964:2024][:nmax]\
 'pag_stats.txt' u 1:2 with boxes notitle
 
+set title 'Proceedings of the National Academy of Sciences'
+set output 'journal_pnas.pdf'
+plot[1964:2024][:nmax]\
+'pnas_stats.txt' u 1:2 with boxes notitle
+
 set title 'Nature'
 set output 'journal_natureJ.pdf'
 plot[1964:2024][:nmax]\
@@ -455,3 +460,19 @@ set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 2007, graph 1
 plot[1964:2024][:nmax]\
 'natureG_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Geophysical & Astrophysical Fluid Dynamics'
+set output 'journal_gafd.pdf'
+#set style rect fc lt -1 fs solid 0.1 noborder
+#set obj rect from 0, graph 0 to 2007, graph 1
+plot[1964:2024][:nmax]\
+'gafd_stats.txt' u 1:2 with boxes notitle
