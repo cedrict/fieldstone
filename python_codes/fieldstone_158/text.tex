@@ -317,78 +317,12 @@ so that we can write the three stencil equations as follows:
 
 
 
-Let us now create the vector $\vec{X}$ that is $N=N_u+N_v+N_p=43$ long (still considering 
-the $4\times 3$ cell mesh presented above):
-\[
-\vec{X}^T=(
-u_{\tt \color{violet} 0},u_{\tt \color{violet} 1}, \dots , u_{\tt \color{violet} 14},
-v_{\tt \color{orange} 0},v_{\tt \color{orange} 1}, \dots , v_{\tt \color{orange} 15},
-p_{\tt \color{teal} 0},p_{\tt \color{teal} 1}, \dots, p_{\tt \color{teal} 11})
-\]
-We have 14 boundary conditions and 29 stencil equations that establish relationships between 
-unknowns  (see previous section) which we can write altogether as a linear system.
-
-The boundary condition $u_{\color{violet} \tt 0}=0$ can be written 
-\[
-(1,0,0,0,...,0) \cdot \vec{X} = (0,....)^T
-\]
-so that the lhs horizontal vector becomes the first line of the matrix and we
-must write zero in the first element of the rhs vector. 
-
-Likewise the boundary condition $u_{\color{violet} \tt 4}=0$ can be written
-\[
-(0,0,0,0,1,...,0) \cdot \vec{X} = (.,.,.,.,0,....)^T
-\]
-and the lhs horizontal vector becomes the 5th line of the matrix and we
-must write zero in the 5th element of the rhs vector. 
-
-We repeat this procedure for all $u$ boundary conditions, which allows us to fill 
-the 1st, 5th, 6th, 10th, 11th and 14th line of the matrix.
-
-Likewise the boundary conditions on $v$ will yield similar lines in the matrix, 
-only the corresponding lines are below the 15 first ones corresponding to $u$.
-
-Considering node ${\color{violet} u_7}$, the stencil equation \eqref{eq:fdmstokes1} then becomes:
 
 
 
-\begin{eqnarray}
-\left( \frac{\eta_{\tt n}}{h_y^2} \right) {\color{violet} u_{\tt 12}} + 
-\left( \frac{2\eta_{\tt e}}{h_x^2} \right) {\color{violet} u_{\tt 8}} + 
-\left( \frac{2\eta_{\tt w}}{h_x^2} \right) {\color{violet} u_{\tt 6}} + 
-\left( \frac{\eta_{\tt s}}{h_y^2} \right) {\color{violet} u_{\tt 2}} + 
-\left( -\frac{2\eta_{\tt e}}{h_x^2} -\frac{2\eta_{\tt w}}{h_x^2}  
--\frac{\eta_{\tt n}}{h_y^2} -\frac{\eta_{\tt s}}{h_y^2}  
-\right) {\color{violet} u_7} \nn\\
-+
-\left( \frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt 10}}+ 
-\left(-\frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt 9}}+ 
-\left(-\frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt 6}}+ 
-\left( \frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt 5}} 
-- \frac{1}{h_x} {\color{teal}p_{\tt 6}} + \frac{1}{h_x} {\color{teal}p_{\tt 5}} 
-&=& -\frac{\rho_{\tt 12}+\rho_{\tt 7}}{2} g_x \nn
-\end{eqnarray}
-which will correspond to the 7th line in the matrix. The coefficients inside the 
-parentheses will be input in the column corresponding to the unknowns they front. 
 
 
 
-Because of how the $\vec{X}$ vector is built (first ${\color{violet} u}$, 
-then ${\color{orange}v}$ then ${\color{teal} p}$ unknowns)
-the resulting linear system takes the following form:
-\begin{equation}
-\left(
-\begin{array}{ccc}
-\K_{xx} & \K_{xy} & \G_x \\
-\K_{yx} & \K_{yy} & \G_y \\
-\Q_x & \Q_y & 0
-\end{array}
-\right)
-\cdot
-\vec{X}
-=\vec{b}
-\label{eq:fdmstokes6}
-\end{equation}
 
 
 \newpage
@@ -467,8 +401,26 @@ As predicted in Eq.~\eqref{eq:fdmstokes6} we recover a matrix that
 is composed of 8 blocks.
 
 
+%-----------------------------------------------------
+\subsection*{Benchmarking of strain rate calculations}
+
+If we set 
+\begin{lstlisting}
+u[:]=1
+v[:]=1
+\end{lstlisting}
+we indeed recover all components of the strain rate being zero.
+
+If we set 
+\begin{lstlisting}
+u[:]=xu[:]
+v[:]=yv[:]
+\end{lstlisting}
+then we recover $\dot{\varepsilon}_{xx}=\dot{\varepsilon}_{yy}=1$
+and $\dot{\varepsilon}_{xy}=0$ everywhere in the domain.
 
 
+\newpage
 %---------------------------
 \subsection*{Experiment 1}
 
@@ -485,7 +437,6 @@ and $\eta=10$.
 \end{center} 
 
 
-TODO: compute strain rate
 
 TODO: show free slip vs no slip
 

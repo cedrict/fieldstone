@@ -2,26 +2,27 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time as clock
 import scipy.sparse as sps
+#from scipy.sparse import csr_matrix, lil_matrix
 
 experiment=1
 
 debug=False
-spy=True
+spy=False
 
 ###############################################################################
 
 def density(x,y,experiment):
     if experiment==1:
-       val=1
+       val=1-1
        if (x-0.5)**2+(y-0.5)**2<0.15**2:
-          val=2
+          val=2-1
     return val
 
 def viscosity(x,y,experiment):
     if experiment==1:
        val=1
        if (x-0.5)**2+(y-0.5)**2<0.15**2:
-          val=10
+          val=1
     return val
 
 ###############################################################################
@@ -32,8 +33,8 @@ Ly=1
 gx=0
 gy=-1
 
-nnx=5
-nny=4
+nnx=200
+nny=200
 
 hx=Lx/(nnx-1)
 hy=Ly/(nny-1)
@@ -52,6 +53,9 @@ N=Nu+Nv+Np       # total nb of unknowns
 
 avrg=3
 
+eta_ref=10
+L_ref=min(hx,hy)
+
 print('===========================')
 print('-------- Stone 158 -------')
 print('===========================')
@@ -64,6 +68,8 @@ print('Nv=',Nv)
 print('Np=',Np)
 print('N=',N)
 print('avrg=',avrg)
+print('eta_ref=',eta_ref)
+print('L_ref=',L_ref)
 print('===========================')
 
 ###############################################################################
@@ -202,7 +208,8 @@ print("setup: p grid points: %.3f s" % (clock.time() - start))
 
 ###############################################################################
 
-A=np.zeros((N,N),dtype=np.float64)
+#A=np.zeros((N,N),dtype=np.float64)
+A=sps.lil_matrix((N,N),dtype=np.float64)
 b=np.zeros(N,dtype=np.float64)
 
 ###############################################################################
@@ -296,8 +303,8 @@ for i in range(0,Nu):
        A[i,Nu+index_v_nw]=-eta_n_xy
        A[i,Nu+index_v_se]=-eta_s_xy
        A[i,Nu+index_v_sw]=+eta_s_xy
-       A[i,Nu+Nv+index_p_e]=-hhx
-       A[i,Nu+Nv+index_p_w]=+hhx
+       A[i,Nu+Nv+index_p_e]=-hhx * eta_ref/L_ref
+       A[i,Nu+Nv+index_p_w]=+hhx * eta_ref/L_ref
 
        if jj==0: # bottom row, ghosts nodes used
           A[i,i]=-2*eta_e_xx-2*eta_w_xx-eta_n_yy-(1-delta_bc_bottom)*eta_s_yy
@@ -412,8 +419,8 @@ for i in range(0,Nv):
        A[Nu+i,index_u_se]=-eta_e_xy
        A[Nu+i,index_u_nw]=-eta_w_xy
        A[Nu+i,index_u_sw]=eta_w_xy
-       A[Nu+i,Nu+Nv+index_p_n]=-hhy
-       A[Nu+i,Nu+Nv+index_p_s]=+hhy
+       A[Nu+i,Nu+Nv+index_p_n]=-hhy * eta_ref/L_ref
+       A[Nu+i,Nu+Nv+index_p_s]=+hhy * eta_ref/L_ref
 
        if ii==0: # left column, ghosts nodes used
           A[Nu+i,Nu+i]=-eta_e_xx-(1-delta_bc_left)*eta_w_xx-2*eta_n_yy-2*eta_s_yy
@@ -451,10 +458,10 @@ for i in range(0,Np):
     index_v_s=i         # v node below
     index_v_n=i+ncellx  # v node above
 
-    A[Nu+Nv+i,   index_u_e]= hhx
-    A[Nu+Nv+i,   index_u_w]=-hhx
-    A[Nu+Nv+i,Nu+index_v_n]= hhy
-    A[Nu+Nv+i,Nu+index_v_s]=-hhy
+    A[Nu+Nv+i,   index_u_e]= hhx * eta_ref/L_ref
+    A[Nu+Nv+i,   index_u_w]=-hhx * eta_ref/L_ref
+    A[Nu+Nv+i,Nu+index_v_n]= hhy * eta_ref/L_ref
+    A[Nu+Nv+i,Nu+index_v_s]=-hhy * eta_ref/L_ref
 
     if debug:
        print('================')
@@ -511,6 +518,69 @@ print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 print("pressure normalise: %.5f s " % (clock.time() - start))
 
 ###############################################################################
+# compute strain rate
+# exx,eyy computed in middle of cells
+# exy is computed on the background mesh
+###############################################################################
+start = clock.time()
+
+#u[:]=1
+#v[:]=1
+
+#u[:]=xu[:]
+#v[:]=yv[:]
+
+exy=np.zeros(Nb,dtype=np.float64)  
+exx=np.zeros(ncell,dtype=np.float64)  
+eyy=np.zeros(ncell,dtype=np.float64)  
+
+counter = 0
+for j in range(0,ncelly):
+    for i in range(0,ncellx):
+        index_u_w=counter+j
+        index_u_e=counter+j+1
+        index_v_s=counter
+        index_v_n=counter+nnx-1
+        #print('cell',counter,':',index_u_w,index_u_e,index_v_s,index_v_n)
+        exx[counter]=(u[index_u_e]-u[index_u_w])/hx
+        eyy[counter]=(v[index_v_n]-v[index_v_s])/hy
+        counter += 1
+
+counter = 0
+for j in range(0,nny):
+    for i in range(0,nnx):
+        index_v_w=counter-j-1
+        index_v_e=counter-j
+        index_u_s=counter-nnx
+        index_u_n=counter
+        #print('node',counter,':',index_v_w,index_v_e,index_u_s,index_u_n)
+        if i==0 and j>0 and j<nny-1: # left
+           exy[counter]=0.5*(u[index_u_n]-u[index_u_s])/hy+\
+                        0.5*(v[index_v_e]-delta_bc_left*v[index_v_e])/hx
+        elif i==nnx-1 and j>0 and j<nny-1: # right
+           exy[counter]=0.5*(u[index_u_n]-u[index_u_s])/hy+\
+                        0.5*(delta_bc_right*v[index_v_w]-v[index_v_w])/hx
+        elif j==0 and i>0 and i<nnx-1: # bottom
+           exy[counter]=0.5*(u[index_u_n]-delta_bc_bottom*u[index_u_n])/hy+\
+                        0.5*(v[index_v_e]-v[index_v_w])/hx
+        elif j==nny-1 and i>0 and i<nnx-1: # top
+           exy[counter]=0.5*(delta_bc_top*u[index_u_s]-u[index_u_s])/hy+\
+                        0.5*(v[index_v_e]-v[index_v_w])/hx
+        elif i>0 and i<nnx-1 and j>0  and j<nny-1:
+           exy[counter]=0.5*(u[index_u_n]-u[index_u_s])/hy+\
+                        0.5*(v[index_v_e]-v[index_v_w])/hx
+        #end if
+        counter += 1
+    #end for
+#end for
+
+print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
+print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
+print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
+
+print("compute strain rate: %.5f s " % (clock.time() - start))
+
+###############################################################################
 # project u,v,p onto background mesh cell centers 
 ###############################################################################
 start = clock.time()
@@ -563,6 +633,21 @@ for i in range(0,ncell):
     vtufile.write("%10e  \n" %(p[i]))
 vtufile.write("</DataArray>\n")
 #--
+vtufile.write("<DataArray type='Float32'  Name='exx' Format='ascii'> \n")
+for i in range(0,ncell):
+    vtufile.write("%10e  \n" %(exx[i]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32'  Name='eyy' Format='ascii'> \n")
+for i in range(0,ncell):
+    vtufile.write("%10e  \n" %(eyy[i]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32'  Name='div(v)' Format='ascii'> \n")
+for i in range(0,ncell):
+    vtufile.write("%10e  \n" %(exx[i]+eyy[i]))
+vtufile.write("</DataArray>\n")
+#--
 vtufile.write("</CellData>\n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")
@@ -580,6 +665,11 @@ vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
 for i in range(0,Nb):
     vtufile.write("%10e \n" %eta[i])
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+for i in range(0,Nb):
+    vtufile.write("%10e \n" %exy[i])
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("</PointData>\n")
