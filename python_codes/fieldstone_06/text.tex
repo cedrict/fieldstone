@@ -1,7 +1,12 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
 
-\includegraphics[height=1.5cm]{images/pictograms/benchmark}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_06/keywords.ascii}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_06/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -9,6 +14,11 @@
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
+
+Last revision: Oct. 28th, 2024.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The SolKz benchmark \cite{repa87} is similar to the SolCx benchmark.
@@ -25,11 +35,27 @@ Free slip boundary conditions are imposed on all sides of the domain.
 This benchmark is presented in Zhong (1996) \cite{zhon96} as well and is studied 
 in Duretz \etal (2011) \cite{dumg11} and Gerya \etal (2013) \cite{gemd13}.
 
-\begin{center}
-\includegraphics[width=14cm]{python_codes/fieldstone_06/results/solution.pdf}
-\end{center}
+Note that the matrx storage and imposition of boundary conditions is still 
+of the naive type in the code. 
 
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_06/results/errors.pdf}\\
+\includegraphics[width=6.5cm]{python_codes/fieldstone_06/results/rho}
+\includegraphics[width=6.5cm]{python_codes/fieldstone_06/results/eta}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_06/results/vel}
+\includegraphics[width=4cm]{python_codes/fieldstone_06/results/vel_error}
+\includegraphics[width=4cm]{python_codes/fieldstone_06/results/press}
+\includegraphics[width=4cm]{python_codes/fieldstone_06/results/press_error}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_06/results/exx}
+\includegraphics[width=4cm]{python_codes/fieldstone_06/results/eyy}
+\includegraphics[width=4cm]{python_codes/fieldstone_06/results/exy}
+\includegraphics[width=4cm]{python_codes/fieldstone_06/results/sr}\\
+{\captionfont Results obtained on $128 \times 128$ mesh.}
+\end{center}
+
+We recover a quadratic convergence for the velocity error and 
+a linear convergence for the pressure error:
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_06/results/errors.pdf}\\
 {\captionfont Velocity and pressure error as a function of mesh size.}
 \end{center}
