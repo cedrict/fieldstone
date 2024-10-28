@@ -1,10 +1,12 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/replication}
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
-
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_05/keywords.ascii}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_05/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -13,8 +15,12 @@
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
+
+Last revision: Oct. 28th, 2024.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\index{stopics}{$Q_1\times P_0$}
 
 The experiment is fully described in Section~\ref{MMM-ss:solcx}.
 The viscosity is prescribed at the quadrature points 
@@ -40,9 +46,19 @@ be high enough to insure an incompressible flow and thereby recover the expected
 due to round-off errors. 
 
 \begin{center}
-\includegraphics[width=16cm]{python_codes/fieldstone_05/results/solution.pdf}\\
-{\captionfont Various fields for 100x100 mesh}
+\includegraphics[width=6.5cm]{python_codes/fieldstone_05/results/rho}
+\includegraphics[width=6.5cm]{python_codes/fieldstone_05/results/eta}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_05/results/vel}
+\includegraphics[width=4cm]{python_codes/fieldstone_05/results/vel_error}
+\includegraphics[width=4cm]{python_codes/fieldstone_05/results/press}
+\includegraphics[width=4cm]{python_codes/fieldstone_05/results/press_error}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_05/results/exx}
+\includegraphics[width=4cm]{python_codes/fieldstone_05/results/eyy}
+\includegraphics[width=4cm]{python_codes/fieldstone_05/results/exy}
+\includegraphics[width=4cm]{python_codes/fieldstone_05/results/sr}\\
+{\captionfont Results obtained on $100 \times 100$ mesh for $\lambda=10^{10}$.}
 \end{center}
+
 
 
 \infortran
