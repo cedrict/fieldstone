@@ -137,26 +137,29 @@ It can be shown that the following layout of nodes is necessary
 if the FDM is to be successful\footnote{In other words
 any attempt where $u$, $v$, $p$ would be on the corner nodes is doomed.}:
 Note that in what follows we consider a mesh where all nodes are equidistant.
-This is not a requirement of the method but it allows for more compact notations. 
+This is not a requirement of the method but it allows for more compact notations
+\footnote{We will revisit this topic in Section~\ref{ss:fdm_stokes_hvar}.}. 
+
+We find a similar staggered grid figure in Gerya's book:
 
 \input{tikz/tikz_staggered2D}
 
 There are:
 \begin{itemize}
-\item ${\tt ncell}={\tt ncellx}*{\tt ncelly}={\tt ncell}$ cells ($5*4$ above)
-\item ${\tt Np}={\tt ncell}$ pressure values ($20$ above)
-\item ${\tt Nu}={\tt (ncellx+1)}*{\tt ncelly}$ $u$ unknowns ($6*4$ above) 
-\item ${\tt Np}={\tt ncell}*{\tt (ncelly+1)}$ $v$ unknowns ($5*5$ above) 
-\item each cell is of size $h_x * h_y$ with $h_x=L_x/{\tt ncellx}$ 
-and $h_y=L_y/{\tt ncelly}$.
+\item ${ncell}={ ncellx}\cdot { ncelly}={ ncell}$ cells ($5\cdot 4$ above)
+\item ${N_p}={ ncell}$ pressure values ($20$ above)
+\item ${N_u}={ (ncellx+1)}\cdot { ncelly}$ $u$ unknowns ($6\cdot 4$ above) 
+\item ${N_p}={ ncell}\cdot { (ncelly+1)}$ $v$ unknowns ($5\cdot 5$ above) 
+\item each cell is of size $h_x \cdot h_y$ 
+with $h_x=L_x/{ ncellx}$ and $h_y=L_y/{ ncelly}$.
 \end{itemize}
 In total there are (not taking boundary conditions into account)
 $N$ unknowns with:
 \[
 N=N_u+N_v+N_p
-= {\tt (ncellx+1)}*{\tt ncelly}
-+ {\tt ncell}*{\tt (ncelly+1)}
-+ {\tt ncellx}*{\tt ncelly} 
+= { (ncellx+1)}\cdot{ ncelly}
++ { ncell}\cdot{ (ncelly+1)}
++ { ncellx}]\cdot{ ncelly} 
 \]
 Note: the number of $u$ unknowns is not necessarily equal to the number of $v$
 unknowns! This is nearly always the case with FEM. 
@@ -192,10 +195,10 @@ finite differences explained in Section 7.3 of Gerya's book.
 
 %\newpage
 %...............................................
-\subsection{momentum equation: $x$-component}
+\subsection{Momentum equation: $x$-component}
 
 Let us zoom-in on a node which carries a $u$ unknown. 
-We label it ${\color{violet}u_\otimes}$. Its right ('east' or {\tt e})  
+We label it ${\color{violet}u_\otimes}$. Its right ('east')  
 neighbour is then ${\color{violet}u_{\tt e}}$,
 its left ('west') neighbour is ${\color{violet}u_{\tt w}}$, 
 its top ('north') neighbour is ${\color{violet}u_{\tt n}}$ and 
@@ -210,14 +213,17 @@ ${\color{orange}v_{\tt nw}}$ as shown here:
 \begin{multicols}{2}
 \input{tikz/tikz_staggered2D_u}
 
+\begin{center}
 {\captionfont Node layout in {n-e-w-s} notations.}
+\end{center}
 
 \columnbreak
-
+\begin{center}
 \includegraphics[width=6.5cm]{images/fdm/gerya_B}\\
 \includegraphics[width=7cm]{images/fdm/gerya_D}\\
 \includegraphics[width=4.5cm]{images/fdm/gerya_F}\\
 {\captionfont Taken from Gerya's book}
+\end{center}
 \end{multicols}
 
 We start from 
@@ -248,7 +254,7 @@ where
 +\frac{{\color{orange}v_{\tt se}}-{\color{orange} v_{\tt sw}}}{h_x} \right)  \nn
 \end{eqnarray}
 
-We will discuss later how to arrive at $\eta_{\tt e}$ and $\eta_{\tt w}$.
+We will discuss later in Section~\ref{ss:fdm_stokes_visc} how to arrive at $\eta_{\tt e}$ and $\eta_{\tt w}$.
 Inserting the four equations above into the first one, we obtain:
 \[
   \frac{1}{h_x} (\tau_{xx,{\tt e}}-\tau_{xx,{\tt w}}) 
@@ -311,9 +317,7 @@ Inserting the four equations above into the first one, we obtain:
 
 \newpage
 %...............................................
-\subsection{momentum equation: $y$-component}
-
-
+\subsection{Momentum equation: $y$-component}
 
 \begin{multicols}{2}
 \input{tikz/tikz_staggered2D_v}
@@ -321,10 +325,13 @@ Inserting the four equations above into the first one, we obtain:
 {\captionfont Node layout in {n-e-w-s} notations.}
 
 \columnbreak
+
+\begin{center}
 \includegraphics[width=6.5cm]{images/fdm/gerya_C}\\
 \includegraphics[width=7cm]{images/fdm/gerya_E}\\
 \includegraphics[width=4.5cm]{images/fdm/gerya_G}\\
 {\captionfont Taken from Gerya's book}
+\end{center}
 \end{multicols}
 
 
@@ -334,13 +341,12 @@ We start from
 \frac{\partial \tau_{yy}}{\partial y}  
 - \frac{\partial p}{\partial y} + \rho g_y = 0
 \]
-which we discretise as follows on the orange node in the middle
+which we discretise as follows on the ${\color{orange} v_\otimes}$ node in the middle
 \[
 \frac{\tau_{xy,{\tt e}}-\tau_{xy,{\tt w}}}{h_x} + \frac{\tau_{yy,{\tt n}}-\tau_{yy,{\tt s}}}{h_y} 
 -\frac{{\color{teal}p_{\tt n}}-{\color{teal}p_{\tt s}}}{h_y} 
 = -\frac{\rho_{\tt e}+\rho_{\tt w}}{2} g_y
 \]
-
 where
 \begin{eqnarray}
 \tau_{xy,{\tt e}} 
@@ -363,7 +369,8 @@ where
  \nn
 \end{eqnarray}
 
-Again, we will discuss later how to arrive at $\eta_{\tt n}$ and $\eta_{\tt s}$.
+Again, we will discuss later in Section~\ref{ss:fdm_stokes_visc} how to arrive at 
+$\eta_{\tt n}$ and $\eta_{\tt s}$.
 Inserting the four equations above into the first one, we obtain:
 
 
@@ -472,8 +479,8 @@ and discretise the equation above in its middle.
 
 
 
-%--------------------------------------------------
-\subsection{Viscosity at the center of cells}
+%-------------------------------------------------------------------------
+\subsection{Viscosity at the center of cells \label{ss:fdm_stokes_visc} }
 
 Following Gerya, the viscosity in the middle of the cells
 can be obtained via averaging (for example arithmetic) of the viscosity values at the corners.
@@ -492,7 +499,7 @@ In the case of the $y$-component of the momentum equation:
 \[
 \eta_{\tt s} = \frac{1}{4}(\eta_{\tt sw}+\eta_{\tt w}+\eta_{\tt e} + \eta_{\tt se})
 \]
-If harmonic averaging is preferred, then for instance
+If harmonic averaging is preferred, then for instance we would have
 \[
 \eta_{\tt w} = \frac{4}{1/\eta_{\tt sw}+1/\eta_{\tt s}+1/\eta_{\tt n} + 1/\eta_{\tt nw} }
 \]
@@ -710,7 +717,7 @@ special finite difference scheme which employs fictitious boundary nodes.}
 Let us consider a $4\times 3$ mesh.
 We have 12 cells, 15 {\color{violet}$u$}-nodes, 
 16 {\color{orange}$v$}-nodes and 12 {\color{teal}$p$}-nodes.
-This mesh then counts $ndof=15+16+12=43$ unknowns\footnote{
+This mesh then counts $N=15+16+12=43$ unknowns\footnote{
 Note that the numbering starts at zero, python-style.}.
 
 \input{tikz/tikz_staggered2D_4x3}
@@ -776,8 +783,10 @@ Let us write the stencil for these nodes:
 \end{eqnarray}
 As we have seen earlier there is obviously a problem as ${\color{violet} u_{\tt s}}$ (the boxed term)
 is not defined.
-If we wish to prescribe free slip, we have seen that ${\color{violet} u_{\tt s}}={\color{violet} u_\otimes}$.
-If we wish to prescribe no slip, we have seen that ${\color{violet} u_{\tt s}}=-{\color{violet} u_\otimes}$.
+If we wish to prescribe free slip, we have seen that we must set 
+${\color{violet} u_{\tt s}}={\color{violet} u_\otimes}$.
+If we wish to prescribe no slip, we have seen that we must set 
+${\color{violet} u_{\tt s}}=-{\color{violet} u_\otimes}$.
 The stencil then becomes:
 \begin{eqnarray}
 \left( \frac{\eta_{\tt n}}{h_y^2} \right) {\color{violet} u_{\tt n}} + 
@@ -837,7 +846,8 @@ Using the same $\delta_{bc}$ parameter the stencil then becomes:
 
 
 
-\item ${\color{violet} u_{\tt 6,7,8}}$: standard stencil applies as these nodes have four 'real' neighbours.
+\item ${\color{violet} u_{\tt 6,7,8}}$: standard stencil applies as 
+these nodes have four `real' neighbours.
 \item ${\color{orange} v_{\tt 0,1,2,3}}$: situated on bottom boundary. Free slip and no slip require ${\color{orange} v}=0$. No need for a ghost node.
 \item ${\color{orange} v_{\tt 12,13,14,15}}$: situated on top boundary. Free slip and no slip require ${\color{orange} v}=0$. No need for a ghost node.
 
@@ -938,6 +948,87 @@ pressure).
 In practice ghost nodes are never created or used. They are useful in order to 
 establish the corrected stencils but are entirely absent from the coding.
 
+%---------------------------------------------------
+\subsection{Generating the linear system}
+
+Let us now create the vector $\vec{X}$ that is $N=N_u+N_v+N_p=43$ long 
+(still considering 
+the $4\times 3$ cell mesh presented above):
+\[
+\vec{X}^T=(\vec{\cal U}, \vec{\cal V}, \vec{\cal P} )=(
+u_{\tt \color{violet} 0},u_{\tt \color{violet} 1}, \dots , u_{\tt \color{violet} 14},
+v_{\tt \color{orange} 0},v_{\tt \color{orange} 1}, \dots , v_{\tt \color{orange} 15},
+p_{\tt \color{teal} 0},p_{\tt \color{teal} 1}, \dots, p_{\tt \color{teal} 11})
+\]
+We have 14 boundary conditions and 29 stencil equations that establish relationships between 
+unknowns  (see previous section) which we can write altogether as a linear system.
+
+The boundary condition $u_{\color{violet} \tt 0}=0$ can be written 
+\[
+(1,0,0,0,...,0) \cdot \vec{X} = (0,....)^T
+\]
+so that the lhs horizontal vector becomes the first line of the matrix and we
+must write zero in the first element of the rhs vector. 
+
+Likewise the boundary condition $u_{\color{violet} \tt 4}=0$ can be written
+\[
+(0,0,0,0,1,...,0) \cdot \vec{X} = (.,.,.,.,0,....)^T
+\]
+and the lhs horizontal vector becomes the 5th line of the matrix and we
+must write zero in the 5th element of the rhs vector. 
+
+We repeat this procedure for all $u$ boundary conditions, which allows us to fill 
+the 1st, 5th, 6th, 10th, 11th and 14th line of the matrix.
+
+Likewise the boundary conditions on $v$ will yield similar lines in the matrix, 
+only the corresponding lines are below the 15 first ones corresponding to $u$.
+
+Considering node ${\color{violet} u_7}$, the stencil equation \eqref{eq:fdmstokes1} then becomes:
+
+
+
+\begin{eqnarray}
+\left( \frac{\eta_{\tt n}}{h_y^2} \right) {\color{violet} u_{\tt 12}} + 
+\left( \frac{2\eta_{\tt e}}{h_x^2} \right) {\color{violet} u_{\tt 8}} + 
+\left( \frac{2\eta_{\tt w}}{h_x^2} \right) {\color{violet} u_{\tt 6}} + 
+\left( \frac{\eta_{\tt s}}{h_y^2} \right) {\color{violet} u_{\tt 2}} + 
+\left( -\frac{2\eta_{\tt e}}{h_x^2} -\frac{2\eta_{\tt w}}{h_x^2}  
+-\frac{\eta_{\tt n}}{h_y^2} -\frac{\eta_{\tt s}}{h_y^2}  
+\right) {\color{violet} u_7} \nn\\
++
+\left( \frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt 10}}+ 
+\left(-\frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt 9}}+ 
+\left(-\frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt 6}}+ 
+\left( \frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt 5}} 
+- \frac{1}{h_x} {\color{teal}p_{\tt 6}} + \frac{1}{h_x} {\color{teal}p_{\tt 5}} 
+&=& -\frac{\rho_{\tt 12}+\rho_{\tt 7}}{2} g_x \nn
+\end{eqnarray}
+which will correspond to the 7th line in the matrix. The coefficients inside the 
+parentheses will be input in the column corresponding to the unknowns they front. 
+
+
+
+Because of how the $\vec{X}$ vector is built (first ${\color{violet} u}$, 
+then ${\color{orange}v}$ then ${\color{teal} p}$ unknowns)
+the resulting linear system takes the following form:
+\begin{equation}
+\left(
+\begin{array}{ccc}
+\K_{xx} & \K_{xy} & \G_x \\
+\K_{yx} & \K_{yy} & \G_y \\
+\Q_x & \Q_y & 0
+\end{array}
+\right)
+\cdot
+\vec{X}
+=\vec{b}
+\label{eq:fdmstokes6}
+\end{equation}
+
+
+
+
+
 
 
 
@@ -950,20 +1041,118 @@ establish the corrected stencils but are entirely absent from the coding.
 The coefficients before the velocity components are all of the form 
 $\eta/h^2$ while those in front of the pressure terms are of the form 
 $1/h$. 
-FINISH
+
+In geodynamics typical velocities are of the order of a cm/year, or about 
+$10^{-10}$ m/s
+while typical pressures are on the order of 1 GPa.
+For a viscosity of about $10^{21}$Pa, and a mesh size of about 1km, 
+we have:
+\[
+\frac{\eta}{h^2} v \sim \frac{10^{21}}{1000^2} 10^{-10} \sim 10^6
+\]
+while
+\[
+\frac{p}{h} \sim \frac{10^9}{1000} = 10^6
+\]
+All is fine until we realise that the terms $\eta/h^2$ and $1/h$ 
+will form the entries of the matrix, with 
+$\eta/h^2 \sim 10^{15}$ and $1/h \sim 10^{-3}$. 
+These numbers are more than 10 orders of magnitude appart and will lead to 
+numerical inaccuracies inside solvers (direct or iterative). 
+It is therefore common\footnote{See entry on the same topic
+in the FEM section.} to define ${p}^\star=\frac{L_{ref}}{\eta_{ref}} p$ so that 
+for example the $y$-momentum equation stencil becomes
+
+
+\begin{eqnarray}
+\left( \frac{2\eta_{\tt n}}{h_y^2} \right) {\color{orange} v_{\tt n}} +
+\left( \frac{ \eta_{\tt e}}{h_x^2} \right) {\color{orange} v_{\tt e}} +
+\left( \frac{ \eta_{\tt w}}{h_x^2} \right) {\color{orange} v_{\tt w}} +
+\left( \frac{2\eta_{\tt s}}{h_y^2} \right) {\color{orange} v_{\tt s}} +
+\left( 
+-\frac{\eta_{\tt e}}{h_x^2} 
+-\frac{\eta_{\tt w}}{h_x^2} 
+-\frac{2\eta_{\tt n}}{h_y^2} 
+-\frac{2\eta_{\tt s}}{h_y^2} 
+\right) {\color{orange} v_\otimes} \nn\\
++
+\left( \frac{\eta_{\tt e}}{h_x h_y} \right) {\color{violet} u_{\tt ne}} +
+\left(-\frac{\eta_{\tt e}}{h_x h_y} \right) {\color{violet} u_{\tt se}} +
+\left(-\frac{\eta_{\tt w}}{h_x h_y} \right) {\color{violet} u_{\tt nw}} +
+\left( \frac{\eta_{\tt w}}{h_x h_y} \right) {\color{violet} u_{\tt sw}} 
+-\frac{1}{h_y}\frac{\eta_{ref}}{L_{ref}} {\color{teal} {p}_{\tt n}^\star} 
++\frac{1}{h_y}\frac{\eta_{ref}}{L_{ref}} {\color{teal} {p}_{\tt s}^\star}
+&=& -\frac{\rho_{\tt e}+\rho_{\tt w}}{2} g_y \nn
+\end{eqnarray}
+By appropriately choosing the reference viscosity $\eta_{ref}$ and the reference
+length $L_{ref}$ we thereby ensure that the 
+resulting matrix contains coefficients which are all only a 
+few orders of magnitude apart (reflecting the viscosity range in the domain).
+
+In the end the linear system will take the form 
+
+\begin{equation}
+\left(
+\begin{array}{ccc}
+\K_{xx} & \K_{xy} & \frac{\eta_{ref}}{L_{ref}} \G_x \\
+\K_{yx} & \K_{yy} & \frac{\eta_{ref}}{L_{ref}} \G_y \\
+\frac{\eta_{ref}}{L_{ref}} \Q_x & \frac{\eta_{ref}}{L_{ref}} \Q_y & 0
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal U} \\
+\vec{\cal V} \\
+\vec{\cal P}^\star
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\vec{b}_x \\
+\vec{b}_y \\
+\vec{0}
+\end{array}
+\right)
+\label{eq:fdmstokes7}
+\end{equation}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 %--------------------------------------------------
 \subsection{Making matrix symmetric again}
 
-Looking at Eq.~\eqref{eq:fdmstokes6} we see that the matrix is not structurally symmetric. In other words $\K_{xy} \neq \K_{yx}$, $\Q_x \neq \G_x^T$, and $\Q_y \neq \G_y^T$, which is obvious only 
+Looking at Eq.~\eqref{eq:fdmstokes6} we see that the matrix is 
+not structurally symmetric. In other words $\K_{xy} \neq \K_{yx}$, 
+$\Q_x \neq \G_x^T$, and $\Q_y \neq \G_y^T$, which is obvious only 
 looking at the non zero terms on the figures above. 
 
-This stems from how boundary conditions are applied. So far the matrix is being built line by line.
-Each line corresponding to a node which value is prescribed on the boundary receives a 1 on the diagonal and the required value (often simply zero) in the rhs.
+This stems from how boundary conditions are applied. So far the matrix 
+is being built line by line.
+Each line corresponding to a node which value is prescribed on the 
+boundary receives a 1 on the diagonal and the required value 
+(often simply zero) in the rhs.
 
-This is for example happening on the line corresponding to node ${\color{violet} u_{10}}$. 
-But if we then turn to node ${\color{violet} u_{11}}$, the stencil equation on this node 
-reads
+This is for example happening on the line corresponding to node 
+${\color{violet} u_{10}}$. 
+But if we then turn to node ${\color{violet} u_{11}}$, the stencil 
+equation on this node reads
 
 \begin{eqnarray}
 \left( \frac{\eta_{\tt n}}{h_y^2} \right) {\color{violet} u_{\tt n}} + 
@@ -1005,18 +1194,154 @@ the matrix and re-establishing the symmetry of the matrix.
 Note that it is not wrong to leave these entries, they just do not serve any real purpose. 
 
 
+\newpage
 %------------------------------------------------------------------------
 \subsection{Recovering the strain rate tensor from the velocity solution}
 
-From the discretisation of the continuity equation we know how to compute 
-$\dot{\varepsilon}_{xx}=\partial u/ \partial x$ and
-$\dot{\varepsilon}_{yy}=\partial v/ \partial y$ inside a cell. 
-But quid of $\dot{\varepsilon}_{xy}$ ?
+Having obtained the velocity field inside the domain we may now 
+wish to compute the components of the strain rate tensor, either
+for plotting purposes or because (for example) the effective viscosity 
+depends on it.
 
+If the Particle-In-Cell technique is used the strain rate needs to 
+be computed on each particle. 
 {\color{red} how to FDM people do this?}
 
+If it is for plotting purposes, a quick look 
+at the the discretisation of the continuity equation tells us that
+we know how to compute 
+$\dot{\varepsilon}_{xx}=\partial u/ \partial x$ and
+$\dot{\varepsilon}_{yy}=\partial v/ \partial y$ in the middle of each cell. 
+But quid of $\dot{\varepsilon}_{xy}$ ?
+
+Let us put the two node layouts we have used previously 
+in the context of the $x$- and $y$-momentum equation:
+
+\begin{multicols}{2}
+
+\input{tikz/tikz_staggered2D_u}
+
+\columnbreak
+
+\input{tikz/tikz_staggered2D_v}
+
+\end{multicols}
+
+On the left side, we see that it would be trivial to compute $\partial u/\partial x$
+and $\partial u/\partial y$ on node ${\color{violet} u_\otimes}$:
+\begin{eqnarray}
+\frac{\partial u}{\partial x} |_{\color{violet}\otimes}
+&\simeq&  \frac{ {\color{violet} u_e}-{\color{violet} u_w}  }{2h_x} \nn\\
+\frac{\partial u}{\partial y} |_{\color{violet}\otimes}
+&\simeq&  \frac{ {\color{violet} u_n}-{\color{violet} u_s}  }{2h_y} \nn
+\end{eqnarray}
+Likewise, on the right we could easily compute
+\begin{eqnarray}
+\frac{\partial v}{\partial x} |_{\color{orange}\otimes}
+&\simeq&  \frac{ {\color{orange} v_e}-{\color{orange} v_w}  }{2h_x} \nn\\
+\frac{\partial v}{\partial y} |_{\color{orange}\otimes}
+&\simeq&  \frac{ {\color{orange} v_n}-{\color{orange} v_s}  }{2h_y} \nn
+\end{eqnarray}
+Conversely, on the left side it would be difficult to 
+compute any $v$ derivative because no horizontal or vertical 
+line passing by the $u$ node in the middle intersects with a 
+$v$ node, and vice versa on the right side. 
+
+It then looks like our best option to compute $\dot{\varepsilon}_{xy}$
+terms is actually on the background (black) nodes since 
+on the left we would have
+\[
+\dot{\varepsilon}_{xy}|_{\tt n} 
+= 
+\frac12 \left(  
+\frac{\partial u}{\partial y}|_{\tt n}
++
+\frac{\partial v}{\partial x}|_{\tt n}
+\right)
+\simeq 
+\frac12 
+\left( 
+\frac{{\color{violet}u_{\tt n}} -{\color{violet}u_\otimes}}{h_y} + 
+\frac{{\color{orange}v_{\tt ne}}-{\color{orange}u_{\tt nw}}}{h_x} 
+\right)
+\]
+This is indeed what we find in Gerya's book at p.~137:
+\begin{center}
+\includegraphics[width=6cm]{images/fdm/gerya_H}\\
+{\captionfont Taken from Gerya (2019).}
+\end{center}
+However, we need to be careful with those nodes on the boundary, and
+even more careful with those at the corners of the domain. 
+
+Let us look again at our prototype mesh:
+
+\input{tikz/tikz_staggered2D_4x3_bc.tex}
+
+Let us consider node 10. It is `missing' a left neighbour, which is 
+the ghost node of ${\color{orange} v_{8}}$. 
+Still operating under the assumption that boundary conditions are either 
+free slip or no slip, the velocity assigned to this ghost is $\delta_{bc} {\color{orange} v_{8}}$,
+so that 
+\[
+\dot{\varepsilon}_{xy}|_{\tt 10} 
+= 
+\frac12 \left(  
+\frac{\partial u}{\partial y}|_{\tt 10}
++
+\frac{\partial v}{\partial x}|_{\tt 10}
+\right)
+\simeq 
+\frac12 
+\left( 
+\frac{{\color{violet}u_{\tt 10}} -{\color{violet}u_5}}{h_y} + 
+\frac{{\color{orange}v_{\tt 8}}- \delta_{bc}{\color{orange}u_{\tt 8}}}{h_x} 
+\right)
+\]
+Likewise, for node 3, we see that the ghost node of ${\color{violet} v_3}$
+will be needed:
+\[
+\dot{\varepsilon}_{xy}|_{\tt 3} 
+= 
+\frac12 \left(  
+\frac{\partial u}{\partial y}|_{\tt 3}
++
+\frac{\partial v}{\partial x}|_{\tt 3}
+\right)
+\simeq 
+\frac12 
+\left( 
+\frac{{\color{violet}u_{\tt 3}} -\delta_{bc} {\color{violet}u_{\tt 3}}}{h_y} + 
+\frac{{\color{orange}v_{\tt 3}}- {\color{orange}u_{\tt 2}}}{h_x} 
+\right)
+\]
+As for the corners, let us consider node 15. 
+We would need the ghost node of ${\color{orange} v_{\tt 12}}$, but since 
+it would be on the top boundary its $v$ value would also be zero. 
+Likewise we would need the ghost node of ${\color{violet} u_{\tt 10}}$
+but it would be on the left boundary so its $u$ value would be zero.
+In the end we find that $\dot{\varepsilon}_{xy}=0$ in all four corners.
 
 
+
+
+
+
+%------------------------------------------------------------------------
+\subsection{Embedding of Particle-In-Cell}
+
+how to interpolate fields onto particles?
+
+section 8.4, 8.5 of book
+
+%------------------------------------------------------------------------
+\subsection{Measure errors}
+
+TODO
+
+%------------------------------------------------------------------------
+\subsection{Non-equidistant nodes \label{ss:fdm_stokes_hvar}}
+
+TODO
 
 
 
