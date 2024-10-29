@@ -656,11 +656,11 @@ Let us focus on the bottom of the following mesh:
 
 \begin{itemize}
 \item \underline{No slip} (at the bottom). We then want $u=v=0$. We can easily zero 
-${\color{orange} v_{\tt 1,2,3,4,5}}$ since the corresponding nodes are on the boundary but this is not enough. Let us consider node ${\color{violet}u_{\tt 2}}$ (bigger on the figure above). 
+${\color{orange} v_{\tt 1,2,3,4,5}}$ since the corresponding nodes are on the boundary 
+but this is not enough. Let us consider node ${\color{violet}u_{\tt 2}}$ (bigger on the figure above). 
 We could zero $u_2$ directly but this would not be correct since the node is not on the boundary.
 If we wish to impose $u=0$ exactly on the boundary then its south neighbour ghost value should be set to
 -{\color{violet} $u_2$} and used in the established stencils.
-
 
 \begin{center}
 \begin{tikzpicture}
@@ -724,7 +724,8 @@ Note that the numbering starts at zero, python-style.}.
 
 Let us assume that we prescribe free slip or no slip on all sides.
 Then we must set 
-${\color{orange}v_{\tt 0}}={\color{orange}v_{\tt 1}}={\color{orange}v_{\tt 2}}={\color{orange}v_{\tt 3}}={\color{orange}v_{\tt 12}}={\color{orange}v_{\tt 13}}={\color{orange}v_{\tt 14}}={\color{orange}v_{\tt 15}}=0$
+${\color{orange}v_{\tt 0}}={\color{orange}v_{\tt 1}}={\color{orange}v_{\tt 2}}={\color{orange}v_{\tt 3}}
+={\color{orange}v_{\tt 12}}={\color{orange}v_{\tt 13}}={\color{orange}v_{\tt 14}}={\color{orange}v_{\tt 15}}=0$
 and ${\color{violet} u_{\tt 0}}={\color{violet}u_{\tt 4}}={\color{violet}u_{\tt 5}}
 ={\color{violet}u_{\tt 9}}={\color{violet}u_{\tt 10}} = {\color{violet}u_{\tt 14}}=0$.
 This means that we need not discretise the momentum equation on these nodes.
@@ -749,10 +750,6 @@ the momentum equation writes there:
 - \frac{1}{h_x} {\color{teal}p_{\tt 6}} + \frac{1}{h_x} {\color{teal}p_{\tt 5}} = -\frac{\rho_{\tt 12}+\rho_{\tt 7}}{2} g_x 
 \nn
 \end{eqnarray}
-
-
-
-
 
 Based on the considerations above pertaining to ghost/virtual nodes
 we turn once more to our $4\times 3$ cell mesh where ghost/virtual nodes have been added:
@@ -947,6 +944,28 @@ pressure).
 
 In practice ghost nodes are never created or used. They are useful in order to 
 establish the corrected stencils but are entirely absent from the coding.
+
+Note that \textcite{dumg11} (2011) calls the method above the ``fictitious node method''
+and states:
+\begin{displayquote}
+{\color{darkgray}
+This method do not require any additional
+pressure constrains, thus no boundary conditions are
+required while solving for pressure. With this discretization of the boundary condition, each partial
+derivative is approximated by means of central finite
+differences and we therefore expect this method to
+be second‐order accurate in space.
+}
+\end{displayquote}
+The authors also present the ``extrapolated BC method''
+but state that it must be supplemented with pressure conditions and that 
+\begin{displayquote}
+{\color{darkgray}
+Given the fact that the boundary condition is
+defined via extrapolation, we expect this implementation to be first order in space.
+}
+\end{displayquote}
+This is later proven, see Fig.~7 of the paper.
 
 %---------------------------------------------------
 \subsection{Generating the linear system}
@@ -1341,145 +1360,93 @@ TODO
 %------------------------------------------------------------------------
 \subsection{Non-equidistant nodes \label{ss:fdm_stokes_hvar}}
 
-TODO
+Although less flexible than the FE method, the FDM allows for cells 
+that are not all the same size.
+This is not fundamentally more difficult than what we have seen above but 
+one now has to be careful about the meaning of the $h_x$ and $h_y$
+quantities when discretising the equations.  
 
 
 
+\input{tikz/tikz_staggered2D_u2}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\newpage
-\begin{landscape}
-{\tiny
+We start from 
 \[
-\left(
-\begin{array}{c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c}
-1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 &
-10 & 11 &12 &13 &14 &15& 16& 17& 18& 19 &
-20 &21 &22 &23 & 24 & 25 & 26 & 27 & 28 & 29 &
-30 &21 &22 &23 & 24 & 25 & 26 & 27 & 28 & 29 &
-40 & 41 & 42 & 43 \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-\hline
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-\hline
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-\hline
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-\hline
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . \\
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & 
-. & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . & . 
-\end{array}
-\right)
-%\cdot
-%\vec{X}=
-%\left(
-%\begin{array}{c}
-%0 \\ . \\ . \\ 0 \\ 0 \\ . \\ . \\ 0 \\
-%X \\
-%0 \\ 0 \\ 0 \\ 0\\ 0 \\ 0
-%\end{array}
-%\right)
+\frac{\partial \tau_{xx}}{\partial x}  + 
+\frac{\partial \tau_{xy}}{\partial y}  
+- \frac{\partial p}{\partial x} + \rho g_x = 0
 \]
-}
-\end{landscape}
+which we discretise as follows on the purple node in the middle:
+\[
+\frac{\tau_{xx,{\tt e}}-\tau_{xx,{\tt w}}}{\frac12h_x^{\tt w}+\frac12h_x^{\tt e}} 
++ \frac{\tau_{xy,{\tt n}}-\tau_{xy,{\tt s}}}{h_y^\otimes} 
+-\frac{{\color{teal}p_{\tt e}}-{\color{teal}p_{\tt w}}}{\frac12h_x^{\tt w}+\frac12h_x^{\tt e}} 
+= -\frac{\rho_{\tt n}+\rho_{\tt s}}{2} g_x
+\]
+
+where
+\begin{eqnarray}
+\tau_{xx,{\tt e}} 
+&=& 2 \eta_{\tt e} \dot{\varepsilon}_{xx,{\tt e}} 
+= 2\eta_{\tt e} \frac{{\color{violet} u_{\tt e}}-{\color{violet} u_\otimes}}{h_x^{\tt e}} 
+\nn \\
+\tau_{xx,{\tt w}} 
+&=& 2 \eta_{\tt w} \dot{\varepsilon}_{xx,{\tt w}} 
+= 2\eta_{\tt w} \frac{{\color{violet} u_\otimes}-{\color{violet} u_{\tt w}}}{h_x^{\tt w}} 
+\nn\\
+\tau_{xy,{\tt n}} &=& 2 \eta_{\tt n} \dot{\varepsilon}_{xy,{\tt n}} 
+= \eta_{\tt n} \left( \frac{{\color{violet} u_{\tt n}}-{\color{violet} u_\otimes}}{\frac12 h_y^{\tt n} + \frac12 h_y^\otimes} 
++\frac{{\color{orange} v_{\tt ne}}-{\color{orange} v_{\tt nw}}}{\frac12 h_x^{\tt e} + \frac12 h_x^{\tt w}} \right) 
+\nn\\
+\tau_{xy,{\tt s}} &=& 2 \eta_{\tt s} \dot{\varepsilon}_{xy,{\tt s}} 
+= \eta_{\tt s} \left( \frac{{\color{violet} u_\otimes}-{\color{violet} u_{\tt s}}}{\frac12 h_y^\otimes + \frac12 h_y^{\tt s}} 
++\frac{{\color{orange}v_{\tt se}}-{\color{orange} v_{\tt sw}}}{\frac12 h_x^{\tt e} + \frac12 h_x^{\tt w}} \right)  \nn
+\end{eqnarray}
+
+
+
+
+\input{tikz/tikz_staggered2D_v2}
+
+
+
+
+
+We start from
+\[
+\frac{\partial \tau_{xy}}{\partial x}  + 
+\frac{\partial \tau_{yy}}{\partial y}  
+- \frac{\partial p}{\partial y} + \rho g_y = 0
+\]
+which we discretise as follows on the ${\color{orange} v_\otimes}$ node in the middle
+\[
+\frac{\tau_{xy,{\tt e}}-\tau_{xy,{\tt w}}}{h_x^\otimes} 
++ \frac{\tau_{yy,{\tt n}}-\tau_{yy,{\tt s}}}{\frac12 h_y^{\tt n} + \frac12 h_y^{\tt s}} 
+-\frac{{\color{teal}p_{\tt n}}-{\color{teal}p_{\tt s}}}{\frac12 h_y^{\tt n} + \frac12 h_y^{\tt s}} 
+= -\frac{\rho_{\tt e}+\rho_{\tt w}}{2} g_y
+\]
+where
+\begin{eqnarray}
+\tau_{xy,{\tt e}} 
+&=& 2 \eta_{\tt e} \dot{\varepsilon}_{xy,{\tt e}} 
+= \eta_{\tt e} \left( \frac{{\color{violet} u_{\tt ne}}-{\color{violet} u_{\tt se}}}{\frac12 h_y^{\tt n} + \frac12 h_y^{\tt s}} 
++\frac{{\color{orange} v_{\tt e}}-{\color{orange} v_\otimes}}{\frac12 h_x^{\tt e} + \frac12 h_x^{\otimes}} \right) 
+\nn \\
+\tau_{xy,{\tt w}} 
+&=& 2 \eta_{\tt w} \dot{\varepsilon}_{xy,{\tt w}} 
+= \eta_{\tt w} \left( \frac{{\color{violet} u_{\tt nw}}-{\color{violet} u_{\tt sw}}}{\frac12 h_y^{\tt n} + \frac12 h_y^{\tt s}} 
++\frac{{\color{orange} v_\otimes} - {\color{orange} v_{\tt w}}}{\frac12 h_x^{\otimes} + \frac12 h_x^{\tt w}} \right) 
+\nn\\
+\tau_{yy,{\tt n}} 
+&=& 2 \eta_{\tt n} \dot{\varepsilon}_{yy,{\tt n}} 
+= 2\eta_{\tt n} \frac{{\color{orange} v_{\tt n}}-{\color{orange} v_\otimes}}{h_y^{\tt n}} 
+\nn\\
+\tau_{yy,{\tt s}} 
+&=& 2 \eta_{\tt s} \dot{\varepsilon}_{yy,{\tt s}} 
+= 2\eta_{\tt s} \frac{{\color{orange} v_\otimes} -{\color{orange} v_{\tt s}}}{h_y^{\tt s}} 
+ \nn
+\end{eqnarray}
+
+
 
