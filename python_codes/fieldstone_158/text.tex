@@ -419,10 +419,24 @@ v[:]=yv[:]
 then we recover $\dot{\varepsilon}_{xx}=\dot{\varepsilon}_{yy}=1$
 and $\dot{\varepsilon}_{xy}=0$ everywhere in the domain.
 
+\newpage
+%------------------------------------------------------------------
+\subsection*{Experiment 4: Donea \& Huerta manufacture solution}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_158/results/exp4/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_158/results/exp4/vel_error}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_158/results/exp4/press}
+\includegraphics[width=7cm]{python_codes/fieldstone_158/results/exp4/press_error}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_158/results/exp4/divv}\\
+{\captionfont Obtained on $200\times 200$ mesh.}
+\end{center} 
+
+
 
 \newpage
-%---------------------------
-\subsection*{Experiment 1}
+%-------------------------------------
+\subsection*{Experiment 1: the sinker}
 
 This is a basic sanity check. Boundary conditions are either free slip or no slip.
 The domain is the unit square filled with a Newtonian fluid characterised by 
@@ -430,18 +444,112 @@ $\rho=1$ and $\eta=1$. There is a sphere in the middle of radius 0.15 with $\rho
 and $\eta=10$.
 
 \begin{center}
-\includegraphics[width=4cm]{python_codes/fieldstone_158/results/exp1/rho}
-\includegraphics[width=4cm]{python_codes/fieldstone_158/results/exp1/eta}
-\includegraphics[width=4cm]{python_codes/fieldstone_158/results/exp1/vel}
-\includegraphics[width=4cm]{python_codes/fieldstone_158/results/exp1/press}
+\includegraphics[width=7cm]{python_codes/fieldstone_158/results/exp1/rho}
+\includegraphics[width=7cm]{python_codes/fieldstone_158/results/exp1/eta}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_158/results/exp1/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_158/results/exp1/press}
+\end{center} 
+
+TODO: show free slip vs no slip
+
+
+\newpage
+%---------------------------------
+\subsection*{Experiment 2: SolKz}
+
+The experiment is described in Section~\ref{MMM-ss:solkz}.
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_158/results/exp3/rho}
+\includegraphics[width=5cm]{python_codes/fieldstone_158/results/exp3/eta}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_158/results/exp3/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_158/results/exp3/press}
+\includegraphics[width=5cm]{python_codes/fieldstone_158/results/exp3/divv}
+\end{center} 
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_158/images/solkz}\\
+{\captionfont Taken from \textcite{dumg11} (2011). }
 \end{center} 
 
 
 
-TODO: show free slip vs no slip
+\newpage
+%---------------------------------
+\subsection*{Experiment 3: SolCx}
 
-TODO: do donea huerta bench
+The experiment is described in Section~\ref{MMM-ss:solcx}.
 
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_158/results/exp3/rho}
+\includegraphics[width=4cm]{python_codes/fieldstone_158/results/exp3/eta}
+\includegraphics[width=4cm]{python_codes/fieldstone_158/results/exp3/vel}
+\includegraphics[width=4cm]{python_codes/fieldstone_158/results/exp3/press}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_158/results/exp3/divv}
+\includegraphics[width=4cm]{python_codes/fieldstone_158/results/exp3/exx}
+\includegraphics[width=4cm]{python_codes/fieldstone_158/results/exp3/eyy}
+\includegraphics[width=4cm]{python_codes/fieldstone_158/results/exp3/exy}
+\end{center} 
 
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_158/images/solcx}\\
+{\captionfont Taken from \textcite{dumg11} (2011). }
+\end{center} 
+
+\newpage
+%----------------------------------------
+\subsection*{Experiment 5: sinking block}
+
+The domain is a unit square. Fluids are such that 
+$\rho_1=1$, $\eta_1=1$ and $\rho_2=1.01$, $\eta_2=1000$.
+Boundary conditions are either free slip or no slip on all sides. 
+Pressure is normalised so that the volume average is zero. 
+Gravity points downwards with $|\vec{g}|=1$.
+Profile measurements are carried out on a vertical line 
+passing through the middle of the block.
+
+The following results are actually obtained for a case with reduced 
+densities, i.e. the backgroud density profile has been removed so that 
+$\rho_1=0$ and $\rho_2=0.01$. The pressure is then the dynamic pressure.
+Arithmetic averaging is used.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/rho}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/eta}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/divv}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/press}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/exy}\\
+{\captionfont Obtained on $320 \times 320$ mesh.}
+\end{center}
+
+We can look at the evolution of the min/max statistics as a function of resolution:
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/stats_u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/stats_v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/stats_p}\\
+\end{center}
+
+We now wish to plot the $u,v,p$ fields on two lines passing through the middle 
+of the block (one vertical, one horizontal). This poses a problem since not all 
+three variables are available on such lines. I have therefore chosen to consider the 
+mid-cell projected fields and export the values on each side of each line.
+
+Horizontal line $y=1/2$:
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/profilex_u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/profilex_v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/profilex_p}
+\end{center} 
+
+Vertical line $x=1/2$:
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/profiley_u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/profiley_v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/profiley_p}
+\end{center} 
+
+TODO: explore effect of viscosity averaging
 
 

@@ -2,9 +2,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time as clock
 import scipy.sparse as sps
-#from scipy.sparse import csr_matrix, lil_matrix
+import solkz
+import solcx
+import dh
 
-experiment=1
+###############################################################################
+
+# experiment=1: sinker
+# experiment=2: solkz
+# experiment=3: solcx
+# experiment=4: donea&huerta 
+# experiment=5: sinking block
+
+experiment=5
 
 debug=False
 spy=False
@@ -16,13 +26,70 @@ def density(x,y,experiment):
        val=1-1
        if (x-0.5)**2+(y-0.5)**2<0.15**2:
           val=2-1
+    if experiment==2:
+       val=-np.sin(2*y)*np.cos(3*np.pi*x)
+    if experiment==3:
+       val=-np.sin(np.pi*y)*np.cos(np.pi*x)
+    if experiment==4:
+       val=1
+    if experiment==5:
+       if abs(x-0.5)<=0.0625 and abs(y-0.5)<=0.0625:
+          val=1.01-1
+       else:
+          val=1-1
     return val
 
 def viscosity(x,y,experiment):
     if experiment==1:
        val=1
        if (x-0.5)**2+(y-0.5)**2<0.15**2:
+          val=10
+    if experiment==2:
+       val=np.exp(13.8155*y)
+    if experiment==3:
+       if x<0.5:
           val=1
+       else:
+          val=1e6
+    if experiment==4:
+       val=1
+    if experiment==5:
+       if abs(x-0.5)<=0.0625 and abs(y-0.5)<=0.0625:
+          val=1000
+       else:
+          val=1
+    return val
+
+def gx(x,y,experiment):
+    if experiment==1:
+       val=0
+    if experiment==2:
+       val=0
+    if experiment==3:
+       val=0
+    if experiment==4:
+       val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
+            (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
+            (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
+            1.-4.*y+12.*y*y-8.*y*y*y)
+    if experiment==5:
+       val=0
+    return val
+
+def gy(x,y,experiment):
+    if experiment==1:
+       val=-1
+    if experiment==2:
+       val=-1
+    if experiment==3:
+       val=-1
+    if experiment==4:
+       val=((8.-48.*y+48.*y*y)*x*x*x+
+            (-12.+72.*y-72.*y*y)*x*x+
+            (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
+            12.*y*y+24.*y*y*y-12.*y**4)
+    if experiment==5:
+       val=-1
     return val
 
 ###############################################################################
@@ -30,11 +97,8 @@ def viscosity(x,y,experiment):
 Lx=1
 Ly=1
 
-gx=0
-gy=-1
-
-nnx=200
-nny=200
+nnx=129
+nny=nnx
 
 hx=Lx/(nnx-1)
 hy=Ly/(nny-1)
@@ -51,10 +115,10 @@ Nv=ncellx*nny    # v-nodes
 Np=ncellx*ncelly # p-nodes
 N=Nu+Nv+Np       # total nb of unknowns
 
-avrg=3
+avrg=1
 
-eta_ref=10
-L_ref=min(hx,hy)
+eta_ref=1
+L_ref=1 #min(hx,hy)
 
 print('===========================')
 print('-------- Stone 158 -------')
@@ -76,10 +140,36 @@ print('===========================')
 # default b.c. on all sides is free slip
 ###############################################################################
 
-bottom_no_slip=False
-top_no_slip=False
-left_no_slip=False
-right_no_slip=False
+if experiment==1:
+   bottom_no_slip=False
+   top_no_slip=False
+   left_no_slip=False
+   right_no_slip=False
+
+elif experiment==2:
+   bottom_no_slip=False
+   top_no_slip=False
+   left_no_slip=False
+   right_no_slip=False
+
+elif experiment==3:
+   bottom_no_slip=False
+   top_no_slip=False
+   left_no_slip=False
+   right_no_slip=False
+
+elif experiment==4:
+   bottom_no_slip=True
+   top_no_slip=True
+   left_no_slip=True
+   right_no_slip=True
+
+if experiment==5:
+   bottom_no_slip=False
+   top_no_slip=False
+   left_no_slip=False
+   right_no_slip=False
+
 
 if bottom_no_slip:
    delta_bc_bottom=-1
@@ -207,6 +297,8 @@ if debug: np.savetxt('grid_p.ascii',np.array([xp,yp]).T,header='# x,y')
 print("setup: p grid points: %.3f s" % (clock.time() - start))
 
 ###############################################################################
+# declare arrays for matrix and rhs
+###############################################################################
 
 #A=np.zeros((N,N),dtype=np.float64)
 A=sps.lil_matrix((N,N),dtype=np.float64)
@@ -237,8 +329,8 @@ for i in range(0,Nu):
 
        match(avrg):
           case(1): # arithmetic
-             eta_w=(eta[index_eta_nw]+eta[index_eta_sw]+eta[index_eta_n]+eta[index_eta_s])/4
-             eta_e=(eta[index_eta_ne]+eta[index_eta_se]+eta[index_eta_n]+eta[index_eta_s])/4
+             eta_w=(eta[index_eta_nw]+eta[index_eta_sw]+eta[index_eta_n]+eta[index_eta_s])/4.
+             eta_e=(eta[index_eta_ne]+eta[index_eta_se]+eta[index_eta_n]+eta[index_eta_s])/4.
           case(3): # harmonic
              eta_w=4./(1./eta[index_eta_nw]+1./eta[index_eta_sw]+1./eta[index_eta_n]+1./eta[index_eta_s])
              eta_e=4./(1./eta[index_eta_ne]+1./eta[index_eta_se]+1./eta[index_eta_n]+1./eta[index_eta_s])
@@ -272,6 +364,8 @@ for i in range(0,Nu):
        index_u_w=i-1
        index_u_e=i+1
 
+       #print(xp[index_p_w],yp[index_p_w],eta_w)
+       #print(xp[index_p_e],yp[index_p_e],eta_e)
        if debug:
           print('================')
           print('u node #',i)
@@ -295,7 +389,7 @@ for i in range(0,Nu):
           print('index_u_w =',index_u_w)
           print('index_u_e =',index_u_e)
 
-       b[i]=-(rho[index_rho_s]+rho[index_rho_n])/2*gx
+       b[i]=-(rho[index_rho_s]+rho[index_rho_n])/2*gx(xu[i],yu[i],experiment)
 
        A[i,index_u_e]=2*eta_e_xx
        A[i,index_u_w]=2*eta_w_xx
@@ -368,7 +462,7 @@ for i in range(0,Nv):
        eta_w=eta[index_eta_w]
 
        eta_n_yy=eta_n/hy**2
-       eta_s_yy=eta_n/hy**2
+       eta_s_yy=eta_s/hy**2
        eta_e_xx=eta_e/hx**2 ; eta_e_xy=eta_e/hx/hy
        eta_w_xx=eta_w/hx**2 ; eta_w_xy=eta_w/hx/hy
 
@@ -388,6 +482,8 @@ for i in range(0,Nv):
        index_u_nw=i-nnx+1+nnx +jj-1
        index_u_ne=i-nnx+1+1 +nnx +jj-1
 
+       #print(xp[index_p_s],yp[index_p_s],eta_s)
+       #print(xp[index_p_n],yp[index_p_n],eta_n)
        if debug:
           print('================')
           print('v node #',i)
@@ -411,7 +507,7 @@ for i in range(0,Nv):
           print('index_u_nw =',index_u_nw)
           print('index_u_ne =',index_u_ne)
 
-       b[Nu+i]=-(rho[index_rho_e]+rho[index_rho_w])/2*gy
+       b[Nu+i]=-(rho[index_rho_e]+rho[index_rho_w])/2*gy(xv[i],yv[i],experiment)
 
        A[Nu+i,Nu+index_v_n]=2*eta_n_yy
        A[Nu+i,Nu+index_v_s]=2*eta_s_yy
@@ -496,7 +592,7 @@ start = clock.time()
 
 u=sol[0:Nu]
 v=sol[Nu+0:Nu+Nv]
-p=sol[Nu+Nv+0:Nu+Nv+Np]
+p=sol[Nu+Nv+0:Nu+Nv+Np]*eta_ref/L_ref
 
 print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
@@ -587,6 +683,13 @@ start = clock.time()
 
 uu=np.zeros(ncell,dtype=np.float64)
 vv=np.zeros(ncell,dtype=np.float64)
+vel=np.zeros(ncell,dtype=np.float64)
+uth=np.zeros(ncell,dtype=np.float64)
+vth=np.zeros(ncell,dtype=np.float64)
+pth=np.zeros(ncell,dtype=np.float64)
+error_uu=np.zeros(ncell,dtype=np.float64)
+error_vv=np.zeros(ncell,dtype=np.float64)
+error_p=np.zeros(ncell,dtype=np.float64)
 
 for i in range(0,ncell):
 
@@ -600,8 +703,47 @@ for i in range(0,ncell):
 
     uu[i]=0.5*(u[index_u_w]+u[index_u_e])
     vv[i]=0.5*(v[index_v_n]+v[index_v_s])
+    vel[i]=np.sqrt(uu[i]**2+vv[i]**2)
+   
+    if experiment==1:
+       ui=vi=pi=0 
+    elif experiment==2:
+       ui,vi,pi=solkz.SolKzSolution(xp[i],yp[i])
+    elif experiment==3:
+       ui,vi,pi=solcx.SolCxSolution(xp[i],yp[i])
+    elif experiment==4:
+       ui,vi,pi=dh.DHSolution(xp[i],yp[i])
+    elif experiment==5:
+       ui=vi=pi=0 
+
+    uth[i]=ui
+    vth[i]=vi
+    pth[i]=pi
+    error_uu[i]=uu[i]-ui
+    error_vv[i]=vv[i]-vi
+    error_p[i]=p[i]-pi
 
 print("u,v at cell center: %.5f s " % (clock.time() - start))
+
+###############################################################################
+
+if experiment==5:
+   print(ncellx,np.min(u),np.max(u),\
+                np.min(v),np.max(v),\
+                np.min(p),np.max(p),\
+                np.min(vel),np.max(vel))
+
+   profile=open('profiley_'+str(ncelly)+'.ascii',"w")
+   for i in range(ncell):
+       if abs(xp[i]-0.5)<hx:
+          profile.write("%e %e %e %e %e \n" %(xp[i],yp[i],uu[i],vv[i],p[i]))
+   profile.close()
+
+   profile=open('profilex_'+str(ncelly)+'.ascii',"w")
+   for i in range(ncell):
+       if abs(yp[i]-0.5)<hx:
+          profile.write("%e %e %e %e %e \n" %(xp[i],yp[i],uu[i],vv[i],p[i]))
+   profile.close()
 
 ###############################################################################
 # export fields to paraview files
@@ -628,9 +770,29 @@ for i in range(0,ncell):
     vtufile.write("%10e %10e %10e \n" %(uu[i],vv[i],0.))
 vtufile.write("</DataArray>\n")
 #--
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (error)' Format='ascii'> \n")
+for i in range(0,ncell):
+    vtufile.write("%10e %10e %10e \n" %(error_uu[i],error_vv[i],0.))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (th)' Format='ascii'> \n")
+for i in range(0,ncell):
+    vtufile.write("%10e %10e %10e \n" %(uth[i],vth[i],0.))
+vtufile.write("</DataArray>\n")
+#--
 vtufile.write("<DataArray type='Float32'  Name='pressure' Format='ascii'> \n")
 for i in range(0,ncell):
     vtufile.write("%10e  \n" %(p[i]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32'  Name='pressure (error)' Format='ascii'> \n")
+for i in range(0,ncell):
+    vtufile.write("%10e  \n" %(error_p[i]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32'  Name='pressure (th)' Format='ascii'> \n")
+for i in range(0,ncell):
+    vtufile.write("%10e  \n" %(pth[i]))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32'  Name='exx' Format='ascii'> \n")
@@ -651,11 +813,6 @@ vtufile.write("</DataArray>\n")
 vtufile.write("</CellData>\n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")
-#--
-#vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-#for i in range(0,NV):
-#    vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
-#vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
 for i in range(0,Nb):
