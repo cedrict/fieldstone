@@ -1,0 +1,120 @@
+###################################################
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize .4
+set xlabel 'h'
+
+set ylabel 'min/max u'
+set output 'stats_u.pdf'
+plot[][]\
+'sinker.ascii' u (1./$1):2 w lp notitle,\
+'sinker.ascii' u (1./$1):3 w lp notitle,\
+ 
+set ylabel 'min/max v'
+set output 'stats_v.pdf'
+plot[][]\
+'sinker.ascii' u (1./$1):4 w lp notitle,\
+'sinker.ascii' u (1./$1):5 w lp notitle,\
+
+set ylabel 'min/max p'
+set output 'stats_p.pdf'
+plot[][]\
+'sinker.ascii' u (1./$1):6 w lp notitle,\
+'sinker.ascii' u (1./$1):7 w lp notitle,\
+
+###################################################
+reset
+
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize .2
+set xlabel 'y'
+set key outside
+
+set style rect fc lt -1 fs solid 0.15 noborder
+set obj rect from 0.5-0.0625, graph 0 to 0.5+0.0625, graph 1
+
+set ylabel 'u'
+set output 'profiley_u.pdf'
+plot[][]\
+'profiley_32.ascii'  u 2:3 t 'ncellx=32',\
+'profiley_64.ascii'  u 2:3 t 'ncellx=64',\
+'profiley_128.ascii' u 2:3 t 'ncellx=128',\
+'profiley_192.ascii' u 2:3 t 'ncellx=192',\
+'profiley_256.ascii' u 2:3 t 'ncellx=256',\
+'profiley_320.ascii' u 2:3 t 'ncellx=320',\
+'profiley_384.ascii' u 2:3 t 'ncellx=384',\
+
+set ylabel 'v'
+set output 'profiley_v.pdf'
+plot[][]\
+'profiley_32.ascii'  u 2:4 t 'ncellx=32',\
+'profiley_64.ascii'  u 2:4 t 'ncellx=64',\
+'profiley_128.ascii' u 2:4 t 'ncellx=128',\
+'profiley_192.ascii' u 2:4 t 'ncellx=192',\
+'profiley_256.ascii' u 2:4 t 'ncellx=256',\
+'profiley_320.ascii' u 2:4 t 'ncellx=320',\
+'profiley_384.ascii' u 2:4 t 'ncellx=384',\
+'../../../../images/sinking_block/FS/ASPECT/q2q1/output_stokes_none_10/point_values.txt' u 3:5 w l lw .5 lt -1 t 'ASPECT, lvl 10',\
+
+set ylabel 'p'
+set output 'profiley_p.pdf'
+plot[][]\
+'profiley_32.ascii'  u 2:5 t 'ncellx=32',\
+'profiley_64.ascii'  u 2:5 t 'ncellx=64',\
+'profiley_128.ascii' u 2:5 t 'ncellx=128',\
+'profiley_192.ascii' u 2:5 t 'ncellx=192',\
+'profiley_256.ascii' u 2:5 t 'ncellx=256',\
+'profiley_320.ascii' u 2:5 t 'ncellx=320',\
+'profiley_384.ascii' u 2:5 t 'ncellx=384',\
+
+#############################################
+set xlabel 'x'
+
+set ylabel 'u'
+set output 'profilex_u.pdf'
+plot[][]\
+'profilex_32.ascii'  u 1:3 t 'ncellx=32',\
+'profilex_64.ascii'  u 1:3 t 'ncellx=64',\
+'profilex_128.ascii' u 1:3 t 'ncellx=128',\
+'profilex_192.ascii' u 1:3 t 'ncellx=192',\
+'profilex_256.ascii' u 1:3 t 'ncellx=256',\
+'profilex_320.ascii' u 1:3 t 'ncellx=320',\
+'profilex_384.ascii' u 1:3 t 'ncellx=384',\
+
+set ylabel 'v'
+set output 'profilex_v.pdf'
+plot[][]\
+'profilex_32.ascii'  u 1:4 t 'ncellx=32',\
+'profilex_64.ascii'  u 1:4 t 'ncellx=64',\
+'profilex_128.ascii' u 1:4 t 'ncellx=128',\
+'profilex_192.ascii' u 1:4 t 'ncellx=192',\
+'profilex_256.ascii' u 1:4 t 'ncellx=256',\
+'profilex_320.ascii' u 1:4 t 'ncellx=320',\
+'profilex_384.ascii' u 1:4 t 'ncellx=384',\
+
+set ylabel 'p'
+set output 'profilex_p.pdf'
+plot[][]\
+'profilex_32.ascii'  u 1:5 t 'ncellx=32',\
+'profilex_64.ascii'  u 1:5 t 'ncellx=64',\
+'profilex_128.ascii' u 1:5 t 'ncellx=128',\
+'profilex_192.ascii' u 1:5 t 'ncellx=192',\
+'profilex_256.ascii' u 1:5 t 'ncellx=256',\
+'profilex_320.ascii' u 1:5 t 'ncellx=320',\
+'profilex_384.ascii' u 1:5 t 'ncellx=384',\
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
