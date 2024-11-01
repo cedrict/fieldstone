@@ -5,6 +5,7 @@ import scipy.sparse as sps
 import solkz
 import solcx
 import dh
+import sys 
 
 ###############################################################################
 
@@ -14,7 +15,7 @@ import dh
 # experiment=4: donea&huerta 
 # experiment=5: sinking block
 
-experiment=5
+experiment=1
 
 debug=False
 spy=False
@@ -97,17 +98,23 @@ def gy(x,y,experiment):
 Lx=1
 Ly=1
 
-nnx=129
-nny=nnx
-
-hx=Lx/(nnx-1)
-hy=Ly/(nny-1)
-hhx=1./hx
-hhy=1./hy
+if int(len(sys.argv) == 3): 
+   nnx = int(sys.argv[1])
+   nny = int(sys.argv[2])
+   visu = 0 
+else:
+   nnx = 65 
+   nny = nnx 
+   visu = 1 
 
 ncellx=nnx-1
 ncelly=nny-1
 ncell=ncellx*ncelly
+
+hx=Lx/ncellx
+hy=Ly/ncelly
+hhx=1./hx
+hhy=1./hy
 
 Nb=nnx*nny       # background mesh
 Nu=nnx*ncelly    # u-nodes
@@ -115,10 +122,10 @@ Nv=ncellx*nny    # v-nodes
 Np=ncellx*ncelly # p-nodes
 N=Nu+Nv+Np       # total nb of unknowns
 
-avrg=1
+avrg=3
 
 eta_ref=1
-L_ref=1 #min(hx,hy)
+L_ref=min(hx,hy)
 
 print('===========================')
 print('-------- Stone 158 -------')
@@ -141,10 +148,10 @@ print('===========================')
 ###############################################################################
 
 if experiment==1:
-   bottom_no_slip=False
-   top_no_slip=False
-   left_no_slip=False
-   right_no_slip=False
+   bottom_no_slip=True
+   top_no_slip=True
+   left_no_slip=True
+   right_no_slip=True
 
 elif experiment==2:
    bottom_no_slip=False
@@ -331,6 +338,9 @@ for i in range(0,Nu):
           case(1): # arithmetic
              eta_w=(eta[index_eta_nw]+eta[index_eta_sw]+eta[index_eta_n]+eta[index_eta_s])/4.
              eta_e=(eta[index_eta_ne]+eta[index_eta_se]+eta[index_eta_n]+eta[index_eta_s])/4.
+          case(2): # geometric
+             eta_w=10.**((np.log10(eta[index_eta_nw])+np.log10(eta[index_eta_sw])+np.log10(eta[index_eta_n])+np.log10(eta[index_eta_s]))/4.)
+             eta_e=10.**((np.log10(eta[index_eta_ne])+np.log10(eta[index_eta_se])+np.log10(eta[index_eta_n])+np.log10(eta[index_eta_s]))/4.)
           case(3): # harmonic
              eta_w=4./(1./eta[index_eta_nw]+1./eta[index_eta_sw]+1./eta[index_eta_n]+1./eta[index_eta_s])
              eta_e=4./(1./eta[index_eta_ne]+1./eta[index_eta_se]+1./eta[index_eta_n]+1./eta[index_eta_s])
@@ -452,6 +462,9 @@ for i in range(0,Nv):
           case(1): # arithmetic
              eta_n=(eta[index_eta_nw]+eta[index_eta_ne]+eta[index_eta_w]+eta[index_eta_e])/4
              eta_s=(eta[index_eta_sw]+eta[index_eta_se]+eta[index_eta_w]+eta[index_eta_e])/4
+          case(2): # gemetric 
+             eta_n=10.**((np.log10(eta[index_eta_nw])+np.log10(eta[index_eta_ne])+np.log10(eta[index_eta_w])+np.log10(eta[index_eta_e]))/4.)
+             eta_s=10.**((np.log10(eta[index_eta_sw])+np.log10(eta[index_eta_se])+np.log10(eta[index_eta_w])+np.log10(eta[index_eta_e]))/4.)
           case(3): # harmonic
              eta_n=4./(1./eta[index_eta_nw]+1./eta[index_eta_ne]+1./eta[index_eta_w]+1./eta[index_eta_e])
              eta_s=4./(1./eta[index_eta_sw]+1./eta[index_eta_se]+1./eta[index_eta_w]+1./eta[index_eta_e])
@@ -681,16 +694,50 @@ print("compute strain rate: %.5f s " % (clock.time() - start))
 ###############################################################################
 start = clock.time()
 
+error_u=np.zeros(Nu,dtype=np.float64)
+error_v=np.zeros(Nv,dtype=np.float64)
+
+for i in range(0,Nu):
+    if experiment==1:
+       ui=vi=pi=0 
+    elif experiment==2:
+       ui,vi,pi=solkz.SolKzSolution(xu[i],yu[i])
+    elif experiment==3:
+       ui,vi,pi=solcx.SolCxSolution(xu[i],yu[i])
+    elif experiment==4:
+       ui,vi,pi=dh.DHSolution(xu[i],yu[i])
+    elif experiment==5:
+       ui=vi=pi=0 
+    error_u[i]=u[i]-ui
+#end for
+
+for i in range(0,Nv):
+    if experiment==1:
+       ui=vi=pi=0 
+    elif experiment==2:
+       ui,vi,pi=solkz.SolKzSolution(xv[i],yv[i])
+    elif experiment==3:
+       ui,vi,pi=solcx.SolCxSolution(xv[i],yv[i])
+    elif experiment==4:
+       ui,vi,pi=dh.DHSolution(xv[i],yv[i])
+    elif experiment==5:
+       ui=vi=pi=0 
+    error_v[i]=v[i]-vi
+#end for
+
 uu=np.zeros(ncell,dtype=np.float64)
 vv=np.zeros(ncell,dtype=np.float64)
 vel=np.zeros(ncell,dtype=np.float64)
 uth=np.zeros(ncell,dtype=np.float64)
 vth=np.zeros(ncell,dtype=np.float64)
 pth=np.zeros(ncell,dtype=np.float64)
-error_uu=np.zeros(ncell,dtype=np.float64)
-error_vv=np.zeros(ncell,dtype=np.float64)
+error_uu=np.zeros(ncell,dtype=np.float64) # for plotting only
+error_vv=np.zeros(ncell,dtype=np.float64) # for plotting only
 error_p=np.zeros(ncell,dtype=np.float64)
 
+errv=0.
+errp=0.
+vrms=0.
 for i in range(0,ncell):
 
     ii=i%ncellx
@@ -723,6 +770,14 @@ for i in range(0,ncell):
     error_vv[i]=vv[i]-vi
     error_p[i]=p[i]-pi
 
+    vrms+=(uu[i]**2+vv[i]**2)*hx*hy
+
+    errv+=(abs(error_u[index_u_w])+abs(error_v[index_u_e]))*hx*hy/2
+    errp+=abs(error_p[i])*hx*hy
+
+print('ncellx= ',ncellx,' vrms= ',np.sqrt(vrms/Lx/Ly))
+print('ncellx= ',ncellx,' errors= ',errv,errp)
+
 print("u,v at cell center: %.5f s " % (clock.time() - start))
 
 ###############################################################################
@@ -731,7 +786,7 @@ if experiment==5:
    print(ncellx,np.min(u),np.max(u),\
                 np.min(v),np.max(v),\
                 np.min(p),np.max(p),\
-                np.min(vel),np.max(vel))
+                np.min(vel),np.max(vel),'stats')
 
    profile=open('profiley_'+str(ncelly)+'.ascii',"w")
    for i in range(ncell):

@@ -1,0 +1,14 @@
+#! /bin/bash
+
+rm -f vrms.ascii
+rm -f errors.ascii
+
+for n in 9 13 17 25 33 41 49 65 97 129 193 257 ; do
+    python3 stone.py  $n   $n > opla
+    grep vrms opla >> vrms.ascii
+    grep errors opla >> errors.ascii
+done
+
+
+#python3 stone.py 129 129  | grep stats >> sinker.ascii
+

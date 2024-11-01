@@ -24,15 +24,15 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Before reading any further please read carefully Section~\ref{MMM-FDMSTOKES}. 
-
+Before reading any further please read carefully Section~\ref{MMM-ss:fdm_stokes2D}. 
 
 
 %--------------------------------------------------
 \subsection*{Implementation}
 
-The domain is $L_x \times L_y$. 
-It is discretised in {\python ncellx}$\times${\python ncelly}.
+The domain is a Cartesian box of dimensions $L_x \times L_y$. 
+It is discretised by means of $nnx \times nny$ nodes (so-called
+background mesh forming the cells).
 We then define:
 \begin{lstlisting}
 ncellx=nnx-1
@@ -44,7 +44,7 @@ Nv=ncellx*nny    # v-nodes
 Np=ncellx*ncelly # p-nodes
 N=Nu+Nv+Np       # total nb of unknowns
 \end{lstlisting}
-For the mesh above we have
+For the $4\times 3$ cell mesh of Section~\ref{MMM-ss:fdm_stokes2D} we have
 
 \begin{verbatim}
 nnx= 6
@@ -57,19 +57,19 @@ N= 69
 ncell= 20
 \end{verbatim}
 
-
-Also, because we will need the cell dimensions and their inverse a lot we define:
+Also, because we will need the cell dimensions and their inverse a lot 
+thoughout the code we define:
 \begin{lstlisting}
-hx=Lx/(nnx-1)
-hy=Ly/(nny-1)
+hx=Lx/ncellx
+hy=Ly/ncelly
 hhx=1/hx
 hhy=1/hy
 \end{lstlisting}
 
 We must then define the $\delta_{bc}$ parameter that 
 controls whether boundaries are free slip or no slip
-(see Eq.~\eqref{MMM-eq:XXX}.
-We here assigne one $\delta_{bc}$ parameter per side 
+(see Section~\ref{MMM-ss:fdmstokesbc}).
+We here assign one $\delta_{bc}$ parameter per side 
 of the domain and arbitrarily choose that free slip is 
 default:
 
@@ -100,13 +100,11 @@ else:
    delta_bc_right=+1
 \end{lstlisting}
 
-
-
 We store the coordinates of the background nodes (where 
 density and viscosity live) in arrays {\python xb,yb}, 
-$u$ nodes in arrays {\python xu,yu},
-the coordinates of the $v$ nodes in arrays {\python xv,yv},
-and the coordinates of the $p$ nodes in arrays {\python xp,yp}.
+${\color{violet} u}$ nodes in arrays {\python xu,yu},
+the coordinates of the ${\color{orange}v}$ nodes in arrays {\python xv,yv},
+and the coordinates of the ${\color{teal}p}$ nodes in arrays {\python xp,yp}.
 
 \begin{lstlisting}
 xu=np.zeros(Nu,dtype=np.float64)
@@ -188,14 +186,15 @@ index_v_n 15
 \end{verbatim}
 
 \end{multicols}
-
+These printouts should obviously match the numbering of the $4\times 3$ cell mesh
+of Section~\ref{MMM-ss:fdm_stokes2D}.
 This step is crucial because these indices will be used to know
 where to add coefficients in the final assembled matrix. 
-If any of them is wrong the generated matrix (and therefore linear system)
+If any of them is wrong the generated matrix is incorrect and therefore the linear system
 might not even have a solution. 
 
-
-We then start from Eqs.~\eqref{eq:fdmstokes1},\eqref{eq:fdmstokes2} and \eqref{eq:fdmstokes3} 
+We then start from Eqs.~\eqref{MMM-eq:fdmstokes1},\eqref{MMM-eq:fdmstokes2} and 
+\eqref{MMM-eq:fdmstokes3} 
 (the modified versions of these equations containing the $\delta_{bc}$ term do not pose
 any kind of additional difficulty so we focus on the standard equations only):
 
@@ -266,12 +265,10 @@ eta_w_xx=eta_w/hx**2
 eta_s_yy=eta_s/hy**2 ; eta_s_xy=eta_s/hx/hy
 ...
 eta_n_yy=eta_n/hy**2
-eta_s_yy=eta_n/hy**2
+eta_s_yy=eta_s/hy**2
 eta_e_xx=eta_e/hx**2 ; eta_e_xy=eta_e/hx/hy
 eta_w_xx=eta_w/hx**2 ; eta_w_xy=eta_w/hx/hy
 \end{lstlisting}
-
-
 
 so that we can write the three stencil equations as follows:
 
@@ -393,13 +390,83 @@ After the loop on $v$ nodes, the matrix non-zero pattern is as follows:
 \includegraphics[width=6cm]{python_codes/fieldstone_158/images/matrix_uv.pdf}
 \end{center}
 
-And finally after the loop of cells:
+And finally after the loop over cells/pressure nodes:
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_158/images/matrix_uvp.pdf}
 \end{center}
-As predicted in Eq.~\eqref{eq:fdmstokes6} we recover a matrix that 
-is composed of 8 blocks.
+As predicted in Eq.~\eqref{MMM-eq:fdmstokes6} we recover a matrix that 
+is composed of 9 blocks, one being entirely zero.
 
+%-----------------------------------------------------
+\subsection*{Viscosity averaging}
+
+A single parameter allows to control the type of viscosity 
+averaging that is used (see Section~\ref{MMM-ss:fdm_stokes_visc}):
+
+\begin{lstlisting}
+avrg=2
+\end{lstlisting}
+with 1: arithmeric, 2: geometric, 3: harmonic.
+
+
+%-----------------------------------------------------
+\subsection*{Matrix block scaling}
+
+Following Section~\ref{MMM-ss:fdmstokesscaling} we define:
+
+\begin{lstlisting}
+eta_ref=1
+L_ref=min(hx,hy)
+\end{lstlisting}
+
+These parameters will be used while building the matrix and also 
+after solving the linear system to scale back the pressure. 
+
+%-----------------------------------------------------
+\subsection*{Matrix storage}
+
+At first one could define the matrix and rhs arrays as follows:
+\begin{lstlisting}
+A=np.zeros((N,N),dtype=np.float64)
+b=np.zeros(N,dtype=np.float64)
+\end{lstlisting}
+However, this is definitely not optimal since we know that the 
+matrix is {\it very} sparse and potentially very large, so that 
+this would lead to large memory requirements for no good reason.
+Instead the matrix is declared as follows\footnote{
+\url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.lil_matrix.html}} 
+(the rhs is unchanged):
+\begin{lstlisting}
+A=sps.lil_matrix((N,N),dtype=np.float64)
+\end{lstlisting}
+Before solving the system the matrix storage needs to be 
+converted to CSR format (see Section~\ref{MMM-sec:sparse_storage}) as follows:
+\begin{lstlisting}
+sol = sps.linalg.spsolve(sps.csr_matrix(A),b)
+\end{lstlisting}
+
+%-----------------------------------------------------
+\subsection*{Pressure normalisation}
+
+For all experiments here we impose a zero average pressure
+after solving the linear system. 
+The average pressure is then computed as follows:
+\[
+<p> 
+= \frac{1}{L_xL_y} \sum_e p_e  V_e
+= \frac{1}{L_xL_y} \sum_e p_e  h_x h_y
+= \frac{1}{L_xL_y} \sum_e p_e  \frac{L_x}{ncellx } \frac{L_y}{ncelly}
+= \sum_e p_e  \frac{1}{ncellx } \frac{1}{ncelly}
+= \frac{1}{ncell} \sum_e p_e 
+\]
+i.e.,
+\begin{lstlisting}
+p_avrg=np.sum(p)/ncell
+\end{lstlisting}
+and then
+\begin{lstlisting}
+p-=p_avrg
+\end{lstlisting}
 
 %-----------------------------------------------------
 \subsection*{Benchmarking of strain rate calculations}
@@ -423,6 +490,8 @@ and $\dot{\varepsilon}_{xy}=0$ everywhere in the domain.
 %------------------------------------------------------------------
 \subsection*{Experiment 4: Donea \& Huerta manufacture solution}
 
+This manufactured solution is described in Section~\ref{MMM-mms1}.
+
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_158/results/exp4/vel}
 \includegraphics[width=7cm]{python_codes/fieldstone_158/results/exp4/vel_error}\\
@@ -432,7 +501,14 @@ and $\dot{\varepsilon}_{xy}=0$ everywhere in the domain.
 {\captionfont Obtained on $200\times 200$ mesh.}
 \end{center} 
 
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp4/errv}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp4/errp}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp4/vrms}\\
+{\captionfont Velocity error, pressure error and $\upnu_{rms}$ as a function of resolution.}
+\end{center}
 
+We recover a second-order convergence for both velocity and pressure errors.
 
 \newpage
 %-------------------------------------
@@ -450,7 +526,10 @@ and $\eta=10$.
 \includegraphics[width=7cm]{python_codes/fieldstone_158/results/exp1/press}
 \end{center} 
 
-TODO: show free slip vs no slip
+\begin{center}
+\includegraphics[width=11cm]{python_codes/fieldstone_158/results/exp1/both}\\
+{\captionfont Velocity field: no slip b.c. (left) and free slip b.c. (right).}
+\end{center} 
 
 
 \newpage
@@ -472,6 +551,14 @@ The experiment is described in Section~\ref{MMM-ss:solkz}.
 {\captionfont Taken from \textcite{dumg11} (2011). }
 \end{center} 
 
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp2/errv}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp2/errp}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp2/vrms}\\
+{\captionfont Velocity error, pressure error and $\upnu_{rms}$ as a function of resolution.}
+\end{center}
+
+We recover a second-order convergence for both velocity and pressure errors.
 
 
 \newpage
@@ -492,14 +579,30 @@ The experiment is described in Section~\ref{MMM-ss:solcx}.
 \end{center} 
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_158/images/solcx}\\
+\includegraphics[width=10cm]{python_codes/fieldstone_158/images/solcx}\\
 {\captionfont Taken from \textcite{dumg11} (2011). }
 \end{center} 
+
+\begin{center}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_158/results/exp3/errv}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_158/results/exp3/errp}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_158/results/exp3/vrms}\\
+{\captionfont Velocity error, pressure error and $\upnu_{rms}$ as a function of resolution.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_158/images/dumg11_solcx}\\
+{\captionfont Taken from Fig. 7 of \textcite{dumg11} (2011). }
+\end{center}
+
+Due to the viscosity jump we only recover a first-order convergence for both velocity and pressure errors.
+
 
 \newpage
 %----------------------------------------
 \subsection*{Experiment 5: sinking block}
 
+This experiment is described in Section~\ref{MMM-ss:sinking_block}.
 The domain is a unit square. Fluids are such that 
 $\rho_1=1$, $\eta_1=1$ and $\rho_2=1.01$, $\eta_2=1000$.
 Boundary conditions are either free slip or no slip on all sides. 
@@ -523,18 +626,25 @@ Arithmetic averaging is used.
 {\captionfont Obtained on $320 \times 320$ mesh.}
 \end{center}
 
-We can look at the evolution of the min/max statistics as a function of resolution:
+We can look at the evolution of the min/max statistics as a function of resolution.
+Using the {\tt script\_exp5} we can run the code from resolution $9^2$ to $257^2$ 
+nodes. In many cases the sides of the block do not align with the cell boundaries 
+and this explains why the line is not monotonous in convergence:
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/stats_u}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/stats_v}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/stats_p}\\
+{\captionfont min/max values of the $u,v,p$ fields with the three different 
+viscosity averagings.}
 \end{center}
 
 We now wish to plot the $u,v,p$ fields on two lines passing through the middle 
 of the block (one vertical, one horizontal). This poses a problem since not all 
 three variables are available on such lines. I have therefore chosen to consider the 
 mid-cell projected fields and export the values on each side of each line.
+
+\newpage
 
 Horizontal line $y=1/2$:
 \begin{center}
@@ -550,6 +660,11 @@ Vertical line $x=1/2$:
 \includegraphics[width=5.7cm]{python_codes/fieldstone_158/results/exp5/profiley_p}
 \end{center} 
 
-TODO: explore effect of viscosity averaging
+Finally we can plot the root mean square velocity as a function 
+of the mesh size:
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_158/results/exp5/vrms.pdf}
+\end{center} 
+
 
 
