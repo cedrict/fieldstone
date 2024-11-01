@@ -503,10 +503,16 @@ If harmonic averaging is preferred, then for instance we would have
 \[
 \eta_{\tt w} = \frac{4}{1/\eta_{\tt sw}+1/\eta_{\tt s}+1/\eta_{\tt n} + 1/\eta_{\tt nw} }
 \]
+If geometric averaging is preferred, then for instance we would have
+\[
+\log_{10} \eta_{\tt s} = \frac{1}{4}(\log_{10} \eta_{\tt sw}
++\log_{10}\eta_{\tt w}+\log_{10}\eta_{\tt e} + \log_{10} \eta_{\tt se})
+\]
+
 
 
 %--------------------------------------------------
-\subsection{Boundary conditions}
+\subsection{Boundary conditions \label{ss:fdmstokesbc}}
 
 We start with so-called Dirichlet boundary conditions, i.e. we wish 
 to prescribe the value of either velocity components on the boundaries.
@@ -1055,7 +1061,7 @@ the resulting linear system takes the following form:
 
 
 %--------------------------------------------------
-\subsection{A remark about scaling of terms}
+\subsection{A remark about scaling of terms \label{ss:fdmstokesscaling}}
 
 The coefficients before the velocity components are all of the form 
 $\eta/h^2$ while those in front of the pressure terms are of the form 
@@ -1224,7 +1230,7 @@ depends on it.
 
 If the Particle-In-Cell technique is used the strain rate needs to 
 be computed on each particle. 
-{\color{red} how to FDM people do this?}
+{\color{red} I need to check how FDM people do this.}
 
 If it is for plotting purposes, a quick look 
 at the the discretisation of the continuity equation tells us that
@@ -1353,9 +1359,146 @@ how to interpolate fields onto particles?
 section 8.4, 8.5 of book
 
 %------------------------------------------------------------------------
-\subsection{Measure errors}
+\subsection{About measuring discretisation errors}
 
-TODO
+This subsection is borrowed from  \textcite{dumg11}.
+
+We here focus on
+measuring the order of convergence of the primitive
+variables of the discrete Stokes problem.
+
+In order to compute the discretization error, we utilize
+the $L_1$ norm, which for a scalar quantity $\phi$, is defined as follows:
+\[
+\left\| \phi \right\|_1 = \int_\Omega |\phi| \; dV
+\]
+where $\Omega$ is the model domain. For a vector quantity $\vec{v} = (u,v)$ 
+we have
+\[
+\left\| \vec{v} \right\|_1 
+= \left\| u \right\|_1 + \left\| v \right\|_1 
+= \int_\Omega (|u|+|v|) \; dV
+\]
+The pressure error is then defined as 
+\[
+\left\| e_p \right\|_1 = \left\| p - p_{mms}  \right\|_1
+\]
+where $p_{mms}$ is the pressure of the manufactured solution.
+
+The $L_1$ error for the velocity $\vec\upnu=(u,v)$, is defined via
+\[
+\left\| e_{\vec\upnu}  \right\|_1 = 
+\left\| e_{u}  \right\|_1 +\left\| e_{v}  \right\|_1 = 
+\left\| u-u_{mms}  \right\|_1 +\left\| v-v_{mms}  \right\|_1 
+\]
+where $u_{mms}$ and $v_{mms}$ are the exact values 
+of $u$ and $v$ velocity components.
+
+For numerical computations
+we approximate the above integrals via a one point
+quadrature rule (see Section~\ref{sec:quadrature}), i.e.,
+\[
+\left\| \phi \right\|_1 \simeq 
+\left\| \phi \right\|_1^h = 
+\sum_e |\phi(x_e,y_e)| \; V_e
+\]
+where $V_e$ is the representative volume for the point $(x_e,y_e)$
+in the middle of each cell $e$.
+
+For FD schemes, the appropriate volume
+to use in the equation above is the control volume associated 
+with each node. Within staggered grid FD
+schemes, the control volume associated with the $p$ and $u$, $v$ 
+degrees of freedom are different.
+
+Looking at the $4 \times 3$ mesh above, the volume associated with node 
+${\color{violet} u_{\tt 0}}$ is only $h_xh_y/2$ while the 
+volume associated with node ${\color{violet} u_{\tt 1}}$ is $h_xh_y$.
+Same for $v$ nodes on the boundaries and inside the domain. 
+Only pressure node {\it all} are associated the same volume $h_xh_y$.
+
+We define the following discrete $L_1$ norm for pressure on an $N\times N$-cell
+mesh as
+\[
+\| p \|_1 = \sum_{i=1}^N \sum_{j=1}^N |p_{i,j}| h_x h_y
+\]
+where $h_xh_y$ is the cell volume. 
+For the velocity components we have:
+\begin{eqnarray}
+\| u \|_1 
+&=& \sum_{j=1}^N |u_{1,j}| \frac{h_xh_y}{2}
++ \sum_{i=2}^N \sum_{j=1}^N |u_{i,j}| h_xh_y
++ \sum_{j=1}^N |u_{N+1,j}| \frac{h_xh_y}{2}
+\label{eq:fdmstokes-uuu}) \\
+\| v \|_1 
+&=& \sum_{i=1}^N |v_{i,1}| \frac{h_xh_y}{2}
++ \sum_{i=1}^N \sum_{j=2}^N |v_{i,j}| h_xh_y
++ \sum_{i=1}^N |v_{i,N+1}| \frac{h_xh_y}{2} 
+\label{eq:fdmstokes-vvv}) 
+\end{eqnarray}
+
+Actually, let us consider yet again our $4\times 3$ mesh.
+We then have
+\begin{eqnarray}
+\| u \|_1 
+&=& \frac{1}{2} \sum_{j=1}^N |{\color{violet}u}_{0,j}| h_xh_y
++ \sum_{j=1}^N |{\color{violet}u}_{2,j}| h_xh_y
++ \sum_{j=1}^N |{\color{violet}u}_{3,j}| h_xh_y
++ \sum_{j=1}^N |{\color{violet}u}_{4,j}| h_xh_y
++ \frac{1}{2} \sum_{j=1}^N |{\color{violet}u}_{5,j}| h_xh_y \nn\\
+&=& \sum_{j=1}^N
+\left[
+\frac12 |{\color{violet}u}_{1,j}| 
++ |{\color{violet}u}_{2,j}| 
++ |{\color{violet}u}_{3,j}| 
++ |{\color{violet}u}_{4,j}| 
++ \frac12 |{\color{violet}u}_{5,j}|
+\right] h_xh_y \nn\\
+&=& \sum_{j=1}^N
+\left[
+ \underbrace{\frac12 
+|{\color{violet}u}_{1,j}| +\frac12 |{\color{violet}u}_{2,j}|}_{{\color{violet}\tilde{u}}_{1,j}} 
++\underbrace{\frac12 
+|{\color{violet}u}_{2,j}| +\frac12 |{\color{violet}u}_{3,j}|}_{{\color{violet}\tilde{u}}_{2,j}} 
++\underbrace{\frac12 
+|{\color{violet}u}_{3,j}| +\frac12 |{\color{violet}u}_{4,j}|}_{{\color{violet}\tilde{u}}_{3,j}} 
++\underbrace{\frac12 
+|{\color{violet}u}_{4,j}| +\frac12 |{\color{violet}u}_{5,j}|}_{{\color{violet}\tilde{u}}_{4,j}} 
+\right] h_xh_y \nn\\
+&=& \sum_{e} {\color{violet} \tilde{u}}_e V_e 
+\end{eqnarray}
+where $\tilde{u}$ is the velocity computed in the middle of each 
+cell as the average of the absolute $u$ velocities on each vertical 
+side of the cell. This formulation is then much more practical 
+to implement than the one consisting of three 
+sums (see Eq.~\eqref{eq:fdmstokes-uuu})
+The same procedure can be repeated  for the vertical component 
+of the velocity.
+
+The order of convergence of the discretization
+is determined by computing the numerical solution
+defined on a sequence of uniformly refined grids,
+and computing the $L_1$ norm of $e_u$ and $e_p$ on each
+grid. Following this, a least squares regression is
+performed on the log10 of the error norm and the
+cell size $h$. We relate the convergence rate of the $L_1$
+norms for velocity and pressure errors to the order
+of convergence via
+\[
+\left\| e_u \right\|_1 \leq C \cdot h^{r_u}
+\qquad
+\left\| e_p \right\|_1 \leq C \cdot h^{r_p}
+\]
+where $h$ is the mesh size, $C$ is a constant 
+independent of the grid resolution $h$, and $r_u$, $r_p$ are the
+order of convergence for velocity and pressure
+fields, respectively. 
+
+{\color{red} write smthg about computing vrms}
+
+
+
+
 
 %------------------------------------------------------------------------
 \subsection{Non-equidistant nodes \label{ss:fdm_stokes_hvar}}
@@ -1448,5 +1591,7 @@ where
  \nn
 \end{eqnarray}
 
+What follows afterwards is not difficult: one needs to rederive the discretised mass and momentum 
+conservation equations starting from the equations above. 
 
 

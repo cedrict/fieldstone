@@ -1,5 +1,5 @@
 \begin{flushright} {\tiny {\color{gray} benchmark\_sinking\_block.tex}} \end{flushright}
-
+%----------------------------------------------------------------------------------------
 
 \vspace{1cm}
 \begin{flushright}
@@ -15,13 +15,12 @@ Pressure is normalised so that the volume average is zero.
 Gravity points downwards with $|\vec{g}|=1$.
 Profile measurements are carried out on the dashed line.
 
-
 \begin{center}
 \input{tikz/tikz_sinking_block}
 \end{center}
 
 When using \aspect{}, it is good to remember that a compositional field is used, 
-which 'lives' on the nodes of the FE grid. Partof the input file is shown here: 
+which 'lives' on the nodes of the FE grid. Part of the input file is shown here: 
 
 \begin{verbatim}
 subsection Compositional fields
@@ -47,8 +46,9 @@ end
 
 The value of the composition (and therefore 
 the density and viscosity values) on a quadrature point is obtained via interpolation 
-and averaging, which is different than the Stone codes where the density 
+and averaging, which is different than the \stone codes where the density 
 and viscosity are elemental quantities.
+
 
 \newpage
 %...................................................................
@@ -86,61 +86,6 @@ and viscosity are elemental quantities.
 \end{center}
 
 
-
-\begin{center}
-\begin{tabular}{llp{4cm}p{4cm}}
-\hline
-            &  & FS & NS \\ 
-\hline\hline
-$\min(u)$   & Stone 18 ($Q_2\times Q_1$) &  &    \\ 
-            & Stone 93 ($P_2^+\times P_{-1}$) &  &   \\
-            & Stone 76 ($Q_2\times P_{-1}$) & & \\
-            & Aspect   &  &         \\
-\hline
-$\max(u)$   & Stone 18 ($Q_2\times Q_1$) &  &    \\ 
-            & Stone 93 ($P_2^+\times P_{-1}$)&  &         \\
-            & Stone 76 ($Q_2\times P_{-1}$) & & \\
-            & Aspect   &  &         \\
-\hline
-$\min(v)$   & Stone 18 ($Q_2\times Q_1$) &  &    \\ 
-            & Stone 93 ($P_2^+\times P_{-1}$)&  &         \\
-            & Stone 76 ($Q_2\times P_{-1}$) & & \\
-            & Aspect   &           \\
-\hline
-$\max(v)$   & Stone 18 ($Q_2\times Q_1$) &  &    \\ 
-            & Stone 93 ($P_2^+\times P_{-1}$)&  &         \\
-            & Stone 76 ($Q_2\times P_{-1}$) & & \\
-            & Aspect   &   &        \\
-\hline
-$\max(|v|)$ & Stone 18 ($Q_2\times Q_1$) &  &    \\ 
-            & Stone 93 ($P_2^+\times P_{-1}$)&  &         \\
-            & Stone 76 ($Q_2\times P_{-1}$) & & \\
-            & Aspect   &   &        \\
-\hline
-$v_{rms}$   & Stone 18 ($Q_2\times Q_1$) &  &    \\ 
-            & Stone 93 ($P_2^+\times P_{-1}$)&  &         \\
-            & Stone 76 ($Q_2\times P_{-1}$) & & \\
-            & Aspect   &          \\
-\hline
-$\min(p)$   & Stone 18 ($Q_2\times Q_1$) &  &    \\ 
-            & Stone 93 ($P_2^+\times P_{-1}$)&  &         \\
-            & Stone 76 ($Q_2\times P_{-1}$) & & \\
-            & Aspect   &          \\
-\hline
-$\max(p)$   & Stone 18 ($Q_2\times Q_1$) &  &    \\ 
-            & Stone 93 ($P_2^+\times P_{-1}$)&  &         \\
-            & Stone 76 ($Q_2\times P_{-1}$) & & \\
-            & Aspect   &   &        \\
-\hline
-$|v|(0.5,0.5)$ & Stone 18 ($Q_2\times Q_1$) &  &    \\ 
-            & Stone 93 ($P_2^+\times P_{-1}$)&  &         \\
-            & Stone 76 ($Q_2\times P_{-1}$) & & \\
-            & Aspect   &   &        \\
-\hline
-\end{tabular}
-\end{center}
-
-
 Using error extrapolation (see Section~\ref{ss:extrapolation}), one can compute an 
 estimate of the resolution independent value of the vrms of maximum velocity for example:
 
@@ -153,10 +98,10 @@ estimate of the resolution independent value of the vrms of maximum velocity for
 \includegraphics[width=5cm]{images/sinking_block/maxvel_FS_error}
 \end{center}
 
-We find that the rates are near unity.
+We find that the convergence rates are near unity.
 
 
-TODO: write material model in ASPECT to bypass compositions! 
+
 
 
 
