@@ -1,26 +1,42 @@
 ###################################################
 set term pdf enhanced font "Times,12pt"
 set grid
-set pointsize .4
+set pointsize .2
 set xlabel 'h'
+set key outside
+set log x
 
 set ylabel 'min/max u'
 set output 'stats_u.pdf'
 plot[][]\
-'sinker.ascii' u (1./$1):2 w lp notitle,\
-'sinker.ascii' u (1./$1):3 w lp notitle,\
+'sinker_avrg1.ascii' u (1./$1):2 w lp lw 0.5 lt 1 t 'avrg=1',\
+'sinker_avrg1.ascii' u (1./$1):3 w lp lw 0.5 lt 1 notitle,\
+'sinker_avrg2.ascii' u (1./$1):2 w lp lw 0.5 lt 2 t 'avrg=2',\
+'sinker_avrg2.ascii' u (1./$1):3 w lp lw 0.5 lt 2 notitle,\
+'sinker_avrg3.ascii' u (1./$1):2 w lp lw 0.5 lt 3 t 'avrg=3',\
+'sinker_avrg3.ascii' u (1./$1):3 w lp lw 0.5 lt 3 notitle,\
  
 set ylabel 'min/max v'
 set output 'stats_v.pdf'
 plot[][]\
-'sinker.ascii' u (1./$1):4 w lp notitle,\
-'sinker.ascii' u (1./$1):5 w lp notitle,\
+'sinker_avrg1.ascii' u (1./$1):4 w lp lw 0.5 lt 1 t 'avrg=1',\
+'sinker_avrg1.ascii' u (1./$1):5 w lp lw 0.5 lt 1 notitle,\
+'sinker_avrg2.ascii' u (1./$1):4 w lp lw 0.5 lt 2 t 'avrg=2',\
+'sinker_avrg2.ascii' u (1./$1):5 w lp lw 0.5 lt 2 notitle,\
+'sinker_avrg3.ascii' u (1./$1):4 w lp lw 0.5 lt 3 t 'avrg=3',\
+'sinker_avrg3.ascii' u (1./$1):5 w lp lw 0.5 lt 3 notitle,\
 
 set ylabel 'min/max p'
 set output 'stats_p.pdf'
 plot[][]\
-'sinker.ascii' u (1./$1):6 w lp notitle,\
-'sinker.ascii' u (1./$1):7 w lp notitle,\
+'sinker_avrg1.ascii' u (1./$1):6 w lp lw 0.5 lt 1 t 'avrg=1',\
+'sinker_avrg1.ascii' u (1./$1):7 w lp lw 0.5 lt 1 notitle,\
+'sinker_avrg2.ascii' u (1./$1):6 w lp lw 0.5 lt 2 t 'avrg=2',\
+'sinker_avrg2.ascii' u (1./$1):7 w lp lw 0.5 lt 2 notitle,\
+'sinker_avrg3.ascii' u (1./$1):6 w lp lw 0.5 lt 3 t 'avrg=3',\
+'sinker_avrg3.ascii' u (1./$1):7 w lp lw 0.5 lt 3 notitle,\
+
+unset log x
 
 ###################################################
 reset
@@ -44,6 +60,8 @@ plot[][]\
 'profiley_256.ascii' u 2:3 t 'ncellx=256',\
 'profiley_320.ascii' u 2:3 t 'ncellx=320',\
 'profiley_384.ascii' u 2:3 t 'ncellx=384',\
+'profiley_448.ascii' u 2:3 t 'ncellx=448',\
+'profiley_512.ascii' u 2:3 t 'ncellx=512',\
 
 set ylabel 'v'
 set output 'profiley_v.pdf'
@@ -55,6 +73,8 @@ plot[][]\
 'profiley_256.ascii' u 2:4 t 'ncellx=256',\
 'profiley_320.ascii' u 2:4 t 'ncellx=320',\
 'profiley_384.ascii' u 2:4 t 'ncellx=384',\
+'profiley_448.ascii' u 2:4 t 'ncellx=448',\
+'profiley_512.ascii' u 2:4 t 'ncellx=512',\
 '../../../../images/sinking_block/FS/ASPECT/q2q1/output_stokes_none_10/point_values.txt' u 3:5 w l lw .5 lt -1 t 'ASPECT, lvl 10',\
 
 set ylabel 'p'
@@ -67,6 +87,8 @@ plot[][]\
 'profiley_256.ascii' u 2:5 t 'ncellx=256',\
 'profiley_320.ascii' u 2:5 t 'ncellx=320',\
 'profiley_384.ascii' u 2:5 t 'ncellx=384',\
+'profiley_448.ascii' u 2:5 t 'ncellx=448',\
+'profiley_512.ascii' u 2:5 t 'ncellx=512',\
 
 #############################################
 set xlabel 'x'
@@ -81,6 +103,8 @@ plot[][]\
 'profilex_256.ascii' u 1:3 t 'ncellx=256',\
 'profilex_320.ascii' u 1:3 t 'ncellx=320',\
 'profilex_384.ascii' u 1:3 t 'ncellx=384',\
+'profilex_448.ascii' u 1:3 t 'ncellx=448',\
+'profilex_512.ascii' u 1:3 t 'ncellx=512',\
 
 set ylabel 'v'
 set output 'profilex_v.pdf'
@@ -92,6 +116,8 @@ plot[][]\
 'profilex_256.ascii' u 1:4 t 'ncellx=256',\
 'profilex_320.ascii' u 1:4 t 'ncellx=320',\
 'profilex_384.ascii' u 1:4 t 'ncellx=384',\
+'profilex_448.ascii' u 1:4 t 'ncellx=448',\
+'profilex_512.ascii' u 1:4 t 'ncellx=512',\
 
 set ylabel 'p'
 set output 'profilex_p.pdf'
@@ -103,11 +129,20 @@ plot[][]\
 'profilex_256.ascii' u 1:5 t 'ncellx=256',\
 'profilex_320.ascii' u 1:5 t 'ncellx=320',\
 'profilex_384.ascii' u 1:5 t 'ncellx=384',\
+'profilex_448.ascii' u 1:5 t 'ncellx=448',\
+'profilex_512.ascii' u 1:5 t 'ncellx=512',\
 
+#############################################
  
-
- 
-
+set log x
+set output 'vrms.pdf'
+set xlabel 'h'
+set ylabel 'v_{rms}'
+plot[][]\
+'vrms_avrg1.ascii' u (1./$2):4 w lp t 'avrg=1',\
+'vrms_avrg2.ascii' u (1./$2):4 w lp t 'avrg=2',\
+'vrms_avrg3.ascii' u (1./$2):4 w lp t 'avrg=3',\
+5.65e-06 w l lt -1 dt 2 t 'ASPECT' 
  
 
  
