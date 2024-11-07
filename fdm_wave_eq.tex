@@ -1,0 +1,162 @@
+
+\begin{flushright} {\tiny {\color{gray} \tt fdm\_wave\_eq.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We start with the one-dimensional wave equation:
+\[
+u_{tt}=c^2 u_{xx}  \qquad x\in[0,L], \quad t\in[0,T]
+\]
+which is supplemented by the initial conditions
+\begin{eqnarray}
+u(x,0) &=& f(x) \qquad  \forall x\\
+u_t(x,0) &=& g(x) \qquad  \forall x
+\end{eqnarray}
+and the boundary conditions
+\begin{eqnarray}
+u(0,t) &=& 0 \qquad  \forall t\\
+u_t(L,t) &=& 0 \qquad  \forall t \label{eq:fdm_wave_bc}
+\end{eqnarray}
+
+
+We then proceed to discretise the space domain with $nnx$ equidistant nodes (forming $ncellx=nnx-1$ cells)
+at location $x_i$, $i=1,...nnx$ and the time domain with $N_t$ equidistant nodes at times
+$t_i$, $i=1,...N_t$.
+We define $h=L/ncellx$ and $\delta\! t=T/(N_t-1)$
+
+We are looking for the solution $u(x,t)$ at all mesh points in space in time and denote by 
+$u_i^k$ the discrete solution at location $x_i$ and time $t_k$.
+
+Following Section~\ref{XYZ} the second-order derivatives will be replaced by central differences 
+stencils, i.e. for a function $f_{tt}$ we would write
+\[
+\frac{\partial^2  f}{\partial t^2} \simeq \frac{ f^{k+1} -2f^{k} +f^{k-1}  }{\delta\! t^2}
+\]
+
+%-----------------------------------
+\subsection{Simple explicit method}
+\label{ss:fdmwavess}
+
+The first idea is just to use central differences for both time and space derivatives,
+while assuming that the rhs term is taken at time $t_k$:
+i.e.
+\[
+\frac{ u_i^{k+1} -2u_i^{k} +u_i^{k-1}  }{\delta\! t^2} = 
+c^2
+\frac{ u_{i+1}^k -2u_{i}^k +u_{i-1}^k  }{h^2} 
+\]
+We then define $\alpha = c\; \delta\! t / h$, so that we can write the equation above as
+\begin{equation}
+u_i^{k+1} -2u_i^{k} +u_i^{k-1}  = \alpha^2 (u_{i+1}^k -2u_{i}^k +u_{i-1}^k )
+\label{eq:fdmwave1}
+\end{equation}
+or,
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+u_i^{k+1} = - u_i^{k-1} +2(1-\alpha^2) u_{i}^k + \alpha^2 (u_{i+1}^k +u_{i-1}^k ) 
+\label{eq:wavee3}
+\end{equation}
+\end{mdframed}
+Actually the parameter $\alpha$ is important and is often called $C_{CFL}$ as it is called the 
+Courant–Friedrichs–Lewy number.
+
+
+Of course, we need to be careful about the initial conditions. Indeed, looking 
+at the left hand side of Eq.~\eqref{eq:fdmwave1}, we see that we have three values of $u_i$
+at three consecutive different times.
+In other words, in order to compute $u_i^{k+1}$ we need two previous values 
+of $u_i$, i.e. $u_i^{k-1}$ and $u_{i}^k$. 
+
+The relationship above can be written for any node inside the domain but not for those on the 
+boundaries ($x=0,L$). However this is not a problem since we need not to write such an equation
+as the values of $u$ at the extremities of the domain are given by the boundary conditions of 
+Eq.~\ref{eq:fdm_wave_bc}.
+
+The initial condition on $u$ is trivial to implement. But quid of $u_t$? In this case we would 
+write a centered difference as 
+\[
+g(x_i,t=0)=\left. \frac{\partial u}{\partial t} \right|_{i}^0 \simeq \frac{u_i^1-u_i^{-1}}{2 \delta \! t} 
+\]
+so that 
+\[
+u_i^{-1} = u_i^1 - 2 \delta \! t g(x_i,t=0)
+\]
+and then, when inserted in Eq.~\eqref{eq:wavee3}, we get for $k=0$
+\begin{eqnarray}
+u_i^{1} 
+&=& - u_i^{-1} +2(1-\alpha^2) u_{i}^0 + \alpha^2 (u_{i+1}^0 +u_{i-1}^0)  \nn\\
+&=& - (u_i^1 - 2 \delta \! t g(x_i,t=0))  +2(1-\alpha^2) u_{i}^0 + \alpha^2 (u_{i+1}^0 +u_{i-1}^0)  \nn\\
+2 u_i^1 &=& 2 \delta \! t g(x_i,t=0)  +2(1-\alpha^2) u_{i}^0 + \alpha^2 (u_{i+1}^0 +u_{i-1}^0)  \nn\\
+u_i^1 &=&  \delta \! t g(x_i,0)  + (1-\alpha^2) f(x_{i},0) + \frac{\alpha^2}{2} (f(x_{i+1},0) + f(x_{i-1},0) \nn\\
+\end{eqnarray}
+
+
+
+FIG 1 of Langtangen
+
+%-----------------------------------
+\subsection{Implicit method(s)}
+
+We could overcome the problem of conditional stability by 
+introducing an implicit scheme as follows:
+\[
+\frac{ u_i^{k+1} -2u_i^{k} +u_i^{k-1}  }{\delta\! t^2} = 
+c^2
+\frac{ u_{i+1}^{k+1} -2u_{i}^{k+1} +u_{i-1}^{k+1}  }{h^2} 
+\]
+which leads to 
+\[
+u_i^{k+1} -2u_i^{k} +u_i^{k-1}  = 
+\alpha ^2 ( u_{i+1}^{k+1} -2u_{i}^{k+1} +u_{i-1}^{k+1} )
+\]
+
+
+
+\[
+\frac{ u_i^{k+1} -2u_i^{k} +u_i^{k-1}  }{\delta\! t^2} = 
+c^2 \frac12 \left(
+\frac{ u_{i+1}^{k+1} -2u_{i}^{k+1} +u_{i-1}^{k+1}  }{h^2} 
++
+\frac{ u_{i+1}^k -2u_{i}^k +u_{i-1}^k  }{h^2} 
+\right)
+\]
+
+
+\[
+u_i^{k+1} -2u_i^{k} +u_i^{k-1} 
+=
+\frac{\alpha^2}{2} \left(
+u_{i+1}^{k+1} -2u_{i}^{k+1} +u_{i-1}^{k+1} 
++
+u_{i+1}^k -2u_{i}^k +u_{i-1}^k 
+\right)
+\]
+
+
+%-------------------------------------------------------------
+\subsection{Reflecting boundaries}
+
+%-------------------------------------------------------------
+\subsection{Generalisation: variable wave velocity}
+
+%-------------------------------------------------------------
+\subsection{Generalisation: damping}
+
+%-------------------------------------------------------------
+\subsection{Periodic boundary conditions}
+
+%---------------------------------------------------------------
+\subsection{(von Neumann) Stability analysis}
+
+%---------------------------------------------------------------
+\subsection{Numerical dispersion relation}
+
+%---------------------------------------------------------------
+\subsection{Generalisation: in 2D and 3D}
+
+
+
+
+
+
+
+

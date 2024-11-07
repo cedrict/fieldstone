@@ -137,10 +137,9 @@ It can be shown that the following layout of nodes is necessary
 if the FDM is to be successful\footnote{In other words
 any attempt where $u$, $v$, $p$ would be on the corner nodes is doomed.}:
 Note that in what follows we consider a mesh where all nodes are equidistant.
-This is not a requirement of the method but it allows for more compact notations
-\footnote{We will revisit this topic in Section~\ref{ss:fdm_stokes_hvar}.}. 
+This is not a requirement of the method but it allows for more compact 
+notations\footnote{We will revisit this topic in Section~\ref{ss:fdm_stokes_hvar}.}. 
 
-We find a similar staggered grid figure in Gerya's book:
 
 \input{tikz/tikz_staggered2D}
 
@@ -167,6 +166,7 @@ unknowns! This is nearly always the case with FEM.
 This means that once we have discretised the Stokes equations we will need
 as many (i.e. $N$) equations in order to obtain a linear system with a solution.
 
+We find a similar staggered grid figure in Gerya's book:
 
 \begin{center}
 \includegraphics[width=6cm]{images/fdm/gerya_A}\\
