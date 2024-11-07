@@ -1,10 +1,23 @@
-\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/aspect_logo}
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/triangle}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/publication}
 
-%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_120/keywords}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_120/text.tex}} \end{flushright}
+
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/template_keywords.key}
+
+\par\noindent\rule{\textwidth}{0.4pt}
 
 \begin{center}
-\inpython~Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_120}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_120}}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -12,6 +25,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \index{stopics}{Donea \& Huerta mms}
+
+This \stone was used to produce all the results in \textcite{thba24} (Subm.).
+
+%======================
+\section*{Philosophy}
 
 The rationale behind this stone is as follows:
 \begin{itemize}
@@ -30,16 +48,18 @@ So far the boundary conditions of this exercise are:
 \item No stabilised formulations, i.e. no ${\bm Q}_1\times Q_1$-stab, 
       ${\bm Q}_1\times P_0$-stab, or $P_1\times P_1$-stab
 \item No $P_1isoP_2$ or similar spaces
+\item all triangles and quadrilaterals have straight edges.
 \end{itemize}
 \item Run a suite of manufactured solution benchmarks with all 
 these finite element pairs and assess their accuracy.
-\item show $L_2$ errors ($v$, $p$, $div(\vec\upnu)$) as function of $h$ and the 
+\item show $L_2$ errors ($v$, $p$, div$(\vec\upnu)$) as function of $h$ and the 
 total number of dofs (as in \textcite{cakp15} (2015))
 \end{itemize}
 
 \begin{remark}
 {\bf 1)} For reasons explained in \textcite{bocg12} (2012) I use 
-a symmetric grid ('SYMM') for triangular elements:
+a symmetric grid ('SYMM') for triangular elements\footnote{See also remark 
+of section 20.4.1 in \textcite{tesk12} (2012)} :
 \begin{center} 
 \includegraphics[width=10cm]{python_codes/fieldstone_120/images/bocg12}\\
 {\captionfont Taken from \textcite{bocg12} (2012).}
@@ -222,7 +242,8 @@ if space=='Chen':   return 5
 
 
 \item \lstinline{mapping(space)}: returns the type of mapping, i.e. $Q_1$ or $P_1$.
-\item \lstinline{visualise_nodes(space)}: generates a png file with the support nodes and the shape of the reference element.
+\item \lstinline{visualise_nodes(space)}: generates a pdf file with the support nodes 
+and the shape of the reference element.
 \item \lstinline{visualise_basis_functions(space)}: is an attempt at making a colormap of the basis functions.
 \end{itemize}
 
@@ -235,8 +256,10 @@ their coordinates and associated weights. If the element is a quadrilateral then
 If it is a triangle then it contains \lstinline{nqpts} quadrature points in total. 
 In that case only 3,6,7,12,13,16 are authorized.   
 \item \lstinline{qcoords_1D(nqpts)}: returns the coordinates of the \lstinline{nqpts} quadrature points between -1 and 1.
+Only used for quadrilateral elements.
 \item \lstinline{qweights_1D(nqpts)}:returns the weights of the \lstinline{nqpts} quadrature points.
-\item \lstinline{visualise_quadrature_points(space,nqpts)}: generates a png file.
+Only used for quadrilateral elements.
+\item \lstinline{visualise_quadrature_points(space,nqpts)}: generates a pdf file.
 \end{itemize}
 
 
@@ -247,9 +270,12 @@ In that case only 3,6,7,12,13,16 are authorized.
 $\times$\lstinline{nely} elements in the domain $[0,L_x]\times[0,L_y]$. It returns the total 
 number of nodes \lstinline{N}, the number of elements \lstinline{nel}, the coordinates of all the 
 nodes in \lstinline{x,y} arrays and the connectivity array \lstinline{icon}.
-There is currently an internal parameter \lstinline{mtype} which splits elements in 2 triangles 
-if equal to zero and in 4 triagles if equal to 2.
- 
+There is an internal parameter \lstinline{mtype} which splits elements in 2 triangles 
+if equal to zero, in 4 triangles if equal to 2, in 6 triangles in equal to 3.\\
+\lstinline|mtype=0| can be used in combination with  $P_0$, $P_1$, $P_{-1}$, $P_1^+$, $P_1+P_0$ or $P_2$.\\
+\lstinline|mtype=2| can be used in combination with  $P_0$, $P_1$.\\ 
+\lstinline|mtype=3| can be used in combination with  $P_1$. 
+
 
 \item \lstinline{randomize_background_mesh(x1,y1,hx,hy,N1,Lx,Ly)}: this adds a random perturbation
 to the coordinates of all the nodes of the background mesh inside the domain (i.e. not on the boundary!). 
@@ -275,7 +301,7 @@ for the mapping.
 \item \lstinline{assemble_f(f_el,rhs,iconV,mV,ndofV,iel)}:
 \item \lstinline{apply_bc(K_el,G_el,f_el,h_el,bc_val,bc_fix,iconV,mV,ndofV,iel)}:
 \item \lstinline{visualise_with_tikz(x,y,space)}: generates a .tex file containing 
-a tikz drawing of the nodes layout. Only works for 3x3 meshes. 
+a tikz drawing of the nodes layout. Only works for $3\times 2$ meshes. 
 \end{itemize}
 
 \end{itemize}
@@ -284,8 +310,6 @@ a tikz drawing of the nodes layout. Only works for 3x3 meshes.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{tester \#1}
-
-
 
 {\pythonfile tester1.py}: checks that each basis function is 1 on its support node and zero at all other nodes.
 
@@ -551,9 +575,8 @@ node 4 : [0.25 0.25 0.25 0.25 1.  ]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{tester \#2}
 
-
 {\pythonfile tester2.py}: computes the area of each element by means of numerical 
-quadrature. The domain is 3x2 and there are 3x2 elements so that we expect 1 for 
+quadrature. The domain is $3 \times 2$ and there are $3 \times 2$ elements so that we expect 1 for 
 quadrilateral elements and 0.5 for triangular elements.  
 
 \begin{tiny}
@@ -1330,6 +1353,10 @@ These figures are obtained by running \lstinline{tester6.py}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{tester \#7: zero-th order consistency}
 
+It computes the sume $\sum_i \bN_i(x,y)$ at all quadrature points. 
+We expect 1 (down to machine precision). If the value is not 1 it 
+writes 'problem'.
+
 \begin{tiny}
 \begin{verbatim}
 =========================================
@@ -1412,12 +1439,50 @@ nqel= 7
 \end{verbatim}
 \end{tiny}
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{tester \#8: }
 
 
-
-
-
-
+\begin{tiny}
+\begin{verbatim}
+**********************************************************
+QUADRILATERALS
+**********************************************************
+nqpts= 1 | sum(weights) 1D= 2.0
+nqpts= 1 | sum(weights) 2D= 4.0
+nqpts= 2 | sum(weights) 1D= 2.0
+nqpts= 2 | sum(weights) 2D= 4.0
+nqpts= 3 | sum(weights) 1D= 2.0
+nqpts= 3 | sum(weights) 2D= 4.0
+nqpts= 4 | sum(weights) 1D= 2.0
+nqpts= 4 | sum(weights) 2D= 4.0
+nqpts= 5 | sum(weights) 1D= 2.0
+nqpts= 5 | sum(weights) 2D= 4.0
+nqpts= 6 | sum(weights) 1D= 2.0
+nqpts= 6 | sum(weights) 2D= 4.0
+nqpts= 7 | sum(weights) 1D= 2.0 
+nqpts= 7 | sum(weights) 2D= 4.0 
+nqpts= 8 | sum(weights) 1D= 2.0
+nqpts= 8 | sum(weights) 2D= 4.0
+nqpts= 9 | sum(weights) 1D= 2.0
+nqpts= 9 | sum(weights) 2D= 4.0 
+nqpts= 10 | sum(weights) 1D= 2.0
+nqpts= 10 | sum(weights) 2D= 4.0
+**********************************************************
+TRIANGLES
+**********************************************************
+nqpts= 1 | sum(weights) 2D= 0.5
+nqpts= 3 | sum(weights) 2D= 0.5
+nqpts= 6 | sum(weights) 2D= 0.5
+nqpts= 7 | sum(weights) 2D= 0.5
+nqpts= 12 | sum(weights) 2D= 0.5
+nqpts= 13 | sum(weights) 2D= 0.5
+nqpts= 16 | sum(weights) 2D= 0.5
+**********************************************************
+\end{verbatim}
+\end{tiny}
 
 
 
@@ -1450,19 +1515,15 @@ if experiment=='solkz'          : import mms_solkz as mms
 if experiment=='solvi'          : import mms_solvi as mms
 if experiment=='RTwave'         : import mms_RTwave as mms
 if experiment=='jokn16'         : import mms_jokn16 as mms
+if experiment=='plin'           : import mms_plin as mms
+if experiment=='lire19'         : import mms_lire19 as mms
 \end{lstlisting}
 
 In the main folder there are many scripts that allow us to run the code
 for a wide range of parameter values (like resolution, element type, ...)
 
-There are several scripts specifically written for 
-\textcite{thba24} (In prep.).
-\begin{itemize}
-\item {\tt script\_paper\_dh}: Donea \& Huerta benchmark.
-Elements are 3, 4, 5, 9, 15, 18. 
-Resolutions are nelx=20, 30, 40, 50, 60, 70, 80, 90, 100.
-This is carried out for both structured and unstructured meshes.
-\end{itemize}
+There are several bash scripts that run various series of benchmarks
+for many resolutions and/or number of quadrature points, boundary conditions, meshes, .... 
 
 \begin{verbatim}
 -rwxrwxr-x 1 cedrict cedrict 1,5K nov 27  2023 script_paper_bocg12_structured
@@ -1990,13 +2051,13 @@ Resolutions nelx=16, 32, 64, 128 are chosen so that element boundaries align wit
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_16}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_32}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_64}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_128}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_16}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_32}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_64}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_128}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_32}\\
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_64}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_128}\\
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_16}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_32}\\
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_64}
+%\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_128}
 \end{center}
 
 
@@ -2330,7 +2391,7 @@ marginally better for incenter than barycenter.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results - Linke \& Rebholz mms }
 
-In the original paper the authors consider the time-dependent Stokes equations:
+In the original paper \cite{lire19} the authors consider the time-dependent Stokes equations:
 \[
 \vec\upnu_t - \nu \Delta \vec\upnu + \vec\nabla p = \vec f 
 \]
@@ -2341,7 +2402,7 @@ Since I do not wish to deal with the time derivative I set it to zero (steady st
 and I also set $t=0$ in their proposed analytical velocity field so that we get
 
 \[
-\vec\upnu (x,y,t) = 
+\vec\upnu (x,y) = 
 \left(
 \begin{array}{c}
 \cos y \\
@@ -2350,8 +2411,9 @@ and I also set $t=0$ in their proposed analytical velocity field so that we get
 \right)
 \]
 \[
-p(x,y,t)=\sin(x+y)
+p(x,y)=\sin(x+y)
 \]
+In this case the rhs force is given by 
 
 
 
