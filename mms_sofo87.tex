@@ -1,0 +1,42 @@
+\begin{flushright} {\tiny {\color{gray} mms\_sofo87.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is presented in \textcite{sofo87} (1987). The velocity field is given by
+\[
+\vec\upnu(x,y) = (x^3,-3x^2y) 
+\]
+and the pressure is 
+\[
+p(x,y)=x^3+y^3-1/2
+\]
+so that, assuming that the viscosity is 1, the body force is:
+\[
+\vec{b} = (-6x+3x^2,6y+3y^2)
+\] 
+Note that I have added the $-1/2$ term to the pressure so that $\int\int p dxdy=0$.
+The root mean square velocity over a unit square is 
+\[
+\upnu_{rms} 
+= \sqrt{ \int_0^1\int_0^1 (u^2+v^2) dx dy }
+= \sqrt{ \int_0^1\int_0^1 (x^6 + 9 x^4 y^2) dx dy }
+= \sqrt{ \frac{1}{7} + 9 \frac{1}{5} \frac{1}{3}  } 
+= \sqrt{ \frac{26}{35} }
+\simeq 0.861892 
+\]
+The strain rate tensor terms are
+\begin{eqnarray}
+\dot{\varepsilon}_{xx} &=& 3x^2  \nonumber\\
+\dot{\varepsilon}_{yy} &=& -3x^2 \nonumber\\ 
+\dot{\varepsilon}_{xy} &=& -3xy  \nn
+\end{eqnarray}
+
+Another one mentioned in the paper:
+\[
+\vec\upnu(x,y) =(x^2,-2xy)
+\qquad
+p(x,y)=0
+\qquad
+\vec{b}=(-2,0) 
+\]
+
+

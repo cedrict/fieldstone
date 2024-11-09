@@ -1,0 +1,95 @@
+\begin{flushright} {\tiny {\color{gray} mms\_buha06.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This is presented in \textcite{buha06} (2006) and \textcite{buha07} (2007) 
+and apparently originates in \textcite{nosi98} (1998). 
+
+The velocity and pressure fields are given in the unit square by
+\begin{eqnarray}
+u(x,y) &=& 20xy^3 \nn\\
+v(x,y) &=& 5x^4-5y^4 \nn\\
+p(x,y) &=& 60x^2y -20y^3 -5
+\end{eqnarray}
+with
+\begin{eqnarray}
+\frac{\partial u }{\partial x} &=& 20y^3 \nn\\
+\frac{\partial u }{\partial y} &=& 60xy^2 \nn\\
+\frac{\partial v }{\partial x} &=& 20x^3 \nn\\
+\frac{\partial v }{\partial y} &=& -20y^3 
+\end{eqnarray}
+
+\begin{center}
+\includegraphics[width=8cm]{images/mms/buha06}\\
+{\captionfont Taken from \textcite{buha06}. Left is velocity, right is pressure.}
+\end{center}
+
+The flow is incompressible:
+\[
+div (\vec\upnu) = 
+\frac{\partial u }{\partial x}
++
+\frac{\partial v }{\partial y}
+= 0
+\]
+Then the strain rate tensor is given by 
+\[
+\dot{\bm\varepsilon} (\vec\upnu)
+=
+\left(
+\begin{array}{cc}
+20y^3 & 30xy^2+10x^3 \\
+30xy^2+10x^3 & -20y^3
+\end{array}
+\right)
+\]
+%and the pressure gradient is
+%\begin{eqnarray}
+%\frac{\partial p}{\partial x} &=& 120xy  \nn\\
+%\frac{\partial p}{\partial y} &=& 60x^2-60y^2
+%\end{eqnarray}
+Assuming the viscosity $\eta=1$, then the full stress tensor is 
+given by
+\begin{eqnarray}
+{\bm\sigma} 
+&=& -p {\bm 1} + 2 \eta \dot{\bm\varepsilon} (\vec\upnu) \nn\\
+&=&
+\left(
+\begin{array}{cc}
+-60x^2y +20y^3 +5 + 40y^3 & 60xy^2+20x^3 \\
+60xy^2+20x^3 & -60x^2y +20y^3 +5 -40y^3
+\end{array}
+\right) \nn\\
+&=&
+\left(
+\begin{array}{cc}
+-60x^2y +60y^3 +5  & 60xy^2+20x^3 \\
+60xy^2+20x^3 & -60x^2y -20y^3 +5 
+\end{array}
+\right)
+\end{eqnarray}
+finally 
+\[
+\vec{b} 
+= -\vec\nabla\cdot \bm\sigma
+= 
+\left(
+\begin{array}{c}
+-120xy + 120xy \\
+60y^2 + 60x^2 -60x^2 -60y^2
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+0 \\
+0
+\end{array}
+\right)
+\]
+This is particularly convenient...
+
+It is implemented in \stone 14, 18 and 115.
+
+
+
+

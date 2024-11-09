@@ -1,0 +1,51 @@
+\begin{flushright} {\tiny {\color{gray} \tt mms\_db3d.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This benchmark begins by postulating a polynomial solution to the 3D Stokes equation \cite{dobo04}:
+\begin{equation}
+\vec{\upnu}
+=
+\left(
+\begin{array}{c}
+x+x^2+xy+x^3y \\
+y + xy + y^2 + x^2 y^2\\
+-2z - 3xz - 3yz - 5x^2 yz
+\end{array}
+\right)
+\label{eqbur}
+\end{equation}
+and
+\begin{equation}
+p = xyz + x^3 y^3z - 5/32
+\end{equation}
+While it is then trivial to verify that this velocity field is divergence-free (see here under),  
+the corresponding body force of the Stokes equation can be computed by  
+inserting this solution into the momentum equation with a given viscosity $\eta(x,y,z)$
+(constant or position/velocity/strain rate dependent). 
+The domain is a unit cube and velocity boundary conditions 
+simply use Eq. (\ref{eqbur}). Note that the pressure fulfils 
+\[
+\int_\Omega p(x,y,z) dV = 0.  
+\]
+Following \cite{busa13}, the viscosity is given by the smoothly varying function
+\begin{equation}
+\eta(x,y,z) = exp(1 - \beta(x(1 - x) + y(1 - y) + z(1 - z)))
+\end{equation}
+Choosing $\beta=0$ yields a constant velocity $\eta=e^1$ (and greatly simplifies the right-hand side).
+One can easily show that the ratio of viscosities $\eta^\star$
+in the system follows $\eta^\star=\exp(-3\beta/4)$ so that choosing $\beta=10$ yields
+$\eta^\star\simeq 1808$ and $\beta=20$ yields $\eta^\star\simeq 3.269\times10^6$.
+
+The exact form of the rhs is carried out in \stone~17.
+
+Let us now compute the root mean square velocity:
+\begin{eqnarray}
+\int_\Omega u^2 dx dy dz &=& \int_{0}^{+1}\int_{0}^{+1}\int_{0}^{+1} (x+x^2+xy+x^3y )^2 dx dy dz = 2867/1260 \\
+\int_\Omega v^2 dx dy dz &=& \int_{0}^{+1}\int_{0}^{+1}\int_{0}^{+1} (y + xy + y^2 + x^2 y^2 )^2 dx dy dz = 3947/1800   \\
+\int_\Omega w^2 dx dy dz &=& \int_{0}^{+1}\int_{0}^{+1}\int_{0}^{+1} (-2z - 3xz - 3yz - 5x^2 yz )^2 dx dy dz = 463/36   
+\end{eqnarray}
+then
+\[
+\upnu_{rms}=\sqrt{ 2867/1260 + 3947/1800 + 463/36  } \simeq 4.1628459
+\]
+

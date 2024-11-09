@@ -2,8 +2,8 @@
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The abstract of the original publication by Blankenbach \etal (1989) \cite{blbc89} reads:
-\begin{center}
-{\it 
+\begin{displayquote}
+{\color{darkgray}
 We have carried out a comparison study for a set of benchmark problems 
 which are relevant for convection in the Earth's mantle. The cases comprise 
 steady isoviscous convection, variable viscosity convection and time-dependent 
@@ -13,7 +13,7 @@ are finite-difference, finite-element and spectral methods. In a synthesis
 we give best estimates of the `true' solutions and ranges of uncertainty. We
 recommend these data for the validation of convection codes in the future.
 }
-\end{center}
+\end{displayquote}
 
 The temperature is fixed to zero on top and to $\Delta T$ at the bottom, 
 with reflecting symmetry at the sidewalls (i.e. $\partial_x T=0$) 
@@ -23,7 +23,7 @@ Free-slip conditions are implemented on all boundaries.
 The Rayleigh number is given by
 \[
 \Ranb = \frac{\alpha g_y \Delta T h^3 }{\kappa \nu}
-=\frac{\alpha g_y \Delta T h^3 \rho^2 c_p}{k \mu}
+=\frac{\alpha g_y \Delta T h^3 \rho^2 c_p}{k \eta}
 \]
 The initial temperature field is given by 
 \[
@@ -56,6 +56,11 @@ b) Results with adaptive mesh refinement. The number of degrees of freedom (\# D
 each finest mesh size $h$ varies between time steps; 
 the indicated numbers provide a typical range.
 Note that these are obtained for $\Ranb=216,000$.}
+\end{center}
+
+In \textcite{ildk24} (2024) we find:
+\begin{center}
+\includegraphics[width=13cm]{images/benchmark_blbc89/ildk24}
 \end{center}
 
 
@@ -126,6 +131,7 @@ obtained with \elefant on a $200\times 200$ grid. King (2009) results on 200x200
 \textcite{trbs21} (2021),
 \textcite{dakg22} (2002),
 \textcite{siwi20} (2020),
+\textcite{ildk24} (2024),
 \stone 3.
 
 

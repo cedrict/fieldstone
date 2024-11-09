@@ -1,0 +1,74 @@
+\begin{flushright} {\tiny {\color{gray} mms\_kovasnay.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This flow was published by L.I.G. Kovasznay in 1948 \cite{kova48}. 
+This paper presents an exact two-dimensional solution of the Navier-Stokes equations 
+with a periodicity in the vertical direction, 
+gives an analytical solution to the steady-state Navier-Stokes equations that is similar
+which is a flow-field behind a periodic array of cylinders.
+
+\begin{eqnarray}
+u(x,y)&=&1-\exp(\lambda x) \cos (2\pi y)\\
+v(x,y)&=&\frac{\lambda}{2\pi} \exp(\lambda x) \sin (2 \pi y)\\
+p(x,y) &=& \frac{1}{2}(1-\exp (2\lambda x)) \\
+\lambda&=&\frac{Re}{2}-\sqrt{\frac{Re^2}{4}+4\pi^2} 
+\end{eqnarray}
+
+Following step-55 of deal.II \footnote{\url{https://www.dealii.org/current/doxygen/deal.II/step_55.html}}
+we have to 'cheat' here since we are not solving the non-linear Navier-Stokes equations, but the linear Stokes system without convective term. Therefore, to recreate the exact same solution
+we move the convective term into the right-hand side.
+
+The analytical solution is prescribed left and right, while free/no (??) slip is prescribed at top and bottom.
+
+Velocity and pressure solution as implemented in step-55:
+\begin{lstlisting}
+const double pi2 = pi*pi;
+
+u = -exp(x*(-sqrt(25.0 + 4*pi2) + 5.0))*cos(2*y*pi) + 1
+
+v = (1.0L/2.0L)*(-sqrt(25.0 + 4*pi2) + 5.0)*
+    exp(x*(-sqrt(25.0 + 4*pi2) + 5.0))*sin(2*y*pi)/pi
+
+p = -1.0L/2.0L*exp(x*(-2*sqrt(25.0 + 4*pi2) + 10.0)) - 2.0*(-6538034.74494422 
+  + 0.0134758939981709*exp(4*sqrt(25.0 + 4*pi2)))/(-80.0*exp(3*sqrt(25.0 + 4*pi2)) 
+  + 16.0*sqrt(25.0 + 4*pi2)*exp(3*sqrt(25.0 + 4*pi2))) 
+  - 1634508.68623606*exp(-3.0*sqrt(25.0 + 4*pi2))/(-10.0 + 2.0*sqrt(25.0 + 4*pi2)) 
+  + (-0.00673794699908547*exp(sqrt(25.0 + 4*pi2)) 
+  + 3269017.37247211*exp(-3*sqrt(25.0 + 4*pi2)))/(-8*sqrt(25.0 + 4*pi2) + 40.0) 
+  + 0.00336897349954273*exp(1.0*sqrt(25.0 + 4*pi2))/(-10.0 + 2.0*sqrt(25.0 + 4*pi2))
+\end{lstlisting}
+while the rhs of the PDE is given by
+
+
+\begin{lstlisting}
+const double pi2 = pi * pi;
+
+values[0] = -1.0L / 2.0L * (-2 * sqrt(25.0 + 4 * pi2) + 10.0) *
+            exp(x*(-2*sqrt(25.0 + 4 * pi2) + 10.0)) -
+            0.4 *pi2*exp(x * (-sqrt(25.0 + 4 * pi2) + 5.0)) * cos(2 * y * pi) +
+            0.1 *pow(-sqrt(25.0 + 4 * pi2) + 5.0, 2) *
+            exp(x*(-sqrt(25.0 + 4 * pi2) + 5.0)) * cos(2 * y * pi)
+
+values[1] = 0.2 * pi*(-sqrt(25.0 + 4 * pi2) + 5.0) *
+            exp(x*(-sqrt(25.0 + 4 * pi2) + 5.0)) * sin(2 * y * pi) -
+            0.05 *pow(-sqrt(25.0 + 4 * pi2) + 5.0, 3) *
+            exp(x*(-sqrt(25.0 + 4 * pi2) + 5.0)) * sin(2 * y * pi) / pi
+
+values[2] = 0;
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=5cm]{images/mms/kovasznay/step-55_solution}
+\includegraphics[width=5cm]{images/mms/kovasznay/KF2DCVP8}
+\includegraphics[width=5cm]{images/mms/kovasznay/KF2DCVP8SL}\\
+{\captionfont 
+Left: solution from Step-55. Right:
+Solution obtained with 
+NekTar++\footnote{\url{http://doc.nektar.info/userguide/4.3.4/user-guidese45.html}}}
+\end{center}
+
+
+This benchmark is carried out in many CFD papers: \cite{coks04b,bodi11,ngpe12}, see also Section 7.4.3
+of Hesthaven \& Warburton \cite{hewa08}.
+
+\todo[inline]{Find analytical expression for pressure. Compute expression for rhs. Make stone}

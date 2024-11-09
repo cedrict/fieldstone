@@ -1,0 +1,63 @@
+\begin{flushright} {\tiny {\color{gray} \tt mms\_viscous\_beam\_ext.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The domain is a Cartesian box of size $L_x \times L_y$. 
+Velocity $-u_0$ is applied on the left boundary and 
+velocity $+u_0$ is applied on the right boundary. 
+Bottom and top boundaries are left free. 
+If no vertical velocity is prescribed anywhere there is an obvious nullspace 
+in the solution which is problematic (numerically of course, but also 
+because the solution is then not unique). One might want to set $v=0$ at $y=L_y/2$
+on each side for example. 
+The solution to this problem (incompressible Stokes equations) is given by
+\begin{eqnarray}
+u(x,y)&=&2u_0(x/L_x-1/2)\\
+v(x,y)&=&-2 u_0 L_y/L_x (y/L_y-1/2)
+\end{eqnarray}
+in the absence of gravity. The strain rate tensor is then:
+\[
+\dot{\bm \varepsilon} =
+\left(
+\begin{array}{cc}
+\dot{\varepsilon}_{xx} & \dot{\varepsilon}_{xy} \\
+\dot{\varepsilon}_{xx} & \dot{\varepsilon}_{yy} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+2 u_0 /Lx & 0 \\
+0 & -2 u_0 /L_x 
+\end{array}
+\right)
+\]
+and we see that the flow is indeed incompressible as the trace 
+of the strain rate tensor is zero. 
+
+The momentum equation is 
+\[
+-\vec\nabla p + \vec\nabla \cdot (2 \eta \dot{\bm\varepsilon}) = \rho \vec g
+\]
+where the viscosity $\eta$ is constant in space. 
+If gravity is set to zero, we obtain:
+\begin{eqnarray}
+-\frac{\partial p}{\partial x} &=& 0 \\
+-\frac{\partial p}{\partial y} &=& 0 
+\end{eqnarray}
+since the strain rate is constant in space and the divergence operator applied to it returns 
+the zero tensor. We there fore can conclude that pressure should be constant. 
+
+Since the top and bottom boundaries are free, we have ${\bm \sigma}\cdot \vec{n} = \vec{0}$ on these.
+The stress tensor is given by ${\bm \sigma} = - {\bm 1} + 2 \eta \dot{\bm \varepsilon}$ and the normal on the 
+top is $\vec{n}=(0,+1)$ so that on the top boundary we have
+\[
+- p + 2 \eta \dot{\epsilon}_{yy} = 0
+\]
+or, 
+\[
+p= 2 \eta \dot{\epsilon}_{yy} 
+\]
+Note that using the bottom boundary with $\vec{n}=(0,-1)$ yields the same result.
+
+
+

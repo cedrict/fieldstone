@@ -1,0 +1,103 @@
+\begin{flushright} {\tiny {\color{gray} \tt mms\_annulus\_kinbc.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Let us consider an annulus domain of inner radius $R_1$ and outer radius $R_2$.
+Boundary conditions are $\vec\upnu(r=R_1)=\upnu_1 \vec{e}_\theta$ and 
+$\vec\upnu(r=R_2)=\upnu_2 \vec{e}_\theta$. Density is assumed to be zero in the domain. 
+
+As seen in Section~\ref{ss:ankbc}, the Laplacian of a vector $\vec{A}$ is given 
+by\footnote{\url{https://en.wikipedia.org/wiki/Vector\_Laplacian}} 
+\[
+\nabla^2 \vec{A} = \nabla(\nabla\cdot\vec{A}) - \nabla\times(\nabla \times\vec{A})
+=
+\left(
+\begin{array}{l}
+\frac{\partial^2 A_r}{\partial r^2} + \frac{1}{r} \frac{\partial A_r}{\partial r} - 
+\frac{1}{r^2} A_r  + \frac{1}{r^2} \frac{\partial^2 A_r}{\partial \theta^2}  - 
+\frac{2}{r^2} \frac{\partial A_\theta}{\partial \theta} \\ \\
+\frac{\partial^2 A_\theta}{\partial r^2} + \frac{1}{r} \frac{\partial A_\theta}{\partial r} - 
+\frac{1}{r^2} A_\theta  + \frac{1}{r^2} \frac{\partial^2 A_\theta}{\partial \theta^2}  
++ \frac{2}{r^2} \frac{\partial A_r}{\partial \theta} 
+\end{array}
+\right)
+\]
+%=
+%\left(
+%\begin{array}{l}
+%\Delta A_r \\ \\ \Delta A_\theta
+%\end{array}
+%\right)
+Given the symmetry of the problem and the boundary conditions we know that the 
+solution is as follows: 
+\[
+{\vec \upnu}(r,\theta) = \upnu_\theta(r) {\vec e}_\theta
+\]
+
+Using this velocity field, we can now obtain the pressure field 
+by solving the Stokes equation
+\[
+-\vec\nabla p + \eta {\vec\nabla}^2 {\vec \upnu} = {\vec 0}
+\]
+since density is zero. Because of symmetry we also expect the pressure to
+be a function of $r$ only, i.e. $p(r)$.
+The Stokes equation in polar coordinates then writes:
+\begin{eqnarray}
+-\frac{\partial p}{\partial r} &=& 0 \\
+-\frac{1}{r}\underbrace{\frac{\partial p}{\partial \theta}}_{=0} + 
+\frac{\partial^2 \upnu_\theta}{\partial r^2} + \frac{1}{r} \frac{\partial \upnu_\theta}{\partial r} 
+- \frac{1}{r^2} \upnu_\theta  &=&0 
+\end{eqnarray}
+so that the pressure is a constant which we arbitrarily set to zero. 
+We assume $\upnu_\theta(r) = r^\alpha$, and the second equation above becomes: 
+\[
+\alpha(\alpha-1) r^{\alpha-2}  + \alpha r^{\alpha-2}  - r^{\alpha-2}  = 0 
+\]
+reducing to $\alpha^2-1=0$, i.e. $\alpha=\pm 1$, since the above equation must be valid
+for any value of $r$.
+The generic solution then can be written as
+\[
+\upnu_\theta (r) = A r + \frac{B}{r}
+\]
+Using the b.c. : 
+\[
+\upnu_\theta (R_1) = A R_1 + \frac{B}{R_1} = \upnu_1
+\]
+\[
+\upnu_\theta (R_2) = A R_2 + \frac{B}{R_2} = \upnu_2
+\]
+or, 
+\[
+A + \frac{B}{R_1^2} = \frac{\upnu_1}{R_1}
+\]
+\[
+A + \frac{B}{R_2^2} = \frac{\upnu_2}{R_2}
+\]
+so
+\[
+B=\frac{ \frac{\upnu_1}{R_1}-\frac{\upnu_2}{R_2}  }{\frac{1}{R_1^2} - \frac{1}{R_2^2}} = 
+R_1R_2 \frac{ \upnu_1R_2-\upnu_2R_1    }{R_2^2-R_1^2}
+\]
+and 
+\[
+A=\frac{\upnu_2R_2-\upnu_1R_1}{R_2^2-R_1^2}
+\]
+%\includegraphics[width=10cm]{PROJECTS/annulus/velprof}
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+\upnu_\theta (r) = \frac{\upnu_2R_2-\upnu_1R_1}{R_2^2-R_1^2}  r 
++ \frac{R_1R_2}{r} \frac{ \upnu_1R_2-\upnu_2R_1    }{R_2^2-R_1^2}
+\]
+\end{mdframed}
+
+We can verify that the flow is indeed incompressible:
+\[
+\vec\nabla\cdot\vec\upnu = \frac{1}{r}\frac{\partial (r\upnu_r)}{\partial r} 
++ \frac{1}{r}\frac{\partial \upnu_\theta}{\partial \theta} = 0
+\]
+since $\upnu_r=0$ and $\upnu_\theta$ does not depend on $\theta$.
+
+Note that we could have used a non-zero density: as long as it does not 
+depend on $\theta$ and the gravity points towards the center,
+it allows for a decoupling of the equations, thereby 
+only contributing to a lithostatic pressure field.

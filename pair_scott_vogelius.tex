@@ -171,6 +171,34 @@ theory.
 }
 \end{displayquote}
 
+Rather interestingly, we find in \textcite{tesk12} (2012) a penalty-approach:
+\begin{displayquote}
+{\color{darkgray}
+Other solutions to deal with the LBB condition include the Uzawa iteration method and penalty
+methods. A combination of these two approaches results in the iterated penalty method presented in
+Scott and Vogelius (1985). Let $r\in\R$ and $\rho\in\R^+$ be prescribed parameters. 
+We wish to ﬁnd $u^n\in V_h$ such that 
+\[
+a(u^n,v) + r(\nabla\cdot u^n,\nabla\cdot v) = (f,v) - (\nabla \cdot v, \nabla\cdot w^n)
+\qquad \forall \; v\in V_h,
+\]
+where $w^{n+1}=w^n+\rho u^n$.
+The pressure may be recovered from the auxiliary ﬁeld $w$ via $p=\nabla\cdot w -C$, 
+where $C$ is an arbitrary constant (since the pressure ﬁeld is only determined up 
+to an arbitrary constant). When computing the error in $p$, we subtract the average 
+of $\nabla\cdot w$ to account for $C$. The algorithm initially assumes
+$w^0=0$, and then solves [the equation above] and updates $w$. 
+The process is repeated until $\| u^{n+1}-u^n\|<\epsilon$, 
+where $\epsilon$ is a prescribed tolerance. This method involves only one function space, but
+it requires a higher-order continuous element $(q\ge 4)$ and it solves the divergence-free criterion
+exactly. The iteration count and accuracy are dependent upon the penalty parameters $\rho$ and $r$. 
+The implementation of this formulation is presented in [the following figure]:
+\begin{center}
+\includegraphics[width=6cm]{images/pair_scott_vogelius/tesk12}
+\end{center}
+
+}
+\end{displayquote}
 
 
 

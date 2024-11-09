@@ -1,0 +1,93 @@
+\begin{flushright} {\tiny {\color{gray} \tt mms\_square\_stream\_function.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I wish to arrive at an analytical formulation for a 2D incompressible flow in 
+the square domain $[-1:1]\times[-1:1]$
+The fluid has constant viscosity $\eta=1$ and is subject to free slip boundary conditions on all sides.
+For reasons that will become clear in what follows I postulate the following stream function:
+\begin{equation}
+\Psi(x,y)=\sin( m \pi x)\sin( n\pi y)
+\end{equation}
+We have the velocity being defined as:
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+{\vec \upnu} = (u,v) = \left( \frac{\partial \Psi}{\partial y},-\frac{\partial \Psi}{\partial x} \right) 
+= (n \pi \sin (m\pi x)\cos(n\pi y),-m\pi \cos(m\pi x)\sin (n\pi y))
+\end{equation}
+\end{mdframed}
+
+\begin{center}
+\includegraphics[width=5cm]{images/mms/square_streamfunction/vel_2x1}\\
+{\captionfont Velocity field for $(m,n)=(2,1)$}
+\end{center}
+
+The strain rate components are then:
+\begin{eqnarray}
+\dot\varepsilon_{xx} &=&  \frac{\partial u}{\partial x} = mn \pi^ 2  \cos (m\pi x)\cos(n\pi y)   \\
+\dot\varepsilon_{yy} &=&  \frac{\partial v}{\partial y} = -mn \pi^ 2  \cos (m\pi x)\cos(n\pi y)  \\
+2\dot\varepsilon_{xy} &=&  \frac{\partial u}{\partial y} +  \frac{\partial v}{\partial x}    \\
+&=&  \frac{\partial^2 \Psi}{\partial y^2} -  \frac{\partial^2 \Psi}{\partial x^2}    \\
+&=& -n^2\pi^2 \Psi + m^2 \pi^2 \Psi \\
+&=& (m^2-n^2) \pi^2   \sin( m \pi x)\sin( n\pi y)
+\end{eqnarray}
+Note that if $m=n$ the last term is identically zero, which is not desirable 
+(flow is too 'simple')
+so in what follows we will prefer $m\neq n$.
+
+It is also easy to verify that $u=0$ on the sides and $v=0$ at the top and bottom and that the 
+term $\dot\varepsilon_{xy}$ is nul on all four sides, thereby garanteeing free slip. 
+
+Our choice of stream function yields:
+\[
+{\nabla}^4 \Psi= 
+\frac{\partial^4 \Psi}{\partial x^4}+
+\frac{\partial^4 \Psi}{\partial y^4}+
+2\frac{\partial^2 \Psi}{\partial x^2 y^2}
+=\pi^4 ( m^4 \Psi + n^4 \Psi + 2m^2n^2 \Psi) = (m^4 + n^4 + 2m^2n^2)\pi^4 \Psi
+\]
+
+Let us recall Eq.~(\ref{eq:sf1}):
+\begin{equation}
+{\vec \nabla}^4 \Psi 
+=
+-\frac{\partial \rho g_y}{\partial x} + \frac{\partial \rho g_x}{\partial y}   
+\end{equation}
+We assume $g_x=0$ and $g_y=-1$ so that we simply have 
+\begin{equation}
+\frac{\partial \rho}{\partial x}
+=
+(m^4 + n^4 + 2m^2n^2)\pi^4 \Psi 
+=
+(m^4 + n^4 + 2m^2n^2)\pi^4 \sin( m \pi x)\sin( n\pi y)
+\end{equation}
+so that (assuming the integration constant to be zero):
+\[
+\rho(x,y) = -\frac{m^4 + n^4 + 2m^2n^2}{m} \pi^3  \cos(m \pi x)\sin(n \pi y)
+\]
+The $x$-component of the momentum equation is (since $g_x=0$): 
+\[
+-\frac{\partial p}{\partial x} + 
+\frac{\partial^2 u}{\partial x^2}+
+\frac{\partial^2 u}{\partial y^2} =
+-\frac{\partial p}{\partial x} 
+-m^2 n \pi^3 \sin (m\pi x)\cos(n\pi y)
+- n^3 \pi^3 \sin (m\pi x)\cos(n\pi y)
+=0
+\]
+so 
+\[
+\frac{\partial p}{\partial x} =-(m^2n+n^3)\pi^3 \sin (m\pi x)\cos(n \pi y)
+\]
+and the pressure field is then (once again neglecting the integration constant):
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+p(x,y)= \frac{m^2n+n^3}{m} \pi^2 \cos (\pi x)\cos(\pi y)
+\]
+\end{mdframed}
+Note that we then have the interesting property that the pressure average 
+over the domain is zero, i.e. $\int p dV =0$.
+
+
+
+
+

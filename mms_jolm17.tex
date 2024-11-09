@@ -77,6 +77,86 @@ All the necessary functions to do this benchmark are in {\tt mms/jolm17.py}:
 \includegraphics[width=4.5cm]{images/mms/jolm17/exy}
 \end{center}
 
+---------------------------------------------------------
+
+At some point I had also written this about he very same benchmark.
+The velocity is given by
+\begin{eqnarray}
+\upnu_x &=&200 x^2(1-x)^2 y (1-y)(1-2y) = 100 a(x) a'(y) \nn\\
+\upnu_y &=& - 200 x(1-x)(1-2x)y^2(1-y)^2 = -100 a'(x) a(y) \nn
+\end{eqnarray}
+with 
+\begin{eqnarray}
+a(x)  &=& x^2(1-x)^2 \nn\\
+a'(x) &=& 2x(1-x)^2-2x^2(1-x) = 2x(1-x)(1-2x) \nn\\
+a''(x) &=& 2(1-6x+6x^2) \nn\\
+a'''(x) &=& 24x-12 \nn
+\end{eqnarray}
+We can now compute the components of the strain rate tensor:
+\begin{eqnarray}
+\dot{\varepsilon}_{xx}=
+\frac{\partial \upnu_x}{\partial x}
+&=&\frac{\partial  (100 a(x)a'(y))}{\partial x} =
+100 a'(x)a'(y) \nonumber\\
+\dot{\varepsilon}_{yy}=
+\frac{\partial \upnu_y}{\partial y}
+&=& \frac{\partial (-100 a'(x) a(y))}{\partial y}
+= -100 a'(x)a'(y) \nonumber\\
+\dot{\varepsilon}_{xy}=
+\dot{\varepsilon}_{yx}=
+\frac12 \left( \frac{\partial \upnu_x}{\partial y}
++\frac{\partial \upnu_y}{\partial x} \right) &=& 
+\frac12 \left(100 a(x)a''(y) -100 a''(x) a(y) \right) 
+= 50 \left( a(x)a''(y) - a''(x) a(y) \right)
+\nonumber
+\end{eqnarray}
+The momentum conservation equation is given by
+\begin{eqnarray}
+- \partial_x p + \partial_x (2\eta \dot{\varepsilon}_{xx})
++ \partial_y (2\eta \dot{\varepsilon}_{xy}) + b_x &=&0 \nn\\
+- \partial_y p + \partial_x (2\eta \dot{\varepsilon}_{xy})
++ \partial_y (2\eta \dot{\varepsilon}_{yy}) + b_y &=&0 \nn
+\end{eqnarray}
+Then 
+\begin{eqnarray}
+b_x 
+&=& \partial_x p - \partial_x (2\eta \dot{\varepsilon}_{xx}) 
+- \partial_y (2\eta \dot{\varepsilon}_{xy}) \nn\\
+&=& \partial_x p - \partial_x [2 \eta 100 a'(x)a'(y) ]
+- \partial_y [2 \eta 50 \left( a(x)a''(y) - a''(x) a(y) \right) ] \nn\\
+&=& \partial_x p -  200 \eta a''(x)a'(y) - 
+100\eta [ a(x)a'''(y) - a''(x)a'(y)] \nn\\
+&=& \partial_x p - 100 \eta a''(x)a'(y) - 100\eta  a(x)a'''(y) \nn\\ 
+&=& \partial_x p - 100 \eta [a''(x)a'(y) + a(x)a'''(y) ]
+\nonumber\\ \nonumber\\
+b_y 
+&=&  \partial_y p - \partial_x (2\eta \dot{\varepsilon}_{xy}) 
+- \partial_y (2\eta \dot{\varepsilon}_{yy}) \nn\\
+&=&  \partial_y p - \partial_x 
+[2\eta  50 \left( a(x)a''(y) - a''(x) a(y) \right) ]
++ \partial_y 2 \eta 100 a'(x)a'(y) \nn\\
+&=&  \partial_y p - 100\eta (a'(x)a''(y) -a'''(x) a(y)  ) + 200 \eta a'(x)a''(y)\nn \\ 
+&=&  \partial_y p + 100 \eta a'(x)a''(y) + 100 \eta a'''(x) a(y) \nonumber\\
+&=& \partial_y p + 100 \eta [ a'(x)a''(y) +  a'''(x) a(y) ] \nonumber
+\end{eqnarray}
+with 
+\begin{eqnarray}
+p(x,y)&=&10
+\left[
+\left(x-\frac12\right)^3y^2
++(1-x)^3\left(y-\frac12\right)^3  
+\right]
+\nonumber\\
+\frac{\partial p}{\partial x} &=& 10 \left[3 \left(x-\frac12\right)^2 y^2
+-3 (1-x)^2 \left(y-\frac12\right)^3  \right] \nonumber\\
+\frac{\partial p}{\partial y}  &=& 10 \left[  
+\left(x-\frac12\right)^3 2y
++(1-x)^33 \left(y-\frac12\right)^2
+\right] \nonumber
+\end{eqnarray}
+
+See \stone~104.
+
 
 
 
