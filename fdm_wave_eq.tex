@@ -8,18 +8,18 @@ u_{tt}=c^2 u_{xx}  \qquad x\in[0,L], \quad t\in[0,T]
 \]
 which is supplemented by the initial conditions
 \begin{eqnarray}
-u(x,0) &=& f(x) \qquad  \forall x\\
-u_t(x,0) &=& g(x) \qquad  \forall x
+u(x,0) &=& f(x) \qquad  \forall x\in[0,L] \nn\\
+u_t(x,0) &=& g(x) \qquad  \forall x\in[0,L] 
 \end{eqnarray}
 and the boundary conditions
 \begin{eqnarray}
-u(0,t) &=& 0 \qquad  \forall t\\
-u_t(L,t) &=& 0 \qquad  \forall t \label{eq:fdm_wave_bc}
+u(0,t) &=& 0 \qquad  \forall t \in [0,T] \nn\\
+u_t(L,t) &=& 0 \qquad  \forall t\in[0,T] \label{eq:fdm_wave_bc}
 \end{eqnarray}
 
 
 We then proceed to discretise the space domain with $nnx$ equidistant nodes (forming $ncellx=nnx-1$ cells)
-at location $x_i$, $i=1,...nnx$ and the time domain with $N_t$ equidistant nodes at times
+at locations $x_i$, $i=1,...nnx$ and the time domain with $N_t$ equidistant nodes at times
 $t_i$, $i=1,...N_t$.
 We define $h=L/ncellx$ and $\delta\! t=T/(N_t-1)$
 
@@ -27,7 +27,7 @@ We are looking for the solution $u(x,t)$ at all mesh points in space in time and
 $u_i^k$ the discrete solution at location $x_i$ and time $t_k$.
 
 Following Section~\ref{XYZ} the second-order derivatives will be replaced by central differences 
-stencils, i.e. for a function $f_{tt}$ we would write
+stencils, i.e. for a function $f$ we would write
 \[
 \frac{\partial^2  f}{\partial t^2} \simeq \frac{ f^{k+1} -2f^{k} +f^{k-1}  }{\delta\! t^2}
 \]
@@ -37,7 +37,7 @@ stencils, i.e. for a function $f_{tt}$ we would write
 \label{ss:fdmwavess}
 
 The first idea is just to use central differences for both time and space derivatives,
-while assuming that the rhs term is taken at time $t_k$:
+while assuming that the rhs (space) term is taken at time $t_k$:
 i.e.
 \[
 \frac{ u_i^{k+1} -2u_i^{k} +u_i^{k-1}  }{\delta\! t^2} = 
@@ -56,9 +56,8 @@ u_i^{k+1} = - u_i^{k-1} +2(1-\alpha^2) u_{i}^k + \alpha^2 (u_{i+1}^k +u_{i-1}^k 
 \label{eq:wavee3}
 \end{equation}
 \end{mdframed}
-Actually the parameter $\alpha$ is important and is often called $C_{CFL}$ as it is called the 
-Courant–Friedrichs–Lewy number.
-
+The parameter $\alpha$ is important and is often denoted by $C$ or $C_{CFL}$ as it is the 
+Courant–Friedrichs–Lewy number\footnote{\url{https://en.wikipedia.org/wiki/Courant-Friedrichs-Lewy_condition}}.
 
 Of course, we need to be careful about the initial conditions. Indeed, looking 
 at the left hand side of Eq.~\eqref{eq:fdmwave1}, we see that we have three values of $u_i$
@@ -69,35 +68,38 @@ of $u_i$, i.e. $u_i^{k-1}$ and $u_{i}^k$.
 The relationship above can be written for any node inside the domain but not for those on the 
 boundaries ($x=0,L$). However this is not a problem since we need not to write such an equation
 as the values of $u$ at the extremities of the domain are given by the boundary conditions of 
-Eq.~\ref{eq:fdm_wave_bc}.
+Eq.~\eqref{eq:fdm_wave_bc}.
 
 The initial condition on $u$ is trivial to implement. But quid of $u_t$? In this case we would 
 write a centered difference as 
 \[
-g(x_i,t=0)=\left. \frac{\partial u}{\partial t} \right|_{i}^0 \simeq \frac{u_i^1-u_i^{-1}}{2 \delta \! t} 
+g(x_i)=\left. \frac{\partial u}{\partial t} \right|_{i}^0 \simeq \frac{u_i^1-u_i^{-1}}{2 \delta \! t} 
 \]
 so that 
 \[
-u_i^{-1} = u_i^1 - 2 \delta \! t g(x_i,t=0)
+u_i^{-1} = u_i^1 - 2 \delta \! t \; g(x_i)
 \]
 and then, when inserted in Eq.~\eqref{eq:wavee3}, we get for $k=0$
 \begin{eqnarray}
 u_i^{1} 
 &=& - u_i^{-1} +2(1-\alpha^2) u_{i}^0 + \alpha^2 (u_{i+1}^0 +u_{i-1}^0)  \nn\\
-&=& - (u_i^1 - 2 \delta \! t g(x_i,t=0))  +2(1-\alpha^2) u_{i}^0 + \alpha^2 (u_{i+1}^0 +u_{i-1}^0)  \nn\\
-2 u_i^1 &=& 2 \delta \! t g(x_i,t=0)  +2(1-\alpha^2) u_{i}^0 + \alpha^2 (u_{i+1}^0 +u_{i-1}^0)  \nn\\
-u_i^1 &=&  \delta \! t g(x_i,0)  + (1-\alpha^2) f(x_{i},0) + \frac{\alpha^2}{2} (f(x_{i+1},0) + f(x_{i-1},0) \nn\\
+&=& - (u_i^1 - 2 \delta \! t g(x_i))  +2(1-\alpha^2) u_{i}^0 + \alpha^2 (u_{i+1}^0 +u_{i-1}^0)  \nn\\
+2 u_i^1 &=& 2 \delta \! t g(x_i)  +2(1-\alpha^2) u_{i}^0 + \alpha^2 (u_{i+1}^0 +u_{i-1}^0)  \nn\\
+u_i^1 &=&  \delta \! t g(x_i)  + (1-\alpha^2) f(x_{i}) + \frac{\alpha^2}{2} (f(x_{i+1}) + f(x_{i-1}) \nn\\
 \end{eqnarray}
-
-
+We now have all discrete $u$ values for the first and second time step so we can  
+apply the algorithm delineated by Eq.\eqref{eq:wavee3} to arrive at $u$ at subsequent time steps.
 
 FIG 1 of Langtangen
+
+{\color{red} explain that this is conditionally stable.}
 
 %-----------------------------------
 \subsection{Implicit method(s)}
 
 We could overcome the problem of conditional stability by 
-introducing an implicit scheme as follows:
+introducing an implicit scheme as follows (this time 
+the space derivative terms are taken at time step $k+1$):
 \[
 \frac{ u_i^{k+1} -2u_i^{k} +u_i^{k-1}  }{\delta\! t^2} = 
 c^2
@@ -108,9 +110,17 @@ which leads to
 u_i^{k+1} -2u_i^{k} +u_i^{k-1}  = 
 \alpha ^2 ( u_{i+1}^{k+1} -2u_{i}^{k+1} +u_{i-1}^{k+1} )
 \]
+or,
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+-\alpha^2 u_{i+1}^{k+1}+
+(1+2\alpha^2) u_i^{k+1} 
+-\alpha^2 u_{i-1}^{k+1}
+=2 u_i^k -u_i^{k-1}
+\end{equation}
+\end{mdframed}
 
-
-
+Another approach (Crank-Nicolson):
 \[
 \frac{ u_i^{k+1} -2u_i^{k} +u_i^{k-1}  }{\delta\! t^2} = 
 c^2 \frac12 \left(
@@ -130,6 +140,18 @@ u_{i+1}^{k+1} -2u_{i}^{k+1} +u_{i-1}^{k+1}
 u_{i+1}^k -2u_{i}^k +u_{i-1}^k 
 \right)
 \]
+or,
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+(1+\alpha^2) u_i^{k+1} 
+-\frac{\alpha^2}{2} (u_{i+1}^{k+1} +u_{i-1}^{k+1} )
+=
+(2-\alpha^2) u_i^{k} 
++\frac{\alpha^2}{2} (u_{i+1}^{k} +u_{i-1}^{k} )
+-u_i^{k-1} 
+\end{equation}
+\end{mdframed}
+
 
 
 %-------------------------------------------------------------
@@ -145,7 +167,7 @@ u_{i+1}^k -2u_{i}^k +u_{i-1}^k
 \subsection{Periodic boundary conditions}
 
 %---------------------------------------------------------------
-\subsection{(von Neumann) Stability analysis}
+\subsection{(Von Neumann) Stability analysis}
 
 %---------------------------------------------------------------
 \subsection{Numerical dispersion relation}

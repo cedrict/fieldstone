@@ -1,0 +1,33 @@
+\begin{flushright} {\tiny {\color{gray} \tt benchmark\_annulus\_time.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This benchmark is presented in Gass{m\"o}ller \etal \cite{galb19}.
+The domain is a 2D annulus with inner and outer radii $R_1=1$ and $R_2=2$, respectively.
+In this situation, the incompressible isothermal Stokes equations and their solution
+can be expressed in a cylindrical coordinate system in terms of the radius $r$ and the
+azimuthal angle $\theta$. The viscosity is set to $eta=1$, and the density is given by
+\begin{equation}
+\rho(r,\theta)=48r^5
+\end{equation}
+The gravity vector is set to 
+\begin{equation}
+\vec{g}(r,\theta)=\frac{r^3}{384} \vec{e}_r + \vec{e}_\theta
+\end{equation}
+Note that this gravity vector is not the gradient of a gravity potential
+and consequently not physical.
+The Stokes system can then be solved using a separation of variables
+approach and yields
+\begin{equation}
+\vec{\upnu}=-r^7 \vec{e}_\theta
+\quad\quad
+p(r,\theta)=\frac{r^9}{72}-\frac{512}{72}
+\end{equation}
+\begin{center}
+\includegraphics[width=12cm]{images/benchmark_annulus/galb19}\\
+{\captionfont Taken from \cite{galb19}}
+\end{center}
+Rather importantly, this benchmark was arrived at by means of a stream 
+function (see Section~\ref{sec:streamfunction}) 
+$\psi(r,\theta)=F(r)G(\theta)$ with $F(r)=r^8/8$ and $G(\theta)=1$.
+
+

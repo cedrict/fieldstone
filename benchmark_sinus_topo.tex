@@ -1,0 +1,29 @@
+\begin{flushright} {\tiny {\color{gray} \tt benchmark\_sinus\_topo.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Following Kramer \etal \cite[Section 3.1.1]{krwd12} and \cite{robh17} 
+the benchmark consists of the relaxation of surface topography in a 
+two-dimensional Cartesian box with an isoviscous fluid. 
+Free slip boundary conditions are imposed on the sides and bottom of the domain.
+The setup is as follows:
+
+\begin{center}
+\begin{minipage}{0.45\textwidth}
+\centering
+\includegraphics[height=0.8\textwidth]{images/benchmark_relaxation/robh17}\\
+{\captionfont Taken from \cite{robh17}. Setup for the free surface relaxation benchmark.
+For the tests $\rho=\eta=g=L=D=1$ and $\xi_0=0.005$.}
+\end{minipage}\hfill
+\begin{minipage}{0.45\textwidth}
+\centering
+\includegraphics[height=0.8\textwidth]{images/benchmark_relaxation/krwd12}\\
+{\captionfont Taken from \cite{krwd12}. $D=3\cdot 10^6$,$\eta=10^{21}$, $\rho=4500$, $g=10$, $\xi_0=10^3$m, and 
+$L=D/4,D/2,D,2D,4D$.}
+\end{minipage}
+\end{center}
+and the infinitesimal sinusoidal perturbations to the free surface is given by
+\[
+\xi(x,t=0)=\xi_0 \cos \left( \frac{2 \pi n x}{L}  \right)
+\]
+where $n$ is a wavenumber which is an integer multiple of 1/2 (taken to be 1/2 exactly in both cases).
+

@@ -1,366 +1,11 @@
 
-\begin{flushright} {\tiny {\color{gray} \tt geodynamics\_benchmarks.tex}} \end{flushright}
 
-Some published numerical experiments have over time become benchmarks for other codes, while some 
-others showcased comparisons between codes. Here is a short list of 'famous' benchmarks' in the 
-computational geodynamics community.
 
-%-----------------------------------
-\subsection{List: Subduction}
 
-\begin{itemize}
-\item subduction problems: \textcite{spka06}, \textcite{scbe08}, 
-                           \textcite{vack08}, \textcite{cehg14},
-                           \textcite{gltf18}, \textcite{ozrs08},
-                           \textcite{siwi20}.
 
-\item Benchmark of 3D numerical models of subduction against a laboratory experiment: 
-      Meriaux \etal (2018)  \cite{memm18}
 
-
-
-\end{itemize}
-
-%-----------------------------------
-\subsection{List: Stokes sphere \& sinkers}
-
-\begin{itemize}
-\item the Stokes sphere: Gale manual \cite{galemanual}, 
-      \aspect{} manual \cite{aspectmanual}, 
-      in visco-plastic fluid: Liu \etal \cite{limd02}, 
-      Deglo de Besses \etal \cite{demj04}. 
-      Finite deformation in and around a fluid sphere \cite{sccm88,crud88}.
-
-\item the sinking block (sinker) 
-      \textcite{thie11} (2011),
-      \textcite{cehg14} (2014),
-      \textcite{gery10} (2010),
-      \textcite{geyu03} (2003),
-      \textcite{mamo08} (2008),
-      \textcite{mishin11} (2011),
-      \textcite{fumt11} (2011),
-      \textcite{maie12} (2012),
-      \textcite{sctc20} (2020),
-      \textcite{mivg22} (2022). 
-      (see Section~\ref{sec:sinker})
-
-\item multiple sinkers \cite{mabl14,mabl15,clhe21,rusg17}
-
-\item Sinking cylinder (2D Stokes sphere): 
-      appendix A of \cite{boht08a}, \cite{wali04}.
-
-\item hot blob problem \cite{bugs09,fumt11} (see Section~\ref{sec:hotblob})
-\end{itemize}
-
-
-%-----------------------------------
-\subsection{List: (Visco-)Elastic deformation}
-
-\begin{itemize}
-
-\item bending of elastic plate/beam \cite{cehg14,boht08a,vosc15,elga10,demh19,modm02,litu02}
-
-\item flexure of finite length elastic plate \cite{chtl13}
-
-\item stress build-up in Maxwell visco-elastic material 
-      \cite{geyu07,chtl13,elga10,demh19}
-\item single layer visco-elastic folding \cite{scps01,vosc15}
-\item viscous(-elastic) flow around a cylinder in a channel (see Section~\ref{sec:flowcyl})
-\item Semi-infinite elastic half plane with a circular hole \cite{verr98}
-\item Uniform strip load on elastic material (see Section~\ref{sec:elaststripload})
-\item Jull and McKenzie (1996) \cite{jumc96} parabolic load on viscoelastic half-space (and melt fractions) 
-\item Stress distribution in elastic sphere under equal and 
-      opposite loads \cite{stro52}
-\item Love's problem: Becker \& Bevis (2004) \cite{bebe04}
-\item Infinite plate with a circular hole \cite{yiha10,rama16}
-\item Square plate with a crack subjected to a horizontal tensile 
-      traction \cite{litu02}
-\item Hollow sphere under internal pressure, see Section~\ref{ss:hollowsphereintpress}
-\end{itemize}
-
-%-----------------------------------
-\subsection{List: Convection}
-
-\begin{itemize}
-\item 2D Rayleigh-Benard convection (see Section~\ref{ss:blbc89}).
-
-\item 2D Rayleigh-Benard convection, lateral heating, 30+ codes: 
-      \textcite{dejo83} (1983).
-
-\item 2D Rayleigh-Benard convection with nonlinear rheology:  
-      \textcite{tosn15} (2015), \aspect{} manual \cite{aspectmanual}, 
-      \textcite{trbs21} (2021), \stone~28, \textcite{dakg22} (2022),
-      \textcite{siwi20} (2020), \textcite{casd20} (2020).
-
-\item 3D convection at infinite Prandtl number with modest viscosity variation:
-      \textcite{bucc94} (1994),
-      \textcite{trha98} (1998),
-      \textcite{kaks05} (2005),
-      \textcite{onmm06} (2006),
-      \textcite{krhb12} (2012), 
-      \textcite{trbs21} (2021),
-      \textcite{dakg22} (2022).
-
-      \begin{center}
-      \includegraphics[height=4cm]{images/busse93/kaks05}
-      \includegraphics[height=4cm]{images/busse93/krhb12}\\
-      {\captionfont Left: Taken from Kameyama \etal (2005).
-      a) Isothermal surfaces obtained for the benchmark calculations 
-      of stationary convections in Busse \etal. (1993). (a) Case 1a is for
-      constant viscosity, while (b) Case 2 is for modestly temperature-dependent 
-      viscosity whose viscosity contrast is 20. The calculations
-      were carried out with (a) 64x32x64 and (b) 64x64x64 mesh divisions.
-      Right: Taken from Kronbichler \etal (2012).}
-      \end{center}
-
-\item Numerical simulations of three-dimensional thermal convection 
-      in a fluid with strongly
-      temperature-dependent viscosity: Ogawa \etal \cite{ogsz91,kaks05} 
-
-\item Convection in 2D-box \cite{galb19} (see Section~\ref{sec:citb})
-\item Onset of convection \cite{aspectmanual}
-\item mantle convection in 3D spherical shell:
-      \textcite{rasz96} (1996),
-      \textcite{iwas96} (1996),
-      \textcite{zhzm00} (2000),
-      \textcite{yoka04} (2004),
-      \textcite{sthh06} (2006),
-      \textcite{chcc07} (2007),
-      \textcite{zhmt08} (2008),
-      \textcite{kaks08} (2008),
-      \textcite{wrfy10} (2010),
-      \textcite{dadb13} (2013),
-      \textcite{busa13} (2013),
-      \textcite{arfw14} (2014),
-      \textcite{liki19} (2019),
-      \textcite{trbs21} (2021),
-      \textcite{eulg23} (2023),
-      \textcite{ildk24} (ildk24).
-
-\item Mantle convection with reversing mobile plates \cite{kogk05}
-\item A comparison of mantle convection models featuring plates \cite{stlh14}
-
-\end{itemize}
-
-%-----------------------------------
-\subsection{List: Free surface \& interfaces}
-
-\begin{itemize}
-
-\item Free surface evolution: Crameri \etal (2012) \cite{crsg12}, 
-      \aspect{} manual \cite{aspectmanual}, \textcite{sctc20} (2020).
-
-\item relaxation of sinusoidal interface \cite{crsg12,robh17}
-
-\end{itemize}
-
-
-%-----------------------------------
-\subsection{List: Rayleigh-Taylor}
-
-\begin{itemize}
-\item 2D Rayleigh-Taylor convection/instability:\\ 
-      \textcite{pros81} (1981),
-      \textcite{trab90} (1990),
-      Weinberg \& Schmeling (1992) \cite{wesc92},
-      Poliakov \& Podlachikov (1992) \cite{popo92},
-      Ogawa (1993) \cite{ogaw93},
-      Conrad \& Molnar (1997) \cite{como97},
-      van Keken \etal (1997) \cite{vaks97},
-      de Smet \etal (2000) \cite{devv00a},
-      Soboutia \etal (2001) \cite{soga01},
-      Babeyko \etal (2002) \cite{bast02},
-      \textcite{taki03} (2003),
-      \textcite{bomh06} (2006),
-      \textcite{dadh07} (2007),
-      \textcite{basd08} (2008),
-      \textcite{deka08} (2008),
-      \textcite{qurj09} (2009),
-      \textcite{saev10} (2010),
-      Suckale \etal (2010) \cite{sunh10},
-      Leng \& Zhong (2011) \cite{lezh11},
-      Mishin (2011) \cite{mishin11}, 
-      Logg \etal (2012) \cite{lomw12}, 
-      Maierova (2012) \cite{maie12},
-      \textcite{fusc13} (2013), 
-      \textcite{vyrc13} (2013), 
-      \textcite{chtl13} (2013),
-      \textcite{ropu19} (2019),
-      \textcite{robe19} (2019), 
-      \textcite{demh19} (2019),
-      \textcite{logb20} (2020),
-      \textcite{sctc20} (2020),
-      \textcite{mivg22} (2022),
-      \textcite{buoa24} (2024),
-      \aspect manual \cite{aspectmanual}.
-
-\item 3D Rayleigh-Taylor instability:
-      \textcite{fukk08} (2008),
-      \textcite{vosc15} (2015).
-
-\item Polydiapirism \cite{wesc92,aspectmanual}
-
-\end{itemize}
-
-%-----------------------------------
-\subsection{List: Couette \& Poiseuille flow}
-
-\begin{itemize}
-\item Couette flow with temperature dependent viscosity \cite{elga10,demh19}
-\item Couette flow with shear heating \cite{elga10}
-\item Couette flow of a power-law fluid, Section 2.4 of  \textcite{saramito}
-\item Poiseuille flow: \cite{fojg94,fuku11,tagm09} (see Section~\ref{ss:poiseuille})
-\item Poiseuille-Couette flow: \textcite{fusc13} (2013)
-\item Poiseuille flow of a power-law fluid, Section 2.3 of  \textcite{saramito}
-\item Channel flow: \textcite{manc08} (2008)
-\item channel flow (nonlinear): \cite{geyu03,maie12,frbt19,gery10,elga10}
-\item Squeezing flow between moving parallel plates: \textcite{gugu77} (1977)
-\item Flow of a Power Law Fluid Through a Tube - page 87 of \textcite{macosko}
-\end{itemize}
-
-
-
-%-----------------------------------
-\subsection{List: Thermal problems}
-
-\begin{itemize}
-\item thermal diffusion of half-cooling space (see Section~\ref{sec:hcsp}) 
-\item thermal diffusion of Gaussian distribution (see compgeo notes, elefant manual)
-\item Heat flow around a cylinder (see Section~\ref{sec:hfcyl})
-\end{itemize}
-
-%-----------------------------------
-\subsection{List: lid driven cavity problems}
-
-\begin{itemize}
-\item Lid driven cavity 
-      \cite{kawa61,chor67,shry78,foth79,ghgs82,kost84,bope98,xika01,brsa06,ertu09,tesk12}
-
-\item Lid driven cavity with analytical solution (see Section~\ref{sec:ldc_anal})
-
-\item Lid driven cavity with nonlinear rheology \cite{been80,svna18}
-\end{itemize}
-
-%-----------------------------------
-\subsection{List: visco-plastic problems}
-
-\begin{itemize}
-
-\item the 'plastic brick' (See section~\ref{ss:plasticbrick}): \\
-      \textcite{lemm08} (2008), 
-      \textcite{qurj09} (2009), 
-      \textcite{kaus10} (2010), 
-      \textcite{mishin11} (2011), 
-      \textcite{muso11} (2011), 
-      \textcite{maie12} (2012), 
-      \textcite{spmw16} (2016), 
-      \textcite{kapb16} (2016), 
-      \textcite{gltf18} (2018), 
-      \textcite{frbt19} (2019),
-      \textcite{mivg22} (2022).
-
-\item indentor, punch problem (see Section~\ref{sec:punch}):\\
-      \textcite{vidm82} (1982),
-      \textcite{vidm84} (1984),
-      \textcite{vimd86} (1986),
-      \textcite{hukm03} (2003), 
-      \textcite{fojd04} (2004), 
-      \textcite{thfb08} (2008),
-      \textcite{gerb12} (2012), 
-      \textcite{gltf18} (2018).
-
-\item numerical sandbox \cite{bube06,bube06,maie12,busa16,gltf18}
-\item fractal networks of  shear bands: Poliakov \& Herrmann (1994) \cite{pohe94}
-\end{itemize}
-
-
-%-----------------------------------
-\subsection{List: miscellaneous}
-
-\begin{itemize}
-
-\item 2D Rayleigh-Benard laminar plumes, comparison of laboratory 
-      and numerical modeling : 
-      \textcite{vavl09} (2009
-)
-\item 2D Cartesian flow with extremely temperature-dependent viscosity:
-      \textcite{moso95} (1995), \textcite{trbs21} (2021).
-
-\item Thin layer entrainment (see Section~\ref{sec:tlentr})
-
-\item 1D compression \cite{modm02}
-
-\item 2D compressible Stokes flow problem \cite{itki94,tagu07,lezh08,kilv10,lizh13}
-
-\item Wannier flow \cite{wann50,yemu99,cehg14}
-
-\item plastic oedometer test  \cite{chtl13}
-
-\item Three-dimensional folding of an embedded viscous layer in 
-      pure shear \cite{flet91}
-
-\item dam-break problem 
-      \cite{moeb99,bacp07,liir07,lemx08,homa09,anco09,grdn97,hini81,basd08}
-
-\item Slope stability for elasto-plastic materials \cite{rama16}
-
-\item Time-dependent flow in an annulus \cite{galb19} (see Section \ref{sec:tdba})
-
-\item Slab detachment benchmark (see Section~\ref{sec:slabdetach}) 
-
-\item 3D Hollow sphere Stokes flow benchmark:\\
-      Thieulot (2017) \cite{thie17},
-      Horbach \etal (2020) \cite{homb20},
-      Kramer \etal \cite{krdw21}
-
-\item Axisymmetric hollow sphere compressible Stokes flow benchmark:\\
-      Machetel \& yuen (1989) \cite{mayu89}
-
-\item Annulus benchmark \cite{aspectmanual}, \cite{ples11}
-
-\item Viscosity grooves benchmark \cite{aspectmanual}
-
-\item Latent heat benchmark \cite{aspectmanual}
-
-\item Layered flow with viscosity contrast \cite{aspectmanual} 
-      (see Section \ref{sec:layfl}) 
-
-\item Brittle thrust wedges benchmark \cite{busa16,aspectmanual}
-
-\item Laplace equation on a semi infinite plate (see Section~\ref{sec:lapplate})
-
-\item 2D Stokes flow over cavity: Popov \& Makeev (2014) \cite{poma14}.
-
-
-\item Analytical solution for solitary porosity waves: \textcite{copo15} (2015)
-
-\item Analytical solution for solitary wave of magma: Dannberg \& Heister (2016) \cite{dahe16} and refs therein
-
-\item Stokes flow caused by the motion of a rigid sphere close 
-      to a viscous interface: \textcite{dagr98} (1998)
-
-\item Deformation caused by a closed vertical volcanic pipe \cite{boda99}
-
-\item Linear Stability Analysis for Thermal Convections in 
-      Spherical Shells \textcite{yuwa19} (2019)
-
-\item Viscous half-space loading \cite{hask35}
-
-\item Nakiboglu and Lambeck (1982) has cylindrical load on variety of rheologies \cite{nala82}
-
-\item generalized half-plane and half-space Cerruti \cite{nowi92,zhga15}
-
-\item Analytical Solutions of Displacements Produced by spherically-shaped Internal Overpressure \cite{gech12}
-
-\item Sagging viscous bridge \cite{stokes98}
-
-\item Deformation around a terminating fault in a viscous medium \cite{baho96}
-
-\end{itemize}
-
-
-%.......................................................
-\subsection{Poiseuille flow} \label{ss:poiseuille}
+%==============================================
+\section{Poiseuille flow} \label{ss:poiseuille}
 
 We consider a two-dimensional channel in the $x,y$ plane. The walls 
 are at $y=0$ and $y=H$ with no-slip boundary conditions. 
@@ -430,6 +75,17 @@ and
 
 
  
+%===============================================================
+\section{Relaxation of sinusoidal topography}
+\input{benchmark_sinus_topo}
+
+%===============================================================
+\section{the plastic brick} \label{ss:plasticbrick}
+\input{benchmark_brick}
+
+%===============================================================
+\section{Time-dependent benchmark in an annulus}\label{sec:tdba}
+\input{benchmark_annulus_time}
 
 
 
@@ -441,215 +97,10 @@ and
 
 
 
-%..................................................
-\subsection{Relaxation of sinusoidal topography}
-
-Following Kramer \etal \cite[Section 3.1.1]{krwd12} and \cite{robh17} 
-the benchmark consists of the relaxation of surface topography in a 
-two-dimensional Cartesian box with an isoviscous fluid. 
-Free slip boundary conditions are imposed on the sides and bottom of the domain.
-The setup is as follows:
-
-\begin{center}
-\begin{minipage}{0.45\textwidth}
-\centering
-\includegraphics[height=0.8\textwidth]{images/benchmark_relaxation/robh17}\\
-{\captionfont Taken from \cite{robh17}. Setup for the free surface relaxation benchmark.
-For the tests $\rho=\eta=g=L=D=1$ and $\xi_0=0.005$.}
-\end{minipage}\hfill
-\begin{minipage}{0.45\textwidth}
-\centering
-\includegraphics[height=0.8\textwidth]{images/benchmark_relaxation/krwd12}\\
-{\captionfont Taken from \cite{krwd12}. $D=3\cdot 10^6$,$\eta=10^{21}$, $\rho=4500$, $g=10$, $\xi_0=10^3$m, and 
-$L=D/4,D/2,D,2D,4D$.}
-\end{minipage}
-\end{center}
-and the infinitesimal sinusoidal perturbations to the free surface is given by
-\[
-\xi(x,t=0)=\xi_0 \cos \left( \frac{2 \pi n x}{L}  \right)
-\]
-where $n$ is a wavenumber which is an integer multiple of 1/2 (taken to be 1/2 exactly in both cases).
-
-
-%...............................................................
-\subsection{the plastic brick} \label{ss:plasticbrick}
-
-\Literature \textcite{hans03},
-\textcite{moml07},
-\textcite{lemm08},
-\cite{kaus10,elga10,qurj09,mishin11,maie12,spmw16,gltf18,frbt19,aspectmanual}
-\textcite{dakg22} (2022), \textcite{mivg22} (2022).
-
-Pretty much all of the brick-type (elasto-)visco-plastic experiments in the literature
-introduce a weak seed at the bottom of the domain to seed deformation (the shear bands
-will ultimately stem from it). 
-Dimensioned and dimensionless experiments have been carried out, with or without 
-elastic behaviour, with or without adaptive mesh refinement, with first order and 
-second order quadrilateral elements or Taylor-Hood triangles, with or without 
-Newton algorithm, in extension and compression, with or without time-stepping,
-with or without viscous lower layer. 
-
-
-\begin{center}
-\includegraphics[width=7cm]{images/benchmark_brick/momu06}\\
-{\captionfont Moresi \& M{\"u}lhaus, 2006 \cite{momu06}}
-\end{center}
-
-\begin{center}\noindent\rule{12cm}{0.4pt}\end{center}
-
-\begin{center}
-\begin{minipage}{0.45\textwidth}
-\centering
-\includegraphics[height=0.8\textwidth]{images/benchmark_brick/moml07}\\
-{\captionfont Moresi \etal, 2007 \cite{moml07}}
-\end{minipage}\hfill
-\begin{minipage}{0.45\textwidth}
-\centering
-\includegraphics[height=0.8\textwidth]{images/benchmark_brick/poso08}\\
-{\captionfont Popov \etal, 2008 \cite{poso08}}
-\end{minipage}
-\end{center}
-
-\begin{center}\noindent\rule{12cm}{0.4pt}\end{center}
-
-\begin{center}
-\includegraphics[width=5cm]{images/benchmark_brick/lemm08a}
-\includegraphics[width=5cm]{images/benchmark_brick/lemm08b}
-\includegraphics[width=5cm]{images/benchmark_brick/lemm08c}\\
-{\captionfont Lemiale \etal, 2008 \cite{lemm08}}
-\end{center}
-
-\begin{center}\noindent\rule{12cm}{0.4pt}\end{center}
-
-\begin{center}
-\includegraphics[width=7cm]{images/benchmark_brick/qurj09b}
-\includegraphics[width=6cm]{images/benchmark_brick/qurj09a}\\
-{\captionfont Quinteros \etal, 2009 \cite{qurj09}}
-\end{center}
-
-\begin{center}\noindent\rule{12cm}{0.4pt}\end{center}
-
-\begin{center}
-\includegraphics[width=5cm]{images/benchmark_brick/kaus10a}
-\includegraphics[width=5cm]{images/benchmark_brick/kaus10b}
-\includegraphics[width=5cm]{images/benchmark_brick/kaus10c}\\
-{\captionfont Kaus, 2010 \cite{kaus10}}
-\end{center}
-
-\begin{center}\noindent\rule{12cm}{0.4pt}\end{center}
-
-\begin{center}
-\includegraphics[width=3.74cm]{images/benchmark_brick/mishina}
-\includegraphics[width=3.74cm]{images/benchmark_brick/mishinb}
-\includegraphics[width=3.74cm]{images/benchmark_brick/mishinc}
-\includegraphics[width=3.74cm]{images/benchmark_brick/mishind}\\
-{\captionfont Mishin, phd thesis, 2011 \cite{mishin11}}
-\end{center}
-
-\begin{center}\noindent\rule{12cm}{0.4pt}\end{center}
-
-\begin{center}
-\includegraphics[width=9cm]{images/benchmark_brick/muso11}\\
-{\captionfont M{\"u}hlhaus \etal, 2011 \cite{muso11}.}
-\end{center}
-
-\begin{center}\noindent\rule{12cm}{0.4pt}\end{center}
-
-\begin{center}
-\includegraphics[width=9cm]{images/benchmark_brick/lemm11}\\
-{\captionfont Lemiale \etal, 2011 \cite{lemm11}.}
-\end{center}
-
-\begin{center}\noindent\rule{12cm}{0.4pt}\end{center}
-
-\begin{center}
-\includegraphics[width=8cm]{images/benchmark_brick/maie12a}
-\includegraphics[width=5cm]{images/benchmark_brick/maie12b}\\
-{\captionfont Maierova, phd thesis, 2012 \cite{maie12}}
-\end{center}
-
-\begin{center}\noindent\rule{12cm}{0.4pt}\end{center}
-
-\begin{center}
-\includegraphics[width=5cm]{images/benchmark_brick/mofm13a}
-\includegraphics[width=8cm]{images/benchmark_brick/mofm13b}\\
-{\captionfont Mohajeri \etal, 2013 \cite{mofm13}.}
-\end{center}
-
-\begin{center}\noindent\rule{12cm}{0.4pt}\end{center}
-
-\begin{center}
-\includegraphics[width=5cm]{images/benchmark_brick/thie14a}
-\includegraphics[width=8cm]{images/benchmark_brick/thie14b}\\
-{\captionfont Thieulot, 2014 \cite{thie14}.}
-\end{center}
-
-\begin{center}\noindent\rule{12cm}{0.4pt}\end{center}
-
-\begin{center}
-\includegraphics[width=5cm]{images/benchmark_brick/spmw16a}
-\includegraphics[width=5cm]{images/benchmark_brick/spmw16b}\\
-{\captionfont Spiegelman \etal, 2016 \cite{spmw16}}
-\end{center}
-
-\begin{center}\noindent\rule{12cm}{0.4pt}\end{center}
-
-\begin{center}
-\includegraphics[width=5cm]{images/benchmark_brick/gltf18a}
-\includegraphics[width=5cm]{images/benchmark_brick/gltf18b}
-\includegraphics[width=5cm]{images/benchmark_brick/gltf18c}\\
-{\captionfont Glerum \etal, 2018 \cite{gltf18}}
-\end{center}
-
-\begin{center}\noindent\rule{12cm}{0.4pt}\end{center}
-
-\begin{center}
-\begin{minipage}{0.45\textwidth}
-\centering
-\includegraphics[height=0.8\textwidth]{images/benchmark_brick/frbt19}\\
-{\captionfont Fraters \etal, 2019 \cite{frbt19}}
-\end{minipage}\hfill
-\begin{minipage}{0.45\textwidth}
-\centering
-\includegraphics[height=0.8\textwidth]{images/benchmark_brick/aspectmanual}\\
-{\captionfont Aspect manual \cite{aspectmanual}}
-\end{minipage}
-\end{center}
 
 
 %..............................................................................
-\subsection{Time-dependent benchmark in an annulus}\label{sec:tdba}
-
-This benchmark is presented in Gass{m\"o}ller \etal \cite{galb19}.
-The domain is a 2D annulus with inner and outer radii $R_1=1$ and $R_2=2$, respectively.
-In this situation, the incompressible isothermal Stokes equations and their solution
-can be expressed in a cylindrical coordinate system in terms of the radius $r$ and the
-azimuthal angle $\theta$. The viscosity is set to $eta=1$, and the density is given by
-\begin{equation}
-\rho(r,\theta)=48r^5
-\end{equation}
-The gravity vector is set to 
-\begin{equation}
-\vec{g}(r,\theta)=\frac{r^3}{384} \vec{e}_r + \vec{e}_\theta
-\end{equation}
-Note that this gravity vector is not the gradient of a gravity potential
-and consequently not physical.
-The Stokes system can then be solved using a separation of variables
-approach and yields
-\begin{equation}
-\vec{\upnu}=-r^7 \vec{e}_\theta
-\quad\quad
-p(r,\theta)=\frac{r^9}{72}-\frac{512}{72}
-\end{equation}
-\begin{center}
-\includegraphics[width=12cm]{images/benchmark_annulus/galb19}\\
-{\captionfont Taken from \cite{galb19}}
-\end{center}
-Rather importantly, this benchmark was arrived at by means of a stream function (see Section~\ref{sec:streamfunction}) 
-$\psi(r,\theta)=F(r)G(\theta)$ with $F(r)=r^8/8$ and $G(\theta)=1$.
-
-%..............................................................................
-\subsection{Convection in 2D-box} \label{sec:citb}
+\section{Convection in 2D-box} \label{sec:citb}
 
 We start from the following stream function (see Section~\ref{sec:streamfunction}):
 \begin{equation}
@@ -688,7 +139,7 @@ g_y = -4\pi ^2 \frac{\cos (\pi x)}{\sin (\pi x)}
 
 
 %..............................................................................
-\subsection{The sinker problem}\label{sec:sinker}
+\section{The sinker problem}\label{sec:sinker}
 
 This experiment is not a benchmark stricto sensu since there is no analytical solution. However, it is widely used in the technical literature because of its simple setup and since it allows to test solving strategies.
 Also, it can conveniently be carried out in both two and three dimensions.
@@ -782,7 +233,7 @@ Results obtained with \aspect with $\rho_1=3200$ and $\rho_2=\rho_1+\delta\rho$ 
 
 
 %......................................................
-\subsection{The hot blob problem}\label{sec:hotblob}
+\section{The hot blob problem}\label{sec:hotblob}
 
 This is a very similar setup as the 3D sinker from the same authors
 with higher but more diffusive variation of viscosity.
@@ -798,7 +249,7 @@ contrast $\alpha$.
 \end{center}
 
 %...........................................................
-\subsection{The punch/indentor problem in 2D} \label{sec:punch}
+\section{The punch/indentor problem in 2D} \label{sec:punch}
 
 The punch benchmark is one of the few boundary value problems involving plastic solids 
 for which there exists an exact solution. 
@@ -866,7 +317,7 @@ limit state design/analysis \cite{mich01,zhll03,gour04,gork06,lesk05,shls03}.
 
 
 %................................................................................
-\subsection{Driven cavity with analytical solution} \label{sec:ldc_anal}
+\section{Driven cavity with analytical solution} \label{sec:ldc_anal}
 
 This comes from Elman \etal \cite{elsw}(section 3.1.4)\footnote{actually, not?}. The velocity is prescribed to be
 \[
@@ -995,7 +446,7 @@ We also find $\upnu_{rms}=\frac{1}{\sqrt{45}}\simeq 0.1490711985$
 
 
 %................................................................................
-\subsection{Viscous flow around a cylinder in 2D and 3D } \label{sec:flowcyl}
+\section{Viscous flow around a cylinder in 2D and 3D } \label{sec:flowcyl}
 
 There are many variants of this problem: 2D in Turek \cite{turek}, 3D in John \cite{john02}.
 Many studies focus on Navier-Stokes flow since the cylinder generates
@@ -1014,7 +465,7 @@ Sch\"afer \& Turek (1996) \cite{sctu96}
 
 
 %................................................................................
-\subsection{Heat flow around a cylinder} \label{sec:hfcyl}
+\section{Heat flow around a cylinder} \label{sec:hfcyl}
 
 The domain is a 2D Cartesian box of size 8x4.
 The Stokes equations are not solved and the following velocity is prescribed:
@@ -1047,7 +498,7 @@ Results obtained with \elefant (unpublished)}
 This is carried out in \stone 65.
 
 %................................................................................
-\subsection{Thermal diffusion of half-cooling space} \label{sec:hcsp}
+\section{Thermal diffusion of half-cooling space} \label{sec:hcsp}
 
 This is a simple 1D experiment which solution is (for instance) available 
 in Turcotte \& Schubert \cite{tusc} and is also presented in Choi \etal \cite{chtl13}.
@@ -1070,11 +521,11 @@ DynEarthSol2D are plotted in circles. Taken from \cite{chtl13}}
 
 
 %................................................................................
-\subsection{Laplace equation on a semi infinite plate} \label{sec:lapplate}
+\section{Laplace equation on a semi infinite plate} \label{sec:lapplate}
 \input{benchmark_laplace_plate}
 
 %................................................................................
-\subsection{Slab detachment benchmark} \label{sec:slabdetach}
+\section{Slab detachment benchmark} \label{sec:slabdetach}
 
 \Literature: Schmeling (2011) \cite{schm11}, \aspect manual \cite{aspectmanual}, Glerum \etal \cite{gltf18}, 
 \stone 26.
@@ -1088,7 +539,7 @@ Taken from \cite{gltf18}.}
 \end{center}
 
 %................................................................................
-\subsection{Layered flow with viscosity contrast} \label{sec:layfl}
+\section{Layered flow with viscosity contrast} \label{sec:layfl}
 
 The idea behind this benchmark is to construct an analytical solution to the incompressible
 Stokes equation in the case where the viscosity field showcases a 
@@ -1264,16 +715,16 @@ C_2= \beta C_1 \log (\beta^2 + (1+y_0)^2)  -  2(1+y_0)C_1 \tan^{-1} ((1+y_0)/\be
 
 \newpage
 %................................................................................
-\subsection{The annulus convection benchmark \# 1} \label{ss:anconv}
+\section{The annulus convection benchmark \# 1} \label{ss:anconv}
 \input{benchmark_annulus_converction_benchmark1}
 
 \newpage
 %................................................................................
-\subsection{The annulus convection benchmark \#2 - no slip bc} \label{ss:anconv2}
+\section{The annulus convection benchmark \#2 - no slip bc} \label{ss:anconv2}
 \input{mms_annulus2}
 
 %................................................................................
-\subsection{Rayleigh-B{\'e}nard convection for silicon oil}
+\section{Rayleigh-B{\'e}nard convection for silicon oil}
 
 This originates in Jenkins \etal (2014) \cite{jejl14}.
 
@@ -1284,59 +735,59 @@ This originates in Jenkins \etal (2014) \cite{jejl14}.
 
 \newpage
 %................................................................................
-\subsection{Rayleigh-Taylor experiment of van Keken \etal (1997)} \label{ss:vaks97}
+\section{Rayleigh-Taylor experiment of van Keken \etal (1997)} \label{ss:vaks97}
 \input{benchmark_vaks97}
 
 \newpage
 %................................................................................
-\subsection{(Instantaneous) Sinking block (2D)} \label{ss:sinking_block}
+\section{(Instantaneous) Sinking block (2D)} \label{ss:sinking_block}
 \input{benchmark_sinking_block}
 
 \newpage
 %................................................................................
-\subsection{(Instantaneous) Stokes sphere (3D)} \label{ss:stokes_sphere3D}
+\section{(Instantaneous) Stokes sphere (3D)} \label{ss:stokes_sphere3D}
 \input{benchmark_stokes_sphere_3D}
 
 \newpage
 %................................................................................
-\subsection{(Instantaneous) Stokes sphere (2D)} \label{ss:stokes_sphere2D}
+\section{(Instantaneous) Stokes sphere (2D)} \label{ss:stokes_sphere2D}
 \input{benchmark_stokes_sphere_2D}
 
 \newpage
 %................................................................................
-\subsection{Stokes sphere (2D) in fluid with deformable free surface} \label{ss:stokes_sphere_fs2D}
+\section{Stokes sphere (2D) in fluid with deformable free surface} \label{ss:stokes_sphere_fs2D}
 \input{benchmark_stokes_sphere_fs_2D}
 
 %.......................................................
-\subsection{Relaxation of topography (Crameri \etal, 2012)} \label{ss:crsg12}
+\section{Relaxation of topography (Crameri \etal, 2012)} \label{ss:crsg12}
 \input{benchmark_crsg12}
 
 %.......................................................
-\subsection{3D spherical shell convection benchmark} \label{ss:sscb3D}
+\section{3D spherical shell convection benchmark} \label{ss:sscb3D}
 \input{benchmark_sscb3D}
 
 %.......................................................
-\subsection{2D convection benchmark ('Blankenbach \etal benchmark')} \label{ss:blbc89}
+\section{2D convection benchmark ('Blankenbach \etal benchmark')} \label{ss:blbc89}
 \input{benchmark_blbc89}
 
 %................................................................
-\subsection{Subduction 'benchmark' of Schmeling \etal (2008)}
+\section{Subduction 'benchmark' of Schmeling \etal (2008)}
 \input{benchmark_scbe08}
 
 %................................................................................
-\subsection{Thin layer entrainment} \label{sec:tlentr}
+\section{Thin layer entrainment} \label{sec:tlentr}
 \input{benchmark_thin_layer_entrainment}
 
 %................................................................................
-\subsection{Cylindrical ring subject to a line load} \label{ss:ringlineload}
+\section{Cylindrical ring subject to a line load} \label{ss:ringlineload}
 \input{benchmark_ring_line_load}
 
 %................................................................................
-\subsection{Lid-driven cavity in 3D} \label{ss:liddriven3D}
+\section{Lid-driven cavity in 3D} \label{ss:liddriven3D}
 \input{benchmark_liddriven3D}
 
 %................................................................................
-\subsection{Hollow sphere under internal pressure} \label{ss:hollowsphereintpress}
+\section{Hollow sphere under internal pressure} \label{ss:hollowsphereintpress}
 \input{benchmark_hollowsphereintpress}
 
 
