@@ -1,0 +1,9 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+set xlabel 'istep'
+set ylabel 'total mass'
+set output 'total_mass.pdf'
+plot[][:27515000000]\
+'mass.ascii' w lp ,\
+27514000000

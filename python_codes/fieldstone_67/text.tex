@@ -4,7 +4,7 @@
 
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_67/text.tex}} \end{flushright}
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_67/keywords.ascii}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_67/keywords.ascii}
 
 \begin{center}
 
@@ -36,7 +36,7 @@ There are four types of projection, controlled by the value of the
 \end{enumerate}
 
 %----------------------------------------------
-\subsubsection*{Setup1: Sinking block} 
+\subsection*{Setup1: Sinking block} 
 
 This simple benchark provides challenging numerical experiments dealing with large viscosity variations 
 within the simulation domain. It appears in \textcite{gery10} (2010), \textcite{thie11} (2011) and
@@ -98,7 +98,7 @@ Run
 
 
 %----------------------------------------------
-\subsubsection*{Setup2: Schmeling et al, 2008}
+\subsection*{Setup2: Schmeling et al, 2008}
 
 The setup originates in Schmeling et al (2008) \cite{scbe08}. It consists of three linear viscous
 materials with a very simple layout placed in a 2D Cartesian domain with free slip boundary conditions 
@@ -155,7 +155,7 @@ i.e. a resolution of 10km, i.e. $300\times 75$ elements (if mesh stretching was 
 \end{center}
 
 %----------------------------------------------
-\subsubsection*{Setup3: Quinquis et al, 2010}
+\subsection*{Setup3: Quinquis et al, 2010}
 
 This setup is based on a poster by Quinquis et al, presented at EGU 2010, but it
 was never published in any journal.
@@ -320,7 +320,7 @@ COMPUTE ANALYTICAL MASS ?!
 
 \newpage
 %----------------------------------------------
-\subsubsection*{Setup4: Samuel, 2018}
+\subsection*{Setup4: Samuel, 2018}
 
 This setup is proposed by Samuel (2018) \cite{samu18} in the context of his paper 
 on the deformable particle-in-cell method (DPIC).
@@ -380,7 +380,7 @@ of a finite volume code \cite{saev10,samu12}
 
 \newpage
 %----------------------------------------------
-\subsubsection*{Setup5: subduction initiation}
+\subsection*{Setup5: subduction initiation}
 
 The setup is decribed in \stone~118 and stems from \textcite{mato83} (1983). 
 
@@ -402,7 +402,7 @@ M=\frac34 L_x \left( (L_y-D_w-D_l) \rho_a + D_l \rho_l + D_w \rho_w \right)
 
 \newpage
 %----------------------------------------------------
-\subsubsection*{Setup6: another Quinquis-like setup}
+\subsection*{Setup6: another Quinquis-like setup}
 
 The domain is $3000\times 670~\si{\km}$. The setup is as follows:
 
@@ -464,6 +464,70 @@ In aspect input file ({\tt ||} is 'or', {\tt \&\&}  is 'and'):
 || ((x-L0)^2+(y-yC)^2<150e3^2 && (x-L0)^2+(y-yC)^2>143e3^2 && y>520e3 && x<L0) 
 \end{verbatim}
 \end{itemize}
+
+%------------------------------------------------------------------
+\subsection*{Setup7: sinking of anhydrite blocks in Newtonian salt}
+
+This experiment comes from \textcite{buks12} (2012). 
+See also other similar articles by the same team such as 
+\textcite{buks11} (2011) and \textcite{buks12b} (2012).
+
+In the paper there are three cases A,B,C with potentially different domain sizes.
+I choose here experiment C with a domain of size $L_x=2500~\si{\meter}$
+and $L_y=5000~\si{\meter}$. The gravity is not specified but I set it to 
+$g=9.81~\si{\meter\per\square\second}$.
+Boundary conditions are simple: free slip on all four sides.
+There are three materials in the domain: salt1, salt2 and anhydrite
+with 
+\begin{itemize}
+\item $\eta_{salt1}=10^{16}~\si{\pascal\second}$, $\rho_{salt1}=2200~\si{\kg\per\cubic\meter}$
+\item $\eta_{salt2}=10^{17}~\si{\pascal\second}$, $\rho_{salt2}=2200~\si{\kg\per\cubic\meter}$
+\item $\eta_{anhyd}=10^{20}~\si{\pascal\second}$, $\rho_{salt2}=2900~\si{\kg\per\cubic\meter}$
+\end{itemize}
+The left half of the domain contains salt1, the right half contains salt2 and 
+a block of anhydrite is placed towards the top of the domain. 
+It is of size $l\times h=200x100m$ (I choose here a 2:1 aspect ratio but the paper 
+explores many different aspect ratios). Its top edge is 100m below the surface:
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_67/results/buks12/setup}
+\end{center}
+
+The original resolution of the paper is 200x400 cells (FDCON is used),
+i.e. cells of about 10~m in size.
+This will be difficult to achieve with this \stone, so we will settle for 20~m
+instead.
+Simulations are run up to about 500ka.
+The authors also mention that an initial distance between markers of 10~m is 
+used, i.e. 250x500=125,000 markers.
+
+The initial mass of the system is given by 
+\[
+M_0 = 
+\frac{L_x}{2} L_y \rho_{salt1}
++
+\frac{L_x}{2} L_y \rho_{salt2}
++
+l h (\rho_{anhyd}-\rho_{salt})
+=27,514,000,000
+\]
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

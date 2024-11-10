@@ -99,8 +99,9 @@ ndofP=1  # number of pressure degrees of freedom
 #model=2 # schmeling et al,PEPI 2008
 #model=3 # falling block 
 #model=4 # dripping instability
-model=5 # mato83 
+#model=5 # mato83 
 #model=6 # quinquis-like 
+model=7 # buks12, anhydrite in salt
 
 #...........
 if model==1:
@@ -245,6 +246,36 @@ if model==6: #
    nparticle_per_dim=10
    marker_random=True
    eta_ref=1e21      # scaling of G blocks
+
+#...........
+if model==7:
+   Lx=2500
+   Ly=5000
+   nelx=75 
+   nely=150 
+   grav=9.81
+   use_stretching_x=False
+   use_stretching_y=False
+   #material 1: salt left
+   #material 2: salt right
+   #material 3: anhydrite
+   nmat=3
+   #case A
+   #rho_mat = np.array([2200,2200,2900],dtype=np.float64) 
+   #eta_mat = np.array([1e17,1e17,1e20],dtype=np.float64) 
+   #case B
+   #rho_mat = np.array([2200,2200,2900],dtype=np.float64) 
+   #eta_mat = np.array([5e16,1e17,1e20],dtype=np.float64) 
+   #case C
+   rho_mat = np.array([2200,2200,2900],dtype=np.float64) 
+   eta_mat = np.array([1e16,1e17,1e20],dtype=np.float64) 
+   mass0=10
+   rk=1
+   nparticle_per_dim=3
+   marker_random=False
+   eta_ref=1e20  # scaling of G blocks
+
+#...........
    
 nnx=2*nelx+1                  # number of V nodes, x direction
 nny=2*nely+1                  # number of V nodes, y direction
@@ -258,7 +289,7 @@ Nfem=NfemV+NfemP              # total number of dofs
 hx=Lx/nelx                    # mesh spacing in x direction
 hy=Ly/nely                    # mesh spacing in y direction
 
-nstep=50
+nstep=250
 
 CFL_nb=0.25
 
@@ -317,6 +348,7 @@ print("nny=",nny)
 print("NV=",NV)
 print("mass0=",mass0)
 print("avrg=",avrg)
+print("nparticle=",nparticle)
 print("particle_projection=",particle_projection)
 print("------------------------------")
 
@@ -746,6 +778,19 @@ if model==6:
              swarm_mat[im]=5
        #end if
 
+if model==7:
+   for im in range(0,nparticle):
+       xi=swarm_x[im]
+       yi=swarm_y[im]
+       if yi>Ly-200 and yi<Ly-100 and abs(xi-Lx/2)<100: 
+          swarm_mat[im]=3
+       else:
+          if xi<Lx/2:
+             swarm_mat[im]=1
+          else:
+             swarm_mat[im]=2
+    #end for
+
 print("marker layout: %.3f s" % (time.time() - start))
 
 #np.savetxt('swarm.ascii',np.array([swarm_x,swarm_y,swarm_mat]).T,header='# x,y')
@@ -793,7 +838,7 @@ if model==1:
    #end for 
 #end if
 
-if model==2 or model==3 or model==5 or model==6:
+if model==2 or model==3 or model==5 or model==6 or model==7:
    for i in range(0,NV):
        if x[i]/Lx<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
@@ -902,6 +947,9 @@ if model==5:
    nmarker=0
 
 if model==6:
+   nmarker=0
+
+if model==7:
    nmarker=0
 
 #np.savetxt('markers.ascii',np.array([m_x,m_y]).T,header='# x,y')
