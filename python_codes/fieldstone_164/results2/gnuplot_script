@@ -3,6 +3,8 @@ set grid
 set xtics 0.25
 set pointsize 0.5
 set key outside
+set xlabel 'x'
+set ylabel 'u(x)'
 
 set output 'u.pdf'
 plot[][]\
@@ -14,5 +16,4 @@ plot[][]\
 'u_0150.ascii' w lp ps .3 t 'istep=150',\
 'u_0180.ascii' w lp ps .3 t 'istep=180',\
 'u_0210.ascii' w lp ps .3 t 'istep=210',\
-'u_0240.ascii' w lp ps .3 t 'istep=240',\
 
