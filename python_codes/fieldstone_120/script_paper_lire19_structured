@@ -13,7 +13,7 @@ rm -f errors*
 mkdir paperresults/lire19
 mkdir paperresults/lire19/structured
 
-for e in 28 3 4 5 9 15 18; do 
+for e in 3 4 5 9 15 18; do 
 
     if test $e == 3  ; then Vspace=P2    Pspace=P0  ; fi
     if test $e == 4  ; then Vspace=Q2    Pspace=Q1  ; fi
@@ -25,8 +25,7 @@ for e in 28 3 4 5 9 15 18; do
 
     echo ---------- $Vspace X $Pspace ----------
 
-    #for n in 16 20 24 28 32 40 48 56 64 80 96 128 160 256; do
-    for n in 16 20 24 28 32 40 48 64 ; do
+    for n in 16 20 24 28 32 40 48 64 80 96 128 160; do
         echo mesh: $n X $n 
         start=`date +%s.%N`
         python3 stone.py $n $Vspace $Pspace lire19 0 >> opla

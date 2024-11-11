@@ -1972,20 +1972,9 @@ for iel in range(0,nel):
         area[iel]+=jcob*weightq
 \end{lstlisting}
 
-
-
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{NEW Results - Donea \& Huerta}
-
-{\tt script\_paper\_dh\_structured} and {\tt script\_paper\_dh\_unstructured}
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/dh_structured_errorsV.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/dh_structured_errorsP.pdf}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/dh_unstructured_errorsV.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/dh_unstructured_errorsP.pdf}
-\end{center}
+%=========================================
+\section*{Examples of unstructured meshes}
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/images/unstructured16}
@@ -1994,7 +1983,60 @@ for iel in range(0,nel):
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/images/unstructured64}
 \end{center}
 
-\includegraphics[width=6cm]{python_codes/fieldstone_120/paperresults/dh_structured_errors_divv.pdf}
+
+\newpage
+%===============================================
+\section*{Results - Donea \& Huerta (nov. 2024)}
+
+{\tt script\_paper\_dh\_structured} and {\tt script\_paper\_dh\_unstructured}
+
+
+%---------------------------
+\subsection*{Structured mesh}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_structured_errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_structured_errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_structured_errors_divv.pdf}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_structured_errorsV2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_structured_errorsP2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_structured_errors_divv2.pdf}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_structured_errorsV3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_structured_errorsP3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_structured_errors_divv3.pdf}\\
+\end{center}
+
+%---------------------------
+\subsection*{Unstructured mesh}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_unstructured_errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_unstructured_errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_unstructured_errors_divv.pdf}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_unstructured_errorsV2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_unstructured_errorsP2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_unstructured_errors_divv2.pdf}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_unstructured_errorsV3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_unstructured_errorsP3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/dh_unstructured_errors_divv3.pdf}\\
+\end{center}
+
+
+
+
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2039,31 +2081,41 @@ The domain is the unit square. Free-slip boundary conditions are applied on all
 four sides. The domain is filled with fluid with $\eta_f=1$ and $\rho_f=1$.
 There is a square sinker in the middle of the domain of size $0.25\times 0.25$ with $\eta_s=100$ and
 $\rho_s=1.001$. Gravity is set to $\vec{g}=-\vec{e}_y$. 
-Resolutions nelx=16, 32, 64, 128 are chosen so that element boundaries align with sinker boundaries 
+Resolutions \lstinline{nelx=16,32,64,128} are chosen so that element boundaries align with sinker boundaries 
 (material averaging is then irrelevant, an element is either 100\% fluid or 100\% sinker material). 
 
 %There is no analytical solution so by setting $\vec{\upnu}^{th}=\vec{0}$ and 
 %$p^{th}=0$ the computed errors are in fact the vrms and prms shown hereunder.
 
+Reported velocity is the root mean square velocity inside the whole block.
+Reported pressure is the pressure(s) on the middle node of the block.
+
 %-------------------------------
 \subsubsection*{structured mesh}
 
+{\tt script\_paper\_sinker}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_16}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_32}\\
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_64}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_128}\\
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_16}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_32}\\
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_64}
-%\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_128}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/paperresults/sinker/structured/vel.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_120/paperresults/sinker/structured/press.png}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_16}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_32}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_64}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_vel_128}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_16}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_32}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_64}
+\includegraphics[width=7cm]{python_codes/fieldstone_120/paperresults/sinker/structured/sinker_press_128}
 \end{center}
 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{NEW Results - square sinker (reduced density)}
+
 
 %----------------------------
 \subsection*{Structured mesh}
@@ -2389,7 +2441,7 @@ marginally better for incenter than barycenter.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Results - Linke \& Rebholz mms }
+\section*{Results - Linke \& Rebholz (2019) mms (nov. 2024)}
 
 In the original paper \cite{lire19} the authors consider the time-dependent Stokes equations:
 \[
@@ -2409,13 +2461,16 @@ and I also set $t=0$ in their proposed analytical velocity field so that we get
 \sin x
 \end{array}
 \right)
-\]
-\[
+\qquad
 p(x,y)=\sin(x+y)
+\qquad
+\left(
+\begin{array}{c}
+\cos(y)+\cos(x+y) \\
+\sin(x)+\cos(x+y) 
+\end{array}
+\right)
 \]
-In this case the rhs force is given by 
-
-
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/lire19_structured_errorsV.pdf}
@@ -2443,12 +2498,67 @@ In this case the rhs force is given by
 \end{center}
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Results - Terrel et al. (2012) mms (nov. 2024)}
 
+This manufactured solution originates in \textcite{tesk12} (2012).
+It is implemented in \verb|mms_tesk12.py|
 
+\begin{eqnarray}
+u(x,y) &=& \sin(4\pi x)\cos(4 \pi y) \nn\\
+v(x,y) &=& -\cos(4\pi x)\sin(4 \pi y) \nn\\
+p(x,y) &=& \pi \cos(4 \pi x) \cos(4 \pi y) \nn\\
+b_x(x,y) &=& 28 \pi^2 \sin(4 \pi x) \cos(4 \pi y) \nn\\
+b_y(x,y) &=& -36 \pi^2 \cos(4 \pi x) \sin(4 \pi y) 
+\end{eqnarray}
 
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12/press}
+\end{center}
 
+%---------------------------
+\subsection*{Structured mesh}
 
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_structured_errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_structured_errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_structured_errors_divv.pdf}\\
+\end{center}
 
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_structured_errorsV2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_structured_errorsP2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_structured_errors_divv2.pdf}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_structured_errorsV3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_structured_errorsP3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_structured_errors_divv3.pdf}
+\end{center}
+
+%---------------------------
+\subsection*{Unstructured mesh}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_unstructured_errorsV.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_unstructured_errorsP.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_unstructured_errors_divv.pdf}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_unstructured_errorsV2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_unstructured_errorsP2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_unstructured_errors_divv2.pdf}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_unstructured_errorsV3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_unstructured_errorsP3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/tesk12_unstructured_errors_divv3.pdf}
+\end{center}
 
 
 
@@ -2467,56 +2577,53 @@ In this case the rhs force is given by
 \section*{Summary of mms results}
 
 
-we have $e_{\bm u}=||u-u_h||_{L_2} \propto h^m$ and $e_p=||p-p_h||_{L_2} \propto h^n$
+We have 
+\begin{eqnarray}
+e_{\bm u} &=&||u-u_h||_{L_2} \propto h^m \nn\\
+e_p       &=&||p-p_h||_{L_2} \propto h^n \nn
+\end{eqnarray}
 In what follows I report the rates $m$ and $n$ of the velocity and pressure errors.
 All values in {\color{teal} this color} are the expected ones.
 
-Q: can I find a reference for P1+/P1 m=2,n=1.5 values ?
 
 %-----------------------------
 \subsection*{Structured mesh}
 
+{\color{red} I need to verify all of these!}
+
 \begin{scriptsize}
 \begin{center}
-\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|}
 \hline
-element & 
-D\&H  & 
-SolKz &  
-johnbook  & 
-SolCx &  
-SolVi & 
-bocg12& 
-jokn16 & 
-jolm17 \\
-& 
-m,n& 
-m,n& 
-m,n& 
-m,n& 
-m,n& 
-m,n&
-m,n&
-m,n\\
+element & D\&H  & SolKz &  johnbook  & SolCx &  SolVi & bocg12& 
+jokn16 & jolm17 & tesk12 & lire19 \\
+& m,n&  m,n&  m,n&  m,n&  m,n&  m,n&  m,n&  m,n& m,n& m,n\\
 \hline
-$Q_2\times Q_1$       & 
-{\color{teal} 3,2}     & 
-{\color{teal} 3,2}      & 
-{\color{teal} 3,2}    & 
+%%%%%%%%%%%%%%%%%%%%%%%
+$Q_2\times Q_1$     & 
+{\color{teal} 3,2}  & 
+{\color{teal} 3,2}  & 
+{\color{teal} 3,2}  & 
 3, 0.5   & 
 1, 0.5 & 
 {\color{teal} 3,2}  & 
 {\color{teal} 3,2}  &
+{\color{teal} 3,2}  &
+{\color{teal} 3,2}  &
 {\color{teal} 3,2} \\ 
-$Q_2\times P_{-1}$    & 
-{\color{teal}3,2}   & 
-{\color{teal}3,2}     & 
-{\color{teal}3,2}    & 
-{\color{teal}3,2}     & 
+%%%%%%%%%%%%%%%%%%%%%%%
+$Q_2\times P_{-1}$ & 
+{\color{teal}3,2}  & 
+{\color{teal}3,2}  & 
+{\color{teal}3,2}  & 
+{\color{teal}3,2}  & 
 1, 0.5 & 
-{\color{teal}3,2}   & 
-{\color{teal}3,2}    &
+{\color{teal}3,2}  & 
+{\color{teal}3,2}  &
+{\color{teal}3,2}  &
+{\color{teal}3,2}  & 
 {\color{teal}3,2}  \\ 
+%%%%%%%%%%%%%%%%%%%%%%%
 $P_1^+\times P_{1}$   & 
 {\color{teal} 2,1.5}  & 
 {\color{teal} 2,1.5}  & 
@@ -2525,8 +2632,11 @@ $P_1^+\times P_{1}$   &
 1, 0.5 & 
 {\color{teal} 2,1.5}  & 
 {\color{teal} 2,1.5}  & 
+{\color{teal} 2,1.5}  & 
+{\color{teal} 2,1.5}  & 
 {\color{teal} 2,1.5}  \\ 
-$P_2\times P_1$       & 
+%%%%%%%%%%%%%%%%%%%%%%%
+$P_2\times P_1$     & 
 {\color{teal}3,2}   & 
 {\color{teal}3,2}   & 
 {\color{teal}3,2}   & 
@@ -2534,22 +2644,30 @@ $P_2\times P_1$       &
 1, 0.5 & 
 {\color{teal}3,2}   & 
 {\color{teal}3,2}   & 
+{\color{teal}3,2}   & 
+{\color{teal}3,2}   & 
 {\color{teal}3,2}   \\ 
-$P_2\times P_0$       & 
+%%%%%%%%%%%%%%%%%%%%%%%
+$P_2\times P_0$     & 
 {\color{teal}2,1}   & 
 {\color{teal}2,1}   & 
 {\color{teal}2,1}   & 
 {\color{teal}2,1}   & 
 1, 0.5 & 
 {\color{teal}2,1}   & 
-2, 1 & 
+{\color{teal}2,1}   & 
+{\color{teal}2,1}   & 
+{\color{teal}2,1}   & 
 {\color{teal}2,1}   \\ 
+%%%%%%%%%%%%%%%%%%%%%%%
 $P_2^+\times P_{-1}$  & 
 {\color{teal}3,2}     & 
 {\color{teal}3,2}     & 
 {\color{teal}3,2}     & 
 {\color{teal}3,2}     & 
 1, 0.5 & 
+{\color{teal}3,2}     & 
+{\color{teal}3,2}     & 
 {\color{teal}3,2}     & 
 {\color{teal}3,2}     & 
 {\color{teal}3,2}     \\ 
@@ -2563,12 +2681,16 @@ $P_2^+\times P_{-1}$  &
 
 \begin{scriptsize}
 \begin{center}
-\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|}
 \hline
-element          & D\&H & SolKz  &  johnbook  & SolCx &  SolVi & bocg12&jokn16 &jolm17  \\
-                      & m,n& m,n& m,n& m,n & m,n& m,n \\
+element & D\&H  & SolKz &  johnbook  & SolCx &  SolVi & bocg12& 
+jokn16 & jolm17 & tesk12 & lire19 \\
+& m,n&  m,n&  m,n&  m,n&  m,n&  m,n&  m,n&  m,n& m,n& m,n\\
 \hline
-$P_1^+\times P_{1}$   &  2,1 & 2,1 &  2,? &  2,0.5 & 2,0.5 &2,1 & 2,1  \\
+%-----------------
+$P_1^+\times P_{1}$   &  
+2,1 & 2,1 &  2,? &  2,0.5 & 2,0.5 &2,1 & 2,1  \\
+%-----------------
 $P_2\times P_1$       &  
 {\color{teal} 3,2} & 
 {\color{teal} 3,2} &  
@@ -2577,7 +2699,10 @@ $P_2\times P_1$       &
 3,0.5 &
 {\color{teal} 3,2} & 
 {\color{teal} 3,2}   \\
-$P_2\times P_0$       &  2,1 & 2,1 &  2,1 &  2,1   & 2,1   &2,1 & 3,2 then 1?  \\
+%-----------------
+$P_2\times P_0$       &  
+2,1 & 2,1 &  2,1 &  2,1   & 2,1   &2,1 & 3,2 then 1?  \\
+%-----------------
 $P_2^+\times P_{-1}$  &  
 {\color{teal} 3,2} & 
 {\color{teal} 3,2} & 
@@ -2592,57 +2717,10 @@ $P_2^+\times P_{-1}$  &
 \end{center}
 \end{scriptsize}
 
-%--------------------------
-\subsection*{Conclusions}
-
-\begin{itemize}
-\item Q2Q1: 3-2 for all experiments unless there is a discontinuous viscosity field (SolCx)
-\item Q2P1: 3-2 for all experiments
-\end{itemize}
 
 
 
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-optimal quadrature \& convergence orders:
-
-\begin{center}
-\begin{tabular}{l|ccc|ccc|}
-\hline
-                     & d\&h &   & vj3 & \\
-                     & nq &v    & nq & p & v & p \\
-\hline
-\hline
-$Q_1\times Q_0$       & 2    & X & 2 & X  \\%1
-$Q_2\times Q_0$       &     &  &  &       \\%2
-$P_2\times Q_0$       &     &  &  &       \\%3
-$Q_2\times Q_1$       &      &   & 3 & 2  \\%4 
-$P_2\times P_1$       &      &   & 3 & 2  \\%5
-$Q_3\times Q_2$       &      &   & 4 & 3  \\%6
-$P_3\times P_2$       &      &   & 4 & 3  \\%7
-$Q_1^+\times Q_1$     &      &   & 2 & {\bf 1.5}  \\%8
-$P_1^+\times P_{1}$   &      &   & 2 & {\bf 1.5}  \\%9
-$RT_1\times Q_0$      &      &   & 2 & 1(?)\\%10
-$RT_2\times Q_0$      &      &   & 2 & 1   \\%11
-$DSSY_1\times Q_0$    &      &   & 2 & 1   \\%12
-$DSSY_2\times Q_0$    &      &   & 2 & 1   \\%13
-$Han\times Q_0$       &      &   & 2 & 1   \\%14
-$Q_2\times P_{-1}$    &      &   & 3 & 2   \\%15
-$Q_2\times P_{-1}(u)$ &      &   &  &      \\%16
-$Q_2^{(8)}\times Q_1$ &      &   & 3 & 2   \\%17
-$P_2^+\times P_{-1}$  &      &   & 3 & 2   \\%18
-$P_2^+\times P_{1}$   &      &   & 3 & 2   \\%19
-\hline
-\end{tabular} 
-\end{center}
-
-\vspace{1cm}
-
 Conclusions:
 \begin{itemize}
 \item $Q_1\times Q_0$ pressure is plagued by checkeboard mode (nothing new, won't be included in paper anyways)
@@ -2652,6 +2730,35 @@ Conclusions:
 \item P2P0 vel convergence not cubic ?
 \end{itemize}
 
+
+TODO:
+
+Write code which computes null space of G 
+
+randomize mesh
+
+write function in FEtools with interpolates v and p on point ?
+
+mms with nonzero dirichlet bc?
+
+Korn inequality something ?
+
+
+
+Remaining questions/ideas:
+
+- no flow benchmark ? i.e bent downwards 2D domain. 
+
+- compute jcb, jci, jcob for 3x2 with all elements.
+
+- should I implement edge stab - dG stuff for R-T elements ? if not they should be  
+removed from study. Probably same with Han and Chen.
+
+Remark:
+
+- P1NC-P0, MINI, BR and P2P0 compared on mms in \cite{cakp15}
+
+Mention \fullcite{schg22} 
 
 
 
@@ -2719,33 +2826,3 @@ Korn stuff.
 
 
 
-
-\newpage
-TODO:
-
-Write code which computes null space of G 
-
-randomize mesh
-
-write function in FEtools with interpolates v and p on point ?
-
-mms with nonzero dirichlet bc?
-
-Korn inequality something ?
-
-
-
-Remaining questions/ideas:
-
-- no flow benchmark ? i.e bent downwards 2D domain. 
-
-- compute jcb, jci, jcob for 3x2 with all elements.
-
-- should I implement edge stab - dG stuff for R-T elements ? if not they should be  
-removed from study. Probably same with Han and Chen.
-
-Remark:
-
-- P1NC-P0, MINI, BR and P2P0 compared on mms in \cite{cakp15}
-
-Mention \fullcite{schg22} 

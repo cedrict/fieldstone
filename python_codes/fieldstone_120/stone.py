@@ -18,16 +18,16 @@ Ly=1
 ndofV=2
 ndofP=1
 
-nelx=32
+nelx=64
 
 mtype=0 # mesh type (how quads are divided into triangles)
 
-Vspace='P2+'
-Pspace='P-1'
+Vspace='Q2'
+Pspace='Q1'
 
 visu=1
 
-experiment='solcx' #'sinker' #'lire19' #'dh'
+experiment='tesk12' #'sinker' #'lire19' #'dh'
 
 unstructured=0
 
@@ -86,6 +86,7 @@ if experiment=='RTwave'         : import mms_RTwave as mms
 if experiment=='jokn16'         : import mms_jokn16 as mms
 if experiment=='plin'           : import mms_plin as mms
 if experiment=='lire19'         : import mms_lire19 as mms
+if experiment=='tesk12'         : import mms_tesk12 as mms
 
 # if quadrilateral nqpts is nqperdim
 # if triangle nqpts is total nb of qpoints 
