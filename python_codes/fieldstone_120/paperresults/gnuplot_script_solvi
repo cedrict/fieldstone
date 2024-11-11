@@ -1,0 +1,144 @@
+#gnuplot script for paper figures
+set term pdf enhanced font "Times,17pt" ps 0.3
+#set grid
+set key outside 
+set key spacing 1.25
+set xlabel 'h'
+
+hmin=0.003
+hmax=0.1
+
+# rate  dt type
+# 0.5   6
+# 1     5
+# 1.5   4
+# 2     3
+# 3     2
+
+
+set xlabel '<h>'
+set log x
+set log y
+set format y "10^{%L}"
+set title "structured mesh"
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'solvi_structured_errorsV.pdf'
+plot[hmin:hmax][]\
+'solvi/structured/errors_Q2_Q1'   u 16:6 w lp ps .7 lt 1 lw 2 t 'Q_2xQ_1',\
+'solvi/structured/errors_Q2_Pm1'  u 16:6 w lp ps .5 lt 2 lw 2 t 'Q_2xP_{-1}',\
+'solvi/structured/errors_P1+_P1'  u 16:6 w lp ps .5 lt 3 lw 2 t 'P_1^+xP_1',\
+'solvi/structured/errors_P2_P1'   u 16:6 w lp ps .5 lt 4 lw 2 t 'P_2xP_1',\
+'solvi/structured/errors_P2_P0'   u 16:6 w lp ps .5 lt 7 lw 2 t 'P_2xP_0',\
+'solvi/structured/errors_P2+_P-1' u 16:6 w lp ps .5 lt 6 lw 2 t 'P_2^+xP_{-1}',\
+x/3 lt -1 dt 5 t 'h'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'solvi_structured_errorsP.pdf'
+plot[hmin:hmax][]\
+'solvi/structured/errors_Q2_Q1'   u 16:9 w lp ps .7 lt 1 lw 2 t 'Q_2xQ_1',\
+'solvi/structured/errors_Q2_Pm1'  u 16:9 w lp ps .5 lt 2 lw 2 t 'Q_2xP_{-1}',\
+'solvi/structured/errors_P1+_P1'  u 16:9 w lp ps .5 lt 3 lw 2 t 'P_1^+xP_1',\
+'solvi/structured/errors_P2_P1'   u 16:9 w lp ps .5 lt 4 lw 2 t 'P_2xP_1',\
+'solvi/structured/errors_P2_P0'   u 16:9 w lp ps .5 lt 7 lw 2 t 'P_2xP_0',\
+'solvi/structured/errors_P2+_P-1' u 16:9 w lp ps .5 lt 6 lw 2 t 'P_2^+xP_{-1}',\
+4*x**0.5 lt -1 dt 6 t 'h^{0.5}'
+
+#set ylabel 'v_{rms}'
+#unset format y
+#unset log y
+#set output 'solvi_structured_vrms.pdf'
+#plot[hmin:hmax][]\
+#'solvi/structured/vrms_Q2_Q1'   u 13:6 w lp ps .7 t 'Q_2xQ_1',\
+#'solvi/structured/vrms_Q2_Pm1'  u 13:6 w lp ps .5 t 'Q_2xP_{-1}',\
+#'solvi/structured/vrms_P1+_P1'  u 13:6 w lp ps .5 t 'P_1^+xP_1',\
+#'solvi/structured/vrms_P2_P1'   u 13:6 w lp ps .5 t 'P_2xP_1',\
+#'solvi/structured/vrms_P2_P0'   u 13:6 w lp ps .5 t 'P_2xP_0',\
+#'solvi/structured/vrms_P2+_P-1' u 13:6 w lp ps .5 t 'P_2^+xP_{-1}'
+
+set title "structured mesh (nelx=32)"
+set xlabel 'x'
+set ylabel 'pressure on y=0 line'
+unset log xy
+set output 'solvi_p_profile_structured_32.pdf'
+plot[][]\
+'solvi/structured/solvi_p_profileQ2xQ1_32.ascii'   w lp ps .25 t 'Q_2xQ_1',\
+'solvi/structured/solvi_p_profileQ2xPm1_32.ascii'  w lp ps .25 t 'Q_2xP_{-1}',\
+'solvi/structured/solvi_p_profileP1+xP1_32.ascii'  w lp ps .25 t 'P_1^+xP_1',\
+'solvi/structured/solvi_p_profileP2xP1_32.ascii'   w lp ps .25 t 'P_2xP_1',\
+'solvi/structured/solvi_p_profileP2xP0_32.ascii'   w lp ps .25 t 'P_2xP_0',\
+'solvi/structured/solvi_p_profileP2+xP-1_32.ascii' w lp ps .25 t 'P_2^+xP_{-1}',\
+
+set title "structured mesh (nelx=96)"
+set ylabel 'pressure on y=0 line'
+set output 'solvi_p_profile_structured_96.pdf'
+plot[][]\
+'solvi/structured/solvi_p_profileQ2xQ1_96.ascii'   w lp ps .25 t 'Q_2xQ_1',\
+'solvi/structured/solvi_p_profileQ2xPm1_96.ascii'  w lp ps .25 t 'Q_2xP_{-1}',\
+'solvi/structured/solvi_p_profileP1+xP1_96.ascii'  w lp ps .25 t 'P_1^+xP_1',\
+'solvi/structured/solvi_p_profileP2xP1_96.ascii'   w lp ps .25 t 'P_2xP_1',\
+'solvi/structured/solvi_p_profileP2xP0_96.ascii'   w lp ps .25 t 'P_2xP_0',\
+'solvi/structured/solvi_p_profileP2+xP-1_96.ascii' w lp ps .25 t 'P_2^+xP_{-1}',\
+
+
+
+
+
+#################################################################
+set log x
+set log y
+set format y "10^{%L}"
+set title "unstructured mesh"
+set xlabel 'h'
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'solvi_unstructured_errorsV.pdf'
+plot[hmin:hmax][]\
+'solvi/unstructured/errors_P1+_P1'  u 16:6 w lp ps .5 lt 3 lw 2 t 'P_1^+xP_1',\
+'solvi/unstructured/errors_P2_P1'   u 16:6 w lp ps .5 lt 4 lw 2 t 'P_2xP_1',\
+'solvi/unstructured/errors_P2_P0'   u 16:6 w lp ps .5 lt 7 lw 2 t 'P_2xP_0',\
+'solvi/unstructured/errors_P2+_P-1' u 16:6 w lp ps .5 lt 6 lw 2 t 'P_2^+xP_{-1}',\
+x**2/4   lt -1 dt 3 t 'h^2',\
+x**3/1.5 lt -1 dt 2 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'solvi_unstructured_errorsP.pdf'
+plot[hmin:hmax][]\
+'solvi/unstructured/errors_P1+_P1'  u 16:9 w lp ps .5 lt 3 lw 2 t 'P_1^+xP_1',\
+'solvi/unstructured/errors_P2_P1'   u 16:9 w lp ps .5 lt 4 lw 2 t 'P_2xP_1',\
+'solvi/unstructured/errors_P2_P0'   u 16:9 w lp ps .5 lt 7 lw 2 t 'P_2xP_0',\
+'solvi/unstructured/errors_P2+_P-1' u 16:9 w lp ps .5 lt 6 lw 2 t 'P_2^+xP_{-1}',\
+x**0.5   lt -1 dt 6 t 'h^{0.5}',\
+x**1*1.5 lt -1 dt 5 t 'h^1',\
+x**2*12  lt -1 dt 3 t 'h^2'
+
+#set ylabel 'v_{rms}'
+#unset format y
+#unset log y
+#set output 'solvi_unstructured_vrms.pdf'
+#plot[hmin:hmax][]\
+#'solvi/unstructured/vrms_P1+_P1'  u 13:6 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+#'solvi/unstructured/vrms_P2_P1'   u 13:6 w lp ps .5 lt 4 t 'P_2xP_1',\
+#'solvi/unstructured/vrms_P2_P0'   u 13:6 w lp ps .5 lt 7 t 'P_2xP_0',\
+#'solvi/unstructured/vrms_P2+_P-1' u 13:6 w lp ps .5 lt 6 t 'P_2^+xP_{-1}'
+
+set title "unstructured mesh (nelx=32)"
+set xlabel 'x'
+set ylabel 'pressure on y=0 line'
+unset log xy
+set output 'solvi_p_profile_unstructured_32.pdf'
+plot[][]\
+'solvi/unstructured/solvi_p_profileP1+xP1_32.ascii'  w lp ps .25 t 'P_1^+xP_1',\
+'solvi/unstructured/solvi_p_profileP2xP1_32.ascii'   w lp ps .25 t 'P_2xP_1',\
+'solvi/unstructured/solvi_p_profileP2xP0_32.ascii'   w lp ps .25 t 'P_2xP_0',\
+'solvi/unstructured/solvi_p_profileP2+xP-1_32.ascii' w lp ps .25 t 'P_2^+xP_{-1}',\
+
+set title "unstructured mesh (nelx=96)"
+set ylabel 'pressure on y=0'
+set output 'solvi_p_profile_unstructured_96.pdf'
+plot[][]\
+'solvi/unstructured/solvi_p_profileP1+xP1_96.ascii'  w lp ps .25 t 'P_1^+xP_1',\
+'solvi/unstructured/solvi_p_profileP2xP1_96.ascii'   w lp ps .25 t 'P_2xP_1',\
+'solvi/unstructured/solvi_p_profileP2xP0_96.ascii'   w lp ps .25 t 'P_2xP_0',\
+'solvi/unstructured/solvi_p_profileP2+xP-1_96.ascii' w lp ps .25 t 'P_2^+xP_{-1}',\
+

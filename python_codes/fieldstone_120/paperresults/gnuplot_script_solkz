@@ -1,0 +1,106 @@
+#gnuplot script for paper figures
+set term pdf enhanced font "Times,17pt" ps 0.3
+#set grid
+set key outside 
+set key spacing 1.25
+set xlabel 'h'
+
+hmin=0.003
+hmax=0.1
+
+# rate  dt type
+# 0.5   6
+# 1     5
+# 1.5   4
+# 2     3
+# 3     2
+
+
+
+
+#################################################################
+#################################################################
+#################################################################
+set log x
+set log y
+set format y "10^{%L}"
+set title "structured mesh"
+
+
+set xlabel '<h>'
+set title "structured mesh"
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'solkz_structured_errorsV.pdf'
+plot[hmin:hmax][]\
+'solkz/structured/errors_Q2_Q1'   u 16:6 w lp ps 1.7 lw 2 lt 1 t 'Q_2xQ_1',\
+'solkz/structured/errors_Q2_Pm1'  u 16:6 w lp ps .5 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'solkz/structured/errors_P1+_P1'  u 16:6 w lp ps .5 lw 2 lt 3 t 'P_1^+xP_1',\
+'solkz/structured/errors_P2_P1'   u 16:6 w lp ps .5 lw 2 lt 4 t 'P_2xP_1',\
+'solkz/structured/errors_P2_P0'   u 16:6 w lp ps .5 lw 2 lt 7 t 'P_2xP_0',\
+'solkz/structured/errors_P2+_P-1' u 16:6 w lp ps .5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+x**2/1200 lt -1 dt 3 t 'h^2',\
+x**3/400  lt -1 dt 2 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'solkz_structured_errorsP.pdf'
+plot[hmin:hmax][1e-6:1e-1]\
+'solkz/structured/errors_Q2_Q1'   u 16:9 w lp ps .7 lw 2 lt 1 t 'Q_2xQ_1',\
+'solkz/structured/errors_Q2_Pm1'  u 16:9 w lp ps 1.4 lw 2 lt 2 t 'Q_2xP_{-1}',\
+'solkz/structured/errors_P1+_P1'  u 16:9 w lp ps .5 lw 2 lt 3 t 'P_1^+xP_1',\
+'solkz/structured/errors_P2_P1'   u 16:9 w lp ps .5 lw 2 lt 4 t 'P_2xP_1',\
+'solkz/structured/errors_P2_P0'   u 16:9 w lp ps .5 lw 2 lt 7 t 'P_2xP_0',\
+'solkz/structured/errors_P2+_P-1' u 16:9 w lp ps .5 lw 2 lt 6 t 'P_2^+xP_{-1}',\
+x**1/7      lt -1 dt 5 t 'h^1',\
+x**1.5/1.24 lt -1 dt 4 t 'h^{1.5}',\
+x**2/1.5    lt -1 dt 3 t 'h^2'
+
+#set ylabel 'v_{rms}'
+#unset format y
+#unset log y
+#set output 'solkz_structured_vrms.pdf'
+#plot[hmin:hmax][]\
+#'solkz/structured/vrms_Q2_Q1'   u 13:6 w lp ps .7 t 'Q_2xQ_1',\
+#'solkz/structured/vrms_Q2_Pm1'  u 13:6 w lp ps .5 t 'Q_2xP_{-1}',\
+#'solkz/structured/vrms_P1+_P1'  u 13:6 w lp ps .5 t 'P_1^+xP_1',\
+#'solkz/structured/vrms_P2_P1'   u 13:6 w lp ps .5 t 'P_2xP_1',\
+#'solkz/structured/vrms_P2_P0'   u 13:6 w lp ps .5 t 'P_2xP_0',\
+#'solkz/structured/vrms_P2+_P-1' u 13:6 w lp ps .5 t 'P_2^+xP_{-1}'
+
+#################################################################
+set log x
+set log y
+set format y "10^{%L}"
+set title "unstructured mesh"
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'solkz_unstructured_errorsV.pdf'
+plot[hmin:hmax][]\
+'solkz/unstructured/errors_P1+_P1'  u 16:6 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+'solkz/unstructured/errors_P2_P1'   u 16:6 w lp ps .5 lt 4 t 'P_2xP_1',\
+'solkz/unstructured/errors_P2_P0'   u 16:6 w lp ps .5 lt 7 t 'P_2xP_0',\
+'solkz/unstructured/errors_P2+_P-1' u 16:6 w lp ps .5 lt 6 t 'P_2^+xP_{-1}',\
+x**2/500 lt -1 dt 3 t 'h^2',\
+x**3/300 lt -1 dt 2 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'solkz_unstructured_errorsP.pdf'
+plot[hmin:hmax][1e-6:1e-1]\
+'solkz/unstructured/errors_P1+_P1'  u 16:9 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+'solkz/unstructured/errors_P2_P1'   u 16:9 w lp ps 1.5 lt 4 t 'P_2xP_1',\
+'solkz/unstructured/errors_P2_P0'   u 16:9 w lp ps .5 lt 7 t 'P_2xP_0',\
+'solkz/unstructured/errors_P2+_P-1' u 16:9 w lp ps .5 lt 6 t 'P_2^+xP_{-1}',\
+x**1/10 lt -1 dt 5 t 'h^1',\
+x**2/2  lt -1 dt 3 t 'h^2'
+
+#set ylabel 'v_{rms}'
+#unset format y
+#unset log y
+#set output 'solkz_unstructured_vrms.pdf'
+#plot[hmin:hmax][]\
+#'solkz/unstructured/vrms_P1+_P1'  u 13:6 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+#'solkz/unstructured/vrms_P2_P1'   u 13:6 w lp ps .5 lt 4 t 'P_2xP_1',\
+#'solkz/unstructured/vrms_P2_P0'   u 13:6 w lp ps .5 lt 7 t 'P_2xP_0',\
+#'solkz/unstructured/vrms_P2+_P-1' u 13:6 w lp ps .5 lt 6 t 'P_2^+xP_{-1}'
+
+

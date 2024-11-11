@@ -1,0 +1,109 @@
+#gnuplot script for paper figures
+set term pdf enhanced font "Times,17pt" ps 0.3
+#set grid
+set key outside 
+set key spacing 1.25
+set xlabel 'h'
+
+hmin=0.003
+hmax=0.1
+
+# rate  dt type
+# 0.5   6
+# 1     5
+# 1.5   4
+# 2     3
+# 3     2
+
+
+
+
+#################################################################
+#################################################################
+#################################################################
+set log x
+set log y
+set format y "10^{%L}"
+set title "structured mesh"
+set xlabel '<h>'
+
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'bocg12_structured_errorsV.pdf'
+plot[hmin:hmax][]\
+'bocg12/structured/errors_Q2_Q1'   u 16:6 w lp ps .7 t 'Q_2xQ_1',\
+'bocg12/structured/errors_Q2_Pm1'  u 16:6 w lp ps .5 t 'Q_2xP_{-1}',\
+'bocg12/structured/errors_P1+_P1'  u 16:6 w lp ps .5 t 'P_1^+xP_1',\
+'bocg12/structured/errors_P2_P1'   u 16:6 w lp ps .5 t 'P_2xP_1',\
+'bocg12/structured/errors_P2_P0'   u 16:6 w lp ps .5 t 'P_2xP_0',\
+'bocg12/structured/errors_P2+_P-1' u 16:6 w lp ps .5 t 'P_2^+xP_{-1}',\
+x**2/30 lt -1 dt 3 t 'h^2',\
+x**3/35 lt -1 dt 2 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'bocg12_structured_errorsP.pdf'
+plot[hmin:hmax][]\
+'bocg12/structured/errors_Q2_Q1'   u 16:9 w lp ps .7 t 'Q_2xQ_1',\
+'bocg12/structured/errors_Q2_Pm1'  u 16:9 w lp ps .5 t 'Q_2xP_{-1}',\
+'bocg12/structured/errors_P1+_P1'  u 16:9 w lp ps .5 t 'P_1^+xP_1',\
+'bocg12/structured/errors_P2_P1'   u 16:9 w lp ps .5 t 'P_2xP_1',\
+'bocg12/structured/errors_P2_P0'   u 16:9 w lp ps .5 t 'P_2xP_0',\
+'bocg12/structured/errors_P2+_P-1' u 16:9 w lp ps .5 t 'P_2^+xP_{-1}',\
+x**1/5 lt -1 dt 5 t 'h^1',\
+x**1.5/3 lt -1 dt 4 t 'h^{1.5}',\
+x**2/3 lt -1 dt 3 t 'h^2'
+
+set ylabel 'v_{rms}'
+unset format y
+unset log y
+set output 'bocg12_structured_vrms.pdf'
+plot[hmin:hmax][]\
+'bocg12/structured/vrms_Q2_Q1'   u 13:6 w lp ps .7 t 'Q_2xQ_1',\
+'bocg12/structured/vrms_Q2_Pm1'  u 13:6 w lp ps .5 t 'Q_2xP_{-1}',\
+'bocg12/structured/vrms_P1+_P1'  u 13:6 w lp ps .5 t 'P_1^+xP_1',\
+'bocg12/structured/vrms_P2_P1'   u 13:6 w lp ps .5 t 'P_2xP_1',\
+'bocg12/structured/vrms_P2_P0'   u 13:6 w lp ps .5 t 'P_2xP_0',\
+'bocg12/structured/vrms_P2+_P-1' u 13:6 w lp ps .5 t 'P_2^+xP_{-1}'
+
+
+
+
+
+#################################################################
+set log x
+set log y
+set format y "10^{%L}"
+set title "unstructured mesh"
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'bocg12_unstructured_errorsV.pdf'
+plot[hmin:hmax][]\
+'bocg12/unstructured/errors_P1+_P1'  u 16:6 w lp lt 3 t 'P_1^+xP_1',\
+'bocg12/unstructured/errors_P2_P1'   u 16:6 w lp lt 4 t 'P_2xP_1',\
+'bocg12/unstructured/errors_P2_P0'   u 16:6 w lp lt 5 t 'P_2xP_0',\
+'bocg12/unstructured/errors_P2+_P-1' u 16:6 w lp lt 6 t 'P_2^+xP_{-1}',\
+x**2/30 lt -1 dt 3 t 'h^2',\
+x**3/35 lt -1 dt 2 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'bocg12_unstructured_errorsP.pdf'
+plot[hmin:hmax][]\
+'bocg12/unstructured/errors_P1+_P1'  u 16:9 w lp lt 3 t 'P_1^+xP_1',\
+'bocg12/unstructured/errors_P2_P1'   u 16:9 w lp lt 4 t 'P_2xP_1',\
+'bocg12/unstructured/errors_P2_P0'   u 16:9 w lp lt 5 t 'P_2xP_0',\
+'bocg12/unstructured/errors_P2+_P-1' u 16:9 w lp lt 6 t 'P_2^+xP_{-1}',\
+x**1/5 lt -1 dt 5 t 'h^1',\
+x**1.5/3 lt -1 dt 4 t 'h^{1.5}',\
+x**2/3 lt -1 dt 3 t 'h^2'
+
+set ylabel 'v_{rms}'
+unset format y
+unset log y
+set output 'bocg12_unstructured_vrms.pdf'
+plot[hmin:hmax][]\
+'bocg12/unstructured/vrms_P1+_P1'  u 13:6 w lp lt 3 t 'P_1^+xP_1',\
+'bocg12/unstructured/vrms_P2_P1'   u 13:6 w lp lt 4 t 'P_2xP_1',\
+'bocg12/unstructured/vrms_P2_P0'   u 13:6 w lp lt 5 t 'P_2xP_0',\
+'bocg12/unstructured/vrms_P2+_P-1' u 13:6 w lp lt 6 t 'P_2^+xP_{-1}'
+
+

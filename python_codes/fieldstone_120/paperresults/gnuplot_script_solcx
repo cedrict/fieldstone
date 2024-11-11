@@ -1,0 +1,163 @@
+#gnuplot script for paper figures
+set term pdf enhanced font "Times,17pt" ps 0.3
+#set grid
+set key outside 
+set key spacing 1.25
+set xlabel 'h'
+
+hmin=0.003
+hmax=0.1
+
+# rate  dt type
+# 0.5   6
+# 1     5
+# 1.5   4
+# 2     3
+# 3     2
+
+
+
+
+#################################################################
+#################################################################
+#################################################################
+set log x
+set log y
+set format y "10^{%L}"
+set title "structured mesh"
+
+set xlabel '<h>'
+set log x
+set log y
+set format y "10^{%L}"
+set title "structured mesh"
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'solcx_structured_errorsV.pdf'
+plot[hmin:hmax][1e-8:]\
+'solcx/structured/errors_Q2_Q1'    u 16:6 w lp ps 1.7 lt 1 lw 2 t 'Q_2xQ_1',\
+'solcx/structured/errors_Q2_Pm1'   u 16:6 w lp ps .5  lt 2 lw 2 t 'Q_2xP_{-1}',\
+'solcx/structured/errors_P1+_P1'   u 16:6 w lp ps .5  lt 3 lw 2 t 'P_1^+xP_1',\
+'solcx/structured/errors_P2_P1'    u 16:6 w lp ps .5  lt 4 lw 2 t 'P_2xP_1',\
+'solcx/structured/errors_P2_P0'    u 16:6 w lp ps .5  lt 7 lw 2 t 'P_2xP_0',\
+'solcx/structured/errors_P2+_P-1'  u 16:6 w lp ps .5  lt 6 lw 2 t 'P_2^+xP_{-1}',\
+'solcx/structured/errors_RT1_Q0'   u 16:6 w lp ps .5  lt 5  lw 2 t 'R-T',\
+'solcx/structured/errors_DSSY1_Q0' u 16:6 w lp ps .5  lt 8  lw 2 t 'DSSY',\
+'solcx/structured/errors_P2_P-1'   u 16:6 w lp ps .5  lt 9  lw 2 t 'SV',\
+'solcx/structured/errors_Q1+_Q1'   u 16:6 w lp ps .5  lt 10 lw 2 t 'MINI',\
+x**2/30 lt -1 dt 3 t 'h^2',\
+x**3/95 lt -1 dt 2 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'solcx_structured_errorsP.pdf'
+plot[hmin:hmax][]\
+'solcx/structured/errors_Q2_Q1'    u 16:9 w lp ps 1.7 lt 1 lw 2 t 'Q_2xQ_1',\
+'solcx/structured/errors_Q2_Pm1'   u 16:9 w lp ps .5  lt 2  lw 2 t 'Q_2xP_{-1}',\
+'solcx/structured/errors_P1+_P1'   u 16:9 w lp ps .5  lt 3  lw 2 t 'P_1^+xP_1',\
+'solcx/structured/errors_P2_P1'    u 16:9 w lp ps .5  lt 4  lw 2 t 'P_2xP_1',\
+'solcx/structured/errors_P2_P0'    u 16:9 w lp ps .5  lt 7  lw 2 t 'P_2xP_0',\
+'solcx/structured/errors_P2+_P-1'  u 16:9 w lp ps .5  lt 6  lw 2 t 'P_2^+xP_{-1}',\
+'solcx/structured/errors_RT1_Q0'   u 16:9 w lp ps .5  lt 5  lw 2 t 'R-T',\
+'solcx/structured/errors_DSSY1_Q0' u 16:9 w lp ps .5  lt 8  lw 2 t 'DSSY',\
+'solcx/structured/errors_P2_P-1'   u 16:9 w lp ps .5  lt 9  lw 2 t 'SV',\
+'solcx/structured/errors_Q1+_Q1'   u 16:9 w lp ps .5  lt 10 lw 2 t 'MINI',\
+x**0.5/15 lt -1 dt 6 t 'h^{0.5}',\
+x**1/12   lt -1 dt 5 t 'h^1',\
+x**2/4    lt -1 dt 3 t 'h^2'
+
+
+unset title
+set ylabel '||u-u_h||_{L_2}'
+set xlabel 'max(h)'
+set output 'solcx_structured_errorsV3.pdf'
+plot[9e-3:hmax][1e-9:]\
+'solcx/structured/errors_Q2_Q1'    u 17:6 w lp ps 1.7 lt 1 lw 2 t 'Q_2xQ_1',\
+'solcx/structured/errors_Q2_Pm1'   u 17:6 w lp ps .5  lt 2 lw 2 t 'Q_2xP_{-1}',\
+'solcx/structured/errors_P2_P1'    u 17:6 w lp ps .5  lt 3 lw 2 t 'P_2xP_1',\
+'solcx/structured/errors_P2+_P-1'  u 17:6 w lp ps .5  lt 4 lw 2 t 'P_2^+xP_{-1}',\
+'solcx/structured/errors_RT1_Q0'   u 17:6 w lp ps .5  lt 5 lw 2 t 'R-T',\
+'solcx/structured/errors_DSSY1_Q0' u 17:6 w lp ps .5  lt 6 lw 2 t 'DSSY',\
+'solcx/structured/errors_P2_P-1'   u 17:6 w lp ps .5  lt 7 lw 2 t 'SV',\
+'solcx/structured/errors_Q1+_Q1'   u 17:6 w lp ps .5  lt 8 lw 2 t 'MINI',\
+x**2/100 lt -1 dt 3 t 'h^2',\
+x**3/150 lt -1 dt 2 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'solcx_structured_errorsP3.pdf'
+plot[9e-3:hmax][1e-6:]\
+'solcx/structured/errors_Q2_Q1'    u 17:9 w lp ps 1.7 lt 1 lw 2 t 'Q_2xQ_1',\
+'solcx/structured/errors_Q2_Pm1'   u 17:9 w lp ps .5  lt 2 lw 2 t 'Q_2xP_{-1}',\
+'solcx/structured/errors_P2_P1'    u 17:9 w lp ps .5  lt 3 lw 2 t 'P_2xP_1',\
+'solcx/structured/errors_P2+_P-1'  u 17:9 w lp ps .5  lt 4 lw 2 t 'P_2^+xP_{-1}',\
+'solcx/structured/errors_RT1_Q0'   u 17:9 w lp ps .5  lt 5 lw 2 t 'R-T',\
+'solcx/structured/errors_DSSY1_Q0' u 17:9 w lp ps .5  lt 6 lw 2 t 'DSSY',\
+'solcx/structured/errors_P2_P-1'   u 17:9 w lp ps .5  lt 7 lw 2 t 'SV',\
+'solcx/structured/errors_Q1+_Q1'   u 17:9 w lp ps .5  lt 8 lw 2 t 'MINI',\
+x**1/12   lt -1 dt 3 t 'h^1',\
+x**2/4    lt -1 dt 4 t 'h^2'
+
+#x**0.5/15 lt -1 dt 2 t 'h^{0.5}',\
+
+
+
+
+
+
+
+
+
+
+
+
+#set ylabel 'v_{rms}'
+#unset format y
+#unset log y
+#set output 'solcx_structured_vrms.pdf'
+#plot[hmin:hmax][]\
+#'solcx/structured/vrms_Q2_Q1'   u 13:6 w lp ps .7 t 'Q_2xQ_1',\
+#'solcx/structured/vrms_Q2_Pm1'  u 13:6 w lp ps .5 t 'Q_2xP_{-1}',\
+#'solcx/structured/vrms_P1+_P1'  u 13:6 w lp ps .5 t 'P_1^+xP_1',\
+#'solcx/structured/vrms_P2_P1'   u 13:6 w lp ps .5 t 'P_2xP_1',\
+#'solcx/structured/vrms_P2_P0'   u 13:6 w lp ps .5 t 'P_2xP_0',\
+#'solcx/structured/vrms_P2+_P-1' u 13:6 w lp ps .5 t 'P_2^+xP_{-1}'
+
+#################################################################
+set log x
+set log y
+set xlabel 'h'
+set format y "10^{%L}"
+set title "unstructured mesh"
+
+set ylabel '||u-u_h||_{L_2}'
+set output 'solcx_unstructured_errorsV.pdf'
+plot[hmin:hmax][]\
+'solcx/unstructured/errors_P1+_P1'  u 16:6 w lp ps .5 lt 3 lw 2  t 'P_1^+xP_1',\
+'solcx/unstructured/errors_P2_P1'   u 16:6 w lp ps .5 lt 4 lw 2 t 'P_2xP_1',\
+'solcx/unstructured/errors_P2_P0'   u 16:6 w lp ps .5 lt 7 lw 2 t 'P_2xP_0',\
+'solcx/unstructured/errors_P2+_P-1' u 16:6 w lp ps .5 lt 6 lw 2 t 'P_2^+xP_{-1}',\
+x**2/30 lt -1 dt 3 t 'h^2',\
+x**3/55 lt -1 dt 2 t 'h^3'
+
+set ylabel '||p-p_h||_{L_2}'
+set output 'solcx_unstructured_errorsP.pdf'
+plot[hmin:hmax][]\
+'solcx/unstructured/errors_P1+_P1'  u 16:9 w lp ps .5 lt 3 lw 2 t 'P_1^+xP_1',\
+'solcx/unstructured/errors_P2_P1'   u 16:9 w lp ps .5 lt 4 lw 2 t 'P_2xP_1',\
+'solcx/unstructured/errors_P2_P0'   u 16:9 w lp ps .5 lt 7 lw 2 t 'P_2xP_0',\
+'solcx/unstructured/errors_P2+_P-1' u 16:9 w lp ps .5 lt 6 lw 2 t 'P_2^+xP_{-1}',\
+x**0.5/15 lt -1 dt 6 t 'h^{0.5}',\
+x**1/12   lt -1 dt 5 t 'h^1',\
+x**2/4    lt -1 dt 3 t 'h^2'
+
+#set ylabel 'v_{rms}'
+#unset format y
+#unset log y
+#set output 'solcx_unstructured_vrms.pdf'
+#plot[hmin:hmax][]\
+#'solcx/unstructured/vrms_P1+_P1'  u 13:6 w lp ps .5 lt 3 t 'P_1^+xP_1',\
+#'solcx/unstructured/vrms_P2_P1'   u 13:6 w lp ps .5 lt 4 t 'P_2xP_1',\
+#'solcx/unstructured/vrms_P2_P0'   u 13:6 w lp ps .5 lt 5 t 'P_2xP_0',\
+#'solcx/unstructured/vrms_P2+_P-1' u 13:6 w lp ps .5 lt 6 t 'P_2^+xP_{-1}'
+
+
+
