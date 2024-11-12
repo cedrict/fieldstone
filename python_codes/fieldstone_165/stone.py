@@ -171,8 +171,8 @@ print("-----------------------------")
 #####################################################################
 start = timing.time()
 
-x = np.empty(N,dtype=np.float64)  # x coordinates
-y = np.empty(N,dtype=np.float64)  # y coordinates
+x=np.zeros(N,dtype=np.float64)  # x coordinates
+y=np.zeros(N,dtype=np.float64)  # y coordinates
 
 counter = 0
 for j in range(0,nny):

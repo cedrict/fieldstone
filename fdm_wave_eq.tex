@@ -19,7 +19,7 @@ u_t(L,t) &=& 0 \qquad  \forall t\in[0,T] \label{eq:fdm_wave_bc}
 
 
 We then proceed to discretise the space domain with $nnx$ equidistant nodes (forming $ncellx=nnx-1$ cells)
-at locations $x_i$, $i=1,...nnx$ and the time domain with $N_t$ equidistant nodes at times
+at locations $x_i$, $i=0,...nnx-1$ and the time domain with $N_t$ equidistant nodes at times
 $t_i$, $i=1,...N_t$.
 We define $h=L/ncellx$ and $\delta\! t=T/(N_t-1)$
 
@@ -85,10 +85,10 @@ u_i^{1}
 &=& - u_i^{-1} +2(1-\alpha^2) u_{i}^0 + \alpha^2 (u_{i+1}^0 +u_{i-1}^0)  \nn\\
 &=& - (u_i^1 - 2 \delta \! t g(x_i))  +2(1-\alpha^2) u_{i}^0 + \alpha^2 (u_{i+1}^0 +u_{i-1}^0)  \nn\\
 2 u_i^1 &=& 2 \delta \! t g(x_i)  +2(1-\alpha^2) u_{i}^0 + \alpha^2 (u_{i+1}^0 +u_{i-1}^0)  \nn\\
-u_i^1 &=&  \delta \! t g(x_i)  + (1-\alpha^2) f(x_{i}) + \frac{\alpha^2}{2} (f(x_{i+1}) + f(x_{i-1}) \nn\\
+u_i^1 &=&  \delta \! t g(x_i)  + (1-\alpha^2) f(x_{i}) + \frac{\alpha^2}{2} (f(x_{i+1}) + f(x_{i-1}) 
 \end{eqnarray}
 We now have all discrete $u$ values for the first and second time step so we can  
-apply the algorithm delineated by Eq.\eqref{eq:wavee3} to arrive at $u$ at subsequent time steps.
+apply the algorithm delineated by Eq.~\eqref{eq:wavee3} to arrive at $u$ at subsequent time steps.
 
 FIG 1 of Langtangen
 
@@ -120,7 +120,7 @@ or,
 \end{equation}
 \end{mdframed}
 
-Another approach (Crank-Nicolson):
+Another approach, the Crank-Nicolson method\footnote{\url{https://en.wikipedia.org/wiki/Crank-Nicolson_method}}:
 \[
 \frac{ u_i^{k+1} -2u_i^{k} +u_i^{k-1}  }{\delta\! t^2} = 
 c^2 \frac12 \left(
@@ -152,13 +152,137 @@ or,
 \end{equation}
 \end{mdframed}
 
-
+Note that we have already encountered this method in the context of the 
+diffusion equation solved with FDM in Section~\ref{ss:fdm_advdiff1D}.
 
 %-------------------------------------------------------------
 \subsection{Reflecting boundaries}
 
+When a wave hits a boundary, either it encounters a (Dirichlet)
+boundary condition as seen so far, but it can also encounter
+a different type of boundary condition: it is reflected back 
+via a Neumann boundary condition, which translates into:
+\[
+\frac{\partial u}{\partial n} = 0, \qquad \text{or} \quad
+\vec{n} \cdot \vec\nabla u = 0
+\]
+In the case of a 1D domain the normal is $-\vec{e}_x$ at $x=0$
+and $+\vec{e}_x$ at $x=L$, which then translates into
+\[
+\left. -\frac{\partial u}{\partial x} \right|_{x=0} = 0
+\]
+\[
+\left. \frac{\partial u}{\partial x} \right|_{x=L} = 0
+\]
+Having established the nature of these boundaries, 
+we must now look at their implementation.
+For accuracy reasons we would like to resort to a central 
+difference scheme (see Section~XXX).
+However, this poses a problem, as visible when focusing on the 
+left boundary (the time here is not important):
+\begin{equation}
+\left. -\frac{\partial u}{\partial x} \right|_{x=0} \simeq - \frac{u_1-u_{-1}}{2 h} =0
+\label{eq:waveeq6}
+\end{equation}
+Obviously $u_{-1}$ does not exist! 
+What we can do is write Eq.~\eqref{eq:wavee3} at node $i=0$:
+\[
+u_0^{k+1} = - u_0^{k-1} +2(1-\alpha^2) u_{0}^k + \alpha^2 (u_{1}^k +u_{-1}^k ) 
+\]
+and insert in it $u_{-1}$ obtained from Eq.~\eqref{eq:waveeq6}:
+\begin{eqnarray}
+u_0^{k+1} 
+&=& - u_0^{k-1} +2(1-\alpha^2) u_{0}^k + \alpha^2 (u_{1}^k +u_{1}^k )  \nn\\
+&=& - u_0^{k-1} +2 u_{0}^k + 2\alpha^2 (u_{1}^k -2u_0^k )  
+\label{eq:waveeq7}
+\end{eqnarray}
+Likewise, on the right boundary (i.e. at node $nnx-1$), we have
+\[
+\left. \frac{\partial u}{\partial x} \right|_{x=L} \simeq \frac{u_{nnx}-u_{nnx-2}}{2h}  = 0
+\]
+which we now insert in Eq.~\eqref{eq:wavee3} expressed at $i=nnx-1$:
+\begin{eqnarray}
+u_{nnx-1}^{k+1} 
+&=& - u_{nnx-1}^{k-1} +2(1-\alpha^2) u_{nnx-1}^k + \alpha^2 (u_{nnx-2}^k +u_{nnx-2}^k ) \nn\\
+&=& - u_{nnx-1}^{k-1} +2 u_{nnx-1}^k + 2\alpha^2 (u_{nnx-2}^k-u_{nnx-1}^k  )
+\label{eq:waveeq8}
+\end{eqnarray}
+
+In his lecture notes Langtangen proposes the following rather elegant 
+impementation\footnote{I have adapted it to suit my notations}:
+\begin{lstlisting}
+for i in range(0, Nx+1):
+    ip1 = i+1 if i < Nx else i-1
+    im1 = i-1 if i > 0 else i+1
+    u[i] = u_1[i] + C2*(u_1[im1] - 2*u_1[i] + u_1[ip1])
+\end{lstlisting}
+{\color{red} adapt to my notations!}
+
+
+ 
+
+
 %-------------------------------------------------------------
 \subsection{Generalisation: variable wave velocity}
+
+
+In the case when the wave velocity is not a constant in space,
+e.g. there are two media next to each other,
+the Laplace term is actually of the form
+\[
+\frac{\partial }{\partial x} (c(x)^2 \frac{\partial u}{\partial x})
+\]
+which then needs to be discretised. 
+The generic wave equation is then 
+\[
+\frac{\partial^2  u}{\partial t^2} = 
+\frac{\partial }{\partial x} (c(x)^2 \frac{\partial u}{\partial x})
++h(x,t)
+\]
+At a given node in time-space it writes
+\[
+\frac{\partial^2  }{\partial t^2} u(x_i,t_n)= 
+\frac{\partial }{\partial x} \left(c(x_i)^2 \frac{\partial }{\partial x} u(x_i,t_n) \right)
++h(x_i,t_n)
+\]
+The typical way to approach this is to first define 
+\[
+\phi(x,t) = c(x)^2 \frac{\partial u}{\partial x}
+\]
+so that a centered spatial derivative of $\phi$ writes
+\[
+\frac{\partial \phi}{\partial x} (x_i,t_n) \simeq \frac{\phi(x_{i+1/2},t_n) - \phi(x_{i-1/2},t_n)}{h_x}  
+\]
+Of course we then turn our attention to (let us call $\underline{c}=c^2$ to simplify notations):
+\begin{eqnarray}
+\phi(x_{i+1/2},t_n) 
+&=& \underline{c}(x_{i+1/2}) \frac{\partial }{\partial x} u(x_{i+1/2},t_n)
+\simeq \underline{c}(x_{i+1/2})^2 \frac{u_{i+1} - u_i}{h_x} \nn\\
+\phi(x_{i-1/2},t_n) 
+&=& \underline{c}(x_{i-1/2}) \frac{\partial }{\partial x} u(x_{i-1/2},t_n)
+\simeq \underline{c}(x_{i-1/2})^2 \frac{u_i - u_{i-1}}{h_x} 
+\end{eqnarray}
+Putting it all together:
+\begin{eqnarray}
+\frac{\partial \phi}{\partial x} (x_i,t_n) 
+&\simeq &
+\frac{1}{h_x} \left( \underline{c}(x_{i+1/2}) \frac{u_{i+1} - u_i}{h_x}
+-\underline{c}(x_{i-1/2}) \frac{u_i - u_{i-1}}{h_x} 
+\right) \nn\\
+&\simeq &
+\frac{1}{h_x^2} \left( \underline{c}(x_{i+1/2}) (u_{i+1} - u_i)
+-\underline{c}(x_{i-1/2}) (u_i - u_{i-1})
+\right) 
+\end{eqnarray}
+But how can we compute $\underline{c}(x_{i+1/2})$? Three methods are commonly used. 
+\begin{itemize}
+\item arithmetic averaging: $\underline{c}(x_{i+1/2}) \simeq \frac12 (\underline{c}(x_i)+\underline{c}(x_{i+1}))$
+\item geometric averaging: $\underline{c}(x_{i+1/2}) \simeq (\underline{c}(x_i)\underline{c}(x_{i+1}))^{1/2}$
+\item harmonic averaging: $\underline{c}(x_{i+1/2}) \simeq  2(1/\underline{c}(x_i)+1/\underline{c}(x_{i+1}))^{-1}$
+\end{itemize}
+Of course similar expressions can then be used to compute $\underline{c}(x_{i-1/2})$.
+
+
 
 %-------------------------------------------------------------
 \subsection{Generalisation: damping}
@@ -173,9 +297,352 @@ or,
 \subsection{Numerical dispersion relation}
 
 %---------------------------------------------------------------
-\subsection{Generalisation: in 2D and 3D}
+\subsection{Generalisation to 2D}
 
 
+We start with the two-dimensional wave equation:
+\[
+u_{tt}=c^2 (u_{xx} +u_{yy}) \qquad x\in\Omega, \quad t\in[0,T]
+\]
+on the domain $\Omega=[0,L_x]\times[0,L_y]$ with boundary $\Gamma$,
+which is supplemented by the initial conditions
+\begin{eqnarray}
+u(x,y,0) &=& f(x,y)   \qquad  \forall (x,y)\in \Omega\nn\\
+u_t(x,y,0) &=& g(x,y) \qquad  \forall (x,y)\in \Omega
+\end{eqnarray}
+and the boundary conditions
+\begin{eqnarray}
+u(x,y,t) &=& 0 \qquad \forall (x,y)\in \Gamma \qquad \forall t \in [0,T] \nn\\
+u_t(x,y,t) &=& 0 \qquad \forall (x,y)\in \Gamma \qquad \forall t \in [0,T] 
+\label{eq:fdm_wave_bc}
+\end{eqnarray}
+
+
+We then proceed to discretise the space domain with $nnx$ equidistant nodes (forming $ncellx=nnx-1$ cells) in the $x$-direction at locations $x_i$, $i=0,...nnx-1$,  
+and with $nny$ equidistant nodes (forming $ncelly=nny-1$ cells) in the $y$-direction 
+at locations $y_j$, $j=0,...nny-1$,
+and the time domain with $N_t$ equidistant nodes at times
+$t_i$, $i=1,...N_t$.
+We define $h_x=L_x/ncellx$, $h_y=L_y/ncelly$ and $\delta\! t=T/(N_t-1)$.
+
+
+
+%===================================================
+\paragraph{Explicit formulation}
+
+The first idea is just to use central differences for both time and space derivatives,
+while assuming that the rhs (space) term is taken at time $t_k$:
+i.e.
+\[
+\frac{ u_{i,j}^{k+1} -2u_{i,j}^{k} +u_{i,j}^{k-1}  }{\delta\! t^2} = 
+c^2
+\left(
+\frac{ u_{i+1,j}^k -2u_{i,j}^k +u_{i-1,j}^k  }{h_x^2} 
++
+\frac{ u_{i,j+1}^k -2u_{i,j}^k +u_{i,j-1}^k  }{h_y^2} 
+\right)
+\]
+We then define $\alpha_x = c\; \delta\! t / h_x$,
+$\alpha_y = c\; \delta\! t / h_y$, so that we can write the equation above as
+\begin{equation}
+u_{i,j}^{k+1} -2u_{i,j}^{k} +u_{i,j}^{k-1}  
+= 
+\alpha_x^2 (u_{i+1,j}^k -2u_{i,j}^k +u_{i-1,j}^k )
++
+\alpha_y^2 (u_{i,j+1}^k -2u_{i,j}^k +u_{i,j-1}^k )
+\label{eq:fdmwave1}
+\end{equation}
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+u_{i,j}^{k+1}
+= \alpha_x^2 (u_{i+1,j}^k -2u_{i,j}^k +u_{i-1,j}^k )
++
+\alpha_y^2 (u_{i,j+1}^k -2u_{i,j}^k +u_{i,j-1}^k )
++2u_{i,j}^{k} -u_{i,j}^{k-1}
+\]
+\end{mdframed}
+
+
+
+%===================================================
+\paragraph{Implicit formulations}
+
+\[
+\frac{ u_{i,j}^{k+1} -2u_{i,j}^{k} +u_{i,j}^{k-1}  }{\delta\! t^2} = 
+c^2
+\left(
+\frac{ u_{i+1,j}^{k+1} -2u_{i,j}^{k+1} +u_{i-1,j}^{k+1}  }{h_x^2} 
++
+\frac{ u_{i,j+1}^{k+1} -2u_{i,j}^{k+1} +u_{i,j-1}^{k+1}  }{h_y^2} 
+\right)
+\]
+
+\[
+u_{i,j}^{k+1} -2u_{i,j}^{k} +u_{i,j}^{k-1}  
+=
+\alpha_x^2 (u_{i+1,j}^{k+1} -2u_{i,j}^{k+1} +u_{i-1,j}^{k+1} )
++
+\alpha_y^2 (u_{i,j+1}^{k+1} -2u_{i,j}^{k+1} +u_{i,j-1}^{k+1} )
+\]
+
+\[
+u_{i,j}^{k+1}
+-
+\alpha_x^2 (u_{i+1,j}^{k+1} -2u_{i,j}^{k+1} +u_{i-1,j}^{k+1} )
+-
+\alpha_y^2 (u_{i,j+1}^{k+1} -2u_{i,j}^{k+1} +u_{i,j-1}^{k+1} )
+=
+2u_{i,j}^{k} -u_{i,j}^{k-1} 
+\]
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\[
+(1+2\alpha_x^2+2\alpha_y^2)u_{i,j}^{k+1}
+-
+\alpha_x^2 (u_{i+1,j}^{k+1}  +u_{i-1,j}^{k+1} )
+-
+\alpha_y^2 (u_{i,j+1}^{k+1}  +u_{i,j-1}^{k+1} )
+=
+2u_{i,j}^{k} -u_{i,j}^{k-1} 
+\]
+\end{mdframed}
+
+
+
+
+
+
+\paragraph{Crank-Nicolson}.
+
+\begin{eqnarray}
+\frac{ u_{i,j}^{k+1} -2u_{i,j}^{k} +u_{i,j}^{k-1}  }{\delta\! t^2} 
+&=& 
+\frac{c^2}{2}
+\left(
+\frac{ u_{i+1,j}^{k} -2u_{i,j}^{k} +u_{i-1,j}^{k}  }{h_x^2} 
++
+\frac{ u_{i,j+1}^{k} -2u_{i,j}^{k} +u_{i,j-1}^{k}  }{h_y^2} 
+\right)
+\nn\\
+&+&
+\frac{c^2}{2}
+\left(
+\frac{ u_{i+1,j}^{k+1} -2u_{i,j}^{k+1} +u_{i-1,j}^{k+1}  }{h_x^2} 
++
+\frac{ u_{i,j+1}^{k+1} -2u_{i,j}^{k+1} +u_{i,j-1}^{k+1}  }{h_y^2} 
+\right) 
+\nn\\
+u_{i,j}^{k+1} -2u_{i,j}^{k} +u_{i,j}^{k-1}  
+&=&
+\frac{\alpha_x^2}{2}
+\left(
+ u_{i+1,j}^{k} -2u_{i,j}^{k} +u_{i-1,j}^{k}  
++
+ u_{i+1,j}^{k+1} -2u_{i,j}^{k+1} +u_{i-1,j}^{k+1}
+\right) \nn\\
+&+&
+\frac{\alpha_y^2}{2}
+\left(
+u_{i,j+1}^{k} -2u_{i,j}^{k} +u_{i,j-1}^{k}  
++
+u_{i,j+1}^{k+1} -2u_{i,j}^{k+1} +u_{i,j-1}^{k+1}
+\right)
+\nn
+\end{eqnarray}
+
+\begin{eqnarray}
+&&u_{i,j}^{k+1} 
+-\frac{\alpha_x^2}{2} \left( u_{i+1,j}^{k+1} -2u_{i,j}^{k+1} +u_{i-1,j}^{k+1} \right) 
+-\frac{\alpha_y^2}{2} \left( u_{i,j+1}^{k+1} -2u_{i,j}^{k+1} +u_{i,j-1}^{k+1} \right) \nn\\
+&=&
+ \frac{\alpha_x^2}{2} \left( u_{i+1,j}^{k} -2u_{i,j}^{k} +u_{i-1,j}^{k}  \right)
++\frac{\alpha_y^2}{2} \left( u_{i,j+1}^{k} -2u_{i,j}^{k} +u_{i,j-1}^{k}  \right)
++2u_{i,j}^{k} -u_{i,j}^{k-1}  
+\end{eqnarray}
+
+
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{eqnarray}
+&&(1+\alpha_x^2+\alpha_y^2) u_{i,j}^{k+1} 
+-\frac{\alpha_x^2}{2} \left( u_{i+1,j}^{k+1}  +u_{i-1,j}^{k+1} \right) 
+-\frac{\alpha_y^2}{2} \left( u_{i,j+1}^{k+1}  +u_{i,j-1}^{k+1} \right) \nn\\
+&=&
+ \frac{\alpha_x^2}{2} \left( u_{i+1,j}^{k}  +u_{i-1,j}^{k}  \right)
++\frac{\alpha_y^2}{2} \left( u_{i,j+1}^{k}  +u_{i,j-1}^{k}  \right)
++(2-\alpha_x^2-\alpha_y^2)u_{i,j}^{k} -u_{i,j}^{k-1}  \label{eq:fdmwave2dCR}
+\end{eqnarray}
+\end{mdframed}
+
+In the case $h_x=h_y=h$ then $\alpha_x=\alpha_y=\alpha$ and we obtain
+\begin{eqnarray}
+&&(1+2\alpha^2) u_{i,j}^{k+1} 
+-\frac{\alpha^2}{2} \left( u_{i+1,j}^{k+1}  +u_{i-1,j}^{k+1}  
++ u_{i,j+1}^{k+1}  +u_{i,j-1}^{k+1} \right) \nn\\
+&=&
+\frac{\alpha^2}{2} \left( u_{i+1,j}^{k}  +u_{i-1,j}^{k}  
++ u_{i,j+1}^{k}  +u_{i,j-1}^{k}  \right)
++(2-2\alpha^2)u_{i,j}^{k} -u_{i,j}^{k-1}  \label{eq:fdmwave2dCR2}
+\end{eqnarray}
+
+
+
+
+
+
+
+%===============================================
+\subsection{(von Neumann) Stability of the Crank-Nicolson method}
+
+This section is inspired by \textcite{degefa2018} (2018).
+
+\vspace{.5cm}
+
+A numerical method is said to be stable if the cumulative effect of all the errors is
+bounded independently from the number of mesh points. 
+
+In order to establish whether a method is stable or not one often employs the so-called
+Von Neumann\footnote{\url{https://en.wikipedia.org/wiki/John_von_Neumann}} stability analysis.
+
+In general, the Von Neumann’s procedure
+introduces an error represented by a finite Fourier series and examines how this error
+propagates during the solution. 
+
+To get stability of the 2D Crank-Nicolson method via this method we substitute
+$u_{i,j}$ in Eq.~\eqref{eq:fdmwave2dCR2} by $u_{i,j}=\rho^k \exp (i\beta mh) \exp (i \gamma n h)$
+in the homogeneous equation with
+$h$ the mesh size in both directions, $m,n$ spatial indices and $\beta,\gamma$ time indices:
+
+\begin{eqnarray}
+&&(1+2\alpha^2) u_{i,j}^{k+1} 
+-\frac{\alpha^2}{2} \left( u_{i+1,j}^{k+1}  +u_{i-1,j}^{k+1}  
++ u_{i,j+1}^{k+1}  +u_{i,j-1}^{k+1} \right) \nn\\
+&=&
+\frac{\alpha^2}{2} \left( u_{i+1,j}^{k}  +u_{i-1,j}^{k}  
++ u_{i,j+1}^{k}  +u_{i,j-1}^{k}  \right)
++(2-2\alpha^2)u_{i,j}^{k} -u_{i,j}^{k-1} 
+\end{eqnarray}
+
+
+
+\begin{eqnarray}
+&&(1+2\alpha^2) \rho^{k+1} e^{i\beta mh}e^{i \gamma n h} 
+-\frac{\alpha^2}{2} \left( 
+ \rho^{k+1} e^{i\beta (m+1)h}e^{i \gamma n h}
++\rho^{k+1} e^{i\beta (m-1)h}e^{i \gamma n h}
++\rho^{k+1} e^{i\beta mh}e^{i \gamma (n+1) h}
++\rho^{k+1} e^{i\beta mh}e^{i \gamma (n-1) h}
+\right) \nn\\
+&&=
+\frac{\alpha^2}{2} \left( 
+ \rho^{k} e^{i\beta (m+1)h}e^{i \gamma n h}
++\rho^{k} e^{i\beta (m-1)h}e^{i \gamma n h}
++\rho^{k} e^{i\beta mh}e^{i \gamma (n+1) h}
++\rho^{k} e^{i\beta mh}e^{i \gamma (n-1) h}
+\right) \nn\\
+&&+(2-2\alpha^2) \rho^k e^{i\beta mh}e^{i \gamma n h} -\rho^{k-1} e^{i\beta mh}e^{i \gamma n h}  \nn
+\end{eqnarray}
+Dividing by $\rho^k e^{i\beta mh}e^{i \gamma n h}$ we obtain
+
+\[
+(1+2\alpha^2) \rho  
+-\frac{\alpha^2}{2} \left( 
+ \rho e^{i\beta h}
++\rho e^{-i\beta h}
++\rho e^{i \gamma  h}
++\rho e^{-i \gamma  h}
+\right) =
+\frac{\alpha^2}{2} \left( 
+  e^{i\beta h}
++ e^{-i\beta h}
++ e^{i \gamma  h}
++ e^{-i \gamma  h}
+\right) 
++(2-2\alpha^2)  -\rho^{-1}   \nn
+\]
+
+We then recall that 
+\[
+\cos \theta
+=
+1 -2 \sin^2 \frac{\theta}{2}
+=
+\frac{e^{i\theta}+e^{-i\theta}}{2}
+\]
+so that the equation above becomes
+\[
+(1+2\alpha^2) \rho  
+-\frac{\alpha^2}{2} \rho\left( 
+\underbrace{ e^{i\beta h} + e^{-i\beta h}}_{2 \cos (\beta h)}
++ \underbrace{e^{i \gamma  h}+ e^{-i \gamma  h} }_{2 \cos ( \gamma h)}
+\right) =
+\frac{\alpha^2}{2} \left( 
+\underbrace{  e^{i\beta h} + e^{-i\beta h} }_{2 \cos (\beta h)}
++ \underbrace{ e^{i \gamma  h} + e^{-i \gamma  h} }_{2 \cos( \gamma h)}
+\right) 
++(2-2\alpha^2)  -\rho^{-1} 
+\]
+
+\[
+(1+2\alpha^2) \rho  
+-\alpha^2 \rho\left[ \cos (\beta h)  +\cos (\gamma h) \right] =
+\alpha^2 \left[ \cos (\beta h) + \cos(\gamma h) \right] 
++(2-2\alpha^2)  -\rho^{-1} 
+\]
+
+
+\[
+(1+2\alpha^2) \rho^2  
+-\alpha^2 \rho^2 \left[ \cos (\beta h)  +\cos (\gamma h) \right] 
+-\alpha^2 \rho \left[ \cos (\beta h) + \cos(\gamma h) \right] 
+-(2-2\alpha^2)\rho  +1 =0 
+\]
+
+\[
+\rho^2 \left[
+1 + \alpha^2 ( 2 - \cos (\beta h)  +\cos ( \gamma h) )
+\right]
++\rho
+\left[
+-2 + \alpha^2 ( 2 - \cos (\beta h) - \cos( \gamma h) )
+\right]
++1
+=0
+\]
+Using now the formula 
+\[
+1-\cos \theta
+=
+2 \sin^2 \frac{\theta}{2}
+\]
+
+
+\[
+\rho^2 \left[
+1 + \alpha^2 \left( 2 \sin^2 \frac{\beta h}{2})  + 2 \sin^2  \frac{ \gamma h}{2} \right)
+\right]
++\rho
+\left[
+-2 + \alpha^2 \left( 2\sin^2 \frac{\beta h}{2}) +  2\sin ^2 \frac{\gamma h}{2} \right)
+\right]
++1
+=0
+\]
+\[
+\rho^2 \left[
+1 + 2\alpha^2 \left(  \sin^2 \frac{\beta h}{2})  +  \sin^2  \frac{ \gamma h}{2} \right)
+\right]
++\rho
+\left[
+-2 + 2\alpha^2 \left( \sin^2 \frac{\beta h}{2}) +  \sin ^2 \frac{\gamma h}{2} \right)
+\right]
++1
+=0
+\]
+
+
+I do not understand the rest of the notes!
 
 
 

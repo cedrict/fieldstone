@@ -1,6 +1,13 @@
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_128/text.tex}} \end{flushright}
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_128/keywords.ascii}
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_128/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -9,10 +16,17 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Following chapter 10 of Guy Simpson's book \cite{simp17} the equations
-governing the evolution of the fluid pressure and fluid flow velocities are\footnote{I have slightly changed the notations.}
+Last revision: Oct. 1st, 2024.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Following chapter 10 of \fullcite{simp17} the equations
+governing the evolution of the fluid pressure and fluid flow 
+velocities are\footnote{I have slightly changed the notations with respect to the book.}
 \begin{eqnarray}
 \varphi \beta \frac{\partial p}{\partial t} &=& -\vec\nabla \cdot \vec \upnu + H \label{eq:128:a}\\
 \vec\upnu &=& -\frac{K}{\eta_f} \left(\vec\nabla p - \rho_f g \vec{e}_z \right) \label{eq:128:b}
@@ -27,7 +41,7 @@ where
 \item $\eta_f$ is the fluid viscosity (\si{\pascal\second}), 
 \item $\rho_f$ is the water density (\si{\kg\per\cubic\meter}), 
 \item $g$ is acceleration due to gravity (\si{\meter\per\square\second}), 
-\item $\vec{e}$ is a unit vector oriented in the vertical direction, 
+\item $\vec{e}_z$ is a unit vector oriented in the vertical direction, 
 \item $H$ accounts for any fluid pressure sources or sinks (e.g., due to devolatilization reactions)
 \end{itemize}
 Introducing the excess pore fluid pressure defined as the pressure in excess of the hydrostatic pressure 
@@ -41,11 +55,11 @@ the excess fluid pressure as follows:
 \end{equation}
 Note that once the excess pressure is computed one can recover the fluid velocity via 
 $\vec\upnu=-\frac{K}{\eta_f} \vec\nabla p_e$. 
-Note that $H=0$ in experiments 1,2,3.
+Note that $H=0$ in all three experiments carried out in this \stone.
 
 Applying standard FE methodology to what is essentially a diffusion equation, we arrive at:
 \[
-{\M} \cdot \dot{\vec{\cal P}}_e + {\K}_d \cdot \vec{\cal P}_e = rhs
+{\M} \cdot \frac{\partial}{\partial t} \vec{\cal P}_e + {\K}_d \cdot \vec{\cal P}_e = \vec{b}
 \]
 with
 \[
@@ -55,17 +69,17 @@ with
 \K_d = \int_\Omega {\bm B}^T {\bm B} \frac{K}{\eta_f} 
 \]
 \[
-rhs = \int_\Omega \vec\bN^T  H 
+\vec{b} = \int_\Omega \vec\bN^T  H 
 \]
 Using a simple first order time discretisation yields
 \[
-({\M} + {\K}_d \delta t) \cdot \vec{\cal P}_e^n = \M \cdot \vec{\cal P}_e^{n-1} + rhs \delta t
+({\M} + {\K}_d \delta t) \cdot \vec{\cal P}_e^n = \M \cdot \vec{\cal P}_e^{n-1} + \vec{b} \delta t
 \]
 
 
 
 %--------------------------------------------------------------------------------------
-\subsection*{Fluid Flow Around a Fault (experiment=2)}
+\subsection*{Fluid Flow Around a Fault ({\tt experiment=2})}
 
 %from simpson book
 A porous crust with an initially uniform and isotropic permeability has an
@@ -103,21 +117,21 @@ The matlab code in the book relies on a bespoke mesh of linear triangles. Unfort
 mesh is stored in a {\tt .mat} format which is very inconvenient. In this \stone we rely on 
 linear quadrilaterals ($Q_1$) instead. 
 
-In what follows we use a $500\times 200$ mesh. Because of the geometry of the fault and the fact that we rely on 
-a regular mesh, the fault is then represented as follows in the model:
+In what follows we use a $500\times 200$ mesh. Because of the geometry of the fault 
+and the fact that we rely on a regular mesh, the fault is then represented as follows in the model:
 
 \begin{center}
 \includegraphics[width=9cm]{python_codes/fieldstone_128/results/experiment2/K}
 \includegraphics[width=7cm]{python_codes/fieldstone_128/results/experiment2/K_zoom}\\
-{\captionfont Permeability on 500x200 mesh.}
+{\captionfont Permeability on $500 \times 200$ mesh.}
 \end{center}
 
 The rest of the code is rather straight forward since it is a diffusion equation
 (see for instance \stone 03). We carry out 100 timesteps of $\delta t=0.1~\si{\year}$ each, 
 which is indeed enough time to reach a steady state. The recovered pressure and velocity fields 
-are similar to those in the book but since the book's figure does not showcase a colorscale
+are similar to those in the book but since the book figure does not showcase a colorscale
 we cannot quantitatively compare\footnote{Run code with Matlab?}.
-The velocitiy field is essentially a scaled pressure gradient and we compute it in the middle 
+The velocity field is essentially a scaled pressure gradient and we compute it in the middle 
 of each element for simplicity. The code computes the root mean square velocity and 
 the average pressure over the domain.
 
@@ -126,20 +140,20 @@ the average pressure over the domain.
 \includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment2/vel}\\
 \includegraphics[width=12cm]{python_codes/fieldstone_128/results/experiment2/flow}\\
 {\captionfont Pressure and velocity field at $t=10~\si{\year}$. Note that there is a very large 
-difference in velocity magnitude between the crust and the fault. The flow arrows are actually 
+difference in velocity magnitude between the crust and the fault. The velocity arrows are actually 
 obtained by normalising the velocity vector to one in each element.}
 \end{center}
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment2/velocity}
 \includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment2/vrms}\\
-{\captionfont Velocity statistics. Pressure stats and average plots are not interesting
+{\captionfont Velocity statistics. Pressure statistics and volume average plots are not interesting
 so not shown.}
 \end{center}
 
 
 %--------------------------------------------------------------------------------------
-\subsection*{Fluid Flow Around a circular inclusion (experiment=1)}
+\subsection*{Fluid Flow Around a circular inclusion ({\tt experiment=1})}
 
 Same setup as experiment 2, but the fault has now been replaced by a circular inclusion 
 placed in the middle of the domain and of radius 5~\si{\km}.
@@ -153,7 +167,7 @@ placed in the middle of the domain and of radius 5~\si{\km}.
 
 
 %--------------------------------------------------------------------------------------
-\subsection*{Fluid Flow in a  (experiment=3)}
+\subsection*{Fluid Flow in a  ({\tt experiment=3})}
 
 All parameters are identical to experiment 2. However I have placed
 111 random seeds in the domain and computed the voronoi diagram of these 
@@ -178,15 +192,13 @@ Simulations are run until steady state is reached.
 {\captionfont Run on 800x320 mesh. This could easily be increased.} 
 \end{center}
 
-Remark: this setup as it is now makes no sense. However, it could be scaled down to a few meters or
-centimeters. Pressure boundary conditions and permeability values can also be adapted.
+Remark: this setup as it is now makes no sense (there is no reason why the 
+spatial distribution of the permeability would follow a Voronoi cell 
+distribution). However, it could be scaled down to a few meters or
+centimeters. Pressure boundary conditions and permeability values could also be adapted.
 Three-dimensional simulations could equally easily be run, albeit with a much higher
 computational cost. 
 Obviously the number of 'grains', their position, their permeability, etc ... can be 
 changed too.
 
 
-%--------------------------------------------------------------------------------------
-\subsection*{Fluid Flow a la Antoine (experiment=4)}
-
-In this case the term $H$ is not zero. 
