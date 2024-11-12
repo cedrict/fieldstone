@@ -1,0 +1,29 @@
+\begin{flushright} {\tiny {\color{gray} \tt mms\_bohm23.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The author does not specify the size of the domain nor the boundary conditions. 
+\[
+\vec\upnu(x,y) =
+\left(
+\begin{array}{c}
+y+2\sin (\pi(x+y))+4 \\
+-x-2\sin(\pi(x+y))+3 \\
+\end{array}
+\right)
+\qquad
+p(x,y)=2x-y+1
+\]
+Since the velocity is not zero on the sides of the unit square and never will on 
+any straight horizontal or vertical line, we will assume that the 
+velocity is prescribed on the sides.
+Note also that the velocity is not normalised to zero:
+\[
+\iint p(x,y) dx dy = 0.5
+\]
+ 
+The viscosity function is non-constant but smooth:
+\[
+\eta(x,y)=\exp(x) \sin \left(\pi \frac{x+1}{2} \right) \sin \left(\pi \frac{y+1}{2}\right)  +1
+\]
+The authors run experiments with $P_2\times P_1$ element pair and recover expected 
+error convergence rates.

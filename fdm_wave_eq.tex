@@ -287,6 +287,24 @@ Of course similar expressions can then be used to compute $\underline{c}(x_{i-1/
 %-------------------------------------------------------------
 \subsection{Generalisation: damping}
 
+The wave equation that we have considered so far is rather ideal, 
+in the sense that it is a bit too perfect: in reality waves 
+energy is dissipated via a range of mechanims (think for instance 
+at the air resistance in the case of a rope).
+
+The simplest way to introduce damping is to add a first-order time
+derivative
+\[
+\frac{\partial^2 u}{\partial t^2} 
++ \gamma \frac{\partial u}{\partial t} 
+=
+c^2 \frac{\partial^2 u}{\partial x^2} + h(x,t)
+\]
+Obviously if one would remove the second-order 
+time derivative we would recover a diffusion equation, 
+which we have already studied in Section~\ref{ss:fdm_diff1D}.
+
+
 %-------------------------------------------------------------
 \subsection{Periodic boundary conditions}
 

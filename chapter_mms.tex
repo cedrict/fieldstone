@@ -1,6 +1,210 @@
 \chapter{Manufactured solutions \label{mms}} 
 
-\input{mms} 
+\index{general}{MMS} 
+\index{general}{Method of Manufactured Solutions}
+\begin{flushright} {\tiny {\color{gray} \tt chapter\_mms.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The method of manufactured solutions is a relatively simple way of carrying out
+code verification. In essence, one postulates a solution for the PDE at hand (as
+well as the proper boundary conditions), inserts it in the PDE and computes the 
+corresponding source term. 
+The same source term and boundary conditions will then be used in a numerical 
+simulation so that the computed solution can be compared with the (postulated)
+true analytical solution. 
+
+Examples of this approach are to be found in 
+\textcite{dohu03}, \textcite{busa13}, \textcite{bodg06}, \textcite{polp14},
+\textcite{polp14b}, \textcite{lopp14}, \textcite{blmp16}, \textcite{thba22}.
+
+%-----------------------------------------------------------------------------
+\section{The repository}
+
+I have created in folder {\tt mms} a template python script for incompressible
+isoviscous isothermal Stokes flow. All one has to do is to provide the velocity and 
+pressure, the strain rate tensor components and its spatial derivatives.
+
+\lstinputlisting[language=python]{mms/template.py}
+
+\begin{eqnarray}
+u(x,y) &=&  \nn\\
+v(x,y) &=&  \nn\\
+p(x,y) &=&  \nn
+\end{eqnarray}
+
+\begin{eqnarray}
+\partial_x u (x,y)&=& \nn\\
+\partial_y u (x,y)&=& \nn\\
+\partial_x v (x,y)&=& \nn\\
+\partial_y v (x,y)&=& \nn
+\end{eqnarray}
+
+\begin{eqnarray}
+\dot\varepsilon_{xx}(x,y) &=&  \nn\\
+\dot\varepsilon_{yy}(x,y) &=&  \nn\\
+\dot\varepsilon_{xy}(x,y) &=&  \nn
+\end{eqnarray}
+
+\begin{eqnarray}
+\frac{\partial p}{\partial x} (x,y)&=& \nn\\
+\frac{\partial p}{\partial y} (x,y)&=& \nn
+\end{eqnarray}
+
+\begin{eqnarray}
+\partial_x \dot\varepsilon_{xx} (x,y)&=& \nn\\
+\partial_x \dot\varepsilon_{xy} (x,y)&=& \nn\\
+\partial_y \dot\varepsilon_{xy} (x,y)&=& \nn\\
+\partial_y \dot\varepsilon_{yy} (x,y)&=& \nn
+\end{eqnarray}
+
+\[
+\upnu_{rms}=\sqrt{ \frac{1}{L_xL_y} \iint (u^2+v^2) dxdy   } = 
+\]
+
+%-----------------------------------------------------------------------------
+\section{Manufactured solution in \textcite{dohu03} (book) \label{mms1}}
+\input{mms_dohu03}
+
+%..........................................................
+\section{SolCx}\label{ss:solcx} 
+\input{benchmark_solcx}
+
+%..........................................................
+\section{SolKz} \label{ss:solkz} 
+\input{benchmark_solkz}
+
+%..........................................................
+\section{SolVi} \label{ss:solvi} 
+\input{benchmark_solvi}
+
+%-----------------------------------------------------------------------------
+\section{Manufactured solution with linear pressure \label{mms_plin}}
+\input{mms_plin}
+
+%--------------------------------------------------------------------------------
+\section{Manufactured solution in \textcite{dobo04} (2004) \label{ss:mms2}}
+\input{mms_dobo}
+
+%--------------------------------------------------------------------------------
+\section{Manufactured solution in \textcite{tesk12} (2012) \label{ss:mms_tesk12}}
+\input{mms_tesk12}
+
+%-----------------------------------------------------------------------------
+\section{Analytical benchmark \label{mms_db3D} - "DB3D"}
+\input{mms_db3d}
+
+%-----------------------------------------------------------------------------
+\section{Analytical benchmark in \textcite{been79} (1979) \label{mms4}}
+\input{mms_been79}
+
+%-----------------------------------------------------------------------------
+\section{Analytical benchmark in \textcite{ilpe07} (2007) \label{mms6}}
+\input{mms_ilpe07}
+
+%-----------------------------------------------------------------------------
+\section{Analytical benchmark \label{mms7} - "grooves"}
+\input{mms_grooves}
+
+%-----------------------------------------------------------------------------
+\section{Analytical benchmark \label{mms8} - "Kovasznay"}
+\input{mms_kovasnay}
+
+%-----------------------------------------------------------------------------
+\section{Manufactured solution in \textcite{lami17} (2017) \label{ss:mms11}}
+\input{mms_lami}
+
+%-----------------------------------------------------------------------------
+\section{Manufactured solution in \textcite{muye17}} \label{ss:mms_muye17a}
+\input{mms_muye17a}
+
+%-----------------------------------------------------------------------------
+\section{Manufactured solution in \textcite{bocg12} (2012)} \label{ss:mms_bocg12}
+\input{mms_bocg12}
+
+%-----------------------------------------------------------------------------
+\section{Manufactured solution in \textcite{john16} (book)} \label{ss:mms_johnbook}
+\input{mms_johnbook}
+
+%-----------------------------------------------------------------------------
+\section{Manufactured solution in \textcite{jokn16b}} \label{ss:mms_jokn16}
+\input{mms_jokn16}
+
+%-----------------------------------------------------------------------------
+\section{Manufactured solution in \textcite{john98} (1998) on a disc} \label{ss:mms_john98}
+\input{mms_john98}
+
+%-----------------------------------------------------------------------------
+\section{Manufactured solution in \textcite{bohm23} (2023)} \label{ss:mms_bohm23}
+\input{mms_bohm23}
+
+%-----------------------------------------------------------------------------
+\section{Annulus with kinematical b.c. - pure rotation} \label{ss:ankbc}
+\input{mms_annulus}
+
+%-----------------------------------------------------------------------------
+\section{Viscous beam under extension \label{ss:viscousbeamext}}
+\input{mms_viscous_beam_ext}
+
+%..........................................................
+\section{Simple shear heating} \label{ss:shearheating} 
+\input{benchmark_shearheating}
+
+%..........................................................
+\section{2D solution with nontrivial interface jump} \label{ss:jump2D} 
+\input{benchmark_jump2D}
+
+%..........................................................
+\section{3D solution with nontrivial interface jump} \label{ss:jump3D} 
+\input{benchmark_jump3D}
+
+%-----------------------------------------------------------------------------
+\section{Flow in a square using Stream Functions \label{ss:square_streamfct} }
+\input{mms_square_stream_function}
+
+%-------------------------------------------------------------------------------
+\section{One-dimensional advection-diffusion equation \label{ss:advdiff} }
+\input{mms_advection1D}
+
+%..............................................................................
+\section{Annulus with kinematical b.c. - shear flow}\label{ss:sfan}
+\input{mms_annulus_kinbc}
+
+%..............................................................................
+\section{Generic framework for 3D solution in Cartesian coordinates}\label{ss:mms3Dgen}
+\input{mms_generic3D}
+
+%..........................................................
+\section{2D Analytical benchmark XII}\label{ss:sofo87_2D}
+\input{mms_sofo87}
+
+%..........................................................
+\section{2D analytical benchmark from Burman \& Hansbo (2006)}\label{ss:mms_buha06}
+\input{mms_buha06}
+
+%..........................................................
+\section{2D analytical benchmark from Cioncolini \& Boffi (2019) \label{ss:mms_cibo19}}
+\input{mms_cibo19}
+
+%..........................................................
+\section{Poisson equation on 3D shell}
+\input{mms_phdo19} 
+
+%-----------------------------------------------------------------------------
+\section{Manufactured solution 1 in \textcite{jolm17}  \label{ss:mms_jolm17a}}
+
+It is presented in Example 1.1 of \cite{jolm17} and meant to be a peculiar case where the velocity solution 
+is exactly zero. The viscosity is 1, the domain is a unit square, no-slip boundary conditions 
+are prescribed everywhere. The buoyancy force is given by $\vec{b}=(0,Ra(1-y+3y^2))$ where 
+$Ra>0$ is a parameter. The flow is incompressible and the analytical pressure solution 
+is given by $p=Ra(y^3-y^2/2+y-7/12)$.
+
+%-----------------------------------------------------------------------------
+\section{Manufactured solution 2 in \textcite{jolm17}  \label{ss:mms_jolm17}}
+\input{mms_jolm17}
+
+%-----------------------------------------------------------------------------
+\section{Channel flow with Herschel-Bulkley rheology \label{ss:HBflow}}
+\input{mms_channelHB} TODO!!!!
 
 
 
