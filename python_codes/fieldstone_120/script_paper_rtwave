@@ -40,8 +40,8 @@ for e in 3 4 5 9 15 18 ; do
 
 done
 
-mv err* paperresults/rt/structured
-mv opla* paperresults/rt/structured
-mv vrms* paperresults/rt/structured
+#mv err* paperresults/rt/structured
+#mv opla* paperresults/rt/structured
+#mv vrms* paperresults/rt/structured
 mv rt_vel* paperresults/rt/structured
 

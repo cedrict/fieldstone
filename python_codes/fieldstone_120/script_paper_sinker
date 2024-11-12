@@ -48,9 +48,9 @@ for e in  4 3 5 9 15 18; do
 
 done
 
-mv err* paperresults/sinker/structured
-mv opla* paperresults/sinker/structured
-mv vrms* paperresults/sinker/structured
+#mv err* paperresults/sinker/structured
+#mv opla* paperresults/sinker/structured
+#mv vrms* paperresults/sinker/structured
 mv sinker* paperresults/sinker/structured
 #mv visu_*.vtu paperresults/sinker/structured
 
