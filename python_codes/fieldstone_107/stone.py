@@ -63,7 +63,7 @@ def dNNds(r,s):
 ###############################################################################
 
 def mygauss_exp1(x,y,Lx):
-    return 200*np.exp(-(x-Lx/2)**2/2/5000**2-y**2/2/5000**2)
+    return 200*np.exp(-(x-Lx/2)**2/2/1000**2-y**2/2/1000**2)
 
 ###############################################################################
 # constants
@@ -72,6 +72,7 @@ eps=1e-9
 year=365.25*3600*24
 sqrt2=np.sqrt(2)
 ndim=2  
+TKelvin=273.15
 
 ###############################################################################
 ###############################################################################
@@ -88,7 +89,7 @@ match (experiment):
     case(0):
         Lx=100e3   ; Ly=100e3
         nelx=32    ; nely=32
-        Ttop=273   ; Tbottom=500
+        Ttop=TKelvin ; Tbottom=500
         ptop=0     ; pbottom=1e7
         eta_f=1e-4 ; T0_f=277.15 ; hcapa_f=4184 ; hcond_f=0.598 ; rho0_f=1000 ; alpha_f=1e-4
         gx=0       ; gy=0
@@ -99,7 +100,7 @@ match (experiment):
     case(1):
         Lx=100e3   ; Ly=100e3
         nelx=32    ; nely=32
-        Ttop=273   ; Tbottom=500
+        Ttop=TKelvin   ; Tbottom=500
         ptop=0     ; pbottom=1000*9.81*Ly
         eta_f=1e-4 ; T0_f=277.15 ; hcapa_f=4184 ; hcond_f=0.598 ; rho0_f=1000 ; alpha_f=0
         gx=0       ; gy=-9.81
@@ -110,13 +111,13 @@ match (experiment):
     case(2):
 
         Lx=10e3      ; Ly=10e3
-        nelx=50      ; nely=50
-        Ttop=273      ; Tbottom=500
-        ptop=1e5      ; pbottom=100e6
-        eta_f=1.33e-4 ; T0_f=277.15   ; hcapa_f=4184 ; hcond_f=0.598 ; rho0_f=1000 ; alpha_f=1e-4
-        gx=0          ; gy=-9.81
+        nelx=100      ; nely=nelx
+        Ttop=TKelvin  ; Tbottom=200+TKelvin
+        ptop=1e5      ; pbottom=99e6
+        eta_f=1.33e-4 ; T0_f=Ttop   ; hcapa_f=4184 ; hcond_f=0.598 ; rho0_f=1000 ; alpha_f=1e-4
+        gx=0          ; gy=-10
         K_s=1e-13     ; rho_s=2700 ; hcapa_s=1000 ; hcond_s=2
-        dt=1*year     ; CFL_nb=0.1 ; tfinal=1e6*year ; nstep=1
+        dt=1*year     ; CFL_nb=-0.1 ; tfinal=1e6*year ; nstep=100
         phi=0.15
 
     case(3):
@@ -132,6 +133,12 @@ match (experiment):
 Ra= K_s*rho0_f*abs(gy)*alpha_f*(Tbottom-Ttop)*Ly/ (hcond_f/rho0_f/hcapa_f)/eta_f #check!
 
 every=1
+                
+###############################################################################
+#compute coeffs based on s,f with phi
+
+rho_hcapa_m=(1-phi)*rho_s*hcapa_s+phi*rho0_f*hcapa_f
+hcond_m=(1-phi)*hcond_s+phi*hcond_f
 
 ###############################################################################
 
@@ -163,6 +170,7 @@ pstats_file=open('stats_p.ascii',"w")
 ustats_file=open('stats_u.ascii',"w")
 vstats_file=open('stats_v.ascii',"w")
 RaNu_file=open('RaNu.ascii',"w")
+meascenter_file=open('measurements_center.ascii',"w")
 
 ###############################################################################
 
@@ -384,11 +392,11 @@ for istep in range(0,nstep):
     ###########################################################################
     start = timing.time()
 
-    A_mat=np.zeros((NfemP,NfemP),dtype=np.float64) # FE matrix 
-    rhs=np.zeros(NfemP,dtype=np.float64)           # FE rhs 
-    B_mat=np.zeros((2,m),dtype=np.float64)         # gradient matrix B 
-    dNNNdx = np.zeros(m,dtype=np.float64)          # basis fct derivatives
-    dNNNdy = np.zeros(m,dtype=np.float64)          # basis fct derivatives
+    A_mat=lil_matrix((NfemP,NfemP),dtype=np.float64) # FE matrix 
+    rhs=np.zeros(NfemP,dtype=np.float64)             # FE rhs 
+    B_mat=np.zeros((2,m),dtype=np.float64)           # gradient matrix B 
+    dNNNdx = np.zeros(m,dtype=np.float64)            # basis fct derivatives
+    dNNNdy = np.zeros(m,dtype=np.float64)            # basis fct derivatives
 
     for iel in range (0,nel):
 
@@ -475,168 +483,6 @@ for istep in range(0,nstep):
 
     print("solve p: %.3f s" % (timing.time() - start))
 
-    #################################################################
-    # 3) compute velocity - not needed 
-    #################################################################
-    
-
-
-
-    ###########################################################################
-    # compute timestep value
-    ###########################################################################
-    start = timing.time()
-
-    #dt1=0 #CFL_nb*hx/np.max(np.sqrt(u**2+v**2))
-    #dt2=CFL_nb*hx**2/(hcond_f/hcapa_f/rho0_f)
-    #dt=np.min([dt1,dt2])
-    #print('     -> dt1 = %.6f (year)' %(dt1/year))
-    #print('     -> dt2 = %.6f (year)' %(dt2/year))
-    #print('     -> dt  = %.6f (year)' %(dt/year))
-    time+=dt
-    print('     -> time= %.6f; tfinal= %.6f (year)' %(time/year,tfinal/year))
-
-    #dt_file.write("%10e %10e %10e %10e\n" % (time,dt1,dt2,dt))
-    #dt_file.flush()
-
-    print("compute time step: %.3f s" % (timing.time() - start))
-
-    ###########################################################################
-    # build temperature matrix
-    ###########################################################################
-    start = timing.time()
-
-    A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
-    rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
-    B_mat=np.zeros((2,m),dtype=np.float64)           # gradient matrix B 
-    N_mat = np.zeros((m,1),dtype=np.float64)         # shape functions
-    N_mat_supg = np.zeros((m,1),dtype=np.float64)    # shape functions
-    Tvect = np.zeros(m,dtype=np.float64)
-
-    for iel in range (0,nel):
-
-        a_el=np.zeros((m,m),dtype=np.float64)
-        b_el=np.zeros(m,dtype=np.float64)
-        Ka=np.zeros((m,m),dtype=np.float64)   # elemental advection matrix 
-        Kd=np.zeros((m,m),dtype=np.float64)   # elemental diffusion matrix 
-        MM=np.zeros((m,m),dtype=np.float64)   # elemental mass matrix 
-        vel=np.zeros((1,ndim),dtype=np.float64)
-
-        for k in range(0,m):
-            Tvect[k]=T[icon[k,iel]]
-        #end for
-
-        for iq in range(0,nqperdim):
-            for jq in range(0,nqperdim):
-                rq=qcoords[iq]
-                sq=qcoords[jq]
-                weightq=qweights[iq]*qweights[jq]
-
-                N_mat[0:m,0]=NN(rq,sq)
-                dNNNdr[0:m]=dNNdr(rq,sq)
-                dNNNds[0:m]=dNNds(rq,sq)
-
-                # calculate jacobian matrix
-                jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                for k in range(0,m):
-                    jcb[0,0]+=dNNNdr[k]*x[icon[k,iel]]
-                    jcb[0,1]+=dNNNdr[k]*y[icon[k,iel]]
-                    jcb[1,0]+=dNNNds[k]*x[icon[k,iel]]
-                    jcb[1,1]+=dNNNds[k]*y[icon[k,iel]]
-                #end for
-                jcob = np.linalg.det(jcb)
-                jcbi = np.linalg.inv(jcb)
-
-                # compute dNdx & dNdy
-                for k in range(0,m):
-                    dNNNdx[k]=jcbi[0,0]*dNNNdr[k]+jcbi[0,1]*dNNNds[k]
-                    dNNNdy[k]=jcbi[1,0]*dNNNdr[k]+jcbi[1,1]*dNNNds[k]
-                    B_mat[0,k]=dNNNdx[k]
-                    B_mat[1,k]=dNNNdy[k]
-                #end for
-
-                #compute velocity at q point
-                dpdxq=0.
-                dpdyq=0.
-                rhoq=0.
-                for k in range(0,m):
-                    rhoq+=N_mat[k,0]*rho[icon[k,iel]]
-                    dpdxq+=dNNNdx[k]*p[icon[k,iel]]
-                    dpdyq+=dNNNdy[k]*p[icon[k,iel]]
-                #end for
-                vel[0,0]=-K_s/eta_f*(dpdxq-rhoq*gx)
-                vel[0,1]=-K_s/eta_f*(dpdyq-rhoq*gy)
-
-                N_mat_supg=N_mat #+tau_supg*np.transpose(vel.dot(B_mat))
-
-                #compute coeffs based on s,f with phi
-                rho_hcapa_m=(1-phi)*rho_s*hcapa_s+phi*rho0_f*hcapa_f
-                hcond_m=(1-phi)*hcond_s+phi*hcond_f
-
-                # compute mass matrix
-                MM+=N_mat_supg.dot(N_mat.T)*weightq*jcob*rho_hcapa_m
-
-                # compute diffusion matrix
-                Kd+=B_mat.T.dot(B_mat)*weightq*jcob*hcond_m
-
-                # compute advection matrix
-                Ka+=N_mat_supg.dot(vel.dot(B_mat))*weightq*jcob*rho0_f*hcapa_f
-
-            #end for
-        #end for
-
-        #1st order backward euler
-        #a_el=MM+ (Ka+Kd)*dt
-        #b_el=MM.dot(Tvect)
-
-        #Crank-Nicolson
-        a_el=MM+0.5*(Ka+Kd)*dt
-        b_el=(MM-0.5*(Ka+Kd)*dt).dot(Tvect)
-
-        # apply boundary conditions
-        for k1 in range(0,m):
-            m1=icon[k1,iel]
-            if bc_fixT[m1]:
-               Aref=a_el[k1,k1]
-               for k2 in range(0,m):
-                   m2=icon[k2,iel]
-                   b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
-                   a_el[k1,k2]=0
-                   a_el[k2,k1]=0
-               #end for
-               a_el[k1,k1]=Aref
-               b_el[k1]=Aref*bc_valT[m1]
-            #end for
-        #end for
-
-        # assemble matrix A_mat and right hand side rhs
-        for k1 in range(0,m):
-            m1=icon[k1,iel]
-            for k2 in range(0,m):
-                m2=icon[k2,iel]
-                A_mat[m1,m2]+=a_el[k1,k2]
-            #end for
-            rhs[m1]+=b_el[k1]
-        #end for
-
-    #end for iel
-
-    print("build FE matrix : %.3f s" % (timing.time() - start))
-
-    ###########################################################################
-    # solve system
-    ###########################################################################
-    start = timing.time()
-
-    T=sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
-
-    print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
-
-    Tstats_file.write("%6e %6e %6e\n" % (time,np.min(T),np.max(T)))
-    Tstats_file.flush()
-
-    print("solve T time: %.3f s" % (timing.time() - start))
-
     ###########################################################################
     # compute pressure and temperature gradients 
     ###########################################################################
@@ -719,6 +565,190 @@ for istep in range(0,nstep):
     print("compute velocity: %.3f s" % (timing.time() - start))
 
     ###########################################################################
+    # export measurements for benchmarking
+    ###########################################################################
+
+    hfile=open('measurements_hline_{:04d}.ascii'.format(istep),"w")
+    vfile=open('measurements_vline_{:04d}.ascii'.format(istep),"w")
+
+    for i in range(0,N):
+        if y[i]/Ly<eps:
+           hfile.write("%e %e %e %e %e\n" % (x[i],T[i]-TKelvin,u[i],v[i],p[i])) ; hfile.flush()
+        if abs(x[i]-Lx/2)/Lx<eps:
+           vfile.write("%e %e %e %e %e\n" % (y[i],T[i]-TKelvin,u[i],v[i],p[i])) ; vfile.flush()
+        if abs(x[i]-Lx/2)/Lx<eps and abs(y[i]-Ly/2)/Ly<eps:
+           meascenter_file.write("%e %e %e %e %e\n" % (time/year,T[i]-TKelvin,u[i],v[i],p[i]))
+           meascenter_file.flush()
+
+    hfile.close()
+    vfile.close()
+
+    ###########################################################################
+    # compute timestep value
+    # if CFL_nb is negative it means we do not use it
+    ###########################################################################
+    start = timing.time()
+
+    dt1=abs(CFL_nb)*hx/np.max(np.sqrt(u**2+v**2))
+    dt2=abs(CFL_nb)*hx**2/(hcond_m/rho_hcapa_m)
+
+    if CFL_nb>0:
+       print('     using CFL condition timestep')
+       dt=np.min([dt1,dt2])
+
+    print('     -> dt1 = %.6f (year)' %(dt1/year))
+    print('     -> dt2 = %.6f (year)' %(dt2/year))
+    print('     -> dt  = %.6f (year)' %(dt/year))
+
+    time+=dt
+    print('     -> time= %.6f; tfinal= %.6f (year)' %(time/year,tfinal/year))
+
+    #dt_file.write("%10e %10e %10e %10e\n" % (time,dt1,dt2,dt))
+    #dt_file.flush()
+
+    print("compute time step: %.3f s" % (timing.time() - start))
+
+    ###########################################################################
+    # build temperature matrix
+    ###########################################################################
+    start = timing.time()
+
+    A_mat=lil_matrix((NfemT,NfemT),dtype=np.float64) # FE matrix 
+    rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
+    B_mat=np.zeros((2,m),dtype=np.float64)           # gradient matrix B 
+    N_mat = np.zeros((m,1),dtype=np.float64)         # shape functions
+    N_mat_supg = np.zeros((m,1),dtype=np.float64)    # shape functions
+    Tvect = np.zeros(m,dtype=np.float64)
+
+    for iel in range (0,nel):
+
+        a_el=np.zeros((m,m),dtype=np.float64)
+        b_el=np.zeros(m,dtype=np.float64)
+        Ka=np.zeros((m,m),dtype=np.float64)   # elemental advection matrix 
+        Kd=np.zeros((m,m),dtype=np.float64)   # elemental diffusion matrix 
+        MM=np.zeros((m,m),dtype=np.float64)   # elemental mass matrix 
+        vel=np.zeros((1,ndim),dtype=np.float64)
+
+        for k in range(0,m):
+            Tvect[k]=T[icon[k,iel]]
+        #end for
+
+        for iq in range(0,nqperdim):
+            for jq in range(0,nqperdim):
+                rq=qcoords[iq]
+                sq=qcoords[jq]
+                weightq=qweights[iq]*qweights[jq]
+
+                N_mat[0:m,0]=NN(rq,sq)
+                dNNNdr[0:m]=dNNdr(rq,sq)
+                dNNNds[0:m]=dNNds(rq,sq)
+
+                # calculate jacobian matrix
+                jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                for k in range(0,m):
+                    jcb[0,0]+=dNNNdr[k]*x[icon[k,iel]]
+                    jcb[0,1]+=dNNNdr[k]*y[icon[k,iel]]
+                    jcb[1,0]+=dNNNds[k]*x[icon[k,iel]]
+                    jcb[1,1]+=dNNNds[k]*y[icon[k,iel]]
+                #end for
+                jcob = np.linalg.det(jcb)
+                jcbi = np.linalg.inv(jcb)
+
+                # compute dNdx & dNdy
+                for k in range(0,m):
+                    dNNNdx[k]=jcbi[0,0]*dNNNdr[k]+jcbi[0,1]*dNNNds[k]
+                    dNNNdy[k]=jcbi[1,0]*dNNNdr[k]+jcbi[1,1]*dNNNds[k]
+                    B_mat[0,k]=dNNNdx[k]
+                    B_mat[1,k]=dNNNdy[k]
+                #end for
+
+                #compute velocity at q point
+                dpdxq=0.
+                dpdyq=0.
+                rhoq=0.
+                for k in range(0,m):
+                    rhoq+=N_mat[k,0]*rho[icon[k,iel]]
+                    dpdxq+=dNNNdx[k]*p[icon[k,iel]]
+                    dpdyq+=dNNNdy[k]*p[icon[k,iel]]
+                #end for
+                vel[0,0]=-K_s/eta_f*(dpdxq-rhoq*gx)
+                vel[0,1]=-K_s/eta_f*(dpdyq-rhoq*gy)
+
+                N_mat_supg=N_mat #+tau_supg*np.transpose(vel.dot(B_mat))
+
+                # compute mass matrix
+                MM+=N_mat_supg.dot(N_mat.T)*weightq*jcob*rho_hcapa_m
+
+                # compute diffusion matrix
+                Kd+=B_mat.T.dot(B_mat)*weightq*jcob*hcond_m
+
+                # compute advection matrix
+                Ka+=N_mat_supg.dot(vel.dot(B_mat))*weightq*jcob*rho0_f*hcapa_f
+
+            #end for
+        #end for
+
+        #1st order backward euler
+        #a_el=MM+ (Ka+Kd)*dt
+        #b_el=MM.dot(Tvect)
+
+        #Crank-Nicolson
+        a_el=MM+0.5*(Ka+Kd)*dt
+        b_el=(MM-0.5*(Ka+Kd)*dt).dot(Tvect)
+
+        # apply boundary conditions
+        for k1 in range(0,m):
+            m1=icon[k1,iel]
+            if bc_fixT[m1]:
+               Aref=a_el[k1,k1]
+               for k2 in range(0,m):
+                   m2=icon[k2,iel]
+                   b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
+                   a_el[k1,k2]=0
+                   a_el[k2,k1]=0
+               #end for
+               a_el[k1,k1]=Aref
+               b_el[k1]=Aref*bc_valT[m1]
+            #end for
+        #end for
+
+        # assemble matrix A_mat and right hand side rhs
+        for k1 in range(0,m):
+            m1=icon[k1,iel]
+            for k2 in range(0,m):
+                m2=icon[k2,iel]
+                A_mat[m1,m2]+=a_el[k1,k2]
+            #end for
+            rhs[m1]+=b_el[k1]
+        #end for
+
+    #end for iel
+
+    print("build FE matrix : %.3f s" % (timing.time() - start))
+
+    ###########################################################################
+    # solve system
+    ###########################################################################
+    start = timing.time()
+
+    T=sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
+
+    print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
+
+    Tstats_file.write("%6e %6e %6e\n" % (time,np.min(T),np.max(T)))
+    Tstats_file.flush()
+
+    print("solve T time: %.3f s" % (timing.time() - start))
+
+
+
+
+
+
+
+
+
+    ###########################################################################
     # compute Nusselt number
     ###########################################################################
     start = timing.time()
@@ -766,14 +796,14 @@ for istep in range(0,nstep):
            vtufile.write("%15e %15e %3e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='Density' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
        for i in range(0,N):
            vtufile.write("%10e \n" %rho[i])
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='Temperature (C)' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='T (C)' Format='ascii'> \n")
        for i in range(0,N):
-           vtufile.write("%10e \n" %(T[i]-273))
+           vtufile.write("%10e \n" %(T[i]-TKelvin))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='dTdx' Format='ascii'> \n")
@@ -796,12 +826,12 @@ for istep in range(0,nstep):
            vtufile.write("%10e \n" %dpdy_nodal[i])
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='Temperature init (C)' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='T init (C)' Format='ascii'> \n")
        for i in range(0,N):
-           vtufile.write("%10e \n" %(T_init[i]-273))
+           vtufile.write("%10e \n" %(T_init[i]-TKelvin))
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='Pressure' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
        for i in range(0,N):
            vtufile.write("%10e \n" %p[i])
        vtufile.write("</DataArray>\n")
