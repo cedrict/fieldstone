@@ -138,65 +138,6 @@ problem with the boundary conditions? }
 
 
 
-%...............................................
-\subsection*{Benchmark}
-
-NOT FINISHED. See Palm \etal 1972. 
-
-The solution can be expanded in a power series in the parameter $\xi$ defined by 
-\[
-\xi^2 = \frac{\Ranb-\Ranb_c}{\Ranb}
-\qquad
-\text{or,}\qquad
-\Ranb = \frac{\Ranb_c}{1-\xi^2}
-\]
-The solution is then expected to follow:
-\begin{eqnarray}
-v &=& \xi v^{(1)} + \xi^2 v^{(2)} + \dots + \xi^n v^{(n)} + \dots \\
-\theta &=& \xi \uptheta^{(1)} + \xi^2 \uptheta^{(2)} + \dots + \xi^n \uptheta^{(n)} + \dots 
-\end{eqnarray}
-
-
-\[
-\Ranb_c = \frac{(\pi^2+a^2)^2}{a^2}
-\]
-
-\begin{eqnarray}
-A_1&=&4\pi \left( \frac{\Ranb_{c,s}}{\Ranb_c} \right)^{1/2} \nonumber\\
-A_2 &=& 0 \nonumber\\
-A_3&=&2\pi \left(\frac{\Ranb_{c,s}}{\Ranb_c} \right)^{1/2} \left(1 + \frac{7}{24} \frac{\Ranb_{c,s}}{\Ranb_c}   \right) \nonumber\\
-A_2 &=& 0 \nonumber\\
-A_5&=&\frac{3\pi}{2} \left(\frac{\Ranb_{c,s}}{\Ranb_c} \right)^{1/2}
-\left(1+\frac{7}{12} \frac{\Ranb_{c,s}}{\Ranb_c} -
-\frac{173}{3\cdot24\cdot24} \left(\frac{R_{0s}}{R_0}\right) ^2 
-\right) \nonumber\\
-A_6 &=& 0 \nonumber
-\end{eqnarray}
-
-
-\[
-\Nunb
-\simeq 1 + 2 \frac{\Ranb_{c,s}}{\Ranb_c} \eta^2
-+ 2 \frac{\Ranb_{c,s}}{\Ranb_c}
-\left( 1 -\frac{17}{24}\frac{\Ranb_{c,s}}{\Ranb_c} \right) \eta^4
-+2 \frac{\Ranb_{c,s}}{\Ranb_c}
-\left( 
-1 -\frac{17}{12}\frac{\Ranb_{c,s}}{\Ranb_c}
-+ \frac{191}{288} \left(\frac{\Ranb_{c,s}}{\Ranb_c}\right) ^2
-\right) \eta^6 
-\]
-
-
-
-\begin{center}
-\includegraphics[width=14cm]{python_codes/fieldstone_107/images/souche_bench}\\
-Taken from Souche, poster EGU, 2010. Standard FEM: $Q_2$ pressure, 
-$Q_1$ temperature, $Q_1$ velocity. 
-Mixed FEM: $P_{-1}$ pressure, $Q_2$ temperature, $Q_2$ velocity.
-\end{center}
-
-
-
 
 
 %...............................................

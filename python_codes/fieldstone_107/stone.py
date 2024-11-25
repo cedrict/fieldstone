@@ -78,7 +78,7 @@ TKelvin=273.15
 ###############################################################################
 ###############################################################################
 
-experiment=2
+experiment=3
 
 print("-----------------------------")
 print("--------- stone 107 ---------")
@@ -109,19 +109,26 @@ match (experiment):
         phi=0.15
 
     case(2):
-
         Lx=10e3      ; Ly=10e3
-        nelx=100      ; nely=nelx
+        nelx=80      ; nely=nelx
         Ttop=TKelvin  ; Tbottom=200+TKelvin
         ptop=1e5      ; pbottom=99e6
         eta_f=1.33e-4 ; T0_f=Ttop   ; hcapa_f=4184 ; hcond_f=0.598 ; rho0_f=1000 ; alpha_f=1e-4
         gx=0          ; gy=-10
         K_s=1e-13     ; rho_s=2700 ; hcapa_s=1000 ; hcond_s=2
-        dt=1*year     ; CFL_nb=-0.1 ; tfinal=1e6*year ; nstep=100
+        dt=1*year     ; CFL_nb=-0.1 ; tfinal=1e6*year ; nstep=1001
         phi=0.15
 
     case(3):
-        1
+        Lx=4000 ; Ly=1000
+        nelx=64  ; nely=16
+        Ttop=100+TKelvin ; Tbottom=150+TKelvin
+        eta_f=1e-3 ; T0_f=Ttop   ; hcapa_f=4000 ; hcond_f=0.5 ; rho0_f=1000 ; alpha_f=1e-4
+        gx=0          ; gy=-10
+        K_s=1e-12     ; rho_s=2700 ; hcapa_s=1000 ; hcond_s=2
+        dt=25*year     ; CFL_nb=-0.1 ; tfinal=1e6*year ; nstep=10000
+        phi=1
+        
 
     case(4):
         2
@@ -130,15 +137,17 @@ match (experiment):
         3
 
 
-Ra= K_s*rho0_f*abs(gy)*alpha_f*(Tbottom-Ttop)*Ly/ (hcond_f/rho0_f/hcapa_f)/eta_f #check!
+every=10
 
-every=1
-                
+
 ###############################################################################
 #compute coeffs based on s,f with phi
 
 rho_hcapa_m=(1-phi)*rho_s*hcapa_s+phi*rho0_f*hcapa_f
 hcond_m=(1-phi)*hcond_s+phi*hcond_f
+
+kappa=hcond_m/rho_hcapa_m
+Ra= K_s*rho0_f*abs(gy)*alpha_f*(Tbottom-Ttop)*Ly/kappa/eta_f 
 
 ###############################################################################
 
@@ -164,7 +173,6 @@ qweights=[5./9.,8./9.,5./9.]
 ###############################################################################
 
 dt_file=open('dt.ascii',"w")
-Tavrg_file=open('Tavrg.ascii',"w")
 Tstats_file=open('stats_T.ascii',"w")
 pstats_file=open('stats_p.ascii',"w")
 ustats_file=open('stats_u.ascii',"w")
@@ -182,8 +190,10 @@ print('nel        =',nel)
 print('NfemT      =',NfemT)
 print('NfemP      =',NfemP)
 print('nqperdim   =',nqperdim)
+print('kappa      =',kappa)
 print('Ra         =',Ra)
 print('-----------------------------')
+
 
 ###############################################################################
 # build nodes coordinates 
@@ -258,6 +268,8 @@ match (experiment):
             if y[i]/Ly<eps:
                bc_fixP[i]=True ; bc_valP[i]=pbottom
         #end for
+    case(3):
+        print('no pressure b.c.')
 
 print("pressure b.c.: %.3f s" % (timing.time() - start))
 
@@ -270,7 +282,7 @@ bc_fixT=np.zeros(NfemT,dtype=bool)
 bc_valT=np.zeros(NfemT,dtype=np.float64) 
 
 match (experiment):
-    case(0 | 1 ):
+    case(0 | 1 | 3):
         for i in range(0,N):
             if y[i]/Ly<eps:
                bc_fixT[i]=True ; bc_valT[i]=Tbottom
@@ -285,9 +297,6 @@ match (experiment):
                bc_fixT[i]=True ; bc_valT[i]=Ttop
         #end for
 
-    #case(2):
-
-    #case(3):
 
 print("temperature b.c.: %.3f s" % (timing.time() - start))
 
@@ -304,23 +313,23 @@ match (experiment):
     case(0 | 1):
         for i in range(0,N):
             T[i]= Tbottom -y[i]/Ly*(Tbottom-Ttop) # conductive profile
+        #end for
     case(2):
         for i in range(0,N):
             T[i]= Tbottom -y[i]/Ly*(Tbottom-Ttop) # conductive profile
             T[i]+=mygauss_exp1(x[i],y[i],Lx)
         #end for
+    case(3):
+        for i in range(0,N):
+            T[i]=Tbottom -y[i]/Ly*(Tbottom-Ttop) # conductive profile
+            T[i]+=random.uniform(-1,+1)
+        #end for
 
-#    case(2):
-
-#    case(3):
-#        for i in range(0,N):
-#            T[i]= Tbottom -y[i]/Ly*(Tbottom-Ttop) # conductive profile
 #            T[i] += np.sin(x[i]/Lx*np.pi)*np.sin(y[i]/Ly*np.pi)
 #        #end for
 
 T_init[:]=T[:]
         
-#T[i] += random.uniform(-1,+1)
 
 print("     -> Tinit (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
 
@@ -568,20 +577,21 @@ for istep in range(0,nstep):
     # export measurements for benchmarking
     ###########################################################################
 
-    hfile=open('measurements_hline_{:04d}.ascii'.format(istep),"w")
-    vfile=open('measurements_vline_{:04d}.ascii'.format(istep),"w")
+    if istep%every==0:
+       hfile=open('measurements_hline_{:04d}.ascii'.format(istep),"w")
+       vfile=open('measurements_vline_{:04d}.ascii'.format(istep),"w")
 
-    for i in range(0,N):
-        if y[i]/Ly<eps:
-           hfile.write("%e %e %e %e %e\n" % (x[i],T[i]-TKelvin,u[i],v[i],p[i])) ; hfile.flush()
-        if abs(x[i]-Lx/2)/Lx<eps:
-           vfile.write("%e %e %e %e %e\n" % (y[i],T[i]-TKelvin,u[i],v[i],p[i])) ; vfile.flush()
-        if abs(x[i]-Lx/2)/Lx<eps and abs(y[i]-Ly/2)/Ly<eps:
-           meascenter_file.write("%e %e %e %e %e\n" % (time/year,T[i]-TKelvin,u[i],v[i],p[i]))
-           meascenter_file.flush()
+       for i in range(0,N):
+           if y[i]/Ly<eps:
+              hfile.write("%e %e %e %e %e\n" % (x[i],T[i]-TKelvin,u[i],v[i],p[i])) ; hfile.flush()
+           if abs(x[i]-Lx/2)/Lx<eps:
+              vfile.write("%e %e %e %e %e\n" % (y[i],T[i]-TKelvin,u[i],v[i],p[i])) ; vfile.flush()
+           if abs(x[i]-Lx/2)/Lx<eps and abs(y[i]-Ly/2)/Ly<eps:
+              meascenter_file.write("%e %e %e %e %e\n" % (time/year,T[i]-TKelvin,u[i],v[i],p[i]))
+              meascenter_file.flush()
 
-    hfile.close()
-    vfile.close()
+       hfile.close()
+       vfile.close()
 
     ###########################################################################
     # compute timestep value
@@ -603,8 +613,8 @@ for istep in range(0,nstep):
     time+=dt
     print('     -> time= %.6f; tfinal= %.6f (year)' %(time/year,tfinal/year))
 
-    #dt_file.write("%10e %10e %10e %10e\n" % (time,dt1,dt2,dt))
-    #dt_file.flush()
+    dt_file.write("%e %e %e %e %e\n" % (time,dt1/year,dt2/year,dt/year,CFL_nb))
+    dt_file.flush()
 
     print("compute time step: %.3f s" % (timing.time() - start))
 
