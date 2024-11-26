@@ -96,6 +96,7 @@ match (experiment):
         K_s=1e-13  ; rho_s=2700  ; hcapa_s=1000    ; hcond_s=2
         dt=1*year  ; CFL_nb=0.   ; tfinal=1e6*year ; nstep=1
         phi=0.15
+        periodicx=False
 
     case(1):
         Lx=100e3   ; Ly=100e3
@@ -107,6 +108,7 @@ match (experiment):
         K_s=1e-13  ; rho_s=2700  ; hcapa_s=1000    ; hcond_s=2
         dt=1*year  ; CFL_nb=0.   ; tfinal=1e6*year ; nstep=1
         phi=0.15
+        periodicx=False
 
     case(2):
         Lx=10e3      ; Ly=10e3
@@ -118,26 +120,34 @@ match (experiment):
         K_s=1e-13     ; rho_s=2700 ; hcapa_s=1000 ; hcond_s=2
         dt=1*year     ; CFL_nb=-0.1 ; tfinal=1e6*year ; nstep=1001
         phi=0.15
+        periodicx=False
 
     case(3):
         Lx=4000 ; Ly=1000
-        nelx=64  ; nely=16
-        Ttop=100+TKelvin ; Tbottom=150+TKelvin
+        nelx=100  ; nely=25
+        Ttop=100+TKelvin ; Tbottom=110+TKelvin
         eta_f=1e-3 ; T0_f=Ttop   ; hcapa_f=4000 ; hcond_f=0.5 ; rho0_f=1000 ; alpha_f=1e-4
         gx=0          ; gy=-10
         K_s=1e-12     ; rho_s=2700 ; hcapa_s=1000 ; hcond_s=2
-        dt=25*year     ; CFL_nb=-0.1 ; tfinal=1e6*year ; nstep=10000
+        dt=25*year    ; CFL_nb=0.8 ; tfinal=1e8*year ; nstep=10000 ; dtmax=500*year
         phi=1
-        
-
-    case(4):
-        2
+        periodicx=True
 
     case _:
         3
 
-
 every=10
+   
+visu = 1 
+
+# allowing for argument parsing through command line
+if int(len(sys.argv) == 4): 
+   nelx = int(sys.argv[1])
+   nely=int(nelx/4)
+   tbottom = int(sys.argv[2])
+   tbottom+=TKelvin
+   visu = int(sys.argv[3])
+   print(sys.argv) 
 
 
 ###############################################################################
@@ -150,10 +160,13 @@ kappa=hcond_m/rho_hcapa_m
 Ra= K_s*rho0_f*abs(gy)*alpha_f*(Tbottom-Ttop)*Ly/kappa/eta_f 
 
 ###############################################################################
-
+   
 nel=nelx*nely # total number of elements
-nnx=2*nelx+1  # number of elements, x direction
-nny=2*nely+1  # number of elements, y direction
+nny=2*nely+1  # number of nodes, y direction
+if periodicx:
+   nnx=2*nelx  # number of nodes, x direction
+else:
+   nnx=2*nelx+1  # number of elements, x direction
 N=nnx*nny     # number of nodes in the mesh
 NfemP=N       # number of pressure dofs
 NfemT=N       # number of temperature dofs
@@ -183,6 +196,7 @@ meascenter_file=open('measurements_center.ascii',"w")
 ###############################################################################
 
 print('experiment =',experiment)
+print('periodicx  =',periodicx)
 print('nnx        =',nnx)
 print('nny        =',nny)
 print('N          =',N)
@@ -192,8 +206,22 @@ print('NfemP      =',NfemP)
 print('nqperdim   =',nqperdim)
 print('kappa      =',kappa)
 print('Ra         =',Ra)
+print('phi        =',phi)
 print('-----------------------------')
-
+print('fluid: eta   =',eta_f)
+print('fluid: rho   =',rho0_f)
+print('fluid: hcond =',hcond_f)
+print('fluid: hcapa =',hcapa_f)
+print('fluid: alpha =',alpha_f)
+print('-----------------------------')
+print('K_s          =',K_s)
+print('rho_s        =',rho_s)
+print('hcapa_s      =',hcapa_s)
+print('hcond_s      =',hcond_s)
+print('-----------------------------')
+print('m: rho*hcapa =',rho_hcapa_m)
+print('m: hcond     =',hcond_m)
+print('-----------------------------')
 
 ###############################################################################
 # build nodes coordinates 
@@ -212,7 +240,7 @@ for j in range(0,nny):
     #end for
 #end for
 
-if debug: np.savetxt('gridV.ascii',np.array([x,y]).T,header='# x,y')
+if debug: np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
 
 print("build V grid: %.3f s" % (timing.time() - start))
 
@@ -236,6 +264,18 @@ for j in range(0,nely):
         counter += 1
     #end for
 #end for
+
+if periodicx:
+   counter=0
+   for j in range(0,nely):
+       for i in range(0,nelx):
+           if i==nelx-1: #last column of elts
+              icon[2,counter]-=nnx
+              icon[5,counter]-=nnx
+              icon[8,counter]-=nnx
+           counter += 1
+       #end for
+   #end for
 
 if debug:
    for iel in range (0,nel):
@@ -297,7 +337,6 @@ match (experiment):
                bc_fixT[i]=True ; bc_valT[i]=Ttop
         #end for
 
-
 print("temperature b.c.: %.3f s" % (timing.time() - start))
 
 ###############################################################################
@@ -307,7 +346,6 @@ start = timing.time()
 
 T = np.zeros(N,dtype=np.float64)
 T_init = np.zeros(N,dtype=np.float64)
-
 
 match (experiment):
     case(0 | 1):
@@ -319,7 +357,7 @@ match (experiment):
             T[i]= Tbottom -y[i]/Ly*(Tbottom-Ttop) # conductive profile
             T[i]+=mygauss_exp1(x[i],y[i],Lx)
         #end for
-    case(3):
+    case(3): 
         for i in range(0,N):
             T[i]=Tbottom -y[i]/Ly*(Tbottom-Ttop) # conductive profile
             T[i]+=random.uniform(-1,+1)
@@ -328,8 +366,21 @@ match (experiment):
 #            T[i] += np.sin(x[i]/Lx*np.pi)*np.sin(y[i]/Ly*np.pi)
 #        #end for
 
+if experiment==3: # project field to Q1
+   # 6---7---8  
+   # |       |  
+   # 3   4   5  
+   # |       |  
+   # 0---1---2  
+   for iel in range(0,nel):
+       T[icon[1,iel]]=0.5*(T[icon[0,iel]]+T[icon[2,iel]])
+       T[icon[7,iel]]=0.5*(T[icon[6,iel]]+T[icon[8,iel]])
+       T[icon[5,iel]]=0.5*(T[icon[2,iel]]+T[icon[8,iel]])
+       T[icon[3,iel]]=0.5*(T[icon[0,iel]]+T[icon[6,iel]])
+       T[icon[4,iel]]=0.25*(T[icon[0,iel]]+T[icon[2,iel]]+\
+                            T[icon[6,iel]]+T[icon[8,iel]])
+
 T_init[:]=T[:]
-        
 
 print("     -> Tinit (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
 
@@ -378,6 +429,7 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 #==============================================================================
 #==============================================================================
 
+Nu_mem=1e50
 time=0
 
 for istep in range(0,nstep):
@@ -407,6 +459,11 @@ for istep in range(0,nstep):
     dNNNdx = np.zeros(m,dtype=np.float64)            # basis fct derivatives
     dNNNdy = np.zeros(m,dtype=np.float64)            # basis fct derivatives
 
+    jcob=hx*hy/4
+    jcbi=np.zeros((ndim,ndim),dtype=np.float64)
+    jcbi[0,0]=2/hx
+    jcbi[1,1]=2/hx
+
     for iel in range (0,nel):
 
         a_el=np.zeros((m,m),dtype=np.float64)
@@ -423,15 +480,15 @@ for istep in range(0,nstep):
                 dNNNds=dNNds(rq,sq)
 
                 # calculate jacobian matrix
-                jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                for k in range(0,m):
-                    jcb[0,0]+=dNNNdr[k]*x[icon[k,iel]]
-                    jcb[0,1]+=dNNNdr[k]*y[icon[k,iel]]
-                    jcb[1,0]+=dNNNds[k]*x[icon[k,iel]]
-                    jcb[1,1]+=dNNNds[k]*y[icon[k,iel]]
+                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                #for k in range(0,m):
+                #    jcb[0,0]+=dNNNdr[k]*x[icon[k,iel]]
+                #    jcb[0,1]+=dNNNdr[k]*y[icon[k,iel]]
+                #    jcb[1,0]+=dNNNds[k]*x[icon[k,iel]]
+                #    jcb[1,1]+=dNNNds[k]*y[icon[k,iel]]
                 #end for
-                jcob = np.linalg.det(jcb)
-                jcbi = np.linalg.inv(jcb)
+                #jcob = np.linalg.det(jcb)
+                #jcbi = np.linalg.inv(jcb)
 
                 # compute rho, dNdx & dNdy at q point
                 rhoq=0.
@@ -493,6 +550,23 @@ for istep in range(0,nstep):
     print("solve p: %.3f s" % (timing.time() - start))
 
     ###########################################################################
+    # compure pressure average
+    ###########################################################################
+    start = timing.time()
+
+    pavrg=0
+    for iel in range(0,nel):
+        pavrg+=np.sum(p[icon[:,iel]])/9*hx*hy
+    pavrg/=(Lx*Ly)
+
+    print("     -> <p>=",pavrg)
+
+    if experiment==3:
+       p-=pavrg
+
+    print("normalise p: %.3f s" % (timing.time() - start))
+
+    ###########################################################################
     # compute pressure and temperature gradients 
     ###########################################################################
     start = timing.time()
@@ -509,14 +583,14 @@ for istep in range(0,nstep):
             sq=snodes[i]
             dNNNdr[0:m]=dNNdr(rq,sq)
             dNNNds[0:m]=dNNds(rq,sq)
-            jcb=np.zeros((ndim,ndim),dtype=np.float64)
-            for k in range(0,m):
-                jcb[0,0]+=dNNNdr[k]*x[icon[k,iel]]
-                jcb[0,1]+=dNNNdr[k]*y[icon[k,iel]]
-                jcb[1,0]+=dNNNds[k]*x[icon[k,iel]]
-                jcb[1,1]+=dNNNds[k]*y[icon[k,iel]]
+            #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            #for k in range(0,m):
+            #    jcb[0,0]+=dNNNdr[k]*x[icon[k,iel]]
+            #    jcb[0,1]+=dNNNdr[k]*y[icon[k,iel]]
+            #    jcb[1,0]+=dNNNds[k]*x[icon[k,iel]]
+            #    jcb[1,1]+=dNNNds[k]*y[icon[k,iel]]
             #end for
-            jcbi=np.linalg.inv(jcb)
+            #jcbi=np.linalg.inv(jcb)
             for k in range(0,m):
                 dNNNdx[k]=jcbi[0,0]*dNNNdr[k]+jcbi[0,1]*dNNNds[k]
                 dNNNdy[k]=jcbi[1,0]*dNNNdr[k]+jcbi[1,1]*dNNNds[k]
@@ -545,10 +619,10 @@ for istep in range(0,nstep):
     dpdx_nodal/=count
     dpdy_nodal/=count
 
-    #print("     -> dpdx_n (m,M) %.6e %.6e " %(np.min(dpdx_n),np.max(dpdx_n)))
-    #print("     -> dpdy_n (m,M) %.6e %.6e " %(np.min(dpdy_n),np.max(dpdy_n)))
-    #print("     -> dTdx_n (m,M) %.6e %.6e " %(np.min(dTdx_n),np.max(dTdx_n)))
-    #print("     -> dTdy_n (m,M) %.6e %.6e " %(np.min(dTdy_n),np.max(dTdy_n)))
+    print("     -> dpdx_nodal (m,M) %e %e " %(np.min(dpdx_nodal),np.max(dpdx_nodal)))
+    print("     -> dpdy_nodal (m,M) %e %e " %(np.min(dpdy_nodal),np.max(dpdy_nodal)))
+    print("     -> dTdx_nodal (m,M) %e %e " %(np.min(dTdx_nodal),np.max(dTdx_nodal)))
+    print("     -> dTdy_nodal (m,M) %e %e " %(np.min(dTdy_nodal),np.max(dTdy_nodal)))
 
     print("compute nodal p,T gradients: %.3f s" % (timing.time() - start))
 
@@ -576,6 +650,7 @@ for istep in range(0,nstep):
     ###########################################################################
     # export measurements for benchmarking
     ###########################################################################
+    start = timing.time()
 
     if istep%every==0:
        hfile=open('measurements_hline_{:04d}.ascii'.format(istep),"w")
@@ -593,6 +668,8 @@ for istep in range(0,nstep):
        hfile.close()
        vfile.close()
 
+    print("export measurements: %.3f s" % (timing.time() - start))
+
     ###########################################################################
     # compute timestep value
     # if CFL_nb is negative it means we do not use it
@@ -605,6 +682,7 @@ for istep in range(0,nstep):
     if CFL_nb>0:
        print('     using CFL condition timestep')
        dt=np.min([dt1,dt2])
+       dt=min(dt,dtmax)
 
     print('     -> dt1 = %.6f (year)' %(dt1/year))
     print('     -> dt2 = %.6f (year)' %(dt2/year))
@@ -630,6 +708,11 @@ for istep in range(0,nstep):
     N_mat_supg = np.zeros((m,1),dtype=np.float64)    # shape functions
     Tvect = np.zeros(m,dtype=np.float64)
 
+    jcob=hx*hy/4
+    jcbi=np.zeros((ndim,ndim),dtype=np.float64)
+    jcbi[0,0]=2/hx
+    jcbi[1,1]=2/hx
+
     for iel in range (0,nel):
 
         a_el=np.zeros((m,m),dtype=np.float64)
@@ -654,15 +737,15 @@ for istep in range(0,nstep):
                 dNNNds[0:m]=dNNds(rq,sq)
 
                 # calculate jacobian matrix
-                jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                for k in range(0,m):
-                    jcb[0,0]+=dNNNdr[k]*x[icon[k,iel]]
-                    jcb[0,1]+=dNNNdr[k]*y[icon[k,iel]]
-                    jcb[1,0]+=dNNNds[k]*x[icon[k,iel]]
-                    jcb[1,1]+=dNNNds[k]*y[icon[k,iel]]
+                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                #for k in range(0,m):
+                #    jcb[0,0]+=dNNNdr[k]*x[icon[k,iel]]
+                #    jcb[0,1]+=dNNNdr[k]*y[icon[k,iel]]
+                #    jcb[1,0]+=dNNNds[k]*x[icon[k,iel]]
+                #    jcb[1,1]+=dNNNds[k]*y[icon[k,iel]]
                 #end for
-                jcob = np.linalg.det(jcb)
-                jcbi = np.linalg.inv(jcb)
+                #jcob = np.linalg.det(jcb)
+                #jcbi = np.linalg.inv(jcb)
 
                 # compute dNdx & dNdy
                 for k in range(0,m):
@@ -750,14 +833,6 @@ for istep in range(0,nstep):
 
     print("solve T time: %.3f s" % (timing.time() - start))
 
-
-
-
-
-
-
-
-
     ###########################################################################
     # compute Nusselt number
     ###########################################################################
@@ -765,17 +840,17 @@ for istep in range(0,nstep):
 
     top_flux=0
     for iel in range (0,nel):
-        if y[icon[8,iel]]>0.999*Ly:
-           top_flux-=hcond_f*((dTdy_nodal[icon[6,iel]]+dTdy_nodal[icon[7,iel]])/2)*hx/2
-           top_flux-=hcond_f*((dTdy_nodal[icon[7,iel]]+dTdy_nodal[icon[8,iel]])/2)*hx/2
+        if y[icon[7,iel]]>0.999*Ly:
+           top_flux-=hcond_m*((dTdy_nodal[icon[6,iel]]+dTdy_nodal[icon[7,iel]])/2)*hx/2
+           top_flux-=hcond_m*((dTdy_nodal[icon[7,iel]]+dTdy_nodal[icon[8,iel]])/2)*hx/2
     top_flux/=Lx
 
-    Nu=top_flux/((Tbottom-Ttop)/Ly*hcond_f)
+    Nu=top_flux/((Tbottom-Ttop)/Ly*hcond_m)
 
-    RaNu_file.write("%10e %.10e\n" % (Ra,Nu))
+    RaNu_file.write("%e %e %e\n" % (time/year,Nu,Ra))
     RaNu_file.flush()
 
-    print('     -> Nusselt number:',Nu)
+    print('     -> Nusselt number:',Nu,abs(Nu-Nu_mem)/Nu)
 
     print("compute Nusselt nb: %.3f s" % (timing.time() - start))
 
@@ -784,7 +859,7 @@ for istep in range(0,nstep):
     ###########################################################################
     start = timing.time()
 
-    if istep%every==0:
+    if istep%every==0 and visu==1:
 
        filename = 'solution_{:04d}.vtu'.format(istep)
        vtufile=open(filename,"w")
@@ -836,10 +911,11 @@ for istep in range(0,nstep):
            vtufile.write("%10e \n" %dpdy_nodal[i])
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='T init (C)' Format='ascii'> \n")
-       for i in range(0,N):
-           vtufile.write("%10e \n" %(T_init[i]-TKelvin))
-       vtufile.write("</DataArray>\n")
+       if istep==0:
+          vtufile.write("<DataArray type='Float32' Name='T init (C)' Format='ascii'> \n")
+          for i in range(0,N):
+              vtufile.write("%10e \n" %(T_init[i]-TKelvin))
+          vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
        for i in range(0,N):
@@ -851,10 +927,26 @@ for istep in range(0,nstep):
        vtufile.write("<Cells>\n")
        #--
        vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%d %d %d %d %d %d %d %d %d \n" %(icon[0,iel],icon[2,iel],icon[8,iel],\
-                                                           icon[6,iel],icon[1,iel],icon[5,iel],\
-                                                           icon[7,iel],icon[3,iel],icon[4,iel]))
+       if periodicx:
+          iel=0
+          for j in range(0,nely):
+              for i in range(0,nelx):
+                  if i==nelx-1:
+                     vtufile.write("%d %d %d %d %d %d %d %d %d \n" %(icon[0,iel],icon[1,iel],icon[7,iel],\
+                                                                     icon[6,iel],icon[1,iel],icon[4,iel],\
+                                                                     icon[7,iel],icon[3,iel],icon[4,iel]))
+                  else:
+                     vtufile.write("%d %d %d %d %d %d %d %d %d \n" %(icon[0,iel],icon[2,iel],icon[8,iel],\
+                                                                     icon[6,iel],icon[1,iel],icon[5,iel],\
+                                                                     icon[7,iel],icon[3,iel],icon[4,iel]))
+                  iel+= 1
+              #end for
+          #end for
+       else:
+          for iel in range (0,nel):
+              vtufile.write("%d %d %d %d %d %d %d %d %d \n" %(icon[0,iel],icon[2,iel],icon[8,iel],\
+                                                              icon[6,iel],icon[1,iel],icon[5,iel],\
+                                                              icon[7,iel],icon[3,iel],icon[4,iel]))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
@@ -882,9 +974,14 @@ for istep in range(0,nstep):
        print("*****tfinal reached*****")
        break
 
+    if istep%20==0:
+       if abs(Nu_mem-Nu)<1e-6: 
+          print("*****steady state reached*****")
+          break
+       Nu_mem=Nu
+
 #end for istep
 
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")
-

@@ -1,9 +1,11 @@
 import numpy as np
 
+Rac=4*np.pi**2
 
 N2_file=open('N2.ascii',"w")
 N4_file=open('N4.ascii',"w")
 N6_file=open('N6.ascii',"w")
+Nu_file=open('Nu.ascii',"w")
 
 n=100
 
@@ -62,5 +64,19 @@ for i in range(0,n):
 
     N6_file.write("%e %e %e\n" % (R,N6_3,N6_100))
     
+    ############################################# 
+
+    Nu_file.write("%e %e\n" % (R*Rac,N6_3))
+
+
+R=400/Rac
+xi2=1.-1./R
+s=3
+ratio=1/(1-xi2**(s))
+N2_3=1.+2*ratio*xi2
+N4_3=N2_3+2*ratio*(1.-17./24.*ratio)*xi2**2
+N6_3=N4_3+2*ratio*(1-17./12*ratio+191/288*ratio**2)*xi2**3
+
+print(N6_3)
 
 
