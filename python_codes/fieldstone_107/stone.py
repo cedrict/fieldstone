@@ -16,7 +16,7 @@ debug=False
 # |       |  
 # 0---1---2  
 
-rnodes=[-1,0,+1,-1,0,+1,-1,0,+1]
+rnodes=[-1,0,+1,-1,0,+1,-1,0,+1] # coordinates of nodes inside element
 snodes=[-1,-1,-1,0,0,0,+1,+1,+1]
 order=2 
 m=9
@@ -140,15 +140,17 @@ every=10
    
 visu = 1 
 
-# allowing for argument parsing through command line
+###############################################################################
+# allowing for argument passing through command line,
+# thereby overwriting the ones above
+
 if int(len(sys.argv) == 4): 
    nelx = int(sys.argv[1])
    nely=int(nelx/4)
-   tbottom = int(sys.argv[2])
-   tbottom+=TKelvin
+   Tbottom = float(sys.argv[2])
+   Tbottom+=TKelvin
    visu = int(sys.argv[3])
    print(sys.argv) 
-
 
 ###############################################################################
 #compute coeffs based on s,f with phi
@@ -157,7 +159,7 @@ rho_hcapa_m=(1-phi)*rho_s*hcapa_s+phi*rho0_f*hcapa_f
 hcond_m=(1-phi)*hcond_s+phi*hcond_f
 
 kappa=hcond_m/rho_hcapa_m
-Ra= K_s*rho0_f*abs(gy)*alpha_f*(Tbottom-Ttop)*Ly/kappa/eta_f 
+Ra=K_s*rho0_f*abs(gy)*alpha_f*(Tbottom-Ttop)*Ly/kappa/eta_f 
 
 ###############################################################################
    
@@ -366,7 +368,7 @@ match (experiment):
 #            T[i] += np.sin(x[i]/Lx*np.pi)*np.sin(y[i]/Ly*np.pi)
 #        #end for
 
-if experiment==3: # project field to Q1
+if experiment==3: # project T field to Q1 space
    # 6---7---8  
    # |       |  
    # 3   4   5  
@@ -404,10 +406,10 @@ for iel in range(0,nel):
             dNNNds=dNNds(rq,sq)
             jcb=np.zeros((ndim,ndim),dtype=np.float64)
             for k in range(0,m):
-                jcb[0,0] += dNNNdr[k]*x[icon[k,iel]]
-                jcb[0,1] += dNNNdr[k]*y[icon[k,iel]]
-                jcb[1,0] += dNNNds[k]*x[icon[k,iel]]
-                jcb[1,1] += dNNNds[k]*y[icon[k,iel]]
+                jcb[0,0]+=dNNNdr[k]*x[icon[k,iel]]
+                jcb[0,1]+=dNNNdr[k]*y[icon[k,iel]]
+                jcb[1,0]+=dNNNds[k]*x[icon[k,iel]]
+                jcb[1,1]+=dNNNds[k]*y[icon[k,iel]]
             #end for
             jcob = np.linalg.det(jcb)
             #print(jcob)
@@ -439,7 +441,7 @@ for istep in range(0,nstep):
     print("-----------------------------")
 
     ###########################################################################
-    # 1) update density on nodes based on current temp field
+    # update density on nodes based on current temp field
     ###########################################################################
     start = timing.time()
 
@@ -449,7 +451,9 @@ for istep in range(0,nstep):
     print("     -> rho (m,M) %.4e %.4e " %(np.min(rho),np.max(rho)))
 
     ###########################################################################
-    # 2) assemble and solve pressure eq 
+    # assemble pressure eq 
+    # because elements are rectangles, no need to use mapping to 
+    # compute jacobian determinant and inverse
     ###########################################################################
     start = timing.time()
 
@@ -462,7 +466,7 @@ for istep in range(0,nstep):
     jcob=hx*hy/4
     jcbi=np.zeros((ndim,ndim),dtype=np.float64)
     jcbi[0,0]=2/hx
-    jcbi[1,1]=2/hx
+    jcbi[1,1]=2/hy
 
     for iel in range (0,nel):
 
@@ -487,8 +491,8 @@ for istep in range(0,nstep):
                 #    jcb[1,0]+=dNNNds[k]*x[icon[k,iel]]
                 #    jcb[1,1]+=dNNNds[k]*y[icon[k,iel]]
                 #end for
-                #jcob = np.linalg.det(jcb)
-                #jcbi = np.linalg.inv(jcb)
+                #jcob=np.linalg.det(jcb)
+                #jcbi=np.linalg.inv(jcb)
 
                 # compute rho, dNdx & dNdy at q point
                 rhoq=0.
@@ -551,6 +555,7 @@ for istep in range(0,nstep):
 
     ###########################################################################
     # compure pressure average
+    # this is very rough (i.e. ~1 point quadrature)
     ###########################################################################
     start = timing.time()
 
@@ -567,7 +572,9 @@ for istep in range(0,nstep):
     print("normalise p: %.3f s" % (timing.time() - start))
 
     ###########################################################################
-    # compute pressure and temperature gradients 
+    # compute pressure and temperature gradients
+    # gradients are computed for each element at each node, and added to a 
+    # nodal field, which is later averaged. 
     ###########################################################################
     start = timing.time()
     
@@ -673,6 +680,8 @@ for istep in range(0,nstep):
     ###########################################################################
     # compute timestep value
     # if CFL_nb is negative it means we do not use it
+    # dt1,dt2 are timestep values due to CFL condition and diffusion time
+    # note that the timestep is limited to dt_max no matter what
     ###########################################################################
     start = timing.time()
 
@@ -702,25 +711,25 @@ for istep in range(0,nstep):
     start = timing.time()
 
     A_mat=lil_matrix((NfemT,NfemT),dtype=np.float64) # FE matrix 
-    rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
+    rhs=np.zeros(NfemT,dtype=np.float64)             # FE rhs 
     B_mat=np.zeros((2,m),dtype=np.float64)           # gradient matrix B 
-    N_mat = np.zeros((m,1),dtype=np.float64)         # shape functions
-    N_mat_supg = np.zeros((m,1),dtype=np.float64)    # shape functions
-    Tvect = np.zeros(m,dtype=np.float64)
+    N_mat=np.zeros((m,1),dtype=np.float64)           # shape functions vector
+    N_mat_supg=np.zeros((m,1),dtype=np.float64)      # shape functions vector
+    Tvect=np.zeros(m,dtype=np.float64)               # T vales at nodes of elt
 
     jcob=hx*hy/4
     jcbi=np.zeros((ndim,ndim),dtype=np.float64)
     jcbi[0,0]=2/hx
-    jcbi[1,1]=2/hx
+    jcbi[1,1]=2/hy
 
     for iel in range (0,nel):
 
-        a_el=np.zeros((m,m),dtype=np.float64)
-        b_el=np.zeros(m,dtype=np.float64)
-        Ka=np.zeros((m,m),dtype=np.float64)   # elemental advection matrix 
-        Kd=np.zeros((m,m),dtype=np.float64)   # elemental diffusion matrix 
-        MM=np.zeros((m,m),dtype=np.float64)   # elemental mass matrix 
-        vel=np.zeros((1,ndim),dtype=np.float64)
+        a_el=np.zeros((m,m),dtype=np.float64)   # elemental matrix
+        b_el=np.zeros(m,dtype=np.float64)       # elemental rhs
+        Ka=np.zeros((m,m),dtype=np.float64)     # elemental advection matrix 
+        Kd=np.zeros((m,m),dtype=np.float64)     # elemental diffusion matrix 
+        MM=np.zeros((m,m),dtype=np.float64)     # elemental mass matrix 
+        vel=np.zeros((1,ndim),dtype=np.float64) # velocity at q point
 
         for k in range(0,m):
             Tvect[k]=T[icon[k,iel]]
@@ -744,8 +753,8 @@ for istep in range(0,nstep):
                 #    jcb[1,0]+=dNNNds[k]*x[icon[k,iel]]
                 #    jcb[1,1]+=dNNNds[k]*y[icon[k,iel]]
                 #end for
-                #jcob = np.linalg.det(jcb)
-                #jcbi = np.linalg.inv(jcb)
+                #jcob=np.linalg.det(jcb)
+                #jcbi=np.linalg.inv(jcb)
 
                 # compute dNdx & dNdy
                 for k in range(0,m):

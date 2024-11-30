@@ -1,0 +1,22 @@
+
+tail -1 exp3_32_101/RaNu.ascii
+tail -1 exp3_32_102/RaNu.ascii
+tail -1 exp3_32_103/RaNu.ascii
+tail -1 exp3_32_104/RaNu.ascii
+tail -1 exp3_32_105/RaNu.ascii
+tail -1 exp3_32_106/RaNu.ascii
+tail -1 exp3_32_107/RaNu.ascii
+tail -1 exp3_32_108/RaNu.ascii
+tail -1 exp3_32_109/RaNu.ascii
+tail -1 exp3_32_110/RaNu.ascii
+tail -1 exp3_32_111/RaNu.ascii
+tail -1 exp3_32_120/RaNu.ascii
+tail -1 exp3_32_130/RaNu.ascii
+tail -1 exp3_32_140/RaNu.ascii
+tail -1 exp3_32_150/RaNu.ascii
+
+tail -1 exp3_32_104.5/RaNu.ascii
+tail -1 exp3_32_105.5/RaNu.ascii
+tail -1 exp3_32_106.5/RaNu.ascii
+tail -1 exp3_32_107.5/RaNu.ascii
+tail -1 exp3_32_108.5/RaNu.ascii

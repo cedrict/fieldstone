@@ -3,11 +3,10 @@
 
 for n in 32 48 64 80 96 ; do
 
-    for ttop in {101..112} ; do 
+    for ttop in 101 102 103 104 105 105.5 106 106.5 107 107.5 108 108.5 109 110 111 120 130 140 150; do 
 
         echo nelx= $n ttop= $ttop
         python3 stone.py  $n $ttop 1 > opla
-        #mv RaNu.ascii RaNu_${n}_${ttop}.ascii
         mkdir exp3_${n}_${ttop}
         mv *.ascii exp3_${n}_${ttop}
         mv opla exp3_${n}_${ttop}

@@ -1,0 +1,66 @@
+#gnuplot script
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+
+year=365.25*24*3600
+
+set xlabel 'Ra'
+set ylabel 'Nu'
+set log xy
+set grid
+
+set output 'Ra_Nu.pdf'
+plot[7:2000][0.9:100]\
+'../../pawk72/Nu.ascii' u 1:2 w l lt -1 t 'pawk72 (mine)' ,\
+'data_pawk72_opentriangles.ascii'   pt 8 lt -1 ps .4 notitle, \
+'data_pawk72_opencircles.ascii'     pt 6 lt -1 ps .4 notitle, \
+'data_pawk72_filledsquares.ascii'   pt 5 lt -1 ps .4 notitle, \
+'data_pawk72_filledtriangles.ascii' pt 9 lt -1 ps .4 notitle, \
+'data_pawk72_filledcircles.ascii'   pt 7 lt -1 ps .4 notitle, \
+'data_pawk72_line.ascii' w l dt 2 lt -1 t 'pawk72 (paper)', \
+'data_souche_line.ascii' w l dt 3 lt -1 t 'Souche poster',\
+'Ra_Nu_32.ascii' u 3:2  pt 5 ps .24 t 'stone 107, 32^2',\
+'Ra_Nu_48.ascii' u 3:2  pt 5 ps .24 t 'stone 107, 48^2',\
+'Ra_Nu_64.ascii' u 3:2  pt 5 ps .24 t 'stone 107, 64^2',\
+'Ra_Nu_80.ascii' u 3:2  pt 5 ps .24 t 'stone 107, 80^2',\
+'Ra_Nu_96.ascii' u 3:2  pt 5 ps .24 t 'stone 107, 96^2',\
+'Ra_Nu_128.ascii' u 3:2  pt 5 ps .24 t 'stone 107, 128^2',\
+
+
+set output 'Ra_Nu_zoom.pdf'
+plot[30:90][0.95:3]\
+'../../pawk72/Nu.ascii' u 1:2 w l lt -1 t 'pawk72 (mine)' ,\
+'data_pawk72_opentriangles.ascii'   pt 8 lt -1 ps .4 notitle, \
+'data_pawk72_opencircles.ascii'     pt 6 lt -1 ps .4 notitle, \
+'data_pawk72_filledsquares.ascii'   pt 5 lt -1 ps .4 notitle, \
+'data_pawk72_filledtriangles.ascii' pt 9 lt -1 ps .4 notitle, \
+'data_pawk72_filledcircles.ascii'   pt 7 lt -1 ps .4 notitle, \
+'data_pawk72_line.ascii' w l dt 2 lt -1 t 'pawk72 (paper)', \
+'data_souche_line.ascii' w l dt 3 lt -1 t 'Souche poster',\
+'Ra_Nu_32.ascii'  u 3:2  pt 5 ps .4 t 'stone 107, 32^2',\
+'Ra_Nu_48.ascii'  u 3:2  pt 5 ps .4 t 'stone 107, 48^2',\
+'Ra_Nu_64.ascii'  u 3:2  pt 5 ps .4 t 'stone 107, 64^2',\
+'Ra_Nu_80.ascii'  u 3:2  pt 5 ps .4 t 'stone 107, 80^2',\
+'Ra_Nu_96.ascii'  u 3:2  pt 5 ps .4 t 'stone 107, 96^2',\
+'Ra_Nu_128.ascii' u 3:2  pt 5 ps .4 t 'stone 107, 128^2',\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
