@@ -15,6 +15,15 @@ def by(x,y,drho):
     else:
        return -1
 
+#reduced density
+#def by(x,y,drho):
+#    if y>0.5+amplitude*np.cos(2*np.pi*x/llambda):
+#       return -drho
+#    else:
+#       return 0
+
+
+
 def solution(x,y):
     return 0,0,0
 
@@ -53,7 +62,7 @@ def vrms():
 
 left_bc  ='free_slip'
 right_bc ='free_slip'
-bottom_bc='free_slip'
-top_bc   ='free_slip'
+bottom_bc='no_slip'
+top_bc   ='no_slip'
 
 pnormalise=True

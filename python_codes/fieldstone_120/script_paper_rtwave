@@ -12,7 +12,8 @@ rm -f rt_vel*
 mkdir paperresults/rt
 mkdir paperresults/rt/structured
 
-for e in 3 4 5 9 15 18 ; do 
+#for e in 3 4 5 9 15 18 ; do 
+for e in 3 ; do 
 
     if test $e == 3  ; then Vspace=P2    Pspace=P0  ; fi
     if test $e == 4  ; then Vspace=Q2    Pspace=Q1  ; fi
@@ -23,8 +24,8 @@ for e in 3 4 5 9 15 18 ; do
 
     echo ---------- $Vspace X $Pspace ----------
 
-    #for n in 16 32 48 64 80 96 128; do
-    for n in 16 32 64 128; do
+    #for n in 16 32 48 64 80 96 128 192 256; do
+    for n in 192; do
         for eta in -2 -1.5 -1 -0.5 0 0.5 1 1.5 2 ; do
             for drho in 0.1  ; do
                 echo mesh: $n X $n '; etastar=' $eta '; drho=' $drho
@@ -34,14 +35,12 @@ for e in 3 4 5 9 15 18 ; do
                 grep rt_wave opla >> rt_vel_${Vspace}_${Pspace}_${n}
                 mv opla opla_${Vspace}_${Pspace}_${n}
                 mv meshV.vtu meshV_${Vspace}_${Pspace}_${n}.vtu
+                mv visu_V.vtu visu_V_${Vspace}_${Pspace}_${n}.vtu
             done
         done
     done
 
 done
 
-#mv err* paperresults/rt/structured
-#mv opla* paperresults/rt/structured
-#mv vrms* paperresults/rt/structured
-mv rt_vel* paperresults/rt/structured
+#mv rt_vel* paperresults/rt/structured
 

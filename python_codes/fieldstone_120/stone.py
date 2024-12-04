@@ -18,23 +18,23 @@ Ly=1
 ndofV=2
 ndofP=1
 
-nelx=64
+nelx=24
 
 mtype=0 # mesh type (how quads are divided into triangles)
 
-Vspace='Q2'
-Pspace='Q1'
+Vspace='P2'
+Pspace='P1'
 
 visu=1
 
-experiment='tesk12' #'sinker' #'lire19' #'dh'
+experiment='dh' #'RTwave' #'tesk12' #'sinker' #'lire19' #'dh'
 
 unstructured=0
 
 isoparametric=True
 randomize_mesh=False
 
-etastar=1
+etastar=100
 drho=0.01
 
 ass_method=2 # assembly method
@@ -184,7 +184,7 @@ if experiment=='RTwave':
    Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xV,yV,iconV,nel,Vspace)
    Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xP,yP,iconP,nel,Pspace)
 
-print("build Q1/P1 mesh: %.3f s" % (timing.time() - start))
+print("make Q1/P1 mesh: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 # compute area of elements 
@@ -226,6 +226,21 @@ print("     -> total area meas %.8e " %(area.sum()))
 print("     -> total area anal %.8e " %(Lx*Ly))
 
 print("compute elements areas: %.3f s" % (timing.time() - start))
+
+###############################################################################
+# compute h 
+###############################################################################
+
+if Vspace[0]=='Q':
+   hmin=min(np.sqrt(area))
+   hmax=max(np.sqrt(area))
+   havrg=sum(np.sqrt(area))/nel
+else:
+   hmin=min(np.sqrt(2*area))
+   hmax=max(np.sqrt(2*area))
+   havrg=sum(np.sqrt(2*area))/nel
+
+print('     -> h (m,M,avrg)= %e %e %e ' %(hmin,hmax,havrg))
 
 ###############################################################################
 # compute array for assembly
@@ -395,7 +410,7 @@ for iel in range(0,nel): # loop over elements
 
 print("     -> assembly: %.3f s" % (time_ass))
 
-print("build FE matrix: %.3f s" % (timing.time() - start))
+print("build FE matrix: %.3f s | %d %d %e" % (timing.time() - start,Nfem,nel,havrg))
 
 #plt.spy(A_sparse,markersize=1)
 #plt.savefig('matrix_'+Vspace+'_'+Pspace+'.pdf', bbox_inches='tight')
@@ -419,7 +434,7 @@ start = timing.time()
 
 sol=spsolve(sparse_matrix,rhs)
 
-print("solve time: %.3f s" % (timing.time() - start))
+print("solve time: %.3f s | %d %d %e" % (timing.time() - start,Nfem,nel,havrg))
 
 ###############################################################################
 # put solution into separate x,y velocity arrays
@@ -507,21 +522,6 @@ if mms.pnormalise:
    print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
             
    print("pressure normalisation: %.3f s" % (timing.time() - start))
-
-###############################################################################
-# compute h 
-###############################################################################
-
-if Vspace[0]=='Q':
-   hmin=min(np.sqrt(area))
-   hmax=max(np.sqrt(area))
-   havrg=sum(np.sqrt(area))/nel
-else:
-   hmin=min(np.sqrt(2*area))
-   hmax=max(np.sqrt(2*area))
-   havrg=sum(np.sqrt(2*area))/nel
-
-print('     -> h (m,M,avrg)= %e %e %e ' %(hmin,hmax,havrg))
 
 ###############################################################################
 
@@ -821,8 +821,8 @@ print("compute q1,q2 : %.3f s" % (timing.time() - start))
 
 ###############################################################################
 
-Tools.export_swarm_vector_to_ascii(xV,yV,u,v,'solution_velocity.ascii')
-Tools.export_swarm_scalar_to_ascii(xP,yP,p,'solution_pressure.ascii')
+#Tools.export_swarm_vector_to_ascii(xV,yV,u,v,'solution_velocity.ascii')
+#Tools.export_swarm_scalar_to_ascii(xP,yP,p,'solution_pressure.ascii')
 Tools.export_elements_to_vtu(xV,yV,iconV,Vspace,'meshV.vtu',area,bxc,byc,etac,q1,q2,q3)
 Tools.export_V_to_vtu(NV,xV,yV,iconV,Vspace,'visu_V.vtu',u,v,Pspace,p,iconP)
 

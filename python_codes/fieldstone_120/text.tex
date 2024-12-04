@@ -2250,24 +2250,190 @@ check rate of mini that seems to have decreased!
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{NEW Results - Rayleigh-Taylor wave}
+\section*{Rayleigh-Taylor wave (Nov. 2024)}
+
+This benchmark is described in Section~\ref{MMM-ss:rtwave},
+although here the domain is the unit square and all quantities are 
+effectively dimensionless.
+Free slip boundary conditions are prescribed on left and right sides,
+no-slip on bottom and top. 
+The implementation in {\tt mms\_RTwave.py} is as follows: 
+\begin{lstlisting}
+amplitude=0.01
+llambda=0.5
+def eta(x,y,param):
+    if y>0.5+amplitude*np.cos(2*np.pi*x/llambda):
+       return 1
+    else:
+       return param
+def by(x,y,drho):
+    if y>0.5+amplitude*np.cos(2*np.pi*x/llambda):
+       return -(1+drho)
+    else:
+       return -1
+\end{lstlisting}
+
+The bash script {\tt script\_paper\_rtwave} loops over $\eta_2=\eta^\star\in[10^{-2}:10^2]$ ('\lstinline{param}' above) 
+for \lstinline{drho}=0.1,
+while $\lambda$ is set to 0.5 and the amplitude is set to $\Delta=0.01$.
+
+Since this experiment requires a bespoke mesh, we find this in the code:
+\begin{lstlisting}
+if experiment=='RTwave':
+   Tools.deform_mesh_RTwave(x1,y1,N1,Lx,Ly,nelx,nely)
+   Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xV,yV,iconV,nel,Vspace)
+   Tools.adapt_FE_mesh(x1,y1,icon1,m1,space1,xP,yP,iconP,nel,Pspace)
+\end{lstlisting}
+which ensures that mid edge nodes are placed so that all elements are straight edged.
+The results for the benchmark are exported as follows:
+\begin{lstlisting}
+print('     -> rt_wave',np.max(abs(v)),phi1,etastar,drho,nelx,val)
+\end{lstlisting}
+where \lstinline{val} is the analytical value.
 
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_120/images/rt_setup}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_120/images/rt_vel}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_120/images/rt_press}
+\includegraphics[width=4.5cm]{python_codes/fieldstone_120/images/rt_setup}
+\includegraphics[width=6.2cm]{python_codes/fieldstone_120/images/rt_vel}
+\includegraphics[width=6.2cm]{python_codes/fieldstone_120/images/rt_press}\\
+{\captionfont Left: mesh for 16x16; middle: velocity; Right: pressure field.
+Obtained for isoviscous case $\eta^\star=\eta_2/\eta_1=1$.}
 \end{center}
+
+\newpage
+The figures below show $max(v_y)$ for the whole domain (which is in fact the vertical velocity 
+at the bellies of the perturbation) against the expected analytical values as a function 
+of the viscosity $\eta_2$ ($\eta_1=1$) for all 6 element pairs.
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_Q2Q1.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_Q2Pm1.pdf}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_P1+P1.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_P2P1.pdf}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_P2P0.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_P2+P-1.pdf} 
+\includegraphics[width=8.2cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_Q2Q1.pdf}
+\includegraphics[width=8.2cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_Q2Pm1.pdf}\\
+\includegraphics[width=8.2cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_P1+P1.pdf}
+\includegraphics[width=8.2cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_P2P1.pdf}\\
+\includegraphics[width=8.2cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_P2P0.pdf}
+\includegraphics[width=8.2cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_vel_P2+P-1.pdf} 
 \end{center}
 
-mid edge nodes are placed on straight edge elements
+\newpage
+The figures below now show the velocity error $|max(v_y)-v_{theory}|$ as a function of viscosity again, 
+but this time for different resolutions, comparing element pairs.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_velerror_16.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_velerror_32.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_velerror_64.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_velerror_128.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_velerror_192.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/rt_wave_velerror_256.pdf}
+\end{center}
+
+$P_2\times P_0$ is surprisingly bad but error does decrease with resolution. 
+Otherwise all other elements yield about the same error, except $P_1^+ \times P_1$
+who seems to be marginally better.
+Rather worryingly the error does not much improve much with increasing resolution.
+
+\newpage
+Below are the velocity fields obtained for $\eta_2=100$ (i.e. $\eta^\star=100$).
+From left to right: resolution $16^2,32^2,64^2,128^2,192^2,256^2$.
+Continuous pressure elements seem to fare better at low resolutions. Only 
+$P_2\times P_0$ fails to recover the correct field at high resolution.
+Colorscale barely readable, but identical for all plots.
+
+\begin{itemize}
+\item $Q_2\times Q_1$
+\begin{center}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_q2q1.0000.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_q2q1.0001.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_q2q1.0002.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_q2q1.0003.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_q2q1.0004.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_q2q1.0005.png}
+\end{center}
+\item $Q_2\times P_{-1}$
+\begin{center}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_q2pm1.0000.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_q2pm1.0001.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_q2pm1.0002.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_q2pm1.0003.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_q2pm1.0004.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_q2pm1.0005.png}
+\end{center}
+\item $P_1^+\times P_1$
+\begin{center}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p1+p1.0000.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p1+p1.0001.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p1+p1.0002.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p1+p1.0003.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p1+p1.0004.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p1+p1.0005.png}
+\end{center}
+\item $P_2\times P_1$ 
+\begin{center}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2p1.0000.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2p1.0001.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2p1.0002.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2p1.0003.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2p1.0004.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2p1.0005.png}
+\end{center}
+\item $P_2\times P_0$
+\begin{center}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2p0.0000.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2p0.0001.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2p0.0002.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2p0.0003.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2p0.0004.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2p0.0005.png}
+\end{center}
+\item $P_2^+\times P_{-1}$
+\begin{center}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2+p-1.0000.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2+p-1.0001.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2+p-1.0002.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2+p-1.0003.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2+p-1.0004.png}
+\includegraphics[width=2.6cm]{python_codes/fieldstone_120/paperresults/rt/structured/vel_p2+p-1.0005.png}
+\end{center}
+\end{itemize}
+
+\newpage
+
+I am quite puzzled by the abysmal results obtained with the $P_2\times P_0$ so I have re-run 
+the experiment run with reduced densities, i.e. 
+top layer has density $0.1$ and bottom layer has zero density (while the lower layer is still 100
+times more viscous than the top layer), i.e. $\eta_\star=100$.
+
+We find that results are substantially improved, which means that similarly to the $Q_1\times P_0$ element
+the background lithostatic pressure is a source of large errors in the context of buoyancy driven flow.
+In this case it could also be that the mesh topology/anisotropy plays a role 
+(as opposed to the $Q_1\times P_0$ one?).
+
+The recovered values are getting closer to the expected analytical ones with increasing resolution
+and the error decreases in a predictable manner. 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/reduced/rt_wave_vel_P2P0.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_120/paperresults/rt/structured/reduced/rt_wave_velerror.pdf}
+\end{center}
+
+Left to right: velocity and pressure fields obtained with $16^2, 32^2, 64^2, 128^2, 192^2$ resolutions:
+\begin{center}
+\includegraphics[width=2.96cm]{python_codes/fieldstone_120/paperresults/rt/structured/reduced/vel_p2p0.0001.png}
+\includegraphics[width=2.96cm]{python_codes/fieldstone_120/paperresults/rt/structured/reduced/vel_p2p0.0000.png}
+\includegraphics[width=2.96cm]{python_codes/fieldstone_120/paperresults/rt/structured/reduced/vel_p2p0.0002.png}
+\includegraphics[width=2.96cm]{python_codes/fieldstone_120/paperresults/rt/structured/reduced/vel_p2p0.0003.png}
+\includegraphics[width=2.96cm]{python_codes/fieldstone_120/paperresults/rt/structured/reduced/vel_p2p0.0004.png}\\
+\includegraphics[width=2.96cm]{python_codes/fieldstone_120/paperresults/rt/structured/reduced/press_p2p0.0001.png}
+\includegraphics[width=2.96cm]{python_codes/fieldstone_120/paperresults/rt/structured/reduced/press_p2p0.0000.png}
+\includegraphics[width=2.96cm]{python_codes/fieldstone_120/paperresults/rt/structured/reduced/press_p2p0.0002.png}
+\includegraphics[width=2.96cm]{python_codes/fieldstone_120/paperresults/rt/structured/reduced/press_p2p0.0003.png}
+\includegraphics[width=2.96cm]{python_codes/fieldstone_120/paperresults/rt/structured/reduced/press_p2p0.0004.png}
+\end{center}
+
+
+
+
+
+
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2509,6 +2675,14 @@ p(x,y)=\sin(x+y)
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/lire19/vel}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_120/paperresults/lire19/press}
 \end{center}
+
+
+
+
+
+
+
+
 
 
 \newpage
