@@ -1,6 +1,6 @@
 set term pdf enhanced font "Times,11pt" size 3.2,3;
 set grid
-set pointsize .1
+set pointsize .15
 
 set output 'fig6.pdf'
 set xlabel 'T_f'
