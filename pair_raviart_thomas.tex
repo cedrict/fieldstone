@@ -428,8 +428,10 @@ family to be $H(\text{div})$-conforming, each component need not be continuous,
 but the normal component must be continuous. In order
 to ensure such continuity, the degrees of freedom of $H(\text{div})$-conforming 
 elements usually include normal components on element facets.
-The two main families of $H(\text{div})$-conforming elements are the Raviart–Thomas 
+The two main families of $H(\text{div})$-conforming elements are the Raviart-Thomas 
 and Brezzi-Douglas-Marini elements.
+
+[...]
 
 The Raviart–Thomas element was introduced by Raviart and Thomas (1977) \cite{rath77}. 
 It was the first element to discretize the mixed form of second-order 
@@ -438,8 +440,30 @@ is designed so that it is the smallest polynomial space
 ${\cal V} \subset {\cal P}_q(T)$, for $q=1,2,...$, from which
 the divergence maps onto ${\cal P}_{q-1}(T)$. 
 Shortly thereafter, it was extended to tetrahedra and boxes by
-Nédélec (1980). It is therefore sometimes referred to as the 
-Raviart-Thomas-Nédélec element.
+\textcite{nede80} (1980). It is therefore sometimes referred to as the 
+Raviart-Thomas-N{\'e}d{\'e}lec element.
+
+[...]
+
+\begin{center}
+\includegraphics[width=8cm]{images/pair_raviart-thomas/rt_lomw12}\\
+{\captionfont Taken from \cite{lomw12}. Illustration of the degrees of freedom for 
+the first, second and third degree Raviart-Thomas elements on triangles and tetrahedra. 
+The degrees of freedom are moments of the normal component against 
+$P_{q-1}$ on facets (edges and faces, respectively) and, for the higher degree elements,
+interior moments against $[P_{q-2}]^d$. Alternatively, as indicated in this 
+illustration, the moments of normal components may be replaced by point evaluation of normal components.}
+\end{center}
+
+As an example, the lowest degree Raviart-Thomas space on triangles is a three-dimensional space
+and consists of vector fields of the form
+\[
+v(x)=\alpha + \beta x
+\]
+where $\alpha$ is a vector-valued constant, and $\beta$ is a scalar constant.
+
+The dimension of $RT_q$ is $q(q+2)$ for a triangle and $\frac12 q (q+1)(q+3)$ 
+for a tetrahedron.
 }
 \end{displayquote}
 
