@@ -1,0 +1,8 @@
+set term pdf 
+
+set output 'res.pdf'
+plot[][-1e-5:1e-5]\
+'res400.ascii' w l t 'T_0=400^oC',\
+'res500.ascii' w l t 'T_0=500^oC',\
+'res600.ascii' w l t 'T_0=600^oC',\
+0 lt -1 dt 2 notitle
