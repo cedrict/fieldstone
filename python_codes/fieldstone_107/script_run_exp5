@@ -1,0 +1,15 @@
+#! /bin/bash
+
+rm vrms.ascii
+rm errors.ascii
+rm pavrg.ascii
+
+for n in 8 12 16 24 32 48 56 64 72 80 88 96 104 112 120 128 160 192 224 256 320; do
+
+    echo nelx= $n 
+    python3 stone.py  $n 0. 1 > opla
+    grep vrms_th opla >> vrms.ascii 
+    grep errv opla >> errors.ascii 
+    grep pavrg opla >> pavrg.ascii 
+
+done

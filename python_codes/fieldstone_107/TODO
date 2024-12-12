@@ -1,9 +1,25 @@
-improve Nu calculations
+
+Q1 and Q2: DONE
+velocity recovery: DONE
+redo Simpson example fault: DONE
+mms: DONE
+introduce switch to not do energy solve: DONE
+implement SUPG: DONE
+
+
+precompute N on qpts ?
+
+improve Nu calculations CBF?
 
 improve dTdx, etc ... calculations?
 
-explore aspect ratio importance ?
+decoupled & coupled implementation
 
-jit ? 
-precompute N on qpts ?
+Neumann bc 
 
+viscous fingering: probably not, requires too much 
+modifs to code
+
+onset on convection:
+--explore aspect ratio importance ?
+--redo Q1 and Q2

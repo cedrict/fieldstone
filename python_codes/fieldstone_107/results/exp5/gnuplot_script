@@ -1,0 +1,57 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize .5
+set key outside
+
+set log x
+set xlabel 'h'
+set ylabel 'u_{vrms}'
+set output 'vrms.pdf'
+plot[][:17.2745]\
+'vrmsQ1.ascii' u (1./$7):3 w lp t 'Q_1',\
+'vrmsQ2.ascii' u (1./$7):3 w lp t 'Q_2',\
+'vrmsQ1.ascii' u (1./$7):5 w l lt -1 dt 2 t 'analytical'
+
+
+set xlabel '# of dofs'
+set output 'vrms2.pdf'
+plot[][:17.2745]\
+'vrmsQ1.ascii' u (($7+1)**2):3 w lp t 'Q_1',\
+'vrmsQ2.ascii' u ((2*$7+1)**2):3 w lp t 'Q_2'
+
+
+set xlabel 'h'
+set ylabel '<p>'
+set output 'pavrg.pdf'
+plot[][:11.834]\
+'pavrgQ1.ascii' u (1./$7):3 w lp t 'Q_1',\
+'pavrgQ2.ascii' u (1./$7):3 w lp t 'Q_2',\
+'pavrgQ2.ascii' u (1./$7):5 w l lt -1 dt 2 t 'analytical'
+
+
+set xlabel '# of dofs'
+set ylabel '<p>'
+set output 'pavrg2.pdf'
+plot[][:11.8338]\
+'pavrgQ1.ascii' u (($7+1)**2):3 w lp t 'Q_1',\
+'pavrgQ2.ascii' u ((2*$7+1)**2):3 w lp t 'Q_2',\
+
+
+
+unset grid
+set format y "10^{%L}"
+
+set log xy
+set xlabel 'h'
+set ylabel 'L_2 error'
+set output 'errors.pdf'
+plot[][]\
+'errorsQ1.ascii' u (1/$7):3 w lp t 'u, Q_1',\
+'errorsQ2.ascii' u (1/$7):3 w lp t 'u, Q_2',\
+'errorsQ1.ascii' u (1/$7):5 w lp t 'p, Q_1',\
+'errorsQ2.ascii' u (1/$7):5 w lp t 'p, Q_2',\
+x**3 lt -1 dt 2 t '{/"cmsy10":Normal=12   O}(h^3)',\
+x**2*4 lt -1 dt 3 t '{/"cmsy10":Normal=12   O}(h^2)',\
+x**1.5*10 lt -1 dt 4 t '{/"cmsy10":Normal=12   O}(h^{1.5})'
+
