@@ -1,0 +1,16 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+
+set xlabel 'T (^oC)'
+set ylabel 'f_{eq13}'
+
+set output 'lines.pdf'
+
+plot[][]\
+'feq13_400.ascii' w l t 'T_0=400^oC',\
+'feq13_500.ascii' w l t 'T_0=500^oC',\
+'feq13_600.ascii' w l t 'T_0=600^oC'
+
+
+

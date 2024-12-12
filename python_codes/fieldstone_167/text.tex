@@ -409,13 +409,41 @@ and we obtain the following figures:
 \end{center}
 
 This is rather worrying because these plots do resemble the Fig.~6 of the paper a lot.
-We can also try to use Eq.~13 of the paper, implemented in the \lstinline|fstuwe|
-function but to no avail.
 Also, we find that the lines in the paper are probably for strainrates 
 $\dot{\epsilon}=10^{-16,-15,-14}~\si{\per\second}$ unlike stated on the figure of the paper.
 
 
+We can also try to use Eq.~13 of the paper, 
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_167/images/stuw98_eq}
+\end{center}
+implemented as follows: 
+\begin{lstlisting}
+def feq13(T,T0,D,t):
+    TT=T+TKelvin
+    x=D/TT
+    TT0=T0+TKelvin
+    x0=D/TT0
+    return  t - C*D*( np.exp(-x)/x -np.exp(-x0)/x0 +scp.special.expi(x0) -scp.special.expi(x) ) 
+\end{lstlisting}
 
+Let us consider three values of $T_0$, i.e. $T_0=400,500,600~\si{\celsius}$ and plot the 
+function over the range 400~\si{\celsius}-1400~\si{\celsius} 
+for $\dot\epsilon=10^{-14}~\si{\per\second}$.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_167/feq13/kelvin/lines.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_167/feq13/zero/lines.pdf}\\
+{\captionfont Left: function using temperatures in Kelvin; 
+Right: function using temperatures in Celsius.}
+\end{center}
+
+When Kelvin units are used, we find that the zero of the function is approxmately equal 
+to $T_0$ which is not what is shown in Fig.~6 of the paper. 
+When Celsius units are used, it is less visually obvious, but the same observation can be made.
+This reinforces the conclusion that Eq.~(13) of the paper is probably wrong. 
+
+ 
 
 
 

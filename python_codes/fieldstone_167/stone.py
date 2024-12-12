@@ -1,7 +1,7 @@
 import numpy as np
 import scipy as scp
 
-TKelvin=273. # set to zero to get correct results
+TKelvin=0#273. # set to zero to get correct results
 R=8.314
 Cp=1000
 n=3.
@@ -31,12 +31,12 @@ def f(T,T0,D,t):
     x0=D/TT0
     return  t/C/D - ( np.exp(-x)/x -np.exp(-x0)/x0 -scp.special.expi(-x0) +scp.special.expi(-x) ) 
 
-def fstuwe(T,T0,D,t):
+def feq13(T,T0,D,t):
     TT=T+TKelvin
     x=D/TT
     TT0=T0+TKelvin
     x0=D/TT0
-    return  t/C/D - ( np.exp(-x)/x -np.exp(-x0)/x0 +scp.special.expi(x0) -scp.special.expi(x) ) 
+    return  t - C*D*( np.exp(-x)/x -np.exp(-x0)/x0 +scp.special.expi(x0) -scp.special.expi(x) ) 
 
 ###########################################################
 
@@ -61,3 +61,23 @@ for sr in (1e-12,1e-13,1e-14,1e-15,1e-16):
 #end for
 
 ###########################################################
+
+sr =1e-14
+D=Q/n/R
+C=rho*Cp/sr*(sr/A)**(-1./n)
+
+for T0 in (400,500,600):
+    res=feq13(Trange,T0,D,t)
+    np.savetxt('feq13_'+str(T0)+'.ascii',np.array([Trange,res]).T)
+
+
+
+
+
+
+
+
+
+
+
+
