@@ -1,0 +1,33 @@
+set term pdf enhanced font "Times, 17pt" ps 0.5
+set grid
+set log x
+#set key bottom left
+
+set xlabel  '{/Symbol h}_2'
+set ylabel  'max(|v_y|)'
+
+
+set title 'P_2xP_0'
+set output 'rt_wave_vel_P2P0.pdf'
+plot[][:0.00005]\
+'rt_vel_P2_P0_16'  u 5:3 w lp t '16^2',\
+'rt_vel_P2_P0_32'  u 5:3 w lp t '32^2',\
+'rt_vel_P2_P0_64'  u 5:3 w lp t '64^2',\
+'rt_vel_P2_P0_128' u 5:3 w lp t '128^2',\
+'rt_vel_P2_P0_192' u 5:3 w lp t '192^2',\
+'rt_vel_P2_P0_16'  u 5:8 w lp lt -1 dt 2 pt 2 t 'analytical'
+
+##############################################################
+set key outside
+set xlabel  '{/Symbol h}_2'
+set ylabel  'velocity error'
+set log y
+
+set output 'rt_wave_velerror.pdf'
+plot[][1e-10:1e-2]\
+'rt_vel_P2_P0_16'   u 5:(abs($3-$8)) w lp t '16^2',\
+'rt_vel_P2_P0_32'   u 5:(abs($3-$8)) w lp t '32^2',\
+'rt_vel_P2_P0_64'   u 5:(abs($3-$8)) w lp t '64^2',\
+'rt_vel_P2_P0_128'  u 5:(abs($3-$8)) w lp t '128^2',\
+'rt_vel_P2_P0_192'  u 5:(abs($3-$8)) w lp t '192^2',\
+
