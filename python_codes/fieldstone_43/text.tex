@@ -17,7 +17,7 @@ hereafter are obtained with quadratic elements (unless specified otherwise).
 
 \todo[inline]{check experiments/benchmarks in Olive's work \cite{olbe14,olbm16}?}
 
-%...........................................................................................
+%------------------------------------------------------------------------------
 \subsection*{Experiment 1 - rotating cone}
 
 This benchmark originates in Donea \& Huerta \cite{dohu03}. 
@@ -73,9 +73,9 @@ f)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/c
 
 Turning now to the statistics, we plot $\min(T)$, $\max(T)$ and $E_T$ as a function of time:
 \begin{center}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_43/results/experiment1/Tmin.pdf}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_43/results/experiment1/Tmax.pdf}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_43/results/experiment1/ET.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_43/results/experiment1/Tmin.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_43/results/experiment1/Tmax.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_43/results/experiment1/ET.pdf}\\
 {\captionfont Time evolution of the min and max temperature and the total energy}
 \end{center}
 The conclusions are clear: the explicit method diverges quickly and is unusable. 
@@ -112,12 +112,12 @@ I now turn to another aspect of this problem: what is the effect of the SUPG sta
 scheme on the solution? In what follows Crank-Nicolson is used. 
 
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_43/results/experiment1/Tmin_supg}
-\includegraphics[width=6cm]{python_codes/fieldstone_43/results/experiment1/Tmax_supg}\\
+\includegraphics[width=6.8cm]{python_codes/fieldstone_43/results/experiment1/Tmin_supg}
+\includegraphics[width=6.8cm]{python_codes/fieldstone_43/results/experiment1/Tmax_supg}\\
 {\captionfont Time evolution of min/max temperature with and without SUPG.} 
 \end{center}
 
-%...........................................................................................
+%------------------------------------------------------------------------------
 \subsection*{Experiment 2 - Three objects rotation}
 
 This setup is inspired by the one in the ASPECT manual. The cone of the previous 
@@ -140,7 +140,13 @@ The domain is $2\times2$, centered on the origin. The velocity is $\vec\upnu=(-y
 is set to zero on all four sides. For this experiment the CFL number is set to 0.5
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment2/buildings}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment2/buildings}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_43/results/experiment2/kome22}\\
+{\captionfont Left: ASPECT manual; Right: taken from \textcite{kome22} (2022).}
+\end{center}
+
+
+\begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment2/avrg_T}
 \includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment2/stats_T}
 \end{center}
@@ -163,7 +169,7 @@ is set to zero on all four sides. For this experiment the CFL number is set to 0
 \end{center}
 
 
-%...........................................................................................
+%------------------------------------------------------------------------------
 \subsection*{Experiment 3 - 1D step advection}
 
 This experiment comes from Appendix A of Thieulot (2011) \cite{thie11}.
@@ -175,7 +181,7 @@ reached the position $x=3/4$.
 Temperature boundary conditions are $T=1$ on the left and $T=0$ on the right. 
 Note that the simulation is actually carried out in 2D with a $1\times0.25$ domain 
 discretised by means of $64\times16$ elements.
-CFL number is set to 0.25
+CFL number is set to 0.25.
 
 %\[
 %\tau_{supg} = \frac{h}{2 d |\vec{\upnu}|} = \frac{\sqrt{2}/50}{2 \cdot 1 \cdot 1} = 0.01414
@@ -192,9 +198,9 @@ CFL number is set to 0.25
 \]
 
 \begin{center}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_43/results/experiment3/Q2/avrg_T.pdf}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_43/results/experiment3/Q2/stats_T.pdf}
-\includegraphics[width=5.4cm]{python_codes/fieldstone_43/results/experiment3/Q2/temperature.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_43/results/experiment3/Q2/avrg_T.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_43/results/experiment3/Q2/stats_T.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_43/results/experiment3/Q2/temperature.pdf}
 \end{center}
 
 
