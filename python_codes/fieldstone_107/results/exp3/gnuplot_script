@@ -20,13 +20,15 @@ plot[7:2000][0.9:100]\
 'data_pawk72_filledcircles.ascii'   pt 7 lt -1 ps .4 notitle, \
 'data_pawk72_line.ascii' w l dt 2 lt -1 t 'pawk72 (paper)', \
 'data_souche_line.ascii' w l dt 3 lt -1 t 'Souche poster',\
-'Ra_Nu_32.ascii' u 3:2  pt 5 ps .24 t 'stone 107, 32^2',\
-'Ra_Nu_48.ascii' u 3:2  pt 5 ps .24 t 'stone 107, 48^2',\
-'Ra_Nu_64.ascii' u 3:2  pt 5 ps .24 t 'stone 107, 64^2',\
-'Ra_Nu_80.ascii' u 3:2  pt 5 ps .24 t 'stone 107, 80^2',\
-'Ra_Nu_96.ascii' u 3:2  pt 5 ps .24 t 'stone 107, 96^2',\
-'Ra_Nu_128.ascii' u 3:2  pt 5 ps .24 t 'stone 107, 128^2',\
-
+'Ra_Nu_32.ascii'    u 3:2 lt 1 pt 5 ps .24 t 'stone 107, 32^2',\
+'Ra_Nu_32_Q1.ascii' u 3:2 lt 1 pt 1 ps  1 t 'stone 107, 64^2, Q_1',\
+'Ra_Nu_48.ascii'    u 3:2 lt 2 pt 5 ps .24 t 'stone 107, 48^2',\
+'Ra_Nu_48_Q1.ascii' u 3:2 lt 2 pt 1 ps  1 t 'stone 107, 48^2, Q_1',\
+'Ra_Nu_64.ascii'    u 3:2 lt 3 pt 5 ps .24 t 'stone 107, 64^2',\
+'Ra_Nu_64_Q1.ascii' u 3:2 lt 3 pt 1 ps  1 t 'stone 107, 64^2, Q_1',\
+'Ra_Nu_80.ascii'    u 3:2 lt 4 pt 5 ps .24 t 'stone 107, 80^2',\
+'Ra_Nu_96.ascii'    u 3:2 lt 5 pt 5 ps .24 t 'stone 107, 96^2',\
+'Ra_Nu_128.ascii'   u 3:2 lt 6 pt 5 ps .24 t 'stone 107, 128^2',\
 
 set output 'Ra_Nu_zoom.pdf'
 plot[30:90][0.95:3]\
@@ -38,29 +40,13 @@ plot[30:90][0.95:3]\
 'data_pawk72_filledcircles.ascii'   pt 7 lt -1 ps .4 notitle, \
 'data_pawk72_line.ascii' w l dt 2 lt -1 t 'pawk72 (paper)', \
 'data_souche_line.ascii' w l dt 3 lt -1 t 'Souche poster',\
-'Ra_Nu_32.ascii'  u 3:2  pt 5 ps .4 t 'stone 107, 32^2',\
-'Ra_Nu_48.ascii'  u 3:2  pt 5 ps .4 t 'stone 107, 48^2',\
-'Ra_Nu_64.ascii'  u 3:2  pt 5 ps .4 t 'stone 107, 64^2',\
-'Ra_Nu_80.ascii'  u 3:2  pt 5 ps .4 t 'stone 107, 80^2',\
-'Ra_Nu_96.ascii'  u 3:2  pt 5 ps .4 t 'stone 107, 96^2',\
-'Ra_Nu_128.ascii' u 3:2  pt 5 ps .4 t 'stone 107, 128^2',\
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+'Ra_Nu_32.ascii'    u 3:2 lt 1 pt 5 ps .4 t 'stone 107, 32^2',\
+'Ra_Nu_32_Q1.ascii' u 3:2 lt 1 pt 1 ps  1 t 'stone 107, 64^2, Q_1',\
+'Ra_Nu_48.ascii'    u 3:2 lt 2 pt 5 ps .4 t 'stone 107, 48^2',\
+'Ra_Nu_48_Q1.ascii' u 3:2 lt 2 pt 1 ps  1 t 'stone 107, 48^2, Q_1',\
+'Ra_Nu_64.ascii'    u 3:2 lt 3 pt 5 ps .4 t 'stone 107, 64^2',\
+'Ra_Nu_64_Q1.ascii' u 3:2 lt 3 pt 1 ps  1 t 'stone 107, 64^2, Q_1',\
+'Ra_Nu_80.ascii'    u 3:2 lt 4 pt 5 ps .4 t 'stone 107, 80^2',\
+'Ra_Nu_96.ascii'    u 3:2 lt 5 pt 5 ps .4 t 'stone 107, 96^2',\
+'Ra_Nu_128.ascii'   u 3:2 lt 6 pt 5 ps .4 t 'stone 107, 128^2',\
 
