@@ -1,3 +1,5 @@
+#!/bin/bash
+
 rm vy.dat
 
 for visc2 in 1.25e20 2.5e20 5e20 1e21 2e21 4e21 8e21 16e21 32e21 64e21 128e21 256e21 ; do 
