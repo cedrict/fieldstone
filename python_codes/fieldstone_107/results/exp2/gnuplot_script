@@ -1,0 +1,174 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize 0.3
+year=3600*24*365.25
+
+set xlabel 'x'
+
+set ylabel 'T (C)'
+set output 'hline_T.pdf'
+plot[][]\
+'40/measurements_hline_0000.ascii' u 1:2 w lp t '50x50',\
+'50/measurements_hline_0000.ascii' u 1:2 w lp t '50x50',\
+'100/measurements_hline_0000.ascii' u 1:2 w lp t '100x100',\
+
+set ylabel 'u (m/s)'
+set output 'hline_u.pdf'
+plot[][]\
+'40/measurements_hline_0000.ascii' u 1:3 w lp t '40x40',\
+'50/measurements_hline_0000.ascii' u 1:3 w lp  t '50x50',\
+'100/measurements_hline_0000.ascii' u 1:3 w lp t '100x100',\
+
+set ylabel 'v (m/s)'
+set output 'hline_v.pdf'
+plot[][]\
+'40/measurements_hline_0000.ascii' u 1:4 w lp t '40x40',\
+'50/measurements_hline_0000.ascii' u 1:4 w lp  t '50x50',\
+'100/measurements_hline_0000.ascii' u 1:4 w lp t '100x100',\
+
+set ylabel 'p (Pa)'
+set output 'hline_p.pdf'
+plot[][]\
+'40/measurements_hline_0000.ascii' u 1:5 w lp t '40x40',\
+'50/measurements_hline_0000.ascii' u 1:5 w lp  t '50x50',\
+'100/measurements_hline_0000.ascii' u 1:5 w lp t '100x100',\
+
+############################
+
+set xlabel 'y'
+
+set ylabel 'T (C)'
+set output 'vline_T.pdf'
+plot[][]\
+'40/measurements_vline_0000.ascii' u 1:2 w lp  t '40x40',\
+'50/measurements_vline_0000.ascii' u 1:2 w lp  t '50x50',\
+'100/measurements_vline_0000.ascii' u 1:2 w lp t '100x100',\
+
+set ylabel 'u (m/s)'
+set output 'vline_u.pdf'
+plot[][]\
+'40/measurements_vline_0000.ascii' u 1:3 w lp  t '40x40',\
+'50/measurements_vline_0000.ascii' u 1:3 w lp  t '50x50',\
+'100/measurements_vline_0000.ascii' u 1:3 w lp t '100x100',\
+
+set ylabel 'v (m/s)'
+set output 'vline_v.pdf'
+plot[][]\
+'40/measurements_vline_0000.ascii' u 1:4 w lp  t '40x40',\
+'50/measurements_vline_0000.ascii' u 1:4 w lp  t '50x50',\
+'100/measurements_vline_0000.ascii' u 1:4 w lp t '100x100',\
+
+set ylabel 'p (Pa)'
+set output 'vline_p.pdf'
+plot[][]\
+'40/measurements_vline_0000.ascii' u 1:5 w lp  t '40x40',\
+'50/measurements_vline_0000.ascii' u 1:5 w lp  t '50x50',\
+'100/measurements_vline_0000.ascii' u 1:5 w lp t '100x100',\
+
+
+############################
+
+
+set ylabel 'v (m/s)'
+set output 'vline_v2.pdf'
+plot[][]\
+'40/measurements_vline_0000.ascii'  u 1:($4*year) w l lt 1 dt 1 t '40^2, t=0yr',\
+'40/measurements_vline_0250.ascii'  u 1:($4*year) w l lt 1 dt 2 t '40^2, t=250yr',\
+'40/measurements_vline_0500.ascii'  u 1:($4*year) w l lt 1 dt 3 t '40^2, t=500yr',\
+'40/measurements_vline_0750.ascii'  u 1:($4*year) w l lt 1 dt 4 t '40^2, t=750yr',\
+'40/measurements_vline_0999.ascii'  u 1:($4*year) w l lt 1 dt 5 t '40^2, t=1000yr',\
+'50/measurements_vline_0000.ascii'  u 1:($4*year) w l lt 2 dt 1 t '50^2, t=0yr',\
+'50/measurements_vline_0250.ascii'  u 1:($4*year) w l lt 2 dt 2 t '50^2, t=250yr',\
+'50/measurements_vline_0500.ascii'  u 1:($4*year) w l lt 2 dt 3 t '50^2, t=500yr',\
+'50/measurements_vline_0750.ascii'  u 1:($4*year) w l lt 2 dt 4 t '50^2, t=750yr',\
+'50/measurements_vline_0999.ascii'  u 1:($4*year) w l lt 2 dt 5 t '50^2, t=1000yr',\
+'100/measurements_vline_0000.ascii' u 1:($4*year) w l lt 3 dt 1 t '100^2, t=0yr',\
+
+
+set ylabel 'T (m/s)'
+set output 'vline_T2.pdf'
+plot[][]\
+'40/measurements_vline_0000.ascii'  u 1:2 w l lt 1 dt 1 t '40^2, t=0yr',\
+'40/measurements_vline_0250.ascii'  u 1:2 w l lt 1 dt 2 t '40^2, t=250yr',\
+'40/measurements_vline_0500.ascii'  u 1:2 w l lt 1 dt 3 t '40^2, t=500yr',\
+'40/measurements_vline_0750.ascii'  u 1:2 w l lt 1 dt 4 t '40^2, t=750yr',\
+'40/measurements_vline_0999.ascii'  u 1:2 w l lt 1 dt 5 t '40^2, t=1000yr',\
+'50/measurements_vline_0000.ascii'  u 1:2 w l lt 2 dt 1 t '50^2, t=0yr',\
+'50/measurements_vline_0250.ascii'  u 1:2 w l lt 2 dt 2 t '50^2, t=250yr',\
+'50/measurements_vline_0500.ascii'  u 1:2 w l lt 2 dt 3 t '50^2, t=500yr',\
+'50/measurements_vline_0750.ascii'  u 1:2 w l lt 2 dt 4 t '50^2, t=750yr',\
+'50/measurements_vline_0999.ascii'  u 1:2 w l lt 2 dt 5 t '50^2, t=1000yr',\
+'100/measurements_vline_0000.ascii' u 1:2 w l lt 3 dt 1 t '1100^2, t=0yr',\
+
+set ylabel 'p (m/s)'
+set output 'vline_p2.pdf'
+plot[][]\
+'40/measurements_vline_0000.ascii'  u 1:5 w l lt 1 t '40^2, t=0',\
+'40/measurements_vline_0250.ascii'  u 1:5 w l lt 1 t '40^2, t=250',\
+'40/measurements_vline_0500.ascii'  u 1:5 w l lt 1 t '40^2, t=500',\
+'50/measurements_vline_0000.ascii'  u 1:5 w l lt 2 t '50^2, t=0',\
+'100/measurements_vline_0000.ascii' u 1:5 w l lt 3 t '100^2, t=0',\
+
+
+
+
+
+
+
+############################
+set xlabel 'time (yr)'
+set key outside
+
+set output 'center_T.pdf'
+set ylabel 'T (C)'
+plot[][]\
+'40/measurements_center.ascii'  u 1:2 w lp t '40x40',\
+'50/measurements_center.ascii'  u 1:2 w lp t '50x50',\
+'100/measurements_center.ascii' u ($1/year):2 w lp t '100x100'
+
+set output 'center_u.pdf'
+set ylabel 'u (m/year)'
+plot[][]\
+'40/measurements_center.ascii'  u 1:($3*year) w lp t '40x40',\
+'50/measurements_center.ascii'  u 1:($3*year) w lp t '50x50',\
+'100/measurements_center.ascii' u ($1/year):($3*year) w lp t '100x100'
+
+set output 'center_v.pdf'
+set ylabel 'v (m/year)'
+plot[][]\
+'40/measurements_center.ascii'  u 1:($4*year) w lp t '40x40',\
+'50/measurements_center.ascii'  u 1:($4*year) w lp t '50x50',\
+'100/measurements_center.ascii' u ($1/year):($4*year) w lp t '100x100'
+
+set output 'center_p.pdf'
+set ylabel 'p (Pa)'
+plot[][]\
+'40/measurements_center.ascii'  u 1:5 w lp t '40x40',\
+'50/measurements_center.ascii'  u 1:5 w lp t '50x50',\
+'100/measurements_center.ascii' u ($1/year):5 w lp t '100x100'
+
+
+##############################################
+
+set ylabel 'time (s)'
+set ylabel 'min/max v (m/s)'
+set output 'stats_v.pdf'
+plot[][]\
+'40/stats_v.ascii' u ($1/year):2 w l lt 1 t '40x40',\
+'40/stats_v.ascii' u ($1/year):3 w l lt 1 notitle,\
+'50/stats_v.ascii' u ($1/year):2 w l lt 2 t '50x50',\
+'50/stats_v.ascii' u ($1/year):3 w l lt 2 notitle,\
+
+set ylabel 'min/max u (m/s)'
+set output 'stats_u.pdf'
+plot[][]\
+'40/stats_u.ascii' u ($1/year):2 w l lt 1 t '40x40',\
+'40/stats_u.ascii' u ($1/year):3 w l lt 1 notitle,\
+'50/stats_u.ascii' u ($1/year):2 w l lt 2 t '50x50',\
+'50/stats_u.ascii' u ($1/year):3 w l lt 2 notitle,\
+
+
+
+
+
