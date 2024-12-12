@@ -1,0 +1,15 @@
+
+grep solve opla_P2_P1    > solve_P2_P1
+grep solve opla_P2_P0    > solve_P2_P0
+grep solve opla_Q2_Q1    > solve_Q2_Q1
+grep solve opla_P1+_P1   > solve_P1+_P1
+grep solve opla_Q2_Pm1   > solve_Q2_Pm1
+grep solve opla_P2+_P-1  > solve_P2+_P-1
+
+
+grep build opla_P2_P1    > build_P2_P1
+grep build opla_P2_P0    > build_P2_P0
+grep build opla_Q2_Q1    > build_Q2_Q1
+grep build opla_P1+_P1   > build_P1+_P1
+grep build opla_Q2_Pm1   > build_Q2_Pm1
+grep build opla_P2+_P-1  > build_P2+_P-1

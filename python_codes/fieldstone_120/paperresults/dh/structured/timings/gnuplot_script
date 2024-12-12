@@ -1,0 +1,93 @@
+#
+set term pdf enhanced font "Times,17pt" ps 0.3
+#set grid
+set key outside 
+set key spacing 1.25
+
+hmin=0.003
+hmax=0.1
+
+set log xy
+
+
+set xlabel '# of degrees of freedom'
+set ylabel 'Time to solve linear system (s)'
+set output 'timings_solve.pdf'
+plot[][0.01:]\
+'solve_Q2_Q1'   u 6:3 w lp t 'Q_2xQ_1',\
+'solve_Q2_Pm1'  u 6:3 w lp t 'Q_2xP_{-1}',\
+'solve_P1+_P1'  u 6:3 w lp t 'P_1^+xP_1',\
+'solve_P2_P1'   u 6:3 w lp t 'P_2xP_1',\
+'solve_P2_P0'   u 6:3 w lp t 'P_2xP_0',\
+'solve_P2+_P-1' u 6:3 w lp t 'P_2^+xP_{-1}',\
+x**1.67/3.8e7 lt -1 dt 2 t '{/cmsy10 O}(N^{1.67})'
+
+
+set xlabel '# of cells'
+set output 'timings_solve2.pdf'
+plot[][]\
+'solve_Q2_Q1'   u 7:3 w lp t 'Q_2xQ_1',\
+'solve_Q2_Pm1'  u 7:3 w lp t 'Q_2xP_{-1}',\
+'solve_P1+_P1'  u 7:3 w lp t 'P_1^+xP_1',\
+'solve_P2_P1'   u 7:3 w lp t 'P_2xP_1',\
+'solve_P2_P0'   u 7:3 w lp t 'P_2xP_0',\
+'solve_P2+_P-1' u 7:3 w lp t 'P_2^+xP_{-1}',\
+x**1.67/2e6 lt -1 dt 2 t '{/cmsy10 O}(N^{1.67})'
+
+set xlabel 'h'
+set output 'timings_solve3.pdf'
+plot[hmin:hmax][0.001:]\
+'solve_Q2_Q1'   u 8:3 w lp t 'Q_2xQ_1',\
+'solve_Q2_Pm1'  u 8:3 w lp t 'Q_2xP_{-1}',\
+'solve_P1+_P1'  u 8:3 w lp t 'P_1^+xP_1',\
+'solve_P2_P1'   u 8:3 w lp t 'P_2xP_1',\
+'solve_P2_P0'   u 8:3 w lp t 'P_2xP_0',\
+'solve_P2+_P-1' u 8:3 w lp t 'P_2^+xP_{-1}',\
+x**-3.33/1.5e6 lt -1 dt 2 t '{/cmsy10 O}(h^{-3.33})'
+
+
+#############################################
+
+set xlabel '# of degrees of freedom'
+set ylabel 'Time to build linear system (s)'
+set output 'timings_build.pdf'
+plot[][]\
+'build_Q2_Q1'   u 7:4 w lp t 'Q_2xQ_1',\
+'build_Q2_Pm1'  u 7:4 w lp t 'Q_2xP_{-1}',\
+'build_P1+_P1'  u 7:4 w lp t 'P_1^+xP_1',\
+'build_P2_P1'   u 7:4 w lp t 'P_2xP_1',\
+'build_P2_P0'   u 7:4 w lp t 'P_2xP_0',\
+'build_P2+_P-1' u 7:4 w lp t 'P_2^+xP_{-1}',\
+x**1/8e3 lt -1 dt 2 t '{/cmsy10 O}(N)'
+
+
+set xlabel '# of cells'
+set output 'timings_build2.pdf'
+plot[][]\
+'build_Q2_Q1'   u 8:4 w lp t 'Q_2xQ_1',\
+'build_Q2_Pm1'  u 8:4 w lp t 'Q_2xP_{-1}',\
+'build_P1+_P1'  u 8:4 w lp t 'P_1^+xP_1',\
+'build_P2_P1'   u 8:4 w lp t 'P_2xP_1',\
+'build_P2_P0'   u 8:4 w lp t 'P_2xP_0',\
+'build_P2+_P-1' u 8:4 w lp t 'P_2^+xP_{-1}',\
+x**1/2e3 lt -1 dt 2 t '{/cmsy10 O}(N)'
+
+set xlabel 'h'
+set output 'timings_build3.pdf'
+plot[hmin:hmax][]\
+'build_Q2_Q1'   u 9:4 w lp t 'Q_2xQ_1',\
+'build_Q2_Pm1'  u 9:4 w lp t 'Q_2xP_{-1}',\
+'build_P1+_P1'  u 9:4 w lp t 'P_1^+xP_1',\
+'build_P2_P1'   u 9:4 w lp t 'P_2xP_1',\
+'build_P2_P0'   u 9:4 w lp t 'P_2xP_0',\
+'build_P2+_P-1' u 9:4 w lp t 'P_2^+xP_{-1}',\
+x**-2/700 lt -1 dt 2 t '{/cmsy10 O}(h^{-2})'
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,14 @@
+build FE matrix: 0.533 s | 2467 512 6.250000e-02
+build FE matrix: 0.838 s | 3803 800 5.000000e-02
+build FE matrix: 1.245 s | 5427 1152 4.166667e-02
+build FE matrix: 1.757 s | 7339 1568 3.571429e-02
+build FE matrix: 2.259 s | 9539 2048 3.125000e-02
+build FE matrix: 3.297 s | 14803 3200 2.500000e-02
+build FE matrix: 4.815 s | 21219 4608 2.083333e-02
+build FE matrix: 7.010 s | 28787 6272 1.785714e-02
+build FE matrix: 8.375 s | 37507 8192 1.562500e-02
+build FE matrix: 13.206 s | 58403 12800 1.250000e-02
+build FE matrix: 19.433 s | 83907 18432 1.041667e-02
+build FE matrix: 36.486 s | 148739 32768 7.812500e-03
+build FE matrix: 53.678 s | 232003 51200 6.250000e-03
+build FE matrix: 140.305 s | 592387 131072 3.906250e-03

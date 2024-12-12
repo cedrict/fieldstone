@@ -18,16 +18,16 @@ Ly=1
 ndofV=2
 ndofP=1
 
-nelx=24
+nelx=64
 
 mtype=0 # mesh type (how quads are divided into triangles)
 
-Vspace='P2'
-Pspace='P1'
+Vspace='Q2'
+Pspace='Q1'
 
 visu=1
 
-experiment='dh' #'RTwave' #'tesk12' #'sinker' #'lire19' #'dh'
+experiment='RTwave' #'tesk12' #'sinker' #'lire19' #'dh'
 
 unstructured=0
 
