@@ -1,4 +1,5 @@
 rm *.dat
 rm *.vtu
 rm *.ascii
+rm opla
 

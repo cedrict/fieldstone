@@ -1,4 +1,5 @@
 import numpy as np
+
 import sys as sys
 import scipy.sparse as sps
 from scipy.sparse.linalg import *
@@ -7,12 +8,13 @@ import scipy
 import time as time
 from schur_complement_cg_solver import *
 import scipy.sparse.linalg as sla
+from uzawa1_solver import *
+from uzawa2_solver import *
 
 ###############################################################################
 # 1: donea & huerta
 # 2: stokes sphere
 # 3: block
-# 4: 
 ###############################################################################
 
 def bx(x,y):
@@ -169,8 +171,8 @@ if int(len(sys.argv) == 6):
    nqperdim = int(sys.argv[4])
    solver = int(sys.argv[5])
 else:
-   nelx = 192
-   nely = 192
+   nelx = 16
+   nely = 16
    visu = 1
    nqperdim=3
    solver=1
@@ -195,7 +197,9 @@ bench=1
 use_precond=False
 precond_type=0
 tolerance=1e-7
-niter_max=100
+niter_max=5000
+
+projection=False
 
 ###########################################################
 # boundary conditions
@@ -238,42 +242,6 @@ if nqperdim==5:
    qw5c=128./225.
    qcoords=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
    qweights=[qw5a,qw5b,qw5c,qw5b,qw5a]
-
-if nqperdim==6:
-   qcoords=[-0.932469514203152,\
-            -0.661209386466265,\
-            -0.238619186083197,\
-            +0.238619186083197,\
-            +0.661209386466265,\
-            +0.932469514203152]
-   qweights=[0.171324492379170,\
-             0.360761573048139,\
-             0.467913934572691,\
-             0.467913934572691,\
-             0.360761573048139,\
-             0.171324492379170]
-
-if nqperdim==10:
-   qcoords=[-0.973906528517172,\
-            -0.865063366688985,\
-            -0.679409568299024,\
-            -0.433395394129247,\
-            -0.148874338981631,\
-             0.148874338981631,\
-             0.433395394129247,\
-             0.679409568299024,\
-             0.865063366688985,\
-             0.973906528517172]
-   qweights=[0.066671344308688,\
-             0.149451349150581,\
-             0.219086362515982,\
-             0.269266719309996,\
-             0.295524224714753,\
-             0.295524224714753,\
-             0.269266719309996,\
-             0.219086362515982,\
-             0.149451349150581,\
-             0.066671344308688]
 
 ###############################################################################
 
@@ -454,6 +422,7 @@ f_rhs = np.zeros(NfemV,dtype=np.float64)           # right hand side f
 h_rhs = np.zeros(NfemP,dtype=np.float64)           # right hand side h 
 b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64)  # gradient matrix B 
 N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64)  # matrix  
+L_mat = lil_matrix((NfemP,NfemP),dtype=np.float64) # matrix GT*G
 dNNNVdx = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 dNNNVdy = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 dNNNVdr = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
@@ -463,9 +432,10 @@ c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64)
 for iel in range(0,nel):
 
     # set arrays to 0 every loop
-    f_el =np.zeros((mV*ndofV),dtype=np.float64)
-    K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
+    f_el=np.zeros((mV*ndofV),dtype=np.float64)
+    K_el=np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
     G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
+    L_el=np.zeros((mP*ndofP,mP*ndofP),dtype=np.float64)
     h_el=np.zeros((mP*ndofP),dtype=np.float64)
 
     for iq in range(0,nqperdim):
@@ -527,6 +497,8 @@ for iel in range(0,nel):
 
         #end for jq
     #end for iq
+    
+    L_el=G_el.T.dot(G_el) # before b.c.!
 
     # impose b.c. 
     for k1 in range(0,mV):
@@ -574,16 +546,25 @@ for iel in range(0,nel):
         h_rhs[m2]+=h_el[k2]
     #end for 
 
+    #assemble matrix
+    for k1 in range(0,mP):
+        m1=iconP[k1,iel]
+        for k2 in range(0,mP):
+            m2=iconP[k2,iel]
+            L_mat[m1,m2]+=L_el[k1,k2]
+        #end for 
+    #end for 
+
 #end for iel
 
 print("build FE matrix: %.3f s" % (time.time() - start))
 
 ###############################################################################
-# assemble K, G, GT, f, h into A and rhs
+# assemble rhs
 ###############################################################################
 start = time.time()
 
-rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+rhs=np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
 
@@ -653,6 +634,7 @@ else:
    K_mat=csr_matrix(K_mat)
 G_mat=csr_matrix(G_mat)
 M_mat=csr_matrix(M_mat)
+L_mat=csr_matrix(L_mat)
 sparse_matrix=sps.csc_matrix(a_mat)
 
 print("convert to CSR: %.3f s, nel= %d" % (time.time() - start, nel))
@@ -711,17 +693,41 @@ elif solver==13:
 elif solver==14:
    solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                                            NfemV,NfemP,niter_max,tolerance,use_precond,'splu')
+elif solver==15:
+   omega=200
+   solV,p,niter=uzawa1_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
+                       NfemV,NfemP,niter_max,tolerance,use_precond,'direct',omega)
+elif solver==16:
+   solV,p,niter=uzawa2_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
+                       NfemV,NfemP,niter_max,tolerance,use_precond,'direct')
 else:
    exit('solver unknown')
 
 print("solve time: %.3f s, nel= %d" % (time.time()-start,nel))
 
 ###############################################################################
+# Poisson correction 
+# L_mat has been assembled above, as well as h_rhs and G_mat
+###############################################################################
+
+if projection and (solver ==15 or solver==16):
+
+   #L_mat=G_mat.T.dot(G_mat) not good coz G contains zero lines
+   b_rhs=h_rhs-G_mat.T.dot(solV)        # right hand side b 
+   qq=sps.linalg.spsolve(L_mat,b_rhs)
+
+   print("     -> projection: qq (m,M) %.4e %.4e " %(np.min(qq),np.max(qq)))
+   print("     -> projection: u,v corr (m,M) %.4e %.4e " %(np.min(G_mat.dot(qq)),np.max(G_mat.dot(qq))))
+
+   solV+=G_mat.dot(qq)
+
+
+###############################################################################
 # put solution into separate x,y velocity arrays
 ###############################################################################
 start = time.time()
 
-if solver==4 or solver==13 or solver==14: 
+if solver==4 or solver==13 or solver==14 or solver==15 or solver==16: 
    u,v=np.reshape(solV,(NV,2)).T
 else:
    u,v=np.reshape(sol[0:NfemV],(NV,2)).T
@@ -840,6 +846,7 @@ start = time.time()
 
 vrms=0.
 errv=0.
+divv=0.
 errp=0.
 avrgp=0.
 for iel in range (0,nel):
@@ -868,16 +875,24 @@ for iel in range (0,nel):
             yq=0.0
             uq=0.0
             vq=0.0
+            exxq=0.0
+            eyyq=0.0
             for k in range(0,mV):
                 xq+=NNNV[k]*xV[iconV[k,iel]]
                 yq+=NNNV[k]*yV[iconV[k,iel]]
                 uq+=NNNV[k]*u[iconV[k,iel]]
                 vq+=NNNV[k]*v[iconV[k,iel]]
+                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
+                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+                exxq+=dNNNVdx[k]*u[iconV[k,iel]]
+                eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
             #end for
             errv+=((uq-uth(xq,yq))**2+\
                    (vq-vth(xq,yq))**2)*weightq*jcob
 
             vrms+=(uq**2+vq**2)*weightq*jcob
+
+            divv+=(exxq+eyyq)**2*weightq*jcob
 
             pq=0.0
             for k in range(0,mP):
@@ -891,12 +906,13 @@ for iel in range (0,nel):
     #end for iq
 #end for iel
 
+divv=np.sqrt(divv/Lx/Ly)
 errv=np.sqrt(errv/Lx/Ly)
 errp=np.sqrt(errp/Lx/Ly)
 vrms=np.sqrt(vrms/Lx/Ly)
 avrgp=avrgp/Lx/Ly
 
-print("     -> nel= %6d ; errv= %e ; errp= %e" %(nel,errv,errp))
+print("     -> nel= %6d ; errv= %e ; errp= %e ; divv= %e" %(nel,errv,errp,divv))
 
 print("compute errors: %.3f s" % (time.time() - start))
 

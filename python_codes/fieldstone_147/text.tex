@@ -24,8 +24,7 @@
 
 The idea behind this \stone is the comparison of various approaches to solve the 
 Stokes system. We here consider simple setups in a 2D rectangular domain. 
-The code relies on the \QtwoQone element pair.
-and is based on \stone~\ref{f18}.
+The code relies on the \QtwoQone element pair and is based on \stone~\ref{f18}.
 
 In almost all previous stones I have used {\python spsolve} to solve the linear system
 but looking online we find that there are many more methods 
@@ -82,6 +81,103 @@ Iterative solver require a tolerance value and it is set to 1e-7 unless mentione
 otherwise.
 
 \newpage
+
+\begin{enumerate}
+%-----------------01
+\item the first solver is the usual one I use in all the stones
+\begin{lstlisting}
+   sol=sps.linalg.spsolve(sparse_matrix,rhs,use_umfpack=False)
+\end{lstlisting}
+%-----------------02
+\item the second solver is the gmres from linalg 
+\begin{lstlisting}
+   sol,info = scipy.sparse.linalg.gmres(sparse_matrix, rhs, restart=2000,tol=tolerance,M=Mprec)
+\end{lstlisting}
+%-----------------03
+\item the third one is the lgmres from linalg
+\begin{lstlisting}
+   sol = scipy.sparse.linalg.lgmres(sparse_matrix, rhs,atol=1e-16,tol=tolerance)[0]
+\end{lstlisting}
+%-----------------04
+\item the fourth one is my Schur complement CG solver using direct solver for inner solve
+\begin{lstlisting}
+   solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
+                                          NfemV,NfemP,niter_max,tolerance,use_precond,'direct')
+\end{lstlisting}
+%-----------------05
+\item the fifth one is minres from linalg
+\begin{lstlisting}
+   sol = scipy.sparse.linalg.minres(sparse_matrix, rhs, tol=1e-10)[0]
+\end{lstlisting}
+%-----------------06
+\item the sixth one is the qmr from linalg
+\begin{lstlisting}
+   sol = scipy.sparse.linalg.qmr(sparse_matrix, rhs, tol=tolerance)[0]
+\end{lstlisting}
+%-----------------07
+\item the seventh one is the tfqmr from linalg
+\begin{lstlisting}
+   sol = scipy.sparse.linalg.tfqmr(sparse_matrix, rhs, tol=1e-10)[0]
+\end{lstlisting}
+%-----------------08
+\item the eighth one is the gcrotmk from linalg
+\begin{lstlisting}
+   sol = scipy.sparse.linalg.gcrotmk(sparse_matrix, rhs,atol=1e-16, tol=1e-10)[0]
+\end{lstlisting}
+%-----------------09
+\item the ninth one is the bicg from linalg
+\begin{lstlisting}
+   sol = scipy.sparse.linalg.bicg(sparse_matrix, rhs, tol=tolerance)[0]
+\end{lstlisting}
+%-----------------10
+\item the tenth one is bicgstab from linalg
+\begin{lstlisting}
+   sol = scipy.sparse.linalg.bicgstab(sparse_matrix, rhs, tol=tolerance)[0]
+\end{lstlisting}
+%-----------------11
+\item the eleventh one is spsolve+umfpack 
+\begin{lstlisting}
+   sol=sps.linalg.spsolve(sparse_matrix,rhs,use_umfpack=True)
+\end{lstlisting}
+%-----------------12
+\item the twelfth one is cgs from linalg
+\begin{lstlisting}
+   sol = scipy.sparse.linalg.cgs(sparse_matrix, rhs, tol=tolerance)[0]
+\end{lstlisting}
+%-----------------13
+\item the thirteenth one is my Schur complement CG solver using cg for inner solve
+\begin{lstlisting}
+   solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
+                                           NfemV,NfemP,niter_max,tolerance,use_precond,'cg')
+\end{lstlisting}
+%-----------------14
+\item the fourteenth one is my Schur complement CG solver using splu for inner solve
+\begin{lstlisting}
+   solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
+                                           NfemV,NfemP,niter_max,tolerance,use_precond,'splu')
+\end{lstlisting}
+%-----------------15
+\item uzawa 1: Section 5.1 \cite{braess}. Parameterised by $\omega$(=2000 default)
+\begin{lstlisting}
+   omega=2000
+   solV,p,niter=uzawa1_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
+                       NfemV,NfemP,niter_max,tolerance,use_precond,'direct',omega)
+\end{lstlisting}
+
+%-----------------16
+\item uzawa 2: Section 5.2 \cite{braess}. 
+\begin{lstlisting}
+   solV,p,niter=uzawa2_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
+                       NfemV,NfemP,niter_max,tolerance,use_precond,'direct')
+\end{lstlisting}
+
+
+
+
+\end{enumerate}
+
+
+\newpage
 %====================================================
 \section*{Donea \& Huerta mms Without preconditioner}
 
@@ -90,8 +186,8 @@ otherwise.
 \end{center}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/solve.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/solve2.pdf}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_147/RESULTS/solve.pdf} \\
+\includegraphics[width=12cm]{python_codes/fieldstone_147/RESULTS/solve2.pdf}\\
 {\captionfont Time to solve linear system. Only results for usable solvers are shown. 
 Left: time as a function of the number of elements; Right: 
 time as a function of the total number of dofs.}
@@ -124,6 +220,45 @@ is scales linearly with the number of elements.
 The highest resolutions so far are $300\times 300$ elements and the memory requirements 
 were about half of my laptop RAM, so about 16Gb, and $400\times 400$ which requires
 about 20+ Gb.
+
+
+We can also look at the $L_2$ error on the velocity divergence:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/error_divv.pdf}
+\end{center}
+
+\newpage
+%......................................
+\subsubsection*{about the uzawa solver}
+
+The uzawa solver is simple to implement but a parameter is needed. 
+U1 is uzawa of Braess, section 5.1
+U2 is uzawa of Braess, section 5.2
+U3 is conjugate gradient on schur complement.
+The following figure shows the convergence of this solver for different values of this parameter.
+20000 makes the solver explode.	
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/uzawa123/convergence_24x24.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/uzawa123/convergence_48x48.pdf}\\
+{\captionfont Convergence on 24x24 mesh (left) and 48x48 mesh (right) 
+for Donea \& Huerta manufactured solution.}
+\end{center}
+
+We see that the omega parameter should be a function of resolution, and that 
+the uzawa2 converges in the same number of iterations because it automatically 
+computes the step.
+
+Indeed focusing now on U2 and U3 only:
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/uzawa123/convergence_uzawa23}
+\end{center}
+
+
+
+
+
 
 
 %-------------------------
