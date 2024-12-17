@@ -4,9 +4,8 @@ import sys as sys
 import scipy
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix, lil_matrix, hstack, vstack
+from scipy.sparse import csr_matrix, lil_matrix
 import time as timing
-from scipy.sparse import lil_matrix
 from numpy import linalg as LA
 
 #------------------------------------------------------------------------------
