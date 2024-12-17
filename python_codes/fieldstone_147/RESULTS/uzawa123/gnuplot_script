@@ -1,0 +1,44 @@
+#script
+set term pdf enhanced font "Times,12pt"
+set grid
+set xtics 250
+set log y
+set format y "10^{%L}"
+set xlabel '# iteration'
+set ylabel '||p_k-p_{k-1}||_2'
+
+set output 'convergence_24x24.pdf'
+plot[:4000][1e-8:1]\
+'24x24/solver_convergence_omega2.ascii'    w l t 'U1, {/symbol a}=2',\
+'24x24/solver_convergence_omega20.ascii'   w l t 'U1, {/symbol a}=20',\
+'24x24/solver_convergence_omega200.ascii'  w l t 'U1, {/symbol a}=200',\
+'24x24/solver_convergence_omega2000.ascii' w l t 'U1, {/symbol a}=2000',\
+'24x24/solver_convergence_uzawa2.ascii'    w l t 'U2',\
+'24x24/solver_convergence_uzawa3.ascii'    w l t 'U3',\
+
+set output 'convergence_48x48.pdf'
+plot[:4000][1e-8:1]\
+'48x48/solver_convergence_omega2.ascii'    w l t 'U1, {/symbol a}=2',\
+'48x48/solver_convergence_omega20.ascii'   w l t 'U1, {/symbol a}=20',\
+'48x48/solver_convergence_omega200.ascii'  w l t 'U1, {/symbol a}=200',\
+'48x48/solver_convergence_omega2000.ascii' w l t 'U1, {/symbol a}=2000',\
+'48x48/solver_convergence_uzawa2.ascii'    w l t 'U2',\
+'48x48/solver_convergence_uzawa3.ascii'    w l t 'U3',\
+
+
+set xtics 50
+set output 'convergence_uzawa23.pdf'
+plot[:][1e-8:1]\
+'24x24/solver_convergence_uzawa2.ascii' w l t 'U2, 24x24',\
+'48x48/solver_convergence_uzawa2.ascii' w l t 'U2, 48x48',\
+'72x72/solver_convergence_uzawa2.ascii' w l t 'U2, 72x72',\
+'96x96/solver_convergence_uzawa2.ascii' w l t 'U2, 96x96',\
+'24x24/solver_convergence_uzawa3.ascii' w l t 'U3, 24x24',\
+'48x48/solver_convergence_uzawa3.ascii' w l t 'U3, 48x48',\
+'72x72/solver_convergence_uzawa3.ascii' w l t 'U3, 72x72',\
+'96x96/solver_convergence_uzawa3.ascii' w l t 'U3, 96x96',\
+
+
+
+
+

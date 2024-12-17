@@ -1,0 +1,19 @@
+set term pdf enhanced font "Times,12pt"
+set log xy
+set key outside
+set pointsize .3
+set grid
+
+set format xy "10^{%L}"
+
+set xlabel 'tolerance {/Symbol d}'
+#set ylabel '||p_k-p_{k-1}||_2'
+
+set title 'U1, 16x16 mesh'
+
+set output 'res.pdf'
+plot[][]\
+'without' u 13:6 w lp t 'e_u,without projection',\
+'without' u 13:12 w lp t 'e_{div(u)},without projection',\
+'with' u 13:6 w lp  t 'e_u,with projection',\
+'with' u 13:12 w lp t 'e_{div(u)}, with projection',\

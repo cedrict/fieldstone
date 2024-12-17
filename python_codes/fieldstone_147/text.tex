@@ -157,11 +157,11 @@ otherwise.
                                            NfemV,NfemP,niter_max,tolerance,use_precond,'splu')
 \end{lstlisting}
 %-----------------15
-\item uzawa 1: Section 5.1 \cite{braess}. Parameterised by $\omega$(=2000 default)
+\item uzawa 1: Section 5.1 \cite{braess}. Parameterised by $\alpha$(=2000 default)
 \begin{lstlisting}
-   omega=2000
+   alpha=2000
    solV,p,niter=uzawa1_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
-                       NfemV,NfemP,niter_max,tolerance,use_precond,'direct',omega)
+                       NfemV,NfemP,niter_max,tolerance,use_precond,'direct',alpha)
 \end{lstlisting}
 
 %-----------------16
@@ -230,12 +230,20 @@ We can also look at the $L_2$ error on the velocity divergence:
 
 \newpage
 %......................................
-\subsubsection*{about the uzawa solver}
+\subsubsection*{About the Uzawa solvers}
 
-The uzawa solver is simple to implement but a parameter is needed. 
-U1 is uzawa of Braess, section 5.1
+U1 is uzawa of Braess, section 5.1: simple to implement but a parameter is needed. 
 U2 is uzawa of Braess, section 5.2
-U3 is conjugate gradient on schur complement.
+U3 is conjugate gradient on schur complement, section 5.3.
+
+The three algorithms U1, U2, U3 are reproduced from \cite{braess} hereunder from left to right for convenience:
+\begin{center}
+\fbox{\includegraphics[width=5.6cm]{python_codes/fieldstone_147/images/braess_U1}}
+\fbox{\includegraphics[width=5.6cm]{python_codes/fieldstone_147/images/braess_U2}}
+\fbox{\includegraphics[width=5.6cm]{python_codes/fieldstone_147/images/braess_U3}}\\
+Taken from \textcite{braess}.
+\end{center}
+
 The following figure shows the convergence of this solver for different values of this parameter.
 20000 makes the solver explode.	
 
@@ -246,21 +254,29 @@ The following figure shows the convergence of this solver for different values o
 for Donea \& Huerta manufactured solution.}
 \end{center}
 
-We see that the omega parameter should be a function of resolution, and that 
+We see that the $\alpha$ parameter should be a function of resolution, and that 
 the uzawa2 converges in the same number of iterations because it automatically 
 computes the step.
 
-Indeed focusing now on U2 and U3 only:
+
+Actually when focusing now on U2 and U3 only and running the experiment at increasing resolutions I find ({\it as expected for stable element pairs}) that the number of iterations is independent of the resolution:
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/uzawa123/convergence_uzawa23}
 \end{center}
 
 
 
+This shows that\\
+1) U2 is a much better/safe algorithm than U1 while being equally simple to implement, thereby proving that U1
+ should be discarded altogether; \\
+2) U3 is the obvious starting point if one wishes to offer an improvement on Uzawa-type solvers as it is by far the best of the three and is marginally more complex to implement than U1 or U2.
 
 
 
 
+
+
+\newpage
 %-------------------------
 \subsection*{Conclusions}
 

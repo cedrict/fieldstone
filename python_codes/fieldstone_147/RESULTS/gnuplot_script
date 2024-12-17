@@ -1,5 +1,5 @@
 #
-set terminal pdf enhanced font "Times,12pt" ps .23
+set terminal pdf enhanced font "Times,12pt" ps .3
 set grid
 set log xy
 set xlabel 'nel'
@@ -18,8 +18,9 @@ plot[][]\
 'solve_11.ascii' u 6:3 w lp lt 11 t 'solver=11 (UMFPACK)',\
 'solve_13.ascii' u 6:3 w lp lt 13 t 'solver=13 (SC-CG+CG)',\
 'solve_14.ascii' u 6:3 w lp lt 14 t 'solver=14 (SC-CG+splu)',\
-x**2/100000 lt -1 dt 2,\
-x**1.4/50000 lt -1 dt 3 
+'solve_16.ascii' u 6:3 w lp lt 15 t 'solver=16 (Uzawa2)',\
+x**2/100000 lt -1 dt 2 t 'h^2',\
+x**1.4/50000 lt -1 dt 3 t 'h^{1.4}' 
 
 set xlabel 'Nfem'
 set output 'solve2.pdf'
@@ -35,6 +36,7 @@ plot[][]\
 'solve_11.ascii' u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp lt 11 t 'solver=11 (UMFPACK)',\
 'solve_13.ascii' u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp lt 13 t 'solver=13 (SC-CG+CG)',\
 'solve_14.ascii' u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp lt 14 t 'solver=14 (SC-CG+splu)',\
+'solve_16.ascii' u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp lt 15 t 'solver=16 (Uzawa2)',\
 x**2/10000000 lt -1 dt 2 t 'x^2',\
 x**1.4/1500000 lt -1 dt 3 t 'x^{1.4}' 
 
@@ -55,6 +57,7 @@ plot[0.005:][:0.01]\
 'errors_11.ascii' u (1/sqrt($3)):6 w lp lt 11 t 'solver=11 (UMFPACK)',\
 'errors_13.ascii' u (1/sqrt($3)):6 w lp lt 13 t 'solver=13 (SC-CG+CG)',\
 'errors_14.ascii' u (1/sqrt($3)):6 w lp lt 14 t 'solver=14 (SC-CG+splu)',\
+'errors_16.ascii' u (1/sqrt($3)):6 w lp lt 15 t 'solver=16 (Uzawa2)',\
 'errors_1.ascii'  u (1/sqrt($3)):9 w lp lt 1 notitle,\
 'errors_2.ascii'  u (1/sqrt($3)):9 w lp lt 2 notitle,\
 'errors_3.ascii'  u (1/sqrt($3)):9 w lp lt 3 notitle,\
@@ -66,10 +69,18 @@ plot[0.005:][:0.01]\
 'errors_11.ascii' u (1/sqrt($3)):9 w lp lt 11 notitle,\
 'errors_13.ascii' u (1/sqrt($3)):9 w lp lt 13 notitle,\
 'errors_14.ascii' u (1/sqrt($3)):9 w lp lt 14 notitle,\
+'errors_16.ascii' u (1/sqrt($3)):9 w lp lt 15 notitle,\
 x**3/50 lt -1 dt 2 t 'h^3',\
 x**2/20 lt -1 dt 3 t 'h^2'
 
 
+set ylabel 'error'
+set xlabel 'h'
+set output 'error_divv.pdf'
+plot[0.005:][:]\
+'errors_1.ascii'  u (1/sqrt($3)):12 w lp lt 1 notitle,\
+'errors_16.ascii' u (1/sqrt($3)):12 w lp lt 15 notitle,\
+x**2/20 lt -1 dt 3 t 'h^2'
 
 
 
