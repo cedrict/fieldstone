@@ -1,0 +1,54 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize .3
+set xlabel 'y'
+set ylabel 'T'
+
+set xtics 0.25
+
+set output 'T_Q1.pdf'
+plot[][-0.2:1.3]\
+'Q1/measurements_vline_0000.ascii'  w lp t 't=0.0',\
+'Q1/measurements_vline_0050.ascii'  w lp t 't=0.1',\
+'Q1/measurements_vline_0100.ascii'  w lp t 't=0.2',\
+'Q1/measurements_vline_0150.ascii'  w lp t 't=0.3',\
+'Q1/measurements_vline_0200.ascii'  w lp t 't=0.4',\
+'Q1/measurements_vline_0250.ascii'  w lp t 't=0.5',\
+
+set output 'T_Q1_supg1.pdf'
+plot[][-0.2:1.3]\
+'Q1/supg1/measurements_vline_0000.ascii'  w lp t 't=0.0',\
+'Q1/supg1/measurements_vline_0050.ascii'  w lp t 't=0.1',\
+'Q1/supg1/measurements_vline_0100.ascii'  w lp t 't=0.2',\
+'Q1/supg1/measurements_vline_0150.ascii'  w lp t 't=0.3',\
+'Q1/supg1/measurements_vline_0200.ascii'  w lp t 't=0.4',\
+'Q1/supg1/measurements_vline_0250.ascii'  w lp t 't=0.5',\
+
+##########################################################
+
+set output 'T_Q2.pdf'
+plot[][-0.2:1.3]\
+'Q2/measurements_vline_0000.ascii'  w lp t 't=0.0',\
+'Q2/measurements_vline_0050.ascii'  w lp t 't=0.1',\
+'Q2/measurements_vline_0100.ascii'  w lp t 't=0.2',\
+'Q2/measurements_vline_0150.ascii'  w lp t 't=0.3',\
+'Q2/measurements_vline_0200.ascii'  w lp t 't=0.4',\
+'Q2/measurements_vline_0250.ascii'  w lp t 't=0.5',\
+
+set output 'T_Q2_supg1.pdf'
+plot[][-0.2:1.3]\
+'Q2/supg1/measurements_vline_0000.ascii'  w lp t 't=0.0',\
+'Q2/supg1/measurements_vline_0050.ascii'  w lp t 't=0.1',\
+'Q2/supg1/measurements_vline_0100.ascii'  w lp t 't=0.2',\
+'Q2/supg1/measurements_vline_0150.ascii'  w lp t 't=0.3',\
+'Q2/supg1/measurements_vline_0200.ascii'  w lp t 't=0.4',\
+'Q2/supg1/measurements_vline_0250.ascii'  w lp t 't=0.5',\
+
+
+
+
+
+
+
+

@@ -9,7 +9,7 @@ import numba
 
 debug=False
 
-order=2 
+order=2
 
 ###############################################################################
 # analytical solution
@@ -124,7 +124,7 @@ TKelvin=273.15
 ###############################################################################
 ###############################################################################
 
-experiment=5
+experiment=6
 
 print("-----------------------------")
 print("--------- stone 107 ---------")
@@ -196,7 +196,7 @@ match (experiment):
         periodicx=False
         solve_T=False
 
-    case(5): #manufactured solution
+    case(5): # manufactured solution for Darcy
         Lx=1 ; Ly=1
         nelx=64  ; nely=64
         eta_f=1. ; rho0_f=1000 
@@ -206,6 +206,22 @@ match (experiment):
         periodicx=False
         solve_T=False
 
+    case(6): # advection benchmark
+        Lx=1 ; Ly=1
+        nelx=50  ; nely=50
+        Ttop=0    ; Tbottom=1
+        eta_f=1 ; T0_f=Ttop   ; hcapa_f=1 ; hcond_f=0 ; rho0_f=1 ; alpha_f=0
+        gx=0     ; gy=0
+        ptop=0    ; pbottom=1
+        K_s=1     ; rho_s=0   ; hcapa_s=0 ; hcond_s=0
+        dt=0.002  ; CFL_nb=-1 ; tfinal=1e8 ; nstep=251 ; dtmax=1
+        phi=1
+        periodicx=False
+        solve_T=True
+        TKelvin=0
+ 
+
+
     case _:
         3
 
@@ -213,7 +229,7 @@ every=10
    
 visu = 1 
                    
-supg_type=0
+supg_type=2
 
 ###############################################################################
 # allowing for argument passing through command line,
@@ -225,12 +241,11 @@ if int(len(sys.argv) == 4):
    Tbottom+=TKelvin
    visu = int(sys.argv[3])
    print(sys.argv) 
-
    
    match (experiment):
        case(3):
           nely=int(nelx/4)
-       case(5):
+       case(5 | 6):
           nely=nelx
        case _:
           exit('plz set nely')
@@ -242,7 +257,10 @@ if solve_T:
    rho_hcapa_m=(1-phi)*rho_s*hcapa_s+phi*rho0_f*hcapa_f
    hcond_m=(1-phi)*hcond_s+phi*hcond_f
    kappa=hcond_m/rho_hcapa_m
-   Ra=K_s*rho0_f*abs(gy)*alpha_f*(Tbottom-Ttop)*Ly/kappa/eta_f 
+   if kappa>0:
+      Ra=K_s*rho0_f*abs(gy)*alpha_f*(Tbottom-Ttop)*Ly/kappa/eta_f 
+   else:
+      Ra=0
 else:
    rho_hcapa_m=0
    hcond_m=0
@@ -440,7 +458,7 @@ bc_fixP=np.zeros(NfemP,dtype=bool)  # boundary condition, yes/no
 bc_valP=np.zeros(NfemP,dtype=np.float64)  # boundary condition, value
 
 match (experiment):
-    case(0 | 1 | 2 | 4):
+    case(0 | 1 | 2 | 4 | 6):
         for i in range(0,N):
             if y[i]/Ly>(1-eps):
                bc_fixP[i]=True ; bc_valP[i]=ptop
@@ -471,7 +489,7 @@ bc_fixT=np.zeros(NfemT,dtype=bool)
 bc_valT=np.zeros(NfemT,dtype=np.float64) 
 
 match (experiment):
-    case(0 | 1 | 3 | 4):
+    case(0 | 1 | 3 | 4 | 6):
         for i in range(0,N):
             if y[i]/Ly<eps:
                bc_fixT[i]=True ; bc_valT[i]=Tbottom
@@ -512,6 +530,12 @@ match (experiment):
             if abs(y[i]-Ly/2)/Ly<0.3:
                T[i]+=random.uniform(-1,+1)
         #end for
+    case(6): 
+        for i in range(0,N):
+            if y[i]<0.25: 
+               T[i]=1
+            else:
+               T[i]=0
 
 #            T[i] += np.sin(x[i]/Lx*np.pi)*np.sin(y[i]/Ly*np.pi)
 #        #end for
@@ -548,7 +572,7 @@ xc=np.zeros(nel,dtype=np.float64)
 yc=np.zeros(nel,dtype=np.float64) 
 
 match(experiment):
-    case(0 | 1 | 2 | 3 | 5):
+    case(0 | 1 | 2 | 3 | 5 | 6):
         permeability[:]=K_s   
     case(4):
         a=0.5
@@ -1014,8 +1038,8 @@ for istep in range(0,nstep):
     if nstep>1:
 
        dt1=abs(CFL_nb)*hx/np.max(np.sqrt(uu**2+vv**2))
-       if solve_T:
-          dt2=abs(CFL_nb)*hx**2/(hcond_m/rho_hcapa_m)
+       if solve_T and kappa>0:
+          dt2=abs(CFL_nb)*hx**2/kappa
        else:
           dt2=1e50
 
@@ -1113,17 +1137,19 @@ for istep in range(0,nstep):
                    vel[0,0]=-permeability[iel]/eta_f*(dpdxq-rhoq*gx)
                    vel[0,1]=-permeability[iel]/eta_f*(dpdyq-rhoq*gy)
 
+                   hh=np.sqrt(hx*hy)
+                   velnorm=np.sqrt(vel[0,0]**2+vel[0,1]**2)
                    if supg_type==0:
                       tau_supg=0.
                    elif supg_type==1:
-                         tau_supg=(hx*sqrt2)/2/order/np.sqrt(vel[0,0]**2+vel[0,1]**2)
-                   elif supg_type==2:
-                         tau_supg=(hx*sqrt2)/order/np.sqrt(vel[0,0]**2+vel[0,1]**2)/sqrt15
-                   elif supg_type==3: #(simpson book p159)
-                         velnorm=np.sqrt(vel[0,0]**2+vel[0,1]**2)
-                         Pe=velnorm*(hx*sqrt2)/2/kappa
-                         alpha=coth(Pe)-1./Pe
-                         tau_supg=alpha*(hx*sqrt2)/2/velnorm
+                         tau_supg=hh/order/velnorm /2
+                   elif supg_type==2: #(simpson book p159)
+                         if kappa>0:
+                            Pe=velnorm*hh/2/kappa
+                            alpha=coth(Pe)-1./Pe
+                         else:
+                            alpha=1
+                         tau_supg=alpha*hh/2/velnorm
                    else:
                       exit("supg_type: wrong value")
                      
