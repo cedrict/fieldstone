@@ -62,16 +62,16 @@ the experiment.
 The authors present the following equations after explaining that all quantities in these
 are dimensionless:
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_168/images/kiso20c.png}
+\includegraphics[width=9cm]{python_codes/fieldstone_168/images/kiso20c.jpg}
 \end{center}
 with the following table of parameters:
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_168/images/kiso20a.png}
+\includegraphics[width=9cm]{python_codes/fieldstone_168/images/kiso20a.jpg}
 \end{center}
 We also find a setup figure that shows the geometry, 
 boundary conditions, initial temperature, etc ...
 \begin{center}
-\includegraphics[width=11cm]{python_codes/fieldstone_168/images/kiso20b.png}
+\includegraphics[width=12cm]{python_codes/fieldstone_168/images/kiso20b.jpg}
 \end{center}
 
 In the text we further find: $L_x=1200~\si{\km}$ and $L_y=600~\si{\km}$.
@@ -88,9 +88,8 @@ All viscosities are linear and temperature independent (although
 later on in the paper the authors explore temperature-dependent viscosities).
 The authors use $\Ranb$ values from $10^5$ to
 $10^7$ by controlling mantle viscosity from $300\cdot 10^{19}~\si{\pascal\second}$ to
-$3\cdot 10^{19}~\si{\pascal\second}$, respectively. Radiogenic and adiabatic heating within
-the crust are ignored.
-
+$3\cdot 10^{19}~\si{\pascal\second}$, respectively. Radiogenic and 
+adiabatic heating within the crust are ignored.
 
 The thermal boundary conditions of the model are $T_t=273$ K
 and $T_b=1673$ K for the top and bottom temperatures
@@ -113,30 +112,33 @@ nor how it is prescribed inside the necking zone.
 All we know is that ``A thicker lithosphere has a
 more gradual geothermal gradient than a thinner lithosphere''.
 
-Based on the equations, and in the absence of a $Rb$ number in the rhs (e.g. \cite{chsg14})
-that accounts for the different buoyancy of the materials in the domain, 
-we will assume that both lithosphere and asthenosphere have the same density $\rho_0$
-and thermal expansion coefficient $\alpha$.
-From the equations above we can infer that the authors use the Boussinesq 
-approximation, with $\rho(T)=\rho_0(1-\alpha T)$ in the rhs of the momentum equation.
+Based on the equations, and in the absence of a $Rb$ number in the 
+rhs (e.g. \cite{chsg14}) that accounts for the different buoyancy of the 
+materials in the domain, we will assume that both lithosphere and 
+asthenosphere have the same density $\rho_0$ and thermal expansion 
+coefficient $\alpha$. From the equations above we can infer that the 
+authors use the Boussinesq approximation, with $\rho(T)=\rho_0(1-\alpha T)$ 
+in the rhs of the momentum equation.
 
 When it comes to the boundary conditions for the Stokes equations, 
-we read ``We did not impose any kinematic boundary condition for driving mantle convection'',
-which (also based on the figures) probably means that free slip
-boundary conditions are imposed on all sides.
+we read ``We did not impose any kinematic boundary condition for driving 
+mantle convection'', which (also based on the figures) probably means 
+that free slip boundary conditions are imposed on all sides.
 
 The authors solve the equations with the commercial code COMSOL.
 The finite element method is used with $Q_2\times Q_1$ elements for velocity and
 pressure respectively and $Q_2$ elements are used for temperature.
-They use a resolution of 5~\si{\km}, so that there are $240\times 120$ elements
-in the domain\footnote{We read in the paper: ``The domain for numerical simulation was 
-divided by $241\times 121$ grids in the horizontal and vertical directions, respectively''.
-This obviously makes little sense. Also the mesh would then consist of $481\times 241$
-velocity nodes, not $241\times 121$.}.
+They use a resolution of 5~\si{\km}, so that there are $240\times 120$ 
+elements in the domain\footnote{We read in the paper: ``The domain for 
+numerical simulation was divided by $241\times 121$ grids in the 
+horizontal and vertical directions, respectively''.
+This obviously makes little sense. Also the mesh would then consist of 
+$481\times 241$ velocity nodes, not $241\times 121$.}.
 
 \vspace{1cm}
 
-Open questions:
+On the back of the observations above I contacted Prof. So, and 
+asked him the following questions. His answers are also reproduced below:
 \begin{enumerate}
 \item Do both lithosphere and asthenosphere have the same density?
 \item What is the exact shape of the LAB. How is it parameterised?
@@ -152,9 +154,41 @@ what is the technique employed? particle-in-cell? compositional fields?
 \end{enumerate} 
 
 
+
+
+
+
+
+
+\newpage
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_168/images/kiso20d.jpg}\\
+{\captionfont $\upnu_{rms}$ of the mantle flow over an entire domain for TH=0.001-0.1}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_168/images/kiso20e.jpg}\\
+{\captionfont 
+$\upnu_{rms}$ depending on $\Ranb$ when $t=8.8\cdot10^{-4}$. Different symbols represent the
+different values of Ra while different colors represent different small-scale
+convection styles along LAB: localized (red), weak (orange), and no (blue) EDC
+cells.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_168/images/kiso20f.jpg}\\
+{\captionfont A map showing the cases of partial melting
+near the lithospheric keel (red), partial melting far
+from the keel (orange), and no partial melting (blue)
+with axes of mantle viscosity ($3\cdot 10^{19}~\si{\pascal\second}- 30\cdot 10^{19}~\si{\pascal\second}$) 
+and lateral temperature contrast ($2.8~\si{\kelvin}-280~\si{\kelvin}$). 
+Illustrations above the map show small-scale convection styles and partial melts pattern.}
+\end{center}
+
+
+
+
+
 %===================================
 %\section*{My implementation}
-
-
-
-

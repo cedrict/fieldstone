@@ -1,9 +1,6 @@
 import numpy as np
-import math as math
 import sys as sys
-import scipy
 import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix, lil_matrix
 import time as time
 import random
@@ -108,21 +105,21 @@ model=1
 #...........
 if model==1:
    Lx=1200e3  # horizontal extent of the domain 
-   Ly=600e3      # vertical extent of the domain 
-   NZ=30e3
-   nelx=120
+   Ly=600e3   # vertical extent of the domain 
+   NZ=30e3    # necking zone width
+   nelx=20   # nb of elements in x direction
    nely=int(nelx*Ly/Lx)
    use_stretching_x=False
    use_stretching_y=False
    Tb=1673
    Tt=273
-   TH=0.01*1400
+   TH=0.1*1400
    alpha=3.1e-5
-   #material 0: lithosphere    eta=3e19, rho=3300
-   #material 1: asthenosphere  eta=3e24, rho=3300
+   #material 0: lithosphere    eta=3e24, rho=3300
+   #material 1: asthenosphere  eta=3e19, rho=3300
    nmat=2
-   rho_mat = np.array([3300,3300],dtype=np.float64)
-   eta_mat = np.array([3e24,3e19],dtype=np.float64) 
+   rho_mat=np.array([3300,3300],dtype=np.float64)
+   eta_mat=np.array([3e24,3e19],dtype=np.float64) 
    rk=2
    nparticle_per_dim=6
    marker_random=True
@@ -138,7 +135,6 @@ nel=nelx*nely                 # number of elements, total
 NfemV=NV*ndofV                # number of velocity dofs
 NfemP=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
 Nfem=NfemV+NfemP              # total number of dofs
-
 hx=Lx/nelx                    # mesh spacing in x direction
 hy=Ly/nely                    # mesh spacing in y direction
 
@@ -687,8 +683,6 @@ for istep in range(0,nstep):
         c[iel]+=1
     rho_elemental/=c
 
-    print(rho_elemental)
-
     c=np.zeros(nel,dtype=np.float64)
 
     if avrg==1:
@@ -981,12 +975,15 @@ for istep in range(0,nstep):
     ######################################################################
     # compute timestep 
     ######################################################################
+    start = time.time()
 
     dt=CFL_nb*min(hx_min,hy_min)/max(max(abs(u)),max(abs(v)))
 
-    print("dt= %.3e yr" %(dt/year))
+    print("     -> dt= %.3e yr" %(dt/year))
 
     dt_file.write("%d %e \n" %(istep,dt)) ; dt_file.flush()
+
+    print("compute timestep: %.3f s" % (time.time()-start))
 
     #################################################################
     # compute vrms 
@@ -1460,6 +1457,11 @@ for istep in range(0,nstep):
            vtufile.write("%10e \n" %q[i])
        vtufile.write("</DataArray>\n")
        #--
+       vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%10e \n" %T[i])
+       vtufile.write("</DataArray>\n")
+       #--
        if particle_projection > 1:
           vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
           for i in range(0,NV):
@@ -1649,7 +1651,6 @@ for istep in range(0,nstep):
        vtufile.write("</UnstructuredGrid>\n")
        vtufile.write("</VTKFile>\n")
        vtufile.close()
-
 
     print("write vtu files: %.3f s" % (time.time() - start))
 
