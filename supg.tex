@@ -12,29 +12,31 @@ and discuss a additional discontinuity-capturing term.
 So do \textcite{tepa86} (1986).
 Note that the idea of upwind goes back to the seventies \textcite{hehz77} (1977)
 
-TODO? It is compared to other methods in the context of mantle convection in 
+{\color{red}TODO?} It is compared to other methods in the context of mantle convection in 
 Malevsky \& Yuen (1991) \cite{mayu91}. 
 
 %-----------------------------------------------------
 \subsubsection{Linear elements - artificial diffusion}
 
 We have seen in Section~\ref{ss:femvsfdm} that the discretised advection-diffusion equation 
-in 1D is given by:
+in 1D can be written in a manner akin to the Finite Difference method:
 \[
 \frac{u}{2h}
 \left[
 \left(1-\frac{1}{\Penb}\right) T_{i+1} + \frac{2}{\Penb} T_i - \left(1+\frac{1}{\Penb}\right)T_{i-1} 
 \right] = f
 \]
-and we show in Stone~\ref{f65} that the solution is far from accurate for $\Penb>1$. Let us ask ourselves the 
-following question: could come up with a modified version of the equation above which 
+and we show in Stone~65 that the solution is far from accurate for $\Penb>1$. Let us ask ourselves the 
+following question: could we come up with a modified version of the equation above which 
 guarantees an exact solution on a uniform mesh of linear elements?
 
 Essentially, we are looking for $A$, $B$ and $C$ such that 
+{\color{red} not sure I understand this sentence} 
 \[
 A T_{i+1} + BT_i + C T_{i-1} = f
 \]
-One can show (see Donea \& Huerta \cite{dohu03}) that a successful candidate formulation 
+One can show (see Donea \& Huerta \cite{dohu03}) that a successful 
+candidate formulation 
 is\footnote{$\coth(x)=(\exp(x)-\exp(-x))/(\exp(x)+\exp(-x))$}:
 \[
 \frac{u}{2h}
@@ -42,6 +44,7 @@ is\footnote{$\coth(x)=(\exp(x)-\exp(-x))/(\exp(x)+\exp(-x))$}:
 \left(1-\coth(\Penb) \right) T_{i+1} + 2 \coth(\Penb) T_i - \left(1+\coth(\Penb)\right) T_{i-1} 
 \right] = f
 \]
+\todo[inline]{I need to better understand this!}
 which can be arranged into the following form:
 \begin{equation}
 u
@@ -80,6 +83,26 @@ or, in its continuous formulation:
 \[
 \rho_0 C_p u \frac{dT}{dx} - (k+ \tilde{k}) \frac{d^2T}{dx^2} = f
 \]
+\[
+\rho_0 C_p u \frac{dT}{dx}
+- \tilde{k} \frac{d^2T}{dx^2} 
+- k \frac{d^2T}{dx^2} = f
+\]
+\[
+\rho_0 C_p u \frac{dT}{dx}
+- \rho_0 C_p \tilde{\kappa} \frac{d^2T}{dx^2} 
+- k \frac{d^2T}{dx^2} = f
+\]
+\[
+\rho_0 C_p u \frac{dT}{dx}
+- \rho_0 C_p \beta \frac{u h}{2} \frac{d^2T}{dx^2} 
+- k \frac{d^2T}{dx^2} = f
+\]
+
+
+
+
+
 The $\beta$ factor is shown in the following figure as a function of the Peclet number:
 \begin{center}
 \includegraphics[width=8cm]{images/supg/beta}\\
@@ -193,7 +216,7 @@ which we once again write
 
 In what follows we assume that the velocity vield $\vec \upnu$ is known so that temperature is the
 only unknown.
-Let $N^\uptheta_i$ be the temperature basis function at node $i$ so that the temperature inside an element is
+Let $\bN^\uptheta_i$ be the temperature basis function at node $i$ so that the temperature inside an element is
 given by\footnote{the $\uptheta$ superscript has been chosen to denote temperature so as to avoid confusion
 with the transpose operator}:
 \begin{equation}
@@ -319,7 +342,8 @@ with
 If the basis functions are first-order ones, then $VI=0$ since $\Delta \vec \bN^\uptheta = \vec 0$.  
 \end{remark}
 
-The SUPG-stabilised pure advection equation is extensively tested in the Stone \ref{f43}.
+The SUPG-stabilised pure advection equation is extensively tested in the 
+\stone~43.
 
 
 %---------------------------------------------------------------------------

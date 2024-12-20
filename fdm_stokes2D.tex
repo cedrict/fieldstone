@@ -24,7 +24,7 @@ In 2D the strain rate tensor components are given by
 \dot{\varepsilon}_{yy}=\frac{\partial v}{\partial y}
 \]
 In the end we obtain the following set of coupled PDEs for the three 
-unknwons $u,v,p$:
+unknowns $u,v,p$:
 \begin{eqnarray}
 -\frac{\partial p}{\partial x}  
 + 2 \frac{\partial }{\partial x} \left(\eta \frac{\partial u}{\partial x}  \right) 
@@ -37,7 +37,7 @@ unknwons $u,v,p$:
 \frac{\partial u}{\partial x} + \frac{\partial v}{\partial y}  = 0 
 \end{eqnarray}
 
-Note that in their syllabus \textcite{beka} add the term $p/\lambda$ to the rhs
+As a side note, \textcite{beka} add the term $p/\lambda$ to the rhs
 of the incompressibility equation: 
 \begin{displayquote}
 {\color{darkgray}
@@ -47,6 +47,7 @@ posed. For this to work, $\lambda$ should be sufficiently large
 ($\sim 10^4$ or so), so that the condition
 of incompressibility is approximately satisfied.}
 \end{displayquote} 
+This is of course very similar to the penalty method described in Section~\ref{sec_penalty}.
 
 
 Then, {\it if the viscosity is constant} the $x$-component of 
@@ -95,7 +96,7 @@ remains the reference in geodynamics and what follows is greatly influenced by t
 %--------------------------------------------
 \subsection{A quick note about the MAC sheme}
 
-The MAC scheme originates in \textcite{hawe65} (1965) and is nicely
+The marker and cell (MAC) scheme originates in \textcite{hawe65} (1965) and is nicely
 summed up in \textcite{kans08} (2008) and \textcite{mctf08} (2008).
 Before going any further we need to highlight a few points from the original paper.
 First, 
@@ -109,7 +110,7 @@ They do not participate in the calculation as do the Particle-in-Cell-method
 particles in the Los alamos computer program for compressible flows.
 }
 \end{displayquote}
-Second, looking at ther equations
+Second, looking at their equations
 \begin{center}
 \fbox{\includegraphics[width=7cm]{images/fdm/hawe65_a}}
 \end{center}
@@ -515,7 +516,7 @@ If geometric averaging is preferred, then for instance we would have
 \subsection{Boundary conditions \label{ss:fdmstokesbc}}
 
 We start with so-called Dirichlet boundary conditions, i.e. we wish 
-to prescribe the value of either velocity components on the boundaries.
+to prescribe the value of all/some of velocity components on the boundaries.
 For simplicity we will then focus on free slip and no slip boundary conditions.
 Free slip b.c. are characterised by a) the normal velocity component on the boundary is zero 
 b) the other two components do not change across the boundary (i.e.
@@ -710,7 +711,7 @@ which translates into assigning its south neighbour ghost the value +${\color{vi
 
 We see that in both cases we will need to create ephemeral boundary nodes outside the domain and assign
 them specific values based on the boundary condition type. 
-This consideration lead Becker \& Kaus to produce this figure in their syllabus:
+This consideration led Becker \& Kaus to produce this figure in their syllabus:
 
 \begin{center}
 \includegraphics[width=8cm]{images/fdm/bk_A}\\
@@ -736,26 +737,7 @@ and ${\color{violet} u_{\tt 0}}={\color{violet}u_{\tt 4}}={\color{violet}u_{\tt 
 ={\color{violet}u_{\tt 9}}={\color{violet}u_{\tt 10}} = {\color{violet}u_{\tt 14}}=0$.
 This means that we need not discretise the momentum equation on these nodes.
 
-Let us consider node ${\color{violet} u_{7}}$. It has four neighbours so the $x$-component of 
-the momentum equation writes there:
 
-\begin{eqnarray}
-&&
-\left( \frac{\eta_{\tt n}}{h_y^2} \right) {\color{violet} u_{\tt 12}} + 
-\left( \frac{2\eta_{\tt e}}{h_x^2} \right) {\color{violet} u_{\tt 8}} + 
-\left( \frac{2\eta_{\tt w}}{h_x^2} \right) {\color{violet} u_{\tt 5}} + 
-\left( \frac{\eta_{\tt s}}{h_y^2} \right) {\color{violet} u_{\tt 2}} + 
-\left( -\frac{2\eta_{\tt e}}{h_x^2} -\frac{2\eta_{\tt w}}{h_x^2}  
--\frac{\eta_{\tt n}}{h_y^2} -\frac{\eta_{\tt s}}{h_y^2}  
-\right) {\color{violet} u_7} \nn\\
-&&+
-\left( \frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt 10}}+ 
-\left(-\frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt 9}}+ 
-\left(-\frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt 6}}+ 
-\left( \frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt 5}} 
-- \frac{1}{h_x} {\color{teal}p_{\tt 6}} + \frac{1}{h_x} {\color{teal}p_{\tt 5}} = -\frac{\rho_{\tt 12}+\rho_{\tt 7}}{2} g_x 
-\nn
-\end{eqnarray}
 
 Based on the considerations above pertaining to ghost/virtual nodes
 we turn once more to our $4\times 3$ cell mesh where ghost/virtual nodes have been added:
@@ -851,6 +833,29 @@ Using the same $\delta_{bc}$ parameter the stencil then becomes:
 
 \item ${\color{violet} u_{\tt 6,7,8}}$: standard stencil applies as 
 these nodes have four `real' neighbours.
+Let us consider node ${\color{violet} u_{7}}$. The $x$-component of the momentum equation there is written:
+\begin{eqnarray}
+&&
+\left( \frac{\eta_{\tt n}}{h_y^2} \right) {\color{violet} u_{\tt 12}} + 
+\left( \frac{2\eta_{\tt e}}{h_x^2} \right) {\color{violet} u_{\tt 8}} + 
+\left( \frac{2\eta_{\tt w}}{h_x^2} \right) {\color{violet} u_{\tt 5}} + 
+\left( \frac{\eta_{\tt s}}{h_y^2} \right) {\color{violet} u_{\tt 2}} + 
+\left( -\frac{2\eta_{\tt e}}{h_x^2} -\frac{2\eta_{\tt w}}{h_x^2}  
+-\frac{\eta_{\tt n}}{h_y^2} -\frac{\eta_{\tt s}}{h_y^2}  
+\right) {\color{violet} u_7} \nn\\
+&&+
+\left( \frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt 10}}+ 
+\left(-\frac{\eta_{\tt n}}{h_x h_y} \right) {\color{orange} v_{\tt 9}}+ 
+\left(-\frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt 6}}+ 
+\left( \frac{\eta_{\tt s}}{h_x h_y} \right) {\color{orange} v_{\tt 5}} 
+- \frac{1}{h_x} {\color{teal}p_{\tt 6}} + \frac{1}{h_x} {\color{teal}p_{\tt 5}} = -\frac{\rho_{\tt 12}+\rho_{\tt 7}}{2} g_x 
+\nn
+\end{eqnarray}
+
+
+
+
+
 \item ${\color{orange} v_{\tt 0,1,2,3}}$: situated on bottom boundary. Free slip and no slip require ${\color{orange} v}=0$. No need for a ghost node.
 \item ${\color{orange} v_{\tt 12,13,14,15}}$: situated on top boundary. Free slip and no slip require ${\color{orange} v}=0$. No need for a ghost node.
 
@@ -956,7 +961,7 @@ and states:
 \begin{displayquote}
 {\color{darkgray}
 This method do not require any additional
-pressure constrains, thus no boundary conditions are
+pressure constraints, thus no boundary conditions are
 required while solving for pressure. With this discretization of the boundary condition, each partial
 derivative is approximated by means of central finite
 differences and we therefore expect this method to
@@ -1082,7 +1087,7 @@ while
 All is fine until we realise that the terms $\eta/h^2$ and $1/h$ 
 will form the entries of the matrix, with 
 $\eta/h^2 \sim 10^{15}$ and $1/h \sim 10^{-3}$. 
-These numbers are more than 10 orders of magnitude appart and will lead to 
+These numbers are more than 10 orders of magnitude apart and will lead to 
 numerical inaccuracies inside solvers (direct or iterative). 
 It is therefore common\footnote{See entry on the same topic
 in the FEM section.} to define ${p}^\star=\frac{L_{ref}}{\eta_{ref}} p$ so that 
@@ -1168,9 +1173,8 @@ not structurally symmetric. In other words $\K_{xy} \neq \K_{yx}$,
 $\Q_x \neq \G_x^T$, and $\Q_y \neq \G_y^T$, which is obvious only 
 looking at the non zero terms on the figures above. 
 
-This stems from how boundary conditions are applied. So far the matrix 
-is being built line by line.
-Each line corresponding to a node which value is prescribed on the 
+This stems from how boundary conditions are applied. So far the matrix is being built line by line.
+Each line corresponding to a node where the value is prescribed on the 
 boundary receives a 1 on the diagonal and the required value 
 (often simply zero) in the rhs.
 
@@ -1237,7 +1241,7 @@ at the the discretisation of the continuity equation tells us that
 we know how to compute 
 $\dot{\varepsilon}_{xx}=\partial u/ \partial x$ and
 $\dot{\varepsilon}_{yy}=\partial v/ \partial y$ in the middle of each cell. 
-But quid of $\dot{\varepsilon}_{xy}$ ?
+But what about $\dot{\varepsilon}_{xy}$ ?
 
 Let us put the two node layouts we have used previously 
 in the context of the $x$- and $y$-momentum equation:
