@@ -62,16 +62,16 @@ the experiment.
 The authors present the following equations after explaining that all quantities in these
 are dimensionless:
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_168/images/kiso20c.jpg}
+\boxed{\includegraphics[width=9cm]{python_codes/fieldstone_168/images/kiso20c.jpg}}
 \end{center}
 with the following table of parameters:
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_168/images/kiso20a.jpg}
+\boxed{\includegraphics[width=9cm]{python_codes/fieldstone_168/images/kiso20a.jpg}}
 \end{center}
 We also find a setup figure that shows the geometry, 
 boundary conditions, initial temperature, etc ...
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_168/images/kiso20b.jpg}
+\boxed{\includegraphics[width=12cm]{python_codes/fieldstone_168/images/kiso20b.jpg}}
 \end{center}
 
 In the text we further find: $L_x=1200~\si{\km}$ and $L_y=600~\si{\km}$.
@@ -83,7 +83,7 @@ geometry with NZ=30~\si{km}. However, other lithospheric geometries
 with NZ=1200~\si{\km} and 300~\si{\km} were tested to
 explore the effect of NZ on EDC (edge-driven convection) cell generation.
 
-The viscosity of lithosphere is $10^5$ times that of the asthenosphere.
+The viscosity of the lithosphere is $10^5$ times that of the asthenosphere.
 All viscosities are linear and temperature independent (although 
 later on in the paper the authors explore temperature-dependent viscosities).
 The authors use $\Ranb$ values from $10^5$ to
@@ -91,14 +91,14 @@ $10^7$ by controlling mantle viscosity from $300\cdot 10^{19}~\si{\pascal\second
 $3\cdot 10^{19}~\si{\pascal\second}$, respectively. Radiogenic and 
 adiabatic heating within the crust are ignored.
 
-The thermal boundary conditions of the model are $T_t=273$ K
-and $T_b=1673$ K for the top and bottom temperatures
+The thermal boundary conditions of the model are $T_t=273~\si{\kelvin}$
+and $T_b=1673~\si{\kelvin}$ for the top and bottom temperatures
 and from the figure we see that no heat-flux boundary conditions are
 prescribed on the sides.
-The initial temperature was set to 1673~K along and below the LAB
+The initial temperature was set to $1673~\si{\kelvin}$ along and below the LAB
 (thick black line on the figure above).
 In order to explore the effect of long-wavelength thermal heterogeneity 
-on EDC ithe authors add a background temperature heterogeneity 
+on EDC the authors add a background temperature heterogeneity 
 so that the temperature in the asthenosphere is given by:
 \[
 T(x,y)=T_b + T_H \sin\left(\frac{\pi y}{L_y}\right) \cos \left(\frac{\pi x}{2 L_y} \right)
@@ -138,26 +138,103 @@ $481\times 241$ velocity nodes, not $241\times 121$.}.
 \vspace{1cm}
 
 On the back of the observations above I contacted Prof. So, and 
-asked him the following questions. His answers are also reproduced below:
+asked him the following questions. His answers (to the best of his ability, since
+the study was already 5 years old upon my contacting him, the original COMSOL
+input file was lost and he was not 
+the first author) came fast and were nicely detailed. They are reproduced below in {\color{darkgray} dark gray}:
 \begin{enumerate}
-\item Do both lithosphere and asthenosphere have the same density?
-\item What is the exact shape of the LAB. How is it parameterised?
-\item How is the initial temperature inside the lithosphere prescribed?
+
+\item Do both lithosphere and asthenosphere have the same density?\\
+ {\color{darkgray} yes}
+
+\item What is the exact shape of the LAB. How is it parameterised?  \\
+{\color{darkgray} 
+Lab was very simply parameterized. I think that it follows the tanh function\footnote{
+\url{https://www.comsol.com/support/learning-center/article/Modeling-Step-Transitions-50151}}.}
+
+\item How is the initial temperature inside the lithosphere prescribed? \\
+{\color{darkgray} I remember that we made an initial temperature profile using steady-state heat conduction. 
+(top temperature: 0, LAB temperature: 1, and bottom temperature: 1).}\\
+This assertion is refuted by the right insert of Fig.~1 of the paper where 
+temperature profiles seem to indicate a half cooling space of some sort.
+This does not matter that much since the lithosphere does not deform.
+
 \item Is the perturbation with the $T_H$ term applied {\it everywhere} in 
-the asthenosphere? 
+the asthenosphere? \\
+{\color{darkgray} Yes. All over the mantle. I think the brown line above 
+has confused you. I am sorry.}
+ 
 \item The temperature perturbation is not zero on the LAB, which renders the 
-initial temperature field discontinuous there. Is this not a problem?
+initial temperature field discontinuous there. Is this not a problem? \\
+{\color{darkgray}
+It is important. I didn't recognize it. But the reference model was similar 
+to King and Anderson (1998). So, I thought it was not a problem.}
+
+
 \item What is not clear from the setup in the paper is whether or not the lithosphere 
 deforms with time. We know that time stepping is carried out (temperature is advected,
 the $v_{rms}$ evolves with time), but if the lithosphere also deforms with the flow, 
-what is the technique employed? particle-in-cell? compositional fields?
+what is the technique employed? particle-in-cell? compositional fields? \\
+{\color{darkgray}
+True. It is a very simple model like King and Anderson (1998). I think that the viscosity of the lithosphere 
+has no meaning, only with much higher viscosity with viscosity. Also, there is no temperature dependence 
+on viscosity. So the velocity field of the lithosphere is almost zero compared to the mantle.
+Above the LAB, the viscosity is simply fixed to large viscosity. Then the velocity is very small. 
+The only advection quantity is temperature in our simple modeling. 
+If we include the temperature dependence, the deformation of the mantle is very complicated.
+}
+
+
 \end{enumerate} 
 
+%===============================================
+\section*{My implementation}
+
+The code also relies on $Q_2\times Q_1$ elements for the Stokes equations and 
+$Q_2$ elements for the temperature equation. 
+The LAB is parameterized as follows:
+\begin{lstlisting}
+def yLAB(x,NZ):
+    return np.arctan((x-Lx/2)/(NZ*4))/(np.pi/2)*75e3+475e3
+\end{lstlisting}
+In the absence of more information in the article it is a bit difficult
+to tune the term in the arc tangent function so as to obtain a necking zone 
+of the right dimension. I found that \lstinline{NZ*4} does the job.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_168/images/setup}
+\includegraphics[width=8cm]{python_codes/fieldstone_168/images/setup_T}\\
+{\captionfont Mesh $150\times 75$ elements, $T_H=0.1\Delta T=140~\si{\celsius}$.}
+\end{center}
 
 
+\newpage
+%===================================================
+\section*{Results}
 
+In Eq.~1 of the paper we see that the characteristic time is given 
+by $D_0^2/\kappa=(6\cdot 10^5)^2/10^{-6}=36\cdot 10^{16}~\si{\second}\simeq 11408~\si{\mega\year}$.
 
+\begin{center}
+\boxed{\includegraphics[width=15cm]{python_codes/fieldstone_168/images/kiso20g.jpg}}\\
+{\captionfont Fig.~2 of the paper. NZ=0.05 indicates that $NZ=0.05*L_y=30~\si{\km}$,
+$\Ranb=10^6$ indicates that $\eta=$ and Time=$8.8\cdot 10^{-4}$ means 
+Time=$8.8\cdot 10^{-4} \cdot 11408~\si{\mega\year}\simeq 10~\si{\mega\year}$ 
+and 
+Time=$8.8\cdot 10^{-4} \cdot 11408~\si{\mega\year}\simeq 91~\si{\mega\year}$ (
+this value is mentioned in the text of section~3).} 
+\end{center}
 
+Looking at the figure above we must acknowledge the poor choice of color scale.
+Nevertheless, in order to ease comparison, the code also exports the dimensionless
+temperature and it will be plotted with the same color scale.
+
+In the text of section~3 we read that the fastest mantle flow velocity
+in each model was 43, 4 and 2.85 as shown in Fig.~2a,b,c.
+In Eq.~1 we find that the caharacteristic velocity is given 
+by $\kappa/D_0=10^{-6}/6\cdot10^5 \simeq 1.67e-12~\si{\meter\per\second} 
+= 0.0052596~\si{\cm\per\year}$.
+The mentioned velocities are then 0.22cm/yr, 0.021cm/yr and 0.015cm/yr.
 
 
 \newpage
