@@ -1,0 +1,82 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+Ts=600
+Tl=1200
+set key outside
+set size square
+
+set xlabel 'Temperature (C)'
+set ylabel 'percent melt'
+set output 'percent_melt.pdf'
+plot[Ts:Tl][]\
+(exp(  -0.1*x)-exp(  -0.1*Ts))/(exp(  -0.1*Tl)-exp(  -0.1*Ts))*100 lw 2 t '{/Symbol a}=-0.1',\
+(exp( -0.01*x)-exp( -0.01*Ts))/(exp( -0.01*Tl)-exp( -0.01*Ts))*100 lw 2 t '{/Symbol a}=-0.01',\
+(exp(-0.001*x)-exp(-0.001*Ts))/(exp(-0.001*Tl)-exp(-0.001*Ts))*100 lw 2 t '{/Symbol a}=-0.001',\
+(exp(  0.1*x)-exp(  0.1*Ts))/(exp(  0.1*Tl)-exp(  0.1*Ts))*100 lw 2 t '{/Symbol a}=0.1',\
+(exp( 0.01*x)-exp( 0.01*Ts))/(exp( 0.01*Tl)-exp( 0.01*Ts))*100 lw 2 t '{/Symbol a}=0.01',\
+(exp(0.001*x)-exp(0.001*Ts))/(exp(0.001*Tl)-exp(0.001*Ts))*100 lw 2 t '{/Symbol a}=0.001'
+
+
+##############################################################
+set xtics 20e3
+set xlabel 'z (km)'
+set ylabel 'temperature (C)'
+
+year=365.25*3600*24
+rho=2800
+Cp=1100
+k=2.5
+kappa=k/rho/Cp
+
+d=50e3
+Ti=800
+Tb=400
+
+f(x,t)=Tb+(Ti-Tb)/2*(erf((x*1000+d/2.)/sqrt(4*kappa*t)) + erf((-x*1000+d/2.)/sqrt(4*kappa*t)))
+
+set output 'solution.pdf'
+plot[-100:100][350:850]\
+f(x,1*year)        t 't=1yr',\
+f(x,1000*year)     t 't=1000yr',\
+f(x,10000*year)    t 't=10,000yr',\
+f(x,100000*year)   t 't=100,000yr',\
+f(x,1000000*year)  t 't=1,000,000yr',\
+f(x,10000000*year) t 't=10,000,000yr'
+
+
+#################################################
+f(x,t)=-(Ti-Tb)/(4*sqrt(pi*kappa*t**3))*\
+((d/2+x*1000)/exp( (d/2+x*1000)**2/4/kappa/t )+\
+(d/2-x*1000)/exp( (d/2-x*1000)**2/4/kappa/t )) * year
+
+set ylabel 'temperature (C) per year'
+set output 'solution_derv.pdf'
+plot[-100:100][]\
+f(x,10000*year)    t 't=10,000yr',\
+f(x,100000*year)   t 't=100,000yr',\
+f(x,1000000*year)  t 't=1,000,000yr',\
+f(x,10000000*year) t 't=10,000,000yr'
+
+#################################################
+L=320e3
+f(x,alpha)=k/rho/(Cp+L* alpha*exp(alpha*x)/(exp(alpha*Tl)-exp(alpha*Ts)))
+set output 'kappa.pdf'
+
+set xlabel 'T (C)'
+set ylabel 'diffusivity {/symbol k} (m^2/s)'
+set xtics 100
+plot[Ts:Tl][]\
+f(x,-0.001) t '{/Symbol a}=-0.001',\
+f(x,-0.01) t '{/Symbol a}=-0.01',\
+f(x,-0.1) t '{/Symbol a}=-0.1',\
+f(x,0.1) t '{/Symbol a}=0.1',\
+f(x,0.01) t '{/Symbol a}=0.01',\
+f(x,0.001) t '{/Symbol a}=0.001'
+
+
+
+
+
+
+
