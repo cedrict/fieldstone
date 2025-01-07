@@ -28,25 +28,31 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This is an attempt at replicating \fullcite{stuw95}. 
-When replicating a study I will always reproduce the abstract:
+This is an attempt at replicating the publication by \fullcite{stuw95}. 
+When replicating a study I always first reproduce the abstract to give context:
 \begin{displayquote}
 {\color{darkgray}
-A simple thermal model is used to investigate to what extent buffering effects of latent heat of fusion may
-prolong the thermal evolution of a one-dimensional, statically cooling, partially or completely melted heat source.
-For a melting model appropriate for crustal rocks, the time of cooling of rocks through the solidus may be about
-tripled by this process. Depending on the melting model, cooling may halt completely near the solidus for time spans
+A simple thermal model is used to investigate to what extent buffering effects 
+of latent heat of fusion may prolong the thermal evolution of a one-dimensional, 
+statically cooling, partially or completely melted heat source.
+For a melting model appropriate for crustal rocks, the time of cooling of rocks 
+through the solidus may be about tripled by this process. Depending on the melting 
+model, cooling may halt completely near the solidus for time spans
 comparable to the thermal time constant of the heat source.\\
-In order to test the influence of this buffering effect on the equilibration of partially melted metamorphic rocks,
-these thermal model results are coupled with a simple diffusion model that relates the degree of equilibration of a
-simple assemblage to temperature and cooling rate. It is shown that, for a broad range of initial heat source
-temperatures, freezing of selected mineral equilibria may occur in a comparably narrow temperature range at and
-around the solidus. The calculations may have some relevance to low-P high-T metamorphic terranes in as much as
-they may provide an explanation for the widely observed equilibration and partial re-equilibration of rocks near the
+In order to test the influence of this buffering effect on the equilibration of 
+partially melted metamorphic rocks, these thermal model results are coupled with 
+a simple diffusion model that relates the degree of equilibration of a
+simple assemblage to temperature and cooling rate. It is shown that, for a broad 
+range of initial heat source temperatures, freezing of selected mineral equilibria 
+may occur in a comparably narrow temperature range at and
+around the solidus. The calculations may have some relevance to low-P high-T 
+metamorphic terranes in as much as they may provide an explanation for the widely 
+observed equilibration and partial re-equilibration of rocks near the
 crystallisation temperatures of partial melts.}
 \end{displayquote}
 
-
+%==============================================================================
+\section*{Theory}
 
 The cooling history of an intrusion is described by the
 thermal relaxation of an initial one-dimensional,
@@ -59,10 +65,9 @@ $T_i$ is the intrusion temperature, $d$ is the intrusion
 thickness and $z$ is the distance from the intrusion centre. 
 \begin{small}
 \begin{verbatim}
-     
-             Tb             Ti         Ti           Tb
-     ------------------+----------+----------+-------------------> 
-                     -d/2         0         d/2                  z
+                  Tb             Ti         Ti           Tb
+          ------------------+----------+----------+-------------------> 
+                          -d/2         0         d/2                  z
 \end{verbatim}
 \end{small}
 
@@ -73,9 +78,9 @@ a function of time, $t$, and distance by:
 \[
 T(z,t)=T_b + \frac{T_i-T_b}{2} 
 \left(
-\text{erf} \; \frac{d/2 +z}{\sqrt{4\kappa t}}
+\text{erf} \left( \frac{d/2 +z}{\sqrt{4\kappa t}} \right)
 +
-\text{erf} \; \frac{d/2 -z}{\sqrt{4\kappa t}}
+\text{erf} \left( \frac{d/2 -z}{\sqrt{4\kappa t}} \right)
 \right)
 \]
 where $\kappa$ is the thermal diffusivity.
@@ -86,15 +91,15 @@ values appropriate to the Earth's crust that are
 commonly used in the literature:
 $\rho=2800~\si{\kg\per\cubic\meter}$, $k=2.5~\si{\watt\per\meter\per\kelvin}$, $C_p=1100~\si{\joule\per\kg\per\kelvin}$.
 Both $C_p$ and $k$ are assumed to be independent of
-temperature {\color{red} what about $\rho$?} 
-so that they can be combined into the thermal diffusivity $\kappa=8.11688\cdot10^{-7}~\si{\square\meter\per\second}$.
+temperature\footnote{Although not made explicit in the 
+paper so is density} 
+so that they can be combined into the thermal 
+diffusivity $\kappa=8.11688\cdot10^{-7}~\si{\square\meter\per\second}$.
 For the latent heat of fusion a value
 of $L = 320~\si{\kilo\joule\per\kg}$ is assumed. Parameter space
 is explored for intrusions of thicknesses $d = 20 - 100~\si{\km}$, 
 intrusion temperatures $T_i = 600-1000~\si{\celsius}$
 and ambient background temperatures of $T_b =400~\si{\celsius}$. 
-For the melting model, a solidus temperature of $T_s=600~\si{\celsius}$ and a 
-liquidus temperature of $T_l = 1200~\si{\celsius}$ are assumed.
 
 
 \begin{center}
@@ -136,13 +141,18 @@ v(T) = \frac{\exp(\alpha T)- \exp(\alpha T_s) }{\exp(\alpha T_l) - \exp(\alpha T
 \label{eq:stuw95_eq3}
 \end{equation}
 is used in which the rate of melt production between $T_s$ and $T_l$ can be controlled by varying $\alpha$.
+Obviously, when $T\rightarrow T_s$ then $v \rightarrow 0$ (no melt) while when
+when $T\rightarrow T_l$ then $v \rightarrow 1$ (100\% melt).
 
+
+For the melting model, a solidus temperature of $T_s=600~\si{\celsius}$ and a 
+liquidus temperature of $T_l = 1200~\si{\celsius}$ are assumed.
 
 
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_169/images/stuw95a}
 \includegraphics[width=10cm]{python_codes/fieldstone_169/images/percent_melt}\\
-Left: A plot of melt volume against temperature as given by
+Left: plot (taken from the paper) of melt volume against temperature taken as given by
 the melting model of Eq.~\eqref{eq:stuw95_eq3}. Different melting models may
 be explored by varying the parameter $\alpha$, for which the diagram 
 is contoured. In most of the following calculations
@@ -153,36 +163,31 @@ Right: my own version of the plot. {\color{red} There is an obvious sign issue w
 
 
 For positive $\alpha$ most of the melt production occurs near $T_l$, for negative a most of the
-melt production occurs near $T_s$ {\color{red} check!}. For this melting
+melt production occurs near $T_s$ (This seems to agree with my plot rather than the 
+one in the paper?). For this melting
 model the thermal energy balance may not be
 solved analytically and a finite difference scheme
-was employed to obtain numerical solutions.
+was employed to obtain numerical solutions in the article.
 
 These solutions were obtained by incorporating the effects of latent heat into a modified heat
-capacity (see the Appendix; Price and Slack, 1952,1954) and the results were back checked by
+capacity (see the Appendix of the paper) and the results were back checked by
 comparing them with the analytical solution of
 Stefan (1891) for $T_i = T_l$ and large negative $\alpha$.
 
-
-
-
-
-
-It is assumed that the
-intrusion is not completely molten, but that the
-melt percentage at $T_i$ is given by Eq. (3).
-
 We start from the 1D heat transport equation with no advection term:
 \[
-\rho C_p \frac{\partial T}{\partial t} + \rho L \frac{\partial v}{\partial t} = k  \frac{\partial^2 T}{\partial z^2} 
+\rho C_p \frac{\partial T}{\partial t} + \rho L \frac{\partial v}{\partial t} 
+= k  \frac{\partial^2 T}{\partial z^2} 
 \]
 where $\partial v/ \partial t$ describes the change in the proportion of melt with time.
+as it is assumed that the intrusion is not completely molten, but that the
+melt percentage at $T_i$ is given by Eq.~\eqref{eq:stuw95_eq3}.
 
 In order to solve this equation it is useful to replace:
 \[
 \frac{\partial v}{\partial t} = \frac{\partial v}{\partial T}\frac{\partial T}{\partial t}
 \]
-so that now
+so that now the heat transport PDE is given by
 \[
 \rho C_p \frac{\partial T}{\partial t} + \rho L 
 \frac{\partial v}{\partial T}\frac{\partial T}{\partial t}
@@ -196,7 +201,7 @@ or,
 and finally, what we call option 1:
 \[
 \boxed{
-\rho \underbrace{\left(C_p + L \frac{\partial v}{\partial T} \right)}_{C_p(t)}
+\rho \underbrace{\left(C_p + L \frac{\partial v}{\partial T} \right)}_{C_p(T)}
 \frac{\partial T}{\partial t} = k  \frac{\partial^2 T}{\partial z^2} 
 }
 \]
@@ -207,16 +212,25 @@ or, what we will call option 2:
 \underbrace{\frac{k}{\rho \left(C_p + L \frac{\partial v}{\partial T} \right)}}_{\kappa(T)} \frac{\partial^2 T}{\partial z^2} 
 }
 \]
-which is a nonlinear 1D diffusion equation and the approach taken in the paper (see Eq.~8, obtained with FDM).
+Both are nonlinear 1D diffusion equations.  The second approach 
+is taken in the paper (see Eq.~8, obtained with FDM).
+In passing, let us note that the author 
+1) does not mention boundary conditions at all,
+2) uses an explicit time discretisation,
+3) does not elaborate about how he deals with the nonlinearities.    
+concerning the boundary conditions, all what we have to do is 
+consider a domain large enough so 
+as to avoid boundary effects and prescribe $T_b$ on both ends.
 
-{\color{red} Stuwe does not mention boundary conditions at all!} However, all what we have to do is consider a domain large enough so as to avoid boundary effects and prescribe $T_b$ on both ends.
-
-When discretised by means of FDM or FEM, we will obtain the following system:
+When discretised using FEM, we will obtain the following system:
 \[
 \M \cdot \dot{\vec{{\cal T}}} + \K_d \cdot \vec{\cal T} = 0
 \]
 In option 1 the mass matrix $\M$ is nonlinear while the diffusion matrix $\K_d$ is linear.
 In option 2 the mass matrix $\M$ is linear while the diffusion matrix $\K_d$ is nonlinear.
+
+When discretised using FDM and resorting to an explicit scheme we will
+naturally adopt option 2.
 
 From Eq.~\eqref{eq:stuw95_eq3} we find that
 \[
@@ -244,9 +258,43 @@ At this stage we can make a few remarks
 \end{enumerate}
 
 
-TODO:
+%==========================================================
+\section*{Discretisation and implementation}
 
-- write 1D FDM code without latent heat, benchmark it
+%----------------------------------------------------------
+\subsection*{Linear case (no melting)}
+
+We adopt here a very simple approach, a forward in time, 
+centered in space approach (FTCS) as explained in Section~\ref{MMM-ss:fdm_diff1D}. 
+Except for the nodes on the boundary (where the temperature
+is prescribed to be $T_b$) we have the following explicit stencil:
+\[
+T_i^{n+1} 
+= 
+T_i^n + \frac{\kappa \delta t }{h^2} (T_{i+1}^n-2T_i^n+T_{i-1}^n)
+\]
+This translates as follows in the code:
+
+\begin{lstlisting}
+Time=0.
+for n in range(0,nstep):
+    Time+=dt
+    for i in range (0,nnx):
+        if i==0:
+           Tnew[i]=Tleft
+        elif i==nnx-1:
+           Tnew[i]=Tright
+        else:
+           Tnew[i]=Told[i]+dt*kappa/h**2*(Told[i+1]-2*Told[i]+Told[i-1])
+        #end if
+    #end for
+    Told[:]=Tnew[:]
+#end for
+\end{lstlisting}
+
+
+
+TODO:
 
 - add latent heat, implement nonlinear scheme
 
@@ -255,9 +303,33 @@ TODO:
 
 
 
+%==========================================================
+\section*{Results}
 
+%----------------------------------------------------------
+\subsection*{Linear case (no melting)}
 
-
+I have run the code with the following parameters:
+\begin{lstlisting}
+nnx=501
+nstep=10000
+Lx=400e3
+rho=2800
+Cp=1100
+k=2.5
+L=350e3
+Tb=400
+Ti=800
+Ts=600
+Tl=1200
+d=50e3
+CFL_nb=0.1
+tfinal=2e6*year
+\end{lstlisting}
+We find that the temperature field indeed follows the analytical solution:
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_169/results/linear/T.pdf}
+\end{center}
 
 
 
