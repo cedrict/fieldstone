@@ -71,6 +71,7 @@ echo -n '2021 ' ; grep year ../biblio_geosciences.bib | grep 2021 | wc
 echo -n '2022 ' ; grep year ../biblio_geosciences.bib | grep 2022 | wc 
 echo -n '2023 ' ; grep year ../biblio_geosciences.bib | grep 2023 | wc 
 echo -n '2024 ' ; grep year ../biblio_geosciences.bib | grep 2024 | wc 
+echo -n '2025 ' ; grep year ../biblio_geosciences.bib | grep 2025 | wc 
 
 #######################################
 
