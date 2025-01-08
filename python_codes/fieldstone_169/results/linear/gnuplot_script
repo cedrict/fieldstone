@@ -2,9 +2,9 @@ set term pdf enhanced font "Times,12pt"
 set grid
 set xlabel 'z (km)'
 set ylabel 'T (^oC)'
-set output 'T.pdf'
 set xtics 25
 
+set output 'T.pdf'
 plot[][350:850]\
 'T_0.ascii'    u ($1/1e3):2 w l lw 2 t 't=0',\
 'T_799.ascii'  u ($1/1e3):2 w l lw 2 t 't=1Myr',\
@@ -13,4 +13,11 @@ plot[][350:850]\
 'T_799.ascii'  u ($1/1e3):3 w l lt -1 dt 2 t 'analytical',\
 'T_1599.ascii' u ($1/1e3):3 w l lt -1 dt 2 notitle,\
 'T_4001.ascii' u ($1/1e3):3 w l lt -1 dt 2 notitle
+
+set ylabel 'T-T_{analytical} (^oC)'
+set output 'T_error.pdf'
+plot[][]\
+'T_799.ascii'  u ($1/1e3):($2-$3) w l lw 2 t 't=1Myr',\
+'T_1599.ascii' u ($1/1e3):($2-$3) w l lw 2 t 't=2Myr',\
+'T_4001.ascii' u ($1/1e3):($2-$3) w l lw 2 t 't=5Myr',\
 

@@ -22,9 +22,9 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-{\sl This stone was developed in collaboration with Donald Duck}. \index{contributors}{D. Duck}
+%{\sl This stone was developed in collaboration with Donald Duck}. \index{contributors}{D. Duck}
 
-\par\noindent\rule{\textwidth}{0.4pt}
+%\par\noindent\rule{\textwidth}{0.4pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -51,6 +51,7 @@ observed equilibration and partial re-equilibration of rocks near the
 crystallisation temperatures of partial melts.}
 \end{displayquote}
 
+\newpage
 %==============================================================================
 \section*{Theory}
 
@@ -74,15 +75,16 @@ thickness and $z$ is the distance from the intrusion centre.
 For this initial condition, and if no latent
 heat is considered, the thermal energy balance
 can be solved analytically to give temperature as
-a function of time, $t$, and distance by:
-\[
+a function of time, $t$, and distance by \cite{jaeg64}:
+\begin{equation}
 T(z,t)=T_b + \frac{T_i-T_b}{2} 
 \left(
 \text{erf} \left( \frac{d/2 +z}{\sqrt{4\kappa t}} \right)
 +
 \text{erf} \left( \frac{d/2 -z}{\sqrt{4\kappa t}} \right)
 \right)
-\]
+\label{eq:f169ana}
+\end{equation}
 where $\kappa$ is the thermal diffusivity.
 
 
@@ -104,7 +106,9 @@ and ambient background temperatures of $T_b =400~\si{\celsius}$.
 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_169/images/solution.pdf}\\
-{\captionfont Plot obtained for $T_b=400~\si{\celsius}$, $T_i=800~\si{\celsius}$ and $d=50~\si{\km}$.}
+{\captionfont Plot obtained 
+with Eq.~\eqref{eq:f169ana}
+for $T_b=400~\si{\celsius}$, $T_i=800~\si{\celsius}$ and $d=50~\si{\km}$.}
 \end{center}
 
 
@@ -291,7 +295,26 @@ for n in range(0,nstep):
     Told[:]=Tnew[:]
 #end for
 \end{lstlisting}
-
+We define the analytical solution function as follows:
+\begin{lstlisting}
+def analytical_solution(x,t):
+    return Tb+(Ti-Tb)/2*\
+           (\
+           erf((d/2+x)/np.sqrt(4*kappa*t)) +\
+           erf((d/2-x)/np.sqrt(4*kappa*t)) \
+           )
+\end{lstlisting}
+The timestep value is computed by means of a CFL conditions:
+\begin{lstlisting}
+dt=CFL_nb*h**2/2/kappa
+\end{lstlisting}
+The initial temperature is prescribed as follows:
+\begin{lstlisting}
+Told=np.zeros(nnx,dtype=np.float64)
+Told[:]=Tb
+for i in range(0,nnx):
+    if abs(x[i])<d/2: Told[i]=Ti
+\end{lstlisting}
 
 
 TODO:
@@ -302,7 +325,7 @@ TODO:
 
 
 
-
+\newpage
 %==========================================================
 \section*{Results}
 
@@ -324,11 +347,15 @@ Ts=600
 Tl=1200
 d=50e3
 CFL_nb=0.1
-tfinal=2e6*year
+tfinal=5e6*year
 \end{lstlisting}
 We find that the temperature field indeed follows the analytical solution:
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_169/results/linear/T.pdf}
+\includegraphics[width=12cm]{python_codes/fieldstone_169/results/linear/T.pdf}
+\end{center}
+The absolute error is only a few degrees at most:
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_169/results/linear/T_error.pdf}
 \end{center}
 
 
