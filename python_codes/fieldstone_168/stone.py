@@ -83,22 +83,35 @@ ndofP=1  # number of pressure degrees of freedom
 
 model=1
 
+if int(len(sys.argv) == 5):
+   nelx = int(sys.argv[1])
+   TH   = float(sys.argv[2])
+   eta0 = int(sys.argv[3])
+   visu = int(sys.argv[4])
+else:
+   nelx = 50
+   TH   = 0.1
+   eta0 = 20
+   visu = 1
+
+print(nelx,TH,eta0,visu)
+
 #...........
 if model==1:
    Lx=1200e3  # horizontal extent of the domain 
    Ly=600e3   # vertical extent of the domain 
    NZ=30e3    # necking zone width
-   nelx=150   # nb of elements in x direction
+   nelx=50   # nb of elements in x direction
    nely=int(nelx*Ly/Lx)
    Tb=1400+TKelvin    # bottom temperature 
    Tt=0+TKelvin       # top temperature
-   TH=0.01*1400  # amplitude temperature perturbation
+   TH*=1400  # amplitude temperature perturbation
    alpha=3.1e-5 # thermal expansion
    #material 0: lithosphere    eta=3e24, rho=3300
    #material 1: asthenosphere  eta=3e19, rho=3300
    nmat=2
    rho_mat=np.array([3300,3300],dtype=np.float64)
-   eta_mat=np.array([3e26,3e21],dtype=np.float64) 
+   eta_mat=np.array([3*10**(eta0+5),3*10**eta0],dtype=np.float64) 
    rk=-1
    nparticle_per_dim=5
    particles_random=False
@@ -121,18 +134,18 @@ NfemT=NV                      # number of temperature dofs
 hx=Lx/nelx                    # mesh spacing in x direction
 hy=Ly/nely                    # mesh spacing in y direction
 
-nstep=50
+nstep=100
 
-tfinal=10e6*year
-dt_max=5e5*year
+tfinal=100e6*year
+dt_max=1e6*year
 
 gx=0
 gy=-9.8
 
 CFL_nb=0.5
 
-nq_per_dim=3                  # number of quad points per dimension
-nq=nq_per_dim**2*nel          # number of quadrature points
+nqperdim=3                  # number of quad points per dimension
+nq=nqperdim**2*nel          # number of quadrature points
 
 nparticle_per_element=nparticle_per_dim**2
 nparticle=nparticle_per_element*nel
@@ -656,8 +669,8 @@ for istep in range(0,nstep):
         G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
         h_el=np.zeros((mP*ndofP),dtype=np.float64)
         # integrate viscous term at quadrature points
-        for iq in range(0,nq_per_dim):
-            for jq in range(0,nq_per_dim):
+        for iq in range(0,nqperdim):
+            for jq in range(0,nqperdim):
                 # position & weight of quad. point
                 rq=qcoords[iq]
                 sq=qcoords[jq]
@@ -872,8 +885,8 @@ for istep in range(0,nstep):
             Tvect[k]=T[iconV[k,iel]]
         #end for
 
-        for iq in range(0,nq_per_dim):
-            for jq in range(0,nq_per_dim):
+        for iq in range(0,nqperdim):
+            for jq in range(0,nqperdim):
                 rq=qcoords[iq]
                 sq=qcoords[jq]
                 weightq=qweights[iq]*qweights[jq]
@@ -970,8 +983,8 @@ for istep in range(0,nstep):
     mass=0.
     counterq=0
     for iel in range (0,nel):
-        for iq in range(0,nq_per_dim):
-            for jq in range(0,nq_per_dim):
+        for iq in range(0,nqperdim):
+            for jq in range(0,nqperdim):
                 # position & weight of quad. point
                 rq=qcoords[iq]
                 sq=qcoords[jq]
@@ -1005,7 +1018,10 @@ for istep in range(0,nstep):
 
     vrms=np.sqrt(vrms/(Lx*Ly))
 
-    vrms_file.write("%e %e %e %e\n" %(Time,vrms,Time/year,vrms/cm*year)) ; vrms_file.flush()
+    if istep==0:
+       vrms0=vrms
+
+    vrms_file.write("%e %e %e %e %e\n" %(Time,vrms,Time/year,vrms/cm*year,(vrms-vrms0)/cm*year)) ; vrms_file.flush()
 
     print("     -> vrms %.5e " %vrms)
     print("     -> mass %.5e " %mass)
@@ -1305,7 +1321,7 @@ for istep in range(0,nstep):
     #####################################################################
     start = timing.time()
     
-    if istep%every==0:
+    if istep%every==0 and visu==1:
 
        filename = 'mesh_rho_eta_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
@@ -1617,6 +1633,8 @@ for istep in range(0,nstep):
        break
 
 #end for istep
+       
+print('vrms_final=',vrms/cm*year,TH,Ranb)
 
 #--------------------------------------------------------------------------------------------------
 # end time stepping loop

@@ -216,7 +216,7 @@ In Eq.~1 of the paper we see that the characteristic time is given
 by $D_0^2/\kappa=(6\cdot 10^5)^2/10^{-6}=36\cdot 10^{16}~\si{\second}\simeq 11408~\si{\mega\year}$.
 
 \begin{center}
-\boxed{\includegraphics[width=15cm]{python_codes/fieldstone_168/images/kiso20g.jpg}}\\
+\boxed{\includegraphics[width=16cm]{python_codes/fieldstone_168/images/kiso20g.jpg}}\\
 {\captionfont Fig.~2 of the paper. NZ=0.05 indicates that $NZ=0.05*L_y=30~\si{\km}$,
 $\Ranb=10^6$ indicates that $\eta=$ and Time=$8.8\cdot 10^{-4}$ means 
 Time=$8.8\cdot 10^{-4} \cdot 11408~\si{\mega\year}\simeq 10~\si{\mega\year}$ 
@@ -239,19 +239,69 @@ The mentioned velocities are then 0.22cm/yr, 0.021cm/yr and 0.015cm/yr.
 
 \newpage
 
-\begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_168/images/kiso20d.jpg}\\
-{\captionfont $\upnu_{rms}$ of the mantle flow over an entire domain for TH=0.001-0.1}
-\end{center}
 
 \begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_168/results/a/T.png}
+\includegraphics[width=7cm]{python_codes/fieldstone_168/results/a/vel.png}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_168/results/b/T.png}
+\includegraphics[width=7cm]{python_codes/fieldstone_168/results/b/vel.png}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_168/results/c/T.png}
+\includegraphics[width=7cm]{python_codes/fieldstone_168/results/c/vel.png}\\
+{\captionfont Results at t=10Myr. 150x75 mesh.} 
+\end{center}
+
+
+
+
+\newpage
+We now turn to the time evolution of the root mean square velocity:
+\begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_168/images/kiso20e.jpg}\\
+{\captionfont $\upnu_{rms}$ of the mantle flow over an entire domain 
+for $T_H=0.001-0.1$}
+\end{center}
+I have a fundamental problem with this plot as the velocity seems to 
+start at zero. Since we are solving the incompressible Stokes 
+equations with no elasticity, the velocity cannot be zero after the 
+first solve.
+Indeed when I record the $\upnu_{rms}$ as a function of time, 
+I obtain the following left figure. If I then proceed to subtract the 
+initial root mean square velocity value to all all measured value, I 
+obtain the following right figure:
+%\begin{center}
+%\includegraphics[width=7cm]{python_codes/fieldstone_168/results/vrms1.pdf}
+%\includegraphics[width=7cm]{python_codes/fieldstone_168/results/vrms2.pdf}
+%\end{center}
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_168/results/vrms_1e6.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_168/results/vrms_1e7.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_168/results/vrms_1e8.pdf}
+\end{center}
+
+
+
+
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_168/images/kiso20d.jpg}
+\includegraphics[width=7cm]{python_codes/fieldstone_168/results/vrms_final.pdf}\\
 {\captionfont 
-$\upnu_{rms}$ depending on $\Ranb$ when $t=8.8\cdot10^{-4}$. Different symbols represent the
+Left: $\upnu_{rms}$ depending on $\Ranb$ when $t=8.8\cdot10^{-4}$. 
+Different symbols represent the
 different values of Ra while different colors represent different small-scale
 convection styles along LAB: localized (red), weak (orange), and no (blue) EDC
 cells.}
 \end{center}
+
+
+
+
+
+
+
 
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_168/images/kiso20f.jpg}\\
@@ -268,4 +318,18 @@ Illustrations above the map show small-scale convection styles and partial melts
 
 
 %===================================
-%\section*{My implementation}
+\section*{Current state}
+
+As of now there are still multiple problems. 
+
+- my vrms increases but then decreases
+
+- i need to run a bunch of TH values and Ra number combinations. i need to script it all. but it takes a long time to run
+
+- i am not sure that the initial T in the lith is correct
+
+- i need to benchmark the code before running all models (Stokes, adv, diff)
+
+
+
+

@@ -1,0 +1,53 @@
+################################################
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize .4
+set xlabel 'time (Myr)'
+set ylabel 'v_{rms} (cm/yr)'
+set key outside
+
+################################################
+set title 'Ra=10^8'
+set output 'vrms_1e8.pdf'
+plot[][]\
+'vrms_0.1_20.ascii'    u ($3/1e6):5 w lp t 'T_H=0.1',\
+'vrms_0.05_20.ascii'   u ($3/1e6):5 w lp t 'T_H=0.05',\
+'vrms_0.025_20.ascii'  u ($3/1e6):5 w lp t 'T_H=0.025',\
+'vrms_0.01_20.ascii'   u ($3/1e6):5 w lp t 'T_H=0.01',\
+'vrms_0.005_20.ascii'  u ($3/1e6):5 w lp t 'T_H=0.005',\
+'vrms_0.0025_20.ascii' u ($3/1e6):5 w lp t 'T_H=0.0025',\
+'vrms_0.001_20.ascii'  u ($3/1e6):5 w lp t 'T_H=0.001'
+
+set title 'Ra=10^7'
+set output 'vrms_1e7.pdf'
+plot[][]\
+'vrms_0.1_19.ascii'    u ($3/1e6):5 w lp t 'T_H=0.1',\
+'vrms_0.05_19.ascii'   u ($3/1e6):5 w lp t 'T_H=0.05',\
+'vrms_0.025_19.ascii'  u ($3/1e6):5 w lp t 'T_H=0.025',\
+'vrms_0.01_19.ascii'   u ($3/1e6):5 w lp t 'T_H=0.01',\
+'vrms_0.005_19.ascii'  u ($3/1e6):5 w lp t 'T_H=0.005',\
+'vrms_0.0025_19.ascii' u ($3/1e6):5 w lp t 'T_H=0.0025',\
+'vrms_0.001_19.ascii'  u ($3/1e6):5 w lp t 'T_H=0.001'
+
+set title 'Ra=10^6'
+set output 'vrms_1e6.pdf'
+plot[][]\
+'vrms_0.1_18.ascii'    u ($3/1e6):5 w lp t 'T_H=0.1',\
+'vrms_0.05_18.ascii'   u ($3/1e6):5 w lp t 'T_H=0.05',\
+'vrms_0.025_18.ascii'  u ($3/1e6):5 w lp t 'T_H=0.025',\
+'vrms_0.01_18.ascii'   u ($3/1e6):5 w lp t 'T_H=0.01',\
+'vrms_0.005_18.ascii'  u ($3/1e6):5 w lp t 'T_H=0.005',\
+'vrms_0.0025_18.ascii' u ($3/1e6):5 w lp t 'T_H=0.0025',\
+'vrms_0.001_18.ascii'  u ($3/1e6):5 w lp t 'T_H=0.001'
+
+
+################################################
+unset title
+set xlabel 'T_H'
+set ylabel 'v_{rms}'
+set log xy
+set output 'vrms_final.pdf'
+plot[][]\
+'vrms_final.ascii' u ($3/1400.):2 pt 7 notitle
+
+

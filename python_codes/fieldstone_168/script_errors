@@ -1,0 +1,17 @@
+#! /bin/bash
+
+rm vrms_final.ascii
+
+for n in 40 ; do
+    for TH in 0.1 0.025 0.05 0.01 0.0025 0.005 0.001 ; do 
+        for eta0 in 18 19 20 ; do 
+
+            echo nelx= $n TH= $TH eta0= $eta0
+
+            python3 stone.py  $n $TH $eta0 0 > opla
+            grep vrms_final opla >> vrms_final_${eta0}.ascii
+            mv vrms.ascii vrms_${TH}_${eta0}.ascii
+
+        done
+    done
+done
