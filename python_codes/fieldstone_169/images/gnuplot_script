@@ -4,8 +4,6 @@ set grid
 Ts=600
 Tl=1200
 
-
-
 ##############################################################
 set xtics 20
 set xlabel 'z (km)'
@@ -51,7 +49,6 @@ set key outside
 L=320e3
 f(x,alpha)=k/rho/(Cp+L* alpha*exp(alpha*x)/(exp(alpha*Tl)-exp(alpha*Ts)))
 set output 'kappa.pdf'
-
 set xlabel 'T (^oC)'
 set ylabel 'diffusivity {/symbol k} (m^2/s)'
 set xtics 100
@@ -64,16 +61,43 @@ f(x,0.01) t '{/Symbol a}=+0.01',\
 f(x,0.1) t '{/Symbol a}=+0.1'
 
 
+f(x,alpha)=Cp+L* alpha*exp(alpha*x)/(exp(alpha*Tl)-exp(alpha*Ts))
+set output 'hcapa.pdf'
+set ylabel 'heat capacity C_p (J/kg/K)'
+plot[Ts:Tl][]\
+f(x,-0.1) t '{/Symbol a}=-0.1',\
+f(x,-0.01) t '{/Symbol a}=-0.01',\
+f(x,-0.001) t '{/Symbol a}=-0.001',\
+f(x,0.001) t '{/Symbol a}=+0.001',\
+f(x,0.01) t '{/Symbol a}=+0.01',\
+f(x,0.1) t '{/Symbol a}=+0.1'
+
 
 ###############################################################
 set size square
 set xlabel 'Temperature (C)'
 set ylabel 'percent melt'
-set output 'percent_melt.pdf'
+set output 'percent_melt_C.pdf'
 plot[Ts:Tl][]\
 (exp(  -0.1*x)-exp(  -0.1*Ts))/(exp(  -0.1*Tl)-exp(  -0.1*Ts))*100 lw 2 t '{/Symbol a}=-0.1',\
 (exp( -0.01*x)-exp( -0.01*Ts))/(exp( -0.01*Tl)-exp( -0.01*Ts))*100 lw 2 t '{/Symbol a}=-0.01',\
 (exp(-0.001*x)-exp(-0.001*Ts))/(exp(-0.001*Tl)-exp(-0.001*Ts))*100 lw 2 t '{/Symbol a}=-0.001',\
-(exp(0.001*x)-exp(0.001*Ts))/(exp(0.001*Tl)-exp(0.001*Ts))*100 lw 2 t '{/Symbol a}=+0.001',\
-(exp( 0.01*x)-exp( 0.01*Ts))/(exp( 0.01*Tl)-exp( 0.01*Ts))*100 lw 2 t '{/Symbol a}=+0.01',\
-(exp(  0.1*x)-exp(  0.1*Ts))/(exp(  0.1*Tl)-exp(  0.1*Ts))*100 lw 2 t '{/Symbol a}=+0.1'
+(exp( 0.001*x)-exp( 0.001*Ts))/(exp( 0.001*Tl)-exp( 0.001*Ts))*100 lw 2 t '{/Symbol a}=+0.001',\
+(exp(  0.01*x)-exp(  0.01*Ts))/(exp(  0.01*Tl)-exp(  0.01*Ts))*100 lw 2 t '{/Symbol a}=+0.01',\
+(exp(   0.1*x)-exp(   0.1*Ts))/(exp(   0.1*Tl)-exp(   0.1*Ts))*100 lw 2 t '{/Symbol a}=+0.1',\
+'fig1_alpha_m0p01.ascii' w l lt -1 dt 2 t 'fig.1, {\Symbol a}=-0.01',\
+'fig1_alpha_m0p001.ascii' w l lt -1 dt 3 t 'fig.1, {\Symbol a}=-0.001'
+
+
+TKelvin=273.15
+set output 'percent_melt_K.pdf'
+plot[Ts:Tl][]\
+(exp(  -0.1*(x+TKelvin))-exp(  -0.1*(Ts+TKelvin)))/(exp(  -0.1*(Tl+TKelvin))-exp(  -0.1*(Ts+TKelvin)))*100 lw 2 t '{/Symbol a}=-0.1',\
+(exp( -0.01*(x+TKelvin))-exp( -0.01*(Ts+TKelvin)))/(exp( -0.01*(Tl+TKelvin))-exp( -0.01*(Ts+TKelvin)))*100 lw 2 t '{/Symbol a}=-0.01',\
+(exp(-0.001*(x+TKelvin))-exp(-0.001*(Ts+TKelvin)))/(exp(-0.001*(Tl+TKelvin))-exp(-0.001*(Ts+TKelvin)))*100 lw 2 t '{/Symbol a}=-0.001',\
+(exp( 0.001*(x+TKelvin))-exp( 0.001*(Ts+TKelvin)))/(exp( 0.001*(Tl+TKelvin))-exp( 0.001*(Ts+TKelvin)))*100 lw 2 t '{/Symbol a}=0.001',\
+(exp(  0.01*(x+TKelvin))-exp(  0.01*(Ts+TKelvin)))/(exp(  0.01*(Tl+TKelvin))-exp(  0.01*(Ts+TKelvin)))*100 lw 2 t '{/Symbol a}=0.01',\
+(exp(   0.1*(x+TKelvin))-exp(   0.1*(Ts+TKelvin)))/(exp(   0.1*(Tl+TKelvin))-exp(   0.1*(Ts+TKelvin)))*100 lw 2 t '{/Symbol a}=0.1',\
+'fig1_alpha_m0p01.ascii' w l lt -1 dt 2 t 'fig.1, {\Symbol a}=-0.01',\
+'fig1_alpha_m0p001.ascii' w l lt -1 dt 3 t 'fig.1, {\Symbol a}=-0.001'
+

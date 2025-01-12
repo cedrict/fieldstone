@@ -141,7 +141,8 @@ relationships are poorly understood, in part because they depend on a range of i
 variables, for example, the presence of a fluid
 (e.g., Vielzeuf and Holloway, 1988). Here a simple model function of the form:
 \begin{equation}
-v(T) = \frac{\exp(\alpha T)- \exp(\alpha T_s) }{\exp(\alpha T_l) - \exp(\alpha T_s) }
+v(T) 
+= \frac{\exp(\alpha T)- \exp(\alpha T_s) }{\exp(\alpha T_l) - \exp(\alpha T_s) }
 \label{eq:stuw95_eq3}
 \end{equation}
 is used in which the rate of melt production between $T_s$ and $T_l$ can be controlled by varying $\alpha$.
@@ -154,8 +155,8 @@ liquidus temperature of $T_l = 1200~\si{\celsius}$ are assumed.
 
 
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_169/images/stuw95a}
-\includegraphics[width=10cm]{python_codes/fieldstone_169/images/percent_melt}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_169/images/stuw95a}
+\includegraphics[width=7cm]{python_codes/fieldstone_169/images/percent_melt_C}\\
 Left: plot (taken from the paper) of melt volume against temperature taken as given by
 the melting model of Eq.~\eqref{eq:stuw95_eq3}. Different melting models may
 be explored by varying the parameter $\alpha$, for which the diagram 
@@ -163,6 +164,19 @@ is contoured. In most of the following calculations
 $\alpha= - 0.01$ is used (thick line).
 Right: my own version of the plot. {\color{red} There is an obvious sign issue with the labels}.
 \end{center}
+
+Side note: Based on my experience in \stone~167, the question remains whether the 
+author used \si{\celsius} or \si{\kelvin} in his Eq~3. Fortunately, this does not matter since
+we have:
+\begin{eqnarray}
+v(T) 
+&=& \frac{\exp(\alpha (T+273))- \exp(\alpha (T_s+273)) }{\exp(\alpha (T_l+273)) - \exp(\alpha (T_s+273)) } \nn\\
+&=& \frac{\exp(\alpha T) \exp(\alpha\cdot 273)- \exp(\alpha T_s) \exp(\alpha\cdot 273)}
+{\exp(\alpha T_l) \exp(\alpha\cdot 273)- \exp(\alpha T_s) \exp(\alpha\cdot 273)} \nn\\
+&=& \frac{\exp(\alpha T)- \exp(\alpha T_s) }{\exp(\alpha T_l) - \exp(\alpha T_s) } \nn
+\end{eqnarray}
+This then means that from Fig.~1 alone I cannot determine whether calculations were 
+carried out in \si{\celsius} or \si{\kelvin}.
 
 
 
@@ -248,11 +262,13 @@ so that the heat diffusion coefficient for option 2 is then given by
 \]
 which is only valid for temperatures between $T_s$ and $T_l$.
 
-
+We can plot the heat capacity $C_p(\alpha,T)$ and heat diffusivity $\kappa(\alpha,T)$:
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_169/images/kappa.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_169/images/hcapa.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_169/images/kappa.pdf}
 \end{center}
-We find that the value of $\alpha$ can alter the value of $\kappa$ by almost an order of magnitude.
+We find that the value of $\alpha$ can alter the value of $\kappa$ by almost 
+an order of magnitude.
 
 At this stage we can make a few remarks
 \begin{enumerate}
@@ -268,7 +284,7 @@ At this stage we can make a few remarks
 %----------------------------------------------------------
 \subsection*{Linear case (no melting)}
 
-We adopt here a very simple approach, a forward in time, 
+We adopt here a very simple FDM approach, a forward in time, 
 centered in space approach (FTCS) as explained in Section~\ref{MMM-ss:fdm_diff1D}. 
 Except for the nodes on the boundary (where the temperature
 is prescribed to be $T_b$) we have the following explicit stencil:
@@ -281,15 +297,20 @@ This translates as follows in the code:
 
 \begin{lstlisting}
 Time=0.
-for n in range(0,nstep):
+for istep in range(0,nstep):
     Time+=dt
     for i in range (0,nnx):
-        if i==0:
-           Tnew[i]=Tleft
-        elif i==nnx-1:
-           Tnew[i]=Tright
+        if linear:
+           kappa[i]=kappa0
+           if i==0:
+              Tnew[i]=Tleft
+           elif i==nnx-1:
+              Tnew[i]=Tright
+           else:
+              Tnew[i]=Told[i]+dt*kappa[i]/h**2*(Told[i+1]-2*Told[i]+Told[i-1])
+           Ta[i]=analytical_solution(x[i],Time,kappa[i])
         else:
-           Tnew[i]=Told[i]+dt*kappa/h**2*(Told[i+1]-2*Told[i]+Told[i-1])
+           ...
         #end if
     #end for
     Told[:]=Tnew[:]
@@ -297,7 +318,7 @@ for n in range(0,nstep):
 \end{lstlisting}
 We define the analytical solution function as follows:
 \begin{lstlisting}
-def analytical_solution(x,t):
+def analytical_solution(x,t,kappa):
     return Tb+(Ti-Tb)/2*\
            (\
            erf((d/2+x)/np.sqrt(4*kappa*t)) +\
@@ -317,15 +338,8 @@ for i in range(0,nnx):
 \end{lstlisting}
 
 
-TODO:
+{\color{red} describe nonlinear melting case}
 
-- add latent heat, implement nonlinear scheme
-
-- compare option 1,2
-
-
-
-\newpage
 %==========================================================
 \section*{Results}
 
@@ -334,21 +348,23 @@ TODO:
 
 I have run the code with the following parameters:
 \begin{lstlisting}
-nnx=501
-nstep=10000
-Lx=400e3
+nnx=601
+nstep=1000000
+Lx=600e3
 rho=2800
 Cp=1100
 k=2.5
-L=350e3
-Tb=400
-Ti=800
-Ts=600
-Tl=1200
+kappa0=k/rho/Cp
+L=320e3
+Tb=400+TKelvin
+Ti=1000+TKelvin
+Ts=600+TKelvin
+Tl=1200+TKelvin
 d=50e3
 CFL_nb=0.1
-tfinal=5e6*year
+tfinal=150e6*year
 \end{lstlisting}
+This means that the spatial resolution is 1~km, and the time step is approximately 1952~year. 
 We find that the temperature field indeed follows the analytical solution:
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_169/results/linear/T.pdf}
@@ -358,8 +374,67 @@ The absolute error is only a few degrees at most:
 \includegraphics[width=12cm]{python_codes/fieldstone_169/results/linear/T_error.pdf}
 \end{center}
 
+We now turn to Fig.~3a of the paper which shows the 
+cooling history of a sill-shaped intrusion of thickness $d=50~\si{\km}$ at $z=0$
+for $T_i=600-1000~\si{\celsius}$ in the absence of melting. 
+I have digitized\footnote{\url{https://plotdigitizer.com/app}} the lines of Fig.~3 
+and results are show here under:
+\begin{center}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_169/images/fig3a}
+\includegraphics[width=9cm]{python_codes/fieldstone_169/results/linear/midT.pdf}\\
+{\captionfont Left: fig.~3a of the paper; Right: time evolution of the 
+temperature at $z=0$ for $T_i=1000~\si{\celsius}$ in purple, next to the 
+digitized lines from the paper.}
+\end{center}
+Since this is the linear case we have an analytical solution at our disposal
+in Eq.~\eqref{eq:f169ana}.
+I find that my results do agree well with the analytical solution 
+but those of St{\"u}we do not! Note that the author specifies that it is
+indeed in the absence of latent heat in the caption of Fig.~3. 
+
+{\color{red} If linear case results in the paper are off 
+with respect to the analytical solution we cannot 
+expect the nonlinear results (with melt) to match...}
 
 
 
+%----------------------------------------------------------
+\subsection*{Nonlinear case (melting)}
+
+We now turn to Fig. 2 of the paper. In this case we set $d=50~\si{\km}$ 
+and $T_i=1000~\si{\celsius}$. 
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_169/images/fig2}
+\end{center}
+
+We have 
+\[
+A= \frac{\alpha }{\exp(\alpha T_l) - \exp(\alpha T_s) } 
+\]
+
+
+We can plot $\kappa$ and the melt percentage in space at the end of the first timestep:
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_169/results/nonlinear/zero/kappa.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_169/results/nonlinear/zero/melt.pdf}
+\end{center}
+
+I now plot the temperature profile and the melt profile at three different times:
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_169/results/nonlinear/T_10000.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_169/results/nonlinear/T_50000.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_169/results/nonlinear/T_100000.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_169/results/nonlinear/melt_10000.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_169/results/nonlinear/melt_50000.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_169/results/nonlinear/melt_100000.pdf}\\
+\end{center}
+
+I have digitized\footnote{\url{https://plotdigitizer.com/app}} the lines of Fig.~2.
+finally I can look again at the temperature in the middle of the layer as a function of time:
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_169/results/nonlinear/midT.pdf}
+\end{center}
+Unsurprisingly my results do not match those of the paper ...
 
 
