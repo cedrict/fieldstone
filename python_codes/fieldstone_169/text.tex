@@ -22,9 +22,9 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-%{\sl This stone was developed in collaboration with Donald Duck}. \index{contributors}{D. Duck}
+{\sl This stone was suggested to me by Alissa Kotowski}. 
 
-%\par\noindent\rule{\textwidth}{0.4pt}
+\par\noindent\rule{\textwidth}{0.4pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -66,9 +66,9 @@ $T_i$ is the intrusion temperature, $d$ is the intrusion
 thickness and $z$ is the distance from the intrusion centre. 
 \begin{small}
 \begin{verbatim}
-                  Tb             Ti         Ti           Tb
-          ------------------+----------+----------+-------------------> 
-                          -d/2         0         d/2                  z
+                       Tb             Ti         Ti           Tb
+               ------------------+----------+----------+-------------------> 
+                               -d/2         0         d/2                  z
 \end{verbatim}
 \end{small}
 
@@ -105,7 +105,7 @@ and ambient background temperatures of $T_b =400~\si{\celsius}$.
 
 
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_169/images/solution.pdf}\\
+\includegraphics[width=11cm]{python_codes/fieldstone_169/images/solution.pdf}\\
 {\captionfont Plot obtained 
 with Eq.~\eqref{eq:f169ana}
 for $T_b=400~\si{\celsius}$, $T_i=800~\si{\celsius}$ and $d=50~\si{\km}$.}
@@ -116,7 +116,8 @@ For many geological purposes it is useful to look at the
 temperature-cooling-rate evolution rather than at
 the temperature-time evolution. For the latent
 heat absent case, this may be found by differentiating the equation above 
-with respect to time so that the cooling rate, $s$, is given by {\color{red} check the maths}:
+with respect to time so that the cooling rate, $s$, is given by\footnote{I have not 
+checked the maths}:
 \[
 s(z,t) = \frac{\partial T}{\partial t}
 =-\frac{T_i-T_b}{4\sqrt{\pi \kappa t^3}}
@@ -126,7 +127,7 @@ s(z,t) = \frac{\partial T}{\partial t}
 \frac{d/2 -z}{\exp((d/2-z)^2/4\kappa t )}
 \right)
 \]
-
+We can plot this quantity in space at different times:
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_169/images/solution_derv.pdf}\\
 {\captionfont Plot obtained for $T_b=400~\si{\celsius}$, $T_i=800~\si{\celsius}$ and $d=50~\si{\km}$.}
@@ -155,18 +156,20 @@ liquidus temperature of $T_l = 1200~\si{\celsius}$ are assumed.
 
 
 \begin{center}
-\includegraphics[width=4cm]{python_codes/fieldstone_169/images/stuw95a}
-\includegraphics[width=7cm]{python_codes/fieldstone_169/images/percent_melt_C}\\
-Left: plot (taken from the paper) of melt volume against temperature taken as given by
+\includegraphics[width=4.5cm]{python_codes/fieldstone_169/images/stuw95a}
+\includegraphics[width=8cm]{python_codes/fieldstone_169/images/percent_melt_C}\\
+{\captionfont Left: fig.~1 (taken from the paper) of melt volume against temperature taken as given by
 the melting model of Eq.~\eqref{eq:stuw95_eq3}. Different melting models may
 be explored by varying the parameter $\alpha$, for which the diagram 
 is contoured. In most of the following calculations
 $\alpha= - 0.01$ is used (thick line).
-Right: my own version of the plot. {\color{red} There is an obvious sign issue with the labels}.
+Right: my own version of the plot. Note that there is an obvious sign issue 
+with the labels; also, although not so clear, the thick line seems to be for 
+$\alpha=+0.01$ and not $\alpha=-0.01$ in fig.~1.}.
 \end{center}
 
 Side note: Based on my experience in \stone~167, the question remains whether the 
-author used \si{\celsius} or \si{\kelvin} in his Eq~3. Fortunately, this does not matter since
+author used temperatures in Celsius or Kelvin in his Eq.~(3). Fortunately, this does not matter since
 we have:
 \begin{eqnarray}
 v(T) 
@@ -175,7 +178,7 @@ v(T)
 {\exp(\alpha T_l) \exp(\alpha\cdot 273)- \exp(\alpha T_s) \exp(\alpha\cdot 273)} \nn\\
 &=& \frac{\exp(\alpha T)- \exp(\alpha T_s) }{\exp(\alpha T_l) - \exp(\alpha T_s) } \nn
 \end{eqnarray}
-This then means that from Fig.~1 alone I cannot determine whether calculations were 
+This means that from Fig.~1 alone I cannot determine whether calculations were 
 carried out in \si{\celsius} or \si{\kelvin}.
 
 
@@ -188,9 +191,8 @@ solved analytically and a finite difference scheme
 was employed to obtain numerical solutions in the article.
 
 These solutions were obtained by incorporating the effects of latent heat into a modified heat
-capacity (see the Appendix of the paper) and the results were back checked by
-comparing them with the analytical solution of
-Stefan (1891) for $T_i = T_l$ and large negative $\alpha$.
+capacity (see here after) and the results were back checked by
+comparing them with the analytical solution of Stefan (1891) for $T_i = T_l$ and large negative $\alpha$.
 
 We start from the 1D heat transport equation with no advection term:
 \[
@@ -198,9 +200,8 @@ We start from the 1D heat transport equation with no advection term:
 = k  \frac{\partial^2 T}{\partial z^2} 
 \]
 where $\partial v/ \partial t$ describes the change in the proportion of melt with time.
-as it is assumed that the intrusion is not completely molten, but that the
-melt percentage at $T_i$ is given by Eq.~\eqref{eq:stuw95_eq3}.
-
+It is assumed that the intrusion is not completely molten, but that the
+melt percentage at is given by Eq.~\eqref{eq:stuw95_eq3}.
 In order to solve this equation it is useful to replace:
 \[
 \frac{\partial v}{\partial t} = \frac{\partial v}{\partial T}\frac{\partial T}{\partial t}
@@ -216,14 +217,14 @@ or,
 \rho \left(C_p + L \frac{\partial v}{\partial T} \right)
 \frac{\partial T}{\partial t} = k  \frac{\partial^2 T}{\partial z^2} 
 \]
-and finally, what we call option 1:
+and finally we obtain (what we call approach 1):
 \[
 \boxed{
 \rho \underbrace{\left(C_p + L \frac{\partial v}{\partial T} \right)}_{C_p(T)}
 \frac{\partial T}{\partial t} = k  \frac{\partial^2 T}{\partial z^2} 
 }
 \]
-or, what we will call option 2:
+or, (what we will call approach 2):
 \[
 \boxed{
 \frac{\partial T}{\partial t} = 
@@ -236,19 +237,18 @@ In passing, let us note that the author
 1) does not mention boundary conditions at all,
 2) uses an explicit time discretisation,
 3) does not elaborate about how he deals with the nonlinearities.    
-concerning the boundary conditions, all what we have to do is 
+
+Concerning the boundary conditions, all what we have to do is 
 consider a domain large enough so 
 as to avoid boundary effects and prescribe $T_b$ on both ends.
 
-When discretised using FEM, we will obtain the following system:
+Remark: when discretised using FEM, we will obtain the following system:
 \[
 \M \cdot \dot{\vec{{\cal T}}} + \K_d \cdot \vec{\cal T} = 0
 \]
-In option 1 the mass matrix $\M$ is nonlinear while the diffusion matrix $\K_d$ is linear.
-In option 2 the mass matrix $\M$ is linear while the diffusion matrix $\K_d$ is nonlinear.
-
-When discretised using FDM and resorting to an explicit scheme we will
-naturally adopt option 2.
+In approach 1 the mass matrix $\M$ is nonlinear while the diffusion matrix $\K_d$ is linear.
+In approach 2 the mass matrix $\M$ is linear while the diffusion matrix $\K_d$ is nonlinear.
+When discretised using FDM and resorting to an explicit scheme we will naturally adopt approach 2.
 
 From Eq.~\eqref{eq:stuw95_eq3} we find that
 \[
@@ -256,9 +256,14 @@ From Eq.~\eqref{eq:stuw95_eq3} we find that
 = \frac{\alpha \exp (\alpha T) }{\exp(\alpha T_l) - \exp(\alpha T_s) } 
 =A \exp (\alpha T)
 \]
-so that the heat diffusion coefficient for option 2 is then given by
+so that the heat capacity coefficient
+is given by 
 \[
-\kappa(T) = \frac{k}{\rho \left(C_p + L A \exp(\alpha T) \right)}
+C_p(\alpha,T)=C_p + L A \exp(\alpha T) 
+\]
+and the diffusion coefficient by
+\[
+\kappa(\alpha,T) = \frac{k}{\rho \left(C_p + L A \exp(\alpha T) \right)}
 \]
 which is only valid for temperatures between $T_s$ and $T_l$.
 
@@ -270,11 +275,11 @@ We can plot the heat capacity $C_p(\alpha,T)$ and heat diffusivity $\kappa(\alph
 We find that the value of $\alpha$ can alter the value of $\kappa$ by almost 
 an order of magnitude.
 
-At this stage we can make a few remarks
+At this stage we can make a few remarks about the context of the study:
 \begin{enumerate}
-\item melt not moving
-\item matrix not deforming
-\item 1D system implying infinite extent in $x,y$ direction
+\item melt is not moving (no advection),
+\item the matrix (host rock) is not deforming,
+\item 1D system implies an infinite extent in $x,y$ directions.
 \end{enumerate}
 
 
@@ -291,9 +296,9 @@ is prescribed to be $T_b$) we have the following explicit stencil:
 \[
 T_i^{n+1} 
 = 
-T_i^n + \frac{\kappa \delta t }{h^2} (T_{i+1}^n-2T_i^n+T_{i-1}^n)
+T_i^n + \frac{\kappa_0 \delta t }{h^2} (T_{i+1}^n-2T_i^n+T_{i-1}^n)
 \]
-This translates as follows in the code:
+with $\kappa_0=k/\rho/C_p$. This translates as follows in the code:
 
 \begin{lstlisting}
 Time=0.
@@ -337,8 +342,13 @@ for i in range(0,nnx):
     if abs(x[i])<d/2: Told[i]=Ti
 \end{lstlisting}
 
+Note that it would be trivial to produce an implicit code with Crank-Nicolson 
+time stepping that would prove to be more stable and accurate but we will 
+see in what follows that it makes little sense to do so (for now?).
 
-{\color{red} describe nonlinear melting case}
+Remark: the code also solves the nonlinear equation with melting 
+but we will see that results are not satisfying so 
+I have not bothered to describe this part of the code yet.
 
 %==========================================================
 \section*{Results}
@@ -388,9 +398,9 @@ digitized lines from the paper.}
 \end{center}
 Since this is the linear case we have an analytical solution at our disposal
 in Eq.~\eqref{eq:f169ana}.
-I find that my results do agree well with the analytical solution 
-but those of St{\"u}we do not! Note that the author specifies that it is
-indeed in the absence of latent heat in the caption of Fig.~3. 
+I find that here again my results do agree well with the analytical solution 
+but those of St{\"u}we do not (see green curve)! Note that the author specifies 
+in the caption of Fig.~3 that it is indeed in the absence of latent heat.
 
 {\color{red} If linear case results in the paper are off 
 with respect to the analytical solution we cannot 
