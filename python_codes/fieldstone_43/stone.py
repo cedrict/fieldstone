@@ -1,11 +1,25 @@
 import numpy as np
 import sys as sys
 import scipy
-import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
+#from scipy.sparse.linalg.dsolve import linsolve
 import time as timing
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+import scipy.sparse as sps
+from scipy.sparse import csr_matrix, lil_matrix
+
+#------------------------------------------------------------------------------
+
+def rhs_f(x,y,experiment):
+    match(experiment):
+        case(1|2|3|4|5|6|7|8):
+            val=0.
+        case(9):
+            if (x+0.75)**2+(y+0.75)**2<0.01:
+               val=10.
+            else:
+               val=0.
+    return val
 
 #------------------------------------------------------------------------------
 
@@ -15,7 +29,7 @@ def NNT(r,s,order):
        N_1=0.25*(1.+r)*(1.-s)
        N_2=0.25*(1.-r)*(1.+s)
        N_3=0.25*(1.+r)*(1.+s)
-       return N_0,N_1,N_2,N_3
+       return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
     if order==2:
        N_0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
        N_1=    (1.-r**2) * 0.5*s*(s-1.)
@@ -26,7 +40,7 @@ def NNT(r,s,order):
        N_6= 0.5*r*(r-1.) * 0.5*s*(s+1.)
        N_7=    (1.-r**2) * 0.5*s*(s+1.)
        N_8= 0.5*r*(r+1.) * 0.5*s*(s+1.)
-       return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8
+       return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
 
 def dNNTdr(r,s,order):
     if order==1:
@@ -34,7 +48,7 @@ def dNNTdr(r,s,order):
        dNdr_1=+0.25*(1.-s)
        dNdr_2=-0.25*(1.+s)
        dNdr_3=+0.25*(1.+s)
-       return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+       return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3],dtype=np.float64)
     if order==2:
        dNdr_0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
        dNdr_1=       (-2.*r) * 0.5*s*(s-1)
@@ -45,7 +59,7 @@ def dNNTdr(r,s,order):
        dNdr_6= 0.5*(2.*r-1.) * 0.5*s*(s+1)
        dNdr_7=       (-2.*r) * 0.5*s*(s+1)
        dNdr_8= 0.5*(2.*r+1.) * 0.5*s*(s+1)
-       return dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8
+       return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8],dtype=np.float64)
 
 def dNNTds(r,s,order):
     if order==1:
@@ -53,7 +67,7 @@ def dNNTds(r,s,order):
        dNds_1=-0.25*(1.+r)
        dNds_2=+0.25*(1.-r)
        dNds_3=+0.25*(1.+r)
-       return dNds_0,dNds_1,dNds_2,dNds_3
+       return np.array([dNds_0,dNds_1,dNds_2,dNds_3],dtype=np.float64)
     if order==2:
        dNds_0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
        dNds_1=    (1.-r**2) * 0.5*(2.*s-1.)
@@ -64,7 +78,7 @@ def dNNTds(r,s,order):
        dNds_6= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
        dNds_7=    (1.-r**2) * 0.5*(2.*s+1.)
        dNds_8= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
-       return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8
+       return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 
@@ -91,14 +105,12 @@ if int(len(sys.argv) == 4):
    order     =int(sys.argv[2])
    supg_type =int(sys.argv[3])
 else:
-   experiment=8
+   experiment=9
    order=2
    supg_type=0
 
-if order==1:
-   m=4          # number of nodes making up an element
-if order==2:
-   m=9
+if order==1: m=4 # number of nodes making up an element
+if order==2: m=9
 
 use_bdf=False
 bdf_order=2
@@ -191,6 +203,16 @@ if experiment==8: # advection cone Li book
    ymin=0.
    every=10
 
+if experiment==9: #step-9
+   nelx=32
+   nely=32
+   Lx=2
+   Ly=2
+   xmin=-1.
+   ymin=-1.
+   every=5
+   tfinal=1.25
+   CFLnb=0.5
 
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
@@ -279,6 +301,9 @@ for j in range(0,nny):
         if experiment==8:
            u[counter]=0.1
            v[counter]=0
+        if experiment==9:
+           u[counter]=2
+           v[counter]=1+4./5.*np.sin(8*np.pi*x[counter])
         counter += 1
     #end for
 #end for
@@ -404,6 +429,14 @@ if experiment==8:
        if x[i]/Lx>(1-eps):
           bc_fixT[i]=True ; bc_valT[i]=0.
 
+if experiment==9:
+   for i in range(0,NV):
+       r2=x[i]**2+y[i]**2
+       if (x[i]+1)/Lx<eps:
+          bc_fixT[i]=True ; bc_valT[i]=np.exp(5*(1-r2))*np.sin(16*np.pi*r2)
+       if (y[i]+1)/Lx<eps:
+          bc_fixT[i]=True ; bc_valT[i]=np.exp(5*(1-r2))*np.sin(16*np.pi*r2)
+
 print("boundary conditions (%.3fs)" % (timing.time() - start))
 
 #####################################################################
@@ -474,6 +507,11 @@ if experiment==8:
        #end if
    #end for
 
+#if experiment==9:
+#   for i in range(0,NV):
+#       if (x[i]+0.75)**2+(y[i]+0.75)**2<0.01:
+#          T[i]=10.
+
 Tm1[:]=T[:]
 Tm2[:]=T[:]
 Tm3[:]=T[:]
@@ -530,6 +568,12 @@ for istep in range(0,nstep):
     print("istep= ", istep,'/',nstep-1)
     print("-----------------------------")
 
+    #################################################################
+    # all elements are rectangles of size hx,hy
+    jcob=hx*hy/4
+    jcbi=np.zeros((2,2),dtype=np.float64)
+    jcbi[0,0]=2/hx
+    jcbi[1,1]=2/hy
 
     #################################################################
     # build temperature matrix
@@ -575,26 +619,26 @@ for istep in range(0,nstep):
                 N_mat[0:m,0]=NNT(rq,sq,order)
 
                 # calculate jacobian matrix
-                jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                for k in range(0,m):
-                    jcb[0,0] += dNNNTdr[k]*x[icon[k,iel]]
-                    jcb[0,1] += dNNNTdr[k]*y[icon[k,iel]]
-                    jcb[1,0] += dNNNTds[k]*x[icon[k,iel]]
-                    jcb[1,1] += dNNNTds[k]*y[icon[k,iel]]
+                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                #for k in range(0,m):
+                #    jcb[0,0]+=dNNNTdr[k]*x[icon[k,iel]]
+                #    jcb[0,1]+=dNNNTdr[k]*y[icon[k,iel]]
+                #    jcb[1,0]+=dNNNTds[k]*x[icon[k,iel]]
+                #    jcb[1,1]+=dNNNTds[k]*y[icon[k,iel]]
                 #end for
-
-                # calculate the determinant of the jacobian
-                jcob=np.linalg.det(jcb)
-
-                # calculate inverse of the jacobian matrix
-                jcbi=np.linalg.inv(jcb)
+                #jcob=np.linalg.det(jcb)
+                #jcbi=np.linalg.inv(jcb)
 
                 # compute dNdx & dNdy
                 vel[0,0]=0.
                 vel[0,1]=0.
+                xq=0.
+                yq=0.
                 for k in range(0,m):
                     vel[0,0]+=N_mat[k,0]*u[icon[k,iel]]
                     vel[0,1]+=N_mat[k,0]*v[icon[k,iel]]
+                    xq+=N_mat[k,0]*x[icon[k,iel]]
+                    yq+=N_mat[k,0]*y[icon[k,iel]]
                     dNNNTdx[k]=jcbi[0,0]*dNNNTdr[k]+jcbi[0,1]*dNNNTds[k]
                     dNNNTdy[k]=jcbi[1,0]*dNNNTdr[k]+jcbi[1,1]*dNNNTds[k]
                     B_mat[0,k]=dNNNTdx[k]
@@ -654,8 +698,11 @@ for istep in range(0,nstep):
                    #end if
                 else:
                    a_el+=MM+alphaT*(Ka+Kd)*dt
-                   b_el+=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Tvectm1)
+                   b_el+=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Tvectm1) +\
+                         N_mat[:,0]*weightq*jcob*rhs_f(xq,yq,experiment)*dt
                 #end if
+
+                #print(xq,yq,rhs_f(xq,yq,experiment))
 
                 counterq+=1
             #end for jq
@@ -734,13 +781,13 @@ for istep in range(0,nstep):
                 NNNT[0:m]=NNT(rq,sq,order)
                 dNNNTdr[0:m]=dNNTdr(rq,sq,order)
                 dNNNTds[0:m]=dNNTds(rq,sq,order)
-                jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                for k in range(0,m):
-                    jcb[0,0]+=dNNNTdr[k]*x[icon[k,iel]]
-                    jcb[0,1]+=dNNNTdr[k]*y[icon[k,iel]]
-                    jcb[1,0]+=dNNNTds[k]*x[icon[k,iel]]
-                    jcb[1,1]+=dNNNTds[k]*y[icon[k,iel]]
-                jcob=np.linalg.det(jcb)
+                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                #for k in range(0,m):
+                #    jcb[0,0]+=dNNNTdr[k]*x[icon[k,iel]]
+                #    jcb[0,1]+=dNNNTdr[k]*y[icon[k,iel]]
+                #    jcb[1,0]+=dNNNTds[k]*x[icon[k,iel]]
+                #    jcb[1,1]+=dNNNTds[k]*y[icon[k,iel]]
+                #jcob=np.linalg.det(jcb)
                 Tq=0.
                 for k in range(0,m):
                     Tq+=NNNT[k]*T[icon[k,iel]]
@@ -833,18 +880,18 @@ for istep in range(0,nstep):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
-       filename = 'solution_{:04d}.pdf'.format(istep) 
-       fig = plt.figure ()
-       ax = fig.gca(projection='3d')
-       ax.plot_surface(x.reshape ((nny,nnx)),y.reshape((nny,nnx)),T.reshape((nny,nnx)),color = 'darkseagreen')
-       ax.set_xlabel ( 'X [ m ] ')
-       ax.set_ylabel ( 'Y [ m ] ')
-       ax.set_zlabel ( ' Temperature  [ C ] ')
-       plt.title('Timestep  %.2d' %(istep),loc='right')
-       plt.grid ()
-       plt.savefig(filename)
+       #filename = 'solution_{:04d}.pdf'.format(istep) 
+       #fig = plt.figure ()
+       #ax = fig.gca(projection='3d')
+       #ax.plot_surface(x.reshape ((nny,nnx)),y.reshape((nny,nnx)),T.reshape((nny,nnx)),color = 'darkseagreen')
+       #ax.set_xlabel ( 'X [ m ] ')
+       #ax.set_ylabel ( 'Y [ m ] ')
+       #ax.set_zlabel ( ' Temperature  [ C ] ')
+       #plt.title('Timestep  %.2d' %(istep),loc='right')
+       #plt.grid ()
+       #plt.savefig(filename)
        #plt.show ()
-       plt.close()
+       #plt.close()
 
        print("export to files: %.3f s" % (timing.time() - start))
 
