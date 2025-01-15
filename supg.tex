@@ -1,217 +1,42 @@
 \begin{flushright} {\tiny {\color{gray} \tt supg.tex}} \end{flushright}
 %------------------------------------------------------------------------------
 
-As abondantly documented in the literature advection needs to be stabilised
+As abundantly documented in the literature advection needs to be stabilised
 as it otherwise showcases non-negligible under- and overshoots.
-A standard approach is the Streamline Upwind Petrov Galerkin (SUPG) method.
+A standard approach is the Streamline Upwind Petrov Galerkin (SUPG) 
+method\footnote{Note that \textcite{mayu91} (1991) speak of ``streamwise-upwinding Petrov-Galerkin'' method}.
 
 A nice overview of upwind techniques and how SUPG came to be is to be found in Chapter 
-2 of Donea \& Huerta \cite{dohu03} or in Brooks and Hughes (1982) \cite{brhu82}.
-Hughes \etal (1986) \cite{humm86} present a review of the SUPG method 
+2 of \textcite{dohu03} or in \textcite{brhu82}.
+\textcite{humm86} (1986) present a review of the SUPG method 
 and discuss a additional discontinuity-capturing term. 
 So do \textcite{tepa86} (1986).
-Note that the idea of upwind goes back to the seventies \textcite{hehz77} (1977)
+Note that the idea of upwind goes back to the seventies, see for example 
+\textcite{hehz77} (1977).
 
-{\color{red}TODO?} It is compared to other methods in the context of mantle convection in 
-Malevsky \& Yuen (1991) \cite{mayu91}. 
+It is compared to other methods in the context of mantle convection in 
+Malevsky \& Yuen (1991) \cite{mayu91} (rotating code, convection in a box). 
+Note that SUPG is not restricted to advection(-diffusion) equations: it can also
+be applied to the Navier-Stokes equations\footnote{\url{https://en.wikipedia.org/wiki/Streamline_upwind_Petrov-Galerkin_pressure-stabilizing_Petrov-Galerkin_formulation_for_incompressible_Navier-Stokes_equations}}
 
-%-----------------------------------------------------
-\subsubsection{Linear elements - artificial diffusion}
+As explained in the step-9 tutorial of deal.II (\url{https://www.dealii.org/current/doxygen/deal.II/step_9.html}), the term `Petrov-Galerkin' can be explained as follows: 
+\begin{displayquote}
+{\color{darkgray}
+A ``Galerkin method'' is one where one obtains the weak formulation by multiplying the equation by a test function $v$ (and then integrating over $\Omega$) where the functions $v$ are from the same space as the solution $u$ (though possibly with different boundary values). But this is not strictly necessary: One could also imagine choosing the test functions from a different set of functions, as long as that different set has ``as many dimensions'' as the original set of functions so that we end up with as many independent equations as there are degrees of freedom (where all of this needs to be appropriately defined in the infinite-dimensional case). Methods that make use of this possibility (i.e., choose the set of test functions differently than the set of solutions) are called ``Petrov-Galerkin'' methods. }
+\end{displayquote}
 
-We have seen in Section~\ref{ss:femvsfdm} that the discretised advection-diffusion equation 
-in 1D can be written in a manner akin to the Finite Difference method:
-\[
-\frac{u}{2h}
-\left[
-\left(1-\frac{1}{\Penb}\right) T_{i+1} + \frac{2}{\Penb} T_i - \left(1+\frac{1}{\Penb}\right)T_{i-1} 
-\right] = f
-\]
-and we show in Stone~65 that the solution is far from accurate for $\Penb>1$. Let us ask ourselves the 
-following question: could we come up with a modified version of the equation above which 
-guarantees an exact solution on a uniform mesh of linear elements?
-
-Essentially, we are looking for $A$, $B$ and $C$ such that 
-{\color{red} not sure I understand this sentence} 
-\[
-A T_{i+1} + BT_i + C T_{i-1} = f
-\]
-One can show (see Donea \& Huerta \cite{dohu03}) that a successful 
-candidate formulation 
-is\footnote{$\coth(x)=(\exp(x)-\exp(-x))/(\exp(x)+\exp(-x))$}:
-\[
-\frac{u}{2h}
-\left[
-\left(1-\coth(\Penb) \right) T_{i+1} + 2 \coth(\Penb) T_i - \left(1+\coth(\Penb)\right) T_{i-1} 
-\right] = f
-\]
-\todo[inline]{I need to better understand this!}
-which can be arranged into the following form:
-\begin{equation}
-u
-\frac{T_{i+1}-T_{i-1}}{2h_x}
--
-(\kappa+ \tilde{\kappa})
-\frac{T_{i-1}-2T_i+T_{i+1}}{h_x^2}
-= \frac{f}{\rho_0 C_p}
-\end{equation}
-where 
-$\tilde{\kappa}$ is known as artificial (numerical) diffusion (dissipation) given by
-\[
-\tilde{\kappa}=\beta \frac{u h}{2} = \beta \kappa \Penb
-\qquad
-\text{with}
-\qquad
-\beta = \coth (\Penb) - \frac{1}{\Penb}
-\]
-where $\Penb$ is the (dimensionless) Peclet number defined as: \index{general}{Peclet Number}
-\[
-\boxed{
-\Penb= \frac{u h }{2 \kappa}
-}
-\]
-If $\Penb>1$ we say the problem is advection-dominated, 
-else if $\Penb<1$ we say the problem is diffusion-dominated.
-
-One can also define $\tilde{k}=\rho_0 C_p \tilde{\kappa}$ so that 
-the discretised 1D advection-diffusion becomes:
-\begin{equation}
-\rho_0 C_p u \frac{T_{i+1}-T_{i-1}}{2h_x}
-- (k+ \tilde{k}) \frac{T_{i-1}-2T_i+T_{i+1}}{h_x^2}
-= f 
-\end{equation}
-or, in its continuous formulation:
-\[
-\rho_0 C_p u \frac{dT}{dx} - (k+ \tilde{k}) \frac{d^2T}{dx^2} = f
-\]
-\[
-\rho_0 C_p u \frac{dT}{dx}
-- \tilde{k} \frac{d^2T}{dx^2} 
-- k \frac{d^2T}{dx^2} = f
-\]
-\[
-\rho_0 C_p u \frac{dT}{dx}
-- \rho_0 C_p \tilde{\kappa} \frac{d^2T}{dx^2} 
-- k \frac{d^2T}{dx^2} = f
-\]
-\[
-\rho_0 C_p u \frac{dT}{dx}
-- \rho_0 C_p \beta \frac{u h}{2} \frac{d^2T}{dx^2} 
-- k \frac{d^2T}{dx^2} = f
-\]
-
-
-
-
-
-The $\beta$ factor is shown in the following figure as a function of the Peclet number:
-\begin{center}
-\includegraphics[width=8cm]{images/supg/beta}\\
-{\captionfont Note that the value of $\beta$ is positive only for $\Penb>1$.}
-\end{center}
-
-
-%-----------------------------------------------------
-\subsubsection{Linear elements - bubble functions \& Petrov-Galerkin formulation}
-
-Let us assume that $u>0$, i.e. advection goes from left to right. 
-Node $i-1$ is said to be on the upstream side of node $i$, and node $i+1$
-is on the downstream side of node . In Petrov FEM, instead of selecting the weight functions to be the
-same as the standard basis functions, we distort them as shown below.
-
-\index{general}{Bubble Function}
-The distortion is based on so-called bubble functions since they have zero
-values on the nodes and they are nonzero on elements' interiors.
-For instance one can take
-\begin{eqnarray}
-{\bN}^\star_1(r)&=&\frac{1}{2}(1-r)-\frac{3}{4}\beta(1-r^2) \\
-{\bN}^\star_2(r)&=&\frac{1}{2}(1+r)+\frac{3}{4}\beta(1-r^2) 
-\end{eqnarray}
-as test/weight functions
-where $\beta$ is a parameter that controls the amount of upwinding. 
-
-
-\begin{center}
-\includegraphics[width=5cm]{images/supg/bubble1}
-\includegraphics[width=5cm]{images/supg/bubble2}\\
-{\captionfont Left: standard $Q_1$ test functions; Right: modified ($Q_1$+bubble) functions
-for $\beta=0.25$}
-\end{center}
-
-
-\begin{eqnarray}
-{\bm K}_a^e 
-&=& \int_{x_k}^{x_{k+1}}   ({\vec \bN}^\star)^T \rho C_p \vec\upnu \cdot {\bm B} \; dx  \nn\\
-&=& 
-\rho C_p u
-\left(
-\begin{array}{cc}
--1/2 & 1/2 \\ \\
--1/2 & 1/2 
-\end{array}
-\right)
-+
-\frac{h}{2}
-\int_{-1}^{+1}
-\rho C_p u
-\left(\begin{array}{c}
--\frac{3}{4}\beta(1-r^2) \\ +\frac{3}{4}\beta(1-r^2) 
-\end{array}\right)
-\left( \frac{d\bN_1}{dr} \; \frac{d\bN_2}{dr} \right)  dr \\
-&=&
-\frac{\rho C_p u}{2}
-\left(
-\begin{array}{cc}
--1 & 1 \\ \\
--1 & 1 
-\end{array}
-\right)
-+
-\frac{u}{2}
-\left(
-\begin{array}{cc}
-\beta & -\beta \\ \\
--\beta & \beta
-\end{array}
-\right)
-\end{eqnarray}
-VERIFY
-
-We see that this additional matrix is akin to ${\bm K}_d^e$
-so that 
-\[
-{\bm K}^e 
-= {\bm K}_a^e + {\bm K}_d^e 
-= \frac{\rho C_p u}{2}
-\left(
-\begin{array}{cc}
--1 & 1 \\ \\
--1 & 1 
-\end{array}
-\right)
-+
-(\frac{k}{h} + \frac{u \beta \rho C_p}{2})
-\left(
-\begin{array}{cc}
-1 & -1 \\ \\
--1 & 1 
-\end{array}
-\right)
-\]
-VERIFY!!
-
-\newpage
 %------------------------------
-\subsubsection{The SUPG method}
+\subsection{The SUPG method}
 
 We start from the 'bare-bones' heat transport equation (source terms are omitted): 
 \begin{equation}
 \rho C_p \left( \frac{\partial T}{\partial t} + {\vec \upnu}\cdot {\vec\nabla T} \right)
-= {\vec \nabla} \cdot k \vec\nabla T 
+= {\vec \nabla} \cdot (k \vec\nabla T )
 \end{equation}
 which we once again write 
 \begin{equation}
 \rho C_p \left(\dot{T} + {\vec \upnu}\cdot {\vec\nabla T} \right)
-= {\vec \nabla} \cdot k \vec\nabla T 
+= {\vec \nabla} \cdot (k \vec\nabla T )
 \end{equation}
 
 In what follows we assume that the velocity vield $\vec \upnu$ is known so that temperature is the
@@ -222,7 +47,7 @@ with the transpose operator}:
 \begin{equation}
 T^h({\vec r}) = \sum_{i=1}^{m_T} \bN^\uptheta_i ({\vec r})\;  T_i = \vec \bN^\uptheta \cdot \vec T
 \end{equation}
-where $\vec T$ and $\vec \bN^\uptheta$ are vectors of length $m_T$. Also:
+where $\vec T$ and $\vec \bN^\uptheta$ are vectors of length $m_T$. Also, in 2d:
 \[
 \vec \nabla \vec \bN^\uptheta = 
 \left(
@@ -240,40 +65,43 @@ The weak form is then
 \begin{equation}
 \int_{\Omega_e} \bN^\uptheta_i \left[ 
 \rho C_p \left( \dot{T} + {\vec \upnu}\cdot {\vec\nabla T} \right) \right] d\Omega
-= \int_{\Omega_e}  \bN^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T  d\Omega
+= \int_{\Omega_e}  \bN^\uptheta_i {\vec \nabla} \cdot (k \vec\nabla T ) d\Omega
 \end{equation}
-or,
+or, rather we look for the discrete temperature $T^h$ such that
 \[
 \underbrace{\int_{\Omega_e} \bN^\uptheta_i  \rho C_p \dot{T}^h d\Omega}_{I}
 + \underbrace{\int_{\Omega_e} \bN^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T^h}   d\Omega}_{II}
-= \underbrace{\int_{\Omega_e}  \bN^\uptheta_i {\vec \nabla} \cdot k \vec\nabla T^h d\Omega}_{III}
+= \underbrace{\int_{\Omega_e}  \bN^\uptheta_i {\vec \nabla} \cdot (k \vec\nabla T^h )d\Omega}_{III}
 \quad\quad
 i=1,m_T
 \]
+We have already worked out in Section~\ref{ss:hte_fem} the terms $I$, $II$ and $III$.
 The streamline upwind Petrov-Galerkin (SUPG) 
 method adds the following stabilisation term to the left hand side of this equation (see Section 2.4 
-in Donea \& Huerta \cite{dohu03}):
-\[
+in \textcite{dohu03}):
+\begin{equation}
 \int_{\Omega_e} (\vec\upnu\cdot\vec\nabla \bN_i^\theta ) \tau {\cal R}(\vec\upnu) \; d\Omega
-\]
+\label{eq:supg:res1}
+\end{equation}
 where ${\cal R}$ is the residual defined as
-\[
+\begin{equation}
 {\cal R}(T^h) = 
 \rho C_p (\dot{T}^h +  {\vec \upnu}\cdot {\vec\nabla T^h}) - {\vec \nabla} \cdot k \vec\nabla T^h 
-\]
-and $\tau$ is a stabilisation parameter (see Section~\ref{ss:tausupg}).
+\label{eq:supg:res2}
+\end{equation}
+and $\tau$ is a stabilization parameter (see Section~\ref{ss:tausupg}).
 
-We have already worked out in Section~\ref{ss:hte_fem} the final forms of $I$, $II$ and 
-$III$, so we here focus on the additional SUPG terms. 
+Since $I$, $II$ and $III$ have been worked out already, 
+we here after only focus on the additional SUPG terms. 
   
-We then have three terms to deal with:
+Given Eq.~\eqref{eq:supg:res1} and \eqref{eq:supg:res2} we then have three terms to deal with:
 \begin{eqnarray}
 IV &=&\int_{\Omega_e} \tau(\vec\upnu\cdot\nabla \bN_i^\theta) (\rho C_p\dot{T}^h)  d\Omega \\
 V  &=&\int_{\Omega_e} \tau(\vec\upnu\cdot\nabla \bN_i^\theta)(\rho C_p{\vec \upnu}\cdot{\vec\nabla T^h}) d\Omega \\
 VI &=&\int_{\Omega_e} \tau(\vec\upnu\cdot\nabla \bN_i^\theta)(-{\vec \nabla} \cdot k \vec\nabla T^h ) d\Omega 
 \end{eqnarray}
-
-We can compute the quantity $I+IV$:
+and we must solve $I + II + IV + V + VI = III$. 
+We can compute the quantities $I+IV$, $II+V$ and $III-VI$:
 \begin{eqnarray}
 I+IV 
 &=&
@@ -282,25 +110,23 @@ I+IV
 \int_{\Omega_e}(\vec\upnu\cdot\vec\nabla \bN_i^\theta)  \tau ( \rho C_p\dot{T}^h)  d\Omega \nn\\
 &=& 
 \int_{\Omega_e} ( \bN^\uptheta_i + \tau \vec\upnu\cdot\vec\nabla \bN_i^\theta )  ( \rho C_p\dot{T}^h)  d\Omega 
-\end{eqnarray}
-and also $II+V$:
-\begin{eqnarray}
+\\
 II+V 
 &=&
 \int_{\Omega_e} \bN^\uptheta_i  \rho C_p  {\vec \upnu}\cdot {\vec\nabla T^h}   d\Omega
 +
-\int_{\Omega_e}(\vec\upnu\cdot\vec\nabla \bN_i^\theta) \tau (\rho C_p {\vec \upnu}\cdot{\vec\nabla T^h}) d\Omega \\
+\int_{\Omega_e}(\vec\upnu\cdot\vec\nabla \bN_i^\theta) \tau (\rho C_p {\vec \upnu}\cdot{\vec\nabla T^h}) d\Omega \nn\\
 &=& 
-\int_{\Omega_e} (\bN^\uptheta_i  + \tau \vec\upnu\cdot\vec\nabla \bN_i^\theta) (\rho C_p {\vec \upnu}\cdot{\vec\nabla T^h}) d\Omega 
+\int_{\Omega_e} (\bN^\uptheta_i  + \tau \vec\upnu\cdot\vec\nabla \bN_i^\theta) (\rho C_p {\vec \upnu}\cdot{\vec\nabla T^h}) d\Omega \\
+III- VI &=& \int_{\Omega_e}  \bN^\uptheta_i {\vec \nabla} \cdot (k \vec\nabla T^h )d\Omega
+- \int_{\Omega_e} \tau(\vec\upnu\cdot\nabla \bN_i^\theta)(-{\vec \nabla} \cdot k \vec\nabla T^h ) d\Omega \nn\\
+&=& \int_{\Omega_e}  (\bN^\uptheta_i    + \tau \vec\upnu\cdot\vec\nabla \bN_i^\theta) {\vec \nabla}    \cdot (k \vec\nabla T^h )d\Omega
 \end{eqnarray}
 
-\begin{remark} Because of the integration by parts which 
-will be applied to  $III$, the terms $III$ and $VI$ cannot be summed together.
-\end{remark}
 
 
 \begin{remark}
-If the equation is a pure advection equation, then $k=0$ so $III=VI=0$. 
+If the equation is a pure advection equation, then the heat conductivity $k=0$ so $III=VI=0$. 
 \end{remark}
 
 
@@ -312,44 +138,55 @@ which we can interpret as a 'modified' basis function:
 }
 \]
 This yields the following modified elemental matrices
-\[
-{\bm M}^\uptheta \quad \rightarrow \quad \underline{\bm M}^\uptheta
-= \int \rho C_p \vec{\underline{\bN}}^\uptheta \vec{\bN}^\uptheta \; d\Omega
-\]
+\begin{eqnarray}
+{\M}^\uptheta \quad &\rightarrow& \quad \underline{\M}^\uptheta
+= \int_{\Omega_e} \rho C_p \vec{\underline{\bN}}^\uptheta \vec{\bN}^\uptheta \; d\Omega
+\\
+{\K}_a \quad &\rightarrow & \quad \underline{\K}_a 
+= \int_{\Omega_e} \rho C_p \vec{\underline{\bN}}^\uptheta ({\vec \upnu}\cdot \vec\nabla \vec{\bN}^\uptheta) \; d\Omega
+\\
+{\K}_d \quad &\rightarrow&  \quad \underline{\K}_d 
+=\int_{\Omega_e} k \vec\nabla \vec{\underline{\bN}}^\uptheta \cdot \vec\nabla \vec{\bN}^\uptheta d\Omega
+\end{eqnarray}
 
-\[
-{\bm K}_a \quad \rightarrow  \quad \underline{\bm K}_a 
-= \int \rho C_p \vec{\underline{\bN}}^\uptheta ({\vec \upnu}\cdot \vec\nabla \vec{\bN}^\uptheta) \; d\Omega
-\]
 
-\begin{remark} 
-The modified mass matrix is not symmetrical anymore.
-\end{remark} 
+These notations may look attractive but the modified diffusion matrix contains the gradient 
+of the modified basis functions and working this out in practice proves to be cumbersome and 
+not practical for higher order basis functions. Also the surface term arising from the integration by parts 
+containing these modified basis functions might lose its physical significance. 
+As such, we will therefore keep $\K_d$ (coming from the integration by parts of $III$, and 
+its associated surface flux term not shown above) and $VI$ separated. 
 
-Under the assumption that $k$ is constant within the element, we have 
+Under the assumption that $k$ is constant within the element $\Omega_e$, we have 
 \[
 VI = \int_{\Omega_e} \tau(\vec\upnu\cdot\nabla \bN_i^\theta)(- k \Delta T^h ) d\Omega 
 \]
 with 
 \[
 \Delta T^h 
-= \Delta \sum_{i=1}^{m_T} \bN^\uptheta_i ({\vec r}) T_i 
+= \Delta \left( \sum_{i=1}^{m_T} \bN^\uptheta_i ({\vec r}) T_i \right)
 = \sum_{i=1}^{m_T} \Delta \bN^\uptheta_i ({\vec r}) T_i 
 = \Delta \vec \bN^\uptheta \cdot \vec T
 \]
-
-\begin{remark}
 If the basis functions are first-order ones, then $VI=0$ since $\Delta \vec \bN^\uptheta = \vec 0$.  
-\end{remark}
 
-The SUPG-stabilised pure advection equation is extensively tested in the 
-\stone~43.
+
+
+\begin{remark} 
+The modified mass matrix is not symmetric anymore. 
+This is not necessarily problematic since the 
+advection matrix is also not symmetric so that the solver of choice for the equation already can 
+deal with such matrices.
+\end{remark} 
+
+
+The SUPG-stabilised pure advection equation is extensively tested in \stone~43.
 
 
 %---------------------------------------------------------------------------
-\subsubsection{About the choice of the parameter $\tau$}\label{ss:tausupg}
+\subsection{About the choice of the parameter $\tau$}\label{ss:tausupg}
 
-\begin{itemize}
+\begin{enumerate}
 \item The approach used in step-63 and subsequently in \aspect{} is the 
 one in John \& Knobloch \cite{jokn06,knob08} which is also to be found in early 
 80's papers \cite{brhu82,hubr82}:
@@ -358,6 +195,7 @@ one in John \& Knobloch \cite{jokn06,knob08} which is also to be found in early
 \]
 where $\tau$ is computed on each cell, $h$ being its diameter in the direction of $\vec\upnu$, 
 and $p$ is the order of the approximation (i.e. the maximum degree of polynomials).
+The expression above is also found at p. 617 in \textcite{lomw12}.
 Note that Hughes \& Brooks \cite{hubr82} replace the costly 'coth' term by an asymptotic curve:
 
 \begin{center}
@@ -368,7 +206,7 @@ is the term $ \coth (\Penb) -1/\Penb$.}
 
 
 \item
-Codina (2000) (see Eq.39 of \cite{codi00}) defines $\tau$ as follows:
+Codina (2000) (see Eq.39 of \cite{codi00}, see also Eq.2.64 of \textcite{dohu03}) defines $\tau$ as follows:
 \[
 \tau_2= \left( \frac{2 |\vec\upnu|}{h} + \frac{4 \kappa}{h^2} + \sigma   \right)^{-1}
 \]
@@ -378,10 +216,14 @@ can be re-written:
 \tau_2= \frac{h}{2 |\vec\upnu|} \left( 1 + \frac{1}{\Penb} \right)^{-1}
 \]
 
-\item
-Shakib \etal (1991) (see Eq. 3.59 of \cite{shhj91}) propose another formula:
+
+
+\item In \textcite{dohu03} we find the expression proposed by Shakib and co-workers (see Eq. 3.59 of \cite{shhj91}):
 \[
-\tau_3= \frac{h}{2 |\vec\upnu|} \left( 1 + \frac{9}{\Penb^2} \right)^{-1}
+\tau_3=\left( \left(\frac{2|\vec\upnu|}{h} \right)^2 
++9 \left(\frac{4\kappa}{h^2} \right)^2 + \sigma^2  \right)^{-1/2}
+= \frac{h}{2|\vec\upnu|} \left(  1 + \frac{9}{\Penb^2} 
++ \left(\frac{h}{2|\vec\upnu|} \sigma  \right)^2 \right)^{-1/2}
 \]
 
 \item
@@ -389,11 +231,11 @@ Braun \cite{brau03} uses
 \[
 \tau_4 = \frac{h}{|\vec\upnu| \sqrt{15}} = \frac{h}{2|\vec\upnu|} \frac{2}{\sqrt{15}} 
 \]
-This formula is independent of $\Penb$ and is also in Bochev \etal (2004) \cite{bogs04}.
+This formula is independent of $\Penb$ and is also in \textcite{bogs04} (2004).
 It is also used in Hughes \& Brooks (1982) \cite{hubr82} for pure advection problems in 1D
 and this value is attributed to Raymond \& Garder (1976)  \cite{raga76}.
 
-\item Following \cite{teos00} (see also Appendix A of Thieulot (2011) \cite{thie11}):
+\item Following \textcite{teos00} (see also Appendix A of Thieulot (2011) \cite{thie11}):
 \[
 \tau_5 = \left( \frac{2 |\vec{\upnu}|}{h} + \frac{1}{\theta \delta t} + \frac{\kappa}{h^2} \right)^{-1}  
 \]
@@ -410,25 +252,27 @@ highest velocity.
 Also, this has been used in the context of SUPG methods for the Navier-Stokes equations, 
 not advection-diffusion equations! This approach is then not considered further.
 
-\item Franca \etal (2004) \cite{frhm04} use the following formula which originates from 
-Franca \etal (1992) \cite{frfh92}: if $0\le \Penb < 1$ then
+\item \textcite{frhm04} (2004) use the following formula which originates from 
+\textcite{frfh92} (1992): if $0\le \Penb < 1$ then
 $\tau = \frac{h}{2 |\vec\upnu|} \Penb$ and if $\Penb \ge 1$ then $\tau = \frac{h}{2 |\vec\upnu|}$.
 Note however that their definition of the Peclet number includes a scalar parameter $m$ which is 
 the minimum between 1/3 and and 2$C_k$ where the calculation of this parameter is discussed in 
 Remarks 4 and 5 of \cite{frfh92}. The authors conclude that for linear quadrilaterals the value
 1/3 should be used while for biquadratic elements 1/12 should be preferred.
-The same approach is found in Brezzi \etal (1992) \cite{brbf92}. 
+The same approach is found in \textcite{brbf92} (1992). 
 
 \item Knobloch \cite{knob08} discusses other choices of $\tau$.
 
-\end{itemize}
+
+\end{enumerate}
 
 Quoting Donea \& Huerta: "It is obvious that $\tau$ must vanish when the mesh is refined (no stabilisation
 is necessary for a fine enough mesh)" and "Numerical experiments seem to indicate that for 
 finite elements of order $p$ the value of the stabilisation parameter should be approximately 
 $\tau/p$."
 
-Let us define $\gamma=\frac{\tau}{h/2|\vec\upnu|}$ (dimensionless quantity) and 
+Let us define the dimensionless coefficient 
+$\gamma_j=\frac{\tau_j}{h/2|\vec\upnu|}$ and 
 plot this quantity against the Peclet number:
 
 \begin{center}
@@ -445,15 +289,17 @@ then $\Penb\rightarrow \infty$ so
 \gamma_5 \rightarrow (1+C^{-1})^{-1} 
 \]
 
+Finally it is worth mentioning that \textcite{dohu03} argue that $\tau$ should 
+ideally take different values at the corners and at the mid-side nodes for quadratic elements (p.~61).
 
 %------------------------------
-\subsubsection{Some remarks about Appendix A of Thieulot (2011) \cite{thie11}}
+\subsection{Some remarks about Appendix A of Thieulot (2011) \cite{thie11}}
 \label{ss:appAthie11}
 
 In the \douar paper \cite{brtf08} or the \fantom paper \cite{thie11},
 The advection matrix is simply modified and computed as follows:
 \[
-({\bm K}_a^e)_{SUPG}
+({\K}_a^e)_{SUPG}
 =
 \int_{x_k}^{x_{k+1}}   ({\vec \bN}^\star)^T \rho C_p \vec\upnu \cdot {\bm B} dx  
 \quad\quad
@@ -463,7 +309,7 @@ The advection matrix is simply modified and computed as follows:
 \]
 Note that we can also write 
 \[
-({\bm K}_a^e)_{SUPG}
+({\K}_a^e)_{SUPG}
 =
 \int_{x_k}^{x_{k+1}}   {\vec \bN}^T \rho C_p \vec\upnu \cdot {\bm B} dx  
 +
@@ -474,8 +320,8 @@ a diffusion term in the direction of the flow.
 This can be seen by looking at the advection matrix a regular grid of 1D 
 elements of size $h$:
 \[
-({\bm K}_a^e)_{SUPG}=
-{\bm K}_a^e
+({\K}_a^e)_{SUPG}=
+{\K}_a^e
 +
 \rho C_p
 \frac{\tau u^2}{h}
@@ -528,11 +374,11 @@ amount of numerical diffusion. Braun \cite{brau03} argues for a constant
 $\gamma=1/\sqrt{15}=0.258$ (citing Hughes \& Brooks (1982) \cite{hubr82}), 
 which effect is also shown in the figure above. This 
 value is arguably too large and introduces an undesirable diffusion. Note that this same value is 
-to be found in Bochev \etal (2004) \cite{bogs04}. The authors then state that 
+to be found in \textcite{bogs04} (2004). The authors then state that 
 "for 1D pure advection problems, this choice maximizes the phase accuracy in the semidiscrete
 equation" and cite Raymond \& Gardner (1976) \cite{raga76} as source. 
 
-Another classic example of advection testing is a 2D problem where (for example) a cylinder, a Gaussian 
+Another classic example of advection testing is a 2d problem where (for example) a cylinder, a Gaussian 
 and a cone are prescribed and advected with a velocity field (see for instance \cite{dohu03}). 
 
 \begin{center}
@@ -552,6 +398,205 @@ Note that the \aspect{} implementation is based on the deal.II step
 \end{remark}
 
 
+%-----------------------------------------------------
+\subsection{A note about linear elements - artificial diffusion}
+
+We have seen in Section~\ref{ss:femvsfdm} that the discretised advection-diffusion equation 
+in 1D can be written in a manner akin to the Finite Difference method:
+\[
+\frac{u}{2h}
+\left[
+\left(1-\frac{1}{\Penb}\right) T_{i+1} + \frac{2}{\Penb} T_i - \left(1+\frac{1}{\Penb}\right)T_{i-1} 
+\right] = f
+\]
+and we show in \stone~65 that the solution is far from accurate for $\Penb>1$ (i.e. systems where advection 
+dominates over diffusion). Let us ask ourselves the 
+following question: could we come up with a modified version of the equation above which 
+guarantees an exact solution on a uniform mesh of linear elements?
+
+Essentially, we are looking for $A$, $B$ and $C$ such that 
+{\color{red} not sure I understand this sentence} 
+\[
+A T_{i+1} + BT_i + C T_{i-1} = f
+\]
+One can show (see Donea \& Huerta \cite{dohu03}) that a successful 
+candidate formulation is\footnote{where we have used $\coth(x)=(\exp(x)-\exp(-x))/(\exp(x)+\exp(-x))$}:
+\[
+\frac{u}{2h}
+\left[
+\left(1-\coth(\Penb) \right) T_{i+1} + 2 \coth(\Penb) T_i - \left(1+\coth(\Penb)\right) T_{i-1} 
+\right] = f
+\]
+\todo[inline]{I need to better understand this!}
+which can be arranged into the following form:
+\begin{equation}
+u
+\frac{T_{i+1}-T_{i-1}}{2h_x}
+-
+(\kappa+ \tilde{\kappa})
+\frac{T_{i-1}-2T_i+T_{i+1}}{h_x^2}
+= \frac{f}{\rho_0 C_p}
+\end{equation}
+where 
+$\tilde{\kappa}$ is known as artificial (numerical) diffusion (dissipation) given by
+\[
+\tilde{\kappa}=\beta \frac{u h}{2} = \beta \kappa \Penb
+\qquad
+\text{with}
+\qquad
+\beta = \coth (\Penb) - \frac{1}{\Penb}
+\]
+where $\Penb$ is the (dimensionless) Peclet number defined as: \index{general}{Peclet Number}
+\[
+\boxed{
+\Penb= \frac{u h }{2 \kappa}
+}
+\]
+If $\Penb>1$ we say the problem is advection-dominated, 
+else if $\Penb<1$ we say the problem is diffusion-dominated.
+
+The $\beta(\Penb)$ factor is shown in the following figure:
+\begin{center}
+\includegraphics[width=10cm]{images/supg/beta}\\
+{\captionfont Note that the value of $\beta$ is positive only for $\Penb>1$.}
+\end{center}
 
 
+One can also define $\tilde{k}=\rho_0 C_p \tilde{\kappa}$ so that 
+the discretised 1D advection-diffusion becomes:
+\begin{equation}
+\rho_0 C_p u \frac{T_{i+1}-T_{i-1}}{2h_x}
+- (k+ \tilde{k}) \frac{T_{i-1}-2T_i+T_{i+1}}{h_x^2}
+= f 
+\end{equation}
+or, in its continuous formulation:
+\begin{eqnarray}
+\rho_0 C_p u \frac{dT}{dx} - (k+ \tilde{k}) \frac{d^2T}{dx^2} &=& f \nn\\
+\rho_0 C_p u \frac{dT}{dx}
+- \tilde{k} \frac{d^2T}{dx^2} 
+- k \frac{d^2T}{dx^2} &=& f \nn\\
+\rho_0 C_p u \frac{dT}{dx}
+- \rho_0 C_p \beta \frac{u h}{2} \frac{d^2T}{dx^2} 
+- k \frac{d^2T}{dx^2} &=& f
+\end{eqnarray}
+
+
+
+
+
+%-----------------------------------------------------
+\subsection{A note about linear elements - bubble functions \& Petrov-Galerkin formulation}
+
+Let us assume that $u>0$, i.e. advection goes from left to right. 
+Node $i-1$ is said to be on the upstream side of node $i$, and node $i+1$
+is on the downstream side of node . In Petrov FEM, instead of selecting the weight functions to be the
+same as the standard basis functions, we distort them as shown below.
+
+\index{general}{Bubble Function}
+The distortion is based on so-called bubble functions since they have zero
+values on the nodes and they are nonzero on elements' interiors.
+For instance one can take
+\begin{eqnarray}
+{\bN}^\star_1(r)&=&\frac{1}{2}(1-r)-\frac{3}{4}\beta(1-r^2) \\
+{\bN}^\star_2(r)&=&\frac{1}{2}(1+r)+\frac{3}{4}\beta(1-r^2) 
+\end{eqnarray}
+as test/weight functions
+where $\beta$ is a parameter that controls the amount of upwinding. 
+
+The elemental advection matrix is then given by:
+\begin{center}
+\includegraphics[width=6cm]{images/supg/bubble1}
+\includegraphics[width=6cm]{images/supg/bubble2}\\
+{\captionfont Left: standard $Q_1$ test functions; Right: modified ($Q_1$+bubble) functions
+for $\beta=0.25$}
+\end{center}
+
+\[
+r = 2(x-x_k)/(x_{k+1}-x_{k}) -1 =2(x-x_k)/h  -1
+\]
+then 
+\[
+dr = \frac{2}{h} dx
+\]
+or
+\[
+dx=\frac{h}{2} dr
+\]
+
+
+\begin{eqnarray}
+{\K}_a^e 
+&=& \int_{x_k}^{x_{k+1}}   ({\vec \bN}^\star)^T \rho C_p \vec\upnu \cdot {\bm B} \; dx  \nn\\
+&=& \frac{h}{2} \int_{-1}^{+1}   ({\vec \bN}^\star)^T \rho C_p \vec\upnu \cdot {\bm B} \; dr  \nn\\
+&=& \frac{h}{2} \int_{-1}^{+1} 
+\left(\begin{array}{c}
+{\bN}_1^\star \\ {\bN}_2^\star 
+\end{array}\right)
+\rho C_p u \left( \frac{d\bN_1}{dr} \; \frac{d\bN_2}{dr} \right)  dr \nn\\
+&=& 
+\frac{h}{2} \rho C_p u \int_{-1}^{+1} 
+\left(\begin{array}{c}
+{\bN}_1 \\ {\bN}_2
+\end{array}\right)
+\left( \frac{d\bN_1}{dr} \; \frac{d\bN_2}{dr} \right)  dr
++
+\frac{h}{2} \rho C_p u \int_{-1}^{+1} 
+\left(\begin{array}{c}
+-\frac{3}{4}\beta(1-r^2) \\ +\frac{3}{4}\beta(1-r^2) 
+\end{array}\right)
+\left( \frac{d\bN_1}{dr} \; \frac{d\bN_2}{dr} \right)  dr 
+\nn\\
+&=& 
+\frac{h}{2} \rho C_p u \int_{-1}^{+1} 
+\left(\begin{array}{c}
+\frac12 (1-r) \\ \frac12(1+r)
+\end{array}\right)
+\left( -\frac12 \; \frac12 \right)  dr
++
+\frac{h}{2} \rho C_p u \int_{-1}^{+1} 
+\left(\begin{array}{c}
+-\frac{3}{4}\beta(1-r^2) \\ +\frac{3}{4}\beta(1-r^2) 
+\end{array}\right)
+\left( -\frac12 \; \frac12 \right)  dr  
+\nn\\
+&=& \rho C_p u \frac{h}{8}\int_{-1}^{+1} 
+\left(\begin{array}{cc}
+-(1-r) & (1-r)  \\
+-(1+r) & (1+r)
+\end{array}\right)  dr
++
+\frac{3h}{16}\beta
+\rho C_p u \int_{-1}^{+1} 
+\left(\begin{array}{cc}
+(1-r^2) & -(1-r^2) \\
+-(1-r^2) & (1-r^2) 
+\end{array}\right)  dr
+\nn\\
+&=& \rho C_p u \frac{h}{8}
+\left(\begin{array}{cc}
+-2 & 2 \\
+-2 & 2
+\end{array}\right)  
++
+\frac{3h}{16}\beta
+\rho C_p u 
+\left(\begin{array}{cc}
+4/3 & -4/3 \\
+-4/3 & 4/3 
+\end{array}\right)   \nn\\
+&=& \rho C_p u \frac{h}{4}
+\left(\begin{array}{cc}
+-1 & 1 \\
+-1 & 1
+\end{array}\right) 
++
+\frac{h}{4}\beta
+\rho C_p u 
+\left(\begin{array}{cc}
+1 & -1 \\
+-1 & 1 
+\end{array}\right)  
+\end{eqnarray}
+We see that this additional matrix is akin to ${\K}_d^e$ (albeit with a 
+different diffusion coefficient).
 
