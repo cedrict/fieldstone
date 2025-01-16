@@ -3,27 +3,111 @@ set term pdf enhanced font "times,12pt"
 set grid
 set key outside
 set xlabel 'time'
-set ylabel 'field (m/M)'
+set ylabel 'T (m/M)'
 
+##################################################
+set title 'no SUPG'
 set output 'stats_T.pdf'
-plot[][]\
-'32/stats_T.ascii' u 1:2 w l lt 1 t '32x32',\
-'32/stats_T.ascii' u 1:3 w l lt 1 notitle,\
-'48/stats_T.ascii' u 1:2 w l lt 2 t '48x48',\
-'48/stats_T.ascii' u 1:3 w l lt 2 notitle,\
-'64/stats_T.ascii' u 1:2 w l lt 3 t '64x64',\
-'64/stats_T.ascii' u 1:3 w l lt 3 notitle,\
-'80/stats_T.ascii' u 1:2 w l lt 4 t '80x80',\
-'80/stats_T.ascii' u 1:3 w l lt 4 notitle
+plot[][-1:1.25]\
+'32_Q1/stats_T.ascii' u 1:2 w l lt 1 dt 2 t '32^2','32_Q1/stats_T.ascii' u 1:3 w l lt 1 dt 2 notitle,\
+'48_Q1/stats_T.ascii' u 1:2 w l lt 2 dt 2 t '48^2','48_Q1/stats_T.ascii' u 1:3 w l lt 2 dt 2 notitle,\
+'64_Q1/stats_T.ascii' u 1:2 w l lt 3 dt 2 t '64^2','64_Q1/stats_T.ascii' u 1:3 w l lt 3 dt 2 notitle,\
+'80_Q1/stats_T.ascii' u 1:2 w l lt 4 dt 2 t '80^2','80_Q1/stats_T.ascii' u 1:3 w l lt 4 dt 2 notitle,\
+'96_Q1/stats_T.ascii' u 1:2 w l lt 5 dt 2 t '96^2','96_Q1/stats_T.ascii' u 1:3 w l lt 5 dt 2 notitle,\
+'32_Q2/stats_T.ascii' u 1:2 w l lt 1 t '32^2','32_Q2/stats_T.ascii' u 1:3 w l lt 1 notitle,\
+'48_Q2/stats_T.ascii' u 1:2 w l lt 2 t '48^2','48_Q2/stats_T.ascii' u 1:3 w l lt 2 notitle,\
+'64_Q2/stats_T.ascii' u 1:2 w l lt 3 t '64^2','64_Q2/stats_T.ascii' u 1:3 w l lt 3 notitle,\
+'80_Q2/stats_T.ascii' u 1:2 w l lt 4 t '80^2','80_Q2/stats_T.ascii' u 1:3 w l lt 4 notitle,\
+'96_Q2/stats_T.ascii' u 1:2 w l lt 5 t '96^2','96_Q2/stats_T.ascii' u 1:3 w l lt 5 notitle
 
+set title 'with SUPG'
+set output 'stats_T_SUPG.pdf'
+plot[][-1:1.25]\
+'32_Q1_SUPG/stats_T.ascii' u 1:2 w l lt 1 dt 2 t '32^2,Q_1','32_Q1_SUPG/stats_T.ascii' u 1:3 w l lt 1 dt 2 notitle,\
+'48_Q1_SUPG/stats_T.ascii' u 1:2 w l lt 2 dt 2 t '48^2,Q_1','48_Q1_SUPG/stats_T.ascii' u 1:3 w l lt 2 dt 2 notitle,\
+'64_Q1_SUPG/stats_T.ascii' u 1:2 w l lt 3 dt 2 t '64^2,Q_1','64_Q1_SUPG/stats_T.ascii' u 1:3 w l lt 3 dt 2 notitle,\
+'80_Q1_SUPG/stats_T.ascii' u 1:2 w l lt 4 dt 2 t '80^2,Q_1','80_Q1_SUPG/stats_T.ascii' u 1:3 w l lt 4 dt 2 notitle,\
+'96_Q1_SUPG/stats_T.ascii' u 1:2 w l lt 5 dt 2 t '96^2,Q_1','96_Q1_SUPG/stats_T.ascii' u 1:3 w l lt 5 dt 2 notitle,\
+'32_Q2_SUPG/stats_T.ascii' u 1:2 w l lt 1 t '32^2,Q_2','32_Q2_SUPG/stats_T.ascii' u 1:3 w l lt 1 notitle,\
+'48_Q2_SUPG/stats_T.ascii' u 1:2 w l lt 2 t '48^2,Q_2','48_Q2_SUPG/stats_T.ascii' u 1:3 w l lt 2 notitle,\
+'64_Q2_SUPG/stats_T.ascii' u 1:2 w l lt 3 t '64^2,Q_2','64_Q2_SUPG/stats_T.ascii' u 1:3 w l lt 3 notitle,\
+'80_Q2_SUPG/stats_T.ascii' u 1:2 w l lt 4 t '80^2,Q_2','80_Q2_SUPG/stats_T.ascii' u 1:3 w l lt 4 notitle,\
+'96_Q2_SUPG/stats_T.ascii' u 1:2 w l lt 5 t '96^2,Q_2','96_Q2_SUPG/stats_T.ascii' u 1:3 w l lt 5 notitle
 
+##################################################
+
+set title 'no SUPG'
 set ylabel '<T>'
 set output 'avrg_T.pdf'
 plot[][]\
-'32/avrg_T.ascii' u 1:2 w l lt 1 t '32x32',\
-'48/avrg_T.ascii' u 1:2 w l lt 2 t '48x48',\
-'64/avrg_T.ascii' u 1:2 w l lt 3 t '64x64',\
-'80/avrg_T.ascii' u 1:2 w l lt 4 t '80x80',\
+'32_Q1/avrg_T.ascii' u 1:2 w l lt 1 dt 2 t '32^2,Q_1',\
+'48_Q1/avrg_T.ascii' u 1:2 w l lt 2 dt 2 t '48^2,Q_1',\
+'64_Q1/avrg_T.ascii' u 1:2 w l lt 3 dt 2 t '64^2,Q_1',\
+'80_Q1/avrg_T.ascii' u 1:2 w l lt 4 dt 2 t '80^2,Q_1',\
+'96_Q1/avrg_T.ascii' u 1:2 w l lt 5 dt 2 t '96^2,Q_1',\
+'32_Q2/avrg_T.ascii' u 1:2 w l lt 1 t '32^2,Q_2',\
+'48_Q2/avrg_T.ascii' u 1:2 w l lt 2 t '48^2,Q_2',\
+'64_Q2/avrg_T.ascii' u 1:2 w l lt 3 t '64^2,Q_2',\
+'80_Q2/avrg_T.ascii' u 1:2 w l lt 4 t '80^2,Q_2',\
+'96_Q2/avrg_T.ascii' u 1:2 w l lt 5 t '96^2,Q_2'
+
+set title 'with SUPG'
+set output 'avrg_T_SUPG.pdf'
+plot[][]\
+'32_Q1_SUPG/avrg_T.ascii' u 1:2 w l lt 1 t '32^2,Q_1',\
+'48_Q1_SUPG/avrg_T.ascii' u 1:2 w l lt 2 t '48^2,Q_1',\
+'64_Q1_SUPG/avrg_T.ascii' u 1:2 w l lt 3 t '64^2,Q_1',\
+'80_Q1_SUPG/avrg_T.ascii' u 1:2 w l lt 4 t '80^2,Q_1',\
+'96_Q1_SUPG/avrg_T.ascii' u 1:2 w l lt 5 t '96^2,Q_1',\
+'32_Q2_SUPG/avrg_T.ascii' u 1:2 w l lt 1 t '32^2,Q_2',\
+'48_Q2_SUPG/avrg_T.ascii' u 1:2 w l lt 2 t '48^2,Q_2',\
+'64_Q2_SUPG/avrg_T.ascii' u 1:2 w l lt 3 t '64^2,Q_2',\
+'80_Q2_SUPG/avrg_T.ascii' u 1:2 w l lt 4 t '80^2,Q_2',\
+
+##################################################
+set xlabel 'x'
+set ylabel 'T'
+
+set title 'no SUPG'
+set output 'diagonal.pdf'
+plot[][-0.8:1.1]\
+'48_Q1/diagonal.ascii'  u 1:3 w l lt 1 dt 2 t '48^2, Q_1',\
+'64_Q1/diagonal.ascii'  u 1:3 w l lt 2 dt 2 t '64^2, Q_1',\
+'96_Q1/diagonal.ascii'  u 1:3 w l lt 3 dt 2 t '96^2, Q_1',\
+'192_Q1/diagonal.ascii' u 1:3 w l lt 6 dt 2 t '192^2, Q_1',\
+'256_Q1/diagonal.ascii' u 1:3 w l lt 7 dt 2 t '256^2, Q_1',\
+'512_Q1/diagonal.ascii' u 1:3 w l lt 8 dt 2 t '512^2, Q_1',\
+'48_Q2/diagonal.ascii'  u 1:3 w l lt 1 t '48^2, Q_2',\
+'64_Q2/diagonal.ascii'  u 1:3 w l lt 2 t '64^2, Q_2',\
+'96_Q2/diagonal.ascii'  u 1:3 w l lt 3 t '96^2, Q_2',\
+'128_Q2/diagonal.ascii' u 1:3 w l lt 4 t '128^2, Q_2',\
+'160_Q2/diagonal.ascii' u 1:3 w l lt 5 t '160^2, Q_2',\
+'192_Q2/diagonal.ascii' u 1:3 w l lt 6 t '192^2, Q_2',\
+'256_Q2/diagonal.ascii' u 1:3 w l lt 7 t '256^2, Q_2',\
+'512_Q2/diagonal.ascii' u 1:3 w l lt 8 t '512^2, Q_2',\
+
+set title 'with SUPG'
+set output 'diagonal_SUPG.pdf'
+plot[][-0.8:1.1]\
+'48_Q1_SUPG/diagonal.ascii'  u 1:3 w l lt 1 dt 2 t '48^2, Q_1',\
+'64_Q1_SUPG/diagonal.ascii'  u 1:3 w l lt 2 dt 2 t '64^2, Q_1',\
+'96_Q1_SUPG/diagonal.ascii'  u 1:3 w l lt 3 dt 2 t '96^2, Q_1',\
+'128_Q1_SUPG/diagonal.ascii' u 1:3 w l lt 4 dt 2 t '128^2, Q_1',\
+'160_Q1_SUPG/diagonal.ascii' u 1:3 w l lt 5 dt 2 t '160^2, Q_1',\
+'192_Q1_SUPG/diagonal.ascii' u 1:3 w l lt 6 dt 2 t '192^2, Q_1',\
+'256_Q1_SUPG/diagonal.ascii' u 1:3 w l lt 7 dt 2 t '256^2, Q_1',\
+'512_Q1_SUPG/diagonal.ascii' u 1:3 w l lt 8 dt 2 t '512^2, Q_1',\
+'48_Q2_SUPG/diagonal.ascii'  u 1:3 w l lt 1 t '48^2, Q_2',\
+'64_Q2_SUPG/diagonal.ascii'  u 1:3 w l lt 2 t '64^2, Q_2',\
+'96_Q2_SUPG/diagonal.ascii'  u 1:3 w l lt 3 t '96^2, Q_2',\
+'128_Q2_SUPG/diagonal.ascii' u 1:3 w l lt 4 t '128^2, Q_2',\
+'160_Q2_SUPG/diagonal.ascii' u 1:3 w l lt 5 t '160^2, Q_2',\
+'192_Q2_SUPG/diagonal.ascii' u 1:3 w l lt 6 t '192^2, Q_2',\
+'256_Q2_SUPG/diagonal.ascii' u 1:3 w l lt 7 t '256^2, Q_2',\
+'512_Q2_SUPG/diagonal.ascii' u 1:3 w l lt 8 t '512^2, Q_2',\
+
+
+
 
 
 
