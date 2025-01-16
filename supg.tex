@@ -192,9 +192,18 @@ one in John \& Knobloch \cite{jokn06,knob08} which is also to be found in early
 80's papers \cite{brhu82,hubr82}:
 \[
 \tau_1 = \frac{h}{2 |\vec\upnu| p} \left( \coth (\Penb) - \frac{1}{\Penb} \right)
+\qquad
+\Penb = \frac{|\vec\upnu| h}{2 \kappa p}
 \]
 where $\tau$ is computed on each cell, $h$ being its diameter in the direction of $\vec\upnu$, 
 and $p$ is the order of the approximation (i.e. the maximum degree of polynomials).
+
+\begin{center}
+\includegraphics[width=8cm]{images/supg/step63}\\
+{\captionfont Taken from step-63 webpage 
+at \url{https://www.dealii.org/current/doxygen/deal.II/step_63.html}}
+\end{center}
+
 The expression above is also found at p. 617 in \textcite{lomw12}.
 Note that Hughes \& Brooks \cite{hubr82} replace the costly 'coth' term by an asymptotic curve:
 
@@ -282,12 +291,15 @@ plot this quantity against the Peclet number:
 In the case when the equation to be stabilised is a pure advection equation, 
 then $\Penb\rightarrow \infty$ so 
 \[
-\gamma_1 \rightarrow 1  \quad
+\gamma_1 \rightarrow 1/p  \quad
 \gamma_2 \rightarrow 1 \quad
 \gamma_3 \rightarrow 1 \quad
 \gamma_4 \simeq 0.52 \quad
 \gamma_5 \rightarrow (1+C^{-1})^{-1} 
 \]
+Note that in most versions above (except $\tau_1$) 
+$\tau$ does not depend on the order $p$ of the basis functions.
+Is it an omission?
 
 Finally it is worth mentioning that \textcite{dohu03} argue that $\tau$ should 
 ideally take different values at the corners and at the mid-side nodes for quadratic elements (p.~61).
