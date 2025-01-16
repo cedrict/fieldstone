@@ -293,8 +293,8 @@ nstep=250
 
 CFL_nb=0.25
 
-nq_per_dim=3                  # number of quad points per dimension
-nq=nq_per_dim**2*nel          # number of quadrature points
+nqperdim=3                  # number of quad points per dimension
+nq=nqperdim**2*nel          # number of quadrature points
 
 nparticle_per_element=nparticle_per_dim**2
 nparticle=nparticle_per_element*nel
@@ -313,11 +313,11 @@ sparse=True
 
 #################################################################
 
-if nq_per_dim==3:
+if nqperdim==3:
    qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
    qweights=[5./9.,8./9.,5./9.]
 
-if nq_per_dim==4:
+if nqperdim==4:
    qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
    qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
    qw4a=(18-np.sqrt(30.))/36.
@@ -325,7 +325,7 @@ if nq_per_dim==4:
    qcoords=[-qc4a,-qc4b,qc4b,qc4a]
    qweights=[qw4a,qw4b,qw4b,qw4a]
 
-if nq_per_dim==5:
+if nqperdim==5:
    qc5a=np.sqrt(5.+2.*np.sqrt(10./7.))/3.
    qc5b=np.sqrt(5.-2.*np.sqrt(10./7.))/3.
    qc5c=0.
@@ -1196,8 +1196,8 @@ for istep in range(0,nstep):
         h_el=np.zeros((mP*ndofP),dtype=np.float64)
         NNNNP= np.zeros(mP*ndofP,dtype=np.float64)   
         # integrate viscous term at quadrature points
-        for iq in range(0,nq_per_dim):
-            for jq in range(0,nq_per_dim):
+        for iq in range(0,nqperdim):
+            for jq in range(0,nqperdim):
                 # position & weight of quad. point
                 rq=qcoords[iq]
                 sq=qcoords[jq]
@@ -1427,8 +1427,8 @@ for istep in range(0,nstep):
     mass=0.
     counterq=0
     for iel in range (0,nel):
-        for iq in range(0,nq_per_dim):
-            for jq in range(0,nq_per_dim):
+        for iq in range(0,nqperdim):
+            for jq in range(0,nqperdim):
                 # position & weight of quad. point
                 rq=qcoords[iq]
                 sq=qcoords[jq]

@@ -264,11 +264,11 @@ ndofV=3  # number of velocity degrees of freedom per node
 if int(len(sys.argv) == 4):
    nelx = int(sys.argv[1])
    visu = int(sys.argv[2])
-   nq_per_dimP= int(sys.argv[3])
+   nqperdimP= int(sys.argv[3])
 else:
    nelx = 10
    visu = 1
-   nq_per_dimP=2
+   nqperdimP=2
 
 if experiment==0: quarter=False
 if experiment==1: quarter=False
@@ -326,15 +326,15 @@ qweights2=[1.,1.]
 qcoords1=[0.]
 qweights1=[2.]
 
-nq_per_dimV=3
+nqperdimV=3
 
-if nq_per_dimP==1:
+if nqperdimP==1:
    qcoordsP=qcoords1
    qweightsP=qweights1
-if nq_per_dimP==2:
+if nqperdimP==2:
    qcoordsP=qcoords2
    qweightsP=qweights2
-if nq_per_dimP==3:
+if nqperdimP==3:
    qcoordsP=qcoords3
    qweightsP=qweights3
 
@@ -349,7 +349,7 @@ print('nelz=',nelz)
 print('nel=',nel)
 print('NV=',NV)
 print('Nfem=',Nfem)
-print('nq_per_dimP=',nq_per_dimP)
+print('nqperdimP=',nqperdimP)
 print("-----------------------------")
 
 #################################################################
@@ -556,9 +556,9 @@ for iel in range(0, nel):
     a_el=np.zeros((m*ndofV,m*ndofV),dtype=np.float64)
 
     # integrate viscous term at 3*3*3 quadrature points
-    for iq in range(0,nq_per_dimV):
-        for jq in range(0,nq_per_dimV):
-            for kq in range(0,nq_per_dimV):
+    for iq in range(0,nqperdimV):
+        for jq in range(0,nqperdimV):
+            for kq in range(0,nqperdimV):
 
                 # position & weight of quad. point
                 rq=qcoords3[iq]
@@ -623,9 +623,9 @@ for iel in range(0, nel):
         #end for jq  
     #end for iq  
 
-    for iq in range(0,nq_per_dimP):
-        for jq in range(0,nq_per_dimP):
-            for kq in range(0,nq_per_dimP):
+    for iq in range(0,nqperdimP):
+        for jq in range(0,nqperdimP):
+            for kq in range(0,nqperdimP):
 
                 rq=qcoordsP[iq]
                 sq=qcoordsP[jq]
@@ -759,9 +759,9 @@ for iel in range(0,nel):
     b_el=np.zeros(m,dtype=np.float64)
 
     # integrate mass matrix at 3x3x3 quadrature points
-    for iq in range(0,nq_per_dimV):
-        for jq in range(0,nq_per_dimV):
-            for kq in range(0,nq_per_dimV):
+    for iq in range(0,nqperdimV):
+        for jq in range(0,nqperdimV):
+            for kq in range(0,nqperdimV):
 
                 # position & weight of quad. point
                 rq=qcoords3[iq]
@@ -797,9 +797,9 @@ for iel in range(0,nel):
     #end for iq  
 
     #----------------------------------
-    for iq in range(0,nq_per_dimP):
-        for jq in range(0,nq_per_dimP):
-            for kq in range(0,nq_per_dimP):
+    for iq in range(0,nqperdimP):
+        for jq in range(0,nqperdimP):
+            for kq in range(0,nqperdimP):
 
                 rq=qcoordsP[iq]
                 sq=qcoordsP[jq]
@@ -966,9 +966,9 @@ vrms=0.
 for iel in range(0,nel):
 
     # integrate 3x3x3 quadrature points
-    for iq in range(0,nq_per_dimV):
-        for jq in range(0,nq_per_dimV):
-            for kq in range(0,nq_per_dimV):
+    for iq in range(0,nqperdimV):
+        for jq in range(0,nqperdimV):
+            for kq in range(0,nqperdimV):
 
                 # position & weight of quad. point
                 rq=qcoords3[iq]

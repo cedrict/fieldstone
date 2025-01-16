@@ -1,7 +1,7 @@
 import numpy as np
 from basisQ1 import *
 
-def compute_gravity_hexahedron_quadrature(Ggrav,pt_1,pt_2,pt_3,pt_4,pt_5,pt_6,pt_7,pt_8,pt_M,rho0,nq_per_dim):
+def compute_gravity_hexahedron_quadrature(Ggrav,pt_1,pt_2,pt_3,pt_4,pt_5,pt_6,pt_7,pt_8,pt_M,rho0,nqperdim):
     # pt1,2,3,4,5,6,7,8,M: arrays containing x,y,z coordinates
 
     xx=np.array([pt_1[0],pt_2[0],pt_3[0],pt_4[0],
@@ -15,23 +15,23 @@ def compute_gravity_hexahedron_quadrature(Ggrav,pt_1,pt_2,pt_3,pt_4,pt_5,pt_6,pt
 
     grav=np.zeros(3,dtype=np.float64)
 
-    if nq_per_dim==1:
+    if nqperdim==1:
        qcoords=[0.]
        qweights=[2.]
-    elif nq_per_dim==2:
+    elif nqperdim==2:
        qcoords=[-np.sqrt(1./3.),np.sqrt(1./3.)]
        qweights=[1.,1.]
-    elif nq_per_dim==3:
+    elif nqperdim==3:
        qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
        qweights=[5./9.,8./9.,5./9.]
-    elif nq_per_dim==4:
+    elif nqperdim==4:
        qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
        qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
        qw4a=(18-np.sqrt(30.))/36.
        qw4b=(18+np.sqrt(30.))/36.
        qcoords=[-qc4a,-qc4b,qc4b,qc4a]
        qweights=[qw4a,qw4b,qw4b,qw4a]
-    elif nq_per_dim==5:
+    elif nqperdim==5:
        qc5a=np.sqrt(5.+2.*np.sqrt(10./7.))/3.
        qc5b=np.sqrt(5.-2.*np.sqrt(10./7.))/3.
        qc5c=0.
@@ -40,7 +40,7 @@ def compute_gravity_hexahedron_quadrature(Ggrav,pt_1,pt_2,pt_3,pt_4,pt_5,pt_6,pt
        qw5c=128./225.
        qcoords=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
        qweights=[qw5a,qw5b,qw5c,qw5b,qw5a]
-    elif nq_per_dim==6:
+    elif nqperdim==6:
        qcoords=[-0.932469514203152,\
                 -0.661209386466265,\
                 -0.238619186083197,\
@@ -53,7 +53,7 @@ def compute_gravity_hexahedron_quadrature(Ggrav,pt_1,pt_2,pt_3,pt_4,pt_5,pt_6,pt
                  0.467913934572691,\
                  0.360761573048139,\
                  0.171324492379170]
-    elif nq_per_dim==7:
+    elif nqperdim==7:
        qcoords=[-0.949107912342759,\
                 -0.741531185599394,\
                 -0.405845151377397,\
@@ -68,7 +68,7 @@ def compute_gravity_hexahedron_quadrature(Ggrav,pt_1,pt_2,pt_3,pt_4,pt_5,pt_6,pt
                  0.381830050505119,\
                  0.279705391489277,\
                  0.129484966168870]
-    elif nq_per_dim==8:
+    elif nqperdim==8:
        qcoords=[-0.960289856497536,\
                 -0.796666477413627,\
                 -0.525532409916329,\
@@ -91,9 +91,9 @@ def compute_gravity_hexahedron_quadrature(Ggrav,pt_1,pt_2,pt_3,pt_4,pt_5,pt_6,pt
     jcb=np.zeros((3,3),dtype=np.float64)
     volume=0
     U=0
-    for iq in range(0,nq_per_dim):
-        for jq in range(0,nq_per_dim):
-            for kq in range(0,nq_per_dim):
+    for iq in range(0,nqperdim):
+        for jq in range(0,nqperdim):
+            for kq in range(0,nqperdim):
                 rq=qcoords[iq]
                 sq=qcoords[jq]
                 tq=qcoords[kq]
