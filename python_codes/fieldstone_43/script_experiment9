@@ -1,0 +1,23 @@
+#! /bin/bash
+   
+experiment=9
+
+#order=2
+#supg_type=1
+
+for n in 32 48 64 80 96 128 ; do
+    for order in 1 2 ; do 
+        for s in 0 1 ; do 
+
+            echo nelx=nely= $n order= $order supg_type= $s 
+
+            ### NOT FINISHED     
+
+        #python3 stone.py $experiment   > opla
+        #grep errv opla >> errors
+        #grep Build opla >> build 
+        #grep Solve opla >> solve 
+
+        done
+    done
+done

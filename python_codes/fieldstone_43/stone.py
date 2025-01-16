@@ -107,7 +107,7 @@ if int(len(sys.argv) == 4):
 else:
    experiment=9
    order=2
-   supg_type=0
+   supg_type=1
 
 if order==1: m=4 # number of nodes making up an element
 if order==2: m=9
@@ -204,8 +204,8 @@ if experiment==8: # advection cone Li book
    every=10
 
 if experiment==9: #step-9
-   nelx=32
-   nely=32
+   nelx=512
+   nely=nelx
    Lx=2
    Ly=2
    xmin=-1.
@@ -213,6 +213,7 @@ if experiment==9: #step-9
    every=5
    tfinal=1.25
    CFLnb=0.5
+   steady_state=True
 
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
@@ -527,10 +528,14 @@ print("initial temperature (%.3fs)" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-dt=CFLnb*hx/np.max(np.sqrt(u**2+v**2))/order
-print('dt=',dt)
-nstep=int(tfinal/dt)
-print('nstep=',nstep)
+if steady_state:
+   dt=0.
+   nstep=1
+else:
+   dt=CFLnb*hx/np.max(np.sqrt(u**2+v**2))/order
+   print('dt=',dt)
+   nstep=int(tfinal/dt)
+   print('nstep=',nstep)
 
 print("compute timestep (%.3fs)" % (timing.time() - start))
 
@@ -580,7 +585,8 @@ for istep in range(0,nstep):
     #################################################################
     start = timing.time()
 
-    A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
+    A_mat = lil_matrix((NfemT,NfemT),dtype=np.float64)
+    #A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
     rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
     B_mat=np.zeros((2,ndofT*m),dtype=np.float64)     # gradient matrix B 
     N_mat = np.zeros((m,1),dtype=np.float64)         # shape functions
@@ -648,7 +654,7 @@ for istep in range(0,nstep):
                 if supg_type==0:
                    tau_supg[counterq]=0.
                 elif supg_type==1:
-                      tau_supg[counterq]=(hx*sqrt2)/2/order/np.sqrt(vel[0,0]**2+vel[0,1]**2)
+                      tau_supg[counterq]=(hx*sqrt2) / (2*np.sqrt(vel[0,0]**2+vel[0,1]**2)*order)
                 elif supg_type==2:
                       tau_supg[counterq]=(hx*sqrt2)/order/np.sqrt(vel[0,0]**2+vel[0,1]**2)/sqrt15
                 else:
@@ -697,9 +703,13 @@ for istep in range(0,nstep):
                            +12./137.*MM.dot(Tvectm5)
                    #end if
                 else:
-                   a_el+=MM+alphaT*(Ka+Kd)*dt
-                   b_el+=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Tvectm1) +\
-                         N_mat[:,0]*weightq*jcob*rhs_f(xq,yq,experiment)*dt
+                   if steady_state:
+                      a_el+=Ka
+                      b_el+=N_mat[:,0]*weightq*jcob*rhs_f(xq,yq,experiment)
+                   else:
+                      a_el+=MM+alphaT*(Ka+Kd)*dt
+                      b_el+=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Tvectm1) +\
+                            N_mat[:,0]*weightq*jcob*rhs_f(xq,yq,experiment)*dt
                 #end if
 
                 #print(xq,yq,rhs_f(xq,yq,experiment))
@@ -735,8 +745,8 @@ for istep in range(0,nstep):
 
     #end for iel
     
-    print("     -> matrix (m,M) %.4e %.4e " %(np.min(A_mat),np.max(A_mat)))
-    print("     -> rhs (m,M) %.4e %.4e " %(np.min(rhs),np.max(rhs)))
+    #print("     -> matrix (m,M) %.4e %.4e " %(np.min(A_mat),np.max(A_mat)))
+    #print("     -> rhs (m,M) %.4e %.4e " %(np.min(rhs),np.max(rhs)))
 
     print("     -> tau_supg (m,M) %e %e " %(np.min(tau_supg),np.max(tau_supg)))
 
@@ -907,6 +917,14 @@ for istep in range(0,nstep):
     print ("model_time=",model_time)
     
 #end for istep
+
+if experiment==9:
+
+   diagonal_file=open('diagonal.ascii',"w")
+   for i in range(0,NV):
+       if np.abs(y[i]-1+x[i])<eps:
+          diagonal_file.write("%4e %6e %7e \n" %(x[i],y[i],T[i]))
+
 
 #==============================================================================
 # end time stepping loop
