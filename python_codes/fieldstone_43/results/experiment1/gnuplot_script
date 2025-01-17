@@ -1,10 +1,12 @@
+#
 set term pdf enhanced
+set grid
 set xlabel 't'
 
 set key outside
 set ylabel 'min. Temperature'
 set output 'Tmin.pdf'
-plot[][-0.25:0.1]\
+plot[0:2*pi][-0.1:0.1]\
 0 lt -1 notitle,\
 'impl/stats_T.ascii' u 1:2 w l lt 1 t 'fully implicit',\
 'expl/stats_T.ascii' u 1:2 w l lt 2 t 'fully explicit',\
@@ -12,7 +14,7 @@ plot[][-0.25:0.1]\
 
 set ylabel 'max. Temperature'
 set output 'Tmax.pdf'
-plot[][0.5:1.1]\
+plot[0:2*pi][0.7:1.1]\
 1 lt -1 notitle,\
 'impl/stats_T.ascii' u 1:3  w l lt 1 t 'fully implicit',\
 'expl/stats_T.ascii' u 1:3  w l lt 2 t 'fully explicit',\
@@ -28,14 +30,12 @@ plot[][0.03:0.05]\
 set output 'Tmin_supg.pdf'
 plot[][:0.001]\
 'supg/stats_T.ascii' u 1:2 w l t '30x30 (supg)',\
-'crni/stats_T.ascii' u 1:2 w l t '30x30 (no supg)',\
-0 lt -1 lw 2 
+'crni/stats_T.ascii' u 1:2 w l t '30x30 (no supg)'
 
 set output 'Tmax_supg.pdf'
-plot[][:1.1]\
+plot[][:1.02]\
 'supg/stats_T.ascii' u 1:3 w l t '30x30 (supg)',\
-'crni/stats_T.ascii' u 1:3 w l t '30x30 (no supg)',\
-1 lt -1 lw 2 
+'crni/stats_T.ascii' u 1:3 w l t '30x30 (no supg)'
 
 
 
