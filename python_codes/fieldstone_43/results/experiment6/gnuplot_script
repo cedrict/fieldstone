@@ -1,3 +1,4 @@
+#
 set term pdf enhanced font "Times,12pt"
 set grid
 set key outside
@@ -7,10 +8,10 @@ set xlabel 'time (yr)'
 set ylabel 'min/max T'
 set output 'stats_T.pdf'
 plot[][]\
-'nosupg/stats_T.ascii' u ($1/year):2 w l t 'min(T), no SUPG',\
-'nosupg/stats_T.ascii' u ($1/year):3 w l t 'max(T), no SUPG',\
-'supg/stats_T.ascii'   u ($1/year):2 w l t 'min(T), SUPG',\
-'supg/stats_T.ascii'   u ($1/year):3 w l t 'max(T), SUPG',\
+'nosupg/stats_T.ascii' u ($1/year):2 w l lt 1 t 'min(T), no SUPG',\
+'nosupg/stats_T.ascii' u ($1/year):3 w l lt 1 t 'max(T), no SUPG',\
+'supg/stats_T.ascii'   u ($1/year):2 w l lt 2 t 'min(T), SUPG',\
+'supg/stats_T.ascii'   u ($1/year):3 w l lt 2 t 'max(T), SUPG',\
 0 lt -1 notitle,\
 1 lt -1 notitle
 
@@ -20,4 +21,9 @@ plot[][]\
 'nosupg/avrg_T.ascii' u ($1/year):2 w l t 'no SUPG',\
 'supg/avrg_T.ascii'   u ($1/year):2 w l t 'SUPG',\
 
-
+set output 'diagonal.pdf'
+set xlabel 'y (km)'
+set ylabel 'T'
+plot[][]\
+'nosupg/diagonal.ascii' u ($2/1e3):3 w lp ps .4 t 'no SUPG',\
+'supg/diagonal.ascii' u ($2/1e3):3 w lp ps .4 t 'SUPG',\
