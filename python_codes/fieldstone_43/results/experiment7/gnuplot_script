@@ -1,23 +1,54 @@
+#
 set term pdf enhanced font "Times,12pt"
 set grid
 set key outside
 year=365.25*24*3600
 
+#####################################################################
 set ylabel 'min/max T'
 set xlabel 'time (yr)'
 set output 'stats_T.pdf'
 plot[][]\
-'nosupg/stats_T.ascii' u ($1/year):2 w l t 'min(T), no SUPG',\
-'nosupg/stats_T.ascii' u ($1/year):3 w l t 'max(T), no SUPG',\
-'supg/stats_T.ascii'   u ($1/year):2 w l t 'min(T), SUPG',\
-'supg/stats_T.ascii'   u ($1/year):3 w l t 'max(T), SUPG',\
+'nosupg32/stats_T.ascii' u ($1/year):2 w l lt 1 dt 2 t 'min/max(T), 32^2, no SUPG', 'nosupg32/stats_T.ascii' u ($1/year):3 w l lt 1 dt 2 notitle,\
+'nosupg64/stats_T.ascii' u ($1/year):2 w l lt 2 dt 2 t 'min/max(T), 64^2, no SUPG', 'nosupg64/stats_T.ascii' u ($1/year):3 w l lt 2 dt 2 notitle,\
+'nosupg96/stats_T.ascii' u ($1/year):2 w l lt 3 dt 2 t 'min/max(T), 96^2, no SUPG', 'nosupg96/stats_T.ascii' u ($1/year):3 w l lt 3 dt 2 notitle,\
+'supg32/stats_T.ascii'   u ($1/year):2 w l lt 1 t 'min/max(T), 32^2, SUPG' , 'supg32/stats_T.ascii' u ($1/year):3 w l lt 1 notitle,\
+'supg64/stats_T.ascii'   u ($1/year):2 w l lt 2 t 'min/max(T), 64^2, SUPG' , 'supg64/stats_T.ascii' u ($1/year):3 w l lt 2 notitle,\
+'supg96/stats_T.ascii'   u ($1/year):2 w l lt 3 t 'min/max(T), 96^2, SUPG' , 'supg96/stats_T.ascii' u ($1/year):3 w l lt 3 notitle,\
 0 lt -1 notitle,\
 1 lt -1 notitle
 
+#####################################################################
 set ylabel '<T>'
 set output 'avrg_T.pdf'
 plot[][]\
-'nosupg/avrg_T.ascii' u ($1/year):2 w l t 'no SUPG',\
-'supg/avrg_T.ascii'   u ($1/year):2 w l t 'SUPG',\
+'nosupg32/avrg_T.ascii' u ($1/year):2 w l lt 1 dt 2 t '32^2, no SUPG',\
+'nosupg64/avrg_T.ascii' u ($1/year):2 w l lt 2 dt 2 t '64^2, no SUPG',\
+'nosupg96/avrg_T.ascii' u ($1/year):2 w l lt 3 dt 2 t '96^2, no SUPG',\
+'supg32/avrg_T.ascii'   u ($1/year):2 w l lt 1 t '32^2, SUPG',\
+'supg64/avrg_T.ascii'   u ($1/year):2 w l lt 2 t '64^2, SUPG',\
+'supg96/avrg_T.ascii'   u ($1/year):2 w l lt 3 t '96^2, SUPG',\
+
+#####################################################################
+set ylabel 'T'
+set xlabel 'x (km)'
+
+set title 'no SUPG'
+set output 'diagonal.pdf'
+plot[][]\
+'nosupg32/diagonal.ascii' u ($1/1e3):3 w l lt 1 t '32^2',\
+'nosupg64/diagonal.ascii' u ($1/1e3):3 w l lt 2 t '64^2',\
+'nosupg96/diagonal.ascii' u ($1/1e3):3 w l lt 3 t '96^2',\
+
+set title 'with SUPG'
+set output 'diagonal_supg.pdf'
+plot[][]\
+'supg32/diagonal.ascii'   u ($1/1e3):3 w l lt 1 t '32^2',\
+'supg64/diagonal.ascii'   u ($1/1e3):3 w l lt 2 t '64^2',\
+'supg96/diagonal.ascii'   u ($1/1e3):3 w l lt 3 t '96^2',\
+
+
+
+
 
 
