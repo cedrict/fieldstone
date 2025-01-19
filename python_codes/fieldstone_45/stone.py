@@ -1,31 +1,30 @@
 import numpy as np
-import sys as sys
 import time 
-import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
 import random
+import scipy.sparse as sps
+from scipy.sparse import csr_matrix, lil_matrix
 
 #------------------------------------------------------------------------------
 # define P1 shape functions
 #------------------------------------------------------------------------------
 
 def NNT(rq,sq):
-    NV_0= (1.-rq-sq)
-    NV_1= rq
-    NV_2= sq
-    return NV_0,NV_1,NV_2
+    N_0= (1.-rq-sq)
+    N_1= rq
+    N_2= sq
+    return np.array([N_0,N_1,N_2],dtype=np.float64)
 
 def dNNTdr(rq,sq):
     dNVdr_0= -1. 
     dNVdr_1= +1.
     dNVdr_2=  0.
-    return dNVdr_0,dNVdr_1,dNVdr_2
+    return np.array([dNVdr_0,dNVdr_1,dNVdr_2],dtype=np.float64)
 
 def dNNTds(rq,sq):
     dNVds_0= -1. 
     dNVds_1=  0.
     dNVds_2= +1.
-    return dNVds_0,dNVds_1,dNVds_2
+    return np.array([dNVds_0,dNVds_1,dNVds_2],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 
@@ -34,8 +33,6 @@ print("----------fieldstone---------")
 print("-----------------------------")
 
 mT=3
-nqel=3
-ndofT=1
 ndim=2
 
 Lx=1
@@ -51,13 +48,14 @@ hy=Ly/nely
 nel=2*nelx*nely
 NT=(nelx+1)*(nely+1)
 
-nstep=1
+nstep=1001
 dt=2*np.pi/200
 
 eps=1e-8
 
-Nfem=NT*ndofT      # Total number of degrees of freedom
+Nfem=NT      # Total number of degrees of freedom
 
+nqel=3
 qcoords_r=[1./6.,2./3.,1./6.] # coordinates & weights 
 qcoords_s=[1./6.,1./6.,2./3.] # of quadrature points
 qweights =[1./6.,1./6.,1./6.]
@@ -69,13 +67,9 @@ Tmin = 0
 Tmax = 1      
 sigma = 0.2  
 
-hcapa = 1   
-hcond = 0
-rho0 = 1   
+theta=0.5 # time discretisation
 
-theta=1 # time discretisation
-
-xi=0. # controls level of mesh randomness (between 0 and 0.5 max)
+xi=0.25 # controls level of mesh randomness (between 0 and 0.5 max)
 
 #################################################################
 
@@ -144,6 +138,19 @@ print(icon[:,11])
 print("connectivity: %.3f s" % (time.time() - start))
 
 #################################################################
+# velocity field on nodes
+#################################################################
+start = time.time()
+
+u=np.zeros(NT,dtype=np.float64)
+v=np.zeros(NT,dtype=np.float64)
+
+u[:]=-y[:]+Ly/2
+v[:]= x[:]-Lx/2
+
+print("define nodal velocity: %.3f s" % (time.time() - start))
+
+#################################################################
 # define boundary conditions
 #################################################################
 start = time.time()
@@ -152,33 +159,23 @@ bc_fix = np.zeros(NT, dtype=bool)  # boundary condition, yes/no
 bc_val = np.zeros(NT, dtype=np.float64)  # boundary condition, value
 
 for i in range(0,NT):
-    if x[i]<eps:
-       bc_fix[i]   = True ; bc_val[i]   = 0.
-    if x[i]>(Lx-eps):
-       bc_fix[i]   = True ; bc_val[i]   = 0.
-    if y[i]<eps:
-       bc_fix[i]   = True ; bc_val[i]   = 0.
-    if y[i]>(Ly-eps):
-       bc_fix[i]   = True ; bc_val[i]   = 0.
+    if x[i]<eps and u[i]>0:
+       bc_fix[i]   = True ; bc_val[i] = 0.
+    if x[i]>(Lx-eps) and u[i]<0:
+       bc_fix[i]   = True ; bc_val[i] = 0.
+    if y[i]<eps and v[i]>0:
+       bc_fix[i]   = True ; bc_val[i] = 0.
+    if y[i]>(Ly-eps) and v[i]<0:
+       bc_fix[i]   = True ; bc_val[i] = 0.
 
 print("boundary conditions: %.3f s" % (time.time() - start))
-
-#################################################################
-# velocity field on nodes
-#################################################################
-start = time.time()
-
-u=-y+Ly/2
-v=x-Lx/2
-
-print("nodal velocity: %.3f s" % (time.time() - start))
 
 #################################################################
 # initial temperature 
 #################################################################
 start = time.time()
 
-Told = np.zeros(NT)
+Told = np.zeros(NT,dtype=np.float64)
 
 for i in range(0,NT):
     if (x[i]-xc)**2+(y[i]-yc)**2 <= sigma**2:
@@ -192,9 +189,9 @@ print("initial temperature: %.3f s" % (time.time() - start))
 start = time.time()
 
 area=np.zeros(nel,dtype=np.float64) 
-NNNT    = np.zeros(mT,dtype=np.float64)           # shape functions V
-dNNNTdr  = np.zeros(mT,dtype=np.float64)          # shape functions derivatives
-dNNNTds  = np.zeros(mT,dtype=np.float64)          # shape functions derivatives
+NNNT=np.zeros(mT,dtype=np.float64)    # shape functions V
+dNNNTdr=np.zeros(mT,dtype=np.float64) # shape functions derivatives
+dNNNTds=np.zeros(mT,dtype=np.float64) # shape functions derivatives
 
 for iel in range(0,nel):
     for kq in range (0,nqel):
@@ -206,10 +203,10 @@ for iel in range(0,nel):
         dNNNTds[0:mT]=dNNTds(rq,sq)
         jcb=np.zeros((2,2),dtype=np.float64)
         for k in range(0,mT):
-            jcb[0,0] += dNNNTdr[k]*x[icon[k,iel]]
-            jcb[0,1] += dNNNTdr[k]*y[icon[k,iel]]
-            jcb[1,0] += dNNNTds[k]*x[icon[k,iel]]
-            jcb[1,1] += dNNNTds[k]*y[icon[k,iel]]
+            jcb[0,0]+=dNNNTdr[k]*x[icon[k,iel]]
+            jcb[0,1]+=dNNNTdr[k]*y[icon[k,iel]]
+            jcb[1,0]+=dNNNTds[k]*x[icon[k,iel]]
+            jcb[1,1]+=dNNNTds[k]*y[icon[k,iel]]
         #end for
         jcob = np.linalg.det(jcb)
         area[iel]+=jcob*weightq
@@ -239,22 +236,21 @@ for istep in range(0,nstep):
     # build FE matrix
     #################################################################
 
-    dNNNTdx = np.zeros(mT,dtype=np.float64)            # shape functions derivatives
-    dNNNTdy = np.zeros(mT,dtype=np.float64)            # shape functions derivatives
-    A_mat = np.zeros((Nfem,Nfem),dtype=np.float64)     # FE matrix
-    rhs   = np.zeros(Nfem,dtype=np.float64)            # FE rhs 
-    B_mat = np.zeros((ndim,ndofT*mT),dtype=np.float64) # gradient matrix B 
-    N_mat = np.zeros((mT,1),dtype=np.float64)          # shape functions
+    dNNNTdx = np.zeros(mT,dtype=np.float64)        # shape functions derivatives
+    dNNNTdy = np.zeros(mT,dtype=np.float64)        # shape functions derivatives
+    A_mat = np.zeros((Nfem,Nfem),dtype=np.float64) # FE matrix
+    rhs   = np.zeros(Nfem,dtype=np.float64)        # FE rhs 
+    B_mat = np.zeros((ndim,mT),dtype=np.float64)   # gradient matrix B 
+    N_mat = np.zeros((mT,1),dtype=np.float64)      # shape functions
     Tvect = np.zeros(mT,dtype=np.float64)
 
     for iel in range (0,nel):
 
-        b_el=np.zeros(mT*ndofT,dtype=np.float64)
-        a_el=np.zeros((mT*ndofT,mT*ndofT),dtype=np.float64)
-        Ka=np.zeros((mT,mT),dtype=np.float64)   # elemental advection matrix 
-        Kd=np.zeros((mT,mT),dtype=np.float64)   # elemental diffusion matrix 
-        MM=np.zeros((mT,mT),dtype=np.float64)   # elemental mass matrix
-        velq=np.zeros((1,ndim),dtype=np.float64)
+        b_el=np.zeros(mT,dtype=np.float64)       # elemental rhs
+        a_el=np.zeros((mT,mT),dtype=np.float64)  # elemental matrix
+        Ka=np.zeros((mT,mT),dtype=np.float64)    # elemental advection matrix 
+        MM=np.zeros((mT,mT),dtype=np.float64)    # elemental mass matrix
+        velq=np.zeros((1,ndim),dtype=np.float64) # velocity at q point
 
         for kq in range(0,nqel):
 
@@ -301,21 +297,16 @@ for istep in range(0,nstep):
             #print(xq,yq)
             #print(velq[0,0],velq[0,1])
 
-            MM+=N_mat.dot(N_mat.T)*rho0*hcapa*weightq*jcob
-
-            # compute diffusion matrix
-            Kd+=B_mat.T.dot(B_mat)*hcond*weightq*jcob
+            # compute mass matrix
+            MM+=N_mat.dot(N_mat.T)*weightq*jcob
 
             # compute advection matrix
-            Ka+=N_mat.dot(velq.dot(B_mat))*rho0*hcapa*weightq*jcob
+            Ka+=N_mat.dot(velq.dot(B_mat))*weightq*jcob
 
         # end for kq
 
-        #print(Ka)
-        #exit()
-
-        a_el=MM+(Ka+Kd)*dt*theta
-        b_el=(MM -(Ka+Kd)*dt*(1-theta)).dot(Tvect)
+        a_el=MM+Ka*dt*theta
+        b_el=(MM -Ka*dt*(1-theta)).dot(Tvect)
 
         # apply boundary conditions
 
