@@ -17,7 +17,8 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The following seven experiments are pure-advection experiments. As such the Peclet number
+The following experiments are ``pure advection'' experiments (i.e. there is 
+no diffusion at all). As such the Peclet number
 is infinite and the $\gamma$ value of the SUPG algorithm as shown in Section~\ref{MMM-ss:supg} tends to 1
 and the $\tau$ parameter is simply $h/2 |\vec\upnu| p$ (where $p$ is the order of 
 the shape function polynomials).
@@ -25,13 +26,32 @@ the shape function polynomials).
 Note that although the code can deal with linear elements, all results 
 hereafter are obtained with quadratic elements (unless specified otherwise). 
 
-\todo[inline]{check experiments/benchmarks in Olive's work \cite{olbe14,olbm16}?}
+A very important remark: In step-9 of deal.II (which is concerned with solving the 
+steady-state advection equation) we read: `` The mathematical theory states that we must not 
+pose any boundary condition on the outflow part of the boundary.''
+Upon my asking for more context to Wolfgang Bangerth (the author of step-9), his answer was:
+``I think the statement can be shown in the following way: If
+you think of the advection equation as transporting information along
+characteristics, then the interior can only be affected by characteristics
+that go from the boundary into the interior. That's exactly the ones at inflow
+boundary conditions. ''
+Note that \aspect automatically checks that $\vec\upnu\cdot\vec{n}<0$ at each node where temperature is
+prescribed and only prescribe it there
+\footnote{\url{https://github.com/geodynamics/aspect/blob/main/source/simulator/core.cc}, Lines 689-726} 
+In other words, one cannot prescribe the temperature on a
+boundary where the fluid is leaving the domain, only where it is entering.
 
+\todo[inline]{This means that in the experiments presented hereafter this
+needs to be checked and corrected if needed!}
+
+
+
+
+\newpage
 %------------------------------------------------------------------------------
 \subsection*{Experiment 1 - rotating cone}
 
-This benchmark originates in Donea \& Huerta \cite{dohu03}. 
-It is also carried out in Beuchert \& Podlachikov (2010) \cite{bepo10}.
+This benchmark can be found \textcite{dohu03} and it is also carried out in \textcite{bepo10} (2010).
 A product-cosine hill is advected in a prescribed velocity field. 
 The initial temperature is:
 \begin{equation}
@@ -46,13 +66,15 @@ T_0(x,y)=
 \end{array}
 \right.
 \end{equation}
-The boundary conditions are $T(x,y)=0$ on all four sides of the unit square domain. 
+The boundary conditions are $T(x,y)=0$ on all four sides of the unit square domain, but only 
+where the velocity field is such that the node in question accounts for an influx, 
+not an outflux (see remark above).
 In what follows we set $x_c=y_c=2/3$ and $\sigma=0.2$.  
 The velocity field is analytically prescribed: $\vec\upnu=(-(y-L_y/2),+(x-L_x/2))$.
-Resolution is set to $30\times30$ quadratic elements.
+Resolution is set to $30\times30$ quadratic $Q_2$ elements.
 
 In what follows we test the time integration scheme by setting $\alpha_T=1$ 
-(fully implicit formulation), $\alpha=0$ (fully explicit formulation) and $\alpha_T=1/2$ (Crank-Nicolson).  
+(fully implicit formulation), $\alpha_T=0$ (fully explicit formulation) and $\alpha_T=1/2$ (Crank-Nicolson).  
 In the book Donea \& Huerta set the timestep is set to $\delta t=2\pi/200$ which corresponds 
 to a CFL number of approximately 0.666. If we want to be able to run this experiment at higher 
 resolution we need to adapt the timestep to the mesh size (CFL criterion). We 
@@ -76,12 +98,12 @@ c)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/c
 d)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/solution_0320.pdf}
 e)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/solution_0420.pdf}
 f)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/crni/solution_0530.pdf}\\
-{\captionfont a,b,c,d,e,f) Temperature field throughout the rotation.} 
+{\captionfont a,b,c,d,e,f) Temperature field throughout the $2\pi$ rotation.} 
 \end{center}
 
 \vspace{.4cm}
 
-Turning now to the statistics, we plot $\min(T)$, $\max(T)$ and $E_T$ as a function of time:
+Turning now to the statistics, we plot $\min/\max(T)$ and $E_T$ as a function of time:
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_43/results/experiment1/Tmin.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_43/results/experiment1/Tmax.pdf}
@@ -91,21 +113,25 @@ Turning now to the statistics, we plot $\min(T)$, $\max(T)$ and $E_T$ as a funct
 The conclusions are clear: the explicit method diverges quickly and is unusable. 
 The fully implicit and Crank-Nicolson 
 method yield similar energy conservation but the fully-implicit showcases 
-a clear loss in maximum temperature.
+a clear decrease in maximum temperature.
 
-\paragraph{Effect of time step value} 
+
+%...................................................................................
+\subsubsection*{Effect of time step value} 
 We can run the experiment (still a $2\pi$ rotation) 
 with three different time steps ($\delta t=2\pi/30,2\pi/60,2\pi/120$) 
-and we recover very similar results to those presented in \cite{dohu03}:
+and we recover very similar results to those presented in \textcite{dohu03}:
 \begin{center}
 \includegraphics[height=8cm]{python_codes/fieldstone_43/results/experiment1/dohu03}
 \includegraphics[height=8cm]{python_codes/fieldstone_43/results/experiment1/temps_30_60_120}\\
-{\captionfont From top to bottom: $\delta t=2\pi/120,2\pi/60,2\pi/30$ with Crank-Nicolson. Left panel is taken from donea \& Huerta \cite{dohu03}. Results obtained with linear elements.}
+{\captionfont From top to bottom: $\delta t=2\pi/120,2\pi/60,2\pi/30$ with Crank-Nicolson. 
+Left panel is taken from donea \& Huerta \cite{dohu03}. Results obtained with linear elements.}
 \end{center}
 
 
 
-\paragraph{On the use of BDF methods} I have also implemented 
+%...................................................................
+\subsubsection*{On the use of BDF methods} I have also implemented 
 BDF1,2,3,4,5  (see Section~\ref{MMM-ss:hte_fem}). 
 BDF2 outperforms BDF1 and is comparable to Crank-Nicolson. 
 For reasons unknown to me, the BDF3 diverges after 100 time steps. So do 
@@ -117,20 +143,41 @@ BDF1,2,3 and Crank-Nicolson after a full rotation.
 {\captionfont Left to right: BDF1 (i.e. implicit euler), BDF2, BDF3, Crank-Nicolson}
 \end{center}
 
-\paragraph{On the effect of SUPG} 
+
+
+%.....................................
+\subsubsection*{On the effect of SUPG} 
 I now turn to another aspect of this problem: what is the effect of the SUPG stabilisation 
 scheme on the solution? In what follows Crank-Nicolson is used. 
 
 \begin{center}
-\includegraphics[width=6.8cm]{python_codes/fieldstone_43/results/experiment1/Tmin_supg}
-\includegraphics[width=6.8cm]{python_codes/fieldstone_43/results/experiment1/Tmax_supg}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment1/Tmin_supg}
+\includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment1/Tmax_supg}\\
 {\captionfont Time evolution of min/max temperature with and without SUPG.} 
 \end{center}
 
+We find that SUPG yields a solution which min/max values are closer to the analytical ones.
+
+\begin{center}
+a)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/supg/solution_0000.pdf}
+b)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/supg/solution_0100.pdf}
+c)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/supg/solution_0200.pdf}
+d)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/supg/solution_0300.pdf}
+e)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/supg/solution_0400.pdf}
+f)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/supg/solution_0500.pdf}\\
+{\captionfont a,b,c,d,e,f) Temperature field throughout the $2\pi$ rotation.} 
+\end{center}
+
+
+
 %------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+\newpage
 \subsection*{Experiment 2 - Three objects rotation}
 
-This setup is inspired by the one in the ASPECT manual. The cone of the previous 
+This setup is inspired by the one in the ASPECT 
+manual\footnote{\url{https://aspect-documentation.readthedocs.io/en/latest/user/benchmarks/benchmarks/advection/doc/advection.html}}. The cone of the previous 
 experiment is now replaced by three 'objects': a Zalesak disk \cite{zale79}, 
 a sharp cone and a truncated cosine hill:
 
@@ -147,7 +194,8 @@ for i in range(0,NV):
 \end{lstlisting}
 
 The domain is $2\times2$, centered on the origin. The velocity is $\vec\upnu=(-y,x)$. Temperature 
-is set to zero on all four sides. For this experiment the CFL number is set to 0.5
+is set to zero on all four sides (only on influx subsets). For this experiment the CFL number is set to 0.5
+and the resolution is $64\times 64$ elements.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment2/buildings}
@@ -158,6 +206,12 @@ is set to zero on all four sides. For this experiment the CFL number is set to 0
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment2/avrg_T}
+\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment2/avrg_T2}\\
+{\captionfont Averave temperature in the domain as a function of time. 
+Left: all three cases. Right: only SUPG cases.}
+\end{center}
+
+\begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment2/stats_T}
 \end{center}
 
@@ -180,15 +234,16 @@ is set to zero on all four sides. For this experiment the CFL number is set to 0
 
 
 %------------------------------------------------------------------------------
+\newpage
 \subsection*{Experiment 3 - 1D step advection}
 
 This experiment comes from Appendix A of Thieulot (2011) \cite{thie11}.
 The unit segment is discretised by means of 64 elements, 
 over which a unit velocity field is prescribed.
 The discontinuity is initially
-placed at x = 1/4 and after a time $t=0.5$, it is expected to have
+placed at $x=1/4$ and after a time $t=0.5$, it is expected to have
 reached the position $x=3/4$.
-Temperature boundary conditions are $T=1$ on the left and $T=0$ on the right. 
+Temperature boundary conditions are $T=1$ on the left. 
 Note that the simulation is actually carried out in 2D with a $1\times0.25$ domain 
 discretised by means of $64\times16$ elements.
 CFL number is set to 0.25.
@@ -214,9 +269,19 @@ CFL number is set to 0.25.
 \end{center}
 
 
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_43/results/experiment3/Q2/compT}\\
+{\captionfont Temperature field at the end of the simulation. No SUPG in the front, 
+with SUPG in the back.}
+\end{center}
+
+
+
+
 
 
 %...........................................................................................
+\newpage
 \subsection*{Experiment 4 - Steady state sideways 2D advection}
 
 This experiment is somewhat similar to the one in \stone~65.
@@ -226,23 +291,26 @@ The temperature is prescribed on the left side only, i.e. $T=1$ for $x=0$, $y=[0
 (corners included), and 
 on the bottom (left corner excluded) with $T=0$. The other two sides 
 are left free. Initial temperature is $T=0$.
-The resolution is $10\times10$ and the CFL number is set to $C=0.1$. 
+The resolution is $10\times10$ and the CFL number is set to $C_{\tt CFL}=0.1$. 
 The model is run up to $t=3$ (steady state is then reached). 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_43/results/experiment4/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_43/results/experiment4/Tss}
-\includegraphics[width=5cm]{python_codes/fieldstone_43/results/experiment4/Tss3D}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment4/stats_T}
-\includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment4/avrg_T}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_43/results/experiment4/vel}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_43/results/experiment4/Tss}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_43/results/experiment4/Tss3D}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment4/stats_T}
+\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment4/avrg_T}
 \end{center}
 
 %...........................................................................................
+\newpage
 \subsection*{Experiment 5 - Steady state rotation }
 
-The domain is a unit square. The velocity field is given by $\vec\upnu=(y,1-x)$. Initial temperature is 
-$T=0$. On left boundary $T=0$ is prescribed while at the bottom $T=0$ is prescribed if $x<1/3$ and $T=1$
-otherwise. Resolution is $16\times16$ and the CFL number is set to $C=0.1$. 
+The domain is a unit square. The velocity field is given by $\vec\upnu=(y,1-x)$. 
+The initial temperature is $T(x,y)=0$. 
+Influx boundary conditions are prescribed on the left and bottom boundaries so
+$T=0$ is prescribed on the left while at the bottom $T=0$ is prescribed if $x<1/3$ and $T=1$
+otherwise. Resolution is $16\times16$ and the CFL number is set to $C_{CFL}=0.25$. 
 The model is run up to $t=4$ (steady state is then reached).
 
 \begin{center}
@@ -261,19 +329,23 @@ The model is run up to $t=4$ (steady state is then reached).
 Note that it is currently not possible to run this experiment with ASPECT (?).
 
 %...........................................................................................
+\newpage
 \subsection*{Experiment 6 - Bending beam}
 
-The domain is $1000\times1000$km, discretised with $50\times50$ elements. Boundary conditions are
-$T=0$ on the top and bottom. On the left side $T=1$ if prescribed if $200<Y<800$km and 0 elsewhere.
-The initial temperature field is a $800\times600$km square attached to the left.
-The velocity is as follows and reaches a maximum on the right wall at 1cm/year:
+The domain is a Cartesian box of size $1000\times1000$km, 
+discretised with $50\times50$ elements. The CFL number is set to 0.25.
+The top boundary is an inflow while the bottom boundary is an outflow.
+We then prescribe $T=0$ at the top. On the left side $T=1$ if prescribed if $200<y<800$km 
+and 0 elsewhere.
+The initial temperature field is a $800\times600$km square attached to the left (see figure).
+The velocity is given by $\vec{\upnu}=(0,-x/Lx\cdot v_0)$  with $v_0=1~\si{\cm\per\year}$:
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment6/setup}
 \end{center}
 
-In this case, because of the very small velocity and the large size of the elements,  
-the reported $\tau$ value is about $10^{13-15}$! 
+Note that in this case, because of the very small velocity and the large size of the elements,  
+the reported $\tau$ value is about $10^{13-15}$.
 
 \begin{center}
 \includegraphics[width=14cm]{python_codes/fieldstone_43/results/experiment6/T}\\
@@ -288,36 +360,60 @@ large scale under/overshoots.
 \includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment6/avrg_T}
 \end{center}
 
+We can also plot the temperature on the vertical line given by $x=L_x/2$:
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment6/diagonal}
+\end{center}
+
+
 %...........................................................................................
+\newpage
 \subsection*{Experiment 7 - Beam in a whirl}
 
-The setup is identical to experiment 6, but the velocity is now given by 
-the equations of Section~\ref{MMM-mms1} which have been multiplied by 100 cm/year 
-to arrive at a max velocity in the domain of approximately 1cm/year:
+The setup is identical to experiment 6 but the velocity is now 
+given by the equations of Section~\ref{MMM-mms1} which have been multiplied by 100 cm/year 
+to arrive at a max velocity in the domain of approximately 1cm/year.
+Since the velocity is parallel/zero on all four boundaries we can prescribe the 
+temperature on all four boundaries. The CFL number is set to 0.25.
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment7/setup}
+\includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment7/T}
+\includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment7/vel}\\
+{\captionfont Left: Initial temperature field in the domain. Right: velocity field.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=14cm]{python_codes/fieldstone_43/results/experiment7/T}\\
-{\captionfont Left: no SUPG; right: with SUPG}
+\includegraphics[width=14cm]{python_codes/fieldstone_43/results/experiment7/T96}\\
+{\captionfont Left: no SUPG; right: with SUPG. Resolution $96^2$.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment7/stats_T}
-\includegraphics[width=7cm]{python_codes/fieldstone_43/results/experiment7/avrg_T}
+\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment7/stats_T}
+\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment7/avrg_T}\\
+{\captionfont Temperature statistics (min,max,avrg) as a function of time 
+for various resolutions with and without SUPG.}
 \end{center}
 
-Ripples are gone, but over/undershoots are about the same with and without supg ...?
+We can also look at a transect of the temperature field from the upper-left corner
+down to the lower-right corner:
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment7/diagonal}
+\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment7/diagonal_supg}
+\end{center}
+With SUPG the ripples are mostly gone, but over/undershoots near large gradients 
+are about the same with and without supg.
+
+(note that the results above were obtained with slightly different b.c.)
 
 %...........................................................................................
+\newpage
 \subsection*{Experiment 8 - 1D Cosine hill advection}
 
 The setup originates in Li \cite[ex 5.2]{li06}.
 The domain has dimension $L_x=1$. 
-The temperature is prescribed on the left and the right boundary to be zero. 
+The temperature is prescribed on the left to be zero (the right boundary is an outflux
+no no temperature can be prescribed there).
 The initial temperature is given by
 \[
 T(x,0)=
@@ -329,9 +425,8 @@ T(x,0)=
 \right.
 \]
 The velocity is set to $u=0.1$.
-We use a mesh of 200x4 elements and a CFL number of 0.1. 
+We use a mesh of $200\times 4$ elements and a CFL number of 0.5. 
 We run the model to time $t=8$.
-
 
 \begin{center}
 \includegraphics[width=4cm]{python_codes/fieldstone_43/results/experiment8/Temp0000}
@@ -343,9 +438,17 @@ We run the model to time $t=8$.
 \includegraphics[width=4cm]{python_codes/fieldstone_43/results/experiment8/Temp0300}
 \end{center}
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment8/stats_T.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment8/avrg_T.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment8/diagonal}
+\end{center}
+
+
 
 \newpage
 %...........................................................................................
+\newpage
 \subsection*{Experiment 9 - wiggles advection (deal.II step-9)}
 
 The setup for this experiment is borrowed from step-9 of deal.II, found at 

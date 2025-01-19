@@ -105,7 +105,7 @@ if int(len(sys.argv) == 4):
    order     =int(sys.argv[2])
    supg_type =int(sys.argv[3])
 else:
-   experiment=9
+   experiment=5
    order=2
    supg_type=1
 
@@ -116,8 +116,8 @@ use_bdf=False
 bdf_order=2
 
 if experiment==1: # rotating cone
-   nelx = 30
-   nely = 30
+   nelx=30
+   nely=nelx
    Lx=1.  
    Ly=1.  
    tfinal=2.*np.pi
@@ -125,6 +125,7 @@ if experiment==1: # rotating cone
    xmin=0.
    ymin=0.
    every=10
+   steady_state=False
 
 if experiment==2: # rotating 3 objects
    nelx=64
@@ -136,6 +137,7 @@ if experiment==2: # rotating 3 objects
    every=10
    xmin=-1.
    ymin=-1.
+   steady_state=False
 
 if experiment==3: # front advection
    nelx=64
@@ -147,6 +149,7 @@ if experiment==3: # front advection
    xmin=0.
    ymin=0.
    every=10
+   steady_state=False
 
 if experiment==4: # skew advection
    nelx=10
@@ -158,6 +161,7 @@ if experiment==4: # skew advection
    xmin=0.
    ymin=0.
    every=10
+   steady_state=False
 
 if experiment==5: # quarter circle
    nelx=16
@@ -165,10 +169,11 @@ if experiment==5: # quarter circle
    Lx=1.   
    Ly=1.   
    tfinal=4.
-   CFLnb=0.1
+   CFLnb=0.25
    xmin=0.
    ymin=0.
    every=10
+   steady_state=False
 
 if experiment==6: # elastic slab
    nelx=50
@@ -180,10 +185,11 @@ if experiment==6: # elastic slab
    xmin=0.
    ymin=0.
    every=1
+   steady_state=False
 
 if experiment==7: # elastic slab
-   nelx=50
-   nely=50
+   nelx=32
+   nely=32
    Lx=1e6
    Ly=1e6
    tfinal=30e6*year 
@@ -191,6 +197,7 @@ if experiment==7: # elastic slab
    xmin=0.
    ymin=0.
    every=5
+   steady_state=False
 
 if experiment==8: # advection cone Li book
    nelx=200
@@ -198,10 +205,11 @@ if experiment==8: # advection cone Li book
    Lx=1
    Ly=0.05
    tfinal=8
-   CFLnb=0.1
+   CFLnb=0.5
    xmin=0.
    ymin=0.
    every=10
+   steady_state=False
 
 if experiment==9: #step-9
    nelx=512
@@ -358,27 +366,15 @@ start = timing.time()
 bc_fixT=np.zeros(NfemT,dtype=bool)  
 bc_valT=np.zeros(NfemT,dtype=np.float64) 
 
-if experiment==1:
+if experiment==1 or experiment==2:
    for i in range(0,NV):
-       if x[i]/Lx<eps:
+       if (x[i]-xmin)/Lx<eps and u[i]>0:
           bc_fixT[i]=True ; bc_valT[i]=0.
-       if x[i]/Lx>(1-eps):
+       if (x[i]-xmin)/Lx>(1-eps) and u[i]<0:
           bc_fixT[i]=True ; bc_valT[i]=0.
-       if y[i]/Ly<eps:
+       if (y[i]-ymin)/Ly<eps and v[i]>0:
           bc_fixT[i]=True ; bc_valT[i]=0.
-       if y[i]/Ly>(1-eps):
-          bc_fixT[i]=True ; bc_valT[i]=0.
-   #end for
-
-if experiment==2:
-   for i in range(0,NV):
-       if (x[i]-xmin)/Lx<eps:
-          bc_fixT[i]=True ; bc_valT[i]=0.
-       if (x[i]-xmin)/Lx>(1-eps):
-          bc_fixT[i]=True ; bc_valT[i]=0.
-       if (y[i]-ymin)/Ly<eps:
-          bc_fixT[i]=True ; bc_valT[i]=0.
-       if (y[i]-ymin)/Ly>(1-eps):
+       if (y[i]-ymin)/Ly>(1-eps) and v[i]<0:
           bc_fixT[i]=True ; bc_valT[i]=0.
    #end for
 
@@ -386,8 +382,6 @@ if experiment==3:
    for i in range(0,NV):
        if x[i]/Lx<eps:
           bc_fixT[i]=True ; bc_valT[i]=1.
-       if x[i]/Lx>(1-eps):
-          bc_fixT[i]=True ; bc_valT[i]=0.
    #end for
 
 if experiment==4:
@@ -411,23 +405,33 @@ if experiment==5:
           bc_fixT[i]=True ; bc_valT[i]=0.
    #end for
 
-if experiment==6 or experiment==7:
+if experiment==6:
    for i in range(0,NV):
        if x[i]/Lx<eps and np.abs(y[i]-Ly/2)<=300e3:
           bc_fixT[i]=True ; bc_valT[i]=1.
        if x[i]/Lx<eps and np.abs(y[i]-Ly/2)>300e3:
           bc_fixT[i]=True ; bc_valT[i]=0.
-       if y[i]/Ly<eps:               
+       if y[i]/Ly>(1-eps):
+          bc_fixT[i]=True ; bc_valT[i]=0.
+   #end for
+
+if experiment==7:
+   for i in range(0,NV):
+       if x[i]/Lx<eps and np.abs(y[i]-Ly/2)<=300e3:
+          bc_fixT[i]=True ; bc_valT[i]=1.
+       if x[i]/Lx<eps and np.abs(y[i]-Ly/2)>300e3:
+          bc_fixT[i]=True ; bc_valT[i]=0.
+       if (x[i]-xmin)/Lx>(1-eps):
           bc_fixT[i]=True ; bc_valT[i]=0.
        if y[i]/Ly>(1-eps):
+          bc_fixT[i]=True ; bc_valT[i]=0.
+       if (y[i])/Ly<eps:
           bc_fixT[i]=True ; bc_valT[i]=0.
    #end for
 
 if experiment==8:
    for i in range(0,NV):
        if x[i]/Lx<eps:
-          bc_fixT[i]=True ; bc_valT[i]=0.
-       if x[i]/Lx>(1-eps):
           bc_fixT[i]=True ; bc_valT[i]=0.
 
 if experiment==9:
@@ -507,11 +511,6 @@ if experiment==8:
           T[i]=0
        #end if
    #end for
-
-#if experiment==9:
-#   for i in range(0,NV):
-#       if (x[i]+0.75)**2+(y[i]+0.75)**2<0.01:
-#          T[i]=10.
 
 Tm1[:]=T[:]
 Tm2[:]=T[:]
@@ -918,12 +917,24 @@ for istep in range(0,nstep):
     
 #end for istep
 
-if experiment==9:
-
+if experiment==9 or experiment==7:
    diagonal_file=open('diagonal.ascii',"w")
    for i in range(0,NV):
-       if np.abs(y[i]-1+x[i])<eps:
+       if np.abs(y[i]-Ly+x[i])<eps*Lx:
           diagonal_file.write("%4e %6e %7e \n" %(x[i],y[i],T[i]))
+
+if experiment==6:
+   diagonal_file=open('diagonal.ascii',"w")
+   for i in range(0,NV):
+       if np.abs(x[i]-Lx/2)<eps*Lx:
+          diagonal_file.write("%4e %6e %7e \n" %(x[i],y[i],T[i]))
+
+if experiment==8 or experiment==3:
+   diagonal_file=open('diagonal.ascii',"w")
+   for i in range(0,NV):
+       if np.abs(y[i]-Ly/2)<eps*Ly:
+          diagonal_file.write("%4e %6e %7e \n" %(x[i],y[i],T[i]))
+
 
 
 #==============================================================================
