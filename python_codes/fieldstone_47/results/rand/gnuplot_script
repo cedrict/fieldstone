@@ -1,0 +1,37 @@
+#
+set term pdf enhanced
+set grid
+set key outside
+set pointsize .2
+
+set xlabel 'x'
+set ylabel 'p'
+set output 'pressure.pdf'
+plot[][]\
+'pressure_16x16.ascii' u 1:3 w p t '16x16',\
+'pressure_32x32.ascii' u 1:3 w p t '32x32',\
+'pressure_48x48.ascii' u 1:3 w p t '48x48',\
+'pressure_64x64.ascii' u 1:3 w p t '64x64',\
+x*(1-x)-1./6. lt -1 t 'analytical'
+
+
+
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+set output 'errors.pdf'
+set format y "10^{%L}"
+set pointsize .2
+plot[0.007:0.12][]\
+'errors3' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'velocity, nqel=3',\
+'errors3' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'pressure, nqel=3',\
+'errors6' u (1./sqrt($3)):6 w lp lt 2 pt 3 t 'velocity, nqel=6',\
+'errors6' u (1./sqrt($3)):9 w lp lt 2 pt 4 t 'pressure, nqel=6',\
+'errors7' u (1./sqrt($3)):6 w lp lt 3 pt 5 t 'velocity, nqel=7',\
+'errors7' u (1./sqrt($3)):9 w lp lt 3 pt 6 t 'pressure, nqel=7',\
+x**2/11. w l lt -1 dt 1 t 'x^2',\
+x**1.5   w l lt -1 dt 2 t 'x^{1.5}',\
+x**1/10   w l lt -1 dt 3 t 'x^{1}'
+
+
+
