@@ -1,11 +1,15 @@
+#
 set term pdf enhanced
 set output 'errors.pdf'
 set log xy
 set xlabel 'h'
 set ylabel 'error'
-set key bottom
-plot[][]\
+set pointsize .25
+set grid
+set format y "10^{%L}"
+set key outside 
+plot[0.009:0.11][]\
 'errors' u (1./sqrt($3)):6 w lp t 'velocity',\
 'errors' u (1./sqrt($3)):9 w lp t 'pressure',\
 x**3/11. w l lt -1 dashtype 2 t 'x^3',\
-x**1.9*7   w l lt -1 dashtype 3 t 'x^{1.9}'
+x**2*1.8   w l lt -1 dashtype 4 t 'x^{2}'
