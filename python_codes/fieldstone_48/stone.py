@@ -1,11 +1,8 @@
 import numpy as np
 import sys as sys
-import scipy
-import math as math
-import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import lil_matrix
 import time as timing
+import scipy.sparse as sps
+from scipy.sparse import csr_matrix,lil_matrix
 
 #------------------------------------------------------------------------------
 
@@ -15,7 +12,7 @@ def NNV(r,s,order):
        N_1=0.25*(1.+r)*(1.-s)
        N_2=0.25*(1.-r)*(1.+s)
        N_3=0.25*(1.+r)*(1.+s)
-       return N_0,N_1,N_2,N_3
+       return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
     if order==2:
        N_0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
        N_1=    (1.-r**2) * 0.5*s*(s-1.)
@@ -26,7 +23,7 @@ def NNV(r,s,order):
        N_6= 0.5*r*(r-1.) * 0.5*s*(s+1.)
        N_7=    (1.-r**2) * 0.5*s*(s+1.)
        N_8= 0.5*r*(r+1.) * 0.5*s*(s+1.)
-       return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8
+       return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
     if order==3:
        N1r=(-1    +r +9*r**2 - 9*r**3)/16
        N2r=(+9 -27*r -9*r**2 +27*r**3)/16
@@ -52,8 +49,8 @@ def NNV(r,s,order):
        N_13= N2r*N4t 
        N_14= N3r*N4t 
        N_15= N4r*N4t 
-       return N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
-              N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15
+       return np.array([N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
+                        N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15],dtype=np.float64)
     if order==4:
        N1r=(    r -   r**2 -4*r**3 + 4*r**4)/6
        N2r=( -8*r +16*r**2 +8*r**3 -16*r**4)/6
@@ -90,11 +87,11 @@ def NNV(r,s,order):
        N_22= N3r*N5s
        N_23= N4r*N5s
        N_24= N5r*N5s
-       return N_00,N_01,N_02,N_03,N_04,\
-              N_05,N_06,N_07,N_08,N_09,\
-              N_10,N_11,N_12,N_13,N_14,\
-              N_15,N_16,N_17,N_18,N_19,\
-              N_20,N_21,N_22,N_23,N_24
+       return np.array([N_00,N_01,N_02,N_03,N_04,\
+                        N_05,N_06,N_07,N_08,N_09,\
+                        N_10,N_11,N_12,N_13,N_14,\
+                        N_15,N_16,N_17,N_18,N_19,\
+                        N_20,N_21,N_22,N_23,N_24],dtype=np.float64)
 
 def dNNVdr(r,s,order):
     if order==1:
@@ -102,7 +99,7 @@ def dNNVdr(r,s,order):
        dNdr_1=+0.25*(1.-s) 
        dNdr_2=-0.25*(1.+s) 
        dNdr_3=+0.25*(1.+s) 
-       return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+       return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3],dtype=np.float64)
     if order==2:
        dNdr_0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
        dNdr_1=       (-2.*r) * 0.5*s*(s-1)
@@ -113,7 +110,8 @@ def dNNVdr(r,s,order):
        dNdr_6= 0.5*(2.*r-1.) * 0.5*s*(s+1)
        dNdr_7=       (-2.*r) * 0.5*s*(s+1)
        dNdr_8= 0.5*(2.*r+1.) * 0.5*s*(s+1)
-       return dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8
+       return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,\
+                        dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8],dtype=np.float64)
     if order==3:
        dN1rdr=( +1 +18*r -27*r**2)/16
        dN2rdr=(-27 -18*r +81*r**2)/16
@@ -139,8 +137,10 @@ def dNNVdr(r,s,order):
        dNdr_13= dN2rdr* N4s 
        dNdr_14= dN3rdr* N4s 
        dNdr_15= dN4rdr* N4s 
-       return dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,dNdr_05,dNdr_06,dNdr_07,\
-              dNdr_08,dNdr_09,dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,dNdr_15
+       return np.array([dNdr_00,dNdr_01,dNdr_02,dNdr_03,\
+                        dNdr_04,dNdr_05,dNdr_06,dNdr_07,\
+                        dNdr_08,dNdr_09,dNdr_10,dNdr_11,\
+                        dNdr_12,dNdr_13,dNdr_14,dNdr_15],dtype=np.float64)
     if order==4:
        dN1dr=(    1 - 2*r -12*r**2 +16*r**3)/6
        dN2dr=(   -8 +32*r +24*r**2 -64*r**3)/6
@@ -177,11 +177,11 @@ def dNNVdr(r,s,order):
        dNdr_22= dN3dr*N5s
        dNdr_23= dN4dr*N5s
        dNdr_24= dN5dr*N5s
-       return dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,\
-              dNdr_05,dNdr_06,dNdr_07,dNdr_08,dNdr_09,\
-              dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,\
-              dNdr_15,dNdr_16,dNdr_17,dNdr_18,dNdr_19,\
-              dNdr_20,dNdr_21,dNdr_22,dNdr_23,dNdr_24
+       return np.array([dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,\
+                        dNdr_05,dNdr_06,dNdr_07,dNdr_08,dNdr_09,\
+                        dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,\
+                        dNdr_15,dNdr_16,dNdr_17,dNdr_18,dNdr_19,\
+                        dNdr_20,dNdr_21,dNdr_22,dNdr_23,dNdr_24],dtype=np.float64)
 
 def dNNVds(r,s,order):
     if order==1:
@@ -189,7 +189,7 @@ def dNNVds(r,s,order):
        dNds_1=-0.25*(1.+r)
        dNds_2=+0.25*(1.-r)
        dNds_3=+0.25*(1.+r)
-       return dNds_0,dNds_1,dNds_2,dNds_3
+       return np.array([dNds_0,dNds_1,dNds_2,dNds_3],dtype=np.float64)
     if order==2:
        dNds_0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
        dNds_1=    (1.-r**2) * 0.5*(2.*s-1.)
@@ -200,7 +200,8 @@ def dNNVds(r,s,order):
        dNds_6= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
        dNds_7=    (1.-r**2) * 0.5*(2.*s+1.)
        dNds_8= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
-       return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8
+       return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,\
+                        dNds_5,dNds_6,dNds_7,dNds_8],dtype=np.float64)
     if order==3:
        N1r=(-1    +r +9*r**2 - 9*r**3)/16
        N2r=(+9 -27*r -9*r**2 +27*r**3)/16
@@ -226,8 +227,10 @@ def dNNVds(r,s,order):
        dNds_13= N2r*dN4sds 
        dNds_14= N3r*dN4sds 
        dNds_15= N4r*dN4sds
-       return dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,dNds_05,dNds_06,dNds_07,\
-              dNds_08,dNds_09,dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,dNds_15
+       return np.array([dNds_00,dNds_01,dNds_02,dNds_03,\
+                        dNds_04,dNds_05,dNds_06,dNds_07,\
+                        dNds_08,dNds_09,dNds_10,dNds_11,\
+                        dNds_12,dNds_13,dNds_14,dNds_15],dtype=np.float64)
     if order==4:
        N1r=(    r -   r**2 -4*r**3 + 4*r**4)/6
        N2r=( -8*r +16*r**2 +8*r**3 -16*r**4)/6
@@ -264,23 +267,23 @@ def dNNVds(r,s,order):
        dNds_22= N3r*dN5ds
        dNds_23= N4r*dN5ds
        dNds_24= N5r*dN5ds
-       return dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,\
-              dNds_05,dNds_06,dNds_07,dNds_08,dNds_09,\
-              dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,\
-              dNds_15,dNds_16,dNds_17,dNds_18,dNds_19,\
-              dNds_20,dNds_21,dNds_22,dNds_23,dNds_24
+       return np.array([dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,\
+                        dNds_05,dNds_06,dNds_07,dNds_08,dNds_09,\
+                        dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,\
+                        dNds_15,dNds_16,dNds_17,dNds_18,dNds_19,\
+                        dNds_20,dNds_21,dNds_22,dNds_23,dNds_24],dtype=np.float64)
 
 
 def NNP(r,s,order):
     if order==1:
        N_1=1.
-       return N_1
+       return np.array([N_1],dtype=np.float64)
     if order==2:
        N_0=0.25*(1-r)*(1-s)
        N_1=0.25*(1+r)*(1-s)
        N_2=0.25*(1-r)*(1+s)
        N_3=0.25*(1+r)*(1+s)
-       return N_0,N_1,N_2,N_3
+       return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
     if order==3:
        N_0= 0.5*r*(r-1) * 0.5*s*(s-1)
        N_1=    (1-r**2) * 0.5*s*(s-1)
@@ -291,7 +294,7 @@ def NNP(r,s,order):
        N_6= 0.5*r*(r-1) * 0.5*s*(s+1)
        N_7=    (1-r**2) * 0.5*s*(s+1)
        N_8= 0.5*r*(r+1) * 0.5*s*(s+1)
-       return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8
+       return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
     if order==4:
        N1r=(-1    +r +9*r**2 - 9*r**3)/16
        N2r=(+9 -27*r -9*r**2 +27*r**3)/16
@@ -317,8 +320,8 @@ def NNP(r,s,order):
        N_13= N2r*N4t 
        N_14= N3r*N4t 
        N_15= N4r*N4t 
-       return N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
-              N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15
+       return np.array([N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
+                        N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 
@@ -345,7 +348,7 @@ def velocity_y(x,y):
     return val
 
 def pressure(x,y):
-    val=x*(1.-x)#-1./6.
+    val=x*(1.-x)-1./6.
     return val
 
 #------------------------------------------------------------------------------
@@ -361,16 +364,18 @@ ndofP=1  # number of pressure degrees of freedom
 Lx=1.
 Ly=1.
 
-if int(len(sys.argv) == 5):
+if int(len(sys.argv) == 6):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
    order = int(sys.argv[4])
+   nqperdim = int(sys.argv[5])
 else:
-   nelx = 8
-   nely = 8
+   nelx = 16
+   nely = 16
    visu = 1
-   order= 2
+   order= 1
+   nqperdim=2
 
 nel=nelx*nely
 nnx=order*nelx+1  # number of elements, x direction
@@ -425,18 +430,20 @@ hy=Ly/nely
 
 sparse=True
 
+#mode=0: blocks u,v,p
+#mode=1: regular approach 
 mode=1
 
 #################################################################
 
-if order==1:
-   nqperdim=2
-if order==2:
-   nqperdim=3
-if order==3:
-   nqperdim=4
-if order==4:
-   nqperdim=5
+#if order==1:
+#   nqperdim=2
+#if order==2:
+#   nqperdim=3
+#if order==3:
+#   nqperdim=4
+#if order==4:
+#   nqperdim=5
 
 if nqperdim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
@@ -463,20 +470,6 @@ if nqperdim==5:
    qw5c=128./225.
    qcoords=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
    qweights=[qw5a,qw5b,qw5c,qw5b,qw5a]
-
-if nqperdim==6:
-   qcoords=[-0.932469514203152,\
-            -0.661209386466265,\
-            -0.238619186083197,\
-            +0.238619186083197,\
-            +0.661209386466265,\
-            +0.932469514203152]
-   qweights=[0.171324492379170,\
-             0.360761573048139,\
-             0.467913934572691,\
-             0.467913934572691,\
-             0.360761573048139,\
-             0.171324492379170]
 
 #################################################################
 
@@ -518,6 +511,8 @@ for j in range(0,nny):
         xV[counter]=i*hx/order
         yV[counter]=j*hy/order
         counter+=1
+    #end for
+#end for
 
 #np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
 
@@ -538,7 +533,11 @@ for j in range(0,nely):
             for l in range(0,order+1):
                 iconV[counter2,counter]=i*order+l+j*order*nnx+nnx*k
                 counter2+=1
+            #end for
+        #end for
         counter += 1
+    #end for
+#end for
 
 #print("-------iconV--------")
 #for iel in range (0,nel):
@@ -586,6 +585,8 @@ if order==1:
        for i in range(0,nelx):
            iconP[0,counter]=counter
            counter += 1
+       #end for
+   #end for
 
 if order>1:
    om1=order-1
@@ -597,7 +598,11 @@ if order>1:
                for l in range(0,order):
                    iconP[counter2,counter]=i*om1+l+j*om1*(om1*nelx+1)+(om1*nelx+1)*k 
                    counter2+=1
+               #end for
+           #end for
            counter += 1
+       #end for
+   #end for
 
 #print("-------iconP--------")
 #for iel in range (0,nel):
@@ -881,23 +886,22 @@ print("assemble blocks: %.3f s" % (timing.time() - start))
 ######################################################################
 # assign extra pressure b.c. to remove null space
 ######################################################################
-
-if mode==1:
-   if sparse:
-      A_sparse[Nfem-1,:]=0
-      A_sparse[:,Nfem-1]=0
-      A_sparse[Nfem-1,Nfem-1]=1
-      rhs[Nfem-1]=0
-   else:
-      a_mat[Nfem-1,:]=0
-      a_mat[:,Nfem-1]=0
-      a_mat[Nfem-1,Nfem-1]=1
-      rhs[Nfem-1]=0
-else:
-   AA_sparse[Nfem-1,:]=0
-   AA_sparse[:,Nfem-1]=0
-   AA_sparse[Nfem-1,Nfem-1]=1
-   rhs[Nfem-1]=0
+#if mode==1:
+#   if sparse:
+#      A_sparse[Nfem-1,:]=0
+#      A_sparse[:,Nfem-1]=0
+#      A_sparse[Nfem-1,Nfem-1]=1
+#      rhs[Nfem-1]=0
+#   else:
+#      a_mat[Nfem-1,:]=0
+#      a_mat[:,Nfem-1]=0
+#      a_mat[Nfem-1,Nfem-1]=1
+#      rhs[Nfem-1]=0
+#else:
+#   AA_sparse[Nfem-1,:]=0
+#   AA_sparse[:,Nfem-1]=0
+#   AA_sparse[Nfem-1,Nfem-1]=1
+#   rhs[Nfem-1]=0
 
 
 ######################################################################
@@ -938,6 +942,41 @@ print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 #np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))
+
+#####################################################################
+# normalise pressure
+#####################################################################
+start = timing.time()
+
+pavrg=0.
+for iel in range(0,nel):
+    for iq in range(0,nqperdim):
+        for jq in range(0,nqperdim):
+            rq=qcoords[iq]
+            sq=qcoords[jq]
+            weightq=qweights[iq]*qweights[jq]
+            dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
+            dNNNVds[0:mV]=dNNVds(rq,sq,order)
+            NNNP[0:mP]=NNP(rq,sq,order)
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,mV):
+                jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+                jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
+                jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+                jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+            jcob=np.linalg.det(jcb)
+            pavrg+=NNNP.dot(p[iconP[:,iel]])*weightq*jcob
+        #end for
+    #end for
+#end for
+
+p-=pavrg
+
+#np.savetxt('pressure_after.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+
+print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+
+print("normalise pressure: %.3f s" % (timing.time() - start))
 
 #####################################################################
 # compute strainrate at element center
@@ -1002,7 +1041,7 @@ for iel in range(0,nel):
 
 q=q/c
 
-np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
+#np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
 
 print("project p onto Vnodes: %.3f s" % (timing.time() - start))
 
@@ -1013,7 +1052,6 @@ start = timing.time()
 
 error_u = np.empty(NV,dtype=np.float64)
 error_v = np.empty(NV,dtype=np.float64)
-error_p = np.empty(NP,dtype=np.float64)
 error_q = np.empty(NV,dtype=np.float64)
 
 for i in range(0,NV): 
@@ -1021,12 +1059,8 @@ for i in range(0,NV):
     error_v[i]=v[i]-velocity_y(xV[i],yV[i])
     error_q[i]=q[i]-pressure(xV[i],yV[i])
 
-for i in range(0,NP): 
-    error_p[i]=p[i]-pressure(xP[i],yP[i])
-
 print("     -> error_u (m,M) %.4e %.4e " %(np.min(error_u),np.max(error_u)))
 print("     -> error_v (m,M) %.4e %.4e " %(np.min(error_v),np.max(error_v)))
-print("     -> error_p (m,M) %.4e %.4e " %(np.min(error_p),np.max(error_p)))
 print("     -> error_q (m,M) %.4e %.4e " %(np.min(error_q),np.max(error_q)))
 
 print("compute error fields: %.3f s" % (timing.time() - start))
@@ -1121,8 +1155,8 @@ if visu==1:
     #--
     if order==1:
        vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
-       for i in range(0,nel):
-           vtufile.write("%10e \n" %p[i])
+       for iel in range(0,nel):
+           vtufile.write("%10e \n" %p[iel])
        vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")

@@ -1,0 +1,13 @@
+build FE matrix: 0.312s - 16 elts
+build FE matrix: 0.695s - 36 elts
+build FE matrix: 1.318s - 64 elts
+build FE matrix: 2.025s - 100 elts
+build FE matrix: 2.983s - 144 elts
+build FE matrix: 3.961s - 196 elts
+build FE matrix: 5.101s - 256 elts
+build FE matrix: 7.295s - 400 elts
+build FE matrix: 11.054s - 576 elts
+build FE matrix: 15.704s - 784 elts
+build FE matrix: 20.399s - 1024 elts
+build FE matrix: 27.824s - 1296 elts
+build FE matrix: 35.706s - 1600 elts

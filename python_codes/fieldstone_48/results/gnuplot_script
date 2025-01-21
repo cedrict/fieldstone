@@ -1,0 +1,151 @@
+#
+set term pdf enhanced
+set log xy
+set xlabel 'h'
+set ylabel 'error'
+set key bottom outside 
+set format y "10^{%L}"
+set grid
+
+###################################################################
+set title 'Q_1xQ_0'
+set output 'errors1.pdf'
+plot[0.008:][:]\
+'Q1Q0/errors_nqperdim2' u (1./sqrt($3)):6  w lp lt 1 pt 1 ps .5 t 'v, nq=2^2=',\
+'Q1Q0/errors_nqperdim2' u (1./sqrt($3)):9  w lp lt 2 pt 1 ps .5 t 'p, nq=2^2=',\
+'Q1Q0/errors_nqperdim2' u (1./sqrt($3)):12 w lp lt 3 pt 1 ps .5 t 'q, nq=2^2=',\
+'Q1Q0/errors_nqperdim3' u (1./sqrt($3)):6  w lp lt 1 pt 2 ps .5 t 'v, nq=3^2=',\
+'Q1Q0/errors_nqperdim3' u (1./sqrt($3)):9  w lp lt 2 pt 2 ps .5 t 'p, nq=3^2=',\
+'Q1Q0/errors_nqperdim3' u (1./sqrt($3)):12 w lp lt 3 pt 2 ps .5 t 'q, nq=3^2=',\
+'Q1Q0/errors_nqperdim4' u (1./sqrt($3)):6  w lp lt 1 pt 3 ps .5 t 'v, nq=4^2=',\
+'Q1Q0/errors_nqperdim4' u (1./sqrt($3)):9  w lp lt 2 pt 3 ps .5 t 'p, nq=4^2=',\
+'Q1Q0/errors_nqperdim4' u (1./sqrt($3)):12 w lp lt 3 pt 3 ps .5 t 'q, nq=4^2=',\
+'Q1Q0/errors_nqperdim5' u (1./sqrt($3)):6  w lp lt 1 pt 4 ps .5 t 'v, nq=5^2=',\
+'Q1Q0/errors_nqperdim5' u (1./sqrt($3)):9  w lp lt 2 pt 4 ps .5 t 'p, nq=5^2=',\
+'Q1Q0/errors_nqperdim5' u (1./sqrt($3)):12 w lp lt 3 pt 4 ps .5 t 'q, nq=5^2=',\
+x**2/15. w l lt -1 dt 1 t 'x^2',\
+x**1/1.  w l lt -1 dt 2 t 'x^1'
+
+set output 'errors1_b.pdf'
+plot[0.008:][:]\
+'Q1Q0/errors_nqperdim5' u (1./sqrt($3)):6  w lp lt 1 pt 4 ps .5 t 'v, nq=5^2=',\
+'Q1Q0/errors_nqperdim5' u (1./sqrt($3)):9  w lp lt 2 pt 4 ps .5 t 'p, nq=5^2=',\
+'Q1Q0/errors_nqperdim5' u (1./sqrt($3)):12 w lp lt 3 pt 4 ps .5 t 'q, nq=5^2=',\
+x**2/15. w l lt -1 dt 1 t 'x^2',\
+x**1/1.  w l lt -1 dt 2 t 'x^1'
+
+###################################################################
+set title 'Q_2xQ_1'
+set output 'errors2.pdf'
+plot[0.008:][:]\
+'Q2Q1/errors_nqperdim2' u (1./sqrt($3)):6  w lp lt 1 pt 1 ps .5 t 'v, nq=2^2=',\
+'Q2Q1/errors_nqperdim2' u (1./sqrt($3)):9  w lp lt 2 pt 1 ps .5 t 'p, nq=2^2=',\
+'Q2Q1/errors_nqperdim2' u (1./sqrt($3)):12 w lp lt 3 pt 1 ps .5 t 'q, nq=2^2=',\
+'Q2Q1/errors_nqperdim3' u (1./sqrt($3)):6  w lp lt 1 pt 2 ps .5 t 'v, nq=3^2=',\
+'Q2Q1/errors_nqperdim3' u (1./sqrt($3)):9  w lp lt 2 pt 2 ps .5 t 'p, nq=3^2=',\
+'Q2Q1/errors_nqperdim3' u (1./sqrt($3)):12 w lp lt 3 pt 2 ps .5 t 'q, nq=3^2=',\
+'Q2Q1/errors_nqperdim4' u (1./sqrt($3)):6  w lp lt 1 pt 3 ps .5 t 'v, nq=4^2=',\
+'Q2Q1/errors_nqperdim4' u (1./sqrt($3)):9  w lp lt 2 pt 3 ps .5 t 'p, nq=4^2=',\
+'Q2Q1/errors_nqperdim4' u (1./sqrt($3)):12 w lp lt 3 pt 3 ps .5 t 'q, nq=4^2=',\
+'Q2Q1/errors_nqperdim5' u (1./sqrt($3)):6  w lp lt 1 pt 4 ps .5 t 'v, nq=5^2=',\
+'Q2Q1/errors_nqperdim5' u (1./sqrt($3)):9  w lp lt 2 pt 4 ps .5 t 'p, nq=5^2=',\
+'Q2Q1/errors_nqperdim5' u (1./sqrt($3)):12 w lp lt 3 pt 4 ps .5 t 'q, nq=5^2=',\
+x**3/80. w l lt -1 dt 1 t 'x^3',\
+x**2/10. w l lt -1 dt 2 t 'x^2'
+
+set output 'errors2_b.pdf'
+plot[0.008:][:]\
+'Q2Q1/errors_nqperdim5' u (1./sqrt($3)):6  w lp lt 1 pt 4 ps .5 t 'v, nq=5^2=',\
+'Q2Q1/errors_nqperdim5' u (1./sqrt($3)):9  w lp lt 2 pt 4 ps .5 t 'p, nq=5^2=',\
+'Q2Q1/errors_nqperdim5' u (1./sqrt($3)):12 w lp lt 3 pt 4 ps .5 t 'q, nq=5^2=',\
+x**3/80. w l lt -1 dt 1 t 'x^3',\
+x**2/10. w l lt -1 dt 2 t 'x^2'
+
+
+###################################################################
+set title 'Q_3xQ_2'
+set output 'errors3.pdf'
+plot[0.008:][:1e25]\
+'Q3Q2/errors_nqperdim2' u (1./sqrt($3)):6  w lp lt 1 pt 1 ps .5 t 'v, nq=2^2=',\
+'Q3Q2/errors_nqperdim2' u (1./sqrt($3)):9  w lp lt 2 pt 1 ps .5 t 'p, nq=2^2=',\
+'Q3Q2/errors_nqperdim2' u (1./sqrt($3)):12 w lp lt 3 pt 1 ps .5 t 'q, nq=2^2=',\
+'Q3Q2/errors_nqperdim3' u (1./sqrt($3)):6  w lp lt 1 pt 2 ps .5 t 'v, nq=3^2=',\
+'Q3Q2/errors_nqperdim3' u (1./sqrt($3)):9  w lp lt 2 pt 2 ps .5 t 'p, nq=3^2=',\
+'Q3Q2/errors_nqperdim3' u (1./sqrt($3)):12 w lp lt 3 pt 2 ps .5 t 'q, nq=3^2=',\
+'Q3Q2/errors_nqperdim4' u (1./sqrt($3)):6  w lp lt 1 pt 3 ps .5 t 'v, nq=4^2=',\
+'Q3Q2/errors_nqperdim4' u (1./sqrt($3)):9  w lp lt 2 pt 3 ps .5 t 'p, nq=4^2=',\
+'Q3Q2/errors_nqperdim4' u (1./sqrt($3)):12 w lp lt 3 pt 3 ps .5 t 'q, nq=4^2=',\
+'Q3Q2/errors_nqperdim5' u (1./sqrt($3)):6  w lp lt 1 pt 4 ps .5 t 'v, nq=5^2=',\
+'Q3Q2/errors_nqperdim5' u (1./sqrt($3)):9  w lp lt 2 pt 4 ps .5 t 'p, nq=5^2=',\
+'Q3Q2/errors_nqperdim5' u (1./sqrt($3)):12 w lp lt 3 pt 4 ps .5 t 'q, nq=5^2=',\
+x**4/400. w l lt -1 dt 1 t 'x^4',\
+x**5/300. w l lt -1 dt 2 t 'x^5'
+
+set output 'errors3_b.pdf'
+plot[0.008:][:]\
+'Q3Q2/errors_nqperdim5' u (1./sqrt($3)):6  w lp lt 1 pt 4 ps .5 t 'v, nq=5^2=',\
+'Q3Q2/errors_nqperdim5' u (1./sqrt($3)):9  w lp lt 2 pt 4 ps .5 t 'p, nq=5^2=',\
+'Q3Q2/errors_nqperdim5' u (1./sqrt($3)):12 w lp lt 3 pt 4 ps .5 t 'q, nq=5^2=',\
+x**4/400. w l lt -1 dt 1 t 'x^4',\
+x**5/300. w l lt -1 dt 2 t 'x^5'
+
+###################################################################
+set title 'Q_4xQ_3'
+set output 'errors4.pdf'
+plot[0.008:][:1e40]\
+'Q4Q3/errors_nqperdim2' u (1./sqrt($3)):6  w lp lt 1 pt 1 ps .5 t 'v, nq=2^2=',\
+'Q4Q3/errors_nqperdim2' u (1./sqrt($3)):9  w lp lt 2 pt 1 ps .5 t 'p, nq=2^2=',\
+'Q4Q3/errors_nqperdim2' u (1./sqrt($3)):12 w lp lt 3 pt 1 ps .5 t 'q, nq=2^2=',\
+'Q4Q3/errors_nqperdim3' u (1./sqrt($3)):6  w lp lt 1 pt 2 ps .5 t 'v, nq=3^2=',\
+'Q4Q3/errors_nqperdim3' u (1./sqrt($3)):9  w lp lt 2 pt 2 ps .5 t 'p, nq=3^2=',\
+'Q4Q3/errors_nqperdim3' u (1./sqrt($3)):12 w lp lt 3 pt 2 ps .5 t 'q, nq=3^2=',\
+'Q4Q3/errors_nqperdim4' u (1./sqrt($3)):6  w lp lt 1 pt 3 ps .5 t 'v, nq=4^2=',\
+'Q4Q3/errors_nqperdim4' u (1./sqrt($3)):9  w lp lt 2 pt 3 ps .5 t 'p, nq=4^2=',\
+'Q4Q3/errors_nqperdim4' u (1./sqrt($3)):12 w lp lt 3 pt 3 ps .5 t 'q, nq=4^2=',\
+'Q4Q3/errors_nqperdim5' u (1./sqrt($3)):6  w lp lt 1 pt 4 ps .5 t 'v, nq=5^2=',\
+'Q4Q3/errors_nqperdim5' u (1./sqrt($3)):9  w lp lt 2 pt 4 ps .5 t 'p, nq=5^2=',\
+'Q4Q3/errors_nqperdim5' u (1./sqrt($3)):12 w lp lt 3 pt 4 ps .5 t 'q, nq=5^2=',\
+x**5/10. w l lt -1 dt 1 t 'x^5',\
+x**4/10. w l lt -1 dt 2 t 'x^4'
+
+set output 'errors4_b.pdf'
+plot[0.008:][:]\
+'Q4Q3/errors_nqperdim5' u (1./sqrt($3)):6  w lp lt 1 pt 4 ps .5 t 'v, nq=5^2=',\
+'Q4Q3/errors_nqperdim5' u (1./sqrt($3)):9  w lp lt 2 pt 4 ps .5 t 'p, nq=5^2=',\
+'Q4Q3/errors_nqperdim5' u (1./sqrt($3)):12 w lp lt 3 pt 4 ps .5 t 'q, nq=5^2=',\
+x**5/10. w l lt -1 dt 1 t 'x^5',\
+x**4/10. w l lt -1 dt 2 t 'x^4'
+
+
+###################################################################
+set xlabel 'number of elements'
+set ylabel 'FE matrix build time' 
+set output 'FEMbuildtimes.pdf'
+plot[][]\
+'Q1Q0/FEMbuild_nqperdim2'  u 6:4 w lp lt 1 pt 1 ps .5 t 'Q_1Q_0 - nq=2^2',\
+'Q1Q0/FEMbuild_nqperdim3'  u 6:4 w lp lt 1 pt 1 ps .5 t 'Q_1Q_0 - nq=3^2',\
+'Q1Q0/FEMbuild_nqperdim4'  u 6:4 w lp lt 1 pt 1 ps .5 t 'Q_1Q_0 - nq=4^2',\
+'Q1Q0/FEMbuild_nqperdim5'  u 6:4 w lp lt 1 pt 1 ps .5 t 'Q_1Q_0 - nq=5^2',\
+'Q2Q1/FEMbuild_nqperdim2'  u 6:4 w lp lt 2 pt 1 ps .5 t 'Q_2Q_1 - nq=2^2',\
+'Q2Q1/FEMbuild_nqperdim3'  u 6:4 w lp lt 2 pt 1 ps .5 t 'Q_2Q_1 - nq=3^2',\
+'Q2Q1/FEMbuild_nqperdim4'  u 6:4 w lp lt 2 pt 1 ps .5 t 'Q_2Q_1 - nq=4^2',\
+'Q2Q1/FEMbuild_nqperdim5'  u 6:4 w lp lt 2 pt 1 ps .5 t 'Q_2Q_1 - nq=5^2',\
+'Q3Q2/FEMbuild_nqperdim2'  u 6:4 w lp lt 3 pt 1 ps .5 t 'Q_3Q_2 - nq=2^2',\
+'Q3Q2/FEMbuild_nqperdim3'  u 6:4 w lp lt 3 pt 1 ps .5 t 'Q_3Q_2 - nq=3^2',\
+'Q3Q2/FEMbuild_nqperdim4'  u 6:4 w lp lt 3 pt 1 ps .5 t 'Q_3Q_2 - nq=4^2',\
+'Q3Q2/FEMbuild_nqperdim5'  u 6:4 w lp lt 3 pt 1 ps .5 t 'Q_3Q_2 - nq=5^2',\
+'Q4Q3/FEMbuild_nqperdim2'  u 6:4 w lp lt 4 pt 1 ps .5 t 'Q_4Q_3 - nq=2^2',\
+'Q4Q3/FEMbuild_nqperdim3'  u 6:4 w lp lt 4 pt 1 ps .5 t 'Q_4Q_3 - nq=3^2',\
+'Q4Q3/FEMbuild_nqperdim4'  u 6:4 w lp lt 4 pt 1 ps .5 t 'Q_4Q_3 - nq=4^2',\
+'Q4Q3/FEMbuild_nqperdim5'  u 6:4 w lp lt 4 pt 1 ps .5 t 'Q_4Q_3 - nq=5^2',\
+
+
+
+
+#'FEMbuild2_full' u 6:4 w lp lt 2 pt 2 ps .5 t 'Q_2Q_1 - full',\
+#'FEMbuild3_full' u 6:4 w lp lt 3 pt 2 ps .5 t 'Q_3Q_2 - full',\
+#'FEMbuild4_full' u 6:4 w lp lt 4 pt 2 ps .5 t 'Q_4Q_3 - full'
+#'Q1Q0/FEMbuild1_full' u 6:4 w lp lt 1 pt 2 ps .5 t 'Q_1Q_0 - full',\
+
+
+

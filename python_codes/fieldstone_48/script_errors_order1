@@ -1,0 +1,15 @@
+#! /bin/bash
+rm -f errors_nq*
+rm -f FEMbuild_nq*
+
+for l in 4 6 8 10 12 14 16 18 20 22 24 26 28 32 36 40 48 56 64 72 80 88 96 128; do
+   for nq in 2 3 4 5; do
+
+       echo l= $l nqperdim= $nq
+
+       python3 stone.py $l $l 0 1 $nq > opla 
+       grep errv opla >> errors_nqperdim${nq}
+       grep FE opla >> FEMbuild_nqperdim${nq}
+
+    done
+done
