@@ -1,0 +1,42 @@
+#
+set term pdf enhanced font "times,12pt"
+set grid
+
+set xlabel 'y (km)'
+set ylabel '{/Symbol t}(y)'
+set log y
+set key outside
+set xtics 1
+set arrow from 7, graph 0 to 7, graph 1 nohead dt 4
+set arrow from 5, graph 0 to 5, graph 1 nohead dt 4
+set arrow from 8, graph 0 to 8, graph 1 nohead dt 4
+
+
+set output 'tau.pdf'
+plot[0:10][10:200000]\
+'tau_low.ascii'    u (10-$2):1 w l lw 2 title 'low',\
+'tau_medium.ascii' u (10-$2):1 w l lw 2 title 'medium',\
+'tau_high.ascii'   u (10-$2):1 w l lw 2 title 'high',\
+70 lt -1 lw .5 dt 2,\
+700 lt -1 lw .5 dt 2,\
+7000 lt -1 lw .5 dt 2
+
+##################################################
+
+reset
+
+set term pdf enhanced font "times,12pt"
+set grid
+set output 'pbottom.pdf'
+
+set xlabel 'x (m)'
+set ylabel 'p_{bottom}'
+
+g=10
+h=10e3
+rho_litho=2800
+rho_m=880
+L=100
+
+plot[-2000:2000][]\
+g*h*(rho_litho-rho_m)*exp(-abs(x)/L) notitle
