@@ -18,9 +18,9 @@
 {\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_126}}
 \end{center}
 
-\par\noindent\rule{\textwidth}{0.4pt}
+%\par\noindent\rule{\textwidth}{0.4pt}
 
-{\sl This stone was developed in collaboration with Donald Duck}. \index{contributors}{D. Duck}
+%{\sl This stone was developed in collaboration with Donald Duck}. \index{contributors}{D. Duck}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -30,14 +30,62 @@ Last revision: Jan. 23rd, 2025.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+This is an attempt at replicating the publication by \fullcite{grfr03}.
+When replicating a study I always first reproduce the abstract to give context:
+\begin{displayquote}
+{\color{darkgray}
+Several models pertaining to earthquake cycles imply intermittent fluid flow through
+fault. During the interseismic period, increase in fluid pressure from hydrostatic to
+lithostatic values is a crucial parameter in mechanisms leading to earthquakes. To achieve
+such pressures, geodynamic processes (gouge compaction, fluid flow) and changes in
+permeability are required. Previous models have postulated that changes in permeability
+(by self-healing) are faster than the effects of geodynamic processes. We consider the
+different mechanisms and rates of crack sealing near active fault on the examples of
+uplifted Californian faults. We find that natural crack sealing is normally not achieved by a
+rapid self-healing process. Pressure solution, with mass transfer from solution cleavage to
+cracks, appears to be a more important mechanism for crack sealing and creep during
+postseismic deformation. The geometry of transfer path and experimental data have been
+used to model crack sealing rates by pressure solution which are estimated to be rather
+slow, similar to the recurrence time of some earthquakes. Such slow changes in
+permeability may be crucial factors in controlling the increase in fluid pressure and,
+consequently, the mechanism of critical failure in faults. Then, numerical modeling of
+fluid pressure and transfer around active faults has been performed integrating a slow
+change in permeability by crack sealing, gouge compaction, and fluid flow from depth.
+This modeling shows various location and evolution of fluid overpressure during the
+interseismic period depending on these processes and allows one to estimate the amount of
+fluid transferred from depth during interseismic periods.
+}
+\end{displayquote}
 
-What follows is borrowed from paragraphs 43, 44 \& 45 of \textcite{grfr03} (2003).
+
+%==========================
+\section*{A bit of background}
+
+From paragraph 41: ``there are two types of processes
+which may increase the fluid pressure: the inflow of fluid
+from depth and the progressive change in porosity and
+permeability by crack sealing within and around the fault.''
+
+``
+we made the simplified assumption, that after each earthquake, 
+the mean porosity profile
+through the whole crustal section, decreases exponentially
+away from the fault.''
+
+
+
+
+
+%==========================
+\section*{Theory}
+
+What follows is borrowed from paragraphs 43, 44 \& 45.
 Two main relations are used, expressing fluid mass conservation
 \begin{equation}
 \frac{\partial (\rho \upphi)}{\partial t} + \vec\nabla\cdot (\rho \vec{u}) = 0
 \label{eq:por01}
 \end{equation}
-and Darcy's law\footnote{There is a minus sign in from of the permeability tensor missing at the 
+and Darcy's law\footnote{There is a minus sign missing in front of the permeability tensor at the 
 beginning of paragraph 43}
 \begin{equation}
 \vec{u} = - {\bm K} \cdot (\vec{\nabla} P + \rho \vec{g})
@@ -336,8 +384,8 @@ Finally, the total fluid pressure $P$
 must not exceed the lithostatic pressure $P_{litho}$. This may
 be written
 \begin{equation}
-P(x,z,t)<P_{litho} \quad\Rightarrow\quad
-p(x,z,t)<P_{litho}-P_{hydro} \propto -g(\rho_{litho}-\rho_m)z
+P(x,z,t)<P_{litho}(z) \quad\Rightarrow\quad
+p(x,z,t)<P_{litho}(z)-P_{hydro}(z) \propto -g(\rho_{litho}-\rho_m)z
 \label{eq:por08}
 \end{equation}
 where $g$ is the mean gravity in the crust, oriented along $z$.
@@ -352,7 +400,7 @@ permeability should increase brutally, making an important
 local fluid flow and a release of pore pressure. In our model,
 we consider a monotonic evolution of the pore pressure, that
 is when a region reaches the criterion \eqref{eq:por08} at time $t_{litho}$, it
-will not unload later, i.e., $p(x,y,t > t_{litho}) = P_{litho}-P_{hydro}$.
+will not unload later, i.e., $p(x,z,t > t_{litho}) = P_{litho}(z)-P_{hydro}(z)$.
 Therefore the boundary of the region that has reached the
 lithostatic pressure is a moving pressure-imposed boundary
 and the fluid flow inside this region is still evaluated with
@@ -380,8 +428,6 @@ $k_0 \eta/\rho_m g =1.7 \cdot 10^{-17}~\si{\square\meter}$. This quite high valu
 one at the center of the fault at the beginning of the process,
 i.e., in the most damaged zone after an earthquake.
 
-{\color{red} one more paragraph in paper}
-
 \begin{center}
 \includegraphics[width=15cm]{python_codes/fieldstone_126/images/grfr03a}\\
 {\captionfont 
@@ -401,6 +447,11 @@ The initial porosity along the fault is 10\% (Figures 9c, 10, and 11) or 1\% (Fi
 \includegraphics[width=7cm]{python_codes/fieldstone_126/images/grfr03b}\\
 {\captionfont Fig. 9c: initial porosity profile.}
 \end{center}
+
+{\color{red} I have an issue with this figure. In the center/fault the porosity
+should be $\Phi_0$ (see Eq.~\eqref{eq:por03}) so how come 
+there are isolines 1 on each side of the fault and the fault itself is at 9 (or 6?).}
+The rest of the panels of Fig.~9 can be reproduced via Eq.~\eqref{eq:por03}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -469,7 +520,20 @@ quartzite at higher temperature and pressure [Renard et al.,2000].
 The depth of transition between these two end-member cases is chosen to be at 3 km.''
 Looking at the digitized figure it is obvious the figure is incorrect. The 3km-depth 
 line (i.e. the $y=7~\si{\km}$ line) does not align with the transition of the curves.
-Also it appears that  the flat sections are nowhere discussed in the text (CHECK).
+On page 18 we read ``
+For the kinetics of crack sealing, a simplified
+variation with depth is used, assuming that the rate of
+sealing is controlled by calcite between 0 and 3 km, by
+quartz between 5 and 10 km, and by an intermediate
+behavior between 3 and 5 km (see Figure 9a). Because of
+the uncertainty on the parameters of the calculation the same
+profile has been used with three different orders of magnitude 
+for the $\tau$ values.
+[...] The sealing rates used here were also chosen as fast
+as realistic in order to be able to run the calculation for an
+acceptable time.
+''
+
 
 In light of all this we will write a single function that returns $\tau$ as a function of $y$
 and it will correct the problems highlighted above. 
@@ -507,14 +571,15 @@ $\upphi'=0$  and $\rho'=0$).
 The calculation was based on the following boundary conditions: 
 \begin{itemize}
 \item top: $p=0$;
-\item sides:  hydrostatic pressure, i.e., $p=0$;
+\item sides:  $\partial p/\partial x =0$ (i.e. $u_x=0$, no flow);
 \item bottom: imposed pressure zone scaled
 with the fault zone, i.e., $p = g h (\rho_{litho} -\rho_m) e^{-x/L}$ which is plotted here under: 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_126/images/pbottom}\\
 {\captionfont Pressure imposed at the bottom.}
 \end{center}
-The maximum value is then $g h (\rho_{litho} -\rho_m) =10*40e3*(2800-880)=192~\si{\mega\pascal}$.
+The maximum value is then $g h (\rho_{litho} -\rho_m) 
+=10\cdot 40e3 \cdot(2800-880)=192~\si{\mega\pascal}$.
 
 \end{itemize}
 I suspect the authors to only solve for half the domain (bc of symmetry) since they 
@@ -562,6 +627,20 @@ We arrive at
 \]
 The matrix is symmetric positive definite which is good news.
 
+%..................................................
+\paragraph{Computing $P_{hydro}$ and $P_{litho}$}
+
+In paragraph 43 $P_{hydro}$ is defined by
+$\vec\nabla P_{hydro} + \rho \vec{g} = \vec{0}$ 
+so that in the code we have $P_{hydro}=\rho_m g (L_y -y)$, 
+assuming that pressure is zero at the top of the domain. 
+
+Likewise we define $P_{litho}=\rho_{litho} g (L_y -y)$ which 
+also means that lithostatic pressure is zero at the top. 
+
+{\Large Q}: does this make sense?
+
+
 
 %..............................
 \paragraph{Logic of the code}
@@ -583,6 +662,36 @@ The matrix is symmetric positive definite which is good news.
 \item model 3: $k_0=10^{-9}~\si{\meter\per\second}$, high sealing rate
 \item model 4: $k_0=10^{-8}~\si{\meter\per\second}$, medium sealing rate
 \end{itemize}
+
+
+{\color{red} Current state: the code runs. I have checked it over multiple times. 
+It is not benchmarked yet (time stepping, diffusion). 
+I believe it fairly represents the equations above. 
+However, running model 1,2,3 gives different results than on Fig 10 at t=2.7 or
+t=27 years. I am not sure how to choose the time step based on 
+the diffusion eq alone, for now it is based on velocity CFL. 
+Pressure gradient calculations are not benchmarked either. 
+I also still need to understand what is done to prevent P to become 
+larger than Plitho.
+}
+
+A potential thing to consider is how much the exponential $\exp(-t/\tau(y))$
+influences results: in the following figure I plot $\upphi_m$ as a function of 
+$x$ and at different times (assuming $\tau(y)=200yr$ for simplicity, corresponding
+to 'high' sealing rate, and 2000 for medium and 20000 for low).
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_126/images/phi200}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_126/images/phi2000}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_126/images/phi20000}
+\end{center}
+
+We see that it changes by less than 50\% in amplitude after 100 years for the 
+high sealing rate case, and that it does not change for medium or low..  
+This means that $\upphi_m$ barely changes in time and that 
+conversely the diffusion coefficient in the form of ${\bm K}$ does not
+change in time in most cases. 
+
 
 
 

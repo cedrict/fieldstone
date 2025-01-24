@@ -3,6 +3,8 @@ import sys as sys
 import time as timing
 import scipy.sparse as sps
 from scipy.sparse import csr_matrix,lil_matrix
+from numba import jit
+
 
 
 sqrt3=np.sqrt(3.)
@@ -10,9 +12,11 @@ sqrt2=np.sqrt(2.)
 eps=1.e-8 
 m=0.01
 year=365.*24.*3600.
+percent=0.01
 
 ###############################################################################
 
+@jit(nopython=True)
 def tau_fct(y,srcoeff):
     if y<5.e3:
        val=1e4+y/5e3*(1e5-1e4)
@@ -24,20 +28,25 @@ def tau_fct(y,srcoeff):
        val=7000+(y-8000)/(10e3-8e3)*(50000-7000)
     return val*year*srcoeff
 
+@jit(nopython=True)
 def Kx_fct(xq,tauq,time):
     return k_0/rho_m/g*np.exp(-abs(xq)/L)*np.exp(-3*time/tauq)
 
+@jit(nopython=True)
 def Ky_fct(xq,tauq,time):
     return 100*k_0/rho_m/g*np.exp(-abs(xq)/L)*np.exp(-3*time/tauq)
 
+@jit(nopython=True)
 def Phi_fct(xq,tauq,time):
     return Phi_0*np.exp(-abs(xq)/L)*np.exp(-time/tauq)
 
+@jit(nopython=True)
 def dPhidt_fct(xq,tauq,time):
     return -Phi_0/tauq*np.exp(-abs(xq)/L)*np.exp(-time/tauq)
 
 ###############################################################################
 
+@jit(nopython=True)
 def NN(rq,sq):
     N_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
     N_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
@@ -50,6 +59,7 @@ def NN(rq,sq):
     N_8=     (1.-rq**2) *     (1.-sq**2)
     return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
 
+@jit(nopython=True)
 def dNNdr(rq,sq):
     dNdr_0= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
     dNdr_1= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
@@ -63,6 +73,7 @@ def dNNdr(rq,sq):
     return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,\
                      dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8],dtype=np.float64)
 
+@jit(nopython=True)
 def dNNds(rq,sq):
     dNds_0= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
     dNds_1= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
@@ -87,21 +98,21 @@ mP=9         # number of nodes per Q2 elt
 
 Lx=4e3
 Ly=10e3
-nelx= 32
+nelx= 20
 nely= int(nelx*Ly/Lx)
 
 dt=0.05*year
-nstep=500
-every=1
+nstep=5000
+every=10
 
-Phi_0=0.1
+Phi_0=10*percent
 rho_m=880
 C=1e-9
 L=100
 g=10
 rho_litho=2800
 
-model=1
+model=3
 
 if model==1: 
    k_0=1e-9
@@ -130,7 +141,7 @@ nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
 NP=nnx*nny    # number of nodes
 nel=nelx*nely # number of elements, total
-NfemP=NP      # Total number of degrees of temperature freedom
+NfemP=NP      # Total number of degrees of pressure freedom
 
 # alpha=1: implicit
 # alpha=0: explicit
@@ -153,19 +164,19 @@ stats_cfl_file=open('stats_cfl.ascii',"w")
 
 ###############################################################################
 
-print ('nelx      =',nelx)
-print ('nely      =',nely)
-print ('NP        =',NP)
-print ('nel       =',nel)
-print ('nqperdim  =',nqperdim)
-print ('dt(yr)    =',dt/year)
-print ('nstep     =',nstep)
-print ('C         =',C)
-print ('L         =',L)
-print ('g         =',g)
-print ('Phi_0     =',Phi_0)
-print ('rho_m     =',rho_m)
-print ('rho_litho =',rho_litho)
+print('nelx      =',nelx)
+print('nely      =',nely)
+print('NP        =',NP)
+print('nel       =',nel)
+print('nqperdim  =',nqperdim)
+print('dt(yr)    =',dt/year)
+print('nstep     =',nstep)
+print('C         =',C)
+print('L         =',L)
+print('g         =',g)
+print('Phi_0     =',Phi_0)
+print('rho_m     =',rho_m)
+print('rho_litho =',rho_litho)
 print("-----------------------------")
 
 ###############################################################################
@@ -222,11 +233,11 @@ bc_valP=np.zeros(NfemP,dtype=np.float64)
 
 for i in range(0,NP):
     #left
-    if abs(xP[i]-Lx/2)/Lx<eps:
-       bc_fixP[i]=True ; bc_valP[i]=0
+    #if abs(xP[i]-Lx/2)/Lx<eps:
+    #   bc_fixP[i]=True ; bc_valP[i]=0
     #right
-    if abs(xP[i]+Lx/2)/Lx<eps:
-       bc_fixP[i]=True ; bc_valP[i]=0
+    #if abs(xP[i]+Lx/2)/Lx<eps:
+    #   bc_fixP[i]=True ; bc_valP[i]=0
     #bottom
     if yP[i]/Ly<eps:
        bc_fixP[i]=True ; bc_valP[i]=g*Ly*(rho_litho-rho_m)*np.exp(-abs(xP[i])/L)
@@ -243,6 +254,9 @@ print("boundary conditions (%.3fs)" % (timing.time()-start))
 p=np.zeros(NP,dtype=np.float64)
 dNNNdx=np.zeros(mP,dtype=np.float64) # shape functions derivatives
 dNNNdy=np.zeros(mP,dtype=np.float64) # shape functions derivatives
+jcb=np.array([[hx/2,0],[0,hy/2]],dtype=np.float64) 
+jcbi=np.array([[2/hx,0],[0,2/hy]],dtype=np.float64) 
+jcob=hx*hy/4
 
 model_time=0.
 
@@ -253,7 +267,7 @@ for istep in range(0,nstep):
     print("-----------------------------")
 
     ###########################################################################
-    # build temperature matrix
+    # build FE matrix
     ###########################################################################
     start = timing.time()
 
@@ -289,15 +303,16 @@ for istep in range(0,nstep):
                 N_mat[:,0]=NN(rq,sq)
 
                 # calculate jacobian matrix
-                jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                for k in range(0,mP):
-                    jcb[0,0]+=dNNNdr[k]*xP[iconP[k,iel]]
-                    jcb[0,1]+=dNNNdr[k]*yP[iconP[k,iel]]
-                    jcb[1,0]+=dNNNds[k]*xP[iconP[k,iel]]
-                    jcb[1,1]+=dNNNds[k]*yP[iconP[k,iel]]
+                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                #for k in range(0,mP):
+                #    jcb[0,0]+=dNNNdr[k]*xP[iconP[k,iel]]
+                #    jcb[0,1]+=dNNNdr[k]*yP[iconP[k,iel]]
+                #    jcb[1,0]+=dNNNds[k]*xP[iconP[k,iel]]
+                #    jcb[1,1]+=dNNNds[k]*yP[iconP[k,iel]]
                 #end for
-                jcob=np.linalg.det(jcb)
-                jcbi=np.linalg.inv(jcb)
+                #jcob=np.linalg.det(jcb)
+                #jcbi=np.linalg.inv(jcb)
+                #print(jcb,hx/2,hy/2,jcob,hx*hy/4)
 
                 # compute dNdx & dNdy
                 for k in range(0,mP):
@@ -363,8 +378,8 @@ for istep in range(0,nstep):
 
     #end for iel
     
-    print("     -> matrix (m,M) %.4e %.4e " %(np.min(A_mat),np.max(A_mat)))
-    print("     -> rhs (m,M) %.4e %.4e " %(np.min(rhs),np.max(rhs)))
+    #print("     -> matrix (m,M) %.4e %.4e " %(np.min(A_mat),np.max(A_mat)))
+    #print("     -> rhs (m,M) %.4e %.4e " %(np.min(rhs),np.max(rhs)))
 
     print("build FEM matrix: %.3fs" % (timing.time() - start))
 
@@ -375,11 +390,12 @@ for istep in range(0,nstep):
 
     p=sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
 
-    np.savetxt('solution.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+    #np.savetxt('solution.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
     print("     -> p (m,M) %e %e  (MPa)" %(np.min(p)/1e6,np.max(p)/1e6))
 
-    stats_p_file.write("%e %e %e \n" %(model_time,np.min(p)/1e6,np.max(p)/1e6)) ; stats_p_file.flush()
+    stats_p_file.write("%e %e %e \n" %(model_time,np.min(p)/1e6,np.max(p)/1e6)) 
+    stats_p_file.flush()
 
     print("solve T time: %.3f s" % (timing.time() - start))
 
@@ -402,14 +418,14 @@ for istep in range(0,nstep):
             NNN=NN(rq,sq)
             dNNNdr=dNNdr(rq,sq)
             dNNNds=dNNds(rq,sq)
-            jcb=np.zeros((ndim,ndim),dtype=np.float64)
-            for k in range(0,mP):
-                jcb[0,0]+=dNNNdr[k]*xP[iconP[k,iel]]
-                jcb[0,1]+=dNNNdr[k]*yP[iconP[k,iel]]
-                jcb[1,0]+=dNNNds[k]*xP[iconP[k,iel]]
-                jcb[1,1]+=dNNNds[k]*yP[iconP[k,iel]]
+            #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            #for k in range(0,mP):
+            #    jcb[0,0]+=dNNNdr[k]*xP[iconP[k,iel]]
+            #    jcb[0,1]+=dNNNdr[k]*yP[iconP[k,iel]]
+            #    jcb[1,0]+=dNNNds[k]*xP[iconP[k,iel]]
+            #    jcb[1,1]+=dNNNds[k]*yP[iconP[k,iel]]
             #end for
-            jcbi=np.linalg.inv(jcb)
+            #jcbi=np.linalg.inv(jcb)
             for k in range(0,mP):
                 dNNNdx[k]=jcbi[0,0]*dNNNdr[k]+jcbi[0,1]*dNNNds[k]
                 dNNNdy[k]=jcbi[1,0]*dNNNdr[k]+jcbi[1,1]*dNNNds[k]
@@ -478,7 +494,7 @@ for istep in range(0,nstep):
 
     print('     -> CFL_nb=',CFL_nb)
 
-    stats_cfl_file.write("%e %e \n" %(model_time,CFL_nb)) ; stats_cfl_file.flush()
+    stats_cfl_file.write("%e %e \n" %(model_time/year,CFL_nb)) ; stats_cfl_file.flush()
 
     ###########################################################################
     # visualisation 

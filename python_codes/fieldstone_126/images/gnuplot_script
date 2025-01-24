@@ -40,3 +40,40 @@ L=100
 
 plot[-2000:2000][]\
 g*h*(rho_litho-rho_m)*exp(-abs(x)/L) notitle
+
+##################################################
+
+set ylabel 'phi_m'
+
+phi0=0.1
+
+set output 'phi200.pdf'
+plot[-2000:2000][]\
+phi0*exp(-abs(x)/L)*exp(-0./200) t 't=0yr',\
+phi0*exp(-abs(x)/L)*exp(-10./200) t 't=10yr',\
+phi0*exp(-abs(x)/L)*exp(-50./200) t 't=50yr',\
+phi0*exp(-abs(x)/L)*exp(-100./200) t 't=100yr'
+
+set output 'phi2000.pdf'
+plot[-2000:2000][]\
+phi0*exp(-abs(x)/L)*exp(-0./2000) t 't=0yr',\
+phi0*exp(-abs(x)/L)*exp(-10./2000) t 't=10yr',\
+phi0*exp(-abs(x)/L)*exp(-50./2000) t 't=50yr',\
+phi0*exp(-abs(x)/L)*exp(-100./2000) t 't=100yr'
+
+set output 'phi20000.pdf'
+plot[-2000:2000][]\
+phi0*exp(-abs(x)/L)*exp(-0./20000) t 't=0yr',\
+phi0*exp(-abs(x)/L)*exp(-10./20000) t 't=10yr',\
+phi0*exp(-abs(x)/L)*exp(-50./20000) t 't=50yr',\
+phi0*exp(-abs(x)/L)*exp(-100./20000) t 't=100yr'
+
+
+
+
+
+
+
+
+
+
