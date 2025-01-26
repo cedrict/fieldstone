@@ -18,23 +18,22 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Last revision: Oct. 1st, 2024.
+Last revision: Jan. 26th, 2025.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-Following chapter 10 of \fullcite{simp17} the equations
-governing the evolution of the fluid pressure and fluid flow 
-velocities are\footnote{I have slightly changed the notations with respect to the book.}
+This \stone is based on Chapter 10 of \fullcite{simp17}.
+The equations governing the evolution of the fluid pressure 
+and fluid flow velocities are\footnote{I have slightly changed the notations with respect to the book.}
 \begin{eqnarray}
-\varphi \beta \frac{\partial p}{\partial t} &=& -\vec\nabla \cdot \vec \upnu + H \label{eq:128:a}\\
-\vec\upnu &=& -\frac{K}{\eta_f} \left(\vec\nabla p - \rho_f g \vec{e}_z \right) \label{eq:128:b}
+\varphi \beta \frac{\partial p}{\partial t} &=& -\vec\nabla \cdot \vec{u} + H \label{eq:128:a}\\
+\vec{u} &=& -\frac{K}{\eta_f} \left(\vec\nabla p - \rho_f g \vec{e}_z \right) \label{eq:128:b}
 \end{eqnarray}
 where
 \begin{itemize}
 \item $p$ is the fluid pressure, 
-\item $\vec\upnu$ is the fluid velocity vector, 
+\item $\vec{u}$ is the fluid velocity vector, 
 \item $\varphi$ is the porosity (-), 
 \item $\beta$ is the bulk compressibility (\si{\per\pascal}), 
 \item $K$ is the permeability (\si{\square\meter}), 
@@ -54,32 +53,28 @@ the excess fluid pressure as follows:
 \vec\nabla \cdot \left( \frac{K}{\eta_f} \vec\nabla p_e  \right) + H
 \end{equation}
 Note that once the excess pressure is computed one can recover the fluid velocity via 
-$\vec\upnu=-\frac{K}{\eta_f} \vec\nabla p_e$. 
-Note that $H=0$ in all three experiments carried out in this \stone.
+$\vec{u}=-\frac{K}{\eta_f} \vec\nabla p_e$. 
+Note that $H=0$ in all three experiments carried out in what follows.
 
 Applying standard FE methodology to what is essentially a diffusion equation, we arrive at:
 \[
 {\M} \cdot \frac{\partial}{\partial t} \vec{\cal P}_e + {\K}_d \cdot \vec{\cal P}_e = \vec{b}
 \]
 with
-\[
-{\M} = \int_\Omega \varphi \beta \vec{\bN}^T \vec{\bN} 
-\]
-\[
-\K_d = \int_\Omega {\bm B}^T {\bm B} \frac{K}{\eta_f} 
-\]
-\[
-\vec{b} = \int_\Omega \vec\bN^T  H 
-\]
+\begin{align}
+{\M} &= \int_\Omega \varphi \beta \vec{\bN}^T \vec{\bN} \nn \\
+\K_d &= \int_\Omega {\bm B}^T {\bm B} \frac{K}{\eta_f} \nn \\
+\vec{b} &= \int_\Omega \vec\bN^T  H \nn
+\end{align}
 Using a simple first order time discretisation yields
 \[
-({\M} + {\K}_d \delta t) \cdot \vec{\cal P}_e^n = \M \cdot \vec{\cal P}_e^{n-1} + \vec{b} \delta t
+({\M} + {\K}_d \delta t) \cdot \vec{\cal P}_e^n = \M \cdot \vec{\cal P}_e^{n-1} + \vec{b} \; \delta t
 \]
 
 
 
 %--------------------------------------------------------------------------------------
-\subsection*{Fluid Flow Around a Fault ({\tt experiment=2})}
+\section*{Fluid Flow Around a Fault ({\tt experiment=2})}
 
 %from simpson book
 A porous crust with an initially uniform and isotropic permeability has an
@@ -108,7 +103,7 @@ and fluid flow vectors in the crust are strongly perturbed by the presence of th
 fault zone. Fluid is focused toward the base of the fault, while it diverges away from its upper tip.
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_128/images/simpson2}\\
-{\captionfont Taken from \cite{simp17}. Excess fluid pressure and flow vectors in the crust 
+{\captionfont Taken from the book\cite{simp17}. Excess fluid pressure and flow vectors in the crust 
 (with a uniform permeability of $\SI{1e-16}{\per\square\meter}$) 10 years after
 introduction of a high permeability ($\SI{1e-12}{\per\square\meter}$) fault zone.}
 \end{center}
@@ -122,7 +117,7 @@ and the fact that we rely on a regular mesh, the fault is then represented as fo
 
 \begin{center}
 \includegraphics[width=9cm]{python_codes/fieldstone_128/results/experiment2/K}
-\includegraphics[width=7cm]{python_codes/fieldstone_128/results/experiment2/K_zoom}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_128/results/experiment2/K_zoom}\\
 {\captionfont Permeability on $500 \times 200$ mesh.}
 \end{center}
 
@@ -147,31 +142,31 @@ obtained by normalising the velocity vector to one in each element.}
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment2/velocity}
 \includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment2/vrms}\\
-{\captionfont Velocity statistics. Pressure statistics and volume average plots are not interesting
-so not shown.}
+{\captionfont Left: Velocity statistics; Right: root mean square velocity.
+Pressure statistics and volume average plots are not interesting so not shown.}
 \end{center}
 
 
 %--------------------------------------------------------------------------------------
-\subsection*{Fluid Flow Around a circular inclusion ({\tt experiment=1})}
+\section*{Fluid Flow Around a circular inclusion ({\tt experiment=1})}
 
 Same setup as experiment 2, but the fault has now been replaced by a circular inclusion 
-placed in the middle of the domain and of radius 5~\si{\km}.
+placed in the middle of the domain and of radius 5~\si{\km}. Why? because why not.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment1/press}
 \includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment1/K}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment1/vel}
-\includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment1/vel2}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_128/results/experiment1/vel2}
 \end{center}
 
 
 %--------------------------------------------------------------------------------------
-\subsection*{Fluid Flow in a  ({\tt experiment=3})}
+\section*{Fluid Flow in a  ({\tt experiment=3})}
 
 All parameters are identical to experiment 2. However I have placed
 111 random seeds in the domain and computed the voronoi diagram of these 
-as projected onto the elements:
+as projected onto the elements using the algorithm documented in \stone~125.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment3/cells}
@@ -179,11 +174,9 @@ as projected onto the elements:
 \end{center}
 
 Each Voronoi cell is then 
-attributed a random permeability between $10^{-14}$ and $10^{-16}$, 
-using the algorithm documented in \stone~125.
-Two bands of thickness $L_y/6$ with constant permeability $10^{-15}$ are 
-prescribed at the top and bottom of the domain.
-Simulations are run until steady state is reached. 
+attributed a random permeability between $10^{-14}~\si{\square\meter}$ and $10^{-16}~\si{\square\meter}$.
+Two bands of thickness $L_y/6$ with constant permeability $10^{-15}~\si{\square\meter}$ are 
+prescribed at the top and bottom of the domain. Simulations are run until steady state is reached. 
 
 \begin{center}
 \includegraphics[width=13cm]{python_codes/fieldstone_128/results/experiment3/K}\\

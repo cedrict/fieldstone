@@ -1,25 +1,22 @@
 import numpy as np
 import sys as sys
-import scipy
-import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
 import time as timing
-from scipy.sparse import csr_matrix, lil_matrix
 import random
+import scipy.sparse as sps
+from scipy.sparse import csr_matrix,lil_matrix
 
 #------------------------------------------------------------------------------
-
-print("-----------------------------")
-print("--------- stone 128 ---------")
-print("-----------------------------")
 
 year=365.25*24*3600
 sqrt3=np.sqrt(3.)
 eps=1.e-10 
 
+print("-----------------------------")
+print("--------- stone 128 ---------")
+print("-----------------------------")
+
 ndim=2              # number of space dimensions
 m=4                 # number of nodes making up an element
-ndof=1              # number of degrees of freedom per node
 
 experiment=3
 
@@ -65,7 +62,7 @@ nel=nelx*nely       # number of elements, total
 nnx=nelx+1      # number of elements, x direction
 nny=nely+1      # number of elements, y direction
 NP=nnx*nny      # number of nodes
-Nfem=NP*ndof    # Total number of pressure degrees of freedom
+Nfem=NP         # Total number of pressure degrees of freedom
 
 #####################################################################
 
@@ -266,7 +263,9 @@ dNds  = np.zeros(m,dtype=np.float64)   # shape functions derivatives
 pvect = np.zeros(m,dtype=np.float64)   
 
 #==============================================================================
+#==============================================================================
 # time stepping loop
+#==============================================================================
 #==============================================================================
 
 time=0.
@@ -588,14 +587,11 @@ for istep in range(0,nstep):
     #####################################################################
 
     phi_mem[:]=phi[:]
-
     # to be implemented
     # Antoine
     if experiment==4:
        for iel in range(0,nel):
-
            #xc[iel] & yc[iel] are element center coords
-
            #phi[iel]=.... evolve value of phi
            #phi=(phi_f-phi_0)*time+phi_0
            K[iel]=1e-26*phi[iel]**3
@@ -604,9 +600,10 @@ for istep in range(0,nstep):
 #end for
 
 #==============================================================================
+#==============================================================================
 # end time stepping loop
 #==============================================================================
-
+#==============================================================================
 
 if experiment==3:
     vtufile=open("voronoi_centers.vtu","w")
