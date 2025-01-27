@@ -1,7 +1,5 @@
 import numpy as np
 import sys as sys
-#import scipy
-import math as math
 import time as timing
 import scipy.sparse as sps
 from scipy.sparse import csr_matrix, lil_matrix
@@ -481,7 +479,6 @@ for iel in range(0,nel):
         sq=qcoords_s[kq]
         weightq=qweights[kq]
 
-        NNNV=NNV(rq,sq)
         dNNNVdr=dNNVdr(rq,sq)
         dNNNVds=dNNVds(rq,sq)
         NNNP=NNP(rq,sq)
