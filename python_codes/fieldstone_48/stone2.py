@@ -374,13 +374,14 @@ else:
    nelx = 16
    nely = 16
    visu = 1
-   order= 1
+   order= 2
    nqperdim=2
 
 nel=nelx*nely
 nnx=order*nelx+1  # number of elements, x direction
 nny=order*nely+1  # number of elements, y direction
 NV=nnx*nny
+nqel=nqperdim**ndim
 
 if order==1:
    NP=nelx*nely
@@ -428,22 +429,7 @@ eta=1.
 hx=Lx/nelx
 hy=Ly/nely
 
-sparse=True
-
-#mode=0: blocks u,v,p
-#mode=1: regular approach 
-mode=1
-
 #################################################################
-
-#if order==1:
-#   nqperdim=2
-#if order==2:
-#   nqperdim=3
-#if order==3:
-#   nqperdim=4
-#if order==4:
-#   nqperdim=5
 
 if nqperdim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
@@ -674,27 +660,18 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 #################################################################
 start = timing.time()
 
-if sparse:
-   A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
-   AA_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
-else:   
-   K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-   G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
-
+A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
+rhs = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
 f_rhs   = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
-ff_rhs  = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
 h_rhs   = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
-hh_rhs  = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
 b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
 N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
-NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
-NNNP    = np.zeros(mP,dtype=np.float64)           # shape functions P
-dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+NNNP    = np.zeros(mP,dtype=np.float64)           # shape functions derivatives
 dNNNVdr = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-u       = np.zeros(NV,dtype=np.float64)           # x-component velocity
-v       = np.zeros(NV,dtype=np.float64)           # y-component velocity
+dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 for iel in range(0,nel):
@@ -704,12 +681,6 @@ for iel in range(0,nel):
     K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
     G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
     h_el=np.zeros((mP*ndofP),dtype=np.float64)
-    fx_el =np.zeros((mV),dtype=np.float64)
-    fy_el =np.zeros((mV),dtype=np.float64)
-    Nxx_el =np.zeros((mV,mV),dtype=np.float64)
-    Nyy_el =np.zeros((mV,mV),dtype=np.float64)
-    Gx_el=np.zeros((mV,mP),dtype=np.float64)
-    Gy_el=np.zeros((mV,mP),dtype=np.float64)
 
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
@@ -762,16 +733,6 @@ for iel in range(0,nel):
 
             G_el-=b_mat.T.dot(N_mat)*weightq*jcob
 
-            #-----------------------------------------------------------------------
-            Nxx_el+=(np.outer(dNNNVdx,dNNNVdx)+np.outer(dNNNVdy,dNNNVdy))*weightq*jcob
-            Nyy_el+=(np.outer(dNNNVdx,dNNNVdx)+np.outer(dNNNVdy,dNNNVdy))*weightq*jcob
-            Gx_el-=np.outer(dNNNVdx,NNNP)*weightq*jcob
-            Gy_el-=np.outer(dNNNVdy,NNNP)*weightq*jcob
-            fx_el+=NNNV*jcob*weightq*bx(xq,yq)
-            fy_el+=NNNV*jcob*weightq*by(xq,yq)
-            #-----------------------------------------------------------------------
-
-        # end for jq
     # end for iq
 
     # impose b.c. 
@@ -790,30 +751,7 @@ for iel in range(0,nel):
                h_el[:]-=G_el[ikk,:]*bc_val[m1]
                G_el[ikk,:]=0
 
-    for k1 in range(0,mV): # only no slip !!!
-        # x bc
-        m1 =ndofV*iconV[k1,iel]
-        if bc_fix[m1]:
-           #print(xV[iconV[k1,iel]],yV[iconV[k1,iel]])
-           N_ref=Nxx_el[k1,k1]
-           Nxx_el[k1,:]=0.
-           Nxx_el[:,k1]=0.
-           Nxx_el[k1,k1]=N_ref
-           fx_el[k1]=0.
-           Gx_el[k1,:]=0.
-        # y bc
-        m1 =ndofV*iconV[k1,iel]+1
-        if bc_fix[m1]:
-           #print(xV[iconV[k1,iel]],yV[iconV[k1,iel]])
-           N_ref=Nyy_el[k1,k1]
-           Nyy_el[k1,:]=0.
-           Nyy_el[:,k1]=0.
-           Nyy_el[k1,k1]=N_ref
-           fy_el[k1]=0.
-           Gy_el[k1,:]=0.
-
-
-    # assemble matrix K_mat and right hand side rhs
+    # assemble FE matrix and right hand side rhs
     for k1 in range(0,mV):
         for i1 in range(0,ndofV):
             ikk=ndofV*k1          +i1
@@ -822,42 +760,18 @@ for iel in range(0,nel):
                 for i2 in range(0,ndofV):
                     jkk=ndofV*k2          +i2
                     m2 =ndofV*iconV[k2,iel]+i2
-                    if sparse:
-                       A_sparse[m1,m2] += K_el[ikk,jkk]
-                    else:
-                       K_mat[m1,m2]+=K_el[ikk,jkk]
+                    A_sparse[m1,m2] += K_el[ikk,jkk]
             for k2 in range(0,mP):
                 jkk=k2
                 m2 =iconP[k2,iel]
-                if sparse:
-                   A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
-                   A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
-                else:
-                   G_mat[m1,m2]+=G_el[ikk,jkk]
+                A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
+                A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
             f_rhs[m1]+=f_el[ikk]
     for k2 in range(0,mP):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
 
-
-    for k1 in range(0,mV):
-        m1 =iconV[k1,iel]
-        for k2 in range(0,mV):
-            m2 =iconV[k2,iel]
-            AA_sparse[m1   ,m2   ] += Nxx_el[k1,k2]
-            AA_sparse[m1+NV,m2+NV] += Nyy_el[k1,k2]
-        ff_rhs[m1   ]+=fx_el[k1]
-        ff_rhs[m1+NV]+=fy_el[k1]
-        for k2 in range(0,mP):
-            m2 =iconP[k2,iel]
-            AA_sparse[m1   ,m2+NfemV] += Gx_el[k1,k2]
-            AA_sparse[m1+NV,m2+NfemV] += Gy_el[k1,k2]
-            AA_sparse[m2+NfemV,m1   ] += Gx_el[k1,k2]
-            AA_sparse[m2+NfemV,m1+NV] += Gy_el[k1,k2]
-
-if not sparse:
-   print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
-   print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
+#end for iel
 
 print("build FE matrix: %.3fs - %d elts" % (timing.time()-start, nel))
 
@@ -866,55 +780,17 @@ print("build FE matrix: %.3fs - %d elts" % (timing.time()-start, nel))
 ######################################################################
 start = timing.time()
    
-rhs = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+rhs[0:NfemV]=f_rhs
+rhs[NfemV:Nfem]=h_rhs
 
-if mode==1:
-   rhs[0:NfemV]=f_rhs
-   rhs[NfemV:Nfem]=h_rhs
-   if not sparse:
-      a_mat = np.zeros((Nfem,Nfem),dtype=np.float64) 
-      a_mat[0:NfemV,0:NfemV]=K_mat
-      a_mat[0:NfemV,NfemV:Nfem]=G_mat
-      a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-else:
-   rhs[0:NfemV]=ff_rhs
-   rhs[NfemV:Nfem]=hh_rhs
-
-print("assemble blocks: %.3f s" % (timing.time() - start))
-
-######################################################################
-# assign extra pressure b.c. to remove null space
-######################################################################
-#if mode==1:
-#   if sparse:
-#      A_sparse[Nfem-1,:]=0
-#      A_sparse[:,Nfem-1]=0
-#      A_sparse[Nfem-1,Nfem-1]=1
-#      rhs[Nfem-1]=0
-#   else:
-#      a_mat[Nfem-1,:]=0
-#      a_mat[:,Nfem-1]=0
-#      a_mat[Nfem-1,Nfem-1]=1
-#      rhs[Nfem-1]=0
-#else:
-#   AA_sparse[Nfem-1,:]=0
-#   AA_sparse[:,Nfem-1]=0
-#   AA_sparse[Nfem-1,Nfem-1]=1
-#   rhs[Nfem-1]=0
-
+print("assemble rhs: %.3f s" % (timing.time() - start))
 
 ######################################################################
 # solve system
 ######################################################################
 start = timing.time()
 
-if mode==1:
-   if sparse:
-      sparse_matrix=A_sparse.tocsr()
-   else:
-      sparse_matrix=sps.csr_matrix(a_mat)
-else:
-      sparse_matrix=AA_sparse.tocsr()
+sparse_matrix=A_sparse.tocsr()
 
 sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
@@ -925,12 +801,7 @@ print("solve time: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-if mode==1:
-   u,v=np.reshape(sol[0:NfemV],(NV,2)).T
-else:
-   u=sol[0:NV]
-   v=sol[NV:NfemV]
-
+u,v=np.reshape(sol[0:NfemV],(NV,2)).T
 p=sol[NfemV:Nfem]
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
@@ -949,6 +820,7 @@ start = timing.time()
 
 pavrg=0.
 for iel in range(0,nel):
+
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
             rq=qcoords[iq]
@@ -959,12 +831,12 @@ for iel in range(0,nel):
             NNNP[0:mP]=NNP(rq,sq,order)
             jcb=np.zeros((ndim,ndim),dtype=np.float64)
             for k in range(0,mV):
-                jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
-                jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
             jcob=np.linalg.det(jcb)
-            pavrg+=NNNP.dot(p[iconP[:,iel]])*weightq*jcob
+            pavrg+=NNNP[0:mP].dot(p[iconP[:,iel]])*weightq*jcob
         #end for
     #end for
 #end for
@@ -982,6 +854,10 @@ print("normalise pressure: %.3f s" % (timing.time() - start))
 #####################################################################
 start = timing.time()
 
+NNNV = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+NNNP = np.zeros(mP,dtype=np.float64)           # shape functions derivatives
+dNNNVdr = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 xc = np.zeros(nel,dtype=np.float64)  
 yc = np.zeros(nel,dtype=np.float64)  
 exx = np.zeros(nel,dtype=np.float64)  
@@ -1079,7 +955,6 @@ for iel in range (0,nel):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
-
             NNNV[0:mV]=NNV(rq,sq,order)
             dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
             dNNNVds[0:mV]=dNNVds(rq,sq,order)
@@ -1107,12 +982,8 @@ for iel in range (0,nel):
             errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
             errq+=(qq-pressure(xq,yq))**2*weightq*jcob
 
-            xq=0.
-            yq=0.
             pq=0.
             for k in range(0,mP):
-                xq+=NNNP[k]*xP[iconP[k,iel]]
-                yq+=NNNP[k]*yP[iconP[k,iel]]
                 pq+=NNNP[k]*p[iconP[k,iel]]
             errp+=(pq-pressure(xq,yq))**2*weightq*jcob
 
@@ -1236,6 +1107,342 @@ if visu==1:
     vtufile.write("</UnstructuredGrid>\n")
     vtufile.write("</VTKFile>\n")
     vtufile.close()
+
+###############################################################################
+###############################################################################
+###############################################################################
+# new approach with precomputed basis functions
+###############################################################################
+###############################################################################
+###############################################################################
+
+print('++++++++++++++++++++++++++++++++++++')
+
+#################################################################
+# precompute basis functions
+#################################################################
+start = timing.time()
+
+NNNNNV    = np.zeros((nqel,mV),dtype=np.float64)
+dNNNNNVdr = np.zeros((nqel,mV),dtype=np.float64)
+dNNNNNVds = np.zeros((nqel,mV),dtype=np.float64)
+NNNNNP    = np.zeros((nqel,mP),dtype=np.float64)
+
+counterq=0    
+for iq in range(0,nqperdim):
+    for jq in range(0,nqperdim):
+        rq=qcoords[iq]
+        sq=qcoords[jq]
+        weightq=qweights[iq]*qweights[jq]
+        NNNNNV[counterq,0:mV]=NNV(rq,sq,order)
+        dNNNNNVdr[counterq,0:mV]=dNNVdr(rq,sq,order)
+        dNNNNNVds[counterq,0:mV]=dNNVds(rq,sq,order)
+        NNNNNP[counterq,0:mP]=NNP(rq,sq,order)
+        counterq+=1
+
+print("precompute basis fcts: %.3f s" % (timing.time() - start))
+
+#################################################################
+# compute area of elements
+#################################################################
+start = timing.time()
+
+area    = np.zeros(nel,dtype=np.float64) 
+
+for iel in range(0,nel):
+    for iq in range(0,nqel):
+        jcb=np.zeros((ndim,ndim),dtype=np.float64)
+        for k in range(0,mV):
+            jcb[0,0] += dNNNNNVdr[iq,k]*xV[iconV[k,iel]]
+            jcb[0,1] += dNNNNNVdr[iq,k]*yV[iconV[k,iel]]
+            jcb[1,0] += dNNNNNVds[iq,k]*xV[iconV[k,iel]]
+            jcb[1,1] += dNNNNNVds[iq,k]*yV[iconV[k,iel]]
+        jcob = np.linalg.det(jcb)
+        area[iel]+=jcob*weightq
+
+print("     -> area (m,M) %.4e %.4e " %(np.min(area),np.max(area)))
+print("     -> total area %.6f " %(area.sum()))
+
+#################################################################
+# build FE matrix
+# [ K G ][u]=[f]
+# [GT 0 ][p] [h]
+#################################################################
+start = timing.time()
+
+A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
+rhs = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+f_rhs   = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
+h_rhs   = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
+b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
+N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
+dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
+c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+
+for iel in range(0,nel):
+
+    # set arrays to 0 every loop
+    f_el =np.zeros((mV*ndofV),dtype=np.float64)
+    K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
+    G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
+    h_el=np.zeros((mP*ndofP),dtype=np.float64)
+
+    for iq in range(0,nqel):
+
+            # calculate jacobian matrix
+            jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            for k in range(0,mV):
+                jcb[0,0] += dNNNNNVdr[iq,k]*xV[iconV[k,iel]]
+                jcb[0,1] += dNNNNNVdr[iq,k]*yV[iconV[k,iel]]
+                jcb[1,0] += dNNNNNVds[iq,k]*xV[iconV[k,iel]]
+                jcb[1,1] += dNNNNNVds[iq,k]*yV[iconV[k,iel]]
+            jcob = np.linalg.det(jcb)
+            jcbi = np.linalg.inv(jcb)
+
+            # compute dNdx & dNdy
+            xq=0.0
+            yq=0.0
+            for k in range(0,mV):
+                xq+=NNNNNV[iq,k]*xV[iconV[k,iel]]
+                yq+=NNNNNV[iq,k]*yV[iconV[k,iel]]
+                dNNNVdx[k]=jcbi[0,0]*dNNNNNVdr[iq,k]+jcbi[0,1]*dNNNNNVds[iq,k]
+                dNNNVdy[k]=jcbi[1,0]*dNNNNNVdr[iq,k]+jcbi[1,1]*dNNNNNVds[iq,k]
+
+            # construct 3x8 b_mat matrix
+            for i in range(0,mV):
+                b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.     ],
+                                         [0.        ,dNNNVdy[i]],
+                                         [dNNNVdy[i],dNNNVdx[i]]]
+
+            # compute elemental a_mat matrix
+            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta*weightq*jcob
+
+            # compute elemental rhs vector
+            for i in range(0,mV):
+                f_el[ndofV*i  ]+=NNNNNV[iq,i]*jcob*weightq*bx(xq,yq)
+                f_el[ndofV*i+1]+=NNNNNV[iq,i]*jcob*weightq*by(xq,yq)
+
+            for i in range(0,mP):
+                N_mat[0,i]=NNNNNP[iq,i]
+                N_mat[1,i]=NNNNNP[iq,i]
+                N_mat[2,i]=0.
+
+            G_el-=b_mat.T.dot(N_mat)*weightq*jcob
+
+    # end for iq
+
+    # impose b.c. 
+    for k1 in range(0,mV):
+        for i1 in range(0,ndofV):
+            ikk=ndofV*k1          +i1
+            m1 =ndofV*iconV[k1,iel]+i1
+            if bc_fix[m1]:
+               K_ref=K_el[ikk,ikk] 
+               for jkk in range(0,mV*ndofV):
+                   f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
+                   K_el[ikk,jkk]=0
+                   K_el[jkk,ikk]=0
+               K_el[ikk,ikk]=K_ref
+               f_el[ikk]=K_ref*bc_val[m1]
+               h_el[:]-=G_el[ikk,:]*bc_val[m1]
+               G_el[ikk,:]=0
+
+    # assemble FE matrix and right hand side rhs
+    for k1 in range(0,mV):
+        for i1 in range(0,ndofV):
+            ikk=ndofV*k1          +i1
+            m1 =ndofV*iconV[k1,iel]+i1
+            for k2 in range(0,mV):
+                for i2 in range(0,ndofV):
+                    jkk=ndofV*k2          +i2
+                    m2 =ndofV*iconV[k2,iel]+i2
+                    A_sparse[m1,m2] += K_el[ikk,jkk]
+            for k2 in range(0,mP):
+                jkk=k2
+                m2 =iconP[k2,iel]
+                A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
+                A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
+            f_rhs[m1]+=f_el[ikk]
+    for k2 in range(0,mP):
+        m2=iconP[k2,iel]
+        h_rhs[m2]+=h_el[k2]
+
+#end for iel
+
+print("build FE matrix: %.3fs - %d elts" % (timing.time()-start, nel))
+
+######################################################################
+# assemble rhs
+######################################################################
+start = timing.time()
+   
+rhs[0:NfemV]=f_rhs
+rhs[NfemV:Nfem]=h_rhs
+
+print("assemble rhs: %.3f s" % (timing.time() - start))
+
+######################################################################
+# solve system
+######################################################################
+start = timing.time()
+
+sparse_matrix=A_sparse.tocsr()
+
+sol=sps.linalg.spsolve(sparse_matrix,rhs)
+
+print("solve time: %.3f s" % (timing.time() - start))
+
+######################################################################
+# put solution into separate x,y velocity arrays
+######################################################################
+start = timing.time()
+
+u,v=np.reshape(sol[0:NfemV],(NV,2)).T
+p=sol[NfemV:Nfem]
+
+print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
+print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
+print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+
+#np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+#np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+
+print("split vel into u,v: %.3f s" % (timing.time() - start))
+
+#####################################################################
+# normalise pressure
+#####################################################################
+start = timing.time()
+
+pavrg=0.
+for iel in range(0,nel):
+    for iq in range(0,nqel):
+        jcb=np.zeros((ndim,ndim),dtype=np.float64)
+        for k in range(0,mV):
+            jcb[0,0] += dNNNNNVdr[iq,k]*xV[iconV[k,iel]]
+            jcb[0,1] += dNNNNNVdr[iq,k]*yV[iconV[k,iel]]
+            jcb[1,0] += dNNNNNVds[iq,k]*xV[iconV[k,iel]]
+            jcb[1,1] += dNNNNNVds[iq,k]*yV[iconV[k,iel]]
+        jcob=np.linalg.det(jcb)
+        pavrg+=NNNNNP[iq,0:mP].dot(p[iconP[:,iel]])*weightq*jcob
+    #end for
+#end for
+
+p-=pavrg
+
+#np.savetxt('pressure_after.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+
+print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+
+print("normalise pressure: %.3f s" % (timing.time() - start))
+
+#####################################################################
+# compute strainrate at element center
+#####################################################################
+
+#not done
+
+#####################################################################
+# project pressure onto velocity grid
+#####################################################################
+start = timing.time()
+
+q=np.zeros(NV,dtype=np.float64)
+c=np.zeros(NV,dtype=np.float64)
+
+for iel in range(0,nel):
+    for i in range(0,mV):
+        NNNP[0:mP]=NNP(rVnodes[i],sVnodes[i],order)
+        q[iconV[i,iel]]+=np.dot(p[iconP[0:mP,iel]],NNNP[0:mP])
+        c[iconV[i,iel]]+=1.
+
+q=q/c
+
+#np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
+
+print("project p onto Vnodes: %.3f s" % (timing.time() - start))
+
+#####################################################################
+# compute error fields for plotting
+#####################################################################
+start = timing.time()
+
+error_u = np.empty(NV,dtype=np.float64)
+error_v = np.empty(NV,dtype=np.float64)
+error_q = np.empty(NV,dtype=np.float64)
+
+for i in range(0,NV): 
+    error_u[i]=u[i]-velocity_x(xV[i],yV[i])
+    error_v[i]=v[i]-velocity_y(xV[i],yV[i])
+    error_q[i]=q[i]-pressure(xV[i],yV[i])
+
+print("     -> error_u (m,M) %.4e %.4e " %(np.min(error_u),np.max(error_u)))
+print("     -> error_v (m,M) %.4e %.4e " %(np.min(error_v),np.max(error_v)))
+print("     -> error_q (m,M) %.4e %.4e " %(np.min(error_q),np.max(error_q)))
+
+print("compute error fields: %.3f s" % (timing.time() - start))
+
+#####################################################################
+# compute L2 errors
+#####################################################################
+start = timing.time()
+
+errv=0.
+errp=0.
+errq=0.
+for iel in range (0,nel):
+    for iq in range(0,nqel):
+
+        jcb=np.zeros((ndim,ndim),dtype=np.float64)
+        for k in range(0,mV):
+            jcb[0,0] += dNNNNNVdr[iq,k]*xV[iconV[k,iel]]
+            jcb[0,1] += dNNNNNVdr[iq,k]*yV[iconV[k,iel]]
+            jcb[1,0] += dNNNNNVds[iq,k]*xV[iconV[k,iel]]
+            jcb[1,1] += dNNNNNVds[iq,k]*yV[iconV[k,iel]]
+        jcob = np.linalg.det(jcb)
+
+        xq=0.
+        yq=0.
+        uq=0.
+        vq=0.
+        qq=0.
+        for k in range(0,mV):
+            xq+=NNNNNV[iq,k]*xV[iconV[k,iel]]
+            yq+=NNNNNV[iq,k]*yV[iconV[k,iel]]
+            uq+=NNNNNV[iq,k]*u[iconV[k,iel]]
+            vq+=NNNNNV[iq,k]*v[iconV[k,iel]]
+            qq+=NNNNNV[iq,k]*q[iconV[k,iel]]
+        errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
+        errq+=(qq-pressure(xq,yq))**2*weightq*jcob
+
+        pq=0.
+        for k in range(0,mP):
+            pq+=NNNNNP[iq,k]*p[iconP[k,iel]]
+        errp+=(pq-pressure(xq,yq))**2*weightq*jcob
+
+    # end for iq
+# end for iel
+
+errv=np.sqrt(errv)
+errp=np.sqrt(errp)
+errq=np.sqrt(errq)
+
+print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errq= %.8e" %(nel,errv,errp,errq))
+
+print("compute errors: %.3f s" % (timing.time() - start))
+
+
+
+
+
+
+
+
+
+
+
+
 
 print("-----------------------------")
 print("------------the end----------")

@@ -1,5 +1,5 @@
 rm *.vtu
 rm *.ascii
 rm *.pdf
-rm errors
+rm errors_*
 

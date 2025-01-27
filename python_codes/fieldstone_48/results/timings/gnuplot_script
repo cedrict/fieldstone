@@ -1,0 +1,31 @@
+#
+set term pdf enhanced
+set log xy
+set key bottom outside 
+set format y "10^{%L}"
+set grid
+
+###################################################################
+set xlabel 'number of elements'
+set ylabel 'FE matrix build time' 
+set output 'FEMbuildtimes.pdf'
+plot[][]\
+'Q1Q0/FEMbuild_nqperdim2'  u 6:4 w p lt 1 pt 1 ps .5 t 'Q_1Q_0 - nq=2^2',\
+'Q1Q0/FEMbuild_nqperdim3'  u 6:4 w p lt 1 pt 1 ps .5 t 'Q_1Q_0 - nq=3^2',\
+'Q1Q0/FEMbuild_nqperdim4'  u 6:4 w p lt 1 pt 1 ps .5 t 'Q_1Q_0 - nq=4^2',\
+'Q1Q0/FEMbuild_nqperdim5'  u 6:4 w p lt 1 pt 1 ps .5 t 'Q_1Q_0 - nq=5^2',\
+'Q2Q1/FEMbuild_nqperdim2'  u 6:4 w p lt 2 pt 1 ps .5 t 'Q_2Q_1 - nq=2^2',\
+'Q2Q1/FEMbuild_nqperdim3'  u 6:4 w p lt 2 pt 1 ps .5 t 'Q_2Q_1 - nq=3^2',\
+'Q2Q1/FEMbuild_nqperdim4'  u 6:4 w p lt 2 pt 1 ps .5 t 'Q_2Q_1 - nq=4^2',\
+'Q2Q1/FEMbuild_nqperdim5'  u 6:4 w p lt 2 pt 1 ps .5 t 'Q_2Q_1 - nq=5^2',\
+'Q3Q2/FEMbuild_nqperdim2'  u 6:4 w p lt 3 pt 1 ps .5 t 'Q_3Q_2 - nq=2^2',\
+'Q3Q2/FEMbuild_nqperdim3'  u 6:4 w p lt 3 pt 1 ps .5 t 'Q_3Q_2 - nq=3^2',\
+'Q3Q2/FEMbuild_nqperdim4'  u 6:4 w p lt 3 pt 1 ps .5 t 'Q_3Q_2 - nq=4^2',\
+'Q3Q2/FEMbuild_nqperdim5'  u 6:4 w p lt 3 pt 1 ps .5 t 'Q_3Q_2 - nq=5^2',\
+'Q4Q3/FEMbuild_nqperdim2'  u 6:4 w p lt 4 pt 1 ps .5 t 'Q_4Q_3 - nq=2^2',\
+'Q4Q3/FEMbuild_nqperdim3'  u 6:4 w p lt 4 pt 1 ps .5 t 'Q_4Q_3 - nq=3^2',\
+'Q4Q3/FEMbuild_nqperdim4'  u 6:4 w p lt 4 pt 1 ps .5 t 'Q_4Q_3 - nq=4^2',\
+'Q4Q3/FEMbuild_nqperdim5'  u 6:4 w p lt 4 pt 1 ps .5 t 'Q_4Q_3 - nq=5^2',\
+
+
+
