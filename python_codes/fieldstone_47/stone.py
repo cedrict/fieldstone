@@ -519,9 +519,12 @@ for iel in range(0,nel):
 
         pavrg+=NNNP.dot(p[iconP[:,iel]])*weightq*jcob
 
+    #end for
+#end for
+
 p-=pavrg
 
-np.savetxt('pressure_after.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+#np.savetxt('pressure_after.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
