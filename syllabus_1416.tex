@@ -183,6 +183,7 @@ Note that it is required that $\vec{n}$ is a unit normal, i.e. $\vec{n}\cdot\vec
 {\small \it 
 Determine the tractions acting on the negative faces of a tiny cube (of which
 the faces are aligned with the local coordinate axes) when the stress is given.
+How do they compare with those of the positive faces?
 }
 \end{exercise}
 \end{minipage}
@@ -390,8 +391,8 @@ T(\vec{r},t)= T_0 \frac{1}{r} \exp(-t) \qquad t>0, r>0
 The temperature field belongs to a flow field given
 by $\vec{\upnu}(\vec{r},t)=\frac{1}{r^2}\exp(-t) \vec{r}$.\\
 a) Determine the divergence of the velocity field.\\
-b) Compute the particle acceleration. \\
-c) Compute the material derivate of $T$ at any position and time.
+b) Compute the material derivative of $T$ at any position and time.\\
+Bonus: Compute the particle acceleration. 
 }
 \end{exercise}
 \end{minipage}
@@ -749,32 +750,32 @@ function $f$ that leads to flow without shear strain rate.
 
 
 %%%ex 11:
-\vspace{0.5cm}
-\fbox{
-\begin{minipage}{0.9\textwidth}
-\begin{exercise}
-{\small \it 
-Demonstrate that 
-\[
-\dot{\bm\omega} = 
-\left(
-\begin{array}{ccc}
-0 & -\frac12 \Omega_3 & \frac12 \Omega_2 \\
-\frac12 \Omega_3 & 0 & -\frac12 \Omega_1 \\
--\frac12 \Omega_2 & \frac12 \Omega_1 & 0
-\end{array}
-\right)
-\]
-where 
-\[
-\vec\Omega=\vec\nabla \times \vec\upnu
-\]
-is the so-called vorticity.
-}
-\end{exercise}
-\end{minipage}
-}
-\vspace{0.5cm}
+%\vspace{0.5cm}
+%\fbox{
+%\begin{minipage}{0.9\textwidth}
+%\begin{exercise}
+%{\small \it 
+%Demonstrate that 
+%\[
+%\dot{\bm\omega} = 
+%\left(
+%\begin{array}{ccc}
+%0 & -\frac12 \Omega_3 & \frac12 \Omega_2 \\
+%\frac12 \Omega_3 & 0 & -\frac12 \Omega_1 \\
+%-\frac12 \Omega_2 & \frac12 \Omega_1 & 0
+%\end{array}
+%\right)
+%\]
+%where 
+%\[
+%\vec\Omega=\vec\nabla \times \vec\upnu
+%\]
+%is the so-called vorticity.
+%}
+%\end{exercise}
+%\end{minipage}
+%}
+%\vspace{0.5cm}
 
 
 
@@ -824,7 +825,7 @@ a) Show that the pressure difference between $B$ and $A$ equals
 $p(B) - p(A) = \int_C \rho \vec{g} \cdot d\vec{r}$
 where $d\vec{r}$ is a line element of $C$. \\
 b) Assume that the continuum is a spherically symmetric body: Show that the pressure
-difference between $B$ and $A$ is: $p(r_B ) - p(r_A) = \int_{r_A}^{r_B} \rho g(r) dr$ 
+difference between $B$ and $A$ is: $p(r_B ) - p(r_A) = -\int_{r_A}^{r_B} \rho g(r) dr$ 
 where quantities only depend on the radius.\\
 c) Show that the density field $\rho$ should satisfy $\vec\nabla \rho // \vec\nabla \Phi$
 where $\Phi$ is the gravitational
@@ -879,10 +880,14 @@ pressure.
 \begin{exercise}
 {\small \it 
 Consider a two-dimensional state of stress.\\
-a) Prove in 2 different ways that the principal values of the deviatoric stress are equal in
-magnitude but opposite in sign.\\
-b) Demonstrate that only shear traction exists on planes bisecting the principal axis of
-deviatoric stress
+a) Prove that the principal values of the deviatoric 
+stress are equal in magnitude but opposite in sign by 
+computing the eigen values.\\
+b) As we will see later in the course, the trace of a tensor is 
+invariant (i.e. unchanged) by rotation. Use this information 
+to prove the previous relationship again without calculations.\\
+c) Demonstrate that only shear traction exists on planes bisecting the 
+principal axis of deviatoric stress
 }
 \end{exercise}
 \end{minipage}
@@ -1190,16 +1195,17 @@ exhaustive and only presented to give examples of nonlinear relations between st
 strain rate involving a viscosity function and, in practice, leading to the notion of
 effective viscosity derived from a superposition of competing deformation mechanisms.
 
-
+\todo[inline]{ADD effective viscosity formula}
 
 %%%ex17
 \vspace{0.5cm}
 \fbox{
 \begin{minipage}{0.9\textwidth}
 \begin{exercise}
-{\small \it 
-Discuss the effects of temperature and pressure (as a function of depth) for
-the constitutive equation \eqref{eq:md30}}
+{\small \it
+a) What is the relative change in effective viscosity 
+assuming both pressure and tempoerature are increased by 10\% ?\\
+b) Same question when only temperature is increased by 10\% ?}
 \end{exercise}
 \end{minipage}
 }
@@ -1532,10 +1538,9 @@ requires, because of the continuity equation, that density is constant in time.
 \begin{minipage}{0.9\textwidth}
 \begin{exercise}
 {\small \it 
-Consider incompressible flow in three dimensions and (implicitly) define the
+Consider an incompressible flow in three dimensions and (implicitly) define the
 vector potential $\vec\psi$ as $\vec\upnu = -\vec\nabla \times \vec\psi$.\\
-a) Demonstrate that $\vec\nabla\cdot\vec\upnu=0$.\\
-b) Assume a Newtonian fluid with constant viscosity and assume that $\rho D\upnu_i/Dt \sim 0$.\\
+Assume a Newtonian fluid with constant viscosity and assume that $\rho D\upnu_i/Dt \sim 0$.\\
 Demonstrate that 
 \[
 \vec\nabla \times
@@ -1546,6 +1551,8 @@ Demonstrate that
 (Use the identity $\vec\nabla^2 \upnu = \vec\nabla(\vec\nabla \cdot \vec\upnu) - 
 \vec\nabla \times \vec\nabla \times \vec\upnu$ and take the curl of the N-S equation)
 }
+
+Bonus: Demonstrate the well known identity $\vec\nabla\cdot\vec\upnu=0$.
 \end{exercise}
 \end{minipage}
 }
@@ -1690,7 +1697,7 @@ p(x,y) = -2\eta A k^2 \exp (-ky) \cos kx + \rho g_y y + p_0
 \begin{minipage}{0.9\textwidth}
 \begin{exercise}
 {\small \it 
-Derive Eq.~\eqref{eq:md49} and determine that $p_0=0$.
+Derive Eq.~\eqref{eq:md49} and justify the assumption $p_0=0$.
 }
 \end{exercise}
 \end{minipage}
@@ -2175,7 +2182,7 @@ Show that for a Newtonian fluid the dissipation term
 $\Phi=\uppi_{ij}\partial \upnu_i/\partial x_j$
 can be written as $\Phi=\uppi_{ij}\dot\varepsilon_{ij}=
 2 \eta \dot\varepsilon_{ij}'\dot\varepsilon_{ij}' + \xi (\dot\varepsilon_{kk})^2$.
-What can one conclude for the two viscosities?
+What do each term physically account for? 
 }
 \end{exercise}
 \end{minipage}
@@ -2204,7 +2211,7 @@ upper mantle of $8.4\cdot 10^{-9} \si{\joule\per\second\per\cubic\meter}$.
 
 \vspace{0.5cm}
 
-%exercise 31
+%exercise 29
 \fbox{
 \begin{minipage}{0.9\textwidth}
 \begin{exercise}
@@ -2231,7 +2238,7 @@ Hint: Take the inner product of the equation of motion with the velocity field a
 integrate the result over $V$. Assume an impermeable boundary $S$ of $V$ (i.e. $\vec\upnu\cdot\vec{n}=0$) 
 and that the boundary is shear stress free (free slip) or has no-slip ($\vec\upnu=\vec{0}$).\\
 b) Show by substitution of the Newtonian rheology that the rhs of this equation is positive
-and show that the lhs of the equation equals the created power due to the change in
+and show that the lhs of the equation equals the power due to the change in
 gravitational potential energy as a result of ${\tilde \rho}$ w.r.t. $\rho_0$.
 }
 \end{exercise}
@@ -2240,19 +2247,19 @@ gravitational potential energy as a result of ${\tilde \rho}$ w.r.t. $\rho_0$.
 
 \vspace{0.5cm}
 
-%exercise 32
+%exercise 30
 \fbox{
 \begin{minipage}{0.9\textwidth}
 \begin{exercise}
 {\small \it 
-a) Derive the heat equation for a static medium ($\vec\upnu=\vec{0}$) from the conservation law of
+Derive the heat equation for a static medium ($\vec\upnu=\vec{0}$) from the conservation law of
 thermal energy. (Hint: Create the heat balance for a fixed control volume based on
-internal energy, heat production and heat flow through the boundary of the volume).\\
-b) Next, assume there is a flow field $\vec\upnu$ and extend the result under a) with a term
-involving the flow density of thermal energy $\vec{J} = \rho C_p T \vec\upnu$ 
-(assume $\rho C_p$ to be constant and $\vec\nabla\cdot \vec\upnu=0$).\\
-The result is the heat equation for an incompressible medium in which adiabatic
-compression and viscous dissipation are neglected.
+internal energy, heat production and heat flow through the boundary of the volume).
+%b) Next, assume there is a flow field $\vec\upnu$ and extend the result under a) with a term
+%involving the flow density of thermal energy $\vec{J} = \rho C_p T \vec\upnu$ 
+%(assume $\rho C_p$ to be constant and $\vec\nabla\cdot \vec\upnu=0$).\\
+%The result is the heat equation for an incompressible medium in which adiabatic
+%compression and viscous dissipation are neglected.
 }
 \end{exercise}
 \end{minipage}
@@ -2619,7 +2626,7 @@ stress free (also called free slip):
 {\small \it 
 Show for an incompressible Newtonian fluid that at $z=0$ the traction $\vec{t}^n$ is given by
 $t_x^n=t_y^n=0$ and $t_z^n = -p+2\eta \partial \upnu_z/\partial z$.
-What can you tell about the horizontal components of velocity?
+%What can you tell about the horizontal components of velocity?
 }
 \end{exercise}
 \end{minipage}
