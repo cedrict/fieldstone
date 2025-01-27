@@ -1,6 +1,5 @@
 import numpy as np
 import scipy.sparse as sps
-from numba import jit
 import scipy.sparse.linalg as sla
 
 ############################################################################### 
