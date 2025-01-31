@@ -5,8 +5,6 @@ import scipy.sparse as sps
 from scipy.sparse import csr_matrix,lil_matrix
 from numba import jit
 
-
-
 sqrt3=np.sqrt(3.)
 sqrt2=np.sqrt(2.)
 eps=1.e-8 
@@ -28,13 +26,17 @@ def tau_fct(y,srcoeff):
        val=7000+(y-8000)/(10e3-8e3)*(50000-7000)
     return val*year*srcoeff
 
+###############################################################################
+
 @jit(nopython=True)
 def Kx_fct(xq,tauq,time):
-    return k_0/rho_m/g*np.exp(-abs(xq)/L)*np.exp(-3*time/tauq)
+    return k_0/rho_m/g*np.exp(-abs(xq)/L)*np.exp(-3*time/tauq) #*0.667
 
 @jit(nopython=True)
 def Ky_fct(xq,tauq,time):
     return 100*k_0/rho_m/g*np.exp(-abs(xq)/L)*np.exp(-3*time/tauq)
+
+###############################################################################
 
 @jit(nopython=True)
 def Phi_fct(xq,tauq,time):
@@ -98,12 +100,12 @@ mP=9         # number of nodes per Q2 elt
 
 Lx=4e3
 Ly=10e3
-nelx= 20
-nely= int(nelx*Ly/Lx)
+nelx=32
+nely=int(nelx*Ly/Lx)
 
-dt=0.05*year
+dt=.5*year
 nstep=5000
-every=10
+every=1
 
 Phi_0=10*percent
 rho_m=880
@@ -112,7 +114,7 @@ L=100
 g=10
 rho_litho=2800
 
-model=3
+model=1
 
 if model==1: 
    k_0=1e-9
@@ -161,6 +163,11 @@ stats_p_file=open('stats_p.ascii',"w")
 stats_gradp_file=open('stats_gradp.ascii',"w")
 stats_vel_file=open('stats_vel.ascii',"w")
 stats_cfl_file=open('stats_cfl.ascii',"w")
+stats_pt1_file=open('stats_pt1.ascii',"w")
+stats_pt2_file=open('stats_pt2.ascii',"w")
+stats_pt3_file=open('stats_pt3.ascii',"w")
+stats_pt4_file=open('stats_pt4.ascii',"w")
+stats_pt5_file=open('stats_pt5.ascii',"w")
 
 ###############################################################################
 
@@ -400,7 +407,24 @@ for istep in range(0,nstep):
     print("solve T time: %.3f s" % (timing.time() - start))
 
     ###########################################################################
-    # compute nodal pressure gradient
+    # prevent pore overpressure to exceed Plitho-Phydro
+    ###########################################################################
+    start = timing.time()
+
+    Ovp=np.zeros(NP,dtype=np.float64) 
+    P_litho=np.zeros(NP,dtype=np.float64) 
+    P_hydro=np.zeros(NP,dtype=np.float64) 
+    for i in range(NP):
+        P_litho[i]=rho_litho*g*(Ly-yP[i])
+        P_hydro[i]=rho_m*g*(Ly-yP[i])
+        p[i]=min(0.999999*(P_litho[i]-P_hydro[i]),p[i])
+        if yP[i]<Ly:
+           Ovp[i]=p[i]/(P_litho[i]-P_hydro[i])
+
+    print("apply pressure limiter: %.3f s" % (timing.time() - start))
+
+    ###########################################################################
+    # compute nodal pressure gradient [benchmarked]
     ###########################################################################
     start = timing.time()
 
@@ -451,6 +475,8 @@ for istep in range(0,nstep):
                                                                 np.min(dpdy_n),np.max(dpdy_n))) 
     stats_gradp_file.flush()
 
+    #np.savetxt('gradp.ascii',np.array([xP,yP,dpdx_n,dpdy_n]).T)
+
     print("compute nodal press gradient: %.3f s" % (timing.time()-start))
 
     ###########################################################################
@@ -462,15 +488,11 @@ for istep in range(0,nstep):
     Kx=np.zeros(NP,dtype=np.float64)
     Ky=np.zeros(NP,dtype=np.float64) 
     tau=np.zeros(NP,dtype=np.float64) 
-    P_litho=np.zeros(NP,dtype=np.float64) 
-    P_hydro=np.zeros(NP,dtype=np.float64) 
     for i in range(0,NP):
         tau[i]=tau_fct(yP[i],sealing_rate_coeff)
         Kx[i]=Kx_fct(xP[i],tau[i],model_time)
         Ky[i]=Ky_fct(xP[i],tau[i],model_time)
         Phi_m[i]=Phi_fct(xP[i],tau[i],model_time)
-        P_litho[i]=rho_litho*g*(Ly-yP[i])
-        P_hydro[i]=rho_m*g*(Ly-yP[i])
 
     u_darcy=np.zeros(NP,dtype=np.float64)
     v_darcy=np.zeros(NP,dtype=np.float64) 
@@ -495,6 +517,31 @@ for istep in range(0,nstep):
     print('     -> CFL_nb=',CFL_nb)
 
     stats_cfl_file.write("%e %e \n" %(model_time/year,CFL_nb)) ; stats_cfl_file.flush()
+
+    ###########################################################################
+    # exporting measurements at 5 locations
+    ###########################################################################
+    start=timing.time()
+
+    for i in range(0,NP):
+        if abs(xP[i]-Lx/2)/Lx<eps:
+           if abs(yP[i]-0.2*Ly)/Ly<eps:
+              stats_pt1_file.write("%e %e %e %e %e\n" %(model_time/year,p[i],u_darcy[i],v_darcy[i],Ovp[i])) 
+              stats_pt1_file.flush()
+           if abs(yP[i]-0.4*Ly)/Ly<eps:
+              stats_pt2_file.write("%e %e %e %e %e\n" %(model_time/year,p[i],u_darcy[i],v_darcy[i],Ovp[i])) 
+              stats_pt2_file.flush()
+           if abs(yP[i]-0.6*Ly)/Ly<eps:
+              stats_pt3_file.write("%e %e %e %e %e\n" %(model_time/year,p[i],u_darcy[i],v_darcy[i],Ovp[i])) 
+              stats_pt3_file.flush()
+           if abs(yP[i]-0.8*Ly)/Ly<eps:
+              stats_pt4_file.write("%e %e %e %e %e\n" %(model_time/year,p[i],u_darcy[i],v_darcy[i],Ovp[i])) 
+              stats_pt4_file.flush()
+        if abs(xP[i]-Lx/4)/Lx<eps and abs(yP[i]-0.7*Ly)/Ly<eps:
+              stats_pt5_file.write("%e %e %e %e %e\n" %(model_time/year,p[i],u_darcy[i],v_darcy[i],Ovp[i])) 
+              stats_pt5_file.flush()
+
+    print("export measurements at 5 pts: %.3f s" % (timing.time()-start))
 
     ###########################################################################
     # visualisation 
@@ -526,10 +573,7 @@ for istep in range(0,nstep):
        #--
        vtufile.write("<DataArray type='Float32' Name='Ovp' Format='ascii'> \n")
        for i in range(0,NP):
-           if abs(yP[i]-Ly)/Ly<eps:
-              vtufile.write("%e \n" %(0))
-           else:
-              vtufile.write("%e \n" %(p[i]/(P_litho[i]-P_hydro[i])))
+           vtufile.write("%e \n" %(Ovp[i]))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='P-Plitho' Format='ascii'> \n")
@@ -626,6 +670,12 @@ for istep in range(0,nstep):
 
     model_time+=dt
     print ("model_time=",model_time/year,'yr')
+
+    if model_time>tfinal:
+       print('**************')
+       print('tfinal reached')
+       print('**************')
+       break 
     
 #end for istep
 

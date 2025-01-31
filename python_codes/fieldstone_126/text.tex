@@ -24,7 +24,7 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: Jan. 23rd, 2025.
+Last revision: Jan. 31st, 2025.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -64,22 +64,17 @@ fluid transferred from depth during interseismic periods.
 From paragraph 41: ``there are two types of processes
 which may increase the fluid pressure: the inflow of fluid
 from depth and the progressive change in porosity and
-permeability by crack sealing within and around the fault.''
-
-``
-we made the simplified assumption, that after each earthquake, 
+permeability by crack sealing within and around the fault.
+[...] 
+We made the simplified assumption, that after each earthquake, 
 the mean porosity profile
 through the whole crustal section, decreases exponentially
 away from the fault.''
 
-
-
-
-
 %==========================
 \section*{Theory}
 
-What follows is borrowed from paragraphs 43, 44 \& 45.
+What follows is 95\% borrowed from paragraphs 43, 44 \& 45 of the paper.
 Two main relations are used, expressing fluid mass conservation
 \begin{equation}
 \frac{\partial (\rho \upphi)}{\partial t} + \vec\nabla\cdot (\rho \vec{u}) = 0
@@ -98,15 +93,17 @@ I don't get it}, ${\bm K}$ is the permeability tensor, $P$ is the total pore pre
 the gravity. 
 
 \underline{Remark:} 
-At this stage one must realize that the standard Darcy flow law is $\vec{u} = - {\bm K}/\eta_f \cdot (\vec{\nabla} P - \rho_f \vec{g})$. In this case I don't know why the viscosity has disappeared. The permeability\footnote{\url{https://en.wikipedia.org/wiki/Permeability_(materials_science)}} $K$ should be in $\si{\square\meter}$ but here it would then be in $\si{\square\meter\per\pascal\per\second}$. Also the minus sign is probably linked to the fact that the vertical axis is pointing down instead of up. 
+At this stage one must realize that the standard Darcy flow law is 
+$\vec{u} = - {\bm K}/\eta_f \cdot (\vec{\nabla} P - \rho_f \vec{g})$. 
+In this case I don't know why the viscosity has disappeared. 
+The permeability\footnote{\url{https://en.wikipedia.org/wiki/Permeability_(materials_science)}} 
+$K$ should be in $\si{\square\meter}$ but here it would then be in $\si{\square\meter\per\pascal\per\second}$. 
+Also the lack of minus sign inside of the parenthesis 
+is probably linked to the fact that the vertical axis is pointing down instead of up. 
 
-
-
-First, during the evolution, we consider that the density 
+First, during the evolution, the authors consider that the density 
 $\rho = \rho' + \rho_m$ will evolve in time of an amount $\rho'$ 
-around its local mean value $\rho_m$ ,
-
-Then Eq.~\eqref{eq:por01} becomes,
+around its local mean value $\rho_m$. Then Eq.~\eqref{eq:por01} becomes
 \begin{eqnarray}
 \frac{\partial ((\rho'+\rho_m) \upphi)}{\partial t} + \vec\nabla\cdot ((\rho'+\rho_m) \vec{u}) &=& 0 
 \nn\\
@@ -122,7 +119,7 @@ Then Eq.~\eqref{eq:por01} becomes,
 \end{eqnarray}
 Since $\rho_m$ is taken to be constant and homogeneous in the crust
 then $\partial_t \rho_m =0$ %and $\vec\nabla \rho_m=\vec{0}$
-and neglecting the terms $\rho'$ compared to $\rho_m$ we can write
+and neglecting the terms $\rho'$ compared to $\rho_m$ one can write
 \begin{equation}
 (\underbrace{\rho' }_{neglect} + \rho_m )\frac{\partial \upphi}{\partial t} 
 +\upphi \frac{\partial \rho'}{\partial t} 
@@ -140,14 +137,14 @@ and finally obtain:
 \end{equation}
 which is Eq.~(9) in the paper.
 
-Second, we consider that the total pore pressure $P$ can
+Second, the authors consider that the total pore pressure $P$ can
 be decomposed as $P = p + P_{hydro}$ such that $P_{hydro}$ is the
 hydrostatic pressure verifying $\vec\nabla P_{hydro} + \rho_m \vec{g} = \vec{0}$. 
 Then Eq.~\eqref{eq:por00} becomes
 \begin{align}
-\vec{u} &= -{\bm K} \cdot (\vec{\nabla} (p + P_{hydro}) + (\rho'+\rho_m) \vec{g}) 
+\vec{u} &= -{\bm K} \cdot (\vec{\nabla} \left(p + P_{hydro}) + (\rho'+\rho_m) \vec{g} \right) 
 \end{align}
-Again, neglecting $\rho'$ compared to $\rho_m$, we arrive at
+Again, neglecting $\rho'$ compared to $\rho_m$, one arrives at
 \begin{equation}
 \boxed{
 \vec{u} = -{\bm K} \cdot \vec{\nabla} p  
@@ -160,7 +157,7 @@ tensor ${\bm K}$ are the axes of the fault frame $x,z$, which means
 that the anisotropy of the permeability takes the natural
 direction of the fault. This last assumption seems reasonable
 if the fault has a constant straight and vertical shape.
-This means that ${\bm K}$ is diagonal:
+This means that the permeability tensor ${\bm K}$ is diagonal:
 \begin{equation}
 {\bm K}(x,z,t) = \left(\begin{array}{cc}
 K_x(x,z,t) & 0 \\ 
@@ -178,13 +175,13 @@ u_y = -K_y \partial_y p
 \label{eq:por11}
 \end{equation}
 which is Eq.~(10) of the paper.
-The two permeabilities $K_z$ and $K_x$ are chosen to express a high anisotropy with a ratio 
+The two permeabilities $K_x$ and $K_z$ are chosen to express a high anisotropy with a ratio 
 $K_z/K_x =100$. This ratio is chosen to allow a reasonable fluid transfer across the fault zone.
 
 It is assumed that the variation of the density of the fluid $\rho'$ 
 is only due to the variation of the fluid pressure $p$. This dependence is simply
 expressed with a compressibility factor $C_f = \frac{1}{\rho_m}\frac{\partial \rho'}{\partial p} $
-taken as a constant. $C_f$ is expressed in $\si{\per\pascal}$.
+taken as a constant. $C_f$ is then expressed in $\si{\per\pascal}$.
 
 We can write this equation as follows:
 \begin{equation}
@@ -205,7 +202,7 @@ varies strongly and heterogeneously in time because of the
 kinetics of the crack sealing process (see below). The $\upphi'$ is
 the smaller variation of the porosity due to the fluid pressure variation.
 
-Therefore we write
+Therefore one can write
 \begin{equation}
 \frac{\partial \upphi}{\partial t}
 =\frac{\partial \upphi_m}{\partial t} +\frac{\partial \upphi'}{\partial t}
@@ -220,17 +217,16 @@ C_m = \frac{1}{\upphi_m}\frac{\partial \upphi'}{\partial p}
 \end{equation}
 Its units are also \si{\per\pascal}.
 Rigorously, by following the Biot theory of poroelasticity,
-reformulated later by [Rice and Cleary, 1976], the pore
+reformulated later by Rice and Cleary (1976), the pore
 pressure should also depend on the variations of the state of
 total stress or the state of strain of the crust. For simplicity,
-we will consider that the state of total stress of the crust will
+the authors consider that the state of total stress of the crust will
 not change significantly during the pressurization. This
 rough approximation is the main limit of the model. Indeed
 it does not consider the interaction involved by the
 poroelastic theory, which is out of the scope of this paper.
 Therefore, by considering, in first approximation, that the
-variations of the state of total stress of the crust are small,
-we have 
+variations of the state of total stress of the crust are small:
 \begin{equation}
 C_m = C_d \left[ \frac{C_d - C_s}{\upphi_m C_s } - 1  \right],
 \end{equation}
@@ -239,18 +235,17 @@ compressibility of the skeleton, i.e., the dried solid part
 containing the pores. During the simulation, the mean
 porosity $\upphi_m$ will decrease significantly in time, due to the
 pressure solution, but at the same time $C_d$ tends to reach $C_s$.
-This is why we assume that the compressibility of the
+This is why it is assumed that the compressibility of the
 matrix $C_m$ can reasonably be taken as a constant. 
 
 Having stated all this it is now time to put it all together.
-We start by combining equations \eqref{eq:por10} and \eqref{eq:por11}:
-
+We start again from Eq.~\eqref{eq:por10}:
 \begin{eqnarray}
 \rho_m \frac{\partial \upphi}{\partial t} 
 +\upphi \frac{\partial \rho' }{\partial t} 
 + \vec\nabla\cdot (\rho_m \vec{u}) &=& 0 \nn
 \end{eqnarray}
-Now using Eqs.~\eqref{eq:por21} and \eqref{eq:por20} leads to
+Using Eqs.~\eqref{eq:por21} and \eqref{eq:por20} leads to
 \begin{eqnarray}
 \rho_m \frac{\partial \upphi}{\partial t} 
 +\upphi \rho_m C_f \frac{\partial p}{\partial t} 
@@ -349,22 +344,22 @@ The $\tau(z)$ is the characteristic time of the sealing process
 (time during which the porosity is divided by $e$). The
 shape of $\tau(z)$ as been derived from a stratified crust with
 different rates of compaction using the results of the crack
-sealing modeling (see Fig.~9a). In the upper crust, we
+sealing modeling (see Fig.~9a). In the upper crust, the authors
 assume the predominance of the calcite rate of crack sealing
-at low temperature and pressure while in the deeper crust we
+at low temperature and pressure while in the deeper crust the authors
 assume the predominance of the rate of crack sealing of the
-quartzite at higher temperature and pressure [Renard et al., 2000]. 
-The depth of transition between these two end-
-member cases is chosen to be at $3~\si{\km}$ (Figure 9).
+quartzite at higher temperature and pressure (Renard et al., 2000). 
+The depth of transition between these two end-member cases 
+is chosen to be at $3~\si{\km}$ (Figure 9 of the paper).
 
-Following Lockner and Evans [1995], the time
+Following Lockner and Evans (1995), the time
 dependence between porosity and permeability during sealing 
 processes may be expressed as
 \begin{equation}
 k(t) \simeq \upphi_m(t)^3
 \label{eq:por05}
 \end{equation}
-This leads to the following relation for the permeability:
+This leads to the following relation for the permeability (Eq.~14 of the paper):
 \begin{eqnarray}
 K_x(x,z,t) &=& \frac{k_0 }{\rho_m g}  \exp\left(-\frac{x}{L}\right) \exp\left(-3\frac{t}{\tau(z)}\right) \label{eq:por06}\\
 K_z(x,z,t) &=& 100\frac{k_0 }{\rho_m g}  \exp\left(-\frac{x}{L}\right) \exp\left(-3\frac{t}{\tau(z)}\right)
@@ -372,9 +367,9 @@ K_z(x,z,t) &=& 100\frac{k_0 }{\rho_m g}  \exp\left(-\frac{x}{L}\right) \exp\left
 \end{eqnarray}
 where $k_0$ is the ``kinematic'' permeability, having the
 dimension of a velocity. The factor 3 is not reported on the
-spatial variation since we do not consider that the initial
+spatial variation since the authors do not consider that the initial
 permeabilities $K_x (x, z,0)$ and $K_z (x, z,0)$ can be easily related
-to the initial porosity $\upphi_m (x,z,0)$. We consider that only their
+to the initial porosity $\upphi_m (x,z,0)$. The authors consider that only their
 rate of variation in time is relevant. 
 Here again we can verify that the units of $K_{x,y}$ are 
 $[k_0]/[\rho_m g]=(\si{\meter\per\second})/(\si{\pascal}/\si{\meter})
@@ -397,7 +392,8 @@ corresponds to a cutoff due to hydraulic fracturing of the
 crust. It is not sufficient to describe the system completely
 because as soon as condition \eqref{eq:por08} is reached, the
 permeability should increase brutally, making an important
-local fluid flow and a release of pore pressure. In our model,
+local fluid flow and a release of pore pressure. 
+In our model,
 we consider a monotonic evolution of the pore pressure, that
 is when a region reaches the criterion \eqref{eq:por08} at time $t_{litho}$, it
 will not unload later, i.e., $p(x,z,t > t_{litho}) = P_{litho}(z)-P_{hydro}(z)$.
@@ -406,10 +402,13 @@ lithostatic pressure is a moving pressure-imposed boundary
 and the fluid flow inside this region is still evaluated with
 equation \eqref{eq:por11}.
 
+Further down in the paper we read
 ``Several calculations have been performed with an
 explicit finite difference method.''
-This is really vague. Nothing is said about numerical methods, 
-resolution, etc ... 
+This is really vague. Nothing is said about numerical methods, resolution, 
+time stepping, etc ...\footnote{Upon my contacting the authors concerning 
+this problem they answered that the original code and its documentation 
+was unfortunately lost for good.}
 
 The modeling main
 parameter values are given in Figure 9b.
@@ -420,7 +419,7 @@ $L=100~\si{\meter}$, and $1/C=1~\si{\giga\pascal}$.
 $\phi_0$ is a maximum porosity value along the fault, the initial porosity profile shows an
 exponential decrease away from the fault
 
-Various calculations have been done with two values of $k_0$
+Various calculations have been done in the paper with two values of $k_0$
 i.e., $k_0 = 10^{-9}~\si{\meter\per\second}$ and $10^{-8}~\si{\meter\per\second}$. By taking a fluid
 viscosity of $\eta= 1.5 \cdot 10^{-4}~\si{\pascal\second}$ (at $160\si{\celsius}$, $5~\si{\kilo\meter}$), 
 $k_0= 10^{-9}~\si{\meter\per\second}$ corresponds to a geometric permeability 
@@ -428,6 +427,7 @@ $k_0 \eta/\rho_m g =1.7 \cdot 10^{-17}~\si{\square\meter}$. This quite high valu
 one at the center of the fault at the beginning of the process,
 i.e., in the most damaged zone after an earthquake.
 
+\newpage
 \begin{center}
 \includegraphics[width=15cm]{python_codes/fieldstone_126/images/grfr03a}\\
 {\captionfont 
@@ -439,7 +439,8 @@ order to divide the initial porosity by 2.72). Three sets of crack sealing value
 section: low, medium and high sealing rate profiles.
 Right (Fig. 9b): Table of values of the main modeling parameters:
 initial permeability $k_0$ and sealing rate. 
-The initial porosity along the fault is 10\% (Figures 9c, 10, and 11) or 1\% (Figures 12 and 13).}
+The initial porosity along the fault is 10\% (Figures 9c, 10, and 11 of the paper) 
+or 1\% (Figures 12 and 13 of the paper).}
 \end{center}
 
 
@@ -448,39 +449,44 @@ The initial porosity along the fault is 10\% (Figures 9c, 10, and 11) or 1\% (Fi
 {\captionfont Fig. 9c: initial porosity profile.}
 \end{center}
 
-{\color{red} I have an issue with this figure. In the center/fault the porosity
-should be $\Phi_0$ (see Eq.~\eqref{eq:por03}) so how come 
-there are isolines 1 on each side of the fault and the fault itself is at 9 (or 6?).}
-The rest of the panels of Fig.~9 can be reproduced via Eq.~\eqref{eq:por03}.
+{\color{red} Q1: I have an issue with this figure. In the center/fault the porosity
+should be $\Phi_0=0.1$ (see Eq.~\eqref{eq:por03}) so how come 
+there are isolines 1 on each side of the fault and the fault itself is at 9 (or 6?).
+It actually looks like the center value is 10, not 0.1 ... Was it normalised somehow? }
+The rest of the panels of Fig.~9c,d can be reproduced via Eq.~\eqref{eq:por03} 
+(porosity is only a function of time and space).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section*{FEM discretisation and code structure}
 
-Based on Fig 9, the domain is a Cartesian box of size $4~\si{\km} \times 10~\si{\km}$ (also from paragraph 45). In the paper the vertical $z$ axis points down (note that our code will obviously 
-not follow this convention and that the axis will be $x,y$ as usual). 
+Based on Fig 9 of the paper the domain is a Cartesian box of 
+size $4~\si{\km} \times 10~\si{\km}$ (also clear from paragraph 45). 
+In the paper the vertical $z$ axis points down (note that our code will 
+not follow this convention and that the axis will be $x,y$ as usual with $y$
+pointing upward). 
 Note that the domain is in fact $[-2:2]\times[0:10]~\si{\km}$. 
-From Eq.~\eqref{eq:por02} and various figures we know that we are solving for the overpressure $p$. 
+From Eq.~\eqref{eq:por02} and various figures we know that the main 
+unknown we are solving for is the overpressure $p$.
+The PDE to be solved is the following 
 \[
 C \upphi_m \frac{\partial p}{\partial t} 
 =\frac{\partial}{\partial x} \left( K_x \frac{\partial p}{\partial x} \right) 
-+ \frac{\partial}{\partial z} \left( K_z \frac{\partial p}{\partial z} \right)
++ \frac{\partial}{\partial y} \left( K_y \frac{\partial p}{\partial y} \right)
 - \frac{\partial \upphi_m}{\partial t} 
-%=\frac{\partial}{\partial x} \left( K_x \frac{\partial p}{\partial x} \right) 
-%+ \frac{\partial}{\partial z} \left( K_z \frac{\partial p}{\partial z} \right)
-%+\frac{\upphi_0}{\tau(z)} \exp (-x/L) \exp (-t/\tau(z)) 
 \]
 which is a diffusion equation in 2d, with a source term. 
-This equation must be supplemented by equations for $K_x(x,z,t)$, $K_z(x,z,t)$, $\upphi_m(x,z,t)$ and 
-$\frac{\partial \upphi_m}{\partial t} (x,y,t)$, i.e. Eqs.~\eqref{eq:por06}, \eqref{eq:por07}, \eqref{eq:por03}, \eqref{eq:por04}:
+This equation must be supplemented by equations for $K_x(x,y,t)$, $K_y(x,y,t)$, $\upphi_m(x,y,t)$ and 
+$\frac{\partial \upphi_m}{\partial t} (x,y,t)$, i.e. Eqs.~\eqref{eq:por06}, 
+\eqref{eq:por07}, \eqref{eq:por03}, \eqref{eq:por04}:
 \begin{eqnarray}
-K_x(x,z,t) &=& \frac{k_0 }{\rho_m g}  \exp\left(-\frac{x}{L}\right) \exp\left(-3\frac{t}{\tau(z)}\right) \nn\\
-K_z(x,z,t) &=& 100\frac{k_0 }{\rho_m g}  \exp\left(-\frac{x}{L}\right) \exp\left(-3\frac{t}{\tau(z)}\right) \nn\\
-\upphi_m(x,z,t) &=& \upphi_0 \exp (-x/L) \exp (-t/\tau(z)) \nn\\
-\frac{\partial \upphi_m}{\partial t}(x,z,t) &=& -\frac{\upphi_0}{\tau(z)} \exp (-x/L) \exp (-t/\tau(z)) \nn
+K_x(x,y,t) &=& \frac{k_0 }{\rho_m g}  \exp\left(-\frac{x}{L}\right) \exp\left(-3\frac{t}{\tau(y)}\right) \nn\\
+K_y(x,y,t) &=& 100\frac{k_0 }{\rho_m g}  \exp\left(-\frac{x}{L}\right) \exp\left(-3\frac{t}{\tau(y)}\right) \nn\\
+\upphi_m(x,y,t) &=& \upphi_0 \exp (-x/L) \exp (-t/\tau(y)) \nn\\
+\frac{\partial \upphi_m}{\partial t}(x,y,t) &=& -\frac{\upphi_0}{\tau(y)} \exp (-x/L) \exp (-t/\tau(y)) \nn
 \end{eqnarray}
-Finally we will need the parameters $k_0$, $\rho_m$, $g$, $\upphi_0$, $L$, $C$ and the curve $\tau(z)$.
+Finally we will need the parameters $k_0$, $\rho_m$, $g$, $\upphi_0$, $L$, $C$ and the curve $\tau(y)$.
 They have all been specified in the text above:
 
 \begin{itemize}
@@ -494,8 +500,6 @@ They have all been specified in the text above:
 exponential decrease away from the fault
 \end{itemize}
 
-Note that there is a discussion about pressure in Eq.\eqref{eq:por08} that needs to be implemented.
-
 %..........................................
 \paragraph{Some thoughts about $\tau(z)$}
 
@@ -504,22 +508,25 @@ I have digitized\footnote{\url{https://plotdigitizer.com/app}} Fig.~9a:
 \includegraphics[width=8cm]{python_codes/fieldstone_126/images/grfr03f}
 \includegraphics[width=8cm]{python_codes/fieldstone_126/images/tau.pdf}\\
 {\captionfont Left: Fig.~9a of the paper; Right: digitized version, note that $y$ is not depth but the
-vertical coordinate.}
+vertical coordinate which points upward.}
 \end{center}
-The original figure is obviously poorly put together and serves as an indication rather than 
+When zooming in we see that the original figure is just a drawing 
+and serves as an indication rather than 
 an accurate representation of the sealing rate $\tau$.
 The three broken lines are identical but off by a factor 10.  
-Fig.~10 showcases the parameter $\tau_m=70yr,700,7000yr$ which is not discussed in the text (CHECK)
-but which seems to correspond to the flat portions of the curves of Fig.~9a.
+Fig.~10 showcases the parameter $\tau_m=70,700,7000~\si{\year}$ which is not discussed in the text
+but which seems to correspond to the flat portions of the curves of Fig.~9a (i.e. the minimum value
+of $\tau$).
 
 In the paper we read ``
 In the upper crust, we assume the predominance of the calcite rate of crack sealing
 at low temperature and pressure while in the deeper crust we
 assume the predominance of the rate of crack sealing of the
-quartzite at higher temperature and pressure [Renard et al.,2000]. 
+quartzite at higher temperature and pressure (Renard et al.,2000). 
 The depth of transition between these two end-member cases is chosen to be at 3 km.''
 Looking at the digitized figure it is obvious the figure is incorrect. The 3km-depth 
 line (i.e. the $y=7~\si{\km}$ line) does not align with the transition of the curves.
+
 On page 18 we read ``
 For the kinetics of crack sealing, a simplified
 variation with depth is used, assuming that the rate of
@@ -534,13 +541,12 @@ as realistic in order to be able to run the calculation for an
 acceptable time.
 ''
 
-
-In light of all this we will write a single function that returns $\tau$ as a function of $y$
-and it will correct the problems highlighted above. 
+In light of all this I have written a single function that returns $\tau$ as a function of $y$
+and it corrects the problems highlighted above. 
 For the `low' curve: it starts at (0,10000), goes to (5,100000), then to (7,7000), plateaus
-until (8,7000) and then goes up to (10,:50000).
+until (8,7000) and then goes up to (10,50000).
 The other two lines follow the same pattern but their $\tau$ values are a factor 10 and 100 lower.
-The function is then as follows:
+The Python function is then as follows:
 \begin{lstlisting}
 def tau_fct(y,srcoeff):
     if y<5.e3:
@@ -553,7 +559,7 @@ def tau_fct(y,srcoeff):
        val=7000+(y-8000)/(10e3-8e3)*(50000-7000)
     return val*year*srcoeff
 \end{lstlisting}
-The \lstinline{srcoeff} is either 1 (hight sealing rate), 0.1 (medium sealing rate)
+The \lstinline{srcoeff} is either 1 (high sealing rate), 0.1 (medium sealing rate)
 or 0.01 (high sealing rate).
 
 
@@ -573,28 +579,38 @@ The calculation was based on the following boundary conditions:
 \item top: $p=0$;
 \item sides:  $\partial p/\partial x =0$ (i.e. $u_x=0$, no flow);
 \item bottom: imposed pressure zone scaled
-with the fault zone, i.e., $p = g h (\rho_{litho} -\rho_m) e^{-x/L}$ which is plotted here under: 
-\begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_126/images/pbottom}\\
-{\captionfont Pressure imposed at the bottom.}
-\end{center}
+with the fault zone, i.e., $p = g h (\rho_{litho} -\rho_m) e^{-x/L}$.
 The maximum value is then $g h (\rho_{litho} -\rho_m) 
 =10\cdot 40e3 \cdot(2800-880)=192~\si{\mega\pascal}$.
+It is plotted here under: 
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_126/images/pbottom}\\
+{\captionfont Pressure imposed at the bottom. Note that for some reason 
+gnuplot will not evaluate the functionat x=0 and the peak therefore does not 
+reach the 192 MPa value...}
+\end{center}
+
+Note that at $x=0$ then the pressure is given by $g h (\rho_{litho} -\rho_m)$
+which is in fact $P_{litho}-P_{hydro}$ at the bottom, so that $O_{vp}=p/(P_{litho}-P_{hydro})=1$
+at $x=0$ (easy to verify in ParaView). 
 
 \end{itemize}
-I suspect the authors to only solve for half the domain (bc of symmetry) since they 
-specify boundary conditions on the fault. Also the expressions for $K$ contain $\exp(-x/L)$
-instead of $\exp(-|x|/L)$.
-
-
+I suspect the authors to only solve for half the domain (because of symmetry, thereby 
+saving computational time) since they 
+specify boundary conditions on the fault. Also the expressions for $K_x$ and $K_z$ 
+contain the term $\exp(-x/L)$ instead of $\exp(-|x|/L)$.
 
 %..............................
 \paragraph{Weak form}
 
+The PDE above is solved by means of the Finite element method, using 
+quadratic $Q_2$ elements.
 How to establish the weak form of the diffusion equation has been 
-carried out in Section~\ref{MMM-ss:hte_fem} so we will not repeat it. 
+carried out in Section~\ref{MMM-ss:hte_fem} of my FieldStone compendium 
+document\footnote{See part 1 at \url{https://cedrict.github.io/}.}
+so I will not repeat it here. 
 The only main difference from the standard diffusion equation for temperature
-is the coefficients and the source term which are all space and time dependent.
+is that the coefficients and the source term are all space and time dependent.
 
 The discretised weak form is given by
 \[
@@ -613,46 +629,92 @@ The discretised weak form is given by
 \int_\Omega \vec{\bN}^T  \frac{\partial \upphi_m}{\partial t} dV
 }_{\vec{b}}
 \]
-Since pressure is prescribed on all sides the surface terms stemming from the integration by parts
-need not be taken into account here.
+Since pressure is prescribed on the top and bottom we need not 
+care about the surface terms stemming from the integration by parts on these boundaries. 
+On the sides we wish to impose $dp/dx$ which is automatically achieved 
+by not specifying/coding any boundary term on these parts of the boundaries.
 
 The time derivative can be discretised by means of a simple explicit scheme:
 \[
 \frac{\partial \vec{\cal P}}{\partial t} \simeq
 \frac{ \vec{\cal P}^{t+\delta t} - \vec{\cal P}^t  }{\delta t}
 \]
-We arrive at 
+and one then arrives at 
 \[
 ( {\M} + {\K}_d) \cdot \vec{\cal P}^{t+\delta t} = {\M} \cdot \vec{\cal P}^t  + \vec{b}
 \]
+Of course this approach is not as accurate as the Crank-Nicolson method which we adopt here.
 The matrix is symmetric positive definite which is good news.
 
-%..................................................
-\paragraph{Computing $P_{hydro}$ and $P_{litho}$}
+Note to self: $\M$ actually depends on time, but I although I reevaluate it 
+at every point in time and space my time discretisation does not account for this 
+time dependency explicitely. Something to revisit?
 
-In paragraph 43 $P_{hydro}$ is defined by
-$\vec\nabla P_{hydro} + \rho \vec{g} = \vec{0}$ 
+
+%...............................
+\paragraph{Time step}
+In the context of solving pure diffusion equations for temperature in geodynamics 
+the time step is limited by 
+\[
+\delta t \propto \frac{h^2}{\kappa}
+\]
+where $\kappa$ is the heat diffusivity.
+Here at $t=0$ to simplify things, we can compute the equivalent diffusion coefficient:
+\[
+\kappa \simeq \frac{\max|{\bm K}|}{\Phi_m C} 
+\simeq \frac{ 100 k_0/\rho_m g \exp(-x/L) }{\Phi_0 \exp (-x/L) C}
+\simeq \frac{ 100 k_0   }{\rho_m g \Phi_0  C}
+= \frac{100 \cdot 10^{-9}}{2800 \cdot 10 \cdot 0.1 \cdot 10^{-9}} \simeq 0.0357 m^2/s
+\]
+Then for $h=100m$ (resolution $40\times 100$), 
+\[
+\delta t \propto  \frac{100^2}{0.0357} \simeq 280,000 s \simeq 0.0088 yr??!
+\]
+That value is *very* small. Not quite sure what to think about this right now.
+In practice I ended up using much larger values (see here after).
+
+%..........................................
+\paragraph{About limiting the overpressure}
+
+In paragraph 43 $P_{hydro}$ is defined by $\vec\nabla P_{hydro} + \rho \vec{g} = \vec{0}$ 
 so that in the code we have $P_{hydro}=\rho_m g (L_y -y)$, 
 assuming that pressure is zero at the top of the domain. 
 
 Likewise we define $P_{litho}=\rho_{litho} g (L_y -y)$ which 
 also means that lithostatic pressure is zero at the top. 
 
-{\Large Q}: does this make sense?
+{\color{red} Q2: does this make sense? if so, $O_{vp}$ is ill defined at the top (dividing by zero)?}
 
+{\color{red} Q3: looking at the definition of $O_{vp}$ above an given the boundary conditions $p=0$
+at the top, then $O_{vp}=0/0$ at the top?!}
 
+As mentioned earlier the $O_{vp}$ quantity cannot exceed 1. This needs to be 
+enforced in an {\it ad hoc} manner. The paper is not exceedly clear as how 
+this should be achieved. I repeat the relevant lines of the paper with regards 
+to this matter:
+``
+In our model, we consider a monotonic evolution of the pore pressure, that
+is when a region reaches the criterion \eqref{eq:por08} at time $t_{litho}$, it
+will not unload later, i.e., $p(x,z,t > t_{litho}) = P_{litho}(z)-P_{hydro}(z)$.
+Therefore the boundary of the region that has reached the
+lithostatic pressure is a moving pressure-imposed boundary
+and the fluid flow inside this region is still evaluated with
+equation \eqref{eq:por11}.''
 
-%..............................
-\paragraph{Logic of the code}
+I have therefore implemented a simple rule as follows. After I have solved for $p$
+I simply threshold it:
+\begin{lstlisting}
+for i in range(NP):
+    p[i]=min(0.999999*(P_litho[i]-P_hydro[i]),p[i])
+\end{lstlisting}
+In the code above $p$ is such that it can never exceed $P_{litho}(z)-P_{hydro}(z)$ 
+(the 0.99999 coefficient is there for safety -- probably not needed in retrospect) but 
+in time $p$ *could* become lower than this quantity again in theory which would violate
+$p(x,z,t > t_{litho}) = P_{litho}(z)-P_{hydro}(z)$ recommended in the paper. 
+In practice, looking at the points measurements, 
+I find that once $p$ has been thresholded it remains at $P_{litho}(z)-P_{hydro}(z)$.
 
-\begin{enumerate}
-\item define all required parameters
-\item set $p=0$ everywhere
-\item set profile for $\tau(z)$
-\item define boundary conditions
-\item define mesh, connectivity array
-\item etc ...
-\end{enumerate}
+{\color{red} Q4: does my limiter this make sense?}
 
 %..............................
 \paragraph{Numerical experiments:} From Fig.~9b we see that four models are run:
@@ -663,22 +725,10 @@ also means that lithostatic pressure is zero at the top.
 \item model 4: $k_0=10^{-8}~\si{\meter\per\second}$, medium sealing rate
 \end{itemize}
 
-
-{\color{red} Current state: the code runs. I have checked it over multiple times. 
-It is not benchmarked yet (time stepping, diffusion). 
-I believe it fairly represents the equations above. 
-However, running model 1,2,3 gives different results than on Fig 10 at t=2.7 or
-t=27 years. I am not sure how to choose the time step based on 
-the diffusion eq alone, for now it is based on velocity CFL. 
-Pressure gradient calculations are not benchmarked either. 
-I also still need to understand what is done to prevent P to become 
-larger than Plitho.
-}
-
 A potential thing to consider is how much the exponential $\exp(-t/\tau(y))$
 influences results: in the following figure I plot $\upphi_m$ as a function of 
-$x$ and at different times (assuming $\tau(y)=200yr$ for simplicity, corresponding
-to 'high' sealing rate, and 2000 for medium and 20000 for low).
+$x$ and at different times (assuming $\tau(y)=200$yr for simplicity, corresponding
+to 'high' sealing rate, and 2000yr for medium and 20000yr for low).
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_126/images/phi200}
@@ -687,12 +737,15 @@ to 'high' sealing rate, and 2000 for medium and 20000 for low).
 \end{center}
 
 We see that it changes by less than 50\% in amplitude after 100 years for the 
-high sealing rate case, and that it does not change for medium or low..  
+high sealing rate case, and that it does not change for medium or low.  
 This means that $\upphi_m$ barely changes in time and that 
 conversely the diffusion coefficient in the form of ${\bm K}$ does not
 change in time in most cases. 
 
-
+The code is written in Python and self contained. It relies on a direct solver
+to solve the linear system stemming from the FEM discretisation.
+Results are exported in ascii format and in vtu formatted files which can be read by the 
+ParaView software\footnote{\url{https://www.paraview.org/}}.
 
 
 \newpage
@@ -700,37 +753,81 @@ change in time in most cases.
 %======================================
 \section*{Results}
 
+\subsection*{Vizualisation}
+
+In Figs. 10 and 12 the authors show the evolution of the
+normalized fluid overpressure $O_{vp} = p/(P_{litho}-P_{hydro})= 
+(P- P_{hydro})/(P_{litho} - P_{hydro})$. This quantity is between 0 and 1.
+
+However comparing my results with those of the paper is nearly impossible. Below is the
+color scale of the paper next to two similar ones in ParaView. 
 \begin{center}
-\includegraphics[width=14cm]{python_codes/fieldstone_126/images/grfr03c}\\
-{\captionfont Fig. 9c: Evolution of the porosity values with time (t), through crustal cross
-section perpendicular to the fault (located at x = 0); 
-evolution is obtained with the lowest sealing rate (model 1, Figure 9b),
-initial porosity profile}
+\includegraphics[width=6.4cm]{python_codes/fieldstone_126/images/grfr03_Ovp}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_126/images/jet}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_126/images/turbo}\\
+{\captionfont At the top is the colorbar of the paper.
+Below is the `Jet' colorbar of ParaView, and at the bottom is 
+the 'Turbo' colorbar of Paraview. Looking for example at the light blue color, we see that 
+it corresponds to different values of $O_{vp}$ which is obviously
+problematic with regards to carrying out a somewhat quantitative comparison.}
 \end{center}
+Note that the problem regarding appropriate colorscales has since been 
+recognised by the community \cite{crsh20}.
+
+I ended up contacting colormaps expert Fabio 
+Crameri\footnote{\url{https://www.fabiocrameri.ch/colourmaps/}}
+and he was able to create a ParaView-compatible
+colormap based on the one found in the paper:
+\begin{center}
+\includegraphics[width=6.6cm]{python_codes/fieldstone_126/images/grfr03_Ovp}\\
+\includegraphics[width=6.4cm]{python_codes/fieldstone_126/images/gratier}
+\end{center}
+This is obviously a great asset for a thorough comparison. 
+I will use this colormap in what follows.
+
+
+Unless specified the time step $\delta t$ is set to 0.5~\si{\year} for simplicity.
+The unfortunate consequence is that the CFL number (based on the Darcy velocity)
+is rather large (and close to 1) at high resolutions.
+I have however rerun some models with $\delta t=0.25~\si{\year}$ and results 
+were virtually unchanged.
+
+At each time step, once $p$ is computed the Darcy velocity $\vec{u}=(u,v)$ is also
+computed with $\vec{u}=-\vec\nabla p$. Min/max values of $u,v,p,O_{vp}$ are exported
+as a function of time and plotted for the different models.
+
+The evolution of $p$, $u$, $v$ and $O_{vp}$ are also recorded at five points.
+The points are $(0,L_y/5)$, $(0,2L_y/5)$, $(0,3L_y/5)$, $(0,4L_y/5)$ and $(L_x/4,7L_y/10)$
+as shown on the following figure:
 
 \begin{center}
-\includegraphics[width=14cm]{python_codes/fieldstone_126/images/grfr03d}\\
-{\captionfont Fig. 9d: same as Fig. 9c, but evolution is 
-obtained with the highest sealing rate (model 3, Figure 9b).}
+\begin{tikzpicture}
+%\draw[fill=gray!23,gray!23](0,0) rectangle (4,7);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (4,7); %background grid
+\draw[thick] (1,1) -- (3,1) -- (3,6) -- (1,6) -- cycle  ; 
+\filldraw[black] (2,2) circle (2pt) node[anchor=west]{\tiny pt 1};
+\filldraw[black] (2,3) circle (2pt) node[anchor=west]{\tiny pt 2};
+\filldraw[black] (2,4) circle (2pt) node[anchor=west]{\tiny pt 3};
+\filldraw[black] (2,5) circle (2pt) node[anchor=west]{\tiny pt 4};
+\filldraw[black] (1.5,4.5) circle (2pt) node[anchor=north]{\tiny pt 5};
+\end{tikzpicture}
 \end{center}
+
+
+
 
 
 \newpage
-
-Fluid transfer modeling along active crustal faults when integrating pressure solution crack sealing
-processes in parallel with inflow of deep lower crust fluids (see Figure 9b); evolution of 
-normalized fluid overpressure $O_{vp} = p/(P_{litho}-P_{hydro}) = (P- P_{hydro})/(P_{litho} - P_{hydro})$. 
-This quantity is between 0 and 1 and it is the quantity plotted on the following plots:
-\begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_126/images/grfr03_Ovp}\\
-\end{center}
-The initial porosity along the fault surface is 10\%. Time-dependent
-variation is from left to right (from 2.7 to 270 years). The $\tau$ values are the time duration 
-requires in order to divide the initial porosity by $e$ (see Figure 9a). 
+%------------------------------------------------------------------------------
+\subsection*{Model 1}
 
 \begin{center}
 \includegraphics[width=13cm]{python_codes/fieldstone_126/images/grfr03_10a}\\
-{\captionfont Fig. 10a:
+{\captionfont Fig. 10a from the paper:
+Fluid transfer modeling along active crustal faults when integrating pressure solution crack sealing
+processes in parallel with inflow of deep lower crust fluids (see Figure 9b); 
+The initial porosity along the fault surface is 10\%. Time-dependent
+variation is from left to right (from 2.7 to 270 years). 
 (a) Model 1, initial permeability $k_0 = 10^{-9} m/s$, low sealing rate; 
 overpressure rapidly increases at depth (zone with $O_{vp}$ values = 0.9) then very 
 slowly extends to the entire fault zone ($O_{vp}$ values reaching 0.6
@@ -738,9 +835,99 @@ after several hundred years).
 }
 \end{center}
 
+
+\begin{center}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model1/nelx32/Ovp_1.png}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model1/nelx32/Ovp_2.png}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model1/nelx32/Ovp_3.png}\\
+{\captionfont Results obtained on $32\times 80$ mesh.}
+\end{center}
+
+Looking at my results it looks as if the diffusion in the $x$ direction too strong.
+I have therefore (rather arbitrarily) started to reduce $K_x$ by various factors and ultimately 
+settled on 2/3.
+Results are now:
+
+\begin{center}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model1_new/Ovp_1.png}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model1_new/Ovp_2.png}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model1_new/Ovp_3.png}\\
+{\captionfont Results obtained on $32\times 80$ mesh with $K_x*2/3$.}
+\end{center}
+My results are then *very* similar to those in the paper.
+
+
+
+
+
+
+
+\newpage
+Measurements at the 5 points are shown hereunder:
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt1_p.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt1_u.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt1_v.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt1_Ovp.pdf}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt2_p.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt2_u.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt2_v.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt2_Ovp.pdf}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt3_p.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt3_u.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt3_v.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt3_Ovp.pdf}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt4_p.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt4_u.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt4_v.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt4_Ovp.pdf}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt5_p.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt5_u.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt5_v.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/pt5_Ovp.pdf}\\
+{\captionfont Conclusion: It looks like resolution does not change results much.}
+\end{center}
+
+%\begin{center}
+%\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/stats_p.pdf}
+%\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/stats_u.pdf}
+%\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/stats_v.pdf}
+%\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/cfl.pdf}\\
+%\end{center}
+
+
+
+
+
+\newpage
+
+\begin{center}
+\includegraphics[width=14.7cm]{python_codes/fieldstone_126/images/grfr03c}\\
+{\captionfont Fig. 9c of the paper: Evolution of the porosity values with time (t), 
+through crustal cross section perpendicular to the fault (located at x=0); 
+evolution is obtained with the lowest sealing rate (model 1, Figure 9b),
+initial porosity profile}
+\end{center}
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/nelx32/phi_0.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/nelx32/phi_1.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/nelx32/phi_2.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model1/nelx32/phi_3.png}\\
+{\captionfont Evolution of porosity in time.}
+\end{center}
+
+We find that for this model $\Phi_m$ does not significantly evolve in time.
+
+
+
+\newpage
+%------------------------------------------------------------------------------
+\subsection*{Model 2}
+
 \begin{center}
 \includegraphics[width=13cm]{python_codes/fieldstone_126/images/grfr03_10b}\\
-{\captionfont Fig. 10a:
+{\captionfont Fig. 10a of the paper:
 Model 2, initial permeability $k_0 = 10^{-9} m/s$, medium sealing rate; same fast localized
 overpressure development at depth (red zone) slowly extending to the whole fault. However, 
 medium sealing rate allows localized overpressure development in the upper part 
@@ -749,25 +936,177 @@ of the seismic crust (270 years).
 \end{center}
 
 \begin{center}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model2/nelx32/Ovp_1.png}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model2/nelx32/Ovp_2.png}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model2/nelx32/Ovp_3.png}\\
+{\captionfont Results obtained on $32\times 80$ mesh.}
+\end{center}
+
+Same as in model 1, the results above look as if diffusion 
+in the $x$ direction is somewhat to strong,
+so $K_x$ is then reduced by a factor 2/3 and results are now:
+
+\begin{center}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model2_new/Ovp_1.png}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model2_new/Ovp_2.png}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model2_new/Ovp_3.png}\\
+{\captionfont Results obtained on $32\times 80$ mesh with $K_x*2/3$.}
+\end{center}
+We obtain *very* similar results as in the paper.
+
+
+
+
+
+
+\newpage
+%------------------------------------------------------------------------------
+\subsection*{Model 3}
+
+\begin{center}
 \includegraphics[width=13cm]{python_codes/fieldstone_126/images/grfr03_10c}\\
-{\captionfont Fig. 10c:
-Model 3, initial permeability $k0 =10^{-9} m/s$, high sealing rate; same fast localized overpressure 
+{\captionfont Fig. 10c of the paper:
+Model 3, initial permeability $k_0 =10^{-9} m/s$, high sealing rate; same fast localized overpressure 
 development at depth (red zone). However, high sealing rate rapidly develops localized overpressure 
-in the upper part of the seismic crust and prevents the outflow of the fluid (before 108 years). 
-}
+in the upper part of the seismic crust and prevents the outflow of the fluid (before 108 years). }
+\end{center}
+
+{\color{red} Q5: based on the successes of models 1\&2, 
+I find the first two left panels above somewhat suspicious in the 
+light of my results below.}
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/nelx32/Ovp_1.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/nelx32/Ovp_2.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/nelx32/Ovp_3.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/nelx32/Ovp_4.png}\\
+{\captionfont Results obtained on $32\times 80$ mesh.}
+\end{center}
+
+Same as in model 1, $K_x$ is then reduced by a factor 2/3 and results are now:
+
+\begin{center}
+\includegraphics[width=4.cm]{python_codes/fieldstone_126/results/model3_new/Ovp_1.png}
+\includegraphics[width=4.cm]{python_codes/fieldstone_126/results/model3_new/Ovp_2.png}
+\includegraphics[width=4.cm]{python_codes/fieldstone_126/results/model3_new/Ovp_3.png}
+\includegraphics[width=4.cm]{python_codes/fieldstone_126/results/model3_new/Ovp_4.png}\\
+{\captionfont Results obtained on $32\times 80$ mesh with $K_x*2/3$.}
+\end{center}
+We again obtain *very* similar results as in the paper.
+
+
+
+\newpage
+Measurements at the 5 points are shown hereunder:
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt1_p.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt1_u.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt1_v.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt1_Ovp.pdf}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt2_p.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt2_u.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt2_v.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt2_Ovp.pdf}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt3_p.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt3_u.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt3_v.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt3_Ovp.pdf}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt4_p.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt4_u.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt4_v.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt4_Ovp.pdf}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt5_p.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt5_u.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt5_v.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/pt5_Ovp.pdf}\\
+{\captionfont Conclusion: It looks like resolution does not change results much.}
 \end{center}
 
 \begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/stats_p.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/stats_u.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/stats_v.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/cfl.pdf}\\
+\end{center}
+
+
+\newpage
+
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_126/images/grfr03d}\\
+{\captionfont Fig. 9d: same as Fig. 9c, but evolution is 
+obtained with the highest sealing rate (model 3, Figure 9b).}
+\end{center}
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/nelx32/phi_1.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/nelx32/phi_2.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/nelx32/phi_3.png}
+\includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/nelx32/phi_4.png}\\
+{\captionfont Evolution of porosity in time.}
+\end{center}
+
+
+
+
+
+
+\newpage
+%------------------------------------------------------------------------------
+\subsection*{Model 4}
+
+\begin{center}
 \includegraphics[width=13cm]{python_codes/fieldstone_126/images/grfr03_10d}\\
-{\captionfont Fig. 10d:
+{\captionfont Fig. 10d of the paper:
 Model 4, initial permeability $k_0 = 10^{-8} m/s$, 
 medium sealing rate; same fast localized overpressure
-development at depth (red zone) rapidly extending to the whole fault after some years 
-($e$ years), contrary to model 2. However, even with the effect of medium sealing rate values, 
+development at depth (red zone) rapidly extending to the whole fault after some years, 
+contrary to model 2. However, even with the effect of medium sealing rate values, 
 localized overpressure finally develops in the upper part of the seismic crust as in model 2 (270 years).
 }
 \end{center}
 
+\begin{center}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model4/nelx32/Ovp_1.png}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model4/nelx32/Ovp_2.png}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model4/nelx32/Ovp_3.png}\\
+{\captionfont Results obtained on $32\times 80$ mesh.}
+\end{center}
 
+Same as in other models, $K_x$ is then reduced by a factor 2/3 and results are now:
+
+\begin{center}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model4_new/Ovp_1.png}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model4_new/Ovp_2.png}
+\includegraphics[width=5.cm]{python_codes/fieldstone_126/results/model4_new/Ovp_3.png}\\
+{\captionfont Results obtained on $32\times 80$ mesh with $K_x*2/3$.}
+\end{center}
+We again obtain *very* similar results as in the paper.
+
+
+
+
+\newpage
+
+Conclusions and thoughts:
+
+\begin{itemize}
+\item my replication seems to be reasonably successful
+\item I still have a few questions about some algorithmic choices (especially the 
+overpressure limiter)
+\item despite these early successes the code should be benchmarked thoroughly 
+with manufactured solutions (diffusion, time derivative, calculation 
+of pressure derivatives, etc ...) before any result can be part of a publication. 
+\item I am not sure how to choose the time step $\delta t$
+\item there are velocity oscillations at the beginning that I have not investigated (dt too big?)
+\item I could build a Finite difference version of the code too (MSc thesis exercise?).
+Based on all I have learned building the FEM code it would nto take long.
+\item my results match the paper provided the $K_x$ coefficient is lessened by a factor (approx.) 2/3.
+This could point to a bug in the original code?
+\item I have not looked at fig 11 yet : to do !
+\item I could extend the code to use $Q_1$ elements.
+\item stretch mesh towards the middle?
+\end{itemize} 
 
 
