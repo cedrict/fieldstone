@@ -1,0 +1,229 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set xlabel 'time (yr)'
+set key outside
+set pointsize .13
+
+year=365.25*24*3600
+
+#######################################################
+set ylabel 'CFL nb'
+set output 'cfl.pdf'
+plot[][]\
+'nelx20/stats_cfl.ascii' u 1:2 w l t 'nelx=20',\
+'nelx32/stats_cfl.ascii' u 1:2 w l t 'nelx=32',\
+'nelx48/stats_cfl.ascii' u 1:2 w l t 'nelx=48',\
+'nelx64/stats_cfl.ascii' u 1:2 w l t 'nelx=64',\
+
+set ylabel 'min/max(p)'
+set output 'stats_p.pdf'
+plot[][-20:]\
+'nelx20/stats_p.ascii' u ($1/year):2 w l lt 1 t 'nelx=20',\
+'nelx20/stats_p.ascii' u ($1/year):3 w l lt 1 notitle,\
+'nelx32/stats_p.ascii' u ($1/year):2 w l lt 2 t 'nelx=32',\
+'nelx32/stats_p.ascii' u ($1/year):3 w l lt 2 notitle,\
+'nelx48/stats_p.ascii' u ($1/year):2 w l lt 3 t 'nelx=48',\
+'nelx48/stats_p.ascii' u ($1/year):3 w l lt 3 notitle,\
+'nelx64/stats_p.ascii' u ($1/year):2 w l lt 4 t 'nelx=64',\
+'nelx64/stats_p.ascii' u ($1/year):3 w l lt 4 notitle,\
+
+set ylabel 'min/max(u)'
+set output 'stats_u.pdf'
+plot[][:]\
+'nelx20/stats_vel.ascii' u ($1):2 w l lt 1 t 'nelx=20',\
+'nelx20/stats_vel.ascii' u ($1):3 w l lt 1 notitle,\
+'nelx32/stats_vel.ascii' u ($1):2 w l lt 2 t 'nelx=32',\
+'nelx32/stats_vel.ascii' u ($1):3 w l lt 2 notitle,\
+'nelx48/stats_vel.ascii' u ($1):2 w l lt 3 t 'nelx=48',\
+'nelx48/stats_vel.ascii' u ($1):3 w l lt 3 notitle,\
+'nelx64/stats_vel.ascii' u ($1):2 w l lt 4 t 'nelx=64',\
+'nelx64/stats_vel.ascii' u ($1):3 w l lt 4 notitle,\
+
+set ylabel 'min/max(v)'
+set output 'stats_v.pdf'
+plot[][:]\
+'nelx20/stats_vel.ascii' u ($1):4 w l lt 1 t 'nelx=20',\
+'nelx20/stats_vel.ascii' u ($1):5 w l lt 1 notitle,\
+'nelx32/stats_vel.ascii' u ($1):4 w l lt 2 t 'nelx=32',\
+'nelx32/stats_vel.ascii' u ($1):5 w l lt 2 notitle,\
+'nelx48/stats_vel.ascii' u ($1):4 w l lt 3 t 'nelx=48',\
+'nelx48/stats_vel.ascii' u ($1):5 w l lt 3 notitle,\
+'nelx64/stats_vel.ascii' u ($1):4 w l lt 4 t 'nelx=64',\
+'nelx64/stats_vel.ascii' u ($1):5 w l lt 4 notitle,\
+
+#######################################################
+set title 'pt 1 (x=L_x/2,y=Ly/5)'
+
+set ylabel 'p (Pa)'
+set output 'pt1_p.pdf'
+plot[][]\
+'nelx20/stats_pt1.ascii' u 1:2 w lp t 'nelx=20',\
+'nelx32/stats_pt1.ascii' u 1:2 w lp t 'nelx=32',\
+'nelx48/stats_pt1.ascii' u 1:2 w lp t 'nelx=48',\
+'nelx64/stats_pt1.ascii' u 1:2 w lp t 'nelx=64',\
+
+set ylabel 'u (m/s)'
+set output 'pt1_u.pdf'
+plot[][]\
+'nelx20/stats_pt1.ascii' u 1:3 w lp t 'nelx=20',\
+'nelx32/stats_pt1.ascii' u 1:3 w lp t 'nelx=32',\
+'nelx48/stats_pt1.ascii' u 1:3 w lp t 'nelx=48',\
+'nelx64/stats_pt1.ascii' u 1:3 w lp t 'nelx=64',\
+
+set ylabel 'v (m/s)'
+set output 'pt1_v.pdf'
+plot[][]\
+'nelx20/stats_pt1.ascii' u 1:4 w lp t 'nelx=20',\
+'nelx32/stats_pt1.ascii' u 1:4 w lp t 'nelx=32',\
+'nelx48/stats_pt1.ascii' u 1:4 w lp t 'nelx=48',\
+'nelx64/stats_pt1.ascii' u 1:4 w lp t 'nelx=64',\
+
+set ylabel 'Ovp'
+set output 'pt1_Ovp.pdf'
+plot[][0:1]\
+'nelx20/stats_pt1.ascii' u 1:5 w lp t 'nelx=20',\
+'nelx32/stats_pt1.ascii' u 1:5 w lp t 'nelx=32',\
+'nelx48/stats_pt1.ascii' u 1:5 w lp t 'nelx=48',\
+'nelx64/stats_pt1.ascii' u 1:5 w lp t 'nelx=64',\
+
+#######################################################
+set title 'pt 2 (x=L_x/2,y=2*Ly/5)'
+
+set ylabel 'p (Pa)'
+set output 'pt2_p.pdf'
+plot[][]\
+'nelx20/stats_pt2.ascii' u 1:2 w lp t 'nelx=20',\
+'nelx32/stats_pt2.ascii' u 1:2 w lp t 'nelx=32',\
+'nelx48/stats_pt2.ascii' u 1:2 w lp t 'nelx=48',\
+'nelx64/stats_pt2.ascii' u 1:2 w lp t 'nelx=64',\
+
+set ylabel 'u (m/s)'
+set output 'pt2_u.pdf'
+plot[][]\
+'nelx20/stats_pt2.ascii' u 1:3 w lp t 'nelx=20',\
+'nelx32/stats_pt2.ascii' u 1:3 w lp t 'nelx=32',\
+'nelx48/stats_pt2.ascii' u 1:3 w lp t 'nelx=48',\
+'nelx64/stats_pt2.ascii' u 1:3 w lp t 'nelx=64',\
+
+set ylabel 'v (m/s)'
+set output 'pt2_v.pdf'
+plot[][]\
+'nelx20/stats_pt2.ascii' u 1:4 w lp t 'nelx=20',\
+'nelx32/stats_pt2.ascii' u 1:4 w lp t 'nelx=32',\
+'nelx48/stats_pt2.ascii' u 1:4 w lp t 'nelx=48',\
+'nelx64/stats_pt2.ascii' u 1:4 w lp t 'nelx=64',\
+
+set ylabel 'Ovp'
+set output 'pt2_Ovp.pdf'
+plot[][0:1]\
+'nelx20/stats_pt2.ascii' u 1:5 w lp t 'nelx=20',\
+'nelx32/stats_pt2.ascii' u 1:5 w lp t 'nelx=32',\
+'nelx48/stats_pt2.ascii' u 1:5 w lp t 'nelx=48',\
+'nelx64/stats_pt2.ascii' u 1:5 w lp t 'nelx=64',\
+
+#######################################################
+set title 'pt 3 (x=L_x/2,y=3*Ly/5)'
+
+set ylabel 'p (Pa)'
+set output 'pt3_p.pdf'
+plot[][]\
+'nelx20/stats_pt3.ascii' u 1:2 w lp t 'nelx=20',\
+'nelx32/stats_pt3.ascii' u 1:2 w lp t 'nelx=32',\
+'nelx48/stats_pt3.ascii' u 1:2 w lp t 'nelx=48',\
+'nelx64/stats_pt3.ascii' u 1:2 w lp t 'nelx=64',\
+
+set ylabel 'u (m/s)'
+set output 'pt3_u.pdf'
+plot[][]\
+'nelx20/stats_pt3.ascii' u 1:3 w lp t 'nelx=20',\
+'nelx32/stats_pt3.ascii' u 1:3 w lp t 'nelx=32',\
+'nelx48/stats_pt3.ascii' u 1:3 w lp t 'nelx=48',\
+'nelx64/stats_pt3.ascii' u 1:3 w lp t 'nelx=64',\
+
+set ylabel 'v (m/s)'
+set output 'pt3_v.pdf'
+plot[][]\
+'nelx20/stats_pt3.ascii' u 1:4 w lp t 'nelx=20',\
+'nelx32/stats_pt3.ascii' u 1:4 w lp t 'nelx=32',\
+'nelx48/stats_pt3.ascii' u 1:4 w lp t 'nelx=48',\
+'nelx64/stats_pt3.ascii' u 1:4 w lp t 'nelx=64',\
+
+set ylabel 'Ovp'
+set output 'pt3_Ovp.pdf'
+plot[][0:1]\
+'nelx20/stats_pt3.ascii' u 1:5 w lp t 'nelx=20',\
+'nelx32/stats_pt3.ascii' u 1:5 w lp t 'nelx=32',\
+'nelx48/stats_pt3.ascii' u 1:5 w lp t 'nelx=48',\
+'nelx64/stats_pt3.ascii' u 1:5 w lp t 'nelx=64',\
+
+#######################################################
+set title 'pt 4 (x=L_x/2,y=4*Ly/5)'
+
+set ylabel 'p (Pa)'
+set output 'pt4_p.pdf'
+plot[][]\
+'nelx20/stats_pt4.ascii' u 1:2 w lp t 'nelx=20',\
+'nelx32/stats_pt4.ascii' u 1:2 w lp t 'nelx=32',\
+'nelx48/stats_pt4.ascii' u 1:2 w lp t 'nelx=48',\
+'nelx64/stats_pt4.ascii' u 1:2 w lp t 'nelx=64',\
+
+set ylabel 'u (m/s)'
+set output 'pt4_u.pdf'
+plot[][]\
+'nelx20/stats_pt4.ascii' u 1:3 w lp t 'nelx=20',\
+'nelx32/stats_pt4.ascii' u 1:3 w lp t 'nelx=32',\
+'nelx48/stats_pt4.ascii' u 1:3 w lp t 'nelx=48',\
+'nelx64/stats_pt4.ascii' u 1:3 w lp t 'nelx=64',\
+
+set ylabel 'v (m/s)'
+set output 'pt4_v.pdf'
+plot[][]\
+'nelx20/stats_pt4.ascii' u 1:4 w lp t 'nelx=20',\
+'nelx32/stats_pt4.ascii' u 1:4 w lp t 'nelx=32',\
+'nelx48/stats_pt4.ascii' u 1:4 w lp t 'nelx=48',\
+'nelx64/stats_pt4.ascii' u 1:4 w lp t 'nelx=64',\
+
+set ylabel 'Ovp'
+set output 'pt4_Ovp.pdf'
+plot[][0:1]\
+'nelx20/stats_pt4.ascii' u 1:5 w lp t 'nelx=20',\
+'nelx32/stats_pt4.ascii' u 1:5 w lp t 'nelx=32',\
+'nelx48/stats_pt4.ascii' u 1:5 w lp t 'nelx=48',\
+'nelx64/stats_pt4.ascii' u 1:5 w lp t 'nelx=64',\
+
+#######################################################
+set title 'pt 5 (x=L_x/2,y=4*Ly/5)'
+
+set ylabel 'p (Pa)'
+set output 'pt5_p.pdf'
+plot[][]\
+'nelx20/stats_pt5.ascii' u 1:2 w lp t 'nelx=20',\
+'nelx32/stats_pt5.ascii' u 1:2 w lp t 'nelx=32',\
+'nelx48/stats_pt5.ascii' u 1:2 w lp t 'nelx=48',\
+'nelx64/stats_pt5.ascii' u 1:2 w lp t 'nelx=64',\
+
+set ylabel 'u (m/s)'
+set output 'pt5_u.pdf'
+plot[][]\
+'nelx20/stats_pt5.ascii' u 1:3 w lp t 'nelx=20',\
+'nelx32/stats_pt5.ascii' u 1:3 w lp t 'nelx=32',\
+'nelx48/stats_pt5.ascii' u 1:3 w lp t 'nelx=48',\
+'nelx64/stats_pt5.ascii' u 1:3 w lp t 'nelx=64',\
+
+set ylabel 'v (m/s)'
+set output 'pt5_v.pdf'
+plot[][]\
+'nelx20/stats_pt5.ascii' u 1:4 w lp t 'nelx=20',\
+'nelx32/stats_pt5.ascii' u 1:4 w lp t 'nelx=32',\
+'nelx48/stats_pt5.ascii' u 1:4 w lp t 'nelx=48',\
+'nelx64/stats_pt5.ascii' u 1:4 w lp t 'nelx=64',\
+
+set ylabel 'Ovp'
+set output 'pt5_Ovp.pdf'
+plot[][0:1]\
+'nelx20/stats_pt5.ascii' u 1:5 w lp t 'nelx=20',\
+'nelx32/stats_pt5.ascii' u 1:5 w lp t 'nelx=32',\
+'nelx48/stats_pt5.ascii' u 1:5 w lp t 'nelx=48',\
+'nelx64/stats_pt5.ascii' u 1:5 w lp t 'nelx=64',\
+
