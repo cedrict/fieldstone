@@ -29,17 +29,18 @@ set term pdf enhanced font "times,12pt"
 set grid
 set output 'pbottom.pdf'
 
-set xlabel 'x (m)'
-set ylabel 'p_{bottom}'
+set xlabel 'x (km)'
+set ylabel 'p_{bottom} (MPa)'
 
+MPa=1e6
 g=10
 h=10e3
 rho_litho=2800
 rho_m=880
 L=100
 
-plot[-2000:2000][]\
-g*h*(rho_litho-rho_m)*exp(-abs(x)/L) notitle
+plot[-2:2][]\
+g*h*(rho_litho-rho_m)*exp(-abs(x*1000)/L)/MPa notitle
 
 ##################################################
 
