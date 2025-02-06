@@ -1,13 +1,11 @@
 import numpy as np
 import sys as sys
-import scipy
-import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
 import time as time
-import matplotlib.pyplot as plt
 import random
+import scipy.sparse as sps
+from scipy.sparse import csr_matrix,lil_matrix
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def bx(x, y):
     if bench==1:
@@ -29,7 +27,7 @@ def by(x, y):
        val=0
     return val
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def velocity_x(x,y):
     if bench==1:
@@ -52,7 +50,7 @@ def pressure(x,y):
        val=0
     return val
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def area_triangle(x1,y1,z1,x2,y2,z2,x3,y3,z3):
     ABx=x2-x1
@@ -70,7 +68,10 @@ def area_triangle(x1,y1,z1,x2,y2,z2,x3,y3,z3):
     norm=np.sqrt(nx**2+ny**2+nz**2)
     return 0.5*norm
 
-#------------------------------------------------------------------------------
+###############################################################################
+
+eps=1.e-10
+sqrt3=np.sqrt(3.)
 
 print("-----------------------------")
 print("----------fieldstone---------")
@@ -84,9 +85,6 @@ ndof=2  # number of degrees of freedom per node
 Lx=1.  # horizontal extent of the domain 
 Ly=1.  # vertical extent of the domain 
 
-assert (Lx>0.), "Lx should be positive" 
-assert (Ly>0.), "Ly should be positive" 
-
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 4):
    nelx = int(sys.argv[1])
@@ -97,22 +95,14 @@ else:
    nely = nelx
    visu = 1
     
-nnx=nelx+1  # number of elements, x direction
-nny=nely+1  # number of elements, y direction
-
-NV=nnx*nny  # number of nodes
-
+nnx=nelx+1     # number of elements, x direction
+nny=nely+1     # number of elements, y direction
+NV=nnx*nny     # number of nodes
 nel=nelx*nely  # number of elements, total
-
-penalty=1.e6  # penalty coefficient value
+Nfem=NV*ndof   # Total number of degrees of freedom
 
 viscosity=1.  # dynamic viscosity \mu
-
-Nfem=NV*ndof  # Total number of degrees of freedom
-
-eps=1.e-10
-
-sqrt3=np.sqrt(3.)
+penalty=1.e6  # penalty coefficient value
 
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
@@ -122,6 +112,7 @@ xi=0. # controls level of mesh randomness (between 0 and 0.5 max)
 #bench=1: donea huerta
 #bench=2: ldc 
 #bench=3: punch
+#bench=4: regularized ldc 
 bench=1
 
 use_filter=False
@@ -211,14 +202,14 @@ elif bench==2:
           bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
    #end for
-else:
+elif bench==4:
    for i in range(0,NV):
        if y[i]<eps:
-          #bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
-       if y[i]>(Ly-eps) and abs(x[i]-0.5)<0.19999:
-          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0
-          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = -1.
+       if y[i]>(Ly-eps):
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = x[i]**2*(1-x[i])**2
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
        if x[i]<eps:
           bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
@@ -226,6 +217,24 @@ else:
           bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
    #end for
+
+elif bench==3:
+   for i in range(0,NV):
+       if y[i]<eps:
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+       if y[i]>(Ly-eps) and x[i]<0.5:
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = -1.
+       if x[i]<eps:
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+          #bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+   #end for
+else:
+   exit('unknown bench')
 #end if
 
 print("boundary conditions: %.3f s" % (time.time() - start))
@@ -495,7 +504,7 @@ print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 
-if bench==1 or bench==2:
+if bench==1 or bench==2 or bench==4:
    int_p=area.dot(p)
    print("     -> avrg pressure=",int_p/Lx/Ly)
    p[:]=p[:]-int_p
@@ -506,7 +515,7 @@ print("     -> rawp (m,M,avrg) %.5f %.5f %.5f %d" %(np.min(p),np.max(p),int_p,ne
 
 np.savetxt('p_top.ascii',np.array([xc[nel-nelx:nel],p[nel-nelx:nel]]).T,header='# x,p')
 
-np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
+#np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
 #np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
 print("compute p,exx,eyy,exy: %.3f s" % (time.time() - start))
@@ -528,12 +537,16 @@ if use_filter:
        int_p+=p[iel]*pcb[iel]*area[iel]
    print('     -> amplitude of checkerboard=',int_p)
 
+   #missing 1/V term ?
+
    for iel in range(0,nel):
        p[iel]-=int_p*pcb[iel]
 
    print("     -> raw2 (m,M,avrg) %.5f %.5f %.5f %d" %(np.min(p),np.max(p),int_p,nel))
 
-   np.savetxt('pressure2.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
+   #np.savetxt('pressure2.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
+
+   np.savetxt('p_top_filtered.ascii',np.array([xc[nel-nelx:nel],p[nel-nelx:nel]]).T,header='# x,p')
 
 #end if
 
@@ -1217,11 +1230,6 @@ if visu==1:
    for i in range(0,NV):
        vtufile.write("%10f \n" %error_q8[i])
    vtufile.write("</DataArray>\n")
-
-
-
-
-
    #--
    vtufile.write("</PointData>\n")
    #####
@@ -1253,3 +1261,5 @@ if visu==1:
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")
+
+###############################################################################

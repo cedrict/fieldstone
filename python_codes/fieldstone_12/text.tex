@@ -3,15 +3,20 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_12/keywords.ascii}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_12/keywords.ascii}
 
 \begin{center}
-\inpython
+\inpython ~
 {\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_12}}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Last revision: Jan. 20th, 2025.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 We start from the analytical benchmark of Section \ref{MMM-mms1} and we use $Q_1 \times P_0$
 elements with a penalty formulation. 
@@ -46,8 +51,9 @@ In this case we compute several nodal pressures as explained in Section~\ref{MMM
 
 \end{itemize}
 
-Since the setups showcase Dirichlet boundary conditions on all four sides, 
-the pressure solution is normalised so that $\int p\; dV =0 $.
+Since the D\& H setup showcases Dirichlet boundary conditions on all four sides, 
+there is a pressure nullspace and it is removed 
+by normalizing the pressure that $\int_\Omega p\; dV =0 $.
 
 \begin{remark}
 Nodes on edges and corners may need special treatment as documented in Sani et al \cite{sagl81a} or
@@ -60,83 +66,207 @@ Lee et al (1979) \cite{legs79} discuss two different ways to compute the lumped 
 \end{remark}
 
 \begin{remark}
-In the same folder there is a fortran90 version of the consistent recovery algorithm.
+In the {\tt code\_simplefem\_consistent\_press} folder there is a fortran90 
+version of the consistent recovery algorithm.
 \end{remark}
+
+There is much more work to be done on this topic/stone! Look at cost vs accuracy!
+
+%------------------------------------------------------------------------
+\subsection*{A (new) checkerboard filter?}
 
 I have created a simple checkerboard filter. Let $\phi=\pm 1$ denote this field.
 The filter is applied as follows:
 \[
 p_{filtered} = p - \left( \frac{1}{|\Omega|} \iint_\Omega p \phi dV \right) \phi
 \]
-It is in fact a a projection. If $p=\alpha \phi$  where $\alpha$ is a scalar, then 
-it is trivial to show that $p_{filtered} =0$.
-Likewise, if $p=constant$ then $p_{filtered}=p$.
-This idea is probably to be found in the relevant publications of Section~\ref{MMM-psmoothing}
-in some form or shape. 
+It is in fact a projection. If $p=\alpha \phi$  where $\alpha$ is a scalar, then 
+it is trivial to show that $p_{filtered} =0$:
+\begin{eqnarray}
+p_{filtered} 
+&=& p - \left( \frac{1}{|\Omega|} \iint_\Omega p \phi dV \right) \phi \nn\\
+&=& \alpha \phi - \left( \frac{1}{|\Omega|} \iint_\Omega \alpha \phi \phi dV \right) \phi \nn\\
+&=& \alpha \phi - \left( \frac{1}{|\Omega|} \alpha \sum_e \iint_{\Omega_e} \phi^2 dV \right) \phi \nn\\
+&=& \alpha \phi - \left( \frac{1}{|\Omega|} \alpha \sum_e \iint_{\Omega_e} 1 dV \right) \phi \nn\\
+&=& \alpha \phi - \left( \frac{1}{|\Omega|} \alpha \sum_e |{\Omega_e}| \right) \phi \nn\\
+&=& \alpha \phi - \left( \frac{1}{|\Omega|} \alpha |\Omega| \right) \phi \nn\\
+&=& \alpha \phi - \alpha\phi \nn\\
+&=& 0 
+\end{eqnarray}
+since on an element $\phi^2=1$. Here $|\Omega_e|$ is the volume of element $e$ and $|\Omega|$ is the 
+volume of the whole domain.
+This means that if the pressure field is 100\% made of a checkerboard field then the 
+filter completely removes it.
 
-There is much more work to be done on this topic/stone! Look at cost vs accuracy!
+Likewise, if $p=p_0=constant$ then 
+\begin{eqnarray}
+p_{filtered} 
+&=& p_0 - \left( \frac{1}{|\Omega|} \iint_\Omega p_0 \phi dV \right) \phi \nn\\
+&=& p_0 - \left( \frac{1}{|\Omega|} p_0 \iint_\Omega  \phi dV \right) \phi \nn\\ 
+&=& p_0 - \left( \frac{1}{|\Omega|} p_0 \sum_e \iint_{\Omega_e}  \phi dV \right) \phi \nn
+\end{eqnarray}
+If there are as many $\phi=+1$ and $\phi=-1$ elements (i.e. the number of elements in 
+each direction is even?) *and* the total volume of the '+' elements is equal 
+to the total volume of the '-' elements then the integral above is zero and 
+we obtain $p_{filtered}=p_0$.
+
+What about the case where the mesh does not consist of equal size elements ?
+\todo[inline]{I need to check but paper by Gang Lu states that then modes don't appear. }
+
+In order to remove the explicit dependency on the areas of elements, 
+the filter above can be reformulated as follows\footnote{if elements are 
+equal size rectangles this formulation is identical to the one with integrals.}
+\[
+\boxed{
+p_{filtered} = p - \left( \frac{1}{nel} \sum_e  \phi_e p_e \right) \phi
+}
+\]
+Let us assume that the pressure field is linear and that a checkerboard mode 
+of amplitude $\alpha$ is present on top of the real signal:
+\[
+p^h(x,y)=ax+by+c + \alpha \phi(x,y)
+\]
+We start with ($x_e,y_e$ stand for the coordinates of the element centers)
+\begin{eqnarray}
+&&\frac{1}{nel} \sum_e^{nel} p(x,_e,y_e) \phi(x_e,y_e) \nn\\
+&=& \frac{1}{nel} \sum_e^{nel} \left[ ax_e+by_e+c + \alpha \phi(x_e,y_e)  \right] \phi(x_e,y_e) \nn\\
+&=& \frac{1}{nel} \sum_e^{nel}  a x_e \phi(x_e,y_e) 
++ \frac{1}{nel} \sum_e^{nel} by_e  \phi(x_e,y_e) 
++ \frac{1}{nel} \sum_e^{nel} c  \phi(x_e,y_e) 
++ \frac{1}{nel} \sum_e^{nel} \alpha \phi(x_e,y_e)   \phi(x_e,y_e) \nn\\
+&=& \frac{1}{nel} a \sum_e^{nel}   x_e \phi(x_e,y_e) 
++ \frac{1}{nel} b\sum_e^{nel} y_e  \phi(x_e,y_e) 
++ \underbrace{\frac{1}{nel} c\sum_e^{nel}   \phi(x_e,y_e) }_{=0}
++ \frac{1}{nel} \alpha \sum_e^{nel}  \underbrace{\phi(x_e,y_e)^2}_{=1} 
+%&=& \frac{1}{nel} a \sum_e   x_e \phi(x_e,y_e) 
+%+ \frac{1}{nel} b\sum_e y_e  \phi(x_e,y_e) 
+%+ \frac{1}{nel} \alpha \underbrace{\sum_e  1}_{nel}
+\end{eqnarray}
+The third term is zero because of the even number of elements. 
+The fourth one is simply equal to $\alpha$.
+For the 1st and 2nd terms we rewrite the sum over elements as a double sum over the rows and 
+columns of elements (assuming this a 2d problem for simplicity):
+\[
+\sum_e^{nel} = \sum_i^{nely} \sum_j^{nelx}
+\]
+where $i$ denotes a column and $j$ a row. Then 
+\begin{eqnarray}
+\frac{1}{nel} a \sum_e   x_e \phi(x_e,y_e)  + \frac{1}{nel} b\sum_e y_e  \phi(x_e,y_e) 
+&=&\frac{1}{nel} a \sum_i\sum_j   x_i \phi(x_i,y_j)  + \frac{1}{nel} b \sum_i\sum_j y_j  \phi(x_i,y_j) \nn\\
+&=&\frac{1}{nel} a \sum_i   x_i  \underbrace{\sum_j\phi(x_i,y_j)}_{=0}  
++ \frac{1}{nel} b \sum_j y_j  \underbrace{\sum_i\phi(x_i,y_j) }_{=0}\nn
+\end{eqnarray}
+Both these sums are zero because on one row or one column the sum of the $\phi$ function is zero. 
+In the end we find
+\begin{eqnarray}
+\frac{1}{nel} \sum_e^{nel} p(x,_e,y_e) \phi(x_e,y_e)  = \alpha 
+\end{eqnarray}
+so that 
+\begin{eqnarray}
+p_{filtered} 
+&=& p - \left( \frac{1}{nel} \sum_e^{nel} p(x,_e,y_e) \phi(x_e,y_e) \right)  \phi(x,y) \nn\\
+&=& ax+by+c + \alpha \phi(x,y) - \alpha  \phi(x,y) \nn\\
+&=& ax+by+c 
+\end{eqnarray}
+so that the filter was successful to remove a checkerboard pattern from a linear pressure field.
+
+
+\begin{remark}
+This idea is probably to be found in the relevant publications of Section~\ref{MMM-psmoothing}
+in some form or shape? 
+\end{remark}
 
 \newpage
-%...............................................
-%...............................................
-\paragraph{Regular mesh made of square elements}
+%---------------------------------------------------------------------------------
+\subsection*{D\&H: Regular mesh made of square elements}
 
 We compute the error convergence for $p$, $q_i$ $(i=1,...8)$:
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_12/results/reg/errors}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/reg/errorsV}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/reg/errorsP}
 \end{center}
 The elemental pressure error converges like $h^1$, $q_{1-7}$ converge like $h^{1.5}$ and 
 $q^8$ converges like $h^2$.
 
-
 \begin{center}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/pressure}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/p_error}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/q1_error}\\
-\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/q2_error}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/q3_error}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/q4_error}\\
-\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/q6_error}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/q7_error}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_12/results/reg/q8_error}\\
-{\captionfont Left: pressure fields as a function of the $x$-coordinate. 
-Right: absolute error with regards to the analytical solution. All on 32x32 mesh.}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/reg/pressure}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/reg/pressure_left}\\
+{\captionfont fields $p$ and $q_{1-8}$ as a function of $x$. Right panel 
+is a zoom around $x=0$}
 \end{center}
 
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_12/results/reg/p_error}
+\includegraphics[width=4cm]{python_codes/fieldstone_12/results/reg/q1_error}
+\includegraphics[width=4cm]{python_codes/fieldstone_12/results/reg/q2_error}
+\includegraphics[width=4cm]{python_codes/fieldstone_12/results/reg/q3_error}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_12/results/reg/q4_error}
+\includegraphics[width=4cm]{python_codes/fieldstone_12/results/reg/q6_error}
+\includegraphics[width=4cm]{python_codes/fieldstone_12/results/reg/q7_error}
+\includegraphics[width=4cm]{python_codes/fieldstone_12/results/reg/q8_error}\\
+{\captionfont 
+Absolute errore with regards to the analytical solution. All on $32\times 32$ mesh.}
+\end{center}
+
+\newpage
 It is worth noticing that the checkerboard is (visually) not present:
 \begin{center}
-\includegraphics[width=4.5cm]{python_codes/fieldstone_12/results/reg/p32}
-\includegraphics[width=4.5cm]{python_codes/fieldstone_12/results/reg/p48}
-\includegraphics[width=4.5cm]{python_codes/fieldstone_12/results/reg/p64}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_12/results/reg/p32}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_12/results/reg/p48}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_12/results/reg/p64}\\
 {\captionfont Elemental pressure field for 32x32, 48x48 and 64x64 resolutions.}
 \end{center}
-This means that the algorithms above fulfill an interpolation function, but not a smoothing one.
+%This means that the algorithms above fulfill an interpolation function, but not a smoothing one.
+
+Looking at the min/max/avg of the elemental pressure field 
+with and without filter:
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/reg/rawp_nofilter.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/reg/rawp_filter.pdf}\\
+{\captionfont min/max/avrg elemental pressure as a function of element size.}
+\end{center}
+Unsurprisingly in this case the filter does not do much. 
+We can verify this by looking at the elemental pressure error convergence:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/reg/errorsP_both.pdf}
+\end{center}
+In this case the filter does virtually nothing.
+
 
 \newpage
 %............................................
-\paragraph{Adding randomness to internal node positions} We now add a random value $\xi h$ to the 
+\subsection*{D\&H: Adding randomness to internal node positions} We now add a random value $\xi h$ to the 
 location of all nodes which are not on the boundary where $h$=$L_x$/nelx and we set $\xi=20\%$.
-In this case a 32x32 mesh looks as follows:
+In this case a $32\times 32$ mesh looks as follows:
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rand/area_0p1}
-\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rand/area_0p2}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/rand/area_0p1}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/rand/area_0p2}\\
 {\captionfont Mesh 32x32 elements. Left: $\xi=0.1$; Right: $\xi=0.2$}
 \end{center}
 
 We repeat the same exercise as before on such a mesh and look at the errors
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_12/results/rand/errors_nofilter}
-\includegraphics[width=8cm]{python_codes/fieldstone_12/results/rand/errors_filter}\\
-{\captionfont Velocity and pressure errors for $\xi=0.2$. Left: no filter, right: with filter.} 
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/rand/errorsV_nofilter}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/rand/errorsP_nofilter}\\
+{\captionfont Velocity and pressure errors for $\xi=0.2$. No filter.}
+\end{center} 
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/rand/errorsV_filter}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/rand/errorsP_filter}\\
+{\captionfont Velocity and pressure errors for $\xi=0.2$. With filter.} 
 \end{center}
 
 It is easy to see the drastic effect that the filter has on the min/max of the elemental pressure:
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_12/results/rand/rawp_nofilter}
 \includegraphics[width=7cm]{python_codes/fieldstone_12/results/rand/rawp_filter}\\
-{\captionfont min/max value of elemental pressure field: Left: no filter, right: with filter}
+{\captionfont Min/max value of elemental pressure field: Left: no filter, right: with filter}
 \end{center}
 
 Rather surprisingly we find that $q_1$ still proves to be the most accurate of all pressures and it converges
@@ -177,9 +307,11 @@ Obtained on 32x32 mesh.}
 
 \newpage
 %............................................
-\paragraph{Lid driven cavity}
+\subsection*{Lid driven cavity}
 
-The domain is a unit square. No slip boundary conditions are prescribed 
+This experiment is not a benchmark since no analytical solution is available.
+The domain is a unit square and the mesh consists of square elements. 
+No slip boundary conditions are prescribed 
 on left, right and bottom boundary. Unit velocity is prescribed on the top, 
 including both top corners, in order to generate a velocity/pressure discontinuity  
 which triggers the checkerboard. This is rather succesful (no filter is applied yet):
@@ -196,48 +328,141 @@ which triggers the checkerboard. This is rather succesful (no filter is applied 
 
 We recover the well known fact that even number of elements are more prone to 
 checkerboard of high amplitude, but odd numbers do not preclude their presence.
-The conclusion is unescapable: there is no nodal pressure filed which does not 
-showcase positive/negative oscillations.
-
+The conclusion is unescapable: there is no nodal pressure field which does not 
+showcase some positive/negative oscillations.
 
 It is easy to see the drastic effect that the filter has on the min/max of the elemental pressure:
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_12/results/ldc/prms_nofilter}
-\includegraphics[width=7cm]{python_codes/fieldstone_12/results/ldc/prms_filter}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_12/results/ldc/rawp_nofilter}
-\includegraphics[width=7cm]{python_codes/fieldstone_12/results/ldc/rawp_filter}\\
-{\captionfont Left: filter off; Right: filter on}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/ldc/prms_even_nofilter}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/ldc/prms_odd_nofilter}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/ldc/prms_even_filter}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/ldc/prms_odd_filter}\\
+{\captionfont root mean square pressure. Left: filter off; Right: filter on.
+Notice the wildly different vertical scales between both figures.}
 \end{center}
 
-Only schemes 6 and 7 are unaffected by the filter since they 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/ldc/rawp_even_nofilter}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/ldc/rawp_odd_nofilter}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/ldc/rawp_even_filter}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/ldc/rawp_odd_filter}\\
+{\captionfont min/max pressure. Left: filter off; Right: filter on. Notice the 
+difference in scales for the $y$-axis. On the left we see that the amplitude of the 
+checkerboard is unpredictable and varies across a few orders of magnitude.}
+\end{center}
+
+It is also worth remembering that this problem is somewhat ill-posed. 
+The pressure should be infinite in the top corners
+
+\todo[inline]{Run this with Q2 elements?}
+
+%Only schemes 6 and 7 are unaffected by the filter since they 
 
 
+\newpage
 %............................................
-\paragraph{Regularised Lid driven cavity}
+\subsection*{Regularised Lid driven cavity}
 
 See stone 4. The velocity on the top is given by $u(x)=x^2(1-x)^2$.
 This has the advantage of removing the discontinuity at the corners and 
 thereby yielding a problem which has a non-singular solution.
-However, wee see that the checkerboard mode is still present:
+We see that the checkerboard mode is still present:
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rldc/vel}
-\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rldc/p}\\
-{\captionfont Resolution 32x32}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/rldc/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/rldc/p}\\
+{\captionfont Resolution $64\times 64$.}
 \end{center}
 
-There is no analytical solution. When the pressure errors are computed in the code
+Again, there is no analytical solution. When the pressure errors are computed in the code
 the results are actually root mean square pressures (if a zero analytical pressure 
 is used). We see that these all converge to a single value.
-Here again we see that the filter has a drastic effect on the min/max 
-of the elemental pressure. 
+We see that the filter has a drastic effect on the min/max 
+of the elemental pressure (mind the $y$-axis range on these figures): 
+
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rldc/prms_nofilter}
-\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rldc/prms_filter}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rldc/rawp_nofilter}
-\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rldc/rawp_filter}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rldc/prms_even_nofilter}
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rldc/prms_odd_nofilter}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rldc/prms_even_filter}
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rldc/prms_odd_filter}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rldc/rawp_even_nofilter}
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rldc/rawp_odd_nofilter}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rldc/rawp_even_filter}
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/rldc/rawp_odd_filter}\\
 {\captionfont Left: filter off; Right: filter on}
 \end{center}
+
+
+\newpage
+%-----------------------------------------------------------------------------
+\subsection*{A punch like experiment}
+
+The domain is still the unit square. The boundary conditions are given by
+\begin{lstlisting}
+or i in range(0,NV):
+   if y[i]<eps:
+      bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+      bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+   if y[i]>(Ly-eps) and x[i]<0.5:
+      bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0
+      bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = -1.
+   if x[i]<eps:
+      bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+   if x[i]>(Lx-eps):
+      bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
+      bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
+\end{lstlisting}
+In other words, the velocity is $v=-1$ on the left half of the top boundary, 
+free slip on the left, no slip on the bottom and right:
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/punch/vel}
+\end{center}
+
+
+
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/punch/prms_even_nofilter}
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/punch/prms_odd_nofilter}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/punch/prms_even_filter}
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/punch/prms_odd_filter}\\
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/punch/rawp_even_nofilter}
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/punch/rawp_odd_nofilter}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/punch/rawp_even_filter}
+\includegraphics[width=7cm]{python_codes/fieldstone_12/results/punch/rawp_odd_filter}\\
+{\captionfont Left: filter off; Right: filter on}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/punch/p_top.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_12/results/punch/p_top_all.pdf}\\
+{\captionfont Left: filter vs no filter; Right: all $q$ pressures no filter.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_12/results/punch/pressures}\\
+{\captionfont Left: no filter; Right: with filter.}
+\end{center}
+
+This is the nail in the coffin for the filter I propose.
+Contrarily to the previous experiments, the checkerboard mode 
+amplitude is not constant in space so that removing $\alpha \phi$
+from the raw pressure does not remove the checkerboard at all. 
+
+
+
+
+
+
+
+
 
 
