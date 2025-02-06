@@ -1,11 +1,12 @@
 import numpy as np
-import math as math
 import sys as sys
-import scipy
-import scipy.sparse as sps
-#from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix, lil_matrix
 import time as time
+import scipy.sparse as sps
+from scipy.sparse import csr_matrix,lil_matrix
+
+#------------------------------------------------------------------------------
+# bench=1: D&H manufactured solution
+# bench=2: Burman & Hansbo manufactured solution
 
 bench=2
 
@@ -110,6 +111,8 @@ for j in range(0, nny):
         x[counter]=i*Lx/float(nelx)
         y[counter]=j*Ly/float(nely)
         counter += 1
+    #end for
+#end for
 
 print("setup: grid points: %.3f s" % (time.time() - start))
 
@@ -122,10 +125,10 @@ icon =np.zeros((mV,nel),dtype=np.int32)
 counter = 0
 for j in range(0, nely):
     for i in range(0, nelx):
-        icon[0, counter] = i + j * (nelx + 1)
-        icon[1, counter] = i + 1 + j * (nelx + 1)
-        icon[2, counter] = i + 1 + (j + 1) * (nelx + 1)
-        icon[3, counter] = i + (j + 1) * (nelx + 1)
+        icon[0,counter]=i+j*(nelx+1)
+        icon[1,counter]=i+1+j*(nelx+1)
+        icon[2,counter]=i+1+(j+1)*(nelx+1)
+        icon[3,counter]=i+(j+1)*(nelx+1)
         counter += 1
     #end for
 #end for
@@ -222,16 +225,16 @@ for iel in range(0, nel):
             dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
             # calculate jacobian matrix
-            jcb = np.zeros((2,2),dtype=np.float64)
+            jcb=np.zeros((2,2),dtype=np.float64)
             for k in range(0,mV):
-                jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
-                jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
-                jcb[1, 0] += dNds[k]*x[icon[k,iel]]
-                jcb[1, 1] += dNds[k]*y[icon[k,iel]]
+                jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+                jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+                jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+                jcb[1,1]+=dNds[k]*y[icon[k,iel]]
 
             # calculate the determinant of the jacobian
-            jcob = np.linalg.det(jcb)
-            jcbi = np.linalg.inv(jcb)
+            jcob=np.linalg.det(jcb)
+            jcbi=np.linalg.inv(jcb)
 
             # compute dNdx & dNdy
             xq=0.0
@@ -294,7 +297,8 @@ for iel in range(0, nel):
             A_mat[NfemV+iel,m1]+=G_el[ikk,0]
     rhs[NfemV+iel]+=h_el[0]
 
-A_mat=A_mat.tocsr()
+#end for
+
 
 print("build FE matrix: %.3f s" % (time.time() - start))
 
@@ -303,7 +307,7 @@ print("build FE matrix: %.3f s" % (time.time() - start))
 ######################################################################
 start = time.time()
 
-sol=sps.linalg.spsolve(A_mat,rhs)
+sol=sps.linalg.spsolve(A_mat.tocsr(),rhs)
 
 print("solve time: %.3f s" % (time.time() - start))
 
