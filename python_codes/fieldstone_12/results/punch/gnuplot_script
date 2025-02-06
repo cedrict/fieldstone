@@ -1,0 +1,117 @@
+#
+set term pdf enhanced font "Times,11pt"
+
+set key outside
+set ylabel 'min/max elemental pressure'
+unset log 
+set log x
+
+set title 'even, no filter'
+set output 'rawp_even_nofilter.pdf'
+plot[][]\
+'nofilter/rawp_even' u (1/sqrt($7)):4 w l t 'min(p)',\
+'nofilter/rawp_even' u (1/sqrt($7)):5 w l t 'max(p)',\
+
+set title 'odd, no filter'
+set output 'rawp_odd_nofilter.pdf'
+plot[][]\
+'nofilter/rawp_odd' u (1/sqrt($7)):4 w l t 'min(p)',\
+'nofilter/rawp_odd' u (1/sqrt($7)):5 w l t 'max(p)',\
+
+set title 'even, filter'
+set output 'rawp_even_filter.pdf'
+plot[][]\
+'filter/rawp2_even' u (1/sqrt($7)):4 w l t 'min(p)',\
+'filter/rawp2_even' u (1/sqrt($7)):5 w l t 'max(p)',\
+
+set title 'odd, filter'
+set output 'rawp_odd_filter.pdf'
+plot[][]\
+'filter/rawp2_odd' u (1/sqrt($7)):4 w l t 'min(p)',\
+'filter/rawp2_odd' u (1/sqrt($7)):5 w l t 'max(p)',\
+
+#####################################################
+
+
+set log x
+set xlabel 'h'
+set ylabel 'p_{rms}'
+
+set title 'even, no filter'
+set output 'prms_even_nofilter.pdf'
+plot[][]\
+'nofilter/errors_even' u (1./sqrt($2)):8  w lp ps 0.5 t 'pressure (el)',\
+'nofilter/errors_even' u (1./sqrt($2)):11 w lp ps 0.6 t 'pressure (q1)',\
+'nofilter/errors_even' u (1./sqrt($2)):14 w lp ps 0.5 t 'pressure (q2)',\
+'nofilter/errors_even' u (1./sqrt($2)):17 w lp ps 0.4 t 'pressure (q3)',\
+'nofilter/errors_even' u (1./sqrt($2)):20 w lp ps 0.4 t 'pressure (q4)',\
+'nofilter/errors_even' u (1./sqrt($2)):23 w lp ps 0.4 t 'pressure (q6)',\
+'nofilter/errors_even' u (1./sqrt($2)):26 w lp ps 0.4 t 'pressure (q7)',\
+'nofilter/errors_even' u (1./sqrt($2)):29 w lp ps 0.4 t 'pressure (q8)'
+
+set title 'odd, no filter'
+set output 'prms_odd_nofilter.pdf'
+plot[][]\
+'nofilter/errors_odd' u (1./sqrt($2)):8  w lp ps 0.5 t 'pressure (el)',\
+'nofilter/errors_odd' u (1./sqrt($2)):11 w lp ps 0.6 t 'pressure (q1)',\
+'nofilter/errors_odd' u (1./sqrt($2)):14 w lp ps 0.5 t 'pressure (q2)',\
+'nofilter/errors_odd' u (1./sqrt($2)):17 w lp ps 0.4 t 'pressure (q3)',\
+'nofilter/errors_odd' u (1./sqrt($2)):20 w lp ps 0.4 t 'pressure (q4)',\
+'nofilter/errors_odd' u (1./sqrt($2)):23 w lp ps 0.4 t 'pressure (q6)',\
+'nofilter/errors_odd' u (1./sqrt($2)):26 w lp ps 0.4 t 'pressure (q7)',\
+'nofilter/errors_odd' u (1./sqrt($2)):29 w lp ps 0.4 t 'pressure (q8)'
+
+set title 'even, filter'
+set output 'prms_even_filter.pdf'
+plot[][]\
+'filter/errors_even' u (1./sqrt($2)):8  w lp ps 0.5 t 'pressure (el)',\
+'filter/errors_even' u (1./sqrt($2)):11 w lp ps 0.6 t 'pressure (q1)',\
+'filter/errors_even' u (1./sqrt($2)):14 w lp ps 0.5 t 'pressure (q2)',\
+'filter/errors_even' u (1./sqrt($2)):17 w lp ps 0.4 t 'pressure (q3)',\
+'filter/errors_even' u (1./sqrt($2)):20 w lp ps 0.4 t 'pressure (q4)',\
+'filter/errors_even' u (1./sqrt($2)):23 w lp ps 0.4 t 'pressure (q6)',\
+'filter/errors_even' u (1./sqrt($2)):26 w lp ps 0.4 t 'pressure (q7)',\
+'filter/errors_even' u (1./sqrt($2)):29 w lp ps 0.4 t 'pressure (q8)'
+
+set title 'odd, filter'
+set output 'prms_odd_filter.pdf'
+plot[][]\
+'filter/errors_odd' u (1./sqrt($2)):8  w lp ps 0.5 t 'pressure (el)',\
+'filter/errors_odd' u (1./sqrt($2)):11 w lp ps 0.6 t 'pressure (q1)',\
+'filter/errors_odd' u (1./sqrt($2)):14 w lp ps 0.5 t 'pressure (q2)',\
+'filter/errors_odd' u (1./sqrt($2)):17 w lp ps 0.4 t 'pressure (q3)',\
+'filter/errors_odd' u (1./sqrt($2)):20 w lp ps 0.4 t 'pressure (q4)',\
+'filter/errors_odd' u (1./sqrt($2)):23 w lp ps 0.4 t 'pressure (q6)',\
+'filter/errors_odd' u (1./sqrt($2)):26 w lp ps 0.4 t 'pressure (q7)',\
+'filter/errors_odd' u (1./sqrt($2)):29 w lp ps 0.4 t 'pressure (q8)'
+
+######################################################3
+set grid
+set title 'pressure at the top surface'
+set pointsize .4
+set xlabel 'x'
+set ylabel 'p'
+unset log x
+set output 'p_top.pdf'
+plot[][]\
+'p_top.ascii' w lp t 'no filter',\
+'p_top_filtered.ascii' w lp t 'filter',\
+
+set output 'p_top_all.pdf'
+set title 'no filter'
+plot[][]\
+'nofilter/p_top.ascii' w l t 'p',\
+'nofilter/q1_top.ascii' w l t 'q_1',\
+'nofilter/q2_top.ascii' w l t 'q_2',\
+'nofilter/q3_top.ascii' w l t 'q_3',\
+'nofilter/q4_top.ascii' w l t 'q_4',\
+'nofilter/q6_top.ascii' w l t 'q_6',\
+'nofilter/q7_top.ascii' w l t 'q_7',\
+'nofilter/q8_top.ascii' w l t 'q_8',\
+
+
+
+
+
+
+
