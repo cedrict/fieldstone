@@ -1,11 +1,21 @@
-set term pdf enhanced font "Times,10pt"
-set output 'errors_nofilter.pdf'
+#
+set term pdf enhanced font "Times,12pt"
+set grid
 set log xy
 set xlabel 'h'
 set ylabel 'error'
 set key outside
-plot[][0.0001:0.05]\
+
+set title 'no filter'
+set output 'errorsV_nofilter.pdf'
+plot[][]\
 'errors_nofilter' u (1./sqrt($2)):5  w lp ps 0.35 t 'velocity',\
+x**2/20.   w l lt -1 dashtype 2 t 'x^2'
+
+
+set title 'no filter'
+set output 'errorsP_nofilter.pdf'
+plot[][0.0001:0.05]\
 'errors_nofilter' u (1./sqrt($2)):8  w lp ps 0.35 t 'elemental p',\
 'errors_nofilter' u (1./sqrt($2)):11 w lp ps 0.24 t 'scheme 1',\
 'errors_nofilter' u (1./sqrt($2)):14 w lp ps 0.14 t 'scheme 2',\
@@ -19,11 +29,17 @@ x**1.25/5. w l lt -1 dashtype 5 t 'x^{1.25}',\
 x**1.5/3.5 w l lt -1 dashtype 3 t 'x^{1.5}',\
 x**1/4.   w l lt -1 dashtype 4 t 'x^1'
 
+###########################################################################
 
-
-set output 'errors_filter.pdf'
-plot[][0.0001:0.05]\
+set title 'with filter'
+set output 'errorsV_filter.pdf'
+plot[][]\
 'errors_filter' u (1./sqrt($2)):5  w lp ps 0.35 t 'velocity',\
+x**2/20.   w l lt -1 dashtype 2 t 'x^2'
+
+set title 'with filter'
+set output 'errorsP_filter.pdf'
+plot[][0.0001:0.05]\
 'errors_filter' u (1./sqrt($2)):8  w lp ps 0.35 t 'elemental p',\
 'errors_filter' u (1./sqrt($2)):11 w lp ps 0.24 t 'scheme 1',\
 'errors_filter' u (1./sqrt($2)):14 w lp ps 0.14 t 'scheme 2',\
@@ -32,7 +48,6 @@ plot[][0.0001:0.05]\
 'errors_filter' u (1./sqrt($2)):23 w lp ps 0.24 t 'scheme 6',\
 'errors_filter' u (1./sqrt($2)):26 w lp ps 0.24 t 'scheme 7',\
 'errors_filter' u (1./sqrt($2)):29 w lp ps 0.24 t 'scheme 8',\
-x**2/20.   w l lt -1 dashtype 2 t 'x^2',\
 x**1.25/5. w l lt -1 dashtype 5 t 'x^{1.25}',\
 x**1.5/3.5 w l lt -1 dashtype 3 t 'x^{1.5}',\
 x**1/4.   w l lt -1 dashtype 4 t 'x^1'
@@ -41,7 +56,9 @@ x**1/4.   w l lt -1 dashtype 4 t 'x^1'
 
 
 
+###########################################################################
 
+set title 'no filter'
 set ylabel 'min/max elemental pressure'
 unset log 
 set log x
@@ -53,6 +70,7 @@ plot[][-0.25:0.25]\
 -0.166667 lt -1 lw .5 dashtype 2 t 'analytical',\
 0.5*0.5-1./6 lt -1 lw .5 dashtype 2 notitle 
 
+set title 'with filter'
 set output 'rawp_filter.pdf'
 plot[][-0.25:0.25]\
 'rawp_filter' u (1/sqrt($7)):4 w l t 'min(p)',\
