@@ -240,10 +240,6 @@ Lx=1.  # x- extent of the domain
 Ly=1.  # y- extent of the domain 
 Lz=1.  # z- extent of the domain 
 
-assert (Lx>0.), "Lx should be positive" 
-assert (Ly>0.), "Ly should be positive" 
-assert (Lz>0.), "Lz should be positive" 
-
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 5):
    nelx = int(sys.argv[1])
@@ -251,15 +247,11 @@ if int(len(sys.argv) == 5):
    nelz = int(sys.argv[3])
    visu = int(sys.argv[4])
 else:
-   nelx = 10
+   nelx = 12
    nely = nelx
    nelz = nelx
    visu=1
 
-assert (nelx>0.), "nelx should be positive" 
-assert (nely>0.), "nely should be positive" 
-assert (nelz>0.), "nelz should be positive" 
-    
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
 nnz=2*nelz+1  # number of elements, z direction
@@ -276,7 +268,7 @@ eps=1.e-10
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
 
-beta=5
+beta=0
 
 hx=Lx/nelx
 hy=Ly/nely
@@ -295,6 +287,7 @@ print("nnx=",nnx)
 print("nny=",nny)
 print("nnz=",nnz)
 print("NV=",NV)
+print("beta=",beta)
 print("------------------------------")
 
 ######################################################################
@@ -655,13 +648,13 @@ start = time.time()
 u,v,w=np.reshape(sol[0:NfemV],(NV,3)).T
 p=sol[NfemV:Nfem]
 
-print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
-print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
-print("     -> w (m,M) %.4f %.4f " %(np.min(w),np.max(w)))
-print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+print("     -> u (m,M) %e %e " %(np.min(u),np.max(u)))
+print("     -> v (m,M) %e %e " %(np.min(v),np.max(v)))
+print("     -> w (m,M) %e %e " %(np.min(w),np.max(w)))
+print("     -> p (m,M) %e %e " %(np.min(p),np.max(p)))
     
 if pnormalise:
-   print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
+   print("     -> Lagrange multiplier: %e" % sol[Nfem])
 
 #np.savetxt('velocity.ascii',np.array([x,y,z,u,v,w]).T,header='# x,y,z,u,v,w')
 
