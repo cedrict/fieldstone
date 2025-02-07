@@ -3,7 +3,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_18/keywords.key}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_18/keywords.key}
 
 \begin{center}
 \inpython
@@ -11,7 +11,12 @@
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Last revision: Feb. 7th, 2025.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The code relies on \QtwoQone elements.
 Each element has $m_V=9$ vertices so in total $ndof_V\times m_V=18$ velocity dofs and 
@@ -25,19 +30,20 @@ Vector $f$ is of size $NfemV$ and vector $h$ is of size $NfemP$.
 When needed the pressure nullspace is removed 
 by imposing (Lagrange multiplier) that $\int_\Omega p \; dV=0$.
 
+The following figure shows the layout of velocity and pressure nodes
+for a $4\times 3$ element mesh:
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_18/images/q2q1setup}
 \end{center}
 
 %-----------------------------------------
-\subsection*{Donea \& Huerta benchmark}
+\subsection*{Donea \& Huerta benchmark ({\tt bench=1})}
 The details of the numerical setup are presented in Section \ref{MMM-mms1}.
-It is triggered by setting {\python bench=1}.
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_18/results/mms/vel}
 \includegraphics[width=7cm]{python_codes/fieldstone_18/results/mms/pressure}\\
-{\captionfont velocity and pressure fields for $32\times 32$ elements grid}
+{\captionfont Velocity and pressure fields for $32\times 32$ elements grid}
 \end{center}
 
 \begin{center}
@@ -46,51 +52,87 @@ It is triggered by setting {\python bench=1}.
 techniques. The zero average pressure approach yields smaller errors.}
 \end{center}
 
-
+\newpage
 %-----------------------------------------
-\subsection*{Burman \& Hansbo manufactured solution}
+\subsection*{Burman \& Hansbo manufactured solution ({\tt bench=4})}
 
 The details of the numerical setup are presented in Section \ref{MMM-ss:mms_buha06}.
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_18/results/buha06/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_18/results/buha06/p}\\
-{\captionfont velocity and pressure fields for $64\times 64$ elements grid}
+\includegraphics[width=6cm]{python_codes/fieldstone_18/results/buha06/vel}
+\includegraphics[width=6cm]{python_codes/fieldstone_18/results/buha06/p}\\
+{\captionfont Velocity and pressure fields for $64\times 64$ elements grid}
 \end{center}
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_18/results/buha06/errors}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_18/results/buha06/errorsV}
+\includegraphics[width=8cm]{python_codes/fieldstone_18/results/buha06/errorsP}\\
 {\captionfont Velocity and pressure error convergence. Zero average.}
 \end{center}
 
-No good reason to run such higher numbers of quadrature points.
+The conclusion is clear (and expected): there is no good reason 
+to run such higher numbers of quadrature points.
 
 
-%-----------------------------------------
-\subsection*{Stokes sphere benchmark}
+\newpage
+%----------------------------------------------------
+\subsection*{Stokes sphere benchmark ({\tt bench=2})}
 
 The setup is described in Section~\ref{MMM-ss:stokes_sphere2D}.
-It is triggered by setting {\python bench=2}.
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_18/results/sphere/vel}
 \includegraphics[width=7cm]{python_codes/fieldstone_18/results/sphere/press}\\
-{\captionfont velocity and pressure fields for $32\times 32$ elements grid and $3^2$
+{\captionfont Velocity and pressure fields for $32\times 32$ elements grid and $3^2$
 quadrature points per element.}
 \end{center}
 
+\newpage
 %-----------------------------------------
-\subsection*{Sinking block benchmark}
+\subsection*{Sinking block benchmark ({\tt bench=3})}
 
-The setup is described in Section~\ref{MMM-ss:sinking_block}.
-It is triggered by setting {\python bench=3}.
+The setup is described in Section~\ref{MMM-ss:sinking_block} of part 1.
+The domain is the unit square.
+A block of density $\rho=1.01$ is placed in a fluid of density $\rho=1$.
+The gravity is vertical and pointing downward with $|\vec{g}|=1$.
+The function for $b_y$ is then:
+\begin{lstlisting}
+def by(x,y):
+    [...]
+    if abs(x-.5)<0.0625 and abs(y-0.5)<0.0625:
+       val=-1.01
+   else:
+      val=-1.
+\end{lstlisting}
+The block is 1000 times more viscous than the fluid:
+\begin{lstlisting}
+def eta(x,y):
+    [...]
+    if bench==3:
+       if abs(x-.5)<0.0625 and abs(y-0.5)<0.0625:
+          val=1000
+       else:
+          val=1
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
 
 \subsubsection*{Free slip boundary conditions (FS)}
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_18/results/block/FS/vel}
 \includegraphics[width=7cm]{python_codes/fieldstone_18/results/block/FS/press}\\
-{\captionfont velocity and pressure fields for $48\times 48$ elements grid and $3^2$
+{\captionfont Velocity and pressure fields for $48\times 48$ elements grid and $3^2$
 quadrature points per element.}
 \end{center}
 
@@ -109,13 +151,27 @@ quadrature points per element.}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/block/profile_p_FS}
 \end{center}
 
+%.....................................................
 \subsubsection*{No slip boundary conditions (NS)}
 
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/block/NS/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/block/NS/v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/block/NS/p}\\
+{\captionfont Velocity and pressure fields for $32\times 32$ elements grid and $3^2$
+quadrature points per element.}
+\end{center}
+
+Velocity and pressure are also measured on a vertical line going through
+the middle of the domain/block (the lithostatic pressure is 
+subtracted from the computed full pressure so that what is plotted is the 
+dynamic pressure):
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/block/profile_u_NS}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/block/profile_v_NS}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/block/profile_p_NS}
 \end{center}
+As expected, the $x$ component of the velocity is zero because of symmetry.
 
 
 

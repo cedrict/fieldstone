@@ -2,8 +2,6 @@
 
 rm statistics*.ascii
 
-#max for square is 160x160
-
 for nq in 3 4 5 6 10 ; do
 
     for res in 6 7 8 9 10 11 12 13 14 15 16 18 20 22 24 26 28 32 40 44 48 56 64 80; do
@@ -18,6 +16,4 @@ for nq in 3 4 5 6 10 ; do
     done
 
 done
-
-
 

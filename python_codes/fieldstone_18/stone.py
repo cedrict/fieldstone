@@ -1,17 +1,14 @@
 import numpy as np
-import sys as sys
-#import scipy
-import scipy.sparse as sps
-from scipy.sparse.linalg import *
-#from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix
 import time as time
+import sys as sys
+import scipy.sparse as sps
+from scipy.sparse import csr_matrix,lil_matrix
 
 ###############################################################################
 # 1: donea & huerta
 # 2: stokes sphere
 # 3: block
-# 4: 
+# 4: Burman & Hansbo 
 ###############################################################################
 
 def bx(x,y):

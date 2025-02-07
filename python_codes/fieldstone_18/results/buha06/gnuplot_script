@@ -1,19 +1,26 @@
+#
 set term pdf enhanced
 set key outside
-set output 'errors.pdf'
+set grid
 set log xy
+set format y "10^{%L}"
 set xlabel 'h'
 set ylabel 'error'
-plot[][]\
+
+set output 'errorsV.pdf'
+plot[0.01:][]\
 'errors_nq3' u (1./sqrt($3)):6 w lp ps .4 t 'vel, nq=3^2',\
-'errors_nq3' u (1./sqrt($3)):9 w lp ps .4 t 'p, nq=3^2',\
 'errors_nq4' u (1./sqrt($3)):6 w lp ps .4 t 'vel, nq=4^2',\
-'errors_nq4' u (1./sqrt($3)):9 w lp ps .4 t 'p, nq=4^2',\
 'errors_nq5' u (1./sqrt($3)):6 w lp ps .4 t 'vel, nq=5^2',\
-'errors_nq5' u (1./sqrt($3)):9 w lp ps .4 t 'p, nq=5^2',\
 'errors_nq6' u (1./sqrt($3)):6 w lp ps .4 t 'vel, nq=6^2',\
-'errors_nq6' u (1./sqrt($3)):9 w lp ps .4 t 'p, nq=6^2',\
 'errors_nq10' u (1./sqrt($3)):6 w lp ps .4 t 'vel, nq=10^2',\
+x**3/5. w l dashtype 2 lt -1 t 'x^3'
+
+set output 'errorsP.pdf'
+plot[0.01:][]\
+'errors_nq3' u (1./sqrt($3)):9 w lp ps .4 t 'p, nq=3^2',\
+'errors_nq4' u (1./sqrt($3)):9 w lp ps .4 t 'p, nq=4^2',\
+'errors_nq5' u (1./sqrt($3)):9 w lp ps .4 t 'p, nq=5^2',\
+'errors_nq6' u (1./sqrt($3)):9 w lp ps .4 t 'p, nq=6^2',\
 'errors_nq10' u (1./sqrt($3)):9 w lp ps .4 t 'p, nq=10^2',\
-x**3/5. w l dashtype 2 lt -1 t 'x^3',\
 x**2/1. w l dashtype 3 lt -1 t 'x^2'
