@@ -32,7 +32,7 @@ def by(x,y):
             (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
             12.*y*y+24.*y*y*y-12.*y**4)
     if bench==2:
-       if (x-.5)**2+(y-0.5)**2<0.123456789**2:
+       if (x-0.5)**2+(y-0.5)**2<0.123456789**2:
           val=-1.01
        else:
           val=-1.
@@ -164,8 +164,8 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    nqperdim = int(sys.argv[4])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 48
+   nely = 48
    visu = 1
    nqperdim=3
     
@@ -184,7 +184,7 @@ Nfem=NfemV+NfemP # total number of dofs
 hx=Lx/nelx
 hy=Ly/nely
 
-bench=3
+bench=2
 
 ###########################################################
 # boundary conditions
@@ -193,8 +193,8 @@ bench=3
 # OT: open top, free slip sides and bottom
 # BO: no slip sides, free slip bottom & top
 
-FS=False
-NS=True   
+FS=True
+NS=False   
 OT=False
 BO=False
 

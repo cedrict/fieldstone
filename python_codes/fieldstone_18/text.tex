@@ -57,10 +57,17 @@ techniques. The zero average pressure approach yields smaller errors.}
 \subsection*{Burman \& Hansbo manufactured solution ({\tt bench=4})}
 
 The details of the numerical setup are presented in Section \ref{MMM-ss:mms_buha06}.
+The velocity and pressure fields are given in the unit square by
+\begin{eqnarray}
+u(x,y) &=& 20xy^3 \nn\\
+v(x,y) &=& 5x^4-5y^4 \nn\\
+p(x,y) &=& 60x^2y -20y^3 -5
+\end{eqnarray}
+The analytical velocity is prescribed on all sides of the domain.
 
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_18/results/buha06/vel}
-\includegraphics[width=6cm]{python_codes/fieldstone_18/results/buha06/p}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_18/results/buha06/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_18/results/buha06/p}\\
 {\captionfont Velocity and pressure fields for $64\times 64$ elements grid}
 \end{center}
 
@@ -79,13 +86,42 @@ to run such higher numbers of quadrature points.
 \subsection*{Stokes sphere benchmark ({\tt bench=2})}
 
 The setup is described in Section~\ref{MMM-ss:stokes_sphere2D}.
+The domain is the unit square.
+A sphere of radius 0.123456789 is placed in the middle of the domain. 
+Its density is 1.01 while the density of the surrounding fluid is 1,
+while its viscosity is 1000 times larger than the viscosity of the fluid.
+Gravity is pointing downward with $|g|=1$.
+There is no analytical solution to this problem.
+Either no-slip or free-slip boundary conditions are prescribed on all 
+sides.
+
+\subsubsection*{Free-slip boundary conditions (FS)}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_18/results/sphere/vel}
-\includegraphics[width=7cm]{python_codes/fieldstone_18/results/sphere/press}\\
-{\captionfont Velocity and pressure fields for $32\times 32$ elements grid and $3^2$
-quadrature points per element.}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/sphere/FS/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/sphere/FS/press}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/sphere/FS/divv}\\
+{\captionfont Velocity, pressure and velocity divergence fields for $48\times 48$ 
+elements grid and $3^2$ quadrature points per element.}
 \end{center}
+
+
+
+
+
+
+\subsubsection*{No-slip boundary conditions (NS)}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/sphere/NS/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/sphere/NS/press}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/sphere/NS/divv}\\
+{\captionfont Velocity, pressure and velocity divergence fields for $48\times 48$ 
+elements grid and $3^2$ quadrature points per element.}
+\end{center}
+
+
+
 
 \newpage
 %-----------------------------------------
@@ -114,14 +150,6 @@ def eta(x,y):
        else:
           val=1
 \end{lstlisting}
-
-
-
-
-
-
-
-
 
 
 
