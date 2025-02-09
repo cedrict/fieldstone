@@ -1,24 +1,24 @@
 rm -f errors
-python3 fieldstone.py   6   6 0 | grep errv >> errors
-python3 fieldstone.py   7   7 0 | grep errv >> errors
-python3 fieldstone.py   8   8 0 | grep errv >> errors
-python3 fieldstone.py   9   9 0 | grep errv >> errors
-python3 fieldstone.py  10  10 0 | grep errv >> errors
-python3 fieldstone.py  11  11 0 | grep errv >> errors
-python3 fieldstone.py  12  12 0 | grep errv >> errors
-python3 fieldstone.py  13  13 0 | grep errv >> errors
-python3 fieldstone.py  14  14 0 | grep errv >> errors
-python3 fieldstone.py  15  15 0 | grep errv >> errors
-python3 fieldstone.py  16  16 0 | grep errv >> errors
-python3 fieldstone.py  18  18 0 | grep errv >> errors
-python3 fieldstone.py  20  20 0 | grep errv >> errors
-python3 fieldstone.py  24  24 0 | grep errv >> errors
-python3 fieldstone.py  28  28 0 | grep errv >> errors
-python3 fieldstone.py  32  32 0 | grep errv >> errors
-python3 fieldstone.py  40  40 0 | grep errv >> errors
-python3 fieldstone.py  44  44 0 | grep errv >> errors
-python3 fieldstone.py  48  48 0 | grep errv >> errors
-
-
+python3 stone.py   6   6 0 | grep errv >> errors
+python3 stone.py   7   7 0 | grep errv >> errors
+python3 stone.py   8   8 0 | grep errv >> errors
+python3 stone.py   9   9 0 | grep errv >> errors
+python3 stone.py  10  10 0 | grep errv >> errors
+python3 stone.py  11  11 0 | grep errv >> errors
+python3 stone.py  12  12 0 | grep errv >> errors
+python3 stone.py  13  13 0 | grep errv >> errors
+python3 stone.py  14  14 0 | grep errv >> errors
+python3 stone.py  15  15 0 | grep errv >> errors
+python3 stone.py  16  16 0 | grep errv >> errors
+python3 stone.py  17  17 0 | grep errv >> errors
+python3 stone.py  18  18 0 | grep errv >> errors
+python3 stone.py  19  19 0 | grep errv >> errors
+python3 stone.py  20  20 0 | grep errv >> errors
+python3 stone.py  22  22 0 | grep errv >> errors
+python3 stone.py  24  24 0 | grep errv >> errors
+python3 stone.py  28  28 0 | grep errv >> errors
+python3 stone.py  32  32 0 | grep errv >> errors
+python3 stone.py  36  36 0 | grep errv >> errors
+python3 stone.py  40  40 0 | grep errv >> errors
 
 

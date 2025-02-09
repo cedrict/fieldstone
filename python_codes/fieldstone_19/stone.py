@@ -1,10 +1,8 @@
 import numpy as np
-import sys as sys
-import scipy
-import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix
 import time as time
+import sys as sys
+import scipy.sparse as sps
+from scipy.sparse import csr_matrix
 
 #------------------------------------------------------------------------------
 
@@ -61,8 +59,10 @@ def NNV(rq,sq):
     NV_13= N2r*N4t 
     NV_14= N3r*N4t 
     NV_15= N4r*N4t 
-    return NV_00,NV_01,NV_02,NV_03,NV_04,NV_05,NV_06,NV_07,\
-           NV_08,NV_09,NV_10,NV_11,NV_12,NV_13,NV_14,NV_15
+    return np.array([NV_00,NV_01,NV_02,NV_03,\
+                     NV_04,NV_05,NV_06,NV_07,\
+                     NV_08,NV_09,NV_10,NV_11,\
+                     NV_12,NV_13,NV_14,NV_15],dtype=np.float64)
 
 def dNNVdr(rq,sq):
     dN1rdr=( +1 +18*rq -27*rq**2)/16
@@ -89,8 +89,10 @@ def dNNVdr(rq,sq):
     dNVdr_13= dN2rdr* N4s 
     dNVdr_14= dN3rdr* N4s 
     dNVdr_15= dN4rdr* N4s 
-    return dNVdr_00,dNVdr_01,dNVdr_02,dNVdr_03,dNVdr_04,dNVdr_05,dNVdr_06,dNVdr_07,\
-           dNVdr_08,dNVdr_09,dNVdr_10,dNVdr_11,dNVdr_12,dNVdr_13,dNVdr_14,dNVdr_15
+    return np.array([dNVdr_00,dNVdr_01,dNVdr_02,dNVdr_03,\
+                     dNVdr_04,dNVdr_05,dNVdr_06,dNVdr_07,\
+                     dNVdr_08,dNVdr_09,dNVdr_10,dNVdr_11,\
+                     dNVdr_12,dNVdr_13,dNVdr_14,dNVdr_15],dtype=np.float64)
 
 def dNNVds(rq,sq):
     N1r=(-1    +rq +9*rq**2 - 9*rq**3)/16
@@ -117,8 +119,10 @@ def dNNVds(rq,sq):
     dNVds_13= N2r*dN4sds 
     dNVds_14= N3r*dN4sds 
     dNVds_15= N4r*dN4sds
-    return dNVds_00,dNVds_01,dNVds_02,dNVds_03,dNVds_04,dNVds_05,dNVds_06,dNVds_07,\
-           dNVds_08,dNVds_09,dNVds_10,dNVds_11,dNVds_12,dNVds_13,dNVds_14,dNVds_15
+    return np.array([dNVds_00,dNVds_01,dNVds_02,dNVds_03,\
+                     dNVds_04,dNVds_05,dNVds_06,dNVds_07,\
+                     dNVds_08,dNVds_09,dNVds_10,dNVds_11,\
+                     dNVds_12,dNVds_13,dNVds_14,dNVds_15],dtype=np.float64)
 
 def NNP(rq,sq):
     NP_0= 0.5*rq*(rq-1) * 0.5*sq*(sq-1)
@@ -130,7 +134,7 @@ def NNP(rq,sq):
     NP_6= 0.5*rq*(rq-1) * 0.5*sq*(sq+1)
     NP_7=     (1-rq**2) * 0.5*sq*(sq+1)
     NP_8= 0.5*rq*(rq+1) * 0.5*sq*(sq+1)
-    return NP_0,NP_1,NP_2,NP_3,NP_4,NP_5,NP_6,NP_7,NP_8
+    return np.array([NP_0,NP_1,NP_2,NP_3,NP_4,NP_5,NP_6,NP_7,NP_8],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 
@@ -146,9 +150,6 @@ ndofP=1  # number of pressure degrees of freedom
 Lx=1.  # horizontal extent of the domain 
 Ly=1.  # vertical extent of the domain 
 
-assert (Lx>0.), "Lx should be positive" 
-assert (Ly>0.), "Ly should be positive" 
-
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 4):
    nelx = int(sys.argv[1])
@@ -158,9 +159,6 @@ else:
    nelx = 8
    nely = 8
    visu = 1
-
-assert (nelx>0.), "nnx should be positive" 
-assert (nely>0.), "nny should be positive" 
     
 nnx=3*nelx+1  # number of elements, x direction
 nny=3*nely+1  # number of elements, y direction
@@ -171,18 +169,25 @@ nel=nelx*nely  # number of elements, total
 
 viscosity=1.  # dynamic viscosity \mu
 
-NfemV=nnp*ndofV               # number of velocity dofs
+NfemV=nnp*ndofV                   # number of velocity dofs
 NfemP=(2*nelx+1)*(2*nely+1)*ndofP # number of pressure dofs
-Nfem=NfemV+NfemP              # total number of dofs
+Nfem=NfemV+NfemP                  # total number of dofs
 
 eps=1.e-10
 
-qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
-qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
-qw4a=(18-np.sqrt(30.))/36.
-qw4b=(18+np.sqrt(30.))/36.
-qcoords=[-qc4a,-qc4b,qc4b,qc4a]
-qweights=[qw4a,qw4b,qw4b,qw4a]
+nqperdim=4
+
+if nqperdim==3:
+   qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
+   qweights=[5./9.,8./9.,5./9.]
+
+if nqperdim==4:
+   qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
+   qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
+   qw4a=(18-np.sqrt(30.))/36.
+   qw4b=(18+np.sqrt(30.))/36.
+   qcoords=[-qc4a,-qc4b,qc4b,qc4a]
+   qweights=[qw4a,qw4b,qw4b,qw4a]
 
 hx=Lx/nelx
 hy=Ly/nely
@@ -343,12 +348,12 @@ constr= np.zeros(NfemP,dtype=np.float64)         # constraint matrix/vector
 
 b_mat = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
 N_mat = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
-NV    = np.zeros(mV,dtype=np.float64)           # shape functions V
-NP    = np.zeros(mP,dtype=np.float64)           # shape functions P
+#NV    = np.zeros(mV,dtype=np.float64)           # shape functions V
+#NP    = np.zeros(mP,dtype=np.float64)           # shape functions P
 dNVdx  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 dNVdy  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-dNVdr  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
-dNVds  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
+#dNVdr  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
+#dNVds  = np.zeros(mV,dtype=np.float64)          # shape functions derivatives
 u     = np.zeros(nnp,dtype=np.float64)          # x-component velocity
 v     = np.zeros(nnp,dtype=np.float64)          # y-component velocity
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
@@ -363,29 +368,29 @@ for iel in range(0,nel):
     NNNP= np.zeros(mP*ndofP,dtype=np.float64)   
 
     # integrate viscous term at 4 quadrature points
-    for iq in [0,1,2,3]:
-        for jq in [0,1,2,3]:
+    for iq in range(0,nqperdim):
+        for jq in range(0,nqperdim):
 
             # position & weight of quad. point
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
 
-            NV[0:16]=NNV(rq,sq)
-            dNVdr[0:16]=dNNVdr(rq,sq)
-            dNVds[0:16]=dNNVds(rq,sq)
-            NP[0:9]=NNP(rq,sq)
+            NV=NNV(rq,sq)
+            dNVdr=dNNVdr(rq,sq)
+            dNVds=dNNVds(rq,sq)
+            NP=NNP(rq,sq)
 
             # calculate jacobian matrix
             jcb=np.zeros((2,2),dtype=np.float64)
             for k in range(0,mV):
-                jcb[0,0] += dNVdr[k]*x[iconV[k,iel]]
-                jcb[0,1] += dNVdr[k]*y[iconV[k,iel]]
-                jcb[1,0] += dNVds[k]*x[iconV[k,iel]]
-                jcb[1,1] += dNVds[k]*y[iconV[k,iel]]
+                jcb[0,0]+=dNVdr[k]*x[iconV[k,iel]]
+                jcb[0,1]+=dNVdr[k]*y[iconV[k,iel]]
+                jcb[1,0]+=dNVds[k]*x[iconV[k,iel]]
+                jcb[1,1]+=dNVds[k]*y[iconV[k,iel]]
             #end for
-            jcob = np.linalg.det(jcb)
-            jcbi = np.linalg.inv(jcb)
+            jcob=np.linalg.det(jcb)
+            jcbi=np.linalg.inv(jcb)
 
             # compute dNdx & dNdy
             xq=0.0
@@ -591,8 +596,8 @@ start = time.time()
 errv=0.
 errp=0.
 for iel in range (0,nel):
-    for iq in [0,1,2,3]:
-        for jq in [0,1,2,3]:
+    for iq in range(0,nqperdim):
+        for jq in range(0,nqperdim):
 
             rq=qcoords[iq]
             sq=qcoords[jq]
@@ -638,7 +643,7 @@ for iel in range (0,nel):
 errv=np.sqrt(errv)
 errp=np.sqrt(errp)
 
-print("     -> nel= %6d ; errv= %.11f ; errp= %.11f" %(nel,errv,errp))
+print("     -> nel= %6d ; errv= %e ; errp= %e" %(nel,errv,errp))
 
 print("compute errors: %.3f s" % (time.time() - start))
 

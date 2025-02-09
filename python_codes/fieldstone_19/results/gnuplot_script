@@ -1,13 +1,16 @@
+#
 set term pdf enhanced
 set key outside
 set output 'errors.pdf'
+set grid
 set log xy
 set xlabel 'h'
 set ylabel 'error'
 plot[][]\
-'errors' u (1./sqrt($3)):6 w lp ps .4 t 'velocity',\
-'errors' u (1./sqrt($3)):9 w lp ps .4 t 'pressure',\
-x**4/250. w l dashtype 1 lt -1 t 'x^4',\
-x**3/140. w l dashtype 2 lt -1 t 'x^3',\
+'errors_nqperdim3' u (1./sqrt($3)):6 w lp ps .4 t 'velocity, nq=3^2',\
+'errors_nqperdim3' u (1./sqrt($3)):9 w lp ps .4 t 'pressure, nq=3^2',\
+'errors_nqperdim4' u (1./sqrt($3)):6 w lp ps .4 t 'velocity, nq=4^2',\
+'errors_nqperdim4' u (1./sqrt($3)):9 w lp ps .4 t 'pressure, nq=4^2',\
+x**4/550. w l dashtype 2 lt -1 t 'x^4',\
 x**5/150. w l dashtype 3 lt -1 t 'x^5'
 
