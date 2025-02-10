@@ -1,15 +1,17 @@
+import time as timing
 import numpy as np
 import sys as sys
-import scipy
 import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
-import time as timing
-import matplotlib.pyplot as plt
-from scipy.sparse import lil_matrix
+from scipy.sparse import csr_matrix,lil_matrix
 from shape_functionsV import NNV,dNNVdr,dNNVds,dNNVdt
 from shape_functionsT import NNT,dNNTdr,dNNTds,dNNTdt
 
 #------------------------------------------------------------------------------
+
+eps=1.e-10
+year=3.154e+7
+Myear=1e6*year
+sqrt3=np.sqrt(3.)
 
 print("-----------------------------")
 print("--------fieldstone 20--------")
@@ -35,6 +37,7 @@ else:
    nely =10
    nelz =16
 
+# this is a requirement bc we measure at z=3Lz/4
 assert (nelz%4==0), "nelz should be even and multiple of 4" 
 
 gx=0
@@ -68,14 +71,6 @@ eta0=8.0198e23
 hcond=3.564
 hcapa=1080
 alpha=1.e-5
-
-eps=1.e-10
-
-
-year=3.154e+7
-Myear=1e6*year
-sqrt3=np.sqrt(3.)
-
 alphaT=0.5
 
 nstep=250
@@ -97,8 +92,7 @@ hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
 
-relax=1
-CFL_nb=0.005 # not needed since relaxation is used
+relax=.9
 
 #################################################################
 #################################################################
@@ -140,9 +134,9 @@ Nufile=open('Nu.ascii',"w")
 ######################################################################
 start = timing.time()
 
-xV = np.empty(NV,dtype=np.float64)  # x coordinates
-yV = np.empty(NV,dtype=np.float64)  # y coordinates
-zV = np.empty(NV,dtype=np.float64)  # z coordinates
+xV = np.zeros(NV,dtype=np.float64)  # x coordinates
+yV = np.zeros(NV,dtype=np.float64)  # y coordinates
+zV = np.zeros(NV,dtype=np.float64)  # z coordinates
 
 counter=0
 for i in range(0,nnx):
@@ -218,17 +212,15 @@ print("boundary conditions V: %.3f s" % (timing.time() - start))
 ######################################################################
 start = timing.time()
 
-xT=np.empty(NT,dtype=np.float64)  # x coordinates
-yT=np.empty(NT,dtype=np.float64)  # y coordinates
-zT=np.empty(NT,dtype=np.float64)  # z coordinates
-
+xT=np.zeros(NT,dtype=np.float64)  # x coordinates
+yT=np.zeros(NT,dtype=np.float64)  # y coordinates
+zT=np.zeros(NT,dtype=np.float64)  # z coordinates
 iconT=np.zeros((mT,nel),dtype=np.int32)
 
-xT=xV
-yT=yV
-zT=zV
-
-iconT=iconV
+xT[:]=xV[:]
+yT[:]=yV[:]
+zT[:]=zV[:]
+iconT[:,:]=iconV[:,:]
 
 print("build grid T: %.3f s" % (timing.time() - start))
 
@@ -283,6 +275,15 @@ p=np.zeros(nel,dtype=np.float64)           # pressure field
 u_old=np.zeros(NV,dtype=np.float64)      # x-component velocity
 v_old=np.zeros(NV,dtype=np.float64)      # y-component velocity
 w_old=np.zeros(NV,dtype=np.float64)      # y-component velocity
+                    
+#Note that instead of computing jcob and jcbi by means of the 
+# determinant I instead assign it its value under the assumption that 
+# the elements are all cuboids of size hxXhyXhz. 
+jcob=hx*hy*hz/8
+jcbi=np.zeros((ndim,ndim),dtype=np.float64)
+jcbi[0,0]=2/hx ; jcbi[0,1]=0    ; jcbi[0,2]=0
+jcbi[1,0]=0    ; jcbi[1,1]=2/hy ; jcbi[1,2]=0
+jcbi[2,0]=0    ; jcbi[2,1]=0    ; jcbi[2,2]=2/hz
 
 for istep in range(0,nstep):
     print("--------------------------------------------")
@@ -316,7 +317,7 @@ for istep in range(0,nstep):
         f_el=np.zeros((mV*ndofV),dtype=np.float64)
         K_el=np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
         G_el=np.zeros((mV*ndofV,1),dtype=np.float64)
-        h_el=np.zeros((1,1),dtype=np.float64)
+        h_el=0. #np.zeros((1,1),dtype=np.float64)
 
         # integrate viscous term at 4 quadrature points
         for iq in [-1,1]:
@@ -337,23 +338,19 @@ for istep in range(0,nstep):
                     dNNNVdt[0:mV]=dNNVdt(rq,sq,tq)
 
                     # calculate jacobian matrix
-                    jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                    for k in range(0,mV):
-                        jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                        jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                        jcb[0,2] += dNNNVdr[k]*zV[iconV[k,iel]]
-                        jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                        jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-                        jcb[1,2] += dNNNVds[k]*zV[iconV[k,iel]]
-                        jcb[2,0] += dNNNVdt[k]*xV[iconV[k,iel]]
-                        jcb[2,1] += dNNNVdt[k]*yV[iconV[k,iel]]
-                        jcb[2,2] += dNNNVdt[k]*zV[iconV[k,iel]]
-
-                    # calculate the determinant of the jacobian
-                    jcob = np.linalg.det(jcb)
-
-                    # calculate inverse of the jacobian matrix
-                    jcbi = np.linalg.inv(jcb)
+                    #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                    #for k in range(0,mV):
+                    #    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+                    #    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+                    #    jcb[0,2] += dNNNVdr[k]*zV[iconV[k,iel]]
+                    #    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+                    #    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+                    #    jcb[1,2] += dNNNVds[k]*zV[iconV[k,iel]]
+                    #    jcb[2,0] += dNNNVdt[k]*xV[iconV[k,iel]]
+                    #    jcb[2,1] += dNNNVdt[k]*yV[iconV[k,iel]]
+                    #    jcb[2,2] += dNNNVdt[k]*zV[iconV[k,iel]]
+                    #jcob=np.linalg.det(jcb)
+                    #jcbi=np.linalg.inv(jcb)
 
                     # compute dNdx, dNdy, dNdz
                     for k in range(0,mV):
@@ -401,7 +398,7 @@ for istep in range(0,nstep):
                    #end for 
                    K_el[ikk,ikk]=K_ref
                    f_el[ikk]=K_ref*bc_valV[m1]
-                   h_el[0]-=G_el[ikk,0]*bc_valV[m1]
+                   h_el-=G_el[ikk,0]*bc_valV[m1]
                    G_el[ikk,0]=0
                 #end if
             #end for 
@@ -426,7 +423,7 @@ for istep in range(0,nstep):
                 A_sparse[NfemV+iel,m1]+=G_el[ikk,0]*scaling_coeff
             #end for 
         #end for 
-        rhs[NfemV+iel]+=h_el[0]*scaling_coeff
+        rhs[NfemV+iel]+=h_el*scaling_coeff
 
     #end
 
@@ -465,8 +462,6 @@ for istep in range(0,nstep):
     ######################################################################
     start = timing.time()
 
-    #sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
-
     sol=sps.linalg.spsolve(A_sparse.tocsr(),rhs)
 
     print("solve time: %.3f s" % (timing.time() - start))
@@ -491,9 +486,6 @@ for istep in range(0,nstep):
     w_stats[istep,0]=np.min(w)
     w_stats[istep,1]=np.max(w)
 
-    #if pnormalise:
-    #   print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
-
     #np.savetxt('velocity.ascii',np.array([xV,yV,zV,u,v,w]).T,header='# x,y,z,u,v,w')
 
     print("transfer solution: %.3f s" % (timing.time() - start))
@@ -511,31 +503,25 @@ for istep in range(0,nstep):
     ######################################################################
     start = timing.time()
 
-    dt1=CFL_nb*min(Lx/nelx,Ly/nely,Lz/nelz)/np.max(np.sqrt(u**2+v**2+w**2))
+    #CFL_nb=0.005 # not needed since relaxation is used
+    #dt1=CFL_nb*min(Lx/nelx,Ly/nely,Lz/nelz)/np.max(np.sqrt(u**2+v**2+w**2))
+    #dt2=CFL_nb*min(Lx/nelx,Ly/nely,Lz/nelz)**2/(hcond/hcapa/rho0)
+    #dt=min(dt1,dt2)
+    #if istep==0:
+    #   model_time[istep]=dt
+    #else:
+    #   model_time[istep]=model_time[istep-1]+dt
+    #dt_stats[istep]=dt 
+    #print('     -> dt1= %.6e dt2= %.6e dt= %.6e Myr' % (dt1/Myear,dt2/Myear,dt/Myear))
 
-    dt2=CFL_nb*min(Lx/nelx,Ly/nely,Lz/nelz)**2/(hcond/hcapa/rho0)
-
-    dt=min(dt1,dt2)
-
-    if istep==0:
-       model_time[istep]=dt
-    else:
-       model_time[istep]=model_time[istep-1]+dt
-
-    dt_stats[istep]=dt 
-
-    print('     -> dt1= %.6e dt2= %.6e dt= %.6e Myr' % (dt1/Myear,dt2/Myear,dt/Myear))
+    model_time[istep]=istep
 
     print("compute timestep: %.3f s" % (timing.time() - start))
 
     ######################################################################
-    # compute vrms. Note that instead of computing jcob by means of the 
-    # determinant I instead assign it its value under the assumption that 
-    # the elements are cuboids. 
+    # compute vrms. 
     ######################################################################
     start = timing.time()
-
-    jcob = hx*hy*hz/8
 
     for iel in range (0,nel):
         for iq in [-1,1]:
@@ -549,21 +535,13 @@ for istep in range(0,nstep):
 
                     NNNV[0:mV]=NNV(rq,sq,tq)
                     NNNT[0:mV]=NNT(rq,sq,tq)
+ 
+                    uq=NNNV.dot(u[iconV[:,iel]])
+                    vq=NNNV.dot(v[iconV[:,iel]])
+                    wq=NNNV.dot(w[iconV[:,iel]])
+                    Tq=NNNT.dot(T[iconT[:,iel]])
 
-                    uq=0.
-                    vq=0.
-                    wq=0.
-                    for k in range(0,mV):
-                       uq+=NNNV[k]*u[iconV[k,iel]]
-                       vq+=NNNV[k]*v[iconV[k,iel]]
-                       wq+=NNNV[k]*w[iconV[k,iel]]
-                    #end for
                     vrms[istep]+=(uq**2+vq**2+wq**2)*weightq*jcob
-
-                    Tq=0.
-                    for k in range(0,mT):
-                       Tq+=NNNT[k]*T[iconT[k,iel]]
-                    #end for
 
                     Tavrg[istep]+=Tq*weightq*jcob
 
@@ -626,20 +604,20 @@ for istep in range(0,nstep):
                     NNNV[0:mV]=NNV(rq,sq,tq)
 
                     # calculate jacobian matrix
-                    jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                    for k in range(0,mT):
-                        jcb[0,0] += dNNNTdr[k]*xT[iconT[k,iel]]
-                        jcb[0,1] += dNNNTdr[k]*yT[iconT[k,iel]]
-                        jcb[0,2] += dNNNTdr[k]*zT[iconT[k,iel]]
-                        jcb[1,0] += dNNNTds[k]*xT[iconT[k,iel]]
-                        jcb[1,1] += dNNNTds[k]*yT[iconT[k,iel]]
-                        jcb[1,2] += dNNNTds[k]*zT[iconT[k,iel]]
-                        jcb[2,0] += dNNNTdt[k]*xT[iconT[k,iel]]
-                        jcb[2,1] += dNNNTdt[k]*yT[iconT[k,iel]]
-                        jcb[2,2] += dNNNTdt[k]*zT[iconT[k,iel]]
+                    #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+                    #for k in range(0,mT):
+                    #    jcb[0,0] += dNNNTdr[k]*xT[iconT[k,iel]]
+                    #    jcb[0,1] += dNNNTdr[k]*yT[iconT[k,iel]]
+                    #    jcb[0,2] += dNNNTdr[k]*zT[iconT[k,iel]]
+                    #    jcb[1,0] += dNNNTds[k]*xT[iconT[k,iel]]
+                    #    jcb[1,1] += dNNNTds[k]*yT[iconT[k,iel]]
+                    #    jcb[1,2] += dNNNTds[k]*zT[iconT[k,iel]]
+                    #    jcb[2,0] += dNNNTdt[k]*xT[iconT[k,iel]]
+                    #    jcb[2,1] += dNNNTdt[k]*yT[iconT[k,iel]]
+                    #    jcb[2,2] += dNNNTdt[k]*zT[iconT[k,iel]]
                     # end for 
-                    jcob = np.linalg.det(jcb)
-                    jcbi = np.linalg.inv(jcb)
+                    #jcob = np.linalg.det(jcb)
+                    #jcbi = np.linalg.inv(jcb)
 
                     vel[0,:]=0.
                     for k in range(0,mV):
@@ -758,19 +736,19 @@ for istep in range(0,nstep):
             dNNNVdr[0:mV]=dNNVdr(rVnodes[i],sVnodes[i],tVnodes[i])
             dNNNVds[0:mV]=dNNVds(rVnodes[i],sVnodes[i],tVnodes[i])
             dNNNVdt[0:mV]=dNNVdt(rVnodes[i],sVnodes[i],tVnodes[i])
-            jcb=np.zeros((ndim,ndim),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                jcb[0,2] += dNNNVdr[k]*zV[iconV[k,iel]]
-                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-                jcb[1,2] += dNNNVds[k]*zV[iconV[k,iel]]
-                jcb[2,0] += dNNNVdt[k]*xV[iconV[k,iel]]
-                jcb[2,1] += dNNNVdt[k]*yV[iconV[k,iel]]
-                jcb[2,2] += dNNNVdt[k]*zV[iconV[k,iel]]
-            jcob=np.linalg.det(jcb)
-            jcbi=np.linalg.inv(jcb)
+            #jcb=np.zeros((ndim,ndim),dtype=np.float64)
+            #for k in range(0,mV):
+            #    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
+            #    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
+            #    jcb[0,2] += dNNNVdr[k]*zV[iconV[k,iel]]
+            #    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
+            #    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+            #    jcb[1,2] += dNNNVds[k]*zV[iconV[k,iel]]
+            #    jcb[2,0] += dNNNVdt[k]*xV[iconV[k,iel]]
+            #    jcb[2,1] += dNNNVdt[k]*yV[iconV[k,iel]]
+            #    jcb[2,2] += dNNNVdt[k]*zV[iconV[k,iel]]
+            #jcob=np.linalg.det(jcb)
+            #jcbi=np.linalg.inv(jcb)
             for k in range(0,mV):
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]+jcbi[0,2]*dNNNVdt[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]+jcbi[1,2]*dNNNVdt[k]
@@ -917,8 +895,8 @@ for istep in range(0,nstep):
                               N2*T[iconT[6,iel]]+\
                               N3*T[iconT[7,iel]]
                            #print (zT[iconT[4:7,iel]],Lz*0.75)  
-                           jcob=hx*hy/4
-                           T_m+=Tq*jcob*weightq
+                           jcobb=hx*hy/4
+                           T_m+=Tq*jcobb*weightq
                 # end if
                 iel+=1
             # end for
@@ -957,8 +935,8 @@ for istep in range(0,nstep):
                                  N2*dTdzn[iconT[6,iel]]+\
                                  N3*dTdzn[iconT[7,iel]]
                            #print (zT[iconT[4:7,iel]],Lz*0.75)  
-                           jcob=hx*hy/4
-                           Nu+=abs(dTdzq*jcob*weightq)
+                           jcobb=hx*hy/4
+                           Nu+=abs(dTdzq*jcobb*weightq)
                 # end if
                 iel+=1
             # end for
@@ -967,7 +945,7 @@ for istep in range(0,nstep):
 
     Nu*=(Lz/(Lx*Ly*(Temperature1-273)))
 
-    Nufile.write("%.6e\n" % Nu)
+    Nufile.write("%d %e\n" % (istep,Nu))
     Nufile.flush()
 
     print("     -> Nu= %.6e  " % Nu)
@@ -1155,10 +1133,10 @@ for istep in range(0,nstep):
 
     #####################################################################
 
-    u_old=u
-    v_old=v
-    w_old=w
-    T_old=T
+    u_old[:]=u[:]
+    v_old[:]=v[:]
+    w_old[:]=w[:]
+    T_old[:]=T[:]
     Nu_old=Nu
 
 print("-----------------------------")

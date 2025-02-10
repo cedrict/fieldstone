@@ -1,11 +1,17 @@
-
+\noindent
 \includegraphics[height=1.25cm]{images/pictograms/replication}
 \includegraphics[height=1.25cm]{images/pictograms/aspect_logo}
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/temperature}
 \includegraphics[height=1.25cm]{images/pictograms/3d}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_20/keywords.ascii}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_20/text.tex}} \end{flushright}
+
+\par\noindent\rule{\textwidth}{0.4pt}
 
 \begin{center}
 \inpython
@@ -13,46 +19,53 @@
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This three-dimensional benchmark was first proposed by Busse et al (1993) \cite{bucc94}. 
-It has been subsequently carried out in Tackley (1994) \cite{tack94},
-Trompert \& Hansen (1998) \cite{trha98}, Albers (2000) \cite{albe00},
-O'Neill \etal (2006) \cite{onmm06}, Davies \etal (2011) \cite{dawk11}, Kronbichler \etal \cite{krhb12}.
-We here focus on Case 1 of \cite{bucc94}:  an isoviscous bimodal convection experiment at $\Ranb=3\cdot 10^5$.
+Last revision: Feb. 9th, 2025.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This three-dimensional benchmark was first proposed by \textcite{bucc94} (1994). 
+It has been subsequently carried out in \textcite{tack94} (1994),
+\textcite{trha98} (1998), \textcite{albe00} (2000),
+\textcite{onmm06} (2006), \textcite{dawk11} (2011), \textcite{krhb12} (2012),
+\textcite{thie14} (2014).
+We here focus on Case 1 of the original article:  
+an isoviscous bimodal convection experiment at $\Ranb=3\cdot 10^5$.
 
 The domain is of size $a\times b\times h$ with $a=1.0079h$, $b=0.6283h$ 
-with $h=\SI{2700}{km}$. It is filled with a Newtonian fluid 
-characterised by $\rho_0=3300\si{\kg\per\cubic\meter}$, $\alpha=10^{-5}\si{\kelvin}^{-1}$, 
-$\mu=8.0198\times10^{23}~\si{\pascal\second}$, 
+with $h=\SI{2700}{\km}$. It is filled with a Newtonian fluid 
+characterised by $\rho_0=\SI{3300}{\kg\per\cubic\meter}$, 
+$\alpha=10^{-5}~\si{\per\kelvin}$, 
+$\eta=8.0198\times10^{23}~\si{\pascal\second}$, 
 $k=3.564~\si{\watt\per\meter\per\kelvin}$, 
 $C_p=1080~\si{\joule\per\kelvin\per\kg}$.
-The gravity vector is set to $\vec{g}=(0,0,-10)^T\si{\meter\per\square\second}$.
+The gravity vector is set to $\vec{g}=(0,0,-10)\si{\meter\per\square\second}$.
 The temperature is imposed at the bottom  ($T=3700~\si{\celsius}$) and at the top ($T=0~\si{\celsius}$).
 
 Note that using these numbers (as provided in the original paper), we arrive at $\Ranb$=29967.01, which 
-is not exactly $3\cdot10^5$ as announced. Also, the heat diffusivity $\kappa=k/\rho_0 C_p$ is 
+is not exactly $3\cdot10^5$ as announced, although the heat diffusivity $\kappa=k/\rho_0 C_p$ is 
 {\it exactly} $10^{-6}~\si{\square\meter\per\second}$.
 
-The various measurements presented in \cite{bucc94} are listed hereafter:
+The various measurements presented in the article are listed hereafter:
 \begin{itemize}
-\item The Nusselt number $\Nunb$ computed at the top surface following Eq. (\ref{MMM-eqNu}):
+\item The Nusselt number $\Nunb$ computed at the top surface following:
 \[
 \Nunb = L_z \frac{\int\int_{z=L_z} \frac{\partial T}{\partial y} dx dy  }{\int \int_{z=0} T dx dy}
 \]
-\item the root mean square velocity $v_{rms}$ and the temperature mean square velocity $T_{rms}$
+\item the root mean square velocity $\upnu_{rms}$ and the temperature mean square velocity $T_{rms}$
 \item The vertical velocity $w$ and temperature $T$ at points $\vec{r}_1=(0,0,L_z/2)$, 
-$\vec{r}_2=(L_x,0,L_z/2)$,
-$\vec{r}_3=(0,L_y,L_z/2)$ and $\vec{r}_4=(L_x,L_y,L_z/2)$;
+$\vec{r}_2=(L_x,0,L_z/2)$, $\vec{r}_3=(0,L_y,L_z/2)$ and $\vec{r}_4=(L_x,L_y,L_z/2)$;
 \item the vertical component of the heat flux $Q$ at the top surface  at all four corners. 
 \end{itemize}
 
 \begin{center}
-\includegraphics[height=5cm]{python_codes/fieldstone_20/images/krhb12}
-\includegraphics[height=5cm]{python_codes/fieldstone_20/images/elefant}\\
+\includegraphics[height=6cm]{python_codes/fieldstone_20/images/krhb12}
+\includegraphics[height=6cm]{python_codes/fieldstone_20/images/elefant}\\
 {\captionfont Left: 
 Velocity field and isosurfaces of the temperature at steady state obtained 
-with \aspect.\\ Taken from Kronbichler et al (2012) \cite{krhb12}.
+with \aspect.\\ Taken from \textcite{krhb12} (2012).
 Right: same, obtained with \elefant \cite{thie14}.}
 \end{center}
 
@@ -60,14 +73,17 @@ Right: same, obtained with \elefant \cite{thie14}.}
 \noindent Given the dimensions of the domain, here are resolutions that would yield (roughly) cubic elements:
 \begin{center}
 \begin{tabular}{l|lccccccc|}
-1.0079$\times$2700km&nelx= &16 &20 &24 &28 &32 &36 &40 \\  
-0.6283$\times$2700km&nely= &10 &13 &15 &18 &20 &23 &25 \\
-1.0000$\times$2700km&nelz= &16 &20 &24 &28 &32 &36 &40 \\  
+domain size & \\
+\hline
+1.0079$\times$2700km & nelx= &16 &20 &24 &28 &32 &36 &40 \\  
+0.6283$\times$2700km & nely= &10 &13 &15 &18 &20 &23 &25 \\
+1.0000$\times$2700km & nelz= &16 &20 &24 &28 &32 &36 &40 \\  
+\hline
 \end{tabular}
 \end{center}
 
 %............................
-\subsubsection*{Methodology}
+\subsection*{Methodology}
 
 In what follows I highlight a few important points which are key to understanding how the code
 is put together and works. 
@@ -107,10 +123,11 @@ from shape_functionsV import NNV,dNNVdr,dNNVds,dNNVdt
 from shape_functionsT import NNT,dNNTdr,dNNTds,dNNTdt
 \end{lstlisting}
 
-There are NV=nnx*nny*nnz velocity nodes and NT=NV temperature nodes.
+There are \lstinline{NV=nnx*nny*nnz} velocity nodes and 
+\lstinline{NT=NV} temperature nodes.
 
-The velocity grid is built: xV, yV, zV, iconV, and 
-these are copied in xT, yT, zT and iconT for the temperature grid.  
+The velocity grid is built: \lstinline{xV, yV, zV, iconV}, and 
+these are copied in \lstinline{xT, yT, zT, iconT} for the temperature grid.  
 
 The initial temperature field is built as follows:
 \begin{lstlisting}
@@ -119,7 +136,7 @@ for i in range(0,NT):
        + 100*(np.cos(np.pi*xT[i]/Lx) + np.cos(np.pi*yT[i]/Ly))*np.sin(np.pi*zT[i]/Lz)
 \end{lstlisting}
 
-The ${\bm C}$ matrix of Eq.~\eqref{eq:mixedC} is then built:
+The ${\bm C}$ matrix of Eq.~\eqref{MMM-eq:mixedC} is then built:
 \begin{lstlisting}
 c_mat = np.array([[2,0,0,0,0,0],\
                   [0,2,0,0,0,0],\
@@ -129,24 +146,27 @@ c_mat = np.array([[2,0,0,0,0,0],\
                   [0,0,0,0,0,1]],dtype=np.float64) 
 \end{lstlisting}
 
+%.......................................
+\subsubsection{Getting to steady state}  
 
-\paragraph{Getting to steady state}  
 In this case we are not so much interested in the path to steady state since 
 the published values/measurements are {\it at} steady state.
 The mass and momentum conservation equations for incompressible Stokes flow do not 
 contain a time derivative but the energy conservation equation does. 
+
 At steady state the terms $\partial_t T$ is zero by definition so we must solve
-the following equation\footnote{Adiabatic heating, shear heating and internal heating are not considered
-in the benchmark} (see Section~\ref{ss:hte}):
+the following equation\footnote{Adiabatic heating, shear heating and internal heating 
+are not considered in the benchmark} (see Section~\ref{ss:hte}):
 \begin{equation}
 \vec{\upnu}\cdot\vec\nabla T - {\vec \nabla} \cdot k {\vec \nabla} T = 0
 \end{equation}
 The Finite Element discretisation of this equation yields 
 \[
-({\bm K}_a + {\bm K}_d) \cdot \vec{T} = \vec{0}
+({\bm K}_a + {\bm K}_d) \cdot \vec{T} = \vec{b}
 \]
-which is much simpler than the time-dependent one and avoids to carefully consider the 
-time-discretisation altogether. 
+where $\vec{b}$ contains the boundary conditions.
+This formulation is much simpler than the time-dependent one and avoids to discuss the choice
+of time-discretisation algorithm altogether. 
 
 We now have to solve three coupled equations:
 \begin{eqnarray}
@@ -167,7 +187,7 @@ but this time considering velocity, pressure and temperature as unknowns of a (v
 \cdot
 \left(
 \begin{array}{c}
-V \\ P \\ T 
+\vec{\cal V} \\ \vec{\cal P} \\ \vec{\cal T}
 \end{array}
 \right)
 =
@@ -181,7 +201,7 @@ Once this matrix is filled a single solve will yield the steady state velocity, 
 temperature fields! 
 
 The term $\rho(T)$ will naturally end up in the (1,3) block of the assembled matrix as matrix ${\bm L}$.
-The mass conservation equation in thisform is independent of temperature so the (2,3) block 
+The mass conservation equation in this form is independent of temperature so the (2,3) block 
 will be zero. The diffusion term ${\bm K}_d$ naturally finds its way to the (3,3) 
 block and since there is not occurence of pressure in the energy equation the (3,2) 
 block will be zero. We then obtain:
@@ -212,12 +232,12 @@ either put it in the (3,1) block nor in the (3,3) block.
 
 This approach fails, which is why 
 the problem is solved iteratively. The idea is simple: when solving the 
-coupled mass and momentum equations, assume temperature known, and when solving the energy equation
-assume velocity known. We can then alternatively solve one system and then the other, constantly 
+coupled mass and momentum equations, we assume temperature known, and when solving the energy equation
+we assume velocity known. We can then alternatively solve one system and then the other, constantly 
 updating the fields when re-building the matrices or right hand sides.
 
 However, it is well known that a straightforward implementation of this algorithm does not 
-work in practice, i.e. it fails to converge, which is why a relaxation scheme is often implemented.
+work in practice, i.e. it fails to converge, which is why a relaxation scheme is often implemented:
 \begin{enumerate}
 \item Solve for velocity and pressure
 \item relax velocity
@@ -244,10 +264,14 @@ w_old=w
 T_old=T
 \end{lstlisting}
 \end{enumerate}
+The relaxation parameter \lstinline{relax} should be between 0 and 1.
 In this case I found that a relaxation coefficient of 1 actually works so it is used by default.
+Note that at the moment the same coefficient is used to relax both velocity and temperature, I have 
+not explored different values for both.
 
+%........................................
+\subsubsection*{Computing nodal derivatives}  
 
-\paragraph{Computing nodal derivatives}  
 Another interesting approach here is how the strain rate is computed on the nodes as well as
 the temperature gradient. The strain rate is not needed for the required measurements of this 
 benchmark but the Nusselt number calculations require $\partial T/\partial z$ at the top
@@ -257,13 +281,36 @@ The idea is simple: loop over all elements, and for each element loop over its s
 there and add its contribution to the nodal field. Finally divide the obtained field by 
 the number of elements each node is part of.
 
+\begin{lstlisting}
+    for iel in range(0,nel):
+        for i in range(0,mV):
+            [...]
+            for k in range(0,mV):
+                dT_dx += dNNNVdx[k]*T[iconV[k,iel]]
+                dT_dy += dNNNVdy[k]*T[iconV[k,iel]]
+                dT_dz += dNNNVdz[k]*T[iconV[k,iel]]
+            # end for
+            dTdxn[iconV[i,iel]]+=dT_dx
+            dTdyn[iconV[i,iel]]+=dT_dy
+            dTdzn[iconV[i,iel]]+=dT_dz
+            c[iconV[i,iel]]+=1.
+        # end for i
+    # end for iel
+    dTdxn/=c
+    dTdyn/=c
+    dTdzn/=c
+\end{lstlisting}
+
 
 \newpage
 %.......................
-\subsubsection*{Results}
+\subsection*{Results}
 
 Given how the code is written and how costly 3D simulations are in general, high resolution
-runs take a long time to run, even using relaxation instead of time stepping. 
+cases take a long time to run, even using relaxation instead of time stepping. 
+From the following figures it is obvious that the value of the relaxation parameter 
+does not influence the final steady state value and that using a high value close or 
+equal to one is probably the best option (0.9 seems to be best in this case). 
 
 \begin{center}
 \includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/Tavrg.pdf}\\
@@ -277,6 +324,7 @@ runs take a long time to run, even using relaxation instead of time stepping.
 \includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/wmid2.pdf}
 \end{center}
 
+\newpage
 The reported values for Busse et al. in the following table are taken from Table 3 
 of \textcite{bucc94} (1994).
 The reported values for fieldstone are adimensionalised by means of a reference temperature (3700K),
@@ -314,13 +362,13 @@ $dTdz(0,L_y,L_z)$  &  & & & $3.1740 \pm 0.0500$ \\
 \end{center}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/u}
-\includegraphics[width=5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/v}
-\includegraphics[width=5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/w}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/vel}
-\includegraphics[width=5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/T}
-\includegraphics[width=5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/sr}\\
-{\captionfont Results obtained on 24x12x32 mesh}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/u}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/v}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/w}\\
+\includegraphics[width=5.5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/vel}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/T}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_20/results/24x12x32_1p0/sr}\\
+{\captionfont Results obtained on $24\times 12\times 32$ mesh}
 \end{center}
 
 

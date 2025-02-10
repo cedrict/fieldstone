@@ -1,5 +1,7 @@
-set term pdf enhanced font "Times,10pt"
+#
+set term pdf enhanced font "Times,12pt"
 set key outside
+set grid 
 
 kappa=1e-6
 Lz=2700e3
@@ -12,11 +14,16 @@ set log x
 set xlabel 'istep'
 set ylabel 'Nu'
 set output 'Nu.pdf'
-plot[][]\
-'14x08x20_1p0/Nu.ascii' u ($1) w l lw 0.5  t '14x08x20',\
-'16x10x24_1p0/Nu.ascii' u ($1) w l lw 0.5  t '16x10x24',\
-'20x12x28_1p0/Nu.ascii' u ($1) w l lw 0.5  t '20x12x28',\
-'24x12x32_1p0/Nu.ascii' u ($1) w l lw 0.5  t '24x12x32',\
+plot[][3:4]\
+'14x08x20_1p0/Nu.ascii'      u ($1) w l lw 0.5 lt 1 t '14x08x20, r=1.0',\
+'16x10x16_relax1p0/Nu.ascii' u ($1) w l lw 0.5 lt 2 dt 1 t '16x10x16, r=1.0',\
+'16x10x16_relax0p9/Nu.ascii' u ($2) w l lw 0.5 lt 2 dt 2 t '16x10x16, r=0.9',\
+'16x10x16_relax0p8/Nu.ascii' u ($2) w l lw 0.5 lt 2 dt 3 t '16x10x16, r=0.8',\
+'16x10x16_relax0p5/Nu.ascii' u ($2) w l lw 0.5 lt 2 dt 4 t '16x10x16, r=0.5',\
+'16x10x16_relax0p2/Nu.ascii' u ($2) w l lw 0.5 lt 2 dt 5 t '16x10x16, r=0.2',\
+'16x10x24_1p0/Nu.ascii'      u ($1) w l lw 0.5 lt 3 t '16x10x24, r=1.0',\
+'20x12x28_1p0/Nu.ascii'      u ($1) w l lw 0.5 lt 4 t '20x12x28, r=1.0',\
+'24x12x32_1p0/Nu.ascii'      u ($1) w l lw 0.5 lt 5 t '24x12x32, r=1.0',\
 3.5374 lt -1 dashtype 1  t 'Busse et al',\
 3.5397 lt -1 dashtype 2 t 'ASPECT'
 
@@ -24,11 +31,16 @@ plot[][]\
 
 set output 'vrms.pdf'
 set ylabel 'v_{rms}/v_{ref}'
-plot[][:45]\
-'14x08x20_1p0/vrms.ascii'  u ($2/velref) w l  lw 0.5 t '14x08x20',\
-'16x10x24_1p0/vrms.ascii'  u ($2/velref) w l  lw 0.5 t '16x10x24',\
-'20x12x28_1p0/vrms.ascii'  u ($2/velref) w l  lw 0.5 t '20x12x28',\
-'24x12x32_1p0/vrms.ascii'  u ($2/velref) w l  lw 0.5 t '24x12x32',\
+plot[][35:45]\
+'14x08x20_1p0/vrms.ascii'      u ($2/velref) w l lw 0.5 lt 1 t '14x08x20, r=1.0',\
+'16x10x16_relax1p0/vrms.ascii' u ($2/velref) w l lw 0.5 lt 2 dt 1 t '16x10x16, r=1.0',\
+'16x10x16_relax0p9/vrms.ascii' u ($2/velref) w l lw 0.5 lt 2 dt 2 t '16x10x16, r=0.8',\
+'16x10x16_relax0p8/vrms.ascii' u ($2/velref) w l lw 0.5 lt 2 dt 3 t '16x10x16, r=0.8',\
+'16x10x16_relax0p5/vrms.ascii' u ($2/velref) w l lw 0.5 lt 2 dt 4 t '16x10x16, r=0.5',\
+'16x10x16_relax0p2/vrms.ascii' u ($2/velref) w l lw 0.5 lt 2 dt 5 t '16x10x16, r=0.2',\
+'16x10x24_1p0/vrms.ascii'      u ($2/velref) w l lw 0.5 lt 3 t '16x10x24, r=1.0',\
+'20x12x28_1p0/vrms.ascii'      u ($2/velref) w l lw 0.5 lt 4 t '20x12x28, r=1.0',\
+'24x12x32_1p0/vrms.ascii'      u ($2/velref) w l lw 0.5 lt 5 t '24x12x32, r=1.0',\
 40.999 lt -1 t 'Busse et al.',\
 40.999 lt -1 t 'ASPECT'
 
@@ -37,75 +49,110 @@ plot[][:45]\
 set output 'Tavrg.pdf'
 set ylabel '<T>/T_{ref}'
 plot[][]\
-'14x08x20_1p0/Tavrg.ascii' u ($2/3700) w l  lw 0.5 t '14x08x20',\
-'16x10x24_1p0/Tavrg.ascii' u ($2/3700) w l  lw 0.5 t '16x10x24',\
-'20x12x28_1p0/Tavrg.ascii' u ($2/3700) w l  lw 0.5 t '20x12x28',\
-'24x12x32_1p0/Tavrg.ascii' u ($2/3700) w l  lw 0.5 t '24x12x32',\
+'14x08x20_1p0/Tavrg.ascii'      u ($2/3700) w l  lw 0.5 lt 1 t '14x08x20, r=1.0',\
+'16x10x16_relax1p0/Tavrg.ascii' u ($2/3700) w l  lw 0.5 lt 2 dt 1 t '16x10x16, r=1.0',\
+'16x10x16_relax0p9/Tavrg.ascii' u ($2/3700) w l  lw 0.5 lt 2 dt 2 t '16x10x16, r=0.9',\
+'16x10x16_relax0p8/Tavrg.ascii' u ($2/3700) w l  lw 0.5 lt 2 dt 3 t '16x10x16, r=0.8',\
+'16x10x16_relax0p5/Tavrg.ascii' u ($2/3700) w l  lw 0.5 lt 2 dt 4 t '16x10x16, r=0.5',\
+'16x10x16_relax0p2/Tavrg.ascii' u ($2/3700) w l  lw 0.5 lt 2 dt 5 t '16x10x16, r=0.2',\
+'16x10x24_1p0/Tavrg.ascii'      u ($2/3700) w l  lw 0.5 lt 3 t '16x10x24, r=1.0',\
+'20x12x28_1p0/Tavrg.ascii'      u ($2/3700) w l  lw 0.5 lt 4 t '20x12x28, r=1.0',\
+'24x12x32_1p0/Tavrg.ascii'      u ($2/3700) w l  lw 0.5 lt 5 t '24x12x32, r=1.0',\
 
-##############################################
+###############################################################################
 
 set output 'Tm.pdf'
 set ylabel '<T>/T_{ref} at z=3L_z/4'
-plot[][]\
-'14x08x20_1p0/Tm.ascii' u (($2-273)/3700) w l  lw 0.5 t '14x08x20',\
-'16x10x24_1p0/Tm.ascii' u (($2-273)/3700) w l  lw 0.5 t '16x10x24',\
-'20x12x28_1p0/Tm.ascii' u (($2-273)/3700) w l  lw 0.5 t '20x12x28',\
-'24x12x32_1p0/Tm.ascii' u (($2-273)/3700) w l  lw 0.5 t '24x12x32',\
+plot[][0.5:]\
+'14x08x20_1p0/Tm.ascii'      u (($2-273)/3700) w l lw 0.5 lt 1 t '14x08x20, r=1.0',\
+'16x10x16_relax1p0/Tm.ascii' u (($2-273)/3700) w l lw 0.5 lt 2 dt 1 t '16x10x16, r=1.0',\
+'16x10x16_relax0p9/Tm.ascii' u (($2-273)/3700) w l lw 0.5 lt 2 dt 2 t '16x10x16, r=0.9',\
+'16x10x16_relax0p8/Tm.ascii' u (($2-273)/3700) w l lw 0.5 lt 2 dt 3 t '16x10x16, r=0.8',\
+'16x10x16_relax0p5/Tm.ascii' u (($2-273)/3700) w l lw 0.5 lt 2 dt 4 t '16x10x16, r=0.5',\
+'16x10x16_relax0p2/Tm.ascii' u (($2-273)/3700) w l lw 0.5 lt 2 dt 5 t '16x10x16, r=0.2',\
+'16x10x24_1p0/Tm.ascii'      u (($2-273)/3700) w l lw 0.5 lt 3 t '16x10x24, r=1.0',\
+'20x12x28_1p0/Tm.ascii'      u (($2-273)/3700) w l lw 0.5 lt 4 t '20x12x28, r=1.0',\
+'24x12x32_1p0/Tm.ascii'      u (($2-273)/3700) w l lw 0.5 lt 5 t '24x12x32, r=1.0',\
 0.52148 lt -1 t 'Busse et al.',\
 0.52148 lt -1 t 'ASPECT'
 
-##############################################
+###############################################################################
 
 set output 'wmid1.pdf'
 set ylabel 'w at (0,0,L_z/2)'
-plot[][:]\
-'14x08x20_1p0/wmid_stats.ascii' u ($2/velref) w l  lw 0.5 t '14x08x20',\
-'16x10x24_1p0/wmid_stats.ascii' u ($2/velref) w l  lw 0.5 t '16x10x24',\
-'20x12x28_1p0/wmid_stats.ascii' u ($2/velref) w l  lw 0.5 t '20x12x28',\
-'24x12x32_1p0/wmid_stats.ascii' u ($2/velref) w l  lw 0.5 t '24x12x32',\
+plot[][100:]\
+'14x08x20_1p0/wmid_stats.ascii'      u ($2/velref) w l lt 1 lw 0.5 t '14x08x20, r=1.0',\
+'16x10x16_relax1p0/wmid_stats.ascii' u ($2/velref) w l lt 2 lw 0.5 dt 1 t '16x10x16, r=1.0',\
+'16x10x16_relax0p9/wmid_stats.ascii' u ($2/velref) w l lt 2 lw 0.5 dt 2 t '16x10x16, r=0.9',\
+'16x10x16_relax0p8/wmid_stats.ascii' u ($2/velref) w l lt 2 lw 0.5 dt 3 t '16x10x16, r=0.8',\
+'16x10x16_relax0p5/wmid_stats.ascii' u ($2/velref) w l lt 2 lw 0.5 dt 4 t '16x10x16, r=0.5',\
+'16x10x16_relax0p2/wmid_stats.ascii' u ($2/velref) w l lt 2 lw 0.5 dt 5 t '16x10x16, r=0.2',\
+'16x10x24_1p0/wmid_stats.ascii'      u ($2/velref) w l lt 3 lw 0.5 t '16x10x24, r=1.0',\
+'20x12x28_1p0/wmid_stats.ascii'      u ($2/velref) w l lt 4 lw 0.5 t '20x12x28, r=1.0',\
+'24x12x32_1p0/wmid_stats.ascii'      u ($2/velref) w l lt 5 lw 0.5 t '24x12x32, r=1.0',\
 116.625 lt -1 t 'Busse et al.',\
 116.623 lt -1 t 'ASPECT'
 
 set output 'wmid2.pdf'
 set ylabel 'w at (0,Ly,L_z/2)'
 plot[][]\
-'14x08x20_1p0/wmid_stats.ascii' u ($4/velref) w l  lw 0.5 t '14x08x20',\
-'16x10x24_1p0/wmid_stats.ascii' u ($4/velref) w l  lw 0.5 t '16x10x24',\
-'20x12x28_1p0/wmid_stats.ascii' u ($4/velref) w l  lw 0.5 t '20x12x28',\
-'24x12x32_1p0/wmid_stats.ascii' u ($4/velref) w l  lw 0.5 t '24x12x32',\
+'14x08x20_1p0/wmid_stats.ascii'      u ($4/velref) w l lw 0.5 lt 1 t '14x08x20, r=1.0',\
+'16x10x16_relax1p0/wmid_stats.ascii' u ($4/velref) w l lw 0.5 lt 2 dt 1 t '16x10x16, r=1.0',\
+'16x10x16_relax0p9/wmid_stats.ascii' u ($4/velref) w l lw 0.5 lt 2 dt 2 t '16x10x16, r=0.9',\
+'16x10x16_relax0p8/wmid_stats.ascii' u ($4/velref) w l lw 0.5 lt 2 dt 3 t '16x10x16, r=0.8',\
+'16x10x16_relax0p5/wmid_stats.ascii' u ($4/velref) w l lw 0.5 lt 2 dt 4 t '16x10x16, r=0.5',\
+'16x10x16_relax0p2/wmid_stats.ascii' u ($4/velref) w l lw 0.5 lt 2 dt 5 t '16x10x16, r=0.2',\
+'16x10x24_1p0/wmid_stats.ascii'      u ($4/velref) w l lw 0.5 lt 3 t '16x10x24, r=1.0',\
+'20x12x28_1p0/wmid_stats.ascii'      u ($4/velref) w l lw 0.5 lt 4 t '20x12x28, r=1.0',\
+'24x12x32_1p0/wmid_stats.ascii'      u ($4/velref) w l lw 0.5 lt 5 t '24x12x32, r=1.0',\
 40.5 lt -1 t 'Busse et al. '
 
-##############################################
+###############################################################################
 
 set output 'Tmid.pdf'
 set ylabel 'T at (0,0,L_z/2)'
-plot[][]\
-'14x08x20_1p0/Tmid_stats.ascii' u (($2-273)/3700) w l  lw 0.5 t '14x08x20',\
-'16x10x24_1p0/Tmid_stats.ascii' u (($2-273)/3700) w l  lw 0.5 t '16x10x24',\
-'20x12x28_1p0/Tmid_stats.ascii' u (($2-273)/3700) w l  lw 0.5 t '20x12x28',\
-'24x12x32_1p0/Tmid_stats.ascii' u (($2-273)/3700) w l  lw 0.5 t '24x12x32',\
+plot[][0.75:]\
+'14x08x20_1p0/Tmid_stats.ascii'      u (($2-273)/3700) w l lw 0.5 lt 1 t '14x08x20, r=1.0',\
+'16x10x16_relax1p0/Tmid_stats.ascii' u (($2-273)/3700) w l lw 0.5 lt 2 dt 1 t'16x10x16, r=1.0',\
+'16x10x16_relax0p9/Tmid_stats.ascii' u (($2-273)/3700) w l lw 0.5 lt 2 dt 2 t'16x10x16, r=0.9',\
+'16x10x16_relax0p8/Tmid_stats.ascii' u (($2-273)/3700) w l lw 0.5 lt 2 dt 3 t'16x10x16, r=0.8',\
+'16x10x16_relax0p5/Tmid_stats.ascii' u (($2-273)/3700) w l lw 0.5 lt 2 dt 4 t'16x10x16, r=0.5',\
+'16x10x16_relax0p2/Tmid_stats.ascii' u (($2-273)/3700) w l lw 0.5 lt 2 dt 5 t'16x10x16, r=0.2',\
+'16x10x24_1p0/Tmid_stats.ascii'      u (($2-273)/3700) w l lw 0.5 lt 3 t '16x10x24, r=1.0',\
+'20x12x28_1p0/Tmid_stats.ascii'      u (($2-273)/3700) w l lw 0.5 lt 4 t '20x12x28, r=1.0',\
+'24x12x32_1p0/Tmid_stats.ascii'      u (($2-273)/3700) w l lw 0.5 lt 5 t '24x12x32, r=1.0',\
 0.80130 lt -1 dashtype 1 t 'Busse et al.',\
 0.80129 lt -1 dashtype 2 t 'ASPECT'
 
-##############################################
+###############################################################################
 
 set output 'hf1.pdf'
 set ylabel 'heat flux at (0,0,L_z)'
-plot[][]\
-'14x08x20_1p0/hf_stats.ascii' u (abs($2)/hfref) w l  lw 0.5 t '14x08x20',\
-'16x10x24_1p0/hf_stats.ascii' u (abs($2)/hfref) w l  lw 0.5 t '16x10x24',\
-'20x12x28_1p0/hf_stats.ascii' u (abs($2)/hfref) w l  lw 0.5 t '20x12x28',\
-'24x12x32_1p0/hf_stats.ascii' u (abs($2)/hfref) w l  lw 0.5 t '24x12x32',\
+plot[][5.5:]\
+'14x08x20_1p0/hf_stats.ascii'      u (abs($2)/hfref) w l lw 0.5 lt 1 t '14x08x20, r=1.0',\
+'16x10x16_relax1p0/hf_stats.ascii' u (abs($2)/hfref) w l lw 0.5 lt 2 dt 1 t '16x10x16, r=1.0',\
+'16x10x16_relax0p9/hf_stats.ascii' u (abs($2)/hfref) w l lw 0.5 lt 2 dt 2 t '16x10x16, r=0.9',\
+'16x10x16_relax0p8/hf_stats.ascii' u (abs($2)/hfref) w l lw 0.5 lt 2 dt 3 t '16x10x16, r=0.8',\
+'16x10x16_relax0p5/hf_stats.ascii' u (abs($2)/hfref) w l lw 0.5 lt 2 dt 4 t '16x10x16, r=0.5',\
+'16x10x16_relax0p2/hf_stats.ascii' u (abs($2)/hfref) w l lw 0.5 lt 2 dt 5 t '16x10x16, r=0.2',\
+'16x10x24_1p0/hf_stats.ascii'      u (abs($2)/hfref) w l lw 0.5 lt 3 t '16x10x24, r=1.0',\
+'20x12x28_1p0/hf_stats.ascii'      u (abs($2)/hfref) w l lw 0.5 lt 4 t '20x12x28, r=1.0',\
+'24x12x32_1p0/hf_stats.ascii'      u (abs($2)/hfref) w l lw 0.5 lt 5 t '24x12x32, r=1.0',\
 6.7127 lt -1 dashtype 1 t 'Busse et al.',\
 6.7189 lt -1 dashtype 2 t 'ASPECT' 
 
 set output 'hf2.pdf'
 set ylabel 'heat flux at (L_x,L_y,L_z)'
 plot[][]\
-'14x08x20_1p0/hf_stats.ascii' u (abs($5)/hfref) w l  lw 0.5 t '14x08x20',\
-'16x10x24_1p0/hf_stats.ascii' u (abs($5)/hfref) w l  lw 0.5 t '16x10x24',\
-'20x12x28_1p0/hf_stats.ascii' u (abs($5)/hfref) w l  lw 0.5 t '20x12x28',\
-'24x12x32_1p0/hf_stats.ascii' u (abs($5)/hfref) w l  lw 0.5 t '24x12x32',\
+'14x08x20_1p0/hf_stats.ascii'      u (abs($5)/hfref) w l lw 0.5 lt 1 t '14x08x20, r=1.0',\
+'16x10x16_relax1p0/hf_stats.ascii' u (abs($5)/hfref) w l lw 0.5 lt 2 dt 1 t '16x10x16, r=1.0',\
+'16x10x16_relax0p9/hf_stats.ascii' u (abs($5)/hfref) w l lw 0.5 lt 2 dt 2 t '16x10x16, r=0.9',\
+'16x10x16_relax0p8/hf_stats.ascii' u (abs($5)/hfref) w l lw 0.5 lt 2 dt 3 t '16x10x16, r=0.8',\
+'16x10x16_relax0p5/hf_stats.ascii' u (abs($5)/hfref) w l lw 0.5 lt 2 dt 4 t '16x10x16, r=0.5',\
+'16x10x16_relax0p2/hf_stats.ascii' u (abs($5)/hfref) w l lw 0.5 lt 2 dt 5 t '16x10x16, r=0.2',\
+'16x10x24_1p0/hf_stats.ascii'      u (abs($5)/hfref) w l lw 0.5 lt 3 t '16x10x24, r=1.0',\
+'20x12x28_1p0/hf_stats.ascii'      u (abs($5)/hfref) w l lw 0.5 lt 4 t '20x12x28, r=1.0',\
+'24x12x32_1p0/hf_stats.ascii'      u (abs($5)/hfref) w l lw 0.5 lt 5 t '24x12x32, r=1.0',\
 0.7140 lt -1 dashtype 1 t 'Busse et al.' ,\
 0.7174 lt -1 dashtype 2 t 'ASPECT' 
 
