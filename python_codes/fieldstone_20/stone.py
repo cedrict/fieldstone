@@ -92,7 +92,8 @@ hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
 
-relax=.9
+relaxV=.9
+relaxT=.9
 
 #################################################################
 #################################################################
@@ -494,9 +495,9 @@ for istep in range(0,nstep):
     # relaxation step
     #####################################################################
 
-    u=relax*u+(1-relax)*u_old
-    v=relax*v+(1-relax)*v_old
-    w=relax*w+(1-relax)*w_old
+    u=relaxV*u+(1-relaxV)*u_old
+    v=relaxV*v+(1-relaxV)*v_old
+    w=relaxV*w+(1-relaxV)*w_old
 
     ######################################################################
     # compute time step value 
@@ -706,7 +707,7 @@ for istep in range(0,nstep):
     # relax
     #################################################################
 
-    T=relax*T+(1-relax)*T_old
+    T=relaxT*T+(1-relaxT)*T_old
 
     #####################################################################
     # compute nodal strainrate on velocity grid

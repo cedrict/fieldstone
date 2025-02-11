@@ -52,12 +52,12 @@ The various measurements presented in the article are listed hereafter:
 \begin{itemize}
 \item The Nusselt number $\Nunb$ computed at the top surface following:
 \[
-\Nunb = L_z \frac{\int\int_{z=L_z} \frac{\partial T}{\partial y} dx dy  }{\int \int_{z=0} T dx dy}
+\Nunb = L_z \frac{\int\int_{z=L_z} \frac{\partial T}{\partial y} dx dy  }{\int \int_{z=0} T dx dy}.
 \]
-\item the root mean square velocity $\upnu_{rms}$ and the temperature mean square velocity $T_{rms}$
+\item The root mean square velocity $\upnu_{rms}$ and the temperature mean square velocity $T_{rms}$.
 \item The vertical velocity $w$ and temperature $T$ at points $\vec{r}_1=(0,0,L_z/2)$, 
-$\vec{r}_2=(L_x,0,L_z/2)$, $\vec{r}_3=(0,L_y,L_z/2)$ and $\vec{r}_4=(L_x,L_y,L_z/2)$;
-\item the vertical component of the heat flux $Q$ at the top surface  at all four corners. 
+$\vec{r}_2=(L_x,0,L_z/2)$, $\vec{r}_3=(0,L_y,L_z/2)$ and $\vec{r}_4=(L_x,L_y,L_z/2)$.
+\item The vertical component of the heat flux $Q$ at the top surface  at all four corners. 
 \end{itemize}
 
 \begin{center}
@@ -75,12 +75,14 @@ Right: same, obtained with \elefant \cite{thie14}.}
 \begin{tabular}{l|lccccccc|}
 domain size & \\
 \hline
-1.0079$\times$2700km & nelx= &16 &20 &24 &28 &32 &36 &40 \\  
-0.6283$\times$2700km & nely= &10 &13 &15 &18 &20 &23 &25 \\
-1.0000$\times$2700km & nelz= &16 &20 &24 &28 &32 &36 &40 \\  
+$a$=1.0079$\times$2700km & nelx= &16 &20 &24 &28 &32 &36 &40 \\  
+$b$=0.6283$\times$2700km & nely= &10 &13 &15 &18 &20 &23 &25 \\
+$h$=1.0000$\times$2700km & nelz= &16 &20 &24 &28 &32 &36 &40 \\  
 \hline
 \end{tabular}
 \end{center}
+Note that \lstinline{nelz} must be a multiple of four since we need to carry out measurements at 
+locations characterised by $z=3L_z/4$.
 
 %............................
 \subsection*{Methodology}
@@ -122,6 +124,8 @@ I fist load the shape functions which are in two separate files:
 from shape_functionsV import NNV,dNNVdr,dNNVds,dNNVdt
 from shape_functionsT import NNT,dNNTdr,dNNTds,dNNTdt
 \end{lstlisting}
+Technically these are the same functions since the polynomial space for 
+both velocity (components) and temperature is $Q_2$.
 
 There are \lstinline{NV=nnx*nny*nnz} velocity nodes and 
 \lstinline{NT=NV} temperature nodes.
@@ -156,7 +160,7 @@ contain a time derivative but the energy conservation equation does.
 
 At steady state the terms $\partial_t T$ is zero by definition so we must solve
 the following equation\footnote{Adiabatic heating, shear heating and internal heating 
-are not considered in the benchmark} (see Section~\ref{ss:hte}):
+are not considered in the benchmark} (see Section~\ref{MMM-ss:hte}):
 \begin{equation}
 \vec{\upnu}\cdot\vec\nabla T - {\vec \nabla} \cdot k {\vec \nabla} T = 0
 \end{equation}
@@ -265,7 +269,7 @@ T_old=T
 \end{lstlisting}
 \end{enumerate}
 The relaxation parameter \lstinline{relax} should be between 0 and 1.
-In this case I found that a relaxation coefficient of 1 actually works so it is used by default.
+In this case I found that a relaxation coefficient of 1 actually works.
 Note that at the moment the same coefficient is used to relax both velocity and temperature, I have 
 not explored different values for both.
 
@@ -299,6 +303,33 @@ the number of elements each node is part of.
     dTdxn/=c
     dTdyn/=c
     dTdzn/=c
+\end{lstlisting}
+
+%........................................
+\subsubsection*{Jacobian estimates}  
+
+Because the mesh is regular and all elements have the same size $h_x,h_y,x_z$
+then the Jacobian of the transformation from an element to the reference element
+is given by 
+\[
+{\bm J}=\left( \begin{array}{ccc}
+h_x/2 & 0 & 0 \\
+0 & h_y/2 & 0 \\
+0 & 0 & h_z/2
+\end{array} \right)
+\qquad
+|{\bm J}|=\frac{h_xh_yh_z}{8}
+\]
+Since these quantities are typically evaluated at all quadrature points 
+there is a substantial CPU time save by precomputing these quantities only 
+once before entering the matrix building loop:
+
+\begin{lstlisting}
+jcob=hx*hy*hz/8
+jcbi=np.zeros((ndim,ndim),dtype=np.float64)
+jcbi[0,0]=2/hx ; jcbi[0,1]=0    ; jcbi[0,2]=0
+jcbi[1,0]=0    ; jcbi[1,1]=2/hy ; jcbi[1,2]=0
+jcbi[2,0]=0    ; jcbi[2,1]=0    ; jcbi[2,2]=2/hz
 \end{lstlisting}
 
 
