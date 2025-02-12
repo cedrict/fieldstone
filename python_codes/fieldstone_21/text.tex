@@ -1,8 +1,15 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/aspect_logo}
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/publication}
 
-\includegraphics[height=1.5cm]{images/pictograms/aspect_logo}
-\includegraphics[height=1.5cm]{images/pictograms/benchmark}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_21/keywords.ascii}
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_21/text.tex}} \end{flushright}
+
+\par\noindent\rule{\textwidth}{0.4pt}
 
 \begin{center}
 \inpython
@@ -15,13 +22,19 @@
 \index{contributors}{E.G.P. Puckett}
 
 \par\noindent\rule{\textwidth}{0.4pt}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The benchmark is described fully in Section~\ref{MMM-ss:anconv}. 
+Last revision: Feb. 11th, 2025.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The benchmark is described fully in Section~\ref{MMM-ss:anconv}.
+It also found its way (albeit with some modifications) in \textcite{gadb24} (2024). 
 The following results have been obtained with $k=4$.
 Taylor-Hood $Q_2\times Q_1$ elements are used with an isoparametric mapping. 
 
-For simplicity the layout of the points is borrowed from Stone 9 which 
+For simplicity the layout of the points is borrowed from Stone~\ref{f09} which 
 showcases $Q_1 \times P_0$ elements. However the points are then 'grouped' 
 to form $Q_2$ elements and $Q_1$ elements. 
 The used parameters $nelr$ and $nelt$ are read in and then halved. Concretely, 
@@ -35,12 +48,17 @@ removing the average pressure as measured on the inner boundary (or outer bounda
 yields the same result) from the pressure fields $p$ and $q$ (the projection of the 
 $Q_1$ pressure onto the $Q_2$ mesh). 
 
-Just for a change I here compute the velocity gradient tensor first ${\bm L}(\vec\upnu)=\vec\nabla\vec\upnu$.
-I loop over elements. For each element I loop over its velocity nodes and use the $Q_2$ 
-shape function derivatives to compute the four components $L_{xx},L_{xy},L_{yx},L_{yy}$ at 
-the node and add this value to the node (while keeping track of how many times a value
-has been added to the node). In the end I simply compute the average of the values
-on each node. From ${\bm L}(\vec\upnu)$ I then compute $\dot{\bm \varepsilon}(\vec\upnu)$. 
+With regards to the mesh using $Q_2$ elements allow us to use curved edges.
+All nodes are placed on a circle. An isoparametric mapping is used.
+We should probably do a super-parametric mapping like in ASPECT. 
+
+Since the viscosity is 1, we need not scale the $\G$ block.
+
+Finally, the pressure normalisation is rather crude: I simply make sure that 
+the average pressure on the inner boundary is zero.
+
+%-----------------------------------------------
+\subsection*{Results}
 
 As expected we recover a cubic convergence for the velocity error and quadratic for the 
 pressure. We also recover nearly identical results as those obtained with ASPECT (note that 
@@ -50,30 +68,35 @@ in this case $h=(R_2-R_1)/nelr=1/nelr$):
 \includegraphics[width=10cm]{python_codes/fieldstone_21/results/errors.pdf}
 \end{center}
 
-I also computed the error convergence of the strain rate components obtained with 
-the three different methods presented in Section~\ref{MMM-ss:nodderiv}
+Just for a change I first compute the velocity gradient tensor 
+first ${\bm L}(\vec\upnu)=\vec\nabla\vec\upnu$ by means of 
+the three different methods presented in Section~\ref{MMM-ss:nodderiv}.
+From ${\bm L}(\vec\upnu)$ I then compute $\dot{\bm \varepsilon}(\vec\upnu)$. 
+I also compute the error convergence of the nodal strain rate components 
 and we recover a quadratic convergence for methods 2 and 3 while method 1 
-shows an exponent of 1.5:
+shows an exponent of 1.5 (and is way less accurate than the other two!):
 
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_21/results/errors_sr1.pdf}\\
-\includegraphics[width=10cm]{python_codes/fieldstone_21/results/errors_sr2.pdf}\\
-\includegraphics[width=10cm]{python_codes/fieldstone_21/results/errors_sr3.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_21/results/errors_sr1.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_21/results/errors_sr2.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_21/results/errors_sr3.pdf}\\
+{\captionfont Error rates for strain rate components 
+as obtained with method 1,2,3 from left to right.}
 \end{center}
 
 Also the root mean square velocity is logically found to converge to its 
 expected analytical value.
 
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_21/results/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_21/results/vrms.pdf}
 \end{center}
 
 The pressure $p$ and its projection onto the $Q_2$ grid at 
 $r=R_1$ and $r=R_2$ are plotted here under:
 
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_21/results/pressure_R1.pdf}\\
-\includegraphics[width=10cm]{python_codes/fieldstone_21/results/pressure_R2.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_21/results/pressure_R1.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_21/results/pressure_R2.pdf}\\
 {\captionfont Left: pressure $p$ and $q$ at $r=R_1$; Right: 
 pressure $p$ and $q$ at $r=R_2$.}
 \end{center}

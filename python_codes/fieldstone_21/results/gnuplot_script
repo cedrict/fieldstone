@@ -1,67 +1,74 @@
-set term pdf enhanced
-set output 'errors.pdf'
+#
+set term pdf enhanced font "Times,12pt"
 set log xy
 set xlabel 'h'
 set ylabel 'error'
-set key bottom 
+set format y "10^{%L}"
+set grid
+
+###############################################################################
+set key outside 
+set output 'errors.pdf'
 plot[][]\
-'errors' u (1./($3)):6 w lp ps .45 t 'velocity',\
-'errors' u (1./($3)):9 w lp ps .35 t 'pressure (p)',\
-'errors' u (1./($3)):12 w lp ps .35 t 'pressure (q)',\
+'errors.ascii' u (1./($3)):6 w lp ps .55 t 'velocity',\
+'errors.ascii' u (1./($3)):9 w lp ps .65 t 'pressure (p)',\
+'errors.ascii' u (1./($3)):12 w lp ps .45 t 'pressure (q)',\
 'aspect_k4_q2q1.dat' u (1./$6):4 w lp ps .4 t 'ASPECT, v' ,\
 'aspect_k4_q2q1.dat' u (1./$6):5 w lp ps .4 t 'ASPECT, p',\
 x**3. w l lt -1 dashtype 4 t 'x^3',\
 x**2.*3. w l lt -1 dashtype 2 t 'x^2'
 
+###############################################################################
 set title 'method 1'
 set output 'errors_sr1.pdf'
-plot[][0.0001:4]\
-'errors_sr1' u (1./($3)):6  w lp lt 1 pt 1 ps .45 t 'e_{xx}' ,\
-'errors_sr1' u (1./($3)):9  w lp lt 2 pt 2 ps .45 t 'e_{yy}' ,\
-'errors_sr1' u (1./($3)):12 w lp lt 3 pt 3 ps .45 t 'e_{xy}' ,\
+plot[0.009:][0.0001:4]\
+'errors_sr1.ascii' u (1./($3)):6  w lp lt 1 pt 1 ps .45 t 'e_{xx}' ,\
+'errors_sr1.ascii' u (1./($3)):9  w lp lt 2 pt 2 ps .45 t 'e_{yy}' ,\
+'errors_sr1.ascii' u (1./($3)):12 w lp lt 3 pt 3 ps .45 t 'e_{xy}' ,\
 x**1.5*20 lt -1 dashtype 3 t 'h^{1.5}' 
 
+###############################################################################
 set title 'method 2'
 set output 'errors_sr2.pdf'
-plot[][:4]\
-'errors_sr2' u (1./($3)):6  w lp lt 1 pt 1 ps .45 t 'e_{xx}' ,\
-'errors_sr2' u (1./($3)):9  w lp lt 2 pt 2 ps .45 t 'e_{yy}' ,\
-'errors_sr2' u (1./($3)):12 w lp lt 3 pt 3 ps .45 t 'e_{xy}' ,\
+plot[0.009:][:4]\
+'errors_sr2.ascii' u (1./($3)):6  w lp lt 1 pt 1 ps .45 t 'e_{xx}' ,\
+'errors_sr2.ascii' u (1./($3)):9  w lp lt 2 pt 2 ps .45 t 'e_{yy}' ,\
+'errors_sr2.ascii' u (1./($3)):12 w lp lt 3 pt 3 ps .45 t 'e_{xy}' ,\
 x**2 lt -1 dashtype 2 t 'h^2' 
 
+###############################################################################
 set title 'method 3'
 set output 'errors_sr3.pdf'
-plot[][:4]\
-'errors_sr3' u (1./($3)):6  w lp lt 1 pt 1 ps .45 t 'e_{xx}' ,\
-'errors_sr3' u (1./($3)):9  w lp lt 2 pt 2 ps .45 t 'e_{yy}' ,\
-'errors_sr3' u (1./($3)):12 w lp lt 3 pt 3 ps .45 t 'e_{xy}' ,\
+plot[0.009:][:4]\
+'errors_sr3.ascii' u (1./($3)):6  w lp lt 1 pt 1 ps .45 t 'e_{xx}' ,\
+'errors_sr3.ascii' u (1./($3)):9  w lp lt 2 pt 2 ps .45 t 'e_{yy}' ,\
+'errors_sr3.ascii' u (1./($3)):12 w lp lt 3 pt 3 ps .45 t 'e_{xy}' ,\
 x**2 lt -1 dashtype 2 t 'h^2' 
 
+###############################################################################
+reset
+set term pdf enhanced font "Times,12pt"
+set grid
 unset title
-
 set pointsize .5
-
 set key top left
+set xlabel 'h'
 set ylabel 'v_{rms}'
 unset log y
 set output 'vrms.pdf'
 plot[:][]\
-'vrms' u (1./($3)):5 w lp notitle,\
+'vrms.ascii' u (1./($3)):5 w lp notitle,\
 1.083554613 lt -1 dashtype 2 t 'analytical'
 
 
-
-
-
-
-
+##########################################################3
+reset
+set term pdf enhanced font "Times,12pt"
+set grid
 set xlabel 'x'
 set ylabel 'pressure'
 set key outside
-unset log
-
-##########################################################3
-
+set pointsize 0.4
 
 R1=1.
 R2=2.
@@ -73,13 +80,13 @@ h(x)=(2*g(x)-f(x))/x
 
 
 set output 'pressure_R1.pdf'
-plot[][]\
+plot[-pi:pi][]\
 4*h(R1)*sin(4*x) lt -1 lw 2 t 'analyt.',\
 'p_R1.ascii' u (atan2($2,$1)):3 w p lt 1 t 'p',\
 'q_R1.ascii' u (atan2($2,$1)):3 w p lt 2 t 'q'
 
 set output 'pressure_R2.pdf'
-plot[][]\
+plot[-pi:pi][]\
 4*h(R2)*sin(4*x) lt -1 lw 2 t 'analyt.',\
 'p_R2.ascii' u (atan2($2,$1)):3 w p lt 1 t 'p',\
 'q_R2.ascii' u (atan2($2,$1)):3 w p lt 2 t 'q'
