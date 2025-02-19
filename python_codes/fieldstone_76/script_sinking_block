@@ -4,18 +4,22 @@ rm errors_*
 rm vrms_*
 rm *.ascii
 
-nq=3
+for m in 1 2 ; do
 
-m=1
+   for rs in 16 32 48 64 80 96; do
 
-for rs in 16 32 48 64 80 96; do
+      #for nq in 2 3 4 ; do
+      for nq in  3  ; do
 
-    echo $rs 
+          echo res=$rs nq=$nq m=$m
 
-    python3 stone.py $rs $rs 0 $nq $m > opla
+          python3 stone.py $rs $rs 0 $nq $m > opla
 
-    grep vrms opla >> vrms_nq$nq
+          grep vrms opla >> vrms_nq${nq}_m${m}
+          mv profile.ascii profile_nq${nq}_m${m}_res${rs}.ascii
 
+      done
+   done
 done
 
 rm opla

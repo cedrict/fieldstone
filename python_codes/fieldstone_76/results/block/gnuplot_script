@@ -16,6 +16,8 @@ set key outside
 unset log xy
 set title 'mapped'
 set xlabel 'y'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0.4375, graph 0 to 0.5625, graph 1
 
 set ylabel 'u'
 set output 'profile_m1_u.pdf'

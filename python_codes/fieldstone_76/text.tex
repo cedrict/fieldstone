@@ -11,7 +11,7 @@
 \par\noindent\rule{\textwidth}{0.4pt}
 
 \begin{center}
-\inpython
+\inpython \hspace{0.5cm}
 {\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_76}}
 \end{center}
 
@@ -26,17 +26,59 @@ Last revision: Feb. 15th, 2025.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%------------------------------------------------------------------------------
+\subsection*{What the literature says}
 
-This stone is an example of $Q_2\times P_{-1}$ implementation. 
-The 2d $Q_2$ shape functions have been derived in Section~\ref{MMM-ss:q22d}
-The $-1$ subscript indicates that the pressure field is linear (but not bilinear!)
-as explained in Section~\ref{MMM-sec:terminology}.
+According to \textcite{bobf08} 
+{\color{darkgray} ``This element was apparently discovered 
+around a blackboard at the Banff Conference on Finite Elements in 
+Flow Problems (1979)''}.
 
-%............................................................
-\subsection*{Mapped vs un-mapped pressure basis functions}
+\begin{center}
+\input{tikz/tikz_q2pm1}
+\end{center}
 
-Actually the story is a bit more complicated than that, as explained for 
-example in \textcite{boga02} (2002):
+This element is crowned ``probably the most accurate 2D element'' in \textcite{grsa}.
+
+It is characterised by piecewise bi/triquadratic velocities, 
+and piecewise linear discontinuous polynomial pressure. 
+The element satisfies the inf-sup condition, see p.~211 of \textcite{hugh}, or 
+p.~138 of \textcite{elsw}.
+It is used for example in \textcite{vavs89} (1989) for steady laminar flow in a curved tube
+but also and more importantly it is the element pair used in \textcite{mabl15} (2015)
+and it is available in \aspect too. 
+
+
+When using this element one must be aware of the fact that there are 
+two possible choices for the definitions of the pressure space 
+(the so-called ``mapped'' and ``un-mapped'' variants) as explained
+in \textcite{boga02} (2002). 
+
+\textcite{bobf08} (2008) state: 
+\begin{displayquote}
+{\color{darkgray}
+On a general quadrilateral mesh, the [pressure] space 
+can be defined in two different ways: either [it] 
+consists of (discontinuous) piecewise linear functions, or it is built
+by considering three linear shape functions on the reference unit square and mapping
+them to the general elements like it is usually done for continuous 
+finite elements. [...] We shall refer to the first possibility as 
+unmapped pressure approach and to the second one as mapped pressure approach.
+
+[...] 
+
+So far, we have shown that either the 
+unmapped and the mapped pressure 
+approach gives rise to a stable ${\bm Q}_2\times P_{-1}$ scheme. 
+However, as a consequence of the
+results proved in \textcite{arbf02} (2002), we have that the mapped 
+pressure approach cannot achieve 
+optimal approximation order. Namely, the unmapped pressure space 
+provides a second-order convergence 
+in $L_2$, while the mapped one achieves only ${\cal O}(h)$ in the same norm.}
+\end{displayquote}
+
+We also read in \textcite{boga02} (2002):
 \begin{displayquote}
 {\color{darkgray}
 Two possible choices are given for the definition of the pressure space: 
@@ -50,12 +92,48 @@ is suboptimally convergent.
 }
 \end{displayquote}
 
-In other words, the mapped version consists of  
-using the $P_{-1}$ basis functions defined in Section~\ref{MMM-ss:lbfq2D}:
-inside the reference element the pressure is given by $p^h(r,s)=a+br+cs$ 
 
-The unmapped version is a bit less straightforward and is as follows:
-let us assume there are three pressure nodes inside the element.
+
+See also discussion about mapped/unmapped in \textcite{bobf13} and 
+in Section 3.6.4 of \textcite{john16}.
+
+This element is mentioned in \textcite{kaus10} (2010) and \textcite{pefc89} (1989) 
+and it is used in \textcite{freh14} (2014) to study 3D fold growth rates 
+(see online supplementary material) and in \textcite{schm08} (2008).
+
+Note that the serendipity version of this pair, 
+i.e. ${\bm Q}_2^{(20)}\times P_{-1}$ is also LBB stable
+as shown in p180 of Reddy \cite{reddybook2}.
+
+{\color{red} since I wrote this I have purchased many relevant FE books
+and I need to go through all and extract relevant facts and remarks about 
+this element pair.}
+
+
+%------------------------------------------------------------------------------
+\subsection*{Deriving the mapped vs un-mapped pressure basis functions}
+
+The mapped version consists of  
+using the $P_{-1}$ basis functions defined in Section~\ref{MMM-ss:lbfq2D}:
+inside the reference element the pressure is given by $p^h(r,s)=a+br+cs$.
+The reference element is the $[-1:1]^2$ square in the 2d Cartesian axis
+system $r,s$.
+Nodes are placed as follows: node 0 at (0,0), node 1 at (1,0) and node 2 at (0,1).
+This yields the following basis functions
+\begin{align}
+\bN_0^p &= 1-r-s \nn\\
+\bN_1^p &= r \nn\\
+\bN_2^p &= s \nn
+\end{align}
+with 
+\[
+p^h(r,s) = \sum_{k=0}^2 \bN_k^p(r,s) \ p_k
+\]
+Obviously we recover $\sum_k \bN_k^p = 1$ and $\bN_k^p(r_i,s_i)=\delta_{ik}$.
+
+
+The un-mapped version is a bit less straightforward and is as follows:
+let us assume there are three distinct pressure nodes inside the element.
 Inside each element the pressure is defined by a linear field
 \[
 p^h(x,y) = a+bx+cy
@@ -65,9 +143,9 @@ the expression above evaluated at the pressure nodes with
 coordinates $(x_i,y_i)$ should be equal to $p_i$. 
 Then we have the following three equations:
 \begin{eqnarray}
-a + bx_1 + cy_1 &=& p_1 \nn\\
-a + bx_2 + cy_2 &=& p_2 \nn\\
-a + bx_3 + cy_3 &=& p_3 \nn
+a + bx_1 + cy_1 &=& p_0 \nn\\
+a + bx_2 + cy_2 &=& p_1 \nn\\
+a + bx_3 + cy_3 &=& p_2 \nn
 \end{eqnarray}
 or, 
 \[
@@ -87,7 +165,7 @@ a \\ b \\ c
 =
 \left(
 \begin{array}{ccc}
-p_1 \\ p_2 \\ p_3
+p_0 \\ p_1 \\ p_2
 \end{array}
 \right)
 \]
@@ -109,7 +187,7 @@ a \\ b \\ c
 \cdot
 \left(
 \begin{array}{ccc}
-p_1 \\ p_2 \\ p_3
+p_0 \\ p_1 \\ p_2
 \end{array}
 \right)
 = {\bm M}^{-1} \cdot \vec{p}
@@ -139,28 +217,39 @@ and
 \]
 so that
 \begin{eqnarray}
-a &=& m_{11}p_1 + m_{12} p_2 + m_{13} p_3 \nn\\
-b &=& m_{21}p_1 + m_{22} p_2 + m_{23} p_3 \nn\\
-c &=& m_{31}p_1 + m_{32} p_2 + m_{33} p_3 \nn
+a &=& m_{11}p_0 + m_{12} p_1 + m_{13} p_2 \nn\\
+b &=& m_{21}p_0 + m_{22} p_1 + m_{23} p_2 \nn\\
+c &=& m_{31}p_0 + m_{32} p_1 + m_{33} p_2 \nn
 \end{eqnarray}
 In the end 
 \begin{eqnarray}
 p^h(x,y) 
 &=&  a+bx+cy \nn\\
-&=& m_{11}p_1 + m_{12} p_2 + m_{13} p_3
-+ (m_{21}p_1 + m_{22} p_2 + m_{23} p_3) x
-+ (m_{31}p_1 + m_{32} p_2 + m_{33} p_3) y \nn\\
-&=& \underbrace{(m_{11} + m_{21}x + m_{31}y)}_{\bN_1(x,y)} p_1 
-+   \underbrace{(m_{12} + m_{22}x + m_{32}y)}_{\bN_2(x,y)} p_2 
-+   \underbrace{(m_{13} + m_{23}x + m_{33}y)}_{\bN_3(x,y)} p_3
+&=& m_{11}p_0 + m_{12} p_1 + m_{13} p_2
++ ( m_{21}p_0 + m_{22} p_1 + m_{23} p_2) x
++ ( m_{31}p_0 + m_{32} p_1 + m_{33} p_2) y \nn\\
+&=& \underbrace{(m_{11} + m_{21}x + m_{31}y)}_{\bN_0^p(x,y)} p_0 
++   \underbrace{(m_{12} + m_{22}x + m_{32}y)}_{\bN_1^p(x,y)} p_1 
++   \underbrace{(m_{13} + m_{23}x + m_{33}y)}_{\bN_1^p(x,y)} p_2
+\label{f76_NNNP}
 \end{eqnarray}
 The basis functions are then evaluated at the (real) coordinates 
 of the quadrature point $(x_q,y_q)$.
 
+{\color{red} Q1: is this the right/standard way of deriving these 
+basis functions? I suspect not. How is this carried out in deal.II?}
 
 
-%..............................................................................
+
+
+
+%------------------------------------------------------------------------------
 \subsection*{About the code}
+
+
+The 2d $Q_2$ shape functions have been derived in Section~\ref{MMM-ss:q22d}.
+%The $-1$ subscript indicates that the pressure field is linear (but not bilinear!)
+%as explained in Section~\ref{MMM-ss:pairq2pm1}.
 
 For all the tests/benchmarks the box is a unit square.
 Velocity nodes coordinates are stored in the \lstinline{xV,yV} arrays
@@ -175,24 +264,38 @@ The mesh counts \lstinline{nel=nelx*nely} elements,
 The \lstinline{meth} parameter is 1 for mapped approach and 2 
 for un-mapped approach. 
 
+I have implemented three different types of meshes. 
+The first type is straightforward: all elements are rectangular (and in 
+practice square for simplicity).
+
+The second type sees a random perturbation added to interior nodes.
 The parameter \lstinline{xi} controls the randomness of the mesh as follows:
 for each node inside the domain (i.e. not on the boundaries) a random value 
-in the range $[-\xi,\xi]$ is added to the $x$ and $y$ coordonates:
+in the range $[-\xi,\xi]$ ($\xi$ is set to 0.1 by default) 
+is added to the $x$ and $y$ coordonates:
 \begin{lstlisting}
 for i in range(0,NV):
     if xV[i]>0 and xV[i]<Lx and yV[i]>0 and yV[i]<Ly:
        xV[i]+=random.uniform(-1.,+1)*hx*xi
        yV[i]+=random.uniform(-1.,+1)*hy*xi
 \end{lstlisting}
-If $\xi=0$ then no randomness is added to the nodes position and the 
-mesh consists of rectangular elements (and for simplicity of square elements).
 
-Another mesh deformation approach is borrowed from \stone~25 which models the 
+The third type is as follows: it is borrowed from \stone~25 which models the 
 Rayleigh-Taylor experiment of \textcite{vaks97} (1997). Only the vertical position 
-of the nodes is modified.
+of the nodes is modified: nodes at about 1/5 the height of the domain are set to 
+follow a sinusoidal perturbation and the position of other nodes above or below
+is then adjusted. See figure below. 
 
+The internal numbering of velocity nodes is as follows:
+\begin{verbatim}
+3--6--2
+|     |
+7  8  5
+|     |
+0--4--1
+\end{verbatim}
 
-When mesh randomization or mesh deformation is added to all nodes, 
+Very importantly, when mesh randomization or mesh deformation is used 
 I make sure that the velocity nodes 4,5,6,7 in the middle of the edges 
 are really put back between nodes 0-1, 1-2, 2-3, and 3-0 respectively. 
 The node in the middle of the element is also then moved accordingly.
@@ -217,19 +320,35 @@ The three types of meshes are shown here:
 \includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mesh_type2}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/mesh_type3}\\
 {\captionfont From left to right: mesh types 1, 2, and 3, or 'square', 'random' 
-and 'wave' meshes.}
+and 'wave' meshes. Elements on the left are squares. Elements on the right are trapezes (their
+vertical edges are parallel).}
 \end{center}
+
+Looking at the meshes above we find that the elements of the 'wave' mesh 
+can be obtained by affine transformation\footnote{\url{https://en.wikipedia.org/wiki/Affine_transformation}} 
+of the reference element but not the elements of the 'random' mesh. 
+Quickly: an affine transformation 
+is a geometric transformation that preserves lines and parallelism, but not necessarily 
+Euclidean distances and angles. 
+I remember coming across this terminology in the relevant literature (which I need to find again!)
+and this may explain the results obtained for the manufactured solutions I ran the code on 
+in what follows on both these types of meshes.
 
 The mapping is isoparametric (i.e. $Q_2$). The same mapping is used for all integrals.
 In the case of rectangular elements both the mapped and un-mapped approaches 
 yield the same pressure basis functions values at the quadrature points
 so the measured errors and vrms are identical.
-{\color{red} what about trapezes? parallelograms?} 
+{\color{red} Q2: I guess this is true for all elements obtained by affine transformation
+from reference element?} 
 
-The same quadrature rule is used for $\K$ and $\G$ blocks.
+The same quadrature rule is used for $\K$ and $\G$ blocks (called $A$ and $B$ blocks respectively in the
+ASPECT literature).
 I explore the effect of the number of quadrature points on the solution, 
 so I allow for $2^2$, $3^2$ and $4^2$ quadrature points
-as parameterized by the \lstinline{nqperdim} parameter. 
+as parameterized by the \lstinline{nqperdim} parameter.
+Note that a $2^2$ is not sufficient to exactly integrate the 
+terms found in the $\K$ and $\G$ blocks, $3^2$ is standard, 
+and $4^2$ is probably overkill.
 
 One source of uncertainty on my part is how/where to setup the pressure nodes.
 For mapped elements the $P_{-1}$ pressure basis functions are defined as 
@@ -241,10 +360,22 @@ def NNP(r,s):
     return np.array([NP_0,NP_1,NP_2],dtype=np.float64)
 \end{lstlisting}
 In other words the first pressure node is at coordinates $(0,0)$,
-the second at $(1,0)$ and the third at $(0,1)$ inside the reference element $[-1,+1]^2$.
+the second at $(1,0)$ and the third at $(0,1)$ inside the reference element $(r,s)\in[-1,+1]^2$
+as shown here:
+
+\begin{verbatim}
+3--6--2   +--2--+
+|     |   |     |
+7  8  5   +  0  1
+|     |   |     |
+0--4--1   +--+--+
+
+V nodes   P nodes
+\end{verbatim}
+
 
 For the un-mapped version we need to define the pressure node coordinates 
-directly in the $x,y$-axis system.
+directly in the $(x,y)$ coordinates.
 At the moment it is done as follows: The ninth velocity node of the element is 
 in the center of the element and is also the first pressure node.
 Since the elements are marginally deformed I can place the second pressure node 
@@ -265,7 +396,7 @@ for iel in range(nel):
     counter+=1
 \end{lstlisting}
 In this case the pressure basis functions need to be computed
-element by element:
+element by element following Eq.~\eqref{f76_NNNP}:
 
 \begin{lstlisting}
 for iel in range(0,nel):
@@ -285,26 +416,24 @@ for iel in range(0,nel):
 \end{lstlisting}
 
 
-In the near future I want to try elements that 
-showcase curves edges. How am I to place P nodes ??
+{\color{red} Q3: In the near future I want to try elements that 
+showcase curves edges (esp. for the wave mesh). How am I then to place the 
+velocity node in the 'middle' and the pressure nodes ??}
 
 In both cases (mapped and un-mapped) the pressure is discontinuous from an element to another 
-and this poses a little problem in terms of exporting it to 
-vtu (and plotting with paraview). 
+and this adds complexity in terms of exporting it to vtu format (and plotting with paraview). 
 I then simply choose to export the value of the pressure in the middle of 
-each element. {\color{red} I should improve this in the future, but it is 
-only a visualisation problem.}
-
+each element\footnote{I should improve this in the future, but it is 
+only a visualisation problem and does not influence results.}
 
 Quick summary of what follows without going into 
 much detail: I carry out three benchmarks based on manufactured solutions  
 and recover the expected cubic convergence for the velocity error 
 and a quadratic error convergence for the pressure 
-\textit{only} for the unmapped approach
-in the case of non-rectangular elements.
+\textit{only} for the un-mapped approach.
+Quadratic pressure error convergence is obtained with mapped elements 
+only on square and wave meshes, with a linear convergence for random meshes. 
 
-
-profiles dont work with unmapped
 
 
 \newpage
@@ -335,13 +464,34 @@ Note that the pressure obeys $\int_{\Omega} p \; dV = 0$.
 right column: wave mesh.}
 \end{center}
 
-Remark: This is rather peculiar. I seem to recover 
-a 4th order convergence for the pressure error when 
+This is rather peculiar. I seem to recover 
+a 4th order convergence for the pressure error on the square meshes when 
 $2\times 2$ quadratures are used but not higher order ones...? 
 This does not happen with either randomised meshes or 
 other manufactured solutions so I will attribute this superconvergence 
-to the fact that the pressure field is independent 
-of $y$ and is only a second order polynomial in $x$ and elements are all square. 
+to a combination of facts, i.e. the pressure field is independent 
+of $y$ and is only a second order polynomial in $x$, 
+terms are under-integrated and elements are all square. 
+
+This observation is no more true on random or wave meshes. 
+On random meshes the velocity error convergence rate becomes less than 3 
+at high(er) resolutions and the pressure error convergence rate is 1
+for the mapped approach and 2 for the un-mapped. 
+Note that in the latter case higher order quadratures $3^2$ and $4^2$ yield pressure errors
+that are about an order of magnitude higher than those obtained with $2^2$ 
+quadratures (again, an unexpected result).
+
+Looking at the results obtained on wave meshes, we see that there is no difference between 
+mapped and un-mapped. Furthermore higher order quadratures $3^2$ and $4^2$ yield pressure errors rates 
+of 4 while the rate obtained with $2^2$ is 3.
+
+All in all, some of these results are somewhat surprising, but they can be attributed to 
+a combination of specific factors.
+
+Let us now consider two other manufactured solutions which showcase a pressure field 
+that is a function of $x^m$ and $y^n$ where $m,n\ge 1$.
+
+
 
 \newpage
 %......................................................
@@ -370,6 +520,16 @@ The corresponding body force terms are derived in Section~\ref{MMM-ss:mms11}.
 {\captionfont Left column: Regular square mesh; middle column: Randomized $\xi=0.1$ mesh;
 right column: wave mesh.}
 \end{center}
+
+The picture in this case is much clearer than before. 
+For square and wave meshes the velocity errors and pressure errors
+converge with rates 3 and 2 respectively and there is 
+no difference between mapped and un-mapped results. Quadrature also does not 
+play any role.
+
+In the case of the random meshes pressure error convergence rates are 1 for mapped and 
+2 for un-mapped.
+
 
 \newpage
 %......................................................
@@ -400,16 +560,93 @@ velocity is prescribed on the boundary of the domain.
 right column: wave mesh.}
 \end{center}
 
+We can draw the same conclusions here as for the previous manufactured solution.  
+
 
 \newpage
 %.......................................................
 \subsection*{Instantaneous sinking block}
 
-It is fully described in Section~\ref{MMM-ss:sinking_block}
+It is fully described in Section~\ref{MMM-ss:sinking_block}.
+The block is centered in the domain, its density is 1\% larger than the 
+fluid density ($\rho_f=1$) and its viscosity is 1000 times larger than 
+the fluid viscosity ($\eta_f=1$).
+The block is a square of dimension 1/8 so that using square meshes $16^2$, 
+$32^2$, $48^2$, $64^2$, ... ensures that element edges align with the 
+sides of the block.
+Free-slip boundary conditions are prescribed on all sides.
+This is not a benchmark {\it stricto sensu} as there is no analytical solution
+available. 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_76/results/block/vel}
-\includegraphics[width=7cm]{python_codes/fieldstone_76/results/block/press}
+\includegraphics[width=5cm]{python_codes/fieldstone_76/results/block/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_76/results/block/press}\\
+{\captionfont Velocity and pressure fields.}
 \end{center}
+
+The root mean square velocity is measured on a series of meshes 
+and is shown on the following figure for both mapped and un-mapped approaches: 
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_76/results/block/vrms.pdf}
+\end{center}
+
+We find that the highest resolution $80^2$ is not high enough to yield a resolution-independent
+measurement (although we note that the measurements above do not vary by more than 1\%). 
+
+The velocity and pressure are measured on a vertical line passing through the 
+middle of the block:
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block/profile_m1_u.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block/profile_m1_v.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block/profile_m1_p.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block/profile_m2_u.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block/profile_m2_v.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block/profile_m2_p.pdf}\\
+{\captionfont The grey band indicates the $y$ values inside the block.}
+\end{center}
+
+Because of symmetry we expect and recover $u=0$ on this line.
+The $v$-component seems to converge to a resolution independent profile
+while the pressure is clearly dominated by the hydrostatic pressure.
+We do not observe any difference between mapped and un-mapped, as expected
+since elements are square.
+
+\newpage
+%............................................................
+\subsection*{Instantaneous sinking block (reduced densities)}
+
+The setup is identical to the previous one, except that now the fluid density is zero and 
+the block density is 0.01. In other words the hydrostatic pressure has been removed.
+We expect an identical velocity field but the recovered pressure is now the 
+dynamic/excess pressure:
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block_rd/profile_m1_u.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block_rd/profile_m1_v.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block_rd/profile_m1_p.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block_rd/profile_m2_u.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block_rd/profile_m2_v.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block_rd/profile_m2_p.pdf}\\
+{\captionfont The grey band indicates the $y$ values inside the block.}
+\end{center}
+
+We find that results obtained with ASPECT nicely agree with the results of this \stone.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/block_rd/vrms.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/block_rd/maxvel.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block_rd/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block_rd/v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_76/results/block_rd/press}\\
+{\captionfont Velocity and pressure fields on $96\times 96$ mesh. 
+Note that the visualised pressure is elemental instead of $P_{-1}$.}
+\end{center}
+
+
 
 

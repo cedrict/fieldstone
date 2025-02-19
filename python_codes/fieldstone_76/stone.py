@@ -5,11 +5,6 @@ import scipy.sparse as sps
 import random
 from scipy.sparse import csr_matrix, lil_matrix 
 
-#import scipy.sparse as sps
-#from scipy.sparse.linalg.dsolve import linsolve
-#from scipy.sparse import lil_matrix
-#from numpy import linalg 
-
 ###############################################################################
 # bx and by are the body force components
 # and analytical solution
@@ -55,64 +50,62 @@ def dpdy_th(x,y):
 #------------------------------------------------------------------------------
 
 def bx(x,y):
-    if bench==1:
-       return dpdx_th(x,y)-2*app(x)*b(y) -(a(x)*bpp(y)+cp(x)*dp(y))
+    if bench==1: return dpdx_th(x,y)-2*app(x)*b(y) -(a(x)*bpp(y)+cp(x)*dp(y))
+    if bench==2: return 0. 
     if bench==3:
        val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
            (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
            (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
            1.-4.*y+12.*y*y-8.*y*y*y)
        return val
-    if bench==9:
-       return 3*x**2*y**2-y-1
+    if bench==9: return 3*x**2*y**2-y-1
 
 def by(x,y):
-    if bench==1:
-       return dpdy_th(x,y)-(ap(x)*bp(y)+cpp(x)*d(y)) -2*c(x)*dpp(y) 
+    if bench==1: return dpdy_th(x,y)-(ap(x)*bp(y)+cpp(x)*d(y)) -2*c(x)*dpp(y) 
+    if bench==2:
+       if abs(x-0.5)<0.0625 and abs(y-0.5)<0.0625:
+          return -1.01+1
+       else:
+          return -1+1
     if bench==3:
        val=((8.-48.*y+48.*y*y)*x*x*x+
          (-12.+72.*y-72.*y*y)*x*x+
          (4.-24.*y+48.*y*y-48.*y*y*y+24.*y**4)*x -
          12.*y*y+24.*y*y*y-12.*y**4)
        return val
-    if bench==9:
-       return 2*x**3*y+3*x-1
+    if bench==9: return 2*x**3*y+3*x-1
 
 #------------------------------------------------------------------------------
 
 def eta(x,y):
-    if bench==1:
-       return 1
-    if bench==3:
-       return 1 
-    if bench==9:
-       return 1 
+    if bench==1: return 1
+    if bench==2:
+       if abs(x-0.5)<0.0625 and abs(y-0.5)<0.0625:
+          return 1000
+       else:
+          return 1
+    if bench==3: return 1 
+    if bench==9: return 1 
 
 #------------------------------------------------------------------------------
 
 def velocity_x(x,y):
-    if bench==1:
-       return a(x)*b(y)
-    if bench==3:
-       return x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
-    if bench==9:
-       return x+x**2-2*x*y+x**3-3*x*y**2+x**2*y
+    if bench==1: return a(x)*b(y)
+    if bench==2: return 0
+    if bench==3: return x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
+    if bench==9: return x+x**2-2*x*y+x**3-3*x*y**2+x**2*y
 
 def velocity_y(x,y):
-    if bench==1:
-       return c(x)*d(y)
-    if bench==3:
-       return -y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
-    if bench==9:
-       return -y-2*x*y+y**2-3*x**2*y+y**3-x*y**2
+    if bench==1: return c(x)*d(y)
+    if bench==2: return 0
+    if bench==3: return -y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
+    if bench==9: return -y-2*x*y+y**2-3*x**2*y+y**3-x*y**2
 
 def pressure(x,y):
-    if bench==1:
-       return x*(1-x)*(1-2*y)
-    if bench==3:
-       return x*(1.-x)-1./6.
-    if bench==9:
-       return x*y+x+y+x**3*y**2-4/3
+    if bench==1: return x*(1-x)*(1-2*y)
+    if bench==2: return 0
+    if bench==3: return x*(1.-x)-1./6.
+    if bench==9: return x*y+x+y+x**3*y**2-4/3
 
 #------------------------------------------------------------------------------
 
@@ -156,10 +149,7 @@ def dNNVds(rq,sq):
                      dNVds_5,dNVds_6,dNVds_7,dNVds_8],dtype=np.float64)
 
 def NNP(r,s):
-    NP_0=1-r-s
-    NP_1=r
-    NP_2=s
-    return np.array([NP_0,NP_1,NP_2],dtype=np.float64)
+    return np.array([1-r-s,r,s],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 ###############################################################################
@@ -183,7 +173,7 @@ mP=3
 # bench=3 : Donea & Huerta
 # bench=9 : mms #2 (lami17)
 
-bench=3
+bench=2
 
 Lx=1
 Ly=1
@@ -195,16 +185,16 @@ if int(len(sys.argv) == 6):
    nqperdim=int(sys.argv[4])
    meth=int(sys.argv[5])
 else:
-   nelx = 16
+   nelx = 32
    nely = nelx
    visu = 1
    nqperdim=3
-   meth = 2
+   meth = 1
 
 # 1: square elements
 # 2: randomised
 # 3: wave deformation
-mesh_type=3
+mesh_type=1
 
 if mesh_type==2: xi=0.1 # controls level of mesh randomness (between 0 and 0.5 max)
 
@@ -861,73 +851,51 @@ if bench==1 or bench==9 or bench==3:
 
 ###############################################################################
 # export velocity and pressure on vertical profile at x=0.5
-# since a node belongs to 4 nodes and the pressure is discontinuous,
+# since a node belongs to up to 4 elts and the pressure is discontinuous,
 # we export the four pressure values at the node.
-# velocities are then exported 4 times, which is unnecessary, but oh well.
 ###############################################################################
+
+rVnodes=[-1,1,1,-1,0,1,0,-1,0]
+sVnodes=[-1,-1,1,1,-1,0,1,0,0]
     
 profile=open('profile.ascii',"w")
 
 for iel in range(0,nel): 
-    if abs(xV[iconV[1,iel]]-0.5)<1e-6:
-       #lower right corner
-       rq=1
-       sq=-1
-       NNNP[0:mP]=NNP(rq,sq)
-       xq=0.0
-       yq=0.0
-       pq=0.0
-       for k in range(0,mP):
-           xq+=NNNP[k]*xP[iconP[k,iel]]
-           yq+=NNNP[k]*yP[iconP[k,iel]]
-           pq+=NNNP[k]*p[iconP[k,iel]]
-       uq=u[iconV[1,iel]]
-       vq=v[iconV[1,iel]]
-       profile.write("%10e %10e %10e %10e %10e\n" %(xq,yq,uq,vq,pq))
-       #upper right corner
-       rq=1
-       sq=+1
-       NNNP[0:mP]=NNP(rq,sq)
-       xq=0.0
-       yq=0.0
-       pq=0.0
-       for k in range(0,mP):
-           xq+=NNNP[k]*xP[iconP[k,iel]]
-           yq+=NNNP[k]*yP[iconP[k,iel]]
-           pq+=NNNP[k]*p[iconP[k,iel]]
-       uq=u[iconV[2,iel]]
-       vq=v[iconV[2,iel]]
-       profile.write("%10e %10e %10e %10e %10e\n" %(xq,yq,uq,vq,pq))
 
-    if abs(xV[iconV[0,iel]]-0.5)<1e-6:
-       #lower left corner
-       rq=-1
-       sq=-1
-       NNNP[0:mP]=NNP(rq,sq)
-       xq=0.0
-       yq=0.0
-       pq=0.0
-       for k in range(0,mP):
-           xq+=NNNP[k]*xP[iconP[k,iel]]
-           yq+=NNNP[k]*yP[iconP[k,iel]]
-           pq+=NNNP[k]*p[iconP[k,iel]]
-       uq=u[iconV[0,iel]]
-       vq=v[iconV[0,iel]]
-       profile.write("%10e %10e %10e %10e %10e\n" %(xq,yq,uq,vq,pq))
-       #upper left corner
-       rq=-1
-       sq=+1
-       NNNP[0:mP]=NNP(rq,sq)
-       xq=0.0
-       yq=0.0
-       pq=0.0
-       for k in range(0,mP):
-           xq+=NNNP[k]*xP[iconP[k,iel]]
-           yq+=NNNP[k]*yP[iconP[k,iel]]
-           pq+=NNNP[k]*p[iconP[k,iel]]
-       uq=u[iconV[3,iel]]
-       vq=v[iconV[3,iel]]
-       profile.write("%10e %10e %10e %10e %10e\n" %(xq,yq,uq,vq,pq))
+    if meth==2:
+       det=xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]]\
+          -xP[iconP[0,iel]]*yP[iconP[2,iel]]+xP[iconP[2,iel]]*yP[iconP[0,iel]]\
+          +xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]]
+       m11=(xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]])/det
+       m12=(xP[iconP[2,iel]]*yP[iconP[0,iel]]-xP[iconP[0,iel]]*yP[iconP[2,iel]])/det
+       m13=(xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]])/det
+       m21=(yP[iconP[1,iel]]-yP[iconP[2,iel]])/det
+       m22=(yP[iconP[2,iel]]-yP[iconP[0,iel]])/det
+       m23=(yP[iconP[0,iel]]-yP[iconP[1,iel]])/det
+       m31=(xP[iconP[2,iel]]-xP[iconP[1,iel]])/det
+       m32=(xP[iconP[0,iel]]-xP[iconP[2,iel]])/det
+       m33=(xP[iconP[1,iel]]-xP[iconP[0,iel]])/det
+
+    for k in range(0,mV):
+       xq=xV[iconV[k,iel]]
+       if abs(xq-0.5)<1e-6:
+          yq=yV[iconV[k,iel]]
+          uq=u[iconV[k,iel]]
+          vq=v[iconV[k,iel]]
+          rq=rVnodes[k]
+          sq=sVnodes[k]
+          if meth==1:
+             NNNP=NNP(rq,sq)
+          else:
+             NNNP[0]=(m11+m21*xq+m31*yq)
+             NNNP[1]=(m12+m22*xq+m32*yq)
+             NNNP[2]=(m13+m23*xq+m33*yq)
+          pq=NNNP.dot(p[iconP[:,iel]])
+          profile.write("%10e %10e %10e %10e %10e\n" %(xq,yq,uq,vq,pq))
+
+
+
+
 
 ###############################################################################
 # plot of solution
