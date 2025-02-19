@@ -2,18 +2,31 @@
 set terminal pdf enhanced font "Times,12pt"
 set grid
 set xlabel 'h'
-set ylabel 'v_{rms}'
-set output 'vrms.pdf'
 set log x
 set pointsize .25
 
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
 plot[0.009:0.12][]\
 'vrms_nq3_m1' u (1./sqrt($3)):6 w lp t 'mapped' ,\
 'vrms_nq3_m2' u (1./sqrt($3)):6 w lp t 'un-mapped'
 
+set ylabel 'max|v|'
+set output 'maxvel.pdf'
+plot[0.009:0.12][]\
+'vrms_nq3_m1' u (1./sqrt($3)):9 w lp t 'mapped' ,\
+'vrms_nq3_m2' u (1./sqrt($3)):9 w lp t 'un-mapped'
+
+
+
+
 ####################################################
 set key outside
 unset log xy
+
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0.4375, graph 0 to 0.5625, graph 1
+
 set title 'mapped'
 set xlabel 'y'
 
@@ -25,6 +38,8 @@ plot[][]\
 'profile_nq3_m1_res48.ascii' u 2:3 t '48^2',\
 'profile_nq3_m1_res64.ascii' u 2:3 t '64^2',\
 'profile_nq3_m1_res80.ascii' u 2:3 t '80^2',\
+'profile_nq3_m1_res96.ascii' u 2:3 t '96^2',\
+'../../../../images/sinking_block/FS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:4 w l lt -1 lw .5   t 'ASPECT, lvl 10',\
 
 set ylabel 'v'
 set output 'profile_m1_v.pdf'
@@ -34,6 +49,8 @@ plot[][]\
 'profile_nq3_m1_res48.ascii' u 2:4 w l t '48^2',\
 'profile_nq3_m1_res64.ascii' u 2:4 w l t '64^2',\
 'profile_nq3_m1_res80.ascii' u 2:4 w l t '80^2',\
+'profile_nq3_m1_res96.ascii' u 2:4 w p t '96^2',\
+'../../../../images/sinking_block/FS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:5 w l lt -1 lw .5   t 'ASPECT, lvl 10',\
  
 set ylabel 'p'
 set output 'profile_m1_p.pdf'
@@ -43,6 +60,8 @@ plot[][]\
 'profile_nq3_m1_res48.ascii' u 2:5 w p t '48^2',\
 'profile_nq3_m1_res64.ascii' u 2:5 w p t '64^2',\
 'profile_nq3_m1_res80.ascii' u 2:5 w p t '80^2',\
+'profile_nq3_m1_res96.ascii' u 2:5 w p t '96^2',\
+'../../../../images/sinking_block/FS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:($6-(0.5-$3)) w l lt -1 lw .5   t 'ASPECT, lvl 10',\
 
 
 
@@ -58,6 +77,8 @@ plot[][]\
 'profile_nq3_m2_res48.ascii' u 2:3 t '48^2',\
 'profile_nq3_m2_res64.ascii' u 2:3 t '64^2',\
 'profile_nq3_m2_res80.ascii' u 2:3 t '80^2',\
+'profile_nq3_m2_res96.ascii' u 2:3 t '96^2',\
+'../../../../images/sinking_block/FS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:4 w l lt -1 lw .5   t 'ASPECT, lvl 10',\
 
 set ylabel 'v'
 set output 'profile_m2_v.pdf'
@@ -67,6 +88,8 @@ plot[][]\
 'profile_nq3_m2_res48.ascii' u 2:4 t '48^2',\
 'profile_nq3_m2_res64.ascii' u 2:4 t '64^2',\
 'profile_nq3_m2_res80.ascii' u 2:4 t '80^2',\
+'profile_nq3_m2_res96.ascii' u 2:4 t '96^2',\
+'../../../../images/sinking_block/FS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:5 w l lt -1 lw .5   t 'ASPECT, lvl 10',\
 
 set ylabel 'p'
 set output 'profile_m2_p.pdf'
@@ -76,5 +99,6 @@ plot[][]\
 'profile_nq3_m2_res48.ascii' u 2:5 w p t '48^2',\
 'profile_nq3_m2_res64.ascii' u 2:5 w p t '64^2',\
 'profile_nq3_m2_res80.ascii' u 2:5 w p t '80^2',\
-
+'profile_nq3_m2_res96.ascii' u 2:5 w p t '96^2',\
+'../../../../images/sinking_block/FS/ASPECT/q2p1/output_stokes_none_10/point_values.txt' u 3:($6-(0.5-$3)) w l lt -1 lw .5   t 'ASPECT, lvl 10',\
 
