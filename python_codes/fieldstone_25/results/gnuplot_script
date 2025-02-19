@@ -1,4 +1,6 @@
+#
 set term pdf enhanced font "Times,12pt"
+set grid
 set key outside
 set log x
 set xlabel 'h_x'
@@ -17,7 +19,7 @@ vrms001=1441.851
 
 set ylabel 'v_{rms}'
 set output 'vrms_100.pdf'
-plot[][:185.3]\
+plot[:0.2][:185.3]\
 '100_100/statistics_q2q1.ascii' u 4:($13/vref) w lp ps .25 notitle,\
 '100_100/statistics_extrapolation_5.ascii' u 4:($13/vref) w p ps .25 notitle,\
 '100_100/statistics_extrapolation_6.ascii' u 4:($13/vref) w p ps .25 notitle,\
@@ -31,37 +33,38 @@ plot[][:185.3]\
 
 set ylabel 'min(u)'
 set output 'min_u_100.pdf'
-plot[][]\
+plot[:0.2][]\
 '100_100/statistics_q2q1.ascii' u 4:($5/vref) w lp ps .25  notitle 
 
 set ylabel 'max(u)'
 set output 'max_u_100.pdf'
-plot[][]\
-'100_100/statistics_q2q1.ascii' u 4:($6/vref) w lp ps .25  notitle 
+plot[:0.2][]\
+'100_100/statistics_q2q1.ascii' u 4:($6/vref) w lp ps .25  notitle,\
+'../statistics_q2.ascii' u 4:($6/vref) w lp ps .25  notitle
 
 set ylabel 'min(v)'
 set output 'min_v_100.pdf'
-plot[][]\
+plot[:0.2][]\
 '100_100/statistics_q2q1.ascii' u 4:($7/vref) w lp ps .25  notitle 
 
 set ylabel 'max(v)'
 set output 'max_v_100.pdf'
-plot[][]\
+plot[:0.2][]\
 '100_100/statistics_q2q1.ascii' u 4:($8/vref) w lp ps .25  notitle 
 
 set ylabel 'max(|v|)'
 set output 'max_vel_100.pdf'
-plot[][]\
+plot[:0.2][]\
 '100_100/statistics_q2q1.ascii' u 4:($10/vref) w lp ps .25  notitle 
 
 set ylabel 'min(p)'
 set output 'min_p_100.pdf'
-plot[][]\
+plot[:0.2][]\
 '100_100/statistics_q2q1.ascii' u 4:($11) w lp ps .25  notitle 
 
 set ylabel 'max(p)'
 set output 'max_p_100.pdf'
-plot[][]\
+plot[:0.2][]\
 '100_100/statistics_q2q1.ascii' u 4:($12) w lp ps .25  notitle 
 
 ###############################################################

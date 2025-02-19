@@ -1,8 +1,14 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
 
-\includegraphics[height=1.5cm]{images/pictograms/replication}
-\includegraphics[height=1.5cm]{images/pictograms/benchmark}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_25/keywords.ascii}
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_25/text.tex}} \end{flushright}
+
+\par\noindent\rule{\textwidth}{0.4pt}
 
 \begin{center}
 \inpython
@@ -10,9 +16,15 @@
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Last revision: Feb. 13th, 2025.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This numerical experiment was first presented in \textcite{vaks97} (1997).
+It is detailed in Section~\ref{MMM-ss:vaks97}.
 It consists of an isothermal Rayleigh-Taylor instability in a two-dimensional box
 of size $L_x=0.9142$ and $L_y=1$.
 Two Newtonian fluids are present in the system: the buoyant layer is placed at the bottom of 
@@ -32,38 +44,104 @@ In this present experiment only the root mean square velocity is measured at $t=
 the code is indeed not yet foreseen of any algorithm capable of tracking deformation.
 
 Another approach than the ones presented in the extensive literature which showcases 
-results of this benchmark is taken. The mesh is initially fitted to the fluids
+results of this benchmark is taken: in this \stone the mesh is initially fitted to the fluids
 interface and the resolution is progressively increased. This results in the 
 following figure:
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_25/results/mats}
+\includegraphics[width=6cm]{python_codes/fieldstone_25/newresults/mats}
+\end{center}
+Note that in this case each element is assigned a density and a viscosity value that 
+is constant over the entire element. 
+Note that this approach requires me to compute how many elements are below the interface
+for a given resolution. We see on the images below that for meshes $21^2-24^2$ there 
+are 4 elements below the interface, for meshes $25^2-29^2$ there are 6 elements, and that 
+we get to 7 elements for $30^2$. These steps will be reflected in the measurents presented 
+afterwards.
+
+\begin{center}
+\includegraphics[width=3.42cm]{python_codes/fieldstone_25/images/mesh.0000.png}
+\includegraphics[width=3.42cm]{python_codes/fieldstone_25/images/mesh.0001.png}
+\includegraphics[width=3.42cm]{python_codes/fieldstone_25/images/mesh.0002.png}
+\includegraphics[width=3.42cm]{python_codes/fieldstone_25/images/mesh.0003.png}
+\includegraphics[width=3.42cm]{python_codes/fieldstone_25/images/mesh.0004.png}\\
+\includegraphics[width=3.42cm]{python_codes/fieldstone_25/images/mesh.0005.png}
+\includegraphics[width=3.42cm]{python_codes/fieldstone_25/images/mesh.0006.png}
+\includegraphics[width=3.42cm]{python_codes/fieldstone_25/images/mesh.0007.png}
+\includegraphics[width=3.42cm]{python_codes/fieldstone_25/images/mesh.0008.png}
+\includegraphics[width=3.42cm]{python_codes/fieldstone_25/images/mesh.0009.png}\\
+{\captionfont Meshes generated for various resolutions: $21^2$, $22^2$, $23^2$, 
+$24^2$, $25^2$, $26^2$, $27^2$, $28^2$, $29^2$ and $30^2$.}
 \end{center}
 
-The code relies on Taylor-Hood eelements ($Q_2\times Q_1$), see Section~\ref{ss:pairq2q1} and 
-on $Q_2\times P_{-1}$ elements, see Section~\ref{ss:pairq2pm1}. 
-It has been  benchmarked agains the Donea \& Huerta manufactured solution, see Section~\ref{mms1}.
+Although it is somewhat a trivial affair to deform the mesh (only the vertical 
+position of the nodes is changed), this begs the question as to where the middle node
+of the element should be placed for best accuracy? {\color{red} explore, ask W}.
+
+After the mesh has been stretched element edges can be straightened 
+(all elements are then trapezes) which is indicated by 's' in the plots 
+shown here after while 'c' stands for meshes with elements showcasing curved edges.
+
+The code relies on Taylor-Hood elements ($Q_2\times Q_1$), see Section~\ref{MMM-ss:pairq2q1} and 
+on $Q_2\times P_{-1}$ elements, see Section~\ref{MMM-ss:pairq2pm1}. 
+It has been  benchmarked agains the Donea \& Huerta manufactured solution, see Section~\ref{MMM-mms1}.
+Isoparametric mapping is used for both element pairs.
+
+Pressure is normalized so that $\int_\Omega p dV= 0$.
+
+
+Note that there is also a $Q_1\times P_0$ version of the code in the folder.
 
 \newpage
 %..............................................................................
-\paragraph{Isoviscous case - $Q_2\times Q_1$}
+\subsection*{Isoviscous case - $Q_2\times Q_1$ and $Q_2\times P_{-1}$}
+
+Results are obtained with {\tt script\_errors\_q2} bash script.
 
 \begin{center}
-\includegraphics[width=5.cm]{python_codes/fieldstone_25/results/100_100/vel}
-\includegraphics[width=5.cm]{python_codes/fieldstone_25/results/100_100/u}
-\includegraphics[width=5.cm]{python_codes/fieldstone_25/results/100_100/v}\\
-\includegraphics[width=6cm]{python_codes/fieldstone_25/results/vrms_100.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_25/results/max_vel_100.pdf}\\
-\includegraphics[width=6cm]{python_codes/fieldstone_25/results/min_u_100.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_25/results/max_u_100.pdf}\\
-\includegraphics[width=6cm]{python_codes/fieldstone_25/results/min_v_100.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_25/results/max_v_100.pdf}\\
-\includegraphics[width=6cm]{python_codes/fieldstone_25/results/min_p_100.pdf}
-\includegraphics[width=6cm]{python_codes/fieldstone_25/results/max_p_100.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_25/newresults/isoviscous/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_25/newresults/isoviscous/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_25/newresults/isoviscous/v}\\
+\includegraphics[width=6.65cm]{python_codes/fieldstone_25/newresults/vrms_iso.pdf}
+\includegraphics[width=6.65cm]{python_codes/fieldstone_25/newresults/max_vel_iso.pdf}\\
+\includegraphics[width=6.65cm]{python_codes/fieldstone_25/newresults/min_u_iso.pdf}
+\includegraphics[width=6.65cm]{python_codes/fieldstone_25/newresults/max_u_iso.pdf}\\
+\includegraphics[width=6.65cm]{python_codes/fieldstone_25/newresults/min_v_iso.pdf}
+\includegraphics[width=6.65cm]{python_codes/fieldstone_25/newresults/max_v_iso.pdf}\\
+\includegraphics[width=6.65cm]{python_codes/fieldstone_25/newresults/min_p_iso.pdf}
+\includegraphics[width=6.65cm]{python_codes/fieldstone_25/newresults/max_p_iso.pdf}\\
 {\captionfont Results obtained with $Q_2\times Q_1$ elements} 
 \end{center}
 
+The conclusion is clear, curved-edges elements yield better results at low resolution
+than the straight-edge ones. This is especially clear when looking at pressure statistics.
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_25/newresults/pbottom_q2q1.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_25/newresults/pbottom_q2p1.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_25/newresults/u_interface_q2q1.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_25/newresults/u_interface_q2p1.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_25/newresults/v_interface_q2q1.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_25/newresults/v_interface_q2p1.pdf}
+\end{center}
+
+It looks like there is a spurious velocity pattern on the interface which seems to 
+go away with increasing resolution...?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
 \begin{tabular}{lllll}
 \hline
 nelx & hx & $\upnu_{rms}(\times 10^{-6})$ & $\upnu^\star_{rms}(\times 10^{-6})$ (extrap.)  & rate \\
@@ -82,9 +160,12 @@ nelx & hx & $\upnu_{rms}(\times 10^{-6})$ & $\upnu^\star_{rms}(\times 10^{-6})$ 
 \hline
 \end{tabular}
 
+
+
+
 \newpage
 %..............................................................................
-\paragraph{Isoviscous case - $Q_2\times P_{-1}$}
+\subsection*{Isoviscous case - $Q_2\times P_{-1}$}
 
 All things equal, this element gives me a headache because at low resolution the velocity
 field showcases a weird pattern which I cannot explain. It is immune to the number of quadrature points. 
