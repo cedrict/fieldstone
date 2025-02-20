@@ -18,9 +18,9 @@
 {\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_126}}
 \end{center}
 
-%\par\noindent\rule{\textwidth}{0.4pt}
+\par\noindent\rule{\textwidth}{0.4pt}
 
-%{\sl This stone was developed in collaboration with Donald Duck}. \index{contributors}{D. Duck}
+{\sl This stone contains contributions by J.-P. Gratier and F. Renard}. 
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -81,7 +81,9 @@ Two main relations are used, expressing fluid mass conservation
 \label{eq:por01}
 \end{equation}
 and Darcy's law\footnote{There is a minus sign missing in front of the permeability tensor at the 
-beginning of paragraph 43}
+beginning of paragraph 43. Authors answered: ``We agree, probably a typo in the paper 
+or the choice of the axis. However, the results show that the fluid is moving from 
+depth to the surface, so the implementation was correct.''.}
 \begin{equation}
 \vec{u} = - {\bm K} \cdot (\vec{\nabla} P + \rho \vec{g})
 \label{eq:por00}
@@ -89,13 +91,17 @@ beginning of paragraph 43}
 where $\rho$ is the density of the fluid, $\upphi$ is the
 connected mean porosity of the rock, $\vec{u}$ is the Darcy flow
 rate\footnote{The authors state that it is ``fluid particle velocity times porosity''. 
-I don't get it}, ${\bm K}$ is the permeability tensor, $P$ is the total pore pressure and $\vec{g}$ is
+Authors state in private communication: ``Here we probably refer to the true fluid velocity, 
+which is the Darcy velocity (apparent velocity, also called specific discharge) divided 
+by porosity. See for example the equations 17 and 18 in: 
+\url{https://books.gw-project.org/hydrogeologic-properties-of-earth-materials-and-principles-of-groundwater-flow/chapter/darcys-law}.'' }, ${\bm K}$ is the permeability tensor, $P$ is the total pore pressure and $\vec{g}$ is
 the gravity. 
 
 \underline{Remark:} 
 At this stage one must realize that the standard Darcy flow law is 
 $\vec{u} = - {\bm K}/\eta_f \cdot (\vec{\nabla} P - \rho_f \vec{g})$. 
-In this case I don't know why the viscosity has disappeared. 
+In this case I don't know why the viscosity has disappeared\footnote{
+Authors answered: ``This is a typo in the article, viscosity should appear in this equation''.}. 
 The permeability\footnote{\url{https://en.wikipedia.org/wiki/Permeability_(materials_science)}} 
 $K$ should be in $\si{\square\meter}$ but here it would then be in $\si{\square\meter\per\pascal\per\second}$. 
 Also the lack of minus sign inside of the parenthesis 
@@ -224,7 +230,11 @@ the authors consider that the state of total stress of the crust will
 not change significantly during the pressurization. This
 rough approximation is the main limit of the model. Indeed
 it does not consider the interaction involved by the
-poroelastic theory, which is out of the scope of this paper.
+poroelastic theory, which is out of the scope of this paper
+\footnote{The authors add: ``Indeed at the time we did not considered 
+the interactions involving the poroelastic theory. It was a choice of simplicity. 
+But Pascal thought that it would be possible to integrate these interactions in 
+the model and could have been a follow-up paper''.}.
 Therefore, by considering, in first approximation, that the
 variations of the state of total stress of the crust are small:
 \begin{equation}
@@ -313,10 +323,13 @@ or, defining $C=C_f+C_m$:
 \end{equation}
 which is Eq.~(11) of the paper, albeit in spirit only\footnote{I believe that the equation in the 
 paper is wrong: the term $(\partial_x+\partial_z)$ makes no sense.
+The authors replied: ``We agree that equation 11 in the paper contains a typo and the correct form 
+is your equation''.
 Also the authors state that in order to arrive at this equation 
 ``we neglect the remaining second
 order terms involving the product $\upphi'\rho'$''
-which I do not understand since $\rho'$ does not appear anywhere...}.
+which I do not understand since $\rho'$ does not appear anywhere.
+The authors answered: ``This term is defined in the paper as the variation of the density of the fluid and is neglected (paragraph 43).''}.
 
 $C$ expresses the mean matrix-fluid compressibility and $\upphi_m C$ represents the 
 pressure storativity\footnote{\url{https://en.wikipedia.org/wiki/Specific_storage}}. 
@@ -354,7 +367,13 @@ is chosen to be at $3~\si{\km}$ (Figure 9 of the paper).
 
 Following Lockner and Evans (1995), the time
 dependence between porosity and permeability during sealing 
-processes may be expressed as
+processes may be expressed 
+as\footnote{The authors state: ``We approximated the Kozeny-Carman 
+equation that relates permeability and porosity with this cubic term. 
+The more exact formulation is $k$ proportional to $\Phi^3/(1-\Phi)^2$. 
+If Pascal Favreau used the full equation and a pre-factor, we wonder if this could explain 
+the 2/3 factor for permeability discussed below.
+\url{https://en.wikipedia.org/wiki/Kozeny-Carman_equation}.}
 \begin{equation}
 k(t) \simeq \upphi_m(t)^3
 \label{eq:por05}
@@ -449,10 +468,14 @@ or 1\% (Figures 12 and 13 of the paper).}
 {\captionfont Fig. 9c: initial porosity profile.}
 \end{center}
 
-{\color{red} Q1: I have an issue with this figure. In the center/fault the porosity
+I first had an issue with this figure. In the center/fault the porosity
 should be $\Phi_0=0.1$ (see Eq.~\eqref{eq:por03}) so how come 
 there are isolines 1 on each side of the fault and the fault itself is at 9 (or 6?).
-It actually looks like the center value is 10, not 0.1 ... Was it normalised somehow? }
+It actually looks like the center value is 10, not 0.1 ... Was it normalised somehow? 
+The authors answered: ``
+The maximum porosity along the fault is 10\%. 
+The porosity is expressed as percentages in figure 9c (and not as volume fraction), 
+so 9 on the figure means 9\%.''
 The rest of the panels of Fig.~9c,d can be reproduced via Eq.~\eqref{eq:por03} 
 (porosity is only a function of time and space).
 
@@ -517,6 +540,12 @@ The three broken lines are identical but off by a factor 10.
 Fig.~10 showcases the parameter $\tau_m=70,700,7000~\si{\year}$ which is not discussed in the text
 but which seems to correspond to the flat portions of the curves of Fig.~9a (i.e. the minimum value
 of $\tau$).
+The authors answered: ``Yes the figure 9a is just a schematic drawing i
+and serves as an indication rather than an accurate representation of the 
+sealing rate $\tau$ and yes the parameter $\tau_m=70,700,7000~\si{\year}$ 
+corresponds to the flat portions of the curves of Fig. 9a. We agree that this 
+figure could have been more accurate, but the transition values 3 and 5 km 
+are the accurate numbers of the transition.''
 
 In the paper we read ``
 In the upper crust, we assume the predominance of the calcite rate of crack sealing
@@ -688,6 +717,11 @@ also means that lithostatic pressure is zero at the top.
 {\color{red} Q3: looking at the definition of $O_{vp}$ above an given the boundary conditions $p=0$
 at the top, then $O_{vp}=0/0$ at the top?!}
 
+The authors answered: ``In our paper the pore overpressure is $p$ where the total 
+fluid pressure $P$ is equal to $p + P_{hydro}$. However, in the paper this $p$ parameter 
+is sometime named 'overpressure' and sometime simply 'pressure' which is a bit 
+confusing. We did not use the term Ovp but the ratio $p/(Plitho-Phydro)$ cannot reach 1 (see Q4).''
+
 As mentioned earlier the $O_{vp}$ quantity cannot exceed 1. This needs to be 
 enforced in an {\it ad hoc} manner. The paper is not exceedly clear as how 
 this should be achieved. I repeat the relevant lines of the paper with regards 
@@ -715,6 +749,13 @@ In practice, looking at the points measurements,
 I find that once $p$ has been thresholded it remains at $P_{litho}(z)-P_{hydro}(z)$.
 
 {\color{red} Q4: does my limiter this make sense?}
+The authors answered: ``Yes p must be lower than the difference 
+$Plitho - Phydro$ (equation 15) it is fine.
+Moreover, this condition, which corresponds to a cutoff due to possible 
+hydraulic fracturing of the crust is a simplification since it would also 
+be necessary to include the strength of the rocks but we decided to neglect this aspect.''
+
+
 
 %..............................
 \paragraph{Numerical experiments:} From Fig.~9b we see that four models are run:
@@ -974,6 +1015,10 @@ in the upper part of the seismic crust and prevents the outflow of the fluid (be
 {\color{red} Q5: based on the successes of models 1\&2, 
 I find the first two left panels above somewhat suspicious in the 
 light of my results below.}
+The authors answered: ``We agree that in this case there is a difference between our 
+figure and your results. We do not have an explanation, and we cannot exclude an error 
+on how we reported the times on these two panels.''
+
 
 \begin{center}
 \includegraphics[width=4cm]{python_codes/fieldstone_126/results/model3/nelx32/Ovp_1.png}
@@ -1103,7 +1148,9 @@ of pressure derivatives, etc ...) before any result can be part of a publication
 \item I could build a Finite difference version of the code too (MSc thesis exercise?).
 Based on all I have learned building the FEM code it would nto take long.
 \item my results match the paper provided the $K_x$ coefficient is lessened by a factor (approx.) 2/3.
-This could point to a bug in the original code?
+This could point to a bug in the original code? The authors answered:
+``We wonder whether this difference might be due to the simplification of the equation 
+linking permeability and porosity, see comment above about equation \eqref{eq:por05}.''
 \item I have not looked at fig 11 yet : to do !
 \item I could extend the code to use $Q_1$ elements.
 \item stretch mesh towards the middle?
