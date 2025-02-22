@@ -1,6 +1,8 @@
 import numpy as np
 import random
 
+###############################################################################
+
 def Q3(r):
     return (-1    +r +9*r**2 - 9*r**3)/16,\
            (+9 -27*r -9*r**2 +27*r**3)/16,\
@@ -118,10 +120,6 @@ def dNds(r,s,space):
        val[20]=N1r*dN5ds ; val[21]=N2r*dN5ds ; val[22]=N3r*dN5ds ; val[23]=N4r*dN5ds ; val[24]=N5r*dN5ds
     return val
 
-
-
-
-
 ###############################################################################
 
 theta1=23./180.*np.pi
@@ -139,7 +137,7 @@ ss=np.zeros(npts,dtype=np.float64)
 xx=np.zeros(npts,dtype=np.float64)   
 yy=np.zeros(npts,dtype=np.float64)   
 
-volume=False
+volume=True
 
 ###############################################################################
 print('**********Q1*********')
@@ -149,6 +147,7 @@ theta=[theta1,theta1,theta2,theta2]
 r=[R1,R2,R2,R1]
 x=r*np.cos(theta)
 y=r*np.sin(theta)
+
 np.savetxt('xy_Q1.ascii',np.array([x,y]).T)
 
 for i in range(0,npts):
@@ -175,7 +174,11 @@ for i in range(0,npts):
     yy[i]=N0*y[0]+N1*y[1]+N2*y[2]+N3*y[3]
 
 np.savetxt('rs1.ascii',np.array([rr,ss]).T)
-np.savetxt('xy1.ascii',np.array([xx,yy,np.sqrt(xx**2+yy**2)]).T)
+
+if volume:
+   np.savetxt('xy1_volume.ascii',np.array([xx,yy,np.sqrt(xx**2+yy**2)]).T)
+else:
+   np.savetxt('xy1_line.ascii',np.array([xx,yy,np.sqrt(xx**2+yy**2)]).T)
 
 #######################################
 
@@ -257,8 +260,8 @@ r=[R1,         #00
 
 x=r*np.cos(theta)
 y=r*np.sin(theta)
-np.savetxt('xy_Q2.ascii',np.array([x,y]).T)
 
+np.savetxt('xy_Q2.ascii',np.array([x,y]).T)
 
 for i in range(0,npts):
     
@@ -288,9 +291,12 @@ for i in range(0,npts):
     xx[i]=N0*x[0]+N1*x[1]+N2*x[2]+N3*x[3]+N4*x[4]+N5*x[5]+N6*x[6]+N7*x[7]+N8*x[8]
     yy[i]=N0*y[0]+N1*y[1]+N2*y[2]+N3*y[3]+N4*y[4]+N5*y[5]+N6*y[6]+N7*y[7]+N8*y[8]
 
-np.savetxt('rs2.ascii',np.array([rr,ss]).T)
-np.savetxt('xy2.ascii',np.array([xx,yy,np.sqrt(xx**2+yy**2)]).T)
+#np.savetxt('rs2.ascii',np.array([rr,ss]).T)
 
+if volume:
+   np.savetxt('xy2_volume.ascii',np.array([xx,yy,np.sqrt(xx**2+yy**2)]).T)
+else:
+   np.savetxt('xy2_line.ascii',np.array([xx,yy,np.sqrt(xx**2+yy**2)]).T)
 
 #######################################
 
@@ -427,9 +433,12 @@ for i in range(0,npts):
     yy[i]=N00*y[0]+N01*y[1]+N02*y[2]+N03*y[3]+N04*y[4]+N05*y[5]+N06*y[6]+N07*y[7]+N08*y[8]\
          +N09*y[9]+N10*y[10]+N11*y[11]+N12*y[12]+N13*y[13]+N14*y[14]+N15*y[15]
 
-np.savetxt('rs3.ascii',np.array([rr,ss]).T)
-np.savetxt('xy3.ascii',np.array([xx,yy,np.sqrt(xx**2+yy**2)]).T)
+#np.savetxt('rs3.ascii',np.array([rr,ss]).T)
 
+if volume:
+   np.savetxt('xy3_volume.ascii',np.array([xx,yy,np.sqrt(xx**2+yy**2)]).T)
+else:
+   np.savetxt('xy3_line.ascii',np.array([xx,yy,np.sqrt(xx**2+yy**2)]).T)
 
 #######################################
 
@@ -543,6 +552,7 @@ r=[R1,               #00
 
 x=r*np.cos(theta)
 y=r*np.sin(theta)
+
 np.savetxt('xy_Q4.ascii',np.array([x,y]).T)
 
 for i in range(0,npts):
@@ -600,8 +610,12 @@ for i in range(0,npts):
          +N09*y[9]+N10*y[10]+N11*y[11]+N12*y[12]+N13*y[13]+N14*y[14]+N15*y[15]+N16*y[16]\
          +N17*y[17]+N17*y[18]+N17*y[19]+N20*y[20]+N21*y[21]+N22*y[22]+N23*y[23]+N24*y[24]
 
-np.savetxt('rs4.ascii',np.array([rr,ss]).T)
-np.savetxt('xy4.ascii',np.array([xx,yy,np.sqrt(xx**2+yy**2)]).T)
+#np.savetxt('rs4.ascii',np.array([rr,ss]).T)
+
+if volume:
+   np.savetxt('xy4_volume.ascii',np.array([xx,yy,np.sqrt(xx**2+yy**2)]).T)
+else:
+   np.savetxt('xy4_line.ascii',np.array([xx,yy,np.sqrt(xx**2+yy**2)]).T)
 
 #######################################
 
