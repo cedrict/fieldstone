@@ -1,0 +1,34 @@
+#
+set term pdf enhanced font "Times,12pt"
+set size square
+set grid
+set key outside
+set output 'nodes.pdf'
+plot[-3:3][-3:3]\
+'nodes0.ascii' pt 4 ps .35 t 'c=0',\
+'nodes1.ascii' pt 4 ps .35 t 'c=1',\
+'nodes2.ascii' pt 4 ps .35 t 'c=2',\
+'nodes6.ascii' pt 4 ps .35 t 'c=6',\
+
+set output 'nodes_zoom.pdf'
+plot[-0.5:0.5][-0.5:0.5]\
+'nodes0.ascii' pt 4 ps .35 t 'c=0',\
+'nodes1.ascii' pt 4 ps .35 t 'c=1',\
+'nodes2.ascii' pt 4 ps .35 t 'c=2',\
+'nodes6.ascii' pt 4 ps .35 t 'c=6',\
+
+set output 'quad_points.pdf'
+plot[-3:3][-3:3]\
+'quads0.ascii' pt 4 ps .35 t 'c=0',\
+'quads1.ascii' pt 4 ps .35 t 'c=1',\
+'quads2.ascii' pt 4 ps .35 t 'c=2',\
+'quads6.ascii' pt 4 ps .35 t 'c=6',\
+
+set output 'edges.pdf'
+plot[-3.5:3.5][-3.5:3.5]\
+'bottom_edge_0.ascii' w d lt -1,\
+'top_edge_0.ascii' w d lt -1,\
+'left_edge_0.ascii' w d lt -1,\
+'right_edge_0.ascii' w d lt -1,\
+'nodes0.ascii' pt 5 ps .5 lt 1 
+
