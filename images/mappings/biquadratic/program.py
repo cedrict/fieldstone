@@ -12,7 +12,6 @@ x6=0.5*(x3+x9)        ; y6=0.5*(y3+y9)
 x8=0.5*(x7+x9)        ; y8=0.5*(y7+y9)
 x5=0.25*(x1+x3+x7+x9) ; y5=0.25*(y1+y3+y7+y9)
 
-
 npts=10000
 r=np.zeros(npts,dtype=np.float64)   
 s=np.zeros(npts,dtype=np.float64)   
@@ -60,3 +59,13 @@ for i in range(0,npts):
 np.savetxt('rs.ascii',np.array([r,s]).T)
 np.savetxt('xyQ1.ascii',np.array([xQ1,yQ1]).T)
 np.savetxt('xyQ2.ascii',np.array([xQ2,yQ2]).T)
+
+print(x1,y1)
+print(x2,y2)
+print(x3,y3)
+print(x4,y4)
+print(x5,y5)
+print(x6,y6)
+print(x7,y7)
+print(x8,y8)
+print(x9,y9)
