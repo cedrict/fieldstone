@@ -17,9 +17,10 @@ def dfctdy(x,y):
 
 ###############################################################################
 ###############################################################################
+# xi is a parameter for element 5 only. 
 
-npts=500
-element=4
+npts=10000
+element=0
 
 if int(len(sys.argv) == 3): 
    xi = int(sys.argv[1])
@@ -31,6 +32,7 @@ else:
    nqperdim=3
 
 ###############################################################################
+# define quadrature points coordinates and weights
 ###############################################################################
 
 if nqperdim==2:
@@ -60,56 +62,28 @@ if nqperdim==5:
    weights=[qw5a,qw5b,qw5c,qw5b,qw5a]
 
 if nqperdim==6:
-   coords=[-0.932469514203152,\
-           -0.661209386466265,\
-           -0.238619186083197,\
-           +0.238619186083197,\
-           +0.661209386466265,\
-           +0.932469514203152]
-   weights=[0.171324492379170,\
-            0.360761573048139,\
-            0.467913934572691,\
-            0.467913934572691,\
-            0.360761573048139,\
-            0.171324492379170]
+   coords=[-0.932469514203152,-0.661209386466265,-0.238619186083197,\
+           +0.238619186083197,+0.661209386466265,+0.932469514203152]
+   weights=[0.171324492379170,0.360761573048139,0.467913934572691,\
+            0.467913934572691,0.360761573048139,0.171324492379170]
 
 if nqperdim==7:
-   coords=[-0.949107912342759,\
-           -0.741531185599394,\
-           -0.405845151377397,\
-            0.000000000000000,\
-            0.405845151377397,\
-            0.741531185599394,\
-            0.949107912342759]
-   weights=[0.129484966168870,\
-            0.279705391489277,\
-            0.381830050505119,\
-            0.417959183673469,\
-            0.381830050505119,\
-            0.279705391489277,\
-            0.129484966168870]
+   coords=[-0.949107912342759,-0.741531185599394,-0.405845151377397,\
+            0.000000000000000,0.405845151377397,\
+            0.741531185599394,0.949107912342759]
+   weights=[0.129484966168870,0.279705391489277,0.381830050505119,\
+            0.417959183673469,0.381830050505119,\
+            0.279705391489277,0.129484966168870]
 
 if nqperdim==10:
-   coords=[-0.973906528517172,\
-            -0.865063366688985,\
-            -0.679409568299024,\
-            -0.433395394129247,\
-            -0.148874338981631,\
-             0.148874338981631,\
-             0.433395394129247,\
-             0.679409568299024,\
-             0.865063366688985,\
-             0.973906528517172]
-   weights=[0.066671344308688,\
-             0.149451349150581,\
-             0.219086362515982,\
-             0.269266719309996,\
-             0.295524224714753,\
-             0.295524224714753,\
-             0.269266719309996,\
-             0.219086362515982,\
-             0.149451349150581,\
-             0.066671344308688]
+   coords=[-0.973906528517172,-0.865063366688985,-0.679409568299024,\
+            -0.433395394129247,-0.148874338981631,0.148874338981631,\
+             0.433395394129247,0.679409568299024,\
+             0.865063366688985,0.973906528517172]
+   weights=[0.066671344308688,0.149451349150581,0.219086362515982,\
+             0.269266719309996,0.295524224714753,0.295524224714753,\
+             0.269266719309996,0.219086362515982,\
+             0.149451349150581,0.066671344308688]
 
 nqel=nqperdim**2
 qcoords_r=np.empty(nqel,dtype=np.float64)
@@ -168,6 +142,7 @@ def dNNVds(rq,sq):
                      dNds_5,dNds_6,dNds_7,dNds_8],dtype=np.float64)
 
 ###############################################################################
+ncenter=7
 
 if element==0: # reference element [-1,1]x[-1,1]
 
@@ -180,7 +155,7 @@ if element==0: # reference element [-1,1]x[-1,1]
    x7=0.5*(x3+x4)     ; y7=0.5*(y3+y4)
    x8=0.5*(x1+x4)     ; y8=0.5*(y1+y4)
 
-   ncenter=3
+   centers=[0,1,2,6]
 
 if element==1: # quadrilateral element 
 
@@ -193,7 +168,7 @@ if element==1: # quadrilateral element
    x7=0.5*(x3+x4)     ; y7=0.5*(y3+y4)
    x8=0.5*(x1+x4)     ; y8=0.5*(y1+y4)
 
-   ncenter=3
+   centers=[0,1,2,6]
 
 if element==2: # quadrilateral element with 2 curved edges 
 
@@ -206,7 +181,7 @@ if element==2: # quadrilateral element with 2 curved edges
    x7=0.5*(x3+x4) ; y7=0.5*(y3+y4) +0.5
    x8=0.5*(x1+x4) ; y8=0.5*(y1+y4)
 
-   ncenter=3
+   centers=[0,1,2,6]
 
 if element==3: # quadrilateral element with 4 curved edges
 
@@ -219,7 +194,7 @@ if element==3: # quadrilateral element with 4 curved edges
    x7=0.5*(x3+x4)     ; y7=0.5*(y3+y4) +0.5
    x8=0.5*(x1+x4)-0.2 ; y8=0.5*(y1+y4) -0.1
 
-   ncenter=3
+   centers=[0,1,2,6]
 
 if element==4: # annulus element
 
@@ -235,21 +210,20 @@ if element==4: # annulus element
    x7=R2*np.cos(np.pi/2-dtheta/2)        ; y7=R2*np.sin(np.pi/2-dtheta/2)   
    x3=R2*np.cos(np.pi/2-dtheta)          ; y3=R2*np.sin(np.pi/2-dtheta)   
 
-   ncenter=6
-
    area_th=0.5*(R2**2-R1**2)*dtheta
    xcg=(R2**3-R1**2)/3*(np.sin(np.pi/2)-np.sin(np.pi/4))/area_th
    ycg=(R2**3-R1**2)/3*(-np.cos(np.pi/2)+np.cos(np.pi/4))/area_th
    print('center of mass coords (x,y):',xcg,ycg)
    print('center of mass coords (r,theta)',np.sqrt(xcg**2+ycg**2),np.arctan2(ycg,xcg)/np.pi*180)
 
+   centers=[0,1,2,3,4,6]
 
+###############################################################################
 
 vtufile=open('element'+str(element)+'.vtu',"w")
 vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
 vtufile.write("<UnstructuredGrid> \n")
 vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(8,1))
-
 vtufile.write("<Points> \n")
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
 vtufile.write("%e %e %e \n" %(x1,y1,0.))
@@ -262,36 +236,32 @@ vtufile.write("%e %e %e \n" %(x7,y7,0.))
 vtufile.write("%e %e %e \n" %(x8,y8,0.))
 vtufile.write("</DataArray>\n")
 vtufile.write("</Points> \n")
-
 vtufile.write("<Cells>\n")
-#--  
 vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
 vtufile.write("%d %d %d %d %d %d %d %d\n" %(0, 1, 2 , 3 , 4 , 5 , 6 , 7))
 vtufile.write("</DataArray>\n")
-#--  
 vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
 vtufile.write("%d \n" %(8))
 vtufile.write("</DataArray>\n")
-#--  
 vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
 vtufile.write("%d \n" % 23) 
 vtufile.write("</DataArray>\n")
-#--  
 vtufile.write("</Cells>\n")
-#####
 vtufile.write("</Piece>\n")
 vtufile.write("</UnstructuredGrid>\n")
 vtufile.write("</VTKFile>\n")
 vtufile.close()
 
-
-
 ###############################################################################
+
+print('element=',element)
+print('npts=',npts)
+print('nqperdim=',nqperdim)
 
 xq=np.zeros((nqel,ncenter),dtype=np.float64)   
 yq=np.zeros((nqel,ncenter),dtype=np.float64)   
 
-for center in range(0,ncenter):
+for center in centers:
 
     print('============================================================')
 
@@ -319,23 +289,26 @@ for center in range(0,ncenter):
        rad=0.5*(R1+R2)+xi/100*(R2-R1)/2
        x9=rad*np.cos(np.pi/2-dtheta/2) 
        y9=rad*np.sin(np.pi/2-dtheta/2)
+    if center==6:
+       x9=-0.25*(x1+x2+x3+x4)+0.5*(x5+x6+x7+x8)
+       y9=-0.25*(y1+y2+y3+y4)+0.5*(y5+y6+y7+y8)
+       rad=np.sqrt(x9**2+y9**2)
 
     xV = np.array([x1,x2,x3,x4,x5,x6,x7,x8,x9],dtype=np.float64)
     yV = np.array([y1,y2,y3,y4,y5,y6,y7,y8,y9],dtype=np.float64)
     fV = fct(xV,yV)
+       
+    print("center= %d x9,y9= %e %e " %(center,x9,y9))
 
     np.savetxt('nodes'+str(center)+'.ascii',np.array([xV,yV]).T)
 
     r=np.zeros(npts,dtype=np.float64)   
     s=np.zeros(npts,dtype=np.float64)   
-    xQ2=np.zeros(npts,dtype=np.float64)   
-    yQ2=np.zeros(npts,dtype=np.float64)   
-    xx=np.zeros(npts,dtype=np.float64)   
-    yy=np.zeros(npts,dtype=np.float64)   
-    err_pos2=np.zeros(npts,dtype=np.float64)   
+    xpoints=np.zeros(npts,dtype=np.float64)   
+    ypoints=np.zeros(npts,dtype=np.float64)   
+    err_f=np.zeros(npts,dtype=np.float64)   
     err_dfdx=np.zeros(npts,dtype=np.float64)   
     err_dfdy=np.zeros(npts,dtype=np.float64)   
-    err_gradf=np.zeros(npts,dtype=np.float64)   
     jcb=np.zeros((2,2),dtype=np.float64)
     dNNNVdx=np.zeros(9,dtype=np.float64)
     dNNNVdy=np.zeros(9,dtype=np.float64)
@@ -347,35 +320,29 @@ for center in range(0,ncenter):
         NNNV=NNV(r[i],s[i])
         dNNNVdr=dNNVdr(r[i],s[i])
         dNNNVds=dNNVds(r[i],s[i])
-        xQ2[i]=np.dot(NNNV,xV)
-        yQ2[i]=np.dot(NNNV,yV)
+        xpoints[i]=np.dot(NNNV,xV)
+        ypoints[i]=np.dot(NNNV,yV)
         jcb[0,0]=np.dot(dNNNVdr[:],xV[:])
         jcb[0,1]=np.dot(dNNNVdr[:],yV[:])
         jcb[1,0]=np.dot(dNNNVds[:],xV[:])
         jcb[1,1]=np.dot(dNNNVds[:],yV[:])
-        
         jcob[i] = np.linalg.det(jcb)
         jcbi=np.linalg.inv(jcb)
         for k in range(0,9):
             dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
             dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-
-        err_dfdx[i]=np.dot(dNNNVdx[:],fV[:])-dfctdx(xQ2[i],yQ2[i])
-        err_dfdy[i]=np.dot(dNNNVdy[:],fV[:])-dfctdy(xQ2[i],yQ2[i])
-        err_gradf[i]=err_dfdx[i]**2+err_dfdy[i]**2
-
-        xx[i]=abs(np.dot(NNNV[:],xV[:]**2)-xQ2[i]**2)
-        yy[i]=abs(np.dot(NNNV[:],yV[:]**2)-yQ2[i]**2)
-        err_pos2=xx[i]+yy[i]
-
+        err_f[i]=np.dot(NNNV[:],fV[:])-fct(xpoints[i],ypoints[i])
+        err_dfdx[i]=np.dot(dNNNVdx[:],fV[:])-dfctdx(xpoints[i],ypoints[i])
+        err_dfdy[i]=np.dot(dNNNVdy[:],fV[:])-dfctdy(xpoints[i],ypoints[i])
     #end for
 
     #np.savetxt('rs.ascii',np.array([r,s]).T)
+    #np.savetxt('points'+str(center)+'.ascii',np.array([xpoints,ypoints,,err_dfdx,err_dfdy,jcob]).T)
 
-    np.savetxt('points'+str(center)+'.ascii',np.array([xQ2,yQ2,xx,yy,err_dfdx,err_dfdy,jcob]).T)
-
-    print('avrg err_pos2 on pts',np.sum(err_pos2)/npts,' ',rad,'c'+str(center))
-    print('avrg err_grad on pts',np.sum(err_gradf)/npts,' ',rad,'c'+str(center))
+    print('center= %d min/max/avrg jcob on pts   = %e %e %e' %(center,np.min(jcob),np.max(jcob),np.sum(jcob)/npts))
+    print('center= %d min/max/avrg err_f on pts   = %e %e %e' %(center,np.min(err_f),np.max(err_f),np.sum(err_f)/npts))
+    print('center= %d min/max/avrg err_dfdx on pts= %e %e %e' %(center,np.min(err_dfdx),np.max(err_dfdx),np.sum(err_dfdx)/npts))
+    print('center= %d min/max/avrg err_dfdy on pts= %e %e %e' %(center,np.min(err_dfdy),np.max(err_dfdy),np.sum(err_dfdy)/npts))
 
     ###########################################################################
 
@@ -383,26 +350,20 @@ for center in range(0,ncenter):
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
     vtufile.write("<UnstructuredGrid> \n")
     vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(npts,npts))
-    #
     vtufile.write("<Points> \n")
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'>\n")
     for i in range(0,npts):
-        vtufile.write("%10e %10e %10e \n" %(xQ2[i],yQ2[i],0.))
+        vtufile.write("%10e %10e %10e \n" %(xpoints[i],ypoints[i],0.))
     vtufile.write("</DataArray>\n")
     vtufile.write("</Points> \n")
-    #
     vtufile.write("<PointData Scalars='scalars'>\n")
     vtufile.write("<DataArray type='Float32' Name='jcob' Format='ascii'>\n")
     for i in range(0,npts):
         vtufile.write("%e \n" % jcob[i])
     vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='error on x^2' Format='ascii'>\n")
+    vtufile.write("<DataArray type='Float32' Name='error on f' Format='ascii'>\n")
     for i in range(0,npts):
-        vtufile.write("%e \n" % xx[i])
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='error on y^2' Format='ascii'>\n")
-    for i in range(0,npts):
-        vtufile.write("%e \n" % yy[i])
+        vtufile.write("%e \n" % err_f[i])
     vtufile.write("</DataArray>\n")
     vtufile.write("<DataArray type='Float32' Name='error on dfdx' Format='ascii'>\n")
     for i in range(0,npts):
@@ -413,7 +374,6 @@ for center in range(0,ncenter):
         vtufile.write("%e \n" % err_dfdy[i])
     vtufile.write("</DataArray>\n")
     vtufile.write("</PointData>\n")
-    #
     vtufile.write("<Cells>\n")
     vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
     for i in range(0,npts):
@@ -428,7 +388,6 @@ for center in range(0,ncenter):
         vtufile.write("%d " % 1)
     vtufile.write("</DataArray>\n")
     vtufile.write("</Cells>\n")
-    #
     vtufile.write("</Piece>\n")
     vtufile.write("</UnstructuredGrid>\n")
     vtufile.write("</VTKFile>\n")
@@ -436,47 +395,9 @@ for center in range(0,ncenter):
 
     ###############################################################################
 
-    #fig = plt.figure()
-    #plt.grid()
-    #plt.scatter(r, s, s=1)
-    #ax = fig.gca()
-    #plt.xlim([-1,1])
-    #plt.ylim([-1,1])
-    #ax.set_aspect('equal', adjustable='box')
-    #plt.savefig('plt_rs.pdf', bbox_inches='tight')
-    #plt.show()
-
-    #fig = plt.figure()
-    #plt.grid()
-    #plt.scatter(xV, yV, c='red',s=25)
-    #ax = fig.gca()
-    #plt.savefig('nodes'+str(center)+'.pdf', bbox_inches='tight')
-    #plt.show()
-
-    #fig = plt.figure()
-    #plt.grid()
-    #plt.scatter(xQ2, yQ2, s=0.5)
-    #plt.scatter(xV, yV, s=25)
-    #ax = fig.gca()
-    #plt.savefig('points_'+str(center)+'.png', bbox_inches='tight')
-    #plt.show()
-
-    #fig = plt.figure()
-    #sc = plt.scatter(xQ2, yQ2, c=jcob, s=2)
-    #ax = fig.gca()
-    #plt.colorbar(sc)
-    #plt.grid()
-    #plt.savefig('jcob'+str(center)+'.pdf', bbox_inches='tight')
-    #plt.show()
-
-    ###############################################################################
-
     jcb=np.zeros((2,2),dtype=np.float64)
 
-    err_posx2=0
-    err_posy2=0
-    err_dfdx=0
-    err_dfdy=0
+    err_f=0.
     err_gradf=0
     area=0
 
@@ -498,7 +419,6 @@ for center in range(0,ncenter):
             jcb[0,1]=np.dot(dNNNVdr[:],yV[:])
             jcb[1,0]=np.dot(dNNNVds[:],xV[:])
             jcb[1,1]=np.dot(dNNNVds[:],yV[:])
-
             jcob=np.linalg.det(jcb)
             jcbi=np.linalg.inv(jcb)
 
@@ -508,39 +428,60 @@ for center in range(0,ncenter):
                 dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                 dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
 
-            err_posx2+=(np.dot(NNNV[:],xV[:]**2)-xq[cq,center]**2) *jcob*weightq 
-            err_posy2+=(np.dot(NNNV[:],yV[:]**2)-yq[cq,center]**2) *jcob*weightq 
-            err_dfdx+=(np.dot(dNNNVdx[:],fV[:])-dfctdx(xq[cq,center],yq[cq,center])) *jcob*weightq 
-            err_dfdy+=(np.dot(dNNNVdy[:],fV[:])-dfctdy(xq[cq,center],yq[cq,center])) *jcob*weightq 
-            err_gradf+=err_dfdx**2+err_dfdy**2
+            err_dfdx=(np.dot(dNNNVdx[:],fV[:])-dfctdx(xq[cq,center],yq[cq,center]))
+            err_dfdy=(np.dot(dNNNVdy[:],fV[:])-dfctdy(xq[cq,center],yq[cq,center]))
+            err_gradf+=(err_dfdx**2+err_dfdy**2) *jcob*weightq 
+
+            err_f+=(np.dot(NNNV[:],fV[:])-fct(xq[cq,center],yq[cq,center]))**2 *jcob*weightq 
 
             cq+=1
         #end for
     #end for
 
-    print('center=',center,': x9,y9=',x9,y9,'| rad 9,', rad  )
-    print('int err_pos2=',abs(err_posx2)+abs(err_posy2),' ',rad,'c'+str(center))
-    print('int err_grad=',err_gradf,' ',rad,'c'+str(center))
+    err_f=np.sqrt(err_f)
+    err_gradf=np.sqrt(err_gradf)
 
-    if element==4: 
-       print('area=',area,' area th=',area_th,' area error',area-area_th,rad,'c'+str(center))
+    print('center= %d int err_f= %e' %(center,err_f))
+    print('center= %d int err_gradf= %e' %(center,err_gradf))
+    print('center= %d area= %e' %(center,area))
+
+    np.savetxt('quads'+str(center)+'.ascii',np.array([xq[:,center],yq[:,center]]).T)
+
+    #################################
+    for i in range(0,npts):
+        r[i]=random.uniform(-1.,+1)
+        s[i]=+1
+        NNNV=NNV(r[i],s[i])
+        xpoints[i]=np.dot(NNNV,xV)
+        ypoints[i]=np.dot(NNNV,yV)
+    np.savetxt('top_edge_'+str(center)+'.ascii',np.array([xpoints,ypoints]).T)
+    #################################
+    for i in range(0,npts):
+        r[i]=random.uniform(-1.,+1)
+        s[i]=-1
+        NNNV=NNV(r[i],s[i])
+        xpoints[i]=np.dot(NNNV,xV)
+        ypoints[i]=np.dot(NNNV,yV)
+    np.savetxt('bottom_edge_'+str(center)+'.ascii',np.array([xpoints,ypoints]).T)
+    #################################
+    for i in range(0,npts):
+        r[i]=-1
+        s[i]=random.uniform(-1.,+1)
+        NNNV=NNV(r[i],s[i])
+        xpoints[i]=np.dot(NNNV,xV)
+        ypoints[i]=np.dot(NNNV,yV)
+    np.savetxt('left_edge_'+str(center)+'.ascii',np.array([xpoints,ypoints]).T)
+    #################################
+    for i in range(0,npts):
+        r[i]=+1
+        s[i]=random.uniform(-1.,+1)
+        NNNV=NNV(r[i],s[i])
+        xpoints[i]=np.dot(NNNV,xV)
+        ypoints[i]=np.dot(NNNV,yV)
+    np.savetxt('right_edge_'+str(center)+'.ascii',np.array([xpoints,ypoints]).T)
 
 #end for
     
-###############################################################################
-    
 print('============================================================')
 
-fig = plt.figure()
-for i in range(0,ncenter):
-    plt.scatter(xq[:,i], yq[:,i], s=10)
-ax = fig.gca()
-plt.grid()
-plt.savefig('quads.pdf', bbox_inches='tight')
-#plt.show()
-
-for i in range(0,ncenter):
-    np.savetxt('quads'+str(i)+'.ascii',np.array([xq[:,i],yq[:,i]]).T)
-
-
-
+###############################################################################

@@ -4,29 +4,23 @@ set size square
 set grid
 set key outside
 set output 'nodes.pdf'
-plot[-0.05:2.15][-0.05:2.15]\
+plot[-3:3][-3:3]\
 'nodes0.ascii' pt 4 ps .35 t 'c=0',\
 'nodes1.ascii' pt 4 ps .35 t 'c=1',\
 'nodes2.ascii' pt 4 ps .35 t 'c=2',\
-'nodes3.ascii' pt 4 ps .35 t 'c=3',\
-'nodes4.ascii' pt 4 ps .35 t 'c=4',\
 'nodes6.ascii' pt 4 ps .35 t 'c=6',\
 
 set output 'nodes_zoom.pdf'
-plot[0.5:0.6][1.25:1.5]\
+plot[-0.5:0.5][-0.5:0.5]\
 'nodes0.ascii' pt 4 ps .35 t 'c=0',\
 'nodes1.ascii' pt 4 ps .35 t 'c=1',\
 'nodes2.ascii' pt 4 ps .35 t 'c=2',\
-'nodes3.ascii' pt 4 ps .35 t 'c=3',\
-'nodes4.ascii' pt 4 ps .35 t 'c=4',\
 'nodes6.ascii' pt 4 ps .35 t 'c=6',\
 
 set output 'quad_points.pdf'
-plot[-0.05:2.15][-0.05:2.15]\
+plot[-3:3][-3:3]\
 'quads0.ascii' pt 4 ps .35 t 'c=0',\
 'quads1.ascii' pt 4 ps .35 t 'c=1',\
 'quads2.ascii' pt 4 ps .35 t 'c=2',\
-'quads3.ascii' pt 4 ps .35 t 'c=3',\
-'quads4.ascii' pt 4 ps .35 t 'c=4',\
 'quads6.ascii' pt 4 ps .35 t 'c=6',\
 
