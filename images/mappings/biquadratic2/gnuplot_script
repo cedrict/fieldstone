@@ -1,26 +1,26 @@
-set term pdf enhanced
+#
+set term pdf enhanced size 3.2,3
 set grid
 set size square
 
 set xlabel 'r'
 set ylabel 's'
 set output 'rs.pdf'
-plot[-2:2][-2:2]\
+plot[-1.5:1.5][-1.5:1.5]\
 'rs.ascii' pt 1 ps .1 notitle,\
-'pts_rs.ascii' lt -1 pt 5 ps .6 notitle
-
+'pts_rs' lt -1 pt 5 ps .6 notitle
 
 set xlabel 'x'
 set ylabel 'y'
 set output 'xyQ1.pdf'
-plot[-4:4][-4:4]\
+plot[-3.5:3.5][-3.5:3.5]\
 'xyQ1.ascii' pt 1 ps .1 notitle,\
-'pts_xy.ascii' lt -1 pt 5 ps .3 notitle
+'pts_xy' lt -1 pt 5 ps .3 notitle
 
 set output 'xyQ2.pdf'
-plot[-4:4][-4:4]\
+plot[-3.5:3.5][-3.5:3.5]\
 'xyQ2.ascii' pt 1 ps .1 notitle,\
-'pts_xy.ascii' lt -1 pt 5 ps .3 notitle
+'pts_xy' lt -1 pt 5 ps .3 notitle
 
 
 
