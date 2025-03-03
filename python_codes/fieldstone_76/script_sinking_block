@@ -6,9 +6,9 @@ rm *.ascii
 
 for m in 1 2 ; do
 
-   for rs in 16 32 48 64 80 96; do
+   #for rs in 16 32 48 64 80 96; do
+   for rs in 16 32 48 64; do
 
-      #for nq in 2 3 4 ; do
       for nq in  3  ; do
 
           echo res=$rs nq=$nq m=$m

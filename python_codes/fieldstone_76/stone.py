@@ -3,49 +3,51 @@ import time as timing
 import sys as sys
 import scipy.sparse as sps
 import random
+from tools import *
 from scipy.sparse import csr_matrix, lil_matrix 
+
+###############################################################################
+
+def laypts4(x1,y1,x2,y2,x3,y3,x4,y4,x,y,hull,level):
+    counter=0
+    for j in range(0,2*level+1):
+        for i in range(0,2*level+1):
+            #equidistant
+            r=-1.+1./level*i
+            s=-1.+1./level*j
+            N1=0.25*(1.-r)*(1.-s)
+            N2=0.25*(1.+r)*(1.-s)
+            N3=0.25*(1.+r)*(1.+s)
+            N4=0.25*(1.-r)*(1.+s)
+            x[counter]=x1*N1+x2*N2+x3*N3+x4*N4
+            y[counter]=y1*N1+y2*N2+y3*N3+y4*N4
+            if i==0 or i==2*level: hull[counter]=True
+            if j==0 or j==2*level: hull[counter]=True
+            counter+=1
+        #end for
+    #end for
 
 ###############################################################################
 # bx and by are the body force components
 # and analytical solution
 
-def a(x):
-    return -2*x*x*(x-1)**2
-def b(y):
-    return y*(2*y-1)*(y-1)  
-def c(x):
-    return x*(2*x-1)*(x-1) 
-def d(y):
-    return 2*y*y*(y-1)**2
-
-def ap(x): 
-    return -4*x*(2*x**2-3*x+1)
-def app(x):
-    return -4*(6*x**2-6*x+1) 
-def bp(y): 
-    return 6*y**2-6*y+1 
-def bpp(y):
-    return 12*y-6 
-def cp(x): 
-    return 6*x**2-6*x+1 
-def cpp(x):
-    return 12*x-6  
-def dp(y): 
-    return 4*y*(2*y**2-3*y+1)  
-def dpp(y):
-    return 4*(6*y**2-6*y+1)  
-
-def exx_th(x,y):
-    return ap(x)*b(y)
-def eyy_th(x,y):
-    return c(x)*dp(y)
-def exx_th(x,y):
-    return 0.5*(a(x)*bp(y)+cp(x)*d(y))
-
-def dpdx_th(x,y):
-    return (1-2*x)*(1-2*y)
-def dpdy_th(x,y):
-    return -2*x*(1-x)
+def a(x): return -2*x*x*(x-1)**2
+def b(y): return y*(2*y-1)*(y-1)  
+def c(x): return x*(2*x-1)*(x-1) 
+def d(y): return 2*y*y*(y-1)**2
+def ap(x):  return -4*x*(2*x**2-3*x+1)
+def app(x): return -4*(6*x**2-6*x+1) 
+def bp(y):  return 6*y**2-6*y+1 
+def bpp(y): return 12*y-6 
+def cp(x):  return 6*x**2-6*x+1 
+def cpp(x): return 12*x-6  
+def dp(y):  return 4*y*(2*y**2-3*y+1)  
+def dpp(y): return 4*(6*y**2-6*y+1)  
+def exx_th(x,y): return ap(x)*b(y)
+def eyy_th(x,y): return c(x)*dp(y)
+def exx_th(x,y): return 0.5*(a(x)*bp(y)+cp(x)*d(y))
+def dpdx_th(x,y): return (1-2*x)*(1-2*y)
+def dpdy_th(x,y): return -2*x*(1-x)
 
 #------------------------------------------------------------------------------
 
@@ -149,9 +151,20 @@ def dNNVds(rq,sq):
                      dNVds_5,dNVds_6,dNVds_7,dNVds_8],dtype=np.float64)
 
 def NNP(r,s):
-    return np.array([1-r-s,r,s],dtype=np.float64)
+    return np.array([1-2*r-2*s,2*r,2*s],dtype=np.float64)
 
 #------------------------------------------------------------------------------
+
+def compute_Ncoeffs(x0,x1,x2,y0,y1,y2,xxc,yyc,hh):
+    xx0=(x0-xxc)/hh ; yy0=(y0-yyc)/hh
+    xx1=(x1-xxc)/hh ; yy1=(y1-yyc)/hh
+    xx2=(x2-xxc)/hh ; yy2=(y2-yyc)/hh
+    det=xx1*yy2-xx2*yy1 -xx0*yy2-xx2*yy0 +xx0*yy1-xx1*yy0
+    N11=(xx1*yy2-xx2*yy1)/det ; N12=(xx2*yy0-xx0*yy2)/det ; N13=(xx0*yy1-xx1*yy0)/det
+    N21=(yy1-yy2        )/det ; N22=(yy2-yy0        )/det ; N23=(yy0-yy1        )/det
+    N31=(xx2-xx1        )/det ; N32=(xx0-xx2        )/det ; N33=(xx1-xx0        )/det
+    return N11,N12,N13,N21,N22,N23,N31,N32,N33 
+
 ###############################################################################
 
 eps=1e-8
@@ -168,35 +181,42 @@ ndofP=1
 mV=9
 mP=3
 
+Lx=1
+Ly=1
+
 # bench=1 : mms #1 (lami17)
 # bench=2 : sinking cube
 # bench=3 : Donea & Huerta
 # bench=9 : mms #2 (lami17)
 
-bench=2
+bench=9
 
-Lx=1
-Ly=1
-
-if int(len(sys.argv) == 6):
+if int(len(sys.argv) == 9):
    nelx=int(sys.argv[1])
    nely=int(sys.argv[2])
    visu=int(sys.argv[3])
    nqperdim=int(sys.argv[4])
    meth=int(sys.argv[5])
+   center=int(sys.argv[6])
+   mesh_type=int(sys.argv[7])
+   s_e=int(sys.argv[8])
 else:
-   nelx = 32
+   # mesh type
+   # 1: square elements
+   # 2: randomised
+   # 3: wave deformation (van keken like)
+   # 4: stretched
+   # 5: double sin
+   nelx = 128
    nely = nelx
    visu = 1
    nqperdim=3
    meth = 1
+   center=0
+   mesh_type=6
+   s_e=0
 
-# 1: square elements
-# 2: randomised
-# 3: wave deformation
-mesh_type=1
-
-if mesh_type==2: xi=0.1 # controls level of mesh randomness (between 0 and 0.5 max)
+straight_edges=(s_e==1)
 
 nnx=2*nelx+1
 nny=2*nely+1
@@ -209,6 +229,9 @@ Nfem=NfemV+NfemP
 hx=Lx/nelx
 hy=Ly/nely
 
+rVnodes=[-1,1,1,-1,0,1,0,-1,0]
+sVnodes=[-1,-1,1,1,-1,0,1,0,0]
+
 ###############################################################################
 
 print('bench=',bench)
@@ -220,6 +243,9 @@ print('NP   =',NP)
 print('NfemV=',NfemV)
 print('NfemP=',NfemP)
 print('method=',meth)
+print('mesh_type=',mesh_type)
+print('straight_edges=',straight_edges)
+print("-----------------------------")
 
 ###############################################################################
 
@@ -249,22 +275,8 @@ if nqperdim==5:
    qcoords=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
    qweights=[qw5a,qw5b,qw5c,qw5b,qw5a]
 
-if nqperdim==6:
-   qcoords=[-0.932469514203152,\
-            -0.661209386466265,\
-            -0.238619186083197,\
-            +0.238619186083197,\
-            +0.661209386466265,\
-            +0.932469514203152]
-   qweights=[0.171324492379170,\
-             0.360761573048139,\
-             0.467913934572691,\
-             0.467913934572691,\
-             0.360761573048139,\
-             0.171324492379170]
-
 eta_ref=1.
-pnormalise=True
+pnormalise=False
 sparse=True
 
 ###############################################################################
@@ -272,8 +284,8 @@ sparse=True
 ###############################################################################
 start = timing.time()
 
-xV = np.empty(NV,dtype=np.float64)  # x coordinates
-yV = np.empty(NV,dtype=np.float64)  # y coordinates
+xV=np.zeros(NV,dtype=np.float64)  # x coordinates
+yV=np.zeros(NV,dtype=np.float64)  # y coordinates
 
 counter = 0
 for j in range(0, nny):
@@ -319,6 +331,7 @@ print("build V grid icon: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 if mesh_type==2:
+   xi=0.1 # controls level of mesh randomness (between 0 and 0.5 max)
    for i in range(0,NV):
        if xV[i]>0 and xV[i]<Lx and yV[i]>0 and yV[i]<Ly:
           xV[i]+=random.uniform(-1.,+1)*hx*xi
@@ -355,34 +368,218 @@ if mesh_type==3:
               yV[counter]=0.
            counter += 1
 
-print("deform with wave: %.3f s" % (timing.time() - start))
+   print("deform with wave: %.3f s" % (timing.time() - start))
+
+###############################################################################
+# stretch mesh in both directions 
+###############################################################################
+
+if mesh_type==4:
+   start=timing.time()
+   for i in range(0,NV):
+       yV[i]=(yV[i])**(0.75+xV[i]/4.)
+       xV[i]=(xV[i])**(0.75+yV[i]/4.)
+   print("stretch mesh: %.3f s" % (timing.time() - start))
+
+#exit()
+
+###############################################################################
+# add double sin perturbation 
+###############################################################################
+
+if mesh_type==5:
+   start=timing.time()
+   for i in range(0,NV):
+       if xV[i]>0 and xV[i]<1: 
+          xV[i]+=np.sin(4*np.pi*yV[i])*hx/5
+       if yV[i]>0 and yV[i]<1: 
+          yV[i]+=np.sin(5*np.pi*xV[i])*hy/5
+   print("double sin mesh: %.3f s" % (timing.time() - start))
+
+###############################################################################
+# create mesh_type 6, by first disregard what was built so far
+###############################################################################
+
+if mesh_type==6:
+   start=timing.time()
+
+   b_Lx=1
+   b_Ly=1
+   b_nelx=int(nelx/2)
+   b_nely=b_nelx
+   b_nnx=2*b_nelx+1
+   b_nny=2*b_nely+1
+   b_NV=b_nnx*b_nny
+   b_nel=b_nelx*b_nely
+
+   # build block 1 as template for the others
+
+   block1_x=np.zeros(b_NV,dtype=np.float64)
+   block1_y=np.zeros(b_NV,dtype=np.float64)
+   block1_hull=np.zeros(b_NV,dtype=bool)
+   block1_iconV =np.zeros((mV,b_nel),dtype=np.int32)
+
+   counter = 0 
+   for j in range(0,b_nny):
+       for i in range(0,b_nnx):
+           block1_x[counter]=i*b_Lx/float(b_nelx)/2
+           block1_y[counter]=j*b_Ly/float(b_nely)/2
+           if i==0 or i==nnx-1: block1_hull[counter]=True
+           if j==0 or j==nny-1: block1_hull[counter]=True
+           counter += 1
+       #end for
+   #end for
+
+   counter = 0
+   for j in range(0,b_nely):
+       for i in range(0,b_nelx):
+           block1_iconV[0,counter]=(i)*2+1+(j)*2*b_nnx-1
+           block1_iconV[1,counter]=(i)*2+3+(j)*2*b_nnx-1
+           block1_iconV[2,counter]=(i)*2+3+(j)*2*b_nnx+b_nnx*2 -1
+           block1_iconV[3,counter]=(i)*2+1+(j)*2*b_nnx+b_nnx*2 -1
+           block1_iconV[4,counter]=(i)*2+2+(j)*2*b_nnx-1
+           block1_iconV[5,counter]=(i)*2+3+(j)*2*b_nnx+b_nnx -1
+           block1_iconV[6,counter]=(i)*2+2+(j)*2*b_nnx+b_nnx*2 -1
+           block1_iconV[7,counter]=(i)*2+1+(j)*2*b_nnx+b_nnx -1
+           block1_iconV[8,counter]=(i)*2+2+(j)*2*b_nnx+b_nnx -1
+           counter += 1
+       #end for
+   #end for
+
+   block2_x=np.zeros(b_NV,dtype=np.float64)
+   block2_y=np.zeros(b_NV,dtype=np.float64)
+   block2_iconV=np.zeros((mV,b_nel),dtype=np.int32)
+   block2_hull=np.zeros(b_NV,dtype=bool)
+   block2_x[:]=block1_x[:]
+   block2_y[:]=block1_y[:]
+   block2_iconV[:,:]=block1_iconV[:,:]
+   block2_hull[:]=block1_hull[:]
+
+   block3_x=np.zeros(b_NV,dtype=np.float64)
+   block3_y=np.zeros(b_NV,dtype=np.float64)
+   block3_iconV=np.zeros((mV,b_nel),dtype=np.int32)
+   block3_hull=np.zeros(b_NV,dtype=bool)
+   block3_x[:]=block1_x[:]
+   block3_y[:]=block1_y[:]
+   block3_iconV[:,:]=block1_iconV[:,:]
+   block3_hull[:]=block1_hull[:]
+
+   # map the three blocks
+   
+   xA=0   ; yA=0
+   xB=0.6 ; yB=0
+   xC=1   ; yC=0 
+   xD=0   ; yD=0.45
+   xE=0.5 ; yE=0.5
+   xF=0   ; yF=1
+   xG=1   ; yG=1
+   
+   laypts4(xA,yA,xB,yB,xE,yE,xD,yD,block1_x,block1_y,block1_hull,b_nelx)
+   laypts4(xB,yB,xC,yC,xG,yG,xE,yE,block2_x,block2_y,block2_hull,b_nelx)
+   laypts4(xD,yD,xE,yE,xG,yG,xF,yF,block3_x,block3_y,block3_hull,b_nelx)
+
+   #np.savetxt('block1.ascii',np.array([block1_x,block1_y]).T,header='# x,y')
+   #np.savetxt('block2.ascii',np.array([block2_x,block2_y]).T,header='# x,y')
+   #np.savetxt('block3.ascii',np.array([block3_x,block3_y]).T,header='# x,y')
+
+   #export_to_vtu('block1.vtu',block1_x,block1_y,block1_iconV,block1_hull)
+   #export_to_vtu('block2.vtu',block2_x,block2_y,block2_iconV,block2_hull)
+   #export_to_vtu('block3.vtu',block3_x,block3_y,block3_iconV,block3_hull)
+
+   # merge blocks. First 1 and 2, then the resulting block with 3
+
+   x12,y12,icon12,hull12=merge_two_blocks(block1_x,block1_y,block1_iconV,block1_hull,\
+                                          block2_x,block2_y,block2_iconV,block2_hull)
+
+   #export_to_vtu('blocks_1-2.vtu',x12,y12,icon12,hull12)
+
+   xV,yV,iconV,hullV=merge_two_blocks(x12,y12,icon12,hull12,\
+                                      block3_x,block3_y,block3_iconV,block3_hull)
+
+   #export_to_vtu('blocks_1-3.vtu',xV,yV,iconV,hullV)
+
+   hx=Lx/(2*b_nelx)
+   hy=Ly/(2*b_nely)
+   nel=3*b_nel
+   NV=np.size(xV)
+   NP=3*nel
+   NfemV=NV*ndofV
+   NfemP=NP*ndofP
+   Nfem=NfemV+NfemP
+
+   print("making glued mesh: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 # straighten the edges
 ###############################################################################
 start=timing.time()
 
-for iel in range(0,nel):
-    xV[iconV[4,iel]]=0.5*(xV[iconV[0,iel]]+xV[iconV[1,iel]])
-    yV[iconV[4,iel]]=0.5*(yV[iconV[0,iel]]+yV[iconV[1,iel]])
-    xV[iconV[5,iel]]=0.5*(xV[iconV[1,iel]]+xV[iconV[2,iel]])
-    yV[iconV[5,iel]]=0.5*(yV[iconV[1,iel]]+yV[iconV[2,iel]])
-    xV[iconV[6,iel]]=0.5*(xV[iconV[2,iel]]+xV[iconV[3,iel]])
-    yV[iconV[6,iel]]=0.5*(yV[iconV[2,iel]]+yV[iconV[3,iel]])
-    xV[iconV[7,iel]]=0.5*(xV[iconV[3,iel]]+xV[iconV[0,iel]])
-    yV[iconV[7,iel]]=0.5*(yV[iconV[3,iel]]+yV[iconV[0,iel]])
-    xV[iconV[8,iel]]=0.25*(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]]+xV[iconV[3,iel]])
-    yV[iconV[8,iel]]=0.25*(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]]+yV[iconV[3,iel]])
+if straight_edges:
+   for iel in range(0,nel):
+       xV[iconV[4,iel]]=0.5*(xV[iconV[0,iel]]+xV[iconV[1,iel]])
+       yV[iconV[4,iel]]=0.5*(yV[iconV[0,iel]]+yV[iconV[1,iel]])
+       xV[iconV[5,iel]]=0.5*(xV[iconV[1,iel]]+xV[iconV[2,iel]])
+       yV[iconV[5,iel]]=0.5*(yV[iconV[1,iel]]+yV[iconV[2,iel]])
+       xV[iconV[6,iel]]=0.5*(xV[iconV[2,iel]]+xV[iconV[3,iel]])
+       yV[iconV[6,iel]]=0.5*(yV[iconV[2,iel]]+yV[iconV[3,iel]])
+       xV[iconV[7,iel]]=0.5*(xV[iconV[3,iel]]+xV[iconV[0,iel]])
+       yV[iconV[7,iel]]=0.5*(yV[iconV[3,iel]]+yV[iconV[0,iel]])
 
 print("straighten edges: %.3f s" % (timing.time() - start))
+
+###############################################################################
+# set middle velocity node using Q_2^8 mapping (see notes)
+###############################################################################
+start=timing.time()
+
+if center==0: 
+   for iel in range(0,nel):
+       xV[iconV[8,iel]]=0.25*(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]]+xV[iconV[3,iel]])
+       yV[iconV[8,iel]]=0.25*(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]]+yV[iconV[3,iel]])
+elif center==1:
+   for iel in range(0,nel):
+       xV[iconV[8,iel]]=0.125*(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]]+xV[iconV[3,iel]]+\
+                               xV[iconV[4,iel]]+xV[iconV[5,iel]]+xV[iconV[6,iel]]+xV[iconV[7,iel]])
+       yV[iconV[8,iel]]=0.125*(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]]+yV[iconV[3,iel]]+\
+                               yV[iconV[4,iel]]+yV[iconV[5,iel]]+yV[iconV[6,iel]]+yV[iconV[7,iel]])
+elif center==2:
+   for iel in range(0,nel):
+       xV[iconV[8,iel]]=(  xV[iconV[0,iel]]+  xV[iconV[1,iel]]+  xV[iconV[2,iel]]+  xV[iconV[3,iel]]+\
+                         3*xV[iconV[4,iel]]+3*xV[iconV[5,iel]]+3*xV[iconV[6,iel]]+3*xV[iconV[7,iel]])/16.
+       yV[iconV[8,iel]]=(  yV[iconV[0,iel]]+  yV[iconV[1,iel]]+  yV[iconV[2,iel]]+  yV[iconV[3,iel]]+\
+                         3*yV[iconV[4,iel]]+3*yV[iconV[5,iel]]+3*yV[iconV[6,iel]]+3*yV[iconV[7,iel]])/16.
+elif center==3:
+   for iel in range(0,nel):
+       xV[iconV[8,iel]]=-0.25*(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]]+xV[iconV[3,iel]])\
+                       + 0.50*(xV[iconV[4,iel]]+xV[iconV[5,iel]]+xV[iconV[6,iel]]+xV[iconV[7,iel]])
+       yV[iconV[8,iel]]=-0.25*(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]]+yV[iconV[3,iel]])\
+                       + 0.50*(yV[iconV[4,iel]]+yV[iconV[5,iel]]+yV[iconV[6,iel]]+yV[iconV[7,iel]])
+else:
+   exit('unknown center')
+
+print("assign coords middle node: %.3f s" % (timing.time() - start))
+
+###############################################################################
+# compute element center coordinates
+###############################################################################
+start = timing.time()
+
+xc=np.zeros(nel,dtype=np.float64) 
+yc=np.zeros(nel,dtype=np.float64) 
+
+for iel in range(0,nel):
+    xc[iel]=0.25*(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]]+xV[iconV[3,iel]])
+    yc[iel]=0.25*(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]]+yV[iconV[3,iel]])
+
+print("compute center coords: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 # build pressure grid and iconP 
 ###############################################################################
 start = timing.time()
 
-xP=np.empty(NP,dtype=np.float64)     # x coordinates
-yP=np.empty(NP,dtype=np.float64)     # y coordinates
+xP=np.zeros(NP,dtype=np.float64)     # x coordinates
+yP=np.zeros(NP,dtype=np.float64)     # y coordinates
 iconP=np.zeros((mP,nel),dtype=np.int32)
 
 for iel in range(nel):
@@ -392,17 +589,23 @@ for iel in range(nel):
 
 counter=0
 for iel in range(nel):
-    xP[counter]=xV[iconV[8,iel]]
-    yP[counter]=yV[iconV[8,iel]]
-    counter+=1
-    xP[counter]=xV[iconV[8,iel]]+hx/2
-    yP[counter]=yV[iconV[8,iel]]
-    counter+=1
-    xP[counter]=xV[iconV[8,iel]]
-    yP[counter]=yV[iconV[8,iel]]+hy/2
+
+    NNNV=NNV(0,0)
+    xP[counter]=NNNV.dot(xV[iconV[0:mV,iel]])
+    yP[counter]=NNNV.dot(yV[iconV[0:mV,iel]])
     counter+=1
 
-#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+    NNNV=NNV(0.5,0)
+    xP[counter]=NNNV.dot(xV[iconV[0:mV,iel]])
+    yP[counter]=NNNV.dot(yV[iconV[0:mV,iel]])
+    counter+=1
+
+    NNNV=NNV(0,0.5)
+    xP[counter]=NNNV.dot(xV[iconV[0:mV,iel]])
+    yP[counter]=NNNV.dot(yV[iconV[0:mV,iel]])
+    counter+=1
+
+#np.savetxt('meshP.ascii',np.array([xP,yP]).T,header='# x,y')
 
 print("build P grid: %.3f s" % (timing.time() - start))
 
@@ -513,19 +716,10 @@ c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64)
 for iel in range(0,nel):
 
     if meth==2:
-       det=xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]]\
-          -xP[iconP[0,iel]]*yP[iconP[2,iel]]+xP[iconP[2,iel]]*yP[iconP[0,iel]]\
-          +xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]]
-       m11=(xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]])/det
-       m12=(xP[iconP[2,iel]]*yP[iconP[0,iel]]-xP[iconP[0,iel]]*yP[iconP[2,iel]])/det
-       m13=(xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]])/det
-       m21=(yP[iconP[1,iel]]-yP[iconP[2,iel]])/det
-       m22=(yP[iconP[2,iel]]-yP[iconP[0,iel]])/det
-       m23=(yP[iconP[0,iel]]-yP[iconP[1,iel]])/det
-       m31=(xP[iconP[2,iel]]-xP[iconP[1,iel]])/det
-       m32=(xP[iconP[0,iel]]-xP[iconP[2,iel]])/det
-       m33=(xP[iconP[1,iel]]-xP[iconP[0,iel]])/det
-
+       hh=np.sqrt(area[iel])
+       N11,N12,N13,N21,N22,N23,N31,N32,N33\
+       =compute_Ncoeffs(xP[iconP[0,iel]],xP[iconP[1,iel]],xP[iconP[2,iel]],\
+                        yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],xc[iel],yc[iel],hh)
 
     # set arrays to 0 every loop
     f_el =np.zeros((mV*ndofV),dtype=np.float64)
@@ -566,9 +760,9 @@ for iel in range(0,nel):
             if meth==1:
                NNNP[0:mP]=NNP(rq,sq)
             else:
-               NNNP[0]=(m11+m21*xq+m31*yq)
-               NNNP[1]=(m12+m22*xq+m32*yq)
-               NNNP[2]=(m13+m23*xq+m33*yq)
+               NNNP[0]=N11+N21*(xq-xc[iel])/hh+N31*(yq-yc[iel])/hh
+               NNNP[1]=N12+N22*(xq-xc[iel])/hh+N32*(yq-yc[iel])/hh
+               NNNP[2]=N13+N23*(xq-xc[iel])/hh+N33*(yq-yc[iel])/hh
             #print(NNNP[0],NNNP[1],NNNP[2])
 
             # construct 3x8 b_mat matrix
@@ -725,9 +919,54 @@ if pnormalise:
    print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
 
 #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
-#np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
 print("split vel into u,v: %.3f s" % (timing.time() - start))
+
+###############################################################################
+# normalise pressure
+###############################################################################
+
+if not pnormalise:
+   pavrg=0.
+   for iel in range(0,nel):
+       if meth==2:
+          hh=np.sqrt(area[iel])
+          N11,N12,N13,N21,N22,N23,N31,N32,N33\
+          =compute_Ncoeffs(xP[iconP[0,iel]],xP[iconP[1,iel]],xP[iconP[2,iel]],\
+                           yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],xc[iel],yc[iel],hh)
+       for iq in range(0,nqperdim):
+           for jq in range(0,nqperdim):
+               rq=qcoords[iq]
+               sq=qcoords[jq]
+               weightq=qweights[iq]*qweights[jq]
+
+               NNNV=NNV(rq,sq)
+               dNNNVdr=dNNVdr(rq,sq)
+               dNNNVds=dNNVds(rq,sq)
+               jcb=np.zeros((2,2),dtype=np.float64)
+               for k in range(0,mV):
+                   jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
+                   jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
+                   jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
+                   jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
+               #end for
+               jcob=np.linalg.det(jcb)
+
+               if meth==1:
+                  NNNP[0:mP]=NNP(rq,sq)
+               else:
+                  xq=NNNV.dot(xV[iconV[:,iel]])
+                  yq=NNNV.dot(yV[iconV[:,iel]])
+                  NNNP[0]=N11+N21*(xq-xc[iel])/hh+N31*(yq-yc[iel])/hh
+                  NNNP[1]=N12+N22*(xq-xc[iel])/hh+N32*(yq-yc[iel])/hh
+                  NNNP[2]=N13+N23*(xq-xc[iel])/hh+N33*(yq-yc[iel])/hh
+               pavrg+=NNNP.dot(p[iconP[:,iel]])*weightq*jcob
+
+   p-=pavrg/Lx/Ly
+
+   print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
+
+#np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
 ###############################################################################
 # compute vrms 
@@ -772,8 +1011,8 @@ print("compute v_rms : %.3f s" % (timing.time()-start))
 ###############################################################################
 start = timing.time()
 
-error_u=np.empty(NV,dtype=np.float64)
-error_v=np.empty(NV,dtype=np.float64)
+error_u=np.zeros(NV,dtype=np.float64)
+error_v=np.zeros(NV,dtype=np.float64)
 
 for i in range(0,NV): 
     error_u[i]=u[i]-velocity_x(xV[i],yV[i])
@@ -793,18 +1032,10 @@ if bench==1 or bench==9 or bench==3:
    for iel in range (0,nel):
 
        if meth==2:
-          det=xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]]\
-             -xP[iconP[0,iel]]*yP[iconP[2,iel]]+xP[iconP[2,iel]]*yP[iconP[0,iel]]\
-             +xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]]
-          m11=(xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]])/det
-          m12=(xP[iconP[2,iel]]*yP[iconP[0,iel]]-xP[iconP[0,iel]]*yP[iconP[2,iel]])/det
-          m13=(xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]])/det
-          m21=(yP[iconP[1,iel]]-yP[iconP[2,iel]])/det
-          m22=(yP[iconP[2,iel]]-yP[iconP[0,iel]])/det
-          m23=(yP[iconP[0,iel]]-yP[iconP[1,iel]])/det
-          m31=(xP[iconP[2,iel]]-xP[iconP[1,iel]])/det
-          m32=(xP[iconP[0,iel]]-xP[iconP[2,iel]])/det
-          m33=(xP[iconP[1,iel]]-xP[iconP[0,iel]])/det
+          hh=np.sqrt(area[iel])
+          N11,N12,N13,N21,N22,N23,N31,N32,N33\
+          =compute_Ncoeffs(xP[iconP[0,iel]],xP[iconP[1,iel]],xP[iconP[2,iel]],\
+                           yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],xc[iel],yc[iel],hh)
 
        for iq in range(0,nqperdim):
            for jq in range(0,nqperdim):
@@ -834,9 +1065,9 @@ if bench==1 or bench==9 or bench==3:
                if meth==1:
                   NNNP[0:mP]=NNP(rq,sq)
                else:
-                  NNNP[0]=(m11+m21*xq+m31*yq)
-                  NNNP[1]=(m12+m22*xq+m32*yq)
-                  NNNP[2]=(m13+m23*xq+m33*yq)
+                  NNNP[0]=N11+N21*(xq-xc[iel])/hh+N31*(yq-yc[iel])/hh
+                  NNNP[1]=N12+N22*(xq-xc[iel])/hh+N32*(yq-yc[iel])/hh
+                  NNNP[2]=N13+N23*(xq-xc[iel])/hh+N33*(yq-yc[iel])/hh
                pq=NNNP.dot(p[iconP[:,iel]])
                errp+=(pq-pressure(xq,yq))**2*weightq*jcob
            #end for
@@ -845,7 +1076,7 @@ if bench==1 or bench==9 or bench==3:
    errv=np.sqrt(errv)
    errp=np.sqrt(errp)
 
-   print("     -> nel= %6d ; errv= %.10f ; errp= %.10f" %(nel,errv,errp))
+   print("     -> nel= %6d ; errv= %e ; errp= %e" %(nel,errv,errp))
 
    print("compute errors: %.3f s" % (timing.time() - start))
 
@@ -854,48 +1085,41 @@ if bench==1 or bench==9 or bench==3:
 # since a node belongs to up to 4 elts and the pressure is discontinuous,
 # we export the four pressure values at the node.
 ###############################################################################
+start = timing.time()
 
-rVnodes=[-1,1,1,-1,0,1,0,-1,0]
-sVnodes=[-1,-1,1,1,-1,0,1,0,0]
     
 profile=open('profile.ascii',"w")
 
 for iel in range(0,nel): 
 
     if meth==2:
-       det=xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]]\
-          -xP[iconP[0,iel]]*yP[iconP[2,iel]]+xP[iconP[2,iel]]*yP[iconP[0,iel]]\
-          +xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]]
-       m11=(xP[iconP[1,iel]]*yP[iconP[2,iel]]-xP[iconP[2,iel]]*yP[iconP[1,iel]])/det
-       m12=(xP[iconP[2,iel]]*yP[iconP[0,iel]]-xP[iconP[0,iel]]*yP[iconP[2,iel]])/det
-       m13=(xP[iconP[0,iel]]*yP[iconP[1,iel]]-xP[iconP[1,iel]]*yP[iconP[0,iel]])/det
-       m21=(yP[iconP[1,iel]]-yP[iconP[2,iel]])/det
-       m22=(yP[iconP[2,iel]]-yP[iconP[0,iel]])/det
-       m23=(yP[iconP[0,iel]]-yP[iconP[1,iel]])/det
-       m31=(xP[iconP[2,iel]]-xP[iconP[1,iel]])/det
-       m32=(xP[iconP[0,iel]]-xP[iconP[2,iel]])/det
-       m33=(xP[iconP[1,iel]]-xP[iconP[0,iel]])/det
+       hh=np.sqrt(area[iel])
+       N11,N12,N13,N21,N22,N23,N31,N32,N33\
+       =compute_Ncoeffs(xP[iconP[0,iel]],xP[iconP[1,iel]],xP[iconP[2,iel]],\
+                        yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],xc[iel],yc[iel],hh)
 
     for k in range(0,mV):
-       xq=xV[iconV[k,iel]]
-       if abs(xq-0.5)<1e-6:
-          yq=yV[iconV[k,iel]]
-          uq=u[iconV[k,iel]]
-          vq=v[iconV[k,iel]]
-          rq=rVnodes[k]
-          sq=sVnodes[k]
-          if meth==1:
-             NNNP=NNP(rq,sq)
-          else:
-             NNNP[0]=(m11+m21*xq+m31*yq)
-             NNNP[1]=(m12+m22*xq+m32*yq)
-             NNNP[2]=(m13+m23*xq+m33*yq)
-          pq=NNNP.dot(p[iconP[:,iel]])
-          profile.write("%10e %10e %10e %10e %10e\n" %(xq,yq,uq,vq,pq))
+        xq=xV[iconV[k,iel]]
+        if abs(xq-0.5)<1e-6:
+           yq=yV[iconV[k,iel]]
+           uq=u[iconV[k,iel]]
+           vq=v[iconV[k,iel]]
+           rq=rVnodes[k]
+           sq=sVnodes[k]
+           if meth==1:
+              NNNP=NNP(rq,sq)
+           else:
+              NNNP[0]=N11+N21*(xq-xc[iel])/hh+N31*(yq-yc[iel])/hh
+              NNNP[1]=N12+N22*(xq-xc[iel])/hh+N32*(yq-yc[iel])/hh
+              NNNP[2]=N13+N23*(xq-xc[iel])/hh+N33*(yq-yc[iel])/hh
+           pq=NNNP.dot(p[iconP[:,iel]])
+           profile.write("%10e %10e %10e %10e %10e\n" %(xq,yq,uq,vq,pq))
+        #end if
+    #end for k
 
-
-
-
+#end for
+   
+print("export fields on profile: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 # plot of solution

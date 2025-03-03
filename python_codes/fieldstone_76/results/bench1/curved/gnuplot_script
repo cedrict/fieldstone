@@ -1,0 +1,157 @@
+#
+set term pdf enhanced font "Times,12pt"
+set key outside
+set log x
+set xlabel 'h'
+set grid
+set pointsize 0.5
+set log y
+
+set ylabel '|u-u_h|_{L_2} error'
+set format y "10^{%L}"
+
+#########################################################################
+set title 'square mesh'
+set output 'errors_V_mt1.pdf'
+plot[0.007:][:0.001]\
+'errors_mt1_center0_meth1' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'center=0, mapped',\
+'errors_mt1_center0_meth2' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'center=0, unmapped',\
+'errors_mt1_center1_meth1' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'center=1, mapped',\
+'errors_mt1_center1_meth2' u (1./sqrt($3)):6 w lp lt 2 pt 2 t 'center=1, unmapped',\
+'errors_mt1_center2_meth1' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'center=2, mapped',\
+'errors_mt1_center2_meth2' u (1./sqrt($3)):6 w lp lt 3 pt 2 t 'center=2, unmapped',\
+'errors_mt1_center3_meth1' u (1./sqrt($3)):6 w lp lt 4 pt 1 t 'center=3, mapped',\
+'errors_mt1_center3_meth2' u (1./sqrt($3)):6 w lp lt 4 pt 2 t 'center=3, unmapped',\
+x**3/150  w l lt -1 dashtype 2 t 'x^3',\
+x**2/3000  w l lt -1 dashtype 4 t 'x^2'
+
+set title 'randomized mesh'
+set output 'errors_V_mt2.pdf'
+plot[0.007:][:0.001]\
+'errors_mt2_center0_meth1' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'center=0, mapped',\
+'errors_mt2_center0_meth2' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'center=0, unmapped',\
+'errors_mt2_center1_meth1' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'center=1, mapped',\
+'errors_mt2_center1_meth2' u (1./sqrt($3)):6 w lp lt 2 pt 2 t 'center=1, unmapped',\
+'errors_mt2_center2_meth1' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'center=2, mapped',\
+'errors_mt2_center2_meth2' u (1./sqrt($3)):6 w lp lt 3 pt 2 t 'center=2, unmapped',\
+'errors_mt2_center3_meth1' u (1./sqrt($3)):6 w lp lt 4 pt 1 t 'center=3, mapped',\
+'errors_mt2_center3_meth2' u (1./sqrt($3)):6 w lp lt 4 pt 2 t 'center=3, unmapped',\
+x**3/150  w l lt -1 dashtype 2 t 'x^3',\
+x**2/3000  w l lt -1 dashtype 4 t 'x^2'
+
+set title 'wave mesh'
+set output 'errors_V_mt3.pdf'
+plot[0.007:][:0.001]\
+'errors_mt3_center0_meth1' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'center=0, mapped',\
+'errors_mt3_center0_meth2' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'center=0, unmapped',\
+'errors_mt3_center1_meth1' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'center=1, mapped',\
+'errors_mt3_center1_meth2' u (1./sqrt($3)):6 w lp lt 2 pt 2 t 'center=1, unmapped',\
+'errors_mt3_center2_meth1' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'center=2, mapped',\
+'errors_mt3_center2_meth2' u (1./sqrt($3)):6 w lp lt 3 pt 2 t 'center=2, unmapped',\
+'errors_mt3_center3_meth1' u (1./sqrt($3)):6 w lp lt 4 pt 1 t 'center=3, mapped',\
+'errors_mt3_center3_meth2' u (1./sqrt($3)):6 w lp lt 4 pt 2 t 'center=3, unmapped',\
+x**3/150  w l lt -1 dashtype 2 t 'x^3',\
+x**2/3000  w l lt -1 dashtype 4 t 'x^2'
+
+set title 'stretched mesh'
+set output 'errors_V_mt4.pdf'
+plot[0.007:][:0.001]\
+'errors_mt4_center0_meth1' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'center=0, mapped',\
+'errors_mt4_center0_meth2' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'center=0, unmapped',\
+'errors_mt4_center1_meth1' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'center=1, mapped',\
+'errors_mt4_center1_meth2' u (1./sqrt($3)):6 w lp lt 2 pt 2 t 'center=1, unmapped',\
+'errors_mt4_center2_meth1' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'center=2, mapped',\
+'errors_mt4_center2_meth2' u (1./sqrt($3)):6 w lp lt 3 pt 2 t 'center=2, unmapped',\
+'errors_mt4_center3_meth1' u (1./sqrt($3)):6 w lp lt 4 pt 1 t 'center=3, mapped',\
+'errors_mt4_center3_meth2' u (1./sqrt($3)):6 w lp lt 4 pt 2 t 'center=3, unmapped',\
+x**3/150  w l lt -1 dashtype 2 t 'x^3',\
+x**2/3000  w l lt -1 dashtype 4 t 'x^2'
+
+set title 'sin-sin mesh'
+set output 'errors_V_mt5.pdf'
+plot[0.007:][:0.001]\
+'errors_mt5_center0_meth1' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'center=0, mapped',\
+'errors_mt5_center0_meth2' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'center=0, unmapped',\
+'errors_mt5_center1_meth1' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'center=1, mapped',\
+'errors_mt5_center1_meth2' u (1./sqrt($3)):6 w lp lt 2 pt 2 t 'center=1, unmapped',\
+'errors_mt5_center2_meth1' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'center=2, mapped',\
+'errors_mt5_center2_meth2' u (1./sqrt($3)):6 w lp lt 3 pt 2 t 'center=2, unmapped',\
+'errors_mt5_center3_meth1' u (1./sqrt($3)):6 w lp lt 4 pt 1 t 'center=3, mapped',\
+'errors_mt5_center3_meth2' u (1./sqrt($3)):6 w lp lt 4 pt 2 t 'center=3, unmapped',\
+x**3/150  w l lt -1 dashtype 2 t 'x^3',\
+x**2/3000  w l lt -1 dashtype 4 t 'x^2'
+
+###############################################################################
+set ylabel '|p-p_h|_{L_2} error'
+
+set title 'square mesh'
+set output 'errors_P_mt1.pdf'
+plot[0.007:][]\
+'errors_mt1_center0_meth1' u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'center=0, mapped',\
+'errors_mt1_center0_meth2' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'center=0, unmapped',\
+'errors_mt1_center1_meth1' u (1./sqrt($3)):9 w lp lt 2 pt 1 t 'center=1, mapped',\
+'errors_mt1_center1_meth2' u (1./sqrt($3)):9 w lp lt 2 pt 2 t 'center=1, unmapped',\
+'errors_mt1_center2_meth1' u (1./sqrt($3)):9 w lp lt 3 pt 1 t 'center=2, mapped',\
+'errors_mt1_center2_meth2' u (1./sqrt($3)):9 w lp lt 3 pt 2 t 'center=2, unmapped',\
+'errors_mt1_center3_meth1' u (1./sqrt($3)):9 w lp lt 4 pt 1 t 'center=3, mapped',\
+'errors_mt1_center3_meth2' u (1./sqrt($3)):9 w lp lt 4 pt 2 t 'center=3, unmapped',\
+x**2/12 w l lt -1 dashtype 2 t 'x^{2}',\
+x**1/250 w l lt -1 dashtype 4 t 'x^{1}'
+
+set title 'randomized mesh'
+set output 'errors_P_mt2.pdf'
+plot[0.007:][:1]\
+'errors_mt2_center0_meth1' u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'center=0, mapped',\
+'errors_mt2_center0_meth2' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'center=0, unmapped',\
+'errors_mt2_center1_meth1' u (1./sqrt($3)):9 w lp lt 2 pt 1 t 'center=1, mapped',\
+'errors_mt2_center1_meth2' u (1./sqrt($3)):9 w lp lt 2 pt 2 t 'center=1, unmapped',\
+'errors_mt2_center2_meth1' u (1./sqrt($3)):9 w lp lt 3 pt 1 t 'center=2, mapped',\
+'errors_mt2_center2_meth2' u (1./sqrt($3)):9 w lp lt 3 pt 2 t 'center=2, unmapped',\
+'errors_mt2_center3_meth1' u (1./sqrt($3)):9 w lp lt 4 pt 1 t 'center=3, mapped',\
+'errors_mt2_center3_meth2' u (1./sqrt($3)):9 w lp lt 4 pt 2 t 'center=3, unmapped',\
+x**2/12 w l lt -1 dashtype 2 t 'x^{2}',\
+x**1/250 w l lt -1 dashtype 4 t 'x^{1}'
+
+set title 'wave mesh'
+set output 'errors_P_mt3.pdf'
+plot[0.007:][:1]\
+'errors_mt3_center0_meth1' u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'center=0, mapped',\
+'errors_mt3_center0_meth2' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'center=0, unmapped',\
+'errors_mt3_center1_meth1' u (1./sqrt($3)):9 w lp lt 2 pt 1 t 'center=1, mapped',\
+'errors_mt3_center1_meth2' u (1./sqrt($3)):9 w lp lt 2 pt 2 t 'center=1, unmapped',\
+'errors_mt3_center2_meth1' u (1./sqrt($3)):9 w lp lt 3 pt 1 t 'center=2, mapped',\
+'errors_mt3_center2_meth2' u (1./sqrt($3)):9 w lp lt 3 pt 2 t 'center=2, unmapped',\
+'errors_mt3_center3_meth1' u (1./sqrt($3)):9 w lp lt 4 pt 1 t 'center=3, mapped',\
+'errors_mt3_center3_meth2' u (1./sqrt($3)):9 w lp lt 4 pt 2 t 'center=3, unmapped',\
+x**2/12 w l lt -1 dashtype 2 t 'x^{2}',\
+x**1/250 w l lt -1 dashtype 4 t 'x^{1}'
+
+set title 'stretched mesh'
+set output 'errors_P_mt4.pdf'
+plot[0.007:][:1]\
+'errors_mt4_center0_meth1' u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'center=0, mapped',\
+'errors_mt4_center0_meth2' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'center=0, unmapped',\
+'errors_mt4_center1_meth1' u (1./sqrt($3)):9 w lp lt 2 pt 1 t 'center=1, mapped',\
+'errors_mt4_center1_meth2' u (1./sqrt($3)):9 w lp lt 2 pt 2 t 'center=1, unmapped',\
+'errors_mt4_center2_meth1' u (1./sqrt($3)):9 w lp lt 3 pt 1 t 'center=2, mapped',\
+'errors_mt4_center2_meth2' u (1./sqrt($3)):9 w lp lt 3 pt 2 t 'center=2, unmapped',\
+'errors_mt4_center3_meth1' u (1./sqrt($3)):9 w lp lt 4 pt 1 t 'center=3, mapped',\
+'errors_mt4_center3_meth2' u (1./sqrt($3)):9 w lp lt 4 pt 2 t 'center=3, unmapped',\
+x**2/12 w l lt -1 dashtype 2 t 'x^{2}',\
+x**1/250 w l lt -1 dashtype 4 t 'x^{1}'
+
+set title 'sin-sin mesh'
+set output 'errors_P_mt5.pdf'
+plot[0.007:][:1]\
+'errors_mt5_center0_meth1' u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'center=0, mapped',\
+'errors_mt5_center0_meth2' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'center=0, unmapped',\
+'errors_mt5_center1_meth1' u (1./sqrt($3)):9 w lp lt 2 pt 1 t 'center=1, mapped',\
+'errors_mt5_center1_meth2' u (1./sqrt($3)):9 w lp lt 2 pt 2 t 'center=1, unmapped',\
+'errors_mt5_center2_meth1' u (1./sqrt($3)):9 w lp lt 3 pt 1 t 'center=2, mapped',\
+'errors_mt5_center2_meth2' u (1./sqrt($3)):9 w lp lt 3 pt 2 t 'center=2, unmapped',\
+'errors_mt5_center3_meth1' u (1./sqrt($3)):9 w lp lt 4 pt 1 t 'center=3, mapped',\
+'errors_mt5_center3_meth2' u (1./sqrt($3)):9 w lp lt 4 pt 2 t 'center=3, unmapped',\
+x**2/12 w l lt -1 dashtype 2 t 'x^{2}',\
+x**1/250 w l lt -1 dashtype 4 t 'x^{1}'
+
+
