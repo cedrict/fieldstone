@@ -1,0 +1,31 @@
+#! /bin/bash
+
+# nelx=int(sys.argv[1])
+# nely=int(sys.argv[2])
+# visu=int(sys.argv[3])
+# nqperdim=int(sys.argv[4])
+# meth=int(sys.argv[5])
+# center=int(sys.argv[6])
+# mesh_type=int(sys.argv[7])
+# straight_edges
+
+rm errors_*
+rm vrms_*
+rm *.ascii
+
+nq=3
+c=0
+rs=16
+m=1
+
+for mt in 1 2 3 4 5 6; do 
+
+    echo mesh_type=$mt 
+
+    python3 stone.py $rs $rs 1 $nq $m $c $mt 0 > opla
+
+    mv solution.vtu solution_${mt}.vtu
+
+done
+
+rm opla

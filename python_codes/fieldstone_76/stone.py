@@ -5,8 +5,10 @@ import scipy.sparse as sps
 import random
 from tools import *
 from scipy.sparse import csr_matrix, lil_matrix 
+import mms_solkz as mms
 
 ###############################################################################
+# this function is used with mesh_type=6
 
 def laypts4(x1,y1,x2,y2,x3,y3,x4,y4,x,y,hull,level):
     counter=0
@@ -61,14 +63,15 @@ def bx(x,y):
            1.-4.*y+12.*y*y-8.*y*y*y)
        return val
     if bench==9: return 3*x**2*y**2-y-1
+    if bench==4: return 0.
 
 def by(x,y):
     if bench==1: return dpdy_th(x,y)-(ap(x)*bp(y)+cpp(x)*d(y)) -2*c(x)*dpp(y) 
     if bench==2:
        if abs(x-0.5)<0.0625 and abs(y-0.5)<0.0625:
-          return -1.01+1
+          return -1.01#+1
        else:
-          return -1+1
+          return -1#+1
     if bench==3:
        val=((8.-48.*y+48.*y*y)*x*x*x+
          (-12.+72.*y-72.*y*y)*x*x+
@@ -76,6 +79,7 @@ def by(x,y):
          12.*y*y+24.*y*y*y-12.*y**4)
        return val
     if bench==9: return 2*x**3*y+3*x-1
+    if bench==4: return np.sin(2.*y)*np.cos(3.*np.pi*x)
 
 #------------------------------------------------------------------------------
 
@@ -88,6 +92,7 @@ def eta(x,y):
           return 1
     if bench==3: return 1 
     if bench==9: return 1 
+    if bench==4: return np.exp(13.8155*y) 
 
 #------------------------------------------------------------------------------
 
@@ -96,18 +101,27 @@ def velocity_x(x,y):
     if bench==2: return 0
     if bench==3: return x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
     if bench==9: return x+x**2-2*x*y+x**3-3*x*y**2+x**2*y
+    if bench==4: 
+       uth,vth,pth=mms.solution(x,y)
+       return uth
 
 def velocity_y(x,y):
     if bench==1: return c(x)*d(y)
     if bench==2: return 0
     if bench==3: return -y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
     if bench==9: return -y-2*x*y+y**2-3*x**2*y+y**3-x*y**2
+    if bench==4: 
+       uth,vth,pth=mms.solution(x,y)
+       return vth
 
 def pressure(x,y):
     if bench==1: return x*(1-x)*(1-2*y)
     if bench==2: return 0
     if bench==3: return x*(1.-x)-1./6.
     if bench==9: return x*y+x+y+x**3*y**2-4/3
+    if bench==4: 
+       uth,vth,pth=mms.solution(x,y)
+       return pth
 
 #------------------------------------------------------------------------------
 
@@ -184,14 +198,8 @@ mP=3
 Lx=1
 Ly=1
 
-# bench=1 : mms #1 (lami17)
-# bench=2 : sinking cube
-# bench=3 : Donea & Huerta
-# bench=9 : mms #2 (lami17)
 
-bench=9
-
-if int(len(sys.argv) == 9):
+if int(len(sys.argv) == 10):
    nelx=int(sys.argv[1])
    nely=int(sys.argv[2])
    visu=int(sys.argv[3])
@@ -200,21 +208,28 @@ if int(len(sys.argv) == 9):
    center=int(sys.argv[6])
    mesh_type=int(sys.argv[7])
    s_e=int(sys.argv[8])
+   bench=int(sys.argv[9])
 else:
-   # mesh type
+   nelx     = 16
+   nely     = nelx
+   visu     = 1
+   nqperdim = 3
+   meth     = 1
+   center   = 0
    # 1: square elements
    # 2: randomised
    # 3: wave deformation (van keken like)
    # 4: stretched
    # 5: double sin
-   nelx = 128
-   nely = nelx
-   visu = 1
-   nqperdim=3
-   meth = 1
-   center=0
-   mesh_type=6
-   s_e=0
+   # 6: glued
+   mesh_type= 1
+   s_e      = 0
+   # bench=1 : mms #1 (lami17)
+   # bench=2 : sinking cube
+   # bench=3 : Donea & Huerta
+   # bench=4 : SolKz
+   # bench=9 : mms #2 (lami17)
+   bench    = 4
 
 straight_edges=(s_e==1)
 
@@ -231,21 +246,6 @@ hy=Ly/nely
 
 rVnodes=[-1,1,1,-1,0,1,0,-1,0]
 sVnodes=[-1,-1,1,1,-1,0,1,0,0]
-
-###############################################################################
-
-print('bench=',bench)
-print('nelx =',nelx)
-print('nely =',nely)
-print('nel  =',nel)
-print('NV   =',NV)
-print('NP   =',NP)
-print('NfemV=',NfemV)
-print('NfemP=',NfemP)
-print('method=',meth)
-print('mesh_type=',mesh_type)
-print('straight_edges=',straight_edges)
-print("-----------------------------")
 
 ###############################################################################
 
@@ -508,6 +508,21 @@ if mesh_type==6:
    Nfem=NfemV+NfemP
 
    print("making glued mesh: %.3f s" % (timing.time() - start))
+
+###############################################################################
+
+print('bench =',bench)
+print('nelx  =',nelx)
+print('nely  =',nely)
+print('nel   =',nel)
+print('NV    =',NV)
+print('NP    =',NP)
+print('NfemV =',NfemV)
+print('NfemP =',NfemP)
+print('method=',meth)
+print('mesh_type=',mesh_type)
+print('straight_edges=',straight_edges)
+print("-----------------------------")
 
 ###############################################################################
 # straighten the edges
@@ -1023,7 +1038,7 @@ print("compute nodal error for visu: %.3f s" % (timing.time()-start))
 ###############################################################################
 # compute error in L2 norm
 ###############################################################################
-if bench==1 or bench==9 or bench==3:
+if bench==1 or bench==9 or bench==3 or bench==4:
 
    start = timing.time()
 
@@ -1076,7 +1091,10 @@ if bench==1 or bench==9 or bench==3:
    errv=np.sqrt(errv)
    errp=np.sqrt(errp)
 
-   print("     -> nel= %6d ; errv= %e ; errp= %e" %(nel,errv,errp))
+   hmin=np.sqrt(np.min(area))
+   hmax=np.sqrt(np.max(area))
+
+   print("     -> nel= %6d ; errv= %e ; errp= %e ; hmin= %e hmax= %e" %(nel,errv,errp,hmin,hmax))
 
    print("compute errors: %.3f s" % (timing.time() - start))
 
@@ -1086,7 +1104,6 @@ if bench==1 or bench==9 or bench==3:
 # we export the four pressure values at the node.
 ###############################################################################
 start = timing.time()
-
     
 profile=open('profile.ascii',"w")
 
@@ -1128,47 +1145,71 @@ print("export fields on profile: %.3f s" % (timing.time() - start))
 start = timing.time()
 
 if visu==1:
+
     vtufile=open('solution.vtu',"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
     vtufile.write("<UnstructuredGrid> \n")
-    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(mV*nel,nel))
     #####
     vtufile.write("<Points> \n")
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
+    for iel in range(0,nel):
+        for k in range(0,mV):
+            vtufile.write("%e %e %e \n" %(xV[iconV[k,iel]],yV[iconV[k,iel]],0.))
     vtufile.write("</DataArray>\n")
     vtufile.write("</Points> \n")
     #####
     vtufile.write("<CellData Scalars='scalars'>\n")
     vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
     for iel in range(0,nel):
-        vtufile.write("%10e \n" %(area[iel]))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
-    for iel in range(0,nel):
-        vtufile.write("%10e \n" %(p[iconP[0,iel]]))
+        vtufile.write("%e \n" %(area[iel]))
     vtufile.write("</DataArray>\n")
     vtufile.write("</CellData>\n")
     #####
     vtufile.write("<PointData Scalars='scalars'>\n")
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+    for iel in range(0,nel):
+        for k in range(0,mV):
+            vtufile.write("%e %e %e \n" %(u[iconV[k,iel]],v[iconV[k,iel]],0.))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='error vel' Format='ascii'> \n")
-    for i in range(0,NV):
-           vtufile.write("%10e %10e %10e \n" %(error_u[i],error_v[i],0.))
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel (error)' Format='ascii'> \n")
+    for iel in range(0,nel):
+        for k in range(0,mV):
+            vtufile.write("%e %e %e \n" %(error_u[iconV[k,iel]],error_v[iconV[k,iel]],0.))
     vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel th' Format='ascii'> \n")
-    for i in range(0,NV):
-           vtufile.write("%10e %10e %10e \n" %(velocity_x(xV[i],yV[i]),velocity_y(xV[i],yV[i]),0))
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel (analytical)' Format='ascii'> \n")
+    for iel in range(0,nel):
+        for k in range(0,mV):
+            vtufile.write("%e %e %e \n" %(velocity_x(xV[iconV[k,iel]],yV[iconV[k,iel]]),\
+                                          velocity_y(xV[iconV[k,iel]],yV[iconV[k,iel]]),0))
     vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='p th' Format='ascii'> \n")
-    for i in range(0,NV):
-           vtufile.write("%10e \n" %(pressure(xV[i],yV[i])))
+    #
+    vtufile.write("<DataArray type='Float32' Name='press' Format='ascii'> \n")
+    for iel in range(0,nel):
+        if meth==2:
+           hh=np.sqrt(area[iel])
+           N11,N12,N13,N21,N22,N23,N31,N32,N33\
+           =compute_Ncoeffs(xP[iconP[0,iel]],xP[iconP[1,iel]],xP[iconP[2,iel]],\
+                            yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],xc[iel],yc[iel],hh)
+        for k in range(0,mV):
+            if meth==1:
+               NNNP[0:mP]=NNP(rVnodes[k],sVnodes[k])
+            else:
+               xxx=xV[iconV[k,iel]]
+               yyy=yV[iconV[k,iel]]
+               NNNP[0]=N11+N21*(xxx-xc[iel])/hh+N31*(yyy-yc[iel])/hh
+               NNNP[1]=N12+N22*(xxx-xc[iel])/hh+N32*(yyy-yc[iel])/hh
+               NNNP[2]=N13+N23*(xxx-xc[iel])/hh+N33*(yyy-yc[iel])/hh
+            ppp=NNNP.dot(p[iconP[:,iel]])
+            vtufile.write("%e \n" %(ppp ))
+    vtufile.write("</DataArray>\n")
+    #
+    vtufile.write("<DataArray type='Float32' Name='press (analytical)' Format='ascii'> \n")
+    for iel in range(0,nel):
+        for k in range(0,mV):
+            vtufile.write("%10e \n" %(pressure(xV[iconV[k,iel]],yV[iconV[k,iel]])))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("</PointData>\n")
@@ -1177,9 +1218,9 @@ if visu==1:
     #--
     vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
     for iel in range (0,nel):
-        vtufile.write("%d %d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],\
-                                                       iconV[3,iel],iconV[4,iel],iconV[5,iel],\
-                                                       iconV[6,iel],iconV[7,iel],iconV[8,iel]))
+        vtufile.write("%d %d %d %d %d %d %d %d %d\n" %(iel*mV+0,iel*mV+1,iel*mV+2,\
+                                                       iel*mV+3,iel*mV+4,iel*mV+5,\
+                                                       iel*mV+6,iel*mV+7,iel*mV+8))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
