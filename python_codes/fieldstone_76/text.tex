@@ -17,11 +17,11 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-{\sl This stone benefitted by comments made by Wolfgang Bangerth}. %\index{contributors}{D. Duck}
+{\sl This stone benefitted from comments made by Wolfgang Bangerth}. %\index{contributors}{D. Duck}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: Feb. 15th, 2025.
+Last revision: March 5th, 2025.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -52,7 +52,7 @@ and it is available in \aspect too.
 
 When using this element one must be aware of the fact that there are 
 two possible choices for the definitions of the pressure space 
-(the so-called ``mapped'' and ``un-mapped'' variants):
+(the so-called ``mapped'' and ``unmapped'' variants):
 
 \textcite{bobf08} (2008) state: 
 \begin{displayquote}
@@ -109,7 +109,7 @@ this element pair.}
 
 
 %------------------------------------------------------------------------------
-\subsection*{Deriving the mapped vs un-mapped pressure basis functions}
+\subsection*{Deriving the mapped vs unmapped pressure basis functions}
 
 
 The mapped version consists of  
@@ -153,7 +153,7 @@ example. You then map these locations forward using whatever mapping you use.
 }
 \end{displayquote}
 
-The un-mapped approach is a bit less straightforward and the procedure is as follows:
+The unmapped approach is a bit less straightforward and the procedure is as follows:
 let us assume there are three distinct pressure nodes inside the cell (the 'real'
 cell, not the reference cell).
 Inside this cell the pressure is defined by a linear field
@@ -278,7 +278,7 @@ A better choice is to use  $\{1, (x-x_c)/h, (y-y_c)/h \}$
 where $h$ is some kind of cell diameter and $x_c,y_c$ are the cell center, 
 or one of the vertices, or some such. The space is obviously the same.}
 
-In light of this pertinent remark\footnote{duh!}, let us then start again from 
+In light of this pertinent remark\footnote{duh...}, let us then start again from 
 \[
 p^h(x,y) = a+b\frac{x-x_c}{h}+c \frac{y-y_c}{h}
 \]
@@ -415,7 +415,7 @@ The mesh counts \lstinline{nel=nelx*nely} cells,
 \lstinline{NV=(2*nelx+1)*(2*nely+1)} velocity nodes and 
 \lstinline{NP=3*nel} pressure nodes.
 The \lstinline{meth} parameter is 1 for mapped approach and 2 
-for un-mapped approach. 
+for unmapped approach. 
 
 Six types of meshes have been implemented so far: 
 \begin{itemize}
@@ -470,8 +470,8 @@ regular meshes that are glued together (ABED, BCGE, DEGF):
 F--------G
 |      / |
 |    /   |
-|  /E    |
-D/   \   |
+D--E     |
+|   \    |
 |    \   |
 A-----B--C
 \end{verbatim}
@@ -483,8 +483,8 @@ In the {\pythonfile tools.py} there are two functions:
 the overlapping nodes of both have been merged and the global numbering and connectivity array computed.
 \item \verb'export_to_vtu': it takes a mesh and exports it to vtu format.
 \end{itemize}
-when \lstlisting{nelx} is set by the bash script, all three blocks are then assigned a 
-resolution \lstinline{nelx/2} \times \lstinline{nelx/2} so that the resolution/cell size
+when \lstinline{nelx} is set by the bash script, all three blocks are then assigned a 
+resolution \lstinline{nelx/2} $\times$ \lstinline{nelx/2} so that the resolution/cell size
 on the left and bottom boundaries is the $h_x$ and $h_y$ values of the square mesh. 
 The resulting mesh is shown hereunder. 
 \end{itemize}
@@ -492,14 +492,14 @@ The resulting mesh is shown hereunder.
 The six types of meshes are shown here:
 
 \begin{center}
-1)\includegraphics[width=5.4cm]{python_codes/fieldstone_76/results/mesh_type1}
-2)\includegraphics[width=5.4cm]{python_codes/fieldstone_76/results/mesh_type2}
-3)\includegraphics[width=5.4cm]{python_codes/fieldstone_76/results/mesh_type3}\\
-4)\includegraphics[width=5.5cm]{python_codes/fieldstone_76/results/mesh_type4}
-5)\includegraphics[width=5.5cm]{python_codes/fieldstone_76/results/mesh_type5}
-6)\includegraphics[width=5.5cm]{python_codes/fieldstone_76/results/mesh_type6}\\
+{\small 1})\includegraphics[width=5.5cm]{python_codes/fieldstone_76/results/mt1}
+{\small 2})\includegraphics[width=5.5cm]{python_codes/fieldstone_76/results/mt2}
+{\small 3})\includegraphics[width=5.5cm]{python_codes/fieldstone_76/results/mt3}\\
+{\small 4})\includegraphics[width=5.5cm]{python_codes/fieldstone_76/results/mt4}
+{\small 5})\includegraphics[width=5.5cm]{python_codes/fieldstone_76/results/mt5}
+{\small 6})\includegraphics[width=5.5cm]{python_codes/fieldstone_76/results/mt6}\\
 {\captionfont From left to right, top to bottom: mesh types 1, 2, 3, 4, 5 and 6, 
-or 'square', 'random', 'wave', 'stretched', 'sin-sin' and 'glued' meshes.}
+or 'square', 'randomized', 'wave', 'stretched', 'sin-sin' and 'glued' meshes.}
 \end{center}
 
 Looking at the meshes above we find that the cells of the 'wave' mesh 
@@ -532,7 +532,7 @@ The placement of the middle node 8 is discussed in what follows.
 
 The mapping is isoparametric (i.e. $Q_2$). The same mapping is used for changes 
 of variables and for all integrals, Jacobians, etc ...
-In the case of rectangular cells both the mapped and un-mapped approaches 
+In the case of rectangular cells both the mapped and unmapped approaches 
 yield the same pressure basis functions values at the quadrature points
 so the measured errors are identical.
 I suspected this is true for all cells obtained by affine transformation
@@ -582,7 +582,7 @@ in the real cell. The code takes the following approach:
 \end{enumerate}
 
 
-In both cases (mapped and un-mapped) the pressure is discontinuous from cell to cell 
+In both cases (mapped and unmapped) the pressure is discontinuous from cell to cell 
 and this adds complexity in terms of exporting it to vtu format (and plotting with paraview). 
 I then simply choose to export the value of the pressure in the middle of 
 each cell\footnote{I should improve this in the future, but it is 
@@ -593,7 +593,17 @@ I know how to fix it, but this has low priority.}
 \subsubsection{About the position of the middle node}
 
 We can think of multiple ways to come up with the `center' of the cell, 
-i.e. the location of node 8. 
+i.e. the location of node 8.
+
+\begin{verbatim}
+3--6--2 
+|     | 
+7  8  5 
+|     | 
+0--4--1 
+V nodes 
+\end{verbatim}
+
 In the code these different approaches are parameterized by means of the
 \lstinline{center} variable:
 
@@ -660,10 +670,10 @@ for example and therefore warrants a thorough study.
 %--------------------------------------------------------------------------------------
 \subsection*{The manufactured solutions}
 
-Note that for all three manufactured solutions used in the present code 
+Note that for all four manufactured solutions used in the present code 
 a) the pressure obeys $\int_{\Omega} p \; dV = 0$;
 b) the analytical velocity is prescribed on the boundary of the domain; 
-c) the viscosity is 1; d) the domain is the unit square. 
+c) the viscosity is 1 (except SolKz); d) the domain is the unit square. 
 
 \begin{itemize}
 \item {\tt bench=3}: 
@@ -695,11 +705,22 @@ v(x,y) &=& -y-2xy+y^2 -3x^2y + y^3 - xy^2 \\
 p(x,y) &=& xy+x+y+x^3y^2 - 4/3
 \end{eqnarray}
 The corresponding body force terms are derived in Section~\ref{MMM-ss:mms2}. 
+
+\item {\tt bench=4}. This is the SolKz benchmark described in Section~\ref{MMM-ss:solkz}.
+The main difference with respect to the previous three ones is the fact that the viscosity
+varies by 6 orders of magnitude (albeit is a smooth manner).
+
+
 \end{itemize}
 
-The numbering {\tt bench=3,1,9} is completely arbitrary and inherited from another \stone.
+The numbering {\tt bench=3,1,9,4} is completely arbitrary and inherited from another \stone.
 
-TODO: add SolCx
+In what follows velocity and pressure error convergence is measured as a function of
+mesh side. Since for some meshes there is not a single obvious mesh size, 
+I then use the square root of the maximum value of the elemental area array:
+\[
+h \simeq \sqrt{\max_e A_e }
+\]
 
 
 \newpage
@@ -736,8 +757,8 @@ wave mesh, stretched mesh, sin-sin mesh and glued mesh.}
 \includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench3/curved/errors_P_mt4.pdf}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench3/curved/errors_V_mt5.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench3/curved/errors_P_mt5.pdf}\\
-{\captionfont From top to bottom: randomized ($\xi=0.1$) mesh,
-wave mesh, stretched mesh and sin-sin.}
+{\captionfont From top to bottom: 'randomized' ($\xi=0.1$) mesh,
+'wave' mesh, 'stretched' mesh and 'sin-sin' mesh.}
 \end{center}
 
 \newpage
@@ -757,8 +778,8 @@ wave mesh, stretched mesh and sin-sin.}
 \includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench1/straight/errors_P_mt5.pdf}\\
 \includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench1/straight/errors_V_mt6.pdf}
 \includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench1/straight/errors_P_mt6.pdf}\\
-{\captionfont From top to bottom: square mesh, Randomized ($\xi=0.1$) mesh,
-wave mesh, stretched mesh, sin-sin mesh and glued mesh.}
+{\captionfont From top to bottom: 'square mesh', 'randomized' ($\xi=0.1$) mesh,
+'wave' mesh, 'stretched' mesh, 'sin-sin' mesh and 'glued' mesh.}
 \end{center}
 
 \newpage
@@ -773,8 +794,11 @@ wave mesh, stretched mesh, sin-sin mesh and glued mesh.}
 \includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench1/curved/errors_V_mt4.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench1/curved/errors_P_mt4.pdf}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench1/curved/errors_V_mt5.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench1/curved/errors_P_mt5.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench1/curved/errors_P_mt5.pdf}\\
+{\captionfont From top to bottom: 'randomized' ($\xi=0.1$) mesh,
+'wave' mesh, 'stretched' mesh and 'sin-sin' mesh.}
 \end{center}
+
 
 \newpage
 %.......................................................................
@@ -793,8 +817,8 @@ wave mesh, stretched mesh, sin-sin mesh and glued mesh.}
 \includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench9/straight/errors_P_mt5.pdf}\\
 \includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench9/straight/errors_V_mt6.pdf}
 \includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench9/straight/errors_P_mt6.pdf}\\
-{\captionfont From top to bottom: square mesh, Randomized ($\xi=0.1$) mesh,
-wave mesh, stretched mesh, sin-sin mesh and glued mesh.}
+{\captionfont From top to bottom: 'square' mesh, 'randomized' ($\xi=0.1$) mesh,
+'wave' mesh, 'stretched' mesh, 'sin-sin' mesh and 'glued' mesh.}
 \end{center}
 
 \newpage
@@ -809,8 +833,50 @@ wave mesh, stretched mesh, sin-sin mesh and glued mesh.}
 \includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench9/curved/errors_V_mt4.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench9/curved/errors_P_mt4.pdf}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench9/curved/errors_V_mt5.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench9/curved/errors_P_mt5.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench9/curved/errors_P_mt5.pdf}\\
+{\captionfont From top to bottom: 'randomized' ($\xi=0.1$) mesh,
+'wave' mesh, 'stretched' mesh and 'sin-sin' mesh.}
 \end{center}
+
+
+\newpage
+%.......................................................................
+\subsection*{Manufactured solution SolKz ({\tt bench=4}) - straight edges}
+
+\begin{center}
+\includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench4/straight/errors_V_mt1.pdf}
+\includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench4/straight/errors_P_mt1.pdf}\\
+\includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench4/straight/errors_V_mt2.pdf}
+\includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench4/straight/errors_P_mt2.pdf}\\
+\includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench4/straight/errors_V_mt3.pdf}
+\includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench4/straight/errors_P_mt3.pdf}\\
+\includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench4/straight/errors_V_mt4.pdf}
+\includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench4/straight/errors_P_mt4.pdf}\\
+\includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench4/straight/errors_V_mt5.pdf}
+\includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench4/straight/errors_P_mt5.pdf}\\
+\includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench4/straight/errors_V_mt6.pdf}
+\includegraphics[width=6.5cm]{python_codes/fieldstone_76/results/bench4/straight/errors_P_mt6.pdf}\\
+{\captionfont From top to bottom: 'square' mesh, 'randomized' ($\xi=0.1$) mesh,
+'wave' mesh, 'stretched' mesh, 'sin-sin' mesh and 'glued' mesh.}
+\end{center}
+
+\newpage
+%.......................................................................
+\subsection*{Manufactured solution SolKz ({\tt bench=4}) - curved edges}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench4/curved/errors_V_mt2.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench4/curved/errors_P_mt2.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench4/curved/errors_V_mt3.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench4/curved/errors_P_mt3.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench4/curved/errors_V_mt4.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench4/curved/errors_P_mt4.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench4/curved/errors_V_mt5.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_76/results/bench4/curved/errors_P_mt5.pdf} \\
+{\captionfont From top to bottom: 'randomized' ($\xi=0.1$) mesh,
+'wave' mesh, 'stretched' mesh and 'sin-sin' mesh.}
+\end{center}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -822,46 +888,40 @@ one expects a 3rd-order convergence (in the $L_2$ norm) for the velocity
 error and a 2nd-order convergence for the pressure error.
 In the tables below error rates that are not the expect 3/2 are highlighted in bold.
 
-The clear conclusion from all this above is that only \lstinline{center=0}
-yields a pressure error which decreases monotonically with resolution 
-for cells with curved edges. 
 Since all four \lstinline{center} approaches are identical for straight edges
 cells I will then only report values for \lstinline{center=0}. 
 
 
+
 \begin{center}
-\includegraphics[width=2.5cm]{python_codes/fieldstone_76/results/mesh_type1}
-\includegraphics[width=2.5cm]{python_codes/fieldstone_76/results/mesh_type2}
-\includegraphics[width=2.5cm]{python_codes/fieldstone_76/results/mesh_type3}
-\includegraphics[width=2.7cm]{python_codes/fieldstone_76/results/mesh_type4}
-\includegraphics[width=2.7cm]{python_codes/fieldstone_76/results/mesh_type5}
-\includegraphics[width=2.7cm]{python_codes/fieldstone_76/results/mesh_type6}\\
+\includegraphics[width=2.7cm]{python_codes/fieldstone_76/results/mt1}
+\includegraphics[width=2.7cm]{python_codes/fieldstone_76/results/mt2}
+\includegraphics[width=2.7cm]{python_codes/fieldstone_76/results/mt3}
+\includegraphics[width=2.7cm]{python_codes/fieldstone_76/results/mt4}
+\includegraphics[width=2.7cm]{python_codes/fieldstone_76/results/mt5}
+\includegraphics[width=2.7cm]{python_codes/fieldstone_76/results/mt6}\\
 {\captionfont 'square' ,'random', 'wave', 'stretched', 'sin-sin', 'glued'.}
 \end{center}
 
 \begin{itemize}
 
 %...................................
-\item {\tt bench=3}, straight edges
+\item {\tt bench=3}
 
 \begin{tabular}{c|cccccc}
 \hline
-& mt=1     &  mt=2        &  mt=3  &  mt=4       & mt=5  & mt=6\\
-& 'square' & 'randomized' & 'wave' & 'stretched' & 'sin-sin' & 'glued'\\
+straight& mt=1     &  mt=2        &  mt=3  &  mt=4       & mt=5  & mt=6\\
+edges& 'square' & 'randomized' & 'wave' & 'stretched' & 'sin-sin' & 'glued'\\
 \hline
 mapped   & 3/2 & {\bf 2/1} &3/2 & {\bf 2.74/1.88} &3/2 \\
 unmapped & 3/2 &3/2 &3/2 & {\bf 2.74/1.92} &3/2 \\
 \hline
 \end{tabular}
 
-
-%...................................
-\item {\tt bench=3}, curved edges
-
 \begin{tabular}{c|cccc}
 \hline
- &  mt=2        &  mt=3  &  mt=4       & mt=5 \\
- & 'randomized' & 'wave' & 'stretched' & 'sin-sin' \\
+curved &  mt=2        &  mt=3  &  mt=4       & mt=5 \\
+edges & 'randomized' & 'wave' & 'stretched' & 'sin-sin' \\
 \hline
 mapped   & \\ 
 unmapped &  \\
@@ -870,54 +930,69 @@ unmapped &  \\
 
 
 %..........................
-\item {\tt bench=1}, straight edges
+\item {\tt bench=1}
 
 \begin{tabular}{c|cccccc}
 \hline
-& mt=1     &  mt=2        &  mt=3  &  mt=4       & mt=5  & mt=6\\
-& 'square' & 'randomized' & 'wave' & 'stretched' & 'sin-sin' & 'glued'\\
+straight & mt=1     &  mt=2        &  mt=3  &  mt=4       & mt=5  & mt=6\\
+edges    & 'square' & 'randomized' & 'wave' & 'stretched' & 'sin-sin' & 'glued'\\
 \hline
 mapped   & 3/2 & {\bf 2/1} &3/2 & {\bf 2.74/1.88} &3/2 \\
 unmapped & 3/2 &3/2 &3/2 & {\bf 2.74/1.92} &3/2 \\
 \hline
 \end{tabular}
 
-
-%.................................
-\item {\tt bench=1}, curved edges
-
 \begin{tabular}{c|cccc}
 \hline
-&  mt=2        &  mt=3  &  mt=4       & mt=5 \\
-& 'randomized' & 'wave' & 'stretched' & 'sin-sin' \\
+curved&  mt=2        &  mt=3  &  mt=4       & mt=5 \\
+edges& 'randomized' & 'wave' & 'stretched' & 'sin-sin' \\
 \hline
 mapped   & \\ 
 unmapped &  \\
 \hline
 \end{tabular}
 
-
-
 %...................................
-\item {\tt bench=9}, straight edges
+\item {\tt bench=9}
 
 \begin{tabular}{c|cccccc}
 \hline
-& mt=1     &  mt=2        &  mt=3  &  mt=4       & mt=5  & mt=6\\
-& 'square' & 'randomized' & 'wave' & 'stretched' & 'sin-sin' & 'glued'\\
+straight& mt=1     &  mt=2        &  mt=3  &  mt=4       & mt=5  & mt=6\\
+edges& 'square' & 'randomized' & 'wave' & 'stretched' & 'sin-sin' & 'glued'\\
 \hline
 mapped   & 3/2 & {\bf 2/1} &3/2 & {\bf 2.78/1.98}  &3/2 \\
 unmapped & 3/2 &3/2 &3/2 & {\bf 2.78/1.98} &3/2 \\
 \hline
 \end{tabular}
 
-%.................................
-\item {\tt bench=9}, curved edges
 
 \begin{tabular}{c|cccc}
 \hline
-&  mt=2        &  mt=3  &  mt=4       & mt=5 \\
-& 'randomized' & 'wave' & 'stretched' & 'sin-sin' \\
+curved&  mt=2        &  mt=3  &  mt=4       & mt=5 \\
+edges& 'randomized' & 'wave' & 'stretched' & 'sin-sin' \\
+\hline
+mapped   & \\ 
+unmapped &  \\
+\hline
+\end{tabular}
+
+%...................................
+\item {\tt bench=4}
+
+\begin{tabular}{c|cccccc}
+\hline
+straight& mt=1     &  mt=2        &  mt=3  &  mt=4       & mt=5  & mt=6\\
+edges& 'square' & 'randomized' & 'wave' & 'stretched' & 'sin-sin' & 'glued'\\
+\hline
+mapped   & 3/2 & {\bf 2/1} &3/2 & {\bf 2.78/1.98}  &3/2 \\
+unmapped & 3/2 &3/2 &3/2 & {\bf 2.78/1.98} &3/2 \\
+\hline
+\end{tabular}
+
+\begin{tabular}{c|cccc}
+\hline
+curved&  mt=2        &  mt=3  &  mt=4       & mt=5 \\
+edges& 'randomized' & 'wave' & 'stretched' & 'sin-sin' \\
 \hline
 mapped   & \\ 
 unmapped &  \\
@@ -926,44 +1001,17 @@ unmapped &  \\
 
 \end{itemize}
 
+The clear conclusion from all this is that only \lstinline{center=0}
+yields a pressure error which decreases monotonically with resolution 
+for cells with curved edges. 
+
 Note that for the stretched mesh the value of the parameter $h$ is not well defined (or
-not as well defined as the other meshes)
-
-----------------------------------------------------------
-
-\begin{small}
-\begin{tabular}{c|cccc|cccc|cccc|cccc|cccc|}
-\hline
--&
-\multicolumn{4}{c|}{mt=2}&
-\multicolumn{4}{c|}{mt=3}&
-\multicolumn{4}{c|}{mt=4}&
-\multicolumn{4}{c|}{mt=5}\\
--&
-\multicolumn{4}{c|}{'randomized'}&
-\multicolumn{4}{c|}{'wave'}&
-\multicolumn{4}{c|}{'stretched'} & 
-\multicolumn{4}{c|}{'sin-sin'} \\
-\hline
-& c=0 & c=1 & c=2 & c=3
-& c=0 & c=1 & c=2 & c=3
-& c=0 & c=1 & c=2 & c=3
-& c=0 & c=1 & c=2 & c=3 \\
-\hline
-mapped   & 2/1&2/1&2/1&2/1 &3/2&3/2&3/2&3/2  &2/1&2/1&2/1&2/1 &2&2&2&2  \\
-unmapped & 2/1&2/X&2/X&2/X &3/2&3/2&3/2&3/2  &2/1&2/X&2/X&2/X &2&2&2&2  \\
-\hline
-\end{tabular}
-\end{small}
-
-
-
+not as well defined as the other meshes). Since the $h$ value I use for these is overestimating
+the size of the smallest cell, these could explain the slightly anomalous rates.
 
 \newpage
 %----------------------------------------
 \subsection*{Instantaneous sinking block}
-
-{\color{red} TO REDO!!!!!}
 
 It is fully described in Section~\ref{MMM-ss:sinking_block}.
 The block is centered in the domain, its density is 1\% larger than the 
@@ -975,7 +1023,7 @@ sides of the block.
 Free-slip boundary conditions are prescribed on all sides.
 This is not a benchmark {\it stricto sensu} as there is no analytical solution
 available. 
-Mesh type 1 is used (square elements) with resolutions $16^2, 32^2, 48^2, 64^2, ...$
+Mesh type 1 is used (square elements) with resolutions $16^2, 32^2, 64^2, 96^2, 128^2, 192^2, 256^2$.
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_76/results/block/vel}
@@ -983,14 +1031,16 @@ Mesh type 1 is used (square elements) with resolutions $16^2, 32^2, 48^2, 64^2, 
 {\captionfont Velocity and pressure fields.}
 \end{center}
 
-The root mean square velocity is measured on a series of meshes 
-and is shown on the following figure for both mapped and un-mapped approaches: 
+The root mean square velocity and the maximum velocity in the domain are 
+measured on a series of meshes 
+and is shown on the following figure for both mapped and unmapped approaches: 
 
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_76/results/block/vrms.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_76/results/block/maxvel.pdf}
 \end{center}
 
-We find that the highest resolution $80^2$ is not high enough to yield a resolution-independent
+We find that the highest resolution $256^2$ is not high enough to yield a resolution-independent
 measurement (although we note that the measurements above do not vary by more than 1\%). 
 
 The velocity and pressure are measured on a vertical line passing through the 
@@ -1006,10 +1056,10 @@ middle of the block:
 {\captionfont The grey band indicates the $y$ values inside the block.}
 \end{center}
 
-Because of symmetry we expect and recover $u=0$ on this line.
+Because of symmetry we expect and recover $u\simeq =0$ on this line.
 The $v$-component seems to converge to a resolution independent profile
 while the pressure is clearly dominated by the hydrostatic pressure.
-We do not observe any difference between mapped and un-mapped, as expected
+We do not observe any difference between mapped and unmapped, as expected
 since elements are square.
 
 \newpage

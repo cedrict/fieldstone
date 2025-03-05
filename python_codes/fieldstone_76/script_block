@@ -1,0 +1,32 @@
+#! /bin/bash
+#   nelx=int(sys.argv[1])
+#   nely=int(sys.argv[2])
+#   visu=int(sys.argv[3])
+#   nqperdim=int(sys.argv[4])
+#   meth=int(sys.argv[5])
+#   center=int(sys.argv[6])
+#   mesh_type=int(sys.argv[7])
+#   s_e=int(sys.argv[8])
+
+rm errors_*
+rm vrms_*
+rm *.ascii
+
+nq=3
+c=0
+mt=1
+
+for m in 1 2 ; do
+   for rs in 16 32 64 96 128 192 256; do
+
+       echo mesh_type=$mt center=$c method=$m res=$rs 
+
+       python3 stone.py $rs $rs 0 $nq $m $c $mt 1 > opla
+
+       grep vrms opla >> vrms_m${m}
+       mv profile.ascii profile_m${m}_res${rs}.ascii
+
+   done
+done
+
+rm opla

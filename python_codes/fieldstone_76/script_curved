@@ -18,7 +18,8 @@ nq=3
 for mt in 2 3 4 5; do 
     for c in 0 1 2 3; do 
         for m in 1 2 ; do
-            for rs in 4 6 8 12 16 24 32 48 64 96 128; do
+            #for rs in 4 6 8 12 16 24 32 48 64 96 128; do
+            for rs in 4 6 8 12 16 24 32; do
 
                echo mesh_type=$mt center=$c method=$m res=$rs 
 
