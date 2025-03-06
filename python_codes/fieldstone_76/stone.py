@@ -210,7 +210,7 @@ if int(len(sys.argv) == 10):
    s_e=int(sys.argv[8])
    bench=int(sys.argv[9])
 else:
-   nelx     = 16
+   nelx     = 4
    nely     = nelx
    visu     = 1
    nqperdim = 3
@@ -222,7 +222,7 @@ else:
    # 4: stretched
    # 5: double sin
    # 6: glued
-   mesh_type= 1
+   mesh_type= 4
    s_e      = 0
    # bench=1 : mms #1 (lami17)
    # bench=2 : sinking cube
@@ -1093,8 +1093,9 @@ if bench==1 or bench==9 or bench==3 or bench==4:
 
    hmin=np.sqrt(np.min(area))
    hmax=np.sqrt(np.max(area))
+   havg=np.sum(np.sqrt(area))/nel
 
-   print("     -> nel= %6d ; errv= %e ; errp= %e ; hmin= %e hmax= %e" %(nel,errv,errp,hmin,hmax))
+   print("     -> nel= %6d ; errv= %e ; errp= %e ; hmin= %e hmax= %e havg= %e" %(nel,errv,errp,hmin,hmax,havg))
 
    print("compute errors: %.3f s" % (timing.time() - start))
 
