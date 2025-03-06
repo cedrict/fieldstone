@@ -1,0 +1,90 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/aspect_logo}
+\includegraphics[height=1.25cm]{images/pictograms/ice}
+\includegraphics[height=1.25cm]{images/pictograms/visualisation}
+\includegraphics[height=1.25cm]{images/pictograms/gravity}
+\includegraphics[height=1.25cm]{images/pictograms/elasticity}
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/triangle}
+\includegraphics[height=1.25cm]{images/pictograms/under_construction}
+\includegraphics[height=1.25cm]{images/pictograms/bsc}
+\includegraphics[height=1.25cm]{images/pictograms/msc}
+\includegraphics[height=1.25cm]{images/pictograms/tools}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/FDM}
+\includegraphics[height=1.25cm]{images/pictograms/temperature}
+\includegraphics[height=1.25cm]{images/pictograms/3d}
+\includegraphics[height=1.25cm]{images/pictograms/pic}
+\includegraphics[height=1.25cm]{images/pictograms/nonlinear}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/publication}
+\includegraphics[height=1.25cm]{images/pictograms/streamfunction}
+\includegraphics[height=1.25cm]{images/pictograms/wave}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_170/text.tex}} \end{flushright}
+
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/template_keywords.key}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_170}}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+{\sl The code for this stone was developed by Djurre van der Molen}. \index{contributors}{D. van der Molen}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+Last revision: March 6th, 2025.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The idea behind this \stone originates in \stone~126 in which I attempt to replicate a 
+published article from 2003 \cite{grfr03}. Unfortunately, upon my asking, 
+the authors were able to confirm that the original code and results were lost for good. 
+This means that my replication hinges on how my my figures match 
+the figures of the paper such as the following one:
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_170/images/grfr03}
+\end{center}
+
+This is quite problematic because a) the quality of the image is objectively not great; 
+b) the colorscale used here is not standard (it is not available in ParaView for example); 
+c) there could have been color distortion from the original during the publication 
+process and the later digitization in order to publish the article online as a pdf document.
+
+Let us then isolate one panel and the color scale:
+
+\begin{center}
+\includegraphics[height=4cm]{python_codes/fieldstone_170/images/graph_3_full}
+\includegraphics[height=4cm]{python_codes/fieldstone_170/images/legenda}
+\end{center}
+
+In order to carry out a more quantitative comparison
+we first need to read in (digitize) the left panel and transform each pixel into 
+a number (or several numbers such as red, green, blue values), and second use the 
+color bar to find the corresponding pressure value between 0 and 1.
+
+The code showcases five functions:
+
+\begin{itemize}
+\item \lstinline{generate_color_value_map(image_path)}:
+\item \lstinline{get_value_from_color(color,color_value_map,color_tree)}:
+\item \lstinline{pixel_to_data_coords(x_pixel,y_pixel,img_width,img_height,x_range,y_range)}:
+\item \lstinline{analyze_graph_image(image_path,color_value_map,color_tree,x_range,y_range)}:
+\item \lstinline{plot_3d_surface(x_vals,y_vals,z_vals)}:
+\end{itemize}
+
+
+
+
+
