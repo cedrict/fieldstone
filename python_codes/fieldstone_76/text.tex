@@ -716,11 +716,12 @@ varies by 6 orders of magnitude (albeit is a smooth manner).
 The numbering {\tt bench=3,1,9,4} is completely arbitrary and inherited from another \stone.
 
 In what follows velocity and pressure error convergence is measured as a function of
-mesh side. Since for some meshes there is not a single obvious mesh size, 
-I then use the square root of the maximum value of the elemental area array:
+mesh size. Since for some meshes there is not a single obvious mesh size, 
+I then use the average square root of elemental area array:
 \[
-h \simeq \sqrt{\max_e A_e }
+h \simeq \frac{1}{nel}\sum_e^{nel} \sqrt{A_e} 
 \]
+In the case of the 'regular' mesh this obviously leads to $h=h_x=h_y=Lx/{nelx}=L_y/nely$.
 
 
 \newpage
