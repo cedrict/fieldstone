@@ -768,7 +768,7 @@ When using quadrilateral elements, the mesh will look similar to this:
 \includegraphics[width=6cm]{images/mappings/curved/annulus_mesh}
 \end{center}
 
-We here focus on $Q_1$, $Q_2$ and $Q_3$ mappings. We single out an element, 
+We here focus on $Q_1$, $Q_2$, $Q_3$ and $Q_4$ mappings. We single out an element, 
 and arbitrarily define it as follows in polar coordinates:
 \begin{lstlisting}
 theta1=23./180.*np.pi
@@ -776,8 +776,8 @@ theta2=52./180.*np.pi
 R1=1.
 R2=1.5
 \end{lstlisting}
-The $Q_1$ mapping requires four points, the $Q_2$ nine points and the $Q_3$
-sixteen points. 
+The $Q_1$ mapping requires four points, the $Q_2$ nine points,
+the $Q_3$ sixteen nodes and the $Q_4$ twenty-five points. 
 The code used in the following is available at {\tt ./images/mappings/curved/}.
 These are placed equidistantly in the $r,\theta$ coordinate
 system, as shown hereunder:
@@ -803,13 +803,13 @@ in the following figures:
 and $Q_4$ mappings.}
 \end{center}
 
-The image of a square with a $Q_1$ mapping is obviously a quadrilateral
-so that it looks like quite a few points land outside of the domain $R_1\leq r\leq R_2$.
+The image of a square with a $Q_1$ mapping is obviously a quadrilateral with 
+straight edges so that it looks like quite a few points land outside of the domain $R_1\leq r\leq R_2$.
 Note that points are well within $23\degree \leq \theta \leq 52\degree$, which can 
 simply be explained by the fact that the faces of the element joining $R_1$
 to $R_2$ are straight lines.
 
-However, it looks like the biquadratic and bicubic mappings are doing a much better 
+However, it looks like the higher order mappings are doing a much better 
 job at mapping the region of space $R_1\leq r\leq R_2$. In order to characterise 
 this better, we now place 10,000 points on the bottom face of 
 the reference element (i.e. $s=-1$)
@@ -887,41 +887,95 @@ Here again the $Q_4$ mapping makes quite the difference.
 
 The same exercise as in the previous section can be carried with 
 triangular elements.
+Please read the previous section to understand the following plots.
+The code used in the following is available at {\tt ./images/mappings/curved\_triangles/}.
 
+The major difference with respect to the quadrilateral element of the previous
+section is the location of the nodes for $P_{3,4}$.
+Indeed for quadrilaterals it made sense to place the nodes on rows at a constant radius
+and columns at a constant angle. 
+Looking at $P_2$ the situation is simple: node 3 is the middle of the edge 0-1, 
+node 5 is the middle of edge 0-2, and it seems reasonable to place node 4
+at a position characterized by $r_4=R_2=1.5$ and $\theta_4=\frac12(\theta_1+\theta_2)$.
+Concerning $P_3$ and $P_4$ I simply use a $P_1$ forward mapping for all 10 and 
+15 nodes respectively. I then proceed to move nodes 6,8 and 8,11,13 respectively 
+so that they are placed on the circle at equi-angular distance for one another\footnote{This
+is obviously very arbitrary and could/should be improved but how?}.
 
 \begin{center}
 \includegraphics[width=7cm]{images/mappings/curved_triangles/nodesP1.pdf}
-%\includegraphics[width=7cm]{images/mappings/curved/nodesQ2.pdf}\\
-%\includegraphics[width=7cm]{images/mappings/curved/nodesQ3.pdf}
-%\includegraphics[width=7cm]{images/mappings/curved/nodesQ4.pdf}\\
-{\captionfont Position of the nodes for the $P_1$, $P_2$, $P_3$ and $Q_4$ mappings.}
+\includegraphics[width=7cm]{images/mappings/curved_triangles/nodesP2.pdf}\\
+\includegraphics[width=7cm]{images/mappings/curved_triangles/nodesP3.pdf}
+\includegraphics[width=7cm]{images/mappings/curved_triangles/nodesP4.pdf}\\
+{\captionfont Position of the nodes for the $P_1$, $P_2$, $P_3$ and $P_4$ mappings.}
 \end{center}
 
+Once the nodes have been layed out we can then use the $P_{1,2,3,4}$ to map
+out 10,000 points:
 
 \begin{center}
 \includegraphics[width=7cm]{images/mappings/curved_triangles/xy1_volume.pdf}
-%\includegraphics[width=7cm]{images/mappings/curved/xy2_volume.pdf}\\
-%\includegraphics[width=7cm]{images/mappings/curved/xy3_volume.pdf}
-%\includegraphics[width=7cm]{images/mappings/curved/xy3_volume.pdf}\\
+\includegraphics[width=7cm]{images/mappings/curved_triangles/xy2_volume.pdf}\\
+\includegraphics[width=7cm]{images/mappings/curved_triangles/xy3_volume.pdf}
+\includegraphics[width=7cm]{images/mappings/curved_triangles/xy4_volume.pdf}\\
 {\captionfont Left to right: position of the mapped points for the $P_1$, $P_2$, $P_3$ 
 and $P_4$ mappings.}
 \end{center}
 
+We now place 10,000 points on the face of the reference element
+that is mapped onto the circle and once again compute their coordinates in the the $x,y$ space:
 
 
+\begin{center}
+\includegraphics[width=8cm]{images/mappings/curved_triangles/xy1_line.pdf}
+\includegraphics[width=8cm]{images/mappings/curved_triangles/xy2_line.pdf}\\
+\includegraphics[width=8cm]{images/mappings/curved_triangles/xy3_line.pdf}
+\includegraphics[width=8cm]{images/mappings/curved_triangles/xy4_line.pdf}\\
+{\captionfont Position of the mapped points for the $P_1$, $P_2$, $P_3$ and $P_4$ mappings.}
+\end{center}
 
+For each point $i$ we now compute the distance $r_i$ 
+to the origin, which, if the 
+mapping was perfect, would be exactly equal to $R_2=1.5$. 
+On the following plots are shown the error $r_i-R_2$ for all 
+points:
 
+\begin{center}
+\includegraphics[width=8cm]{images/mappings/curved_triangles/innerline_error_P1mapping.pdf}
+\includegraphics[width=8cm]{images/mappings/curved_triangles/innerline_error_P2mapping.pdf}\\
+\includegraphics[width=8cm]{images/mappings/curved_triangles/innerline_error_P3mapping.pdf}
+\includegraphics[width=8cm]{images/mappings/curved_triangles/innerline_error_P4mapping.pdf}\\
+{\captionfont Radius error of the mapped points for the $P_1$, $P_2$, $P_3$ and $P_4$ mappings.}
+\end{center}
 
+We recover the same kind of plots as with the quadrilaterals. 
 
+When it comes to integration the problem we are facing here is the 
+fact that the analytical value of the area covered by the shape 
+formed by the 2 straight edges and the curved side is very difficult to compute.
 
-
-
-
-
-
-
-
-
+\begin{verbatim}
+**********P1*********
+nqel= 3 area= 0.1722550348981049
+nqel= 4 area= 0.1722550348981049
+nqel= 6 area= 0.17225503489810473
+nqel= 7 area= 0.172255034898036
+**********P2*********
+nqel= 3 area= 0.19618061669192358
+nqel= 4 area= 0.19618061669192355
+nqel= 6 area= 0.19618061669192338
+nqel= 7 area= 0.19618061669184547
+**********P3*********
+nqel= 3 area= 0.196202089783442
+nqel= 4 area= 0.19620751672068115
+nqel= 6 area= 0.19626921242826045
+nqel= 7 area= 0.1962692124281841
+**********P4*********
+nqel= 3 area= 0.19339109577274016
+nqel= 4 area= 0.1961927497201587
+nqel= 6 area= 0.1962431894093658
+nqel= 7 area= 0.19626032062958276
+\end{verbatim}
 
 
 
