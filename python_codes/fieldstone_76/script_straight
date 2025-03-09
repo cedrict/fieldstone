@@ -1,14 +1,16 @@
 #! /bin/bash
 
-# nelx=int(sys.argv[1])
-# nely=int(sys.argv[2])
-# visu=int(sys.argv[3])
-# nqperdim=int(sys.argv[4])
-# meth=int(sys.argv[5])
-# center=int(sys.argv[6])
-# mesh_type=int(sys.argv[7])
-# straight_edges
-# benchmark nb
+#   nelx=int(sys.argv[1])
+#   nely=int(sys.argv[2])
+#   visu=int(sys.argv[3])
+#   nqperdim=int(sys.argv[4])
+#   meth=int(sys.argv[5])
+#   center=int(sys.argv[6])
+#   mesh_type=int(sys.argv[7])
+#   s_e=int(sys.argv[8])
+#   bench=int(sys.argv[9])
+
+visu=0
 
 rm errors_*
 rm vrms_*
@@ -24,7 +26,7 @@ for b in 1 3 4 9; do
 
                    echo mesh_type=$mt center=$c method=$m res=$rs 
 
-                   python3 stone.py $rs $rs 0 $nq $m $c $mt 1 $b > opla
+                   python3 stone.py $rs $rs $visu $nq $m $c $mt 1 $b > opla
 
                    grep errv opla >> errors_mt${mt}_center${c}_meth$m
                    #grep vrms opla >> vrms_mt${mt}_center${c}_meth$m
