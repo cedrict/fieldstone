@@ -1,0 +1,295 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set log x
+set pointsize .35
+
+vref=1
+
+set format y "%10.5f"
+
+hmin=0.005
+hmax=0.11
+
+############################################################
+
+set xlabel 'h_x'
+
+set ylabel 'min(u)'
+set output 'min_u.pdf'
+plot[hmin:hmax][]\
+'curved0_pdisc0_mapped0/stats_curved0_pdisc0_mapped0.ascii' u 4:($5/vref) w lp lt 1 pt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/stats_curved0_pdisc1_mapped0.ascii' u 4:($5/vref) w lp lt 2 pt 1  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/stats_curved0_pdisc1_mapped1.ascii' u 4:($5/vref) w lp lt 3 pt 1  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/stats_curved1_pdisc0_mapped0.ascii' u 4:($5/vref) w lp lt 1 pt 2  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/stats_curved1_pdisc1_mapped0.ascii' u 4:($5/vref) w lp lt 2 pt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/stats_curved1_pdisc1_mapped1.ascii' u 4:($5/vref) w lp lt 3 pt 2  t 'curved,Q_2xP_{-1},unmapped',\
+
+set ylabel 'max(u)'
+set output 'max_u.pdf'
+plot[hmin:hmax][]\
+'curved0_pdisc0_mapped0/stats_curved0_pdisc0_mapped0.ascii' u 4:($6/vref) w lp lt 1 pt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/stats_curved0_pdisc1_mapped0.ascii' u 4:($6/vref) w lp lt 2 pt 1  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/stats_curved0_pdisc1_mapped1.ascii' u 4:($6/vref) w lp lt 3 pt 1  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/stats_curved1_pdisc0_mapped0.ascii' u 4:($6/vref) w lp lt 1 pt 2  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/stats_curved1_pdisc1_mapped0.ascii' u 4:($6/vref) w lp lt 2 pt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/stats_curved1_pdisc1_mapped1.ascii' u 4:($6/vref) w lp lt 3 pt 2  t 'curved,Q_2xP_{-1},unmapped',\
+
+set ylabel 'min(v)'
+set output 'min_v.pdf'
+plot[hmin:hmax][]\
+'curved0_pdisc0_mapped0/stats_curved0_pdisc0_mapped0.ascii' u 4:($7/vref) w lp lt 1 pt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/stats_curved0_pdisc1_mapped0.ascii' u 4:($7/vref) w lp lt 2 pt 1  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/stats_curved0_pdisc1_mapped1.ascii' u 4:($7/vref) w lp lt 3 pt 1  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/stats_curved1_pdisc0_mapped0.ascii' u 4:($7/vref) w lp lt 1 pt 2  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/stats_curved1_pdisc1_mapped0.ascii' u 4:($7/vref) w lp lt 2 pt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/stats_curved1_pdisc1_mapped1.ascii' u 4:($7/vref) w lp lt 3 pt 2  t 'curved,Q_2xP_{-1},unmapped',\
+
+set ylabel 'max(v)'
+set output 'max_v.pdf'
+plot[hmin:hmax][]\
+'curved0_pdisc0_mapped0/stats_curved0_pdisc0_mapped0.ascii' u 4:($8/vref) w lp lt 1 pt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/stats_curved0_pdisc1_mapped0.ascii' u 4:($8/vref) w lp lt 2 pt 1  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/stats_curved0_pdisc1_mapped1.ascii' u 4:($8/vref) w lp lt 3 pt 1  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/stats_curved1_pdisc0_mapped0.ascii' u 4:($8/vref) w lp lt 1 pt 2  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/stats_curved1_pdisc1_mapped0.ascii' u 4:($8/vref) w lp lt 2 pt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/stats_curved1_pdisc1_mapped1.ascii' u 4:($8/vref) w lp lt 3 pt 2  t 'curved,Q_2xP_{-1},unmapped',\
+
+set ylabel 'min(p)'
+set output 'min_p.pdf'
+plot[hmin:hmax][]\
+'curved0_pdisc0_mapped0/stats_curved0_pdisc0_mapped0.ascii' u 4:11 w lp lt 1 pt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/stats_curved0_pdisc1_mapped0.ascii' u 4:11 w lp lt 2 pt 1  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/stats_curved0_pdisc1_mapped1.ascii' u 4:11 w lp lt 3 pt 1  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/stats_curved1_pdisc0_mapped0.ascii' u 4:11 w lp lt 1 pt 2  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/stats_curved1_pdisc1_mapped0.ascii' u 4:11 w lp lt 2 pt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/stats_curved1_pdisc1_mapped1.ascii' u 4:11 w lp lt 3 pt 2  t 'curved,Q_2xP_{-1},unmapped',\
+-1./6 w l lt -1 dt 2  t 'analytical' 
+
+pmax=0.5*0.5-1./6
+set ylabel 'max(p)'
+set output 'max_p.pdf'
+plot[hmin:hmax][]\
+'curved0_pdisc0_mapped0/stats_curved0_pdisc0_mapped0.ascii' u 4:12 w lp lt 1 pt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/stats_curved0_pdisc1_mapped0.ascii' u 4:12 w lp lt 2 pt 1  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/stats_curved0_pdisc1_mapped1.ascii' u 4:12 w lp lt 3 pt 1  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/stats_curved1_pdisc0_mapped0.ascii' u 4:12 w lp lt 1 pt 2  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/stats_curved1_pdisc1_mapped0.ascii' u 4:12 w lp lt 2 pt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/stats_curved1_pdisc1_mapped1.ascii' u 4:12 w lp lt 3 pt 2  t 'curved,Q_2xP_{-1},unmapped',\
+pmax w l lt -1 dt 2 t 'analytical' 
+
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
+plot[hmin:hmax][]\
+'curved0_pdisc0_mapped0/stats_curved0_pdisc0_mapped0.ascii' u 4:($13/vref) w lp lt 1 pt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/stats_curved0_pdisc1_mapped0.ascii' u 4:($13/vref) w lp lt 2 pt 1  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/stats_curved0_pdisc1_mapped1.ascii' u 4:($13/vref) w lp lt 3 pt 1  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/stats_curved1_pdisc0_mapped0.ascii' u 4:($13/vref) w lp lt 1 pt 2  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/stats_curved1_pdisc1_mapped0.ascii' u 4:($13/vref) w lp lt 2 pt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/stats_curved1_pdisc1_mapped1.ascii' u 4:($13/vref) w lp lt 3 pt 2  t 'curved,Q_2xP_{-1},unmapped',\
+
+set ylabel 'max(|v|)'
+set output 'max_vel.pdf'
+plot[hmin:hmax][]\
+'curved0_pdisc0_mapped0/stats_curved0_pdisc0_mapped0.ascii' u 4:($10/vref) w lp lt 1 pt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/stats_curved0_pdisc1_mapped0.ascii' u 4:($10/vref) w lp lt 2 pt 1  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/stats_curved0_pdisc1_mapped1.ascii' u 4:($10/vref) w lp lt 3 pt 1  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/stats_curved1_pdisc0_mapped0.ascii' u 4:($10/vref) w lp lt 1 pt 2  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/stats_curved1_pdisc1_mapped0.ascii' u 4:($10/vref) w lp lt 2 pt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/stats_curved1_pdisc1_mapped1.ascii' u 4:($10/vref) w lp lt 3 pt 2  t 'curved,Q_2xP_{-1},unmapped',\
+
+set log xy
+set ylabel 'err u'
+set output 'errv.pdf'
+plot[hmin:hmax][]\
+'curved0_pdisc0_mapped0/errors_curved0_pdisc0_mapped0.ascii' u 16:6 w lp lt 1 pt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/errors_curved0_pdisc1_mapped0.ascii' u 16:6 w lp lt 2 pt 1  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/errors_curved0_pdisc1_mapped1.ascii' u 16:6 w lp lt 3 pt 1  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/errors_curved1_pdisc0_mapped0.ascii' u 16:6 w lp lt 1 pt 2  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/errors_curved1_pdisc1_mapped0.ascii' u 16:6 w lp lt 2 pt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/errors_curved1_pdisc1_mapped1.ascii' u 16:6 w lp lt 3 pt 2  t 'curved,Q_2xP_{-1},unmapped',\
+x**3/200 lt -1 dt 2 t 'h^3'
+
+set ylabel 'err p'
+set output 'errp.pdf'
+plot[hmin:hmax][]\
+'curved0_pdisc0_mapped0/errors_curved0_pdisc0_mapped0.ascii' u 16:9 w lp lt 1 pt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/errors_curved0_pdisc1_mapped0.ascii' u 16:9 w lp lt 2 pt 1  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/errors_curved0_pdisc1_mapped1.ascii' u 16:9 w lp lt 3 pt 1  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/errors_curved1_pdisc0_mapped0.ascii' u 16:9 w lp lt 1 pt 2  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/errors_curved1_pdisc1_mapped0.ascii' u 16:9 w lp lt 2 pt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/errors_curved1_pdisc1_mapped1.ascii' u 16:9 w lp lt 3 pt 2  t 'curved,Q_2xP_{-1},unmapped',\
+x**2/20 lt -1 dt 2 t 'h^2'
+
+
+
+
+
+###################################################################################3
+# interface
+###################################################################################3
+unset log xy
+set xlabel 'x'
+
+
+set title 'resolution 16x16'
+
+set ylabel 'u'
+set output 'interface_u_16.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/vel_interface16.ascii' w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/vel_interface16.ascii' w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/vel_interface16.ascii' w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/vel_interface16.ascii' w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/vel_interface16.ascii' w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/vel_interface16.ascii' w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+
+set ylabel 'v'
+set output 'interface_v_16.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/vel_interface16.ascii' u 1:3 w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/vel_interface16.ascii' u 1:3 w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/vel_interface16.ascii' u 1:3 w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/vel_interface16.ascii' u 1:3 w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/vel_interface16.ascii' u 1:3 w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/vel_interface16.ascii' u 1:3 w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+
+set title 'resolution 32x32'
+
+set ylabel 'u'
+set output 'interface_u_32.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/vel_interface32.ascii' w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/vel_interface32.ascii' w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/vel_interface32.ascii' w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/vel_interface32.ascii' w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/vel_interface32.ascii' w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/vel_interface32.ascii' w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+
+set ylabel 'v'
+set output 'interface_v_32.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/vel_interface32.ascii' u 1:3 w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/vel_interface32.ascii' u 1:3 w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/vel_interface32.ascii' u 1:3 w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/vel_interface32.ascii' u 1:3 w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/vel_interface32.ascii' u 1:3 w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/vel_interface32.ascii' u 1:3 w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+
+
+
+
+set title 'resolution 64x64'
+
+set ylabel 'u'
+set output 'interface_u_64.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/vel_interface64.ascii' w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/vel_interface64.ascii' w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/vel_interface64.ascii' w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/vel_interface64.ascii' w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/vel_interface64.ascii' w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/vel_interface64.ascii' w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+
+set ylabel 'v'
+set output 'interface_v_64.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/vel_interface64.ascii' u 1:3 w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/vel_interface64.ascii' u 1:3 w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/vel_interface64.ascii' u 1:3 w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/vel_interface64.ascii' u 1:3 w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/vel_interface64.ascii' u 1:3 w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/vel_interface64.ascii' u 1:3 w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+
+set title 'resolution 128x128' 
+
+set ylabel 'u'
+set output 'interface_u_128.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/vel_interface128.ascii' w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/vel_interface128.ascii' w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/vel_interface128.ascii' w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/vel_interface128.ascii' w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/vel_interface128.ascii' w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/vel_interface128.ascii' w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+
+set ylabel 'v'
+set output 'interface_v_128.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/vel_interface128.ascii' u 1:3 w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/vel_interface128.ascii' u 1:3 w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/vel_interface128.ascii' u 1:3 w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/vel_interface128.ascii' u 1:3 w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/vel_interface128.ascii' u 1:3 w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/vel_interface128.ascii' u 1:3 w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+
+
+
+
+
+
+
+
+###################################################################################3
+# p bottom 
+###################################################################################3
+set key inside
+set key bottom
+set ylabel 'pressure at the bottom'
+
+set title 'resolution 16x16'
+set output 'pbottom16.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/pbottom16.ascii' w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/pbottom16.ascii' w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/pbottom16.ascii' w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/pbottom16.ascii' w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/pbottom16.ascii' w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/pbottom16.ascii' w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+x*(1-x)-1./6 lt -1 dt 2 t 'analytical'
+
+set title 'resolution 32x32'
+set output 'pbottom32.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/pbottom32.ascii' w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/pbottom32.ascii' w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/pbottom32.ascii' w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/pbottom32.ascii' w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/pbottom32.ascii' w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/pbottom32.ascii' w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+x*(1-x)-1./6 lt -1 dt 2 t 'analytical'
+
+
+
+
+set title 'resolution 64x64'
+set output 'pbottom64.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/pbottom64.ascii' w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/pbottom64.ascii' w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/pbottom64.ascii' w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/pbottom64.ascii' w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/pbottom64.ascii' w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/pbottom64.ascii' w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+x*(1-x)-1./6 lt -1 dt 2 t 'analytical'
+
+set title 'resolution 128x128'
+set output 'pbottom128.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/pbottom128.ascii' w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/pbottom128.ascii' w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/pbottom128.ascii' w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/pbottom128.ascii' w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/pbottom128.ascii' w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/pbottom128.ascii' w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+x*(1-x)-1./6 lt -1 dt 2 t 'analytical'
+
+
+
+
+
+
+
+
+
