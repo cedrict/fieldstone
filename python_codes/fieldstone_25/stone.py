@@ -140,7 +140,7 @@ print("-----------------------------")
 mV=9     # number of velocity nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 
-Lx=1. #0.9142 # horizontal extent of the domain 
+Lx=0.9142 # horizontal extent of the domain 
 Ly=1.     # vertical extent of the domain 
 
 gx=0
@@ -191,6 +191,9 @@ Nfem=NfemV+NfemP # total number of dofs
 
 hx=Lx/nelx       # element size
 hy=Ly/nely       # approx element size
+
+rVnodes=[-1,1,1,-1,0,1,0,-1,0]
+sVnodes=[-1,-1,1,1,-1,0,1,0,0]
 
 ###########################################################
 
@@ -362,6 +365,7 @@ print("pressure connectivity & nodes: %.3f s" % (time.time() - start))
 start = time.time()
 
 area=np.zeros(nel,dtype=np.float64) 
+hh=np.zeros(nel,dtype=np.float64) 
 NNNV=np.zeros(mV,dtype=np.float64)     # shape functions V
 dNNNVdr=np.zeros(mV,dtype=np.float64)  # shape functions derivatives
 dNNNVds=np.zeros(mV,dtype=np.float64)  # shape functions derivatives
@@ -387,6 +391,7 @@ for iel in range(0,nel):
                print (xV[iconV[k,iel]],yV[iconV[k,iel]])
         #end for
     #end for
+    hh[iel]=np.sqrt(area[iel])
 #end for
 
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
@@ -429,10 +434,10 @@ bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 for i in range(0, NV):
     if xV[i]<eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. # dohu03
+       #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. # D&H
     if xV[i]>(Lx-eps):
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. # dohu03
+       #bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0. # D&H
     if yV[i]<eps:
        bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
@@ -479,11 +484,10 @@ for iel in range(0,nel):
     NNNNP= np.zeros(mP,dtype=np.float64)   
 
     if not mapped:
-       hh=np.sqrt(area[iel])
        N11,N12,N13,N21,N22,N23,N31,N32,N33\
        =compute_Ncoeffs(xP[iconP[0,iel]],xP[iconP[1,iel]],xP[iconP[2,iel]],\
-                        yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],xc[iel],yc[iel],hh)
-
+                        yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],\
+                        xc[iel],yc[iel],hh[iel])
 
     # integrate viscous term at 4 quadrature points
     for iq in range(0,nqperdim):
@@ -503,9 +507,9 @@ for iel in range(0,nel):
             if mapped or not pdisc:
                NNNP=NNP(rq,sq)
             else:
-               NNNP[0]=N11+N21*(xq-xc[iel])/hh+N31*(yq-yc[iel])/hh
-               NNNP[1]=N12+N22*(xq-xc[iel])/hh+N32*(yq-yc[iel])/hh
-               NNNP[2]=N13+N23*(xq-xc[iel])/hh+N33*(yq-yc[iel])/hh
+               NNNP[0]=N11+N21*(xq-xc[iel])/hh[iel]+N31*(yq-yc[iel])/hh[iel]
+               NNNP[1]=N12+N22*(xq-xc[iel])/hh[iel]+N32*(yq-yc[iel])/hh[iel]
+               NNNP[2]=N13+N23*(xq-xc[iel])/hh[iel]+N33*(yq-yc[iel])/hh[iel]
             #print(NNNP[0],NNNP[1],NNNP[2])
 
             # calculate jacobian matrix,det, and inverse
@@ -528,15 +532,15 @@ for iel in range(0,nel):
                                          [dNNNVdy[i],dNNNVdx[i]]]
 
             # compute elemental a_mat matrix
-            #K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta_el[iel]*weightq*jcob
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*weightq*jcob #D&H
+            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta_el[iel]*weightq*jcob
+            #K_el+=b_mat.T.dot(c_mat.dot(b_mat))*weightq*jcob #D&H
 
             # compute elemental rhs vector
             for i in range(0,mV):
-                #f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*gx*rho_el[iel]
-                #f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy*rho_el[iel]
-                f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*bx(xq,yq) #D&H
-                f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*by(xq,yq) #D&H
+                f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*gx*rho_el[iel]
+                f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy*rho_el[iel]
+                #f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*bx(xq,yq) #D&H
+                #f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*by(xq,yq) #D&H
 
             for i in range(0,mP):
                 N_mat[0,i]=NNNP[i]
@@ -642,7 +646,6 @@ eyy=np.zeros(nel,dtype=np.float64)
 exy=np.zeros(nel,dtype=np.float64)  
 
 for iel in range(0,nel):
-
     NNNV=NNV(0,0)
     dNNNVdr=dNNVdr(0,0)
     dNNNVds=dNNVds(0,0)
@@ -680,10 +683,10 @@ start = time.time()
 avrg_p=0.
 for iel in range (0,nel):
     if not mapped:
-       hh=np.sqrt(area[iel])
        N11,N12,N13,N21,N22,N23,N31,N32,N33\
        =compute_Ncoeffs(xP[iconP[0,iel]],xP[iconP[1,iel]],xP[iconP[2,iel]],\
-                        yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],xc[iel],yc[iel],hh)
+                        yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],\
+                        xc[iel],yc[iel],hh[iel])
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
             rq=qcoords[iq]
@@ -698,9 +701,9 @@ for iel in range (0,nel):
             if mapped or not pdisc:
                NNNP=NNP(rq,sq)
             else:
-               NNNP[0]=N11+N21*(xq-xc[iel])/hh+N31*(yq-yc[iel])/hh
-               NNNP[1]=N12+N22*(xq-xc[iel])/hh+N32*(yq-yc[iel])/hh
-               NNNP[2]=N13+N23*(xq-xc[iel])/hh+N33*(yq-yc[iel])/hh
+               NNNP[0]=N11+N21*(xq-xc[iel])/hh[iel]+N31*(yq-yc[iel])/hh[iel]
+               NNNP[1]=N12+N22*(xq-xc[iel])/hh[iel]+N32*(yq-yc[iel])/hh[iel]
+               NNNP[2]=N13+N23*(xq-xc[iel])/hh[iel]+N33*(yq-yc[iel])/hh[iel]
 
             jcb[0,0]=dNNNVdr.dot(xV[iconV[:,iel]])
             jcb[0,1]=dNNNVdr.dot(yV[iconV[:,iel]])
@@ -731,10 +734,10 @@ errv=0.
 errp=0.
 for iel in range (0,nel):
     if not mapped:
-       hh=np.sqrt(area[iel])
        N11,N12,N13,N21,N22,N23,N31,N32,N33\
        =compute_Ncoeffs(xP[iconP[0,iel]],xP[iconP[1,iel]],xP[iconP[2,iel]],\
-                        yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],xc[iel],yc[iel],hh)
+                        yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],\
+                        xc[iel],yc[iel],hh[iel])
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
             rq=qcoords[iq]
@@ -749,9 +752,9 @@ for iel in range (0,nel):
             if mapped or not pdisc:
                NNNP=NNP(rq,sq)
             else:
-               NNNP[0]=N11+N21*(xq-xc[iel])/hh+N31*(yq-yc[iel])/hh
-               NNNP[1]=N12+N22*(xq-xc[iel])/hh+N32*(yq-yc[iel])/hh
-               NNNP[2]=N13+N23*(xq-xc[iel])/hh+N33*(yq-yc[iel])/hh
+               NNNP[0]=N11+N21*(xq-xc[iel])/hh[iel]+N31*(yq-yc[iel])/hh[iel]
+               NNNP[1]=N12+N22*(xq-xc[iel])/hh[iel]+N32*(yq-yc[iel])/hh[iel]
+               NNNP[2]=N13+N23*(xq-xc[iel])/hh[iel]+N33*(yq-yc[iel])/hh[iel]
 
             jcb[0,0]=dNNNVdr.dot(xV[iconV[:,iel]])
             jcb[0,1]=dNNNVdr.dot(yV[iconV[:,iel]])
@@ -782,44 +785,6 @@ print("     -> nel= %6d ; errv= %e ; errp= %e ; hmin= %e hmax= %e havg= %e" %(ne
 print("compute vrms and errors: %.3f s" % (time.time() - start))
 
 ###############################################################################
-# interpolate pressure onto velocity grid points
-###############################################################################
-start = time.time()
-
-q=np.zeros(NV,dtype=np.float64)
-counter=np.zeros(NV,dtype=np.float64)
-
-rVnodes=[-1,1,1,-1,0,1,0,-1,0]
-sVnodes=[-1,-1,1,1,-1,0,1,0,0]
-for iel in range(0,nel):
-    if not mapped:
-       hh=np.sqrt(area[iel])
-       N11,N12,N13,N21,N22,N23,N31,N32,N33\
-       =compute_Ncoeffs(xP[iconP[0,iel]],xP[iconP[1,iel]],xP[iconP[2,iel]],\
-                        yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],xc[iel],yc[iel],hh)
-    for k in range(0,mV):
-        if mapped or not pdisc:
-           NNNP=NNP(rVnodes[k],sVnodes[k])
-        else:
-           xq=xV[iconV[k,iel]]
-           yq=yV[iconV[k,iel]]
-           NNNP[0]=N11+N21*(xq-xc[iel])/hh+N31*(yq-yc[iel])/hh
-           NNNP[1]=N12+N22*(xq-xc[iel])/hh+N32*(yq-yc[iel])/hh
-           NNNP[2]=N13+N23*(xq-xc[iel])/hh+N33*(yq-yc[iel])/hh
-
-        pq=NNNP.dot(p[iconP[:,iel]])
-        q[iconV[k,iel]]+=pq
-        counter[iconV[k,iel]]+=1
-    #end for
-#end for
-q[:]/=counter[:]
-
-if debug: np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
-if debug: np.savetxt('qbottom'+str(nelx)+'.ascii',np.array([xV[0:nnx],yV[0:nnx],q[0:nnx]]).T,header='# x,y,q')
-
-print("compute q: %.3f s" % (time.time() - start))
-
-###############################################################################
 # compute pressure at the bottom of the domain
 ###############################################################################
 start = time.time()
@@ -842,34 +807,34 @@ for iel in range(0,nelx):
        pq=NNNP.dot(p[iconP[:,iel]])
        pbottomfile.write("%e %e \n" %(xq,pq))
     else:
-       hh=np.sqrt(area[iel])
        N11,N12,N13,N21,N22,N23,N31,N32,N33\
        =compute_Ncoeffs(xP[iconP[0,iel]],xP[iconP[1,iel]],xP[iconP[2,iel]],\
-                        yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],xc[iel],yc[iel],hh)
+                        yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],\
+                        xc[iel],yc[iel],hh[iel])
        #at V node 0
        xL=xV[iconV[0,iel]]
        yL=yV[iconV[0,iel]]
-       NNNP[0]=N11+N21*(xL-xc[iel])/hh+N31*(yL-yc[iel])/hh
-       NNNP[1]=N12+N22*(xL-xc[iel])/hh+N32*(yL-yc[iel])/hh
-       NNNP[2]=N13+N23*(xL-xc[iel])/hh+N33*(yL-yc[iel])/hh
+       NNNP[0]=N11+N21*(xL-xc[iel])/hh[iel]+N31*(yL-yc[iel])/hh[iel]
+       NNNP[1]=N12+N22*(xL-xc[iel])/hh[iel]+N32*(yL-yc[iel])/hh[iel]
+       NNNP[2]=N13+N23*(xL-xc[iel])/hh[iel]+N33*(yL-yc[iel])/hh[iel]
        pL=NNNP.dot(p[iconP[:,iel]])
        pbottomfile.write("%e %e \n" %(xL,pL))
 
        #at V node 4
        xM=xV[iconV[4,iel]]
        yM=yV[iconV[4,iel]]
-       NNNP[0]=N11+N21*(xM-xc[iel])/hh+N31*(yM-yc[iel])/hh
-       NNNP[1]=N12+N22*(xM-xc[iel])/hh+N32*(yM-yc[iel])/hh
-       NNNP[2]=N13+N23*(xM-xc[iel])/hh+N33*(yM-yc[iel])/hh
+       NNNP[0]=N11+N21*(xM-xc[iel])/hh[iel]+N31*(yM-yc[iel])/hh[iel]
+       NNNP[1]=N12+N22*(xM-xc[iel])/hh[iel]+N32*(yM-yc[iel])/hh[iel]
+       NNNP[2]=N13+N23*(xM-xc[iel])/hh[iel]+N33*(yM-yc[iel])/hh[iel]
        pM=NNNP.dot(p[iconP[:,iel]])
        pbottomfile.write("%e %e \n" %(xM,pM))
 
        #at V node 1
        xR=xV[iconV[1,iel]]
        yR=yV[iconV[1,iel]]
-       NNNP[0]=N11+N21*(xR-xc[iel])/hh+N31*(yR-yc[iel])/hh
-       NNNP[1]=N12+N22*(xR-xc[iel])/hh+N32*(yR-yc[iel])/hh
-       NNNP[2]=N13+N23*(xR-xc[iel])/hh+N33*(yR-yc[iel])/hh
+       NNNP[0]=N11+N21*(xR-xc[iel])/hh[iel]+N31*(yR-yc[iel])/hh[iel]
+       NNNP[1]=N12+N22*(xR-xc[iel])/hh[iel]+N32*(yR-yc[iel])/hh[iel]
+       NNNP[2]=N13+N23*(xR-xc[iel])/hh[iel]+N33*(yR-yc[iel])/hh[iel]
        pR=NNNP.dot(p[iconP[:,iel]])
        pbottomfile.write("%e %e \n" %(xR,pR))
 
@@ -883,6 +848,35 @@ for i in range(0,NV):
        vinterface_file.write("%e %e %e \n" %(xV[i],u[i],v[i]))
 
 ###############################################################################
+# compute pressure on all nine V nodes of elements
+# in the case of Q2Q1 this is a waste of memory since pressure is continuous
+# across elements. In the case of Q2P-1 this allows us to latex export the 
+# pressure on V nodes without having to average it.
+###############################################################################
+start = time.time()
+
+qq=np.zeros((mV,nel),dtype=np.float64)  
+
+for iel in range(0,nel):
+    if not mapped:
+       N11,N12,N13,N21,N22,N23,N31,N32,N33\
+       =compute_Ncoeffs(xP[iconP[0,iel]],xP[iconP[1,iel]],xP[iconP[2,iel]],\
+                        yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],\
+                        xc[iel],yc[iel],hh[iel])
+    for k in range(0,mV):
+        if mapped or not pdisc:
+           NNNP[0:mP]=NNP(rVnodes[k],sVnodes[k])
+        else:
+           xxx=xV[iconV[k,iel]]
+           yyy=yV[iconV[k,iel]]
+           NNNP[0]=N11+N21*(xxx-xc[iel])/hh[iel]+N31*(yyy-yc[iel])/hh[iel]
+           NNNP[1]=N12+N22*(xxx-xc[iel])/hh[iel]+N32*(yyy-yc[iel])/hh[iel]
+           NNNP[2]=N13+N23*(xxx-xc[iel])/hh[iel]+N33*(yyy-yc[iel])/hh[iel]
+        qq[k,iel]=NNNP.dot(p[iconP[:,iel]])
+
+print("compute pressure on V nodes: %.3f s" % (time.time() - start))
+
+###############################################################################
 # print measurements later to be grep-ed by bash scripts
 ###############################################################################
 
@@ -891,7 +885,7 @@ print('benchmark ',nel,Nfem,hx,\
 np.min(u),np.max(u),\
 np.min(v),np.max(v),\
 np.min(vel),np.max(vel),\
-np.min(p),np.max(p),
+np.min(qq),np.max(qq),
 vrms)
 
 ###############################################################################
@@ -944,13 +938,6 @@ vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % eta_el[iel]) 
 vtufile.write("</DataArray>\n")
-#--
-if pdisc:
-   vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % p[3*iel]) 
-   vtufile.write("</DataArray>\n")
-
 vtufile.write("</CellData>\n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")
@@ -966,37 +953,13 @@ for iel in range(0,nel):
     for k in range(0,mV):
         vtufile.write("%e %e %e \n" %(velocity_x(xV[iconV[k,iel]],yV[iconV[k,iel]]),\
                                       velocity_y(xV[iconV[k,iel]],yV[iconV[k,iel]]),0.))
-
 vtufile.write("</DataArray>\n")
-
-
-
 #    
 vtufile.write("<DataArray type='Float32' Name='press' Format='ascii'> \n")
 for iel in range(0,nel):
-    if not mapped:
-       hh=np.sqrt(area[iel])
-       N11,N12,N13,N21,N22,N23,N31,N32,N33\
-       =compute_Ncoeffs(xP[iconP[0,iel]],xP[iconP[1,iel]],xP[iconP[2,iel]],\
-                        yP[iconP[0,iel]],yP[iconP[1,iel]],yP[iconP[2,iel]],xc[iel],yc[iel],hh)
     for k in range(0,mV):
-        if mapped or not pdisc:
-           NNNP[0:mP]=NNP(rVnodes[k],sVnodes[k])
-        else:
-           xxx=xV[iconV[k,iel]]
-           yyy=yV[iconV[k,iel]]
-           NNNP[0]=N11+N21*(xxx-xc[iel])/hh+N31*(yyy-yc[iel])/hh
-           NNNP[1]=N12+N22*(xxx-xc[iel])/hh+N32*(yyy-yc[iel])/hh
-           NNNP[2]=N13+N23*(xxx-xc[iel])/hh+N33*(yyy-yc[iel])/hh
-        ppp=NNNP.dot(p[iconP[:,iel]])
-        vtufile.write("%e \n" %(ppp ))
+        vtufile.write("%e \n" %(qq[k,iel] ))
 vtufile.write("</DataArray>\n")
-
-#--
-#vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
-#for i in range(0,NV):
-#    vtufile.write("%e \n" %q[i])
-#vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='interface' Format='ascii'> \n")
 for iel in range(0,nel):
@@ -1016,12 +979,6 @@ for iel in range (0,nel):
     vtufile.write("%d %d %d %d %d %d %d %d %d\n" %(iel*mV+0,iel*mV+1,iel*mV+2,\
                                                    iel*mV+3,iel*mV+4,iel*mV+5,\
                                                    iel*mV+6,iel*mV+7,iel*mV+8))
-
-
-#for iel in range (0,nel):
-#    vtufile.write("%d %d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],\
-#                                                   iconV[3,iel],iconV[4,iel],iconV[5,iel],\
-#                                                   iconV[6,iel],iconV[7,iel],iconV[8,iel]))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
