@@ -226,6 +226,26 @@ plot[0:][]\
 
 
 
+set ylabel 'u'
+set output 'interface_u_160.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/vel_interface160.ascii' w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/vel_interface160.ascii' w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/vel_interface160.ascii' w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/vel_interface160.ascii' w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/vel_interface160.ascii' w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/vel_interface160.ascii' w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+
+set ylabel 'v'
+set output 'interface_v_160.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/vel_interface160.ascii' u 1:3 w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/vel_interface160.ascii' u 1:3 w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/vel_interface160.ascii' u 1:3 w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/vel_interface160.ascii' u 1:3 w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/vel_interface160.ascii' u 1:3 w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/vel_interface160.ascii' u 1:3 w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+
 
 
 
@@ -260,9 +280,6 @@ plot[0:][]\
 'curved1_pdisc1_mapped1/pbottom32.ascii' w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
 x*(1-x)-1./6 lt -1 dt 2 t 'analytical'
 
-
-
-
 set title 'resolution 64x64'
 set output 'pbottom64.pdf'
 plot[0:][]\
@@ -285,11 +302,14 @@ plot[0:][]\
 'curved1_pdisc1_mapped1/pbottom128.ascii' w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
 x*(1-x)-1./6 lt -1 dt 2 t 'analytical'
 
-
-
-
-
-
-
-
+set title 'resolution 160x160'
+set output 'pbottom160.pdf'
+plot[0:][]\
+'curved0_pdisc0_mapped0/pbottom160.ascii' w l lt 1  t 'straight,Q_2xQ_1',\
+'curved0_pdisc1_mapped0/pbottom160.ascii' w l lt 2  t 'straight,Q_2xP_{-1},mapped',\
+'curved0_pdisc1_mapped1/pbottom160.ascii' w l lt 3  t 'straight,Q_2xP_{-1},unmapped',\
+'curved1_pdisc0_mapped0/pbottom160.ascii' w l lt 1  t 'curved,Q_2xQ_1',\
+'curved1_pdisc1_mapped0/pbottom160.ascii' w l lt 2  t 'curved,Q_2xP_{-1},mapped',\
+'curved1_pdisc1_mapped1/pbottom160.ascii' w l lt 3  t 'curved,Q_2xP_{-1},unmapped',\
+x*(1-x)-1./6 lt -1 dt 2 t 'analytical'
 
