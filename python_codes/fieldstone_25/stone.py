@@ -156,7 +156,7 @@ if int(len(sys.argv) == 8):
    pdisc = int(sys.argv[6])
    mapped = int(sys.argv[7])
 else:
-   nelx = 32
+   nelx = 16
    nely = nelx
    visu = 1
    eta_bottom=100

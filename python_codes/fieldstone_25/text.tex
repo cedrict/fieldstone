@@ -23,44 +23,66 @@ Last revision: March 11th, 2025.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This numerical experiment was first presented in \textcite{vaks97} (1997).
-It is detailed in Section~\ref{MMM-ss:vaks97}.
-It consists of an isothermal Rayleigh-Taylor instability in a two-dimensional box
-of size $L_x=0.9142$ and $L_y=1$.
-Two Newtonian fluids are present in the system: the buoyant layer is placed at the bottom of 
-the box and the interface between both fluids is given by 
-$
-y(x)=0.2+0.02\cos \left( \frac{\pi x}{L_x}  \right)
-$
+This numerical experiment was first presented in \textcite{vaks97} (1997). It is detailed 
+in Section~\ref{MMM-ss:vaks97}. It consists of an isothermal Rayleigh-Taylor instability 
+in a two-dimensional box of size $L_x=0.9142$ and $L_y=1$. Two Newtonian fluids are present 
+in the box. The buoyant fluid layer is placed at the bottom of the box and the interface 
+between both fluids is given by $y(x)=0.2+0.02\cos \left( \frac{\pi x}{L_x} \right)$.
 The bottom fluid is parametrised by its mass density $\rho_1=1000$ and its viscosity $\eta_1=1,10,100$, 
-while the layer above is parametrised by $\rho_2=1010$ and $\eta_2=100$.
+while the layer above is parametrised by $\rho_2=1010$ and $\eta_2=100$ (the entire
+experiment is built with dimensionless quantities).
 
 No-slip boundary conditions are applied at the bottom and at the top of the box 
 while free-slip boundary conditions are applied on the sides. 
 
 In the original benchmark the system is run over 2000 units of dimensionless time and the 
 timing and position of various upwellings/downwellings is monitored. 
-In this present experiment only the root mean square velocity is measured at $t=0$:
-the code is indeed not yet foreseen of any algorithm capable of tracking deformation.
-To be clear, this is also not the goal here. We instead want to investigate the 
-differences between the $Q_2\times Q_1$ and the $Q_2\times P_{-1}$ (mapped and unmapped)
-finite element pairs.
+In this \stone only the root mean square velocity and various velocity and pressure
+statistics are measured at $t=0$ as the code is indeed not yet foreseen of any 
+algorithm capable of tracking deformation.
+To be clear, this is also not the goal here: we here wish to investigate the 
+differences between the $Q_2\times Q_1$ (see Section~\ref{MMM-ss:pairq2q1})
+and the mapped and unmapped $Q_2\times P_{-1}$ (see Section~\ref{MMM-ss:pairq2pm1})
+finite element pairs (isoparametric mapping is used for both).
 
-Another approach than the ones presented in the extensive literature which showcases 
-results of this benchmark is taken: in this \stone the mesh is initially fitted to the fluids
-interface and the resolution is progressively increased. This results in the 
-following figure:
+With regards to the FE mesh, another approach than the ones presented in the extensive 
+literature which showcases results of this benchmark is taken: in this \stone the mesh 
+is initially fitted to the fluids interface and the resolution is progressively increased. 
+This results in the following typical mesh:
 
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_25/newresults/mats}
 \end{center}
-Note that in this case each element is assigned a density and a viscosity value that 
-is constant over the entire element. 
-Note that this approach requires me to compute how many elements are below the interface
+Note that in this case each cell is assigned a density and a viscosity value that 
+is constant over the entire cell. 
+Also, this approach requires to compute how many cells below the interface
 for a given resolution. We see on the images below that for meshes $21^2-24^2$ there 
-are 4 elements below the interface, for meshes $25^2-29^2$ there are 6 elements, and that 
-we get to 7 elements for $30^2$. These steps will be reflected in the measurents presented 
-afterwards.
+are 4 elements below the interface, for meshes $25^2-29^2$ there are 6 cells, and that 
+we get to 7 cells for $30^2$ (these steps will be reflected in the measurents presented 
+afterwards). The algorithm is as follows:
+\begin{lstlisting}
+on_interface=np.zeros(NV,dtype=bool) 
+jtarget=2*int(nely/5)+1 -1 
+counter = 0
+for j in range(0,nny):
+    for i in range(0,nnx):
+        yinterface=0.2+0.02*np.cos(np.pi*xV[counter]/Lx)
+        if j==jtarget:
+           yV[counter]=yinterface
+           on_interface[counter]=True
+        if j<jtarget:
+           yV[counter]=yinterface*(j+1-1.)/(jtarget+1-1.)
+        if j>jtarget:
+           dy=(Ly-yinterface)/(nny-jtarget-1)
+           yV[counter]=yinterface+dy*(j-jtarget)
+        if j==nny-1:
+           yV[counter]=1.
+        if j==0:
+           yV[counter]=0.
+        counter += 1
+\end{lstlisting}
+
+Various meshes are shown in the following figure:
 
 \begin{center}
 \includegraphics[width=3.42cm]{python_codes/fieldstone_25/images/mesh.0000.jpg}
@@ -79,24 +101,58 @@ $24^2$, $25^2$, $26^2$, $27^2$, $28^2$, $29^2$ and $30^2$.}
 
 Although it is somewhat a trivial affair to deform the mesh (only the vertical 
 position of the nodes is changed), this begs the question as to where the middle node
-of the element should be placed for best accuracy?
+of the cell should be placed for best accuracy?
 At this stage I urge the reader to read \stone~76 and come back here afterwards. 
+Here node 8 is the middle point of the cell corners.
+\begin{lstlisting}
+for iel in range(0,nel):
+    xV[iconV[8,iel]]=(xV[iconV[0,iel]]+xV[iconV[1,iel]]+xV[iconV[2,iel]]+xV[iconV[3,iel]])/4
+    yV[iconV[8,iel]]=(yV[iconV[0,iel]]+yV[iconV[1,iel]]+yV[iconV[2,iel]]+yV[iconV[3,iel]])/4
+\end{lstlisting}
 
-After the mesh has been stretched element edges can be straightened 
-(all elements are then trapezes) as parameterized by \lstinline{curved}.  
+After the mesh has been stretched cell edges can be straightened (all cells are then 
+trapezes since lateral edges are all vertical) as parameterized by \lstinline{curved}.  
+\begin{lstlisting}
+if not curved: 
+   for iel in range(0,nel):
+       xV[iconV[4,iel]]= (xV[iconV[0,iel]]+xV[iconV[1,iel]])/2
+       yV[iconV[4,iel]]= (yV[iconV[0,iel]]+yV[iconV[1,iel]])/2
+       xV[iconV[6,iel]]= (xV[iconV[2,iel]]+xV[iconV[3,iel]])/2
+       yV[iconV[6,iel]]= (yV[iconV[2,iel]]+yV[iconV[3,iel]])/2
+       xV[iconV[5,iel]]= (xV[iconV[1,iel]]+xV[iconV[2,iel]])/2
+       yV[iconV[5,iel]]= (yV[iconV[1,iel]]+yV[iconV[2,iel]])/2
+       xV[iconV[7,iel]]= (xV[iconV[0,iel]]+xV[iconV[3,iel]])/2
+       yV[iconV[7,iel]]= (yV[iconV[0,iel]]+yV[iconV[3,iel]])/2
+\end{lstlisting}
 
-The code relies on Taylor-Hood elements ($Q_2\times Q_1$), see Section~\ref{MMM-ss:pairq2q1} and 
-on $Q_2\times P_{-1}$ elements, see Section~\ref{MMM-ss:pairq2pm1}. 
-It has been  benchmarked against the Donea \& Huerta manufactured solution, see Section~\ref{MMM-mms1}.
-Isoparametric mapping is used for both element pairs.
+The coordinates of the cell center are stored in arrays \lstinline{xc} and \lstinline{yc}
+computed as follows: the middle of each cell is given by the forward mapping of the 
+point $(r,s)=(0,0)$.
+\begin{lstlisting}
+for iel in range(0,nel):
+    NNNV[0:9]=NNV(0,0)
+    xc[iel]=NNNV.dot(xV[iconV[:,iel]])
+    yc[iel]=NNNV.dot(yV[iconV[:,iel]])
+\end{lstlisting}
 
 Pressure is normalized so that $\int_\Omega p dV= 0$.
+Pressure is also computed on all 9 velocity nodes of each cell and stored in 
+the \lstinline{qq} array of size $m_V \times nel$. Its min/max is then computed and 
+exported alongside min/max of $u$ and $v$.
+
+The \lstinline{debug} parameter switches on the export of many fields to ascii files 
+for debugging purposes.
 
 Note that there is also a $Q_1\times P_0$ version of the code in the folder.
+
+The code has been benchmarked against the Donea \& Huerta manufactured solution 
+described in Section~\ref{MMM-mms1} and results are presented on the next page.
 
 \newpage
 %..............................................................................
 \subsection*{Manufactured solution D\&H - $Q_2\times Q_1$ and $Q_2\times P_{-1}$}
+
+Results are obtained with {\tt script\_errors\_q2} bash script.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_25/results/doneahuerta/errv.pdf}
@@ -122,6 +178,8 @@ Velocity measured at the 'interface'
 \includegraphics[width=8cm]{python_codes/fieldstone_25/results/doneahuerta/interface_v_64.pdf}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_25/results/doneahuerta/interface_u_128.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_25/results/doneahuerta/interface_v_128.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_25/results/doneahuerta/interface_u_160.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_25/results/doneahuerta/interface_v_160.pdf}\\
 \end{center}
 
 \newpage
@@ -130,11 +188,14 @@ Pressure measured at the bottom:
 \includegraphics[width=8cm]{python_codes/fieldstone_25/results/doneahuerta/pbottom16.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_25/results/doneahuerta/pbottom32.pdf}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_25/results/doneahuerta/pbottom64.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_25/results/doneahuerta/pbottom128.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_25/results/doneahuerta/pbottom128.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_25/results/doneahuerta/pbottom160.pdf}
 \end{center}
 
 The error convergence for velocity and pressure are third and second order 
 respectively, as expected. All other measurements are following the analytical solution.
+All finite elements pairs yield nearly identical solutions.
+Based on these promising results we now turn to the Rayleigh-Taylor experiment.
 
 \newpage
 %..............................................................................
@@ -163,22 +224,28 @@ Results are obtained with {\tt script\_errors\_q2} bash script.
 \includegraphics[width=8cm]{python_codes/fieldstone_25/results/isoviscous/interface_v_64.pdf}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_25/results/isoviscous/interface_u_128.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_25/results/isoviscous/interface_v_128.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_25/results/isoviscous/interface_u_160.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_25/results/isoviscous/interface_v_160.pdf}\\
 \end{center}
 
 \begin{center}
-\includegraphics[width=14cm]{python_codes/fieldstone_25/results/isoviscous/pbottom48.pdf}\\
+\includegraphics[width=14cm]{python_codes/fieldstone_25/results/isoviscous/pbottom16.pdf}\\
+\includegraphics[width=14cm]{python_codes/fieldstone_25/results/isoviscous/pbottom32.pdf}\\
 \includegraphics[width=14cm]{python_codes/fieldstone_25/results/isoviscous/pbottom64.pdf}\\
-\includegraphics[width=14cm]{python_codes/fieldstone_25/results/isoviscous/pbottom80.pdf}\\
-\includegraphics[width=14cm]{python_codes/fieldstone_25/results/isoviscous/pbottom128.pdf}
+\includegraphics[width=14cm]{python_codes/fieldstone_25/results/isoviscous/pbottom128.pdf}\\
+\includegraphics[width=14cm]{python_codes/fieldstone_25/results/isoviscous/pbottom160.pdf}
 \end{center}
 
-I still got somewhat surprising pressure results compared to what is in newresults folder. 
+Looking at low resolution results we see that the unmapped $Q_2\times P_{-1}$ with curved boundaries
+yields a pressure field that seems to showcase some form of sawtooth pattern at the bottom. 
+Looking at the amplitude we see that it is actually rather small (about $0.1\%$) and the amplitude 
+does decrease with increasing resolution.
 
 
+\vspace{1cm}
 
+{\color{red} TO DO: rerun all cases, fill following table and carry out extrapolation. }
 
-
-\newpage
 \begin{tabular}{lllll}
 \hline
 nelx & hx & $\upnu_{rms}(\times 10^{-6})$ & $\upnu^\star_{rms}(\times 10^{-6})$ (extrap.)  & rate \\
@@ -205,7 +272,9 @@ nelx & hx & $\upnu_{rms}(\times 10^{-6})$ & $\upnu^\star_{rms}(\times 10^{-6})$ 
 
 \newpage
 %..............................................................................
-\paragraph{Viscosity ratio = 10 - $Q_2\times Q_1$}
+\paragraph{Viscosity ratio = 10 - $Q_2\times Q_1$}....
+
+{\color{red} these are old results- I leave them here but it should all be re-run}
 
 \begin{center}
 \includegraphics[width=5.cm]{python_codes/fieldstone_25/results/010_100/vel}
@@ -251,7 +320,9 @@ nelx & hx & $\upnu_{rms}(\times 10^{-6})$ & $\upnu^\star_{rms}(\times 10^{-6})$ 
 
 \newpage
 %..............................................................................
-\paragraph{Viscosity ratio = 100 - $Q_2\times Q_1$}
+\paragraph{Viscosity ratio = 100 - $Q_2\times Q_1$}...
+
+{\color{red} these are old results- I leave them here but it should all be re-run}
 
 \begin{center}
 \includegraphics[width=5.cm]{python_codes/fieldstone_25/results/001_100/vel}
@@ -280,18 +351,6 @@ $nelx$ & $h_x$ & $\upnu_{rms}(\times 10^{-6})$ & $\upnu^\star_{rms}(\times 10^{-
 256  & 0.00357109375 & 0.0014418612856352821 &  X              & X   \\
 \hline
 \end{tabular}
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
