@@ -42,10 +42,10 @@ def quadrature(space,nqpts):
           val_r[2]=1/6 ; val_s[2]=2/3 ; val_w[2]=1/3/2
 
        elif nq==4: #cubic 3rd order - confirmed 
-          val_r[0]=1/3 ; val_r[0]=1/3 ; val_w[0]=-27/48/2
-          val_r[1]=1/5 ; val_r[1]=3/5 ; val_w[1]= 25/48/2
-          val_r[2]=1/5 ; val_r[2]=1/5 ; val_w[2]= 25/48/2
-          val_r[3]=3/5 ; val_r[3]=1/5 ; val_w[3]= 25/48/2
+          val_r[0]=1/3 ; val_s[0]=1/3 ; val_w[0]=-27/48/2
+          val_r[1]=1/5 ; val_s[1]=3/5 ; val_w[1]= 25/48/2
+          val_r[2]=1/5 ; val_s[2]=1/5 ; val_w[2]= 25/48/2
+          val_r[3]=3/5 ; val_s[3]=1/5 ; val_w[3]= 25/48/2
 
        elif nq==6: #4th order - confirmed
           val_r[0]=0.091576213509771 ; val_s[0]=0.091576213509771 ; val_w[0]=0.109951743655322/2.0 

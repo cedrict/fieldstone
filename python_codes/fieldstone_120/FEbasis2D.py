@@ -159,7 +159,6 @@ def NNN(r,s,space,**keyword_arguments):
        val[12]=(16*s-16*r*s-112*s**2+96*r*s**2+224*s**3-128*r*s**3-128*s**4)/3
        val[13]=(16*r*s-96*r*s**2+128*r*s**3)/3
        val[14]=(-3*s+22*s**2-48*s**3+32*s**4)/3
-       return val
 
     if space=='Q4':
        val = np.zeros(25,dtype=np.float64)
