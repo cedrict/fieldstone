@@ -9,7 +9,7 @@ for R in 771 772 773 774 775 776 777 778 779 780 781; do
     for res in 48; do
 
         echo Ra= $R - resolution $res 
-        python3 stone_new.py  $res $R $nstep | grep script >> onset_${res}x${res}.ascii
+        python3 stone.py  $res $R $nstep | grep script >> onset_${res}x${res}.ascii
         mv Nu_vrms.ascii Nu_vrms_${R}_${res}x${res}.ascii
 
     done
