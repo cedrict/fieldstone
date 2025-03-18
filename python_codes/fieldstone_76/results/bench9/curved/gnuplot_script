@@ -10,10 +10,12 @@ set log y
 set ylabel '|u-u_h|_{L_2} error'
 set format y "10^{%L}"
 
+hmin=0.003
+
 #########################################################################
 set title 'square mesh'
 set output 'errors_V_mt1.pdf'
-plot[0.007:][]\
+plot[hmin:][]\
 'errors_mt1_center0_meth1' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'center=0, mapped',\
 'errors_mt1_center0_meth2' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'center=0, unmapped',\
 'errors_mt1_center1_meth1' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'center=1, mapped',\
@@ -27,7 +29,7 @@ x**2/30  w l lt -1 dashtype 4 t 'x^2'
 
 set title 'randomized mesh'
 set output 'errors_V_mt2.pdf'
-plot[0.007:][]\
+plot[hmin:][]\
 'errors_mt2_center0_meth1' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'center=0, mapped',\
 'errors_mt2_center0_meth2' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'center=0, unmapped',\
 'errors_mt2_center1_meth1' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'center=1, mapped',\
@@ -41,7 +43,7 @@ x**2/30  w l lt -1 dashtype 4 t 'x^2'
 
 set title 'wave mesh'
 set output 'errors_V_mt3.pdf'
-plot[0.007:][]\
+plot[hmin:][]\
 'errors_mt3_center0_meth1' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'center=0, mapped',\
 'errors_mt3_center0_meth2' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'center=0, unmapped',\
 'errors_mt3_center1_meth1' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'center=1, mapped',\
@@ -55,7 +57,7 @@ x**2/30  w l lt -1 dashtype 4 t 'x^2'
 
 set title 'stretched mesh'
 set output 'errors_V_mt4.pdf'
-plot[0.007:][]\
+plot[hmin:][]\
 'errors_mt4_center0_meth1' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'center=0, mapped',\
 'errors_mt4_center0_meth2' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'center=0, unmapped',\
 'errors_mt4_center1_meth1' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'center=1, mapped',\
@@ -69,7 +71,7 @@ x**2/30  w l lt -1 dashtype 4 t 'x^2'
 
 set title 'sin sin mesh'
 set output 'errors_V_mt5.pdf'
-plot[0.007:][]\
+plot[hmin:][]\
 'errors_mt5_center0_meth1' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'center=0, mapped',\
 'errors_mt5_center0_meth2' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'center=0, unmapped',\
 'errors_mt5_center1_meth1' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'center=1, mapped',\
@@ -87,7 +89,7 @@ set ylabel '|p-p_h|_{L_2} error'
 
 set title 'aquare mesh'
 set output 'errors_P_mt1.pdf'
-plot[0.007:][]\
+plot[hmin:][]\
 'errors_mt1_center0_meth1' u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'center=0, mapped',\
 'errors_mt1_center0_meth2' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'center=0, unmapped',\
 'errors_mt1_center1_meth1' u (1./sqrt($3)):9 w lp lt 2 pt 1 t 'center=1, mapped',\
@@ -101,7 +103,7 @@ x**1/5 w l lt -1 dashtype 4 t 'x^{1}'
 
 set title 'randomized mesh'
 set output 'errors_P_mt2.pdf'
-plot[0.007:][]\
+plot[hmin:][]\
 'errors_mt2_center0_meth1' u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'center=0, mapped',\
 'errors_mt2_center0_meth2' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'center=0, unmapped',\
 'errors_mt2_center1_meth1' u (1./sqrt($3)):9 w lp lt 2 pt 1 t 'center=1, mapped',\
@@ -115,7 +117,7 @@ x**1/7 w l lt -1 dashtype 4 t 'x^{1}'
 
 set title 'wave mesh'
 set output 'errors_P_mt3.pdf'
-plot[0.007:][]\
+plot[hmin:][]\
 'errors_mt3_center0_meth1' u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'center=0, mapped',\
 'errors_mt3_center0_meth2' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'center=0, unmapped',\
 'errors_mt3_center1_meth1' u (1./sqrt($3)):9 w lp lt 2 pt 1 t 'center=1, mapped',\
@@ -129,7 +131,7 @@ x**1/7 w l lt -1 dashtype 4 t 'x^{1}'
 
 set title 'stretched mesh'
 set output 'errors_P_mt4.pdf'
-plot[0.007:][]\
+plot[hmin:][]\
 'errors_mt4_center0_meth1' u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'center=0, mapped',\
 'errors_mt4_center0_meth2' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'center=0, unmapped',\
 'errors_mt4_center1_meth1' u (1./sqrt($3)):9 w lp lt 2 pt 1 t 'center=1, mapped',\
@@ -143,7 +145,7 @@ x**1/7 w l lt -1 dashtype 4 t 'x^{1}'
 
 set title 'sin sin mesh'
 set output 'errors_P_mt5.pdf'
-plot[0.007:][]\
+plot[hmin:][]\
 'errors_mt5_center0_meth1' u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'center=0, mapped',\
 'errors_mt5_center0_meth2' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'center=0, unmapped',\
 'errors_mt5_center1_meth1' u (1./sqrt($3)):9 w lp lt 2 pt 1 t 'center=1, mapped',\
