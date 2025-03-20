@@ -2,10 +2,27 @@ set term pdf enhanced
 set output 'errors.pdf'
 set log xy
 set xlabel 'h'
-set key bottom
+set key outside 
 set ylabel 'error'
+set pointsize .3
 plot[][]\
-'errors' u (1./sqrt($3)):6 w lp ps .4 t 'velocity',\
-'errors' u (1./sqrt($3)):9 w lp ps .4 t 'pressure',\
+'errors_1_1' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'v, m=1, n=1',\
+'errors_1_1' u (1./sqrt($3)):9 w lp lt 2 pt 1 t 'p, m=1, n=1',\
+'errors_1_2' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'v, m=1, n=2',\
+'errors_1_2' u (1./sqrt($3)):9 w lp lt 2 pt 2 t 'p, m=1, n=2',\
+'errors_1_3' u (1./sqrt($3)):6 w lp lt 1 pt 3 t 'v, m=1, n=3',\
+'errors_1_3' u (1./sqrt($3)):9 w lp lt 2 pt 3 t 'p, m=1, n=3',\
+'errors_2_1' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'v, m=2, n=1',\
+'errors_2_1' u (1./sqrt($3)):9 w lp lt 4 pt 1 t 'p, m=2, n=1',\
+'errors_2_2' u (1./sqrt($3)):6 w lp lt 3 pt 2 t 'v, m=2, n=2',\
+'errors_2_2' u (1./sqrt($3)):9 w lp lt 4 pt 2 t 'p, m=2, n=2',\
+'errors_2_3' u (1./sqrt($3)):6 w lp lt 3 pt 3 t 'v, m=2, n=3',\
+'errors_2_3' u (1./sqrt($3)):9 w lp lt 4 pt 3 t 'p, m=2, n=3',\
+'errors_3_1' u (1./sqrt($3)):6 w lp lt 5 pt 1 t 'v, m=3, n=1',\
+'errors_3_1' u (1./sqrt($3)):9 w lp lt 6 pt 1 t 'p, m=3, n=1',\
+'errors_3_2' u (1./sqrt($3)):6 w lp lt 5 pt 2 t 'v, m=3, n=2',\
+'errors_3_2' u (1./sqrt($3)):9 w lp lt 6 pt 2 t 'p, m=3, n=2',\
+'errors_3_3' u (1./sqrt($3)):6 w lp lt 5 pt 3 t 'v, m=3, n=3',\
+'errors_3_3' u (1./sqrt($3)):9 w lp lt 6 pt 3 t 'p, m=3, n=3',\
 x**2*95. w l lt -1 dashtype 2 t 'x^2',\
-x**1*90. w l lt -1 dashtype 4 t 'x^1'
+x**1*250. w l lt -1 dashtype 4 t 'x^1'

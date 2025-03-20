@@ -1,60 +1,20 @@
-rm -f errors
-python3 stone.py   8   8 0 1 1 | grep nel >> errors
-python3 stone.py   9   9 0 1 1 | grep nel >> errors
-python3 stone.py  10  10 0 1 1 | grep nel >> errors
-python3 stone.py  11  11 0 1 1 | grep nel >> errors
-python3 stone.py  12  12 0 1 1 | grep nel >> errors
-python3 stone.py  16  16 0 1 1 | grep nel >> errors
-python3 stone.py  24  24 0 1 1 | grep nel >> errors
-python3 stone.py  32  32 0 1 1 | grep nel >> errors
-python3 stone.py  48  48 0 1 1 | grep nel >> errors
-python3 stone.py  64  64 0 1 1 | grep nel >> errors
-python3 stone.py  96  96 0 1 1 | grep nel >> errors
-python3 stone.py 128 128 0 1 1 | grep nel >> errors
+#! /bin/bash
+#   nelx = int(sys.argv[1])
+#   nely = int(sys.argv[2])
+#   visu = int(sys.argv[3])
+#   MX   = int(sys.argv[4])
+#   MY   = int(sys.argv[5])
 
-echo " " >> errors
+visu=0
 
-python3 stone.py   8   8 0 1 2 | grep nel >> errors
-python3 stone.py   9   9 0 1 2 | grep nel >> errors
-python3 stone.py  10  10 0 1 2 | grep nel >> errors
-python3 stone.py  11  11 0 1 2 | grep nel >> errors
-python3 stone.py  12  12 0 1 2 | grep nel >> errors
-python3 stone.py  16  16 0 1 2 | grep nel >> errors
-python3 stone.py  24  24 0 1 2 | grep nel >> errors
-python3 stone.py  32  32 0 1 2 | grep nel >> errors
-python3 stone.py  48  48 0 1 2 | grep nel >> errors
-python3 stone.py  64  64 0 1 2 | grep nel >> errors
-python3 stone.py  96  96 0 1 2 | grep nel >> errors
-python3 stone.py 128 128 0 1 2 | grep nel >> errors
+rm errors_*
+rm *.ascii
 
-echo " " >> errors
-
-python3 stone.py   8   8 0 2 1 | grep nel >> errors
-python3 stone.py   9   9 0 2 1 | grep nel >> errors
-python3 stone.py  10  10 0 2 1 | grep nel >> errors
-python3 stone.py  11  11 0 2 1 | grep nel >> errors
-python3 stone.py  12  12 0 2 1 | grep nel >> errors
-python3 stone.py  16  16 0 2 1 | grep nel >> errors
-python3 stone.py  24  24 0 2 1 | grep nel >> errors
-python3 stone.py  32  32 0 2 1 | grep nel >> errors
-python3 stone.py  48  48 0 2 1 | grep nel >> errors
-python3 stone.py  64  64 0 2 1 | grep nel >> errors
-python3 stone.py  96  96 0 2 1 | grep nel >> errors
-python3 stone.py 128 128 0 2 1 | grep nel >> errors
-
-echo " " >> errors
- 
-python3 stone.py   8   8 0 2 2 | grep nel >> errors
-python3 stone.py   9   9 0 2 2 | grep nel >> errors
-python3 stone.py  10  10 0 2 2 | grep nel >> errors
-python3 stone.py  11  11 0 2 2 | grep nel >> errors
-python3 stone.py  12  12 0 2 2 | grep nel >> errors
-python3 stone.py  16  16 0 2 2 | grep nel >> errors
-python3 stone.py  24  24 0 2 2 | grep nel >> errors
-python3 stone.py  32  32 0 2 2 | grep nel >> errors
-python3 stone.py  48  48 0 2 2 | grep nel >> errors
-python3 stone.py  64  64 0 2 2 | grep nel >> errors
-python3 stone.py  96  96 0 2 2 | grep nel >> errors
-python3 stone.py 128 128 0 2 2 | grep nel >> errors
- 
+for mx in 1 2 3; do
+    for my in 1 2 3; do 
+        for rs in 8 9 10 11 12 13 14 15 16 17 18 19 20 24 25 28 32 33 35 39 48 53 59 64 71 80 89 96; do
+            python3 stone.py  $rs $rs $visu $mx $my | grep nel >> errors_${mx}_${my}
+        done
+    done
+done
 
