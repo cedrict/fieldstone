@@ -8,6 +8,9 @@ python3 stone.py  48  48 0 | grep nel >> errors
 python3 stone.py  64  64 0 | grep nel >> errors
 python3 stone.py  96  96 0 | grep nel >> errors
 python3 stone.py 128 128 0 | grep nel >> errors
+python3 stone.py 160 160 0 | grep nel >> errors
+python3 stone.py 192 192 0 | grep nel >> errors
+python3 stone.py 256 256 0 | grep nel >> errors
 
 
 

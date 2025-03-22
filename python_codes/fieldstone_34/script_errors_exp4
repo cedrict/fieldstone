@@ -1,0 +1,12 @@
+#! /bin/bash
+
+rm -f errors
+python3 stone.py   60   40 0 | grep nel >> errors
+python3 stone.py  120   80 0 | grep nel >> errors
+python3 stone.py  180  120 0 | grep nel >> errors
+python3 stone.py  240  160 0 | grep nel >> errors
+python3 stone.py  300  200 0 | grep nel >> errors
+python3 stone.py  360  240 0 | grep nel >> errors
+python3 stone.py  420  280 0 | grep nel >> errors
+python3 stone.py  480  320 0 | grep nel >> errors
+
