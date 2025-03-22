@@ -9,4 +9,6 @@ python3 stone.py  300  200 0 | grep nel >> errors
 python3 stone.py  360  240 0 | grep nel >> errors
 python3 stone.py  420  280 0 | grep nel >> errors
 python3 stone.py  480  320 0 | grep nel >> errors
+python3 stone.py  540  360 0 | grep nel >> errors
+python3 stone.py  600  400 0 | grep nel >> errors
 

@@ -92,8 +92,8 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 240
-   nely = 160
+   nelx = 540
+   nely = 360
    visu = 1
     
 nnx=nelx+1 
