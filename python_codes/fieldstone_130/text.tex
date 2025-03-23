@@ -19,6 +19,9 @@ Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fields
 
 This is based on Simpson's book \cite{simp17}, chapter 7.3.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Theory and equations}
+
 As an introduction to the topic of how the FEM can be
 performed on systems of equations, we consider the following equations
 \begin{eqnarray}
@@ -43,6 +46,9 @@ the formation of self-organizing patterns, for example,
 related to mineral growth, stromatolites and
 corals, concretions, and so on.
 
+The setup of the experiment as well as the boundary conditions
+is shown in the following figure:
+
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_130/images/simpson1}
 \end{center}
@@ -57,7 +63,8 @@ perturbation $r$ (that has a maximum amplitude
 of 1/100). No flux (zero gradient) conditions are considered across 
 all lateral boundaries.
 
-In the book we find: 
+In the book we find:
+{\small 
 \begin{verbatim}
 lx = 5 ; % length of x domain
 ly = 5 ; % length of y domain
@@ -71,6 +78,7 @@ nxe = 50 ; % number of elements in x-direction
 nye = 50 ; % number of elements in y-direction
 dt = 5e-4 ; % time step
 \end{verbatim}
+}
 
 The coupled PDEs are nonlinear: they both contain the term $A^2B$. As such 
 a specific algorithm must be employed so as to make sure that the 
@@ -143,21 +151,19 @@ or, after multiplying both equations by $\delta t$,
 - \delta t\int \vec{\bN}^T (A^n)^2 B^n dV 
 + {\M} \cdot \vec{\cal B}^{n-1}}_{\vec{f}_B}
 \end{eqnarray}
-Note that the rhs vectors depend on An, Bn and ...
-
-We assume $\vec{\cal A}^{n-1}$ and $\vec{\cal B}^{n-1}$ known. 
-
-
-Inside the integrals, we have
+Note that the rhs vectors depend on $A^n$, $B^n$ and their value at the previous time step.
+These are given by 
 \[
 A^n = \vec{\cal N}\cdot \vec{\cal A}^n
 \qquad 
 B^n = \vec{\cal N}\cdot \vec{\cal B}^n
 \]
+When building the rhs we assume $\vec{\cal A}^{n-1}$ and $\vec{\cal B}^{n-1}$ known in the calculations. 
 
+{\color{red} write about how bc is done}
 
-
-\subsection*{Simple approach} The FE matrix structure is as follows:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Simple approach} The FE matrix structure is as follows:
 \[
 \left(
 \begin{array}{cc}
@@ -181,8 +187,9 @@ B^n = \vec{\cal N}\cdot \vec{\cal B}^n
 \right)
 \]
 
-
-\subsection*{Different approach} The rhs of the first equation contains the term $\gamma A^2B$
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Different approach} 
+The rhs of the first equation contains the term $\gamma A^2B$
 so that we have to compute
 \[
 \gamma \int \vec{\cal N}^T A^2 B dV
@@ -221,10 +228,12 @@ The FE matrix structure is then as follows:
 \]
 
 
-\subsection*{Results} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Results} 
+
 This is a rough take.
 I need nonlinear iterations to take care of the nonlinearities introduced by the rhs
-I need to explaore whether part of the rhs could not make its way in the matrix. 
+I need to explore whether part of the rhs could not make its way in the matrix. 
 Quid of the nl convergence ?
 This is 1st order implicit in time. Crank-Nicolson ?
 Check analytical solution 

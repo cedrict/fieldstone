@@ -1,47 +1,44 @@
 import numpy as np
-import sys as sys
-import scipy
-import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
 import time as timing
-from scipy.sparse import csr_matrix, lil_matrix
-import random
+import sys as sys
+import scipy.sparse as sps
 import matplotlib.pyplot as plt
+import random
 from numpy import linalg as LA
+from scipy.sparse import csr_matrix,lil_matrix
 
-#------------------------------------------------------------------------------
+###############################################################################
 
-def NNV(rq,sq):
+def NN(rq,sq):
     N0=0.25*(1.-rq)*(1.-sq)
     N1=0.25*(1.+rq)*(1.-sq)
     N2=0.25*(1.+rq)*(1.+sq)
-    N4=0.25*(1.-rq)*(1.+sq)
-    return [N0,N1,N2,N3]    
+    N3=0.25*(1.-rq)*(1.+sq)
+    return np.array([N0,N1,N2,N3],dtype=np.float64)
 
-def dNNVdr(rq,sq):
+def dNNdr(rq,sq):
     dNdr0=-0.25*(1.-sq)
     dNdr1=+0.25*(1.-sq)
     dNdr2=+0.25*(1.+sq)
     dNdr3=-0.25*(1.+sq)
-    return [dNdr0,dNdr1,dNdr2,dNdr3]
+    return np.array([dNdr0,dNdr1,dNdr2,dNdr3],dtype=np.float64)
 
-def dNNVds(rq,sq):
+def dNNds(rq,sq):
     dNds0=-0.25*(1.-rq)
     dNds1=-0.25*(1.+rq)
     dNds2=+0.25*(1.+rq)
     dNds3=+0.25*(1.-rq)
-    return [dNds0,dNds1,dNds2,dNds3]    
+    return np.array([dNds0,dNds1,dNds2,dNds3],dtype=np.float64)
 
-#------------------------------------------------------------------------------
+###############################################################################
+
+sqrt3=np.sqrt(3.)
+eps=1.e-10 
 
 print("-----------------------------")
 print("--------- stone 130 ---------")
 print("-----------------------------")
 
-sqrt3=np.sqrt(3.)
-eps=1.e-10 
-
-ndim=2     # number of space dimensions
 m=4        # number of nodes making up an element
 ndof=1     # number of degrees of freedom per node
 Lx=5       # horizontal extent of the domain 
@@ -53,8 +50,8 @@ gamma=600  # kinetics
 nstep=2000 # maximum number of timestep   
 dt=1e-4    # time step
 
-nelx = 128
-nely = 128
+nelx=64
+nely=nelx
 
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
@@ -71,6 +68,8 @@ tol=1e-6
 stats_AB_file=open('stats_AB.ascii',"w")
 conv_AB_file=open('conv_AB.ascii',"w")
 
+debug=False
+
 #####################################################################
 
 print('Lx=',Lx)
@@ -86,9 +85,10 @@ print("-----------------------------")
 #####################################################################
 # grid point setup 
 #####################################################################
+start = timing.time()
 
-x = np.empty(NP, dtype=np.float64)  # x coordinates
-y = np.empty(NP, dtype=np.float64)  # y coordinates
+x=np.zeros(NP,dtype=np.float64)  # x coordinates
+y=np.zeros(NP,dtype=np.float64)  # y coordinates
 
 counter = 0
 for j in range(0,nny):
@@ -98,12 +98,15 @@ for j in range(0,nny):
         counter += 1
     #end for
 #end for
+        
+print("setup: node coordinates %.3f s" % (timing.time() - start))
 
 #####################################################################
 # connectivity
 #####################################################################
+start = timing.time()
 
-icon =np.zeros((m,nel),dtype=np.int32)
+icon=np.zeros((m,nel),dtype=np.int32)
 
 counter = 0
 for j in range(0,nely):
@@ -116,21 +119,12 @@ for j in range(0,nely):
     #end for
 #end for
 
-#####################################################################
-# define temperature boundary conditions
-#####################################################################
-#bc_fix=np.zeros(Nfem,dtype=bool)  
-#bc_val=np.zeros(Nfem,dtype=np.float64) 
-#for i in range(0,NP):
-#    if y[i]/Ly<eps:
-#       bc_fix[i]=True ; bc_val[i]=Peb
-#    if y[i]/Ly>(1-eps):
-#       bc_fix[i]=True ; bc_val[i]=0.
-#end for
+print("setup: connectivity array %.3f s" % (timing.time() - start))
 
 #####################################################################
 # initial temperature
 #####################################################################
+start = timing.time()
 
 A = np.zeros(NP,dtype=np.float64)
 B = np.zeros(NP,dtype=np.float64)
@@ -142,8 +136,11 @@ for i in range(0,NP):
     B[i]=b/(a+b)**2+random.uniform(-0.01,0.01)
 #end for
 
-#np.savetxt('A_init.ascii',np.array([x,y,A]).T,header='# x,y,A')
-#np.savetxt('B_init.ascii',np.array([x,y,B]).T,header='# x,y,B')
+if debug: 
+   np.savetxt('A_init.ascii',np.array([x,y,A]).T,header='# x,y,A')
+   np.savetxt('B_init.ascii',np.array([x,y,B]).T,header='# x,y,B')
+
+print("setup: initial conditions %.3f s" % (timing.time() - start))
 
 #####################################################################
 # create necessary arrays 
@@ -151,8 +148,6 @@ for i in range(0,NP):
 
 dNdx  = np.zeros(m,dtype=np.float64)   # shape functions derivatives
 dNdy  = np.zeros(m,dtype=np.float64)   # shape functions derivatives
-dNdr  = np.zeros(m,dtype=np.float64)   # shape functions derivatives
-dNds  = np.zeros(m,dtype=np.float64)   # shape functions derivatives
 Avect = np.zeros(m,dtype=np.float64)   
 Bvect = np.zeros(m,dtype=np.float64)   
 
@@ -163,11 +158,14 @@ Bvect = np.zeros(m,dtype=np.float64)
 time=0.
 
 for istep in range(0,nstep):
+
     print("-----------------------------")
     print("istep= ", istep)
     print("-----------------------------")
 
-    for iiter in range(0,niter):
+    for iiter in range(0,niter): # Picard iterations loop
+
+        print("    iter= ", iiter)
 
         #################################################################
         # build FE matrix
@@ -175,11 +173,10 @@ for istep in range(0,nstep):
         start = timing.time()
 
         A_mat = lil_matrix((Nfem,Nfem),dtype=np.float64) # FE matrix 
-        #A_mat = np.zeros((Nfem,Nfem),dtype=np.float64) # FE matrix 
         rhs   = np.zeros(Nfem,dtype=np.float64)          # FE rhs 
         B_mat=np.zeros((2,m),dtype=np.float64)           # gradient matrix B 
         N_mat = np.zeros((m,1),dtype=np.float64)         # shape functions
-        N = np.zeros(m,dtype=np.float64)                 # shape functions
+        jcb=np.zeros((2,2),dtype=np.float64)
 
         for iel in range (0,nel):
 
@@ -201,45 +198,28 @@ for istep in range(0,nstep):
                     sq=jq/sqrt3
                     weightq=1.*1.
 
-                    # calculate shape functions
-                    N_mat[0,0]=0.25*(1.-rq)*(1.-sq)
-                    N_mat[1,0]=0.25*(1.+rq)*(1.-sq)
-                    N_mat[2,0]=0.25*(1.+rq)*(1.+sq)
-                    N_mat[3,0]=0.25*(1.-rq)*(1.+sq)
+                    #evaluate basis fcts & derivatives
+                    N=NN(rq,sq)
+                    dNdr=dNNdr(rq,sq)
+                    dNds=dNNds(rq,sq)
+                    N_mat[:,0]=N[:]
 
-                    N[0]=0.25*(1.-rq)*(1.-sq)
-                    N[1]=0.25*(1.+rq)*(1.-sq)
-                    N[2]=0.25*(1.+rq)*(1.+sq)
-                    N[3]=0.25*(1.-rq)*(1.+sq)
-
-                    # calculate shape function derivatives
-                    dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
-                    dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
-                    dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
-                    dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
-
-                    # calculate jacobian matrix
-                    jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                    for k in range(0,m):
-                        jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
-                        jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
-                        jcb[1,0]+=dNds[k]*x[icon[k,iel]]
-                        jcb[1,1]+=dNds[k]*y[icon[k,iel]]
-                    #end for
+                    # calculate jacobian matrix & inverse
+                    jcb[0,0]=dNdr.dot(x[icon[:,iel]])
+                    jcb[0,1]=dNdr.dot(y[icon[:,iel]])
+                    jcb[1,0]=dNds.dot(x[icon[:,iel]])
+                    jcb[1,1]=dNds.dot(y[icon[:,iel]])
                     jcob=np.linalg.det(jcb)
                     jcbi=np.linalg.inv(jcb)
 
-                    # compute dNdx & dNdy
-                    Aq=0
-                    Bq=0
-                    for k in range(0,m):
-                        dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-                        dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
-                        B_mat[0,k]=dNdx[k]
-                        B_mat[1,k]=dNdy[k]
-                        Aq+=N[k]*Amem[icon[k,iel]]
-                        Bq+=N[k]*Bmem[icon[k,iel]]
-                    #end for
+                    Aq=N.dot(Amem[icon[:,iel]])
+                    Bq=N.dot(Bmem[icon[:,iel]])
+
+                    dNdx[:]=jcbi[0,0]*dNdr[:]+jcbi[0,1]*dNds[:]
+                    dNdy[:]=jcbi[1,0]*dNdr[:]+jcbi[1,1]*dNds[:]
+
+                    B_mat[0,:]=dNdx[:]
+                    B_mat[1,:]=dNdy[:]
 
                     # compute mass matrix
                     MM=N_mat.dot(N_mat.T)*weightq*jcob
@@ -256,42 +236,29 @@ for istep in range(0,nstep):
                 #end for
             #end for
 
-            # apply boundary conditions
-            #for k1 in range(0,m):
-            #    m1=icon[k1,iel]
-            #    if bc_fix[m1]:
-            #       Aref=a_el[k1,k1]
-            #       for k2 in range(0,m):
-            #           m2=icon[k2,iel]
-            #           b_el[k2]-=a_el[k2,k1]*bc_val[m1]
-            #           a_el[k1,k2]=0
-            #           a_el[k2,k1]=0
-            #       a_el[k1,k1]=Aref
-            #       b_el[k1]=Aref*bc_val[m1]
-            #    #end if
-            #end for
-
             # assemble matrix A_mat and right hand side rhs
             for k1 in range(0,m):
                 m1=icon[k1,iel]
                 for k2 in range(0,m):
                     m2=icon[k2,iel]
                     A_mat[m1,m2]+=a_el_A[k1,k2]
+                    A_mat[m1+NP,m2+NP]+=a_el_B[k1,k2]
                 #end for
                 rhs[m1]+=b_el_A[k1]
+                rhs[m1+NP]+=b_el_B[k1]
             #end for
-            for k1 in range(0,m):
-                m1=icon[k1,iel]+NP
-                for k2 in range(0,m):
-                    m2=icon[k2,iel]+NP
-                    A_mat[m1,m2]+=a_el_B[k1,k2]
-                #end for
-                rhs[m1]+=b_el_B[k1]
+            #for k1 in range(0,m):
+            #    m1=icon[k1,iel]+NP
+            #    for k2 in range(0,m):
+            #        m2=icon[k2,iel]+NP
+            #        A_mat[m1,m2]+=a_el_B[k1,k2]
+            #    #end for
+            #    rhs[m1]+=b_el_B[k1]
             #end for
 
         #end for iel
 
-        print("building temperature matrix and rhs: %.3f s" % (timing.time() - start))
+        print("    building matrix and rhs: %.3f s" % (timing.time() - start))
 
         #export matrix nonzero structure
         #plt.spy(A_mat, markersize=2.5)
@@ -311,8 +278,7 @@ for istep in range(0,nstep):
         print("     -> A (m,M) %.4f %.4f " %(np.min(Asol),np.max(Asol)))
         print("     -> B (m,M) %.4f %.4f " %(np.min(Bsol),np.max(Bsol)))
 
-
-        print("solve time: %.3f s" % (timing.time() - start))
+        print("    solve time: %.3f s" % (timing.time() - start))
 
         #################################################################
         # assess nl convergence 
@@ -325,7 +291,6 @@ for istep in range(0,nstep):
 
         conv_AB_file.write("%f %10e %10e %10e\n" %(istep+iiter/100,chi_A,chi_B,tol))
         conv_AB_file.flush()
-
 
         if chi_A<tol and chi_B<tol:
            A[:]=Asol[:]
@@ -354,20 +319,13 @@ for istep in range(0,nstep):
                 rq=iq/sqrt3
                 sq=jq/sqrt3
                 weightq=1.*1.
-                N[0]=0.25*(1.-rq)*(1.-sq)
-                N[1]=0.25*(1.+rq)*(1.-sq)
-                N[2]=0.25*(1.+rq)*(1.+sq)
-                N[3]=0.25*(1.-rq)*(1.+sq)
-                dNdr[0]=-0.25*(1.-sq) ; dNds[0]=-0.25*(1.-rq)
-                dNdr[1]=+0.25*(1.-sq) ; dNds[1]=-0.25*(1.+rq)
-                dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
-                dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
-                jcb=np.zeros((2,2),dtype=np.float64)
-                for k in range(0,m):
-                    jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
-                    jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
-                    jcb[1,0]+=dNds[k]*x[icon[k,iel]]
-                    jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+                N=NN(rq,sq)
+                dNdr=dNNdr(rq,sq)
+                dNds=dNNds(rq,sq)
+                jcb[0,0]=dNdr.dot(x[icon[:,iel]])
+                jcb[0,1]=dNdr.dot(y[icon[:,iel]])
+                jcb[1,0]=dNds.dot(x[icon[:,iel]])
+                jcb[1,1]=dNds.dot(y[icon[:,iel]])
                 jcob=np.linalg.det(jcb)
                 Aq=N.dot(A[icon[:,iel]])
                 Bq=N.dot(B[icon[:,iel]])
@@ -400,17 +358,15 @@ for istep in range(0,nstep):
             inode=icon[i,iel]
             rq=rVnodes[i]
             sq=sVnodes[i]
-            dNdr=dNNVdr(rq,sq)
-            dNds=dNNVds(rq,sq)
-            jcb=np.zeros((2,2),dtype=np.float64)
-            for k in range(0,m):
-                jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
-                jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
-                jcb[1,0]+=dNds[k]*x[icon[k,iel]]
-                jcb[1,1]+=dNds[k]*y[icon[k,iel]]
-            for k in range(0,m):
-                dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-                dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
+            dNdr=dNNdr(rq,sq)
+            dNds=dNNds(rq,sq)
+            jcb[0,0]=dNdr.dot(x[icon[:,iel]])
+            jcb[0,1]=dNdr.dot(y[icon[:,iel]])
+            jcb[1,0]=dNds.dot(x[icon[:,iel]])
+            jcb[1,1]=dNds.dot(y[icon[:,iel]])
+            jcbi=np.linalg.inv(jcb)
+            dNdx[:]=jcbi[0,0]*dNdr[:]+jcbi[0,1]*dNds[:]
+            dNdy[:]=jcbi[1,0]*dNdr[:]+jcbi[1,1]*dNds[:]
             dAdx[inode]+=dNdx.dot(A[icon[:,iel]])
             dAdy[inode]+=dNdy.dot(A[icon[:,iel]])
             dBdx[inode]+=dNdx.dot(B[icon[:,iel]])
