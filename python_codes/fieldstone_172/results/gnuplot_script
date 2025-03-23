@@ -1,0 +1,25 @@
+#
+set term png enhanced font "Times,12pt"
+set grid
+set size square
+
+set output 'pts_10.png'
+plot[0.9:3][0.9:3]\
+'pts_10.ascii' notitle
+
+set output 'pts_100.png'
+plot[0.9:3][0.9:3]\
+'pts_100.ascii' notitle
+
+set output 'pts_1000.png'
+plot[0.9:3][0.9:3]\
+'pts_1000.ascii' notitle
+
+set output 'pts_10000.png'
+plot[0.9:3][0.9:3]\
+'pts_10000.ascii' notitle
+
+set output 'pts_100000.png'
+plot[0.9:3.1][0.9:3.1]\
+'pts_100000.ascii' w d notitle
+
