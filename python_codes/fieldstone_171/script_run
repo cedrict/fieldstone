@@ -1,0 +1,13 @@
+#! /bin/bash
+
+
+for m in 'alpha' 'beta' 'gamma' 'delta' 'epsilon' 'zeta' 'eta' 'theta' 'iota' 'kappa' 'lambda' 'mu'; do 
+    echo $m
+    python3 stone.py  $m 129 > opla_$m
+    mkdir results_$m
+    mv *.ascii results_$m
+    mv *.vtu results_$m
+    mv opla_$m results_$m
+done
+
+

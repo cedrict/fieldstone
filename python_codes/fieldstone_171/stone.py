@@ -1,4 +1,5 @@
 import numpy as np
+import sys as sys
 import random
 import time as clock 
 import numba
@@ -7,24 +8,83 @@ import numba
 ###############################################################################
 ###############################################################################
 
-Lx=1.
-Ly=.5
-Lz=1.
 
-nnx=101
+if int(len(sys.argv))==3:
+   model=str(sys.argv[1])
+   nnx = int(sys.argv[2])
+else:
+   model='alpha'
+   nnx = 257
+
+use_2d_seeds=True
+
+Lx=2.5
+Ly=1.
+Lz=2.5
+
 nny=int(nnx*Ly/Lx)
 nnz=int(nnx*Lz/Lx)
 
-hx=Lx/(nnx-1)
-hy=Ly/(nny-1)
-hz=Lz/(nnz-1)
+if use_2d_seeds:
+   nny=4
+   Ly=0.01
 
 dt=1e-1
 
+nstep=10000
+
+every=200
+
+###########################################################
+
+#default (Lukas)
 Du=0.000004
 Dv=0.000002
 Feed=0.035
 Kill=0.0575
+
+if model=='alpha':
+   Du=2.e-5 ; Dv=1e-5
+   Kill=0.050600858369098715 ; Feed=0.016904176904176903
+if model=='beta':
+   Du=2.e-5 ; Dv=1e-5
+   Kill=0.040529327610872676 ; Feed= 0.014938574938574938
+if model=='gamma':
+   Du=2.e-5 ; Dv=1e-5
+   Kill=0.05540772532188842  ; Feed= 0.02407862407862408
+if model=='delta':
+   Du=2.e-5 ; Dv=1e-5
+   Kill=0.055464949928469245 ; Feed= 0.029484029484029485
+if model=='epsilon':
+   Du=2.e-5 ; Dv=1e-5
+   Kill=0.05540772532188842 ; Feed= 0.01926289926289926
+if model=='zeta':
+   Du=2.e-5 ; Dv=1e-5 ; 
+   Kill=0.060386266094420604 ; Feed= 0.024373464373464375 
+if model=='eta':
+   Du=2.e-5 ; Dv=1e-5 ; 
+   Kill=0.06296137339055795 ; Feed= 0.0343980343980344 
+if model=='theta':
+   Du=2.e-5 ; Dv=1e-5 ; 
+   Kill=0.05992846924177397 ; Feed= 0.03960687960687961 
+if model=='iota':
+   Du=2.e-5 ; Dv=1e-5 ; 
+   Kill=0.06010014306151645 ; Feed= 0.049238329238329236 
+if model=='kappa':
+   Du=2.e-5 ; Dv=1e-5 ; 
+   Kill=0.06290414878397711 ; Feed= 0.04687960687960688 
+if model=='lambda':
+   Du=2.e-5 ; Dv=1e-5 ; 
+   Kill=0.0653648068669528 ; Feed= 0.036855036855036855
+if model=='mu':
+   Du=2.e-5 ; Dv=1e-5 ; 
+   Kill=0.06525035765379114 ; Feed= 0.04914004914004914
+
+###########################################################
+
+hx=Lx/(nnx-1)
+hy=Ly/(nny-1)
+hz=Lz/(nnz-1)
 
 nelx=nnx-1
 nely=nny-1
@@ -32,11 +92,8 @@ nelz=nnz-1
 nel=nelx*nely*nelz
 NP=nnx*nny*nnz
 
-nstep=10000
-
-every=100
-
 print("-----------------------------")
+print('model=',model)
 print('nnx=',nnx)
 print('nny=',nny)
 print('nnz=',nnz)
@@ -48,7 +105,7 @@ print('Kill=',Kill)
 print('nstep=',nstep)
 print('dt=',dt)
 
-print(hx**2/Du,hx**2/Dv)
+print('diff dt:',hx**2/Du,hx**2/Dv)
 
 ###############################################################################
 # create mesh 
@@ -102,30 +159,45 @@ v=np.zeros(NP,dtype=np.float64)
 X=np.zeros(2*NP,dtype=np.float64)
 
 nseed=16
-seed_size=0.05
+seed_size=0.02
 
 u[:]=1
 v[:]=0
 
-for iseed in range(nseed):
-    
-    xs=random.uniform(0+seed_size,1-seed_size)
-    ys=random.uniform(0+seed_size,1-seed_size)
-    zs=random.uniform(0+seed_size,1-seed_size)
-    for i in range(0,NP):
-        if abs(x[i]-xs)<seed_size and\
-           abs(y[i]-ys)<seed_size and\
-           abs(z[i]-zs)<seed_size :
-           u[i]=0.75 #random.uniform(0.5,1)
+if use_2d_seeds:
+   for iseed in range(nseed):
+       xs=random.uniform(0+2*seed_size,Lx-2*seed_size)
+       zs=random.uniform(0+2*seed_size,Lz-2*seed_size)
+       for i in range(0,NP):
+           if abs(x[i]-xs)<seed_size and\
+              abs(z[i]-zs)<seed_size :
+              u[i]=random.uniform(0.5,1)
+       xs=random.uniform(0+2*seed_size,Lx-2*seed_size)
+       zs=random.uniform(0+2*seed_size,Lz-2*seed_size)
+       for i in range(0,NP):
+           if abs(x[i]-xs)<seed_size and\
+              abs(z[i]-zs)<seed_size :
+              v[i]=random.uniform(0,0.25)
 
-    xs=random.uniform(0+seed_size,1-seed_size)
-    ys=random.uniform(0+seed_size,1-seed_size)
-    zs=random.uniform(0+seed_size,1-seed_size)
-    for i in range(0,NP):
-        if abs(x[i]-xs)<seed_size and\
-           abs(y[i]-ys)<seed_size and\
-           abs(z[i]-zs)<seed_size :
-           v[i]=0.125 #random.uniform(0,0.25)
+else:
+
+   for iseed in range(nseed):
+       xs=random.uniform(0+seed_size,Lx-seed_size)
+       ys=random.uniform(0+seed_size,Ly-seed_size)
+       zs=random.uniform(0+seed_size,Lz-seed_size)
+       for i in range(0,NP):
+           if abs(x[i]-xs)<seed_size and\
+              abs(y[i]-ys)<seed_size and\
+              abs(z[i]-zs)<seed_size :
+              u[i]=random.uniform(0.5,1)
+       xs=random.uniform(0+seed_size,Lx-seed_size)
+       ys=random.uniform(0+seed_size,Ly-seed_size)
+       zs=random.uniform(0+seed_size,Lz-seed_size)
+       for i in range(0,NP):
+           if abs(x[i]-xs)<seed_size and\
+              abs(y[i]-ys)<seed_size and\
+              abs(z[i]-zs)<seed_size :
+              v[i]=random.uniform(0,0.25)
 
 X[0:NP]=u[:]
 X[NP:2*NP]=v[:]
@@ -191,13 +263,13 @@ def F(Du,Dv,F,K,NP,hx,hy,hz,u,v):
                 #-----------------
                 dX_dt[counter]=Duhx2*(u[front]-2*u[counter]+u[back])\
                               +Duhy2*(u[left] -2*u[counter]+u[right])\
-                              +Duhz2*(u[top]  -2*u[counter]+u[bottom])
-                              #-u[counter]*v[counter]**2+F*(1-u[counter])
+                              +Duhz2*(u[top]  -2*u[counter]+u[bottom])\
+                              -u[counter]*v[counter]**2+F*(1-u[counter])
 
                 dX_dt[counter+NP]=Dvhx2*(v[front]-2*v[counter]+v[back])\
                                  +Dvhy2*(v[left] -2*v[counter]+v[right])\
-                                 +Dvhz2*(v[top]  -2*v[counter]+v[bottom])
-                                 #+u[counter]*v[counter]**2-(F+K)*v[counter]
+                                 +Dvhz2*(v[top]  -2*v[counter]+v[bottom])\
+                                 +u[counter]*v[counter]**2-(F+K)*v[counter]
                 counter+=1
 
             #end for
@@ -209,29 +281,47 @@ def F(Du,Dv,F,K,NP,hx,hy,hz,u,v):
 ###############################################################################
 # time stepping loop
 ###############################################################################
+stats_u_file=open('stats_u.ascii',"w")
+stats_v_file=open('stats_v.ascii',"w")
 
 t=0
 for istep in range(0,nstep+1):
     start=clock.time()
-    print("-----------------------------")
-    print("istep= ", istep,'| t=',t)
     X[:]+=F(Du,Dv,Feed,Kill,NP,hx,hy,hz,u,v)*dt
     u[:]=X[0:NP]
     v[:]=X[NP:2*NP]
-    print("     -> u (m,M) %e %e " %(np.min(u),np.max(u)))
-    print("     -> v (m,M) %e %e " %(np.min(v),np.max(v)))
     t+=dt
-    print("     update solution: %.3f s" % (clock.time()-start))
 
     if istep%every==0 or istep==nstep:
-       filename = 'solution_{:05d}.vtu'.format(istep)
-       #np.savetxt(filename,np.array([x,T]).T,fmt='%1.5e')
+
+       min_u=np.min(u)
+       max_u=np.max(u)
+       min_v=np.min(v)
+       max_v=np.max(v)
+       avrg_u=np.average(u)
+       avrg_v=np.average(v)
+
+       print("-----------------------------")
+       print("istep= ", istep,'| t=',t)
+       print("     -> u (m,M) %e %e " %(min_u,max_u))
+       print("     -> v (m,M) %e %e " %(min_v,max_v))
+       print("     update solution: %.3f s" % (clock.time()-start))
+
+       stats_u_file.write("%e %e %e %e\n" % (t,min_u,max_u,avrg_u)) ; stats_u_file.flush()
+       stats_v_file.write("%e %e %e %e\n" % (t,min_v,max_v,avrg_v)) ; stats_v_file.flush()
+
+       u_threshold=np.zeros(NP,dtype=np.int8)
+       v_threshold=np.zeros(NP,dtype=np.int8)
+       for i in range(0,NP):
+           if u[i]>avrg_u: u_threshold[i]=1
+           if v[i]>avrg_v: v_threshold[i]=1
 
        ########################################################################
        # export solution to vtu format
        ########################################################################
        start=clock.time()
 
+       filename = 'solution_{:05d}.vtu'.format(istep)
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
@@ -240,19 +330,30 @@ for istep in range(0,nstep+1):
        vtufile.write("<Points> \n")
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
        for i in range(0,NP):
-           vtufile.write("%10f %10f %10f \n" %(x[i],y[i],z[i]))
+           vtufile.write("%.3e %.3e %.3e \n" %(x[i],y[i],z[i]))
        vtufile.write("</DataArray>\n")
        vtufile.write("</Points> \n")
        #####
        vtufile.write("<PointData Scalars='scalars'>\n")
+
        vtufile.write("<DataArray type='Float32' Name='u' Format='ascii'> \n")
        for i in range(0,NP):
-           vtufile.write("%f \n" %(u[i]))
+           vtufile.write("%.3e \n" %(u[i]))
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Float32' Name='v' Format='ascii'> \n")
        for i in range(0,NP):
-           vtufile.write("%f \n" %(v[i]))
+           vtufile.write("%.3e \n" %(v[i]))
        vtufile.write("</DataArray>\n")
+
+       vtufile.write("<DataArray type='Int8' Name='u (threshold)' Format='ascii'> \n")
+       for i in range(0,NP):
+           vtufile.write("%d " %(u_threshold[i]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Int8' Name='v (threshold)' Format='ascii'> \n")
+       for i in range(0,NP):
+           vtufile.write("%d " %(v_threshold[i]))
+       vtufile.write("</DataArray>\n")
+
        vtufile.write("</PointData>\n")
        #####
        vtufile.write("<Cells>\n")
@@ -263,11 +364,11 @@ for istep in range(0,nstep+1):
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
        for iel in range (0,nel):
-           vtufile.write("%d \n" %((iel+1)*8))
+           vtufile.write("%d " %((iel+1)*8))
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
        for iel in range (0,nel):
-           vtufile.write("%d \n" %12)
+           vtufile.write("%d " %12)
        vtufile.write("</DataArray>\n")
        vtufile.write("</Cells>\n")
        #####
@@ -277,3 +378,5 @@ for istep in range(0,nstep+1):
        vtufile.close()
 
        print("     export to vtu: %.3f s" % (clock.time()-start))
+
+
