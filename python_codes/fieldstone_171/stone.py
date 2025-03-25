@@ -8,12 +8,11 @@ import numba
 ###############################################################################
 ###############################################################################
 
-
 if int(len(sys.argv))==3:
    model=str(sys.argv[1])
    nnx = int(sys.argv[2])
 else:
-   model='alpha'
+   model='default'
    nnx = 257
 
 use_2d_seeds=True
@@ -38,11 +37,11 @@ every=200
 ###########################################################
 
 #default (Lukas)
-Du=0.000004
-Dv=0.000002
-Feed=0.035
-Kill=0.0575
-
+if model=='default':
+   Du=0.000004
+   Dv=0.000002
+   Feed=0.035
+   Kill=0.0575
 if model=='alpha':
    Du=2.e-5 ; Dv=1e-5
    Kill=0.050600858369098715 ; Feed=0.016904176904176903
@@ -281,8 +280,8 @@ def F(Du,Dv,F,K,NP,hx,hy,hz,u,v):
 ###############################################################################
 # time stepping loop
 ###############################################################################
-stats_u_file=open('stats_u.ascii',"w")
-stats_v_file=open('stats_v.ascii',"w")
+stats_u_file=open(model+'_stats_u.ascii',"w")
+stats_v_file=open(model+'_stats_v.ascii',"w")
 
 t=0
 for istep in range(0,nstep+1):
@@ -321,7 +320,7 @@ for istep in range(0,nstep+1):
        ########################################################################
        start=clock.time()
 
-       filename = 'solution_{:05d}.vtu'.format(istep)
+       filename = model+'_solution_{:05d}.vtu'.format(istep)
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
