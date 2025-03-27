@@ -1,0 +1,19 @@
+set term png
+set grid
+set pointsize .25
+
+set output 'fig6.png'
+set xlabel 'T_f'
+set ylabel 'T_0'
+set key bottom left
+
+set xtics 200
+set ytics 200
+
+set size square
+
+plot[400:1400][1400:400]\
+'sr1e-14.ascii' t '1e-14',\
+'../sr1e-14.ascii' notitle ,\
+x lt -1 lw 1.5 
+
