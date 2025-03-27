@@ -3,6 +3,7 @@ import sys as sys
 import random
 import time as clock 
 import numba
+import matplotlib.pyplot as plt
 
 ###############################################################################
 ###############################################################################
@@ -13,7 +14,7 @@ if int(len(sys.argv))==3:
    nnx = int(sys.argv[2])
 else:
    model='sigma'
-   nnx = 257
+   nnx = 129
 
 use_2d_seeds=True
 
@@ -30,7 +31,7 @@ if use_2d_seeds:
 
 dt=1e-1
 
-nstep=200000
+nstep=20000
 
 every=500
 
@@ -393,4 +394,7 @@ for istep in range(0,nstep+1):
           print('avrg_u=',avrg_u) 
           print('avrg_v=',avrg_v) 
           exit('stopping iterations') 
+
+
+#plt.imshow(np.reshape(u,(nny,nnx)), interpolation='none')
 
