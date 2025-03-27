@@ -1,24 +1,31 @@
 import numpy as np
 import scipy as scp
 
-TKelvin=0#273. # set to zero to get correct results
+TKelvin=273. # set to zero to get correct results
 R=8.314
 Cp=1000
-n=3.
 rho=2750
 e=1
 
 #brace & kohlstedt 1980
-A=5e-6*1e-18
-Q=1.9e5
+#n=3.
+#A=5e-6*1e-18
+#Q=1.9e5
 
 #stuwe & sandiford 1994
+#n=3.
 #A=2e-4*1e-18
 #Q=2.5e5
 
 #brace & kohlstedt 1980
+#n=3.
 #A=7e4*1e-18
 #Q=5.2e5
+
+#gleason Tullis 1995
+A=1.1e-28
+n=4.
+Q=223e3
 
 Trange=np.arange(400,1400,1)
 
@@ -69,15 +76,5 @@ C=rho*Cp/sr*(sr/A)**(-1./n)
 for T0 in (400,500,600):
     res=feq13(Trange,T0,D,t)
     np.savetxt('feq13_'+str(T0)+'.ascii',np.array([Trange,res]).T)
-
-
-
-
-
-
-
-
-
-
 
 

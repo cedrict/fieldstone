@@ -1,0 +1,22 @@
+set term pdf enhanced font "Times,11pt" size 3.2,3;
+set grid
+set pointsize .15
+
+set output 'fig6.pdf'
+set xlabel 'T_f'
+set ylabel 'T_0'
+set key bottom left
+
+set xtics 200
+set ytics 200
+
+set size square
+
+plot[400:1400][1400:400]\
+'sr1e-16.ascii' t '1e-16',\
+'sr1e-15.ascii' t '1e-15',\
+'sr1e-14.ascii' t '1e-14',\
+'sr1e-13.ascii' t '1e-13',\
+'sr1e-12.ascii' t '1e-12',\
+x lt -1 lw 1.5 
+

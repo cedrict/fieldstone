@@ -73,7 +73,7 @@ with the second invariant thereof given by
 = \dot\epsilon^2
 \]
 
-In this deformation geometry, the principal stresses ($\sigma1$ and $\sigma_3$ correspond 
+In this deformation geometry, the principal stresses ($\sigma_1$ and $\sigma_3$ correspond 
 to the horizontal and vertical stresses and there is no shear stress so that 
 the mean stress can be expressed as $\tau = \frac12(\sigma_1-\sigma_3)$.
 
@@ -398,7 +398,7 @@ I have digitized\footnote{\url{https://plotdigitizer.com/app}} the lines of Fig.
 and these are also plotted on the figures.
 This is rather puzzling because our results do not come close to those of Fig~6 at all. 
 However, although it is obviously wrong, we could run our code and choose not 
-to convert temperatures to \si{\kelvin} (simply by setting \lstinline|TKelvin=0| in the code) 
+to convert temperatures to Kelvin (simply by setting \lstinline|TKelvin=0| in the code) 
 and we obtain the following figures:
 
 \begin{center}
@@ -444,8 +444,69 @@ When Celsius units are used, it is less visually obvious, but the same observati
 This reinforces the conclusion that Eq.~(13) of the paper is probably wrong. 
 
  
+\newpage
+%---------------------------------------------------------------------
+\subsection*{Studying the Quartz flow law of Gleason \& Tullis (1995)}
 
+\begin{center}
+\includegraphics[width=11cm]{python_codes/fieldstone_167/images/gltu95}\\
+{\captionfont Abstract from \textcite{gltu95} (1995).}
+\end{center}
 
+This paper was chosen not because it is in anyway `better' than any other of the 
+same type but because: a) uncertainties on the flow law parameters are 
+mentioned in the abstract, b) these parameters were used in many publications 
+(e.g. \cite{wabj08}, \cite{wabj08b}, \cite{wabj08c}).
 
+Let us first use the quantities $n=4$, $A=1.1\cdot 10^{-28}$ and $Q=223\cdot 10^3$.
+We then obtain a similar set of curves as before:
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_167/gltu95/fig6.pdf}
+\end{center}
+
+We can go further by investigating the sensitivity of these curves to 
+the uncertainties of the three coefficients:
+$n=4 \pm 0.9$, $A=1.1\cdot 10^{-4 \pm 2 -6n}$ and $Q=223 \pm 56 \cdot 10^3$.
+The code has therefore been modified (additional \verb|stone_gltu95.py| file)
+to include a triple loop:
+\begin{lstlisting}
+for Q in range(223-56,223+56):
+    for n in (4-0.9,4,4+0.9):
+        for a in range(-2,2):
+            A=1.1*10**(-4+a-6*n)
+            D=(Q*1e3)/n/R
+            C=rho*Cp/sr*(sr/A)**(-1./n)
+            ...
+\end{lstlisting}
+These are placed inside the loop over strain rate values. 
+We then obtain the following envelopes composed of 5*3*113=1695 lines:
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_167/gltu95/envelopes/fig6_12.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_167/gltu95/envelopes/fig6_13.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_167/gltu95/envelopes/fig6_14.png}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_167/gltu95/envelopes/fig6_15.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_167/gltu95/envelopes/fig6_16.png}
+\end{center}
+
+These figures show a very large scatter and are not particularly useful. 
+For one thing they do not provide us with an understanding of which of the three 
+parameters is the dominant one (if any). 
+
+Let us then focus on the case \lstinline{sr=1e-14} and re-run the simulations
+and only vary one parameter at a time:
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_167/gltu95/envelope_2a/fig6.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_167/gltu95/envelope_2b/fig6.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_167/gltu95/envelope_2c/fig6.png}\\
+{\captionfont Left: varying $Q$; Middle: varying $n$; Right: varying $A$.
+(experiment=2a,2b,2c in the code)}
+\end{center}
+
+We find that $Q$ has the largest influence when all other parameters are kept to their 
+`standard' values. Of course when all three parameters are allowed to vary their effects 
+compound and the scatter is then much larger.
 
 

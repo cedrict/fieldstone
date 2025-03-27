@@ -1,0 +1,100 @@
+#
+
+
+#set xtics 200
+#set ytics 200
+
+##############################################
+set term pdf enhanced font "Times,11pt" size 3.2,3;
+set size square
+set grid
+set xlabel 'T_f'
+set ylabel 'T_0'
+set key bottom left
+
+set output 'fig6_12.pdf'
+plot[400:1400][1400:400]\
+'sr1e-12.ascii' w d t '1e-12',\
+'../sr1e-12.ascii' w p ps .3 notitle,\
+x lt -1 lw 1.5 
+
+set term png 
+set output "fig6_12.png" 
+replot
+
+##############################################
+reset
+set term pdf enhanced font "Times,11pt" size 3.2,3;
+set size square
+set grid
+set xlabel 'T_f'
+set ylabel 'T_0'
+set key bottom left
+
+set output 'fig6_13.pdf'
+plot[400:1400][1400:400]\
+'sr1e-13.ascii' w d t '1e-13',\
+'../sr1e-13.ascii' w p ps .3 notitle,\
+x lt -1 lw 1.5 
+
+set term png 
+set output "fig6_13.png" 
+replot
+
+##############################################
+reset
+set term pdf enhanced font "Times,11pt" size 3.2,3;
+set size square
+set grid
+set xlabel 'T_f'
+set ylabel 'T_0'
+set key bottom left
+
+set output 'fig6_14.pdf'
+plot[400:1400][1400:400]\
+'sr1e-14.ascii' w d t '1e-14',\
+'../sr1e-14.ascii' w p ps .3 notitle,\
+x lt -1 lw 1.5 
+
+set term png 
+set output "fig6_14.png" 
+replot
+
+##############################################
+reset
+set term pdf enhanced font "Times,11pt" size 3.2,3;
+set size square
+set grid
+set xlabel 'T_f'
+set ylabel 'T_0'
+set key bottom left
+
+set output 'fig6_15.pdf'
+plot[400:1400][1400:400]\
+'sr1e-15.ascii' w d t '1e-15',\
+'../sr1e-15.ascii' w p ps .3 notitle,\
+x lt -1 lw 1.5 
+
+set term png 
+set output "fig6_15.png" 
+replot
+
+##############################################
+reset
+set term pdf enhanced font "Times,11pt" size 3.2,3;
+set size square
+set grid
+set xlabel 'T_f'
+set ylabel 'T_0'
+set key bottom left
+
+set output 'fig6_16.pdf'
+plot[400:1400][1400:400]\
+'sr1e-16.ascii' w d t '1e-16',\
+'../sr1e-16.ascii' w p ps .3 notitle ,\
+x lt -1 lw 1.5 
+
+set term png 
+set output "fig6_16.png" 
+replot
+
