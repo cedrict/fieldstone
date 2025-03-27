@@ -12,7 +12,7 @@ if int(len(sys.argv))==3:
    model=str(sys.argv[1])
    nnx = int(sys.argv[2])
 else:
-   model='default'
+   model='sigma'
    nnx = 257
 
 use_2d_seeds=True
@@ -30,9 +30,9 @@ if use_2d_seeds:
 
 dt=1e-1
 
-nstep=10000
+nstep=200000
 
-every=200
+every=500
 
 ###########################################################
 
@@ -44,16 +44,19 @@ if model=='default':
    Kill=0.0575
 if model=='alpha':
    Du=2.e-5 ; Dv=1e-5
-   Kill=0.050600858369098715 ; Feed=0.016904176904176903
+   #Kill=0.050600858369098715 ; Feed=0.016904176904176903
+   Kill=0.050 ; Feed=0.010 # gane22 OK
 if model=='beta':
    Du=2.e-5 ; Dv=1e-5
    Kill=0.040529327610872676 ; Feed= 0.014938574938574938
 if model=='gamma':
    Du=2.e-5 ; Dv=1e-5
-   Kill=0.05540772532188842  ; Feed= 0.02407862407862408
+   #Kill=0.05540772532188842  ; Feed= 0.02407862407862408
+   Kill=0.054 ; Feed= 0.025 # gane22 OK
 if model=='delta':
    Du=2.e-5 ; Dv=1e-5
-   Kill=0.055464949928469245 ; Feed= 0.029484029484029485
+   #Kill=0.055464949928469245 ; Feed= 0.029484029484029485
+   Kill=0.052 ; Feed= 0.025 # gane22 OK
 if model=='epsilon':
    Du=2.e-5 ; Dv=1e-5
    Kill=0.05540772532188842 ; Feed= 0.01926289926289926
@@ -77,7 +80,17 @@ if model=='lambda':
    Kill=0.0653648068669528 ; Feed= 0.036855036855036855
 if model=='mu':
    Du=2.e-5 ; Dv=1e-5 ; 
-   Kill=0.06525035765379114 ; Feed= 0.04914004914004914
+   #Kill=0.06525035765379114 ; Feed= 0.04914004914004914
+   Kill=0.064 ; Feed= 0.050 # gane22 
+   #Kill=0.065 ; Feed= 0.046 # muna  OK
+
+if model=='sigma':
+   Du=2.e-5 ; Dv=1e-5 ; 
+   Kill=0.056 ; Feed=0.095 # gane22  DOES NOT WORK
+
+if model=='xi':
+   Du=2.e-5 ; Dv=1e-5 ; 
+   Kill=0.042 ; Feed=0.01 # gane22  DOES NOT WORK
 
 ###########################################################
 
@@ -155,13 +168,13 @@ start=clock.time()
 
 u=np.zeros(NP,dtype=np.float64)
 v=np.zeros(NP,dtype=np.float64)
-X=np.zeros(2*NP,dtype=np.float64)
 
-nseed=16
+nseed=100
 seed_size=0.02
-
-u[:]=1
-v[:]=0
+       
+for i in range(0,NP):
+    u[i]=random.uniform(0.9,1) # close to 1
+    v[i]=random.uniform(0,0.1) # close to 0 
 
 if use_2d_seeds:
    for iseed in range(nseed):
@@ -176,7 +189,7 @@ if use_2d_seeds:
        for i in range(0,NP):
            if abs(x[i]-xs)<seed_size and\
               abs(z[i]-zs)<seed_size :
-              v[i]=random.uniform(0,0.25)
+              v[i]=random.uniform(0,0.5)
 
 else:
 
@@ -198,6 +211,7 @@ else:
               abs(z[i]-zs)<seed_size :
               v[i]=random.uniform(0,0.25)
 
+X=np.zeros(2*NP,dtype=np.float64)
 X[0:NP]=u[:]
 X[NP:2*NP]=v[:]
 
@@ -334,7 +348,6 @@ for istep in range(0,nstep+1):
        vtufile.write("</Points> \n")
        #####
        vtufile.write("<PointData Scalars='scalars'>\n")
-
        vtufile.write("<DataArray type='Float32' Name='u' Format='ascii'> \n")
        for i in range(0,NP):
            vtufile.write("%.3e \n" %(u[i]))
@@ -343,7 +356,6 @@ for istep in range(0,nstep+1):
        for i in range(0,NP):
            vtufile.write("%.3e \n" %(v[i]))
        vtufile.write("</DataArray>\n")
-
        vtufile.write("<DataArray type='Int8' Name='u (threshold)' Format='ascii'> \n")
        for i in range(0,NP):
            vtufile.write("%d " %(u_threshold[i]))
@@ -352,7 +364,6 @@ for istep in range(0,nstep+1):
        for i in range(0,NP):
            vtufile.write("%d " %(v_threshold[i]))
        vtufile.write("</DataArray>\n")
-
        vtufile.write("</PointData>\n")
        #####
        vtufile.write("<Cells>\n")
@@ -378,4 +389,8 @@ for istep in range(0,nstep+1):
 
        print("     export to vtu: %.3f s" % (clock.time()-start))
 
+       if abs(min_u-max_u)<1e-3 and abs(min_v-max_v)<1e-3:
+          print('avrg_u=',avrg_u) 
+          print('avrg_v=',avrg_v) 
+          exit('stopping iterations') 
 

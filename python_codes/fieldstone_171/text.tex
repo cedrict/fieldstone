@@ -35,12 +35,17 @@ Last revision: March. 23th, 2025.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+There is a lot of literature and online material about these equations. Please consult them 
+for reference:
+\begin{itemize}
+\item \fullcite{grsc84}
+\item \fullcite{pear93}
+\item \fullcite{muna14}
+\item \url{http://www.mrob.com/pub/comp/xmorphia/index.html} by R. Munafo
+\item \url{https://en.wikipedia.org/wiki/Reaction-diffusion_system}
+\end{itemize}
 
-\url{https://en.wikipedia.org/wiki/Reaction-diffusion_system}
-
-The systematic generation of porous geometries is based on a special treatment, outlined in
-the rest of this section, of a class of solutions to the Gray–Scott reaction–diffusion system
-of equations given by
+The Gray–Scott reaction–diffusion system of equations are given by
 \begin{eqnarray}
 \frac{\partial U}{\partial t} &=& D_u \vec\nabla^2 U - UV^2 + F(1-U) \nn\\
 \frac{\partial V}{\partial t} &=& D_v \vec\nabla^2 V + UV^2 - (F+k)V 
@@ -120,11 +125,89 @@ which the perturbation spread, the system
 went into an asymptotic state that was either
 time-independent or time-dependent, depending on the parameter values.
 
+Likewise in \textcite{gane22} (2022) we find the following figure:
+\begin{center}
+\includegraphics[height=7.5cm]{python_codes/fieldstone_171/images/gane22}\\
+{\captionfont Taken from \cite{gane22}. 
+Snapshots of a selection of two-dimensional patterns obtained for
+$D_u=2\cdot 10^{-5}$ and $D_v=1\cdot 10^{-5}$ obtained via numerical 
+simulation in MATLAB. (Code online.) Patterns
+are classified according to the Greek letter naming convention used by \textcite{pear93}.
+} 
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{About the work of R. Munafo}
+
+We find there\footnote{\url{http://www.mrob.com/pub/comp/xmorphia/pearson-classes.html}}
+two key figures:
+
+\begin{center}
+\includegraphics[height=7.5cm]{python_codes/fieldstone_171/images/pearson-orig}
+\includegraphics[height=7.5cm]{python_codes/fieldstone_171/images/pearson-tags}\\
+{\captionfont So called key maps of the Gray-Scott equations. $k$ is on the 
+horizontal axis, $F$ is on the vertical axis. Thick lines correspond to 
+0.3-0.7 on the x-axis and to 0.3-0.8 on the y-axis.
+The classification of the solution is traditionally based on Greek letters:
+alpha ($\alpha$),    beta ($\beta$),    gamma ($\gamma$),    delta ($\delta$),    
+epsilon ($\epsilon$),    zeta ($\zeta$),    eta ($\eta$),    
+theta ($\theta$),    iota ($\iota$),    kappa ($\kappa$),    lambda ($\lambda$),    
+mu ($\mu$),    nu ($\nu$),    xi ($\xi$),    pi ($\pi$),    rho ($\rho$),    sigma ($\sigma$).
+The first fourteen
+(R, B, and $alpha$ through $\mu$) were defined by Pearson \cite{pear93} (left figure); 
+On the right we find the data from his figure 3 (with corrections) replotted on the index image from the left figure. 
+}
+\end{center}
+
+The author states:
+\begin{displayquote}
+{\color{darkgray}
+Pearson missed many types of patterns because he only used one starting pattern: 
+a small (u, v) = (1/2, 1/4) square on an otherwise (1, 0) background. Many combinations of paramters (F, k) fail to produce 
+a pattern if initialised this way, but produce patterns when started some other way (such as a single small spot on 
+an otherwise (0, 1) background, resembling the inverse of Pearson's initialisation; or several spots of
+diverse (F, k) values). Types nu, xi, pi, rho, and sigma are of this sort and were identified by me; 
+the first three of these are described in my paper [2]. Types rho, and sigma also require a model with somewhat higher 
+resolution than Pearson's, and significantly better runtime; these requirements would have made their discovery 
+nearly impossible in the 1990s.
+}
+\end{displayquote} 
+
+
+
+The classification is then as follows:
+\begin{center}
+\begin{tabular}{lll}
+alpha   & (F=0.010, k=0.047) (F=0.014, k=0.053) \\
+beta    & (F=0.014, k=0.039) (F=0.026, k=0.051) \\
+gamma   & (F=0.022, k=0.051) (F=0.026, k=0.055) \\
+delta   & (F=0.030, k=0.055) (F=0.042, k=0.059) \\
+epsilon & (F=0.018, k=0.055) (F=0.022, k=0.059) \\
+zeta    & (F=0.022, k=0.061) (F=0.026, k=0.059) \\
+eta     & (F=0.034, k=0.063) 	\\
+theta   & (F=0.030, k=0.057) (F=0.038, k=0.061) \\
+iota    & (F=0.046, k=0.0594)   \\
+kappa   & (F=0.050, k=0.063) (F=0.058, k=0.063) \\
+lambda  & (F=0.026, k=0.061) (F=0.034, k=0.065) \\
+mu      & (F=0.046, k=0.065) (F=0.058, k=0.065) \\
+nu      & (F=0.054, k=0.067) (F=0.082, k=0.063) \\
+xi      & (F=0.010, k=0.041) (F=0.014, k=0.047) \\
+pi      & (F=0.062, k=0.061) \\
+rho     & (F=0.090, k=0.059) (F=0.102, k=0.055) \\
+sigma   & (F=0.090, k=0.057) (F=0.110, k=0.0523)
+\end{tabular}
+\end{center}
+
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Lukas van de Wiel's approach}
 
-Lukas says:
+In a private communication Lukas wrote:
+{\small 
 \begin{verbatim}
 I used a resolution of 4800x4800 but 1000x1000 will most likely get you fine results.
 The equations are:
@@ -147,13 +230,9 @@ soft edges seed blobs/gaussians, but then the smoothness of the patterns
 depends on the parameters of Du and Dv, and needed something that works 
 universally, for consistency. (If you reduce Du and Dv, you well get a more 
 fine grained pattern, as if zoomed out more) 
-If you want to create the full pattern range like the background of my poster, 
-you need let F and K change. I let K change with x, and F with y, but that 
-was because of the orientation I wished on the poster,
-you can do just as well the other way around.
-Letting both vary between 0 and 0.1 will give you the full spectrum.
 Method of lines - no particular attention to nonlinearities. 
 \end{verbatim}
+}
 
 \begin{center}
 \includegraphics[width=5.6cm]{python_codes/fieldstone_171/images/u000000.jpg}
