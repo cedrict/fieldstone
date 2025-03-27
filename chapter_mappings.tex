@@ -27,18 +27,19 @@ f^h(r,s)=\sum_i \bN_i(r,s) f_i.
 If we treat the coordinate variables $x$ and $y$ themselves as functions of $(r,s)$, 
 then the basis functions can be used to construct the mapping:
 \begin{eqnarray}
-x(r,s) &=& \sum_{i=1}^4 \bN_i(r,s) x_i \\
-y(r,s) &=& \sum_{i=1}^4 \bN_i(r,s) y_i 
+x(r,s) &=& \sum_{i=1}^m \bN_i(r,s) x_i \\
+y(r,s) &=& \sum_{i=1}^m \bN_i(r,s) y_i 
 \end{eqnarray}
+where $m$ is the number of nodes.
 This is a relationship between the reduced coordinates $r,s$ and the 'real'
 coordinates $x,y$.
 
 Let us compute the space derivatives of these quantities:
 \begin{eqnarray}
-\frac{\partial x}{\partial r} &=& \sum_i \frac{\partial \bN_i}{\partial r} x_i \nn\\
-\frac{\partial x}{\partial s} &=& \sum_i \frac{\partial \bN_i}{\partial s} x_i \nn\\
-\frac{\partial y}{\partial r} &=& \sum_i \frac{\partial \bN_i}{\partial r} y_i \nn\\
-\frac{\partial y}{\partial s} &=& \sum_i \frac{\partial \bN_i}{\partial s} y_i \nn
+\frac{\partial x}{\partial r} &=& \sum_i^m \frac{\partial \bN_i}{\partial r} x_i \label{eq:dddd1}\\
+\frac{\partial x}{\partial s} &=& \sum_i^m \frac{\partial \bN_i}{\partial s} x_i \label{eq:dddd2}\\
+\frac{\partial y}{\partial r} &=& \sum_i^m \frac{\partial \bN_i}{\partial r} y_i \label{eq:dddd3}\\
+\frac{\partial y}{\partial s} &=& \sum_i^m \frac{\partial \bN_i}{\partial s} y_i \label{eq:dddd4}
 \end{eqnarray}
 
 We also have 
@@ -146,6 +147,33 @@ of the Gauss-Legendre quadrature.
 \iint_{\Omega_e} ... \; dx dy = \int_{-1}^{+1} \int_{-1}^{+1} ...|{\bm J}| \; dr ds
 \end{equation}
 
+\todo[inline]{make link with LAVA chapter at some point}
+
+%==============================================================================
+\section{A quick word about implementation}
+
+In two dimensions 
+\begin{lstlisting}
+jcb = np.zeros((2, 2),dtype=np.float64)
+for k in range(0,m):
+    jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
+    jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
+    jcb[1,0]+=dNds[k]*x[icon[k,iel]]
+    jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+\end{lstlisting}
+This implementation is interesting because it explicitely 
+implements the loop $\sum_i$ over nodes of 
+Eqs.~\eqref{eq:dddd1},\eqref{eq:dddd2},\eqref{eq:dddd3},\eqref{eq:dddd4}
+as a for loop.
+It is often used in (older) stones and progressively beeing replaced by 
+the following implementation that is more compact and avoids the writing of 
+explicit loops (which are notoriously slow in Python):
+\begin{lstlisting}
+jcb[0,0]=dNdr.dot(x[icon[:,iel]])
+jcb[0,1]=dNdr.dot(y[icon[:,iel]])
+jcb[1,0]=dNds.dot(x[icon[:,iel]])
+jcb[1,1]=dNds.dot(y[icon[:,iel]])
+\end{lstlisting}
 
 
 
@@ -296,8 +324,8 @@ and its gradient by
 \nabla^h \phi (x,y) = \sum_i 
 \left(
 \begin{array}{c}
-\sum_i \frac{\partial \bN_i}{\partial x} \phi_i \\
-\sum_i \frac{\partial \bN_i}{\partial y} \phi_i 
+\sum\limits_i \frac{\partial \bN_i}{\partial x} \phi_i \\
+\sum\limits_i \frac{\partial \bN_i}{\partial y} \phi_i 
 \end{array}
 \right)
 \]
@@ -327,8 +355,8 @@ We then simply have the
 following relationship, i.e. any point of the reference element 
 can be mapped to the physical quadrilateral as follows:
 \begin{eqnarray}
-x&=& \bN_1(r,s) x_1 + \bN_2(r,s) x_2 + \bN_3(r,s) x_3 + \bN_4(r,s) x_4 \nn\\
-y&=& \bN_1(r,s) y_1 + \bN_2(r,s) y_2 + \bN_3(r,s) y_3 + \bN_4(r,s) y_4 \label{mapppQ1a} 
+x(r,s)&=& \bN_1(r,s) x_1 + \bN_2(r,s) x_2 + \bN_3(r,s) x_3 + \bN_4(r,s) x_4 \nn\\
+y(r,s)&=& \bN_1(r,s) y_1 + \bN_2(r,s) y_2 + \bN_3(r,s) y_3 + \bN_4(r,s) y_4 \label{mapppQ1a} 
 \end{eqnarray} 
 where the $Q_1$ basis functions $\bN_i(r,s)$ are defined in Section~\ref{sec:elts1D}.
 
