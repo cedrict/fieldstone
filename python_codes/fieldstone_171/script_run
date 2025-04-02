@@ -1,16 +1,16 @@
 #! /bin/bash
 
 
-for m in 'alpha' 'beta' 'gamma' 'delta' 'epsilon' 'zeta' 'eta' 'theta' 'iota' 'kappa' 'lambda' 'mu'; do 
+for m in 'alpha' 'beta' 'gamma' 'delta' 'epsilon' 'zeta' 'eta' 'theta' 'iota' 'kappa' 'lambda' 'mu' 'nu' 'xi' 'pi' 'rho' 'sigma'; do 
     echo $m
-    python3 stone.py  $m 129 > opla_$m
+    python3 stone.py  $m 257 > opla_$m
 done
 
-for m in 'alpha' 'beta' 'gamma' 'delta' 'epsilon' 'zeta' 'eta' 'theta' 'iota' 'kappa' 'lambda' 'mu'; do 
-    mkdir results_$m
-    mv ${m}*.ascii results_$m
-    mv ${m}*.vtu results_$m
-    mv opla_$m results_$m
-done
+#for m in 'alpha' 'beta' 'gamma' 'delta' 'epsilon' 'zeta' 'eta' 'theta' 'iota' 'kappa' 'lambda' 'mu'; do 
+#    mkdir results_$m
+#    mv ${m}*.ascii results_$m
+#    mv ${m}*.vtu results_$m
+#    mv opla_$m results_$m
+#done
 
 
