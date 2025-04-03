@@ -1,0 +1,52 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set ytics .1
+
+tend=100000
+
+set xlabel 'time'
+
+set ylabel '<u>'
+set output 'stats_u.pdf'
+plot[:tend][-0.1:1.1]\
+'alpha_stats_u.ascii'   u 1:4 w l t 'alpha',\
+'beta_stats_u.ascii'    u 1:4 w l t 'beta',\
+'delta_stats_u.ascii'   u 1:4 w l t 'delta',\
+'epsilon_stats_u.ascii' u 1:4 w l t 'epsilon',\
+'eta_stats_u.ascii'     u 1:4 w l t 'eta',\
+'gamma_stats_u.ascii'   u 1:4 w l t 'gamma',\
+'iota_stats_u.ascii'    u 1:4 w l t 'iota',\
+'kappa_stats_u.ascii'   u 1:4 w l t 'kappa',\
+'lambda_stats_u.ascii'  u 1:4 w l t 'lambda',\
+'mu_stats_u.ascii'      u 1:4 w l t 'mu',\
+'nu_stats_u.ascii'      u 1:4 w l t 'nu',\
+'pi_stats_u.ascii'      u 1:4 w l t 'pi',\
+'rho_stats_u.ascii'     u 1:4 w l t 'rho',\
+'sigma_stats_u.ascii'   u 1:4 w l t 'sigma',\
+'theta_stats_u.ascii'   u 1:4 w l t 'theta',\
+'xi_stats_u.ascii'      u 1:4 w l t 'xi',\
+'zeta_stats_u.ascii'    u 1:4 w l t 'zeta'
+
+set ylabel '<v>'
+set output 'stats_v.pdf'
+plot[:tend][-0.1:1.1]\
+'alpha_stats_v.ascii'   u 1:4 w l t 'alpha',\
+'beta_stats_v.ascii'    u 1:4 w l t 'beta',\
+'delta_stats_v.ascii'   u 1:4 w l t 'delta',\
+'epsilon_stats_v.ascii' u 1:4 w l t 'epsilon',\
+'eta_stats_v.ascii'     u 1:4 w l t 'eta',\
+'gamma_stats_v.ascii'   u 1:4 w l t 'gamma',\
+'iota_stats_v.ascii'    u 1:4 w l t 'iota',\
+'kappa_stats_v.ascii'   u 1:4 w l t 'kappa',\
+'lambda_stats_v.ascii'  u 1:4 w l t 'lambda',\
+'mu_stats_v.ascii'      u 1:4 w l t 'mu',\
+'nu_stats_v.ascii'      u 1:4 w l t 'nu',\
+'pi_stats_v.ascii'      u 1:4 w l t 'pi',\
+'rho_stats_v.ascii'     u 1:4 w l t 'rho',\
+'sigma_stats_v.ascii'   u 1:4 w l t 'sigma',\
+'theta_stats_v.ascii'   u 1:4 w l t 'theta',\
+'xi_stats_v.ascii'      u 1:4 w l t 'xi',\
+'zeta_stats_v.ascii'    u 1:4 w l t 'zeta'
+

@@ -1,0 +1,10 @@
+#! /bin/bash
+
+init=3
+scheme='RK2'
+
+for m in 'alpha' 'beta' 'gamma' 'delta' 'epsilon' 'zeta' 'eta' 'theta' 'iota' 'kappa' 'lambda' 'mu' 'nu' 'xi' 'pi' 'rho' 'sigma'; do 
+    echo $m
+    python3 stone.py  $m 257 $scheme $init #> opla_$m
+done
+

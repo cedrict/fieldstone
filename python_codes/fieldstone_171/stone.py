@@ -11,16 +11,21 @@ import matplotlib.pyplot as plt
 
 three_dimensions=False
 
+#init=1: random
+#init=2: three discs
+#init=3: a la pearson 1993
 
-if int(len(sys.argv))==4:
+if int(len(sys.argv))==5:
    model  = str(sys.argv[1])
    nnx    = int(sys.argv[2])
    scheme = str(sys.argv[3])
+   init   = int(sys.argv[4])
    print(sys.argv)
 else:
    model='zeta'
    nnx = 1025
-   scheme='RK5'
+   scheme='RK2'
+   init=1
 
 if three_dimensions:
    Lx=2.5
@@ -55,7 +60,7 @@ else:
    tyype=9 # vtu
    nseed=500
 
-dt=0.01
+dt=1
 
 nstep=100000
 
@@ -64,12 +69,6 @@ every_vtu=1000
 every_png=1000
 
 seed_size=0.02
-
-#1: random
-#2: three discs
-#3: a la pearson 1993
-
-init=1
 
 ###########################################################
 
@@ -94,7 +93,7 @@ if model=='epsilon':
    Feed=0.018
    Kill=0.055
 if model=='zeta':
-   Du=2.e-6 ; Dv=1e-6
+   Du=2.e-5 ; Dv=1e-5
    Feed=0.022
    Kill=0.061
 if model=='eta':
@@ -295,9 +294,8 @@ if init==3:
    v[:]=0
    for i in range(0,NP):
        if abs(x[i]-Lx/2)<0.2 and abs(z[i]-Lz/2)<0.2:
-          u[i]=1/2+random.uniform(0.01,0.01)
-          v[i]=1/4+random.uniform(0.01,0.01)
-
+          u[i]=1/2+random.uniform(-0.01,0.01)
+          v[i]=1/4+random.uniform(-0.01,0.01)
 
 X=np.zeros(2*NP,dtype=np.float64)
 X[0:NP]=u[:]
