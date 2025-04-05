@@ -36,6 +36,8 @@ ones in what follows:
 \begin{itemize}
 \item \fullcite{grsc84}
 \item \fullcite{pear93}
+\item \fullcite{lemo93}
+\item \fullcite{haqh16} (they talk about blob detection and shannon entropy. Explore?)
 \item \fullcite{muna14}
 \item \fullcite{gane22}
 \item \fullcite{gama23}
@@ -45,14 +47,133 @@ ones in what follows:
 
 The Gray–Scott reaction–diffusion system of equations are given by
 \begin{eqnarray}
-\frac{\partial U}{\partial t} &=& D_u \vec\nabla^2 U - UV^2 + F(1-U) \nn\\
-\frac{\partial V}{\partial t} &=& D_v \vec\nabla^2 V + UV^2 - (F+k)V 
+\frac{\partial u}{\partial t} &=& D_u \vec\nabla^2 u - uv^2 + F(1-u) \nn\\
+\frac{\partial v}{\partial t} &=& D_v \vec\nabla^2 v + uv^2 - (F+k)v
 \end{eqnarray}
-where $D_u$ and $D_v$ are diffusion coefficients associated with the species concentration $U$and $V$
-$k$ is the dimensionless rate constant of the second reaction (also commonly called the `kill 
+where $D_u$ and $D_v$ are diffusion coefficients associated with the species concentration $u$
+and $v$. $k$ is the dimensionless rate constant of the second reaction (also commonly called the `kill 
 parameter') and $F$ is the dimensionless feed rate.
 Often periodic boundary conditions are used. 
 
+In his 1993 landmark paper \textcite{pear93} reveals a surprising variety of 
+irregular spatiotemporal patterns as shown in Fig. 2\&3 of the paper:
+
+\begin{center}
+\includegraphics[height=7.5cm]{python_codes/fieldstone_171/images/pear93a}
+\includegraphics[height=7.5cm]{python_codes/fieldstone_171/images/pear93b}\\
+{\captionfont Taken from \cite{pear93}. Left: The key to the map. The patterns 
+shown in the figure are designated by Greek letters, which are used in 
+[the right figure] to indicate the pattern found at a given point in parameter space.
+Right: The Greek letters indicate the location in parameter
+space where the patterns in [the left figure] were found; B and R indicate that
+the system evolved to uniform blue and red states, respectively.
+} 
+\end{center}
+
+In the paper the domain is a square of size $L=2.5$ with $D_u=2\cdot 10^{-5}$
+and $D_v=10^{-5}$. The boundary conditions are periodic.
+The simulations are forward Euler integrations of the finite-difference equations 
+resulting from discretization of the diffusion operator. The spatial mesh consists of 256 by 256
+grid points. The time step used is 1. Spot checks made with meshes as large as 1024 by
+1024 and time steps as small as 0.01 produced no qualitative difference in the results.
+
+Initially, the entire system was placed in the trivial state ($u=1,v=0$). The 20 by
+20 mesh point area located symmetrically about the center of the grid was then
+perturbed to ($u=1/2,v=1/4$). These conditions were then perturbed with $\pm 1\%$
+random noise in order to break the square symmetry. The system was then integrated
+for 200,000 time steps and an image was saved. In all cases, the initial disturbance
+propagated outward from the central square, leaving patterns in its wake, until
+the entire grid was affected by the initial square perturbation. The propagation was
+wave-like, with the leading edge of the perturbation moving with an approximately
+constant velocity. Depending on the parameter values, it took on the order of 10,000 to
+20,000 time steps for the initial perturbation to spread over the entire grid. The 
+propagation velocity of the initial perturbation is thus on the order of $1\cdot 10^{-4}$ 
+space units per time unit. After the initial period during which the perturbation spread, 
+the system went into an asymptotic state that was either
+time-independent or time-dependent, depending on the parameter values.
+
+Likewise in \textcite{gane22} (2022) we find the following figure:
+\begin{center}
+\includegraphics[height=7.5cm]{python_codes/fieldstone_171/images/gane22}\\
+{\captionfont Taken from \cite{gane22}. 
+Snapshots of a selection of two-dimensional patterns obtained for
+$D_u=2\cdot 10^{-5}$ and $D_v=1\cdot 10^{-5}$ obtained via numerical 
+simulation in MATLAB. Patterns are classified according to the Greek letter 
+naming convention used by \textcite{pear93}.
+} 
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{About the work of R. Munafo}
+
+We find on his website\footnote{\url{http://www.mrob.com/pub/comp/xmorphia/pearson-classes.html}}
+two key figures:
+
+\begin{center}
+\includegraphics[height=7.5cm]{python_codes/fieldstone_171/images/pearson-orig}
+\includegraphics[height=7.5cm]{python_codes/fieldstone_171/images/pearson-tags}\\
+{\captionfont So called key maps of the Gray-Scott equations. $k$ is on the 
+horizontal axis, $F$ is on the vertical axis. Thick lines correspond to 
+0.2-0.7 on the x-axis and to 0.3-0.8 on the y-axis.
+The classification of the solution is traditionally based on Greek letters:
+alpha ($\alpha$),    beta ($\beta$),    gamma ($\gamma$),    delta ($\delta$),    
+epsilon ($\epsilon$),    zeta ($\zeta$),    eta ($\eta$),    
+theta ($\theta$),    iota ($\iota$),    kappa ($\kappa$),    lambda ($\lambda$),    
+mu ($\mu$),    nu ($\nu$),    xi ($\xi$),    pi ($\pi$),    rho ($\rho$),    sigma ($\sigma$).
+The first fourteen
+(R, B, and $\alpha$ through $\mu$) were defined by Pearson \cite{pear93} (left figure); 
+On the right we find the data from his figure 3 (with corrections) replotted on the index image from the left figure. 
+}
+\end{center}
+
+The author further states:
+\begin{displayquote}
+{\color{darkgray}
+Pearson missed many types of patterns because he only used one starting pattern: 
+a small (u, v) = (1/2, 1/4) square on an otherwise (1, 0) background. Many combinations 
+of parameters $(F,k)$ fail to produce 
+a pattern if initialised this way, but produce patterns when started some other way 
+(such as a single small spot on 
+an otherwise (0, 1) background, resembling the inverse of Pearson's initialisation; or several spots of
+diverse $(F,k)$ values). 
+Types nu, xi, pi, rho, and sigma are of this sort and were identified by me; 
+the first three of these are described in my paper [2]. 
+Types rho, and sigma also require a model with somewhat higher 
+resolution than Pearson's, and significantly better runtime; these requirements would have made their discovery 
+nearly impossible in the 1990s.
+}
+\end{displayquote} 
+
+The classification is then as follows:
+\begin{center}
+\begin{tabular}{lll}
+\hline
+alpha   & (F=0.010, k=0.047) &(F=0.014, k=0.053) \\
+beta    & (F=0.014, k=0.039) &(F=0.026, k=0.051) \\
+gamma   & (F=0.022, k=0.051) &(F=0.026, k=0.055) \\
+delta   & (F=0.030, k=0.055) &(F=0.042, k=0.059) \\
+epsilon & (F=0.018, k=0.055) &(F=0.022, k=0.059) \\
+zeta    & (F=0.022, k=0.061) &(F=0.026, k=0.059) \\
+eta     & (F=0.034, k=0.063) &	\\
+theta   & (F=0.030, k=0.057) &(F=0.038, k=0.061) \\
+iota    & (F=0.046, k=0.0594)   \\
+kappa   & (F=0.050, k=0.063) &(F=0.058, k=0.063) \\
+lambda  & (F=0.026, k=0.061) &(F=0.034, k=0.065) \\
+mu      & (F=0.046, k=0.065) &(F=0.058, k=0.065) \\
+nu      & (F=0.054, k=0.067) &(F=0.082, k=0.063) \\
+xi      & (F=0.010, k=0.041) &(F=0.014, k=0.047) \\
+pi      & (F=0.062, k=0.061) \\
+rho     & (F=0.090, k=0.059) &(F=0.102, k=0.055) \\
+sigma   & (F=0.090, k=0.057) &(F=0.110, k=0.0523)\\
+\hline
+\end{tabular}
+\end{center}
+
+The left column of this table is used to define the 17 
+models in this \stone.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section*{}
 \textcite{gama23} (2023) rely on these equations to generate porous geometries 
 and the following values of $D_u,D_v,f,k$ are used:
 
@@ -78,125 +199,22 @@ with periodic boundary conditions. As time evolves, the patterns generated by
 the solutions reveal a class of solutions whose iso-surfaces are reminiscent of the internal
 boundaries encountered on porous media as shown in the figure above.
 
-
-
-\textcite{pear93} (1993) reveals a surprising variety of irregular spatiotemporal patterns
-as shown in Fig. 2\&3 of the paper:
-
+\textcite{haqh16} (2016) also investigate pattern formation:
 \begin{center}
-\includegraphics[height=7.5cm]{python_codes/fieldstone_171/images/pear93a}
-\includegraphics[height=7.5cm]{python_codes/fieldstone_171/images/pear93b}\\
-{\captionfont Taken from \cite{pear93}. Left: The key to the map. The patterns 
-shown in the figure are designated by Greek letters, which are used in 
-[the right figure] to indicate the pattern found at a given point in parameter space.
-Right: The Greek letters indicate the location in parameter
-space where the patterns in [the left figure] were found; B and R indicate that
-the system evolved to uniform blue and red states, respectively.
-} 
+\includegraphics[width=13cm]{python_codes/fieldstone_171/images/haqh16}\\
+{\captionfont 
+Example of patterns found in the Gray-Scott model. These represent
+the concentration of V. All simulations performed with a grid size of 400x400,
+and $D_u/D_v=2$. 
+(a) Self-replicating spots after replication is ﬁnished. $F=0.0392,k=0.0649$ (Pearson lambda pattern). 
+(b) Worm-like patterns. $F=0.0416,k=0.0625$ (Pearson mu pattern). 
+(c) `Mixed-phase' between the self-replicating spots and the worm-like pattern. $F=0.0404,k=0.0638$ (Pearson eta pattern). 
+(d) Spatio-temporal chaos (never reaches steady-state). $F=0.0208,k=0.0576$ (Pearson epsilon pattern).
+(e) $F=0.0175,k=0.0504$ (Pearson alpha pattern). 
+(f) Labyrinthine pattern. $F=0.0295,k=0.0561$ (Pearson theta pattern).}
 \end{center}
 
-In the paper the domain is a square of size $L=2.5$ with $D_u=2\cdot 10^{-5}$
-and $D_v=10^{-5}$. The boundary conditions are periodic.
-The simulations are forward Euler integrations of the finite-difference equations 
-resulting from discretization of the diffusion operator. The spatial mesh consists of 256 by 256
-grid points. The time step used is 1. Spot checks made with meshes as large as 1024 by
-1024 and time steps as small as 0.01 produced no qualitative difference in the results.
 
-Initially, the entire system was placed in the trivial state (U = 1,V = 0). The 20 by
-20 mesh point area located symmetrically about the center of the grid was then
-perturbed to (U = 1/2,V = 1/4). These conditions were then perturbed with $\pm 1\%$
-random noise in order to break the square symmetry. The system was then integrated
-for 200,000 time steps and an image was
-saved. In all cases, the initial disturbance
-propagated outward from the central
-square, leaving patterns in its wake, until
-the entire grid was affected by the initial
-square perturbation. The propagation was
-wave-like, with the leading edge of the
-perturbation moving with an approximately
-constant velocity. Depending on the parameter values, it took on the order of 10,000 to
-20,000 time steps for the initial perturbation
-to spread over the entire grid. The propagation velocity of the initial perturbation is
-thus on the order of $1\cdot 10^{-4}$ space units per time unit. After the initial period during
-which the perturbation spread, the system
-went into an asymptotic state that was either
-time-independent or time-dependent, depending on the parameter values.
-
-Likewise in \textcite{gane22} (2022) we find the following figure:
-\begin{center}
-\includegraphics[height=7.5cm]{python_codes/fieldstone_171/images/gane22}\\
-{\captionfont Taken from \cite{gane22}. 
-Snapshots of a selection of two-dimensional patterns obtained for
-$D_u=2\cdot 10^{-5}$ and $D_v=1\cdot 10^{-5}$ obtained via numerical 
-simulation in MATLAB. (Code online.) Patterns
-are classified according to the Greek letter naming convention used by \textcite{pear93}.
-} 
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{About the work of R. Munafo}
-
-We find there\footnote{\url{http://www.mrob.com/pub/comp/xmorphia/pearson-classes.html}}
-two key figures:
-
-\begin{center}
-\includegraphics[height=7.5cm]{python_codes/fieldstone_171/images/pearson-orig}
-\includegraphics[height=7.5cm]{python_codes/fieldstone_171/images/pearson-tags}\\
-{\captionfont So called key maps of the Gray-Scott equations. $k$ is on the 
-horizontal axis, $F$ is on the vertical axis. Thick lines correspond to 
-0.2-0.7 on the x-axis and to 0.3-0.8 on the y-axis.
-The classification of the solution is traditionally based on Greek letters:
-alpha ($\alpha$),    beta ($\beta$),    gamma ($\gamma$),    delta ($\delta$),    
-epsilon ($\epsilon$),    zeta ($\zeta$),    eta ($\eta$),    
-theta ($\theta$),    iota ($\iota$),    kappa ($\kappa$),    lambda ($\lambda$),    
-mu ($\mu$),    nu ($\nu$),    xi ($\xi$),    pi ($\pi$),    rho ($\rho$),    sigma ($\sigma$).
-The first fourteen
-(R, B, and $alpha$ through $\mu$) were defined by Pearson \cite{pear93} (left figure); 
-On the right we find the data from his figure 3 (with corrections) replotted on the index image from the left figure. 
-}
-\end{center}
-
-The author states:
-\begin{displayquote}
-{\color{darkgray}
-Pearson missed many types of patterns because he only used one starting pattern: 
-a small (u, v) = (1/2, 1/4) square on an otherwise (1, 0) background. Many combinations of parameters 
-$(F,k)$ fail to produce 
-a pattern if initialised this way, but produce patterns when started some other way (such as a single small spot on 
-an otherwise (0, 1) background, resembling the inverse of Pearson's initialisation; or several spots of
-diverse $(F,k)$ values). Types nu, xi, pi, rho, and sigma are of this sort and were identified by me; 
-the first three of these are described in my paper [2]. 
-Types rho, and sigma also require a model with somewhat higher 
-resolution than Pearson's, and significantly better runtime; these requirements would have made their discovery 
-nearly impossible in the 1990s.
-}
-\end{displayquote} 
-
-The classification is then as follows:
-\begin{center}
-\begin{tabular}{lll}
-alpha   & (F=0.010, k=0.047) &(F=0.014, k=0.053) \\
-beta    & (F=0.014, k=0.039) &(F=0.026, k=0.051) \\
-gamma   & (F=0.022, k=0.051) &(F=0.026, k=0.055) \\
-delta   & (F=0.030, k=0.055) &(F=0.042, k=0.059) \\
-epsilon & (F=0.018, k=0.055) &(F=0.022, k=0.059) \\
-zeta    & (F=0.022, k=0.061) &(F=0.026, k=0.059) \\
-eta     & (F=0.034, k=0.063) &	\\
-theta   & (F=0.030, k=0.057) &(F=0.038, k=0.061) \\
-iota    & (F=0.046, k=0.0594)   \\
-kappa   & (F=0.050, k=0.063) &(F=0.058, k=0.063) \\
-lambda  & (F=0.026, k=0.061) &(F=0.034, k=0.065) \\
-mu      & (F=0.046, k=0.065) &(F=0.058, k=0.065) \\
-nu      & (F=0.054, k=0.067) &(F=0.082, k=0.063) \\
-xi      & (F=0.010, k=0.041) &(F=0.014, k=0.047) \\
-pi      & (F=0.062, k=0.061) \\
-rho     & (F=0.090, k=0.059) &(F=0.102, k=0.055) \\
-sigma   & (F=0.090, k=0.057) &(F=0.110, k=0.0523)
-\end{tabular}
-\end{center}
-
-The left column of this table is used to define the 17 
-models in the code.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Lukas van de Wiel's approach}
@@ -218,8 +236,6 @@ between 11 and 60 and a value between 0 and 0.25
 The squares in u and those in v are independent from each other
 I applied a thousand of these seeds in u and a thousand in v.
 Time stepping: I use RK4 timesteps, with DT=0.001
-Adaptive timestepping will probably be an improvement near the end,  
-because the sharp edges around the seed squares will have gone.
 It could no doubt be improved by turning the hard edges seed squares into 
 soft edges seed blobs/gaussians, but then the smoothness of the patterns
 depends on the parameters of Du and Dv, and needed something that works 
@@ -238,6 +254,9 @@ Method of lines - no particular attention to nonlinearities.
 \includegraphics[width=5.6cm]{python_codes/fieldstone_171/images/uu000020.jpg}\\
 {\captionfont Solved in on a GPU, which did this in about a day, on 4800x4800.}
 \end{center}
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{About the methods of this \stone}
@@ -331,19 +350,21 @@ The equations above can then be written
 \]
 The right-hand side of this equation is then implemented as follows:
 \begin{lstlisting}
-def F_3d(Du,Dv,F,K,NP,hx,hy,hz,u,v):
+
+def F_3d(Du,Dv,F,K,NP,hx,hy,hz,X):
     dX_dt=np.zeros(2*NP,dtype=np.float64)
+    u=X[0:NP]
+    v=X[NP:2*NP]
     ...
     counter=0
     for i in range(0,nnx):
         for j in range(0,nny):
             for k in range(0,nnz):
-                ...
+                ... 
                 dX_dt[counter]=Duhx2*(u[front]-2*u[counter]+u[back])\
                               +Duhy2*(u[left] -2*u[counter]+u[right])\
                               +Duhz2*(u[top]  -2*u[counter]+u[bottom])\
                               -u[counter]*v[counter]**2+F*(1-u[counter])
-
                 dX_dt[counter+NP]=Dvhx2*(v[front]-2*v[counter]+v[back])\
                                  +Dvhy2*(v[left] -2*v[counter]+v[right])\
                                  +Dvhz2*(v[top]  -2*v[counter]+v[bottom])\
@@ -358,15 +379,21 @@ There is of course a similar function for the 2d case.
 Both \lstinline{F_2d} and \lstinline{F_3d} are jitted with
 \lstinline{@numba.njit} and it makes them at least 100 times faster.
 
-Periodic boundary conditions are implemented.
+Periodic boundary conditions are implemented\footnote{This should be described}.
 
 The solution vectors $\vec{U}$ and $\vec{V}$ are then exported to 
 a vtu file every so often (controlled by the \lstinline{every_vtu} parameter),
 and in 2d png files are automatically generated (controlled by 
 the \lstinline{every_png} parameter).
 
-At the moment the timestep is set to 0.1.
+A good starting point for the timestep is 0.1 dimensionless units.
+Note that the CFL condition number for diffusion is $\propto h^2/\kappa$, 
+so that when resolution is halved the time step should probably be divided by four. 
 
+There are three initial conditions, as controlled by the \lstinline{init} parameter.
+
+\begin{itemize}
+\item \lstinline{init=1}:
 The initial condition is as follows: the field $u$ is initialized
 to random values between 0.8 and 1 while the field $v$ is 
 initialized to random values between 0 and 0.2:
@@ -385,18 +412,51 @@ for iseed in range(nseed):
     for i in range(0,NP):
         if abs(x[i]-xs)<seed_size and\
            abs(z[i]-zs)<seed_size :
-           u[i]=random.uniform(0.5,0.75)
+           u[i]=random.uniform(0.5,1)
     xs=random.uniform(0+2*seed_size,Lx-2*seed_size)
     zs=random.uniform(0+2*seed_size,Lz-2*seed_size)
     for i in range(0,NP):
         if abs(x[i]-xs)<seed_size and\
            abs(z[i]-zs)<seed_size :
-           v[i]=random.uniform(0.25,0.5)
+           v[i]=random.uniform(0.,0.5)
 \end{lstlisting}
+
+\item \lstinline{init=2}.
+This corresponds to the case where 3 discs (cylinders in 3d)
+are implemented. There is no random component and it allows 
+us to test the code in a deterministic fashion (see 
+tests of RK methods later)
+\begin{lstlisting}
+for i in range(0,NP):
+    if (x[i]-Lx/3)**2+(z[i]-Lz/3)**2<0.2:
+       u[i]=1
+       v[i]=0.5
+    if (x[i]-Lx*0.67)**2+(z[i]-Lz/2)**2<0.2:
+       u[i]=0.5
+       v[i]=0.25
+    if (x[i]-Lx*0.5)**2+(z[i]-Lz*0.75)**2<0.08:
+       u[i]=0.7
+       v[i]=0.125
+\end{lstlisting}
+
+\item \lstinline{init=3}
+This is the starting condition of \textcite{pear93} (1993).
+\begin{lstlisting}
+   u[:]=1
+   v[:]=0
+   for i in range(0,NP):
+       if abs(x[i]-Lx/2)<0.2 and abs(z[i]-Lz/2)<0.2:
+          u[i]=1/2+random.uniform(-0.01,0.01)
+          v[i]=1/4+random.uniform(-0.01,0.01)
+\end{lstlisting}
+
+
+\end{itemize}
 
 The code implements a large family of Runge-Kutta algorithms, all described in 
 Section~\ref{MMM-ss:rkm}.
 In what follows we assume that a time step $\delta t$ has been chosen. 
+(embedded methods should probably be considered in the future).
 
 \begin{itemize}
 
@@ -537,7 +597,7 @@ The coefficients are obtained from the following Butcher tableau.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Testing/benchmarking of R-K methods}
 
-In this case we start with non random initial conditions (\lstinline{random_init=False}):
+In this case we start with non random initial conditions (\lstinline{init=2}):
 \begin{lstlisting}
    for i in range(0,NP):
        if (x[i]-Lx/3)**2+(z[i]-Lz/3)**2<0.2:
@@ -551,7 +611,7 @@ In this case we start with non random initial conditions (\lstinline{random_init
           v[i]=0.125
 \end{lstlisting}
 
-We run the zeta model.
+We run the zeta model and we find that it relaxes to the trivial solution $(u=1,v=0)$.
 
 \begin{center}
 \includegraphics[height=6cm]{python_codes/fieldstone_171/RKtest1/u0}
@@ -568,9 +628,10 @@ We run the zeta model.
 and $v$ for all the RK methods, parameters of the zeta model.}
 \end{center}
 
-This is of course not a benchmark per se, but rather a sanity check that 
+This is of course not a benchmark {\it per se}, but rather a sanity check that 
 all RK methods yield the same results (down to a small difference).
 
+\todo[inline]{run lukas model on this ?}
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -591,7 +652,17 @@ The only difference with respect to the paper is that I resort to RK2.
 
 The major issue here is that I cannot reproduce Fig 2 of the paper since the 
 author does not provide the $(F,k)$ values for the 12 models. 
-I then instead keep the nomenclature of Munafo for the 17 models.
+I then instead keep the nomenclature of Munafo for the 17 models but we 
+see that this is not necessarily reassuring since Munafo's letters 
+do not always coincide with Pearson's:
+\begin{center}
+\includegraphics[height=14cm]{python_codes/fieldstone_171/images/drawing.png}\\
+{\captionfont Fig 2 of Pearson. Red letters are Munafo's ones. 
+Blue letters are from \text{gane22}.}
+\end{center}
+
+
+
 
 All models start from the following initial condition ({\it the randomness was taken away!}):
 \begin{center}
@@ -602,202 +673,192 @@ In what follows I only show the $u$ field for convenience.
 Only 100,000 time steps are carried out.
 
 \begin{itemize}
-\item {\tt alpha}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_final_u.png}
-\item {\tt beta}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_final_u.png}
-\item {\tt delta}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_final_u.png}
-\item {\tt epsilon}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_final_u.png}
-\item {\tt eta}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_final_u.png}
-\item {\tt gamma}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_final_u.png}
-\item {\tt iota}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_final_u.png}
-\item {\tt kappa}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_final_u.png}
+\item {\tt alpha} (in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0005000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0015000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0020000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0040000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0075000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_final_u.png}
+\item {\tt beta} (in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0005000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0015000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0020000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0040000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_0075000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/beta_solution_final_u.png}
 
-\item {\tt lambda}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_final_u.png}
+\item {\tt gamma} (in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0005000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0015000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0020000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0040000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_0075000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/gamma_solution_final_u.png}
 
-\item {\tt mu}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_final_u.png}
 
-\item {\tt nu}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_final_u.png}
+\item {\tt delta} (in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0005000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0015000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0020000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0040000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_0075000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/delta_solution_final_u.png}
 
-\item {\tt pi}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_final_u.png}
+\item {\tt epsilon} (in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0005000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0015000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0020000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0040000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_0075000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/epsilon_solution_final_u.png}
 
-\item {\tt rho}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_final_u.png}
+\item {\tt zeta} (in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_final_u.png}
 
-\item {\tt sigma}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_final_u.png}
 
-\item {\tt theta}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_final_u.png}
+\item {\tt eta} (in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0005000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0015000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0020000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0040000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_0075000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/eta_solution_final_u.png}
 
-\item {\tt xi}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_final_u.png}
+\item {\tt theta} (in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0005000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0015000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0020000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0040000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_0075000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/theta_solution_final_u.png}
 
-\item {\tt zeta}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93/zeta_solution_final_u.png}
+
+
+
+
+
+
+
+
+\item {\tt iota} (in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0005000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0015000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0020000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0040000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_0075000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/iota_solution_final_u.png}
+\item {\tt kappa} (in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0005000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0015000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0020000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0040000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_0075000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/kappa_solution_final_u.png}
+
+\item {\tt lambda} (in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0005000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0015000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0020000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0040000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_0075000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/lambda_solution_final_u.png}
+
+\item {\tt mu} (in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0005000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0015000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0020000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0040000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_0075000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/mu_solution_final_u.png}
+
+\item {\tt nu} (not in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_final_u.png}
+
+\item {\tt pi} (not in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0005000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0015000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0020000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0040000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0075000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_final_u.png}
+
+\item {\tt rho} (not in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/rho_solution_final_u.png}
+
+\item {\tt sigma} (not in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_final_u.png}
+
+\item {\tt xi} (not in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_final_u.png}
 
 \end{itemize}
 
@@ -806,222 +867,246 @@ Only 100,000 time steps are carried out.
 \includegraphics[width=8cm]{python_codes/fieldstone_171/pearson93/stats_v.pdf}
 
 
+Looking back on the statement by Munafo: ``
+Types nu, xi, pi, rho, and sigma are of this sort and were identified by me''
+This makes sense since in this case these 5 cases yield stable patterns 
+that are unlike the other ones.
+Only zeta seems not to work as expected.
+
+
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results: replicating the Pearson (1993) study (with random)}
 
 All the same as previous section but $\pm 1\%$ perturbation added in the square 
-in the middle at startup as in the original publication. 
+in the middle at startup as in the original publication.
+For each case the second line consists of captures of Fig.2 of Pearson (when available) and online figures from Munafo.
 
 \begin{itemize}
 \item {\tt alpha}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_final_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0005000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0015000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0020000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0040000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/alpha_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/pear93_alpha}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_alpha1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_alpha2}
 
 \item {\tt beta}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_final_u.png}
-
-\item {\tt delta}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_final_u.png}
-
-\item {\tt epsilon}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_final_u.png}
-
-\item {\tt eta}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_final_u.png}
-
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0005000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0015000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0020000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0040000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/beta_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/pear93_beta}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_beta1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_beta2}
 
 \item {\tt gamma}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_final_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0005000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0015000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0020000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0040000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/gamma_solution_final_u.png} \\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/pear93_gamma}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_gamma1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_gamma2}
+
+\item {\tt delta}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0005000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0015000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0020000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0040000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/delta_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/pear93_delta}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_delta1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_delta2}
+
+\item {\tt epsilon}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0005000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0015000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0020000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0040000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/epsilon_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/pear93_epsilon}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_epsilon1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_epsilon2}
+
+\item {\tt zeta}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/zeta_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/zeta_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/zeta_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/zeta_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/pear93_zeta}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_zeta1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_zeta2}
+
+
+
+
+\item {\tt eta}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0005000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0015000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0020000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0040000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/eta_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/pear93_eta}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_eta}
+
+\item {\tt theta}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0005000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0015000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0020000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0040000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/pear93_theta}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_theta1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_theta2}
+
+
 
 
 \item {\tt iota}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_final_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0005000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0015000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0020000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0040000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/iota_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/pear93_iota}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_iota}
 
 
 \item {\tt kappa}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_final_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0005000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0015000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0020000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0040000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/kappa_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/pear93_kappa}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_kappa1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_kappa2}
 
 \item {\tt lambda}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_final_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0005000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0015000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0020000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0040000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/lambda_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/pear93_lambda}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_lambda1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_lambda2}
 
 \item {\tt mu}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_final_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0005000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0015000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0020000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0040000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/mu_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/pear93_mu}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_mu1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_mu2}
 
-\item {\tt nu}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_final_u.png}
 
-\item {\tt pi}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_final_u.png}
 
-\item {\tt rho}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_final_u.png}
+\item {\tt nu} Not in Pearson 1993\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_nu1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_nu2}
 
-\item {\tt sigma}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_final_u.png}
+\item {\tt pi} Not in Pearson 1993\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0005000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0015000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0020000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0040000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_pi}
 
-\item {\tt theta}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/theta_solution_final_u.png}
+\item {\tt rho} Not in Pearson 1993\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_rho1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_rho2}
 
-\item {\tt xi}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_final_u.png}
+\item {\tt sigma} Not in Pearson 1993\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_sigma1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_sigma2}
 
-\item {\tt zeta}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/zeta_solution_0001000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/zeta_solution_0005000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/zeta_solution_0010000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/zeta_solution_0015000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/zeta_solution_0020000_u.png}\\
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/zeta_solution_0030000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/zeta_solution_0040000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/zeta_solution_0050000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/zeta_solution_0075000_u.png}
-\includegraphics[width=3.4cm]{python_codes/fieldstone_171/pearson93_rand/zeta_solution_final_u.png}
+\item {\tt xi} Not in Pearson 1993\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_xi1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_xi2}
 
 \end{itemize}
+
+Looking back on the statement by Munafo: ``
+Types nu, xi, pi, rho, and sigma are of this sort and were identified by me''
+This makes sense since in this case these 5 cases yield stable patterns 
+that are unlike the other ones.
 
 
 
@@ -1033,9 +1118,39 @@ in the middle at startup as in the original publication.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results: replicating the Pearson (1993) study (with random, high res)}
 
-In this case the resolution is set to 513x513 nodes.
+In this case the resolution is set to $513\times 513$ nodes.
 the time step $\delta t=1$ lead to numerical explosion ('nan') so 
 it was set to $\delta t=0.25$.
+
+The previous results are unchanged in nature except for this case:
+\begin{itemize}
+
+\item {\tt pi} \\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_hr/pi_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_hr/pi_solution_0005000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_hr/pi_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_hr/pi_solution_0015000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_hr/pi_solution_0020000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_hr/pi_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_hr/pi_solution_0040000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_hr/pi_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_hr/pi_solution_0075000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_hr/pi_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_pi}
+
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Results: replicating the Pearson (1993) study (with random, very high res)}
+
+In this case the resolution is set to $1025\times 1025$ nodes.
+the time step $\delta t=0.25$ lead to numerical explosion ('nan') so 
+it was set to $\delta t=0.05$.
+
+DIFFERENCE??!
+
+
 
 
 
@@ -1173,37 +1288,6 @@ it was set to $\delta t=0.25$.
 
 
 
-
-
-
-\newpage
-
-
-
-
-\url{
-http://www.mrob.com/pub/comp/xmorphia/ogl/index.html
-}
-
-
-\begin{verbatim}
-And if you cannot get enough, there are the Brusselator equations, which are similar to Gray Scott but different:
-dudt[idx] = DU * Lu[idx] + FEED - (KILL+1) * u[idx] + u[idx]*u[idx]*v[idx];
-dvdt[idx] = DV * Lv[idx] +         KILL    * u[idx] - u[idx]*u[idx]*v[idx];
-which have different pattern formations
-(idx appears to indicate a 1D solution, but is actually 2D)
-In general, while GS tend to have smooth shapes, B can have sharp wave fronts.
-See section 1.1.1 of https://astro.pas.rochester.edu/~aquillen/phy411/Turing.pdf  for initial conditions.
-\end{verbatim}
-
-
-
-
----------------------------
-
-implement all greek letters of website
-
-adapt script to run them all
 
 
 
