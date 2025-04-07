@@ -1,0 +1,12 @@
+#! /bin/bash
+
+init=4
+scheme='RK2'
+nstep=50000
+dt=0.1
+
+for m in 'alpha1' 'alpha2' 'beta1' 'beta2' 'gamma1' 'gamma2' 'delta1' 'delta2' 'epsilon1' 'epsilon2' 'zeta1' 'zeta2' 'eta' 'theta1' 'theta2' 'iota' 'kappa1' 'kappa2' 'lambda1' 'lambda2' 'mu1' 'mu2' 'nu1' 'nu2' 'xi1' 'xi2' 'pi' 'rho1' 'rho2' 'sigma1' 'sigma2'; do 
+    echo $m
+    python3 stone.py  $m 257 $scheme $init $nstep $dt > opla_$m
+done
+

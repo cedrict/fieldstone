@@ -1,0 +1,17 @@
+#! /bin/bash
+
+m='alpha1'
+nstep=10000
+dt=0.1
+init=4
+
+for scheme in 'RK1' 'RK2' 'Heun' 'RK3' 'RK4' 'RK38' 'RK5' 'RKF'; do 
+    echo 'model' $m '| scheme' $scheme  
+    python3 stone.py  $m 257 $scheme $init $nstep $dt > opla_${m}_${scheme}
+    mv ${m}_stats_u.ascii         ${m}_stats_u_${scheme}.ascii
+    mv ${m}_stats_v.ascii         ${m}_stats_v_${scheme}.ascii
+    mv ${m}_solution_final_u.png  ${m}_solution_final_u_${scheme}.png
+    mv ${m}_solution_final_v.png  ${m}_solution_final_v_${scheme}.png
+    mv ${m}_solution_final.vtu    ${m}_solution_final_${scheme}.vtu
+done
+

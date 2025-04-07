@@ -14,18 +14,23 @@ three_dimensions=False
 #init=1: random
 #init=2: three discs
 #init=3: a la pearson 1993
+#init=4: two gaussians
 
-if int(len(sys.argv))==5:
+if int(len(sys.argv))==7:
    model  = str(sys.argv[1])
    nnx    = int(sys.argv[2])
    scheme = str(sys.argv[3])
    init   = int(sys.argv[4])
+   nstep  = int(sys.argv[5])
+   dt     = float(sys.argv[6])
    print(sys.argv)
 else:
-   model='zeta'
-   nnx = 1025
+   model='alpha1'
+   nnx = 256
    scheme='RK2'
-   init=1
+   init=4
+   nstep=4000
+   dt=0.1
 
 if three_dimensions:
    Lx=2.5
@@ -43,7 +48,7 @@ if three_dimensions:
    NP=nnx*nny*nnz
    m=8
    tyype=12 # vtu
-   nseed=1000
+   nseed=100
 
 else:
    Lx=2.5
@@ -60,9 +65,7 @@ else:
    tyype=9 # vtu
    nseed=500
 
-dt=1
 
-nstep=100000
 
 every_ascii=100
 every_vtu=1000
@@ -72,74 +75,89 @@ seed_size=0.02
 
 ###########################################################
 
-if model=='alpha':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.01
-   Kill=0.047
-if model=='beta':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.014 
-   Kill= 0.039
-if model=='gamma':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.022 
-   Kill=0.051 
-if model=='delta':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.030
-   Kill=0.055 
-if model=='epsilon':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.018
-   Kill=0.055
-if model=='zeta':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.022
-   Kill=0.061
+if model=='alpha1':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.010 ; Kill=0.047
+if model=='alpha2':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.014 ; Kill=0.053
+
+if model=='beta1':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.014 ; Kill=0.039
+if model=='beta2':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.026 ; Kill=0.051
+
+if model=='gamma1':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.022 ; Kill=0.051
+if model=='gamma2':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.026 ; Kill=0.055
+ 
+if model=='delta1':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.030 ; Kill=0.055 
+if model=='delta2':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.042 ; Kill=0.059
+
+if model=='epsilon1':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.018 ; Kill=0.055
+if model=='epsilon2':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.022 ; Kill=0.059
+
+if model=='zeta1':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.022 ; Kill=0.061
+if model=='zeta2':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.026 ; Kill=0.059
+
 if model=='eta':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.034
-   Kill=0.063
-if model=='theta':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.03
-   Kill=0.057
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.034 ; Kill=0.063
+
+if model=='theta1':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.030 ; Kill=0.057
+if model=='theta2':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.038 ; Kill=0.061
+
 if model=='iota':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.046
-   Kill=0.0594
-if model=='kappa':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.05
-   Kill=0.063
-if model=='lambda':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.026
-   Kill=0.061
-if model=='mu':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.046
-   Kill=0.065
-if model=='nu':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.054
-   Kill=0.067
-if model=='xi':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.01
-   Kill=0.041
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.046 ; Kill=0.0594
+
+if model=='kappa1':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.050 ; Kill=0.063
+if model=='kappa2':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.058 ; Kill=0.063
+
+if model=='lambda1':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.026 ; Kill=0.061
+if model=='lambda2':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.034 ; Kill=0.065
+
+if model=='mu1':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.046 ; Kill=0.065
+if model=='mu2':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.058 ; Kill=0.065
+
+if model=='nu1':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.054 ; Kill=0.067
+if model=='nu2':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.082 ; Kill=0.063
+
+if model=='xi1':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.010 ; Kill=0.041
+if model=='xi2':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.014 ; Kill=0.047
+
 if model=='pi':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.062
-   Kill=0.061
-if model=='rho':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.09
-   Kill=0.059
-if model=='sigma':
-   Du=2.e-5 ; Dv=1e-5
-   Feed=0.09
-   Kill=0.057
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.062 ; Kill=0.061
+
+if model=='rho1':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.090 ; Kill=0.059
+if model=='rho2':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.102 ; Kill=0.055
+
+if model=='sigma1':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.090 ; Kill=0.057
+if model=='sigma2':
+   Du=2.e-5 ; Dv=1e-5 ; Feed=0.110 ; Kill=0.0523
+
+
+if model=='lukas':
+   Du=4.e-6 ; Dv=2e-6 ; Feed=0.035 ; Kill=0.0575
+
 
 ###########################################################
 
@@ -235,13 +253,14 @@ start=clock.time()
 u=np.zeros(NP,dtype=np.float64)
 v=np.zeros(NP,dtype=np.float64)
 
-if init==1:
+if init==1: #----------------------------------------------
        
    for i in range(0,NP):
        u[i]=random.uniform(0.8,1) # close to 1
        v[i]=random.uniform(0,0.2) # close to 0 
 
    if three_dimensions:
+      print('starting building initial conditions....')
 
       for iseed in range(nseed):
           xs=random.uniform(0+seed_size,Lx-seed_size)
@@ -277,7 +296,7 @@ if init==1:
                  abs(z[i]-zs)<seed_size :
                  v[i]=random.uniform(0.,0.5)
 
-if init==2:
+elif init==2: #----------------------------------------------
    for i in range(0,NP):
        if (x[i]-Lx/3)**2+(z[i]-Lz/3)**2<0.2:
           u[i]=1
@@ -289,13 +308,65 @@ if init==2:
           u[i]=0.7
           v[i]=0.125
 
-if init==3:
+elif init==3: #----------------------------------------------
    u[:]=1
    v[:]=0
    for i in range(0,NP):
        if abs(x[i]-Lx/2)<0.2 and abs(z[i]-Lz/2)<0.2:
           u[i]=1/2+random.uniform(-0.01,0.01)
           v[i]=1/4+random.uniform(-0.01,0.01)
+
+elif init==4: #----------------------------------------------
+
+   #def mygaussian(x,y,xc,yc,sigma):
+   #    return np.exp(-(x-xc)**2/sigma**2  -(y-yc)**2/sigma**2    )
+   #u[:]=0.9
+   #v[:]=0.1
+   #for i in range(0,NP):
+       #u[i]+=0.45*np.cos(0.5*(1.1*x[i]+z[i])**2*np.pi)*np.cos(0.6*(x[i]-1.1*z[i])**2*np.pi)
+       #v[i]+=0.45*np.sin(0.6*(1.2*x[i]+z[i])**2*np.pi)*np.sin(0.7*(x[i]-1.2*z[i])**2*np.pi)
+       #u[i]+=0.45*np.cos(0.3*(x[i]-1.25)*np.pi)*np.cos(0.3*(z[i]-1.25)*np.pi)
+       #v[i]+=0.45*np.sin(0.3*(x[i]-1.25)*np.pi)*np.cos(0.3*(z[i]-1.25)*np.pi)
+       #u[i]-=mygaussian(x[i],z[i],0.25,0.33,0.1)/1.2
+       #u[i]-=mygaussian(x[i],z[i],0.75,0.66,0.15)/1.2
+       #u[i]-=mygaussian(x[i],z[i],1.25,1.33,0.2)/1.2
+       #u[i]-=mygaussian(x[i],z[i],2,2,0.3)/1.2
+       #u[i]-=mygaussian(x[i],z[i],0.5,2.1,0.2)/1.2
+       #u[i]-=mygaussian(x[i],z[i],2.2,0.6,0.2)/1.2
+       #v[i]+=mygaussian(x[i],z[i],0.33,0.25,0.1)/1.2
+       #v[i]+=mygaussian(x[i],z[i],0.66,0.75,0.15)/1.2
+       #v[i]+=mygaussian(x[i],z[i],1.33,1.25,0.2)/1.2
+       #v[i]+=mygaussian(x[i],z[i],2,2,0.3)/1.2
+       #v[i]+=mygaussian(x[i],z[i],2.1,0.5,0.2)/1.2
+       #v[i]+=mygaussian(x[i],z[i],0.6,2.2,0.2)/1.2
+   #mean = 0.25
+   #std = 0.05
+   #u[:] = np.random.normal(mean, std, size=NP)
+   #mean = 0.75
+   #std = 0.05 
+   #v[:] = np.random.normal(mean, std, size=NP)
+   #for i in range(0,NP):
+   #    if x[i]>Lx/2: u[i]=0.75
+   #    if z[i]>Lz/2: u[i]=0.25
+
+   # original at https://github.com/cselab/gray-scott/blob/master/python/gray_scott.py
+   # domain is [-1:1]x[-1:1]
+   for i in range(0,NP):
+       xi=x[i]-Lx/2
+       zi=z[i]-Lz/2
+       u[i]=1-np.exp(-80*((xi+0.05)**2+(zi+0.05)**2))
+       v[i]=np.exp(-80*((xi-0.05)**2+(zi-0.05)**2))
+
+else:
+
+   exit('unknown init parameter')
+
+#exit()
+
+min_u=np.min(u) ; max_u=np.max(u) ; avrg_u=np.average(u)
+min_v=np.min(v) ; max_v=np.max(v) ; avrg_v=np.average(v)
+print("     -> u (m,M) %f %f " %(min_u,max_u))
+print("     -> v (m,M) %f %f " %(min_v,max_v))
 
 X=np.zeros(2*NP,dtype=np.float64)
 X[0:NP]=u[:]
@@ -358,8 +429,10 @@ def compute_node_index(i,j,k):
     return nny*nnz*i+nnz*j+k
 
 @numba.njit
-def F_3d(Du,Dv,F,K,NP,hx,hy,hz,u,v):
+def F_3d(Du,Dv,F,K,NP,hx,hy,hz,X):
     dX_dt=np.zeros(2*NP,dtype=np.float64)
+    u=X[0:NP]
+    v=X[NP:2*NP]
 
     Duhx2=Du/hx**2 ; Duhy2=Du/hy**2 ; Duhz2=Du/hz**2
     Dvhx2=Dv/hx**2 ; Dvhy2=Dv/hy**2 ; Dvhz2=Dv/hz**2
@@ -426,7 +499,7 @@ for istep in range(0,nstep+1):
 
     if scheme=='RK1':
        if three_dimensions:
-          X[:]+=F_3d(Du,Dv,Feed,Kill,NP,hx,hy,hz,u,v)*dt
+          X[:]+=F_3d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X)*dt
        else:
           X[:]+=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X)*dt
 
@@ -436,8 +509,12 @@ for istep in range(0,nstep+1):
        X[:]+=(k1+k2)/2
 
     if scheme=='RK2':
-       k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X     )*dt
-       k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/2)*dt
+       if three_dimensions:
+          k1=F_3d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X     )*dt
+          k2=F_3d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k1/2)*dt
+       else:
+          k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X     )*dt
+          k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/2)*dt
        X[:]+=k2
 
     if scheme=='RK3':
@@ -454,10 +531,16 @@ for istep in range(0,nstep+1):
        X[:]+=(k1+3*k2+3*k3+k4)/8
 
     if scheme=='RK4':
-       k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X     )*dt
-       k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/2)*dt
-       k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k2/2)*dt
-       k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k3  )*dt
+       if three_dimensions:
+          k1=F_3d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X     )*dt
+          k2=F_3d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k1/2)*dt
+          k3=F_3d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k2/2)*dt
+          k4=F_3d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k3  )*dt
+       else:
+          k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X     )*dt
+          k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/2)*dt
+          k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k2/2)*dt
+          k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k3  )*dt
        X[:]+=(k1+2*k2+2*k3+k4)/6
 
     if scheme=='RK5':
@@ -477,7 +560,6 @@ for istep in range(0,nstep+1):
        k5=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X +k1*439/216  -k2*8        +k3*3680/513  -k4*845/4104           )*dt
        k6=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X -k1*8/27     +k2*2        -k3*3544/2565 +k4*1859/4104 -k5*11/40)*dt
        X[:]+=(16/135*k1 +6656/12825*k3 +28561/56430*k4 -9/50*k5 +2/55*k6)
-
 
     u[:]=X[0:NP]
     v[:]=X[NP:2*NP]
@@ -533,14 +615,14 @@ for istep in range(0,nstep+1):
        for i in range(0,NP):
            vtufile.write("%.3e \n" %(v[i]))
        vtufile.write("</DataArray>\n")
-       vtufile.write("<DataArray type='Int8' Name='u (threshold)' Format='ascii'> \n")
-       for i in range(0,NP):
-           vtufile.write("%d " %(u_threshold[i]))
-       vtufile.write("</DataArray>\n")
-       vtufile.write("<DataArray type='Int8' Name='v (threshold)' Format='ascii'> \n")
-       for i in range(0,NP):
-           vtufile.write("%d " %(v_threshold[i]))
-       vtufile.write("</DataArray>\n")
+       #vtufile.write("<DataArray type='Int8' Name='u (threshold)' Format='ascii'> \n")
+       #for i in range(0,NP):
+       #    vtufile.write("%d " %(u_threshold[i]))
+       #vtufile.write("</DataArray>\n")
+       #vtufile.write("<DataArray type='Int8' Name='v (threshold)' Format='ascii'> \n")
+       #for i in range(0,NP):
+       #    vtufile.write("%d " %(v_threshold[i]))
+       #vtufile.write("</DataArray>\n")
        vtufile.write("</PointData>\n")
        #####
        vtufile.write("<Cells>\n")
@@ -575,9 +657,9 @@ for istep in range(0,nstep+1):
     if istep%every_png==0 or istep==nstep:
        if not three_dimensions:
           start=clock.time()
-          plt.imshow(np.reshape(u,(nnz,nnx)), interpolation='none')
+          plt.imshow(np.reshape(u,(nnz,nnx)), interpolation='none',cmap='Spectral')
           plt.savefig(filename+'_u.png', bbox_inches='tight')
-          plt.imshow(np.reshape(v,(nnz,nnx)), interpolation='none')
+          plt.imshow(np.reshape(v,(nnz,nnx)), interpolation='none',cmap='RdBu')
           plt.savefig(filename+'_v.png', bbox_inches='tight')
           print("     export to png: %.3f s" % (clock.time()-start))
 

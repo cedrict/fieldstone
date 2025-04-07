@@ -21,11 +21,11 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-{\sl This stone was developed in collaboration with L. van de Wiel}. \index{contributors}{L. van de Wiel}
+{\sl This stone was developed with input from L. van de Wiel}. \index{contributors}{L. van de Wiel}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: March. 23th, 2025.
+Last revision: April 6th, 2025.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -73,7 +73,8 @@ the system evolved to uniform blue and red states, respectively.
 In the paper the domain is a square of size $L=2.5$ with $D_u=2\cdot 10^{-5}$
 and $D_v=10^{-5}$. The boundary conditions are periodic.
 The simulations are forward Euler integrations of the finite-difference equations 
-resulting from discretization of the diffusion operator. The spatial mesh consists of 256 by 256
+resulting from discretization of the diffusion operator (or, FTCS). 
+The spatial mesh consists of 256 by 256
 grid points. The time step used is 1. Spot checks made with meshes as large as 1024 by
 1024 and time steps as small as 0.01 produced no qualitative difference in the results.
 
@@ -81,14 +82,11 @@ Initially, the entire system was placed in the trivial state ($u=1,v=0$). The 20
 20 mesh point area located symmetrically about the center of the grid was then
 perturbed to ($u=1/2,v=1/4$). These conditions were then perturbed with $\pm 1\%$
 random noise in order to break the square symmetry. The system was then integrated
-for 200,000 time steps and an image was saved. In all cases, the initial disturbance
-propagated outward from the central square, leaving patterns in its wake, until
-the entire grid was affected by the initial square perturbation. The propagation was
-wave-like, with the leading edge of the perturbation moving with an approximately
-constant velocity. Depending on the parameter values, it took on the order of 10,000 to
-20,000 time steps for the initial perturbation to spread over the entire grid. The 
-propagation velocity of the initial perturbation is thus on the order of $1\cdot 10^{-4}$ 
-space units per time unit. After the initial period during which the perturbation spread, 
+for 200,000 time steps. 
+
+Depending on the parameter values, it took on the order of 10,000 to
+20,000 time steps for the initial perturbation to spread over the entire grid. 
+After the initial period during which the perturbation spread, 
 the system went into an asymptotic state that was either
 time-independent or time-dependent, depending on the parameter values.
 
@@ -126,11 +124,14 @@ On the right we find the data from his figure 3 (with corrections) replotted on 
 }
 \end{center}
 
+It is interesting to note that the greek letters on the left figure are
+not exactly coinciding with those of the original paper...
+
 The author further states:
 \begin{displayquote}
 {\color{darkgray}
 Pearson missed many types of patterns because he only used one starting pattern: 
-a small (u, v) = (1/2, 1/4) square on an otherwise (1, 0) background. Many combinations 
+a small $(u,v)=(1/2,1/4)$ square on an otherwise (1,0) background. Many combinations 
 of parameters $(F,k)$ fail to produce 
 a pattern if initialised this way, but produce patterns when started some other way 
 (such as a single small spot on 
@@ -144,33 +145,8 @@ nearly impossible in the 1990s.
 }
 \end{displayquote} 
 
-The classification is then as follows:
-\begin{center}
-\begin{tabular}{lll}
-\hline
-alpha   & (F=0.010, k=0.047) &(F=0.014, k=0.053) \\
-beta    & (F=0.014, k=0.039) &(F=0.026, k=0.051) \\
-gamma   & (F=0.022, k=0.051) &(F=0.026, k=0.055) \\
-delta   & (F=0.030, k=0.055) &(F=0.042, k=0.059) \\
-epsilon & (F=0.018, k=0.055) &(F=0.022, k=0.059) \\
-zeta    & (F=0.022, k=0.061) &(F=0.026, k=0.059) \\
-eta     & (F=0.034, k=0.063) &	\\
-theta   & (F=0.030, k=0.057) &(F=0.038, k=0.061) \\
-iota    & (F=0.046, k=0.0594)   \\
-kappa   & (F=0.050, k=0.063) &(F=0.058, k=0.063) \\
-lambda  & (F=0.026, k=0.061) &(F=0.034, k=0.065) \\
-mu      & (F=0.046, k=0.065) &(F=0.058, k=0.065) \\
-nu      & (F=0.054, k=0.067) &(F=0.082, k=0.063) \\
-xi      & (F=0.010, k=0.041) &(F=0.014, k=0.047) \\
-pi      & (F=0.062, k=0.061) \\
-rho     & (F=0.090, k=0.059) &(F=0.102, k=0.055) \\
-sigma   & (F=0.090, k=0.057) &(F=0.110, k=0.0523)\\
-\hline
-\end{tabular}
-\end{center}
 
-The left column of this table is used to define the 17 
-models in this \stone.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\section*{}
@@ -246,16 +222,49 @@ Method of lines - no particular attention to nonlinearities.
 }
 
 \begin{center}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_171/images/uu000000.jpg}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_171/images/uu000001.jpg}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_171/images/uu000003.jpg}\\
-\includegraphics[width=5.6cm]{python_codes/fieldstone_171/images/uu000007.jpg}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_171/images/uu000012.jpg}
-\includegraphics[width=5.6cm]{python_codes/fieldstone_171/images/uu000020.jpg}\\
+\includegraphics[width=5.2cm]{python_codes/fieldstone_171/images/uu000000.jpg}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_171/images/uu000001.jpg}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_171/images/uu000003.jpg}\\
+\includegraphics[width=5.2cm]{python_codes/fieldstone_171/images/uu000007.jpg}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_171/images/uu000012.jpg}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_171/images/uu000020.jpg}\\
 {\captionfont Solved in on a GPU, which did this in about a day, on 4800x4800.}
 \end{center}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Classification}
 
+The topic of classification is important here since each greek letter
+should correspond to a unique dynamical evolution/pattern
+Unfortunately, while every paper published after 1993 quotes Pearson and 
+his 12 models, the Pearson paper itself is rather ambiguous about 
+the exact $F,k$ values for each of the 12 models shown in its Fig. 2.
+
+The classification is then as follows:
+\begin{center}
+\begin{tabular}{lllll}
+&Munafo & Munafo & Gandy \& Nelson 2022 & Har-Shemesh et al 2016 \\ 
+\hline
+alpha   & $F=0.010,k=0.047$  &$F=0.014,k=0.053$ & $F=0.010,k=0.050$ & $F=0.0175,k=0.0504$ \\
+beta    & $F=0.014,k=0.039$  &$F=0.026,k=0.051$ &                   & \\
+gamma   & $F=0.022,k=0.051$  &$F=0.026,k=0.055$ & $F=0.025,k=0.054$ & \\
+delta   & $F=0.030,k=0.055$  &$F=0.042,k=0.059$ & $F=0.025,k=0.052$ & \\
+epsilon & $F=0.018,k=0.055$  &$F=0.022,k=0.059$ &                   & $F=0.0208,k=0.0576$\\
+zeta    & $F=0.022,k=0.061$  &$F=0.026,k=0.059$ &                   & \\
+eta     & $F=0.034,k=0.063$  &	                &                   & $F=0.0404,k=0.0638$ \\
+theta   & $F=0.030,k=0.057$  &$F=0.038,k=0.061$ &                   & $F=0.0295,k=0.0561$\\
+iota    & $F=0.046,k=0.0594$ &                  &                   & \\
+kappa   & $F=0.050,k=0.063$  &$F=0.058,k=0.063$ &                   & \\
+lambda  & $F=0.026,k=0.061$  &$F=0.034,k=0.065$ &                   & $F=0.0392,k=0.0649$ \\
+mu      & $F=0.046,k=0.065$  &$F=0.058,k=0.065$ & $F=0.050,k=0.064$ & $F=0.0416,k=0.0625$ \\
+nu      & $F=0.054,k=0.067$  &$F=0.082,k=0.063$ &                   & \\
+xi      & $F=0.010,k=0.041$  &$F=0.014,k=0.047$ & $F=0.010,k=0.042$ & \\
+pi      & $F=0.062,k=0.061$  &                  &                   & \\
+rho     & $F=0.090,k=0.059$  &$F=0.102,k=0.055$ &                   & \\
+sigma   & $F=0.090,k=0.057$  &$F=0.110,k=0.0523$& $F=0.095,k=0.056$ & \\
+\hline
+\end{tabular}
+\end{center}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -386,11 +395,19 @@ a vtu file every so often (controlled by the \lstinline{every_vtu} parameter),
 and in 2d png files are automatically generated (controlled by 
 the \lstinline{every_png} parameter).
 
-A good starting point for the timestep is 0.1 dimensionless units.
+A good starting point for the timestep is 0.1 dimensionless units, but 
+(very) high resolutions may require much smaller values.
 Note that the CFL condition number for diffusion is $\propto h^2/\kappa$, 
 so that when resolution is halved the time step should probably be divided by four. 
 
 There are three initial conditions, as controlled by the \lstinline{init} parameter.
+Initial conditions are nearly always specified in the literature. For example, we
+read in \cite{haqh16}: 
+``The simulation was started with an initial condition of the
+red state (u,v)=(1,0) with a finite perturbation in the form of a 20x20 square in the
+center of the simulation grid in the state (u,v)=(0.5, 0.25) and an additional Gaussian
+noise with an amplitude of 0.05 covering the entire simulation grid.''
+
 
 \begin{itemize}
 \item \lstinline{init=1}:
@@ -421,7 +438,7 @@ for iseed in range(nseed):
            v[i]=random.uniform(0.,0.5)
 \end{lstlisting}
 
-\item \lstinline{init=2}.
+\item \lstinline{init=2}: 
 This corresponds to the case where 3 discs (cylinders in 3d)
 are implemented. There is no random component and it allows 
 us to test the code in a deterministic fashion (see 
@@ -439,7 +456,7 @@ for i in range(0,NP):
        v[i]=0.125
 \end{lstlisting}
 
-\item \lstinline{init=3}
+\item \lstinline{init=3}: 
 This is the starting condition of \textcite{pear93} (1993).
 \begin{lstlisting}
    u[:]=1
@@ -450,8 +467,29 @@ This is the starting condition of \textcite{pear93} (1993).
           v[i]=1/4+random.uniform(-0.01,0.01)
 \end{lstlisting}
 
+\item \lstinline{init=4}: I found it 
+online\footnote{\url{https://github.com/cselab/gray-scott/blob/master/python/gray_scott.py}}
+but it was written for a simulation taking place in a $[-1:1]\times[-1:1]$ domain.
+I then displace the gaussians so as to bring them to the middle of our domain.
+
+\begin{lstlisting}
+for i in range(0,NP):
+    xi=x[i]-Lx/2
+    zi=z[i]-Lz/2
+    u[i]=1-np.exp(-80*((xi+0.05)**2+(zi+0.05)**2))
+    v[i]=np.exp(-80*((xi-0.05)**2+(zi-0.05)**2))
+\end{lstlisting}
+
+This initial condition is simple, seems to work with all greek letter models, and is 
+deterministic (no randomness) so that it lends itself to testing (RK order, resolution, time step value, ...)
 
 \end{itemize}
+
+
+
+%--------------------------------------------------------
+\subsubsection*{Time-stepping}
+
 
 The code implements a large family of Runge-Kutta algorithms, all described in 
 Section~\ref{MMM-ss:rkm}.
@@ -461,7 +499,7 @@ In what follows we assume that a time step $\delta t$ has been chosen.
 \begin{itemize}
 
 %--------------------------------------
-\item 1st-order RK ('RK1')
+\item 1st-order RK (\lstinline{scheme='RK1'})
 Starting from the ODE above we can write
 \[
 \frac{\vec{X}^{n+1} -\vec{X}^{n} }{\delta t} = \vec{\cal F} (\vec{X}^n)
@@ -479,7 +517,7 @@ for istep in range(0,nstep+1):
 \end{lstlisting}
 
 %--------------------------------------
-\item 2nd-order RK ('RK2')
+\item 2nd-order RK (\lstinline{scheme='RK2'})
 \begin{lstlisting}
 for istep in range(0,nstep+1):
     k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X     )*dt
@@ -488,7 +526,7 @@ for istep in range(0,nstep+1):
 \end{lstlisting}
 
 %--------------------------------------
-\item 2nd-order RK ('Heun')
+\item 2nd-order RK (\lstinline{scheme='Heun'})
 
 \begin{lstlisting}
 for istep in range(0,nstep+1):
@@ -497,11 +535,8 @@ for istep in range(0,nstep+1):
     X[:]+=(k1+k2)/2
 \end{lstlisting}
 
-
 %--------------------------------------
-
-%--------------------------------------
-\item 3rd-order RK ('RK3')
+\item 3rd-order RK (\lstinline{scheme='RK3'})
 
 \begin{eqnarray}
 \vec{k}_1 &=& \vec{\cal F}(\vec{X}_n) \cdot \delta t\nn\\
@@ -520,7 +555,8 @@ for istep in range(0,nstep+1):
 
 
 %--------------------------------------
-\item 4th-order RK\footnote{\url{https://en.wikipedia.org/wiki/Runge-Kutta_methods}} ('RK4')
+\item 4th-order RK\footnote{\url{https://en.wikipedia.org/wiki/Runge-Kutta_methods}}
+(\lstinline{scheme='RK4'})
 
 \begin{eqnarray}
 \vec{k}_1 &=& \vec{\cal F}(\vec{X}_n) \cdot \delta t\nn\\
@@ -542,7 +578,7 @@ for istep in range(0,nstep+1):
 
 
 %--------------------------------------
-\item 4th-order RK ('RK38')
+\item 4th-order RK (\lstinline{scheme='RK38'})
 
 \begin{lstlisting}
 for istep in range(0,nstep+1):
@@ -554,7 +590,7 @@ for istep in range(0,nstep+1):
 \end{lstlisting}
 
 %--------------------------------------
-\item 5th-order RK ('RK5')
+\item 5th-order RK (\lstinline{scheme='RK5'})
 
 \begin{lstlisting}
 for istep in range(0,nstep+1):
@@ -568,7 +604,8 @@ for istep in range(0,nstep+1):
 \end{lstlisting}
 
 %--------------------------------------
-\item Runge-Kutta-Fehlberg\footnote{\url{https://ketch.github.io/numipedia/methods/Fehlberg45.html}} ('RKF')
+\item Runge-Kutta-Fehlberg\footnote{\url{https://ketch.github.io/numipedia/methods/Fehlberg45.html}} 
+(\lstinline{scheme='RKF'})
 
 The coefficients are obtained from the following Butcher tableau.
 
@@ -586,32 +623,31 @@ The coefficients are obtained from the following Butcher tableau.
 \end{align}
 
 
-
-
-
 \end{itemize}
 
+TODO:
 
+try implicit ? if I only keep the Laplace terms in the matrix the matrix does not change, only the rhs.
+
+add colorbar to png plots
+
+change/prescribe colorscale python
+
+use python function to integrate ? a la rhymtite ? see stone 157
+
+run 3D model(s). Which one ? why ?
+
+extend code to 1D. apparently there is a fair bit of published work in 1d too.
+
+Look at blob detection algorithms (haqh16) 
 
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Testing/benchmarking of R-K methods}
 
-In this case we start with non random initial conditions (\lstinline{init=2}):
-\begin{lstlisting}
-   for i in range(0,NP):
-       if (x[i]-Lx/3)**2+(z[i]-Lz/3)**2<0.2:
-          u[i]=1
-          v[i]=0.5
-       if (x[i]-Lx*0.67)**2+(z[i]-Lz/2)**2<0.2:
-          u[i]=0.5
-          v[i]=0.25
-       if (x[i]-Lx*0.5)**2+(z[i]-Lz*0.75)**2<0.08:
-          u[i]=0.7
-          v[i]=0.125
-\end{lstlisting}
-
+In this case we start with non random initial conditions (\lstinline{init=2}).
 We run the zeta model and we find that it relaxes to the trivial solution $(u=1,v=0)$.
+We use the {\tt script\_RKtest1} bash script.
 
 \begin{center}
 \includegraphics[height=6cm]{python_codes/fieldstone_171/RKtest1/u0}
@@ -631,7 +667,30 @@ and $v$ for all the RK methods, parameters of the zeta model.}
 This is of course not a benchmark {\it per se}, but rather a sanity check that 
 all RK methods yield the same results (down to a small difference).
 
-\todo[inline]{run lukas model on this ?}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Testing/benchmarking of R-K methods (2)}
+
+In this case we start with non random initial conditions (\lstinline{init=4}).
+We run the alpha1 model. Resolution 257x257, dt=0.1, nstep=10,000.
+We use the {\tt script\_RKtest2} bash script.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_171/RKtest2/avrg_u.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_171/RKtest2/avrg_v.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_171/RKtest2/stats_u.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_171/RKtest2/stats_v.pdf}\\
+{\captionfont Evolution of the averages and min/max values of fields $u$
+and $v$ for all the RK methods, parameters of the alpha1 model.}
+\end{center}
+
+\begin{center}
+\includegraphics[height=6cm]{python_codes/fieldstone_171/RKtest2/alpha1_solution_final_u_RKF.png}
+\includegraphics[height=6cm]{python_codes/fieldstone_171/RKtest2/alpha1_solution_final_v_RKF.png}\\
+{\captionfont $u$ and $v$ fields at the end of the run, resolution $257^2$.}
+\end{center}
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -652,19 +711,20 @@ The only difference with respect to the paper is that I resort to RK2.
 
 The major issue here is that I cannot reproduce Fig 2 of the paper since the 
 author does not provide the $(F,k)$ values for the 12 models. 
-I then instead keep the nomenclature of Munafo for the 17 models but we 
-see that this is not necessarily reassuring since Munafo's letters 
+I then instead keep the nomenclature of Munafo for the 17 models
+\footnote{In what follows the left column of the table is used to define the 17 
+models} but we see that this is not necessarily reassuring since Munafo's letters 
 do not always coincide with Pearson's:
 \begin{center}
 \includegraphics[height=14cm]{python_codes/fieldstone_171/images/drawing.png}\\
 {\captionfont Fig 2 of Pearson. Red letters are Munafo's ones. 
-Blue letters are from \text{gane22}.}
+Blue letters are from \cite{gane22}.}
 \end{center}
 
 
 
 
-All models start from the following initial condition ({\it the randomness was taken away!}):
+All models start from the following initial condition ({\it the randomness was taken away}):
 \begin{center}
 \includegraphics[width=4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0000000_u.png}
 \end{center}
@@ -827,6 +887,13 @@ Only 100,000 time steps are carried out.
 \includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_0050000_u.png}
 \includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/nu_solution_final_u.png}
 
+\item {\tt xi} (not in Pearson 1993)\\
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0001000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0010000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0030000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0050000_u.png}
+\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_final_u.png}
+
 \item {\tt pi} (not in Pearson 1993)\\
 \includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0001000_u.png}
 \includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/pi_solution_0005000_u.png}
@@ -853,15 +920,7 @@ Only 100,000 time steps are carried out.
 \includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_0050000_u.png}
 \includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/sigma_solution_final_u.png}
 
-\item {\tt xi} (not in Pearson 1993)\\
-\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0001000_u.png}
-\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0010000_u.png}
-\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0030000_u.png}
-\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_0050000_u.png}
-\includegraphics[width=1.4cm]{python_codes/fieldstone_171/pearson93/xi_solution_final_u.png}
-
 \end{itemize}
-
 
 \includegraphics[width=8cm]{python_codes/fieldstone_171/pearson93/stats_u.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_171/pearson93/stats_v.pdf}
@@ -1053,7 +1112,7 @@ For each case the second line consists of captures of Fig.2 of Pearson (when ava
 
 
 
-\item {\tt nu} Not in Pearson 1993\\
+\item {\tt nu} (Not in Pearson 1993)\\
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0001000_u.png}
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0010000_u.png}
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/nu_solution_0030000_u.png}
@@ -1062,7 +1121,16 @@ For each case the second line consists of captures of Fig.2 of Pearson (when ava
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_nu1}
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_nu2}
 
-\item {\tt pi} Not in Pearson 1993\\
+\item {\tt xi} (Not in Pearson 1993)\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0001000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0010000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0030000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0050000_u.png}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_final_u.png}\\
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_xi1}
+\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_xi2}
+
+\item {\tt pi} (Not in Pearson 1993)\\
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0001000_u.png}
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0005000_u.png}
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_0010000_u.png}
@@ -1074,7 +1142,7 @@ For each case the second line consists of captures of Fig.2 of Pearson (when ava
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/pi_solution_final_u.png}\\
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_pi}
 
-\item {\tt rho} Not in Pearson 1993\\
+\item {\tt rho} (Not in Pearson 1993)\\
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0001000_u.png}
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0010000_u.png}
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/rho_solution_0030000_u.png}
@@ -1083,7 +1151,7 @@ For each case the second line consists of captures of Fig.2 of Pearson (when ava
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_rho1}
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_rho2}
 
-\item {\tt sigma} Not in Pearson 1993\\
+\item {\tt sigma} (Not in Pearson 1993)\\
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0001000_u.png}
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0010000_u.png}
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/sigma_solution_0030000_u.png}
@@ -1092,21 +1160,10 @@ For each case the second line consists of captures of Fig.2 of Pearson (when ava
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_sigma1}
 \includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_sigma2}
 
-\item {\tt xi} Not in Pearson 1993\\
-\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0001000_u.png}
-\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0010000_u.png}
-\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0030000_u.png}
-\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_0050000_u.png}
-\includegraphics[height=1.4cm]{python_codes/fieldstone_171/pearson93_rand/xi_solution_final_u.png}\\
-\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_xi1}
-\includegraphics[height=1.4cm]{python_codes/fieldstone_171/images/munafo_xi2}
-
 \end{itemize}
 
 Looking back on the statement by Munafo: ``
 Types nu, xi, pi, rho, and sigma are of this sort and were identified by me''
-This makes sense since in this case these 5 cases yield stable patterns 
-that are unlike the other ones.
 
 
 
@@ -1147,63 +1204,75 @@ The previous results are unchanged in nature except for this case:
 In this case the resolution is set to $1025\times 1025$ nodes.
 the time step $\delta t=0.25$ lead to numerical explosion ('nan') so 
 it was set to $\delta t=0.05$.
-
-DIFFERENCE??!
-
-
-
-
-
+Unfortunately models nu, xi, rho, sigma failed to develop any pattern.
 
 
 
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Results}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Results, starting from random initial condition}
 
 \subsection*{alpha}
 
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/alpha_stats}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/alpha_solution_final_u.png}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/alpha_solution_final_v.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/alpha1_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/alpha1_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/alpha1_solution_final_v.png}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/alpha2_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/alpha2_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/alpha2_solution_final_v.png}
 \end{center}
 
 \subsection*{beta}
 
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/beta_stats}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/beta_solution_final_u.png}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/beta_solution_final_v.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/beta1_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/beta1_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/beta1_solution_final_v.png}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/beta2_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/beta2_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/beta2_solution_final_v.png}
 \end{center}
 
 \subsection*{gamma}
 
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/gamma_stats}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/gamma_solution_final_u.png}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/gamma_solution_final_v.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/gamma1_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/gamma1_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/gamma1_solution_final_v.png}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/gamma2_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/gamma2_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/gamma2_solution_final_v.png}
 \end{center}
 
 \subsection*{delta}
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/delta_stats}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/delta_solution_final_u.png}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/delta_solution_final_v.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/delta1_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/delta1_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/delta1_solution_final_v.png}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/delta2_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/delta2_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/delta2_solution_final_v.png}
 \end{center}
 
 \subsection*{epsilon}
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/epsilon_stats}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/epsilon_solution_final_u.png}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/epsilon_solution_final_v.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/epsilon1_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/epsilon1_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/epsilon1_solution_final_v.png}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/epsilon2_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/epsilon2_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/epsilon2_solution_final_v.png}
 \end{center}
 
 \subsection*{zeta}
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/zeta_stats}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/zeta_solution_final_u.png}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/zeta_solution_final_v.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/zeta1_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/zeta1_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/zeta1_solution_final_v.png}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/zeta2_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/zeta2_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/zeta2_solution_final_v.png}
 \end{center}
 
 \subsection*{eta}
@@ -1215,9 +1284,12 @@ DIFFERENCE??!
 
 \subsection*{theta}
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/theta_stats}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/theta_solution_final_u.png}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/theta_solution_final_v.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/theta1_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/theta1_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/theta1_solution_final_v.png}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/theta2_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/theta2_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/theta2_solution_final_v.png}
 \end{center}
 
 \subsection*{iota}
@@ -1229,37 +1301,52 @@ DIFFERENCE??!
 
 \subsection*{kappa}
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/kappa_stats}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/kappa_solution_final_u.png}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/kappa_solution_final_v.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/kappa1_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/kappa1_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/kappa1_solution_final_v.png}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/kappa2_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/kappa2_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/kappa2_solution_final_v.png}
 \end{center}
 
 \subsection*{lambda}
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/lambda_stats}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/lambda_solution_final_u.png}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/lambda_solution_final_v.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/lambda1_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/lambda1_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/lambda1_solution_final_v.png}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/lambda2_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/lambda2_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/lambda2_solution_final_v.png}
 \end{center}
 
 \subsection*{mu}
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/mu_stats}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/mu_solution_final_u.png}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/mu_solution_final_v.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/mu1_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/mu1_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/mu1_solution_final_v.png}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/mu2_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/mu2_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/mu2_solution_final_v.png}
 \end{center}
 
 \subsection*{nu}
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/nu_stats}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/nu_solution_final_u.png}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/nu_solution_final_v.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/nu1_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/nu1_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/nu1_solution_final_v.png}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/nu2_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/nu2_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/nu2_solution_final_v.png}
 \end{center}
 
 \subsection*{xi}
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/xi_stats}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/xi_solution_final_u.png}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/xi_solution_final_v.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/xi1_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/xi1_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/xi1_solution_final_v.png}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/xi2_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/xi2_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/xi2_solution_final_v.png}
 \end{center}
 
 \subsection*{pi}
@@ -1271,16 +1358,22 @@ DIFFERENCE??!
 
 \subsection*{rho}
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/rho_stats}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/rho_solution_final_u.png}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/rho_solution_final_v.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/rho1_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/rho1_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/rho1_solution_final_v.png}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/rho2_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/rho2_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/rho2_solution_final_v.png}
 \end{center}
 
 \subsection*{sigma}
 \begin{center}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/sigma_stats}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/sigma_solution_final_u.png}
-\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/sigma_solution_final_v.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/sigma1_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/sigma1_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/sigma1_solution_final_v.png}\\
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/sigma2_stats}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/sigma2_solution_final_u.png}
+\includegraphics[height=4.5cm]{python_codes/fieldstone_171/results/sigma2_solution_final_v.png}
 \end{center}
 
 

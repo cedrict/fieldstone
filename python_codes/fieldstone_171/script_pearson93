@@ -2,9 +2,11 @@
 
 init=3
 scheme='RK2'
+nstep=200000
+dt=1
 
-for m in 'alpha' 'beta' 'gamma' 'delta' 'epsilon' 'zeta' 'eta' 'theta' 'iota' 'kappa' 'lambda' 'mu' 'nu' 'xi' 'pi' 'rho' 'sigma'; do 
+for m in 'alpha1' 'beta1' 'gamma1' 'delta1' 'epsilon1' 'zeta1' 'eta' 'theta1' 'iota' 'kappa1' 'lambda1' 'mu1' 'nu1' 'xi1' 'pi' 'rho1' 'sigma1'; do 
     echo $m
-    python3 stone.py  $m 257 $scheme $init #> opla_$m
+    python3 stone.py  $m 257 $scheme $init $nstep $dt > opla_$m
 done
 
