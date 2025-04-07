@@ -4,66 +4,142 @@ set grid
 set xlabel 't'
 set key outside
 
-set title 'alpha'
-set output 'alpha_stats.pdf'
+set title 'alpha1'
+set output 'alpha1_stats.pdf'
 plot[][0:1]\
-'alpha_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
-'alpha_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
-'alpha_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
-'alpha_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
-'alpha_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
-'alpha_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+'alpha1_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'alpha1_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'alpha1_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'alpha1_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'alpha1_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'alpha1_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
-set title 'beta'
-set output 'beta_stats.pdf'
+set title 'alpha2'
+set output 'alpha2_stats.pdf'
 plot[][0:1]\
-'beta_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
-'beta_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
-'beta_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
-'beta_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
-'beta_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
-'beta_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+'alpha2_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'alpha2_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'alpha2_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'alpha2_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'alpha2_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'alpha2_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
-set title 'gamma'
-set output 'gamma_stats.pdf'
+#######################################################
+
+set title 'beta1'
+set output 'beta1_stats.pdf'
 plot[][0:1]\
-'gamma_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
-'gamma_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
-'gamma_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
-'gamma_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
-'gamma_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
-'gamma_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+'beta1_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'beta1_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'beta1_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'beta1_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'beta1_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'beta1_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
-set title 'delta'
-set output 'delta_stats.pdf'
+set title 'beta2'
+set output 'beta2_stats.pdf'
 plot[][0:1]\
-'delta_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
-'delta_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
-'delta_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
-'delta_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
-'delta_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
-'delta_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+'beta2_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'beta2_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'beta2_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'beta2_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'beta2_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'beta2_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
-set title 'epsilon'
-set output 'epsilon_stats.pdf'
+#######################################################
+set title 'gamma1'
+set output 'gamma1_stats.pdf'
 plot[][0:1]\
-'epsilon_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
-'epsilon_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
-'epsilon_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
-'epsilon_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
-'epsilon_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
-'epsilon_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+'gamma1_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'gamma1_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'gamma1_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'gamma1_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'gamma1_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'gamma1_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
-set title 'zeta'
-set output 'zeta_stats.pdf'
+set title 'gamma2'
+set output 'gamma2_stats.pdf'
 plot[][0:1]\
-'zeta_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
-'zeta_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
-'zeta_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
-'zeta_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
-'zeta_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
-'zeta_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+'gamma2_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'gamma2_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'gamma2_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'gamma2_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'gamma2_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'gamma2_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
+
+#######################################################
+set title 'delta1'
+set output 'delta1_stats.pdf'
+plot[][0:1]\
+'delta1_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'delta1_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'delta1_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'delta1_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'delta1_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'delta1_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+set title 'delta2'
+set output 'delta2_stats.pdf'
+plot[][0:1]\
+'delta2_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'delta2_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'delta2_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'delta2_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'delta2_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'delta2_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+
+
+#######################################################
+set title 'epsilon1'
+set output 'epsilon1_stats.pdf'
+plot[][0:1]\
+'epsilon1_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'epsilon1_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'epsilon1_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'epsilon1_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'epsilon1_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'epsilon1_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+set title 'epsilon2'
+set output 'epsilon2_stats.pdf'
+plot[][0:1]\
+'epsilon2_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'epsilon2_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'epsilon2_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'epsilon2_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'epsilon2_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'epsilon2_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+
+
+
+#######################################################
+set title 'zeta1'
+set output 'zeta1_stats.pdf'
+plot[][0:1]\
+'zeta1_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'zeta1_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'zeta1_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'zeta1_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'zeta1_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'zeta1_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+set title 'zeta2'
+set output 'zeta2_stats.pdf'
+plot[][0:1]\
+'zeta2_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'zeta2_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'zeta2_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'zeta2_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'zeta2_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'zeta2_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+
+
+
+#######################################################
 set title 'eta'
 set output 'eta_stats.pdf'
 plot[][0:1]\
@@ -74,16 +150,28 @@ plot[][0:1]\
 'eta_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
 'eta_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
-set title 'theta'
-set output 'theta_stats.pdf'
+#######################################################
+set title 'theta1'
+set output 'theta1_stats.pdf'
 plot[][0:1]\
-'theta_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
-'theta_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
-'theta_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
-'theta_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
-'theta_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
-'theta_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+'theta1_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'theta1_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'theta1_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'theta1_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'theta1_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'theta1_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
+set title 'theta2'
+set output 'theta2_stats.pdf'
+plot[][0:1]\
+'theta2_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'theta2_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'theta2_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'theta2_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'theta2_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'theta2_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+#######################################################
 set title 'iota'
 set output 'iota_stats.pdf'
 plot[][0:1]\
@@ -94,56 +182,112 @@ plot[][0:1]\
 'iota_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
 'iota_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
-set title 'kappa'
-set output 'kappa_stats.pdf'
+#######################################################
+set title 'kappa1'
+set output 'kappa1_stats.pdf'
 plot[][0:1]\
-'kappa_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
-'kappa_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
-'kappa_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
-'kappa_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
-'kappa_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
-'kappa_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+'kappa1_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'kappa1_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'kappa1_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'kappa1_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'kappa1_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'kappa1_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
-set title 'lambda'
-set output 'lambda_stats.pdf'
+set title 'kappa2'
+set output 'kappa2_stats.pdf'
 plot[][0:1]\
-'lambda_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
-'lambda_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
-'lambda_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
-'lambda_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
-'lambda_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
-'lambda_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+'kappa2_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'kappa2_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'kappa2_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'kappa2_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'kappa2_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'kappa2_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
-set title 'mu'
-set output 'mu_stats.pdf'
+#######################################################
+set title 'lambda1'
+set output 'lambda1_stats.pdf'
 plot[][0:1]\
-'mu_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
-'mu_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
-'mu_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
-'mu_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
-'mu_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
-'mu_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+'lambda1_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'lambda1_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'lambda1_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'lambda1_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'lambda1_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'lambda1_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
-set title 'nu'
-set output 'nu_stats.pdf'
+set title 'lambda2'
+set output 'lambda2_stats.pdf'
 plot[][0:1]\
-'nu_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
-'nu_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
-'nu_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
-'nu_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
-'nu_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
-'nu_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+'lambda2_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'lambda2_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'lambda2_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'lambda2_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'lambda2_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'lambda2_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
-set title 'xi'
-set output 'xi_stats.pdf'
+#######################################################
+set title 'mu1'
+set output 'mu1_stats.pdf'
 plot[][0:1]\
-'xi_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
-'xi_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
-'xi_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
-'xi_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
-'xi_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
-'xi_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+'mu1_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'mu1_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'mu1_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'mu1_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'mu1_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'mu1_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
+set title 'mu2'
+set output 'mu2_stats.pdf'
+plot[][0:1]\
+'mu2_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'mu2_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'mu2_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'mu2_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'mu2_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'mu2_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+#######################################################
+set title 'nu1'
+set output 'nu1_stats.pdf'
+plot[][0:1]\
+'nu1_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'nu1_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'nu1_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'nu1_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'nu1_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'nu1_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+set title 'nu2'
+set output 'nu2_stats.pdf'
+plot[][0:1]\
+'nu2_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'nu2_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'nu2_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'nu2_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'nu2_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'nu2_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+#######################################################
+set title 'xi1'
+set output 'xi1_stats.pdf'
+plot[][0:1]\
+'xi1_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'xi1_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'xi1_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'xi1_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'xi1_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'xi1_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+set title 'xi2'
+set output 'xi2_stats.pdf'
+plot[][0:1]\
+'xi2_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'xi2_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'xi2_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'xi2_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'xi2_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'xi2_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+#######################################################
 set title 'pi'
 set output 'pi_stats.pdf'
 plot[][0:1]\
@@ -154,26 +298,52 @@ plot[][0:1]\
 'pi_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
 'pi_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
-set title 'rho'
-set output 'rho_stats.pdf'
-plot[][0:1]\
-'rho_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
-'rho_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
-'rho_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
-'rho_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
-'rho_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
-'rho_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
 
 
-set title 'sigma'
-set output 'sigma_stats.pdf'
+#######################################################
+set title 'rho1'
+set output 'rho1_stats.pdf'
 plot[][0:1]\
-'sigma_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
-'sigma_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
-'sigma_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
-'sigma_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
-'sigma_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
-'sigma_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+'rho1_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'rho1_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'rho1_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'rho1_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'rho1_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'rho1_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+set title 'rho2'
+set output 'rho2_stats.pdf'
+plot[][0:1]\
+'rho2_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'rho2_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'rho2_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'rho2_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'rho2_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'rho2_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+
+#######################################################
+set title 'sigma1'
+set output 'sigma1_stats.pdf'
+plot[][0:1]\
+'sigma1_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'sigma1_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'sigma1_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'sigma1_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'sigma1_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'sigma1_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+set title 'sigma2'
+set output 'sigma2_stats.pdf'
+plot[][0:1]\
+'sigma2_stats_u.ascii' u 1:2 w l lt 1 dt 2 t 'min(u)',\
+'sigma2_stats_u.ascii' u 1:3 w l lt 1 dt 4 t 'max(u)',\
+'sigma2_stats_u.ascii' u 1:4 w l lt 1 dt 1 t 'avr(u)',\
+'sigma2_stats_v.ascii' u 1:2 w l lt 2 dt 2 t 'min(v)',\
+'sigma2_stats_v.ascii' u 1:3 w l lt 2 dt 4 t 'max(v)',\
+'sigma2_stats_v.ascii' u 1:4 w l lt 2 dt 1 t 'avr(v)',\
+
+
 
 
 

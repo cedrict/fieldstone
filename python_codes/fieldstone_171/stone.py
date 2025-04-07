@@ -25,11 +25,11 @@ if int(len(sys.argv))==7:
    dt     = float(sys.argv[6])
    print(sys.argv)
 else:
-   model='alpha1'
+   model='zeta1'
    nnx = 256
    scheme='RK2'
    init=4
-   nstep=4000
+   nstep=40000
    dt=0.1
 
 if three_dimensions:
@@ -65,13 +65,9 @@ else:
    tyype=9 # vtu
    nseed=500
 
-
-
 every_ascii=100
 every_vtu=1000
 every_png=1000
-
-seed_size=0.02
 
 ###########################################################
 
@@ -158,7 +154,6 @@ if model=='sigma2':
 if model=='lukas':
    Du=4.e-6 ; Dv=2e-6 ; Feed=0.035 ; Kill=0.0575
 
-
 ###########################################################
 
 print("-----------------------------")
@@ -174,7 +169,6 @@ print('Kill=',Kill)
 print('scheme=',scheme)
 print('nstep=',nstep)
 print('dt=',dt)
-
 print('diff dt:',hx**2/Du,hx**2/Dv)
 
 ###############################################################################
@@ -261,6 +255,7 @@ if init==1: #----------------------------------------------
 
    if three_dimensions:
       print('starting building initial conditions....')
+      seed_size=0.02
 
       for iseed in range(nseed):
           xs=random.uniform(0+seed_size,Lx-seed_size)
