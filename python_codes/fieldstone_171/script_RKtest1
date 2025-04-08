@@ -1,13 +1,13 @@
 #! /bin/bash
 
-m='zeta'
-nstep=10000
+m='zeta1'
+nstep=5000
 dt=0.1
 init=2
 
-for scheme in 'RK1' 'RK2' 'Heun' 'RK3' 'RK4' 'RK38' 'RK5' 'RKF'; do 
+for scheme in 'RK1' 'RK2' 'Heun' 'RK3' 'RK4' 'RK38' 'RK5' 'RKF5' 'RKF78' 'RK65' 'RK87' ; do 
     echo 'model' $m '| scheme' $scheme  
-    python3 stone.py  $m 513 $scheme $init $nstep $dt > opla_${m}_${scheme}
+    python3 stone.py  $m 257 $scheme $init $nstep $dt > opla_${m}_${scheme}
     mv ${m}_stats_u.ascii         ${m}_stats_u_${scheme}.ascii
     mv ${m}_stats_v.ascii         ${m}_stats_v_${scheme}.ascii
     mv ${m}_solution_final_u.png  ${m}_solution_final_u_${scheme}.png

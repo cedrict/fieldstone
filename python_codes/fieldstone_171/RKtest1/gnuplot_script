@@ -1,0 +1,66 @@
+#
+set term pdf enhanced font "Times,12pt'
+set pointsize .012
+
+
+set xlabel 'time t'
+set ylabel '<u>'
+set output 'avrg_u.pdf'
+plot[:500][]\
+'zeta1_stats_u_RK1.ascii'  u 1:4 w l t 'RK1',\
+'zeta1_stats_u_RK2.ascii'  u 1:4 w l t 'RK2',\
+'zeta1_stats_u_Heun.ascii' u 1:4 w l t 'Heun',\
+'zeta1_stats_u_RK3.ascii'  u 1:4 w l t 'RK3',\
+'zeta1_stats_u_RK4.ascii'  u 1:4 w l t 'RK4',\
+'zeta1_stats_u_RK38.ascii' u 1:4 w l t 'RK38',\
+'zeta1_stats_u_RK5.ascii'  u 1:4 w l t 'RK5',\
+
+set ylabel '<v>'
+set output 'avrg_v.pdf'
+plot[:500][]\
+'zeta1_stats_v_RK1.ascii'  u 1:4 w l t 'RK1',\
+'zeta1_stats_v_RK2.ascii'  u 1:4 w l t 'RK2',\
+'zeta1_stats_v_Heun.ascii' u 1:4 w l t 'Heun',\
+'zeta1_stats_v_RK3.ascii'  u 1:4 w l t 'RK3',\
+'zeta1_stats_v_RK4.ascii'  u 1:4 w l t 'RK4',\
+'zeta1_stats_v_RK38.ascii' u 1:4 w l t 'RK38',\
+'zeta1_stats_v_RK5.ascii'  u 1:4 w l t 'RK5',\
+
+set ylabel 'u (m/M)'
+set output 'stats_u.pdf'
+plot[:500][]\
+'zeta1_stats_u_RK1.ascii'  u 1:2 w l lt 1 t 'RK1',\
+'zeta1_stats_u_RK1.ascii'  u 1:3 w l lt 1 notitle,\
+'zeta1_stats_u_RK2.ascii'  u 1:2 w l lt 2 t 'RK2',\
+'zeta1_stats_u_RK2.ascii'  u 1:3 w l lt 2 notitle,\
+'zeta1_stats_u_Heun.ascii' u 1:2 w l lt 3 t 'Heun',\
+'zeta1_stats_u_Heun.ascii' u 1:3 w l lt 3 notitle,\
+'zeta1_stats_u_RK3.ascii'  u 1:2 w l lt 4 t 'RK3',\
+'zeta1_stats_u_RK3.ascii'  u 1:3 w l lt 4 notitle,\
+'zeta1_stats_u_RK4.ascii'  u 1:2 w l lt 5 t 'RK4',\
+'zeta1_stats_u_RK4.ascii'  u 1:3 w l lt 5 notitle,\
+'zeta1_stats_u_RK38.ascii' u 1:2 w l lt 6 t 'RK38',\
+'zeta1_stats_u_RK38.ascii' u 1:3 w l lt 6 notitle,\
+'zeta1_stats_u_RK5.ascii'  u 1:2 w l lt 7 t 'RK5',\
+'zeta1_stats_u_RK5.ascii'  u 1:3 w l lt 7 notitle,\
+
+set ylabel 'v (m/M)'
+set output 'stats_v.pdf'
+plot[:500][]\
+'zeta1_stats_v_RK1.ascii'  u 1:2 w l lt 1 t 'RK1',\
+'zeta1_stats_v_RK1.ascii'  u 1:3 w l lt 1 notitle,\
+'zeta1_stats_v_RK2.ascii'  u 1:2 w l lt 2 t 'RK2',\
+'zeta1_stats_v_RK2.ascii'  u 1:3 w l lt 2 notitle,\
+'zeta1_stats_v_Heun.ascii' u 1:2 w l lt 3 t 'Heun',\
+'zeta1_stats_v_Heun.ascii' u 1:3 w l lt 3 notitle,\
+'zeta1_stats_v_RK3.ascii'  u 1:2 w l lt 4 t 'RK3',\
+'zeta1_stats_v_RK3.ascii'  u 1:3 w l lt 4 notitle,\
+'zeta1_stats_v_RK4.ascii'  u 1:2 w l lt 5 t 'RK4',\
+'zeta1_stats_v_RK4.ascii'  u 1:3 w l lt 5 notitle,\
+'zeta1_stats_v_RK38.ascii' u 1:2 w l lt 6 t 'RK38',\
+'zeta1_stats_v_RK38.ascii' u 1:3 w l lt 6 notitle,\
+'zeta1_stats_v_RK5.ascii'  u 1:2 w l lt 7 t 'RK5',\
+'zeta1_stats_v_RK5.ascii'  u 1:3 w l lt 7 notitle,\
+
+
+
