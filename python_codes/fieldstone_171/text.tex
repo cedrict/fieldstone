@@ -49,6 +49,8 @@ ones in what follows:
 \item \url{https://en.wikipedia.org/wiki/Reaction-diffusion_system}
 \end{itemize}
 
+See also \textcite{marm96} (1996), \textcite{mcri04} (2004).
+
 The Gray–Scott reaction–diffusion system of equations are given by
 \begin{eqnarray}
 \frac{\partial u}{\partial t} &=& D_u \vec\nabla^2 u - uv^2 + F(1-u) \nn\\
@@ -542,6 +544,8 @@ for istep in range(0,nstep+1):
 %--------------------------------------
 \item 3rd-order RK (\lstinline{scheme='RK3'})
 
+Kutta's third-order method, \url{https://en.wikipedia.org/wiki/List_of_Runge-Kutta_methods}
+
 \begin{eqnarray}
 \vec{k}_1 &=& \vec{\cal F}(\vec{X}_n) \cdot \delta t\nn\\
 \vec{k}_2 &=& \vec{\cal F}(\vec{X}_n+ \frac{1}{2} \vec{k}_1) \cdot \delta t \nn\\
@@ -580,7 +584,6 @@ for istep in range(0,nstep+1):
     X[:]+=(k1+2*k2+2*k3+k4)/6
 \end{lstlisting}
 
-
 %--------------------------------------
 \item 4th-order RK (\lstinline{scheme='RK38'})
 
@@ -609,7 +612,7 @@ for istep in range(0,nstep+1):
 
 %--------------------------------------
 \item Runge-Kutta-Fehlberg\footnote{\url{https://ketch.github.io/numipedia/methods/Fehlberg45.html}} 
-(\lstinline{scheme='RKF'})
+(\lstinline{scheme='RKF5'})
 
 The coefficients are obtained from the following Butcher tableau.
 
@@ -626,8 +629,32 @@ The coefficients are obtained from the following Butcher tableau.
 \end{array}
 \end{align}
 
+%--------------------------------------------------------------
+\item 6th order Dormand-Prince/RK method (\lstinline{scheme='RK65'})
+
+See table 1 in \textcite{prdo81}.
+
+%--------------------------------------------------------------
+\item 8th order Runge-Kutta-Fehlberg method (\lstinline{scheme='RKF78'})
+
+It is commonly named RKF7(8) and I found it in \textcite{bujk16} (2016).
+See also section~\ref{MMM-ss:rkm}.
+
+%--------------------------------------------------------------
+\item 8th order Dormand-Prince method (\lstinline{scheme='RK87'})
+
+It is commonly named DP8(7) and I found it in \textcite{bujk16} (2016).
+See also section~\ref{MMM-ss:rkm}.
+ODE87  is a realization of explicit Runge-Kutta method. 
+See \fullcite{prdo81}.
+This is a 8th-order accurate integrator therefore the local error normally
+expected is ${\cal O}(h^9)$.  
+This requires 13 function evaluations per integration step.
 
 \end{itemize}
+
+
+-------------------------------------------------
 
 TODO:
 
@@ -644,6 +671,8 @@ run 3D model(s). Which one ? why ?
 extend code to 1D. apparently there is a fair bit of published work in 1d too.
 
 Look at blob detection algorithms (haqh16) 
+
+do massive run with Lukas' poster approach ?
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -674,25 +703,70 @@ all RK methods yield the same results (down to a small difference).
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Testing/benchmarking of R-K methods (2)}
+\section*{Testing/benchmarking of Runge-Kutta methods (2)}
 
-In this case we start with non random initial conditions (\lstinline{init=4}).
-We run the alpha1 model. Resolution 257x257, dt=0.1, nstep=10,000.
+In this case we start with non random initial conditions (\lstinline{init=4}):
+\begin{lstlisting}
+for i in range(0,NP):
+    xi=x[i]-Lx/2
+    zi=z[i]-Lz/2
+    u[i]=1-np.exp(-80*((xi+0.05)**2+(zi+0.05)**2))
+    v[i]=np.exp(-80*((xi-0.05)**2+(zi-0.05)**2))
+\end{lstlisting}
+We run the alpha1 model (Du=2.e-5 ; Dv=1e-5 ; Feed=0.010 ; Kill=0.047). 
+Resolution $257\times 257$, domain is a square of size 2.5, 
+$\delta t=0.1$, nstep=100,000.
 We use the {\tt script\_RKtest2} bash script.
 
+We first monitor the average of the $u$ and $v$ arrays over time:
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_171/RKtest2/avrg_u.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_171/RKtest2/avrg_v.pdf}\\
+{\captionfont Evolution of the averages of fields $u$
+and $v$ for all the RK methods, parameters of the alpha1 model.}
+\end{center}
+We find that after 'some time'  the measurements diverge. 
+More precisely:
+\begin{itemize}
+\item $<u>,<v>$: RK1      and RKF5/RK5 agree until $t\simeq 2300$
+\item $<u>,<v>$: RK2/Heun and RKF5/RK5 agree until $t\simeq 4200$
+\item $<u>,<v.$: RK3      and RKF5/RK5 agree until $t\simeq 5800$
+\item $<u>,<v.$: RK4/RK38 and RKF5/RK5 agree until $t\simeq 9000$
+\item $<u>,<v.$: RKF5, RK5, RK65, RKF78, RK87 all perfectly agree until $t=10,000$
+\end{itemize}
+
+
+This shows (at least for this experiment) that RK1, RK2, Heun, RK3 and probably RK4/RK38
+are not accurate enough. Let us now plot the averages again but only for the high
+order RK methods and confirm they all lead to the same results (at least until $t=10,000$):
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_171/RKtest2/avrg_u_high.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_171/RKtest2/avrg_v_high.pdf}\\
+{\captionfont Evolution of the averages of fields $u$
+and $v$ for the high-order RK methods, parameters of the alpha1 model.}
+\end{center}
+
+
+We can now turn to the min/max values\footnote{max(u) is 
+nearly always 1 and min(v) nearly always zero so I do not plot them} 
+of the field and we find that 
+they also are identical for all high-order methods:
+\begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_171/RKtest2/stats_u.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_171/RKtest2/stats_v.pdf}\\
-{\captionfont Evolution of the averages and min/max values of fields $u$
+{\captionfont Evolution of the min/max values of fields $u$
 and $v$ for all the RK methods, parameters of the alpha1 model.}
 \end{center}
 
 \begin{center}
-\includegraphics[height=6cm]{python_codes/fieldstone_171/RKtest2/alpha1_solution_final_u_RKF.png}
-\includegraphics[height=6cm]{python_codes/fieldstone_171/RKtest2/alpha1_solution_final_v_RKF.png}\\
-{\captionfont $u$ and $v$ fields at the end of the run, resolution $257^2$.}
+\includegraphics[height=5cm]{python_codes/fieldstone_171/RKtest2/alpha1_solution_final_u_RK1.png}
+\includegraphics[height=5cm]{python_codes/fieldstone_171/RKtest2/alpha1_solution_final_u_RK2.png}
+\includegraphics[height=5cm]{python_codes/fieldstone_171/RKtest2/alpha1_solution_final_u_RK3.png}\\
+\includegraphics[height=5cm]{python_codes/fieldstone_171/RKtest2/alpha1_solution_final_u_RK4.png}
+\includegraphics[height=5cm]{python_codes/fieldstone_171/RKtest2/alpha1_solution_final_u_RK5.png}
+\includegraphics[height=5cm]{python_codes/fieldstone_171/RKtest2/alpha1_solution_final_u_RKF78.png}\\
+{\captionfont $u$ field at the end of the run, resolution $257^2$, RK1, RK2, RK3, RK4, RK5, RKF7(8).}
 \end{center}
 
 

@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 
 ###############################################################################
 ###############################################################################
-###############################################################################
 
 three_dimensions=False
 
@@ -25,11 +24,11 @@ if int(len(sys.argv))==7:
    dt     = float(sys.argv[6])
    print(sys.argv)
 else:
-   model='zeta1'
-   nnx = 256
-   scheme='RK2'
+   model='alpha1'
+   nnx = 257
+   scheme='RK4'
    init=4
-   nstep=40000
+   nstep=100000
    dt=0.1
 
 if three_dimensions:
@@ -66,8 +65,8 @@ else:
    nseed=500
 
 every_ascii=100
-every_vtu=1000
-every_png=1000
+every_vtu=5000
+every_png=5000
 
 ###########################################################
 
@@ -153,6 +152,143 @@ if model=='sigma2':
 
 if model=='lukas':
    Du=4.e-6 ; Dv=2e-6 ; Feed=0.035 ; Kill=0.0575
+
+###############################################################################
+
+if scheme=='RK3': #----------------------------------------
+   # Kutta's third-order method 
+   # https://en.wikipedia.org/wiki/List_of_Runge-Kutta_methods
+
+   a=np.array(\
+     [[1/2, 0],\
+      [ -1, 2]],\
+      dtype=np.float64)
+
+   b=np.array([1/6,4/6,1/6],dtype=np.float64)
+
+elif scheme=='RK4': #----------------------------------------
+   #https://en.wikipedia.org/wiki/Runge-Kutta_methods
+
+   a=np.array(\
+     [[1/2,   0, 0],\
+      [  0, 1/2, 0],\
+      [  0,   0, 1]],\
+      dtype=np.float64)
+
+   b=np.array([1/6,1/3,1/3,1/6],dtype=np.float64)
+
+elif scheme=='RK38': #---------------------------------------
+   #https://en.wikipedia.org/wiki/Runge-Kutta_methods
+
+   a=np.array(\
+     [[ 1/3,  0, 0],\
+      [-1/3,  1, 0],\
+      [   1, -1, 1]],\
+      dtype=np.float64)
+
+   b=np.array([1/8,3/8,3/8,1/8],dtype=np.float64)
+
+elif scheme=='RK5': #---------------------------------------
+   # Nyström's fifth-order method  
+   # https://en.wikipedia.org/wiki/List_of_Runge-Kutta_methods
+
+   a=np.array(\
+     [[     1/3,     0,      0,    0, 0],\
+      [    4/25,  6/25,      0,    0, 0],\
+      [     1/4,    -3,   15/4,    0, 0],\
+      [    2/27,  10/9, -50/81, 8/81, 0],\
+      [    2/25, 12/25,   2/15, 8/75, 0]],\
+      dtype=np.float64)
+
+   b=np.array([23/192,0,125/192,0,-27/64,125/192],dtype=np.float64)
+
+elif scheme=='RKF5': #---------------------------------------
+   #https://en.wikipedia.org/wiki/Runge-Kutta_methods
+   #https://en.wikipedia.org/wiki/List_of_Runge-Kutta_methods
+
+   a=np.array(\
+     [[      1/4,          0,          0,         0,      0],\
+      [     3/32,       9/32,          0,         0,      0],\
+      [1932/2197, -7200/2197,  7296/2197,         0,      0],\
+      [  439/216,         -8,   3680/513, -845/4104,      0],\
+      [    -8/27,          2, -3544/2565, 1859/4104, -11/40]],\
+      dtype=np.float64)
+
+   b=np.array([16/135, 0, 6656/12825, 28561/56430, -9/50, 2/55],dtype=np.float64)
+
+if scheme=='RK65': #----------------------------------------
+   # The coefficients originate in Table 1 of prdo81
+   # not 100% clear to me which b vector I should use
+
+   a=np.array(\
+     [[         1/10,          0,                 0,                0,              0,             0, 0],\
+      [        -2/81,      20/81,                 0,                0,              0,             0, 0],\
+      [     615/1372,   -270/343,         1053/1372,                0,              0,             0, 0],\
+      [    3243/5500,     -54/55,       50949/71500,       4998/17875,              0,             0, 0],\
+      [ -26492/37125,      72/55,        2808/23375,     -24206/37125,        338/459,             0, 0],\
+      [    5561/2376,     -35/11,      -24117/31603,    899983/200772,     -5225/1836,     3925/4056, 0],\
+      [465467/266112, -2945/1232, -5610201/14158144, 10513573/3212352, -424325/205632, 376225/454272, 0]],\
+      dtype=np.float64)
+
+   b=np.array([61/864, 0, 98415/321776, 16807/146016, 1375/7344, 1375/5408, -37/1120, 1/10],dtype=np.float64)
+
+if scheme=='RKF78':
+   # Table 2 of bujk16
+   # also https://nl.mathworks.com/matlabcentral/fileexchange/61130-runge-kutta-fehlberg-rkf78
+   # not 100% clear to me which b vector I should use, but the first one yielded worse results
+
+   a=np.array(\
+     [[      2/27,    0,      0,        0,         0,       0,         0,     0,      0,     0, 0, 0, 0],\
+      [      1/36, 1/12,      0,        0,         0,       0,         0,     0,      0,     0, 0, 0, 0],\
+      [      1/24,    0,    1/8,        0,         0,       0,         0,     0,      0,     0, 0, 0, 0],\
+      [      5/12,    0, -25/16,    25/16,         0,       0,         0,     0,      0,     0, 0, 0, 0],\
+      [      1/20,    0,      0,      1/4,       1/5,       0,         0,     0,      0,     0, 0, 0, 0],\
+      [   -25/108,    0,      0,  125/108,    -65/27,  125/54,         0,     0,      0,     0, 0, 0, 0],\
+      [    31/300,    0,      0,        0,    61/225,    -2/9,    13/900,     0,      0,     0, 0, 0, 0],\
+      [         2,    0,      0,    -53/6,    704/45,  -107/9,     67/90,     3,      0,     0, 0, 0, 0],\
+      [   -91/108,    0,      0,   23/108,  -976/135,  311/54,    -19/60,  17/6,  -1/12,     0, 0, 0, 0],\
+      [ 2383/4100,    0,      0, -341/164, 4496/1025, -301/82, 2133/4100, 45/82, 45/164, 18/41, 0, 0, 0],\
+      [     3/205,    0,      0,        0,         0,   -6/41,    -3/205, -3/41,   3/41,  6/41, 0, 0, 0],\
+      [-1777/4100,    0,      0, -341/164, 4496/1025, -289/82, 2193/4100, 51/82, 33/164, 12/41, 0, 1, 0]],\
+      dtype=np.float64)
+   #b=np.array([0,0,0,0,0,34/105,9/35,9/35,9/280,9/280,0,41/840,41/840],dtype=np.float64)
+   b=np.array([41/840,0,0,0,0,34/105,9/35,9/35,9/280,9/280,41/840,0,0],dtype=np.float64)
+
+
+if scheme=='RK87': #----------------------------------------
+   # The coefficients originate in Table 2 of prdo81
+   # not 100% clear to me which b vector I should use
+
+   a=np.array(\
+     [[1/18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+      [1/48, 1/16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\
+      [1/32, 0, 3/32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\
+      [5/16, 0, -75/64, 75/64, 0, 0, 0, 0, 0, 0, 0, 0, 0],\
+      [3/80, 0, 0, 3/16, 3/20, 0, 0, 0, 0, 0, 0, 0, 0], \
+      [29443841/614563906, 0, 0, 77736538/692538347, -28693883/1125000000, 23124283/1800000000, 0, 0, 0, 0, 0, 0, 0],\
+      [16016141/946692911, 0, 0, 61564180/158732637, 22789713/633445777, 545815736/2771057229,\
+      -180193667/1043307555, 0, 0, 0, 0, 0, 0],\
+      [39632708/573591083, 0, 0, -433636366/683701615, -421739975/2616292301, 100302831/723423059,\
+      790204164/839813087, 800635310/3783071287, 0, 0, 0, 0, 0],\
+      [246121993/1340847787, 0, 0, -37695042795/15268766246, -309121744/1061227803, -12992083/490766935,\
+      6005943493/2108947869, 393006217/1396673457, 123872331/1001029789, 0, 0, 0, 0],\
+      [-1028468189/846180014, 0, 0, 8478235783/508512852, 1311729495/1432422823, -10304129995/1701304382,\
+      -48777925059/3047939560, 15336726248/1032824649, -45442868181/3398467696, 3065993473/597172653, 0, 0, 0],\
+      [185892177/718116043, 0, 0, -3185094517/667107341, -477755414/1098053517, -703635378/230739211, 5731566787/1027545527,\
+      5232866602/850066563, -4093664535/808688257, 3962137247/1805957418, 65686358/487910083, 0, 0],\
+      [403863854/491063109, 0, 0, -5068492393/434740067, -411421997/543043805, 652783627/914296604, 11173962825/925320556,\
+      -13158990841/6184727034, 3936647629/1978049680, -160528059/685178525, 248638103/1413531060, 0, 0] ],dtype=np.float64)
+
+   b=np.array([14005451/335480064,\
+               0,0,0,0,\
+               -59238493/1068277825,\
+               181606767/758867731,\
+               561292985/797845732,\
+               -1041891430/1371343529,\
+               760417239/1151165299,\
+               118820643/751138087,\
+               -528747749/2220607170,\
+               1/4],dtype=np.float64)
 
 ###########################################################
 
@@ -312,40 +448,8 @@ elif init==3: #----------------------------------------------
           v[i]=1/4+random.uniform(-0.01,0.01)
 
 elif init==4: #----------------------------------------------
-
-   #def mygaussian(x,y,xc,yc,sigma):
-   #    return np.exp(-(x-xc)**2/sigma**2  -(y-yc)**2/sigma**2    )
-   #u[:]=0.9
-   #v[:]=0.1
-   #for i in range(0,NP):
-       #u[i]+=0.45*np.cos(0.5*(1.1*x[i]+z[i])**2*np.pi)*np.cos(0.6*(x[i]-1.1*z[i])**2*np.pi)
-       #v[i]+=0.45*np.sin(0.6*(1.2*x[i]+z[i])**2*np.pi)*np.sin(0.7*(x[i]-1.2*z[i])**2*np.pi)
-       #u[i]+=0.45*np.cos(0.3*(x[i]-1.25)*np.pi)*np.cos(0.3*(z[i]-1.25)*np.pi)
-       #v[i]+=0.45*np.sin(0.3*(x[i]-1.25)*np.pi)*np.cos(0.3*(z[i]-1.25)*np.pi)
-       #u[i]-=mygaussian(x[i],z[i],0.25,0.33,0.1)/1.2
-       #u[i]-=mygaussian(x[i],z[i],0.75,0.66,0.15)/1.2
-       #u[i]-=mygaussian(x[i],z[i],1.25,1.33,0.2)/1.2
-       #u[i]-=mygaussian(x[i],z[i],2,2,0.3)/1.2
-       #u[i]-=mygaussian(x[i],z[i],0.5,2.1,0.2)/1.2
-       #u[i]-=mygaussian(x[i],z[i],2.2,0.6,0.2)/1.2
-       #v[i]+=mygaussian(x[i],z[i],0.33,0.25,0.1)/1.2
-       #v[i]+=mygaussian(x[i],z[i],0.66,0.75,0.15)/1.2
-       #v[i]+=mygaussian(x[i],z[i],1.33,1.25,0.2)/1.2
-       #v[i]+=mygaussian(x[i],z[i],2,2,0.3)/1.2
-       #v[i]+=mygaussian(x[i],z[i],2.1,0.5,0.2)/1.2
-       #v[i]+=mygaussian(x[i],z[i],0.6,2.2,0.2)/1.2
-   #mean = 0.25
-   #std = 0.05
-   #u[:] = np.random.normal(mean, std, size=NP)
-   #mean = 0.75
-   #std = 0.05 
-   #v[:] = np.random.normal(mean, std, size=NP)
-   #for i in range(0,NP):
-   #    if x[i]>Lx/2: u[i]=0.75
-   #    if z[i]>Lz/2: u[i]=0.25
-
    # original at https://github.com/cselab/gray-scott/blob/master/python/gray_scott.py
-   # domain is [-1:1]x[-1:1]
+   # their domain is [-1:1]x[-1:1] so I transpose it
    for i in range(0,NP):
        xi=x[i]-Lx/2
        zi=z[i]-Lz/2
@@ -498,12 +602,12 @@ for istep in range(0,nstep+1):
        else:
           X[:]+=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X)*dt
 
-    if scheme=='Heun':
+    elif scheme=='Heun':
        k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X   )*dt
        k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1)*dt
        X[:]+=(k1+k2)/2
 
-    if scheme=='RK2':
+    elif scheme=='RK2':
        if three_dimensions:
           k1=F_3d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X     )*dt
           k2=F_3d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k1/2)*dt
@@ -512,49 +616,69 @@ for istep in range(0,nstep+1):
           k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/2)*dt
        X[:]+=k2
 
-    if scheme=='RK3':
-       k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X        )*dt
-       k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/2   )*dt
-       k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X-k1+2*k2)*dt
-       X[:]+=(k1+4*k2+k3)/6
-
-    if scheme=='RK38':
-       k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X         )*dt
-       k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/3    )*dt
-       k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X-k1/3+k2 )*dt
-       k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1-k2+k3)*dt
-       X[:]+=(k1+3*k2+3*k3+k4)/8
-
-    if scheme=='RK4':
+    elif scheme=='RK3':
        if three_dimensions:
-          k1=F_3d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X     )*dt
-          k2=F_3d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k1/2)*dt
-          k3=F_3d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k2/2)*dt
-          k4=F_3d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k3  )*dt
+          k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X                    )*dt 
+          k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k1*a[0,0]          )*dt
+          k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k1*a[1,0]+k2*a[1,1])*dt
        else:
-          k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X     )*dt
-          k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/2)*dt
-          k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k2/2)*dt
-          k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k3  )*dt
-       X[:]+=(k1+2*k2+2*k3+k4)/6
+          k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X                    )*dt 
+          k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[0,0]          )*dt
+          k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[1,0]+k2*a[1,1])*dt
+       X[:]+=(b[0]*k1+b[1]*k2+b[2]*k3)
 
-    if scheme=='RK5':
-       k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X                                    )*dt
-       k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/3                               )*dt
-       k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*4/25+k2*6/25                    )*dt
-       k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/4   -k2*3    +k3*15/4           )*dt
-       k5=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*2/27+k2*10/9 -k3*50/81 +k4*8/81 )*dt
-       k6=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*2/25+k2*12/25+k3*2/15  +k4*8/75 )*dt
-       X[:]+=(k1*23+125*k3-81*k5+125*k6)/192
+    elif scheme=='RK4' or scheme=='RK38':
+       if three_dimensions:
+          k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X                              )*dt 
+          k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k1*a[0,0]                    )*dt
+          k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k1*a[1,0]+k2*a[1,1]          )*dt
+          k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k1*a[2,0]+k2*a[2,1]+k3*a[2,2])*dt
+       else:
+          k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X                              )*dt 
+          k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[0,0]                    )*dt
+          k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[1,0]+k2*a[1,1]          )*dt
+          k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[2,0]+k2*a[2,1]+k3*a[2,2])*dt
+       X[:]+=(b[0]*k1+b[1]*k2+b[2]*k3+b[3]*k4)
 
-    if scheme=='RKF':
-       k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X                                                                )*dt
-       k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X +k1*1/4                                                        )*dt
-       k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X +k1*3/32     +k2*9/32                                          )*dt
-       k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X +k1*1932/2197-k2*7200/2197+k3*7296/2197                        )*dt
-       k5=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X +k1*439/216  -k2*8        +k3*3680/513  -k4*845/4104           )*dt
-       k6=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X -k1*8/27     +k2*2        -k3*3544/2565 +k4*1859/4104 -k5*11/40)*dt
-       X[:]+=(16/135*k1 +6656/12825*k3 +28561/56430*k4 -9/50*k5 +2/55*k6)
+    elif scheme=='RKF5' or scheme=='RK5':
+       k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X                                                  )*dt 
+       k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[0,0]                                        )*dt
+       k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[1,0]+k2*a[1,1]                              )*dt
+       k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[2,0]+k2*a[2,1]+k3*a[2,2]                    )*dt
+       k5=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[3,0]+k2*a[3,1]+k3*a[3,2]+k4*a[3,3]          )*dt
+       k6=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[4,0]+k2*a[4,1]+k3*a[4,2]+k4*a[4,3]+k5*a[4,4])*dt
+       X[:]+=(b[0]*k1+b[1]*k2+b[2]*k3+b[3]*k4+b[4]*k5+b[5]*k6)
+
+    elif scheme=='RK65':
+       k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X                                                                      )*dt 
+       k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[0,0]                                                            )*dt
+       k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[1,0]+k2*a[1,1]                                                  )*dt
+       k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[2,0]+k2*a[2,1]+k3*a[2,2]                                        )*dt
+       k5=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[3,0]+k2*a[3,1]+k3*a[3,2]+k4*a[3,3]                              )*dt
+       k6=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[4,0]+k2*a[4,1]+k3*a[4,2]+k4*a[4,3]+k5*a[4,4]                    )*dt
+       k7=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[5,0]+k2*a[5,1]+k3*a[5,2]+k4*a[5,3]+k5*a[5,4]+k6*a[5,5]          )*dt
+       k8=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[6,0]+k2*a[6,1]+k3*a[6,2]+k4*a[6,3]+k5*a[6,4]+k6*a[6,5]+k7*a[6,6])*dt
+       X[:]+=(b[0]*k1+b[1]*k2+b[2]*k3+b[3]*k4+b[4]*k5+b[5]*k6+b[6]*k7+b[7]*k8)
+
+    elif scheme=='RK87' or scheme=='RKF78':
+       k1 =F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X)*dt 
+       k2 =F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[0,0])*dt
+       k3 =F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[1,0] +k2*a[1,1])*dt
+       k4 =F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[2,0] +k2*a[2,1] +k3*a[2,2])*dt
+       k5 =F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[3,0] +k2*a[3,1] +k3*a[3,2] +k4*a[3,3])*dt
+       k6 =F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[4,0] +k2*a[4,1] +k3*a[4,2] +k4*a[4,3] +k5*a[4,4])*dt
+       k7 =F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[5,0] +k2*a[5,1] +k3*a[5,2] +k4*a[5,3] +k5*a[5,4] +k6*a[5,5])*dt
+       k8 =F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[6,0] +k2*a[6,1] +k3*a[6,2] +k4*a[6,3] +k5*a[6,4] +k6*a[6,5] +k7*a[6,6])*dt
+       k9 =F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[7,0] +k2*a[7,1] +k3*a[7,2] +k4*a[7,3] +k5*a[7,4] +k6*a[7,5] +k7*a[7,6] +k8*a[7,7])*dt
+       k10=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[8,0] +k2*a[8,1] +k3*a[8,2] +k4*a[8,3] +k5*a[8,4] +k6*a[8,5] +k7*a[8,6] +k8*a[8,7] +k9*a[8,8])*dt
+       k11=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[9,0] +k2*a[9,1] +k3*a[9,2] +k4*a[9,3] +k5*a[9,4] +k6*a[9,5] +k7*a[9,6] +k8*a[9,7] +k9*a[9,8] +k10*a[9,9])*dt
+       k12=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[10,0]+k2*a[10,1]+k3*a[10,2]+k4*a[10,3]+k5*a[10,4]+k6*a[10,5]+k7*a[10,6]+k8*a[10,7]+k9*a[10,8]+k10*a[10,9]+k11*a[10,10])*dt 
+       k13=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[11,0]+k2*a[11,1]+k3*a[11,2]+k4*a[11,3]+k5*a[11,4]+k6*a[11,5]+k7*a[11,6]+k8*a[11,7]+k9*a[11,8]+k10*a[11,9]+k11*a[11,10]+k11*a[11,11])*dt 
+       X[:]+=(b[0]*k1+b[1]*k2+b[2]*k3+b[3]*k4+b[4]*k5+b[5]*k6+b[6]*k7+b[7]*k8+b[8]*k9+b[9]*k10+b[10]*k11+b[11]*k12+b[12]*k13)
+
+    else:
+
+       exit('unknwon scheme')
 
     u[:]=X[0:NP]
     v[:]=X[NP:2*NP]
