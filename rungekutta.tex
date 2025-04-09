@@ -85,6 +85,25 @@ slightly more FLOPs per time step. Its Butcher tableau is
 \end{tabular}
 \end{mdframed}
 
+We find on Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/List_of_Runge-Kutta_methods}}
+a fifth-order method:
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{tabular}{c|cccccccc}
+0 & \\
+1/3 & 1/3 \\
+2/5 & 4/25 & 6/25 \\
+1 & 1/4 & -3 & 15/4 \\
+2/3 & 2/27 & 10/9 & -50/81 & 8/81 \\
+4/5 & 2/25 & 12/25 & 2/15 & 8/75 & 0 & 0 \\ 
+\hline
+ & 23/192 & 0 & 125/192 & 0 & -27/64 & 125/192 \\
+\end{tabular}
+\end{mdframed}
+
+
+
+
 
 \index{general}{RK45} \index{general}{Runge-Kutta-Fehlberg method}
 The following method is called the Runge-Kutta-Fehlberg method and is 
@@ -127,17 +146,20 @@ where $h$ is the current step.
 If $R \le tol$ keep $A$ as the current step solution and move to the next step with step size $\delta  \cdot h$.
 If $R > tol$ recalculate the current step with step size $\delta  \cdot h$. 
 
-
-
 In the literature we can also find even higher order methods 
 based on the same principle:
 
 \begin{center}
 \includegraphics[width=8cm]{images/rungekutta/fe7}\\
+{\captionfont 7th order Fehlberg method \cite{bujk16}.}
+\end{center}
+
+
+\begin{center}
 \includegraphics[width=10cm]{images/rungekutta/prdo81a}\\
 \includegraphics[width=14cm]{images/rungekutta/prdo81b}\\
-{\captionfont Top: 7th order Fehlberg method; 
-Middle and bottom: 6/5th and 8/7th order Dormand-Prince methods from \cite{prdo81}.}
+{\captionfont 
+RK6(5) and RK8(7) Dormand-Prince methods from \cite{prdo81}.}
 \end{center}
 
 \Literature:
