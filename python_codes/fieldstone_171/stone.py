@@ -450,11 +450,37 @@ elif init==3: #----------------------------------------------
 elif init==4: #----------------------------------------------
    # original at https://github.com/cselab/gray-scott/blob/master/python/gray_scott.py
    # their domain is [-1:1]x[-1:1] so I transpose it
+
    for i in range(0,NP):
        xi=x[i]-Lx/2
        zi=z[i]-Lz/2
        u[i]=1-np.exp(-80*((xi+0.05)**2+(zi+0.05)**2))
        v[i]=np.exp(-80*((xi-0.05)**2+(zi-0.05)**2))
+
+elif init==5: #----------------------------------------------
+   # modified from init=4
+
+   for i in range(0,NP):
+       xi=x[i]-Lx/2 
+       zi=z[i]-Lz/2 
+       u[i]=1-np.exp(-80*((xi+0.05)**2+(zi+0.05)**2))
+       v[i]=np.exp(-80*((xi-0.05)**2+(zi-0.05)**2))
+       xi=x[i]-Lx/2 -Lx/3.3
+       zi=z[i]-Lz/2 -Lz/3.3
+       u[i]+=1-np.exp(-80*((xi+0.05)**2+(zi+0.05)**2))
+       v[i]+=np.exp(-80*((xi-0.05)**2+(zi-0.05)**2))
+       xi=x[i]-Lx/2 +Lx/3.5
+       zi=z[i]-Lz/2 +Lz/10 
+       u[i]+=1-np.exp(-80*((xi+0.05)**2+(zi+0.05)**2))
+       v[i]+=np.exp(-80*((xi-0.05)**2+(zi-0.05)**2))
+       xi=x[i]-Lx/2 -Lx/20
+       zi=z[i]-Lz/2 +Lz/2.8
+       u[i]+=1-np.exp(-80*((xi+0.05)**2+(zi+0.05)**2))
+       v[i]+=np.exp(-80*((xi-0.05)**2+(zi-0.05)**2))
+
+
+
+
 
 else:
 
@@ -777,9 +803,12 @@ for istep in range(0,nstep+1):
        if not three_dimensions:
           start=clock.time()
           plt.imshow(np.reshape(u,(nnz,nnx)), interpolation='none',cmap='Spectral')
+          plt.colorbar()
           plt.savefig(filename+'_u.png', bbox_inches='tight')
+          plt.clf()
           plt.imshow(np.reshape(v,(nnz,nnx)), interpolation='none',cmap='RdBu')
           plt.savefig(filename+'_v.png', bbox_inches='tight')
+          plt.clf()
           print("     export to png: %.3f s" % (clock.time()-start))
 
 

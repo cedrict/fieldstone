@@ -25,7 +25,7 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: April 6th, 2025.
+Last revision: April 9th, 2025.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -49,7 +49,9 @@ ones in what follows:
 \item \url{https://en.wikipedia.org/wiki/Reaction-diffusion_system}
 \end{itemize}
 
-See also \textcite{marm96} (1996), \textcite{mcri04} (2004).
+See also \textcite{marm96} (1996), \textcite{mcri04} (2004), \textcite{jilw24} (2024).
+
+\vspace{.6cm}
 
 The Gray–Scott reaction–diffusion system of equations are given by
 \begin{eqnarray}
@@ -107,8 +109,8 @@ naming convention used by \textcite{pear93}.
 } 
 \end{center}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{About the work of R. Munafo}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{About the work of R. Munafo available online}
 
 We find on his website\footnote{\url{http://www.mrob.com/pub/comp/xmorphia/pearson-classes.html}}
 two key figures:
@@ -131,7 +133,7 @@ On the right we find the data from his figure 3 (with corrections) replotted on 
 \end{center}
 
 It is interesting to note that the greek letters on the left figure are
-not exactly coinciding with those of the original paper...
+not exactly coinciding with those of the original paper... more on this later.
 
 The author further states:
 \begin{displayquote}
@@ -241,15 +243,15 @@ Method of lines - no particular attention to nonlinearities.
 \section*{Classification}
 
 The topic of classification is important here since each greek letter
-should correspond to a unique dynamical evolution/pattern
+should correspond to a unique dynamical evolution/pattern.
 Unfortunately, while every paper published after 1993 quotes Pearson and 
 his 12 models, the Pearson paper itself is rather ambiguous about 
 the exact $F,k$ values for each of the 12 models shown in its Fig. 2.
 
-The classification is then as follows:
+In the literature we find these $F,k$ values:
 \begin{center}
 \begin{tabular}{lllll}
-&Munafo & Munafo & Gandy \& Nelson 2022 & Har-Shemesh et al 2016 \\ 
+&Munafo online & Munafo online & Gandy \& Nelson 2022 & Har-Shemesh et al 2016 \\ 
 \hline
 alpha   & $F=0.010,k=0.047$  &$F=0.014,k=0.053$ & $F=0.010,k=0.050$ & $F=0.0175,k=0.0504$ \\
 beta    & $F=0.014,k=0.039$  &$F=0.026,k=0.051$ &                   & \\
@@ -271,8 +273,10 @@ sigma   & $F=0.090,k=0.057$  &$F=0.110,k=0.0523$& $F=0.095,k=0.056$ & \\
 \hline
 \end{tabular}
 \end{center}
+Note that all papers set $D_u/D_v=2$ but the actual values of each parameter 
+can vary.
 
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{About the methods of this \stone}
 
@@ -325,7 +329,7 @@ in 2d, so that the PDEs can be discretised in space at a node $i$ as follows:
 \frac{v_{i,j,k-1}-2v_{i,j,k}+v_{i,j,k+1}}{h_z^2} 
 \right) \nn\\
 &&
-+ u_{i,j,k}v_{i,j,k}^2 - (F+k)v_{i,j,k}
++ u_{i,j,k}v_{i,j,k}^2 - (F+k)v_{i,j,k} \nn
 \end{eqnarray}
 In two dimensions these equations become simply:
 
@@ -391,7 +395,7 @@ def F_3d(Du,Dv,F,K,NP,hx,hy,hz,X):
 Note that the code above is not complete and only serves as an 
 illustration of the structure of the function.
 There is of course a similar function for the 2d case.
-Both \lstinline{F_2d} and \lstinline{F_3d} are jitted with
+Both \lstinline{F_2d} and \lstinline{F_3d} functions are `jitted' with
 \lstinline{@numba.njit} and it makes them at least 100 times faster.
 
 Periodic boundary conditions are implemented\footnote{This should be described}.
@@ -406,8 +410,9 @@ A good starting point for the timestep is 0.1 dimensionless units, but
 Note that the CFL condition number for diffusion is $\propto h^2/\kappa$, 
 so that when resolution is halved the time step should probably be divided by four. 
 
-There are three initial conditions, as controlled by the \lstinline{init} parameter.
-Initial conditions are nearly always specified in the literature. For example, we
+There are different initial conditions implemented, as controlled by the \lstinline{init} parameter.
+Initial conditions are not neutral with respect with the evolution of the models and 
+are therefore nearly always specified in the literature. For example, we
 read in \cite{haqh16}: 
 ``The simulation was started with an initial condition of the
 red state (u,v)=(1,0) with a finite perturbation in the form of a 20x20 square in the
@@ -502,6 +507,25 @@ Section~\ref{MMM-ss:rkm}.
 In what follows we assume that a time step $\delta t$ has been chosen. 
 (embedded methods should probably be considered in the future).
 
+For methods of order 3 and higher the coefficients of the Butcher Tableaus
+are stored in arrays \lstinline{a} and \lstinline{b}. For instance:
+
+\begin{lstlisting}
+if scheme=='RK3': 
+   a=np.array(\
+     [[1/2, 0],\
+      [ -1, 2]],dtype=np.float64)
+   b=np.array([1/6,4/6,1/6],dtype=np.float64)
+elif scheme=='RK4':
+   a=np.array(\
+     [[1/2,   0, 0],\
+      [  0, 1/2, 0],\
+      [  0,   0, 1]],dtype=np.float64)
+   b=np.array([1/6,1/3,1/3,1/6],dtype=np.float64)
+...
+\end{lstlisting}
+
+
 \begin{itemize}
 
 %--------------------------------------
@@ -516,7 +540,7 @@ or,
 =
 \vec{X}^{n} + \vec{\cal F} (\vec{X}^n) \delta t
 \]
-which translates into
+which translates (in 2d) into
 \begin{lstlisting}
 for istep in range(0,nstep+1):
     X[:]+=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X)*dt
@@ -542,9 +566,9 @@ for istep in range(0,nstep+1):
 \end{lstlisting}
 
 %--------------------------------------
-\item 3rd-order RK (\lstinline{scheme='RK3'})
-
-Kutta's third-order method, \url{https://en.wikipedia.org/wiki/List_of_Runge-Kutta_methods}
+\item 3rd-order RK (\lstinline{scheme='RK3'}).
+This is the so-called Kutta's third-order 
+method\footnote{\url{https://en.wikipedia.org/wiki/List_of_Runge-Kutta_methods}}
 
 \begin{eqnarray}
 \vec{k}_1 &=& \vec{\cal F}(\vec{X}_n) \cdot \delta t\nn\\
@@ -555,10 +579,15 @@ Kutta's third-order method, \url{https://en.wikipedia.org/wiki/List_of_Runge-Kut
 
 \begin{lstlisting}
 for istep in range(0,nstep+1):
-    k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X        )*dt
-    k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/2   )*dt
-    k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X-k1+2*k2)*dt
-    X[:]+=(k1+4*k2+k3)/6
+    if three_dimensions:
+       k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X                    )*dt 
+       k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k1*a[0,0]          )*dt
+       k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k1*a[1,0]+k2*a[1,1])*dt
+    else:
+       k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X                    )*dt 
+       k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[0,0]          )*dt
+       k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[1,0]+k2*a[1,1])*dt
+    X[:]+=(b[0]*k1+b[1]*k2+b[2]*k3)
 \end{lstlisting}
 
 
@@ -577,80 +606,53 @@ for istep in range(0,nstep+1):
 This translates very simply as follows into code:
 \begin{lstlisting}
 for istep in range(0,nstep+1):
-    k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X     )*dt
-    k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/2)*dt
-    k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k2/2)*dt
-    k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k3  )*dt
-    X[:]+=(k1+2*k2+2*k3+k4)/6
+       if three_dimensions:
+          k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X                              )*dt 
+          k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k1*a[0,0]                    )*dt
+          k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k1*a[1,0]+k2*a[1,1]          )*dt
+          k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hy,hz,X+k1*a[2,0]+k2*a[2,1]+k3*a[2,2])*dt
+       else:
+          k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X                              )*dt 
+          k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[0,0]                    )*dt
+          k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[1,0]+k2*a[1,1]          )*dt
+          k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*a[2,0]+k2*a[2,1]+k3*a[2,2])*dt
+       X[:]+=(b[0]*k1+b[1]*k2+b[2]*k3+b[3]*k4)
 \end{lstlisting}
 
 %--------------------------------------
-\item 4th-order RK (\lstinline{scheme='RK38'})
-
-\begin{lstlisting}
-for istep in range(0,nstep+1):
-    k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X         )*dt
-    k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/3    )*dt
-    k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X-k1/3+k2 )*dt
-    k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1-k2+k3)*dt
-    X[:]+=(k1+3*k2+3*k3+k4)/8
-\end{lstlisting}
+\item 4th-order RK (\lstinline{scheme='RK38'}).
+See also section~\ref{MMM-ss:rkm}.
 
 %--------------------------------------
-\item 5th-order RK (\lstinline{scheme='RK5'})
-
-\begin{lstlisting}
-for istep in range(0,nstep+1):
-    k1=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X                                    )*dt
-    k2=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/3                               )*dt
-    k3=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*4/25+k2*6/25                    )*dt
-    k4=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1/4   -k2*3    +k3*15/4           )*dt
-    k5=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*2/27+k2*10/9 -k3*50/81 +k4*8/81 )*dt
-    k6=F_2d(Du,Dv,Feed,Kill,NP,hx,hz,X+k1*2/25+k2*12/25+k3*2/15  +k4*8/75 )*dt
-    X[:]+=(k1*23+125*k3-81*k5+125*k6)/192
-\end{lstlisting}
+\item 5th-order RK (\lstinline{scheme='RK5'})   
+This is the so-called Nystr\"{o}m's fifth-order 
+method\footnote{\url{https://en.wikipedia.org/wiki/List_of_Runge-Kutta_methods}}.
+See also section~\ref{MMM-ss:rkm}.
 
 %--------------------------------------
 \item Runge-Kutta-Fehlberg\footnote{\url{https://ketch.github.io/numipedia/methods/Fehlberg45.html}} 
 (\lstinline{scheme='RKF5'})
-
-The coefficients are obtained from the following Butcher tableau.
-
-\begin{align} 
-\begin{array}{c|cccccc} 
-& & & & & & \\ 
-\frac{1}{4} & \frac{1}{4} & & & & & \\ 
-\frac{3}{8} & \frac{3}{32} & \frac{9}{32} & & & & \\ 
-\frac{12}{13} & \frac{1932}{2197} & - \frac{7200}{2197} & \frac{7296}{2197} & & & \\ 
-1 & \frac{439}{216} & -8 & \frac{3680}{513} & - \frac{845}{4104} & & \\ 
-\frac{1}{2} & - \frac{8}{27} & 2 & - \frac{3544}{2565} & \frac{1859}{4104} & - \frac{11}{40} & \\ 
-\hline & \frac{16}{135} & & \frac{6656}{12825} & \frac{28561}{56430} & - \frac{9}{50} & \frac{2}{55}\\ 
-& \frac{25}{216} & & \frac{1408}{2565} & \frac{2197}{4104} & - \frac{1}{5} & 
-\end{array}
-\end{align}
+See also section~\ref{MMM-ss:rkm}.
 
 %--------------------------------------------------------------
-\item 6th order Dormand-Prince/RK method (\lstinline{scheme='RK65'})
-
+\item 6th order Dormand-Prince/RK method (\lstinline{scheme='RK65'}).
 See table 1 in \textcite{prdo81}.
+See also section~\ref{MMM-ss:rkm}.
 
 %--------------------------------------------------------------
-\item 8th order Runge-Kutta-Fehlberg method (\lstinline{scheme='RKF78'})
-
+\item 8th order Runge-Kutta-Fehlberg method (\lstinline{scheme='RKF78'}).
 It is commonly named RKF7(8) and I found it in \textcite{bujk16} (2016).
 See also section~\ref{MMM-ss:rkm}.
 
 %--------------------------------------------------------------
-\item 8th order Dormand-Prince method (\lstinline{scheme='RK87'})
-
+\item 8th order Dormand-Prince method (\lstinline{scheme='RK87'}).
 It is commonly named DP8(7) and I found it in \textcite{bujk16} (2016).
 See also section~\ref{MMM-ss:rkm}.
 ODE87  is a realization of explicit Runge-Kutta method. 
-See \fullcite{prdo81}.
+See \textcite{prdo81} (1981).
 This is a 8th-order accurate integrator therefore the local error normally
 expected is ${\cal O}(h^9)$.  
 This requires 13 function evaluations per integration step.
-
 \end{itemize}
 
 
@@ -658,28 +660,33 @@ This requires 13 function evaluations per integration step.
 
 TODO:
 
-try implicit ? if I only keep the Laplace terms in the matrix the matrix does not change, only the rhs.
+\begin{itemize}
+\item try implicit ? if I only keep the Laplace terms in the matrix the matrix does not change, only the rhs.
+Implicit in time means large time steps can be taken so as to get `faster' to a steady state {\it if it exists}.
 
-add colorbar to png plots
+\item use python function to integrate the ODE? a la rhythmite ? see stone 157.
 
-change/prescribe colorscale python
+\item run 3D model(s). Which one ? why ?
 
-use python function to integrate ? a la rhymtite ? see stone 157
+\item extend code to 1D. Apparently there is a fair bit of published work in 1d too.
 
-run 3D model(s). Which one ? why ?
+\item Look at blob detection algorithms (haqh16). 
 
-extend code to 1D. apparently there is a fair bit of published work in 1d too.
+\item do massive run with Lukas' poster approach ?
 
-Look at blob detection algorithms (haqh16) 
+\item try nine-point stencil as in \cite{jilw24}. More expensive calculations... different results?
 
-do massive run with Lukas' poster approach ?
+\item compute $\delta t$ via embedded methods.
+
+\end{itemize}
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Testing/benchmarking of R-K methods}
 
 In this case we start with non random initial conditions (\lstinline{init=2}).
-We run the zeta model and we find that it relaxes to the trivial solution $(u=1,v=0)$.
+We run the zeta1 model and we find that it relaxes to the trivial solution $(u=1,v=0)$.
 We use the {\tt script\_RKtest1} bash script.
 
 \begin{center}
@@ -698,8 +705,9 @@ and $v$ for all the RK methods, parameters of the zeta model.}
 \end{center}
 
 This is of course not a benchmark {\it per se}, but rather a sanity check that 
-the low order RK methods yield the same results (down to a small difference).
-
+the low order RK methods yield the same results (down to a small difference) 
+on a rather trivial model.
+We carry out a more appropriate and challenging test in the next section.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -728,11 +736,11 @@ and $v$ for all the RK methods, parameters of the alpha1 model.}
 We find that after 'some time'  the measurements diverge. 
 More precisely:
 \begin{itemize}
-\item $<u>,<v>$: RK1      and RKF5/RK5 agree until $t\simeq 2300$
-\item $<u>,<v>$: RK2/Heun and RKF5/RK5 agree until $t\simeq 4200$
-\item $<u>,<v.$: RK3      and RKF5/RK5 agree until $t\simeq 5800$
-\item $<u>,<v.$: RK4/RK38 and RKF5/RK5 agree until $t\simeq 9000$
-\item $<u>,<v.$: RKF5, RK5, RK65, RKF78, RK87 all perfectly agree until $t=10,000$
+\item $<u>,<v>$: RK1      and RK5 agree until $t\simeq 2300$
+\item $<u>,<v>$: RK2/Heun and RK5 agree until $t\simeq 4200$
+\item $<u>,<v>$: RK3      and RK5 agree until $t\simeq 5800$
+\item $<u>,<v>$: RK4/RK38 and RK5 agree until $t\simeq 9000$
+\item $<u>,<v>$: RK5, RKF5, RK65, RKF78, RK87 all perfectly agree until $t=10,000$
 \end{itemize}
 
 
@@ -769,6 +777,21 @@ and $v$ for all the RK methods, parameters of the alpha1 model.}
 {\captionfont $u$ field at the end of the run, resolution $257^2$, RK1, RK2, RK3, RK4, RK5, RKF7(8).}
 \end{center}
 
+We now repeat this test with a much longer run, i.e. \lstinline{nstep=200,000}, 
+all other things equal. This is carried out by {\tt script\_RKtest3}.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_171/RKtest3/avrg_u.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_171/RKtest3/avrg_v.pdf}\\
+{\captionfont Evolution of the averages of fields $u$
+and $v$ for the high-order RK methods, parameters of the alpha1 model.}
+\end{center}
+
+We find that ultimately all RK schemes end up diverging.
+
+
+
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -802,7 +825,7 @@ Blue letters are from \cite{gane22}.}
 
 
 
-All models start from the following initial condition ({\it the randomness was taken away}):
+All models start from the following initial condition ({\it the initial randomness is absent for now}):
 \begin{center}
 \includegraphics[width=4cm]{python_codes/fieldstone_171/pearson93/alpha_solution_0000000_u.png}
 \end{center}
@@ -1288,7 +1311,7 @@ Unfortunately models nu, xi, rho, sigma failed to develop any pattern.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Results, starting from random initial condition}
+\section*{Results, starting from single perturbation (init=4)}
 
 \subsection*{alpha}
 
