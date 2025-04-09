@@ -1,0 +1,3 @@
+#
+for f in *.png; do convert -resize 60% "$f" "${f%.*}.jpg"; done
+
