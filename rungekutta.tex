@@ -1,9 +1,9 @@
 These methods were developed around 1900 by the German mathematicians Carl Runge and Martin Kutta.
 The RK methods are methods for the numerical integration of 
 ODEs\footnote{\url{https://en.wikipedia.org/wiki/Runge-Kutta_methods}}. These methods are well 
-documented in any numerical analysis textbook and the reader is referred to \cite{gery10,tack10}.
-Any Runge-Kutta method is uniquely identified by its Butcher tableau (REF?) which contains 
-all necessary coefficients to build the algorithm.\todo{missing refs for Butcher tableau}
+documented in any numerical analysis textbook but also in the textbooks of geodynamics \cite{gery10,tack10}.
+Any Runge-Kutta method is uniquely identified by its so-called `Butcher tableau' which contains 
+all necessary coefficients to build the algorithm.
 
 You will find here\footnote{\url{https://en.wikipedia.org/wiki/List_of_Runge-Kutta_methods}}
 a complete list of RK methods.
@@ -102,9 +102,6 @@ a fifth-order method:
 \end{mdframed}
 
 
-
-
-
 \index{general}{RK45} \index{general}{Runge-Kutta-Fehlberg method}
 The following method is called the Runge-Kutta-Fehlberg method and is 
 commonly abbreviated 
@@ -124,7 +121,6 @@ Its Butcher tableau is as follows:
 &25/216 	&0 	&1408/2565 	&2197/4104 	&-1/5 	&0 
 \end{tabular}
 \end{mdframed}
-
 
 The first row of coefficients at the bottom of the table gives the fifth-order 
 accurate method, and the second row gives the fourth-order accurate method. 
@@ -147,7 +143,24 @@ If $R \le tol$ keep $A$ as the current step solution and move to the next step w
 If $R > tol$ recalculate the current step with step size $\delta  \cdot h$. 
 
 In the literature we can also find even higher order methods 
-based on the same principle:
+based on the same principle. 
+For example the Butcher tableau of the RKF5 method is as 
+follows\footnote{\url{https://ketch.github.io/numipedia/methods/Fehlberg45.html}}:
+
+\[ 
+\begin{array}{c|cccccc} 
+& & & & & & \\ 
+\frac{1}{4} & \frac{1}{4} & & & & & \\ 
+\frac{3}{8} & \frac{3}{32} & \frac{9}{32} & & & & \\ 
+\frac{12}{13} & \frac{1932}{2197} & - \frac{7200}{2197} & \frac{7296}{2197} & & & \\ 
+1 & \frac{439}{216} & -8 & \frac{3680}{513} & - \frac{845}{4104} & & \\ 
+\frac{1}{2} & - \frac{8}{27} & 2 & - \frac{3544}{2565} & \frac{1859}{4104} & - \frac{11}{40} & \\ 
+\hline & \frac{16}{135} & & \frac{6656}{12825} & \frac{28561}{56430} & - \frac{9}{50} & \frac{2}{55}\\ 
+& \frac{25}{216} & & \frac{1408}{2565} & \frac{2197}{4104} & - \frac{1}{5} & 
+\end{array}
+\]
+
+
 
 \begin{center}
 \includegraphics[width=8cm]{images/rungekutta/fe7}\\
