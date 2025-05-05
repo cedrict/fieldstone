@@ -1,12 +1,13 @@
 \begin{flushright} {\tiny {\color{gray} \tt storage.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The FE matrix (or the blocks which compose it) 
+The FE matrix\footnote{what follows also applied to matrices 
+obtained by means of the FD method} (or the blocks which compose it) 
 is the result of the assembly process of all elemental matrices. 
 Its size can become quite large when the resolution is being increased (from thousands
-of lines/columns to tens of millions).
+of lines/columns to tens of millions, if not even more).
 
-One important property of the matrix is its sparsity. Typically mush less than 1\% of the 
+One important property of the matrix is its sparsity. Typically musc {\it much} less than 1\% of the 
 matrix terms is not zero and this means that the matrix storage can and {\it should} be optimised. 
 Clever storage formats were designed early on since the amount of RAM memory in computers
 was the limiting factor 3 or 4 decades ago \cite{saad}.
@@ -20,10 +21,11 @@ There are several standard formats\footnote{\url{https://en.wikipedia.org/wiki/S
 \end{itemize}
 
 I focus on  the CSR format in what follows since it is the most common format 
-and it is the one used in \elefant. 
+and it is the one used in \elefant and in almost all code of FieldStone. 
+In the following sections I look at typical cases in 2d and 3d.
 
 %..............................................................................
-\subsection{2D domain - $Q_1$ - One degree of freedom per node}
+\subsection{2d domain - $Q_1$ - One degree of freedom per node}
 
 Let us consider again the  $3\times2$ element grid which counts 12 nodes.
 
@@ -32,9 +34,9 @@ Let us consider again the  $3\times2$ element grid which counts 12 nodes.
 \end{center}
 
 \noindent In the case there is only a single degree of freedom per node, the 
-assembled FEM matrix ${\bm M}$ will look like this:
+assembled FEM matrix ${\bm A}$ will look like this:
 \[
-{\bm M}=
+{\bm A}=
 \left(
 \begin{array}{cccccccccccc}
 \Box & \Box &      &      & \Box & \Box &      &      &      &      &      &      \\
@@ -53,27 +55,28 @@ assembled FEM matrix ${\bm M}$ will look like this:
 \right)
 \]
 where the $\Box$ stand for non-zero terms.
-This matrix structure stems from the fact that
+This matrix structure is actually very predictable and stems from the fact that
 \begin{itemize}
-\item node 0 sees nodes 0,1,4,5 (1st line/column of the matrix)
-\item node 1 sees nodes 0,1,2,4,5,6 (2nd line/column of the matrix)
-\item node 2 sees nodes 1,2,3,5,6,7 (3rd line/column of the matrix)
-\item node 3 sees nodes 2,3,6,7
-\item node 4 sees nodes 0,1,4,5,8,9
-\item node 5 sees nodes 0,1,2,4,5,6,8,9,10 
-\item node 6 sees nodes 1,2,3,5,6,7,9,10,11
-\item node 7 sees nodes 2,3,6,7,10,11
-\item node 8 sees nodes 4,5,8,9
-\item node 9 sees nodes 4,5,6,8,9,10
-\item node 10 sees nodes 5,6,7,9,10,11 
-\item node 11 sees nodes 6,7,10,11 (last line/column of the matrix)
+\item node 0 is connected to nodes 0,1,4,5 (1st line of the matrix)
+\item node 1 is connected to nodes 0,1,2,4,5,6 (2nd line of the matrix)
+\item node 2 is connected to nodes 1,2,3,5,6,7 (3rd line of the matrix)
+\item node 3 is connected to nodes 2,3,6,7 (4th line of the matrix)
+\item node 4 is connected to nodes 0,1,4,5,8,9 (5th line of the matrix)
+\item node 5 is connected to nodes 0,1,2,4,5,6,8,9,10  (6th line of the matrix)
+\item node 6 is connected to nodes 1,2,3,5,6,7,9,10,11 (7th line of the matrix)
+\item node 7 is connected to nodes 2,3,6,7,10,11 (8th line of the matrix)
+\item node 8 is connected to nodes 4,5,8,9 (9th line of the matrix)
+\item node 9 is connected to nodes 4,5,6,8,9,10 (10th line of the matrix)
+\item node 10 is connected to nodes 5,6,7,9,10,11  (11th line of the matrix)
+\item node 11 is connected to nodes 6,7,10,11 (last line/column of the matrix)
 \end{itemize}
+By 'connected' we mean that there is 
 In light thereof, we have
 \begin{itemize}
-\item 4 corner nodes which have 4 neighbours (counting themselves) 
-\item 2(nnx-2) nodes which have 6 neighbours
-\item 2(nny-2) nodes which have 6 neighbours
-\item (nnx-2)$\times$(nny-2) nodes which have 9 neighbours
+\item $4$ corner nodes which have 4 neighbours (counting themselves), 
+\item $2(nnx-2)$ nodes which have 6 neighbours,
+\item $2(nny-2)$ nodes which have 6 neighbours,
+\item $(nnx-2)\times(nny-2)$ nodes which have 9 neighbours.
 \end{itemize}
 In total, the number of non-zero terms in the matrix above is then:
 \[
@@ -97,28 +100,32 @@ R = \frac{16+24(n-2)+9(n-2)^2}{n^4}
 It is then obvious that when $n$ is large enough $R \sim 1/n^2$.
 
 CSR stores the nonzeros of the matrix row by row, in a
-single indexed array A of double precision  numbers.
-Another array COLIND contains the column index of each
-corresponding entry in the A array. A third integer array RWPTR
+single indexed array {\sffamily A} of double precision  numbers.
+Another array {\sffamily COLIND} (also often called {\sffamily ja}) 
+contains the column index of each
+corresponding entry in the {\sffamily A} array. A third integer array 
+{\sffamily RWPTR} (also often called {\sffamily ia})
 contains pointers to the beginning of each row, which an additional pointer to
-the first index following the nonzeros of the matrix A.
-A and COLIND have length NZ and RWPTR has length N+1.
+the first index following the nonzeros of the matrix {\sffamily A}.
+{\sffamily A} and {\sffamily COLIND} have length {\sffamily NZ} 
+and {\sffamily RWPTR} has length {\sffamily N+1}.
 
-In the case of the here-above matrix, the arrays COLIND and RWPTR will look like:
+In the case of the here-above matrix, the arrays {\sffamily COLIND} and 
+{\sffamily RWPTR} will look like:
+
 \begin{eqnarray}
-COLIND&=&(0,1,4,5, \; 0,1,2,4,5,6, \; 1,2,3,5,6,7, ..., 6,7,10,11) \nn\\
-RWPTR &=&(0,4,10,16, ... )   \nn
+\text{\sffamily ja=COLIND}&=&(0,1,4,5, \; 0,1,2,4,5,6, \; 1,2,3,5,6,7, ..., 6,7,10,11) \nn\\
+\text{\sffamily ia=RWPTR} &=&(0,4,10,16, ... )   \nn
 \end{eqnarray}
 
-
 %..............................................................................
-\subsection{2D domain - $Q_1$ - Symmetric matrix CSR storage} \label{ss:symmcsrss}
+\subsection{2d domain - $Q_1$ - Symmetric matrix CSR storage} \label{ss:symmcsrss}
 
-If the matrix is symmetric, i.e. ${\bm M}={\bm M}^T$, then we may wish to 
+If the matrix is symmetric, i.e. ${\bm A}={\bm A}^T$, then we may wish to 
 only store half of it, always in the interest of saving memory. 
 Only the following remaining $\Box$ entries are relevant now:
 \[
-{\bm M}=
+{\bm A}=
 \left(
 \begin{array}{cccccccccccc}
 \Box & \Box &      &      & \Box & \Box &      &      &      &      &      &      \\
@@ -138,28 +145,30 @@ Only the following remaining $\Box$ entries are relevant now:
 \]
 We see that the number of nonzeros is now 
 \[
-NZ_{symm}= \frac{NZ-n}{2}+n
+NZ_{symm}= \frac{NZ-N}{2}+N
 \]
 and in this case $NZ_{symm}=(70-12)/2+12=41$.
 Then 
+
+
 \begin{eqnarray}
-COLIND&=&(0,1,4,5, \; 1,2,4,5,6, \; 3,5,6,7, ..., ,11) \nn\\
-RWPTR &=&(0,4,9,14, ... )   \nn
+\text{\sffamily ja=COLIND}&=&(0,1,4,5, \; 1,2,4,5,6, \; 3,5,6,7, ..., ,11) \nn\\
+\text{\sffamily ia=RWPTR} &=&(0,4,9,14, ... )   \nn
 \end{eqnarray}
 
 In case the numbering is Fortran-like, then 
+
 \begin{eqnarray}
-ja=COLIND&=&(
-1, 2, 5, 6, \quad  2, 3, 5, 6, 7, \quad 3, 4, 6, 7, 8, \quad      
-4, 7, 8, \quad  5, 6, 9, 10, \quad 6, 7, 9, 10, 11, \nn\\
-&& 7, 8, 10, 11, 12, \quad 8, 11, 12, \quad 9, 10, \quad 10, 11, \quad  11, 12, \quad 12) \nn\\
-ia=RWPTR &=&(1, 5, 10, 15, 18, 22, 27, 32, 35, 37, 39, 41, 42)  \nn
+\text{\sffamily ja=COLIND}&=& (1, 2, 5, 6, 2, 3, 5, 6, 7,  3, 4, 6, 7, 8, 
+4, 7, 8,  5, 6, 9, 10, 6, 7, 9, 10, 11, \nn\\
+&& 7, 8, 10, 11, 12,  8, 11, 12,  9, 10,  10, 11,   11, 12,  12) \nn\\
+\text{\sffamily ia=RWPTR} &=&(1, 5, 10, 15, 18, 22, 27, 32, 35, 37, 39, 41, 42)  \nn
 \end{eqnarray}
 
 %..............................................................................
-\subsection{2D domain - $Q_1$ - Two degrees of freedom per node}
+\subsection{2d domain - $Q_1$ - Two degrees of freedom per node}
 
-When there are now two degrees of freedom per node, such as in the case 
+When there are two degrees of freedom per node (i.e. $ndofV=2$), such as in the case 
 of the Stokes equation in two-dimensions, the size of the $\K$ matrix 
 is given by $NfemV=nnx*nny*ndofV$ where $NfemV$ is the total number of 
 velocity degrees of freedom.
@@ -226,9 +235,10 @@ the number of non-zero terms in the matrix is then:
 NZ=4\left[4\times4+4\times6+2\times6+2\times9\right]=280
 \]
 In the case of the here-above matrix, the arrays COLIND and RWPTR will look like:
+
 \begin{eqnarray}
-COLIND&=&(0,1,2,3,8,9,10,11, \; 0,1,2,3,8,9,10,11,\; ...) \nn\\
-RWPTR &=&(0,8,16,28, ... ) \nn
+\text{\sffamily ja=COLIND}&=& (0,1,2,3,8,9,10,11, \; 0,1,2,3,8,9,10,11,\; ...) \nn\\
+\text{\sffamily ia=RWPTR} &=&(0,8,16,28, ... ) \nn
 \end{eqnarray}
 
 Assuming we are using $Q_1\times P_0$ elements, the structure of the matrix $\G_{el}^T$ is as follows
@@ -238,7 +248,7 @@ Assuming we are using $Q_1\times P_0$ elements, the structure of the matrix $\G_
 \begin{equation}
 \left(
 \begin{array}{ccccccccccccccccccccccccc}
-&0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 & 17 & 18 & 19 & 20 & 21 & 22 & 23     \\
+0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 & 17 & 18 & 19 & 20 & 21 & 22 & 23     \\
 \Box&\Box & \Box&\Box &  &  &  &  & \Box&\Box & \Box&\Box &  &  &  &  &  &  &  &  &  &  &  &  \\
     &     & \Box&\Box & \Box&\Box &  &  &  &  & \Box&\Box & \Box&\Box &  &  &  &  &  &  &  &  &  &  \\
  & &     &     & \Box&\Box & \Box&\Box &  &  &  &  & \Box&\Box & \Box&\Box &  &  &  &  &  &  &  &    \\
@@ -259,7 +269,8 @@ $3\times 2$, $4\times 3$ and $5\times 4$ mesh of $Q_1\times P_0$ elements.}
 \end{center}
 
 
-Assuming we are now using $Q_1\times Q_1$ elements (without bubble), 
+Assuming we are now using $Q_1\times Q_1$ elements (without bubble\footnote{This element
+pair is obviously unstable and should not be used.}), 
 the structure of the matrix $\G_{el}^T$ is different: we now have 12 pressure dofs 
 which are coupled to 24 velocity dofs:
 \begin{scriptsize}
@@ -352,7 +363,7 @@ In other words,
 
 
 %..............................................................................
-\subsection{2D domain - $Q_2$ - Two degrees of freedom per node}
+\subsection{2d domain - $Q_2$ - Two degrees of freedom per node}
 
 
 When there are now two degrees of freedom per node, such as in the case 
@@ -370,10 +381,10 @@ $nelx=3$, $nely=2$, so that $nnx=7$ and $nny=5$, and then
 $NfemV=7*5*2=70$ and elemental matrices are now $18\times18$ in size.
 
 
+Let us start with the simple case of 1 dof per node:
 \begin{center}
 \input{tikz/tikz_3x2_Q2.tex}
 \end{center}
-
 
 Concretely here:
 \begin{itemize}
@@ -395,10 +406,10 @@ NZ=1700
 \] 
 And if we choose for a symmetric CSR storage:
 \[
-NZ_{symm} = \frac{NZ-n}{2}+n = \frac{1700-70}{2} + 70 = 885 
+NZ_{symm} = \frac{NZ-N}{2}+N = \frac{1700-70}{2} + 70 = 885 
 \]
 
-Let us now turn to the real case of 2 dofs per node and establish who sees who:
+Let us now turn to the real case of 2 dofs per node and establish who 'sees' who:
 
 \begin{tabular}{lp{14.5cm}l}
 dof &  sees other dofs & total\\
@@ -427,7 +438,8 @@ dof &  sees other dofs & total\\
 \hline
 \end{tabular}
 
-The second column of this array is the content of the ja array if a full storage is used.
+The second column of this array is the content of the {\sffamily ja} array 
+if a full storage is used.
 If we now use a symmetric storage then:
 
 \begin{tabular}{lp{14.5cm}l}
@@ -511,7 +523,7 @@ as expected.
 
 
 %..............................................................................
-\subsection{3D domain - $Q_1$ - CSR storage - One degree of freedom}
+\subsection{3d domain - $Q_1$ - CSR storage - One degree of freedom}
 
 Let us consider a $3\times4\times2$ grid which counts 
 $nnx\cdot nny \cdot nnz = 5 \cdot 4\cdot 3=60$ nodes.
@@ -537,7 +549,7 @@ The total number of nonzeros in the case $ndof=1$ would be decomposed as follows
 \end{itemize}
 
 %..............................................................................
-\subsection{3D domain - $Q_2$ - CSR storage - one degree of freedom}
+\subsection{3d domain - $Q_2$ - CSR storage - one degree of freedom}
 
 
 \begin{center}
@@ -549,7 +561,7 @@ The total number of nonzeros in the case $ndof=1$ would be decomposed as follows
 
 
 %..............................................................................
-\subsection{Matrix Storage in fieldstone}
+\subsection{Matrix Storage in the Python codes of FieldStone}
 
 The majority of the early codes have the FE matrix being a full array
 \begin{lstlisting}
@@ -571,7 +583,7 @@ A conversion to CSR format is still necessary before calling the solver.
 \subsection{About Sparse Matrix-Vector multiplication} \label{ss:spmv}
 \index{general}{SpMV} \index{general}{Sparse Matrix-Vector Multiplication}
 
-When/if the matrix ${\bm M}$ is stored in a two-dimensional array, 
+When the matrix ${\bm A}$ is stored in a two-dimensional array of size $N\times N$, 
 its (left or right) multiplication by a vector is trivial. 
 Either one resorts to writing a double for loop (not recommended), 
 either one uses {\tt numpy.dot}\footnote{\url{https://numpy.org/doc/stable/reference/generated/numpy.dot.html}}
@@ -583,37 +595,38 @@ This question is {\it very important} since iterative solvers such as the Conjug
 
 The Sparse Matrix-Vector multiplication operation is often abbreviated SpMV.
 To quote Knepley \cite{knepley}: "The Sparse Matrix-Vector Product (SpMV) is today 
-a workhorse of scientific computing. It is a central kernel is iterative linear and 
+a workhorse of scientific computing. It is a central kernel in iterative linear and 
 nonlinear solvers for PDE, and now for many graph algorithms."
 As explained in Williams \etal (2007) \cite{wiov07} (and in many 
 other sources on the topic), the algorithm for 
-a basic SpMV implementation is rather simple in its naive form. 
+a basic SpMV implementation is rather simple in its naive form: 
 
 \begin{center}
 \includegraphics[width=17cm]{images/spmv/widc08}\\
 {\captionfont Taken from Williams \etal (2008) \cite{widc08}. 
 Sparse Matrix Vector Multiplication (SpMV). 
-(a) visualization of the algebra: $\vec{y} \leftarrow {\bm A}\cdot \vec{x}$.\\
-(b) Standard compressed sparse row (CSR) representation of the matrix.  \\
+(a) visualization of the algebra: $\vec{y} \leftarrow {\bm A}\cdot \vec{x}$.
+(b) Standard compressed sparse row (CSR) representation of the matrix.
 (c) The standard implementation of SpMV for a matrix stored in CSR. 
 The outer loop is trivially parallelized without any data dependencies.}
 \end{center}
 
 Let us assume that we wish to compute $\vec{y}={\bm A}\cdot \vec{x}$ where ${\bm A}$ 
 is in CSR format. The pseudo code then goes as follows:
-\begin{verbatim}
+\begin{lstlisting}
 for i in range(0,m):
     y0=0
     for k in range(ROWPTR[i],ROWPTR[i+1]):
         y0 += VAL[k] * x[COLIND[k]]
     y[i]=y0
-\end{verbatim} 
+\end{lstlisting} 
 Although technically correct, this algorithm is problematic because the vector x array
 is accessed indirectly and this causes a non-optimal use of the processor, which 
 in the end makes the calculation take longer than it should.
 
 
-The following piece of code comes from \elefant. Note that here (ROWPTR=ia, COLIND=ja, VAL=mat)
+The following piece of ForTran code comes from \elefant. 
+Note that here (ROWPTR=ia, COLIND=ja, VAL=mat)
 \begin{lstlisting}[language=Fortran]
 subroutine spmv (nr,nc,nz,x,y,mat,ja,ia)
 implicit none
@@ -639,8 +652,9 @@ end subroutine
 How to make this calculation as efficiently as possible on CPUs and GPUs, on one thread 
 or multiple threads has given rise to a lot of literature.
 
-\Literature Krotkiewski \& Dabrowski \cite{krda10}, Section 9.4 of Kepley \cite{knepley}, 
-Williams \etal (2008) \cite{widc08}
+\Literature: 
+\textcite{krda10} (2010), Section 9.4 of \textcite{knepley}, 
+\textcite{widc08} (2008).
 
 %..............................................................................
 \subsection{SpMV and SpMV-T with the CSR format - a concrete example}

@@ -623,7 +623,7 @@ What do you observe ? why does it explode?
 Multiply all diagonal values by 10 and re-run it. 
 What do you observe now? 
 
-Bonus: implement the Gauss-Seidel method.
+Implement the Gauss-Seidel method.
 Which of the two methods converges the fastest?\\
 $\rightarrow$\url{https://en.wikipedia.org/wiki/Iterative_method}. 
 \par\noindent\rule{\textwidth}{0.4pt}
@@ -669,8 +669,14 @@ In your code use an if statement which allows to choose between
 explicit and implicit, and another if statement which allows to choose 
 between scipy solver and iterative solver. 
 
-Bonus: implement the SOR method in another function and compare Jacobi, Gauss-Seidel and SOR.\\
-$\rightarrow$\url{https://en.wikipedia.org/wiki/Iterative_method}
+Implement the SOR method and the Conjugate Gradient
+method in separate functions.
+Make sure they all return the correct solution. 
+Compare the solution and the path to convergence as 
+returned by Jacobi, Gauss-Seidel and SOR for the same 
+tolerance $\epsilon$.\\
+$\rightarrow$\url{https://en.wikipedia.org/wiki/Iterative_method}\\
+$\rightarrow$\url{https://en.wikipedia.org/wiki/Conjugate_gradient_method}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
@@ -728,6 +734,32 @@ at time $n+1$ by solution (inversion) of a system of linear equations based on t
 
 Modify the code of Exercise FDM-4 to implement the Crank-Nicolson method.
 
+\par\noindent\rule{\textwidth}{0.4pt}
+\end{minipage}
+\end{center}
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+
+
+
+
+
+%-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+\begin{center}
+\begin{minipage}[t]{0.77\textwidth}
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\includegraphics[width=0.8cm]{images/garftr} \\
+{\color{orange}Exercise FDM-5}
+\end{center}
+
+Modify the code of Exercise FDM-5 to implement 
+the more accurate discretisation of the 
+second order derivative on the interior nodes
+(i.e. replace Eq.~\eqref{eq:fpp1} by Eq.~\eqref{eq:fpp2}
+for nodes $2,3,4,...nnx-3$, while you keep using 
+Eq.~\eqref{eq:fpp1} for nodes 1 and $nnx-2$, and 
+you prescribe temperature on nodes 0 and $nnx-1$.
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}

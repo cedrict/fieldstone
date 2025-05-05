@@ -367,6 +367,7 @@ f_{i}''=\frac{f_{i+1}-2f_i+f_{i-1}}{h^2} + {\cal O}(h^2)
 \qquad
 \qquad
 \text{(second order central difference)}
+\label{eq:fpp1}
 \end{equation}
 Note that this formula requires one value left and one value right of the point 
 under consideration. 
@@ -418,9 +419,10 @@ the grid-nodes, most second-order methods will show first order accuracy at best
 
 
 \noindent Can we do better than ${\cal O}(h^2)$? The answer is yes again:
-\[
+\begin{equation}
 f_i'' = \frac{-f_{i+2} + 16 f_{i+1} -30 f_i + 16 f_{i-1} - f_{i-2} }{12 h^2} + {\cal O}(h^4)
-\]
+\label{eq:fpp2}
+\end{equation}
 
 
 
