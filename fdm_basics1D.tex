@@ -1,9 +1,12 @@
+\begin{flushright} {\tiny {\color{gray} fdm\_basics1D.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 In what follows we suppose that we have a function $f(x)$, 
 which is continuous and differentiable over the range of interest. 
 Let us also assume that we know the value $f(x_0)$ and all the derivatives at $x = x_0$. 
 
 %.......................................
-\subsubsection{First order derivatives}
+\subsection{First order derivatives}
 
 The forward Taylor-series expansion for $f(x_0 + h)$, away 
 from the point $x_0$ by a small amount $h$ is given by
@@ -17,7 +20,7 @@ h \frac{\partial f}{\partial x}(x_0)  +
 \end{equation}
 We can substract $f(x_0)$ to each side of the equation and divide by $h$:
 \begin{equation}
-\frac{1}{h} \left(f(x_0+h)-f(x_0)\right) = 
+\frac{1}{h} \left[f(x_0+h)-f(x_0)\right] = 
  \frac{\partial f}{\partial x}(x_0)  + 
 \frac{h}{2!} \frac{\partial^2 f}{\partial x^2}(x_0)  + \dots 
 \end{equation}
@@ -38,7 +41,8 @@ is made smaller and smaller, the (numerical approximation) error decreases $\pro
 
 \index{general}{Truncation Error}
 
-Let us assume that the 1D domain on which a given ODE/PDE is to be solved has been discretised
+Let us assume that the 1D domain on which a given Ordinary Differential 
+Equation (ODE) or Partial Differential Equation (PDE) is to be solved has been discretised
 and let us zoom in on three consecutive points ($x_0=x_i$ here):
 
 \begin{center}
@@ -179,7 +183,7 @@ The {\bf backward FD derivative} then writes:
 
 
 Alternatively, we can substract the backward formula from the forward one 
-and divide by two. Concretely, we start from 
+and divide by two; concretely, we start from 
 \begin{equation}
 f(x_0+h)=f(x_0)+ 
 h \frac{\partial f}{\partial x}(x_0)  + 
@@ -224,19 +228,22 @@ Taken from Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Finite_differen
 Can we do better than ${\cal O}(h^2)$? The answer is yes, and I list hereunder the 
 formula:
 \begin{equation}
-f_i' = \frac{2 f_{i+1} + 3 f_i - 6 f_{i-1} + f_{i-2}}{6 h} + {\cal O}(h^3)
+\frac{\partial f}{\partial x}(x_i) 
+= \frac{2 f_{i+1} + 3 f_i - 6 f_{i-1} + f_{i-2}}{6 h} + {\cal O}(h^3)
 \qquad
 \text{backward difference}
 \end{equation}
 
 \begin{equation}
-f_i' = \frac{-  f_{i+2} +6 f_{i+1} - 3 f_{i} -2 f_{i-1}}{6 h} + {\cal O}(h^3)
+\frac{\partial f}{\partial x}(x_i) 
+= \frac{-  f_{i+2} +6 f_{i+1} - 3 f_{i} -2 f_{i-1}}{6 h} + {\cal O}(h^3)
 \qquad
 \text{forward difference}
 \end{equation}
 
 \begin{equation}
-f_i' = \frac{-  f_{i+2} +8 f_{i+1} - 8 f_{i-1} + f_{i-2}}{12 h} + {\cal O}(h^4)
+\frac{\partial f}{\partial x}(x_i) 
+= \frac{-  f_{i+2} +8 f_{i+1} - 8 f_{i-1} + f_{i-2}}{12 h} + {\cal O}(h^4)
 \qquad
 \text{central difference}
 \end{equation}
@@ -262,15 +269,12 @@ Prove the formula above.
 %/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
 
-
-
-
 %.......................................
-\subsubsection{Second-order derivatives}
+\subsection{Second-order derivatives}
 
-Many PDEs contain second order derivatives (typically diffusion equations)
+Many PDEs contain second order derivatives (typically diffusion equations or wave equations)
 so we now turn to these and 
-define $f_i''=f''(x_i) = \frac{\partial^2 f}{\partial x^2} (x_i)$. 
+define $f_i''=f''(x_i) = \frac{d^2 f}{d x^2} (x_i)$. 
 
 %______________________________
 \paragraph{Second order derivative - forward} 
@@ -424,11 +428,9 @@ f_i'' = \frac{-f_{i+2} + 16 f_{i+1} -30 f_i + 16 f_{i-1} - f_{i-2} }{12 h^2} + {
 \label{eq:fpp2}
 \end{equation}
 
+Note that in some cases the fully forward or backward expressions 
+need to be used on the boundary if the value of the function is not prescribed.
 
-
-\vspace{1cm}
-
-\todo[inline]{write about one-sided FD, useful on boundaries}
 
 
 

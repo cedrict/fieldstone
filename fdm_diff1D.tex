@@ -1,3 +1,6 @@
+\begin{flushright} {\tiny {\color{gray} fdm\_diff1D.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Consider the one-dimensional, transient (i.e. time-dependent) 
 heat conduction equation without heat generating sources
 \begin{equation}
@@ -37,14 +40,17 @@ To be clear: $n$ represents the current time step whereas $n+1$
 represents the next time step. 
 
 Both $n$ and $i$ are integers; $n$ varies from 0 to $nstep-1$ (total number of time steps)
-and $i$ varies from 0 to $nnx-1$ (where $nnx$ is the total number of grid points in $x$-direction).
+and $i$ varies from 0 to $nnx-1$ (where $nnx$ is the total number of grid points in 
+$x$-direction)\footnote{I here adopt the zero-based numbering used in Python, see 
+\url{https://en.wikipedia.org/wiki/Zero-based_numbering}}.
 
-The spatial derivative is replaced by a central FD approximation
+
+The spatial derivative is replaced by a central FD approximation expressed at $t^n$:
 \begin{eqnarray}
 \frac{\partial^2 T}{\partial x^2} 
 \simeq \frac{T_{i+1}^n - 2T_i^n + T_{i-1}^n}{h^2}
 \end{eqnarray}
-We obtain
+We then obtain
 \begin{eqnarray}
 \frac{T_{i}^{n+1}-T_i^n}{\delta t} 
 = \kappa \frac{T_{i+1}^n - 2T_i^n + T_{i-1}^n}{h^2}
@@ -116,7 +122,7 @@ obtained {\it only} when
 \delta t \leq \frac{h^2}{2 \kappa}
 \end{equation}
 If this condition is not satisfied, the solution becomes {\color{olive} unstable}, starts to
-wildly oscillate and ultimately 'blows up'. We will observe this during the practicals. 
+wildly oscillate and ultimately `blows up'. We will observe this during the practicals. 
 
 The stability condition means that the maximum time step needs to be smaller than the time it
 takes for an anomaly to diffuse across the grid (nodal) spacing $h$.
@@ -238,7 +244,7 @@ so that
 \begin{equation}
 \frac{T_{i}^{n}-T_i^{n-1}}{\delta t} = \kappa \frac{T_{i+1}^n - 2T_i^n + T_{i-1}^n}{h^2}
 \end{equation}
-Note that this is often rewritten as follows in order to keep the unknwowns at time $n+1$:
+Note that this is often rewritten as follows (i.e. one time step further, $n\rightarrow n+1$):
 \begin{equation}
 \frac{T_{i}^{n+1}-T_i^{n}}{\delta t} = \kappa \frac{T_{i+1}^{n+1} - 2T_i^{n+1} + T_{i-1}^{n+1}}{h^2}
 \end{equation}
@@ -267,9 +273,9 @@ Instead, we have to solve a {\color{olive}linear system of equations}, which is 
 
 The main advantage of implicit methods is that there are no restrictions on the time step,
 the fully implicit scheme is {\bf unconditionally stable}.
-This does not mean that it is accurate! Stability and accuracy are two different things! 
+This does not mean that it is accurate as stability and accuracy are two different things.
 Taking large time steps may result in an inaccurate solution for features with
-small spatial scales!
+small spatial scales.
 
 For any application, it is therefore always a good idea to check the 
 results by decreasing the time step
@@ -594,8 +600,8 @@ temperature vectors are nearly identical, or,
 where $\epsilon$ is a carefully chosen small enough number. 
 
 A sufficient (but not necessary) condition for the method to converge is that 
-the matrix ${\bm A}$ is strictly or irreducibly diagonally dominant
-\footnote{\url{https://en.wikipedia.org/wiki/Diagonally_dominant_matrix}}. 
+the matrix ${\bm A}$ is strictly or irreducibly diagonally 
+dominant\footnote{\url{https://en.wikipedia.org/wiki/Diagonally_dominant_matrix}}. 
 Strict row diagonal dominance means that for each row, the absolute value of 
 the diagonal term is greater than the sum of absolute values of other 
 terms $|a_{ii}|>\sum_{j\neq i} |a_{ij}| $.
@@ -626,6 +632,12 @@ What do you observe now?
 Implement the Gauss-Seidel method.
 Which of the two methods converges the fastest?\\
 $\rightarrow$\url{https://en.wikipedia.org/wiki/Iterative_method}. 
+
+Instructions: for each solver type create a 
+dedicated function (e.g. {\tt jacobi\_solver})
+which takes four arguments: the 
+matrix ${\bm A}$, the vector $\vec{b}$, the 
+guess vector and the desired tolerance set by the user.
 \par\noindent\rule{\textwidth}{0.4pt}
 \end{minipage}
 \end{center}
@@ -637,7 +649,8 @@ Finally, looking at
 \begin{equation}
 -s\;  T_{i+1}^{n+1} + (1+2s)\;  T_{i}^{n+1} - s\;  T_{i-1}^{n+1} = T_i^{n}
 \end{equation}
-and dividing by $-s$ and letting $\delta t \rightarrow \infty$, we obtain:
+and dividing by $-s$ and letting $\delta t \rightarrow \infty$ (so $s\rightarrow \infty$ also), 
+we obtain:
 \begin{equation}
 T_{i+1}^{n+1} -2 T_{i}^{n+1} + T_{i-1}^{n+1} = 0
 \end{equation}
@@ -695,7 +708,7 @@ It is possible to write down a scheme which is second order accurate both in tim
 The method was developed by John Crank and Phyllis Nicolson 
 in the mid 20th century. \url{https://en.wikipedia.org/wiki/Crank-Nicolson_method}
 }
-scheme which is unconditionally stable. 
+scheme which remains unconditionally stable. 
 
 The Crank-Nicolson method is the time analog of central spatial differences and is given by
 \begin{equation}
@@ -706,7 +719,7 @@ The Crank-Nicolson method is the time analog of central spatial differences and 
 \underbrace{\frac{T_{i+1}^{n+1} - 2T_i^{n+1} + T_{i-1}^{n+1}}{h^2}}_{\text{at time } n+1}
 \right]
 \end{equation}
-We define $s=\kappa \delta t/ 2h^2$ so that the equation above can be rearranged as follows :
+We now define $s=\kappa \delta t/ 2h^2$ so that the equation above can be rearranged as follows :
 \begin{equation}
 \boxed{
 -s\; T_{i+1}^{n+1} + (1+2s)\;  T_{i}^{n+1} 
@@ -741,8 +754,6 @@ Modify the code of Exercise FDM-4 to implement the Crank-Nicolson method.
 
 
 
-
-
 %-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 \begin{center}
 \begin{minipage}[t]{0.77\textwidth}
@@ -750,7 +761,7 @@ Modify the code of Exercise FDM-4 to implement the Crank-Nicolson method.
 
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise FDM-5}
+{\color{orange}Exercise FDM-6}
 \end{center}
 
 Modify the code of Exercise FDM-5 to implement 

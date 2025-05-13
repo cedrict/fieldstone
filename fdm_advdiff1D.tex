@@ -1,4 +1,7 @@
-The 1D advection-diffusion equation is:
+\begin{flushright} {\tiny {\color{gray} fdm\_advdiff1D.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The 1d advection-diffusion equation is:
 \begin{equation}
 \rho C_p \left( \frac{\partial T}{\partial t}  
 + u \frac{\partial T}{\partial x} \right)= k \frac{\partial^2 T}{\partial x^2} + H'
@@ -7,7 +10,7 @@ or simply
 \begin{equation}
 \frac{\partial T}{\partial t} + u \frac{\partial T}{\partial x}= \kappa \frac{\partial^2 T}{\partial x^2} + H
 \end{equation}
-where $H$ is a source term that does not depend on time.
+where $H=H'/\rho C_p$ is a source term that does not depend on time.
 We have seen how to deal with the time derivative (explicit, implicit) 
 and with the first order space derivative (forward, backward or central).
 Let us consider the FTCS scheme (Forward in Time, Central in Space).
@@ -119,7 +122,7 @@ A very similar example is implemented in \stone~65 (albeit with FEM).
 
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise FDM-7}
+{\color{orange}Exercise FDM-8}
 \end{center}
 
 Prove that Eq.~\eqref{eq:fdmadvdiff1} is indeed solution of 

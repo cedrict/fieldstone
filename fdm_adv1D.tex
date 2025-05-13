@@ -5,7 +5,7 @@
 %
 
 
-The 1D hyperbolic advection equation is:
+The 1d hyperbolic advection equation is:
 \begin{equation}
 \rho C_p \left( \frac{\partial T}{\partial t}  
 + u \frac{\partial T}{\partial x} \right)=0 
@@ -16,28 +16,27 @@ or simply
 \end{equation}
 We have seen how to deal with the time derivative (explicit, implicit) 
 and with the first order space derivative (forward, backward or central).
-Let us consider the FTCS scheme (Forward in Time, Central in Space).
+Let us consider the FTCS scheme (Forward in Time, Central in Space) expressed 
+at node ${\color{teal}i}$:
 \[
 \frac{T_{\color{teal}i}^{n+1}-T^n_{\color{teal}i}}{\delta t} 
 + u_i \frac{T^n_{\color{teal}i+1} - T^n_{{\color{teal}i-1}}}{2h} =0 
 \]
 or,
 \[
-T_i^{n+1} = T_i^n - \frac{u_i \delta t}{2 h} (T_{i+1}^n-T_{i-1}^n)
+T_{\color{teal}i}^{n+1} = T_{\color{teal}i}^n - \frac{u_{\color{teal}i} \delta t}{2 h} 
+(T_{\color{teal} i+1}^n-T_{\color{teal} i-1}^n)
 \]
 Note that although the velocity $u$ is prescribed, it can vary in space, hence
-the subscript $i$. 
-
-
+the subscript $i$. We here assume that it is time-independent for simplicity.
 
 There is however a major problem: 
 the FTCS method is in this case {\bf unconditionally} {\bf un}stable (see Section 6.2.1 
-of \cite{hoch}, section 4.3.1 of \cite{pell08}), i.e., it blows up for any $\delta t$.
+of \textcite{hoch}, section 4.3.1 of \textcite{pell08}), i.e., it blows up for any $\delta t$.
 The instability is related to the fact that this scheme produces negative diffusion, 
 which is numerically unstable.
 
-
-Finally, The Crank-Nicolson implicit scheme for solving the diffusion equation 
+The Crank-Nicolson implicit scheme for solving the diffusion equation 
 can be adapted to solve the advection equation:
 
 \[
@@ -72,8 +71,10 @@ but it is also {\bf unconditionally} {\bf un}stable (see Section 6.2.1 of \cite{
 
 We will now look at to methods which alleviate this problem:
 
-\index{general}{Lax-Friedrichs method}
+%\index{general}{Lax-Friedrichs method}
+
 \begin{itemize}
+%-----------------------------------
 \item The {\color{olive} Lax-Friedrichs method}\footnote{Named after Peter Lax 
 and Kurt O. Friedrichs. \url{https://en.wikipedia.org/wiki/Lax-Friedrichs_method}} consists of replacing the $T_{\color{teal}i}^n$ 
 in the time derivative term with $(T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)/2$
@@ -90,20 +91,78 @@ T_{\color{teal}i}^{n+1} = \frac{1}{2} (T_{{\color{teal}i+1}}^n + T_{{\color{teal
 \]
 von Neumann stability analysis indicates that this method is stable
 when $C=u \delta t/h \leq 1$ where $C$ is the Courant number.
+
+%-----------------------------------
 \item In the {\color{olive}Streamline upwind} method the spatial finite difference scheme 
-depends on the sign of the velocity:
+depends on the sign of the velocity (assumed to be constant in space in what follows):
+
+%\[
+%\frac{T_{\color{teal}i}^{n+1}-  (T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)/2   }{\delta t} =
+%\left\{
+%\begin{array}{l}
+% - u_i \frac{T^n_{{\color{teal}i}}-T^n_{{\color{teal}i-1}}}{h_x}  \quad\quad  {\rm if} \quad u_i<0\\ \\
+% - u_i \frac{T^n_{{\color{teal}i+1}}-T^n_{{\color{teal}i}}}{h_x}  \quad\quad  {\rm if} \quad u_i>0
+%\end{array}
+%\right.
+%\]
+
 \[
-\frac{T_{\color{teal}i}^{n+1}-  (T_{{\color{teal}i+1}}^n + T_{{\color{teal}i-1}}^n)/2   }{\delta t} =
+\frac{T_{\color{teal}i}^{n+1}-  T_{{\color{teal}i}}^n   }{\delta t} =
 \left\{
 \begin{array}{l}
- - u_i \frac{T^n_{{\color{teal}i}}-T^n_{{\color{teal}i-1}}}{h_x}  \quad\quad  {\rm if} \quad u_i<0\\ \\
- - u_i \frac{T^n_{{\color{teal}i+1}}-T^n_{{\color{teal}i}}}{h_x}  \quad\quad  {\rm if} \quad u_i>0
+ - u \frac{T^n_{{\color{teal}i}}-T^n_{{\color{teal}i-1}}}{h}  \quad\quad  {\rm if} \quad u>0\\ \\
+ - u \frac{T^n_{{\color{teal}i+1}}-T^n_{{\color{teal}i}}}{h}  \quad\quad  {\rm if} \quad u<0
 \end{array}
 \right.
 \]
-In fact, we have replaced central with forward or backward derivatives, depending on the flow direction. 
-This method is stable when $C=u \delta t/h \leq 1$. 
+Using 
+\begin{eqnarray}
+u^+ &=& \frac12 (u + |u|) \nn\\
+u^- &=& \frac12 (u - |u|)
+\end{eqnarray}
+i.e. if $u>0$ then $u^+=u$ and $u^-=0$, if $u<0$ then $u^+=0$ and $u^-=u$,
+so the upwind scheme can be written
+\begin{eqnarray}
+0
+&=&
+\frac{T_{\color{teal}i}^{n+1}-  T_{{\color{teal}i}}^n   }{\delta t} 
++ \frac{ \delta t}{h}
+\left[
+u^+ (  T^n_{{\color{teal}i}}-T^n_{{\color{teal}i-1}} )
++u^- ( T^n_{{\color{teal}i+1}}-T^n_{{\color{teal}i}}  )
+\right] \nn\\
+&=&
+\frac{T_{\color{teal}i}^{n+1}-  T_{{\color{teal}i}}^n   }{\delta t} 
++ \frac{ \delta t}{h}
+\left[
+ \frac12 (u + |u|) (  T^n_{{\color{teal}i}}-T^n_{{\color{teal}i-1}} )
++\frac12 (u - |u|) ( T^n_{{\color{teal}i+1}}-T^n_{{\color{teal}i}}  )
+\right] \nn\\
+&=& 
+\frac{T_{\color{teal}i}^{n+1}-  T_{{\color{teal}i}}^n   }{\delta t} 
++ \frac{u }{2 h } ( T_{\color{teal}i+1}^n - T_{\color{teal}i-1}^n) 
++ \frac{|u| h}{2}  \frac{ -T_{\color{teal} i+1}^n +  2T_{\color{teal}i}^n  -T_{\color{teal}i-1}^n}{  h^2}
+\end{eqnarray}
+or,
+\[
+T_{\color{teal}i}^{n+1} 
+= T_{\color{teal}i}^n - \frac{u \delta t}{2 h } ( T_{\color{teal}i+1}^n - T_{\color{teal}i-1}^n) 
++ \frac{|u| h \delta t}{2}
+\frac{ T_{\color{teal} i+1}^n -  2T_{\color{teal}i}^n  +T_{\color{teal}i-1}^n}{  h^2}
+\]
+One can see that the 2nd term on RHS is the advection term obtained with the FTCS approach 
+and the 3rd term has a form of diffusion.
 
+Apparently, the 'diffusion term' included in the upwind scheme stabilizes the upwind scheme 
+-- it is achieved by damping the otherwise growing short waves.
+The included `diffusion term' also introduces excessively damping to the short waves, as seen earlier. One possible
+remedy is to attempt to remove this excessive diffusion through one or several corrective steps. This is exactly
+what is done in Smolarkiewicz (1983, 1984) scheme, which is rather popular in the field of meteorology.
+
+This method is stable when $C=u \delta t/h \leq 1$. 
+We will encounter Streamline Upwind again in the context of the Finite element method.
+
+%-----------------------------------
 \item {\color{olive} Lax-Wendroff method}\footnote{Named after Peter Lax 
 and Burton Wendroff \url{https://en.wikipedia.org/wiki/Lax-Wendroff_method}} \cite{hoch}
 is second-order accurate in both space and time. 
@@ -111,8 +170,9 @@ This method is an example of explicit time integration where the function that d
 the governing equation is evaluated at the current time. 
 \index{general}{Lax-Wendroff method}
 \[
-T^{n+1}_i = T_i^n - \frac{u \delta t}{2 h} (T_{i+1}^n-T_{i-1}^n)
-+ \frac{u^2 dt^2}{2 h^2} (T_{i+1}^n-2 T_i^n+T_{i-1}^n)
+T^{n+1}_{\color{teal}i} = T_{\color{teal}i}^n 
+- \frac{u \delta t}{2 h} (T_{\color{teal}i+1}^n-T_{\color{teal}i-1}^n)
++ \frac{u^2 dt^2}{2 h^2} (T_{\color{teal} i+1}^n-2 T_{\color{teal}i}^n+T_{\color{teal} i-1}^n)
 \]
 In \cite{boudreau} we find:
 ``
@@ -125,9 +185,18 @@ Bi+1 that cannot be eliminated with a boundary condition. One can apply [forward
 backward in space equation] at this point and hope it does not perturb the scheme.''
 
 
+%-----------------------------------
+\item {\color{olive} modified Crank-Nicolson} as shown in \textcite{beka}:
 
-
-
+\begin{eqnarray}
+&&\left[\frac16 -\frac14 \frac{u \delta t}{h}  \right] T^{n+1}_{\color{teal}i-1} + 
+\left[1-\frac13  \right] T^{n+1}_{i} + 
+\left[\frac16 +\frac14 \frac{u \delta t}{h}  \right] T^{n+1}_{\color{teal} i+1}  \nn\\
+&=& 
+\left[\frac16 -\frac14 \frac{u \delta t}{h}  \right] T^{n}_{\color{teal} i-1} + 
+\left[1-\frac13  \right] T^{n1}_{i} + 
+\left[\frac16 +\frac14 \frac{u \delta t}{h}  \right] T^{n}_{\color{teal} i+1} 
+\end{eqnarray}
 
 
 \end{itemize}
@@ -159,7 +228,7 @@ sharp gradients (shocks) are not involved.
 
 \begin{center}
 \includegraphics[width=0.8cm]{images/garftr} \\
-{\color{orange}Exercise FDM-6}
+{\color{orange}Exercise FDM-7}
 \end{center}
 
 Let us consider the domain $[0,1]$. The temperature field at $t=0$ is 
