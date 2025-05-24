@@ -1,0 +1,12 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+
+set xlabel 's'
+set ylabel 'q_n'
+set output 'heat_flux_boundary.pdf'
+set key outside
+
+plot[][]\
+'heat_flux_boundary_8.ascii'  u ($1/32):5  w lp ps .24 t '8x8',\
+'heat_flux_boundary_80.ascii' u ($1/320):5 w lp ps .24 t '80x80',\
+'heat_flux_boundary_80.ascii' u ($1/320):6 w l lt -1 t 'analytical',\

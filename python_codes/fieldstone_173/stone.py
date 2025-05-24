@@ -134,6 +134,8 @@ if order==1:
    nqperdim=2
    qcoords=[-1./sqrt3,1./sqrt3]
    qweights=[1.,1.]
+   rnodes=[-1,1,1,-1]
+   snodes=[-1,-1,1,1]
 
 if order==2:
    nqperdim=3
@@ -178,8 +180,8 @@ print("mesh (%.3fs)" % (timing.time() - start))
 #####################################################################
 
 for i in range(0,NV):
-    x[i]=x[i]**0.67
-    y[i]=y[i]**0.67
+    x[i]=x[i]**0.66
+    y[i]=y[i]**0.66
 
 #####################################################################
 # connectivity
@@ -217,6 +219,76 @@ for j in range(0,nny-1):
 #end for
 
 print("connectivity (%.3fs)" % (timing.time() - start))
+
+#################################################################
+# flag nodes and elements on boundary
+#################################################################
+start = timing.time()
+
+surface_element=np.zeros(nel,dtype=bool)  
+boundary_node=np.zeros(NV,dtype=bool)  
+
+counter=0
+for j in range(0,nely):
+    for i in range(0,nelx):
+        if i==0 or i==nelx-1 or j==0 or j==nely-1: 
+           surface_element[counter]=True 
+        counter+=1
+
+counter=0
+for j in range(0,nny):
+    for i in range(0,nnx):
+        if i==0 or i==nnx-1 or j==0 or j==nny-1: 
+           boundary_node[counter]=True 
+        counter+=1
+
+print("flag boundary nodes & elements: %.3f s" % (timing.time() - start))
+
+
+#################################################################
+# compute normal to domain at the nodes
+# this is also implemented in stone 151
+#################################################################
+start = timing.time()
+
+nx=np.zeros(NV,dtype=np.float64) 
+ny=np.zeros(NV,dtype=np.float64) 
+jcb=np.zeros((ndim,ndim),dtype=np.float64)
+
+for iel in range(0,nel):
+    if surface_element[iel]: 
+       for iq in range(0,nqperdim):
+           for jq in range(0,nqperdim):
+
+               rq=qcoords[iq]
+               sq=qcoords[jq]
+               weightq=qweights[iq]*qweights[jq]
+               dNNNTdr=dNNTdr(rq,sq,order)
+               dNNNTds=dNNTds(rq,sq,order)
+               jcb[0,0]=np.dot(dNNNTdr[:],x[icon[:,iel]])
+               jcb[0,1]=np.dot(dNNNTdr[:],y[icon[:,iel]])
+               jcb[1,0]=np.dot(dNNNTds[:],x[icon[:,iel]])
+               jcb[1,1]=np.dot(dNNNTds[:],y[icon[:,iel]])
+               jcob = np.linalg.det(jcb)
+               jcbi=np.linalg.inv(jcb)
+               dNNNTdx=jcbi[0,0]*dNNNTdr[:]+jcbi[0,1]*dNNNTds[:]
+               dNNNTdy=jcbi[1,0]*dNNNTdr[:]+jcbi[1,1]*dNNNTds[:]
+               for k in range(0,m):
+                   if boundary_node[icon[k,iel]]:
+                      nx[icon[k,iel]]+=dNNNTdx[k]*jcob*weightq
+                      ny[icon[k,iel]]+=dNNNTdy[k]*jcob*weightq
+           #end for
+       #end for
+    #end if
+#end for
+
+for i in range(0,NV):
+    if boundary_node[i]:
+       norm=np.sqrt(nx[i]**2+ny[i]**2)
+       nx[i]/=norm
+       ny[i]/=norm
+
+print("compute normal: %.3f s" % (timing.time() - start))
 
 #####################################################################
 # define temperature boundary conditions
@@ -408,11 +480,8 @@ for istep in range(0,nstep):
 
     qx=np.zeros(NV,dtype=np.float64) 
     qy=np.zeros(NV,dtype=np.float64) 
+    qn=np.zeros(NV,dtype=np.float64) 
     cc=np.zeros(NV,dtype=np.float64) 
-
-    if order==1:
-       rnodes=[-1,1,1,-1]
-       snodes=[-1,-1,1,1]
 
     for iel in range(0,nel):
         for k in range(0,m):
@@ -437,61 +506,53 @@ for istep in range(0,nstep):
     qx/=cc
     qy/=cc
 
+    qn[:]=qx[:]*nx[:]+qy[:]*ny[:]
+
     print("     -> qx (m,M) %.4f %.4f " %(np.min(qx),np.max(qx)))
     print("     -> qy (m,M) %.4f %.4f " %(np.min(qy),np.max(qy)))
+    print("     -> qn (m,M) %.4f %.4f " %(np.min(qn),np.max(qn)))
 
     print("compute heat flux: %.3f s" % (timing.time() - start))
 
     #################################################################
-    # compute normal to domain at the nodes
-    # this is also implemented in stone 151
-    #################################################################
-    
-
-    
-
-
-
-    #################################################################
     # export boundary heat flux values
     #################################################################
+    qn_file=open('heat_flux_boundary.ascii',"w")
 
     counter=0
 
     for i in range(0,nny):
-        nx=1
-        ny=0
         inode=nnx*(i+1)-1
-        print (counter,qx[inode],qy[inode],qx[inode]*nx+qy[inode]*ny,
-               qx_analytical(x[inode],y[inode])*nx+qy_analytical(x[inode],y[inode])*ny,inode)
+        qn_file.write("%d %d %e %e %e %e  \n" %(counter,inode,qx[inode],qy[inode],qn[inode],\
+               qx_analytical(x[inode],y[inode])*nx[inode]
+              +qy_analytical(x[inode],y[inode])*ny[inode]))
         counter+=1
          
     counter-=1
     for i in range(0,nnx): 
-        nx=0
-        ny=1
         inode=NV-i-1
-        print (counter,qx[inode],qy[inode],qx[inode]*nx+qy[inode]*ny,
-               qx_analytical(x[inode],y[inode])*nx+qy_analytical(x[inode],y[inode])*ny,inode)
+        qn_file.write("%d %d %e %e %e %e  \n" %(counter,inode,qx[inode],qy[inode],qn[inode],\
+               qx_analytical(x[inode],y[inode])*nx[inode]
+              +qy_analytical(x[inode],y[inode])*ny[inode]))
         counter+=1
 
     counter-=1
     for i in range(0,nny):
-        nx=-1
-        ny=0
         inode=NV-(i+1)*nnx
-        print (counter,qx[inode],qy[inode],qx[inode]*nx+qy[inode]*ny,
-               qx_analytical(x[inode],y[inode])*nx+qy_analytical(x[inode],y[inode])*ny,inode)
+        qn_file.write("%d %d %e %e %e %e  \n" %(counter,inode,qx[inode],qy[inode],qn[inode],
+               qx_analytical(x[inode],y[inode])*nx[inode]
+              +qy_analytical(x[inode],y[inode])*ny[inode]))
         counter+=1
 
     counter-=1
     for i in range(0,nnx): 
-        nx=0
-        ny=-1
         inode=i
-        print (counter,qx[inode],qy[inode],qx[inode]*nx+qy[inode]*ny,
-               qx_analytical(x[inode],y[inode])*nx+qy_analytical(x[inode],y[inode])*ny,inode)
+        qn_file.write("%d %d %e %e %e %e  \n" %(counter,inode,qx[inode],qy[inode],qn[inode],
+               qx_analytical(x[inode],y[inode])*nx[inode]
+              +qy_analytical(x[inode],y[inode])*ny[inode]))
         counter+=1
+
+    qn_file.close()
 
     #################################################################
     # visualisation 
@@ -546,7 +607,21 @@ for istep in range(0,nstep):
            vtufile.write("%e %e %e \n" %(qx[i]-qx_analytical(x[i],y[i]),qy[i]-qy_analytical(x[i],y[i]),0))
        vtufile.write("</DataArray>\n")
 
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal' Format='ascii'> \n")
+       for i in range(0,NV):
+           vtufile.write("%e %e %e \n" %(nx[i],ny[i],0.))
+       vtufile.write("</DataArray>\n")
 
+       #--
+       vtufile.write("<DataArray type='Int32' Name='boundary' Format='ascii'> \n")
+       for i in range(0,NV):
+           if boundary_node[i]:
+              vtufile.write("%d \n" % 1)
+           else:
+              vtufile.write("%d \n" % 0)
+       vtufile.write("</DataArray>\n")
+       #--
 
 
        #--
