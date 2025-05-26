@@ -609,8 +609,8 @@ the Schur complement equation takes the form:
 \begin{mdframed}[backgroundcolor=blue!5]
 \underline{\bf solver\_pcg}: assume $\vec{\cal P}_0$ known
 \begin{itemize}
-\item compute ${\cal V}_0=\K^{-1}(f-\G{\cal P}_0)$
-\item $\vec{r}_0 = \G^T {\cal V}_0 - \C \cdot \vec{\cal P}_0 - \vec{h}$
+\item compute $\vec{\cal V}_0=\K^{-1}(\vec{f}-\G\cdot \vec{\cal P}_0)$
+\item $\vec{r}_0 = \G^T \cdot \vec{\cal V}_0 - \C \cdot \vec{\cal P}_0 - \vec{h}$
 \item if $\vec{r}_0$ is sufficiently small, then return $(\vec{\cal V}_0,\vec{\cal P}_0)$ as the result
 \item $\vec{z}_0= M^{-1} \cdot \vec{r}_0$ 
 \item $\vec{p}_0=\vec{z}_0$
@@ -735,6 +735,61 @@ Note that sometimes this mass matrix can be lumped which makes solving with it t
 The inner solve with $\K$ is carried out with a CG solvers preconditioned with AMG. They 
 state that ``Using AMG as a preconditioner to CG for the subsystem solution
 guarantees $h$-independent convergence of the solver during the preconditioner construction phase.''
+
+
+%......................................................
+\subsection{The Arrow-Hurwicz algorithm}
+
+This is borrowed from algorithm 8.7 in \textcite{saad}.
+
+\begin{itemize}
+\item[] Select an initial guess $\vec{\cal V}^0$ and $\vec{\cal P}^0$ 
+\item[] for $k$=0,1,2,... until convergence
+\begin{itemize}
+\item $\vec{\cal V}^{k+1}=\vec{\cal V}^k + \epsilon ( \vec{f}- \K \cdot \vec{\cal V}^k - \G \cdot \vec{\cal P}^k )$
+\item $\vec{\cal P}^{k+1}=\vec{\cal P}^k + \omega ( \G^T \cdot \vec{\cal V}^{k+1} - \vec{h})$
+\end{itemize}
+\end{itemize}
+
+The above algorithm is a block-iteration of the form
+\[
+\left(
+\begin{array}{cc}
+I & 0 \\
+-\omega \G^T & I
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal V}^{k+1} \\
+\vec{\cal P}^{k+1}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+I-\epsilon \K & -\epsilon \G \\
+0 & I
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\vec{\cal V}^{k} \\
+\vec{\cal P}^{k}
+\end{array}
+\right)
++
+\left(
+\begin{array}{c}
+\epsilon \vec{f} \\
+-\omega \vec{h}
+\end{array}
+\right)
+\]
+
+
 
 %......................................................
 \subsection{Using MINRES a la Burstedde \etal (2008)}
