@@ -419,6 +419,7 @@ for iel in range(0,nel):
                    dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
                    dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
                #end for 
+               #nodes 2,3,6 are on boundary
                nx2[iconV[2,iel]]+=dNNNVdx[2]*jcob*weightq
                ny2[iconV[2,iel]]+=dNNNVdy[2]*jcob*weightq
                nx2[iconV[3,iel]]+=dNNNVdx[3]*jcob*weightq

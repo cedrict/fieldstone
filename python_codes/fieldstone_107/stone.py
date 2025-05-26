@@ -124,7 +124,7 @@ TKelvin=273.15
 ###############################################################################
 ###############################################################################
 
-experiment=6
+experiment=4
 
 print("-----------------------------")
 print("--------- stone 107 ---------")
@@ -194,7 +194,7 @@ match (experiment):
         dt=500*year    ; CFL_nb=0.8 ; tfinal=1e8*year ; nstep=1 ; dtmax=500*year
         phi=0.1
         periodicx=False
-        solve_T=False
+        solve_T=True
 
     case(5): # manufactured solution for Darcy
         Lx=1 ; Ly=1

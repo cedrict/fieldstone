@@ -68,6 +68,7 @@ Euler step:
 \[
 \frac{\partial T}{\partial t} \simeq \frac{T^{n+1}-T^n}{\delta t}
 \]
+This then results in a FTCS algorithm.
 In a second step, we may wish to use the {\python solve\_ivp} 
 function\footnote{\url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html}}
 which gives access to 5 methods: RK23, RK45 (default) DOP853, BDF and Radau.
