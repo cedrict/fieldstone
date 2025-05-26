@@ -9,6 +9,7 @@ from scipy.sparse import csr_matrix,lil_matrix
 # 2: stokes sphere
 # 3: block
 # 4: Burman & Hansbo 
+# 5: inclusion Yamato
 ###############################################################################
 
 def bx(x,y):
@@ -22,6 +23,8 @@ def bx(x,y):
     if bench==3:
        val=0 
     if bench==4:
+       val=0 
+    if bench==5:
        val=0 
     return val
 
@@ -43,7 +46,8 @@ def by(x,y):
           val=-1.
     if bench==4:
        val=0 
-
+    if bench==5:
+       val=0 
     return val
 
 ###############################################################################
@@ -63,6 +67,11 @@ def eta(x,y):
           val=1
     if bench==4:
        val=1
+    if bench==5:
+       if x**2+y**2<0.1**2:
+          val=1.
+       else:
+          val=1e3
     return val
 
 ###############################################################################
@@ -70,7 +79,7 @@ def eta(x,y):
 def uth(x,y):
     if bench==1:
        val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
-    if bench==2 or bench==3:
+    if bench==2 or bench==3 or bench==5:
        val=0
     if bench==4:
        val=20*x*y**3
@@ -79,7 +88,7 @@ def uth(x,y):
 def vth(x,y):
     if bench==1:
        val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
-    if bench==2 or bench==3:
+    if bench==2 or bench==3 or bench==5:
        val=0
     if bench==4:
        val=5*x**4-5*y**4
@@ -88,7 +97,7 @@ def vth(x,y):
 def pth(x,y):
     if bench==1:
        val=x*(1.-x)-1./6.
-    if bench==2 or bench==3:
+    if bench==2 or bench==3 or bench==5:
        val=0
     if bench==4:
        val=60*x**2*y-20*y**3-5
@@ -164,8 +173,8 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    nqperdim = int(sys.argv[4])
 else:
-   nelx = 48
-   nely = 48
+   nelx = 200 
+   nely = nelx 
    visu = 1
    nqperdim=3
     
@@ -184,7 +193,7 @@ Nfem=NfemV+NfemP # total number of dofs
 hx=Lx/nelx
 hy=Ly/nely
 
-bench=2
+bench=5
 
 ###########################################################
 # boundary conditions
@@ -192,8 +201,9 @@ bench=2
 # FS: free slip on all sides
 # OT: open top, free slip sides and bottom
 # BO: no slip sides, free slip bottom & top
+# YA: bespoke for Yamato setup
 
-FS=True
+FS=False
 NS=False   
 OT=False
 BO=False
@@ -203,6 +213,9 @@ if bench==1:
 
 if bench==4:
    NS=True
+
+if bench==5:
+   YA=True
 
 ###############################################################################
 
@@ -269,7 +282,7 @@ if nqperdim==10:
 if OT or BO:
    pnormalise=False
 
-if NS or FS:
+if NS or FS or YA:
    pnormalise=True
 
 print("nelx",nelx)
@@ -393,7 +406,7 @@ if NS:
        #end if
    #end for
 
-if FS:
+elif FS:
    for i in range(0,NV):
        if x[i]<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
@@ -406,7 +419,7 @@ if FS:
        #end if
    #end for
 
-if OT:
+elif OT:
    for i in range(0,NV):
        if x[i]<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
@@ -417,7 +430,7 @@ if OT:
        #end if
    #end for
 
-if BO:
+elif BO:
    for i in range(0,NV):
        if x[i]<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
@@ -429,6 +442,19 @@ if BO:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
        if y[i]>(Ly-eps):
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       #end if
+   #end for
+
+elif YA:
+   for i in range(0,NV):
+       if x[i]<eps:
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
+       if x[i]>(Lx-eps):
+          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = -1
+       if y[i]<eps:
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+       if y[i]>(Ly-eps):
+          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = +1
        #end if
    #end for
 
@@ -441,8 +467,7 @@ print("setup: boundary conditions: %.3f s" % (time.time() - start))
 ###############################################################################
 start = time.time()
 
-K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
+A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
 f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
 h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
 constr= np.zeros(NfemP,dtype=np.float64)         # constraint matrix/vector
@@ -466,7 +491,7 @@ for iel in range(0,nel):
     h_el=np.zeros((mP*ndofP),dtype=np.float64)
     NNNNP= np.zeros(mP*ndofP,dtype=np.float64)   
 
-    # integrate viscous term at 4 quadrature points
+    # integrate viscous term at quadrature points
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
 
@@ -560,11 +585,14 @@ for iel in range(0,nel):
                 for i2 in range(0,ndofV):
                     jkk=ndofV*k2          +i2
                     m2 =ndofV*iconV[k2,iel]+i2
-                    K_mat[m1,m2]+=K_el[ikk,jkk]
+                    A_sparse[m1,m2]+=K_el[ikk,jkk]
+                #end for
+            #end for
             for k2 in range(0,mP):
                 jkk=k2
                 m2 =iconP[k2,iel]
-                G_mat[m1,m2]+=G_el[ikk,jkk]
+                A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
+                A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
             #end for 
             f_rhs[m1]+=f_el[ikk]
         #end for 
@@ -573,36 +601,21 @@ for iel in range(0,nel):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
         constr[m2]+=NNNNP[k2]
+        #if pnormalise:
+        #   A_sparse[Nfem,NfemV+m2]+=constr[m2]
+        #   A_sparse[NfemV+m2,Nfem]+=constr[m2]
     #end for 
 
 #end for iel
 
-print("     -> K_mat (m,M) %.4e %.4e " %(np.min(K_mat),np.max(K_mat)))
-print("     -> G_mat (m,M) %.4e %.4e " %(np.min(G_mat),np.max(G_mat)))
-
 print("build FE matrix: %.3f s" % (time.time() - start))
 
 ###############################################################################
-# assemble K, G, GT, f, h into A and rhs
+# assemble f, h into rhs vector
 ###############################################################################
 start = time.time()
 
-if pnormalise:
-   a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
-   rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
-   a_mat[0:NfemV,0:NfemV]=K_mat
-   a_mat[0:NfemV,NfemV:Nfem]=G_mat
-   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-   a_mat[Nfem,NfemV:Nfem]=constr
-   a_mat[NfemV:Nfem,Nfem]=constr
-else:
-   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-   rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-   a_mat[0:NfemV,0:NfemV]=K_mat
-   a_mat[0:NfemV,NfemV:Nfem]=G_mat
-   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-#end if
-
+rhs = np.zeros(Nfem,dtype=np.float64)
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
 
@@ -613,7 +626,7 @@ print("assemble blocks: %.3f s" % (time.time() - start))
 ###############################################################################
 start = time.time()
 
-sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+sol=sps.linalg.spsolve(sps.csr_matrix(A_sparse),rhs)
 
 print("solve time: %.3f s" % (time.time() - start))
 
@@ -629,9 +642,53 @@ print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
-#np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
+np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
 print("split vel into u,v: %.3f s" % (time.time() - start))
+
+###############################################################################
+# normalise pressure
+###############################################################################
+
+if pnormalise:
+
+   jcobq=hx*hy/4 # only if rectangular elements! 
+
+   int_p=0
+   for iel in range(0,nel):
+       for iq in range(0,nqperdim):
+           for jq in range(0,nqperdim):
+               rq=qcoords[iq]
+               sq=qcoords[jq]
+               weightq=qweights[iq]*qweights[jq]
+               NNNP[0:mP]=NNP(rq,sq)
+               p_q=NNNP[0:mP].dot(p[iconP[0:mP,iel]])
+               int_p+=p_q*weightq*jcobq
+           #end for
+       #end for
+   #end for
+
+   avrg_p=int_p/Lx/Ly
+
+   print("     -> int_p %e " %(int_p))
+   print("     -> avrg_p %e " %(avrg_p))
+
+   p[:]-=avrg_p
+
+   print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
+
+xP=np.empty(NP,dtype=np.float64)  # x coordinates
+yP=np.empty(NP,dtype=np.float64)  # y coordinates
+counter = 0
+for j in range(0,nely+1):
+    for i in range(0,nelx+1):
+        xP[counter]=i*hx
+        yP[counter]=j*hy
+        counter += 1
+    #end for
+#end for
+
+np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
 
 ###############################################################################
 # compute strainrate 
@@ -644,6 +701,10 @@ exx = np.zeros(nel,dtype=np.float64)
 eyy = np.zeros(nel,dtype=np.float64)  
 exy = np.zeros(nel,dtype=np.float64)  
 e   = np.zeros(nel,dtype=np.float64)  
+pc  = np.zeros(nel,dtype=np.float64)  
+sigmaxx = np.zeros(nel,dtype=np.float64)  
+sigmayy = np.zeros(nel,dtype=np.float64)  
+sigmaxy = np.zeros(nel,dtype=np.float64)  
 
 for iel in range(0,nel):
 
@@ -681,13 +742,24 @@ for iel in range(0,nel):
 
     e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
 
+    pc[iel]=np.sum(p[iconP[:,iel]])/mP
+
+    sigmaxx[iel]=-pc[iel]+2*eta(xc[iel],yc[iel])*exx[iel]
+    sigmayy[iel]=-pc[iel]+2*eta(xc[iel],yc[iel])*eyy[iel]
+    sigmaxy[iel]=         2*eta(xc[iel],yc[iel])*exy[iel]
+
 #end for
 
 print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
+print("     -> pc  (m,M) %.4e %.4e " %(np.min(pc), np.max(pc)))
 
-#np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+
+np.savetxt('sigma.ascii',np.array([xc,yc,sigmaxx,sigmayy,sigmaxy]).T,header='# xc,yc,sigmaxx,sigmayy,sigmaxy')
+   
+np.savetxt('pressure_c.ascii',np.array([xc,yc,pc]).T,header='# x,y,p')
 
 print("compute press & sr: %.3f s" % (time.time() - start))
 
@@ -846,6 +918,38 @@ vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
 vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%10e\n" % (eta(xc[iel],yc[iel])) )
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%10e\n" % (pc[iel]) )
+vtufile.write("</DataArray>\n")
+
+#--
+vtufile.write("<DataArray type='Float32' Name='sigmaxx' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%10e\n" % (sigmaxx[iel]) )
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='sigmayy' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%10e\n" % (sigmayy[iel]) )
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='sigmaxy' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%10e\n" % (sigmaxy[iel]) )
+vtufile.write("</DataArray>\n")
+
+
+
+
+
+
 vtufile.write("</CellData>\n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")

@@ -202,4 +202,36 @@ dynamic pressure):
 As expected, the $x$ component of the velocity is zero because of symmetry.
 
 
+\newpage
+%----------------------------------------------------
+\subsection*{Inclusion in pure shear ({\tt bench=5})}
+
+(this setup was created for Philippe Yamato of Rennes University)
+
+The inclusion is placed at the origin and has a radius 0.1, while the domain is the 
+unit square. Viscosity inside the inclusion is 1 while the matrix viscosity is 1000.
+Free slip is prescribed on the left and bottom boundary while 
+$u=-1$ is prescribed on the right boundary and $v=+1$ on the top.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/inclusion/eta}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/inclusion/vel}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_18/results/inclusion/press}\\
+{\captionfont Resolution $256\times 256$.}
+\end{center}
+
+Note that viscosity is prescribed on quadrature levels, which in this case 
+is likely to generate large errors/jumps around the inclusion surface.
+
+\begin{verbatim}
+For 256x256 mesh on my laptop:
+setup: grid points: 0.128 s
+setup: connectivity: 0.242 s
+setup: boundary conditions: 0.151 s
+build FE matrix: 284.284 s
+assemble blocks: 0.003 s
+solve time: 804.607 s
+\end{verbatim}
+
+
 

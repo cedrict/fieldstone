@@ -1,0 +1,12 @@
+lut Cédric,
+Comme convenu, voici le setup dont je t’ai parlé hier:
+Lx = Ly = 2 m
+rayon de l’inclusion placée au centre = 0.1 m
+Viscosity ratio = eta_m/eta_i = 1000. Inclusion is weaker than matrix.
+
+Je suis en pure shear (raccourcissement horizontal) avec un background strain rate de 1e-14 s-1.
+Je te mets une image de la zone zoomée:
+- EN haut, pression / tffs
+- En bas, tauII / tffs
+avec tffs = 2*eta_m*ebg
+Thibault me dit que c’est normal en fait cette différence et qu’elle est liée au fait qu’on n'interpole pas la viscosité de la meme manière dans les deux codes.
