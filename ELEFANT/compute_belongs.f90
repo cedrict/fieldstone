@@ -77,6 +77,7 @@ end do
 end if
 
 !----------------------------------------------------------
+! should it be NV long ?!?!!?
 
 allocate(Pnode_belongs_to(9,NV)) !9 = max nb of elements a node can belong to
 

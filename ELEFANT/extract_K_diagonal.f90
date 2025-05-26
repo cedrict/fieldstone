@@ -55,7 +55,7 @@ case('matrix_MUMPS')
 case('matrix_CSR')
 
    do i=1,NfemVel
-      do k=1,csrK%ia(i),csrK%ia(i+1)-1
+      do k=1,csrK%ia(i),csrK%ia(i+1)-1   !!! SUSPICIOUS WHY START AT 1 ?!
          if (csrK%ja(k)==i) Kdiag(i)=csrK%mat(k)
       end do
    end do
