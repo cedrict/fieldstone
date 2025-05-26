@@ -1,0 +1,5 @@
+rm *.pdf
+rm *.vtu
+rm *.ascii
+rm *.png
+
