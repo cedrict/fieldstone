@@ -27,8 +27,8 @@ def NNT(r,s,order):
     if order==1:
        N_0=0.25*(1.-r)*(1.-s)
        N_1=0.25*(1.+r)*(1.-s)
-       N_2=0.25*(1.-r)*(1.+s)
-       N_3=0.25*(1.+r)*(1.+s)
+       N_2=0.25*(1.+r)*(1.+s)
+       N_3=0.25*(1.-r)*(1.+s)
        return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
     if order==2:
        N_0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
@@ -46,8 +46,8 @@ def dNNTdr(r,s,order):
     if order==1:
        dNdr_0=-0.25*(1.-s)
        dNdr_1=+0.25*(1.-s)
-       dNdr_2=-0.25*(1.+s)
-       dNdr_3=+0.25*(1.+s)
+       dNdr_2=+0.25*(1.+s)
+       dNdr_3=-0.25*(1.+s)
        return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3],dtype=np.float64)
     if order==2:
        dNdr_0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
@@ -65,8 +65,8 @@ def dNNTds(r,s,order):
     if order==1:
        dNds_0=-0.25*(1.-r)
        dNds_1=-0.25*(1.+r)
-       dNds_2=+0.25*(1.-r)
-       dNds_3=+0.25*(1.+r)
+       dNds_2=+0.25*(1.+r)
+       dNds_3=+0.25*(1.-r)
        return np.array([dNds_0,dNds_1,dNds_2,dNds_3],dtype=np.float64)
     if order==2:
        dNds_0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
@@ -107,7 +107,7 @@ if order==1: m=4 # number of nodes making up an element
 if order==2: m=9
 
 if experiment==1: # rotating cone
-   nelx=8
+   nelx=128
    nely=nelx
    Lx=1.  
    Ly=1.  
@@ -190,31 +190,34 @@ start = timing.time()
 
 icon =np.zeros((m,nel),dtype=np.int32)
 
-counter=0
-for j in range(0,nely):
-    for i in range(0,nelx):
-        counter2=0
-        for k in range(0,order+1):
-            for l in range(0,order+1):
-                icon[counter2,counter]=i*order+l+j*order*nnx+nnx*k
-                counter2+=1
+counter = 0
+for j in range(0, nely):
+    for i in range(0, nelx):
+        icon[0,counter]= i + j * (nelx + 1)
+        icon[1,counter]= i + 1 + j * (nelx + 1)
+        icon[2,counter]= i + 1 + (j + 1) * (nelx + 1)
+        icon[3,counter]= i + (j + 1) * (nelx + 1)
+        counter+=1
+
+#for iel in range (0,nel):
+#    print ("iel=",iel,'--------------')
+#    print ("node 1",icon[0,iel],"at pos.",x[icon[0,iel]], y[icon[0,iel]])
+#    print ("node 2",icon[1,iel],"at pos.",x[icon[1,iel]], y[icon[1,iel]])
+#    print ("node 3",icon[2,iel],"at pos.",x[icon[2,iel]], y[icon[2,iel]])
+#    print ("node 4",icon[3,iel],"at pos.",x[icon[3,iel]], y[icon[3,iel]])
+
+
+#counter=0
+#for j in range(0,nely):
+#    for i in range(0,nelx):
+#        counter2=0
+#        for k in range(0,order+1):
+#            for l in range(0,order+1):
+#                icon[counter2,counter]=i*order+l+j*order*nnx+nnx*k
+#                counter2+=1
             #end for
         #end for
-        counter += 1
-    #end for
-#end for
-
-#connectivity array for plotting
-nel2=(nnx-1)*(nny-1)
-iconQ1 =np.zeros((4,nel2),dtype=np.int32)
-counter = 0
-for j in range(0,nny-1):
-    for i in range(0,nnx-1):
-        iconQ1[0,counter]=i+j*nnx
-        iconQ1[1,counter]=i+1+j*nnx
-        iconQ1[2,counter]=i+1+(j+1)*nnx
-        iconQ1[3,counter]=i+(j+1)*nnx
-        counter += 1 
+#        counter += 1
     #end for
 #end for
 
@@ -247,6 +250,7 @@ print("flag boundary nodes & elements: %.3f s" % (timing.time() - start))
 #################################################################
 # compute B_to_G and G_to_B arrays
 #################################################################
+start = timing.time()
     
 NB=2*(nelx+nely)
 
@@ -257,7 +261,6 @@ counter=0
 
 for i in range(0,nnx): 
         inode=i
-        #print(counter,inode)
         G_to_B[inode]=counter
         B_to_G[counter]=inode
         counter+=1
@@ -265,7 +268,6 @@ for i in range(0,nnx):
 counter-=1
 for i in range(0,nny):
         inode=nnx*(i+1)-1
-        #print(counter,inode)
         G_to_B[inode]=counter
         B_to_G[counter]=inode
         counter+=1
@@ -273,7 +275,6 @@ for i in range(0,nny):
 counter-=1
 for i in range(0,nnx): 
         inode=NV-i-1
-        #print(counter,inode)
         G_to_B[inode]=counter
         B_to_G[counter]=inode
         counter+=1
@@ -281,12 +282,13 @@ for i in range(0,nnx):
 counter-=1
 for i in range(0,nny-1):
         inode=NV-(i+1)*nnx
-        #print(counter,inode)
         G_to_B[inode]=counter
         B_to_G[counter]=inode
         counter+=1
 
-print (B_to_G)
+#print (B_to_G)
+
+print("compute B_to_G, G_to_B: %.3f s" % (timing.time() - start))
 
 #################################################################
 # compute normal to domain at the nodes
@@ -557,90 +559,55 @@ for istep in range(0,nstep):
 
     print("compute heat flux: %.3f s" % (timing.time() - start))
 
-    #################################################################
-    # export boundary heat flux values
-    #################################################################
+    qn_analytical=np.zeros(NV,dtype=np.float64) 
+    for i in range(NV):
+        qn_analytical[i]=qx_analytical(x[i],y[i])*nx[i]+qy_analytical(x[i],y[i])*ny[i]
+
     qn_file=open('heat_flux_boundary.ascii',"w")
-
-    counter=0
-
-    for i in range(0,nnx-1): 
-        inode=B_to_G[counter]
-        print(inode)
-        qn_file.write("%d %d %e %e  \n" %(counter,inode,qn[inode],
-               qx_analytical(x[inode],y[inode])*nx[inode]
-              +qy_analytical(x[inode],y[inode])*ny[inode]))
-        counter+=1
-
-    for i in range(0,nny-1):
-        inode=B_to_G[counter]
-        print(inode)
-        qn_file.write("%d %d %e %e  \n" %(counter,inode,qn[inode],\
-               qx_analytical(x[inode],y[inode])*nx[inode]
-              +qy_analytical(x[inode],y[inode])*ny[inode]))
-        counter+=1
-         
-    for i in range(0,nnx-1): 
-        inode=B_to_G[counter]
-        print(inode)
-        qn_file.write("%d %d %e %e  \n" %(counter,inode,qn[inode],\
-               qx_analytical(x[inode],y[inode])*nx[inode]
-              +qy_analytical(x[inode],y[inode])*ny[inode]))
-        counter+=1
-
-    for i in range(0,nny-1):
-        inode=B_to_G[counter]
-        print(inode)
-        qn_file.write("%d %d %e %e  \n" %(counter,inode,qn[inode],
-               qx_analytical(x[inode],y[inode])*nx[inode]
-              +qy_analytical(x[inode],y[inode])*ny[inode]))
-        counter+=1
-
+    for k in range(0,NB):
+        qn_file.write("%e %e %e %e %d %d \n" %(x[B_to_G[k]],y[B_to_G[k]],
+                                               qn[B_to_G[k]],qn_analytical[B_to_G[k]],B_to_G[k],k))
     qn_file.close()
 
     #################################################################
     # compute heat flux w/ consistent boundary flux method
     # internal numbering of Q1 is 
-    # 2--3
+    # 3--2
     # |  |
     # 0--1
+    # the order of k,l does not matter
     #################################################################
     start = timing.time()
 
     M=lil_matrix((NB,NB),dtype=np.float64)
+    Ml=lil_matrix((NB,NB),dtype=np.float64)
     rhs= np.zeros(NB,dtype=np.float64)   
     Mel=np.zeros((2,2),dtype=np.float64) 
 
     for iel in range(0,nel):
         if boundary_element[iel]:
-           # loop over sides, now only side 01
 
-           for k in range(0,m): 
-
-               if k==0: # side 0-1
-                  inode=icon[0,iel]
-                  jnode=icon[1,iel]
-               elif k==1: # side 1-2
-                  inode=icon[1,iel]
-                  jnode=icon[3,iel]
-               elif k==2: # side 3-2
-                  inode=icon[3,iel]
-                  jnode=icon[2,iel]
-               else: # side 2-0
-                  inode=icon[2,iel]
-                  jnode=icon[0,iel]
+           for face in range(0,4): # loop over faces
+               k=face    ; inode=icon[k,iel]
+               l=(k+1)%4 ; jnode=icon[l,iel]
 
                if boundary_node[inode] and boundary_node[jnode]: # both nodes are on boundary
                   if bc_fixT[inode] and bc_fixT[jnode]: # both nodes are fixed
 
                      # compute face length
-                     h=np.sqrt( (x[icon[0,iel]]-x[icon[1,iel]])**2 + (y[icon[0,iel]]-y[icon[1,iel]])**2 )
+                     h=np.sqrt( (x[icon[k,iel]]-x[icon[l,iel]])**2 + 
+                                (y[icon[k,iel]]-y[icon[l,iel]])**2 )
+
+                     #print('iel=',iel,'face=',face,'k=',k,'l=',l,'inode=',inode,'jnode=',jnode,
+                     #        'h=',h,G_to_B[inode],G_to_B[jnode])
+
                      # compute Mel, assuming all sides are straight
                      Mel[0,0]=h/3  
                      Mel[0,1]=h/6  
                      Mel[1,0]=h/6  
                      Mel[1,1]=h/3  
-                     # compute bel
+
+                     # compute bel, integration over volume
                      bel=np.zeros(2,dtype=np.float64) 
                      for iq in range(0,nqperdim):
                          for jq in range(0,nqperdim):
@@ -654,39 +621,44 @@ for istep in range(0,nstep):
                              jcb[0,1]=np.dot(dNNNTdr[:],y[icon[:,iel]])
                              jcb[1,0]=np.dot(dNNNTds[:],x[icon[:,iel]])
                              jcb[1,1]=np.dot(dNNNTds[:],y[icon[:,iel]])
-                             jcob = np.linalg.det(jcb)
+                             jcob=np.linalg.det(jcb)
                              jcbi=np.linalg.inv(jcb)
                              dNNNTdx=jcbi[0,0]*dNNNTdr[:]+jcbi[0,1]*dNNNTds[:]
                              dNNNTdy=jcbi[1,0]*dNNNTdr[:]+jcbi[1,1]*dNNNTds[:]
                              dTdxq=np.dot(dNNNTdx[:],T[icon[:,iel]])
                              dTdyq=np.dot(dNNNTdy[:],T[icon[:,iel]])
-                             bel[0]+=(dNNNTdx[0]*dTdxq+dNNNTdy[0]*dTdyq)*weightq*jcob
-                             bel[1]+=(dNNNTdx[1]*dTdxq+dNNNTdy[1]*dTdyq)*weightq*jcob
+                             bel[0]-=(dNNNTdx[k]*dTdxq+dNNNTdy[k]*dTdyq)*weightq*jcob
+                             bel[1]-=(dNNNTdx[l]*dTdxq+dNNNTdy[l]*dTdyq)*weightq*jcob
                              # compute \int N S 
                              NNNT=NNT(rq,sq,order)
                              xq=np.dot(NNNT[:],x[icon[:,iel]])
                              yq=np.dot(NNNT[:],y[icon[:,iel]])
-                             bel[0]-=(NNNT[0]*rhs_f(xq,yq,experiment))*weightq*jcob
-                             bel[1]-=(NNNT[1]*rhs_f(xq,yq,experiment))*weightq*jcob
+                             bel[0]+=(NNNT[k]*rhs_f(xq,yq,experiment))*weightq*jcob
+                             bel[1]+=(NNNT[l]*rhs_f(xq,yq,experiment))*weightq*jcob
                          #end for jq
                      #end for iq
 
                      #assembly                                          
-                     M[G_to_B[inode],G_to_B[inode]]+=Mel[0,0] 
-                     M[G_to_B[inode],G_to_B[jnode]]+=Mel[0,1] 
-                     M[G_to_B[jnode],G_to_B[inode]]+=Mel[1,0] 
-                     M[G_to_B[jnode],G_to_B[jnode]]+=Mel[1,1] 
+                     M[G_to_B[inode],G_to_B[inode]]+=Mel[0,0]
+                     M[G_to_B[inode],G_to_B[jnode]]+=Mel[0,1]
+                     M[G_to_B[jnode],G_to_B[inode]]+=Mel[1,0]
+                     M[G_to_B[jnode],G_to_B[jnode]]+=Mel[1,1]
                      rhs[G_to_B[inode]]+=bel[0]
                      rhs[G_to_B[jnode]]+=bel[1]
+                     Ml[G_to_B[inode],G_to_B[inode]]+=Mel[0,0]
+                     Ml[G_to_B[inode],G_to_B[inode]]+=Mel[0,1]
+                     Ml[G_to_B[jnode],G_to_B[jnode]]+=Mel[1,0]
+                     Ml[G_to_B[jnode],G_to_B[jnode]]+=Mel[1,1]
 
                   #end if bc_fix                 
                #end if boundary_node   
-           #end for k
+           #end for side
         #end if boundary_element                 
     #end for iel                    
 
-    # solve linear system
+    # solve linear systems
     qn_CBF=sps.linalg.spsolve(sps.csr_matrix(M),rhs)
+    qn_CBF_lumped=sps.linalg.spsolve(sps.csr_matrix(Ml),rhs)
 
     print("     -> qn (m,M) %.4f %.4f " %(np.min(qn_CBF),np.max(qn_CBF)))
 
@@ -695,7 +667,7 @@ for istep in range(0,nstep):
 
     qn_file=open('heat_flux_boundary_CBF.ascii',"w")
     for k in range(0,NB):
-        qn_file.write("%d %d %e \n" %(k,B_to_G[k],qn_CBF[k])) 
+        qn_file.write("%e %e %e %e %d %d \n" %(x[B_to_G[k]],y[B_to_G[k]],qn_CBF[k],qn_CBF_lumped[k],B_to_G[k],k))
     qn_file.close()
 
     print("compute heat flux (CBF): %.3f s" % (timing.time() - start))
@@ -712,7 +684,7 @@ for istep in range(0,nstep):
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
-       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel2))
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
        #####
        vtufile.write("<Points> \n")
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
@@ -801,21 +773,17 @@ for istep in range(0,nstep):
        vtufile.write("<Cells>\n")
        #--
        vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-       if order==1:
-          for iel in range (0,nel2):
-              vtufile.write("%d %d %d %d \n" %(icon[0,iel],icon[1,iel],icon[3,iel],icon[2,iel]))
-       if order==2:
-          for iel in range (0,nel2):
-              vtufile.write("%d %d %d %d \n" %(iconQ1[0,iel],iconQ1[1,iel],iconQ1[2,iel],iconQ1[3,iel]))
+       for iel in range (0,nel):
+           vtufile.write("%d %d %d %d \n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel]))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-       for iel in range (0,nel2):
+       for iel in range (0,nel):
            vtufile.write("%d \n" %((iel+1)*4))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-       for iel in range (0,nel2):
+       for iel in range (0,nel):
            vtufile.write("%d \n" %9)
        vtufile.write("</DataArray>\n")
        #--
