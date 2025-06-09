@@ -38,7 +38,7 @@ This \stone is based on
 %====================================
 \section*{Setup of experiment \# 1}
 
-The 1d setup originates in Eq.~(52) of \textcite{grls87}.
+The 1d setup originates in Eq.~(52) of \textcite{grls87} (1987).
 The domain is the unit square. 
 The 2d steady state heat equation (with heat source) is solved, with $\rho=C_p=k=1$:
 \[
@@ -115,8 +115,6 @@ Indeed:
 = -2 + 2y^2 -2 + x^2
 = -4 + 2(x^2+y^2)
 \]
-
-
 The heat flux is given by 
 \[
 \vec{q} = -\vec\nabla T = 
@@ -140,7 +138,49 @@ although the normal direction is undefined at the corners.
 
 The paper relies mostly on linear triangles but we will only consider 
 linear quadrilaterals here.
-Resolutions used in the paper are 4x4, 8x8, 16x16.
+Resolutions used in the paper are $4\times 4$, $8\times 8$, $16\times 16$.
+
+%====================================
+\section*{Setup of experiment \# 3,4,5}
+
+These originate in Section~5 of \textcite{care82} (1982).
+We solve the Laplace equation $\Delta T=0$ on the domain is $\Omega=[-1,1]\times [-1,1]$.
+The analytical solution for these exoeriments are 
+\[
+T_3(x,y)=x^2-y^2
+\qquad
+T_4(x,y)=2xy
+\qquad
+T_5(x,y)=x^3-3xy^2
+\]
+and it is prescribed on the boundary. The heat flux is then
+\[
+\vec{q}_3 
+= -\vec\nabla T_3
+= \left(\begin{array}{c}
+-2x \\ -2y
+\end{array}\right)
+\qquad
+\vec{q}_4
+= -\vec\nabla T_4
+= \left(\begin{array}{c}
+-2y \\ -2x
+\end{array}\right)
+\qquad
+\vec{q}_5
+= -\vec\nabla T_5
+= \left(\begin{array}{c}
+-3x^2+3y^2 \\ -6xy
+\end{array}\right)
+\]
+We find that the normal flux $q_1=\vec{q}_1\cdot\vec{n}$ is constant on each face 
+of the domain.
+
+
+{\color{red} check, implement, finish, compute error rates, ...}
+
+
+
 
 
 %==============================================================================
@@ -293,9 +333,10 @@ to the point that it is somewhat dificult to distinguish between dots and triang
 These observations motivate the following section.
 Also, this problem is not new and we read in \textcite{mizu86} (1986):
 \begin{displayquote}
+{\color{MidnightBlue}
 Most finite element schemes for thermal problems estimate boundary heat flux directly from the
 derivative of the finite element solution. The boundary flux calculated by this approach is typically
-inaccurate and does not guarantee a global heat balance.
+inaccurate and does not guarantee a global heat balance.}
 \end{displayquote}
 
 %==============================================================================
@@ -611,7 +652,7 @@ In this case the solution is then simply:
 \right)
 \]
 
-
+------ above is  in FS already ----
 
 Let us now consider the mesh (topology) of \textcite{grls87}:
 \begin{center}
@@ -1164,6 +1205,12 @@ followed by
     qn_CBF_lumped=sps.linalg.spsolve(sps.csr_matrix(Ml),rhs)
 \end{lstlisting}
 
+Note that the 'spy' function allows us to look at the CBF matrix nonzero structure:
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_173/results/exp1/matrix.pdf}
+\end{center}
+
+
 We then run the code and proceed to plot
 \begin{itemize}
 \item the boundary heat flux \lstinline{qn} obtained by means of the averaged corner 
@@ -1177,14 +1224,26 @@ computed normals above.
 %==============================================================================
 \section*{Computing the boundary heat flux ('partial' CBF method)}
 
-This method is presented in Section~5 of \textcite{cacs85} (1985).
-The underlying idea is to compute the heat flux one (flat) face at a time.
-
-We read:
+The issue with the corners of a 2d or 3d domain 
+is discussed in Section 5 of \textcite{cacs85} (1985):
 \begin{displayquote}
+{\color{MidnightBlue}
+As noted earlier, local effects at the corners may degrade the rate of convergence of the
+computed flux. Near a corner point $P$, there are two distinct unit normal vectors, each
+associated with one of the two (straight line) portions of $\Gamma$. These vectors are associated with
+two different limiting flux values at $P$ and hence lead to a discontinuity of the flux at the
+corner. Thus if the distinct flux values at P were specified correctly one would anticipate that,
+by incorporating these values in our post-processing procedures, a much more accurate flux
+approximation would result.}
+\end{displayquote}
+
+The underlying idea is to compute the heat flux one (flat) face at a time.
+We read further:
+\begin{displayquote}
+{\color{MidnightBlue}
 The following variant of the post-processing method is designed to circumvent the previous
 difficulties associated with the corners, by utilizing the prescribed boundary data to provide
-analytic representations of the corner-flux components with respect to the associated sides.
+analytic representations of the corner-flux components with respect to the associated sides.}
 \end{displayquote}
 
 Let $\Gamma$ be a portion of the boundary $\partial \Omega$ 
@@ -1200,13 +1259,14 @@ boundary heat flux for $i=2,3, ...,m-1$.
 
 We read further:
 \begin{displayquote}
+{\color{MidnightBlue}
 Moreover, the following numerical
 experiments indicate that this variant of the method yields the optimal rate of convergence in
 all test cases, including two nonlinear problems. Since the method involves only part of the
 boundary we shall refer to it as the `partial' method.
 
 In order to apply the partial-boundary method it is necessary to supply the exact (or good
-approximations of the exact) flux values at the corner points.
+approximations of the exact) flux values at the corner points.}
 \end{displayquote}
 
 The difficulty of course is to come up with boundary heat flux values at $P$ and $Q$.
@@ -1335,7 +1395,58 @@ and as the lower right corner B of the domain:
     qn_B=-dTdyq
 \end{lstlisting}
 These two values will be used as boundary condition for the CBF
-approach applied to face A-B.
+approach applied to face A-B only.
+
+
+
+
+\newpage
+
+
+In the book by \textcite{reddybook2} (p.~308-309) we read:
+
+\begin{displayquote}
+{\color{MidnightBlue} 
+Since 
+\[
+T(x,y,t)=\vec{\bN}(x,y) \cdot \vec{T} 
+\]
+then the flux components are
+\[
+q_i(x,y,t)=-k \frac{\partial \vec{\bN}}{\partial x_i} \cdot \vec{T}(t)
+\]
+This relation is valid for any element and allows the flux to be evaluated 
+at any time and at any point inside the element.
+[...]
+Maximum accuracy in the shape function derivatives is obtained by evaluating the derivative at the element numerical integration points
+(typically, the 2x2 Gaussian points in quadrilateral elements).
+
+Since fluxes are normally required on element or domain boundaries, the integration point values are extrapolated to the nodes and the discontinuous element level fluxes averaged between adjacent elements.
+Other evaluation points within and element have been employed, such as the points midway between nodes on the element boundary, or the Gauss points on the element boundary.
+
+All of these methods provide results of acceptable accuracy provided the computational mesh is 
+sufficiently refined. Note that a common feature of these procedures is the need to compute a unit normal on an element boundary if a total or integrated flux is to be derived. Methods for determining 
+unique and consistent normals to element boundaries are discussed in \textcite{ensg82} (1982).
+
+A second, less familiar, approach for computing flux quantities relies on the consistent application
+of the weighed residual method. This idea was proposed by \textcite{lahe76} (1976) 
+and \textcite{mahz78} (1978), and refined by Gresho et al (1981) [unfindable conference paper].
+In essence, a weighted residual equation is derived that relates the boundary flux to local heat sources and computed temperature gradients. The consistent flux equation requires a matrix solution, 
+which for many cases can be simplified by the use of a lumping procedure. 
+Though somewhat more accurate than the simpler basis function derivative method, this procedure 
+requires more computation, especially for the advection-diffusion equation.
+
+It is important to recall that the above methods were described for the case
+of a conductive heat flux as would be computed for for a solid boundary or a no flow-through surface.
+The heat flux computation for an open flow boundary would have to include terms describing the 
+advective transport of energy. 
+The appropriate flux description for this case would be
+\[
+q_i(x,y,t)=\rho C_p v_i T -k \frac{\partial T}{\partial x_i} 
+\]
+
+}
+\end{displayquote}
 
 
 
@@ -1346,38 +1457,22 @@ approach applied to face A-B.
 %===================================================
 \section*{Results of experiment \# 1}
 
-Before we look at results we must acknowledge that the paper on which this all is based \cite{mizu86}
-only showcases results in 1d. This observation will come to haunt us later on. 
+The heat flux computed on the boundary of the domain is shown hereafter:
 
 \begin{center}
-a)\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/CBF1/heat_flux_boundary.pdf}
-b)\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/CBF2/heat_flux_boundary.pdf}\\
-c)\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/CBF3/heat_flux_boundary.pdf}
-d)\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/CBF4/heat_flux_boundary.pdf}\\
+a)\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/CBF1/heat_flux_boundary.pdf}
+b)\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/CBF2/heat_flux_boundary.pdf}\\
+c)\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/CBF3/heat_flux_boundary.pdf}
+d)\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/CBF4/heat_flux_boundary.pdf}\\
 {\captionfont a) grid $8\times 8$, no stretching; b) grid $8\times 8$, with stretching;
 c) grid $128\times 128$, no stretching; d) grid $128\times 128$, with stretching. 
 Note that here the measurements are done SW-SE-NE-NW-SW.}
 \end{center}
 
-The conclusion is clear: with or without stretching the CBF algorithm (lumped or not) works. 
+The conclusion is that with or without stretching the CBF algorithm (lumped or not) works. 
 However the presence of corners with an undefined normal yields anomalous results.
 The 'partial' CBF method on the other hand yields much more accurate results including near the corners. 
 
-Fortunately, this problem was also observed in Section 5 of \textcite{cacs85} (1985):
-\begin{displayquote}
-As noted earlier, local effects at the corners may degrade the rate of convergence of the
-computed flux. Near a corner point $P$, there are two distinct unit normal vectors, each
-associated with one of the two (straight line) portions of $\Gamma$. These vectors are associated with
-two different limiting flux values at $P$ and hence lead to a discontinuity of the flux at the
-corner. Thus if the distinct flux values at P were specified correctly one would anticipate that,
-by incorporating these values in our post-processing procedures, a much more accurate flux
-approximation would result.
-\end{displayquote}
-
-Note that the 'spy' function allows us to look at the CBF matrix nonzero structure:
-\begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_173/results/exp1/matrix.pdf}
-\end{center}
 
 
 
@@ -1432,7 +1527,68 @@ We find as in Fig.~3 of the paper that the CBF accuracy drastically decreases at
 All in all, the 'partial method' seems to work best.
 
 
+\newpage
+%===================================================
+\section*{Results of experiment \# 3}
 
+Temperature and heat flux fields are shown hereunder. 
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp3/T}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp3/qx}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp3/qy}\\
+{\captionfont Temperature and heat flux components in the domain on $32 \times 32$ mesh.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary_bottom.pdf}\\
+{\captionfont Boundary heat flux on $16 \times 16$ mesh. Left: all four 
+sides of domain, Right: error on bottom face}
+\end{center}
+
+\newpage
+%===================================================
+\section*{Results of experiment \# 4}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp4/T}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp4/qx}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp4/qy}\\
+{\captionfont Temperature and heat flux components in the domain on $32 \times 32$ mesh.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary_bottom.pdf}\\
+{\captionfont Boundary heat flux on $16 \times 16$ mesh. Left: all four 
+sides of domain, Right: error on bottom face}
+\end{center}
+
+
+
+
+
+
+
+\newpage
+%===================================================
+\section*{Results of experiment \# 5}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp5/T}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp5/qx}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp5/qy}\\
+{\captionfont Temperature and heat flux components in the domain on $32 \times 32$ mesh.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary_bottom.pdf}\\
+{\captionfont Boundary heat flux on $16 \times 16$ mesh. Left: all four 
+sides of domain, Right: error on bottom face}
+\end{center}
 
 
 

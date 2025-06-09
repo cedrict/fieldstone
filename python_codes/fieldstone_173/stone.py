@@ -14,24 +14,48 @@ def T_analytical(x,y,experiment):
        return (2*x+y)**2
     if experiment==2:
        return (1-x**2)*(1-y**2)
+    if experiment==3:
+       return x**2-y**2
+    if experiment==4:
+       return 2*x*y 
+    if experiment==5:
+       return x**3-3*x*y**2
 
 def qx_analytical(x,y,experiment):
     if experiment==1:
        return -4*(2*x+y)
     if experiment==2:
        return 2*x*(1-y**2)
+    if experiment==3:
+       return -2*x
+    if experiment==4:
+       return -2*y
+    if experiment==5:
+       return -3*x**2+3*y**2
 
 def qy_analytical(x,y,experiment):
     if experiment==1:
        return -2*(2*x+y)
     if experiment==2:
        return 2*y*(1-x**2)
+    if experiment==3:
+       return 2*y
+    if experiment==4:
+       return -2*x
+    if experiment==5:
+       return +6*x*y
 
 def rhs_f(x,y,experiment):
     if experiment==1:
        return -10
     if experiment==2:
        return 4-2*(x**2+y**2)
+    if experiment==3:
+       return 0 
+    if experiment==4:
+       return 0
+    if experiment==5:
+       return 0
 
 #------------------------------------------------------------------------------
 
@@ -108,7 +132,7 @@ if int(len(sys.argv) == 4):
    experiment=int(sys.argv[1])
    order     =int(sys.argv[2])
 else:
-   experiment=1
+   experiment=5
    order=1
 
 if order==1: m=4 # number of nodes making up an element
@@ -123,8 +147,8 @@ if experiment==1: #
    x0=0
    y0=0
 
-if experiment==2:
-   nelx=8
+if experiment==2 or experiment==3 or experiment==4 or experiment==5:
+   nelx=16
    nely=nelx
    Lx=2.
    Ly=2.
