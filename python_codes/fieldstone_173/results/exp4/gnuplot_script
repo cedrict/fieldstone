@@ -1,23 +1,87 @@
 #
 set term pdf enhanced font "Times,12pt"
 set grid
-set pointsize .3
-set xlabel 'boundary node id'
+set pointsize .23
 set key outside
 
+set xlabel 's'
 set ylabel 'q_n'
-set output 'heat_flux_boundary.pdf'
-plot[][:]\
-'heat_flux_boundary.ascii' u 3 w lp t 'method 1',\
-'heat_flux_boundary_CBF.ascii' u 3 pt 5 w lp t 'CBF',\
-'heat_flux_boundary_CBF.ascii' u 4 w lp t 'CBF lumped',\
-'heat_flux_boundary_partial.ascii' u 3 w lp t 'partial',\
-'heat_flux_boundary.ascii' u 4 w lp lt -1  dt 2  t 'analytical'
 
+
+set title '8x8'
+set output 'heat_flux_boundary_8.pdf'
+plot[][:]\
+'heat_flux_boundary_caveraging_exp4_8.ascii' u 5:3 w lp t 'corner averaging',\
+'heat_flux_boundary_CBF_exp4_8.ascii' u 5:3 pt 5 w lp t 'CBF',\
+'heat_flux_boundary_CBF_exp4_8.ascii' u 5:4 w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp4_8.ascii' u 4:3 w lp t 'CBF partial',\
+'heat_flux_boundary_caveraging_exp4_8.ascii' u 5:3 w lp lt -1  dt 2  t 'analytical'
+
+set title '16x16'
+set output 'heat_flux_boundary_16.pdf'
+plot[][:]\
+'heat_flux_boundary_caveraging_exp4_16.ascii' u 5:3 w lp t 'corner averaging',\
+'heat_flux_boundary_CBF_exp4_16.ascii' u 5:3 pt 5 w lp t 'CBF',\
+'heat_flux_boundary_CBF_exp4_16.ascii' u 5:4 w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp4_16.ascii' u 4:3 w lp t 'CBF partial',\
+'heat_flux_boundary_caveraging_exp4_16.ascii' u 5:3 w lp lt -1  dt 2  t 'analytical'
+
+set title '32x32'
+set output 'heat_flux_boundary_32.pdf'
+plot[][:]\
+'heat_flux_boundary_caveraging_exp4_32.ascii' u 5:3 w lp t 'corner averaging',\
+'heat_flux_boundary_CBF_exp4_32.ascii' u 5:3 pt 5 w lp t 'CBF',\
+'heat_flux_boundary_CBF_exp4_32.ascii' u 5:4 w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp4_32.ascii' u 4:3 w lp t 'CBF partial',\
+'heat_flux_boundary_caveraging_exp4_32.ascii' u 5:3 w lp lt -1  dt 2  t 'analytical'
+
+set title '64x64'
+set output 'heat_flux_boundary_64.pdf'
+plot[][:]\
+'heat_flux_boundary_caveraging_exp4_64.ascii' u 5:3 w lp t 'corner averaging',\
+'heat_flux_boundary_CBF_exp4_64.ascii' u 5:3 pt 5 w lp t 'CBF',\
+'heat_flux_boundary_CBF_exp4_64.ascii' u 5:4 w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp4_64.ascii' u 4:3 w lp t 'CBF partial',\
+'heat_flux_boundary_caveraging_exp4_64.ascii' u 5:3 w lp lt -1  dt 2  t 'analytical'
+
+#####################################################################
+
+set ylabel 'q_n error on AB'
 set xlabel 'x'
-set output 'heat_flux_boundary_bottom.pdf'
-plot[][-1:1]\
-'heat_flux_boundary.ascii'         u 1:($3-(2*$1)) w lp t 'method 1',\
-'heat_flux_boundary_CBF.ascii'     u 1:($3-(2*$1)) pt 5 w lp t 'CBF',\
-'heat_flux_boundary_CBF.ascii'     u 1:($4-(2*$1)) w lp t 'CBF lumped',\
-'heat_flux_boundary_partial.ascii' u 1:($3-(2*$1)) w lp t 'partial',\
+
+set title '8x8'
+set output 'heat_flux_boundary_bottom_8.pdf'
+plot[][-5:5]\
+'heat_flux_boundary_AB_caveraging_exp4_8.ascii'  u 1:($3-(2*$1)) w lp t 'corner averaging',\
+'heat_flux_boundary_AB_CBF_exp4_8.ascii'         u 1:($3-(2*$1)) pt 5 w lp t 'CBF',\
+'heat_flux_boundary_AB_CBF_exp4_8.ascii'         u 1:($4-(2*$1)) w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp4_8.ascii'     u 1:($3-(2*$1)) w lp t 'CBF partial'
+
+set title '16x16'
+set output 'heat_flux_boundary_bottom_16.pdf'
+plot[][-5:5]\
+'heat_flux_boundary_AB_caveraging_exp4_16.ascii'  u 1:($3-(2*$1)) w lp t 'corner averaging',\
+'heat_flux_boundary_AB_CBF_exp4_16.ascii'         u 1:($3-(2*$1)) pt 5 w lp t 'CBF',\
+'heat_flux_boundary_AB_CBF_exp4_16.ascii'         u 1:($4-(2*$1)) w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp4_16.ascii'     u 1:($3-(2*$1)) w lp t 'CBF partial'
+
+set title '32x32'
+set output 'heat_flux_boundary_bottom_32.pdf'
+plot[][-5:5]\
+'heat_flux_boundary_AB_caveraging_exp4_32.ascii'  u 1:($3-(2*$1)) w lp t 'corner averaging',\
+'heat_flux_boundary_AB_CBF_exp4_32.ascii'         u 1:($3-(2*$1)) pt 5 w lp t 'CBF',\
+'heat_flux_boundary_AB_CBF_exp4_32.ascii'         u 1:($4-(2*$1)) w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp4_32.ascii'     u 1:($3-(2*$1)) w lp t 'CBF partial'
+
+set title '64x64'
+set output 'heat_flux_boundary_bottom_64.pdf'
+plot[][-5:5]\
+'heat_flux_boundary_AB_caveraging_exp4_64.ascii'  u 1:($3-(2*$1)) w lp t 'corner averaging',\
+'heat_flux_boundary_AB_CBF_exp4_64.ascii'         u 1:($3-(2*$1)) pt 5 w lp t 'CBF',\
+'heat_flux_boundary_AB_CBF_exp4_64.ascii'         u 1:($4-(2*$1)) w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp4_64.ascii'     u 1:($3-(2*$1)) w lp t 'CBF partial'
+
+
+
+
+

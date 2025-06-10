@@ -1,0 +1,30 @@
+#! /bin/bash
+
+rm -f errors
+rm -f build
+rm -f solve
+
+order=1
+
+for exp in {1..5} ; do 
+
+    echo experiment= $exp
+
+    for n in 8 12 16 24 32 48 64 ; do
+
+        echo ----nelx=nely= $n
+
+        python3 stone.py  $exp $order $n > opla
+
+        mv heat_flux_boundary_caveraging.ascii heat_flux_boundary_caveraging_exp${exp}_${n}.ascii
+        mv heat_flux_boundary_CBF.ascii        heat_flux_boundary_CBF_exp${exp}_${n}.ascii
+
+        mv heat_flux_boundary_AB_caveraging.ascii heat_flux_boundary_AB_caveraging_exp${exp}_${n}.ascii
+        mv heat_flux_boundary_AB_CBF.ascii        heat_flux_boundary_AB_CBF_exp${exp}_${n}.ascii
+        mv heat_flux_boundary_AB_partial.ascii    heat_flux_boundary_AB_partial_exp${exp}_${n}.ascii
+
+        mv solution.vtu solution_exp${exp}_${n}.vtu
+
+    done
+
+done

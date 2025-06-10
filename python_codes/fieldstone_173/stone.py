@@ -2,7 +2,6 @@ import numpy as np
 import sys as sys
 import scipy
 import time as timing
-from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import scipy.sparse as sps
 from scipy.sparse import csr_matrix, lil_matrix
@@ -128,31 +127,29 @@ hcond=1.     # thermal conductivity
 hcapa=1.     # heat capacity
 rho0=1       # reference density
 
-if int(len(sys.argv) == 4):
+if int(len(sys.argv)==4):
    experiment=int(sys.argv[1])
    order     =int(sys.argv[2])
+   nelx      =int(sys.argv[3])
 else:
    experiment=5
    order=1
+   nelx=16
 
 if order==1: m=4 # number of nodes making up an element
 if order==2: m=9
 
-if experiment==1: # 
-   nelx=8
+if experiment==1:  
    nely=nelx
    Lx=1.  
    Ly=1.  
-   steady_state=True
    x0=0
    y0=0
 
 if experiment==2 or experiment==3 or experiment==4 or experiment==5:
-   nelx=16
    nely=nelx
    Lx=2.
    Ly=2.
-   steady_state=True
    x0=-1
    y0=-1
 
@@ -164,12 +161,6 @@ nny=order*nely+1  # number of elements, y direction
 NT=nnx*nny        # number of nodes
 nel=nelx*nely     # number of elements, total
 NfemT=NT*ndofT    # Total number of degrees of temperature freedom
-
-# alphaT=1: implicit
-# alphaT=0: explicit
-# alphaT=0.5: Crank-Nicolson
-
-alphaT=0.5
 
 #####################################################################
 # define 1d quadrature points and weights
@@ -202,7 +193,7 @@ print("-----------------------------")
 #####################################################################
 # grid point setup 
 #####################################################################
-start = timing.time()
+start=timing.time()
 
 x=np.zeros(NT,dtype=np.float64)  # x coordinates
 y=np.zeros(NT,dtype=np.float64)  # y coordinates
@@ -223,6 +214,7 @@ print("mesh (%.3fs)" % (timing.time() - start))
 #####################################################################
 # stretch mesh
 #####################################################################
+start=timing.time()
 
 if experiment==1:
    for i in range(0,NT):
@@ -232,7 +224,7 @@ if experiment==1:
 #####################################################################
 # connectivity
 #####################################################################
-start = timing.time()
+start=timing.time()
 
 icon =np.zeros((m,nel),dtype=np.int32)
 
@@ -250,7 +242,7 @@ print("connectivity (%.3fs)" % (timing.time() - start))
 #################################################################
 # flag nodes and elements on boundary
 #################################################################
-start = timing.time()
+start=timing.time()
 
 boundary_element=np.zeros(nel,dtype=bool)  
 boundary_node=np.zeros(NT,dtype=bool)  
@@ -274,7 +266,7 @@ print("flag boundary nodes & elements: %.3f s" % (timing.time()-start))
 #################################################################
 # compute B_to_G and G_to_B arrays
 #################################################################
-start = timing.time()
+start=timing.time()
     
 NB=2*(nelx+nely)
 
@@ -315,10 +307,19 @@ for i in range(0,nny-1):
 print("compute B_to_G, G_to_B: %.3f s" % (timing.time() - start))
 
 #################################################################
+# compute s coordinate along boundary
+#################################################################
+
+s=np.zeros((NB),dtype=np.float64) 
+
+for k in range(1,NB):
+    s[k]=s[k-1]+np.sqrt( (x[B_to_G[k]]-x[B_to_G[k-1]])**2+(y[B_to_G[k]]-y[B_to_G[k-1]])**2   )
+
+#################################################################
 # compute normal to domain at the nodes
 # this is also implemented in stone 151
 #################################################################
-start = timing.time()
+start=timing.time()
 
 nx=np.zeros(NT,dtype=np.float64) 
 ny=np.zeros(NT,dtype=np.float64) 
@@ -361,7 +362,7 @@ print("compute normal: %.3f s" % (timing.time() - start))
 #####################################################################
 # define temperature boundary conditions
 #####################################################################
-start = timing.time()
+start=timing.time()
 
 eps=1.e-10 
 
@@ -381,64 +382,26 @@ for i in range(0,NT):
 print("boundary conditions (%.3fs)" % (timing.time() - start))
 
 #####################################################################
-# initial temperature
-#####################################################################
-start = timing.time()
-
-T = np.zeros(NT,dtype=np.float64)
-
-print("initial temperature (%.3fs)" % (timing.time() - start))
-
-#################################################################
-# compute timestep
-#################################################################
-start = timing.time()
-
-if steady_state:
-   dt=0.
-   nstep=1
-else:
-   dt=0
-   print('dt=',dt)
-   nstep=int(tfinal/dt)
-   print('nstep=',nstep)
-
-print("compute timestep (%.3fs)" % (timing.time() - start))
-
-#####################################################################
 # create necessary arrays 
 #####################################################################
-start = timing.time()
+start=timing.time()
 
-Tvectm1 = np.zeros(m,dtype=np.float64)   
 dNNNTdx = np.zeros(m,dtype=np.float64)           # shape functions derivatives
 dNNNTdy = np.zeros(m,dtype=np.float64)           # shape functions derivatives
 N_mat = np.zeros((m,1),dtype=np.float64)         # shape functions
     
 print("create arrays (%.3fs)" % (timing.time() - start))
 
-#==============================================================================
-# time stepping loop
-#==============================================================================
+#####################################################################
+# build FEM linear system
+#####################################################################
+start=timing.time()
 
-model_time=0.
+A_mat = lil_matrix((NfemT,NfemT),dtype=np.float64)
+rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
+B_mat=np.zeros((2,ndofT*m),dtype=np.float64)     # gradient matrix B 
 
-for istep in range(0,nstep):
-    print("-----------------------------")
-    print("istep= ", istep,'/',nstep-1)
-    print("-----------------------------")
-
-    #################################################################
-    # build temperature matrix
-    #################################################################
-    start = timing.time()
-
-    A_mat = lil_matrix((NfemT,NfemT),dtype=np.float64)
-    rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
-    B_mat=np.zeros((2,ndofT*m),dtype=np.float64)     # gradient matrix B 
-
-    counterq=0
-    for iel in range (0,nel):
+for iel in range (0,nel):
 
         b_el=np.zeros(m*ndofT,dtype=np.float64)
         a_el=np.zeros((m*ndofT,m*ndofT),dtype=np.float64)
@@ -486,16 +449,9 @@ for istep in range(0,nstep):
                 # compute diffusion matrix
                 Kd=B_mat.T.dot(B_mat)*hcond*weightq*jcob
 
-                if steady_state:
-                   a_el+=Kd
-                   b_el+=N_mat[:,0]*weightq*jcob*rhs_f(xq,yq,experiment)
-                else:
-                      a_el+=MM+alphaT*(Kd)*dt
-                      b_el+=(MM-(1-alphaT)*(Kd)*dt).dot(Tvectm1) +\
-                            N_mat[:,0]*weightq*jcob*rhs_f(xq,yq,experiment)*dt
-                #end if
+                a_el+=Kd
+                b_el+=N_mat[:,0]*weightq*jcob*rhs_f(xq,yq,experiment)
 
-                counterq+=1
             #end for jq
         #end for iq
 
@@ -524,32 +480,32 @@ for istep in range(0,nstep):
             rhs[m1]+=b_el[k1]
         #end for
 
-    #end for iel
+#end for iel
 
-    print("build FEM matrix: %.3fs" % (timing.time() - start))
+print("build FEM matrix: %.3fs" % (timing.time() - start))
 
-    #################################################################
-    # solve system
-    #################################################################
-    start = timing.time()
+#################################################################
+# solve system
+#################################################################
+start=timing.time()
 
-    T = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
+T = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
 
-    print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
+print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
 
-    print("solve T time: %.3f s" % (timing.time() - start))
+print("solve T time: %.3f s" % (timing.time() - start))
 
-    #################################################################
-    # compute heat flux
-    #################################################################
-    start = timing.time()
+#################################################################
+# compute heat flux - corner-to-node
+#################################################################
+start=timing.time()
 
-    qx=np.zeros(NT,dtype=np.float64) 
-    qy=np.zeros(NT,dtype=np.float64) 
-    qn=np.zeros(NT,dtype=np.float64) 
-    cc=np.zeros(NT,dtype=np.float64) 
+qx=np.zeros(NT,dtype=np.float64) 
+qy=np.zeros(NT,dtype=np.float64) 
+qn=np.zeros(NT,dtype=np.float64) 
+cc=np.zeros(NT,dtype=np.float64) 
 
-    for iel in range(0,nel):
+for iel in range(0,nel):
         for k in range(0,m):
             rq=rnodes[k]
             sq=snodes[k]
@@ -568,45 +524,51 @@ for istep in range(0,nstep):
             qx[inode]-=np.sum(dNNNTdx[:]*T[icon[:,iel]])
             qy[inode]-=np.sum(dNNNTdy[:]*T[icon[:,iel]])
         #end for
-    #end for
-    qx/=cc
-    qy/=cc
+#end for
+qx/=cc
+qy/=cc
 
-    qn[:]=qx[:]*nx[:]+qy[:]*ny[:]
+qn[:]=qx[:]*nx[:]+qy[:]*ny[:]
 
-    print("     -> qx (m,M) %.4f %.4f " %(np.min(qx),np.max(qx)))
-    print("     -> qy (m,M) %.4f %.4f " %(np.min(qy),np.max(qy)))
-    print("     -> qn (m,M) %.4f %.4f " %(np.min(qn),np.max(qn)))
+print("     -> qx (m,M) %.4f %.4f " %(np.min(qx),np.max(qx)))
+print("     -> qy (m,M) %.4f %.4f " %(np.min(qy),np.max(qy)))
+print("     -> qn (m,M) %.4f %.4f " %(np.min(qn),np.max(qn)))
 
-    print("compute heat flux: %.3f s" % (timing.time() - start))
+print("compute heat flux: %.3f s" % (timing.time() - start))
 
-    qn_analytical=np.zeros(NT,dtype=np.float64) 
-    for i in range(NT):
-        qn_analytical[i]=qx_analytical(x[i],y[i],experiment)*nx[i]\
-                        +qy_analytical(x[i],y[i],experiment)*ny[i]
+qn_analytical=np.zeros(NT,dtype=np.float64) 
+for i in range(NT):
+    qn_analytical[i]=qx_analytical(x[i],y[i],experiment)*nx[i]\
+                    +qy_analytical(x[i],y[i],experiment)*ny[i]
 
-    qn_file=open('heat_flux_boundary.ascii',"w")
-    for k in range(0,NB):
-        qn_file.write("%e %e %e %e %d %d \n" %(x[B_to_G[k]],y[B_to_G[k]],
-                                               qn[B_to_G[k]],qn_analytical[B_to_G[k]],B_to_G[k],k))
-    qn_file.close()
+qn_file=open('heat_flux_boundary_caveraging.ascii',"w")
+for k in range(0,NB):
+    qn_file.write("%e %e %e %e %e \n" %(x[B_to_G[k]],y[B_to_G[k]],
+                                        qn[B_to_G[k]],qn_analytical[B_to_G[k]],s[k]))
+qn_file.close()
 
-    #################################################################
-    # compute heat flux w/ consistent boundary flux method
-    # internal numbering of Q1 is 
-    # 3--2
-    # |  |
-    # 0--1
-    # the order of k,l does not matter
-    #################################################################
-    start = timing.time()
+qn_file=open('heat_flux_boundary_AB_caveraging.ascii',"w")
+for k in range(0,nnx):
+    qn_file.write("%e %e %e \n" %(x[k],y[k],qn[k]))
+qn_file.close()
 
-    M=lil_matrix((NB,NB),dtype=np.float64)
-    Ml=lil_matrix((NB,NB),dtype=np.float64)
-    rhs= np.zeros(NB,dtype=np.float64)   
-    Mel=np.zeros((2,2),dtype=np.float64) 
+#################################################################
+# compute heat flux w/ consistent boundary flux method
+# internal numbering of Q1 is 
+# 3--2
+# |  |
+# 0--1
+# the order of k,l does not matter
+# NB: number of nodes on boundary
+#################################################################
+start=timing.time()
 
-    for iel in range(0,nel):
+M=lil_matrix((NB,NB),dtype=np.float64) # matrix
+Ml=lil_matrix((NB,NB),dtype=np.float64) # lumped matrix
+rhs= np.zeros(NB,dtype=np.float64)   
+Mel=np.zeros((2,2),dtype=np.float64) 
+
+for iel in range(0,nel):
         if boundary_element[iel]:
 
            for face in range(0,4): # loop over faces
@@ -676,67 +638,73 @@ for istep in range(0,nstep):
                #end if boundary_node   
            #end for side
         #end if boundary_element                 
-    #end for iel                    
+#end for iel                    
 
-    # solve linear systems
-    qn_CBF=sps.linalg.spsolve(sps.csr_matrix(M),rhs)
-    qn_CBF_lumped=sps.linalg.spsolve(sps.csr_matrix(Ml),rhs)
+# solve linear systems
+qn_CBF=sps.linalg.spsolve(sps.csr_matrix(M),rhs)
+qn_CBF_lumped=sps.linalg.spsolve(sps.csr_matrix(Ml),rhs)
 
-    print("     -> qn (m,M) %.4f %.4f " %(np.min(qn_CBF),np.max(qn_CBF)))
+print("     -> qn (m,M) %.4f %.4f " %(np.min(qn_CBF),np.max(qn_CBF)))
 
-    #plt.spy(M,markersize=1)
-    #plt.savefig('matrix.pdf', bbox_inches='tight')
+#plt.spy(M,markersize=1)
+#plt.savefig('matrix.pdf', bbox_inches='tight')
 
-    qn_file=open('heat_flux_boundary_CBF.ascii',"w")
-    for k in range(0,NB):
-        qn_file.write("%e %e %e %e %d %d \n" %(x[B_to_G[k]],y[B_to_G[k]],qn_CBF[k],qn_CBF_lumped[k],B_to_G[k],k))
-    qn_file.close()
+qn_file=open('heat_flux_boundary_CBF.ascii',"w")
+for k in range(0,NB):
+    qn_file.write("%e %e %e %e %e \n" %(x[B_to_G[k]],y[B_to_G[k]],qn_CBF[k],qn_CBF_lumped[k],s[k]))
+qn_file.close()
 
-    print("compute heat flux (CBF): %.3f s" % (timing.time() - start))
+qn_file=open('heat_flux_boundary_AB_CBF.ascii',"w")
+for k in range(0,nnx):
+    qn_file.write("%e %e %e %e \n" %(x[B_to_G[k]],y[B_to_G[k]],qn_CBF[k],qn_CBF_lumped[k]))
+qn_file.close()
 
-    #################################################################
-    # partial method, only for bottom boundary A-B
-    # D--C
-    # |  |
-    # A--B  we here assume all nodes on AB are fixed.
-    #################################################################
-    start = timing.time()
+print("compute heat flux (CBF): %.3f s" % (timing.time() - start))
 
-    M_AB=np.zeros((nnx,nnx),dtype=np.float64)
-    rhs_AB= np.zeros(nnx,dtype=np.float64)   
-    Mel=np.zeros((2,2),dtype=np.float64) 
+#################################################################
+# compute boundary heat flux: partial method
+# only for bottom boundary A-B
+# D--C
+# |  |
+# A--B  we here assume all nodes on AB are fixed.
+#################################################################
+start=timing.time()
 
-    #compute heat flux at point A for bc: qn_A
-    iel=0 ; rq=-1 ; sq=-1
-    dNNNTdr=dNNTdr(rq,sq,order)
-    dNNNTds=dNNTds(rq,sq,order)
-    jcb[0,0]=np.dot(dNNNTdr[:],x[icon[:,iel]])
-    jcb[0,1]=np.dot(dNNNTdr[:],y[icon[:,iel]])
-    jcb[1,0]=np.dot(dNNNTds[:],x[icon[:,iel]])
-    jcb[1,1]=np.dot(dNNNTds[:],y[icon[:,iel]])
-    jcbi=np.linalg.inv(jcb)
-    dNNNTdx=jcbi[0,0]*dNNNTdr[:]+jcbi[0,1]*dNNNTds[:]
-    dNNNTdy=jcbi[1,0]*dNNNTdr[:]+jcbi[1,1]*dNNNTds[:]
-    dTdyq=np.dot(dNNNTdy[:],T[icon[:,iel]])
-    qn_A=-dTdyq
-    print('     -> qn_A=',qn_A)
+M_AB=np.zeros((nnx,nnx),dtype=np.float64)
+rhs_AB= np.zeros(nnx,dtype=np.float64)   
+Mel=np.zeros((2,2),dtype=np.float64) 
 
-    #compute heat flux at point B for bc: qn_B
-    iel=nelx-1 ; rq=+1 ; sq=-1
-    dNNNTdr=dNNTdr(rq,sq,order)
-    dNNNTds=dNNTds(rq,sq,order)
-    jcb[0,0]=np.dot(dNNNTdr[:],x[icon[:,iel]])
-    jcb[0,1]=np.dot(dNNNTdr[:],y[icon[:,iel]])
-    jcb[1,0]=np.dot(dNNNTds[:],x[icon[:,iel]])
-    jcb[1,1]=np.dot(dNNNTds[:],y[icon[:,iel]])
-    jcbi=np.linalg.inv(jcb)
-    dNNNTdx=jcbi[0,0]*dNNNTdr[:]+jcbi[0,1]*dNNNTds[:]
-    dNNNTdy=jcbi[1,0]*dNNNTdr[:]+jcbi[1,1]*dNNNTds[:]
-    dTdyq=np.dot(dNNNTdy[:],T[icon[:,iel]])
-    qn_B=-dTdyq
-    print('     -> qn_B=',qn_B)
+#compute heat flux at point A for bc: qn_A
+iel=0 ; rq=-1 ; sq=-1
+dNNNTdr=dNNTdr(rq,sq,order)
+dNNNTds=dNNTds(rq,sq,order)
+jcb[0,0]=np.dot(dNNNTdr[:],x[icon[:,iel]])
+jcb[0,1]=np.dot(dNNNTdr[:],y[icon[:,iel]])
+jcb[1,0]=np.dot(dNNNTds[:],x[icon[:,iel]])
+jcb[1,1]=np.dot(dNNNTds[:],y[icon[:,iel]])
+jcbi=np.linalg.inv(jcb)
+dNNNTdx=jcbi[0,0]*dNNNTdr[:]+jcbi[0,1]*dNNNTds[:]
+dNNNTdy=jcbi[1,0]*dNNNTdr[:]+jcbi[1,1]*dNNNTds[:]
+dTdyq=np.dot(dNNNTdy[:],T[icon[:,iel]])
+qn_A=-dTdyq
+print('     -> qn_A=',qn_A)
 
-    for iel in range(0,nelx): # loop over 
+#compute heat flux at point B for bc: qn_B
+iel=nelx-1 ; rq=+1 ; sq=-1
+dNNNTdr=dNNTdr(rq,sq,order)
+dNNNTds=dNNTds(rq,sq,order)
+jcb[0,0]=np.dot(dNNNTdr[:],x[icon[:,iel]])
+jcb[0,1]=np.dot(dNNNTdr[:],y[icon[:,iel]])
+jcb[1,0]=np.dot(dNNNTds[:],x[icon[:,iel]])
+jcb[1,1]=np.dot(dNNNTds[:],y[icon[:,iel]])
+jcbi=np.linalg.inv(jcb)
+dNNNTdx=jcbi[0,0]*dNNNTdr[:]+jcbi[0,1]*dNNNTds[:]
+dNNNTdy=jcbi[1,0]*dNNNTdr[:]+jcbi[1,1]*dNNNTds[:]
+dTdyq=np.dot(dNNNTdy[:],T[icon[:,iel]])
+qn_B=-dTdyq
+print('     -> qn_B=',qn_B)
+
+for iel in range(0,nelx): # loop over 
         inode=icon[0,iel] 
         jnode=icon[1,iel]
 
@@ -786,150 +754,142 @@ for istep in range(0,nstep):
         rhs_AB[inode]+=bel[0]
         rhs_AB[jnode]+=bel[1]
 
-    #end for iel                    
+#end for iel                    
 
-    # apply b.c.
-    M_AB[0    ,:]=0 ; M_AB[    0,    0]=1 ; rhs_AB[    0]=-qn_A
-    M_AB[nnx-1,:]=0 ; M_AB[nnx-1,nnx-1]=1 ; rhs_AB[nnx-1]=-qn_B
+# apply b.c.
+M_AB[0    ,:]=0 ; M_AB[    0,    0]=1 ; rhs_AB[    0]=-qn_A
+M_AB[nnx-1,:]=0 ; M_AB[nnx-1,nnx-1]=1 ; rhs_AB[nnx-1]=-qn_B
 
-    # solve linear systems
-    qn_AB=sps.linalg.spsolve(sps.csr_matrix(M_AB),rhs_AB)
+# solve linear systems
+qn_AB=sps.linalg.spsolve(sps.csr_matrix(M_AB),rhs_AB)
 
-    print("     -> qn on AB (m,M) %.4f %.4f " %(np.min(qn_AB),np.max(qn_AB)))
+print("     -> qn on AB (m,M) %.4f %.4f " %(np.min(qn_AB),np.max(qn_AB)))
 
-    qn_file=open('heat_flux_boundary_partial.ascii',"w")
-    for k in range(0,nnx):
-        qn_file.write("%e %e %e \n" %(x[k],y[k],qn_AB[k]))
-    qn_file.close()
+qn_file=open('heat_flux_boundary_AB_partial.ascii',"w")
+for k in range(0,nnx):
+    qn_file.write("%e %e %e %e \n" %(x[k],y[k],qn_AB[k],s[k]))
+qn_file.close()
 
+print("compute heat flux (partial CBF): %.3f s" % (timing.time() - start))
 
-    #################################################################
-    # visualisation 
-    #################################################################
-    start = timing.time()
+#################################################################
+# visualisation 
+#################################################################
+start=timing.time()
 
-    filename = 'solution_{:04d}.vtu'.format(istep) 
-    vtufile=open(filename,"w")
-    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-    vtufile.write("<UnstructuredGrid> \n")
-    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NT,nel))
-    #####
-    vtufile.write("<Points> \n")
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-    for i in range(0,NT):
-        vtufile.write("%e %e %e \n" %(x[i],y[i],0.))
-    vtufile.write("</DataArray>\n")
-    vtufile.write("</Points> \n")
-    #####
-    vtufile.write("<PointData Scalars='scalars'>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
-    for i in range(0,NT):
-        vtufile.write("%12.4e \n" %T[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='G_to_B' Format='ascii'> \n")
-    for i in range(0,NT):
-        vtufile.write("%d \n" %G_to_B[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='T (analytical)' Format='ascii'> \n")
-    for i in range(0,NT):
-        vtufile.write("%12.4e \n" % (T_analytical(x[i],y[i],experiment)))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='T (error)' Format='ascii'> \n")
-    for i in range(0,NT):
-        vtufile.write("%12.4e \n" % (T[i]-T_analytical(x[i],y[i],experiment)))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux' Format='ascii'> \n")
-    for i in range(0,NT):
-        vtufile.write("%e %e %e \n" %(qx[i],qy[i],0.))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='qn' Format='ascii'> \n")
-    for i in range(0,NT):
-        vtufile.write("%e \n" % qn[i])
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' Name='qn (CBF)' Format='ascii'> \n")
-    for i in range(0,NT):
-        if (G_to_B[i]>0):
-           vtufile.write("%e \n" % qn_CBF[G_to_B[i]])
-        else:
-           vtufile.write("%e \n" % 0. )
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux (analytical)' Format='ascii'> \n")
-    for i in range(0,NT):
-        vtufile.write("%e %e %e \n" %(qx_analytical(x[i],y[i],experiment),qy_analytical(x[i],y[i],experiment),0))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux (error)' Format='ascii'> \n")
-    for i in range(0,NT):
-        vtufile.write("%e %e %e \n" %(qx[i]-qx_analytical(x[i],y[i],experiment),qy[i]-qy_analytical(x[i],y[i],experiment),0))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal' Format='ascii'> \n")
-    for i in range(0,NT):
-        vtufile.write("%e %e %e \n" %(nx[i],ny[i],0.))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='boundary' Format='ascii'> \n")
-    for i in range(0,NT):
-        if boundary_node[i]:
-           vtufile.write("%d \n" % 1)
-        else:
-           vtufile.write("%d \n" % 0)
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("</PointData>\n")
-    #####
-    vtufile.write("<CellData Scalars='scalars'>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='boundary' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d \n" % int(boundary_element[iel]))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("</CellData>\n")
-    #####
-    vtufile.write("<Cells>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d %d %d %d \n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel]))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%d \n" %((iel+1)*4))
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-    for iel in range (0,nel):
-        vtufile.write("%d \n" %9)
-    vtufile.write("</DataArray>\n")
-    #--
-    vtufile.write("</Cells>\n")
-    #####
-    vtufile.write("</Piece>\n")
-    vtufile.write("</UnstructuredGrid>\n")
-    vtufile.write("</VTKFile>\n")
-    vtufile.close()
+filename = 'solution.vtu'
+vtufile=open(filename,"w")
+vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+vtufile.write("<UnstructuredGrid> \n")
+vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NT,nel))
+#####
+vtufile.write("<Points> \n")
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+for i in range(0,NT):
+    vtufile.write("%e %e %e \n" %(x[i],y[i],0.))
+vtufile.write("</DataArray>\n")
+vtufile.write("</Points> \n")
+#####
+vtufile.write("<PointData Scalars='scalars'>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
+for i in range(0,NT):
+    vtufile.write("%12.4e \n" %T[i])
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Int32' Name='G_to_B' Format='ascii'> \n")
+for i in range(0,NT):
+    vtufile.write("%d \n" %G_to_B[i])
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='T (analytical)' Format='ascii'> \n")
+for i in range(0,NT):
+    vtufile.write("%12.4e \n" % (T_analytical(x[i],y[i],experiment)))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='T (error)' Format='ascii'> \n")
+for i in range(0,NT):
+    vtufile.write("%12.4e \n" % (T[i]-T_analytical(x[i],y[i],experiment)))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux' Format='ascii'> \n")
+for i in range(0,NT):
+    vtufile.write("%e %e %e \n" %(qx[i],qy[i],0.))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='qn' Format='ascii'> \n")
+for i in range(0,NT):
+    vtufile.write("%e \n" % qn[i])
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='qn (CBF)' Format='ascii'> \n")
+for i in range(0,NT):
+    if (G_to_B[i]>0):
+       vtufile.write("%e \n" % qn_CBF[G_to_B[i]])
+    else:
+       vtufile.write("%e \n" % 0. )
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux (analytical)' Format='ascii'> \n")
+for i in range(0,NT):
+    vtufile.write("%e %e %e \n" %(qx_analytical(x[i],y[i],experiment),qy_analytical(x[i],y[i],experiment),0))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux (error)' Format='ascii'> \n")
+for i in range(0,NT):
+    vtufile.write("%e %e %e \n" %(qx[i]-qx_analytical(x[i],y[i],experiment),qy[i]-qy_analytical(x[i],y[i],experiment),0))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal' Format='ascii'> \n")
+for i in range(0,NT):
+    vtufile.write("%e %e %e \n" %(nx[i],ny[i],0.))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Int32' Name='boundary' Format='ascii'> \n")
+for i in range(0,NT):
+    if boundary_node[i]:
+       vtufile.write("%d \n" % 1)
+    else:
+       vtufile.write("%d \n" % 0)
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("</PointData>\n")
+#####
+vtufile.write("<CellData Scalars='scalars'>\n")
+#--
+vtufile.write("<DataArray type='Int32' Name='boundary' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%d \n" % int(boundary_element[iel]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("</CellData>\n")
+#####
+vtufile.write("<Cells>\n")
+#--
+vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%d %d %d %d \n" %(icon[0,iel],icon[1,iel],icon[2,iel],icon[3,iel]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%d \n" %((iel+1)*4))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+for iel in range (0,nel):
+    vtufile.write("%d \n" %9)
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("</Cells>\n")
+#####
+vtufile.write("</Piece>\n")
+vtufile.write("</UnstructuredGrid>\n")
+vtufile.write("</VTKFile>\n")
+vtufile.close()
 
-    print("export to files: %.3f s" % (timing.time() - start))
-
-    model_time+=dt
-    print ("model_time=",model_time)
+print("export to files: %.3f s" % (timing.time() - start))
     
-#end for istep
-
-#==============================================================================
-# end time stepping loop
-#==============================================================================
-
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")

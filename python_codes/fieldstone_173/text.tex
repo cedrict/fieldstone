@@ -79,18 +79,15 @@ The mesh then looks like this:
 \end{center}
 This is not identical to the article but sufficiently close.
 
-
-We then solve the equation on this mesh with $Q_1$ elements:
-
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/T}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/T_analytical}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/T_error}\\
-{\captionfont Temperature in the domain on stretched $8\times 8$ mesh. 
-Left: computed; Middle: analytical; Right: error.}
-\end{center}
-
-We find that the calculated temperature is machine precision accurate.
+%We then solve the equation on this mesh with $Q_1$ elements:
+%\begin{center}
+%\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/T}
+%\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/T_analytical}
+%\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/T_error}\\
+%{\captionfont Temperature in the domain on stretched $8\times 8$ mesh. 
+%Left: computed; Middle: analytical; Right: error.}
+%\end{center}
+%We find that the calculated temperature is machine precision accurate.
 
 %====================================
 \section*{Setup of experiment \# 2}
@@ -263,7 +260,7 @@ We see that the vectors at the corners are not 'at $45$ degrees' if the element 
 
 
 %==============================================================================
-\section*{Computing the nodal heat flux everywhere - method 1}
+\section*{Computing the nodal heat flux everywhere - 'Corner Averaging'}
 
 We apply here a standard technique: the derivatives of the temperature 
 are computed at each corner of the element by means of the basis functions
@@ -299,39 +296,10 @@ and then averaged out on the nodes.
     qn[:]=qx[:]*nx[:]+qy[:]*ny[:]
 \end{lstlisting}
 
-We find that this technique yields an accurate heat flux inside the domain 
-but not so much on the boundary:
 
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/q8}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/q8_analytical}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/q8_error}\\
-{\captionfont Temperature in the domain on $8 \times 8$ mesh. Left to right:
-computed, analytical, error.}
-\end{center}
 
-We can also compute the heat flux on a higher resolution mesh:
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/q80}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/q80_analytical}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/q80_error}\\
-{\captionfont Temperature in the domain on $80 \times 80$ mesh. From left to right:
-computed, analytical, error.}
-\end{center}
 
-In both cases we see that the heat flux is not accurate on the boundary.
-As in \textcite{grls87} we can plot the normal heat flux, i.e. $q_n=\vec{q}\cdot \vec{n}$
-along the boundary starting a the SE corner, moving to NE, then NW, then SW back to SE:
-
-\begin{center}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary.pdf}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_173/images/grls87a}\\
-{\captionfont Rather annoyingly the figure of the paper is poorly digitized 
-to the point that it is somewhat dificult to distinguish between dots and triangles data points.}
-\end{center}
-
-These observations motivate the following section.
-Also, this problem is not new and we read in \textcite{mizu86} (1986):
+We read in \textcite{mizu86} (1986):
 \begin{displayquote}
 {\color{MidnightBlue}
 Most finite element schemes for thermal problems estimate boundary heat flux directly from the
@@ -1457,22 +1425,39 @@ q_i(x,y,t)=\rho C_p v_i T -k \frac{\partial T}{\partial x_i}
 %===================================================
 \section*{Results of experiment \# 1}
 
-The heat flux computed on the boundary of the domain is shown hereafter:
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/T}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/qx}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/qy}\\
+{\captionfont Temperature and heat flux components in the domain on $32 \times 32$ mesh.}
+\end{center}
 
 \begin{center}
-a)\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/CBF1/heat_flux_boundary.pdf}
-b)\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/CBF2/heat_flux_boundary.pdf}\\
-c)\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/CBF3/heat_flux_boundary.pdf}
-d)\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/CBF4/heat_flux_boundary.pdf}\\
-{\captionfont a) grid $8\times 8$, no stretching; b) grid $8\times 8$, with stretching;
-c) grid $128\times 128$, no stretching; d) grid $128\times 128$, with stretching. 
-Note that here the measurements are done SW-SE-NE-NW-SW.}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_8.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_bottom_8.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_16.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_bottom_16.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_32.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_bottom_32.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_64.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_bottom_64.pdf}\\
+{\captionfont Boundary heat flux. Left column: all four sides of domain, Right: error on bottom face.}
 \end{center}
+
 
 The conclusion is that with or without stretching the CBF algorithm (lumped or not) works. 
 However the presence of corners with an undefined normal yields anomalous results.
 The 'partial' CBF method on the other hand yields much more accurate results including near the corners. 
 
+In both cases we see that the heat flux is not accurate on the boundary.
+As in \textcite{grls87} we can plot the normal heat flux, i.e. $q_n=\vec{q}\cdot \vec{n}$
+along the boundary starting a the SE corner, moving to NE, then NW, then SW back to SE:
+
+\begin{center}
+\includegraphics[width=9cm]{python_codes/fieldstone_173/images/grls87a}\\
+{\captionfont Rather annoyingly the figure of the paper is poorly digitized 
+to the point that it is somewhat dificult to distinguish between dots and triangles data points.}
+\end{center}
 
 
 
@@ -1481,50 +1466,32 @@ The 'partial' CBF method on the other hand yields much more accurate results inc
 %===================================================
 \section*{Results of experiment \# 2}
 
-Temperature and heat flux fields are shown hereunder. 
-We find that the heat flux error is the largest along the boundary.
-
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp2/T}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp2/T_analytical}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp2/T_error}\\
-{\captionfont Temperature in the domain on $32 \times 32$ mesh. 
-Left: computed; Middle: analytical; Right: error.}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp2/qx}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp2/qy}\\
+{\captionfont Temperature and heat flux components in the domain on $32 \times 32$ mesh.}
 \end{center}
 
+
+
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp2/q}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp2/q_analytical}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp2/q_error}\\
-{\captionfont Heat flux in the domain on $32 \times 32$ mesh. 
-Left: computed; Middle: analytical; Right: error.}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/heat_flux_boundary_8.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/heat_flux_boundary_bottom_8.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/heat_flux_boundary_16.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/heat_flux_boundary_bottom_16.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/heat_flux_boundary_32.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/heat_flux_boundary_bottom_32.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/heat_flux_boundary_64.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/heat_flux_boundary_bottom_64.pdf}\\
+{\captionfont Boundary heat flux. Left column: all four sides of domain, Right: error on bottom face.}
 \end{center}
 
 We find that boundary heat flux accuracy increases with resolution, and that the 
-CBF (lumped or not) is more accurate than the other method:
-\begin{center}
-a)\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/8x8/heat_flux_boundary.pdf}
-b)\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/16x16/heat_flux_boundary.pdf}\\
-c)\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/32x32/heat_flux_boundary.pdf}
-d)\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/64x64/heat_flux_boundary.pdf}\\
-{\captionfont a) grid $8\times 8$; b) grid $16\times 16$;
-c) grid $32\times 32$; d) grid $64\times 64$. 
-Note that here the measurements are done SW-SE-NE-NW-SW.}
-\end{center}
-
-The error was also measured on the bottom face:
-\begin{center}
-a)\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/8x8/heat_flux_boundary_bottom.pdf}
-b)\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/16x16/heat_flux_boundary_bottom.pdf}\\
-c)\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/32x32/heat_flux_boundary_bottom.pdf}
-d)\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/64x64/heat_flux_boundary_bottom.pdf}\\
-{\captionfont a) grid $8\times 8$; b) grid $16\times 16$;
-c) grid $32\times 32$; d) grid $64\times 64$. 
-Note that here the measurements are done SW-SE-NE-NW-SW.}
-\end{center}
-
+CBF (lumped or not) is more accurate than the other method.
 We find as in Fig.~3 of the paper that the CBF accuracy drastically decreases at the corners.
 All in all, the 'partial method' seems to work best.
+
 
 
 \newpage
@@ -1541,12 +1508,19 @@ Temperature and heat flux fields are shown hereunder.
 {\captionfont Temperature and heat flux components in the domain on $32 \times 32$ mesh.}
 \end{center}
 
+
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary_bottom.pdf}\\
-{\captionfont Boundary heat flux on $16 \times 16$ mesh. Left: all four 
-sides of domain, Right: error on bottom face}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary_8.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary_bottom_8.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary_16.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary_bottom_16.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary_32.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary_bottom_32.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary_64.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary_bottom_64.pdf}\\
+{\captionfont Boundary heat flux. Left column: all four sides of domain, Right: error on bottom face.}
 \end{center}
+
 
 \newpage
 %===================================================
@@ -1560,17 +1534,16 @@ sides of domain, Right: error on bottom face}
 \end{center}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary_bottom.pdf}\\
-{\captionfont Boundary heat flux on $16 \times 16$ mesh. Left: all four 
-sides of domain, Right: error on bottom face}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary_8.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary_bottom_8.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary_16.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary_bottom_16.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary_32.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary_bottom_32.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary_64.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary_bottom_64.pdf}\\
+{\captionfont Boundary heat flux. Left column: all four sides of domain, Right: error on bottom face.}
 \end{center}
-
-
-
-
-
-
 
 \newpage
 %===================================================
@@ -1584,10 +1557,15 @@ sides of domain, Right: error on bottom face}
 \end{center}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary_bottom.pdf}\\
-{\captionfont Boundary heat flux on $16 \times 16$ mesh. Left: all four 
-sides of domain, Right: error on bottom face}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary_8.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary_bottom_8.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary_16.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary_bottom_16.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary_32.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary_bottom_32.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary_64.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary_bottom_64.pdf}\\
+{\captionfont Boundary heat flux. Left column: all four sides of domain, Right: error on bottom face.}
 \end{center}
 
 
