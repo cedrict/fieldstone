@@ -1,6 +1,9 @@
-\includegraphics[height=1.5cm]{images/pictograms/replication}
-\includegraphics[height=1.5cm]{images/pictograms/benchmark}
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/pic}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
 
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_67/text.tex}} \end{flushright}
 
@@ -468,40 +471,142 @@ In aspect input file ({\tt ||} is 'or', {\tt \&\&}  is 'and'):
 %------------------------------------------------------------------
 \subsection*{Setup7: sinking of anhydrite blocks in Newtonian salt}
 
-This experiment comes from \textcite{buks12} (2012). 
-See also other similar articles by the same team such as 
-\textcite{buks11} (2011) and \textcite{buks12b} (2012).
 
-In the paper there are three cases A,B,C with potentially different domain sizes.
-I choose here experiment C with a domain of size $L_x=2500~\si{\meter}$
-and $L_y=5000~\si{\meter}$. The gravity is not specified but I set it to 
-$g=9.81~\si{\meter\per\square\second}$.
-Boundary conditions are simple: free slip on all four sides.
-There are three materials in the domain: salt1, salt2 and anhydrite
-with 
-\begin{itemize}
-\item $\eta_{salt1}=10^{16}~\si{\pascal\second}$, $\rho_{salt1}=2200~\si{\kg\per\cubic\meter}$
-\item $\eta_{salt2}=10^{17}~\si{\pascal\second}$, $\rho_{salt2}=2200~\si{\kg\per\cubic\meter}$
-\item $\eta_{anhyd}=10^{20}~\si{\pascal\second}$, $\rho_{salt2}=2900~\si{\kg\per\cubic\meter}$
-\end{itemize}
-The left half of the domain contains salt1, the right half contains salt2 and 
-a block of anhydrite is placed towards the top of the domain. 
-It is of size $l\times h=200x100m$ (I choose here a 2:1 aspect ratio but the paper 
-explores many different aspect ratios). Its top edge is 100m below the surface:
+This experiment originates in \textcite{buks12} (2012). 
+Similar experiments are conducted by the same authors in \textcite{buks11} (2011)
+and \textcite{buks12b} (2012).
 
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_67/results/buks12/setup}
+\includegraphics[width=10cm]{python_codes/fieldstone_67/images/buks12a}\\
+{\captionfont NW–SE cross-section through the Gorleben diapir.}
 \end{center}
 
-The original resolution of the paper is 200x400 cells (FDCON is used),
-i.e. cells of about 10~m in size.
-This will be difficult to achieve with this \stone, so we will settle for 20~m
-instead.
-Simulations are run up to about 500ka.
-The authors also mention that an initial distance between markers of 10~m is 
-used, i.e. 250x500=125,000 markers.
+Based on the principal structural configurations of the Main Anhydrite 
+segments within the Gorleben diapir, as shown in the figure above, 
+the authors set up three series of
+models. Each model analyses the deformation associated with the gravity-driven sinking
+of one anhydrite block. The block geometry was simplified to rectangular shapes
+of different aspect ratios which vary from 10:1 to 1:10, 
+with a 1:1 ratio corresponding to a 100x100m block as shown here:
 
-The initial mass of the system is given by 
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_67/images/buks12b}\\
+{\captionfont Scaled sketches of model set-ups.}
+\end{center}
+
+In practice, the setup is as follows:
+
+\begin{center}
+\begin{tikzpicture}
+\draw[step=0.5cm,gray,very thin] (0,0) grid (10,7); %background grid
+\draw [draw=black!0,fill=black!10] (0,0) rectangle (5,7);
+\draw [draw=black!0,fill=black!20] (5,0) rectangle (10,7);
+\draw [draw=black!0,fill=black!40] (4.5,5) rectangle (5.5,6);
+\draw[ultra thick] (0,2) -- (0,7) -- (10,7) -- (10,2);  
+\draw[ultra thick] (5,7) -- (5,6);  
+\draw[ultra thick] (5,5) -- (5,2);  
+\draw[ultra thick,dashed] (0,0) -- (0,2);  
+\draw[ultra thick,dashed] (5,0) -- (5,2);  
+\draw[ultra thick,dashed] (10,0) -- (10,2);  
+\draw[<->] (4.5,4.75)--(5.5,4.75); \node at (5.3,4.5) {\small $b_x$};
+\draw[<->] (5.75,5)--(5.75,6); \node at (6.1,5.5) {\small $b_y$};
+\draw[<->] (5.75,6)--(5.75,7); \node at (6.1,6.5) {\small $h$};
+\draw[ultra thick] (4.5,5) -- (5.5,5) -- (5.5,6) -- (4.5,6) -- cycle; %block
+\node at (2.5,4.5) {\small salt\_left};
+\node at (2.5,4) {\small $\rho=2200~\si{\kg\per\cubic\meter}$};
+\node at (2.5,3.5) {\small $\eta=10^{16}~\si{\pascal\second}$};
+\node at (7.5,4.55) {\small salt\_right};
+\node at (7.5,4) {\small $\rho=2200~\si{\kg\per\cubic\meter}$};
+\node at (7.5,3.5) {\small $\eta=10^{17}~\si{\pascal\second}$};
+\node at (2,6.5) {\small anhydrite\_block}; \draw[] (3.3,6.35) -- (4.7,5.7);
+\node at (2,6) {\small $\rho=2900~\si{\kg\per\cubic\meter}$};
+\node at (2,5.5) {\small $\eta=10^{20}~\si{\pascal\second}$};
+\end{tikzpicture}
+\end{center}
+
+In the paper the authors consider three cases A,B,C with potentially 
+different domain sizes or viscosity stratification. We focus here on 
+experiment C with a domain of size $L_x=2500~\si{\meter}$
+and $L_y=5000~\si{\meter}$. The gravity is not specified in the paper 
+but it is set to $g=9.81~\si{\meter\per\square\second}$. Boundary conditions 
+are free slip on all four sides. There are three materials in the domain: 
+\begin{itemize}
+\item salt\_left (material 1): $\eta=10^{16}~\si{\pascal\second}$, $\rho=2200~\si{\kg\per\cubic\meter}$
+\item salt\_right (material 2):  $\eta=10^{17}~\si{\pascal\second}$, $\rho=2200~\si{\kg\per\cubic\meter}$
+\item anhydrite\_block (material 3): $\eta=10^{20}~\si{\pascal\second}$, $\rho=2900~\si{\kg\per\cubic\meter}$
+\end{itemize}
+Note that the top edge of the block is always 100m below the surface 
+at the beginning of the simulation. 
+
+In the papers the authors use the Finite Difference code  FDCON \cite{wesc92}.
+The original resolution of the paper is $200 \times 400$ cells,
+i.e. cells of $12.5 \times 12.5$ meter in size.
+This will be difficult to achieve with this \stone, so we will settle for 33~m instead, i.e.
+a $75 \times 150$ mesh of $Q_2\times Q_1$ elements.
+Likewise their markers are located
+every 10 to 12.5 m in vertical and horizontal direction, i.e. about 100,000 markers in total.
+Simulations are run up to about 500ka.
+
+Rather importantly, the authors add that their models are based on a number of assumptions and simplifications:
+
+\begin{itemize}
+\item All materials are homogeneous and isotropic neglecting any stratigraphic heterogeneities within the
+salt formations or the anhydrite. 
+\item The materials used are incompressible and entirely viscous, that is, 
+no elastic behavior of, for example, the anhydrite is enabled. 
+\item The salt rheology in the models is
+Newtonian. However, salt rheology is a complex product of, for
+example, composition, grain size, fluid content, temperature and
+strain rate (e.g. \cite{ursz86,vasv93,javs94}). 
+\item The models are isothermal, neglecting temperature effects on the rheology. 
+\item Limitations regarding geometry include the simplified, rectangular shape of the anhydrite blocks
+with thicknesses of 100 m (instead of 70 m in case of the Main
+Anhydrite) and the perfectly straight interface between the two salt
+types. Hence, pre-existing deformation caused by salt ascent and
+emplacement along with the entrainment of the Main Anhydrite layer is neglected.
+\end{itemize}
+
+
+
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_67/images/buks12c}\\
+{\captionfont
+Particle fields for the C model with 1:1 aspect ratio. The mesh displays every 
+fifth marker of the marker field in vertical and horizontal direction. The insets 
+display close-ups of the area around the block (indicated by black boxes).}
+\end{center}
+
+
+
+%\begin{center}
+%\includegraphics[width=8cm]{images/mesh}
+%\includegraphics[width=8cm]{images/vel}\\
+%\includegraphics[width=8cm]{images/sr}
+%\includegraphics[width=8cm]{images/eta}\\
+%{\captionfont Fields after 50ka.}
+%\end{center}
+
+
+
+From the left figure below we find that the sinking square has sunk 1000m in 0.2Ma, or an average 
+velocity of $1000/200,000=0.5cm/yr$. 
+\begin{center}
+\includegraphics[width=9.5cm]{python_codes/fieldstone_67/images/buks12d}
+\includegraphics[width=6cm]{python_codes/fieldstone_67/images/buks12e}\\
+{\captionfont Left: Sunken distance as a function of time in Ma (horizontal 
+tics are every 0.2Ma). The thick light gray line corresponds to 1:1 aspect ratio; 
+Right: sinking velocity after 2000m of sinking.}
+\end{center}
+
+{\color{red} I suspect there is a pb with the left figure. Looking at figures
+the 1:1 block has not sunk 1km in 200ka. yes the vertical legend is not correct: 
+instead o f 1,2,3,4 we should read 0.5, 1.5, 2.5, 3.5}
+Use plot digitizer.
+
+
+
+
+The initial mass of the system is given by
 \[
 M_0 = 
 \frac{L_x}{2} L_y \rho_{salt1}
@@ -509,8 +614,22 @@ M_0 =
 \frac{L_x}{2} L_y \rho_{salt2}
 +
 l h (\rho_{anhyd}-\rho_{salt})
-=27,514,000,000
+=27,514,000,000 kg
 \]
+
+
+
+
+
+
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_67/results/buks12/vel}
+\includegraphics[width=8cm]{python_codes/fieldstone_67/results/buks12/press}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_67/results/buks12/sr}
+\includegraphics[width=8cm]{python_codes/fieldstone_67/results/buks12/particles}
+\end{center}
 
 
 

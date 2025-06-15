@@ -2,11 +2,10 @@ import numpy as np
 import math as math
 import sys as sys
 import scipy
-import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
-from scipy.sparse import csr_matrix, lil_matrix
 import time as time
 import random
+import scipy.sparse as sps
+from scipy.sparse import csr_matrix, lil_matrix
 
 #------------------------------------------------------------------------------
 
@@ -95,16 +94,16 @@ mP=4     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-#model=1 # quinquis et al, EGU 2010
-#model=2 # schmeling et al,PEPI 2008
-#model=3 # falling block 
-#model=4 # dripping instability
-#model=5 # mato83 
-#model=6 # quinquis-like 
-model=7 # buks12, anhydrite in salt
+#experiment=1 # quinquis et al, EGU 2010
+#experiment=2 # schmeling et al,PEPI 2008
+#experiment=3 # falling block 
+#experiment=4 # dripping instability
+#experiment=5 # mato83 
+#experiment=6 # quinquis-like 
+experiment=7 # buks12, anhydrite in salt
 
 #...........
-if model==1:
+if experiment==1:
    Lx=2680e3  # horizontal extent of the domain 
    Ly=670e3      # vertical extent of the domain 
    nelx=256
@@ -129,7 +128,7 @@ if model==1:
    eta_ref=1e21      # scaling of G blocks
 
 #...........
-if model==2:
+if experiment==2:
    Lx=3000e3
    Ly=750e3
    nelx=128
@@ -154,7 +153,7 @@ if model==2:
    eta_ref=1e21      # scaling of G blocks
 
 #...........
-if model==3: # falling block
+if experiment==3: # falling block
    Lx=500e3
    Ly=500e3
    nelx=64
@@ -174,7 +173,7 @@ if model==3: # falling block
    eta_ref=1e21      # scaling of G blocks
 
 #...........
-if model==4: # dripping instability 
+if experiment==4: # dripping instability 
    Lx=1
    Ly=2
    nelx=33
@@ -195,7 +194,7 @@ if model==4: # dripping instability
    eta_ref=10      # scaling of G blocks
 
 #...........
-if model==5: # mato83 
+if experiment==5: # mato83 
    Lx=400e3
    Ly=180e3
    nelx=160
@@ -223,7 +222,7 @@ if model==5: # mato83
    eta_ref=1e21      # scaling of G blocks
 
 #...........
-if model==6: #  
+if experiment==6: #  
    Lx=3000e3
    Ly=670e3
    nelx=150
@@ -248,12 +247,14 @@ if model==6: #
    eta_ref=1e21      # scaling of G blocks
 
 #...........
-if model==7:
+if experiment==7:
    Lx=2500
    Ly=5000
-   nelx=75 
-   nely=150 
+   nelx=75
+   nely=2*nelx 
    grav=9.81
+   bx=100
+   by=100
    use_stretching_x=False
    use_stretching_y=False
    #material 1: salt left
@@ -269,9 +270,9 @@ if model==7:
    #case C
    rho_mat = np.array([2200,2200,2900],dtype=np.float64) 
    eta_mat = np.array([1e16,1e17,1e20],dtype=np.float64) 
-   mass0=10
+   mass0=27514000000
    rk=1
-   nparticle_per_dim=3
+   nparticle_per_dim=5
    marker_random=False
    eta_ref=1e20  # scaling of G blocks
 
@@ -417,22 +418,6 @@ for j in range(0,nely):
         iconP[1,counter]=i+1+j*(nelx+1)
         iconP[2,counter]=i+1+(j+1)*(nelx+1)
         iconP[3,counter]=i+(j+1)*(nelx+1)
-        counter += 1
-    #end for
-#end for
-
-# creating a dedicated connectivity array to plot the solution on Q1 space
-# different icon array but same velocity nodes.
-
-nel2=(nnx-1)*(nny-1)
-iconQ1 =np.zeros((4,nel2),dtype=np.int32)
-counter = 0
-for j in range(0,nny-1):
-    for i in range(0,nnx-1):
-        iconQ1[0,counter]=i+j*nnx
-        iconQ1[1,counter]=i+1+j*nnx
-        iconQ1[2,counter]=i+1+(j+1)*nnx
-        iconQ1[3,counter]=i+(j+1)*nnx
         counter += 1
     #end for
 #end for
@@ -588,7 +573,7 @@ print("marker setup: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-if model==1:
+if experiment==1:
 
    #points_file=open('points.ascii',"w")
 
@@ -691,7 +676,7 @@ if model==1:
    #    if swarm_mat[im]==6:
    #       mat6_file.write("%e %e\n" %(swarm_x[im],swarm_y[im]))
 
-if model==2:
+if experiment==2:
    for im in range(0,nparticle):
        xi=swarm_x[im]
        yi=swarm_y[im]
@@ -704,7 +689,7 @@ if model==2:
           swarm_mat[im]=2
     #end for
 
-if model==3:
+if experiment==3:
    for im in range(0,nparticle):
        xi=swarm_x[im]
        yi=swarm_y[im]
@@ -713,7 +698,7 @@ if model==3:
           swarm_mat[im]=2
     #end for
 
-if model==4:
+if experiment==4:
    for im in range(0,nparticle):
        xi=swarm_x[im]
        yi=swarm_y[im]
@@ -726,7 +711,7 @@ if model==4:
           swarm_mat[im]=3
     #end for
 
-if model==5:
+if experiment==5:
    for im in range(0,nparticle):
        xi=swarm_x[im]
        yi=swarm_y[im]
@@ -741,7 +726,7 @@ if model==5:
           swarm_mat[im]=4
     #end for
 
-if model==6:
+if experiment==6:
    xM=Lx/2
    yM=Ly-150e3
    for im in range(0,nparticle):
@@ -778,11 +763,11 @@ if model==6:
              swarm_mat[im]=5
        #end if
 
-if model==7:
+if experiment==7:
    for im in range(0,nparticle):
        xi=swarm_x[im]
        yi=swarm_y[im]
-       if yi>Ly-200 and yi<Ly-100 and abs(xi-Lx/2)<100: 
+       if yi>Ly-100-by and yi<Ly-100 and abs(xi-Lx/2)<bx/2: 
           swarm_mat[im]=3
        else:
           if xi<Lx/2:
@@ -814,7 +799,7 @@ start = time.time()
 bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 
-if model==1:
+if experiment==1:
    u_in=-5*cm/year
    y_in=Ly-128e3
    y_out=Ly-160e3
@@ -838,7 +823,7 @@ if model==1:
    #end for 
 #end if
 
-if model==2 or model==3 or model==5 or model==6 or model==7:
+if experiment==2 or experiment==3 or experiment==5 or experiment==6 or experiment==7:
    for i in range(0,NV):
        if x[i]/Lx<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
@@ -851,7 +836,7 @@ if model==2 or model==3 or model==5 or model==6 or model==7:
    #end for
 #end if
 
-if model==4:
+if experiment==4:
    for i in range(0,NV):
        if x[i]/Lx<eps:
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0. # free slip
@@ -873,13 +858,13 @@ print("setup: boundary conditions: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-if model==1:
+if experiment==1:
    nmarker=0
 
-if model==2:
+if experiment==2:
    nmarker=0
 
-if model==3:
+if experiment==3:
    hh=1e3
    nmarker1=np.int(100e3/hh)
    nmarker2=np.int(100e3/hh)
@@ -913,7 +898,7 @@ if model==3:
        m_y[counter]=450e3
        counter+=1
 
-if model==4:
+if experiment==4:
    hh=0.001
    nmarker1=np.int(0.1/hh)
    nmarker2=np.int(0.2/hh)
@@ -943,14 +928,45 @@ if model==4:
        counter+=1
     #end for
 
-if model==5:
+if experiment==5:
    nmarker=0
 
-if model==6:
+if experiment==6:
    nmarker=0
 
-if model==7:
-   nmarker=0
+if experiment==7:
+   hh=2
+   nmarker1=int(100/hh)
+   nmarker2=int(100/hh)
+   nmarker3=int(100/hh)
+   nmarker4=int(100/hh)
+   nmarker=nmarker1+nmarker2+nmarker3+nmarker4
+   print('     -> nmarker=',nmarker)
+
+   m_x=np.empty(nmarker,dtype=np.float64) 
+   m_y=np.empty(nmarker,dtype=np.float64) 
+   m_r=np.empty(nmarker,dtype=np.float64) 
+   m_s=np.empty(nmarker,dtype=np.float64) 
+   m_u=np.empty(nmarker,dtype=np.float64) 
+   m_v=np.empty(nmarker,dtype=np.float64) 
+
+   counter=0
+   for i in range(0,nmarker1):
+       m_x[counter]=Lx/2-bx/2
+       m_y[counter]=4900-i*hh
+       counter+=1
+   for i in range(0,nmarker2):
+       m_x[counter]=Lx/2-bx/2+i*hh
+       m_y[counter]=Ly-100-by
+       counter+=1
+   for i in range(0,nmarker3):
+       m_x[counter]=Lx/2+bx/2
+       m_y[counter]=Ly-100-by+i*hh
+       counter+=1
+   for i in range(0,nmarker4):
+       m_x[counter]=Lx/2+bx/2-i*hh
+       m_y[counter]=4900
+       counter+=1
 
 #np.savetxt('markers.ascii',np.array([m_x,m_y]).T,header='# x,y')
 
@@ -1862,11 +1878,11 @@ for istep in range(0,nstep):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
-       filename = 'solution_4xQ1_{:04d}.vtu'.format(istep) 
+       filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
-       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel2))
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
        #####
        vtufile.write("<Points> \n")
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
@@ -1933,18 +1949,20 @@ for istep in range(0,nstep):
        #####
        vtufile.write("<Cells>\n")
        vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-       for iel in range (0,nel2):
-           vtufile.write("%d %d %d %d \n" %(iconQ1[0,iel],iconQ1[1,iel],iconQ1[2,iel],iconQ1[3,iel]))
+       for iel in range (0,nel):
+           vtufile.write("%d %d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],\
+                                                          iconV[3,iel],iconV[4,iel],iconV[5,iel],\
+                                                          iconV[6,iel],iconV[7,iel],iconV[8,iel]))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-       for iel in range (0,nel2):
-           vtufile.write("%d \n" %((iel+1)*4))
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %((iel+1)*9))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-       for iel in range (0,nel2):
-           vtufile.write("%d \n" %9)
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %28) 
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("</Cells>\n")
