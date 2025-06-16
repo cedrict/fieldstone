@@ -20,130 +20,128 @@ def dNds(r,s):
 
 ###############################################################################
 
-def mesher(Lx,Ly,nelx,nely,nel,NV,mV):
+def mesher(Lx,Ly,ncellx,ncelly):
 
-    x = np.zeros(NV,dtype=np.float64)  # x coordinates
-    y = np.zeros(NV,dtype=np.float64)  # y coordinates
-    icon =np.zeros((mV,nel),dtype=np.int32)
+    m=4 # number of vertices per element
+    nel=ncellx*ncelly*18
+    N1=(ncellx+1)*(ncelly+1) # corners of Q1 mesh 
+    N2=ncellx*ncelly*11      # inside nodes
+    N3=3*(ncellx+1)*ncelly   # vertical sides nodes
+    N4=3*(ncelly+1)*ncellx   # horizontal sides nodes
+    N=N1+N2+N3+N4
+
+    x = np.zeros(N,dtype=np.float64)  # x coordinates
+    y = np.zeros(N,dtype=np.float64)  # y coordinates
+    icon =np.zeros((m,nel),dtype=np.int32)
   
-    hx=Lx/nelx
-    hy=Ly/nely
-
-    N1=(nelx+1)*(nely+1) # corners of Q1 mesh 
-    N2=nelx*nely*11      # inside nodes
-    N3=3*(nelx+1)*nely   # vertical sides nodes
-    N4=3*(nely+1)*nelx   # horizontal sides nodes
+    hx=Lx/ncellx
+    hy=Ly/ncelly
 
     rA=0.2 ; sA=0.2
     rB=0.6 ; sB=0.6
     rC=0.4 ; sC=0.7
     rD=sC  ; sD=rC
-
     rM=0.1  ; sM=0 ; rS=sM ; sS=rM
     rL=rM/2 ; sL=0 ; rT=sL ; sT=rL
     rN=0.55 ; sN=0 ; rR=sN ; sR=rN
-
     rI=(rS+rA)/2 ; sI=(sS+sA)/2 ; rJ=sI ; sJ=rI
     rK=(rI+rL)/2 ; sK=(sI+sL)/2 
-
     rF=(rA+1)/2 ; sF=(sA+sS)/2 ; rE=sF ; sE=rF
     rH=(rJ+1)/2 ; sH=(sJ+sT)/2 ; rG=sH ; sG=rH
 
-    # nodes 1,2,3,4
+    # nodes corners
     counter=0    
-    for j in range(0,nely+1):
-        for i in range(0,nelx+1):
+    for j in range(0,ncelly+1):
+        for i in range(0,ncellx+1):
             x[counter]=i*hx
             y[counter]=j*hy
             counter+=1    
 
-    for j in range(0,nely):
-        for i in range (0,nelx):
+    for j in range(0,ncelly):
+        for i in range (0,ncellx):
             x[counter]=(i+rA)*hx ; y[counter]=(j+sA)*hy ; counter+=1 # A
-    for j in range(0,nely):
-        for i in range (0,nelx):
+    for j in range(0,ncelly):
+        for i in range (0,ncellx):
             x[counter]=(i+rB)*hx ; y[counter]=(j+sB)*hy ; counter+=1 # B 
-    for j in range(0,nely):
-        for i in range (0,nelx):
+    for j in range(0,ncelly):
+        for i in range (0,ncellx):
             x[counter]=(i+rC)*hx ; y[counter]=(j+sC)*hy ; counter+=1 # C
-    for j in range(0,nely):
-        for i in range (0,nelx):
+    for j in range(0,ncelly):
+        for i in range (0,ncellx):
             x[counter]=(i+rD)*hx ; y[counter]=(j+sD)*hy ; counter+=1 # D
-    for j in range(0,nely):
-        for i in range (0,nelx):
+    for j in range(0,ncelly):
+        for i in range (0,ncellx):
             x[counter]=(i+rE)*hx ; y[counter]=(j+sE)*hy ; counter+=1 # E
-    for j in range(0,nely):
-        for i in range (0,nelx):
+    for j in range(0,ncelly):
+        for i in range (0,ncellx):
             x[counter]=(i+rF)*hx ; y[counter]=(j+sF)*hy ; counter+=1 # F
-    for j in range(0,nely):
-        for i in range (0,nelx):
+    for j in range(0,ncelly):
+        for i in range (0,ncellx):
             x[counter]=(i+rG)*hx ; y[counter]=(j+sG)*hy ; counter+=1 # G
-    for j in range(0,nely):
-        for i in range (0,nelx):
+    for j in range(0,ncelly):
+        for i in range (0,ncellx):
             x[counter]=(i+rH)*hx ; y[counter]=(j+sH)*hy ; counter+=1 # H
-    for j in range(0,nely):
-        for i in range (0,nelx):
+    for j in range(0,ncelly):
+        for i in range (0,ncellx):
             x[counter]=(i+rI)*hx ; y[counter]=(j+sI)*hy ; counter+=1 # I
-    for j in range(0,nely):
-        for i in range (0,nelx):
+    for j in range(0,ncelly):
+        for i in range (0,ncellx):
             x[counter]=(i+rJ)*hx ; y[counter]=(j+sJ)*hy ; counter+=1 # J
-    for j in range(0,nely):
-        for i in range (0,nelx):
+    for j in range(0,ncelly):
+        for i in range (0,ncellx):
             x[counter]=(i+rK)*hx ; y[counter]=(j+sK)*hy ; counter+=1 # K
-
-    for j in range(0,nely+1):
-        for i in range (0,nelx):
+    for j in range(0,ncelly+1):
+        for i in range (0,ncellx):
             x[counter]=(i+rL)*hx ; y[counter]=(j+sL)*hy ; counter+=1 # L
             x[counter]=(i+rM)*hx ; y[counter]=(j+sM)*hy ; counter+=1 # M
             x[counter]=(i+rN)*hx ; y[counter]=(j+sN)*hy ; counter+=1 # N
-
-    for j in range(0,nely):
-        for i in range (0,nelx+1):
+    for j in range(0,ncelly):
+        for i in range (0,ncellx+1):
             x[counter]=(i+rT)*hx ; y[counter]=(j+sT)*hy ; counter+=1 # T
             x[counter]=(i+rS)*hx ; y[counter]=(j+sS)*hy ; counter+=1 # S
             x[counter]=(i+rR)*hx ; y[counter]=(j+sR)*hy ; counter+=1 # R
 
     iel=0    
     cell=0
-    for j in range(0,nely):
-        for i in range(0,nelx):
+    for j in range(0,ncelly):
+        for i in range(0,ncellx):
 
-            nodeA=N1+ 0*nelx*nely+cell
-            nodeB=N1+ 1*nelx*nely+cell
-            nodeC=N1+ 2*nelx*nely+cell
-            nodeD=N1+ 3*nelx*nely+cell
-            nodeE=N1+ 4*nelx*nely+cell
-            nodeF=N1+ 5*nelx*nely+cell
-            nodeG=N1+ 6*nelx*nely+cell
-            nodeH=N1+ 7*nelx*nely+cell
-            nodeI=N1+ 8*nelx*nely+cell
-            nodeJ=N1+ 9*nelx*nely+cell
-            nodeK=N1+10*nelx*nely+cell
+            nodeA=N1+ 0*ncellx*ncelly+cell
+            nodeB=N1+ 1*ncellx*ncelly+cell
+            nodeC=N1+ 2*ncellx*ncelly+cell
+            nodeD=N1+ 3*ncellx*ncelly+cell
+            nodeE=N1+ 4*ncellx*ncelly+cell
+            nodeF=N1+ 5*ncellx*ncelly+cell
+            nodeG=N1+ 6*ncellx*ncelly+cell
+            nodeH=N1+ 7*ncellx*ncelly+cell
+            nodeI=N1+ 8*ncellx*ncelly+cell
+            nodeJ=N1+ 9*ncellx*ncelly+cell
+            nodeK=N1+10*ncellx*ncelly+cell
 
-            nodeL=N1+N2+3*i+j*3*nelx
+            nodeL=N1+N2+3*i+j*3*ncellx
             nodeM=nodeL+1
             nodeN=nodeM+1
             #print(nodeL,nodeM,nodeN)
 
-            nodeO=N1+N2+3*i+(j+1)*3*nelx
+            nodeO=N1+N2+3*i+(j+1)*3*ncellx
             nodeP=nodeO+1
             nodeQ=nodeP+1
             #print('OPQ-->',nodeO,nodeP,nodeQ)
 
-            nodeT=N1+N2+N4+3*j*(nelx+1)+i*3
+            nodeT=N1+N2+N4+3*j*(ncellx+1)+i*3
             nodeS=nodeT+1
             nodeR=nodeS+1
             #print('TSR->',nodeT,nodeS,nodeR)
 
-            nodeW=N1+N2+N4+3*j*(nelx+1)+(i+1)*3
+            nodeW=N1+N2+N4+3*j*(ncellx+1)+(i+1)*3
             nodeV=nodeW+1
             nodeU=nodeV+1
             #print('WVU->',nodeW,nodeV,nodeU)
 
-            nodeSW= i + j * (nelx + 1)
-            nodeSE= i + 1 + j * (nelx + 1)
-            nodeNE= i + 1 + (j + 1) * (nelx + 1)
-            nodeNW= i + (j + 1) * (nelx + 1)
+            nodeSW=i+j*(ncellx+1)
+            nodeSE=i+1+j*(ncellx+1)
+            nodeNE=i+1+(j+1)*(ncellx+1)
+            nodeNW=i+(j+1)*(ncellx+1)
 
             #sub element 0 
             icon[0,iel]=nodeSW
@@ -276,30 +274,26 @@ def mesher(Lx,Ly,nelx,nely,nel,NV,mV):
         #end for i
     #end for j 
 
-    return x,y,icon
+    return x,y,N,nel,m,icon
 
 ###############################################################################
 
-nelx=6
-nely=4
-nel=nelx*nely*18
+print("-----------------------------")
+print("--------- stone 174 ---------")
+print("-----------------------------")
 
-m=4
-Lx=3
+Lx=3 # domain size
 Ly=2
 
-N=(nelx+1)*(nely+1) # corners of Q1 mesh 
-N+=nelx*nely*11     # inside nodes
-N+=3*(nelx+1)*nely  # vertical sides nodes
-N+=3*(nely+1)*nelx  # horizontal sides nodes
+ncellx=6
+ncelly=4
+
+x,y,N,nel,m,icon=mesher(Lx,Ly,ncellx,ncelly)
 
 print('nel=',nel)
 print('N=',N)
 
-x,y,icon=mesher(Lx,Ly,nelx,nely,nel,N,m)
-
-#for iel in range (54,71):
-#    print ("---------------------------")
+#for iel in range (0,nel):
 #    print ("iel=",iel,icon[:,iel])
 
 ###############################################################################
@@ -313,6 +307,7 @@ qweights=[1.,1.]
 area  = np.zeros(nel,dtype=np.float64) 
 dNNdr = np.zeros(m,dtype=np.float64)    
 dNNds = np.zeros(m,dtype=np.float64)     
+jcb=np.zeros((2,2),dtype=np.float64)
 
 for iel in range(0,nel):
     for iq in range(0,nqperdim):
@@ -322,13 +317,10 @@ for iel in range(0,nel):
             weightq=qweights[iq]*qweights[jq]
             dNNdr[0:m]=dNdr(rq,sq)
             dNNds[0:m]=dNds(rq,sq)
-            jcb=np.zeros((2,2),dtype=np.float64)
-            for k in range(0,m):
-                jcb[0,0] += dNNdr[k]*x[icon[k,iel]]
-                jcb[0,1] += dNNdr[k]*y[icon[k,iel]]
-                jcb[1,0] += dNNds[k]*x[icon[k,iel]]
-                jcb[1,1] += dNNds[k]*y[icon[k,iel]]
-            #end for
+            jcb[0,0]=np.dot(dNNdr[:],x[icon[:,iel]])
+            jcb[0,1]=np.dot(dNNdr[:],y[icon[:,iel]])
+            jcb[1,0]=np.dot(dNNds[:],x[icon[:,iel]])
+            jcb[1,1]=np.dot(dNNds[:],y[icon[:,iel]])
             jcob=np.linalg.det(jcb)
             area[iel]+=jcob*weightq
         #end for
@@ -388,4 +380,7 @@ vtufile.write("</UnstructuredGrid>\n")
 vtufile.write("</VTKFile>\n")
 vtufile.close()
 
+print("-----------------------------")
+print("-----------------------------")
+print("-----------------------------")
 ###############################################################################

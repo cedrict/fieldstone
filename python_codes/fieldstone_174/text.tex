@@ -27,14 +27,20 @@ Last revision: June 16th, 2025.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This originates in \textcite{zibz98} (1998):
+The motivation for this \stone originates in \textcite{zibz98} (1998):
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_174/images/zibz98a}\\
 {\captionfont See also Fig.~4 of the paper.}
 \end{center}
 
-In order to build the mesh we need to label the nodes of the 'master' cell:
+In essence, we wish to write a function that generates a mesh like the 
+one in the figure above.  
+
+Note that what follows actually replicates Fig.~4e of the paper, which is
+similar to the figure above but not identical (check lower left corner).
+In order to build the mesh we need to label the nodes of the 'master' cell 
+which is decomposed in 18 sub-elements:
 
 \begin{center}
 \begin{tikzpicture}
@@ -103,10 +109,9 @@ N_4&=&3*(nely+1)*nelx =3*3*3 = 27 \text{ (horizontal sides nodes)} \nn\\
 N&=&N_1+N_2+N_3+N_4=129 \nn
 \end{eqnarray}
 
-
+The resulting mesh is then as follows:
 
 \begin{center}
-
 \begin{tikzpicture}
 %\draw[step=0.5cm,gray,very thin] (0,0) grid (15,10); %background grid
 
@@ -416,11 +421,16 @@ N&=&N_1+N_2+N_3+N_4=129 \nn
 \node[brown] at (3.75,2.9+4.5) {\tiny \bf 71};
 
 \end{tikzpicture}
-
 \end{center}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The code exports the resulting mesh in vtu format for Paraview, 
+and also computes the element aread:
 
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_174/images/area}\\
 {\captionfont Example of a $6 \times 4$-cell mesh counting 432 elements and 473 nodes.}
 \end{center}
+
+
