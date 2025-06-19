@@ -8,20 +8,77 @@ from scipy.sparse import csr_matrix,lil_matrix
 
 #------------------------------------------------------------------------------
 
+experiment=1
+
+#------------------------------------------------------------------------------
+
 def gx(x,y):
     return 0
 
 def gy(x,y):
-    return 0
+    return 0 #-1
 
 def ud(x,y,Lx,Ly):
-    return x/2-Lx/4/np.pi/Lx*np.sin(2*np.pi*x/Lx)-Lx/4
+    if experiment==1:
+       return 0.5*(x-Lx/2 -Lx/2/np.pi*np.sin(2*np.pi*x/Lx) )
+    if experiment==2:
+       delta=Lx/8
+       if x<=Lx/2-delta: 
+          return -delta/2
+       elif x<=Lx/2+delta:
+          return 0.5*(x-Lx/2+delta/np.pi*np.sin(np.pi*(x-Lx/2)/delta))
+       else: 
+          return delta/2
+    if experiment==3:
+       return 0
 
 def duddx(x,y,Lx,Ly):
-    return (1-np.cos(2*np.pi*x/Lx))/2
+    if experiment==1:
+       return (1-np.cos(2*np.pi*x/Lx))/2
+    if experiment==2:
+       delta=Lx/8
+       if abs(x-Lx/2)<=delta: 
+          return 0.5*(1+np.cos(np.pi*(x-Lx/2)/delta))
+       else:
+          return 0
+    if experiment==3:
+       delta=Lx/8
+       if abs(x-Lx/2)<=delta: 
+          return 1
+       else:
+          return 0
 
 def d2uddx2(x,y,Lx,Ly):
-    return np.pi/Lx*np.cos(2*np.pi*x/Lx)
+    if experiment==1:
+       return np.pi/Lx*np.sin(2*np.pi*x/Lx)
+    if experiment==2:
+       delta=Lx/8
+       if abs(x-Lx/2)<=delta: 
+          return -0.5*np.pi/delta*np.sin(np.pi*(x-Lx/2)/delta)
+       else:
+          return 0
+
+def d2uddy2(x,y,Lx,Ly):
+    return 0
+
+def d2uddxdy(x,y,Lx,Ly):
+    return 0
+
+def d2vddx2(x,y,Lx,Ly):
+    return 0
+
+def d2vddy2(x,y,Lx,Ly):
+    return 0
+
+def d2vddxdy(x,y,Lx,Ly):
+    return 0
+
+def fx(x,y,Lx,Ly):
+    return (2-2/3) *d2uddx2(x,y,Lx,Ly) 
+
+def fy(x,y,Lx,Ly):
+    return 0
+
 
 #------------------------------------------------------------------------------
 
@@ -85,8 +142,8 @@ mP=4     # number of pressure nodes making up an element
 ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
-nelx=32
-nely=16
+nelx=64
+nely=32
 
 Lx=2.
 Ly=1.
@@ -212,10 +269,9 @@ print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 # [GT 0 ][p] [h]
 ###############################################################################
 
-c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+#c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64)  not correct!
 
-#c_mat = np.array([[4,-2,0],[-2,4,0],[0,0,3]],dtype=np.float64) 
-#c_mat/=3
+c_mat = np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64) 
 
 if True:
 
@@ -234,7 +290,6 @@ if True:
    jcbi[0,0] = 2/hx 
    jcbi[1,1] = 2/hy
 
-   counter=0
    for iel in range(0,nel):
 
        # set arrays to 0 for each element 
@@ -285,7 +340,7 @@ if True:
 
                # compute elemental rhs vector
                for i in range(0,mV):
-                   f_el[ndofV*i+0]+=NNNV[i]*jcob*weightq*(rho*gx(xq,yq)-d2uddx2(xq,yq,Lx,Ly)*(2-2./ndim))
+                   f_el[ndofV*i+0]+=NNNV[i]*jcob*weightq*(rho*gx(xq,yq)-d2uddx2(xq,yq,Lx,Ly)*(2-2./3))
                    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*(rho*gy(xq,yq)-0)
 
                for i in range(0,mP):
@@ -297,7 +352,6 @@ if True:
                 
                h_el[:]-=NNNP[:]*duddx(xq,yq,Lx,Ly)*weightq*jcob
 
-               counter+=1
            # end for iq 
        # end for jq 
 
@@ -476,13 +530,13 @@ if True:
            yc[iel]+=NNNV[k]*yV[iconV[k,iel]]
            exx[iel]+=dNNNVdx[k]*u[iconV[k,iel]]
            eyy[iel]+=dNNNVdy[k]*v[iconV[k,iel]]
-           exy[iel]+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
+           exy[iel]+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+\
+                     0.5*dNNNVdx[k]*v[iconV[k,iel]]
 
        sr[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
 
        for k in range(0,mP):
            pc[iel] += NNNP[k]*p[iconP[k,iel]]
-
    #end if
 
    print("     -> exx (m,M) %.5e %.5e " %(np.min(exx),np.max(exx)))
@@ -491,7 +545,7 @@ if True:
    print("     -> sr  (m,M) %.5e %.5e " %(np.min(sr),np.max(sr)))
    print("     -> pc  (m,M) %.5e %.5e " %(np.min(pc),np.max(pc)))
 
-   np.savetxt('solution_c.ascii',np.array([xc,yc,pc]).T)
+   np.savetxt('solution_c.ascii',np.array([xc,yc,pc,exx+eyy]).T)
 
    print("compute press & sr: %.3f s" % (timing.time() - start))
 

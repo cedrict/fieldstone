@@ -1,0 +1,43 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set xlabel 'x'
+set pointsize .4
+L=2.
+delta=L/8
+
+#u
+f(x) = x<L/2-delta ? -delta/2 : x<L/2+delta ? 0.5*( x-L/2 + delta/pi * sin  (pi*(x-L/2)/delta) ) : delta/2
+
+#dudx
+g(x) =x<L/2-delta ? 0  : x<L/2+delta ?  0.5*(1+cos( pi*(x-L/2)/delta ))  : 0
+
+################################################################
+
+set ylabel 'u_d'
+set output 'ud.pdf'
+plot[][]\
+'solution_32x16.ascii' u 1:3 t '32x16',\
+'solution_64x32.ascii' u 1:3 t '64x32',\
+f(x) lt -1 t 'analytical'
+
+set ylabel 'p'
+set output 'p.pdf'
+plot[][]\
+'solution_c_32x16.ascii' u 1:3 t '32x16',\
+'solution_c_64x32.ascii' u 1:3 t '64x32',\
+0 lt -1 t 'analytical' 
+
+set ylabel 'div(v)'
+set output 'divv.pdf'
+plot[][]\
+'solution_c_32x16.ascii' u 1:4 t '32x16',\
+'solution_c_64x32.ascii' u 1:4 t '64x32',\
+g(x) lt -1  t 'du_d/dx'
+
+unset ylabel
+set output 'analytical.pdf'
+plot[0:2][]\
+g(x)  t 'du_d/dx',\
+f(x) t 'u_d(x)'
