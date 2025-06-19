@@ -56,23 +56,55 @@ not unflag nodes that are no more on the boundary, it simply merges the two hull
 This proto-mesh contains 8 elements and 14 points.
 
 \begin{verbatim}
-12---------------13
-| \               |
-|  10------------11 icon[0:m,0]=[0,1,6,5]
-|   | \           | icon[0:m,1]=[1,2,7,6]
-|   |  \          | icon[0:m,2]=[2,3,8,7]
-|   |   \         | icon[0:m,3]=[3,4,9,8]
-|   |    \        | icon[0:m,4]=[5,6,10,12]
-5---6     8-------9 icon[0:m,5]=[6,7,8,10]    
-|   | \   / \     | icon[0:m,6]=[8,9,11,10]
-|   |   7-   \    | icon[0:m,7]=[10,11,13,12]
-|   |     \   \   | 
-0---1-----2----3--4
+icon[0:m,0]=[0,1,6,5]
+icon[0:m,1]=[1,2,7,6]
+icon[0:m,2]=[2,3,8,7]
+icon[0:m,3]=[3,4,9,8]
+icon[0:m,4]=[5,6,10,12]
+icon[0:m,5]=[6,7,8,10]    
+icon[0:m,6]=[8,9,11,10]
+icon[0:m,7]=[10,11,13,12]
 \end{verbatim}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_149/results/meshing/mesh}
+\begin{tikzpicture}
+\draw[fill=gray!5,gray!5](0,0) rectangle (7,6);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (7,6); %background grid
+\draw[thin] (0,0)--(7,0)--(7,6)--(0,6)--cycle  ;
+
+\draw[thin] (0,3)--(1,3)--(3,2)--(3.5,0) ; %5672
+\draw[thin] (0,6)--(6,0); % diag
+\draw[thin] (1,0)--(1,5)--(7,5)   ;%1 6 10 11
+\draw[thin] (3,2)--(3.5,2.5)--(7,2.5); % 7 8 9
+
+\node[blue] at (0,0) {\small 0};
+\node[blue] at (1,0) {\small 1};
+\node[blue] at (3.5,0) {\small 2};
+\node[blue] at (6,0) {\small 3};
+\node[blue] at (7,0) {\small 4};
+\node[blue] at (0,3) {\small 5};
+\node[blue] at (1,3) {\small 6};
+\node[blue] at (3,2) {\small 7};
+\node[blue] at (3.5,2.5) {\small 8};
+\node[blue] at (7,2.5) {\small 9};
+\node[blue] at (1,5) {\small 10};
+\node[blue] at (7,5) {\small 11};
+\node[blue] at (0,6) {\small 12};
+\node[blue] at (7,6) {\small 13};
+
+\node[olive] at (0.5,1.5) {\small 0};
+\node[olive] at (2,1.25) {\small 1};
+\node[olive] at (4,1) {\small 2};
+\node[olive] at (6,1.5) {\small 3};
+\node[olive] at (0.5,4.25) {\small 4};
+\node[olive] at (2,3.25) {\small 5};
+\node[olive] at (5,3.75) {\small 6};
+\node[olive] at (4,5.5) {\small 7};
+\end{tikzpicture}
+{\captionfont The 14 points and 8 cells making up the large mesh.}
 \end{center}
+
+
 
 We then proceed by creating 8 blocks of resolution $10\times 10$. 
 We then map them and finally assemble them one by one to obtain:
