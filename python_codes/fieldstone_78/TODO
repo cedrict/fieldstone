@@ -1,0 +1,29 @@
+cmat version ? 
+
+put bc inside each experiment ?
+
+pnormalise/ constraint ?
+
+visc computed at q point or center ?
+
+recover pressure !!!! 
+
+use schur complement solver to show it is stable ?
+
+master script 
+
+loop over topo 0,7
+loop over experiments 1-14 (make choice?)
+
+loop over resolutions
+     
+     mv solution.vtu solution_0.vtu
+     mv pressure_top.ascii pressure_top_0.ascii
+     mv vel_profile.ascii vel_profile_0.ascii 
+    grep errv opla >> errors_regular
+    grep vrms opla >> vrms_regular
+    grep p opla | grep m,M  >> pstats_S
+    grep q opla | grep m,M  >> qstats_S
+    grep u opla | grep m,M  >> ustats_S
+    grep v opla | grep m,M  >> vstats_S
+ 
