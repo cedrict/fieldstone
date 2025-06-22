@@ -13,37 +13,17 @@ eps=1.e-10
 ###############################################################################
 
 def bx(x,y):
+    if experiment==2 or experiment==3 or experiment==4 or experiment==5 or\
+       experiment==6 or experiment==7 or experiment==8 or experiment==10 or\
+       experiment==11 or experiment==12 or experiment==13 or experiment==14:
+       val=0.
     if experiment==1:
        val=((12.-24.*y)*x**4+(-24.+48.*y)*x*x*x +
             (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
             (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
             1.-4.*y+12.*y*y-8.*y*y*y)
-    if experiment==2:
-       val=0.
-    if experiment==3:
-       val=0.
-    if experiment==4:
-       val=0.
-    if experiment==5:
-       val=0.
-    if experiment==6:
-       val=0.
-    if experiment==7:
-       val=0.
-    if experiment==8:
-       val=0.
     if experiment==9:
        val=(3*x**2*y**2-y-1)
-    if experiment==10:
-       val=0.
-    if experiment==11:
-       val=0.
-    if experiment==12:
-       val=0.
-    if experiment==13:
-       val=0.
-    if experiment==14:
-       val=0.
     return val
 
 def by(x,y):
@@ -91,37 +71,23 @@ def by(x,y):
     return val
 
 def viscosity(x,y):
-    if experiment==1:
-       val=1
-    if experiment==2:
+    if experiment==1 or experiment==2 or experiment==4 or \
+       experiment==6 or experiment==7 or experiment==9 or \
+       experiment==10 or experiment==11 or experiment==12:
        val=1
     if experiment==3:
        if (x-Lx/2)**2+(y-Ly/2)**2<0.125**2:
           val=1e4
        else:
           val=1
-    if experiment==4:
-       val=1
     if experiment==5:
        B=0.5*np.log(1e6)
        val=np.exp(2*B*y)
-    if experiment==6:
-       val=1.
-    if experiment==7:
-       val=1.
     if experiment==8:
        if abs(x-Lx/2)<64e3 and abs(y-384e3)<64e3:
           val=1e24
        else:
           val=1e21
-    if experiment==9:
-       val=1.
-    if experiment==10:
-       val=1.
-    if experiment==11:
-       val=1.
-    if experiment==12:
-       val=1.
     if experiment==13:
        if x<0.5:
           val=1
@@ -137,30 +103,18 @@ def viscosity(x,y):
 ###############################################################################
 
 def velocity_x(x,y):
+    if experiment==2 or experiment==3 or experiment==4 or\
+       experiment==6 or experiment==8 or experiment==10 or\
+       experiment==11 or experiment==12:
+       val=0
     if experiment==1:
        val=x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
-    if experiment==2:
-       val=0.
-    if experiment==3:
-       val=0.
-    if experiment==4:
-       val=0
     if experiment==5:
        val,xxx,xxxx=solkz.SolKzSolution(x,y)
-    if experiment==6:
-       val=0
     if experiment==7:
        val=(2*y-1)*x*(1-x)
-    if experiment==8:
-       val=0
     if experiment==9:
        val=x+x**2-2*x*y+x**3-3*x*y**2+x**2*y
-    if experiment==10:
-       val=0
-    if experiment==11:
-       val=0
-    if experiment==12:
-       val=0
     if experiment==13:
        val,xxx,xxx=solcx.SolCxSolution(x,y)
     if experiment==14:
@@ -168,30 +122,18 @@ def velocity_x(x,y):
     return val
 
 def velocity_y(x,y):
+    if experiment==2 or experiment==3 or experiment==4 or\
+       experiment==6 or experiment==8 or experiment==10 or\
+       experiment==11 or experiment==12:
+       val=0
     if experiment==1:
        val=-y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
-    if experiment==2:
-       val=0.
-    if experiment==3:
-       val=0.
-    if experiment==4:
-       val=0
     if experiment==5:
        xxx,val,xxxx=solkz.SolKzSolution(x,y)
-    if experiment==6:
-       val=0
     if experiment==7:
        val=-(2*x-1)*y*(1-y)
-    if experiment==8:
-       val=0
     if experiment==9:
        val=-y-2*x*y+y**2-3*x**2*y+y**3-x*y**2
-    if experiment==10:
-       val=0
-    if experiment==11:
-       val=0
-    if experiment==12:
-       val=0
     if experiment==13:
        xxx,val,xxx=solcx.SolCxSolution(x,y)
     if experiment==14:
@@ -199,30 +141,21 @@ def velocity_y(x,y):
     return val
 
 def pressure(x,y):
+    if experiment==2 or experiment==3 or experiment==6 or\
+       experiment==10 or experiment==11 or experiment==12:
+       val=0
     if experiment==1:
        val=x*(1.-x)-1./6.
-    if experiment==2:
-       val=0.
-    if experiment==3:
-       val=0.
     if experiment==4:
        val=0.5-y
     if experiment==5:
        xxx,xxxx,val=solkz.SolKzSolution(x,y)
-    if experiment==6:
-       val=0
     if experiment==7:
        val=2*x*(1-2*y)
     if experiment==8:
        val=-32000*(y-Ly/2)
     if experiment==9:
        val=x*y+x+y+x**3*y**2-4./3.
-    if experiment==10:
-       val=0
-    if experiment==11:
-       val=0
-    if experiment==12:
-       val=0
     if experiment==13:
        xxx,xxx,val=solcx.SolCxSolution(x,y)
     if experiment==14:
@@ -272,59 +205,58 @@ ndofP=1  # number of pressure degrees of freedom
 # 6: Thieulot (A)
 # 7: Thieulot (B)
 
-if int(len(sys.argv) == 6):
+# experiment:
+# 1: mms donea huerta
+# 2: block
+# 3: sphere 
+# 4: aquarium (retire)
+# 5: mms solkz
+# 6: regularised lid driven cavity
+# 7: mms cavity
+# 8: sinking block
+# 9: mms dohrmann bochev 
+# 10: flow around square cylinder
+# 11: flow over cavity
+# 12: flow over obstacle
+# 13: mms solcx
+# 14: mms solvi
+
+if int(len(sys.argv) == 7):
    nelx = int(sys.argv[1])
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
    topo = int(sys.argv[4])
    epsi = float(sys.argv[5]) # only for topo=2
+   experiment = int(sys.argv[6])
 else:
    nelx = 32
    nely = 32
    visu = 1
    topo = 1
    epsi = 0
+   experiment=5
 
-pnormalise=True # using int p dV=0 constrain
-
-#exp1: mms donea huerta
-#exp2: block
-#exp3: sphere 
-#exp4: aquarium (retire)
-#exp5: mms solkz
-#exp6: regularised lid driven cavity
-#exp7: mms cavity
-#exp8: sinking block
-#exp9: mms dohrmann bochev 
-#exp10: flow around square cylinder
-#exp11: flow over cavity
-#exp12: flow over obstacle
-#exp13: mms solcx
-#exp14: mms solvi
-
-experiment=1
+pnormalise=True 
 
 ###############################################################################
 # set specific values to some parameters for some experiments
 ###############################################################################
 
-if experiment!=8:
-   Lx=1. 
-   Ly=1.
-   eta_ref=1
-else:
+Lx=1. 
+Ly=1.
+eta_ref=1
+vscaling=1.
+
+if experiment==8:
    Lx=512e3
    Ly=512e3
    eta_ref=1e21
+   vscaling=0.01/365.25/24/3600
  
 if experiment==10 or experiment==11 or experiment==12:
-   pnormalise=False 
+   #pnormalise=False 
    Lx=4
-
-if experiment==8:
-   vscaling=0.01/365.25/24/3600
-else:
-   vscaling=1.
+   nelx=4*nely
 
 ###############################################################################
 ###############################################################################
@@ -614,13 +546,12 @@ print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 ###############################################################################
 start = timing.time()
 
-if pnormalise:
-   A_mat = lil_matrix((Nfem+1,Nfem+1),dtype=np.float64)# matrix A 
-   rhs   = np.zeros((Nfem+1),dtype=np.float64)         # right hand side 
-else:
-   A_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)# matrix A 
-   rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side 
-
+#if pnormalise:
+#   A_mat = lil_matrix((Nfem+1,Nfem+1),dtype=np.float64)# matrix A 
+#   rhs   = np.zeros((Nfem+1),dtype=np.float64)         # right hand side 
+#else:
+A_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)# matrix A 
+rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side 
 b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64)  # gradient matrix B 
 dNNNVdx = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 dNNNVdy = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
@@ -712,17 +643,11 @@ for iel in range(0,nel):
             A_mat[NfemV+iel,m1]+=G_el[ikk,0]
     rhs[NfemV+iel]+=h_el[0,0]
 
-    if pnormalise:
-       A_mat[Nfem,NfemV+iel]=area[iel]
-       A_mat[NfemV+iel,Nfem]=area[iel]
+    #if pnormalise:
+    #   A_mat[Nfem,NfemV+iel]=area[iel]
+    #   A_mat[NfemV+iel,Nfem]=area[iel]
 
 #end for iel
-
-#pinning pressure on last element
-#for i in range(0,Nfem):
-#    A_mat[Nfem-1,i]=0
-#A_mat[Nfem-1,Nfem-1]=1
-#rhs[Nfem-1]=0    
 
 print("build FE matrix: %.3f s" % (timing.time() - start))
 
@@ -757,7 +682,7 @@ start = timing.time()
 
 avrg_p=np.sum(p[:]*area[:])/Lx/Ly
 
-print('avrg p=',avrg_p)
+print('     -> avrg p=',avrg_p)
 
 p[:]-=avrg_p
 
@@ -768,41 +693,33 @@ print("     -> p (m,M) %.6f %.6f nel= %d" %(np.min(p),np.max(p),nel))
 print("normalise pressure: %.3f s" % (timing.time() - start))
 
 ###############################################################################
-# compute q1 nodal pressure (corner to node averaging)
+# compute q1 &q2 nodal pressure (corner to node averaging)
 ###############################################################################
 start = timing.time()
 
 q1=np.zeros(NV,dtype=np.float64)  
-count=np.zeros(NV,dtype=np.int32) 
+q2=np.zeros(NV,dtype=np.float64)  
+count1=np.zeros(NV,dtype=np.int32) 
+count2=np.zeros(NV,dtype=np.float64) 
 
 for iel in range(0,nel):
     for k in range(0,mV):
         inode=iconV[k,iel]
         q1[inode]+=p[iel]
-        count[inode]+=1
+        q2[inode]+=p[iel]*area[iel]
+        count1[inode]+=1
+        count2[inode]+=area[iel]
 
-q1/=count
+q1/=count1
+q2/=count2
 
 #np.savetxt('q1.ascii',np.array([xV,yV,q1]).T)
-
-print("     -> q1 (m,M) %.6f %.6f nel= %d" %(np.min(q1),np.max(q1),nel))
-
-print("compute nodal pressure q1: %.3f s" % (timing.time() - start))
-
-###############################################################################
-# compute q2 nodal pressure (via corner to node area weighed average)
-###############################################################################
-start = timing.time()
-
-q2=np.zeros(NV,dtype=np.float64)  
-
-
-
 #np.savetxt('q2.ascii',np.array([xV,yV,q2]).T)
 
+print("     -> q1 (m,M) %.6f %.6f nel= %d" %(np.min(q1),np.max(q1),nel))
 print("     -> q2 (m,M) %.6f %.6f nel= %d" %(np.min(q2),np.max(q2),nel))
 
-print("compute nodal pressure q2: %.3f s" % (timing.time() - start))
+print("compute nodal pressure q1 & q2: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 # compute error
@@ -879,19 +796,21 @@ start = timing.time()
 pfile=open('pressure_top.ascii',"w")
 for iel in range(0,nel):
     if abs(yV[iconV[0,iel]]-Ly)<eps and abs(yV[iconV[1,iel]]-Ly)<eps:
-       pfile.write("%10e %10e \n" %(xc[iel],p[iel]))
+       pfile.write("%e %e %e \n" %(xc[iel],p[iel],pressure(xc[iel],yc[iel])))
     if abs(yV[iconV[1,iel]]-Ly)<eps and abs(yV[iconV[2,iel]]-Ly)<eps:
-       pfile.write("%10e %10e \n" %(xc[iel],p[iel]))
+       pfile.write("%e %e %e \n" %(xc[iel],p[iel],pressure(xc[iel],yc[iel])))
     if abs(yV[iconV[2,iel]]-Ly)<eps and abs(yV[iconV[3,iel]]-Ly)<eps:
-       pfile.write("%10e %10e \n" %(xc[iel],p[iel]))
+       pfile.write("%e %e %e \n" %(xc[iel],p[iel],pressure(xc[iel],yc[iel])))
     if abs(yV[iconV[3,iel]]-Ly)<eps and abs(yV[iconV[0,iel]]-Ly)<eps:
-       pfile.write("%10e %10e \n" %(xc[iel],p[iel]))
+       pfile.write("%e %e %e \n" %(xc[iel],p[iel],pressure(xc[iel],yc[iel])))
 pfile.close()
 
 vfile=open('vel_profile.ascii',"w")
 for i in range(0,NV):
     if abs(xV[i]-Lx/2)<eps:
-       vfile.write("%10e %10e %10e\n" %(yV[i],u[i],v[i]))
+       vfile.write("%e %e %e %e %e\n" %(yV[i],u[i],v[i],\
+                                        velocity_x(xV[i],yV[i]),\
+                                        velocity_y(xV[i],yV[i])))
 vfile.close()
 
 print("export profiles: %.3f s" % (timing.time() - start))

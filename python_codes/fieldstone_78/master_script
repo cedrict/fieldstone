@@ -1,0 +1,46 @@
+#! /bin/bash
+
+rm errors_*
+rm vrms_*
+rm pstats_*
+rm q1stats_*
+rm q2stats_*
+rm ustats_*
+rm vstats_*
+rm *.ascii
+rm *.vtu
+
+# topo 7 is removed bc not stable macro element
+
+#for exp in 1 2 3 4 5 6 7 8 9 10 11 12 13 14; do
+for exp in 5; do
+
+    for topo in 0 1 2 3 4 5 6 ; do
+
+        echo topology= $topo experiment= $exp
+
+        #for res in 8 12 16 24 32 40 48 64 80 96 128 ; do
+        for res in 8 9 10 11 12 13 14 15 16 20 24 28 32 40 48 56 64; do
+
+            echo $res 
+            python3 stone.py $res $res 1 $topo 0 $exp > opla
+
+            grep errv opla >> errors_topo${topo}_exp${exp}
+            grep vrms opla >> vrms_topo${topo}_exp${exp}
+            grep p opla  | grep m,M  >> pstats_topo${topo}_exp${exp}
+            grep q1 opla | grep m,M  >> q1stats_topo${topo}_exp${exp}
+            grep q2 opla | grep m,M  >> q2stats_topo${topo}_exp${exp}
+            grep u opla  | grep m,M  >> ustats_topo${topo}_exp${exp}
+            grep v opla  | grep m,M  >> vstats_topo${topo}_exp${exp}
+
+            mv solution.vtu solution_topo${topo}_exp${exp}_res${res}.vtu
+            mv pressure_top.ascii pressure_top_topo${topo}_exp${exp}_res${res}.ascii
+            mv vel_profile.ascii vel_profile_topo${topo}_exp${exp}_res${res}.ascii
+
+        done
+    done
+done
+
+# 8 * 14 * 11 = 1232 runs
+     
+ 
