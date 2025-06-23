@@ -13,7 +13,7 @@ rm *.vtu
 # topo 7 is removed bc not stable macro element
 
 #for exp in 1 2 3 4 5 6 7 8 9 10 11 12 13 14; do
-for exp in 5; do
+for exp in 13; do
 
     for topo in 0 1 2 3 4 5 6 ; do
 

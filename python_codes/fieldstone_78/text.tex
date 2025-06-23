@@ -35,6 +35,19 @@ here under:
 7: mine (B)}
 \end{center}
 
+
+\paragraph{location of nodes inside macro element}.
+When possible, we wish that all elements of a macro-element 
+have the same area. 
+For the Stenberg macro-element, we set $\delta =0.3$.
+For the Le Tallex macro-element, we set $\delta=h/\sqrt{12}$.
+(dunno where my notes are) 
+We also make sure that all elements in QZ1,QZ3,B have same area.
+However, there is a problem with QZ2: equi area yields quads with angle =180. 
+Likewise macro-element  A cannot be generated with all elements equi-area.
+
+
+
 %---------------------------------
 \subsection*{Implementation}
 
@@ -535,6 +548,9 @@ Odd number of elements:
 \includegraphics[width=6cm]{python_codes/fieldstone_78/results/mms_solcx/odd/vrms.pdf}
 \end{center}
 
+Le Tallec macro-element has vertical line in the middle, so that 
+even/odd does not matter, there is always an element edge aligned with x=1/2.
+
 
 
 \newpage
@@ -607,6 +623,17 @@ which makes it much more expensive than a $Q_2\times Q_1$ element of the same si
 We find that toplogy 7 does not yield a stable macroelement, so it will be discarded in 
 future tests/experiments.
 
-location of nodes inside macro element ?
+mention c-n-c smoothing a la Douar
+
+Look in pythoncodes/Gel folder, for nullspace caluclations of macroelements
+
+various stabilisations have been proposed for q1p0. However they invariably 
+rely on adding a block in the Stokes matrix \ref{XXXX} or altering the 
+linear solver so as to filter the spurious modes. 
+We here focus on techniques that only involve a specific mesh topology and 
+no other modification.
+Furthermode it is the author's experimence that 
+macro-elt stabilisations are not compatible with buoyancy driven flow
 
 
+check \cite{nath93}
