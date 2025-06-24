@@ -10,41 +10,133 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 
 Although the $Q_1\times P_0$ is not LBB-stable (see Section~\ref{MMM-ss:LBBcond})
-it has been proven that some spatial arrangements of this element can be, such as the
-so-called Stenberg macro-element described in Section~\ref{MMM-ss:meshtopos}.
-I have gathered 7 mesh types from the literature and they are shown 
-here under: 
+it has been proven that some spatial arrangements of this element can be.
+These are macro-elements, i.e. groupings of elements that are then repeated.
+We will here consider:
+
+\begin{itemize}
+\item the Stenberg (S) macro-element: it originates in \cite{sten84}.
+It is also found in \cite{chba93}, \cite{brfo}, \cite{qizh07}.
 
 \begin{center}
-0)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0000}
-1)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0001}
-2)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0002}
-3)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0003}\\
-4)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0004}
-5)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0005}
-6)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0006}
-7)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0007}\\
-{\captionfont 
-0: regular structured mesh, 
-1: Stenberg (S) \cite{sten84},
-2: Le Tallec (LT) \cite{leta81},
-3: qizh07 (QZ1) \cite{qizh07} ,
-4: qizh07 (QZ2) \cite{qizh07},
-5: qizh07 (QZ3) \cite{qizh07},
-6: mine (A),
-7: mine (B)}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0001}
+\end{center}
+
+\item the Le Tallec (LT) macro-element: it originates in \cite{leta81}. 
+It is found in \cite{leru86}, \cite{qizh07}  and mentioned in \cite{brfo} and \cite{rovira1992}.
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0002}
+\end{center}
+
+\item the Qin \& Zhang (QZ1, QZ2, QZ3) macro-elements: they originate in \cite{qizh07}.
+Note that QZ3 is in fact mentioned 2 decades before in \cite{idsn95}. See also 
+remark below from \cite{rovira1992}. 
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0003}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0004}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0005}
+\end{center}
+
+\item mine A,B
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0006}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0007}
+\end{center}
+
+\end{itemize}
+
+
+
+
+%................................................
+\paragraph{A building block for macro-elements}
+
+We read in \textcite{rovira1992}:
+\begin{displayquote}
+{\color{MidnightBlue}
+The velocity-constant pressure element [...] does not satisfy the BB condition, although there
+are ways to stabilize it [...]. There is a simple way to see that it may work without any particular 
+stabilization procedure.}
+
+\begin{center}
+\begin{tikzpicture}
+\draw[thick] (0,0) -- (5.6,0) -- (2.2,4.3)-- cycle;  
+\draw[thick] (1.05,2.1) -- (2.6,1.4) -- (3.9,2.1);  
+\draw[thick] (2.6,1.4) -- (2.9,0);  
+\draw[black,fill=teal] (0,0) circle (2pt);
+\draw[black,fill=teal] (5.6,0) circle (2pt);
+\draw[black,fill=teal] (2.2,4.3) circle (2pt);
+\draw[black,fill=teal] (1.05,2.1) circle (2pt);
+\draw[black,fill=teal] (2.6,1.4) circle (2pt);
+\draw[black,fill=teal] (3.9,2.1) circle (2pt);
+\draw[black,fill=teal] (2.9,0) circle (2pt);
+\draw[violet] (1.9,1) circle (4pt);
+\draw[violet] (3.4,1) circle (4pt);
+\draw[violet] (2.4,2.2) circle (4pt);
+\end{tikzpicture}
 \end{center}
 
 
-\paragraph{location of nodes inside macro element}.
-When possible, we wish that all elements of a macro-element 
-have the same area. 
-For the Stenberg macro-element, we set $\delta =0.3$.
-For the Le Tallex macro-element, we set $\delta=h/\sqrt{12}$.
-(dunno where my notes are) 
+{\color{MidnightBlue}
+For simplicity, consider the two-dimensional case. Figure [above] shows how a quadratic
+triangular element enriched with a node placed at the barycenter of the triangle can
+be splitted into three bilinear elements. If we consider a pressure unknown for each
+quadrilateral, we see that the velocity and pressure spaces will be isomorphic to those
+of the $P_2^+ \times P_{-1}$ element [...]. The velocity-pressure interpolation for this
+element satisfies the BB condition. Therefore, the macroelement depicted in [the figure above]
+composed of $Q_1 \times P_0$ elements will also be div-stable.
+
+Clearly, the main problem with this approach is the distorsion of the triangular
+patch of three quadrilaterals. This patch has to be regular enough (i.e., the angles
+sufficiently close to $\pi/3$) to ensure that the isoparametric mapping to the parent domain
+(usually $[-1,1] \times [-1,1]$) be invertible. See Reference \cite{ciarlet2002finite} 
+for the regularity conditions that a finite element partition has to satisfy.
+
+The macroelement of [the figure above] is homeomorphic to the macroelement of Le Tallec
+\& Ruas \cite{leru86}.
+In the three-dimensional case, the $P_2^+ \times P_{-1}$ 
+element has to be splitted into four $Q_1 \times P_0$ subelements. 
+Apparently, this connexion between the $P_2^+ \times P_{-1}$ and the $Q_1 \times P_0$
+elements has never been exploited.}
+
+\end{displayquote}
+
+We indeed find this subdivided triangle m-e in QZ1 and QZ3. 
+
+%...................................................
+\paragraph{Location of nodes inside macro element}.
+When possible, we wish that all elements of a macro-element have the same area. 
+For the Stenberg macro-element, we set $\delta =0.3$ (see remark at the end).
+For the Le Tallex macro-element, we set $\delta=h/\sqrt{12}$ (see remark at the end).
 We also make sure that all elements in QZ1,QZ3,B have same area.
 However, there is a problem with QZ2: equi area yields quads with angle =180. 
 Likewise macro-element  A cannot be generated with all elements equi-area.
+
+
+%................................................
+\paragraph{Removal of checkerboard pattern via perturbation}
+
+We read in \textcite{lumh24}:
+\begin{displayquote}
+{\color{MidnightBlue}
+Griffiths and Silvester (1994) demonstrates a simple way to remove the checker-board 
+error associated with the Q1-P0 element. One only needs to add a small perturbation 
+to the coordinates of grid points. Here we adopt this approach in our two-phase 
+implementation and perturb the coordinates of the internal vertices by 5\% of the
+element size.
+}
+\end{displayquote}
+
+
+This does not mean that it is usable with iterative solver?
+
+
+
+
+
+
+
 
 
 
@@ -108,6 +200,446 @@ More specifically $q_1$ is the pressure average at the node,
 while $q_2$  is the element area weighed average.
 
 Define errors and mesh size which is taken to be $h = \sqrt{L_xL_y/nel}$. 
+
+\newpage
+%-----------------------------------------------------------------
+\subsection*{Testing for the existence of checkerboard modes}
+
+
+
+\[
+\G_{el} = -\int_{\Omega_e} {\bm B}^T \cdot {\bm N} d\Omega
+= -\int_{\Omega_e}
+\left(
+\begin{array}{ccc}
+\partial_x \bN_1^\upnu & 0 & \partial_y \bN_1^\upnu \\
+0 & \partial_y \bN_1^\upnu & \partial_x \bN_1^\upnu \\
+\partial_x \bN_2^\upnu & 0 & \partial_y \bN_2^\upnu \\
+0 & \partial_y \bN_2^\upnu & \partial_x \bN_2^\upnu \\
+\dots & \dots & \dots \\
+\dots & \dots & \dots \\
+\partial_x \bN_{m_\upnu}^\upnu & 0 & \partial_y \bN_{m_\upnu}^\upnu \\
+0 & \partial_y \bN_{m_\upnu}^\upnu & \partial_x \bN_{m_\upnu}^\upnu 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cccc}
+\bN_1^p & \bN_2^p & \dots & \bN_{m_p}^p \\ 
+\bN_1^p & \bN_2^p & \dots & \bN_{m_p}^p \\ 
+0 & 0 & \dots & 0
+\end{array}
+\right)
+d\Omega
+\]
+Since we are dealing with $Q_1\times P_0$ elements then $m_p=1$ and $N^p(r,s)=1$.
+This yields
+\[
+\G_{el} = -\int_{\Omega_e} {\bm B}^T \cdot {\bm N} d\Omega
+= -\int_{\Omega_e}
+\left(
+\begin{array}{ccc}
+\partial_x \bN_1^\upnu \\
+\partial_y \bN_1^\upnu \\
+\partial_x \bN_2^\upnu \\
+\partial_y \bN_2^\upnu \\
+\partial_x \bN_3^\upnu \\
+\partial_y \bN_3^\upnu \\
+\partial_x \bN_4^\upnu \\
+\partial_y \bN_4^\upnu 
+\end{array}
+\right)
+d\Omega
+\]
+
+In what follows we proceed to build the assembled block $\G$ for each macro element, 
+impose no slip boundary conditions on all sides (thereby zeroing many lines of the
+matrix), and compute the null space of the remaining lines. 
+Ideally only one pressure solution should be in the null space, the space of 
+all constant vectors since then $\G \cdot \vec{\cal P}=\vec{0}$.
+If/when the nullspace is larger than one, then checkerboard patterns (aka 
+spurious modes) exist and degrade the solution. 
+
+This study can be carried out by setting the 'nullspace' parameter to True.
+
+
+\newpage
+The 8 macro-elements considered here are shown hereunder 
+with their internal numbering of nodes:
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[fill=gray!23,gray!23](0,0) rectangle (15,15);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (15,15); %background grid
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%stenberg
+\node[] at (1,14.3) {\tiny Stenberg};
+\draw[thick] (0,10) -- (4,10) -- (4,14) -- (0,14) -- cycle;  
+\draw[thick] (2,10) -- (3,12) -- (2,14) -- (1,12) -- cycle;  
+\draw[thick] (0,12) -- (1,12);  
+\draw[thick] (3,12) -- (4,12);  
+\draw[black,fill=teal] (0,10) circle (2pt);
+\draw[black,fill=teal] (4,10) circle (2pt);
+\draw[black,fill=teal] (4,14) circle (2pt);
+\draw[black,fill=teal] (0,14) circle (2pt);
+\draw[black,fill=teal] (2,10) circle (2pt);
+\draw[black,fill=teal] (2,14) circle (2pt);
+\draw[black,fill=teal] (0,12) circle (2pt);
+\draw[black,fill=teal] (4,12) circle (2pt);
+\draw[black,fill=teal] (1,12) circle (2pt);
+\draw[black,fill=teal] (3,12) circle (2pt);
+
+\node[] at (0,10-0.2) {\tiny 0};
+\node[] at (4,10-0.2) {\tiny 2};
+\node[] at (4,14+0.2) {\tiny 9};
+\node[] at (0,14+0.2) {\tiny 7};
+\node[] at (2,10-0.2) {\tiny 1};
+\node[] at (2,14+0.2) {\tiny 8};
+\node[] at (0-0.2,12) {\tiny 3};
+\node[] at (4+0.2,12) {\tiny 6};
+\node[] at (1,12+0.2) {\tiny 4};
+\node[] at (3,12+0.2) {\tiny 5};
+
+
+\node[] at (0.5,12.2) {\tiny $\delta$};
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%letallec
+\node[] at (6,14.3) {\tiny Le Tallec};
+\draw[thick] (5,10) -- (9,10) -- (9,14) -- (5,14) -- cycle;  
+\draw[thick] (6,11) -- (8,11) -- (8,13) -- (6,13) -- cycle;  
+\draw[thick] (5,10) -- (6,11) ;  
+\draw[thick] (9,10) -- (8,11) ;  
+\draw[thick] (9,14) -- (8,13) ;  
+\draw[thick] (5,14) -- (6,13) ;  
+\draw[thick] (5,12) -- (9,12) ;  
+\draw[thick] (7,10) -- (7,14) ;  
+\draw[black,fill=teal] (0+5,10) circle (2pt);
+\draw[black,fill=teal] (4+5,10) circle (2pt);
+\draw[black,fill=teal] (4+5,14) circle (2pt);
+\draw[black,fill=teal] (0+5,14) circle (2pt);
+\draw[black,fill=teal] (6,11) circle (2pt);
+\draw[black,fill=teal] (8,11) circle (2pt);
+\draw[black,fill=teal] (8,13) circle (2pt);
+\draw[black,fill=teal] (6,13) circle (2pt);
+\draw[black,fill=teal] (7,10) circle (2pt);
+\draw[black,fill=teal] (5,12) circle (2pt);
+\draw[black,fill=teal] (9,12) circle (2pt);
+\draw[black,fill=teal] (7,14) circle (2pt);
+\draw[black,fill=teal] (6,12) circle (2pt);
+\draw[black,fill=teal] (7,12) circle (2pt);
+\draw[black,fill=teal] (8,12) circle (2pt);
+\draw[black,fill=teal] (7,11) circle (2pt);
+\draw[black,fill=teal] (7,13) circle (2pt);
+
+
+\node[] at (0+5,10-0.2) {\tiny 0};
+\node[] at (2+5,10-0.2) {\tiny 1};
+\node[] at (4+5,10-0.2) {\tiny 2};
+\node[] at (1+5,11-0.2) {\tiny 3};
+\node[] at (2+5,11-0.2) {\tiny 4};
+\node[] at (3+5,11-0.2) {\tiny 5};
+\node[] at (0-0.2+5,12) {\tiny 6};
+\node[] at (1+5,12+0.2) {\tiny 7};
+\node[] at (2+5,12+0.2) {\tiny 8};
+\node[] at (3+5,12+0.2) {\tiny 9};
+\node[] at (4+0.2+5,12) {\tiny 10};
+\node[] at (1+5,13-0.2) {\tiny 11};
+\node[] at (2+5,13-0.2) {\tiny 12};
+\node[] at (3+5,13-0.2) {\tiny 13};
+\node[] at (0+5,14+0.2) {\tiny 14};
+\node[] at (2+5,14+0.2) {\tiny 15};
+\node[] at (4+5,14+0.2) {\tiny 16};
+
+\node[] at (6.5,13.2) {\tiny $\delta$};
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%qizh1
+\node[] at (1,9.3) {\tiny Qin \& Zhang 1};
+
+\draw[thick] (0,5) -- (4,5) -- (4,9) -- (0,9) -- cycle;  
+\draw[thick] (1.75-1,3+4) -- (3-1,1.75+4) -- (4.25-1,3+4) -- (3-1,4.25+4) -- cycle;  
+\draw[thick] (1-1,1+4) -- (5-1,5+4) ;  
+\draw[thick] (1-1,5+4) -- (5-1,1+4) ;  
+\draw[thick] (3-1,1+4) -- (3-1,1.75+4) ;  
+\draw[thick] (3-1,4.25+4) -- (3-1,5+4) ;  
+\draw[thick] (1-1,3+4) -- (1.75-1,3+4) ;  
+\draw[thick] (4.25-1,3+4) -- (5-1,3+4) ;  
+\draw[black,fill=teal] (1-1,1+4)   circle (2pt);
+\draw[black,fill=teal] (3-1,1+4)   circle (2pt);
+\draw[black,fill=teal] (5-1,1+4)   circle (2pt);
+
+\draw[black,fill=teal] (3-1,1.75+4)   circle (2pt);
+\draw[black,fill=teal] (2.375-1,2.375+4)   circle (2pt);
+\draw[black,fill=teal] (3.625-1,2.375+4)   circle (2pt);
+
+\draw[black,fill=teal] (1-1,3+4)   circle (2pt);
+\draw[black,fill=teal] (1.75-1,3+4)   circle (2pt);
+\draw[black,fill=teal] (3-1,3+4)   circle (2pt);
+\draw[black,fill=teal] (4.25-1,3+4)   circle (2pt);
+\draw[black,fill=teal] (5-1,3+4)   circle (2pt);
+
+\draw[black,fill=teal] (2.375-1,3.625+4)   circle (2pt);
+\draw[black,fill=teal] (3.625-1,3.625+4)   circle (2pt);
+\draw[black,fill=teal] (3-1,4.25+4)   circle (2pt);
+
+\draw[black,fill=teal] (1-1,5+4)   circle (2pt);
+\draw[black,fill=teal] (3-1,5+4)   circle (2pt);
+\draw[black,fill=teal] (5-1,5+4)   circle (2pt);
+
+
+\node[] at (0,5-0.2) {\tiny 0};
+\node[] at (2,5-0.2) {\tiny 4};
+\node[] at (4,5-0.2) {\tiny 1};
+\node[] at (0-0.2,7) {\tiny 6};
+\node[] at (1,7) {\tiny 15};
+\node[] at (2,7-0.2) {\tiny 8};
+\node[] at (3,7) {\tiny 11};
+\node[] at (4+0.2,7) {\tiny 7};
+\node[] at (2,6) {\tiny 9};
+\node[] at (2,8) {\tiny 13};
+\node[] at (0,9+0.2) {\tiny 3};
+\node[] at (2,9+0.2) {\tiny 5};
+\node[] at (4,9+0.2) {\tiny 2};
+
+\node[] at (1.35,6.1) {\tiny 16};
+\node[] at (2.65,6.1) {\tiny 10};
+\node[] at (1.35,7.8) {\tiny 14};
+\node[] at (2.65,7.8) {\tiny 12};
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\draw[thick] (5,5) -- (9,5) -- (9,9) -- (5,9) -- cycle;  
+\node[] at (6,9.3) {\tiny Qin \& Zhang 2};
+
+\draw[thick] (1+4,3+4) -- (2.25+4,2.25+4) -- (3+4,1+4) -- (3.75+4,2.25+4) -- (5+4,3+4) --(3.75+4,3.75+4) -- (3+4,5+4) --(2.25+4,3.75+4) --cycle;  
+\draw[thick] (2.25+4,2.25+4) -- (3.75+4,3.75+4) ;  %diags
+\draw[thick] (2.25+4,3.75+4) -- (3.75+4,2.25+4) ;  
+
+\draw[black,fill=teal] (1+4,1+4)   circle (2pt); %perimeter nodes
+\draw[black,fill=teal] (3+4,1+4)   circle (2pt);
+\draw[black,fill=teal] (5+4,1+4)   circle (2pt);
+\draw[black,fill=teal] (1+4,3+4)   circle (2pt);
+\draw[black,fill=teal] (3+4,3+4)   circle (2pt);
+\draw[black,fill=teal] (5+4,3+4)   circle (2pt);
+\draw[black,fill=teal] (1+4,5+4)   circle (2pt);
+\draw[black,fill=teal] (3+4,5+4)   circle (2pt);
+\draw[black,fill=teal] (5+4,5+4)   circle (2pt);
+
+\draw[black,fill=teal] (2.25+4,2.25+4)   circle (2pt); %inside nodes
+\draw[black,fill=teal] (3.75+4,3.75+4)   circle (2pt);
+\draw[black,fill=teal] (2.25+4,3.75+4)   circle (2pt);
+\draw[black,fill=teal] (3.75+4,2.25+4)   circle (2pt);
+
+
+\node[] at (1+4,1+4-0.2) {\tiny 0};
+\node[] at (1+6,1+4-0.2) {\tiny 4};
+\node[] at (1+8,1+4-0.2) {\tiny 1};
+\node[] at (1+4-0.2,1+6) {\tiny 6};
+\node[] at (1+6,1+6-0.2) {\tiny 8};
+\node[] at (1+8+0.2,1+6) {\tiny 7};
+\node[] at (1+4,1+8+0.2) {\tiny 2};
+\node[] at (1+6,1+8+0.2) {\tiny 5};
+\node[] at (1+8,1+8+0.2) {\tiny 3};
+\node[] at (2.25+4,2.25+4+0.2) {\tiny 9};
+\node[] at (2.25+4+1.5,2.25+4+0.2) {\tiny 10};
+\node[] at (2.25+4,2.25+4+1.5+0.2) {\tiny 12};
+\node[] at (2.25+4+1.5,2.25+4+1.5+0.2) {\tiny 11};
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\node[] at (11,9.4) {\tiny Qin \& Zhang 3};
+\draw[thick] (10,5) -- (14,5) -- (14,9) -- (10,9) -- cycle;  
+
+\draw[thick] (1+9,3+4) -- (2.25+9,3.75+4) -- (3+9,5+4);
+\draw[thick] (3+9,1+4) -- (3.75+9,2.25+4) -- (5+9,3+4);
+\draw[thick] (1+9,1+4) -- (5+9,5+4) ;  %diags
+\draw[thick] (2.25+9,3.75+4) -- (3.75+9,2.25+4) ;  
+
+\draw[black,fill=teal] (1+9,1+4)   circle (2pt); %perimeter nodes
+\draw[black,fill=teal] (3+9,1+4)   circle (2pt);
+\draw[black,fill=teal] (5+9,1+4)   circle (2pt);
+\draw[black,fill=teal] (1+9,3+4)   circle (2pt);
+\draw[black,fill=teal] (3+9,3+4)   circle (2pt);
+\draw[black,fill=teal] (5+9,3+4)   circle (2pt);
+\draw[black,fill=teal] (1+9,5+4)   circle (2pt);
+\draw[black,fill=teal] (3+9,5+4)   circle (2pt);
+\draw[black,fill=teal] (5+9,5+4)   circle (2pt);
+\draw[black,fill=teal] (2.25+9,3.75+4)   circle (2pt); %inside nodes
+\draw[black,fill=teal] (3.75+9,2.25+4)   circle (2pt);
+
+
+\node[] at (1+9,1+4-0.2) {\tiny 0};
+\node[] at (3+9,1+4-0.2) {\tiny 4};
+\node[] at (5+9,1+4-0.2) {\tiny 1};
+
+\node[] at (1+9-0.2,1+6) {\tiny 6};
+\node[] at (1+9+4+0.2,1+6) {\tiny 7};
+\node[] at (1+9+2.5+0.2,1+5.5) {\tiny 8};
+\node[] at (1+9+2-0.2,1+6) {\tiny 9};
+\node[] at (1+9+1.5-0.2,1+6.5) {\tiny 10};
+
+\node[] at (1+9,1+8+0.2) {\tiny 2};
+\node[] at (3+9,1+8+0.2) {\tiny 5};
+\node[] at (5+9,1+8+0.2) {\tiny 3};
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%mineB
+\node[] at (0.5+10,4.3) {\tiny ThB};
+\draw[thick] (0+10,0) -- (4+10,0) -- (4+10,4) -- (0+10,4) -- cycle;  
+\draw[thick] (1+10,1) -- (3+10,1) -- (3+10,3) -- (1+10,3) -- cycle;  
+\draw[thick] (0+10,0) -- (1+10,1);  
+\draw[thick] (4+10,0) -- (3+10,1); 
+\draw[thick] (4+10,4) -- (3+10,3);  
+\draw[thick] (0+10,4) -- (1+10,3);  
+\draw[black,fill=teal] (0+10,0)   circle (2pt);
+\draw[black,fill=teal] (4+10,0)   circle (2pt);
+\draw[black,fill=teal] (4+10,4)   circle (2pt);
+\draw[black,fill=teal] (0+10,4)   circle (2pt);
+\draw[black,fill=teal] (1+10,1)   circle (2pt);
+\draw[black,fill=teal] (3+10,1)   circle (2pt);
+\draw[black,fill=teal] (3+10,3)   circle (2pt);
+\draw[black,fill=teal] (1+10,3)   circle (2pt);
+
+\node[] at (0+10,0-0.2) {\tiny 0};
+\node[] at (4+10,0-0.2) {\tiny 1};
+\node[] at (4+10,4+0.2) {\tiny 3};
+\node[] at (0+10,4+0.2) {\tiny 2};
+\node[] at (1+10,1-0.2) {\tiny 4};
+\node[] at (3+10,1-0.2) {\tiny 5};
+\node[] at (1+10,3+0.2) {\tiny 7};
+\node[] at (3+10,3+0.2) {\tiny 6};
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%mineA
+\node[] at (5.5,4.3) {\tiny ThA};
+\draw[thick] (5,0) -- (9,0) -- (9,4) -- (5,4) -- cycle;  
+\draw[thick] (6.5,1.5) -- (7.5,1.5) -- (7.5,2.5) -- (6.5,2.5) -- cycle;  
+
+\draw[thick] (5,0) --(6.5,1.5);
+\draw[thick] (7,0) --(7.5,1.5)--(9,2);
+\draw[thick] (5,2) --(6.5,2.5)--(7,4);
+\draw[thick] (7.5,2.5) --(9,4);
+
+\draw[black,fill=teal] (5,0)   circle (2pt);
+\draw[black,fill=teal] (9,0)   circle (2pt);
+\draw[black,fill=teal] (9,4)   circle (2pt);
+\draw[black,fill=teal] (5,4)   circle (2pt);
+\draw[black,fill=teal] (6.5,1.5)   circle (2pt);
+\draw[black,fill=teal] (7.5,1.5)   circle (2pt);
+\draw[black,fill=teal] (7.5,2.5)   circle (2pt);
+\draw[black,fill=teal] (6.5,2.5)   circle (2pt);
+
+\draw[black,fill=teal] (7,0)   circle (2pt);
+\draw[black,fill=teal] (7,4)   circle (2pt);
+\draw[black,fill=teal] (5,2)   circle (2pt);
+\draw[black,fill=teal] (9,2)   circle (2pt);
+
+\node[] at (7,2.7) {\tiny $\delta$};
+
+\node[] at (5,0-0.2) {\tiny 0};
+\node[] at (5-0.2,2) {\tiny 6};
+\node[] at (9+0.2,2) {\tiny 7};
+
+\node[] at (5+2,0-0.2) {\tiny 4};
+\node[] at (5+4,0-0.2) {\tiny 1};
+\node[] at (5,4+0.2) {\tiny 2};
+\node[] at (5+2,4+0.2) {\tiny 5};
+\node[] at (5+4,4+0.2) {\tiny 3};
+
+\node[] at (5+1.5,1.5-0.2) {\tiny 8};
+\node[] at (5+2.6,1.5-0.2) {\tiny 9};
+\node[] at (5+1.4,2.5+0.2) {\tiny 11};
+\node[] at (5+2.45,2.5+0.2) {\tiny 10};
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%regular
+
+\node[] at (1,4.3) {\tiny Regular};
+
+\draw[thick] (0,0) -- (4,0) -- (4,4) -- (0,4) -- cycle;  
+\draw[thick] (0,2) -- (4,2) ;  
+\draw[thick] (2,0) -- (2,4) ;  
+
+\node[] at (0,0) {\tiny 0};
+\node[] at (2,0) {\tiny 1};
+\node[] at (4,0) {\tiny 2};
+
+\node[] at (0,2) {\tiny 3};
+\node[] at (2,2) {\tiny 4};
+\node[] at (4,2) {\tiny 5};
+
+\node[] at (0,4) {\tiny 6};
+\node[] at (2,4) {\tiny 7};
+\node[] at (4,4) {\tiny 8};
+
+\end{tikzpicture}
+\end{center}
+
+Let us consider the regular case. 
+The assembled $\G$ matrix is of size $(ndofV \cdot NV, NP)=(18,4)$ and is 
+\begin{verbatim}
+0 | [0. 0. 0. 0.]
+1 | [0. 0. 0. 0.]
+2 | [0. 0. 0. 0.]
+3 | [0. 0. 0. 0.]
+4 | [0. 0. 0. 0.]
+5 | [0. 0. 0. 0.]
+6 | [0. 0. 0. 0.]
+7 | [0. 0. 0. 0.]
+8 | [-0.25  0.25 -0.25  0.25]
+9 | [-0.25 -0.25  0.25  0.25]
+10 | [0. 0. 0. 0.]
+11 | [0. 0. 0. 0.]
+12 | [0. 0. 0. 0.]
+13 | [0. 0. 0. 0.]
+14 | [0. 0. 0. 0.]
+15 | [0. 0. 0. 0.]
+16 | [0. 0. 0. 0.]
+17 | [0. 0. 0. 0.]
+\end{verbatim}
+We then extract from this the 2 non-zero lines 
+corresponding to the node 4 (so lines 2*4+0 and 2*4+1)
+which yields the $\tilde{\G}$ matrix:
+\[
+\tilde{\G}=
+\frac14
+\begin{pmatrix}
+-1 &1 &-1 &1 \\
+-1 &-1& 1 &1
+\end{pmatrix}
+\]
+We then obtain 
+\begin{verbatim}
+null space vector(s):
+[[-0.1  0.7]
+ [ 0.7  0.1]
+ [ 0.7  0.1]
+ [-0.1  0.7]]
+\end{verbatim}
+
+If we now turn to the Stenberg macro-element, 
+
+...
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \newpage
@@ -635,5 +1167,112 @@ no other modification.
 Furthermode it is the author's experimence that 
 macro-elt stabilisations are not compatible with buoyancy driven flow
 
-
 check \cite{nath93}
+
+
+%......................................................................
+\paragraph{A note about the aspect ratio of the stenberg m-e.}
+Let us assume that the Stenberg macro-element is $h$ high and $H=\lambda h$ long
+as shown here:
+
+\begin{center}
+\begin{tikzpicture}
+%\draw[fill=gray!23,gray!23](0,0) rectangle (5,5);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (6,4); %background grid
+\draw[thick] (1,1) -- (5,1) -- (5,3) -- (1,3) -- cycle;  
+\draw[thick] (3,1) -- (4,2) -- (3,3) -- (2,2) -- cycle;  
+\draw[thick] (1,2) -- (2,2);  
+\draw[thick] (4,2) -- (5,2);  
+\node[] at (5.25,2) {\small $h$};
+\node[] at (3,3.25) {\small $H=\lambda h$};
+\node[] at (1.7,2.2) {\small $\delta H$};
+\draw[black,fill=teal] (1,1) circle (2pt);
+\draw[black,fill=teal] (3,1) circle (2pt);
+\draw[black,fill=teal] (5,1) circle (2pt);
+\draw[black,fill=teal] (1,2) circle (2pt);
+\draw[black,fill=teal] (2,2) circle (2pt);
+\draw[black,fill=teal] (4,2) circle (2pt);
+\draw[black,fill=teal] (5,2) circle (2pt);
+\draw[black,fill=teal] (1,3) circle (2pt);
+\draw[black,fill=teal] (3,3) circle (2pt);
+\draw[black,fill=teal] (5,3) circle (2pt);
+\end{tikzpicture}
+\end{center}
+
+The total area is 
+\[
+A= \lambda h \cdot h = \lambda h^2
+\]
+The area of the trapezes is
+\[
+A_{TR} = (\frac{H}{2} + \delta H)\frac12 \cdot \frac{h}{2}=\frac{\lambda h^2}{4} \left(\frac12 + \delta \right)
+\]
+while the area of the middle diamond is
+\[
+A_D = 4 \cdot \frac12 \frac{h}{2} \left(\frac{H}{2}-\delta H \right) 
+= \lambda h^2 \left(\frac12 - \delta \right)
+\]
+We can compute $\delta$ by requiring that the trapezes and the diamond all 
+have the same area, i.e.
+\[
+\frac{\lambda h^2}{4} (\frac12 + \delta)
+=
+\lambda h^2 (\frac12 - \delta)
+\qquad
+\Rightarrow \quad \delta = 0.3
+\]
+We find that the value of $\delta$ is independent of $\lambda$.
+
+We see in the literature \cite{sten84,brfo,chba93}  that the 
+macro-element is often depicted with the diamond being a square.
+In this case we must have along the horizontal middle line
+\[
+\lambda h = 0.3 \lambda h + \frac{h}{2}+ \frac{h}{2} + 0.3 \lambda h
+\qquad
+\Rightarrow \quad 
+\lambda=5/2
+\]
+The 5:2 aspect ratio macro-element guarantees equal areas and a square middle element.
+
+But does the aspect ratio matter in practice? 
+Results are shown hereunder for the D\&H benchmark:
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_78/results/exp01/stenberg_study/errors_u.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_78/results/exp01/stenberg_study/errors_p.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_78/results/exp01/stenberg_study/errors_q1.pdf}\\
+{\captionfont square ($nelx=nely$): 16x16, 32x32, 48x48; 
+ar ($nely/nelx=5/2$) : 10x25, 20x50, 40x100.}
+\end{center}
+
+We find that in practice this consideration does not make much of a difference,
+and that the $nelx=nely$ case actually yields slightly better results.
+
+%......................................................................
+\paragraph{A note about the Le Talle m-e.}
+
+\begin{center}
+\begin{tikzpicture}
+\draw[thick] (1,1) -- (3,1) -- (3,3) -- (1,3) -- cycle;  
+\draw[thick] (1,3) -- (2,2);  
+\draw[thick] (2,1) -- (2,2) --(3,2);  
+\node[] at (2.5,2.2) {\small $\delta$};
+\node[] at (2,3.2) {\small $h/2$};
+\end{tikzpicture}
+\end{center}
+
+The area of the trapezes is 
+\[
+A_{TR}=\frac12 (\frac{h}{2}+\delta) (\frac{h}{2}-\delta) = \frac{h^2}{8}- \frac{\delta^2}{2}
+\]
+while the area of the square element is $A_{SQ}=\delta^2$.
+When set to be equal, we arrive at
+\[
+\delta^2 = \frac{h}{\sqrt{12}} \simeq 0.288 h
+\]
+
+
+
+
+
+

@@ -7,6 +7,7 @@ from scipy.sparse import csr_matrix,lil_matrix
 import solkz
 import solcx
 import solvi
+from scipy.linalg import null_space
 
 eps=1.e-10
 
@@ -229,14 +230,16 @@ if int(len(sys.argv) == 7):
    epsi = float(sys.argv[5]) # only for topo=2
    experiment = int(sys.argv[6])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 10
+   nely = 10
    visu = 1
-   topo = 1
+   topo = 0
    epsi = 0
-   experiment=5
+   experiment=1
 
 pnormalise=True 
+
+nullspace=True
 
 ###############################################################################
 # set specific values to some parameters for some experiments
@@ -303,6 +306,29 @@ if topo==7: # mine (B)
 
 ###############################################################################
 
+if nullspace:
+
+   Lx=1
+   Ly=1
+   experiment=1
+
+   if topo==0:
+      nelx=2 ; nely=2 ; NV=9 ; nel=4
+   if topo==1: # stenberg m-e
+      nelx=1 ; nely=1 ; NV=10 ; nel=5
+   if topo==2 or topo==3: # stenberg, QZ1 m-e
+      nelx=1 ; nely=1 ; NV=17 ; nel=12
+   if topo==4: # QZ2 m-e
+      nelx=1 ; nely=1 ; NV=13 ; nel=8
+   if topo==5: # QZ3 m-e
+      nelx=1 ; nely=1 ; NV=11 ; nel=6
+   if topo==6: # ThA m-e
+      nelx=1 ; nely=1 ; NV=12 ; nel=7
+   if topo==7: # ThB m-e
+      nelx=1 ; nely=1 ; NV=8 ; nel=5
+
+###############################################################################
+
 NfemV=NV*ndofV   # number of velocity dofs
 NfemP=nel*ndofP   # number of pressure dofs
 Nfem=NfemV+NfemP # total number of dofs
@@ -333,29 +359,14 @@ sVnodes=[-1,-1,+1,+1]
 ###############################################################################
 start = timing.time()
 
-if topo==0:
-   xV,yV,iconV=regular.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
-
-if topo==1:
-   xV,yV,iconV=macro_S.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
-
-if topo==2:
-   xV,yV,iconV=macro_LT.mesher(Lx,Ly,nelx,nely,nel,NV,mV,epsi)
-
-if topo==3:
-   xV,yV,iconV=macro_QZ1.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
-
-if topo==4:
-   xV,yV,iconV=macro_QZ2.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
-
-if topo==5:
-   xV,yV,iconV=macro_QZ3.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
-
-if topo==6:
-   xV,yV,iconV=macro_A.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
-
-if topo==7:
-   xV,yV,iconV=macro_B.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+if topo==0: xV,yV,iconV=regular.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+if topo==1: xV,yV,iconV=macro_S.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+if topo==2: xV,yV,iconV=macro_LT.mesher(Lx,Ly,nelx,nely,nel,NV,mV,epsi)
+if topo==3: xV,yV,iconV=macro_QZ1.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+if topo==4: xV,yV,iconV=macro_QZ2.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+if topo==5: xV,yV,iconV=macro_QZ3.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+if topo==6: xV,yV,iconV=macro_A.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+if topo==7: xV,yV,iconV=macro_B.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 
 print("build mesh: %.3f s" % (timing.time() - start))
 
@@ -550,6 +561,7 @@ start = timing.time()
 #   A_mat = lil_matrix((Nfem+1,Nfem+1),dtype=np.float64)# matrix A 
 #   rhs   = np.zeros((Nfem+1),dtype=np.float64)         # right hand side 
 #else:
+G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
 A_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)# matrix A 
 rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side 
 b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64)  # gradient matrix B 
@@ -639,6 +651,7 @@ for iel in range(0,nel):
                     m2 =ndofV*iconV[k2,iel]+i2
                     A_mat[m1,m2]+=K_el[ikk,jkk]
             rhs[m1]+=f_el[ikk]
+            G_mat[m1,iel]+=G_el[ikk,0]
             A_mat[m1,NfemV+iel]+=G_el[ikk,0]
             A_mat[NfemV+iel,m1]+=G_el[ikk,0]
     rhs[NfemV+iel]+=h_el[0,0]
@@ -650,6 +663,85 @@ for iel in range(0,nel):
 #end for iel
 
 print("build FE matrix: %.3f s" % (timing.time() - start))
+
+###############################################################################
+# compute null space of G matrix
+###############################################################################
+
+if nullspace:
+
+   print("-----------------------------")
+   print('G matrix:')
+   for i in range (NfemV):
+       print (i,'|',G_mat[i,:])
+
+   if topo==0:
+      G2=np.zeros((2,NfemP),dtype=np.float64)
+      G2[0,:]=G_mat[8,:] ; G2[1,:]=G_mat[9,:]
+
+   if topo==1:
+      G2=np.zeros((4,NfemP),dtype=np.float64)
+      G2[0,:]=G_mat[8,:]  ; G2[1,:]=G_mat[9,:]
+      G2[2,:]=G_mat[10,:] ; G2[3,:]=G_mat[11,:]
+
+   if topo==2:
+      G2=np.zeros((18,NfemP),dtype=np.float64)
+      G2[0,:]=G_mat[6,:]   ; G2[1,:]=G_mat[7,:]
+      G2[2,:]=G_mat[8,:]   ; G2[3,:]=G_mat[9,:]
+      G2[4,:]=G_mat[10,:]  ; G2[5,:]=G_mat[11,:]
+      G2[6,:]=G_mat[14,:]  ; G2[7,:]=G_mat[15,:]
+      G2[8,:]=G_mat[16,:]  ; G2[9,:]=G_mat[17,:]
+      G2[10,:]=G_mat[18,:] ; G2[11,:]=G_mat[19,:]
+      G2[12,:]=G_mat[22,:] ; G2[13,:]=G_mat[23,:]
+      G2[14,:]=G_mat[24,:] ; G2[15,:]=G_mat[25,:]
+      G2[16,:]=G_mat[26,:] ; G2[17,:]=G_mat[27,:]
+
+   if topo==3:
+      G2=np.zeros((18,NfemP),dtype=np.float64)
+      G2[0,:]=G_mat[16,:]  ; G2[1,:]=G_mat[17,:]
+      G2[2,:]=G_mat[18,:]  ; G2[3,:]=G_mat[19,:]
+      G2[4,:]=G_mat[20,:]  ; G2[5,:]=G_mat[21,:]
+      G2[6,:]=G_mat[22,:]  ; G2[7,:]=G_mat[23,:]
+      G2[8,:]=G_mat[24,:]  ; G2[9,:]=G_mat[25,:]
+      G2[10,:]=G_mat[26,:] ; G2[11,:]=G_mat[27,:]
+      G2[12,:]=G_mat[28,:] ; G2[13,:]=G_mat[29,:]
+      G2[14,:]=G_mat[30,:] ; G2[15,:]=G_mat[31,:]
+      G2[16,:]=G_mat[32,:] ; G2[17,:]=G_mat[33,:]
+
+   if topo==4:
+      G2=np.zeros((10,NfemP),dtype=np.float64)
+      G2[0,:]=G_mat[16,:] ; G2[1,:]=G_mat[17,:]
+      G2[2,:]=G_mat[18,:] ; G2[3,:]=G_mat[19,:]
+      G2[4,:]=G_mat[20,:] ; G2[5,:]=G_mat[21,:]
+      G2[6,:]=G_mat[22,:] ; G2[7,:]=G_mat[23,:]
+      G2[8,:]=G_mat[24,:] ; G2[9,:]=G_mat[25,:]
+
+   if topo==5:
+      G2=np.zeros((6,NfemP),dtype=np.float64)
+      G2[0,:]=G_mat[16,:] ; G2[1,:]=G_mat[17,:]
+      G2[2,:]=G_mat[18,:] ; G2[3,:]=G_mat[19,:]
+      G2[4,:]=G_mat[20,:] ; G2[5,:]=G_mat[21,:]
+
+   if topo==6:
+      G2=np.zeros((8,NfemP),dtype=np.float64)
+      G2[0,:]=G_mat[16,:] ; G2[1,:]=G_mat[17,:]
+      G2[2,:]=G_mat[18,:] ; G2[3,:]=G_mat[19,:]
+      G2[4,:]=G_mat[20,:] ; G2[5,:]=G_mat[21,:]
+      G2[6,:]=G_mat[22,:] ; G2[7,:]=G_mat[23,:]
+
+   if topo==7:
+      G2=np.zeros((8,NfemP),dtype=np.float64)
+      G2[0,:]=G_mat[8,:]  ; G2[1,:]=G_mat[9,:]
+      G2[2,:]=G_mat[10,:] ; G2[3,:]=G_mat[11,:]
+      G2[4,:]=G_mat[12,:] ; G2[5,:]=G_mat[13,:]
+      G2[6,:]=G_mat[14,:] ; G2[7,:]=G_mat[15,:]
+
+
+   ns=null_space(G2)
+   print('null space vector(s):')
+   print(ns)
+   
+   #exit()
 
 ###############################################################################
 # solve system
@@ -733,63 +825,62 @@ error_q2 = np.zeros(NV,dtype=np.float64)
 error_p = np.zeros(nel,dtype=np.float64)
 jcb=np.zeros((2,2),dtype=np.float64)
 
-if True: 
+for i in range(0,NV): 
+    error_u[i]=u[i]-velocity_x(xV[i],yV[i])
+    error_v[i]=v[i]-velocity_y(xV[i],yV[i])
+    error_q1[i]=q1[i]-pressure(xV[i],yV[i])
+    error_q2[i]=q2[i]-pressure(xV[i],yV[i])
 
-   for i in range(0,NV): 
-       error_u[i]=u[i]-velocity_x(xV[i],yV[i])
-       error_v[i]=v[i]-velocity_y(xV[i],yV[i])
-       error_q1[i]=q1[i]-pressure(xV[i],yV[i])
-       error_q2[i]=q2[i]-pressure(xV[i],yV[i])
+for i in range(0,nel): 
+    error_p[i]=p[i]-pressure(xc[i],yc[i])
 
-   for i in range(0,nel): 
-       error_p[i]=p[i]-pressure(xc[i],yc[i])
+vrms=0.
+errv=0.
+errp=0.
+errq1=0.
+errq2=0.
+for iel in range (0,nel):
+    for iq in range(0,nqperdim):
+        for jq in range(0,nqperdim):
+            rq=qcoords[iq]
+            sq=qcoords[jq]
+            weightq=qweights[iq]*qweights[jq]
+            NNNV=NNV(rq,sq)
+            dNNNVdr=dNNVdr(rq,sq)
+            dNNNVds=dNNVds(rq,sq)
+            jcb[0,0]=dNNNVdr[:].dot(xV[iconV[:,iel]])
+            jcb[0,1]=dNNNVdr[:].dot(yV[iconV[:,iel]])
+            jcb[1,0]=dNNNVds[:].dot(xV[iconV[:,iel]])
+            jcb[1,1]=dNNNVds[:].dot(yV[iconV[:,iel]])
+            jcob = np.linalg.det(jcb)
+            xq=NNNV[:].dot(xV[iconV[:,iel]])
+            yq=NNNV[:].dot(yV[iconV[:,iel]])
+            uq=NNNV[:].dot(u[iconV[:,iel]])
+            vq=NNNV[:].dot(v[iconV[:,iel]])
+            q1q=NNNV[:].dot(q1[iconV[:,iel]])
+            q2q=NNNV[:].dot(q2[iconV[:,iel]])
+            errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
+            errp+=(p[iel]-pressure(xq,yq))**2*weightq*jcob
+            errq1+=(q1q-pressure(xq,yq))**2*weightq*jcob
+            errq2+=(q2q-pressure(xq,yq))**2*weightq*jcob
+            vrms+=(uq**2+vq**2)*weightq*jcob
+        #end for
+    #end for
+#end for
+errv=np.sqrt(errv)
+errp=np.sqrt(errp)
+errq1=np.sqrt(errq1)
+errq2=np.sqrt(errq2)
+vrms=np.sqrt(vrms/(Lx*Ly))
 
-   vrms=0.
-   errv=0.
-   errp=0.
-   errq1=0.
-   errq2=0.
-   for iel in range (0,nel):
-       for iq in range(0,nqperdim):
-           for jq in range(0,nqperdim):
-               rq=qcoords[iq]
-               sq=qcoords[jq]
-               weightq=qweights[iq]*qweights[jq]
-               NNNV=NNV(rq,sq)
-               dNNNVdr=dNNVdr(rq,sq)
-               dNNNVds=dNNVds(rq,sq)
-               jcb[0,0]=dNNNVdr[:].dot(xV[iconV[:,iel]])
-               jcb[0,1]=dNNNVdr[:].dot(yV[iconV[:,iel]])
-               jcb[1,0]=dNNNVds[:].dot(xV[iconV[:,iel]])
-               jcb[1,1]=dNNNVds[:].dot(yV[iconV[:,iel]])
-               jcob = np.linalg.det(jcb)
-               xq=NNNV[:].dot(xV[iconV[:,iel]])
-               yq=NNNV[:].dot(yV[iconV[:,iel]])
-               uq=NNNV[:].dot(u[iconV[:,iel]])
-               vq=NNNV[:].dot(v[iconV[:,iel]])
-               q1q=NNNV[:].dot(q1[iconV[:,iel]])
-               q2q=NNNV[:].dot(q2[iconV[:,iel]])
-               errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*weightq*jcob
-               errp+=(p[iel]-pressure(xq,yq))**2*weightq*jcob
-               errq1+=(q1q-pressure(xq,yq))**2*weightq*jcob
-               errq2+=(q2q-pressure(xq,yq))**2*weightq*jcob
-               vrms+=(uq**2+vq**2)*weightq*jcob
-           #end for
-       #end for
-   #end for
-   errv=np.sqrt(errv)
-   errp=np.sqrt(errp)
-   errq1=np.sqrt(errq1)
-   errq2=np.sqrt(errq2)
-   vrms=np.sqrt(vrms/(Lx*Ly))
-
-   print("     -> nel= %6d ; errv= %.8f ; errp= %.8f ; errq1= %.8f ; errq2= %.8f" %(nel,errv,errp,errq1,errq2))
-   print("     -> nel= %6d ; vrms= %12.4e " %(nel,vrms))
+print("     -> nel= %6d ; errv= %.8f ; errp= %.8f ; errq1= %.8f ; errq2= %.8f" %(nel,errv,errp,errq1,errq2))
+print("     -> nel= %6d ; vrms= %12.4e " %(nel,vrms))
 
 print("compute errors: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 # export profiles
+# only export pressure if a complete edge is on boundary
 ###############################################################################
 start = timing.time()
 

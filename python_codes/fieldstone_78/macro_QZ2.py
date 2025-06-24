@@ -52,7 +52,7 @@ def mesher(Lx,Ly,nelx,nely,nel,NV,mV):
             yV[counter]=(j+0.5)*hy+eps
             counter=counter+1    
 
-    np.savetxt('velocity.ascii',np.array([xV,yV]).T)
+    #np.savetxt('velocity.ascii',np.array([xV,yV]).T)
 
     ###############################################################################
     # computing grid connectivity 

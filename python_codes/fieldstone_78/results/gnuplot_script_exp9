@@ -1,0 +1,183 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize 0.4
+set key outside
+set format y "10^{%L}"
+
+#################################################################
+
+set log xy
+
+set xlabel '<h>'
+set ylabel '||u-u_h||_{L_2}'
+set output 'errors_u_exp9.pdf'
+plot[][]\
+'exp09/errors_topo0_exp9' u (1./sqrt($3)):6 w lp t 'topo=0',\
+'exp09/errors_topo1_exp9' u (1./sqrt($3)):6 w lp t 'topo=1',\
+'exp09/errors_topo2_exp9' u (1./sqrt($3)):6 w lp t 'topo=2',\
+'exp09/errors_topo3_exp9' u (1./sqrt($3)):6 w lp t 'topo=3',\
+'exp09/errors_topo4_exp9' u (1./sqrt($3)):6 w lp t 'topo=4',\
+'exp09/errors_topo5_exp9' u (1./sqrt($3)):6 w lp t 'topo=5',\
+'exp09/errors_topo6_exp9' u (1./sqrt($3)):6 w lp t 'topo=6',\
+x**2/10 lt -1 dt 2 t 'h^2'
+
+set xlabel '<h>'
+set ylabel '||p-p_h||_{L_2}'
+set output 'errors_p_exp9.pdf'
+plot[][]\
+'exp09/errors_topo0_exp9' u (1./sqrt($3)):9 w lp t 'topo=0',\
+'exp09/errors_topo1_exp9' u (1./sqrt($3)):9 w lp t 'topo=1',\
+'exp09/errors_topo2_exp9' u (1./sqrt($3)):9 w lp t 'topo=2',\
+'exp09/errors_topo3_exp9' u (1./sqrt($3)):9 w lp t 'topo=3',\
+'exp09/errors_topo4_exp9' u (1./sqrt($3)):9 w lp t 'topo=4',\
+'exp09/errors_topo5_exp9' u (1./sqrt($3)):9 w lp t 'topo=5',\
+'exp09/errors_topo6_exp9' u (1./sqrt($3)):9 w lp t 'topo=6',\
+x**1/10 lt -1 dt 2 t 'h^1'
+
+set xlabel '<h>'
+set ylabel '||p-q_{1,h}||_{L_2}'
+set output 'errors_q1_exp9.pdf'
+plot[][]\
+'exp09/errors_topo0_exp9' u (1./sqrt($3)):12 w lp t 'topo=0',\
+'exp09/errors_topo1_exp9' u (1./sqrt($3)):12 w lp t 'topo=1',\
+'exp09/errors_topo2_exp9' u (1./sqrt($3)):12 w lp t 'topo=2',\
+'exp09/errors_topo3_exp9' u (1./sqrt($3)):12 w lp t 'topo=3',\
+'exp09/errors_topo4_exp9' u (1./sqrt($3)):12 w lp t 'topo=4',\
+'exp09/errors_topo5_exp9' u (1./sqrt($3)):12 w lp t 'topo=5',\
+'exp09/errors_topo6_exp9' u (1./sqrt($3)):12 w lp t 'topo=6',\
+x**1 lt -1 dt 2 t 'h^1',\
+x**1.5 lt -1 dt 3 t 'h^{1.5}'
+
+set xlabel '<h>'
+set ylabel '||p-q_{2,h}||_{L_2}'
+set output 'errors_q2_exp9.pdf'
+plot[][]\
+'exp09/errors_topo0_exp9' u (1./sqrt($3)):15 w lp t 'topo=0',\
+'exp09/errors_topo1_exp9' u (1./sqrt($3)):15 w lp t 'topo=1',\
+'exp09/errors_topo2_exp9' u (1./sqrt($3)):15 w lp t 'topo=2',\
+'exp09/errors_topo3_exp9' u (1./sqrt($3)):15 w lp t 'topo=3',\
+'exp09/errors_topo4_exp9' u (1./sqrt($3)):15 w lp t 'topo=4',\
+'exp09/errors_topo5_exp9' u (1./sqrt($3)):15 w lp t 'topo=5',\
+'exp09/errors_topo6_exp9' u (1./sqrt($3)):15 w lp t 'topo=6',\
+x**1 lt -1 dt 2 t 'h^1',\
+x**1.5 lt -1 dt 3 t 'h^{1.5}'
+
+unset log y
+set xlabel '<h>'
+set ylabel 'u_{rms}'
+set output 'vrms_exp9.pdf'
+plot[][]\
+'exp09/vrms_topo0_exp9' u (1./sqrt($3)):6 w lp t 'topo=0',\
+'exp09/vrms_topo1_exp9' u (1./sqrt($3)):6 w lp t 'topo=1',\
+'exp09/vrms_topo2_exp9' u (1./sqrt($3)):6 w lp t 'topo=2',\
+'exp09/vrms_topo3_exp9' u (1./sqrt($3)):6 w lp t 'topo=3',\
+'exp09/vrms_topo4_exp9' u (1./sqrt($3)):6 w lp t 'topo=4',\
+'exp09/vrms_topo5_exp9' u (1./sqrt($3)):6 w lp t 'topo=5',\
+'exp09/vrms_topo6_exp9' u (1./sqrt($3)):6 w lp t 'topo=6',\
+
+set xlabel '<h>'
+set ylabel 'min/max u'
+set output 'stats_u_exp9.pdf'
+plot[][]\
+'exp09/ustats_topo0_exp9' u (1./sqrt($7)):4 w lp lt 1 t 'topo=0',\
+'exp09/ustats_topo0_exp9' u (1./sqrt($7)):5 w lp lt 1 notitle,\
+'exp09/ustats_topo1_exp9' u (1./sqrt($7)):4 w lp lt 2 t 'topo=1',\
+'exp09/ustats_topo1_exp9' u (1./sqrt($7)):5 w lp lt 2 notitle,\
+'exp09/ustats_topo2_exp9' u (1./sqrt($7)):4 w lp lt 3 t 'topo=2',\
+'exp09/ustats_topo2_exp9' u (1./sqrt($7)):5 w lp lt 3 notitle,\
+'exp09/ustats_topo3_exp9' u (1./sqrt($7)):4 w lp lt 4 t 'topo=3',\
+'exp09/ustats_topo3_exp9' u (1./sqrt($7)):5 w lp lt 4 notitle,\
+'exp09/ustats_topo4_exp9' u (1./sqrt($7)):4 w lp lt 5 t 'topo=4',\
+'exp09/ustats_topo4_exp9' u (1./sqrt($7)):5 w lp lt 5 notitle,\
+'exp09/ustats_topo5_exp9' u (1./sqrt($7)):4 w lp lt 6 t 'topo=5',\
+'exp09/ustats_topo5_exp9' u (1./sqrt($7)):5 w lp lt 6 notitle,\
+'exp09/ustats_topo6_exp9' u (1./sqrt($7)):4 w lp lt 7 t 'topo=6',\
+'exp09/ustats_topo6_exp9' u (1./sqrt($7)):5 w lp lt 7 notitle,\
+
+set xlabel '<h>'
+set ylabel 'min/max v'
+set output 'stats_v_exp9.pdf'
+plot[][]\
+'exp09/vstats_topo0_exp9' u (1./sqrt($7)):4 w lp lt 1 t 'topo=0',\
+'exp09/vstats_topo0_exp9' u (1./sqrt($7)):5 w lp lt 1 notitle,\
+'exp09/vstats_topo1_exp9' u (1./sqrt($7)):4 w lp lt 2 t 'topo=1',\
+'exp09/vstats_topo1_exp9' u (1./sqrt($7)):5 w lp lt 2 notitle,\
+'exp09/vstats_topo2_exp9' u (1./sqrt($7)):4 w lp lt 3 t 'topo=2',\
+'exp09/vstats_topo2_exp9' u (1./sqrt($7)):5 w lp lt 3 notitle,\
+'exp09/vstats_topo3_exp9' u (1./sqrt($7)):4 w lp lt 4 t 'topo=3',\
+'exp09/vstats_topo3_exp9' u (1./sqrt($7)):5 w lp lt 4 notitle,\
+'exp09/vstats_topo4_exp9' u (1./sqrt($7)):4 w lp lt 5 t 'topo=4',\
+'exp09/vstats_topo4_exp9' u (1./sqrt($7)):5 w lp lt 5 notitle,\
+'exp09/vstats_topo5_exp9' u (1./sqrt($7)):4 w lp lt 6 t 'topo=5',\
+'exp09/vstats_topo5_exp9' u (1./sqrt($7)):5 w lp lt 6 notitle,\
+'exp09/vstats_topo6_exp9' u (1./sqrt($7)):4 w lp lt 7 t 'topo=6',\
+'exp09/vstats_topo6_exp9' u (1./sqrt($7)):5 w lp lt 7 notitle,\
+
+set xlabel '<h>'
+set ylabel 'min/max p'
+set output 'stats_p_exp9.pdf'
+plot[][]\
+'exp09/pstats_topo0_exp9' u (1./sqrt($7)):4 w lp lt 1 t 'topo=0',\
+'exp09/pstats_topo0_exp9' u (1./sqrt($7)):5 w lp lt 1 notitle,\
+'exp09/pstats_topo1_exp9' u (1./sqrt($7)):4 w lp lt 2 t 'topo=1',\
+'exp09/pstats_topo1_exp9' u (1./sqrt($7)):5 w lp lt 2 notitle,\
+'exp09/pstats_topo2_exp9' u (1./sqrt($7)):4 w lp lt 3 t 'topo=2',\
+'exp09/pstats_topo2_exp9' u (1./sqrt($7)):5 w lp lt 3 notitle,\
+'exp09/pstats_topo3_exp9' u (1./sqrt($7)):4 w lp lt 4 t 'topo=3',\
+'exp09/pstats_topo3_exp9' u (1./sqrt($7)):5 w lp lt 4 notitle,\
+'exp09/pstats_topo4_exp9' u (1./sqrt($7)):4 w lp lt 5 t 'topo=4',\
+'exp09/pstats_topo4_exp9' u (1./sqrt($7)):5 w lp lt 5 notitle,\
+'exp09/pstats_topo5_exp9' u (1./sqrt($7)):4 w lp lt 6 t 'topo=5',\
+'exp09/pstats_topo5_exp9' u (1./sqrt($7)):5 w lp lt 6 notitle,\
+'exp09/pstats_topo6_exp9' u (1./sqrt($7)):4 w lp lt 7 t 'topo=6',\
+'exp09/pstats_topo6_exp9' u (1./sqrt($7)):5 w lp lt 7 notitle,\
+
+set xlabel '<h>'
+set ylabel 'min/max q_1'
+set output 'stats_q1_exp9.pdf'
+plot[][]\
+'exp09/q1stats_topo0_exp9' u (1./sqrt($7)):4 w lp lt 1 t 'topo=0',\
+'exp09/q1stats_topo0_exp9' u (1./sqrt($7)):5 w lp lt 1 notitle,\
+'exp09/q1stats_topo1_exp9' u (1./sqrt($7)):4 w lp lt 2 t 'topo=1',\
+'exp09/q1stats_topo1_exp9' u (1./sqrt($7)):5 w lp lt 2 notitle,\
+'exp09/q1stats_topo2_exp9' u (1./sqrt($7)):4 w lp lt 3 t 'topo=2',\
+'exp09/q1stats_topo2_exp9' u (1./sqrt($7)):5 w lp lt 3 notitle,\
+'exp09/q1stats_topo3_exp9' u (1./sqrt($7)):4 w lp lt 4 t 'topo=3',\
+'exp09/q1stats_topo3_exp9' u (1./sqrt($7)):5 w lp lt 4 notitle,\
+'exp09/q1stats_topo4_exp9' u (1./sqrt($7)):4 w lp lt 5 t 'topo=4',\
+'exp09/q1stats_topo4_exp9' u (1./sqrt($7)):5 w lp lt 5 notitle,\
+'exp09/q1stats_topo5_exp9' u (1./sqrt($7)):4 w lp lt 6 t 'topo=5',\
+'exp09/q1stats_topo5_exp9' u (1./sqrt($7)):5 w lp lt 6 notitle,\
+'exp09/q1stats_topo6_exp9' u (1./sqrt($7)):4 w lp lt 7 t 'topo=6',\
+'exp09/q1stats_topo6_exp9' u (1./sqrt($7)):5 w lp lt 7 notitle,\
+
+set xlabel '<h>'
+set ylabel 'min/max q_2'
+set output 'stats_q2_exp9.pdf'
+plot[][]\
+'exp09/q2stats_topo0_exp9' u (1./sqrt($7)):4 w lp lt 1 t 'topo=0',\
+'exp09/q2stats_topo0_exp9' u (1./sqrt($7)):5 w lp lt 1 notitle,\
+'exp09/q2stats_topo1_exp9' u (1./sqrt($7)):4 w lp lt 2 t 'topo=1',\
+'exp09/q2stats_topo1_exp9' u (1./sqrt($7)):5 w lp lt 2 notitle,\
+'exp09/q2stats_topo2_exp9' u (1./sqrt($7)):4 w lp lt 3 t 'topo=2',\
+'exp09/q2stats_topo2_exp9' u (1./sqrt($7)):5 w lp lt 3 notitle,\
+'exp09/q2stats_topo3_exp9' u (1./sqrt($7)):4 w lp lt 4 t 'topo=3',\
+'exp09/q2stats_topo3_exp9' u (1./sqrt($7)):5 w lp lt 4 notitle,\
+'exp09/q2stats_topo4_exp9' u (1./sqrt($7)):4 w lp lt 5 t 'topo=4',\
+'exp09/q2stats_topo4_exp9' u (1./sqrt($7)):5 w lp lt 5 notitle,\
+'exp09/q2stats_topo5_exp9' u (1./sqrt($7)):4 w lp lt 6 t 'topo=5',\
+'exp09/q2stats_topo5_exp9' u (1./sqrt($7)):5 w lp lt 6 notitle,\
+'exp09/q2stats_topo6_exp9' u (1./sqrt($7)):4 w lp lt 7 t 'topo=6',\
+'exp09/q2stats_topo6_exp9' u (1./sqrt($7)):5 w lp lt 7 notitle,\
+
+
+
+
+
+
+
+
+
+
+
