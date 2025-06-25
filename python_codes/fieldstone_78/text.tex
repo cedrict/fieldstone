@@ -582,8 +582,9 @@ with their internal numbering of nodes:
 \end{tikzpicture}
 \end{center}
 
-Let us consider the regular case. 
-The assembled $\G$ matrix is of size $(ndofV \cdot NV, NP)=(18,4)$ and is 
+Let us consider the regular macro-element consisting of an array of $2\times 2$ rectangular elements. 
+The assembled $\G$ matrix is of size $(ndofV \cdot NV, NP)=(NfemV,NfemP)=(18,4)$ and is 
+{\small
 \begin{verbatim}
 0 | [0. 0. 0. 0.]
 1 | [0. 0. 0. 0.]
@@ -604,9 +605,10 @@ The assembled $\G$ matrix is of size $(ndofV \cdot NV, NP)=(18,4)$ and is
 16 | [0. 0. 0. 0.]
 17 | [0. 0. 0. 0.]
 \end{verbatim}
-We then extract from this the 2 non-zero lines 
-corresponding to the node 4 (so lines 2*4+0 and 2*4+1)
-which yields the $\tilde{\G}$ matrix:
+}
+Indeed, because of boundary conditions on nodes 0,1,2,3,5,6,7,8 all lines 
+but the ones corresponding to node 4 (so lines 2*4+0 and 2*4+1) are zeroed. 
+We then extract these, which yields the $\tilde{\G}$ matrix:
 \[
 \tilde{\G}=
 \frac14
@@ -615,7 +617,8 @@ which yields the $\tilde{\G}$ matrix:
 -1 &-1& 1 &1
 \end{pmatrix}
 \]
-We then obtain 
+Using the built function \lstinline{null_space} from \lstinline{scipy}, 
+we then obtain 
 \begin{verbatim}
 null space vector(s):
 [[-0.1  0.7]
@@ -623,20 +626,68 @@ null space vector(s):
  [ 0.7  0.1]
  [-0.1  0.7]]
 \end{verbatim}
+If we normalise these vectors so that $<p>=0$ then these two 
+pressure vectors are then
+\[
+\vec{\cal P}=(-0.4,0.4,0.4,-0.4)
+\qquad \text{and}
+\vec{\cal P}=(0.3,-0.3,-0.3,0.3)
+\]
+which correspong to the following two checker board pressure modes:
 
-If we now turn to the Stenberg macro-element, 
-
-...
-
-
-
-
-
-
-
-
+{\color{red} DRAW!}
 
 
+If we now turn to the Stenberg macro-element, the $\G$ matrix 
+is of size  $20\times 5$: 
+{\small
+\begin{verbatim}
+0 | [0. 0. 0. 0. 0.]
+1 | [0. 0. 0. 0. 0.]
+2 | [0. 0. 0. 0. 0.]
+3 | [0. 0. 0. 0. 0.]
+4 | [0. 0. 0. 0. 0.]
+5 | [0. 0. 0. 0. 0.]
+6 | [0. 0. 0. 0. 0.]
+7 | [0. 0. 0. 0. 0.]
+8 | [-0.25  0.    0.5  -0.25  0.  ]
+9 | [-0.25  0.    0.    0.25  0.  ]
+10 | [ 0.    0.25 -0.5   0.    0.25]
+11 | [ 0.   -0.25  0.    0.    0.25]
+12 | [0. 0. 0. 0. 0.]
+13 | [0. 0. 0. 0. 0.]
+14 | [0. 0. 0. 0. 0.]
+15 | [0. 0. 0. 0. 0.]
+16 | [0. 0. 0. 0. 0.]
+17 | [0. 0. 0. 0. 0.]
+18 | [0. 0. 0. 0. 0.]
+19 | [0. 0. 0. 0. 0.]
+\end{verbatim}
+}
+Again, only the lines corresponding to nodes a and 5 are not zeroed.
+\[
+\tilde{\G}=
+\frac14
+\begin{pmatrix}
+-1 & 0 & 2 &-1 &0 \\
+-1 & 0 & 0 & 1 &0 \\
+ 0 & 1 &-2 & 0 &1 \\
+ 0 &-1 & 0 & 0 &1
+\end{pmatrix}
+\]
+We finally obtain
+\begin{verbatim}
+null space vector(s):
+[[0.4472136]
+ [0.4472136]
+ [0.4472136]
+ [0.4472136]
+ [0.4472136]]
+\end{verbatim}
+The nullspace of $\tilde{\G}$ consists of a single pressure solution, 
+the desired constant pressure vector. 
+
+The same is true for all other macro-element of the figure above. 
 
 
 
