@@ -20,7 +20,7 @@ plot[][]\
 'exp14/errors_topo4_exp14' u (1./sqrt($3)):6 w lp t 'topo=4',\
 'exp14/errors_topo5_exp14' u (1./sqrt($3)):6 w lp t 'topo=5',\
 'exp14/errors_topo6_exp14' u (1./sqrt($3)):6 w lp t 'topo=6',\
-x/10 lt -1 dt 2 t 'h'
+x/4 lt -1 dt 2 t 'h'
 
 set xlabel '<h>'
 set ylabel '||p-p_h||_{L_2}'
@@ -46,7 +46,7 @@ plot[][]\
 'exp14/errors_topo4_exp14' u (1./sqrt($3)):12 w lp t 'topo=4',\
 'exp14/errors_topo5_exp14' u (1./sqrt($3)):12 w lp t 'topo=5',\
 'exp14/errors_topo6_exp14' u (1./sqrt($3)):12 w lp t 'topo=6',\
-x**0.5*4 lt -1 dt 2 t 'h^{0.5}'
+x**0.5*2 lt -1 dt 2 t 'h^{0.5}'
 
 set xlabel '<h>'
 set ylabel '||p-q_{2,h}||_{L_2}'

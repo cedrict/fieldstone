@@ -229,17 +229,20 @@ if int(len(sys.argv) == 7):
    topo = int(sys.argv[4])
    epsi = float(sys.argv[5]) # only for topo=2
    experiment = int(sys.argv[6])
+   if topo==0:
+      nelx*=2
+      nely*=2
 else:
-   nelx = 10
-   nely = 10
+   nelx = 140
+   nely = 140
    visu = 1
-   topo = 0
+   topo = 1
    epsi = 0
    experiment=1
 
 pnormalise=True 
 
-nullspace=True
+nullspace=False
 
 ###############################################################################
 # set specific values to some parameters for some experiments
@@ -257,7 +260,6 @@ if experiment==8:
    vscaling=0.01/365.25/24/3600
  
 if experiment==10 or experiment==11 or experiment==12:
-   #pnormalise=False 
    Lx=4
    nelx=4*nely
 
@@ -561,7 +563,8 @@ start = timing.time()
 #   A_mat = lil_matrix((Nfem+1,Nfem+1),dtype=np.float64)# matrix A 
 #   rhs   = np.zeros((Nfem+1),dtype=np.float64)         # right hand side 
 #else:
-G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
+if (nullspace): 
+   G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
 A_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)# matrix A 
 rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side 
 b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64)  # gradient matrix B 
@@ -651,7 +654,7 @@ for iel in range(0,nel):
                     m2 =ndofV*iconV[k2,iel]+i2
                     A_mat[m1,m2]+=K_el[ikk,jkk]
             rhs[m1]+=f_el[ikk]
-            G_mat[m1,iel]+=G_el[ikk,0]
+            if (nullspace): G_mat[m1,iel]+=G_el[ikk,0]
             A_mat[m1,NfemV+iel]+=G_el[ikk,0]
             A_mat[NfemV+iel,m1]+=G_el[ikk,0]
     rhs[NfemV+iel]+=h_el[0,0]

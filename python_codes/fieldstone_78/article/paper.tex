@@ -17,7 +17,7 @@ geodynamical buoyancy-driven flows
 \author{C. Thieulot*}
 
 
-%\keywords{Finite Elements, Stokes equations, macro-elements, buoyancy-driven flow}
+%%%%%%\keywords{Finite Elements, Stokes equations, macro-elements, buoyancy-driven flow}
 
 
 \begin{document}
@@ -68,7 +68,7 @@ dominating lithostatic pressure gradient due to the Earth's gravity field.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The $Q_1\times P_0$ element}\label{sec2}
+%\section{The $Q_1\times P_0$ element}\label{sec2}
 
 The $Q_1\times P_0$ (also sometimes called 
 $Q_1 \times Q_0$ \cite{grsa}) element has been the object of a lot of attention in the 80's and 90's
@@ -120,8 +120,9 @@ Also QZ3 was mentioned in 1995 by Idehlsohn et al \cite{idsn95} but not used in 
 \caption{
 a) velocity and pressure nodes for a $Q_1\times P_0$ element;
 b) Stenberg 'S' macro-element \cite{sten84}; 
-c) Le Tallec macro-element \cite{leta81,leru86}; 
-d,e,f) QZ1, QZ2, and QZ3 macro-elements \cite{qizh07}; g,h) macro-elements A and B (this study).
+c) Le Tallec (LT) macro-element \cite{leta81,leru86}; 
+d,e,f) QZ1, QZ2, and QZ3 macro-elements \cite{qizh07}; 
+g,h) macro-elements Th1 and Th2 (this study).
 Velocity nodes are represented by filled-in circles. The purple ones indicate internal nodes which belong to 3 elements.
 For each macro-element a distance $\epsilon$ is indicated which controls the positioning of the internal nodes.
 \label{fig:mes}}
@@ -134,8 +135,7 @@ the case of QZ3 for example, there is an edge joining two opposite corners but n
 other two opposite corners.
 In Table~\ref{tab1} I summarize the various properties which characterise each macro-element.
 
-
-\begin{table}[h!]
+\begin{table}
 \centering
 \begin{tabular}{cccccc}
 \hline
@@ -171,7 +171,39 @@ would list five types of macro-elements from the best to worst as S, LT, QZ1, QZ
 The authors unfortunately do not provide any numerical comparison between these 5. 
 %Understand what their ranking is based on. My pragmatic approach - numerical testing!
 
-Despite the existing literature, many questions remain with regards to these macro-elements:
+\paragraph{A quick remark about the QZ1 and QZ3 macro-elements:}
+Let us consider the triangular macro-element as shown in Fig.~\ref{fig:triangle}.
+As mentioned in \cite{rovira1992}, 
+the velocity and pressure spaces in this case are isomorphic to those
+of the $P_2^+ \times P_{-1}$ element \cite{thba25}. Since this velocity-pressure pair 
+element satisfies the LBB condition, the macroelement depicted in this figure
+composed of $Q_1 \times P_0$ elements is also be div-stable.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\draw[thick] (0,0) -- (5.6,0) -- (2.2,4.3)-- cycle;  
+\draw[thick] (1.05,2.1) -- (2.6,1.4) -- (3.9,2.1);  
+\draw[thick] (2.6,1.4) -- (2.9,0);  
+\draw[black,fill=teal] (0,0) circle (2pt);
+\draw[black,fill=teal] (5.6,0) circle (2pt);
+\draw[black,fill=teal] (2.2,4.3) circle (2pt);
+\draw[black,fill=teal] (1.05,2.1) circle (2pt);
+\draw[black,fill=teal] (2.6,1.4) circle (2pt);
+\draw[black,fill=teal] (3.9,2.1) circle (2pt);
+\draw[black,fill=teal] (2.9,0) circle (2pt);
+\draw[violet] (1.9,1) circle (4pt);
+\draw[violet] (3.4,1) circle (4pt);
+\draw[violet] (2.4,2.2) circle (4pt);
+\end{tikzpicture}
+\caption{A triangular macro-element made of 3 $Q_1\times P_0$ elements.
+Green discs correspond to velocity nodes while open circle correspond to pressure dofs.}\label{fig:triangle}
+\end{figure}
+
+\vspace{.4cm}
+
+
+In the end, despite the existing literature, many questions remain with regards to these macro-elements:
 \begin{itemize}
 \item Based on a handful of benchmarks is it possible to establish a ranking, or at the very least can we pinpoint the objectively worse one(s)?
 
@@ -191,11 +223,6 @@ buoyancy-driven flows in the presence of a strong hydrostatic pressure gradient?
 
 %I need to understand how to prove LBB stability and apply it to 3D elts ?
 
-%Paper content/new/inovation:
-
-%run stokes sphere too.
-
-%can I compute Gel for macro elt ? or a 2x2 block ?
 
 %I disregard randomised regular meshes bc how much random is not clear.
 
@@ -246,19 +273,17 @@ This procedure is rather standard and well documented in many
 textbooks \cite{grsa,dohu03,bobf13} and the reader is referred to these sources 
 for more detail.
 
-
 All (macro-)elements have been implemented in a dedicated Python code (see Supplementary material). 
 An isoparametric mapping is used. 
-The pressure nullspace due to the Dirichlet boundary conditions on all sides is removed 
-by means of a Lagrange multiplier technique so as to insure that the pressure field 
-satisfies $\int_\Omega p dV= 0$.
 The fully assembled Stokes matrix is passed to a Python solver (WHICH exactly). 
 Better solving strategies have of course 
 been designed to solve the resulting saddle point \cite{begl05} but are not 
 implemented since optimal performance is not of interest here.
+The pressure nullspace due to the Dirichlet boundary conditions on all sides is removed 
+after the linear system is solved, by imposing $\int_\Omega p dV= 0$.
 
 The projection of the discontinuous pressure $p$ onto the velocity nodes is denoted by $q$. 
-For simplicity I have adopted the simple procedure explained in REF: each 
+For simplicity I have adopted the simple procedure explained in \cite{REF}: each 
 elemental pressure is added to the nodes making this element and later averaged. 
 
 When an analytical solution exists convergence rates are computed and 
@@ -269,16 +294,89 @@ are optimal, i.e., that the errors satisfy the relationships
 \| p - p_h \|_{L_2}   &=& {\cal O}(h^{1}),
   \label{eq:error-rates}
 \end{eqnarray}
-where $h$ is the maximal diameter over all cells in the mesh.
+where $h$ is the maximal diameter over all cells in the mesh \cite{thba22,thba25}.
 I will also measure and report on the convergence rate index for the nodal pressure $q$.
 
 Looking at Fig.~\ref{fig:mes} we see that the elements inside the macro-elements 
 have various sizes and shapes so 
-the default version of each macro-element is the one for which all internal elements have the same area, and 
-I then define the average element size
+the default version of each macro-element is the one for which all internal elements have the same area
+(when possible -- see appendix), and I then define the average element size
 $\langle h \rangle$ as the square root of the average elemental area.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Donea \& Huerta manufactured solution as test case}
+
+To test the implementation I first consider the manufactured solution 
+proposed in Chapter 6 of \cite{dohu03} and also used in \cite{thba22,thba25}.
+ 
+The domain is a unit square. The viscosity is set to $\eta=1$.
+The velocity and pressure fields are given by
+\begin{eqnarray}
+u_x(x,y) &=& x^2(1- x)^2 (2y - 6y^2 + 4y^3)  \\
+u_y(x,y) &=& -y^2 (1 - y)^2 (2x - 6x^2 + 4x^3) \\
+p(x,y) &=& x(1 -x)- 1/6. 
+\end{eqnarray}
+The buoyancy force is obtained by inserting these expressions
+in Eq.~\ref{eq:conv_momentum}.
+Boundary conditions are no-slip on all sides of the domain.
+
+\begin{figure}
+\centering
+\includegraphics[width=8cm]{../results/errors_u_exp1}
+\includegraphics[width=8cm]{../results/errors_p_exp1}\\
+\includegraphics[width=8cm]{../results/errors_q1_exp1}
+\includegraphics[width=8cm]{../results/vrms_exp1}
+\caption{Donea and Huerta benchmark:} \label{fig:resdh}
+\end{figure}
+
+FIGURE with v,p soltuion for reg, all m-e, Th2
+
+
+In Fig.~\ref{fig:resdh} the velocity and pressure errors are shown as a function of the 
+average mesh size $\langle h \rangle$ for all four benchmarks and all 8 macro-elements.
+Conclusions:
+\begin{itemize}
+\item We recover optimal rates for velocity ${\bm u}$ (quadratic convergence) 
+and pressure $p$ (linear convergence) and 1.5 rate for $q$ (for some!!).
+\item Despite the presence of a very strong chequerboard (see Fig.~\ref{fig:check}) the regular mesh 
+is the most accurate for velocity for all benchmarks.
+\item Regular mesh and Th2 macro-elements show widely oscillating pressure errors which reflect the 
+presence of checkerboard modes. 
+\item The newly-proposed macro-element Th2 is not stable as the checkboard pattern is clearly visible in Fig.~\ref{fig:check}. 
+This macro-element also always yields the worse velocity error. It is therefore abandonned in what follows. 
+\item The amplitude of checkerboard modes is difficult to predict (it is a function 
+of boundary conditions, mesh topology, even or odd numbers of elements per direction, flow features, ...) \cite{XXX} 
+\item The Stenberg macro-element is objectively the most accurate macro-element; 
+\item the LT element showcases a q-pressure error rate that is O(h1.5) at low resolutions and it tends to 
+flatten at high resolution
+\item  QZ2 macro-element are comparable; 
+\item QZ1 and QZ3 yield slighly less accurate results than QZ2;
+\item the newly-proposed Th1 macro-element yields similar pressure errors as the other macro-elements but 
+it has one of the highest velocity errors.
+\item discuss p error conv rates at high resolution!
+\end{itemize}
+
+As a conclusion, S is the clear best macro-element, followed by QZ2 macro-element.
+(only these 2 showcase O(h1.5) for error on q
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Non-isoviscous manufactured solutions}
+
+
+Select last 3-4 ones
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Buoyancy-driven flow}
+
+use last 3 ones for this
+
+REDO SINKING BLOCK thba22, thba25
 
 
 
@@ -286,10 +384,13 @@ $\langle h \rangle$ as the square root of the average elemental area.
 
 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}\label{sec5}
 
 Conclusions about mms:
+
+similar conclusions hold for other isoviscous mms. TEST
+
 
 
 
@@ -305,6 +406,9 @@ also, if used at high res, full density, what about mesh deformation?
 
 extension to 3D ?
 
+q1 vs q2. in practice doe snot make much difference
+
+if direct solver is used a sloan algo is needed
 
 
 
