@@ -55,6 +55,24 @@ $Q_1\times Q_1$ cousin \cite{dobo04,bodg06} but it was recently shown\cite{thba2
 that this stabilised element is not suited to model buoyancy-driven flows, 
 while retaining its usability in engineering applications.  
 
+In \cite{thba22} the authors conclude:
+``
+We believe that the Q1 × P0 element is also not a viable
+choice. As shown by several of the analytical bench-
+marks, the errors that result from using this element can
+be orders of magnitude larger than the corresponding
+errors that result from the Taylor–Hood-type elements.
+This is no longer the case once we consider discontin-
+uous viscosity profiles (see Sect. 5.3), but this element
+is also unable to accurately solve the buoyancy-driven
+case discussed in Sect. 5.4. Furthermore, as pointed out
+before, this element is not LBB-stable, which, despite
+considerable efforts in the past decades, has limited its
+use in combination with iterative methods: because of
+the corresponding condition number increase, the num-
+ber of iterations is found to grow in a somewhat un-
+predictable manner with an increase in resolution. ''
+
 A third option, seldom explored, is the use of so-called macro-elements composed of $Q_1\times P_0$ elements. 
 Two were shown to be stable in the mid eighties\cite{leta81,sten84}, followed by three more twenty years
 later\cite{qizh07} but to the author's knowledge these macro-elements were never 
@@ -127,6 +145,8 @@ Velocity nodes are represented by filled-in circles. The purple ones indicate in
 For each macro-element a distance $\epsilon$ is indicated which controls the positioning of the internal nodes.
 \label{fig:mes}}
 \end{figure}
+
+{\it add comment about 'R' not being a m-e stricto sensu}
 
 Looking  at Fig~\ref{fig:mes}, we can also make the observation that some macro-elements 
 have a two-fold symmetry (along the axis or the diagonals) while others have a four-fold one 
@@ -324,45 +344,58 @@ Boundary conditions are no-slip on all sides of the domain.
 \begin{figure}
 \centering
 \includegraphics[width=8cm]{../results/errors_u_exp1}
-\includegraphics[width=8cm]{../results/errors_p_exp1}\\
+\includegraphics[width=8cm]{../results/vrms_exp1} \\
+\includegraphics[width=8cm]{../results/errors_p_exp1}
 \includegraphics[width=8cm]{../results/errors_q1_exp1}
-\includegraphics[width=8cm]{../results/vrms_exp1}
 \caption{Donea and Huerta benchmark:} \label{fig:resdh}
 \end{figure}
 
-FIGURE with v,p soltuion for reg, all m-e, Th2
 
+{\color{red} 
+FIGURE with v,p soltuion for reg, all m-e, T2}
 
 In Fig.~\ref{fig:resdh} the velocity and pressure errors are shown as a function of the 
-average mesh size $\langle h \rangle$ for all four benchmarks and all 8 macro-elements.
-Conclusions:
+average mesh size $\langle h \rangle$ for all 8 macro-elements.
+
 \begin{itemize}
-\item We recover optimal rates for velocity ${\bm u}$ (quadratic convergence) 
-and pressure $p$ (linear convergence) and 1.5 rate for $q$ (for some!!).
-\item Despite the presence of a very strong chequerboard (see Fig.~\ref{fig:check}) the regular mesh 
-is the most accurate for velocity for all benchmarks.
-\item Regular mesh and Th2 macro-elements show widely oscillating pressure errors which reflect the 
-presence of checkerboard modes. 
-\item The newly-proposed macro-element Th2 is not stable as the checkboard pattern is clearly visible in Fig.~\ref{fig:check}. 
-This macro-element also always yields the worse velocity error. It is therefore abandonned in what follows. 
+
+%comment on velocity
+\item We recover optimal rates for velocity ${\bm u}$ (quadratic convergence) for all macro-elements.
+The 'R' macro-element is the most accurate, followed by S, LT, QZ1, QZ2, QZ3 which are very close, 
+while the T1 and T2 macro-elements are the least accurate ones. 
+%comment on vrms
+\item All macro-elements converge to the correct root mean square velocity $u_{rms}$ and 
+their accuracy follows the previously made observations on their respective velocity errors.
+
+%comment on elemental pressure p
+\item As expected the 'R' macro-element yields a pressure field showcasing a checker board so that 
+the corresponding pressure error does not decrease with increasing $<h>$. 
+\item The same observation can be made for macro-element 'T2'. 
+\item All other macro-elements pressure errors converge linearly and the 'S' macro-element is
+the most accurate of them all.
 \item The amplitude of checkerboard modes is difficult to predict (it is a function 
 of boundary conditions, mesh topology, even or odd numbers of elements per direction, flow features, ...) \cite{XXX} 
-\item The Stenberg macro-element is objectively the most accurate macro-element; 
-\item the LT element showcases a q-pressure error rate that is O(h1.5) at low resolutions and it tends to 
-flatten at high resolution
-\item  QZ2 macro-element are comparable; 
-\item QZ1 and QZ3 yield slighly less accurate results than QZ2;
-\item the newly-proposed Th1 macro-element yields similar pressure errors as the other macro-elements but 
-it has one of the highest velocity errors.
-\item discuss p error conv rates at high resolution!
+
+%comment on nodal pressure q
+\item Because the 'R' and 'T2' macro-elements yield a checker board pressure field, we need not
+assessing their nodal projection and these have then been removed from Fig.~\ref{fig:resdh}c.
+\item A handfull of macro-elements (S, QZ2, QZ3) have their nodal pressure $q$ converge like ${\cal O}(h^{1.5})$
+while the others (LT, QZ1, T1) ultimately see their nodal pressure converge linearly.
+\item Again, 'S' is the most accurate of them all.
+
 \end{itemize}
 
-As a conclusion, S is the clear best macro-element, followed by QZ2 macro-element.
-(only these 2 showcase O(h1.5) for error on q
+
+The newly-proposed macro-element T2 is not stable as the checkboard pattern is clearly visible in Fig.~\ref{fig:check}. 
+Also, this macro-element also always yields the worse velocity error. It is therefore abandonned in what follows. 
+As a conclusion, S is the clear best macro-element, followed by QZ2 and QZ3 macro-elements.
+
+{\color{red} I need to re-do all this with different mms and see whether this holds!!}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Non-isoviscous manufactured solutions}
+
 
 
 Select last 3-4 ones
@@ -377,6 +410,85 @@ Select last 3-4 ones
 use last 3 ones for this
 
 REDO SINKING BLOCK thba22, thba25
+
+
+
+
+What characterises geodynamical modelling is the buoyancy-driven nature of the flow 
+in the presence of a very strong hydrostatic pressure and a relatively small dynamic pressure.
+On long periods of time the mantle and the lithosphere behave like non-Newtonian fluids
+which effective viscosity ranges from about $10^{19}$ up to $10^{28}\si{\pascal\second}$, 
+typical velocities are of the order of $1\si{\cm\per year}$, and pressure ranges from 
+the atmospheric pressure at the surface ($\sim 10^5 \si{\pascal}$) up to about $100\si{\giga\pascal}$ 
+at the core mantle boundary. The mantle is not well mixed and therefore not homeogenous: 
+Subducted plate remnants which are colder than their surroundings are thought to slowly sink 
+while thermo-chemical instabilities at the core mantle boundary are the location where 
+so-called plumes root and traverse the mantle upwards.
+
+
+
+The $Q_1\times P_0$ has been the workhorse of computational geodynamics for decades with 
+very popular mantle convection and lithosphere deformation codes such as Citcom, SOPALE, 
+UnderWorld, DOUAR \cite{brtf08}, FANTOM \cite{thie11}, ... FINISH
+
+
+
+The following experiment is an idealised geodynamical setup.
+The domain is a square of size $L_x=L_y=512$km filled with a fluid (the ``mantle'')
+of density $\rho_1=3200\si{\kg\per\cubic\metre}$ 
+and viscosity $\eta_1=10^{21}\si{\pascal\second}$.
+A square block of size $128\times 128\si{\km}$ is placed in the domain and
+is centered at location ($x_c,y_c$)=($256\si{\km}$, $384\si{\km}$) so 
+as to insure that its sides
+align with cell boundaries at all resolutions (we thereby wish to avoid
+cases where the quadrature points inside an element would have different
+density or viscosity associated to them). It is filled with a fluid
+of density $\rho_2=\rho_1+\delta \rho$ and viscosity $\eta_2=10^{23}\si{\pascal\second}$.
+The gravity vector points downwards with $|{\bm g}|=10\si{\metre\per\square\second}$. 
+Boundary conditions are free slip on all sides.
+This benchmark is similar or identical to the ones presented in 
+\cite{mamo08}, \cite{gery10}, \cite{thie11} and \cite{sctc20}.
+
+Density variations are often small compared to the density of the mantle itself
+and they can be positive or negative: in a geodynamical context, 
+the block could be interpreted as a detached slab
+($\delta\rho>0$) or a plume head ($\delta\rho<0$). 
+We here choose $\delta \rho=+8\si{\kg\per\cubic\metre}$, i.e. $\delta \rho/\rho_1 = 0.25\%$.
+
+This experiment was run for resolutions $16m\times 16m$ with $m=\{1,2,3,4,5\}$. 
+The vertical component of the velocity on a vertical line passing through the middle
+of the domain is recorded and plotted in Fig.~\ref{fig:profiles}. 
+There is no analytical solution to this problem so 
+these values are plotted against a high resolution profile obtained with the state-of-the-art geodynamics ASPECT 
+code\cite{krhb12,hedg17} based on the deal.II FE library \cite{XX} 
+using a mesh of $128\times128$ $Q_2\times P_{-1}$ elements.
+
+
+
+
+
+\begin{figure}
+\centering
+\includegraphics[width=8cm]{../results/sinking_block/p_block_res32.pdf}
+\includegraphics[width=8cm]{../results/sinking_block/v_block_res32.pdf}\\
+\includegraphics[width=8cm]{../results/sinking_block/p_block_res64.pdf}
+\includegraphics[width=8cm]{../results/sinking_block/v_block_res64.pdf}
+\caption{Sinking block experiment with full density: } \label{fig:resblock}
+\end{figure}
+
+
+
+
+
+
+
+We find that
+\begin{itemize}
+\item no checkerboard ! 
+\item All bad, except Reg and B!!!
+\item results for QZ1,2,3, A, B not shown because quantitatively and qualitatively similar to those shown here.
+\end{itemize}
+
 
 
 
@@ -410,7 +522,9 @@ q1 vs q2. in practice doe snot make much difference
 
 if direct solver is used a sloan algo is needed
 
+we do not consider penalty formulations (no choice of lambda)
 
+Note that other q projections are available.
 
 \printbibliography
 

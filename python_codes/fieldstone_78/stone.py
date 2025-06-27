@@ -11,6 +11,10 @@ from scipy.linalg import null_space
 
 eps=1.e-10
 
+#exp=8
+drho=8 # exp=8
+rho0=3200
+
 ###############################################################################
 
 def bx(x,y):
@@ -53,10 +57,9 @@ def by(x,y):
        val=-(8*x-2)
     if experiment==8:
        if abs(x-Lx/2)<64e3 and abs(y-384e3)<64e3:
-          val=-10*3208#+32000
+          val=-10*(rho0+drho)
        else:
-          val=-10*3200#+32000
-       val=-32000
+          val=-10*rho0
     if experiment==9:
        val=(2*x**3*y+3*x-1)
     if experiment==10:
@@ -86,7 +89,7 @@ def viscosity(x,y):
        val=np.exp(2*B*y)
     if experiment==8:
        if abs(x-Lx/2)<64e3 and abs(y-384e3)<64e3:
-          val=1e24
+          val=1e21*eta_star
        else:
           val=1e21
     if experiment==13:
@@ -227,18 +230,20 @@ if int(len(sys.argv) == 7):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
    topo = int(sys.argv[4])
-   epsi = float(sys.argv[5]) # only for topo=2
+   eta_star = int(sys.argv[5]) 
    experiment = int(sys.argv[6])
    if topo==0:
       nelx*=2
       nely*=2
 else:
-   nelx = 140
-   nely = 140
+   nelx = 32
+   nely = 32
    visu = 1
-   topo = 1
-   epsi = 0
-   experiment=1
+   topo = 3
+   eta_star=0
+   experiment=8
+   
+eta_star=10**eta_star
 
 pnormalise=True 
 
@@ -363,7 +368,7 @@ start = timing.time()
 
 if topo==0: xV,yV,iconV=regular.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==1: xV,yV,iconV=macro_S.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
-if topo==2: xV,yV,iconV=macro_LT.mesher(Lx,Ly,nelx,nely,nel,NV,mV,epsi)
+if topo==2: xV,yV,iconV=macro_LT.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==3: xV,yV,iconV=macro_QZ1.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==4: xV,yV,iconV=macro_QZ2.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==5: xV,yV,iconV=macro_QZ3.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
@@ -907,6 +912,23 @@ for i in range(0,NV):
                                         velocity_y(xV[i],yV[i])))
 vfile.close()
 
+xc_block=256e3
+yc_block=384e3
+for iel in range(0,nel):
+    if abs(xV[iconV[0,iel]]-xc_block)/Lx<eps and abs(yV[iconV[0,iel]]-yc_block)/Ly<eps:
+       print ('pblock:',eta_star,p[iel],q1[iconV[0,iel]],drho)
+    if abs(xV[iconV[1,iel]]-xc_block)/Lx<eps and abs(yV[iconV[1,iel]]-yc_block)/Ly<eps:
+       print ('pblock:',eta_star,p[iel],q1[iconV[1,iel]],drho)
+    if abs(xV[iconV[2,iel]]-xc_block)/Lx<eps and abs(yV[iconV[2,iel]]-yc_block)/Ly<eps:
+       print ('pblock:',eta_star,p[iel],q1[iconV[2,iel]],drho)
+    if abs(xV[iconV[3,iel]]-xc_block)/Lx<eps and abs(yV[iconV[3,iel]]-yc_block)/Ly<eps:
+       print ('pblock:',eta_star,p[iel],q1[iconV[3,iel]],drho)
+
+for i in range(0,NV):
+    if abs(xV[i]-xc_block)/Lx<eps and abs(yV[i]-yc_block)/Ly<eps:
+       print('vblock:',eta_star,u[i],v[i],drho)
+
+
 print("export profiles: %.3f s" % (timing.time() - start))
 
 ###############################################################################
@@ -950,7 +972,7 @@ if visu:
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Float32' Name='by' Format='ascii'> \n")
    for iel in range(0,nel):
-           vtufile.write("%10e \n" %(by(xc[iel],yc[iel])))
+           vtufile.write("%e \n" %(by(xc[iel],yc[iel])))
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
    for iel in range(0,nel):

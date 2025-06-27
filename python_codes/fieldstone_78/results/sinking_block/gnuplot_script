@@ -1,0 +1,151 @@
+#
+set term pdf enhanced font "Times,12pt"
+set pointsize 0.3
+set grid
+set key outside
+
+Lb=128e3
+g=10
+
+set log x
+
+#####################################################
+
+set output 'p_block_res32.pdf'
+plot[][]\
+'pblock_topo0_res32' u 2:($3/Lb/g/$5) w lp t 'R',\
+'pblock_topo1_res32' u 2:($3/Lb/g/$5) w lp t 'S',\
+'pblock_topo2_res32' u 2:($3/Lb/g/$5) w lp t 'LT',\
+'pblock_topo3_res32' u 2:($3/Lb/g/$5) w lp t 'QZ1',\
+'pblock_topo4_res32' u 2:($3/Lb/g/$5) w lp t 'QZ2',\
+'pblock_topo5_res32' u 2:($3/Lb/g/$5) w lp t 'QZ3',\
+'pblock_topo6_res32' u 2:($3/Lb/g/$5) w lp t 'T1',\
+
+set output 'p_block_res64.pdf'
+plot[][]\
+'pblock_topo0_res64' u 2:($3/Lb/g/$5) w lp t 'R',\
+'pblock_topo1_res64' u 2:($3/Lb/g/$5) w lp t 'S',\
+'pblock_topo2_res64' u 2:($3/Lb/g/$5) w lp t 'LT',\
+'pblock_topo3_res64' u 2:($3/Lb/g/$5) w lp t 'QZ1',\
+'pblock_topo4_res64' u 2:($3/Lb/g/$5) w lp t 'QZ2',\
+'pblock_topo5_res64' u 2:($3/Lb/g/$5) w lp t 'QZ3',\
+'pblock_topo6_res64' u 2:($3/Lb/g/$5) w lp t 'T1',\
+
+#####################################################
+
+set output 'q1_block_res32.pdf'
+plot[][]\
+'pblock_topo0_res32' u 2:($4/Lb/g/$5) w lp t 'R',\
+'pblock_topo1_res32' u 2:($4/Lb/g/$5) w lp t 'S',\
+'pblock_topo2_res32' u 2:($4/Lb/g/$5) w lp t 'LT',\
+'pblock_topo3_res32' u 2:($4/Lb/g/$5) w lp t 'QZ1',\
+'pblock_topo4_res32' u 2:($4/Lb/g/$5) w lp t 'QZ2',\
+'pblock_topo5_res32' u 2:($4/Lb/g/$5) w lp t 'QZ3',\
+'pblock_topo6_res32' u 2:($4/Lb/g/$5) w lp t 'T1',\
+
+set output 'q1_block_res64.pdf'
+plot[][]\
+'pblock_topo0_res64' u 2:($4/Lb/g/$5) w lp t 'R',\
+'pblock_topo1_res64' u 2:($4/Lb/g/$5) w lp t 'S',\
+'pblock_topo2_res64' u 2:($4/Lb/g/$5) w lp t 'LT',\
+'pblock_topo3_res64' u 2:($4/Lb/g/$5) w lp t 'QZ1',\
+'pblock_topo4_res64' u 2:($4/Lb/g/$5) w lp t 'QZ2',\
+'pblock_topo5_res64' u 2:($4/Lb/g/$5) w lp t 'QZ3',\
+'pblock_topo6_res64' u 2:($4/Lb/g/$5) w lp t 'T1',\
+
+######################################################
+
+eta1=1e21
+
+set output 'v_block_res32.pdf'
+plot[][]\
+'vblock_topo0_res32' u 2:($4/eta1/$5) w lp t 'R',\
+'vblock_topo1_res32' u 2:($4/eta1/$5) w lp t 'S',\
+'vblock_topo2_res32' u 2:($4/eta1/$5) w lp t 'LT',\
+'vblock_topo3_res32' u 2:($4/eta1/$5) w lp t 'QZ1',\
+'vblock_topo4_res32' u 2:($4/eta1/$5) w lp t 'QZ2',\
+'vblock_topo5_res32' u 2:($4/eta1/$5) w lp t 'QZ3',\
+'vblock_topo6_res32' u 2:($4/eta1/$5) w lp t 'T1',\
+
+set output 'v_block_res64.pdf'
+plot[][]\
+'vblock_topo0_res64' u 2:($4/eta1/$5) w lp t 'R',\
+'vblock_topo1_res64' u 2:($4/eta1/$5) w lp t 'S',\
+'vblock_topo2_res64' u 2:($4/eta1/$5) w lp t 'LT',\
+'vblock_topo3_res64' u 2:($4/eta1/$5) w lp t 'QZ1',\
+'vblock_topo4_res64' u 2:($4/eta1/$5) w lp t 'QZ2',\
+'vblock_topo5_res64' u 2:($4/eta1/$5) w lp t 'QZ3',\
+'vblock_topo6_res64' u 2:($4/eta1/$5) w lp t 'T1',\
+
+######################################################
+unset log x
+
+set xlabel 'y (km)'
+cm=0.01
+year=365.25*3600*24
+
+set output 'v_profile_res32.pdf'
+plot[0:512][]\
+'vel_profile_topo0_etastar0_res32.ascii' u ($1/1000):($3/cm*year) w lp t 'R',\
+'vel_profile_topo1_etastar0_res32.ascii' u ($1/1000):($3/cm*year) w lp t 'S',\
+'vel_profile_topo2_etastar0_res32.ascii' u ($1/1000):($3/cm*year) w lp t 'LT',\
+'vel_profile_topo3_etastar0_res32.ascii' u ($1/1000):($3/cm*year) w lp t 'QZ1',\
+'vel_profile_topo4_etastar0_res32.ascii' u ($1/1000):($3/cm*year) w lp t 'QZ2',\
+'vel_profile_topo5_etastar0_res32.ascii' u ($1/1000):($3/cm*year) w lp t 'QZ3',\
+'vel_profile_topo6_etastar0_res32.ascii' u ($1/1000):($3/cm*year) w lp t 'T1',\
+
+set output 'v_profile_res64.pdf'
+plot[0:512][]\
+'vel_profile_topo0_etastar0_res64.ascii' u ($1/1000):($3/cm*year) w lp t 'R',\
+'vel_profile_topo1_etastar0_res64.ascii' u ($1/1000):($3/cm*year) w lp t 'S',\
+'vel_profile_topo2_etastar0_res64.ascii' u ($1/1000):($3/cm*year) w lp t 'LT',\
+'vel_profile_topo3_etastar0_res64.ascii' u ($1/1000):($3/cm*year) w lp t 'QZ1',\
+'vel_profile_topo4_etastar0_res64.ascii' u ($1/1000):($3/cm*year) w lp t 'QZ2',\
+'vel_profile_topo5_etastar0_res64.ascii' u ($1/1000):($3/cm*year) w lp t 'QZ3',\
+'vel_profile_topo6_etastar0_res64.ascii' u ($1/1000):($3/cm*year) w lp t 'T1',\
+
+######################################################
+
+set xlabel 'x (km)'
+set ylabel 'p (Pa)'
+
+set output 'pressure_top_res32.pdf'
+plot[0:512][]\
+'pressure_top_topo0_etastar0_res32.ascii' u ($1/1000):2 w lp t 'R',\
+'pressure_top_topo1_etastar0_res32.ascii' u ($1/1000):2 w lp t 'S',\
+'pressure_top_topo2_etastar0_res32.ascii' u ($1/1000):2 w lp t 'LT',\
+'pressure_top_topo3_etastar0_res32.ascii' u ($1/1000):2 w lp t 'QZ1',\
+'pressure_top_topo4_etastar0_res32.ascii' u ($1/1000):2 w lp t 'QZ2',\
+'pressure_top_topo5_etastar0_res32.ascii' u ($1/1000):2 w lp t 'QZ3',\
+'pressure_top_topo6_etastar0_res32.ascii' u ($1/1000):2 w lp t 'T1'
+
+set output 'pressure_top_res64.pdf'
+plot[0:512][]\
+'pressure_top_topo0_etastar0_res64.ascii' u ($1/1000):2 w lp t 'R',\
+'pressure_top_topo1_etastar0_res64.ascii' u ($1/1000):2 w lp t 'S',\
+'pressure_top_topo2_etastar0_res64.ascii' u ($1/1000):2 w lp t 'LT',\
+'pressure_top_topo3_etastar0_res64.ascii' u ($1/1000):2 w lp t 'QZ1',\
+'pressure_top_topo4_etastar0_res64.ascii' u ($1/1000):2 w lp t 'QZ2',\
+'pressure_top_topo5_etastar0_res64.ascii' u ($1/1000):2 w lp t 'QZ3',\
+'pressure_top_topo6_etastar0_res64.ascii' u ($1/1000):2 w lp t 'T1'
+
+set output 'pressure_top_res96.pdf'
+plot[0:512][]\
+'pressure_top_topo0_etastar0_res96.ascii' u ($1/1000):2 w lp t 'R',\
+'pressure_top_topo1_etastar0_res96.ascii' u ($1/1000):2 w lp t 'S',\
+'pressure_top_topo2_etastar0_res96.ascii' u ($1/1000):2 w lp t 'LT',\
+'pressure_top_topo3_etastar0_res96.ascii' u ($1/1000):2 w lp t 'QZ1',\
+'pressure_top_topo4_etastar0_res96.ascii' u ($1/1000):2 w lp t 'QZ2',\
+'pressure_top_topo5_etastar0_res96.ascii' u ($1/1000):2 w lp t 'QZ3',\
+'pressure_top_topo6_etastar0_res96.ascii' u ($1/1000):2 w lp t 'T1'
+
+
+
+
+
+
+
+
+
+
+
