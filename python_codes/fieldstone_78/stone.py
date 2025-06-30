@@ -13,7 +13,7 @@ eps=1.e-10
 
 #exp=8
 drho=8 # exp=8
-rho0=3200
+rho0=0 #3200
 
 ###############################################################################
 
@@ -236,12 +236,12 @@ if int(len(sys.argv) == 7):
       nelx*=2
       nely*=2
 else:
-   nelx = 32
-   nely = 32
+   nelx = 80#*2
+   nely = 80#*2
    visu = 1
-   topo = 3
+   topo = 0
    eta_star=0
-   experiment=8
+   experiment=5
    
 eta_star=10**eta_star
 
@@ -881,7 +881,7 @@ errq1=np.sqrt(errq1)
 errq2=np.sqrt(errq2)
 vrms=np.sqrt(vrms/(Lx*Ly))
 
-print("     -> nel= %6d ; errv= %.8f ; errp= %.8f ; errq1= %.8f ; errq2= %.8f" %(nel,errv,errp,errq1,errq2))
+print("     -> nel= %6d ; errv= %.11f ; errp= %.11f ; errq1= %.11f ; errq2= %.11f" %(nel,errv,errp,errq1,errq2))
 print("     -> nel= %6d ; vrms= %12.4e " %(nel,vrms))
 
 print("compute errors: %.3f s" % (timing.time() - start))
@@ -957,7 +957,7 @@ if visu:
    for iel in range(0,nel):
        vtufile.write("%10e \n" %(error_p[iel]))
    vtufile.write("</DataArray>\n")
-   if experiment==3 or experiment==5 or experiment==8:
+   if experiment==3 or experiment==5 or experiment==8 or experiment==13:
       vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
       for iel in range(0,nel):
            vtufile.write("%10e \n" %(viscosity(xc[iel],yc[iel])))

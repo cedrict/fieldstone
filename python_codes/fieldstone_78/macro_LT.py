@@ -1,6 +1,6 @@
 import numpy as np
 
-def mesher(Lx,Ly,nelx,nely,nel,NV,mV,epsi):
+def mesher(Lx,Ly,nelx,nely,nel,NV,mV):
 
     xV = np.zeros(NV,dtype=np.float64)  # x coordinates
     yV = np.zeros(NV,dtype=np.float64)  # y coordinates
@@ -16,7 +16,6 @@ def mesher(Lx,Ly,nelx,nely,nel,NV,mV,epsi):
     dy4=Ly/nely/4
 
     eps=dx/2/np.sqrt(3)
-    #eps=dx*epsi/100.
 
     counter=0
     for irow in range(0,nely):

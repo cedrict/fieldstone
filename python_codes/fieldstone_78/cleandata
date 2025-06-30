@@ -3,8 +3,11 @@ rm *.ascii
 rm ustat*
 rm vstat*
 rm pstat*
-rm qstat*
+rm q1stat*
+rm q2stat*
 rm vrms*
 rm errors*
+rm pblock_*
+rm vblock_*
+rm opla
 rm pressure*.ascii
-

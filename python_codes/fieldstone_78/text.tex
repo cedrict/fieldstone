@@ -982,6 +982,29 @@ Earth dimensions.
 \end{center}
 
 
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/p_block_res32.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/p_block_res64.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/q1_block_res32.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/q1_block_res64.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/v_block_res32.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/v_block_res64.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/pressure_top_res32.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/pressure_top_res64.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/v_profile_res32.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/v_profile_res64.pdf}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
 
 
 \newpage
@@ -1180,22 +1203,13 @@ use schur complement solver to show it is stable ?
 
 cmat version ? 
 
-put bc inside each experiment ?
-
-mesh anisotropy
-
-we do not consider penalty formulations (no choice of lambda)
-
-Note that other q projections are available.
 
 is $<h>$ best? smthg fancier ?
 
 remark in Gang Lu paper with Dave, about removing checkerboard mode
 
-
 I have the feeling results can be different if i impose the
 constraint in the matrix like it was at first?
-
 
 what is the real advantage of such a macro-element? it is LBB stable, so 
 iterative solver will work optimally, and the pressure has no checkerboard.
@@ -1205,10 +1219,6 @@ Also if one would consider a macro-element as an element, it counts 10 velocity 
 which makes it much more expensive than a $Q_2\times Q_1$ element of the same size...
 We find that toplogy 7 does not yield a stable macroelement, so it will be discarded in 
 future tests/experiments.
-
-mention c-n-c smoothing a la Douar
-
-Look in pythoncodes/Gel folder, for nullspace caluclations of macroelements
 
 various stabilisations have been proposed for q1p0. However they invariably 
 rely on adding a block in the Stokes matrix \ref{XXXX} or altering the 

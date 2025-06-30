@@ -40,40 +40,49 @@ focused on 'cheap' elements with a small memory footprint, such as the smallest 
 solve the Stokes equations on quadrilateral: the bi/tri-linear velocity-constant pressure element, 
 also denoted $Q_1 \times P_0$ (or sometimes $Q_1\times Q_0$, see \cite{grsa}). 
 
-Unfortunately it was soon demonstrated \cite{XXX} that this element pair is not LBB-stable and this instability
-manifests itself via the presence of the spurious chequerboard mode on regular meshes, despite a perfectly usable and 
-reasonably accurate velocity field. 
+Unfortunately it was soon demonstrated that this element pair is not LBB-stable \cite{boni84,boni85} and this instability
+manifests itself via the presence of the spurious checkerboard mode on regular meshes
+which have been thoroughly analysed, see for example \cite{grsi94,chpc95,sagl81a,sagl81b}, 
+despite a perfectly usable and reasonably accurate velocity field \cite{grsa,dohu03,bobf08,bobf13}.
+
+
+In Gresho \& Sani \cite{grsa} it is labeled as follows: ``slightly unstable but highly usable''.
 This lead some part of the community to use stable elements instead, such as the Taylor-Hood pair $Q_2\times Q_1$
-(or its simplicial counterpart the $P_2\times P_1$ element), 
-while the rest investigated various options to stabilise this element:
-One can cite approaches which include a matrix block in the lower right part of 
+(or its simplicial counterpart the $P_2\times P_1$ element \cite{thba25}), 
+while the rest investigated various options to nevertheless use this element.
+One can cite approaches which include a stabilizing matrix block in the lower right part of 
 the otherwise empty part of the Stokes matrix\cite{kesi88,sike90,vibo92,nosi98},
 the $Q_1^+\times P_0$ element of Fortin\cite{fort81}, or the $\tilde{Q}_1\times P_0$ element which adds 
 a $Q_2$ bubble function to the $Q_1$ space \cite[p265]{brfo}.
 Finally various stabilisations were also proposed for its 
-$Q_1\times Q_1$ cousin \cite{dobo04,bodg06} but it was recently shown\cite{thba22} 
+$Q_1\times Q_1$ cousin \cite{dobo04,bodg06,busa13} but it was recently shown\cite{thba22} 
 that this stabilised element is not suited to model buoyancy-driven flows, 
 while retaining its usability in engineering applications.  
 
-In \cite{thba22} the authors conclude:
-``
-We believe that the Q1 × P0 element is also not a viable
-choice. As shown by several of the analytical bench-
-marks, the errors that result from using this element can
+Arguments in favour of the $Q_1\times P_0$ element can be summarized as follows:
+a) It insures mass balance at the element level \cite[p459]{grsa};
+b) The pressure modes have been thoroughly analysed \cite{sagl81a,sagl81b,grsi94}.
+One pressure mode is the hydrostatic mode, which is  
+physical. The other one is the so-called checkerboard mode which is spurious;
+c) When filtered out \cite{chpc95} the recovered pressure is usable;
+d) Combined with a penalty formulation, the elimination of the pressure degrees of freedom 
+yield a very compact SPD stiffness matrix \cite{zigo75,hulb79,zina82,redd82,odks82};
+e) Like all other unstable elements, an irregular mesh yields a 
+better numerical behaviour of the element \cite{qizh07} and pressure modes substantially subdue
+(Brezzi \& Fortin p244: ``the known experimental fact that on a general
+distorted mesh pressure modes disappear and the inf-sup constant is independent of h. 
+This last fact is still resisting analysis.'')
+
+Conerning the $Q_1 \times P_0$ pair, \cite{thba22} conclude:
+``We believe that the $Q_1 \times P_0$ element is also not a viable
+choice. As shown by several of the analytical benchmarks, the errors that result from using this element can
 be orders of magnitude larger than the corresponding
 errors that result from the Taylor–Hood-type elements.
-This is no longer the case once we consider discontin-
-uous viscosity profiles (see Sect. 5.3), but this element
+This is no longer the case once we consider discontinuous viscosity profiles [...], but this element
 is also unable to accurately solve the buoyancy-driven
-case discussed in Sect. 5.4. Furthermore, as pointed out
-before, this element is not LBB-stable, which, despite
-considerable efforts in the past decades, has limited its
-use in combination with iterative methods: because of
-the corresponding condition number increase, the num-
-ber of iterations is found to grow in a somewhat un-
-predictable manner with an increase in resolution. ''
+case discussed in Sect. 5.4.''
 
-A third option, seldom explored, is the use of so-called macro-elements composed of $Q_1\times P_0$ elements. 
+Another option, seldom explored, is the use of so-called macro-elements composed of $Q_1\times P_0$ elements. 
 Two were shown to be stable in the mid eighties\cite{leta81,sten84}, followed by three more twenty years
 later\cite{qizh07} but to the author's knowledge these macro-elements were never 
 implemented and compared with each other, nor put through a series of benchmarks showcasing complex flow in the 
@@ -84,51 +93,17 @@ solution of the buoyancy-driven incompressible Stokes flow in the presence of
 dominating lithostatic pressure gradient due to the Earth's gravity field.  
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{The $Q_1\times P_0$ element}\label{sec2}
+%\section{Macro-elements}\label{sec3}
 
-The $Q_1\times P_0$ (also sometimes called 
-$Q_1 \times Q_0$ \cite{grsa}) element has been the object of a lot of attention in the 80's and 90's
-mostly because of its computational attractiveness and is nearly always discussed in 
-textbooks dealing with the Finite Element modelling of flows \cite{grsa,dohu03,bobf08,bobf13}.
-It does however not satisfy the LBB inf-sup condition and it is therefore unstable. 
-This instability usually manifests itself through spurious pressure modes.
-
-The problems of the $Q_1\times P_0$ element have long been recognised 
-and have led computational geodynamicists to rely on 
-higher-order inherently stable elements, such as the $Q_2\times P_{-1}$ \cite{mabl15} or the 
-$Q_2\times Q_1$ \cite{krhb12} or on stabilised equal-order elements such as the $Q_1\times Q_1$ \cite{busa13}.
-
-Arguments in favour of the $Q_1\times P_0$ element are as follows:
-a) It insures mass balance at the element level \cite[p459]{grsa};
-b) The pressure modes have been thoroughly analysed \cite{sagl81a,sagl81b,grsi94}.
-One pressure mode is the hydrostatic mode, which is  
-physical. The other one is the so-called chequerboard mode which is spurious;
-c) When filtered out \cite{chpc95} the recovered pressure is usable;
-d) Combined with a penalty formulation, the elimination of the pressure degrees of freedom 
-yield a very compact SPD stiffness matrix \cite{zigo75,hulb79,zina82,redd82,odks82};
-e) Like all other unstable elements, an irregular mesh yields a 
-better numerical behaviour of the element \cite{qizh07} and pressure modes substantially subdue.
-
-
-%Brezzi \& Fortin p244: " the known experimental fact that on a general
-%distorted mesh pressure modes disappear and the inf-sup constant is independent of h. 
-%This last fact is still resisting analysis."
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Macro-elements}\label{sec3}
-
-Following Stenberg\cite{sten90}, we define by a macroelement $M$ "a connected set of elements of which the 
+Following Stenberg\cite{sten90}, we define by a macroelement $M$ ``a connected set of elements of which the 
 intersection of any two is either empty, a vertex, or one edge or face in $\mathbb{R}^2$ 
-and $\mathbb{R}^3$, respectively".
+and $\mathbb{R}^3$, respectively''.
 
-In this work I focus on quadrilateral meshes and consider 7 
-macro-elements, 5 from from the published literature and 2 new ones. These are shown in Figure~\ref{fig:mes}.
+In this work I focus on quadrilateral meshes and consider 8 
+macro-elements, 5 from from the published literature (S, LT, QZ1, QZ2, QZ3) and 2 new ones (T1, T2) -- although 
+the macro-element R fulfills the definition above it only consists of a $2\times 2$ patch of elements. 
+These are shown in Figure~\ref{fig:mes}.
 Note that macro-element S is often cited in the literature as example of a stable macro-element, 
 e.g. \cite{chba93}+books, but rarely the LT one which in fact predates it by three years. 
 Also QZ3 was mentioned in 1995 by Idehlsohn et al \cite{idsn95} but not used in calculations. 
@@ -137,23 +112,28 @@ Also QZ3 was mentioned in 1995 by Idehlsohn et al \cite{idsn95} but not used in 
 \input{tikz_all_macros}
 \caption{
 a) velocity and pressure nodes for a $Q_1\times P_0$ element;
-b) Stenberg 'S' macro-element \cite{sten84}; 
+b) Stenberg (S) macro-element \cite{sten84}; 
 c) Le Tallec (LT) macro-element \cite{leta81,leru86}; 
-d,e,f) QZ1, QZ2, and QZ3 macro-elements \cite{qizh07}; 
-g,h) macro-elements Th1 and Th2 (this study).
+d,e,f) Qin \& Zhiang (QZ1, QZ2, and QZ3) macro-elements \cite{qizh07}; 
+g,h) newly proposed macro-elements T1 and T2 (this study).
 Velocity nodes are represented by filled-in circles. The purple ones indicate internal nodes which belong to 3 elements.
 For each macro-element a distance $\epsilon$ is indicated which controls the positioning of the internal nodes.
 \label{fig:mes}}
 \end{figure}
 
-{\it add comment about 'R' not being a m-e stricto sensu}
+Note that the new macro-elements proposed by the author have not been proven stable. They are arrived at 
+observing the other existing ones and making sure that they contain at least one node that belongs to three 
+elements so as to hamper checkboard modes.
+
+%checkerboard: US
+%chequerboard: UK
 
 Looking  at Fig~\ref{fig:mes}, we can also make the observation that some macro-elements 
 have a two-fold symmetry (along the axis or the diagonals) while others have a four-fold one 
 (axis and diagonals). May be more important is the fact that S, QZ3 and A are 'anisotropic', i.e., in 
 the case of QZ3 for example, there is an edge joining two opposite corners but none joining the 
 other two opposite corners.
-In Table~\ref{tab1} I summarize the various properties which characterise each macro-element.
+In Table~\ref{tab1} I summarize the various properties which characterizes each macro-element.
 
 \begin{table}
 \centering
@@ -163,6 +143,7 @@ In Table~\ref{tab1} I summarize the various properties which characterise each m
 & {\# elements per m-e} & {mid edge points}  \\
 \hline
 \hline
+R   &  Yes &  Yes & 1  & 4 & No \\
 S   &  Yes &   No & 2  & 5 & Yes \\
 LT  &  Yes &  Yes & 9 & 12 & Yes \\
 QZ1 &  Yes &  Yes & 9 & 12 & Yes \\
@@ -172,26 +153,26 @@ A   &  No  &  Yes & 4 & 7  & Yes \\
 B   &  Yes &  Yes & 4 & 5  & No  \\
 \hline
 \end{tabular}
-\caption{Characteristics of all 7 macro-elements as shown in Fig.~\ref{fig:mes}.\label{tab1}}%
+\caption{Characteristics of all 8 macro-elements as shown in Fig.~\ref{fig:mes}.\label{tab1}}%
 \end{table}
-
 
 The stability of a velocity-pressure pair or a macro-element is often difficult to prove 
 and various techniques have been proposed \cite{bobf13}. 
 All 5 published macro-elements were shown to be LBB-stable and all showcase at least 
 an internal node shared by an odd number of elements which makes a chequerboard pattern impossible. 
-However, things are not that simple since macro-element B showcases 
+However, things are not that simple since macro-element T2 showcases 
 4 such points and as we will see it is not stable and chequerboard patterns still occur 
 albeit at the macro-element scale (I have used the macro-element technique of Stenberg 
-also in Lamichhane to show that a patch of 2x2 m-e of B type have indeed a chequerboard mode).
+also in Lamichhane to show that a patch of 2x2 m-e of T2 type have indeed a chequerboard mode). {\color{red} REDO?!}
 Looking at a macro-element is therefore not sufficient to determine whether it is LBB-stable or not. 
 
 Qi et al \cite{qizh07} state "[...] from the points of implementation and the approximation property, we 
 would list five types of macro-elements from the best to worst as S, LT, QZ1, QZ2, QZ3." 
-The authors unfortunately do not provide any numerical comparison between these 5. 
+The authors unfortunately do not provide any numerical comparison between these 5 and their 
+ranking is therefore not borne by hard evidence. Furthermore, we will find that our ranking disagrees with theirs. 
 %Understand what their ranking is based on. My pragmatic approach - numerical testing!
 
-\paragraph{A quick remark about the QZ1 and QZ3 macro-elements:}
+\paragraph{A remark about the QZ1 and QZ3 macro-elements:}
 Let us consider the triangular macro-element as shown in Fig.~\ref{fig:triangle}.
 As mentioned in \cite{rovira1992}, 
 the velocity and pressure spaces in this case are isomorphic to those
@@ -235,23 +216,9 @@ buoyancy-driven flows in the presence of a strong hydrostatic pressure gradient?
 \end{itemize}
 
 
-%- how can we generate a nodal pressure field? Pressure recovery , from disc to continuous ?
-
-%- can we extend all/some to 3D? stability proof ?
-
-%compute indicator (eigenvalue, ... ?) for meshes and rank them ? see chappelle bathe
-
-%I need to understand how to prove LBB stability and apply it to 3D elts ?
 
 
-%I disregard randomised regular meshes bc how much random is not clear.
 
-%\begin{figure*}
-%\centerline{\includegraphics[width=342pt,height=9pc,draft]{empty}}
-%\caption{This is the sample figure caption.\label{fig2}}
-%\end{figure*}
-
-%Additional Literature ? \cite{bowr08}
 
 
 
@@ -303,6 +270,8 @@ The pressure nullspace due to the Dirichlet boundary conditions on all sides is 
 after the linear system is solved, by imposing $\int_\Omega p dV= 0$.
 
 The projection of the discontinuous pressure $p$ onto the velocity nodes is denoted by $q$. 
+Techniques how to do so (and thereby filter out the checkerboard modes) have been presented in 
+\cite{chpc95,legs79}.
 For simplicity I have adopted the simple procedure explained in \cite{REF}: each 
 elemental pressure is added to the nodes making this element and later averaged. 
 
@@ -314,7 +283,7 @@ are optimal, i.e., that the errors satisfy the relationships
 \| p - p_h \|_{L_2}   &=& {\cal O}(h^{1}),
   \label{eq:error-rates}
 \end{eqnarray}
-where $h$ is the maximal diameter over all cells in the mesh \cite{thba22,thba25}.
+where $h$ is the average diameter over all cells in the mesh.
 I will also measure and report on the convergence rate index for the nodal pressure $q$.
 
 Looking at Fig.~\ref{fig:mes} we see that the elements inside the macro-elements 
@@ -337,9 +306,17 @@ u_x(x,y) &=& x^2(1- x)^2 (2y - 6y^2 + 4y^3)  \\
 u_y(x,y) &=& -y^2 (1 - y)^2 (2x - 6x^2 + 4x^3) \\
 p(x,y) &=& x(1 -x)- 1/6. 
 \end{eqnarray}
-The buoyancy force is obtained by inserting these expressions
-in Eq.~\ref{eq:conv_momentum}.
+The buoyancy force is obtained by inserting these expressions in Eq.~\ref{eq:conv_momentum}.
 Boundary conditions are no-slip on all sides of the domain.
+
+The velocity and pressure fields obtained with a subset of the macro-elements 
+are shown in Fig.~\ref{fig:dh1}
+
+
+\begin{figure}[t]
+{\color{red} insert vel, p field, for R,S,T2}
+\caption{ \label{fig:dh1}}
+\end{figure}
 
 \begin{figure}
 \centering
@@ -347,12 +324,14 @@ Boundary conditions are no-slip on all sides of the domain.
 \includegraphics[width=8cm]{../results/vrms_exp1} \\
 \includegraphics[width=8cm]{../results/errors_p_exp1}
 \includegraphics[width=8cm]{../results/errors_q1_exp1}
-\caption{Donea and Huerta benchmark:} \label{fig:resdh}
+\caption{Donea and Huerta benchmark: velocity error, 
+root mean square velocity, elemental pressure error and nodal pressure error
+as a function of the the average mesh size $h$.} 
+\label{fig:resdh}
 \end{figure}
 
 
-{\color{red} 
-FIGURE with v,p soltuion for reg, all m-e, T2}
+
 
 In Fig.~\ref{fig:resdh} the velocity and pressure errors are shown as a function of the 
 average mesh size $\langle h \rangle$ for all 8 macro-elements.
@@ -368,7 +347,7 @@ while the T1 and T2 macro-elements are the least accurate ones.
 their accuracy follows the previously made observations on their respective velocity errors.
 
 %comment on elemental pressure p
-\item As expected the 'R' macro-element yields a pressure field showcasing a checker board so that 
+\item As expected the 'R' macro-element yields a pressure field showcasing a checkerboard so that 
 the corresponding pressure error does not decrease with increasing $<h>$. 
 \item The same observation can be made for macro-element 'T2'. 
 \item All other macro-elements pressure errors converge linearly and the 'S' macro-element is
@@ -377,7 +356,7 @@ the most accurate of them all.
 of boundary conditions, mesh topology, even or odd numbers of elements per direction, flow features, ...) \cite{XXX} 
 
 %comment on nodal pressure q
-\item Because the 'R' and 'T2' macro-elements yield a checker board pressure field, we need not
+\item Because the 'R' and 'T2' macro-elements yield a checkerboard pressure field, we need not
 assessing their nodal projection and these have then been removed from Fig.~\ref{fig:resdh}c.
 \item A handfull of macro-elements (S, QZ2, QZ3) have their nodal pressure $q$ converge like ${\cal O}(h^{1.5})$
 while the others (LT, QZ1, T1) ultimately see their nodal pressure converge linearly.
@@ -390,7 +369,7 @@ The newly-proposed macro-element T2 is not stable as the checkboard pattern is c
 Also, this macro-element also always yields the worse velocity error. It is therefore abandonned in what follows. 
 As a conclusion, S is the clear best macro-element, followed by QZ2 and QZ3 macro-elements.
 
-{\color{red} I need to re-do all this with different mms and see whether this holds!!}
+{\color{red} TODO: I need to re-do all this with different mms and see whether this holds!!}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -398,7 +377,24 @@ As a conclusion, S is the clear best macro-element, followed by QZ2 and QZ3 macr
 
 
 
-Select last 3-4 ones
+
+
+\begin{figure}
+\centering
+\includegraphics[width=8cm]{../results/errors_u_exp5}
+\includegraphics[width=8cm]{../results/vrms_exp5} \\
+\includegraphics[width=8cm]{../results/errors_p_exp5}
+\includegraphics[width=8cm]{../results/errors_q1_exp5}
+\caption{SolKz benchmark: velocity error, 
+root mean square velocity, elemental pressure error and nodal pressure error
+as a function of the the average mesh size $h$.} 
+\label{fig:ressolkz}
+\end{figure}
+
+
+
+
+
 
 
 
@@ -407,14 +403,12 @@ Select last 3-4 ones
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Buoyancy-driven flow}
 
-use last 3 ones for this
-
-REDO SINKING BLOCK thba22, thba25
 
 
 
 
-What characterises geodynamical modelling is the buoyancy-driven nature of the flow 
+%paragraph for non geo ppl
+What often characterizes geodynamical modelling is the buoyancy-driven nature of the flow 
 in the presence of a very strong hydrostatic pressure and a relatively small dynamic pressure.
 On long periods of time the mantle and the lithosphere behave like non-Newtonian fluids
 which effective viscosity ranges from about $10^{19}$ up to $10^{28}\si{\pascal\second}$, 
@@ -424,8 +418,6 @@ at the core mantle boundary. The mantle is not well mixed and therefore not home
 Subducted plate remnants which are colder than their surroundings are thought to slowly sink 
 while thermo-chemical instabilities at the core mantle boundary are the location where 
 so-called plumes root and traverse the mantle upwards.
-
-
 
 The $Q_1\times P_0$ has been the workhorse of computational geodynamics for decades with 
 very popular mantle convection and lithosphere deformation codes such as Citcom, SOPALE, 
@@ -464,6 +456,45 @@ code\cite{krhb12,hedg17} based on the deal.II FE library \cite{XX}
 using a mesh of $128\times128$ $Q_2\times P_{-1}$ elements.
 
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=4cm]{../results/sinking_block/figure_full/vel0.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_full/vel1.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_full/vel2.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_full/vel3.png}\\
+\includegraphics[width=4cm]{../results/sinking_block/figure_full/vel4.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_full/vel5.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_full/vel6.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_full/vel7.png}
+\caption{Sinking block experiment with full densities: velocity fields 
+obtained with meshes composed of $16\times 16$ macro-elements. \label{fig:dh1}}
+\end{figure}
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/vel.0000.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/vel.0001.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/vel.0002.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/vel.0003.png}\\
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/vel.0004.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/vel.0005.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/vel.0006.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/vel.0007.png}\\
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/press.0000.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/press.0001.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/press.0002.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/press.0003.png}\\
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/press.0004.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/press.0005.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/press.0006.png}
+\includegraphics[width=4cm]{../results/sinking_block/figure_reduced/press.0007.png}\\
+\caption{Sinking block experiment with reduced densities: velocity fields 
+obtained with meshes composed of $16\times 16$ macro-elements. \label{fig:dh2}}
+\end{figure}
+
+
+
 
 
 
@@ -472,7 +503,9 @@ using a mesh of $128\times128$ $Q_2\times P_{-1}$ elements.
 \includegraphics[width=8cm]{../results/sinking_block/p_block_res32.pdf}
 \includegraphics[width=8cm]{../results/sinking_block/v_block_res32.pdf}\\
 \includegraphics[width=8cm]{../results/sinking_block/p_block_res64.pdf}
-\includegraphics[width=8cm]{../results/sinking_block/v_block_res64.pdf}
+\includegraphics[width=8cm]{../results/sinking_block/v_block_res64.pdf}\\
+\includegraphics[width=8cm]{../results/sinking_block/v_profile_res32.pdf}
+\includegraphics[width=8cm]{../results/sinking_block/v_profile_res64.pdf}
 \caption{Sinking block experiment with full density: } \label{fig:resblock}
 \end{figure}
 
@@ -516,7 +549,7 @@ awkward with particle-in-cell , inner structure of macro-element could influence
 
 also, if used at high res, full density, what about mesh deformation?
 
-extension to 3D ?
+can we extend all/some to 3D? stability proof ?
 
 q1 vs q2. in practice doe snot make much difference
 
@@ -525,6 +558,13 @@ if direct solver is used a sloan algo is needed
 we do not consider penalty formulations (no choice of lambda)
 
 Note that other q projections are available.
+
+%compute indicator (eigenvalue, ... ?) for meshes and rank them ? see chappelle bathe
+
+%I need to understand how to prove LBB stability and apply it to 3D elts ?
+
+%I disregard randomised regular meshes bc how much random is not clear.
+
 
 \printbibliography
 

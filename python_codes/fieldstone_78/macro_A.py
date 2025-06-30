@@ -50,7 +50,7 @@ def mesher(Lx,Ly,nelx,nely,nel,NV,mV):
             counter=counter+1    
 
 
-    np.savetxt('velocity.ascii',np.array([xV,yV]).T)
+    #np.savetxt('velocity.ascii',np.array([xV,yV]).T)
 
 
     ###############################################################################
