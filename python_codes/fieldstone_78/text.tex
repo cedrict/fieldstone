@@ -188,18 +188,82 @@ The arguments are the domain size $L_x$ and $L_y$, the number of macroelements
 in each direction $nelx$ and $nely$, the precomputed total number of $Q_1\times P_0$ 
 elements $nel$ and nodes $NV$ and the number of nodes per element $m_\upnu$.  
 
-Pressure normalisation is achieved by enforcing after the solve:
-\[
-\int_\Omega p dV = \sum_e A_e p_e = 0
-\]
-where $A_e$ is the area of element $e$.
-
 In what follows $p$ is the 'raw' pressure field (after normalisation)
 while $q$ denotes its projection onto the nodes by means of corner-to-node average.
 More specifically $q_1$ is the pressure average at the node, 
 while $q_2$  is the element area weighed average.
 
 Define errors and mesh size which is taken to be $h = \sqrt{L_xL_y/nel}$. 
+
+
+\subsection*{Pressure normalization}
+
+When it comes to the requirement of $\int_\Omega p dV=0$ we have three options:
+\begin{enumerate}
+\item build the matrix without taking care of this constraint, and 
+enforce it after the solve:
+\[
+\int_\Omega p dV = \sum_e A_e p_e = 0
+\]
+with $A_e$ being the area of element $e$.
+
+\item Add a line and column to the matrix (Lagrange multiplier technique)
+and effectively add the vector $(A_0, A_1, ... A_{nel-1})$ below and to the 
+right of the zero pressure-pressure block of the Stokes matrix. 
+The recovered pressure is then such that $sum_e A_e p_e = 0$
+and the normalisation loop that comes after is useless (if only to 
+verify that indeed $<p>=0$).
+
+\item add a line and column to the matrix that enforces $p_{nel}=0$
+(or any value, really), solve the linear system and then 
+normalize the pressure.
+
+\end{enumerate}
+
+Option 1 is the simplest and it works fine, except for 
+experiment 9, which showcases a velocity field that 
+does not showcases no-slip b.c.:
+
+\begin{center}
+\includegraphics[width=7cm]{./results/exp09/vel.png}
+\includegraphics[width=7cm]{./results/exp09/press.png}
+\end{center}
+
+I then found out that Option 2 worked *much* better
+and allowed to recover accurate velocities, mild pressure checkerboarding.
+However the addition of the extra line probably (I cannot check this 
+for sure but it makes sense)  generated a lot of fill-ins in the direct solver
+and slowed things down considerably.
+
+Option 3 was then favoured.
+
+\begin{center}
+\includegraphics[width=7cm]{./images/lagrange/A_bef.png}\\
+{\captionfont 20x20 QZ2 macro-element matrix non-zero pattern}
+\end{center}
+
+
+we can verify that the three options result in the same results 
+for experiment 1 for example:
+
+\begin{verbatim}
+**Option 1**
+-> nel=   2400 ; errv= 0.00003035857 ; errp= 0.00419435407 ; errq1= 0.00153250868 ; errq2= 0.00153250868
+solve time: 0.132 s
+**Option 2**
+-> nel=   2400 ; errv= 0.00003035857 ; errp= 0.00419435407 ; errq1= 0.00153250868 ; errq2= 0.00153250868
+solve time: 1.314 s
+**Option 3**
+-> nel=   2400 ; errv= 0.00003035857 ; errp= 0.00419435407 ; errq1= 0.00153250868 ; errq2= 0.00153250868
+solve time: 0.130 s
+\end{verbatim}
+
+We see that Option 2 is definitely *much* slower than option 3!
+
+
+
+
+
 
 \newpage
 %-----------------------------------------------------------------

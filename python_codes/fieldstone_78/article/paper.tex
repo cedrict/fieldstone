@@ -369,14 +369,80 @@ The newly-proposed macro-element T2 is not stable as the checkboard pattern is c
 Also, this macro-element also always yields the worse velocity error. It is therefore abandonned in what follows. 
 As a conclusion, S is the clear best macro-element, followed by QZ2 and QZ3 macro-elements.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Other isoviscous manufactured solutions}
+
 {\color{red} TODO: I need to re-do all this with different mms and see whether this holds!!}
+
+i%experiment=9
+The second one originates in Dohrmann \& Bochev \cite{dobo04} and the smooth exact solution is
+\begin{eqnarray}
+u_x(x,y) &=& x+x^2 - 2xy+x^3 - 3xy^2 + x^2y \\
+u_y(x,y) &=& -y-2xy+y^2 -3x^2y + y^3 - xy^2 \\
+p(x,y) &=& xy+x+y+x^3y^2 - 4/3
+\end{eqnarray}
+Here too the buoyancy terms can be obtained by inserting these expressions
+in Eq.~\ref{eq:conv_momentum}
+and are given in Appendix~\ref{app_bxby}. The analytical velocity
+is prescribed on all sides of the domain.
+
+
+%experiment=7
+The fourth one can be found in Elman et al \cite{elsw}.
+The gravity is vertical with $\vec{g}=-\vec{e}_y$, and 
+density is given by $\rho(x,y)=8x-2$. The velocity and pressure fields are given by
+\begin{eqnarray}
+u_x(x,y) &=&  (2y-1)x(1-x) \\
+u_y(x,y) &=& - (2x-1)y(1-y) \\
+p(x,y) &=& 2x(1 - 2y)
+\end{eqnarray}
+The analytical velocity is prescribed on the edges of the domain. 
+
+\begin{figure}
+\centering
+\includegraphics[width=8cm]{../results/errors_u_exp7}
+\includegraphics[width=8cm]{../results/vrms_exp7} \\
+\includegraphics[width=8cm]{../results/errors_p_exp7}
+\includegraphics[width=8cm]{../results/errors_q1_exp7}
+\caption{Cavity benchmark: velocity error, 
+root mean square velocity, elemental pressure error and nodal pressure error
+as a function of the the average mesh size $h$.} 
+\label{fig:resexp7}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=8cm]{../results/errors_u_exp9}
+\includegraphics[width=8cm]{../results/vrms_exp9} \\
+\includegraphics[width=8cm]{../results/errors_p_exp9}
+\includegraphics[width=8cm]{../results/errors_q1_exp9}
+\caption{Dohrmann \& Bochev benchmark: velocity error, 
+root mean square velocity, elemental pressure error and nodal pressure error
+as a function of the the average mesh size $h$.} 
+\label{fig:resexp7}
+\end{figure}
+
+
+
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Non-isoviscous manufactured solutions}
 
-
-
+The first manufactured solution is one of the standard benchmarks in the computational geodynamics 
+community  \cite{mozg96,mamo08,krhb12,gemd13,demh19,thba22}.
+The viscosity and density fields are given by 
+\begin{eqnarray}
+\eta(y)&=&\exp(By) \\
+\rho(x,y)&=&\sin(2y) \cos(3\pi x)
+\end{eqnarray}
+with $B=\ln 10^6 \simeq 13.8155$ and $\vec{g}=-\vec{e}_y$. 
+Free slip boundary conditions are imposed on all sides of the domain.
+The analytical solution is derived in \cite{XXX} and available in open source codes
+such as for example ASPECT (https://github.com/geodynamics/aspect) or Underworld (?).
 
 
 \begin{figure}
@@ -567,6 +633,114 @@ Note that other q projections are available.
 
 
 \printbibliography
+
+\newpage
+\section{Matrix structure}
+
+
+\begin{center}
+\includegraphics[width=4cm]{../results/spy/A_bef_topo0.pdf}
+\includegraphics[width=4cm]{../results/spy/A_bef_topo1.pdf}
+\includegraphics[width=4cm]{../results/spy/A_bef_topo2.pdf}
+\includegraphics[width=4cm]{../results/spy/A_bef_topo3.pdf}\\
+\includegraphics[width=4cm]{../results/spy/A_bef_topo4.pdf}
+\includegraphics[width=4cm]{../results/spy/A_bef_topo5.pdf}
+\includegraphics[width=4cm]{../results/spy/A_bef_topo6.pdf}
+\includegraphics[width=4cm]{../results/spy/A_bef_topo7.pdf}\\
+{\small 4x4 macro-element mesh}
+\end{center}
+
+\begin{center}
+\includegraphics[width=4cm]{../results/spy/A_aft_topo0.pdf}
+\includegraphics[width=4cm]{../results/spy/A_aft_topo1.pdf}
+\includegraphics[width=4cm]{../results/spy/A_aft_topo2.pdf}
+\includegraphics[width=4cm]{../results/spy/A_aft_topo3.pdf}\\
+\includegraphics[width=4cm]{../results/spy/A_aft_topo4.pdf}
+\includegraphics[width=4cm]{../results/spy/A_aft_topo5.pdf}
+\includegraphics[width=4cm]{../results/spy/A_aft_topo6.pdf}
+\includegraphics[width=4cm]{../results/spy/A_aft_topo7.pdf}\\
+{\small 4x4 macro-element mesh}
+\end{center}
+
+
+
+
+
+
+
+no Lagrange constraint
+
+
+
+
+
+
+
+
+
+
+\newpage
+\section{Question to Wolfgang}
+
+The code solves the following manufactured solution problem
+which originates in Dohrmann \& Bochev \cite{dobo04}: 
+\begin{eqnarray}
+u_x(x,y) &=& x+x^2 - 2xy+x^3 - 3xy^2 + x^2y \\
+u_y(x,y) &=& -y-2xy+y^2 -3x^2y + y^3 - xy^2 \\
+p(x,y) &=& xy+x+y+x^3y^2 - 4/3
+\end{eqnarray}
+
+The element pair I am using is $Q_1\times P_0$ (I know, but there is a good reason, I'll 
+explain later, bear with me:).
+The velocity and pressure fields are as follows:
+
+\begin{center}
+\includegraphics[width=7cm]{../results/exp09/vel.png}
+\includegraphics[width=7cm]{../results/exp09/press.png}
+\end{center}
+
+The analytical field is such that $\int_\Omega p dV= 0$.
+As in our 2 previous papers, I solve the Stokes system (without 
+any imposed constraint wrt zero pressure average) using a built-in direct solver
+and later normalize the pressure to zero.
+
+At this stage I must say that the same code running on the Donea \& Huerta manufactured
+solution yields the right error rates for velocity and pressure, with a zest of pressure 
+checker board modes.
+
+If I run this new benchmark I find that the velocity is visually plagued by imperfections, 
+that its error rate convergence is all over the place and that the pressure field 
+is so 14 orders of magnitude off:
+
+\begin{center}
+\includegraphics[width=7cm]{../results/exp09/velpb.png}
+\includegraphics[width=7cm]{../results/exp09/presspb.png}
+\end{center}
+
+If I now run it by incorporating the constraint $\int_\Omega p dV = \sum_e A_e p_e$ in the 
+matrix itself I find that the problem described above is completely absent, fields are smooth, 
+rates are what is expected, comparable to D\&H benchmark. 
+
+I *suspect* that this behavior could be due to the fact that for once a manufactured solution 
+does not rely on no-slip b.c. and may be there is some kind of imbalance in the overal (discrete)
+flux (flow is incompressible, we should have $\int_\Gamma \vec{u}\cdot\vec{n}d\Gamma=0$) 
+and therefore triggers insane pressure oscillations and 
+yields the problem above? and my instinct then tells me that 
+by adding this extra line (and corresponding column) of constraints in the matrix it somewhat 
+introduces some 'wiggle room' (\#technicalterm:) that compensates for the error in the b.c. imposition?
+ 
+Am I in the right direction? if so could you put some maths around this? 
+If not, any idea what causes the pb, or the solution? :)
+ 
+
+
+
+
+
+
+
+
+
 
 
 \end{document}

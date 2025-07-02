@@ -8,6 +8,8 @@ import solkz
 import solcx
 import solvi
 from scipy.linalg import null_space
+import matplotlib.pyplot as plt
+from scipy.sparse.csgraph import reverse_cuthill_mckee
 
 eps=1.e-10
 
@@ -216,7 +218,7 @@ ndofP=1  # number of pressure degrees of freedom
 # 4: aquarium (retire)
 # 5: mms solkz
 # 6: regularised lid driven cavity
-# 7: mms cavity
+# 7: mms cavity (Elman et al)
 # 8: sinking block
 # 9: mms dohrmann bochev 
 # 10: flow around square cylinder
@@ -232,22 +234,25 @@ if int(len(sys.argv) == 7):
    topo = int(sys.argv[4])
    eta_star = int(sys.argv[5]) 
    experiment = int(sys.argv[6])
-   if topo==0:
-      nelx*=2
-      nely*=2
 else:
-   nelx = 80#*2
-   nely = 80#*2
+   nelx = 32
+   nely = 32
    visu = 1
    topo = 0
    eta_star=0
-   experiment=5
+   experiment=9
+   
+if topo==0:
+   nelx*=2
+   nely*=2
    
 eta_star=10**eta_star
 
-pnormalise=True 
-
 nullspace=False
+p_lagrange=False
+matrix_snapshot=False
+apply_RCM=False
+correct_bcval=False
 
 ###############################################################################
 # set specific values to some parameters for some experiments
@@ -348,6 +353,10 @@ print('NfemV=',NfemV)
 print('NfemP=',NfemP)
 print('topo=',topo)
 print('experiment=',experiment)
+print('p_lagrange=',p_lagrange)
+print('matrix_snapshot',matrix_snapshot)
+print('apply_RCM=',apply_RCM)
+
 print("-----------------------------")
 
 ###############################################################################
@@ -558,20 +567,124 @@ else: # no slip on all sides
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
 
 ###############################################################################
+# compute flux 
+###############################################################################
+start = timing.time()
+
+flux_bottom=0
+flux_top=0
+flux_left=0
+flux_right=0
+
+for iel in range(0,nel):
+    inode0=iconV[0,iel]
+    inode1=iconV[1,iel]
+    inode2=iconV[2,iel]
+    inode3=iconV[3,iel]
+    if abs(yV[inode1]-0)/Ly<eps and abs(yV[inode0]-0)/Ly<eps:
+       flux_bottom+=(xV[inode1]-xV[inode0])*\
+                    (bc_val[inode0*ndofV+1]+bc_val[inode1*ndofV+1])/2 * -1
+    if abs(yV[inode2]-Ly)/Ly<eps and abs(yV[inode3]-Ly)/Ly<eps:
+       flux_top+=(xV[inode2]-xV[inode3])*\
+                 (bc_val[inode2*ndofV+1]+bc_val[inode3*ndofV+1])/2 * 1
+    if abs(xV[inode1]-Lx)/Lx<eps and abs(xV[inode2]-Lx)/Lx<eps:
+       flux_right+=(yV[inode2]-yV[inode1])*\
+                 (bc_val[inode1*ndofV]+bc_val[inode2*ndofV])/2 * 1
+    if abs(xV[inode0]-0)/Lx<eps and abs(xV[inode3]-0)/Lx<eps:
+       flux_left+=(yV[inode3]-yV[inode0])*\
+                 (bc_val[inode0*ndofV]+bc_val[inode3*ndofV])/2 * -1
+
+PHI=flux_bottom+flux_top+flux_left+flux_right
+
+print('     -> flux_bottom=',flux_bottom)
+print('     -> flux_top=',flux_top)
+print('     -> flux_left=',flux_left)
+print('     -> flux_right=',flux_right)
+print('     -> total_flux=',PHI)
+
+print("compute bc val flux: %.3f s" % (timing.time() - start))
+
+###############################################################################
+# correct boundary conditions
+###############################################################################
+start = timing.time()
+
+if correct_bcval:
+
+   perim=2*Lx+2*Ly
+
+   for i in range(0,NV):
+          if yV[i]<eps: # bottom, only need to correct v 
+             ny=-1
+             bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])-PHI/perim*ny
+          if yV[i]>(Ly-eps): #top, only need to correct v
+             ny=+1
+             bc_val[i*ndofV+1] = velocity_y(xV[i],yV[i])-PHI/perim*ny
+          if xV[i]<eps: # left, only need to correct u
+             nx=-1
+             bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])-PHI/perim*nx
+          if xV[i]>(Lx-eps): #right, only need to correct u
+             nx=+1
+             bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])-PHI/perim*nx
+
+   print("correct bc val: %.3f s" % (timing.time() - start))
+
+###############################################################################
+# compute flux again 
+###############################################################################
+start = timing.time()
+
+if correct_bcval:
+
+   flux_bottom=0
+   flux_top=0
+   flux_left=0
+   flux_right=0
+
+   for iel in range(0,nel):
+       inode0=iconV[0,iel]
+       inode1=iconV[1,iel]
+       inode2=iconV[2,iel]
+       inode3=iconV[3,iel]
+       if abs(yV[inode1]-0)/Ly<eps and abs(yV[inode0]-0)/Ly<eps:
+          flux_bottom+=(xV[inode1]-xV[inode0])*\
+                       (bc_val[inode0*ndofV+1]+bc_val[inode1*ndofV+1])/2 * -1
+       if abs(yV[inode2]-Ly)/Ly<eps and abs(yV[inode3]-Ly)/Ly<eps:
+          flux_top+=(xV[inode2]-xV[inode3])*\
+                    (bc_val[inode2*ndofV+1]+bc_val[inode3*ndofV+1])/2 * 1
+       if abs(xV[inode1]-Lx)/Lx<eps and abs(xV[inode2]-Lx)/Lx<eps:
+          flux_right+=(yV[inode2]-yV[inode1])*\
+                    (bc_val[inode1*ndofV]+bc_val[inode2*ndofV])/2 * 1
+       if abs(xV[inode0]-0)/Lx<eps and abs(xV[inode3]-0)/Lx<eps:
+          flux_left+=(yV[inode3]-yV[inode0])*\
+                    (bc_val[inode0*ndofV]+bc_val[inode3*ndofV])/2 * -1
+
+   PHI=flux_bottom+flux_top+flux_left+flux_right
+
+   print('     -> flux_bottom=',flux_bottom)
+   print('     -> flux_top=',flux_top)
+   print('     -> flux_left=',flux_left)
+   print('     -> flux_right=',flux_right)
+   print('     -> total_flux=',PHI)
+
+   print("compute bc val flux: %.3f s" % (timing.time() - start))
+
+###############################################################################
 # build FE matrix
 # [ K G ][u]=[f]
 # [GT 0 ][p] [h]
 ###############################################################################
 start = timing.time()
 
-#if pnormalise:
-#   A_mat = lil_matrix((Nfem+1,Nfem+1),dtype=np.float64)# matrix A 
-#   rhs   = np.zeros((Nfem+1),dtype=np.float64)         # right hand side 
-#else:
+if p_lagrange:
+   A_mat = lil_matrix((Nfem+1,Nfem+1),dtype=np.float64)# matrix A 
+   rhs   = np.zeros((Nfem+1),dtype=np.float64)         # right hand side 
+else:
+   A_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)# matrix A 
+   rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side 
+
 if (nullspace): 
    G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
-A_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)# matrix A 
-rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side 
 b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64)  # gradient matrix B 
 dNNNVdx = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 dNNNVdy = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
@@ -664,9 +777,16 @@ for iel in range(0,nel):
             A_mat[NfemV+iel,m1]+=G_el[ikk,0]
     rhs[NfemV+iel]+=h_el[0,0]
 
-    #if pnormalise:
-    #   A_mat[Nfem,NfemV+iel]=area[iel]
-    #   A_mat[NfemV+iel,Nfem]=area[iel]
+    if p_lagrange:
+       A_mat[Nfem,NfemV+iel]=area[iel]
+       A_mat[NfemV+iel,Nfem]=area[iel]
+    #if p_lagrange and iel==nel-1:
+    #   A_mat[Nfem,NfemV+iel]=1
+    #   A_mat[NfemV+iel,Nfem]=1
+    #if p_lagrange and iel<=nelx-1:
+    #   A_mat[Nfem,NfemV+iel]=1
+    #   A_mat[NfemV+iel,Nfem]=1
+
 
 #end for iel
 
@@ -744,20 +864,53 @@ if nullspace:
       G2[4,:]=G_mat[12,:] ; G2[5,:]=G_mat[13,:]
       G2[6,:]=G_mat[14,:] ; G2[7,:]=G_mat[15,:]
 
-
    ns=null_space(G2)
    print('null space vector(s):')
    print(ns)
-   
    #exit()
+
+###############################################################################
+# apply reverse Cuthill-McKee algorithm 
+###############################################################################
+start = timing.time()
+   
+A_csr=A_mat.tocsr()
+
+#take snapshot of matrix before reordering
+if matrix_snapshot:
+   plt.spy(A_csr, markersize=0.2)
+   plt.savefig('A_bef.png', bbox_inches='tight')
+   plt.clf()
+   print('     -> A_bef.png')
+
+if apply_RCM:
+   #compute reordering array
+   perm = reverse_cuthill_mckee(A_csr,symmetric_mode=True)
+   #build reverse perm array
+   perm_inv=np.empty(len(perm),dtype=np.int32)
+   for i in range(0,len(perm)):
+       perm_inv[perm[i]]=i
+   A_csr=A_csr[np.ix_(perm,perm)]
+   rhs=rhs[np.ix_(perm)]
+
+if matrix_snapshot:
+   #take snapshot of matrix after reordering
+   plt.spy(A_csr, markersize=0.2)
+   plt.savefig('A_aft.png', bbox_inches='tight')
+   plt.clf()
+   print('     -> A_aft.png')
+
+print("apply Reverse Cuthill-Mckee reordering: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 # solve system
 ###############################################################################
 start = timing.time()
 
-A_mat=A_mat.tocsr()
-sol=sps.linalg.spsolve(A_mat,rhs)
+sol=sps.linalg.spsolve(A_csr,rhs)
+   
+if apply_RCM:
+   sol=sol[np.ix_(perm_inv)]
 
 print("solve time: %.3f s" % (timing.time() - start))
 
@@ -826,22 +979,6 @@ print("compute nodal pressure q1 & q2: %.3f s" % (timing.time() - start))
 ###############################################################################
 start = timing.time()
 
-error_u = np.zeros(NV,dtype=np.float64)
-error_v = np.zeros(NV,dtype=np.float64)
-error_q1 = np.zeros(NV,dtype=np.float64)
-error_q2 = np.zeros(NV,dtype=np.float64)
-error_p = np.zeros(nel,dtype=np.float64)
-jcb=np.zeros((2,2),dtype=np.float64)
-
-for i in range(0,NV): 
-    error_u[i]=u[i]-velocity_x(xV[i],yV[i])
-    error_v[i]=v[i]-velocity_y(xV[i],yV[i])
-    error_q1[i]=q1[i]-pressure(xV[i],yV[i])
-    error_q2[i]=q2[i]-pressure(xV[i],yV[i])
-
-for i in range(0,nel): 
-    error_p[i]=p[i]-pressure(xc[i],yc[i])
-
 vrms=0.
 errv=0.
 errp=0.
@@ -882,7 +1019,7 @@ errq2=np.sqrt(errq2)
 vrms=np.sqrt(vrms/(Lx*Ly))
 
 print("     -> nel= %6d ; errv= %.11f ; errp= %.11f ; errq1= %.11f ; errq2= %.11f" %(nel,errv,errp,errq1,errq2))
-print("     -> nel= %6d ; vrms= %12.4e " %(nel,vrms))
+print("     -> nel= %6d ; vrms= %12.6e " %(nel,vrms))
 
 print("compute errors: %.3f s" % (timing.time() - start))
 
@@ -912,28 +1049,50 @@ for i in range(0,NV):
                                         velocity_y(xV[i],yV[i])))
 vfile.close()
 
-xc_block=256e3
-yc_block=384e3
-for iel in range(0,nel):
-    if abs(xV[iconV[0,iel]]-xc_block)/Lx<eps and abs(yV[iconV[0,iel]]-yc_block)/Ly<eps:
-       print ('pblock:',eta_star,p[iel],q1[iconV[0,iel]],drho)
-    if abs(xV[iconV[1,iel]]-xc_block)/Lx<eps and abs(yV[iconV[1,iel]]-yc_block)/Ly<eps:
-       print ('pblock:',eta_star,p[iel],q1[iconV[1,iel]],drho)
-    if abs(xV[iconV[2,iel]]-xc_block)/Lx<eps and abs(yV[iconV[2,iel]]-yc_block)/Ly<eps:
-       print ('pblock:',eta_star,p[iel],q1[iconV[2,iel]],drho)
-    if abs(xV[iconV[3,iel]]-xc_block)/Lx<eps and abs(yV[iconV[3,iel]]-yc_block)/Ly<eps:
-       print ('pblock:',eta_star,p[iel],q1[iconV[3,iel]],drho)
-
-for i in range(0,NV):
-    if abs(xV[i]-xc_block)/Lx<eps and abs(yV[i]-yc_block)/Ly<eps:
-       print('vblock:',eta_star,u[i],v[i],drho)
-
+if experiment==8:
+   xc_block=256e3
+   yc_block=384e3
+   for iel in range(0,nel):
+       if abs(xV[iconV[0,iel]]-xc_block)/Lx<eps and abs(yV[iconV[0,iel]]-yc_block)/Ly<eps:
+          print ('pblock:',eta_star,p[iel],q1[iconV[0,iel]],drho)
+       if abs(xV[iconV[1,iel]]-xc_block)/Lx<eps and abs(yV[iconV[1,iel]]-yc_block)/Ly<eps:
+          print ('pblock:',eta_star,p[iel],q1[iconV[1,iel]],drho)
+       if abs(xV[iconV[2,iel]]-xc_block)/Lx<eps and abs(yV[iconV[2,iel]]-yc_block)/Ly<eps:
+          print ('pblock:',eta_star,p[iel],q1[iconV[2,iel]],drho)
+       if abs(xV[iconV[3,iel]]-xc_block)/Lx<eps and abs(yV[iconV[3,iel]]-yc_block)/Ly<eps:
+          print ('pblock:',eta_star,p[iel],q1[iconV[3,iel]],drho)
+   for i in range(0,NV):
+       if abs(xV[i]-xc_block)/Lx<eps and abs(yV[i]-yc_block)/Ly<eps:
+          print('vblock:',eta_star,u[i],v[i],drho)
 
 print("export profiles: %.3f s" % (timing.time() - start))
 
 ###############################################################################
+# compute error fields for visualisation
+###############################################################################
+start = timing.time()
+
+error_u = np.zeros(NV,dtype=np.float64)
+error_v = np.zeros(NV,dtype=np.float64)
+error_q1 = np.zeros(NV,dtype=np.float64)
+error_q2 = np.zeros(NV,dtype=np.float64)
+error_p = np.zeros(nel,dtype=np.float64)
+
+for i in range(0,NV): 
+    error_u[i]=u[i]-velocity_x(xV[i],yV[i])
+    error_v[i]=v[i]-velocity_y(xV[i],yV[i])
+    error_q1[i]=q1[i]-pressure(xV[i],yV[i])
+    error_q2[i]=q2[i]-pressure(xV[i],yV[i])
+
+for i in range(0,nel): 
+    error_p[i]=p[i]-pressure(xc[i],yc[i])
+
+print("create error fields: %.3f s" % (timing.time() - start))
+
+###############################################################################
 # plot of solution
 ###############################################################################
+start = timing.time()
 
 if visu:
    vtufile=open('solution.vtu',"w")
@@ -947,7 +1106,7 @@ if visu:
        vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
    vtufile.write("</DataArray>\n")
    vtufile.write("</Points> \n")
-
+   #
    vtufile.write("<CellData Scalars='scalars'>\n")
    vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
    for iel in range(0,nel):
@@ -990,6 +1149,13 @@ if visu:
    for i in range(0,NV):
        vtufile.write("%10e %10e %10e \n" %(velocity_x(xV[i],yV[i]),velocity_y(xV[i],yV[i]),0.))
    vtufile.write("</DataArray>\n")
+
+   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel (error)' Format='ascii'> \n")
+   for i in range(0,NV):
+       vtufile.write("%10e %10e %10e \n" %(error_u[i]/vscaling,error_v[i]/vscaling,0.))
+   vtufile.write("</DataArray>\n")
+
+
    #--
    vtufile.write("<DataArray type='Float32'  Name='q1' Format='ascii'> \n")
    for i in range(0,NV):
@@ -1025,6 +1191,8 @@ if visu:
    vtufile.write("</UnstructuredGrid>\n")
    vtufile.write("</VTKFile>\n")
    vtufile.close()
+
+   print("export to vtu: %.3f s" % (timing.time() - start))
 
 print("-----------------------------")
 print("------------the end----------")

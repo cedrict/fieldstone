@@ -1,0 +1,20 @@
+#! /bin/bash
+
+exp=1
+eta_star=0
+res=4
+
+for topo in 0 1 2 3 4 5 6 7 ; do
+
+    echo topology= $topo 
+
+    python3 stone.py $res $res 1 $topo $eta_star $exp > opla
+
+    mv A_bef.pdf A_bef_topo${topo}.pdf
+    mv A_aft.pdf A_aft_topo${topo}.pdf
+
+done
+
+rm opla
+     
+ 
