@@ -141,7 +141,7 @@ This does not mean that it is usable with iterative solver?
 
 
 %---------------------------------
-\subsection*{Implementation}
+\section*{Implementation}
 
 There are 14 benchmarks/experiments that are currently implemented in the code:
 \begin{enumerate}
@@ -195,7 +195,7 @@ while $q_2$  is the element area weighed average.
 
 Define errors and mesh size which is taken to be $h = \sqrt{L_xL_y/nel}$. 
 
-
+%------------------------------------
 \subsection*{Pressure normalization}
 
 When it comes to the requirement of $\int_\Omega p dV=0$ we have three options:
@@ -225,11 +225,11 @@ experiment 9, which showcases a velocity field that
 does not showcases no-slip b.c.:
 
 \begin{center}
-\includegraphics[width=7cm]{./results/exp09/vel.png}
-\includegraphics[width=7cm]{./results/exp09/press.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp09/vel.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp09/press.png}
 \end{center}
 
-I then found out that Option 2 worked *much* better
+I then found out that Option 2 worked *much* better for this experiment
 and allowed to recover accurate velocities, mild pressure checkerboarding.
 However the addition of the extra line probably (I cannot check this 
 for sure but it makes sense)  generated a lot of fill-ins in the direct solver
@@ -238,10 +238,9 @@ and slowed things down considerably.
 Option 3 was then favoured.
 
 \begin{center}
-\includegraphics[width=7cm]{./images/lagrange/A_bef.png}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_78/images/lagrange/A_bef.png}\\
 {\captionfont 20x20 QZ2 macro-element matrix non-zero pattern}
 \end{center}
-
 
 we can verify that the three options result in the same results 
 for experiment 1 for example:
@@ -259,10 +258,96 @@ solve time: 0.130 s
 \end{verbatim}
 
 We see that Option 2 is definitely *much* slower than option 3!
+However, when carrying out resolution tests I found that Option 2 slowed 
+the solver so much that it became unpractical. 
+Also I found out that Option 2 worked but Option 3 did not (again, for experiment 9), which makes little sense. 
+I then followed my instinct and started to think again about the fact that 
+experiment 9 showcases a non-zero flux on various faces. 
 
+I then *suspected* that this behavior could be due to the fact 
+may be there is some kind of imbalance in the overal (discrete)
+flux (flow is incompressible, we should have $\int_\Gamma \vec{u}\cdot\vec{n}d\Gamma=0$) 
+and therefore triggers extremely large insane pressure oscillations and 
+yields the problem above? my instinct then tells me that 
+by adding this extra line (and corresponding column) of constraints in the matrix it somewhat 
+introduces some 'wiggle room' (\#technicalterm:) that compensates for the error in the b.c. imposition?
+However, since option 2 is not an option in reality, what to do? 
+ 
+For once we could start by computing the flux on each face for experiment9:
+\begin{eqnarray}
+\Phi_{bottom} 
+&=& \int_0^1 \vec{\upnu}(x,y=0) \cdot \vec{n} \; dx \nn\\
+&=& -\int_0^1 v(x,y=0)  dx \nn\\
+&=& 0 \nn\\
+\Phi_{top} 
+&=& \int_0^1 \vec{\upnu}(x,y=1) \cdot \vec{n} \; dx \nn\\
+&=& \int_0^1 v(x,y=1)  dx \nn\\
+&=& \int_0^1 ( -1-2x+1 -3x^2 + 1 - x ) dx \nn\\
+&=& \int_0^1 ( -3x+1 -3x^2   ) dx \nn\\
+&=& -3/2 \nn\\
+\Phi_{left} 
+&=& \int_0^1 \vec{\upnu}(x=0,y) \cdot \vec{n} \; dy \nn\\
+&=& -\int_0^1 u(x=0,y)  dy \nn\\
+&=& 0 \nn\\
+\Phi_{right} 
+&=& \int_0^1 \vec{\upnu}(x=1,y) \cdot \vec{n} \; dy \nn\\
+&=& \int_0^1 u(x=1,y)  dy \nn\\
+&=& \int_0^1 (3  - y - 3y^2  ) dy \nn\\
+&=& 3/2 \nn
+\end{eqnarray}
+And of course we find 
+\[
+\Phi_{total}=\Phi_{bottom}+\Phi_{top} +\Phi_{left}  + \Phi_{right}  =0
+\] 
+We expected this since
+\[
+\int_\Omega \vec{\nabla}\cdot \vec{\upnu} \; dV 
+= \int_\Gamma \vec{\upnu} \cdot \vec{n} \; dS
+=\Phi_{total}=\Phi_{bottom}+\Phi_{top} +\Phi_{left}  + \Phi_{right}  =0
+\]
 
+Now turning to measurements of these fluxes on each boundary,
+we compute these by means of a one point quadrature on each 
+element edge that is on a boundary. 
+For a 32x32 (R) mesh we find:
+\begin{verbatim}
+flux b,t,l,r= 0.0 -1.5001220703125 0.0 1.4998779296875
+total_flux= -0.000244140625
+\end{verbatim}
+We see that the total flux is not zero (at least down to machine precision)
+and this is likely to introduce a problem.
 
+I then prescribe on the nodes of the boundary the following velocity:
+\[
+\vec{\upnu}^{bc} = \vec{\upnu}_{analytical} - \frac{\Phi_{measured}}{P} \vec{n}
+\]
+Then 
+\begin{eqnarray}
+\int_\Gamma \vec{\upnu}^{bc} \cdot \vec{n} dS
+&=& \int_\Gamma \vec{\upnu}_{analytical} \cdot \vec{n} dS
+- \int_\Gamma  \frac{\Phi_{measured}}{P} \vec{n} \cdot \vec{n} dS\nn\\
+&=& \Phi_{measured} - \frac{\Phi_{measured}}{P} \int_\Gamma  1 dS \nn\\
+&=& \Phi_{measured} - \frac{\Phi_{measured}}{P} P \nn\\
+&=&0 \nn
+\end{eqnarray}
+where $P$ is the perimeter of the domain.
+I then find that applying this correction does solve the problem 
+and that Option 1 is now usable again for all topologies.
 
+Note that the problem of the normal vector at the corners does not
+present itself: the quadrature points are in the middle 
+of element edges and the normal vector is well defined there.
+
+This velocity correction is transparent to all 
+manufactured solutions or experiments that 
+showcase free-slip or no-slip boundary conditions.
+
+This is controled by the {\tt correct\_bcval} parameter. 
+
+%--------------------------------------------------------------
+\subsection{About reordering ...}
+
+DESCRIBE HERE RCM
 
 
 \newpage

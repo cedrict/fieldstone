@@ -252,7 +252,7 @@ nullspace=False
 p_lagrange=False
 matrix_snapshot=False
 apply_RCM=False
-correct_bcval=False
+correct_bcval=True
 
 ###############################################################################
 # set specific values to some parameters for some experiments
@@ -581,25 +581,51 @@ for iel in range(0,nel):
     inode1=iconV[1,iel]
     inode2=iconV[2,iel]
     inode3=iconV[3,iel]
-    if abs(yV[inode1]-0)/Ly<eps and abs(yV[inode0]-0)/Ly<eps:
-       flux_bottom+=(xV[inode1]-xV[inode0])*\
-                    (bc_val[inode0*ndofV+1]+bc_val[inode1*ndofV+1])/2 * -1
+
+    # bottom
+    if abs(yV[inode0]-0)/Ly<eps and abs(yV[inode1]-0)/Ly<eps:
+       flux_bottom+=abs(xV[inode0]-xV[inode1])*(bc_val[inode0*ndofV+1]+bc_val[inode1*ndofV+1])/2 *-1
+    if abs(yV[inode1]-0)/Ly<eps and abs(yV[inode2]-0)/Ly<eps:
+       flux_bottom+=abs(xV[inode1]-xV[inode2])*(bc_val[inode1*ndofV+1]+bc_val[inode2*ndofV+1])/2 *-1
+    if abs(yV[inode2]-0)/Ly<eps and abs(yV[inode3]-0)/Ly<eps:
+       flux_bottom+=abs(xV[inode2]-xV[inode3])*(bc_val[inode2*ndofV+1]+bc_val[inode3*ndofV+1])/2 *-1
+    if abs(yV[inode3]-0)/Ly<eps and abs(yV[inode0]-0)/Ly<eps:
+       flux_bottom+=abs(xV[inode3]-xV[inode0])*(bc_val[inode3*ndofV+1]+bc_val[inode0*ndofV+1])/2 *-1
+
+    # top
+    if abs(yV[inode0]-Ly)/Ly<eps and abs(yV[inode1]-Ly)/Ly<eps:
+       flux_top+=abs(xV[inode0]-xV[inode1])*(bc_val[inode0*ndofV+1]+bc_val[inode1*ndofV+1])/2 * 1
+    if abs(yV[inode1]-Ly)/Ly<eps and abs(yV[inode2]-Ly)/Ly<eps:
+       flux_top+=abs(xV[inode1]-xV[inode2])*(bc_val[inode1*ndofV+1]+bc_val[inode2*ndofV+1])/2 * 1
     if abs(yV[inode2]-Ly)/Ly<eps and abs(yV[inode3]-Ly)/Ly<eps:
-       flux_top+=(xV[inode2]-xV[inode3])*\
-                 (bc_val[inode2*ndofV+1]+bc_val[inode3*ndofV+1])/2 * 1
+       flux_top+=abs(xV[inode2]-xV[inode3])*(bc_val[inode2*ndofV+1]+bc_val[inode3*ndofV+1])/2 * 1
+    if abs(yV[inode3]-Ly)/Ly<eps and abs(yV[inode0]-Ly)/Ly<eps:
+       flux_top+=abs(xV[inode3]-xV[inode0])*(bc_val[inode3*ndofV+1]+bc_val[inode0*ndofV+1])/2 * 1
+
+    # right
+    if abs(xV[inode0]-Lx)/Lx<eps and abs(xV[inode1]-Lx)/Lx<eps:
+       flux_right+=abs(yV[inode0]-yV[inode1])*(bc_val[inode0*ndofV]+bc_val[inode1*ndofV])/2 * 1
     if abs(xV[inode1]-Lx)/Lx<eps and abs(xV[inode2]-Lx)/Lx<eps:
-       flux_right+=(yV[inode2]-yV[inode1])*\
-                 (bc_val[inode1*ndofV]+bc_val[inode2*ndofV])/2 * 1
-    if abs(xV[inode0]-0)/Lx<eps and abs(xV[inode3]-0)/Lx<eps:
-       flux_left+=(yV[inode3]-yV[inode0])*\
-                 (bc_val[inode0*ndofV]+bc_val[inode3*ndofV])/2 * -1
+       flux_right+=abs(yV[inode1]-yV[inode2])*(bc_val[inode1*ndofV]+bc_val[inode2*ndofV])/2 * 1
+    if abs(xV[inode2]-Lx)/Lx<eps and abs(xV[inode3]-Lx)/Lx<eps:
+       flux_right+=abs(yV[inode2]-yV[inode3])*(bc_val[inode2*ndofV]+bc_val[inode3*ndofV])/2 * 1
+    if abs(xV[inode3]-Lx)/Lx<eps and abs(xV[inode0]-Lx)/Lx<eps:
+       flux_right+=abs(yV[inode3]-yV[inode0])*(bc_val[inode3*ndofV]+bc_val[inode0*ndofV])/2 * 1
+
+    # left 
+    if abs(xV[inode0]-0)/Lx<eps and abs(xV[inode1]-0)/Lx<eps:
+       flux_left+=abs(yV[inode0]-yV[inode1])*(bc_val[inode0*ndofV]+bc_val[inode1*ndofV])/2 * -1
+    if abs(xV[inode1]-0)/Lx<eps and abs(xV[inode2]-0)/Lx<eps:
+       flux_left+=abs(yV[inode1]-yV[inode2])*(bc_val[inode1*ndofV]+bc_val[inode2*ndofV])/2 * -1
+    if abs(xV[inode2]-0)/Lx<eps and abs(xV[inode3]-0)/Lx<eps:
+       flux_left+=abs(yV[inode2]-yV[inode3])*(bc_val[inode2*ndofV]+bc_val[inode3*ndofV])/2 * -1
+    if abs(xV[inode3]-0)/Lx<eps and abs(xV[inode0]-0)/Lx<eps:
+       flux_left+=abs(yV[inode3]-yV[inode0])*(bc_val[inode3*ndofV]+bc_val[inode0*ndofV])/2 * -1
+
 
 PHI=flux_bottom+flux_top+flux_left+flux_right
 
-print('     -> flux_bottom=',flux_bottom)
-print('     -> flux_top=',flux_top)
-print('     -> flux_left=',flux_left)
-print('     -> flux_right=',flux_right)
+print('     -> flux b,t,l,r=',flux_bottom,flux_top,flux_left,flux_right)
 print('     -> total_flux=',PHI)
 
 print("compute bc val flux: %.3f s" % (timing.time() - start))
@@ -646,25 +672,50 @@ if correct_bcval:
        inode1=iconV[1,iel]
        inode2=iconV[2,iel]
        inode3=iconV[3,iel]
-       if abs(yV[inode1]-0)/Ly<eps and abs(yV[inode0]-0)/Ly<eps:
-          flux_bottom+=(xV[inode1]-xV[inode0])*\
-                       (bc_val[inode0*ndofV+1]+bc_val[inode1*ndofV+1])/2 * -1
+
+       # bottom
+       if abs(yV[inode0]-0)/Ly<eps and abs(yV[inode1]-0)/Ly<eps:
+          flux_bottom+=abs(xV[inode0]-xV[inode1])*(bc_val[inode0*ndofV+1]+bc_val[inode1*ndofV+1])/2 *-1
+       if abs(yV[inode1]-0)/Ly<eps and abs(yV[inode2]-0)/Ly<eps:
+          flux_bottom+=abs(xV[inode1]-xV[inode2])*(bc_val[inode1*ndofV+1]+bc_val[inode2*ndofV+1])/2 *-1
+       if abs(yV[inode2]-0)/Ly<eps and abs(yV[inode3]-0)/Ly<eps:
+          flux_bottom+=abs(xV[inode2]-xV[inode3])*(bc_val[inode2*ndofV+1]+bc_val[inode3*ndofV+1])/2 *-1
+       if abs(yV[inode3]-0)/Ly<eps and abs(yV[inode0]-0)/Ly<eps:
+          flux_bottom+=abs(xV[inode3]-xV[inode0])*(bc_val[inode3*ndofV+1]+bc_val[inode0*ndofV+1])/2 *-1
+
+       # top
+       if abs(yV[inode0]-Ly)/Ly<eps and abs(yV[inode1]-Ly)/Ly<eps:
+          flux_top+=abs(xV[inode0]-xV[inode1])*(bc_val[inode0*ndofV+1]+bc_val[inode1*ndofV+1])/2 * 1
+       if abs(yV[inode1]-Ly)/Ly<eps and abs(yV[inode2]-Ly)/Ly<eps:
+          flux_top+=abs(xV[inode1]-xV[inode2])*(bc_val[inode1*ndofV+1]+bc_val[inode2*ndofV+1])/2 * 1
        if abs(yV[inode2]-Ly)/Ly<eps and abs(yV[inode3]-Ly)/Ly<eps:
-          flux_top+=(xV[inode2]-xV[inode3])*\
-                    (bc_val[inode2*ndofV+1]+bc_val[inode3*ndofV+1])/2 * 1
+          flux_top+=abs(xV[inode2]-xV[inode3])*(bc_val[inode2*ndofV+1]+bc_val[inode3*ndofV+1])/2 * 1
+       if abs(yV[inode3]-Ly)/Ly<eps and abs(yV[inode0]-Ly)/Ly<eps:
+          flux_top+=abs(xV[inode3]-xV[inode0])*(bc_val[inode3*ndofV+1]+bc_val[inode0*ndofV+1])/2 * 1
+
+       # right
+       if abs(xV[inode0]-Lx)/Lx<eps and abs(xV[inode1]-Lx)/Lx<eps:
+          flux_right+=abs(yV[inode0]-yV[inode1])*(bc_val[inode0*ndofV]+bc_val[inode1*ndofV])/2 * 1
        if abs(xV[inode1]-Lx)/Lx<eps and abs(xV[inode2]-Lx)/Lx<eps:
-          flux_right+=(yV[inode2]-yV[inode1])*\
-                    (bc_val[inode1*ndofV]+bc_val[inode2*ndofV])/2 * 1
-       if abs(xV[inode0]-0)/Lx<eps and abs(xV[inode3]-0)/Lx<eps:
-          flux_left+=(yV[inode3]-yV[inode0])*\
-                    (bc_val[inode0*ndofV]+bc_val[inode3*ndofV])/2 * -1
+          flux_right+=abs(yV[inode1]-yV[inode2])*(bc_val[inode1*ndofV]+bc_val[inode2*ndofV])/2 * 1
+       if abs(xV[inode2]-Lx)/Lx<eps and abs(xV[inode3]-Lx)/Lx<eps:
+          flux_right+=abs(yV[inode2]-yV[inode3])*(bc_val[inode2*ndofV]+bc_val[inode3*ndofV])/2 * 1
+       if abs(xV[inode3]-Lx)/Lx<eps and abs(xV[inode0]-Lx)/Lx<eps:
+          flux_right+=abs(yV[inode3]-yV[inode0])*(bc_val[inode3*ndofV]+bc_val[inode0*ndofV])/2 * 1
+
+       # left 
+       if abs(xV[inode0]-0)/Lx<eps and abs(xV[inode1]-0)/Lx<eps:
+          flux_left+=abs(yV[inode0]-yV[inode1])*(bc_val[inode0*ndofV]+bc_val[inode1*ndofV])/2 * -1
+       if abs(xV[inode1]-0)/Lx<eps and abs(xV[inode2]-0)/Lx<eps:
+          flux_left+=abs(yV[inode1]-yV[inode2])*(bc_val[inode1*ndofV]+bc_val[inode2*ndofV])/2 * -1
+       if abs(xV[inode2]-0)/Lx<eps and abs(xV[inode3]-0)/Lx<eps:
+          flux_left+=abs(yV[inode2]-yV[inode3])*(bc_val[inode2*ndofV]+bc_val[inode3*ndofV])/2 * -1
+       if abs(xV[inode3]-0)/Lx<eps and abs(xV[inode0]-0)/Lx<eps:
+          flux_left+=abs(yV[inode3]-yV[inode0])*(bc_val[inode3*ndofV]+bc_val[inode0*ndofV])/2 * -1
 
    PHI=flux_bottom+flux_top+flux_left+flux_right
 
-   print('     -> flux_bottom=',flux_bottom)
-   print('     -> flux_top=',flux_top)
-   print('     -> flux_left=',flux_left)
-   print('     -> flux_right=',flux_right)
+   print('     -> flux b,t,l,r=',flux_bottom,flux_top,flux_left,flux_right)
    print('     -> total_flux=',PHI)
 
    print("compute bc val flux: %.3f s" % (timing.time() - start))

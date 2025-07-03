@@ -17,11 +17,13 @@ for exp in 9; do
 
         echo topology= $topo experiment= $exp
 
-        for res in 8 10 12 14 16 20 24 28 32 40 48 64; do
+        for res in 8 10 12 14 16 20 24 28 32 48 64 80 96; do
         #for res in 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 23 24 27 28 31 32 35 40 45 48 53 56 61 64 71 80 88 96 111 128 150; do
 
             echo $res 
             python3 stone.py $res $res 1 $topo 0 $exp > opla
+
+            grep flux opla | grep total
 
             grep errv opla >> errors_topo${topo}_exp${exp}.ascii
             grep vrms opla >> vrms_topo${topo}_exp${exp}.ascii

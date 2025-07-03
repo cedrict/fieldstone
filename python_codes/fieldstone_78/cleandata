@@ -10,4 +10,6 @@ rm errors*
 rm pblock_*
 rm vblock_*
 rm opla
+rm *.pdf
+rm *.png
 rm pressure*.ascii
