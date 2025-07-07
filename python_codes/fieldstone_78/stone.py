@@ -15,7 +15,7 @@ eps=1.e-10
 
 #exp=8
 drho=8 # exp=8
-rho0=0 #3200
+rho0=0 # 3200
 
 ###############################################################################
 
@@ -238,9 +238,9 @@ else:
    nelx = 32
    nely = 32
    visu = 1
-   topo = 0
+   topo = 1
    eta_star=0
-   experiment=9
+   experiment=1
    
 if topo==0:
    nelx*=2
@@ -248,7 +248,7 @@ if topo==0:
    
 eta_star=10**eta_star
 
-nullspace=False
+nullspace=True
 p_lagrange=False
 matrix_snapshot=False
 apply_RCM=False
@@ -306,17 +306,18 @@ if topo==5: # qizh07 (QZ3)
    nel=nelx*nely*6
    NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +3*nelx*nely
 
-if topo==6: # mine (A)
-   import macro_A
+if topo==6: # mine (T1)
+   import macro_T1
    nel=nelx*nely*7
    NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +4*nelx*nely
 
-if topo==7: # mine (B)
-   import macro_B
+if topo==7: # mine (T2)
+   import macro_T2
    nel=nelx*nely*5
    NV=(nelx+1)*(nely+1)+4*nelx*nely
 
 ###############################################################################
+
 
 if nullspace:
 
@@ -325,19 +326,40 @@ if nullspace:
    experiment=1
 
    if topo==0:
-      nelx=2 ; nely=2 ; NV=9 ; nel=4
+      nelx=4 ; nely=4 
+      NV=(nelx+1)*(nely+1)
+      nel=nelx*nely
+      NV2=(nelx-1)*(nely-1)
    if topo==1: # stenberg m-e
-      nelx=1 ; nely=1 ; NV=10 ; nel=5
+      nelx=1 ; nely=1
+      NV=nely*(5*nelx+2)+2*nelx+1
+      nel=5*nelx*nely
+      NV2=NV-2*(2*nelx-1)-2*(2*nely-1)-4
    if topo==2 or topo==3: # stenberg, QZ1 m-e
       nelx=1 ; nely=1 ; NV=17 ; nel=12
+      G2=np.zeros((18,nel),dtype=np.float64)
    if topo==4: # QZ2 m-e
       nelx=1 ; nely=1 ; NV=13 ; nel=8
+      G2=np.zeros((10,nel),dtype=np.float64)
    if topo==5: # QZ3 m-e
       nelx=1 ; nely=1 ; NV=11 ; nel=6
+      G2=np.zeros((6,nel),dtype=np.float64)
    if topo==6: # ThA m-e
-      nelx=1 ; nely=1 ; NV=12 ; nel=7
+      nelx=1 ; nely=1 
+      nel=nelx*nely*7
+      NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +4*nelx*nely
+      G2=np.zeros((8,nel),dtype=np.float64)
    if topo==7: # ThB m-e
-      nelx=1 ; nely=1 ; NV=8 ; nel=5
+      nelx=1 ; nely=1
+      nel=nelx*nely*5
+      NV=(nelx+1)*(nely+1)+4*nelx*nely
+      NV2=4*nelx*nely+(nelx-1)*(nely-1)
+      
+   G2=np.zeros((NV2*ndofV,nel),dtype=np.float64)
+
+   print('NV=',NV)
+   print('NV2=',NV2)
+   print('G2=',np.shape(G2))
 
 ###############################################################################
 
@@ -381,8 +403,8 @@ if topo==2: xV,yV,iconV=macro_LT.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==3: xV,yV,iconV=macro_QZ1.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==4: xV,yV,iconV=macro_QZ2.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==5: xV,yV,iconV=macro_QZ3.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
-if topo==6: xV,yV,iconV=macro_A.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
-if topo==7: xV,yV,iconV=macro_B.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+if topo==6: xV,yV,iconV=macro_T1.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+if topo==7: xV,yV,iconV=macro_T2.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 
 print("build mesh: %.3f s" % (timing.time() - start))
 
@@ -850,75 +872,28 @@ print("build FE matrix: %.3f s" % (timing.time() - start))
 if nullspace:
 
    print("-----------------------------")
-   print('G matrix:')
-   for i in range (NfemV):
-       print (i,'|',G_mat[i,:])
+   #print('G matrix:')
+   #for i in range (NfemV):
+   #    print (i,'|',G_mat[i,:])
 
-   if topo==0:
-      G2=np.zeros((2,NfemP),dtype=np.float64)
-      G2[0,:]=G_mat[8,:] ; G2[1,:]=G_mat[9,:]
-
-   if topo==1:
-      G2=np.zeros((4,NfemP),dtype=np.float64)
-      G2[0,:]=G_mat[8,:]  ; G2[1,:]=G_mat[9,:]
-      G2[2,:]=G_mat[10,:] ; G2[3,:]=G_mat[11,:]
-
-   if topo==2:
-      G2=np.zeros((18,NfemP),dtype=np.float64)
-      G2[0,:]=G_mat[6,:]   ; G2[1,:]=G_mat[7,:]
-      G2[2,:]=G_mat[8,:]   ; G2[3,:]=G_mat[9,:]
-      G2[4,:]=G_mat[10,:]  ; G2[5,:]=G_mat[11,:]
-      G2[6,:]=G_mat[14,:]  ; G2[7,:]=G_mat[15,:]
-      G2[8,:]=G_mat[16,:]  ; G2[9,:]=G_mat[17,:]
-      G2[10,:]=G_mat[18,:] ; G2[11,:]=G_mat[19,:]
-      G2[12,:]=G_mat[22,:] ; G2[13,:]=G_mat[23,:]
-      G2[14,:]=G_mat[24,:] ; G2[15,:]=G_mat[25,:]
-      G2[16,:]=G_mat[26,:] ; G2[17,:]=G_mat[27,:]
-
-   if topo==3:
-      G2=np.zeros((18,NfemP),dtype=np.float64)
-      G2[0,:]=G_mat[16,:]  ; G2[1,:]=G_mat[17,:]
-      G2[2,:]=G_mat[18,:]  ; G2[3,:]=G_mat[19,:]
-      G2[4,:]=G_mat[20,:]  ; G2[5,:]=G_mat[21,:]
-      G2[6,:]=G_mat[22,:]  ; G2[7,:]=G_mat[23,:]
-      G2[8,:]=G_mat[24,:]  ; G2[9,:]=G_mat[25,:]
-      G2[10,:]=G_mat[26,:] ; G2[11,:]=G_mat[27,:]
-      G2[12,:]=G_mat[28,:] ; G2[13,:]=G_mat[29,:]
-      G2[14,:]=G_mat[30,:] ; G2[15,:]=G_mat[31,:]
-      G2[16,:]=G_mat[32,:] ; G2[17,:]=G_mat[33,:]
-
-   if topo==4:
-      G2=np.zeros((10,NfemP),dtype=np.float64)
-      G2[0,:]=G_mat[16,:] ; G2[1,:]=G_mat[17,:]
-      G2[2,:]=G_mat[18,:] ; G2[3,:]=G_mat[19,:]
-      G2[4,:]=G_mat[20,:] ; G2[5,:]=G_mat[21,:]
-      G2[6,:]=G_mat[22,:] ; G2[7,:]=G_mat[23,:]
-      G2[8,:]=G_mat[24,:] ; G2[9,:]=G_mat[25,:]
-
-   if topo==5:
-      G2=np.zeros((6,NfemP),dtype=np.float64)
-      G2[0,:]=G_mat[16,:] ; G2[1,:]=G_mat[17,:]
-      G2[2,:]=G_mat[18,:] ; G2[3,:]=G_mat[19,:]
-      G2[4,:]=G_mat[20,:] ; G2[5,:]=G_mat[21,:]
-
-   if topo==6:
-      G2=np.zeros((8,NfemP),dtype=np.float64)
-      G2[0,:]=G_mat[16,:] ; G2[1,:]=G_mat[17,:]
-      G2[2,:]=G_mat[18,:] ; G2[3,:]=G_mat[19,:]
-      G2[4,:]=G_mat[20,:] ; G2[5,:]=G_mat[21,:]
-      G2[6,:]=G_mat[22,:] ; G2[7,:]=G_mat[23,:]
-
-   if topo==7:
-      G2=np.zeros((8,NfemP),dtype=np.float64)
-      G2[0,:]=G_mat[8,:]  ; G2[1,:]=G_mat[9,:]
-      G2[2,:]=G_mat[10,:] ; G2[3,:]=G_mat[11,:]
-      G2[4,:]=G_mat[12,:] ; G2[5,:]=G_mat[13,:]
-      G2[6,:]=G_mat[14,:] ; G2[7,:]=G_mat[15,:]
+   counter=0
+   for i in range(0,NV):
+       for i1 in range(0,ndofV):
+           m1=ndofV*i+i1
+           if not bc_fix[m1]:
+              print (m1)
+              G2[counter,:]=G_mat[m1,:]
+              counter+=1 
 
    ns=null_space(G2)
-   print('null space vector(s):')
+   print('null space size:',np.shape(ns))
+   ns_size=np.shape(ns)[1]
+   for ins in range(ns_size):
+       print(np.average(ns[:,ins]))
+       ns[:,ins]-=np.average(ns[:,ins])
+       ns[:,ins]/=np.max(ns[:,ins])
    print(ns)
-   #exit()
+   exit()
 
 ###############################################################################
 # apply reverse Cuthill-McKee algorithm 
@@ -1093,12 +1068,15 @@ for iel in range(0,nel):
 pfile.close()
 
 vfile=open('vel_profile.ascii',"w")
+qfile=open('q1_profile.ascii',"w")
 for i in range(0,NV):
     if abs(xV[i]-Lx/2)<eps:
        vfile.write("%e %e %e %e %e\n" %(yV[i],u[i],v[i],\
                                         velocity_x(xV[i],yV[i]),\
                                         velocity_y(xV[i],yV[i])))
+       qfile.write("%e %e\n" %(yV[i],q1[i]))
 vfile.close()
+qfile.close()
 
 if experiment==8:
    xc_block=256e3

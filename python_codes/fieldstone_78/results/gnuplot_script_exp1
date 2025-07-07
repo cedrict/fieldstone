@@ -1,7 +1,7 @@
 #
 set term pdf enhanced font "Times,12pt"
 set grid
-set pointsize 0.4
+set pointsize 0.3
 set key outside
 set format y "10^{%L}"
 
@@ -14,58 +14,56 @@ set log xy
 set xlabel '<h>'
 set ylabel '||u-u_h||_{L_2}'
 set output 'errors_u_exp1.pdf'
-plot[][5e-7:1e-3]\
-'exp01/errors_topo0_exp1' u (1./sqrt($3)):6 w lp t 'topo=0',\
-'exp01/errors_topo1_exp1' u (1./sqrt($3)):6 w lp t 'topo=1',\
-'exp01/errors_topo2_exp1' u (1./sqrt($3)):6 w lp t 'topo=2',\
-'exp01/errors_topo3_exp1' u (1./sqrt($3)):6 w lp t 'topo=3',\
-'exp01/errors_topo4_exp1' u (1./sqrt($3)):6 w lp t 'topo=4',\
-'exp01/errors_topo5_exp1' u (1./sqrt($3)):6 w lp t 'topo=5',\
-'exp01/errors_topo6_exp1' u (1./sqrt($3)):6 w lp t 'topo=6',\
-'exp01/errors_topo7_exp1' u (1./sqrt($3)):6 w lp t 'topo=7',\
-x**2/10 lt -1 dt 2 t 'h^2'
+plot[1e-3:][7e-8:2e-3]\
+'exp01/errors_topo0_exp1' u (1./sqrt($3)):6 w lp t 'R',\
+'exp01/errors_topo1_exp1' u (1./sqrt($3)):6 w lp t 'S',\
+'exp01/errors_topo2_exp1' u (1./sqrt($3)):6 w lp t 'LT',\
+'exp01/errors_topo3_exp1' u (1./sqrt($3)):6 w lp t 'QZ1',\
+'exp01/errors_topo4_exp1' u (1./sqrt($3)):6 w lp t 'QZ2',\
+'exp01/errors_topo5_exp1' u (1./sqrt($3)):6 w lp t 'QZ3',\
+'exp01/errors_topo6_exp1' u (1./sqrt($3)):6 w lp t 'T1',\
+'exp01/errors_topo7_exp1' u (1./sqrt($3)):6 w lp t 'T2',\
+x**2/22 lt -1 dt 2 t 'h^2'
 
 set xlabel '<h>'
 set ylabel '||p-p_h||_{L_2}'
 set output 'errors_p_exp1.pdf'
-plot[][:1]\
-'exp01/errors_topo0_exp1' u (1./sqrt($3)):9 w lp t 'topo=0',\
-'exp01/errors_topo1_exp1' u (1./sqrt($3)):9 w lp t 'topo=1',\
-'exp01/errors_topo2_exp1' u (1./sqrt($3)):9 w lp t 'topo=2',\
-'exp01/errors_topo3_exp1' u (1./sqrt($3)):9 w lp t 'topo=3',\
-'exp01/errors_topo4_exp1' u (1./sqrt($3)):9 w lp t 'topo=4',\
-'exp01/errors_topo5_exp1' u (1./sqrt($3)):9 w lp t 'topo=5',\
-'exp01/errors_topo6_exp1' u (1./sqrt($3)):9 w lp t 'topo=6',\
-'exp01/errors_topo7_exp1' u (1./sqrt($3)):9 w lp t 'topo=7',\
+plot[1e-3:][:5e-1]\
+'exp01/errors_topo0_exp1' u (1./sqrt($3)):9 w lp t 'R',\
+'exp01/errors_topo1_exp1' u (1./sqrt($3)):9 w lp t 'S',\
+'exp01/errors_topo2_exp1' u (1./sqrt($3)):9 w lp t 'LT',\
+'exp01/errors_topo3_exp1' u (1./sqrt($3)):9 w lp t 'QZ1',\
+'exp01/errors_topo4_exp1' u (1./sqrt($3)):9 w lp t 'QZ2',\
+'exp01/errors_topo5_exp1' u (1./sqrt($3)):9 w lp t 'QZ3',\
+'exp01/errors_topo6_exp1' u (1./sqrt($3)):9 w lp t 'T1',\
+'exp01/errors_topo7_exp1' u (1./sqrt($3)):9 w lp t 'T2',\
 x**1/8 lt -1 dt 2 t 'h^1'
 
 set xlabel '<h>'
 set ylabel '||p-q_{1,h}||_{L_2}'
 set output 'errors_q1_exp1.pdf'
-plot[][:0.2]\
-'exp01/errors_topo0_exp1' u (1./sqrt($3)):12 w lp t 'topo=0',\
-'exp01/errors_topo1_exp1' u (1./sqrt($3)):12 w lp t 'topo=1',\
-'exp01/errors_topo2_exp1' u (1./sqrt($3)):12 w lp t 'topo=2',\
-'exp01/errors_topo3_exp1' u (1./sqrt($3)):12 w lp t 'topo=3',\
-'exp01/errors_topo4_exp1' u (1./sqrt($3)):12 w lp t 'topo=4',\
-'exp01/errors_topo5_exp1' u (1./sqrt($3)):12 w lp t 'topo=5',\
-'exp01/errors_topo6_exp1' u (1./sqrt($3)):12 w lp t 'topo=6',\
-'exp01/errors_topo7_exp1' u (1./sqrt($3)):12 w lp t 'topo=7',\
-x**1 lt -1 dt 2 t 'h^1',\
-x**1.5/2 lt -1 dt 3 t 'h^{1.5}'
+plot[1e-3:][2e-5:0.02]\
+'exp01/errors_topo1_exp1' u (1./sqrt($3)):12 w lp lt 2 t 'S',\
+'exp01/errors_topo2_exp1' u (1./sqrt($3)):12 w lp lt 3 t 'LT',\
+'exp01/errors_topo3_exp1' u (1./sqrt($3)):12 w lp lt 4 t 'QZ1',\
+'exp01/errors_topo4_exp1' u (1./sqrt($3)):12 w lp lt 5 t 'QZ2',\
+'exp01/errors_topo5_exp1' u (1./sqrt($3)):12 w lp lt 6 t 'QZ3',\
+'exp01/errors_topo6_exp1' u (1./sqrt($3)):12 w lp lt 7 t 'T1',\
+x**1/16 lt -1 dt 2 t 'h^1',\
+x**1.5/3.5 lt -1 dt 3 t 'h^{1.5}'
 
 set xlabel '<h>'
 set ylabel '||p-q_{2,h}||_{L_2}'
 set output 'errors_q2_exp1.pdf'
 plot[][:]\
-'exp01/errors_topo0_exp1' u (1./sqrt($3)):15 w lp t 'topo=0',\
-'exp01/errors_topo1_exp1' u (1./sqrt($3)):15 w lp t 'topo=1',\
-'exp01/errors_topo2_exp1' u (1./sqrt($3)):15 w lp t 'topo=2',\
-'exp01/errors_topo3_exp1' u (1./sqrt($3)):15 w lp t 'topo=3',\
-'exp01/errors_topo4_exp1' u (1./sqrt($3)):15 w lp t 'topo=4',\
-'exp01/errors_topo5_exp1' u (1./sqrt($3)):15 w lp t 'topo=5',\
-'exp01/errors_topo6_exp1' u (1./sqrt($3)):15 w lp t 'topo=6',\
-'exp01/errors_topo7_exp1' u (1./sqrt($3)):15 w lp t 'topo=7',\
+'exp01/errors_topo0_exp1' u (1./sqrt($3)):15 w lp t 'R',\
+'exp01/errors_topo1_exp1' u (1./sqrt($3)):15 w lp t 'S',\
+'exp01/errors_topo2_exp1' u (1./sqrt($3)):15 w lp t 'LT',\
+'exp01/errors_topo3_exp1' u (1./sqrt($3)):15 w lp t 'QZ1',\
+'exp01/errors_topo4_exp1' u (1./sqrt($3)):15 w lp t 'QZ2',\
+'exp01/errors_topo5_exp1' u (1./sqrt($3)):15 w lp t 'QZ3',\
+'exp01/errors_topo6_exp1' u (1./sqrt($3)):15 w lp t 'T1',\
+'exp01/errors_topo7_exp1' u (1./sqrt($3)):15 w lp t 'T2',\
 x**1 lt -1 dt 2 t 'h^1',\
 x**1.5 lt -1 dt 3 t 'h^{1.5}'
 
@@ -74,15 +72,15 @@ unset log y
 set xlabel '<h>'
 set ylabel 'u_{rms}'
 set output 'vrms_exp1.pdf'
-plot[][0.00755:]\
-'exp01/vrms_topo0_exp1' u (1./sqrt($3)):6 w lp t 'topo=0',\
-'exp01/vrms_topo1_exp1' u (1./sqrt($3)):6 w lp t 'topo=1',\
-'exp01/vrms_topo2_exp1' u (1./sqrt($3)):6 w lp t 'topo=2',\
-'exp01/vrms_topo3_exp1' u (1./sqrt($3)):6 w lp t 'topo=3',\
-'exp01/vrms_topo4_exp1' u (1./sqrt($3)):6 w lp t 'topo=4',\
-'exp01/vrms_topo5_exp1' u (1./sqrt($3)):6 w lp t 'topo=5',\
-'exp01/vrms_topo6_exp1' u (1./sqrt($3)):6 w lp t 'topo=6',\
-'exp01/vrms_topo7_exp1' u (1./sqrt($3)):6 w lp t 'topo=7',\
+plot[1e-3:][0.00755:]\
+'exp01/vrms_topo0_exp1' u (1./sqrt($3)):6 w lp t 'R',\
+'exp01/vrms_topo1_exp1' u (1./sqrt($3)):6 w lp t 'S',\
+'exp01/vrms_topo2_exp1' u (1./sqrt($3)):6 w lp t 'LT',\
+'exp01/vrms_topo3_exp1' u (1./sqrt($3)):6 w lp t 'QZ1',\
+'exp01/vrms_topo4_exp1' u (1./sqrt($3)):6 w lp t 'QZ2',\
+'exp01/vrms_topo5_exp1' u (1./sqrt($3)):6 w lp t 'QZ3',\
+'exp01/vrms_topo6_exp1' u (1./sqrt($3)):6 w lp t 'T1',\
+'exp01/vrms_topo7_exp1' u (1./sqrt($3)):6 w lp t 'T2',\
 0.00777615791 lt -1 dt 2 t 'analytical'
 
 set xlabel '<h>'

@@ -1,0 +1,30 @@
+#! /bin/bash
+
+rm errors_*
+rm vrms_*
+rm pstats_*
+rm q1stats_*
+rm q2stats_*
+rm ustats_*
+rm vstats_*
+rm *.ascii
+rm *.vtu
+
+exp=8
+eta_star=0
+res=32
+
+for topo in 0 1 2 3 4 5 6 7 ; do
+
+    echo topology= $topo 
+
+    python3 stone.py $res $res 1 $topo $eta_star $exp > opla
+
+    mv solution.vtu solution_topo${topo}.vtu
+    mv vel_profile.ascii vel_profile_topo${topo}.ascii
+    mv q1_profile.ascii q1_profile_topo${topo}.ascii
+
+done
+
+     
+ 

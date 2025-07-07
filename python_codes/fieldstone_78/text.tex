@@ -177,8 +177,8 @@ import macro_LT
 import macro_QZ1 
 import macro_QZ2
 import macro_QZ3
-import macro_A
-import macro_B
+import macro_T1
+import macro_T2
 \end{lstlisting} 
 Inside each of these files a function called {\sl mesher} is defined: 
 \begin{lstlisting} 
@@ -192,13 +192,16 @@ In what follows $p$ is the 'raw' pressure field (after normalisation)
 while $q$ denotes its projection onto the nodes by means of corner-to-node average.
 More specifically $q_1$ is the pressure average at the node, 
 while $q_2$  is the element area weighed average.
+In practice most of the macro-elements are built so that 
+the elements inside it have equal area and then $q_1=q_2$. 
 
 Define errors and mesh size which is taken to be $h = \sqrt{L_xL_y/nel}$. 
 
 %------------------------------------
 \subsection*{Pressure normalization}
 
-When it comes to the requirement of $\int_\Omega p dV=0$ we have three options:
+When it comes to the requirement of $\int_\Omega p dV=0$ we have three options
+in order to enforce this constraint:
 \begin{enumerate}
 \item build the matrix without taking care of this constraint, and 
 enforce it after the solve:
@@ -208,72 +211,75 @@ enforce it after the solve:
 with $A_e$ being the area of element $e$.
 
 \item Add a line and column to the matrix (Lagrange multiplier technique)
-and effectively add the vector $(A_0, A_1, ... A_{nel-1})$ below and to the 
+and effectively add the vector $(A_0,	 A_1, ... A_{nel-1})$ below and to the 
 right of the zero pressure-pressure block of the Stokes matrix. 
 The recovered pressure is then such that $sum_e A_e p_e = 0$
 and the normalisation loop that comes after is useless (if only to 
 verify that indeed $<p>=0$).
+Post-solve normalisation is then not needed but acts as a check 
+and typically returns zero (within machine precision).
 
 \item add a line and column to the matrix that enforces $p_{nel}=0$
 (or any value, really), solve the linear system and then 
-normalize the pressure.
+normalize the pressure as in Option 1.
 
 \end{enumerate}
 
 Option 1 is the simplest and it works fine, except for 
-experiment 9, which showcases a velocity field that 
+experiment 9, which has a velocity field that 
 does not showcases no-slip b.c.:
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp09/vel.png}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp09/press.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp09/press.png}\\
+{\captionfont Experiment 9: velocity and pressure fields.}
 \end{center}
 
-I then found out that Option 2 worked *much* better for this experiment
+I then found out that Option 2 worked {\it much} better for this experiment
 and allowed to recover accurate velocities, mild pressure checkerboarding.
-However the addition of the extra line probably (I cannot check this 
-for sure but it makes sense)  generated a lot of fill-ins in the direct solver
+However the addition of the extra line probably\footnote{I cannot check this 
+for sure but it makes sense -- more on this later} generated a lot of fill-ins in the direct solver
 and slowed things down considerably.
-
-Option 3 was then favoured.
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_78/images/lagrange/A_bef.png}\\
-{\captionfont 20x20 QZ2 macro-element matrix non-zero pattern}
+{\captionfont Example of $20\times 20$ QZ2 macro-element matrix sparsity pattern.}
 \end{center}
 
 we can verify that the three options result in the same results 
 for experiment 1 for example:
 
+{\small
 \begin{verbatim}
-**Option 1**
--> nel=   2400 ; errv= 0.00003035857 ; errp= 0.00419435407 ; errq1= 0.00153250868 ; errq2= 0.00153250868
+*****Option 1*****
+nel=   2400 ; errv= 0.00003035857 ; errp= 0.00419435407 ; errq1= 0.00153250868 
 solve time: 0.132 s
-**Option 2**
--> nel=   2400 ; errv= 0.00003035857 ; errp= 0.00419435407 ; errq1= 0.00153250868 ; errq2= 0.00153250868
+*****Option 2*****
+nel=   2400 ; errv= 0.00003035857 ; errp= 0.00419435407 ; errq1= 0.00153250868 
 solve time: 1.314 s
-**Option 3**
--> nel=   2400 ; errv= 0.00003035857 ; errp= 0.00419435407 ; errq1= 0.00153250868 ; errq2= 0.00153250868
+*****Option 3*****
+nel=   2400 ; errv= 0.00003035857 ; errp= 0.00419435407 ; errq1= 0.00153250868 
 solve time: 0.130 s
 \end{verbatim}
+}
 
 We see that Option 2 is definitely *much* slower than option 3!
-However, when carrying out resolution tests I found that Option 2 slowed 
+and when carrying out resolution tests I found that Option 2 slowed 
 the solver so much that it became unpractical. 
 Also I found out that Option 2 worked but Option 3 did not (again, for experiment 9), which makes little sense. 
-I then followed my instinct and started to think again about the fact that 
+I then decided to follow and other lead and started to think again about the fact that 
 experiment 9 showcases a non-zero flux on various faces. 
 
 I then *suspected* that this behavior could be due to the fact 
 may be there is some kind of imbalance in the overal (discrete)
-flux (flow is incompressible, we should have $\int_\Gamma \vec{u}\cdot\vec{n}d\Gamma=0$) 
+flux (flow is incompressible, we should have $\int_\Gamma \vec{u}\cdot\vec{n} \; dS=0$) 
 and therefore triggers extremely large insane pressure oscillations and 
 yields the problem above? my instinct then tells me that 
 by adding this extra line (and corresponding column) of constraints in the matrix it somewhat 
 introduces some 'wiggle room' (\#technicalterm:) that compensates for the error in the b.c. imposition?
 However, since option 2 is not an option in reality, what to do? 
  
-For once we could start by computing the flux on each face for experiment9:
+For once we could start by computing the analytical flux on each face for experiment 9:
 \begin{eqnarray}
 \Phi_{bottom} 
 &=& \int_0^1 \vec{\upnu}(x,y=0) \cdot \vec{n} \; dx \nn\\
@@ -308,8 +314,26 @@ We expected this since
 
 Now turning to measurements of these fluxes on each boundary,
 we compute these by means of a one point quadrature on each 
-element edge that is on a boundary. 
-For a 32x32 (R) mesh we find:
+element edge that is on a boundary.
+The algorithm goes as follows for one of the four fluxes:
+\begin{lstlisting}
+flux_bottom=0
+for iel in range(0,nel):
+    inode0=iconV[0,iel]
+    inode1=iconV[1,iel]
+    inode2=iconV[2,iel]
+    inode3=iconV[3,iel]
+    if abs(yV[inode0]-0)/Ly<eps and abs(yV[inode1]-0)/Ly<eps:
+       flux_bottom+=abs(xV[inode0]-xV[inode1])*(bc_val[inode0*ndofV+1]+bc_val[inode1*ndofV+1])/2 *-1
+    if abs(yV[inode1]-0)/Ly<eps and abs(yV[inode2]-0)/Ly<eps:
+       flux_bottom+=abs(xV[inode1]-xV[inode2])*(bc_val[inode1*ndofV+1]+bc_val[inode2*ndofV+1])/2 *-1
+    if abs(yV[inode2]-0)/Ly<eps and abs(yV[inode3]-0)/Ly<eps:
+       flux_bottom+=abs(xV[inode2]-xV[inode3])*(bc_val[inode2*ndofV+1]+bc_val[inode3*ndofV+1])/2 *-1
+    if abs(yV[inode3]-0)/Ly<eps and abs(yV[inode0]-0)/Ly<eps:
+       flux_bottom+=abs(xV[inode3]-xV[inode0])*(bc_val[inode3*ndofV+1]+bc_val[inode0*ndofV+1])/2 *-1
+\end{lstlisting}
+ 
+For a $32\times 32$ (R) mesh we find:
 \begin{verbatim}
 flux b,t,l,r= 0.0 -1.5001220703125 0.0 1.4998779296875
 total_flux= -0.000244140625
@@ -321,16 +345,18 @@ I then prescribe on the nodes of the boundary the following velocity:
 \[
 \vec{\upnu}^{bc} = \vec{\upnu}_{analytical} - \frac{\Phi_{measured}}{P} \vec{n}
 \]
+where $\Phi_{measured}$ is the measured velocity flux 
+through the entire boundary and $P$ is the perimeter of the domain.
 Then 
 \begin{eqnarray}
-\int_\Gamma \vec{\upnu}^{bc} \cdot \vec{n} dS
-&=& \int_\Gamma \vec{\upnu}_{analytical} \cdot \vec{n} dS
-- \int_\Gamma  \frac{\Phi_{measured}}{P} \vec{n} \cdot \vec{n} dS\nn\\
-&=& \Phi_{measured} - \frac{\Phi_{measured}}{P} \int_\Gamma  1 dS \nn\\
+\int_\Gamma \vec{\upnu}^{bc} \cdot \vec{n} \; dS
+&=& \int_\Gamma \vec{\upnu}_{analytical} \cdot \vec{n} \; dS
+- \int_\Gamma  \frac{\Phi_{measured}}{P} \vec{n} \cdot \vec{n} \; dS\nn\\
+&=& \Phi_{measured} - \frac{\Phi_{measured}}{P} \int_\Gamma  1 \; dS \nn\\
 &=& \Phi_{measured} - \frac{\Phi_{measured}}{P} P \nn\\
 &=&0 \nn
 \end{eqnarray}
-where $P$ is the perimeter of the domain.
+assuming that the normal vector is a unit vector, i.e. $\vec{n}\cdot \vec{n}=1$.
 I then find that applying this correction does solve the problem 
 and that Option 1 is now usable again for all topologies.
 
@@ -345,9 +371,79 @@ showcase free-slip or no-slip boundary conditions.
 This is controled by the {\tt correct\_bcval} parameter. 
 
 %--------------------------------------------------------------
-\subsection{About reordering ...}
+\subsection*{About reordering ...}
 
-DESCRIBE HERE RCM
+While exploring the pressure normalisation I observed that 
+Option 2 was much slower than the others. I attributed this 
+to the number of fill-ins generated because of the full line
+added at the bottom of the pressure-pressure block. 
+
+I then proceeded to look into reordering the complete 
+Stokes matrix via the Reverse Cuthill-McKee 
+algorithm\footnote{\url{https://en.wikipedia.org/wiki/Cuthill-McKee_algorithm}}
+(see also \ref{MMS-ss:reordering}) which is available via SciPy:
+\begin{lstlisting} 
+from scipy.sparse.csgraph import reverse_cuthill_mckee
+\end{lstlisting} 
+Once the matrix is fully assembled I use the 'spy' function 
+to generate a plot of its sparsity patten.
+I then proceed to use the RCM algorithm as follows:
+\begin{lstlisting} 
+if apply_RCM:
+   perm=reverse_cuthill_mckee(A_csr,symmetric_mode=True)
+   perm_inv=np.empty(len(perm),dtype=np.int32)
+   for i in range(0,len(perm)):
+       perm_inv[perm[i]]=i
+   A_csr=A_csr[np.ix_(perm,perm)]
+   rhs=rhs[np.ix_(perm)]
+\end{lstlisting} 
+Another snapshot of the matrix is then produced after the reordering. 
+Before and after snapshots are shown below for all 8 topologies 
+(in the absence of any pressure normalisation Lagrange multiplier line):
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_bef_topo0.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_bef_topo1.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_bef_topo2.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_bef_topo3.pdf}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_bef_topo4.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_bef_topo5.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_bef_topo6.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_bef_topo7.pdf}\\
+{\captionfont Before: 4x4 macro-element mesh}
+\end{center}
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_aft_topo0.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_aft_topo1.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_aft_topo2.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_aft_topo3.pdf}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_aft_topo4.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_aft_topo5.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_aft_topo6.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/spy/A_aft_topo7.pdf}\\
+{\captionfont After: 4x4 macro-element mesh}
+\end{center}
+
+After the solve, the solution vector must be reordered to 
+comply with the connectivity array:
+\begin{lstlisting} 
+if apply_RCM:
+   sol=sol[np.ix_(perm_inv)]
+\end{lstlisting} 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \newpage
@@ -357,7 +453,7 @@ DESCRIBE HERE RCM
 
 
 \[
-\G_{el} = -\int_{\Omega_e} {\bm B}^T \cdot {\bm N} d\Omega
+\G_{el} = -\int_{\Omega_e} {\bm B}^T \cdot {\bm N} dV
 = -\int_{\Omega_e}
 \left(
 \begin{array}{ccc}
@@ -379,12 +475,12 @@ DESCRIBE HERE RCM
 0 & 0 & \dots & 0
 \end{array}
 \right)
-d\Omega
+dV
 \]
-Since we are dealing with $Q_1\times P_0$ elements then $m_p=1$ and $N^p(r,s)=1$.
+Since we are dealing with $Q_1\times P_0$ elements then $m_p=1$ and $\bN^p(x,y)=1$.
 This yields
 \[
-\G_{el} = -\int_{\Omega_e} {\bm B}^T \cdot {\bm N} d\Omega
+\G_{el} = -\int_{\Omega_e} {\bm B}^T \cdot {\bm N} dV
 = -\int_{\Omega_e}
 \left(
 \begin{array}{ccc}
@@ -398,7 +494,7 @@ This yields
 \partial_y \bN_4^\upnu 
 \end{array}
 \right)
-d\Omega
+dV
 \]
 
 In what follows we proceed to build the assembled block $\G$ for each macro element, 
@@ -407,10 +503,10 @@ matrix), and compute the null space of the remaining lines.
 Ideally only one pressure solution should be in the null space, the space of 
 all constant vectors since then $\G \cdot \vec{\cal P}=\vec{0}$.
 If/when the nullspace is larger than one, then checkerboard patterns (aka 
-spurious modes) exist and degrade the solution. 
+spurious modes) can exist and degrade the solution. 
 
-This study can be carried out by setting the 'nullspace' parameter to True.
-
+This study can be carried out by setting the \lstinline{nullspace} parameter to 
+\lstinline{True} and the number of elements and domain size is then set automatically.
 
 \newpage
 The 8 macro-elements considered here are shown hereunder 
@@ -639,7 +735,7 @@ with their internal numbering of nodes:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %mineB
-\node[] at (0.5+10,4.3) {\tiny ThB};
+\node[] at (0.5+10,4.3) {\tiny T2};
 \draw[thick] (0+10,0) -- (4+10,0) -- (4+10,4) -- (0+10,4) -- cycle;  
 \draw[thick] (1+10,1) -- (3+10,1) -- (3+10,3) -- (1+10,3) -- cycle;  
 \draw[thick] (0+10,0) -- (1+10,1);  
@@ -667,7 +763,7 @@ with their internal numbering of nodes:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %mineA
-\node[] at (5.5,4.3) {\tiny ThA};
+\node[] at (5.5,4.3) {\tiny T1};
 \draw[thick] (5,0) -- (9,0) -- (9,4) -- (5,4) -- cycle;  
 \draw[thick] (6.5,1.5) -- (7.5,1.5) -- (7.5,2.5) -- (6.5,2.5) -- cycle;  
 
@@ -716,17 +812,17 @@ with their internal numbering of nodes:
 \draw[thick] (0,2) -- (4,2) ;  
 \draw[thick] (2,0) -- (2,4) ;  
 
-\node[] at (0,0) {\tiny 0};
-\node[] at (2,0) {\tiny 1};
-\node[] at (4,0) {\tiny 2};
+\node[] at (0,0-0.2) {\tiny 0};
+\node[] at (2,0-0.2) {\tiny 1};
+\node[] at (4,0-0.2) {\tiny 2};
 
-\node[] at (0,2) {\tiny 3};
-\node[] at (2,2) {\tiny 4};
-\node[] at (4,2) {\tiny 5};
+\node[] at (0-0.2,2) {\tiny 3};
+\node[] at (2.1,2.1) {\tiny 4};
+\node[] at (4+0.2,2) {\tiny 5};
 
-\node[] at (0,4) {\tiny 6};
-\node[] at (2,4) {\tiny 7};
-\node[] at (4,4) {\tiny 8};
+\node[] at (0,4+0.2) {\tiny 6};
+\node[] at (2,4+0.2) {\tiny 7};
+\node[] at (4,4+0.2) {\tiny 8};
 
 \end{tikzpicture}
 \end{center}
@@ -767,9 +863,14 @@ We then extract these, which yields the $\tilde{\G}$ matrix:
 \end{pmatrix}
 \]
 Using the built function \lstinline{null_space} from \lstinline{scipy}, 
+\begin{lstlisting}
+ns=null_space(G2)
+print('null space:')
+print(ns)
+\end{lstlisting}
 we then obtain 
 \begin{verbatim}
-null space vector(s):
+null space:
 [[-0.1  0.7]
  [ 0.7  0.1]
  [ 0.7  0.1]
@@ -779,7 +880,7 @@ If we normalise these vectors so that $<p>=0$ then these two
 pressure vectors are then
 \[
 \vec{\cal P}=(-0.4,0.4,0.4,-0.4)
-\qquad \text{and}
+\qquad \text{and} \qquad 
 \vec{\cal P}=(0.3,-0.3,-0.3,0.3)
 \]
 which correspong to the following two checker board pressure modes:
@@ -813,7 +914,7 @@ is of size  $20\times 5$:
 19 | [0. 0. 0. 0. 0.]
 \end{verbatim}
 }
-Again, only the lines corresponding to nodes a and 5 are not zeroed.
+Again, only the lines corresponding to nodes 4 and 5 are not zeroed.
 \[
 \tilde{\G}=
 \frac14
@@ -826,7 +927,7 @@ Again, only the lines corresponding to nodes a and 5 are not zeroed.
 \]
 We finally obtain
 \begin{verbatim}
-null space vector(s):
+null space:
 [[0.4472136]
  [0.4472136]
  [0.4472136]
@@ -837,6 +938,8 @@ The nullspace of $\tilde{\G}$ consists of a single pressure solution,
 the desired constant pressure vector. 
 
 The same is true for all other macro-element of the figure above. 
+
+{\color{red} redo with 2x2 macro-elements !! show T2 is not stable}
 
 
 
@@ -1145,6 +1248,29 @@ Earth dimensions.
 \end{center}
 
 
+\newpage
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo0_full.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo1_full.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo2_full.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo3_full.pdf}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo4_full.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo5_full.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo6_full.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo7_full.pdf}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo0_reduced.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo1_reduced.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo2_reduced.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo3_reduced.pdf}\\
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo4_reduced.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo5_reduced.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo6_reduced.pdf}
+\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp08/vel_profile_topo7_reduced.pdf}
+\end{center}
 
 
 
@@ -1169,7 +1295,6 @@ v(x,y) &=& -y-2xy+y^2 -3x^2y + y^3 - xy^2 \\
 p(x,y) &=& xy+x+y+x^3y^2 - 4/3
 \end{eqnarray}
 Note that the pressure field is such that $\int_{\Omega} p \; dV = 0$.
-
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_u_exp9.pdf}
@@ -1224,8 +1349,8 @@ Viscosity is one and gravity is switched off.
 \subsection*{Experiment 11: flow over cavity (EXP)}
 
 The domain is 4x1. No slip boundary conditions are imposed on all walls.
-The cavity is formed by prescribing $\vec{\upnu}=\vec{0}$ on the right
-nodes inside the domain. $\vec{\upnu}=-(y-L_y)(y-L_y/2)$ is prescribed 
+The cavity is formed by prescribing $\vec{\upnu}=\vec{0}$ on the desired 
+nodes inside the domain. $\vec{\upnu}(x,y)=-(y-L_y)(y-L_y/2)$ is prescribed 
 on the left inflow boundary while $\upnu_y=0$ is prescribed on the outflow boundary.
 Viscosity is one and gravity is switched off.
  
@@ -1253,8 +1378,8 @@ Viscosity is one and gravity is switched off.
 %-------------------------------------------------------------
 \subsection*{Experiment 12: flow over obstacle (EXP)}
 
-Domain is 4x1. Viscosity is 1, $rho g = -1$. Free slip top and bottom.
-Obstacle is no slip and is composed of nodes at $x=L_x/2$ and $y\le L_y/2$.
+Domain is 4x1. Viscosity is 1, $\rho g = -1$. Free slip top and bottom.
+Obstacle consists of nodes ($x=L_x/2$ and $y\le L_y/2$) where $\vec\upnu=0$. 
 $\vec\upnu=(1,0)$ prescribed on the left, $\upnu_y=0$ on the right.
 
 \begin{center}
@@ -1279,7 +1404,7 @@ $\vec\upnu=(1,0)$ prescribed on the left, $\upnu_y=0$ on the right.
 
 \newpage
 %-------------------------------------------------------------
-\subsection*{Experiment 13: solcx (MS)}
+\subsection*{Experiment 13: SolCx (MS)}
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_u_exp13.pdf}
