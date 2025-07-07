@@ -240,7 +240,7 @@ else:
    visu = 1
    topo = 1
    eta_star=0
-   experiment=1
+   experiment=13
    
 if topo==0:
    nelx*=2
@@ -248,7 +248,7 @@ if topo==0:
    
 eta_star=10**eta_star
 
-nullspace=True
+nullspace=False
 p_lagrange=False
 matrix_snapshot=False
 apply_RCM=False
@@ -335,20 +335,30 @@ if nullspace:
       NV=nely*(5*nelx+2)+2*nelx+1
       nel=5*nelx*nely
       NV2=NV-2*(2*nelx-1)-2*(2*nely-1)-4
-   if topo==2 or topo==3: # stenberg, QZ1 m-e
+
+   if topo==2: # LT
       nelx=1 ; nely=1 ; NV=17 ; nel=12
       G2=np.zeros((18,nel),dtype=np.float64)
+
+   if topo==3: # QZ1 m-e
+      nelx=1 ; nely=1 ; NV=17 ; nel=12
+      G2=np.zeros((18,nel),dtype=np.float64)
+
+
    if topo==4: # QZ2 m-e
       nelx=1 ; nely=1 ; NV=13 ; nel=8
       G2=np.zeros((10,nel),dtype=np.float64)
+
    if topo==5: # QZ3 m-e
       nelx=1 ; nely=1 ; NV=11 ; nel=6
       G2=np.zeros((6,nel),dtype=np.float64)
+
    if topo==6: # ThA m-e
       nelx=1 ; nely=1 
       nel=nelx*nely*7
       NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +4*nelx*nely
       G2=np.zeros((8,nel),dtype=np.float64)
+
    if topo==7: # ThB m-e
       nelx=1 ; nely=1
       nel=nelx*nely*5
