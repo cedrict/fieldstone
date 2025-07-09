@@ -4,9 +4,9 @@ import time as timing
 import scipy
 import scipy.sparse as sps
 from scipy.sparse import csr_matrix,lil_matrix
-import solkz
-import solcx
-import solvi
+import mms_solkz as solkz
+import mms_solcx as solcx
+import mms_solvi as solvi
 from scipy.linalg import null_space
 import matplotlib.pyplot as plt
 from scipy.sparse.csgraph import reverse_cuthill_mckee
@@ -208,8 +208,9 @@ ndofP=1  # number of pressure degrees of freedom
 # 3: Qin & Zhang (QZ1)
 # 4: Qin & Zhang (QZ2)
 # 5: Qin & Zhang (QZ3)
-# 6: Thieulot (A)
-# 7: Thieulot (B)
+# 6: Thieulot (T1)
+# 7: Thieulot (T2)
+# 8: random R (RR)
 
 # experiment:
 # 1: mms donea huerta
@@ -235,14 +236,14 @@ if int(len(sys.argv) == 7):
    eta_star = int(sys.argv[5]) 
    experiment = int(sys.argv[6])
 else:
-   nelx = 32
-   nely = 32
+   nelx = 6
+   nely = 8
    visu = 1
-   topo = 1
+   topo = 9
    eta_star=0
-   experiment=13
+   experiment=1
    
-if topo==0:
+if topo==0 or topo==8 or topo==9:
    nelx*=2
    nely*=2
    
@@ -257,6 +258,8 @@ correct_bcval=True
 ###############################################################################
 # set specific values to some parameters for some experiments
 ###############################################################################
+
+if nullspace: experiment=1
 
 Lx=1. 
 Ly=1.
@@ -277,7 +280,7 @@ if experiment==10 or experiment==11 or experiment==12:
 ###############################################################################
   
 if topo==0: #regular
-   import regular
+   import macro_R
    NV=(nelx+1)*(nely+1)
    nel=nelx*nely
 
@@ -316,8 +319,17 @@ if topo==7: # mine (T2)
    nel=nelx*nely*5
    NV=(nelx+1)*(nely+1)+4*nelx*nely
 
-###############################################################################
+if topo==8: # rand regular
+   import macro_RR
+   NV=(nelx+1)*(nely+1)
+   nel=nelx*nely
 
+if topo==9: # true rand regular
+   import macro_TR
+   NV=(nelx+1)*(nely+1)
+   nel=nelx*nely
+
+###############################################################################
 
 if nullspace:
 
@@ -325,11 +337,12 @@ if nullspace:
    Ly=1
    experiment=1
 
-   if topo==0:
+   if topo==0: # R m-e
       nelx=4 ; nely=4 
       NV=(nelx+1)*(nely+1)
       nel=nelx*nely
       NV2=(nelx-1)*(nely-1)
+
    if topo==1: # stenberg m-e
       nelx=1 ; nely=1
       NV=nely*(5*nelx+2)+2*nelx+1
@@ -337,30 +350,37 @@ if nullspace:
       NV2=NV-2*(2*nelx-1)-2*(2*nely-1)-4
 
    if topo==2: # LT
-      nelx=1 ; nely=1 ; NV=17 ; nel=12
-      G2=np.zeros((18,nel),dtype=np.float64)
+      nelx=1 ; nely=1
+      NV=(2*nelx+1)*(2*nely+1)+nely*nelx*8
+      nel=12*nelx*nely
+      NV2=NV-2*(2*nelx-1)-2*(2*nely-1)-4
 
    if topo==3: # QZ1 m-e
-      nelx=1 ; nely=1 ; NV=17 ; nel=12
-      G2=np.zeros((18,nel),dtype=np.float64)
-
+      nelx=1 ; nely=1
+      nel=nelx*nely*12
+      NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +9*nelx*nely
+      NV2=NV-2*(2*nelx-1)-2*(2*nely-1)-4
 
    if topo==4: # QZ2 m-e
-      nelx=1 ; nely=1 ; NV=13 ; nel=8
-      G2=np.zeros((10,nel),dtype=np.float64)
+      nelx=1 ; nely=1 
+      nel=nelx*nely*8
+      NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +5*nelx*nely
+      NV2=NV-2*(2*nelx-1)-2*(2*nely-1)-4
 
    if topo==5: # QZ3 m-e
       nelx=1 ; nely=1 ; NV=11 ; nel=6
-      G2=np.zeros((6,nel),dtype=np.float64)
+      nel=nelx*nely*6
+      NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +3*nelx*nely
+      NV2=NV-2*(2*nelx-1)-2*(2*nely-1)-4
 
    if topo==6: # ThA m-e
       nelx=1 ; nely=1 
       nel=nelx*nely*7
       NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +4*nelx*nely
-      G2=np.zeros((8,nel),dtype=np.float64)
+      NV2=NV-2*(2*nelx-1)-2*(2*nely-1)-4
 
    if topo==7: # ThB m-e
-      nelx=1 ; nely=1
+      nelx=2 ; nely=2
       nel=nelx*nely*5
       NV=(nelx+1)*(nely+1)+4*nelx*nely
       NV2=4*nelx*nely+(nelx-1)*(nely-1)
@@ -407,7 +427,7 @@ sVnodes=[-1,-1,+1,+1]
 ###############################################################################
 start = timing.time()
 
-if topo==0: xV,yV,iconV=regular.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+if topo==0: xV,yV,iconV=macro_R.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==1: xV,yV,iconV=macro_S.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==2: xV,yV,iconV=macro_LT.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==3: xV,yV,iconV=macro_QZ1.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
@@ -415,6 +435,8 @@ if topo==4: xV,yV,iconV=macro_QZ2.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==5: xV,yV,iconV=macro_QZ3.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==6: xV,yV,iconV=macro_T1.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==7: xV,yV,iconV=macro_T2.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+if topo==8: xV,yV,iconV=macro_RR.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+if topo==9: xV,yV,iconV=macro_TR.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 
 print("build mesh: %.3f s" % (timing.time() - start))
 
@@ -816,8 +838,8 @@ for iel in range(0,nel):
                                          [dNNNVdy[i],dNNNVdx[i]]]
 
             # compute elemental a_mat matrix
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xc[iel],yc[iel])*weightq*jcob
-            #K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq,yq)*weightq*jcob
+            #K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xc[iel],yc[iel])*weightq*jcob
+            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq,yq)*weightq*jcob
 
             # compute elemental rhs vector
             for i in range(0,mV):
@@ -903,7 +925,7 @@ if nullspace:
        ns[:,ins]-=np.average(ns[:,ins])
        ns[:,ins]/=np.max(ns[:,ins])
    print(ns)
-   exit()
+#   exit()
 
 ###############################################################################
 # apply reverse Cuthill-McKee algorithm 
@@ -1174,8 +1196,15 @@ if visu:
    vtufile.write("</DataArray>\n")
    vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
    for iel in range(0,nel):
-           vtufile.write("%10e \n" %(area[iel]))
+           vtufile.write("%e \n" %(area[iel]))
    vtufile.write("</DataArray>\n")
+   #--
+   if nullspace:
+      vtufile.write("<DataArray type='Float32' Name='nullspace' Format='ascii'> \n")
+      for iel in range(0,nel):
+              vtufile.write("%10e \n" %(ns[iel,0]))
+      vtufile.write("</DataArray>\n")
+   #--
    vtufile.write("</CellData>\n")
    #####
    vtufile.write("<PointData Scalars='scalars'>\n")
@@ -1184,17 +1213,16 @@ if visu:
    for i in range(0,NV):
        vtufile.write("%10e %10e %10e \n" %(u[i]/vscaling,v[i]/vscaling,0.))
    vtufile.write("</DataArray>\n")
+   #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel (analytical)' Format='ascii'> \n")
    for i in range(0,NV):
        vtufile.write("%10e %10e %10e \n" %(velocity_x(xV[i],yV[i]),velocity_y(xV[i],yV[i]),0.))
    vtufile.write("</DataArray>\n")
-
+   #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel (error)' Format='ascii'> \n")
    for i in range(0,NV):
        vtufile.write("%10e %10e %10e \n" %(error_u[i]/vscaling,error_v[i]/vscaling,0.))
    vtufile.write("</DataArray>\n")
-
-
    #--
    vtufile.write("<DataArray type='Float32'  Name='q1' Format='ascii'> \n")
    for i in range(0,NV):

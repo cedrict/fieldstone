@@ -15,33 +15,49 @@ These are macro-elements, i.e. groupings of elements that are then repeated.
 We will here consider:
 
 \begin{itemize}
+\item the regular macro-element (not really one, just a regular grid in practice).
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/images/16x16/area0.png}
+\end{center}
+
 \item the Stenberg (S) macro-element: it originates in \cite{sten84}.
 It is also found in \cite{chba93}, \cite{brfo}, \cite{qizh07}.
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0001}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/images/16x16/area1.png}
 \end{center}
 
 \item the Le Tallec (LT) macro-element: it originates in \cite{leta81}. 
 It is found in \cite{leru86}, \cite{qizh07}  and mentioned in \cite{brfo} and \cite{rovira1992}.
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0002}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/images/16x16/area2.png}
 \end{center}
 
 \item the Qin \& Zhang (QZ1, QZ2, QZ3) macro-elements: they originate in \cite{qizh07}.
 Note that QZ3 is in fact mentioned 2 decades before in \cite{idsn95}. See also 
 remark below from \cite{rovira1992}. 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0003}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0004}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0005}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/images/16x16/area3.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/images/16x16/area4.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/images/16x16/area5.png}
 \end{center}
 
-\item mine A,B
+\item mine T1, T2 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0006}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_dh/16x16/grid0007}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/images/16x16/area6.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/images/16x16/area7.png}
+\end{center}
+
+\item RR, TR: The topology is identical to R. 
+RR corresponds to moving the middle node of the macro-element by $+0.05h_x,+0.05h_y$.
+TR corresponds to moving the middle node of the macro-element by $0.05\mu h_x,0.05\nu h_y$
+with $\mu,\nu=-1,1$ randomly.
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/images/16x16/area8.png}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/images/16x16/area9.png}
 \end{center}
 
 \end{itemize}
@@ -110,8 +126,8 @@ When possible, we wish that all elements of a macro-element have the same area.
 For the Stenberg macro-element, we set $\delta =0.3$ (see remark at the end).
 For the Le Tallex macro-element, we set $\delta=h/\sqrt{12}$ (see remark at the end).
 We also make sure that all elements in QZ1,QZ3,B have same area.
-However, there is a problem with QZ2: equi area yields quads with angle =180. 
-Likewise macro-element  A cannot be generated with all elements equi-area.
+However, there is a problem with QZ2: equi area yields quads with angle=$180^o$. 
+Likewise macro-element T1 cannot be generated with all elements equi-area.
 
 
 %................................................
@@ -369,6 +385,8 @@ manufactured solutions or experiments that
 showcase free-slip or no-slip boundary conditions.
 
 This is controled by the {\tt correct\_bcval} parameter. 
+
+Remark: see page 291 of \textcite{vibo92} (1992).
 
 %--------------------------------------------------------------
 \subsection*{About reordering ...}
@@ -979,14 +997,14 @@ we see that there is no checkerboarding occurring:
 Rather interestingly the pressure error is the largest next to the boundaries.
 
 \begin{center}
-0)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/p0}
-1)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/p1}
-2)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/p2}
-3)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/p3}\\
-4)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/p4}
-5)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/p5}
-6)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/p6}
-7)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/mms_dh/16x16/p7}\\
+0)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp01/16x16/p0}
+1)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp01/16x16/p1}
+2)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp01/16x16/p2}
+3)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp01/16x16/p3}\\
+4)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp01/16x16/p4}
+5)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp01/16x16/p5}
+6)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp01/16x16/p6}
+7)\includegraphics[width=4cm]{python_codes/fieldstone_78/results/exp01/16x16/p7}\\
 {\captionfont Meshes  made of 16x16 (macro-)elements.} 
 \end{center}
 
@@ -1129,13 +1147,6 @@ We see that the Stenberg macro-element is the best, with the lowest velocity and
 
 plot analytical pressure and velocity against these!!
 
-\begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_solkz/errors_V}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_solkz/errors_P}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/mms_solkz/errors_Q} 
-\end{center}
-
-
 
 
 
@@ -1235,16 +1246,16 @@ Earth dimensions.
 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/p_block_res32.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/p_block_res64.pdf}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/q1_block_res32.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/q1_block_res64.pdf}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/v_block_res32.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/v_block_res64.pdf}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/pressure_top_res32.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/pressure_top_res64.pdf}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/v_profile_res32.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/sinking_block/v_profile_res64.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp08/p_block_res32.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp08/p_block_res64.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp08/q1_block_res32.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp08/q1_block_res64.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp08/v_block_res32.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp08/v_block_res64.pdf}\\
+%\includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp08/pressure_top_res32.pdf}
+%\includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp08/pressure_top_res64.pdf}\\
+%\includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp08/v_profile_res32.pdf}
+%\includegraphics[width=5cm]{python_codes/fieldstone_78/results/exp08/v_profile_res64.pdf}
 \end{center}
 
 
@@ -1406,29 +1417,31 @@ $\vec\upnu=(1,0)$ prescribed on the left, $\upnu_y=0$ on the right.
 %-------------------------------------------------------------
 \subsection*{Experiment 13: SolCx (MS)}
 
-\begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_u_exp13.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/vrms_exp13.pdf} \\
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_p_exp13.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_q1_exp13.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_q2_exp13.pdf}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_u_exp13.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_v_exp13.pdf}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_p_exp13.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_q1_exp13.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_q2_exp13.pdf}
-\end{center}
+\begin{figure}
+\centering
+\includegraphics[width=5cm]{python_codes/fieldstone_78/images/fields/vel_solcx}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/images/fields/press_solcx}\\
+{\captionfont Velocity and pressure fields for SolCx experiment.}
+\end{figure}
 
-Odd number of elements:
+For SolKz the viscosity is given by $\eta(y)=\exp(By)$ with $B=\ln 10^6 \simeq 13.8155$ 
+and the density field by $\rho(x,y)=\sin(2y) \cos(3\pi x)$, with 
 
-\begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_78/results/mms_solcx/odd/errors_V}
-\includegraphics[width=6cm]{python_codes/fieldstone_78/results/mms_solcx/odd/errors_P}\\
-\includegraphics[width=6cm]{python_codes/fieldstone_78/results/mms_solcx/odd/errors_Q}
-\includegraphics[width=6cm]{python_codes/fieldstone_78/results/mms_solcx/odd/vrms.pdf}
-\end{center}
 
-Le Tallec macro-element has vertical line in the middle, so that 
+\begin{figure}
+\centering
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_u_exp13}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/vrms_exp13} \\
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_p_exp13}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_q1_exp13}
+{\captionfont SolCx benchmark: velocity error, 
+root mean square velocity, elemental pressure error and nodal pressure error
+as a function of the the average mesh size $h$.} 
+\end{figure}
+
+
+
+Remark: Le Tallec macro-element has vertical line in the middle, so that 
 even/odd does not matter, there is always an element edge aligned with x=1/2.
 
 
@@ -1606,6 +1619,10 @@ When set to be equal, we arrive at
 \delta^2 = \frac{h}{\sqrt{12}} \simeq 0.288 h
 \]
 
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_78/results/epsilon_studies/LT/errorss.pdf}
+\end{center}
 
 
 
