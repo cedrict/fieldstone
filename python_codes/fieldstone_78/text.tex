@@ -207,9 +207,19 @@ elements $nel$ and nodes $NV$ and the number of nodes per element $m_\upnu$.
 In what follows $p$ is the 'raw' pressure field (after normalisation)
 while $q$ denotes its projection onto the nodes by means of corner-to-node average.
 More specifically $q_1$ is the pressure average at the node, 
-while $q_2$  is the element area weighed average.
+while $q_2$ is the element area weighed average
+and $q_3$ is the triangle area weighed average. i.e. Scheme 2 of \cite{sagl81a}.
+Note that the `filtering and smoothing' schemes proposed in this paper (section F, page 36)
+are all based on the assumption
+that each node belongs to four elements, which is not the case for our macro-elements here.
+Interestingly \textcite{sagl81a} present their Scheme 1 as ``always successfully filters the 
+CB mode, [but] cumbersome to implement''.
 In practice most of the macro-elements are built so that 
-the elements inside it have equal area and then $q_1=q_2$. 
+the elements inside it have equal area and then $q_1=q_2=q_3$. 
+
+Note that \textcite{sagl81a} present rules for side and corner nodes. I here do not implement these
+since they would need to be adapted ad hoc for each macro-element.
+See also \stone~12 about pressure smoothing.
 
 Define errors and mesh size which is taken to be $h = \sqrt{L_xL_y/nel}$. 
 
@@ -293,8 +303,15 @@ and therefore triggers extremely large insane pressure oscillations and
 yields the problem above? my instinct then tells me that 
 by adding this extra line (and corresponding column) of constraints in the matrix it somewhat 
 introduces some 'wiggle room' (\#technicalterm:) that compensates for the error in the b.c. imposition?
-However, since option 2 is not an option in reality, what to do? 
- 
+
+Note that in \textcite{sagl81a} we read:
+`` if the imposed boundary conditions violate the constraint equation among the
+normal velocities on the boundary (which again can only occur if all normal velocity
+components on $\partial\Omega$ are specified), the problem is ill-posed, the algebraic system will be
+inconsistent, and no solution is possible (owing to the lack of global mass balance implied by
+the erroneous boundary conditions''.
+
+Since option 2 is not an option in reality, what to do? 
 For once we could start by computing the analytical flux on each face for experiment 9:
 \begin{eqnarray}
 \Phi_{bottom} 
@@ -981,13 +998,14 @@ and the pressure error does not converge.
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_u_exp1.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/vrms_exp1.pdf} \\
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_p_exp1.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/vrms_exp1.pdf} 
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_p_exp1.pdf}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_q1_exp1.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_q2_exp1.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_q2_exp1.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/errors_q3_exp1.pdf}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_u_exp1.pdf}
 \includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_v_exp1.pdf}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_p_exp1.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_p_exp1.pdf}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_q1_exp1.pdf}
 \includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_q2_exp1.pdf}
 \end{center}
@@ -1169,8 +1187,8 @@ No-slip prescribed at sides and bottom and $\vec{\upnu}=(16x^2(1-x^2),0)$ prescr
 \includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_u_exp6.pdf}
 \includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_v_exp6.pdf}\\
 \includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_p_exp6.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_q1_exp6.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_q2_exp6.pdf}
+%\includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_q1_exp6.pdf}
+%\includegraphics[width=5cm]{python_codes/fieldstone_78/results/stats_q2_exp6.pdf}
 \end{center}
 
 pressure of topo 0 is 10**12 , no in plot
