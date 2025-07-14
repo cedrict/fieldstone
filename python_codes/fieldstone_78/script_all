@@ -13,13 +13,13 @@ rm *.vtu
 #for exp in 1 2 3 4 5 6 7 8 9 10 11 12 13 14; do
 for exp in 1; do
 
-    #for topo in 0 1 2 3 4 5 6 7 8 9; do
-    for topo in 9  ; do
+    for topo in 0 1 2 3 4 5 6 7 8 9 10 ; do
+    #for topo in 8 9 10 ; do
 
         echo topology= $topo experiment= $exp
 
-        for res in 8 10 12 14 16 20 24 28 32 48 64 96 128 160 192 256; do
-        #for res in 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 23 24 27 28 31 32 35 40 45 48 53 56 61 64 71 80 88 96 111 128 150; do
+        #for res in 8 10 12 14 16 20 24 28 32 48 64 80 96 112 128; do # 144 160 192 256; do
+        for res in 8 10 12 14 16 20 24 28 32 48 64 80 96 128; do # 144 160 192 256; do
 
             echo $res 
             python3 stone.py $res $res 1 $topo 0 $exp > opla
@@ -31,6 +31,7 @@ for exp in 1; do
             grep p opla  | grep m,M  >> pstats_topo${topo}_exp${exp}.ascii
             grep q1 opla | grep m,M  >> q1stats_topo${topo}_exp${exp}.ascii
             grep q2 opla | grep m,M  >> q2stats_topo${topo}_exp${exp}.ascii
+            grep q3 opla | grep m,M  >> q3stats_topo${topo}_exp${exp}.ascii
             grep u opla  | grep m,M  >> ustats_topo${topo}_exp${exp}.ascii
             grep v opla  | grep m,M  >> vstats_topo${topo}_exp${exp}.ascii
 

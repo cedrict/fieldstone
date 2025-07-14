@@ -7,6 +7,8 @@
 \usepackage{siunitx}
 \usepackage{amsfonts}
 
+\linespread{1.5}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \title{
@@ -294,11 +296,22 @@ Techniques how to do so (and thereby filter out the checkerboard modes) have bee
 for example in \cite{legs79,sagl81a,chpc95,thfb08}.
 For simplicity, and since all elements have equal or very similar areas 
 I have adopted the following simple procedure: each 
-elemental pressure is added to the nodes making this element and later averaged:
+elemental pressure is added to the nodes making this element and later averaged.
+In the end the pressure at a node is given by
 \[
-q_j = \frac{1}{nel_j} \sum_{e=1}^{nel_j} p_e
+q = \frac{1}{nel_j} \sum_{e=1}^{n} \xi_e p_e
 \]
-where $nel_j$ is the number of elements to which node $j$ belongs.
+where $n$ is the number of elements to which the node belongs.
+We find multiple options in the literature for the weight $\xi_e$.
+We shall not embark on a full detailed study of all the possibilities 
+and instead will consider three nodal pressures:
+a) $q_1$ is obtained when $\xi_e=1$; 
+b) $q_2$ is obtained when $\xi_e=A_e$ where $A_e$ is the area of element $e$
+(scheme 3 of \cite{sagl81a}).
+b) $q_3$ is obtained when $\xi_e=A_e^T$ where $A_e^T$ is the area of the triangle cutting
+element $e$ along the diagonal for which the node belongs to two edges (scheme 2 of \cite{sagl81a}).
+{\color{red} W: figure?}
+
 
 When an analytical solution exists convergence rates are computed and 
 we expect for smooth viscosity fields and/or boundary conditions that the convergence rates 
@@ -356,9 +369,11 @@ b: Dohrmann \& Bochev, c: cavity) in this work. \label{fig:dh1}}
 \includegraphics[width=8cm]{../results/errors_u_exp1}
 \includegraphics[width=8cm]{../results/vrms_exp1} \\
 \includegraphics[width=8cm]{../results/errors_p_exp1}
-\includegraphics[width=8cm]{../results/errors_q1_exp1}
+\includegraphics[width=8cm]{../results/errors_q1_exp1}\\
+\includegraphics[width=8cm]{../results/errors_q2_exp1}
+\includegraphics[width=8cm]{../results/errors_q3_exp1}
 \caption{Donea and Huerta benchmark: velocity error, 
-root mean square velocity, elemental pressure error and nodal pressure error
+root mean square velocity, elemental pressure error and nodal pressure errors $q_1,q_2,q_3$
 as a function of the the average mesh size $h$.} 
 \label{fig:resdh}
 \end{figure}
@@ -770,9 +785,41 @@ The greyed area highlights the presence of a QZ1 macro-element.
 \newpage
 \section{About nullspaces}
 
+The nullspace of the ${ \bm G}$ operator can be determined 
+numerically. It is first built with a size $NfemV \times NfemP$.
+In a second time the lines corresponding to degrees of freedom 
+where a Dirichlet boundary condition is applied are removed to yield
+the $\tilde{\bm G}$ matrix. 
+
+The null space of $\tilde{\bm G}$ is then obtained with the 
+{\tt null\_space} function from {\tt scipy.linalg}.
+I report below the size of the null space for all 11 topologies/meshes
+and for meshes consisting of $1\times 1$ macro-element up to $10\times 10$.
+
+As explained (for example) in \cite{sagl81a}, if an element is stable we 
+expect the size of the null space to be one, corresponding to the 
+hydrostatic pressure mode.
+We find that the R mesh null space is always two, thereby confirming 
+the presence of a checkerboard pressure mode at all resolutions. 
+The S, LT, QZ1, QZ2, QZ3 null spaces are unsurprisingly of size 1 since 
+these macro-elements have been proven LBB stable. 
+We find that T1 null space is also always 1 which indicates that it could
+be stable. 
+Finally the Rp, Rrp and FR meshes all yield null spaces of size 1 
+provided that at least a 3x3 macro-element is used which is very much the 
+case in practice. 
+
+
 
 \begin{center}
-\includegraphics[width=14cm]{../results/nullspace/nullspace.pdf}
+\includegraphics[width=14cm]{../results/nullspace/nullspace_NS.pdf}\\
+No-slip on all sides
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=10cm]{../results/nullspace/nullspace_FS.pdf}\\
+Free-slip on all sides
 \end{center}
 
 

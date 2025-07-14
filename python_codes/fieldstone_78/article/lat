@@ -1,3 +1,0 @@
-biber --output-safechars paper
-pdflatex paper.tex
-

@@ -11,6 +11,7 @@ from scipy.linalg import null_space
 import matplotlib.pyplot as plt
 from scipy.sparse.csgraph import reverse_cuthill_mckee
 from numba import jit,float64
+#from scikits.umfpack import spsolve, splu
 
 eps=1.e-10
 
@@ -266,12 +267,12 @@ if int(len(sys.argv) == 7):
    eta_star = int(sys.argv[5]) 
    experiment = int(sys.argv[6])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 1
+   nely = 1
    visu = 1
-   topo = 2
+   topo = 0
    eta_star=0
-   experiment=7
+   experiment=1
    
 if topo==0 or topo==8 or topo==9 or topo==10:
    nelx*=2
@@ -366,68 +367,6 @@ if topo==10: # fully random regular
 
 ###############################################################################
 
-if nullspace:
-
-   Lx=1
-   Ly=1
-   experiment=1
-
-   if topo==0 or topo==8 or topo==9 or topo==10: # R m-e
-      #nelx=4 ; nely=4 
-      NV=(nelx+1)*(nely+1)
-      nel=nelx*nely
-      NV2=(nelx-1)*(nely-1)
-
-   if topo==1: # stenberg m-e
-      #nelx=1 ; nely=1
-      NV=nely*(5*nelx+2)+2*nelx+1
-      nel=5*nelx*nely
-      NV2=NV-2*(2*nelx-1)-2*(2*nely-1)-4
-
-   if topo==2: # LT
-      #nelx=1 ; nely=1
-      NV=(2*nelx+1)*(2*nely+1)+nely*nelx*8
-      nel=12*nelx*nely
-      NV2=NV-2*(2*nelx-1)-2*(2*nely-1)-4
-
-   if topo==3: # QZ1 m-e
-      #nelx=1 ; nely=1
-      nel=nelx*nely*12
-      NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +9*nelx*nely
-      NV2=NV-2*(2*nelx-1)-2*(2*nely-1)-4
-
-   if topo==4: # QZ2 m-e
-      #nelx=1 ; nely=1 
-      nel=nelx*nely*8
-      NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +5*nelx*nely
-      NV2=NV-2*(2*nelx-1)-2*(2*nely-1)-4
-
-   if topo==5: # QZ3 m-e
-      #nelx=1 ; nely=1 ; NV=11 ; nel=6
-      nel=nelx*nely*6
-      NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +3*nelx*nely
-      NV2=NV-2*(2*nelx-1)-2*(2*nely-1)-4
-
-   if topo==6: # ThA m-e
-      #nelx=1 ; nely=1 
-      nel=nelx*nely*7
-      NV=(nelx+1)*(nely+1) +nelx*(nely+1) +nely*(nelx+1) +4*nelx*nely
-      NV2=NV-2*(2*nelx-1)-2*(2*nely-1)-4
-
-   if topo==7: # ThB m-e
-      #nelx=2 ; nely=2
-      nel=nelx*nely*5
-      NV=(nelx+1)*(nely+1)+4*nelx*nely
-      NV2=4*nelx*nely+(nelx-1)*(nely-1)
-      
-   G2=np.zeros((NV2*ndofV,nel),dtype=np.float64)
-
-   print('NV=',NV)
-   print('NV2=',NV2)
-   print('G2=',np.shape(G2))
-
-###############################################################################
-
 NfemV=NV*ndofV   # number of velocity dofs
 NfemP=nel*ndofP   # number of pressure dofs
 Nfem=NfemV+NfemP # total number of dofs
@@ -481,6 +420,7 @@ print("build mesh: %.3f s" % (timing.time() - start))
 ###############################################################################
 # compute coordinates of center of elements
 ###############################################################################
+start = timing.time()
 
 xc = np.zeros(nel,dtype=np.float64)  
 yc = np.zeros(nel,dtype=np.float64)  
@@ -488,6 +428,8 @@ yc = np.zeros(nel,dtype=np.float64)
 for iel in range(0,nel):
     xc[iel]=0.25*np.sum(xV[iconV[:,iel]])
     yc[iel]=0.25*np.sum(yV[iconV[:,iel]])
+
+print("compute elt center coords: %.3f s" % (timing.time() - start))
 
 ###############################################################################
 # compute area of elements
@@ -670,6 +612,22 @@ else: # no slip on all sides
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
 
 print("setup: boundary conditions: %.3f s" % (timing.time() - start))
+
+###############################################################################
+# compute NV2 and allocate G2 for nullspace
+
+if nullspace:
+
+   N2=NfemV
+   for i in range(0,NV):
+       if bc_fix[i*ndofV  ]:  N2-=1 
+       if bc_fix[i*ndofV+1]: N2-=1 
+
+   G2=np.zeros((N2,nel),dtype=np.float64)
+
+   print('NV=',NV)
+   print('N2=',N2)
+   print('G2=',np.shape(G2))
 
 ###############################################################################
 # compute flux 
@@ -997,9 +955,11 @@ for iel in range(0,nel):
 
 #end for iel
 
-print(tA,tB,tC)
+print('    -> make elt matrices: %.3f s' %tA)
+print('    -> bound conds: %.3f s' %tB)
+print('    -> assembly: %.3f s' %tC)
 
-print("build FE matrix: %.3f s" % (timing.time() - start))
+print("build FE matrix: %.3f s" % (tA+tB+tC))
 
 ###############################################################################
 # compute null space of G matrix
@@ -1017,7 +977,7 @@ if nullspace:
        for i1 in range(0,ndofV):
            m1=ndofV*i+i1
            if not bc_fix[m1]:
-              print (m1)
+              #print (m1)
               G2[counter,:]=G_mat[m1,:]
               counter+=1 
 
@@ -1029,7 +989,7 @@ if nullspace:
       coeff=1
    print('topo=',topo,'null space size:',ns_size,'|',nelx/coeff,nel)
    for ins in range(ns_size):
-       print(np.average(ns[:,ins]))
+       #print(np.average(ns[:,ins]))
        ns[:,ins]-=np.average(ns[:,ins])
        ns[:,ins]/=np.max(ns[:,ins])
    #print(ns)
@@ -1077,8 +1037,6 @@ start = timing.time()
 sparse_matrix = sps.coo_matrix((V,(I,J)),shape=(Nfem,Nfem)).tocsr()
 sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
-
-#sol=sps.linalg.spsolve(A_csr,rhs)
    
 if apply_RCM:
    sol=sol[np.ix_(perm_inv)]
