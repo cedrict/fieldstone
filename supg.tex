@@ -9,19 +9,19 @@ method\footnote{Note that \textcite{mayu91} (1991) speak of ``streamwise-upwindi
 A nice overview of upwind techniques and how SUPG came to be is to be found in Chapter 
 2 of \textcite{dohu03} or in \textcite{brhu82}.
 \textcite{humm86} (1986) present a review of the SUPG method 
-and discuss a additional discontinuity-capturing term. 
+and discuss an additional discontinuity-capturing term. 
 So do \textcite{tepa86} (1986).
 Note that the idea of upwind goes back to the seventies, see for example 
 \textcite{hehz77} (1977).
 
 It is compared to other methods in the context of mantle convection in 
-Malevsky \& Yuen (1991) \cite{mayu91} (rotating code, convection in a box). 
+Malevsky \& Yuen (1991) \cite{mayu91} (rotating cone, convection in a box). 
 Note that SUPG is not restricted to advection(-diffusion) equations: it can also
 be applied to the Navier-Stokes equations\footnote{\url{https://en.wikipedia.org/wiki/Streamline_upwind_Petrov-Galerkin_pressure-stabilizing_Petrov-Galerkin_formulation_for_incompressible_Navier-Stokes_equations}}
 
 As explained in the step-9 tutorial of deal.II (\url{https://www.dealii.org/current/doxygen/deal.II/step_9.html}), the term `Petrov-Galerkin' can be explained as follows: 
 \begin{displayquote}
-{\color{darkgray}
+{\color{MidnightBlue}
 A ``Galerkin method'' is one where one obtains the weak formulation by multiplying the equation by a test function $v$ (and then integrating over $\Omega$) where the functions $v$ are from the same space as the solution $u$ (though possibly with different boundary values). But this is not strictly necessary: One could also imagine choosing the test functions from a different set of functions, as long as that different set has ``as many dimensions'' as the original set of functions so that we end up with as many independent equations as there are degrees of freedom (where all of this needs to be appropriately defined in the infinite-dimensional case). Methods that make use of this possibility (i.e., choose the set of test functions differently than the set of solutions) are called ``Petrov-Galerkin'' methods. }
 \end{displayquote}
 
@@ -61,7 +61,7 @@ where $\vec T$ and $\vec \bN^\uptheta$ are vectors of length $m_T$. Also, in 2d:
 \end{array}
 \right)
 \]
-The weak form is then
+The weak form is then of the form
 \begin{equation}
 \int_{\Omega_e} \bN^\uptheta_i \left[ 
 \rho C_p \left( \dot{T} + {\vec \upnu}\cdot {\vec\nabla T} \right) \right] d\Omega
@@ -80,12 +80,12 @@ The streamline upwind Petrov-Galerkin (SUPG)
 method adds the following stabilisation term to the left hand side of this equation (see Section 2.4 
 in \textcite{dohu03}):
 \begin{equation}
-\int_{\Omega_e} (\vec\upnu\cdot\vec\nabla \bN_i^\theta ) \tau {\cal R}(\vec\upnu) \; d\Omega
+\int_{\Omega_e} (\vec\upnu\cdot\vec\nabla \bN_i^\theta ) \tau {\cal R}(T^h,\vec\upnu) \; d\Omega
 \label{eq:supg:res1}
 \end{equation}
 where ${\cal R}$ is the residual defined as
 \begin{equation}
-{\cal R}(T^h) = 
+{\cal R}(T^h,\vec\upnu) = 
 \rho C_p (\dot{T}^h +  {\vec \upnu}\cdot {\vec\nabla T^h}) - {\vec \nabla} \cdot k \vec\nabla T^h 
 \label{eq:supg:res2}
 \end{equation}
@@ -199,19 +199,60 @@ where $\tau$ is computed on each cell, $h$ being its diameter in the direction o
 and $p$ is the order of the approximation (i.e. the maximum degree of polynomials).
 
 \begin{center}
-\includegraphics[width=8cm]{images/supg/step63}\\
+\includegraphics[width=9cm]{images/supg/step63}\\
 {\captionfont Taken from step-63 webpage 
 at \url{https://www.dealii.org/current/doxygen/deal.II/step_63.html}}
 \end{center}
 
+A quick note about 
+\[
+\beta(x) = \coth (x) -\frac{1}{x}
+\]
+If $x\rightarrow \infty$ then $1/x \rightarrow 0$ and then
+\[
+\beta(x) \rightarrow \coth(x) 
+= \frac{\exp(x) + \exp(-x)}{\exp(x)-\exp(-x)}
+= \frac{1 + \exp(-2x)}{1-\exp(-2x)} \rightarrow 1
+\]
+If $x \rightarrow 0$ then we must use the Taylor expansion of the $\exp$ function:
+\[
+\exp(x) \simeq 1 +x +x\frac{x^2}{2} + \frac{x^3}{6}
+\]
+Then 
+\begin{eqnarray}
+\exp(x) + \exp(-x)
+&\simeq& 1 +x +\frac{x^2}{2} + \frac{x^3}{6} + ...
++ 1 -x +\frac{x^2}{2} - \frac{x^3}{6} + ...
+\simeq 2 + x^2 \nn\\
+\exp(x) - \exp(-x) 
+&\simeq& 1 +x +\frac{x^2}{2} + \frac{x^3}{6} + ...
+- 1 +x -\frac{x^2}{2} + \frac{x^3}{6} + ...
+\simeq 2x 
+\end{eqnarray}
+so that 
+\[
+\beta(x) \rightarrow \frac{2+x^2}{2x} - \frac{1}{x} = \frac12 x
+\]
+In both cases the function $\beta$ is bounded and positive. 
+
+
+
 The expression above is also found at p. 617 in \textcite{lomw12}.
-Note that Hughes \& Brooks \cite{hubr82} replace the costly 'coth' term by an asymptotic curve:
+Note that Hughes \& Brooks \cite{hubr82} replace the costly '$\coth$' term by an asymptotic curve:
 
 \begin{center}
 \includegraphics[width=8cm]{images/supg/hubr82}\\
-{\captionfont Taken from \cite{hubr82}. Here $\alpha$ is the Peclet number and the vertical axis
-is the term $ \coth (\Penb) -1/\Penb$.}
+{\captionfont Taken from \textcite{hubr82} (1982). Here $\alpha$ is the Peclet number.} 
 \end{center}
+
+Note also that in \textcite{hubr82} (1982) the authors present the 
+following formulation for the 2d case:
+\begin{center}
+\includegraphics[width=9cm]{images/supg/hubr82b}\\
+{\captionfont Taken from \textcite{hubr82} (1982).} 
+\end{center}
+This approach will certainly prove to be rather expensive!
+
 
 
 \item
@@ -285,7 +326,10 @@ $\gamma_j=\frac{\tau_j}{h/2|\vec\upnu|}$ and
 plot this quantity against the Peclet number:
 
 \begin{center}
-\includegraphics[width=10cm]{images/supg/gamma} 
+\includegraphics[width=10cm]{images/supg/gamma}\\
+{\captionfont in images/supg/ folder. Note that gnuplot
+struggles with small values of $\Penb$ and the purple line should 
+actually reach the origin.} 
 \end{center}
 
 In the case when the equation to be stabilised is a pure advection equation, 
@@ -469,8 +513,7 @@ else if $\Penb<1$ we say the problem is diffusion-dominated.
 
 The $\beta(\Penb)$ factor is shown in the following figure:
 \begin{center}
-\includegraphics[width=10cm]{images/supg/beta}\\
-{\captionfont Note that the value of $\beta$ is positive only for $\Penb>1$.}
+\includegraphics[width=10cm]{images/supg/beta1}
 \end{center}
 
 

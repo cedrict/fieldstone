@@ -1,3 +1,6 @@
+
+
+
 The elemental matrix $\G_{el}$ is given by (see Section~\ref{sec:mixed}):
 
 \[
@@ -5,34 +8,35 @@ The elemental matrix $\G_{el}$ is given by (see Section~\ref{sec:mixed}):
 = -\int_{\Omega_e}
 \left(
 \begin{array}{ccc}
-\partial_x N_1^\upnu & 0 & \partial_y N_1^\upnu \\
-0 & \partial_y N_1^\upnu & \partial_x N_1^\upnu \\
-\partial_x N_2^\upnu & 0 & \partial_y N_2^\upnu \\
-0 & \partial_y N_2^\upnu & \partial_x N_2^\upnu \\
+\partial_x \bN_1^\upnu & 0 & \partial_y \bN_1^\upnu \\
+0 & \partial_y \bN_1^\upnu & \partial_x \bN_1^\upnu \\
+\partial_x \bN_2^\upnu & 0 & \partial_y \bN_2^\upnu \\
+0 & \partial_y \bN_2^\upnu & \partial_x \bN_2^\upnu \\
 \dots & \dots & \dots \\
 \dots & \dots & \dots \\
-\partial_x N_{m_\upnu}^\upnu & 0 & \partial_y N_{m_\upnu}^\upnu \\
-0 & \partial_y N_{m_\upnu}^\upnu & \partial_x N_{m_\upnu}^\upnu 
+\partial_x \bN_{m_\upnu}^\upnu & 0 & \partial_y \bN_{m_\upnu}^\upnu \\
+0 & \partial_y \bN_{m_\upnu}^\upnu & \partial_x \bN_{m_\upnu}^\upnu 
 \end{array}
 \right)
 \cdot
 \left(
 \begin{array}{cccc}
-N_1^p & N_2^p & \dots & N_{m_p}^p \\ 
-N_1^p & N_2^p & \dots & N_{m_p}^p \\ 
+\bN_1^p & \bN_2^p & \dots & \bN_{m_p}^p \\ 
+\bN_1^p & \bN_2^p & \dots & \bN_{m_p}^p \\ 
 0 & 0 & \dots & 0
 \end{array}
 \right)
 d\Omega
 \]
 
-In what follows I set out to compute this elemental matrix for the reference element.
-All of the integrals were computed with WolframAlpha since it allowed me to copy-paste 
+In what follows I set out to compute this elemental matrix for the reference element $[-1:1]\times[-1:1]$.
+All of the integrals were computed with WolframAlpha\footnote{\url{https://www.wolframalpha.com/}} 
+since it allowed me to copy-paste
 the \LaTeX code directly into the website prompt area and obtain the value of these integrals.
 
 
 %-------------------------------------------------------------------
-\subsection{$Q_1\times P_0$ element - 2D}
+\subsection{$Q_1\times P_0$ element (2d case)}
 
 For this element, $m_\upnu=4$ and $m_p=1$ so $\G_{el}$ is
 a $8\times 1$ matrix:
@@ -41,40 +45,40 @@ a $8\times 1$ matrix:
 = -\int_{\Omega_e}
 \left(
 \begin{array}{ccc}
-\partial_r N_1^\upnu & 0 & \partial_s N_1^\upnu \\
-0 & \partial_s N_1^\upnu & \partial_r N_1^\upnu \\
-\partial_r N_2^\upnu & 0 & \partial_s N_2^\upnu \\
-0 & \partial_s N_2^\upnu & \partial_r N_2^\upnu \\
-\partial_r N_3^\upnu & 0 & \partial_s N_3^\upnu \\
-0 & \partial_s N_3^\upnu & \partial_r N_3^\upnu \\
-\partial_r N_4^\upnu & 0 & \partial_s N_4^\upnu \\
-0 & \partial_s N_4^\upnu & \partial_r N_4^\upnu 
+\partial_r \bN_1^\upnu & 0 & \partial_s \bN_1^\upnu \\
+0 & \partial_s \bN_1^\upnu & \partial_r \bN_1^\upnu \\
+\partial_r \bN_2^\upnu & 0 & \partial_s \bN_2^\upnu \\
+0 & \partial_s \bN_2^\upnu & \partial_r \bN_2^\upnu \\
+\partial_r \bN_3^\upnu & 0 & \partial_s \bN_3^\upnu \\
+0 & \partial_s \bN_3^\upnu & \partial_r \bN_3^\upnu \\
+\partial_r \bN_4^\upnu & 0 & \partial_s \bN_4^\upnu \\
+0 & \partial_s \bN_4^\upnu & \partial_r \bN_4^\upnu 
 \end{array}
 \right)
 \cdot
 \left(
 \begin{array}{c}
-N_1^p  \\ 
-N_1^p  \\ 
+\bN_1^p  \\ 
+\bN_1^p  \\ 
 0 
 \end{array}
 \right)
 d\Omega
 \]
-also, since $N_1^p=1$ then 
+also, since $\bN_1^p(r,s)=1$ then
 \[
 \G_{el} = -\int_{\Omega_e} {\bm B}^T \cdot {\bm N} d\Omega
 = -\int_{\Omega_e}
 \left(
 \begin{array}{ccc}
-\partial_r N_1^\upnu  \\
-\partial_s N_1^\upnu  \\
-\partial_r N_2^\upnu  \\
-\partial_s N_2^\upnu  \\
-\partial_r N_3^\upnu  \\
-\partial_s N_3^\upnu  \\
-\partial_r N_4^\upnu  \\
-\partial_s N_4^\upnu  
+\partial_r \bN_1^\upnu  \\
+\partial_s \bN_1^\upnu  \\
+\partial_r \bN_2^\upnu  \\
+\partial_s \bN_2^\upnu  \\
+\partial_r \bN_3^\upnu  \\
+\partial_s \bN_3^\upnu  \\
+\partial_r \bN_4^\upnu  \\
+\partial_s \bN_4^\upnu  
 \end{array}
 \right)
 d\Omega
@@ -93,7 +97,7 @@ d\Omega
 \right)
 \]
 
-A macro element made of a single element makes no sense since if velocity 
+A macro element made of a single element makes no sense since if velocity
 is prescribed on all sides there is not a single velocity dof left.
 
 We then consider the following macro-element:
@@ -106,6 +110,7 @@ velocity      pressure
 |    |    |   |  1 |  2 |   
 1====2====3   .====.====.   NP=4
 \end{verbatim}
+
 
 The assembled $\G$ matrix is then $18 \times 4$:
 \[
@@ -134,6 +139,7 @@ The assembled $\G$ matrix is then $18 \times 4$:
 \right)
 \]
 After applying boundary conditions on nodes 1,2,3,4,6,7,8,9:
+
 \[
 \G = 
 \left(
@@ -159,7 +165,7 @@ After applying boundary conditions on nodes 1,2,3,4,6,7,8,9:
 \end{array}
 \right)
 \]
-or, 
+or, defining $\tilde{\G}$ as the remaining matrix when the zero lines have been removed:
 \[
 \tilde{\G} = 
 \left(
@@ -177,13 +183,18 @@ The null space is of size two, spawn by the two vectors:
  [-0.1  0.7]]
 \end{verbatim}
 
-In the book the authors proceed to show that any such macroelement 
-made of rectangles has a spurious mode. 
+The means that we have two pressure solutions $\vec{\cal P}_{1,2}$ (and any linear combination of these 2) 
+which are such that $\G\cdot\vec{\cal P}=\vec{0}$
+while we would ideally want a single one, the constant vector.
+
+In the book (which?) the authors proceed to show that any such macro-element
+made of rectangles has a spurious mode.
 
 See code {\tt python\_codes/Gel/macro\_element\_q1p0.py}
 
+
 %-------------------------------------------------------------------
-\subsection{$Q_1\times P_0$ element - 3D}
+\subsection{$Q_1\times P_0$ element (3d case)}
 
 For this element, $m_\upnu=8$ and $m_p=1$ so $\G_{el}$ is
 a $3*8\times 1$ matrix:
@@ -192,23 +203,22 @@ a $3*8\times 1$ matrix:
 = -\int_{\Omega_e}
 \left(
 \begin{array}{cccccc}
-\partial_r N_1^\upnu & 0 & 0 & \partial_s N_1^\upnu  & \partial_t N_1^\upnu & 0 \\
-0 & \partial_s N_1^\upnu  & 0 & \partial_r N_1^\upnu  & 0 & \partial_t N_1^\upnu \\
-0 & 0 & \partial_t N_1^\upnu  & 0 & \partial_r N_1^\upnu  & \partial_s N_1^\upnu \\
+\partial_r \bN_1^\upnu & 0 & 0 & \partial_s \bN_1^\upnu  & \partial_t \bN_1^\upnu & 0 \\
+0 & \partial_s \bN_1^\upnu  & 0 & \partial_r \bN_1^\upnu  & 0 & \partial_t \bN_1^\upnu \\
+0 & 0 & \partial_t \bN_1^\upnu  & 0 & \partial_r \bN_1^\upnu  & \partial_s \bN_1^\upnu \\
 \dots  & \dots & \dots  & \dots & \dots  & \dots \\
 \dots  & \dots & \dots  & \dots & \dots  & \dots \\
-\dots  & \dots & \dots  & \dots & \dots  & \dots \\
-\partial_r N_8^\upnu & 0 & 0 & \partial_s N_8^\upnu  & \partial_t N_8^\upnu & 0 \\
-0 & \partial_s N_8^\upnu  & 0 & \partial_r N_8^\upnu  & 0 & \partial_t N_8^\upnu \\
-0 & 0 & \partial_t N_8^\upnu  & 0 & \partial_r N_8^\upnu  & \partial_s N_8^\upnu 
+\partial_r \bN_8^\upnu & 0 & 0 & \partial_s \bN_8^\upnu  & \partial_t \bN_8^\upnu & 0 \\
+0 & \partial_s \bN_8^\upnu  & 0 & \partial_r \bN_8^\upnu  & 0 & \partial_t \bN_8^\upnu \\
+0 & 0 & \partial_t \bN_8^\upnu  & 0 & \partial_r \bN_8^\upnu  & \partial_s \bN_8^\upnu 
 \end{array}
 \right)
 \cdot
 \left(
 \begin{array}{c}
-N_1^p  \\ 
-N_1^p  \\ 
-N_1^p  \\ 
+\bN_1^p  \\ 
+\bN_1^p  \\ 
+\bN_1^p  \\ 
 0 \\
 0 \\
 0 
@@ -216,36 +226,36 @@ N_1^p  \\
 \right)
 d\Omega
 \]
-also, since $N_1^p=1$ then 
+also, since $\bN_1^p(r,s)=1$ then
 \[
 \G_{el} = -\int_{\Omega_e} {\bm B}^T \cdot {\bm N} d\Omega
 = -\int_{\Omega_e}
 \left(
 \begin{array}{ccc}
-\partial_r N_1^\upnu  \\
-\partial_s N_1^\upnu  \\
-\partial_t N_1^\upnu  \\
-\partial_r N_2^\upnu  \\
-\partial_s N_2^\upnu  \\
-\partial_t N_2^\upnu  \\
-\partial_r N_3^\upnu  \\
-\partial_s N_3^\upnu  \\
-\partial_t N_3^\upnu  \\
-\partial_r N_4^\upnu  \\
-\partial_s N_4^\upnu  \\
-\partial_t N_4^\upnu  \\
-\partial_r N_5^\upnu  \\
-\partial_s N_5^\upnu  \\
-\partial_t N_5^\upnu  \\
-\partial_r N_6^\upnu  \\
-\partial_s N_6^\upnu  \\
-\partial_t N_6^\upnu  \\
-\partial_r N_7^\upnu  \\
-\partial_s N_7^\upnu  \\
-\partial_t N_7^\upnu  \\
-\partial_r N_8^\upnu  \\
-\partial_s N_8^\upnu  \\
-\partial_t N_8^\upnu  
+\partial_r \bN_1^\upnu  \\
+\partial_s \bN_1^\upnu  \\
+\partial_t \bN_1^\upnu  \\
+\partial_r \bN_2^\upnu  \\
+\partial_s \bN_2^\upnu  \\
+\partial_t \bN_2^\upnu  \\
+\partial_r \bN_3^\upnu  \\
+\partial_s \bN_3^\upnu  \\
+\partial_t \bN_3^\upnu  \\
+\partial_r \bN_4^\upnu  \\
+\partial_s \bN_4^\upnu  \\
+\partial_t \bN_4^\upnu  \\
+\partial_r \bN_5^\upnu  \\
+\partial_s \bN_5^\upnu  \\
+\partial_t \bN_5^\upnu  \\
+\partial_r \bN_6^\upnu  \\
+\partial_s \bN_6^\upnu  \\
+\partial_t \bN_6^\upnu  \\
+\partial_r \bN_7^\upnu  \\
+\partial_s \bN_7^\upnu  \\
+\partial_t \bN_7^\upnu  \\
+\partial_r \bN_8^\upnu  \\
+\partial_s \bN_8^\upnu  \\
+\partial_t \bN_8^\upnu  
 \end{array}
 \right)
 d\Omega
@@ -310,15 +320,15 @@ d\Omega
 \right)
 \]
 
-If we consider a macro-element 2x2x2 of size Lx=Ly=Lz=4, apply velocity b.c on the all sides
-we are left with 
+If we consider a macro-element $2\times 2 \times 2$ of size $L_x=L_y=L_z=4$, apply velocity b.c on the all sides
+we are left with
 \[
 \tilde{G} = 
 \left(
-\begin{array}{cccccc}
--1. -1. -1. -1.  1.  1.  1.  1.\\
--1. -1.  1.  1. -1. -1.  1.  1.\\
--1.  1. -1.  1. -1.  1. -1.  1.
+\begin{array}{cccccccc}
+-1 &-1 &-1 &-1 & 1 & 1 & 1 & 1\\
+-1 &-1 & 1 & 1 &-1 &-1 & 1 & 1\\
+-1 & 1 &-1 & 1 &-1 & 1 &-1 & 1
 \end{array}
 \right)
 \]
@@ -337,13 +347,10 @@ Null space has dimension 5:
 
 
 
-
-
 %-------------------------------------------------------------------
-\subsection{$Q_1\times Q_1$ element}
+\subsection{$Q_1\times Q_1$ element (2d case)}
 
-For this element, $m_\upnu=4$ and $m_p=4$ so $\G_{el}$ is
-a $8\times 4$ matrix:
+For this element, $m_\upnu=4$ and $m_p=4$ so $\G_{el}$ is a $8\times 4$ matrix:
 
 \begin{eqnarray}
 \G_{el} 
@@ -351,21 +358,21 @@ a $8\times 4$ matrix:
 &=& -\int_{\Omega_e}
 \left(
 \begin{array}{ccc}
-\partial_r N_1^\upnu & 0 & \partial_s N_1^\upnu \\
-0 & \partial_s N_1^\upnu & \partial_r N_1^\upnu \\
-\partial_r N_2^\upnu & 0 & \partial_s N_2^\upnu \\
-0 & \partial_s N_2^\upnu & \partial_r N_2^\upnu \\
-\partial_r N_3^\upnu & 0 & \partial_s N_3^\upnu \\
-0 & \partial_s N_3^\upnu & \partial_r N_3^\upnu \\
-\partial_r N_4^\upnu & 0 & \partial_s N_4^\upnu \\
-0 & \partial_s N_4^\upnu & \partial_r N_4^\upnu \\
+\partial_r \bN_1^\upnu & 0 & \partial_s \bN_1^\upnu \\
+0 & \partial_s \bN_1^\upnu & \partial_r \bN_1^\upnu \\
+\partial_r \bN_2^\upnu & 0 & \partial_s \bN_2^\upnu \\
+0 & \partial_s \bN_2^\upnu & \partial_r \bN_2^\upnu \\
+\partial_r \bN_3^\upnu & 0 & \partial_s \bN_3^\upnu \\
+0 & \partial_s \bN_3^\upnu & \partial_r \bN_3^\upnu \\
+\partial_r \bN_4^\upnu & 0 & \partial_s \bN_4^\upnu \\
+0 & \partial_s \bN_4^\upnu & \partial_r \bN_4^\upnu \\
 \end{array}
 \right)
 \cdot
 \left(
 \begin{array}{cccc}
-N_1^p & N_2^p & N_3^p & N_{4}^p \\ 
-N_1^p & N_2^p & N_3^p & N_{4}^p \\ 
+\bN_1^p & \bN_2^p & \bN_3^p & \bN_{4}^p \\ 
+\bN_1^p & \bN_2^p & \bN_3^p & \bN_{4}^p \\ 
 0 & 0 & \dots & 0
 \end{array}
 \right)
@@ -374,34 +381,33 @@ d\Omega \\
 -\int_{\Omega_e}
 \left(
 \begin{array}{cccc}
-N_1^p\partial_r N_1^\upnu & N_2^p\partial_r N_1^\upnu & N_3^p\partial_r N_1^\upnu & N_4^p\partial_r N_1^\upnu \\
-N_1^p\partial_s N_1^\upnu & N_2^p\partial_s N_1^\upnu & N_3^p\partial_s N_1^\upnu & N_4^p\partial_s N_1^\upnu \\
-N_1^p\partial_r N_2^\upnu & N_2^p\partial_r N_2^\upnu & N_3^p\partial_r N_2^\upnu & N_4^p\partial_r N_2^\upnu \\
-N_1^p\partial_s N_2^\upnu & N_2^p\partial_s N_2^\upnu & N_3^p\partial_s N_2^\upnu & N_4^p\partial_s N_2^\upnu \\
-N_1^p\partial_r N_3^\upnu & N_2^p\partial_r N_3^\upnu & N_3^p\partial_r N_3^\upnu & N_4^p\partial_r N_3^\upnu \\
-N_1^p\partial_s N_3^\upnu & N_2^p\partial_s N_3^\upnu & N_3^p\partial_s N_3^\upnu & N_4^p\partial_s N_3^\upnu \\
-N_1^p\partial_r N_4^\upnu & N_2^p\partial_r N_4^\upnu & N_3^p\partial_r N_4^\upnu & N_4^p\partial_r N_4^\upnu \\
-N_1^p\partial_s N_4^\upnu & N_2^p\partial_s N_4^\upnu & N_3^p\partial_s N_4^\upnu & N_4^p\partial_s N_4^\upnu 
+\bN_1^p\partial_r \bN_1^\upnu & \bN_2^p\partial_r \bN_1^\upnu & \bN_3^p\partial_r \bN_1^\upnu & \bN_4^p\partial_r \bN_1^\upnu \\
+\bN_1^p\partial_s \bN_1^\upnu & \bN_2^p\partial_s \bN_1^\upnu & \bN_3^p\partial_s \bN_1^\upnu & \bN_4^p\partial_s \bN_1^\upnu \\
+\bN_1^p\partial_r \bN_2^\upnu & \bN_2^p\partial_r \bN_2^\upnu & \bN_3^p\partial_r \bN_2^\upnu & \bN_4^p\partial_r \bN_2^\upnu \\
+\bN_1^p\partial_s \bN_2^\upnu & \bN_2^p\partial_s \bN_2^\upnu & \bN_3^p\partial_s \bN_2^\upnu & \bN_4^p\partial_s \bN_2^\upnu \\
+\bN_1^p\partial_r \bN_3^\upnu & \bN_2^p\partial_r \bN_3^\upnu & \bN_3^p\partial_r \bN_3^\upnu & \bN_4^p\partial_r \bN_3^\upnu \\
+\bN_1^p\partial_s \bN_3^\upnu & \bN_2^p\partial_s \bN_3^\upnu & \bN_3^p\partial_s \bN_3^\upnu & \bN_4^p\partial_s \bN_3^\upnu \\
+\bN_1^p\partial_r \bN_4^\upnu & \bN_2^p\partial_r \bN_4^\upnu & \bN_3^p\partial_r \bN_4^\upnu & \bN_4^p\partial_r \bN_4^\upnu \\
+\bN_1^p\partial_s \bN_4^\upnu & \bN_2^p\partial_s \bN_4^\upnu & \bN_3^p\partial_s \bN_4^\upnu & \bN_4^p\partial_s \bN_4^\upnu 
 \end{array}
 \right)
 d\Omega \\
 \end{eqnarray}
-We have $N_i^\upnu = N_i^p $ with $i=1,2,3,4$, so we can drop the superscripts and we can write:
-
+We have $\bN_i^\upnu = \bN_i^p $ with $i=1,2,3,4$, so we can drop the superscripts and we can write:
 \begin{eqnarray}
 \G_{el} 
 &=&
 -\int_{\Omega_e}
 \left(
 \begin{array}{cccc}
-N_1\partial_r N_1 & N_2\partial_r N_1 & N_3\partial_r N_1 & N_4\partial_r N_1 \\
-N_1\partial_s N_1 & N_2\partial_s N_1 & N_3\partial_s N_1 & N_4\partial_s N_1 \\
-N_1\partial_r N_2 & N_2\partial_r N_2 & N_3\partial_r N_2 & N_4\partial_r N_2 \\
-N_1\partial_s N_2 & N_2\partial_s N_2 & N_3\partial_s N_2 & N_4\partial_s N_2 \\
-N_1\partial_r N_3 & N_2\partial_r N_3 & N_3\partial_r N_3 & N_4\partial_r N_3 \\
-N_1\partial_s N_3 & N_2\partial_s N_3 & N_3\partial_s N_3 & N_4\partial_s N_3 \\
-N_1\partial_r N_4 & N_2\partial_r N_4 & N_3\partial_r N_4 & N_4\partial_r N_4 \\
-N_1\partial_s N_4 & N_2\partial_s N_4 & N_3\partial_s N_4 & N_4\partial_s N_4 
+\bN_1\partial_r \bN_1 & \bN_2\partial_r \bN_1 & \bN_3\partial_r \bN_1 & \bN_4\partial_r \bN_1 \\
+\bN_1\partial_s \bN_1 & \bN_2\partial_s \bN_1 & \bN_3\partial_s \bN_1 & \bN_4\partial_s \bN_1 \\
+\bN_1\partial_r \bN_2 & \bN_2\partial_r \bN_2 & \bN_3\partial_r \bN_2 & \bN_4\partial_r \bN_2 \\
+\bN_1\partial_s \bN_2 & \bN_2\partial_s \bN_2 & \bN_3\partial_s \bN_2 & \bN_4\partial_s \bN_2 \\
+\bN_1\partial_r \bN_3 & \bN_2\partial_r \bN_3 & \bN_3\partial_r \bN_3 & \bN_4\partial_r \bN_3 \\
+\bN_1\partial_s \bN_3 & \bN_2\partial_s \bN_3 & \bN_3\partial_s \bN_3 & \bN_4\partial_s \bN_3 \\
+\bN_1\partial_r \bN_4 & \bN_2\partial_r \bN_4 & \bN_3\partial_r \bN_4 & \bN_4\partial_r \bN_4 \\
+\bN_1\partial_s \bN_4 & \bN_2\partial_s \bN_4 & \bN_3\partial_s \bN_4 & \bN_4\partial_s \bN_4 
 \end{array}
 \right)
 d\Omega 
@@ -410,56 +416,52 @@ d\Omega
 \begin{tiny}
 
 \begin{eqnarray}
-\int_{\Omega_e}  N_1\partial_r N_1 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(-1)(1-s) dr ds = -1/3 \\
-\int_{\Omega_e}  N_1\partial_s N_1 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(1-r)(-1) dr ds = -1/3 \\
-\int_{\Omega_e}  N_1\partial_r N_2 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(+1)(1-s) dr ds = 1/3 \\
-\int_{\Omega_e}  N_1\partial_s N_2 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(1+r)(-1) dr ds = -1/6 \\
-\int_{\Omega_e}  N_1\partial_r N_3 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(+1)(1+s) dr ds = 1/6 \\
-\int_{\Omega_e}  N_1\partial_s N_3 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(1+r)(+1) dr ds = 1/6 \\
-\int_{\Omega_e}  N_1\partial_r N_4 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(-1)(1+s) dr ds = -1/6 \\
-\int_{\Omega_e}  N_1\partial_s N_4 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(1-r)(+1) dr ds = 1/3 
+\int_{\Omega_e}\bN_1\partial_r \bN_1 d\Omega&=&\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(-1)(1-s) dr ds = -1/3 \nn\\
+\int_{\Omega_e}\bN_1\partial_s \bN_1 d\Omega&=&\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(1-r)(-1) dr ds = -1/3 \nn\\
+\int_{\Omega_e}\bN_1\partial_r \bN_2 d\Omega&=&\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(+1)(1-s) dr ds = 1/3 \nn\\
+\int_{\Omega_e}\bN_1\partial_s \bN_2 d\Omega&=&\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(1+r)(-1) dr ds = -1/6 \nn\\
+\int_{\Omega_e}\bN_1\partial_r \bN_3 d\Omega&=&\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(+1)(1+s) dr ds = 1/6 \nn\\
+\int_{\Omega_e}\bN_1\partial_s \bN_3 d\Omega&=&\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(1+r)(+1) dr ds = 1/6 \nn\\
+\int_{\Omega_e}\bN_1\partial_r \bN_4 d\Omega&=&\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(-1)(1+s) dr ds = -1/6 \nn\\
+\int_{\Omega_e}\bN_1\partial_s \bN_4 d\Omega&=&\int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1-s) \frac{1}{4}(1-r)(+1) dr ds = 1/3 \nn
 \end{eqnarray}
 
 \begin{eqnarray}
-\int_{\Omega_e}  N_2\partial_r N_1 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(-1)(1-s) dr ds = -1/3 \\
-\int_{\Omega_e}  N_2\partial_s N_1 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(1-r)(-1) dr ds = -1/6 \\
-\int_{\Omega_e}  N_2\partial_r N_2 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(+1)(1-s) dr ds = 1/3 \\
-\int_{\Omega_e}  N_2\partial_s N_2 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(1+r)(-1) dr ds = -1/3 \\
-\int_{\Omega_e}  N_2\partial_r N_3 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(+1)(1+s) dr ds = 1/6 \\
-\int_{\Omega_e}  N_2\partial_s N_3 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(1+r)(+1) dr ds = 1/3  \\
-\int_{\Omega_e}  N_2\partial_r N_4 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(-1)(1+s) dr ds = -1/6 \\
-\int_{\Omega_e}  N_2\partial_s N_4 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(1-r)(+1) dr ds = 1/6 
+\int_{\Omega_e}\bN_2\partial_r \bN_1 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(-1)(1-s) dr ds = -1/3 \nn\\
+\int_{\Omega_e}\bN_2\partial_s \bN_1 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(1-r)(-1) dr ds = -1/6 \nn\\
+\int_{\Omega_e}\bN_2\partial_r \bN_2 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(+1)(1-s) dr ds = 1/3 \nn\\
+\int_{\Omega_e}\bN_2\partial_s \bN_2 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(1+r)(-1) dr ds = -1/3 \nn\\
+\int_{\Omega_e}\bN_2\partial_r \bN_3 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(+1)(1+s) dr ds = 1/6 \nn\\
+\int_{\Omega_e}\bN_2\partial_s \bN_3 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(1+r)(+1) dr ds = 1/3  \nn\\
+\int_{\Omega_e}\bN_2\partial_r \bN_4 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(-1)(1+s) dr ds = -1/6 \nn\\
+\int_{\Omega_e}\bN_2\partial_s \bN_4 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1-s) \frac{1}{4}(1-r)(+1) dr ds = 1/6 \nn
 \end{eqnarray}
-
 
 \begin{eqnarray}
-\int_{\Omega_e}  N_3\partial_r N_1 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(-1)(1-s) dr ds = -1/6 \\
-\int_{\Omega_e}  N_3\partial_s N_1 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(1-r)(-1) dr ds = -1/6 \\
-\int_{\Omega_e}  N_3\partial_r N_2 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(+1)(1-s) dr ds = 1/6\\
-\int_{\Omega_e}  N_3\partial_s N_2 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(1+r)(-1) dr ds = -1/3\\
-\int_{\Omega_e}  N_3\partial_r N_3 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(+1)(1+s) dr ds = 1/3 \\
-\int_{\Omega_e}  N_3\partial_s N_3 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(1+r)(+1) dr ds = 1/3  \\
-\int_{\Omega_e}  N_3\partial_r N_4 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(-1)(1+s) dr ds = -1/3 \\
-\int_{\Omega_e}  N_3\partial_s N_4 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(1-r)(+1) dr ds = 1/6 
+\int_{\Omega_e}  \bN_3\partial_r \bN_1 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(-1)(1-s) dr ds = -1/6 \nn\\
+\int_{\Omega_e}  \bN_3\partial_s \bN_1 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(1-r)(-1) dr ds = -1/6 \nn\\
+\int_{\Omega_e}  \bN_3\partial_r \bN_2 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(+1)(1-s) dr ds = 1/6 \nn\\
+\int_{\Omega_e}  \bN_3\partial_s \bN_2 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(1+r)(-1) dr ds = -1/3 \nn\\
+\int_{\Omega_e}  \bN_3\partial_r \bN_3 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(+1)(1+s) dr ds = 1/3 \nn\\
+\int_{\Omega_e}  \bN_3\partial_s \bN_3 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(1+r)(+1) dr ds = 1/3  \nn\\
+\int_{\Omega_e}  \bN_3\partial_r \bN_4 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(-1)(1+s) dr ds = -1/3 \nn\\
+\int_{\Omega_e}  \bN_3\partial_s \bN_4 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1+r)(1+s) \frac{1}{4}(1-r)(+1) dr ds = 1/6 \nn
 \end{eqnarray}
-
 
 \begin{eqnarray}
-\int_{\Omega_e}  N_4\partial_r N_1 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(-1)(1-s) dr ds = -1/6 \\
-\int_{\Omega_e}  N_4\partial_s N_1 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(1-r)(-1) dr ds = -1/3 \\
-\int_{\Omega_e}  N_4\partial_r N_2 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(+1)(1-s) dr ds = 1/6 \\
-\int_{\Omega_e}  N_4\partial_s N_2 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(1+r)(-1) dr ds = -1/6\\
-\int_{\Omega_e}  N_4\partial_r N_3 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(+1)(1+s) dr ds =  1/3 \\
-\int_{\Omega_e}  N_4\partial_s N_3 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(1+r)(+1) dr ds = 1/6  \\
-\int_{\Omega_e}  N_4\partial_r N_4 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(-1)(1+s) dr ds = -1/3 \\
-\int_{\Omega_e}  N_4\partial_s N_4 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(1-r)(+1) dr ds = 1/3 
+\int_{\Omega_e}  \bN_4\partial_r \bN_1 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(-1)(1-s) dr ds = -1/6 \nn\\
+\int_{\Omega_e}  \bN_4\partial_s \bN_1 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(1-r)(-1) dr ds = -1/3 \nn\\
+\int_{\Omega_e}  \bN_4\partial_r \bN_2 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(+1)(1-s) dr ds = 1/6 \nn\\
+\int_{\Omega_e}  \bN_4\partial_s \bN_2 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(1+r)(-1) dr ds = -1/6\nn\\
+\int_{\Omega_e}  \bN_4\partial_r \bN_3 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(+1)(1+s) dr ds =  1/3 \nn\\
+\int_{\Omega_e}  \bN_4\partial_s \bN_3 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(1+r)(+1) dr ds = 1/6  \nn\\
+\int_{\Omega_e}  \bN_4\partial_r \bN_4 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(-1)(1+s) dr ds = -1/3 \nn\\
+\int_{\Omega_e}  \bN_4\partial_s \bN_4 d\Omega&=& \int_{-1}^{+1}\int_{-1}^{+1} \frac{1}{4}(1-r)(1+s) \frac{1}{4}(1-r)(+1) dr ds = 1/3 \nn
 \end{eqnarray}
-
 
 \end{tiny}
 
 Putting it all together:
-
 
 \begin{eqnarray}
 \G_{el} 
@@ -493,8 +495,8 @@ Putting it all together:
 \right)
 \end{eqnarray}
 
-I have implemented a 3x3 quadrature integration to numerically compute the matrix in the file {\tt python\_codes/Gel/programQ1Q1.py}.
-The code returns:
+I have implemented a $3\times 3$ quadrature integration to numerically compute the matrix in the 
+file {\tt python\_codes/Gel/programQ1Q1.py}. The code returns:
 \begin{verbatim}
 [[ 0.33333333  0.33333333  0.16666667  0.16666667]
  [ 0.33333333  0.16666667  0.16666667  0.33333333]
@@ -505,10 +507,10 @@ The code returns:
  [ 0.16666667  0.16666667  0.33333333  0.33333333]
  [-0.33333333 -0.16666667 -0.16666667 -0.33333333]]
 \end{verbatim}
-which is indeed what we have obtained above.
+which is indeed what we have obtained above.where???????
 
-Similarly to the Q1P0 element, a macroelement made of a single element has 
-zero left over vel dof after b.c. are applied on all sides, so we 
+Similarly to the Q1P0 element, a macroelement made of a single element has
+zero left over vel dof after b.c. are applied on all sides, so we
 resort to the following macroelement:
 
 \begin{verbatim}
@@ -574,9 +576,9 @@ and after imposing boundary conditions on nodes 1,2,3,4,6,7,8,9:
 \end{array}
 \right)
 \]
-or, 
+or,
 \[
-\G=
+\tilde{\G}=
 \frac{1}{6}
 \left(
 \begin{array}{ccccccccc}
@@ -599,14 +601,210 @@ When passed to {\sl null\_space} as argument it returns the following nullspace:
 \end{verbatim}
 which is very bad: the dimension of the nullspace is 9!
 
-Note that it does not mean that this element is unstable (see Q2Q1) since it is a sufficient 
-but not necessary condition. We could test with larger macroelements (see Q2Q1) and these could 
-prove to have a properly sized nullspace. 
+%Note that it does not mean that this element is unstable (see Q2Q1) since it is a sufficient
+%but not necessary condition. We could test with larger macroelements (see Q2Q1) and these could
+%prove to have a properly sized nullspace.
 
 See code {\tt python\_codes/Gel/macro\_element\_q1q1.py}
 
+
+%-------------------------------------------------------------------
+\subsection{$Q_2 \times Q_1$ element}
+
+\begin{eqnarray}
+\G_{el} 
+&=& -\int_{\Omega_e} {\bm B}^T \cdot {\bm N} d\Omega \nn\\
+&=& -\int_{\Omega_e}
+\left(
+\begin{array}{ccc}
+\partial_x \bN_1^\upnu & 0 & \partial_y \bN_1^\upnu \\
+0 & \partial_y \bN_1^\upnu & \partial_x \bN_1^\upnu \\
+\partial_x \bN_2^\upnu & 0 & \partial_y \bN_2^\upnu \\
+0 & \partial_y \bN_2^\upnu & \partial_x \bN_2^\upnu \\
+\partial_x \bN_3^\upnu & 0 & \partial_y \bN_1^\upnu \\
+0 & \partial_y \bN_3^\upnu & \partial_x \bN_1^\upnu \\
+\partial_x \bN_4^\upnu & 0 & \partial_y \bN_2^\upnu \\
+0 & \partial_y \bN_4^\upnu & \partial_x \bN_2^\upnu \\
+\partial_x \bN_5^\upnu & 0 & \partial_y \bN_1^\upnu \\
+0 & \partial_y \bN_5^\upnu & \partial_x \bN_1^\upnu \\
+\partial_x \bN_6^\upnu & 0 & \partial_y \bN_2^\upnu \\
+0 & \partial_y \bN_6^\upnu & \partial_x \bN_2^\upnu \\
+\partial_x \bN_7^\upnu & 0 & \partial_y \bN_1^\upnu \\
+0 & \partial_y \bN_7^\upnu & \partial_x \bN_1^\upnu \\
+\partial_x \bN_8^\upnu & 0 & \partial_y \bN_2^\upnu \\
+0 & \partial_y \bN_8^\upnu & \partial_x \bN_2^\upnu \\
+\partial_x \bN_9^\upnu & 0 & \partial_y \bN_1^\upnu \\
+0 & \partial_y \bN_9^\upnu & \partial_x \bN_1^\upnu 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{cccc}
+\bN_1^p & \bN_2^p & \bN_3^p & \bN_4^p \\ 
+\bN_1^p & \bN_2^p & \bN_3^p & \bN_4^p \\
+0 & 0 & \dots & 0
+\end{array}
+\right)
+d\Omega \nn\\
+&=&
+-\int_{\Omega_e}
+\left(
+\begin{array}{cccc}
+\bN_1^p\partial_r \bN_1^\upnu & \bN_2^p\partial_r \bN_1^\upnu & \bN_3^p\partial_r \bN_1^\upnu & \bN_4^p\partial_r \bN_1^\upnu \\
+\bN_1^p\partial_s \bN_1^\upnu & \bN_2^p\partial_s \bN_1^\upnu & \bN_3^p\partial_s \bN_1^\upnu & \bN_4^p\partial_s \bN_1^\upnu \\
+\bN_1^p\partial_r \bN_2^\upnu & \bN_2^p\partial_r \bN_2^\upnu & \bN_3^p\partial_r \bN_2^\upnu & \bN_4^p\partial_r \bN_2^\upnu \\
+\bN_1^p\partial_s \bN_2^\upnu & \bN_2^p\partial_s \bN_2^\upnu & \bN_3^p\partial_s \bN_2^\upnu & \bN_4^p\partial_s \bN_2^\upnu \\
+\bN_1^p\partial_r \bN_3^\upnu & \bN_2^p\partial_r \bN_3^\upnu & \bN_3^p\partial_r \bN_3^\upnu & \bN_4^p\partial_r \bN_3^\upnu \\
+\bN_1^p\partial_s \bN_3^\upnu & \bN_2^p\partial_s \bN_3^\upnu & \bN_3^p\partial_s \bN_3^\upnu & \bN_4^p\partial_s \bN_3^\upnu \\
+\bN_1^p\partial_r \bN_4^\upnu & \bN_2^p\partial_r \bN_4^\upnu & \bN_3^p\partial_r \bN_4^\upnu & \bN_4^p\partial_r \bN_4^\upnu \\
+\bN_1^p\partial_s \bN_4^\upnu & \bN_2^p\partial_s \bN_4^\upnu & \bN_3^p\partial_s \bN_4^\upnu & \bN_4^p\partial_s \bN_4^\upnu \\
+\bN_1^p\partial_r \bN_5^\upnu & \bN_2^p\partial_r \bN_5^\upnu & \bN_3^p\partial_r \bN_5^\upnu & \bN_4^p\partial_r \bN_5^\upnu \\
+\bN_1^p\partial_s \bN_5^\upnu & \bN_2^p\partial_s \bN_5^\upnu & \bN_3^p\partial_s \bN_5^\upnu & \bN_4^p\partial_s \bN_5^\upnu \\
+\bN_1^p\partial_r \bN_6^\upnu & \bN_2^p\partial_r \bN_6^\upnu & \bN_3^p\partial_r \bN_6^\upnu & \bN_4^p\partial_r \bN_6^\upnu \\
+\bN_1^p\partial_s \bN_6^\upnu & \bN_2^p\partial_s \bN_6^\upnu & \bN_3^p\partial_s \bN_6^\upnu & \bN_4^p\partial_s \bN_6^\upnu \\
+\bN_1^p\partial_r \bN_7^\upnu & \bN_2^p\partial_r \bN_7^\upnu & \bN_3^p\partial_r \bN_7^\upnu & \bN_4^p\partial_r \bN_7^\upnu \\
+\bN_1^p\partial_s \bN_7^\upnu & \bN_2^p\partial_s \bN_7^\upnu & \bN_3^p\partial_s \bN_7^\upnu & \bN_4^p\partial_s \bN_7^\upnu \\
+\bN_1^p\partial_r \bN_8^\upnu & \bN_2^p\partial_r \bN_8^\upnu & \bN_3^p\partial_r \bN_8^\upnu & \bN_4^p\partial_r \bN_8^\upnu \\
+\bN_1^p\partial_s \bN_8^\upnu & \bN_2^p\partial_s \bN_8^\upnu & \bN_3^p\partial_s \bN_8^\upnu & \bN_4^p\partial_s \bN_8^\upnu \\
+\bN_1^p\partial_r \bN_9^\upnu & \bN_2^p\partial_r \bN_9^\upnu & \bN_3^p\partial_r \bN_9^\upnu & \bN_4^p\partial_r \bN_9^\upnu \\
+\bN_1^p\partial_s \bN_9^\upnu & \bN_2^p\partial_s \bN_9^\upnu & \bN_3^p\partial_s \bN_9^\upnu & \bN_4^p\partial_s \bN_9^\upnu 
+\end{array}
+\right)
+d\Omega 
+\end{eqnarray}
+
+
+\begin{tiny}
+
+\begin{eqnarray}
+\int_{\Omega_e}  \bN_1^p \partial_r \bN_1^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1-s) \frac{1}{2}(2r-1) \frac{1}{2}s(s-1) dr ds = -5/18 \nn\\
+\int_{\Omega_e}  \bN_2^p \partial_s \bN_1^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1-s) \frac{1}{2}r(r-1) \frac{1}{2}(2s-1) dr ds = -5/18 \nn\\
+\int_{\Omega_e}  \bN_3^p \partial_r \bN_1^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1-s) \frac{1}{2}(2r-1) \frac{1}{2}s(s-1) dr ds = -1/18 \nn\\
+\int_{\Omega_e}  \bN_4^p \partial_s \bN_1^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1-s) \frac{1}{2}r(r-1) \frac{1}{2}(2s-1) dr ds = 0 \nn\\
+\int_{\Omega_e}  \bN_1^p \partial_r \bN_1^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1+s) \frac{1}{2}(2r-1) \frac{1}{2}s(s-1) dr ds = 0 \nn\\
+\int_{\Omega_e}  \bN_2^p \partial_s \bN_1^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1+s) \frac{1}{2}r(r-1) \frac{1}{2}(2s-1) dr ds = 0 \nn\\
+\int_{\Omega_e}  \bN_3^p \partial_r \bN_1^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1+s) \frac{1}{2}(2r-1) \frac{1}{2}s(s-1) dr ds = 0 \nn\\
+\int_{\Omega_e}  \bN_4^p \partial_s \bN_1^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1+s) \frac{1}{2}r(r-1) \frac{1}{2}(2s-1) dr ds = -1/18 \nn
+\end{eqnarray}
+
+... same procedure for 1,2,3,4,5,6,7...
+
+\begin{eqnarray}
+\int_{\Omega_e}  \bN_1^p \partial_r \bN_9^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1-s)    (-2r)(1-s^2)  drds = 4/9 \nn\\
+\int_{\Omega_e}  \bN_2^p \partial_s \bN_9^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1-s)    (1-r^2)(-2s)  drds = 4/9 \nn\\
+\int_{\Omega_e}  \bN_3^p \partial_r \bN_9^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1-s)    (-2r)(1-s^2)  drds = -4/9 \nn\\
+\int_{\Omega_e}  \bN_4^p \partial_s \bN_9^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1-s)    (1-r^2)(-2s)  drds = 4/9 \nn\\
+\int_{\Omega_e}  \bN_1^p \partial_r \bN_9^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1+s)    (-2r)(1-s^2)  drds = -4/9 \nn\\
+\int_{\Omega_e}  \bN_2^p \partial_s \bN_9^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1+s)    (1-r^2)(-2s)  drds = -4/9  \nn\\
+\int_{\Omega_e}  \bN_3^p \partial_r \bN_9^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1+s)    (-2r)(1-s^2)  drds = 4/9 \nn\\
+\int_{\Omega_e}  \bN_4^p \partial_s \bN_9^\upnu d\Omega &=&  
+\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1+s)    (1-r^2)(-2s)  drds = -4/9 \nn
+\end{eqnarray}
+\end{tiny}
+
+We obtain
+\[
+\tilde{\G}_{el}=
+-\int_{\Omega_e}
+\left(
+\begin{array}{cccc}
+N_1^p\partial_r N_9^\upnu & N_2^p\partial_r N_9^\upnu & N_3^p\partial_r N_9^\upnu & N_4^p\partial_r N_9^\upnu \\
+N_1^p\partial_s N_9^\upnu & N_2^p\partial_s N_9^\upnu & N_3^p\partial_s N_9^\upnu & N_4^p\partial_s N_9^\upnu 
+\end{array}
+\right)
+d\Omega 
+=
+- \frac{4}{9}
+\left(
+\begin{array}{cccc}
+1 &-1 &-1 &1 \\
+1 &1 &-1 &-1 
+\end{array}
+\right)
+\]
+which is identical to Eq.(3.53) of \textcite{elsw}.
+I have implemented a 3x3 quadrature integration to numerically compute the matrix
+in the file {\tt python\_codes/Gel/programQ2Q1.py}:
+
+\begin{verbatim}
+[[ 2.77777778e-01  5.55555556e-02  1.73472348e-18  3.68628739e-18]
+ [ 2.77777778e-01 -1.29020059e-17 -3.46944695e-18  5.55555556e-02]
+ [-5.55555556e-02 -2.77777778e-01 -2.77555756e-17 -3.03576608e-18]
+ [-2.19008839e-17  2.77777778e-01  5.55555556e-02 -4.33680869e-18]
+ [-3.46944695e-18 -1.38777878e-17 -2.77777778e-01 -5.55555556e-02]
+ [ 2.60208521e-18 -5.55555556e-02 -2.77777778e-01  6.93889390e-18]
+ [ 4.01154804e-18  4.33680869e-18  5.55555556e-02  2.77777778e-01]
+ [-5.55555556e-02  6.07153217e-18  2.08166817e-17 -2.77777778e-01]
+ [-2.22222222e-01  2.22222222e-01  0.00000000e+00 -8.67361738e-19]
+ [ 5.55555556e-01  5.55555556e-01  1.11111111e-01  1.11111111e-01]
+ [-1.11111111e-01 -5.55555556e-01 -5.55555556e-01 -1.11111111e-01]
+ [-8.67361738e-19 -2.22222222e-01  2.22222222e-01  6.93889390e-18]
+ [-8.67361738e-18 -6.93889390e-18  2.22222222e-01 -2.22222222e-01]
+ [-1.11111111e-01 -1.11111111e-01 -5.55555556e-01 -5.55555556e-01]
+ [ 5.55555556e-01  1.11111111e-01  1.11111111e-01  5.55555556e-01]
+ [-2.22222222e-01 -5.20417043e-18  6.93889390e-18  2.22222222e-01]
+ [-4.44444444e-01  4.44444444e-01  4.44444444e-01 -4.44444444e-01]
+ [-4.44444444e-01 -4.44444444e-01  4.44444444e-01  4.44444444e-01]]
+\end{verbatim}
+or,
+\[
+\G_{el} 
+=\frac{1}{18}
+\left(
+\begin{array}{cccc}
+5 &1 &0 &0 \\
+5 &0 &0 &1 \\
+-1 &-5 &0 &0\\ 
+0 &5 &1 &0\\
+0 &0 &-5 &-1 \\
+0 &-1 &-5 &0 \\
+0 &0& 1& 5\\
+-1 &0 &0& -5\\
+-4 &4 &0 &0\\
+10 &10& 2 &2\\
+-2 &-10 &-10 &-2\\
+0 &-4 &4& 0\\
+0 &0 &4 &-4\\
+-2 &-2& -10 &-10\\
+10 &2 &2 &10\\
+-4 &0 &0 &4\\
+-8 &8 &8 &-8 \\
+-8 &-8 &8 &8
+\end{array}
+\right)
+\]
+Reading \textcite{elsw} we see that this element is stable but patches of
+even and odd elements actually are needed to establish the stability of the element.
+
+
+
+
+
+
+
+
+
+
 %-------------------------------------------------------------------
 \subsection{$Q_1^+\times Q_1$ element}
+
+{\color{red} I need to revisit this section, add bN, etc ....}
+
 
 For the quadrilateral MINI element, $m_\upnu=5$ and $m_p=4$ so $\G_{el}$ is
 a $10\times 4$ matrix:
@@ -1301,196 +1499,6 @@ I have tried all kinds of bubbles but I usually arrive at a
 null space of dimension 3 to 5... typically for bubble 1, dim=5, 
 while for bubble=2 dim=3. 
 
-
-%-------------------------------------------------------------------
-\subsection{$Q_2 \times Q_1$ element}
-
-
-\begin{eqnarray}
-\G_{el} 
-&=& -\int_{\Omega_e} {\bm B}^T \cdot {\bm N} d\Omega \nn\\
-&=& -\int_{\Omega_e}
-\left(
-\begin{array}{ccc}
-\partial_x N_1^\upnu & 0 & \partial_y N_1^\upnu \\
-0 & \partial_y N_1^\upnu & \partial_x N_1^\upnu \\
-\partial_x N_2^\upnu & 0 & \partial_y N_2^\upnu \\
-0 & \partial_y N_2^\upnu & \partial_x N_2^\upnu \\
-\partial_x N_3^\upnu & 0 & \partial_y N_1^\upnu \\
-0 & \partial_y N_3^\upnu & \partial_x N_1^\upnu \\
-\partial_x N_4^\upnu & 0 & \partial_y N_2^\upnu \\
-0 & \partial_y N_4^\upnu & \partial_x N_2^\upnu \\
-\partial_x N_5^\upnu & 0 & \partial_y N_1^\upnu \\
-0 & \partial_y N_5^\upnu & \partial_x N_1^\upnu \\
-\partial_x N_6^\upnu & 0 & \partial_y N_2^\upnu \\
-0 & \partial_y N_6^\upnu & \partial_x N_2^\upnu \\
-\partial_x N_7^\upnu & 0 & \partial_y N_1^\upnu \\
-0 & \partial_y N_7^\upnu & \partial_x N_1^\upnu \\
-\partial_x N_8^\upnu & 0 & \partial_y N_2^\upnu \\
-0 & \partial_y N_8^\upnu & \partial_x N_2^\upnu \\
-\partial_x N_9^\upnu & 0 & \partial_y N_1^\upnu \\
-0 & \partial_y N_9^\upnu & \partial_x N_1^\upnu 
-\end{array}
-\right)
-\cdot
-\left(
-\begin{array}{cccc}
-N_1^p & N_2^p & N_3^p & N_4^p \\ 
-N_1^p & N_2^p & N_3^p & N_4^p \\
-0 & 0 & \dots & 0
-\end{array}
-\right)
-d\Omega \nn\\
-&=&
--\int_{\Omega_e}
-\left(
-\begin{array}{cccc}
-N_1^p\partial_r N_1^\upnu & N_2^p\partial_r N_1^\upnu & N_3^p\partial_r N_1^\upnu & N_4^p\partial_r N_1^\upnu \\
-N_1^p\partial_s N_1^\upnu & N_2^p\partial_s N_1^\upnu & N_3^p\partial_s N_1^\upnu & N_4^p\partial_s N_1^\upnu \\
-N_1^p\partial_r N_2^\upnu & N_2^p\partial_r N_2^\upnu & N_3^p\partial_r N_2^\upnu & N_4^p\partial_r N_2^\upnu \\
-N_1^p\partial_s N_2^\upnu & N_2^p\partial_s N_2^\upnu & N_3^p\partial_s N_2^\upnu & N_4^p\partial_s N_2^\upnu \\
-N_1^p\partial_r N_3^\upnu & N_2^p\partial_r N_3^\upnu & N_3^p\partial_r N_3^\upnu & N_4^p\partial_r N_3^\upnu \\
-N_1^p\partial_s N_3^\upnu & N_2^p\partial_s N_3^\upnu & N_3^p\partial_s N_3^\upnu & N_4^p\partial_s N_3^\upnu \\
-N_1^p\partial_r N_4^\upnu & N_2^p\partial_r N_4^\upnu & N_3^p\partial_r N_4^\upnu & N_4^p\partial_r N_4^\upnu \\
-N_1^p\partial_s N_4^\upnu & N_2^p\partial_s N_4^\upnu & N_3^p\partial_s N_4^\upnu & N_4^p\partial_s N_4^\upnu \\
-N_1^p\partial_r N_5^\upnu & N_2^p\partial_r N_5^\upnu & N_3^p\partial_r N_5^\upnu & N_4^p\partial_r N_5^\upnu \\
-N_1^p\partial_s N_5^\upnu & N_2^p\partial_s N_5^\upnu & N_3^p\partial_s N_5^\upnu & N_4^p\partial_s N_5^\upnu \\
-N_1^p\partial_r N_6^\upnu & N_2^p\partial_r N_6^\upnu & N_3^p\partial_r N_6^\upnu & N_4^p\partial_r N_6^\upnu \\
-N_1^p\partial_s N_6^\upnu & N_2^p\partial_s N_6^\upnu & N_3^p\partial_s N_6^\upnu & N_4^p\partial_s N_6^\upnu \\
-N_1^p\partial_r N_7^\upnu & N_2^p\partial_r N_7^\upnu & N_3^p\partial_r N_7^\upnu & N_4^p\partial_r N_7^\upnu \\
-N_1^p\partial_s N_7^\upnu & N_2^p\partial_s N_7^\upnu & N_3^p\partial_s N_7^\upnu & N_4^p\partial_s N_7^\upnu \\
-N_1^p\partial_r N_8^\upnu & N_2^p\partial_r N_8^\upnu & N_3^p\partial_r N_8^\upnu & N_4^p\partial_r N_8^\upnu \\
-N_1^p\partial_s N_8^\upnu & N_2^p\partial_s N_8^\upnu & N_3^p\partial_s N_8^\upnu & N_4^p\partial_s N_8^\upnu \\
-N_1^p\partial_r N_9^\upnu & N_2^p\partial_r N_9^\upnu & N_3^p\partial_r N_9^\upnu & N_4^p\partial_r N_9^\upnu \\
-N_1^p\partial_s N_9^\upnu & N_2^p\partial_s N_9^\upnu & N_3^p\partial_s N_9^\upnu & N_4^p\partial_s N_9^\upnu 
-\end{array}
-\right)
-d\Omega 
-\end{eqnarray}
-
-
-
-\begin{tiny}
-
-\begin{eqnarray}
-\int_{\Omega_e}  N_1^p \partial_r N_1^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1-s) \frac{1}{2}(2r-1) \frac{1}{2}s(s-1) dr ds = -5/18 \\
-\int_{\Omega_e}  N_2^p \partial_s N_1^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1-s) \frac{1}{2}r(r-1) \frac{1}{2}(2s-1) dr ds = -5/18 \\
-\int_{\Omega_e}  N_3^p \partial_r N_1^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1-s) \frac{1}{2}(2r-1) \frac{1}{2}s(s-1) dr ds = -1/18 \\
-\int_{\Omega_e}  N_4^p \partial_s N_1^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1-s) \frac{1}{2}r(r-1) \frac{1}{2}(2s-1) dr ds = 0 \\
-\int_{\Omega_e}  N_1^p \partial_r N_1^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1+s) \frac{1}{2}(2r-1) \frac{1}{2}s(s-1) dr ds = 0 \\
-\int_{\Omega_e}  N_2^p \partial_s N_1^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1+s) \frac{1}{2}r(r-1) \frac{1}{2}(2s-1) dr ds = 0 \\
-\int_{\Omega_e}  N_3^p \partial_r N_1^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1+s) \frac{1}{2}(2r-1) \frac{1}{2}s(s-1) dr ds = 0 \\
-\int_{\Omega_e}  N_4^p \partial_s N_1^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1+s) \frac{1}{2}r(r-1) \frac{1}{2}(2s-1) dr ds = -1/18
-\end{eqnarray}
-
-... same procedure for 1,2,3,4,5,6,7...
-
-\begin{eqnarray}
-\int_{\Omega_e}  N_1^p \partial_r N_9^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1-s)    (-2r)(1-s^2)  drds = 4/9 \\
-\int_{\Omega_e}  N_2^p \partial_s N_9^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1-s)    (1-r^2)(-2s)  drds = 4/9 \\
-\int_{\Omega_e}  N_3^p \partial_r N_9^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1-s)    (-2r)(1-s^2)  drds = -4/9 \\
-\int_{\Omega_e}  N_4^p \partial_s N_9^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1-s)    (1-r^2)(-2s)  drds = 4/9 \\
-\int_{\Omega_e}  N_1^p \partial_r N_9^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1+s)    (-2r)(1-s^2)  drds = -4/9 \\
-\int_{\Omega_e}  N_2^p \partial_s N_9^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1+r)(1+s)    (1-r^2)(-2s)  drds = -4/9  \\
-\int_{\Omega_e}  N_3^p \partial_r N_9^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1+s)    (-2r)(1-s^2)  drds = 4/9 \\
-\int_{\Omega_e}  N_4^p \partial_s N_9^\upnu d\Omega &=&  
-\int_{-1}^{+1}\int_{-1}^{+1}\frac{1}{4}(1-r)(1+s)    (1-r^2)(-2s)  drds = -4/9 
-\end{eqnarray}
-\end{tiny}
-
-
-We obtain 
-\[
--\int_{\Omega_e}
-\left(
-\begin{array}{cccc}
-N_1^p\partial_r N_9^\upnu & N_2^p\partial_r N_9^\upnu & N_3^p\partial_r N_9^\upnu & N_4^p\partial_r N_9^\upnu \\
-N_1^p\partial_s N_9^\upnu & N_2^p\partial_s N_9^\upnu & N_3^p\partial_s N_9^\upnu & N_4^p\partial_s N_9^\upnu 
-\end{array}
-\right)
-d\Omega 
-=
-- \frac{4}{9}
-\left(
-\begin{array}{cccc}
-1 &-1 &-1 &1 \\
-1 &1 &-1 &-1 
-\end{array}
-\right)
-\]
-which is identical to Eq.(3.53) of Elman \etal \cite{elsw}.
-
-
-I have implemented a 3x3 quadrature integration to numerically compute the matrix 
-in the file {\tt python\_codes/Gel/programQ2Q1.py}:
- 
-\begin{verbatim}
-[[ 2.77777778e-01  5.55555556e-02  1.73472348e-18  3.68628739e-18]
- [ 2.77777778e-01 -1.29020059e-17 -3.46944695e-18  5.55555556e-02]
- [-5.55555556e-02 -2.77777778e-01 -2.77555756e-17 -3.03576608e-18]
- [-2.19008839e-17  2.77777778e-01  5.55555556e-02 -4.33680869e-18]
- [-3.46944695e-18 -1.38777878e-17 -2.77777778e-01 -5.55555556e-02]
- [ 2.60208521e-18 -5.55555556e-02 -2.77777778e-01  6.93889390e-18]
- [ 4.01154804e-18  4.33680869e-18  5.55555556e-02  2.77777778e-01]
- [-5.55555556e-02  6.07153217e-18  2.08166817e-17 -2.77777778e-01]
- [-2.22222222e-01  2.22222222e-01  0.00000000e+00 -8.67361738e-19]
- [ 5.55555556e-01  5.55555556e-01  1.11111111e-01  1.11111111e-01]
- [-1.11111111e-01 -5.55555556e-01 -5.55555556e-01 -1.11111111e-01]
- [-8.67361738e-19 -2.22222222e-01  2.22222222e-01  6.93889390e-18]
- [-8.67361738e-18 -6.93889390e-18  2.22222222e-01 -2.22222222e-01]
- [-1.11111111e-01 -1.11111111e-01 -5.55555556e-01 -5.55555556e-01]
- [ 5.55555556e-01  1.11111111e-01  1.11111111e-01  5.55555556e-01]
- [-2.22222222e-01 -5.20417043e-18  6.93889390e-18  2.22222222e-01]
- [-4.44444444e-01  4.44444444e-01  4.44444444e-01 -4.44444444e-01]
- [-4.44444444e-01 -4.44444444e-01  4.44444444e-01  4.44444444e-01]]
-\end{verbatim}
-
-
-or,
-\[
-\G_{el} 
-=\frac{1}{18}
-\left(
-\begin{array}{cccc}
-5 &1 &0 &0 \\
-5 &0 &0 &1 \\
--1 &-5 &0 &0\\ 
-0 &5 &1 &0\\
-0 &0 &-5 &-1 \\
-0 &-1 &-5 &0 \\
-0 &0& 1& 5\\
--1 &0 &0& -5\\
--4 &4 &0 &0\\
-10 &10& 2 &2\\
--2 &-10 &-10 &-2\\
-0 &-4 &4& 0\\
-0 &0 &4 &-4\\
--2 &-2& -10 &-10\\
-10 &2 &2 &10\\
--4 &0 &0 &4\\
--8 &8 &8 &-8 \\
--8 &-8 &8 &8
-\end{array}
-\right)
-\]
-
-Reading Elman \cite{elsw} we see that this element is stable but patches of 
-even and odd elements actually are needed to establish the stability of the element. 
 
 
 

@@ -7,10 +7,15 @@ set key bottom
 ###########################################################
 set xlabel 'Pe'
 set ylabel '{/Symbol b}'
-coth(x)=(exp(x)-exp(-x))/(exp(x)+exp(-x))
-set output 'beta.pdf'
-plot[0:30][0:]\
-coth(x)-1./x notitle
+
+coth(x)=(exp(x)+exp(-x))/(exp(x)-exp(-x))
+set output 'beta1.pdf'
+plot[0:30][0:] coth(x)-1./x notitle
+
+coth(x)=(1+exp(-2*x))/(1-exp(-2*x))
+set output 'beta2.pdf'
+plot[0:5][0:1.1] coth(x)-1./x notitle, x/2
+
 
 ###########################################################
 set ylabel '{/Symbol g}'

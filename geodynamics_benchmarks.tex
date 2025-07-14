@@ -359,6 +359,10 @@ The Stokes equations are not solved and the following velocity is prescribed:
 u(x,y)&=& U_\infty \left(  1-\frac{x^2-y^2}{(x^2+y^2)^2}  \right) \\
 v(x,y)&=& -2U_\infty \frac{xy}{(x^2+y^2)^2}
 \end{eqnarray}
+Note that the coordinates in the equation above are actually centered on 
+the middle of the cylinder (this also means that we never divide by zero outside
+the cylinder!)
+
 Boundary conditions are as follows:
 $T=0$ is imposed at the top and bottom of the domain. 
 $T=1$ is imposed inside a disc centered at (2,2) with radius 1.  
