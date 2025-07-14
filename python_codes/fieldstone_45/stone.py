@@ -48,7 +48,7 @@ hy=Ly/nely
 nel=2*nelx*nely
 NT=(nelx+1)*(nely+1)
 
-nstep=1001
+nstep=201
 dt=2*np.pi/200
 
 eps=1e-8
@@ -67,9 +67,9 @@ Tmin = 0
 Tmax = 1      
 sigma = 0.2  
 
-theta=0.5 # time discretisation
+theta=1 # time discretisation
 
-xi=0.25 # controls level of mesh randomness (between 0 and 0.5 max)
+xi=0 #0.25 # controls level of mesh randomness (between 0 and 0.5 max)
 
 #################################################################
 
@@ -296,6 +296,8 @@ for istep in range(0,nstep):
             velq[0,1]= xq-Lx/2
             #print(xq,yq)
             #print(velq[0,0],velq[0,1])
+            velq[0,0]=np.sum(u[icon[:,iel]])/3
+            velq[0,1]=np.sum(v[icon[:,iel]])/3
 
             # compute mass matrix
             MM+=N_mat.dot(N_mat.T)*weightq*jcob
@@ -304,6 +306,26 @@ for istep in range(0,nstep):
             Ka+=N_mat.dot(velq.dot(B_mat))*weightq*jcob
 
         # end for kq
+
+        if iel==0: print(Ka)
+
+        u0=np.sum(u[icon[:,iel]])/3
+        v0=np.sum(v[icon[:,iel]])/3
+        Ka=area[iel]/3*np.array([\
+                           [u0*(y[icon[1,iel]]-y[icon[2,iel]])+v0*(x[icon[2,iel]]-x[icon[1,iel]]), 
+                            u0*(y[icon[2,iel]]-y[icon[0,iel]])+v0*(x[icon[0,iel]]-x[icon[2,iel]]), 
+                            u0*(y[icon[0,iel]]-y[icon[1,iel]])+v0*(x[icon[1,iel]]-x[icon[0,iel]])],
+                           [u0*(y[icon[1,iel]]-y[icon[2,iel]])+v0*(x[icon[2,iel]]-x[icon[1,iel]]), 
+                            u0*(y[icon[2,iel]]-y[icon[0,iel]])+v0*(x[icon[0,iel]]-x[icon[2,iel]]), 
+                            u0*(y[icon[0,iel]]-y[icon[1,iel]])+v0*(x[icon[1,iel]]-x[icon[0,iel]])],
+                           [u0*(y[icon[1,iel]]-y[icon[2,iel]])+v0*(x[icon[2,iel]]-x[icon[1,iel]]), 
+                            u0*(y[icon[2,iel]]-y[icon[0,iel]])+v0*(x[icon[0,iel]]-x[icon[2,iel]]), 
+                            u0*(y[icon[0,iel]]-y[icon[1,iel]])+v0*(x[icon[1,iel]]-x[icon[0,iel]])] ])
+
+
+        if iel==0: print(Ka/area[iel]/2)
+
+        exit()
 
         a_el=MM+Ka*dt*theta
         b_el=(MM -Ka*dt*(1-theta)).dot(Tvect)
@@ -349,7 +371,7 @@ for istep in range(0,nstep):
 
     #################################################################
 
-    if istep%200==0 :
+    if istep%20==0 :
        filename = 'solution_{:04d}.vtu'.format(istep)
        vtufile=open(filename,"w")
 
@@ -373,7 +395,7 @@ for istep in range(0,nstep):
 
        vtufile.write("<PointData Scalars='scalars'>\n")
        #--
-       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='displacement' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
        for i in range(0,NT):
            vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")

@@ -240,7 +240,7 @@ if ex4:
    export_elements_to_vtu(x,y,icon,'example4.vtu',area)
 
 #------------------------------------------------------------------------------
-# fifth example: filling an annulus with triangles
+# fifth example: filling a half sphere with triangles
 #------------------------------------------------------------------------------
 
 if ex5:
