@@ -79,8 +79,8 @@ plot[1e-3:][2e-5:0.02]\
 'exp01/errors_topo8_exp1.ascii'  u (1./sqrt($3)):15 w lp lt 7 pt 1 t 'Rr',\
 'exp01/errors_topo9_exp1.ascii'  u (1./sqrt($3)):15 w lp lt 7 pt 2 t 'Rrp',\
 'exp01/errors_topo10_exp1.ascii' u (1./sqrt($3)):15 w lp lt 7 pt 6 t 'FR',\
-x**1 lt -1 dt 2 t 'h^1',\
-x**1.5 lt -1 dt 3 t 'h^{1.5}'
+x**1/16 lt -1 dt 2 t 'h^1',\
+x**1.5/3.5 lt -1 dt 3 t 'h^{1.5}'
 
 set xlabel '<h>'
 set ylabel '||p-q_{3,h}||_{L_2}'
@@ -97,8 +97,8 @@ plot[1e-3:][2e-5:0.02]\
 'exp01/errors_topo8_exp1.ascii'  u (1./sqrt($3)):18 w lp lt 7 pt 1 t 'Rr',\
 'exp01/errors_topo9_exp1.ascii'  u (1./sqrt($3)):18 w lp lt 7 pt 2 t 'Rrp',\
 'exp01/errors_topo10_exp1.ascii' u (1./sqrt($3)):18 w lp lt 7 pt 6 t 'FR',\
-x**1 lt -1 dt 2 t 'h^1',\
-x**1.5 lt -1 dt 3 t 'h^{1.5}'
+x**1/16 lt -1 dt 2 t 'h^1',\
+x**1.5/3.5 lt -1 dt 3 t 'h^{1.5}'
 
 
 

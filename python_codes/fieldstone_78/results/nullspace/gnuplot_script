@@ -1,0 +1,40 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set xlabel 'mesh topology'
+set ylabel 'size of pressure nullspace'
+set ytics 1 
+set xtics 1
+
+
+set xtics ("R" 0, "S" 1, "LT" 2, "QZ1" 3, "QZ2" 4, "QZ3" 5, "T1" 6, "T2" 7, 'Rp' 8, 'Rrp' 9, 'FR' 10)
+
+set output 'nullspace_NS.pdf'
+plot[-0.5:10.5][0.9:2.1]\
+'NS/nullspace_1.ascii'  u 2:($6-0.04)  w lp ps .4 pt 1 t '1x1 m-e',\
+'NS/nullspace_2.ascii'  u 2:($6-0.02)  w lp ps .4 pt 1 t '2x2 m-e',\
+'NS/nullspace_3.ascii'  u 2:($6-0.03)  w lp ps .4 pt 1 t '3x3 m-e',\
+'NS/nullspace_4.ascii'  u 2:($6-0.01)  w lp ps .4 pt 1 t '4x4 m-e',\
+'NS/nullspace_5.ascii'  u 2:($6+0.00)  w lp ps .4 pt 1 t '5x5 m-e',\
+'NS/nullspace_6.ascii'  u 2:($6+0.01)  w lp ps .4 pt 1 t '6x6 m-e',\
+'NS/nullspace_7.ascii'  u 2:($6+0.02)  w lp ps .4 pt 1 t '7x7 m-e',\
+'NS/nullspace_8.ascii'  u 2:($6+0.03)  w lp ps .4 pt 1 t '8x8 m-e',\
+'NS/nullspace_9.ascii'  u 2:($6+0.04)  w lp ps .4 pt 2 t '9x9 m-e',\
+'NS/nullspace_10.ascii' u 2:($6+0.05) w lp ps .4 pt 2 t '10x10 m-e',\
+
+set output 'nullspace_FS.pdf'
+plot[-0.5:10.5][0.9:2.1]\
+'FS/nullspace_1.ascii'  u 2:($6-0.04)  w lp ps .4 pt 1 t '1x1 m-e',\
+'FS/nullspace_2.ascii'  u 2:($6-0.02)  w lp ps .4 pt 1 t '2x2 m-e',\
+'FS/nullspace_3.ascii'  u 2:($6-0.03)  w lp ps .4 pt 1 t '3x3 m-e',\
+'FS/nullspace_4.ascii'  u 2:($6-0.01)  w lp ps .4 pt 1 t '4x4 m-e',\
+'FS/nullspace_5.ascii'  u 2:($6+0.00)  w lp ps .4 pt 1 t '5x5 m-e',\
+'FS/nullspace_6.ascii'  u 2:($6+0.01)  w lp ps .4 pt 1 t '6x6 m-e',\
+'FS/nullspace_7.ascii'  u 2:($6+0.02)  w lp ps .4 pt 1 t '7x7 m-e',\
+'FS/nullspace_8.ascii'  u 2:($6+0.03)  w lp ps .4 pt 1 t '8x8 m-e',\
+'FS/nullspace_9.ascii'  u 2:($6+0.04)  w lp ps .4 pt 2 t '9x9 m-e',\
+'FS/nullspace_10.ascii' u 2:($6+0.05) w lp ps .4 pt 2 t '10x10 m-e',\
+
+
+
