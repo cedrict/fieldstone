@@ -1,11 +1,11 @@
 import numpy as np
 import math as math
 import sys as sys
-import scipy
-import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
 import time as time
 from scipy.linalg import null_space
+import scipy
+import scipy.sparse as sps
+from scipy.sparse import csr_matrix,lil_matrix
 
 #------------------------------------------------------------------------------
 
@@ -77,10 +77,10 @@ y[2]=0
 x[3]=0
 y[3]=0.5
 
-x[4]=0.2
+x[4]=0.3
 y[4]=0.5
 
-x[5]=0.8
+x[5]=0.7
 y[5]=0.5
 
 x[6]=1
@@ -166,9 +166,6 @@ dNdx  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNdy  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNdr  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNds  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
-u     = np.zeros(NV,dtype=np.float64)          # x-component velocity
-v     = np.zeros(NV,dtype=np.float64)          # y-component velocity
-p     = np.zeros(nel,dtype=np.float64)          # y-component velocity
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 for iel in range(0, nel):
@@ -248,7 +245,7 @@ for iel in range(0, nel):
                    K_el[jkk,ikk]=0
                K_el[ikk,ikk]=K_ref
                f_el[ikk]=K_ref*bc_val[m1]
-               h_el[0]-=G_el[ikk,0]*bc_val[m1]
+               h_el[0,0]-=G_el[ikk,0]*bc_val[m1]
                G_el[ikk,0]=0
 
     # assemble matrix K_mat and right hand side rhs
@@ -263,13 +260,13 @@ for iel in range(0, nel):
                     K_mat[m1,m2]+=K_el[ikk,jkk]
             f_rhs[m1]+=f_el[ikk]
             G_mat[m1,iel]+=G_el[ikk,0]
-    h_rhs[iel]+=h_el[0]
+    h_rhs[iel]+=h_el[0,0]
 
 
 
-
+G_mat*=4
 for i in range (NfemV):
-    print (G_mat[i,0], G_mat[i,2], G_mat[i,3], G_mat[i,4], G_mat[i,4]) 
+    print (G_mat[i,0], G_mat[i,1], G_mat[i,2], G_mat[i,3], G_mat[i,4]) 
     #print ("%3i  & %3i & %3i & %3i  \\\\ " %(int(round(G_mat[i,0])),int(round(G_mat[i,1])),int(round(G_mat[i,2])),int(round(G_mat[i,3])) ))
 
 
