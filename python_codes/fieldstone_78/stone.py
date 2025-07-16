@@ -4,9 +4,9 @@ import time as timing
 import scipy
 import scipy.sparse as sps
 from scipy.sparse import csr_matrix,lil_matrix
-#import mms_solkz as solkz
-#import mms_solcx as solcx
-#import mms_solvi as solvi
+import mms_solkz as solkz
+import mms_solcx as solcx
+import mms_solvi as solvi
 from scipy.linalg import null_space
 import matplotlib.pyplot as plt
 from scipy.sparse.csgraph import reverse_cuthill_mckee
@@ -17,7 +17,7 @@ eps=1.e-10
 
 #exp=8
 drho=8 # exp=8
-rho0=0 # 3200
+rho0=3200
 
 ###############################################################################
 
@@ -114,7 +114,7 @@ def viscosity(x,y):
 
 ###############################################################################
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def velocity_x(x,y):
     if experiment==2 or experiment==3 or experiment==4 or\
        experiment==6 or experiment==8 or experiment==10 or\
@@ -134,7 +134,7 @@ def velocity_x(x,y):
        val,xxx,xxx=solvi.solution(x,y) 
     return val
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def velocity_y(x,y):
     if experiment==2 or experiment==3 or experiment==4 or\
        experiment==6 or experiment==8 or experiment==10 or\
@@ -154,7 +154,7 @@ def velocity_y(x,y):
        xxx,val,xxx=solvi.solution(x,y) 
     return val
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def pressure(x,y):
     if experiment==2 or experiment==3 or experiment==6 or\
        experiment==10 or experiment==11 or experiment==12:
@@ -231,7 +231,7 @@ ndofV=2  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
 # topo:
-# 0: regular/structured
+# 0: regular/structured (R)
 # 1: Stenberg (S)
 # 2: Le Tallec (LT)
 # 3: Qin & Zhang (QZ1)
@@ -239,8 +239,8 @@ ndofP=1  # number of pressure degrees of freedom
 # 5: Qin & Zhang (QZ3)
 # 6: Thieulot (T1)
 # 7: Thieulot (T2)
-# 8: perturb R (RR)
-# 9: macro random (TR)
+# 8: perturb R (Rp)
+# 9: macro random (Rrp)
 #10: fully random (FR)
 
 # experiment:
@@ -267,12 +267,12 @@ if int(len(sys.argv) == 7):
    eta_star = int(sys.argv[5]) 
    experiment = int(sys.argv[6])
 else:
-   nelx = 1
-   nely = 1
+   nelx = 16
+   nely = 16
    visu = 1
    topo = 0
    eta_star=0
-   experiment=1
+   experiment=5
    
 if topo==0 or topo==8 or topo==9 or topo==10:
    nelx*=2
@@ -350,13 +350,13 @@ if topo==7: # mine (T2)
    nel=nelx*nely*5
    NV=(nelx+1)*(nely+1)+4*nelx*nely
 
-if topo==8: # rand regular
-   import macro_RR
+if topo==8: # regular + perturbation
+   import macro_Rp
    NV=(nelx+1)*(nely+1)
    nel=nelx*nely
 
-if topo==9: # true rand regular
-   import macro_TR
+if topo==9: # regular + rand perturbation
+   import macro_Rrp
    NV=(nelx+1)*(nely+1)
    nel=nelx*nely
 
@@ -411,8 +411,8 @@ if topo==4:  xV,yV,iconV=macro_QZ2.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==5:  xV,yV,iconV=macro_QZ3.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==6:  xV,yV,iconV=macro_T1.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==7:  xV,yV,iconV=macro_T2.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
-if topo==8:  xV,yV,iconV=macro_RR.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
-if topo==9:  xV,yV,iconV=macro_TR.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+if topo==8:  xV,yV,iconV=macro_Rp.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
+if topo==9:  xV,yV,iconV=macro_Rrp.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==10: xV,yV,iconV=macro_FR.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 
 print("build mesh: %.3f s" % (timing.time() - start))
@@ -1115,9 +1115,9 @@ q1/=count1
 q2/=count2
 q3/=count3
 
-np.savetxt('q1.ascii',np.array([xV,yV,q1]).T)
-np.savetxt('q2.ascii',np.array([xV,yV,q2]).T)
-np.savetxt('q3.ascii',np.array([xV,yV,q3]).T)
+#np.savetxt('q1.ascii',np.array([xV,yV,q1]).T)
+#np.savetxt('q2.ascii',np.array([xV,yV,q2]).T)
+#np.savetxt('q3.ascii',np.array([xV,yV,q3]).T)
 
 print("     -> q1 (m,M) %.6f %.6f nel= %d" %(np.min(q1),np.max(q1),nel))
 print("     -> q2 (m,M) %.6f %.6f nel= %d" %(np.min(q2),np.max(q2),nel))

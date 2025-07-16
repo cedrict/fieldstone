@@ -19,7 +19,9 @@ for exp in 1; do
         echo topology= $topo experiment= $exp
 
         #for res in 8 10 12 14 16 20 24 28 32 48 64 80 96 112 128; do # 144 160 192 256; do
-        for res in 8 10 12 14 16 20 24 28 32 48 64 80 96 128; do # 144 160 192 256; do
+        #for res in 8 10 12 14 16 20 24 28 32 48 64 80 ; do # 144 160 192 256; do
+        for res in {8..32} ; do
+
 
             echo $res 
             python3 stone.py $res $res 1 $topo 0 $exp > opla

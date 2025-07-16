@@ -5,27 +5,28 @@
 
 exp=8
 
-for eta_star in -3 -2 -1 0 1 2 3; do
+#for eta_star in -3 -2 -1 0 1 2 3; do
+for eta_star in  0 ; do
 
-    for topo in 0 1 2 3 4 5 6  ; do
+    for topo in 0 1 2 3 4 5 6 7 8 9 10 ; do
 
-        for res in 128 ; do
+        for res in 16 32 64 128 ; do
 
             echo topology= $topo res=$res eta_star=$eta_star
 
             python3 stone.py $res $res 1 $topo $eta_star $exp > opla
 
-            grep vblock opla >> vblock_topo${topo}_res${res}
-            grep pblock opla >> pblock_topo${topo}_res${res}
-            grep vrms opla >> vrms_topo${topo}_res${res}
-            grep p opla  | grep m,M  >> pstats_topo${topo}_res${res}
-            grep q1 opla | grep m,M  >> q1stats_topo${topo}_res${res}
-            grep q2 opla | grep m,M  >> q2stats_topo${topo}_res${res}
-            grep u opla  | grep m,M  >> ustats_topo${topo}_res${res}
-            grep v opla  | grep m,M  >> vstats_topo${topo}_res${res}
+            grep vblock opla >> vblock_topo${topo}_res${res}.ascii
+            grep pblock opla >> pblock_topo${topo}_res${res}.ascii
+            grep vrms opla >> vrms_topo${topo}_res${res}.ascii
+
+            #grep p opla  | grep m,M  >> pstats_topo${topo}_res${res}
+            #grep q1 opla | grep m,M  >> q1stats_topo${topo}_res${res}
+            #grep q2 opla | grep m,M  >> q2stats_topo${topo}_res${res}
+            #grep u opla  | grep m,M  >> ustats_topo${topo}_res${res}
+            #grep v opla  | grep m,M  >> vstats_topo${topo}_res${res}
 
             mv solution.vtu solution_topo${topo}_etastar${eta_star}_res${res}.vtu
-            mv pressure_top.ascii pressure_top_topo${topo}_etastar${eta_star}_res${res}.ascii
             mv vel_profile.ascii vel_profile_topo${topo}_etastar${eta_star}_res${res}.ascii
             mv q1_profile.ascii q1_profile_topo${topo}_etastar${eta_star}_res${res}.ascii
 

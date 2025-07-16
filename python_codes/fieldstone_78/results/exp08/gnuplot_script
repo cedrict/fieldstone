@@ -1,0 +1,324 @@
+#
+set term pdf enhanced font "Times,14pt"
+set grid
+set pointsize .3
+set key bottom left
+set xlabel 'x (km)'
+set ylabel 'u_y (cm/year)'
+
+cm=0.01
+year=365.25*24*3600
+
+set output 'vel_profile_topo0_full.pdf'
+plot[:512][-0.8:0.2]\
+'fig16x16_full/vel_profile_topo0_etastar0_res16.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_full/vel_profile_topo0_etastar0_res32.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_full/vel_profile_topo0_etastar0_res64.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_full/vel_profile_topo0_etastar0_res128.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo1_full.pdf'
+plot[:512][-0.8:0.2]\
+'fig16x16_full/vel_profile_topo1_etastar0_res16.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_full/vel_profile_topo1_etastar0_res32.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_full/vel_profile_topo1_etastar0_res64.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_full/vel_profile_topo1_etastar0_res128.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo2_full.pdf'
+plot[:512][-0.8:0.2]\
+'fig16x16_full/vel_profile_topo2_etastar0_res16.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_full/vel_profile_topo2_etastar0_res32.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_full/vel_profile_topo2_etastar0_res64.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_full/vel_profile_topo2_etastar0_res128.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo3_full.pdf'
+plot[:512][-0.8:0.2]\
+'fig16x16_full/vel_profile_topo3_etastar0_res16.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_full/vel_profile_topo3_etastar0_res32.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_full/vel_profile_topo3_etastar0_res64.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_full/vel_profile_topo3_etastar0_res128.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo4_full.pdf'
+plot[:512][-0.8:0.2]\
+'fig16x16_full/vel_profile_topo4_etastar0_res16.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_full/vel_profile_topo4_etastar0_res32.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_full/vel_profile_topo4_etastar0_res64.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_full/vel_profile_topo4_etastar0_res128.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo5_full.pdf'
+plot[:512][-0.8:0.2]\
+'fig16x16_full/vel_profile_topo5_etastar0_res16.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_full/vel_profile_topo5_etastar0_res32.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_full/vel_profile_topo5_etastar0_res64.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_full/vel_profile_topo5_etastar0_res128.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo6_full.pdf'
+plot[:512][-0.8:0.2]\
+'fig16x16_full/vel_profile_topo6_etastar0_res16.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_full/vel_profile_topo6_etastar0_res32.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_full/vel_profile_topo6_etastar0_res64.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_full/vel_profile_topo6_etastar0_res128.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo7_full.pdf'
+plot[:512][-0.8:0.2]\
+'fig16x16_full/vel_profile_topo7_etastar0_res16.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_full/vel_profile_topo7_etastar0_res32.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_full/vel_profile_topo7_etastar0_res64.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_full/vel_profile_topo7_etastar0_res128.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+
+set output 'vel_profile_topo8_full.pdf'
+plot[:512][-0.8:0.2]\
+'fig16x16_full/vel_profile_topo8_etastar0_res16.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_full/vel_profile_topo8_etastar0_res32.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_full/vel_profile_topo8_etastar0_res64.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_full/vel_profile_topo8_etastar0_res128.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo9_full.pdf'
+plot[:512][-0.8:0.2]\
+'fig16x16_full/vel_profile_topo9_etastar0_res16.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_full/vel_profile_topo9_etastar0_res32.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_full/vel_profile_topo9_etastar0_res64.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_full/vel_profile_topo9_etastar0_res128.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo10_full.pdf'
+plot[:512][-0.8:0.2]\
+'fig16x16_full/vel_profile_topo10_etastar0_res16.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_full/vel_profile_topo10_etastar0_res32.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_full/vel_profile_topo10_etastar0_res64.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_full/vel_profile_topo10_etastar0_res128.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#########################################################
+
+
+set output 'vel_profile_topo0_reduced.pdf'
+plot[:512][-0.4:0.]\
+'fig16x16_reduced/vel_profile_topo0.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_reduced/vel_profile_topo0.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_reduced/vel_profile_topo0.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_reduced/vel_profile_topo0.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo1_reduced.pdf'
+plot[:512][-0.4:0.]\
+'fig16x16_reduced/vel_profile_topo1.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_reduced/vel_profile_topo1.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_reduced/vel_profile_topo1.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_reduced/vel_profile_topo1.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo2_reduced.pdf'
+plot[:512][-0.4:0.]\
+'fig16x16_reduced/vel_profile_topo2.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_reduced/vel_profile_topo2.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_reduced/vel_profile_topo2.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_reduced/vel_profile_topo2.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo3_reduced.pdf'
+plot[:512][-0.4:0.]\
+'fig16x16_reduced/vel_profile_topo3.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_reduced/vel_profile_topo3.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_reduced/vel_profile_topo3.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_reduced/vel_profile_topo3.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo4_reduced.pdf'
+plot[:512][-0.4:0.]\
+'fig16x16_reduced/vel_profile_topo4.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_reduced/vel_profile_topo4.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_reduced/vel_profile_topo4.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_reduced/vel_profile_topo4.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo5_reduced.pdf'
+plot[:512][-0.4:0.]\
+'fig16x16_reduced/vel_profile_topo5.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_reduced/vel_profile_topo5.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_reduced/vel_profile_topo5.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_reduced/vel_profile_topo5.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo6_reduced.pdf'
+plot[:512][-0.4:0.]\
+'fig16x16_reduced/vel_profile_topo6.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_reduced/vel_profile_topo6.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_reduced/vel_profile_topo6.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_reduced/vel_profile_topo6.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+set output 'vel_profile_topo7_reduced.pdf'
+plot[:512][-0.4:0.]\
+'fig16x16_reduced/vel_profile_topo7.ascii'   u ($1/1e3):($3/cm*year) w p t '16x16',\
+'fig32x32_reduced/vel_profile_topo7.ascii'   u ($1/1e3):($3/cm*year) w p t '32x32',\
+'fig64x64_reduced/vel_profile_topo7.ascii'   u ($1/1e3):($3/cm*year) w p t '64x64',\
+'fig128x128_reduced/vel_profile_topo7.ascii' u ($1/1e3):($3/cm*year) w p t '128x128',\
+
+###################################################################
+
+Lb=128e3
+g=10
+
+set log x
+set key outside right
+
+#####################################################
+set ylabel 'p'
+set xlabel '{/Symbol h}^*'
+set pointsize .4
+
+set title '16x16'
+set output 'p_block_res16.pdf'
+plot[0.0005:3000][-440:-360]\
+'fig16x16_full/pblock_topo0_res16' u 2:($3/Lb/g/$5) w p lt 1 pt 1 t 'R',\
+'fig16x16_full/pblock_topo9_res16' u 2:($3/Lb/g/$5) w p lt 1 pt 4 t 'Rrp',\
+'fig16x16_full/pblock_topo1_res16' u 2:($3/Lb/g/$5) w p lt 2 pt 1 t 'S',\
+'fig16x16_full/pblock_topo2_res16' u 2:($3/Lb/g/$5) w p lt 3 pt 1 t 'LT',\
+'fig16x16_full/pblock_topo3_res16' u 2:($3/Lb/g/$5) w p lt 4 pt 1 t 'QZ1',\
+'fig16x16_full/pblock_topo4_res16' u 2:($3/Lb/g/$5) w p lt 4 pt 2 t 'QZ2',\
+'fig16x16_full/pblock_topo5_res16' u 2:($3/Lb/g/$5) w p lt 4 pt 6 t 'QZ3',\
+'fig16x16_full/pblock_topo6_res16' u 2:($3/Lb/g/$5) w p lt 6 pt 1 t 'T1',\
+
+
+
+set title '32x32'
+set output 'p_block_res32.pdf'
+plot[0.0005:3000][-440:-360]\
+'fig32x32_full/pblock_topo0_res32' u 2:($3/Lb/g/$5) w p lt 1 pt 1 t 'R',\
+'fig32x32_full/pblock_topo9_res32' u 2:($3/Lb/g/$5) w p lt 1 pt 4 t 'Rrp',\
+'fig32x32_full/pblock_topo1_res32' u 2:($3/Lb/g/$5) w p lt 2 pt 1 t 'S',\
+'fig32x32_full/pblock_topo2_res32' u 2:($3/Lb/g/$5) w p lt 3 pt 1 t 'LT',\
+'fig32x32_full/pblock_topo3_res32' u 2:($3/Lb/g/$5) w p lt 4 pt 1 t 'QZ1',\
+'fig32x32_full/pblock_topo4_res32' u 2:($3/Lb/g/$5) w p lt 4 pt 2 t 'QZ2',\
+'fig32x32_full/pblock_topo5_res32' u 2:($3/Lb/g/$5) w p lt 4 pt 6 t 'QZ3',\
+'fig32x32_full/pblock_topo6_res32' u 2:($3/Lb/g/$5) w p lt 6 pt 1 t 'T1',\
+
+
+
+set title '64x64'
+set output 'p_block_res64.pdf'
+plot[0.0005:3000][-440:-360]\
+'fig64x64_full/pblock_topo0_res64' u 2:($3/Lb/g/$5) w p lt 1 pt 1 t 'R',\
+'fig64x64_full/pblock_topo9_res64' u 2:($3/Lb/g/$5) w p lt 1 pt 4 t 'Rrp',\
+'fig64x64_full/pblock_topo1_res64' u 2:($3/Lb/g/$5) w p lt 2 pt 1 t 'S',\
+'fig64x64_full/pblock_topo2_res64' u 2:($3/Lb/g/$5) w p lt 3 pt 1 t 'LT',\
+'fig64x64_full/pblock_topo3_res64' u 2:($3/Lb/g/$5) w p lt 4 pt 1 t 'QZ1',\
+'fig64x64_full/pblock_topo4_res64' u 2:($3/Lb/g/$5) w p lt 4 pt 2 t 'QZ2',\
+'fig64x64_full/pblock_topo5_res64' u 2:($3/Lb/g/$5) w p lt 4 pt 6 t 'QZ3',\
+'fig64x64_full/pblock_topo6_res64' u 2:($3/Lb/g/$5) w p lt 6 pt 1 t 'T1',\
+
+
+set title '128x128'
+set output 'p_block_res128.pdf'
+plot[0.0005:3000][-440:-360]\
+'fig128x128_full/pblock_topo0_res128' u 2:($3/Lb/g/$5) w p lt 1 pt 1 t 'R',\
+'fig128x128_full/pblock_topo9_res128' u 2:($3/Lb/g/$5) w p lt 1 pt 4 t 'Rrp',\
+'fig128x128_full/pblock_topo1_res128' u 2:($3/Lb/g/$5) w p lt 2 pt 1 t 'S',\
+'fig128x128_full/pblock_topo2_res128' u 2:($3/Lb/g/$5) w p lt 3 pt 1 t 'LT',\
+'fig128x128_full/pblock_topo3_res128' u 2:($3/Lb/g/$5) w p lt 4 pt 1 t 'QZ1',\
+'fig128x128_full/pblock_topo4_res128' u 2:($3/Lb/g/$5) w p lt 4 pt 2 t 'QZ2',\
+'fig128x128_full/pblock_topo5_res128' u 2:($3/Lb/g/$5) w p lt 4 pt 6 t 'QZ3',\
+'fig128x128_full/pblock_topo6_res128' u 2:($3/Lb/g/$5) w p lt 6 pt 1 t 'T1',\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#####################################################
+set ylabel 'q_1'
+
+set output 'q1_block_res16.pdf'
+plot[][]\
+'pblock_topo0_res16' u 2:($4/Lb/g/$5) w lp t 'R',\
+'pblock_topo1_res16' u 2:($4/Lb/g/$5) w lp t 'S',\
+'pblock_topo2_res16' u 2:($4/Lb/g/$5) w lp t 'LT',\
+'pblock_topo3_res16' u 2:($4/Lb/g/$5) w lp t 'QZ1',\
+'pblock_topo4_res16' u 2:($4/Lb/g/$5) w lp t 'QZ2',\
+'pblock_topo5_res16' u 2:($4/Lb/g/$5) w lp t 'QZ3',\
+'pblock_topo6_res16' u 2:($4/Lb/g/$5) w lp t 'T1',\
+
+
+set output 'q1_block_res32.pdf'
+plot[][]\
+'pblock_topo0_res32' u 2:($4/Lb/g/$5) w lp t 'R',\
+'pblock_topo1_res32' u 2:($4/Lb/g/$5) w lp t 'S',\
+'pblock_topo2_res32' u 2:($4/Lb/g/$5) w lp t 'LT',\
+'pblock_topo3_res32' u 2:($4/Lb/g/$5) w lp t 'QZ1',\
+'pblock_topo4_res32' u 2:($4/Lb/g/$5) w lp t 'QZ2',\
+'pblock_topo5_res32' u 2:($4/Lb/g/$5) w lp t 'QZ3',\
+'pblock_topo6_res32' u 2:($4/Lb/g/$5) w lp t 'T1',\
+
+set output 'q1_block_res64.pdf'
+plot[][]\
+'pblock_topo0_res64' u 2:($4/Lb/g/$5) w lp t 'R',\
+'pblock_topo1_res64' u 2:($4/Lb/g/$5) w lp t 'S',\
+'pblock_topo2_res64' u 2:($4/Lb/g/$5) w lp t 'LT',\
+'pblock_topo3_res64' u 2:($4/Lb/g/$5) w lp t 'QZ1',\
+'pblock_topo4_res64' u 2:($4/Lb/g/$5) w lp t 'QZ2',\
+'pblock_topo5_res64' u 2:($4/Lb/g/$5) w lp t 'QZ3',\
+'pblock_topo6_res64' u 2:($4/Lb/g/$5) w lp t 'T1',\
+
+######################################################
+
+set ylabel 'u_y'
+
+eta1=1e21
+
+set output 'v_block_res16.pdf'
+plot[][]\
+'vblock_topo0_res16' u 2:($4/eta1/$5) w lp t 'R',\
+'vblock_topo1_res16' u 2:($4/eta1/$5) w lp t 'S',\
+'vblock_topo2_res16' u 2:($4/eta1/$5) w lp t 'LT',\
+'vblock_topo3_res16' u 2:($4/eta1/$5) w lp t 'QZ1',\
+'vblock_topo4_res16' u 2:($4/eta1/$5) w lp t 'QZ2',\
+'vblock_topo5_res16' u 2:($4/eta1/$5) w lp t 'QZ3',\
+'vblock_topo6_res16' u 2:($4/eta1/$5) w lp t 'T1',\
+
+set output 'v_block_res32.pdf'
+plot[][]\
+'vblock_topo0_res32' u 2:($4/eta1/$5) w lp t 'R',\
+'vblock_topo1_res32' u 2:($4/eta1/$5) w lp t 'S',\
+'vblock_topo2_res32' u 2:($4/eta1/$5) w lp t 'LT',\
+'vblock_topo3_res32' u 2:($4/eta1/$5) w lp t 'QZ1',\
+'vblock_topo4_res32' u 2:($4/eta1/$5) w lp t 'QZ2',\
+'vblock_topo5_res32' u 2:($4/eta1/$5) w lp t 'QZ3',\
+'vblock_topo6_res32' u 2:($4/eta1/$5) w lp t 'T1',\
+
+set output 'v_block_res64.pdf'
+plot[][]\
+'vblock_topo0_res64' u 2:($4/eta1/$5) w lp t 'R',\
+'vblock_topo1_res64' u 2:($4/eta1/$5) w lp t 'S',\
+'vblock_topo2_res64' u 2:($4/eta1/$5) w lp t 'LT',\
+'vblock_topo3_res64' u 2:($4/eta1/$5) w lp t 'QZ1',\
+'vblock_topo4_res64' u 2:($4/eta1/$5) w lp t 'QZ2',\
+'vblock_topo5_res64' u 2:($4/eta1/$5) w lp t 'QZ3',\
+'vblock_topo6_res64' u 2:($4/eta1/$5) w lp t 'T1',\
+
+######################################################

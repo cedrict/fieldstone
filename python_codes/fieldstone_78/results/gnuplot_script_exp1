@@ -1,5 +1,5 @@
 #
-set term pdf enhanced font "Times,12pt"
+set term pdf enhanced font "Times,14pt"
 set grid
 set pointsize 0.3
 set key outside
@@ -11,11 +11,14 @@ set format y "10^{%L}"
 
 set log xy
 
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel '||u-u_h||_{L_2}'
 set output 'errors_u_exp1.pdf'
 plot[1e-3:][7e-8:1e-3]\
 'exp01/errors_topo0_exp1.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'R',\
+'exp01/errors_topo8_exp1.ascii'  u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'Rp',\
+'exp01/errors_topo9_exp1.ascii'  u (1./sqrt($3)):6 w lp lt 1 pt 4 t 'Rrp',\
+'exp01/errors_topo10_exp1.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 6 t 'FR',\
 'exp01/errors_topo1_exp1.ascii' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'S',\
 'exp01/errors_topo2_exp1.ascii' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'LT',\
 'exp01/errors_topo3_exp1.ascii' u (1./sqrt($3)):6 w lp lt 4 pt 1 t 'QZ1',\
@@ -23,16 +26,16 @@ plot[1e-3:][7e-8:1e-3]\
 'exp01/errors_topo5_exp1.ascii' u (1./sqrt($3)):6 w lp lt 4 pt 6 t 'QZ3',\
 'exp01/errors_topo6_exp1.ascii' u (1./sqrt($3)):6 w lp lt 6 pt 1 t 'T1',\
 'exp01/errors_topo7_exp1.ascii' u (1./sqrt($3)):6 w lp lt 6 pt 2 t 'T2',\
-'exp01/errors_topo8_exp1.ascii'  u (1./sqrt($3)):6 w lp lt 7 pt 1 t 'Rp',\
-'exp01/errors_topo9_exp1.ascii'  u (1./sqrt($3)):6 w lp lt 7 pt 2 t 'Rrp',\
-'exp01/errors_topo10_exp1.ascii' u (1./sqrt($3)):6 w lp lt 7 pt 6 t 'FR',\
 x**2/22 lt -1 dt 2 t 'h^2'
 
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel '||p-p_h||_{L_2}'
 set output 'errors_p_exp1.pdf'
-plot[1e-3:][:5e-1]\
+plot[1e-3:][:1e-1]\
 'exp01/errors_topo0_exp1.ascii' u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'R',\
+'exp01/errors_topo8_exp1.ascii' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'Rp',\
+'exp01/errors_topo9_exp1.ascii' u (1./sqrt($3)):9 w lp lt 1 pt 4 t 'Rrp',\
+'exp01/errors_topo10_exp1.ascii'u (1./sqrt($3)):9 w lp lt 1 pt 6 t 'FR',\
 'exp01/errors_topo1_exp1.ascii' u (1./sqrt($3)):9 w lp lt 2 pt 1 t 'S',\
 'exp01/errors_topo2_exp1.ascii' u (1./sqrt($3)):9 w lp lt 3 pt 1 t 'LT',\
 'exp01/errors_topo3_exp1.ascii' u (1./sqrt($3)):9 w lp lt 4 pt 1 t 'QZ1',\
@@ -40,16 +43,16 @@ plot[1e-3:][:5e-1]\
 'exp01/errors_topo5_exp1.ascii' u (1./sqrt($3)):9 w lp lt 4 pt 6 t 'QZ3',\
 'exp01/errors_topo6_exp1.ascii' u (1./sqrt($3)):9 w lp lt 6 pt 1 t 'T1',\
 'exp01/errors_topo7_exp1.ascii' u (1./sqrt($3)):9 w lp lt 6 pt 2 t 'T2',\
-'exp01/errors_topo8_exp1.ascii'  u (1./sqrt($3)):9 w lp lt 7 pt 1 t 'Rp',\
-'exp01/errors_topo9_exp1.ascii'  u (1./sqrt($3)):9 w lp lt 7 pt 2 t 'Rrp',\
-'exp01/errors_topo10_exp1.ascii' u (1./sqrt($3)):9 w lp lt 7 pt 6 t 'FR',\
 x**1/8 lt -1 dt 2 t 'h^1'
 
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel '||p-q_{1,h}||_{L_2}'
 set output 'errors_q1_exp1.pdf'
 plot[1e-3:][2e-5:0.02]\
 'exp01/errors_topo0_exp1.ascii' u (1./sqrt($3)):12 w lp lt 1 pt 1 t 'R',\
+'exp01/errors_topo8_exp1.ascii' u (1./sqrt($3)):12 w lp lt 1 pt 2 t 'Rp',\
+'exp01/errors_topo9_exp1.ascii' u (1./sqrt($3)):12 w lp lt 1 pt 4 t 'Rrp',\
+'exp01/errors_topo10_exp1.ascii'u (1./sqrt($3)):12 w lp lt 1 pt 6 t 'FR',\
 'exp01/errors_topo1_exp1.ascii' u (1./sqrt($3)):12 w lp lt 2 pt 1 t 'S',\
 'exp01/errors_topo2_exp1.ascii' u (1./sqrt($3)):12 w lp lt 3 pt 1 t 'LT',\
 'exp01/errors_topo3_exp1.ascii' u (1./sqrt($3)):12 w lp lt 4 pt 1 t 'QZ1',\
@@ -57,18 +60,18 @@ plot[1e-3:][2e-5:0.02]\
 'exp01/errors_topo5_exp1.ascii' u (1./sqrt($3)):12 w lp lt 4 pt 6 t 'QZ3',\
 'exp01/errors_topo6_exp1.ascii' u (1./sqrt($3)):12 w lp lt 6 pt 1 t 'T1',\
 'exp01/errors_topo7_exp1.ascii' u (1./sqrt($3)):12 w lp lt 6 pt 2 t 'T2',\
-'exp01/errors_topo8_exp1.ascii'  u (1./sqrt($3)):12 w lp lt 7 pt 1 t 'Rp',\
-'exp01/errors_topo9_exp1.ascii'  u (1./sqrt($3)):12 w lp lt 7 pt 2 t 'Rpr',\
-'exp01/errors_topo10_exp1.ascii' u (1./sqrt($3)):12 w lp lt 7 pt 6 t 'FR',\
 x**1/16 lt -1 dt 2 t 'h^1',\
 x**1.5/3.5 lt -1 dt 3 t 'h^{1.5}'
 
 
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel '||p-q_{2,h}||_{L_2}'
 set output 'errors_q2_exp1.pdf'
 plot[1e-3:][2e-5:0.02]\
 'exp01/errors_topo0_exp1.ascii' u (1./sqrt($3)):15 w lp lt 1 pt 1 t 'R',\
+'exp01/errors_topo8_exp1.ascii' u (1./sqrt($3)):15 w lp lt 1 pt 2 t 'Rp',\
+'exp01/errors_topo9_exp1.ascii' u (1./sqrt($3)):15 w lp lt 1 pt 4 t 'Rrp',\
+'exp01/errors_topo10_exp1.ascii'u (1./sqrt($3)):15 w lp lt 1 pt 6 t 'FR',\
 'exp01/errors_topo1_exp1.ascii' u (1./sqrt($3)):15 w lp lt 2 pt 1 t 'S',\
 'exp01/errors_topo2_exp1.ascii' u (1./sqrt($3)):15 w lp lt 3 pt 1 t 'LT',\
 'exp01/errors_topo3_exp1.ascii' u (1./sqrt($3)):15 w lp lt 4 pt 1 t 'QZ1',\
@@ -76,17 +79,17 @@ plot[1e-3:][2e-5:0.02]\
 'exp01/errors_topo5_exp1.ascii' u (1./sqrt($3)):15 w lp lt 4 pt 6 t 'QZ3',\
 'exp01/errors_topo6_exp1.ascii' u (1./sqrt($3)):15 w lp lt 6 pt 1 t 'T1',\
 'exp01/errors_topo7_exp1.ascii' u (1./sqrt($3)):15 w lp lt 6 pt 2 t 'T2',\
-'exp01/errors_topo8_exp1.ascii'  u (1./sqrt($3)):15 w lp lt 7 pt 1 t 'Rr',\
-'exp01/errors_topo9_exp1.ascii'  u (1./sqrt($3)):15 w lp lt 7 pt 2 t 'Rrp',\
-'exp01/errors_topo10_exp1.ascii' u (1./sqrt($3)):15 w lp lt 7 pt 6 t 'FR',\
 x**1/16 lt -1 dt 2 t 'h^1',\
 x**1.5/3.5 lt -1 dt 3 t 'h^{1.5}'
 
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel '||p-q_{3,h}||_{L_2}'
 set output 'errors_q3_exp1.pdf'
 plot[1e-3:][2e-5:0.02]\
 'exp01/errors_topo0_exp1.ascii' u (1./sqrt($3)):18 w lp lt 1 pt 1 t 'R',\
+'exp01/errors_topo8_exp1.ascii' u (1./sqrt($3)):18 w lp lt 1 pt 2 t 'Rp',\
+'exp01/errors_topo9_exp1.ascii' u (1./sqrt($3)):18 w lp lt 1 pt 4 t 'Rrp',\
+'exp01/errors_topo10_exp1.ascii'u (1./sqrt($3)):18 w lp lt 1 pt 6 t 'FR',\
 'exp01/errors_topo1_exp1.ascii' u (1./sqrt($3)):18 w lp lt 2 pt 1 t 'S',\
 'exp01/errors_topo2_exp1.ascii' u (1./sqrt($3)):18 w lp lt 3 pt 1 t 'LT',\
 'exp01/errors_topo3_exp1.ascii' u (1./sqrt($3)):18 w lp lt 4 pt 1 t 'QZ1',\
@@ -94,9 +97,6 @@ plot[1e-3:][2e-5:0.02]\
 'exp01/errors_topo5_exp1.ascii' u (1./sqrt($3)):18 w lp lt 4 pt 6 t 'QZ3',\
 'exp01/errors_topo6_exp1.ascii' u (1./sqrt($3)):18 w lp lt 6 pt 1 t 'T1',\
 'exp01/errors_topo7_exp1.ascii' u (1./sqrt($3)):18 w lp lt 6 pt 2 t 'T2',\
-'exp01/errors_topo8_exp1.ascii'  u (1./sqrt($3)):18 w lp lt 7 pt 1 t 'Rr',\
-'exp01/errors_topo9_exp1.ascii'  u (1./sqrt($3)):18 w lp lt 7 pt 2 t 'Rrp',\
-'exp01/errors_topo10_exp1.ascii' u (1./sqrt($3)):18 w lp lt 7 pt 6 t 'FR',\
 x**1/16 lt -1 dt 2 t 'h^1',\
 x**1.5/3.5 lt -1 dt 3 t 'h^{1.5}'
 
@@ -107,21 +107,21 @@ x**1.5/3.5 lt -1 dt 3 t 'h^{1.5}'
 
 unset format y
 unset log y
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel 'u_{rms}'
 set output 'vrms_exp1.pdf'
 plot[1e-3:][0.00755:]\
-'exp01/vrms_topo0_exp1.ascii' u (1./sqrt($3)):6 w lp t 'R',\
-'exp01/vrms_topo1_exp1.ascii' u (1./sqrt($3)):6 w lp t 'S',\
-'exp01/vrms_topo2_exp1.ascii' u (1./sqrt($3)):6 w lp t 'LT',\
-'exp01/vrms_topo3_exp1.ascii' u (1./sqrt($3)):6 w lp t 'QZ1',\
-'exp01/vrms_topo4_exp1.ascii' u (1./sqrt($3)):6 w lp t 'QZ2',\
-'exp01/vrms_topo5_exp1.ascii' u (1./sqrt($3)):6 w lp t 'QZ3',\
-'exp01/vrms_topo6_exp1.ascii' u (1./sqrt($3)):6 w lp t 'T1',\
-'exp01/vrms_topo7_exp1.ascii' u (1./sqrt($3)):6 w lp t 'T2',\
-'exp01/vrms_topo8_exp1.ascii' u (1./sqrt($3)):6 w lp t 'Rp',\
-'exp01/vrms_topo9_exp1.ascii' u (1./sqrt($3)):6 w lp t 'Rrp',\
-'exp01/vrms_topo10_exp1.ascii' u (1./sqrt($3)):6 w lp t 'FR',\
+'exp01/vrms_topo0_exp1.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'R',\
+'exp01/vrms_topo8_exp1.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'Rp',\
+'exp01/vrms_topo9_exp1.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 4 t 'Rrp',\
+'exp01/vrms_topo10_exp1.ascii'u (1./sqrt($3)):6 w lp lt 1 pt 6 t 'FR',\
+'exp01/vrms_topo1_exp1.ascii' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'S',\
+'exp01/vrms_topo2_exp1.ascii' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'LT',\
+'exp01/vrms_topo3_exp1.ascii' u (1./sqrt($3)):6 w lp lt 4 pt 1 t 'QZ1',\
+'exp01/vrms_topo4_exp1.ascii' u (1./sqrt($3)):6 w lp lt 4 pt 2 t 'QZ2',\
+'exp01/vrms_topo5_exp1.ascii' u (1./sqrt($3)):6 w lp lt 4 pt 6 t 'QZ3',\
+'exp01/vrms_topo6_exp1.ascii' u (1./sqrt($3)):6 w lp lt 6 pt 1 t 'T1',\
+'exp01/vrms_topo7_exp1.ascii' u (1./sqrt($3)):6 w lp lt 6 pt 2 t 'T2',\
 0.00777615791 lt -1 dt 2 t 'analytical'
 
 
@@ -144,7 +144,7 @@ plot[1e-3:][0.00755:]\
 
 
 
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel 'min/max u'
 set output 'stats_u_exp1.pdf'
 plot[][]\
@@ -165,7 +165,7 @@ plot[][]\
 'exp01/ustats_topo7_exp1.ascii' u (1./sqrt($7)):4 w lp lt 8 t 'topo=7',\
 'exp01/ustats_topo7_exp1.ascii' u (1./sqrt($7)):5 w lp lt 8 notitle
 
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel 'min/max v'
 set output 'stats_v_exp1.pdf'
 plot[][]\
@@ -186,7 +186,7 @@ plot[][]\
 'exp01/vstats_topo7_exp1.ascii' u (1./sqrt($7)):4 w lp lt 8 t 'topo=7',\
 'exp01/vstats_topo7_exp1.ascii' u (1./sqrt($7)):5 w lp lt 8 notitle
 
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel 'min/max p'
 set output 'stats_p_exp1.pdf'
 plot[][]\
@@ -207,7 +207,7 @@ plot[][]\
 'exp01/pstats_topo7_exp1.ascii' u (1./sqrt($7)):4 w lp lt 8 t 'topo=7',\
 'exp01/pstats_topo7_exp1.ascii' u (1./sqrt($7)):5 w lp lt 8 notitle
 
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel 'min/max q_2'
 set output 'stats_q1_exp1.pdf'
 plot[0.001:][-0.5:0.5]\
@@ -225,7 +225,7 @@ plot[0.001:][-0.5:0.5]\
 
 
 
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel 'min/max q_2'
 set output 'stats_q2_exp1.pdf'
 plot[0.001:][-0.5:0.5]\
@@ -241,7 +241,7 @@ plot[0.001:][-0.5:0.5]\
 'exp01/q2stats_topo9_exp1.ascii'  u (1./sqrt($7)):4 w lp lt 7 pt 2 t 'Rrp','exp01/q2stats_topo9_exp1.ascii'  u (1./sqrt($7)):5 w lp lt 7 pt 2 notitle,\
 'exp01/q2stats_topo10_exp1.ascii' u (1./sqrt($7)):4 w lp lt 7 pt 6 t 'FR', 'exp01/q2stats_topo10_exp1.ascii' u (1./sqrt($7)):5 w lp lt 7 pt 6 notitle,\
 
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel 'min/max q_3'
 set output 'stats_q3_exp1.pdf'
 plot[0.001:][-0.5:0.5]\

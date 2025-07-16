@@ -1,5 +1,5 @@
 #
-set term pdf enhanced font "Times,12pt"
+set term pdf enhanced font "Times,14pt"
 set grid
 set pointsize 0.3
 set key outside
@@ -9,52 +9,83 @@ set format y "10^{%L}"
 
 set log xy
 
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel '||u-u_h||_{L_2}'
 set output 'errors_u_exp9.pdf'
 plot[1e-3:][5e-7:2e-1]\
-'exp09/errors_topo0_exp9.ascii' u (1./sqrt($3)):6 w lp t 'R',\
-'exp09/errors_topo1_exp9.ascii' u (1./sqrt($3)):6 w lp t 'S',\
-'exp09/errors_topo2_exp9.ascii' u (1./sqrt($3)):6 w lp t 'LT',\
-'exp09/errors_topo3_exp9.ascii' u (1./sqrt($3)):6 w lp t 'QZ1',\
-'exp09/errors_topo4_exp9.ascii' u (1./sqrt($3)):6 w lp t 'QZ2',\
-'exp09/errors_topo5_exp9.ascii' u (1./sqrt($3)):6 w lp t 'QZ3',\
-'exp09/errors_topo6_exp9.ascii' u (1./sqrt($3)):6 w lp t 'T1',\
-'exp09/errors_topo7_exp9.ascii' u (1./sqrt($3)):6 w lp t 'T2',\
+'exp09/errors_topo0_exp9.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'R',\
+'exp09/errors_topo9_exp9.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 4 t 'Rrp',\
+'exp09/errors_topo1_exp9.ascii' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'S',\
+'exp09/errors_topo2_exp9.ascii' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'LT',\
+'exp09/errors_topo3_exp9.ascii' u (1./sqrt($3)):6 w lp lt 4 pt 1 t 'QZ1',\
+'exp09/errors_topo4_exp9.ascii' u (1./sqrt($3)):6 w lp lt 4 pt 2 t 'QZ2',\
+'exp09/errors_topo5_exp9.ascii' u (1./sqrt($3)):6 w lp lt 4 pt 6 t 'QZ3',\
+'exp09/errors_topo6_exp9.ascii' u (1./sqrt($3)):6 w lp lt 6 pt 1 t 'T1',\
 x**2/2 lt -1 dt 2 t 'h^2'
+#'exp09/errors_topo10_exp9.ascii'u (1./sqrt($3)):6 w lp lt 1 pt 6 t 'FR',\
+#'exp09/errors_topo8_exp9.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'Rp',\
+#'exp09/errors_topo7_exp9.ascii' u (1./sqrt($3)):6 w lp lt 6 pt 2 t 'T2',\
 
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel '||p-p_h||_{L_2}'
 set output 'errors_p_exp9.pdf'
 plot[1e-3:][:10]\
-'exp09/errors_topo0_exp9.ascii' u (1./sqrt($3)):9 w lp t 'R',\
-'exp09/errors_topo1_exp9.ascii' u (1./sqrt($3)):9 w lp t 'S',\
-'exp09/errors_topo2_exp9.ascii' u (1./sqrt($3)):9 w lp t 'LT',\
-'exp09/errors_topo3_exp9.ascii' u (1./sqrt($3)):9 w lp t 'QZ1',\
-'exp09/errors_topo4_exp9.ascii' u (1./sqrt($3)):9 w lp t 'QZ2',\
-'exp09/errors_topo5_exp9.ascii' u (1./sqrt($3)):9 w lp t 'QZ3',\
-'exp09/errors_topo6_exp9.ascii' u (1./sqrt($3)):9 w lp t 'T1',\
-'exp09/errors_topo7_exp9.ascii' u (1./sqrt($3)):9 w lp t 'T2',\
+'exp09/errors_topo0_exp9.ascii' u (1./sqrt($3)):9 w lp lt 1 pt 1 t 'R',\
+'exp09/errors_topo9_exp9.ascii' u (1./sqrt($3)):9 w lp lt 1 pt 4 t 'Rrp',\
+'exp09/errors_topo1_exp9.ascii' u (1./sqrt($3)):9 w lp lt 2 pt 1 t 'S',\
+'exp09/errors_topo2_exp9.ascii' u (1./sqrt($3)):9 w lp lt 3 pt 1 t 'LT',\
+'exp09/errors_topo3_exp9.ascii' u (1./sqrt($3)):9 w lp lt 4 pt 1 t 'QZ1',\
+'exp09/errors_topo4_exp9.ascii' u (1./sqrt($3)):9 w lp lt 4 pt 2 t 'QZ2',\
+'exp09/errors_topo5_exp9.ascii' u (1./sqrt($3)):9 w lp lt 4 pt 6 t 'QZ3',\
+'exp09/errors_topo6_exp9.ascii' u (1./sqrt($3)):9 w lp lt 6 pt 1 t 'T1',\
 x**1*2 lt -1 dt 2 t 'h^1'
+#'exp09/errors_topo10_exp9.ascii'u (1./sqrt($3)):9 w lp lt 1 pt 6 t 'FR',\
+#'exp09/errors_topo8_exp9.ascii' u (1./sqrt($3)):9 w lp lt 1 pt 2 t 'Rp',\
+#'exp09/errors_topo7_exp9.ascii' u (1./sqrt($3)):9 w lp lt 6 pt 2 t 'T2',\
 
-set xlabel '<h>'
+set xlabel 'h'
 set ylabel '||p-q_{1,h}||_{L_2}'
 set output 'errors_q1_exp9.pdf'
 plot[1e-3:][5e-5:0.2]\
-'exp09/errors_topo1_exp9.ascii' u (1./sqrt($3)):12 w lp lt 2 t'S',\
-'exp09/errors_topo2_exp9.ascii' u (1./sqrt($3)):12 w lp lt 3 t'LT',\
-'exp09/errors_topo3_exp9.ascii' u (1./sqrt($3)):12 w lp lt 4 t'QZ1',\
-'exp09/errors_topo4_exp9.ascii' u (1./sqrt($3)):12 w lp lt 5 t'QZ2',\
-'exp09/errors_topo5_exp9.ascii' u (1./sqrt($3)):12 w lp lt 6 t'QZ3',\
-'exp09/errors_topo6_exp9.ascii' u (1./sqrt($3)):12 w lp lt 7 t'T1',\
+'exp09/errors_topo0_exp9.ascii' u (1./sqrt($3)):12 w lp lt 1 pt 1 t 'R',\
+'exp09/errors_topo9_exp9.ascii' u (1./sqrt($3)):12 w lp lt 1 pt 4 t 'Rrp',\
+'exp09/errors_topo1_exp9.ascii' u (1./sqrt($3)):12 w lp lt 2 pt 1 t 'S',\
+'exp09/errors_topo2_exp9.ascii' u (1./sqrt($3)):12 w lp lt 3 pt 1 t 'LT',\
+'exp09/errors_topo3_exp9.ascii' u (1./sqrt($3)):12 w lp lt 4 pt 1 t 'QZ1',\
+'exp09/errors_topo4_exp9.ascii' u (1./sqrt($3)):12 w lp lt 4 pt 2 t 'QZ2',\
+'exp09/errors_topo5_exp9.ascii' u (1./sqrt($3)):12 w lp lt 4 pt 6 t 'QZ3',\
+'exp09/errors_topo6_exp9.ascii' u (1./sqrt($3)):12 w lp lt 6 pt 1 t 'T1',\
 x**1/4 lt -1 dt 2 t 'h^1',\
 x**1.5*1.2 lt -1 dt 3 t 'h^{1.5}'
+#'exp09/errors_topo10_exp9.ascii'u (1./sqrt($3)):12 w lp lt 1 pt 6 t 'FR',\
+#'exp09/errors_topo8_exp9.ascii' u (1./sqrt($3)):12 w lp lt 1 pt 2 t 'Rp',\
+#'exp09/errors_topo7_exp9.ascii' u (1./sqrt($3)):12 w lp lt 6 pt 2 t 'T2',\
 
-#'exp09/errors_topo0_exp9.ascii' u (1./sqrt($3)):12 w lp lt 1 t'R',\
-#'exp09/errors_topo7_exp9.ascii' u (1./sqrt($3)):12 w lp lt 8 t'T2',\
+unset format y
+unset log y
+set xlabel 'h'
+set ylabel 'u_{rms}'
+set output 'vrms_exp9.pdf'
+plot[1e-3:][:1.7761]\
+'exp09/vrms_topo0_exp9.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 1 t 'R',\
+'exp09/vrms_topo9_exp9.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 4 t 'Rrp',\
+'exp09/vrms_topo1_exp9.ascii' u (1./sqrt($3)):6 w lp lt 2 pt 1 t 'S',\
+'exp09/vrms_topo2_exp9.ascii' u (1./sqrt($3)):6 w lp lt 3 pt 1 t 'LT',\
+'exp09/vrms_topo3_exp9.ascii' u (1./sqrt($3)):6 w lp lt 4 pt 1 t 'QZ1',\
+'exp09/vrms_topo4_exp9.ascii' u (1./sqrt($3)):6 w lp lt 4 pt 2 t 'QZ2',\
+'exp09/vrms_topo5_exp9.ascii' u (1./sqrt($3)):6 w lp lt 4 pt 6 t 'QZ3',\
+'exp09/vrms_topo6_exp9.ascii' u (1./sqrt($3)):6 w lp lt 6 pt 1 t 'T1',\
+
+#'exp09/vrms_topo10_exp9.ascii'u (1./sqrt($3)):6 w lp lt 1 pt 6 t 'FR',\
+#'exp09/vrms_topo8_exp9.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'Rp',\
+#'exp09/vrms_topo7_exp9.ascii' u (1./sqrt($3)):6 w lp lt 6 pt 2 t 'T2',\
+
+##########################################################################
+# rest is not needed for paper
 
 
-set xlabel '<h>'
+
+set xlabel 'h'
 set ylabel '||p-q_{2,h}||_{L_2}'
 set output 'errors_q2_exp9.pdf'
 plot[][]\
@@ -68,20 +99,8 @@ plot[][]\
 x**1 lt -1 dt 2 t 'h^1',\
 x**1.5 lt -1 dt 3 t 'h^{1.5}'
 
-unset format y
-unset log y
-set xlabel '<h>'
-set ylabel 'u_{rms}'
-set output 'vrms_exp9.pdf'
-plot[1e-3:][:1.7761]\
-'exp09/vrms_topo0_exp9.ascii' u (1./sqrt($3)):6 w lp t 'R',\
-'exp09/vrms_topo1_exp9.ascii' u (1./sqrt($3)):6 w lp t 'S',\
-'exp09/vrms_topo2_exp9.ascii' u (1./sqrt($3)):6 w lp t 'LT',\
-'exp09/vrms_topo3_exp9.ascii' u (1./sqrt($3)):6 w lp t 'QZ1',\
-'exp09/vrms_topo4_exp9.ascii' u (1./sqrt($3)):6 w lp t 'QZ2',\
-'exp09/vrms_topo5_exp9.ascii' u (1./sqrt($3)):6 w lp t 'QZ3',\
-'exp09/vrms_topo6_exp9.ascii' u (1./sqrt($3)):6 w lp t 'T1',\
-'exp09/vrms_topo7_exp9.ascii' u (1./sqrt($3)):6 w lp t 'T2'
+
+
 
 set xlabel '<h>'
 set ylabel 'min/max u'
