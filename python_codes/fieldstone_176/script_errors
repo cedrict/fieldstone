@@ -1,0 +1,34 @@
+#! /bin/bash
+
+rm *.ascii 
+
+for n in {8..80} ; do
+    for s in {1..16} ; do 
+        echo nelx=nely= $n
+        python3 stone.py  $n $n 0 > opla
+        grep errv opla >> errors.ascii
+        grep assembly opla >> assembly.ascii
+        grep Build opla >> build.ascii
+        grep Solve opla >> solve.ascii
+        grep csr opla >> convert2csr.ascii
+        grep split opla >> split.ascii
+        grep press opla >> press.ascii
+    done
+done
+
+for n in 96 112 128  ; do
+    for s in {1..16} ; do 
+        echo nelx=nely= $n
+        python3 stone.py  $n $n 0 > opla
+        grep errv opla >> errors.ascii
+        grep assembly opla >> assembly.ascii
+        grep Build opla >> build.ascii
+        grep Solve opla >> solve.ascii
+        grep csr opla >> convert2csr.ascii
+        grep split opla >> split.ascii
+        grep press opla >> press.ascii
+    done
+done
+
+
+
