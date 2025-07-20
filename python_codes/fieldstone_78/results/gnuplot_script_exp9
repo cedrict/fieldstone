@@ -75,6 +75,7 @@ plot[1e-3:][:1.7761]\
 'exp09/vrms_topo4_exp9.ascii' u (1./sqrt($3)):6 w lp lt 4 pt 2 t 'QZ2',\
 'exp09/vrms_topo5_exp9.ascii' u (1./sqrt($3)):6 w lp lt 4 pt 6 t 'QZ3',\
 'exp09/vrms_topo6_exp9.ascii' u (1./sqrt($3)):6 w lp lt 6 pt 1 t 'T1',\
+1.77236278 lt -1 dt 2 t 'analytical'
 
 #'exp09/vrms_topo10_exp9.ascii'u (1./sqrt($3)):6 w lp lt 1 pt 6 t 'FR',\
 #'exp09/vrms_topo8_exp9.ascii' u (1./sqrt($3)):6 w lp lt 1 pt 2 t 'Rp',\

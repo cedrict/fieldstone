@@ -182,55 +182,51 @@ set pointsize .4
 set title '16x16'
 set output 'p_block_res16.pdf'
 plot[0.0005:3000][-440:-360]\
-'fig16x16_full/pblock_topo0_res16' u 2:($3/Lb/g/$5) w p lt 1 pt 1 t 'R',\
-'fig16x16_full/pblock_topo9_res16' u 2:($3/Lb/g/$5) w p lt 1 pt 4 t 'Rrp',\
-'fig16x16_full/pblock_topo1_res16' u 2:($3/Lb/g/$5) w p lt 2 pt 1 t 'S',\
-'fig16x16_full/pblock_topo2_res16' u 2:($3/Lb/g/$5) w p lt 3 pt 1 t 'LT',\
-'fig16x16_full/pblock_topo3_res16' u 2:($3/Lb/g/$5) w p lt 4 pt 1 t 'QZ1',\
-'fig16x16_full/pblock_topo4_res16' u 2:($3/Lb/g/$5) w p lt 4 pt 2 t 'QZ2',\
-'fig16x16_full/pblock_topo5_res16' u 2:($3/Lb/g/$5) w p lt 4 pt 6 t 'QZ3',\
-'fig16x16_full/pblock_topo6_res16' u 2:($3/Lb/g/$5) w p lt 6 pt 1 t 'T1',\
-
-
+'fig16x16_full/pblock_topo0_res16.ascii' u 2:($3/Lb/g/$5) w p lt 1 pt 1 t 'R',\
+'fig16x16_full/pblock_topo9_res16.ascii' u 2:($3/Lb/g/$5) w p lt 1 pt 4 t 'Rrp',\
+'fig16x16_full/pblock_topo1_res16.ascii' u 2:($3/Lb/g/$5) w p lt 2 pt 1 t 'S',\
+'fig16x16_full/pblock_topo2_res16.ascii' u 2:($3/Lb/g/$5) w p lt 3 pt 1 t 'LT',\
+'fig16x16_full/pblock_topo3_res16.ascii' u 2:($3/Lb/g/$5) w p lt 4 pt 1 t 'QZ1',\
+'fig16x16_full/pblock_topo4_res16.ascii' u 2:($3/Lb/g/$5) w p lt 4 pt 2 t 'QZ2',\
+'fig16x16_full/pblock_topo5_res16.ascii' u 2:($3/Lb/g/$5) w p lt 4 pt 6 t 'QZ3',\
+'fig16x16_full/pblock_topo6_res16.ascii' u 2:($3/Lb/g/$5) w p lt 6 pt 1 t 'T1',\
 
 set title '32x32'
 set output 'p_block_res32.pdf'
 plot[0.0005:3000][-440:-360]\
-'fig32x32_full/pblock_topo0_res32' u 2:($3/Lb/g/$5) w p lt 1 pt 1 t 'R',\
-'fig32x32_full/pblock_topo9_res32' u 2:($3/Lb/g/$5) w p lt 1 pt 4 t 'Rrp',\
-'fig32x32_full/pblock_topo1_res32' u 2:($3/Lb/g/$5) w p lt 2 pt 1 t 'S',\
-'fig32x32_full/pblock_topo2_res32' u 2:($3/Lb/g/$5) w p lt 3 pt 1 t 'LT',\
-'fig32x32_full/pblock_topo3_res32' u 2:($3/Lb/g/$5) w p lt 4 pt 1 t 'QZ1',\
-'fig32x32_full/pblock_topo4_res32' u 2:($3/Lb/g/$5) w p lt 4 pt 2 t 'QZ2',\
-'fig32x32_full/pblock_topo5_res32' u 2:($3/Lb/g/$5) w p lt 4 pt 6 t 'QZ3',\
-'fig32x32_full/pblock_topo6_res32' u 2:($3/Lb/g/$5) w p lt 6 pt 1 t 'T1',\
-
-
+'fig32x32_full/pblock_topo0_res32.ascii' u 2:($3/Lb/g/$5) w p lt 1 pt 1 t 'R',\
+'fig32x32_full/pblock_topo9_res32.ascii' u 2:($3/Lb/g/$5) w p lt 1 pt 4 t 'Rrp',\
+'fig32x32_full/pblock_topo1_res32.ascii' u 2:($3/Lb/g/$5) w p lt 2 pt 1 t 'S',\
+'fig32x32_full/pblock_topo2_res32.ascii' u 2:($3/Lb/g/$5) w p lt 3 pt 1 t 'LT',\
+'fig32x32_full/pblock_topo3_res32.ascii' u 2:($3/Lb/g/$5) w p lt 4 pt 1 t 'QZ1',\
+'fig32x32_full/pblock_topo4_res32.ascii' u 2:($3/Lb/g/$5) w p lt 4 pt 2 t 'QZ2',\
+'fig32x32_full/pblock_topo5_res32.ascii' u 2:($3/Lb/g/$5) w p lt 4 pt 6 t 'QZ3',\
+'fig32x32_full/pblock_topo6_res32.ascii' u 2:($3/Lb/g/$5) w p lt 6 pt 1 t 'T1',\
 
 set title '64x64'
 set output 'p_block_res64.pdf'
 plot[0.0005:3000][-440:-360]\
-'fig64x64_full/pblock_topo0_res64' u 2:($3/Lb/g/$5) w p lt 1 pt 1 t 'R',\
-'fig64x64_full/pblock_topo9_res64' u 2:($3/Lb/g/$5) w p lt 1 pt 4 t 'Rrp',\
-'fig64x64_full/pblock_topo1_res64' u 2:($3/Lb/g/$5) w p lt 2 pt 1 t 'S',\
-'fig64x64_full/pblock_topo2_res64' u 2:($3/Lb/g/$5) w p lt 3 pt 1 t 'LT',\
-'fig64x64_full/pblock_topo3_res64' u 2:($3/Lb/g/$5) w p lt 4 pt 1 t 'QZ1',\
-'fig64x64_full/pblock_topo4_res64' u 2:($3/Lb/g/$5) w p lt 4 pt 2 t 'QZ2',\
-'fig64x64_full/pblock_topo5_res64' u 2:($3/Lb/g/$5) w p lt 4 pt 6 t 'QZ3',\
-'fig64x64_full/pblock_topo6_res64' u 2:($3/Lb/g/$5) w p lt 6 pt 1 t 'T1',\
+'fig64x64_full/pblock_topo0_res64.ascii' u 2:($3/Lb/g/$5) w p lt 1 pt 1 t 'R',\
+'fig64x64_full/pblock_topo9_res64.ascii' u 2:($3/Lb/g/$5) w p lt 1 pt 4 t 'Rrp',\
+'fig64x64_full/pblock_topo1_res64.ascii' u 2:($3/Lb/g/$5) w p lt 2 pt 1 t 'S',\
+'fig64x64_full/pblock_topo2_res64.ascii' u 2:($3/Lb/g/$5) w p lt 3 pt 1 t 'LT',\
+'fig64x64_full/pblock_topo3_res64.ascii' u 2:($3/Lb/g/$5) w p lt 4 pt 1 t 'QZ1',\
+'fig64x64_full/pblock_topo4_res64.ascii' u 2:($3/Lb/g/$5) w p lt 4 pt 2 t 'QZ2',\
+'fig64x64_full/pblock_topo5_res64.ascii' u 2:($3/Lb/g/$5) w p lt 4 pt 6 t 'QZ3',\
+'fig64x64_full/pblock_topo6_res64.ascii' u 2:($3/Lb/g/$5) w p lt 6 pt 1 t 'T1',\
 
 
 set title '128x128'
 set output 'p_block_res128.pdf'
 plot[0.0005:3000][-440:-360]\
-'fig128x128_full/pblock_topo0_res128' u 2:($3/Lb/g/$5) w p lt 1 pt 1 t 'R',\
-'fig128x128_full/pblock_topo9_res128' u 2:($3/Lb/g/$5) w p lt 1 pt 4 t 'Rrp',\
-'fig128x128_full/pblock_topo1_res128' u 2:($3/Lb/g/$5) w p lt 2 pt 1 t 'S',\
-'fig128x128_full/pblock_topo2_res128' u 2:($3/Lb/g/$5) w p lt 3 pt 1 t 'LT',\
-'fig128x128_full/pblock_topo3_res128' u 2:($3/Lb/g/$5) w p lt 4 pt 1 t 'QZ1',\
-'fig128x128_full/pblock_topo4_res128' u 2:($3/Lb/g/$5) w p lt 4 pt 2 t 'QZ2',\
-'fig128x128_full/pblock_topo5_res128' u 2:($3/Lb/g/$5) w p lt 4 pt 6 t 'QZ3',\
-'fig128x128_full/pblock_topo6_res128' u 2:($3/Lb/g/$5) w p lt 6 pt 1 t 'T1',\
+'fig128x128_full/pblock_topo0_res128.ascii' u 2:($3/Lb/g/$5) w p lt 1 pt 1 t 'R',\
+'fig128x128_full/pblock_topo9_res128.ascii' u 2:($3/Lb/g/$5) w p lt 1 pt 4 t 'Rrp',\
+'fig128x128_full/pblock_topo1_res128.ascii' u 2:($3/Lb/g/$5) w p lt 2 pt 1 t 'S',\
+'fig128x128_full/pblock_topo2_res128.ascii' u 2:($3/Lb/g/$5) w p lt 3 pt 1 t 'LT',\
+'fig128x128_full/pblock_topo3_res128.ascii' u 2:($3/Lb/g/$5) w p lt 4 pt 1 t 'QZ1',\
+'fig128x128_full/pblock_topo4_res128.ascii' u 2:($3/Lb/g/$5) w p lt 4 pt 2 t 'QZ2',\
+'fig128x128_full/pblock_topo5_res128.ascii' u 2:($3/Lb/g/$5) w p lt 4 pt 6 t 'QZ3',\
+'fig128x128_full/pblock_topo6_res128.ascii' u 2:($3/Lb/g/$5) w p lt 6 pt 1 t 'T1',\
 
 
 

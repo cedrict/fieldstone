@@ -270,7 +270,7 @@ else:
    nelx = 16
    nely = 16
    visu = 1
-   topo = 0
+   topo = 7
    eta_star=0
    experiment=5
    
