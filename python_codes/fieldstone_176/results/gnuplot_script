@@ -38,11 +38,6 @@ plot[][]\
 x*0.00000045 lt -1 dt 2 lw 2,\
 x*0.0000092 lt -1 dt 3 lw 2
 
-
-
-
-
-
 set ylabel 'total build+solve time'
 set output 'build_solve.pdf'
 plot[][]\
@@ -54,6 +49,23 @@ x*0.00026 lt -1 dt 2 lw 2,\
 x*0.00048 lt -1 dt 3 lw 2,\
 x*0.000026 lt -1 dt 2 lw 2,\
 x*0.000048 lt -1 dt 3 lw 2
+
+set ylabel 'compute pressure \& sr'
+set output 'compute_press_sr.pdf'
+plot[][]\
+'old/press.ascii' u 9:5 w p t 'old',\
+'new/press.ascii' u 9:5 w p t 'new',\
+x*0.000025 lt -1 dt 2 lw 2   
+
+set ylabel 'split'
+set output 'split.pdf'
+plot[][]\
+'old/split.ascii' u 9:5 w p t 'old',\
+'new/split.ascii' u 9:5 w p t 'new',\
+
+
+
+
 
 
 

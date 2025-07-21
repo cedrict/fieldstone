@@ -69,7 +69,7 @@ penalty=1.e7  # penalty coefficient value
 eps=1.e-10
 sqrt3=np.sqrt(3.)
 
-new_assembly=True
+new_assembly=False
 
 #################################################################
 # grid point setup
@@ -301,22 +301,19 @@ for iel in range(0,nel):
        #end for
     #end if
     time_ass+=time.time()-start2
+#end for iel
 
 print('     -> time assembly=',time_ass,Nfem)
 
-print("Build FE matrix: %.5f s | Nfem= %d" % (time.time() - start,Nfem))
-
-###############################################################################
-# solve system
-###############################################################################
-start = time.time()
-
+start3=time.time()
 if new_assembly:
    A=sps.csr_matrix((a_mat,(row,col)),shape=(Nfem,Nfem))
 else:
    A=sps.csr_matrix(a_mat)
 
-print("Convert to csr format: %.5f s | Nfem= %d " % (time.time() - start, Nfem))
+print("Convert to csr format: %.5f s | Nfem= %d " % (time.time() - start3, Nfem))
+
+print("Build FE matrix: %.5f s | Nfem= %d" % (time.time() - start,Nfem))
 
 ###############################################################################
 # solve system
