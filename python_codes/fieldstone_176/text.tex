@@ -1,6 +1,5 @@
 \noindent
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
-\includegraphics[height=1.25cm]{images/pictograms/under_construction}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -18,21 +17,26 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: July. 20th, 2026.
+Last revision: July. 21st, 2026.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+{\sl This stone was developed based on an idea by Mohit Lohani}. \index{contributors}{M. Lohani}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This \stone is based on \stone~1. It has been modified slightly to make it more compact without
+This \stone is based on \stone~1. It has been modified slightly to make it more compact
+(explicit for loops have been removed for a great deal) without
 changing any functionality at all (note however that no graphical output is produced).
 
-What we will test here is the assembly process. Indeed \stone~150 showed us that 
-it is a part of a FEM code that is difficult to optimize. I am here testing an approach that 
-one of my students used in class.
+What I will test here is the assembly process algorithm. Indeed \stone~150 showed us that 
+it is a part of a FEM code that is time demanding and difficult to optimize. 
+I am here testing an approach that one of my students used in class.
 
 I then choose for the simplest and easiest case of the penalty formulation that yields a FEM system that 
-is not a saddle point system.
+is not a saddle point system. No vtu file is produced since it is not needed here.
 
 %-------------------------------------------
 \subsection*{Implementation - The `old' way}
@@ -42,7 +46,7 @@ matrix\footnote{\url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.
 \begin{lstlisting}
 a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)
 \end{lstlisting}
-In side the loop over element the elemental matrix \lstinline{a_el} is built
+Inside the loop over elements the elemental matrix \lstinline{a_el} is built
 and the assembly is as follows:
 
 \begin{lstlisting}
@@ -67,7 +71,10 @@ Finally the matrix is converted to CSR format:
 \begin{lstlisting}
 A=sps.csr_matrix(a_mat)
 \end{lstlisting}
-
+before being passed to the solver alongside the rhs vector:
+\begin{lstlisting}
+sol=sps.linalg.spsolve(A,rhs)
+\end{lstlisting}
 
 %-------------------------------------------
 \subsection*{Implementation - The `new' way}
@@ -99,15 +106,14 @@ for iel in range(0,nel):
         rhs[idof]+=b_el[i_local]
     #end for
 \end{lstlisting}
-We have used here the python \lstinline{enumerate}
-functionality. In fact
+We have used here the python \lstinline{enumerate} functionality. In fact
 \begin{lstlisting}
 for i_local,idof in enumerate(dofs):
 \end{lstlisting}
 elegantly replaces
 \begin{lstlisting}
 for i_local in (0,m):
-    idof=dofs[i]
+    idof=dofs[i_local]
 \end{lstlisting}
 Finally the CSR converstion goes as follows:
 \begin{lstlisting}
@@ -115,20 +121,20 @@ A=sps.csr_matrix((a_mat,(row,col)),shape=(Nfem,Nfem))
 \end{lstlisting}
 
 
-
-
 %-------------------------------------------
 \subsection*{Results/timings}
 
 The bash {\tt script\_errors} runs the code over a range of resolutions 
-and for each resolution runs it 20 times so as to obtain better average 
+and for each resolution runs it 4 times so as to obtain better average 
 timings. 
 Various parts of the code are timed and we compare values between the `old'
 and the `new' approach.
+Results have been obtained on my Lenovo ThinkPad T470p, with Intel Core i7-7820HQ CPU at 2.90GHzx8.
+
 Let us start with the assembly:
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_176/results/assembly.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_176/results/convert2csr.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_176/results/convert2csr.pdf}\\
 {\captionfont Left: time required to carry out the assembly; Right: time
 required to carry out the CSR conversion.}
 \end{center}
@@ -144,6 +150,13 @@ as well as the solve time:
 \end{center}
 The conclusion is then clear: the new method yields a matrix build that 
 is about 2x faster than the old one.
+Also, comparing matrix building times to solve times, we get a feel for how 
+improving the assembly process ultimately makes our code faster!
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_176/results/build_solve.pdf}
+\end{center}
+
+
 
 We can also monitor the time necessary to split the solution vector
 and the time required to compute the pressure and strain rate components:
@@ -153,6 +166,8 @@ and the time required to compute the pressure and strain rate components:
 {\captionfont We of course retrieve the same time for both implementations since
 these algorithms are not linked to the assembly process.}
 \end{center}
+We find that the split time is negligble. 
+
 
 Finally we make sure that the discretization errors converge at the expected rate
 in both implementations:

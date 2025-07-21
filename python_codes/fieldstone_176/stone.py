@@ -79,9 +79,9 @@ start = time.time()
 x=np.empty(NV,dtype=np.float64)  # x coordinates
 y=np.empty(NV,dtype=np.float64)  # y coordinates
 
-counter = 0
-for j in range(0, nny):
-    for i in range(0, nnx):
+counter=0
+for j in range(0,nny):
+    for i in range(0,nnx):
         x[counter]=i*Lx/float(nelx)
         y[counter]=j*Ly/float(nely)
         counter += 1
@@ -320,7 +320,7 @@ print("Build FE matrix: %.5f s | Nfem= %d" % (time.time() - start,Nfem))
 ###############################################################################
 start = time.time()
 
-sol = sps.linalg.spsolve(A,rhs)
+sol=sps.linalg.spsolve(A,rhs)
 
 print("Solve linear system: %.5f s | Nfem= %d " % (time.time() - start, Nfem))
 
@@ -353,7 +353,6 @@ for iel in range(0,nel):
 
     rq = 0.0
     sq = 0.0
-    weightq = 2.0 * 2.0
 
     N[0]=0.25*(1.-rq)*(1.-sq)
     N[1]=0.25*(1.+rq)*(1.-sq)
@@ -383,7 +382,7 @@ for iel in range(0,nel):
              0.5*dNdx[:].dot(v[icon[:,iel]])
     p[iel]=-penalty*(exx[iel]+eyy[iel])
 
-print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
+print("     -> p   (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
@@ -393,20 +392,20 @@ print("compute press & sr: %.5f s | Nfem: %d" % (time.time() - start,Nfem))
 #################################################################
 # compute error
 #################################################################
-start = time.time()
+#start = time.time()
 
-error_u=np.empty(NV,dtype=np.float64)
-error_v=np.empty(NV,dtype=np.float64)
-error_p=np.empty(nel,dtype=np.float64)
+#error_u=np.empty(NV,dtype=np.float64)
+#error_v=np.empty(NV,dtype=np.float64)
+#error_p=np.empty(nel,dtype=np.float64)
 
-for i in range(0,NV): 
-    error_u[i]=u[i]-velocity_x(x[i],y[i])
-    error_v[i]=v[i]-velocity_y(x[i],y[i])
+#for i in range(0,NV): 
+#    error_u[i]=u[i]-velocity_x(x[i],y[i])
+#    error_v[i]=v[i]-velocity_y(x[i],y[i])
 
-for i in range(0,nel): 
-    error_p[i]=p[i]-pressure(xc[i],yc[i])
+#for i in range(0,nel): 
+#    error_p[i]=p[i]-pressure(xc[i],yc[i])
 
-print("compute nodal error for plot: %.3f s" % (time.time() - start))
+#print("compute nodal error for plot: %.3f s" % (time.time() - start))
 
 #################################################################
 # compute error in L2 norm
@@ -415,7 +414,7 @@ start = time.time()
 
 errv=0.
 errp=0.
-for iel in range (0,nel):
+for iel in range(0,nel):
     for iq in [-1,1]:
         for jq in [-1,1]:
             rq=iq/sqrt3

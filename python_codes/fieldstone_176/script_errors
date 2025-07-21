@@ -3,7 +3,7 @@
 rm *.ascii 
 
 for n in {8..80} ; do
-    for s in {1..16} ; do 
+    for s in {1..4} ; do 
         echo nelx=nely= $n
         python3 stone.py  $n $n 0 > opla
         grep errv opla >> errors.ascii
@@ -16,8 +16,8 @@ for n in {8..80} ; do
     done
 done
 
-for n in 96 112 128  ; do
-    for s in {1..16} ; do 
+for n in 96 104 112 120 128 144 ; do
+    for s in {1..4} ; do 
         echo nelx=nely= $n
         python3 stone.py  $n $n 0 > opla
         grep errv opla >> errors.ascii
