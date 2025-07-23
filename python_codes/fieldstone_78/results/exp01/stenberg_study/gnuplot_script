@@ -1,0 +1,39 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize 0.4
+set key outside
+set format y "10^{%L}"
+
+#################################################################
+# exp=1
+#################################################################
+
+set log xy
+
+set xlabel '<h>'
+set ylabel '||u-u_h||_{L_2}'
+set output 'errors_u.pdf'
+plot[][]\
+'square' u (1./sqrt($3)):6 w lp t 'square',\
+'ar25' u (1./sqrt($3)):6 w lp t 'ar 5:2',\
+x**2/10 lt -1 dt 2 t 'h^2'
+
+
+
+set xlabel '<h>'
+set ylabel '||p-p_h||_{L_2}'
+set output 'errors_p.pdf'
+plot[][]\
+'square' u (1./sqrt($3)):9 w lp t 'square',\
+'ar25' u (1./sqrt($3)):9 w lp t 'ar 5:2',\
+x**1/10 lt -1 dt 2 t 'h^1'
+
+set xlabel '<h>'
+set ylabel '||p-q_{1,h}||_{L_2}'
+set output 'errors_q1.pdf'
+plot[][]\
+'square' u (1./sqrt($3)):12 w lp t 'square',\
+'ar25' u (1./sqrt($3)):12 w lp t 'ar 5:2',\
+x**1.5 lt -1 dt 3 t 'h^{1.5}'
+
