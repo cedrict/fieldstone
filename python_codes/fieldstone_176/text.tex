@@ -126,10 +126,10 @@ A=sps.csr_matrix((a_mat,(row,col)),shape=(Nfem,Nfem))
 
 The bash {\tt script\_errors} runs the code over a range of resolutions 
 and for each resolution runs it 4 times so as to obtain better average 
-timings. 
-Various parts of the code are timed and we compare values between the `old'
-and the `new' approach.
-Results have been obtained on my Lenovo ThinkPad T470p, with Intel Core i7-7820HQ CPU at 2.90GHzx8.
+timings. Various parts of the code are timed and we compare values between 
+the `old' and the `new' approach. Results have been obtained on my 
+laptop (Lenovo ThinkPad T470p, with Intel Core i7-7820HQ CPU at 2.90GHzx8),
+and on Shrek (Intel Xeon E5-2660 v3x40).
 
 Let us start with the assembly:
 \begin{center}
@@ -155,8 +155,6 @@ improving the assembly process ultimately makes our code faster!
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_176/results/build_solve.pdf}
 \end{center}
-
-
 
 We can also monitor the time necessary to split the solution vector
 and the time required to compute the pressure and strain rate components:

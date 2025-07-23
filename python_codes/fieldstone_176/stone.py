@@ -390,24 +390,6 @@ print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 print("compute press & sr: %.5f s | Nfem: %d" % (time.time() - start,Nfem))
 
 #################################################################
-# compute error
-#################################################################
-#start = time.time()
-
-#error_u=np.empty(NV,dtype=np.float64)
-#error_v=np.empty(NV,dtype=np.float64)
-#error_p=np.empty(nel,dtype=np.float64)
-
-#for i in range(0,NV): 
-#    error_u[i]=u[i]-velocity_x(x[i],y[i])
-#    error_v[i]=v[i]-velocity_y(x[i],y[i])
-
-#for i in range(0,nel): 
-#    error_p[i]=p[i]-pressure(xc[i],yc[i])
-
-#print("compute nodal error for plot: %.3f s" % (time.time() - start))
-
-#################################################################
 # compute error in L2 norm
 #################################################################
 start = time.time()

@@ -5,72 +5,74 @@ set pointsize .35
 set grid
 
 set xlabel 'Nfem'
-set ylabel 'assembly time'
 
+set ylabel 'assembly time (s)'
 set output 'assembly.pdf'
 plot[][]\
-'old/assembly.ascii' u 5:4 w lp pt 5 t 'old',\
-'new/assembly.ascii' u 5:4 w lp pt 5 t 'new',\
+'old/assembly.ascii'       u 5:4 w lp lt 1 pt 1 t 'old, laptop',\
+'old_shrek/assembly.ascii' u 5:4 w lp lt 2 pt 2 t 'old, shrek',\
+'new/assembly.ascii'       u 5:4 w lp lt 3 pt 1 t 'new, laptop',\
+'new_shrek/assembly.ascii' u 5:4 w lp lt 4 pt 2 t 'new, shrek',\
 x*0.000023 lt -1 dt 2 lw 2,\
-x*0.00023 lt -1 dt 3 lw 2
+x*0.00025 lt -1 dt 3 lw 2
 
-set ylabel 'total build time'
+set ylabel 'total build time (s)'
 set output 'build.pdf'
 plot[][]\
-'old/build.ascii' u 8:4 w lp pt 5 t 'old',\
-'new/build.ascii' u 8:4 w lp pt 5 t 'new',\
-x*0.00027 lt -1 dt 2 lw 2,\
-x*0.00048 lt -1 dt 3 lw 2
+'old/build.ascii'       u 8:4 w lp lt 1 pt 1 t 'old, laptop',\
+'old_shrek/build.ascii' u 8:4 w lp lt 2 pt 2 t 'old, shrek',\
+'new/build.ascii'       u 8:4 w lp lt 3 pt 1 t 'new, laptop',\
+'new_shrek/build.ascii' u 8:4 w lp lt 4 pt 2 t 'new, shrek',\
+x*0.00029 lt -1 dt 2 lw 2,\
+x*0.00052 lt -1 dt 3 lw 2
 
 set log xy
-set ylabel 'solve time'
+set ylabel 'solve time (s)'
 set output 'solve.pdf'
 plot[][]\
-'old/solve.ascii' u 8:4 w lp pt 5 t 'old',\
-'new/solve.ascii' u 8:4 w lp pt 5 t 'new',\
-x*0.0000029 lt -1 dt 2 lw 2 t 'h^1'
+'old/solve.ascii'       u 8:4 w lp lt 1 pt 1 t 'old, laptop',\
+'old_shrek/solve.ascii' u 8:4 w lp lt 2 pt 2 t 'old, shrek',\
+'new/solve.ascii'       u 8:4 w lp lt 3 pt 1 t 'new, laptop',\
+'new_shrek/solve.ascii' u 8:4 w lp lt 4 pt 2 t 'new, shrek',\
+x*0.0000029 lt -1 dt 2 lw 2 t 'h^1',\
+x**1.4*0.000001 lt -1 dt 3 lw 2  t 'h^{1.4}'
 
 unset log xy
 
-set ylabel 'convert to csr time'
+set ylabel 'convert to csr time (s)'
 set output 'convert2csr.pdf'
-plot[][]\
-'old/convert2csr.ascii' u 9:5 w lp pt 5 t 'old',\
-'new/convert2csr.ascii' u 9:5 w lp pt 5 t 'new',\
-x*0.00000045 lt -1 dt 2 lw 2,\
-x*0.0000096 lt -1 dt 3 lw 2
+plot[][:1]\
+'old/convert2csr.ascii'       u 9:5 w lp lt 1 pt 1 t 'old, laptop',\
+'old_shrek/convert2csr.ascii' u 9:5 w lp lt 2 pt 2 t 'old, shrek',\
+'new/convert2csr.ascii'       u 9:5 w lp lt 3 pt 1 t 'new, laptop',\
+'new_shrek/convert2csr.ascii' u 9:5 w lp lt 4 pt 2 t 'new, shrek',\
+x*0.00000075 lt -1 dt 2 lw 2,\
+x*0.000013 lt -1 dt 3 lw 2
 
-set ylabel 'total build+solve time'
+set ylabel 'total build+solve time (s)'
 set output 'build_solve.pdf'
 plot[][]\
-'old/build.ascii' u 8:4 w p pt 5 t 'build, old',\
-'new/build.ascii' u 8:4 w p pt 5 t 'build, new',\
-'old/solve.ascii' u 8:4 w p pt 5 t 'solve,old',\
-'new/solve.ascii' u 8:4 w p pt 5 t 'solve,new',\
-x*0.00026 lt -1 dt 2 lw 2,\
-x*0.00048 lt -1 dt 3 lw 2,\
-x*0.000026 lt -1 dt 2 lw 2,\
-x*0.000048 lt -1 dt 3 lw 2
+'old_shrek/build.ascii' u 8:4 w p pt 5 t 'build, old',\
+'new_shrek/build.ascii' u 8:4 w p pt 5 t 'build, new',\
+'old_shrek/solve.ascii' u 8:4 w p pt 5 t 'solve, old',\
+'new_shrek/solve.ascii' u 8:4 w p pt 5 t 'solve, new',\
 
-set ylabel 'compute pressure \& sr'
+set ylabel 'compute pressure \& sr time (s)'
 set output 'compute_press_sr.pdf'
 plot[][]\
-'old/press.ascii' u 9:5 w p pt 5 t 'old',\
-'new/press.ascii' u 9:5 w p pt 5 t 'new',\
-x*0.000025 lt -1 dt 2 lw 2   
+'old/press.ascii'       u 9:5 w p pt 1 t 'old, laptop',\
+'old_shrek/press.ascii' u 9:5 w p pt 2 t 'old, shrek',\
+'new/press.ascii'       u 9:5 w p pt 1 t 'new, laptop',\
+'new_shrek/press.ascii' u 9:5 w p pt 2 t 'new, shrek',\
+x*0.000021 lt -1 dt 2 lw 2   
 
-set ylabel 'split'
+set ylabel 'split time (s)'
 set output 'split.pdf'
 plot[][]\
-'old/split.ascii' u 9:5 w p pt 5 t 'old',\
-'new/split.ascii' u 9:5 w p pt 5 t 'new',\
-
-
-
-
-
-
-
+'old/split.ascii'       u 9:5 w p pt 1 t 'old, laptop',\
+'old_shrek/split.ascii' u 9:5 w p pt 2 t 'old, shrek',\
+'new/split.ascii'       u 9:5 w p pt 1 t 'new, laptop',\
+'new_shrek/split.ascii' u 9:5 w p pt 2 t 'new, shrek',\
 
 
 
