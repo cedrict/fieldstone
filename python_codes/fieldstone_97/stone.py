@@ -504,10 +504,18 @@ for il in range(0,8): #layer
 #min_lat=5
 #max_lat=40
 
-min_lon=-78+180
-max_lon=-10+180
-min_lat=58
-max_lat=85
+#greenland
+#min_lon=-78+180
+#max_lon=-10+180
+#min_lat=58
+#max_lat=85
+
+#western US
+min_lon=-114 +180
+max_lon=-100 +180
+min_lat=33
+max_lat=43
+
 
 counter =np.zeros(8,dtype=np.int32)
 
