@@ -303,7 +303,7 @@ From $\vec\nabla^2 \Psi = -\omega $, we can also write
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Vorticity-stream function formulation of the non-isoviscous Stokes equation in 2d}
+\section{(Vorticity-)stream function formulation of the non-isoviscous Stokes equation in 2d}
 
 In this case, we can no longer write the Stokes equation as follows
 \begin{equation}
@@ -361,6 +361,7 @@ the first line with regards to $y$ and the second line with regards to $x$,
 + \frac{\partial \rho g_y}{\partial x}
 \end{eqnarray}
 and next by subtracting the resulting equations, leading to:
+{\small
 \begin{eqnarray}
 0 &=& 
 \frac{\partial^2 }{\partial x \partial y} \left(2\eta \frac{\partial^2 \Psi}{\partial x \partial y} \right)
@@ -397,9 +398,10 @@ and next by subtracting the resulting equations, leading to:
 + \frac{\partial \rho g_x}{\partial y}
 - \frac{\partial \rho g_y}{\partial x}
 \end{eqnarray}
+}
 i.e.
-\[
-\boxed{
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
 4\frac{\partial^2 }{\partial x \partial y} 
 \left[\eta \frac{\partial^2 \Psi}{\partial x \partial y}  \right]
 + 
@@ -411,8 +413,9 @@ i.e.
 =
 - \frac{\partial \rho g_x}{\partial y}
 + \frac{\partial \rho g_y}{\partial x}
-}
-\]
+\label{eq:stream2dnoniso}
+\end{equation}
+\end{mdframed}
 This is eq 5.36c of Gerya. 
 This expression (esp. the lhs) is to be found in its dimensionless form in 
 \textcite{chyu84} (1984) or in \textcite{scja81} (1981) for example:
@@ -455,11 +458,386 @@ In the presence of temperature variations and multiple compositions,
 Ra_T \frac{\partial T}{\partial x}-
 Ra_C \frac{\partial C}{\partial x}
 \]
+Let us now investigate further the equation \eqref{eq:stream2dnoniso}:
 
-PB: what if C is a discontinuous field? then I guess C needs to be carried on the nodes.
+\[
+\underbrace{
+4\frac{\partial^2 }{\partial x \partial y} 
+\left[\eta \frac{\partial^2 \Psi}{\partial x \partial y}  \right]}_{A}
++ 
+\underbrace{
+\left( 
+\frac{\partial^2 }{\partial y^2}
+- \frac{\partial^2 }{\partial x^2}
+\right)
+\left[ \eta (\frac{\partial^2 \Psi}{\partial y^2}-\frac{\partial^2 \Psi}{\partial x^2}) \right]}_{B}
+=
+- \frac{\partial (\rho g_x)}{\partial y}
++ \frac{\partial (\rho g_y)}{\partial x}
+\]
 
-Introducing the vorticity again, 
-we can rewrite the above equation as follows: ??? can it ???
+
+
+
+\begin{eqnarray}
+A &=& 4\frac{\partial^2 }{\partial x \partial y} 
+\left[\eta \frac{\partial^2 \Psi}{\partial x \partial y}  \right] \nn\\
+&=&
+4\frac{\partial^2 \eta }{\partial x \partial y} \frac{\partial^2 \Psi}{\partial x \partial y} 
++4 \eta \frac{\partial^4 \Psi}{\partial x^2 \partial y^2} \nn\\
+B &=&
+\left( 
+\frac{\partial^2 }{\partial y^2}
+- \frac{\partial^2 }{\partial x^2}
+\right)
+\left[ \eta (\frac{\partial^2 \Psi}{\partial y^2}-\frac{\partial^2 \Psi}{\partial x^2}) \right] \nn\\
+&=&
+\left( 
+\frac{\partial^2 \eta}{\partial y^2}
+- \frac{\partial^2 \eta}{\partial x^2}
+\right)
+\left( \frac{\partial^2 \Psi}{\partial y^2}-\frac{\partial^2 \Psi}{\partial x^2} \right)
++ \eta 
+\left( \frac{\partial^4 \Psi}{\partial y^4} - 2 \frac{\partial^4 \Psi}{\partial x^2\partial y^2} +
+\frac{\partial^4 \Psi}{\partial x^4} \right) \nn\\
+&=&
+\left( 
+\frac{\partial^2 \eta}{\partial y^2}
+- \frac{\partial^2 \eta}{\partial x^2}
+\right)
+\left( \frac{\partial^2 \Psi}{\partial y^2}-\frac{\partial^2 \Psi}{\partial x^2} \right)
++ \eta 
+\left( \underbrace{\frac{\partial^4 \Psi}{\partial y^4} + 2 \frac{\partial^4 \Psi}{\partial x^2\partial y^2} +
+\frac{\partial^4 \Psi}{\partial x^4} }_{\nabla^2\nabla^2 \Psi}\right) 
+- 4 \eta \frac{\partial^4 \Psi}{\partial x^2\partial y^2}
+\nn\\
+\end{eqnarray}
+We sum $A$ and $B$ and the $4\eta  \frac{\partial^4 \Psi}{\partial x^2\partial y^2}$ terms cancel each other:
+\[
+4\frac{\partial^2 \eta }{\partial x \partial y} \frac{\partial^2 \Psi}{\partial x \partial y} 
++\left( 
+\frac{\partial^2 \eta}{\partial y^2}
+- \frac{\partial^2 \eta}{\partial x^2}
+\right)
+\left( \frac{\partial^2 \Psi}{\partial y^2}-\frac{\partial^2 \Psi}{\partial x^2} \right)
++\eta \nabla^2\nabla^2 \Psi 
+= 
+- \frac{\partial (\rho g_x)}{\partial y}
++ \frac{\partial (\rho g_y)}{\partial x}
+\]
+Note that if $\eta=\eta_0=Constant$ than most lhs term are zero and we recover 
+the isoviscous formulation
+\begin{equation}
+\vec\nabla^4 \Psi = \frac{1}{\eta_0} \left( -\frac{\partial (\rho g_x)}{\partial y}
++\frac{\partial (\rho g_y)}{\partial x} \right)
+\end{equation}
+
+
+
+
+The discretisation of the PDE above will require the following terms:
+\[
+\frac{\partial^4 \Psi}{\partial y^4}, \quad
+\frac{\partial^4 \Psi}{\partial x^2\partial y^2}, \quad
+\frac{\partial^4 \Psi}{\partial x^4}, \quad
+\frac{\partial^2 \Psi}{\partial x^2}, \quad
+\frac{\partial^2 \Psi}{\partial x\partial y}, \quad
+\frac{\partial^2 \Psi}{\partial y^2}.
+\]
+In this case this approach is then more difficult than the $\omega,\Psi$ approach which consisted of two coupled Poisson equations as we now have to deal with fourth-order derivatives. For example, 1d we have\footnote{\url{https://en.wikipedia.org/wiki/Finite_difference_coefficient}} the following central finite difference 
+expression:
+\[
+f''''(x_k) \simeq \frac{  f_{k-2} -4f_{k-1} +6f_k -4f_{k+1} +f_{k+2}  }{h^4}
+\]
+so we see that the stencil now involves 5 points. 
+We find in the literature that the 2nd-order accurate 13-point stencil for the biharmonic 
+operator is as follows \cite{chll08,misk25}:
+\begin{eqnarray}
+\vec\nabla^2 \vec\nabla^2 u_{i,j}
+&=&\frac{1}{h^4} 
+\left(
+20 u_{i,j} - 8(u_{i+1,j} + u_{i-1,j} + u_{i,j+1} + u_{i,j-1} )  \right. \nn\\
+&& \left. + 2 (u_{i+1,j+1} + u_{i-1,j+1} + u_{i-1,j-1} + u_{i+1,j-1} )
++ (u_{i+2,j} + u_{i-2,j} + u_{i,j+2} + u_{i,j-2} ) 
+\right)
+\label{eq:bihh2}
+\end{eqnarray}
+This can be arrived at by starting from the Laplace operator 2d stencil:
+\[
+\begin{pmatrix}
+. & . &  . & . & . \\
+. & . &  1 & . & . \\
+. & 1 & -4 & 1 & . \\
+. & . &  1 & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+\]
+which corresponds to 
+\begin{equation}
+\vec\nabla^2 v (x_i,y_j) =  \frac{1}{h^2} (v_{i-1,j} +v_{i+1,j}+v_{i,j-1}+v_{i,j+1}-4v_{i,j} )
+\label{eq:bihh1}
+\end{equation}
+If we define $v$ such that $v=\vec\nabla^2 u$, then
+\begin{equation}
+\vec\nabla^2 \vec\nabla^2 u (x_i,y_j) 
+=  \frac{1}{h^2} \left(
+\vec\nabla^2 u (x_{i-1},y_j)+
+\vec\nabla^2 u (x_{i+1},y_j)+
+\vec\nabla^2 u (x_i,y_{j-1})+
+\vec\nabla^2 u (x_i,y_{j+1})
+-4\vec\nabla^2 u (x_i,y_j)
+\right)
+\label{eq:bihh3}
+\end{equation}
+Each term could then be replaced by a formula akin to Eq.~\eqref{eq:bihh1} and we would then arrive at 
+Eq.~\eqref{eq:bihh2}. There is actually an easier way to arrive at this equation. We only need to 
+sum the stencils corresponding to each term in Eq.~\eqref{eq:bihh3}:
+{\small
+\[
+\begin{pmatrix}
+ . &  . & . & . &.\\
+ . &  1 & . & . &.\\
+ 1 & -4 & 1 & . &.\\
+ . &  1 & . & . &.\\
+ . &  . & . & . &.
+\end{pmatrix}
++
+\begin{pmatrix}
+.&. & . &  . & .  \\
+.&. & . &  1 & .  \\
+.&. & 1 & -4 & 1  \\
+.&. & . &  1 & .  \\
+.&. & . &  . & .  
+\end{pmatrix}
++
+\begin{pmatrix}
+. & . &  . & . & .  \\
+. & . &  . & . & . \\
+. & . &  1 & . & . \\
+. & 1 & -4 & 1 & . \\
+. & . &  1 & . & . 
+\end{pmatrix}
++
+\begin{pmatrix}
+. & . &  1 & . & . \\
+. & 1 & -4 & 1 & . \\
+. & . &  1 & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+-4
+\begin{pmatrix}
+. & . &  . & . & . \\
+. & . &  1 & . & . \\
+. & 1 & -4 & 1 & . \\
+. & . &  1 & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+\]
+\[
+=
+\begin{pmatrix}
+. & . &  1 & . & . \\
+. & 2 &  -8 & 2 & . \\
+1 & -8 & 20 & -8 & 1 \\
+. & 2 &  -8 & 2 & . \\
+. & . &  1 & . & . 
+\end{pmatrix}
+\]
+}
+Note that in the equation above the terms $1/h^2$ or $1/h^4$ are absent.
+Also, the sum of all coefficients should be zero. 
+The local truncation error is order of $h^2$. The finite difference approximation above needs to be modified at grid points near the boundary. 
+
+This results in the following stencil if a 1st-order accurate formula is used 
+for the boundary one {\color{red} check}:
+{\small
+\[
+\begin{pmatrix}
+. & . &  . & . & . \\
+1 & . &  . & . & . \\
+-1 & -2 & 1 & . & . \\
+1 & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
++
+\begin{pmatrix}
+. & . &  . & . & .\\
+. & . &  1 & . & .\\
+. & 1 & -4 & 1 & .\\
+. & . &  1 & . & .\\
+. & . &  . & . & .
+\end{pmatrix}
++
+\begin{pmatrix}
+ . &  . & . & . &.\\
+ . &  . & . & . &.\\
+ . &  1 & . & . &.\\
+ 1 & -4 & 1 & . &.\\
+ . &  1 & . & . &.
+\end{pmatrix}
++
+\begin{pmatrix}
+ . &  1 & . & . &.\\
+ 1 & -4 & 1 & . &.\\
+ . &  1 & . & . &.\\
+ . &  . & . & . &.\\
+ . &  . & . & . &.
+\end{pmatrix}
+-4
+\begin{pmatrix}
+ . &  . & . & . &.\\
+ . &  1 & . & . &.\\
+ 1 & -4 & 1 & . &.\\
+ . &  1 & . & . &.\\
+ . &  . & . & . &.
+\end{pmatrix}
+\]
+
+\[
+=
+\begin{pmatrix}
+. &  1 & . & . &. \\
+2 &  -8 & 2 & . &. \\
+-5 &  17 & -7 & 1 &. \\
+2 &  -8 & 2 & . &. \\
+. &  1 & . & . &. 
+\end{pmatrix}
+\]
+}
+
+and in the following stencil if 2nd-order accurate formulae are used 
+throughout {\color{red} check}:
+{\small
+\[
+\begin{pmatrix}
+. & . &  . & . & . \\
+1 & . &  . & . & . \\
+0 & -5 & 4 & -1 & . \\
+1 & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
++
+\begin{pmatrix}
+. & . &  . & . & .\\
+. & . &  1 & . & .\\
+. & 1 & -4 & 1 & .\\
+. & . &  1 & . & .\\
+. & . &  . & . & .
+\end{pmatrix}
++
+\begin{pmatrix}
+ . &  . & . & . &.\\
+ . &  . & . & . &.\\
+ . &  1 & . & . &.\\
+ 1 & -4 & 1 & . &.\\
+ . &  1 & . & . &.
+\end{pmatrix}
++
+\begin{pmatrix}
+ . &  1 & . & . &.\\
+ 1 & -4 & 1 & . &.\\
+ . &  1 & . & . &.\\
+ . &  . & . & . &.\\
+ . &  . & . & . &.
+\end{pmatrix}
+-4
+\begin{pmatrix}
+ . &  . & . & . &.\\
+ . &  1 & . & . &.\\
+ 1 & -4 & 1 & . &.\\
+ . &  1 & . & . &.\\
+ . &  . & . & . &.
+\end{pmatrix}
+\]
+
+\[
+=
+\begin{pmatrix}
+. &  1 & . & . &. \\
+2 &  -8 & 2 & . &. \\
+-4 &  14 & -4 & 0 &. \\
+2 &  -8 & 2 & . &. \\
+. &  1 & . & . &. 
+\end{pmatrix}
+\]
+}
+Please check section XYZ for the various stencils of the 2d Laplace operator near on boundaries and corners.
+
+Having said all this, we have two options: since we are considering the case of a non-isoviscous flow, 
+we assume that the viscosity will depend on velocity and/or pressure, i.e. on derivatives of $\Psi$, 
+which renders the equation above nonlinear.
+Non-linear iterations will then be implemented and the equation will look something like
+(we here assume that temperature/density in known -- also for simplicity I assume $g_x=0$ and $g_y$
+constant in space/time):
+\[
+4\frac{\partial^2 \eta^{(k-1)} }{\partial x \partial y} 
+\frac{\partial^2 \Psi^{(k)}}{\partial x \partial y} 
++\left( 
+\frac{\partial^2 \eta^{(k-1)}}{\partial y^2}
+- \frac{\partial^2 \eta^{(k-1)}}{\partial x^2}
+\right)
+\left( \frac{\partial^2 \Psi^{(k)}}{\partial y^2}-\frac{\partial^2 \Psi^{(k)}}{\partial x^2} \right)
++\eta^{(k-1)} \nabla^2\nabla^2 \Psi^{(k)} 
+= 
+\frac{\partial \rho}{\partial x} g_y
+\]
+We coin this approach {\bf method 1}.
+
+Alternatively, we could replace $\Psi^{(k)}$ by $\Psi^{(k-1)}$ in the terms that 
+contain viscosity derivatives so that these terms can be moved to the rhs:
+
+
+\[
+\eta^{(k-1)} \nabla^2\nabla^2 \Psi^{(k)} 
+= 
+\frac{\partial \rho}{\partial x} g_y
+-
+4\frac{\partial^2 \eta^{(k-1)} }{\partial x \partial y} 
+\frac{\partial^2 \Psi^{(k-1)}}{\partial x \partial y} 
++\left( 
+\frac{\partial^2 \eta^{(k-1)}}{\partial y^2}
+- \frac{\partial^2 \eta^{(k-1)}}{\partial x^2}
+\right)
+\left( \frac{\partial^2 \Psi^{(k-1)}}{\partial y^2}-\frac{\partial^2 \Psi^{(k-1)}}{\partial x^2} \right)
+\]
+and we can divide by the viscosity:
+\[
+\nabla^2\nabla^2 \Psi^{(k)} 
+= 
+\frac{1}{\eta^{(k-1)} }
+\left[
+\frac{\partial \rho}{\partial x} g_y
+-
+4\frac{\partial^2 \eta^{(k-1)} }{\partial x \partial y} 
+\frac{\partial^2 \Psi^{(k-1)}}{\partial x \partial y} 
++\left( 
+\frac{\partial^2 \eta^{(k-1)}}{\partial y^2}
+- \frac{\partial^2 \eta^{(k-1)}}{\partial x^2}
+\right)
+\left( \frac{\partial^2 \Psi^{(k-1)}}{\partial y^2}-\frac{\partial^2 \Psi^{(k-1)}}{\partial x^2} \right)
+\right]
+\]
+This then allows us to introduce vorticity again and we can use our two-stage Poisson equation scheme
+inside the nonlinear iterations  to obtain {\bf method 2}:
+\begin{eqnarray}
+\nabla^2 \omega^{(k)} 
+&=& 
+\frac{1}{\eta^{(k-1)} }
+\left[
+\frac{\partial \rho}{\partial x} g_y
+-
+4\frac{\partial^2 \eta^{(k-1)} }{\partial x \partial y} 
+\frac{\partial^2 \Psi^{(k-1)}}{\partial x \partial y} 
++\left( 
+\frac{\partial^2 \eta^{(k-1)}}{\partial y^2}
+- \frac{\partial^2 \eta^{(k-1)}}{\partial x^2}
+\right)
+\left( \frac{\partial^2 \Psi^{(k-1)}}{\partial y^2}-\frac{\partial^2 \Psi^{(k-1)}}{\partial x^2} \right)
+\right] \nn\\
+\nabla^2 \Psi^{(k)} &=& \omega^{(k)}
+\end{eqnarray}
+
 
 
 
@@ -1871,6 +2249,11 @@ from a velocity field obtained via the FEM.
  \textbullet \fullcite{vanv08}
 \item[\twothousandeleven] 
  \textbullet \fullcite{vanj11}
+\item[\twothousandeighteen]
+ \textbullet \fullcite{gakh18}
+\item[\twothousandnineteen]
+ \textbullet \fullcite{gakh19}
+ 
 \end{itemize}
 \end{scriptsize}
 

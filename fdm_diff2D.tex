@@ -812,6 +812,301 @@ or,
 Both are isotropic forms of discrete Laplacian, and in the limit of small $h$, they all become equivalent. This form is the one we find in \textcite[p64]{leveque}.
 
 %..............................................................
+\subsection{Stencils for the Laplace operator close to boundaries} \label{ss:stencilLaplaceBnd}
+
+We here assume that the domain is a rectangle discretized with $nnx\times nny$ nodes.
+
+{\color{red} what follows may be not correct ... check section 2.4 of misk25}
+
+
+\begin{itemize}
+
+\item Point on the left boundary (i.e. $i=1$). We use a 2nd-order central finite difference 
+approach in the $y$ direction, but a forward one for the $x$ direction (only 1st-order):
+\[
+\vec\nabla^2 u (x_i,y_i)= \frac{\partial^2 u}{\partial x^2}(x_i,y_i)+
+\frac{\partial^2 u}{\partial y^2}(x_i,y_i)
+= 
+\frac{u_{i,j} -2u_{i+1,j} +u_{i+2,j}}{h_x^2} + \frac{u_{i,j-1} -2u_{i,j} +u_{i,j+1}}{h_y^2}
+\]
+If $h_x=h_y$ then
+\[
+\vec\nabla^2 u (x_i,y_i)= \frac{1}{h^2}
+\left(
+-u_{i,j} -2u_{i+1,j} +u_{i+2,j} + u_{i,j-1}  +u_{i,j+1}
+\right)
+\]
+corresponding to the following stencil:
+\[
+\begin{pmatrix}
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+1 & -2 & 1 & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
++
+\begin{pmatrix}
+. & . &  . & . & . \\
+1 & . &  . & . & . \\
+-2 & . &  . & . & . \\
+1 & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+=
+\begin{pmatrix}
+. & . &  . & . & . \\
+1 & . &  . & . & . \\
+-1 & -2 & 1 & . & . \\
+1 & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+\]
+
+
+\item Point on the left boundary (i.e. $i=1$). We use a 2nd-order central finite difference 
+approach in the $y$ direction, but a forward one for the $x$ direction (also 2nd-order):
+\[
+\vec\nabla^2 u (x_i,y_i)= \frac{\partial^2 u}{\partial x^2}(x_i,y_i)+
+\frac{\partial^2 u}{\partial y^2}(x_i,y_i)
+= 
+\frac{2u_{i,j} -5u_{i+1,j} +4u_{i+2,j}-u_{i+3,j}}{h_x^2} + \frac{u_{i,j-1} -2u_{i,j} +u_{i,j+1}}{h_y^2}
+\]
+If $h_x=h_y$ then
+\[
+\vec\nabla^2 u (x_i,y_i)= \frac{1}{h^2}
+\left(
+-5u_{i+1,j} +4u_{i+2,j}-u_{i+3,j} +u_{i,j-1}  +u_{i,j+1}
+\right)
+\]
+corresponding to the following stencil:
+\[
+\begin{pmatrix}
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+2 &-5 & 4 & -1 &. \\
+. & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
++
+\begin{pmatrix}
+. & . &  . & . & . \\
+1 & . &  . & . & . \\
+-2 & . &  . & . & . \\
+1 & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+=
+\begin{pmatrix}
+. & . &  . & . & . \\
+1 & . &  . & . & . \\
+0 & -5 & 4 & -1 & . \\
+1 & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+\]
+
+
+\item Point on the right boundary (i.e. $i=nnx$). We use a 2nd-order central finite difference 
+approach in the $y$ direction, but a backward one for the $x$ direction (also 2nd-order):
+\[
+\vec\nabla^2 u (x_i,y_i)= \frac{\partial^2 u}{\partial x^2}(x_i,y_i)+
+\frac{\partial^2 u}{\partial y^2}(x_i,y_i)
+= 
+\frac{2u_{i,j} -5u_{i-1,j} +4u_{i-2,j}-u_{i-3,j}}{h_x^2} + \frac{u_{i,j-1} -2u_{i,j} +u_{i,j+1}}{h_y^2}
+\]
+If $h_x=h_y$ then
+\[
+\vec\nabla^2 u (x_i,y_i)= \frac{1}{h^2}
+\left(
+-5u_{i-1,j} +4u_{i-2,j}-u_{i-3,j} +u_{i,j-1}  +u_{i,j+1}
+\right)
+\]
+corresponding to the following stencil:
+\[
+\begin{pmatrix}
+. & . &  . & . & . \\
+. & . &  . & . & 1 \\
+. & -1 & 4 & -5 & 0 \\
+. & . &  . & . & 1 \\
+. & . &  . & . & . 
+\end{pmatrix}
+\]
+
+\item Point on the bottom boundary (i.e. $j=1$).
+We use a 2nd-order central finite difference 
+approach in the $x$ direction, but a backward one for the $y$ direction 
+(only 1st-order):
+
+\[
+\begin{pmatrix}
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+. & 1 & -2 & 1 & . 
+\end{pmatrix}
++
+\begin{pmatrix}
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+. & . & 1 & . &  \\
+. & .& -2 & . &  \\
+. & . & 1 & . &   
+\end{pmatrix}
+=
+\begin{pmatrix}
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+. & . &  1 & . & . \\
+. & . &  -2 & . & . \\
+. & 1 &  -1 & 1 & . 
+\end{pmatrix}
+\]
+
+
+\item Point on the top boundary (i.e. $j=nny$). 
+
+
+\[
+\begin{pmatrix}
+. & 1 &  -2 & 1 & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
++
+\begin{pmatrix}
+. & . &  1 & . & . \\
+. & . &  -2 & . & . \\
+. & . &  1 & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+=
+\begin{pmatrix}
+. & 1 &  -1 & 1 & . \\
+. & . &  -2 & . & . \\
+. & . &  1 & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+\]
+
+
+\item Point at top left corner (1st order)
+\[
+\begin{pmatrix}
+1 & -2 &  1 & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
++
+\begin{pmatrix}
+1 & . &  . & . & . \\
+-2 & . &  . & . & . \\
+1 & . &  . & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+=
+\begin{pmatrix}
+2 & -2 &  1 & . & . \\
+-2 & . &  . & . & . \\
+1 & . &  . & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+\]
+
+
+\item Point at top left corner (2nd order)
+\[
+\begin{pmatrix}
+2 & -5 &  4 & -1 & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
++
+\begin{pmatrix}
+2 & . &  . & . & . \\
+-5 & . &  . & . & . \\
+4 & . &  . & . & . \\
+-1 & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+=
+\begin{pmatrix}
+4 & -5 &  4 & -1 & . \\
+-5 & . &  . & . & . \\
+4 & . &  . & . & . \\
+-1 & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+\]
+
+
+
+
+\item Point at top right corner (1st order)
+
+\[
+\begin{pmatrix}
+. & . &  1 & -2 & 1 \\
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
++
+\begin{pmatrix}
+. & . &  . & . & 1 \\
+. & . &  . & . & -2 \\
+. & . &  . & . & 1 \\
+. & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+=
+\begin{pmatrix}
+. & . &  1 & -2 & 2 \\
+. & . &  . & . & -2 \\
+. & . &  . & . & 1 \\
+. & . &  . & . & . \\
+. & . &  . & . & . 
+\end{pmatrix}
+\]
+
+\item Point at top right corner (2nd order)
+
+more of the same ....
+
+\item Point at bottom left corner ($i=j=1$)
+
+more of the same ....
+
+\item Point at bottom right corner
+
+more of the same ....
+
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+%..............................................................
 \subsection{The alternating-direction-implicit (ADI) technique}
 
 This is borroed from Anderson's book, section 6.7.
