@@ -144,8 +144,8 @@ but the CSR conversion is then more than 10x slower.
 In context, one can now look at the total time needed to build the matrix,
 as well as the solve time:
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_176/results/build.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_176/results/solve.pdf}\\
+\includegraphics[width=8.5cm]{python_codes/fieldstone_176/results/build.pdf}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_176/results/solve.pdf}\\
 {\captionfont Left: time to build; Right: time to solve.}
 \end{center}
 The conclusion is then clear: the new method yields a matrix build that 
@@ -153,9 +153,10 @@ is about 2x faster than the old one.
 Also, comparing matrix building times to solve times, we get a feel for how 
 improving the assembly process ultimately makes our code faster!
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_176/results/build_solve.pdf}
+\includegraphics[width=10cm]{python_codes/fieldstone_176/results/build_solve.pdf}
 \end{center}
 
+\newpage
 We can also monitor the time necessary to split the solution vector
 and the time required to compute the pressure and strain rate components:
 \begin{center}

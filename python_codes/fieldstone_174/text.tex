@@ -21,7 +21,7 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: June 16th, 2025.
+Last revision: July 31st, 2025.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -36,10 +36,10 @@ The motivation for this \stone originates in \textcite{zibz98} (1998):
 
 In essence, we wish to write a function that generates a mesh like the 
 one in the figure above.  
-
 Note that what follows actually replicates Fig.~4e of the paper, which is
 similar to the figure above but not identical (check lower left corner).
-In order to build the mesh we need to label the nodes of the 'master' cell 
+
+In order to build the mesh we need to label the nodes of the `master' cell 
 which is decomposed in 18 sub-elements:
 
 \begin{center}
@@ -426,7 +426,7 @@ The resulting mesh is then as follows:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The code exports the resulting mesh in vtu format for Paraview, 
-and also computes the element aread:
+and also computes the element area:
 
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_174/images/area}\\
