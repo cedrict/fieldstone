@@ -1,22 +1,26 @@
 import numpy as np
-import time
-from scipy.sparse import csr_matrix, lil_matrix
+import time as clock 
+import scipy.sparse as sps
+from scipy.sparse import csr_matrix,lil_matrix
 
+eps=1e-8
+
+###############################################################################
 
 Lx=1
 Ly=1
 Lz=1
 
-nelx=8
-nely=9
-nelz=10
+nelx=15
+nely=16
+nelz=17
 
 nel=nelx*nely*nelz
 
 hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
-he=max(hx,hy,hz)
+hmin=max(hx,hy,hz)
 
 m=8
 
@@ -27,9 +31,22 @@ nnz=nelz+1
 NT=nnx*nny*nnz
 Nfem=nnx*nny*nnz
 
-hcond=1
+experiment=2
 
-dt=1e-3
+nstep=25
+
+alphaT=.5
+
+###############################################################################
+# exp=1: pure conduction
+
+if experiment==1 or experiment==2:
+   hcond=1
+   hcapa=1
+   rho=1
+   dt=1e-2
+   Tbottom=1
+   Ttop=0
 
 ###############################################################################
 # local coordinates of elemental nodes
@@ -41,6 +58,7 @@ tnodes=np.array([-1,-1,-1,-1, 1, 1, 1 , 1],np.float64)
 
 ###############################################################################
 # setup quadrature points and weights
+# The first 3 values are the r,s,t coordinates, the 4th one is the weight
 ###############################################################################
 
 a=1/np.sqrt(3)
@@ -55,6 +73,9 @@ quadrature_points = [(-a,-a,-a ,1),
 
 ###############################################################################
 
+print("--------------------------------------------")
+print("--------- stone 177 ------------------------")
+print("--------------------------------------------")
 print('Lx=',Lx)
 print('Ly=',Ly)
 print('Lz=',Lz)
@@ -62,36 +83,38 @@ print('nelx=',nelx)
 print('nely=',nely)
 print('nelz=',nelz)
 print('nel=',nel)
+print('NT=',NT)
 print('Nfem=',Nfem)
-print("-----------------------------")
+print('experiment=',experiment)
+print("--------------------------------------------")
 
 ###############################################################################
 # grid point setup
 ###############################################################################
-start = time.time()
+start=clock.time()
 
-x = np.zeros(NT,dtype=np.float64)
-y = np.zeros(NT,dtype=np.float64)
-z = np.zeros(NT,dtype=np.float64)
+x=np.zeros(NT,dtype=np.float64)
+y=np.zeros(NT,dtype=np.float64)
+z=np.zeros(NT,dtype=np.float64)
 
 counter=0
 for i in range(0,nnx):
     for j in range(0,nny):
         for k in range(0,nnz):
-            x[counter]=i*Lx/float(nelx)
-            y[counter]=j*Ly/float(nely)
-            z[counter]=k*Lz/float(nelz)
+            x[counter]=i*hx
+            y[counter]=j*hy
+            z[counter]=k*hz
             counter += 1
         #end for
     #end for
 #end for
 
-print("mesh setup: %.3f s" % (time.time() - start))
+print("mesh setup: %.3f s" % (clock.time() - start))
 
 ###############################################################################
 # build connectivity array (python is row major)
 ###############################################################################
-start = time.time()
+start=clock.time()
 
 icon=np.zeros((nel,m),dtype=np.int32)
 
@@ -112,87 +135,204 @@ for i in range(0,nelx):
     #end for
 #end for
 
-print("connectivity setup: %.3f s" % (time.time() - start))
+print("connectivity setup: %.3f s" % (clock.time() - start))
 
 ###############################################################################
 # prescribe velocity on mesh
 ###############################################################################
-start = time.time()
+start=clock.time()
 
-u = np.zeros(NT,dtype=np.float64)
-v = np.zeros(NT,dtype=np.float64)
-w = np.zeros(NT,dtype=np.float64)
+u=np.zeros(NT,dtype=np.float64)
+v=np.zeros(NT,dtype=np.float64)
+w=np.zeros(NT,dtype=np.float64)
+
+if experiment==1:
+   print('no advection: zero velocity')
+
+if experiment==2:
+   u[:] = x*(1-x)*(1-2*y)*(1-2*z) *10
+   v[:] = (1-2*x)*y*(1-y)*(1-2*z) *10
+   w[:] = -2*(1-2*x)*(1-2*y)*z*(1-z) *10
+
+print("prescribe velocity: %.3f s" % (clock.time()-start))
 
 ######################################################################
 # define boundary conditions temperature
 ######################################################################
-start = timing.time()
+start=clock.time()
 
 bc_fix=np.zeros(Nfem,dtype=bool) 
 bc_val=np.zeros(Nfem,dtype=np.float64)
 
-for i in range(0,NT):
-    if z[i]<eps:
-       bc_fix[i] = True ; bc_val[i] = Temperature1
-    if z[i]/Lz>1-eps:
-       bc_fix[i] = True ; bc_val[i] = Temperature2
-# end for
+if experiment==1 or experiment==2:
+   for i in range(0,NT):
+       if z[i]<eps:
+          bc_fix[i]=True ; bc_val[i]=Tbottom
+       if z[i]/Lz>1-eps:
+          bc_fix[i]=True ; bc_val[i]=Ttop
 
-print("boundary conditions T: %.3f s" % (timing.time() - start))
+print("boundary conditions: %.3f s" % (clock.time()-start))
 
-###############################################################################
-# build matrix
-###############################################################################
-start = time.time()
+#******************************************************************************
+#******************************************************************************
+# start time stepping
+#******************************************************************************
+#******************************************************************************
+    
+Told=np.zeros(NT,dtype=np.float64)
+MM=np.zeros((m,m),dtype=np.float64)
+Kd=np.zeros((m,m),dtype=np.float64)
+Ka=np.zeros((m,m),dtype=np.float64)
+Ael=np.zeros((m,m),dtype=np.float64)
+bel=np.zeros(m,dtype=np.float64)
 
-Amat=lil_matrix((Nfem,Nfem),dtype=np.float64)
-rhs=np.zeros(Nfem,dtype=np.float64)
-Me=np.zeros((m,m),dtype=np.float64)
-Kde=np.zeros((m,m),dtype=np.float64)
-Kae=np.zeros((m,m),dtype=np.float64)
+for istep in range(0,nstep):
 
-for e,nodes in enumerate(icon):
-    xe,ye,ze=x[nodes],y[nodes],z[nodes]
-    ue,ve,we=u[nodes],v[nodes],w[nodes]
+    print("--------------------------------------------")
+    print("istep= ", istep)
+    print("--------------------------------------------")
 
-    Me[:,:]=0
-    Kae[:,:]=0
-    Kde[:,:]=0
+    ###############################################################################
+    # build matrix
+    ###############################################################################
+    start=clock.time()
 
-    for rq,sq,tq,weightq in quadrature_points:
+    Amat=lil_matrix((Nfem,Nfem),dtype=np.float64)
+    rhs=np.zeros(Nfem,dtype=np.float64)
 
-        N=0.125*(1+rnodes*rq)*(1+snodes*sq)*(1+tnodes*tq)
 
-        dNdr=0.125*rnodes*(1+snodes*sq)*(1+tnodes*tq)
-        dNds=0.125*snodes*(1+rnodes*rq)*(1+tnodes*tq)
-        dNdt=0.125*tnodes*(1+rnodes*rq)*(1+snodes*sq)
+    for e,nodes in enumerate(icon):
+        xe,ye,ze=x[nodes],y[nodes],z[nodes]
+        ue,ve,we=u[nodes],v[nodes],w[nodes]
+        Te=Told[nodes]
 
-        invJ=np.diag([2/hx,2/hy,2/hz])
-        jcob=hx*hy*hz/8
+        MM[:,:]=0
+        Ka[:,:]=0
+        Kd[:,:]=0
 
-        B=(invJ@np.vstack((dNdr,dNds,dNdt))).T  # (8x3) shape
+        for rq,sq,tq,weightq in quadrature_points:
 
-        velq=np.dot(N,np.vstack((ue,ve,we)).T) # (3,) shape
-        #print(np.shape(velq))
+            N=0.125*(1+rnodes*rq)*(1+snodes*sq)*(1+tnodes*tq)
+
+            dNdr=0.125*rnodes*(1+snodes*sq)*(1+tnodes*tq)
+            dNds=0.125*snodes*(1+rnodes*rq)*(1+tnodes*tq)
+            dNdt=0.125*tnodes*(1+rnodes*rq)*(1+snodes*sq)
+
+            invJ=np.diag([2/hx,2/hy,2/hz])
+            jcob=hx*hy*hz/8
+
+            B=(invJ@np.vstack((dNdr,dNds,dNdt))).T  # (8x3) shape
+
+            velq=np.dot(N,np.vstack((ue,ve,we)).T) # (3,) shape
+            #print(np.shape(velq))
       
-        advN=B@velq # (8,) shape
+            advN=B@velq # (8,) shape
 
-        Me+=np.outer(N,N)*jcob*weightq
-        Kae+=np.outer(N,advN)*jcob*weightq
-        Kde+=B@B.T*hcond*jcob*weightq
+            MM+=rho*hcapa*np.outer(N,N)*jcob*weightq
+            Ka+=np.outer(N,advN)*jcob*weightq
+            Kd+=B@B.T*hcond*jcob*weightq
 
-    #end for quad points
+        #end for quad points
 
-    Ae=Me+(Kae+Kde)*dt
-    be=0
+        Ael=MM+alphaT*(Ka+Kd)*dt
+        bel=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Te)
 
-    #impose boundary conditions
+        #impose boundary conditions
+        for k1,m1 in enumerate(nodes):
+            if bc_fix[m1]:
+               Aref=Ael[k1,k1]
+               for k2,m2 in enumerate(nodes):
+                   bel[k2]-=Ael[k2,k1]*bc_val[m1]
+                   Ael[k2,k1]=0
+               Ael[k1,:]=0
+               Ael[k1,k1]=Aref
+               bel[k1]=Aref*bc_val[m1]
+            # end if
+        # end for
+
+        #assemble
+        Amat[np.ix_(nodes,nodes)]+=Ael
+        rhs[nodes]+=bel
+
+    #end for elements
+
+    print("build matrix: %.3f s" % (clock.time()-start))
+
+    ###############################################################################
+    # solve system
+    ###############################################################################
+    start=clock.time()
+
+    T=sps.linalg.spsolve(sps.csr_matrix(Amat),rhs)
+
+    print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
+
+    print("solve T: %.3f s" % (clock.time()-start))
+
+    ###############################################################################
+    # export to vtu
+    ###############################################################################
+
+    if True:
+       filename = 'solution_{:04d}.vtu'.format(istep) 
+       vtufile=open(filename,"w")
+       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+       vtufile.write("<UnstructuredGrid> \n")
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NT,nel))
+       #####
+       vtufile.write("<Points> \n")
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+       for i in range(0,NT):
+           vtufile.write("%.6e %.6e %.6e \n" %(x[i],y[i],z[i]))
+       vtufile.write("</DataArray>\n")
+       vtufile.write("</Points> \n")
+       #####
+       vtufile.write("<PointData Scalars='scalars'>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
+       for i in range(0,NT):
+           vtufile.write("%10f \n" %(T[i]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+       for i in range(0,NT):
+           vtufile.write("%10f %10f %10f \n" %(u[i],v[i],w[i]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</PointData>\n")
+       #####
+       vtufile.write("<Cells>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d %d %d %d %d %d %d %d\n" %(icon[iel,0],icon[iel,1],\
+                                                       icon[iel,2],icon[iel,3],\
+                                                       icon[iel,4],icon[iel,5],\
+                                                       icon[iel,6],icon[iel,7]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %((iel+1)*8))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+       for iel in range (0,nel):
+           vtufile.write("%d \n" %12)
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("</Cells>\n")
+       #####
+       vtufile.write("</Piece>\n")
+       vtufile.write("</UnstructuredGrid>\n")
+       vtufile.write("</VTKFile>\n")
+       vtufile.close()
+       print("export to vtu: %.3f s" % (clock.time()-start))
 
 
-    #assemble
-    Amat[np.ix_(nodes,nodes)]+=Ae
+       Told[:]=T[:]
 
-#end for elements
-
-print("build matrix: %.3f s" % (time.time() - start))
+print("--------------------------------------------")
+print("------------ the end -----------------------")
+print("--------------------------------------------")
 
