@@ -1,9 +1,9 @@
 import numpy as np
 import time as clock 
 import scipy.sparse as sps
+import sys as sys
 from scipy.sparse import csr_matrix,lil_matrix
 
-eps=1e-8
 
 ###############################################################################
 
@@ -11,9 +11,21 @@ Lx=1
 Ly=1
 Lz=1
 
-nelx=15
-nely=16
-nelz=17
+
+if int(len(sys.argv) == 5):
+   nelx = int(sys.argv[1])
+   nely = int(sys.argv[2])
+   nelz = int(sys.argv[3])
+   visu = int(sys.argv[4])
+else:
+   nelx = 16
+   nely = 16
+   nelz = 16
+   visu = 1
+    
+nnx=nelx+1    # number of elements, x direction
+nny=nely+1    # number of elements, y direction
+NV=nnx*nny    # number of nodes
 
 nel=nelx*nely*nelz
 
@@ -33,9 +45,11 @@ Nfem=nnx*nny*nnz
 
 experiment=2
 
-nstep=25
+nstep=3
 
 alphaT=.5
+
+CFL=0.5
 
 ###############################################################################
 # exp=1: pure conduction
@@ -44,7 +58,6 @@ if experiment==1 or experiment==2:
    hcond=1
    hcapa=1
    rho=1
-   dt=1e-2
    Tbottom=1
    Ttop=0
 
@@ -87,6 +100,8 @@ print('NT=',NT)
 print('Nfem=',Nfem)
 print('experiment=',experiment)
 print("--------------------------------------------")
+
+Tavrgfile=open('Tavrg.ascii',"w")
 
 ###############################################################################
 # grid point setup
@@ -161,6 +176,8 @@ print("prescribe velocity: %.3f s" % (clock.time()-start))
 ######################################################################
 start=clock.time()
 
+eps=1e-8
+
 bc_fix=np.zeros(Nfem,dtype=bool) 
 bc_val=np.zeros(Nfem,dtype=np.float64)
 
@@ -172,6 +189,18 @@ if experiment==1 or experiment==2:
           bc_fix[i]=True ; bc_val[i]=Ttop
 
 print("boundary conditions: %.3f s" % (clock.time()-start))
+
+###############################################################################
+# compute time step
+###############################################################################
+
+dt1=hmin**2/(hcond/rho/hcapa)
+
+dt2=hmin/max(np.max(u),np.max(v),np.max(w))
+
+dt=CFL*min(dt1,dt2)
+
+print("     -> dt %e " %(dt))
 
 #******************************************************************************
 #******************************************************************************
@@ -199,7 +228,6 @@ for istep in range(0,nstep):
 
     Amat=lil_matrix((Nfem,Nfem),dtype=np.float64)
     rhs=np.zeros(Nfem,dtype=np.float64)
-
 
     for e,nodes in enumerate(icon):
         xe,ye,ze=x[nodes],y[nodes],z[nodes]
@@ -256,7 +284,7 @@ for istep in range(0,nstep):
 
     #end for elements
 
-    print("build matrix: %.3f s" % (clock.time()-start))
+    print("Build FE matrix: %.5f s | Nfem= %d" % (clock.time()-start,Nfem))
 
     ###############################################################################
     # solve system
@@ -267,13 +295,32 @@ for istep in range(0,nstep):
 
     print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
 
-    print("solve T: %.3f s" % (clock.time()-start))
+    print("Solve linear system: %.5f s | Nfem= %d " % (clock.time()-start,Nfem))
+
+    ###############################################################################
+    # compute average T
+    ###############################################################################
+    start=clock.time()
+
+    Tavrg=0.
+    for e,nodes in enumerate(icon):
+        Te=T[nodes]
+        Tavrg+=np.sum(Te)*0.125 *hx*hy*hz
+
+    Tavrg/=(Lx*Ly*Lz)
+
+    print("     -> T (avrg) %.4f " %(Tavrg))
+
+    Tavrgfile.write("%d %e\n" % (istep,Tavrg))
+    Tavrgfile.flush()
+
+    print("compute avrg T: %.3f s" % (clock.time()-start))
 
     ###############################################################################
     # export to vtu
     ###############################################################################
 
-    if True:
+    if visu==1:
        filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
