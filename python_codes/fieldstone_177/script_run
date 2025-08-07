@@ -8,6 +8,8 @@ for n in {8..24} ; do
         python3 stone.py  $n $n $n 0 > opla
         grep Build opla >> build.ascii
         grep Solve opla >> solve.ascii
+        grep assemb opla >> assembly.ascii
+        grep quad opla >> quad.ascii
     done
 done
 

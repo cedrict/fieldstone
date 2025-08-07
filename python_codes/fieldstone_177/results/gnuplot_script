@@ -1,0 +1,21 @@
+#script
+set term pdf enhanced font "Times,12pt"
+set grid
+set log xy
+set pointsize .4
+set key outside
+
+set output 'times.pdf'
+set xlabel 'Nfem'
+set ylabel 'time (s)'
+plot[][]\
+'old/quad.ascii'     u 5:4 w lp lt 1 pt 1 t'quad (old)',\
+'new/quad.ascii'     u 5:4 w lp lt 1 pt 2 t'quad (new)',\
+'old/assembly.ascii' u 5:4 w lp lt 2 pt 1 t'assembly (old)',\
+'new/assembly.ascii' u 5:4 w lp lt 2 pt 2 t'assembly (new)',\
+'old/build.ascii'    u 8:4 w lp lt 3 pt 1 t'build (old)',\
+'new/build.ascii'    u 8:4 w lp lt 3 pt 2 t'build (new)',\
+'old/solve.ascii'    u 8:4 w lp lt 4 pt 1 t'solve (old)',\
+'new/solve.ascii'    u 8:4 w lp lt 4 pt 2 t'solve (new)',\
+x**2.3/1000000000 lt -1 dt 3,\
+x/1000 lt -1 dt 2 

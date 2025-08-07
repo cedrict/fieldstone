@@ -4,6 +4,47 @@ import scipy.sparse as sps
 import sys as sys
 from scipy.sparse import csr_matrix,lil_matrix
 
+def NNT(r,s,t):
+    return 0.125*(1-r)*(1-s)*(1-t),\
+           0.125*(1+r)*(1-s)*(1-t),\
+           0.125*(1+r)*(1+s)*(1-t),\
+           0.125*(1-r)*(1+s)*(1-t),\
+           0.125*(1-r)*(1-s)*(1+t),\
+           0.125*(1+r)*(1-s)*(1+t),\
+           0.125*(1+r)*(1+s)*(1+t),\
+           0.125*(1-r)*(1+s)*(1+t)
+
+def dNNTdr(r,s,t):
+    return -0.125*(1-s)*(1-t),\
+           +0.125*(1-s)*(1-t),\
+           +0.125*(1+s)*(1-t),\
+           -0.125*(1+s)*(1-t),\
+           -0.125*(1-s)*(1+t),\
+           +0.125*(1-s)*(1+t),\
+           +0.125*(1+s)*(1+t),\
+           -0.125*(1+s)*(1+t)
+   
+def dNNTds(r,s,t):
+    return -0.125*(1-r)*(1-t),\
+           -0.125*(1+r)*(1-t),\
+           +0.125*(1+r)*(1-t),\
+           +0.125*(1-r)*(1-t),\
+           -0.125*(1-r)*(1+t),\
+           -0.125*(1+r)*(1+t),\
+           +0.125*(1+r)*(1+t),\
+           +0.125*(1-r)*(1+t)
+
+def dNNTdt(r,s,t):
+    return -0.125*(1-r)*(1-s),\
+           -0.125*(1+r)*(1-s),\
+           -0.125*(1+r)*(1+s),\
+           -0.125*(1-r)*(1+s),\
+           +0.125*(1-r)*(1-s),\
+           +0.125*(1+r)*(1-s),\
+           +0.125*(1+r)*(1+s),\
+           +0.125*(1-r)*(1+s)
+
+
 
 ###############################################################################
 
@@ -50,6 +91,8 @@ nstep=3
 alphaT=.5
 
 CFL=0.5
+
+method='old'
 
 ###############################################################################
 # exp=1: pure conduction
@@ -215,11 +258,15 @@ Ka=np.zeros((m,m),dtype=np.float64)
 Ael=np.zeros((m,m),dtype=np.float64)
 bel=np.zeros(m,dtype=np.float64)
 
+
 for istep in range(0,nstep):
 
     print("--------------------------------------------")
     print("istep= ", istep)
     print("--------------------------------------------")
+
+    time_quad=0.
+    time_ass=0.
 
     ###############################################################################
     # build matrix
@@ -229,60 +276,166 @@ for istep in range(0,nstep):
     Amat=lil_matrix((Nfem,Nfem),dtype=np.float64)
     rhs=np.zeros(Nfem,dtype=np.float64)
 
-    for e,nodes in enumerate(icon):
-        xe,ye,ze=x[nodes],y[nodes],z[nodes]
-        ue,ve,we=u[nodes],v[nodes],w[nodes]
-        Te=Told[nodes]
+    jcbi=np.diag([2/hx,2/hy,2/hz])
+    jcob=hx*hy*hz/8
 
-        MM[:,:]=0
-        Ka[:,:]=0
-        Kd[:,:]=0
+    if method=='new':
 
-        for rq,sq,tq,weightq in quadrature_points:
+       for e,nodes in enumerate(icon):
+           ue,ve,we,Te=u[nodes],v[nodes],w[nodes],Told[nodes]
 
-            N=0.125*(1+rnodes*rq)*(1+snodes*sq)*(1+tnodes*tq)
+           MM[:,:]=0
+           Ka[:,:]=0
+           Kd[:,:]=0
 
-            dNdr=0.125*rnodes*(1+snodes*sq)*(1+tnodes*tq)
-            dNds=0.125*snodes*(1+rnodes*rq)*(1+tnodes*tq)
-            dNdt=0.125*tnodes*(1+rnodes*rq)*(1+snodes*sq)
+           start1=clock.time()
+           for rq,sq,tq,weightq in quadrature_points:
+   
+               N=0.125*(1+rnodes*rq)*(1+snodes*sq)*(1+tnodes*tq)
+   
+               dNdr=0.125*rnodes*(1+snodes*sq)*(1+tnodes*tq)
+               dNds=0.125*snodes*(1+rnodes*rq)*(1+tnodes*tq)
+               dNdt=0.125*tnodes*(1+rnodes*rq)*(1+snodes*sq)
 
-            invJ=np.diag([2/hx,2/hy,2/hz])
-            jcob=hx*hy*hz/8
+               B=(jcbi@np.vstack((dNdr,dNds,dNdt))).T
 
-            B=(invJ@np.vstack((dNdr,dNds,dNdt))).T  # (8x3) shape
+               MM+=rho*hcapa*np.outer(N,N)*jcob*weightq
+               Kd+=B@B.T*hcond*jcob*weightq
+   
+               velq=np.dot(N,np.vstack((ue,ve,we)).T)
+               advN=B@velq
+               Ka+=np.outer(N,advN)*jcob*weightq*rho*hcapa
 
-            velq=np.dot(N,np.vstack((ue,ve,we)).T) # (3,) shape
-            #print(np.shape(velq))
-      
-            advN=B@velq # (8,) shape
+           #end for quad points
+           time_quad+=clock.time()-start1
 
-            MM+=rho*hcapa*np.outer(N,N)*jcob*weightq
-            Ka+=np.outer(N,advN)*jcob*weightq
-            Kd+=B@B.T*hcond*jcob*weightq
+           Ael=MM+alphaT*(Ka+Kd)*dt
+           bel=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Te)
 
-        #end for quad points
+           #impose boundary conditions
+           for k1,m1 in enumerate(nodes):
+               if bc_fix[m1]:
+                  Aref=Ael[k1,k1]
+                  for k2,m2 in enumerate(nodes):
+                      bel[k2]-=Ael[k2,k1]*bc_val[m1]
+                      Ael[k2,k1]=0
+                  Ael[k1,:]=0
+                  Ael[k1,k1]=Aref
+                  bel[k1]=Aref*bc_val[m1]
+               # end if
+           # end for
 
-        Ael=MM+alphaT*(Ka+Kd)*dt
-        bel=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Te)
+           #assemble
+           start2=clock.time()
+           Amat[np.ix_(nodes,nodes)]+=Ael
+           rhs[nodes]+=bel
+           time_ass+=clock.time()-start2
 
-        #impose boundary conditions
-        for k1,m1 in enumerate(nodes):
-            if bc_fix[m1]:
-               Aref=Ael[k1,k1]
-               for k2,m2 in enumerate(nodes):
-                   bel[k2]-=Ael[k2,k1]*bc_val[m1]
-                   Ael[k2,k1]=0
-               Ael[k1,:]=0
-               Ael[k1,k1]=Aref
-               bel[k1]=Aref*bc_val[m1]
-            # end if
-        # end for
+       #end for elements
 
-        #assemble
-        Amat[np.ix_(nodes,nodes)]+=Ael
-        rhs[nodes]+=bel
+    else: # old method -------------------------------------
 
-    #end for elements
+       sqrt3=np.sqrt(3.)
+       B_mat=np.zeros((3,m),dtype=np.float64) 
+       NNNT_mat=np.zeros((m,1),dtype=np.float64) 
+       dNNNTdx=np.zeros(m,dtype=np.float64)     
+       dNNNTdy=np.zeros(m,dtype=np.float64)   
+       dNNNTdz=np.zeros(m,dtype=np.float64) 
+       dNNNTdr=np.zeros(m,dtype=np.float64) 
+       dNNNTds=np.zeros(m,dtype=np.float64) 
+       dNNNTdt=np.zeros(m,dtype=np.float64) 
+       Tvect=np.zeros(m,dtype=np.float64)
+       vel=np.zeros((1,3),dtype=np.float64)
+
+       for iel in range (0,nel):
+
+           MM[:,:]=0
+           Ka[:,:]=0
+           Kd[:,:]=0
+
+           for k in range(0,m):
+               Tvect[k]=Told[icon[iel,k]]
+
+           start1=clock.time()
+           for iq in [-1,1]:
+               for jq in [-1,1]:
+                   for kq in [-1,1]:
+
+                       # position & weight of quad. point
+                       rq=iq/sqrt3
+                       sq=jq/sqrt3
+                       tq=kq/sqrt3
+                       weightq=1.*1.*1.
+
+                       # calculate shape functions
+                       NNNT_mat[0:m,0]=NNT(rq,sq,tq)
+                       dNNNTdr[0:m]=dNNTdr(rq,sq,tq)
+                       dNNNTds[0:m]=dNNTds(rq,sq,tq)
+                       dNNNTdt[0:m]=dNNTdt(rq,sq,tq)
+
+                       vel[0,:]=0.
+                       for k in range(0,m):
+                           vel[0,0]+=NNNT_mat[k,0]*u[icon[iel,k]]
+                           vel[0,1]+=NNNT_mat[k,0]*v[icon[iel,k]]
+                           vel[0,2]+=NNNT_mat[k,0]*w[icon[iel,k]]
+                       # end for 
+
+                       # compute dNdx, dNdy, dNdz 
+                       for k in range(0,m):
+                           dNNNTdx[k]=jcbi[0,0]*dNNNTdr[k]+jcbi[0,1]*dNNNTds[k]+jcbi[0,2]*dNNNTdt[k]
+                           dNNNTdy[k]=jcbi[1,0]*dNNNTdr[k]+jcbi[1,1]*dNNNTds[k]+jcbi[1,2]*dNNNTdt[k]
+                           dNNNTdz[k]=jcbi[2,0]*dNNNTdr[k]+jcbi[2,1]*dNNNTds[k]+jcbi[2,2]*dNNNTdt[k]
+                           B_mat[0,k]=dNNNTdx[k]
+                           B_mat[1,k]=dNNNTdy[k]
+                           B_mat[2,k]=dNNNTdz[k]
+                       # end for 
+
+                       MM+=NNNT_mat.dot(NNNT_mat.T)*rho*hcapa*weightq*jcob
+                       Kd+=B_mat.T.dot(B_mat)*hcond*weightq*jcob
+                       Ka+=NNNT_mat.dot(vel.dot(B_mat))*rho*hcapa*weightq*jcob
+
+                   #end for
+               #end for
+           #end for
+           time_quad+=clock.time()-start1
+
+           Ael=MM+alphaT*(Ka+Kd)*dt
+           bel=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Tvect)
+
+           # apply boundary conditions
+           for k1 in range(0,m):
+               m1=icon[iel,k1]
+               if bc_fix[m1]:
+                  Aref=Ael[k1,k1]
+                  for k2 in range(0,m):
+                      m2=icon[iel,k2]
+                      bel[k2]-=Ael[k2,k1]*bc_val[m1]
+                      Ael[k1,k2]=0
+                      Ael[k2,k1]=0
+                  # end for
+                  Ael[k1,k1]=Aref
+                  bel[k1]=Aref*bc_val[m1]
+               # end if
+           # end for
+
+           # assemble matrix Amat and right hand side rhs
+           start2=clock.time()
+           for k1 in range(0,m):
+               m1=icon[iel,k1]
+               for k2 in range(0,m):
+                   m2=icon[iel,k2]
+                   Amat[m1,m2]+=Ael[k1,k2]
+               # end for
+               rhs[m1]+=bel[k1]
+           # end for
+           time_ass+=clock.time()-start2
+
+       #end for iel
+
+    #end if method
+
+    print('     -> time quadrature=',time_quad,Nfem)
+    print('     -> time assembly=',time_ass,Nfem)
 
     print("Build FE matrix: %.5f s | Nfem= %d" % (clock.time()-start,Nfem))
 
