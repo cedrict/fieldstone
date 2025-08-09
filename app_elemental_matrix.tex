@@ -2187,7 +2187,7 @@ where we have introduced the notation $x_{ij}=x_i-x_j$ and $y_{ij}=y_i-y_j$.
 %\right) 
 %\end{eqnarray}
 
-We now turn to the advection $\K_a$ and diffusion $\K_d$ matrices.
+We now turn to the diffusion $\K_d$ matrices.
 The gradient matrix ${\bm B}$ is given by 
 \[
 {\bm B} = 
@@ -2231,7 +2231,7 @@ If the heat conductivity $k$ is constant within the element, then
 the integrand in the expression above is constant with respect to the 
 integration and since $\iint_\triangle dV = S$ we then obtain:
 \[
-{\bm K}_d 
+\K_d 
 = \frac{k}{4S}
 \left(
 \begin{array}{cc}
@@ -2251,7 +2251,7 @@ x_{32} & x_{13} & x_{21}
 or
 \[
 \boxed{
-{\bm K}_d 
+\K_d 
 = \frac{k}{4S}
 \left(
 \begin{array}{ccc}
@@ -2264,99 +2264,151 @@ y_{12}y_{23} + x_{21}x_{32} & y_{12}y_{31} + x_{21}x_{13} & y_{12}y_{12} + x_{21
 \]
 
 
+
 Turning now to the advection matrix
 \begin{eqnarray}
-{\bm K}_a 
-&=& \iint_\triangle \vec{\bN}^T \vec{\upnu}\cdot {\bm B} \; dV \nn\\
-&=& \iint_\triangle \vec{\bN}^T(x,y) \vec{\upnu}(x,y)\cdot {\bm B}(x,y) \; dx dy \nn\\
-&=& 2S \iint_\triangle \vec{\bN}^T(x(r,s),y(r,s)) \vec{\upnu}(x(r,s),y(r,s))\cdot {\bm B}(x(r,s),y(r,s)) \; dr ds \nn\\
-&=& 2S \iint_\triangle 
+\K_a 
+&=& \iint_\triangle \vec{\bN}^T  \; \vec{\upnu}\cdot {\bm B} \; dV \nn\\
+&=& \iint_\triangle \vec{\bN}^T(x,y) \; \vec{\upnu}(x,y) \cdot {\bm B}(x,y) \; dx dy \nn
+\end{eqnarray}
+
+If the velocity is constant within the element (which is rarely the case) then 
+this expression can be integrated exactly. If not, a quadrature rule must be used.
+
+Let us assume that velocity is indeed constant inside the element. Then
+$\vec{\upnu}(x,y)=\vec\upnu_0=(u_0,v_0)$ and
+\begin{eqnarray}
+\K_a 
+&=& \iint_\triangle \vec{\bN}^T(x,y) \; \vec{\upnu}_0 \cdot {\bm B}(x,y) \; dx dy \nn\\
+&=& \iint_\triangle
 \left(
-\begin{array}{c} 
-1-r-s \\ r \\ s 
+\begin{array}{c}
+\bN_1(x,y) \\
+\bN_2(x,y) \\
+\bN_3(x,y) 
 \end{array}
 \right)
-\vec{\upnu}(x(r,s),y(r,s))\cdot 
+\;
+(u_0,v_0)
+\cdot
 \frac{1}{2S}
 \left(
 \begin{array}{ccc}
 y_{23} & y_{31} & y_{12} \\
 x_{32} & x_{13} & x_{21}
 \end{array}
-\right)
-\; dr ds \nn\\
-&=&  \iint_\triangle 
-\left(
-\begin{array}{c} 
-\bN_1(r,s) \\ \bN_2(r,s) \\ \bN_3(r,s)
-\end{array}
-\right)
-\vec{\upnu}(x(r,s),y(r,s))\cdot 
-\left(
-\begin{array}{ccc}
-y_{23} & y_{31} & y_{12} \\
-x_{32} & x_{13} & x_{21}
-\end{array}
-\right)
-\; dr ds \nn
-\end{eqnarray}
-If the velocity is constant within the element (rather rare case) then this can be integrated exactly.
-If not, a quadrature rule must be used. 
-
-Let us assume that indeed velocity is constant inside the element. Then 
-$\vec{\upnu}(x(r,s),y(r,s))=(u_0,v_0)$ and then
-\begin{eqnarray}
-{\bm K}_a 
-&=&  \iint_\triangle 
-\left(
-\begin{array}{c} 
-\bN_1(r,s) \\ \bN_2(r,s) \\ \bN_3(r,s)
-\end{array}
-\right)
-(u_0,v_0)\cdot 
-\left(
-\begin{array}{ccc}
-y_{23} & y_{31} & y_{12} \\
-x_{32} & x_{13} & x_{21}
-\end{array}
-\right)
-\; dr ds \nn \\
-&=&  \iint_\triangle 
-\left(
-\begin{array}{c} 
-\bN_1(r,s) \\ \bN_2(r,s) \\ \bN_3(r,s)
-\end{array}
-\right)
-\left(
-\begin{array}{ccc}
-u_0 y_{23} + v_0 x_{32} &
-u_0 y_{31} + v_0 x_{13} &
-u_0 y_{12} + v_0 x_{21}
-\end{array}
-\right)
-\; dr ds \nn \\
-\end{eqnarray}
-Using Eqs.~\eqref{eq:elmats:1},\eqref{eq:elmats:2},\eqref{eq:elmats:3}
-we arrive at
-\begin{eqnarray}
-{\bm K}_a 
+\right) \; dxdy \nn\\
 &=& 
-\frac{S}{3}
+\frac{1}{2S}
+\iint_\triangle
 \left(
-\begin{array}{c} 
-1 \\ 1 \\ 1
+\begin{array}{c}
+\bN_1(x,y) \\
+\bN_2(x,y) \\
+\bN_3(x,y) 
 \end{array}
 \right)
 \left(
 \begin{array}{ccc}
-u_0 y_{23} + v_0 x_{32} &
-u_0 y_{31} + v_0 x_{13} &
-u_0 y_{12} + v_0 x_{21}
+u_0 y_{23}+ v_0 x_{32}  &
+u_0 y_{31}+ v_0 x_{13}  &
+u_0 y_{12}+ v_0 x_{21}  
+\end{array}
+\right)
+\; dx dy \nn
+\end{eqnarray}
+Since the terms in the second vector is independent of $x,y$ we will need to compute
+\[
+\iint_\triangle \bN_1(x,y) dxdy, \qquad 
+\iint_\triangle \bN_2(x,y) dxdy, \qquad \text{and} \quad 
+\iint_\triangle \bN_3(x,y) dxdy. 
+\]
+We have established that for any function $f(x,y)$ we have
+\[
+\iint_\triangle f(x,y) dx dy = 2S \int_0^{1} \left(\int_0^{1-r} f(x(r,s),y(r,s))  ds \right) dr 
+\]
+Then
+\begin{eqnarray}
+\iint_\triangle \bN_1(x,y) dxdy 
+&=& 2S \int_0^{1} \left(\int_0^{1-r} \bN_1(r,s)  ds \right) dr \nn\\
+&=& 2S \int_0^{1} \left(\int_0^{1-r} (1-r-s)  ds \right) dr \nn\\
+&=& 2S \int_0^{1} \left[ (1-r)s -\frac12 s^2)   \right]_0^{1-r} dr \nn\\
+&=& 2S \int_0^{1} \left( (1-r)^2 -\frac12 (1-r)^2   \right) dr \nn\\
+&=& 2S \int_0^{1} \frac12 (1-r)^2  dr \nn\\
+&=& 2S \frac16 \nn\\
+\iint_\triangle \bN_2(x,y) dxdy 
+&=& 2S \int_0^{1} \left(\int_0^{1-r} \bN_2(r,s)  ds \right) dr \nn\\
+&=& 2S \int_0^{1} \left(\int_0^{1-r} r  ds \right) dr \nn\\
+&=& 2S \int_0^{1} r (1-r) dr \nn\\
+&=& 2S \frac16 \nn\\
+\iint_\triangle \bN_3(x,y) dxdy 
+&=& 2S \int_0^{1} \left(\int_0^{1-r} \bN_3(r,s)  ds \right) dr \nn\\
+&=& 2S \int_0^{1} \left(\int_0^{1-r} s  ds \right) dr \nn\\
+&=& 2S \int_0^{1} [\frac12 s^2]_0^{1-r}  dr \nn\\
+&=& 2S \frac12 \int_0^{1} (1-r)^2  dr \nn\\
+&=& 2S \frac16 \nn
+\end{eqnarray}
+In the end
+\[
+\boxed{
+\K_a
+= \frac16
+\left(
+\begin{array}{ccc}
+u_0 y_{23}+ v_0 x_{32}  & u_0 y_{31}+ v_0 x_{13}  & u_0 y_{12}+ v_0 x_{21}  \\
+u_0 y_{23}+ v_0 x_{32}  & u_0 y_{31}+ v_0 x_{13}  & u_0 y_{12}+ v_0 x_{21}  \\
+u_0 y_{23}+ v_0 x_{32}  & u_0 y_{31}+ v_0 x_{13}  & u_0 y_{12}+ v_0 x_{21}  
+\end{array}
+\right)
+}
+\]
+This expression was tested against a numerically integrated approach in 
+\stone~45 (simply set \lstinline{test=True} in the code). 
+
+If the element under consideration is the reference element, we 
+we have
+
+\begin{eqnarray}
+\K_a 
+&=& 
+\int_0^{1} \left[ \int_0^{1-r}
+\left(
+\begin{array}{c}
+\bN_1(r,s) \\
+\bN_2(r,s) \\
+\bN_3(r,s) 
+\end{array}
+\right)
+\;
+(u_0,v_0)
+\cdot
+\left(
+\begin{array}{ccc}
+-1 & 1 & 0 \\
+-1 & 0 & 1
+\end{array}
+\right) ds \right] dr  \nn\\
+&=&
+\int_0^{1} \left[ \int_0^{1-r}
+\left(
+\begin{array}{c}
+\bN_1(r,s) \\
+\bN_2(r,s) \\
+\bN_3(r,s) 
+\end{array}
+\right)
+(-u_0-v_0 , u_0 , v_0) \;
+ds \right] dr \nn\\
+&=& \frac16
+\left(
+\begin{array}{ccc}
+-u_0 - v_0   & u_0   &  v_0   \\
+-u_0 - v_0   & u_0   &  v_0   \\
+-u_0 - v_0   & u_0   &  v_0   
 \end{array}
 \right)
 \end{eqnarray}
 
-\todo[inline]{verify!! FOR REAL 2025 probably off by factor S/2 or 2S !!!}
 
 
 
