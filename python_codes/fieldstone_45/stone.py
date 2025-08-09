@@ -29,7 +29,7 @@ def dNNTds(rq,sq):
 #------------------------------------------------------------------------------
 
 print("-----------------------------")
-print("----------fieldstone---------")
+print("---------- stone 45 ---------")
 print("-----------------------------")
 
 mT=3
@@ -67,9 +67,12 @@ Tmin = 0
 Tmax = 1      
 sigma = 0.2  
 
-theta=1 # time discretisation
+theta=0.5 # time discretisation
 
 xi=0 #0.25 # controls level of mesh randomness (between 0 and 0.5 max)
+
+#set test=True if you wish to test the analytical K_a expression of appendix A
+test=False
 
 #################################################################
 
@@ -83,8 +86,8 @@ print("-----------------------------")
 #################################################################
 start = time.time()
 
-x=np.zeros(NT,dtype=np.float64)          # x coordinates
-y=np.zeros(NT,dtype=np.float64)          # y coordinates
+x=np.zeros(NT,dtype=np.float64) # x coordinates
+y=np.zeros(NT,dtype=np.float64) # y coordinates
 
 counter = 0
 for j in range(0, nny):
@@ -112,7 +115,7 @@ print("grid points: %.3f s" % (time.time() - start))
 #################################################################
 start = time.time()
 
-icon =np.zeros((mT, nel),dtype=np.int32)
+icon=np.zeros((mT,nel),dtype=np.int32)
 
 counter = 0 
 for j in range(0, nely):
@@ -131,9 +134,8 @@ for j in range(0, nely):
         icon[1, counter] = i + 1 + (j + 1) * (nelx + 1)
         icon[2, counter] = i + (j + 1) * (nelx + 1)
         counter += 1
-
-print(icon[:,10])
-print(icon[:,11])
+    #end for
+#end for
 
 print("connectivity: %.3f s" % (time.time() - start))
 
@@ -194,7 +196,7 @@ dNNNTdr=np.zeros(mT,dtype=np.float64) # shape functions derivatives
 dNNNTds=np.zeros(mT,dtype=np.float64) # shape functions derivatives
 
 for iel in range(0,nel):
-    for kq in range (0,nqel):
+    for kq in range(0,nqel):
         rq=qcoords_r[kq]
         sq=qcoords_s[kq]
         weightq=qweights[kq]
@@ -294,10 +296,10 @@ for istep in range(0,nstep):
             #end for
             velq[0,0]=-yq+Ly/2
             velq[0,1]= xq-Lx/2
-            #print(xq,yq)
-            #print(velq[0,0],velq[0,1])
-            velq[0,0]=np.sum(u[icon[:,iel]])/3
-            velq[0,1]=np.sum(v[icon[:,iel]])/3
+
+            if test:
+               velq[0,0]=np.sum(u[icon[:,iel]])/3
+               velq[0,1]=np.sum(v[icon[:,iel]])/3
 
             # compute mass matrix
             MM+=N_mat.dot(N_mat.T)*weightq*jcob
@@ -307,25 +309,21 @@ for istep in range(0,nstep):
 
         # end for kq
 
-        if iel==0: print(Ka)
+        if test and iel<3: print(Ka)
 
         u0=np.sum(u[icon[:,iel]])/3
         v0=np.sum(v[icon[:,iel]])/3
-        Ka=area[iel]/3*np.array([\
-                           [u0*(y[icon[1,iel]]-y[icon[2,iel]])+v0*(x[icon[2,iel]]-x[icon[1,iel]]), 
-                            u0*(y[icon[2,iel]]-y[icon[0,iel]])+v0*(x[icon[0,iel]]-x[icon[2,iel]]), 
-                            u0*(y[icon[0,iel]]-y[icon[1,iel]])+v0*(x[icon[1,iel]]-x[icon[0,iel]])],
-                           [u0*(y[icon[1,iel]]-y[icon[2,iel]])+v0*(x[icon[2,iel]]-x[icon[1,iel]]), 
-                            u0*(y[icon[2,iel]]-y[icon[0,iel]])+v0*(x[icon[0,iel]]-x[icon[2,iel]]), 
-                            u0*(y[icon[0,iel]]-y[icon[1,iel]])+v0*(x[icon[1,iel]]-x[icon[0,iel]])],
-                           [u0*(y[icon[1,iel]]-y[icon[2,iel]])+v0*(x[icon[2,iel]]-x[icon[1,iel]]), 
-                            u0*(y[icon[2,iel]]-y[icon[0,iel]])+v0*(x[icon[0,iel]]-x[icon[2,iel]]), 
-                            u0*(y[icon[0,iel]]-y[icon[1,iel]])+v0*(x[icon[1,iel]]-x[icon[0,iel]])] ])
+        x1=x[icon[0,iel]] ; x2=x[icon[1,iel]] ; x3=x[icon[2,iel]]
+        y1=y[icon[0,iel]] ; y2=y[icon[1,iel]] ; y3=y[icon[2,iel]]
 
+        Ka=1./6.*np.array([\
+                           [u0*(y2-y3)+v0*(x3-x2),u0*(y3-y1)+v0*(x1-x3), u0*(y1-y2)+v0*(x2-x1)], \
+                           [u0*(y2-y3)+v0*(x3-x2),u0*(y3-y1)+v0*(x1-x3), u0*(y1-y2)+v0*(x2-x1)], \
+                           [u0*(y2-y3)+v0*(x3-x2),u0*(y3-y1)+v0*(x1-x3), u0*(y1-y2)+v0*(x2-x1)]  ])
 
-        if iel==0: print(Ka/area[iel]/2)
+        if test and iel<3: print(Ka)
 
-        exit()
+        if test and iel>2: exit()
 
         a_el=MM+Ka*dt*theta
         b_el=(MM -Ka*dt*(1-theta)).dot(Tvect)
