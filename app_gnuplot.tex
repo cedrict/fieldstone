@@ -1,4 +1,3 @@
-\subsection{gnuplot}
 
 gnuplot is a famous and widely used command-line program that can 
 generate two- and three-dimensional plots of functions, data, and data fits.
@@ -13,7 +12,7 @@ It dates back to 1986 and runs on all operating systems (Linux, Unix, Microsoft 
 The gray boxes indicate that its content takes place in the terminal.
 
 %----------------------------------------
-\subsubsection*{Installing gnuplot}
+\subsection*{Installing gnuplot}
 
 If you are using Ubuntu, you can install gnuplot as follows:
 
@@ -26,7 +25,7 @@ If you are using Ubuntu, you can install gnuplot as follows:
 
 
 %----------------------------------------
-\subsubsection*{Interactive use}
+\subsection*{Interactive use}
 
 In the following pages I explain how to use the gnuplot program from the terminal.
 Having done so, in the terminal simply type
@@ -173,7 +172,7 @@ gnuplot> exit
 You should find {\filenamefont results.pdf} in your folder next to {\filenamefont results.dat}.
 
 %----------------------------------------
-\subsubsection*{Scripting gnuplot}
+\subsection*{Scripting gnuplot}
 
 Although the interactive approach is very useful its workflow 
 is not practical if one wishes (for instance) to produce the same plot 
@@ -207,7 +206,7 @@ Note that I have added a title to the plot as well.
 
 
 %----------------------------------------
-\subsubsection*{Greek letters}
+\subsection*{Greek letters}
 
 In order to display Greek letters the {\tt /Symbol} command:
 
@@ -237,7 +236,7 @@ M 	&Mu 	 &Z 		&Zeta 	  &m 		&mu 	($\mu$)       &z 		&zeta $\zeta$\\
 
 
 %----------------------------------------
-\subsubsection*{piecewise function}
+\subsection*{piecewise function}
 
 You can define piecewise functions as follows:
 \begin{verbatim}
@@ -252,7 +251,7 @@ plot[-10:12] f(x),g(x)
 
 
 %----------------------------------------
-\subsubsection*{linetype and dashtype}
+\subsection*{linetype and dashtype}
 
 There are essentially three ways of plotting data: 
 \begin{verbatim}
@@ -341,7 +340,7 @@ than normal.
 
 
 %----------------------------------------
-\subsubsection*{Moving the 'key'}
+\subsection*{Moving the 'key'}
 
 The default is inside top right, but it can be changed, e.g.:
 \begin{verbatim}
@@ -355,7 +354,7 @@ corresponding to (from left to right):
 \end{center}
 
 %----------------------------------------
-\subsubsection*{Plotting arrows}
+\subsection*{Plotting arrows}
 
 Let us now turn to the {\filenamefont velocity.dat} file which consists of 
 four columns: x, y, $\upnu_x$ and $\upnu_y$.
@@ -394,7 +393,7 @@ means that gnuplot takes the value in column 3 or 4 and multiplies it by 4.
 The resulting figure is shown in b).
 
 %----------------------------------------
-\subsubsection*{Powers of 10}
+\subsection*{Powers of 10}
 
 \begin{verbatim}
 set format y "10^{%L}"
@@ -402,7 +401,7 @@ set format y "10^{%L}"
 
 
 %----------------------------------------
-\subsubsection*{Least square fit}
+\subsection*{Least square fit}
 
 Assuming we have a file containing data, e.g. {\tt data.ascii}, that 
 we want to fit by means of a linear relationship over the range $[-1,+1]$:
@@ -419,7 +418,7 @@ plot[] 'data.ascii' u 1:2, f(x)
 
 
 %----------------------------------------
-\subsubsection*{coloring areas}
+\subsection*{coloring areas}
 
 
 \begin{verbatim}
@@ -429,7 +428,7 @@ set obj rect from 0, graph 0 to 15, graph 1
 
 
 %----------------------------------------
-\subsubsection*{vertical line}
+\subsection*{vertical line}
 
 To draw a vertical line from the bottom to the top of the graph at x=3, use: 
 \begin{verbatim}
@@ -438,7 +437,7 @@ set arrow from 3, graph 0 to 3, graph 1 nohead
 
 
 %----------------------------------------------------
-\subsubsection*{Show list of all available colors}
+\subsection*{Show list of all available colors}
 
 In an interactive gnuplot session type:
 
@@ -448,7 +447,7 @@ In an interactive gnuplot session type:
 
 
 %----------------------------------------------------
-\subsubsection*{Piecewise functions}
+\subsection*{Piecewise functions}
 
 \begin{verbatim}
 f(x) = x<a ? 1: 1/0

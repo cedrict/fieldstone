@@ -5,23 +5,24 @@ If you wish to use these in a code, do not forget to take the jacobian
 of the transformation/mapping into account. 
 
 %---------------------------
-\subsection{1D segments}
+\section{1d segments}
 
 %.....................................
-\subsubsection{Linear basis functions}
+\subsection{Linear basis functions}
 
 Let us start with the mass matrix (which we encountered in 
-Section~\ref{sec:diff1D} -- although we leave the $\rho C_p$ term out):
+Section~\ref{sec:diff1D} -- although we leave the $\rho C_p$ term out, 
+thereby implicitely assuming it is constant over the element!):
 \begin{equation}
-{\bm M}_e=\int_{\Omega_e} \vec{N}^T \vec{N} dV
-= \int_{-1}^{+1} \vec{N}^T \vec{N} dr
+{\bm M}_e=\int_{\Omega_e} \vec{\bN}^T \vec{\bN} dV
+= \int_{-1}^{+1} \vec{\bN}^T \vec{\bN} dr
 \end{equation}
 on the reference element, with 
 \[
 {\vec N}^T = 
 \left(
 \begin{array}{c}
-N_1(r) \\ N_2(r)
+\bN_1(r) \\ \bN_2(r)
 \end{array}
 \right)
 =
@@ -34,20 +35,20 @@ N_1(r) \\ N_2(r)
 \]
 We have 
 \begin{eqnarray}
-\int_{-1}^{+1} N_1(r) N_1(r) dr &=& 2/3 \\ 
-\int_{-1}^{+1} N_1(r) N_2(r) dr &=& 1/3 \\
-\int_{-1}^{+1} N_2(r) N_2(r) dr &=& 2/3
+\int_{-1}^{+1} \bN_1(r) \bN_1(r)\; dr &=& 2/3 \nn\\ 
+\int_{-1}^{+1} \bN_1(r) \bN_2(r)\; dr &=& 1/3 \nn\\
+\int_{-1}^{+1} \bN_2(r) \bN_2(r)\; dr &=& 2/3 \nn
 \end{eqnarray}
-
-Following the procedure in Section~\ref{sec:diff1D} we arrive at
+We then obtain 
 \[
+\boxed{
 {\bm M}^e= \frac{1}{3} 
 \left(
 \begin{array}{cc}
 2  & 1 \\
 1 & 2
 \end{array}
-\right)
+\right)}
 \]
 The lumped mass matrix is then
 \begin{eqnarray}
@@ -70,29 +71,29 @@ The lumped mass matrix is then
 \end{eqnarray}
 
 \begin{remark} 
-The sum of all the terms in the mass matrix must be equal to 2. Indeed:
+The sum of all the terms in the mass matrix must be equal to 2. Proof: 
 \begin{eqnarray}
 \sum_{ij} M_{ij} 
-&=&\sum_{ij} \int_{-1}^{+1} N_i N_j dr \nn\\
-&=&\int_{-1}^{+1} (N_1N_1+N_1N_2+N_2N_1+N_2N_2) dr\nn\\
-&=&\int_{-1}^{+1} [N_1(N_1+N_2)+N_2(N_1+N_2)]dr\nn\\
-&=&\int_{-1}^{+1} (N_1 + N_2) dr\nn\\
+&=&\sum_{ij} \int_{-1}^{+1} \bN_i \bN_j dr \nn\\
+&=&\int_{-1}^{+1} (\bN_1\bN_1+\bN_1\bN_2+\bN_2\bN_1+\bN_2\bN_2) dr\nn\\
+&=&\int_{-1}^{+1} [\bN_1(\bN_1+\bN_2)+\bN_2(\bN_1+\bN_2)]dr\nn\\
+&=&\int_{-1}^{+1} (\bN_1 + \bN_2) dr\nn\\
 &=& 2\nn
 \end{eqnarray}
 \end{remark}
 
 
 %.....................................
-\subsubsection{Quadratic basis functions}
+\subsection{Quadratic basis functions}
 There are now three nodes in the segment so that the mass matrix 
 is now a $3\times3$ matrix. We have (see Section~\ref{sec:bf1}) 
 \begin{equation}
-{\vec N}^T(r) = 
+{\vec \bN}^T(r) = 
 \left(
 \begin{array}{c}
-N_1(r) \\ 
-N_2(r) \\ 
-N_3(r) 
+\bN_1(r) \\ 
+\bN_2(r) \\ 
+\bN_3(r) 
 \end{array}
 \right)
 =
@@ -106,18 +107,18 @@ N_3(r)
 \end{equation}
 We then have to compute
 \begin{eqnarray}
-\int_{-1}^{+1} N_1(r) N_1(r) dr &=& \frac{8}{30}  = 0.26666 \nn\\
-\int_{-1}^{+1} N_1(r) N_2(r) dr &=& \frac{4}{30}  =0.13333  \nn\\
-\int_{-1}^{+1} N_1(r) N_3(r) dr &=& -\frac{2}{30} =-0.06666...\nn\\ 
-\int_{-1}^{+1} N_2(r) N_2(r) dr &=& \frac{16}{15} = 1.06666 \nn\\
-\int_{-1}^{+1} N_2(r) N_3(r) dr &=& \frac{4}{30}  =0.13333 \nn\\
-\int_{-1}^{+1} N_3(r) N_3(r) dr &=& \frac{8}{30} = 0.26666  \nn
+\int_{-1}^{+1} \bN_1(r) \bN_1(r) dr &=& \frac{8}{30}  = 0.26666 \nn\\
+\int_{-1}^{+1} \bN_1(r) \bN_2(r) dr &=& \frac{4}{30}  =0.13333  \nn\\
+\int_{-1}^{+1} \bN_1(r) \bN_3(r) dr &=& -\frac{2}{30} =-0.06666\nn\\ 
+\int_{-1}^{+1} \bN_2(r) \bN_2(r) dr &=& \frac{16}{15} = 1.06666 \nn\\
+\int_{-1}^{+1} \bN_2(r) \bN_3(r) dr &=& \frac{4}{30}  =0.13333 \nn\\
+\int_{-1}^{+1} \bN_3(r) \bN_3(r) dr &=& \frac{8}{30} = 0.26666  \nn
 \end{eqnarray}
 and finally 
 \begin{equation}
+\boxed{
 {\bm M}^e 
-=
-\frac{1}{30}
+=\frac{1}{30}
 \left(
 \begin{array}{ccc}
 8  & 4 & -2 \\
@@ -125,9 +126,8 @@ and finally
 -2 & 4 & 8
 \end{array}
 \right)
+}
 \end{equation}
-
-
 The lumped mass matrix is then
 \begin{eqnarray}
 \bar{\bm M}^e 
@@ -159,7 +159,6 @@ The lumped mass matrix is then
 \end{array}
 \right) 
 \end{eqnarray}
-
 We can easily verify that
 \[
 \sum_{ij} M_{ij} = 2
@@ -170,17 +169,17 @@ We can easily verify that
 
 
 %.....................................
-\subsubsection{Cubic basis functions}
+\subsection{Cubic basis functions}
 There are now four nodes in the segment so that the mass matrix 
 is now a $4\times4$ matrix. We have (see Section~\ref{sec:bf3}) 
 \begin{equation}
 {\vec N}^T(r) = 
 \left(
 \begin{array}{c}
-N_1(r) \\ 
-N_2(r) \\ 
-N_3(r) \\ 
-N_4(r) 
+\bN_1(r) \\ 
+\bN_2(r) \\ 
+\bN_3(r) \\ 
+\bN_4(r) 
 \end{array}
 \right)
 =
@@ -194,23 +193,22 @@ N_4(r)
 \end{array}
 \right)
 \end{equation}
-
-
+leading to
 \begin{eqnarray}
-\int_{-1}^{+1} N_1(r) N_1(r) dr &=&  \frac{1}{256}\frac{4096}{105} \nn\\ 
-\int_{-1}^{+1} N_1(r) N_2(r) dr &=&  \frac{1}{256}\frac{1056}{35} \nn\\
-\int_{-1}^{+1} N_1(r) N_3(r) dr &=& -\frac{1}{256}\frac{384}{35} \nn\\
-\int_{-1}^{+1} N_1(r) N_4(r) dr &=&  \frac{1}{256}\frac{608}{105} \nn\\
-\int_{-1}^{+1} N_2(r) N_2(r) dr &=&  \frac{1}{256}\frac{6912}{35} \nn\\
-\int_{-1}^{+1} N_2(r) N_3(r) dr &=& -\frac{1}{256}\frac{864}{35} \nn\\
-\int_{-1}^{+1} N_2(r) N_4(r) dr &=& -\frac{1}{256}\frac{384}{35} \nn\\
-\int_{-1}^{+1} N_3(r) N_3(r) dr &=&  \frac{1}{256}\frac{6912}{35}\nn\\
-\int_{-1}^{+1} N_3(r) N_4(r) dr &=&  \frac{1}{256}\frac{1056}{35}\nn\\
-\int_{-1}^{+1} N_4(r) N_4(r) dr &=&  \frac{1}{256}\frac{4096}{105}\nn
+\int_{-1}^{+1} \bN_1(r) \bN_1(r) dr &=&  \frac{1}{256}\frac{4096}{105} \nn\\ 
+\int_{-1}^{+1} \bN_1(r) \bN_2(r) dr &=&  \frac{1}{256}\frac{1056}{35} \nn\\
+\int_{-1}^{+1} \bN_1(r) \bN_3(r) dr &=& -\frac{1}{256}\frac{384}{35} \nn\\
+\int_{-1}^{+1} \bN_1(r) \bN_4(r) dr &=&  \frac{1}{256}\frac{608}{105} \nn\\
+\int_{-1}^{+1} \bN_2(r) \bN_2(r) dr &=&  \frac{1}{256}\frac{6912}{35} \nn\\
+\int_{-1}^{+1} \bN_2(r) \bN_3(r) dr &=& -\frac{1}{256}\frac{864}{35} \nn\\
+\int_{-1}^{+1} \bN_2(r) \bN_4(r) dr &=& -\frac{1}{256}\frac{384}{35} \nn\\
+\int_{-1}^{+1} \bN_3(r) \bN_3(r) dr &=&  \frac{1}{256}\frac{6912}{35}\nn\\
+\int_{-1}^{+1} \bN_3(r) \bN_4(r) dr &=&  \frac{1}{256}\frac{1056}{35}\nn\\
+\int_{-1}^{+1} \bN_4(r) \bN_4(r) dr &=&  \frac{1}{256}\frac{4096}{105}\nn
 \end{eqnarray}
-
 and finally 
 \begin{equation}
+\boxed{
 {\bm M}^e 
 =
 \frac{1}{16}\frac{1}{105}
@@ -221,10 +219,10 @@ and finally
 -72 & -162 & 1296 & 198 \\
 38 & -72 & 198 & 256
 \end{array}
-\right)
+\right)}
 \end{equation}
-
 The lumped mass matrix is then
+\begin{small}
 \begin{eqnarray}
 \bar{\bm M}^e 
 &=&
@@ -258,8 +256,7 @@ The lumped mass matrix is then
 \end{array}
 \right) \nn
 \end{eqnarray}
-
-
+\end{small}
 We can easily verify that
 \[
 \sum_{ij} M_{ij} = 2
@@ -270,18 +267,18 @@ We can easily verify that
 
 
 %.....................................
-\subsubsection{Quartic basis functions}
+\subsection{Quartic basis functions}
 There are now five nodes in the segment so that the mass matrix 
-is now a $5\times5$ matrix. We have (see Section~\ref{sec:bf4}) 
+is a $5\times5$ matrix. We have (see Section~\ref{sec:bf4}) 
 \begin{equation}
-{\vec N}^T(r) = 
+{\vec \bN}^T(r) = 
 \left(
 \begin{array}{c}
-N_1(r) \\ 
-N_2(r) \\ 
-N_3(r) \\ 
-N_4(r) \\ 
-N_5(r) 
+\bN_1(r) \\ 
+\bN_2(r) \\ 
+\bN_3(r) \\ 
+\bN_4(r) \\ 
+\bN_5(r) 
 \end{array}
 \right)
 =
@@ -296,28 +293,27 @@ N_5(r)
 \end{array}
 \right)
 \end{equation}
-
-
+leading to
 \begin{eqnarray}
-\int_{-1}^{+1} N_1(r) N_1(r) dr &=& \frac{1}{36}\frac{1168}{315} \nn\\ 
-\int_{-1}^{+1} N_1(r) N_2(r) dr &=& \frac{1}{36}\frac{1184}{315} \nn\\ 
-\int_{-1}^{+1} N_1(r) N_3(r) dr &=&-\frac{1}{36}\frac{232}{105}  \nn\\ 
-\int_{-1}^{+1} N_1(r) N_4(r) dr &=& \frac{1}{36}\frac{32}{45}    \nn\\ 
-\int_{-1}^{+1} N_1(r) N_5(r) dr &=&-\frac{1}{36}\frac{116}{315}  \nn\\ 
-\int_{-1}^{+1} N_2(r) N_2(r) dr &=& \frac{1}{36}\frac{1024}{45}  \nn\\ 
-\int_{-1}^{+1} N_2(r) N_3(r) dr &=&-\frac{1}{36}\frac{512}{105}  \nn\\ 
-\int_{-1}^{+1} N_2(r) N_4(r) dr &=& \frac{1}{36}\frac{1024}{315} \nn\\ 
-\int_{-1}^{+1} N_2(r) N_5(r) dr &=& \frac{1}{36}\frac{32}{45}    \nn\\ 
-\int_{-1}^{+1} N_3(r) N_3(r) dr &=& \frac{1}{36}\frac{832}{35}    \nn\\ 
-\int_{-1}^{+1} N_3(r) N_4(r) dr &=& -\frac{1}{36}\frac{512}{105}    \nn\\ 
-\int_{-1}^{+1} N_3(r) N_5(r) dr &=& -\frac{1}{36}\frac{232}{105}    \nn\\ 
-\int_{-1}^{+1} N_4(r) N_4(r) dr &=& \frac{1}{36}\frac{1024}{45}    \nn\\ 
-\int_{-1}^{+1} N_4(r) N_5(r) dr &=& \frac{1}{36}\frac{1184}{315}    \nn\\ 
-\int_{-1}^{+1} N_5(r) N_5(r) dr &=& \frac{1}{36}\frac{1168}{315}    
+\int_{-1}^{+1} \bN_1(r) \bN_1(r) dr &=& \frac{1}{36}\frac{1168}{315} \nn\\ 
+\int_{-1}^{+1} \bN_1(r) \bN_2(r) dr &=& \frac{1}{36}\frac{1184}{315} \nn\\ 
+\int_{-1}^{+1} \bN_1(r) \bN_3(r) dr &=&-\frac{1}{36}\frac{232}{105}  \nn\\ 
+\int_{-1}^{+1} \bN_1(r) \bN_4(r) dr &=& \frac{1}{36}\frac{32}{45}    \nn\\ 
+\int_{-1}^{+1} \bN_1(r) \bN_5(r) dr &=&-\frac{1}{36}\frac{116}{315}  \nn\\ 
+\int_{-1}^{+1} \bN_2(r) \bN_2(r) dr &=& \frac{1}{36}\frac{1024}{45}  \nn\\ 
+\int_{-1}^{+1} \bN_2(r) \bN_3(r) dr &=&-\frac{1}{36}\frac{512}{105}  \nn\\ 
+\int_{-1}^{+1} \bN_2(r) \bN_4(r) dr &=& \frac{1}{36}\frac{1024}{315} \nn\\ 
+\int_{-1}^{+1} \bN_2(r) \bN_5(r) dr &=& \frac{1}{36}\frac{32}{45}    \nn\\ 
+\int_{-1}^{+1} \bN_3(r) \bN_3(r) dr &=& \frac{1}{36}\frac{832}{35}    \nn\\ 
+\int_{-1}^{+1} \bN_3(r) \bN_4(r) dr &=& -\frac{1}{36}\frac{512}{105}    \nn\\ 
+\int_{-1}^{+1} \bN_3(r) \bN_5(r) dr &=& -\frac{1}{36}\frac{232}{105}    \nn\\ 
+\int_{-1}^{+1} \bN_4(r) \bN_4(r) dr &=& \frac{1}{36}\frac{1024}{45}    \nn\\ 
+\int_{-1}^{+1} \bN_4(r) \bN_5(r) dr &=& \frac{1}{36}\frac{1184}{315}    \nn\\ 
+\int_{-1}^{+1} \bN_5(r) \bN_5(r) dr &=& \frac{1}{36}\frac{1168}{315}    
 \end{eqnarray}
-
-
+and finally
 \begin{equation}
+\boxed{
 {\bm M}^e
 =\frac{1}{36}
 \frac{1}{315}
@@ -329,9 +325,8 @@ N_5(r)
 224   & 1024 & -1536 & 7168 & 1184 \\
 -116 & 224   & -696 & 1184 & 1168
 \end{array}
-\right)
+\right)}
 \end{equation}
-
 The lumped mass matrix is then
 \begin{eqnarray}
 \bar{\bm M}^e 
@@ -357,10 +352,8 @@ The lumped mass matrix is then
 0&0&0&32   &0 \\
 0&0&0&0&7      \\
 \end{array}
-\right)
+\right) \nn
 \end{eqnarray}
-
-
 We can once again easily verify that
 \[
 \sum_{ij} M_{ij} = 2
@@ -379,15 +372,11 @@ Example:
 \end{center}
 
 
+%------------------------------------------------------------------------
+\section{2d Quadrilaterals} \label{app:qrle}
 
+\subsection{$Q_1$ elements - mass matrix}
 
-
-
-
-%---------------------------
-\subsection{Quadrilaterals: rectangular linear elements} \label{app:qrle}
-
-\subsubsection{Mass matrix}
 
 We assume that each element is a rectangle of size $h_x \times h_y$. 
 We start from the linear basis functions in the reference element as a function of $r,s$:
@@ -495,9 +484,8 @@ dr ds\nn\\
 \right)
 \end{eqnarray}
 
-%__________________________________
-\subsubsection{Diffusion matrix}
-
+%----------------------------------------------------
+\subsection{$Q_1$ elements - Diffusion matrix $\K_d$}
 
 \[
 {\bm K}_d^e = k \frac{h_xh_y}{4} \int_{-1}^{+1}\int_{-1}^{+1}
@@ -521,7 +509,7 @@ with
 \]
 Then 
 \begin{eqnarray}
-&& {\bm B}^T(r,s) \cdot {\bm B}(r,s) \\
+&& {\bm B}^T(r,s) \cdot {\bm B}(r,s)  \nn\\
 &=&
 \left(
 \begin{array}{cc}
@@ -543,7 +531,7 @@ Then
 \frac{1}{h_y} \frac12 (1+r) &
 \frac{1}{h_y} \frac12 (1-r) 
 \end{array}
-\right) \\
+\right) \nn\\
 &=&
 \frac{1}{4h_x^2}
 \left(
@@ -562,7 +550,7 @@ Then
 -(1-r) & -(1+r) &
  (1+r) &  (1-r) 
 \end{array}
-\right) \\
+\right) \nn\\
 &=& 
 \frac{1}{4h_x^2}
 \left(
@@ -572,7 +560,7 @@ Then
 -(1-r^2) & -(1+r)^2 & (1+r)^2 & (1-r^2) \\
 -(1-r)^2 & -(1-r^2) & (1-r^2) & (1-r)^2
 \end{array}
-\right) \\
+\right) \nn\\
 &=& 
 \frac{1}{4h_y^2}
 \left(
@@ -582,7 +570,7 @@ Then
 -(1-s^2) & (1-s^2) & (1+s)^2 & - (1+s)^2 \\
 (1-s^2) & -(1-s^2) & -(1+s)^2 & (1+s)^2 
 \end{array}
-\right) \\
+\right) 
 \end{eqnarray}
 So in the end 
 \begin{eqnarray}
@@ -597,7 +585,7 @@ So in the end
 -(1-r)^2 & -(1-r^2) & (1-r^2) & (1-r)^2
 \end{array}
 \right)
-dr ds \\
+dr ds \nn\\
 &+&
 \frac{h_xh_y}{4} \int_{-1}^{+1}\int_{-1}^{+1}
 \frac{1}{4h_y^2}
@@ -608,7 +596,7 @@ dr ds \\
 -(1-s^2) & (1-s^2) & (1+s)^2 & - (1+s)^2 \\
 (1-s^2) & -(1-s^2) & -(1+s)^2 & (1+s)^2 
 \end{array}
-\right) dr ds \\
+\right) dr ds \nn\\
 &=& k \frac{k h_y}{8 h_x} \int_{-1}^{+1}
 \left(
 \begin{array}{cccc}
@@ -618,7 +606,7 @@ dr ds \\
 -(1-r)^2 & -(1-r^2) & (1-r^2) & (1-r)^2
 \end{array}
 \right)
-dr  \\
+dr  \nn\\
 &+&
 \frac{k h_x}{8 h_y} \int_{-1}^{+1}
 \left(
@@ -628,7 +616,7 @@ dr  \\
 -(1-s^2) & (1-s^2) & (1+s)^2 & - (1+s)^2 \\
 (1-s^2) & -(1-s^2) & -(1+s)^2 & (1+s)^2 
 \end{array}
-\right) ds \\
+\right) ds  \nn \\
 &=& 
 k \frac{k h_y}{8 h_x} \frac{4}{3}
 \left(
@@ -648,8 +636,13 @@ k \frac{k h_y}{8 h_x} \frac{4}{3}
 -1 &1 & 2 &-2 \\
 1 &-1 &-2 &2 
 \end{array}
-\right)  \\
-&=& 
+\right) \nn 
+\end{eqnarray}
+or,
+\begin{equation}
+\boxed{
+\K_d^e
+= 
 \frac{k h_x h_y }{6}
 \left(
 \begin{array}{cccc}
@@ -670,18 +663,19 @@ k \frac{k h_y}{8 h_x} \frac{4}{3}
 -\frac{2}{h_x^2}+\frac{1}{h_y^2} &
  \frac{2}{h_x^2}+\frac{2}{h_y^2} 
 \end{array}
-\right)  
-\end{eqnarray}
+\right)}  
+\end{equation}
 
 
-%__________________________________
-\subsubsection{Advection matrix}
+%----------------------------------------------------
+\subsection{$Q_1$ elements - advection matrix $\K_a$}
 
 \[
 {\bm K}_a = \rho C_p \frac{h_xh_y}{4}
 \int_{-1}^{+1} \int_{-1}^{+1} {\bm N}^T(r,s) (\vec\upnu \cdot {\bm B}(r,s)) \; dr ds
 \]
 with 
+\begin{small}
 \[
 \vec\upnu \cdot  {\bm B}(r,s) 
 =
@@ -692,6 +686,7 @@ with
 -\frac{u}{2h_x}(1+s)\!+\!\frac{v}{2h_y}(1-r) 
 \right)
 \]
+\end{small}
 Assuming that the velocity is constant within the element (which is almost always not true!), we can write:
 \begin{eqnarray}
 {\bm K}_a 
@@ -712,7 +707,7 @@ Assuming that the velocity is constant within the element (which is almost alway
 (1+r) \quad
 (1-r) 
 \right) \;
-dr ds \\
+dr ds \nn\\
 &+& 
 \rho C_p \frac{h_xh_y}{16}\frac{u}{2h_x}
 \int_{-1}^{+1} \int_{-1}^{+1} 
@@ -730,7 +725,7 @@ dr ds \\
 (1+s) \quad
 -(1+s) 
 \right) \;
-dr ds  \\
+dr ds  \nn\\
 &=&
 \rho C_p \frac{h_x v}{32}
 \int_{-1}^{+1} \int_{-1}^{+1} 
@@ -748,7 +743,7 @@ dr ds  \\
 (1+r) \quad
 (1-r) 
 \right) \;
-dr ds \\
+dr ds \nn\\
 &+& 
 \rho C_p \frac{h_y u}{32}
 \int_{-1}^{+1} \int_{-1}^{+1} 
@@ -766,7 +761,7 @@ dr ds \\
 (1+s) \quad
 -(1+s) 
 \right) \;
-dr ds  \\
+dr ds \nn \\
 &=& 
 \rho C_p \frac{1}{12} 
 \left(
@@ -788,10 +783,11 @@ v h_x
 -1 &1 &2 &-2
 \end{array}
 \right)
-\right)
+\right) \nn
 \end{eqnarray}
 and finally
 \[
+\boxed{
 {\bm K}_a
 =
 \frac{\rho C_p}{3}
@@ -814,7 +810,7 @@ and finally
  \frac{1}{2} u h_y  +\frac{1}{4} v h_x & 
 -\frac{1}{2} u h_y  +\frac{1}{2} v h_x 
 \end{array}
-\right)
+\right)}
 \]
 
 
@@ -824,8 +820,8 @@ and finally
 
 
 
-
-\subsubsection{Matrices for D.G.}
+%----------------------------------------------------------------
+\subsection{$Q_1$ elements - Matrices for Discontinuous Galerkin}
 
 In the context of Discontinuous Galerkin methods we will need
 \begin{eqnarray}
@@ -1176,12 +1172,16 @@ h_x
 
 
 %............................................................................................
-\subsubsection{The $\K$ and $\G$ matrices for $Q_1 \times P_0$ in 2D \label{app:q1p0_elmats}}
+\subsection{The $\K$ and $\G$ matrices for $Q_1 \times P_0$ in 2D \label{app:q1p0_elmats}}
 
+Let us consider a regular grid composed of $nelx \times nely$ rectangular linear 
+elements on a domain of dimensions $L_x\times L_y$. We are here interested in the 
+elemental matrices $\K_e$ and $\G_e$. Borrowing (for example) from \stone~1 we can write 
+a simple code which compute these matrices by means of numerical integration. 
+This code is available there: {\tt python\_codes/Gel/compute\_K\_G\_S\_q1p0.py}.
 
-Let us consider a regular grid composed of $nelx \times nely$ rectangular linear elements on a domain of dimensions $L_x\times L_y$. We are here interested in the elemental matrices $\K_e$ and $\G_e$. Borrowing (for example) from stone~1 we can write a simple code which compute these matrices by means of numerical integration. This code is available there: {\tt python\_codes/Gel/compute\_K\_G\_S\_q1p0.py}.
-
-We start with square elements and a constant viscosity $\eta=1$. We find that $\K_e$ is independent of the resolution (i.e. independent of $nelx=nely$):
+We start with square elements and a constant viscosity $\eta=1$. We find that $\K_e$ 
+is independent of the resolution (i.e. independent of $nelx=nely$):
 \[
 \K_e=
 \left(
@@ -1273,14 +1273,17 @@ Let us now turn to non-square elements. Let us print $\K_e$ and $\G_e$ for 2 res
 \right)
 \]
 
-We find that both matrices $K_e$ and $\G_e$ are different from each other and different from the ones obtained with square elements. We have no other choice than computing these by hand in order to express these as a function of $h_x$ and $h_y$. Let us start with $\K_e$:
+We find that both matrices $K_e$ and $\G_e$ are different from each 
+other and different from the ones obtained with square elements. We have 
+no other choice than computing these by hand in order to express these as 
+a function of $h_x$ and $h_y$. Let us start with $\K_e$:
 
 \begin{eqnarray}
 \K_e 
 &=& \iint_{\Omega_e} {\bm B}^T \cdot {\bm C}_\eta \cdot {\bm B} \; dV 
 = \int_{x_1}^{x_3}\int_{y_1}^{y_3} 
 {\bm B}^T(x,y) \cdot {\bm C}_\eta \cdot {\bm B}(x,y) \; dx dy 
-\quad \qquad\text{with}\qquad \quad
+\qquad\text{with}\qquad 
 {\bm C}_\eta = \eta \left(\begin{array}{ccc}
 2 &0 &0\\
 0 &2 &0\\
@@ -1601,7 +1604,8 @@ And now the other rows:
 
 \newpage
 
-so that (matrix $\K_e$ is symmetric so only half is shown here)\footnote{Values above are fully checked, values in matrix below should be re-checked to be sure}:
+so that (matrix $\K_e$ is symmetric so only half is shown here)
+\footnote{Values above are fully checked, values in matrix below should be re-checked to be sure}:
 \begin{scriptsize}
 \[
 \left(
@@ -1768,8 +1772,8 @@ Since the pressure is constant inside each element, then $\G_{el}$ is $(ndof_V*m
 
 
 
-%---------------------------
-\subsection{Quadrilaterals: rectangular quadratic elements} \label{app:qrqe}
+%--------------------------------------------------------------------
+\subsection{rectangular quadratic elements $Q_2$ - mass matrix} \label{app:qrqe}
 
 \input{tikz/tikz_q22d}
 
@@ -1863,8 +1867,11 @@ M =
 
 
 \newpage
+%------------------------------------------------------------------------
+\section{3d hexahedra}
+
 %---------------------------
-\subsection{Hexahedra: cuboid elements}
+\subsection{Linear cuboid elements $Q_1$ - $\K$ and $\G$ matrices}
 
 We here assume that each element is a cuboid\footnote{\url{https://en.wikipedia.org/wiki/Cuboid}}. 
 We set the domain size to $L_x=4$, $L_x=3$ and $L_z=2$, with $nelx=4$, 
@@ -1941,13 +1948,16 @@ and
 
 \newpage
 %---------------------------------------
-\subsection{Triangles: linear elements} \label{ss:tle}
+\section{Triangles: linear elements} \label{ss:tle}
+
+
+\subsection{linear elements $P_1$} 
 
 We start from the linear basis functions in the reference triangle given as a function of $r,s$:
 \begin{eqnarray}
-\bN_1(r,s) &=& 1-r-s \\
-\bN_2(r,s) &=& r \\
-\bN_3(r,s) &=& s
+\bN_1(r,s) &=& 1-r-s \nn\\
+\bN_2(r,s) &=& r \nn\\
+\bN_3(r,s) &=& s \nn
 \end{eqnarray}
 and their derivatives:
 \begin{eqnarray}
@@ -1972,11 +1982,10 @@ $(x,y)\rightarrow (r,s)$:
 \right|  dr ds 
 \end{eqnarray}
 From 
-\[
-x(r,s)=\sum_{i=1}^3 \bN_i(r,s) x_i 
-\qquad \text{and} \qquad 
-y(r,s)=\sum_{i=1}^3 \bN_i(r,s) y_i 
-\]
+\begin{eqnarray}
+x(r,s)&=&\sum_{i=1}^3 \bN_i(r,s) x_i = (1-r-s)x_1 + rx_2 + sx_3 = (x_2-x_1)r+(x_3-x_1)s+x_1  \nn\\
+y(r,s)&=&\sum_{i=1}^3 \bN_i(r,s) y_i = (1-r-s)y_1 + ry_2 + sy_3 = (y_2-y_1)r+(y_3-y_1)s+y_1  \nn
+\end{eqnarray}
 we can write
 \begin{eqnarray}
 \frac{\partial x}{\partial r}(r,s)
@@ -2071,11 +2080,13 @@ and the mass matrix is given by
 \end{eqnarray}
 This is Eq.(4.10e) of \textcite{li06}. 
 Also note that in the context of the heat transport equation this matrix is multiplied 
-by $\rho C_p$.
+by $\rho C_p$ (all under the assumption that these coefficients are constant 
+over the whole element).
 
-We will then compute the ${\bm J}_x$ and ${\bm J}_y$ matrices\footnote{Nobody 
-knows what these matrices are for ... needs to be lookied into.}.
-We start from the basis functions expressed in the $(x,y)$ coordinate system:
+%We will then compute the ${\bm J}_x$ and ${\bm J}_y$ matrices\footnote{Nobody 
+%knows what these matrices are for ... needs to be looked into.}.
+The basis functions can also directly be expressed in the $(x,y)$ coordinate system
+(see for example Section~\ref{ss:p1}):
 \begin{eqnarray}
 \bN_1(x,y) &=& \frac{1}{2S} \left( x_2y_3-x_3y_2+(y_2-y_3)x+(x_3-x_2)y   \right) \nn\\
 \bN_2(x,y) &=& \frac{1}{2S} \left( x_3y_1-x_1y_3+(y_3-y_1)x+(x_1-x_3)y   \right) \nn\\
@@ -2084,99 +2095,99 @@ We start from the basis functions expressed in the $(x,y)$ coordinate system:
 where $S$ is the area of the element.
 We then have 
 \begin{eqnarray}
-\partial_x \bN_1(x,y) &=& \frac{1}{2S}  (y_2-y_3) \nn\\
-\partial_x \bN_2(x,y) &=& \frac{1}{2S}  (y_3-y_1) \nn\\
-\partial_x \bN_3(x,y) &=& \frac{1}{2S}  (y_1-y_2) \nn\\
-\partial_y \bN_1(x,y) &=& \frac{1}{2S}  (x_3-x_2) \nn\\
-\partial_y \bN_2(x,y) &=& \frac{1}{2S}  (x_1-x_3) \nn\\
-\partial_y \bN_3(x,y) &=& \frac{1}{2S}  (x_2-x_1) \nn
+\partial_x \bN_1(x,y) &=& \frac{1}{2S}  (y_2-y_3) = \frac{1}{2S} y_{23} \nn\\
+\partial_x \bN_2(x,y) &=& \frac{1}{2S}  (y_3-y_1) = \frac{1}{2S} y_{31} \nn\\
+\partial_x \bN_3(x,y) &=& \frac{1}{2S}  (y_1-y_2) = \frac{1}{2S} y_{12} \nn\\
+\partial_y \bN_1(x,y) &=& \frac{1}{2S}  (x_3-x_2) = \frac{1}{2S} y_{32} \nn\\
+\partial_y \bN_2(x,y) &=& \frac{1}{2S}  (x_1-x_3) = \frac{1}{2S} y_{13} \nn\\
+\partial_y \bN_3(x,y) &=& \frac{1}{2S}  (x_2-x_1) = \frac{1}{2S} y_{21} \nn
 \end{eqnarray}
-We start with
-\begin{eqnarray}
-{\bm J}_x
-&=& \iint_\triangle  \partial_x \vec{\bN}^T \vec{\bN} dV \nn\\
-&=&  \iint_\triangle 
-\left(
-\begin{array}{c}
-\frac{1}{2S}(y_2-y_3) \\
-\frac{1}{2S}(y_3-y_1) \\
-\frac{1}{2S}(y_1-y_2)
-\end{array}
-\right)
-\left(
-\begin{array}{ccc}
-N_1(x,y) & N_2(x,y) & N_3(x,y) 
-\end{array}
-\right) dx dy \nn\\
-&=& \frac{1}{2S} 
-\left(
-\begin{array}{ccc}
-y_{23} \iint_\triangle \bN_1 dx dy & y_{23} \iint_\triangle \bN_2 dx dy & y_{23} \iint_\triangle \bN_3 dx dy \\
-y_{31} \iint_\triangle \bN_1 dx dy & y_{31} \iint_\triangle \bN_2 dx dy & y_{31} \iint_\triangle \bN_3 dx dy \\
-y_{12} \iint_\triangle \bN_1 dx dy & y_{12} \iint_\triangle \bN_2 dx dy & y_{12} \iint_\triangle \bN_3 dx dy 
-\end{array}
-\right) 
-\end{eqnarray}
-where we have introduced the notation $x_{ij}=x_i-x_j$.
-We then need to compute
-\begin{eqnarray}
-\iint_\triangle \bN_1(x,y) dx dy 
-&=& 2S \int_0^{1} \left(\int_0^{1-r} \bN_1(x(r,s),y(r,s))  ds \right) dr \nonumber\\ 
-&=& 2S \int_0^{1} \left(\int_0^{1-r} (1-r-s)  ds \right) dr \nonumber\\ 
-&=& 2S \frac{1}{6} \label{eq:elmats:1}\\ 
-\iint_\triangle \bN_2(x,y) dx dy 
-&=& 2S \int_0^{1} \left(\int_0^{1-r} \bN_2(x(r,s),y(r,s))  ds \right) dr \nonumber\\ 
-&=& 2S \int_0^{1} \left(\int_0^{1-r} r  ds \right) dr \nonumber\\ 
-&=& 2S \frac{1}{6} \label{eq:elmats:2}\\ 
-\iint_\triangle \bN_3(x,y) dx dy 
-&=& 2S \int_0^{1} \left(\int_0^{1-r} \bN_3(x(r,s),y(r,s))  ds \right) dr \nonumber\\ 
-&=& 2S \int_0^{1} \left(\int_0^{1-r} s  ds \right) dr \nonumber\\ 
-&=& 2S \frac{1}{6} \label{eq:elmats:3} 
-\end{eqnarray}
-\todo[inline]{verify!! FOR REAL 2025}
-Finally:
-\[
-{\bm J}_x
-=
-\frac{1}{6}
-\left(
-\begin{array}{ccc}
-y_{23} & y_{23} & y_{23} \\ 
-y_{31} & y_{31} & y_{31} \\ 
-y_{12} & y_{12} & y_{12}  
-\end{array}
-\right) 
-\]
+where we have introduced the notation $x_{ij}=x_i-x_j$ and $y_{ij}=y_i-y_j$.
 
-Likewise
-\begin{eqnarray}
-{\bm J}_y
-&=& \iint_\triangle  \partial_y \vec{\bN}^T \vec{\bN} dV \nn\\
-&=&  \iint_\triangle 
-\left(
-\begin{array}{c}
-\frac{1}{2S}(x_3-x_2) \\
-\frac{1}{2S}(x_1-x_3) \\
-\frac{1}{2S}(x_2-x_1)
-\end{array}
-\right)
-\left(
-\begin{array}{ccc}
-\bN_1(x,y) & \bN_2(x,y) & \bN_3(x,y) 
-\end{array}
-\right) dx dy \nn\\
-&=&
-\frac{1}{6}
-\left(
-\begin{array}{ccc}
-x_{32} & x_{32} & x_{32} \\ 
-x_{13} & x_{13} & x_{13} \\ 
-x_{21} & x_{21} & x_{21}  
-\end{array}
-\right) 
-\end{eqnarray}
+%We start with
+%\begin{eqnarray}
+%{\bm J}_x
+%&=& \iint_\triangle  \partial_x \vec{\bN}^T \vec{\bN} dV \nn\\
+%&=&  \iint_\triangle 
+%\left(
+%\begin{array}{c}
+%\frac{1}{2S}(y_2-y_3) \\
+%\frac{1}{2S}(y_3-y_1) \\
+%\frac{1}{2S}(y_1-y_2)
+%\end{array}
+%\right)
+%\left(
+%\begin{array}{ccc}
+%N_1(x,y) & N_2(x,y) & N_3(x,y) 
+%\end{array}
+%\right) dx dy \nn\\
+%&=& \frac{1}{2S} 
+%\left(
+%\begin{array}{ccc}
+%y_{23} \iint_\triangle \bN_1 dx dy & y_{23} \iint_\triangle \bN_2 dx dy & y_{23} \iint_\triangle \bN_3 dx dy \\
+%y_{31} \iint_\triangle \bN_1 dx dy & y_{31} \iint_\triangle \bN_2 dx dy & y_{31} \iint_\triangle \bN_3 dx dy \\
+%y_{12} \iint_\triangle \bN_1 dx dy & y_{12} \iint_\triangle \bN_2 dx dy & y_{12} \iint_\triangle \bN_3 dx dy 
+%\end{array}
+%\right) 
+%\end{eqnarray}
+%We then need to compute
+%\begin{eqnarray}
+%\iint_\triangle \bN_1(x,y) dx dy 
+%&=& 2S \int_0^{1} \left(\int_0^{1-r} \bN_1(x(r,s),y(r,s))  ds \right) dr \nonumber\\ 
+%&=& 2S \int_0^{1} \left(\int_0^{1-r} (1-r-s)  ds \right) dr \nonumber\\ 
+%&=& 2S \frac{1}{6} \label{eq:elmats:1}\\ 
+%\iint_\triangle \bN_2(x,y) dx dy 
+%&=& 2S \int_0^{1} \left(\int_0^{1-r} \bN_2(x(r,s),y(r,s))  ds \right) dr \nonumber\\ 
+%&=& 2S \int_0^{1} \left(\int_0^{1-r} r  ds \right) dr \nonumber\\ 
+%&=& 2S \frac{1}{6} \label{eq:elmats:2}\\ 
+%\iint_\triangle \bN_3(x,y) dx dy 
+%&=& 2S \int_0^{1} \left(\int_0^{1-r} \bN_3(x(r,s),y(r,s))  ds \right) dr \nonumber\\ 
+%&=& 2S \int_0^{1} \left(\int_0^{1-r} s  ds \right) dr \nonumber\\ 
+%&=& 2S \frac{1}{6} \label{eq:elmats:3} 
+%\end{eqnarray}
+%\todo[inline]{verify!! FOR REAL 2025}
+%Finally:
+%\[
+%{\bm J}_x
+%=
+%\frac{1}{6}
+%%\left(
+%\begin{array}{ccc}
+%y_{23} & y_{23} & y_{23} \\ 
+%y_{31} & y_{31} & y_{31} \\ 
+%y_{12} & y_{12} & y_{12}  
+%\end{array}
+%\right) 
+%\]
+%Likewise
+%\begin{eqnarray}
+%{\bm J}_y
+%&=& \iint_\triangle  \partial_y \vec{\bN}^T \vec{\bN} dV \nn\\
+%&=&  \iint_\triangle 
+%\left(
+%\begin{array}{c}
+%\frac{1}{2S}(x_3-x_2) \\
+%\frac{1}{2S}(x_1-x_3) \\
+%\frac{1}{2S}(x_2-x_1)
+%\end{array}
+%\right)
+%\left(
+%\begin{array}{ccc}
+%\bN_1(x,y) & \bN_2(x,y) & \bN_3(x,y) 
+%\end{array}
+%\right) dx dy \nn\\
+%&=&
+%\frac{1}{6}
+%\left(
+%\begin{array}{ccc}
+%x_{32} & x_{32} & x_{32} \\ 
+%x_{13} & x_{13} & x_{13} \\ 
+%x_{21} & x_{21} & x_{21}  
+%\end{array}
+%\right) 
+%\end{eqnarray}
 
-We now turn to the other two matrices, the advection $\K_a$ and diffusion $\K_d$ matrices.
+We now turn to the advection $\K_a$ and diffusion $\K_d$ matrices.
 The gradient matrix ${\bm B}$ is given by 
 \[
 {\bm B} = 
@@ -2216,7 +2227,9 @@ x_{32} & x_{13} & x_{21}
 \right)
 \; dV
 \]
-If $k$ is constant within the element, then 
+If the heat conductivity $k$ is constant within the element, then 
+the integrand in the expression above is constant with respect to the 
+integration and since $\iint_\triangle dV = S$ we then obtain:
 \[
 {\bm K}_d 
 = \frac{k}{4S}
@@ -2235,6 +2248,22 @@ x_{32} & x_{13} & x_{21}
 \end{array}
 \right)
 \]
+or
+\[
+\boxed{
+{\bm K}_d 
+= \frac{k}{4S}
+\left(
+\begin{array}{ccc}
+y_{23}y_{23} + x_{32}x_{32} & y_{23}y_{31} + x_{32}x_{13} & y_{23}y_{12} + x_{32}x_{21}  \\ 
+y_{31}y_{23} + x_{13}x_{32} & y_{31}y_{31} + x_{13}x_{13} & y_{31}y_{12} + x_{13}x_{21}  \\ 
+y_{12}y_{23} + x_{21}x_{32} & y_{12}y_{31} + x_{21}x_{13} & y_{12}y_{12} + x_{21}x_{21} 
+\end{array}
+\right)
+}
+\]
+
+
 Turning now to the advection matrix
 \begin{eqnarray}
 {\bm K}_a 

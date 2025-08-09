@@ -922,8 +922,9 @@ The choice of $\lambda$ can be difficult as too low or too high a value yields e
 works well. 
 Note that at convergence we have $||\vec{\cal P}^{k+1}-\vec{\cal P}^k||<\epsilon$ and then Eq.(\ref{ALStokes}) converges to Eq.(\ref{StokesSyst2}) and the velocity and pressure fields are solution of the unmodified system Eq.(\ref{StokesSyst2}).
 
-The introduction of this term serves one purpose: allowing us to solve the system in a segregated manner (i.e. computing successive iterates of the velocity and pressure fields until convergence is reached).
-The second line of Eq.~(\ref{ALStokes}) is 
+The introduction of this term serves one purpose: allowing us to solve the system 
+in a segregated manner (i.e. computing successive iterates of the velocity and pressure 
+fields until convergence is reached). The second line of Eq.~(\ref{ALStokes}) is 
 \[
 \G^T \cdot \vec{\cal V}^{k+1} - \lambda^{-1} \mathbb{M}_p \cdot \vec{\cal P}^{k+1} = \vec{h} - \lambda^{-1} \mathbb{M}_p \cdot \vec{\cal P}^k
 \]
@@ -1042,4 +1043,32 @@ is used on the Schur complement equation).
 the FGMRES approach \cite{deit13}
 
 \Literature \cite{pasa75,mamo08,fumt11,knke04,kool00,kopo93,rusg17} 
+
+
+%--------------------------------------------------------------
+\subsection{Segregated methods}
+
+See GR and MSc thesis of Carmen Spronk for context. FINISH!
+
+\begin{itemize}
+\item \fullcite{cobl77}
+\item \fullcite{bezi86}
+\item \fullcite{risc86}
+\item \fullcite{lefr87}
+\item \fullcite{raju91}
+\item \fullcite{shaw91}
+\item \fullcite{haeh93}
+\item \fullcite{leru95}
+\item \fullcite{duto98}
+\item \fullcite{duto98b}
+\item \fullcite{sucy00}
+\item \fullcite{duto00}
+\item \fullcite{wade03}
+\item \fullcite{wade04}
+\item \fullcite{utne08}
+\end{itemize}
+
+
+
+
 
