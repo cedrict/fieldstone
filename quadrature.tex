@@ -625,11 +625,14 @@ We will use this result in the following section.
 %------------------------------------------
 \subsection{The Gauss-Lobatto approach \label{sec:loba}}
 
-All what we have seen above falls under the Gauss-Legendre quadrature method. There is however another 
-somewhat common quadrature method: the Gauss-Lobatto  quadrature. \index{general}{Gauss-Lobatto}.
-It is similar to Gaussian quadrature with the following  important differences:
-1) There are integration points in the interval but they also always include the end points of the integration interval;
-2) It is accurate for polynomials up to degree $2n-3$, where $n$ is the number of integration points.
+All what we have seen above falls under the Gauss-Legendre quadrature method. 
+There is however another somewhat common quadrature method: the Gauss-Lobatto 
+quadrature. \index{general}{Gauss-Lobatto}.
+It is similar to Gaussian quadrature with the following important differences:
+1) There are integration points in the interval but they also always include 
+the end points of the integration interval;
+2) It is accurate for polynomials up to degree $2n-3$, where $n$ is 
+the number of integration points.
 
 In 1D, it reads:
 \[
@@ -642,22 +645,24 @@ The locations and weights of the integration points are as follows:
 \hline
 n & $x_{iq}$ & $w_{iq}$ & $x_{iq}$ (approx) & $w_{iq}$ (approx) \\
 \hline\hline
-3 & 0 & 4/3 & & \\
-  & $\pm 1$ & 1/3 & &  \\
+3 & 0 & 4/3 & 0& 1.333333\\
+  & $\pm 1$ & 1/3 & $\pm$ 1 & 0.333333 \\
 \hline
-4 & $\pm\sqrt{\frac{1}{5}}$ & 5/6 & & \\
-  & $\pm 1$ & 1/6 & & \\
+4 & $\pm\sqrt{\frac{1}{5}}$ & 5/6 & $\pm$ 0.447214 & 0.833333 \\
+  & $\pm 1$ & 1/6 & $\pm$ 1 & 0.166667\\
 \hline
-5 & 0 & 32/45 & & \\
-  & $\pm\sqrt{\frac{3}{7}}$ & 49/90 & & \\
-  & $\pm 1$ & 1/10 & & \\
+5 & 0 & 32/45 & 0 &  0.711111\\
+  & $\pm\sqrt{\frac{3}{7}}$ & 49/90 & $\pm$654654 & 0.544444\\
+  & $\pm 1$ & 1/10 & $\pm 1$& 0.100000\\
 \hline
-6 & $\pm\sqrt{\frac{1}{3} -\frac{2\sqrt{7}}{21}}$ & $\frac{14+\sqrt{7}}{30}$ & & \\
-  & $\pm\sqrt{\frac{1}{3} +\frac{2\sqrt{7}}{21}}$ & $\frac{14-\sqrt{7}}{30}$ & & \\
-  & $\pm 1$ & 1/15 \\
+6 & $\pm\sqrt{\frac{1}{3} -\frac{2\sqrt{7}}{21}}$ & $\frac{14+\sqrt{7}}{30}$ & $\pm 0.285232$ & 0.554858 \\
+  & $\pm\sqrt{\frac{1}{3} +\frac{2\sqrt{7}}{21}}$ & $\frac{14-\sqrt{7}}{30}$ & $\pm 0.765055$ & 0.378475\\
+  & $\pm 1$ & 1/15  & $\pm 1$  &  0.066667\\
 \hline
 \end{tabular}
 \end{center}
+
+Resources: \url{https://mathworld.wolfram.com/LobattoQuadrature.html}
 
  
 %-------------------------------------------------------------------------
