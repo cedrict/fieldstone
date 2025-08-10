@@ -1,6 +1,6 @@
 import numpy as np
 import sys as sys
-import time as time
+import time as clock
 import scipy.sparse as sps
 from scipy.sparse import csr_matrix,lil_matrix
 
@@ -74,7 +74,7 @@ new_assembly=False
 #################################################################
 # grid point setup
 #################################################################
-start = time.time()
+start=clock.time()
 
 x=np.empty(NV,dtype=np.float64)  # x coordinates
 y=np.empty(NV,dtype=np.float64)  # y coordinates
@@ -86,12 +86,12 @@ for j in range(0,nny):
         y[counter]=j*Ly/float(nely)
         counter += 1
 
-print("setup: grid points: %.3f s" % (time.time() - start))
+print("setup: grid points: %.3f s" % (clock.time()-start))
 
 #################################################################
 # build connectivity array
 #################################################################
-start = time.time()
+start=clock.time()
 
 icon=np.zeros((m,nel),dtype=np.int32)
 
@@ -104,13 +104,13 @@ for j in range(0, nely):
         icon[3,counter]= i + (j + 1) * (nelx + 1)
         counter += 1
 
-print("setup: connectivity: %.3f s" % (time.time() - start))
+print("setup: connectivity: %.3f s" % (clock.time()-start))
 
 #################################################################
 # define boundary conditions
 # for this benchmark: no slip. 
 #################################################################
-start = time.time()
+start=clock.time()
 
 bc_fix = np.zeros(Nfem, dtype=bool)  # boundary condition, yes/no
 bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
@@ -129,13 +129,13 @@ for i in range(0,NV):
        bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
        bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
-print("setup: boundary conditions: %.3f s" % (time.time() - start))
+print("setup: boundary conditions: %.3f s" % (clock.time()-start))
 
 #################################################################
 # build FE matrix
 # r,s are the reduced coordinates in the [-1:1]x[-1:1] ref elt
 #################################################################
-start = time.time()
+start=clock.time()
 
 b_mat = np.zeros((3,ndof*m),dtype=np.float64)   # gradient matrix B 
 rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
@@ -274,7 +274,7 @@ for iel in range(0,nel):
     #end for
 
     # assemble matrix a_mat and right hand side rhs
-    start2=time.time()
+    start2=clock.time()
     if new_assembly:
         for i_local,idof in enumerate(dofs):
             for j_local,jdof in enumerate(dofs):
@@ -300,47 +300,47 @@ for iel in range(0,nel):
            #end for
        #end for
     #end if
-    time_ass+=time.time()-start2
+    time_ass+=clock.time()-start2
 #end for iel
 
 print('     -> time assembly=',time_ass,Nfem)
 
-start3=time.time()
+start3=clock.time()
 if new_assembly:
    A=sps.csr_matrix((a_mat,(row,col)),shape=(Nfem,Nfem))
 else:
    A=sps.csr_matrix(a_mat)
 
-print("Convert to csr format: %.5f s | Nfem= %d " % (time.time() - start3, Nfem))
+print("Convert to csr format: %.5f s | Nfem= %d " % (clock.time()-start3,Nfem))
 
-print("Build FE matrix: %.5f s | Nfem= %d" % (time.time() - start,Nfem))
+print("Build FE matrix: %.5f s | Nfem= %d" % (clock.time()-start,Nfem))
 
 ###############################################################################
 # solve system
 ###############################################################################
-start = time.time()
+start=clock.time()
 
 sol=sps.linalg.spsolve(A,rhs)
 
-print("Solve linear system: %.5f s | Nfem= %d " % (time.time() - start, Nfem))
+print("Solve linear system: %.5f s | Nfem= %d " % (clock.time()-start,Nfem))
 
 ###############################################################################
 # put solution into separate x,y velocity arrays
 ###############################################################################
-start = time.time()
+start=clock.time()
 
 u,v=np.reshape(sol,(NV,2)).T
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
-print("split vel into u,v: %.6f s | Nfem %d " % (time.time()-start,Nfem))
+print("split vel into u,v: %.6f s | Nfem %d " % (clock.time()-start,Nfem))
 
 #####################################################################
 # we compute the pressure and strain rate components in the middle 
 # of the elements.
 #####################################################################
-start = time.time()
+start=clock.time()
 
 xc = np.zeros(nel,dtype=np.float64)  
 yc = np.zeros(nel,dtype=np.float64)  
@@ -387,12 +387,12 @@ print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 
-print("compute press & sr: %.5f s | Nfem: %d" % (time.time() - start,Nfem))
+print("compute press & sr: %.5f s | Nfem: %d" % (clock.time()-start,Nfem))
 
 #################################################################
 # compute error in L2 norm
 #################################################################
-start = time.time()
+start=clock.time()
 
 errv=0.
 errp=0.
@@ -430,7 +430,7 @@ errp=np.sqrt(errp)
 
 print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
 
-print("compute errors: %.3f s" % (time.time() - start))
+print("compute errors: %.3f s" % (clock.time()-start))
 
 #np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
 #np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
