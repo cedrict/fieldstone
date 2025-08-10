@@ -1,5 +1,5 @@
 import numpy as np
-import time 
+import time as clock 
 import random
 import scipy.sparse as sps
 from scipy.sparse import csr_matrix, lil_matrix
@@ -9,22 +9,13 @@ from scipy.sparse import csr_matrix, lil_matrix
 #------------------------------------------------------------------------------
 
 def NNT(rq,sq):
-    N_0= (1.-rq-sq)
-    N_1= rq
-    N_2= sq
-    return np.array([N_0,N_1,N_2],dtype=np.float64)
+    return np.array([1-rq-sq,rq,sq],dtype=np.float64)
 
 def dNNTdr(rq,sq):
-    dNVdr_0= -1. 
-    dNVdr_1= +1.
-    dNVdr_2=  0.
-    return np.array([dNVdr_0,dNVdr_1,dNVdr_2],dtype=np.float64)
+    return np.array([-1,+1,0],dtype=np.float64)
 
 def dNNTds(rq,sq):
-    dNVds_0= -1. 
-    dNVds_1=  0.
-    dNVds_2= +1.
-    return np.array([dNVds_0,dNVds_1,dNVds_2],dtype=np.float64)
+    return np.array([-1,0,+1],dtype=np.float64)
 
 #------------------------------------------------------------------------------
 
@@ -53,7 +44,7 @@ dt=2*np.pi/200
 
 eps=1e-8
 
-Nfem=NT      # Total number of degrees of freedom
+Nfem=NT # Total number of degrees of freedom
 
 nqel=3
 qcoords_r=[1./6.,2./3.,1./6.] # coordinates & weights 
@@ -77,6 +68,8 @@ test=False
 #################################################################
 
 print ('NT       =',NT)
+print ('nelx     =',nelx)
+print ('nely     =',nely)
 print ('nel      =',nel)
 print ('Nfem     =',Nfem)
 print("-----------------------------")
@@ -84,7 +77,7 @@ print("-----------------------------")
 #################################################################
 # grid point setup
 #################################################################
-start = time.time()
+start=clock.time()
 
 x=np.zeros(NT,dtype=np.float64) # x coordinates
 y=np.zeros(NT,dtype=np.float64) # y coordinates
@@ -108,12 +101,12 @@ for j in range(0, nny):
 
 #np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
 
-print("grid points: %.3f s" % (time.time() - start))
+print("grid points: %.3f s" % (clock.time() - start))
 
 #################################################################
 # connectivity
 #################################################################
-start = time.time()
+start=clock.time()
 
 icon=np.zeros((mT,nel),dtype=np.int32)
 
@@ -137,12 +130,12 @@ for j in range(0, nely):
     #end for
 #end for
 
-print("connectivity: %.3f s" % (time.time() - start))
+print("connectivity: %.3f s" % (clock.time() - start))
 
 #################################################################
 # velocity field on nodes
 #################################################################
-start = time.time()
+start=clock.time()
 
 u=np.zeros(NT,dtype=np.float64)
 v=np.zeros(NT,dtype=np.float64)
@@ -150,12 +143,12 @@ v=np.zeros(NT,dtype=np.float64)
 u[:]=-y[:]+Ly/2
 v[:]= x[:]-Lx/2
 
-print("define nodal velocity: %.3f s" % (time.time() - start))
+print("define nodal velocity: %.3f s" % (clock.time() - start))
 
 #################################################################
 # define boundary conditions
 #################################################################
-start = time.time()
+start=clock.time()
 
 bc_fix = np.zeros(NT, dtype=bool)  # boundary condition, yes/no
 bc_val = np.zeros(NT, dtype=np.float64)  # boundary condition, value
@@ -170,12 +163,12 @@ for i in range(0,NT):
     if y[i]>(Ly-eps) and v[i]<0:
        bc_fix[i]   = True ; bc_val[i] = 0.
 
-print("boundary conditions: %.3f s" % (time.time() - start))
+print("boundary conditions: %.3f s" % (clock.time() - start))
 
 #################################################################
 # initial temperature 
 #################################################################
-start = time.time()
+start=clock.time()
 
 Told = np.zeros(NT,dtype=np.float64)
 
@@ -183,12 +176,12 @@ for i in range(0,NT):
     if (x[i]-xc)**2+(y[i]-yc)**2 <= sigma**2:
        Told[i]= (1/4)*(1+np.cos(np.pi*((x[i]-xc)/sigma)))*(1+np.cos(np.pi*((y[i]-yc)/sigma)))
 
-print("initial temperature: %.3f s" % (time.time() - start))
+print("initial temperature: %.3f s" % (clock.time() - start))
 
 #################################################################
 # compute area of elements
 #################################################################
-start = time.time()
+start=clock.time()
 
 area=np.zeros(nel,dtype=np.float64) 
 NNNT=np.zeros(mT,dtype=np.float64)    # shape functions V
@@ -218,7 +211,7 @@ for iel in range(0,nel):
 print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area (meas) %.6f " %(area.sum()))
 
-print("compute elements areas: %.3f s" % (time.time() - start))
+print("compute elements areas: %.3f s" % (clock.time() - start))
 
 ###############################################################################
 ###############################################################################
