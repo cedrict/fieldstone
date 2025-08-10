@@ -1,6 +1,6 @@
 import numpy as np
 import sys as sys
-import time as timing
+import time as clock
 import scipy
 import scipy.sparse as sps
 from scipy.sparse import csr_matrix,lil_matrix
@@ -401,7 +401,7 @@ sVnodes=[-1,-1,+1,+1]
 ###############################################################################
 # computing nodes coordinates and their connectivity
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 if topo==0:  xV,yV,iconV=macro_R.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==1:  xV,yV,iconV=macro_S.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
@@ -415,12 +415,12 @@ if topo==8:  xV,yV,iconV=macro_Rp.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==9:  xV,yV,iconV=macro_Rrp.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 if topo==10: xV,yV,iconV=macro_FR.mesher(Lx,Ly,nelx,nely,nel,NV,mV)
 
-print("build mesh: %.3f s" % (timing.time() - start))
+print("build mesh: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # compute coordinates of center of elements
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 xc = np.zeros(nel,dtype=np.float64)  
 yc = np.zeros(nel,dtype=np.float64)  
@@ -429,7 +429,7 @@ for iel in range(0,nel):
     xc[iel]=0.25*np.sum(xV[iconV[:,iel]])
     yc[iel]=0.25*np.sum(yV[iconV[:,iel]])
 
-print("compute elt center coords: %.3f s" % (timing.time() - start))
+print("compute elt center coords: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # compute area of elements
@@ -439,7 +439,7 @@ print("compute elt center coords: %.3f s" % (timing.time() - start))
 # whole domain then there is a major problem which needs to 
 # be addressed before FE are set into motion.
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 area=np.zeros(nel,dtype=np.float64) 
 jcb=np.zeros((2,2),dtype=np.float64)
@@ -483,12 +483,12 @@ print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area meas %.6f " %(area.sum()))
 print("     -> total area anal %.6f " %(Lx*Ly))
 
-print("compute elements areas: %.3f s" % (timing.time() - start))
+print("compute elements areas: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # define boundary conditions
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
@@ -611,7 +611,7 @@ else: # no slip on all sides
           bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = 0.
           bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
 
-print("setup: boundary conditions: %.3f s" % (timing.time() - start))
+print("setup: boundary conditions: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # compute NV2 and allocate G2 for nullspace
@@ -632,7 +632,7 @@ if nullspace:
 ###############################################################################
 # compute flux 
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 flux_bottom=0
 flux_top=0
@@ -690,12 +690,12 @@ PHI=flux_bottom+flux_top+flux_left+flux_right
 print('     -> flux b,t,l,r=',flux_bottom,flux_top,flux_left,flux_right)
 print('     -> total_flux=',PHI)
 
-print("compute bc val flux: %.3f s" % (timing.time() - start))
+print("compute bc val flux: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # correct boundary conditions
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 if correct_bcval:
 
@@ -715,12 +715,12 @@ if correct_bcval:
           nx=+1
           bc_val[i*ndofV  ] = velocity_x(xV[i],yV[i])-PHI/perim*nx
 
-   print("correct bc val: %.3f s" % (timing.time() - start))
+   print("correct bc val: %.3f s" % (clock.time() - start))
 
 ###############################################################################
 # compute flux again 
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 if correct_bcval:
 
@@ -780,12 +780,12 @@ if correct_bcval:
    print('     -> flux b,t,l,r=',flux_bottom,flux_top,flux_left,flux_right)
    print('     -> total_flux=',PHI)
 
-   print("compute bc val flux: %.3f s" % (timing.time() - start))
+   print("compute bc val flux: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # compute array for assembly
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 local_to_globalV=np.zeros((ndofV_el,nel),dtype=np.int32)
 
@@ -796,13 +796,13 @@ for iel in range(0,nel):
             m1 =ndofV*iconV[k1,iel]+i1
             local_to_globalV[ikk,iel]=m1
   
-print("compute local_to_global: %.3f s" % (timing.time() - start))
+print("compute local_to_global: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # fill I,J arrays
 # bignb is nel*(nb of floats needed to store Kel and 2*Gel)
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 bignb=nel*( (mV*ndofV)**2 + 2*(mV*ndofV*mP) )
 
@@ -829,15 +829,14 @@ for iel in range(0,nel):
         J[counter]=m1
         counter+=1
 
-print("fill I,J arrays: %.3f s" % (timing.time() - start))
-
+print("fill I,J arrays: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # build FE matrix
 # [ K G ][u]=[f]
 # [GT 0 ][p] [h]
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 if p_lagrange:
    A_mat = lil_matrix((Nfem+1,Nfem+1),dtype=np.float64)# matrix A 
@@ -865,7 +864,7 @@ for iel in range(0,nel):
     h_el=np.zeros((1,1),dtype=np.float64)
 
     # integrate viscous term at 4 quadrature points
-    start = timing.time()
+    start=clock.time()
     for iq in range(0,nqel):
 
         # calculate jacobian matrix
@@ -898,10 +897,10 @@ for iel in range(0,nel):
 
     #end for iq
     G_el*=eta_ref/Lx
-    tA+=timing.time()-start
+    tA+=clock.time()-start
 
     # impose b.c. 
-    start = timing.time()
+    start=clock.time()
     for ikk in range(0,ndofV_el):
             m1=local_to_globalV[ikk,iel]
             if bc_fix[m1]:
@@ -914,10 +913,10 @@ for iel in range(0,nel):
                f_el[ikk]=K_ref*bc_val[m1]
                h_el[0,0]-=G_el[ikk,0]*bc_val[m1]
                G_el[ikk,0]=0
-    tB+=timing.time()-start
+    tB+=clock.time()-start
 
     # assemble matrix K_mat and right hand side rhs
-    start = timing.time()
+    start=clock.time()
     for ikk in range(ndofV_el):
         m1=local_to_globalV[ikk,iel]
         if (nullspace): G_mat[m1,iel]+=G_el[ikk,0]
@@ -939,7 +938,7 @@ for iel in range(0,nel):
 #        A_mat[m1,NfemV+iel]+=G_el[ikk,0]
 #        A_mat[NfemV+iel,m1]+=G_el[ikk,0]
 #    rhs[NfemV+iel]+=h_el[0,0]
-    tC+=timing.time()-start
+    tC+=clock.time()-start
 
 
 
@@ -998,7 +997,7 @@ if nullspace:
 ###############################################################################
 # apply reverse Cuthill-McKee algorithm 
 ###############################################################################
-start = timing.time()
+start=clock.time()
    
 A_csr=A_mat.tocsr()
 
@@ -1026,27 +1025,26 @@ if matrix_snapshot:
    plt.clf()
    print('     -> A_aft.png')
 
-print("apply Reverse Cuthill-Mckee reordering: %.3f s" % (timing.time() - start))
+print("apply Reverse Cuthill-Mckee reordering: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # solve system
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 #NEW
 sparse_matrix = sps.coo_matrix((V,(I,J)),shape=(Nfem,Nfem)).tocsr()
 sol=sps.linalg.spsolve(sparse_matrix,rhs)
-
    
 if apply_RCM:
    sol=sol[np.ix_(perm_inv)]
 
-print("solve time: %.3f s" % (timing.time() - start))
+print("solve time: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # put solution into separate x,y velocity arrays
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 u,v=np.reshape(sol[0:NfemV],(NV,2)).T
 p=sol[NfemV:Nfem]*eta_ref/Lx
@@ -1056,11 +1054,11 @@ print("     -> v (m,M) %12.4e %12.4e nel= %d" %(np.min(v),np.max(v),nel))
 
 #np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 
-print("split vel into u,v: %.3f s" % (timing.time() - start))
+print("split vel into u,v: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 avrg_p=np.sum(p[:]*area[:])/Lx/Ly
 
@@ -1072,12 +1070,12 @@ p[:]-=avrg_p
 
 print("     -> p (m,M) %.6f %.6f nel= %d" %(np.min(p),np.max(p),nel))
 
-print("normalise pressure: %.3f s" % (timing.time() - start))
+print("normalise pressure: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # compute q1 &q2 nodal pressure (corner to node averaging)
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 q1=np.zeros(NV,dtype=np.float64)  
 q2=np.zeros(NV,dtype=np.float64)  
@@ -1123,12 +1121,12 @@ print("     -> q1 (m,M) %.6f %.6f nel= %d" %(np.min(q1),np.max(q1),nel))
 print("     -> q2 (m,M) %.6f %.6f nel= %d" %(np.min(q2),np.max(q2),nel))
 print("     -> q3 (m,M) %.6f %.6f nel= %d" %(np.min(q3),np.max(q3),nel))
 
-print("compute nodal pressure q1,q2,q3: %.3f s" % (timing.time() - start))
+print("compute nodal pressure q1,q2,q3: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # compute error
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 vrms=0.
 errv=0.
@@ -1163,13 +1161,13 @@ print("     -> nel= %6d ; errv= %.11f ; errp= %.11f ; errq1= %.11f ; errq2= %.11
           %(nel,errv,errp,errq1,errq2,errq3))
 print("     -> nel= %6d ; vrms= %12.6e " %(nel,vrms))
 
-print("compute errors: %.3f s" % (timing.time() - start))
+print("compute errors: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # export profiles
 # only export pressure if a complete edge is on boundary
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 pfile=open('pressure_top.ascii',"w")
 for iel in range(0,nel):
@@ -1210,12 +1208,12 @@ if experiment==8:
        if abs(xV[i]-xc_block)/Lx<eps and abs(yV[i]-yc_block)/Ly<eps:
           print('vblock:',eta_star,u[i],v[i],drho)
 
-print("export profiles: %.3f s" % (timing.time() - start))
+print("export profiles: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # compute error fields for visualisation
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 error_u = np.zeros(NV,dtype=np.float64)
 error_v = np.zeros(NV,dtype=np.float64)
@@ -1234,12 +1232,12 @@ for i in range(0,NV):
 for i in range(0,nel): 
     error_p[i]=p[i]-pressure(xc[i],yc[i])
 
-print("create error fields: %.3f s" % (timing.time() - start))
+print("create error fields: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # plot of solution
 ###############################################################################
-start = timing.time()
+start=clock.time()
 
 if visu:
    vtufile=open('solution.vtu',"w")
@@ -1366,7 +1364,7 @@ if visu:
    vtufile.write("</VTKFile>\n")
    vtufile.close()
 
-   print("export to vtu: %.3f s" % (timing.time() - start))
+   print("export to vtu: %.3f s" % (clock.time()-start))
 
 print("-----------------------------")
 print("------------the end----------")
