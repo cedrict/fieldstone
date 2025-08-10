@@ -1,4 +1,4 @@
-import time as timing
+import time as clock 
 import numpy as np
 import sys as sys
 import scipy.sparse as sps
@@ -133,7 +133,7 @@ Nufile=open('Nu.ascii',"w")
 ######################################################################
 # grid point setup
 ######################################################################
-start = timing.time()
+start = clock.time()
 
 xV = np.zeros(NV,dtype=np.float64)  # x coordinates
 yV = np.zeros(NV,dtype=np.float64)  # y coordinates
@@ -151,12 +151,12 @@ for i in range(0,nnx):
     # end for j
 # end for i
 
-print("grid points setup: %.3f s" % (timing.time() - start))
+print("grid points setup: %.3f s" % (clock.time() - start))
 
 ######################################################################
 # connectivity
 ######################################################################
-start = timing.time()
+start = clock.time()
 
 iconV=np.zeros((mV,nel),dtype=np.int32)
 
@@ -177,12 +177,12 @@ for i in range(0,nelx):
     # end for j
 # end for i
 
-print("build connectivity: %.3f s" % (timing.time() - start))
+print("build connectivity: %.3f s" % (clock.time() - start))
 
 ######################################################################
 # define boundary conditions velocity
 ######################################################################
-start = timing.time()
+start = clock.time()
 
 bc_fixV=np.zeros(Nfem,dtype=bool)  # boundary condition, yes/no
 bc_valV=np.zeros(Nfem,dtype=np.float64)  # boundary condition, value
@@ -206,12 +206,12 @@ for i in range(0,NV):
        bc_fixV[i*ndofV+2]=True ; bc_valV[i*ndofV+2]=0 
 # end for
 
-print("boundary conditions V: %.3f s" % (timing.time() - start))
+print("boundary conditions V: %.3f s" % (clock.time() - start))
 
 ######################################################################
 # temperature grid setup
 ######################################################################
-start = timing.time()
+start = clock.time()
 
 xT=np.zeros(NT,dtype=np.float64)  # x coordinates
 yT=np.zeros(NT,dtype=np.float64)  # y coordinates
@@ -223,12 +223,12 @@ yT[:]=yV[:]
 zT[:]=zV[:]
 iconT[:,:]=iconV[:,:]
 
-print("build grid T: %.3f s" % (timing.time() - start))
+print("build grid T: %.3f s" % (clock.time() - start))
 
 ######################################################################
 # define boundary conditions temperature
 ######################################################################
-start = timing.time()
+start = clock.time()
 
 bc_fixT=np.zeros(NfemT,dtype=bool) # boundary condition, yes/no
 bc_valT=np.zeros(NfemT,dtype=np.float64)  # boundary condition, value
@@ -240,7 +240,7 @@ for i in range(0,NT):
        bc_fixT[i] = True ; bc_valT[i] = Temperature2
 # end for
 
-print("boundary conditions T: %.3f s" % (timing.time() - start))
+print("boundary conditions T: %.3f s" % (clock.time() - start))
 
 ######################################################################
 # initial temperature field 
@@ -269,13 +269,13 @@ c_mat = np.array([[2,0,0,0,0,0],\
                   [0,0,0,0,1,0],\
                   [0,0,0,0,0,1]],dtype=np.float64) 
 
-u=np.zeros(NV,dtype=np.float64)            # x-component velocity
-v=np.zeros(NV,dtype=np.float64)            # y-component velocity
-w=np.zeros(NV,dtype=np.float64)            # y-component velocity
-p=np.zeros(nel,dtype=np.float64)           # pressure field
-u_old=np.zeros(NV,dtype=np.float64)      # x-component velocity
-v_old=np.zeros(NV,dtype=np.float64)      # y-component velocity
-w_old=np.zeros(NV,dtype=np.float64)      # y-component velocity
+u=np.zeros(NV,dtype=np.float64)     # x-component velocity
+v=np.zeros(NV,dtype=np.float64)     # y-component velocity
+w=np.zeros(NV,dtype=np.float64)     # y-component velocity
+p=np.zeros(nel,dtype=np.float64)    # pressure field
+u_old=np.zeros(NV,dtype=np.float64) # x-component velocity
+v_old=np.zeros(NV,dtype=np.float64) # y-component velocity
+w_old=np.zeros(NV,dtype=np.float64) # y-component velocity
                     
 #Note that instead of computing jcob and jcbi by means of the 
 # determinant I instead assign it its value under the assumption that 
@@ -294,7 +294,7 @@ for istep in range(0,nstep):
     ######################################################################
     # build FE matrix
     ######################################################################
-    start = timing.time()
+    start = clock.time()
 
     A_sparse= lil_matrix((Nfem,Nfem),dtype=np.float64)
     rhs=np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
@@ -431,12 +431,12 @@ for istep in range(0,nstep):
     #print("f_rhs (m,M) = %.6e %.6e" %(np.min(f_rhs),np.max(f_rhs)))
     #print("h_rhs (m,M) = %.6e %.6e" %(np.min(h_rhs),np.max(h_rhs)))
 
-    print("build FE matrix: %.3f s" % (timing.time() - start))
+    print("build FE matrix: %.3f s" % (clock.time() - start))
 
     ######################################################################
     # assemble K, G, GT, f, h into A and rhs
     ######################################################################
-    #start = timing.time()
+    #start = clock.time()
     #if pnormalise:
     #   a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
     #   rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
@@ -452,7 +452,7 @@ for istep in range(0,nstep):
     #   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
     #rhs[0:NfemV]=f_rhs
     #rhs[NfemV:Nfem]=h_rhs
-    #print("assemble blocks: %.3f s" % (timing.time() - start))
+    #print("assemble blocks: %.3f s" % (clock.time() - start))
     ######################################################################
     #a_mat[NfemV-1,:]=0
     #a_mat[:,NfemV-1]=0
@@ -461,16 +461,16 @@ for istep in range(0,nstep):
     ######################################################################
     # solve system
     ######################################################################
-    start = timing.time()
+    start = clock.time()
 
     sol=sps.linalg.spsolve(A_sparse.tocsr(),rhs)
 
-    print("solve time: %.3f s" % (timing.time() - start))
+    print("solve time: %.3f s" % (clock.time() - start))
 
     ######################################################################
     # put solution into separate x,y velocity arrays
     ######################################################################
-    start = timing.time()
+    start = clock.time()
 
     u,v,w=np.reshape(sol[0:NfemV],(NV,ndim)).T
     p=sol[NfemV:Nfem]*scaling_coeff
@@ -489,7 +489,7 @@ for istep in range(0,nstep):
 
     #np.savetxt('velocity.ascii',np.array([xV,yV,zV,u,v,w]).T,header='# x,y,z,u,v,w')
 
-    print("transfer solution: %.3f s" % (timing.time() - start))
+    print("transfer solution: %.3f s" % (clock.time() - start))
 
     #####################################################################
     # relaxation step
@@ -502,7 +502,7 @@ for istep in range(0,nstep):
     ######################################################################
     # compute time step value 
     ######################################################################
-    start = timing.time()
+    start = clock.time()
 
     #CFL_nb=0.005 # not needed since relaxation is used
     #dt1=CFL_nb*min(Lx/nelx,Ly/nely,Lz/nelz)/np.max(np.sqrt(u**2+v**2+w**2))
@@ -517,12 +517,12 @@ for istep in range(0,nstep):
 
     model_time[istep]=istep
 
-    print("compute timestep: %.3f s" % (timing.time() - start))
+    print("compute timestep: %.3f s" % (clock.time() - start))
 
     ######################################################################
     # compute vrms. 
     ######################################################################
-    start = timing.time()
+    start = clock.time()
 
     for iel in range (0,nel):
         for iq in [-1,1]:
@@ -556,12 +556,12 @@ for istep in range(0,nstep):
 
     print("     -> vrms= %.6e ; vrmsdiff= %.6e " % (vrms[istep],vrms[istep]-vrms[0]))
 
-    print("compute vrms: %.3f s" % (timing.time() - start))
+    print("compute vrms: %.3f s" % (clock.time() - start))
 
     ######################################################################
     # build FE matrix for Temperature 
     ######################################################################
-    start = timing.time()
+    start = clock.time()
 
     A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
     rhs = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
@@ -646,8 +646,8 @@ for istep in range(0,nstep):
                     # compute advection matrix
                     Ka=NNNT_mat.dot(vel.dot(B_mat))*rho0*hcapa*weightq*jcob
 
-                    #a_el=MM+alphaT*(Ka+Kd)*dt
-                    #b_el=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Tvect)
+                    #a_el+=MM+alphaT*(Ka+Kd)*dt
+                    #b_el+=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Tvect)
 
                     a_el+=(Kd+Ka)
 
@@ -687,12 +687,12 @@ for istep in range(0,nstep):
     print("     -> A_mat (m,M) = %.6e %.6e" %(np.min(A_mat),np.max(A_mat)))
     print("     -> rhs   (m,M) = %.6e %.6e" %(np.min(rhs),np.max(rhs)))
 
-    print("build FEM matrix T: %.3f s" % (timing.time() - start))
+    print("build FEM matrix T: %.3f s" % (clock.time() - start))
 
     #################################################################
     # solve system
     #################################################################
-    start = timing.time()
+    start = clock.time()
 
     T = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
 
@@ -701,7 +701,7 @@ for istep in range(0,nstep):
     T_stats[istep,0]=np.min(T)-TKelvin 
     T_stats[istep,1]=np.max(T)-TKelvin
 
-    print("solve T: %.3f s" % (timing.time() - start))
+    print("solve T: %.3f s" % (clock.time() - start))
 
     #################################################################
     # relax
@@ -717,7 +717,7 @@ for istep in range(0,nstep):
     # since the velocity and temperature shape functions are the same
     # and so are the connectivity arrays I save much time doing this.
     #####################################################################
-    start = timing.time()
+    start = clock.time()
 
     exxn=np.zeros(NV,dtype=np.float64)
     eyyn=np.zeros(NV,dtype=np.float64)
@@ -809,12 +809,12 @@ for istep in range(0,nstep):
     print("     -> dTdy (m,M) %.6e %.6e " %(np.min(dTdyn),np.max(dTdyn)))
     print("     -> dTdz (m,M) %.6e %.6e " %(np.min(dTdzn),np.max(dTdzn)))
 
-    print("compute nod strain rate: %.3f s" % (timing.time() - start))
+    print("compute nod strain rate: %.3f s" % (clock.time() - start))
 
     ######################################################################
     # compute nodal pressure
     ######################################################################
-    start = timing.time()
+    start = clock.time()
 
     q=np.zeros(NV,dtype=np.float64)  
     count=np.zeros(NV,dtype=np.float64)  
@@ -832,7 +832,7 @@ for istep in range(0,nstep):
 
     print("     -> q (m,M) %.4e %.4e " %(np.min(q),np.max(q)))
 
-    print("compute nod pressure: %.3f s" % (timing.time() - start))
+    print("compute nod pressure: %.3f s" % (clock.time() - start))
 
     #####################################################################
     # velocity and temperature at mid side edges
@@ -871,7 +871,7 @@ for istep in range(0,nstep):
     #####################################################################
     # average temperature at z=3Lz/4
     #####################################################################
-    start = timing.time()
+    start = clock.time()
 
     ielztarget=3*nelz/4-1
  
@@ -910,7 +910,7 @@ for istep in range(0,nstep):
 
     Tm[istep]=T_m
 
-    print("compute avrt T at z=3Lz/4: %.3f s" % (timing.time() - start))
+    print("compute avrt T at z=3Lz/4: %.3f s" % (clock.time() - start))
 
     #####################################################################
     # Nusselt number 
@@ -954,7 +954,7 @@ for istep in range(0,nstep):
     #####################################################################
     # plot of solution
     #####################################################################
-    start = timing.time()
+    start = clock.time()
 
     if visu==1 and istep%20==0:
 
@@ -1076,10 +1076,10 @@ for istep in range(0,nstep):
        vtufile.write("</UnstructuredGrid>\n")
        vtufile.write("</VTKFile>\n")
        vtufile.close()
-       print("export to vtu: %.3f s" % (timing.time() - start))
+       print("export to vtu: %.3f s" % (clock.time() - start))
 
     #####################################################################
-    start = timing.time()
+    start = clock.time()
 
     np.savetxt('vrms.ascii',np.array([model_time[0:istep]/Myear,\
                                       vrms[0:istep]]).T,header='# t/year,vrms')
@@ -1124,7 +1124,7 @@ for istep in range(0,nstep):
                                           hf_stats[0:istep,2],\
                                           hf_stats[0:istep,3]]).T,header='# t/year,hf1,hf2,hf3,hf4')
 
-    print("export stats to ascii: %.3f s" % (timing.time() - start))
+    print("export stats to ascii: %.3f s" % (clock.time() - start))
 
     #####################################################################
 
