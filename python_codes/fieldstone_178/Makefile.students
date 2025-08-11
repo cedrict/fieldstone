@@ -1,0 +1,21 @@
+FLAGS =  -c -ffree-line-length-none  -O3 -mtune=native
+F90      = gfortran
+F77      = gfortran
+MAKE     = make
+
+MUMPS    = /aw/mumps/lib
+MUMPS2   = /aw/mumps/libseq
+MUMPS3   = /aw/mumps/include
+PORD     = /aw/mumps/PORD
+
+LIBS = \
+-L$(MUMPS) -ldmumps -lmumps_common\
+-L$(MUMPS2) -lmpiseq \
+-L$(PORD) -lpord \
+-llapack -lblas -fopenmp 
+
+INCLUDE = \
+-I$(MUMPS2) -I$(MUMPS3)
+
+OPTIONS = 
+

@@ -1,0 +1,30 @@
+FLAGS =  -c -ffree-line-length-none  -O3 -mtune=native
+
+#FLAGS =  -mtune=native  -c -ffree-line-length-none  -O3 -fbounds-check -fcheck=all -Wall 
+
+F90      = gfortran
+F77      = gfortran
+MAKE     = make
+
+MUMPS    = /home/cedrict/work/LIBRARIES/MUMPS_5.0.2/lib
+MUMPS2   = /home/cedrict/work/LIBRARIES/MUMPS_5.0.2/libseq
+MUMPS3   = /home/cedrict/work/LIBRARIES/MUMPS_5.0.2/include
+PORD     = /home/cedrict/work/LIBRARIES/MUMPS_5.0.2/PORD
+METIS    = /home/cedrict/work/LIBRARIES/metis-5.1.0/build/Linux-x86_64/libmetis 
+NN       = /home/cedrict/work/LIBRARIES/NN
+LAPACK   = /home/cedrict/work/LIBRARIES/lapack-release
+WB       = /home/cedrict/Desktop/ELEFANT/WorldBuilder/build
+
+LIBS = \
+-L$(MUMPS) -ldmumps -lmumps_common\
+-L$(MUMPS2) -lmpiseq \
+-L$(PORD) -lpord \
+-L$(METIS) -lmetis\
+-L$(LAPACK) -llapack -lrefblas -fopenmp 
+
+
+INCLUDE = \
+-I$(MUMPS2) -I$(MUMPS3)
+
+OPTIONS = 
+

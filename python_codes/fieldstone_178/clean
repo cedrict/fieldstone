@@ -1,0 +1,9 @@
+rm OUT/*.vtu
+rm OUT/*.dat
+rm *.dat
+rm fort.*
+rm *.o
+rm simplefem
+rm opla
+
+
