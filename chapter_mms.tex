@@ -154,61 +154,66 @@ p(x,y) &=&  \nn
 \input{benchmark_shearheating}
 
 %..........................................................
-\section{2d solution with nontrivial interface jump} \label{ss:jump2D} 
+\section{Solution with nontrivial interface jump (2d)} \label{ss:jump2D} 
 \input{benchmark_jump2D}
 
 %..........................................................
-\section{3d solution with nontrivial interface jump} \label{ss:jump3D} 
+\section{Solution with nontrivial interface jump (3d)} \label{ss:jump3D} 
 \input{benchmark_jump3D}
 
 %-----------------------------------------------------------------------------
-\section{Flow in a square using Stream Functions \label{ss:square_streamfct} }
+\section{Flow in a square using Stream Functions (2d) \label{ss:square_streamfct} }
 \input{mms_square_stream_function}
 
 %-------------------------------------------------------------------------------
-\section{One-dimensional advection-diffusion equation \label{ss:advdiff} }
+\section{Advection-diffusion equation (1d)\label{ss:advdiff} }
 \input{mms_advection1D}
 
 %..............................................................................
-\section{Annulus with kinematical b.c. - shear flow}\label{ss:sfan}
+\section{Annulus with kinematical b.c. - shear flow (2d)}\label{ss:sfan}
 \input{mms_annulus_kinbc}
 
 %..............................................................................
-\section{Generic framework for 3d solution in Cartesian coordinates}\label{ss:mms3Dgen}
+\section{Generic framework for solution in Cartesian coordinates (3d)}\label{ss:mms3Dgen}
 \input{mms_generic3D}
 
 %..........................................................
-\section{2d Analytical benchmark XII}\label{ss:sofo87_2D}
+\section{Analytical benchmark XII (2d)}\label{ss:sofo87_2D}
 \input{mms_sofo87}
 
 %..........................................................
-\section{2d analytical benchmark from Burman \& Hansbo (2006)}\label{ss:mms_buha06}
+\section{2d analytical benchmark from Burman \& Hansbo (2006) (2d)}\label{ss:mms_buha06}
 \input{mms_buha06}
 
 %..........................................................
-\section{2d analytical benchmark from Cioncolini \& Boffi (2019) \label{ss:mms_cibo19}}
+\section{2d analytical benchmark from Cioncolini \& Boffi (2019) (2d)\label{ss:mms_cibo19}}
 \input{mms_cibo19}
 
 %..........................................................
-\section{Poisson equation on 3d shell}
+\section{Poisson equation on shell (3d)}
 \input{mms_phdo19} 
 
 %-----------------------------------------------------------------------------
-\section{Manufactured solution 1 in \textcite{jolm17}  \label{ss:mms_jolm17a}}
+\section{Manufactured solution 1 in \textcite{jolm17} (2d) \label{ss:mms_jolm17a}}
 
-It is presented in Example 1.1 of \cite{jolm17} and meant to be a peculiar case where the velocity solution 
-is exactly zero. The viscosity is 1, the domain is a unit square, no-slip boundary conditions 
-are prescribed everywhere. The buoyancy force is given by $\vec{b}=(0,Ra(1-y+3y^2))$ where 
-$Ra>0$ is a parameter. The flow is incompressible and the analytical pressure solution 
-is given by $p=Ra(y^3-y^2/2+y-7/12)$.
+It is presented in Example 1.1 of \cite{jolm17} and meant to be a peculiar 
+case where the velocity solution is exactly zero. The viscosity is 1, 
+the domain is a unit square, no-slip boundary conditions 
+are prescribed everywhere. The buoyancy force is given by 
+$\vec{b}=(0,Ra(1-y+3y^2))$ where 
+$Ra>0$ is a parameter. The flow is incompressible and the analytical 
+pressure solution is given by $p=Ra(y^3-y^2/2+y-7/12)$.
 
 %-----------------------------------------------------------------------------
-\section{Manufactured solution 2 in \textcite{jolm17}  \label{ss:mms_jolm17}}
+\section{Manufactured solution 2 in \textcite{jolm17} (2d) \label{ss:mms_jolm17}}
 \input{mms_jolm17}
 
 %-----------------------------------------------------------------------------
-\section{Channel flow with Herschel-Bulkley rheology \label{ss:HBflow}}
+\section{Channel flow with Herschel-Bulkley rheology (2d) \label{ss:HBflow}}
 \input{mms_channelHB} TODO!!!!
 
-
+\newpage
+%-----------------------------------------------------------------------------
+\section{ABC flow (3d)\label{ss:ABCflow}}
+\input{mms_ABCflow}
 

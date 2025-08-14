@@ -1,0 +1,129 @@
+\begin{flushright} {\tiny {\color{gray} mms\_ABCflow.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Arnold–Beltrami–Childress (ABC) flow or Gromeka–Arnold–Beltrami–Childress (GABC) flow is a three-dimensional incompressible velocity field. 
+
+\url{https://en.wikipedia.org/wiki/Arnold-Beltrami-Childress_flow}
+
+Its representation in Cartesian coordinates is the following:
+\begin{eqnarray}
+u &=& A\sin z +C \cos y \nn\\
+v &=& B\sin x +A \cos z \nn\\
+w &=& C\sin y +B \cos x \nn
+\end{eqnarray}
+Indeed we have
+\[
+\vec\nabla \cdot \vec\upnu = 
+\frac{\partial u}{\partial x} +
+\frac{\partial v}{\partial y} +
+\frac{\partial w}{\partial z} 
+\]
+
+If we now consider a unit cube as computational domain, 
+the following velocity field can then be used instead:
+\begin{eqnarray}
+u(x,y,z) &=& \sin (\pi z) + \cos (\pi y) \nn\\
+v(x,y,z) &=& \sin (\pi x) + \cos (\pi z) \nn\\
+w(x,y,z) &=& \sin (\pi y) + \cos (\pi x) \nn
+\end{eqnarray}
+and the pressure can be for example chosen to be 
+\[
+p(x,y,z)=\sin (\pi x) \cos(\pi y) \cos (\pi z)
+\]
+Assuming $\eta=1$, we have
+\[
+-\vec\nabla p + \vec\nabla \cdot 2\dot{\bm \varepsilon}(\vec\upnu) + \vec{f} = \vec{0}
+\]
+
+The velocity gradient ${\bm L}(\vec\upnu)$ is then given by
+\[
+{\bm L}(\vec\upnu) = \pi
+\left(
+\begin{array}{ccc}
+0 & \cos (\pi x) & -\sin (\pi x) \\
+-\sin (\pi y) & 0 & \cos (\pi y)  \\
+\cos (\pi z) & -\sin (\pi z) & 0 
+\end{array}
+\right)
+\]
+and the strain rate tensor by:
+\[
+\dot{\bm \varepsilon}(\vec\upnu)
+=\frac{1}{2}({\bm L}(\vec\upnu)+{\bm L}(\vec\upnu)^T)
+=
+\frac{\pi}{2}
+\left(
+\begin{array}{ccc}
+0 &  \cos (\pi x) -\sin (\pi y)  & \cos (\pi z) -\sin (\pi x)\\
+\cos (\pi x) -\sin (\pi y)  & 0 & \cos (\pi y)-\sin (\pi z)  \\
+\cos (\pi z) -\sin (\pi x)  &  \cos (\pi y)-\sin (\pi z)  & 0
+\end{array}
+\right)
+\]
+
+We assume for simplicity that $\eta=1$ so 
+\begin{eqnarray}
+\vec\nabla\cdot 2\eta \dot{\bm \varepsilon}(\vec\upnu)
+&=&
+\pi
+\vec\nabla\cdot 
+\left(
+\begin{array}{ccc}
+0 &  \cos (\pi x) -\sin (\pi y)  & \cos (\pi z) -\sin (\pi x)\\
+\cos (\pi x) -\sin (\pi y)  & 0 & \cos (\pi y)-\sin (\pi z)  \\
+\cos (\pi z) -\sin (\pi x)  &  \cos (\pi y)-\sin (\pi z)  & 0
+\end{array}
+\right) \nn\\
+&=& \pi^2
+\left(
+\begin{array}{ccc}
+-\cos (\pi y) -\sin(\pi z) \\
+-\sin (\pi x) -\cos(\pi z) \\
+-\cos (\pi x) -\sin(\pi y)
+\end{array}
+\right) 
+\end{eqnarray}
+Also,
+\[
+\vec\nabla p = \pi
+\left(
+\begin{array}{ccc}
+\cos (\pi x) \cos(\pi y) \cos (\pi z)\\
+-\sin (\pi x) \sin(\pi y) \cos (\pi z)\\
+-\sin (\pi x) \cos(\pi y) \sin (\pi z)
+\end{array}
+\right)
+\]
+In the end
+\begin{eqnarray}
+\vec{f} 
+&=& \vec\nabla p - \vec\nabla \cdot 2 \varepsilon(\vec\upnu) \nn\\
+&=& 
+\pi
+\left(
+\begin{array}{ccc}
+\cos (\pi x) \cos(\pi y) \cos (\pi z)\\
+-\sin (\pi x) \sin(\pi y) \cos (\pi z)\\
+-\sin (\pi x) \cos(\pi y) \sin (\pi z)
+\end{array}
+\right)
+-
+\pi^2
+\left(
+\begin{array}{ccc}
+-\cos (\pi y) -\sin(\pi z) \\
+-\sin (\pi x) -\cos(\pi z) \\
+-\cos (\pi x) -\sin(\pi y)
+\end{array}
+\right)  \nn\\
+&=& 
+\left(
+\begin{array}{ccc}
+\pi \cos (\pi x) \cos(\pi y) \cos (\pi z) +\pi^2 \cos (\pi y) +\pi^2\sin(\pi z)\\
+-\pi\sin (\pi x) \sin(\pi y) \cos (\pi z) +\pi^2 \sin (\pi x) +\pi^2\cos(\pi z)\\
+-\pi\sin (\pi x) \cos(\pi y) \sin (\pi z) +\pi^2 \cos (\pi x) +\pi^2\sin(\pi y)
+\end{array}
+\right) 
+\end{eqnarray}
+
+
