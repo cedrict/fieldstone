@@ -23,7 +23,7 @@ def export_elements_to_vtu(x,y,icon,filename,area):
     vtufile.write("<CellData Scalars='scalars'>\n")
     vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
     for iel in range (0,nel):
-        vtufile.write("%10e\n" % (area[iel]))
+        vtufile.write("%10e\n" % (area[iel,0]))
     vtufile.write("</DataArray>\n")
     vtufile.write("</CellData>\n")
     #####
@@ -92,22 +92,23 @@ def compute_triangles_center_coordinates(coords,nodesArray):
 ###############################################################################
 ###############################################################################
 
-ex1=True
+ex1=False
 ex2=False
 ex3=False
 ex4=False
 ex5=False
+ex6=True
 
 #------------------------------------------------------------------------------
 # first example: a square of size L. 
 
 if ex1:
 
+   print('========== EXAMPLE 1 ==========')
+
    L = 10 
    square_vertices = np.array([[0,0],[0,L],[L,L],[L,0]])
    square_edges = compute_segs(square_vertices)
-
-   print(square_edges)
 
    O1 = {'vertices' : square_vertices, 'segments' : square_edges}
    T1 = tr.triangulate(O1, 'pqa10') # tr.triangulate() computes the main dictionary 
@@ -133,6 +134,8 @@ if ex1:
 #------------------------------------------------------------------------------
 
 if ex2: 
+
+   print('========== EXAMPLE 2 ==========')
 
    ### Martian Surface
 
@@ -195,6 +198,8 @@ if ex2:
 #------------------------------------------------------------------------------
 
 if ex3: 
+   
+   print('========== EXAMPLE 3 ==========')
 
    N = 32
    theta = np.linspace(0, 2 * np.pi, N, endpoint=False)
@@ -216,6 +221,8 @@ if ex3:
 
 if ex4:
 
+   print('========== EXAMPLE 4 ==========')
+
    def circle(N, R):
        i = np.arange(N) #where N is the number of points on the circle
        theta = i * 2 * np.pi / N
@@ -226,6 +233,8 @@ if ex4:
    #make two circles
    pts0, seg0 = circle(30, 1.4)
    pts1, seg1 = circle(16, 0.6)
+
+   print(pts0)
 
    pts = np.vstack([pts0, pts1]) #making 1 vector out of the location of all nodes
    seg = np.vstack([seg0, seg1 + seg0.shape[0]]) #making 1 vector out of all segments 
@@ -244,6 +253,8 @@ if ex4:
 #------------------------------------------------------------------------------
 
 if ex5:
+
+   print('========== EXAMPLE 5 ==========')
 
    def halfcircle(N, R):   #a function that returns half a sphere with radius R and N# of nodes on the border
        i = np.arange(N)
@@ -266,5 +277,42 @@ if ex5:
    x=t1['vertices'][:,0] 
    y=t1['vertices'][:,1] 
    export_elements_to_vtu(x,y,icon,'example5.vtu',area)
+
+#------------------------------------------------------------------------------
+# sixth example: L shaped domain 
+#------------------------------------------------------------------------------
+
+if ex6:
+
+   print('========== EXAMPLE 6 ==========')
+
+   pts = np.array([[-1,-1],[0,-2],[2,0],[0,2],[-1,1],[0,0]])
+
+   segments = np.array([[0,1],[1,2],[2,3],[3,4],[4,5],[5,0]])
+
+   #print(pts)
+   #print(segments)
+
+   O1 = {'vertices' : pts, 'segments' : segments}
+   T1 = tr.triangulate(O1, 'pqa0.05') # tr.triangulate() computes the main dictionary 
+
+   tr.compare(plt, O1, T1) # The tr.compare() function always takes plt as its 1st argument
+   #plt.savefig('ex6.pdf', bbox_inches='tight')
+   #plt.show()
+
+   area=compute_triangles_area(T1['vertices'], T1['triangles'])
+   icon=T1['triangles'] ; icon=icon.T
+   x=T1['vertices'][:,0] 
+   y=T1['vertices'][:,1] 
+   export_elements_to_vtu(x,y,icon,'example6.vtu',area)
+
+   print(np.shape(icon))
+   
+
+
+
+
+
+
 
 
