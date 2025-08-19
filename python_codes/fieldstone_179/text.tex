@@ -28,10 +28,14 @@ Last revision: August 18th, 2025.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+This \stone is inspired by \textcite{koko07} (2007) in which the author presents 
+a clever way to build and assemble elemental matrices for a 2d $P_1$ elastic code.
+The 'clever' way is presented in Section~\ref{MMM-ss:p1}.
 
+%------------------------------------------------
+\section*{The physical problem}
 
-The domain
-$\Omega$ is described by the polygon
+The domain $\Omega$ is described by the polygon
 $(-1,-1), (0,-2), (2, 0), (0, 2), (-1,+1), (0, 0)$.
 
 The exact solution is known in polar coordinates $(r,\theta)$:
@@ -65,5 +69,26 @@ the gradient $|\vec\nabla \vec{u}|$ of the exact solution
 has a singularity at the re-entrant corner $(0,0)$. This singularity,
 despite being very local, is a significant source of error.
 
+%------------------------------------------------
+\section*{Implementation}
+
+
+
+
+%------------------------------------------------
+\section*{Results}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_179/RESULTS/disp}
+\includegraphics[width=7cm]{python_codes/fieldstone_179/RESULTS/divv}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_179/RESULTS/error}
+\includegraphics[width=7cm]{python_codes/fieldstone_179/RESULTS/strain}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_179/RESULTS/build.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_179/RESULTS/solve.pdf}
+\end{center}
 
 

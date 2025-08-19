@@ -1,0 +1,23 @@
+set term pdf enhanced font "Times,12pt" 
+set grid
+set log xy 
+set xlabel 'Nfem'
+set key outside
+set pointsize 0.4
+
+set ylabel 'solve time (s)'
+set output 'solve.pdf'
+plot[][]\
+'solve_0.ascii' u 7:3 w lp t 'method=0',\
+'solve_1.ascii' u 7:3 w lp t 'method=1'
+
+
+set ylabel 'build matrix time (s)'
+set output 'build.pdf'
+plot[][]\
+'build_0.ascii' u 7:3 w lp t 'method=0',\
+'build_1.ascii' u 7:3 w lp t 'method=1',\
+'koko07.ascii' u ($2*2):3 w lp t 'Koko, 2007',\
+x/6000 lt -1 dt 2 t 'linear' 
+
+

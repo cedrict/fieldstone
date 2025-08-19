@@ -1,3 +1,4 @@
+import sys 
 import math
 import numpy as np
 import time as clock 
@@ -70,11 +71,16 @@ nqel=3
 
 visu=1
 
-method=0
+if int(len(sys.argv) == 3):
+   method = int(sys.argv[1])
+   sizet = float(sys.argv[2])
+else:
+   method=1
+   sizet = 0.001 
 
-debug=True
+debug=False
 
-triangle_instructions='pqa0.05'
+triangle_instructions='pqa'+str(sizet)  # 'pqa0.001'
 
 qcoords_r=[1./6.,1./6.,2./3.] # coordinates & weights 
 qcoords_s=[2./3.,1./6.,1./6.] # of quadrature points
@@ -104,9 +110,10 @@ Nfem=NV*ndof
 print('m=',m)
 print('NV=',NV)
 print('nel=',nel)
+print(triangle_instructions)
 print("-----------------------------")
 
-print("setup: build mesh: %.3f s" % (clock.time()-start))
+print("setup: build mesh: %.3f s | %d " % (clock.time()-start,Nfem))
 
 ###############################################################################
 # flag boundary nodes
@@ -137,15 +144,15 @@ if method==0:
    for i in range(0,NV):
        if on_boundary[i]: 
           ui,vi=displ_th(x[i],y[i])
-          bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = 1#ui
-          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0#vi
+          bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = ui
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = vi
 
 else:
    for i in range(0,NV):
        if on_boundary[i]: 
           ui,vi=displ_th(x[i],y[i])
-          bc_fix[i   ]=True ; bc_val[i   ]=1#ui
-          bc_fix[i+NV]=True ; bc_val[i+NV]=0#vi
+          bc_fix[i   ]=True ; bc_val[i   ]=ui
+          bc_fix[i+NV]=True ; bc_val[i+NV]=vi
 
 print("setup: boundary conditions: %.3f s" % (clock.time()-start))
 
@@ -187,15 +194,12 @@ start=clock.time()
     
 A_fem=lil_matrix((Nfem,Nfem),dtype=np.float64)
 b_fem=np.zeros(Nfem,dtype=np.float64)
-Ael=np.zeros((ndof*m,ndof*m),dtype=np.float64)
-bel=np.zeros(ndof*m,dtype=np.float64)
 dNNNVdx=np.zeros(m,dtype=np.float64)  
 dNNNVdy=np.zeros(m,dtype=np.float64)  
 b_mat=np.zeros((3,ndof*m),dtype=np.float64) 
 c_mat=np.array([[2*mu+laambda,laambda,0],[laambda,2*mu+laambda,0],[0,0,mu]],dtype=np.float64) 
 
 for iel,nodes in enumerate(icon):
-    #print(iel,nodes)
 
     if method==0:
 
@@ -238,10 +242,6 @@ for iel,nodes in enumerate(icon):
 
        #end for kq
 
-       #print(Ael[0,0],Ael[2,2],Ael[4,4])
-       #print(Ael[1,1],Ael[3,3],Ael[5,5])
-       #print(Ael[1,4],Ael[3,4],Ael[5,4])
-
        # impose dirichlet b.c. 
        for k1 in range(0,m):
            for i1 in range(0,ndof):
@@ -258,6 +258,10 @@ for iel,nodes in enumerate(icon):
                #end if
            #end for 
        #end for
+
+       #if debug: print(Ael[0,0],Ael[0,1],Ael[0,2])
+       #if debug: print(Ael[0,3],Ael[0,4],Ael[0,5])
+       #if debug: print(bel[0],bel[2],bel[4])
 
        # assemble matrix a_mat and right hand side rhs
        for k1 in range(0,m):
@@ -276,6 +280,8 @@ for iel,nodes in enumerate(icon):
        #end for
 
     else:
+       Ael=np.zeros((m*ndof,m*ndof),dtype=np.float64)
+       bel=np.zeros(m*ndof)
 
        xvect=np.array([x[nodes[2]]-x[nodes[1]],\
                        x[nodes[0]]-x[nodes[2]],\
@@ -291,14 +297,8 @@ for iel,nodes in enumerate(icon):
        Kyy=(ll+2*mm)*np.outer(xvect,xvect) + mm*np.outer(yvect,yvect)
        Kxy=       ll*np.outer(yvect,xvect) + mm*np.outer(xvect,yvect)
 
-       #print(Kxx[0,0],Kxx[1,1],Kxx[2,2])
-       #print(Kxy[0,0],Kxy[1,1],Kxy[2,2])
-       #print(Kxy[0,0],Kxy[0,1],Kxy[0,2])
-
        Ael[  0:m,0:m]=Kxx   ; Ael[  0:m,m:2*m]=Kxy
        Ael[m:2*m,0:m]=Kxy.T ; Ael[m:2*m,m:2*m]=Kyy
-
-       #print(Ael[3,2],Ael[4,2],Ael[5,2])
 
        # impose dirichlet b.c. 
        for k1 in range(0,m):
@@ -316,6 +316,10 @@ for iel,nodes in enumerate(icon):
                #end if
            #end for 
        #end for
+
+       #if debug: print(Ael[0,0],Ael[0,3],Ael[0,1])
+       #if debug: print(Ael[0,4],Ael[0,2],Ael[0,5])
+       #if debug: print(bel[0],bel[1],bel[2])
 
        # assemble matrix a_mat and right hand side rhs
        for k1 in range(0,m):
@@ -337,7 +341,7 @@ for iel,nodes in enumerate(icon):
 
 #end for
 
-print("build matrix: %.3f s" % (clock.time()-start))
+print("Build matrix: %.3f s | Nfem= %d" % (clock.time()-start,Nfem))
 
 if False:
    plt.spy(sps.csr_matrix(A_fem),markersize=1)
@@ -350,7 +354,7 @@ start=clock.time()
 
 sol=sps.linalg.spsolve(sps.csr_matrix(A_fem),b_fem)
 
-print("solve time: %.3f s" % (clock.time()-start))
+print("Solve time: %.3f s | Nfem= %d" % (clock.time()-start,Nfem))
 
 ###############################################################################
 # put solution into separate x,y velocity arrays
