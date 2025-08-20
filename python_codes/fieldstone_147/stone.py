@@ -1,15 +1,13 @@
 import numpy as np
-
 import sys as sys
+import time as clock
 import scipy.sparse as sps
-from scipy.sparse.linalg import *
 from scipy.sparse import csr_matrix,csc_matrix,lil_matrix
-import scipy 
-import time as time
 from schur_complement_cg_solver import *
 import scipy.sparse.linalg as sla
 from uzawa1_solver import *
 from uzawa2_solver import *
+from projection_solver import *
 
 ###############################################################################
 # 1: donea & huerta
@@ -23,11 +21,7 @@ def bx(x,y):
             (-48.*y+72.*y*y-48.*y*y*y+12.)*x*x +
             (-2.+24.*y-72.*y*y+48.*y*y*y)*x +
             1.-4.*y+12.*y*y-8.*y*y*y)
-    if bench==2:
-       val=0 
-    if bench==3:
-       val=0 
-    if bench==4:
+    if bench==2 or bench==3 or bench==4:
        val=0 
     return val
 
@@ -49,7 +43,6 @@ def by(x,y):
           val=-1.
     if bench==4:
        val=0 
-
     return val
 
 ###############################################################################
@@ -175,7 +168,7 @@ else:
    nely = 16
    visu = 1
    nqperdim=3
-   solver=1
+   solver=17
     
 nnx=2*nelx+1  # number of elements, x direction
 nny=2*nely+1  # number of elements, y direction
@@ -197,7 +190,7 @@ bench=1
 use_precond=False
 precond_type=0
 tolerance=1e-7
-niter_max=5000
+niter_max=20000
 
 projection=False
 
@@ -261,7 +254,7 @@ print("------------------------------")
 ###############################################################################
 # grid point setup
 ###############################################################################
-start = time.time()
+start=clock.time()
 
 xV=np.empty(NV,dtype=np.float64)  # x coordinates
 yV=np.empty(NV,dtype=np.float64)  # y coordinates
@@ -277,7 +270,7 @@ for j in range(0,nny):
 
 #np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
 
-print("setup: grid points: %.3f s" % (time.time() - start))
+print("setup: grid points: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # connectivity
@@ -289,7 +282,7 @@ print("setup: grid points: %.3f s" % (time.time() - start))
 # |       |   |       |
 # 0---4---1   0-------1
 ###############################################################################
-start = time.time()
+start=clock.time()
 
 iconV=np.zeros((mV,nel),dtype=np.int32)
 iconP=np.zeros((mP,nel),dtype=np.int32)
@@ -340,12 +333,12 @@ for j in range(0,nely):
 #     print ("node 3",icon[2][iel],"at pos.",x[icon[2][iel]], y[icon[2][iel]])
 #     print ("node 4",icon[3][iel],"at pos.",x[icon[3][iel]], y[icon[3][iel]])
 
-print("setup: connectivity: %.3f s" % (time.time() - start))
+print("setup: connectivity: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # define boundary conditions
 ###############################################################################
-start = time.time()
+start=clock.time()
 
 bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
@@ -406,14 +399,14 @@ if BO:
        #end if
    #end for
 
-print("setup: boundary conditions: %.3f s" % (time.time() - start))
+print("setup: boundary conditions: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # build FE matrix
 # [ K G ][u]=[f]
 # [GT 0 ][p] [h]
 ###############################################################################
-start = time.time()
+start=clock.time()
 
 a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)   # matrix of Ax=b
 K_mat = lil_matrix((NfemV,NfemV),dtype=np.float64) # matrix K 
@@ -425,8 +418,8 @@ N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64)  # matrix
 L_mat = lil_matrix((NfemP,NfemP),dtype=np.float64) # matrix GT*G
 dNNNVdx = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 dNNNVdy = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
-dNNNVdr = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
-dNNNVds = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
+#dNNNVdr = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
+#dNNNVds = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
 c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 for iel in range(0,nel):
@@ -557,31 +550,32 @@ for iel in range(0,nel):
 
 #end for iel
 
-print("build FE matrix: %.3f s" % (time.time() - start))
+print("build FE matrix: %.3f s" % (clock.time()-start))
 
 ###############################################################################
-# assemble rhs
+# assemble right hand side of Ax=b
 ###############################################################################
-start = time.time()
+start=clock.time()
 
-rhs=np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+rhs=np.zeros(Nfem,dtype=np.float64) 
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
 
-print("assemble blocks: %.3f s" % (time.time() - start))
+print("assemble blocks: %.3f s" % (clock.time()-start))
 
-######################################################################
+###############################################################################
 # compute preconditioner
+###############################################################################
 
 Mprec = lil_matrix((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
 for i in range(0,Nfem):
     Mprec[i,i]=10
 Mprec=csr_matrix(Mprec)
 
-######################################################################
+###############################################################################
 # compute Schur preconditioner
-######################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
 M_mat = lil_matrix((NfemP,NfemP),dtype=np.float64)  # matrix of Ax=b
    
@@ -623,10 +617,10 @@ if precond_type==4:
 #plt.spy(M_mat)
 #plt.savefig('matrix.pdf', bbox_inches='tight')
 
-print("build Schur matrix precond: %e s, nel= %d" % (time.time() - start, nel))
+print("build Schur matrix precond: %e s, nel= %d" % (clock.time()-start,nel))
 
 ###############################################################################
-start = time.time()
+start=clock.time()
 
 if solver==14:
    K_mat=csc_matrix(K_mat)
@@ -637,10 +631,10 @@ M_mat=csr_matrix(M_mat)
 L_mat=csr_matrix(L_mat)
 sparse_matrix=sps.csc_matrix(a_mat)
 
-print("convert to CSR: %.3f s, nel= %d" % (time.time() - start, nel))
+print("convert to CSR: %.3f s, nel= %d" % (clock.time()-start, nel))
 
 ###############################################################################
-#start = time.time()
+#start = clock.time()
 
 #ILUfact = sla.spilu(sparse_matrix)
 #M = sla.LinearOperator(
@@ -654,12 +648,12 @@ print("convert to CSR: %.3f s, nel= %d" % (time.time() - start, nel))
 #M = sparse.linalg.LinearOperator((nrows,ncols), sA_iLU.solve)
 #also does nto work
 
-print("generate ILU precond: %.3f s, nel= %d" % (time.time() - start, nel))
+print("generate ILU precond: %.3f s, nel= %d" % (clock.time()-start,nel))
 
 ###############################################################################
 # solve system
 ###############################################################################
-start = time.time()
+start=clock.time()
 
 if solver==1:
    sol=sps.linalg.spsolve(sparse_matrix,rhs,use_umfpack=False)
@@ -700,15 +694,20 @@ elif solver==15:
 elif solver==16:
    solV,p,niter=uzawa2_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                        NfemV,NfemP,niter_max,tolerance,use_precond,'direct')
+elif solver==17:
+   solV,p,niter=projection_solver(K_mat,G_mat,L_mat,f_rhs,h_rhs,\
+                                  NfemV,NfemP,niter_max,tolerance)
+
 else:
    exit('solver unknown')
 
-print("solve time: %.3f s, nel= %d" % (time.time()-start,nel))
+print("solve time: %.3f s, nel= %d" % (clock.time()-start,nel))
 
 ###############################################################################
 # Poisson correction 
 # L_mat has been assembled above, as well as h_rhs and G_mat
 ###############################################################################
+start=clock.time()
 
 if projection and (solver ==15 or solver==16):
 
@@ -721,13 +720,14 @@ if projection and (solver ==15 or solver==16):
 
    solV+=G_mat.dot(qq)
 
+   print("post projection: %.3f s, nel= %d" % (clock.time()-start,nel))
 
 ###############################################################################
 # put solution into separate x,y velocity arrays
 ###############################################################################
-start = time.time()
+start=clock.time()
 
-if solver==4 or solver==13 or solver==14 or solver==15 or solver==16: 
+if solver==4 or solver==13 or solver==14 or solver==15 or solver==16 or solver==17: 
    u,v=np.reshape(solV,(NV,2)).T
 else:
    u,v=np.reshape(sol[0:NfemV],(NV,2)).T
@@ -739,12 +739,12 @@ print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
 #np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
-print("split vel into u,v: %.3f s" % (time.time() - start))
+print("split vel into u,v: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 #normalise pressure
 ###############################################################################
-start = time.time()
+start=clock.time()
 
 pavrg=0.
 for iel in range (0,nel):
@@ -779,25 +779,23 @@ p[:]-=pavrg/Lx/Ly
 
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
-print("normalise pressure: %.3f s" % (time.time() - start))
+print("normalise pressure: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # compute strainrate 
 ###############################################################################
-start = time.time()
+start=clock.time()
 
-xc = np.zeros(nel,dtype=np.float64)  
-yc = np.zeros(nel,dtype=np.float64)  
-exx = np.zeros(nel,dtype=np.float64)  
-eyy = np.zeros(nel,dtype=np.float64)  
-exy = np.zeros(nel,dtype=np.float64)  
-e   = np.zeros(nel,dtype=np.float64)  
+e=np.zeros(nel,dtype=np.float64)  
+xc=np.zeros(nel,dtype=np.float64)  
+yc=np.zeros(nel,dtype=np.float64)  
+exx=np.zeros(nel,dtype=np.float64)  
+eyy=np.zeros(nel,dtype=np.float64)  
+exy=np.zeros(nel,dtype=np.float64)  
 
 for iel in range(0,nel):
 
-    rq=0.
-    sq=0.
-    weightq=2.*2.
+    rq=0. ; sq=0. ; weightq=2.*2.
 
     NNNV=NNV(rq,sq)
     dNNNVdr=dNNVdr(rq,sq)
@@ -819,12 +817,11 @@ for iel in range(0,nel):
     #end for
 
     for k in range(0,mV):
-        xc[iel] += NNNV[k]*xV[iconV[k,iel]]
-        yc[iel] += NNNV[k]*yV[iconV[k,iel]]
-        exx[iel] += dNNNVdx[k]*u[iconV[k,iel]]
-        eyy[iel] += dNNNVdy[k]*v[iconV[k,iel]]
-        exy[iel] += 0.5*dNNNVdy[k]*u[iconV[k,iel]]+\
-                    0.5*dNNNVdx[k]*v[iconV[k,iel]]
+        xc[iel]+=NNNV[k]*xV[iconV[k,iel]]
+        yc[iel]+=NNNV[k]*yV[iconV[k,iel]]
+        exx[iel]+=dNNNVdx[k]*u[iconV[k,iel]]
+        eyy[iel]+=dNNNVdy[k]*v[iconV[k,iel]]
+        exy[iel]+=0.5*(dNNNVdy[k]*u[iconV[k,iel]]+dNNNVdx[k]*v[iconV[k,iel]])
     #end for
 
     e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
@@ -837,12 +834,12 @@ print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
 
 #np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
-print("compute press & sr: %.3f s" % (time.time() - start))
+print("compute press & sr: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # compute error
 ###############################################################################
-start = time.time()
+start=clock.time()
 
 vrms=0.
 errv=0.
@@ -887,17 +884,11 @@ for iel in range (0,nel):
                 exxq+=dNNNVdx[k]*u[iconV[k,iel]]
                 eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
             #end for
-            errv+=((uq-uth(xq,yq))**2+\
-                   (vq-vth(xq,yq))**2)*weightq*jcob
-
+            errv+=((uq-uth(xq,yq))**2+(vq-vth(xq,yq))**2)*weightq*jcob
             vrms+=(uq**2+vq**2)*weightq*jcob
-
             divv+=(exxq+eyyq)**2*weightq*jcob
 
-            pq=0.0
-            for k in range(0,mP):
-                pq+=NNNP[k]*p[iconP[k,iel]]
-            #end for
+            pq=NNNP.dot(p[iconP[:,iel]])
             errp+=(pq-pth(xq,yq))**2*weightq*jcob
 
             avrgp+=pq*weightq*jcob
@@ -914,12 +905,12 @@ avrgp=avrgp/Lx/Ly
 
 print("     -> nel= %6d ; errv= %e ; errp= %e ; divv= %e" %(nel,errv,errp,divv))
 
-print("compute errors: %.3f s" % (time.time() - start))
+print("compute errors: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # interpolate pressure onto velocity grid points
 ###############################################################################
-start = time.time()
+start=clock.time()
 
 q=np.zeros(NV,dtype=np.float64)
 
@@ -937,12 +928,12 @@ for iel in range(0,nel):
 
 #np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
 
-print("from p to q: %.3f s" % (time.time() - start))
+print("from p to q: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # export various measurements for stokes sphere benchmark 
 ###############################################################################
-start = time.time()
+start=clock.time()
 
 for i in range(0,NV):
     if abs(xV[i]-0.5)<eps and abs(yV[i]-0.5)<eps:
@@ -962,12 +953,12 @@ print('bench ',Lx/nelx,nel,Nfem,\
 #    if abs(x[i]-0.5)<1e-6:
 #       profile.write("%10e %10e %10e %10e \n" %(y[i],u[i],v[i],q[i]))
 
-print("export measurements: %.3f s" % (time.time() - start))
+print("export measurements: %.3f s" % (clock.time()-start))
     
 ###############################################################################
 # plot of solution
 ###############################################################################
-start = time.time()
+start=clock.time()
 
 filename = 'solution.vtu'
 vtufile=open(filename,"w")
@@ -1049,7 +1040,7 @@ vtufile.write("</UnstructuredGrid>\n")
 vtufile.write("</VTKFile>\n")
 vtufile.close()
 
-print("export solution to vtu: %.3f s" % (time.time() - start))
+print("export solution to vtu: %.3f s" % (clock.time()-start))
 
 print("-----------------------------")
 print("------------the end----------")

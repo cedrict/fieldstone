@@ -59,7 +59,7 @@ a SPD matrix\footnote{\url{https://en.wikipedia.org/wiki/Conjugate_gradient_meth
 We will then try all the other ones.
 
 Additionally we can build the $\K$ and $\G$ blocks and use conjugate gradient method on 
-the Schur complement equation ('SC-CG'), as explained in Section~\ref{MMM-ss:schurpcg}.
+the Schur complement equation ('SC-CG'), as explained in Section~\ref{MMM-ss:schurpcg}.\\
 This solver is implemented in {\tt schur\_complement\_cg\_solver.py}.
 It requires an inner solver called once per iteration on the $\K$ block.
 We then have the choice between using a direct solver ({\python solver=4})
@@ -341,33 +341,7 @@ diagonal of $ \G^T (diag [\K]  )^{-1} \G$ we lump the matrix instead.
 
 \end{itemize}
 
-{\Large unfinished}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\par\noindent\rule{\textwidth}{0.4pt}
-
-\vspace{.5cm}
-
-\begin{center}
-\fbox{\begin{minipage}{0.9\textwidth}
-{\color{teal}To Do, open questions, future work?}
-\begin{itemize}
-\item do smthg
-\end{itemize}
-\end{minipage}}
-\end{center}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\vspace{.5cm}
-
-\Literature:\\
-\fullcite{xxxxYY}
-
-
-
-
+{\color{red} \Large unfinished}
 
 
 
