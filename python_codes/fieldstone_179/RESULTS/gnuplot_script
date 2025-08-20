@@ -20,4 +20,12 @@ plot[][]\
 'koko07.ascii' u ($2*2):3 w lp t 'Koko, 2007',\
 x/6000 lt -1 dt 2 t 'linear' 
 
+set ylabel 'build elemental matrix time (s)'
+set output 'Ael.pdf'
+plot[][]\
+'Ael_0.ascii' u 7:3 w lp t 'method=0',\
+'Ael_1.ascii' u 7:3 w lp t 'method=1',\
+x/12000 lt -1 dt 2 t 'linear' 
+
+
 

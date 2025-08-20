@@ -75,8 +75,8 @@ if int(len(sys.argv) == 3):
    method = int(sys.argv[1])
    sizet = float(sys.argv[2])
 else:
-   method=1
-   sizet = 0.001 
+   method= 0
+   sizet = 0.01 
 
 debug=False
 
@@ -105,7 +105,7 @@ NV=np.size(x)
 nel,m=np.shape(icon)
 Nfem=NV*ndof
 
-#print(np.sum(area))
+if debug: print(np.sum(area))
 
 print('m=',m)
 print('NV=',NV)
@@ -134,6 +134,8 @@ for i in range(NV):
 
 print("setup: flag boundary nodes: %.3f s" % (clock.time()-start))
  
+###############################################################################
+# boundary conditions setup
 ###############################################################################
 start=clock.time()
 
@@ -199,9 +201,12 @@ dNNNVdy=np.zeros(m,dtype=np.float64)
 b_mat=np.zeros((3,ndof*m),dtype=np.float64) 
 c_mat=np.array([[2*mu+laambda,laambda,0],[laambda,2*mu+laambda,0],[0,0,mu]],dtype=np.float64) 
 
+time_Ael=0
+
 for iel,nodes in enumerate(icon):
 
     if method==0:
+       start2=clock.time()
 
        Ael=np.zeros((m*ndof,m*ndof),dtype=np.float64)
        bel=np.zeros(m*ndof)
@@ -242,6 +247,8 @@ for iel,nodes in enumerate(icon):
 
        #end for kq
 
+       time_Ael+=clock.time()-start2
+
        # impose dirichlet b.c. 
        for k1 in range(0,m):
            for i1 in range(0,ndof):
@@ -280,6 +287,8 @@ for iel,nodes in enumerate(icon):
        #end for
 
     else:
+       start2=clock.time()
+
        Ael=np.zeros((m*ndof,m*ndof),dtype=np.float64)
        bel=np.zeros(m*ndof)
 
@@ -299,6 +308,8 @@ for iel,nodes in enumerate(icon):
 
        Ael[  0:m,0:m]=Kxx   ; Ael[  0:m,m:2*m]=Kxy
        Ael[m:2*m,0:m]=Kxy.T ; Ael[m:2*m,m:2*m]=Kyy
+
+       time_Ael+=clock.time()-start2
 
        # impose dirichlet b.c. 
        for k1 in range(0,m):
@@ -337,13 +348,17 @@ for iel,nodes in enumerate(icon):
            #end for
        #end for
 
+
    #end if method
 
 #end for
+       
+print("     -> Ael: %.3f s | Nfem= %d" % (time_Ael,Nfem))
 
 print("Build matrix: %.3f s | Nfem= %d" % (clock.time()-start,Nfem))
 
-if False:
+if True:
+   plt.clf()
    plt.spy(sps.csr_matrix(A_fem),markersize=1)
    plt.savefig('matrix.pdf', bbox_inches='tight')
 
@@ -354,7 +369,7 @@ start=clock.time()
 
 sol=sps.linalg.spsolve(sps.csr_matrix(A_fem),b_fem)
 
-print("Solve time: %.3f s | Nfem= %d" % (clock.time()-start,Nfem))
+print("Solve time: %.5f s | Nfem= %d" % (clock.time()-start,Nfem))
 
 ###############################################################################
 # put solution into separate x,y velocity arrays

@@ -72,11 +72,58 @@ despite being very local, is a significant source of error.
 %------------------------------------------------
 \section*{Implementation}
 
+I have implemented the FEM matrix \& rhs building process as I 
+usuallly do (e.g. \stone~58), i.e. using Gauss quadrature and
+coined it \lstinline{method=0}.
+I also implemented the clever way of \textcite{koko07} (2007)
+as explained in Section~\ref{MMM-ss:p1}. It bypasses Gauss quadrature
+altogether and allows to build elemental matrices and rhs directly.
+This is coined \lstinline{method=1}.
+Note that in both cases the imposition of boundary conditions on the 
+elemental matrices and their assembly is similar\footnote{Note 
+that faster assembly methods could be explored, as in \stone~176.} 
+However because of how the elemental matrix is build in the second case
+(4 blocks of size $3\times 3$: $\K_{xx}$, $\K_{yy}$, $\K_{xy}=\K_{yx}^T$)
+it makes more sense to organise the global solution vector 
+\[
+\vec{\cal U}^T=(u_1,u_2, ...u_N,v_1,v_2,... v_N)
+\]
+This has consequences for the structure of the boundary conditions arrays, 
+the boundary conditions imposition, the assembly and the recovery of 
+the vectors $\vec{u}=(u_1,u_2,...u_N)$ and $\vec{v}=(v_1,v_2,...v_N)$. 
+For example:
+\begin{lstlisting}
+if method==0:
+   for i in range(0,NV):
+       if on_boundary[i]: 
+          ui,vi=displ_th(x[i],y[i])
+          bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = ui
+          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = vi
+else:
+   for i in range(0,NV):
+       if on_boundary[i]: 
+          ui,vi=displ_th(x[i],y[i])
+          bc_fix[i   ]=True ; bc_val[i   ]=ui
+          bc_fix[i+NV]=True ; bc_val[i+NV]=vi
+\end{lstlisting}
+
+
+
+Remark: The author resorts to penalization to impose Dirichlet 
+boundary conditions but details how to carry out Neumann boundary conditions.
+
+Meshing is carried out as explained in \stone~131 and leads to such a mesh:
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_179/RESULTS/mesh}
+\end{center}
 
 
 
 %------------------------------------------------
 \section*{Results}
+
+After having verified that results are identical when either 
+of the methods is used, we can visualise results:
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_179/RESULTS/disp}
@@ -85,10 +132,34 @@ despite being very local, is a significant source of error.
 \includegraphics[width=7cm]{python_codes/fieldstone_179/RESULTS/strain}
 \end{center}
 
-
+By means of the {\tt script\_errors} bash script we can run models 
+of increasing resolution and measure the matrix building time and the 
+solve time.
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_179/RESULTS/build.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_179/RESULTS/solve.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_179/RESULTS/solve.pdf}\\
+{\captionfont Left: matrix building time (Koko's MATLAB timings are included);
+Right: solve time.}
 \end{center}
+
+Because the build time also encompasses the boundary conditions and 
+assembly, I also only measure the time need to build the elemental 
+matrices:
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_179/RESULTS/Ael.pdf}
+\end{center}
+In this case the conclusion is clear: Koko's method is about 3 times faster.
+
+
+Because of the structure of $\vec{\cal U}$ the assembled FEM matrices 
+non-zero structure look very different:
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_179/RESULTS/matrix0.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_179/RESULTS/matrix1.pdf}\\
+{\captionfont Left: method=0; Right: method=1.}
+\end{center}
+Despite this difference in structure we find that the solve time is identical
+in both cases.
+
 
 
