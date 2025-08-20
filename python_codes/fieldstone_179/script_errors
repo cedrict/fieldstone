@@ -16,5 +16,7 @@ for s in 0.03 0.029 0.028 0.027 0.026 0.025 0.024 0.023 0.022 0.021 0.02 0.019 0
         grep Build opla >> build_${m}.ascii 
         grep Solve opla >> solve_${m}.ascii 
         grep Ael opla >> Ael_${m}.ascii 
+        grep vrms opla >> vrms_${m}.ascii 
+        grep displ opla >> errdispl_${m}.ascii 
     done
 done

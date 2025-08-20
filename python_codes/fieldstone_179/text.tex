@@ -22,7 +22,7 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: August 18th, 2025.
+Last revision: August 20th, 2025.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -44,7 +44,7 @@ u_r(r,\theta)
 &=&\frac{1}{2\mu} r^\alpha 
 [(c_2 - \alpha - 1)c_1 \cos((\alpha - 1)\theta) 
 - (\alpha + 1) \cos((\alpha + 1)\theta)] \nn\\
-u\theta(r,\theta)&=& 
+u_\theta(r,\theta)&=& 
 \frac{1}{2\mu}
 [(\alpha + 1) \sin((\alpha + 1)\theta) 
 + (c_2 + \alpha - 1)c_1 \sin((\alpha - 1)\theta)]
@@ -57,13 +57,13 @@ with $\omega=3\pi/4$ and
 \[
 c_1 = -\frac{\cos((\alpha+1)\omega)}{\cos((\alpha-1)\omega)}
 \qquad
+\qquad
 c_2 = 2 \frac{\lambda + 2\mu}{\lambda+\mu}
 \]
 
-
 The displacement field are solution of the momentum equation 
-with $\vec{f} = \vec{0}$ and $u_D = (u_r , u_\theta )$ on 
-$\Gamma = \Gamma_D$ . Numerical
+with no body force ($\vec{f} = \vec{0}$) and $u_D = (u_r , u_\theta )$ on 
+$\Gamma = \Gamma_D$. Numerical
 experiments are carried out with Young’s modulus E = 100000 and Poisson’s coefficient $\nu$ = 0.3. The magnitude of
 the gradient $|\vec\nabla \vec{u}|$ of the exact solution 
 has a singularity at the re-entrant corner $(0,0)$. This singularity,
@@ -114,11 +114,12 @@ boundary conditions but details how to carry out Neumann boundary conditions.
 
 Meshing is carried out as explained in \stone~131 and leads to such a mesh:
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_179/RESULTS/mesh}
+\includegraphics[width=6.6cm]{python_codes/fieldstone_179/RESULTS/mesh}
 \end{center}
 
 
 
+\newpage
 %------------------------------------------------
 \section*{Results}
 
@@ -160,6 +161,13 @@ non-zero structure look very different:
 \end{center}
 Despite this difference in structure we find that the solve time is identical
 in both cases.
+
+Finally we can look at the discretisation error (as a function of 
+the total number of dofs for commodity):
+\begin{center}
+\includegraphics[width=9cm]{python_codes/fieldstone_179/RESULTS/erru.pdf}
+\end{center}
+
 
 
 

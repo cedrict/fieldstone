@@ -27,5 +27,9 @@ plot[][]\
 'Ael_1.ascii' u 7:3 w lp t 'method=1',\
 x/12000 lt -1 dt 2 t 'linear' 
 
-
-
+set ylabel '|u-u_{th}|_{L_2}'
+set output 'erru.pdf'
+plot[][]\
+'errdispl_0.ascii' u 7:5   w lp t 'method=0',\
+'errdispl_1.ascii' u 7:5   w lp t 'method=1',\
+x**-.5/100000 lt -1 dt 2 t 'N^{-0.5}'

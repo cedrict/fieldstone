@@ -163,9 +163,10 @@ print("setup: boundary conditions: %.3f s" % (clock.time()-start))
 #################################################################
 start=clock.time()
 
+jcb=np.zeros((2,2),dtype=np.float64)
 area2=np.zeros(nel,dtype=np.float64) 
 
-for iel in range(0,nel):
+for iel,nodes in enumerate(icon):
     for kq in range (0,nqel):
         rq=qcoords_r[kq]
         sq=qcoords_s[kq]
@@ -173,13 +174,10 @@ for iel in range(0,nel):
         NNNV=NNV(rq,sq)
         dNNNVdr=dNNVdr(rq,sq)
         dNNNVds=dNNVds(rq,sq)
-        jcb=np.zeros((2,2),dtype=np.float64)
-        for k in range(0,m):
-            jcb[0,0]+=dNNNVdr[k]*x[icon[iel,k]]
-            jcb[0,1]+=dNNNVdr[k]*y[icon[iel,k]]
-            jcb[1,0]+=dNNNVds[k]*x[icon[iel,k]]
-            jcb[1,1]+=dNNNVds[k]*y[icon[iel,k]]
-        #end for
+        jcb[0,0]=np.dot(dNNNVdr[:],x[nodes[:]])
+        jcb[0,1]=np.dot(dNNNVdr[:],y[nodes[:]])
+        jcb[1,0]=np.dot(dNNNVds[:],x[nodes[:]])
+        jcb[1,1]=np.dot(dNNNVds[:],y[nodes[:]])
         jcob = np.linalg.det(jcb)
         area2[iel]+=jcob*weightq
     #end for
@@ -218,13 +216,10 @@ for iel,nodes in enumerate(icon):
            NNNV=NNV(rq,sq)
            dNNNVdr=dNNVdr(rq,sq)
            dNNNVds=dNNVds(rq,sq)
-           jcb=np.zeros((2,2),dtype=np.float64)
-           for k in range(0,m):
-               jcb[0,0]+=dNNNVdr[k]*x[nodes[k]]
-               jcb[0,1]+=dNNNVdr[k]*y[nodes[k]]
-               jcb[1,0]+=dNNNVds[k]*x[nodes[k]]
-               jcb[1,1]+=dNNNVds[k]*y[nodes[k]]
-           #end for
+           jcb[0,0]=np.dot(dNNNVdr[:],x[nodes[:]])
+           jcb[0,1]=np.dot(dNNNVdr[:],y[nodes[:]])
+           jcb[1,0]=np.dot(dNNNVds[:],x[nodes[:]])
+           jcb[1,1]=np.dot(dNNNVds[:],y[nodes[:]])
            jcob=np.linalg.det(jcb)
            jcbi=np.linalg.inv(jcb)
 
@@ -456,6 +451,58 @@ sigma_xy[:]=               +2*mu*exy[:]
 
 print("compute stress: %.3f s" % (clock.time() - start))
 
+
+
+
+###############################################################################
+# compute root mean square displacement vrms 
+###############################################################################
+start=clock.time()
+
+vrms=0.
+avrg_u=0.
+avrg_v=0.
+erru=0.
+
+for iel,nodes in enumerate(icon):
+    for kq in range (0,nqel):
+        rq=qcoords_r[kq]
+        sq=qcoords_s[kq]
+        weightq=qweights[kq]
+        NNNV=NNV(rq,sq)
+        dNNNVdr=dNNVdr(rq,sq)
+        dNNNVds=dNNVds(rq,sq)
+        jcb[0,0]=np.dot(dNNNVdr[:],x[nodes[:]])
+        jcb[0,1]=np.dot(dNNNVdr[:],y[nodes[:]])
+        jcb[1,0]=np.dot(dNNNVds[:],x[nodes[:]])
+        jcb[1,1]=np.dot(dNNNVds[:],y[nodes[:]])
+        jcob = np.linalg.det(jcb)
+        uq=np.dot(NNNV[:],u[nodes[:]])
+        vq=np.dot(NNNV[:],v[nodes[:]])
+        xq=np.dot(NNNV[:],x[nodes[:]])
+        yq=np.dot(NNNV[:],y[nodes[:]])
+        vrms+=(uq**2+vq**2)*weightq*jcob
+        avrg_u+=uq*weightq*jcob
+        avrg_v+=vq*weightq*jcob
+        uth,vth=displ_th(xq,yq)
+        erru+=((uq-uth)**2+(vq-vth)**2)*weightq*jcob
+    # end for kq
+# end for iel
+
+avrg_u/=np.sum(area)
+avrg_v/=np.sum(area)
+erru/=np.sum(area)
+erru=np.sqrt(erru)
+
+print("     -> vrms   = %.6e | %d" %(vrms,Nfem))
+print("     -> avrg_u = %.6e " %(avrg_u))
+print("     -> avrg_v = %.6e " %(avrg_v))
+print("     -> err displ = %.6e | %d" %(erru,Nfem))
+
+print("compute vrms: %.3fs" % (clock.time()-start))
+
+###############################################################################
+# export to vtu 
 ###############################################################################
 start=clock.time()
 
