@@ -6,13 +6,16 @@ from scipy.sparse import csr_matrix,csc_matrix,lil_matrix
 from schur_complement_cg_solver import *
 import scipy.sparse.linalg as sla
 from uzawa1_solver import *
+from uzawa1_solver_L2 import *
+from uzawa1_solver_L2b import *
 from uzawa2_solver import *
 from projection_solver import *
+from basis_functions import *
 
 ###############################################################################
-# 1: donea & huerta
-# 2: stokes sphere
-# 3: block
+# bench=1: donea & huerta
+# bench=2: stokes sphere
+# bench=3: block
 ###############################################################################
 
 def bx(x,y):
@@ -95,53 +98,6 @@ def pth(x,y):
 
 ###############################################################################
 
-def NNV(rq,sq):
-    N_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
-    N_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
-    N_2= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.)
-    N_3= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.)
-    N_4=     (1.-rq**2) * 0.5*sq*(sq-1.)
-    N_5= 0.5*rq*(rq+1.) *     (1.-sq**2)
-    N_6=     (1.-rq**2) * 0.5*sq*(sq+1.)
-    N_7= 0.5*rq*(rq-1.) *     (1.-sq**2)
-    N_8=     (1.-rq**2) *     (1.-sq**2)
-    return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
-
-def dNNVdr(rq,sq):
-    dNdr_0= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
-    dNdr_1= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
-    dNdr_2= 0.5*(2.*rq+1.) * 0.5*sq*(sq+1)
-    dNdr_3= 0.5*(2.*rq-1.) * 0.5*sq*(sq+1)
-    dNdr_4=       (-2.*rq) * 0.5*sq*(sq-1)
-    dNdr_5= 0.5*(2.*rq+1.) *    (1.-sq**2)
-    dNdr_6=       (-2.*rq) * 0.5*sq*(sq+1)
-    dNdr_7= 0.5*(2.*rq-1.) *    (1.-sq**2)
-    dNdr_8=       (-2.*rq) *    (1.-sq**2)
-    return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,\
-                     dNdr_5,dNdr_6,dNdr_7,dNdr_8],dtype=np.float64)
-
-def dNNVds(rq,sq):
-    dNds_0= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
-    dNds_1= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
-    dNds_2= 0.5*rq*(rq+1.) * 0.5*(2.*sq+1.)
-    dNds_3= 0.5*rq*(rq-1.) * 0.5*(2.*sq+1.)
-    dNds_4=     (1.-rq**2) * 0.5*(2.*sq-1.)
-    dNds_5= 0.5*rq*(rq+1.) *       (-2.*sq)
-    dNds_6=     (1.-rq**2) * 0.5*(2.*sq+1.)
-    dNds_7= 0.5*rq*(rq-1.) *       (-2.*sq)
-    dNds_8=     (1.-rq**2) *       (-2.*sq)
-    return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,\
-                     dNds_5,dNds_6,dNds_7,dNds_8],dtype=np.float64)
-
-def NNP(rq,sq):
-    N_0=0.25*(1-rq)*(1-sq)
-    N_1=0.25*(1+rq)*(1-sq)
-    N_2=0.25*(1+rq)*(1+sq)
-    N_3=0.25*(1-rq)*(1+sq)
-    return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
-
-###############################################################################
-
 eps=1.e-10
 
 print("-----------------------------")
@@ -164,33 +120,32 @@ if int(len(sys.argv) == 6):
    nqperdim = int(sys.argv[4])
    solver = int(sys.argv[5])
 else:
-   nelx = 16
-   nely = 16
+   nelx = 32
+   nely = nelx
    visu = 1
    nqperdim=3
-   solver=17
+   solver=19
     
-nnx=2*nelx+1  # number of elements, x direction
-nny=2*nely+1  # number of elements, y direction
-
+nnx=2*nelx+1         # number of V nodes, x direction
+nny=2*nely+1         # number of V nodes, y direction
 NV=nnx*nny           # number of V nodes
 NP=(nelx+1)*(nely+1) # number of P nodes
-
-nel=nelx*nely  # number of elements, total
-
-NfemV=NV*ndofV   # number of velocity dofs
-NfemP=NP*ndofP   # number of pressure dofs
-Nfem=NfemV+NfemP # total number of dofs
+nel=nelx*nely        # total number of elements
+NfemV=NV*ndofV       # number of velocity dofs
+NfemP=NP*ndofP       # number of pressure dofs
+Nfem=NfemV+NfemP     # total number of dofs
 
 hx=Lx/nelx
 hy=Ly/nely
 
 bench=1
+   
+omega=1
 
 use_precond=False
 precond_type=0
 tolerance=1e-7
-niter_max=20000
+niter_max=5000
 
 projection=False
 
@@ -303,18 +258,6 @@ for j in range(0,nely):
     #end for
 #end for
 
-#for iel in range (0,nel):
-#    print ("iel=",iel)
-#    print ("node 1",icon[0][iel],"at pos.",x[icon[0][iel]], y[icon[0][iel]])
-#    print ("node 2",icon[1][iel],"at pos.",x[icon[1][iel]], y[icon[1][iel]])
-#    print ("node 3",icon[2][iel],"at pos.",x[icon[2][iel]], y[icon[2][iel]])
-#    print ("node 4",icon[3][iel],"at pos.",x[icon[3][iel]], y[icon[3][iel]])
-#    print ("node 2",icon[4][iel],"at pos.",x[icon[4][iel]], y[icon[4][iel]])
-#    print ("node 2",icon[5][iel],"at pos.",x[icon[5][iel]], y[icon[5][iel]])
-#    print ("node 2",icon[6][iel],"at pos.",x[icon[6][iel]], y[icon[6][iel]])
-#    print ("node 2",icon[7][iel],"at pos.",x[icon[7][iel]], y[icon[7][iel]])
-#    print ("node 2",icon[8][iel],"at pos.",x[icon[8][iel]], y[icon[8][iel]])
-
 counter = 0
 for j in range(0,nely):
     for i in range(0,nelx):
@@ -325,13 +268,6 @@ for j in range(0,nely):
         counter += 1
     #end for
 #end for
-
-# for iel in range (0,nel):
-#     print ("iel=",iel)
-#     print ("node 1",icon[0][iel],"at pos.",x[icon[0][iel]], y[icon[0][iel]])
-#     print ("node 2",icon[1][iel],"at pos.",x[icon[1][iel]], y[icon[1][iel]])
-#     print ("node 3",icon[2][iel],"at pos.",x[icon[2][iel]], y[icon[2][iel]])
-#     print ("node 4",icon[3][iel],"at pos.",x[icon[3][iel]], y[icon[3][iel]])
 
 print("setup: connectivity: %.3f s" % (clock.time()-start))
 
@@ -346,17 +282,17 @@ bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
 if NS:
    for i in range(0,NV):
        if xV[i]<eps:
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = uth(xV[i],yV[i])
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vth(xV[i],yV[i])
+          bc_fix[i*ndofV  ]=True ; bc_val[i*ndofV  ]=uth(xV[i],yV[i])
+          bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]=vth(xV[i],yV[i])
        if xV[i]>(Lx-eps):
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = uth(xV[i],yV[i])
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vth(xV[i],yV[i])
+          bc_fix[i*ndofV  ]=True ; bc_val[i*ndofV  ]=uth(xV[i],yV[i])
+          bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]=vth(xV[i],yV[i])
        if yV[i]<eps:
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = uth(xV[i],yV[i])
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vth(xV[i],yV[i])
+          bc_fix[i*ndofV  ]=True ; bc_val[i*ndofV  ]=uth(xV[i],yV[i])
+          bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]=vth(xV[i],yV[i])
        if yV[i]>(Ly-eps):
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = uth(xV[i],yV[i])
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vth(xV[i],yV[i])
+          bc_fix[i*ndofV  ]=True ; bc_val[i*ndofV  ]=uth(xV[i],yV[i])
+          bc_fix[i*ndofV+1]=True ; bc_val[i*ndofV+1]=vth(xV[i],yV[i])
        #end if
    #end for
 
@@ -408,28 +344,31 @@ print("setup: boundary conditions: %.3f s" % (clock.time()-start))
 ###############################################################################
 start=clock.time()
 
-a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)   # matrix of Ax=b
-K_mat = lil_matrix((NfemV,NfemV),dtype=np.float64) # matrix K 
-G_mat = lil_matrix((NfemV,NfemP),dtype=np.float64) # matrix GT
-f_rhs = np.zeros(NfemV,dtype=np.float64)           # right hand side f 
-h_rhs = np.zeros(NfemP,dtype=np.float64)           # right hand side h 
-b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64)  # gradient matrix B 
-N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64)  # matrix  
-L_mat = lil_matrix((NfemP,NfemP),dtype=np.float64) # matrix GT*G
-dNNNVdx = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
-dNNNVdy = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
-#dNNNVdr = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
-#dNNNVds = np.zeros(mV,dtype=np.float64)            # shape functions derivatives
+A_fem   = lil_matrix((Nfem,Nfem),dtype=np.float64)   # matrix of Ax=b
+K_mat   = lil_matrix((NfemV,NfemV),dtype=np.float64) # matrix K 
+G_mat   = lil_matrix((NfemV,NfemP),dtype=np.float64) # matrix GT
+L_mat   = lil_matrix((NfemP,NfemP),dtype=np.float64) # matrix GT*G
+MP_mat  = lil_matrix((NfemP,NfemP),dtype=np.float64) # pressure mass matrix
+MV_mat  = lil_matrix((NfemV,NfemV),dtype=np.float64) # velocity mass matrix
+f_rhs   = np.zeros(NfemV,dtype=np.float64)           # right hand side f 
+h_rhs   = np.zeros(NfemP,dtype=np.float64)           # right hand side h 
+b_fem   = np.zeros(Nfem,dtype=np.float64)            # rhs of fem linear system
+b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64)    # gradient matrix B 
+N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64)    # matrix  
+dNNNVdx = np.zeros(mV,dtype=np.float64)              # shape functions derivatives
+dNNNVdy = np.zeros(mV,dtype=np.float64)              # shape functions derivatives
 c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+jcb     = np.zeros((2,2),dtype=np.float64)
 
 for iel in range(0,nel):
 
-    # set arrays to 0 every loop
     f_el=np.zeros((mV*ndofV),dtype=np.float64)
     K_el=np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
     G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
     L_el=np.zeros((mP*ndofP,mP*ndofP),dtype=np.float64)
     h_el=np.zeros((mP*ndofP),dtype=np.float64)
+    MP_el=np.zeros((mP,mP),dtype=np.float64)
+    MV_el=np.zeros((mV,mV),dtype=np.float64)
 
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
@@ -445,25 +384,18 @@ for iel in range(0,nel):
             NNNP=NNP(rq,sq)
 
             # calculate jacobian matrix
-            jcb=np.zeros((2,2),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
-                jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
-            #end for 
+            jcb[0,0]=dNNNVdr[:].dot(xV[iconV[:,iel]])
+            jcb[0,1]=dNNNVdr[:].dot(yV[iconV[:,iel]])
+            jcb[1,0]=dNNNVds[:].dot(xV[iconV[:,iel]])
+            jcb[1,1]=dNNNVds[:].dot(yV[iconV[:,iel]])
             jcob = np.linalg.det(jcb)
             jcbi = np.linalg.inv(jcb)
 
             # compute dNdx & dNdy
-            xq=0.0
-            yq=0.0
-            for k in range(0,mV):
-                xq+=NNNV[k]*xV[iconV[k,iel]]
-                yq+=NNNV[k]*yV[iconV[k,iel]]
-                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-            #end for 
+            xq=NNNV[:].dot(xV[iconV[:,iel]])
+            yq=NNNV[:].dot(yV[iconV[:,iel]])
+            dNNNVdx[:]=jcbi[0,0]*dNNNVdr[:]+jcbi[0,1]*dNNNVds[:]
+            dNNNVdy[:]=jcbi[1,0]*dNNNVdr[:]+jcbi[1,1]*dNNNVds[:]
 
             # construct 3x8 b_mat matrix
             for i in range(0,mV):
@@ -488,8 +420,12 @@ for iel in range(0,nel):
 
             G_el-=b_mat.T.dot(N_mat)*weightq*jcob
 
+            MP_el+=np.outer(NNNP,NNNP)*weightq*jcob
+
         #end for jq
     #end for iq
+
+    #print(MP_el*9/hx/hy) ok! identical to appendix A.2.1
     
     L_el=G_el.T.dot(G_el) # before b.c.!
 
@@ -523,13 +459,13 @@ for iel in range(0,nel):
                     jkk=ndofV*k2          +i2
                     m2 =ndofV*iconV[k2,iel]+i2
                     K_mat[m1,m2]+=K_el[ikk,jkk]
-                    a_mat[m1,m2]+=K_el[ikk,jkk]
+                    A_fem[m1,m2]+=K_el[ikk,jkk]
             for k2 in range(0,mP):
                 jkk=k2
                 m2 =iconP[k2,iel]
                 G_mat[m1,m2]+=G_el[ikk,jkk]
-                a_mat[m1,NfemV+m2]+=G_el[ikk,jkk]
-                a_mat[NfemV+m2,m1]+=G_el[ikk,jkk]
+                A_fem[m1,NfemV+m2]+=G_el[ikk,jkk]
+                A_fem[NfemV+m2,m1]+=G_el[ikk,jkk]
             #end for 
             f_rhs[m1]+=f_el[ikk]
         #end for 
@@ -539,29 +475,22 @@ for iel in range(0,nel):
         h_rhs[m2]+=h_el[k2]
     #end for 
 
-    #assemble matrix
+    #assemble pressure mass matrix
     for k1 in range(0,mP):
         m1=iconP[k1,iel]
         for k2 in range(0,mP):
             m2=iconP[k2,iel]
             L_mat[m1,m2]+=L_el[k1,k2]
+            MP_mat[m1,m2]+=MP_el[k1,k2]
         #end for 
     #end for 
 
 #end for iel
 
+b_fem[0:NfemV]=f_rhs
+b_fem[NfemV:Nfem]=h_rhs
+
 print("build FE matrix: %.3f s" % (clock.time()-start))
-
-###############################################################################
-# assemble right hand side of Ax=b
-###############################################################################
-start=clock.time()
-
-rhs=np.zeros(Nfem,dtype=np.float64) 
-rhs[0:NfemV]=f_rhs
-rhs[NfemV:Nfem]=h_rhs
-
-print("assemble blocks: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # compute preconditioner
@@ -620,6 +549,8 @@ if precond_type==4:
 print("build Schur matrix precond: %e s, nel= %d" % (clock.time()-start,nel))
 
 ###############################################################################
+# convert lil matrices to csr
+###############################################################################
 start=clock.time()
 
 if solver==14:
@@ -628,8 +559,9 @@ else:
    K_mat=csr_matrix(K_mat)
 G_mat=csr_matrix(G_mat)
 M_mat=csr_matrix(M_mat)
+MP_mat=csr_matrix(MP_mat)
 L_mat=csr_matrix(L_mat)
-sparse_matrix=sps.csc_matrix(a_mat)
+sparse_matrix=sps.csc_matrix(A_fem)
 
 print("convert to CSR: %.3f s, nel= %d" % (clock.time()-start, nel))
 
@@ -656,31 +588,31 @@ print("generate ILU precond: %.3f s, nel= %d" % (clock.time()-start,nel))
 start=clock.time()
 
 if solver==1:
-   sol=sps.linalg.spsolve(sparse_matrix,rhs,use_umfpack=False)
+   sol=sps.linalg.spsolve(sparse_matrix,b_fem,use_umfpack=False)
 elif solver==2:
-   sol,info = scipy.sparse.linalg.gmres(sparse_matrix, rhs, restart=2000,tol=tolerance,M=Mprec)
+   sol,info = scipy.sparse.linalg.gmres(sparse_matrix,b_fem,restart=2000,tol=tolerance,M=Mprec)
    if info!=0: exit('gmres did not converge')
 elif solver==3:
-   sol = scipy.sparse.linalg.lgmres(sparse_matrix, rhs,atol=1e-16,tol=tolerance)[0]
+   sol = scipy.sparse.linalg.lgmres(sparse_matrix,b_fem,atol=1e-16,tol=tolerance)[0]
 elif solver==4:
    solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                                            NfemV,NfemP,niter_max,tolerance,use_precond,'direct')
 elif solver==5:
-   sol = scipy.sparse.linalg.minres(sparse_matrix, rhs, tol=1e-10)[0]
+   sol = scipy.sparse.linalg.minres(sparse_matrix,b_fem, tol=1e-10)[0]
 elif solver==6:
-   sol = scipy.sparse.linalg.qmr(sparse_matrix, rhs, tol=tolerance)[0]
+   sol = scipy.sparse.linalg.qmr(sparse_matrix,b_fem,tol=tolerance)[0]
 elif solver==7:
-   sol = scipy.sparse.linalg.tfqmr(sparse_matrix, rhs, tol=1e-10)[0]
+   sol = scipy.sparse.linalg.tfqmr(sparse_matrix,b_fem, tol=1e-10)[0]
 elif solver==8:
-   sol = scipy.sparse.linalg.gcrotmk(sparse_matrix, rhs,atol=1e-16, tol=1e-10)[0]
+   sol = scipy.sparse.linalg.gcrotmk(sparse_matrix,b_fem,atol=1e-16, tol=1e-10)[0]
 elif solver==9:
-   sol = scipy.sparse.linalg.bicg(sparse_matrix, rhs, tol=tolerance)[0]
+   sol = scipy.sparse.linalg.bicg(sparse_matrix,b_fem, tol=tolerance)[0]
 elif solver==10:
-   sol = scipy.sparse.linalg.bicgstab(sparse_matrix, rhs, tol=tolerance)[0]
+   sol = scipy.sparse.linalg.bicgstab(sparse_matrix,b_fem, tol=tolerance)[0]
 elif solver==11:
-   sol=sps.linalg.spsolve(sparse_matrix,rhs,use_umfpack=True)
+   sol=sps.linalg.spsolve(sparse_matrix,b_fem,use_umfpack=True)
 elif solver==12:
-   sol = scipy.sparse.linalg.cgs(sparse_matrix, rhs, tol=tolerance)[0]
+   sol = scipy.sparse.linalg.cgs(sparse_matrix,b_fem, tol=tolerance)[0]
 elif solver==13:
    solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                                            NfemV,NfemP,niter_max,tolerance,use_precond,'cg')
@@ -688,7 +620,6 @@ elif solver==14:
    solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                                            NfemV,NfemP,niter_max,tolerance,use_precond,'splu')
 elif solver==15:
-   omega=200
    solV,p,niter=uzawa1_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                        NfemV,NfemP,niter_max,tolerance,use_precond,'direct',omega)
 elif solver==16:
@@ -697,6 +628,12 @@ elif solver==16:
 elif solver==17:
    solV,p,niter=projection_solver(K_mat,G_mat,L_mat,f_rhs,h_rhs,\
                                   NfemV,NfemP,niter_max,tolerance)
+elif solver==18:
+   solV,p,niter=uzawa1_solver_L2(K_mat,G_mat,MP_mat,f_rhs,h_rhs,\
+                                 NfemP,niter_max,tolerance,omega)
+elif solver==19:
+   solV,p,niter=uzawa1_solver_L2b(K_mat,G_mat,MP_mat,f_rhs,h_rhs,\
+                                 NfemP,niter_max,tolerance,omega)
 
 else:
    exit('solver unknown')
@@ -727,7 +664,8 @@ if projection and (solver ==15 or solver==16):
 ###############################################################################
 start=clock.time()
 
-if solver==4 or solver==13 or solver==14 or solver==15 or solver==16 or solver==17: 
+if solver==4 or solver==13 or solver==14 or solver==15 or solver==16 or\
+   solver==17 or solver==18 or solver==19: 
    u,v=np.reshape(solV,(NV,2)).T
 else:
    u,v=np.reshape(sol[0:NfemV],(NV,2)).T

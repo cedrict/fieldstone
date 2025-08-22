@@ -157,11 +157,11 @@ otherwise.
                                            NfemV,NfemP,niter_max,tolerance,use_precond,'splu')
 \end{lstlisting}
 %-----------------15
-\item uzawa 1: Section 5.1 \cite{braess}. Parameterised by $\alpha$(=2000 default)
+\item uzawa 1: Section 5.1 \cite{braess}. Parameterised by $\omega$(=2000 default)
 \begin{lstlisting}
-   alpha=2000
+   omega=2000
    solV,p,niter=uzawa1_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
-                       NfemV,NfemP,niter_max,tolerance,use_precond,'direct',alpha)
+                       NfemV,NfemP,niter_max,tolerance,use_precond,'direct',omega)
 \end{lstlisting}
 
 %-----------------16
@@ -343,5 +343,59 @@ diagonal of $ \G^T (diag [\K]  )^{-1} \G$ we lump the matrix instead.
 
 {\color{red} \Large unfinished}
 
+\newpage
+%==============================================================
+\section*{L2 projection stuff - Donea \& Huerta}
 
+
+Solver 15 is the standard Uzawa 1:
+\begin{lstlisting}
+solV=sps.linalg.spsolve(K_mat,f_rhs-G_mat.dot(solP))
+solPnew=solP+omega*(G_mat.T.dot(solV)-h_rhs)         
+\end{lstlisting}
+
+Solver 18 is Uzawa 1 with L2 projection:
+\begin{lstlisting}
+solV=sps.linalg.spsolve(K_mat,f_rhs-G_mat.dot(solP))     
+rhs=MP_mat.dot(solP)+omega*(G_mat.T.dot(solV)-h_rhs)      
+solPnew=sps.linalg.spsolve(MP_mat,rhs,use_umfpack=False)   
+\end{lstlisting}
+
+
+Solver 19 is Uzawa 1 with L2 projection in which 
+the matrix multiplication with the pressure mass matrix is avoided:
+\begin{lstlisting}
+solV=sps.linalg.spsolve(K_mat,f_rhs-G_mat.dot(solP))   
+rhs=omega*(G_mat.T.dot(solV)-h_rhs)                     
+dsolP=sps.linalg.spsolve(MP_mat,rhs,use_umfpack=False)   
+solPnew=solP+dsolP                                    
+\end{lstlisting}
+
+Compared to the standard Uzawa1 approach (solver 15) these have a cost, 
+since each iteration now involves a solve with the pressure mass matrix 
+(and potentially a SpMV multiplication with this matrix too). 
+
+However, the results are nothing short of spectacular:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/solver_convergence.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/time.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/errorsP.pdf}
+\end{center}
+
+Solvers 18 and 19 converge *much* faster than 15 (standard Uzawa1) and we find that 
+they still yield correct discretisations errors (errors for solvers 18 and 19
+are obviously identical).
+The maximum number of iterations is arbitrarily set to 5000. We see that when resolution increases 
+solver 15 fails to converge, even after 5000 iterations, and the measured errors reflect this.
+
+When it comes to solve time, despite the extra solve with the 
+pressure mass matrix solvers 18 and 19 are *much* faster than 15
+and we find that 19 is a few percents faster than 18. 
+
+Finally, we find that solver 15 gets better and better with increasing $\omega$
+(up to a certain limit) while solvers 18 \& 19 will diverge for $\omega>3$.
+
+Remark: in this example $\vec{h}=0$. One should verify that solvers 18,19 still work if not zero.
 
