@@ -1,0 +1,14 @@
+solver= 18
+solve time: 0.134 s, nel= 64
+solver= 18
+solve time: 0.822 s, nel= 256
+solver= 18
+solve time: 2.451 s, nel= 576
+solver= 18
+solve time: 15.996 s, nel= 1024
+solver= 18
+solve time: 33.423 s, nel= 1600
+solver= 18
+solve time: 65.147 s, nel= 2304
+solver= 18
+solve time: 156.040 s, nel= 4096
