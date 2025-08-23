@@ -346,17 +346,22 @@ start=clock.time()
 
 A_fem   = lil_matrix((Nfem,Nfem),dtype=np.float64)   # matrix of Ax=b
 K_mat   = lil_matrix((NfemV,NfemV),dtype=np.float64) # matrix K 
-G_mat   = lil_matrix((NfemV,NfemP),dtype=np.float64) # matrix GT
+G_mat   = lil_matrix((NfemV,NfemP),dtype=np.float64) # matrix G
+H_mat   = lil_matrix((NfemP,NfemV),dtype=np.float64) # matrix H 
 L_mat   = lil_matrix((NfemP,NfemP),dtype=np.float64) # matrix GT*G
 MP_mat  = lil_matrix((NfemP,NfemP),dtype=np.float64) # pressure mass matrix
 MV_mat  = lil_matrix((NfemV,NfemV),dtype=np.float64) # velocity mass matrix
 f_rhs   = np.zeros(NfemV,dtype=np.float64)           # right hand side f 
 h_rhs   = np.zeros(NfemP,dtype=np.float64)           # right hand side h 
 b_fem   = np.zeros(Nfem,dtype=np.float64)            # rhs of fem linear system
+aa_mat  = np.zeros((mP,2),dtype=np.float64)      
+bb_mat  = np.zeros((2,ndofV*mV),dtype=np.float64)     
 b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64)    # gradient matrix B 
 N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64)    # matrix  
 dNNNVdx = np.zeros(mV,dtype=np.float64)              # shape functions derivatives
 dNNNVdy = np.zeros(mV,dtype=np.float64)              # shape functions derivatives
+dNNNPdx = np.zeros(mP,dtype=np.float64)              # shape functions derivatives
+dNNNPdy = np.zeros(mP,dtype=np.float64)              # shape functions derivatives
 c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 jcb     = np.zeros((2,2),dtype=np.float64)
 
@@ -365,6 +370,7 @@ for iel in range(0,nel):
     f_el=np.zeros((mV*ndofV),dtype=np.float64)
     K_el=np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
     G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
+    H_el=np.zeros((mP,mV*ndofV),dtype=np.float64)
     L_el=np.zeros((mP*ndofP,mP*ndofP),dtype=np.float64)
     h_el=np.zeros((mP*ndofP),dtype=np.float64)
     MP_el=np.zeros((mP,mP),dtype=np.float64)
@@ -382,6 +388,8 @@ for iel in range(0,nel):
             dNNNVdr=dNNVdr(rq,sq)
             dNNNVds=dNNVds(rq,sq)
             NNNP=NNP(rq,sq)
+            dNNNPdr=dNNPdr(rq,sq)
+            dNNNPds=dNNPds(rq,sq)
 
             # calculate jacobian matrix
             jcb[0,0]=dNNNVdr[:].dot(xV[iconV[:,iel]])
@@ -405,6 +413,16 @@ for iel in range(0,nel):
             #end for 
 
             K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(xq,yq)*weightq*jcob
+
+            dNNNPdx[:]=jcbi[0,0]*dNNNPdr[:]+jcbi[0,1]*dNNNPds[:]
+            dNNNPdy[:]=jcbi[1,0]*dNNNPdr[:]+jcbi[1,1]*dNNNPds[:]
+            for i in range(0,mP):
+                aa_mat[i,0]=dNNNPdx[i]
+                aa_mat[i,1]=dNNNPdy[i]
+            for i in range(0,mV):
+                bb_mat[0,2*i  ]=NNNV[i] 
+                bb_mat[1,2*i+1]=NNNV[i] 
+            H_el+=aa_mat@bb_mat*weightq*jcob
 
             # compute elemental rhs vector
             for i in range(0,mV):
@@ -485,6 +503,18 @@ for iel in range(0,nel):
         #end for 
     #end for 
 
+    #assemble other gradient matrix H
+    for k1 in range(0,mP):
+        m1=iconP[k1,iel]
+        for k2 in range(0,mV):
+            for i2 in range(0,ndofV):
+                jkk=ndofV*k2          +i2
+                m2 =ndofV*iconV[k2,iel]+i2
+                H_mat[m1,m2]+=H_el[k1,jkk]
+            #end for 
+        #end for 
+    #end for 
+
 #end for iel
 
 b_fem[0:NfemV]=f_rhs
@@ -558,6 +588,7 @@ if solver==14:
 else:
    K_mat=csr_matrix(K_mat)
 G_mat=csr_matrix(G_mat)
+H_mat=csr_matrix(H_mat)
 M_mat=csr_matrix(M_mat)
 MP_mat=csr_matrix(MP_mat)
 L_mat=csr_matrix(L_mat)
