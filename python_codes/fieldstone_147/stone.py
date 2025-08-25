@@ -9,6 +9,8 @@ from uzawa1_solver import *
 from uzawa1_solver_L2 import *
 from uzawa1_solver_L2b import *
 from uzawa2_solver import *
+from uzawa2_solver_L2 import *
+from uzawa3_solver import *
 from projection_solver import *
 from basis_functions import *
 
@@ -120,11 +122,11 @@ if int(len(sys.argv) == 6):
    nqperdim = int(sys.argv[4])
    solver = int(sys.argv[5])
 else:
-   nelx = 32
+   nelx = 24
    nely = nelx
    visu = 1
    nqperdim=3
-   solver=19
+   solver=21
     
 nnx=2*nelx+1         # number of V nodes, x direction
 nny=2*nely+1         # number of V nodes, y direction
@@ -651,11 +653,9 @@ elif solver==14:
    solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                                            NfemV,NfemP,niter_max,tolerance,use_precond,'splu')
 elif solver==15:
-   solV,p,niter=uzawa1_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
-                       NfemV,NfemP,niter_max,tolerance,use_precond,'direct',omega)
+   solV,p,niter=uzawa1_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance,omega)
 elif solver==16:
-   solV,p,niter=uzawa2_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
-                       NfemV,NfemP,niter_max,tolerance,use_precond,'direct')
+   solV,p,niter=uzawa2_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance)
 elif solver==17:
    solV,p,niter=projection_solver(K_mat,G_mat,L_mat,f_rhs,h_rhs,\
                                   NfemV,NfemP,niter_max,tolerance)
@@ -665,7 +665,10 @@ elif solver==18:
 elif solver==19:
    solV,p,niter=uzawa1_solver_L2b(K_mat,G_mat,MP_mat,f_rhs,h_rhs,\
                                  NfemP,niter_max,tolerance,omega)
-
+elif solver==20:
+   solV,p,niter=uzawa2_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance)
+elif solver==21:
+   solV,p,niter=uzawa3_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance)
 else:
    exit('solver unknown')
 
@@ -696,7 +699,7 @@ if projection and (solver ==15 or solver==16):
 start=clock.time()
 
 if solver==4 or solver==13 or solver==14 or solver==15 or solver==16 or\
-   solver==17 or solver==18 or solver==19: 
+   solver==17 or solver==18 or solver==19 or solver==20 or solver==21: 
    u,v=np.reshape(solV,(NV,2)).T
 else:
    u,v=np.reshape(sol[0:NfemV],(NV,2)).T

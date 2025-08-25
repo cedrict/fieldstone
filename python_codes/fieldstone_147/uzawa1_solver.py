@@ -5,8 +5,7 @@ import scipy.sparse.linalg as sla
 ############################################################################### 
 #the function implicitely assumes matrices in csr format
 
-def uzawa1_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
-                 NfemV,NfemP,niter,tol,use_precond,inner,omega):
+def uzawa1_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter,tol,omega):
 
    print('-------------------------')
 

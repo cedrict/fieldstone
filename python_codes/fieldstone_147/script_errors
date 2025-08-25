@@ -11,7 +11,7 @@ for res in 8 10 12 14 16 20 24 32 40 48 64; do
 
     echo mesh $res x $res  
 
-    for solver in 19 ; do 
+    for solver in 4 21 ; do 
 
         echo -solver=$solver
 
@@ -36,11 +36,23 @@ for res in 8 10 12 14 16 20 24 32 40 48 64; do
         then
            mv solver_convergence.ascii solver_convergence_${solver}_${res}.ascii
         fi
+        if [ $solver -eq 16 ] 
+        then
+           mv solver_convergence.ascii solver_convergence_${solver}_${res}.ascii
+        fi
         if [ $solver -eq 18 ] 
         then
            mv solver_convergence.ascii solver_convergence_${solver}_${res}.ascii
         fi
         if [ $solver -eq 19 ] 
+        then
+           mv solver_convergence.ascii solver_convergence_${solver}_${res}.ascii
+        fi
+        if [ $solver -eq 20 ] 
+        then
+           mv solver_convergence.ascii solver_convergence_${solver}_${res}.ascii
+        fi
+        if [ $solver -eq 21 ] 
         then
            mv solver_convergence.ascii solver_convergence_${solver}_${res}.ascii
         fi

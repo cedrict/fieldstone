@@ -5,7 +5,7 @@ import scipy.sparse.linalg as sla
 ############################################################################### 
 #the function implicitely assumes matrices in csr format
 
-def uzawa2_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter,tol):
+def uzawa2_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter,tol):
 
    print('-------------------------')
 
@@ -17,11 +17,19 @@ def uzawa2_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter,tol):
    conv_file=open("solver_convergence.ascii","w")
 
    for k in range (0,niter): #--------------------------------------#
-                                                                    #
-       qk=h_rhs-G_mat.T.dot(solV)                                   #
+
+       rhs=h_rhs-G_mat.T.dot(solV)
+       qk=sps.linalg.spsolve(MP_mat,rhs,use_umfpack=False)          #
+       #qk=h_rhs-G_mat.T.dot(solV)                                  #
+
        pk=G_mat.dot(qk)                                             #
        Hk=sps.linalg.spsolve(K_mat,pk)                              # 
-       alphak=qk.dot(qk)/pk.dot(Hk)                                 #
+
+       numerator=qk.dot(MP_mat.dot(qk))                             #
+       denominator=qk.dot(H_mat.dot(Hk))                            #
+       alphak=numerator/denominator                                 # 
+       #alphak=qk.dot(qk)/pk.dot(Hk)                                #
+
        solPnew=solP-alphak*qk                                       #
        solVnew=solV+alphak*Hk                                       #
                                                                     #

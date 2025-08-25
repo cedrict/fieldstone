@@ -347,6 +347,9 @@ diagonal of $ \G^T (diag [\K]  )^{-1} \G$ we lump the matrix instead.
 %==============================================================
 \section*{L2 projection stuff - Donea \& Huerta}
 
+%---------------------------------------------------
+\subsection*{Uzawa 1 algorithm}
+
 
 Solver 15 is the standard Uzawa 1:
 \begin{lstlisting}
@@ -378,10 +381,10 @@ since each iteration now involves a solve with the pressure mass matrix
 However, the results are nothing short of spectacular:
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/solver_convergence.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/time.pdf}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/errorsV.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/errorsP.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa1/solver_convergence.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa1/time.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa1/errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa1/errorsP.pdf}
 \end{center}
 
 Solvers 18 and 19 converge *much* faster than 15 (standard Uzawa1) and we find that 
@@ -398,4 +401,75 @@ Finally, we find that solver 15 gets better and better with increasing $\omega$
 (up to a certain limit) while solvers 18 \& 19 will diverge for $\omega>3$.
 
 Remark: in this example $\vec{h}=0$. One should verify that solvers 18,19 still work if not zero.
+
+%---------------------------------------------------
+\subsection*{Uzawa 2 algorithm}
+
+Solver 16 is the standard Uzawa 2:
+\begin{lstlisting}
+qk=h_rhs-G_mat.T.dot(solV)      
+pk=G_mat.dot(qk)               
+Hk=sps.linalg.spsolve(K_mat,pk) 
+alphak=qk.dot(qk)/pk.dot(Hk)   
+solPnew=solP-alphak*qk        
+solVnew=solV+alphak*Hk       
+\end{lstlisting}
+
+
+Solver 20 is Uzawa 2 with L2 projection: 
+\begin{lstlisting}
+rhs=h_rhs-G_mat.T.dot(solV)
+qk=sps.linalg.spsolve(MP_mat,rhs,use_umfpack=False)    
+pk=G_mat.dot(qk)                           
+Hk=sps.linalg.spsolve(K_mat,pk)             
+numerator=qk.dot(MP_mat.dot(qk))             
+denominator=qk.dot(H_mat.dot(Hk))             
+alphak=numerator/denominator                   
+solPnew=solP-alphak*qk                          
+solVnew=solV+alphak*Hk                           
+\end{lstlisting}
+
+For this solver we need the pressure mass matrix again, but also a new
+matrix ${\bm H}$ built as follows:
+\begin{lstlisting}
+H_mat   = lil_matrix((NfemP,NfemV),dtype=np.float64) # matrix H 
+for iel in range(0,nel):
+    [...]
+    for iq in range(0,nqperdim):
+        for jq in range(0,nqperdim):
+            [...]
+            dNNNPdx[:]=jcbi[0,0]*dNNNPdr[:]+jcbi[0,1]*dNNNPds[:]
+            dNNNPdy[:]=jcbi[1,0]*dNNNPdr[:]+jcbi[1,1]*dNNNPds[:]
+            for i in range(0,mP):
+                aa_mat[i,0]=dNNNPdx[i]
+                aa_mat[i,1]=dNNNPdy[i]
+            for i in range(0,mV):
+                bb_mat[0,2*i  ]=NNNV[i] 
+                bb_mat[1,2*i+1]=NNNV[i] 
+            H_el+=aa_mat@bb_mat*weightq*jcob
+\end{lstlisting}
+
+Again, the results are nothing short of spectacular:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa2/solver_convergence_P.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa2/solver_convergence_V.pdf} \\
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa2/solver_convergence_alpha.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa2/time.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa2/errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa2/errorsP.pdf}
+\end{center}
+
+Solver 20 is about a factor 10 faster than solver 16.
+We also find that the value of $\alpha_k$ for solver 20 is resolution independent.
+
+Remark: in this example $\vec{h}=0$. One should verify that solvers 18,19 still work if not zero.
+
+%---------------------------------------------------
+\subsection*{Uzawa 3 algorithm}
+
+solver 21 is identical to solver 4 but: different xi calculation so as to 
+compare with uzawa 1 and 2, and no preconditioner nor inner solver choice. 
+
+
 
