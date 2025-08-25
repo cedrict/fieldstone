@@ -103,13 +103,14 @@ echo -n 'Earth & Pl. Phys. ' ; grep epp         ../biblio_geosciences.bib | grep
 echo -n 'J of Geodynamics  ' ; grep jog         ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Geoscience Front. ' ; grep geoF        ../biblio_geosciences.bib | grep journal |wc
 echo -n 'Earth-Science Rev.' ; grep esr         ../biblio_geosciences.bib | grep journal |wc
-
 echo -n 'ijnme             ' ; grep ijnme       ../biblio_geosciences.bib | grep journal |wc
 echo -n 'ijnmf             ' ; grep ijnmf       ../biblio_geosciences.bib | grep journal |wc
 echo -n 'cmame             ' ; grep cmame       ../biblio_geosciences.bib | grep journal |wc
 echo -n 'jcp               ' ; grep jcp         ../biblio_geosciences.bib | grep journal |wc
 echo -n 'gafd              ' ; grep gafd        ../biblio_geosciences.bib | grep journal |wc
-
+echo -n 'Comm Earth & Env  ' ; grep c_e_e       ../biblio_geosciences.bib | grep journal |wc
+echo -n 'SIAMjsc           ' ; grep SIAMjsc     ../biblio_geosciences.bib | grep journal |wc
+echo -n 'SIAMjna           ' ; grep SIAMjna     ../biblio_geosciences.bib | grep journal |wc
 
 #grep solid_earth ../biblio_geosciences.bib | grep journal > solid_earth.txt
 
@@ -223,5 +224,14 @@ for n in {1965..2026} ; do
 
     echo -n $n >> gafd_stats.txt 
     grep gafd ../biblio_geosciences.bib | grep journal | grep $n | wc >> gafd_stats.txt 
+
+    echo -n $n >> c_e_e_stats.txt 
+    grep c_e_e ../biblio_geosciences.bib | grep journal | grep $n | wc >> c_e_e_stats.txt 
+
+    echo -n $n >> SIAMjna_stats.txt 
+    grep SIAMjna ../biblio_geosciences.bib | grep journal | grep $n | wc >> SIAMjna_stats.txt 
+
+    echo -n $n >> SIAMjsc_stats.txt 
+    grep SIAMjsc ../biblio_geosciences.bib | grep journal | grep $n | wc >> SIAMjsc_stats.txt 
 
 done

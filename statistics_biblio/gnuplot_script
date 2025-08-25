@@ -5,6 +5,8 @@ set ytics 20
 set xtics 5
 nmax=32
 
+endyear=2026
+
 set key left
 set output 'stats.pdf'
 plot[1965:2025][]\
@@ -13,7 +15,7 @@ plot[1965:2025][]\
 
 set ytics 5
 set output 'journals.pdf'
-plot[1965:2024][:nmax]\
+plot[1965:endyear][:nmax]\
 'jgr_stats.txt' u 1:2 w lp pt 5 ps 0.23 t 'JGR',\
 'gji_stats.txt' u 1:2 w lp pt 5 ps 0.23 t 'GJI',\
 'pepi_stats.txt'  u 1:2 w lp pt 5 lw 1 ps 0.23 t 'PEPI',\
@@ -33,27 +35,27 @@ set style fill solid
 
 set title 'Frontiers in Earth Science'
 set output 'journal_fes.pdf'
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'fes_stats.txt' u 1:2 with boxes notitle
 
 set title 'Journal of Open Source Software'
 set output 'journal_joss.pdf'
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'joss_stats.txt' u 1:2 with boxes notitle
 
 set title 'Pure \& Applied Geophysics'
 set output 'journal_pag.pdf'
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'pag_stats.txt' u 1:2 with boxes notitle
 
 set title 'Proceedings of the National Academy of Sciences'
 set output 'journal_pnas.pdf'
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'pnas_stats.txt' u 1:2 with boxes notitle
 
 set title 'Nature'
 set output 'journal_natureJ.pdf'
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'natureJ_stats.txt' u 1:2 with boxes notitle
 
 ###############################################
@@ -69,7 +71,7 @@ set title 'Scientific Reports'
 set output 'journal_scientific_reports.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 2010, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'scientific_reports_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -85,7 +87,7 @@ set title 'Journal of Structural Geology'
 set output 'journal_jsg.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1978, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'jsg_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -101,7 +103,7 @@ set title 'Gondwana Research'
 set output 'journal_gondwana.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1996, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'gondwana_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -117,7 +119,7 @@ set title 'Earth and Planetary Physics'
 set output 'journal_epp.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 2016, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'epp_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -133,7 +135,7 @@ set title 'Int. J. Num. Meth. Fluids'
 set output 'journal_ijnmf.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1980, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'ijnmf_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -149,7 +151,7 @@ set title 'Journal of Geodynamics'
 set output 'journal_jog.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1983, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'jog_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -245,7 +247,7 @@ set title 'Earth Planet. Sci. Lett.'
 set output 'journal_epsl.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1965, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'epsl_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -259,14 +261,14 @@ set boxwidth 0.75
 set style fill solid
 set title 'J. Geophys. Res.: Solid Earth'
 set output 'journal_jgr.pdf'
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'jgr_stats.txt' u 1:2 with boxes notitle
 
 set title 'J. Geophys. Res.: Planets' 
 set output 'journal_jgr_planets.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1990, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'jgr_planets_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -282,7 +284,7 @@ set title 'Geophysical Journal International'
 set output 'journal_gji.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1987, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'gji_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -298,7 +300,7 @@ set title 'Geology'
 set output 'journal_geology.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1972, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'geology_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -314,7 +316,7 @@ set title 'Tectonics'
 set output 'journal_tectonics.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1981, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'tectonics_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -330,7 +332,7 @@ set title 'Tectonophysics'
 set output 'journal_tectonophysics.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1963, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'tectonophysics_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -346,7 +348,7 @@ set title 'Computers \& Geosciences'
 set output 'journal_cageo.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1974, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'cageo_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -362,7 +364,7 @@ set title 'Icarus'
 set output 'journal_icarus.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1961, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'icarus_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -378,7 +380,7 @@ set title 'Physics of the Earth and Planetary Interiors'
 set output 'journal_pepi.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1967, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'pepi_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -394,7 +396,7 @@ set title 'Journal of Computational Physics'
 set output 'journal_jcp.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1966, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'jcp_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -410,7 +412,7 @@ set title 'Terra Nova'
 set output 'journal_terra_nova.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1988, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'terra_nova_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -426,7 +428,7 @@ set title 'Computer Methods in Applied Mechanics and Engineering'
 set output 'journal_cmame.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 1971, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'cmame_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -442,7 +444,7 @@ set title 'Nature Communications'
 set output 'journal_natureC.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 2009, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'natureC_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -458,7 +460,7 @@ set title 'Nature Geoscience'
 set output 'journal_natureG.pdf'
 set style rect fc lt -1 fs solid 0.1 noborder
 set obj rect from 0, graph 0 to 2007, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'natureG_stats.txt' u 1:2 with boxes notitle
 
 ###########################################################
@@ -474,5 +476,58 @@ set title 'Geophysical & Astrophysical Fluid Dynamics'
 set output 'journal_gafd.pdf'
 #set style rect fc lt -1 fs solid 0.1 noborder
 #set obj rect from 0, graph 0 to 2007, graph 1
-plot[1964:2024][:nmax]\
+plot[1964:endyear][:nmax]\
 'gafd_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'Communications Earth \& Environment'
+set output 'journal_c_e_e.pdf'
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0, graph 0 to 2019, graph 1
+plot[1964:endyear][:nmax]\
+'c_e_e_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'SIAM Journal on Scientific Computing'
+set output 'journal_SIAMjsc.pdf'
+#set style rect fc lt -1 fs solid 0.1 noborder
+#set obj rect from 0, graph 0 to 2019, graph 1
+plot[1964:endyear][:nmax]\
+'SIAMjsc_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+reset
+set term pdf enhanced font "Times,10pt"
+set grid
+set xtics 5
+set ytics 1
+set boxwidth 0.75
+set style fill solid
+set title 'SIAM Journal on Numerical Analysis'
+set output 'journal_SIAMjna.pdf'
+#set style rect fc lt -1 fs solid 0.1 noborder
+#set obj rect from 0, graph 0 to 2019, graph 1
+plot[1964:endyear][:nmax]\
+'SIAMjna_stats.txt' u 1:2 with boxes notitle
+
+###########################################################
+
+
+

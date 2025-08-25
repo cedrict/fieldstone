@@ -38,7 +38,6 @@ u_1 \\ v_1 \\ u_2 \\ v_2 \\ u_3 \\ v_3
 \right)
 \]
 \end{small}
-or simply 
 
 For this element, we have three nodes at the vertices of the triangle, which are 
 numbered around the element in the counterclockwise direction. 
@@ -205,6 +204,259 @@ and the basis functions:
 \end{eqnarray}
 \end{mdframed}
 Once again we can verify that $\bN_i(x_j,y_j)=\delta_{ij}$ and $\sum\limits_i \bN_i(r,s)=1$.
+
+
+Coming back to the basis functions given for a generic triangle, we have
+\begin{eqnarray}
+\bN_1(x,y) &=& \frac{1}{D}[(x_2y_3-x_3y_2) + (y_2-y_3)x + (x_3-x_2)y] \nn\\
+\bN_2(x,y) &=& \frac{1}{D}[(x_3y_1-x_1y_3) + (y_3-y_1)x + (x_1-x_3)y] \nn\\
+\bN_3(x,y) &=& \frac{1}{D}[(x_1y_2-x_2y_1) + (y_1-y_2)x + (x_2-x_1)y] \nn
+\end{eqnarray}
+or, introducing the notations $x_{ij}=x_i-x_j$ and $y_{ij}=y_i-y_j$:
+\begin{eqnarray}
+\bN_1(x,y) &=& \frac{1}{D}[(x_2y_3-x_3y_2) + y_{23} x + x_{32} y] \nn\\
+\bN_2(x,y) &=& \frac{1}{D}[(x_3y_1-x_1y_3) + y_{31} x + x_{13} y] \nn\\
+\bN_3(x,y) &=& \frac{1}{D}[(x_1y_2-x_2y_1) + y_{12} x + x_{21} y] \nn
+\end{eqnarray}
+with $D=2|T|$ with $|T|$ being the area of the triangle.
+
+
+
+The gradient matrix is then given by (see for example \cite{koko07}) 
+\[
+{\bm B} = 
+\frac{1}{2|T|}
+\begin{pmatrix}
+\partial_x \bN_1 & 0 & \partial_x \bN_2 & 0 & \partial_x \bN_3 & 0 \\
+0 & \partial_y \bN_1 & 0 & \partial_y \bN_2 & 0 & \partial_y \bN_3 \\
+\partial_y \bN_1 & \partial_x \bN_1 &
+\partial_y \bN_2 & \partial_x \bN_2 &
+\partial_y \bN_3 & \partial_x \bN_3 
+\end{pmatrix}
+= \frac{1}{2|T|} \tilde{\bm B}
+\]
+with 
+\[
+\tilde{\bm B}=
+\begin{pmatrix}
+y_{23} & 0 & y_{31} & 0 & y_{12} & 0 \\
+0 & x_{32} & 0 & x_{13} & 0 & x_{21} \\
+x_{32} & y_{23} & x_{13} & y_{31} & x_{21} & y_{12}
+\end{pmatrix}
+\]
+
+{\it What follows is written specifically for the $P_1$ element 
+used in the context of elasticity and originates in \cite{koko07}.}
+
+We can also rewrite the element displacement vector
+\[
+\vec{u}_e = (u_1, v_1, u_2, v_2, u_3, v_3)^T
+\]
+in a non-standard form
+\[
+\vec{u}_e = (u_1, u_2, u_3, v_1, v_2, v_3)^T
+\]
+Then the corresponding gradient matrix is 
+\[
+\tilde{\bm B}=
+\begin{pmatrix}
+y_{23}  & y_{31}  & y_{12} & 0 & 0 & 0 \\
+0 & 0 & 0 & x_{32}  & x_{13}  & x_{21} \\
+x_{32} & x_{13} & x_{21} & y_{23} &  y_{31}  & y_{12}
+\end{pmatrix}
+\]
+We have 
+\[
+{\bm C} =
+\begin{pmatrix}
+\lambda + 2 \mu & \lambda & 0 \\
+\lambda & \lambda + 2 \mu & 0 \\
+0 & 0 & \mu
+\end{pmatrix}
+=
+\begin{pmatrix}
+\tilde\lambda  & \lambda & 0 \\
+\lambda & \tilde\lambda  & 0 \\
+0 & 0 & \mu
+\end{pmatrix}
+\]
+Then 
+
+
+
+\begin{landscape}
+\begin{eqnarray}
+&&
+{\bm B}^T \cdot {\bm C} \cdot {\bm B} \nn\\
+&=& \frac{1}{4|T|^2} \tilde{\bm B}^T \cdot {\bm C} \cdot \tilde{\bm B} \nn\\
+&=& \frac{1}{4|T|^2} \tilde{\bm B}^T \cdot 
+\begin{pmatrix}
+\tilde\lambda  & \lambda & 0 \\
+\lambda & \tilde\lambda  & 0 \\
+0 & 0 & \mu
+\end{pmatrix}
+\cdot 
+\begin{pmatrix}
+y_{23}  & y_{31}  & y_{12} & 0 & 0 & 0 \\
+0 & 0 & 0 & x_{32}  & x_{13}  & x_{21} \\
+x_{32} & x_{13} & x_{21} & y_{23} &  y_{31}  & y_{12}
+\end{pmatrix} \nn\\
+&=& \frac{1}{4|T|^2} \tilde{\bm B}^T \cdot 
+\begin{pmatrix}
+\tilde\lambda y_{23} & \tilde\lambda y_{31} & \tilde\lambda y_{12} & \lambda x_{32} & \lambda x_{13} & \lambda x_{21} \\
+\lambda y_{23} &  \lambda y_{31} &  \lambda y_{12} & \tilde\lambda x_{32} & \tilde\lambda x_{13} & \tilde\lambda x_{21} \\
+\mu x_{32} &    \mu x_{13} & \mu x_{21} & \mu y_{23} &    \mu y_{31} & \mu y_{12}  
+\end{pmatrix} \nn\\
+&=&
+\frac{1}{4|T|^2} 
+\begin{pmatrix}
+y_{23} & 0 & x_{32} \\
+y_{31} & 0 & x_{13} \\
+y_{12} & 0 & x_{21} \\
+0 & x_{32} & y_{23} \\
+0 & x_{13} & y_{31} \\
+0 & x_{21} & y_{12} 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\tilde\lambda y_{23} & \tilde\lambda y_{31} & \tilde\lambda y_{12} & \lambda x_{32} & \lambda x_{13} & \lambda x_{21} \\
+\lambda y_{23} &  \lambda y_{31} &  \lambda y_{12} & \tilde\lambda x_{32} & \tilde\lambda x_{13} & \tilde\lambda x_{21} \\
+\mu x_{32} &    \mu x_{13} & \mu x_{21} & \mu y_{23} &    \mu y_{31} & \mu y_{12}  
+\end{pmatrix} \nn\\
+&=&
+\frac{1}{4|T|^2} 
+\begin{pmatrix}
+\tilde\lambda y_{23}^ 2 + \mu x_{32}^2 &
+\tilde\lambda y_{23}y_{31} + \mu x_{32}x_{13} &
+\tilde\lambda y_{23}y_{12} + \mu x_{32}x_{21} &
+\lambda y_{23}x_{32} + \mu x_{32}y_{23} &
+\lambda y_{23}x_{13} + \mu x_{32}y_{31} &
+\lambda y_{23}x_{21} + \mu x_{32}y_{12}  
+\\
+\tilde\lambda y_{31}y_{23} + \mu x_{13}x_{32} &
+\tilde\lambda y_{31}^2 + \mu x_{13}^2 &
+\tilde\lambda y_{31}y_{12} + \mu x_{13}x_{21} &
+\lambda y_{31}x_{32} + \mu x_{13}y_{23}  &
+\lambda y_{31}x_{13} + \mu x_{13}y_{31}  &
+\lambda y_{31}x_{21} + \mu x_{13}y_{12}  
+\\
+\tilde\lambda y_{12}y_{23} + \mu x_{21}x_{32} &
+\tilde\lambda y_{12}y_{31} + \mu x_{21}x_{13} &
+\tilde\lambda y_{12}^2 + \mu x_{21}^2 &
+\lambda y_{12}x_{32} + \mu x_{21}y_{23}  &
+\lambda y_{12}x_{13} + \mu x_{21}y_{31}  &
+\lambda y_{12}x_{21} + \mu x_{21}y_{12}  
+\\
+. & .& . &
+\tilde\lambda x_{32}^2 + \mu y_{23}^2 &
+\tilde\lambda x_{32}x_{13} + \mu y_{23}y_{31} &
+\tilde\lambda x_{32}x_{21} + \mu y_{23}y_{12} 
+\\
+. & . & . & 
+\tilde\lambda x_{13}x_{32} + \mu y_{31}y_{23} &
+\tilde\lambda x_{13}^2 + \mu y_{31}^2 &
+\tilde\lambda x_{13}x_{21} + \mu y_{31}y_{12} 
+\\
+. & . & . &
+\tilde\lambda x_{21}x_{32} + \mu y_{12}y_{23} &
+\tilde\lambda x_{21}x_{13} + \mu y_{12}y_{31} &
+\tilde\lambda x_{21}^2 + \mu y_{12}^2 
+\end{pmatrix} 
+\nn\\
+&=& \frac{1}{4|T|^2} 
+\begin{pmatrix}
+\K_{xx} & \K_{xy} \\
+\K_{yx} & \K_{yy}
+\end{pmatrix}
+\end{eqnarray}
+\end{landscape}
+
+with
+\begin{eqnarray}
+\K_{xx} &=&  
+\begin{pmatrix}
+\tilde\lambda y_{23}^ 2 + \mu x_{32}^2 &
+\tilde\lambda y_{23}y_{31} + \mu x_{32}x_{13} &
+\tilde\lambda y_{23}y_{12} + \mu x_{32}x_{21} \\
+\tilde\lambda y_{31}y_{23} + \mu x_{13}x_{32} &
+\tilde\lambda y_{31}^2 + \mu x_{13}^2 &
+\tilde\lambda y_{31}y_{12} + \mu x_{13}x_{21} \\
+\tilde\lambda y_{12}y_{23} + \mu x_{21}x_{32} &
+\tilde\lambda y_{12}y_{31} + \mu x_{21}x_{13} &
+\tilde\lambda y_{12}^2 + \mu x_{21}^2 &
+\end{pmatrix}
+\nn\\
+\K_{yy} &=&  
+\begin{pmatrix}
+\tilde\lambda x_{32}^2 + \mu y_{23}^2 &
+\tilde\lambda x_{32}x_{13} + \mu y_{23}y_{31} &
+\tilde\lambda x_{32}x_{21} + \mu y_{23}y_{12} 
+\\
+\tilde\lambda x_{13}x_{32} + \mu y_{31}y_{23} &
+\tilde\lambda x_{13}^2 + \mu y_{31}^2 &
+\tilde\lambda x_{13}x_{21} + \mu y_{31}y_{12} 
+\\
+\tilde\lambda x_{21}x_{32} + \mu y_{12}y_{23} &
+\tilde\lambda x_{21}x_{13} + \mu y_{12}y_{31} &
+\tilde\lambda x_{21}^2 + \mu y_{12}^2 
+\end{pmatrix}
+\nn\\
+\K_{xy} = \K_{yx}^T &=&
+\begin{pmatrix}
+\lambda y_{23}x_{32} + \mu x_{32}y_{23} &
+\lambda y_{23}x_{13} + \mu x_{32}y_{31} &
+\lambda y_{23}x_{21} + \mu x_{32}y_{12}  
+\\
+\lambda y_{31}x_{32} + \mu x_{13}y_{23}  &
+\lambda y_{31}x_{13} + \mu x_{13}y_{31}  &
+\lambda y_{31}x_{21} + \mu x_{13}y_{12}  
+\\
+\lambda y_{12}x_{32} + \mu x_{21}y_{23}  &
+\lambda y_{12}x_{13} + \mu x_{21}y_{31}  &
+\lambda y_{12}x_{21} + \mu x_{21}y_{12}  
+\end{pmatrix}
+\end{eqnarray}
+
+If we now introduce the vectors
+\[
+\vec{x} = 
+\begin{pmatrix}
+x_{32} \\ x_{13} \\ x_{21} 
+\end{pmatrix}
+\qquad \text{and}
+\qquad
+\vec{y}=
+\begin{pmatrix}
+y_{23} \\ y_{31} \\ y_{12}
+\end{pmatrix}
+\]
+then 
+\begin{eqnarray}
+\K_{xx} &=&  (\lambda+2\mu) \vec{y}\vec{y}^T + \mu \vec{x}\vec{x}^T \nn\\
+\K_{yy} &=&  (\lambda+2\mu) \vec{x}\vec{x}^T + \mu \vec{y}\vec{y}^T \nn\\
+\K_{xy} &=& \lambda \vec{y}\vec{x}^T  + \mu \vec{x} \vec{y}^T \nn
+\end{eqnarray}
+
+In the end 
+\begin{eqnarray}
+\K 
+&=& \int_T {\bm B}^T \cdot {\bm C} \cdot {\bm B} dV \nn\\
+&=& \int_T \frac{1}{4|T|^2} \tilde{\bm B}^T \cdot {\bm C} \cdot \tilde {\bm B} dV \nn\\
+&=&  \frac{1}{4|T|^2}  \tilde{\bm B}^T \cdot {\bm C} \cdot \tilde {\bm B} \int_T dV \nn\\
+&=&  \frac{1}{4|T|}  \tilde{\bm B}^T \cdot {\bm C} \cdot \tilde {\bm B} 
+\end{eqnarray}
+
+This means that one can compute elemental matrices for each triangle
+without using Gauss integration (as long as the coefficients are 
+constant within the triangle).
+
+Whether the same approach can be taken in 3d needs to be looked at ...
+
+
+
+
+
+
 
 
 
