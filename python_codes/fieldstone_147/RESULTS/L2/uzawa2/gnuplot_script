@@ -1,0 +1,102 @@
+#
+set term pdf enhanced font "times,10pt"
+set pointsize .2
+set grid
+set key outside
+
+##############################################################
+
+set log y
+set format y "10^{%L}"
+
+set xlabel '# iterations'
+set ylabel 'xi_P'
+set output 'solver_convergence_P.pdf'
+plot[][]\
+'solver_convergence_16_8.ascii'    w l lt 1 dt 1 t 'solver=16, 8x8',\
+'solver_convergence_16_16.ascii'   w l lt 1 dt 1 t 'solver=16, 16x16',\
+'solver_convergence_16_24.ascii'   w l lt 1 dt 1 t 'solver=16, 24x24',\
+'solver_convergence_16_32.ascii'   w l lt 1 dt 1 t 'solver=16, 32x32',\
+'solver_convergence_16_40.ascii'   w l lt 1 dt 1 t 'solver=16, 40x40',\
+'solver_convergence_16_48.ascii'   w l lt 1 dt 1 t 'solver=16, 48x48',\
+'solver_convergence_16_64.ascii'   w l lt 1 dt 1 t 'solver=16, 64x64',\
+'solver_convergence_20_8.ascii'    w l lt 2 dt 1 t 'solver=20, 8x8',\
+'solver_convergence_20_16.ascii'   w l lt 2 dt 1 t 'solver=20, 16x16',\
+'solver_convergence_20_24.ascii'   w l lt 2 dt 1 t 'solver=20, 24x24',\
+'solver_convergence_20_32.ascii'   w l lt 2 dt 1 t 'solver=20, 32x32',\
+'solver_convergence_20_40.ascii'   w l lt 2 dt 1 t 'solver=20, 40x40',\
+'solver_convergence_20_48.ascii'   w l lt 2 dt 1 t 'solver=20, 48x48',\
+'solver_convergence_20_64.ascii'   w l lt 2 dt 1 t 'solver=20, 64x64',\
+
+set ylabel 'xi_V'
+set output 'solver_convergence_V.pdf'
+plot[][]\
+'solver_convergence_16_8.ascii'  u 1:3 w l lt 1 dt 1 t 'solver=16, 8x8',\
+'solver_convergence_16_16.ascii' u 1:3 w l lt 1 dt 1 t 'solver=16, 16x16',\
+'solver_convergence_16_24.ascii' u 1:3 w l lt 1 dt 1 t 'solver=16, 24x24',\
+'solver_convergence_16_32.ascii' u 1:3 w l lt 1 dt 1 t 'solver=16, 32x32',\
+'solver_convergence_16_40.ascii' u 1:3 w l lt 1 dt 1 t 'solver=16, 40x40',\
+'solver_convergence_16_48.ascii' u 1:3 w l lt 1 dt 1 t 'solver=16, 48x48',\
+'solver_convergence_16_64.ascii' u 1:3 w l lt 1 dt 1 t 'solver=16, 64x64',\
+'solver_convergence_20_8.ascii'  u 1:3 w l lt 2 dt 1 t 'solver=20, 8x8',\
+'solver_convergence_20_16.ascii' u 1:3 w l lt 2 dt 1 t 'solver=20, 16x16',\
+'solver_convergence_20_24.ascii' u 1:3 w l lt 2 dt 1 t 'solver=20, 24x24',\
+'solver_convergence_20_32.ascii' u 1:3 w l lt 2 dt 1 t 'solver=20, 32x32',\
+'solver_convergence_20_40.ascii' u 1:3 w l lt 2 dt 1 t 'solver=20, 40x40',\
+'solver_convergence_20_48.ascii' u 1:3 w l lt 2 dt 1 t 'solver=20, 48x48',\
+'solver_convergence_20_64.ascii' u 1:3 w l lt 2 dt 1 t 'solver=20, 64x64',\
+
+set ylabel 'alpha'
+set output 'solver_convergence_alpha.pdf'
+plot[][]\
+'solver_convergence_16_8.ascii'  u 1:4 w l lt 1 dt 1 t 'solver=16, 8x8',\
+'solver_convergence_16_16.ascii' u 1:4 w l lt 1 dt 1 t 'solver=16, 16x16',\
+'solver_convergence_16_24.ascii' u 1:4 w l lt 1 dt 1 t 'solver=16, 24x24',\
+'solver_convergence_16_32.ascii' u 1:4 w l lt 1 dt 1 t 'solver=16, 32x32',\
+'solver_convergence_16_40.ascii' u 1:4 w l lt 1 dt 1 t 'solver=16, 40x40',\
+'solver_convergence_16_48.ascii' u 1:4 w l lt 1 dt 1 t 'solver=16, 48x48',\
+'solver_convergence_16_64.ascii' u 1:4 w l lt 1 dt 1 t 'solver=16, 64x64',\
+'solver_convergence_20_8.ascii'  u 1:4 w l lt 2 dt 1 t 'solver=20, 8x8',\
+'solver_convergence_20_16.ascii' u 1:4 w l lt 2 dt 1 t 'solver=20, 16x16',\
+'solver_convergence_20_24.ascii' u 1:4 w l lt 2 dt 1 t 'solver=20, 24x24',\
+'solver_convergence_20_32.ascii' u 1:4 w l lt 2 dt 1 t 'solver=20, 32x32',\
+'solver_convergence_20_40.ascii' u 1:4 w l lt 2 dt 1 t 'solver=20, 40x40',\
+'solver_convergence_20_48.ascii' u 1:4 w l lt 2 dt 1 t 'solver=20, 48x48',\
+'solver_convergence_20_64.ascii' u 1:4 w l lt 2 dt 1 t 'solver=20, 64x64',\
+
+##############################################################
+
+set log xy
+set ylabel '|u-u_{th}|_{L_2}'
+set xlabel 'h'
+set output 'errorsV.pdf'
+plot[][]\
+'errors_16.ascii'    u (1/sqrt($3)):6 w lp lt 1  dt 1 t'solver=16',\
+'errors_20.ascii'    u (1/sqrt($3)):6 w lp lt 2  dt 1 t'solver=20',\
+x**3/150 lt -1 dt 2  t 'h^{3}' 
+
+set ylabel '|p-p_{th}|_{L_2}'
+set xlabel 'h'
+set output 'errorsP.pdf'
+plot[][]\
+'errors_16.ascii'    u (1/sqrt($3)):9 w lp lt 1  dt 1 t'solver=16',\
+'errors_20.ascii'    u (1/sqrt($3)):9 w lp lt 2  dt 1 t'solver=20',\
+x**2/25 lt -1 dt 2  t 'h^{2}' 
+
+set ylabel '|div(v)|_{L_2}'
+set xlabel 'h'
+set output 'divv.pdf'
+plot[][]\
+'errors_16.ascii'    u (1/sqrt($3)):12 w lp lt 1  dt 1 t'solver=16',\
+'errors_20.ascii'    u (1/sqrt($3)):12 w lp lt 2  dt 1 t'solver=20',\
+
+##############################################################
+
+set xlabel 'nel'
+set ylabel 'time (s)'
+set output 'time.pdf'
+plot[][]\
+'solve_16.ascii'   u 6:3 w l lt 1 dt 1  t 'solver=16',\
+'solve_20.ascii'   u 6:3 w l lt 2 dt 1  t 'solver=20',\
+
+
