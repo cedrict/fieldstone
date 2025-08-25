@@ -1,3 +1,4 @@
+#
 set term pdf enhanced font "Times,12pt" 
 set grid
 set log xy 
@@ -9,7 +10,8 @@ set ylabel 'solve time (s)'
 set output 'solve.pdf'
 plot[][]\
 'solve_0.ascii' u 7:3 w lp t 'method=0',\
-'solve_1.ascii' u 7:3 w lp t 'method=1'
+'solve_1.ascii' u 7:3 w lp t 'method=1',\
+x**1.5/10000000 lt -1 dt 2 t 'N^{1.5}'
 
 
 set ylabel 'build matrix time (s)'

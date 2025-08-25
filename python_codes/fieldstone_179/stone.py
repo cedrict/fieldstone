@@ -73,14 +73,14 @@ visu=1
 
 if int(len(sys.argv) == 3):
    method = int(sys.argv[1])
-   sizet = float(sys.argv[2])
+   sizet = sys.argv[2]
 else:
    method= 0
-   sizet = 0.01 
+   sizet = '0.00005'
 
 debug=False
 
-triangle_instructions='pqa'+str(sizet)  # 'pqa0.001'
+triangle_instructions='pqa'+sizet  # 'pqa0.001'
 
 qcoords_r=[1./6.,1./6.,2./3.] # coordinates & weights 
 qcoords_s=[2./3.,1./6.,1./6.] # of quadrature points
@@ -107,13 +107,17 @@ Nfem=NV*ndof
 
 if debug: print(np.sum(area))
 
+print("setup: build mesh: %.3f s | %d " % (clock.time()-start,Nfem))
+
+###############################################################################
+
 print('m=',m)
 print('NV=',NV)
 print('nel=',nel)
+print('Nfem=',Nfem)
+print('method=',method)
 print(triangle_instructions)
 print("-----------------------------")
-
-print("setup: build mesh: %.3f s | %d " % (clock.time()-start,Nfem))
 
 ###############################################################################
 # flag boundary nodes
@@ -352,7 +356,7 @@ print("     -> Ael: %.3f s | Nfem= %d" % (time_Ael,Nfem))
 
 print("Build matrix: %.3f s | Nfem= %d" % (clock.time()-start,Nfem))
 
-if True:
+if False:
    plt.clf()
    plt.spy(sps.csr_matrix(A_fem),markersize=1)
    plt.savefig('matrix.pdf', bbox_inches='tight')
