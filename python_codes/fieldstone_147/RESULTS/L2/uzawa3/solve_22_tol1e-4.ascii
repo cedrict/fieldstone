@@ -1,0 +1,22 @@
+solver= 22
+solve time: 0.015 s, nel= 64, niter= 6
+solver= 22
+solve time: 0.026 s, nel= 100, niter= 6
+solver= 22
+solve time: 0.102 s, nel= 256, niter= 7
+solver= 22
+solve time: 0.303 s, nel= 576, niter= 7
+solver= 22
+solve time: 1.748 s, nel= 1024, niter= 7
+solver= 22
+solve time: 4.159 s, nel= 1600, niter= 8
+solver= 22
+solve time: 8.103 s, nel= 2304, niter= 8
+solver= 22
+solve time: 18.581 s, nel= 4096, niter= 8
+solver= 22
+solve time: 34.032 s, nel= 6400, niter= 8
+solver= 22
+solve time: 73.158 s, nel= 9216, niter= 9
+solver= 22
+solve time: 192.415 s, nel= 16384, niter= 9

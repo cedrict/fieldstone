@@ -1,0 +1,14 @@
+solve time: 0.021 s, nel= 64
+solve time: 0.035 s, nel= 100
+solve time: 0.057 s, nel= 144
+solve time: 0.083 s, nel= 196
+solve time: 0.115 s, nel= 256
+solve time: 0.225 s, nel= 400
+solve time: 0.360 s, nel= 576
+solve time: 2.073 s, nel= 1024
+solve time: 4.716 s, nel= 1600
+solve time: 9.374 s, nel= 2304
+solve time: 22.501 s, nel= 4096
+solve time: 41.397 s, nel= 6400
+solve time: 84.936 s, nel= 9216
+solve time: 226.167 s, nel= 16384
