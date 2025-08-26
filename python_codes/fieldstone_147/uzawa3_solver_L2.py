@@ -4,31 +4,43 @@ import scipy.sparse.linalg as sla
 
 ############################################################################### 
 # same as schur_complement_cg_solver.py but without preconditioner business 
-# the function implicitely assumes matrices in csr format
+#the function implicitely assumes matrices in csr format
 ############################################################################### 
 
-def uzawa3_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter,tol):
+def uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter,tol):
 
    print('-------------------------')
-   
-   solP=np.zeros(NfemP,dtype=np.float64)  # guess pressure is zero.
+
+   solP=np.zeros(NfemP,dtype=np.float64) #  guess pressure is zero.
 
    conv_file=open("solver_convergence.ascii","w")
 
    solV=sps.linalg.spsolve(K_mat,f_rhs)                             # compute V_0
-   rvect_k=G_mat.T.dot(solV)-h_rhs                                  # compute r_0
+   rvect_k=sps.linalg.spsolve(MP_mat,G_mat.T.dot(solV)-h_rhs)       # compute r_0
    pvect_k=np.copy(rvect_k)                                         # compute p_0
 
    for k in range (0,niter): #--------------------------------------#
-                                                                    #
-       ptildevect_k=G_mat.dot(pvect_k)                              # 
-       dvect_k=sps.linalg.spsolve(K_mat,ptildevect_k)               #
-       alpha=(rvect_k.dot(rvect_k))/(ptildevect_k.dot(dvect_k))     #
+                                                                    # 
+       #AAA                                                         #
+       dvect_k=sps.linalg.spsolve(K_mat,G_mat.dot(pvect_k))         #
+       #BBB                                                         #
+       numerator=rvect_k.dot(MP_mat.dot(rvect_k))                   #
+       denominator=pvect_k.dot(H_mat.dot(dvect_k))                  #
+       alpha=numerator/denominator                                  #
+       #CCC                                                         #
        solP+=alpha*pvect_k                                          #
+       #DDD                                                         #
        solV-=alpha*dvect_k                                          #
-       rvect_kp1=rvect_k-alpha*(G_mat.T.dot(dvect_k))               #
-       beta=(rvect_kp1.dot(rvect_kp1))/(rvect_k.dot(rvect_k))       #
+       #EEE                                                         #
+       dr=sps.linalg.spsolve(MP_mat,-alpha*G_mat.T.dot(dvect_k))    #
+       rvect_kp1=rvect_k+dr                                         #
+       #FFF                                                         #
+       numerator=rvect_kp1.dot(MP_mat.dot(rvect_kp1))               #
+       denominator=rvect_k.dot(MP_mat.dot(rvect_k))                 #
+       beta=numerator/denominator                                   #
+       #GGG                                                         #
        pvect_kp1=rvect_kp1+beta*pvect_k                             #
+                                                                    #
        xiP=np.linalg.norm(alpha*pvect_k)  # i.e. norm of (Pk+1-Pk)  #
        xiV=np.linalg.norm(alpha*dvect_k)  # i.e. norm of (Vk+1-Vk)  #
        conv_file.write("%d %e %e %e \n" %(k,xiP,xiV,alpha))         #

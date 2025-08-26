@@ -1,16 +1,15 @@
 import numpy as np
 import scipy.sparse as sps
-import scipy.sparse.linalg as sla
 
 ############################################################################### 
 #the function implicitely assumes matrices in csr format
+############################################################################### 
 
 def uzawa2_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter,tol):
 
    print('-------------------------')
-
-   # we assume that the guess/starting pressure is zero.
-   solP=np.zeros(NfemP,dtype=np.float64)  
+   
+   solP=np.zeros(NfemP,dtype=np.float64) # guess pressure is zero.
 
    solV=sps.linalg.spsolve(K_mat,f_rhs-G_mat.dot(solP))    
 

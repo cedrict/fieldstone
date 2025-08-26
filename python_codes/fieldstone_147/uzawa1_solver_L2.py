@@ -2,17 +2,15 @@ import numpy as np
 import scipy.sparse as sps
 import scipy.sparse.linalg as sla
 
-# thsi does not work i dont understand how it works !!
-
 ############################################################################### 
-#the function implicitely assumes matrices in csr format
+# the function implicitely assumes matrices in csr format
+############################################################################### 
 
 def uzawa1_solver_L2(K_mat,G_mat,MP_mat,f_rhs,h_rhs,NfemP,niter,tol,omega):
 
    print('-------------------------')
 
-   # we assume that the guess/starting pressure is zero.
-   solP=np.zeros(NfemP,dtype=np.float64)  
+   solP=np.zeros(NfemP,dtype=np.float64) # guess pressure is zero.
 
    conv_file=open("solver_convergence.ascii","w")
 

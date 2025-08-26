@@ -6,11 +6,12 @@ from scipy.sparse import csr_matrix,csc_matrix,lil_matrix
 from schur_complement_cg_solver import *
 import scipy.sparse.linalg as sla
 from uzawa1_solver import *
-from uzawa1_solver_L2 import *
-from uzawa1_solver_L2b import *
 from uzawa2_solver import *
-from uzawa2_solver_L2 import *
 from uzawa3_solver import *
+from uzawa1_solver_L2 import *
+from uzawa2_solver_L2 import *
+from uzawa3_solver_L2 import *
+from uzawa1_solver_L2b import *
 from projection_solver import *
 from basis_functions import *
 
@@ -122,11 +123,11 @@ if int(len(sys.argv) == 6):
    nqperdim = int(sys.argv[4])
    solver = int(sys.argv[5])
 else:
-   nelx = 24
+   nelx = 16
    nely = nelx
    visu = 1
    nqperdim=3
-   solver=21
+   solver=22
     
 nnx=2*nelx+1         # number of V nodes, x direction
 nny=2*nely+1         # number of V nodes, y direction
@@ -146,7 +147,7 @@ omega=1
 
 use_precond=False
 precond_type=0
-tolerance=1e-7
+tolerance=1e-4
 niter_max=5000
 
 projection=False
@@ -620,6 +621,8 @@ print("generate ILU precond: %.3f s, nel= %d" % (clock.time()-start,nel))
 ###############################################################################
 start=clock.time()
 
+niter=0
+
 if solver==1:
    sol=sps.linalg.spsolve(sparse_matrix,b_fem,use_umfpack=False)
 elif solver==2:
@@ -657,22 +660,21 @@ elif solver==15:
 elif solver==16:
    solV,p,niter=uzawa2_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance)
 elif solver==17:
-   solV,p,niter=projection_solver(K_mat,G_mat,L_mat,f_rhs,h_rhs,\
-                                  NfemV,NfemP,niter_max,tolerance)
+   solV,p,niter=projection_solver(K_mat,G_mat,L_mat,f_rhs,h_rhs,NfemV,NfemP,niter_max,tolerance)
 elif solver==18:
-   solV,p,niter=uzawa1_solver_L2(K_mat,G_mat,MP_mat,f_rhs,h_rhs,\
-                                 NfemP,niter_max,tolerance,omega)
+   solV,p,niter=uzawa1_solver_L2(K_mat,G_mat,MP_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance,omega)
 elif solver==19:
-   solV,p,niter=uzawa1_solver_L2b(K_mat,G_mat,MP_mat,f_rhs,h_rhs,\
-                                 NfemP,niter_max,tolerance,omega)
+   solV,p,niter=uzawa1_solver_L2b(K_mat,G_mat,MP_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance,omega)
 elif solver==20:
    solV,p,niter=uzawa2_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance)
 elif solver==21:
    solV,p,niter=uzawa3_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance)
+elif solver==22:
+   solV,p,niter=uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance)
 else:
    exit('solver unknown')
 
-print("solve time: %.3f s, nel= %d" % (clock.time()-start,nel))
+print("solve time: %.3f s, nel= %d, niter= %d" % (clock.time()-start,nel,niter))
 
 ###############################################################################
 # Poisson correction 
@@ -699,7 +701,8 @@ if projection and (solver ==15 or solver==16):
 start=clock.time()
 
 if solver==4 or solver==13 or solver==14 or solver==15 or solver==16 or\
-   solver==17 or solver==18 or solver==19 or solver==20 or solver==21: 
+   solver==17 or solver==18 or solver==19 or solver==20 or solver==21 or\
+   solver==22: 
    u,v=np.reshape(solV,(NV,2)).T
 else:
    u,v=np.reshape(sol[0:NfemV],(NV,2)).T
@@ -722,26 +725,18 @@ pavrg=0.
 for iel in range (0,nel):
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
-
-            # position & weight of quad. point
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
-
             dNNNVdr=dNNVdr(rq,sq)
             dNNNVds=dNNVds(rq,sq)
             NNNP=NNP(rq,sq)
-            # calculate jacobian matrix
-            jcb=np.zeros((2,2),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
+            jcb[0,0]=dNNNVdr[:].dot(xV[iconV[:,iel]])
+            jcb[0,1]=dNNNVdr[:].dot(yV[iconV[:,iel]])
+            jcb[1,0]=dNNNVds[:].dot(xV[iconV[:,iel]])
+            jcb[1,1]=dNNNVds[:].dot(yV[iconV[:,iel]])
             jcob = np.linalg.det(jcb)
-            pq=0.
-            for k in range(0,mP):
-                pq+=NNNP[k]*p[iconP[k,iel]]
+            pq=NNNP[:].dot(p[iconP[:,iel]])
             pavrg+=pq*weightq*jcob
         # end for jq
     # end for iq
@@ -749,6 +744,7 @@ for iel in range (0,nel):
 
 p[:]-=pavrg/Lx/Ly
 
+print("     -> pavrg %e " %(pavrg))
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
 print("normalise pressure: %.3f s" % (clock.time()-start))
@@ -772,30 +768,19 @@ for iel in range(0,nel):
     NNNV=NNV(rq,sq)
     dNNNVdr=dNNVdr(rq,sq)
     dNNNVds=dNNVds(rq,sq)
-
-    jcb=np.zeros((2,2),dtype=np.float64)
-    for k in range(0,mV):
-        jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-        jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
-        jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-        jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
-    #end for
-    jcob=np.linalg.det(jcb)
+    jcb[0,0]=dNNNVdr[:].dot(xV[iconV[:,iel]])
+    jcb[0,1]=dNNNVdr[:].dot(yV[iconV[:,iel]])
+    jcb[1,0]=dNNNVds[:].dot(xV[iconV[:,iel]])
+    jcb[1,1]=dNNNVds[:].dot(yV[iconV[:,iel]])
     jcbi=np.linalg.inv(jcb)
-
-    for k in range(0,mV):
-        dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-        dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-    #end for
-
-    for k in range(0,mV):
-        xc[iel]+=NNNV[k]*xV[iconV[k,iel]]
-        yc[iel]+=NNNV[k]*yV[iconV[k,iel]]
-        exx[iel]+=dNNNVdx[k]*u[iconV[k,iel]]
-        eyy[iel]+=dNNNVdy[k]*v[iconV[k,iel]]
-        exy[iel]+=0.5*(dNNNVdy[k]*u[iconV[k,iel]]+dNNNVdx[k]*v[iconV[k,iel]])
-    #end for
-
+    dNNNVdx[:]=jcbi[0,0]*dNNNVdr[:]+jcbi[0,1]*dNNNVds[:]
+    dNNNVdy[:]=jcbi[1,0]*dNNNVdr[:]+jcbi[1,1]*dNNNVds[:]
+    xc[iel]=NNNV[:].dot(xV[iconV[:,iel]])
+    yc[iel]=NNNV[:].dot(yV[iconV[:,iel]])
+    exx[iel]=dNNNVdx[:].dot(u[iconV[:,iel]])
+    eyy[iel]=dNNNVdy[:].dot(v[iconV[:,iel]])
+    exy[iel]=0.5*(dNNNVdy[:].dot(u[iconV[:,iel]])
+                 +dNNNVdx[:].dot(v[iconV[:,iel]]))
     e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
 
 #end for
@@ -817,7 +802,6 @@ vrms=0.
 errv=0.
 divv=0.
 errp=0.
-avrgp=0.
 for iel in range (0,nel):
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
@@ -831,39 +815,28 @@ for iel in range (0,nel):
             dNNNVds=dNNVds(rq,sq)
             NNNP=NNP(rq,sq)
 
-            jcb=np.zeros((2,2),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
-                jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
-            #end for
+            jcb[0,0]=dNNNVdr[:].dot(xV[iconV[:,iel]])
+            jcb[0,1]=dNNNVdr[:].dot(yV[iconV[:,iel]])
+            jcb[1,0]=dNNNVds[:].dot(xV[iconV[:,iel]])
+            jcb[1,1]=dNNNVds[:].dot(yV[iconV[:,iel]])
             jcob=np.linalg.det(jcb)
 
-            xq=0.0
-            yq=0.0
-            uq=0.0
-            vq=0.0
-            exxq=0.0
-            eyyq=0.0
-            for k in range(0,mV):
-                xq+=NNNV[k]*xV[iconV[k,iel]]
-                yq+=NNNV[k]*yV[iconV[k,iel]]
-                uq+=NNNV[k]*u[iconV[k,iel]]
-                vq+=NNNV[k]*v[iconV[k,iel]]
-                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-                exxq+=dNNNVdx[k]*u[iconV[k,iel]]
-                eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
-            #end for
+            dNNNVdx[:]=jcbi[0,0]*dNNNVdr[:]+jcbi[0,1]*dNNNVds[:]
+            dNNNVdy[:]=jcbi[1,0]*dNNNVdr[:]+jcbi[1,1]*dNNNVds[:]
+
+            xq=NNNV[:].dot(xV[iconV[:,iel]])
+            yq=NNNV[:].dot(yV[iconV[:,iel]])
+            uq=NNNV[:].dot(u[iconV[:,iel]])
+            vq=NNNV[:].dot(v[iconV[:,iel]])
+            exxq=dNNNVdx[:].dot(u[iconV[:,iel]])
+            eyyq=dNNNVdy[:].dot(v[iconV[:,iel]])
+
             errv+=((uq-uth(xq,yq))**2+(vq-vth(xq,yq))**2)*weightq*jcob
             vrms+=(uq**2+vq**2)*weightq*jcob
             divv+=(exxq+eyyq)**2*weightq*jcob
 
             pq=NNNP.dot(p[iconP[:,iel]])
             errp+=(pq-pth(xq,yq))**2*weightq*jcob
-
-            avrgp+=pq*weightq*jcob
 
         #end for jq
     #end for iq
@@ -873,7 +846,6 @@ divv=np.sqrt(divv/Lx/Ly)
 errv=np.sqrt(errv/Lx/Ly)
 errp=np.sqrt(errp/Lx/Ly)
 vrms=np.sqrt(vrms/Lx/Ly)
-avrgp=avrgp/Lx/Ly
 
 print("     -> nel= %6d ; errv= %e ; errp= %e ; divv= %e" %(nel,errv,errp,divv))
 

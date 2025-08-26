@@ -347,9 +347,26 @@ diagonal of $ \G^T (diag [\K]  )^{-1} \G$ we lump the matrix instead.
 %==============================================================
 \section*{L2 projection stuff - Donea \& Huerta}
 
+In what follows we will need to replace $\vec{p}^T\cdot\vec{p}$ 
+by 
+\[
+(p,q) = \int_\Omega {p} \cdot {q} dV 
+= \vec{p}^T \cdot {\bm M}_{p} \cdot \vec{q}
+\]
+where ${\bm M}_{p}$ is the pressure mass matrix. 
+Building and re-using the pressure mass matrix is simpler than 
+computing the integral everytime, but it may not be 
+the fastest approach.
+
+Likewise we will need to replace $( \G \cdot \vec{x})^T\cdot \vec{y}$
+by
+\[
+(\nabla {x},{y}) = \int_\Omega \nabla \vec{x} \; {y} dV = \vec{x}^T \cdot {\bm H} \cdot \vec{y}
+\]
+where ${\bm H}$ is defined as $\int \vec\nabla \vec{\bN}_P  \cdot \vec{\bN}_V dV$ (not exactly, see below). 
+
 %---------------------------------------------------
 \subsection*{Uzawa 1 algorithm}
-
 
 Solver 15 is the standard Uzawa 1:
 \begin{lstlisting}
@@ -468,8 +485,27 @@ Remark: in this example $\vec{h}=0$. One should verify that solvers 18,19 still 
 %---------------------------------------------------
 \subsection*{Uzawa 3 algorithm}
 
-solver 21 is identical to solver 4 but: different xi calculation so as to 
+solver 21 is identical to solver 4 (schur complement solver) but: 
+different $\xi_{\cal V}=\|{\cal V}^{k+1}-{\cal V}\|_2$ and 
+$\xi_{\cal P}=\|{\cal P}^{k+1}-{\cal P}^k\|_2$ calculation (convergence indicators) so as to 
 compare with uzawa 1 and 2, and no preconditioner nor inner solver choice. 
+Solver 22 is the Uzawa 3 solver (i.e solver 21) with $L_2$ projection.
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa3/solver_convergence_P.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa3/solver_convergence_V.pdf} \\
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa3/solver_convergence_alpha.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa3/time.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa3/errorsV.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa3/errorsP.pdf}
+\end{center}
+
+Again, the L2 projection improves on the standard Uzawa solver, and in 
+this particular case the number of iterations is divided by 3, and the total solve 
+time is also more than halved.
+The direct solver approach (solver 1) is also included in the plots as reference. 
+We see that solver 1 still remains substantially faster.
+Of course the performance of the Uzawa solvers is tied to the required tolerance,
+which is set to a low value of $10^{-7}$.
 
 
