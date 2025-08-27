@@ -446,7 +446,7 @@ For $k=0,1,2,...$, compute
 
 
 
-
+\newpage
 %...................................................
 \subsection{Conjugate gradient and the Schur complement approach }
 \label{ss:schurpcg}
@@ -462,7 +462,8 @@ The conjugate gradient method is often implemented as an iterative algorithm, ap
 to be handled by a direct implementation or other direct methods such as the Cholesky decomposition. 
 Large sparse systems often arise when numerically solving partial differential equations or optimization problems.}"
 
-A simple Google search tells us that the Conjugate Gradient algorithm is as follows:
+A simple Wikipedia search (crossed-checked against other online sources) 
+tells us that the Conjugate Gradient algorithm is as follows:
 
 \begin{minipage}{0.40\textwidth}
 \centering
@@ -470,7 +471,7 @@ A simple Google search tells us that the Conjugate Gradient algorithm is as foll
 \frame{\includegraphics[width=7cm]{images/solvers/cgwiki}}
 \end{minipage}\hfill
 \begin{minipage}{0.50\textwidth}
-The same algorithm with our notations:\\
+The same algorithm with our notations ($\SSS\cdot \vec{\cal P}=\underline{\vec{f}}$):\\
 $\vec{r}_0 = \underline{\vec{f}} - \SSS \cdot \vec{\cal P}_0$\\
 $\vec{p}_0 = \vec{r}_0$\\
 $k=0$ \\
@@ -569,6 +570,7 @@ We have
 and we can insert this minor extra calculation inside the algorithm and get the velocity solution 
 nearly for free. The final CG algorithm is then 
 
+\newpage
 \begin{mdframed}[backgroundcolor=blue!5]
 \underline{\bf solver\_cg}: assume $\vec{\cal P}_0$ known
 \begin{itemize}
@@ -587,7 +589,7 @@ nearly for free. The final CG algorithm is then
 \item $ \vec{\cal V}_{k+1} = \vec{\cal V}_k - \alpha_k \vec{d}_k$
 \item $\vec{r}_{k+1} = \vec{r}_k - \alpha_k (\G^T \cdot \vec{d}_k + \C \cdot \vec{p}_k) $
 \item if $\vec{r}_{k+1}$ is sufficiently small ($||\vec{r}_{k+1}||_2/||\vec{r}_0||_2 <tol$), then exit loop
-\item $\beta_k=(r_{k+1}^T r_{k+1})/(r_k^T r_k)$
+\item $\beta_k=(\vec{r}_{k+1}^T \cdot \vec{r}_{k+1})/(\vec{r}_k^T \cdot \vec{r}_k)$
 \item $\vec{p}_{k+1} =\vec{r}_{k+1}+ \beta_k \vec{p}_k$
 \item $k=k+1$
 \end{itemize}
@@ -643,7 +645,7 @@ return $\vec{\cal P}_{k+1}$ as the result
 
 Unsurprisingly we find the same algorithm in Saad \cite{saad}:
 
-\frame{\includegraphics[width=7cm]{images/solvers/saad}}
+\frame{\includegraphics[width=8cm]{images/solvers/saad}}
 
 Note that in the algorithm above the preconditioner matrix ${\bm M}$ 
 has to be symmetric positive-definite and fixed, i.e., cannot change from iteration to iteration. 
