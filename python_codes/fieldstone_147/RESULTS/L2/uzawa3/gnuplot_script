@@ -13,51 +13,51 @@ set xlabel '# iterations'
 set ylabel 'xi_P'
 set output 'solver_convergence_P.pdf'
 plot[][]\
-'solver_convergence_21_8.ascii'    w l lt 1 dt 1 t 'solver=21, 8x8',\
-'solver_convergence_21_16.ascii'   w l lt 1 dt 1 t 'solver=21, 16x16',\
-'solver_convergence_21_24.ascii'   w l lt 1 dt 1 t 'solver=21, 24x24',\
-'solver_convergence_21_32.ascii'   w l lt 1 dt 1 t 'solver=21, 32x32',\
-'solver_convergence_21_40.ascii'   w l lt 1 dt 1 t 'solver=21, 40x40',\
-'solver_convergence_21_48.ascii'   w l lt 1 dt 1 t 'solver=21, 48x48',\
-'solver_convergence_21_64.ascii'   w l lt 1 dt 1 t 'solver=21, 64x64',\
-'solver_convergence_21_80.ascii'   w l lt 1 dt 1 t 'solver=21, 80x80',\
-'solver_convergence_21_96.ascii'   w l lt 1 dt 1 t 'solver=21, 96x96',\
-'solver_convergence_21_128.ascii'  w l lt 1 dt 1 t 'solver=21, 128x128',\
-'solver_convergence_22_8.ascii'    w l lt 2 dt 1 t 'solver=22, 8x8',\
-'solver_convergence_22_16.ascii'   w l lt 2 dt 1 t 'solver=22, 16x16',\
-'solver_convergence_22_24.ascii'   w l lt 2 dt 1 t 'solver=22, 24x24',\
-'solver_convergence_22_32.ascii'   w l lt 2 dt 1 t 'solver=22, 32x32',\
-'solver_convergence_22_40.ascii'   w l lt 2 dt 1 t 'solver=22, 40x40',\
-'solver_convergence_22_48.ascii'   w l lt 2 dt 1 t 'solver=22, 48x48',\
-'solver_convergence_22_64.ascii'   w l lt 2 dt 1 t 'solver=22, 64x64',\
-'solver_convergence_22_80.ascii'   w l lt 2 dt 1 t 'solver=22, 80x80',\
-'solver_convergence_22_96.ascii'   w l lt 2 dt 1 t 'solver=22, 96x96',\
-'solver_convergence_22_128.ascii'  w l lt 2 dt 1 t 'solver=22, 128x128',\
+'solver_convergence_21_8.ascii'    w lp lt 1 dt 1 t 'solver=21, 8x8',\
+'solver_convergence_21_16.ascii'   w lp lt 1 dt 1 t 'solver=21, 16x16',\
+'solver_convergence_21_24.ascii'   w lp lt 1 dt 1 t 'solver=21, 24x24',\
+'solver_convergence_21_32.ascii'   w lp lt 1 dt 1 t 'solver=21, 32x32',\
+'solver_convergence_21_40.ascii'   w lp lt 1 dt 1 t 'solver=21, 40x40',\
+'solver_convergence_21_48.ascii'   w lp lt 1 dt 1 t 'solver=21, 48x48',\
+'solver_convergence_21_64.ascii'   w lp lt 1 dt 1 t 'solver=21, 64x64',\
+'solver_convergence_21_80.ascii'   w lp lt 1 dt 1 t 'solver=21, 80x80',\
+'solver_convergence_21_96.ascii'   w lp lt 1 dt 1 t 'solver=21, 96x96',\
+'solver_convergence_21_128.ascii'  w lp lt 1 dt 1 t 'solver=21, 128x128',\
+'solver_convergence_22_8.ascii'    w lp lt 2 dt 1 t 'solver=22, 8x8',\
+'solver_convergence_22_16.ascii'   w lp lt 2 dt 1 t 'solver=22, 16x16',\
+'solver_convergence_22_24.ascii'   w lp lt 2 dt 1 t 'solver=22, 24x24',\
+'solver_convergence_22_32.ascii'   w lp lt 2 dt 1 t 'solver=22, 32x32',\
+'solver_convergence_22_40.ascii'   w lp lt 2 dt 1 t 'solver=22, 40x40',\
+'solver_convergence_22_48.ascii'   w lp lt 2 dt 1 t 'solver=22, 48x48',\
+'solver_convergence_22_64.ascii'   w lp lt 2 dt 1 t 'solver=22, 64x64',\
+'solver_convergence_22_80.ascii'   w lp lt 2 dt 1 t 'solver=22, 80x80',\
+'solver_convergence_22_96.ascii'   w lp lt 2 dt 1 t 'solver=22, 96x96',\
+'solver_convergence_22_128.ascii'  w lp lt 2 dt 1 t 'solver=22, 128x128',\
 1e-7 lt -1 dt 2 
 
 set ylabel 'xi_V'
 set output 'solver_convergence_V.pdf'
 plot[][]\
-'solver_convergence_21_8.ascii'  u 1:3 w l lt 1 dt 1 t 'solver=21, 8x8',\
-'solver_convergence_21_16.ascii' u 1:3 w l lt 1 dt 1 t 'solver=21, 16x16',\
-'solver_convergence_21_24.ascii' u 1:3 w l lt 1 dt 1 t 'solver=21, 24x24',\
-'solver_convergence_21_32.ascii' u 1:3 w l lt 1 dt 1 t 'solver=21, 32x32',\
-'solver_convergence_21_40.ascii' u 1:3 w l lt 1 dt 1 t 'solver=21, 40x40',\
-'solver_convergence_21_48.ascii' u 1:3 w l lt 1 dt 1 t 'solver=21, 48x48',\
-'solver_convergence_21_64.ascii' u 1:3 w l lt 1 dt 1 t 'solver=21, 64x64',\
-'solver_convergence_21_80.ascii' u 1:3 w l lt 1 dt 1 t 'solver=21, 80x80',\
-'solver_convergence_21_96.ascii' u 1:3 w l lt 1 dt 1 t 'solver=21, 96x96',\
-'solver_convergence_21_128.ascii'u 1:3 w l lt 1 dt 1 t 'solver=21, 128x128',\
-'solver_convergence_22_8.ascii'  u 1:3 w l lt 2 dt 1 t 'solver=22, 8x8',\
-'solver_convergence_22_16.ascii' u 1:3 w l lt 2 dt 1 t 'solver=22, 16x16',\
-'solver_convergence_22_24.ascii' u 1:3 w l lt 2 dt 1 t 'solver=22, 24x24',\
-'solver_convergence_22_32.ascii' u 1:3 w l lt 2 dt 1 t 'solver=22, 32x32',\
-'solver_convergence_22_40.ascii' u 1:3 w l lt 2 dt 1 t 'solver=22, 40x40',\
-'solver_convergence_22_48.ascii' u 1:3 w l lt 2 dt 1 t 'solver=22, 48x48',\
-'solver_convergence_22_64.ascii' u 1:3 w l lt 2 dt 1 t 'solver=22, 64x64',\
-'solver_convergence_22_80.ascii' u 1:3 w l lt 2 dt 1 t 'solver=22, 80x80',\
-'solver_convergence_22_96.ascii' u 1:3 w l lt 2 dt 1 t 'solver=22, 96x96',\
-'solver_convergence_22_128.ascii'u 1:3 w l lt 2 dt 1 t 'solver=22, 128x128',\
+'solver_convergence_21_8.ascii'  u 1:3 w lp lt 1 dt 1 t 'solver=21, 8x8',\
+'solver_convergence_21_16.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 16x16',\
+'solver_convergence_21_24.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 24x24',\
+'solver_convergence_21_32.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 32x32',\
+'solver_convergence_21_40.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 40x40',\
+'solver_convergence_21_48.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 48x48',\
+'solver_convergence_21_64.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 64x64',\
+'solver_convergence_21_80.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 80x80',\
+'solver_convergence_21_96.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 96x96',\
+'solver_convergence_21_128.ascii'u 1:3 w lp lt 1 dt 1 t 'solver=21, 128x128',\
+'solver_convergence_22_8.ascii'  u 1:3 w lp lt 2 dt 1 t 'solver=22, 8x8',\
+'solver_convergence_22_16.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 16x16',\
+'solver_convergence_22_24.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 24x24',\
+'solver_convergence_22_32.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 32x32',\
+'solver_convergence_22_40.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 40x40',\
+'solver_convergence_22_48.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 48x48',\
+'solver_convergence_22_64.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 64x64',\
+'solver_convergence_22_80.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 80x80',\
+'solver_convergence_22_96.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 96x96',\
+'solver_convergence_22_128.ascii'u 1:3 w lp lt 2 dt 1 t 'solver=22, 128x128',\
 1e-7 lt -1 dt 2 
 
 set ylabel 'alpha'
@@ -95,9 +95,11 @@ plot[][]\
 'errors_21_tol1e-7.ascii' u (1/sqrt($3)):6 w lp lt 1 dt 1 t'solver=21, tol=1e-7',\
 'errors_21_tol1e-5.ascii' u (1/sqrt($3)):6 w lp lt 1 dt 2 t'solver=21, tol=1e-5',\
 'errors_21_tol1e-4.ascii' u (1/sqrt($3)):6 w lp lt 1 dt 3 t'solver=21, tol=1e-4',\
+'errors_21_tol1e-3.ascii' u (1/sqrt($3)):6 w lp lt 1 dt 4 t'solver=21, tol=1e-3',\
 'errors_22_tol1e-7.ascii' u (1/sqrt($3)):6 w lp lt 2 dt 1 t'solver=22, tol=1e-7',\
 'errors_22_tol1e-5.ascii' u (1/sqrt($3)):6 w lp lt 2 dt 2 t'solver=22, tol=1e-5',\
 'errors_22_tol1e-4.ascii' u (1/sqrt($3)):6 w lp lt 2 dt 3 t'solver=22, tol=1e-4',\
+'errors_22_tol1e-3.ascii' u (1/sqrt($3)):6 w lp lt 2 dt 4 t'solver=22, tol=1e-3',\
 x**3/150 lt -1 dt 2  t 'h^{3}' 
 
 set ylabel '|p-p_{th}|_{L_2}'
@@ -108,9 +110,11 @@ plot[][]\
 'errors_21_tol1e-7.ascii' u (1/sqrt($3)):9 w lp lt 1 dt 1 t'solver=21, tol=1e-7',\
 'errors_21_tol1e-5.ascii' u (1/sqrt($3)):9 w lp lt 1 dt 2 t'solver=21, tol=1e-5',\
 'errors_21_tol1e-4.ascii' u (1/sqrt($3)):9 w lp lt 1 dt 3 t'solver=21, tol=1e-4',\
+'errors_21_tol1e-3.ascii' u (1/sqrt($3)):9 w lp lt 1 dt 4 t'solver=21, tol=1e-3',\
 'errors_22_tol1e-7.ascii' u (1/sqrt($3)):9 w lp lt 2 dt 1 t'solver=22, tol=1e-7',\
 'errors_22_tol1e-5.ascii' u (1/sqrt($3)):9 w lp lt 2 dt 2 t'solver=22, tol=1e-5',\
 'errors_22_tol1e-4.ascii' u (1/sqrt($3)):9 w lp lt 2 dt 3 t'solver=22, tol=1e-4',\
+'errors_22_tol1e-3.ascii' u (1/sqrt($3)):9 w lp lt 2 dt 4 t'solver=22, tol=1e-3',\
 x**2/25 lt -1 dt 2  t 'h^{2}' 
 
 set ylabel '|div(v)|_{L_2}'
@@ -121,9 +125,11 @@ plot[][]\
 'errors_21_tol1e-7.ascii' u (1/sqrt($3)):12 w lp lt 1 dt 1 t'solver=21, tol=1e-7',\
 'errors_21_tol1e-5.ascii' u (1/sqrt($3)):12 w lp lt 1 dt 2 t'solver=21, tol=1e-5',\
 'errors_21_tol1e-4.ascii' u (1/sqrt($3)):12 w lp lt 1 dt 3 t'solver=21, tol=1e-4',\
+'errors_21_tol1e-3.ascii' u (1/sqrt($3)):12 w lp lt 1 dt 4 t'solver=21, tol=1e-3',\
 'errors_22_tol1e-7.ascii' u (1/sqrt($3)):12 w lp lt 2 dt 1 t'solver=22, tol=1e-7',\
 'errors_22_tol1e-5.ascii' u (1/sqrt($3)):12 w lp lt 2 dt 2 t'solver=22, tol=1e-5',\
 'errors_22_tol1e-4.ascii' u (1/sqrt($3)):12 w lp lt 2 dt 3 t'solver=22, tol=1e-4',\
+'errors_22_tol1e-3.ascii' u (1/sqrt($3)):12 w lp lt 2 dt 4 t'solver=22, tol=1e-3',\
 
 ##############################################################
 
@@ -135,7 +141,29 @@ plot[][]\
 'solve_21_tol1e-7.ascii'   u 6:3 w lp lt 1 dt 1  t 'solver=21, tol=1e-7',\
 'solve_21_tol1e-5.ascii'   u 6:3 w lp lt 1 dt 2  t 'solver=21, tol=1e-5',\
 'solve_21_tol1e-4.ascii'   u 6:3 w lp lt 1 dt 3  t 'solver=21, tol=1e-4',\
+'solve_21_tol1e-3.ascii'   u 6:3 w lp lt 1 dt 4  t 'solver=21, tol=1e-3',\
 'solve_22_tol1e-7.ascii'   u 6:3 w lp lt 2 dt 1  t 'solver=22, tol=1e-7',\
 'solve_22_tol1e-5.ascii'   u 6:3 w lp lt 2 dt 2  t 'solver=22, tol=1e-5',\
 'solve_22_tol1e-4.ascii'   u 6:3 w lp lt 2 dt 3  t 'solver=22, tol=1e-4',\
+'solve_22_tol1e-3.ascii'   u 6:3 w lp lt 2 dt 4  t 'solver=22, tol=1e-3',\
 x**1.66/60000 lt -1 dt 2 t 'x^{1.66}'
+
+###########################################################################
+
+reset
+set term pdf enhanced font "times,10pt"
+set pointsize .2
+set grid
+set key outside
+unset log y
+set xlabel 'NfemP'
+set ylabel 'time per solver iteration (s)'
+set output 'time_per_iteration.pdf'
+plot[][:]\
+'time_per_iteration_21.ascii' u 5:4 w lp lt 1 dt 1 t 'solver=21, tol=1e-7',\
+'time_per_iteration_22.ascii' u 5:4 w lp lt 2 dt 1 t 'solver=22, tol=1e-7',\
+
+
+
+
+
