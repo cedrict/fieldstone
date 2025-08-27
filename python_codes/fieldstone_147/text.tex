@@ -447,7 +447,70 @@ solVnew=solV+alphak*Hk
 \end{lstlisting}
 
 For this solver we need the pressure mass matrix again, but also a new
-matrix ${\bm H}$ built as follows:
+matrix ${\bm H}$:
+
+\[
+\langle q,q \rangle 
+= \vec{q}^T \cdot \int_\Omega \vec{\cal N}_p^T \vec{\cal N}_p dV \cdot \vec{q} = \vec{q}^T \cdot {\bm M}_p \cdot \vec{q}
+\]
+\[
+\langle \nabla q,z\rangle = \int_\Omega  \nabla q \; z dV = 
+\int (\partial_x q \; \partial_y q) \cdot 
+\begin{pmatrix}
+z_x \\ z_y
+\end{pmatrix}
+dV
+\]
+We have 
+\[
+(\partial_x q \; \partial_y q) =
+(.... \vec{Q} ... ) \cdot
+\begin{pmatrix}
+\partial_x \bN_1^p & \partial_y \bN_1^ p\\
+\partial_x \bN_2^p & \partial_y \bN_2^ p\\
+\partial_x \bN_3^p & \partial_y \bN_3^ p\\
+...  & ... \\
+\partial_x \bN_N^p & \partial_y \bN_N^ p
+\end{pmatrix}
+\qquad
+\text{and}
+\qquad
+\begin{pmatrix}
+z_x \\ z_y
+\end{pmatrix}
+=
+\begin{pmatrix}
+\bN_1^v & 0 & \bN_2^v & 0 & ... \\
+0 & \bN_1^v & 0 & \bN_2^v & ... \\
+\end{pmatrix}
+\cdot
+\vec{\cal Z}
+\]
+so that 
+\[
+\langle \nabla q,z\rangle
+= 
+\vec{Q}^T \cdot 
+\left[
+\int_\Omega
+\begin{pmatrix}
+\partial_x \bN_1^p & \partial_y \bN_1^ p\\
+\partial_x \bN_2^p & \partial_y \bN_2^ p\\
+\partial_x \bN_3^p & \partial_y \bN_3^ p\\
+...  & ... \\
+\partial_x \bN_N^p & \partial_y \bN_N^ p
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\bN_1^v & 0 & \bN_2^v & 0 & ... \\
+0 & \bN_1^v & 0 & \bN_2^v & ... \\
+\end{pmatrix}
+dV \right]
+\cdot
+\vec{\cal Z}
+\]
+This translates as follows into code:
+
 \begin{lstlisting}
 H_mat   = lil_matrix((NfemP,NfemV),dtype=np.float64) # matrix H 
 for iel in range(0,nel):
@@ -485,10 +548,82 @@ Remark: in this example $\vec{h}=0$. One should verify that solvers 18,19 still 
 %---------------------------------------------------
 \subsection*{Uzawa 3 algorithm}
 
-solver 21 is identical to solver 4 (schur complement solver) but: 
+I recall here the structure of the solver (see Section~\ref{MMM-ss:schurpcg})
+and highlight the lines which will need special treatment in the context of the $L_2$-projection
+(I have also removed the $\C$ matrix entries which are irrelevant here).
+
+\begin{itemize}
+\item compute $\vec{\cal V}_0=\K^{-1}\cdot (\vec{f}-\G \cdot \vec{\cal P}_0)$
+\item {\color{purple} $\vec{r}_0 = \G^T\cdot \vec{\cal V}_0 - \vec{h}$} 
+\item if $\vec{r}_0$ is sufficiently small, then return $(\vec{\cal V}_0,\vec{\cal P}_0)$ as the result
+\item $\vec{p}_0=\vec{r}_0$
+\item $k=0$
+\item repeat
+\begin{enumerate}
+\item compute $\tilde{\vec{p}}_k = \G \cdot \vec{p}_k$
+\item solve $\K\cdot \vec{d}_k = \tilde{p}_k$
+\item compute {\color{purple} $\alpha_k=(\vec{r}_k^T \cdot  \vec{r}_k)/(\tilde{\vec{p}}_k^T \cdot \vec{d}_k)$}
+\item $\vec{\cal P}_{k+1} = \vec{\cal P}_k+\alpha_k \vec{p}_k$
+\item $ \vec{\cal V}_{k+1} = \vec{\cal V}_k - \alpha_k \vec{d}_k$
+\item {\color{purple} $\vec{r}_{k+1} = \vec{r}_k - \alpha_k (\G^T \cdot \vec{d}_k ) $}
+\item if $\vec{r}_{k+1}$ is sufficiently small ($||\vec{r}_{k+1}||_2/||\vec{r}_0||_2 <tol$), then exit loop
+\item compute {\color{purple} $\beta_k=(\vec{r}_{k+1}^T \cdot \vec{r}_{k+1})/(\vec{r}_k^T \cdot \vec{r}_k)$}
+\item $\vec{p}_{k+1} =\vec{r}_{k+1}+ \beta_k \vec{p}_k$
+\item $k=k+1$
+\end{enumerate}
+\item return $\vec{\cal P}_{k+1}$ as result
+\end{itemize}
+
+The first residual $\vec{r}_0$ is then computed as follows:
+\begin{lstlisting}
+rvect_k=sps.linalg.spsolve(MP_mat,G_mat.T.dot(solV)-h_rhs) 
+\end{lstlisting}
+Then $\alpha_k$ is computed as follows:
+\[
+\alpha_k
+= \frac{ \vec{r}_k^T \cdot  \vec{r}_k } { \tilde{\vec{p}}_k^T \cdot \vec{d}_k }
+= \frac{ \vec{r}_k^T \cdot  \vec{r}_k } {(\G \cdot  \vec{p}_k)^T \cdot \vec{d}_k }
+\quad
+\Rightarrow
+\quad
+\alpha_k
+= \frac{ \vec{r}_k^T \cdot {\bm M}_p \cdot \vec{r}_k } {\vec{p}_k^T \cdot {\bm H} \cdot \vec{d}_k }
+\]
+
+\begin{lstlisting}
+numerator=rvect_k.dot(MP_mat.dot(rvect_k))     
+denominator=pvect_k.dot(H_mat.dot(dvect_k))   
+alpha=numerator/denominator                  
+\end{lstlisting}
+The updated residual $\vec{r}_{k+1}$ follows. 
+We can write step 6 
+\[
+\delta r\vec{r} = \vec{r}_{k+1} - \vec{r}_k = - \alpha_k (\G^T \cdot \vec{d}_k ) 
+\]
+which leads to
+\begin{lstlisting}
+dr=sps.linalg.spsolve(MP_mat,-alpha*G_mat.T.dot(dvect_k)) 
+rvect_kp1=rvect_k+dr     
+\end{lstlisting}
+and finally $\beta_k$:
+\[
+\beta_k= \frac{ \vec{r}_{k+1}^T \cdot \vec{r}_{k+1} } { \vec{r}_k^T \cdot \vec{r}_k }
+\quad
+\Rightarrow
+\quad
+\beta_k= \frac{ \vec{r}_{k+1}^T \cdot {\bm M}_p \cdot \vec{r}_{k+1} }
+{ \vec{r}_k^T \cdot {\bm M}_p \cdot \vec{r}_k }
+\]
+\begin{lstlisting}
+numerator=rvect_kp1.dot(MP_mat.dot(rvect_kp1)) 
+denominator=rvect_k.dot(MP_mat.dot(rvect_k))  
+beta=numerator/denominator                   
+\end{lstlisting}
+
+In what follows solver 21 is identical to solver 4 (schur complement solver) but: 
 different $\xi_{\cal V}=\|{\cal V}^{k+1}-{\cal V}\|_2$ and 
 $\xi_{\cal P}=\|{\cal P}^{k+1}-{\cal P}^k\|_2$ calculation (convergence indicators) so as to 
-compare with uzawa 1 and 2, and no preconditioner nor inner solver choice. 
+compare with previous Uzawa 1 and 2 (and no preconditioner nor inner solver choice). 
 Solver 22 is the Uzawa 3 solver (i.e solver 21) with $L_2$ projection.
 
 \begin{center}
@@ -508,4 +643,36 @@ We see that solver 1 still remains substantially faster.
 Of course the performance of the Uzawa solvers is tied to the required tolerance,
 which is set to a low value of $10^{-7}$.
 
+I have here also explored the influence of the tolerance parameter. 
+It was previously always $10^{-7}$ and I here document its effect on 
+accuracy and solve time. 
+We find that $10^{-5}$ (or even $10^{-4}$) seems to be sufficient (for this one isoviscous manufactured solution
+and this range of resolutions). Since less iterations are needed it makes the iterative 
+solvers faster, especially 21 since it 'spares' dozens of iterations. 
+For solver 22 we find:
+
+\begin{center}
+\begin{tabular}{|c|cc|cc|cc|}
+\hline
+& tol=10-4 & & tol=10-5 & & tol=10-7 & \\
+nel   & time (s) & \# its &  time (s) & \# its &  time (s) & \# its  \\ 
+\hline
+1024  & 1.748    &  7  &2.046  &   8  & 2.073    & 10\\
+1600  & 4.159    &  8  &4.557  &   8  & 4.716    & 10 \\
+2304  & 8.103    &  8  &8.358  &   9  &  9.374   & 11\\
+4096  & 18.581   &  8  &20.229 &   9  &  22.501  & 11\\
+6400  & 34.032   &  8  &36.868 &   9  &  41.397  & 11 \\
+9216  & 73.158   &  9  &72.908 &   9  &  84.936  & 11 \\
+16384 & 192.415  &  9  &205.503&   10 &  226.167 & 11\\
+\hline
+\end{tabular}
+\end{center}
+
+
+One can also look at the time per solver iteration
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa3/time_per_iteration.pdf}
+\end{center}
+We find that the additional solves and matrix-vector multiplications for the L2 variant (solver 22)
+do not make each iteration substantially longer.
 

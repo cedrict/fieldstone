@@ -3,6 +3,7 @@
 rm statistics*.ascii
 rm errors*.ascii
 rm solve*.ascii
+rm time_per_iteration_*.ascii
 
 nq=3
 
@@ -11,7 +12,7 @@ for res in 8 10 16 24 32 40 48 64 80 96 128; do
 
     echo mesh $res x $res  
 
-    for solver in  21 22 ; do 
+    for solver in  22 ; do 
 
         echo -solver=$solver
 
@@ -20,6 +21,7 @@ for res in 8 10 16 24 32 40 48 64 80 96 128; do
         grep errv opla >> errors_${solver}.ascii
         grep bench opla >> statistics_${solver}.ascii
         grep solve opla >> solve_${solver}.ascii
+        grep iteration opla >> time_per_iteration_${solver}.ascii
         if [ $solver -eq 4 ] 
         then
            mv solver_convergence.ascii solver_convergence_${solver}_${res}.ascii

@@ -1,6 +1,6 @@
 import numpy as np
+import time as clock
 import scipy.sparse as sps
-import scipy.sparse.linalg as sla
 
 ############################################################################### 
 # same as schur_complement_cg_solver.py but without preconditioner business 
@@ -19,6 +19,7 @@ def uzawa3_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter,tol):
    rvect_k=G_mat.T.dot(solV)-h_rhs                                  # compute r_0
    pvect_k=np.copy(rvect_k)                                         # compute p_0
 
+   startu=clock.time()
    for k in range (0,niter): #--------------------------------------#
                                                                     #
        ptildevect_k=G_mat.dot(pvect_k)                              # 
@@ -41,9 +42,11 @@ def uzawa3_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter,tol):
        pvect_k=pvect_kp1                                            #
                                                                     #
    #end for k #-----------------------------------------------------#
+   endu=clock.time()
 
    conv_file.close()
 
+   print('time per iteration:',(endu-startu)/k,NfemP)
    print('-------------------------')
     
    return solV,solP,k
