@@ -213,15 +213,17 @@ d& \text{factorize} & \text{solve} \\
 
 Let us write the above system as two equations:
 \begin{eqnarray}
-\K \cdot \vec{\cal V} + \G \cdot \vec{\cal P} &=& \vec{f} \\
-\G^T \cdot  \vec{\cal V} - \C \cdot \vec{\cal P} &=& \vec{h} 
+\K \cdot \vec{\cal V} + \G \cdot \vec{\cal P} &=& \vec{f} \nn\\
+\G^T \cdot  \vec{\cal V} - \C \cdot \vec{\cal P} &=& \vec{h} \nn
 \end{eqnarray}
+Again, $\C$ is typically non-zero in the case of stabilised elements or if a 
+penalty formulation is used. 
 The first line can be re-written 
 $\vec{\cal V}=\K^{-1}\cdot (\vec{f} - \G \cdot \vec{\cal P})$ and can be inserted in the second:
 \begin{equation}
 \G^T\cdot \vec{\cal V} =\G^T \cdot  [ \K^{-1} \cdot  (\vec{f} - \G \cdot  \vec{\cal P}) ] - \C\cdot \vec{\cal P} = \vec{h} 
 \end{equation}
-or, 
+which can be written: 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
 (\G^T \cdot \K^{-1} \cdot \G + \C) \cdot \vec{\cal P} = \G^T \cdot \K^{-1}\cdot \vec{f} - \vec{h} 
@@ -273,10 +275,10 @@ For now, let us assume that we have built the $\SSS$ matrix\footnote{We will
 revisit this topic later on, but be aware that we never build $\SSS$ in practice.} 
 and the right hand 
 side $\underline{\vec{f}}=\G^T \cdot \K^{-1} \cdot \vec{f} - \vec{h}$.
-We must solve $\SSS\cdot \vec{\cal P} = \underline{\vec{f}}$.
+We must then solve $\SSS\cdot \vec{\cal P} = \underline{\vec{f}}$.
 It is easy to see that $\SSS$ is actually a full matrix (i.e. not sparse) and 
-aside from the costs of building it explicitly using a direct solver would require 
-a lot of memory so that we must then turn to iterative methods. 
+aside from the costs of building it, explicitly using a direct solver would require 
+a lot (i.e. too much in practice) of memory so that we must then turn to iterative methods. 
 
 \index{general}{Richardson Iterations}
 One can resort to so-called Richardson iterations, defined as follows 
@@ -323,11 +325,12 @@ altered the indices of the velocities wrt the book}).
 k=0,1,2, ... \label{uzaa2}
 \end{eqnarray}
 \end{mdframed}
-This same algorithm is to be found on page 59 or \cite{saramito}.
+This same algorithm is to be found on page 59 of \cite{saramito}.
 
 This method is rather simple to implement, although
 what makes an appropriate set of $\alpha_k$ values is not 
-straightforward, which is why the conjugate gradient is often preferred, 
+straightforward, which is why the conjugate gradient method (or any method
+which computes an optimal $\alpha_k$ in some sense) is often preferred, 
 as detailed in the next section. 
 
 It is known that such iterations will converge for $0< \alpha < \rho(\SSS)= \lambda_{max}(\SSS)$ 
@@ -345,17 +348,16 @@ since it can be rewritten
 which is the definition of a stationary method. 
 The four main stationary methods are the Jacobi method, 
 Gauss-Seidel method, successive overrelaxation method (SOR), 
-and symmetric successive overrelaxation method (SSOR)
+and symmetric successive overrelaxation method (SSOR).
 \index{general}{Jacobi Iterative Method}
 \index{general}{Gauss-Seidel Iterative Method}
 \index{general}{SOR Iterative Method}
 \index{general}{SSOR Iterative Method}
 
-
 Since the $\alpha$ parameter is the key to a successful Uzawa algorithm, 
-this issue has of course been looked into. What follows is 
+this issue has of course been investigated. What follows is 
 presented in p221 of Braess \cite{braess}.
-For the analysis of the Uzawa algorithm, we define the residue
+For the analysis of the Uzawa algorithm, we define the residual
 \[
 \vec {\cal R}_k = \vec h - \mathbb{G}^T \cdot \vec{\cal V}_k  +\C \cdot \vec{\cal P}_{k}
 \]
@@ -374,9 +376,9 @@ we get
 \begin{eqnarray}
 \vec{\cal R}_k 
 &=& \vec{h} -\G^T  \cdot \vec{\cal V}_k  +\C \cdot \vec{\cal P}_{k} \nn\\
-&=& \vec{h} -\mathbb{G}^T\cdot \mathbb{K}^{-1} (\vec f - \mathbb{G}\cdot \vec{\cal P}_{k})  +\C \cdot \vec{\cal P}_{k}\\
+&=& \vec{h} -\mathbb{G}^T\cdot \mathbb{K}^{-1} (\vec f - \mathbb{G}\cdot \vec{\cal P}_{k})  +\C \cdot \vec{\cal P}_{k}\nn\\
 &=& (\G^T\cdot\vec{\cal V}^\star - \C \cdot \vec{\cal P}^\star) -\mathbb{G}^T\cdot \mathbb{K}^{-1} (\K\cdot\vec{\cal V}^\star 
-+ \G\cdot\vec{\cal P}^\star - {\G}\cdot \vec{\cal P}_{k})+\C \cdot \vec{\cal P}_{k} \\
++ \G\cdot\vec{\cal P}^\star - {\G}\cdot \vec{\cal P}_{k})+\C \cdot \vec{\cal P}_{k} \nn\\
 &=& ({\G}^T \cdot \mathbb{K}^{-1} \cdot \mathbb{G} + \C)\cdot (\vec {\cal P}_{k} - \vec{\cal P}^\star) 
 \end{eqnarray}
 From Eq.~\eqref{uzaa2} it follows that:
@@ -395,13 +397,13 @@ In particular, the iteration converges for
 $
 \alpha < 2 || \G^T \cdot \K^{-1} \cdot \G + \C||^{-1}
 $
-and one can show that the good step size $\alpha_k$ is given by 
+and one can show that the good step size $\alpha_k$ is given by\footnote{I need to include matrix $\C$.}
 \begin{equation}
 \alpha_k = \frac{\vec{\cal R}_k \cdot \vec{\cal R}_k}
 {(\G \cdot \vec{\cal R}_k)\cdot (\K^{-1}\cdot \G \cdot \vec{\cal R}_k)}
 \label{uzaa3}
 \end{equation}
-\todo[inline]{include matrix $\C$!}
+
 
 
 However, if we were to use this rule formally, we would 
@@ -438,12 +440,16 @@ For $k=0,1,2,...$, compute
 
 
 \Literature: \\
-\fullcite{cach88}\\
-\fullcite{bamn02}\\
-\fullcite{cao03}\\
-\fullcite{kosa11}.
-
-
+\begin{itemize}
+\item
+\fullcite{cach88}
+\item
+\fullcite{bamn02}
+\item
+\fullcite{cao03}
+\item
+\fullcite{kosa11}
+\end{itemize}
 
 
 \newpage
@@ -465,6 +471,8 @@ Large sparse systems often arise when numerically solving partial differential e
 A simple Wikipedia search (crossed-checked against other online sources) 
 tells us that the Conjugate Gradient algorithm is as follows:
 
+\vspace{0.4cm}
+
 \begin{minipage}{0.40\textwidth}
 \centering
 {\captionfont Algorithm as obtained from Wikipedia.}\\
@@ -479,6 +487,7 @@ repeat\\
 \hspace{8mm} $\alpha_k = (\vec{r}_k^T\cdot \vec{r}_k )/(\vec{p}_k^T \cdot \SSS\cdot  \vec{p}_k )$\\
 \hspace{8mm} $\vec{\cal P}_{k+1} = \vec{\cal P}_k+\alpha_k \vec{p}_k$\\
 \hspace{8mm} $\vec{r}_{k+1} = \vec{r}_k - \alpha_k \; \SSS \cdot \vec{p}_k $ \\
+if $\vec{r}_{k+1}$ is sufficiently small, exit loop.\\
 \hspace{8mm} $\beta_k=(\vec{r}_{k+1}^T \cdot \vec{r}_{k+1})/(\vec{r}_k^T \cdot \vec{r}_k)$ \\
 \hspace{8mm} $\vec{p}_{k+1} =\vec{r}_{k+1}+ \beta_k \vec{p}_k$ \\
 $k=k+1$ \\
@@ -494,15 +503,14 @@ in Zhong, Yuen, Moresi \& Knepley (2012) \cite{zhym12}, and in Section~\ref{ss:i
 Let us look at this algorithm more closely. The parts which may prove to be somewhat tricky 
 are those involving the matrix the Schur complement matrix since we wish never to build 
 it explicitely. We start the iterations with a guess pressure $\vec{\cal P}_0$ (and an initial guess velocity 
-which could be obtained by 
-solving $\K\cdot \vec{\cal V}_0 =\vec{f}- \G\cdot \vec{\cal P}_0$).
+which is obtained by solving $\K\cdot \vec{\cal V}_0 =\vec{f}- \G\cdot \vec{\cal P}_0$).
 \begin{eqnarray}
 \vec{r}_0 
-&=& \underline{\vec{f}}-\SSS \cdot \vec{\cal P}_0 \\
-&=& \G^T\cdot \K^{-1}\cdot \vec{f} - \vec{h} - (\G^T\cdot \K^{-1}\cdot \G + \C)\cdot \vec{\cal P}_0 \\ 
-&=& \G^T\cdot \K^{-1}\cdot (\vec{f} - \G\cdot \vec{\cal P}_0) - \vec{h} \\
-&=& \G^T\cdot \K^{-1}\cdot \K\cdot \vec{\cal V}_0 -\C \cdot \vec{\cal P}_0 - \vec{h} \\ 
-&=& \G^T\cdot \vec{\cal V}_0  -\C \cdot \vec{\cal P}_0   - \vec{h} 
+&=& \underline{\vec{f}}-\SSS \cdot \vec{\cal P}_0 \nn\\
+&=& \G^T\cdot \K^{-1}\cdot \vec{f} - \vec{h} - (\G^T\cdot \K^{-1}\cdot \G + \C)\cdot \vec{\cal P}_0 \nn\\ 
+&=& \G^T\cdot \K^{-1}\cdot (\vec{f} - \G\cdot \vec{\cal P}_0) - \vec{h} \nn\\
+&=& \G^T\cdot \K^{-1}\cdot \K\cdot \vec{\cal V}_0 -\C \cdot \vec{\cal P}_0 - \vec{h} \nn\\ 
+&=& \G^T\cdot \vec{\cal V}_0  -\C \cdot \vec{\cal P}_0   - \vec{h}  
 \end{eqnarray}
 We see that we were able to compute $\SSS \cdot \vec{\cal P}_0$ without ever forming the 
 Schur complement matrix explicitely. We now turn to the $\alpha_k$ coefficient:
@@ -519,7 +527,7 @@ We then define $\tilde{\vec{p}}_k = \G \cdot \vec{p}_k$, so that $\alpha_k$ can 
 \item compute 
 \[
 \alpha_k=\frac{\vec{r}_k^T \cdot \vec{r}_k}{\tilde{\vec{p}}_k^T \cdot \vec{d}_k 
-+ \vec{p}_k\cdot^T \C\cdot \vec{p}_k }
++ \vec{p}_k^T \cdot \C\cdot \vec{p}_k }
 \]
 \end{enumerate}
 Then we need to look at the term $\SSS\cdot \vec{p}_k$:
@@ -561,10 +569,10 @@ as well so that this last solve is unnecessary.
 We have 
 \begin{eqnarray}
 \vec{\cal V}_{k+1} 
-&=& \K^{-1}\cdot (f - \G\cdot \vec{\cal P}_{p+1} )\\
-&=& \K^{-1}\cdot (f - \G\cdot (\vec{\cal P}_k+\alpha_k \vec{p}_k) ) \\
-&=& \K^{-1}\cdot (f - \G\cdot \vec{\cal P}_k) - \alpha_k \K^{-1}\cdot \G \cdot \vec{p}_k \\
-&=& \vec{\cal V}_k - \alpha_k \K^{-1}\cdot \tilde{\vec{p}}_k  \\
+&=& \K^{-1}\cdot (f - \G\cdot \vec{\cal P}_{p+1} ) \nn\\
+&=& \K^{-1}\cdot (f - \G\cdot (\vec{\cal P}_k+\alpha_k \vec{p}_k) ) \nn\\
+&=& \K^{-1}\cdot (f - \G\cdot \vec{\cal P}_k) - \alpha_k \K^{-1}\cdot \G \cdot \vec{p}_k \nn\\
+&=& \vec{\cal V}_k - \alpha_k \K^{-1}\cdot \tilde{\vec{p}}_k  \nn\\
 &=& \vec{\cal V}_k - \alpha_k \vec{d}_k 
 \end{eqnarray}
 and we can insert this minor extra calculation inside the algorithm and get the velocity solution 
@@ -598,7 +606,7 @@ nearly for free. The final CG algorithm is then
 \end{mdframed}
 
 \begin{remark}
-The matrix $\C$ is rarely present unless for example when stabilised elements are used 
+Again, the matrix $\C$ is rarely present unless for example when stabilised elements are used 
 such as the stabilised $Q_1\times P_0$ or the stabilised $Q_1\times Q_1$ elements.
 \end{remark}
 
@@ -645,7 +653,9 @@ return $\vec{\cal P}_{k+1}$ as the result
 
 Unsurprisingly we find the same algorithm in Saad \cite{saad}:
 
-\frame{\includegraphics[width=8cm]{images/solvers/saad}}
+\begin{center}
+\frame{\includegraphics[width=10cm]{images/solvers/saad}}
+\end{center}
 
 Note that in the algorithm above the preconditioner matrix ${\bm M}$ 
 has to be symmetric positive-definite and fixed, i.e., cannot change from iteration to iteration. 
@@ -655,6 +665,7 @@ be such that solving ${\bm M}\cdot \vec{x}= \vec{f}$
 where $\vec{f}$ is a given rhs vector must be cheap. Ultimately, the PCG algorithm applied to 
 the Schur complement equation takes the form:
 
+\newpage
 \begin{mdframed}[backgroundcolor=blue!5]
 \underline{\bf solver\_pcg}: assume $\vec{\cal P}_0$ known
 \begin{itemize}
@@ -694,7 +705,7 @@ and it is trivial to invert. The entries in
 $diag[\K]$ are the average viscosity in the elements associated
 with a given degree of freedom.
 
-Another very cheap way of building ${\bm M}$ for $Q_1\times P_0$ lements 
+Another very cheap way of building ${\bm M}$ for $Q_1\times P_0$ elements 
 is to realise that the matrix $\SSS$ has dimensions element surface/volume 
 divided by viscosity. We can then postulate 
 \[
@@ -706,10 +717,12 @@ For higher order elements, we need to use the pressure mass matrix.
 These two preconditioners and two other variants are implemented in \stone 16 for 
 $Q_1\times P_0$ elements.
 
+
+\newpage
 %......................................................
 \subsection{Generalized Conjugate Residual approach (Geenen \etal (2009))}
 
-This approach is presented in Geenen \etal (2009) \cite{geum09}. 
+This approach is presented in \textcite{geum09} (2009).  
 The saddle point problem arising from the constrained Stokes equation is 
 solved with a Krylov method, GCR \cite{vavu94}, right preconditioned (postconditioned) 
 with a block triangular preconditioner (BTR) \cite{brpa88}.
