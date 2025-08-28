@@ -12,3 +12,5 @@ solve time: 65.863 s, nel= 4096
 solve time: 124.453 s, nel= 6400
 solve time: 257.673 s, nel= 9216
 solve time: 705.798 s, nel= 16384
+solve time: 1198.464 s, nel= 25600, niter= 38
+solve time: 2081.198 s, nel= 36864, niter= 38

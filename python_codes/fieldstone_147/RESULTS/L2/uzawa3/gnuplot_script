@@ -23,6 +23,8 @@ plot[][]\
 'solver_convergence_21_80.ascii'   w lp lt 1 dt 1 t 'solver=21, 80x80',\
 'solver_convergence_21_96.ascii'   w lp lt 1 dt 1 t 'solver=21, 96x96',\
 'solver_convergence_21_128.ascii'  w lp lt 1 dt 1 t 'solver=21, 128x128',\
+'solver_convergence_21_160.ascii'  w lp lt 1 dt 1 t 'solver=21, 160x160',\
+'solver_convergence_21_192.ascii'  w lp lt 1 dt 1 t 'solver=21, 192x192',\
 'solver_convergence_22_8.ascii'    w lp lt 2 dt 1 t 'solver=22, 8x8',\
 'solver_convergence_22_16.ascii'   w lp lt 2 dt 1 t 'solver=22, 16x16',\
 'solver_convergence_22_24.ascii'   w lp lt 2 dt 1 t 'solver=22, 24x24',\
@@ -33,56 +35,66 @@ plot[][]\
 'solver_convergence_22_80.ascii'   w lp lt 2 dt 1 t 'solver=22, 80x80',\
 'solver_convergence_22_96.ascii'   w lp lt 2 dt 1 t 'solver=22, 96x96',\
 'solver_convergence_22_128.ascii'  w lp lt 2 dt 1 t 'solver=22, 128x128',\
+'solver_convergence_22_160.ascii'  w lp lt 2 dt 1 t 'solver=22, 160x160',\
+'solver_convergence_22_192.ascii'  w lp lt 2 dt 1 t 'solver=22, 192x192',\
 1e-7 lt -1 dt 2 
 
 set ylabel 'xi_V'
 set output 'solver_convergence_V.pdf'
 plot[][]\
-'solver_convergence_21_8.ascii'  u 1:3 w lp lt 1 dt 1 t 'solver=21, 8x8',\
-'solver_convergence_21_16.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 16x16',\
-'solver_convergence_21_24.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 24x24',\
-'solver_convergence_21_32.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 32x32',\
-'solver_convergence_21_40.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 40x40',\
-'solver_convergence_21_48.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 48x48',\
-'solver_convergence_21_64.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 64x64',\
-'solver_convergence_21_80.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 80x80',\
-'solver_convergence_21_96.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 96x96',\
-'solver_convergence_21_128.ascii'u 1:3 w lp lt 1 dt 1 t 'solver=21, 128x128',\
-'solver_convergence_22_8.ascii'  u 1:3 w lp lt 2 dt 1 t 'solver=22, 8x8',\
-'solver_convergence_22_16.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 16x16',\
-'solver_convergence_22_24.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 24x24',\
-'solver_convergence_22_32.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 32x32',\
-'solver_convergence_22_40.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 40x40',\
-'solver_convergence_22_48.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 48x48',\
-'solver_convergence_22_64.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 64x64',\
-'solver_convergence_22_80.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 80x80',\
-'solver_convergence_22_96.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 96x96',\
-'solver_convergence_22_128.ascii'u 1:3 w lp lt 2 dt 1 t 'solver=22, 128x128',\
+'solver_convergence_21_8.ascii'   u 1:3 w lp lt 1 dt 1 t 'solver=21, 8x8',\
+'solver_convergence_21_16.ascii'  u 1:3 w lp lt 1 dt 1 t 'solver=21, 16x16',\
+'solver_convergence_21_24.ascii'  u 1:3 w lp lt 1 dt 1 t 'solver=21, 24x24',\
+'solver_convergence_21_32.ascii'  u 1:3 w lp lt 1 dt 1 t 'solver=21, 32x32',\
+'solver_convergence_21_40.ascii'  u 1:3 w lp lt 1 dt 1 t 'solver=21, 40x40',\
+'solver_convergence_21_48.ascii'  u 1:3 w lp lt 1 dt 1 t 'solver=21, 48x48',\
+'solver_convergence_21_64.ascii'  u 1:3 w lp lt 1 dt 1 t 'solver=21, 64x64',\
+'solver_convergence_21_80.ascii'  u 1:3 w lp lt 1 dt 1 t 'solver=21, 80x80',\
+'solver_convergence_21_96.ascii'  u 1:3 w lp lt 1 dt 1 t 'solver=21, 96x96',\
+'solver_convergence_21_128.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 128x128',\
+'solver_convergence_21_160.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 160x160',\
+'solver_convergence_21_192.ascii' u 1:3 w lp lt 1 dt 1 t 'solver=21, 192x192',\
+'solver_convergence_22_8.ascii'   u 1:3 w lp lt 2 dt 1 t 'solver=22, 8x8',\
+'solver_convergence_22_16.ascii'  u 1:3 w lp lt 2 dt 1 t 'solver=22, 16x16',\
+'solver_convergence_22_24.ascii'  u 1:3 w lp lt 2 dt 1 t 'solver=22, 24x24',\
+'solver_convergence_22_32.ascii'  u 1:3 w lp lt 2 dt 1 t 'solver=22, 32x32',\
+'solver_convergence_22_40.ascii'  u 1:3 w lp lt 2 dt 1 t 'solver=22, 40x40',\
+'solver_convergence_22_48.ascii'  u 1:3 w lp lt 2 dt 1 t 'solver=22, 48x48',\
+'solver_convergence_22_64.ascii'  u 1:3 w lp lt 2 dt 1 t 'solver=22, 64x64',\
+'solver_convergence_22_80.ascii'  u 1:3 w lp lt 2 dt 1 t 'solver=22, 80x80',\
+'solver_convergence_22_96.ascii'  u 1:3 w lp lt 2 dt 1 t 'solver=22, 96x96',\
+'solver_convergence_22_128.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 128x128',\
+'solver_convergence_22_160.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 160x160',\
+'solver_convergence_22_192.ascii' u 1:3 w lp lt 2 dt 1 t 'solver=22, 192x192',\
 1e-7 lt -1 dt 2 
 
 set ylabel 'alpha'
 set output 'solver_convergence_alpha.pdf'
 plot[][]\
-'solver_convergence_21_8.ascii'  u 1:4 w l lt 1 dt 1 t 'solver=21, 8x8',\
-'solver_convergence_21_16.ascii' u 1:4 w l lt 1 dt 1 t 'solver=21, 16x16',\
-'solver_convergence_21_24.ascii' u 1:4 w l lt 1 dt 1 t 'solver=21, 24x24',\
-'solver_convergence_21_32.ascii' u 1:4 w l lt 1 dt 1 t 'solver=21, 32x32',\
-'solver_convergence_21_40.ascii' u 1:4 w l lt 1 dt 1 t 'solver=21, 40x40',\
-'solver_convergence_21_48.ascii' u 1:4 w l lt 1 dt 1 t 'solver=21, 48x48',\
-'solver_convergence_21_64.ascii' u 1:4 w l lt 1 dt 1 t 'solver=21, 64x64',\
-'solver_convergence_21_80.ascii' u 1:4 w l lt 1 dt 1 t 'solver=21, 80x80',\
-'solver_convergence_21_96.ascii' u 1:4 w l lt 1 dt 1 t 'solver=21, 96x96',\
-'solver_convergence_21_128.ascii'u 1:4 w l lt 1 dt 1 t 'solver=21, 128x128',\
-'solver_convergence_22_8.ascii'  u 1:4 w l lt 2 dt 1 t 'solver=22, 8x8',\
-'solver_convergence_22_16.ascii' u 1:4 w l lt 2 dt 1 t 'solver=22, 16x16',\
-'solver_convergence_22_24.ascii' u 1:4 w l lt 2 dt 1 t 'solver=22, 24x24',\
-'solver_convergence_22_32.ascii' u 1:4 w l lt 2 dt 1 t 'solver=22, 32x32',\
-'solver_convergence_22_40.ascii' u 1:4 w l lt 2 dt 1 t 'solver=22, 40x40',\
-'solver_convergence_22_48.ascii' u 1:4 w l lt 2 dt 1 t 'solver=22, 48x48',\
-'solver_convergence_22_64.ascii' u 1:4 w l lt 2 dt 1 t 'solver=22, 64x64',\
-'solver_convergence_22_80.ascii' u 1:4 w l lt 2 dt 1 t 'solver=22, 80x80',\
-'solver_convergence_22_96.ascii' u 1:4 w l lt 2 dt 1 t 'solver=22, 96x96',\
-'solver_convergence_22_128.ascii'u 1:4 w l lt 2 dt 1 t 'solver=22, 128x128',\
+'solver_convergence_21_8.ascii'   u 1:4 w l lt 1 dt 1 t 'solver=21, 8x8',\
+'solver_convergence_21_16.ascii'  u 1:4 w l lt 1 dt 1 t 'solver=21, 16x16',\
+'solver_convergence_21_24.ascii'  u 1:4 w l lt 1 dt 1 t 'solver=21, 24x24',\
+'solver_convergence_21_32.ascii'  u 1:4 w l lt 1 dt 1 t 'solver=21, 32x32',\
+'solver_convergence_21_40.ascii'  u 1:4 w l lt 1 dt 1 t 'solver=21, 40x40',\
+'solver_convergence_21_48.ascii'  u 1:4 w l lt 1 dt 1 t 'solver=21, 48x48',\
+'solver_convergence_21_64.ascii'  u 1:4 w l lt 1 dt 1 t 'solver=21, 64x64',\
+'solver_convergence_21_80.ascii'  u 1:4 w l lt 1 dt 1 t 'solver=21, 80x80',\
+'solver_convergence_21_96.ascii'  u 1:4 w l lt 1 dt 1 t 'solver=21, 96x96',\
+'solver_convergence_21_128.ascii' u 1:4 w l lt 1 dt 1 t 'solver=21, 128x128',\
+'solver_convergence_21_160.ascii' u 1:4 w l lt 1 dt 1 t 'solver=21, 160x160',\
+'solver_convergence_21_192.ascii' u 1:4 w l lt 1 dt 1 t 'solver=21, 192x192',\
+'solver_convergence_22_8.ascii'   u 1:4 w l lt 2 dt 1 t 'solver=22, 8x8',\
+'solver_convergence_22_16.ascii'  u 1:4 w l lt 2 dt 1 t 'solver=22, 16x16',\
+'solver_convergence_22_24.ascii'  u 1:4 w l lt 2 dt 1 t 'solver=22, 24x24',\
+'solver_convergence_22_32.ascii'  u 1:4 w l lt 2 dt 1 t 'solver=22, 32x32',\
+'solver_convergence_22_40.ascii'  u 1:4 w l lt 2 dt 1 t 'solver=22, 40x40',\
+'solver_convergence_22_48.ascii'  u 1:4 w l lt 2 dt 1 t 'solver=22, 48x48',\
+'solver_convergence_22_64.ascii'  u 1:4 w l lt 2 dt 1 t 'solver=22, 64x64',\
+'solver_convergence_22_80.ascii'  u 1:4 w l lt 2 dt 1 t 'solver=22, 80x80',\
+'solver_convergence_22_96.ascii'  u 1:4 w l lt 2 dt 1 t 'solver=22, 96x96',\
+'solver_convergence_22_128.ascii' u 1:4 w l lt 2 dt 1 t 'solver=22, 128x128',\
+'solver_convergence_22_160.ascii' u 1:4 w l lt 2 dt 1 t 'solver=22, 160x160',\
+'solver_convergence_22_192.ascii' u 1:4 w l lt 2 dt 1 t 'solver=22, 192x192',\
 
 ##############################################################
 

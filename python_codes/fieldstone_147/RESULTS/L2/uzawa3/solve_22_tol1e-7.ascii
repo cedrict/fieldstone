@@ -9,3 +9,5 @@ solve time: 24.044 s, nel= 4096, niter= 11
 solve time: 45.421 s, nel= 6400, niter= 11
 solve time: 86.857 s, nel= 9216, niter= 11
 solve time: 232.358 s, nel= 16384, niter= 11
+solve time: 436.069 s, nel= 25600, niter= 12
+solve time: 786.035 s, nel= 36864, niter= 12
