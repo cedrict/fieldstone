@@ -1,13 +1,16 @@
 import numpy as np
 import time as clock
 import scipy.sparse as sps
+import scipy.sparse.linalg as sla
 
 ############################################################################### 
 # same as schur_complement_cg_solver.py but without preconditioner business 
 #the function implicitely assumes matrices in csr format
 ############################################################################### 
 
-def uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter,tol):
+def uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter,tol,inner):
+
+   timeK=0.
 
    print('-------------------------')
 
@@ -15,7 +18,14 @@ def uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter,tol):
 
    conv_file=open("solver_convergence.ascii","w")
 
-   solV=sps.linalg.spsolve(K_mat,f_rhs)                             # compute V_0
+   if inner=='direct':
+      solV=sps.linalg.spsolve(K_mat,f_rhs)                             # compute V_0
+   elif inner=='splu':
+      LU = sla.splu(K_mat)
+      solV=LU.solve(f_rhs)
+   else:
+      exit('unknown inner solver')
+
    rvect_k=sps.linalg.spsolve(MP_mat,G_mat.T.dot(solV)-h_rhs)       # compute r_0
    pvect_k=np.copy(rvect_k)                                         # compute p_0
 
@@ -23,7 +33,12 @@ def uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter,tol):
    for k in range (0,niter): #--------------------------------------#
                                                                     # 
        #AAA                                                         #
-       dvect_k=sps.linalg.spsolve(K_mat,G_mat.dot(pvect_k))         #
+       startK=clock.time()                                          #
+       if inner=='direct':                                          #
+          dvect_k=sps.linalg.spsolve(K_mat,G_mat.dot(pvect_k))      #
+       elif inner=='splu':                                          #
+          dvect_k=LU.solve(G_mat.dot(pvect_k))                      #
+       timeK+=clock.time()-startK                                   #
        #BBB                                                         #
        numerator=rvect_k.dot(MP_mat.dot(rvect_k))                   #
        denominator=pvect_k.dot(H_mat.dot(dvect_k))                  #
@@ -58,6 +73,7 @@ def uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter,tol):
 
    conv_file.close()
 
+   print('time solving with K',timeK,NfemP)
    print('time per iteration:',(endu-startu)/k,NfemP)
    print('-------------------------')
     

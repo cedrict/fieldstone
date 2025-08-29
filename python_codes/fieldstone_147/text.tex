@@ -157,9 +157,8 @@ otherwise.
                                            NfemV,NfemP,niter_max,tolerance,use_precond,'splu')
 \end{lstlisting}
 %-----------------15
-\item uzawa 1: Section 5.1 \cite{braess}. Parameterised by $\omega$(=2000 default)
+\item uzawa 1: Section 5.1 \cite{braess}. Parameterised by $\omega$
 \begin{lstlisting}
-   omega=2000
    solV,p,niter=uzawa1_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                        NfemV,NfemP,niter_max,tolerance,use_precond,'direct',omega)
 \end{lstlisting}
@@ -171,7 +170,47 @@ otherwise.
                        NfemV,NfemP,niter_max,tolerance,use_precond,'direct')
 \end{lstlisting}
 
+%-----------------17
+\item projection solver 
+\begin{lstlisting}
+solV,p,niter=projection_solver(K_mat,G_mat,L_mat,f_rhs,h_rhs,NfemV,NfemP,niter_max,tolerance)
+\end{lstlisting}
 
+%-----------------18
+\item Uzawa 1 + L2 projection
+\begin{lstlisting}
+solV,p,niter=uzawa1_solver_L2(K_mat,G_mat,MP_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance,omega)
+\end{lstlisting}
+
+%-----------------19
+\item Uzawa 1b + L2 projection
+\begin{lstlisting}
+solV,p,niter=uzawa1_solver_L2b(K_mat,G_mat,MP_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance,omega)
+\end{lstlisting}
+
+%-----------------20
+\item Uzawa 2 + L2 projection
+\begin{lstlisting}
+solV,p,niter=uzawa2_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance)
+\end{lstlisting}
+
+%-----------------21
+\item Uzawa 3 (CG on Schur) projection
+\begin{lstlisting}
+solV,p,niter=uzawa3_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance)
+\end{lstlisting}
+
+%-----------------22
+\item Uzawa 3 (CG on Schur) + L2 projection
+\begin{lstlisting}
+solV,p,niter=uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance,'direct')
+\end{lstlisting}
+
+%-----------------23
+\item Uzawa 3 (CG on Schur), LU inner, L2 projection
+\begin{lstlisting}
+solV,p,niter=uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance,'splu')
+\end{lstlisting}
 
 
 \end{enumerate}
@@ -231,6 +270,8 @@ We can also look at the $L_2$ error on the velocity divergence:
 \newpage
 %......................................
 \subsubsection*{About the Uzawa solvers}
+
+This subsection was written and used to review a paper.
 
 U1 is uzawa of Braess, section 5.1: simple to implement but a parameter is needed. 
 U2 is uzawa of Braess, section 5.2
@@ -350,7 +391,7 @@ diagonal of $ \G^T (diag [\K]  )^{-1} \G$ we lump the matrix instead.
 In what follows we will need to replace $\vec{p}^T\cdot\vec{p}$ 
 by 
 \[
-(p,q) = \int_\Omega {p} \cdot {q} dV 
+\langle p,q \rangle = \int_\Omega {p} \cdot {q} dV 
 = \vec{p}^T \cdot {\bm M}_{p} \cdot \vec{q}
 \]
 where ${\bm M}_{p}$ is the pressure mass matrix. 
@@ -361,35 +402,85 @@ the fastest approach.
 Likewise we will need to replace $( \G \cdot \vec{x})^T\cdot \vec{y}$
 by
 \[
-(\nabla {x},{y}) = \int_\Omega \nabla \vec{x} \; {y} dV = \vec{x}^T \cdot {\bm H} \cdot \vec{y}
+\langle \nabla {x},{y} \rangle = \int_\Omega \nabla \vec{x} \; {y} dV = \vec{x}^T \cdot {\bm H} \cdot \vec{y}
 \]
 where ${\bm H}$ is defined as $\int \vec\nabla \vec{\bN}_P  \cdot \vec{\bN}_V dV$ (not exactly, see below). 
+
+Note that in the case of this benchmark the velocity boundary conditions
+are no slip on all sides, so that in practive $\vec{h}=0$.
 
 %---------------------------------------------------
 \subsection*{Uzawa 1 algorithm}
 
-Solver 15 is the standard Uzawa 1:
+
+Assume $\vec{\cal P}_0$ known
+\begin{eqnarray}
+\text{solve} \qquad \mathbb{K} \cdot {\color{teal} \vec{\cal V}_k} 
+&=& {\color{teal} \vec{f}} - \mathbb{G}\cdot {\color{carrotorange} \vec{\cal P}_{k}}  \nn\\
+{\color{carrotorange} \vec{\cal P}_{k+1}} &=& 
+{\color{carrotorange} \vec{\cal P}_{k}}  
++ \alpha_k (\mathbb{G}^T\cdot {\color{teal} \vec{\cal V}_k}   - {\color{carrotorange}\vec{h}})
+\quad
+\quad
+\quad
+\quad
+k=0,1,2, ... 
+\end{eqnarray}
+
+Vectors this {\color{teal} color} are vectors of size \lstinline{NfemV} (the number 
+of velocity degrees of freedom) and vectors this {\color{carrotorange} color} are 
+vectors of size \lstinline{NfemP} (the number of pressure degrees of freedom).
+
+In the context of the L2 projection, the second line of the algorithm 
+is replaced by a new one.
+we start instead from 
+\[
+\langle p^{k+1},q  \rangle = 
+\langle p^{k},q  \rangle -\alpha_k \langle \vec\nabla \cdot \vec{\upnu}^{k} -h ,q \rangle 
+\qquad \forall \quad q\in Q 
+\]
+where $\langle \cdot,\cdot  \rangle$ denotes the $L_2$ inner product on $Q$ (the pressure space):
+\[
+\langle p,q \rangle = \int_\Omega p(x)q(x) dx, \qquad \forall p,q \in Q.
+\]
+We then obtain:
+\[
+{\bm M}_p \cdot {\color{carrotorange} \vec{\cal P}_{k+1}} 
+=
+{\bm M}_p \cdot {\color{carrotorange} \vec{\cal P}_{k}}  
++\alpha_k  (\mathbb{G}^T\cdot {\color{teal} \vec{\cal V}_k}   - {\color{carrotorange}\vec{h}})
+\]
+where ${\bm M}_p$ is the pressure mass matrix.
+
+In light of all this, I have written three solvers:
+\begin{itemize}
+\item Solver 15 is the standard Uzawa 1:
 \begin{lstlisting}
-solV=sps.linalg.spsolve(K_mat,f_rhs-G_mat.dot(solP))
-solPnew=solP+omega*(G_mat.T.dot(solV)-h_rhs)         
+for k in range (0,niter):
+    solV=sps.linalg.spsolve(K_mat,f_rhs-G_mat.dot(solP))
+    solPnew=solP+omega*(G_mat.T.dot(solV)-h_rhs)         
 \end{lstlisting}
 
-Solver 18 is Uzawa 1 with L2 projection:
+\item Solver 18 is Uzawa 1 with $L_2$ projection:
 \begin{lstlisting}
-solV=sps.linalg.spsolve(K_mat,f_rhs-G_mat.dot(solP))     
-rhs=MP_mat.dot(solP)+omega*(G_mat.T.dot(solV)-h_rhs)      
-solPnew=sps.linalg.spsolve(MP_mat,rhs,use_umfpack=False)   
+for k in range (0,niter):
+    solV=sps.linalg.spsolve(K_mat,f_rhs-G_mat.dot(solP))     
+    rhs=MP_mat.dot(solP)+omega*(G_mat.T.dot(solV)-h_rhs)      
+    solPnew=sps.linalg.spsolve(MP_mat,rhs)   
 \end{lstlisting}
 
 
-Solver 19 is Uzawa 1 with L2 projection in which 
+\item Solver 19 is Uzawa 1 with $L_2$ projection in which 
 the matrix multiplication with the pressure mass matrix is avoided:
 \begin{lstlisting}
-solV=sps.linalg.spsolve(K_mat,f_rhs-G_mat.dot(solP))   
-rhs=omega*(G_mat.T.dot(solV)-h_rhs)                     
-dsolP=sps.linalg.spsolve(MP_mat,rhs,use_umfpack=False)   
-solPnew=solP+dsolP                                    
+for k in range (0,niter):
+    solV=sps.linalg.spsolve(K_mat,f_rhs-G_mat.dot(solP))   
+    rhs=omega*(G_mat.T.dot(solV)-h_rhs)                     
+    dsolP=sps.linalg.spsolve(MP_mat,rhs)   
+    solPnew=solP+dsolP                                    
 \end{lstlisting}
+
+\end{itemize}
 
 Compared to the standard Uzawa1 approach (solver 15) these have a cost, 
 since each iteration now involves a solve with the pressure mass matrix 
@@ -404,14 +495,14 @@ However, the results are nothing short of spectacular:
 \includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa1/errorsP.pdf}
 \end{center}
 
-Solvers 18 and 19 converge *much* faster than 15 (standard Uzawa1) and we find that 
+Solvers 18 and 19 converge {\it much} faster than 15 (standard Uzawa1) and we find that 
 they still yield correct discretisations errors (errors for solvers 18 and 19
 are obviously identical).
 The maximum number of iterations is arbitrarily set to 5000. We see that when resolution increases 
 solver 15 fails to converge, even after 5000 iterations, and the measured errors reflect this.
 
 When it comes to solve time, despite the extra solve with the 
-pressure mass matrix solvers 18 and 19 are *much* faster than 15
+pressure mass matrix solvers 18 and 19 are {\it much} faster than 15
 and we find that 19 is a few percents faster than 18. 
 
 Finally, we find that solver 15 gets better and better with increasing $\omega$
@@ -422,31 +513,46 @@ Remark: in this example $\vec{h}=0$. One should verify that solvers 18,19 still 
 %---------------------------------------------------
 \subsection*{Uzawa 2 algorithm}
 
-Solver 16 is the standard Uzawa 2:
-\begin{lstlisting}
-qk=h_rhs-G_mat.T.dot(solV)      
-pk=G_mat.dot(qk)               
-Hk=sps.linalg.spsolve(K_mat,pk) 
-alphak=qk.dot(qk)/pk.dot(Hk)   
-solPnew=solP-alphak*qk        
-solVnew=solV+alphak*Hk       
-\end{lstlisting}
+Assume ${\color{carrotorange} \vec{\cal P}_0}$ known. 
+Solve $\mathbb{K}\cdot {\color{teal} \vec{\cal V}_0} 
+= {\color{teal} \vec{f}} - \mathbb{G}\cdot  {\color{carrotorange} \vec{\cal P}_0}$. 
+For $k=0,1,2,...$, compute 
+\begin{eqnarray}
+{\color{carrotorange} \vec{\cal R}_k}
+={\color{carrotorange} \vec{q}_k} 
+&=& {\color{carrotorange} \vec{h}} - \mathbb{G}^T \cdot {\color{teal} \vec{\cal V}_k}  \nn\\
+{\color{teal} \vec{p}_k} &=& {\G}\cdot {\color{carrotorange} \vec{q}_k} \nn\\
+{\color{teal} \vec{H}_k} &=& {\K}^{-1}\cdot {\color{teal} \vec{p}_k } \nn\\
+\alpha_k &=& \frac{  {\color{carrotorange} \vec{q}_k} \cdot {\color{carrotorange} \vec{q}_k}}
+{ {\color{teal} \vec{p}_k} \cdot {\color{teal} \vec{H}_k }} \nn\\
+{\color{carrotorange} \vec {\cal P}_k} &=& 
+{\color{carrotorange} \vec {\cal P}_{k-1}} - \alpha_k  {\color{carrotorange} \vec q_k} \nn\\
+{\color{teal} \vec {\cal V}_{k}} &=& {\color{teal} \vec {\cal V}_{k-1}} 
++ \alpha_k {\color{teal} \vec{H}_k}
+\end{eqnarray}
+
+The $L_2$ version has two differences:
+\[
+{\color{carrotorange} \vec{q}_k} = 
+{\color{carrotorange} \vec{h}} - \mathbb{G}^T \cdot {\color{teal} \vec{\cal V}_k} 
+\qquad
+\Rightarrow
+\qquad
+\langle q^k,q \rangle  = \langle h+ \vec\nabla \cdot \vec\upnu^k,q \rangle \qquad \forall q
+\]
+\[
+\alpha_k = \frac{  {\color{carrotorange} \vec{q}_k} \cdot {\color{carrotorange} \vec{q}_k}}
+{ {\color{teal} \vec{p}_k} \cdot {\color{teal} \vec{H}_k }} 
+\qquad
+\Rightarrow
+\qquad
+\alpha_k = \frac{ \langle q^k,q^k  \rangle  }{ \langle \vec\nabla q , H_k  \rangle   }
+\]
 
 
-Solver 20 is Uzawa 2 with L2 projection: 
-\begin{lstlisting}
-rhs=h_rhs-G_mat.T.dot(solV)
-qk=sps.linalg.spsolve(MP_mat,rhs,use_umfpack=False)    
-pk=G_mat.dot(qk)                           
-Hk=sps.linalg.spsolve(K_mat,pk)             
-numerator=qk.dot(MP_mat.dot(qk))             
-denominator=qk.dot(H_mat.dot(Hk))             
-alphak=numerator/denominator                   
-solPnew=solP-alphak*qk                          
-solVnew=solV+alphak*Hk                           
-\end{lstlisting}
 
-For this solver we need the pressure mass matrix again, but also a new
+
+For this solver we need the pressure mass matrix ${\bm M}_p$ again, but also a new
 matrix ${\bm H}$:
 
 \[
@@ -509,7 +615,8 @@ dV \right]
 \cdot
 \vec{\cal Z}
 \]
-This translates as follows into code:
+This translates as follows into code and is included in the 
+matrix building for loop over all elements:
 
 \begin{lstlisting}
 H_mat   = lil_matrix((NfemP,NfemV),dtype=np.float64) # matrix H 
@@ -528,6 +635,39 @@ for iel in range(0,nel):
                 bb_mat[1,2*i+1]=NNNV[i] 
             H_el+=aa_mat@bb_mat*weightq*jcob
 \end{lstlisting}
+
+Two solvers have then been written:
+\begin{itemize}
+\item Solver 16 is the standard Uzawa 2:
+\begin{lstlisting}
+for k in range (0,niter): 
+    qk=h_rhs-G_mat.T.dot(solV)      
+    pk=G_mat.dot(qk)               
+    Hk=sps.linalg.spsolve(K_mat,pk) 
+    alphak=qk.dot(qk)/pk.dot(Hk)   
+    solPnew=solP-alphak*qk        
+    solVnew=solV+alphak*Hk       
+\end{lstlisting}
+
+\item Solver 20 is Uzawa 2 with L2 projection: 
+\begin{lstlisting}
+for k in range (0,niter): 
+    rhs=h_rhs-G_mat.T.dot(solV)
+    qk=sps.linalg.spsolve(MP_mat,rhs,use_umfpack=False)    
+    pk=G_mat.dot(qk)                           
+    Hk=sps.linalg.spsolve(K_mat,pk)             
+    numerator=qk.dot(MP_mat.dot(qk))             
+    denominator=qk.dot(H_mat.dot(Hk))             
+    alphak=numerator/denominator                   
+    solPnew=solP-alphak*qk                          
+    solVnew=solV+alphak*Hk                           
+\end{lstlisting}
+
+\end{itemize}
+
+
+
+
 
 Again, the results are nothing short of spectacular:
 
@@ -550,28 +690,31 @@ Remark: in this example $\vec{h}=0$. One should verify that solvers 18,19 still 
 
 I recall here the structure of the solver (see Section~\ref{MMM-ss:schurpcg})
 and highlight the lines which will need special treatment in the context of the $L_2$-projection
-(I have also removed the $\C$ matrix entries which are irrelevant here).
+with a $\triangleleft$ (I have also removed the $\C$ matrix entries which are irrelevant here).
 
 \begin{itemize}
-\item compute $\vec{\cal V}_0=\K^{-1}\cdot (\vec{f}-\G \cdot \vec{\cal P}_0)$
-\item {\color{purple} $\vec{r}_0 = \G^T\cdot \vec{\cal V}_0 - \vec{h}$} 
+\item compute ${\color{teal} \vec{\cal V}_0}=\K^{-1}\cdot ({\color{teal} \vec{f}}-\G \cdot {\color{carrotorange} \vec{\cal P}_0})$
+\item $ {\color{carrotorange} \vec{r}_0} = \G^T\cdot {\color{teal} \vec{\cal V}_0} - {\color{carrotorange}\vec{h}}$  \hspace{1cm} $\triangleleft$
 \item if $\vec{r}_0$ is sufficiently small, then return $(\vec{\cal V}_0,\vec{\cal P}_0)$ as the result
-\item $\vec{p}_0=\vec{r}_0$
+\item ${\color{carrotorange} \vec{p}_0}={\color{carrotorange} \vec{r}_0}$
 \item $k=0$
 \item repeat
 \begin{enumerate}
-\item compute $\tilde{\vec{p}}_k = \G \cdot \vec{p}_k$
-\item solve $\K\cdot \vec{d}_k = \tilde{p}_k$
-\item compute {\color{purple} $\alpha_k=(\vec{r}_k^T \cdot  \vec{r}_k)/(\tilde{\vec{p}}_k^T \cdot \vec{d}_k)$}
-\item $\vec{\cal P}_{k+1} = \vec{\cal P}_k+\alpha_k \vec{p}_k$
-\item $ \vec{\cal V}_{k+1} = \vec{\cal V}_k - \alpha_k \vec{d}_k$
-\item {\color{purple} $\vec{r}_{k+1} = \vec{r}_k - \alpha_k (\G^T \cdot \vec{d}_k ) $}
+\item compute ${\color{teal} \tilde{\vec{p}}_k} = \G \cdot {\color{carrotorange} \vec{p}_k}$
+\item solve $\K\cdot {\color{teal} \vec{d}_k} = {\color{teal} \tilde{p}_k }$
+\item compute $\alpha_k=( {\color{carrotorange} \vec{r}_k^T \cdot  \vec{r}_k})
+/({\color{teal} \tilde{\vec{p}}_k^T \cdot \vec{d}_k })$ \hspace{1cm} $\triangleleft$
+\item ${\color{carrotorange} \vec{\cal P}_{k+1}} = {\color{carrotorange} \vec{\cal P}_k}+\alpha_k {\color{carrotorange} \vec{p}_k}$
+\item ${\color{teal} \vec{\cal V}_{k+1}} = {\color{teal} \vec{\cal V}_k} - \alpha_k {\color{teal} \vec{d}_k}$
+\item ${\color{carrotorange} \vec{r}_{k+1}} = {\color{carrotorange}\vec{r}_k} 
+-\alpha_k (\G^T \cdot {\color{teal} \vec{d}_k}) $ \hspace{1cm} $\triangleleft$
 \item if $\vec{r}_{k+1}$ is sufficiently small ($||\vec{r}_{k+1}||_2/||\vec{r}_0||_2 <tol$), then exit loop
-\item compute {\color{purple} $\beta_k=(\vec{r}_{k+1}^T \cdot \vec{r}_{k+1})/(\vec{r}_k^T \cdot \vec{r}_k)$}
-\item $\vec{p}_{k+1} =\vec{r}_{k+1}+ \beta_k \vec{p}_k$
+\item compute $\beta_k=({\color{carrotorange} \vec{r}_{k+1}^T \cdot \vec{r}_{k+1}})
+/({\color{carrotorange} \vec{r}_k^T \cdot \vec{r}_k})$ \hspace{1cm} $\triangleleft$
+\item ${\color{carrotorange} \vec{p}_{k+1}} = {\color{carrotorange} \vec{r}_{k+1} }+ \beta_k {\color{carrotorange}\vec{p}_k}$
 \item $k=k+1$
 \end{enumerate}
-\item return $\vec{\cal P}_{k+1}$ as result
+\item return $\vec{\cal V}_{k+1}$ and $\vec{\cal P}_{k+1}$ as result
 \end{itemize}
 
 The first residual $\vec{r}_0$ is then computed as follows:
@@ -589,7 +732,7 @@ Then $\alpha_k$ is computed as follows:
 \alpha_k
 = \frac{ \vec{r}_k^T \cdot {\bm M}_p \cdot \vec{r}_k } {\vec{p}_k^T \cdot {\bm H} \cdot \vec{d}_k }
 \]
-
+which translates into
 \begin{lstlisting}
 numerator=rvect_k.dot(MP_mat.dot(rvect_k))     
 denominator=pvect_k.dot(H_mat.dot(dvect_k))   
@@ -625,6 +768,11 @@ different $\xi_{\cal V}=\|{\cal V}^{k+1}-{\cal V}\|_2$ and
 $\xi_{\cal P}=\|{\cal P}^{k+1}-{\cal P}^k\|_2$ calculation (convergence indicators) so as to 
 compare with previous Uzawa 1 and 2 (and no preconditioner nor inner solver choice). 
 Solver 22 is the Uzawa 3 solver (i.e solver 21) with $L_2$ projection.
+I have also code solver 23, which is solver 22, albeit the inner solve 
+is carried out with a LU solveri\footnote{\url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.splu.html}}: 
+in practice the matrix $\K$ is then LU-decomposed once and the decomposition 
+is then reused for each solve with $\K$. This results in a drastic
+speedup as shown hereunder:
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa3/solver_convergence_P.pdf}
@@ -654,16 +802,18 @@ For solver 22 we find:
 \begin{center}
 \begin{tabular}{|c|cc|cc|cc|}
 \hline
-& tol=10-4 & & tol=10-5 & & tol=10-7 & \\
+& tol=$10^{-4}$ & & tol=$10^{-5}$ & & tol=$10^{-7}$ & \\
 nel   & time (s) & \# its &  time (s) & \# its &  time (s) & \# its  \\ 
 \hline
-1024  & 1.748    &  7  &2.046  &   8  & 2.073    & 10\\
+1024  & 1.748    &  7  &2.046  &   8  & 2.073    & 10 \\
 1600  & 4.159    &  8  &4.557  &   8  & 4.716    & 10 \\
-2304  & 8.103    &  8  &8.358  &   9  &  9.374   & 11\\
-4096  & 18.581   &  8  &20.229 &   9  &  22.501  & 11\\
+2304  & 8.103    &  8  &8.358  &   9  &  9.374   & 11 \\
+4096  & 18.581   &  8  &20.229 &   9  &  22.501  & 11 \\
 6400  & 34.032   &  8  &36.868 &   9  &  41.397  & 11 \\
 9216  & 73.158   &  9  &72.908 &   9  &  84.936  & 11 \\
-16384 & 192.415  &  9  &205.503&   10 &  226.167 & 11\\
+16384 & 192.415  &  9  &205.503&   10 &  226.167 & 11 \\
+25600 &          &     &       &      &  436.069 & 12 \\
+36864 &          &     &       &      &  786.035 & 12 \\
 \hline
 \end{tabular}
 \end{center}
@@ -675,4 +825,7 @@ One can also look at the time per solver iteration
 \end{center}
 We find that the additional solves and matrix-vector multiplications for the L2 variant (solver 22)
 do not make each iteration substantially longer.
+
+Since solver 23 relies on LU and therefore needs to store the $L$ and $U$
+matrices, I expect it requires more memory than solver 22 - not proven yet.
 

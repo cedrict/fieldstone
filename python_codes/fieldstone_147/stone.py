@@ -123,11 +123,11 @@ if int(len(sys.argv) == 6):
    nqperdim = int(sys.argv[4])
    solver = int(sys.argv[5])
 else:
-   nelx = 16
+   nelx = 256
    nely = nelx
    visu = 1
    nqperdim=3
-   solver=22
+   solver=23
     
 nnx=2*nelx+1         # number of V nodes, x direction
 nny=2*nely+1         # number of V nodes, y direction
@@ -586,7 +586,7 @@ print("build Schur matrix precond: %e s, nel= %d" % (clock.time()-start,nel))
 ###############################################################################
 start=clock.time()
 
-if solver==14:
+if solver==14 or solver==23: # LU requires CSC
    K_mat=csc_matrix(K_mat)
 else:
    K_mat=csr_matrix(K_mat)
@@ -670,7 +670,9 @@ elif solver==20:
 elif solver==21:
    solV,p,niter=uzawa3_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance)
 elif solver==22:
-   solV,p,niter=uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance)
+   solV,p,niter=uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance,'direct')
+elif solver==23:
+   solV,p,niter=uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance,'splu')
 else:
    exit('solver unknown')
 
@@ -702,7 +704,7 @@ start=clock.time()
 
 if solver==4 or solver==13 or solver==14 or solver==15 or solver==16 or\
    solver==17 or solver==18 or solver==19 or solver==20 or solver==21 or\
-   solver==22: 
+   solver==22 or solver==23: 
    u,v=np.reshape(solV,(NV,2)).T
 else:
    u,v=np.reshape(sol[0:NfemV],(NV,2)).T
@@ -761,28 +763,24 @@ exx=np.zeros(nel,dtype=np.float64)
 eyy=np.zeros(nel,dtype=np.float64)  
 exy=np.zeros(nel,dtype=np.float64)  
 
-for iel in range(0,nel):
-
+for iel,nodes in enumerate(iconV.T):
     rq=0. ; sq=0. ; weightq=2.*2.
-
     NNNV=NNV(rq,sq)
     dNNNVdr=dNNVdr(rq,sq)
     dNNNVds=dNNVds(rq,sq)
-    jcb[0,0]=dNNNVdr[:].dot(xV[iconV[:,iel]])
-    jcb[0,1]=dNNNVdr[:].dot(yV[iconV[:,iel]])
-    jcb[1,0]=dNNNVds[:].dot(xV[iconV[:,iel]])
-    jcb[1,1]=dNNNVds[:].dot(yV[iconV[:,iel]])
+    jcb[0,0]=dNNNVdr[:].dot(xV[nodes[:]])
+    jcb[0,1]=dNNNVdr[:].dot(yV[nodes[:]])
+    jcb[1,0]=dNNNVds[:].dot(xV[nodes[:]])
+    jcb[1,1]=dNNNVds[:].dot(yV[nodes[:]])
     jcbi=np.linalg.inv(jcb)
     dNNNVdx[:]=jcbi[0,0]*dNNNVdr[:]+jcbi[0,1]*dNNNVds[:]
     dNNNVdy[:]=jcbi[1,0]*dNNNVdr[:]+jcbi[1,1]*dNNNVds[:]
-    xc[iel]=NNNV[:].dot(xV[iconV[:,iel]])
-    yc[iel]=NNNV[:].dot(yV[iconV[:,iel]])
-    exx[iel]=dNNNVdx[:].dot(u[iconV[:,iel]])
-    eyy[iel]=dNNNVdy[:].dot(v[iconV[:,iel]])
-    exy[iel]=0.5*(dNNNVdy[:].dot(u[iconV[:,iel]])
-                 +dNNNVdx[:].dot(v[iconV[:,iel]]))
+    xc[iel]=NNNV[:].dot(xV[nodes[:]])
+    yc[iel]=NNNV[:].dot(yV[nodes[:]])
+    exx[iel]=dNNNVdx[:].dot(u[nodes[:]])
+    eyy[iel]=dNNNVdy[:].dot(v[nodes[:]])
+    exy[iel]=0.5*(dNNNVdy[:].dot(u[nodes[:]])+dNNNVdx[:].dot(v[nodes[:]]))
     e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
-
 #end for
 
 print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
@@ -802,7 +800,7 @@ vrms=0.
 errv=0.
 divv=0.
 errp=0.
-for iel in range (0,nel):
+for iel,nodes in enumerate(iconV.T):
     for iq in range(0,nqperdim):
         for jq in range(0,nqperdim):
 
@@ -815,21 +813,21 @@ for iel in range (0,nel):
             dNNNVds=dNNVds(rq,sq)
             NNNP=NNP(rq,sq)
 
-            jcb[0,0]=dNNNVdr[:].dot(xV[iconV[:,iel]])
-            jcb[0,1]=dNNNVdr[:].dot(yV[iconV[:,iel]])
-            jcb[1,0]=dNNNVds[:].dot(xV[iconV[:,iel]])
-            jcb[1,1]=dNNNVds[:].dot(yV[iconV[:,iel]])
+            jcb[0,0]=dNNNVdr[:].dot(xV[nodes[:]])
+            jcb[0,1]=dNNNVdr[:].dot(yV[nodes[:]])
+            jcb[1,0]=dNNNVds[:].dot(xV[nodes[:]])
+            jcb[1,1]=dNNNVds[:].dot(yV[nodes[:]])
             jcob=np.linalg.det(jcb)
 
             dNNNVdx[:]=jcbi[0,0]*dNNNVdr[:]+jcbi[0,1]*dNNNVds[:]
             dNNNVdy[:]=jcbi[1,0]*dNNNVdr[:]+jcbi[1,1]*dNNNVds[:]
 
-            xq=NNNV[:].dot(xV[iconV[:,iel]])
-            yq=NNNV[:].dot(yV[iconV[:,iel]])
-            uq=NNNV[:].dot(u[iconV[:,iel]])
-            vq=NNNV[:].dot(v[iconV[:,iel]])
-            exxq=dNNNVdx[:].dot(u[iconV[:,iel]])
-            eyyq=dNNNVdy[:].dot(v[iconV[:,iel]])
+            xq=NNNV[:].dot(xV[nodes[:]])
+            yq=NNNV[:].dot(yV[nodes[:]])
+            uq=NNNV[:].dot(u[nodes[:]])
+            vq=NNNV[:].dot(v[nodes[:]])
+            exxq=dNNNVdx[:].dot(u[nodes[:]])
+            eyyq=dNNNVdy[:].dot(v[nodes[:]])
 
             errv+=((uq-uth(xq,yq))**2+(vq-vth(xq,yq))**2)*weightq*jcob
             vrms+=(uq**2+vq**2)*weightq*jcob
@@ -858,17 +856,16 @@ start=clock.time()
 
 q=np.zeros(NV,dtype=np.float64)
 
-for iel in range(0,nel):
-    q[iconV[0,iel]]=p[iconP[0,iel]]
-    q[iconV[1,iel]]=p[iconP[1,iel]]
-    q[iconV[2,iel]]=p[iconP[2,iel]]
-    q[iconV[3,iel]]=p[iconP[3,iel]]
-    q[iconV[4,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
-    q[iconV[5,iel]]=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
-    q[iconV[6,iel]]=(p[iconP[2,iel]]+p[iconP[3,iel]])*0.5
-    q[iconV[7,iel]]=(p[iconP[3,iel]]+p[iconP[0,iel]])*0.5
-    q[iconV[8,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]]+\
-                     p[iconP[2,iel]]+p[iconP[3,iel]])*0.25
+for iel,nodes in enumerate(iconP.T):
+    q[iconV[0,iel]]=p[nodes[0]]
+    q[iconV[1,iel]]=p[nodes[1]]
+    q[iconV[2,iel]]=p[nodes[2]]
+    q[iconV[3,iel]]=p[nodes[3]]
+    q[iconV[4,iel]]=(p[nodes[0]]+p[nodes[1]])*0.5
+    q[iconV[5,iel]]=(p[nodes[1]]+p[nodes[2]])*0.5
+    q[iconV[6,iel]]=(p[nodes[2]]+p[nodes[3]])*0.5
+    q[iconV[7,iel]]=(p[nodes[3]]+p[nodes[0]])*0.5
+    q[iconV[8,iel]]=(p[nodes[0]]+p[nodes[1]]+p[nodes[2]]+p[nodes[3]])*0.25
 
 #np.savetxt('q.ascii',np.array([x,y,q]).T,header='# x,y,q')
 
