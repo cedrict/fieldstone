@@ -1,6 +1,6 @@
 import numpy as np
 import sys as sys
-import time as time
+import time as clock 
 import random
 import scipy.sparse as sps
 from scipy.sparse import csr_matrix,lil_matrix
@@ -74,10 +74,8 @@ eps=1.e-10
 sqrt3=np.sqrt(3.)
 
 print("-----------------------------")
-print("----------fieldstone---------")
+print("---------- stone 12 ---------")
 print("-----------------------------")
-
-print("variable declaration")
 
 m=4     # number of nodes making up an element
 ndof=2  # number of degrees of freedom per node
@@ -117,13 +115,13 @@ bench=1
 
 use_filter=False
 
-#################################################################
+###############################################################################
 # grid point setup
-#################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
-x = np.empty(NV,dtype=np.float64)  # x coordinates
-y = np.empty(NV,dtype=np.float64)  # y coordinates
+x=np.empty(NV,dtype=np.float64)  # x coordinates
+y=np.empty(NV,dtype=np.float64)  # y coordinates
 
 counter = 0
 for j in range(0, nny):
@@ -142,14 +140,14 @@ for j in range(0, nny):
     #end for
 #end for
 
-print("grid nodes setup: %.3f s" % (time.time() - start))
+print("grid nodes setup: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # connectivity
-#################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
-icon =np.zeros((m,nel),dtype=np.int32)
+icon=np.zeros((m,nel),dtype=np.int32)
 
 counter = 0
 for j in range(0,nely):
@@ -162,15 +160,15 @@ for j in range(0,nely):
     #end for
 #end for
 
-print("connectivity: %.3f s" % (time.time() - start))
+print("connectivity: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # define boundary conditions
-#################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
-bc_fix = np.zeros(Nfem, dtype=bool)  # boundary condition, yes/no
-bc_val = np.zeros(Nfem, dtype=np.float64)  # boundary condition, value
+bc_fix = np.zeros(Nfem,dtype=bool)  # boundary condition, yes/no
+bc_val = np.zeros(Nfem,dtype=np.float64)  # boundary condition, value
 
 if bench==1:
    for i in range(0,NV):
@@ -237,16 +235,16 @@ else:
    exit('unknown bench')
 #end if
 
-print("boundary conditions: %.3f s" % (time.time() - start))
+print("boundary conditions: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # build FE matrix
-#################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
-a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+A_fem = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+b_fem = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
 b_mat = np.zeros((3,ndof*m),dtype=np.float64)   # gradient matrix B 
-rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
 N     = np.zeros(m,dtype=np.float64)            # shape functions
 dNdx  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
 dNdy  = np.zeros(m,dtype=np.float64)            # shape functions derivatives
@@ -257,12 +255,13 @@ v     = np.zeros(NV,dtype=np.float64)          # y-component velocity
 area  = np.zeros(nel,dtype=np.float64)  
 k_mat = np.array([[1,1,0],[1,1,0],[0,0,0]],dtype=np.float64) 
 c_mat = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+jcb   = np.zeros((2,2),dtype=np.float64)
 
 for iel in range(0, nel):
 
     # set 2 arrays to 0 every loop
-    b_el = np.zeros(m * ndof)
-    a_el = np.zeros((m * ndof, m * ndof), dtype=float)
+    b_el=np.zeros(m*ndof)
+    a_el=np.zeros((m*ndof,m*ndof),dtype=np.float64)
 
     # integrate viscous term at 4 quadrature points
     for iq in [-1, 1]:
@@ -286,13 +285,10 @@ for iel in range(0, nel):
             dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
             # calculate jacobian matrix
-            jcb = np.zeros((2, 2),dtype=float)
-            for k in range(0,m):
-                jcb[0, 0] += dNdr[k]*x[icon[k,iel]]
-                jcb[0, 1] += dNdr[k]*y[icon[k,iel]]
-                jcb[1, 0] += dNds[k]*x[icon[k,iel]]
-                jcb[1, 1] += dNds[k]*y[icon[k,iel]]
-            #end for
+            jcb[0,0]=dNdr[:].dot(x[icon[:,iel]])
+            jcb[0,1]=dNdr[:].dot(y[icon[:,iel]])
+            jcb[1,0]=dNds[:].dot(x[icon[:,iel]])
+            jcb[1,1]=dNds[:].dot(y[icon[:,iel]])
 
             # calculate the determinant of the jacobian
             jcob = np.linalg.det(jcb)
@@ -300,15 +296,12 @@ for iel in range(0, nel):
             # calculate inverse of the jacobian matrix
             jcbi = np.linalg.inv(jcb)
 
+            xq=N[:].dot(x[icon[:,iel]])
+            yq=N[:].dot(y[icon[:,iel]])
+
             # compute dNdx & dNdy
-            xq=0.0
-            yq=0.0
-            for k in range(0, m):
-                xq+=N[k]*x[icon[k,iel]]
-                yq+=N[k]*y[icon[k,iel]]
-                dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-                dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
-            #end for
+            dNdx[:]=jcbi[0,0]*dNdr[:]+jcbi[0,1]*dNds[:]
+            dNdy[:]=jcbi[1,0]*dNdr[:]+jcbi[1,1]*dNds[:]
 
             area[iel]+=jcob*weightq 
 
@@ -319,7 +312,7 @@ for iel in range(0, nel):
                                          [dNdy[i],dNdx[i]]]
             #end for
 
-            # compute elemental a_mat matrix
+            # compute elemental a_el matrix
             a_el += b_mat.T.dot(c_mat.dot(b_mat))*viscosity*weightq*jcob
 
             # compute elemental rhs vector
@@ -347,12 +340,10 @@ for iel in range(0, nel):
     dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
     # compute the jacobian
-    jcb=np.zeros((2,2),dtype=float)
-    for k in range(0, m):
-        jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
-        jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
-        jcb[1,0]+=dNds[k]*x[icon[k,iel]]
-        jcb[1,1]+=dNds[k]*y[icon[k,iel]]
+    jcb[0,0]=dNdr[:].dot(x[icon[:,iel]])
+    jcb[0,1]=dNdr[:].dot(y[icon[:,iel]])
+    jcb[1,0]=dNds[:].dot(x[icon[:,iel]])
+    jcb[1,1]=dNds[:].dot(y[icon[:,iel]])
 
     # calculate determinant of the jacobian
     jcob = np.linalg.det(jcb)
@@ -361,10 +352,8 @@ for iel in range(0, nel):
     jcbi = np.linalg.inv(jcb)
 
     # compute dNdx and dNdy
-    for k in range(0,m):
-        dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-        dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
-    #end for
+    dNdx[:]=jcbi[0,0]*dNdr[:]+jcbi[0,1]*dNds[:]
+    dNdy[:]=jcbi[1,0]*dNdr[:]+jcbi[1,1]*dNds[:]
 
     # compute gradient matrix
     for i in range(0,m):
@@ -395,7 +384,7 @@ for iel in range(0, nel):
         #end for
     #end for
 
-    # assemble matrix a_mat and right hand side rhs
+    # assemble matrix A_fem and right hand side rhs
     for k1 in range(0,m):
         for i1 in range(0,ndof):
             ikk=ndof*k1          +i1
@@ -404,10 +393,10 @@ for iel in range(0, nel):
                 for i2 in range(0,ndof):
                     jkk=ndof*k2          +i2
                     m2 =ndof*icon[k2,iel]+i2
-                    a_mat[m1,m2]+=a_el[ikk,jkk]
+                    A_fem[m1,m2]+=a_el[ikk,jkk]
                 #end for
             #end for
-            rhs[m1]+=b_el[ikk]
+            b_fem[m1]+=b_el[ikk]
         #end for
     #end for
 
@@ -415,21 +404,21 @@ for iel in range(0, nel):
 
 #print(np.sum(area))
 
-print("building FE matrix: %.3f s" % (time.time() - start))
+print("building FE matrix: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # solve system
-#################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
-sol = sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+sol=sps.linalg.spsolve(sps.csr_matrix(A_fem),b_fem)
 
-print("solve time: %.3f s" % (time.time() - start))
+print("solve time: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # put solution into separate x,y velocity arrays
-#####################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
 u,v=np.reshape(sol,(NV,2)).T
 
@@ -438,12 +427,12 @@ print("     -> v (m,M) %.5f %.5f " %(np.min(v),np.max(v)))
 
 #np.savetxt('velocity.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
-print("reshape: %.3f s" % (time.time() - start))
+print("reshape: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # retrieve elemental pressure & strain rate from velocity divergence
-#####################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
 xc = np.zeros(nel,dtype=np.float64)  
 yc = np.zeros(nel,dtype=np.float64)  
@@ -468,33 +457,20 @@ for iel in range(0,nel):
     dNdr[2]=+0.25*(1.+sq) ; dNds[2]=+0.25*(1.+rq)
     dNdr[3]=-0.25*(1.+sq) ; dNds[3]=+0.25*(1.-rq)
 
-    jcb=np.zeros((2,2),dtype=float)
-    for k in range(0, m):
-        jcb[0,0]+=dNdr[k]*x[icon[k,iel]]
-        jcb[0,1]+=dNdr[k]*y[icon[k,iel]]
-        jcb[1,0]+=dNds[k]*x[icon[k,iel]]
-        jcb[1,1]+=dNds[k]*y[icon[k,iel]]
-    #end for
-
-    # calculate determinant of the jacobian
-    jcob=np.linalg.det(jcb)
-
-    # calculate the inverse of the jacobian
+    jcb[0,0]=dNdr[:].dot(x[icon[:,iel]])
+    jcb[0,1]=dNdr[:].dot(y[icon[:,iel]])
+    jcb[1,0]=dNds[:].dot(x[icon[:,iel]])
+    jcb[1,1]=dNds[:].dot(y[icon[:,iel]])
     jcbi=np.linalg.inv(jcb)
 
-    for k in range(0, m):
-        dNdx[k]=jcbi[0,0]*dNdr[k]+jcbi[0,1]*dNds[k]
-        dNdy[k]=jcbi[1,0]*dNdr[k]+jcbi[1,1]*dNds[k]
-    #end for
+    dNdx[:]=jcbi[0,0]*dNdr[:]+jcbi[0,1]*dNds[:]
+    dNdy[:]=jcbi[1,0]*dNdr[:]+jcbi[1,1]*dNds[:]
 
-    for k in range(0, m):
-        xc[iel] += N[k]*x[icon[k,iel]]
-        yc[iel] += N[k]*y[icon[k,iel]]
-        exx[iel] += dNdx[k]*u[icon[k,iel]]
-        eyy[iel] += dNdy[k]*v[icon[k,iel]]
-        exy[iel] += 0.5*dNdy[k]*u[icon[k,iel]]+ 0.5*dNdx[k]*v[icon[k,iel]]
-    #end for
-
+    xc[iel]=N[:].dot(x[icon[:,iel]])
+    yc[iel]=N[:].dot(y[icon[:,iel]])
+    exx[iel]=dNdx[:].dot(u[icon[:,iel]])
+    eyy[iel]=dNdy[:].dot(v[icon[:,iel]])
+    exy[iel]=0.5*dNdy[:].dot(u[icon[:,iel]])+0.5*dNdx[:].dot(v[icon[:,iel]])
     p[iel]=-penalty*(exx[iel]+eyy[iel])
 
 #end for iel
@@ -518,12 +494,12 @@ np.savetxt('p_top.ascii',np.array([xc[nel-nelx:nel],p[nel-nelx:nel]]).T,header='
 #np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
 #np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
-print("compute p,exx,eyy,exy: %.3f s" % (time.time() - start))
+print("compute p,exx,eyy,exy: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # +1/-1 checkerboard automatic removal 
-#####################################################################
-#start = time.time()
+###############################################################################
+start=clock.time()
 
 pcb  = np.zeros(nel,dtype=np.float64)  
 for iely in range(0,nely):
@@ -550,22 +526,19 @@ if use_filter:
 
 #end if
 
-print("filter p with pcb: %.3f s" % (time.time() - start))
+print("filter p with pcb: %.3f s" % (clock.time()-start))
 
-#####################################################################
-#####################################################################
-#####################################################################
-#####################################################################
-#####################################################################
+###############################################################################
+###############################################################################
 
 print("******************************")
 print("PROJECTING PRESSURE ONTO NODES")
 print("******************************")
 
-#####################################################################
+###############################################################################
 # Scheme 1
-#####################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
 q1=np.zeros(NV,dtype=np.float64)  
 count=np.zeros(NV,dtype=np.float64)  
@@ -589,12 +562,12 @@ np.savetxt('q1_top.ascii',np.array([x[NV-nnx:NV],q1[NV-nnx:NV]]).T,header='# x,q
 
 print("     -> q1 (m,M) %.5f %.5f " %(np.min(q1),np.max(q1)))
 
-print("compute q1: %.3f s" % (time.time() - start))
+print("compute q1: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # Scheme 2
-#####################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
 q2=np.zeros(NV,dtype=np.float64)  
 count=np.zeros(NV,dtype=np.float64)  
@@ -618,17 +591,17 @@ np.savetxt('q2_top.ascii',np.array([x[NV-nnx:NV],q2[NV-nnx:NV]]).T,header='# x,q
 
 print("     -> q2 (m,M) %.5f %.5f " %(np.min(q2),np.max(q2)))
 
-print("compute q2: %.3f s" % (time.time() - start))
+print("compute q2: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # Scheme 3 
 # AtrX is the area of the triangle attached to node X
 # 3-----2
 # |     |
 # |     |
 # 0-----1
-#####################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
 q3=np.zeros(NV,dtype=np.float64)  
 count=np.zeros(NV,dtype=np.float64)  
@@ -660,12 +633,12 @@ np.savetxt('q3_top.ascii',np.array([x[NV-nnx:NV],q3[NV-nnx:NV]]).T,header='# x,q
 
 print("     -> q3 (m,M) %.5f %.5f " %(np.min(q3),np.max(q3)))
 
-print("compute q3: %.3f s" % (time.time() - start))
+print("compute q3: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # Scheme 4
-#####################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
 q4=np.zeros(NV,dtype=np.float64)  
 count=np.zeros(NV,dtype=np.float64)  
@@ -689,12 +662,12 @@ print("     -> q4 (m,M) %.5f %.5f " %(np.min(q4),np.max(q4)))
 
 np.savetxt('q4_top.ascii',np.array([x[NV-nnx:NV],q4[NV-nnx:NV]]).T,header='# x,q4')
 
-print("compute q4: %.3f s" % (time.time() - start))
+print("compute q4: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # Scheme 6: consistent recovery 
-#####################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
 q6=np.zeros(NV,dtype=np.float64)  
 q7=np.zeros(NV,dtype=np.float64)  
@@ -842,13 +815,12 @@ np.savetxt('q7_top.ascii',np.array([x[NV-nnx:NV],q7[NV-nnx:NV]]).T,header='# x,q
 print("     -> q6 (m,M) %.5f %.5f " %(np.min(q6),np.max(q6)))
 print("     -> q7 (m,M) %.5f %.5f " %(np.min(q7),np.max(q7)))
 
-print("compute q6,q7: %.3f s" % (time.time() - start))
+print("compute q6,q7: %.3f s" % (clock.time()-start))
 
-
-#####################################################################
+###############################################################################
 # Scheme 8
-#####################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
 q8=np.zeros(NV,dtype=np.float64)  
 mat=np.zeros((4,4),dtype=np.float64)  
@@ -908,10 +880,10 @@ np.savetxt('q8_top.ascii',np.array([x[NV-nnx:NV],q8[NV-nnx:NV]]).T,header='# x,q
 
 print("     -> q8 (m,M) %.5f %.5f " %(np.min(q8),np.max(q8)))
 
-#####################################################################
+###############################################################################
 # normalise pressure fields 
-#####################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
 avrg_p=0
 avrg_q1=0
@@ -993,12 +965,12 @@ print ("     -> avrg(q6)= %.19f" % avrg_q6)
 #q4-=avrg_q4
 #q6-=avrg_q6
 
-print("normalise p fields: %.3fs" % (time.time() - start))
+print("normalise p fields: %.3fs" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # compute error
-#####################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
 error_p = np.empty(nel,dtype=np.float64)
 error_u = np.empty(NV,dtype=np.float64)
@@ -1108,12 +1080,12 @@ errq8=np.sqrt(errq8)
 print("nel= %6d ; v: %.8f ; p: %.8f ; q1: %.8f ; q2: %.8f ; q3: %.8f ; q4: %.8f ; q6: %.8f ; q7: %.8f ; q8: %.8f"\
  %(nel,errv,errp,errq1,errq2,errq3,errq4,errq6,errq7,errq8))
 
-print("compute discr. errors: %.3f s" % (time.time() - start))
+print("compute discr. errors: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # plot of solution export to vtu format
-#####################################################################
-start = time.time()
+###############################################################################
+start=clock.time()
 
 if visu==1:
    vtufile=open("solution.vtu","w")
@@ -1144,8 +1116,6 @@ if visu==1:
    for iel in range (0,nel):
        vtufile.write("%f\n" % pcb[iel])
    vtufile.write("</DataArray>\n")
-
-
    #--
    vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
    for iel in range (0,nel):
@@ -1192,9 +1162,6 @@ if visu==1:
    for i in range(0,NV):
        vtufile.write("%10f \n" %q6[i])
    vtufile.write("</DataArray>\n")
-
-
-
    #--
    vtufile.write("<DataArray type='Float32' Name='error q1' Format='ascii'> \n")
    for i in range(0,NV):
@@ -1256,7 +1223,7 @@ if visu==1:
    vtufile.write("</UnstructuredGrid>\n")
    vtufile.write("</VTKFile>\n")
    vtufile.close()
-   print("export to vtu: %.3f s" % (time.time() - start))
+   print("export to vtu: %.3f s" % (clock.time()-start))
 
 print("-----------------------------")
 print("------------the end----------")
