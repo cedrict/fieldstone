@@ -72,7 +72,7 @@ print("-----------------------------")
 print("--------- stone 11 ----------")
 print("-----------------------------")
 
-m=8      # number of nodes making up an element
+mV=8      # number of nodes making up an element
 ndofV=3  # number of velocity degrees of freedom per node
 ndofP=1  # number of pressure degrees of freedom 
 
@@ -156,7 +156,7 @@ print("grid points setup: %.3f s" % (clock.time()-start))
 ###############################################################################
 start=clock.time()
 
-icon =np.zeros((m, nel),dtype=np.int32)
+icon =np.zeros((mV,nel),dtype=np.int32)
 counter = 0
 for i in range(0, nelx):
     for j in range(0, nely):
@@ -203,26 +203,17 @@ print("define b.c.: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # build FE matrix
+# note that in practice all elements are cuboids so that the jacobian 
+# and derived quantities could be computed directly as fct of hx,hy,hz
 ###############################################################################
 start=clock.time()
 
+jcb   = np.zeros((3,3),dtype=np.float64)
 K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
 G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
 f_rhs = np.zeros(NfemV,dtype=np.float64)         # right hand side f 
 h_rhs = np.zeros(NfemP,dtype=np.float64)         # right hand side h 
-b_mat = np.zeros((6,ndofV*m),dtype=np.float64)   # gradient matrix B 
-N     = np.zeros(m,dtype=np.float64)             # shape functions
-dNdx  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
-dNdy  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
-dNdz  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
-dNdr  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
-dNds  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
-dNdt  = np.zeros(m,dtype=np.float64)             # shape functions derivatives
-u     = np.zeros(NV,dtype=np.float64)            # x-component velocity
-v     = np.zeros(NV,dtype=np.float64)            # y-component velocity
-w     = np.zeros(NV,dtype=np.float64)            # z-component velocity
-p     = np.zeros(nel,dtype=np.float64)           # pressure 
-jcb=np.zeros((3,3),dtype=np.float64)
+b_mat = np.zeros((6,ndofV*mV),dtype=np.float64)  # gradient matrix B 
 
 c_mat = np.zeros((6,6),dtype=np.float64) 
 c_mat[0,0]=2. ; c_mat[1,1]=2. ; c_mat[2,2]=2.
@@ -231,9 +222,9 @@ c_mat[3,3]=1. ; c_mat[4,4]=1. ; c_mat[5,5]=1.
 for iel in range(0, nel):
 
     # set arrays to 0 every loop
-    f_el =np.zeros((m*ndofV),dtype=np.float64)
-    K_el =np.zeros((m*ndofV,m*ndofV),dtype=np.float64)
-    G_el=np.zeros((m*ndofV,1),dtype=np.float64)
+    f_el=np.zeros((mV*ndofV),dtype=np.float64)
+    K_el=np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
+    G_el=np.zeros((mV*ndofV,1),dtype=np.float64)
     h_el=np.zeros((1,1),dtype=np.float64)
 
     # integrate viscous term at 4 quadrature points
@@ -248,10 +239,10 @@ for iel in range(0, nel):
                 wq=1.*1.*1.
 
                 # calculate shape functions
-                N[0:8]=NNV(rq,sq,tq)
-                dNdr[0:8]=dNNVdr(rq,sq,tq)
-                dNds[0:8]=dNNVds(rq,sq,tq)
-                dNdt[0:8]=dNNVdt(rq,sq,tq)
+                N=NNV(rq,sq,tq)
+                dNdr=dNNVdr(rq,sq,tq)
+                dNds=dNNVds(rq,sq,tq)
+                dNdt=dNNVdt(rq,sq,tq)
 
                 # calculate jacobian matrix
                 jcb[0,0]=dNdr[:].dot(x[icon[:,iel]])
@@ -276,12 +267,12 @@ for iel in range(0, nel):
                 zq=N[:].dot(z[icon[:,iel]])
 
                 # compute dNdx, dNdy, dNdz
-                dNdx[:]=jcbi[0,0]*dNdr[:]+jcbi[0,1]*dNds[:]+jcbi[0,2]*dNdt[:]
-                dNdy[:]=jcbi[1,0]*dNdr[:]+jcbi[1,1]*dNds[:]+jcbi[1,2]*dNdt[:]
-                dNdz[:]=jcbi[2,0]*dNdr[:]+jcbi[2,1]*dNds[:]+jcbi[2,2]*dNdt[:]
+                dNdx=jcbi[0,0]*dNdr[:]+jcbi[0,1]*dNds[:]+jcbi[0,2]*dNdt[:]
+                dNdy=jcbi[1,0]*dNdr[:]+jcbi[1,1]*dNds[:]+jcbi[1,2]*dNdt[:]
+                dNdz=jcbi[2,0]*dNdr[:]+jcbi[2,1]*dNds[:]+jcbi[2,2]*dNdt[:]
 
                 # construct 3x8 b_mat matrix
-                for i in range(0, m):
+                for i in range(0,mV):
                     b_mat[0:6, 3*i:3*i+3] = [[dNdx[i],0.     ,0.     ],
                                              [0.     ,dNdy[i],0.     ],
                                              [0.     ,0.     ,dNdz[i]],
@@ -292,7 +283,7 @@ for iel in range(0, nel):
 
                 K_el += b_mat.T.dot(c_mat.dot(b_mat))*viscosity(xq,yq,zq)*wq*jcob
 
-                for i in range(0, m):
+                for i in range(0,mV):
                     f_el[ndofV*i+0]+=N[i]*jcob*wq*density(xq,yq,zq)*gx
                     f_el[ndofV*i+1]+=N[i]*jcob*wq*density(xq,yq,zq)*gy
                     f_el[ndofV*i+2]+=N[i]*jcob*wq*density(xq,yq,zq)*gz
@@ -306,13 +297,13 @@ for iel in range(0, nel):
     #end for iq
 
     # impose b.c. 
-    for k1 in range(0,m):
+    for k1 in range(0,mV):
         for i1 in range(0,ndofV):
             ikk=ndofV*k1          +i1
             m1 =ndofV*icon[k1,iel]+i1
             if bc_fix[m1]:
                K_ref=K_el[ikk,ikk] 
-               for jkk in range(0,m*ndofV):
+               for jkk in range(0,mV*ndofV):
                    f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
                    K_el[ikk,jkk]=0
                    K_el[jkk,ikk]=0
@@ -326,11 +317,11 @@ for iel in range(0, nel):
     #end for
 
     # assemble matrix K_mat and right hand side rhs
-    for k1 in range(0,m):
+    for k1 in range(0,mV):
         for i1 in range(0,ndofV):
             ikk=ndofV*k1          +i1
             m1 =ndofV*icon[k1,iel]+i1
-            for k2 in range(0,m):
+            for k2 in range(0,mV):
                 for i2 in range(0,ndofV):
                     jkk=ndofV*k2          +i2
                     m2 =ndofV*icon[k2,iel]+i2
@@ -434,10 +425,10 @@ for iel in range(0,nel):
     tq=0.
     wq=2.*2.*2.
 
-    N[0:8]=NNV(rq,sq,tq)
-    dNdr[0:8]=dNNVdr(rq,sq,tq)
-    dNds[0:8]=dNNVds(rq,sq,tq)
-    dNdt[0:8]=dNNVdt(rq,sq,tq)
+    N=NNV(rq,sq,tq)
+    dNdr=dNNVdr(rq,sq,tq)
+    dNds=dNNVds(rq,sq,tq)
+    dNdt=dNNVdt(rq,sq,tq)
 
     jcb[0,0]=dNdr[:].dot(x[icon[:,iel]])
     jcb[0,1]=dNdr[:].dot(y[icon[:,iel]])
