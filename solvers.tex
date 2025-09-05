@@ -459,43 +459,58 @@ For $k=0,1,2,...$, compute
 
 \index{general}{CG} \index{general}{Conjugate Gradient}
 Since the Schur matrix $\SSS$ is Symmetric Positive Definite, 
-the Conjugate Gradient (CG) method\footnote{\url{https://en.wikipedia.org/wiki/Conjugate_gradient_method}} \cite{hest52} 
+the Conjugate Gradient (CG) 
+method\footnote{\url{https://en.wikipedia.org/wiki/Conjugate_gradient_method}} \cite{hest52} 
 is very appropriate to solve this system. 
 
-Indeed, looking at the definition of Wikipedia: "{\it In mathematics, the conjugate gradient method is an algorithm 
-for the numerical solution of particular systems of linear equations, namely those whose matrix is symmetric and positive-definite. 
-The conjugate gradient method is often implemented as an iterative algorithm, applicable to sparse systems that are too large 
-to be handled by a direct implementation or other direct methods such as the Cholesky decomposition. 
-Large sparse systems often arise when numerically solving partial differential equations or optimization problems.}"
+Indeed, looking at the definition of Wikipedia: "{\it In mathematics, the conjugate 
+gradient method is an algorithm for the numerical solution of particular systems of 
+linear equations, namely those whose matrix is symmetric and positive-definite. 
+The conjugate gradient method is often implemented as an iterative algorithm, applicable 
+to sparse systems that are too large to be handled by a direct implementation or other 
+direct methods such as the Cholesky decomposition. 
+Large sparse systems often arise when numerically solving partial differential 
+equations or optimization problems.}"
+
+See also the excellent document by J. Shewchuk entitled {\it 
+An Introduction to the Conjugate Gradient Method Without the Agonizing Pain}
+available at \url{https://www.cs.cmu.edu/~quake-papers/painless-conjugate-gradient.pdf}.
 
 A simple Wikipedia search (crossed-checked against other online sources) 
 tells us that the Conjugate Gradient algorithm is as follows:
 
 \vspace{0.4cm}
 
-\begin{minipage}{0.40\textwidth}
+\begin{minipage}{0.48\textwidth}
 \centering
 {\captionfont Algorithm as obtained from Wikipedia.}\\
-\frame{\includegraphics[width=7cm]{images/solvers/cgwiki}}
+\frame{\includegraphics[width=8cm]{images/solvers/cgwiki}}
 \end{minipage}\hfill
-\begin{minipage}{0.50\textwidth}
-The same algorithm with our notations ($\SSS\cdot \vec{\cal P}=\underline{\vec{f}}$):\\
-$\vec{r}_0 = \underline{\vec{f}} - \SSS \cdot \vec{\cal P}_0$\\
-$\vec{p}_0 = \vec{r}_0$\\
-$k=0$ \\
-repeat\\
-\hspace{8mm} $\alpha_k = (\vec{r}_k^T\cdot \vec{r}_k )/(\vec{p}_k^T \cdot \SSS\cdot  \vec{p}_k )$\\
-\hspace{8mm} $\vec{\cal P}_{k+1} = \vec{\cal P}_k+\alpha_k \vec{p}_k$\\
-\hspace{8mm} $\vec{r}_{k+1} = \vec{r}_k - \alpha_k \; \SSS \cdot \vec{p}_k $ \\
-if $\vec{r}_{k+1}$ is sufficiently small, exit loop.\\
-\hspace{8mm} $\beta_k=(\vec{r}_{k+1}^T \cdot \vec{r}_{k+1})/(\vec{r}_k^T \cdot \vec{r}_k)$ \\
-\hspace{8mm} $\vec{p}_{k+1} =\vec{r}_{k+1}+ \beta_k \vec{p}_k$ \\
-$k=k+1$ \\
-end repeat\\
-return $\vec{\cal P}_{k+1}$ as the result
+\begin{minipage}{0.48\textwidth}
+\centering
+{\captionfont Algorithm as obtained from Shewchuck}\\
+\frame{\includegraphics[width=8cm]{images/solvers/shewchuk.png}}
 \end{minipage}
 
 \vspace{.5cm}
+
+The same algorithm with our notations (we wish to solve $\SSS\cdot \vec{\cal P}=\underline{\vec{f}}$):
+\begin{itemize}
+\item $\vec{r}_0 = \underline{\vec{f}} - \SSS \cdot \vec{\cal P}_0$
+\item $\vec{p}_0 = \vec{r}_0$
+\item $k=0$ 
+\item repeat
+\begin{itemize}
+\item $\alpha_k = (\vec{r}_k^T\cdot \vec{r}_k )/(\vec{p}_k^T \cdot \SSS\cdot  \vec{p}_k )$
+\item $\vec{\cal P}_{k+1} = \vec{\cal P}_k+\alpha_k \vec{p}_k$
+\item $\vec{r}_{k+1} = \vec{r}_k - \alpha_k \; \SSS \cdot \vec{p}_k $ 
+\item if $\vec{r}_{k+1}$ is sufficiently small, exit loop.
+\item $\beta_k=(\vec{r}_{k+1}^T \cdot \vec{r}_{k+1})/(\vec{r}_k^T \cdot \vec{r}_k)$ 
+\item $\vec{p}_{k+1} =\vec{r}_{k+1}+ \beta_k \vec{p}_k$ 
+\item $k=k+1$ 
+\end{itemize}
+\item return $\vec{\cal P}_{k+1}$ as the result
+\end{itemize}
 
 This algorithm is of course explained in detail in many textbooks such as Saad \cite{saad},
 in Zhong, Yuen, Moresi \& Knepley (2012) \cite{zhym12}, and in Section~\ref{ss:itsolvers}.
@@ -575,8 +590,8 @@ We have
 &=& \vec{\cal V}_k - \alpha_k \K^{-1}\cdot \tilde{\vec{p}}_k  \nn\\
 &=& \vec{\cal V}_k - \alpha_k \vec{d}_k 
 \end{eqnarray}
-and we can insert this minor extra calculation inside the algorithm and get the velocity solution 
-nearly for free. The final CG algorithm is then 
+and we can insert this simple and cheap calculation inside the algorithm and get the velocity solution 
+nearly for free. The final Conjugate Gradient algorithm is then 
 
 \newpage
 \begin{mdframed}[backgroundcolor=blue!5]
@@ -626,36 +641,40 @@ One thing we know improves the convergence of any iterative solver is the use of
 preconditioner matrix and therefore now focus on the Preconditioned Conjugate Gradient (PCG) method.
 Once again we turn to Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Conjugate_gradient_method}}:
 
-\begin{minipage}{0.40\textwidth}
+\begin{minipage}{0.43\textwidth}
 \centering
 {\captionfont Algorithm as obtained from Wikipedia.}\\
 \frame{\includegraphics[width=7cm]{images/solvers/pcgwiki}}
 \end{minipage}\hfill
-\begin{minipage}{0.50\textwidth}
-The same algorithm with our notations:\\
-$\vec{r}_0 = \underline{\vec{f}} - \SSS \cdot \vec{\cal P}_0$\\
-$\vec{z}_0= {\bm M}^{-1} \cdot \vec{r}_0$ \\
-$\vec{p}_0 = \vec{z}_0$\\
-$k=0$ \\
-repeat\\
-\hspace{8mm} $\alpha_k = (\vec{r}_k^T\cdot \vec{z}_k )/(\vec{p}_k^T \cdot \SSS\cdot  \vec{p}_k )$\\
-\hspace{8mm} $\vec{\cal P}_{k+1} = \vec{\cal P}_k+\alpha_k \vec{p}_k$\\
-\hspace{8mm} $\vec{r}_{k+1} = \vec{r}_k - \alpha_k \; \SSS \cdot \vec{p}_k $ \\
-\hspace{8mm} $\vec{z}_{k+1} = {\bm M}^{-1} \cdot \vec{r}_{k+1}$ \\
-\hspace{8mm} $\beta_k=(\vec{z}_{k+1}^T \cdot \vec{r}_{k+1})/(\vec{z}_k^T \cdot \vec{r}_k)$ \\
-\hspace{8mm} $\vec{p}_{k+1} =\vec{z}_{k+1}+ \beta_k \vec{p}_k$ \\
-$k=k+1$ \\
-end repeat\\
-return $\vec{\cal P}_{k+1}$ as the result
+\begin{minipage}{0.52\textwidth}
+\begin{center}
+{\captionfont Algorithm as found in Saad \cite{saad}}\\
+\frame{\includegraphics[width=9cm]{images/solvers/saad}}
+\end{center}
 \end{minipage}
 
-\vspace{.5cm}
+\vspace{0.5cm}
 
-Unsurprisingly we find the same algorithm in Saad \cite{saad}:
+The same algorithm with our notations:
+\begin{itemize}
+\item $\vec{r}_0 = \underline{\vec{f}} - \SSS \cdot \vec{\cal P}_0$ 
+\item $\vec{z}_0= {\bm M}^{-1} \cdot \vec{r}_0$ 
+\item $\vec{p}_0 = \vec{z}_0$
+\item $k=0$ 
+\item repeat
+\begin{itemize}
+\item $\alpha_k = (\vec{r}_k^T\cdot \vec{z}_k )/(\vec{p}_k^T \cdot \SSS\cdot  \vec{p}_k )$
+\item $\vec{\cal P}_{k+1} = \vec{\cal P}_k+\alpha_k \vec{p}_k$
+\item $\vec{r}_{k+1} = \vec{r}_k - \alpha_k \; \SSS \cdot \vec{p}_k $ 
+\item $\vec{z}_{k+1} = {\bm M}^{-1} \cdot \vec{r}_{k+1}$ 
+\item $\beta_k=(\vec{z}_{k+1}^T \cdot \vec{r}_{k+1})/(\vec{z}_k^T \cdot \vec{r}_k)$ 
+\item $\vec{p}_{k+1} =\vec{z}_{k+1}+ \beta_k \vec{p}_k$ 
+\item $k=k+1$ 
+\end{itemize}
+\item return $\vec{\cal P}_{k+1}$ as the result
+\end{itemize}
 
-\begin{center}
-\frame{\includegraphics[width=10cm]{images/solvers/saad}}
-\end{center}
+
 
 Note that in the algorithm above the preconditioner matrix ${\bm M}$ 
 has to be symmetric positive-definite and fixed, i.e., cannot change from iteration to iteration. 

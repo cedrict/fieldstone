@@ -33,19 +33,20 @@
 @string{jgr_atm = {J. Geophys. Res.: Atmospheres}}
 @string{jgr_es = {J. Geophys. Res.: Earth Surface}}
 @string{jgr_oceans = {J. Geophys. Res.: Oceans}}
+@string{c_e_e = {Communications Earth \& Environment}}
+@string{SIAMjna = {SIAM Journal on Numerical Analysis}}
+@string{SIAMjsc = {SIAM Journal on Scientific Computing}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BOOKS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 @book{qumn15,
-  title={Reduced basis methods for partial differential equations: an introduction},
-  author={Quarteroni, Alfio and Manzoni, Andrea and Negri, Federico},
-  volume={92},
-  year={2015},
-  publisher={Springer}
-}
-
+title={Reduced basis methods for partial differential equations: an introduction},
+author={Quarteroni, Alfio and Manzoni, Andrea and Negri, Federico},
+volume={92},
+year={2015},
+publisher={Springer}}
 
 @book{ciarlet2002finite,
 title={The finite element method for elliptic problems},
@@ -2015,7 +2016,7 @@ publisher={JSTOR}}
 @article{alrr22a,
 title={Self-replicating subduction zone initiation by polarity reversal},
 author={Almeida, J and Riel, N and Rosas, FM and Duarte, JC and Kaus, B},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2022 
 volume={3},
 pages={},
 doi={10.1038/s43247-022-00380-2},
@@ -2333,7 +2334,7 @@ doi={10.1016/j.pepi.2015.02.008}}
 @article{arbc02,
 title={Unified analysis of discontinuous Galerkin methods for elliptic problems},
 author={Arnold, Douglas N and Brezzi, Franco and Cockburn, Bernardo and Marini, L Donatella},
-journal={SIAM journal on numerical analysis},
+journal=SIAMjna, % 2002
 volume={39},
 number={5},
 pages={1749--1779},
@@ -2548,7 +2549,7 @@ year={1993}}
 @article{arno82,
 title={An interior penalty finite element method with discontinuous elements},
 author={D.N. Arnold},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 1982
 volume={19},
 number={4},
 pages={742--760},
@@ -2706,7 +2707,7 @@ year={1994}}
 @article{asms90,
 title={A taxonomy for conjugate gradient methods},
 author={S.F. Ashby and T.A. Manteuffel and P.E. Saylor},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 1990
 volume={27},
 number={6},
 pages={1542--1568},
@@ -2832,7 +2833,7 @@ year={2001}}
 @article{arbf05,
 title={Quadrilateral H(div) finite elements},
 author={Arnold, Douglas N and Boffi, Daniele and Falk, Richard S},
-journal={SIAM Journal on Numerical Analysis},
+journal=SIAMjna, % 2005
 volume={42},
 number={6},
 pages={2429--2451},
@@ -3220,11 +3221,22 @@ Year = {2011}}
 % BBBB
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+@article{bamn02,
+title={An adaptive Uzawa FEM for the Stokes problem: Convergence 
+without the inf-sup condition},
+author={B{\"a}nsch, Eberhard and Morin, Pedro and Nochetto, Ricardo H},
+journal=SIAMjna, % 2002
+volume={40},
+number={4},
+pages={1207--1229},
+doi={10.1137/S0036142901392134},
+year={2002}}
 
 @article{bagu25,
 title={Eclogite Induced Lithospheric Drips: Implications for the Removal 
 of the Lithosphere at Magmatic Arcs and Orogens},
-author={Ball{\i}, A and G{\"o}{\u{g}}{\"u}{\c{s}}, OH and Uluocak, E {\c{S}}eng{\"u}l and van Hunen, J},
+author={Ball{\i}, A and G{\"o}{\u{g}}{\"u}{\c{s}}, OH and 
+Uluocak, E {\c{S}}eng{\"u}l and van Hunen, J},
 journal={Terra Nova},
 volume={},
 pages={},
@@ -3267,7 +3279,7 @@ year={2012}}
 title={Performance assessment of the cloud for prototypical instant 
 computing approaches in geoscientific hazard simulations},
 author={Behrens, J{\"o}rn and Schulz, Arne and Simon, Konrad},
-journal={Frontiers in Earth Science},
+journal=FES, % 2022
 volume={10},
 pages={762768},
 doi={10.3389/feart.2022.762768},
@@ -4557,7 +4569,7 @@ publisher={CSPG Special Publications}}
 @article{boni85,
 title={Stable and semistable low order finite elements for viscous flows},
 author={Boland, JM and Nicolaides, RA},
-journal={SIAM journal on numerical analysis},
+journal=SIAMjna, % 1985
 volume={22},
 number={3},
 pages={474--492},
@@ -4632,13 +4644,12 @@ year={2020}}
 title={On Hanging Node Constraints for Nonconforming Finite Elements using the 
 Douglas--Santos--Sheen--Ye Element as an Example},
 author={Bangerth, Wolfgang and Kim, Imbunm and Sheen, Dongwoo and Yim, Jaeryun},
-journal={SIAM Journal on Numerical Analysis},
+journal=SIAMjna, % 2017
 volume={55},
 number={4},
 pages={1719--1739},
-year={2017},
 doi={10.1137/16M1071432},
-publisher={SIAM}}
+year={2017}}
 
 @article {brst21,
 author = {Bredow, Eva and Steinberger, Bernhard},
@@ -7241,7 +7252,7 @@ year={2011}}
 @article{beol06,
 title={An augmented Lagrangian based approach to the Oseen problem},
 author={M. Benzi and M.A. Olshanskii},
-journal={SIAM J. Sci. Comput.},
+journal=SIAMjsc, % 2006
 volume={28},
 number={6},
 pages={2095--2113},
@@ -7444,7 +7455,7 @@ year={1982}}
 @article{bafr85,
 title={{Isocahedral discretisation of the two-sphere}},
 author={J.R. Baumgardner and P.O. Frederickson},
-journal={SIAM J. Numer Anal.},
+journal=SIAMjna, % 1985
 volume={22},
 number={6},
 doi={10.1137/0722066},
@@ -7734,7 +7745,7 @@ year={1998}}
 author = {Carsten Burstedde and Lucas C. Wilcox and Omar Ghattas},
 title = {{\texttt{p4est}}: Scalable Algorithms for Parallel Adaptive Mesh
 Refinement on Forests of Octrees},
-journal = {SIAM Journal on Scientific Computing},
+journal = SIAMjsc, % 2011
 volume = {33},
 number = {3},
 pages = {1103-1133},
@@ -7873,7 +7884,7 @@ pages = {645--666}}
 @article{brpv97,
 title={{Analysis of the inexact Uzawa algorithm for saddle point problems}},
 author={J.H. Bramble and J.E. Pasciak and A.T. Vassilev},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 1997
 volume={34},
 pages={1072-1092},
 year={1997}}
@@ -8164,7 +8175,7 @@ year={1998}}
 @article{bacu06,
 title={{A unified approach for Uzawa algorithms}},
 author={C. Bacuta},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 2006
 volume={44},
 number={6},
 pages={2633--2649},
@@ -8385,7 +8396,7 @@ year={2009}}
 @article{babg04,
 title={{A taxonomy of consistently stabilised finite element methods for the Stokes problem}},
 author={T. Barth and P. Bochev and M. Gunzburger and J. Shadid},
-journal={SIAM J. Sci. Comput.},
+journal=SIAMjna, % 2004
 volume={25},
 number={5},
 pages={1585--1607},
@@ -8719,7 +8730,7 @@ Year={1980}}
 
 @article{bodg06,
 Author = {P. B. Bochev and C. R. Dohrmann and M. D. Gunzburger},
-journal = {{SIAM} Journal on Numerical Analysis},
+journal = SIAMjna, % 2006
 Number = {1},
 Pages = {82--101},
 title = {Stabilization of Low-order Mixed Finite Elements for the Stokes Equations},
@@ -8959,15 +8970,15 @@ Year = {1997}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 @article{cobl77,
-  title={A block iterative finite element algorithm for numerical solution of the steady--state, compressible Navier--Stokes equations},
-  author={Cooke, Charlie H and Blanchard, Doris K},
-  journal={International Journal for Numerical Methods in Engineering},
-  volume={11},
-  number={12},
-  pages={1879--1892},
+title={A block iterative finite element algorithm for numerical solution 
+of the steady--state, compressible Navier--Stokes equations},
+author={Cooke, Charlie H and Blanchard, Doris K},
+journal=ijnme, % 1977 
+volume={11},
+number={12},
+pages={1879--1892},
 doi={10.1002/nme.1620111210},
-  year={1977}}
-
+year={1977}}
 
 @article{cevg25,
 title={How double-slab subduction shaped the Eastern Anatolian Plateau: 
@@ -8984,7 +8995,7 @@ title={Large volcanic eruptions are mostly sourced above mobile
 basal mantle structures},
 author={Cucchiaro, Annalise and Flament, Nicolas and Arnould, Ma{\"e}lis 
 and Cressie, Noel},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2025
 volume={6},
 number={1},
 pages={538},
@@ -9048,7 +9059,7 @@ title={A spectrum of tectonic processes at coronae on Venus revealed
 by gravity and topography},
 author={Cascioli, Gael and G{\"u}lcher, Anna JP and Mazarico, Erwan 
 and Smrekar, Suzanne E},
-journal={Science Advances}, % 2025
+journal=sciad, % 2025
 volume={11},
 number={20},
 pages={eadt5932},
@@ -9059,7 +9070,7 @@ year={2025}}
 title={Fingerprints of necking domains at rifted margins: 
 A review of the best-documented examples worldwide},
 author={Chenin, Pauline and Manatschal, Gianreto},
-journal={Earth-Science Reviews}, % 2025
+journal=esr, % 2025
 volume={265},
 pages={105110},
 doi={10.1016/j.earscirev.2025.105110},
@@ -9158,7 +9169,7 @@ year={1988}}
 title={Symmetric interior penalty discontinuous Galerkin discretizations 
 and block preconditioning for heterogeneous Stokes flow},
 author={Charrier, Dominic E and May, Dave A and Schnepp, Sascha M},
-journal={SIAM Journal on Scientific Computing}, % 2017
+journal=SIAMjsc, % 2017
 volume={39},
 number={6},
 pages={B1021--B1042},
@@ -9381,7 +9392,7 @@ title={A connection between Scott--Vogelius and grad-div stabilized
 Taylor--Hood FE approximations of the Navier--Stokes equations},
 author={Case, Michael A and Ervin, Vincent J and Linke, Alexander 
 and Rebholz, Leo G},
-journal={SIAM Journal on Numerical Analysis},
+journal=SIAMjna, % 2011
 volume={49},
 number={4},
 pages={1461--1481},
@@ -10621,7 +10632,7 @@ year={2014}}
 title={An augmented incomplete factorization approach for computing the Schur complement in 
 stochastic optimization},
 author={Petra, Cosmin G and Schenk, Olaf and Lubin, Miles and G{\"a}rtner, Klaus},
-journal={SIAM Journal on Scientific Computing},
+journal=SIAMjsc, % 2014
 volume={36},
 number={2},
 doi={},
@@ -12510,7 +12521,7 @@ year={2009}}
 @article{cacp00,
 title={{An a priori error analysis of the local discontinuous Galerkin method for elliptic problems}},
 author={P. Castillo and B. Cockburn and I. Perugia and D. Sch{\"o}tzau},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 2000
 volume={38},
 pages={1676--1706},
 year={2000}}
@@ -12542,7 +12553,7 @@ year={2009}}
 @article{cogo09,
 title={{The derivation of hybridizable discontinuous Galerkin methods for Stokes flow}},
 author={B. Cockburn and J. Gopalakrishnan},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 2009 
 volume={47},
 number={2},
 pages={1092--1125},
@@ -12552,7 +12563,7 @@ year={2009}}
 title={{Incompressible Finite elements via Hybridization. Part I: 
 The Stokes System in Two Space Dimensions}},
 author={B. Cockburn and J. Gopalakrishnan},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 2005 
 volume={43},
 number={4},
 pages={1627--1650},
@@ -12562,7 +12573,7 @@ year={2005}}
 title={{Incompressible Finite elements via Hybridization. Part II: 
 The Stokes System in Three Space Dimensions}},
 author={B. Cockburn and J. Gopalakrishnan},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 2005
 volume={43},
 number={4},
 pages={1651--1672},
@@ -12579,7 +12590,7 @@ year={2000}}
 @article{coks02,
 title={{Local discontinuous Galerkin methods for the Stokes system}},
 author={B. Cockburn and G. Kansschat and D. Schoetzau and C. Schwab},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 2002
 volume={40},
 number={1},
 pages={319--343},
@@ -12588,7 +12599,7 @@ year={2002}}
 @article{cosh98,
 title={{The Local Discontinuous Galerkin Method for Time-Dependent Convection-Diffusion Systems}},
 author={B. Cockburn and C.-W. Shu},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 1998 
 volume={35},
 number={6},
 pages={2440--2463},
@@ -13122,7 +13133,7 @@ title={Changes in core-mantle boundary heat flux patterns
 throughout the supercontinent cycle},
 author={Juliane Dannberg and Rene Gassmoeller and Daniele Thallner 
 and Frederick LaCombe and Courtney Sprain},
-journal=gji,
+journal=gji, % 2024
 volume={237},
 pages={1251--1274},
 doi={https://doi.org/10.1093/gji/ggae075},
@@ -13131,7 +13142,7 @@ year={2024}}
 @article{dupo76,
 title={A unified theory of superconvergence for Galerkin methods for two-point boundary problems},
 author={Dupont, Todd},
-journal={SIAM Journal on Numerical Analysis},
+journal=SIAMjna, % 1976 
 volume={13},
 number={3},
 pages={362--368},
@@ -13167,7 +13178,7 @@ author={Del Piccolo, Gianmarco and VanderBeek, Brandon P and Faccenda, Manuele
 and Lo Bue, Rosalia and Cocina, Ornella and Firetto Carlino, Marco and 
 Giampiccolo, Elisabetta and Scarf{\'\i}, Luciano and Rappisi, Francesco 
 and Gerya, Taras and others},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2025
 volume={6},
 number={1},
 pages={1--8},
@@ -13421,7 +13432,7 @@ year={1996}}
 title={How lowermost mantle viscosity controls the chemical structure 
 of Earth’s deep interior},
 author={Dannberg, Juliane and Chotalia, Kiran and Gassm{\"o}ller, Rene},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2023
 volume={4},
 number={1},
 pages={493},
@@ -13965,7 +13976,7 @@ title={Weak orogenic lithosphere guides the pattern of plume-triggered
 supercontinent break-up},
 author={Dang, Zhuo and Zhang, Nan and Li, Zheng-Xiang and Huang, Chuan and 
 Spencer, Christopher J and Liu, Yebo},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2020
 volume={1},
 number={1},
 doi={10.1038/s43247-020-00052-z},
@@ -15719,7 +15730,7 @@ Year = {1996}}
 title={Terrane accretion explains thin and hot ocean-continent back-arcs},
 author={Erd{\H{o}}s, Zolt{\'a}n and Huismans, Ritske S and 
 Wolf, Sebastian G and Faccenna, Claudio},
-journal={Science Advances},
+journal=sciad, % 2025
 volume={11},
 number={17},
 pages={eadq8444},
@@ -15866,7 +15877,7 @@ year={1968}}
 @article{ehgu75,
 title={Some difference schemes for the biharmonic equation},
 author={Ehrlich, Louis W and Gupta, Murli M},
-journal={SIAM Journal on Numerical Analysis},
+journal=SIAMjna, % 1975
 volume={12},
 number={5},
 pages={773--790},
@@ -16347,17 +16358,16 @@ year={1996}}
 @article{eies83,
 title={{Variational iterative methods for nonsymmetric systems of linear equations}},
 author={Eisenstat, Stanley C and Elman, Howard C and Schultz, Martin H},
-journal={SIAM Journal on Numerical Analysis},
+journal=SIAMjna, % 1983
 volume={20},
 number={2},
 pages={345--357},
-year={1983},
-publisher={SIAM}}
+year={1983}}
 
 @article{elgo94,
 title={{Inexact and preconditioned Uzawa algorithms for saddle point problems}},
 author={H.C. Elman and G.H. Golub},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 1994
 volume={31},
 number={6},
 pages={1645--1661},
@@ -16576,7 +16586,7 @@ year={2025}}
 @misc{foon21,
 title={Continents soldered from below},
 author={Foley, Stephen and O’Neill, Craig},
-journal={Nature},
+journal={Nature}, % 2021
 volume={592},
 pages={692--693},
 year={2021}}
@@ -16594,7 +16604,7 @@ organization={Venice}}
 title={Bushveld superplume drove Proterozoic magmatism and metallogenesis in Australia},
 author={Fiorentini, Marco L and O’Neill, Craig and Giuliani, Andrea and 
 Choi, Eunjoo and Maas, Roland and Pirajno, Franco and Foley, Stephen},
-journal={Scientific Reports}, % 2020
+journal=ScientificReports, % 2020
 volume={10},
 number={1},
 pages={19729},
@@ -18600,7 +18610,14 @@ Year = {1981}}
 % GGGG
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+@article{guhp25,
+title={Slab break-off and subduction polarity reversal after collision can be very fast},
+author={G{\"u}n, Erkan and Heron, Philip J and Pysklywec, Russell N},
+journal={Geology}, % 2025
+volume={},
+number={},
+doi={10.1130/G52507.1},
+year={2025}}
 
 @article{gazr80,
 title={On the convective instability of real models of the upper mantle 
@@ -18650,7 +18667,7 @@ year={2019}}
 title={Slab underthrusting is the primary control on flat-slab size},
 author={Gianni, Guido M and Gallo, Leandro C and Likerman, Jerem{\'\i}as and 
 Echaurren, Andr{\'e}s and Gianni, Conrado R and Faccenna, Claudio},
-journal={Science Advances},
+journal=sciad, % 2025
 volume={11},
 number={28},
 pages={eadv8872},
@@ -18680,7 +18697,7 @@ year={2003}}
 title={Periodicity in the Deccan volcanism modulated by plume perturbations 
 at the mid-mantle transition zone},
 author={Ghosh, Dip and Sen, Joyjeet and Mandal, Nibir},
-journal={Journal of Geophysical Research: Solid Earth},
+journal=jgr, % 2024 
 volume={129},
 number={6},
 pages={e2024JB029020},
@@ -18691,7 +18708,7 @@ year={2024}}
 title={Numerical simulation of the effects of wedge subduction on the lithospheric 
 thermal structure and the seismogenic zone south of Chile Triple Junction},
 author={Guo, Changsheng and Sun, Pengchao and Wei, Dongping},
-journal={Frontiers in Earth Science},
+journal=FES, % 2021
 volume={9},
 pages={782458},
 doi={10.3389/feart.2021.782458},
@@ -19597,7 +19614,7 @@ year={2014}}
 @article{gmrs15,
 title={Performance and scalability of hierarchical hybrid multigrid solvers for Stokes systems},
 author={Gmeiner, Bjorn and R{\"u}de, Ulrich and Stengel, Holger and Waluga, Christian and Wohlmuth, Barbara},
-journal={SIAM Journal on Scientific Computing},
+journal=SIAMjsc, % 2015
 volume={37},
 number={2},
 pages={C143--C168},
@@ -19920,7 +19937,7 @@ year={1999}}
 @article{grol09,
 title={An iterative method for the Stokes-type problem with variable viscosity},
 author={Grinevich, Piotr P and Olshanskii, Maxim A},
-journal={SIAM Journal on Scientific Computing},
+journal=SIAMjsc, % 2009
 volume={31},
 number={5},
 pages={3959--3978},
@@ -20701,7 +20718,7 @@ year={2018}}
 @article{geor73,
 title={Nested dissection of a regular finite element mesh},
 author={George, Alan},
-journal={SIAM Journal on Numerical Analysis},
+journal=SIAMjna, % 1973
 volume={10},
 number={2},
 pages={345--363},
@@ -22036,7 +22053,7 @@ Year = {2003}}
 @article{hoee25,
 title={Gravitational instability of thickened yet compositionally buoyant Tibetan mantle lithosphere},
 author={Houseman, Gregory A and England, Philip C and Evans, Lynn A},
-journal={Tectonophysics},
+journal={Tectonophysics}, % 2025
 volume={911},
 pages={230837},
 doi={10.1016/j.tecto.2025.230837},
@@ -22056,7 +22073,7 @@ year={2024}}
 title={Pressure-driven processes explain the decreasing magnetization 
 of the subducting oceanic crust in the Japan Trench},
 author={Han, Dongwoo and Park, Yong-Hee and Lee, Changyeol},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2023
 volume={4},
 number={1},
 pages={242},
@@ -22114,7 +22131,7 @@ year={2025}}
 @article{hacl25,
 title={Tectonics vs eustasy: The oceanic container and its contents},
 author={Haq, Bilal U and Cloetingh, Sierd},
-journal={Earth-Science Reviews},
+journal=esr, % 2025
 volume={267},
 pages={105166},
 doi={10.1016/j.earscirev.2025.105166},
@@ -22125,7 +22142,7 @@ title={The impact of Pangean subducted oceans on mantle dynamics:
 Passive piles and the positioning of deep mantle plumes},
 author={Heron, Philip J and Dannberg, Juliane and Gassm{\"o}ller, Rene 
 and Shephard, Grace E and van Hunen, Jeroen and Pysklywec, Russell N},
-journal={Gondwana Research},
+journal={Gondwana Research}, % 2025
 volume={138},
 pages={168--185},
 doi={10.1016/j.gr.2024.10.007},
@@ -25101,7 +25118,7 @@ year={1979}}
 @article{hoow17,
 title={{Accelerating the Uzawa algorithm}},
 author={N. Ho and S.D. Olson and H.F. Walker},
-journal={SIAM J. Sci. Comput.},
+journal=SIAMjsc, % 2017
 volume={39},
 number={5},
 pages={S461--S476},
@@ -25724,7 +25741,7 @@ year={1997}}
 title={Solution of nonlinear Stokes equations discretized by high-order finite 
 elements on nonconforming and anisotropic meshes, with application to ice sheet dynamics},
 author={Isaac, Tobin and Stadler, Georg and Ghattas, Omar},
-journal={SIAM Journal on Scientific Computing},
+journal=SIAMjsc, % 2015
 volume={37},
 number={6},
 doi={10.1137/140974407},
@@ -25824,7 +25841,7 @@ title={Continental rifts and mantle convection},
 author={Jolivet, Laurent and Faccenna, Claudio and Becker, Thorsten and 
 Davaille, Anne and Lasseur, Eric and Briais, Justine and Koptev, Alexander 
 and Sternai, Pietro and Le Pourhiet, Laetitia},
-journal={Earth-Science Reviews},
+journal=esr, % 2025
 pages={105243},
 doi={10.1016/j.earscirev.2025.105243},
 year={2025}}
@@ -25833,7 +25850,7 @@ year={2025}}
 title={Building archean cratonic roots},
 author={Jain, C and Rozel, A and van Hunen, J and 
 Chin, E and Manj{\'o}n-Cabeza C{\'o}rdoba, A},
-journal={Frontiers in Earth Science},
+journal=FES, % 2022
 volume={10},
 pages={966397},
 doi={10.3389/feart.2022.966397},
@@ -26920,7 +26937,7 @@ year={2001}}
 title={{Error analysis of the SUPG finite element discretization of evolutionary 
 convection-diffusion-reaction equations}},
 author={V. John and J. Novo},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 2011
 volume={49},
 number={3},
 pages={1149--1176},
@@ -27332,7 +27349,7 @@ year={2020}}
 title={Textbook efficiency: massively parallel matrix-free multigrid 
 for the Stokes system},
 author={Kohl, Nils and Rüde, Ulrich},
-journal={SIAM Journal on Scientific Computing},
+journal=SIAMjsc, % 2022
 volume={44},
 number={2},
 pages={C124--C155},
@@ -27353,7 +27370,7 @@ year={2019}}
 @article{kome22,
 title={A massively parallel Eulerian-Lagrangian method for advection-dominated transport in viscous fluids},
 author={Kohl, Nils and Mohr, Marcus and Eibl, Sebastian and R{\"u}de, Ulrich},
-journal={SIAM J. SCI. COMPUT.},
+journal=SIAMjsc, % 2022
 volume={44},
 number={3},
 pages={C260--C285},
@@ -27568,7 +27585,7 @@ year={2023}}
 @article{kigr16,
 title={Analysis of an XFEM discretization for Stokes interface problems},
 author={Kirchhart, Matthias and Gross, Sven and Reusken, Arnold},
-journal={SIAM Journal on Scientific Computing},
+journal=SIAMjsc, % 2016
 volume={38},
 number={2},
 doi={10.1137/15M1011779},
@@ -30100,7 +30117,7 @@ year={2024}}
 title={Role of warm subduction in the seismological properties of 
 the forearc mantle: An example from southwest Japan},
 author={Lee, Changyeol and Kim, YoungHee},
-journal={Science Advances},
+journal=sciad, % 2021
 volume={7},
 number={28},
 pages={eabf8934},
@@ -31451,7 +31468,7 @@ year={2017}}
 @article{lalt21,
 title={Global mantle convection models produce transform offsets along divergent plate boundaries},
 author={Langemeyer, Sean M and Lowman, Julian P and Tackley, Paul J},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2021
 volume={2},
 number={1},
 pages={1--10},
@@ -31459,10 +31476,11 @@ doi={10.1038/s43247-021-00139-1},
 year={2021}}
 
 @article{lobp20,
-title={Constraints on the shallow elastic and anelastic structure of Mars from InSight seismic data},
-author={Lognonn{\'e}, Philippe and Banerdt, WB and Pike, WT and Giardini, Domenico and 
-Christensen, U and Garcia, Rapha{\"e}l F and Kawamura, T and Kedar, S and Knapmeyer-Endrun, B 
-and Margerin, L and others},
+title={Constraints on the shallow elastic and anelastic structure of 
+Mars from InSight seismic data},
+author={Lognonn{\'e}, Philippe and Banerdt, WB and Pike, WT and 
+Giardini, Domenico and Christensen, U and Garcia, Rapha{\"e}l F 
+and Kawamura, T and Kedar, S and Knapmeyer-Endrun, B and Margerin, L and others},
 journal=NatureGeoscience, % 2020
 volume={13},
 number={3},
@@ -32692,7 +32710,7 @@ doi={10.1029/2012JB009165}}
 @article{leve96,
 title={High-resolution conservative algorithms for advection in incompressible flow},
 author={R.J. Leveque},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 1996
 volume={33(2)},
 pages={627--665},
 doi={10.1137/0733033},
@@ -33578,7 +33596,17 @@ Year = {2008}}
 % MMMM
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+@article{momg25,
+title={Underworld3: Mathematically Self-Describing Modelling in 
+Python for Desktop, HPC and Cloud},
+author={Moresi, Louis and Mansour, John and Giordani, Julian and Knepley, Matt 
+and Knight, Ben and Graciosa, Juan Carlos and Gollapalli, Thyagarajulu 
+and Lu, Neng and Beucher, Romain},
+journal=joss, % 2025
+volume={10},
+number={112},
+pages={7831},
+year={2025}}
 
 @article{mori25,
 title={Anisotropy of the thermal conductivity, thermal expansion coefficient, 
@@ -33592,7 +33620,7 @@ year={2025}}
 @article{misk25,
 title={Stencil Composition for Finite Difference Approximations of Partial Differential Equations},
 author={Mishra, Abhishek and Salac, David and Knepley, Matthew G},
-journal={SIAM Journal on Scientific Computing},
+journal=SIAMjsc, % 2025
 volume={47},
 number={2},
 pages={A657--A688},
@@ -33622,7 +33650,7 @@ year={2013}}
 @article{mcst23,
 title={Plateau formation controlled by lithospheric foundering under a weak crust},
 author={McMillan, M and Schoenbohm, LM and Tye, AR},
-journal={Geophysical Research Letters},
+journal=grl, % 2023
 volume={50},
 number={16},
 pages={e2023GL103996},
@@ -33654,7 +33682,7 @@ title={Dynamics and evolution of the Azores Triple Junction and its
 relation to pre-existing major tectonic structures},
 author={Marques, Fernando O and Bal{\'a}zs, Attila and Gerya, Taras V 
 and Hildenbrand, Anthony},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2025
 volume={6},
 number={1},
 pages={303},
@@ -33748,7 +33776,7 @@ year={2024}}
 @article{matw02,
 title={A robust finite element method for Darcy--Stokes flow},
 author={Mardal, Kent Andre and Tai, Xue-Cheng and Winther, Ragnar},
-journal={SIAM Journal on Numerical Analysis},
+journal=SIAMjna, % 2002
 volume={40},
 number={5},
 pages={1605--1631},
@@ -33802,7 +33830,7 @@ year={2002}}
 title={Upright emplacement of the Gibraltar slab and the origin of 
 rifting in adjacent foreland and Backarc Basins},
 author={Ma, Pengfei and Liu, Shaofeng and Booth-Rea, Guillermo and Zhang, Huiping and Yang, Ting},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2024
 volume={5},
 number={1},
 pages={673},
@@ -34037,7 +34065,7 @@ title={Intermediate-depth seismicity and intraslab stress changes
 due to outer-rise faulting},
 author={Malatesta, Cristina and Gerya, Taras and Pittaluga, Simone 
 and Cabiddu, Daniela},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2024
 volume={5},
 number={1},
 pages={253},
@@ -34407,7 +34435,7 @@ year={2022}}
 @article{mokj22,
 title={Dynamic pressure variations in the lower crust caused by localized fluid-induced weakening},
 author={Moulas, Evangelos and Kaus, Boris and Jamtveit, Bj{\o}rn},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2022
 volume={3},
 number={1},
 pages={1--7},
@@ -34732,7 +34760,7 @@ title={Trans-lithospheric diapirism explains the presence of ultra-high pressure
 in the European Variscides},
 author={Maierov{\'a}, Petra and Schulmann, Karel and {\v{S}}t{\'\i}psk{\'a}, Pavla 
 and Gerya, Taras and Lexa, Ondrej},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2021
 volume={2},
 number={1},
 pages={1--9},
@@ -38664,7 +38692,7 @@ year={2010}}
 @article{nano12,
 title={An algebraic multigrid method with guaranteed convergence rate},
 author={A. Napov and Y. Notay},
-journal={SIAM J. Sci. Comput.},
+journal=SIAMjsc, % 2012
 volume={34},
 pages={A1079-A1109},
 doi={10.1137/100818509},
@@ -38673,7 +38701,7 @@ year={2012}}
 @article{nota12,
 title={Aggregation-based algebraic multigrid for convection-diffusion equations},
 author={Y. Notay},
-journal={SIAM J. Sci. Comput.},
+journal=SIAMjsc, % 2012
 volume={34},
 doi={10.1137/110835347},
 pages={A2288-A2316},
@@ -38757,7 +38785,7 @@ year = {1999}}
 @article{nosi01,
 title={{Fourier analysis of stabilized Q1-Q1 mixed finite element approximation}},
 author={S. Norburn and D. Silvester},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, %2001
 volume={39},
 doi={10.1137/S0036142999362274},
 pages={817--833},
@@ -38922,13 +38950,24 @@ Year = {2000}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
+@article{oravecz2025syn,
+title={Syn-rift magmatism and oceanic spreading initiation controlled 
+by rift obliquity: Insights from 3D coupled thermo-mechanical and surface 
+processes modeling},
+author={Oravecz, {\'E}va and Bal{\'a}zs, Attila and Gerya, Taras and 
+May, Dave A and Fodor, L{\'a}szl{\'o}},
+journal=jgr, % 2025
+volume={130},
+number={8},
+pages={e2025JB031142},
+doi={10.1029/2025JB031142},
+year={2025}}
 
 @article{orgb25,
 title={The location of compression-induced subduction initiation controlled 
 by structural versus thermal inheritance},
 author={Oravecz, {\'E}va and Gerya, Taras and Bal{\'a}zs, Attila},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2025
 volume={6},
 number={1},
 pages={652},
@@ -39131,14 +39170,28 @@ doi={10.1029/JB073i008p02643},
 year={1968}}
 
 @article{orbg24,
-author = {Oravecz, Éva and Balázs, Attila and Gerya, Taras and May, Dave A. and Fodor, László},
-title = "{Competing effects of crustal shortening, thermal inheritance, 
-and surface processes explain subsidence anomalies in inverted rift basins}",
-volume={xxx},
-pages={xxx},
-journal = {Geology}, % 2024
+author={Oravecz, {\'E}va and Bal{\'a}zs, Attila and Gerya, Taras and 
+May, Dave A and Fodor, L{\'a}szl{\'o}},
+title={Competing effects of crustal shortening, thermal inheritance, and 
+surface processes explain subsidence anomalies in inverted rift basins},
+journal={Geology}, % 2024
+volume={52},
+number={6},
+pages={447--452},
 doi = {10.1130/G51971.1},
 year = {2024}}
+
+@article{orbg25,
+title={Syn-rift magmatism and oceanic spreading initiation controlled by 
+rift obliquity: Insights from 3D coupled thermo-mechanical and surface processes modeling},
+author={Oravecz, {\'E}va and Bal{\'a}zs, Attila and Gerya, Taras and 
+May, Dave A and Fodor, L{\'a}szl{\'o}},
+journal=jgr, % 2025
+volume={130},
+number={8},
+pages={e2025JB031142},
+doi={10.1029/2025JB031142},
+year={2025}}
 
 @article{otlr88,
 title={Morphological structures produced by mixing in chaotic flows},
@@ -39836,7 +39889,7 @@ year={1984}}
 @article{ossh91,
 title={{High-order essentially non-oscillatory schemes for Hamilton-Jacobi equations}},
 author={S. Osher and C.-W. Shu},
-journal={SIAM J. Numer. Anal},
+journal=SIAMjna, % 1991
 volume={28},
 pages={907--922},
 year={1991}}
@@ -41019,7 +41072,7 @@ year={2013}}
 @article{pash03,
 title={$P_1$-nonconforming quadrilateral finite element methods for second-order elliptic problems},
 author={Park, Chunjae and Sheen, Dongwoo},
-journal={SIAM Journal on Numerical Analysis},
+journal=SIAMjna, %2003
 volume={41},
 number={2},
 pages={624--640},
@@ -41962,7 +42015,7 @@ year={2018}}
 @article{pepe08,
 title={{The compact discontinuous Galerkin method for elliptic problems}},
 author={J. Peraire and P.-O. Persson},
-journal={SIAM J. Sci. Comput.},
+journal=SIAMjsc, % 2008
 volume={30},
 number={4},
 pages={1806--1824},
@@ -42254,7 +42307,7 @@ year={1997}}
 @article{pasa75,
 title={{Solution of sparse indefinite systems of linear equations}},
 author={C.C. Paige and M.A. Saunders},
-journal={SIAM J. Numer. Anal},
+journal=SIAMjna, % 1975
 volume={12},
 number={4},
 pages={617--629},
@@ -42273,7 +42326,7 @@ doi="10.1016/j.pepi.2017.10.004"}
 @article{perr05,
 title={{Fast Iterative Solvers for Discrete Stokes Equations }},
 author={J. Peters and V. Reichelt and A. Reusken},
-journal={SIAM Journal on Scientific Computing},
+journal=SIAMjsc, % 2005
 volume={27},
 number={2},
 pages={646--666},
@@ -42800,7 +42853,7 @@ title={Influence of reef isostasy, dynamic topography, and glacial isostatic
 adjustment on sea-level records in Northeastern Australia},
 author={Rovere, Alessio and Pico, Tamara and Richards, Fred and O’Leary, Michael J 
 and Mitrovica, Jerry X and Goodwin, Ian D and Austermann, Jacqueline and Latychev, Konstantin},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2023
 volume={4},
 number={1},
 pages={328},
@@ -42889,7 +42942,7 @@ year={2016}}
 title={Weighted BFBT preconditioner for Stokes flow problems with 
 highly heterogeneous viscosity},
 author={Rudi, Johann and Stadler, Georg and Ghattas, Omar},
-journal={SIAM Journal on Scientific Computing},
+journal=SIAMjsc, % 2017
 volume={39},
 number={5},
 pages={S272--S297},
@@ -45987,7 +46040,7 @@ title={Robust multigrid techniques for augmented Lagrangian
 preconditioning of incompressible Stokes equations with extreme 
 viscosity variations},
 author={Shih, Yu-hsuan and Stadler, Georg and Wechsung, Florian},
-journal={SIAM Journal on Scientific Computing},
+journal=SIAMjsc, % 2022
 volume={45},
 number={3},
 pages={S27--S53},
@@ -46020,7 +46073,7 @@ year={1994}}
 title={Mantle upwelling induced by slab rollover subduction could explain widespread 
 intraplate volcanism in Tibet},
 author={Strak, Vincent and Xue, Kai and Schellart, Wouter P},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2024
 volume={5},
 number={1},
 pages={510},
@@ -49705,7 +49758,8 @@ year={2016}}
 
 @article{saab84,
 author={M. Saito and Y. Abe},
-title={Consequences of anisotropic viscosity in the Earth's mantle (in Japanese, with English Abstract)},
+title={Consequences of anisotropic viscosity in the Earth's 
+mantle (in Japanese, with English Abstract)},
 journal={Zisin}, 
 volume={37}, 
 pages={237--245},
@@ -49719,15 +49773,14 @@ volume={50},
 pages={89--100},
 year={1981}}
 
-@article{sasm,
+@article{sasm16,
 title={Pipelined, flexible Krylov subspace methods},
 author={Sanan, Patrick and Schnepp, Sascha M and May, Dave A},
-journal={SIAM Journal on Scientific Computing},
+journal=SIAMjsc, % 2016 
 volume={38},
 number={5},
 pages={C441--C470},
-year={2016},
-publisher={SIAM}}
+year={2016}}
 
 @article{scdm06,
 author = {Schmalzle, G and Dixon, T and Malservisi, R and Govers, Rob},
@@ -49972,7 +50025,7 @@ year={1987}}
 @article{saad93,
 title={{A flexible inner-outer preconditioned GMRES algorithm}},
 author={Y. Saad},
-journal={SIAM J. Sci. Comput.},
+journal=SIAMjsc, % 1993
 volume={14},
 number={2},
 pages={461--469},
@@ -50535,7 +50588,7 @@ year={2004}}
 title={{Fast Iterative Solution of Stabilised Stokes Systems. 
 Part II: Using general block preconditioners}},
 author={D. Silvester and A. Wathen },
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 1994 
 volume={31},
 number={5},
 pages={1352--1367},
@@ -53391,6 +53444,26 @@ year={2008}}
 % VVVV
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+@article{vand90,
+title={Breakup of young oceanic lithosphere in the upper part of a subduction 
+zone: implications for the emplacement of ophiolites},
+author={van den Beukel, Jilles},
+journal={Tectonics},  % 1990
+volume={9},
+number={4},
+pages={825--844},
+doi={10.1029/TC009i004p00825},
+year={1990}}
+
+@article{vand92,
+title={Some thermomechanical aspects of the subduction of continental lithosphere},
+author={van den Beukel, Jilles},
+journal={Tectonics}, % 1992
+volume={11},
+number={2},
+pages={316--329},
+doi={10.1029/91TC01039},
+year={1992}}
 
 @article{vavb23,
 title={Simulation of a fully coupled 3D glacial isostatic adjustment--ice 
@@ -53460,7 +53533,7 @@ year={2014}}
 title={Slab buckling as a driver for rapid oscillations in Indian plate motion and subduction rate},
 author={{van der Wiel}, Erik and Pokorn{\`y}, Jakub and {\v{C}}{\'\i}{\v{z}}kov{\'a}, Hana 
 and Spakman, Wim and {van den Berg}, Arie P and {van Hinsbergen}, Douwe JJ},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2024
 volume={5},
 number={1},
 pages={316},
@@ -53567,6 +53640,16 @@ number={10},
 pages={1057--1060},
 doi={10.1029/GL014i010p01057},
 year={1987}}
+
+@article{vawo88,
+title={Thermo-mechanical modelling of arc-trench regions},
+author={Van Den Beukel, Jilles and Wortel, Rinus},
+journal={Tectonophysics}, % 1988
+volume={154},
+number={3-4},
+pages={177--193},
+doi={10.1016/0040-1951(88)90101-1},
+year={1988}}
 
 @article{vawi23,
 title={An introductory review of the thermal structure of subduction zones: 
@@ -55191,7 +55274,7 @@ year={1994}}
 @article{whee74,
 title={A Galerkin procedure for estimating the flux for two-point boundary value problems},
 author={Wheeler, Mary Fanett},
-journal={SIAM Journal on Numerical Analysis},
+journal=SIAMjna, % 1974
 volume={11},
 number={4},
 pages={764--768},
@@ -55212,7 +55295,7 @@ year={2004}}
 title={Recent ice melt above a mantle plume track is accelerating 
 the uplift of Southeast Greenland},
 author={Weerdesteijn, Maaike FM and Conrad, Clinton P},
-journal={Communications Earth \& Environment},
+journal=c_e_e, % 2024
 volume={5},
 number={1},
 pages={791},
@@ -55223,7 +55306,7 @@ year={2024}}
 title={The punctuated evolution of the Venusian atmosphere from a 
 transition in mantle convective style and volcanic outgassing},
 author={Weller, Matthew B and Kiefer, Walter S},
-journal={Science Advances},
+journal=sciad, % 2025
 volume={11},
 number={2},
 pages={eadn9861},
@@ -55426,7 +55509,7 @@ year={1999}}
 @article{wahe22,
 title={Mantle evolution and continental growth events},
 author={Walzer, Uwe and Hendel, Roland},
-journal={Earth-Science Reviews},
+journal=esr, % 2022
 volume={232},
 pages={104130},
 doi={10.1016/j.earscirev.2022.104130},
@@ -56244,7 +56327,7 @@ year={1988}}
 @article{wani11,
 title={Anderson acceleration for fixed-point iterations},
 author={Walker, Homer F and Ni, Peng},
-journal={SIAM Journal on Numerical Analysis},
+journal=SIAMjna, % 2011
 volume={49},
 number={4},
 pages={1715--1735},
@@ -56981,7 +57064,7 @@ year={1992}}
 @article{whee78,
 title={An elliptic collocation-finite element method with interior penalties},
 author={M.F. Wheeler},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 1978
 volume={15},
 number={1},
 pages={152--161},
@@ -57343,7 +57426,7 @@ year={2014}}
 title={Fast Iterative Solution of Stabilised Stokes Systems. 
 Part I: Using Simple Diagonal Preconditioners},
 author={A. Wathen and D. Silvester},
-journal={SIAM J. Numer. Anal.},
+journal=SIAMjna, % 1993
 volume={30},
 number={3},
 pages={630--649},
@@ -57562,6 +57645,15 @@ year={1999}}
 % XXXX
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+@article{xums25,
+title={Sedimentation and deformation in oblique continental rifts: 
+The role of climate-tectonic interactions},
+author={Xue, Liang and Moucha, Robert and Scholz, Christopher A and Naliboff, John},
+journal=epsl, % 2025
+volume={669},
+pages={119565},
+doi={10.1016/j.epsl.2025.119565},
+year={2025}}
 
 @article{xizo23,
 title={Dynamics of Oceanic Slab Tearing During Transform-Fault Horizontally-Oblique 
@@ -58764,9 +58856,14 @@ Year = {2009}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
-
-
+@article{zhhg25,
+title={Ongoing India--Eurasia collision predominantly driven by Sumatra--Java slab pull},
+author={Zheng, Qunfan and Hu, Jiashun and Gurnis, Michael and Chen, Ling 
+and Shi, Yaolin and Bao, Xueyang and Yang, Yingjie},
+journal=NatureGeoscience, % 2025
+pages={1--7},
+doi={10.1038/s41561-025-01771-8},
+year={2025}}
 
 @article{zhkl93,
 author = {Zhao, Xiao-Hua and Kwek, Keng-Huat and Li, JI-Bin and Huang, Ke-Lei},
@@ -58834,7 +58931,7 @@ year={1996}}
 @article{zhen25,
 title={A revisit to continental collision between India and Asia},
 author={Zheng, Yong-Fei},
-journal={Earth-Science Reviews},
+journal=esr, % 2025
 volume={264},
 pages={105087},
 doi={10.1016/j.earscirev.2025.105087},
@@ -58846,7 +58943,7 @@ $H_2$ generation},
 author={Zwaan, Frank and Brune, Sascha and Glerum, Anne C and 
 Vasey, Dylan A and Naliboff, John B and Manatschal, Gianreto 
 and Gaucher, Eric C},
-journal={Science Advances}, % 2025
+journal=sciad, % 2025
 volume={11},
 number={8},
 pages={eadr3418},
@@ -58998,7 +59095,7 @@ year={2016}}
 @article{zhan09,
 title={A Family of $Q_{k+1,k}\times Q_{k,k+1}$ Divergence-Free Finite Elements on Rectangular Grids},
 author={Zhang, Shangyou},
-journal={SIAM journal on numerical analysis},
+journal=SIAMjna, % 2009
 volume={47},
 number={3},
 pages={2090--2107},
