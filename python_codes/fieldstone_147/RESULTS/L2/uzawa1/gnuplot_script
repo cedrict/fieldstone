@@ -7,6 +7,7 @@ set key outside
 set xlabel '# iterations'
 set format y "10^{%L}"
 
+set ylabel 'xi_p'
 set output 'solver_convergence.pdf'
 plot[][]\
 'omega1/solver_convergence_15_8.ascii'    w l lt 1 dt 1 t 'solver=15, 8x8, {/Symbol w}=1',\

@@ -1,5 +1,5 @@
 #
-set terminal pdf enhanced font "Times,12pt" ps .3
+set terminal pdf enhanced font "Times,11pt" ps .3
 set grid
 set log xy
 set xlabel 'nel'
@@ -7,18 +7,22 @@ set ylabel 'time (s)'
 
 set output 'solve.pdf'
 set key outside
-plot[][]\
-'solve_1.ascii'  u 6:3 w lp lt 1 t 'solver=1 (SPSOLVE)',\
-'solve_2.ascii'  u 6:3 w lp lt 2 t 'solver=2 (GMRES)',\
-'solve_3.ascii'  u 6:3 w lp lt 3 t 'solver=3 (LGMRES)',\
-'solve_4.ascii'  u 6:3 w lp lt 4 t 'solver=4 (SC-CG)',\
-'solve_6.ascii'  u 6:3 w lp lt 6 t 'solver=6 (QMR)',\
-'solve_8.ascii'  u 6:3 w lp lt 8 t 'solver=8 (GCROTMK)',\
-'solve_9.ascii'  u 6:3 w lp lt 9 t 'solver=9 (BICG)',\
-'solve_11.ascii' u 6:3 w lp lt 11 t 'solver=11 (UMFPACK)',\
+plot[:50000][]\
+'solve_1.ascii'  u 6:3 w lp lt 1 pt 1 t 'solver=1 (SPSOLVE)',\
+'solve_2.ascii'  u 6:3 w lp lt 2 pt 1 t 'solver=2 (GMRES)',\
+'solve_3.ascii'  u 6:3 w lp lt 2 pt 2 t 'solver=3 (LGMRES)',\
+'solve_4.ascii'  u 6:3 w lp lt 3 pt 1 t 'solver=4 (SC-CG)',\
+'solve_6.ascii'  u 6:3 w lp lt 2 pt 3 t 'solver=6 (QMR)',\
+'solve_8.ascii'  u 6:3 w lp lt 2 pt 4 t 'solver=8 (GCROTMK)',\
+'solve_9.ascii'  u 6:3 w lp lt 2 pt 5 t 'solver=9 (BICG)',\
+'solve_11.ascii' u 6:3 w lp lt 1 pt 2 t 'solver=11 (UMFPACK)',\
 'solve_13.ascii' u 6:3 w lp lt 13 t 'solver=13 (SC-CG+CG)',\
 'solve_14.ascii' u 6:3 w lp lt 14 t 'solver=14 (SC-CG+splu)',\
-'solve_16.ascii' u 6:3 w lp lt 15 t 'solver=16 (Uzawa2)',\
+'L2/uzawa2/solve_16.ascii'         u 6:3 w lp lt 15 pt 1 t'solver=16 (Uzawa2)',\
+'L2/uzawa2/solve_20.ascii'         u 6:3 w lp lt 15 pt 2 t'solver=20 (Uzawa2+L2)',\
+'L2/uzawa3/solve_21_tol1e-7.ascii' u 6:3 w lp lt 15 pt 3 t'solver=21 (Uzawa3)',\
+'L2/uzawa3/solve_22_tol1e-7.ascii' u 6:3 w lp lt 15 pt 4 t'solver=22 (Uzawa3+L2)',\
+'L2/uzawa3/solve_23_tol1e-7.ascii' u 6:3 w lp lt 15 pt 5 t'solver=22 (Uzawa3+splu+L2)',\
 x**2/100000 lt -1 dt 2 t 'h^2',\
 x**1.4/50000 lt -1 dt 3 t 'h^{1.4}' 
 
