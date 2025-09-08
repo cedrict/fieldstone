@@ -6,8 +6,8 @@ rm -f errors_sr2.ascii
 rm -f errors_sr3.ascii
 rm -f vrms.ascii
 
-for l in 4 6 8 10 12 14 16 20 24 32 36 40 44 48 56 64 72 80; do
-#for l in 4 6 8 10 12 14 16 20 24 ; do
+#for l in 4 6 8 10 12 14 16 20 24 32 36 40 44 48 56 64 72 80; do
+for l in 6 8 10 12 14 16 ; do
 
    echo nelr= $l
 
