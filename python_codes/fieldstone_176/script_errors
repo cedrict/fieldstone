@@ -13,6 +13,7 @@ for n in {8..80} ; do
         grep csr opla >> convert2csr.ascii
         grep split opla >> split.ascii
         grep press opla >> press.ascii
+        grep bc opla >> bc.ascii
     done
 done
 

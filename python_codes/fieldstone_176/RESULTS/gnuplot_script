@@ -1,5 +1,5 @@
 #
-set term pdf enhanced font "Time,14pt"
+set term pdf enhanced font "Time,12pt"
 set key outside
 set pointsize .35
 set grid
@@ -15,6 +15,15 @@ plot[][]\
 'new_shrek/assembly.ascii' u 5:4 w lp lt 4 pt 2 t 'new, shrek',\
 x*0.000023 lt -1 dt 2 lw 2,\
 x*0.00025 lt -1 dt 3 lw 2
+
+set ylabel 'apply bc time (s)'
+set output 'bc.pdf'
+plot[][]\
+'old/bc.ascii'       u 5:4 w lp lt 1 pt 1 t 'old, laptop',\
+'new/bc.ascii'       u 5:4 w lp lt 3 pt 1 t 'new, laptop',\
+x*0.000009 lt -1 dt 2 lw 2,\
+x*0.000003 lt -1 dt 3 lw 2
+
 
 set ylabel 'total build time (s)'
 set output 'build.pdf'
