@@ -3,13 +3,11 @@
 rm *.ascii 
 
 for n in {8..24} ; do
-    for s in {1..2} ; do 
-        echo nelx=nely=nelz= $n / s= $s
-        python3 stone.py  $n $n $n 0 > opla
-        grep Build opla >> build.ascii
-        grep Solve opla >> solve.ascii
-        grep assemb opla >> assembly.ascii
-        grep quad opla >> quad.ascii
-    done
+    echo nelx=nely=nelz= $n 
+    python3 stone.py  $n $n $n 0 > opla
+    grep Build opla >> build.ascii
+    grep Solve opla >> solve.ascii
+    grep assemb opla >> assembly.ascii
+    grep quad opla >> quad.ascii
 done
 
