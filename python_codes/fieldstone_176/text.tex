@@ -17,7 +17,7 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: July. 21st, 2026.
+Last revision: September 13th, 2025.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -44,36 +44,52 @@ is not a saddle point system. No vtu file is produced since it is not needed her
 The FE matrix is defined as a Row-based LIst of Lists sparse 
 matrix\footnote{\url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.lil_matrix.html}}:
 \begin{lstlisting}
-a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)
+A_fem=lil_matrix((Nfem,Nfem),dtype=np.float64)
 \end{lstlisting}
-Inside the loop over elements the elemental matrix \lstinline{a_el} is built
-and the assembly is as follows:
+Inside the loop over elements the elemental matrix \lstinline{A_el} is built
+and boundary conditions are applied as follows:
+\begin{lstlisting}
+       for k1 in range(0,m_V):
+           for i1 in range(0,ndof_V):
+               m1 =ndof_V*icon_V[k1,iel]+i1
+               if bc_fix_V[m1]: 
+                  fixt=bc_val_V[m1]
+                  ikk=ndof_V*k1+i1
+                  aref=A_el[ikk,ikk]
+                  for jkk in range(0,m_V*ndof_V):
+                      b_el[jkk]-=A_el[jkk,ikk]*fixt
+                      A_el[ikk,jkk]=0.
+                      A_el[jkk,ikk]=0.
+                  #end for
+                  A_el[ikk,ikk]=aref
+                  b_el[ikk]=aref*fixt
+\end{lstlisting}
+
+The assembly is as follows:
 
 \begin{lstlisting}
-for k1 in range(0,m):
-    for i1 in range(0,ndof):
-        ikk=ndof*k1          +i1
-        m1 =ndof*icon[k1,iel]+i1
-        for k2 in range(0,m):
-            for i2 in range(0,ndof):
-                jkk=ndof*k2          +i2
-                m2 =ndof*icon[k2,iel]+i2
-                a_mat[m1,m2]+=a_el[ikk,jkk]
-            #end for
-        #end for
-        rhs[m1]+=b_el[ikk]
-    #end for
-#end for
+       for k1 in range(0,m_V):
+           for i1 in range(0,ndof_V):
+               ikk=ndof_V*k1          +i1
+               m1 =ndof_V*icon_V[k1,iel]+i1
+               for k2 in range(0,m_V):
+                   for i2 in range(0,ndof_V):
+                       jkk=ndof_V*k2          +i2
+                       m2 =ndof_V*icon_V[k2,iel]+i2
+                       A_fem[m1,m2]+=A_el[ikk,jkk]
+                   #end for
+               #end for
+               b_fem[m1]+=b_el[ikk]
 \end{lstlisting}
 The quadruple for loop is not conducive to a fast python code.
 
 Finally the matrix is converted to CSR format:
 \begin{lstlisting}
-A=sps.csr_matrix(a_mat)
+A_fem=sps.csr_matrix(A_fem)
 \end{lstlisting}
 before being passed to the solver alongside the rhs vector:
 \begin{lstlisting}
-sol=sps.linalg.spsolve(A,rhs)
+sol=sps.linalg.spsolve(A_fem,b_fem)
 \end{lstlisting}
 
 %-------------------------------------------
@@ -82,29 +98,40 @@ sol=sps.linalg.spsolve(A,rhs)
 In this case the matrix is defined as follows, along side two 
 required arrays that will store the entries locations:
 \begin{lstlisting}
-row = [] 
-col = []
-a_mat = []
+row=[] 
+col=[]
+A_fem=[]
 \end{lstlisting}
 Note that here the matrix is a one-dimensional array
 while it was a two-dimensional one in the previous case.
-Then, the assembly is as follows (note the required \lstinline{dofs}
+Then, the boundary conditions and assembly are as follows (note the required \lstinline{dofs}
 array that contains the list of all dofs for the element under consideration:
 \begin{lstlisting}
 for iel in range(0,nel):
     ...
-    for k in range(0,m):
-        dofs[k*ndof+0]=icon[k,iel]*ndof+0
-        dofs[k*ndof+1]=icon[k,iel]*ndof+1
+    for k in range(0,m_V):
+        dofs[k*ndof_V  ]=icon_V[k,iel]*ndof_V
+        dofs[k*ndof_V+1]=icon_V[k,iel]*ndof_V+1
     ...
-    for i_local,idof in enumerate(dofs):
-        for j_local,jdof in enumerate(dofs):
-            row.append(idof)
-            col.append(jdof)
-            a_mat.append(a_el[i_local,j_local])
-        #end for
-        rhs[idof]+=b_el[i_local]
-    #end for
+       for i_local,idof in enumerate(dofs):
+           if bc_fix_V[idof]: 
+              fixt=bc_val_V[idof]
+              Aref=A_el[i_local,i_local]
+              for j_local,jdof in enumerate(dofs):
+                  b_el[j_local]-=A_el[j_local,i_local]*fixt
+              #end for
+              A_el[i_local,:]=0.
+              A_el[:,i_local]=0.
+              A_el[i_local,i_local]=Aref
+              b_el[i_local]=Aref*fixt
+    ...
+       for i_local,idof in enumerate(dofs):
+           for j_local,jdof in enumerate(dofs):
+               row.append(idof)
+               col.append(jdof)
+               A_fem.append(A_el[i_local,j_local])
+           #end for
+           b_fem[idof]+=b_el[i_local]
 \end{lstlisting}
 We have used here the python \lstinline{enumerate} functionality. In fact
 \begin{lstlisting}
@@ -117,9 +144,12 @@ for i_local in (0,m):
 \end{lstlisting}
 Finally the CSR converstion goes as follows:
 \begin{lstlisting}
-A=sps.csr_matrix((a_mat,(row,col)),shape=(Nfem,Nfem))
+A_fem=sps.csr_matrix((A_fem,(row,col)),shape=(Nfem,Nfem))
 \end{lstlisting}
 
+The new boundary conditions and assembly algorithms 
+are triggered by \lstinline{new_bc} and \lstinline{new_assembly}
+respectively.
 
 %-------------------------------------------
 \subsection*{Results/timings}
@@ -133,19 +163,26 @@ and on Shrek (Intel Xeon E5-2660 v3x40).
 
 Let us start with the assembly:
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_176/results/assembly.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_176/results/convert2csr.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_176/RESULTS/assembly.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_176/RESULTS/convert2csr.pdf}\\
 {\captionfont Left: time required to carry out the assembly; Right: time
 required to carry out the CSR conversion.}
 \end{center}
 We find that the new method yields an assembly about 10x faster 
 but the CSR conversion is then more than 10x slower. 
 
+We can also look at the application of boundary conditions and
+we find that the new way is about 3x times faster than the old one
+(in practice these times $<0.1$s are not very critical):
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_176/RESULTS/bc.pdf}
+\end{center}
+
 In context, one can now look at the total time needed to build the matrix,
 as well as the solve time:
 \begin{center}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_176/results/build.pdf}
-\includegraphics[width=8.5cm]{python_codes/fieldstone_176/results/solve.pdf}\\
+\includegraphics[width=8.5cm]{python_codes/fieldstone_176/RESULTS/build.pdf}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_176/RESULTS/solve.pdf}\\
 {\captionfont Left: time to build; Right: time to solve.}
 \end{center}
 The conclusion is then clear: the new method yields a matrix build that 
@@ -153,15 +190,14 @@ is about 2x faster than the old one.
 Also, comparing matrix building times to solve times, we get a feel for how 
 improving the assembly process ultimately makes our code faster!
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_176/results/build_solve.pdf}
+\includegraphics[width=10cm]{python_codes/fieldstone_176/RESULTS/build_solve.pdf}
 \end{center}
 
-\newpage
 We can also monitor the time necessary to split the solution vector
 and the time required to compute the pressure and strain rate components:
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_176/results/split.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_176/results/compute_press_sr.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_176/RESULTS/split.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_176/RESULTS/compute_press_sr.pdf}\\
 {\captionfont We of course retrieve the same time for both implementations since
 these algorithms are not linked to the assembly process.}
 \end{center}
@@ -171,7 +207,7 @@ We find that the split time is negligble.
 Finally we make sure that the discretization errors converge at the expected rate
 in both implementations:
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_176/results/errv.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_176/results/errp.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_176/RESULTS/errv.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_176/RESULTS/errp.pdf}\\
 {\captionfont We of course retrieve the same errors for both implementations.}
 \end{center}
