@@ -9,7 +9,7 @@
 
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_58/text.tex}} \end{flushright}
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_58/keywords.ascii}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_58/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -17,23 +17,24 @@
 Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_58}
 \end{center}
 
-
 \par\noindent\rule{\textwidth}{0.4pt}
 
 {\sl This stone was developed in collaboration with L. van de Wiel and T. Shinohara}. 
 
 \par\noindent\rule{\textwidth}{0.4pt}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Last revision: September 15th, 2025.
+
+\par\noindent\rule{\textwidth}{0.4pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 %----------------------------
 \subsubsection*{Experiment 1}
 
 This benchmark is well document in Sadd \cite{sadd14}.
-%what follows is from the book itself
+\begin{displayquote}
+{\color{darkgray}
 Let us investigate the solution to the plane problem shown hereunder of a circular disk 
 loaded by equal but opposite concentrated forces along a given diameter. 
 This particular problem is of special interest since this geometry is used 
@@ -43,16 +44,17 @@ the sample and loading geometry create a tension zone along the loaded diameter,
 thus allowing determination of the tensile strength of the specimen material. 
 Standard direct tension testing on such brittle materials has led to difficulty 
 in establishing a failure region in the sample’s central interior away from 
-the gripping locations.
+the gripping locations.}
+\end{displayquote}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_58/experiment1/setup}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_58/experiment1/setup}\\
 {\captionfont Setup of the experiment.}
 \end{center}
 
 The mesh is regular and made of concentric layers of triangles. The original algorithm
-which was used in \elefant was written by L. van de Wiel and is present in the {\tt mesher\_fortran} folder.  
-Given the nature of the boundary 
+which was used in \elefant was written by L. van de Wiel and is present in 
+the {\tt mesher\_fortran} folder. Given the nature of the boundary 
 conditions we wish to apply we make sure that two faces are present at the top and bottom 
 locations of the disc, which is why the mesh is rotated 90\degree 
 after it is generated. \index{contributors}{L. van de Wiel} 
@@ -85,9 +87,8 @@ The pressure is given by:
 \begin{eqnarray}
 p(x,y) 
 &=& -\frac{1}{2}(\sigma_{xx} + \sigma_{yy}) \nonumber\\
-&=& 
- \frac{P}{\pi} \left[ \frac{(R-y)x^2}{r_1^4} + \frac{(R+y)x^2}{r_2^4} -\frac{1}{D} \right] 
-+ \frac{P}{\pi} \left[ \frac{(R-y)^3}{r_1^4} + \frac{(R+y)^3}{r_2^4} -\frac{1}{D} \right] \\
+&=&  \frac{P}{\pi} \left[ \frac{(R-y)x^2}{r_1^4} + \frac{(R+y)x^2}{r_2^4} -\frac{1}{D} \right] 
++ \frac{P}{\pi} \left[ \frac{(R-y)^3}{r_1^4} + \frac{(R+y)^3}{r_2^4} -\frac{1}{D} \right] \nn\\
 &=& 
 \frac{P}{\pi} \left[ \frac{(R-y)x^2 + (R-y)^3 }{r_1^4} + \frac{(R+y)x^2 + (R+y)^3}{r_2^4} - \frac{2}{D}\right] 
 \end{eqnarray}
@@ -98,21 +99,19 @@ On the $x$-axis ($y=0$) these results simplify to give
 \sigma_{yy}(x,0) &=& -\frac{2P}{\pi D} \left( \frac{4D^4}{(D^2+4x^2)^2} -1 \right) \\
 \sigma_{xy}(x,0) &=& 0 \\
 p(x,0) 
-&=& \frac{P}{\pi} \left[ \frac{(R-y)x^2 + (R-y)^3 }{r_1^4} + \frac{(R+y)x^2 + (R+y)^3  }{r_2^4}  - \frac{2}{D} \right] \\
-&=& \frac{P}{\pi} \left[ \frac{Rx^2 + R^3 }{(x^2+R^2)^2} + \frac{Rx^2 + R^3  }{(x^2+R^2)^2}  - \frac{2}{D} \right] \\
-&=& \frac{2P}{\pi} \left[ \frac{R(x^2 + R^2 )}{(x^2+R^2)^2} - \frac{1}{D} \right] \\
-&=& \frac{2P}{\pi} \left[ \frac{R }{x^2+R^2} - \frac{1}{D} \right] \\
+&=& \frac{P}{\pi} \left[ \frac{(R-y)x^2 + (R-y)^3 }{r_1^4} + \frac{(R+y)x^2 + (R+y)^3  }{r_2^4}  - \frac{2}{D} \right] \nn\\
+&=& \frac{P}{\pi} \left[ \frac{Rx^2 + R^3 }{(x^2+R^2)^2} + \frac{Rx^2 + R^3  }{(x^2+R^2)^2}  - \frac{2}{D} \right] \nn\\
+&=& \frac{2P}{\pi} \left[ \frac{R(x^2 + R^2 )}{(x^2+R^2)^2} - \frac{1}{D} \right] \nn\\
+&=& \frac{2P}{\pi} \left[ \frac{R }{x^2+R^2} - \frac{1}{D} \right] 
 \end{eqnarray}
 
 On the $y$-axis ($x=0$) the stresses are 
 \begin{eqnarray}
 \sigma_{xx}(0,y) &=& \frac{2P}{\pi D} \\
-\sigma_{yy}(0,y) 
-&=& -\frac{2P}{\pi} \left( \frac{2}{D-2y} + \frac{2}{D+2y} -\frac{1}{D} \right) \\
+\sigma_{yy}(0,y) &=& -\frac{2P}{\pi} \left( \frac{2}{D-2y} + \frac{2}{D+2y} -\frac{1}{D} \right) \nn\\
 &=& -\frac{2P}{\pi} \left( \frac{1}{R-y} + \frac{1}{R+y} -\frac{1}{D} \right) \\
 \sigma_{xy} (0,y) &=& 0 \\
-p(0,y) 
-&=& \frac{P}{\pi} \left[ \frac{(R-y)^3 }{(R-y)^4} + \frac{ (R+y)^3  }{(R+y)^4}  - \frac{2}{D} \right] \\
+p(0,y) &=& \frac{P}{\pi} \left[ \frac{(R-y)^3 }{(R-y)^4} + \frac{ (R+y)^3  }{(R+y)^4}  - \frac{2}{D} \right] \nn\\
 &=& \frac{P}{\pi} \left[ \frac{1}{R-y} + \frac{ 1 }{R+y}  - \frac{2}{D} \right] 
 \end{eqnarray}
 In the code the pressure is retrieved after the displacements are computed. 
@@ -169,16 +168,16 @@ nicely converge to a single smooth curve.
 
 \newpage
 \begin{center}
-a)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/press_xaxis.pdf}
-b)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/press_yaxis.pdf}\\
-c)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/sigmaxx_xaxis.pdf}
-d)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/sigmaxx_yaxis.pdf}\\
-e)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/sigmayy_xaxis.pdf}
-f)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/sigmayy_yaxis.pdf}\\
-g)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/sigmaxy_xaxis.pdf}
-h)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/sigmaxy_yaxis.pdf}\\
-i)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/u_xaxis.pdf}
-j)\includegraphics[width=7.3cm]{python_codes/fieldstone_58/experiment1/v_yaxis.pdf}\\
+a)\includegraphics[width=8cm]{python_codes/fieldstone_58/experiment1/press_xaxis.pdf}
+b)\includegraphics[width=8cm]{python_codes/fieldstone_58/experiment1/press_yaxis.pdf}\\
+c)\includegraphics[width=8cm]{python_codes/fieldstone_58/experiment1/sigmaxx_xaxis.pdf}
+d)\includegraphics[width=8cm]{python_codes/fieldstone_58/experiment1/sigmaxx_yaxis.pdf}\\
+e)\includegraphics[width=8cm]{python_codes/fieldstone_58/experiment1/sigmayy_xaxis.pdf}
+f)\includegraphics[width=8cm]{python_codes/fieldstone_58/experiment1/sigmayy_yaxis.pdf}\\
+g)\includegraphics[width=8cm]{python_codes/fieldstone_58/experiment1/sigmaxy_xaxis.pdf}
+h)\includegraphics[width=8cm]{python_codes/fieldstone_58/experiment1/sigmaxy_yaxis.pdf}\\
+i)\includegraphics[width=8cm]{python_codes/fieldstone_58/experiment1/u_xaxis.pdf}
+j)\includegraphics[width=8cm]{python_codes/fieldstone_58/experiment1/v_yaxis.pdf}\\
 {\captionfont a,b) pressure along the $x$-axis;
 c,d) $\sigma_{xx}$  along the $x-$ and $y-$axis; 
 e,f) $\sigma_{yy}$  along the $x-$ and $y-$axis; 
@@ -207,14 +206,13 @@ j) vertical displacement along the $y-$axis}
 \newpage
 
 \begin{center}
-a)\includegraphics[width=8cm]{python_codes/fieldstone_58/experiment1/contours}
+a)\includegraphics[width=8.5cm]{python_codes/fieldstone_58/experiment1/contours}
 b)\includegraphics[width=6cm]{python_codes/fieldstone_58/experiment1/111/e_2}\\
 {\captionfont 
 a) Maximum shear stress contours and corresponding photoelastic isochromatic 
 for a disk under diametrical compression \cite{sadd14};\\
 b) computed second invariant of the strain tensor.}
 \end{center}
-
 
 We can also look at the principal stresses.
 The principal direction angle $\theta_p$ defines the principal
@@ -275,20 +273,17 @@ b) simplified setup of a single grain.}
 \end{center}
 
 
-
+\newpage
 \noindent \Literature:
 \begin{itemize}
-\item Compaction creep of sands due to time-dependent grain failure: Effects of chemical environment,
-      applied stress, and grain size. Brzesowsky \etal{} (2014) \cite{brhb14}
-\item Failure behavior of single sand grains: Theory versus experiment. Brzesowsky \etal{} (2011) \cite{brsp11}
-\item Time-independent compaction behavior of quartz sands. Brzesowsky \etal{} (2014) \cite{brsp14}
-\item Determination of the tensile strength of rock by a compression test of an 
-      irregular test piece. Hiramatsu \etal{} (1966) \cite{hiok66}
-\item Micromechanics of sand grain failure and sand compaction. Brzesowsky (1995) \cite{brze95}
-\item Contact fatigue in silica sand—Observations and modeling. Wang \& Michalowski (2015) \cite{wami15}
-\item Tensile stress concentration and compressive failure in cemented granular material. 
-      Wong \& Wu (1995)\cite{wowu95}
-\item Micromechanics of pressure-induced grain crushing in porous rocks. Zhang \etal{} (1990) \cite{zhwd90}
+\item \fullcite{brhb14}
+\item \fullcite{brsp11}
+\item \fullcite{brsp14}
+\item \fullcite{hiok66}
+\item \fullcite{brze95}
+\item \fullcite{wami15}
+\item \fullcite{wowu95}
+\item \fullcite{zhwd90}
 \end{itemize}
 
 

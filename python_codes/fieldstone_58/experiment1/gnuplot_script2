@@ -1,4 +1,5 @@
-set term pdf enhanced font "Times,11pt"
+#
+set term pdf enhanced font "Times,13pt"
 set grid
 
 P=1
@@ -14,6 +15,7 @@ plot[-1:1][0:15]\
  '71/yaxis.ascii' u 1:4 lt 3 ps .25 t 'nlayers=71',\
  '91/yaxis.ascii' u 1:4 lt 4 ps .25 t 'nlayers=91',\
 '111/yaxis.ascii' u 1:4 lt 5 ps .25 t 'nlayers=111',\
+'131/yaxis.ascii' u 1:4 lt 6 ps .25 t 'nlayers=131',\
 f(x) lt -1 lw 0.5 t 'analytical'
 
 set ylabel 'p on x-axis'
@@ -25,6 +27,7 @@ plot[-1:1][]\
  '71/xaxis.ascii' u 1:4 lt 3 ps .25 t 'nlayers=71',\
  '91/xaxis.ascii' u 1:4 lt 4 ps .25 t 'nlayers=91',\
 '111/xaxis.ascii' u 1:4 lt 5 ps .25 t 'nlayers=111',\
+'131/xaxis.ascii' u 1:4 lt 6 ps .25 t 'nlayers=131',\
 l(x) lt -1 lw 0.5 t 'analytical'
 
 set ylabel 'u on x-axis'
@@ -35,7 +38,8 @@ plot[-1:1]\
  '51/xaxis.ascii' u 1:2 ps .25 t 'nlayers=51',\
  '71/xaxis.ascii' u 1:2 ps .25 t 'nlayers=71',\
  '91/xaxis.ascii' u 1:2 ps .25 t 'nlayers=91',\
-'111/xaxis.ascii' u 1:2 ps .25 t 'nlayers=111'
+'111/xaxis.ascii' u 1:2 ps .25 t 'nlayers=111',\
+'131/xaxis.ascii' u 1:2 ps .25 t 'nlayers=131'
 
 set ylabel 'v on y-axis'
 set key right
@@ -45,7 +49,8 @@ plot[-1:1]\
  '51/yaxis.ascii' u 1:3 ps .25 t 'nlayers=51',\
  '71/yaxis.ascii' u 1:3 ps .25 t 'nlayers=71',\
  '91/yaxis.ascii' u 1:3 ps .25 t 'nlayers=91',\
-'111/yaxis.ascii' u 1:3 ps .25 t 'nlayers=111'
+'111/yaxis.ascii' u 1:3 ps .25 t 'nlayers=111',\
+'131/yaxis.ascii' u 1:3 ps .25 t 'nlayers=131'
 
 set output 'sigmaxx_xaxis.pdf'
 set ylabel '{/Symbol s}_{xx} on x-axis'
@@ -55,6 +60,7 @@ plot[-1:1][]\
  '71/xaxis.ascii' u 1:8 ps .25 t 'nlayers=71',\
  '91/xaxis.ascii' u 1:8 ps .25 t 'nlayers=91',\
 '111/xaxis.ascii' u 1:8 ps .25 t 'nlayers=111',\
+'131/xaxis.ascii' u 1:8 ps .25 t 'nlayers=131',\
 2*P/pi/2.*((4-4*x**2)/(4+4*x**2))**2 lt -1 lw 0.5  t 'analytical'
 
 set key bottom
@@ -66,6 +72,7 @@ plot[-1:1][]\
  '71/xaxis.ascii' u 1:9 ps .25 t 'nlayers=71',\
  '91/xaxis.ascii' u 1:9 ps .25 t 'nlayers=91',\
 '111/xaxis.ascii' u 1:9 ps .25 t 'nlayers=111',\
+'131/xaxis.ascii' u 1:9 ps .25 t 'nlayers=131',\
 -2*P/pi/2*( 4*2**4/(4+4*x**2)**2 -1 ) lt -1 lw 0.5 t 'analytical'
 
 set output 'sigmaxy_xaxis.pdf'
@@ -76,6 +83,7 @@ plot[-1:1][-0.01:0.01]\
  '71/xaxis.ascii' u 1:10 ps .25 t 'nlayers=71',\
  '91/xaxis.ascii' u 1:10 ps .25 t 'nlayers=91',\
 '111/xaxis.ascii' u 1:10 ps .25 t 'nlayers=111',\
+'131/xaxis.ascii' u 1:10 ps .25 t 'nlayers=131',\
 0 lt -1 lw 0.5 t 'analytical'
 
 set output 'sigmaxx_yaxis.pdf'
@@ -86,6 +94,7 @@ plot[-1:1][-5:5]\
  '71/yaxis.ascii' u 1:8 ps .25 t 'nlayers=71',\
  '91/yaxis.ascii' u 1:8 ps .25 t 'nlayers=91',\
 '111/yaxis.ascii' u 1:8 ps .25 t 'nlayers=111',\
+'131/yaxis.ascii' u 1:8 ps .25 t 'nlayers=131',\
 2*P/pi/2. lt -1 lw 0.5 t 'analytical'
 
 set output 'sigmayy_yaxis.pdf'
@@ -96,6 +105,7 @@ plot[-1:1][-50:]\
  '71/yaxis.ascii' u 1:9 ps .25 t 'nlayers=71',\
  '91/yaxis.ascii' u 1:9 ps .25 t 'nlayers=91',\
 '111/yaxis.ascii' u 1:9 ps .25 t 'nlayers=111',\
+'131/yaxis.ascii' u 1:9 ps .25 t 'nlayers=131',\
 -2*P/pi*(1./(R-x)+1./(R+x)-1./2.) lt -1 lw 0.5 t 'analytical'
 
 set output 'sigmaxy_yaxis.pdf'
@@ -106,16 +116,15 @@ plot[-1:1][-10:10]\
  '71/yaxis.ascii' u 1:10 ps .25 t 'nlayers=71',\
  '91/yaxis.ascii' u 1:10 ps .25 t 'nlayers=91',\
 '111/yaxis.ascii' u 1:10 ps .25 t 'nlayers=111',\
+'131/yaxis.ascii' u 1:10 ps .25 t 'nlayers=131',\
 0 lt -1 lw 0.5 t 'analytical'
 
-
-
-
+##########################################################
 
 set ylabel 'v_{rms}'
 set xlabel 'h'
 set output 'vrms.pdf'
 set log x
-plot 'vrms.ascii' u (1./$1):9 w lp pt 7 ps .4  notitle
+plot[:0.11] 'vrms.ascii' u (1./$1):9 w lp pt 7 ps .4  notitle
 
 
