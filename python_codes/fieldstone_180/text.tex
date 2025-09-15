@@ -7,8 +7,6 @@
 
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_180/text.tex}} \end{flushright}
 
-%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/template_keywords.key}
-
 \par\noindent\rule{\textwidth}{0.4pt}
 
 \begin{center}
@@ -28,69 +26,10 @@ Last revision: September 5th, 2025.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Let us consider the following 1d mesh composed of four nodes:
-\begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_180/gerya_stencil}\\
-{\captionfont I need to redo the figure and replace $\Delta x_i$ by $h_i$.}
-\end{center}
-We denote by A,B,C the positions of the middle of each cell.
-We assume for simplicity that we prescribe temperature 
-boundary conditions on nodes 1 and 4.
 We wish to solve the steady state diffusion equation $\vec\nabla \cdot (-k \vec\nabla T)=0$
 in the case where the heat conductivity is not necessarily constant in space.
+The theory behind the special stencil used here is presented in Section~\ref{MMM-}.
 
-Following Section 10.2 of \textcite{gery19book}, we follow the
-proposer conservative Finite Difference formulation of the flux terms
-and we write the heat flux at nodes 2 and 3 as follows:
-\begin{eqnarray}
-\left.\frac{dq}{dx}\right|_2 &=& \frac{q_B-q_A}{(h_1+h_2)/2} \nn\\
-\left.\frac{dq}{dx}\right|_3 &=& \frac{q_C-q_B}{(h_2+h_3)/2} \nn
-\end{eqnarray}
-
-We choose\footnote{Note that in the book Gerya presents 
-another way of averaging the conductivity, i.e. a harmonic averaging.} 
-\[
-k_A = \frac{k_1+k_2}{2}
-\qquad
-k_B = \frac{k_2+k_3}{2}
-\qquad
-k_C = \frac{k_3+k_4}{2}
-\]
-so that we have for instance
-\begin{eqnarray}
-\left.\frac{dq}{dx}\right|_3
-&=& \frac{q_C-q_B}{(h_2+h_3)/2} \nn\\
-&=& \frac{-k_C \frac{T_4-T_3}{h_3} + k_B \frac{T_3-T_2}{h_2}  }{(h_2+h_3)/2} \nn\\
-&=& \frac{- \frac{k_3+k_4}{2} \frac{T_4-T_3}{h_3} + \frac{k_2+k_3}{2} \frac{T_3-T_2}{h_2}  }{(h_2+h_3)/2} \nn\\
-&=& -\frac{k_3+k_4}{h_3(h_2+h_3)} (T_4-T_3)+  \frac{k_2+k_3}{h_2(h_2+h_3)} (T_3-T_2)\nn
-\end{eqnarray}
-and finally
-\[
-\left.\frac{dq}{dx}\right|_3
-=
--\frac{k_2+k_3}{h_2(h_2+h_3)} T_2
-+ \left(
-\frac{k_3+k_4}{h_3(h_2+h_3)} + \frac{k_2+k_3}{h_2(h_2+h_3)} 
-\right) T_3
--\frac{k_3+k_4}{h_3(h_2+h_3)} T_4
-\]
-This leads in the end to the following stencil for the inside nodes:
-\[
-\frac{dq}{dx}|_i
-= - \frac{k_{i-1}+k_i}{h_{i-1} (h_{i-1}+h_i)} T_{i-1}
-+\left(
-\frac{k_{i}+k_{i+1}}{h_{i} (h_{i-1}+h_i)} +
-\frac{k_{i-1}+k_i}{h_{i-1} (h_{i-1}+h_i)}
-\right) T_i
- - \frac{k_{i}+k_{i+1}}{h_{i} (h_{i-1}+h_i)} T_{i+1}
-\]
-Note that stencil does not lead to symmetric matrix, even for a diffusion equation!
-
-Of course it is trivial to verify that if the node spacing is constant and the 
-heat conductivity is also constant then the stencil above simply becomes 
-\[
-\frac{dq}{dx}|_i = -k \frac{T_{i-1}-2T_i+T_{i+1}}{h^2}
-\] 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{A simple example}

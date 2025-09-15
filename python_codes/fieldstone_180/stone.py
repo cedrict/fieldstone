@@ -6,7 +6,7 @@ from scipy.sparse import csr_matrix,lil_matrix
 
 nnx=5                         # number of nodes
 x=np.array([0,0.3,0.4,0.9,1]) # coordinates of nodes
-hcond=np.ones(nnx)                # nodal heat conductivity
+hcond=np.ones(nnx)            # nodal heat conductivity
 
 ###############################################################################
 # compute spacing between nodes 
