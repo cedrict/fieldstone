@@ -3,15 +3,12 @@
 \includegraphics[height=1.25cm]{images/pictograms/elasticity}
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
 \includegraphics[height=1.25cm]{images/pictograms/triangle}
-\includegraphics[height=1.25cm]{images/pictograms/under_construction}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/paraview}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_179/text.tex}} \end{flushright}
-
-%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/template_keywords.key}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -22,7 +19,7 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: August 20th, 2025.
+Last revision: September 13th, 2025.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -61,10 +58,11 @@ c_1 = -\frac{\cos((\alpha+1)\omega)}{\cos((\alpha-1)\omega)}
 c_2 = 2 \frac{\lambda + 2\mu}{\lambda+\mu}
 \]
 
-The displacement field are solution of the momentum equation 
+The displacement field is solution of the momentum equation 
 with no body force ($\vec{f} = \vec{0}$) and $u_D = (u_r , u_\theta )$ on 
 $\Gamma = \Gamma_D$. Numerical
-experiments are carried out with Young’s modulus E = 100000 and Poisson’s coefficient $\nu$ = 0.3. The magnitude of
+experiments are carried out with Young's modulus $E = 100000$ 
+and Poisson’s coefficient $\nu$ = 0.3. The magnitude of
 the gradient $|\vec\nabla \vec{u}|$ of the exact solution 
 has a singularity at the re-entrant corner $(0,0)$. This singularity,
 despite being very local, is a significant source of error.
@@ -81,7 +79,7 @@ altogether and allows to build elemental matrices and rhs directly.
 This is coined \lstinline{method=1}.
 Note that in both cases the imposition of boundary conditions on the 
 elemental matrices and their assembly is similar\footnote{Note 
-that faster assembly methods could be explored, as in \stone~176.} 
+that a faster assembly methods s here used as explained in \stone~176.} 
 However because of how the elemental matrix is build in the second case
 (4 blocks of size $3\times 3$: $\K_{xx}$, $\K_{yy}$, $\K_{xy}=\K_{yx}^T$)
 it makes more sense to organise the global solution vector 
@@ -94,30 +92,27 @@ the vectors $\vec{u}=(u_1,u_2,...u_N)$ and $\vec{v}=(v_1,v_2,...v_N)$.
 For example:
 \begin{lstlisting}
 if method==0:
-   for i in range(0,NV):
+   for i in range(0,nn_V):
        if on_boundary[i]: 
-          ui,vi=displ_th(x[i],y[i])
-          bc_fix[i*ndof+0] = True ; bc_val[i*ndof+0] = ui
-          bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = vi
+          ui,vi=displ_th(x_V[i],y_V[i])
+          bc_fix_V[i*ndof_V+0] = True ; bc_val_V[i*ndof_V+0] = ui
+          bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = vi
+
 else:
-   for i in range(0,NV):
+   for i in range(0,nn_V):
        if on_boundary[i]: 
-          ui,vi=displ_th(x[i],y[i])
-          bc_fix[i   ]=True ; bc_val[i   ]=ui
-          bc_fix[i+NV]=True ; bc_val[i+NV]=vi
+          ui,vi=displ_th(x_V[i],y_V[i])
+          bc_fix_V[i     ]=True ; bc_val_V[i     ]=ui
+          bc_fix_V[i+nn_V]=True ; bc_val_V[i+nn_V]=vi
 \end{lstlisting}
-
-
 
 Remark: The author resorts to penalization to impose Dirichlet 
 boundary conditions but details how to carry out Neumann boundary conditions.
 
 Meshing is carried out as explained in \stone~131 and leads to such a mesh:
 \begin{center}
-\includegraphics[width=6.6cm]{python_codes/fieldstone_179/RESULTS/mesh}
+\includegraphics[width=8cm]{python_codes/fieldstone_179/RESULTS/mesh}
 \end{center}
-
-
 
 \newpage
 %------------------------------------------------
@@ -144,13 +139,11 @@ Right: solve time.}
 \end{center}
 
 Because the build time also encompasses the boundary conditions and 
-assembly, I also only measure the time need to build the elemental 
-matrices:
+assembly, I also only measure the time need to build the elemental matrices:
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_179/RESULTS/Ael.pdf}
+\includegraphics[width=10cm]{python_codes/fieldstone_179/RESULTS/Ael.pdf}
 \end{center}
 In this case the conclusion is clear: Koko's method is about 3 times faster.
-
 
 Because of the structure of $\vec{\cal U}$ the assembled FEM matrices 
 non-zero structure look very different:
@@ -165,9 +158,12 @@ in both cases.
 Finally we can look at the discretisation error (as a function of 
 the total number of dofs for commodity):
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_179/RESULTS/erru.pdf}
+\includegraphics[width=10cm]{python_codes/fieldstone_179/RESULTS/erru.pdf}
 \end{center}
 
+\includegraphics[width=3cm]{images/conclusion} 
+This is an interesting avenue, as long as material properties can 
+be assumed to be constant inside each element.
 
 
 

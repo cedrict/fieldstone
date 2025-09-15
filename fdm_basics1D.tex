@@ -376,6 +376,18 @@ f_{i}''=\frac{f_{i+1}-2f_i+f_{i-1}}{h^2} + {\cal O}(h^2)
 Note that this formula requires one value left and one value right of the point 
 under consideration. 
 
+\noindent Can we do better than ${\cal O}(h^2)$? The answer is yes again:
+\begin{equation}
+f_i'' = \frac{-f_{i+2} + 16 f_{i+1} -30 f_i + 16 f_{i-1} - f_{i-2} }{12 h^2} + {\cal O}(h^4)
+\label{eq:fpp2}
+\end{equation}
+
+Note that in some cases the fully forward or backward expressions 
+need to be used on the boundary if the value of the function is not prescribed.
+
+%------------------------------------------------------------------------
+\subsection*{Second-order derivatives - spatially varying coeffs \& mesh cell size}
+
 Another way to arrive at the same expression is to write the expansion at $x_0 \pm h/2$, 
 i.e. at the (convenient, yet nonexistent) half points $i\pm 1/2$:
 
@@ -415,21 +427,90 @@ where $k$ is a function of space, should be formed as follows
 \label{eq:fdm_discterms}
 \end{equation}
 where $k_{i\pm 1/2}$ is evaluated between the points to maintain the second order accuracy.
+One typically use an arithmetic averaging but harmonic averaging too \cite{gery19book}.
 
 \begin{remark}
 If the heat conductivity $k$ shows strong jumps from one grid point to another that are not aligned with
 the grid-nodes, most second-order methods will show first order accuracy at best.
 \end{remark}
 
+Let us now consider the generic case where nodes are not equidistant and mesh spacing can also vary:
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_180/gerya_stencil}\\
+{\captionfont I need to redo the figure and replace $\Delta x_i$ by $h_i$.}
+\end{center}
+We denote by A,B,C the positions of the middle of each cell.
 
-\noindent Can we do better than ${\cal O}(h^2)$? The answer is yes again:
-\begin{equation}
-f_i'' = \frac{-f_{i+2} + 16 f_{i+1} -30 f_i + 16 f_{i-1} - f_{i-2} }{12 h^2} + {\cal O}(h^4)
-\label{eq:fpp2}
-\end{equation}
+Following Section 10.2 of \textcite{gery19book}, we follow the
+proposed {\it conservative} Finite Difference formulation of the flux terms
+and we write the heat flux at nodes 2 and 3 as follows:
+\begin{eqnarray}
+\left.\frac{dq}{dx}\right|_2 &=& \frac{q_B-q_A}{(h_1+h_2)/2} \nn\\
+\left.\frac{dq}{dx}\right|_3 &=& \frac{q_C-q_B}{(h_2+h_3)/2} \nn
+\end{eqnarray}
 
-Note that in some cases the fully forward or backward expressions 
-need to be used on the boundary if the value of the function is not prescribed.
+We choose\footnote{Note that in the book Gerya presents 
+another way of averaging the conductivity, i.e. a harmonic averaging.} 
+\[
+k_A = \frac{k_1+k_2}{2}
+\qquad
+k_B = \frac{k_2+k_3}{2}
+\qquad
+k_C = \frac{k_3+k_4}{2}
+\]
+so that we have for instance
+\begin{eqnarray}
+\left.\frac{dq}{dx}\right|_3
+&=& \frac{q_C-q_B}{(h_2+h_3)/2} \nn\\
+&=& \frac{-k_C \frac{T_4-T_3}{h_3} + k_B \frac{T_3-T_2}{h_2}  }{(h_2+h_3)/2} \nn\\
+&=& \frac{- \frac{k_3+k_4}{2} \frac{T_4-T_3}{h_3} + \frac{k_2+k_3}{2} \frac{T_3-T_2}{h_2}  }{(h_2+h_3)/2} \nn\\
+&=& -\frac{k_3+k_4}{h_3(h_2+h_3)} (T_4-T_3)+  \frac{k_2+k_3}{h_2(h_2+h_3)} (T_3-T_2)\nn
+\end{eqnarray}
+and finally
+\[
+\left.\frac{dq}{dx}\right|_3
+=
+-\frac{k_2+k_3}{h_2(h_2+h_3)} T_2
++ \left(
+\frac{k_3+k_4}{h_3(h_2+h_3)} + \frac{k_2+k_3}{h_2(h_2+h_3)} 
+\right) T_3
+-\frac{k_3+k_4}{h_3(h_2+h_3)} T_4
+\]
+This leads in the end to the following stencil for the inside nodes:
+\[
+\frac{dq}{dx}|_i
+= - \frac{k_{i-1}+k_i}{h_{i-1} (h_{i-1}+h_i)} T_{i-1}
++\left(
+\frac{k_{i}+k_{i+1}}{h_{i} (h_{i-1}+h_i)} +
+\frac{k_{i-1}+k_i}{h_{i-1} (h_{i-1}+h_i)}
+\right) T_i
+ - \frac{k_{i}+k_{i+1}}{h_{i} (h_{i-1}+h_i)} T_{i+1}
+\]
+Note that stencil does not lead to symmetric matrix, even for a diffusion equation!
+
+Of course it is trivial to verify that if the node spacing is constant and the 
+heat conductivity is also constant then the stencil above simply becomes 
+\[
+\frac{dq}{dx}|_i = -k \frac{T_{i-1}-2T_i+T_{i+1}}{h^2}
+\] 
+Likewise, we can derive the stencil for a varying heat conductivity
+but constant mesh spacing:
+\[
+\frac{dq}{dx}|_i
+= 
+- \frac{k_{i-1}+k_i}{2h^2} T_{i-1}
++\left(
+\frac{k_{i}+k_{i+1}}{2h^2} + \frac{k_{i-1}+k_i}{2h^2}
+\right) T_i
+ - \frac{k_{i}+k_{i+1}}{2h^2} T_{i+1}
+=
+- \frac{k_{i-1}+k_i}{2h^2} T_{i-1}
++\frac{k_{i-1}+ 2k_{i}+k_{i+1}}{2h^2} T_i
+- \frac{k_{i}+k_{i+1}}{2h^2} T_{i+1}
+\]
+which is identical to Eq.~\eqref{eq:fdm_discterms}.
+
+
 
 
 

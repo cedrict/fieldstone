@@ -97,36 +97,42 @@ urlcolor=black}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter*{Naming convention for every stone and elefant }
 
-These have evolved in the first two years so that the early stones may not 
+These have evolved since the beginning so that the early stones may not 
 follow these conventions (yet).
 
-\begin{tabular}{p{2.5cm}p{14cm}}
+\begin{tabular}{p{3.5cm}p{12cm}}
 \hline
-Variable & meaning \\
+Variable (scalar) & meaning \\
 \hline
 \hline
-{\tt mV}    & number $m_\upnu$ of velocity nodes in the element \\
-{\tt mP}    & number $m_p$ of pressure nodes in the element \\
-{\tt mT}    & number $m_T$ of temperature nodes in the element \\
-{\tt ndofV} & number of velocity degrees of freedom per velocity node \\
-{\tt ndofP} & number of pressure degrees of freedom per pressure node \\
-{\tt NV}    & total number of velocity nodes \\
-{\tt NfemV} & total number of velocity degrees of freedom \\
-{\tt NfemP} & total number of pressure degrees of freedom \\
-{\tt Nfem}  & total number of degrees of freedom \\
+{\tt m\_V}    & number $m_\upnu$ of velocity nodes in the element \\
+{\tt m\_P}     & number $m_p$ of pressure nodes in the element \\
+{\tt m\_T}     & number $m_T$ of temperature nodes in the element \\
+{\tt ndof\_V}  & number of velocity degrees of freedom per velocity node \\
+{\tt ndof\_P}  & number of pressure degrees of freedom per pressure node \\
+{\tt nn\_V}    & total number of velocity nodes \\
+{\tt nn\_P}    & total number of pressure nodes \\
+{\tt nn\_T}    & total number of temperature nodes \\
+{\tt Nfem\_V}  & total number of velocity degrees of freedom \\
+{\tt Nfem\_P}  & total number of pressure degrees of freedom \\
+{\tt Nfem\_T}  & total number of temperature degrees of freedom \\
+{\tt Nfem}     & total number of degrees of freedom \\
 {\tt nelx,nely,nelz} & number of elements in each direction \\
-{\tt nel}   & total number of elements \\
-{\tt nqel}  & number of quadrature points per element \\
+{\tt nel}      & total number of elements \\
+{\tt nqel}     & number of quadrature points per element \\
 {\tt xq,yq,zq} & coordinates of a quadrature point \\
 {\tt uq,vq,wq} & velocity at a quadrature point \\
-{\tt pq}   & pressure at a quadrature point \\
-{\tt etaq} & viscosity value at a quadrature point \\
-{\tt rhoq} & density value at a quadrature point \\
-{\tt dt}   & time step $\delta t$\\ 
+{\tt hx,hy,hz} & size of the element (when applicable)\\ 
+{\tt pq}       & pressure at a quadrature point \\
+{\tt etaq}     & viscosity value at a quadrature point \\
+{\tt rhoq}     & density value at a quadrature point \\
+{\tt dt}       & time step $\delta t$\\ 
 {\tt gx,gy,gz} & components of the gravity vector \\
-{\tt jcob} & determinant of the Jacobian matrix \\
+{\tt jcob}     & determinant of the Jacobian matrix \\
 \hline
 \end{tabular}
+
+
 
 \vspace{.5cm}
 
@@ -135,37 +141,36 @@ Variable & meaning \\
 Array & meaning \\
 \hline
 \hline
-{\tt iconV} & connectivity array for velocity nodes \\
-{\tt iconP} & connectivity array for pressure nodes \\
+{\tt x\_V,y\_V,z\_V} & coordinates of the {\tt NV} velocity nodes \\
+{\tt x\_P,y\_P,z\_P} & coordinates of the {\tt NP} pressure nodes \\
+{\tt u,v,w} & velocity components \\ 
+{\tt p} & pressure \\ 
+{\tt q} & pressure projected onto the velocity nodes\\
+{\tt icon\_V} & connectivity array for velocity nodes \\
+{\tt icon\_P} & connectivity array for pressure nodes \\
+{\tt jcb} & 2x2 or 3x3 Jacobian matrix \\
+{\tt jcbi} & inverse of the Jacobian matrix \\
+{\tt A\_fem}  & fully assembled FE matrix \\
+{\tt b\_fem} & right hand side vector \\
+{\tt bc\_fix} & boolean array. Is true if a boundary condition is specify at a dof \\
+{\tt bc\_val} & value of the boundary condition at a given dof \\
+{\tt exx,eyy,exy,exz,...} & components of the strain rate tensor (elemental or nodal array)\\
+{\tt tauxx,tauyy,tauxy,...} & components of the deviatoric stress tensor (elemental or nodal array)\\
+{\tt sol} & solution vector returned by the solver\\
+{\tt N\_V} & velocity basis functions values at a quadrature point \\
+{\tt dNdr\_V} &velocity basis functions derivatives values at a quadrature point \\
+{\tt dNds\_V} &velocity basis functions derivatives values at a quadrature point \\
+{\tt dNdt\_V} &velocity basis functions derivatives values at a quadrature point \\
+{\tt N\_P} & pressure basis functions values at a quadrature point \\
+\hline
 {\tt qcoords\_r} & contains the $r$ coordinates of the {\tt nel} quadrature points \\
 {\tt qcoords\_s} & contains the $s$ coordinates of the {\tt nel} quadrature points \\
 {\tt qcoords\_t} & contains the $t$ coordinates of the {\tt nel} quadrature points \\
 {\tt qweights} & contains the weights associated to the {\tt nel} quadrature points \\
-{\tt xV,yV,zV} & coordinates of the {\tt NV} velocity nodes \\
-{\tt xP,yP,zP} & coordinates of the {\tt NP} pressure nodes \\
-{\tt bc\_fix} & boolean array of size {\tt NfemV}. Is true if a boundary condition
-                is specify at a dof \\
-{\tt bc\_val} & value of the boundary condition at a given dof \\
-{\tt u,v,w} & velocity components \\ 
-{\tt p} & pressure \\ 
-{\tt q} & pressure projected onto the velocity nodes\\
-{\tt NNNV} & velocity basis functions values at a quadrature point \\
-{\tt dNNNVdr} & velocity basis functions derivatives values at a quadrature point \\
-{\tt dNNNVds} & velocity basis functions derivatives values at a quadrature point \\
-{\tt dNNNVdt} & velocity basis functions derivatives values at a quadrature point \\
-{\tt NNNP} & pressure basis functions values at a quadrature point \\
 {\tt b\_mat} & elemental gradient matrix ${\bm B}$ \\
 {\tt K\_el}  & elemental stiffness matrix $\K_{el}$ \\
 {\tt G\_el}  & elemental gradient matrix $\G_{el}$ \\
 {\tt N\_mat}  & elemental ${\bm N}$ matrix \\
-{\tt a\_mat}  & fully assembled Stokes matrix \\
-{\tt A\_sparse} & Stokes matrix in {\tt lil\_matrix} format \\
-{\tt exx,eyy,exy,...} & components of the strain rate tensor (elemental or nodal array)\\
-{\tt tauxx,tauyy,tauxy,...} & components of the deviatoric stress tensor (elemental or nodal array)\\
-{\tt jcb} & 2x2 or 3x3 Jacobian matrix \\
-{\tt jcbi} & inverse of the Jacobian matrix \\
-{\tt rhs} & right hand side vector \\
-{\tt sol} & solution vector returned by the solver\\
 \hline
 \end{tabular}
 
@@ -175,16 +180,16 @@ Array & meaning \\
 \hline
 Function & meaning \\
 \hline
-{\tt NNV}    & function which returns the value of all velocity basis functions 
-               ${\cal N}_i^\upnu$ at a given location\\
-{\tt dNNVdr} & function which returns the value of all velocity basis functions 
-               ${\cal N}_i^\upnu$ derivative with respect to $r$ at a given location\\
-{\tt dNNVds} & function which returns the value of all velocity basis functions 
-               ${\cal N}_i^\upnu$ derivative with respect to $s$ at a given location\\
-{\tt dNNVdt} & function which returns the value of all velocity basis functions 
-               ${\cal N}_i^\upnu$ derivative with respect to $t$ at a given location\\
-{\tt NNP}    & function which returns the value of all pressure basis functions 
-               ${\cal N}_i^P$ at a given location\\
+{\tt basis\_functions\_V(r,s,t)}    & 
+function which returns the value of all velocity basis functions ${\cal N}_i^\upnu$ at a given location\\
+{\tt basis\_functions\_V\_dr(r,s,t)} & 
+function which returns the value of all velocity basis functions ${\cal N}_i^\upnu$ derivative with respect to $r$ at a given location\\
+{\tt basis\_functions\_V\_ds(r,s,t)} &
+function which returns the value of all velocity basis functions ${\cal N}_i^\upnu$ derivative with respect to $s$ at a given location\\
+{\tt basis\_functions\_V\_dt(r,s,t)} &
+function which returns the value of all velocity basis functions ${\cal N}_i^\upnu$ derivative with respect to $t$ at a given location\\
+{\tt basis\_functions\_P(r,s,t)}    & 
+function which returns the value of all pressure basis functions ${\cal N}_i^P$ at a given location\\
 {\tt bx} & \\
 {\tt by} & \\
 {\tt bz} & \\
@@ -193,7 +198,7 @@ Function & meaning \\
 
 
 
-\chapter*{Stone 00: mesh generation in 1d, 2d, 3d \label{f00}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 00
+\chapter*{Stone 0: mesh generation in 1d, 2d, 3d \label{f00}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 00
 \input{python_codes/fieldstone_00/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{D\&H manufactured solution ($Q_1\times P_0$+penalty)\label{f01}} %%%%%%%%%%%%%%%%%%%%%%%%% 01
@@ -721,16 +726,16 @@ Function & meaning \\
 \chapter{Dilation in incompressible FEM codes \label{f175}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 175
 \input{python_codes/fieldstone_175/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{A new way to assemble FEM matrices ($Q_1\times P_0$+penalty, 2d) \label{f176}} %%%%%%%%%%%%%%%%%%%%% 176
+\chapter{A faster way to assemble FEM matrices ($Q_1\times P_0$+penalty, 2d) \label{f176}} %%%%%%%%%%%%%%%%%% 176
 \input{python_codes/fieldstone_176/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{A 'new' way to build FEM matrices for the energy equation ($Q_1$, 2d) \label{f177}} %%%%%%%%%%%%%%%% 177
+\chapter{An other way to build FEM matrices for the energy equation ($Q_1$, 2d) \label{f177}} %%%%%%%%%%%%%%% 177
 \input{python_codes/fieldstone_177/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Modelling instantaneous crust \& lithosphere deformation in continental extension \label{f178}} %%%% 178
 \input{python_codes/fieldstone_178/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Elastic deformation in 2d L-shaped domain ($P_1$) \label{f179}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 179
+\chapter{Elastic deformation in an L-shaped domain ($P_1$, 2d) \label{f179}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 179
 \input{python_codes/fieldstone_179/text} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{1d diffusion equation with FDM \& non equidistant nodes\label{f180}} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 180
