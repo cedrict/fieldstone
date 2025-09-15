@@ -4,35 +4,35 @@ import numpy as np
 # Q1 basis functions derivatives
 ###############################################################################
 
-def dNdr(r,s):
-       dNdr_0=-0.25*(1.-s)
-       dNdr_1=+0.25*(1.-s)
-       dNdr_2=+0.25*(1.+s)
-       dNdr_3=-0.25*(1.+s)
-       return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3],dtype=np.float64)
+def basis_functions_dr(r,s):
+    dNdr_0=-0.25*(1.-s)
+    dNdr_1=+0.25*(1.-s)
+    dNdr_2=+0.25*(1.+s)
+    dNdr_3=-0.25*(1.+s)
+    return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3],dtype=np.float64)
 
-def dNds(r,s):
-       dNds_0=-0.25*(1.-r)
-       dNds_1=-0.25*(1.+r)
-       dNds_2=+0.25*(1.+r)
-       dNds_3=+0.25*(1.-r)
-       return np.array([dNds_0,dNds_1,dNds_2,dNds_3],dtype=np.float64)
+def basis_functions_ds(r,s):
+    dNds_0=-0.25*(1.-r)
+    dNds_1=-0.25*(1.+r)
+    dNds_2=+0.25*(1.+r)
+    dNds_3=+0.25*(1.-r)
+    return np.array([dNds_0,dNds_1,dNds_2,dNds_3],dtype=np.float64)
 
 ###############################################################################
 
 def mesher(Lx,Ly,ncellx,ncelly):
 
-    m=4 # number of vertices per element
-    nel=ncellx*ncelly*18
+    m=4                      # number of vertices per element
+    nel=ncellx*ncelly*18     # number of elements
     N1=(ncellx+1)*(ncelly+1) # corners of Q1 mesh 
     N2=ncellx*ncelly*11      # inside nodes
     N3=3*(ncellx+1)*ncelly   # vertical sides nodes
     N4=3*(ncelly+1)*ncellx   # horizontal sides nodes
-    N=N1+N2+N3+N4
+    N=N1+N2+N3+N4            # number of nodes
 
-    x = np.zeros(N,dtype=np.float64)  # x coordinates
-    y = np.zeros(N,dtype=np.float64)  # y coordinates
-    icon =np.zeros((m,nel),dtype=np.int32)
+    x=np.zeros(N,dtype=np.float64)  # x coordinates
+    y=np.zeros(N,dtype=np.float64)  # y coordinates
+    icon=np.zeros((m,nel),dtype=np.int32)
   
     hx=Lx/ncellx
     hy=Ly/ncelly
@@ -278,9 +278,11 @@ def mesher(Lx,Ly,ncellx,ncelly):
 
 ###############################################################################
 
-print("-----------------------------")
-print("--------- stone 174 ---------")
-print("-----------------------------")
+###############################################################################
+
+print("*******************************")
+print("********** stone 174 **********")
+print("*******************************")
 
 Lx=3 # domain size
 Ly=2
@@ -304,9 +306,7 @@ nqperdim=2
 qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
 qweights=[1.,1.]
 
-area  = np.zeros(nel,dtype=np.float64) 
-dNNdr = np.zeros(m,dtype=np.float64)    
-dNNds = np.zeros(m,dtype=np.float64)     
+area=np.zeros(nel,dtype=np.float64) 
 jcb=np.zeros((2,2),dtype=np.float64)
 
 for iel in range(0,nel):
@@ -315,20 +315,20 @@ for iel in range(0,nel):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
-            dNNdr[0:m]=dNdr(rq,sq)
-            dNNds[0:m]=dNds(rq,sq)
-            jcb[0,0]=np.dot(dNNdr[:],x[icon[:,iel]])
-            jcb[0,1]=np.dot(dNNdr[:],y[icon[:,iel]])
-            jcb[1,0]=np.dot(dNNds[:],x[icon[:,iel]])
-            jcb[1,1]=np.dot(dNNds[:],y[icon[:,iel]])
+            dNdr=basis_functions_dr(rq,sq)
+            dNds=basis_functions_ds(rq,sq)
+            jcb[0,0]=np.dot(dNdr[:],x[icon[:,iel]])
+            jcb[0,1]=np.dot(dNdr[:],y[icon[:,iel]])
+            jcb[1,0]=np.dot(dNds[:],x[icon[:,iel]])
+            jcb[1,1]=np.dot(dNds[:],y[icon[:,iel]])
             jcob=np.linalg.det(jcb)
             area[iel]+=jcob*weightq
         #end for
     #end for
 #end for
 
-print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
-print("     -> total area (meas) %.6f " %(area.sum()))
+print("area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
+print("total area (meas) %.6f " %(area.sum()))
 
 ###############################################################################
 # export to vtu
@@ -380,7 +380,8 @@ vtufile.write("</UnstructuredGrid>\n")
 vtufile.write("</VTKFile>\n")
 vtufile.close()
 
-print("-----------------------------")
-print("-----------------------------")
-print("-----------------------------")
+print("*******************************")
+print("********** the end ************")
+print("*******************************")
+
 ###############################################################################
