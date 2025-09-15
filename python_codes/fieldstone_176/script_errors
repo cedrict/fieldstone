@@ -28,6 +28,7 @@ for n in 96 104 112 120 128 144 ; do
         grep csr opla >> convert2csr.ascii
         grep split opla >> split.ascii
         grep press opla >> press.ascii
+        grep bc opla >> bc.ascii
     done
 done
 

@@ -88,8 +88,8 @@ Nfem=Nfem_V            # total number of degrees of freedom
 viscosity=1. # dynamic viscosity \eta
 penalty=1.e7 # penalty coefficient value
 
-new_assembly=False
-new_bc=False
+new_assembly=True
+new_bc=True
 
 debug=False
 

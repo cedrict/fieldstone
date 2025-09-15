@@ -9,9 +9,9 @@ set xlabel 'Nfem'
 set ylabel 'assembly time (s)'
 set output 'assembly.pdf'
 plot[][]\
-'old/assembly.ascii'       u 5:4 w lp lt 1 pt 1 t 'old, laptop',\
+'old/assembly.ascii'       u 5:4 w lp lt 1 pt 1 ps .6 t 'old, laptop',\
 'old_shrek/assembly.ascii' u 5:4 w lp lt 2 pt 2 t 'old, shrek',\
-'new/assembly.ascii'       u 5:4 w lp lt 3 pt 1 t 'new, laptop',\
+'new/assembly.ascii'       u 5:4 w lp lt 3 pt 1 ps .7 t 'new, laptop',\
 'new_shrek/assembly.ascii' u 5:4 w lp lt 4 pt 2 t 'new, shrek',\
 x*0.000023 lt -1 dt 2 lw 2,\
 x*0.00025 lt -1 dt 3 lw 2
@@ -21,16 +21,16 @@ set output 'bc.pdf'
 plot[][]\
 'old/bc.ascii'       u 5:4 w lp lt 1 pt 1 t 'old, laptop',\
 'new/bc.ascii'       u 5:4 w lp lt 3 pt 1 t 'new, laptop',\
-x*0.000009 lt -1 dt 2 lw 2,\
+x*0.00001 lt -1 dt 2 lw 2,\
 x*0.000003 lt -1 dt 3 lw 2
 
 
 set ylabel 'total build time (s)'
 set output 'build.pdf'
 plot[][]\
-'old/build.ascii'       u 8:4 w lp lt 1 pt 1 t 'old, laptop',\
+'old/build.ascii'       u 8:4 w lp lt 1 pt 1 ps .7 t 'old, laptop',\
 'old_shrek/build.ascii' u 8:4 w lp lt 2 pt 2 t 'old, shrek',\
-'new/build.ascii'       u 8:4 w lp lt 3 pt 1 t 'new, laptop',\
+'new/build.ascii'       u 8:4 w lp lt 3 pt 1 ps .7 t 'new, laptop',\
 'new_shrek/build.ascii' u 8:4 w lp lt 4 pt 2 t 'new, shrek',\
 x*0.00029 lt -1 dt 2 lw 2,\
 x*0.00052 lt -1 dt 3 lw 2
@@ -50,13 +50,13 @@ unset log xy
 
 set ylabel 'convert to csr time (s)'
 set output 'convert2csr.pdf'
-plot[][:1]\
-'old/convert2csr.ascii'       u 9:5 w lp lt 1 pt 1 t 'old, laptop',\
+plot[:80000][:1]\
+'old/convert2csr.ascii'       u 9:5 w lp lt 1 pt 1 ps .6 t 'old, laptop',\
 'old_shrek/convert2csr.ascii' u 9:5 w lp lt 2 pt 2 t 'old, shrek',\
 'new/convert2csr.ascii'       u 9:5 w lp lt 3 pt 1 t 'new, laptop',\
 'new_shrek/convert2csr.ascii' u 9:5 w lp lt 4 pt 2 t 'new, shrek',\
-x*0.00000075 lt -1 dt 2 lw 2,\
-x*0.000013 lt -1 dt 3 lw 2
+x*0.00000075 lt -1 dt 2 lw 1,\
+x*0.000013 lt -1 dt 3 lw 1
 
 set ylabel 'total build+solve time (s)'
 set output 'build_solve.pdf'
@@ -83,7 +83,9 @@ plot[][]\
 'new/split.ascii'       u 9:5 w p pt 1 t 'new, laptop',\
 'new_shrek/split.ascii' u 9:5 w p pt 2 t 'new, shrek',\
 
+############################################################
 
+set format y "10^{%L}"
 
 set xlabel 'h'
 set ylabel '|u-u^h|_2'
