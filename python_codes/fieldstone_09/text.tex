@@ -3,7 +3,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_09/keywords.ascii}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_09/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -20,14 +20,13 @@
 
 The benchmark is described fully in Section~\ref{MMM-ss:anconv} in which 
 an analytical solution to the isoviscous incompressible Stokes equations 
-is derived in an annulus geometry.
-The velocity and pressure fields are as follows:
+is derived in an annulus geometry. The velocity and pressure fields are as follows:
 
 \begin{eqnarray}
-v_r(r,\theta)     &=&  g(r) k \sin(k\theta), \\
-v_\theta(r,\theta)&=&  f(r) \cos(k \theta), \\ 
-p(r,\theta)       &=&  k h(r) \sin(k \theta), \\
-\rho (r,\theta)   &=& \aleph(r) k \sin (k \theta), 
+v_r(r,\theta)      &=&  g(r) k \sin(k\theta), \\
+v_\theta(r,\theta) &=&  f(r) \cos(k \theta), \\ 
+p(r,\theta)        &=&  k h(r) \sin(k \theta), \\
+\rho (r,\theta)    &=& \aleph(r) k \sin (k \theta), 
 \end{eqnarray}
 with $f(r)$, $g(r)$, $h(r)$ given in Section~\ref{MMM-ss:anconv}.
 The parameters $A$ and $B$ are chosen so that $v_r(R_1)=v_r(R_2)=0$, i.e.
@@ -37,23 +36,27 @@ In the present case, we set $R_1=1$, $R_2=2$ and $C=-1$.
 The parameter $k$ can take values 0,1,2,3,... 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_09/velocity}
-\includegraphics[width=5cm]{python_codes/fieldstone_09/vr}
-\includegraphics[width=5cm]{python_codes/fieldstone_09/vtheta}\\
-{\small Left to right: velocity norm, $r$ component, $\theta$ component}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_09/RESULTS/velocity}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_09/RESULTS/vr}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_09/RESULTS/vtheta}\\
+{\captionfont Left to right: velocity norm, $r$ component, $\theta$ component}
 \end{center}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_09/density}
-\includegraphics[width=7cm]{python_codes/fieldstone_09/pressure}\\
-{\small Left: density field; right: pressure field.}
+\includegraphics[width=7cm]{python_codes/fieldstone_09/RESULTS/density}
+\includegraphics[width=7cm]{python_codes/fieldstone_09/RESULTS/pressure}\\
+{\captionfont Left: density field; right: pressure field.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_09/psi}
-\includegraphics[width=7cm]{python_codes/fieldstone_09/psi_arrows}\\
-{\small Left: $\psi$ field; right: $\psi$ isolines with velocity arrows.}
+\includegraphics[width=7cm]{python_codes/fieldstone_09/RESULTS/psi}
+\includegraphics[width=7cm]{python_codes/fieldstone_09/RESULTS/psi_arrows}\\
+{\captionfont Left: $\psi$ field; right: $\psi$ isolines with velocity arrows.}
 \end{center}
 
-\includegraphics[width=15cm]{python_codes/fieldstone_09/errors}
+\begin{center}
+\includegraphics[width=15cm]{python_codes/fieldstone_09/RESULTS/errors}
+\end{center}
+
+
 

@@ -1,11 +1,13 @@
-set term pdf enhanced
+#
+set term pdf enhanced font "Times,12pt"
 set output 'errors.pdf'
 set log xy
+set grid
 set xlabel 'h'
 set ylabel 'error'
 set key bottom 
-plot[0.003:0.1][]\
+plot[0.003:0.11][]\
 'errors' u (1./sqrt($3)):6 w lp ps .5 t 'velocity',\
 'errors' u (1./sqrt($3)):9 w lp ps .5 t 'pressure',\
-x**2.*15. w l lt -1 dashtype 4 t 'x^2',\
-x**1.*15. w l lt -1 dashtype 2 t 'x^1'
+x**2.*15. w l lt -1 dashtype 4 t 'h^2',\
+x**1.*19. w l lt -1 dashtype 2 t 'h^1'
