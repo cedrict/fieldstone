@@ -1,10 +1,15 @@
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_106/keywords.key}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_106/keywords.key}
 
 \begin{center}
 Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_106}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
+
+Last revision: September 17th, 2025.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \Literature:\\
@@ -19,7 +24,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 \vspace{.5cm}
 
-This stone is inspired by \textcite{keki97} (1997). 
+This stone is very much inspired by \textcite{keki97} (1997). 
 
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_106/images/keki97a}\\
@@ -27,15 +32,15 @@ This stone is inspired by \textcite{keki97} (1997).
 \end{center}
 
 I set out to reproduce the results of the original publication. 
-The necessary information is spread out throughout the first pages.
-In Section~3 it is stated that the angular opening is $\pi/4$ and $r_i/r_o=0.55$.
+The necessary information for this exercise is spread out throughout the first pages
+of the paper. In Section~3 it is stated that the angular opening is $\pi/4$ and $r_i/r_o=0.55$.
 However, it is not clear what $r_i$ or $r_o$ are, although Section~3
 mentions $r$ values of 1.7 which is somewhat in the 'middle' of the cone. 
 Because the equations in the paper are in dimensionless form, and 
 because it is common to choose the depth of the mantle as reference length, 
 then we probably have $r_o-r_i=1$. In this case we find $r_i=1.22\dots$ and 
 $r_o=2.22\dots$ ({\color{orange} 1st guess}: confirmed by author S.K., June 2021. 
-Also consistent with King \cite{king97}).
+Also consistent with \textcite{king97} (1997)).
 
 Free-slip boundary conditions are imposed on all boundaries.
 A patch on the inner boundary of the shell is heated by
