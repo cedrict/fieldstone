@@ -1,21 +1,33 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/replication}
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/publication}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_40/keywords.ascii}
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_040/text.tex}} \end{flushright}
+
+\par\noindent\rule{\textwidth}{0.4pt}
 
 \begin{center}
-Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_40}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_040}}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This benchmark is carried out in \textcite{deka08} (2008), \textcite{gery10} (2010) and \textcite{thie11} (2011) 
-and is based on the analytical solution by \textcite{ramb68} (1968). 
-It consists of a buoyancy-driven two-layer system driven. 
-The domain is a square of size $512\times512$km. 
+Last revision: September 19th, 2025.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This benchmark is carried out in \textcite{deka08} (2008), \textcite{gery10} (2010), 
+\textcite{thie11} (2011) and \textcite{thba25} (2025). 
+It is based on the analytical solution by \textcite{ramb68} (1968) and consists of 
+a buoyancy-driven two-layer system driven. The domain is a square of size $512\times512$km. 
 Free slip are imposed on the sides while no-slip boundary conditions are imposed on the
 top and the bottom of the box.
 
@@ -31,8 +43,7 @@ b) \includegraphics[width=0.55\textwidth]{python_codes/fieldstone_40/images/dens
 {\captionfont  a) Setup of the experiment, taken from \cite{thie11}; b) grid setup for 24$\times$24 grid.} 
 \end{center}
 
-Under this condition, the velocity of the diapiric growth
-$v_y$ is given by the relation
+Under this condition, the velocity of the diapiric growth $v_y$ is given by the relation
 \[
 \frac{v_y}{\Delta} = - K \frac{\rho_1-\rho_2}{2 \eta_2} h_2 g
 \]
@@ -51,17 +62,18 @@ j_{22} &=& \frac{\eta_1 2 \phi_1^2 \phi_2}{\eta_2(\cosh 2\phi_1 -1-2\phi_1^2)} -
 \phi_2&=&\frac{2\pi h_2}{\lambda}
 \end{eqnarray}
 
+The velocity and pressure fields are then as follows in the isoviscous case:
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_40/images/vel}
-\includegraphics[width=7cm]{python_codes/fieldstone_40/images/p}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_40/RESULTS/vel}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_40/RESULTS/p}
 \end{center}
 
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_40/images/plot24x24}
-\includegraphics[width=5cm]{python_codes/fieldstone_40/images/plot32x32}
-\includegraphics[width=5cm]{python_codes/fieldstone_40/images/plot48x48}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_40/RESULTS/plot24x24}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_40/RESULTS/plot32x32}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_40/RESULTS/plot48x48}\\
 {\captionfont  Left: 24$\times$24 elements, middle: 32$\times$32; right: 48$\times$48. We see that 
 increasing resolution yields more accurate results in the cases of short wavelength 
 perturbations (points on the right on the plots).\\  
@@ -70,3 +82,8 @@ and vary $\lambda=L_x/2,L_x,4,L_x/8$. Each line corresponds to a different value
 \end{center}
 
 
+\begin{remark}
+Note that the same experiment is carried out in \stone 181. 
+This version is somewhat naive in how the FE matrix is built and the pressure normalised, 
+which restricts the highest achievable resolution and makes it somewhat inefficient too.
+\end{remark}
