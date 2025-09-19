@@ -1,23 +1,31 @@
 #!/bin/bash
 
 rm *.ascii
+rm vy.dat
 
 visc2=1e21
 lambda=256e3
 
-for n in 16 32 48 ; do 
+for n in 12 16 20 24 28 32 36 40 44 48 52 56 64 80 92 128; do 
 
-    for a in 1 2 3; do 
+    for a in 1 2 ; do 
 
         echo n= $n assembly= $a
 
-        python3 stone.py $n $n  0 $lambda 3000 $visc2 > opla
+        python3 stone.py $n $n  0 $lambda 3000 $visc2 $a > opla
 
         grep bc opla >> bc_${a}.ascii 
         grep assembl opla >> assembly_${a}.ascii 
         grep build opla >> build_${a}.ascii 
         grep convert opla >> convert_${a}.ascii 
         grep solve opla >> solve_${a}.ascii 
+        grep matrices opla >> matrices_${a}.ascii 
+
+        echo -n $lambda >> vy.dat 
+        echo -n ' ' >> vy.dat 
+        echo -n $visc2 >> vy.dat 
+        echo -n ' ' >> vy.dat 
+        grep vy opla >> vy.dat 
 
     done
 
