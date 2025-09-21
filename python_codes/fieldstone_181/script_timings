@@ -1,14 +1,13 @@
 #!/bin/bash
 
 rm *.ascii
-rm vy.dat
 
 visc2=1e21
 lambda=256e3
 
-for n in 12 16 20 24 28 32 36 40 44 48 52 56 64 80 92 128; do 
+for n in 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 48 56 64 80 88 96 112 128 160 192; do 
 
-    for a in 1 2 ; do 
+    for a in 1 2 3; do 
 
         echo n= $n assembly= $a
 
@@ -21,11 +20,11 @@ for n in 12 16 20 24 28 32 36 40 44 48 52 56 64 80 92 128; do
         grep solve opla >> solve_${a}.ascii 
         grep matrices opla >> matrices_${a}.ascii 
 
-        echo -n $lambda >> vy.dat 
-        echo -n ' ' >> vy.dat 
-        echo -n $visc2 >> vy.dat 
-        echo -n ' ' >> vy.dat 
-        grep vy opla >> vy.dat 
+        echo -n $lambda >> vy_${a}.ascii 
+        echo -n ' ' >> vy_${a}.ascii 
+        echo -n $visc2 >> vy_${a}.ascii 
+        echo -n ' ' >> vy_${a}.ascii 
+        grep vy opla >> vy_${a}.ascii 
 
     done
 

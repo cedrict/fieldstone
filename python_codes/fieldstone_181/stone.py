@@ -110,7 +110,7 @@ if int(len(sys.argv)==8):
    eta2=float(sys.argv[6])
    assembly=int(sys.argv[7])
 else:
-   nelx = 16
+   nelx = 192
    nely = nelx
    visu = 1
    llambda=256e3
@@ -355,15 +355,15 @@ print("sanity check and area: %.3f s" % (clock.time()-start))
 ###############################################################################
 start=clock.time()
 
-local_to_globalV=np.zeros((ndof_V_el,nel),dtype=np.int32)
+local_to_global_V=np.zeros((ndof_V_el,nel),dtype=np.int32)
 
 for iel in range(0,nel):
     for k1 in range(0,m_V):
         for i1 in range(0,ndof_V):
             ikk=ndof_V*k1+i1
-            local_to_globalV[ikk,iel]=ndof_V*icon_V[k1,iel]+i1
+            local_to_global_V[ikk,iel]=ndof_V*icon_V[k1,iel]+i1
                  
-print("compute local_to_globalV: %.3f s" % (clock.time() - start))
+print("compute local_to_global_V: %.3f s" % (clock.time() - start))
 
 ###############################################################################
 # fill I,J arrays
@@ -373,7 +373,6 @@ start = clock.time()
 if assembly==2:
 
    bignb=nel*( (m_V*ndof_V)**2 + 2*(m_V*ndof_V*m_P) )
-
    II_V=np.zeros(bignb,dtype=np.int32)    
    JJ_V=np.zeros(bignb,dtype=np.int32)    
    VV_V=np.zeros(bignb,dtype=np.float64)    
@@ -381,9 +380,9 @@ if assembly==2:
    counter=0
    for iel in range(0,nel):
        for ikk in range(ndof_V_el):
-           m1=local_to_globalV[ikk,iel]
+           m1=local_to_global_V[ikk,iel]
            for jkk in range(ndof_V_el):
-               m2=local_to_globalV[jkk,iel]
+               m2=local_to_global_V[jkk,iel]
                II_V[counter]=m1
                JJ_V[counter]=m2
                counter+=1
@@ -496,7 +495,7 @@ for iel in range(0,nel):
        #end for
        time_bc+=clock.time()-start2
 
-       # assemble matrix K_mat and right hand side rhs
+       # assemble matrix and right hand side
        start2=clock.time()
        for k1 in range(0,m_V):
            for i1 in range(0,ndof_V):
@@ -530,7 +529,7 @@ for iel in range(0,nel):
        # impose b.c. 
        start2=clock.time()
        for ikk in range(0,ndof_V_el):
-           m1=local_to_globalV[ikk,iel]
+           m1=local_to_global_V[ikk,iel]
            if bc_fix_V[m1]:
                   K_ref=K_el[ikk,ikk] 
                   for jkk in range(0,ndof_V_el):
@@ -543,10 +542,10 @@ for iel in range(0,nel):
                   G_el[ikk,:]=0
        time_bc+=clock.time()-start2
 
-       # assemble matrix K_mat and right hand side rhs
+       # assemble matrix and right hand side
        start2=clock.time()
        for ikk in range(ndof_V_el):
-           m1=local_to_globalV[ikk,iel]
+           m1=local_to_global_V[ikk,iel]
            for jkk in range(ndof_V_el):
                VV_V[counter]=K_el[ikk,jkk]
                counter+=1
@@ -565,20 +564,42 @@ for iel in range(0,nel):
 
        #impose b.c. 
        start2=clock.time()
-
+       for ikk in range(0,ndof_V_el):
+           m1=local_to_global_V[ikk,iel]
+           if bc_fix_V[m1]:
+                  K_ref=K_el[ikk,ikk] 
+                  for jkk in range(0,ndof_V_el):
+                      f_el[jkk]-=K_el[jkk,ikk]*bc_val_V[m1]
+                  K_el[ikk,:]=0
+                  K_el[:,ikk]=0
+                  K_el[ikk,ikk]=K_ref
+                  f_el[ikk]=K_ref*bc_val_V[m1]
+                  h_el[:]-=G_el[ikk,:]*bc_val_V[m1]
+                  G_el[ikk,:]=0
        time_bc+=clock.time()-start2
 
-
+       # assemble matrix and right hand side
        start2=clock.time()
-       for i_local,idof in enumerate(local_to_global(iel)):
-           for j_local,jdof in enumerate(local_to_global(iel)):
-               row.append(idof)
-               col.append(jdof)
-               A_fem.append(K_el[i_local,j_local])
-           #end for
-           b_fem[idof]+=b_el[i_local]
+       for ikk in range(ndof_V_el):
+           m1=local_to_global_V[ikk,iel]
+           for jkk in range(ndof_V_el):
+               m2=local_to_global_V[jkk,iel]
+               row.append(m1)
+               col.append(m2)
+               A_fem.append(K_el[ikk,jkk])
+           for jkk in range(0,m_P):
+               m2 =icon_P[jkk,iel]+Nfem_V
+               row.append(m1)
+               col.append(m2)
+               A_fem.append(G_el[ikk,jkk])
+               row.append(m2)
+               col.append(m1)
+               A_fem.append(G_el[ikk,jkk])
+           b_fem[m1]+=f_el[ikk]
        #end for
-
+       for k2 in range(0,m_P):
+           m2=icon_P[k2,iel]
+           b_fem[Nfem_V+m2]+=h_el[k2]
        time_ass+=clock.time()-start2
 
 #end for iel
@@ -594,10 +615,9 @@ print("build FE matrix: %.3f s | %d" % (clock.time()-start,Nfem))
 ###############################################################################
 start=clock.time()
 
-if assembly==2:    
-   A_fem=sps.coo_matrix((VV_V,(II_V,JJ_V)),shape=(Nfem,Nfem)).tocsr()
-else:
-   A_fem=sps.csr_matrix(A_fem)
+if assembly==1: A_fem=sps.csr_matrix(A_fem)
+if assembly==2: A_fem=sps.coo_matrix((VV_V,(II_V,JJ_V)),shape=(Nfem,Nfem)).tocsr()
+if assembly==3: A_fem=sps.csr_matrix((A_fem,(row,col)),shape=(Nfem,Nfem))
 
 print("convert to csr: %.3f s | %d" % (clock.time()-start,Nfem))
 
@@ -622,11 +642,43 @@ print("     -> u (m,M) %.5e %.5e " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.5e %.5e " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.5e %.5e " %(np.min(p),np.max(p)))
 
-print("     -> vy/ampl, phi1 %.5e %.5e %.5e" %(np.max(abs(v)),phi1,vy_th(phi1,phi2,rho1,rho2)))
+print("     -> vy/ampl, phi1 %.5e %.5e %.5e %d" %(np.max(abs(v)),phi1,vy_th(phi1,phi2,rho1,rho2),Nfem))
 
 if debug: np.savetxt('velocity.ascii',np.array([x_V,y_V,u,v]).T,header='# x,y,u,v')
 
 print("split vel into u,v: %.3f s" % (clock.time() - start))
+
+###############################################################################
+# normalise pressure
+###############################################################################
+start=clock.time()
+
+int_p=0.
+for iel in range(0,nel):
+    for iq in range(0,nq_per_dim):
+        for jq in range(0,nq_per_dim):
+            rq=qcoords[iq]
+            sq=qcoords[jq]
+            weightq=qweights[iq]*qweights[jq]
+            N_P=basis_functions_P(rq,sq)
+            dNdr_V=basis_functions_V_dr(rq,sq)
+            dNds_V=basis_functions_V_ds(rq,sq)
+            jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
+            jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
+            jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
+            jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
+            JxWq=np.linalg.det(jcb)*weightq
+            pq=np.dot(N_P,p[icon_P[:,iel]])
+            int_p+=pq*JxWq
+        #end for
+    #end for
+#end for
+
+p-=int_p/Lx/Ly
+
+print("     -> p (m,M) %.5e %.5e " %(np.min(p),np.max(p)))
+
+print("normalise pressure: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # compute strainrate 
@@ -650,12 +702,10 @@ for iel in range(0,nel):
     jcbi=np.linalg.inv(jcb)
     dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V
     dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V
-
     exx[iel]=np.dot(dNdx_V[:],u[icon_V[:,iel]])
     eyy[iel]=np.dot(dNdy_V[:],v[icon_V[:,iel]])
     exy[iel]=np.dot(dNdy_V[:],u[icon_V[:,iel]])*0.5\
             +np.dot(dNdx_V[:],v[icon_V[:,iel]])*0.5
-
     e[iel]=np.sqrt(0.5*(exx[iel]**2+eyy[iel]**2)+exy[iel]**2)
 
 print("     -> exx (m,M) %.5e %.5e " %(np.min(exx),np.max(exx)))
@@ -709,17 +759,22 @@ vtufile.write("</Points> \n")
 #####
 vtufile.write("<CellData Scalars='scalars'>\n")
 #--
-vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' Name='div(v)' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%e\n" % (exx[iel]+eyy[iel]))
 vtufile.write("</DataArray>\n")
 #--
-vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
+for iel in range (0,nel):
+    vtufile.write("%e\n" % (e[iel]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='Density' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%e\n" % (rho[iel]))
 vtufile.write("</DataArray>\n")
 #--
-vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' Name='Viscosity' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%e\n" % (eta[iel]))
 vtufile.write("</DataArray>\n")
@@ -728,7 +783,7 @@ vtufile.write("</CellData>\n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")
 #--
-vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='Velocity' Format='ascii'> \n")
 for i in range(0,nn_V):
     vtufile.write("%e %e %e \n" %(u[i],v[i],0.))
 vtufile.write("</DataArray>\n")
