@@ -54,6 +54,8 @@ produces points that are tightly-packed, but no closer to each other than
 a specified minimum distance, resulting in a more natural pattern 
 \footnote{https://en.wikipedia.org/wiki/Supersampling}. Note that 
 the Poisson-disc algorithm fills the whole domain at once, not element after element.
+Note that the code used to generate this distribution is taken from 
+\url{https://scipython.com/blog/poisson-disc-sampling-in-python/}.
 
 {\color{red} say smthg about avrg dist}  
 
@@ -219,31 +221,32 @@ the same value.
 \newpage
 Root mean square velocity results are shown hereunder:
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_rand_proj1} 
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_poissondisc_proj1} 
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_reg_proj1}\\ 
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_rand_proj2} 
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_poissondisc_proj2} 
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_reg_proj2}\\ 
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_rand_proj3} 
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_poissondisc_proj3} 
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_reg_proj3}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_rand_proj4} 
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_poissondisc_proj4} 
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_reg_proj4}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_rand_proj0} 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_poissondisc_proj0} 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_reg_proj0}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_rand_proj1} 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_poissondisc_proj1} 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_reg_proj1}\\ 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_rand_proj2} 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_poissondisc_proj2} 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_reg_proj2}\\ 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_rand_proj3} 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_poissondisc_proj3} 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_reg_proj3}\\
 {\captionfont Left column: random markers, middle column: Poisson disc, 
-right column: regular markers.
+right column: regular markers. \\
 First row: elemental projection, second row: nodal 1 projection, 
 third row: nodal 2 projection, fourth row: nodal 3 projection. }
 \end{center}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_am} 
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_gm} 
-\includegraphics[width=5.7cm]{python_codes/fieldstone_13/results/vrms_hm}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_am} 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_gm} 
+\includegraphics[width=5.7cm]{python_codes/fieldstone_13/RESULTS/vrms_hm}\\
 {\captionfont Left to right: arithmetic, geometric, harmonic averaging for viscosity.}
 \end{center}
 
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \par\noindent\rule{\textwidth}{0.4pt}
 
