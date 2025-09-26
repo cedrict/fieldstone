@@ -7,7 +7,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_28/keywords.ascii}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_28/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -16,19 +16,22 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-{\sl This fieldstone was developed in collaboration with Rens Elbertsen}. 
-\index{contributors}{R. Elbertsen}
+{\sl This stone was developed in collaboration with Rens Elbertsen}. \index{contributors}{R. Elbertsen}
 
 \par\noindent\rule{\textwidth}{0.4pt}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Last revision: September 26th, 2025.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This \stone is based on \textcite{tosn15} (2015).
 As for every \stone aiming at reproducing results off a publication I here include de abstract
 of the article:
 
-\begin{center}
-\begin{minipage}{13cm}
-{\small
+\begin{displayquote}
+{\color{darkgray}
 Numerical simulations of thermal convection in the Earth’s mantle often employ a pseudoplastic 
 rheology in order to mimic the plate-like behavior of the lithosphere. Yet the benchmark tests available
 in the literature are largely based on simple linear rheologies in which the viscosity is either assumed to be
@@ -45,8 +48,7 @@ the critical value of the yield stress at which the transition between different
 recent mantle convection codes can handle a number of different geometries within a single solution
 framework, this benchmark will also prove useful when validating viscoplastic thermal convection 
 simulations in such geometries.}
-\end{minipage}
-\end{center}
+\end{displayquote}
 
 The viscosity field $\eta$ is calculated as the harmonic average between a linear part $\eta_{lin}$ 
 that depends on temperature only or on temperature and depth $d$ , and a non-linear,
@@ -127,20 +129,26 @@ In all tests, the reference Rayleigh number is set at the surface ($y=1$) to $10
 
 NOTE: no Crank-Nicolson scheme for temperature !!
 
+\newpage 
 %---------------------------------------------------------------------------------
-\subsubsection*{Case 0: Newtonian case, a la Blankenbach et al., 1989}
+\subsection*{Case 0: Newtonian case, a la Blankenbach et al., 1989}
 
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case0/vrms.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case0/Nu.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case0/vrms_Nu.pdf}
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case0/vrms.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case0/Nu.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case0/vrms_Nu.pdf}
+\end{center}
 
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case0/temp}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case0/vel}
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_28/results_case0/temp}
+\includegraphics[width=8cm]{python_codes/fieldstone_28/results_case0/vel}
+\end{center}
 
 
 
-\newpage %-------------------------------------------------------
-\subsubsection*{Case 1}
+\newpage 
+%---------------------------------------------------------------------------------
+\subsection*{Case 1}
 
 In this case $\eta^\star=0$ and $\sigma_Y=0$ so that $\eta_{plast}$ can be discarded.
 The CFL number is set to 0.5 and the viscosity is given by 
@@ -160,9 +168,9 @@ $\eta_\text{lin} (T,z) = \exp(-\gamma_T T )$
 \end{center}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case1/T_profile.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case1/eta_profile.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case1/V_profile.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case1/T_profile.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case1/eta_profile.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case1/V_profile.pdf}
 \end{center}
 \newpage
 \begin{center}
@@ -183,7 +191,7 @@ $\eta_\text{lin} (T,z) = \exp(-\gamma_T T )$
 
 
 \newpage %-------------------------------------------------------
-\subsubsection*{Case 2}
+\subsection*{Case 2}
 
 \includegraphics[width=16cm]{python_codes/fieldstone_28/results_case4/tosn15}
 
@@ -195,9 +203,9 @@ $\eta_\text{lin} (T,z) = \exp(-\gamma_T T )$
 \end{center}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case2/T_profile.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case2/eta_profile.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case2/V_profile.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case2/T_profile.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case2/eta_profile.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case2/V_profile.pdf}
 \end{center}
 
 \newpage
@@ -214,7 +222,7 @@ $\eta_\text{lin} (T,z) = \exp(-\gamma_T T )$
 
 
 \newpage %-------------------------------------------------------
-\subsubsection*{Case 3}
+\subsection*{Case 3}
 
 \includegraphics[width=16cm]{python_codes/fieldstone_28/results_case3/tosn15}
 
@@ -226,9 +234,9 @@ $\eta_\text{lin} (T,z) = \exp(-\gamma_T T )$
 \end{center}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case3/T_profile.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case3/eta_profile.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case3/V_profile.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case3/T_profile.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case3/eta_profile.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case3/V_profile.pdf}
 \end{center}
 
 \newpage
@@ -245,7 +253,7 @@ $\eta_\text{lin} (T,z) = \exp(-\gamma_T T )$
 
 
 \newpage %-------------------------------------------------------
-\subsubsection*{Case 4}
+\subsection*{Case 4}
 
 \includegraphics[width=16cm]{python_codes/fieldstone_28/results_case4/tosn15}
 
@@ -257,9 +265,9 @@ $\eta_\text{lin} (T,z) = \exp(-\gamma_T T )$
 \end{center}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case4/T_profile.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case4/eta_profile.pdf}
-\includegraphics[width=5cm]{python_codes/fieldstone_28/results_case4/V_profile.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case4/T_profile.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case4/eta_profile.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case4/V_profile.pdf}
 \end{center}
 
 \newpage
@@ -273,7 +281,7 @@ $\eta_\text{lin} (T,z) = \exp(-\gamma_T T )$
 \end{center}
 
 \newpage %-------------------------------------------------------
-\subsubsection*{Case 5a - Periodic Solutions}
+\subsection*{Case 5a - Periodic Solutions}
 
 \begin{center}
 \includegraphics[width=7.8cm]{python_codes/fieldstone_28/results_case5/vrms.pdf}
@@ -308,7 +316,7 @@ $\eta_\text{lin} (T,z) = \exp(-\gamma_T T )$
 \end{center}
 
 %-----------------------------------------------
-\subsubsection*{Case 5b - Bifurcation Analysis}
+\subsection*{Case 5b - Bifurcation Analysis}
 
 Case 5b is an extension of Case 5a. Here we varied the yield stress from $\sigma_Y=$ 3 to 5 with the goal of identifying 
 the critical values at which the system transitions from a steady, mobile lid regime (for low values of $\sigma_Y$ ),

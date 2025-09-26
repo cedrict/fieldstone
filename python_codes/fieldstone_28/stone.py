@@ -6,7 +6,7 @@ from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import csr_matrix
 import time as time
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def density(rho0,alpha,T,T0,case):
     val=rho0*(1.-alpha*(T-T0)) -rho0
@@ -78,11 +78,11 @@ def dNNVds(rq,sq):
     dNds_3=+0.25*(1.-rq)
     return dNds_0,dNds_1,dNds_2,dNds_3
 
-#------------------------------------------------------------------------------
+###############################################################################
 
-print("-----------------------------")
-print("----------fieldstone---------")
-print("-----------------------------")
+print("*******************************")
+print("********** stone 028 **********")
+print("*******************************")
 
 ndim=2        # number of dimensions
 m=4           # number of nodes making up an element
@@ -106,7 +106,7 @@ every=50      # vtu output frequency
 nstep=5000   # maximum number of timestep   
 tol_nl=1.e-6  # nonlinear convergence coeff.
 
-#--------------------------------------
+###############################################################################
 
 case=5
 
@@ -181,7 +181,7 @@ sqrt3=np.sqrt(3.)
 convfile=open("conv_nl.ascii","w")
 niterfile=open("niter_nl.ascii","w")
 
-#################################################################
+###############################################################################
 
 model_time=np.zeros(nstep,dtype=np.float64) 
 vrms=np.zeros(nstep,dtype=np.float64) 
@@ -193,9 +193,9 @@ T_stats=np.zeros((nstep,2),dtype=np.float64)
 dt_stats=np.zeros(nstep,dtype=np.float64)
 heatflux_boundary=np.zeros(nstep,dtype=np.float64)
 
-#################################################################
+###############################################################################
 # grid point setup
-#################################################################
+###############################################################################
 start = time.time()
 
 x = np.empty(nnp,dtype=np.float64)  # x coordinates
@@ -212,9 +212,9 @@ for j in range(0, nny):
 
 print("setup: grid points: %.3f s" % (time.time() - start))
 
-#################################################################
+###############################################################################
 # connectivity
-#################################################################
+###############################################################################
 start = time.time()
 
 icon =np.zeros((m, nel),dtype=np.int32)
@@ -231,9 +231,9 @@ for j in range(0, nely):
 
 print("setup: connectivity: %.3f s" % (time.time() - start))
 
-#################################################################
+###############################################################################
 # define boundary conditions
-#################################################################
+###############################################################################
 start = time.time()
 
 bc_fixV=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
@@ -268,9 +268,9 @@ for i in range(0,nnp):
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
-#################################################################
+###############################################################################
 # initial temperature setup
-#################################################################
+###############################################################################
 start = time.time()
 
 T=np.zeros(nnp,dtype=np.float64)
@@ -337,8 +337,8 @@ for istep in range(0,nstep):
             h_el=np.zeros((1,1),dtype=np.float64)
 
             # integrate viscous term at 4 quadrature points
-            for iq in [-1, 1]:
-                for jq in [-1, 1]:
+            for iq in [-1,1]:
+                for jq in [-1,1]:
 
                     # position & weight of quad. point
                     rq=iq/sqrt3
@@ -783,7 +783,7 @@ for istep in range(0,nstep):
     #################################################################
     start = time.time()
 
-    T = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
+    T=sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
 
     print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
 
@@ -1018,6 +1018,8 @@ for istep in range(0,nstep):
 convfile.close()
 niterfile.close()
 
-print("-----------------------------")
-print("------------the end----------")
-print("-----------------------------")
+print("*******************************")
+print("********** the end ************")
+print("*******************************")
+
+###############################################################################
