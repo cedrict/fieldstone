@@ -6,7 +6,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_38/keywords.ascii}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_38/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -25,8 +25,8 @@ of the article:
 \begin{minipage}{13cm}
 {\small 
 Plate tectonics provides a remarkably accurate kinematic description of the
-motion of the earth’s crust but a fully dynamical theory requires a n under-
-standing of convection in the mantle. Thus the properties of plates and of the
+motion of the earth's crust but a fully dynamical theory requires a n understanding 
+of convection in the mantle. Thus the properties of plates and of the
 mantle must be related to a systematic study of convection. This paper reviews
 both the geophysical information and the fluid dynamics of convection in a
 Boussinesq fluid of infinite Prandtl number. Numerical experiments have been
@@ -41,7 +41,7 @@ means of investigating convection in the upper mantle.}
 \end{minipage}
 \end{center}
 
-The domain is a 2D square of size $L$. The fluid is incompressible, and the Boussinesq 
+The domain is a 2d square of size $L$. The fluid is incompressible, and the Boussinesq 
 approximation is used. Boundary conditions are free slip on all sides. $T=0$ is prescribed 
 at the bottom and $T(x)=T_0 \cos (\pi x/L)$ at the top. The two sides are insulated.
 
@@ -90,12 +90,13 @@ The code is based on \stone~03, and because velocities are very small for low Ra
 reduced densities are used, i.e. the buoyancy force in the Stokes equation is given by $-\alpha(T-T_0)\vec{g}$.
 Steady state is reached when the velocity and temperature fields do not change by more than $tol=10^{-6}$.
 
-Note that what is called $\Nunb$ in the code is in fact $Q=\int_0^{L_x} q_y dx$.
+Note that what is called $\Nunb$ in the code is in fact $Q=\int_0^{L_x} q_y(x) dx$.
 
-I have also run the very same experiments with \aspect{} at mesh uniform level 5 (and found that 
-level 6 did not change anything to the results). The prm file is hereby joined to this repository.
+I have also run the very same experiments with \aspect{} at meshes with uniform level 5 (32x32 
+elements) and found that level 6 did not change anything to the results. 
+The prm file is hereby joined to this repository.
 
-As explained in McKenzie \etal (1974), for $\Ranb <<1$ advection of heat is negligible and $T$ is 
+As explained in \textcite{mcrw74}, for $\Ranb <<1$ advection of heat is negligible and $T$ is 
 therefore harmonic:
 \[
 T(x,y) = \Delta T \cos (\pi x/L) \frac{\sinh \pi z/L}{\sinh \pi L_y/L_x}
@@ -104,8 +105,8 @@ When $T_0=0.01$, only heat diffusion is present and we recover the analytical so
 in McKenzie \etal:
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_38/results/T0_0p001_32x32/T}
-\includegraphics[width=8cm]{python_codes/fieldstone_38/results/T0_0p001_32x32/T_anal}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_38/RESULTS/T0_0p001_32x32/T}
+\includegraphics[width=8cm]{python_codes/fieldstone_38/RESULTS/T0_0p001_32x32/T_anal}\\
 {\captionfont Left: computed temperature, $48\times48$ resolution; Right: analytical solution.}
 \end{center}
 
@@ -113,38 +114,30 @@ in McKenzie \etal:
 \subsubsection*{Steady-state study}
 
 \begin{center}
-\includegraphics[width=13cm]{python_codes/fieldstone_38/results/Q.pdf}\\
-\includegraphics[width=13cm]{python_codes/fieldstone_38/results/vrms.pdf}\\
+\includegraphics[width=15cm]{python_codes/fieldstone_38/RESULTS/Q.pdf}\\
+\includegraphics[width=15cm]{python_codes/fieldstone_38/RESULTS/vrms.pdf}\\
 {\captionfont Heat flux on top boundary (top) and root mean square velocity (bottom)
 as measured with \stone~38 and \aspect on $64\times 64$ mesh.}
 \end{center}
 
+%\newpage
 
-\newpage
-
-\begin{center}
-\includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_0p01_64x64/vel}
-\includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_0p01_64x64/T}
-\includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_0p01_64x64/qy}\\
-\includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_0p1_64x64/vel}
-\includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_0p1_64x64/T}
-\includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_0p1_64x64/qy}\\
-...missing T0=1 row...\\
-\includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_10_64x64/vel}
-\includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_10_64x64/T}
-\includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_10_64x64/qy}\\
-\includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_100_64x64/vel}
-\includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_100_64x64/T}
-\includegraphics[height=4cm]{python_codes/fieldstone_38/results/T0_100_64x64/qy}\\
-{\captionfont Obtained with \stone~38 on $64\times64$ mesh. 
-Top to bottom: $T_0=0.01,0.1,1,10,100$}
-\end{center}
-
-
-
-
-TODO: boundary conditions should be done on elemental matrices.
-
-
+%\begin{center}
+%\includegraphics[height=4cm]{python_codes/fieldstone_38/RESULTS/T0_0p01_64x64/vel}
+%\includegraphics[height=4cm]{python_codes/fieldstone_38/RESULTS/T0_0p01_64x64/T}
+%\includegraphics[height=4cm]{python_codes/fieldstone_38/RESULTS/T0_0p01_64x64/qy}\\
+%\includegraphics[height=4cm]{python_codes/fieldstone_38/RESULTS/T0_0p1_64x64/vel}
+%\includegraphics[height=4cm]{python_codes/fieldstone_38/RESULTS/T0_0p1_64x64/T}
+%\includegraphics[height=4cm]{python_codes/fieldstone_38/RESULTS/T0_0p1_64x64/qy}\\
+%...missing T0=1 row...\\
+%\includegraphics[height=4cm]{python_codes/fieldstone_38/RESULTS/T0_10_64x64/vel}
+%\includegraphics[height=4cm]{python_codes/fieldstone_38/RESULTS/T0_10_64x64/T}
+%\includegraphics[height=4cm]{python_codes/fieldstone_38/RESULTS/T0_10_64x64/qy}\\
+%\includegraphics[height=4cm]{python_codes/fieldstone_38/RESULTS/T0_100_64x64/vel}
+%\includegraphics[height=4cm]{python_codes/fieldstone_38/RESULTS/T0_100_64x64/T}
+%\includegraphics[height=4cm]{python_codes/fieldstone_38/RESULTS/T0_100_64x64/qy}\\
+%{\captionfont Obtained with \stone~38 on $64\times64$ mesh. 
+%Top to bottom: $T_0=0.01,0.1,1,10,100$}
+%\end{center}
 
 

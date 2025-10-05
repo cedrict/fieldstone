@@ -1,0 +1,19 @@
+#! /bin/bash
+
+rm -f errors
+rm -f build
+rm -f solve
+
+for n in 32 64 96; do
+
+    for T in 0.01 0.1 1 10 100 ; do 
+
+        echo nelx=nely= $n T0= $T
+        python3 stone.py  $n $n $T > opla
+        mv Q.ascii Q_${n}_${T}.ascii
+        mv vrms.ascii vrms_${n}_${T}.ascii
+        mv Tavrg.ascii Tavrg_${n}_${T}.ascii
+
+    done
+
+done
