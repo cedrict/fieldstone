@@ -84,8 +84,8 @@ if int(len(sys.argv) == 4):
     nely = int(sys.argv[2])
     visu = int(sys.argv[3])
 else:
-    nelx = 32
-    nely = 32
+    nelx = 4
+    nely = 3
     visu = 1
 
 assert (nelx > 0.), "nnx should be positive"
@@ -131,6 +131,7 @@ icon = np.zeros((m, nel), dtype=np.int32)
 
 xis = np.linspace(0., nelx-1, nelx, dtype=np.int32)
 yis = np.linspace(0., nely-1, nely, dtype=np.int32)
+
 xiv, yiv = np.meshgrid(xis, yis)
 
 icon = np.array([xiv + yiv * nnx,
@@ -152,10 +153,12 @@ raw_b_inds = np.where(np.logical_or.reduce((x < eps, x > Lx-eps,
 # with len(number of dimensions), which is here equal to one.
 
 bc_inds = np.sort(np.hstack((raw_b_inds*ndof, raw_b_inds*ndof+1)))
+
 bc_vals = np.array([0. for idx in bc_inds])
 
 print("setup: boundary conditions: %.3f s" % (time.time() - start))
 
+exit()
 #################################################################
 # build FE matrix
 # r,s are the reduced coordinates in the [-1:1]x[-1:1] ref elt

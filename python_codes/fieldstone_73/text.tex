@@ -13,7 +13,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 
 %.................................
-\subsubsection*{Building the mesh}
+\subsection*{Building the mesh}
 
 The mesh counts $nnp=nnx \times nny$ points. 
 In fieldstone 1 we have seen that we can build the node coordinates as follows:
@@ -78,19 +78,19 @@ xy = np.vstack((x, y)).T
 
 
 %...............................................
-\subsubsection*{Building the connectivity array}
+\subsection*{Building the connectivity array}
 
 The connectivity array is of size $m \times nel$ 
 where $m$ is the number of nodes per element, and $nel$ is the number 
 of element in the mesh: 
 
 \begin{lstlisting}
-icon = np.zeros((m, nel), dtype=np.int32)
+icon=np.zeros((m,nel),dtype=np.int32)
 \end{lstlisting}
 
 The original version is a simple double for loop
 which for each element $iel$ finds its 4 corners and 
-stores them in $icon[iel,0:3]$:
+stores them in $icon[iel,:]$:
 
 \begin{lstlisting}
 counter = 0
@@ -104,7 +104,7 @@ for j in range(0, nely):
 \end{lstlisting}
 
 In the new version the same is achieved
-using linspace and meshgrids again\todo{Bob: say more?}:
+using linspace and meshgrids again:
 
 \begin{lstlisting}
 xis = np.linspace(0., nelx-1, nelx, dtype=np.int32)
@@ -116,9 +116,26 @@ icon = np.array([xiv + yiv * nnx,
                  xiv + (yiv + 1) * nnx]).reshape((m, nel))
 \end{lstlisting}
 
+In order to make sense of this, let us consider the 
+case of a simple $4\times 3$ mesh. 
+We find 
+\begin{verbatim}
+xis=[0 1 2 3]
+yis=[0 1 2]
+xiv=[[0 1 2 3]
+     [0 1 2 3]
+     [0 1 2 3]]
+yiv=[[0 0 0 0]
+     [1 1 1 1]
+     [2 2 2 2]]
+icon=[[ 0  1  2  3  5  6  7  8 10 11 12 13]
+      [ 1  2  3  4  6  7  8  9 11 12 13 14]
+      [ 6  7  8  9 11 12 13 14 16 17 18 19]
+      [ 5  6  7  8 10 11 12 13 15 16 17 18]]
+\end{verbatim}
 
 %.................................................
-\subsubsection*{Building the boundary conditions} 
+\subsection*{Building the boundary conditions} 
 
 
 \begin{lstlisting}
@@ -140,9 +157,8 @@ for i in range(0, nnp):
 \end{lstlisting}
 
 
-
-bc\_fix has been replaced by bc\_inds
-bc\_val has been replaced by bc\_vals\todo{Bob: say more?}:
+\lstinline{bc_fix} has been replaced by \lstinline{bc_inds}, and 
+\lstinline{bc_val} has been replaced by \lstinline{bc_vals}:
 
 \begin{lstlisting}
 raw_b_inds = np.where(np.logical_or.reduce((x < eps, x > Lx-eps,
@@ -154,8 +170,18 @@ bc_inds = np.sort(np.hstack((raw_b_inds*ndof, raw_b_inds*ndof+1)))
 bc_vals = np.array([0. for idx in bc_inds])
 \end{lstlisting}
 
+Again, for the $4\times 3$ mesh:
+\begin{verbatim}
+raw_b_inds=[ 0  1  2  3  4  5  9 10 14 15 16 17 18 19]
+\end{verbatim}
+and 
+\begin{verbatim}
+bc_inds=[ 0  1  2  3  4  5  6  7  8  9 10 11 18 19 20 21 28 
+29 30 31 32 33 34 35 36 37 38 39]
+\end{verbatim}
+
 %.................................................
-\subsubsection*{Building the FE matrix}
+\subsection*{Building the FE matrix}
 
 The following arrays are unchanged between both versions:
 
@@ -323,23 +349,6 @@ np.add.at(rhs, m_indices, b_el)
 np.add.at(a_mat, mm_indices, a_el)
 \end{lstlisting}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\newpage
 
 
 
