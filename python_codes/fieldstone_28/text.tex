@@ -60,21 +60,25 @@ plastic part $\eta_{plast}$ dependent on the strain rate:
 \label{eq:eta}
 \end{equation}
 
-The linear part is given by the linearized Arrhenius law (the so-called Frank-Kamenetskii approximation \cite{fran69}):
+The linear part is given by the linearized Arrhenius law 
+(the so-called Frank-Kamenetskii approximation \cite{fran69}):
 
 \begin{equation}
 \eta_\text{lin} (T,z) = \exp(-\gamma_T T + \gamma_{z} z), \label{eq:eta_Ty}
 \end{equation}
 
-where $\gamma_T = \ln ( \Delta\eta_T)$ and $\gamma_{z}=\ln(\Delta\eta_{z})$ are parameters controlling the total viscosity 
-contrast due to temperature ($\Delta\eta_T$) and pressure ($\Delta\eta_{z}$). The non-linear part is given by \cite{trha98,trha98b}: 
+where $\gamma_T = \ln ( \Delta\eta_T)$ and $\gamma_{z}=\ln(\Delta\eta_{z})$ are parameters 
+controlling the total viscosity 
+contrast due to temperature ($\Delta\eta_T$) and pressure ($\Delta\eta_{z}$). 
+The non-linear part is given by \textcite{trha98}, \textcite{trha98b}: 
 
 \begin{equation}
 \eta_\text{plast} (\dot{\boldsymbol{\epsilon}}) 
 = \eta^{*} + \frac{\sigma_Y}{\sqrt{\dot{\boldsymbol{\epsilon}}:\dot{\boldsymbol{\epsilon}}}}, \label{eq:eta_sigma}
 \end{equation}
-where $\eta^*$ is a constant representing the effective viscosity at high stresses \cite{stlh14} and $\sigma_Y$ is the yield stress, also assumed to be constant. In 2-D, the denominator in the second term of 
-equation (\ref{eq:eta_sigma}) is given explicitly by
+where $\eta^*$ is a constant representing the effective viscosity at high stresses 
+\cite{stlh14} and $\sigma_Y$ is the yield stress, also assumed to be constant. 
+In 2d, the denominator in the second term of equation (\ref{eq:eta_sigma}) is given explicitly by
 
 \begin{equation}
 \sqrt{\dot{\boldsymbol{\epsilon}}:\dot{\boldsymbol{\epsilon}}} 

@@ -1,3 +1,4 @@
+#
 set term pdf enhanced font "Times,12pt"
 set xlabel 'time'
 set ylabel 'v_{rms}'
@@ -114,10 +115,6 @@ plot[840:950][]\
 'aspect_vof/lvl8/statistics'           u 2:13 w l lt 3 dt 1 lw .5 t 'vof',\
 0.000865 lt -1 lw .5 dt 2 notitle
 
-
-
-
-
 #########################################
 set ylabel 'Global mass for composition C_1'
 
@@ -153,12 +150,4 @@ plot[0:1200][]\
 'aspect/lvl8_smooth_0p02/statistics'   u 2:18 w l lt 2 dt 4 lw .5 t 'smooth, 0.02',\
 'aspect_vof/lvl8/statistics'           u 2:17 w l lt 3 dt 1 lw .5 t 'vof',\
 0.18284 lt -1 dt 2 t 'analytical'
-
-
-
-
-
-
-
-
 

@@ -347,7 +347,7 @@ both the density of the fluid and the strength of the gravitational pull.
 
 Coupled to this Stokes system is equation \eqref{eq:temperature} for the
 temperature field $T=T(\mathbf x,t)$ that contains heat conduction terms as
-well as advection with the flow velocity $\mathbf v$. The right hand side
+well as advection with the flow velocity $\vec\upnu$. The right hand side
 terms of this equation correspond to
 \begin{itemize}
 \item internal heat production for example due to radioactive decay;
@@ -976,7 +976,11 @@ Before being used these equations should be checked against multiple sources.
 \index{general}{Boussinesq Approximation}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
-As nicely explained in Spiegel \& Veronis \cite{spve60}: "In the study of problems of thermal convection it is a frequent practice to simplify the basic equations by introducing certain approximations which are attributed to
+As nicely explained in \textcite{spve60} (1960): 
+\begin{displayquote}
+{\color{darkgray}
+In the study of problems of thermal convection it is a frequent practice to simplify the basic 
+equations by introducing certain approximations which are attributed to
 Boussinesq (1903). The Boussinesq approximations can best be summarized by two
 statements: 
 \begin{enumerate}
@@ -986,6 +990,8 @@ result principally from thermal (as opposed to pressure) effects.
 for the rate of change of momentum and mass, density variations may be neglected except
 when they are coupled to the gravitational acceleration in the buoyancy force."
 \end{enumerate}
+}
+\end{displayquote}
 Note that their paper examines the Boussinesq approximation for compressible fluids.  
 
 [from \aspect{} manual]
@@ -1022,17 +1028,69 @@ Note that all terms on the rhs of the temperature equations have disappeared, wi
 of the source term.
 
 
+In \textcite{vacp22} we read: 
+\begin{displayquote}
+The Boussinesq approximation (\textcite{ober79}; Boussinesq, 1903; Rayleigh, 1916) 
+assumes that density
+variations are so small that they can be neglected everywhere
+except in the buoyancy term in the momentum equation, 
+which is equivalent to using a constant reference density profile. 
+This implies incompressibility [...]. In addition, adiabatic heating
+and shear heating are not considered in the energy equation. 
+This approximation is valid as long as density variations are small 
+and the modelled processes would cause no substantial 
+shear or adiabatic heating.
+The Boussinesq approximation is often used in lithosphere-
+scale models. Due to its simplicity, the approximation of in-
+compressibility is sometimes also adopted for whole-mantle
+convection models, wherein it is only approximately valid,
+and it has been shown that compressibility can have a large
+effect on the pattern of convective flow \cite{tack96}.
+\end{displayquote}
+
+
 %---------------------------------
 \section{The Extended Boussinesq approximation}
 \index{general}{Extended Boussinesq Approximation}
 \index{general}{EBA}
 \begin{flushright} {\tiny {\color{gray} physics.tex}} \end{flushright}
 
-Yuen \etal (2007) \cite{yumc07} state that the background of the extended Boussinesq 
-equations can be found described in 
-Christensen and Yuen (1985) \cite{chyu85} and more completely in Matyska and Yuen (2007) \cite{mayu07}.
+In \textcite{vacp22} we read: 
+\begin{displayquote}
+The extended Boussinesq approximation (\cite{chyu85,oxtu78}) is based
+on the same assumptions as the BA but does consider adiabatic 
+and shear heating. Since it includes adiabatic heating,
+but not the associated volume and density changes, it can
+lead to artificial changes of energy in the model, i.e. material 
+is being heated or cooled based on the assumption that
+it is compressed or it expands, but the mechanical work that
+causes compression or expansion is not done. Consequently,
+the extended Boussinesq approximation should only be used
+in models without substantial adiabatic temperature changes.
+
+For a comparison between some of these approximations
+using benchmark models, see e.g. \textcite{sthe89},
+\textcite{lezh08}, \textcite{kilv10}, \textcite{gadb20}. 
+In addition, the choice of approximation may
+also be limited by the numerical methods being employed
+(for example, the accuracy of the solution for the variables
+that affect the density). Also note that, technically, these 
+approximations are all internally inconsistent to varying 
+degrees, since they do not fulfil the definitions of
+thermodynamic variables but use linearised versions instead,
+and they use different density formulations in the different 
+equations. Nevertheless, many of them are generally accepted 
+and widely used in geodynamic modelling studies, as
+they allow for simpler equations and more easily obtained solutions.
+\end{displayquote}
+
+\textcite{yumc07} (2007) state that the background of the extended Boussinesq 
+equations can be found described in \textcite{chyu85} and 
+more completely in \textcite{mayu07}.
 
 \Literature \cite{hayk91,hayk93}
+
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
