@@ -1,0 +1,28 @@
+     -> nel= 256 ; nparticle= 4096 ; vrms= 1.663357e-02
+compute vrms: 0.040 s
+     -> nel= 400 ; nparticle= 6400 ; vrms= 1.687579e-02
+compute vrms: 0.059 s
+     -> nel= 576 ; nparticle= 9216 ; vrms= 1.708141e-02
+compute vrms: 0.083 s
+     -> nel= 784 ; nparticle= 12544 ; vrms= 1.739230e-02
+compute vrms: 0.117 s
+     -> nel= 1024 ; nparticle= 16384 ; vrms= 1.774347e-02
+compute vrms: 0.168 s
+     -> nel= 1600 ; nparticle= 25600 ; vrms= 1.791619e-02
+compute vrms: 0.263 s
+     -> nel= 2304 ; nparticle= 36864 ; vrms= 1.810115e-02
+compute vrms: 0.339 s
+     -> nel= 4096 ; nparticle= 65536 ; vrms= 1.833236e-02
+compute vrms: 0.593 s
+     -> nel= 6400 ; nparticle= 102400 ; vrms= 1.853450e-02
+compute vrms: 0.964 s
+     -> nel= 9216 ; nparticle= 147456 ; vrms= 1.856785e-02
+compute vrms: 1.370 s
+     -> nel= 16384 ; nparticle= 262144 ; vrms= 1.865805e-02
+compute vrms: 2.474 s
+     -> nel= 25600 ; nparticle= 409600 ; vrms= 1.871663e-02
+compute vrms: 3.906 s
+     -> nel= 36864 ; nparticle= 589824 ; vrms= 1.874779e-02
+compute vrms: 5.752 s
+     -> nel= 65536 ; nparticle= 1048576 ; vrms= 1.880820e-02
+compute vrms: 10.884 s

@@ -1,0 +1,8 @@
+     -> nel= 256 ; nparticle= 2304 ; vrms= 1.235369e-02
+compute vrms: 0.040 s
+     -> nel= 400 ; nparticle= 3600 ; vrms= 1.441416e-02
+compute vrms: 0.063 s
+     -> nel= 784 ; nparticle= 7056 ; vrms= 1.543017e-02
+compute vrms: 0.112 s
+     -> nel= 2304 ; nparticle= 20736 ; vrms= 1.670918e-02
+compute vrms: 0.366 s

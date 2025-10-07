@@ -14,7 +14,8 @@ def PoissonDisc(k,r,width,height):
     # Cell side length
     a = r/np.sqrt(2)
     # Number of cells in the x- and y-directions of the grid
-    nx, ny = int(width / a) + 1, int(height / a) + 1
+    nx=int(width /a)+1
+    ny=int(height/a)+1
 
     # A list of coordinates in the grid of cells
     coords_list = [(ix, iy) for ix in range(nx) for iy in range(ny)]
@@ -137,9 +138,3 @@ def PoissonDisc(k,r,width,height):
     
     return(nsamples,xcord,ycord)
 
-#print (poissondisc(30,15,400,400))
-"""plt.scatter(*zip(*samples), color='r', alpha=0.6, lw=0)
-plt.xlim(0, width)
-plt.ylim(0, height)
-plt.axis('off')
-plt.show()"""
