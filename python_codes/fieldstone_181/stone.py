@@ -110,7 +110,7 @@ if int(len(sys.argv)==8):
    eta2=float(sys.argv[6])
    assembly=int(sys.argv[7])
 else:
-   nelx = 192
+   nelx = 300
    nely = nelx
    visu = 1
    llambda=256e3

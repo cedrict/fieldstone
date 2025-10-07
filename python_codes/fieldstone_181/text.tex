@@ -86,12 +86,15 @@ of matrix size \lstinline{Nfem}, i.e.
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_181/RESULTS/times_build.pdf}
 \end{center}
-\item The total time spent in the assembly alone:
+\item The total time spent in the assembly alone. In all three cases it scales 
+linearly with the number of dofs, but method 2 is more than 10x faster than method 1. 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_181/RESULTS/times_assembly.pdf}
 \end{center}
 
-\item The time spent applying boundary conditions to the elemental matrices 
+\item The time spent applying boundary conditions to the elemental matrices.
+We see that at high resolutions this time can go from less than a second to about 4s.
+
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_181/RESULTS/times_bc.pdf}
 \end{center}
@@ -123,9 +126,9 @@ Finally we can verify that the solution for all three methods is identical:
 
 
 
-\noindent \includegraphics[width=3cm]{./images/conclusion.png}
+\noindent \includegraphics[width=2.5cm]{./images/conclusion.png}
 Method 1 is the slowest. 
-Method 2 is the fastest. It requires a bit more work (additional large arrays need to be 
+Method 2 is the fastest. It requires a bit more work (large additional arrays need to be 
 declared and filled) and the time to fill these arrays is not negligible BUT if 
 multiple solves are to be carried out (nonlinear iterations, time stepping) these 
 arrays do not change and their relative cost becomes then negligible.. 

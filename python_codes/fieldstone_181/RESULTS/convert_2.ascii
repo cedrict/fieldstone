@@ -23,3 +23,5 @@ convert to csr: 0.083 s | 114019
 convert to csr: 0.112 s | 148739
 convert to csr: 0.169 s | 232003
 convert to csr: 0.242 s | 333699
+convert to csr: 0.397 s | 592387
+convert to csr: 0.521 s | 813003
