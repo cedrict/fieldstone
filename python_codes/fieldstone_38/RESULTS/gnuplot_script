@@ -1,0 +1,78 @@
+#
+set term pdf enhanced font "Times,12pt"
+set log xy
+set key outside
+
+cm=0.01
+year=365.25*3600*24.
+
+set xlabel 'time (yr)'
+set ylabel 'v_{rms} (cm/yr)'
+set output 'vrms.pdf'
+plot[][1e-6:]\
+'T0_0p1_aspect_lvl5/statistics' u 2:($12/cm) w l lt 2 dt 1 t 'T_0=0.1, ASPECT, lvl 5',\
+'T0_1_aspect_lvl5/statistics'   u 2:($12/cm) w l lt 3 dt 1 t 'T_0=1, ASPECT, lvl 5',\
+'T0_10_aspect_lvl5/statistics'  u 2:($12/cm) w l lt 4 dt 1 t 'T_0=10, ASPECT, lvl 5',\
+'T0_100_aspect_lvl5/statistics' u 2:($12/cm) w l lt 7 dt 1 t 'T_0=100, ASPECT, lvl 5',\
+'vrms_32_0.01.ascii'  u 1:2 w l lt 1 dt 4 t 'T_0=0.01, 32^2',\
+'vrms_64_0.01.ascii'  u 1:2 w l lt 1 dt 3 t 'T_0=0.01, 64^2',\
+'vrms_96_0.01.ascii'  u 1:2 w l lt 1 dt 2 t 'T_0=0.01, 96^2',\
+'vrms_32_0.1.ascii'   u 1:2 w l lt 2 dt 4 t 'T_0=0.1, 32^2',\
+'vrms_64_0.1.ascii'   u 1:2 w l lt 2 dt 3 t 'T_0=0.1, 64^2',\
+'vrms_96_0.1.ascii'   u 1:2 w l lt 2 dt 2 t 'T_0=0.1, 96^2',\
+'vrms_32_1.ascii'     u 1:2 w l lt 3 dt 4 t 'T_0=1, 32^2',\
+'vrms_64_1.ascii'     u 1:2 w l lt 3 dt 3 t 'T_0=1, 64^2',\
+'vrms_96_1.ascii'     u 1:2 w l lt 3 dt 2 t 'T_0=1, 96^2',\
+'vrms_32_10.ascii'    u 1:2 w l lt 4 dt 4 t 'T_0=10, 32^2',\
+'vrms_64_10.ascii'    u 1:2 w l lt 4 dt 3 t 'T_0=10, 64^2',\
+'vrms_96_10.ascii'    u 1:2 w l lt 4 dt 2 t 'T_0=10, 96^2',\
+'vrms_32_100.ascii'   u 1:2 w l lt 7 dt 4 t 'T_0=100, 32^2',\
+'vrms_64_100.ascii'   u 1:2 w l lt 7 dt 3 t 'T_0=100, 64^2',\
+'vrms_96_100.ascii'   u 1:2 w l lt 7 dt 2 t 'T_0=100, 96^2',\
+
+
+set ylabel 'Q'
+set output 'Q.pdf'
+plot[][:]\
+'T0_0p1_aspect_lvl5/statistics' u 2:(abs($21))  w l lt 2 dt 1 t 'T_0=0.1, ASPECT, lvl 5',\
+'T0_1_aspect_lvl5/statistics'   u 2:(abs($21))  w l lt 3 dt 1 t 'T_0=1, ASPECT, lvl 5',\
+'T0_10_aspect_lvl5/statistics'  u 2:(abs($21))  w l lt 4 dt 1 t 'T_0=10, ASPECT, lvl 5',\
+'T0_100_aspect_lvl5/statistics' u 2:(abs($21))  w l lt 7 dt 1 t 'T_0=100, ASPECT, lvl 5',\
+'Q_32_0.01.ascii'  u 1:2 w l lt 1 dt 4 t 'T_0=0.01, 32^2',\
+'Q_64_0.01.ascii'  u 1:2 w l lt 1 dt 3 t 'T_0=0.01, 64^2',\
+'Q_96_0.01.ascii'  u 1:2 w l lt 1 dt 2 t 'T_0=0.01, 96^2',\
+'Q_32_0.1.ascii'   u 1:2 w l lt 2 dt 4 t 'T_0=0.1, 32^2',\
+'Q_64_0.1.ascii'   u 1:2 w l lt 2 dt 3 t 'T_0=0.1, 64^2',\
+'Q_96_0.1.ascii'   u 1:2 w l lt 2 dt 2 t 'T_0=0.1, 96^2',\
+'Q_32_1.ascii'     u 1:2 w l lt 3 dt 4 t 'T_0=1, 32^2',\
+'Q_64_1.ascii'     u 1:2 w l lt 3 dt 3 t 'T_0=1, 64^2',\
+'Q_96_1.ascii'     u 1:2 w l lt 3 dt 2 t 'T_0=1, 96^2',\
+'Q_32_10.ascii'    u 1:2 w l lt 4 dt 4 t 'T_0=10, 32^2',\
+'Q_64_10.ascii'    u 1:2 w l lt 4 dt 3 t 'T_0=10, 64^2',\
+'Q_96_10.ascii'    u 1:2 w l lt 4 dt 2 t 'T_0=10, 96^2',\
+'Q_32_100.ascii'   u 1:2 w l lt 7 dt 4 t 'T_0=100, 32^2',\
+'Q_64_100.ascii'   u 1:2 w l lt 7 dt 3 t 'T_0=100, 64^2',\
+'Q_96_100.ascii'   u 1:2 w l lt 7 dt 2 t 'T_0=100, 96^2',\
+
+
+unset log y 
+set ylabel '<T>'
+set output 'Tavrg.pdf'
+plot[][:]\
+'Tavrg_32_0.01.ascii'  u 1:2 w l lt 1 dt 4 t 'T_0=0.01, 32^2',\
+'Tavrg_64_0.01.ascii'  u 1:2 w l lt 1 dt 3 t 'T_0=0.01, 64^2',\
+'Tavrg_96_0.01.ascii'  u 1:2 w l lt 1 dt 2 t 'T_0=0.01, 96^2',\
+'Tavrg_32_0.1.ascii'   u 1:2 w l lt 2 dt 4 t 'T_0=0.1, 32^2',\
+'Tavrg_64_0.1.ascii'   u 1:2 w l lt 2 dt 3 t 'T_0=0.1, 64^2',\
+'Tavrg_96_0.1.ascii'   u 1:2 w l lt 2 dt 2 t 'T_0=0.1, 96^2',\
+'Tavrg_32_1.ascii'     u 1:2 w l lt 3 dt 4 t 'T_0=1, 32^2',\
+'Tavrg_64_1.ascii'     u 1:2 w l lt 3 dt 3 t 'T_0=1, 64^2',\
+'Tavrg_96_1.ascii'     u 1:2 w l lt 3 dt 2 t 'T_0=1, 96^2',\
+'Tavrg_32_10.ascii'    u 1:2 w l lt 4 dt 4 t 'T_0=10, 32^2',\
+'Tavrg_64_10.ascii'    u 1:2 w l lt 4 dt 3 t 'T_0=10, 64^2',\
+'Tavrg_96_10.ascii'    u 1:2 w l lt 4 dt 2 t 'T_0=10, 96^2',\
+'Tavrg_32_100.ascii'   u 1:2 w l lt 7 dt 4 t 'T_0=100, 32^2',\
+'Tavrg_64_100.ascii'   u 1:2 w l lt 7 dt 3 t 'T_0=100, 64^2',\
+'Tavrg_96_100.ascii'   u 1:2 w l lt 7 dt 2 t 'T_0=100, 96^2',\
+
+
