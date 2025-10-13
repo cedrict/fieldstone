@@ -1,0 +1,34 @@
+#!/bin/bash
+
+rm *.ascii
+
+visc2=1e21
+lambda=256e3
+
+#for n in 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 48 56 64 80 88 96 112 128 160 192; do 
+for n in 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 48 56 64 80 96 128 160; do 
+
+    for a in 1 2 3; do 
+
+        echo n= $n assembly= $a
+
+        python3 stone.py $n $n  0 $lambda 3000 $visc2 $a > opla
+
+        grep bc opla >> bc_${a}.ascii 
+        grep assembl opla >> assembly_${a}.ascii 
+        grep build opla >> build_${a}.ascii 
+        grep convert opla >> convert_${a}.ascii 
+        grep solve opla >> solve_${a}.ascii 
+        grep matrices opla >> matrices_${a}.ascii 
+
+        echo -n $lambda >> vy_${a}.ascii 
+        echo -n ' ' >> vy_${a}.ascii 
+        echo -n $visc2 >> vy_${a}.ascii 
+        echo -n ' ' >> vy_${a}.ascii 
+        grep vy opla >> vy_${a}.ascii 
+
+    done
+
+done
+
+rm opla

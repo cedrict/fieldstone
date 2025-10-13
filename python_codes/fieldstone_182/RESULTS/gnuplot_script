@@ -1,0 +1,98 @@
+#
+set term pdf enhanced font "Times,14pt"
+set grid
+set pointsize .4
+set xlabel "Nfem"
+
+set log xy
+set key outside
+
+set ylabel "time boundary conditions (s)"
+set output 'times_bc.pdf'
+plot[][]\
+'bc_1.ascii'       u 5:4 w lp lt 1 pt 1 t 'ass=1',\
+'bc_2.ascii'       u 5:4 w lp lt 2 pt 1 t 'ass=2',\
+'bc_3.ascii'       u 5:4 w lp lt 3 pt 1 t 'ass=3',\
+'../../fieldstone_181/RESULTS/bc_1.ascii' u 5:4 w l lt 1 dt 2  t 'ass=1',\
+'../../fieldstone_181/RESULTS/bc_2.ascii' u 5:4 w l lt 2 dt 2  t 'ass=2',\
+'../../fieldstone_181/RESULTS/bc_3.ascii' u 5:4 w l lt 3 dt 2  t 'ass=3',\
+x/200000 lt -1 dt 2,\
+x**0.8 /100000 lt -1 dt  3
+
+set ylabel "time build matrix (s)"
+set output 'times_build.pdf'
+plot[][]\
+'build_1.ascii'    u 7:4 w lp lt 1 pt 2 t 'ass=1',\
+'build_2.ascii'    u 7:4 w lp lt 2 pt 2 t 'ass=2',\
+'build_3.ascii'    u 7:4 w lp lt 3 pt 2 t 'ass=3',\
+'../../fieldstone_181/RESULTS/build_1.ascii' u 7:4 w l lt 1 dt 2  t 'ass=1',\
+'../../fieldstone_181/RESULTS/build_2.ascii' u 7:4 w l lt 2 dt 2  t 'ass=2',\
+'../../fieldstone_181/RESULTS/build_3.ascii' u 7:4 w l lt 3 dt 2  t 'ass=3',\
+x/9000 lt -1 dt 2 ,\
+x/1800 lt -1 dt 2 
+
+set ylabel "time solve system (s)"
+set output 'times_solve.pdf'
+plot[][]\
+'solve_1.ascii'    u 6:3 w lp lt 1 pt 3 t 'ass=1',\
+'solve_2.ascii'    u 6:3 w lp lt 2 pt 3 t 'ass=2',\
+'solve_3.ascii'    u 6:3 w lp lt 3 pt 3 t 'ass=3',\
+x**1.67/10000000 lt -1 dt 2 
+
+set ylabel "time convert to csr format (s)"
+set output 'times_convert.pdf'
+plot[][]\
+'convert_1.ascii'  u 7:4 w lp lt 1 pt 4 t 'ass=1',\
+'convert_2.ascii'  u 7:4 w lp lt 2 pt 4 t 'ass=2',\
+'convert_3.ascii'  u 7:4 w lp lt 3 pt 4 t 'ass=3',\
+'../../fieldstone_181/RESULTS/convert_1.ascii' u 7:4 w l lt 1 dt 2  t 'ass=1',\
+'../../fieldstone_181/RESULTS/convert_2.ascii' u 7:4 w l lt 2 dt 2  t 'ass=2',\
+'../../fieldstone_181/RESULTS/convert_3.ascii' u 7:4 w l lt 3 dt 2  t 'ass=3',\
+x/100000 lt -1 dt 2
+
+set ylabel "time building elemental matrices (s)"
+set output 'times_matrices.pdf'
+plot[][]\
+'matrices_1.ascii' u 5:4 w lp lt 1 pt 5 t 'ass=1',\
+'matrices_2.ascii' u 5:4 w lp lt 2 pt 5 t 'ass=2',\
+'matrices_3.ascii' u 5:4 w lp lt 3 pt 5 t 'ass=3',\
+'../../fieldstone_181/RESULTS/matrices_1.ascii' u 5:4 w l lt 1 dt 2  t 'ass=1',\
+'../../fieldstone_181/RESULTS/matrices_2.ascii' u 5:4 w l lt 2 dt 2  t 'ass=2',\
+'../../fieldstone_181/RESULTS/matrices_3.ascii' u 5:4 w l lt 3 dt 2  t 'ass=3',\
+x/10000 lt -1 dt  2
+
+set ylabel "time for assembly alone (s)"
+set output 'times_assembly.pdf'
+plot[][]\
+'assembly_1.ascii' u 5:4 w lp lt 1 pt 6 t 'ass=1',\
+'assembly_2.ascii' u 5:4 w lp lt 2 pt 6 t 'ass=2',\
+'assembly_3.ascii' u 5:4 w lp lt 3 pt 6 t 'ass=3',\
+'../../fieldstone_181/RESULTS/assembly_1.ascii' u 5:4 w l lt 1 dt 2  t 'ass=1',\
+'../../fieldstone_181/RESULTS/assembly_2.ascii' u 5:4 w l lt 2 dt 2  t 'ass=2',\
+'../../fieldstone_181/RESULTS/assembly_3.ascii' u 5:4 w l lt 3 dt 2  t 'ass=3',\
+x/60000 lt -1 dt 2,\
+x/3000 lt -1 dt 3
+
+set ylabel "time build \& solve matrix (s)"
+set output 'times_build_solve.pdf'
+plot[][]\
+'build_1.ascii' u 7:4 w lp lt 1 pt 2 t 'Build, ass=1',\
+'build_2.ascii' u 7:4 w lp lt 2 pt 2 t 'Build, ass=2',\
+'build_3.ascii' u 7:4 w lp lt 3 pt 2 t 'Build, ass=3',\
+'solve_1.ascii' u 6:3 w lp lt 1 pt 5 t 'Solve, ass=1',\
+'solve_2.ascii' u 6:3 w lp lt 2 pt 5 t 'Solve, ass=2',\
+'solve_3.ascii' u 6:3 w lp lt 3 pt 5 t 'Solve, ass=3',\
+
+
+###############################################
+
+set ylabel 'max(v_y) (m/s)'
+unset log y
+set output 'vy.pdf'
+plot[][]\
+'vy_1.ascii'  u 9:6 t 'ass=1',\
+'vy_2.ascii'  u 9:6 t 'ass=2',\
+'vy_3.ascii'  u 9:6 t 'ass=3',\
+'vy_1.ascii' u 9:8 w l lt -1 dt 2 t 'analytical'
+
+
