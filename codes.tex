@@ -917,19 +917,36 @@ faulting, body forces, and surface tractions.
 \section{GAIA} 
 %------------------------------------------------------------------------------
 
+From \cite{momh25}: ``The development of the Generic Automaton for planetary Interior
+Analysis (GAIA) began in 2006 at the German Aerospace Center (DLR), Institute of 
+Planetary Research in Berlin. GAIA is written in C++ and has no external dependencies, 
+making it self-contained too, except for the possibility to additionally use external 
+linear solvers.
+GAIA is a fluid flow and energy solver for the incompressible and
+compressible (anelastic) Navier–Stokes equations across arbitrary
+2-D and 3-D geometries. Initially designed to simulate Stokes flow
+(creeping flow) with strongly varying viscosity (Hüttig et al. 2013),
+GAIA has since been extended to support flows driven by inertia.
+Also supporting a wide range of geometries, these advanced features
+make GAIA an ideal tool for simulating a variety of geophysical flows
+such as mantle, core, and ocean convection.
+''
+
 \begin{small}
 \begin{itemize}
-\item[\twothousandeight]     \textcite{hust08b} 
-\item[\twothousandeleven]    \textcite{toyu11} 
-\item[\twothousandtwelve]    \textcite{nobs12}, \textcite{plsp12}
-\item[\twothousandthirteen]  \textcite{hutm13}, \textcite{plth13},  \textcite{nobr13},
-                             \textcite{plbs13}, \textcite{pltb13}
-\item[\twothousandfifteen]   \textcite{plht15}
-\item[\twothousandsixteen]   \textcite{plhm16}
-\item[\twothousandseventeen] \textcite{mats17}
-\item[\twothousandeighteen]  \textcite{plpt18}, \textcite{plhw18}
-\item[\twothousandnineteen]  \textcite{neum19}
-\item[\twothousandtwenty]    \textcite{agtb20},  \textcite{sctp20}
+\item[\twothousandeight]      \textcite{hust08b} 
+\item[\twothousandeleven]     \textcite{toyu11} 
+\item[\twothousandtwelve]     \textcite{nobs12}, \textcite{plsp12}
+\item[\twothousandthirteen]   \textcite{hutm13}, \textcite{plth13},  \textcite{nobr13},
+                              \textcite{plbs13}, \textcite{pltb13}
+\item[\twothousandfifteen]    \textcite{plht15}
+\item[\twothousandsixteen]    \textcite{plhm16}
+\item[\twothousandseventeen]  \textcite{mats17}
+\item[\twothousandeighteen]   \textcite{plpt18}, \textcite{plhw18}
+\item[\twothousandnineteen]   \textcite{neum19}
+\item[\twothousandtwenty]     \textcite{agtb20},  \textcite{sctp20}
+\item[\twothousandtwentyfour] \textcite{flph24}
+\item[\twothousandtwentyfive] \textcite{momh25}
 \end{itemize}
 \end{small}
 
@@ -972,6 +989,19 @@ Rather logically only a handful of publications were produced with this code:
 \end{itemize}
 \end{small}
 
+%------------------------------------------------------------------------------
+\section{GeoFLAC} 
+%------------------------------------------------------------------------------
+
+
+\begin{small}
+\begin{itemize}
+\item[2006] \textcite{lama06}
+\item[2015] \textcite{svlh15}
+\item[2023] \textcite{moml23}
+\item[2025] \textcite{mohl25} 
+\end{itemize}
+\end{small}
 
 %------------------------------------------------------------------------------
 \section{(G)TECTON} 
@@ -1160,7 +1190,7 @@ I3MG is described in the appendix of \textcite{fava23} (2023).
 \item[\twothousandtwentyfive]  \textcite{masg25},  \textcite{pezg25}, \textcite{ligr25},
                                \textcite{mabg25},  \textcite{cagm25}, \textcite{devf25},
                                \textcite{gugs25},  \textcite{orgb25}, \textcite{orbg25},
-                               \textcite{pezg25}
+                               \textcite{pezg25b}
 \end{itemize}
 \end{small}
 
@@ -1592,7 +1622,7 @@ geoflac code at \url{https://github.com/tan2/geoflac} used in \cite{gojd23}
                              \textcite{chbl13}
 \item[\twothousandfourteen]    \textcite{frba14},  \textcite{gagb14}, 
                                \textcite{bufa14},  \textcite{bufy14b}
-\item[\twothousandfifteen]     \textcite{wulc15},  \textcite{gebw15}, \textcite{svlh15}
+\item[\twothousandfifteen]     \textcite{wulc15},  \textcite{gebw15}
 \item[\twothousandsixteen]     \textcite{marl16},  \textcite{jala16}
 \item[\twothousandseventeen]   \textcite{petc17}
 \item[\twothousandeighteen]    \textcite{gesr18}
@@ -2031,7 +2061,7 @@ For an explanation of nested version of the numerical model, see appendix A of \
 \item[\twothousandtwentyfour]  \textcite{jalt24},  \textcite{deba24}, \textcite{chrg24},
                                \textcite{masw24},  \textcite{shml24}, \textcite{lamt24},
                                \textcite{pagr24}
-\item[\twothousandtwentyfive]  \textcite{semt25},  \textcite{gufl25}
+\item[\twothousandtwentyfive]  \textcite{semt25},  \textcite{gufl25}, \textcite{jacc25}
 
 \end{itemize}
 \end{small}
@@ -2091,6 +2121,8 @@ magnitude across a single cell are easily handled by STREAMV.
 \textcite{samu12b}
 \item[2023]
 \textcite{sasa23}
+\item[2025] 
+\textcite{momh25}
 \end{itemize}
 \end{small}
 
