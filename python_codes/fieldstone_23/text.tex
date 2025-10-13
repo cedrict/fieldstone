@@ -1,8 +1,11 @@
-
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
 \includegraphics[height=1.25cm]{images/pictograms/msc}
-\includegraphics[height=1.5cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_23/keywords.ascii}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_23/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -21,28 +24,29 @@ We first start with an isothermal Stokes flow, so that we disregard the heat tra
 the equations we wish to solve are simply:
 
 \begin{align}
-  -\nabla \cdot \left[2\eta \left(\dot\varepsilon(\bm v)
-                                  - \frac{1}{3}(\nabla \cdot \bm v)\mathbf 1\right)
-                \right] + \nabla p &=
-  \rho \bm g
+-\vec\nabla p +\vec\nabla \cdot \left[2 \eta \left(\dot\varepsilon(\vec \upnu)
+            - \frac{1}{3}(\vec\nabla \cdot \vec\upnu) \mathbf 1\right)  \right] +   \rho \vec{g} &=\vec{0}
   &
   & \textrm{in $\Omega$},
   \\
-  \nabla \cdot (\rho \bm v) &= 0
+  \vec\nabla \cdot (\rho \vec\upnu) &= 0
   &
   & \textrm{in $\Omega$}
 \end{align}
+
+
+
 The second equation can be rewritten 
-$\nabla \cdot (\rho {\bm v}) =  \rho \nabla \cdot {\bm v} + {\bm v} \cdot {\bm \nabla}\rho=0$
+$\vec\nabla \cdot (\rho \vec{\upnu}) =  \rho \vec\nabla \cdot \vec{\upnu} 
++ \vec{\upnu} \cdot \vec{\nabla}\rho=0$
 or, 
 \[
-\nabla \cdot {\bm v} + \frac{1}{\rho} {\bm v} \cdot {\bm \nabla}\rho=0
+\vec\nabla \cdot \vec{\upnu} + \frac{1}{\rho} \vec{\upnu} \cdot {\vec\nabla}\rho = 0
 \]
 Note that this presupposes that the density is not zero anywhere in the domain.
 
-We use a mixed formulation and therefore  
-keep both velocity and pressure as unknowns. We end up having to solve 
-the following system:
+We use a mixed formulation and therefore keep both velocity and pressure as unknowns. 
+We end up having to solve the following system:
 \[
 \left(
 \begin{array}{cc}
@@ -52,7 +56,7 @@ the following system:
 \cdot
 \left(
 \begin{array}{c}
-{\cal V} \\ {\cal P}
+\vec{\cal V} \\ \vec{\cal P}
 \end{array}
 \right)
 =
@@ -64,16 +68,17 @@ the following system:
 \quad\quad
 {\rm or,}
 \quad\quad
-\A \cdot X = rhs
+\A \cdot X = \vec{b}
 \]
 Where $\K$ is the stiffness matrix, $\G$ is the discrete gradient operator, 
-$\G^T$ is the discrete divergence operator, ${\cal V}$ the velocity vector, 
-${\cal P}$ the pressure vector.
-Note that the term $\Z{\cal V}$ derives from term ${\bm v} \cdot {\bm \nabla} \rho$ in the continuity equation. 
+$\G^T$ is the discrete divergence operator, $\vec{\cal V}$ the velocity vector, 
+$\vec{\cal P}$ the pressure vector.
+Note that the term $\Z{\cal V}$ derives from term $\vec{\upnu} \cdot \vec{\nabla}\rho$ 
+in the continuity equation. 
 
 Each block $\K$, $\G$ , $\Z$ and vectors $f$ and $h$ are built separately 
-in the code and assembled into 
-the matrix $\A$ and vector $rhs$ afterwards. $\A$ and $rhs$ are then passed to the solver. 
+in the code and assembled into the matrix $\A$ and vector $\vec{b}$ 
+afterwards. $\A$ and $\vec{b}$ are then passed to the solver. 
 We will see later that there are alternatives to solve this approach which do not require to 
 build the full Stokes matrix $\A$. 
 
@@ -82,16 +87,18 @@ the matrix $\A$ retains the same structure as in the incompressible case. This i
 how it is implemented in ASPECT. This however requires more work since the rhs depends 
 on the solution and some form of iterations is needed. 
 
-In the case of a compressible flow the strain rate tensor and the deviatoric strain rate tensor are no more equal (since ${\bm \nabla}\cdot{\bm v} \neq 0$).
-The deviatoric strainrate tensor is given by\footnote{See the ASPECT manual for a justification of the 3 value in the denominator in 2D and 3D.} 
+In the case of a compressible flow the strain rate tensor and the deviatoric strain 
+rate tensor are no more equal (since ${\vec\nabla}\cdot\vec{\upnu} \neq 0$).
+The deviatoric strainrate tensor is given by\footnote{See the ASPECT manual for a 
+justification of the 3 value in the denominator in 2d and 3d.} 
 \[
-\dot{\bm \epsilon}^d({\bm v})=
-\dot{\bm \epsilon}({\bm v})-\frac{1}{3} Tr(\dot{\bm \epsilon}) {\bm 1}
-=\dot{\bm \epsilon}({\bm v})-\frac{1}{3} ({\bm \nabla}\cdot{\bm v}) {\bm 1}
+\dot{\bm \varepsilon}^d(\vec{\upnu})=
+\dot{\bm \varepsilon}(\vec{\upnu})-\frac{1}{3} Tr(\dot{\bm \varepsilon}) {\bm 1}
+=\dot{\bm \varepsilon}(\vec{\upnu})-\frac{1}{3} ({\bm \nabla}\cdot \vec{\upnu}) {\bm 1}
 \]
 In that case:
 \begin{eqnarray}
-\dot{\epsilon}_{xx}^d 
+\dot{\varepsilon}_{xx}^d 
 &=& \frac{\partial u}{\partial x}
 -\frac{1}{3} \left( \frac{\partial u}{\partial x} + \frac{\partial v}{\partial y} \right) 
 = \frac{2}{3}\frac{\partial u}{\partial x}
@@ -100,7 +107,7 @@ In that case:
 %\frac{2}{3} \sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  u_i 
 %-\frac{1}{3} \sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  v_i 
 \\
-\dot{\epsilon}_{yy}^d 
+\dot{\varepsilon}_{yy}^d 
 &=& \frac{\partial v}{\partial y}
 -\frac{1}{3} \left( \frac{\partial u}{\partial x} + \frac{\partial v}{\partial y} \right) 
 =-\frac{1}{3} \frac{\partial u}{\partial x} 
@@ -108,7 +115,7 @@ In that case:
 %=-\frac{1}{3}  \sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  u_i
 %+ \frac{2}{3} \sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  v_i
 \\
-2\dot{\epsilon}_{xy}^d 
+2\dot{\varepsilon}_{xy}^d 
 &=& 
 \frac{\partial u}{\partial y} 
 +\frac{\partial v}{\partial x} 
@@ -117,7 +124,7 @@ In that case:
 \end{eqnarray}
 and then 
 \[
-\dot{\bm \epsilon}^d({\bm v})
+\dot{\bm \varepsilon}^d({\bm v})
 =
 \left(
 \begin{array}{cc}
@@ -185,17 +192,6 @@ or,
 \[
 \vec{\tau} = {\bm C}_\eta {\bm B} V
 \]
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -286,4 +282,124 @@ ToDo:
 \item redo A v d Berg benchmark (see Tom Weir thesis)
 \end{itemize}
 
+
+
+\newpage
+\section*{Analytical solution}
+
+
+We start from 
+\[
+\rho(x,y)=xy
+\qquad
+u(x,y)=\frac{C_x}{x}
+\qquad
+v(x,y)=\frac{C_y}{y}
+\qquad
+g_x(x,y)=\frac{1}{x}
+\qquad
+g_y(x,y)=\frac{1}{y}
+\]
+We then confirm that 
+\[
+\vec\nabla \cdot (\rho \vec\upnu) 
+= \rho \vec\nabla \cdot \vec\upnu
++ \vec\upnu \cdot \vec\nabla \rho
+= xy \left(\frac{\partial u}{\partial x}+\frac{\partial v}{\partial y} \right)
++ \frac{C_x}{x} \frac{\partial \rho}{\partial x}
++ \frac{C_y}{y} \frac{\partial \rho}{\partial y}
+= xy \left( -\frac{C_x}{x^2} - \frac{C_y}{y^2}  \right)
++ \frac{C_x y}{x} + \frac{C_y x}{y}=0
+\]
+From the definition of the velocity we can compute the strain rate and deviatoric strain rate tensors:
+
+\begin{eqnarray}
+\dot{\bm \varepsilon} 
+&=& 
+\begin{pmatrix}
+-C_x/x^ 2 & 0 \\
+0 & -C_y/y^2
+\end{pmatrix} \nn\\
+\dot{\bm \varepsilon}^d 
+&=& \dot{\bm \varepsilon} -\frac13  \vec\nabla \cdot \vec\upnu {\bm 1} \nn\\
+&=& \dot{\bm \varepsilon} -\frac13  \left( -\frac{C_x}{x^2} - \frac{C_y}{y^2} \right) {\bm 1} \nn\\
+&=&\dot{\bm \varepsilon} +\frac13  \left( \frac{C_x}{x^2} + \frac{C_y}{y^2}  \right) {\bm 1} \nn\\
+&=&
+\begin{pmatrix}
+-\frac{2C_x}{3x^2} + \frac{C_y}{3y^2} & 0 \\
+0 & \frac{C_x}{3x^2} - \frac{2C_y}{3y^2}
+\end{pmatrix} \nn
+\end{eqnarray}
+Assuming the viscosity to be constant, the moment conservation equation is then
+\begin{eqnarray}
+\vec{0}&=& -\vec\nabla p + \vec\nabla \cdot (2 \eta \dot{\bm \varepsilon}^d )+ \rho \vec{g} \nn\\
+&=& 
+\begin{pmatrix} 
+-\frac{\partial p}{\partial x} \\
+-\frac{\partial p}{\partial y} 
+\end{pmatrix} 
++  2 \eta \vec\nabla \cdot   
+\begin{pmatrix}
+-\frac{2C_x}{3x^2} + \frac{C_y}{3y^2} & 0 \\
+0 & \frac{C_x}{3x^2} - \frac{2C_y}{3y^2}
+\end{pmatrix}
++ 
+\begin{pmatrix}
+y \\x
+\end{pmatrix} \nn\\
+&=&
+\begin{pmatrix} 
+-\frac{\partial p}{\partial x} + 2\eta \frac{\partial}{\partial x} (-\frac{2C_x}{3x^2} +\frac{C_y}{3y^2})+ y \\
+-\frac{\partial p}{\partial y} + 2\eta \frac{\partial}{\partial y} (\frac{C_x}{3x^2} -\frac{2C_y}{3y^2})+ x 
+\end{pmatrix} \nn\\
+&=& 
+\begin{pmatrix} 
+-\frac{\partial p}{\partial x} + 2\eta \frac{\partial}{\partial x} (-\frac{2C_x}{3x^2} )+ y \\
+-\frac{\partial p}{\partial y} + 2\eta \frac{\partial}{\partial y} (-\frac{2C_y}{3y^2})+ x 
+\end{pmatrix} 
+\end{eqnarray}
+The first line leads to write 
+\[
+p(x,y) = -\frac{4 \eta C_x}{3x^2}   + yx + f(y)
+\]
+Inserting this in the second line:
+\[
+-\frac{\partial }{\partial y}  \left( -\frac{4 \eta C_x}{3x^2}   + yx + f(y) \right) 
++ 2\eta \frac{\partial}{\partial y} \left(-\frac{2C_y}{3y^2} \right)+ x = 0
+\]
+\[
+-x - f'(y) + 2\eta \frac{\partial}{\partial y} \left(-\frac{2C_y}{3y^2} \right)+ x = 0
+\]
+or, 
+\[
+f(y) =   -\frac{4 \eta C_y}{3y^2} + Const
+\]
+and finally
+\[
+p(x,y) =  -\frac{4 \eta C_x}{3x^2}  -\frac{4 \eta C_y}{3y^2}   + yx    + Const 
+\]
+Requiring $\iint_\square p \; dxdy=0$ where $\square=[1:2]\times [1:2]$ (because of the 
+expressions for velocity and gravity the origin of the axis system cannot be included in the 
+domain) leads to 
+\begin{eqnarray}
+\iint_\square  
+\left( -\frac{4 \eta C_x}{3x^2}  -\frac{4 \eta C_y}{3y^2}   + yx    + Const \right) 
+&=& 
+\iint_\square   \left( -\frac{4 \eta C_x}{3x^2}  -\frac{4 \eta C_y}{3y^2}   + yx  \right) dxdy
++\iint_\square   Const \; dx dy \nn\\
+&=&\iint_\square   \left( -\frac{4 \eta C_x}{3x^2}  -\frac{4 \eta C_y}{3y^2}   + yx  \right) dxdy
++ Const
+\end{eqnarray}
+so that 
+\[
+Const = -\int_1^2 \int_1^2  \left( -\frac{4 \eta C_x}{3x^2}  -\frac{4 \eta C_y}{3y^2}   + yx  \right) dxdy
+\]
+We then set $\eta=C_x=C_y=1$ for simplicity so that we find\footnote{Thank you WolframAlpha}:
+\[
+Const= -11/12
+\]
+and in the end
+\[
+p(x,y) = -\frac{4}{3x^2} -\frac{4}{3y^2} + yx -\frac{11}{12}
+\]
 
