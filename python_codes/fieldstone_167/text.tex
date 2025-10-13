@@ -24,13 +24,16 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
+Last revision: October 9th, 2025.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This \stone takes its origin in the MSc work of Daniel about the subduction interface. 
 \textcite{stuw98} (1998) proposes a simple mathematical model for the influence 
 of shear heating on the temperature there, so it was decided to 
-reproduce the results of the paper (esp. Fig.~6) and use it as a basis for discussion.
-
+reproduce the results of the paper (especially Fig.~6) and use it as a basis for discussion.
 
 %-------------------------------------------------
 \subsection*{Theory}
@@ -61,7 +64,7 @@ Concretely, the strain rate tensor (in the right coordinate system) can then be 
 \end{array}
 \right)
 \]
-with the second invariant thereof given by
+with its second invariant given by
 \[
 {\cal I}_2(\dot{\bm \varepsilon}) 
 = \frac12 \dot{\bm \varepsilon}:\dot{\bm \varepsilon}
@@ -108,7 +111,7 @@ so that in the end:
 }
 \]
 which is Eq.~(6) of \textcite{stuw98} (1978)\footnote{Save for factor 2. However note that this factor 2 
-disappears in Eq.~7 so which one is it?}
+disappears in Eq.~7 so which one is it?}.
 
 In order to solve this ODE we follow the same procedure as in the appendix of the paper. 
 Assuming the strain rate $\dot\epsilon$ to be constant, we define 
@@ -122,8 +125,8 @@ D = \frac{Q}{nR}
 so that now
 \begin{eqnarray}
 \frac{dT}{dt} &=& C^{-1} e^{D/T} \nn\\
-\Rightarrow C e^{-D/T}  dT &=&  dt \nn\\
-\Rightarrow \int_{T_0}^{T_f} C e^{-D/T}  dT &=&  \int_0^t dt 
+\Rightarrow \qquad C e^{-D/T}  dT &=&  dt \nn\\
+\Rightarrow \qquad \int_{T_0}^{T_f} C e^{-D/T}  dT &=&  \int_0^t dt 
 \end{eqnarray}
 where we have integrated between the limits of temperature at the start of
 deformation, $T_0$, and temperature at the end of deformation $T_f$.
@@ -137,7 +140,7 @@ and also $dT=-\frac{D}{x^2} dx$. Then
 t = C \int_{x_0}^{x_f} e^{-x} \left(-\frac{D}{x^2} \right) dx 
 = CD \int_{x_0}^{x_f} \left(-\frac{1}{x^2} \right) e^{-x} dx
 \]
-where $x_0=D/T_0$ and $x_f=D/T_f$. There probably is a minus sign missing in Eq.~9.
+where $x_0=D/T_0$ and $x_f=D/T_f$. There probably is a minus sign missing in Eq.~9 of the paper.
 
 The integral in the rhs can be integrated by parts\footnote{$\int u'v = uv - \int uv'$}:
 \[
@@ -155,7 +158,7 @@ $\text{Ei}$ defined as follows:
 \text{Ei}(-x)= -\int_{x}^\infty \frac{e^{-t}}{t} dt
 \]
 The second expression will prove useful in what follows.
-Using Eq.~12 of \textcite{stuw98}: 
+Using Eq.~12 of the paper: 
 \begin{eqnarray}
 \int_{x_0}^{x_f} \frac{ e^{-x}}{x}  dx
 &=& \int_{x_0}^\infty \frac{e^{-x}   }{x}  dx + \int^{x_f}_\infty \frac{e^{-x}}{x}  dx \nn\\
@@ -224,7 +227,7 @@ which is the standard definition that we have used above.
 %-------------------------------------------------
 \subsection*{About Fig. 6 of the paper}
 
-Let us consider Fig.~6 of \textcite{stuw98}, where three different sets rheological constants are used
+Let us consider Fig.~6 of the paper, where three different sets rheological constants are used
 for $A$ and $Q$.
 
 \begin{center}
@@ -242,7 +245,7 @@ a total strain of one.
 }
 \end{center}
 
-Obviously the final temperature $T_f$ can not be lower than the initial temperature $T_0$
+Obviously the final temperature $T_f$ cannot be lower than the initial temperature $T_0$
 ($H_s\ge 0$) so that the lower left of the figure is not accessible. Also this means that we should
 look for the root of Eq.~\eqref{f167:eqnl} in the range $T_f\ge T_0$.
 
@@ -397,7 +400,7 @@ $10^{-13,-14,-15}~\si{\per\second}$:
 I have digitized\footnote{\url{https://plotdigitizer.com/app}} the lines of Fig.~6
 and these are also plotted on the figures.
 This is rather puzzling because our results do not come close to those of Fig~6 at all. 
-However, although it is obviously wrong, we could run our code and choose not 
+However, although it is obviously wrong to do so, we could run our code and choose not 
 to convert temperatures to Kelvin (simply by setting \lstinline|TKelvin=0| in the code) 
 and we obtain the following figures:
 
