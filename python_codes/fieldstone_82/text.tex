@@ -8,7 +8,7 @@
 
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_82/text.tex}} \end{flushright}
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_82/keywords.key}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_82/keywords.key}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -19,11 +19,10 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-{\bf \color{teal} Purpose}: implement and document the $Q_1^{++}\times Q_1$ element.
-
-\index{stopics}{$Q_1^{++} \times Q_1$}
+Last revision: October 13th, 2025.
 
 \par\noindent\rule{\textwidth}{0.4pt}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The basis functions for this element is presented in Section~\ref{MMM-ss:Q1Q1bb_3D}.
@@ -31,8 +30,8 @@ This element is presented in \textcite{kahp20} (2020).
 
 There are two bubble functions/nodes per element so we then have 
 \begin{lstlisting}
-NV=nnx*nny*nnz+2*nel 
-NP=nnx*nny*nnz
+nn_V=nnx*nny*nnz+2*nel 
+nn_P=nnx*nny*nnz
 \end{lstlisting}
 For a $8\times 8 \times 8=512$ element grid, there are $9^3=729$ nodes, and 1024 bubble nodes.
 We then have $3\cdot 729=2157$ $Q_1$ velocity dofs and 3072 velocity dofs attached 
@@ -42,7 +41,7 @@ Since the bubble nodes are stored last the structure of the matrix is as follows
 \includegraphics[width=7cm]{python_codes/fieldstone_82/results/matrix_8x8x8_bef_bc}
 \includegraphics[width=7cm]{python_codes/fieldstone_82/results/matrix_8x8x8_aft_bc}\\
 {\captionfont Sparsity pattern of the matrix for a 8x8x8 grid.
-NV= 1753, NP=729.\\ Left:
+nn\_V=1753, nn\_P=729.\\ Left:
 before boundary conditions are applied. 
 Right: after boundary conditions are applied.} 
 \end{center}
@@ -84,21 +83,54 @@ Somewhat surprisingly, the pressure convergence is not exactly quadratic but see
 around 1.8. Also, the $2\times 2\times 2$ 
 quadrature yields better results than the $3\times 3\times 3$ or $4\times 4 \times 4$.
 
+\newpage
 %......................................
 \subsection*{Horizontal shear (bench=2)}
 
-This is a simple kinematical test: gravity is set to zero, no boundary 
-conditions on the sides and $\vec\upnu=(-1,0,0)$ prescribed on the top, and 
-$\vec\upnu=(+1,0,0)$ prescribed on the bottom.
+This is a simple kinematical test: gravity is set to zero, 
+Viscosity is 1.
+The analytical solution $(u,v,w)=(0.5-z,0,0)$ is prescribed on all sides. 
+The analytical pressure solution is $p=0$.
+The root mean square velocity is then
+\[
+\upnu_{rms}
+=\sqrt{ \frac{1}{L_xL_yL_z} \iiint_\square (u^2+v^2+w^2)dxdydz }
+=\sqrt{ \int_0^1 (\frac12-z)^2dz  }
+\simeq 0.288675
+\]
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_82/results/bench2/vel}
-\includegraphics[width=8cm]{python_codes/fieldstone_82/results/bench2/press}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_82/results/bench2/vel}
+\includegraphics[width=5cm]{python_codes/fieldstone_82/results/bench2/press}\\
 {\captionfont $20\times 20 \times 20$ mesh.} 
 \end{center}
 
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_82/RESULTS/bench2/build.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_82/RESULTS/bench2/solve.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench2/diags_u.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench2/diags_v.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench2/diags_w.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench2/u.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench2/v.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench2/w.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench2/p.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench2/vrms.pdf}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+\newpage
 %......................................
-\subsection*{Stokes sphere (bench=3)}
+\subsection*{Stokes sphere ({\tt bench=3})}
 
 This is the benchmark of Section~\ref{MMM-ss:stokes_sphere3D}.
 A sphere of radius 0.123456789 is placed in the middle of the domain. 
@@ -119,12 +151,30 @@ Boundary conditions are no slip on all sides. Gravity is $\vec{g}=-\vec{e}_z$.
 
 All velocity and pressure statistics are presented in Section~\ref{MMM-ss:stokes_sphere3D}.
 
+%\begin{center}
+%\includegraphics[width=8cm]{python_codes/fieldstone_82/results/bench3/build.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_82/results/bench3/solve.pdf}\\
+%{\captionfont Matrix build and solve time as a function of $h$.}
+%\end{center}
+
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_82/results/bench3/build.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_82/results/bench3/solve.pdf}\\
-{\captionfont Matrix build and solve time as a function of $h$.}
+\includegraphics[width=8cm]{python_codes/fieldstone_82/RESULTS/bench3/build.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_82/RESULTS/bench3/solve.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench3/diags_u.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench3/diags_v.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench3/diags_w.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench3/u.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench3/v.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench3/w.pdf}\\
 \end{center}
 
+
+
+
+
+
+
+\newpage
 %......................................
 \subsection*{Sinking cube (bench=4)}
 
@@ -179,6 +229,25 @@ velocity components (and their absolute value) as a function of the mesh size:
 It seems that the somewhat anisotropic placement of the bubbles does not introduce 
 a form of asymmetry in the solution.
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_82/RESULTS/bench4/build.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_82/RESULTS/bench4/solve.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench4/diags_u.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench4/diags_v.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench4/diags_w.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench4/u.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench4/v.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench4/w.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench4/p.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_82/RESULTS/bench4/vrms.pdf}
+\end{center}
+
+
+
+
+
+
+\newpage
 %......................................
 \subsection*{Manufactured solution (bench=5)}
 

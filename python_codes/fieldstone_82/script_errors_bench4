@@ -1,0 +1,27 @@
+#! /bin/bash
+
+rm -f vrms_nq*.ascii
+rm -f vels_nq*.ascii
+rm -f press_nq*.ascii
+rm -f solve_nq*.ascii
+rm -f build_nq*.ascii
+rm -f statistics*.ascii
+rm -f avrg*.ascii
+
+for nq in 2 3 4 ; do
+    for res in 8 16 24 ; do
+        echo $res X $res X $res - nq=$nq
+        python3 stone.py $res $res $res $nq 0 > opla
+        grep vrms opla >> vrms_nq$nq.ascii
+        grep solve opla >> solve_nq$nq.ascii
+        grep averages opla >> avrg_$nq.ascii
+        grep build opla | grep FE >> build_nq$nq.ascii
+        cat stats_vel.ascii >> vels_nq$nq.ascii
+        cat stats_p.ascii >> press_nq$nq.ascii
+        mv vert.ascii vert_res${res}_nq${nq}.ascii
+        mv diag1.ascii diag1_res${res}_nq${nq}.ascii
+        mv diag2.ascii diag2_res${res}_nq${nq}.ascii
+        mv diag3.ascii diag3_res${res}_nq${nq}.ascii
+        mv diag4.ascii diag4_res${res}_nq${nq}.ascii
+    done
+done

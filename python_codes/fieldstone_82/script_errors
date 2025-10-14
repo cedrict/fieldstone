@@ -10,7 +10,7 @@ rm -f statistics*.ascii
 rm -f avrg*.ascii
 
 for nq in 2 3 4 ; do
-    for res in {4..24}; do
+    for res in 4 5 6 7 8 9 10 11 12 13 14 15 16; do
         echo $res X $res X $res - nq=$nq
         python3 stone.py $res $res $res $nq 0 > opla
         grep errv opla >> errors_nq$nq.ascii
@@ -18,8 +18,13 @@ for nq in 2 3 4 ; do
         grep solve opla >> solve_nq$nq.ascii
         grep averages opla >> avrg_$nq.ascii
         grep build opla | grep FE >> build_nq$nq.ascii
+        grep bench opla >> statistics_nq$nq.ascii
         cat stats_vel.ascii >> vels_nq$nq.ascii
         cat stats_p.ascii >> press_nq$nq.ascii
-        grep bench opla >> statistics_nq$nq.ascii
+        mv vert.ascii vert_res${res}_nq${nq}.ascii
+        mv diag1.ascii diag1_res${res}_nq${nq}.ascii
+        mv diag2.ascii diag2_res${res}_nq${nq}.ascii
+        mv diag3.ascii diag3_res${res}_nq${nq}.ascii
+        mv diag4.ascii diag4_res${res}_nq${nq}.ascii
     done
 done
