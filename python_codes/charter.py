@@ -185,6 +185,7 @@ for iel in range(0,nel):
                 tq=qcoords[kq]
                 weightq=qweights[iq]*qweights[jq]*qweights[kq]
                 N_V=basis_functions_V(rq,sq,tq)
+                N_P=basis_functions_P(rq,sq,tq)
                 dNdr_V=basis_functions_V_dr(rq,sq,tq)
                 dNds_V=basis_functions_V_ds(rq,sq,tq)
                 dNdt_V=basis_functions_V_dt(rq,sq,tq)
@@ -199,6 +200,16 @@ for iel in range(0,nel):
                 jcb[2,2]=np.dot(dNdt_V,z_V[icon_V[:,iel]])
                 jcbi=np.linalg.inv(jcb)
                 JxWq=np.linalg.det(jcb)*weightq
+                dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V+jcbi[0,2]*dNdt_V
+                dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V+jcbi[1,2]*dNdt_V
+                dNdz_V=jcbi[2,0]*dNdr_V+jcbi[2,1]*dNds_V+jcbi[2,2]*dNdt_V
+                xq=np.dot(N_V,x_V[icon_V[:,iel]])
+                yq=np.dot(N_V,y_V[icon_V[:,iel]])
+                zq=np.dot(N_V,z_V[icon_V[:,iel]])
+                uq=np.dot(N_V,u[icon_V[:,iel]])
+                vq=np.dot(N_V,v[icon_V[:,iel]])
+                wq=np.dot(N_V,w[icon_V[:,iel]])
+                pq=np.dot(N_P,p[icon_P[:,iel]])
                 area[iel]+=JxWq
             #end for
         #end for
@@ -308,7 +319,7 @@ for i in range(0,m_V):
                       [dNdy_V[i],dNdx_V[i]]]
 
 
-B=np.zeros((6,ndofV*mV),dtype=np.float64)  # gradient matrix B 
+B=np.zeros((6,ndofV*m_V),dtype=np.float64)  # gradient matrix B 
 for i in range(0,m_V):
     B[0:6,3*i:3*i+3] = [[dNdx_V[i],0.       ,0.       ],
                         [0.       ,dNdy_V[i],0.       ],
