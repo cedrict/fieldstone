@@ -406,74 +406,182 @@ v_\phi   &=& -u \sin\phi  + v \cos\phi
 %.................................................................................................
 \subsection{Converting tensors between Cartesian and Cylindrical bases \label{ss:convcartcyl}}
 
-\[
-{\bm T}_{Cyl}=
-\left(
-\begin{array}{ccc}
+
+\begin{eqnarray}
+{\bm T}_{Cyl}
+&=&
+\left(\begin{array}{ccc}
 T_{rr}       & T_{r\theta}      & T_{rz} \\
 T_{\theta r} & T_{\theta\theta} & T_{\theta z} \\
 T_{z r}      & T_{z \theta}     & T_{zz}
-\end{array}
-\right)
-=
-\left(
-\begin{array}{ccc}
+\end{array}\right) \nn\\
+&=&
+\left(\begin{array}{ccc}
  \cos \theta&\sin \theta&0 \\
 -\sin \theta&\cos \theta&0 \\
 0 & 0 & 1 
-\end{array}
-\right)
+\end{array}\right)
 \cdot
-\left(
-\begin{array}{ccc}
+\left(\begin{array}{ccc}
 T_{xx} & T_{xy} & T_{xz} \\
 T_{yx} & T_{yy} & T_{yz} \\
 T_{zx} & T_{zy} & T_{zz} 
-\end{array}
-\right)
+\end{array}\right)
 \cdot
-\left(
-\begin{array}{ccc}
+\left(\begin{array}{ccc}
 \cos \theta & -\sin \theta&0 \\
 \sin \theta &  \cos \theta&0 \\
 0 & 0 & 1 
+\end{array}\right) \nn\\
+&=&
+\left(\begin{array}{ccc}
+ \cos \theta&\sin \theta&0 \\
+-\sin \theta&\cos \theta&0 \\
+0 & 0 & 1 
+\end{array}\right)
+\cdot
+\left(
+\begin{array}{ccc}
+T_{xx} \cos\theta  + T_{xy} \sin\theta & -T_{xx} \sin\theta + T_{xy} \cos\theta & T_{xz}\\
+T_{yx} \cos\theta  + T_{yy} \sin\theta & -T_{yx} \sin\theta + T_{yy} \cos\theta & T_{yz}\\
+T_{zx} \cos\theta  + T_{zy} \sin\theta & -T_{zx} \sin\theta + T_{zy} \cos\theta & T_{zz}\\
+\end{array}
+\right) \nn\\
+&=& 
+\left(\begin{array}{ccc}
+T_{xx} c^2\theta  + T_{xy} s_\theta c_\theta 
++T_{yx} s_\theta c_\theta  + T_{yy} s^2_\theta & 
+-T_{xx} s_\theta c_\theta + T_{xy} c^2_\theta
+-T_{yx} s^2_\theta + T_{yy} s_\theta c_\theta &
+T_{xz} c_\theta +T_{yz} s_\theta  \\ \\
+-T_{xx} s_\theta c_\theta  - T_{xy} s^2_\theta 
++ T_{yx} c^2_\theta  + T_{yy} s_\theta c_\theta &  
+T_{xx} s^2_\theta - T_{xy} s_\theta c_\theta 
+-T_{yx} s_\theta c_\theta + T_{yy} c^2_\theta
+& -T_{xz} s_\theta + T_{yz} c_\theta \\ \\
+T_{zx} c_\theta  + T_{zy} s_\theta &  
+-T_{zx} s_\theta + T_{zy} c_\theta  &
+T_{zz}
+\end{array}
+\right) \nn\\
+&=& 
+\left(\begin{array}{ccc}
+T_{xx} c^2\theta  + 2T_{xy} s_\theta c_\theta + T_{yy} s^2_\theta & 
+-T_{xx} s_\theta c_\theta + T_{xy} c^2_\theta -T_{yx} s^2_\theta + T_{yy} s_\theta c_\theta &
+T_{xz} c_\theta +T_{yz} s_\theta  \\ 
+\\
+-T_{xx} s_\theta c_\theta  - T_{xy} s^2_\theta + T_{yx} c^2_\theta  + T_{yy} s_\theta c_\theta &  
+T_{xx} s^2_\theta - 2T_{xy} s_\theta c_\theta + T_{yy} c^2_\theta &
+-T_{xz} s_\theta + T_{yz} c_\theta \\ 
+\\
+T_{zx} c_\theta  + T_{zy} s_\theta &   -T_{zx} s_\theta + T_{zy} c_\theta  & T_{zz}
+\end{array}
+\right) \nn
+\end{eqnarray}
+
+Assuming an annulus in the xy plane and being infinite in the z direction, we have 
+\[
+w=0 \qquad \partial_z =0 
+\]
+so that 
+\begin{eqnarray}
+\dot{\varepsilon}_{xz}= \dot{\varepsilon}_{zx}&=&
+\frac12 (  \frac{\partial u}{\partial z}  + \frac{\partial w}{\partial x}) =0 \nn\\
+\dot{\varepsilon}_{yz}= \dot{\varepsilon}_{zy} &=& 
+\frac12 (  \frac{\partial v}{\partial z}  + \frac{\partial w}{\partial y}) = 0 \nn\\
+\dot{\varepsilon}_{zz}&=& \frac{\partial w}{\partial z} = 0
+\end{eqnarray}
+so that the strain rate tensor in Cartesian coordinates is in fact a 2x2 tensor.
+Likewise, in the case of polar coordinates, we obtain the strain rate tensor from the equation 
+above by setting $T_{xz}=T_{yz}=T_{zz}=0$.
+
+In the end 
+\[
+{\bm T}_{Polar}
+=
+\left(\begin{array}{ccc}
+T_{rr}       & T_{r\theta}       \\
+T_{\theta r} & T_{\theta\theta}  
+\end{array}\right) 
+=
+\left(\begin{array}{cc}
+T_{xx} \cos^2\theta  + 2T_{xy} s_\theta c_\theta + T_{yy} s^2_\theta & 
+(T_{yy}-T_{xx}) s_\theta c_\theta + T_{xy} c^2_\theta -T_{yx} s^2_\theta  \\ 
+\\
+(T_{yy}-T_{xx}) s_\theta c_\theta  - T_{xy} s^2_\theta + T_{yx} c^2_\theta   &  
+T_{xx} s^2_\theta - 2T_{xy} s_\theta c_\theta + T_{yy} c^2_\theta  \\ 
 \end{array}
 \right)
 \]
 
+Let us now assume that we wish to compute the normal traction to the surface of an annulus. 
+In this case the tensor ${\bm T}$ above is the stress tensor ${\bm \sigma}$. 
+In order to obtain the traction at a point of the surface, we need to compute 
+\[
+\vec{t}={\bm \sigma}\cdot \vec{n}
+\]
+where $\vec{n}$ is the normal to the surface at that point. In the case of an 
+annulus, we have $\vec{n}=(\cos\theta, \sin\theta)$.
+The traction is then 
+\[
+\vec{t}={\bm \sigma}\cdot \vec{n}
+=\left(\begin{array}{cc}
+\sigma_{xx} & \sigma_{xy} \\
+\sigma_{yx} & \sigma_{yy} 
+\end{array}\right)
+\cdot
+\left(\begin{array}{c}
+\cos\theta \\
+\sin\theta
+\end{array}\right)
+=
+\left(\begin{array}{c}
+\sigma_{xx}\cos\theta +  \sigma_{xy} \sin\theta \\
+\sigma_{yx}\cos\theta +  \sigma_{yy} \sin\theta 
+\end{array}\right)
+\]
+The component of the traction along the normal vector (i.e. perpendicular to the surface)
+is then 
+\begin{eqnarray}
+t_n 
+&=& \vec{t}\cdot \vec{n} \nn\\
+&=& 
+(\sigma_{xx}\cos\theta +  \sigma_{xy} \sin\theta )\cos\theta
++(\sigma_{yx}\cos\theta +  \sigma_{yy} \sin\theta )\sin\theta \nn\\
+&=& \sigma_{xx}\cos^2\theta +  \sigma_{xy} \sin\theta \cos\theta 
++ \sigma_{yx}\sin\theta \cos\theta +  \sigma_{yy} \sin^2\theta \nn\\
+&=& \sigma_{xx}\cos^2\theta +2 \sigma_{xy}\sin\theta \cos\theta + \sigma_{yy} \sin^2\theta \nn\\
+&=& \sigma_{rr}
+\end{eqnarray}
+
+Finallly we can also express the tensor in Cartesian coordinates starting 
+from its expression in polar coordinates follows:
+
 \[
 {\bm T}_{Cart}=
-\left(
-\begin{array}{ccc}
+\left(\begin{array}{ccc}
 T_{xx} & T_{xy} & T_{xz} \\
 T_{yx} & T_{yy} & T_{yz} \\
 T_{zx} & T_{zy} & T_{zz} 
-\end{array}
-\right)
+\end{array}\right)
 =
-\left(
-\begin{array}{ccc}
+\left(\begin{array}{ccc}
  \cos \theta&-\sin \theta&0 \\
 \sin \theta&\cos \theta&0 \\
 0 & 0 & 1 
-\end{array}
-\right)
+\end{array}\right)
 \cdot
-\left(
-\begin{array}{ccc}
+\left(\begin{array}{ccc}
 T_{rr}       & T_{r\theta}      & T_{rz} \\
 T_{\theta r} & T_{\theta\theta} & T_{\theta z} \\
 T_{z r}      & T_{z \theta}     & T_{zz}
-\end{array}
-\right)
+\end{array}\right)
 \cdot
-\left(
-\begin{array}{ccc}
+\left(\begin{array}{ccc}
 \cos \theta & \sin \theta&0 \\
 -\sin \theta &  \cos \theta&0 \\
 0 & 0 & 1 
-\end{array}
-\right)
+\end{array}\right)
 \]
 
 
