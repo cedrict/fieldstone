@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.sparse as sps
-import time as timing
+import time as clock
 
 def schur_complement_cg_solver(K_mat,G_mat,C_mat,M_mat,f_rhs,h_rhs,NfemV,NfemP,niter,tol,use_precond):
 
@@ -33,7 +33,7 @@ def schur_complement_cg_solver(K_mat,G_mat,C_mat,M_mat,f_rhs,h_rhs,NfemV,NfemP,n
 
    for k in range (0,niter): #--------------------------------------#
                                                                     #
-       debut = timing.time()                                        #
+       debut = clock.time()                                         #
                                                                     #
        ptildevect_k=G_mat.dot(pvect_k)                              # 
        Cp=C_mat.dot(pvect_k)                                        # C . p_k
@@ -58,9 +58,9 @@ def schur_complement_cg_solver(K_mat,G_mat,C_mat,M_mat,f_rhs,h_rhs,NfemV,NfemP,n
        conv_file.write("%d %6e \n"  %(k,xi))                        #
        conv_file.flush()                                            #
                                                                     #
-       fin = timing.time()                                          #
+       fin = clock.time()                                           #
                                                                     #
-       print('     -> iter= %3d, xi= %.3e | time= %.2f s' %(k,xi,fin-debut))    
+       print('iter= %3d, xi= %.3e | time= %.2f s'%(k,xi,fin-debut)) #
        if xi<tol:                                                   #
           print('     -> converged!')                               #
           break                                                     #

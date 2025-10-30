@@ -255,7 +255,7 @@ if int(len(sys.argv) == 6):
    nq_per_dim=int(sys.argv[4])
    visu = int(sys.argv[5])
 else:
-   nelx = 14  # do not exceed 20 
+   nelx =10  # do not exceed 20 
    nely =nelx
    nelz =nelx
    nq_per_dim=2
@@ -266,7 +266,7 @@ debug=False
 
 # True: build fully assembled Stokes matrix
 # False: use schur complement solver
-globall=True
+globall=False
 
 apply_RCM=False      # Reverse Cuthill-McKee algo
 matrix_snapshot=False

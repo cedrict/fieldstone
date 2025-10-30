@@ -1,0 +1,13 @@
+build FE matrix: 3.057 s, h= 2.500000e-01
+build FE matrix: 3.899 s, h= 2.000000e-01
+build FE matrix: 5.434 s, h= 1.666667e-01
+build FE matrix: 6.674 s, h= 1.428571e-01
+build FE matrix: 10.360 s, h= 1.250000e-01
+build FE matrix: 12.760 s, h= 1.111111e-01
+build FE matrix: 16.588 s, h= 1.000000e-01
+build FE matrix: 20.018 s, h= 9.090909e-02
+build FE matrix: 24.190 s, h= 8.333333e-02
+build FE matrix: 33.462 s, h= 7.692308e-02
+build FE matrix: 43.820 s, h= 7.142857e-02
+build FE matrix: 50.217 s, h= 6.666667e-02
+build FE matrix: 60.536 s, h= 6.250000e-02
