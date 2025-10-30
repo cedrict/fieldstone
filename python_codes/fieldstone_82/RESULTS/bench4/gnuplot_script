@@ -132,3 +132,168 @@ plot[][]\
 
 
 
+####################################################
+set xlabel 'coordinate along diagonal'
+set title '8x8x8'
+set ylabel '|u|'
+set output 'u_08.pdf'
+plot[][:4e-6]\
+'8x8x8/diag1.ascii' u 8:(abs($4)) w lp ps .125 lw .5 t 'diag1',\
+'8x8x8/diag2.ascii' u 8:(abs($4)) w lp ps .125 lw .5 t 'diag2',\
+'8x8x8/diag3.ascii' u 8:(abs($4)) w lp ps .125 lw .5 t 'diag3',\
+'8x8x8/diag4.ascii' u 8:(abs($4)) w lp ps .125 lw .5 t 'diag4'
+
+set title '16x16x16'
+set output 'u_16.pdf'
+plot[][:4e-6]\
+'16x16x16/diag1.ascii' u 8:(abs($4)) w lp ps .125 lw .5 t 'diag1',\
+'16x16x16/diag2.ascii' u 8:(abs($4)) w lp ps .125 lw .5 t 'diag2',\
+'16x16x16/diag3.ascii' u 8:(abs($4)) w lp ps .125 lw .5 t 'diag3',\
+'16x16x16/diag4.ascii' u 8:(abs($4)) w lp ps .125 lw .5 t 'diag4',\
+
+set title '24x24x24'
+set output 'u_24.pdf'
+plot[][:4e-6]\
+'24x24x24/diag1.ascii' u 8:(abs($4)) w lp ps .125 lw .5 t 'diag1',\
+'24x24x24/diag2.ascii' u 8:(abs($4)) w lp ps .125 lw .5 t 'diag2',\
+'24x24x24/diag3.ascii' u 8:(abs($4)) w lp ps .125 lw .5 t 'diag3',\
+'24x24x24/diag4.ascii' u 8:(abs($4)) w lp ps .125 lw .5 t 'diag4',\
+
+
+####################################################
+set ylabel '|v|'
+set title '8x8x8'
+set output 'v_08.pdf'
+plot[][:4e-6]\
+'8x8x8/diag1.ascii' u 8:(abs($5)) w lp ps .125 lw .5 t 'diag1',\
+'8x8x8/diag2.ascii' u 8:(abs($5)) w lp ps .125 lw .5 t 'diag2',\
+'8x8x8/diag3.ascii' u 8:(abs($5)) w lp ps .125 lw .5 t 'diag3',\
+'8x8x8/diag4.ascii' u 8:(abs($5)) w lp ps .125 lw .5 t 'diag4'
+
+set title '16x16x16'
+set output 'v_16.pdf'
+plot[][:4e-6]\
+'16x16x16/diag1.ascii' u 8:(abs($5)) w lp ps .125 lw .5 t 'diag1',\
+'16x16x16/diag2.ascii' u 8:(abs($5)) w lp ps .125 lw .5 t 'diag2',\
+'16x16x16/diag3.ascii' u 8:(abs($5)) w lp ps .125 lw .5 t 'diag3',\
+'16x16x16/diag4.ascii' u 8:(abs($5)) w lp ps .125 lw .5 t 'diag4',\
+
+set title '24x24x24'
+set output 'v_24.pdf'
+plot[][:4e-6]\
+'24x24x24/diag1.ascii' u 8:(abs($5)) w lp ps .125 lw .5 t 'diag1',\
+'24x24x24/diag2.ascii' u 8:(abs($5)) w lp ps .125 lw .5 t 'diag2',\
+'24x24x24/diag3.ascii' u 8:(abs($5)) w lp ps .125 lw .5 t 'diag3',\
+'24x24x24/diag4.ascii' u 8:(abs($5)) w lp ps .125 lw .5 t 'diag4',\
+
+
+
+####################################################
+set ylabel '|w|'
+set title '8x8x8'
+set output 'w_08.pdf'
+plot[][:4e-6]\
+'8x8x8/diag1.ascii' u 8:(abs($6)) w lp ps .125 lw .5 t 'diag1',\
+'8x8x8/diag2.ascii' u 8:(abs($6)) w lp ps .125 lw .5 t 'diag2',\
+'8x8x8/diag3.ascii' u 8:(abs($6)) w lp ps .125 lw .5 t 'diag3',\
+'8x8x8/diag4.ascii' u 8:(abs($6)) w lp ps .125 lw .5 t 'diag4'
+
+set title '16x16x16'
+set output 'w_16.pdf'
+plot[][:4e-6]\
+'16x16x16/diag1.ascii' u 8:(abs($6)) w lp ps .125 lw .5 t 'diag1',\
+'16x16x16/diag2.ascii' u 8:(abs($6)) w lp ps .125 lw .5 t 'diag2',\
+'16x16x16/diag3.ascii' u 8:(abs($6)) w lp ps .125 lw .5 t 'diag3',\
+'16x16x16/diag4.ascii' u 8:(abs($6)) w lp ps .125 lw .5 t 'diag4',\
+
+set title '24x24x24'
+set output 'w_24.pdf'
+plot[][:4e-6]\
+'24x24x24/diag1.ascii' u 8:(abs($6)) w lp ps .125 lw .5 t 'diag1',\
+'24x24x24/diag2.ascii' u 8:(abs($6)) w lp ps .125 lw .5 t 'diag2',\
+'24x24x24/diag3.ascii' u 8:(abs($6)) w lp ps .125 lw .5 t 'diag3',\
+'24x24x24/diag4.ascii' u 8:(abs($6)) w lp ps .125 lw .5 t 'diag4',\
+
+####################################################
+set ylabel 'p'
+set title '8x8x8'
+set output 'p_08.pdf'
+plot[][]\
+'8x8x8/diag1.ascii' u 8:7 w lp ps .125 lw .5 t 'diag1',\
+'8x8x8/diag2.ascii' u 8:7 w lp ps .125 lw .5 t 'diag2',\
+'8x8x8/diag3.ascii' u 8:7 w lp ps .125 lw .5 t 'diag3',\
+'8x8x8/diag4.ascii' u 8:7 w lp ps .125 lw .5 t 'diag4',\
+
+set title '16x16x16'
+set output 'p_16.pdf'
+plot[][]\
+'16x16x16/diag1.ascii' u 8:7 w lp ps .125 lw .5 t 'diag1',\
+'16x16x16/diag2.ascii' u 8:7 w lp ps .125 lw .5 t 'diag2',\
+'16x16x16/diag3.ascii' u 8:7 w lp ps .125 lw .5 t 'diag3',\
+'16x16x16/diag4.ascii' u 8:7 w lp ps .125 lw .5 t 'diag4',\
+
+set title '24x24x24'
+set output 'p_24.pdf'
+plot[][]\
+'24x24x24/diag1.ascii' u 8:7 w lp ps .125 lw .5 t 'diag1',\
+'24x24x24/diag2.ascii' u 8:7 w lp ps .125 lw .5 t 'diag2',\
+'24x24x24/diag3.ascii' u 8:7 w lp ps .125 lw .5 t 'diag3',\
+'24x24x24/diag4.ascii' u 8:7 w lp ps .125 lw .5 t 'diag4',\
+
+
+#################################################################
+unset title
+
+
+set xlabel 'u'
+set key outside 
+set output 'vert_u.pdf'
+plot[][]\
+'8x8x8/vert.ascii'    u 1:2 w lp ps .125 lw .5  t '8x8x8',\
+'16x16x16/vert.ascii' u 1:2 w lp ps .125 lw .5  t '16x16x16',\
+'24x24x24/vert.ascii' u 1:2 w lp ps .125 lw .5  t '24x24x24',\
+
+set xlabel 'v'
+set output 'vert_v.pdf'
+plot[][]\
+'8x8x8/vert.ascii'    u 1:3 w lp ps .125 lw .5  t '8x8x8',\
+'16x16x16/vert.ascii' u 1:3 w lp ps .125 lw .5  t '16x16x16',\
+'24x24x24/vert.ascii' u 1:3 w lp ps .125 lw .5  t '24x24x24',\
+
+set xlabel 'w'
+set output 'vert_w.pdf'
+plot[][]\
+'8x8x8/vert.ascii'    u 1:4 w lp ps .125 lw .5  t '8x8x8',\
+'16x16x16/vert.ascii' u 1:4 w lp ps .125 lw .5  t '16x16x16',\
+'24x24x24/vert.ascii' u 1:4 w lp ps .125 lw .5  t '24x24x24',\
+
+set xlabel 'p'
+set output 'vert_p.pdf'
+plot[][]\
+'8x8x8/vert.ascii'    u 1:5 w lp ps .125 lw .5  t '8x8x8',\
+'16x16x16/vert.ascii' u 1:5 w lp ps .125 lw .5  t '16x16x16',\
+'24x24x24/vert.ascii' u 1:5 w lp ps .125 lw .5  t '24x24x24',\
+
+set log x
+set output 'averages.pdf'
+set xlabel 'h'
+set ylabel 'volume average'
+plot[][]\
+'avrg_2.ascii' u (1/$3**0.333):7 w lp ps .5 t '<u>',\
+'avrg_2.ascii' u (1/$3**0.333):8 w lp ps .5 t '<v>',\
+'avrg_2.ascii' u (1/$3**0.333):9 w lp ps .5 t '<w>',\
+
+set output 'averages_abs.pdf'
+set xlabel 'h'
+set ylabel 'volume average'
+plot[][]\
+'avrg_2.ascii' u (1/$3**0.333):10 w lp ps .5 t '<|u|>',\
+'avrg_2.ascii' u (1/$3**0.333):11 w lp ps .5 t '<|v|>',\
+'avrg_2.ascii' u (1/$3**0.333):12 w lp ps .5 t '<|w|>'
+
+
+
+
+
+
+
