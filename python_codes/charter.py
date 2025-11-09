@@ -26,6 +26,9 @@ def basis_functions_V_ds(r,s,t):
 def basis_functions_V_dt(r,s,t):
     return np.array([dNdt0,dNdt1,dNdt2,dNdt3,dNdt4,dNdt5,dNdt6,dNdt7],dtype=np.float64)
 
+def basis_functions_P(r,s,t):
+    return np.array([N0,N1,N2,N3,N4,N5,N6,N7,N8],dtype=np.float64)
+
 ###############################################################################
 
 def u_analytical(x,y,z):

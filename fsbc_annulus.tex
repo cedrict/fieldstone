@@ -1,24 +1,594 @@
 \begin{flushright} {\tiny {\color{gray} fsbc\_annulus.tex}} \end{flushright}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 In the context of geodynamical modelling we often wish to prescribed free-slip 
 boundary conditions on a given boundary of the domain. If the domain is a rectangle
-which sides align with the Cartesian axis, then fixing $\upnu_x=0$ or $\upnu_y=0$
+which sides align with the Cartesian axis, then fixing $u=\upnu_x=0$ or $v=\upnu_y=0$
 is simple and does indeed insure free-slip boundary conditions. 
 
 However the situation is much more complicated in the case of a curved boundary, 
 such as for instance the inner and outer boundaries of an annulus or spherical shell.
 
-If the curved boundary is a circular, the procedure is as follows:
+So far my literature search has come to three articles:
+
+\begin{itemize}
+\item \fullcite{ditu13}
+\item \fullcite{ensg82}
+\item \fullcite{behr04}
+\end{itemize}
+
+In \textcite{behr04} we read the following useful lines:
+\begin{displayquote}
+{\color{darkgray}
+1. If the slip boundary coincides with a Cartesian coordinate plane, the implementation is trivial,
+with the equations corresponding to the normal component of velocity simply being dropped
+from the equation system.
+2. If the slip boundary does not coincide with a Cartesian coordinate plane, the equations
+corresponding to the velocity components at the boundary are locally aligned with the normal-
+tangent-bi-tangent coordinate system, and the normal component of velocity is set to zero.
+This procedure is described by \textcite{ensg82} (1982), who also advocate the use of consistent
+normals for proper mass conservation.}
+\end{displayquote}
+
+Note to myself: This technique is implemented in stones 33,96,151 and FLAPS.
+In fact in these stones I rotate back the system after applying bc while 
+(as we will see here below) various authors advocate to solve for $u_n,u_t$ and recover 
+$u_x,u_y$ afterwards.
+
+In what follows I use the method highlighted in \textcite{ensg82}.
+
+The elemental Stokes matrix is given by
+\begin{equation}
+\begin{pmatrix}
+\K_e & \G_e \\
+\G_e^T & 0 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\vec{\cal V}_e \\ \vec{\cal P}_e
+\end{pmatrix}
+=
+\begin{pmatrix}
+\vec{f}_e \\ \vec{h}_{e}
+\end{pmatrix}
+\label{bcfs1}
+\end{equation}
+or, more explicitely for 2d $Q_1 Q_1$ elements\footnote{I know this element pair is not LBB stable but 
+it yields a smaller matrix that fits in the page. $Q_2\times Q_1$ elememts would yield a $\K$ matrix of size $18\times 18$.}:
+\begin{small}
+\[
+\left(\begin{array}{cccccccccccc}
+K_{11} & K_{12} & K_{13} & K_{14} & K_{15} & K_{16} & K_{17} & K_{18} & G_{11} & G_{12} & G_{13} & G_{14} \\
+K_{21} & K_{22} & K_{23} & K_{24} & K_{25} & K_{26} & K_{27} & K_{28} & G_{21} & G_{22} & G_{23} & G_{24} \\
+K_{31} & K_{32} & K_{33} & K_{34} & K_{35} & K_{36} & K_{37} & K_{38} & G_{31} & G_{32} & G_{33} & G_{34} \\
+K_{41} & K_{42} & K_{43} & K_{44} & K_{45} & K_{46} & K_{47} & K_{48} & G_{41} & G_{42} & G_{43} & G_{44} \\
+K_{51} & K_{52} & K_{53} & K_{54} & K_{55} & K_{56} & K_{57} & K_{58} & G_{51} & G_{52} & G_{53} & G_{54} \\
+K_{61} & K_{62} & K_{63} & K_{64} & K_{65} & K_{66} & K_{67} & K_{68} & G_{61} & G_{62} & G_{63} & G_{64} \\
+K_{71} & K_{72} & K_{73} & K_{74} & K_{75} & K_{76} & K_{77} & K_{78} & G_{71} & G_{72} & G_{73} & G_{74} \\
+K_{81} & K_{82} & K_{83} & K_{84} & K_{85} & K_{86} & K_{87} & K_{88} & G_{81} & G_{82} & G_{83} & G_{84} \\
+G_{11} & G_{21} & G_{31} & G_{41} & G_{51} & G_{61} & G_{71} & G_{81} & 0 &0 &0 &0 \\
+G_{12} & G_{22} & G_{32} & G_{42} & G_{52} & G_{62} & G_{72} & G_{82} & 0 &0 &0 &0 \\
+G_{13} & G_{23} & G_{33} & G_{43} & G_{53} & G_{63} & G_{73} & G_{83} & 0 &0 &0 &0 \\
+G_{14} & G_{24} & G_{34} & G_{44} & G_{54} & G_{64} & G_{74} & G_{84} & 0 &0 &0 &0 \\
+\end{array} \right)
+\cdot
+\begin{pmatrix}
+u_1 \\ v_1 \\ 
+u_2 \\ v_2 \\ 
+u_3 \\ v_3 \\ 
+u_4 \\ v_4 \\
+p_1 \\ p_2 \\ p_3 \\ p_4
+\end{pmatrix}
+=
+\begin{pmatrix}
+\vec{f}_e \\ h_{e}
+\end{pmatrix}
+\]
+\end{small}
+
+Let us now assume that node 3 is on the curved boundary. On this node the normal to the boundary is $\vec{n}_3=(n_{x,3},n_{y,3})$
+and the corresponding perpendicular vector is the tangent vector $\vec{t}_3=(t_{x,3},t_{x,3})$.
+
+Following Eq.~(3) of \textcite{ensg82}, the velocity at node 3 can also be written as a vector of two components $(u_{t,3},u_{n,3})$ with
+\begin{align}
+u_{t,3} &= t_{x,3} u_3 + t_{y,3} v_3 \nn\\
+u_{n,3} &= n_{x,3} u_3 + n_{y,3} v_3 \label{bcfs2}
+\end{align}
+or,
+\[
+\begin{pmatrix}
+u_{t,3} \\
+u_{n,3} 
+\end{pmatrix}
+= 
+\underbrace{\begin{pmatrix}
+t_{x,3} & t_{y,3}  \\
+n_{x,3} & n_{y,3} 
+\end{pmatrix}}_{{\bm R}_3}
+\cdot
+\begin{pmatrix}
+u_{3} \\
+v_{3} 
+\end{pmatrix}
+\]
+%Note that this $2\times 2$ matrix is a rotation matrix, i.e. ${\bm R}_3^{-1}={\bm R}_3^T$.
+
+Let us now consider the case of a circular boundary:
+\begin{center}
+\includegraphics[width=5cm,angle=-90]{images/fsbc/one}
+\end{center}
+
+Then $\vec{n}_3=(\cos\theta_3,\sin\theta_3)$ 
+and $\vec{t}_3= \vec{k} \times \vec{n}_3 = (-n_{y,3},n_{x,3}) =(-\sin\theta_3,\cos\theta_3)$, where $\vec{k}$ is the vector perpendicular to the plane, so that
+\[
+{\bm R}_3=
+\begin{pmatrix}
+-\sin\theta_3 & \cos\theta_3 \\ 
+\cos\theta_3 & \sin\theta_3 
+\end{pmatrix}
+\]
+At this stage, we must acknowledge that this matrix is not a rotation matrix\footnote{See for example \url{https://en.wikipedia.org/wiki/Rotation_matrix}}. 
+We should instead swap the lines around to obtain a {\it clockwise} rotation matrix of the angle $\theta_3$:
+\[
+{\bm R}_3=
+\begin{pmatrix}
+\cos\theta_3 & \sin\theta_3 \\
+-\sin\theta_3 & \cos\theta_3  
+\end{pmatrix}
+\]
+This means that we bring the node under consideration back onto the $x$-axis.
+The normal component then aligns with the $x$-axis and should be zeroed for free slip boundary conditions.
+Eq.~\eqref{bcfs2} then writes:
+\begin{align}
+u_{n,3} &= n_{x,3} u_3 + n_{y,3} v_3 \nn\\
+u_{t,3} &= t_{x,3} u_3 + t_{y,3} v_3 
+\end{align}
+or
+
+\[
+\begin{pmatrix}
+u_{n,3} \\
+u_{t,3} 
+\end{pmatrix}
+= 
+\underbrace{\begin{pmatrix}
+n_{x,3} & n_{y,3} \\
+t_{x,3} & t_{y,3}  
+\end{pmatrix}}_{{\bm R}_3}
+\cdot
+\begin{pmatrix}
+u_{3} \\
+v_{3} 
+\end{pmatrix}
+\]
+
+
+If for example the node is on the equator (i.e. on the x axis) already, then $\theta_3=0$ and then 
+\[
+{\bm R}_3=
+\begin{pmatrix}
+1 & 0 \\
+0 & 1
+\end{pmatrix}
+\]
+so that 
+\[
+\begin{pmatrix}
+u_{n,3} \\
+u_{t,3} 
+\end{pmatrix}
+= 
+{\bm R}_3
+\cdot
+\begin{pmatrix}
+u_{3} \\
+v_{3} 
+\end{pmatrix}
+=
+\begin{pmatrix}
+u_{3} \\
+v_{3} 
+\end{pmatrix}
+\]
+and this indeed makes sense: at this location the normal velocity is along the x axis (so it is 
+equal to $u_3$) while the tangential velocity point upwards and is along the y axis (so it is equal to $v_3$.)
+
+\begin{center}
+\includegraphics[width=4cm,angle=-90]{images/fsbc/two}
+\includegraphics[width=4cm,angle=-90]{images/fsbc/three}\\
+{\captionfont Left: node on the equator. Right: node at the North pole.}
+\end{center}
+
+Likewise if node 3 is at the North pole, then $\theta_3=\pi/2$, so that 
+\[
+{\bm R}_3=
+\begin{pmatrix}
+0 & 1 \\
+-1 & 0
+\end{pmatrix}
+\]
+and then 
+\[
+\begin{pmatrix}
+u_{n,3} \\
+u_{t,3} 
+\end{pmatrix}
+= 
+{\bm R}_3
+\cdot
+\begin{pmatrix}
+u_{3} \\
+v_{3} 
+\end{pmatrix}
+=
+\begin{pmatrix}
+v_{3} \\
+-u_{3} 
+\end{pmatrix}
+\]
+which again makes sense since $u_t$ points in the negative $x$ direction.
+
+
+We then go further and build the following matrix:
+\[
+{\bm R}=
+\left(\begin{array}{cccccccccccc}
+1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & n_{x,3} & n_{y,3} & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & t_{x,3} & t_{y,3} & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1
+\end{array} \right)
+=
+\left(\begin{array}{cccccccccccc}
+1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & \cos\theta_3 & \sin\theta_3 & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & -\sin\theta_3 & \cos\theta_3 & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1
+\end{array} \right)
+\]
+with 
+
+\[
+{\bm R}=
+\left(\begin{array}{cccccccccccc}
+1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & n_{x,3} & n_{y,3} & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & t_{x,3} & t_{y,3} & 0 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 &  0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 
+\end{array} \right)
+\cdot
+\begin{pmatrix}
+u_1 \\ v_1 \\ 
+u_2 \\ v_2 \\ 
+u_3 \\ v_3 \\ 
+u_4 \\ v_4 \\
+p_1 \\ p_2 \\ p_3 \\ p_4
+\end{pmatrix}
+=
+\underbrace{
+\begin{pmatrix}
+u_1 \\ v_1 \\ 
+u_2 \\ v_2 \\ 
+u_{n,3} \\ u_{t,3} \\ 
+u_4 \\ v_4 \\
+p_1 \\ p_2 \\ p_3 \\ p_4
+\end{pmatrix}
+}_{\vec{\tilde X}_e}
+\]
+Since ${\bm R}^{-1} = {\bm R}^T$ (a property of rotation matrices), 
+then the linear system of Eq.~\eqref{bcfs1} can be written 
+\[
+\underbrace{
+\begin{pmatrix}
+\K_e & \G_e \\
+\G_e^T & 0 
+\end{pmatrix}
+\cdot
+{\bm R}^T }_{\tilde{\bm A}_e}
+\cdot
+\underbrace{{\bm R} \cdot
+\begin{pmatrix}
+\vec{\cal V}_e \\ \vec{\cal P}_e
+\end{pmatrix}}_{\vec{\tilde X}_e}
+=
+\begin{pmatrix}
+\vec{f}_e \\ \vec{h}_{e}
+\end{pmatrix}
+\]
+In doing so, we have now a linear system which involves the normal and tangential components 
+of the velocity at node 3 and we can apply boundary conditions on this node as we normally apply
+Dirichlet boundary conditions.
+BUT this is not without problem: indeed the new $\tilde{\bm A}_e$ system is not symmetric anymore.
+
+Following \cite{ensg82} (bottom of page 227) we read:
+\begin{displayquote}
+{\color{darkgray}
+The natural modification to the above procedure which eliminates this potential problem
+is to transform the $x$ and $y$ momentum equations to the tangential and normal momentum
+equations before transforming $u_x$ and $u_y$ to $u_t$ and $u_n$. This is the procedure adopted in most
+structural FEM codes [...] this is simply achieved by pre-multiplying the element stiffness of any element
+containing node $i$ by the inverse (transpose) of the same orthogonal rotation matrix ${\bm R}$ used
+to transform $u_x,u_y$ to $u_t,u_n$.}
+\end{displayquote}
+
+This approach yields the following equation:
+\begin{equation}
+\underbrace{
+{\bm R}\cdot
+\begin{pmatrix}
+\K_e & \G_e \\
+\G_e^T & 0 
+\end{pmatrix}
+\cdot
+{\bm R}^T }_{\tilde{\bm A}_e}
+\cdot
+\underbrace{{\bm R} \cdot
+\begin{pmatrix}
+\vec{\cal V}_e \\ \vec{\cal P}_e
+\end{pmatrix}}_{\vec{\tilde X}_e}
+=
+{\bm R}\cdot
+\begin{pmatrix}
+\vec{f}_e \\ h_{e}
+\end{pmatrix}
+\label{bcfs3}
+\end{equation}
+
+In the end, we quote again \cite{ensg82}:
+\begin{displayquote}
+{\color{darkgray}
+So, in summary, to apply a constrained normal or tangential velocity at node $i$, we simply
+pre-multiply the element stiffness matrix and corresponding right-hand side vector by the
+appropriate matrix R and post-multiply the stiffness matrix by its transpose ${\bm R}^T$, and then
+apply the specified value in the same manner as a specified value for $u_x,u_y$, (i.e. the solution
+at this node will be in terms of the normal and tangential components of velocity). Once the
+system of equations has been solved, the $u_x$ and $u_y$ components of velocities at node $i$ can be
+recovered using equation \eqref{bcfs2} --or its inverse 
+\begin{align}
+u_x &= n_x u_n - n_y u_t \nn\\
+u_y &= n_y u_n + n_x u_t
+\end{align}
+}
+\end{displayquote}
+Again the equation above is ultimately not what we will want to use, given the modifications 
+brought to their method highlighted above.
+Instead, we will perform a counterclockwise rotation of the vector (i.e. we go from polar coordinates to 
+Cartesian coordinates):
+\begin{align}
+\vec\upnu 
+&= u_n \vec{e}_r + u_t \vec{e}_\theta \nn\\
+&= \upnu_r \vec{e}_r + \upnu_\theta \vec{e}_\theta \nn\\
+&= \upnu_r (\cos\theta \vec{e}_x + \sin\theta \vec{e}_y)
++ \upnu_\theta (-\sin\theta \vec{e}_x + \cos\theta \vec{e}_y) \nn\\
+&= (\upnu_r \cos\theta - \upnu_\theta \sin\theta ) \vec{e}_x
++ (\upnu_r \sin\theta - \upnu_\theta \cos\theta ) \vec{e}_y \label{fsbc4}
+\end{align}
+
+
+
+In my codes I build $\K_e$, $\G_e$, $\vec{f}_e$ and $\vec{h}_e$ separately. 
+I then define 
+\[
+{\bm R} = 
+\begin{pmatrix}
+{\bm R}_\K & {\bm 0} \\
+{\bm 0} & {\bm I} 
+\end{pmatrix}
+\]
+Then Eq.~\eqref{bcfs3} becomes
+\begin{align}
+\begin{pmatrix}
+{\bm R}_\K & {\bm 0} \\
+{\bm 0} & {\bm I} 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\K_e & \G_e \\
+\G_e^T & 0 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+{\bm R}_\K & {\bm 0} \\
+{\bm 0} & {\bm I} 
+\end{pmatrix}^T 
+\cdot
+\begin{pmatrix}
+{\bm R}_\K & {\bm 0} \\
+{\bm 0} & {\bm I} 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\vec{\cal V}_e \\ \vec{\cal P}_e
+\end{pmatrix}
+&=
+\begin{pmatrix}
+{\bm R}_\K & {\bm 0} \\
+{\bm 0} & {\bm I} 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\vec{f}_e \\ \vec{h}_{e}
+\end{pmatrix}  
+\nn\\
+\begin{pmatrix}
+{\bm R}_\K \K_e & {\bm R}_\K \G_e \\
+\G_e^T & 0 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+{\bm R}_\K^T & {\bm 0} \\
+{\bm 0} & {\bm I} 
+\end{pmatrix} 
+\cdot
+\begin{pmatrix}
+{\bm R}_\K & {\bm 0} \\
+{\bm 0} & {\bm I} 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\vec{\cal V}_e \\ \vec{\cal P}_e
+\end{pmatrix}
+&=
+\begin{pmatrix}
+{\bm R}_\K \vec{f}_e \\ \vec{h}_{e}
+\end{pmatrix}
+\nn\\
+\begin{pmatrix}
+{\bm R}_\K \K_e {\bm R}_\K^T& {\bm R}_\K \G_e \\
+\G_e^T {\bm R}_\K^T& 0 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+{\bm R}_\K & {\bm 0} \\
+{\bm 0} & {\bm I} 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\vec{\cal V}_e \\ \vec{\cal P}_e
+\end{pmatrix}
+=
+\begin{pmatrix}
+{\bm R}_\K \vec{f}_e \\ \vec{h}_{e}
+\end{pmatrix}
+\nn\\
+\begin{pmatrix}
+{\bm R}_\K \K_e {\bm R}_\K^T& {\bm R}_\K \G_e \\
+({\bm R}_\K \G_e)^T & 0 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+{\bm R}_\K & {\bm 0} \\
+{\bm 0} & {\bm I} 
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\vec{\cal V}_e \\ \vec{\cal P}_e
+\end{pmatrix}
+&=
+\begin{pmatrix}
+{\bm R}_\K \vec{f}_e \\ \vec{h}_{e}
+\end{pmatrix}
+\end{align}
+
+\noindent In practice the algorithm goes as follows:
 \begin{enumerate}
-\item identify the node on the boundary which is to be fixed. 
-\item compute its coordinate angle $\theta$ (and $\phi$ in 3D) 
-\item do a rotation so as to bring it back onto the x-axis (2D) or z-axis (3D)
-\item apply free slip boundary condition (now easy since parallel or perpendicular to axis)
-\item rotate back
+\item for each element $e$ build $\K_e$, $\G_e$, $\vec{f}_e$, $\vec{h}_e$
+\item loop over nodes of $e$. If a node is on the boundary and this boundary is curved (i.e. the normal
+is not aligned with either axis), form matrix ${\bm R}_\K$.
+\begin{lstlisting}
+if top_element[iel] and top_free_slip: 
+   for i in [2,3,6]:
+       inode=icon_V[i,iel] 
+       if (not bc_fix_V[2*inode]) and (not bc_fix_V[2*inode+1]): 
+          RR=np.eye(ndof_V_el,dtype=np.float64)
+          idofn=2*i
+          idoft=2*i+1
+          RR[idofn,idofn]= np.cos(theta_V[inode]) 
+          RR[idofn,idoft]=np.sin(theta_V[inode])
+          RR[idoft,idofn]=-np.sin(theta_V[inode]) 
+          RR[idoft,idoft]=np.cos(theta_V[inode])
+          K_el=RR.dot(K_el.dot(RR.T))
+\end{lstlisting}
+
+\item Form ${\bm R}_\K \K_e {\bm R}_\K^T$, ${\bm R}_\K \G_e$ and ${\bm R}_\K \vec{f}_e$
+\begin{lstlisting}
+          K_el=RR.dot(K_el.dot(RR.T))
+          G_el=RR.dot(G_el)
+          f_el=RR.dot(f_el)
+\end{lstlisting}
+
+\item apply boundary conditions $u_n=0$:
+\begin{lstlisting}
+          K_ref=K_el[idofn,idofn]
+          K_el[idofn,:]=0
+          K_el[:,idofn]=0
+          K_el[idofn,idofn]=K_ref
+          G_el[idofn,:]=0
+          f_el[idofn]=0
+\end{lstlisting}
+
+\item assemble
+\item solve linear system
+\item for the nodes on the curved boundary, recover $u,v$ using Eq.~\eqref{fsbc4}
+This translates as follows in MEEUUW:
+\begin{lstlisting}
+   if geometry=='quarter' and top_free_slip:
+       for i in range(0,nn_V):
+           if top_nodes[i] and (not bc_fix_V[2*i]) and (not bc_fix_V[2*i+1]):
+              ui=np.cos(theta_V[i])*u[i]-np.sin(theta_V[i])*v[i]
+              vi=np.sin(theta_V[i])*u[i]+np.cos(theta_V[i])*v[i] 
+              u[i]=ui
+              v[i]=vi
+     
+    if geometry=='quarter' and bot_free_slip:
+       for i in range(0,nn_V):
+           if bot_nodes[i] and (not bc_fix_V[2*i]) and (not bc_fix_V[2*i+1]):
+              ui=np.cos(theta_V[i])*u[i]-np.sin(theta_V[i])*v[i]
+              vi=np.sin(theta_V[i])*u[i]+np.cos(theta_V[i])*v[i] 
+              u[i]=ui
+              v[i]=vi
+\end{lstlisting}
+
 \end{enumerate}
 
-This technique is implemented in \stone~\ref{f33}, \stone~\ref{f96} and \stone~\ref{f151}.
+\paragraph{Remark:} when the geometry of the domain is not a simple shape with a well defined normal vector
+the authors explain in Section~3 how to compute the normal vector in a FE consistent way (it is implemented in 
+{\sc flaps} and {\sc meeuuw}). Also their method is only valid for an incompressible medium.
+
+\paragraph{Remark:} Special care must be taken for nodes at the corners of the domain (also explained in the
+paper). In this case the proposed algorithm breaks down and a special procedure must be adopted.
+In the case of an half or quarter annulus, we have four of these points. 
+Let us for example consider the North pole. It is at the intersection of two boundaries: 
+the vertical one (i.e. the $y$-axis) characterised by $u=0$ and the top (curved) boundary
+characterised by $u_n=0$, which, at the North pole becomes $u_n=v$. This means that we must 
+set $u=v=0$ (i.e. no slip) at this node. The same reasoning applies to the other three corners.
+This translates as follows in {\sc meeuuw}:
+\begin{lstlisting}
+       for i in range(0,nn_V):
+           if x_V[i]/Rinner<eps:
+              bc_fix_V[i*ndof_V  ]=True ; bc_val_V[i*ndof_V  ]=0.
+           if y_V[i]/Rinner<eps:
+              bc_fix_V[i*ndof_V+1]=True ; bc_val_V[i*ndof_V+1]=0.
+           if bot_nodes[i] and left_nodes[i]:
+              bc_fix_V[i*ndof_V  ]=True ; bc_val_V[i*ndof_V  ]=0.
+              bc_fix_V[i*ndof_V+1]=True ; bc_val_V[i*ndof_V+1]=0.
+           if bot_nodes[i] and right_nodes[i]:
+              bc_fix_V[i*ndof_V  ]=True ; bc_val_V[i*ndof_V  ]=0.
+              bc_fix_V[i*ndof_V+1]=True ; bc_val_V[i*ndof_V+1]=0.
+           if top_nodes[i] and left_nodes[i]:
+              bc_fix_V[i*ndof_V  ]=True ; bc_val_V[i*ndof_V  ]=0.
+              bc_fix_V[i*ndof_V+1]=True ; bc_val_V[i*ndof_V+1]=0.
+           if top_nodes[i] and right_nodes[i]:
+              bc_fix_V[i*ndof_V  ]=True ; bc_val_V[i*ndof_V  ]=0.
+              bc_fix_V[i*ndof_V+1]=True ; bc_val_V[i*ndof_V+1]=0.
+\end{lstlisting}
+
+
 
 \paragraph{A few remarks about rotation matrices} 
 In a given plane, the counter-clockwise rotation matrix by and angle $\theta$ is defined by 
@@ -83,8 +653,7 @@ alternating signs.
 \right)
 \]
 
-In my \elefant code
-I first rotate around the $z$ axis by and angle $-\phi$ and then 
+In my ELEFANT code I first rotate around the $z$ axis by and angle $-\phi$ and then 
 around axis $y$ by an angle $-\theta$ in the case of a spherical shell.
 
 \[
@@ -129,19 +698,4 @@ around axis $y$ by an angle $-\theta$ in the case of a spherical shell.
 These are the {\tt Rott} and {\tt Rotp} matrices in the routines.
 
 
-\Literature
-\begin{itemize}
-\item 
-Note that in some cases applying free slip boundary conditions on a curved boundary with a triangular mesh 
-can be problematic as explained in \textcite{ditu13} (2013).
-\item \fullcite{ensg82}
-\item \fullcite{behr04} in which it is stated:\\
-{\it 1. If the slip boundary coincides with a Cartesian coordinate plane, the implementation is trivial,
-with the equations corresponding to the normal component of velocity simply being dropped
-from the equation system.
-2. If the slip boundary does not coincide with a Cartesian coordinate plane, the equations
-corresponding to the velocity components at the boundary are locally aligned with the normal-
-tangent-bi-tangent coordinate system, and the normal component of velocity is set to zero.
-This procedure is described by \textcite{ensg82} (1982), who also advocate the use of consistent
-normals for proper mass conservation.}
-\end{itemize}
+

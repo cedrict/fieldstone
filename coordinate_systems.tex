@@ -144,7 +144,57 @@ dV= r dr \; d\theta.
 The gradient, divergence and Laplacian formulae are given in the following section about 
 the cylindrical coordinates.
 
-\index{general}{Path Increment in Polar Coordinates}
+To transform equations from Cartesian to polar coordinates, 
+first note the relations
+\begin{align}
+x &= r \cos \theta \nn\\
+y &= r \sin \theta \nn\\
+r &= \sqrt{x^2+y^2} \nn\\
+\theta &= \arctan (y/x)
+\end{align}
+Then the Cartesian partial derivatives become
+\begin{align}
+\frac{\partial }{\partial x} &= 
+\frac{\partial r}{\partial x} \frac{\partial }{\partial r} + 
+\frac{\partial \theta}{\partial x} \frac{\partial }{\partial \theta} 
+= \cos \theta \frac{\partial }{\partial r} - \frac{\sin\theta}{r} \frac{\partial }{\partial \theta} 
+\nn\\
+\frac{\partial }{\partial y} &= 
+\frac{\partial r}{\partial y} \frac{\partial }{\partial r} + 
+\frac{\partial \theta}{\partial y} \frac{\partial }{\partial \theta} 
+= \sin \theta \frac{\partial }{\partial r} + \frac{\cos\theta}{r} \frac{\partial }{\partial \theta} 
+\end{align}
+By combining the above expressions (i.e. $\partial^2/\partial x^2=\partial_x \partial_x$)
+one can obtain second order derivatives:
+\begin{align}
+\frac{\partial^2 }{\partial x^2} &=
+\cos^2 \theta \frac{\partial^2 }{\partial r^2}
++\sin^2 \theta \left( \frac{1}{r} \frac{\partial }{\partial r} + \frac{1}{r^2} \frac{\partial^2 }{\partial \theta^2}\right)
++ \sin 2\theta \left( \frac{1}{r^2} \frac{\partial }{\partial \theta}
+-\frac{1}{r} \frac{\partial^2 }{\partial r\partial \theta} \right)
+\nn\\
+\frac{\partial^2 }{\partial y^2} &=
+\sin^2 \theta \frac{\partial^2 }{\partial r^2}
++\cos^2 \theta \left( \frac{1}{r} \frac{\partial }{\partial r} + \frac{1}{r^2} \frac{\partial^2 }{\partial \theta^2}\right)
+- \sin 2\theta \left( \frac{1}{r^2} \frac{\partial }{\partial \theta}
+-\frac{1}{r} \frac{\partial^2 }{\partial r\partial \theta} \right) 
+\nn\\
+\frac{\partial^2 }{\partial xy} &=
+-\sin\theta\cos\theta \left(
+-\frac{\partial^2}{\partial r^2}
++\frac{1}{r} \frac{\partial }{\partial r} 
++\frac{1}{r^2} \frac{\partial^2 }{\partial \theta^2}
+\right)
+-\cos 2\theta 
+\left(
+\frac{1}{r^2}
+\frac{\partial}{\partial\theta}
+-\frac{1}{r} \frac{\partial^2}{\partial r\partial \theta}
+\right)
+\end{align}
+
+
+
 
 %...........................................................
 \subsection{Cylindrical coordinates \label{ss:cylcoord}}
@@ -404,7 +454,30 @@ v_\phi   &=& -u \sin\phi  + v \cos\phi
 \end{eqnarray}
 
 %.................................................................................................
-\subsection{Converting tensors between Cartesian and Cylindrical bases \label{ss:convcartcyl}}
+\subsection{Converting tensors between Cartesian and Polar coordinates \label{ss:convcartpol}}
+
+\begin{eqnarray}
+u=\upnu_x &=& \upnu_r \cos\theta - \upnu_\theta \sin\theta \nn\\
+v=\upnu_y &=& \upnu_r \sin\theta + \upnu_\theta \cos\theta 
+\end{eqnarray}
+
+
+\begin{eqnarray}
+T_{rr} &=& T_{xx} \cos^2\theta + T_{yy} \sin^2\theta + T_{xy} \sin 2\theta \nn\\
+T_{\theta\theta} &=& T_{xx} \sin^2\theta + T_{yy} \cos^2\theta - T_{xy} \sin 2\theta \nn\\
+T_{r\theta} &=& \sin\theta\cos\theta (T_{yy}-T_{xx}) + T_{xy} \cos 2\theta
+\end{eqnarray}
+
+
+\begin{eqnarray}
+T_{xx} &=& T_{rr} \cos^2\theta + T_{\theta\theta} \sin^2\theta - T_{r\theta} \sin 2\theta \nn\\
+T_{yy} &=& T_{rr} \sin^2\theta + T_{\theta\theta} \cos^2\theta + T_{r\theta} \sin 2\theta \nn\\
+T_{xy} &=& \sin\theta\cos\theta (T_{rr}-T_{\theta\theta}) + T_{r\theta} \cos 2\theta
+\end{eqnarray}
+
+
+%.................................................................................................
+\subsection{Converting tensors between Cartesian and Cylindrical coordinates \label{ss:convcartcyl}}
 
 
 \begin{eqnarray}
@@ -587,7 +660,7 @@ T_{z r}      & T_{z \theta}     & T_{zz}
 
 
 %.................................................................................................
-\subsection{Converting tensors between Cartesian and Spherical bases \label{ss:convcartspher}}
+\subsection{Converting tensors between Cartesian and Spherical coordinates \label{ss:convcartspher}}
 
 Let ${\bm T}$ be a tensor
 \[
