@@ -1,3 +1,4 @@
 rm solution.vtu
 rm opla
+rm *.ascii
 
