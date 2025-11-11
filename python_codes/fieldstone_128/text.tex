@@ -21,6 +21,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 Last revision: Jan. 26th, 2025.
 
 \par\noindent\rule{\textwidth}{0.4pt}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This \stone is based on Chapter 10 of \fullcite{simp17}.
@@ -44,17 +45,17 @@ where
 \item $H$ accounts for any fluid pressure sources or sinks (e.g., due to devolatilization reactions)
 \end{itemize}
 Introducing the excess pore fluid pressure defined as the pressure in excess of the hydrostatic pressure 
-(i.e., $p_e = p-p_h$ where $p_h = \rho_f g (L_z-z)$) and 
+(i.e., $p_e=p-p_h$ where $p_h=\rho_f g(L_z-z)$) and 
 substituting \eqref{eq:128:b} into \eqref{eq:128:a} lead to a single parabolic equation for
 the excess fluid pressure as follows:
 \begin{equation}
 \varphi \beta  \frac{\partial p_e}{\partial t}
-=
-\vec\nabla \cdot \left( \frac{K}{\eta_f} \vec\nabla p_e  \right) + H
+=\vec\nabla \cdot \left( \frac{K}{\eta_f} \vec\nabla p_e  \right) + H
+\label{f128:eq1}
 \end{equation}
 Note that once the excess pressure is computed one can recover the fluid velocity via 
 $\vec{u}=-\frac{K}{\eta_f} \vec\nabla p_e$. 
-Note that $H=0$ in all three experiments carried out in what follows.
+Note that $H=0$ in the experiments carried out in what follows.
 
 Applying standard FE methodology to what is essentially a diffusion equation, we arrive at:
 \[
@@ -62,15 +63,26 @@ Applying standard FE methodology to what is essentially a diffusion equation, we
 \]
 with
 \begin{align}
-{\M} &= \int_\Omega \varphi \beta \vec{\bN}^T \vec{\bN} \nn \\
-\K_d &= \int_\Omega {\bm B}^T {\bm B} \frac{K}{\eta_f} \nn \\
-\vec{b} &= \int_\Omega \vec\bN^T  H \nn
+{\M} &= \int_\Omega \varphi \beta \vec{\bN}^T \vec{\bN} dV\nn \\
+\K_d &= \int_\Omega {\bm B}^T {\bm B} \frac{K}{\eta_f} dV \nn \\
+\vec{b} &= \int_\Omega \vec\bN^T  H dV \nn
 \end{align}
 Using a simple first order time discretisation yields
 \[
 ({\M} + {\K}_d \delta t) \cdot \vec{\cal P}_e^n = \M \cdot \vec{\cal P}_e^{n-1} + \vec{b} \; \delta t
 \]
-
+This translates as follows in the code:
+\begin{lstlisting}
+for iel in range (0,nel):
+    ...
+    for iq in [-1,1]:
+        for jq in [-1,1]:
+            ...
+            MM=np.outer(N_P,N_P)*beta*phi[iel]*JxWq
+            Kd=B.T.dot(B)*K[iel]/eta*JxWq
+            A_el+=MM+Kd*dt
+            b_el+=MM.dot(pvect)+N_P[:]*JxWq*(H[iel]*dt-
+\end{lstlisting}
 
 
 %--------------------------------------------------------------------------------------
@@ -80,15 +92,10 @@ Using a simple first order time discretisation yields
 A porous crust with an initially uniform and isotropic permeability has an
 overpressure that increases linearly with depth. At $t=0$ a dipping, high permeability fault zone is
 suddenly introduced into the crust.
-The transient evolution of the excess pore pressure is governed by
-\begin{equation}
-\varphi \beta  \frac{\partial p_e}{\partial t}
-=
-\vec\nabla \cdot \left( \frac{K(x,y)}{\eta_f} \vec\nabla p_e  \right) 
-\end{equation}
-subject to the boundary conditions as specified in the following figure:
+The transient evolution of the excess pore pressure is governed by Eq.~\eqref{f128:f128:eq1}
+and is subject to the boundary conditions as specified in the following figure:
 \begin{center}
-\includegraphics[width=11cm]{python_codes/fieldstone_128/images/simpson1}\\
+\includegraphics[width=11cm]{python_codes/fieldstone_128/IMAGES/simpson1}\\
 {\captionfont Taken from \cite{simp17}. Setup for model of fluid flow around a high permeability fault zone.}
 \end{center}
 
@@ -102,22 +109,22 @@ The results, after an approximately steady situation has been achieved (after 10
 and fluid flow vectors in the crust are strongly perturbed by the presence of the high permeability
 fault zone. Fluid is focused toward the base of the fault, while it diverges away from its upper tip.
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_128/images/simpson2}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_128/IMAGES/simpson2}\\
 {\captionfont Taken from the book\cite{simp17}. Excess fluid pressure and flow vectors in the crust 
 (with a uniform permeability of $\SI{1e-16}{\per\square\meter}$) 10 years after
 introduction of a high permeability ($\SI{1e-12}{\per\square\meter}$) fault zone.}
 \end{center}
 
 The matlab code in the book relies on a bespoke mesh of linear triangles. Unfortunately the 
-mesh is stored in a {\tt .mat} format which is very inconvenient. In this \stone we rely on 
+mesh is stored in a {\tt .mat} format which is very inconvenient. In this \stone I rely on 
 linear quadrilaterals ($Q_1$) instead. 
 
-In what follows we use a $500\times 200$ mesh. Because of the geometry of the fault 
+In what follows a $500\times 200$ elements mesh is used. Because of the geometry of the fault 
 and the fact that we rely on a regular mesh, the fault is then represented as follows in the model:
 
 \begin{center}
-\includegraphics[width=9cm]{python_codes/fieldstone_128/results/experiment2/K}
-\includegraphics[width=6cm]{python_codes/fieldstone_128/results/experiment2/K_zoom}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_128/RESULTS/experiment2/K}
+\includegraphics[width=6.5cm]{python_codes/fieldstone_128/RESULTS/experiment2/K_zoom}\\
 {\captionfont Permeability on $500 \times 200$ mesh.}
 \end{center}
 
@@ -131,21 +138,21 @@ of each element for simplicity. The code computes the root mean square velocity 
 the average pressure over the domain.
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment2/press}
-\includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment2/vel}\\
-\includegraphics[width=12cm]{python_codes/fieldstone_128/results/experiment2/flow}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_128/RESULTS/experiment2/press}
+\includegraphics[width=8cm]{python_codes/fieldstone_128/RESULTS/experiment2/vel}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_128/RESULTS/experiment2/flow}\\
 {\captionfont Pressure and velocity field at $t=10~\si{\year}$. Note that there is a very large 
 difference in velocity magnitude between the crust and the fault. The velocity arrows are actually 
-obtained by normalising the velocity vector to one in each element.}
+obtained by normalising the velocity vector to one in each element. This is easily done in ParaView
+by not scaling the arrow glyphs with any field.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment2/velocity}
-\includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment2/vrms}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_128/RESULTS/experiment2/velocity}
+\includegraphics[width=8cm]{python_codes/fieldstone_128/RESULTS/experiment2/vrms}\\
 {\captionfont Left: Velocity statistics; Right: root mean square velocity.
 Pressure statistics and volume average plots are not interesting so not shown.}
 \end{center}
-
 
 %--------------------------------------------------------------------------------------
 \section*{Fluid Flow Around a circular inclusion ({\tt experiment=1})}
@@ -154,23 +161,22 @@ Same setup as experiment 2, but the fault has now been replaced by a circular in
 placed in the middle of the domain and of radius 5~\si{\km}. Why? because why not.
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment1/press}
-\includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment1/K}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment1/vel}
-\includegraphics[width=7cm]{python_codes/fieldstone_128/results/experiment1/vel2}
+\includegraphics[width=8cm]{python_codes/fieldstone_128/RESULTS/experiment1/press}
+\includegraphics[width=8cm]{python_codes/fieldstone_128/RESULTS/experiment1/K}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_128/RESULTS/experiment1/vel}
+\includegraphics[width=7cm]{python_codes/fieldstone_128/RESULTS/experiment1/vel2}
 \end{center}
 
 
 %--------------------------------------------------------------------------------------
-\section*{Fluid Flow in a  ({\tt experiment=3})}
+\section*{Fluid Flow in a random medium ({\tt experiment=3})}
 
 All parameters are identical to experiment 2. However I have placed
 111 random seeds in the domain and computed the voronoi diagram of these 
 as projected onto the elements using the algorithm documented in \stone~125.
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment3/cells}
-\includegraphics[width=8cm]{python_codes/fieldstone_128/results/experiment3/cells_zoom}
+\includegraphics[width=10cm]{python_codes/fieldstone_128/RESULTS/experiment3/cells}
 \end{center}
 
 Each Voronoi cell is then 
@@ -179,9 +185,9 @@ Two bands of thickness $L_y/6$ with constant permeability $10^{-15}~\si{\square\
 prescribed at the top and bottom of the domain. Simulations are run until steady state is reached. 
 
 \begin{center}
-\includegraphics[width=13cm]{python_codes/fieldstone_128/results/experiment3/K}\\
-\includegraphics[width=13cm]{python_codes/fieldstone_128/results/experiment3/press}\\
-\includegraphics[width=13cm]{python_codes/fieldstone_128/results/experiment3/vel}\\
+\includegraphics[width=13cm]{python_codes/fieldstone_128/RESULTS/experiment3/K}\\
+\includegraphics[width=13cm]{python_codes/fieldstone_128/RESULTS/experiment3/press}\\
+\includegraphics[width=13cm]{python_codes/fieldstone_128/RESULTS/experiment3/vel}\\
 {\captionfont Run on 800x320 mesh. This could easily be increased.} 
 \end{center}
 
