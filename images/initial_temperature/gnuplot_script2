@@ -1,0 +1,22 @@
+#
+set term pdf enhanced font "Times,12pt"
+
+set grid
+set xlabel 'r'
+set ylabel 'Temperature (C)'
+
+Ts=0
+Tb=3000
+Rs=6370e3
+Rb=2890e3
+
+A=(Tb-Ts)/(1./Rs-1./Rb)
+B= (Tb+Ts)/2. + 0.5*(Tb-Ts)/(1./Rs-1./Rb) * ( 1./Rb + 1./Rs )
+
+set output 'temperature_spherical.pdf' 
+plot[Rb:Rs]  \
+-A/x+B notitle
+
+
+
+

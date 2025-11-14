@@ -1,4 +1,5 @@
-set term pdf enhanced
+#
+set term pdf enhanced font "Times,12pt"
 
 set grid
 set xlabel 'y'

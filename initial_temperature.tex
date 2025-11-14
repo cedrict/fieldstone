@@ -1,3 +1,5 @@
+\begin{flushright} {\tiny {\color{gray} \tt initial\_temperature.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \Literature: 
 \begin{itemize}
@@ -13,9 +15,8 @@ Thermal Structure of Oceanic Lithosphere \cite{rihc18}
 \item thermal structure of a subducting plate with finite length \cite{hstt90}
 \end{itemize}
 
-
 %.............................................................
-\subsubsection{Single layer with imposed temperature b.c.}
+\subsection{Single layer with imposed temperature b.c.}
 
 Let us take a single layer of material characterised by
 a heat capacity $C_p$, a heat conductivity $k$
@@ -25,7 +26,7 @@ and a heat production term $H$.
 \includegraphics[width=5cm]{images/initial_temperature/tempcond.png}
 \end{center}
 
-The Heat transport equation writes
+The energy equation writes
 \begin{equation}
 \rho C_p \left( \frac{\partial T}{\partial t} + {\vec v} \cdot {\vec \nabla} { T} \right) = 
 {\vec \nabla} \cdot (k {\vec \nabla} T) + \rho H
@@ -51,7 +52,7 @@ T(y) = \frac{T_t-T_b}{y_t-y_b}(y-y_b) + T_b
 \]
 \end{mdframed}
 
-If now the heat production coefficient is not zero, the differential equation
+\noindent If now the heat production coefficient is not zero, the differential equation
 reads
 \begin{equation}
  k \Delta T + H = 0 
@@ -73,16 +74,18 @@ and finally
 \alpha =  \frac{T_t-T_b}{y_t-y_b}  + \frac{H}{2k}(y_b+y_t)
 \]
 or,
+\begin{mdframed}[backgroundcolor=blue!5]
 \[
 T(y) = -\frac{H}{2k} (y^2-y_b^2) + \left( \frac{T_t-T_b}{y_t-y_b}  + \frac{H}{2k}(y_b+y_t)   \right) (y-y_b) + T_b
 \]
+\end{mdframed}
 
 Taking $H=0$ in this equation obviously yields the temperature field obtained previously.
 Taking $k=2.25$, $T_t=0C$, $T_b=550C$, $y_t=660km$, $y_b=630km$ yields the following
 temperature profiles and heat fluxes when the heat production $H$ varies:
 \begin{center}
-\includegraphics[width=5cm]{images/initial_temperature/temperature1.pdf}
-\includegraphics[width=5cm]{images/initial_temperature/heatflux1.pdf}
+\includegraphics[width=8cm]{images/initial_temperature/temperature1.pdf}
+\includegraphics[width=8cm]{images/initial_temperature/heatflux1.pdf}
 \end{center}
 Looking at the values at the top, which are somewhat estimated to be
 about $55-65mW/m^2$ \cite[table 8.6]{jama}, one sees that value $H=0.8e-6$ yields a very acceptable
@@ -93,14 +96,14 @@ is reported to be somewhere between 10 and 20 $mW/m^2$ in \cite[table 7.1]{jama}
 
 
 %-----------------------------------------------------
-\subsubsection{Single layer with imposed heat flux b.c.}
+\subsection{Single layer with imposed heat flux b.c.}
 
 Let us now assume that heat fluxes are imposed at the top and bottom of the layer:
 \begin{center} 
 \includegraphics[width=5cm]{images/initial_temperature/tempcond2.png}
 \end{center}
 
-We start again from the ODE
+\noindent We start again from the ODE
 \[
 k \Delta T + H = 0 
 \]
@@ -116,7 +119,7 @@ $q=k(dT/dy)|_{y=y_t} = q_t$ so that
 
  
 %-----------------------------------------------------
-\subsubsection{Single layer with imposed heat flux and temperature b.c. }
+\subsection{Single layer with imposed heat flux and temperature b.c. }
 
 \begin{center}
 \includegraphics[width=5cm]{images/initial_temperature/tempcond3.png}
@@ -126,19 +129,19 @@ $q=k(dT/dy)|_{y=y_t} = q_t$ so that
 
 
 %---------------------------------------------------------------
-\subsubsection{Half cooling space}
+\subsection{Half cooling space}
 
 TODO. 
 
 \Literature \cite{fagm12} 
 
 %---------------------------------------------------------------
-\subsubsection{Plate model}
+\subsection{Plate model}
 
 \cite{mcke67}
 
 %.................................
-\subsubsection{McKenzie slab}
+\subsection{McKenzie slab}
 
 When doing thermo-mechanical modelling, the initial temperature
 field in the domain is of prime importance. This is 
@@ -146,17 +149,17 @@ especially true for the temperature in the slab for subduction
 modelling as its rheological behaviour is strongly temperature-dependent. 
 One could easily design a simple geometrical initial field but it is 
 unlikely to be close to the field of a slowly subducting slab at an angle 
-in a hot mantle. 
+in a hot mantle (for example). 
 
-McKenzie \cite{mcke69} derived such approximate initial field from the 
+\textcite{mcke69} (1969) derived such approximate initial field from the 
 steady-state energy equation in two dimensions:
 \begin{equation}
-\rho C_p \vec v \cdot \vec\nabla T = k \vec\nabla^2 T
+\rho C_p \vec\upnu \cdot \vec\nabla T = k \vec\nabla^2 T
 \end{equation}
 We denote by $T_l$ the temperature at the base of the lithosphere
 and $l$ its thickness (i.e. the thickness of the slab).
 
-Assuming $\vec v=(v_x,0)$ yields
+Assuming $\vec\upnu=(v_x,0)$ yields
 \[
 \rho C_p v_x \frac{\partial T}{\partial x} = k \frac{\partial^2 T}{\partial x^2}
 \]
@@ -277,7 +280,7 @@ velocity. The python code is available in {\tt images/mckenzie/mckenzie2.py}.
 %\todo[inline]{BSc: create mckenzie slab temperature setup}
 
 %......................................................................
-\subsubsection{Initial temperature for global mantle convection models}
+\subsection{Initial temperature for global mantle convection models}
 
 This is a difficult topic, and Gottschaldt \etal \cite{gows09} list a few issues or 
 facts to take into account:
@@ -288,5 +291,86 @@ are also conceivable.
 \item Fractional crystallisation and subsequent overturn has the potential to result in 
 compositionally or thermally stable layering, too (Elkins-Tanton \etal 2003; Zaranek and Parmentier 2004)
 \end{itemize}
+
+%...............................
+\paragraph{Conductive geotherm} 
+To start with we can look at the conductive geotherm in a hollow sphere. 
+Assuming no advection takes place, and again assuming steady state we 
+must solve $\Delta T =0$, but this time in a layer that is no more an infinite rectangle 
+in the horizontal directions but a 3d radially symmetric hollow planet. 
+Spherical coordinates are then the appropriate choice, and the Laplace operator
+is given by 
+
+\begin{equation}
+\Delta f=
+\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial f}{\partial r} \right)
++\frac{1}{r^2 \sin\theta} \frac{\partial}{\partial \theta} \left( \sin\theta \frac{\partial f}{\partial \theta} \right)
++\frac{1}{r^2 \sin^2\theta}  \frac{\partial^2 f}{\partial \phi^2}
+\end{equation}
+In our case $\partial_\theta = \partial_\phi=0$ so that we are left with
+\[
+\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial T}{\partial r} \right) =0
+\]
+or,
+\[
+\frac{\partial}{\partial r} \left( r^2 \frac{\partial T}{\partial r} \right) =0
+\]
+\[
+r^2 \frac{\partial T}{\partial r}  = A
+\]
+\[
+\frac{\partial T}{\partial r}  = \frac{A}{r^2}
+\]
+\[
+T(r) = - \frac{A}{r} + B
+\]
+Assuming $T=T_b$ at the bottom (i.e. the core-mantle boundary) 
+and $T=T_s$ at the surface, we have
+\begin{eqnarray}
+T_b &=& -\frac{A}{R_b} + B \nn\\
+T_s &=& -\frac{A}{R_s} + B \nn
+\end{eqnarray}
+which yields 
+\[
+T_b-T_s = -A \left( \frac{1}{R_b} - \frac{1}{R_s}\right)
+\qquad \Rightarrow
+\qquad
+A= \frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } 
+\]
+Likewise we have
+\[
+\frac12(T_b+T_s) = - \frac{A}{2} \left( \frac{1}{R_b} +\frac{1}{R_s} \right) + B
+\]
+or,
+\[
+B = \frac12(T_b+T_s)  + \frac{A}{2} \left( \frac{1}{R_b} +\frac{1}{R_s} \right) 
+\]
+so that 
+\begin{eqnarray}
+T(r) 
+&=& -\frac{A}{r} + B  \nn\\
+&=& - A \frac{1}{r}  +\frac12(T_b+T_s)  + \frac{A}{2} \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \nn\\
+&=& A \left( -\frac{1}{r} + \frac 12 \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s) \nn\\
+&=& \frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } \left( -\frac{1}{r} + \frac 12 \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s) \nn
+\end{eqnarray}
+
+\noindent Verification:
+\begin{align}
+T(r=R_s) 
+&=  \frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } \left( -\frac{1}{R_s} + \frac 12 \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s)  \nn\\
+&=  \frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } \left( \frac 12 \left( \frac{1}{R_b} -\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s)  \nn\\
+&= -\frac12 (T_b-T_s)  +\frac12(T_b+T_s)  \nn\\
+&= T_s
+\end{align}
+Same for $T(r=R_b)$.
+
+The temperature profile is not linear and in the case of the Earth, with $T_s=0^o$C and $T_b=3000^o$C
+it looks as follows:
+
+\begin{center}
+\includegraphics[width=9cm]{images/initial_temperature/temperature_spherical.pdf}
+\end{center}
+
+
 
 
