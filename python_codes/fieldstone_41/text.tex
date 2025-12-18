@@ -1,6 +1,125 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/aspect_logo}
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/pic}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
 
-\paragraph{Setup of the experiment} It originates in Schuh-Senlis \etal \cite{sctc20} 
-and is a scaled-up version of the Rayleigh-Taylor experiment of van Keken et al (1997) \cite{vaks97}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_41/text.tex}} \end{flushright}
+
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/template_keywords.key}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+\begin{center}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_41}}
+\end{center}
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+Last revision: Dec. 16th, 2025.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection*{The code} 
+It is based on stable $Q_2\times Q_1$ elements for the Stokes equations and 
+the heat transport equation need not be solved. 
+It relies on the Particle-in-Cell method (see Section~\ref{MMM-ss:pic}) for material advection. 
+At startup \lstinline{nparticle\_per\_dim**2} particles are regularly placed in each element. 
+There are in total:
+\begin{lstlisting}
+nparticle=nparticle_per_element*nel
+\end{lstlisting}
+
+Particles track material number, i.e. 1,2,3...
+
+Density is interpolated from particles onto the $Q_1$ mesh by means of the $Q_1$ shape functions:
+\begin{lstlisting}
+for im in range(0,nmarker):
+    ielx=int(swarm_x[im]/Lx*nelx)
+    iely=int(swarm_y[im]/Ly*nely)
+    iel=nelx*(iely)+ielx
+    N1=0.25*(1-swarm_r[im])*(1-swarm_s[im])
+    N2=0.25*(1+swarm_r[im])*(1-swarm_s[im])
+    N3=0.25*(1+swarm_r[im])*(1+swarm_s[im])
+    N4=0.25*(1-swarm_r[im])*(1+swarm_s[im])
+    rho_nodal[iconP[0,iel]]+=rho_mat[swarm_mat[im]-1]*N1
+    rho_nodal[iconP[1,iel]]+=rho_mat[swarm_mat[im]-1]*N2
+    rho_nodal[iconP[2,iel]]+=rho_mat[swarm_mat[im]-1]*N3
+    rho_nodal[iconP[3,iel]]+=rho_mat[swarm_mat[im]-1]*N4
+    rho_nodal_counter[iconP[0,iel]]+=N1
+    rho_nodal_counter[iconP[1,iel]]+=N2
+    rho_nodal_counter[iconP[2,iel]]+=N3
+    rho_nodal_counter[iconP[3,iel]]+=N4
+rho_nodal/=rho_nodal_counter
+\end{lstlisting}
+
+%This is a particle-centric approach, which is identical to the 
+%somewhat more instinctive node-centric approach which itself is similar
+%to the meshless methods approach (think of the SPH method kernel but with a 
+%square support). Density is later on interpolated onto the quadrature points 
+%with the $Q_1$ shape functions again to avoid the problems highlighted in 
+%Section~\ref{MMM-ss:bern}.
+%Viscosity is averaged per element by means of an arithmetic, geometric or harmonic mean.
+
+
+Densities are always averaged arithmetically. 
+There are three different projections: nodal, elemental and least squares,
+corresponding to \lstinline{particle_rho_projection=0,1,2} respectively.
+
+Viscosities are projected onto elements ({\tt avrg}$>0$) or onto $Q_1$nodes ({\tt avrg}$<0$).
+There are 7 viscosity averaging schemes implemented:
+\begin{itemize}
+\item[{\tt avrg}=-1] first-order basis function weighed arithmetic average onto nodes
+\item[{\tt avrg}=-2] first-order basis function weighed geometric average onto nodes
+\item[{\tt avrg}=-3] first-order basis function weighed harmonic average onto nodes
+\item[{\tt avrg}=+1] elemental piecewise constant arithmetic average 
+\item[{\tt avrg}=+2] elemental piecewise constant geometric average 
+\item[{\tt avrg}=+3] elemental piecewise constant harmonic average 
+\item[{\tt avrg}=+4] elemental first-order least square projection 
+\end{itemize}
+
+This means that there are 21 combinations (3 density projections, 7 viscosity projections).
+I have therefore written a bash script which runs all 21 combinations at various resolutions, 
+from $33^2$ up to $129^2$ elements.
+
+Let us recall that the Least Squares methodology is presented for example in 
+Thielmann \etal \cite{thmk14} and in Section~\ref{MMM-ss:pic}:
+the density or viscosity values carried by the particles are represented by a linear 
+function in a 2D space inside each 
+element, i.e. $\tilde{\eta}({\vec r}) = a_\eta + b_\eta x+c_\eta y$ and $\tilde{\rho}=a_\rho +b_\rho x+c_\rho y$.
+
+When {\tt avrg}$<0$ values are projected onto quadrature points by means 
+of $Q_1$ basis functions using the values at the corners of the element.
+When {\tt avrg}$=1,2,3$ all quadrature points receive the same elemental value. 
+When {\tt avrg}$=4$ the coordinates of each quadrature points are used in order to 
+estimate the value from the coefficients $\{a,b,c\}$ and $\{d,e,f\}$ 
+of the (limited) least square.
+
+
+Particles are advected by means of a (space) Runge-Kutta 1st/2nd/3rd order algorithm (see
+Section~\ref{MMM-ss:rkm}). The time step $\delta t$ is set by means of the CFL criterion (see
+Section~\ref{MMM-ss:cfl}).
+
+The root mean square velocity and total mass of the system are computed every time step.
+
+Note that this is an early \stone, so that the assembly of the matrix is rather slow, 
+and no part of the code is numba'd. In other words, it is slow.
+
+%----------------------------------------------------------------------------------
+\subsection*{Rayleigh-Taylor experiment (model=1)} 
+
+{\color{red} This experiment has not been rerun with the latest version of the code!}
+
+It originates in \textcite{sctc20} (2020) and is a scaled-up version of the 
+Rayleigh-Taylor experiment of \textcite{vaks97} (1997).
 In the original experiment the domain is $0.9142\times1$, viscosity is $\eta=100$, 
 densities are 1000 and 1010 (i.e. $\delta \rho=10$) and the gravity is $|\vec{g}|=10$.
 In our case the domain is 10,000 times larger, i.e. $9142\times10000$m, 
@@ -27,11 +146,11 @@ then we should also have
 \]
 i.e.,
 \[
-t = \frac{10^{14}}{450} \simeq 2.222 \cdot 10^{11}\text{s}
+\tilde{t} = \frac{10^{14}}{450} \simeq 2.222 \cdot 10^{11}\text{s}
 \]
 This means that in order to plot our results against those in van Keken et al, their results
-must be scaled: times must be multiplied by $t$ and velocities divided by 
-$t/length = 2.222 \cdot 10^{7}\text{m/s}$  
+must be scaled: times must be multiplied by $\tilde{t}$ and velocities divided by 
+$\tilde{t}/length = 2.222 \cdot 10^{7}\text{m/s}$  
 
 The initial mass of the system is:
 \[
@@ -39,16 +158,7 @@ M(t=0) = L_x \times 2km \times \rho_s + Lx \times 8km \times \rho_0 =
 9142 \cdot(2000\cdot 2150 + 8000\cdot 2600) \simeq 2.294642\cdot 10^{11}\text{kg}
 \]
 
-\paragraph{The code} It is based on stable $Q_2\times Q_1$ elements for the Stokes equations and 
-the heat transport equation need not be solved. 
-It relies on the Particle-in-Cell method (see Section~\ref{MMM-ss:pic}) for material advection. 
-At startup {\tt nmarker\_per\_dim**2} particles are regularly placed in each element. 
-There are in total:
-\begin{lstlisting}
-nmarker=nmarker_per_element*nel
-\end{lstlisting}
-
-Markers track material number, i.e. 1 or 2:
+The particle setup is as follows:
 \begin{lstlisting}
 for im in range (0,nmarker):
     if swarm_y[im]>salt_thickness+amplitude*np.cos(np.pi*swarm_x[im]/Lx):
@@ -57,174 +167,208 @@ for im in range (0,nmarker):
        swarm_mat[im]=1
 \end{lstlisting}
 
-Marker density is interpolated onto the Q1 mesh by means of the Q1 shape functions:
-\begin{lstlisting}
-for im in range(0,nmarker):
-    ielx=int(swarm_x[im]/Lx*nelx)
-    iely=int(swarm_y[im]/Ly*nely)
-    iel=nelx*(iely)+ielx
-    N1=0.25*(1-swarm_r[im])*(1-swarm_s[im])
-    N2=0.25*(1+swarm_r[im])*(1-swarm_s[im])
-    N3=0.25*(1+swarm_r[im])*(1+swarm_s[im])
-    N4=0.25*(1-swarm_r[im])*(1+swarm_s[im])
-    rho_nodal[iconP[0,iel]]+=rho_mat[swarm_mat[im]-1]*N1
-    rho_nodal[iconP[1,iel]]+=rho_mat[swarm_mat[im]-1]*N2
-    rho_nodal[iconP[2,iel]]+=rho_mat[swarm_mat[im]-1]*N3
-    rho_nodal[iconP[3,iel]]+=rho_mat[swarm_mat[im]-1]*N4
-    rho_nodal_counter[iconP[0,iel]]+=N1
-    rho_nodal_counter[iconP[1,iel]]+=N2
-    rho_nodal_counter[iconP[2,iel]]+=N3
-    rho_nodal_counter[iconP[3,iel]]+=N4
-rho_nodal/=rho_nodal_counter
-\end{lstlisting}
-This is a marker-centric approach, which is identical to the 
-somewhat more instinctive node-centric approach which itself is similar
-to the meshless methods approach (think of the SPH method kernel but with a 
-square support). Density is later on interpolated onto the quadrature points 
-with the $Q_1$ shape functions again to avoid the problems highlighted in 
-Section~\ref{MMM-ss:bern}.
-Viscosity is averaged per element by means of an arithmetic, geometric or harmonic mean.
-
-Particles are advected by means of a (space) Runge-Kutta 1st/2nd/3rd order algorithm (see
-Section~\ref{MMM-ss:rkm}). The time step $\delta t$ is set by means of the CFL criterion (see
-Section~\ref{MMM-ss:cfl}).
-
-The root mean square velocity and total mass of the system are computed every time step.
 
 Simulations end when the maximum number of time steps is reached or when 
 an element does not contain any particle.
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_41/results/vrms_RK.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_41/results/vrms_RES.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_41/results/vrms_CFL.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_41/results/vrms_nmarker.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/vrms_RK.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/vrms_RES.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/vrms_CFL.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/vrms_nmarker.pdf}\\
 {\captionfont Root mean square velocity as a function of time. Black curves are those in van Keken
 et al (1997). Letters stand for authors initials.}
 \end{center}
 
-
-
+We can also monitor the time evolution of the mass of the rising fluid 
+as well as the number of particles per element:
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_41/results/mass.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_41/results/nmarker.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_41/RESULTS/mass.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_41/RESULTS/nmarker.pdf}
 \end{center}
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_41/results/64x64_10_RK3/markers0000}
-\includegraphics[width=5cm]{python_codes/fieldstone_41/results/64x64_10_RK3/markers0143}
-\includegraphics[width=5cm]{python_codes/fieldstone_41/results/64x64_10_RK3/rho_nodal_0143}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_41/RESULTS/64x64_10_RK3/markers0000}
+\includegraphics[width=5cm]{python_codes/fieldstone_41/RESULTS/64x64_10_RK3/markers0143}
+\includegraphics[width=5cm]{python_codes/fieldstone_41/RESULTS/64x64_10_RK3/rho_nodal_0143}\\
 {\captionfont 64x64 simulation right before crash}
 \end{center}
 
 
 \newpage
 %---------------------------------------------------------------
-\subsection*{Stokes sphere under deformable free surface}
+\subsection*{Stokes sphere under deformable free surface (model=3)}
 
-The setup is described in Section~\ref{MMM-ss:stokes_sphere_fs2D}. 
-Densities are projected on the nodes or elements with an arithmetic averaging while
-viscosities are projected onto elements ({\tt avrg}$>0$) or onto $Q_1$nodes ({\tt avrg}$<0$).
-There are 7 averaging schemes implemented:
-\begin{itemize}
-\item[{\tt avrg}=-1] first-order basis function weighed arithmetic average onto nodes
-\item[{\tt avrg}=-2] first-order basis function weighed geometric average onto nodes
-\item[{\tt avrg}=-3] first-order basis function weighed harmonic average onto nodes
-\item[{\tt avrg}=+1]  elemental piecewise constant arithmetic average 
-\item[{\tt avrg}=+2]  elemental piecewise constant geometric average 
-\item[{\tt avrg}=+3]  elemental piecewise constant harmonic average 
-\item[{\tt avrg}=+4]  elemental first-order least square projection 
-\end{itemize}
+The setup is described in detail in Section~\ref{MMM-ss:stokes_sphere_fs2D}. 
+Unit square, top 25\% is air. Sphere has radius 0.123456789, located at (0.5,0.6).
+Free slip on all sides.
 
-Let us recall that the Least Squares methodology is presented for example in 
-Thielmann \etal \cite{thmk14} and in Section~\ref{MMM-ss:pic}:
-the density or viscosity values carried by the markers are represented by a linear 
-function in a 2D space inside each 
-element, i.e. $\tilde{\eta}({\vec r}) = a + b x+c y$ and $\tilde{\rho}=d+ex+fy$.
 
-When {\tt avrg}$<0$ values are projected onto quadrature points by means 
-of $Q_1$ basis functions using the values at the corners of the element.
-When {\tt avrg}$=1,2,3$ all quadrature points receive the same elemental value. 
-When {\tt avrg}$=4$ the coordinates of each quadrature points are used in order to 
-estimate the value from the coefficients $\{a,b,c\}$ and $\{d,e,f\}$ 
-of the (limited) least square.
+
+
 
 Given the current limitations of this simple code I can only run experiments with limited resolutions. 
 Also since I later wish to plot the density and viscosity values carried by the quadrature points 
 on a vertical line passing through the middle of the sphere, I focus on odd numbers of elements
-in the horizontal direction and investigate $33\times33$, $49\times49$, $65\times65$, $81\times81$,
-and $97\times97$.
+in the horizontal direction and investigate $33^2$, $49^2$, $65^2$, $81^2$, $97^2$, $113^2$ and $129^2$.
 
 \begin{center}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_41/results/exp3/markers}
-\includegraphics[width=5.5cm]{python_codes/fieldstone_41/results/exp3/vel_line}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/exp3/markers}
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/exp3/vel_line}\\
 {\captionfont 
-Left: markers on 33x33 grid, $5^2$ markers per element.  
-Right: vertical component $v$ of the velocity as obtained \\
-on the $81\times81$ mesh using least squares + limiter projection.\\
+Left: particles on $33\times 33$ grid, $5^2$ particles per element.  
+Right: vertical component $v$ of the velocity as obtained 
+on the $81\times81$ mesh using least squares + limiter projection.
 The black line indicates the location of profile measurements.}
 \end{center}
 
+
+
+
+
+
+\newpage
+\paragraph{Nodal density}.
+
 \begin{center}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/33x33/profile_v.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/33x33/profile_p.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/33x33/profile_eta_elemental.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/33x33/profile_eta_nodal.pdf}\\
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/49x49/profile_v.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/49x49/profile_p.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/49x49/profile_eta_elemental.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/49x49/profile_eta_nodal.pdf}\\
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/65x65/profile_v.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/65x65/profile_p.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/65x65/profile_eta_elemental.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/65x65/profile_eta_nodal.pdf}\\
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/81x81/profile_v.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/81x81/profile_p.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/81x81/profile_eta_elemental.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/81x81/profile_eta_nodal.pdf}\\
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/97x97/profile_v.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/97x97/profile_p.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/97x97/profile_eta_elemental.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/97x97/profile_eta_nodal.pdf}\\
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/113x113/profile_v.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/113x113/profile_p.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/113x113/profile_eta_elemental.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/113x113/profile_eta_nodal.pdf}\\
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/129x129/profile_v.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/129x129/profile_p.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/129x129/profile_eta_elemental.pdf}
-\includegraphics[width=4.25cm]{python_codes/fieldstone_41/results/exp3/129x129/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/33x33/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/33x33/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/33x33/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/33x33/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/49x49/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/49x49/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/49x49/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/49x49/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/65x65/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/65x65/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/65x65/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/65x65/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/81x81/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/81x81/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/81x81/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/81x81/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/97x97/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/97x97/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/97x97/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/97x97/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/113x113/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/113x113/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/113x113/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/113x113/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/129x129/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/129x129/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/129x129/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/129x129/profile_eta_nodal.pdf}\\
 {\captionfont 
 1st column: vertical velocity profile; 
 2nd column: vertical pressure profile; 
 3rd column: viscosity on quadrature points in log scale for {\tt avrg}$>0$ (elemental approach);
 4th column: viscosity on quadrature points in log scale for {\tt avrg}$<0$ (nodal approach);
-$5^2$ markers per element.
+$5^2$ particles per element.
 The black dot indicates the velocity in the middle of the sphere 
 obtained with \stone 93 using Crouzeix-Raviart triangular elements.} 
 \end{center}
-It is immediately apparent that the least-square case yields smooth velocity profiles, even at 
-low resolutions. Also it is clear that nodal approaches tend to smear out the transition zone
-but do not yield a visible improvement in terms of velocity.
+
+
+
+\newpage
+\paragraph{Elemental density}.
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_41/results/exp3/mass.pdf}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_41/results/exp3/vrms.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/33x33/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/33x33/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/33x33/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/33x33/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/49x49/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/49x49/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/49x49/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/49x49/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/65x65/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/65x65/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/65x65/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/65x65/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/81x81/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/81x81/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/81x81/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/81x81/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/97x97/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/97x97/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/97x97/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/97x97/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/113x113/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/113x113/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/113x113/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/113x113/profile_eta_nodal.pdf}\\
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/129x129/profile_v.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/129x129/profile_p.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/129x129/profile_eta_elemental.pdf}
+\includegraphics[width=4.25cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/129x129/profile_eta_nodal.pdf}\\
+{\captionfont 
+1st column: vertical velocity profile; 
+2nd column: vertical pressure profile; 
+3rd column: viscosity on quadrature points in log scale for {\tt avrg}$>0$ (elemental approach);
+4th column: viscosity on quadrature points in log scale for {\tt avrg}$<0$ (nodal approach);
+$5^2$ particles per element.
+The black dot indicates the velocity in the middle of the sphere 
+obtained with \stone 93 using Crouzeix-Raviart triangular elements.} 
+\end{center}
+
+
+\newpage
+\paragraph{Least squares density}.
+
+There is no need to produce all the plots. They are virtually identical to those
+obtained with an elemental density field.
+
+\paragraph{Comparison}.
+
+On the following figures I plot the vertical velocity and pressure profiles 
+for both avrg=-3,3 and for all 3 density projections:
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/exp3/profile_v_m3.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/exp3/profile_v_p3.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/exp3/profile_p_m3.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/exp3/profile_p_p3.pdf}
+\end{center}
+
+Conclusion: elemental density is best (no wiggles, faster than least squares). 
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/mass.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_n/vrms.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/mass.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_e/vrms.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_ls/mass.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_41/RESULTS/exp3/exp3_ls/vrms.pdf}\\
 {\captionfont Total mass and root mean square velocity $\upnu_{rms}$ for all 7 projections.}
 \end{center}
 
+Conclusion: averaging does not matter for average quantities (i.e. the vrms).
+Total mass is not very dependent on averagings, only resolution.. 
+
+\newpage
 %-----------------------------------------------------------------------------
 \subsubsection*{A word about the need for a limiter}
 
 The following figures are obtained with a standard linear least square algorithm. 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_41/results/exp3/rho_ls}
-\includegraphics[width=7cm]{python_codes/fieldstone_41/results/exp3/eta_ls}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_41/results/exp3/rho_ls_warp}
-\includegraphics[width=7cm]{python_codes/fieldstone_41/results/exp3/eta_ls_warp}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_41/results/exp3/rho_ls_warp2}
-\includegraphics[width=7cm]{python_codes/fieldstone_41/results/exp3/eta_ls_warp2}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_41/RESULTS/exp3/rho_ls}
+\includegraphics[width=7cm]{python_codes/fieldstone_41/RESULTS/exp3/eta_ls}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_41/RESULTS/exp3/rho_ls_warp}
+\includegraphics[width=7cm]{python_codes/fieldstone_41/RESULTS/exp3/eta_ls_warp}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_41/RESULTS/exp3/rho_ls_warp2}
+\includegraphics[width=7cm]{python_codes/fieldstone_41/RESULTS/exp3/eta_ls_warp2}\\
+{\captionfont Left: density field; Right: Viscosity field.}
 \end{center}
+
+Unfortunately the least squares approach is sensitive to both the location of the 
+particles as well as the values they carry inside the element. As such the retrieved 
+coefficients of the polynomials can be such that the reconstructed density or velocity
+field at a quadrature point is negative, which is nonsensical. 
+A limiter has been designed and implemented to prevent this. 
+
+
 
 Describe here limiter...
 

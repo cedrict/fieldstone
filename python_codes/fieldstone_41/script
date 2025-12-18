@@ -1,0 +1,57 @@
+#!/bin/bash
+
+for nelx in 33 41 49 65 81 97 113 129 ; do
+#for nelx in 81 97 113 129 ; do
+
+    mkdir ${nelx}x${nelx}
+
+    echo resolution= ${nelx}x${nelx}
+
+    python3 stone.py -3 $nelx > opla_${nelx}_m3
+    mv profileq.ascii profileq_m3.ascii
+    mv profilec.ascii profilec_m3.ascii
+    cat mass.ascii >> mass_all.ascii
+    cat vrms.ascii >> vrms_all.ascii
+
+    python3 stone.py -2 $nelx > opla_${nelx}_m2
+    mv profileq.ascii profileq_m2.ascii
+    mv profilec.ascii profilec_m2.ascii
+    cat mass.ascii >> mass_all.ascii
+    cat vrms.ascii >> vrms_all.ascii
+
+    python3 stone.py -1 $nelx > opla_${nelx}_m1
+    mv profileq.ascii profileq_m1.ascii
+    mv profilec.ascii profilec_m1.ascii
+    cat mass.ascii >> mass_all.ascii
+    cat vrms.ascii >> vrms_all.ascii
+
+    python3 stone.py  1 $nelx > opla_${nelx}_1
+    mv profileq.ascii profileq_p1.ascii
+    mv profilec.ascii profilec_p1.ascii
+    cat mass.ascii >> mass_all.ascii
+    cat vrms.ascii >> vrms_all.ascii
+
+    python3 stone.py  2 $nelx > opla_${nelx}_2
+    mv profileq.ascii profileq_p2.ascii
+    mv profilec.ascii profilec_p2.ascii
+    cat mass.ascii >> mass_all.ascii
+    cat vrms.ascii >> vrms_all.ascii
+
+    python3 stone.py  3 $nelx > opla_${nelx}_3
+    mv profileq.ascii profileq_p3.ascii
+    mv profilec.ascii profilec_p3.ascii
+    cat mass.ascii >> mass_all.ascii
+    cat vrms.ascii >> vrms_all.ascii
+
+    python3 stone.py  4 $nelx > opla_${nelx}_4
+    mv profileq.ascii profileq_p4.ascii
+    mv profilec.ascii profilec_p4.ascii
+    cat mass.ascii >> mass_all.ascii
+    cat vrms.ascii >> vrms_all.ascii
+
+    mv mass_all.ascii ${nelx}x${nelx}
+    mv vrms_all.ascii ${nelx}x${nelx}
+    mv profile*.ascii ${nelx}x${nelx}
+
+done
+
