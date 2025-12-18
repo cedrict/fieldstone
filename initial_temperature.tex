@@ -131,14 +131,16 @@ $q=k(dT/dy)|_{y=y_t} = q_t$ so that
 %---------------------------------------------------------------
 \subsection{Half cooling space}
 
-TODO. 
+TODO
 
-\Literature \cite{fagm12} 
+\fullcite{fagm12} 
 
 %---------------------------------------------------------------
 \subsection{Plate model}
 
-\cite{mcke67}
+TODO
+
+\fullcite{mcke67}
 
 %.................................
 \subsection{McKenzie slab}
@@ -350,9 +352,17 @@ so that
 T(r) 
 &=& -\frac{A}{r} + B  \nn\\
 &=& - A \frac{1}{r}  +\frac12(T_b+T_s)  + \frac{A}{2} \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \nn\\
-&=& A \left( -\frac{1}{r} + \frac 12 \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s) \nn\\
-&=& \frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } \left( -\frac{1}{r} + \frac 12 \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s) \nn
+&=& A \left( -\frac{1}{r} + \frac 12 \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s) \nn
 \end{eqnarray}
+and in the end:
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+T(r)
+=\frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } \left( -\frac{1}{r} + 
+\frac 12 \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s) \nn
+\end{equation}
+\end{mdframed}
 
 \noindent Verification:
 \begin{align}
@@ -360,7 +370,7 @@ T(r=R_s)
 &=  \frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } \left( -\frac{1}{R_s} + \frac 12 \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s)  \nn\\
 &=  \frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } \left( \frac 12 \left( \frac{1}{R_b} -\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s)  \nn\\
 &= -\frac12 (T_b-T_s)  +\frac12(T_b+T_s)  \nn\\
-&= T_s
+&= T_s \nn
 \end{align}
 Same for $T(r=R_b)$.
 
@@ -371,6 +381,7 @@ it looks as follows:
 \includegraphics[width=9cm]{images/initial_temperature/temperature_spherical.pdf}
 \end{center}
 
-
+%..........................................
+\paragraph{Adiabatic temperature profile}
 
 

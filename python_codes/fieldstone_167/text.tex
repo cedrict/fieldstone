@@ -30,8 +30,9 @@ Last revision: October 9th, 2025.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This \stone takes its origin in the MSc work of Daniel about the subduction interface. 
-\textcite{stuw98} (1998) proposes a simple mathematical model for the influence 
+This \stone takes its origin in the MSc work of Daniel about the subduction interface and
+aims at replicating \fullcite{stuw98}.\\ 
+In the paper the author proposes a simple mathematical model for the influence 
 of shear heating on the temperature there, so it was decided to 
 reproduce the results of the paper (especially Fig.~6) and use it as a basis for discussion.
 
@@ -227,7 +228,7 @@ which is the standard definition that we have used above.
 %-------------------------------------------------
 \subsection*{About Fig. 6 of the paper}
 
-Let us consider Fig.~6 of the paper, where three different sets rheological constants are used
+Let us consider Fig.~6 of the paper, where three different sets of rheological constants are used
 for $A$ and $Q$.
 
 \begin{center}
@@ -387,8 +388,8 @@ also run $\dot\epsilon=10^{-12,-16}~\si{\per\second}$.
 
 
 Running our code for temperatures between 400~\si{\celsius} and 1400~\si{\celsius}
-we arrive at the following temperature profiles for three values of strain rate 
-$10^{-13,-14,-15}~\si{\per\second}$:
+we arrive at the following temperature profiles for values of strain rate 
+$10^{-12,-13,-14,-15,-16}~\si{\per\second}$:
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_167/1kelvin/fig6.pdf}
@@ -397,7 +398,7 @@ $10^{-13,-14,-15}~\si{\per\second}$:
 {\captionfont From left to right: Quartz \cite{brko80}, quartz \cite{stsa94}, olivine \cite{brko80}.}
 \end{center}
 
-I have digitized\footnote{\url{https://plotdigitizer.com/app}} the lines of Fig.~6
+I have digitized\footnote{\url{https://plotdigitizer.com/app}} the lines of Fig.~6 of the paper
 and these are also plotted on the figures.
 This is rather puzzling because our results do not come close to those of Fig~6 at all. 
 However, although it is obviously wrong to do so, we could run our code and choose not 
@@ -412,7 +413,7 @@ and we obtain the following figures:
 \end{center}
 
 This is rather worrying because these plots do resemble the Fig.~6 of the paper a lot.
-Also, we find that the lines in the paper are probably for strainrates 
+Also, by doing so we also find that the lines in the paper are probably for strainrates 
 $\dot{\epsilon}=10^{-16,-15,-14}~\si{\per\second}$ unlike stated on the figure of the paper.
 
 
@@ -441,7 +442,7 @@ for $\dot\epsilon=10^{-14}~\si{\per\second}$.
 Right: function using temperatures in Celsius.}
 \end{center}
 
-When Kelvin units are used, we find that the zero of the function is approxmately equal 
+When Kelvin units are used, we find that the zero of the function is approximately equal 
 to $T_0$ which is not what is shown in Fig.~6 of the paper. 
 When Celsius units are used, it is less visually obvious, but the same observation can be made.
 This reinforces the conclusion that Eq.~(13) of the paper is probably wrong. 
