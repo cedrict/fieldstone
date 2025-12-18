@@ -1,0 +1,44 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+
+
+
+set xlabel 'y'
+set ylabel 'v'
+
+set title 'avrg=3, 65x65'
+set output 'profile_v_p3.pdf'
+plot[][]\
+'exp3_n/65x65/profilec_p3.ascii'  u 1:4 w lp ps .14 lt 1 pt 5 lw .5 t 'nodal rho',\
+'exp3_e/65x65/profilec_p3.ascii'  u 1:4 w lp ps .14 lt 2 pt 5 lw .5 t 'elemental rho',\
+'exp3_ls/65x65/profilec_p3.ascii' u 1:4 w lp ps .14 lt 3 pt 5 lw .5 t 'least squares rho'
+
+set title 'avrg=-3, 65x65'
+set output 'profile_v_m3.pdf'
+plot[][]\
+'exp3_n/65x65/profilec_m3.ascii'  u 1:4 w lp ps .14 lt 1 pt 5 lw .5 t 'nodal rho',\
+'exp3_e/65x65/profilec_m3.ascii'  u 1:4 w lp ps .14 lt 2 pt 5 lw .5 t 'elemental rho',\
+'exp3_ls/65x65/profilec_m3.ascii' u 1:4 w lp ps .14 lt 3 pt 5 lw .5 t 'least squares rho'
+
+#############################################################
+set xlabel 'y'
+set ylabel 'p'
+
+set title 'avrg=3, 65x65'
+set output 'profile_p_p3.pdf'
+plot[][]\
+'exp3_n/65x65/profilec_p3.ascii'  u 1:5 w lp ps .14 lt 1 pt 5 lw .5 t 'nodal rho',\
+'exp3_e/65x65/profilec_p3.ascii'  u 1:5 w lp ps .14 lt 2 pt 5 lw .5 t 'elemental rho',\
+'exp3_ls/65x65/profilec_p3.ascii' u 1:5 w lp ps .14 lt 3 pt 5 lw .5 t 'least squares rho'
+
+set title 'avrg=-3, 65x65'
+set output 'profile_p_m3.pdf'
+plot[][]\
+'exp3_n/65x65/profilec_m3.ascii'  u 1:5 w lp ps .14 lt 1 pt 5 lw .5 t 'nodal rho',\
+'exp3_e/65x65/profilec_m3.ascii'  u 1:5 w lp ps .14 lt 2 pt 5 lw .5 t 'elemental rho',\
+'exp3_ls/65x65/profilec_m3.ascii' u 1:5 w lp ps .14 lt 3 pt 5 lw .5 t 'least squares rho'
+
+
+
