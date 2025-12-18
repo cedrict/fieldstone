@@ -1,0 +1,38 @@
+#
+set term pdf enhanced font 'Times,12pt"
+set grid
+set key outside
+set xlabel 'projection'
+
+set title 'elemental density'
+
+set ylabel 'v_{rms}'
+set output 'vrms.pdf'
+plot[][]\
+'33x33/vrms_all.ascii' u 3:2 w lp ps .5 t '33^2',\
+'41x41/vrms_all.ascii' u 3:2 w lp ps .5 t '41^2',\
+'49x49/vrms_all.ascii' u 3:2 w lp ps .5 t '49^2',\
+'65x65/vrms_all.ascii' u 3:2 w lp ps .5 t '65^2',\
+'81x81/vrms_all.ascii' u 3:2 w lp ps .5 t '81^2',\
+'97x97/vrms_all.ascii' u 3:2 w lp ps .5 t '97^2',\
+'113x113/vrms_all.ascii' u 3:2 w lp ps .5 t '113^2',\
+'129x129/vrms_all.ascii' u 3:2 w lp ps .5 t '129^2',\
+0.002522 w l lt -1 dt 2 t 'stone 93'
+
+set ylabel 'total mass'
+set output 'mass.pdf'
+plot[-3:4][]\
+'33x33/mass_all.ascii' u 4:2 w lp ps .5 t '33^2',\
+'41x41/mass_all.ascii' u 4:2 w lp ps .5 t '41^2',\
+'49x49/mass_all.ascii' u 4:2 w lp ps .5 t '49^2',\
+'65x65/mass_all.ascii' u 4:2 w lp ps .5 t '65^2',\
+'81x81/mass_all.ascii' u 4:2 w lp ps .5 t '81^2',\
+'97x97/mass_all.ascii' u 4:2 w lp ps .5 t '97^2',\
+'113x113/mass_all.ascii' u 4:2 w lp ps .5 t '113^2',\
+'129x129/mass_all.ascii' u 4:2 w lp ps .5 t '129^2',\
+'33x33/mass_all.ascii' u 4:3 w l lt -1 lw 2 dt 2 t 'analytical',\
+
+
+
+
+
