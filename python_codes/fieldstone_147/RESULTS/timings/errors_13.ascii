@@ -1,0 +1,15 @@
+     -> nel=     64 ; errv= 1.805935e-05 ; errp= 1.165115e-03 ; divv= 7.756150e-04 ; solver= 13
+     -> nel=    100 ; errv= 9.234173e-06 ; errp= 7.454976e-04 ; divv= 4.989105e-04 ; solver= 13
+     -> nel=    144 ; errv= 5.339043e-06 ; errp= 5.176590e-04 ; divv= 3.474667e-04 ; solver= 13
+     -> nel=    196 ; errv= 3.360199e-06 ; errp= 3.803048e-04 ; divv= 2.557421e-04 ; solver= 13
+     -> nel=    256 ; errv= 2.250123e-06 ; errp= 2.911647e-04 ; divv= 1.960377e-04 ; solver= 13
+     -> nel=    400 ; errv= 1.151471e-06 ; errp= 1.863419e-04 ; divv= 1.256456e-04 ; solver= 13
+     -> nel=    576 ; errv= 6.661989e-07 ; errp= 1.294032e-04 ; divv= 8.732429e-05 ; solver= 13
+     -> nel=    676 ; errv= 5.239332e-07 ; errp= 1.102605e-04 ; divv= 7.442698e-05 ; solver= 13
+     -> nel=    784 ; errv= 4.194652e-07 ; errp= 9.507148e-05 ; divv= 6.418837e-05 ; solver= 13
+     -> nel=    900 ; errv= 3.410521e-07 ; errp= 8.281781e-05 ; divv= 5.592519e-05 ; solver= 13
+     -> nel=   1024 ; errv= 2.810078e-07 ; errp= 7.278906e-05 ; divv= 4.916019e-05 ; solver= 13
+     -> nel=   1296 ; errv= 1.973877e-07 ; errp= 5.751239e-05 ; divv= 3.885141e-05 ; solver= 13
+     -> nel=   1600 ; errv= 1.439492e-07 ; errp= 4.658511e-05 ; divv= 3.147473e-05 ; solver= 13
+     -> nel=   2304 ; errv= 8.341216e-08 ; errp= 3.235094e-05 ; divv= 2.186213e-05 ; solver= 13
+     -> nel=   4096 ; errv= 3.553237e-08 ; errp= 1.819792e-05 ; divv= 1.230009e-05 ; solver= 13

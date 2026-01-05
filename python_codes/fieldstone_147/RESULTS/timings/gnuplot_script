@@ -1,0 +1,144 @@
+#
+set term pdf enhanced font "Times,12pt"
+set key outside
+set grid
+set pointsize .5
+
+set ylabel 'time per outer iteration (s)'
+set xlabel 'NfemP'
+set output 'time_per_iteration.pdf'
+plot[][]\
+'time_per_iteration_16.ascii' u 5:4 w lp t 'solver=16',\
+'time_per_iteration_18.ascii' u 5:4 w lp t 'solver=18',\
+'time_per_iteration_20.ascii' u 5:4 w lp t 'solver=20',\
+'time_per_iteration_21.ascii' u 5:4 w lp t 'solver=21',\
+'time_per_iteration_22.ascii' u 5:4 w lp t 'solver=22',\
+'time_per_iteration_23.ascii' u 5:4 w lp t 'solver=23'
+
+########################################################
+
+set log xy 
+set xlabel 'nel'
+set ylabel 'err(v)'
+set output 'errv.pdf'
+plot[][]\
+'errors_1.ascii' u 3:6 w lp t 'solver=1',\
+'errors_2.ascii' u 3:6 w lp t 'solver=2',\
+'errors_3.ascii' u 3:6 w lp t 'solver=3',\
+'errors_4.ascii' u 3:6 w lp t 'solver=4',\
+'errors_5.ascii' u 3:6 w lp t 'solver=5',\
+'errors_6.ascii' u 3:6 w lp t 'solver=6',\
+'errors_8.ascii' u 3:6 w lp t 'solver=8',\
+'errors_9.ascii' u 3:6 w lp t 'solver=9',\
+'errors_11.ascii' u 3:6 w lp t 'solver=11',\
+'errors_13.ascii' u 3:6 w lp t 'solver=13',\
+'errors_14.ascii' u 3:6 w lp t 'solver=14',\
+'errors_16.ascii' u 3:6 w lp t 'solver=16',\
+'errors_18.ascii' u 3:6 w lp t 'solver=18',\
+'errors_19.ascii' u 3:6 w lp t 'solver=19',\
+'errors_20.ascii' u 3:6 w lp t 'solver=20',\
+'errors_21.ascii' u 3:6 w lp t 'solver=21',\
+'errors_22.ascii' u 3:6 w lp t 'solver=22',\
+'errors_23.ascii' u 3:6 w lp t 'solver=23',\
+
+set ylabel 'err(p)'
+set output 'errp.pdf'
+plot[][]\
+'errors_1.ascii' u 3:9 w lp t 'solver=1',\
+'errors_2.ascii' u 3:9 w lp t 'solver=2',\
+'errors_3.ascii' u 3:9 w lp t 'solver=3',\
+'errors_4.ascii' u 3:9 w lp t 'solver=4',\
+'errors_5.ascii' u 3:9 w lp t 'solver=5',\
+'errors_6.ascii' u 3:9 w lp t 'solver=6',\
+'errors_8.ascii' u 3:9 w lp t 'solver=8',\
+'errors_9.ascii' u 3:9 w lp t 'solver=9',\
+'errors_11.ascii' u 3:9 w lp t 'solver=11',\
+'errors_13.ascii' u 3:9 w lp t 'solver=13',\
+'errors_14.ascii' u 3:9 w lp t 'solver=14',\
+'errors_16.ascii' u 3:9 w lp t 'solver=16',\
+'errors_18.ascii' u 3:9 w lp t 'solver=18',\
+'errors_19.ascii' u 3:9 w lp t 'solver=19',\
+'errors_20.ascii' u 3:9 w lp t 'solver=20',\
+'errors_21.ascii' u 3:9 w lp t 'solver=21',\
+'errors_22.ascii' u 3:9 w lp t 'solver=22',\
+'errors_23.ascii' u 3:9 w lp t 'solver=23',\
+
+#########################################################
+
+set ylabel 'time to solve linear system (s)'
+set output 'solve_time.pdf'
+plot[][]\
+'solve_1.ascii'  u 6:3 w lp t 'solver=1',\
+'solve_2.ascii'  u 6:3 w lp t 'solver=2',\
+'solve_3.ascii'  u 6:3 w lp t 'solver=3',\
+'solve_4.ascii'  u 6:3 w lp t 'solver=4',\
+'solve_5.ascii'  u 6:3 w lp t 'solver=5',\
+'solve_6.ascii'  u 6:3 w lp t 'solver=6',\
+'solve_8.ascii'  u 6:3 w lp t 'solver=8',\
+'solve_9.ascii'  u 6:3 w lp t 'solver=9',\
+'solve_11.ascii' u 6:3 w lp t 'solver=11',\
+'solve_13.ascii' u 6:3 w lp t 'solver=13',\
+'solve_14.ascii' u 6:3 w lp t 'solver=14',\
+'solve_16.ascii' u 6:3 w lp t 'solver=16',\
+'solve_18.ascii' u 6:3 w lp t 'solver=18',\
+'solve_19.ascii' u 6:3 w lp t 'solver=19',\
+'solve_20.ascii' u 6:3 w lp t 'solver=20',\
+'solve_21.ascii' u 6:3 w lp t 'solver=21',\
+'solve_22.ascii' u 6:3 w lp t 'solver=22',\
+'solve_23.ascii' u 6:3 w lp t 'solver=23',\
+
+
+#########################################################
+
+set ylabel 'time (s)'
+set xlabel 'h'
+set output 'solve_time2.pdf'
+plot[][]\
+'solve_1.ascii'  u (1./sqrt($6)):3 w lp t 'solver=1',\
+'solve_2.ascii'  u (1./sqrt($6)):3 w lp t 'solver=2',\
+'solve_3.ascii'  u (1./sqrt($6)):3 w lp t 'solver=3',\
+'solve_4.ascii'  u (1./sqrt($6)):3 w lp t 'solver=4',\
+'solve_5.ascii'  u (1./sqrt($6)):3 w lp t 'solver=5',\
+'solve_6.ascii'  u (1./sqrt($6)):3 w lp t 'solver=6',\
+'solve_8.ascii'  u (1./sqrt($6)):3 w lp t 'solver=8',\
+'solve_9.ascii'  u (1./sqrt($6)):3 w lp t 'solver=9',\
+'solve_11.ascii' u (1./sqrt($6)):3 w lp t 'solver=11',\
+'solve_13.ascii' u (1./sqrt($6)):3 w lp t 'solver=13',\
+'solve_14.ascii' u (1./sqrt($6)):3 w lp t 'solver=14',\
+'solve_16.ascii' u (1./sqrt($6)):3 w lp t 'solver=16',\
+'solve_18.ascii' u (1./sqrt($6)):3 w lp t 'solver=18',\
+'solve_19.ascii' u (1./sqrt($6)):3 w lp t 'solver=19',\
+'solve_20.ascii' u (1./sqrt($6)):3 w lp t 'solver=20',\
+'solve_21.ascii' u (1./sqrt($6)):3 w lp t 'solver=21',\
+'solve_22.ascii' u (1./sqrt($6)):3 w lp t 'solver=22',\
+'solve_23.ascii' u (1./sqrt($6)):3 w lp t 'solver=23',\
+
+set xlabel 'Nfem'
+set output 'solve_time3.pdf'
+plot[][]\
+'solve_1.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=1',\
+'solve_2.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=2',\
+'solve_3.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=3',\
+'solve_4.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=4',\
+'solve_5.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=5',\
+'solve_6.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=6',\
+'solve_8.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=8',\
+'solve_9.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=9',\
+'solve_11.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=11',\
+'solve_13.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=13',\
+'solve_14.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=14',\
+'solve_16.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=16',\
+'solve_18.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=18',\
+'solve_19.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=19',\
+'solve_20.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=20',\
+'solve_21.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=21',\
+'solve_22.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=22',\
+'solve_23.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=23',\
+
+
+
+
+
+
+
+

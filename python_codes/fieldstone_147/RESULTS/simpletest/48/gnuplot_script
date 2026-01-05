@@ -1,0 +1,27 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+#set log y 
+set xtics 1
+
+set xlabel 'solver'
+
+set ylabel 'err(v)'
+set output 'errv.pdf'
+plot[][8.315e-8:8.36e-8]\
+'popo' u 15:6 w lp pt 7 ps .5 notitle,\
+8.32e-08 w l lt -1 dt 2 
+
+set ylabel 'err(p)'
+set output 'errp.pdf'
+plot[][3.233e-5:3.26e-5]\
+'popo' u 15:9 w lp pt 7 ps .5 notitle,\
+3.235e-05  w l lt -1 dt 2 
+
+set ylabel 'div(v)'
+set output 'divv.pdf'
+plot[][2.1858e-5:2.195e-5]\
+'popo' u 15:12 w lp pt 7 ps .5 notitle,\
+2.18622e-05  w l lt -1 dt 2 
+
+
