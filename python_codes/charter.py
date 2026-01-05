@@ -70,7 +70,6 @@ m_P=
 m_T=
 Lx=
 Ly=
-ndof=
 hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
