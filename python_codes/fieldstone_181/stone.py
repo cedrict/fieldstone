@@ -97,9 +97,6 @@ ndof_V=2 # number of velocity degrees of freedom per node
 Lx=512e3  # horizontal extent of the domain 
 Ly=512e3  # vertical extent of the domain 
 
-# 1: old style
-# 2: via II,JJ,VV
-# 3: row[],col[],A_fem[]
 
 if int(len(sys.argv)==8):
    nelx=int(sys.argv[1])
@@ -116,6 +113,9 @@ else:
    llambda=256e3
    amplitude=4000
    eta2=1e21
+   # 1: old style
+   # 2: via II,JJ,VV
+   # 3: row[],col[],A_fem[]
    assembly=2
 
 nel=nelx*nely  # number of elements, total
