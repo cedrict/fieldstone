@@ -1,0 +1,91 @@
+#
+set term pdf
+set key outside
+set grid
+set pointsize .5
+
+########################################################
+
+set log xy 
+set xlabel 'nel'
+set ylabel 'err(v)'
+set output 'errv.pdf'
+plot[][]\
+'errors_1.ascii' u 3:6 w lp t 'solver=1',\
+'errors_14.ascii' u 3:6 w lp t 'solver=14',\
+'errors_23.ascii' u 3:6 w lp t 'solver=23',\
+
+set ylabel 'err(p)'
+set output 'errp.pdf'
+plot[][]\
+'errors_1.ascii' u 3:9 w lp t 'solver=1',\
+'errors_14.ascii' u 3:9 w lp t 'solver=14',\
+'errors_23.ascii' u 3:9 w lp t 'solver=23',\
+
+#########################################################
+
+set ylabel 'time to solve linear system (s)'
+set output 'solve_time.pdf'
+plot[][0.002:200]\
+'solve_1.ascii'  u 6:3 w lp t 'solver=1',\
+'solve_14.ascii' u 6:3 w lp t 'solver=14',\
+'solve_23.ascii' u 6:3 w lp t 'solver=23',\
+
+set xlabel 'h'
+set output 'solve_time2.pdf'
+plot[][0.002:200]\
+'solve_1.ascii'  u (1./sqrt($6)):3 w lp t 'solver=1',\
+'solve_14.ascii' u (1./sqrt($6)):3 w lp t 'solver=14',\
+'solve_23.ascii' u (1./sqrt($6)):3 w lp t 'solver=23',\
+
+set xlabel 'Nfem'
+set output 'solve_time3.pdf'
+plot[][0.002:200]\
+'solve_1.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=1',\
+'solve_14.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=14',\
+'solve_23.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=23',\
+x**1.4/1e6 w l lt -1 dt 2 t 'x^{1.4}'
+
+####################################################
+unset log x
+
+set xlabel '# iter'
+set ylabel 'xi_P'
+
+set title 'solver=14'
+set output 'solver_convergence_14.pdf'
+plot[][1e-8:10]\
+'solver_convergence_14_16.ascii' w lp t '16^2',\
+'solver_convergence_14_32.ascii' w lp t '32^2',\
+'solver_convergence_14_48.ascii' w lp t '48^2',\
+'solver_convergence_14_64.ascii' w lp t '64^2',\
+'solver_convergence_14_80.ascii' w lp t '80^2',\
+'solver_convergence_14_96.ascii' w lp t '96^2',\
+'solver_convergence_14_128.ascii' w lp t '128^2',\
+'solver_convergence_14_160.ascii' w lp t '160^2',\
+'solver_convergence_14_192.ascii' w lp t '192^2',\
+1e-7 lt -1 dt 2 
+
+set title 'solver=23'
+set output 'solver_convergence_23.pdf'
+plot[][1e-8:10]\
+'solver_convergence_23_16.ascii' w lp t '16^2',\
+'solver_convergence_23_32.ascii' w lp t '32^2',\
+'solver_convergence_23_48.ascii' w lp t '48^2',\
+'solver_convergence_23_64.ascii' w lp t '64^2',\
+'solver_convergence_23_80.ascii' w lp t '80^2',\
+'solver_convergence_23_96.ascii' w lp t '96^2',\
+'solver_convergence_23_128.ascii' w lp t '128^2',\
+'solver_convergence_23_160.ascii' w lp t '160^2',\
+'solver_convergence_23_192.ascii' w lp t '192^2',\
+'solver_convergence_23_256.ascii' w lp t '256^2',\
+1e-7 lt -1 dt 2 
+
+
+
+
+
+
+
+
+

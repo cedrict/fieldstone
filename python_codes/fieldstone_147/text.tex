@@ -404,13 +404,12 @@ At resolution 192x192 solvers 14 \& 23 are approx. 3x faster than solver 1
 
 \subsection*{A quick parameter study}
 
-We can also focus on the SC-CG solver and look at the required number of 
-outer iterations to reach the desired tolerance:
-
-\begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_147/RESULTS/convergence_schur_cpl.pdf}\\
-{\captionfont Convergence of the SC-CG solver as function of resolution.}
-\end{center}
+%We can also focus on the SC-CG solver and look at the required number of 
+%outer iterations to reach the desired tolerance:
+%\begin{center}
+%\includegraphics[width=12cm]{python_codes/fieldstone_147/RESULTS/convergence_schur_cpl.pdf}\\
+%{\captionfont Convergence of the SC-CG solver as function of resolution.}
+%\end{center}
 
 On the following figure I plot the velocity and pressure errors for SC-CG+ilu solver 
 for different values of the relative tolerance. We find that the solve time is not 
@@ -436,10 +435,6 @@ were about half of my laptop RAM, so about 16Gb, and $400\times 400$ which requi
 about 20+ Gb.
 
 
-%We can also look at the $L_2$ error on the velocity divergence:
-%\begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/error_divv.pdf}
-%\end{center}
 
 
 
