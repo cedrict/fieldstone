@@ -360,6 +360,8 @@ for istep in range(0,nstep):
             #end for
         #end for
 
+        
+
         # apply boundary conditions
         for k1 in range(0,m):
             m1=icon_P[k1,iel]
@@ -398,8 +400,9 @@ for istep in range(0,nstep):
 
     print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
-    stats_p_file.write("%e %e %e\n" % (time,np.min(p),np.max(p)))
-    stats_p_file.flush()
+    stats_p_file.write("%e %e %e\n" % (time,np.min(p),np.max(p))) ; stats_p_file.flush()
+
+    if debug: np.savetxt('pressure_'+str(istep)+'.ascii',np.array([x_P,y_P,p]).T,header='# x,y,p')
 
     print("solve time: %.3f s" % (clock.time()-start))
 
