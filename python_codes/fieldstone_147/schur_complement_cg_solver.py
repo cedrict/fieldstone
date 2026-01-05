@@ -27,7 +27,7 @@ def schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
    if inner=='direct':
       solV=sps.linalg.spsolve(K_mat,f_rhs)                          # compute V_0
    elif inner=='cg':
-      solV=sps.linalg.cg(K_mat,f_rhs,tol=1e-6)[0] 
+      solV=sps.linalg.cg(K_mat,f_rhs)[0] 
    elif inner=='splu':
       LU = sla.splu(K_mat)
       solV=LU.solve(f_rhs)
@@ -48,10 +48,22 @@ def schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
        if inner=='direct':                                          #
           dvect_k=sps.linalg.spsolve(K_mat,ptildevect_k)            #
        elif inner=='cg':                                            #
-          dvect_k=sps.linalg.cg(K_mat,ptildevect_k,tol=1e-6)[0]     #
+          #dvect_k=sps.linalg.cg(K_mat,ptildevect_k,tol=1e-6)[0]    #
+          rhsmax=np.max(ptildevect_k)
+          dvect_k=sps.linalg.cg(K_mat,ptildevect_k/rhsmax)[0]       #
+          dvect_k*=rhsmax
        elif inner=='splu':                                          #
           dvect_k=LU.solve(ptildevect_k)                            #
+
+       if np.isnan(np.sum(dvect_k)): exit('nan found in dvect_k')
+
        alpha=(rvect_k.dot(zvect_k))/(ptildevect_k.dot(dvect_k))     #
+
+       if np.isinf(alpha): 
+          print(np.sum(ptildevect_k))
+          print(np.sum(dvect_k))
+          exit('alpha is infinite')
+
        solP+=alpha*pvect_k                                          #
        solV-=alpha*dvect_k                                          #
        rvect_kp1=rvect_k-alpha*(G_mat.T.dot(dvect_k))               #

@@ -1,4 +1,5 @@
 import numpy as np
+import time as clock
 import scipy.sparse as sps
 
 ############################################################################### 
@@ -15,6 +16,7 @@ def uzawa2_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter,tol):
 
    conv_file=open("solver_convergence.ascii","w")
 
+   startu=clock.time()
    for k in range (0,niter): #--------------------------------------#
                                                                     #
        qk=h_rhs-G_mat.T.dot(solV)                                   #
@@ -29,19 +31,21 @@ def uzawa2_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter,tol):
        conv_file.write("%d %e %e %e \n" %(k,xiP,xiV,alphak))        #
        conv_file.flush()                                            #
        print('iter %3d xiP= %e xiV= %e' %(k,xiP,xiV))               #
-       if xiP<tol and xiV<tol:                                      #
-          break                                                     #
                                                                     #
        solP[:]=solPnew[:]                                           #
        solV[:]=solVnew[:]                                           #
                                                                     #
+       if xiP<tol and xiV<tol:                                      #
+          break                                                     #
+                                                                    #
    #end for k #-----------------------------------------------------#
+   endu=clock.time()
 
    conv_file.close()
 
+   print('time per iteration:',(endu-startu)/k,NfemP)
    print('-------------------------')
     
    return solV,solP,k
 
 ############################################################################### 
-

@@ -37,11 +37,12 @@ def uzawa2_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter,tol):
        conv_file.write("%d %e %e %e \n" %(k,xiP,xiV,alphak))        #
        conv_file.flush()                                            #
        print('iter %3d xiP= %e xiV= %e' %(k,xiP,xiV))               #
-       if xiP<tol and xiV<tol:                                      #
-          break                                                     #
                                                                     #
        solP[:]=solPnew[:]                                           #
        solV[:]=solVnew[:]                                           #
+                                                                    #
+       if xiP<tol and xiV<tol:                                      #
+          break                                                     #
                                                                     #
    #end for k #-----------------------------------------------------#
    endu=clock.time()
@@ -54,4 +55,3 @@ def uzawa2_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter,tol):
    return solV,solP,k
 
 ############################################################################### 
-

@@ -65,8 +65,8 @@ def uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter,tol,inner)
        if xiP<tol and xiV<tol:                                      #
           break                                                     #
                                                                     #
-       rvect_k=rvect_kp1                                            #
-       pvect_k=pvect_kp1                                            #
+       rvect_k=np.copy(rvect_kp1)                                   #
+       pvect_k=np.copy(pvect_kp1)                                   #
                                                                     #
    #end for k #-----------------------------------------------------#
    endu=clock.time()
