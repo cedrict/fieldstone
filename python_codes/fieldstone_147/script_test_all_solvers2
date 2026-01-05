@@ -1,0 +1,14 @@
+#!/bin/bash
+
+nq=3
+res=48
+
+rm popo
+
+for solver in  1 2 3 4 5 6 8 9 11 13 14 15 16 18 19 20 21 22 23 ; do 
+
+    python3 stone.py $res $res 0 $nq $solver > opla
+
+    grep errv opla >> popo 
+
+done

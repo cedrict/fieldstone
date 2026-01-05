@@ -10,11 +10,12 @@ nq=3
 #for res in 8 10 16 24 32 40 48 64 80 96 128; do
 #for res in 8 10 12 14 16 20 24 28 32 40 48 56 64 72 80 96 128 144 160 176 192 ; do
 
-for res in 8 10 12 14 16 20 24 26 28 30 32 36 40 48 64; do
+#for res in 8 10 12 14 16 20 24 26 28 30 32 36 40 44 48 56 64 72 80 88 96 104 112 120 128; do
+for res in 144 160 176 192; do
 
     echo mesh $res x $res  
 
-    for solver in 1 2 3 4 5 6 8 9 11 13 14 16 18 19 20 21 22 23 ; do 
+    for solver in 1 14 23 ; do 
 
         echo -solver=$solver
 
