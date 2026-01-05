@@ -6,8 +6,7 @@ import random
 x=[1.,3.,2.]
 y=[1.,1.5,2.9]
 
-
-for npts in (10,100,1000,10000,100000):
+for npts in (10,100,1000,10000,100000,1000000):
 
     print('npts:',npts)
 
@@ -39,11 +38,4 @@ for npts in (10,100,1000,10000,100000):
 
     np.savetxt('pts_'+str(npts)+'.ascii',np.array([xcoords,ycoords]).T)
 
-    ###################
-    # generate vtu file
-    ###################
-
-    # to do ?
-
 #end for npts
-
