@@ -24,3 +24,4 @@ build Schur matrix precond: 1.229694e+00 s, nel= 2304
 build Schur matrix precond: 3.087272e+00 s, nel= 3136
 build Schur matrix precond: 8.159037e+00 s, nel= 4096
 build Schur matrix precond: 8.846575e+01 s, nel= 9216
+build Schur matrix precond: 5.946151e+02 s, nel= 16384

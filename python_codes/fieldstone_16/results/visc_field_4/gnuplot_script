@@ -8,7 +8,7 @@ set xlabel 'h'
 set ylabel '# iterations'
 set log xy 
 set output 'niterations.pdf'
-plot[0.009:][]\
+plot[0.007:][]\
 'niterations_ps0.ascii' u (1/sqrt($7)):4 w lp pt 5 t 'no prec.',\
 'niterations_ps1.ascii' u (1/sqrt($7)):4 w lp pt 5 t 'prec. #1',\
 'niterations_ps2.ascii' u (1/sqrt($7)):4 w lp pt 5 t 'prec. #2',\
@@ -19,7 +19,7 @@ plot[0.009:][]\
 #unset log y
 set ylabel 'time (s)'
 set output 'solve_time.pdf'
-plot[0.009:][]\
+plot[0.007:][]\
 'solve_time_ps0.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'no prec.',\
 'solve_time_ps1.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'prec. #1',\
 'solve_time_ps2.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'prec. #2',\
@@ -29,7 +29,7 @@ x**(-3)/10000 lt -1 dashtype 3 t 'x^{-1}'
 
 set ylabel 'time (s)'
 set output 'build_precond.pdf'
-plot[0.009:][]\
+plot[0.007:][]\
 'build_precond_ps0.ascii' u (1/sqrt($8)):5 w lp pt 5 t 'no prec.',\
 'build_precond_ps1.ascii' u (1/sqrt($8)):5 w lp pt 5 t 'prec. #1',\
 'build_precond_ps2.ascii' u (1/sqrt($8)):5 w lp pt 5 t 'prec. #2',\
