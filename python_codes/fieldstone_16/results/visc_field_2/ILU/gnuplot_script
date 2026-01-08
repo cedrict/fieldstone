@@ -1,0 +1,36 @@
+#
+set term pdf enhanced font "Times,12pt"
+set log y
+set pointsize 0.5
+set grid
+
+set xlabel 'h'
+set log xy 
+
+#unset log y
+set ylabel 'time (s)'
+set output 'solve_time.pdf'
+plot[0.005:][]\
+'solve_time_ps2.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'ILU',\
+'../solve_time_ps2.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'spsolve',\
+x**(-3)/10000 lt -1 dashtype 3 t 'x^{-1}' 
+
+set format y "10^{%L}"
+unset log x
+set xlabel '# iteration'
+set ylabel 'normalised residual'
+set xtics 50
+
+set output 'residual.pdf'
+plot[:][1e-9:]\
+'solver_convergence_rs32_ps2.ascii'  w l lt 1  t '32^2',\
+'solver_convergence_rs64_ps2.ascii'  w l lt 2  t '64^2',\
+'solver_convergence_rs96_ps2.ascii'  w l lt 3  t '96^2',\
+'solver_convergence_rs128_ps2.ascii' w l lt 4  t '128^2',\
+'solver_convergence_rs160_ps2.ascii' w l lt 5  t '160^2',\
+1e-8 lt -1 lw 2  dt 2 
+
+
+
+
+

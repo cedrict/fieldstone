@@ -3,7 +3,8 @@ import sys as sys
 import time as clock
 import matplotlib.pyplot as plt
 from schur_complement_cg_solver import *
-from scipy.sparse import csr_matrix
+from schur_complement_cg_solver_LU import *
+from scipy.sparse import csr_matrix,csc_matrix
 
 ###################################################################################################
 
@@ -67,8 +68,8 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    precond_type = int(sys.argv[4])
 else:
-   nelx = 32
-   nely = nelx
+   nelx = 3
+   nely = 2 #nelx
    visu = 1
    precond_type=2
     
@@ -100,7 +101,9 @@ eta_ref=10
 # 4: nodal+Q1 interp geom
 # 5: nodal+Q1 interp harm
 
-viscosity_field=4
+viscosity_field=2
+
+use_LU=False
 
 #################################################################
 # grid point setup
@@ -178,8 +181,8 @@ print("compute elt center: %.3f s" % (clock.time()-start))
 
 #################################################################
 # build FE matrix
-# [ K  G ][u]=[f]
-# [GT -C ][p] [h]
+# [ K G ][u]=[f]
+# [GT 0 ][p] [h]
 #################################################################
 start=clock.time()
 
@@ -223,16 +226,22 @@ for iel in range(0, nel):
             dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V
             dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V
 
-            if viscosity_field==3:
+            if viscosity_field==1:    
+               etaq=viscosity(xq,yq)
+
+            elif viscosity_field==2:    
+               etaq=eta_e[iel]
+
+            elif viscosity_field==3:
                etaq=np.dot(N_V,eta_V[icon_V[:,iel]])
 
-            if viscosity_field==4:
+            elif viscosity_field==4:
                etaq=0.0
                for k in range(0,m_V):
                    etaq+=N_V[k]*np.log10(eta_V[icon_V[k,iel]])
                etaq=10.**etaq
 
-            if viscosity_field==5:
+            elif viscosity_field==5:
                etaq=0.0
                for k in range(0,m_V):
                    etaq+=N_V[k]*1./eta_V[icon_V[k,iel]]
@@ -245,12 +254,7 @@ for iel in range(0, nel):
                                   [dNdy_V[i],dNdx_V[i]]]
 
             # compute elemental K_el matrix
-            if viscosity_field==1:    
-               K_el+=B.T.dot(C.dot(B))*viscosity(xq,yq)*JxWq
-            elif viscosity_field==2:    
-               K_el+=B.T.dot(C.dot(B))*eta_e[iel]*JxWq
-            elif viscosity_field==3 or viscosity_field==4 or viscosity_field==5:
-               K_el+=B.T.dot(C.dot(B))*etaq*JxWq
+            K_el+=B.T.dot(C.dot(B))*etaq*JxWq
 
             # compute elemental rhs vector
             for i in range(0,m_V):
@@ -261,6 +265,8 @@ for iel in range(0, nel):
 
         #end for jq
     #end for iq
+
+    #GG_el=np.copy(G_el)*eta_ref/Ly tried smthg for G_mat
 
     # impose b.c. 
     for k1 in range(0,m_V):
@@ -347,8 +353,8 @@ if precond_type==4:
               M_mat[i,i]+=np.abs(M_mat[i,j])
               M_mat[i,j]=0.
 
-#plt.spy(M_mat)
-#plt.savefig('matrix.pdf', bbox_inches='tight')
+plt.spy(M_mat)
+plt.savefig('matrix.pdf', bbox_inches='tight')
 
 print("build Schur matrix precond: %e s, nel= %d" % (clock.time() - start, nel))
 
@@ -359,13 +365,20 @@ start=clock.time()
 
 if use_SchurComplementApproach:
 
-   K_mat=csr_matrix(K_mat)
-   G_mat=csr_matrix(G_mat)
-   M_mat=csr_matrix(M_mat)
-
-   solV,solP,niter=schur_complement_cg_solver(K_mat,G_mat,C_mat,M_mat,f_rhs,h_rhs,\
-                                              Nfem_V,Nfem_P,niter_stokes,\
-                                              solver_tolerance,use_preconditioner)
+   if precond_type==2 and use_LU:
+      K_mat=csc_matrix(K_mat)
+      G_mat=csr_matrix(G_mat)
+      M_mat=csc_matrix(M_mat)
+      solV,solP,niter=schur_complement_cg_solver_LU(K_mat,G_mat,C_mat,M_mat,f_rhs,h_rhs,\
+                                                    Nfem_V,Nfem_P,niter_stokes,\
+                                                    solver_tolerance,use_preconditioner)
+   else:
+      K_mat=csr_matrix(K_mat)
+      G_mat=csr_matrix(G_mat)
+      M_mat=csr_matrix(M_mat)
+      solV,solP,niter=schur_complement_cg_solver(K_mat,G_mat,C_mat,M_mat,f_rhs,h_rhs,\
+                                                 Nfem_V,Nfem_P,niter_stokes,\
+                                                 solver_tolerance,use_preconditioner)
    u,v=np.reshape(solV[0:Nfem_V],(nn_V,2)).T
    p=solP[0:Nfem_P]*(eta_ref/Ly)
 
