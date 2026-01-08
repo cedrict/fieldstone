@@ -1,9 +1,8 @@
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_15/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -12,7 +11,7 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: Sept. 7th, 2024.
+Last revision: January 8th, 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -21,10 +20,13 @@ The details of the numerical setup are presented in Section~\ref{MMM-mms1}.
 The main difference resides in the Schur complement approach to solve the 
 Stokes system, as presented in Section \ref{MMM-sec:solvers} (see {\bf solver\_cg}).
 This iterative solver is very easy to implement once the blocks $\K$ and $\G$, 
-as well as the rhs vectors $f$ and $h$ have been built. 
+as well as the rhs vectors $\vec{f}$ and $\vec{h}$ have been built. 
+
+Note that the storage of all FE matrices is naive (I use full arrays) and
+that sparse storage should be used for lower memory use and overall better performance.
 
 \begin{center}
-\includegraphics[width=15cm]{python_codes/fieldstone_15/results/solution.pdf}\\
+\includegraphics[width=15cm]{python_codes/fieldstone_15/RESULTS/solution.pdf}\\
 {\captionfont Solution plot automatically generated with matplotlib.}
 \end{center}
 
@@ -35,29 +37,17 @@ Looking at the discretisation errors for velocity and pressure, we
 of course recover the same rates and values as in the full matrix case.
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_15/results/errors.pdf}
+\includegraphics[width=12cm]{python_codes/fieldstone_15/RESULTS/errors.pdf}
 \end{center}
 
 Finally, for each experiment the normalised residual (see {\bf solver\_cg}) was recorded. We see that 
 all things equal the resolution has a strong influence on the number of iterations the solver must
 perform to reach the required tolerance. This is one of the manifestations of the fact that the 
 $Q_1 \times P_0$ element is not a stable element: the condition number of the matrix increases with 
-resolution. We will see that this is not the case of stable elements such as $Q_2\times Q_1$.
+resolution. We will see that this is not the case of stable elements such as $Q_2\times Q_1$ (
+see for example \stone~147).
 
 \begin{center}
-\includegraphics[width=14cm]{python_codes/fieldstone_15/results/residual.pdf}
+\includegraphics[width=14cm]{python_codes/fieldstone_15/RESULTS/residual.pdf}
 \end{center}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\par\noindent\rule{\textwidth}{0.4pt}
-
-\vspace{.5cm}
-
-\begin{center}
-\fbox{\begin{minipage}{0.9\textwidth}
-{\color{teal}To Do, open questions, future work?}
-\begin{itemize}
-\item build S and have python compute its smallest and largest eigenvalues as a function of resolution?
-\end{itemize}
-\end{minipage}}
-\end{center}

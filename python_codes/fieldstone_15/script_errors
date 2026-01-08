@@ -1,0 +1,9 @@
+#! /bin/bash
+rm -f errors
+
+for rs in 8 10 12 14 16 20 24 28 32 40 48 56 64 80 96 112 128; do 
+    echo resolution $rs
+    python3 stone.py  $rs $rs 0  | grep nel | grep errv >> errors
+    mv solver_convergence.ascii solver_convergence_rs${rs}.ascii 
+done
+
