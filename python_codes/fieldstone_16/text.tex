@@ -19,14 +19,14 @@ Last revision: Sept. 8th, 2024.
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-We are revisiting the 2D Stokes sphere problem, but this time 
-we use the Schur complement approach to solve the Stokes system. 
-We choose an open boundary at the top so that we do not have to deal with the pressure 
+I am revisiting the 2D Stokes sphere problem, but this time 
+I use the Schur complement approach to solve the Stokes system. 
+I choose an open boundary at the top so that we do not have to deal with the pressure 
 nullspace. No-slip boundary conditions are prescribed on the sides and bottom boundaries.
 Density is prescribed directly onto the quadrature points. 
 
 Because there are viscosity contrasts in the domain, it is advisable 
-to use the Preconditioned Conjugate Gradient 
+to use the {\it Preconditioned} Conjugate Gradient 
 as presented in Section \ref{MMM-sec:solvers} (see {\bf solver\_pcg}).\\
 The solver is implemented in the {\tt schur\_complement\_cg\_solver.py} file in the same folder.  
 
@@ -44,21 +44,23 @@ The solver is implemented in the {\tt schur\_complement\_cg\_solver.py} file in 
 \includegraphics[width=5cm]{python_codes/fieldstone_16/results/visc_field_1/matrix_ps2}
 \includegraphics[width=5cm]{python_codes/fieldstone_16/results/visc_field_1/matrix_ps3}\\
 {\captionfont Resolution 8x8 elements. Matrix sparsity pattern 
-for preconditioner \#2 (left) and preconditioners 0,1,3,4 (right).}
+for preconditioner \#2, \#22 (left) and preconditioners 0,1,3,4 (right).}
 \end{center}
 
+%--------------------------------------------------------
+\subsection*{The preconditioners}
 
-
-\noindent We have designed 5 preconditioners. 
-The preconditioners have to be similar to the Schur complement $\SSS=\G^T \cdot \K^{-1} \cdot \G$.
-These matrices are of size $Nfem_P \times Nfem_P$:
+I here consider 5 preconditioners. 
+The preconditioners have to be similar/close to the Schur complement $\SSS=\G^T \cdot \K^{-1} \cdot \G$.
+These matrices are of size $Nfem_P \times Nfem_P$ :
 \begin{lstlisting}
-M_mat=np.zeros((Nfem_P,Nfem_P),dtype=np.float64) # preconditioner 
+M_mat=lil_matrix((Nfem_P,Nfem_P),dtype=np.float64) # preconditioner 
 \end{lstlisting}
 
 
 \begin{itemize}
 
+%-------------------------------
 \item \lstinline{precond_type=0} It is the unit matrix (so it does nothing). 
 This translates as follows:
 \begin{lstlisting}
@@ -67,6 +69,7 @@ for i in range(0,Nfem_P):
 \end{lstlisting}
 
 
+%-------------------------------
 \item \lstinline{precond_type=1} This is a very simple one as it is diagonal and built element by element:
 \[
 \M_{e,e} = \frac{h_x h_y}{\eta_e} 
@@ -80,6 +83,7 @@ for iel in range(0,nel):
 \end{lstlisting}
 
 
+%-------------------------------
 \item \lstinline{precond_type=2}
 \[
 {\M} = \G^T (\text{diag} [\K]  )^{-1} \G 
@@ -92,8 +96,11 @@ for i in range(0,Nfem_V):
 M_mat=G_mat.T.dot(Km1.dot(G_mat))
 \end{lstlisting}
 Note that this preconditioner is currently built using the assembled $\K$ and $\G$ matrices.
-I could/should think of a more economical way of building it. However one can show (tedious!)
+One could/should think of a more economical way of building it. However one can show (tedious!)
 that it cannot be built at the elemental level and then assembled. 
+I have worked it all out (see at the end of this \stone) and found a way to 
+code the same preconditioner is a fraction of the time. This preconditioner 
+is coined \#22 and its performance is documented for \lstinline{viscosity_field=2} only. 
 
 Note also that I have tried to use a version of the $\G$ matrix which 
 is assembled from the elemental $\G_e$ matrices {\it before} boundary conditions 
@@ -115,17 +122,17 @@ followed by
 \begin{lstlisting}
 dvect_k=LU.solve(G_mat.dot(pvect_k)) 
 \end{lstlisting}
-inside the iterations. The same would go for the application
-of the preconditioner. 
+inside the iterations. The same would go for the application of the preconditioner. 
 The single LU decomposition of both matrices at the beginning 
-have a cost but the subsequent solves become really cheap. 
-
+have a cost but the subsequent solves are {\it really} cheap and we will
+see it is worth the cost. 
 This is implemented in {\tt schur\_complement\_cg\_solver\_LU.py}.
  
 
+%-------------------------------
 \item \lstinline{precond_type=3} 
 \[
-{\M} = diag \left[ \G^T (diag [\K]  )^{-1} \G \right]
+{\M} = \text{diag} \left[ \G^T (\text{diag} [\K]  )^{-1} \G \right]
 \]
 
 This translates as follows:
@@ -140,13 +147,10 @@ This translates as follows:
               M_mat[i,j]=0.
 \end{lstlisting}
 
-
-
-
-\item \lstinline{precond_type=4} Same as 2, but instead of using the 
-diagonal of $ \G^T (diag [\K]  )^{-1} \G$ we lump the matrix instead.
+%-------------------------------
+\item \lstinline{precond_type=4} Same as \#2, but instead of using the 
+diagonal of $ \G^T (\text{diag} [\K]  )^{-1} \G$ we lump the matrix instead.
 This translates as follows:
-
 
 \begin{lstlisting}
    Km1    = np.zeros((Nfem_V,Nfem_V),dtype=np.float64) 
@@ -161,11 +165,29 @@ This translates as follows:
 \end{lstlisting}
 
 
-
-
 \end{itemize}
 
-\noindent There are also multiple ways to prescribe the viscosity on the quadrature points:
+The building of preconditioners \#3 and \#4 could be improved as for \#2
+but as we will see they are not as good as \#2.
+
+Note that in \cite{bugg08} an approximation of the Schur complement is 
+given by a lumped (pressure) mass matrix weighted by the inverse viscosity.
+However, in this case the pressure is discontinuous and constant over each element
+so that the pressure mass matris is in fact diagonal and this approach would
+be close to preconditioner \#1.
+
+Because of the fact that preconditioners \#2, \#3 and \#4 rely on 
+matrix multiplications of the type $\G\cdot (\text{diag}\K)^{-1}$
+we find that the $\G$ matrix cannot be stored with \lstinline{lil_matrix}
+and a full array approach is then needed, which in turn limits the 
+resolution that can be tackled.
+
+
+
+%--------------------------------------------------------
+\subsection*{The viscosity field}
+
+There are also multiple ways to prescribe the viscosity on the quadrature points:
 \begin{itemize}
 \item \lstinline{viscosity_field=1}: viscosity is directly computed 
 on the quadrature points;
@@ -179,12 +201,6 @@ interpolated onto quadrature points with a harmonic averaging.
 \end{itemize}
 
 \newpage
-
-
-
-
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -208,7 +224,8 @@ Middle: time spent in the solver.
 Right: time spent to build the preconditioner matrix.}
 \end{center} 
 
-Conclusion: preconditioner \#2 is the best: less outer iterations, fastest solve. 
+Conclusion: preconditioner \#2 is the best: less outer iterations, fastest solve, and 
+\#22 is even better since its build time is negligible compared to \#2 at high resolutions. 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -338,6 +355,7 @@ but this time per preconditioner type:
 \end{center}
 
 
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Using an LU decomposition for K and M}
 
@@ -346,8 +364,9 @@ for both $\K$ and $\M$ yields a solver that is about 10x faster!
 This is controlled by the \lstinline{use_LU} flag.
 
 \begin{center} 
-\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_2/ILU/solve_time.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_2/ILU/residual.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_2/LU/solve_time.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_16/results/visc_field_2/LU/solve_time2.pdf}\\
+\includegraphics[width=12cm]{python_codes/fieldstone_16/results/visc_field_2/LU/residual.pdf}\\
 {\captionfont results obtained with precond \#2 and viscosity field 2.}
 \end{center}
 
@@ -368,13 +387,13 @@ We see that the choice of preconditioner is important. Preconditioner \#2 gives 
 and most predictable results but its preconditioner matrix is not diagonal so that 
 its use implies solving with it at each solver iteration, which has a cost: although at 
 resolution $96\times 96$ it requires the least iterations, the total time spent in the solver does
-not reflect this fact as well. It is also expensive to build! 
+not reflect this fact as well. It is also expensive to build but preconditioner \#22 is 
+much cheaper and yields the same results. Using preconditioner \#22 and LU
+decomposition for both inner solves yields the best combination so far.
 
 Finally preconditioners \#3 and \#4 show extremely similar results, with a little 
 advantage for \#3, i.e. lumping does not help at all.
 
-Since we have used the python solver as a black box inside our solver for $\K$ and ${\M}$
-there would be much more to look into in this direction. I do so in \stone~147.
 
 \begin{remark}
 I have tried lil\_matrix and csr format on the $\K$, $\G$ and $\M$ matrices 
@@ -426,7 +445,7 @@ G_{0,0} & G_{0,1} & G_{0,2} & G_{0,3} & 0 & 0 & 0 & 0 & G_{0,8} & G_{0,9} & G_{0
 0 & 0 & 0 & 0 & G_{2,4} & G_{2,5} & G_{2,6} & G_{2,7} & 0 & 0 & 0 & 0 & G_{2,12} & G_{2,13} & G_{2,14} & G_{2,15} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \\
 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & G_{3,8} & G_{3,9} & G_{3,10} & G_{3,11} & 0 & 0 & 0 & 0 & G_{3,16} & G_{3,17} & G_{3,18} & G_{3,19} & 0 & 0 & 0 & 0 \\ \\
 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & G_{4,10} & G_{4,11} & G_{4,12} & G_{4,13} & 0 & 0 & 0 & 0 & G_{4,18} & G_{4,19} & G_{4,20} & G_{4,21} & 0 & 0 \\ \\
-0 & 0 & 00 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & G_{5,12} & G_{5,13} & G_{5,14} & G_{5,15} & 0 & 0 & 0 & 0 & G_{5,20} & G_{5,21} & G_{5,22} & G_{5,23}  \\ \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & G_{5,12} & G_{5,13} & G_{5,14} & G_{5,15} & 0 & 0 & 0 & 0 & G_{5,20} & G_{5,21} & G_{5,22} & G_{5,23}  \\ \\
 \end{array}
 \right)
 \]
@@ -477,9 +496,15 @@ G_{1,10}^2 \tilde{K}_{10} + G_{1,11}^2 \tilde{K}_{11} + G_{1,12}^2 \tilde{K}_{12
 M_{2,2} &=&  
 G_{2,4}^2 \tilde{K}_4 + G_{2,5}^2 \tilde{K}_5 + G_{2,6}^2 \tilde{K}_6 + G_{2,7}^2 \tilde{K}_7 + 
 G_{2,12}^2 \tilde{K}_{12} + G_{2,13}^2 \tilde{K}_{13} + G_{2,14}^2 \tilde{K}_{14} + G_{2,15}^2 \tilde{K}_{15} \nn\\
-M_{3,3} &=& etc... \nn\\
-M_{4,4} &=& etc... \nn\\
-M_{5,5} &=& etc... \nn
+M_{3,3} &=& 
+G_{3,8}^2 \tilde{K}_8 + G_{3,9}^2 \tilde{K}_9 + G_{3,10}^2 \tilde{K}_{10} + G_{3,11}^2 \tilde{K}_{11} + 
+G_{3,16}^2 \tilde{K}_{16} + G_{3,17}^2 \tilde{K}_{17} + G_{3,18}^2 \tilde{K}_{18} + G_{3,19}^2 \tilde{K}_{19} \nn\\
+M_{4,4} &=& 
+G_{4,10}^2 \tilde{K}_{10} + G_{4,11}^2 \tilde{K}_{11} + G_{4,12}^2 \tilde{K}_{12} + G_{4,13}^2 \tilde{K}_{13} + 
+G_{4,18}^2 \tilde{K}_{18} + G_{4,19}^2 \tilde{K}_{19} + G_{4,20}^2 \tilde{K}_{20} + G_{4,21}^2 \tilde{K}_{21} \nn\\
+M_{5,5} &=& 
+G_{5,12}^2 \tilde{K}_{12} + G_{5,13}^2 \tilde{K}_{13} + G_{5,14}^2 \tilde{K}_{14} + G_{5,15}^2 \tilde{K}_{15} + 
+G_{5,20}^2 \tilde{K}_{20} + G_{5,21}^2 \tilde{K}_{21} + G_{5,22}^2 \tilde{K}_{22} + G_{5,23}^2 \tilde{K}_{23} 
 \end{eqnarray}
 In the end the diagonal terms can be computed as follows:
 \[
@@ -493,7 +518,22 @@ M_{0,1} &=&  G_{0,2} G_{1,2} \tilde{K}_2 + G_{0,3} G_{1,3} \tilde{K}_3
 + G_{0,10} G_{1,10} \tilde{K}_{10} + G_{0,11} G_{1,11} \tilde{K}_{11} \nn\\
 M_{0,2} &=& 0 \nn\\
 M_{0,3} &=& G_{0,8}G_{3,8} \tilde{K}_8 + G_{0,9}G_{3,9} \tilde{K}_9 + G_{0,10}G_{3,10} \tilde{K}_{10} + G_{0,11}G_{3,11} \tilde{K}_{11} \nn\\
-M_{0,4} &=& ...\nn
+M_{0,4} &=& G_{0,10} G_{4,10} \tilde{K}_{10} +G_{0,11} G_{4,11} \tilde{K}_{11} \nn\\
+M_{0,5} &=& 0 
+\nn\\ \nn\\
+M_{1,2} &=& G_{1,4}G_{2,4} \tilde{K}_4  +G_{1,5}G_{2,5} \tilde{K}_5  + G_{1,12}G_{2,12} \tilde{K}_{12}  +G_{1,13}G_{2,13} \tilde{K}_{13}  \nn\\
+M_{1,3} &=& G_{1,10} G_{3,10} \tilde{K}_{10} + G_{1,11} G_{3,11} \tilde{K}_{11}     \nn\\
+M_{1,4} &=& G_{1,10} G_{4,10} \tilde{K}_{10} + G_{1,11} G_{4,11} \tilde{K}_{11} + G_{1,12} G_{4,12} \tilde{K}_{12} + G_{1,13} G_{4,13} \tilde{K}_{13}  \nn\\
+M_{1,5} &=&  G_{1,12} G_{5,12} \tilde{K}_{12} + G_{1,13} G_{5,13} \tilde{K}_{13}     
+\nn\\ \nn\\
+M_{2,3} &=&  0   \nn\\
+M_{2,4} &=&  G_{2,12}G_{4,12}\tilde{K}_{12} +G_{2,13}G_{4,13}\tilde{K}_{13} \nn\\
+M_{2,5} &=&  G_{2,12}G_{5,12}\tilde{K}_{12} +G_{2,13}G_{5,13}\tilde{K}_{13} + G_{2,14}G_{5,14}\tilde{K}_{14} +G_{2,15}G_{5,15} \tilde{K}_{15} \nn\\
+\nn\\ \nn\\
+M_{3,4} &=&  G_{3,10}G_{4,10}\tilde{K}_{10} +G_{3,11}G_{4,11}\tilde{K}_{11} +G_{3,18}G_{4,18}\tilde{K}_{18} +G_{3,19}G_{4,19}\tilde{K}_{19} \nn\\
+M_{3,5} &=&  0 
+\nn\\ \nn\\
+M_{4,5} &=& G_{4,12}G_{5,12} \tilde{K}_{12} + G_{4,13}G_{5,13} \tilde{K}_{13} + G_{4,20}G_{5,20} \tilde{K}_{20} + G_{4,21}G_{5,21} \tilde{K}_{21} 
 \end{eqnarray}
 
 Here too a pattern emerges. 
@@ -508,6 +548,173 @@ by means of a loop rather than multiplying fully assembled matrices containing m
 My guess is that one must first compute the list of elements a node belongs to, and then proceed to loop 
 over all nodes and add contributions to $\M$. 
 Since I do not really need a fast version of this algorithm I leave it there for now.
+
+\newpage
+We can now pretend to loop over velocity dofs:
+\begin{itemize}
+
+\item i=0: belongs to element 0\\
+ $G_{0,0}^2\tilde{K}_0 \rightarrow M_{0,0}$
+
+\item i=1: belongs to element 0\\
+$G_{0,1}^2\tilde{K}_1 \rightarrow M_{0,0}$
+
+\item i=2: belongs to elements 0,1\\
+$G_{0,2}^2\tilde{K}_2 \rightarrow M_{0,0}$ \\
+$G_{0,2} G_{1,2} \tilde{K}_2 \rightarrow M_{0,1}$ \\ 
+$G_{1,2}^2\tilde{K}_2 \rightarrow M_{1,1}$ 
+
+\item i=3: belongs to elements 0,1\\
+$G_{0,3}^2\tilde{K}_3 \rightarrow M_{0,0}$ \\
+$G_{0,3} G_{1,3} \tilde{K}_3 \rightarrow M_{0,1}$ \\           
+$G_{1,3}^2\tilde{K}_3 \rightarrow M_{1,1}$ 
+
+\item i=4: belongs to elements 1,2\\
+$G_{1,4}^2\tilde{K}_4 \rightarrow M_{1,1}$ \\ 
+$G_{1,4}G_{2,4}\tilde{K}_4 \rightarrow M_{1,2}$\\
+$G_{2,4}^2\tilde{K}_4 \rightarrow M_{2,2}$ 
+
+\item i={\color{orange}5}: belongs to elements {\color{violet}1},{\color{teal}2}\\
+$G_{{\color{violet}1},{\color{orange}5}}^2\tilde{K}_{\color{orange}5} \rightarrow M_{{\color{violet}1},{\color{violet}1}}$ \\
+$G_{{\color{violet}1},{\color{orange}5}}G_{{\color{teal}2},{\color{orange}5}}\tilde{K}_{\color{orange}5}  \rightarrow M_{{\color{violet}1},{\color{teal}2}}$ \\
+$G_{{\color{teal}2},{\color{orange}5}}^2\tilde{K}_{\color{orange}5} \rightarrow M_{{\color{teal}2},{\color{teal}2}}$ 
+
+\item i=6: belongs to element 2\\
+$G_{2,6}^2\tilde{K}_6 \rightarrow M_{2,2}$
+
+\item i=7: belongs to element 2\\
+$G_{2,7}^2\tilde{K}_7 \rightarrow M_{2,2}$
+
+\item i=8: belongs to elements 0,3\\
+$G_{0,8}^2\tilde{K}_8    \rightarrow M_{0,0}$ \\ 
+$G_{0,8}G_{3,8} \tilde{K}_8 \rightarrow M_{0,3} $ \\
+$G_{3,8}^2 \tilde{K}_8    \rightarrow M_{3,3}$ 
+
+\item i=9: belongs to elements 0,3\\
+$G_{0,9}^2\tilde{K}_9    \rightarrow M_{0,0}$ \\
+$G_{0,9}G_{3,9} \tilde{K}_9  \rightarrow M_{0,3} $ \\
+$G_{3,9}^2 \tilde{K}_9    \rightarrow M_{3,3}$ 
+
+\item {\color{orange}i}=10: belongs to elements {\color{teal}0},{\color{violet}1},{\color{brown}3},4,\\
+$G_{{\color{teal}0},{\color{orange}10}}^2\tilde{K}_{{\color{orange}10}} \rightarrow M_{{\color{teal}0},{\color{teal}0}}$ \\  
+$G_{{\color{teal}0},{\color{orange}10}}G_{1,{\color{orange}10}}\tilde{K}_{{\color{orange}10}} \rightarrow M_{{\color{teal}0},1}$ \\
+$G_{{\color{teal}0},{\color{orange}10}}G_{3,{\color{orange}10}}\tilde{K}_{{\color{orange}10}} \rightarrow M_{{\color{teal}0},{\color{brown}3}}$\\
+$G_{{\color{teal}0},{\color{orange}10}}G_{4,{\color{orange}10}}\tilde{K}_{{\color{orange}10}} \rightarrow M_{{\color{teal}0},4}$\\
+$G_{{\color{violet}1},{\color{orange}10}}^2\tilde{K}_{{\color{orange}10}} \rightarrow M_{{\color{violet}1},{\color{violet}1}}$ \\
+$G_{{\color{violet}1},{\color{orange}10}}G_{3,{\color{orange}10}}\tilde{K}_{{\color{orange}10}} \rightarrow M_{{\color{violet}1},{\color{brown}3}}$ \\
+$G_{{\color{violet}1},{\color{orange}10}}G_{4,{\color{orange}10}}\tilde{K}_{{\color{orange}10}} \rightarrow M_{{\color{violet}1},4}$ \\
+$G_{{\color{brown}3},{\color{orange}10}}^2\tilde{K}_{{\color{orange}10}} \rightarrow M_{{\color{brown}3},{\color{brown}3}}$ \\
+$G_{{\color{brown}3},{\color{orange}10}}G_{4,{\color{orange}10}}\tilde{K}_{{\color{orange}10}} \rightarrow M_{{\color{brown}3},4}$ \\
+$G_{4,{\color{orange}10}}^2\tilde{K}_{{\color{orange}10}} \rightarrow M_{4,4}$ 
+
+\item i=11: belongs to elements 0,1,3,4\\
+$G_{0,11}^2\tilde{K}_{11} \rightarrow M_{0,0}$  \\
+$G_{0,11}G_{1,11}\tilde{K}_{11} \rightarrow M_{0,1}$ \\
+$G_{0,11}G_{3,11}\tilde{K}_{11} \rightarrow M_{0,3}$  \\
+$G_{0,11}G_{4,11}\tilde{K}_{11} \rightarrow M_{0,4}$  \\
+$G_{1,11}^2\tilde{K}_{11} \rightarrow M_{1,1}$   \\
+$G_{1,11}G_{3,11}\tilde{K}_{11} \rightarrow M_{1,3}$  \\ 
+$G_{1,11}G_{4,11}\tilde{K}_{11} \rightarrow M_{1,4}$   \\
+$G_{3,11}^2\tilde{K}_{11} \rightarrow M_{3,3}$   \\
+$G_{3,11}G_{4,11}\tilde{K}_{11} \rightarrow M_{3,4}$  \\ 
+$G_{4,11}^2\tilde{K}_{11} \rightarrow M_{4,4}$ 
+
+\item i=12: belongs to elements 1,2,4,5\\
+$G_{1,12}^2\tilde{K}_{12} \rightarrow M_{1,1}$ \\ 
+$G_{1,12}G_{2,12}\tilde{K}_{12} \rightarrow M_{1,2}$ \\
+$G_{1,12}G_{4,12}\tilde{K}_{12} \rightarrow M_{1,4}$ \\
+$G_{1,12}G_{5,12}\tilde{K}_{12} \rightarrow M_{1,5}$ \\
+$G_{2,12}^2\tilde{K}_{12} \rightarrow M_{2,2}$ \\
+$G_{2,12}G_{4,12}\tilde{K}_{12} \rightarrow M_{2,4}$ \\
+$G_{2,12}G_{5,12}\tilde{K}_{12} \rightarrow M_{2,5}$ \\
+$G_{4,12}^2\tilde{K}_{12} \rightarrow M_{4,4}$ \\
+$G_{4,12}G_{5,12}\tilde{K}_{12} \rightarrow M_{4,5}$ \\
+$G_{5,12}^2\tilde{K}_{12} \rightarrow M_{5,5}$ 
+
+\item i=13: belongs to elements 1,2,4,5\\
+$G_{1,13}^2\tilde{K}_{13} \rightarrow M_{1,1}$\\ 
+$G_{1,13}G_{2,13}\tilde{K}_{13} \rightarrow M_{1,2}$\\
+$G_{1,13}G_{4,13}\tilde{K}_{13} \rightarrow M_{1,4}$ \\
+$G_{1,13}G_{5,13}\tilde{K}_{13} \rightarrow M_{1,5}$ \\
+$G_{2,13}^2\tilde{K}_{13} \rightarrow M_{2,2}$\\
+$G_{2,13}G_{4,13}\tilde{K}_{13} \rightarrow M_{2,4}$ \\
+$G_{2,13}G_{5,13}\tilde{K}_{13} \rightarrow M_{2,5}$ \\
+$G_{4,13}^2\tilde{K}_{13} \rightarrow M_{4,4}$ \\
+$G_{4,13}G_{5,13}\tilde{K}_{13} \rightarrow M_{4,5}$ \\
+$G_{5,13}^2\tilde{K}_{13} \rightarrow M_{5,5}$ 
+
+\item i=14: belongs to elements 2,5\\
+$G_{2,14}^2\tilde{K}_{14} \rightarrow M_{2,2}$ \\ 
+$G_{2,14}G_{5,14}\tilde{K}_{14} \rightarrow  M_{2,5}$ \\
+$G_{5,14}^2\tilde{K}_{14} \rightarrow M_{5,5}$ 
+
+\item i=15: belongs to elements 2,5\\
+$G_{2,15}^2\tilde{K}_{15} \rightarrow M_{2,2}$ \\ 
+$G_{2,15}G_{5,15}\tilde{K}_{15} \rightarrow  M_{2,5}$ \\ 
+$G_{5,15}^2\tilde{K}_{15} \rightarrow M_{5,5}$ 
+
+\item i=16: belongs to element 3\\
+$G_{3,16}^2\tilde{K}_{16} \rightarrow M_{3,3}$
+
+\item i=17: belongs to element 3\\
+$G_{3,17}^2\tilde{K}_{17} \rightarrow M_{3,3}$
+
+\item i=18: belongs to elements 3,4\\ 
+$G_{3,18}^2\tilde{K}_{18} \rightarrow M_{3,3}$ \\ 
+$G_{3,18}G_{4,18}\tilde{K}_{18} \rightarrow M_{3,4}$ \\
+$G_{4,18}^2\tilde{K}_{18} \rightarrow M_{4,4}$ 
+
+\item i=19: belongs to elements 3,4\\
+$G_{3,19}^2\tilde{K}_{19} \rightarrow M_{3,3}$ \\
+$G_{3,19}G_{4,19}\tilde{K}_{19} \rightarrow M_{3,4}$ \\
+$G_{4,19}^2\tilde{K}_{19} \rightarrow M_{4,4}$ 
+
+\item i=20: belongs to elements 4,5\\
+$G_{4,20}^2\tilde{K}_{20} \rightarrow M_{4,4}$ \\ 
+$G_{4,20}G_{5,20} \tilde{K}_{20} \rightarrow M_{4,5}$ \\
+$G_{5,20}^2\tilde{K}_{20} \rightarrow M_{5,5}$ 
+
+\item i=21: belongs to elements 4,5\\
+$G_{4,21}^2\tilde{K}_{21} \rightarrow M_{4,4}$ \\ 
+$G_{4,21}G_{5,21} \tilde{K}_{21} \rightarrow M_{4,5}$ \\
+$G_{5,21}^2\tilde{K}_{21} \rightarrow M_{5,5}$ 
+
+\item i=22: belongs to element 5\\
+$G_{5,22}^2\tilde{K}_{22} \rightarrow M_{5,5}$
+
+\item i=23: belongs to element 5\\
+$G_{5,23}^2\tilde{K}_{23} \rightarrow M_{5,5}$
+\end{itemize}
+
+This shows a clear pattern and lends itself to efficient programming, BUT 
+the list of elements to which a V node (or a V dof) belongs to is needed.
+This is coded as follows:
+
+\begin{lstlisting}
+nb_of_elts_Vnode_belongs_to=np.zeros(nn_V,dtype=np.int32)
+list_of_elts_Vnode_belongs_to=np.zeros((nn_V,4),dtype=np.int32)
+for iel,nodes in enumerate(icon_V.T):
+    for k in range(0,m_V):
+        list_of_elts_Vnode_belongs_to[nodes[k],nb_of_elts_Vnode_belongs_to[nodes[k]]]=iel
+        nb_of_elts_Vnode_belongs_to[nodes[k]]+=1
+\end{lstlisting}
+
+The preconditioner, coined \#22 because it is essentiallly a different code to 
+arrive at the same matrix as with preconditioner \#2, is then 
+computed as follows:
+
+\begin{lstlisting}
+for l in range(0,nn_V):
+    N=nb_of_elts_Vnode_belongs_to[l]
+    for k in range(0,2):
+        idof = 2*l+k
+        for i in range(0,N):
+            iel=list_of_elts_Vnode_belongs_to[l,i]
+            for j in range(0,N):
+                jel=list_of_elts_Vnode_belongs_to[l,j]
+                M_mat[iel,jel]+=G_mat[idof,iel]*G_mat[idof,jel]/K_mat[idof,idof]
+\end{lstlisting}
+
 
 \end{landscape}
 

@@ -2,7 +2,7 @@ import numpy as np
 import scipy.sparse as sps
 import scipy.sparse.linalg as sla
 
-def schur_complement_cg_solver_LU(K_mat,G_mat,C_mat,M_mat,f_rhs,h_rhs,NfemV,NfemP,niter,tol,use_precond):
+def schur_complement_cg_solver_LU(K_mat,G_mat,M_mat,f_rhs,h_rhs,NfemV,NfemP,niter,tol,use_precond):
 
    #the function implicitely assumes matrices in csr format
 
@@ -26,7 +26,7 @@ def schur_complement_cg_solver_LU(K_mat,G_mat,C_mat,M_mat,f_rhs,h_rhs,NfemV,Nfem
    #solV=sps.linalg.spsolve(K_mat,f_rhs)                         # compute V_0
    solV=LU_K.solve(f_rhs)
 
-   rvect_k=G_mat.T.dot(solV)-C_mat.dot(solP)-h_rhs              # compute r_0
+   rvect_k=G_mat.T.dot(solV)-h_rhs              # compute r_0
    rvect_0=np.linalg.norm(rvect_k) # 2-norm by default
    if use_precond:
       #zvect_k=sps.linalg.spsolve(M_mat,rvect_k)                 # compute z_0
@@ -38,14 +38,14 @@ def schur_complement_cg_solver_LU(K_mat,G_mat,C_mat,M_mat,f_rhs,h_rhs,NfemV,Nfem
    for k in range (0,niter): #--------------------------------------#
                                                                     #
        ptildevect_k=G_mat.dot(pvect_k)                              # 
-       Cp=C_mat.dot(pvect_k)                                        # C . p_k
-       pCp=pvect_k.dot(Cp)                                          # p_k . C . p_k
+       #Cp=C_mat.dot(pvect_k)                                        # C . p_k
+       #pCp=pvect_k.dot(Cp)                                          # p_k . C . p_k
        #dvect_k=sps.linalg.spsolve(K_mat,ptildevect_k)              #
        dvect_k=LU_K.solve(ptildevect_k)                             #
-       alpha=(rvect_k.dot(zvect_k))/(ptildevect_k.dot(dvect_k)+pCp) #
+       alpha=(rvect_k.dot(zvect_k))/(ptildevect_k.dot(dvect_k)) #
        solP+=alpha*pvect_k                                          #
        solV-=alpha*dvect_k                                          #
-       rvect_kp1=rvect_k-alpha*(G_mat.T.dot(dvect_k)+Cp)            #
+       rvect_kp1=rvect_k-alpha*(G_mat.T.dot(dvect_k))            #
        if use_precond:                                              #
            #zvect_kp1=sps.linalg.spsolve(M_mat,rvect_kp1)           #
            zvect_kp1=LU_M.solve(rvect_kp1)                          #

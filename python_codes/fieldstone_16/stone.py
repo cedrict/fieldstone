@@ -4,9 +4,9 @@ import time as clock
 import matplotlib.pyplot as plt
 from schur_complement_cg_solver import *
 from schur_complement_cg_solver_LU import *
-from scipy.sparse import csr_matrix,csc_matrix
+from scipy.sparse import csr_matrix,csc_matrix,lil_matrix
 
-###################################################################################################
+###############################################################################
 
 def density(x,y):
     if (x-.5)**2+(y-0.5)**2<0.123**2:
@@ -22,7 +22,7 @@ def viscosity(x,y):
        val=1.
     return val
 
-###################################################################################################
+###############################################################################
 
 def basis_functions_V(r,s):
     N_0=0.25*(1.-r)*(1.-s)
@@ -45,7 +45,7 @@ def basis_functions_V_ds(r,s):
     dNds_3=+0.25*(1.-r)
     return np.array([dNds_0,dNds_1,dNds_2,dNds_3],dtype=np.float64)
 
-###################################################################################################
+###############################################################################
 
 eps=1.e-10
 sqrt3=np.sqrt(3.)
@@ -68,10 +68,10 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    precond_type = int(sys.argv[4])
 else:
-   nelx = 3
-   nely = 2 #nelx
+   nelx = 256
+   nely = 256
    visu = 1
-   precond_type=2
+   precond_type=22
     
 nnx=nelx+1          # number of nodes, x direction
 nny=nely+1          # number of nodes, y direction
@@ -105,9 +105,9 @@ viscosity_field=2
 
 use_LU=False
 
-#################################################################
+###############################################################################
 # grid point setup
-#################################################################
+###############################################################################
 start=clock.time()
 
 x_V=np.zeros(nn_V,dtype=np.float64)  # x coordinates
@@ -124,9 +124,9 @@ for j in range(0,nny):
 
 print("setup: grid points: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # connectivity
-#################################################################
+###############################################################################
 start=clock.time()
 
 icon_V=np.zeros((m_V,nel),dtype=np.int32)
@@ -142,9 +142,28 @@ for j in range(0,nely):
 
 print("setup: connectivity: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
+# compute belongs
+###############################################################################
+start=clock.time()
+
+nb_of_elts_Vnode_belongs_to=np.zeros(nn_V,dtype=np.int32)
+list_of_elts_Vnode_belongs_to=np.zeros((nn_V,4),dtype=np.int32)
+
+for iel,nodes in enumerate(icon_V.T):
+    for k in range(0,m_V):
+        list_of_elts_Vnode_belongs_to[nodes[k],nb_of_elts_Vnode_belongs_to[nodes[k]]]=iel
+        nb_of_elts_Vnode_belongs_to[nodes[k]]+=1
+
+#print(nb_of_elts_Vnode_belongs_to)
+#for k in range(0,nn_V):
+#    print(list_of_elts_Vnode_belongs_to[k,0:nb_of_elts_Vnode_belongs_to[k]])
+
+print("setup: belongs: %.3f s" % (clock.time()-start))
+
+###############################################################################
 # define boundary conditions: no slip on all sides
-#################################################################
+###############################################################################
 start=clock.time()
 
 bc_fix_V=np.zeros(Nfem_V,dtype=bool)  # boundary condition, yes/no
@@ -163,9 +182,9 @@ for i in range(0,nn_V):
 
 print("setup: boundary conditions: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # compute element center coordinates
-#################################################################
+###############################################################################
 start=clock.time()
 
 x_e=np.zeros(nel,dtype=np.float64)  
@@ -179,16 +198,20 @@ for iel in range(0,nel):
 
 print("compute elt center: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # build FE matrix
 # [ K G ][u]=[f]
 # [GT 0 ][p] [h]
-#################################################################
+###############################################################################
 start=clock.time()
 
-K_mat=np.zeros((Nfem_V,Nfem_V),dtype=np.float64) # matrix K 
-G_mat=np.zeros((Nfem_V,Nfem_P),dtype=np.float64) # matrix GT
-C_mat=np.zeros((Nfem_P,Nfem_P),dtype=np.float64) # stays zero
+K_mat=lil_matrix((Nfem_V,Nfem_V),dtype=np.float64) # matrix K 
+
+if precond_type==0 or precond_type==1 or precond_type==22:
+   G_mat=lil_matrix((Nfem_V,Nfem_P),dtype=np.float64) 
+else:
+   G_mat=np.zeros((Nfem_V,Nfem_P),dtype=np.float64) 
+
 f_rhs=np.zeros(Nfem_V,dtype=np.float64) # right hand side f 
 h_rhs=np.zeros(Nfem_P,dtype=np.float64) # right hand side h 
 B=np.zeros((3,ndof_V*m_V),dtype=np.float64) # gradient matrix 
@@ -311,12 +334,13 @@ print("     -> f_rhs (m,M) %.4e %.4e " %(np.min(f_rhs),np.max(f_rhs)))
 
 print("build FE matrix: %.3f s" % (clock.time() - start))
 
-######################################################################
+###############################################################################
 # compute Schur preconditioner
-######################################################################
+###############################################################################
 start=clock.time()
 
-M_mat=np.zeros((Nfem_P,Nfem_P),dtype=np.float64) # preconditioner 
+#M_mat=np.zeros((Nfem_P,Nfem_P),dtype=np.float64) # preconditioner 
+M_mat=lil_matrix((Nfem_P,Nfem_P),dtype=np.float64) # preconditioner 
    
 if precond_type==0:
    for i in range(0,Nfem_P):
@@ -331,6 +355,20 @@ if precond_type==2:
    for i in range(0,Nfem_V):
        Km1[i,i]=1./K_mat[i,i] 
    M_mat=G_mat.T.dot(Km1.dot(G_mat))
+
+if precond_type==22:
+
+   for l in range(0,nn_V):
+       N=nb_of_elts_Vnode_belongs_to[l]
+       for k in range(0,2):
+           idof = 2*l+k
+           for i in range(0,N):
+               iel=list_of_elts_Vnode_belongs_to[l,i]
+               for j in range(0,N):
+                   jel=list_of_elts_Vnode_belongs_to[l,j]
+                   M_mat[iel,jel]+=G_mat[idof,iel]*G_mat[idof,jel]/K_mat[idof,idof]
+
+
 
 if precond_type==3:
    Km1=np.zeros((Nfem_V,Nfem_V),dtype=np.float64) 
@@ -353,30 +391,30 @@ if precond_type==4:
               M_mat[i,i]+=np.abs(M_mat[i,j])
               M_mat[i,j]=0.
 
-plt.spy(M_mat)
-plt.savefig('matrix.pdf', bbox_inches='tight')
+#plt.spy(M_mat)
+#plt.savefig('matrix.pdf', bbox_inches='tight')
 
-print("build Schur matrix precond: %e s, nel= %d" % (clock.time() - start, nel))
+print("build Schur matrix precond: %e s, nel= %d" % (clock.time()-start,nel))
 
-######################################################################
+###############################################################################
 # solve system  
-######################################################################
+###############################################################################
 start=clock.time()
 
 if use_SchurComplementApproach:
 
-   if precond_type==2 and use_LU:
+   if (precond_type==2 or precond_type==22)and use_LU:
       K_mat=csc_matrix(K_mat)
       G_mat=csr_matrix(G_mat)
       M_mat=csc_matrix(M_mat)
-      solV,solP,niter=schur_complement_cg_solver_LU(K_mat,G_mat,C_mat,M_mat,f_rhs,h_rhs,\
+      solV,solP,niter=schur_complement_cg_solver_LU(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                                                     Nfem_V,Nfem_P,niter_stokes,\
                                                     solver_tolerance,use_preconditioner)
    else:
       K_mat=csr_matrix(K_mat)
       G_mat=csr_matrix(G_mat)
       M_mat=csr_matrix(M_mat)
-      solV,solP,niter=schur_complement_cg_solver(K_mat,G_mat,C_mat,M_mat,f_rhs,h_rhs,\
+      solV,solP,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                                                  Nfem_V,Nfem_P,niter_stokes,\
                                                  solver_tolerance,use_preconditioner)
    u,v=np.reshape(solV[0:Nfem_V],(nn_V,2)).T
@@ -400,11 +438,11 @@ print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
-print("solve time: %.3f s, nel= %d" % (clock.time() - start, nel))
+print("solve time: %.3f s, nel= %d" % (clock.time()-start, nel))
 
-######################################################################
+###############################################################################
 # compute strainrate 
-######################################################################
+###############################################################################
 start=clock.time()
 
 e=np.zeros(nel,dtype=np.float64)  
@@ -438,9 +476,9 @@ print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
 
 print("compute press & sr: %.3f s" % (clock.time()-start))
 
-######################################################################
+###############################################################################
 # compute nodal pressure
-######################################################################
+###############################################################################
 start=clock.time()
 
 q=np.zeros(nn_V,dtype=np.float64)  
@@ -460,9 +498,9 @@ q=q/count
 
 print("compute nodal p: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # export solution to vtu file
-#####################################################################
+###############################################################################
 start=clock.time()
 
 filename = 'solution.vtu'
@@ -560,3 +598,5 @@ print("export to vtu: %.3f s" % (clock.time()-start))
 print("*******************************")
 print("********** the end ************")
 print("*******************************")
+
+###############################################################################

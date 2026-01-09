@@ -4,9 +4,9 @@ rm solve_time*.ascii
 rm solver_convergence*
 rm build_precond*.ascii
 
-for preconds in 0 1 2 3 4; do 
-    #for rs in 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 24 28 29 32 40 41 48 56 64 80 96 112 128; do
-    for rs in 6 7 8 9 10 11 12 13 14 15 16 24 32 48 64 96 128 160; do 
+for preconds in 0 1 2 3 4 22 ; do 
+    for rs in 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 24 26 28 29 32 36 40 41 45 48 52 56 60 64 68 80 96 112 128; do
+    #for rs in 6 7 8 9 10 11 12 13 14 15 16 24 32 48 64 72 80 88 96 112 128 144 160 176 192 ; do 
         echo precond $preconds res $rs
         python3 stone.py  $rs $rs 0 $preconds > opla 
         grep after opla >> niterations_ps${preconds}.ascii 
