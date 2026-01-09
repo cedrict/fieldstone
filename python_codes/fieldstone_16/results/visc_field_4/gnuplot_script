@@ -25,7 +25,7 @@ plot[0.007:][]\
 'solve_time_ps2.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'prec. #2',\
 'solve_time_ps3.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'prec. #3',\
 'solve_time_ps4.ascii' u (1/sqrt($6)):3 w lp pt 5 t 'prec. #4',\
-x**(-3)/10000 lt -1 dashtype 3 t 'x^{-1}' 
+x**(-3)/10000 lt -1 dashtype 3 t 'x^{-3}' 
 
 set ylabel 'time (s)'
 set output 'build_precond.pdf'
@@ -36,7 +36,7 @@ plot[0.007:][]\
 'build_precond_ps3.ascii' u (1/sqrt($8)):5 w lp pt 5 t 'prec. #3',\
 'build_precond_ps4.ascii' u (1/sqrt($8)):5 w lp pt 5 t 'prec. #4',\
 
-
+###############################################################################
 
 set format y "10^{%L}"
 unset log x
