@@ -1,4 +1,5 @@
-set term pdf enhanced
+#
+set term pdf enhanced font "Times,12pt"
 set grid
 set key left 
 set xlabel 'x'
@@ -7,13 +8,13 @@ set ylabel 'x-component velocity'
 set output 'veldiag.pdf'
 plot[][]\
 'diag.ascii' w p ps .4 t '150x150',\
-'diag.ascii' u 1:3 w l t 'analytical' 
+'diag.ascii' u 1:3 w l lt -1 t 'analytical' 
 
 set key bottom right
 set output 'pressbottom.pdf'
 plot[][]\
 'bottom.ascii' w p ps .4 t '150x150',\
-'bottom.ascii' u 1:3 w l t 'analytical'
+'bottom.ascii' u 1:3 w l lt -1  t 'analytical'
 
 
 
@@ -23,7 +24,7 @@ set log xy
 set xlabel 'h'
 set ylabel 'error'
 plot[][]\
-'errors' u (1./sqrt($2)):5 w lp ps .5 t 'velocity',\
-'errors' u (1./sqrt($2)):8 w lp ps .5 t 'pressure',\
+'errors' u (1./sqrt($3)):6 w lp ps .5 t 'velocity',\
+'errors' u (1./sqrt($3)):9 w lp ps .5 t 'pressure',\
 x**.5/.15 w l lt -1 dt 2 t 'x^{0.5}',\
-x**1/4.  w l lt -1 dt 1 t 'x^1'
+x**1/4.  w l lt -1 dt 3 t 'x^1'
