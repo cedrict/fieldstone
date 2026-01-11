@@ -1,19 +1,25 @@
-set term pdf enhanced
-set xlabel 'x'
+#
+set term pdf enhanced font "Times,12pt"
+set grid
 
+
+set xlabel 'x'
 set ylabel 'pressure'
 set output 'pressure.pdf'
 plot[][]\
 'v_q_top.ascii'  u 1:4 w lp ps .5 t 'q',\
 'p_sr_top.ascii' u 1:2 w lp ps .5 t 'p',\
-1+pi  lt -1 
+1+pi  lt -1 t '1+{/Symbol p}'
 
+set xlabel 'x'
 set ylabel 'strain rate'
 set output 'strainrate.pdf' 
 plot[][]\
 'p_sr_top.ascii' u 1:3 w lp ps .5 t 'exx',\
 'p_sr_top.ascii' u 1:4 w lp ps .5 t 'exy',\
 
+set key bottom
+set xlabel 'x'
 set ylabel 'stress'
 set output 'stress.pdf' 
 plot[][]\
@@ -21,13 +27,18 @@ plot[][]\
 'sigma_eta_top.ascii' u 1:3 w lp ps .5 t 'sigmayy',\
 'sigma_eta_top.ascii' u 1:4 w lp ps .5 t 'sigmaxy',\
 
+
+set xlabel '# iter'
+set ylabel 'min/max u'
 set output 'u_stats.pdf'
-plot[][]\
+plot[][-1.25:1.25]\
 'u_stats.ascii' u 1 w lp ps .5 t 'min(u)',\
 'u_stats.ascii' u 2 w lp ps .5 t 'max(u)',\
 
+set xlabel '# iter'
+set ylabel 'min/max v'
 set output 'v_stats.pdf'
-plot[][]\
+plot[][-1.25:1.25]\
 'v_stats.ascii' u 1 w lp ps .5 t 'min(v)',\
 'v_stats.ascii' u 2 w lp ps .5 t 'max(v)',\
 
@@ -38,9 +49,10 @@ set log y
 #'sigma_eta_top.ascii' u 1:5 w lp ps .5 t 'eta'
 
 set ylabel 'residual'
+set ylabel 'residual'
 set output 'residual.pdf'
 plot[][]\
-'residual.ascii' w lp
+'residual.ascii' w lp notitle
 
 set ylabel 'velocity difference'
 set output 'diff_uv.pdf'
