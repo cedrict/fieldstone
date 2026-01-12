@@ -441,13 +441,14 @@ print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 print("     -> eta (m,M) %.4f %.4f " %(np.min(eta),np.max(eta)))
 
-np.savetxt('velocity.ascii',np.array([x_V,y_V,u,v]).T,header='# x,y,u,v')
-np.savetxt('pressure.ascii',np.array([x_e,y_e,p]).T,header='# x,y,p')
-np.savetxt('strainrate.ascii',np.array([x_e,y_e,exx,eyy,exy]).T,header='# x,y,exx,eyy,exy')
+if debug:
+   np.savetxt('velocity.ascii',np.array([x_V,y_V,u,v]).T,header='# x,y,u,v')
+   np.savetxt('pressure.ascii',np.array([x_e,y_e,p]).T,header='# x,y,p')
+   np.savetxt('strainrate.ascii',np.array([x_e,y_e,exx,eyy,exy]).T,header='# x,y,exx,eyy,exy')
 
-#####################################################################
+###############################################################################
 # computing stress tensor components
-#####################################################################
+###############################################################################
 start=clock.time()
 
 sigmaxx=np.zeros(nel,dtype=np.float64)  
@@ -458,9 +459,9 @@ sigmaxx=-p+2*eta*exx
 sigmayy=-p+2*eta*eyy
 sigmaxy=   2*eta*exy
 
-#####################################################################
+###############################################################################
 # smoothing pressure 
-#####################################################################
+###############################################################################
 start=clock.time()
 
 q=np.zeros(nn_V,dtype=np.float64)  
@@ -480,9 +481,9 @@ q/=count
 
 print("project press on V grid: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # extract velocity field at domain top
-#####################################################################
+###############################################################################
 start=clock.time()
 
 xtop=np.zeros(nnx,dtype=np.float64)  
