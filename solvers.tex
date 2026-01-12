@@ -49,7 +49,7 @@ $\C$ is here omitted but it bears no consequences on the conclusion.}
 \]
 However, such an expression is of limited interest in the numerical solution of saddle
 point problems since it showcases 5 times the inverse of $\K$ and more importantly
-the inverse of the Schur complement matrix $\S$ which is likely to be a full matrix so 
+the inverse of the Schur complement matrix $\SSS$ which is likely to be a full matrix so 
 that we never want to compute it explicitely.
 
 
@@ -85,16 +85,13 @@ block-triangular preconditioner (This is what \aspect does):
 
 \end{itemize}
 
-
-\item an all-at-once multigrid performed on the entire Stokes
-system, using Uzawa-type smoothers.
+\item an all-at-once multigrid performed on the entire Stokes system, using Uzawa-type smoothers.
 \end{itemize}
 
 
 
-
-
 \Literature: Preconditioners for Incompressible Navier-Stokes Solvers 
+\begin{small}
 \begin{itemize}
 \item
 \fullcite{benz02}
@@ -104,18 +101,13 @@ system, using Uzawa-type smoothers.
 \fullcite{urvs08}
 \item 
 \fullcite{seuv10}
+\item Saddle point preconditioners have been extensively discussed and studied \cite{bewa08}, \cite{dewu04}
+\item Diagonal preconditioners in \cite{shrb01}, \cite{babc94}.
 \end{itemize}
-
-
-Saddle point preconditioners have been extensively discussed and 
-studied \cite{bewa08}, \cite{dewu04}
-
-Diagonal preconditioners in \cite{shrb01}, \cite{babc94}.
-
-Pragmatic solvers for 3D Stokes problems with heterogeneous coefficients \cite{samb20}
+\end{small}
 
 \Literature: Solving Stokes Saddle Point problem
-
+\begin{small}
 \begin{itemize}
 \item
 \fullcite{laqu86}
@@ -137,7 +129,10 @@ Pragmatic solvers for 3D Stokes problems with heterogeneous coefficients \cite{s
 \fullcite{lica06}
 \item
 \fullcite{hoow17}
+\item
+Pragmatic solvers for 3D Stokes problems with heterogeneous coefficients \cite{samb20}
 \end{itemize}
+\end{small}
 
 
 
@@ -145,8 +140,8 @@ Pragmatic solvers for 3D Stokes problems with heterogeneous coefficients \cite{s
 %...................................................
 \subsection{When using the penalty formulation}
 
-In this case we are only solving for 
-velocity since pressure has been eliminated and is later recovered in a post-processing step:
+In this case we are only solving for velocity since pressure has been eliminated 
+and is later recovered in a post-processing step. The linear system is of the form:
 \[
 (\K_\eta+\K_\lambda) \cdot \vec {\cal V} = \vec f
 \]
@@ -451,6 +446,8 @@ For $k=0,1,2,...$, compute
 \fullcite{kosa11}
 \end{itemize}
 
+These Uzawa methods have been implemented in \stone~147.
+
 
 \newpage
 %...................................................
@@ -640,6 +637,10 @@ nor the corresponding preconditioner.
 One thing we know improves the convergence of any iterative solver is the use of a 
 preconditioner matrix and therefore now focus on the Preconditioned Conjugate Gradient (PCG) method.
 Once again we turn to Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Conjugate_gradient_method}}:
+and read: ``In most cases, preconditioning is necessary to ensure 
+fast convergence of the conjugate gradient method. If ${\bm M}^{-1}$ is 
+symmetric positive-definite and ${\bm M}^{-1}\cdot {\bm A}$ has a better condition number than 
+${\bm A}$, a preconditioned conjugate gradient method can be used. It takes the following form:''
 
 \begin{minipage}{0.43\textwidth}
 \centering
@@ -654,6 +655,7 @@ Once again we turn to Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Conj
 \end{minipage}
 
 \vspace{0.5cm}
+
 
 The same algorithm with our notations:
 \begin{itemize}
@@ -718,7 +720,7 @@ Following Zhong \etal \cite{zhym12} one can define the following matrix as preco
 \[
 {\bm M} = diag \left[ \G^T (diag [\K]  )^{-1} \G \right]
 \]
-which is the preconditioner used for the Citcom codes (see appendix \ref{app:codes}). It 
+which is the preconditioner used for the Citcom codes. It 
 can be constructed while the FEM matrix is being built/assembled
 and it is trivial to invert. The entries in
 $diag[\K]$ are the average viscosity in the elements associated
@@ -908,7 +910,6 @@ The same solver structure based on MINRES is used in these articles too.
 \subsection{The Augmented Lagrangian approach}
 \index{general}{Augmented Lagrangian}
 
-see LaCoDe paper \cite{demh19}.
 
 We start from the saddle point Stokes system:
 \begin{equation}
@@ -956,8 +957,8 @@ and introducing the following iterative scheme:
 \end{equation}
 where $k$ is the iteration counter and $\lambda$ is an artificial compressibility term which has 
 the dimensions of dynamic viscosity. 
-The choice of $\lambda$ can be difficult as too low or too high a value yields either erroneous results and/or terribly ill-conditioned matrices. LaCoDe paper (!!) use such a method and report that $\lambda=\max_\Omega({\eta})$
-works well. 
+The choice of $\lambda$ can be difficult as too low or too high a value yields either erroneous results and/or terribly ill-conditioned matrices. The LaCoDe paper \cite{demh19} uses such a method and report 
+that $\lambda=\max_\Omega({\eta})$ works well. 
 Note that at convergence we have $||\vec{\cal P}^{k+1}-\vec{\cal P}^k||<\epsilon$ and then Eq.(\ref{ALStokes}) converges to Eq.(\ref{StokesSyst2}) and the velocity and pressure fields are solution of the unmodified system Eq.(\ref{StokesSyst2}).
 
 The introduction of this term serves one purpose: allowing us to solve the system 
@@ -995,7 +996,8 @@ $\vec{\cal P}^{k+1} = \vec{\cal P}^k + \lambda \mathbb{M}_p^{-1} \cdot (\G^T \cd
 
 \begin{remark} 
 If discontinuous pressures are used, the pressure mass matrix can be inverted element by element which is 
-cheaper than inverting $\mathbb{M}_p$ as a whole.
+cheaper than inverting $\M_p$ as a whole. If the pressure field is continuous computing the inverse 
+of the pressure mass matrix is definitely not a viable option.
 \end{remark}
 
 \begin{remark} 
@@ -1003,7 +1005,8 @@ This method has obvious ties with the penalty method.
 \end{remark}
 
 \begin{remark} 
-If $\lambda >> \max_\Omega{\eta}$ then the matrix $\tilde{\K}$ is ill-conditioned and an iterative solver must be used.
+If $\lambda >> \max_\Omega(\eta)$ then the matrix $\tilde{\K}$ is ill-conditioned and 
+a direct solver must probably be used.
 \end{remark}
 
 \newpage

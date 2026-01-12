@@ -298,9 +298,9 @@ wq=np.dot(N_V,w[icon_V[:,iel]])
 pq=np.dot(N_P,p[icon_P[:,iel]])
 qq=np.dot(N_V,q[icon_V[:,iel]])
 
-xc[iel]=np.dot(N_V,x_V[icon_V[:,iel]])
-yc[iel]=np.dot(N_V,y_V[icon_V[:,iel]])
-zc[iel]=np.dot(N_V,z_V[icon_V[:,iel]])
+x_e[iel]=np.dot(N_V,x_V[icon_V[:,iel]])
+y_e[iel]=np.dot(N_V,y_V[icon_V[:,iel]])
+z_e[iel]=np.dot(N_V,z_V[icon_V[:,iel]])
 
 dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V
 dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V
@@ -370,7 +370,7 @@ sol=spsolve(A_fem,b_fem)
 
 ###############################################################################
 
-u,v,w=np.reshape(sol,(NV,3)).T
+u,v,w=np.reshape(sol,(nn_V,3)).T
 
 errv # velocity discretization error
 errp # pressure discretization error
