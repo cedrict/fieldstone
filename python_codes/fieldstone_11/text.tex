@@ -1,10 +1,9 @@
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/3d}
 \includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_11/keywords.ascii}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{center}
 \inpython
@@ -13,11 +12,11 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: August 30th, 2025.
+Last revision: January 11th, 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The setup is identical to the one of the \stone~\ref{f10}.
 
@@ -54,27 +53,27 @@ The pressure normalisation is controled by the boolean {\sl pnormalise} in the c
 Since the pressure constraint adds a line to the global FE, we then logically have:
 \begin{lstlisting}
 if pnormalise:
-   a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) 
-   rhs   = np.zeros(Nfem+1,dtype=np.float64)    
+   A_fem = np.zeros((Nfem+1,Nfem+1),dtype=np.float64)
+   b_fem = np.zeros(Nfem+1,dtype=np.float64)        
 else:
-   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)
-   rhs   = np.zeros(Nfem,dtype=np.float64)       
+   A_fem = np.zeros((Nfem,Nfem),dtype=np.float64) 
+   b_fem = np.zeros(Nfem,dtype=np.float64)       
 \end{lstlisting} 
 Once the solve has been done, we retrieve the separate velocity and pressure fields as follows:
 \begin{lstlisting}
-u,v,w=np.reshape(sol[0:NfemV],(nnp,3)).T
-p=sol[NfemV:Nfem]
+u,v,w=np.reshape(sol[0:Nfem_V],(nn_V,3)).T
+p=sol[Nfem_V:Nfem]
 \end{lstlisting} 
 and the Lagrange multiplier is a scalar at the bottom of the array:
 \begin{lstlisting}
 if pnormalise:
-   print("     -> Lagrange multiplier: %.4es" % sol[Nfem])
+   print("     -> Lagrange multiplier: %.4e" % sol[Nfem])
 \end{lstlisting} 
 
 It is quite easy in python to visualise the matrix structure 
 with the spy function:
 \begin{lstlisting}
-plt.spy(a_mat)
+plt.spy(A_fem)
 \end{lstlisting} 
 and we see that we indeed recover
 the block structure with a zero block for the pressure-pressure entries.  
@@ -91,12 +90,9 @@ the block structure with a zero block for the pressure-pressure entries.
 {\captionfont Velocity, pressure and effective strain rate fields for a $20\times 20\times 20$ mesh.}
 \end{center}
 
-
 \underline{Remark}: the matrix building in this \stone is rather naive. The 
 $\K$ and $\G$ matrices are built as full matrices and later assembled
-in {\python a\_mat} which is also a full matrix, only to be converted 
+in {\python A\_fem} which is also a full matrix, only to be converted 
 to CSR format before calling the solver. 
-In subsequent stones I usually only build {\python a\_mat} in {\python lil\_matrix} format.
-
-
+In subsequent stones I usually only build {\python A\_fem} in {\python lil\_matrix} format.
  
