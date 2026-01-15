@@ -5,13 +5,11 @@
 
 What follows is borrowed from \fullcite{john16}, page 666. 
 
-
 The SIMPLE method (Semi-Implicit Method for Pressure-Linked Equations)
-has been introduced by Patankar \& Spalding (1972) \cite{pasp72} as an iterative method to solve
+has been introduced by \textcite{pasp72} (1972) as an iterative method to solve
 the finite volume discretized incompressible Navier-Stokes equations. 
 
-The algorithm
-is based on the following steps:
+The algorithm is based on the following steps (adapted from \cite{eche13}):
 \begin{itemize}
 \item First the pressure is assumed to be known from the previous iteration.
 \item Then the velocity is solved from the momentum equations. The newly obtained
@@ -23,45 +21,33 @@ satisfy the discrete continuity equation.
 
 SIMPLE relies on the block LU decomposition
 \begin{equation}
-\left(
-\begin{array}{cc}
-\K & \G \\ \G^T & -\C 
-\end{array}
-\right)
+\left(\begin{array}{cc}
+\K & \G \\ \G^T & 0  
+\end{array}\right)
 \cdot
-\left(
-\begin{array}{c}
+\left(\begin{array}{c}
 \vec{\cal V} \\ \vec{\cal P}
-\end{array}
-\right)
+\end{array}\right)
 =
-\left(
-\begin{array}{cc}
+\left(\begin{array}{cc}
 \K & 0 \\ \G^T & -\SSS
-\end{array}
-\right)
+\end{array}\right)
 \cdot
-\left(
-\begin{array}{cc}
+\left(\begin{array}{cc}
 {\bm I} & \K^{-1} \cdot \G \\
 0 & {\bm I} 
-\end{array}
-\right)
+\end{array}\right)
 \cdot
-\left(
-\begin{array}{c}
+\left(\begin{array}{c}
 \vec{\cal V} \\ \vec{\cal P}
-\end{array}
-\right)
+\end{array}\right)
 =
-\left(
-\begin{array}{c}
+\left(\begin{array}{c}
 \vec{f} \\ \vec{h}
-\end{array}
-\right)
+\end{array}\right)
 \end{equation}
 
-The approximation $\K^{-1}$ as ${\bm D}_\K^{-1} = (diag(\K))^{-1}$ leads to the 
+The approximation $\K^{-1}$ as ${\bm D}_\K^{-1} = (\text{diag}(\K))^{-1}$ leads to the 
 SIMPLE algorithm. In this case the approximation of the Schur complement matrix is given by
 $\tilde{\SSS} = \G^T\cdot  {\bm D}_\K^{-1} \cdot \G$  and the decomposition looks like
 \[
@@ -120,12 +106,8 @@ Thus one iteration of SIMPLE solves the following system:
 \right)
 \]
 
-
-
-
-
 Before we can write out the SIMPLE algorithm, we must first take a small detour via so-called
-distributive iterative methods \cite{vusb00,tack10}. \index{general}{Distributive Iterative Method}
+distributive iterative methods \cite{vusb00,tack10}. 
 Let us consider the linear system 
 \[
 {\bm A}\cdot \vec{x}=\vec{b}
@@ -170,15 +152,15 @@ Using $\vec{x}={\bm B}\cdot \underline{\vec{x}}$, we get
 \[
 {\bm M}\cdot {\bm B}^{-1}\cdot \vec{x}^{k+1} = {\bm N}\cdot {\bm B}^{-1}\cdot  \vec{x}^{k}+\vec{b} 
 \]
-We then have 
+We can then 'solve' for $\vec{x}^{k+1}$ and we then have 
 \begin{eqnarray}
 \vec{x}^{k+1}
-&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ {\bm N} \cdot  {\bm B}^{-1}  \cdot \vec{x}^{k}+ \vec{b}  ] \\
-&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ ({\bm M} - \underline{\bm A}) \cdot  {\bm B}^{-1}\cdot \vec{x}^{k}+\vec{b}  ]\\
-&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ ({\bm M} - {\bm A}\cdot {\bm B}) \cdot  {\bm B}^{-1}\cdot  \vec{x}^{k}+ \vec{b}  ]\\
-&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ {\bm M}\cdot {\bm B}^{-1} \cdot \vec{x}^{k} - {\bm A}\cdot {\bm B}\cdot  {\bm B}^{-1} \cdot \vec{x}^{k}+\vec{b}  ]\\
-&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ {\bm M}\cdot {\bm B}^{-1} \cdot \vec{x}^{k} - {\bm A}\cdot \vec{x}^{k}+ \vec{b}  ]\\
-&=&  \vec{x}^k + {\bm B}\cdot {\bm M}^{-1}\cdot [ \vec{b}    - {\bm A} \cdot \vec{x}^{k}  ]
+&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ {\bm N} \cdot  {\bm B}^{-1}  \cdot \vec{x}^{k}+ \vec{b}  ] \nn\\
+&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ ({\bm M} - \underline{\bm A}) \cdot  {\bm B}^{-1}\cdot \vec{x}^{k}+\vec{b}  ]\nn\\
+&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ ({\bm M} - {\bm A}\cdot {\bm B}) \cdot  {\bm B}^{-1}\cdot  \vec{x}^{k}+ \vec{b}  ]\nn\\
+&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ {\bm M}\cdot {\bm B}^{-1} \cdot \vec{x}^{k} - {\bm A}\cdot {\bm B}\cdot  {\bm B}^{-1} \cdot \vec{x}^{k}+\vec{b}  ]\nn\\
+&=&  {\bm B}\cdot {\bm M}^{-1} \cdot[ {\bm M}\cdot {\bm B}^{-1} \cdot \vec{x}^{k} - {\bm A}\cdot \vec{x}^{k}+ \vec{b}  ]\nn\\
+&=&  \vec{x}^k + {\bm B}\cdot {\bm M}^{-1}\cdot [ \vec{b}    - {\bm A} \cdot \vec{x}^{k}  ] \nn
 \end{eqnarray}
 Finally, we have the following recursion:
 \begin{equation}
@@ -200,7 +182,7 @@ The matrix ${\bm B}$ is then chosen to be
 {\bm B}=
 \left(
 \begin{array}{cc}
-{\bm I} & -\K^{-1} \G \\
+{\bm I} & -\K^{-1} \cdot \G \\
 0 & {\bm I}
 \end{array}
 \right)
@@ -217,7 +199,7 @@ We then have
 \cdot 
 \left(
 \begin{array}{cc}
-{\bm I} & -\K^{-1} \G \\
+{\bm I} & -\K^{-1} \cdot \G \\
 0 & {\bm I}
 \end{array}
 \right)
@@ -230,7 +212,7 @@ We then have
 \right)
 \]
 where $\SSS=\G^T \cdot \K^{-1} \cdot \G$.
-Let us recall that we define ${\bm D}_\K =diag(\K)$ and $\hat{\SSS}=\G^T \cdot {\bm D}_\K^{-1} \cdot \G$. 
+Let us recall that we define ${\bm D}_\K =\text{diag}(\K)$ and $\hat{\SSS}=\G^T \cdot {\bm D}_\K^{-1} \cdot \G$. 
 We further define 
 \[
 {\bm M}=
@@ -250,7 +232,7 @@ ${\bm B}$ is approximated by:
 {\bm B}=
 \left(
 \begin{array}{cc}
-{\bm I} & -{\bm D}_\K^{-1} \G \\
+{\bm I} & -{\bm D}_\K^{-1} \cdot \G \\
 0 & {\bm I}
 \end{array}
 \right)
@@ -297,37 +279,41 @@ The iteration loop of Eq.~\eqref{eq:simplerec} then takes the form
 =
 \left(
 \begin{array}{c}
-V^k \\ P^k
+\vec{\cal V}^k \\ 
+\vec{\cal P}^k
 \end{array}
 \right)
 + 
-{\bm B}  {\bm M} ^{-1}
+{\bm B}\cdot  {\bm M} ^{-1}
 \left(
 \begin{array}{c}
-r_V^k \\ r_P^k
+r_{\cal V}^k \\ r_{\cal P}^k
 \end{array}
 \right)
 =
 \left(
 \begin{array}{c}
-V^k \\ P^k
+\vec{\cal V}^k \\ 
+\vec{\cal P}^k
 \end{array}
 \right)
 + 
 \left(
 \begin{array}{c}
-\delta V^k \\ \delta P^k
+\delta \vec{\cal V}^k \\ 
+\delta \vec{\cal P}^k
 \end{array}
 \right)
-\quad\quad
-\textrm{with}\quad\quad
+\quad
+\textrm{with}\quad
 \left(
 \begin{array}{c}
-\delta V^k \\ \delta P^k
+\delta \vec{\cal V}^k \\ 
+\delta \vec{\cal P}^k
 \end{array}
 \right)
 =
-{\bm B}  {\bm M} ^{-1}
+{\bm B} \cdot {\bm M}^{-1}
 \left(
 \begin{array}{c}
 \vec{r}_{\cal V}^k \\ 
@@ -397,7 +383,7 @@ and then compute
 \end{array}
 \right)
 =
-{\bm B}  
+{\bm B} \cdot 
 \left(
 \begin{array}{c}
 \delta^\star \vec{\cal V}^k \\ 
@@ -409,7 +395,7 @@ and then compute
 Fortunately Eq.~\eqref{simple1aa} translates into:
 \begin{eqnarray}
 \K \cdot \delta^\star \vec{\cal V}^k &=&  \vec{r}_{\cal V}^k   \\
-\hat{\SSS} \cdot  \delta^\star \vec{\cal P}^k &=&  - \vec{r}_P^k + \G^T \cdot \delta^\star \vec{V}^k 
+\hat{\SSS} \cdot  \delta^\star \vec{\cal P}^k &=&  - \vec{r}_P^k + \G^T \cdot \delta^\star \vec{\cal V}^k 
 \end{eqnarray}
 and Eq.~\eqref{simple2aa} translates into:
 \[
@@ -452,19 +438,20 @@ The final algorithm will then look as follows:
 \vec{r}_{\cal P} &=& \vec{h} - \G^T \cdot \vec{\cal V}^{(k)}
 \end{eqnarray}
 \item Solve $\K  \cdot \delta^\star \vec{\cal V}^k =  \vec{r}_{\cal V}^k  $
-\item Solve $\hat{\SSS} \cdot \delta^\star \vec{\cal P}^k =  \vec{r}_{\cal P}^k - \G^T \cdot  \delta^\star {\cal V}^k $
+\item Solve $\hat{\SSS} \cdot \delta^\star \vec{\cal P}^k =  \vec{r}_{\cal P}^k - \G^T \cdot  \delta^\star \vec{\cal V}^k $
 \item Compute $\delta \vec{\cal V}^k = \delta^\star \vec{\cal V}^k -{\bm D}_\K^{-1} \cdot \G \cdot \delta^\star \vec{\cal P}_k $
 \item Update $\delta \vec{\cal P}^k = \delta^\star \vec{\cal P}^k$
 \item Update 
 \begin{eqnarray}
-\vec{\cal V}^{(k+1)} &=& \vec{\cal V}^{(k)} + \omega_{\cal V} \delta \vec{\cal V}^{(k)} \nn\\
-\vec{\cal P}^{(k+1)} &=& \vec{\cal P}^{(k)} + \omega_{\cal P} \delta \vec{\cal P}^{(k)} 
+\vec{\cal V}^{(k+1)} &=& \vec{\cal V}^{(k)} + \omega_{\cal V} \; \delta \vec{\cal V}^{(k)} \nn\\
+\vec{\cal P}^{(k+1)} &=& \vec{\cal P}^{(k)} + \omega_{\cal P} \; \delta \vec{\cal P}^{(k)} 
 \end{eqnarray}
 \end{enumerate}
 \end{mdframed}
 where the parameters $\omega_{\cal V}$ and $\omega_{\cal P}$ are between 0 and 1. 
 
-Note that SIMPLE can be used as left and as right preconditioner, see page 669 of \textcite{john16}.
+Note that SIMPLE can be used as left and as right preconditioner, 
+see page 669 of \textcite{john16}.
 
 Also, John states that:
 ``SIMPLE is easily to implement, which makes
@@ -475,16 +462,262 @@ element approximations of the diffusion operator, but it is still a sparse matri
 The efficiency of SIMPLE depends on how good $\K^{-1}$ is approximated by its
 diagonal.''
 
-\vspace{.5cm}
 
-\Literature: 
-\begin{itemize}
-\item \fullcite{eche13}, 
-\item \fullcite{brsa97b}, 
-\item \fullcite{urvs09} for SIMPLE(R) algorithm, 
-\item \fullcite{tack10}
-\end{itemize}
+Note that SIMPLE is also discussed (and improved?) in \cite{brsa97b} (1997). 
 
 
+\newpage
+What follows is taken from section 6.5.1 of the book by \cite{tack10}.
+I have adapted their notations to fit the ones of FieldStone. 
+In retrospect this is not as well explained as the material above 
+taken from \textcite{john16} but we obtain the same algorithm. 
+
+\subsection*{Distributive iterations}
+To apply the method of distributive iterations (Section 6.3.4 of the book), initially we define
+\[
+\mathbb{A} = \begin{pmatrix}
+\K & \G \\
+\G^T & 0
+\end{pmatrix}
+\]
+We choose a distribution matrix $\mathbb{B}$ such as to represent 
+$\mathbb{A}\cdot \mathbb{B}$ in a block-triangular form:
+\begin{equation}
+{\mathbb A}\cdot {\mathbb B} = 
+\begin{pmatrix}
+\mathbb{Q} & 0 \\
+\mathbb{R} & \mathbb{T}
+\end{pmatrix}
+\label{simple:eq1}
+\end{equation}
+Splitting $\mathbb{A}\cdot \mathbb{B} = \mathbb{M} - \mathbb{L}$\footnote{we find $M-N$ in the book, 
+but $N$ is already defined at the 1-1 block of the matrix $A$, so I use $L$ instead.} is easily obtained by splitting $\mathbb{Q}$ and $\mathbb{T}$, 
+leading to simple separate updates for velocity and pressure. A possible choice for ${\mathbb B}$ is
+\[
+{\mathbb B} = 
+\begin{pmatrix}
+\mathbb{I} & \mathbb{B}_{12} \\
+0 &  \mathbb{B}_{22} 
+\end{pmatrix}
+\]
+and hence 
+\[
+{\mathbb A}\cdot {\mathbb B} = 
+\begin{pmatrix}
+\K & \K \cdot \mathbb{B}_{12} + \G \cdot \mathbb{B}_{22} \\
+\G^T & \G^T \cdot \mathbb{B}_{12}
+\end{pmatrix}
+\]
+Choosing $\mathbb{B}_{12}$ and $\mathbb{B}_{22}$ such that $\K \cdot \mathbb{B}_{12} + \G \cdot \mathbb{B}_{22} =0$ results in the block-triangular form \eqref{simple:eq1}.
+Therefore we choose
+$\mathbb{B}_{12} = - \K^{-1} \cdot \G \cdot \mathbb{B}_{22} $ which leads to:
+\[
+{\mathbb A}\cdot {\mathbb B} 
+= 
+\begin{pmatrix}
+\K & 0 \\
+\G^T & - \G^T \cdot \K^{-1} \cdot \G \cdot \mathbb{B}_{22} 
+\end{pmatrix}
+= 
+\begin{pmatrix}
+\K & 0 \\
+\G^T & - \SSS \cdot \mathbb{B}_{22} 
+\end{pmatrix}
+=
+\begin{pmatrix}
+\mathbb{Q} & 0 \\
+\mathbb{R} & \mathbb{T}
+\end{pmatrix}
+\]
+with $\mathbb{T} = - \SSS \cdot \mathbb{B}_{22}$, $\mathbb{Q}=\K$, $\mathbb{R}=\G^T$ and with $\mathbb{B}_{22}$ still to be chosen.
+
+Various methods result from the choice of $\mathbb{B}_{22}$. We present one of the choices in
+the next section, i.e. the SIMPLE method.
+
+\subsection*{The SIMPLE method}
+
+A method widely known in the literature as the SIMPLE method (Semi-Implicit Method for
+Pressure-Linked Equations) is proposed in \textcite{pasp72} (1972) and discussed in detail in the book by \textcite{patankar1980} (1980). This is perhaps the oldest and most widely used iterative method
+for the Stokes equations. The SIMPLE method is obtained by choosing 
+$\mathbb{B}_{22}={\bm 1}$, so that now $\mathbb{T}=\SSS$ and then
+\[
+{\mathbb A}\cdot {\mathbb B}  
+=
+\begin{pmatrix}
+\K & 0 \\
+\G^T & - \SSS
+\end{pmatrix}
+=
+\begin{pmatrix}
+\K & 0 \\
+\G^T & - \G^T \cdot \K^{-1} \cdot \G 
+\end{pmatrix}
+\]
+where $\SSS$ is the standard Schur complement.
+A splitting ${\mathbb A}\cdot {\mathbb B} = \M-\mathbb{L}$ is defined by
+\[
+\mathbb{M}
+=
+\begin{pmatrix}
+\mathbb{Q} & 0 \\
+\G^T & \mathbb{T}
+\end{pmatrix}
+\]
+where $\mathbb{Q}$ is an approximation to $\K$ (which we will
+denote by $\hat{\mathbb{K}}$)
+and $\mathbb{T}$ is an approximation to $-\SSS$
+(which we will denote by $-\hat{\mathbb{S}}$)
+such that $\mathbb{M}\cdot \vec{x} = \vec{b}$ is easily solvable.
+Then
+\[
+\mathbb{M}=
+\begin{pmatrix}
+\hat{\mathbb{K}} & 0 \\
+\G^T & -\hat{\mathbb{S}}
+\end{pmatrix}
+\]
+where $\hat{\mathbb{K}}$ and $\hat{\mathbb{S}}$ are approximations to $\K$ 
+and $\SSS $ 
+
+For the distribution step in (6.55) $\mathbb{B}$ is approximated by\footnote{In 
+equation 6.65 of the book matrix $\hat{\bm N}$ should read $\hat{\bm N}^{-1}$}
+\[
+{\mathbb B} = 
+\begin{pmatrix}
+{\bm 1} & -\tilde{\K}^{-1} \cdot \G \\
+0 &  {\bm 1} 
+\end{pmatrix}
+\]
+where $\tilde{\mathbb{K}}^{-1}$ is an easy to evaluate approximate inverse of $\K$.
+Depending on the choice of $\tilde{\K}$, $\hat{\mathbb{K}}$ and $\hat{\mathbb{S}}$, 
+various variants of the SIMPLE method are obtained.
+In the original SIMPLE method, one chooses $\tilde{\K} =\text{diag}(\K)$. 
+This makes $\G^T \cdot \tilde{\K}^{-1} \cdot \G$   easy to determine.
+
+Consider now the following algorithm. Using (6.55) we have
+\[
+\vec{b} - \mathbb{A} \cdot \vec{x}^k = 
+\begin{pmatrix}
+\vec{f} \\ \vec{h} 
+\end{pmatrix}
+-
+\begin{pmatrix}
+\K & \G \\
+\G^T & 0
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\vec{\cal V} \\ 
+\vec{\cal P}
+\end{pmatrix}
+= 
+\begin{pmatrix}
+\vec{r}_{\cal V} \\
+\vec{r}_{\cal P}
+\end{pmatrix}
+\]
+After computing the residuals $\vec{r}_{\cal V}$ and $\vec{r}_{\cal P}$ preliminary 
+velocity $\delta \vec{\cal V}$ and pressure $\delta \vec{P}$ corrections 
+are computed by solving subsequently
+\begin{eqnarray}
+\hat{\mathbb{K}}\cdot\delta \vec{\cal V} &=& \vec{r}_V \nn\\
+\hat{\mathbb{S}}\cdot\delta \vec{\cal P} &=&\vec{r}_{\cal P} - \G^T \cdot \delta \vec{\cal V} \nn
+\end{eqnarray}
+In the distribution step new corrections are obtained by
+\[
+\begin{pmatrix}
+\delta \vec{\cal V} -\tilde{\K} \cdot \G \cdot \delta \vec{\cal P} \\
+\delta \vec{\cal P}
+\end{pmatrix}
+\]
+Finally we find the velocity and pressure at next iterative step as
+\begin{eqnarray}
+\vec{\cal V}^{k+1} &=& \vec{\cal V}^{k} + \omega_{\cal V} \delta \vec{\cal V} \nn\\
+\vec{\cal P}^{k+1} &=& \vec{\cal P}^{k} + \omega_{\cal P} \delta \vec{\cal P}
+\end{eqnarray}
+where $\omega_{\cal V}$ and $\omega_{\cal P}$ are relaxation parameters 
+between 0 and 1.
+
+\newpage
+Let us now turn to \textcite{eche13} (2013)
+Note that the same material is also available in \textcite{urvs09} (2009).
+Again I adapt the notations of the original material to fit mine.
+
+The algorithms follows from a block $LU$ decomposition of the coefficient matrix
+\begin{equation}
+\left(\begin{array}{cc}
+\K & \G \\ \G^T & 0  
+\end{array}\right)
+\cdot
+\left(\begin{array}{c}
+\vec{\cal V} \\ \vec{\cal P}
+\end{array}\right)
+=
+\left(\begin{array}{cc}
+\K & 0 \\ \G^T & -\SSS
+\end{array}\right)
+\cdot
+\left(\begin{array}{cc}
+{\bm I} & \K^{-1} \cdot \G \\
+0 & {\bm I} 
+\end{array}\right)
+\cdot
+\left(\begin{array}{c}
+\vec{\cal V} \\ \vec{\cal P}
+\end{array}\right)
+=
+\left(\begin{array}{c}
+\vec{f} \\ \vec{h}
+\end{array}\right)
+\end{equation}
+The approximation $\K^{-1}={\bm D}_\K^{-1}$ in the (2, 2) and (1, 2) block of the
+$L$ and $U$ block matrices, respectively, leads to the SIMPLE algorithm. Solve recursively the
+following systems
+\[
+\begin{pmatrix}
+\K & 0 \\
+\G^T & -\SSS
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\vec{\cal V}^\star \\
+\delta \vec{\cal P}
+\end{pmatrix}
+=
+\begin{pmatrix}
+\vec{f} \\
+\vec{h}
+\end{pmatrix}
+\]
+and
+\[
+\begin{pmatrix}
+{\bm 1} & -{\bm D}_\K^{-1} \cdot \G \\
+0 & {\bm 1}
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\vec{\cal V} \\
+\vec{\cal P}
+\end{pmatrix}
+=
+\begin{pmatrix}
+\vec{\cal V}^\star \\
+\delta \vec{\cal P}
+\end{pmatrix}
+\]
+This method leads to the following Algorithm for the SIMPLE method:
+
+\begin{enumerate}
+\item $\vec{\cal P}$ is given
+\item Solve $\K \cdot \vec{\cal V}^\star = \vec{r}_{\cal V} - \G \cdot \vec{\cal P}  $
+\item Solve $\hat{\SSS} \cdot \delta\vec{\cal P} = \vec{r}_{\cal P} - \G^T \cdot \vec{\cal V}^\star $
+\item Update $\vec{\cal V} = \vec{\cal V}^\star - {\bm D}^{-1} \cdot \G \cdot \delta \vec{\cal P} $
+\item Update $\vec{\cal P} = \vec{\cal P} + \delta \vec{\cal P} $
+\item If not converged go to 2.
+\end{enumerate}
+
+Note that the author sees SIMPLE as a preconditioner and therefore 
+does not implement any relaxation step at the end.
 
 

@@ -93,14 +93,10 @@ block-triangular preconditioner (This is what \aspect does):
 \Literature: Preconditioners for Incompressible Navier-Stokes Solvers 
 \begin{small}
 \begin{itemize}
-\item
-\fullcite{benz02}
-\item
-\fullcite{bewa08}
-\item
-\fullcite{urvs08}
-\item 
-\fullcite{seuv10}
+\item \fullcite{benz02}
+\item \fullcite{bewa08}
+\item \fullcite{urvs08}
+\item \fullcite{seuv10}
 \item Saddle point preconditioners have been extensively discussed and studied \cite{bewa08}, \cite{dewu04}
 \item Diagonal preconditioners in \cite{shrb01}, \cite{babc94}.
 \end{itemize}
@@ -109,31 +105,151 @@ block-triangular preconditioner (This is what \aspect does):
 \Literature: Solving Stokes Saddle Point problem
 \begin{small}
 \begin{itemize}
-\item
-\fullcite{laqu86}
-\item
-\fullcite{rotf90}
-\item
-\fullcite{frha93}
-\item
-\fullcite{elgo94}
-\item
-\fullcite{cheb96}
-\fullcite{elma96}
-\item
-\fullcite{brpv97}
-\item
-\fullcite{lixu01}
-\item
-\fullcite{dogs06}
-\fullcite{lica06}
-\item
-\fullcite{hoow17}
-\item
-Pragmatic solvers for 3D Stokes problems with heterogeneous coefficients \cite{samb20}
+\item \fullcite{laqu86}
+\item \fullcite{rotf90}
+\item \fullcite{frha93}
+\item \fullcite{elgo94}
+\item \fullcite{cheb96}, \fullcite{elma96}
+\item \fullcite{brpv97}
+\item \fullcite{lixu01}
+\item \fullcite{dogs06}, \fullcite{lica06}
+\item \fullcite{hoow17}
+\item Pragmatic solvers for 3D Stokes problems with heterogeneous coefficients \cite{samb20}
 \end{itemize}
 \end{small}
 
+
+
+%------------------------------------------------------------------------------
+\subsection{Block diagonal scaling} \label{sec:block_scaling}
+
+We have already seen in Section~\ref{pscaling} how and why we scale the $\G$ block. 
+We revisit this topic more thoroughly in what follows.
+This section is borrowed from Section~2.6 of \textcite{mamo08} (2008).
+
+Let us state again the equation we wish to solve (Eq. 6 in the paper):
+\[
+\begin{pmatrix}
+\K & \G \\
+\G^T & 0
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+\vec{\cal V} \\
+\vec{\cal P}
+\end{pmatrix}
+=
+\begin{pmatrix}
+\vec{f} \\
+\vec{h}
+\end{pmatrix}
+\]
+
+Prior to solving this equation, the autors apply a row/column scaling to the equation
+to effectively normalize the operators $\K$ and $\G$ with the intention of
+reducing round off errors. The scaling is particularly important for
+problems in geodynamics when dimensional quantities are used to
+define the problem and because of the large, local variations which
+may occur in the constitutive tensor (in practice, the effective viscosity) . 
+
+They apply a symmetric block diagonal scaling to the equation via the scaling matrix\footnote{
+The $S$ stands for 'scaling', the Schur complement is given by $\SSS$}
+\[
+{\bm S} = 
+\begin{pmatrix}
+{\bm S}_1 & 0 \\ 0 & {\bm S}_2
+\end{pmatrix}
+\]
+Writing the first equation as ${\bm A} \cdot \vec{x} = \vec{b}$, 
+the symmetric scaling operation is applied as follows:
+\[
+{\bm S}^{-1} \cdot {\bm A} \cdot \vec{x}= {\bm S}^{-1} \cdot \vec{b} 
+\]
+followed by\footnote{${\bm S}^{-T}$ is the inverse of the transpose of the matrix.} 
+\[
+{\bm S}^{-1} \cdot {\bm A} \cdot {\bm S}^{-T} \cdot {\bm S}^T \cdot \vec{x}= {\bm S}^{-1} \cdot \vec{b} 
+\]
+to give the scaled system ${\bm A}_s \cdot \vec{y}_s = \vec{b}_s$ , where the operator 
+${\bm A}_s$ is given by
+\begin{eqnarray}
+{\bm S}^{-1} \cdot {\bm A} \cdot {\bm S}^{-T} 
+&=&\begin{pmatrix}
+{\bm S}_1^{-1} & 0 \\ 0 & {\bm S}_2^{-1}
+\end{pmatrix}
+\cdot 
+\begin{pmatrix}
+\K & \G \\
+\G^T & 0
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+{\bm S}_1^{-T} & 0 \\ 0 & {\bm S}_2^{-T}
+\end{pmatrix} \nn\\
+&=&
+\begin{pmatrix}
+{\bm S}_1^{-1} \cdot \K \cdot {\bm S}_1^{-T} & {\bm S}_1^{-1} \cdot \G \cdot {\bm S}_2^{-T} \\
+({\bm S}_1^{-1} \cdot \G \cdot {\bm S}_2^{-T})^{T} & 0 
+\end{pmatrix} \nn\\
+&=&
+\begin{pmatrix}
+\K_s & \G_s \\
+\G^T_s & 0
+\end{pmatrix} \nn\\
+&=&{\bm A}_s \nn
+\end{eqnarray}
+with
+\[
+{\bm S}^T \cdot \vec{x} 
+= 
+\begin{pmatrix}
+{\bm S}_1^T \cdot \vec{\cal V} \\
+{\bm S}_2^T \cdot \vec{\cal P}
+\end{pmatrix}
+=\vec{y}_s
+\qquad\qquad
+{\bm S}^{-1} \cdot \vec{b} = 
+\begin{pmatrix}
+{\bm S}_1^{-1}\cdot\vec{f} \\
+{\bm S}_2^{-1}\cdot\vec{h}
+\end{pmatrix}
+=\vec{b}_s
+\]
+Following the solution of the scaled system, we recover the un-scaled
+solution from $\vec{x} = {\bm S}^{-T} \cdot  \vec{y}_s$. 
+The form of the scaling operation is based
+on the preconditioner described in Rusten and Winther (1992). For
+the purpose of scaling, rather than full preconditioning of the indefinite system, 
+we let both ${\bm S}_1$ and ${\bm S}_2$ be diagonal matrices. We seek
+to approximately normalize the operators $\K$ and $\G$.
+
+Thus we let 
+\[
+S_1(i,i) = \sqrt{ \max_j K_{ij}} \qquad \forall i \in [1,NfemV]
+\]
+The choice for ${\bm S}_2$ is based on the requirement that $\G^T_s\cdot \G_s \simeq {\bm 1}_{Nfemp}$ (i.e.
+the identity matrix of size $NfemP\times NfemP$) which yields the relation
+\[
+\G^T_s \cdot \G = ({\bm S}_1^{-1} \cdot \G \cdot {\bm S}_2^{-T})^T 
+\cdot ({\bm S}_1^{-1} \cdot \G \cdot {\bm S}_2^{-T} )
+= {\bm S}_2^{-1} \cdot \G^T \cdot {\bm S}_1^{-T} \cdot {\bm S}_1^{-1} \cdot \G \cdot {\bm S}_2^{-T} = {\bm 1}
+\]
+We can left multiply by ${\bm S}_2$ and right multiply by  ${\bm S}_2^T$ to obtain
+\[
+\G^T \cdot {\bm S}_1^{-T} \cdot {\bm S}_1^{-1} \cdot \G = {\bm S}_2 \cdot {\bm S}_2^T
+\]
+We can approximately satisfy this equation if we first define the vector $\vec{g}$ of size $NfemV$
+\[
+g_i = \max_j(G_{ij}) 
+\]
+and then let
+\[
+S_2(i,i)=\frac{1}{NfemV} \sqrt{ \left( \sum_k S_1^2(k,k) \right)   \vec{g}_i \cdot \vec{g}_i}
+\]
+Note that in the paper the above equation (their eq.37) does not contain any $i$ in the rhs, 
+which is probably missing from the $\vec{g}$ vectors.
+
+
+{\color{red} sent email to Dave May 15/01/2026}
 
 
 
@@ -716,27 +832,12 @@ the Schur complement equation takes the form:
 \end{itemize}
 \end{mdframed}
 
-Following Zhong \etal \cite{zhym12} one can define the following matrix as preconditioner:
-\[
-{\bm M} = diag \left[ \G^T (diag [\K]  )^{-1} \G \right]
-\]
-which is the preconditioner used for the Citcom codes. It 
-can be constructed while the FEM matrix is being built/assembled
-and it is trivial to invert. The entries in
-$diag[\K]$ are the average viscosity in the elements associated
-with a given degree of freedom.
+Preconditioners of the Schur complement matrix are discussed in Section~\ref{sec:precond_S}
 
-Another very cheap way of building ${\bm M}$ for $Q_1\times P_0$ elements 
-is to realise that the matrix $\SSS$ has dimensions element surface/volume 
-divided by viscosity. We can then postulate 
-\[
-M_{e,e} = \frac{|\Omega|_e}{\eta_e} 
-\]
-where $e$ is an element and $\eta_e$ is the (average viscosity) inside the element.
-For higher order elements, we need to use the pressure mass matrix.
 
-These two preconditioners and two other variants are implemented in \stone 16 for 
-$Q_1\times P_0$ elements.
+
+
+
 
 
 \newpage
@@ -1108,6 +1209,122 @@ See GR and MSc thesis of Carmen Spronk for context. FINISH!
 \item \fullcite{wade04}
 \item \fullcite{utne08}
 \end{itemize}
+
+
+%--------------------------------------------------------------------------------
+\subsection{Preconditioners of the Schur complement matrix} \label{sec:precond_S}
+
+
+Following Zhong \etal \cite{zhym12} one can define the following matrix as preconditioner:
+\[
+{\bm M} = \text{diag} \left[ \G^T (\text{diag} [\K]  )^{-1} \G \right]
+\]
+which is the preconditioner used for the Citcom codes. It 
+can be constructed while the FEM matrix is being built/assembled
+and it is trivial to invert. The entries in
+$\text{diag}[\K]$ are the average viscosity in the elements associated
+with a given degree of freedom.
+
+Another very cheap way of building ${\bm M}$ for $Q_1\times P_0$ elements 
+is to realise that the matrix $\SSS$ has dimensions element surface/volume 
+divided by viscosity. We can then postulate 
+\[
+M_{e,e} = \frac{|\Omega|_e}{\eta_e} 
+\]
+where $e$ is an element and $\eta_e$ is the (average viscosity) inside the element.
+For higher order elements, we need to use the pressure mass matrix.
+
+These two preconditioners and two other variants are implemented in \stone 16 for 
+$Q_1\times P_0$ elements.
+
+Digging further in the literature we find the article by \textcite{mamo08} (2008).
+In what follows I focus on their Section 3.1:  we consider 4 different Schur complement 
+preconditioners\footnote{the authors present a different type in the form of ``approximate commutator''
+in section 3.2 of the paper, with BFBt, etc ...}.
+What follows is entirely borrowed from the paper.
+Let us recall that the Schur complement matrix $\SSS$ is given by $\SSS=\G^T \cdot \K^{-1} \cdot \G$.
+
+\begin{enumerate}
+%----
+\item One of the earliest Schur complement preconditioners was given by 
+\textcite{verf84} (1984) who showed that the pressure mass matrix 
+$\M_p$ is spectrally equivalent to the Schur complement when the viscosity 
+$\eta=\eta_0$ is constant, thus giving rise to the Schur complement preconditioner
+\[
+\hat{\SSS}=\eta_0 \M_p^{-1}
+\]
+The same preconditioner was derived by \textcite{cach88} (1988) (when Re → 0) [...]. 
+See \textcite{begl05} (2005) for more details. In the case of variable viscosity 
+Stokes flow, one may consider defining a preconditioner 
+for $\SSS$ based on a scaling each row in $\M_p$ by the local viscosity, i.e.
+\[
+\hat{\SSS}_0={\bm N} \cdot \M_p
+\]
+where ${\bm N}$ is a diagonal matrix of size $NfemP \times NfemP$ containing the scaling due to
+a variable viscosity. For finite element computations, ${\bm N}$ could be defined as
+\[
+{\bm N} = \sum_e^{n_{el}} \bar{\eta}^e {\bm 1}_{m_p} 
+\]
+in which $n_{el}$ is the number of elements, $m_p$ is the number of pressure nodes per 
+element and $ \bar{\eta}^e$ is the element averaged viscosity. The sum sign above is 
+to be understood as the assembly operator.
+
+%----
+\item Several other preconditioners for $\SSS$ that are suitable for capturing 
+local viscosity variations can be constructed by letting 
+$\hat{\K}^{-1}=(\text{diag}(\K))^{-1} ={\bm D}_\K^{-1}$.
+The first one is 
+\[
+\hat{\SSS}_1=\G^T \cdot {\bm D}_\K^{-1} \cdot \G
+\]
+which was first introduced in Carriere and Jeandel (1991) to study thermoconvective ﬂows. 
+In their experiments, this preconditioner was found to outperform the preconditioner 
+of Cahouet and Chabard (1988). Since only the diagonal of $\K$ is considered, this preconditioner
+matrix can be explicitly computed. {\color{red} link to somewhere !}
+
+To define $\vec{z} = \hat{\SSS}^{-1}\cdot \vec{r}$ one could
+either employ a factorization (incomplete or exact), or use a Krylov
+method to solve $\hat{\SSS} \cdot \vec{z}= \vec{r}$. As $\hat{\SSS}$ is used to define a preconditioner,
+a low accuracy solve may be employed provided the outer Krylov method permits variable preconditioning.
+
+
+%----
+\item A simpler approximation would be to let
+\[
+\hat{\SSS}_2 = \text{diag}( \G^T \cdot {\bm D}_\K^{-1} \cdot \G)
+\]
+for which the inverse can be explicitly computed very efﬁciently.
+
+%----
+\item When using finite elements, we have the possibility of defining
+an element based Schur complement $\hat{\SSS}^e$ and assemble these local
+contributions into a global preconditioner matrix $\hat{\SSS}$ according to:
+\[
+\hat{\SSS}_3=\sum_e \hat{\SSS}^e
+\qquad \text{with}
+\qquad 
+\hat{\SSS}^e = (\G^T)^e \cdot (D_\K^e)^{-1} \cdot \G^e
+\]
+When using discontinuous pressure elements, the elemental
+pressure unknowns are decoupled from one another yielding a
+block diagonal sparsity pattern, where the block size is given by
+the number of pressure nodes per element $m_p$. This particular nonzero 
+structure enables $\hat{\SSS}^{-1}$ to be constructed very efficiently as we
+can directly assemble the inverse preconditioner via
+\[
+\hat{\SSS}_4^{-1} = \sum_e (\hat{\SSS}^e)^{-1}.
+\]
+
+FINISH FINISH!!
+If we use $Q_1\times P_0$ shape functions which yield a block diagonal matrix
+$\hat{\SSS}_3$ with block size 1, (i.e. diagonal) and is thus easily inverted. The
+preconditioners $\hat{\SSS}_3^{-1}$ and $\hat{\SSS}_4^{-1}$ are implemented in the 
+mantle convection code CITCOM \cite{moso95}, with $\hat{\SSS}_4^{-1}$ being used as the default. 
+
+
+\end{enumerate}
+
+
 
 
 
