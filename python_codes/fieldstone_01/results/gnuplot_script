@@ -1,3 +1,4 @@
+#
 set term pdf enhanced font "Times,12pt"
 set grid
 set xlabel 'x'
@@ -16,10 +17,10 @@ set log xy
 set xlabel 'h'
 set ylabel 'error'
 set format y "10^{%L}"
-plot[][]\
-'errors' u (1./sqrt($3)):6 w lp ps .5 t 'velocity',\
-'errors' u (1./sqrt($3)):9 w lp ps .5 t 'pressure',\
-x**2/10. w l lt -1 dashtype 2 t 'x^2',\
+plot[0.01:][]\
+'errors.ascii' u (1./sqrt($3)):6 w lp ps .5 t 'velocity',\
+'errors.ascii' u (1./sqrt($3)):9 w lp ps .5 t 'pressure',\
+x**2/40. w l lt -1 dashtype 2 t 'x^2',\
 x**1/10. w l lt -1 dashtype 3 t 'x^1'
 
 #################################################

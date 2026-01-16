@@ -1,35 +1,35 @@
+#
 set term pdf enhanced font "Times,12pt"
 set grid
 set key outside
-
 set log xy
 
+###############################################################################
 set xlabel 'Nfem'
-set ylabel 'time (s)'
+set ylabel 'build FE matrix time (s)'
 
 set output 'timings_build.pdf'
 plot[][:]\
-'build'          u 8:4 w lp ps .2 t 'build - julia',\
-'../build'       u 8:4 w lp ps .2 t 'build - python',\
-x**1.1/7000 lt -1 dt 2  t 'x^{1.1}',\
+'build'          u 8:4 w lp ps .2 t 'julia',\
+'../build.ascii' u 8:4 w lp ps .2 t 'python',\
+x**1.075/7000 lt -1 dt 2  t 'x^{1.075}',\
 0.75 lt -1 dt 4 notitle
+
+###############################################################################
+set ylabel 'solve time (s)'
 
 set output 'timings_solve.pdf'
 plot[][0.004:2]\
-'solve_default'   u 8:4 w lp ps .12 t 'solve - julia (default)',\
-'solve_cholesky'  u 8:4 w lp ps .12 t 'solve - julia (cholesky)',\
-'solve_cholesky2' u 8:4 w lp ps .12 t 'solve - julia (cholesky) 2',\
-'solve_ldlt'      u 8:4 w lp ps .12 t 'solve - julia (ldlt)',\
-'solve_lu'        u 8:4 w lp ps .12 t 'solve - julia (lu)',\
-'solve_lu2'       u 8:4 w lp ps .12 t 'solve - julia (lu) 2',\
-'../solve'        u 8:4 w lp ps .12 t 'solve - python',\
+'solve_default'   u 8:4 w lp ps .12 t 'julia (default)',\
+'solve_cholesky'  u 8:4 w lp ps .12 t 'julia (cholesky)',\
+'solve_cholesky2' u 8:4 w lp ps .12 t 'julia (cholesky) 2',\
+'solve_ldlt'      u 8:4 w lp ps .12 t 'julia (ldlt)',\
+'solve_lu'        u 8:4 w lp ps .12 t 'julia (lu)',\
+'solve_lu2'       u 8:4 w lp ps .12 t 'julia (lu) 2',\
+'../solve.ascii'  u 8:4 w lp ps .12 t 'python',\
 x**1.666/7000000 lt -1 dt 2  t 'x^{1.66}'
 
-
-
-
-
-#################################################
+###############################################################################
 
 set output 'errors.pdf'
 set log xy
@@ -41,3 +41,6 @@ plot[][]\
 'errors' u (1./sqrt($3)):9 w lp ps .25 t 'pressure',\
 x**2/10. w l lt -1 dashtype 2 t 'x^2',\
 x**1/10. w l lt -1 dashtype 3 t 'x^1'
+
+
+###############################################################################

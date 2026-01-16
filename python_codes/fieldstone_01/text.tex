@@ -1,9 +1,10 @@
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_01/text.tex}} \end{flushright}
-
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_01/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -18,16 +19,20 @@
 {\sl The julia stone was developed by Jort Jansen.}. \index{contributors}{J. Jansen}
 
 \par\noindent\rule{\textwidth}{0.4pt}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\index{stopics}{$Q_1\times P_0$}
-\index{stopics}{Donea \& Huerta mms}
+Last revision: January 16th, 2026.
 
-This benchmark is taken from Donea \& Huerta (2003) \cite{dohu03} and is described fully in section \ref{MMM-mms1}. 
-In order to illustrate the behavior of selected mixed finite elements in the solution 
-of stationary Stokes flow,  we consider a two-dimensional problem 
-in the square domain $\Omega=[0,1]\times[0,1]$, which possesses a closed-form analytical 
-solution. 
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This benchmark is taken from the book by \textcite{dohu03} (2003) and is described fully in 
+section \ref{MMM-mms1}. We here consider a stationary Stokes flow in the two-dimensional 
+square domain $\Omega=[0,1]\times[0,1]$, which possesses a closed-form analytical solution. 
+
+By means of the bash script {\tt script\_errors} we run the code with resolutions 
+ranging from $8\times 8$ elements up to $80\times 80$ and record the 
+velocity and pressure discretisation errors:
 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_01/results/errors.pdf}\\
@@ -35,10 +40,15 @@ solution.
 linear convergence for pressure error, as expected.}
 \end{center}
 
+We further plot the pressure field as a function of $x$ only against the analytical 
+solution and we find good agreement:
+
 \begin{center}
-\includegraphics[width=11cm]{python_codes/fieldstone_01/results/pressure.pdf}\\
-{\captionfont Pressure field}
+\includegraphics[width=11cm]{python_codes/fieldstone_01/results/pressure.pdf}
 \end{center}
+
+Although we will see in subsequent \stone how to export data in the {.vtu} 
+format we here rely on matplotlib and the following figure is autmatically generated:
 
 \begin{center}
 \includegraphics[width=16cm]{python_codes/fieldstone_01/results/solution.pdf}
@@ -50,7 +60,7 @@ at many depths I simply take an arithmetic average over rows of nodes. At high r
 converge to the analytical profiles for the individual components and to the results 
 obtained with \aspect. Please check \stone~\ref{f110} for a better implementation.
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_01/results/vel_profile}\\
+\includegraphics[width=14cm]{python_codes/fieldstone_01/results/vel_profile}\\
 {\captionfont Vertical average of velocity. \aspect was run with the 'depth average' postprocessor
 added to the prm file.}
 \end{center}
@@ -58,9 +68,8 @@ added to the prm file.}
 \newpage
 \subsection*{About the Fortran code}
 
-I wrote the first ever version of this \stone in
-Fortran90 around 2011. It is available in the {\foldernamefont simplefem} folder in this stone.
-\index{general}{fortran90}
+I wrote the first ever version of this \stone in Fortran90 around 2011. 
+It is available in the {\tt simplefem} folder in this stone.
 
 The code can be compiled as follows:
 \begin{verbatim}
@@ -77,8 +86,8 @@ set of subroutine from BLAS and LinPACK\footnote{\url{https://en.wikipedia.org/w
 {\captionfont Despite a very naive application of the boundary conditions to the entire
 assembled FE matrix, we find here that this part of the code is not taking long at all.}
 \end{center}
-There is no export of the results to ParaView format, only ascii text files.
-
+There is no export of the results to ParaView format, only ascii files to be later 
+processed by means of Gnuplot (for example).
 
 
 \newpage
@@ -93,39 +102,37 @@ and for instance $96\times 96$ yields to a crash.
 
 In this version the matrix is stored as a full array. 
 Before the linear system is solved, however, we must convert it to sparse storage:
-\begin{verbatim}
+\begin{lstlisting}
 Sps_amat=sparse(a_mat)
-\end{verbatim}
+\end{lstlisting}
 When it comes to the solve, we have various options. The first and most 
 simple one is similar to Matlab's backslash:
-\begin{verbatim}
+\begin{lstlisting}
 sol= Sps_amat\rhs
-\end{verbatim}
+\end{lstlisting}
 Another possibility is cholesky\footnote{This method uses the CHOLMOD library from SuiteSparse:
 \url{https://people.engr.tamu.edu/davis/suitesparse.html}} or ldlt or lu:
-\begin{verbatim}
+\begin{lstlisting}
 sol= cholesky(Sps_amat)\rhs
 sol= ldlt(Sps_amat)\rhs
 sol= lu(Sps_amat)\rhs
-\end{verbatim}
+\end{lstlisting}
 
+The computed errors are of course identical to those of the python codes:
+\begin{center}
+\includegraphics[width=11cm]{python_codes/fieldstone_01/results/julia/errors.pdf}\\
+\end{center}
 
-The computed errors are of course identical to those of the python codes but we find that
-at low resolutions the python code is much faster than the julia code: 
-this is likely due to the time taken by julia to compile the code.
- 
+We find that at low resolutions the python code is much faster than the julia code: 
+this is likely due to the time taken by julia to (on the fly) compile the code.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_01/results/julia/timings_build.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_01/results/julia/timings_solve.pdf}\\
-\includegraphics[width=11cm]{python_codes/fieldstone_01/results/julia/errors.pdf}\\
 {\captionfont Matrix building and solving times as obtained for nelx from 8 until 80, each 
 resolution being run 10 times.}
 \end{center}
 
 We find that the LU-based solver is the fasted in this case.
-
-
-
 
 
