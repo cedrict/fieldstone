@@ -2,10 +2,9 @@
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_04/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -13,8 +12,12 @@
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\index{stopics}{$Q_1\times P_0$}
+
+Last revision: January 17th, 2026.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The lid driven cavity is a famous Computational Fluid Dynamics test case 
 \cite{kawa61,ghgs82,paac67,bope98,brsa06,grdn97,shde00}
@@ -47,7 +50,9 @@ prescribing the horizontal velocity of the lid as follows:
 \begin{equation}
 u(x)=16x^2(1-x)^2.
 \end{equation}
-In this case the velocity and its first derivative is continuous at the corners. This is the so-called regularised lid-driven cavity problem \cite{piva94}. The factor 16 ensures that $\max\limits_{[0,1]}(u)=1$.
+In this case the velocity and its first derivative is continuous at the corners. 
+This is the so-called regularised lid-driven cavity problem \cite{piva94}. 
+The factor 16 ensures that $\max\limits_{[0,1]}(u)=1$.
  
 %---------------------------------------------------------
 \subsection*{The lid driven cavity problem - regularisation II ({\tt ldc=2})}
@@ -55,10 +60,9 @@ In this case the velocity and its first derivative is continuous at the corners.
 Another regularisation was presented in de Frutos \etal \cite{dejn16} and 
 also in Appendix D.4 of \textcite{john16} (2016). 
 Here, a regularized lid driven cavity is studied which is consistent in the sense that 
-${\bm \nabla}\cdot{\bm v}=0$ 
+${\bm \nabla}\cdot \vec{\upnu}=0$ 
 holds also at the corners of the domain.
 There are no-slip conditions at the boundaries $x=0$, $x=1$, and $y=0$. 
-
 The velocity at $y=1$ is given by
 
 \begin{eqnarray}
@@ -68,10 +72,16 @@ u(x) &=& 1-\frac{1}{4}\left( 1-\cos (\frac{x-(1-x_1)}{x_1}\pi)  \right)^2   \qua
 \end{eqnarray}
 Results are obtained with $x_1=0.1$.
 
-
 A 100$\times$100 element grid is used. 
 A zero vertical velocity is prescribed at the top and the exact form of the 
 prescribed horizontal velocity is controlled by the {\tt ldc} parameter.
+
+%---------------------------------------------------------------------
+\subsection*{Results}
+
+We plot the pressure field on the top boundary on the domain. 
+We plot the elemental pressure $p$ and also the pressure $q$
+obtained by means of a projection of $p$ onto the V-nodes.
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_04/results/p.pdf}
