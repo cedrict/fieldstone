@@ -1,7 +1,7 @@
 import numpy as np
 import sys as sys
-import scipy.sparse as sps
 import time as clock 
+import scipy.sparse as sps
 import matplotlib.pyplot as plt
 
 ###############################################################################
@@ -21,7 +21,6 @@ def viscosity(x,y):
     return val
 
 ###############################################################################
-#160x160 is maximum resolution for full square on 32Gb RAM laptop
 
 eps=1.e-10
 sqrt3=np.sqrt(3.)
@@ -113,15 +112,15 @@ for j in range(0,nely):
         icon_V[3,counter]=i+(j+1)*(nelx+1)
         counter += 1
 
-# for iel in range (0,nel):
-#     print ("iel=",iel)
-#     print ("node 1",icon[0,iel],"at pos.",x[icon[0,iel]], y[icon[0,iel]])
-#     print ("node 2",icon[1,iel],"at pos.",x[icon[1,iel]], y[icon[1,iel]])
-#     print ("node 3",icon[2,iel],"at pos.",x[icon[2,iel]], y[icon[2,iel]])
-#     print ("node 4",icon[3,iel],"at pos.",x[icon[3,iel]], y[icon[3,iel]])
+if debug:
+   for iel in range (0,nel):
+       print ("iel=",iel)
+       print ("node 1",icon_V[0,iel],"at pos.",x_V[icon_V[0,iel]], y_V[icon_V[0,iel]])
+       print ("node 2",icon_V[1,iel],"at pos.",x_V[icon_V[1,iel]], y_V[icon_V[1,iel]])
+       print ("node 3",icon_V[2,iel],"at pos.",x_V[icon_V[2,iel]], y_V[icon_V[2,iel]])
+       print ("node 4",icon_V[3,iel],"at pos.",x_V[icon_V[3,iel]], y_V[icon_V[3,iel]])
 
 print("setup: connectivity: %.3f s" % (clock.time()-start))
-
 
 ###############################################################################
 # define boundary conditions
@@ -180,13 +179,13 @@ A_fem=np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
 b_fem=np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
 B=np.zeros((3,ndof_V*m_V),dtype=np.float64)   # gradient matrix B 
 N_V=np.zeros(m_V,dtype=np.float64)            # shape functions
-dNdx_V=np.zeros(m_V,dtype=np.float64)            # shape functions derivatives
-dNdy_V=np.zeros(m_V,dtype=np.float64)            # shape functions derivatives
-dNdr_V=np.zeros(m_V,dtype=np.float64)            # shape functions derivatives
-dNds_V=np.zeros(m_V,dtype=np.float64)            # shape functions derivatives
+dNdx_V=np.zeros(m_V,dtype=np.float64)         # shape functions derivatives
+dNdy_V=np.zeros(m_V,dtype=np.float64)         # shape functions derivatives
+dNdr_V=np.zeros(m_V,dtype=np.float64)         # shape functions derivatives
+dNds_V=np.zeros(m_V,dtype=np.float64)         # shape functions derivatives
+jcb=np.zeros((2,2),dtype=np.float64)
 H=np.array([[1,1,0],[1,1,0],[0,0,0]],dtype=np.float64) 
 C=np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
-jcb=np.zeros((2,2),dtype=np.float64)
 
 for iel in range(0,nel):
 
@@ -287,14 +286,18 @@ for iel in range(0,nel):
     # assemble matrix and right hand side 
     for k1 in range(0,m_V):
         for i1 in range(0,ndof_V):
-            ikk=ndof_V*k1          +i1
+            ikk=ndof_V*k1+i1
             m1 =ndof_V*icon_V[k1,iel]+i1
             for k2 in range(0,m_V):
                 for i2 in range(0,ndof_V):
-                    jkk=ndof_V*k2          +i2
+                    jkk=ndof_V*k2+i2
                     m2 =ndof_V*icon_V[k2,iel]+i2
                     A_fem[m1,m2]+=A_el[ikk,jkk]
+                #end for
+            #end for
             b_fem[m1]+=b_el[ikk]
+        #end for
+    #end for
 
 print("Build FE matrix: %.5f s | Nfem= %d" % (clock.time()-start,Nfem))
 
@@ -315,8 +318,9 @@ for i in range(0, Nfem):
            A_fem[i,i] = A_femref
        b_fem[i]=A_femref*bc_val_V[i]
 
-#print("A_fem (m,M) = %.4e %.4e" %(np.min(A_fem),np.max(A_fem)))
-#print("b_fem (m,M) = %.4e %.4e" %(np.min(b_fem),np.max(b_fem)))
+if debug:
+   print("A_fem (m,M) = %.4e %.4e" %(np.min(A_fem),np.max(A_fem)))
+   print("b_fem (m,M) = %.4e %.4e" %(np.min(b_fem),np.max(b_fem)))
 
 print("impose b.c.: %.3f s" % (clock.time()-start))
 
@@ -325,7 +329,7 @@ print("impose b.c.: %.3f s" % (clock.time()-start))
 ###############################################################################
 start=clock.time()
 
-sol = sps.linalg.spsolve(sps.csr_matrix(A_fem),b_fem)
+sol=sps.linalg.spsolve(sps.csr_matrix(A_fem),b_fem)
 
 print("Solve linear system: %.5f s | Nfem= %d " % (clock.time()-start,Nfem))
 
@@ -355,7 +359,7 @@ exx=np.zeros(nel,dtype=np.float64)
 eyy=np.zeros(nel,dtype=np.float64)  
 exy=np.zeros(nel,dtype=np.float64)  
 eta=np.zeros(nel,dtype=np.float64)  
-dens=np.zeros(nel,dtype=np.float64)  
+rho=np.zeros(nel,dtype=np.float64)  
 
 for iel in range(0,nel):
 
@@ -393,7 +397,7 @@ for iel in range(0,nel):
     y_e[iel]=np.dot(N_V,y_V[icon_V[:,iel]])
 
     eta[iel]=viscosity(x_e[iel],y_e[iel])
-    dens[iel]=density(x_e[iel],y_e[iel])
+    rho[iel]=density(x_e[iel],y_e[iel])
 
     exx[iel]=np.dot(dNdx_V[:],u[icon_V[:,iel]])
     eyy[iel]=np.dot(dNdy_V[:],v[icon_V[:,iel]])
@@ -409,7 +413,7 @@ print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 print("     -> eta (m,M) %.4f %.4f " %(np.min(eta),np.max(eta)))
-print("     -> dens (m,M) %.4f %.4f " %(np.min(dens),np.max(dens)))
+print("     -> rho (m,M) %.4f %.4f " %(np.min(rho),np.max(rho)))
 
 if debug:
    np.savetxt('pressure.ascii',np.array([x_e,y_e,p]).T,header='# x,y,p')
@@ -442,8 +446,6 @@ for iel in range (0,nel):
             jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
             jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
             JxWq=np.linalg.det(jcb)*weightq
-            xq=np.dot(N_V,x_V[icon_V[:,iel]])
-            yq=np.dot(N_V,y_V[icon_V[:,iel]])
             uq=np.dot(N_V,u[icon_V[:,iel]])
             vq=np.dot(N_V,v[icon_V[:,iel]])
             vrms+=(uq**2+vq**2)*JxWq
@@ -452,21 +454,20 @@ vrms=np.sqrt(vrms/Lx/Ly)
 
 print("compute vrms: %.3f s" % (clock.time()-start))
 
-#####################################################################
 ###############################################################################
 # export various measurements for stokes sphere benchmark 
 ###############################################################################
-#####################################################################
 start=clock.time()
 
 vel=np.sqrt(u**2+v**2)
-print('bench ',Lx/nelx,nel,Nfem,\
-      np.min(u),np.max(u),\
-      np.min(v),np.max(v),\
-      0,0,\
-      np.min(vel),np.max(vel),\
-      np.min(p),np.max(p),
-      vrms)
+
+print('bench ',Lx/nelx,nel,Nfem, # 1,2,3,4
+      np.min(u),np.max(u),       # 5,6
+      np.min(v),np.max(v),       # 7,8
+      0,0,                       # 9,10 
+      np.min(vel),np.max(vel),   # 11,12
+      np.min(p),np.max(p),       # 13,14
+      vrms)                      # 15
 
 print("measurements: %.3f s" % (clock.time()-start))
 
@@ -514,7 +515,7 @@ for iel in range (0,nel):
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='density' Format='ascii'> \n")
 for iel in range (0,nel):
-    vtufile.write("%e \n" % dens[iel])
+    vtufile.write("%e \n" % rho[iel])
 vtufile.write("</DataArray>\n")
 vtufile.write("</CellData>\n")
 #####
