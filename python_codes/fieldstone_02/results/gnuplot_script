@@ -1,0 +1,30 @@
+#
+set term pdf
+set pointsize .4
+set key outside
+set grid
+
+set xlabel 'h_x'
+set log x
+
+set output 'u.pdf'
+plot[][]\
+'statistics.ascii' u 2:5 w lp t 'u',\
+'statistics.ascii' u 2:6 w lp notitle
+
+set output 'v.pdf'
+plot[][]\
+'statistics.ascii' u 2:7 w lp t 'v',\
+'statistics.ascii' u 2:8 w lp notitle
+
+set output 'vrms.pdf'
+plot[][]\
+'statistics.ascii' u 2:15 w lp notitle 
+
+set log xy
+set xlabel 'Nfem'
+set ylabel 'time(s)'
+set output 'solve_time.pdf'
+plot[][]\
+'solve_time.ascii' u 8:4 w lp notitle,\
+x**1.85/38000000 lt -1 dt 2  t 'x^{1.85}'

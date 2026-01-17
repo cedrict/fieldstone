@@ -1,8 +1,8 @@
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_02/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -10,31 +10,46 @@
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\index{stopics}{$Q_1\times P_0$}
+Last revision: January 17th, 2026.
 
-This stone carries out the benchmark of Section~\ref{MMM-ss:stokes_sphere2D}
-with $Q_1\times P_0$ elements using the penalty formulation.
-The domain is a unit square and the fluid is characterised 
-by $\rho=1$ and $\eta=1$ 
-while the sphere is characterised 
-by $\rho=1.01$ and $\eta=1000$.
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This stone carries out the benchmark of Section~\ref{MMM-ss:stokes_sphere2D} (see manual.pdf)
+with $Q_1\times P_0$ elements using the penalty formulation. 
+The physical domain is a unit square and the fluid is characterised 
+by $\rho=1$ and $\eta=1$ while the sphere is characterised by $\rho=1.01$ and $\eta=1000$.
+\begin{lstlisting}
+def density(x,y):
+    if (x-.5)**2+(y-0.5)**2<0.123456789**2:
+       val=1.01
+    else:
+       val=1.
+    return val
+
+def viscosity(x,y):
+    if (x-.5)**2+(y-0.5)**2<0.123456789**2:
+       val=1.e3
+    else:
+       val=1.
+    return val
+\end{lstlisting}
+
 The gravity vector is $\vec{g}=(0,-1)$. 
-
-Boundary conditions are free slip on all sides ({\tt bc\_type=0}), 
-no slip on all sides ({\tt bc\_type=1}) or free slip on the sides and bottom and open 
-on top ({\tt bc\_type=2}).
+Boundary conditions are free slip on all sides (\lstinline{bc_type=0}), 
+no slip on all sides (\lstinline{bc_type=1}) or free slip on the sides and bottom and open 
+on top (\lstinline{bc_type=2}).
 Viscosity and density directly computed at the quadrature points.
 The results are presented in Section~\ref{MMM-ss:stokes_sphere2D} and compared to 
 those obtained with other codes.
 
 Also, because of the inherent symmetry we can solve the system 
-on only half the domain:
+on only half the domain (\lstinline{half=True}):
 \begin{center}
-\includegraphics[width=4cm]{python_codes/fieldstone_02/results/eta_1}
-$\rightarrow$
-\includegraphics[width=4cm]{python_codes/fieldstone_02/results/eta_2}
+\includegraphics[width=6cm]{python_codes/fieldstone_02/results/eta_1}
+\includegraphics[width=6cm]{python_codes/fieldstone_02/results/eta_2}
 \end{center}
 
 \newpage
@@ -57,5 +72,14 @@ $\rightarrow$
 {\captionfont Results on a $32\times 64$ grid. Top is free-slip, 
 middle is no-slip, bottom is open top.}
 \end{center}
+
+
+\begin{center}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_02/results/u.pdf}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_02/results/v.pdf}
+\includegraphics[width=5.4cm]{python_codes/fieldstone_02/results/vrms.pdf}\\
+{\captionfont bc\_type=2, half=True}
+\end{center}
+
 
 
