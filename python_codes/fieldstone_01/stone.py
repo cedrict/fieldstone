@@ -64,7 +64,6 @@ print("*******************************")
 print("********** stone 001 **********")
 print("*******************************")
 
-# declare variables
 print("variable declaration")
 
 m_V=4     # number of nodes making up an element
@@ -457,8 +456,6 @@ for iel in range (0,nel):
             yq=np.dot(N_V,y_V[icon_V[:,iel]])
             uq=np.dot(N_V,u[icon_V[:,iel]])
             vq=np.dot(N_V,v[icon_V[:,iel]])
-            dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V
-            dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V
             errv+=((uq-velocity_x(xq,yq))**2+(vq-velocity_y(xq,yq))**2)*JxWq
             errp+=(p[iel]-pressure(xq,yq))**2*JxWq
 
