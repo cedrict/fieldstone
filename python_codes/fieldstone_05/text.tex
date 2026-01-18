@@ -3,10 +3,9 @@
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_05/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -16,25 +15,25 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: August 30th, 2025.
+Last revision: January 18th, 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The experiment is fully described in Section~\ref{MMM-ss:solcx}.
-The viscosity is prescribed at the quadrature points 
+The experiment is fully described in Section~\ref{MMM-ss:solcx} (see {\tt manual.pdf}).
+The viscosity and desnity are prescribed at the quadrature points. 
 If the number of elements is even in the $x$-direction direction, all elements 
 (and their associated quadrature points)
 have a constant viscosity ($1$ or  $10^6$). If it is odd, then the elements situated 
 at the viscosity jump have half their integration points with $\eta=1$ and half 
-with $\eta=10^6$ 
-(which is a pathological case since the used quadrature rule inside elements cannot represent 
-accurately such a jump).  
+with $\eta=10^6$ (which is a pathological case since the used quadrature rule inside 
+elements cannot represent accurately such a jump).  
 
+We can run the code for a wide range of resolution and look at the discretisation errors:
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_05/results/errors_even.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_05/results/errors_odd.pdf}\\
+\includegraphics[width=8.2cm]{python_codes/fieldstone_05/results/errors_even.pdf}
+\includegraphics[width=8.2cm]{python_codes/fieldstone_05/results/errors_odd.pdf}\\
 {\captionfont Velocity and pressure error convergence as a function of mesh size and for various values
 of the penalty parameter. Left: even number of elements in each direction; Right: odd numbers.
 }
@@ -43,7 +42,7 @@ of the penalty parameter. Left: even number of elements in each direction; Right
 Because of the high viscosity in the right part of the domain, the penalty parameter should 
 be high enough to insure an incompressible flow and thereby recover the expected convergence rate
 (at least for the even case). Note that values higher than $\lambda=10^{10}$ yield erroneous solutions 
-due to round-off errors. 
+due to round-off errors as shown in the following figures.  
 
 \begin{center}
 \includegraphics[width=6.5cm]{python_codes/fieldstone_05/results/rho}
@@ -59,9 +58,6 @@ due to round-off errors.
 {\captionfont Results obtained on $100 \times 100$ mesh for $\lambda=10^{10}$.}
 \end{center}
 
-
-
-\infortran
-Note that a Fortran90 version of this code is available in the same folder. \index{general}{fortran90}
+Note that a Fortran90 version of this code is available in the same folder. 
 
 
