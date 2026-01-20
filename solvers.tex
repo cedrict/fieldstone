@@ -1280,7 +1280,9 @@ The first one is
 which was first introduced in Carriere and Jeandel (1991) to study thermoconvective ﬂows. 
 In their experiments, this preconditioner was found to outperform the preconditioner 
 of Cahouet and Chabard (1988). Since only the diagonal of $\K$ is considered, this preconditioner
-matrix can be explicitly computed. {\color{red} link to somewhere !}
+matrix can be explicitly computed. 
+See next subsubsection for how to build this preconditioner matrix.
+
 
 To define $\vec{z} = \hat{\SSS}^{-1}\cdot \vec{r}$ one could
 either employ a factorization (incomplete or exact), or use a Krylov
@@ -1314,17 +1316,329 @@ can directly assemble the inverse preconditioner via
 \[
 \hat{\SSS}_4^{-1} = \sum_e (\hat{\SSS}^e)^{-1}.
 \]
-
-FINISH FINISH!!
 If we use $Q_1\times P_0$ shape functions which yield a block diagonal matrix
-$\hat{\SSS}_3$ with block size 1, (i.e. diagonal) and is thus easily inverted. The
+$\hat{\SSS}_3$ with block size 1, (i.e. a scalar) and is thus easily inverted. The
 preconditioners $\hat{\SSS}_3^{-1}$ and $\hat{\SSS}_4^{-1}$ are implemented in the 
 mantle convection code CITCOM \cite{moso95}, with $\hat{\SSS}_4^{-1}$ being used as the default. 
 
-
+However if a $Q_1$ space is used for the pressure field then there are $m_p=4$ P-dofs 
+per element in 2d and $m_p=8$ P-dofs in 3d, which makes computing $(\hat{\SSS}^e)^{-1}$
+not practical. This means that $\hat{\SSS}_3$ will probably be preferred.
 \end{enumerate}
 
 
+
+%..................................................................................
+\subsubsection{How to compute $\hat{\SSS}_1=\G^T \cdot {\bm D}_\K^{-1} \cdot \G$}
+
+
+Let us consider a 3x2 mesh of $Q_2\times Q_1$ elements:
+\begin{verbatim}
+28--29--30--31--32--33--34       8-------9------10------11
+ |       |       |       |       |       |       |       |
+21  22  23  24  25  26  27       |       |       |       |
+ |       |       |       |       |       |       |       |
+14--15--16--17--18--19--20       4-------5-------6-------7
+ |       |       |       |       |       |       |       |
+ 7   8   9  10  11  12  13       |       |       |       |
+ |       |       |       |       |       |       |       |
+ 0---1---2---3---4---5---6       0-------1-------2-------3
+      velocity nodes                  pressure nodes
+\end{verbatim}
+
+The non-zero pattern of the pressure mass matrix is as follows:
+\[
+\left(
+\begin{array}{cccccccccccc}
+X&X&.&X&X&.&.&.&.&.&.&. \\
+X&X&X&.&X&X&X&.&.&.&.&. \\
+.&X&X&X&.&X&X&X&.&.&.&. \\
+.&.&X&X&.&.&X&X&.&.&.&. \\
+X&X&.&.&X&X&.&.&X&X&.&. \\
+X&X&X&.&X&X&X&.&X&X&X&.\\
+.&X&X&X&.&X&X&X&.&X&X&X\\
+.&.&X&X&.&.&X&X&.&.&X&X \\
+.&.&.&.&.X&X&.&.&X&X&.&. \\
+.&.&.&.&X&X&X&&X&X&X&.\\
+.&.&.&.&.&X&X&X&.&X&X&X\\
+.&.&.&.&.&.&X&X&.&.&X&X
+\end{array}
+\right)
+\]
+This is based on the information: ``I am P-node i, which other P-nodes am I connected to?''
+For example P-node 0 is connected to P-nodes 0,1,4,5 inside the first element and 
+there are therefore 4 non-zero terms in the first (i.e. corresponding to $i=0$) line of $\G$
+at columns 0,1,4,5.
+Another one: P-node 5 is connected to P-nodes 0,1,2,4,5,6,8,9,10 so there are 9 non-zero terms in the 
+line corresponding to $i=5$.
+
+Let us now turn to $\G$ (or rather $\G^T$ in what follows).
+The size of the $\G^T$ matrix is $Nfem_P \times Nfem_V=12 \times 70$
+so that I will not even try to draw the matrix it like I did for $Q_1\times P_0$ 
+in stone~16. Instead I will follow a similar reasoning.
+Let us start by writing down the lists of V-nodes that each P-node sees:
+
+\begin{itemize}
+\item P-node 0 sees V-nodes 0 1 2 7 8 9 14 15 16
+\item P-node 1 sees V-nodes 0 1 2 3 4 7 8 9 10 11 14 15 16 17 18 
+\item P-node 2 sees V-nodes 2 3 4 5 6 9 10 11 12 13 16 17 18 19 20
+\item P-node 3 sees V-nodes 4 5 6 11 12 13 18 19 20
+\item P-node 4 sees V-nodes 0 1 2 7 8 9 14 15 16 21 22 23 28 29 30
+\item P-node 5 sees V-nodes 0 1 2 3 4 7 8 9 10 11 14 15 16 17 18 21 22 23 24 25 28 29 30 31 32
+\item ...
+\item P-node 11 sees V-nodes 18 19 20 25 26 27 32 33 34
+\end{itemize}
+or, we can rewrite the same information as follows:
+\begin{itemize}
+\item ${\cal L}(0) = \{ 0, 1, 2, 7, 8, 9, 14, 15, 16 \}$
+\item ${\cal L}(1) = \{ 0, 1, 2, 3, 4, 7, 8, 9, 10, 11, 14, 15, 16, 17, 18 \}$
+\item ${\cal L}(2) = \{ 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20 \}$
+\item ${\cal L}(3) = \{4,5,6,11,12,13,18,19,20  \}$
+\item ${\cal L}(4) = \{0,1,2,7,8,9,14,15,16,21,22,23,18,19,30  \}$
+\item ${\cal L}(5) = \{0,1,2,3,4,7,8,9,10,11,14,15,16,17,18,21,22,23,24,25,28,29,30,31,32  \}$
+\item ${\cal L}(6) = \{2,3,4,5,6,9,10,11,12,13,16,17,18,19,20,23,24,25,26,27,30,31,32,33,34  \}$
+\item ${\cal L}(7) = \{4,5,6,11,12,13,18,19,20,25,26,27,32,33,34  \}$
+\item ${\cal L}(8) = \{14,15,16,21,22,23,28,29,30  \}$
+\item ${\cal L}(9) = \{14,15,16,17,18,21,22,23,24,25,28,29,30,31,32  \}$
+\item ${\cal L}(10) = \{16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30, 31, 32, 33, 34\}$
+\item ${\cal L}(11) = \{18, 19, 20, 25, 26, 27, 32, 33, 34 \}$
+\end{itemize}
+where ${\cal L}(i)$ is the list of V-nodes that P-node $i$ sees.
+These lists ultimately allow us to recover the sparsity pattern of $\G$. Note that 
+each number in a list actually counts for two consecutive V-dofs.
+
+Let us recall that the matrix we wish to form is 
+\[
+\hat{\SSS}=\G^T \cdot {\bm D}_\K^{-1} \cdot \G
+\]
+where ${\bm D}_\K$ is the diagonal of matrix $\K$.
+Because ${\bm D}_\K$ is diagonal, finding its inverse is trivial and multiplying with it is fast.
+In what follows I denote $\tilde{\K}=D_{\bm K}^{-1}$.
+
+We can start with the diagonal terms of the $\hat{\SSS}$ matrix:
+\begin{eqnarray}
+\hat{S}_{0,0} %= \vec{G}_{0,:} \cdot \vec{G}_{:,0} 
+&=& \sum_{i={\cal L}(0)} \sum_{j=1}^2 G_{0,2*i+j} G_{0,2*i+j} \tilde{K}_{2*i+j} \nn\\
+\hat{S}_{1,1} 
+&=& \sum_{i={\cal L}(1)} \sum_{j=1}^2 G_{1,2*i+j} G_{1,2*i+j} \tilde{K}_{2*i+j}\nn\\
+\hat{S}_{2,2} 
+&=& \sum_{i={\cal L}(2)} \sum_{j=1}^2 G_{2,2*i+j} G_{2,2*i+j} \tilde{K}_{2*i+j}\nn\\
+\hat{S}_{3,3} &=& etc ... 
+\end{eqnarray}
+where the sum over $j$ runs over the number of V dofs per node, i.e. the number of physical dimensions.
+
+Likewise, we  will have
+\begin{eqnarray}
+%----------------------------
+\hat{S}_{0,1}=\hat{S}_{1,0} 
+&=& \sum_{i= {\cal L}(0) \bigcap {\cal L}(1)} \sum_{j=1}^2 G_{0,2*i+j} G_{1,2*i+j} \tilde{K}_{2*i+j} 
+=\sum_{i= 0, 1, 2, 7, 8, 9, 14, 15, 16 } \sum_{j=1}^2 G_{0,2*i+j} G_{1,2*i+j} \tilde{K}_{2*i+j} 
+\nn\\
+%----------------------------
+\hat{S}_{0,2}=\hat{S}_{2,0} 
+&=& \sum_{i={\cal L}(0) \bigcap {\cal L}(2)} \sum_{j=1}^2 G_{0,2*i+j} G_{2,2*i+j} \tilde{K}_{2*i+j} 
+=\sum_{i=2,9,16} \sum_{j=1}^2 G_{0,2*i+j} G_{2,2*i+j} \tilde{K}_{2*i+j} 
+\nn\\
+%----------------------------
+\hat{S}_{0,3}=\hat{S}_{3,0} 
+&=& \sum_{i= {\cal L}(0) \bigcap {\cal L}(3)} \sum_{j=1}^2 G_{0,2*i+j} G_{3,2*i+j} \tilde{K}_{2*i+j} 
+=\sum_{i=\emptyset} \sum_{j=1}^2 G_{0,2*i+j} G_{3,2*i+j} \tilde{K}_{3*i+j} =0 \nn \\
+%----------------------------
+\hat{S}_{0,4}=\hat{S}_{4,0} 
+&=& \sum_{i= {\cal L}(0) \bigcap {\cal L}(4)} \sum_{j=1}^2 G_{0,2*i+j} G_{4,2*i+j} \tilde{K}_{4*i+j} 
+=\sum_{i=0, 1, 2, 7, 8, 9, 14, 15, 16} \sum_{j=1}^2 G_{0,2*i+j} G_{4,2*i+j} \tilde{K}_{2*i+j} \nn\\
+%----------------------------
+\hat{S}_{0,5}=\hat{S}_{5,0} 
+&=& \sum_{i= {\cal L}(0) \bigcap {\cal L}(4)} \sum_{j=1}^2 G_{0,2*i+j} G_{5,2*i+j} \tilde{K}_{2*i+j} 
+=\sum_{i=0, 1, 2, 7, 8, 9, 14, 15, 16} \sum_{j=1}^2 G_{0,2*i+j} G_{4,2*i+j} \tilde{K}_{2*i+j} \nn\\
+%----------------------------
+\hat{S}_{0,6}=\hat{S}_{6,0} 
+&=& \sum_{i= {\cal L}(0) \bigcap {\cal L}(4)} \sum_{j=1}^2 G_{0,2*i+j} G_{6,2*i+j} \tilde{K}_{2*i+j} 
+= \sum_{i=2,9,16} \sum_{j=1}^2 G_{0,2*i+j} G_{6,2*i+j} \tilde{K}_{2*i+j} \nn\\
+%----------------------------
+\hat{S}_{0,7}=\hat{S}_{7,0} 
+&=& \sum_{i= {\cal L}(0) \bigcap {\cal L}(4)} \sum_{j=1}^2 G_{0,2*i+j} G_{7,2*i+j} \tilde{K}_{2*i+j} = 0\nn\\
+%----------------------------
+\hat{S}_{0,8}=\hat{S}_{8,0} 
+&=& \sum_{i= {\cal L}(0) \bigcap {\cal L}(4)} \sum_{j=1}^2 G_{0,2*i+j} G_{8,2*i+j} \tilde{K}_{2*i+j} 
+=\sum_{i=14,15,16} \sum_{j=1}^2 G_{0,2*i+j} G_{8,2*i+j} \tilde{K}_{2*i+j} \nn\\
+%----------------------------
+\hat{S}_{0,9}=\hat{S}_{9,0} 
+&=& \sum_{i= {\cal L}(0) \bigcap {\cal L}(4)} \sum_{j=1}^2 G_{0,2*i+j} G_{9,2*i+j} \tilde{K}_{2*i+j} 
+= \sum_{i=14,15,16} \sum_{j=1}^2 G_{0,2*i+j} G_{9,2*i+j} \tilde{K}_{2*i+j} \nn\\
+%----------------------------
+\hat{S}_{0,10}=\hat{S}_{10,0} 
+&=& \sum_{i= {\cal L}(0) \bigcap {\cal L}(4)} \sum_{j=1}^2 G_{0,2*i+j} G_{10,2*i+j} \tilde{K}_{2*i+j} 
+= \sum_{i=16} \sum_{j=1}^2 G_{0,2*i+j} G_{10,2*i+j} \tilde{K}_{2*i+j} \nn\\
+%----------------------------
+\hat{S}_{0,11}=\hat{S}_{11,0} 
+&=& \sum_{i= {\cal L}(0) \bigcap {\cal L}(4)} \sum_{j=1}^2 G_{0,2*i+j} G_{4,2*i+j} \tilde{K}_{2*i+j} =0
+\end{eqnarray}
+and in the end we see that since ${\cal L}(i) \bigcap {\cal L}(i) = {\cal L}(i)$
+the diagonal terms can also be expressed with the same formula as the off-diagonal terms:
+\[
+\hat{S}_{I,J} = \hat{S}_{J,I} = \sum_{i= {\cal L}(I) \bigcap {\cal L}(J)} 
+\sum_{j=1}^2 G_{I,2*i+j} G_{J,2*i+j} \tilde{K}_{2*i+j} 
+\]
+where ${\cal L}_I$ is the list of V-nodes seen by P-node $I$.
+
+Establishing the list of V-nodes seen by each P-node is a reasonable task. However computing (quickly)
+the intersection of two lists will need some careful attentions.
+
+The non-zero pattern of $\hat{\SSS}$ is then different than the pressure mass matrix:
+\[
+\left(
+\begin{array}{cccccccccccc}
+X&X&X&0&X&X&X&0&X&X&X&0 \\
+X&X&.&.&.&.&.&.&.&.&.&. \\
+X&.&X&.&.&.&.&.&.&.&.&. \\
+0&.&.&X&.&.&.&.&.&.&.&. \\
+X&.&.&.&X&.&.&.&.&.&.&. \\
+X&.&.&.&.&X&.&.&.&.&.&. \\
+X&.&.&.&.&.&X&.&.&.&.&. \\
+0&.&.&.&.&.&.&X&.&.&.&. \\
+X&.&.&.&.&.&.&.&X&.&.&. \\
+X&.&.&.&.&.&.&.&.&X&.&. \\
+X&.&.&.&.&.&.&.&.&.&X&. \\
+0&.&.&.&.&.&.&.&.&.&.&X 
+\end{array}
+\right)
+\]
+
+Obviously this kinda looks like the matrix is full, but two P-nodes more than 2 elements apart have no 
+Vdof in common and this will yield zeros. The bandwidth of the matrix is larger than the mass matrix 
+bandwidth.
+
+\newpage
+
+\noindent I start by writing this simple code. It loops over each 
+P-node and finds to which V-node it corresponds to.
+\begin{lstlisting}
+counter=0
+for jp in range(0,nely+1):
+    for ip in range(0,nelx+1): # loop over pressure nodes
+        iv=2*ip
+        jv=2*jp
+        kv=nnx*jv+iv
+        print('P-node',ip,jp,counter,' -> V-node',iv,jv,kv)
+        counter+=1
+\end{lstlisting}
+In the code \lstinline{ip,jp} are the integer coordinates/indices of the P-node, 
+while \lstinline{iv,jv} are the integer coordinates/indices of the V-node.
+Upon executing the code we obtain:
+{\small
+\begin{verbatim}
+P-node 0 0 0  -> V-node 0 0 0 
+P-node 1 0 1  -> V-node 2 0 2 
+P-node 2 0 2  -> V-node 4 0 4 
+P-node 3 0 3  -> V-node 6 0 6 
+P-node 0 1 4  -> V-node 0 2 14
+P-node 1 1 5  -> V-node 2 2 16
+P-node 2 1 6  -> V-node 4 2 18
+P-node 3 1 7  -> V-node 6 2 20
+P-node 0 2 8  -> V-node 0 4 28
+P-node 1 2 9  -> V-node 2 4 30
+P-node 2 2 10  -> V-node 4 4 32
+P-node 3 2 11  -> V-node 6 4 34
+\end{verbatim}
+}
+We see that this is indeed correct since:
+\begin{verbatim}
+28--29--30--31--32--33--34       8-------9------10------11
+ |       |       |       |       |       |       |       |
+21  22  23  24  25  26  27       |       |       |       |
+ |       |       |       |       |       |       |       |
+14--15--16--17--18--19--20       4-------5-------6-------7
+ |       |       |       |       |       |       |       |
+ 7   8   9  10  11  12  13       |       |       |       |
+ |       |       |       |       |       |       |       |
+ 0---1---2---3---4---5---6       0-------1-------2-------3
+      velocity nodes                  pressure nodes
+\end{verbatim}
+
+The strategy is then simple: for each P-node, find its corresponding V-node, and explore the (up to)
+24 V-nodes around it. This exploration is carried out by means of a double for loop (-2,-1,0,1,2) which 
+is added to the code above:
+\begin{lstlisting}
+counter=0
+for jp in range(0,nely+1):
+    for ip in range(0,nelx+1): # loop over pressure nodes
+        iv=2*ip
+        jv=2*jp
+        kv=nnx*jv+iv
+        for n in (-2,-1,0,1,2):
+            for m in (-2,-1,0,1,2):
+                iiv=iv+m
+                jjv=jv+n
+                if iiv>=0 and iiv<nnx and jjv>=0 and jjv<nny: #if Vnode exists
+                   kkv=nnx*jjv+iiv
+\end{lstlisting}
+There are 25 combinations \lstinline{m,n} but depending on where in space the P-node is (typically on the hull 
+of the domain), some combinations might lead to locations outside of the mesh so a test is carried out 
+before the global index/identity of the found V-node is established (i.e. \lstinline{kkv}).
+
+We will need to store this information: how many V-nodes each P-node sees, and the 
+corresponding list. 
+This is done in these arrays:
+\begin{lstlisting}
+nb_of_Vnodes_seen_by_Pnode=np.zeros(nn_P,dtype=np.int32)
+list_of_Vnodes_seen_by_Pnode=np.zeros((nn_P,25),dtype=np.int32)
+\end{lstlisting}
+and these are included in the loops above as follows:
+\begin{lstlisting}
+counter=0
+for jp in range(0,nely+1):
+    for ip in range(0,nelx+1): # loop over pressure nodes
+        iv=2*ip
+        jv=2*jp
+        kv=nnx*jv+iv
+        Nv=0
+        for n in (-2,-1,0,1,2):
+            for m in (-2,-1,0,1,2):
+                iiv=iv+m
+                jjv=jv+n
+                if iiv>=0 and iiv<nnx and jjv>=0 and jjv<nny: #if V-node exists
+                   kkv=nnx*jjv+iiv
+                   #print('m=',m,'n=',n,'iiv=',iiv,'jjv=',jjv,'kkv=',kkv)
+                   list_of_Vnodes_seen_by_Pnode[counter,Nv]=kkv
+                   Nv+=1
+                #end if
+            #end for
+        #end for
+        nb_of_Vnodes_seen_by_Pnode[counter]=Nv
+        counter += 1
+\end{lstlisting}
+so that when we run 
+\begin{lstlisting}
+for i in range(0,nn_P):
+    print('P-node',i,'sees V-nodes:',list_of_Vnodes_seen_by_Pnode[i,:nb_of_Vnodes_seen_by_Pnode[i]])
+\end{lstlisting}
+we obtain:
+{\small
+\begin{verbatim}
+P-node 0 sees V-nodes: [ 0  1  2  7  8  9 14 15 16] 
+P-node 1 sees V-nodes: [ 0  1  2  3  4  7  8  9 10 11 14 15 16 17 18] 
+P-node 2 sees V-nodes: [ 2  3  4  5  6  9 10 11 12 13 16 17 18 19 20] 
+P-node 3 sees V-nodes: [ 4  5  6 11 12 13 18 19 20] 
+P-node 4 sees V-nodes: [ 0  1  2  7  8  9 14 15 16 21 22 23 28 29 30] 
+P-node 5 sees V-nodes: [ 0  1  2  3  4  7  8  9 10 11 14 15 16 17 18 21 22 23 24 25 28 29 30 31 32] 
+P-node 6 sees V-nodes: [ 2  3  4  5  6  9 10 11 12 13 16 17 18 19 20 23 24 25 26 27 30 31 32 33 34] 
+P-node 7 sees V-nodes: [ 4  5  6 11 12 13 18 19 20 25 26 27 32 33 34] 
+P-node 8 sees V-nodes: [14 15 16 21 22 23 28 29 30] 
+P-node 9 sees V-nodes: [14 15 16 17 18 21 22 23 24 25 28 29 30 31 32] 
+P-node 10 sees V-nodes: [16 17 18 19 20 23 24 25 26 27 30 31 32 33 34] 
+P-node 11 sees V-nodes: [18 19 20 25 26 27 32 33 34] 
+\end{verbatim}
+}
+Finally we will need to compute the intersection between lists as follows:
+\begin{lstlisting}
+for i in range(0,nn_P):
+  for j in range(0,nn_P):
+    print(i,j,list(set(list_of_Vnodes_seen_by_Pnode[i,:nb_of_Vnodes_seen_by_Pnode[i]]) &\
+                   set(list_of_Vnodes_seen_by_Pnode[j,:nb_of_Vnodes_seen_by_Pnode[j]])))
+\end{lstlisting}
+
+The full code is available in the {\tt images/approxS/} folder.
 
 
 
