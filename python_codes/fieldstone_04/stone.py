@@ -49,12 +49,9 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 100
+   nelx = 64
    nely = nelx
    visu = 1
-
-assert (nelx>0.), "nnx should be positive" 
-assert (nely>0.), "nny should be positive" 
     
 nnx=nelx+1         # number of elements, x direction
 nny=nely+1         # number of elements, y direction
@@ -67,7 +64,7 @@ penalty=1.e7  # penalty coefficient value
 
 viscosity=1.  # dynamic viscosity \mu
 
-ldc=0
+ldc=2
 
 debug=False
 

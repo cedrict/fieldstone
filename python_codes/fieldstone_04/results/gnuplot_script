@@ -1,16 +1,34 @@
-set term pdf enhanced
+#
+set term pdf enhanced font "Times,12pt"
 set grid
 set xlabel 'x'
 set ylabel 'pressure'
+set key outside
+set title 'resolution 64x64'
 
-set output 'p.pdf'
+set output 'p64.pdf'
 plot[][-200:200]\
-'ldc0/p_top.ascii' w l t 'ldc0',\
-'ldc1/p_top.ascii' w l t 'ldc1',\
-'ldc2/p_top.ascii' w l t 'ldc2',\
+'ldc0/p_top64.ascii' w l t 'ldc0',\
+'ldc1/p_top64.ascii' w l t 'ldc1',\
+'ldc2/p_top64.ascii' w l t 'ldc2',\
 
-set output 'q.pdf'
+set output 'q64.pdf'
 plot[][-200:200]\
-'ldc0/q_top.ascii' w l t 'ldc0',\
-'ldc1/q_top.ascii' w l t 'ldc1',\
-'ldc2/q_top.ascii' w l t 'ldc2',\
+'ldc0/q_top64.ascii' w l t 'ldc0',\
+'ldc1/q_top64.ascii' w l t 'ldc1',\
+'ldc2/q_top64.ascii' w l t 'ldc2',\
+
+#########################################
+set title 'resolution 100x100'
+
+set output 'p100.pdf'
+plot[][-200:200]\
+'ldc0/p_top100.ascii' w l t 'ldc0',\
+'ldc1/p_top100.ascii' w l t 'ldc1',\
+'ldc2/p_top100.ascii' w l t 'ldc2',\
+
+set output 'q100.pdf'
+plot[][-200:200]\
+'ldc0/q_top100.ascii' w l t 'ldc0',\
+'ldc1/q_top100.ascii' w l t 'ldc1',\
+'ldc2/q_top100.ascii' w l t 'ldc2',\
