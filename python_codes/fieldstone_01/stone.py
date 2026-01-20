@@ -88,19 +88,16 @@ else:
 assert (nelx>0.), "nnx should be positive" 
 assert (nely>0.), "nny should be positive" 
     
-nnx=nelx+1  # number of elements, x direction
-nny=nely+1  # number of elements, y direction
-
-nn_V=nnx*nny  # number of nodes
-
-nel=nelx*nely  # number of elements, total
+nnx=nelx+1         # number of elements, x direction
+nny=nely+1         # number of elements, y direction
+nn_V=nnx*nny       # number of nodes
+nel=nelx*nely      # number of elements, total
+Nfem_V=nn_V*ndof_V # number of velocity degrees for freedom
+Nfem=Nfem_V        # Total number of degrees of freedom
 
 penalty=1.e7  # penalty coefficient value
 
-viscosity=1.  # dynamic viscosity \eta
-
-Nfem_V=nn_V*ndof_V # number of velocity degrees for freedom
-Nfem=Nfem_V        # Total number of degrees of freedom
+viscosity=1.  # dynamic viscosity
 
 ###############################################################################
 # grid point setup
@@ -149,8 +146,8 @@ print("setup: connectivity: %.3f s" % (clock.time()-start))
 ###############################################################################
 start=clock.time()
 
-bc_fix_V =np.zeros(Nfem,dtype=bool)  # boundary condition, yes/no
-bc_val_V =np.zeros(Nfem,dtype=np.float64)  # boundary condition, value
+bc_fix_V=np.zeros(Nfem,dtype=bool)  # boundary condition, yes/no
+bc_val_V=np.zeros(Nfem,dtype=np.float64)  # boundary condition, value
 
 for i in range(0,nn_V):
     if x_V[i]<eps:
