@@ -18,6 +18,7 @@ from basis_functions import *
 # bench=1: donea & huerta
 # bench=2: stokes sphere
 # bench=3: block
+# bench=4: ??
 ###############################################################################
 
 def bx(x,y):
@@ -107,17 +108,17 @@ Ly=1.  # vertical extent of the domain
 
 # allowing for argument parsing through command line
 if int(len(sys.argv) == 6):
-   nelx = int(sys.argv[1])
-   nely = int(sys.argv[2])
-   visu = int(sys.argv[3])
-   nq_per_dim = int(sys.argv[4])
-   solver = int(sys.argv[5])
+   nelx=int(sys.argv[1])
+   nely=int(sys.argv[2])
+   visu=int(sys.argv[3])
+   nq_per_dim=int(sys.argv[4])
+   solver=int(sys.argv[5])
 else:
-   nelx = 64
-   nely = nelx
-   visu = 1
+   nelx=32
+   nely=nelx
+   visu=1
    nq_per_dim=3
-   solver=13
+   solver=1
     
 nnx=2*nelx+1           # number of V nodes, x direction
 nny=2*nely+1           # number of V nodes, y direction
@@ -131,7 +132,7 @@ Nfem=Nfem_V+Nfem_P     # total number of dofs
 hx=Lx/nelx
 hy=Ly/nely
 
-bench=1
+bench=3
    
 omega15=1000 # parameter for solver 15
 omega18=1    # parameter for solver 18
@@ -158,11 +159,8 @@ NS=True
 OT=False
 BO=False
 
-if bench==1:
-   NS=True
-
-if bench==4:
-   NS=True
+if bench==1: NS=True
+if bench==4: NS=True
 
 ###############################################################################
 
@@ -290,6 +288,58 @@ for j in range(0,nely):
 #end for
 
 print("setup: connectivity: %.3f s" % (clock.time()-start))
+
+###############################################################################
+# compute list of V-nodes seen by each P-node
+# it is worth acknowedging that the lists are automatically sorted
+###############################################################################
+start=clock.time()
+
+nb_of_Vnodes_seen_by_Pnode=np.zeros(nn_P,dtype=np.int32)
+list_of_Vnodes_seen_by_Pnode=np.zeros((nn_P,25),dtype=np.int32)
+
+counter=0
+for jp in range(0,nely+1):
+    for ip in range(0,nelx+1): # loop over pressure nodes
+        iv=2*ip
+        jv=2*jp
+        kv=nnx*jv+iv
+        #print('P-node',ip,jp,counter,' -> V-node',iv,jv,kv)
+        Nv=0
+        for n in (-2,-1,0,1,2):
+            for m in (-2,-1,0,1,2):
+                iiv=iv+m
+                jjv=jv+n
+                if iiv>=0 and iiv<nnx and jjv>=0 and jjv<nny: #if V-node exists
+                   kkv=nnx*jjv+iiv
+                   #print('m=',m,'n=',n,'iiv=',iiv,'jjv=',jjv,'kkv=',kkv)
+                   list_of_Vnodes_seen_by_Pnode[counter,Nv]=kkv
+                   Nv+=1
+                #end if
+            #end for
+        #end for
+        nb_of_Vnodes_seen_by_Pnode[counter]=Nv
+        counter += 1
+    #end for
+#end for
+
+print("link P-node V-node arrays: %.3f s" % (clock.time()-start))
+
+###############################################################################
+# compute element center coords and viscosity
+###############################################################################
+start=clock.time()
+
+x_e=np.zeros(nel,dtype=np.float64)  
+y_e=np.zeros(nel,dtype=np.float64)  
+eta_e=np.zeros(nel,dtype=np.float64)  
+
+for iel in range(0,nel):
+    x_e[iel]=(x_V[icon_V[0,iel]]+x_V[icon_V[2,iel]])/2
+    y_e[iel]=(y_V[icon_V[0,iel]]+y_V[icon_V[2,iel]])/2
+    eta_e[iel]=eta(x_e[iel],y_e[iel])
+
+print("element centers: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # define boundary conditions
@@ -533,6 +583,19 @@ b_fem[Nfem_V:Nfem]=h_rhs
 print("build FE matrix: %.3f s" % (clock.time()-start))
 
 ###############################################################################
+# compute S1, S2 matrices to scale blocks K,G
+###############################################################################
+
+S1=lil_matrix((Nfem_V,Nfem_V),dtype=np.float64)
+S2=lil_matrix((Nfem_P,Nfem_P),dtype=np.float64)
+
+#for i in range(0,Nfem_V):
+#    S1[i,i]=np.sqrt(K_mat[i,i])
+#S1=csr_matrix(S1)
+
+print('UNFINISHED SCALING BLOCKS ') 
+
+###############################################################################
 # compute preconditioner
 ###############################################################################
 #Mprec=lil_matrix((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
@@ -542,45 +605,23 @@ print("build FE matrix: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # compute Schur preconditioner
+# 0: identity matrix (for tests/reference)
+# 1: GT.D_K^-1.G using dot on assembled matrices
+# 2: GT.D_K^-1.G using clever algorithm
 ###############################################################################
 start=clock.time()
 
-M_mat = lil_matrix((Nfem_P,Nfem_P),dtype=np.float64)  # matrix of Ax=b
+M_mat=lil_matrix((Nfem_P,Nfem_P),dtype=np.float64)
    
-#if precond_type==0:
-#   for i in range(0,Nfem_P):
-#       M_mat[i,i]=1
-
-#if precond_type==1:
-#   for iel in range(0,nel):
-#       M_mat[iel,iel]=hx*hy/eta(xc[iel],yc[iel])
-
-if precond_type==2:
-   Km1 = np.zeros((Nfem_V,Nfem_V),dtype=np.float64) 
-   for i in range(0,Nfem_V):
-       Km1[i,i]=1./K_mat[i,i] 
-   M_mat=G_mat.T.dot(Km1.dot(G_mat))
-
-if precond_type==3:
-   Km1 = np.zeros((Nfem_V,Nfem_V),dtype=np.float64) 
-   for i in range(0,Nfem_V):
-       Km1[i,i]=1./K_mat[i,i] 
-   M_mat=G_mat.T.dot(Km1.dot(G_mat))
+if precond_type==0:
    for i in range(0,Nfem_P):
-       for j in range(0,Nfem_P):
-           if i!=j:
-              M_mat[i,j]=0.
+       M_mat[i,i]=1
 
-if precond_type==4:
-   Km1 = np.zeros((Nfem_V,Nfem_V),dtype=np.float64) 
+if precond_type==1:
+   Km1=np.zeros((Nfem_V,Nfem_V),dtype=np.float64) 
    for i in range(0,Nfem_V):
        Km1[i,i]=1./K_mat[i,i] 
    M_mat=G_mat.T.dot(Km1.dot(G_mat))
-   for i in range(0,Nfem_P):
-       for j in range(0,Nfem_P):
-           if i!=j:
-              M_mat[i,i]+=np.abs(M_mat[i,j])
-              M_mat[i,j]=0.
 
 #plt.spy(M_mat)
 #plt.savefig('matrix.pdf', bbox_inches='tight')
@@ -605,20 +646,7 @@ sparse_matrix=sps.csc_matrix(A_fem)
 
 print("convert to CSR: %.3f s, nel= %d" % (clock.time()-start, nel))
 
-###############################################################################
-#start = clock.time()
-#import scipy.sparse.linalg as sla
-#ILUfact = sla.spilu(sparse_matrix)
-#M = sla.LinearOperator(
-#    shape = sparse_matrix.shape,
-#    matvec = lambda b: ILUfact.solve(b)
-#)
-#other option from 
-#https://stackoverflow.com/questions/58895934/how-to-implement-ilu-precondioner-in-scipy
-#sA_iLU = sparse.linalg.spilu(sA)
-#M = sparse.linalg.LinearOperator((nrows,ncols), sA_iLU.solve)
-#also does nto work
-#print("generate ILU precond: %.3f s, nel= %d" % (clock.time()-start,nel))
+
 
 ###############################################################################
 # solve system
@@ -760,8 +788,6 @@ print("normalise pressure: %.3f s" % (clock.time()-start))
 start=clock.time()
 
 e=np.zeros(nel,dtype=np.float64)  
-xc=np.zeros(nel,dtype=np.float64)  
-yc=np.zeros(nel,dtype=np.float64)  
 exx=np.zeros(nel,dtype=np.float64)  
 eyy=np.zeros(nel,dtype=np.float64)  
 exy=np.zeros(nel,dtype=np.float64)  
@@ -778,8 +804,6 @@ for iel,nodes in enumerate(icon_V.T):
     jcbi=np.linalg.inv(jcb)
     dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V
     dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V
-    xc[iel]=np.dot(N_V,x_V[icon_V[:,iel]])
-    yc[iel]=np.dot(N_V,y_V[icon_V[:,iel]])
     exx[iel]=np.dot(dNdx_V[:],u[icon_V[:,iel]])
     eyy[iel]=np.dot(dNdy_V[:],v[icon_V[:,iel]])
     exy[iel]=np.dot(dNdy_V[:],u[icon_V[:,iel]])*0.5\
@@ -928,6 +952,10 @@ vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
 for iel in range (0,nel):
     vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+eta_e.tofile(vtufile,sep=' ',format='%.5e')
 vtufile.write("</DataArray>\n")
 vtufile.write("</CellData>\n")
 #####

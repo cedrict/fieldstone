@@ -29,15 +29,21 @@ def schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
    elif inner=='cg':
       solV=sps.linalg.cg(K_mat,f_rhs)[0] 
    elif inner=='splu':
-      LU = sla.splu(K_mat)
-      solV=LU.solve(f_rhs)
+      LU_K = sla.splu(K_mat)
+      solV=LU_K.solve(f_rhs)
    else:
-      exit('unknown inner solver')
+      exit('K_mat: unknown inner solver')
 
    rvect_k=G_mat.T.dot(solV)-h_rhs                                  # compute r_0
    rvect_0=np.linalg.norm(rvect_k) # 2-norm by default
    if use_precond:
-      zvect_k=sps.linalg.spsolve(M_mat,rvect_k)                     # compute z_0
+      if inner=='direct':
+         zvect_k=sps.linalg.spsolve(M_mat,rvect_k)                  # compute z_0
+      elif inner=='splu':
+         LU_M=sla.splu(M_mat)
+         zvect_k=LU_M.solve(rvect_k)
+      else:
+         exit('M_mat: unknown inner solver')
    else:
       zvect_k=rvect_k
    pvect_k=zvect_k                                                  #compute p_0
@@ -49,13 +55,13 @@ def schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
           dvect_k=sps.linalg.spsolve(K_mat,ptildevect_k)            #
        elif inner=='cg':                                            #
           #dvect_k=sps.linalg.cg(K_mat,ptildevect_k,tol=1e-6)[0]    #
-          rhsmax=np.max(ptildevect_k)
+          rhsmax=np.max(ptildevect_k)                               #
           dvect_k=sps.linalg.cg(K_mat,ptildevect_k/rhsmax)[0]       #
-          dvect_k*=rhsmax
+          dvect_k*=rhsmax                                           #
        elif inner=='splu':                                          #
-          dvect_k=LU.solve(ptildevect_k)                            #
+          dvect_k=LU_K.solve(ptildevect_k)                          #
 
-       if np.isnan(np.sum(dvect_k)): exit('nan found in dvect_k')
+       if np.isnan(np.sum(dvect_k)): exit('nan found in dvect_k')   #
 
        alpha=(rvect_k.dot(zvect_k))/(ptildevect_k.dot(dvect_k))     #
 
@@ -68,7 +74,10 @@ def schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
        solV-=alpha*dvect_k                                          #
        rvect_kp1=rvect_k-alpha*(G_mat.T.dot(dvect_k))               #
        if use_precond:                                              #
-           zvect_kp1=sps.linalg.spsolve(M_mat,rvect_kp1)            #
+          if inner=='direct':                                       #
+             zvect_kp1=sps.linalg.spsolve(M_mat,rvect_kp1)          #
+          elif inner=='splu':                                       #
+             zvect_kp1=LU_M.solve(rvect_kp1)                        #
        else:                                                        #
            zvect_kp1=rvect_kp1                                      #
        beta=(zvect_kp1.dot(rvect_kp1))/(zvect_k.dot(rvect_k))       #
