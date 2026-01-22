@@ -1,8 +1,8 @@
 #! /bin/bash
 
-rm -f errors
-rm -f rawp
-rm -f rawp2
+rm -f errors.ascii
+rm -f rawp.ascii
+rm -f rawp2.ascii
 
 for rs in 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 55 58 59 60 61 62 65 68 69 70 71 72 75 76 77 80 85 90 95 100 105 110 115 120 125 130 135 141 150 161 180 201; do
 
@@ -10,12 +10,11 @@ for rs in 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 
 
     python3 stone.py $rs $rs 0 > opla 
 
-    grep nel opla >> errors
-    grep rawp opla >> rawp
-    grep raw2 opla >> rawp2
+    grep nel opla >> errors.ascii
+    grep rawp opla >> rawp.ascii
+    grep raw2 opla >> rawp2.ascii
 
 done
 
 rm opla
  
-

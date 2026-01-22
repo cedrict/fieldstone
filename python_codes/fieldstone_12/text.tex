@@ -1,9 +1,9 @@
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_12/keywords.ascii}
 
 \begin{center}
 \inpython ~
@@ -12,7 +12,7 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: August 30th, 2025.
+Last revision: January 21st, 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -20,16 +20,18 @@ Last revision: August 30th, 2025.
 
 We start from the analytical benchmark of Section \ref{MMM-mms1} and we use $Q_1 \times P_0$
 elements with a penalty formulation. 
-We have seen in \stone~\ref{f01} how to recover the elemental pressure as a postprocessing step. 
+We have seen in \stone~\ref{f01} how to recover the elemental pressure as a postprocessing step, i.e.
+by computing the velocity divergence in the middle of each element and multiplying the result by the 
+penalty parameter. 
 However, the discontinous nature of the pressure field (and the presence of a
 parasitic checkerboard mode) can be problematic for many reasons 
 (pressure enters the rheology, equation of state, plotting, ...). 
 We then wish to project the elemental pressure onto the nodes of the mesh while at the same 
 time filtering the checkerboard mode out. 
 
-Terminology: in general, when a discontinuous elemental pressure is used in a stone, 
+Remark: in general, when a discontinuous elemental pressure is used in a \stone, 
 it is called $p$ while its projection onto the velocity nodes is called $q$. 
-In this case we compute several nodal pressures as explained in Section~\ref{MMM-psmoothing}:
+In this case we compute several nodal pressures as explained in Section~\ref{MMM-psmoothing} of {\tt manual.pdf}:
 
 \begin{itemize}
 %...........
@@ -41,9 +43,9 @@ In this case we compute several nodal pressures as explained in Section~\ref{MMM
 
 \item $q_4$: smoothed pressure obtained with the center-to-node approach with inverse element area weighing.
 
-\item $q_5$: is not computed because same as 6.
+\item $q_5$: is not computed because (it turned out to be same as 6).
 
-\item $q_6$: consistent pressure recovery through FE (scheme 5 \& 6)
+\item $q_6$: consistent pressure recovery through FE (scheme 6)
 
 \item $q_7$: consistent pressure recovery with lumped mass matrix. 
 
@@ -52,17 +54,16 @@ In this case we compute several nodal pressures as explained in Section~\ref{MMM
 \end{itemize}
 
 Since the D\& H setup showcases Dirichlet boundary conditions on all four sides, 
-there is a pressure nullspace and it is removed 
-by normalizing the pressure that $\int_\Omega p\; dV =0 $.
+there is a pressure nullspace and it is removed by normalizing the pressure that $\int_\Omega p\; dV =0 $.
 
 \begin{remark}
-Nodes on edges and corners may need special treatment as documented in Sani et al \cite{sagl81a} or
-Lee et al (1979) \cite{legs79} which is not done here.  
+Nodes on edges and corners may need special treatment as documented in \textcite{sagl81a} (1981) or
+\textcite{legs79} (1979) which is not done here.  
 Nodes on the boundary showcase the largest errors. Maybe then use CBF instead for these?
 \end{remark}
 
 \begin{remark}
-Lee et al (1979) \cite{legs79} discuss two different ways to compute the lumped mass matrix. 
+\textcite{legs79} (1979) discuss two different ways to compute the lumped mass matrix. 
 \end{remark}
 
 \begin{remark}
@@ -156,7 +157,8 @@ where $i$ denotes a column and $j$ a row. Then
 &=&\frac{1}{nel} a \sum_i   x_i  \underbrace{\sum_j\phi(x_i,y_j)}_{=0}  
 + \frac{1}{nel} b \sum_j y_j  \underbrace{\sum_i\phi(x_i,y_j) }_{=0}\nn
 \end{eqnarray}
-Both these sums are zero because on one row or one column the sum of the $\phi$ function is zero. 
+Both these sums are zero because on one row or one column the sum of the $\phi$ function is zero\footnote{Again, 
+assuming an even number of elements in both directions!}. 
 In the end we find
 \begin{eqnarray}
 \frac{1}{nel} \sum_e^{nel} p(x,_e,y_e) \phi(x_e,y_e)  = \alpha 
@@ -177,8 +179,8 @@ in some form or shape?
 \end{remark}
 
 \newpage
-%---------------------------------------------------------------------------------
-\subsection*{D\&H: Regular mesh made of square elements}
+%----------------------------------------------------------------------------------------
+\subsection*{Donea \& Huerta manufactured solution: Regular mesh made of square elements}
 
 We compute the error convergence for $p$, $q_i$ $(i=1,...8)$:
 \begin{center}
@@ -191,8 +193,7 @@ $q^8$ converges like $h^2$.
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_12/results/reg/pressure}
 \includegraphics[width=8cm]{python_codes/fieldstone_12/results/reg/pressure_left}\\
-{\captionfont fields $p$ and $q_{1-8}$ as a function of $x$. Right panel 
-is a zoom around $x=0$}
+{\captionfont fields $p$ and $q_{1-8}$ as a function of $x$. Right panel is a zoom around $x=0$}
 \end{center}
 
 
@@ -205,8 +206,7 @@ is a zoom around $x=0$}
 \includegraphics[width=4cm]{python_codes/fieldstone_12/results/reg/q6_error}
 \includegraphics[width=4cm]{python_codes/fieldstone_12/results/reg/q7_error}
 \includegraphics[width=4cm]{python_codes/fieldstone_12/results/reg/q8_error}\\
-{\captionfont 
-Absolute errore with regards to the analytical solution. All on $32\times 32$ mesh.}
+{\captionfont Absolute errore with regards to the analytical solution. All on $32\times 32$ mesh.}
 \end{center}
 
 \newpage
@@ -219,8 +219,7 @@ It is worth noticing that the checkerboard is (visually) not present:
 \end{center}
 %This means that the algorithms above fulfill an interpolation function, but not a smoothing one.
 
-Looking at the min/max/avg of the elemental pressure field 
-with and without filter:
+Looking at the min/max/avg of the elemental pressure field with and without filter:
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_12/results/reg/rawp_nofilter.pdf}
 \includegraphics[width=7cm]{python_codes/fieldstone_12/results/reg/rawp_filter.pdf}\\
@@ -237,8 +236,9 @@ In this case the filter does virtually nothing.
 
 \newpage
 %............................................
-\subsection*{D\&H: Adding randomness to internal node positions} We now add a random value $\xi h$ to the 
-location of all nodes which are not on the boundary where $h$=$L_x$/nelx and we set $\xi=20\%$.
+\subsection*{Donea \& Huerta manufactured solution: Adding randomness to internal node positions} 
+We now add a random value $\xi h$ to the location of all nodes which are not on the boundary 
+where $h=L_x/nelx$ and we set $\xi=20\%$.
 In this case a $32\times 32$ mesh looks as follows:
 
 \begin{center}

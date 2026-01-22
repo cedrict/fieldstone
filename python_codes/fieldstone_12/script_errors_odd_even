@@ -1,29 +1,29 @@
 #! /bin/bash
 
-rm -f errors_even
-rm -f rawp_even
-rm -f rawp2_even
+rm -f errors_even.ascii
+rm -f rawp_even.ascii
+rm -f rawp2_even.ascii
 
-rm -f errors_odd
-rm -f rawp_odd
-rm -f rawp2_odd
+rm -f errors_odd.ascii
+rm -f rawp_odd.ascii
+rm -f rawp2_odd.ascii
 
 
 for rs in 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 68 72 76 80 84 88 92 94 100 108 116 124 132 140 148 156 164 172 180 188 ; do
     echo $rs X $rs
     python3 stone.py $rs $rs 0 > opla 
-    grep nel opla >> errors_even
-    grep rawp opla >> rawp_even
-    grep raw2 opla >> rawp2_even
+    grep nel opla >> errors_even.ascii
+    grep rawp opla >> rawp_even.ascii
+    grep raw2 opla >> rawp2_even.ascii
 done
 
 
 for rs in 9 11 13 15 17 19 21 23 25 27 29 31 33 35 37 39 41 43 45 47 49 51 53 55 57 59 61 63 65 71 75 81 85 91 95 101 111 121 131 141 151 161 171 181 ; do
     echo $rs X $rs
     python3 stone.py $rs $rs 0 > opla 
-    grep nel opla >> errors_odd
-    grep rawp opla >> rawp_odd
-    grep raw2 opla >> rawp2_odd
+    grep nel opla >> errors_odd.ascii
+    grep rawp opla >> rawp_odd.ascii
+    grep raw2 opla >> rawp2_odd.ascii
 done
 
 rm opla
