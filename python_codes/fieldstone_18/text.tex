@@ -1,9 +1,9 @@
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_18/keywords.key}
 
 \begin{center}
 \inpython
@@ -12,33 +12,37 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: Feb. 7th, 2025.
+Last revision: January 22nd, 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The code relies on \QtwoQone elements.
-Each element has $m_V=9$ vertices so in total $ndof_V\times m_V=18$ velocity dofs and 
-$ndof_P*m_P=4$ pressure dofs. The total number of 
-velocity dofs is therefore $NfemV=NV \times ndofV$ while the total number of
-pressure dofs is $NfemP=NP\times ndofP$. The total number of dofs is then $Nfem=NfemV+NfemP$.
+The code relies on $Q_2\times Q_1$ elements in 2d.
+Each element has \lstinline{m_V=9} vertices so in total 
+\lstinline{ndof_V*m_V=18} velocity dofs (V-dofs) and 
+\lstinline{m_P=4} pressure dofs (P-dofs). The total number of 
+V-dofs is therefore \lstinline{Nfem_V=nn_V*ndof_V} while the total number of
+P-dofs is \lstinline{Nfem_P=nn_P}. The total number of dofs is then 
+\lstinline{Nfem=Nfem_V+Nfem_P}.
 
-As a consequence, matrix $\K$ has size $NfemV,NfemV$ and matrix $\G$ has size $NfemV,NfemP$.
-Vector $f$ is of size $NfemV$ and vector $h$ is of size $NfemP$.  
+%As a consequence, matrix $\K$ has size $NfemV,NfemV$ and matrix $\G$ has size $NfemV,NfemP$.
+%Vector $f$ is of size $NfemV$ and vector $h$ is of size $NfemP$.  
 
-When needed the pressure nullspace is removed 
-by imposing (Lagrange multiplier) that $\int_\Omega p \; dV=0$.
+In the original version of the code, and when needed the pressure nullspace was removed 
+by imposing (via a Lagrange multiplier) that $\int_\Omega p \; dV=0$.
+It is now removed as a postprocessing step.
 
 The following figure shows the layout of velocity and pressure nodes
 for a $4\times 3$ element mesh:
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_18/images/q2q1setup}
+\includegraphics[width=8cm]{python_codes/fieldstone_18/images/q2q1setup}
 \end{center}
 
-%-----------------------------------------
-\subsection*{Donea \& Huerta benchmark ({\tt bench=1})}
-The details of the numerical setup are presented in Section \ref{MMM-mms1}.
+\newpage
+%-------------------------------------------------------------------
+\subsection*{Donea \& Huerta manufactured  solution ({\tt bench=1})}
+The details of the numerical setup are presented in Section \ref{MMM-mms1} (see {\tt manual.pdf}).
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_18/results/mms/vel}
@@ -53,10 +57,11 @@ techniques. The zero average pressure approach yields smaller errors.}
 \end{center}
 
 \newpage
-%-----------------------------------------
+%---------------------------------------------------------------------
 \subsection*{Burman \& Hansbo manufactured solution ({\tt bench=4})}
 
-The details of the numerical setup are presented in Section \ref{MMM-ss:mms_buha06}.
+The details of the numerical setup are presented in Section \ref{MMM-ss:mms_buha06} (see 
+{\tt manual.pdf}).
 The velocity and pressure fields are given in the unit square by
 \begin{eqnarray}
 u(x,y) &=& 20xy^3 \nn\\
@@ -106,10 +111,6 @@ elements grid and $3^2$ quadrature points per element.}
 \end{center}
 
 
-
-
-
-
 \subsubsection*{No-slip boundary conditions (NS)}
 
 \begin{center}
@@ -150,9 +151,6 @@ def eta(x,y):
        else:
           val=1
 \end{lstlisting}
-
-
-
 
 
 \subsubsection*{Free slip boundary conditions (FS)}
