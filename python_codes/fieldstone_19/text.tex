@@ -2,6 +2,7 @@
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -16,37 +17,34 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: Feb. 9th, 2025.
+Last revision: January 24th, 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The details of this manufactured solution are presented in Section \ref{MMM-mms1}.
+The details of this manufactured solution are presented in Section \ref{MMM-mms1} (see {\tt manual.pdf}).
 
-Each element has $m_V=16$ vertices so in total $ndof_V \cdot m_V=32$ 
-velocity dofs and $ndof_P \cdot m_P=9$ pressure dofs. The total number of 
-velocity dofs is therefore $NfemV=nnp \cdot ndofV$ while the total number of
-pressure dofs is $NfemP=nel$. The total number of dofs is then $Nfem=NfemV+NfemP$.
-
-As a consequence, matrix $\K$ has size $(NfemV,NfemV)$ and matrix $\G$ has size $(NfemV,NfemP)$.
-Vector $f$ is of size $NfemV$ and vector $h$ is of size $NfemP$.  
+Each element counts \lstinline{m_V=16} V-nodes so in total \lstinline{ndof_V*m_V=32} 
+V-dofs and \lstinline{m_P=9} P-dofs. The total number of 
+V-dofs is therefore \lstinline{Nfem_V=nn_V*ndof_V} while the total number of
+pressure dofs is \lstinline{Nfem_P=nel}. The total number of dofs is then \lstinline{Nfem=Nfem_V+Nfem_P}.
 
 \begin{center}
 \begin{verbatim}
-60===61===62===63===64===65===66===67===68===70
-||             ||             ||             ||
-50   51   52   53   54   55   56   57   58   59
-||             ||             ||             ||
-40   41   42   43   44   45   46   47   48   49
-||             ||             ||             ||
-30===31===32===33===34===35===36===37===38===39
-||             ||             ||             ||
-20   21   22   23   24   25   26   27   28   29
-||             ||             ||             ||
-10   11   12   13   14   15   16   17   18   19
-||             ||             ||             ||
-00===01===02===03===04===05===06===07===08===09
+  60===61===62===63===64===65===66===67===68===70
+  ||             ||             ||             ||
+  50   51   52   53   54   55   56   57   58   59
+  ||             ||             ||             ||
+  40   41   42   43   44   45   46   47   48   49
+  ||             ||             ||             ||
+  30===31===32===33===34===35===36===37===38===39
+  ||             ||             ||             ||
+  20   21   22   23   24   25   26   27   28   29
+  ||             ||             ||             ||
+  10   11   12   13   14   15   16   17   18   19
+  ||             ||             ||             ||
+  00===01===02===03===04===05===06===07===08===09
 \end{verbatim}
 {\captionfont Example of 3x2 mesh. nnx=10, nny=7, nnp=70, nelx=3, nely=2, nel=6}
 \end{center}
@@ -84,7 +82,7 @@ Vector $f$ is of size $NfemV$ and vector $h$ is of size $NfemP$.
 \end{footnotesize}
 
 The reduced coordinates of the quadrature points and their weights are to be found in 
-Section~\ref{MMM-sec:quad1D}.
+Section~\ref{MMM-sec:quad1D} (see {\tt manual.pdf}).
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_19/results/vel}
@@ -93,8 +91,8 @@ Section~\ref{MMM-sec:quad1D}.
 exist in vtk so it is split into 9 $Q_1$ elements for visualisation purposes only.}
 \end{center}
 
-Velocity and pressure convergence rates can be measured for both $3^2$ and $4^2$
-quadrature rules:
+Discretisation errors are measured for a range of resolutions 
+and for two different quadratures ($3^2$ and $4^2$ points). 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_19/results/errors}\\
 {\captionfont Velocity error rate is cubic, pressure superconvergent since the pressure field
