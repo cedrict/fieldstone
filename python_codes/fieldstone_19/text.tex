@@ -99,3 +99,12 @@ and for two different quadratures ($3^2$ and $4^2$ points).
 is quadratic and therefore lies into the $Q_2$ space.}
 \end{center}
 
+Note that this code builds the $\K$ and $\G$ blocks separately and then 
+assembles them in the full Stokes matrix. This is not very efficient 
+and therefore limits the maximum attainable resolution.
+Also the zero pressure average is achieved my means of a Lagrange multiplier 
+as opposed to a post-processing step as often.
+
+
+
+

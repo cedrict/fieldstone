@@ -22,13 +22,13 @@ def by(x, y):
 
 ###############################################################################
 
-def uth(x,y):
+def u_analytical(x,y):
     return x*x*(1.-x)**2*(2.*y-6.*y*y+4*y*y*y)
 
-def vth(x,y):
+def v_analytical(x,y):
     return -y*y*(1.-y)**2*(2.*x-6.*x*x+4*x*x*x)
 
-def pth(x,y):
+def p_analytical(x,y):
     return x*(1.-x)-1./6.
 
 ###############################################################################
@@ -162,10 +162,11 @@ else:
     
 nnx=3*nelx+1                 # number of elements, x direction
 nny=3*nely+1                 # number of elements, y direction
-nn_V=nnx*nny                 # number of nodes
+nn_V=nnx*nny                 # number of V-nodes
+nn_P=(2*nelx+1)*(2*nely+1)   # number of P-nodes 
 nel=nelx*nely                # number of elements, total
 Nfem_V=nn_V*ndof_V           # number of velocity dofs
-Nfem_P=(2*nelx+1)*(2*nely+1) # number of pressure dofs
+Nfem_P=nn_P                  # number of pressure dofs
 Nfem=Nfem_V+Nfem_P           # total number of dofs
 
 hx=Lx/nelx
@@ -200,6 +201,7 @@ print("nel",nel)
 print("nnx=",nnx)
 print("nny=",nny)
 print("nn_V=",nn_V)
+print("nn_P=",nn_P)
 print("hx,hy=",hx,hy)
 print("------------------------------")
 
@@ -220,7 +222,20 @@ for j in range(0,nny):
     #end for
 #end for
 
+x_P=np.zeros(nn_P,dtype=np.float64)  # x coordinates
+y_P=np.zeros(nn_P,dtype=np.float64)  # y coordinates
+
+counter=0
+for j in range(0,2*nely+1):
+    for i in range(0,2*nelx+1):
+        x_P[counter]=i*hx/2
+        y_P[counter]=j*hy/2
+        counter += 1
+    #end for
+#end for
+
 if debug: np.savetxt('grid_V.ascii',np.array([x_V,y_V]).T,header='# x,y')
+if debug: np.savetxt('grid_P.ascii',np.array([x_P,y_P]).T,header='# x,y')
 
 print("setup: grid points: %.3f s" % (clock.time()-start))
 
@@ -380,10 +395,8 @@ for iel in range(0,nel):
             jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
             jcbi=np.linalg.inv(jcb)
             JxWq=np.linalg.det(jcb)*weightq
-
             xq=np.dot(N_V,x_V[icon_V[:,iel]])
             yq=np.dot(N_V,y_V[icon_V[:,iel]])
-
             dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V
             dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V
 
@@ -393,7 +406,7 @@ for iel in range(0,nel):
                                   [dNdy_V[i],dNdx_V[i]]]
 
 
-            # compute elemental a_mat matrix
+            # compute elemental K matrix
             K_el+=B.T.dot(C.dot(B))*viscosity*JxWq
 
             # compute elemental rhs vector
@@ -402,12 +415,11 @@ for iel in range(0,nel):
                 f_el[ndof_V*i+1]+=N_V[i]*by(xq,yq)*JxWq
             #end for
 
+            # compute elemental G matrix
             for i in range(0,m_P):
                 N_mat[0,i]=N_P[i]
                 N_mat[1,i]=N_P[i]
                 N_mat[2,i]=0.
-            #end for
-
             G_el-=B.T.dot(N_mat)*JxWq
 
             NNNP[:]+=N_P[:]*JxWq
@@ -435,7 +447,7 @@ for iel in range(0,nel):
         #end for
     #end for 
 
-    # assemble matrix K_mat and right hand side rhs
+    # assemble matrix and right hand side
     for k1 in range(0,m_V):
         for i1 in range(0,ndof_V):
             ikk=ndof_V*k1          +i1
@@ -471,22 +483,22 @@ print("build FE matrix: %.3f s" % (clock.time()-start))
 start=clock.time()
 
 if pnormalise:
-   a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
-   rhs   = np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
-   a_mat[0:Nfem_V,0:Nfem_V]=K_mat
-   a_mat[0:Nfem_V,Nfem_V:Nfem]=G_mat
-   a_mat[Nfem_V:Nfem,0:Nfem_V]=G_mat.T
-   a_mat[Nfem,Nfem_V:Nfem]=constr
-   a_mat[Nfem_V:Nfem,Nfem]=constr
+   A_fem=np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
+   b_fem=np.zeros(Nfem+1,dtype=np.float64)          # right hand side of Ax=b
+   A_fem[0:Nfem_V,0:Nfem_V]=K_mat
+   A_fem[0:Nfem_V,Nfem_V:Nfem]=G_mat
+   A_fem[Nfem_V:Nfem,0:Nfem_V]=G_mat.T
+   A_fem[Nfem,Nfem_V:Nfem]=constr
+   A_fem[Nfem_V:Nfem,Nfem]=constr
 else:
-   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
-   rhs   = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-   a_mat[0:Nfem_V,0:Nfem_V]=K_mat
-   a_mat[0:Nfem_V,Nfem_V:Nfem]=G_mat
-   a_mat[Nfem_V:Nfem,0:Nfem_V]=G_mat.T
+   A_fem=np.zeros((Nfem,Nfem),dtype=np.float64)  # matrix of Ax=b
+   b_fem=np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
+   A_fem[0:Nfem_V,0:Nfem_V]=K_mat
+   A_fem[0:Nfem_V,Nfem_V:Nfem]=G_mat
+   A_fem[Nfem_V:Nfem,0:Nfem_V]=G_mat.T
 
-rhs[0:Nfem_V]=f_rhs
-rhs[Nfem_V:Nfem]=h_rhs
+b_fem[0:Nfem_V]=f_rhs
+b_fem[Nfem_V:Nfem]=h_rhs
 
 print("assemble blocks: %.3f s" % (clock.time()-start))
 
@@ -495,7 +507,7 @@ print("assemble blocks: %.3f s" % (clock.time()-start))
 ######################################################################
 start=clock.time()
 
-sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
+sol=sps.linalg.spsolve(sps.csr_matrix(A_fem),b_fem)
 
 print("solve time: %.3f s" % (clock.time()-start))
 
@@ -553,7 +565,7 @@ for iel in range(0,nel):
     exy[iel]=np.dot(dNdy_V[:],u[icon_V[:,iel]])*0.5\
             +np.dot(dNdx_V[:],v[icon_V[:,iel]])*0.5
 
-    e[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
+    e[iel]=np.sqrt(0.5*(exx[iel]**2+eyy[iel]**2)+exy[iel]**2)
 
 #end for
 
@@ -595,8 +607,8 @@ for iel in range (0,nel):
             vq=np.dot(N_V,v[icon_V[:,iel]])
             pq=np.dot(N_P,p[icon_P[:,iel]])
 
-            errv+=((uq-uth(xq,yq))**2+(vq-vth(xq,yq))**2)*JxWq
-            errp+=(pq-pth(xq,yq))**2*JxWq
+            errv+=((uq-u_analytical(xq,yq))**2+(vq-v_analytical(xq,yq))**2)*JxWq
+            errp+=(pq-p_analytical(xq,yq))**2*JxWq
 
         #end for
     #end for
@@ -740,7 +752,7 @@ vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='p (th)' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%10e \n" %pth(x_V[i],y_V[i]))
+    vtufile.write("%10e \n" %p_analytical(x_V[i],y_V[i]))
 vtufile.write("</DataArray>\n")
 vtufile.write("</PointData>\n")
 #####
