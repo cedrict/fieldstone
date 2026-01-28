@@ -6,6 +6,7 @@
 \includegraphics[height=1.25cm]{images/pictograms/temperature}
 \includegraphics[height=1.25cm]{images/pictograms/3d}
 \includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -20,21 +21,25 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: Feb. 9th, 2025.
+Last revision: January 27th, 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This three-dimensional benchmark was first proposed by \textcite{bucc94} (1994). 
-It has been subsequently carried out in \textcite{tack94} (1994),
-\textcite{trha98} (1998), \textcite{albe00} (2000),
-\textcite{onmm06} (2006), \textcite{dawk11} (2011), \textcite{krhb12} (2012),
+It has been subsequently carried out in 
+\textcite{tack94} (1994),
+\textcite{trha98} (1998), 
+\textcite{albe00} (2000),
+\textcite{onmm06} (2006), 
+\textcite{dawk11} (2011), 
+\textcite{krhb12} (2012),
 \textcite{thie14} (2014).
-We here focus on Case 1 of the original article:  
+I here focus on Case 1 of the original article:  
 an isoviscous bimodal convection experiment at $\Ranb=3\cdot 10^5$.
 
-The domain is of size $a\times b\times h$ with $a=1.0079h$, $b=0.6283h$ 
+The domain is of size $a\times b\times h$ with $a=1.0079\cdot h$, $b=0.6283 \cdot h$ 
 with $h=\SI{2700}{\km}$. It is filled with a Newtonian fluid 
 characterised by $\rho_0=\SI{3300}{\kg\per\cubic\meter}$, 
 $\alpha=10^{-5}~\si{\per\kelvin}$, 
@@ -70,7 +75,8 @@ Right: same, obtained with \elefant \cite{thie14}.}
 \end{center}
 
 
-\noindent Given the dimensions of the domain, here are resolutions that would yield (roughly) cubic elements:
+\noindent Given the dimensions of the domain, here are resolutions 
+that would yield (roughly) cubic elements:
 \begin{center}
 \begin{tabular}{l|lccccccc|}
 domain size & \\
@@ -82,9 +88,10 @@ $h$=1.0000$\times$2700km & nelz= &16 &20 &24 &28 &32 &36 &40 \\
 \end{tabular}
 \end{center}
 Note that \lstinline{nelz} must be a multiple of four since we need to carry out measurements at 
-locations characterised by $z=3L_z/4$.
+locations characterised by $z=3L_z/4$ (technically not a requirement but it makes the 
+measurement much easier).
 
-%............................
+%-------------------------
 \subsection*{Methodology}
 
 In what follows I highlight a few important points which are key to understanding how the code
@@ -93,23 +100,23 @@ is put together and works.
 \begin{verbatim}
 load needed modules and functions
 define parameters
-build V grid (xV,yV,zV)
-build V connectivity (iconV)
-define b.c. for velocity (bc_fixV,bc_valV)
-build T grid (xT,yT,zT)
-build T connectivity (iconT)
-define b.c. for temperature (bc_fixT,bc_valT)
+build V grid (x_V,y_V,z_V)
+build V connectivity (icon_V)
+define b.c. for velocity (bc_fix_V,bc_val_V)
+build T grid (x_T,y_T,z_T)
+build T connectivity (icon_T)
+define b.c. for temperature (bc_fix_T,bc_val_T)
 initial temperature field
 .------------------------> istep ---------------------.
-|  build K,G,f,h                                      |
-|  assemble them in A,rhs                             |
+|  build Kel,Gel,f,h                                  |
+|  assemble them in A_fem,b_fem                       |
 |  solve                                              |
 |  split solution vector in u,v,w,p                   |
-|  {u,v,w}=relax*{u,v,w}+(1-relax)*{u,v,w}            |
+|  {u,v,w}=relax_V*{u,v,w}+(1-relax_V)*{u,v,w}        |
 |  compute vrms                                       |
-|  build A, rhs for temperature                       |
+|  build A_fem, b_fem for temperature                 |
 |  solve for temperature T                            |
-|  T=relax*T+(1-relax)*T                              |
+|  T=relax_T*T+(1-relax_T)*T                          |
 |  compute elemental strainrate                       |
 |  compute nodal strainrate                           |
 |  compute nodal pressure                             |
@@ -118,29 +125,20 @@ initial temperature field
 .---------------------------<-------------------------.
 \end{verbatim}
 
-I fist load the shape functions which are in two separate files:
+There are \lstinline{nn_V=nnx*nny*nnz} velocity nodes and 
+\lstinline{nn_T=nn_V} temperature nodes.
 
-\begin{lstlisting}
-from shape_functionsV import NNV,dNNVdr,dNNVds,dNNVdt
-from shape_functionsT import NNT,dNNTdr,dNNTds,dNNTdt
-\end{lstlisting}
-Technically these are the same functions since the polynomial space for 
-both velocity (components) and temperature is $Q_2$.
-
-There are \lstinline{NV=nnx*nny*nnz} velocity nodes and 
-\lstinline{NT=NV} temperature nodes.
-
-The velocity grid is built: \lstinline{xV, yV, zV, iconV}, and 
-these are copied in \lstinline{xT, yT, zT, iconT} for the temperature grid.  
+The velocity grid is built: \lstinline{x_V, y_V, z_V, icon_V}, and 
+these are copied in \lstinline{x_T, y_T, z_T, icon_T} for the temperature grid.  
 
 The initial temperature field is built as follows:
 \begin{lstlisting}
-for i in range(0,NT):
-   T[i]= (Temperature2-Temperature1)/Lz*zT[i]+Temperature1 \
-       + 100*(np.cos(np.pi*xT[i]/Lx) + np.cos(np.pi*yT[i]/Ly))*np.sin(np.pi*zT[i]/Lz)
+for i in range(0,nn_T):
+   T[i]=(Temperature2-Temperature1)/Lz*z_T[i]+Temperature1 \
+       +100*(np.cos(np.pi*x_T[i]/Lx) + np.cos(np.pi*y_T[i]/Ly))*np.sin(np.pi*z_T[i]/Lz)
 \end{lstlisting}
 
-The ${\bm C}$ matrix of Eq.~\eqref{MMM-eq:mixedC} is then built:
+The ${\bm C}$ matrix of Eq.~\eqref{MMM-eq:mixedC} (see {\tt manual.pdf}) is then built:
 \begin{lstlisting}
 c_mat = np.array([[2,0,0,0,0,0],\
                   [0,2,0,0,0,0],\
@@ -153,15 +151,17 @@ c_mat = np.array([[2,0,0,0,0,0],\
 %.......................................
 \subsubsection{Getting to steady state}  
 
-In this case we are not so much interested in the path to steady state since 
-the published values/measurements are {\it at} steady state.
+In this case I am not so much interested in the path to steady state (i.e.
+the intermediate values) since the published values/measurements are {\it at} steady state.
 The mass and momentum conservation equations for incompressible Stokes flow do not 
 contain a time derivative but the energy conservation equation does. 
 
 At steady state the terms $\partial_t T$ is zero by definition so we must solve
 the following equation\footnote{Adiabatic heating, shear heating and internal heating 
-are not considered in the benchmark} (see Section~\ref{MMM-ss:hte}):
+are not considered in the benchmark -- Boussinesq approximation} (see 
+Section~\ref{MMM-ss:hte} of {\tt manual.pdf}):
 \begin{equation}
+\rho_0 C_p
 \vec{\upnu}\cdot\vec\nabla T - {\vec \nabla} \cdot k {\vec \nabla} T = 0
 \end{equation}
 The Finite Element discretisation of this equation yields 
@@ -172,13 +172,13 @@ where $\vec{b}$ contains the boundary conditions.
 This formulation is much simpler than the time-dependent one and avoids to discuss the choice
 of time-discretisation algorithm altogether. 
 
-We now have to solve three coupled equations:
+I now have to solve three coupled equations:
 \begin{eqnarray}
 -{\vec \nabla}p + {\vec \nabla}\cdot (2 \eta \dot{\bm \varepsilon}^d ) + \rho(T) {\vec g} &=& \vec{0} \\
 {\vec \nabla}\cdot{\vec \upnu} &=& 0 \\ 
-\vec{\upnu}\cdot\vec\nabla T - {\vec \nabla} \cdot k {\vec \nabla} T &=& 0 
+\rho_0 C_p \vec{\upnu}\cdot\vec\nabla T - {\vec \nabla} \cdot k {\vec \nabla} T &=& 0 
 \end{eqnarray}
-We could then proceed to write the weak forms of these equations and cast these as we have done before, 
+I could then proceed to write the weak forms of these equations and cast these as we have done before, 
 but this time considering velocity, pressure and temperature as unknowns of a (very) large system:
 \[
 \left(
@@ -201,14 +201,14 @@ but this time considering velocity, pressure and temperature as unknowns of a (v
 \end{array}
 \right)
 \]
-Once this matrix is filled a single solve will yield the steady state velocity, pressure and 
+Once this matrix is filled a single solve would then yield the steady state velocity, pressure and 
 temperature fields! 
 
 The term $\rho(T)$ will naturally end up in the (1,3) block of the assembled matrix as matrix ${\bm L}$.
 The mass conservation equation in this form is independent of temperature so the (2,3) block 
 will be zero. The diffusion term ${\bm K}_d$ naturally finds its way to the (3,3) 
 block and since there is not occurence of pressure in the energy equation the (3,2) 
-block will be zero. We then obtain:
+block will be zero. I then obtain:
 \[
 \left(
 \begin{array}{ccc}
@@ -237,7 +237,7 @@ either put it in the (3,1) block nor in the (3,3) block.
 This approach fails, which is why 
 the problem is solved iteratively. The idea is simple: when solving the 
 coupled mass and momentum equations, we assume temperature known, and when solving the energy equation
-we assume velocity known. We can then alternatively solve one system and then the other, constantly 
+we assume velocity known. I can then alternatively solve one system and then the other, constantly 
 updating the fields when re-building the matrices or right hand sides.
 
 However, it is well known that a straightforward implementation of this algorithm does not 
@@ -331,6 +331,19 @@ jcbi[0,0]=2/hx ; jcbi[0,1]=0    ; jcbi[0,2]=0
 jcbi[1,0]=0    ; jcbi[1,1]=2/hy ; jcbi[1,2]=0
 jcbi[2,0]=0    ; jcbi[2,1]=0    ; jcbi[2,2]=2/hz
 \end{lstlisting}
+
+
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/timings/build_energy.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/timings/build_stokes.pdf}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/timings/solve_energy.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/timings/solve_stokes.pdf}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/timings/compute_sr.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/timings/compute_vrms.pdf}
+\end{center}
+
+
+
 
 
 \newpage

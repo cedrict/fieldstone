@@ -1,0 +1,977 @@
+*******************************
+********** stone 020 **********
+*******************************
+nelx 12
+nely 12
+nelz 12
+nel 1728
+nnx= 13
+nny= 13
+nnz= 13
+nn_V= 2197
+Ra= 29967.010399261828 300000.0
+kappa= 1e-06
+reftime= 231135.06658211796 Myr
+tfinal= 1155675.3329105896 Myr
+------------------------------
+grid points setup: 0.004 s
+build connectivity: 0.019 s
+boundary conditions V: 0.014 s
+build grid T: 0.000 s
+boundary conditions T: 0.004 s
+initial temperature: 0.010 s
+--------------------------------------------
+istep=  0
+--------------------------------------------
+build FE matrix Stokes: 8.988 s
+solve Stokes system: 2.330 s
+     -> u (m,M) -1.1579e-04 1.1579e-04 
+     -> v (m,M) -9.1280e-05 9.1280e-05 
+     -> w (m,M) -2.6379e-04 2.6379e-04 
+     -> p (m,M) -4.0332e+10 3.9912e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 3.5556e-12 ; vrmsdiff= 3.556e-12 
+compute vrms: 0.766 s
+     -> A_fem (m,M) = -4.5856e+05 2.0410e+06
+     -> b_fem (m,M) = 0.0000e+00 4.0638e+09
+build FE matrix T: 1.525 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.081 s
+relax temperature: 0.000 s
+     -> exx (m,M) -4.1900e-18 4.1900e-18 
+     -> eyy (m,M) -5.2986e-18 5.2986e-18 
+     -> ezz (m,M) -8.9225e-18 8.9225e-18 
+     -> exy (m,M) -8.6831e-26 6.5667e-26 
+     -> exz (m,M) -5.6837e-18 1.3477e-18 
+     -> eyz (m,M) -4.7892e-18 0.0000e+00 
+     -> dTdx (m,M) -7.8291e-04 3.4694e-18 
+     -> dTdy (m,M) -1.0405e-03 6.9389e-18 
+     -> dTdz (m,M) -4.4779e-03 -1.0911e-04 
+compute nod strain rate: 1.257 s
+     -> q (m,M) -4.0332e+10 3.9912e+10 
+compute q: 0.014 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 1.6828e+03 
+compute avrg T at z=3Lz/4: 0.002 s
+     -> Nu= 1.781930e+00  
+compute Nusselt number: 0.002 s
+export to vtu: 0.030 s
+export stats to ascii: 0.007 s
+--------------------------------------------
+istep=  1
+--------------------------------------------
+build FE matrix Stokes: 9.330 s
+solve Stokes system: 2.422 s
+     -> u (m,M) -8.3072e-04 8.3072e-04 
+     -> v (m,M) -5.0719e-04 5.0719e-04 
+     -> w (m,M) -1.5773e-03 1.5773e-03 
+     -> p (m,M) -4.0492e+10 4.0212e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 2.0035e-11 ; vrmsdiff= 1.648e-11 
+compute vrms: 0.724 s
+     -> A_fem (m,M) = -9.1320e+05 2.0489e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1233e+09
+build FE matrix T: 1.615 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.079 s
+relax temperature: 0.000 s
+     -> exx (m,M) -2.9664e-17 2.6908e-17 
+     -> eyy (m,M) -2.8386e-17 2.5959e-17 
+     -> ezz (m,M) -4.9529e-17 4.9255e-17 
+     -> exy (m,M) -1.1697e-18 1.2633e-18 
+     -> exz (m,M) -3.8228e-17 8.7963e-18 
+     -> eyz (m,M) -2.5851e-17 0.0000e+00 
+     -> dTdx (m,M) -1.3495e-03 3.4694e-18 
+     -> dTdy (m,M) -1.4524e-03 1.9568e-04 
+     -> dTdz (m,M) -8.8433e-03 6.7369e-04 
+compute nod strain rate: 1.423 s
+     -> q (m,M) -4.0492e+10 4.0212e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.1254e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.553453e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  2
+--------------------------------------------
+build FE matrix Stokes: 10.208 s
+solve Stokes system: 2.546 s
+     -> u (m,M) -6.1209e-04 6.1209e-04 
+     -> v (m,M) -3.5548e-04 3.5548e-04 
+     -> w (m,M) -1.5275e-03 1.5275e-03 
+     -> p (m,M) -4.0429e+10 4.0274e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.5573e-11 ; vrmsdiff= -4.462e-12 
+compute vrms: 0.739 s
+     -> A_fem (m,M) = -9.0300e+05 2.0525e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1220e+09
+build FE matrix T: 1.501 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.099 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.3603e-17 2.9066e-17 
+     -> eyy (m,M) -2.5742e-17 2.2937e-17 
+     -> ezz (m,M) -5.0016e-17 5.7156e-17 
+     -> exy (m,M) -4.1722e-18 4.1065e-18 
+     -> exz (m,M) -3.2401e-17 1.0405e-17 
+     -> eyz (m,M) -2.1404e-17 8.2768e-19 
+     -> dTdx (m,M) -1.5364e-03 5.6055e-05 
+     -> dTdy (m,M) -1.5934e-03 1.3346e-04 
+     -> dTdz (m,M) -9.2859e-03 7.5178e-04 
+compute nod strain rate: 1.342 s
+     -> q (m,M) -4.0429e+10 4.0274e+10 
+compute q: 0.015 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.1863e+03 
+compute avrg T at z=3Lz/4: 0.002 s
+     -> Nu= 3.512448e+00  
+compute Nusselt number: 0.002 s
+export stats to ascii: 0.007 s
+--------------------------------------------
+istep=  3
+--------------------------------------------
+build FE matrix Stokes: 9.915 s
+solve Stokes system: 2.561 s
+     -> u (m,M) -5.9434e-04 5.9434e-04 
+     -> v (m,M) -3.5143e-04 3.5143e-04 
+     -> w (m,M) -1.5166e-03 1.5166e-03 
+     -> p (m,M) -4.0420e+10 4.0284e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.5075e-11 ; vrmsdiff= -4.978e-13 
+compute vrms: 0.838 s
+     -> A_fem (m,M) = -8.8847e+05 2.0527e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1218e+09
+build FE matrix T: 1.555 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.092 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.4944e-17 2.8924e-17 
+     -> eyy (m,M) -2.4944e-17 2.2209e-17 
+     -> ezz (m,M) -4.9494e-17 5.8165e-17 
+     -> exy (m,M) -4.2230e-18 3.9113e-18 
+     -> exz (m,M) -3.1408e-17 1.1040e-17 
+     -> eyz (m,M) -2.1726e-17 1.0576e-18 
+     -> dTdx (m,M) -1.5406e-03 4.8648e-06 
+     -> dTdy (m,M) -1.6907e-03 1.4341e-04 
+     -> dTdz (m,M) -9.2912e-03 7.5139e-04 
+compute nod strain rate: 1.388 s
+     -> q (m,M) -4.0420e+10 4.0284e+10 
+compute q: 0.015 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.1910e+03 
+compute avrg T at z=3Lz/4: 0.002 s
+     -> Nu= 3.488965e+00  
+compute Nusselt number: 0.002 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  4
+--------------------------------------------
+build FE matrix Stokes: 10.158 s
+solve Stokes system: 2.601 s
+     -> u (m,M) -5.9953e-04 5.9953e-04 
+     -> v (m,M) -3.4030e-04 3.4030e-04 
+     -> w (m,M) -1.4936e-03 1.4936e-03 
+     -> p (m,M) -4.0418e+10 4.0285e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.5186e-11 ; vrmsdiff= 1.113e-13 
+compute vrms: 0.824 s
+     -> A_fem (m,M) = -8.7223e+05 2.0525e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1210e+09
+build FE matrix T: 1.589 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.093 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.5422e-17 2.9046e-17 
+     -> eyy (m,M) -2.3705e-17 2.1257e-17 
+     -> ezz (m,M) -4.8725e-17 5.7602e-17 
+     -> exy (m,M) -3.9176e-18 3.4716e-18 
+     -> exz (m,M) -3.1260e-17 1.1283e-17 
+     -> eyz (m,M) -2.1311e-17 1.0496e-18 
+     -> dTdx (m,M) -1.5812e-03 1.8333e-06 
+     -> dTdy (m,M) -1.6634e-03 1.6130e-04 
+     -> dTdz (m,M) -9.2280e-03 7.5380e-04 
+compute nod strain rate: 1.356 s
+     -> q (m,M) -4.0418e+10 4.0285e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.1924e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.492421e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  5
+--------------------------------------------
+build FE matrix Stokes: 10.233 s
+solve Stokes system: 2.600 s
+     -> u (m,M) -6.0620e-04 6.0620e-04 
+     -> v (m,M) -3.2317e-04 3.2317e-04 
+     -> w (m,M) -1.4751e-03 1.4751e-03 
+     -> p (m,M) -4.0417e+10 4.0283e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.5204e-11 ; vrmsdiff= 1.797e-14 
+compute vrms: 0.761 s
+     -> A_fem (m,M) = -8.5827e+05 2.0523e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1199e+09
+build FE matrix T: 1.609 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.081 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.5822e-17 2.9271e-17 
+     -> eyy (m,M) -2.2614e-17 2.0282e-17 
+     -> ezz (m,M) -4.8023e-17 5.7009e-17 
+     -> exy (m,M) -3.7441e-18 3.3048e-18 
+     -> exz (m,M) -3.1477e-17 1.1593e-17 
+     -> eyz (m,M) -2.0392e-17 1.1687e-18 
+     -> dTdx (m,M) -1.6202e-03 5.8071e-06 
+     -> dTdy (m,M) -1.5655e-03 1.6925e-04 
+     -> dTdz (m,M) -9.1585e-03 7.6546e-04 
+compute nod strain rate: 1.440 s
+     -> q (m,M) -4.0417e+10 4.0283e+10 
+compute q: 0.015 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.1958e+03 
+compute avrg T at z=3Lz/4: 0.002 s
+     -> Nu= 3.485664e+00  
+compute Nusselt number: 0.002 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  6
+--------------------------------------------
+build FE matrix Stokes: 10.192 s
+solve Stokes system: 2.552 s
+     -> u (m,M) -6.1416e-04 6.1416e-04 
+     -> v (m,M) -3.0634e-04 3.0634e-04 
+     -> w (m,M) -1.4607e-03 1.4607e-03 
+     -> p (m,M) -4.0416e+10 4.0281e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.5194e-11 ; vrmsdiff= -1.041e-14 
+compute vrms: 0.831 s
+     -> A_fem (m,M) = -8.4685e+05 2.0521e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1189e+09
+build FE matrix T: 1.550 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.092 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.6314e-17 2.9537e-17 
+     -> eyy (m,M) -2.1621e-17 1.9352e-17 
+     -> ezz (m,M) -4.7416e-17 5.6565e-17 
+     -> exy (m,M) -3.6443e-18 3.2548e-18 
+     -> exz (m,M) -3.1866e-17 1.1859e-17 
+     -> eyz (m,M) -1.9434e-17 1.2887e-18 
+     -> dTdx (m,M) -1.6545e-03 1.2010e-05 
+     -> dTdy (m,M) -1.4459e-03 1.7305e-04 
+     -> dTdz (m,M) -9.0944e-03 7.7971e-04 
+compute nod strain rate: 1.382 s
+     -> q (m,M) -4.0416e+10 4.0281e+10 
+compute q: 0.015 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2000e+03 
+compute avrg T at z=3Lz/4: 0.002 s
+     -> Nu= 3.473678e+00  
+compute Nusselt number: 0.002 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  7
+--------------------------------------------
+build FE matrix Stokes: 10.244 s
+solve Stokes system: 2.634 s
+     -> u (m,M) -6.2099e-04 6.2099e-04 
+     -> v (m,M) -2.9112e-04 2.9112e-04 
+     -> w (m,M) -1.4477e-03 1.4477e-03 
+     -> p (m,M) -4.0415e+10 4.0279e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.5166e-11 ; vrmsdiff= -2.770e-14 
+compute vrms: 0.813 s
+     -> A_fem (m,M) = -8.3622e+05 2.0520e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1180e+09
+build FE matrix T: 1.600 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.100 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.6833e-17 2.9792e-17 
+     -> eyy (m,M) -2.0670e-17 1.8486e-17 
+     -> ezz (m,M) -4.6852e-17 5.6185e-17 
+     -> exy (m,M) -3.5767e-18 3.2418e-18 
+     -> exz (m,M) -3.2251e-17 1.2063e-17 
+     -> eyz (m,M) -1.8564e-17 1.3726e-18 
+     -> dTdx (m,M) -1.6806e-03 1.8333e-05 
+     -> dTdy (m,M) -1.3298e-03 1.7458e-04 
+     -> dTdz (m,M) -9.0330e-03 7.9256e-04 
+compute nod strain rate: 1.300 s
+     -> q (m,M) -4.0415e+10 4.0279e+10 
+compute q: 0.013 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2041e+03 
+compute avrg T at z=3Lz/4: 0.002 s
+     -> Nu= 3.459942e+00  
+compute Nusselt number: 0.002 s
+export stats to ascii: 0.005 s
+--------------------------------------------
+istep=  8
+--------------------------------------------
+build FE matrix Stokes: 9.159 s
+solve Stokes system: 2.472 s
+     -> u (m,M) -6.2619e-04 6.2619e-04 
+     -> v (m,M) -2.7770e-04 2.7770e-04 
+     -> w (m,M) -1.4348e-03 1.4348e-03 
+     -> p (m,M) -4.0414e+10 4.0277e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.5132e-11 ; vrmsdiff= -3.387e-14 
+compute vrms: 0.996 s
+     -> A_fem (m,M) = -8.2569e+05 2.0519e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1172e+09
+build FE matrix T: 1.407 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.079 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.7321e-17 3.0063e-17 
+     -> eyy (m,M) -1.9759e-17 1.7687e-17 
+     -> ezz (m,M) -4.6305e-17 5.5812e-17 
+     -> exy (m,M) -3.5141e-18 3.2267e-18 
+     -> exz (m,M) -3.2568e-17 1.2214e-17 
+     -> eyz (m,M) -1.7790e-17 1.4138e-18 
+     -> dTdx (m,M) -1.7019e-03 2.3842e-05 
+     -> dTdy (m,M) -1.2559e-03 1.7315e-04 
+     -> dTdz (m,M) -8.9723e-03 8.0523e-04 
+compute nod strain rate: 1.242 s
+     -> q (m,M) -4.0414e+10 4.0277e+10 
+compute q: 0.014 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2078e+03 
+compute avrg T at z=3Lz/4: 0.002 s
+     -> Nu= 3.446531e+00  
+compute Nusselt number: 0.002 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  9
+--------------------------------------------
+build FE matrix Stokes: 9.360 s
+solve Stokes system: 2.540 s
+     -> u (m,M) -6.3000e-04 6.3000e-04 
+     -> v (m,M) -2.6589e-04 2.6589e-04 
+     -> w (m,M) -1.4219e-03 1.4219e-03 
+     -> p (m,M) -4.0412e+10 4.0275e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.5099e-11 ; vrmsdiff= -3.338e-14 
+compute vrms: 0.724 s
+     -> A_fem (m,M) = -8.1525e+05 2.0517e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1163e+09
+build FE matrix T: 1.454 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.079 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.7748e-17 3.0272e-17 
+     -> eyy (m,M) -1.8899e-17 1.6954e-17 
+     -> ezz (m,M) -4.5766e-17 5.5431e-17 
+     -> exy (m,M) -3.4471e-18 3.1987e-18 
+     -> exz (m,M) -3.2812e-17 1.2327e-17 
+     -> eyz (m,M) -1.7102e-17 1.4234e-18 
+     -> dTdx (m,M) -1.7199e-03 2.8499e-05 
+     -> dTdy (m,M) -1.1898e-03 1.7023e-04 
+     -> dTdz (m,M) -8.9119e-03 8.1816e-04 
+compute nod strain rate: 1.296 s
+     -> q (m,M) -4.0412e+10 4.0275e+10 
+compute q: 0.014 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2110e+03 
+compute avrg T at z=3Lz/4: 0.002 s
+     -> Nu= 3.434349e+00  
+compute Nusselt number: 0.002 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  10
+--------------------------------------------
+build FE matrix Stokes: 9.617 s
+solve Stokes system: 2.549 s
+     -> u (m,M) -6.3276e-04 6.3276e-04 
+     -> v (m,M) -2.5548e-04 2.5548e-04 
+     -> w (m,M) -1.4092e-03 1.4092e-03 
+     -> p (m,M) -4.0411e+10 4.0273e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.5069e-11 ; vrmsdiff= -3.042e-14 
+compute vrms: 0.710 s
+     -> A_fem (m,M) = -8.0511e+05 2.0516e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1155e+09
+build FE matrix T: 1.441 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.082 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.8108e-17 3.0427e-17 
+     -> eyy (m,M) -1.8103e-17 1.6288e-17 
+     -> ezz (m,M) -4.5242e-17 5.5045e-17 
+     -> exy (m,M) -3.3756e-18 3.1591e-18 
+     -> exz (m,M) -3.2995e-17 1.2414e-17 
+     -> eyz (m,M) -1.6486e-17 1.4133e-18 
+     -> dTdx (m,M) -1.7353e-03 3.2419e-05 
+     -> dTdy (m,M) -1.1310e-03 1.6668e-04 
+     -> dTdz (m,M) -8.8525e-03 8.2778e-04 
+compute nod strain rate: 1.421 s
+     -> q (m,M) -4.0411e+10 4.0273e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2137e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.423623e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  11
+--------------------------------------------
+build FE matrix Stokes: 9.783 s
+solve Stokes system: 2.584 s
+     -> u (m,M) -6.3475e-04 6.3475e-04 
+     -> v (m,M) -2.4627e-04 2.4627e-04 
+     -> w (m,M) -1.3969e-03 1.3969e-03 
+     -> p (m,M) -4.0410e+10 4.0271e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.5042e-11 ; vrmsdiff= -2.683e-14 
+compute vrms: 0.712 s
+     -> A_fem (m,M) = -7.9544e+05 2.0514e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1147e+09
+build FE matrix T: 1.447 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.103 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.8405e-17 3.0539e-17 
+     -> eyy (m,M) -1.7378e-17 1.5686e-17 
+     -> ezz (m,M) -4.4740e-17 5.4664e-17 
+     -> exy (m,M) -3.3024e-18 3.1119e-18 
+     -> exz (m,M) -3.3133e-17 1.2481e-17 
+     -> eyz (m,M) -1.5932e-17 1.3920e-18 
+     -> dTdx (m,M) -1.7501e-03 3.5731e-05 
+     -> dTdy (m,M) -1.0790e-03 1.6293e-04 
+     -> dTdz (m,M) -8.7952e-03 8.3764e-04 
+compute nod strain rate: 1.514 s
+     -> q (m,M) -4.0410e+10 4.0271e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2161e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.414297e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  12
+--------------------------------------------
+build FE matrix Stokes: 10.909 s
+solve Stokes system: 2.991 s
+     -> u (m,M) -6.3621e-04 6.3621e-04 
+     -> v (m,M) -2.3812e-04 2.3812e-04 
+     -> w (m,M) -1.3853e-03 1.3853e-03 
+     -> p (m,M) -4.0409e+10 4.0269e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.5018e-11 ; vrmsdiff= -2.337e-14 
+compute vrms: 0.792 s
+     -> A_fem (m,M) = -7.8640e+05 2.0513e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1140e+09
+build FE matrix T: 1.606 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.089 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.8649e-17 3.0617e-17 
+     -> eyy (m,M) -1.6723e-17 1.5145e-17 
+     -> ezz (m,M) -4.4267e-17 5.4296e-17 
+     -> exy (m,M) -3.2299e-18 3.0609e-18 
+     -> exz (m,M) -3.3236e-17 1.2535e-17 
+     -> eyz (m,M) -1.5436e-17 1.3651e-18 
+     -> dTdx (m,M) -1.7626e-03 3.8542e-05 
+     -> dTdy (m,M) -1.0331e-03 1.5924e-04 
+     -> dTdz (m,M) -8.7408e-03 8.4549e-04 
+compute nod strain rate: 1.423 s
+     -> q (m,M) -4.0409e+10 4.0269e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2181e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.406218e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  13
+--------------------------------------------
+build FE matrix Stokes: 10.600 s
+solve Stokes system: 2.652 s
+     -> u (m,M) -6.3729e-04 6.3729e-04 
+     -> v (m,M) -2.3088e-04 2.3088e-04 
+     -> w (m,M) -1.3743e-03 1.3743e-03 
+     -> p (m,M) -4.0408e+10 4.0267e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.4998e-11 ; vrmsdiff= -2.029e-14 
+compute vrms: 0.863 s
+     -> A_fem (m,M) = -7.7802e+05 2.0512e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1133e+09
+build FE matrix T: 1.622 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.091 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.8847e-17 3.0671e-17 
+     -> eyy (m,M) -1.6136e-17 1.4659e-17 
+     -> ezz (m,M) -4.3827e-17 5.3947e-17 
+     -> exy (m,M) -3.1601e-18 3.0087e-18 
+     -> exz (m,M) -3.3316e-17 1.2579e-17 
+     -> eyz (m,M) -1.4990e-17 1.3360e-18 
+     -> dTdx (m,M) -1.7716e-03 4.0943e-05 
+     -> dTdy (m,M) -9.9253e-04 1.5571e-04 
+     -> dTdz (m,M) -8.6899e-03 8.5145e-04 
+compute nod strain rate: 1.450 s
+     -> q (m,M) -4.0408e+10 4.0267e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2199e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.399214e+00  
+compute Nusselt number: 0.002 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  14
+--------------------------------------------
+build FE matrix Stokes: 10.600 s
+solve Stokes system: 2.684 s
+     -> u (m,M) -6.3809e-04 6.3809e-04 
+     -> v (m,M) -2.2443e-04 2.2443e-04 
+     -> w (m,M) -1.3641e-03 1.3641e-03 
+     -> p (m,M) -4.0407e+10 4.0266e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.4980e-11 ; vrmsdiff= -1.762e-14 
+compute vrms: 0.811 s
+     -> A_fem (m,M) = -7.7031e+05 2.0511e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1127e+09
+build FE matrix T: 1.639 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.090 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.9010e-17 3.0706e-17 
+     -> eyy (m,M) -1.5610e-17 1.4224e-17 
+     -> ezz (m,M) -4.3419e-17 5.3619e-17 
+     -> exy (m,M) -3.0939e-18 2.9571e-18 
+     -> exz (m,M) -3.3377e-17 1.2615e-17 
+     -> eyz (m,M) -1.4590e-17 1.3067e-18 
+     -> dTdx (m,M) -1.7812e-03 4.3006e-05 
+     -> dTdy (m,M) -9.5667e-04 1.5239e-04 
+     -> dTdz (m,M) -8.6425e-03 8.5577e-04 
+compute nod strain rate: 1.446 s
+     -> q (m,M) -4.0407e+10 4.0266e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2214e+03 
+compute avrg T at z=3Lz/4: 0.002 s
+     -> Nu= 3.393123e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  15
+--------------------------------------------
+build FE matrix Stokes: 10.496 s
+solve Stokes system: 2.702 s
+     -> u (m,M) -6.3870e-04 6.3870e-04 
+     -> v (m,M) -2.1866e-04 2.1866e-04 
+     -> w (m,M) -1.3547e-03 1.3547e-03 
+     -> p (m,M) -4.0406e+10 4.0264e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.4965e-11 ; vrmsdiff= -1.535e-14 
+compute vrms: 0.803 s
+     -> A_fem (m,M) = -7.6325e+05 2.0510e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1121e+09
+build FE matrix T: 1.634 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.086 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.9144e-17 3.0729e-17 
+     -> eyy (m,M) -1.5139e-17 1.3833e-17 
+     -> ezz (m,M) -4.3044e-17 5.3313e-17 
+     -> exy (m,M) -3.0318e-18 2.9072e-18 
+     -> exz (m,M) -3.3424e-17 1.2645e-17 
+     -> eyz (m,M) -1.4229e-17 1.2782e-18 
+     -> dTdx (m,M) -1.7909e-03 4.4791e-05 
+     -> dTdy (m,M) -9.2486e-04 1.4930e-04 
+     -> dTdz (m,M) -8.5986e-03 8.5888e-04 
+compute nod strain rate: 1.446 s
+     -> q (m,M) -4.0406e+10 4.0264e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2227e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.387805e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  16
+--------------------------------------------
+build FE matrix Stokes: 10.522 s
+solve Stokes system: 2.642 s
+     -> u (m,M) -6.3915e-04 6.3915e-04 
+     -> v (m,M) -2.1349e-04 2.1349e-04 
+     -> w (m,M) -1.3460e-03 1.3460e-03 
+     -> p (m,M) -4.0405e+10 4.0263e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.4952e-11 ; vrmsdiff= -1.343e-14 
+compute vrms: 0.791 s
+     -> A_fem (m,M) = -7.5678e+05 2.0509e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1115e+09
+build FE matrix T: 1.632 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.089 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.9254e-17 3.0742e-17 
+     -> eyy (m,M) -1.4716e-17 1.3482e-17 
+     -> ezz (m,M) -4.2700e-17 5.3030e-17 
+     -> exy (m,M) -2.9740e-18 2.8596e-18 
+     -> exz (m,M) -3.3462e-17 1.2671e-17 
+     -> eyz (m,M) -1.3903e-17 1.2511e-18 
+     -> dTdx (m,M) -1.7986e-03 4.6344e-05 
+     -> dTdy (m,M) -8.9654e-04 1.4645e-04 
+     -> dTdz (m,M) -8.5582e-03 8.6109e-04 
+compute nod strain rate: 1.458 s
+     -> q (m,M) -4.0405e+10 4.0263e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2239e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.383138e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  17
+--------------------------------------------
+build FE matrix Stokes: 10.559 s
+solve Stokes system: 2.684 s
+     -> u (m,M) -6.3950e-04 6.3950e-04 
+     -> v (m,M) -2.0882e-04 2.0882e-04 
+     -> w (m,M) -1.3380e-03 1.3380e-03 
+     -> p (m,M) -4.0404e+10 4.0261e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.4940e-11 ; vrmsdiff= -1.181e-14 
+compute vrms: 0.852 s
+     -> A_fem (m,M) = -7.5087e+05 2.0508e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1110e+09
+build FE matrix T: 1.623 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.091 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.9346e-17 3.0749e-17 
+     -> eyy (m,M) -1.4336e-17 1.3165e-17 
+     -> ezz (m,M) -4.2384e-17 5.2768e-17 
+     -> exy (m,M) -2.9202e-18 2.8145e-18 
+     -> exz (m,M) -3.3492e-17 1.2693e-17 
+     -> eyz (m,M) -1.3608e-17 1.2256e-18 
+     -> dTdx (m,M) -1.8047e-03 4.7704e-05 
+     -> dTdy (m,M) -8.7123e-04 1.4382e-04 
+     -> dTdz (m,M) -8.5210e-03 8.6263e-04 
+compute nod strain rate: 1.419 s
+     -> q (m,M) -4.0404e+10 4.0261e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2249e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.379024e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  18
+--------------------------------------------
+build FE matrix Stokes: 10.481 s
+solve Stokes system: 2.650 s
+     -> u (m,M) -6.3976e-04 6.3976e-04 
+     -> v (m,M) -2.0460e-04 2.0460e-04 
+     -> w (m,M) -1.3307e-03 1.3307e-03 
+     -> p (m,M) -4.0403e+10 4.0260e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.4929e-11 ; vrmsdiff= -1.043e-14 
+compute vrms: 0.785 s
+     -> A_fem (m,M) = -7.4546e+05 2.0507e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1106e+09
+build FE matrix T: 1.630 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.089 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.9424e-17 3.0750e-17 
+     -> eyy (m,M) -1.3993e-17 1.2878e-17 
+     -> ezz (m,M) -4.2094e-17 5.2526e-17 
+     -> exy (m,M) -2.8704e-18 2.7721e-18 
+     -> exz (m,M) -3.3516e-17 1.2712e-17 
+     -> eyz (m,M) -1.3341e-17 1.2018e-18 
+     -> dTdx (m,M) -1.8097e-03 4.8901e-05 
+     -> dTdy (m,M) -8.4852e-04 1.4140e-04 
+     -> dTdz (m,M) -8.4867e-03 8.6366e-04 
+compute nod strain rate: 1.440 s
+     -> q (m,M) -4.0403e+10 4.0260e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2258e+03 
+compute avrg T at z=3Lz/4: 0.002 s
+     -> Nu= 3.375378e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  19
+--------------------------------------------
+build FE matrix Stokes: 10.523 s
+solve Stokes system: 2.680 s
+     -> u (m,M) -6.3996e-04 6.3996e-04 
+     -> v (m,M) -2.0077e-04 2.0077e-04 
+     -> w (m,M) -1.3239e-03 1.3239e-03 
+     -> p (m,M) -4.0403e+10 4.0259e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.4920e-11 ; vrmsdiff= -9.262e-15 
+compute vrms: 0.825 s
+     -> A_fem (m,M) = -7.4050e+05 2.0506e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1102e+09
+build FE matrix T: 1.623 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.090 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.9489e-17 3.0749e-17 
+     -> eyy (m,M) -1.3683e-17 1.2618e-17 
+     -> ezz (m,M) -4.1851e-17 5.2302e-17 
+     -> exy (m,M) -2.8244e-18 2.7324e-18 
+     -> exz (m,M) -3.3535e-17 1.2728e-17 
+     -> eyz (m,M) -1.3097e-17 1.1797e-18 
+     -> dTdx (m,M) -1.8137e-03 4.9962e-05 
+     -> dTdy (m,M) -8.2806e-04 1.3916e-04 
+     -> dTdz (m,M) -8.4552e-03 8.6430e-04 
+compute nod strain rate: 1.423 s
+     -> q (m,M) -4.0403e+10 4.0259e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2267e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.372133e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.008 s
+--------------------------------------------
+istep=  20
+--------------------------------------------
+build FE matrix Stokes: 10.505 s
+solve Stokes system: 2.652 s
+     -> u (m,M) -6.4011e-04 6.4011e-04 
+     -> v (m,M) -1.9729e-04 1.9729e-04 
+     -> w (m,M) -1.3177e-03 1.3177e-03 
+     -> p (m,M) -4.0402e+10 4.0258e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.4912e-11 ; vrmsdiff= -8.260e-15 
+compute vrms: 0.813 s
+     -> A_fem (m,M) = -7.3595e+05 2.0506e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1098e+09
+build FE matrix T: 1.639 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.084 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.9544e-17 3.0744e-17 
+     -> eyy (m,M) -1.3402e-17 1.2382e-17 
+     -> ezz (m,M) -4.1637e-17 5.2095e-17 
+     -> exy (m,M) -2.7817e-18 2.6953e-18 
+     -> exz (m,M) -3.3551e-17 1.2743e-17 
+     -> eyz (m,M) -1.2875e-17 1.1592e-18 
+     -> dTdx (m,M) -1.8169e-03 5.0906e-05 
+     -> dTdy (m,M) -8.1232e-04 1.3710e-04 
+     -> dTdz (m,M) -8.4261e-03 8.6466e-04 
+compute nod strain rate: 1.432 s
+     -> q (m,M) -4.0402e+10 4.0258e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2274e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.369232e+00  
+compute Nusselt number: 0.003 s
+export to vtu: 0.034 s
+export stats to ascii: 0.007 s
+--------------------------------------------
+istep=  21
+--------------------------------------------
+build FE matrix Stokes: 10.499 s
+solve Stokes system: 2.676 s
+     -> u (m,M) -6.4022e-04 6.4022e-04 
+     -> v (m,M) -1.9411e-04 1.9411e-04 
+     -> w (m,M) -1.3119e-03 1.3119e-03 
+     -> p (m,M) -4.0401e+10 4.0257e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.4904e-11 ; vrmsdiff= -7.398e-15 
+compute vrms: 0.793 s
+     -> A_fem (m,M) = -7.3177e+05 2.0505e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1094e+09
+build FE matrix T: 1.635 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.087 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.9591e-17 3.0738e-17 
+     -> eyy (m,M) -1.3146e-17 1.2167e-17 
+     -> ezz (m,M) -4.1440e-17 5.1904e-17 
+     -> exy (m,M) -2.7422e-18 2.6606e-18 
+     -> exz (m,M) -3.3564e-17 1.2756e-17 
+     -> eyz (m,M) -1.2672e-17 1.1402e-18 
+     -> dTdx (m,M) -1.8195e-03 5.1750e-05 
+     -> dTdy (m,M) -7.9942e-04 1.3520e-04 
+     -> dTdz (m,M) -8.3993e-03 8.6479e-04 
+compute nod strain rate: 1.442 s
+     -> q (m,M) -4.0401e+10 4.0257e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2280e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.366627e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  22
+--------------------------------------------
+build FE matrix Stokes: 10.548 s
+solve Stokes system: 2.660 s
+     -> u (m,M) -6.4030e-04 6.4030e-04 
+     -> v (m,M) -1.9119e-04 1.9119e-04 
+     -> w (m,M) -1.3066e-03 1.3066e-03 
+     -> p (m,M) -4.0401e+10 4.0256e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.4898e-11 ; vrmsdiff= -6.653e-15 
+compute vrms: 0.788 s
+     -> A_fem (m,M) = -7.2792e+05 2.0504e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1091e+09
+build FE matrix T: 1.645 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.089 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.9632e-17 3.0730e-17 
+     -> eyy (m,M) -1.2913e-17 1.1970e-17 
+     -> ezz (m,M) -4.1259e-17 5.1728e-17 
+     -> exy (m,M) -2.7056e-18 2.6282e-18 
+     -> exz (m,M) -3.3575e-17 1.2768e-17 
+     -> eyz (m,M) -1.2486e-17 1.1226e-18 
+     -> dTdx (m,M) -1.8231e-03 5.2508e-05 
+     -> dTdy (m,M) -7.8755e-04 1.3345e-04 
+     -> dTdz (m,M) -8.3746e-03 8.6476e-04 
+compute nod strain rate: 1.464 s
+     -> q (m,M) -4.0401e+10 4.0256e+10 
+compute q: 0.017 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2286e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.364279e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  23
+--------------------------------------------
+build FE matrix Stokes: 10.541 s
+solve Stokes system: 2.687 s
+     -> u (m,M) -6.4036e-04 6.4036e-04 
+     -> v (m,M) -1.8852e-04 1.8852e-04 
+     -> w (m,M) -1.3017e-03 1.3017e-03 
+     -> p (m,M) -4.0400e+10 4.0255e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.4892e-11 ; vrmsdiff= -6.006e-15 
+compute vrms: 0.860 s
+     -> A_fem (m,M) = -7.2437e+05 2.0504e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1088e+09
+build FE matrix T: 1.616 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.093 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.9667e-17 3.0722e-17 
+     -> eyy (m,M) -1.2700e-17 1.1789e-17 
+     -> ezz (m,M) -4.1092e-17 5.1564e-17 
+     -> exy (m,M) -2.6717e-18 2.5980e-18 
+     -> exz (m,M) -3.3584e-17 1.2778e-17 
+     -> eyz (m,M) -1.2314e-17 1.1064e-18 
+     -> dTdx (m,M) -1.8290e-03 5.3191e-05 
+     -> dTdy (m,M) -7.7659e-04 1.3182e-04 
+     -> dTdz (m,M) -8.3516e-03 8.6461e-04 
+compute nod strain rate: 1.435 s
+     -> q (m,M) -4.0400e+10 4.0255e+10 
+compute q: 0.016 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2291e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.362155e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.006 s
+--------------------------------------------
+istep=  24
+--------------------------------------------
+build FE matrix Stokes: 10.506 s
+solve Stokes system: 2.635 s
+     -> u (m,M) -6.4041e-04 6.4041e-04 
+     -> v (m,M) -1.8606e-04 1.8606e-04 
+     -> w (m,M) -1.2971e-03 1.2971e-03 
+     -> p (m,M) -4.0400e+10 4.0255e+10 
+transfer solution: 0.000 s
+relax velocity solution: 0.000 s
+compute timestep: 0.000 s
+     -> vrms= 1.4886e-11 ; vrmsdiff= -5.441e-15 
+compute vrms: 0.838 s
+     -> A_fem (m,M) = -7.2110e+05 2.0503e+06
+     -> b_fem (m,M) = 0.0000e+00 4.1085e+09
+build FE matrix T: 1.613 s
+     -> T (m,M) -0.0000 3700.0000 
+solve energy system: 0.106 s
+relax temperature: 0.000 s
+     -> exx (m,M) -3.9697e-17 3.0713e-17 
+     -> eyy (m,M) -1.2505e-17 1.1623e-17 
+     -> ezz (m,M) -4.0937e-17 5.1412e-17 
+     -> exy (m,M) -2.6402e-18 2.5698e-18 
+     -> exz (m,M) -3.3591e-17 1.2787e-17 
+     -> eyz (m,M) -1.2156e-17 1.0913e-18 
+     -> dTdx (m,M) -1.8345e-03 5.3809e-05 
+     -> dTdy (m,M) -7.6646e-04 1.3031e-04 
+     -> dTdz (m,M) -8.3304e-03 8.6437e-04 
+compute nod strain rate: 1.408 s
+     -> q (m,M) -4.0400e+10 4.0255e+10 
+compute q: 0.017 s
+measurements: 0.002 s
+     -> avrg T at z=3Lz/4= 2.2296e+03 
+compute avrg T at z=3Lz/4: 0.003 s
+     -> Nu= 3.360228e+00  
+compute Nusselt number: 0.003 s
+export stats to ascii: 0.006 s
+*******************************
+********** the end ************
+*******************************

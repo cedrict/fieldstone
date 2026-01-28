@@ -1,0 +1,25 @@
+#
+
+grep FE opla8 | grep T > build_energy8
+grep FE opla8 | grep Stokes > build_stokes8
+grep vrms opla8 | grep compute > compute_vrms8
+grep nod opla8 > compute_sr8
+grep solve opla8 | grep Stokes > solve_stokes8
+grep solve opla8 | grep energy > solve_energy8
+
+grep FE opla12 | grep T > build_energy12
+grep FE opla12 | grep Stokes > build_stokes12
+grep vrms opla12 | grep compute > compute_vrms12
+grep nod opla12 > compute_sr12
+grep solve opla12 | grep Stokes > solve_stokes12
+grep solve opla12 | grep energy > solve_energy12 
+
+grep FE opla16 | grep T > build_energy16
+grep FE opla16 | grep Stokes > build_stokes16
+grep vrms opla16 | grep compute > compute_vrms16
+grep nod opla16 > compute_sr16
+grep solve opla16 | grep Stokes > solve_stokes16
+grep solve opla16 | grep energy > solve_energy16 
+
+
+
