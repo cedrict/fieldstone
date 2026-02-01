@@ -6,6 +6,9 @@ set key outside
 set xlabel '# iter'
 set ylabel 'time (s)'
 
+
+
+
 set title 'compute vrms'
 set output 'compute_vrms.pdf'
 plot[][]\
@@ -14,7 +17,7 @@ plot[][]\
 'withjcb/compute_vrms16' u 3 w lp lt 3 pt 5 t'16^3, J',\
 'nojcb/compute_vrms8'    u 3 w lp lt 1 pt 7 t'8^3, NJ',\
 'nojcb/compute_vrms12'   u 3 w lp lt 2 pt 7 t'12^3, NJ',\
-'nojcb/compute_vrms16'   u 3 w lp lt 3 pt 7 t'16^3, NJ',\
+'nojcb/compute_vrms16'   u 3 w lp lt 3 pt 7 t'16^3, NJ'
 
 set title 'compute strain rate'
 set output 'compute_sr.pdf'
@@ -24,10 +27,9 @@ plot[][]\
 'withjcb/compute_sr16' u 5 w lp lt 3 pt 5 t'16^3, J',\
 'nojcb/compute_sr8'    u 5 w lp lt 1 pt 7 t'8^3, NJ',\
 'nojcb/compute_sr12'   u 5 w lp lt 2 pt 7 t'12^3, NJ',\
-'nojcb/compute_sr16'   u 5 w lp lt 3 pt 7 t'16^3, NJ',\
+'nojcb/compute_sr16'   u 5 w lp lt 3 pt 7 t'16^3, NJ'
 
-
-#set title 'build Stokes system'
+set title 'build Stokes system'
 set output 'build_stokes.pdf'
 plot[][]\
 'withjcb/build_stokes8'  u 5 w lp lt 1 pt 5 t'8^3, J',\
@@ -35,10 +37,9 @@ plot[][]\
 'withjcb/build_stokes16' u 5 w lp lt 3 pt 5 t'16^3, J',\
 'nojcb/build_stokes8'    u 5 w lp lt 1 pt 7 t'8^3, NJ',\
 'nojcb/build_stokes12'   u 5 w lp lt 2 pt 7 t'12^3, NJ',\
-'nojcb/build_stokes16'   u 5 w lp lt 3 pt 7 t'16^3, NJ',\
+'nojcb/build_stokes16'   u 5 w lp lt 3 pt 7 t'16^3, NJ'
 
 set title 'solve Stokes system'
-set output 'build_stokes.pdf'
 set output 'solve_stokes.pdf'
 plot[][]\
 'withjcb/solve_stokes8'  u 4 w lp lt 1 pt 5 t'8^3, J',\

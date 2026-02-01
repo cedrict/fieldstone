@@ -231,14 +231,12 @@ V \\ P \\ T
 \right)
 \]
 The last remaining term is the advection term of the energy equation and it is a problematic one:
-it features the product of the velocity by the temperature. As such it is nonlinear and one cannot 
-either put it in the (3,1) block nor in the (3,3) block. 
-
-This approach fails, which is why 
-the problem is solved iteratively. The idea is simple: when solving the 
+it features the product of the velocity by the temperature gradient. 
+As such it is nonlinear and one cannot either put it in the (3,1) block nor in the (3,3) block,
+which is why the problem is solved iteratively. The idea is simple: when solving the 
 coupled mass and momentum equations, we assume temperature known, and when solving the energy equation
-we assume velocity known. I can then alternatively solve one system and then the other, constantly 
-updating the fields when re-building the matrices or right hand sides.
+we assume the velocity field known. I can then alternatively solve one system and then the other, constantly 
+updating the fields when re-building the matrices and right hand sides.
 
 However, it is well known that a straightforward implementation of this algorithm does not 
 work in practice, i.e. it fails to converge, which is why a relaxation scheme is often implemented:
@@ -271,7 +269,8 @@ T_old=T
 The relaxation parameter \lstinline{relax} should be between 0 and 1.
 In this case I found that a relaxation coefficient of 1 actually works.
 Note that at the moment the same coefficient is used to relax both velocity and temperature, I have 
-not explored different values for both.
+not explored different values for both (the code however showcases \lstlisting{relax_V}
+and \lstlisting{relax_T}).
 
 %........................................
 \subsubsection*{Computing nodal derivatives}  
@@ -332,17 +331,25 @@ jcbi[1,0]=0    ; jcbi[1,1]=2/hy ; jcbi[1,2]=0
 jcbi[2,0]=0    ; jcbi[2,1]=0    ; jcbi[2,2]=2/hz
 \end{lstlisting}
 
+The \lstlisting{} parameter controls whether or not this 'shortcut' is used.
+This allows then for a timing comparison for the various parts of the 
+code where the Jacobian is needed. 
 
 \begin{center}
 \includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/timings/build_energy.pdf}
 \includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/timings/build_stokes.pdf}\\
-\includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/timings/solve_energy.pdf}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/timings/solve_stokes.pdf}\\
 \includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/timings/compute_sr.pdf}
 \includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/timings/compute_vrms.pdf}
 \end{center}
+Unsurprisingly timings are substantially lower when the shortcut is used.
 
 
+I also measure the solve time for good measure although we do not expect this 
+time to depend on the Jacobian calculations at all:
+\begin{center}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/timings/solve_energy.pdf}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_20/results/timings/solve_stokes.pdf}
+\end{center}
 
 
 
@@ -371,19 +378,15 @@ equal to one is probably the best option (0.9 seems to be best in this case).
 \newpage
 The reported values for Busse et al. in the following table are taken from Table 3 
 of \textcite{bucc94} (1994).
-The reported values for fieldstone are adimensionalised by means of a reference temperature (3700K),
+The reported values for this \stone are adimensionalised by means of a reference temperature (3700K),
 a reference lengthscale 2700km, and a reference time $L_z^2/\kappa\sim 7.29e+18$s.
-%The steady state is arrived at by solving the steady state Stokes and temperature equations 
-%with a relaxation parameter of 1/2.
-%To find the steady state, we simulate the problem up to non-dimensional time $t=5$, 
-%i.e. $t=3.645e+19$s.
-
+{\color{red} the table comes from krhb12 - i need to put the stone results next!}
 
 \begin{center}
-\begin{tabular}{llllll}
+\begin{tabular}{lllllll}
 \hline
-                                & \aspect & ($Q_2\times Q_1/Q_2$)      &       & Busse et al \cite{bucc94} &  \\
-Mesh size                       & Lz/24  & Lz/32 & Lz/48 & (best results)            & \\ 
+                                & \aspect &      &       & Busse et al \cite{bucc94} & \stone  \\
+Mesh size                       & Lz/24  & Lz/32 & Lz/48 & (best results)            & 24x12x32?  \\ 
 \hline
 $\Nunb$                         & 3.5539 &3.5447 & 3.5397 & $3.5374  \pm 0.0005$   \\
 $v_{rms}$                       & 40.997 &40.999 &40.999  & $40.999  \pm 0.004$    \\

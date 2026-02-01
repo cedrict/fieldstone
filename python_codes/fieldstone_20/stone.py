@@ -76,9 +76,9 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    nelz = int(sys.argv[3])
 else:
-   nelx=16
-   nely=16
-   nelz=16
+   nelx=12
+   nely=12
+   nelz=12
 
 # this is a requirement bc we measure at z=3Lz/4
 assert (nelz%4==0), "nelz should be even and multiple of 4" 
@@ -114,9 +114,9 @@ hcond=3.564
 hcapa=1080
 alpha=1.e-5
 
-nstep=25
+nstep=250
 
-tol_Nu=1e-4
+tol_Nu=1e-5
 
 Ra=alpha*abs(gz)*(Temperature1-Temperature2)*Lz**3*rho0**2*hcapa/hcond/eta0
 
@@ -337,9 +337,9 @@ for istep in range(0,nstep):
     print("istep= ", istep)
     print("--------------------------------------------")
 
-    ######################################################################
+    ###########################################################################
     # build FE matrix
-    ######################################################################
+    ###########################################################################
     start=clock.time()
 
     A_fem=lil_matrix((Nfem,Nfem),dtype=np.float64)
@@ -454,9 +454,9 @@ for istep in range(0,nstep):
 
     print("build FE matrix Stokes: %.3f s" % (clock.time()-start))
 
-    ######################################################################
+    ###########################################################################
     # assemble K, G, GT, f, h into A and rhs
-    ######################################################################
+    ###########################################################################
     #start = clock.time()
     #if pnormalise:
     #   a_mat = np.zeros((Nfem+1,Nfem+1),dtype=np.float64) # matrix of Ax=b
@@ -474,23 +474,23 @@ for istep in range(0,nstep):
     #rhs[0:Nfem_V]=f_rhs
     #rhs[Nfem_V:Nfem]=h_rhs
     #print("assemble blocks: %.3f s" % (clock.time() - start))
-    ######################################################################
+    ###########################################################################
     #a_mat[Nfem_V-1,:]=0
     #a_mat[:,Nfem_V-1]=0
     #a_mat[Nfem_V-1,Nfem_V-1]=1
     #rhs[Nfem_V-1]=0
-    ######################################################################
+    ###########################################################################
     # solve system
-    ######################################################################
+    ###########################################################################
     start=clock.time()
 
     sol=sps.linalg.spsolve(A_fem.tocsr(),b_fem)
 
     print("solve Stokes system: %.3f s" % (clock.time()-start))
 
-    ######################################################################
+    ###########################################################################
     # put solution into separate x,y velocity arrays
-    ######################################################################
+    ###########################################################################
     start=clock.time()
 
     u,v,w=np.reshape(sol[0:Nfem_V],(nn_V,ndim)).T
@@ -591,8 +591,9 @@ for istep in range(0,nstep):
 
     vrms[istep]=np.sqrt(vrms[istep]/(Lx*Ly*Lz))
     Tavrg[istep]/=Lx*Ly*Lz
+    Tavrg[istep]-=TKelvin
 
-    print("     -> vrms= %.4e ; vrmsdiff= %.3e " % (vrms[istep],vrms[istep]-vrms[istep-1]))
+    print("     -> vrms= %.4e ; vrmsdiff= %.3e " % (vrms[istep]/year,(vrms[istep]-vrms[istep-1])*year))
 
     print("compute vrms: %.3f s" % (clock.time()-start))
 
@@ -1081,19 +1082,19 @@ for istep in range(0,nstep):
     start = clock.time()
 
     np.savetxt('vrms.ascii',np.array([model_time[0:istep]/Myear,\
-                                      vrms[0:istep]]).T,header='# t/year,vrms')
+                                      vrms[0:istep]*year]).T,header='# t/year,vrms')
 
     np.savetxt('u_stats.ascii',np.array([model_time[0:istep]/Myear,\
-                                         u_stats[0:istep,0],\
-                                         u_stats[0:istep,1]]).T,header='# t/year,min(u),max(u)')
+                                         u_stats[0:istep,0]*year,\
+                                         u_stats[0:istep,1]*year]).T,header='# t/year,min(u),max(u)')
 
     np.savetxt('v_stats.ascii',np.array([model_time[0:istep]/Myear,\
-                                         v_stats[0:istep,0],\
-                                         v_stats[0:istep,1]]).T,header='# t/year,min(v),max(v)')
+                                         v_stats[0:istep,0]*year,\
+                                         v_stats[0:istep,1]*year]).T,header='# t/year,min(v),max(v)')
 
     np.savetxt('w_stats.ascii',np.array([model_time[0:istep]/Myear,\
-                                         w_stats[0:istep,0],\
-                                         w_stats[0:istep,1]]).T,header='# t/year,min(w),max(w)')
+                                         w_stats[0:istep,0]*year,\
+                                         w_stats[0:istep,1]*year]).T,header='# t/year,min(w),max(w)')
 
     np.savetxt('T_stats.ascii',np.array([model_time[0:istep]/Myear,\
                                          T_stats[0:istep,0],\
@@ -1127,7 +1128,7 @@ for istep in range(0,nstep):
 
     ###########################################################################
 
-    if np.abs(Nu-Nu_old)<tol_Nu:
+    if np.abs(Nu-Nu_old)<tol_Nu and abs(Tm[istep]-Tm[istep-1])<1:
        print("Nu converged to 1e-6")
        break
 
