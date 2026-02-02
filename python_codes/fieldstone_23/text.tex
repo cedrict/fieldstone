@@ -2,10 +2,9 @@
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
 \includegraphics[height=1.25cm]{images/pictograms/msc}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_23/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -15,13 +14,17 @@
 \par\noindent\rule{\textwidth}{0.4pt}
 
 This work is part of the MSc thesis of T. Weir (2018).
-\index{contributors}{T. Weir}
 
 \par\noindent\rule{\textwidth}{0.4pt}
+
+Last revision: Feb. 1st, 2026.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-We first start with an isothermal Stokes flow, so that we disregard the heat transport equation and 
-the equations we wish to solve are simply:
+We first start with an isothermal Stokes flow, so that we disregard the heat 
+transport equation and the equations we wish to solve are simply:
 
 \begin{align}
 -\vec\nabla p +\vec\nabla \cdot \left[2 \eta \left(\dot\varepsilon(\vec \upnu)
@@ -33,8 +36,6 @@ the equations we wish to solve are simply:
   &
   & \textrm{in $\Omega$}
 \end{align}
-
-
 
 The second equation can be rewritten 
 $\vec\nabla \cdot (\rho \vec{\upnu}) =  \rho \vec\nabla \cdot \vec{\upnu} 
@@ -62,30 +63,30 @@ We end up having to solve the following system:
 =
 \left(
 \begin{array}{c}
- f \\ h
+\vec{f} \\ \vec{h}
 \end{array}
 \right)
 \quad\quad
 {\rm or,}
 \quad\quad
-\A \cdot X = \vec{b}
+{\cal A} \cdot X = \vec{b}
 \]
 Where $\K$ is the stiffness matrix, $\G$ is the discrete gradient operator, 
 $\G^T$ is the discrete divergence operator, $\vec{\cal V}$ the velocity vector, 
 $\vec{\cal P}$ the pressure vector.
-Note that the term $\Z{\cal V}$ derives from term $\vec{\upnu} \cdot \vec{\nabla}\rho$ 
+Note that the term $\Z\cdot \vec{\cal V}$ derives from term $\vec{\upnu} \cdot \vec{\nabla}\rho$ 
 in the continuity equation. 
 
 Each block $\K$, $\G$ , $\Z$ and vectors $f$ and $h$ are built separately 
-in the code and assembled into the matrix $\A$ and vector $\vec{b}$ 
-afterwards. $\A$ and $\vec{b}$ are then passed to the solver. 
+in the code and assembled into the matrix ${\cal A}$ and vector $\vec{b}$ 
+afterwards. ${\cal A}$ and $\vec{b}$ are then passed to the solver. 
 We will see later that there are alternatives to solve this approach which do not require to 
 build the full Stokes matrix $\A$. 
 
-{\sl Remark}: the term $\Z {\cal V}$ is often put in the rhs (i.e. added to $h$) so that 
-the matrix $\A$ retains the same structure as in the incompressible case. This is indeed 
-how it is implemented in ASPECT. This however requires more work since the rhs depends 
-on the solution and some form of iterations is needed. 
+{\sl Remark}: the term $\Z\cdot \vec{\cal V}$ is often put in the rhs (i.e. added to $h$) so that 
+the Stokes matrix ${\cal A}$ retains the same structure as in the incompressible case. This is indeed 
+how it is implemented in ASPECT (check?). This however requires more work since the rhs depends 
+on the solution and some iterations are then needed. 
 
 In the case of a compressible flow the strain rate tensor and the deviatoric strain 
 rate tensor are no more equal (since ${\vec\nabla}\cdot\vec{\upnu} \neq 0$).
@@ -93,8 +94,8 @@ The deviatoric strainrate tensor is given by\footnote{See the ASPECT manual for 
 justification of the 3 value in the denominator in 2d and 3d.} 
 \[
 \dot{\bm \varepsilon}^d(\vec{\upnu})=
-\dot{\bm \varepsilon}(\vec{\upnu})-\frac{1}{3} Tr(\dot{\bm \varepsilon}) {\bm 1}
-=\dot{\bm \varepsilon}(\vec{\upnu})-\frac{1}{3} ({\bm \nabla}\cdot \vec{\upnu}) {\bm 1}
+\dot{\bm \varepsilon}(\vec{\upnu})-\frac{1}{3} \text{Tr}(\dot{\bm \varepsilon}) {\bm 1}
+=\dot{\bm \varepsilon}(\vec{\upnu})-\frac{1}{3} ({\vec\nabla}\cdot \vec{\upnu}) {\bm 1}
 \]
 In that case:
 \begin{eqnarray}
@@ -115,16 +116,15 @@ In that case:
 %=-\frac{1}{3}  \sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  u_i
 %+ \frac{2}{3} \sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  v_i
 \\
-2\dot{\varepsilon}_{xy}^d 
+\dot{\varepsilon}_{xy}^d 
 &=& 
-\frac{\partial u}{\partial y} 
-+\frac{\partial v}{\partial x} 
+\frac12 \left( \frac{\partial u}{\partial y} +\frac{\partial v}{\partial x}  \right)
 %= \sum_{i=1}^4 \frac{\partial N_i}{\partial y}\;  u_i
 %+ \sum_{i=1}^4 \frac{\partial N_i}{\partial x}\;  v_i
 \end{eqnarray}
 and then 
 \[
-\dot{\bm \varepsilon}^d({\bm v})
+\dot{\bm \varepsilon}^d(\vec{\upnu})
 =
 \left(
 \begin{array}{cc}
@@ -190,116 +190,52 @@ From $\vec{\tau} = 2\eta \vec{\epsilon}^d$ we arrive at:
 \]
 or, 
 \[
-\vec{\tau} = {\bm C}_\eta {\bm B} V
+\vec{\tau} = {\bm C}_\eta\cdot {\bm B} \cdot \vec{\cal V}
 \]
 
 
+\paragraph{Implementation} 
+All terms of the linear system are common many previous stones and described in 
+the {\tt manual.pdf}, but not $\Z_e$.
+In practice it is computed as follows:
+
+\begin{lstlisting}
+for iel in range(0, nel):
+    Z_el=np.zeros((m_V*ndof_V,1),dtype=np.float64)
+    for iq in [-1,1]:
+        for jq in [-1,1]:
+            [...]
+            drhodxq=np.dot(dNdx_V,rho_nodal[icon_V[:,iel]])
+            drhodyq=np.dot(dNdy_V,rho_nodal[icon_V[:,iel]])
+            for i in range(0,m_V):
+                Z_el[ndof_V*i  ,0]-=N_V[i]*drhodxq/rhoq *JxWq 
+                Z_el[ndof_V*i+1,0]-=N_V[i]*drhodyq/rhoq *JxWq 
+\end{lstlisting}
+
+Note that the exact denisty gradient could have been computed from $\rho(x,y)$
+and prescribed at the quadrature points. 
+In any case the term we need to integrate is not a polynomial so that 
+the employed quadrature rule is not adequate.
 
 
-
+{\color{red} TODO: implement Q2Q1 and better matrix building !!!}
 
 
 \newpage
-In order to test our implementation we have created a few manufactured solutions:
-\begin{itemize}
-\item \underline{benchmark \#1} ({\tt ibench=1})): Starting from a density profile of:
-\begin{equation}
-    \rho(x,y) = xy
-\end{equation}
-We derive a velocity given by:
-\begin{equation}
-    v_x(x,y) = \frac{C_x}{x} , v_y(x,y) = \frac{C_y}{y}
-\end{equation}
-
-With $g_x(x,y) = \frac{1}{x}$ and $g_y(x,y) = \frac{1}{y}$, this leads us to a pressure profile:
-\begin{equation}
-    p = - \eta \left( \frac{4C_x}{3x^2} + \frac{4C_y}{3y^2} \right)  + xy + C_0
-\end{equation}
-This gives us a strain rate:
-\[
-\dot{\epsilon}_{xx} =  \frac{-C_x}{x^2}
-\quad
-\quad
-\quad
-\dot{\epsilon}_{yy} =  \frac{-C_y}{y^2}
-\quad
-\quad
-\quad
-\dot{\epsilon}_{xy} = 0 
-\]
-In what follows, we choose $\eta=1$ and $C_x=C_y=1$ and for a unit square domain $
-[1:2]\times[1:2]$ we compute $C_0$
-so that the pressure is normalised to zero over the whole domain and obtain $C_0=-1$. 
- 
-\item \underline{benchmark \#2} ({\tt ibench=2}): Starting from a density profile of:
-\begin{equation}
-    \rho = \cos(x)\cos(y)
-\end{equation}
-We derive a velocity given by:
-\begin{equation}
-    v_x = \frac{C_x}{\cos(x)} , v_y = \frac{C_y}{\cos(y)}
-\end{equation}
-With $g_x = \frac{1}{\cos(y)}$ and $g_y = \frac{1}{\cos(x)}$, this leads us to a pressure profile:
-\begin{equation}
-    p =  \eta \Bigg(\frac{4C_x \sin(x)}{3\cos^2(x)} + \frac{4C_y \sin(y)}{3\cos^2(y)}\Bigg) 
-    +( \sin(x) + \sin(y) ) + C_0
-\end{equation}
-\[
-\dot{\epsilon}_{xx} = C_x \frac{\sin(x)}{\cos^2(x)}
-\quad
-\quad
-\quad
-\dot{\epsilon}_{yy} = C_y \frac{\sin(y)}{\cos^2(y)}
-\quad
-\quad
-\quad
-\dot{\epsilon}_{xy} = 0 
-\]
-We choose $\eta=1$ and $C_x=C_y=1$. The domain is the unit square $[0:1]\times[0:1]$ and we obtain 
-$C_0$ as before and obtain 
-\[
-C_0 = 2 - 2 \cos(1) + 8/3 (\frac{1}{\cos (1)} - 1)
-\simeq 3.18823730
-\]
-(thank you WolframAlpha)
+In order to test our implementation we have created five manufactured solutions.
+Note that contrarily to previous cases using odd number of elements in 
+each direction still yields very strong checkerboard modes.
 
 
-\item \underline{benchmark \#3} ({\tt ibench=3}) 
-\item \underline{benchmark \#4} ({\tt ibench=4}) 
-\item \underline{benchmark \#5} ({\tt ibench=5}) 
-\end{itemize}
+%--------------------------------------------------------------------
+\subsection*{benchmark \#1 ({\tt ibench=1})}
 
-
-
-
-
-%\includegraphics[width=16cm]{python_codes/fieldstone_saddlepoint/solution.pdf}
-
-ToDo:
-\begin{itemize}
-\item pbs with odd vs even number of elements 
-\item q is 'fine' everywhere except in the corners - revisit pressure smoothing paper?
-\item redo A v d Berg benchmark (see Tom Weir thesis)
-\end{itemize}
-
-
-
-\newpage
-\section*{Analytical solution}
-
-
-We start from 
-\[
-\rho(x,y)=xy
-\qquad
-u(x,y)=\frac{C_x}{x}
-\qquad
-v(x,y)=\frac{C_y}{y}
-\qquad
-g_x(x,y)=\frac{1}{x}
-\qquad
-g_y(x,y)=\frac{1}{y}
-\]
+Starting from a density field given by
+$\rho(x,y) = xy$, we postulate the following velocity field:
+\begin{eqnarray}
+u(x,y) &=& \frac{C_x}{x} \nn\\
+v(x,y) &=& \frac{C_y}{y} \nn
+\end{eqnarray}
 We then confirm that 
 \[
 \vec\nabla \cdot (\rho \vec\upnu) 
@@ -321,7 +257,7 @@ From the definition of the velocity we can compute the strain rate and deviatori
 0 & -C_y/y^2
 \end{pmatrix} \nn\\
 \dot{\bm \varepsilon}^d 
-&=& \dot{\bm \varepsilon} -\frac13  \vec\nabla \cdot \vec\upnu {\bm 1} \nn\\
+&=& \dot{\bm \varepsilon} -\frac13  (\vec\nabla \cdot \vec\upnu) {\bm 1} \nn\\
 &=& \dot{\bm \varepsilon} -\frac13  \left( -\frac{C_x}{x^2} - \frac{C_y}{y^2} \right) {\bm 1} \nn\\
 &=&\dot{\bm \varepsilon} +\frac13  \left( \frac{C_x}{x^2} + \frac{C_y}{y^2}  \right) {\bm 1} \nn\\
 &=&
@@ -330,7 +266,9 @@ From the definition of the velocity we can compute the strain rate and deviatori
 0 & \frac{C_x}{3x^2} - \frac{2C_y}{3y^2}
 \end{pmatrix} \nn
 \end{eqnarray}
-Assuming the viscosity to be constant, the moment conservation equation is then
+
+We further postulate $g_x(x,y) = \frac{1}{x}$ and $g_y(x,y) = \frac{1}{y}$.
+Assuming the viscosity to be constant, the momentum conservation equation is then
 \begin{eqnarray}
 \vec{0}&=& -\vec\nabla p + \vec\nabla \cdot (2 \eta \dot{\bm \varepsilon}^d )+ \rho \vec{g} \nn\\
 &=& 
@@ -402,4 +340,284 @@ and in the end
 \[
 p(x,y) = -\frac{4}{3x^2} -\frac{4}{3y^2} + yx -\frac{11}{12}
 \]
+
+\begin{lstlisting}
+def gx(x,y,ibench):
+    if ibench==1: val=1/y
+
+def gy(x,y,ibench):
+    if ibench==1: val=1/x
+
+def density(x,y,ibench):
+    if ibench==1: val=x*y
+
+def u_th(x,y,ibench):
+    if ibench==1: val=1/x
+
+def v_th(x,y,ibench):
+    if ibench==1: val=1/y
+
+def p_th(x,y,ibench):
+    if ibench==1:
+       val = -4/(3*x**2) - 4/(3*y**2) + x*y  -11./12
+
+def sr_xx_th(x,y,ibench):
+    if ibench==1: val=-1/x**2
+
+def sr_yy_th(x,y,ibench):
+    if ibench==1: val=-1/y**2
+
+def sr_xy_th(x,y,ibench):
+    if ibench==1: val=0
+\end{lstlisting}
+
+
+\newpage
+%------------------------------------------------ 
+\subsection*{benchmark \#2 ({\tt ibench=2})}
+Starting from the density field
+$  \rho = \cos(x)\cos(y)$ we derive the velocity field:
+\begin{equation}
+u(x,y) = \frac{C_x}{\cos(x)} , 
+v(x,y) = \frac{C_y}{\cos(y)}
+\end{equation}
+with $g_x = \frac{1}{\cos(y)}$ and $g_y = \frac{1}{\cos(x)}$ and 
+this leads us to a pressure field given by: 
+\begin{equation}
+p =  \eta \Bigg(\frac{4C_x \sin(x)}{3\cos^2(x)} + \frac{4C_y \sin(y)}{3\cos^2(y)}\Bigg) 
++( \sin(x) + \sin(y) ) + C_0
+\end{equation}
+\[
+\dot{\epsilon}_{xx} = C_x \frac{\sin(x)}{\cos^2(x)}
+\quad
+\quad
+\quad
+\dot{\epsilon}_{yy} = C_y \frac{\sin(y)}{\cos^2(y)}
+\quad
+\quad
+\quad
+\dot{\epsilon}_{xy} = 0 
+\]
+We choose $\eta=1$ and $C_x=C_y=1$. The domain is the unit square $[0:1]\times[0:1]$ and we obtain 
+$C_0$ as before and obtain 
+\[
+C_0 = 2 - 2 \cos(1) + 8/3 (\frac{1}{\cos (1)} - 1)
+\simeq 3.18823730
+\]
+(thank you WolframAlpha)
+
+
+\begin{lstlisting}
+def gx(x,y,ibench):
+    if ibench==2: val = 1/np.cos(y)
+
+def gy(x,y,ibench):
+    if ibench==2: val=1/np.cos(x)
+
+def density(x,y,ibench):
+    if ibench==2: val = np.cos(x)*np.cos(y)
+
+def u_th(x,y,ibench):
+    if ibench==2: val=1/np.cos(x)
+
+def v_th(x,y,ibench):
+    if ibench==2: val=1/np.cos(y)
+
+def p_th(x,y,ibench):
+    if ibench==2:
+       val = 4*np.sin(x)/(3*np.cos(x)**2)+4*np.sin(y)/(3*np.cos(y)**2) \
+           + np.sin(x) + np.sin(y) - 2+2*np.cos(1)-8/3*(1/np.cos(1)-1) 
+
+def sr_xx_th(x,y,ibench):
+    if ibench==2: val=np.sin(x)/np.cos(x)**2
+
+def sr_yy_th(x,y,ibench):
+    if ibench==2: val=np.sin(y)/np.cos(y)**2
+
+def sr_xy_th(x,y,ibench):
+    if ibench==2: val=0
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+\newpage
+%---------------------------------------------
+\subsection*{benchmark \#3 ({\tt ibench=3}) - 1D Cartesian Linear}
+
+The fields are as follows:
+\begin{eqnarray}
+g_x &=& -1   \nn\\
+g_y &=& 0   \nn\\
+\rho &=& x   \nn\\
+u &=& 1/x   \nn\\
+v &=& 0    \nn\\
+p &=& -4/(3x^2) -x^2/2 + 11/6 \nn\\
+\dot{\varepsilon}_{xx} &=& -1/x^2  \nn\\
+\dot{\varepsilon}_{yy} &=& 0  \nn\\
+\dot{\varepsilon}_{xy} &=& 0  \nn
+\end{eqnarray}
+
+\begin{lstlisting}
+def gx(x,y,ibench):
+    if ibench==3: val=-1
+
+def gy(x,y,ibench):
+    if ibench==3: val=0
+
+def density(x,y,ibench):
+    if ibench==3: val=x
+
+def u_th(x,y,ibench):
+    if ibench==3: val=1/x
+
+def v_th(x,y,ibench):
+    if ibench==3: val=0
+
+def p_th(x,y,ibench):
+    if ibench==3: val =  -4/(3*x**2) - x**2/2 + 11/6
+
+def sr_xx_th(x,y,ibench):
+    if ibench==3: val=-1/x**2
+
+def sr_yy_th(x,y,ibench):
+    if ibench==3: val=0 
+
+def sr_xy_th(x,y,ibench):
+    if ibench==3: val=0 
+\end{lstlisting}
+
+
+\newpage
+%---------------------------------------------
+\subsection*{benchmark \#4 ({\tt ibench=4}) - by Arie van den Berg}
+
+The fields are as follows:
+\begin{eqnarray}
+g_x &=& 10   \nn\\
+g_y &=& 0   \nn\\
+\rho &=& 1/(1-x)   \nn\\
+u &=& 1-x   \nn\\
+v &=& 0    \nn\\
+p &=& 10\ln (x-1) + 290.9  \nn\\
+\dot{\varepsilon}_{xx} &=& -1  \nn\\
+\dot{\varepsilon}_{yy} &=& 0  \nn\\
+\dot{\varepsilon}_{xy} &=& 0  \nn
+\end{eqnarray}
+
+
+\begin{lstlisting}
+def gx(x,y,ibench):
+    if ibench==4: val=10
+
+def gy(x,y,ibench):
+    if ibench==4: val=0
+
+def density(x,y,ibench):
+    if ibench==4: val = 1/(1-x)
+
+def u_th(x,y,ibench):
+    if ibench==4: val=1-x
+
+def v_th(x,y,ibench):
+    if ibench==4: val=0
+
+def p_th(x,y,ibench):
+    if ibench==4: val = 10*log(x-1) +290.9 
+
+def sr_xx_th(x,y,ibench):
+    if ibench==4: val=0 
+
+def sr_yy_th(x,y,ibench):
+    if ibench==4: val=0 
+
+def sr_xy_th(x,y,ibench):
+    if ibench==4: val=0 
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+%---------------------------------------------
+\subsection*{benchmark \#5 ({\tt ibench=5}) - 1D Cartesian Sinusoidal}
+
+The fields are as follows:
+\begin{eqnarray}
+g_x &=& -1   \nn\\
+g_y &=& 0   \nn\\
+\rho &=& \cos(x)   \nn\\
+u &=& 1/\cos(x)   \nn\\
+v &=& 0    \nn\\
+p &=& 4\sin(x)/(3 \cos^2 x) - \sin(x) - 0.674723  \nn\\
+\dot{\varepsilon}_{xx} &=&   \nn\\
+\dot{\varepsilon}_{yy} &=& 0 \nn\\
+\dot{\varepsilon}_{xy} &=& 0  \nn
+\end{eqnarray}
+
+
+\begin{lstlisting}
+def gx(x,y,ibench):
+    if ibench==5: val=-1
+
+def gy(x,y,ibench):
+    if ibench==5: val=0
+
+def density(x,y,ibench):
+    if ibench==5: val=np.cos(x)
+
+def u_th(x,y,ibench):
+    if ibench==5: val=1/np.cos(x)
+
+def v_th(x,y,ibench):
+    if ibench==5: val=0
+
+def p_th(x,y,ibench):
+    if ibench==5: val = 4*np.sin(x)/(3*np.cos(x)**2) -np.sin(x) -0.674723
+
+def sr_xx_th(x,y,ibench):
+    if ibench==5: val=0 
+
+def sr_yy_th(x,y,ibench):
+    if ibench==5: val=0 
+
+def sr_xy_th(x,y,ibench):
+    if ibench==5: val=0 
+\end{lstlisting}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Results}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_23/RESULTS/bench1/errors.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_23/RESULTS/bench2/errors.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_23/RESULTS/bench3/errors.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_23/RESULTS/bench4/errors.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_23/RESULTS/bench5/errors.pdf}\\
+{\captionfont Discretisation errors for all five benchmarks.}
+\end{center}
+
+We see that all benchmarks are solutions of the Stokes equations 
+(velocity field converges at the expected rate) but the pressure
+checkerboard modes are so large that the pressure error is large 
+and the pressure error does not converge at all.
+
+
+
+
+
 

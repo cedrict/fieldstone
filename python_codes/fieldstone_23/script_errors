@@ -1,15 +1,14 @@
-rm -f errors
-python3 fieldstone.py   8   8 0 | grep nel >> errors
-python3 fieldstone.py  12  12 0 | grep nel >> errors
-python3 fieldstone.py  16  16 0 | grep nel >> errors
-python3 fieldstone.py  20  20 0 | grep nel >> errors
-python3 fieldstone.py  24  24 0 | grep nel >> errors
-python3 fieldstone.py  32  32 0 | grep nel >> errors
-python3 fieldstone.py  48  48 0 | grep nel >> errors
-python3 fieldstone.py  64  64 0 | grep nel >> errors
-python3 fieldstone.py  96  96 0 | grep nel >> errors
-python3 fieldstone.py 128 128 0 | grep nel >> errors
+#! /bin/bash
 
+rm -f errors.ascii
 
+for n in 8 10 12 14 16 18 20 22 24 28 32 36 40 44 48 52 56 60 64 80 96 ; do
+    echo nelx=nely= $n
+    python3 stone.py  $n  $n 0 | grep errv >> errors.ascii
+done
 
+#for n in 7 9 11 13 15 17 19 21 23 25 27 29 31 33; do
+#    echo nelx=nely= $n
+#    python3 stone.py  $n  $n 0 | grep errv >> errors.ascii
+#done
 

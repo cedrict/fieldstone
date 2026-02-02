@@ -1,0 +1,15 @@
+#
+set term pdf enhanced font "Times,12pt"
+set output 'errors.pdf'
+set log xy
+set key outside
+set pointsize .4
+set xlabel 'h'
+set ylabel 'error'
+set title 'benchmark #4'
+plot[][]\
+'errors.ascii' u (1./sqrt($3)):6 w lp t 'v',\
+'errors.ascii' u (1./sqrt($3)):9 w lp t 'p',\
+'errors.ascii' u (1./sqrt($3)):12 w lp t 'q',\
+x**2/10. w l lt -1 dt 2 t'h^2',\
+x**1/10. w l lt -1 dt 3 t'h^1'
