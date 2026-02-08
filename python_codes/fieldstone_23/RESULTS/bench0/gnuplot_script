@@ -5,7 +5,7 @@ set key outside
 set pointsize .4
 set xlabel 'h'
 set ylabel 'error'
-set title 'benchmark #1'
+set title 'benchmark #0'
 set format y "10^{%L}"
 
 set output 'errors_q1p0.pdf'
@@ -21,7 +21,7 @@ plot[][]\
 'errors_q2q1.ascii' u (1./sqrt($3)):6   w lp lt 1 pt 6 t 'v',\
 'errors_q2q1.ascii' u (1./sqrt($3)):9   w lp lt 2 pt 4 t 'p',\
 'errors_q2q1.ascii' u (1./sqrt($3)):12  w lp lt 3 pt 2 t 'q',\
-x**3/40. w l lt -1 dt 2 t 'h^3',\
-x**2/5.  w l lt -1 dt 3 t 'h^2'
+x**3/80. w l lt -1 dt 2 t 'h^3',\
+x**2/10.  w l lt -1 dt 3 t 'h^2'
 
 

@@ -1,15 +1,27 @@
 #
 set term pdf enhanced font "Times,12pt"
-set output 'errors.pdf'
 set log xy
 set key outside
 set pointsize .4
 set xlabel 'h'
 set ylabel 'error'
 set title 'benchmark #2'
+set format y "10^{%L}"
+
+set output 'errors_q1p0.pdf'
 plot[][]\
-'errors.ascii' u (1./sqrt($3)):6 w lp t 'v',\
-'errors.ascii' u (1./sqrt($3)):9 w lp t 'p',\
-'errors.ascii' u (1./sqrt($3)):12 w lp t 'q',\
-x**2/10. w l lt -1 dt 2 t'h^2',\
-x**1/10. w l lt -1 dt 3 t'h^1'
+'errors_q1p0.ascii' u (1./sqrt($3)):6   w lp lt 1 pt 7 t 'v',\
+'errors_q1p0.ascii' u (1./sqrt($3)):9   w lp lt 2 pt 5 t 'p',\
+'errors_q1p0.ascii' u (1./sqrt($3)):12  w lp lt 3 pt 1 t 'q',\
+x**2/20.  w l lt -1 dt 3 t 'h^2',\
+x**1/1.  w l lt -1 dt 4 t 'h^1'
+
+set output 'errors_q2q1.pdf'
+plot[][]\
+'errors_q2q1.ascii' u (1./sqrt($3)):6   w lp lt 1 pt 6 t 'v',\
+'errors_q2q1.ascii' u (1./sqrt($3)):9   w lp lt 2 pt 4 t 'p',\
+'errors_q2q1.ascii' u (1./sqrt($3)):12  w lp lt 3 pt 2 t 'q',\
+x**3/20. w l lt -1 dt 2 t 'h^3',\
+x**2/2.  w l lt -1 dt 3 t 'h^2'
+
+

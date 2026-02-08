@@ -13,11 +13,11 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-This work is part of the MSc thesis of T. Weir (2018).
+Part of this work originates in the MSc thesis of T. Weir (2018).
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: Feb. 1st, 2026.
+Last revision: Feb. 6th, 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -44,7 +44,9 @@ or,
 \[
 \vec\nabla \cdot \vec{\upnu} + \frac{1}{\rho} \vec{\upnu} \cdot {\vec\nabla}\rho = 0
 \]
-Note that this presupposes that the density is not zero anywhere in the domain.
+Note that this equation presupposes that the density is not zero anywhere in the domain.
+Implicitely, we also make the assumption that the density field is known 
+when the equations above need to be solved.
 
 We use a mixed formulation and therefore keep both velocity and pressure as unknowns. 
 We end up having to solve the following system:
@@ -71,17 +73,16 @@ We end up having to solve the following system:
 \quad\quad
 {\cal A} \cdot X = \vec{b}
 \]
-Where $\K$ is the stiffness matrix, $\G$ is the discrete gradient operator, 
+where $\K$ is the stiffness matrix, $\G$ is the discrete gradient operator, 
 $\G^T$ is the discrete divergence operator, $\vec{\cal V}$ the velocity vector, 
 $\vec{\cal P}$ the pressure vector.
-Note that the term $\Z\cdot \vec{\cal V}$ derives from term $\vec{\upnu} \cdot \vec{\nabla}\rho$ 
+Note that the term $\Z\cdot \vec{\cal V}$ derives from term $\rho^{-1} \vec{\upnu} \cdot \vec{\nabla}\rho$ 
 in the continuity equation. 
 
-Each block $\K$, $\G$ , $\Z$ and vectors $f$ and $h$ are built separately 
-in the code and assembled into the matrix ${\cal A}$ and vector $\vec{b}$ 
-afterwards. ${\cal A}$ and $\vec{b}$ are then passed to the solver. 
-We will see later that there are alternatives to solve this approach which do not require to 
-build the full Stokes matrix $\A$. 
+The elemental matrix blocks $\K_e$, $\G_e$, $\Z_e$ as well as 
+the elemental vectors $\vec{f}_e$ and $\vec{h}_e$ are built inside a 
+loop of elements and assembled into the matrix ${\cal A}$ and vector $\vec{b}$. 
+${\cal A}$ and $\vec{b}$ are then passed to the solver. 
 
 {\sl Remark}: the term $\Z\cdot \vec{\cal V}$ is often put in the rhs (i.e. added to $h$) so that 
 the Stokes matrix ${\cal A}$ retains the same structure as in the incompressible case. This is indeed 
@@ -197,34 +198,146 @@ or,
 \paragraph{Implementation} 
 All terms of the linear system are common many previous stones and described in 
 the {\tt manual.pdf}, but not $\Z_e$.
-In practice it is computed as follows:
+In practice it is computed as follows for the $Q_1\times P_0$:
 
 \begin{lstlisting}
 for iel in range(0, nel):
-    Z_el=np.zeros((m_V*ndof_V,1),dtype=np.float64)
-    for iq in [-1,1]:
-        for jq in [-1,1]:
+    Z_el=np.zeros((m_P,m_V*ndof_V),dtype=np.float64)
+    for iq in range(0,nq_per_dim):
+        for jq in range(0,nq_per_dim):
+            rq=qcoords[iq]
+            sq=qcoords[jq]
+            weightq=qweights[iq]*qweights[jq]
             [...]
             drhodxq=np.dot(dNdx_V,rho_nodal[icon_V[:,iel]])
             drhodyq=np.dot(dNdy_V,rho_nodal[icon_V[:,iel]])
             for i in range(0,m_V):
-                Z_el[ndof_V*i  ,0]-=N_V[i]*drhodxq/rhoq *JxWq 
-                Z_el[ndof_V*i+1,0]-=N_V[i]*drhodyq/rhoq *JxWq 
+                Z_el[0,ndof_V*i  ]-=N_V[i]*drhodxq/rhoq *JxWq 
+                Z_el[0,ndof_V*i+1]-=N_V[i]*drhodyq/rhoq *JxWq 
 \end{lstlisting}
 
-Note that the exact denisty gradient could have been computed from $\rho(x,y)$
+Note that the exact density gradient could have been computed from $\rho(x,y)$
 and prescribed at the quadrature points. 
 In any case the term we need to integrate is not a polynomial so that 
 the employed quadrature rule is not adequate.
 
+In the case $Q_2\times Q_1$ elements are used, we need to be  
+bit more careful. Let $q$ be a pressure test function.
+The term under consideration is given by
+\[
+\int q \frac{1}{\rho}  \vec\upnu \cdot \vec\nabla \rho dV
+= 
+\int q \frac{1}{\rho}  \left( u \frac{\partial \rho}{\partial x} + v \frac{\partial \rho}{\partial y}\right) dV
+\]
+We have $q= \vec{\bN}_p^T \cdot \vec{\cal Q} =  \vec{\cal Q}^T \cdot \vec{\bN}_p$ so that
+\[
+\vec{\cal Q}^T \cdot \int \frac{1}{\rho} \vec{\bN}_p  
+\left( u \frac{\partial \rho}{\partial x} + v \frac{\partial \rho}{\partial y}\right) dV
+\]
+Because $u = \sum_i \bN_i u_i$ and $v = \sum_i \bN_i v_i$ the term in parenthesis can be written
+\[
+\left( u \frac{\partial \rho}{\partial x} + v \frac{\partial \rho}{\partial y}\right) 
+=
+\left( 
+\bN_1 \frac{\partial \rho}{\partial x} , \bN_1 \frac{\partial \rho}{\partial y},
+\bN_2 \frac{\partial \rho}{\partial x} , \bN_2 \frac{\partial \rho}{\partial y},
+...
+\bN_{m_V} \frac{\partial \rho}{\partial x} , \bN_{m_V} \frac{\partial \rho}{\partial y} \right)
+\cdot 
+\vec{\cal V}
+\]
+where $\vec{\cal V}^T=(u_1,v_1,u_2,v_2...)$
+Then 
+\[
+\vec{\cal Q}^T \cdot 
+\left[\int \frac{1}{\rho} \vec{\bN}_p  
+\left( 
+\bN_1 \frac{\partial \rho}{\partial x} , \bN_1 \frac{\partial \rho}{\partial y},
+\bN_2 \frac{\partial \rho}{\partial x} , \bN_2 \frac{\partial \rho}{\partial y},
+...
+\bN_{m_V} \frac{\partial \rho}{\partial x} , \bN_{m_V} \frac{\partial \rho}{\partial y} \right)
+dV 
+\right]
+\cdot 
+\vec{\cal V}
+\]
+which yields the matrix $\Z$ (of size $m_P \times ndof_V*m_V$ for each element):
+\[
+\Z = \int \frac{1}{\rho} \vec{\bN}_p  
+\left( 
+\bN_1 \frac{\partial \rho}{\partial x} , \bN_1 \frac{\partial \rho}{\partial y},
+\bN_2 \frac{\partial \rho}{\partial x} , \bN_2 \frac{\partial \rho}{\partial y},
+...
+\bN_{m_V} \frac{\partial \rho}{\partial x} , \bN_{m_V} \frac{\partial \rho}{\partial y} \right)
+dV 
+\]
+This is then implemented as follows:
 
-{\color{red} TODO: implement Q2Q1 and better matrix building !!!}
+\begin{lstlisting}
+for iel in range(0, nel):
+    Z_el=np.zeros((m_P,m_V*ndof_V),dtype=np.float64)
+    for iq in range(0,nq_per_dim):
+        for jq in range(0,nq_per_dim):
+            rq=qcoords[iq]
+            sq=qcoords[jq]
+            weightq=qweights[iq]*qweights[jq]
+            [...]
+            drhodxq=np.dot(dNdx_V,rho_nodal[icon_V[:,iel]])
+            drhodyq=np.dot(dNdy_V,rho_nodal[icon_V[:,iel]])
+            for i in range(0,m_V):
+                for j in range(0,m_P):
+                    Z_el[j,ndof_V*i  ]-=N_P[j]*N_V[i]*drhodxq/rhoq *JxWq 
+                    Z_el[j,ndof_V*i+1]-=N_P[j]*N_V[i]*drhodyq/rhoq *JxWq 
+\end{lstlisting}
+Of course this implementation also works for the $Q_1\times P_0$ element.
+
+Finally note that if a Lagrange multiplier technique is not used 
+in the case of the $Q_1\times P_0$ element the checkerboard modes are 
+extremely large and also derail the velocity solution. 
+The \lstinline{pnormalise} controls this. 
+I found it was not needed in the $Q_2\times Q_1$ case so that it is 
+not implemented and a postprocessing step insures that the 
+average pressure is zero. 
+
+As usual for discontinuous pressure elements I project the pressure $p$
+field onto the V-nodes to yield the $q$ pressure field. 
+In what follows the discretisation errors for both $p$ and $q$ is measured.
+
+$2^2$ quadrature points are used for the $Q_1\times P_0$ element
+while $3^2$ quadrature points are used for the $Q_2\times Q_1$ element (I have
+tried $4^2$ and results are virtually unchanged).
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Results}
+
+%\subsection*{Incompressible case}
+
+In this section we first check that the code works as expected with 
+both $Q_1\times P_0$ and $Q_2\times Q_1$ elements.
+We therefore run the (incompressible) Donea \& Huerta manufactured solution and indeed
+recover the expected rates:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_23/RESULTS/bench0/errors_q1p0.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_23/RESULTS/bench0/errors_q2q1.pdf}
+\end{center}
 
 
 \newpage
 In order to test our implementation we have created five manufactured solutions.
 Note that contrarily to previous cases using odd number of elements in 
 each direction still yields very strong checkerboard modes.
+
+Conclusions of the following 5 experiments:
+\begin{itemize}
+\item $Q_1\times P_0$ element: pressure field showcases a very large checkerboard mode and 
+proves then unusable. The velocity error does however converge quadratically as expected.
+There also seems to be a very big difference between even and odd numbers of elements 
+in the amplitude of the checkerboard mode. 
+\item $Q_2\times Q_1$ element: both velocity and pressure errors converge with the 
+expected rates.
+\end{itemize}
 
 
 %--------------------------------------------------------------------
@@ -267,72 +380,84 @@ From the definition of the velocity we can compute the strain rate and deviatori
 \end{pmatrix} \nn
 \end{eqnarray}
 
-We further postulate $g_x(x,y) = \frac{1}{x}$ and $g_y(x,y) = \frac{1}{y}$.
-Assuming the viscosity to be constant, the momentum conservation equation is then
+We further postulate $g_x(x,y) = \frac{1}{x}$ and $g_y(x,y) = \frac{1}{y}$ 
+so that 
+\[
+\rho \vec{g} = xy 
+\begin{pmatrix}
+1/x \\ 1/y
+\end{pmatrix}
+=
+\begin{pmatrix}
+ y\\ x
+\end{pmatrix}
+\]
+
+Assuming the viscosity to be constant ($\eta=1$), the momentum conservation equation is then
 \begin{eqnarray}
-\vec{0}&=& -\vec\nabla p + \vec\nabla \cdot (2 \eta \dot{\bm \varepsilon}^d )+ \rho \vec{g} \nn\\
+\vec{0}&=& -\vec\nabla p + \vec\nabla \cdot (2  \dot{\bm \varepsilon}^d )+ \rho \vec{g} \nn\\
 &=& 
 \begin{pmatrix} 
 -\frac{\partial p}{\partial x} \\
 -\frac{\partial p}{\partial y} 
 \end{pmatrix} 
-+  2 \eta \vec\nabla \cdot   
++    \vec\nabla \cdot  2 
 \begin{pmatrix}
 -\frac{2C_x}{3x^2} + \frac{C_y}{3y^2} & 0 \\
 0 & \frac{C_x}{3x^2} - \frac{2C_y}{3y^2}
 \end{pmatrix}
 + 
 \begin{pmatrix}
-y \\x
+ y \\ x
 \end{pmatrix} \nn\\
 &=&
 \begin{pmatrix} 
--\frac{\partial p}{\partial x} + 2\eta \frac{\partial}{\partial x} (-\frac{2C_x}{3x^2} +\frac{C_y}{3y^2})+ y \\
--\frac{\partial p}{\partial y} + 2\eta \frac{\partial}{\partial y} (\frac{C_x}{3x^2} -\frac{2C_y}{3y^2})+ x 
+-\frac{\partial p}{\partial x} +  \frac{\partial}{\partial x} (-\frac{4C_x}{3x^2} +\frac{2C_y}{3y^2})+ y \\
+-\frac{\partial p}{\partial y} +  \frac{\partial}{\partial y} (\frac{2C_x}{3x^2} -\frac{4C_y}{3y^2})+ x 
 \end{pmatrix} \nn\\
 &=& 
 \begin{pmatrix} 
--\frac{\partial p}{\partial x} + 2\eta \frac{\partial}{\partial x} (-\frac{2C_x}{3x^2} )+ y \\
--\frac{\partial p}{\partial y} + 2\eta \frac{\partial}{\partial y} (-\frac{2C_y}{3y^2})+ x 
+-\frac{\partial p}{\partial x} +  \frac{\partial}{\partial x} (-\frac{4C_x}{3x^2})+ y \\
+-\frac{\partial p}{\partial y} +  \frac{\partial}{\partial y} (-\frac{4C_y}{3y^2})+ x 
 \end{pmatrix} 
 \end{eqnarray}
 The first line leads to write 
 \[
-p(x,y) = -\frac{4 \eta C_x}{3x^2}   + yx + f(y)
+p(x,y) = -\frac{4 C_x}{3x^2}   + yx + f(y)
 \]
 Inserting this in the second line:
 \[
--\frac{\partial }{\partial y}  \left( -\frac{4 \eta C_x}{3x^2}   + yx + f(y) \right) 
-+ 2\eta \frac{\partial}{\partial y} \left(-\frac{2C_y}{3y^2} \right)+ x = 0
+-\frac{\partial }{\partial y}  \left(  yx + f(y) \right) 
++  \frac{\partial}{\partial y} \left(-\frac{4C_y}{3y^2} \right)+ x = 0
 \]
 \[
--x - f'(y) + 2\eta \frac{\partial}{\partial y} \left(-\frac{2C_y}{3y^2} \right)+ x = 0
+-x - f'(y) +  \frac{\partial}{\partial y} \left(-\frac{4C_y}{3y^2} \right)+ x = 0
 \]
 or, 
 \[
-f(y) =   -\frac{4 \eta C_y}{3y^2} + Const
+f(y) =   -\frac{4  C_y}{3y^2} + C_0
 \]
 and finally
 \[
-p(x,y) =  -\frac{4 \eta C_x}{3x^2}  -\frac{4 \eta C_y}{3y^2}   + yx    + Const 
+p(x,y) =  -\frac{4  C_x}{3x^2}  -\frac{4 C_y}{3y^2}   + yx    + C_0
 \]
 Requiring $\iint_\square p \; dxdy=0$ where $\square=[1:2]\times [1:2]$ (because of the 
 expressions for velocity and gravity the origin of the axis system cannot be included in the 
 domain) leads to 
 \begin{eqnarray}
 \iint_\square  
-\left( -\frac{4 \eta C_x}{3x^2}  -\frac{4 \eta C_y}{3y^2}   + yx    + Const \right) 
+\left( -\frac{4  C_x}{3x^2}  -\frac{4  C_y}{3y^2}   + yx    + C_0 \right) 
 &=& 
-\iint_\square   \left( -\frac{4 \eta C_x}{3x^2}  -\frac{4 \eta C_y}{3y^2}   + yx  \right) dxdy
+\iint_\square   \left( -\frac{4  C_x}{3x^2}  -\frac{4 C_y}{3y^2}   + yx  \right) dxdy
 +\iint_\square   Const \; dx dy \nn\\
-&=&\iint_\square   \left( -\frac{4 \eta C_x}{3x^2}  -\frac{4 \eta C_y}{3y^2}   + yx  \right) dxdy
+&=&\iint_\square   \left( -\frac{4  C_x}{3x^2}  -\frac{4  C_y}{3y^2}   + yx  \right) dxdy
 + Const
 \end{eqnarray}
 so that 
 \[
-Const = -\int_1^2 \int_1^2  \left( -\frac{4 \eta C_x}{3x^2}  -\frac{4 \eta C_y}{3y^2}   + yx  \right) dxdy
+Const = -\int_1^2 \int_1^2  \left( -\frac{4  C_x}{3x^2}  -\frac{4  C_y}{3y^2}   + yx  \right) dxdy
 \]
-We then set $\eta=C_x=C_y=1$ for simplicity so that we find\footnote{Thank you WolframAlpha}:
+We then set $C_x=C_y=1$ for simplicity so that we find\footnote{Thank you WolframAlpha}:
 \[
 Const= -11/12
 \]
@@ -341,106 +466,153 @@ and in the end
 p(x,y) = -\frac{4}{3x^2} -\frac{4}{3y^2} + yx -\frac{11}{12}
 \]
 
-\begin{lstlisting}
-def gx(x,y,ibench):
-    if ibench==1: val=1/y
-
-def gy(x,y,ibench):
-    if ibench==1: val=1/x
-
-def density(x,y,ibench):
-    if ibench==1: val=x*y
-
-def u_th(x,y,ibench):
-    if ibench==1: val=1/x
-
-def v_th(x,y,ibench):
-    if ibench==1: val=1/y
-
-def p_th(x,y,ibench):
-    if ibench==1:
-       val = -4/(3*x**2) - 4/(3*y**2) + x*y  -11./12
-
-def sr_xx_th(x,y,ibench):
-    if ibench==1: val=-1/x**2
-
-def sr_yy_th(x,y,ibench):
-    if ibench==1: val=-1/y**2
-
-def sr_xy_th(x,y,ibench):
-    if ibench==1: val=0
-\end{lstlisting}
-
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_23/RESULTS/bench1/errors_q1p0.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_23/RESULTS/bench1/errors_q2q1.pdf}
+\end{center}
 
 \newpage
 %------------------------------------------------ 
 \subsection*{benchmark \#2 ({\tt ibench=2})}
 Starting from the density field
-$  \rho = \cos(x)\cos(y)$ we derive the velocity field:
-\begin{equation}
-u(x,y) = \frac{C_x}{\cos(x)} , 
-v(x,y) = \frac{C_y}{\cos(y)}
-\end{equation}
-with $g_x = \frac{1}{\cos(y)}$ and $g_y = \frac{1}{\cos(x)}$ and 
-this leads us to a pressure field given by: 
-\begin{equation}
-p =  \eta \Bigg(\frac{4C_x \sin(x)}{3\cos^2(x)} + \frac{4C_y \sin(y)}{3\cos^2(y)}\Bigg) 
-+( \sin(x) + \sin(y) ) + C_0
-\end{equation}
+$\rho = \cos(x)\cos(y)$ we postulate the velocity field:
+\begin{eqnarray}
+u(x,y) &=& \frac{C_x}{\cos(x)}  \nn\\
+v(x,y) &=& \frac{C_y}{\cos(y)}
+\end{eqnarray}
+with $g_x = \frac{1}{\cos(y)}$ and $g_y = \frac{1}{\cos(x)}$.
+We choose $\eta=1$ and $C_x=C_y=1$. 
+We then confirm that 
 \[
-\dot{\epsilon}_{xx} = C_x \frac{\sin(x)}{\cos^2(x)}
-\quad
-\quad
-\quad
-\dot{\epsilon}_{yy} = C_y \frac{\sin(y)}{\cos^2(y)}
-\quad
-\quad
-\quad
-\dot{\epsilon}_{xy} = 0 
+\vec\nabla \cdot (\rho \vec\upnu) 
+=\vec\nabla \cdot (\cos(y), \cos(x))=0
 \]
-We choose $\eta=1$ and $C_x=C_y=1$. The domain is the unit square $[0:1]\times[0:1]$ and we obtain 
-$C_0$ as before and obtain 
+The strain rate tensor components are then given by
+\begin{eqnarray}
+\dot{\epsilon}_{xx} &=&  \frac{\sin(x)}{\cos^2(x)} \nn\\
+\dot{\epsilon}_{yy} &=&  \frac{\sin(y)}{\cos^2(y)} \nn\\
+\dot{\epsilon}_{xy} &=& 0 
+\end{eqnarray}
+and the deviatoric tensor follows:
+\begin{eqnarray}
+\dot{\bm \varepsilon}^d 
+&=& \dot{\bm \varepsilon} -\frac13 (\vec\nabla\cdot \vec\upnu) {\bm 1} \nn\\
+&=& 
+\begin{pmatrix}
+ \frac{\sin(x)}{\cos^2(x)} & 0 \\
+0 & \frac{\sin(y)}{\cos^2(y)} 
+\end{pmatrix}
+-\frac13 \left(\frac{\sin(x)}{\cos^2(x)}+\frac{\sin(y)}{\cos^2(y)}\right){\bm 1} \nn\\
+&=& 
+\begin{pmatrix}
+\frac23 \frac{\sin(x)}{\cos^2(x)} -\frac13 \frac{\sin(y)}{\cos^2(y)}   & 0 \\
+0 &-\frac13 \frac{\sin(x)}{\cos^2(x)}+  \frac23 \frac{\sin(y)}{\cos^2(y)} 
+\end{pmatrix}
+\nn\\
+\rho \vec{g} &=& \cos(x)\cos(y)
+\begin{pmatrix}
+\frac{1}{\cos(y)} \\
+\frac{1}{\cos(x)}
+\end{pmatrix} \nn\\
+&=& 
+\begin{pmatrix}
+\cos(x) \\
+\cos(y)
+\end{pmatrix} \nn
+\end{eqnarray}
+Let us consider the $x$-component of the momentum equation:
 \[
-C_0 = 2 - 2 \cos(1) + 8/3 (\frac{1}{\cos (1)} - 1)
-\simeq 3.18823730
+-\frac{\partial p}{\partial x} + 2 \eta \left( \partial_x \dot{\epsilon}_{xx}^d +
+\partial_y \dot{\epsilon}_{xy}^d \right) + \cos(x) = 0
 \]
-(thank you WolframAlpha)
+\[
+-\frac{\partial p}{\partial x} + 2 \frac{\partial}{\partial x} 
+\left( \frac23 \frac{\sin(x)}{\cos^2(x)} -\frac13 \frac{\sin(y)}{\cos^2(y)} \right)
+ + \cos(x) = 0
+\]
+\[
+\frac{\partial}{\partial x} 
+\left( -p +\frac43 \frac{\sin(x)}{\cos^2(x)} -\frac23 \frac{\sin(y)}{\cos^2(y)} \right)
+ + \cos(x) = 0
+\]
+We then integrate with respect to $x$:
+\[
+-p +\frac43 \frac{\sin(x)}{\cos^2(x)} -\frac23 \frac{\sin(y)}{\cos^2(y)} 
++ \sin x + f(y) =0
+\]
+where $f(y)$ is a function of $y$ only, or:
+\[
+p(x,y) =
+\frac43 \frac{\sin(x)}{\cos^2(x)} -\frac23 \frac{\sin(y)}{\cos^2(y)} 
++ \sin x + f(y) 
+\]
+We now turn to the $y$-component of the momentum equation:
+\[
+-\frac{\partial p}{\partial y} + 2 \eta \left( \partial_x \dot{\epsilon}_{xy}^d +
+\partial_y \dot{\epsilon}_{yy}^d \right) + \cos(y) = 0
+\]
+\[
+-\frac{\partial p}{\partial y} + 2\partial_y \dot{\epsilon}_{yy}^d + \cos(y) =0
+\]
+\[
+-\frac{\partial p}{\partial y} +  \frac{\partial }{\partial y}
+\left( -\frac23 \frac{\sin(x)}{\cos^2(x)}+  \frac43 \frac{\sin(y)}{\cos^2(y)} \right)
++ \cos(y) =0
+\]
+and now insert the obtained pressure:
+\[
+-\frac{\partial }{\partial y} 
+\left( \frac43 \frac{\sin(x)}{\cos^2(x)} -\frac23 \frac{\sin(y)}{\cos^2(y)} + \sin x + f(y)   \right)
++ 
+\frac{\partial }{\partial y}
+ \left( -\frac23 \frac{\sin(x)}{\cos^2(x)}+  \frac43 \frac{\sin(y)}{\cos^2(y)} \right)
++ \cos(y) =0
+\]
+\[
+\frac{\partial }{\partial y} 
+\left( 
+\frac23 \frac{\sin(y)}{\cos^2(y)} 
++ f(y) 
++ \frac43 \frac{\sin(y)}{\cos^2(y)} \right)
++ \cos(y) =0
+\]
+\[
+\frac{\partial }{\partial y} \left(   f(y) + \frac63 \frac{\sin(y)}{\cos^2(y)}   \right) + \cos(y) = 0 
+\]
+or, 
+\[
+f(y)=\sin (y) + \frac63 \frac{\sin(y)}{\cos^2(y)}  +C_0
+\]
+This leads us to a pressure field given by: 
+\begin{eqnarray}
+p(x,y) 
+&=&  \frac43 \frac{\sin(x)}{\cos^2(x)} -\frac23 \frac{\sin(y)}{\cos^2(y)} + \sin x + f(y) \nn\\
+&=&  \frac43 \frac{\sin(x)}{\cos^2(x)} -\frac23 \frac{\sin(y)}{\cos^2(y)} + \sin x + 
+\sin (y) + \frac63 \frac{\sin(y)}{\cos^2(y)}  +C_0 \nn\\
+&=&  \frac43 \frac{\sin(x)}{\cos^2(x)} +\frac43 \frac{\sin(y)}{\cos^2(y)} + \sin x + \sin (y)   +C_0 \nn
+\end{eqnarray}
+%or, more generally:
+%\begin{equation}
+%p 
+%=  \eta \Bigg(\frac{4C_x \sin(x)}{3\cos^2(x)} + \frac{4C_y \sin(y)}{3\cos^2(y)}\Bigg) 
+%+( \sin(x) + \sin(y) ) + C_0
+%\end{equation}
+
+The domain is the unit square $[0:1]\times[0:1]$ and we obtain 
+$C_0$ as before\footnote{\url{https://www.wolframalpha.com/}} and obtain
+\[
+C_0 = -\iint_\square 
+\left(\frac43 \frac{\sin(x)}{\cos^2(x)} +\frac43 \frac{\sin(y)}{\cos^2(y)} + \sin x + \sin (y) \right) dxdy
+= -(2 - 2 \cos(1) + 8/3 (\frac{1}{\cos (1)} - 1))
+\simeq -3.18823730
+\]
 
 
-\begin{lstlisting}
-def gx(x,y,ibench):
-    if ibench==2: val = 1/np.cos(y)
 
-def gy(x,y,ibench):
-    if ibench==2: val=1/np.cos(x)
-
-def density(x,y,ibench):
-    if ibench==2: val = np.cos(x)*np.cos(y)
-
-def u_th(x,y,ibench):
-    if ibench==2: val=1/np.cos(x)
-
-def v_th(x,y,ibench):
-    if ibench==2: val=1/np.cos(y)
-
-def p_th(x,y,ibench):
-    if ibench==2:
-       val = 4*np.sin(x)/(3*np.cos(x)**2)+4*np.sin(y)/(3*np.cos(y)**2) \
-           + np.sin(x) + np.sin(y) - 2+2*np.cos(1)-8/3*(1/np.cos(1)-1) 
-
-def sr_xx_th(x,y,ibench):
-    if ibench==2: val=np.sin(x)/np.cos(x)**2
-
-def sr_yy_th(x,y,ibench):
-    if ibench==2: val=np.sin(y)/np.cos(y)**2
-
-def sr_xy_th(x,y,ibench):
-    if ibench==2: val=0
-\end{lstlisting}
-
-
-
-
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_23/RESULTS/bench2/errors_q1p0.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_23/RESULTS/bench2/errors_q2q1.pdf}
+\end{center}
 
 
 
@@ -462,36 +634,66 @@ p &=& -4/(3x^2) -x^2/2 + 11/6 \nn\\
 \dot{\varepsilon}_{yy} &=& 0  \nn\\
 \dot{\varepsilon}_{xy} &=& 0  \nn
 \end{eqnarray}
+We then confirm that 
+\[
+\vec\nabla \cdot (\rho \vec\upnu) 
+=\vec\nabla \cdot (1,0)=0
+\]
 
-\begin{lstlisting}
-def gx(x,y,ibench):
-    if ibench==3: val=-1
 
-def gy(x,y,ibench):
-    if ibench==3: val=0
 
-def density(x,y,ibench):
-    if ibench==3: val=x
+\begin{eqnarray}
+\dot{\bm \varepsilon}^d 
+&=& \dot{\bm \varepsilon} -\frac13 (\vec\nabla\cdot \vec\upnu) {\bm 1} \nn\\
+&=& 
+\begin{pmatrix}
+-1/x^2 & 0 \\
+0 & 0
+\end{pmatrix}
+-\frac13 \left(  -1/x^2  \right){\bm 1} \nn\\
+&=& 
+\begin{pmatrix}
+-\frac{2}{3x^2} & 0 \\
+0 & \frac{1}{3x^2}
+\end{pmatrix}
+\end{eqnarray}
 
-def u_th(x,y,ibench):
-    if ibench==3: val=1/x
+Then, setting $\eta=1$
+\[
+-\partial_x p + 2 \partial_x(-\frac{2}{3x^2} ) -x =0
+\]
+\[
+-\partial_x p +  \partial_x(-\frac{4}{3x^2} ) -x =0
+\]
+leads to 
+\[
+p = -\frac{4}{3x^2} -x^2/2 + f(y)
+\]
+We turn to the $x$-component of the momentum equation:
+\[
+-\partial_y p + 2 \partial_y(\frac{1}{3x^2} )  =0
+\]
+\[
+-\partial_y ( -\frac{4}{3x^2} -x^2/2 + f(y)  ) + 2 \partial_y(\frac{1}{3x^2} )  =0
+\]
+or $-\partial_y f =0$, i.e. $f(y)=C_0$ and 
+\[
+p = -\frac{4}{3x^2} -x^2/2 + C_0 
+\]
+The final constant is computed by requiring $\iint_\square p(x,y) dx dy=0$ on $[1:2]\times[1:2]$.
+We find
+\[
+0=\iint_\square p(x,y) dx dy
+=\int_0^1\int_0^1 (  -\frac{4}{3x^2} -x^2/2 + C_0 ) dx dy 
+=\int_0^1\int_0^1 (  -\frac{4}{3x^2} -x^2/2  ) dx dy + C_0
+\]
+leading to $C_0= 11/6$.
 
-def v_th(x,y,ibench):
-    if ibench==3: val=0
 
-def p_th(x,y,ibench):
-    if ibench==3: val =  -4/(3*x**2) - x**2/2 + 11/6
-
-def sr_xx_th(x,y,ibench):
-    if ibench==3: val=-1/x**2
-
-def sr_yy_th(x,y,ibench):
-    if ibench==3: val=0 
-
-def sr_xy_th(x,y,ibench):
-    if ibench==3: val=0 
-\end{lstlisting}
-
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_23/RESULTS/bench3/errors_q1p0.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_23/RESULTS/bench3/errors_q2q1.pdf}
+\end{center}
 
 \newpage
 %---------------------------------------------
@@ -499,7 +701,7 @@ def sr_xy_th(x,y,ibench):
 
 The fields are as follows:
 \begin{eqnarray}
-g_x &=& 10   \nn\\
+g_x &=& -10   \nn\\
 g_y &=& 0   \nn\\
 \rho &=& 1/(1-x)   \nn\\
 u &=& 1-x   \nn\\
@@ -509,38 +711,84 @@ p &=& 10\ln (x-1) + 290.9  \nn\\
 \dot{\varepsilon}_{yy} &=& 0  \nn\\
 \dot{\varepsilon}_{xy} &=& 0  \nn
 \end{eqnarray}
+as defined on the $[20:21]\times [20:21]$ domain.
+We then confirm that 
+\[
+\vec\nabla \cdot (\rho \vec\upnu) 
+=\vec\nabla \cdot (1,0  )=0
+\]
 
 
-\begin{lstlisting}
-def gx(x,y,ibench):
-    if ibench==4: val=10
-
-def gy(x,y,ibench):
-    if ibench==4: val=0
-
-def density(x,y,ibench):
-    if ibench==4: val = 1/(1-x)
-
-def u_th(x,y,ibench):
-    if ibench==4: val=1-x
-
-def v_th(x,y,ibench):
-    if ibench==4: val=0
-
-def p_th(x,y,ibench):
-    if ibench==4: val = 10*log(x-1) +290.9 
-
-def sr_xx_th(x,y,ibench):
-    if ibench==4: val=0 
-
-def sr_yy_th(x,y,ibench):
-    if ibench==4: val=0 
-
-def sr_xy_th(x,y,ibench):
-    if ibench==4: val=0 
-\end{lstlisting}
+\begin{eqnarray}
+\dot{\bm \varepsilon}^d 
+&=& \dot{\bm \varepsilon} -\frac13 (\vec\nabla \cdot \vec\upnu) {\bm 1} \nn\\
+&=& \dot{\bm \varepsilon} -\frac13 (-1) {\bm 1} \nn\\
+&=& \begin{pmatrix}
+-1 +1/3 & 0 \\
+0 & 1/3
+\end{pmatrix} \nn\\
+&=& \begin{pmatrix}
+-2/3 & 0 \\
+0 & 1/3
+\end{pmatrix} \nn
+\end{eqnarray}
 
 
+We further postulate $g_x(x,y) = 10$ and $g_y(x,y) = 0$.
+Assuming the viscosity to be constant ($\eta=1$, the momentum conservation equation is then
+\begin{eqnarray}
+\vec{0}&=& -\vec\nabla p + \vec\nabla \cdot (2 \dot{\bm \varepsilon}^d )+ \rho \vec{g} \nn\\
+&=& 
+\begin{pmatrix} 
+-\frac{\partial p}{\partial x} \\
+-\frac{\partial p}{\partial y} 
+\end{pmatrix} 
++  2 \eta \vec\nabla \cdot   
+\begin{pmatrix}
+-2/3 & 0 \\
+0 & 1/3
+\end{pmatrix}
++ 
+\frac{1}{1-x}
+\begin{pmatrix}
+-10 \\ 0
+\end{pmatrix} \nn\\
+&=&
+\begin{pmatrix} 
+-\frac{\partial p}{\partial x} - \frac{10}{1-x} \\
+-\frac{\partial p}{\partial y}  
+\end{pmatrix} \nn
+\end{eqnarray}
+The second line tells us that the pressure is independent of $y$. We then integrate the  
+first line:
+\[
+\frac{\partial p}{\partial x} = \frac{10}{x-1}
+\]
+which yields
+\[
+p(x) 
+= \int \frac{10}{x-1} dx 
+= 10 \log (x-1) + C_0
+\]
+Normalisation:
+\[
+0=\iint_\square p(x,y) dx dy 
+= \int_{20}^{21}\int_{20}^{21} ( 10 \log (x-1) + C_0 ) dx dy
+= \int_{20}^{21}\int_{20}^{21}  10 \log (x-1) dx dy + C_0
+\simeq 29.7030486691745 +C_0
+\]
+
+10*log(x-1)-29.703
+
+
+The velocity is a first-order polynomial so that we expect super-convergence 
+of the velocity error. 
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_23/RESULTS/bench4/errors_q1p0.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_23/RESULTS/bench4/errors_q2q1.pdf}
+\end{center}
 
 
 
@@ -566,58 +814,19 @@ p &=& 4\sin(x)/(3 \cos^2 x) - \sin(x) - 0.674723  \nn\\
 \dot{\varepsilon}_{yy} &=& 0 \nn\\
 \dot{\varepsilon}_{xy} &=& 0  \nn
 \end{eqnarray}
+We then confirm that 
+\[
+\vec\nabla \cdot (\rho \vec\upnu) 
+=\vec\nabla \cdot (1,0 )=0
+\]
 
 
-\begin{lstlisting}
-def gx(x,y,ibench):
-    if ibench==5: val=-1
 
-def gy(x,y,ibench):
-    if ibench==5: val=0
-
-def density(x,y,ibench):
-    if ibench==5: val=np.cos(x)
-
-def u_th(x,y,ibench):
-    if ibench==5: val=1/np.cos(x)
-
-def v_th(x,y,ibench):
-    if ibench==5: val=0
-
-def p_th(x,y,ibench):
-    if ibench==5: val = 4*np.sin(x)/(3*np.cos(x)**2) -np.sin(x) -0.674723
-
-def sr_xx_th(x,y,ibench):
-    if ibench==5: val=0 
-
-def sr_yy_th(x,y,ibench):
-    if ibench==5: val=0 
-
-def sr_xy_th(x,y,ibench):
-    if ibench==5: val=0 
-\end{lstlisting}
-
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Results}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_23/RESULTS/bench1/errors.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_23/RESULTS/bench2/errors.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_23/RESULTS/bench3/errors.pdf}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_23/RESULTS/bench4/errors.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_23/RESULTS/bench5/errors.pdf}\\
-{\captionfont Discretisation errors for all five benchmarks.}
+\includegraphics[width=8cm]{python_codes/fieldstone_23/RESULTS/bench5/errors_q1p0.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_23/RESULTS/bench5/errors_q2q1.pdf}
 \end{center}
-
-We see that all benchmarks are solutions of the Stokes equations 
-(velocity field converges at the expected rate) but the pressure
-checkerboard modes are so large that the pressure error is large 
-and the pressure error does not converge at all.
-
-
-
 
 
 
