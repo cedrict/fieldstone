@@ -1,0 +1,160 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set xlabel 'time (yr)'
+set key outside
+
+tfinal=2.e10
+
+#############################################
+
+set ylabel 'v_{rms} (cm/yr)'
+set output 'vrms.pdf'
+plot[:tfinal][]\
+'16x16/vrms_Nu.ascii' u 1:2 w l t '16^2',\
+'24x24/vrms_Nu.ascii' u 1:2 w l t '24^2',\
+'32x32/vrms_Nu.ascii' u 1:2 w l t '32^2',\
+'64x64/vrms_Nu.ascii' u 1:2 w l t '64^2',\
+
+#############################################
+
+set ylabel 'Nu'
+set output 'Nu.pdf'
+plot[:tfinal][]\
+'16x16/vrms_Nu.ascii' u 1:3 w l t '16^2',\
+'24x24/vrms_Nu.ascii' u 1:3 w l t '24^2',\
+'32x32/vrms_Nu.ascii' u 1:3 w l t '32^2',\
+'64x64/vrms_Nu.ascii' u 1:3 w l t '64^2',\
+
+#############################################
+
+set ylabel '<T> (K)'
+set output 'Tavrg.pdf'
+plot[:tfinal][]\
+'16x16/Tavrg.ascii' u 1:2 w l t '16^2',\
+'24x24/Tavrg.ascii' u 1:2 w l t '24^2',\
+'32x32/Tavrg.ascii' u 1:2 w l t '32^2',\
+'64x64/Tavrg.ascii' u 1:2 w l t '64^2',\
+
+#############################################
+
+set ylabel 'total heat flux'
+set output 'total_heat_flux.pdf'
+plot[:tfinal][]\
+'16x16/heat_flux_boundary.ascii' u 1:2 w l t '16^2',\
+'24x24/heat_flux_boundary.ascii' u 1:2 w l t '24^2',\
+'32x32/heat_flux_boundary.ascii' u 1:2 w l t '32^2',\
+'64x64/heat_flux_boundary.ascii' u 1:2 w l t '64^2',\
+
+#############################################
+
+set ylabel 'viscous dissipation'
+set output 'viscous_dissipation.pdf'
+plot[:tfinal][]\
+'16x16/viscous_dissipation.ascii' u 1:2 w l t '16^2',\
+'24x24/viscous_dissipation.ascii' u 1:2 w l t '24^2',\
+'32x32/viscous_dissipation.ascii' u 1:2 w l t '32^2',\
+'64x64/viscous_dissipation.ascii' u 1:2 w l t '64^2',\
+
+#############################################
+
+set ylabel 'mass'
+set output 'mass.pdf'
+plot[:tfinal][]\
+'16x16/M.ascii' u 1:2 w l t '16^2',\
+'24x24/M.ascii' u 1:2 w l t '24^2',\
+'32x32/M.ascii' u 1:2 w l t '32^2',\
+'64x64/M.ascii' u 1:2 w l t '64^2',\
+
+#############################################
+
+set ylabel 'kinetic energy'
+set output 'kinetic_energy.pdf'
+plot[:tfinal][]\
+'16x16/EK.ascii' u 1:2 w l t '16^2',\
+'24x24/EK.ascii' u 1:2 w l t '24^2',\
+'32x32/EK.ascii' u 1:2 w l t '32^2',\
+'64x64/EK.ascii' u 1:2 w l t '64^2',\
+
+#############################################
+
+set ylabel 'thermal energy'
+set output 'thermal_energy.pdf'
+plot[:tfinal][]\
+'16x16/ET.ascii' u 1:2 w l t '16^2',\
+'24x24/ET.ascii' u 1:2 w l t '24^2',\
+'32x32/ET.ascii' u 1:2 w l t '32^2',\
+'64x64/ET.ascii' u 1:2 w l t '64^2',\
+
+#############################################
+
+set ylabel 'gravitational energy'
+set output 'gravitational_energy.pdf'
+plot[:tfinal][]\
+'16x16/EG.ascii' u 1:2 w l t '16^2',\
+'24x24/EG.ascii' u 1:2 w l t '24^2',\
+'32x32/EG.ascii' u 1:2 w l t '32^2',\
+'64x64/EG.ascii' u 1:2 w l t '64^2',\
+
+#############################################
+
+set ylabel 'work against gravity'
+set output 'work_against_gravity.pdf'
+plot[:tfinal][]\
+'16x16/work_grav.ascii' u 1:2 w l t '16^2',\
+'24x24/work_grav.ascii' u 1:2 w l t '24^2',\
+'32x32/work_grav.ascii' u 1:2 w l t '32^2',\
+'64x64/work_grav.ascii' u 1:2 w l t '64^2',\
+
+#############################################
+
+set ylabel 'adiabatic heating'
+set output 'adiabatic_heating.pdf'
+plot[:tfinal][]\
+'16x16/adiabatic_heating.ascii' u 1:2 w l t '16^2',\
+'24x24/adiabatic_heating.ascii' u 1:2 w l t '24^2',\
+'32x32/adiabatic_heating.ascii' u 1:2 w l t '32^2',\
+'64x64/adiabatic_heating.ascii' u 1:2 w l t '64^2',\
+
+#############################################
+
+set ylabel 'velocity statistics' 
+set output 'velocity_stats.pdf'
+plot[:tfinal][]\
+'24x24/u_stats.ascii' u 1:2 w l t 'min(u)',\
+'24x24/u_stats.ascii' u 1:3 w l t 'max(u)',\
+'24x24/v_stats.ascii' u 1:2 w l t 'min(v)',\
+'24x24/v_stats.ascii' u 1:3 w l t 'max(v)',\
+'32x32/u_stats.ascii' u 1:2 w l t 'min(u)',\
+'32x32/u_stats.ascii' u 1:3 w l t 'max(u)',\
+'32x32/v_stats.ascii' u 1:2 w l t 'min(v)',\
+'32x32/v_stats.ascii' u 1:3 w l t 'max(v)',\
+
+
+#############################################
+
+set ylabel ' '
+set output 'energy_check1.pdf'
+plot[:tfinal/4][]\
+'16x16/viscous_dissipation.ascii' u 1:2 w l lt 1 t'vd,16^2',\
+'24x24/viscous_dissipation.ascii' u 1:2 w l lt 2 t'vd,24^2',\
+'32x32/viscous_dissipation.ascii' u 1:2 w l lt 3 t'vd,32^2',\
+'64x64/viscous_dissipation.ascii' u 1:2 w l lt 4 t'vd,64^2',\
+'16x16/work_grav.ascii' u 1:2 w l lt 1 dt 2 t'wag,16^2',\
+'24x24/work_grav.ascii' u 1:2 w l lt 2 dt 2 t'wag,24^2',\
+'32x32/work_grav.ascii' u 1:2 w l lt 3 dt 2 t'wag,32^2',\
+'64x64/work_grav.ascii' u 1:2 w l lt 4 dt 2 t'wag,64^2',\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
