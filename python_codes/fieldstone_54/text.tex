@@ -1,12 +1,31 @@
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_54/keywords.ascii}
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/aspect_logo}
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+%\includegraphics[height=1.25cm]{images/pictograms/clean}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_54/text.tex}} \end{flushright}
+
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/template_keywords.key}
+
+\par\noindent\rule{\textwidth}{0.4pt}
 
 \begin{center}
-Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_54}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_54}}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
+Last revision: February 17th, 2026.
 
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This stone implements three different free surface/mesh deformation algorithms. 
 The first one has all the nodes move with the computed velocity (Lagrangian method)
@@ -245,59 +264,93 @@ I haven't used any of the projections to carry out timestepping.
 %......................................................................
 
 
+\newpage
 %......................................................................
-\subsubsection*{Experiment 9 - Rayleigh-Taylor instability}
+\subsection*{Experiment 9 - Rayleigh-Taylor instability}
 
 
-The setup originates in Kaus et al (2010) \cite{kamm10}.
+The setup originates in \textcite{kamm10} (2010).
 It is a Rayleigh-Taylor instability of a dense, more viscous 
-layer ($\rho=3300kg/m^3$ , $\eta=10^{21}Pa\cdot s$), 
-sinking through a less dense fluid ($\rho=3200 kg/m^3$ , $\eta=10^{20}Pa\cdot s$). 
+layer ($\rho=3300~\si{\kg\per\cubic\meter}$, $\eta=10^{21}~\si{\pascal\second}$), 
+sinking through a less dense fluid ($\rho=3200~\si{\kg\per\cubic\meter}$ , 
+$\eta=10^{20}~\si{\pascal\second}$). 
 Side boundaries are free slip, the lower boundary is no-slip and the upper boundary 
 is a free surface. 
-The box is 500 x 500 km in size, and gravitational acceleration was 9.81m/s$^2$ . 
-The initial perturbation was sinusoidal with initial amplitude $A$ of 5 km (i.e. 1\%
-of the box size) and centered at $y_0=400$km:
+The box is $500\times 500~\si{\km}$ in size, and gravitational acceleration is 
+$9.81~\si{\meter\per\square\second}$ . 
+The initial perturbation was sinusoidal with initial amplitude $A$ of $5~\si{\km}$ (i.e. 1\%
+of the box size) and centered at $y_0=400~\si{\km}$:
 \[
 y(x)=y_0 - A \cos(2\pi x/L_x)
 \]
-The position $y(t)$ of the free surface point situated at $x=L_x$ 
-is monitored and plotted ...
+The position $y(t)$ of the free surface point situated at $x=L_x$ is monitored and plotted.
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_54/images/exp9/robh17}\\
-{\captionfont Taken from Rose et al (2017) \cite{robh17}.}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_54/RESULTS/exp9/robh17}
+\includegraphics[width=11.2cm]{python_codes/fieldstone_54/RESULTS/exp9/kamm10}\\
+{\captionfont Left: Taken from \textcite{robh17} (2017). Right: taken 
+from \textcite{kamm10} (2010).}
 \end{center}
 
 Because I do not have compositional fields or markers implemented in this code I have 
 to align the mesh with the initial sinusoidal perturbation and run the model in 
-Lagrangian mode. Also, as shown in \cite{kamm10}, this experiment is prone to drunken sailor 
-instabilities and I have therefore fixed dt=2500yr with a 25x25 resolution.
+Lagrangian mode:
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_54/RESULTS/exp9/rho0}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_54/RESULTS/exp9/eta0}\\
+{\captionfont Initial density and viscosity field on $25\times 25$ mesh.}
+\end{center}
+
+Also, as shown in \cite{kamm10}, this experiment is prone to drunken sailor 
+instabilities and I have therefore fixed $dt=2500~\si{\year}$ with a $25\times 25$ resolution.
 As a consequence, the model will run until elements become too distorted. 
 
 \begin{center}
-\includegraphics[width=13cm]{python_codes/fieldstone_54/images/exp9/kamm10}\\
-{\captionfont Taken from Kaus et al (2010) \cite{kamm10}.}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_54/RESULTS/exp9/2500/rho.0000.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_54/RESULTS/exp9/2500/rho.0025.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_54/RESULTS/exp9/2500/rho.0049.png}\\
+{\captionfont Density field at timestep 0, 500 and 1000 for $dt=2500yr$.}
 \end{center}
-Kaus et al show that the system is stable for $\delta t=2500$yr and 
-quickly unstable for $\delta t=5000$yr. This is also what we observe:
+
+
+
+
+
+\textcite{kamm10} show that the system is stable for $\delta t=2500~\si{\year}$ and 
+quickly unstable for $\delta t=5000~\si{\year}$. This is also what we observe:
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp9/volume.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp9/elev.pdf}\\
-{\captionfont Results obtained with method=1. 25x25 resolution.}
+\includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp9/elev.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp9/volume.pdf}\\
+{\captionfont Results obtained with method=1. $25\times 25$ resolution.
+Left: elevation of top right corner over time; Right: relative volume error over time.}
 \end{center}
+
+Example of an unstable run which showcases the drunken sailor instability:
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_54/images/exp9/rho0000}
-\includegraphics[width=5cm]{python_codes/fieldstone_54/images/exp9/rho0040}
-\includegraphics[width=5cm]{python_codes/fieldstone_54/images/exp9/rho0050}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_54/images/exp9/rho0051}
-\includegraphics[width=5cm]{python_codes/fieldstone_54/images/exp9/rho0052}
-\includegraphics[width=5cm]{python_codes/fieldstone_54/images/exp9/rho0053}\\
-{\captionfont mesh at time steps 0,40,50,51,52,53 for $\delta t=5000$yr.}
+\includegraphics[width=5cm]{python_codes/fieldstone_54/RESULTS/exp9/rho0000}
+\includegraphics[width=5cm]{python_codes/fieldstone_54/RESULTS/exp9/rho0040}
+\includegraphics[width=5cm]{python_codes/fieldstone_54/RESULTS/exp9/rho0050}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_54/RESULTS/exp9/rho0051}
+\includegraphics[width=5cm]{python_codes/fieldstone_54/RESULTS/exp9/rho0052}
+\includegraphics[width=5cm]{python_codes/fieldstone_54/RESULTS/exp9/rho0053}\\
+{\captionfont Mesh at time steps 0,40,50,51,52,53 for $\delta t=5000$yr. 
+Entertaining, but wrong.}
 \end{center}
 
+
+\newpage
+%......................................................................
+\subsection*{Experiment 10 - a la Clint }
+
+
+\begin{verbatim}
+Clint, 17 feb 2026
+he basis for that analysis is simply Turcotte & Schubert (3rd edition, 2014). The equations shown are simply equations 6.104 and 6.105 in that book - that produces the (red) curve for r=1, which is the halfspace solution (essentially, f=1 in this case).
+The colored curves, which are for r>1, involve a layered analysis - in this case f is dependent on both b, lambda, and r. For this, I actually went through the full analytical derivation - unfortunately this is still unpublished and kind of untested so far. It is on my list of things to do - I am hoping to make some progress on this in the coming months while I am not teaching. I hope to get back to it soon! I agree, it would be an interesting educational code.
+\end{verbatim}
 
 
 
