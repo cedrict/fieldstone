@@ -4,7 +4,7 @@
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/paraview}
-%\includegraphics[height=1.25cm]{images/pictograms/clean}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -28,16 +28,20 @@ Last revision: February 17th, 2026.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This stone implements three different free surface/mesh deformation algorithms. 
-The first one has all the nodes move with the computed velocity (Lagrangian method)
-and is coined 'method 1'. 
-The second one ('method 2') only has the top row of nodes moving with the computed velocity, 
+The first one has all the nodes move with the computed velocity (purely Lagrangian method)
+and is coined \lstinline{method=1}. 
+The second one (\lstinline{method=2}) only has the top row of nodes moving with the computed velocity, 
 while all the nodes underneath are static (this is obviously not a viable method for 
 large deformations). 
-The third one ('method 3') is the method used in ASPECT and described in \textcite{robh17} (2017).
+The third one (\lstinline{method=3}) is the method used in ASPECT and described in \textcite{robh17} (2017).
 Its implementation is described in Section~\ref{MMM-sec:freesurface}.
 
+The code relies on $Q_2\times Q_1$ elements. 
+Since there is a free surface, no need for pressure normalisation.
+Since the clean I have not tested methods 2 or 3.
+
 %...........................................................
-\subsubsection*{Experiment 1 - relaxation of topography}
+\subsection*{Experiment 1 - relaxation of topography}
 
 The domain is a 2D Cartesian box of size 512$\times$512km, with free slip on left, 
 bottom and right sides, free surface at the top. 
@@ -81,7 +85,7 @@ e) final elevation at the 200th time step.}
 \end{center}
 
 %...........................................................
-\subsubsection*{Experiment 2,3 - extension}
+\subsection*{Experiment 2,3 - extension}
 
 We now consider a rectangular domain (crust sized) of $128\times32$km, discretised by means of $40\times10$ elements.
 The fluid is identical to the one above and so is gravity. 
@@ -111,7 +115,7 @@ $n_y=1$) while 'both dir' stands for the use of dynamically computed normal vect
 
 
 %...........................................................
-\subsubsection*{Experiment 4,5 - extension with bottom inflow}
+\subsection*{Experiment 4,5 - extension with bottom inflow}
 
 This is the same setup as above, but we now impose an influx boundary condition at the bottom: $v=0.5cm$ (this balances the outflux exactly) and 
 the horizontal component at the bottom is set to the left value (-1 or 0 cm/yr) for $x\leq L_x/2$ and to the right value +1 or +2 cm/yr for $x\geq L_x/2$.
@@ -135,7 +139,7 @@ asymmetric extension, vertical normal vector}
 \end{center}
 
 %...........................................................
-\subsubsection*{Experiment 6 - pure advection test}
+\subsection*{Experiment 6 - pure advection test}
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp6/velp}\\
@@ -145,7 +149,7 @@ asymmetric extension, vertical normal vector}
 \end{center}
 
 %...........................................................
-\subsubsection*{Experiment 7 - pure advection test of a cosine bump}
+\subsection*{Experiment 7 - pure advection test of a cosine bump}
 
 The initial topography bump is given by
 \[
@@ -222,7 +226,7 @@ of the computed mesh velocity bc.
 I haven't used any of the projections to carry out timestepping.
 
 %......................................................................
-\subsubsection*{Experiment 8 - pure advection test of a pyramidal bump}
+\subsection*{Experiment 8 - pure advection test of a pyramidal bump}
 
 This is a nearly identical experiment as the previous one, but now the bump is 
 composed of two straight lines, of slopes $\pm 0.1$.
@@ -348,11 +352,153 @@ Entertaining, but wrong.}
 
 \begin{verbatim}
 Clint, 17 feb 2026
-he basis for that analysis is simply Turcotte & Schubert (3rd edition, 2014). The equations shown are simply equations 6.104 and 6.105 in that book - that produces the (red) curve for r=1, which is the halfspace solution (essentially, f=1 in this case).
-The colored curves, which are for r>1, involve a layered analysis - in this case f is dependent on both b, lambda, and r. For this, I actually went through the full analytical derivation - unfortunately this is still unpublished and kind of untested so far. It is on my list of things to do - I am hoping to make some progress on this in the coming months while I am not teaching. I hope to get back to it soon! I agree, it would be an interesting educational code.
+The basis for that analysis is simply Turcotte & Schubert (3rd edition, 2014). 
+The equations shown are simply equations 6.104 and 6.105 in that book - 
+that produces the (red) curve for r=1, which is the halfspace solution 
+(essentially, f=1 in this case).
+The colored curves, which are for r>1, involve a layered analysis - 
+in this case f is dependent on both b, lambda, and r. For this, 
+I actually went through the full analytical derivation - unfortunately 
+this is still unpublished and kind of untested so far. It is on my list 
+of things to do - I am hoping to make some progress on this in the coming 
+months while I am not teaching. I hope to get back to it soon! I agree, 
+it would be an interesting educational code.
 \end{verbatim}
 
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_54/RESULTS/exp10/GIA_setup.v1.png}
+\end{center}
+
+\begin{verbatim}
+That is great that you have a code that can test this theory - would be 
+interesting to see the results of that test.
+
+I attach the actual figures that are in that slide. I set out the theory 
+in dimensionless units, and then added the dimensions later to make the plot 
+that I showed - see the left side of the figure, and then I put in dimensions 
+to make the right side.
+
+If you are trying to reproduce the right hand figure, then I used:
+rho1 = rho2 = 3300 kg/m^3
+b = 600 km (not 670 km and yout wrote in your drawing)
+Layer 2 is an infinite halfspace
+Lx —> the width of the box actually doesn’t matter, since this theory is 
+assuming infinite wavelengths in both side directions (repeating cos wave) 
+So I think you can just model this as a single wavelength, with reflecting boundary conditions.
+eta1 = 10^21 Pa s
+eta2 = r*eta1
+g = 9.8 m?2^2 (is what I used, not 10)
+
+The surface deflection w0 should not matter - you could start with any 
+amplitude and the topography should decay exponentially with time. 
+The trick is to measure the exponential decay rate. It should be possible 
+to plot log(w) vs time - this should be a straight line, with a slope that is the relaxation time.
+
+Interesting that you are using a code that is set up to solve the Rayleigh-Taylor 
+problem. Indeed, my analytical theory is based on an analytical solution for 
+the Rayleigh-Taylor problem. I worked on this as part of my PhD, such as in this paper:
+https://www.clintconrad.no/papers/Conrad_GJI1997.pdf
+
+My eventual plan for this is to generalize this to multiple layers, and then try 
+to offer the python code as a useful tool for students getting started with GIA 
+problems. One problem with this is that of course actual GIA problems need to 
+include an elastic component of the solution (the top layer presumably is stiff enough 
+to have hold the elastic stresses). I have some ideas about how to approximate the 
+elastic solution, but this part is still rather untested. But I guess that your 
+code does not solve for the elastic part also, or is there a version that can? 
+I was eventually thinking about testing these using an ASPECT set up, but I need to set this up.
+
+Let me know if you have any questions about the setup, etc. I could also find the actual 
+values that are plotted in this figure, if you want to compare things in more detail.
+\end{verbatim}
+
+The domain is of size $L_x\times L_y$. It is divided in two layers, 
+the upper and lower mantle. The upper mantle is 600~\si{\km} thick
+while the lower layer is $L_y-600$~\si{\km} thick.
+The upper mantle has a density $\rho_1=3300$~\si{\kg\per\cubic\meter} 
+and viscosity $\eta_1=10^{21}~\si{\pascal\second}$.
+The lower layer has the same density $\rho_2=\rho_1$ 
+(for now?) and a viscosity $\eta_2=r\cdot \eta_1$ with $r=1,3,10,30$.
+
+Each element is assigned a density and a viscosity 
+value at startup:
+
+\begin{lstlisting}
+for iel in range(0,nel):
+    if y_e[iel]<Ly-600e3:
+       eta_e[iel]=1e21*30.
+       rho_e[iel]=3300
+    else:
+       eta_e[iel]=1e21
+       rho_e[iel]=3300
+\end{lstlisting}
+
+The cosine perturbation of amplitude $w_0$ and
+wavelength $\lambda=L_x$ is added to the top domain boundary:
+
+\begin{lstlisting}
+for i in range(0,nn_V):
+    if on_top_boundary[i]:
+       y_V[i]-=w0*np.cos(2*np.pi/Lx*x_V[i]) 
+\end{lstlisting}
+
+Boundary conditions are free slip on the left, bottom and right sides
+of the domain.
+Gravity is set to $g=-9.8$~\si{\meter\per\square\second}.
 
 
+We expect an exponential decay of the form:
+\begin{equation}
+w(t)=w_0 \exp \left( -\frac{t}{f \tau}  \right)
+\label{f54-eq1}
+\end{equation}
+
+{\color{red} insert here theoretical derivations 
+of Clint and his wiggly plot.}
+
+
+Eq.~\eqref{f54-eq1} can also be written
+\[
+\frac{w(t)}{w_0} = \exp \left( -\frac{t}{f \tau}  \right)
+\]
+or, 
+\begin{equation}
+\ln \frac{w(t)}{w_0} =  \underbrace{-\frac{1}{f \tau}}_{slope}   t
+\label{f54-eq2}
+\end{equation}
+At $t=0$ we have $w(t=0)=w_0$ so that 
+the left hand side term is zero.
+
+We then measure the maximum elevation $w_m(t)$ of the 
+surface over a few time steps and measure its change 
+in time as in Eq.~\eqref{f54-eq2}.
+The slope is reported in the left figure while the 
+value of $f \tau$ is reported in the right figure
+for various wavelengths and viscosity ratios $r=\eta_2/\eta_1$:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp10/slope.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp10/tau_f.pdf}
+\end{center}
+We find that the lines do not curve down for large wavelengths as in Clint's figure.
+It seems that the depth of the model plays a role in this, 
+but we should probably test the influence of\footnote{It would probably not hurt 
+to carry out a few experiments with ASPECT with sticky air and tons of mesh refinement
+along the material interfaces}:
+\begin{itemize}
+\item value of $w_0$
+\item time step
+\item horizontal resolution
+\item vertical resolution
+\item vertical extent of domain
+\item proper linear fit of $f \tau$
+\end{itemize}
+
+Further developments: 
+
+\begin{itemize}
+\item if resolution matters refactor matrix assembly, make code faster
+\item add elasticity
+\end{itemize}
 
 

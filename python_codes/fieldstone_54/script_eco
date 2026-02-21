@@ -1,0 +1,38 @@
+#! /bin/bash
+
+for r in 1 3 10 30 ; do
+
+    echo rrr= $r
+
+    rm measurements.ascii
+
+    python3 stone.py    6    300000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py    8    400000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py   10    500000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py   12    600000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py   14    700000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py   16    800000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py   18    900000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py   20   1000000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py   25   1250000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py   30   1500000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py   40   2000000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py   50   2500000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py   60   3000000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py   70   3500000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py   80   4000000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py   90   4500000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py  100   5000000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py  120   6000000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py  140   7000000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py  160   8000000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py  180   9000000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py  200  10000000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py  240  12000000 $r > opla ; grep tau opla >> measurements.ascii 
+    python3 stone.py  280  14000000 $r > opla ; grep tau opla >> measurements.ascii 
+
+    mv measurements.ascii measurements_r$r.ascii
+
+done
+
+
