@@ -101,23 +101,19 @@ match experiment:
    nely=25
    eta_ref=1e20
  case 10:
-   #Ly=3000e3 
-   #nely=30 
-   #Ly=4000e3
-   #nely=40  
-   Ly=5000e3
-   nely=50  
    gy=-9.8
    eta_ref=1e21
    w0=5*km
    if int(len(sys.argv)==4):
-      nelx=int(sys.argv[1])
-      Lx=float(sys.argv[2])
+      Lx=float(sys.argv[1]) ; Lx*=km
+      Ly=float(sys.argv[2]) ; Ly*=km
       rrr=float(sys.argv[3])
    else:
-      nelx=10
-      Lx=500e3
+      Lx=1000e3
+      Ly=3000e3
       rrr=3  # viscosities ratio
+   nelx=int(Lx/50e3)
+   nely=int(Ly/100e3)
    laambda=2*Lx
 
 hx=Lx/nelx
@@ -158,6 +154,8 @@ every=2
 
 debug=False
 
+print('Lx    =',Lx)
+print('Ly    =',Ly)
 print('nelx  =',nelx)
 print('nely  =',nely)
 print('nel   =',nel)
@@ -812,7 +810,7 @@ for istep in range(0,nstep):
 
    print("     -> max(y_V) %.7e " %(np.max(y_V)/Ly))
 
-   elevation[istep,0]=istep*dt/Myear
+   elevation[istep,0]=istep*dt
    elevation[istep,1]=np.min(y_V[nn_V-(2*nelx+1):nn_V])-Ly
    elevation[istep,2]=np.max(y_V[nn_V-(2*nelx+1):nn_V])-Ly
    elevation[istep,3]=y_V[nn_V-1]-Ly

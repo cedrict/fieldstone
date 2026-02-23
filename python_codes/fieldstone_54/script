@@ -1,0 +1,14 @@
+#! /bin/bash
+
+for Ly in 3000 4000 5000 ; do
+ for r in 1 3 10 30 ; do
+  rm measurements.ascii
+  for Lx in 300 400 500 600 700 800 900 1000 1300 1600 2000 2500 3000 4000 5000 6000 7000 8000 9000; do
+    echo Lx=$Lx Ly=$Ly rrr=$r
+    python3 stone.py   $Lx $Ly $r > opla ; grep tau opla >> measurements.ascii 
+  done
+  mv measurements.ascii measurements_Ly${Ly}_r$r.ascii
+ done
+done
+
+

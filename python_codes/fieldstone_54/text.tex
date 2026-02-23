@@ -40,6 +40,7 @@ The code relies on $Q_2\times Q_1$ elements.
 Since there is a free surface, no need for pressure normalisation.
 Since the clean I have not tested methods 2 or 3.
 
+\newpage
 %...........................................................
 \subsection*{Experiment 1 - relaxation of topography}
 
@@ -55,15 +56,15 @@ values of the surface are recorded over time.
 \begin{center}
 \includegraphics[width=7.5cm]{python_codes/fieldstone_54/images/exp1/u}
 \includegraphics[width=7.5cm]{python_codes/fieldstone_54/images/exp1/v}\\
-{\captionfont velocity field at $t=0$ with resolution 24x24}
+{\captionfont velocity field at $t=0$ with resolution $24\times 24$.}
 \end{center}
 
-The results hereunder are obtained for all three methods at two different resolutions (16x16 
-and 24x24 elements).
+The results hereunder are obtained for all three methods at two different resolutions 
+($16\times 16$ and $24 \times 24$ elements).
 The plots on the left column are obtained with the movement of the top nodes being constrained in 
 the vertical direction, while the plots on the right column are obtained with nodes being 
 allowed to move in both $x$ and $y$ directions (note that for method 3 the normals are not -yet-
-computed with the method of Eq. 49 in \cite{robh17} but instead by a simple geometric rule).
+computed with the method of Eq.~(49) in \textcite{robh17} (2017) but instead by a simple geometric rule).
 
 \begin{center}
 a) \includegraphics[width=7cm]{python_codes/fieldstone_54/images/exp1/elevation_vert.pdf}
@@ -84,6 +85,8 @@ d) root mean square velocity as a function of time;
 e) final elevation at the 200th time step.}
 \end{center}
 
+
+\newpage
 %...........................................................
 \subsection*{Experiment 2,3 - extension}
 
@@ -347,11 +350,9 @@ Entertaining, but wrong.}
 
 \newpage
 %......................................................................
-\subsection*{Experiment 10 - a la Clint }
-
+\subsection*{Experiment 10 - GIA-like experiment}
 
 \begin{verbatim}
-Clint, 17 feb 2026
 The basis for that analysis is simply Turcotte & Schubert (3rd edition, 2014). 
 The equations shown are simply equations 6.104 and 6.105 in that book - 
 that produces the (red) curve for r=1, which is the halfspace solution 
@@ -408,8 +409,6 @@ elastic solution, but this part is still rather untested. But I guess that your
 code does not solve for the elastic part also, or is there a version that can? 
 I was eventually thinking about testing these using an ASPECT set up, but I need to set this up.
 
-Let me know if you have any questions about the setup, etc. I could also find the actual 
-values that are plotted in this figure, if you want to compare things in more detail.
 \end{verbatim}
 
 The domain is of size $L_x\times L_y$. It is divided in two layers, 
@@ -445,7 +444,9 @@ for i in range(0,nn_V):
 Boundary conditions are free slip on the left, bottom and right sides
 of the domain.
 Gravity is set to $g=-9.8$~\si{\meter\per\square\second}.
-
+Note that I first started with $\lambda=L_x$ but due to the 
+symmetry of the problem I have decided to run the experiment 
+with only the left half of the domain, i.e. $\lambda=2 L_x$ now. 
 
 We expect an exponential decay of the form:
 \begin{equation}
@@ -454,7 +455,7 @@ w(t)=w_0 \exp \left( -\frac{t}{f \tau}  \right)
 \end{equation}
 
 {\color{red} insert here theoretical derivations 
-of Clint and his wiggly plot.}
+of Clint and his wiggly plot from the slide?.}
 
 
 Eq.~\eqref{f54-eq1} can also be written
@@ -463,11 +464,42 @@ Eq.~\eqref{f54-eq1} can also be written
 \]
 or, 
 \begin{equation}
-\ln \frac{w(t)}{w_0} =  \underbrace{-\frac{1}{f \tau}}_{slope}   t
+\ln \frac{w(t)}{w_0} =  - \underbrace{\frac{1}{f \tau}}_{slope}   t
 \label{f54-eq2}
 \end{equation}
 At $t=0$ we have $w(t=0)=w_0$ so that 
 the left hand side term is zero.
+
+We have for a single semi-infinite layer the 
+following relaxation time\footnote{see Eq. 6.105 of Turcotte \& Schubert 3rd edition}:
+\[
+\tau=\frac{4 \pi \eta_1}{\lambda \rho_1 g}
+= \frac{4 \pi 10^{21} }{\lambda 3300 9.8}
+\simeq \frac{3.8857e17}{\lambda}
+\]
+
+For $\lambda=500~\si{\km}$ we obtain 777141039849s, i.e. approx. 24626.1 years.
+For $\lambda=5000~\si{\km}$ we obtain 777141039849s, i.e. approx. 2462.6 years.
+We can also plot the relaxation time as a function of $\lambda$:
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp10/tau.pdf}
+\end{center}
+
+We then run a series of models by means of a bash script:
+\begin{verbatim}
+#! /bin/bash
+for Ly in 3000 4000 5000 ; do
+ for r in 1 3 10 30 ; do
+  rm measurements.ascii
+  for Lx in 300 400 500 600 700 800 900 1000 1300 1600 2000 2500 3000 4000 5000 6000 7000 8000 9000; do
+    echo Lx=$Lx Ly=$Ly rrr=$r
+    python3 stone.py   $Lx $Ly $r > opla ; grep tau opla >> measurements.ascii 
+  done
+  mv measurements.ascii measurements_Ly${Ly}_r$r.ascii
+ done
+done
+\end{verbatim}
+Both $L_x$ and $L_y$ are varied, as well as the viscosity ratio $r$.
 
 We then measure the maximum elevation $w_m(t)$ of the 
 surface over a few time steps and measure its change 
@@ -477,24 +509,27 @@ value of $f \tau$ is reported in the right figure
 for various wavelengths and viscosity ratios $r=\eta_2/\eta_1$:
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp10/slope.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp10/tau_f.pdf}
+%\includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp10/slope.pdf}
+\includegraphics[width=12cm]{python_codes/fieldstone_54/RESULTS/exp10/tau_f.pdf}
 \end{center}
-We find that the lines do not curve down for large wavelengths as in Clint's figure.
-It seems that the depth of the model plays a role in this, 
+We find that the lines do not seem to curve down for large wavelengths as in Clint's figure.
+It looks liek the depth of the model plays a role in this, 
 but we should probably test the influence of\footnote{It would probably not hurt 
 to carry out a few experiments with ASPECT with sticky air and tons of mesh refinement
 along the material interfaces}:
 \begin{itemize}
 \item value of $w_0$
-\item time step
+\item time step $\delta t$
 \item horizontal resolution
 \item vertical resolution
 \item vertical extent of domain
-\item proper linear fit of $f \tau$
+\item proper linear fit of the amplitude decay $f \tau$
 \end{itemize}
 
-Further developments: 
+There seems to be a funny effect for $r=1$, $Ly=5000$km and large values of $\lambda$.
+This needs to be investigated. A resolution effect?
+
+Further envisaged developments: 
 
 \begin{itemize}
 \item if resolution matters refactor matrix assembly, make code faster
