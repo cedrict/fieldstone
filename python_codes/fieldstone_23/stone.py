@@ -240,6 +240,8 @@ if ibench==3: offsetx=1  ; offsety=1  ; compressible=True
 if ibench==4: offsetx=20 ; offsety=20 ; compressible=True
 if ibench==5: offsetx=0  ; offsety=0  ; compressible=True
 
+###############################################################################
+
 if order==1: nq_per_dim=2
 if order==2: nq_per_dim=3
 
@@ -267,6 +269,8 @@ print('nelx=',nelx)
 print('nely=',nely)
 print('nnx=',nnx)
 print('nny=',nny)
+print('nn_V=',nn_V)
+print('nn_P=',nn_P)
 print('Nfem_V=',Nfem_V)
 print('Nfem_P=',Nfem_P)
 print("*******************************")
@@ -513,7 +517,6 @@ for iel in range(0, nel):
 
         # end for jq
     # end for iq
-
 
     # impose b.c. 
     for k1 in range(0,m_V):
