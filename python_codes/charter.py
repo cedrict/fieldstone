@@ -147,9 +147,9 @@ dNdt_V=np.zeros((nqel,m_V),dtype=np.float64)
 nq_per_dim=3
 nqel=nq_per_dim**ndim
 
-for iq in range(0,nqperdim):
-    for jq in range(0,nqperdim):
-        for kq in range(0,nqperdim):
+for iq in range(0,nq_per_dim):
+    for jq in range(0,nq_per_dim):
+        for kq in range(0,nq_per_dim):
 
 ###############################################################################
 
