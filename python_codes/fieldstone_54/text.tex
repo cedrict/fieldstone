@@ -409,8 +409,34 @@ elastic solution, but this part is still rather untested. But I guess that your
 code does not solve for the elastic part also, or is there a version that can? 
 I was eventually thinking about testing these using an ASPECT set up, but I need to set this up.
 
+------------------------------------------------------------
+
+
+Thanks for sharing your work on this. I agree this looks promising. Indeed, the numerical models seem to be following the general trend of the analytical results, even after just a first implementation.
+
+So far, I developed this as a way to try to solve regional-scale GIA problems rather quickly, without the need to develop a full numerical model. I could not find any published theory for a layered solution, so I adapted one myself. My plan has been to test this with a numerical solution, and so your start on this is very welcome. I would be happy to team up with you to move this forward toward some sort of publication. My thought was to develop a sharable version of a python code that solves the analytical solution - it could be very useful for students, and some research applications as well.
+
+What I did so far is to write up the analytical solution for a 2 layer model. I attached this here. In addition to this, I developed a way to expand this to arbitrary functions (basically just using a Fourier series) and a treatment of the effect of elasticity (serves to reduce the amplitudes at short wavelengths). These aspects are also included in the attached theory. I also attached a short python code that I wrote to solve the equations - this might be useful for reproducing the curves in the figure.
+
+Looking at your results, I agree with the points you make at the end. I was at first surprised that the timescale always seems shorter (faster decay) than the analytical theory - I would have thought that having the bottom layer confined would slow things down. But you have free slip on the bottom, which seems like it would act as if there were a 3rd invicid halfspace below - so i think that would speed things up. If you added a rigid boundary on the bottom, this should make everything slower (longer timescale). I think it should be possible to adjust the analytical theory so to include either a free slip or rigid base on the bottom boundary. Or, you could extend the depth of the numerical solution downward, which should move the solution closer toward the analytical (but would be more computationally intensive). Of course, it is also possible that there is an error somewhere in my analytical solution. (which is why it is good to test this)
+
+I was wondering how you are measuring the timescale? Do you move the solution forward (how far?) and then measure the deformation, assuming exponential decay? At some point, some sort of non-linear behavior might set in, and the solution might not be exponential anymore. At least, this is what happens in the Rayleigh-Taylor case.
+
+Here are the things I was thinking to include in the analytical theory:
+— Multiple layers
+— Different boundary conditions on the base (as I mention above)
+— A solution for an annulus. This has geological applications (such as melting of a ice cap), but the analytical solution is harder.
+
+In any case, I would be happy to work with you to move this forward - I think it will get done better and more quickly this way. I did most of this work myself so far, but there are a few others that were involved as inspriation-advice, and I was thinking to involve at some stage. I do think it would be a fun project.
+
+
 \end{verbatim}
 
+
+
+
+
+\newpage
 The domain is of size $L_x\times L_y$. It is divided in two layers, 
 the upper and lower mantle. The upper mantle is 600~\si{\km} thick
 while the lower layer is $L_y-600$~\si{\km} thick.
@@ -504,35 +530,35 @@ Both $L_x$ and $L_y$ are varied, as well as the viscosity ratio $r$.
 We then measure the maximum elevation $w_m(t)$ of the 
 surface over a few time steps and measure its change 
 in time as in Eq.~\eqref{f54-eq2}.
-The slope is reported in the left figure while the 
-value of $f \tau$ is reported in the right figure
+The %slope is reported in the left figure while the 
+value of $f \tau$ is reported in the following figure
 for various wavelengths and viscosity ratios $r=\eta_2/\eta_1$:
 
 \begin{center}
-%\includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp10/slope.pdf}
 \includegraphics[width=12cm]{python_codes/fieldstone_54/RESULTS/exp10/tau_f.pdf}
 \end{center}
+Note that these results were obtained for dt=125yr, and that higher timestep values
+led to somewhat different results that did not fit the isoviscous analytical results.
 We find that the lines do not seem to curve down for large wavelengths as in Clint's figure.
-It looks liek the depth of the model plays a role in this, 
-but we should probably test the influence of\footnote{It would probably not hurt 
-to carry out a few experiments with ASPECT with sticky air and tons of mesh refinement
-along the material interfaces}:
+
+We should further investigate
 \begin{itemize}
-\item value of $w_0$
-\item time step $\delta t$
+\item value of $w_0$ (I tried 4km instead of 5km, no substantial change in measurements)
+\item time step $\delta t$. from 125yr to even lower values? (early tests with dt=25yr seem to indicate 125yr is ok) 
 \item horizontal resolution
 \item vertical resolution
-\item vertical extent of domain
 \item proper linear fit of the amplitude decay $f \tau$
+\item noslip boundary conditions:
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_54/RESULTS/exp10/noslipbottom/tau_f.pdf}
+\end{center}
 \end{itemize}
-
-There seems to be a funny effect for $r=1$, $Ly=5000$km and large values of $\lambda$.
-This needs to be investigated. A resolution effect?
 
 Further envisaged developments: 
 
 \begin{itemize}
 \item if resolution matters refactor matrix assembly, make code faster
+\item move to MEEUUW?
 \item add elasticity
 \end{itemize}
 

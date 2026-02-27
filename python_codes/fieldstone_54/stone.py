@@ -144,7 +144,7 @@ nq_per_dim=3
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
 
-dt=1e3*year
+dt=125*year
 nstep=3
 
 method=1
@@ -271,6 +271,7 @@ for i in range(0,nn_V):
           bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0.5*cm/year
        else:
           bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0.
+          #bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = 0.   #noslip
 
 print("boundary conditions: %.3f s" % (clock.time()-start))
 
