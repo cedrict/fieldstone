@@ -1,0 +1,133 @@
+
+
+We define (see for instance Massimi \etal (2006) \cite{maqs06}) four reference 
+quantities which are relevant for geodynamics\footnote{Note that in the paper 
+the authors conflate $\rho$ and $\tilde{\rho}$ which prevents them from non-dimensionalising
+all terms as we do here.}:
+\begin{itemize}
+\item a reference viscosity value $\underline{\eta}=10^{20}~\si{\pascal\second}$
+\item a reference mass density $\underline{\rho}=1000~\si{\kg\per\cubic\metre}$
+\item a reference time $\underline{t}=1\text{Myr}\simeq 3.15\cdot 10^{13}~\si{\second}$
+\item a reference length $\underline{l}=1000~\si{\metre}$
+\item a reference gravity $\underline{g}=9.81~\si{\metre\per\square\second}$
+\end{itemize}
+It follows that a reference pressure can be obtained:
+\[
+\underline{p}=\underline{\rho} \underline{g} \underline{l} = 9.81\cdot 10^6~\si{\pascal}
+\]
+Note that there is unfortunately no natural selection for the pressure scale. 
+We could also have used $\underline{p}=\underline{\rho}\underline{\upnu}^2$ 
+where dynamic effects are dominant i.e. high velocity flows,
+or $\underline{p}=\underline{\eta}\underline{\upnu}/\underline{l}$ 
+where viscous effects are dominant i.e. creeping flows (which 
+is the case in geodynamics).
+The definition of a reference velocity is more straightforward:
+\[
+\underline{\upnu} = \frac{\underline{l}}{\underline{t}} = 1~\si{\mm\per\year}
+\]
+We define dimensionless variables through:
+\[
+{\color{teal}x} = \frac{x}{\underline{l}}
+\qquad
+{\color{teal}y} = \frac{y}{\underline{l}}
+\qquad
+{\color{teal}z} = \frac{z}{\underline{l}}
+\qquad
+{\color{teal}\vec\upnu'} = \frac{\vec\upnu}{\underline{\upnu}}
+\qquad
+{\color{teal}t} = \frac{t}{\underline{t}}
+\qquad
+{\color{teal} \eta} = \frac{\eta}{\underline{\eta}}
+\qquad
+{\color{teal} g} =\frac{g}{\underline{g}}
+\]
+where the {\color{teal}teal} color indicates dimensionless values.
+
+Consequently, time and space derivatives will be rescaled as follows:
+\[
+{\color{teal} \vec\nabla} = \underline{l}\; \vec\nabla
+\qquad
+{\color{teal} \partial_t} = \underline{t}\; \partial_t 
+\]
+Using this scaling relations the Navier-Stokes equation become:
+\[
+\frac{\rho \underline{l}}{\underline{t}^2} {\color{teal} \frac{\partial \vec\upnu}{\partial t}}
++
+\frac{\rho \underline{l}}{\underline{t}^2} {\color{teal} (\vec\upnu \cdot\vec\nabla) \vec\upnu} 
+=
+- \underline{\rho} \underline{g} {\color{teal} \vec\nabla p}
++
+\frac{\underline{\eta}}{\underline{l}\underline{t}} 
+{\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
++ \rho \vec{g}
+\]
+I make ${\color{teal}\rho}= \rho/\underline{\rho}$ appear in the left hand side:
+\[
+\frac{\underline{\rho} \underline{l}}{\underline{t}^2}
+{\color{teal}\rho}
+ {\color{teal} \frac{\partial \vec\upnu}{\partial t}}
++
+\frac{\underline{\rho} \underline{l}}{\underline{t}^2} 
+{\color{teal}\rho}
+{\color{teal} (\vec\upnu \cdot\vec\nabla) \vec\upnu} 
+=
+- \underline{\rho} g {\color{teal} \vec\nabla p}
++
+\frac{\underline{\eta}}{\underline{l}\underline{t}} 
+{\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
++ \rho \vec{g}
+\]
+which we can divide by $\underline{\rho} \underline{l}/\underline{t}^2$ to obtain:
+\[
+ {\color{teal}\rho} \left(
+{\color{teal} \frac{\partial \vec\upnu}{\partial t}}
++
+{\color{teal} (\vec\upnu \cdot\vec\nabla) \vec\upnu} 
+\right)
+=
+- \frac{ \underline{g} \underline{t}^2 }{\underline{l}} {\color{teal} \vec\nabla p}
++
+\frac{\underline{\eta} \underline{t}}{\underline{\rho} \underline{l}^2 } 
+{\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
++ \frac{\underline{t}^2}{ \underline{l}}  {\color{teal} \rho} \vec{g}
+\]
+One can recognise in this equation the Reynolds and Froude 
+non-dimensional numbers (the ratio between the inertial and viscous forces, and the 
+ratio between buoyancy and inertial forces respectively). 
+\[
+Re = \frac{\underline{\rho} \underline{l}^2}{\underline{\eta} \underline{t} }
+\qquad
+Fr= \frac{\underline{l}}{\underline{g}\underline{t}^2 }
+\]
+From this we conclude that inertial forces in the Earth's mantle
+are small compared to viscous forces.
+We can then write:
+\[
+\boxed{
+{\color{teal}\rho} \left(
+{\color{teal} \frac{\partial \vec\upnu}{\partial t}}
++
+{\color{teal} (\vec\upnu \cdot\vec\nabla) \vec\upnu}  \right)
+=
+- \frac{1}{Fr} {\color{teal} \vec\nabla p}
++
+\frac{1}{Re}
+{\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
++ \frac{1}{Fr} {\color{teal} \vec{g}}
+}
+\]
+In our case, given the definitions taken above, we have:
+\[
+Re \simeq 3.174 \cdot 10^{-24}
+\qquad
+Fr \simeq 1.027 \cdot 10^{-25}
+\]
+so that the inertial terms can be dropped from the momentum equation (thereby yielding the 
+dimensionless Stokes equations):
+\[
+{\color{teal} \vec\nabla \cdot \eta (\vec\nabla \vec \upnu + \vec\nabla \vec \upnu ^T)}
+- \frac{Re}{Fr} {\color{teal} \vec\nabla p}
++ \frac{Re}{Fr}  {\color{teal} \vec{g} }
+=0
+\]
+Note that in our case $Re/Fr\simeq 30.5$. 
