@@ -105,10 +105,10 @@ if int(len(sys.argv) == 5):
    visu = int(sys.argv[3])
    Ra   = float(sys.argv[4])
 else:
-   nelx = 24
-   nely = 24
+   nelx = 64
+   nely = nelx
    visu = 0
-   Ra   = 1e5 # Rayleigh number
+   Ra   = 1e4 # Rayleigh number
 
 nel=nelx*nely                       # number of elements, total
 nnx=order*nelx+1                    # number of nodes, x direction
@@ -142,6 +142,8 @@ refvel=Ly/reftime
 refTemp=Delta_Temp
 refPress=eta0*hcond/rho0/hcapa/Ly**2
 
+print ("     -> Ra %e " % Ra)
+print ("     -> Di %e " % Di)
 print ("     -> kappa %e " % kappa)
 print ("     -> alphaT %e " % alphaT)
 print ("     -> eta %e " %  eta0)
@@ -155,8 +157,8 @@ nstep=1000
 
 pnormalise=True
 
-use_EBA=False
-use_BA=True
+use_BA=False
+use_EBA=True
 
 debug=False
 
@@ -209,6 +211,7 @@ print('nn_V=',nn_V)
 print('nn_P=',nn_P)
 print('Nfem_V=',Nfem_V)
 print('Nfem_P=',Nfem_P)
+print('use_BA=',use_BA)
 print("*******************************")
 
 ###############################################################################
@@ -1128,7 +1131,12 @@ for istep in range(0,nstep):
     np.savetxt('ET.ascii',np.array([model_time[0:istep]/year,ET[0:istep]]).T,header='# t/year,ET')
     np.savetxt('viscous_dissipation.ascii',np.array([model_time[0:istep]/year,visc_diss[0:istep]]).T,header='# t/year,Phi')
     np.savetxt('work_grav.ascii',np.array([model_time[0:istep]/year,work_grav[0:istep]]).T,header='# t/year,W')
-    np.savetxt('heat_flux_boundary.ascii',np.array([model_time[0:istep]/year,heatflux_boundary[0:istep,0]]).T,header='# t/year,q')
+    np.savetxt('heat_flux_boundary.ascii',np.array([model_time[0:istep]/year,
+                                                    heatflux_boundary[0:istep,0],\
+                                                    heatflux_boundary[0:istep,1],\
+                                                    heatflux_boundary[0:istep,2],\
+                                                    heatflux_boundary[0:istep,3],\
+                                                    heatflux_boundary[0:istep,4]]).T,header='# t/year,qtot,qtop,qbot,qleft,qright')
     np.savetxt('adiabatic_heating.ascii',np.array([model_time[0:istep]/year,adiab_heating[0:istep]]).T,header='# t/year,ad.heat.')
     np.savetxt('viscous_dissipation_adim.ascii',np.array([model_time[0:istep]/reftime,visc_diss[0:istep]/(refPress*refvel*Ly**2)]).T,header='# t/reftime,Phi')
     np.savetxt('work_grav_adim.ascii',np.array([model_time[0:istep]/reftime,work_grav[0:istep]/(refPress*refvel*Ly**2)]).T,header='# t/reftime,W')

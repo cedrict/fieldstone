@@ -262,6 +262,9 @@ E_K=\int_V \frac{1}{2}\rho \upnu^2 dV
         for iq in range(0,nq_per_dim):
             for jq in range(0,nq_per_dim):
                 ...
+                vq=np.dot(N_V,v[icon_V[:,iel]])
+                rhoq=np.dot(N_V,rho[icon_V[:,iel]])
+                work_grav[istep]+=(rhoq-rho0)*gy*vq*JxWq 
             #end for jq
         #end for iq
     #end for iel
@@ -276,6 +279,14 @@ E_K=\int_V \frac{1}{2}\rho \upnu^2 dV
         for iq in range(0,nq_per_dim):
             for jq in range(0,nq_per_dim):
                 ...
+                exxq=np.dot(dNdx_V,u[icon_V[:,iel]])
+                eyyq=np.dot(dNdy_V,v[icon_V[:,iel]])
+                exyq=np.dot(dNdx_V,v[icon_V[:,iel]])*0.5+\
+                     np.dot(dNdy_V,u[icon_V[:,iel]])*0.5
+                exxqd=exxq-(exxq+eyyq)/3.
+                eyyqd=eyyq-(exxq+eyyq)/3.
+                exyqd=exyq
+                visc_diss[istep]+=2.*eta0*(exxqd**2+eyyqd**2+2*exyqd**2)*JxWq
             #end for jq
         #end for iq
     #end for iel
@@ -323,8 +334,9 @@ E_T = \int_V \rho_{(0)} C_p T dV
 Nu=-\frac{1}{Lx}\frac{1}{\Delta T} \int_0^{L_x} \frac{\partial T(x,y=L_y)}{\partial y} dx
 \]
 \begin{lstlisting}
-    for iel in range(0,nel):
-    #end for iel
+    for iely in range(0,nely):
+        for ielx in range(0,nelx):
+            if iely==nely-1: Nu[istep]-=dTdy_e[iel]*hx *Ly/(Lx*Delta_Temp)
 \end{lstlisting}
 \end{itemize}
 
@@ -348,7 +360,7 @@ $\Ranb$ and dissipation number $\Dinb$ as input parameters:
 \quad\quad
 \Dinb=\frac{\alpha g L}{C_p}
 \]
-From the second equation we get $\alpha=\frac{Di C_p}{g L}$, which we can insert in the first one:
+From the second equation we get $\alpha=\frac{\Dinb C_p}{g L}$, which we can insert in the first one:
 \[
 \Ranb=\frac{\Dinb C_p^2 \Delta T L^2 \rho_0^2 }{\eta k}
 \quad\quad
@@ -380,18 +392,44 @@ p_r=\frac{\eta_r k_r}{\rho_r C_p L^2}\quad  ({\tt refpress})
 t_r=\frac{\rho_r C_p L^2}{k_r} \quad ({\tt reftime})
 \]
 
-In the case of the setup described hereabove, and when choosing 
-$Ra=10^4$ and $Di=0.5$, we get:
+In the case of the setup described hereabove, and 
+when choosing $Ra=10^4$ and $Di=0.5$, we get:
 \begin{verbatim}
-alphaT 2.083333e-05 
-eta 8.437500e+24 
-reftime 1.125000e+19 
-refvel 2.666667e-13 
-refPress 7.500000e+05 
+-> Ra 1.000000e+04 
+-> Di 5.000000e-01 
+-> kappa 8.000000e-07 
+-> alphaT 2.083333e-05 
+-> eta 8.437500e+24 
+-> reftime 1.125000e+19 
+-> refvel 2.666667e-13 
+-> refPress 7.500000e+05 
+\end{verbatim}
+when choosing $Ra=10^5$ and $Di=0.5$, we get:
+\begin{verbatim}
+-> Ra 1.000000e+05 
+-> Di 5.000000e-01 
+-> kappa 8.000000e-07 
+-> alphaT 2.083333e-05 
+-> eta 8.437500e+23 
+-> reftime 1.125000e+19 
+-> refvel 2.666667e-13 
+-> refPress 7.500000e+04 
+\end{verbatim}
+and finally when choosing $Ra=10^6$ and $Di=0.5$, we get:
+\begin{verbatim}
+-> Ra 1.000000e+06 
+-> Di 5.000000e-01 
+-> kappa 8.000000e-07 
+-> alphaT 2.083333e-05 
+-> eta 8.437500e+22 
+-> reftime 1.125000e+19 
+-> refvel 2.666667e-13 
+-> refPress 7.500000e+03
 \end{verbatim}
 
 
 
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Conservation of energy 1}
 
@@ -496,19 +534,28 @@ where this is carried out with the Adams-Williamson eos.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Conservation of energy 2}
 
-Following the Reynold's transport theorem (see for example p210 of \textcite{malvern}) 
-we have for a property $A$ (per unit mass)
+We start with the Reynolds transport 
+theorem\footnote{\url{https://en.wikipedia.org/wiki/Reynolds_transport_theorem}} 
+(see also p210 of \textcite{malvern}).
+Given any scalar quantity $B(\vec{r},t)$ associated with a moving fluid, 
+the general form of Reynolds transport theorem says 
+
 \[
-\frac{d}{dt} \int_V A \rho \; dV 
-= \int_V \frac{\partial }{\partial t} (A\rho) \; dV 
-+ \int_S A \rho \vec{\upnu} \cdot \vec{n} \; dS
+\frac{D}{Dt} \int_{V_m(t)} B(\vec{r},t) \; dV 
+= \int_{V_m(t)} \left[ \frac{\partial B}{\partial t} + \vec\nabla \cdot( B \vec{\upnu})   \right]  \; dV 
+=\int_{V_m(t)}  \frac{\partial B}{\partial t}  dV + \int_S B   \vec{\upnu} \cdot \vec{n} \; dS
 \]
-Let us apply to this to $A=C_p T$ and compute the time 
+where we have used the divergence theorem on the last term.
+Here, $D/Dt$ is the material derivative, $\vec\nabla$ 
+is the usual gradient, $V_m(t)$ denotes the material volume at time $t$, 
+and $\vec\upnu$ denotes the velocity vector.
+
+Let us apply to this to $B=\rho C_p T$ and compute the time 
 derivative of the internal energy:
 \begin{eqnarray}
 \frac{d}{dt} \int_V \rho C_p T \; dV 
 &=& \int_V \frac{\partial }{\partial t} (\rho C_p T ) \; dV 
-+ \int_S A \rho \underbrace{ \vec{\upnu}\cdot \vec{n}}_{=0 \; (b.c.)} \; dS 
++ \int_S \rho C_p T  \underbrace{ \vec{\upnu}\cdot \vec{n}}_{=0 \; (b.c.)} \; dS 
 \end{eqnarray}
 
 Remark: $\rho$ is a mass density in \si{\kg\per\cubic\meter},
@@ -607,10 +654,17 @@ we end up with
 \]
 
 
+Note: Arie advises me to measure the total heat flux through the boundaries and normalise it 
+by the top heat flux. His experience is that the normalised total heat flux is near zero 
+for BA, but a few \% for EBA.
+
+
 %-------------------------------------------
 \section*{The problem of the onset of convection}
 
-[wiki] In geophysics, the Rayleigh number is of fundamental importance: it indicates the presence and strength of convection within a fluid body such as the Earth's mantle. The mantle is a solid that behaves as a fluid over geological time scales.
+[wiki] In geophysics, the Rayleigh number is of fundamental importance: 
+it indicates the presence and strength of convection within a fluid body 
+such as the Earth's mantle. The mantle is a solid that behaves as a fluid over geological time scales.
 
  The Rayleigh number essentially is an indicator of the type of heat transport mechanism. At low Rayleigh numbers conduction processes dominate over convection ones. At high Rayleigh numbers it is the other way around. There is a so-called critical value of the number with delineates the transition from one regime to the other. 
 
@@ -622,44 +676,91 @@ Ra_c=(27/4)\pi^4 \simeq 657.5
 in setups similar to ours.
 
 
-\vspace{3cm}
+\vspace{1.5cm}
 
-
-
-{\color{red} VERY BIG PROBLEM}
+\subsection*{A potentially big problem}
 
 The temperature setup is built as follows: $T_{surf}$ is prescribed at the top, 
-$T_{surf}+\Delta T$ is prescribed at the bottom. The initial temperature profile is linear between these two values. 
-In the case of BA, the actual value of $T_{surf}$ is of no consequence. However, for the EBA the full temperature is present in the adiabatic heating term on the rhs of the hte, and the value of $T_{surf}$ will therefore influence the solution greatly. This is very problematic as there is no real way to arrive at the surface temperature from the King paper. On top of this, the density uses a reference temperature $T_0$ which too will influence the solution without being present in the controlling $Ra$ and $Di$ numbers!!
-
+$T_{surf}+\Delta T$ is prescribed at the bottom. The initial temperature profile 
+is linear between these two values. 
+In the case of BA, the actual value of $T_{surf}$ is of no consequence. However, i
+for the EBA the full temperature is present in the adiabatic heating term on the 
+rhs of the heat transport equation, and the value of $T_{surf}$ will therefore 
+influence the solution. This is very problematic as there is no real way 
+to arrive at the surface temperature from the King paper. On top of this, 
+the density uses a reference temperature $T_0$ which too will influence the solution 
+without being present in the controlling $Ra$ and $Di$ numbers!!
 In light thereof, it will be very difficult to recover the values of King et al for EBA!
+I remember the ASPECT authors struggling with the same issue when attempting to 
+replicate the same benchmark. I should dig in the ASPECT cookbooks. 
 
 \vspace{3cm}
 
-\Literature: 
-\textcite{besg92},
-\textcite{itki94},
-\textcite{tagu07},
-\textcite{lezh08},
-\textcite{kilv10},
-\textcite{lezh11},
-\textcite{lizh13},
-\textcite{civj17},
-\textcite{hedg17}.
+\Literature: \\
+\fullcite{besg92},\\
+\fullcite{itki94},\\
+\fullcite{tagu07},\\
+\fullcite{lezh08},\\
+\fullcite{kilv10},\\
+\fullcite{lezh11},\\
+\fullcite{lizh13},\\
+\fullcite{civj17},\\
+\fullcite{hedg17}.
 
 ToDo: 
 \begin{itemize}
-\item heat flux is at the moment elemental, so Nusselt and heat flux on boundaries measurements not as accurate as could be.
+\item heat flux is at the moment elemental, so Nusselt and heat flux 
+on boundaries measurements not as accurate as could be.
 \item implement steady state detection
-\item do $Ra=10^5$ and $Ra=10^6$
 \item velocity average at surface
 \item non dimensional heat flux at corners \cite{blbc89} 
 \item depth-dependent viscosity (case 2 of \cite{blbc89})
+\item run Ra=1e6 for BA
 \end{itemize}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{NEW Results - Q2Q1 - BA - Ra=1e4 CFL=0.75}
+
+Note that the $\upnu_{rms}$ is normalised with the reference velocity
+above and can therefore be compared to the value in \textcite{blbc89}.
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e4/adiabatic_heating.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e4/gravitational_energy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e4/kinetic_energy.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e4/mass.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e4/Nu.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e4/Tavrg.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e4/thermal_energy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e4/total_heat_flux.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e4/velocity_stats.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e4/viscous_dissipation.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e4/vrms_adim.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e4/work_against_gravity.pdf}
+\end{center}
+
+
+Is viscous dissipation equal to the work against gravity (see Eq.~\eqref{ba003}) ? YES
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_24/RESULTS/BA_1e4/energy_check1.pdf}
+\end{center}
+
+
+
+
+
+
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{NEW Results - Q2Q1 - BA - Ra=1e5 CFL=0.75}
+
+Note that the $\upnu_{rms}$ is normalised with the reference velocity
+above and can therefore be compared to the value in \textcite{blbc89}.
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e5/adiabatic_heating.pdf}
@@ -677,11 +778,119 @@ ToDo:
 \end{center}
 
 
-Is viscous dissipation equal to the work against gravity? (see Eq.~\eqref{ba003})
+Is viscous dissipation equal to the work against gravity (see Eq.~\eqref{ba003}) ? YES
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_24/RESULTS/BA_1e5/energy_check1.pdf}
 \end{center}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{NEW Results - Q2Q1 - BA - Ra=1e6 CFL=0.75}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e6/adiabatic_heating.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e6/gravitational_energy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e6/kinetic_energy.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e6/mass.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e6/Nu.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e6/Tavrg.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e6/thermal_energy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e6/total_heat_flux.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e6/velocity_stats.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e6/viscous_dissipation.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e6/vrms_adim.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/BA_1e6/work_against_gravity.pdf}
+\end{center}
+
+
+Is viscous dissipation equal to the work against gravity (see Eq.~\eqref{ba003}) ? YES
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_24/RESULTS/BA_1e6/energy_check1.pdf}
+\end{center}
+
+
+
+
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{NEW Results - Q2Q1 - EBA - Ra=1e4 CFL=0.75}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e4/adiabatic_heating.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e4/gravitational_energy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e4/kinetic_energy.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e4/mass.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e4/Nu.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e4/Tavrg.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e4/thermal_energy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e4/total_heat_flux.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e4/velocity_stats.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e4/viscous_dissipation.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e4/vrms_adim.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e4/work_against_gravity.pdf}
+\end{center}
+
+
+Is viscous dissipation equal to the work against gravity (see Eq.~\eqref{ba003}) ? YES
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_24/RESULTS/EBA_1e4/energy_check1.pdf}
+\end{center}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{NEW Results - Q2Q1 - EBA - Ra=1e6 CFL=0.75}
+
+\begin{center}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e6/adiabatic_heating.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e6/gravitational_energy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e6/kinetic_energy.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e6/mass.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e6/Nu.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e6/Tavrg.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e6/thermal_energy.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e6/total_heat_flux.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e6/velocity_stats.pdf}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e6/viscous_dissipation.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e6/vrms_adim.pdf}
+\includegraphics[width=5cm]{python_codes/fieldstone_24/RESULTS/EBA_1e6/work_against_gravity.pdf}
+\end{center}
+
+
+Is viscous dissipation equal to the work against gravity (see Eq.~\eqref{ba003}) ? YES
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_24/RESULTS/EBA_1e6/energy_check1.pdf}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -725,19 +934,6 @@ AH: adiabatic heating, VD: viscous dissipation, HF: heat flux, WG: work against 
 
 Eq.(\ref{ba005}) is verified by (l) and Eq.(\ref{ba003}) is verified by (m).
 
-
-\newpage
-\begin{center}
-(a)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/BA_104/u.png}
-(b)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/BA_104/v.png}
-(c)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/BA_104/vel.png}\\
-(d)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/BA_104/q.png}    
-(e)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/BA_104/divv.png}    
-(f)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/BA_104/e2.png}   \\
-(g)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/BA_104/T.png} 
-(h)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/BA_104/dTdx.png}
-(i)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/BA_104/dTdy.png}  \\
-\end{center}
 
 \newpage
 %-------------------------------------------------------
@@ -796,25 +992,6 @@ AH: adiabatic heating, VD: viscous dissipation, HF: heat flux, WG: work against 
 \end{center}
 
 Eq.(\ref{ba005}) is verified by (l) and Eq.(\ref{ba003}) is verified by (m).
-
-\newpage
-\begin{center}
-a)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/u.png}
-b)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/v.png}
-c)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/vel.png}\\
-d)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/q.png}    
-e)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/divv.png}    
-f)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/e2.png}   \\
-g)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/rho.png}  
-h)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/drhodx.png}  
-i)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/drhody.png} \\ 
-j)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/T.png} 
-k)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/dTdx.png}
-l)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/dTdy.png}  \\
-m)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/alpha_T_v_gradp.png}  
-n)\includegraphics[width=4.5cm]{python_codes/fieldstone_24/EBA_104/Phi.png}
-\end{center}
-
 
 
 \newpage

@@ -1,0 +1,12 @@
+cp ../../../EK.ascii .
+cp ../../../ET.ascii .
+cp ../../../EG.ascii .
+cp ../../../heat_flux_boundary.ascii .
+cp ../../../M.ascii .
+cp ../../../Tavrg.ascii .
+cp ../../../viscous_dissipation.ascii .
+cp ../../../vrms_Nu.ascii .
+cp ../../../work_grav.ascii .
+cp ../../../u_stats.ascii .
+cp ../../../v_stats.ascii .
+
