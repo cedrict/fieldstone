@@ -177,7 +177,6 @@ Nfem=Nfem_V+Nfem_P     # total number of dofs
 hx=Lx/nelx             # element size, x direction
 hy=Ly/nely             # element size, y direction
 
-
 debug=False
 
 ###############################################################################
@@ -527,7 +526,7 @@ for iel in range(0,nel):
         #end for 
     #end for 
 
-    # assemble matrix K_mat and right hand side rhs
+    # assemble matrix and right hand side 
     for k1 in range(0,m_V):
         for i1 in range(0,ndof_V):
             ikk=ndof_V*k1          +i1
