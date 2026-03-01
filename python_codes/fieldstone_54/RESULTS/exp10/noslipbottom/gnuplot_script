@@ -1,0 +1,51 @@
+#
+set term pdf enhanced font "times,12pt"
+set log xy
+set pointsize 0.12
+set key outside
+set grid
+km=1e3
+year=3600*24*365.25
+
+
+
+####################################################
+set xlabel 'wavelength {/Symbol l} (km)'
+set ylabel 'f*tau (yr)'
+ 
+set output 'tau_f.pdf'
+plot[4e2:3e4][]\
+4*pi*1e21/(x*1e3*3300*9.8) /year  lt -1 dt 2 lw .24 t 'single layer relax time',\
+'measurements_Ly3000_r1.ascii'  u ($4/km):(-1./$6/year) w lp pt 5 lt 1 dt 1 lw .5  t'r=1, Ly=3000km',\
+'measurements_Ly4000_r1.ascii'  u ($4/km):(-1./$6/year) w lp pt 5 lt 1 dt 2 lw .5  t'r=1, Ly=4000km',\
+'measurements_Ly5000_r1.ascii'  u ($4/km):(-1./$6/year) w lp pt 5 lt 1 dt 3 lw .5  t'r=1, Ly=5000km',\
+'measurements_Ly3000_r3.ascii'  u ($4/km):(-1./$6/year) w lp pt 5 lt 2 dt 1 lw .5  t'r=3, Ly=3000km',\
+'measurements_Ly4000_r3.ascii'  u ($4/km):(-1./$6/year) w lp pt 5 lt 2 dt 2 lw .5  t'r=3, Ly=4000km',\
+'measurements_Ly5000_r3.ascii'  u ($4/km):(-1./$6/year) w lp pt 5 lt 2 dt 3 lw .5  t'r=3, Ly=5000km',\
+'measurements_Ly3000_r10.ascii' u ($4/km):(-1./$6/year) w lp pt 5 lt 3 dt 1 lw .5  t'r=10, Ly=3000km',\
+'measurements_Ly4000_r10.ascii' u ($4/km):(-1./$6/year) w lp pt 5 lt 3 dt 2 lw .5  t'r=10, Ly=4000km',\
+'measurements_Ly5000_r10.ascii' u ($4/km):(-1./$6/year) w lp pt 5 lt 3 dt 3 lw .5  t'r=10, Ly=5000km',\
+'measurements_Ly3000_r30.ascii' u ($4/km):(-1./$6/year) w lp pt 5 lt 4 dt 1 lw .5  t'r=30, Ly=3000km',\
+'measurements_Ly4000_r30.ascii' u ($4/km):(-1./$6/year) w lp pt 5 lt 4 dt 2 lw .5  t'r=30, Ly=4000km',\
+'measurements_Ly5000_r30.ascii' u ($4/km):(-1./$6/year) w lp pt 5 lt 4 dt 3 lw .5  t'r=30, Ly=5000km'
+
+
+
+unset log y
+set ylabel 'slope'
+set output 'slope.pdf'
+plot[4e2:3e4][]\
+'measurements_Ly3000_r1.ascii'  u ($4/km):($6) w lp pt 5 lt 1 dt 1 lw .5  t'r=1, Ly=3000km',\
+'measurements_Ly4000_r1.ascii'  u ($4/km):($6) w lp pt 5 lt 1 dt 2 lw .5  t'r=1, Ly=4000km',\
+'measurements_Ly5000_r1.ascii'  u ($4/km):($6) w lp pt 5 lt 1 dt 3 lw .5  t'r=1, Ly=5000km',\
+'measurements_Ly3000_r3.ascii'  u ($4/km):($6) w lp pt 5 lt 2 dt 1 lw .5  t'r=3, Ly=3000km',\
+'measurements_Ly4000_r3.ascii'  u ($4/km):($6) w lp pt 5 lt 2 dt 2 lw .5  t'r=3, Ly=4000km',\
+'measurements_Ly5000_r3.ascii'  u ($4/km):($6) w lp pt 5 lt 2 dt 3 lw .5  t'r=3, Ly=5000km',\
+'measurements_Ly3000_r10.ascii' u ($4/km):($6) w lp pt 5 lt 3 dt 1 lw .5  t'r=10, Ly=3000km',\
+'measurements_Ly4000_r10.ascii' u ($4/km):($6) w lp pt 5 lt 3 dt 2 lw .5  t'r=10, Ly=4000km',\
+'measurements_Ly5000_r10.ascii' u ($4/km):($6) w lp pt 5 lt 3 dt 3 lw .5  t'r=10, Ly=5000km',\
+'measurements_Ly3000_r30.ascii' u ($4/km):($6) w lp pt 5 lt 4 dt 1 lw .5  t'r=30, Ly=3000km',\
+'measurements_Ly4000_r30.ascii' u ($4/km):($6) w lp pt 5 lt 4 dt 2 lw .5  t'r=30, Ly=4000km',\
+'measurements_Ly5000_r30.ascii' u ($4/km):($6) w lp pt 5 lt 4 dt 3 lw .5  t'r=30, Ly=5000km',\
+
+
