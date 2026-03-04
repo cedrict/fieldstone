@@ -1,5 +1,6 @@
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/temperature}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -10,7 +11,6 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \par\noindent\rule{\textwidth}{0.4pt}
 
 {\sl This stone was developed with input from D. Bont{\'e}}. 
-\index{contributors}{D. Bont{\'e}}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,7 +83,7 @@ five materials in the domain: the sediments (\#1), the upper crust (UC, \#2),
 the lower crust (LC, \#3), the mantle lithosphere (ML, \#4) and the asthenosphere (\#5):
 
 \begin{center}
-\includegraphics[width=17cm]{python_codes/fieldstone_86/images/setup}\\
+\includegraphics[width=17.5cm]{python_codes/fieldstone_86/images/setup}\\
 {\captionfont Points A..P are used in the code to build the geometry.}
 \end{center}
 
@@ -174,11 +174,12 @@ vertical temperature gradient and vertical component of the heat flux.}
 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_86/results/mats}
-\includegraphics[width=7cm]{python_codes/fieldstone_86/results/T}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_86/results/dTdy}
-\includegraphics[width=7cm]{python_codes/fieldstone_86/results/heatflux}
+\includegraphics[width=8cm]{python_codes/fieldstone_86/results/mats}
+\includegraphics[width=8cm]{python_codes/fieldstone_86/results/T}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_86/results/dTdy}
+\includegraphics[width=8cm]{python_codes/fieldstone_86/results/heatflux}
 \end{center}
 
 
-ToDo: implement heat source !
+ToDo: implement heat source ! it is implemented, but not benchmarked, and 
+one now needs to find appropriate heat prod values for crustal layers.
