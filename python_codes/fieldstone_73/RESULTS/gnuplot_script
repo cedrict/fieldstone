@@ -1,0 +1,24 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+
+set xlabel 'Nfem'
+set ylabel 'time (s)'
+set log xy 
+set output 'times.pdf'
+plot[][]\
+'build.ascii'  u 7:4 w lp ps .24 t 'build',\
+'impose.ascii' u 6:3 w lp ps .24 t 'impose',\
+'solve.ascii'  u 6:3 w lp ps .24 t 'solve',\
+'computerrors.ascii'  u 6:3 w lp ps .24 t 'errors',\
+x/1e5 w l lt -1 dt 2 t'x^1'
+
+set xlabel 'h'
+set ylabel 'errors'
+set output 'errors.pdf'
+plot[][]\
+'errors.ascii' u (1/sqrt($3)):6 w lp ps 0.25 t 'velocity',\
+'errors.ascii' u (1/sqrt($3)):9 w lp ps 0.25 t 'pressure',\
+x**2/13 lt -1 dt 2 t 'h^2',\
+x**1/10 lt -1 dt 3 t 'h^1'

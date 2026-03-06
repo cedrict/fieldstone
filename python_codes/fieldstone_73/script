@@ -1,0 +1,19 @@
+#! /bin/bash
+
+rm -f errors.ascii
+rm -f build.ascii
+rm -f solve.ascii
+rm -f impose.ascii
+rm -f computerrors.ascii
+
+for n in {8..80} ; do
+    for s in {1..10} ; do 
+        echo nelx=nely= $n
+        python3 stone.py  $n $n 0 > opla
+        grep errv opla >> errors.ascii
+        grep Build opla >> build.ascii
+        grep Impose opla >> impose.ascii
+        grep Solve opla >> solve.ascii 
+        grep errors opla >> computerrors.ascii 
+    done
+done
