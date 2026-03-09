@@ -1,18 +1,29 @@
-\includegraphics[height=1.5cm]{images/pictograms/replication}
-\includegraphics[height=1.5cm]{images/pictograms/aspect_logo}
-\includegraphics[height=1.5cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/aspect_logo}
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/nonlinear}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_70/keywords.ascii}
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_70/text.tex}} \end{flushright}
+
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_70/keywords.ascii}
 
 \begin{center}
-Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_70}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_70}}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Last revision: March 7th, 2026.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The setup is borrowed from \textcite{dudy20} (2020). 
 Two major differences with the paper: 1) no elasticity and 2) no Newton solver.
@@ -255,7 +266,7 @@ By construction, the viscosity is also maintained between $\eta_{m}\ge \SI{1e19}
 and $\eta_{v}=\SI{1e25}{\pascal}$. 
 
 \begin{center}
-\includegraphics[width=11cm]{python_codes/fieldstone_70/images/fig2}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_70/images/fig2}\\
 {\captionfont Figure taken from \cite{dudy20}}
 \end{center}
 
@@ -265,38 +276,31 @@ and $\eta_{v}=\SI{1e25}{\pascal}$.
 {\captionfont Obtained with \aspect (see cookbook)}
 \end{center}
 
+\newpage
+\section*{Results}
 
-%\newpage
-%......................
-%\paragraph{Extension}. 
+\subsection*{resolution 100x30 elements}
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/RESULTS/100x30/conv_compression.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/RESULTS/100x30/conv_extension.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_70/RESULTS/100x30/exy_compression.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/RESULTS/100x30/exy_extension.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_70/RESULTS/100x30/pressure_compression.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/RESULTS/100x30/pressure_extension.pdf}
+\end{center}
 
-%\begin{center}
-%\includegraphics[width=7cm]{python_codes/fieldstone_70/extension/u}
-%\includegraphics[width=7cm]{python_codes/fieldstone_70/extension/v}\\
-%\includegraphics[width=7cm]{python_codes/fieldstone_70/extension/vel}
-%\includegraphics[width=7cm]{python_codes/fieldstone_70/extension/q}\\
-%\includegraphics[width=7cm]{python_codes/fieldstone_70/extension/e}
-%\includegraphics[width=7cm]{python_codes/fieldstone_70/extension/etaeff}\\
-%\includegraphics[width=6cm]{python_codes/fieldstone_70/extension/conv.pdf}
-%\includegraphics[width=6cm]{python_codes/fieldstone_70/extension/pressure.pdf}\\
-%\includegraphics[width=6cm]{python_codes/fieldstone_70/extension/tau.pdf}\\
-%extension, resolution 150x45, 100 nl iterations only.
-%\end{center}
+\subsection*{resolution 150x45 elements}
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/RESULTS/150x45/conv_compression.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/RESULTS/150x45/conv_extension.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_70/RESULTS/150x45/exy_compression.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/RESULTS/150x45/exy_extension.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_70/RESULTS/150x45/pressure_compression.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_70/RESULTS/150x45/pressure_extension.pdf}
+\end{center}
 
-%\newpage
-%......................
-%\paragraph{Compression}. 
 
-%\begin{center}
-%\includegraphics[width=7cm]{python_codes/fieldstone_70/compression/u}
-%\includegraphics[width=7cm]{python_codes/fieldstone_70/compression/v}\\
-%\includegraphics[width=7cm]{python_codes/fieldstone_70/compression/vel}
-%\includegraphics[width=7cm]{python_codes/fieldstone_70/compression/q}\\
-%\includegraphics[width=7cm]{python_codes/fieldstone_70/compression/e}
-%\includegraphics[width=7cm]{python_codes/fieldstone_70/compression/etaeff}\\
-%\includegraphics[width=6cm]{python_codes/fieldstone_70/compression/conv.pdf}
-%\includegraphics[width=6cm]{python_codes/fieldstone_70/compression/pressure.pdf}\\
-%\includegraphics[width=6cm]{python_codes/fieldstone_70/compression/tau.pdf}\\
-%extension, resolution 150x45, 100 nl iterations only.
-%\end{center}
+
+
+
 
