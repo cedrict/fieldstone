@@ -1,26 +1,26 @@
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
-\includegraphics[height=1.25cm]{images/pictograms/temperature}
 \includegraphics[height=1.25cm]{images/pictograms/nonlinear}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
 \includegraphics[height=1.25cm]{images/pictograms/publication}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_50/text.tex}} \end{flushright}
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_50/keywords.key}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_50/keywords.key}
 
 \begin{center}
-Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_50}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_50}}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-{\sl The setup for this stone comes from J. Naliboff}. 
-\index{contributors}{J. Naliboff} \index{contributors}{J. Naliboff}
+{\sl The setup for this stone comes from J. Naliboff via an early version of an ASPECT cookbook}. 
 
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 The code is based on quadrilateral $Q_2\times Q_1$ elements.
 The domain is $400~\si{\km}\times 100~\si{km}$ and the 
@@ -30,39 +30,33 @@ There are 4 materials in the domain:
 \item upper crust (20~\si{\km} thick layer)
 \item lower crust (10~\si{\km} thick layer)
 \item mantle lithosphere (70~\si{\km} thick layer)
-\item weak seed for $60<y<68$km and $198<x<202$km
+\item weak seed for $60<y<68$~\si{\km} and $198<x<202$~\si{\km}
 \end{itemize}
-Each element is assigned a material number ('imat'). 
+Each element is assigned a material number (`imat'). 
 The rheology is visco-plastic, with a dislocation creep rheology for the viscous branch and 
-a Drucker-Prager yield criterion. Nonlinear (Picard) iterations are carried out until 
-a relative tolerance $tol=10^{-4}$ is reached. TODO!!!
+a Drucker-Prager yield criterion. 
 The viscosity and density are computed at each quadrature point.
 For visualisation purposes these are averaged per element.
  
 Kinematical boundary conditions are precribed on the sides and bottom boundaries:
 $u=-0.25~\si{\cm\per\year}$ on the left, 
 $u=+0.25~\si{\cm\per\year}$ on the right, 
-and $v=+0.125~\si{\cm\per\year}$ on the bottom. 
+and $v=+0.125~\si{\cm\per\year}$ on the bottom.
+Because the top surface is open there is no pressure nullspace and one need not
+normalise the pressure.
 
 The temperature field is piecewise linear in the $y$-direction: from 
 0~\si{\celsius} to 500~\si{\celsius} at 30~\si{\km} depth, and then to 1500~\si{\celsius} at the bottom. 
-Pressure $p$ is interpolated onto the velocity node ($q$ field).
+Pressure $p$ is interpolated onto the velocity node ($q$ field) for visualisation purposes.
 There is no time stepping and the heat transport equation is not solved.
 
-Results are exported to vtu format (solution.vtu) but also by means of 
-matplotlib (solution.pdf). Note that I'd be happy if anybody knows how to 
-fix the size of the colorbars.	
-
-\includegraphics[width=16cm]{python_codes/fieldstone_50/images/solution.pdf}
-
+Nonlinear (Picard) iterations are carried out until a relative tolerance $tol=10^{-4}$ is reached. 
 For simplicity I compute the following convergence indicators:
 \[
-\xi_u=\frac{|| \vec{\cal U}^k-\vec{\cal U}^{k-1}||_2 }{||\vec{\cal U}^k+\vec{\cal U}^{k-1}||_2 }
-\]
-\[
-\xi_v=\frac{|| \vec{\cal V}^k-\vec{\cal V}^{k-1}||_2 }{||\vec{\cal V}^k+\vec{\cal V}^{k-1}||_2 }
-\]
-\[
+\xi_u=\frac{|| \vec{\cal U}^k-\vec{\cal U}^{k-1}||_2 }{||\vec{\cal U}^k+\vec{\cal U}^{k-1}||_2 },
+\qquad
+\xi_v=\frac{|| \vec{\cal V}^k-\vec{\cal V}^{k-1}||_2 }{||\vec{\cal V}^k+\vec{\cal V}^{k-1}||_2 },
+\qquad
 \xi_p=\frac{|| \vec{\cal P}^k-\vec{\cal P}^{k-1}||_2 }{||\vec{\cal P}^k+\vec{\cal P}^{k-1}||_2 }
 \]
 where $k$ denotes the nonlinear loop increment and $\vec{\cal U},\vec{\cal V},\vec{\cal P}$ 
@@ -70,7 +64,8 @@ denote the solution vectors.
 When/if the fields converge then the denominator converges to a 
 single non-zero value and the numerator goes to zero.
 
-
+Note that all plots in what follows were obtained with an
+older version of the code.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,12 +89,12 @@ Convergence results are shown in the following figure:
 to convergence.}
 \end{center}
 
-We see that 1) all curves seem to plateau first and then seem to converge very slowly; 
+We see that 
+a) all curves seem to plateau first and then seem to converge very slowly; 
 b) this relaxation scheme does not improve things much at all...
 
-Let us explore the parameters which could alter these convergence results
-and let us start with the reference viscosity. Changing it to 1e21 does not 
-alter the results.  
+I have tried to explore the parameters which could alter these convergence results, 
+such as the reference viscosity. Changing it to 1e21 did not alter the results.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Relaxing the velocity and pressure}
@@ -121,8 +116,30 @@ p=p*gamma_uvp+p_old*(1-gamma_uvp)
 As before we can conclude that such simple relaxation scheme does not substantially 
 improve (if at all) the convergence.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\par\noindent\rule{\textwidth}{0.4pt}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Without any relaxation}
+
+Since relaxation proved to be somewhat inconclusive, it is switched 
+off entirely. The model is run on a $160\times 40$ mesh.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/conv.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/statistics_uv.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/statistics_p.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/p}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/e}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/eta}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/T}\\
+{\captionfont Fields obtained at convergence.}
+\end{center}
+
 
 \vspace{.5cm}
 
@@ -130,12 +147,34 @@ improve (if at all) the convergence.
 \fbox{\begin{minipage}{0.9\textwidth}
 {\color{teal}To Do, open questions, future work?}
 \begin{itemize}
-\item compute nonlinear residuals instead of $\xi$ vallues 
-\item extract velocity and/or pressure value at key points and monitor as a function of the nonlinear iterations loop increment
+\item compute nonlinear residuals instead of $\xi$ values 
+\item extract velocity and/or pressure value at key points and monitor as a 
+function of the nonlinear iterations loop increment
+\item run at different resolutions
 \end{itemize}
 \end{minipage}}
 \end{center}
 
+
+
+
+
+
+
+\newpage
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/ee.0001.png}
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/eeta.0001.png}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/ee.0010.png}
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/eeta.0010.png}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/ee.0020.png}
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/eeta.0020.png}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/ee.0040.png}
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/eeta.0040.png}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/ee.0060.png}
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/eeta.0060.png}\\
+{\captionfont strain rate and viscosity fields at iterations 1,10,20,40,60.}
+\end{center}
 
 
 

@@ -1,5 +1,4 @@
 import numpy as np
-import math as math
 import sys as sys
 import time as clock
 import scipy.sparse as sps
@@ -9,48 +8,48 @@ from scipy.sparse import csr_matrix,lil_matrix
 # defining Q2xQ1 basis functions and their derivatives
 ###############################################################################
 
-def basis_functions_V(rq,sq):
-    N_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
-    N_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
-    N_2= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.)
-    N_3= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.)
-    N_4=     (1.-rq**2) * 0.5*sq*(sq-1.)
-    N_5= 0.5*rq*(rq+1.) *     (1.-sq**2)
-    N_6=     (1.-rq**2) * 0.5*sq*(sq+1.)
-    N_7= 0.5*rq*(rq-1.) *     (1.-sq**2)
-    N_8=     (1.-rq**2) *     (1.-sq**2)
-    return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
+def basis_functions_V(r,s):
+    N0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
+    N1= 0.5*r*(r+1.) * 0.5*s*(s-1.)
+    N2= 0.5*r*(r+1.) * 0.5*s*(s+1.)
+    N3= 0.5*r*(r-1.) * 0.5*s*(s+1.)
+    N4=    (1.-r**2) * 0.5*s*(s-1.)
+    N5= 0.5*r*(r+1.) *    (1.-s**2)
+    N6=    (1.-r**2) * 0.5*s*(s+1.)
+    N7= 0.5*r*(r-1.) *    (1.-s**2)
+    N8=    (1.-r**2) *    (1.-s**2)
+    return np.array([N0,N1,N2,N3,N4,N5,N6,N7,N8],dtype=np.float64)
 
-def basis_functions_V_dr(rq,sq):
-    dNdr_0= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
-    dNdr_1= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
-    dNdr_2= 0.5*(2.*rq+1.) * 0.5*sq*(sq+1)
-    dNdr_3= 0.5*(2.*rq-1.) * 0.5*sq*(sq+1)
-    dNdr_4=       (-2.*rq) * 0.5*sq*(sq-1)
-    dNdr_5= 0.5*(2.*rq+1.) *    (1.-sq**2)
-    dNdr_6=       (-2.*rq) * 0.5*sq*(sq+1)
-    dNdr_7= 0.5*(2.*rq-1.) *    (1.-sq**2)
-    dNdr_8=       (-2.*rq) *    (1.-sq**2)
-    return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8],dtype=np.float64)
+def basis_functions_V_dr(r,s):
+    dNdr0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
+    dNdr1= 0.5*(2.*r+1.) * 0.5*s*(s-1)
+    dNdr2= 0.5*(2.*r+1.) * 0.5*s*(s+1)
+    dNdr3= 0.5*(2.*r-1.) * 0.5*s*(s+1)
+    dNdr4=       (-2.*r) * 0.5*s*(s-1)
+    dNdr5= 0.5*(2.*r+1.) *   (1.-s**2)
+    dNdr6=       (-2.*r) * 0.5*s*(s+1)
+    dNdr7= 0.5*(2.*r-1.) *   (1.-s**2)
+    dNdr8=       (-2.*r) *   (1.-s**2)
+    return np.array([dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,dNdr6,dNdr7,dNdr8],dtype=np.float64)
 
-def basis_functions_V_ds(rq,sq):
-    dNds_0= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
-    dNds_1= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
-    dNds_2= 0.5*rq*(rq+1.) * 0.5*(2.*sq+1.)
-    dNds_3= 0.5*rq*(rq-1.) * 0.5*(2.*sq+1.)
-    dNds_4=     (1.-rq**2) * 0.5*(2.*sq-1.)
-    dNds_5= 0.5*rq*(rq+1.) *       (-2.*sq)
-    dNds_6=     (1.-rq**2) * 0.5*(2.*sq+1.)
-    dNds_7= 0.5*rq*(rq-1.) *       (-2.*sq)
-    dNds_8=     (1.-rq**2) *       (-2.*sq)
-    return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8],dtype=np.float64)
+def basis_functions_V_ds(r,s):
+    dNds0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
+    dNds1= 0.5*r*(r+1.) * 0.5*(2.*s-1.)
+    dNds2= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
+    dNds3= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
+    dNds4=    (1.-r**2) * 0.5*(2.*s-1.)
+    dNds5= 0.5*r*(r+1.) *       (-2.*s)
+    dNds6=    (1.-r**2) * 0.5*(2.*s+1.)
+    dNds7= 0.5*r*(r-1.) *       (-2.*s)
+    dNds8=    (1.-r**2) *       (-2.*s)
+    return np.array([dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6,dNds7,dNds8],dtype=np.float64)
 
-def basis_functions_P(rq,sq):
-    N_0=0.25*(1-rq)*(1-sq)
-    N_1=0.25*(1+rq)*(1-sq)
-    N_2=0.25*(1+rq)*(1+sq)
-    N_3=0.25*(1-rq)*(1+sq)
-    return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
+def basis_functions_P(r,s):
+    N0=0.25*(1-r)*(1-s)
+    N1=0.25*(1+r)*(1-s)
+    N2=0.25*(1+r)*(1+s)
+    N3=0.25*(1-r)*(1+s)
+    return np.array([N0,N1,N2,N3],dtype=np.float64)
 
 ###############################################################################
 # density and viscosity functions
@@ -73,15 +72,13 @@ def eta(xq,yq,imat,exx,eyy,exy,p,T):
     eta_max=1.e26
 
     if imat==1: # upper crust
-       phi=20. ; c=20e6 ; A=8.57e-28 ; Q=223e3 ; n=4 ; V=0 ; f=1
+       phi=20./180*np.pi ; c=20e6 ; A=8.57e-28 ; Q=223e3 ; n=4 ; V=0 ; f=1
     elif imat==2: # lower crust
-       phi=20. ; c=20e6 ; A=7.13e-18 ; Q=345e3 ; n=3 ; V=0 ; f=1
+       phi=20./180*np.pi ; c=20e6 ; A=7.13e-18 ; Q=345e3 ; n=3 ; V=0 ; f=1
     elif imat==3: # mantle
-       phi=20. ; c=20e6 ; A=6.52e-16 ; Q=530e3 ; n=3.5 ; V=18e-6 ; f=1 
+       phi=20./180*np.pi ; c=20e6 ; A=6.52e-16 ; Q=530e3 ; n=3.5 ; V=18e-6 ; f=1 
     else:  # seed
-       phi=20. ; c=20e6 ; A=7.13e-18 ; Q=345e3 ; n=3  ; V=0 ; f=1 
-
-    phi*=(np.pi/180)
+       phi=20./180*np.pi ; c=20e6 ; A=7.13e-18 ; Q=345e3 ; n=3  ; V=0 ; f=1 
 
     E2=np.sqrt( 0.5*(exx**2+eyy**2)+exy**2 )
     #print (exx,eyy,exy,imat,T,p)
@@ -116,27 +113,14 @@ def bc_fct_bottom(x,y):
 
 ###############################################################################
 
-def onePlot(variable, plotX, plotY, title, labelX, labelY, extVal, limitX, limitY, colorMap):
-    im=axes[plotX][plotY].imshow(np.flipud(variable),extent=extVal,cmap=colorMap,interpolation="nearest")
-    axes[plotX][plotY].set_title(title,fontsize=10, y=1.01)
-    if (limitX != 0.0):
-       axes[plotX][plotY].set_xlim(0,limitX)
-    if (limitY != 0.0):
-       axes[plotX][plotY].set_ylim(0,limitY)
-    axes[plotX][plotY].set_xlabel(labelX)
-    axes[plotX][plotY].set_ylabel(labelY)
-    fig.colorbar(im,ax=axes[plotX][plotY])
-    return
-
-###############################################################################
-
-print("-----------------------------")
-print("---------- stone 50 ---------")
-print("-----------------------------")
-
+eps=1.e-8
 cm=0.01
 year=365.25*24*3600
 MPa=1e6
+
+print("*******************************")
+print("********** stone 050 **********")
+print("*******************************")
 
 ndim=2
 m_V=9     # number of velocity nodes making up an element
@@ -157,7 +141,7 @@ else:
    nelx=160
    nely=40
    visu=1
-   niter=40 #50
+   niter=100 #50
     
 nn_V=(2*nelx+1)*(2*nely+1) # number of V nodes
 nn_P=(nelx+1)*(nely+1)     # number of P nodes
@@ -167,14 +151,13 @@ Nfem_P=nn_P                # number of pressure dofs
 Nfem=Nfem_V+Nfem_P         # total number of dofs
 
 nq_per_dim=3
-nqel=nq_per_dim**ndim
+nq_per_el=nq_per_dim**ndim
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
 
 hx=Lx/nelx
 hy=Ly/nely
 
-gx=0.
 gy=-9.81
 
 eta_ref=1e23 # scaling of G blocks
@@ -182,7 +165,7 @@ eta_ref=1e23 # scaling of G blocks
 tol=1e-4 # nonlinear iterations convergence tolerance
 
 gamma_eta=1   #gamma=1 -> no relax
-gamma_uvp=0.1 #gamma=1 -> no relax
+gamma_uvp=1 #gamma=1 -> no relax
 
 debug=False
    
@@ -197,10 +180,11 @@ print("nn_V=",nn_V)
 print("nn_P=",nn_P)
 print("hx=",hx)
 print("hy=",hy)
-print("---------------------------------------")
+print("*******************************")
 
 conv_file=open('conv.ascii',"w")
 stats_file=open('statistics.ascii',"w")
+stats_file.write("#min(u) np.max(u) min(v) max(v) min(p) max(p) sum(abs(u))/nn_V sum(abs(v))/nn_V)) \n")
 
 ###############################################################################
 # grid point setup
@@ -217,8 +201,8 @@ for j in range(0,2*nely+1):
         y_V[counter]=j*hy/2
         counter+=1
 
-x_P=np.empty(nn_P,dtype=np.float64) # x coordinates
-y_P=np.empty(nn_P,dtype=np.float64) # y coordinates
+x_P=np.zeros(nn_P,dtype=np.float64) # x coordinates
+y_P=np.zeros(nn_P,dtype=np.float64) # y coordinates
 
 counter=0    
 for j in range(0,nely+1):
@@ -281,8 +265,6 @@ print("setup: connectivity: %.3f s" % (clock.time()-start))
 ###############################################################################
 start=clock.time()
 
-eps=1.e-8
-
 bc_fix_V=np.zeros(Nfem_V,dtype=bool) # boundary condition, yes/no
 bc_val_V=np.zeros(Nfem_V,dtype=np.float64) # boundary condition, value
 
@@ -294,7 +276,7 @@ for i in range(0,nn_V):
     if y_V[i]/Ly<eps:
        bc_fix_V[i*ndof_V+1]=True ; bc_val_V[i*ndof_V+1]=bc_fct_bottom(x_V[i],y_V[i])
 
-print("setup: boundary conditions: %.3f s" % (clock.time() - start))
+print("setup: boundary conditions: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # define temperature field
@@ -309,9 +291,9 @@ for i in range(0,nn_V):
     else:
        T[i]=-(y_V[i]-70.e3)*(700.)/70.e3+500
 
-T[:]=T[:]+273.15
+T[:]+=273.15
 
-print("setup: initial temperature: %.3f s" % (clock.time() - start))
+print("setup: initial temperature: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # define material layout
@@ -319,28 +301,28 @@ print("setup: initial temperature: %.3f s" % (clock.time() - start))
 start=clock.time()
 
 material=np.zeros(nel,dtype=np.int32) 
-
-xc=np.zeros(nel,dtype=np.float64)  
-yc=np.zeros(nel,dtype=np.float64)  
+x_e=np.zeros(nel,dtype=np.float64)  
+y_e=np.zeros(nel,dtype=np.float64)  
 
 for iel in range(0,nel):
     rq=0 ; sq=0
     N_V=basis_functions_V(rq,sq)
-    xc[iel]=np.dot(N_V,x_V[icon_V[:,iel]])
-    yc[iel]=np.dot(N_V,y_V[icon_V[:,iel]])
+    x_e[iel]=np.dot(N_V,x_V[icon_V[:,iel]])
+    y_e[iel]=np.dot(N_V,y_V[icon_V[:,iel]])
 
-    if yc[iel]>80.e3:
+    # 3 layers
+    if y_e[iel]>80.e3:
        material[iel]=1
-    elif yc[iel]>70.e3:
+    elif y_e[iel]>70.e3:
        material[iel]=2
     else:
        material[iel]=3
 
     # weak zone 
-    if yc[iel]<68.e3 and yc[iel]>60.e3 and xc[iel]>=198.e3 and xc[iel]<=202.e3:
+    if y_e[iel]<68.e3 and y_e[iel]>60.e3 and x_e[iel]>=198.e3 and x_e[iel]<=202.e3:
        material[iel]=4
 
-print("setup: material layout: %.3f s" % (clock.time() - start))
+print("setup: material layout: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # sanity check / compute total area 
@@ -363,7 +345,6 @@ for iel in range(0,nel):
             jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
             jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
             jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
-            jcbi=np.linalg.inv(jcb)
             JxWq=np.linalg.det(jcb)*weightq
             area[iel]+=JxWq
         #end for
@@ -374,28 +355,28 @@ print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area (meas) %e " %(area.sum()))
 print("     -> total area (anal) %e " %(Lx*Ly))
 
-print("compute elements areas: %.3f s" % (clock.time() - start))
+print("compute elements areas: %.3f s" % (clock.time()-start))
 
-###############################################################################
-###############################################################################
+#########################################################################################
+#########################################################################################
 # non linear iterations
-###############################################################################
-###############################################################################
-u=np.zeros(nn_V,dtype=np.float64)
-v=np.zeros(nn_V,dtype=np.float64)
-p=np.zeros(nn_P,dtype=np.float64) 
+#########################################################################################
+#########################################################################################
+#u=np.zeros(nn_V,dtype=np.float64)
+#v=np.zeros(nn_V,dtype=np.float64)
+#p=np.zeros(nn_P,dtype=np.float64) 
 u_mem=np.zeros(nn_V,dtype=np.float64)  
 v_mem=np.zeros(nn_V,dtype=np.float64) 
 p_mem=np.zeros(nn_P,dtype=np.float64) 
-etaq=np.zeros(nel*nqel,dtype=np.float64)     # viscosity at quadrature points 
-etaq_mem=np.zeros(nel*nqel,dtype=np.float64) 
+etaq=np.zeros(nel*nq_per_el,dtype=np.float64)
+etaq_mem=np.zeros(nel*nq_per_el,dtype=np.float64) 
     
 C=np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
-for iter in range(0,niter):
+for iiter in range(0,niter):
 
     print('=======================')
-    print('======= iter ',iter,'=======')
+    print('======= iiter ',iiter,'======')
     print('=======================')
 
     #**************************************************************************
@@ -408,18 +389,18 @@ for iter in range(0,niter):
     A_fem=lil_matrix((Nfem,Nfem),dtype=np.float64)  # FEM matrix
     b_fem=np.zeros(Nfem,dtype=np.float64)           # right hand side of Ax=b
     B=np.zeros((3,ndof_V*m_V),dtype=np.float64)     # gradient matrix B 
-    N_mat=np.zeros((3,m_P),dtype=np.float64)  # matrix  
+    N_mat=np.zeros((3,m_P),dtype=np.float64)        # matrix  
     eta_el=np.zeros(nel,dtype=np.float64)           # elemental viscosity 
     rho_el=np.zeros(nel,dtype=np.float64)           # elemental density
 
-    counterq=0
+    cq=0
 
     for iel in range(0,nel):
 
         # set arrays to 0 every loop
-        f_el =np.zeros((m_V*ndof_V),dtype=np.float64)
-        K_el =np.zeros((m_V*ndof_V,m_V*ndof_V),dtype=np.float64)
+        K_el=np.zeros((m_V*ndof_V,m_V*ndof_V),dtype=np.float64)
         G_el=np.zeros((m_V*ndof_V,m_P*ndof_P),dtype=np.float64)
+        f_el=np.zeros((m_V*ndof_V),dtype=np.float64)
         h_el=np.zeros((m_P*ndof_P),dtype=np.float64)
 
         # integrate terms over 9 quadrature points
@@ -434,14 +415,12 @@ for iter in range(0,niter):
                 N_P=basis_functions_P(rq,sq)
                 dNdr_V=basis_functions_V_dr(rq,sq)
                 dNds_V=basis_functions_V_ds(rq,sq)
-
                 jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
                 jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
                 jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
                 jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
                 jcbi=np.linalg.inv(jcb)
                 JxWq=np.linalg.det(jcb)*weightq
-
                 dNdx_V=jcbi[0,0]*dNdr_V[:]+jcbi[0,1]*dNds_V[:]
                 dNdy_V=jcbi[1,0]*dNdr_V[:]+jcbi[1,1]*dNds_V[:]
 
@@ -460,22 +439,21 @@ for iter in range(0,niter):
                                       [0.       ,dNdy_V[i]],
                                       [dNdy_V[i],dNdx_V[i]]]
 
-                etaq[counterq]=eta(xq,yq,material[iel],exxq,eyyq,exyq,pq,Tq)
+                etaq[cq]=eta(xq,yq,material[iel],exxq,eyyq,exyq,pq,Tq)
 
-                if iter>0:
-                   etaq[counterq]=etaq[counterq]*gamma_eta+(1-gamma_eta)*etaq_mem[counterq]
+                if iiter>0 and gamma_eta<1:
+                   etaq[cq]=etaq[cq]*gamma_eta+(1-gamma_eta)*etaq_mem[cq]
 
                 rhoq=rho(xq,yq,material[iel],Tq)
 
-                eta_el[iel]+=etaq[counterq]/nqel # arithm averaging
-                rho_el[iel]+=rhoq/nqel           # arithm averaging
+                eta_el[iel]+=etaq[cq]/nq_per_el # arithm averaging
+                rho_el[iel]+=rhoq/nq_per_el     # arithm averaging
 
                 # compute elemental matrix
-                K_el+=B.T.dot(C.dot(B))*etaq[counterq]*JxWq
+                K_el+=B.T.dot(C.dot(B))*etaq[cq]*JxWq
 
                 # compute elemental rhs vector
                 for i in range(0,m_V):
-                    f_el[ndof_V*i  ]+=N_V[i]*rhoq*gx*JxWq
                     f_el[ndof_V*i+1]+=N_V[i]*rhoq*gy*JxWq
 
                 for i in range(0,m_P):
@@ -485,7 +463,7 @@ for iter in range(0,niter):
 
                 G_el-=B.T.dot(N_mat)*JxWq
 
-                counterq+=1
+                cq+=1
 
             #end for jq
         #end for iq
@@ -526,7 +504,7 @@ for iter in range(0,niter):
             m2=icon_P[k2,iel]
             b_fem[Nfem_V+m2]+=h_el[k2]*eta_ref/Ly
 
-    print("build FE matrix: %.5f s nel= %d time/elt %.5f" % (clock.time()-start,nel,(clock.time()-start)/nel))
+    print("build FE matrix: %.5fs" % (clock.time()-start))
 
     ###########################################################################
     # solve system
@@ -545,19 +523,19 @@ for iter in range(0,niter):
     u,v=np.reshape(sol[0:Nfem_V],(nn_V,2)).T
     p=sol[Nfem_V:Nfem]*(eta_ref/Ly)
 
-    if iter>0:
+    if iiter>0 and gamma_uvp<1:
        u=u*gamma_uvp+u_mem*(1-gamma_uvp)
        v=v*gamma_uvp+v_mem*(1-gamma_uvp)
        p=p*gamma_uvp+p_mem*(1-gamma_uvp)
 
     print("     -> u (m,M) %.4f %.4f cm/yr" %(np.min(u)/cm*year,np.max(u)/cm*year))
     print("     -> v (m,M) %.4f %.4f cm/yr" %(np.min(v)/cm*year,np.max(v)/cm*year))
-    print("     -> p (m,M) %.4f %.4f Mpa  " %(np.min(p)/1e6,np.max(p)/1e6))
+    print("     -> p (m,M) %.4f %.4f Mpa  " %(np.min(p)/MPa,np.max(p)/MPa))
 
-    stats_file.write("%d %e %e %e %e %e %e %e %e\n" %(iter,\
+    stats_file.write("%d %e %e %e %e %e %e %e %e\n" %(iiter,\
                                                       np.min(u)/cm*year,np.max(u)/cm*year,\
                                                       np.min(v)/cm*year,np.max(v)/cm*year,\
-                                                      np.min(p)/1e6,np.max(p)/1e6,\
+                                                      np.min(p)/MPa,np.max(p)/MPa,\
                                                       np.sum(abs(u))/nn_V,np.sum(abs(v))/nn_V))
     stats_file.flush()
 
@@ -565,249 +543,221 @@ for iter in range(0,niter):
        np.savetxt('velocity.ascii',np.array([x_V,y_V,u,v]).T,header='# x,y,u,v')
        np.savetxt('pressure.ascii',np.array([x_P,y_P,p]).T,header='# x,y,p')
 
-    print("split vel into u,v: %.3f s" % (clock.time() - start))
+    print("split vel into u,v: %.3f s" % (clock.time()-start))
 
     ###########################################################################
-
-    #xi_u=np.linalg.norm(u-u_mem,2)/np.linalg.norm(u+u_mem,2)
-    #xi_v=np.linalg.norm(v-v_mem,2)/np.linalg.norm(v+v_mem,2)
-    #xi_p=np.linalg.norm(p-p_mem,2)/np.linalg.norm(p+p_mem,2)
+    start=clock.time()
 
     xi_u=np.linalg.norm((u-u_mem)/cm*year,2)/np.linalg.norm((u+u_mem)/cm*year,2)
     xi_v=np.linalg.norm((v-v_mem)/cm*year,2)/np.linalg.norm((v+v_mem)/cm*year,2)
     xi_p=np.linalg.norm((p-p_mem)/MPa,2)/np.linalg.norm((p+p_mem)/MPa,2)
 
-    print("conv: u,v,p: %.6f %.6f %.6f" %(xi_u,xi_v,xi_p))
-    conv_file.write("%d %e %e %e\n" %(iter,xi_u,xi_v,xi_p))
+    print("     -> conv: u,v,p: %.6f %.6f %.6f" %(xi_u,xi_v,xi_p))
+    conv_file.write("%d %e %e %e\n" %(iiter,xi_u,xi_v,xi_p))
     conv_file.flush()
 
     if xi_u<tol and xi_v<tol and xi_p<tol:
        print('*** converged ***')
        break
     else:
-       u_mem=u
-       v_mem=v
-       p_mem=p
+       u_mem[:]=u[:]
+       v_mem[:]=v[:]
+       p_mem[:]=p[:]
        etaq_mem[:]=etaq[:]
 
-#end for
+    print("assess convergence: %.3f s" % (clock.time()-start))
 
-###############################################################################
-# compute elemental strainrate 
-###############################################################################
-start=clock.time()
+    ###########################################################################
+    # compute elemental strainrate 
+    ###########################################################################
+    start=clock.time()
 
-exx=np.zeros(nel,dtype=np.float64)  
-eyy=np.zeros(nel,dtype=np.float64)  
-exy=np.zeros(nel,dtype=np.float64)  
-e=np.zeros(nel,dtype=np.float64)  
+    exx=np.zeros(nel,dtype=np.float64)  
+    eyy=np.zeros(nel,dtype=np.float64)  
+    exy=np.zeros(nel,dtype=np.float64)  
+    e=np.zeros(nel,dtype=np.float64)  
 
-for iel in range(0,nel):
+    for iel in range(0,nel):
+        rq=0.0 ; sq=0.0
+        N_V=basis_functions_V(rq,sq)
+        N_P=basis_functions_P(rq,sq)
+        dNdr_V=basis_functions_V_dr(rq,sq)
+        dNds_V=basis_functions_V_ds(rq,sq)
+        jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
+        jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
+        jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
+        jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
+        jcbi=np.linalg.inv(jcb)
+        dNdx_V=jcbi[0,0]*dNdr_V[:]+jcbi[0,1]*dNds_V[:]
+        dNdy_V=jcbi[1,0]*dNdr_V[:]+jcbi[1,1]*dNds_V[:]
 
-    rq=0.0 ; sq=0.0
+        exx[iel]=np.dot(dNdx_V[:],u[icon_V[:,iel]])
+        eyy[iel]=np.dot(dNdy_V[:],v[icon_V[:,iel]])
+        exy[iel]=np.dot(dNdy_V[:],u[icon_V[:,iel]])*0.5\
+                +np.dot(dNdx_V[:],v[icon_V[:,iel]])*0.5
 
-    N_V=basis_functions_V(rq,sq)
-    N_P=basis_functions_P(rq,sq)
-    dNdr_V=basis_functions_V_dr(rq,sq)
-    dNds_V=basis_functions_V_ds(rq,sq)
+        e[iel]=np.sqrt(0.5*(exx[iel]**2+eyy[iel]**2)+exy[iel]**2)
 
-    jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
-    jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
-    jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
-    jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
-    jcbi=np.linalg.inv(jcb)
+    print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
+    print("     -> eyy (m,M) %.4e %.4e " %(np.min(eyy),np.max(eyy)))
+    print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
 
-    dNdx_V=jcbi[0,0]*dNdr_V[:]+jcbi[0,1]*dNds_V[:]
-    dNdy_V=jcbi[1,0]*dNdr_V[:]+jcbi[1,1]*dNds_V[:]
+    if debug:
+       np.savetxt('strainrate.ascii',np.array([x_e,y_e,exx,eyy,exy]).T,header='# x,y,exx,eyy,exy')
 
-    xc[iel]=np.dot(N_V,x_V[icon_V[:,iel]])
-    yc[iel]=np.dot(N_V,y_V[icon_V[:,iel]])
+    print("compute strainrate: %.3f s" % (clock.time()-start))
 
-    exx[iel]=np.dot(dNdx_V[:],u[icon_V[:,iel]])
-    eyy[iel]=np.dot(dNdy_V[:],v[icon_V[:,iel]])
-    exy[iel]=np.dot(dNdy_V[:],u[icon_V[:,iel]])*0.5\
-            +np.dot(dNdx_V[:],v[icon_V[:,iel]])*0.5
+    ###########################################################################
+    # interpolate pressure onto velocity grid points (Q1 -> Q2)
+    ###########################################################################
+    start=clock.time()
 
-    e[iel]=np.sqrt(0.5*(exx[iel]**2+eyy[iel]**2)+exy[iel]**2)
+    q=np.zeros(nn_V,dtype=np.float64)
 
-print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
-print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
-print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
+    for iel in range(0,nel):
+        q[icon_V[0,iel]]=p[icon_P[0,iel]]
+        q[icon_V[1,iel]]=p[icon_P[1,iel]]
+        q[icon_V[2,iel]]=p[icon_P[2,iel]]
+        q[icon_V[3,iel]]=p[icon_P[3,iel]]
+        q[icon_V[4,iel]]=(p[icon_P[0,iel]]+p[icon_P[1,iel]])*0.5
+        q[icon_V[5,iel]]=(p[icon_P[1,iel]]+p[icon_P[2,iel]])*0.5
+        q[icon_V[6,iel]]=(p[icon_P[2,iel]]+p[icon_P[3,iel]])*0.5
+        q[icon_V[7,iel]]=(p[icon_P[3,iel]]+p[icon_P[0,iel]])*0.5
+        q[icon_V[8,iel]]=(p[icon_P[0,iel]]+p[icon_P[1,iel]]+p[icon_P[2,iel]]+p[icon_P[3,iel]])*0.25
 
-if debug:
-   np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+    if debug: np.savetxt('q.ascii',np.array([x_V,y_V,q]).T,header='# x,y,q')
 
-print("compute press & sr: %.3f s" % (clock.time() - start))
+    print("interpolate pressure onto velocity mesh: %.3f s" % (clock.time()-start))
 
-###############################################################################
-# interpolate pressure onto velocity grid points (Q1 -> Q2)
-###############################################################################
-start=clock.time()
+    ###########################################################################
+    # export solution to vtu
+    ###########################################################################
+    start=clock.time()
 
-q=np.zeros(nn_V,dtype=np.float64)
+    filename='solution_{:04d}.vtu'.format(iiter)
+    vtufile=open(filename,"w")
+    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
+    vtufile.write("<UnstructuredGrid> \n")
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nn_V,nel))
+    #####
+    vtufile.write("<Points> \n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
+    for i in range(0,nn_V):
+        vtufile.write("%10e %10e %10e \n" %(x_V[i],y_V[i],0.))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</Points> \n")
+    #####
+    vtufile.write("<CellData Scalars='scalars'>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
+    eta_el.tofile(vtufile,sep=' ',format='%.4e')
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
+    rho_el.tofile(vtufile,sep=' ',format='%.4e')
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
+    exx.tofile(vtufile,sep=' ',format='%.4e')
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
+    eyy.tofile(vtufile,sep=' ',format='%.4e')
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+    exy.tofile(vtufile,sep=' ',format='%.4e')
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
+    e.tofile(vtufile,sep=' ',format='%.4e')
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
+    divv=exx+eyy
+    divv.tofile(vtufile,sep=' ',format='%.4e')
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='material' Format='ascii'> \n")
+    material.tofile(vtufile,sep=' ',format='%.4e')
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("</CellData>\n")
+    #####
+    vtufile.write("<PointData Scalars='scalars'>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (cm/year)' Format='ascii'> \n")
+    for i in range(0,nn_V):
+        vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity diff (cm/year)' Format='ascii'> \n")
+    for i in range(0,nn_V):
+        vtufile.write("%10e %10e %10e \n" %((u[i]-u_mem[i])/cm*year,(v[i]-v_mem[i])/cm*year,0.))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='bc_fix u' Format='ascii'> \n")
+    for i in range(0,nn_V):
+        if bc_fix_V[i*ndof_V]:
+           vtufile.write("%10e \n" % 1.)
+        else:
+           vtufile.write("%10e \n" % 0.)
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='bc_fix v' Format='ascii'> \n")
+    for i in range(0,nn_V):
+        if bc_fix_V[i*ndof_V+1]:
+           vtufile.write("%10e \n" % 1.)
+        else:
+           vtufile.write("%10e \n" % 0.)
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='q (MPa)' Format='ascii'> \n")
+    for i in range(0,nn_V):
+        vtufile.write("%10e \n" % (q[i]/MPa))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
+    for i in range(0,nn_V):
+        vtufile.write("%10e \n" %(T[i]-273.15))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("</PointData>\n")
+    #####
+    vtufile.write("<Cells>\n")
+    #--
+    vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%d %d %d %d %d %d %d %d %d\n" %(icon_V[0,iel],icon_V[1,iel],icon_V[2,iel],\
+                                                       icon_V[3,iel],icon_V[4,iel],icon_V[5,iel],\
+                                                       icon_V[6,iel],icon_V[7,iel],icon_V[8,iel]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
+    for iel in range (0,nel):
+        vtufile.write("%d \n" %((iel+1)*m_V))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
+    for iel in range (0,nel):
+        vtufile.write("%d \n" %28)
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("</Cells>\n")
+    #####
+    vtufile.write("</Piece>\n")
+    vtufile.write("</UnstructuredGrid>\n")
+    vtufile.write("</VTKFile>\n")
+    vtufile.close()
 
-for iel in range(0,nel):
-    q[icon_V[0,iel]]=p[icon_P[0,iel]]
-    q[icon_V[1,iel]]=p[icon_P[1,iel]]
-    q[icon_V[2,iel]]=p[icon_P[2,iel]]
-    q[icon_V[3,iel]]=p[icon_P[3,iel]]
-    q[icon_V[4,iel]]=(p[icon_P[0,iel]]+p[icon_P[1,iel]])*0.5
-    q[icon_V[5,iel]]=(p[icon_P[1,iel]]+p[icon_P[2,iel]])*0.5
-    q[icon_V[6,iel]]=(p[icon_P[2,iel]]+p[icon_P[3,iel]])*0.5
-    q[icon_V[7,iel]]=(p[icon_P[3,iel]]+p[icon_P[0,iel]])*0.5
-    q[icon_V[8,iel]]=(p[icon_P[0,iel]]+p[icon_P[1,iel]]+p[icon_P[2,iel]]+p[icon_P[3,iel]])*0.25
+    print("export to vtu: %.3f s" % (clock.time()-start))
 
-#np.savetxt('q.ascii',np.array([x_V,y_V,q]).T,header='# x,y,q')
+#########################################################################################
+#########################################################################################
+#end for nonlinear iterations
+#########################################################################################
+#########################################################################################
 
-print("interpolate pressure onto velocity mesh: %.3f s" % (clock.time() - start))
-
-###############################################################################
-# plot of solution
-# the 9-node Q2 element does not exist in vtk, but the 8-node one does, i.e. type=23. 
-###############################################################################
-start=clock.time()
-
-if visu:
-   filename='solution.vtu'
-   vtufile=open(filename,"w")
-   vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
-   vtufile.write("<UnstructuredGrid> \n")
-   vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nn_V,nel))
-   #####
-   vtufile.write("<Points> \n")
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-   for i in range(0,nn_V):
-       vtufile.write("%10e %10e %10e \n" %(x_V[i],y_V[i],0.))
-   vtufile.write("</DataArray>\n")
-   vtufile.write("</Points> \n")
-   #####
-   vtufile.write("<CellData Scalars='scalars'>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='eta' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % eta_el[iel])
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % rho_el[iel])
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % exx[iel])
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % eyy[iel])
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % exy[iel])
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='material' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%10e\n" % material[iel])
-   vtufile.write("</DataArray>\n")
-
-   vtufile.write("</CellData>\n")
-   #####
-   vtufile.write("<PointData Scalars='scalars'>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (cm/year)' Format='ascii'> \n")
-   for i in range(0,nn_V):
-       vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity diff (cm/year)' Format='ascii'> \n")
-   for i in range(0,nn_V):
-       vtufile.write("%10e %10e %10e \n" %((u[i]-u_mem[i])/cm*year,(v[i]-v_mem[i])/cm*year,0.))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='bc_fix u' Format='ascii'> \n")
-   for i in range(0,nn_V):
-       if bc_fix_[i*ndof_V]:
-          vtufile.write("%10e \n" % 1.)
-       else:
-          vtufile.write("%10e \n" % 0.)
-   vtufile.write("</DataArray>\n")
-   vtufile.write("<DataArray type='Float32' Name='bc_fix v' Format='ascii'> \n")
-   for i in range(0,nn_V):
-       if bc_fix_T[i*ndof_V+1]:
-          vtufile.write("%10e \n" % 1.)
-       else:
-          vtufile.write("%10e \n" % 0.)
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='q (MPa)' Format='ascii'> \n")
-   for i in range(0,nn_V):
-       vtufile.write("%10e \n" % (q[i]/MPa))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
-   for i in range(0,nn_V):
-       vtufile.write("%10e \n" %(T[i]-273.15))
-   vtufile.write("</DataArray>\n")
-   vtufile.write("</PointData>\n")
-   #####
-   vtufile.write("<Cells>\n")
-   #--
-   vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%d %d %d %d %d %d %d %d %d\n" %(icon_V[0,iel],icon_V[1,iel],icon_V[2,iel],\
-                                                      icon_V[3,iel],icon_V[4,iel],icon_V[5,iel],\
-                                                      icon_V[6,iel],icon_V[7,iel],icon_V[8,iel]))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
-   for iel in range (0,nel):
-       vtufile.write("%d \n" %((iel+1)*m_V))
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
-   for iel in range (0,nel):
-       vtufile.write("%d \n" %28)
-   vtufile.write("</DataArray>\n")
-   #--
-   vtufile.write("</Cells>\n")
-   #####
-   vtufile.write("</Piece>\n")
-   vtufile.write("</UnstructuredGrid>\n")
-   vtufile.write("</VTKFile>\n")
-   vtufile.close()
-
-   print("export to vtu: %.3f s" % (clock.time()-start))
-
-   #***********************************************************************************************
-
-   if use_matplotlib:
-
-      import matplotlib.pyplot as plt
-      fig,axes=plt.subplots(nrows=3,ncols=3,figsize=(18,18))
-      extent=(np.amin(x_V),np.amax(x_V),np.amin(y_V),np.amax(y_V))
-      onePlot(u.reshape((nny,nnx)),        0, 0, "$v_x$",                 "x", "y", extent,  0,  0, 'Spectral_r')
-      onePlot(v.reshape((nny,nnx)),        0, 1, "$v_y$",                 "x", "y", extent,  0,  0, 'Spectral_r')
-      onePlot(q.reshape((nny,nnx)),        0, 2, "$p$",                   "x", "y", extent, Lx, Ly, 'RdGy_r')
-      onePlot(exx.reshape((nely,nelx)),    1, 0, "$\dot{\epsilon}_{xx}$", "x", "y", extent, Lx, Ly, 'viridis')
-      onePlot(eyy.reshape((nely,nelx)),    1, 1, "$\dot{\epsilon}_{yy}$", "x", "y", extent, Lx, Ly, 'viridis')
-      onePlot(exy.reshape((nely,nelx)),    1, 2, "$\dot{\epsilon}_{xy}$", "x", "y", extent, Lx, Ly, 'viridis')
-      onePlot(rho_el.reshape((nely,nelx)), 2, 0, "density",               "x", "y", extent, Lx, Ly, 'RdGy_r')
-      onePlot(eta_el.reshape((nely,nelx)), 2, 1, "viscosity",             "x", "y", extent, Lx, Ly, 'RdGy_r')
-      onePlot(T.reshape((nny,nnx)),        2, 2, "$T$",                   "x", "y", extent, Lx, Ly, 'RdGy_r')
-      plt.subplots_adjust(hspace=0.5)
-      plt.savefig('solution.pdf', bbox_inches='tight')
-      plt.show()
-
-print("-----------------------------")
-print("------------the end----------")
-print("-----------------------------")
+print("*******************************")
+print("********** the end ************")
+print("*******************************")
 
 ###############################################################################
