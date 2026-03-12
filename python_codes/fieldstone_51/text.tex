@@ -8,8 +8,6 @@
 
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_51/text.tex}} \end{flushright}
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_51/keywords.ascii}
-
 \begin{center}
 \inpython
 Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_51}
@@ -17,7 +15,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-{\sl This fieldstone was developed in collaboration with L. van de Wiel}. 
+{\sl This stone was developed in collaboration with L. van de Wiel (meshing).} 
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -102,15 +100,16 @@ Nu
 \]
 It is reported to be 24.535 in \textcite{jolm17} (2017).
 \item the temperature on the hypotenuse.
-\item the root mean square velocity
-\item the mean temperature $\langle T \rangle = |\Omega|^{-1} \int_\Omega T \; dV$
+\item the root mean square velocity.
+\item the mean temperature $\langle T \rangle = |\Omega|^{-1} \int_\Omega T \; dV$.
 \end{itemize}
 
 %----------------------------------------------------------------------
 \subsubsection*{On the importance of the relaxation parameter $\gamma$}
 
 In what follows the internal node coordinate randomness is switched off.
-I have run the model for various values of $\gamma$ for $n=25$, and results are shown on the 
+I have run the model for various values of $\gamma$ for $n=25$ (which 
+controls the resolution), and results are shown on the 
 following figures. We see that all simulations seem to converge to the same 
 steady state, which is very reassuring. However, it looks like too small a value of $\gamma$
 delays greatly the convergence and too large a value also seems detrimental. 
@@ -142,7 +141,7 @@ calculations for $n=25,50,75,100$.
 \begin{center}
 \begin{tabular}{llll}
 \hline
-resolution $(n)$ & $v_{rms}$ & Nu & $\langle T \rangle$ \\
+resolution $(n)$ & $\upnu_{rms}$ & Nu & $\langle T \rangle$ \\
 \hline
 \hline
 25  & 154.35406 & 19.51906 &  1.22759\\
