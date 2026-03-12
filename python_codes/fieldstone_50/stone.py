@@ -1,6 +1,7 @@
 import numpy as np
 import sys as sys
 import time as clock
+from numba import jit
 import scipy.sparse as sps
 from scipy.sparse import csr_matrix,lil_matrix
 
@@ -8,6 +9,7 @@ from scipy.sparse import csr_matrix,lil_matrix
 # defining Q2xQ1 basis functions and their derivatives
 ###############################################################################
 
+@jit(nopython=True)
 def basis_functions_V(r,s):
     N0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
     N1= 0.5*r*(r+1.) * 0.5*s*(s-1.)
@@ -20,6 +22,7 @@ def basis_functions_V(r,s):
     N8=    (1.-r**2) *    (1.-s**2)
     return np.array([N0,N1,N2,N3,N4,N5,N6,N7,N8],dtype=np.float64)
 
+@jit(nopython=True)
 def basis_functions_V_dr(r,s):
     dNdr0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
     dNdr1= 0.5*(2.*r+1.) * 0.5*s*(s-1)
@@ -32,6 +35,7 @@ def basis_functions_V_dr(r,s):
     dNdr8=       (-2.*r) *   (1.-s**2)
     return np.array([dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,dNdr6,dNdr7,dNdr8],dtype=np.float64)
 
+@jit(nopython=True)
 def basis_functions_V_ds(r,s):
     dNds0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
     dNds1= 0.5*r*(r+1.) * 0.5*(2.*s-1.)
@@ -44,6 +48,7 @@ def basis_functions_V_ds(r,s):
     dNds8=    (1.-r**2) *       (-2.*s)
     return np.array([dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6,dNds7,dNds8],dtype=np.float64)
 
+@jit(nopython=True)
 def basis_functions_P(r,s):
     N0=0.25*(1-r)*(1-s)
     N1=0.25*(1+r)*(1-s)
@@ -66,6 +71,7 @@ def rho(xq,yq,imat,Tq):
        rho0=3300. ; alpha=2.5e-5 ; T0=500+273.15
     return rho0*(1.-alpha*(Tq-T0))
 
+@jit(nopython=True)
 def eta(xq,yq,imat,exx,eyy,exy,p,T):
     Rgas=8.314
     eta_min=1.e19
@@ -138,10 +144,10 @@ if int(len(sys.argv) == 5):
    visu =int(sys.argv[3])
    niter=int(sys.argv[4])
 else:
-   nelx=160
-   nely=40
+   nelx=200
+   nely=50
    visu=1
-   niter=100 #50
+   niter=100
     
 nn_V=(2*nelx+1)*(2*nely+1) # number of V nodes
 nn_P=(nelx+1)*(nely+1)     # number of P nodes
@@ -164,7 +170,7 @@ eta_ref=1e23 # scaling of G blocks
 
 tol=1e-4 # nonlinear iterations convergence tolerance
 
-gamma_eta=1   #gamma=1 -> no relax
+gamma_eta=1 #gamma=1 -> no relax
 gamma_uvp=1 #gamma=1 -> no relax
 
 debug=False
@@ -362,9 +368,6 @@ print("compute elements areas: %.3f s" % (clock.time()-start))
 # non linear iterations
 #########################################################################################
 #########################################################################################
-#u=np.zeros(nn_V,dtype=np.float64)
-#v=np.zeros(nn_V,dtype=np.float64)
-#p=np.zeros(nn_P,dtype=np.float64) 
 u_mem=np.zeros(nn_V,dtype=np.float64)  
 v_mem=np.zeros(nn_V,dtype=np.float64) 
 p_mem=np.zeros(nn_P,dtype=np.float64) 
@@ -590,12 +593,10 @@ for iiter in range(0,niter):
         jcbi=np.linalg.inv(jcb)
         dNdx_V=jcbi[0,0]*dNdr_V[:]+jcbi[0,1]*dNds_V[:]
         dNdy_V=jcbi[1,0]*dNdr_V[:]+jcbi[1,1]*dNds_V[:]
-
         exx[iel]=np.dot(dNdx_V[:],u[icon_V[:,iel]])
         eyy[iel]=np.dot(dNdy_V[:],v[icon_V[:,iel]])
         exy[iel]=np.dot(dNdy_V[:],u[icon_V[:,iel]])*0.5\
                 +np.dot(dNdx_V[:],v[icon_V[:,iel]])*0.5
-
         e[iel]=np.sqrt(0.5*(exx[iel]**2+eyy[iel]**2)+exy[iel]**2)
 
     print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
@@ -607,27 +608,90 @@ for iiter in range(0,niter):
 
     print("compute strainrate: %.3f s" % (clock.time()-start))
 
+    #####################################################################
+    # compute nodal strainrate and pressure on V grid. 
+    #
+    # 3--6--2
+    # |  |  |
+    # 7--8--5
+    # |  |  |
+    # 0--4--1
+    #####################################################################
+    start=clock.time()
+
+    r_V=[-1,+1,+1,-1,0,+1,0,-1,0]
+    s_V=[-1,-1,+1,+1,-1,0,+1,0,0]
+    
+    q=np.zeros(nn_V,dtype=np.float64)
+    exx_n=np.zeros(nn_V,dtype=np.float64)  
+    eyy_n=np.zeros(nn_V,dtype=np.float64)  
+    exy_n=np.zeros(nn_V,dtype=np.float64)  
+    count=np.zeros(nn_V,dtype=np.int32)  
+
+    for iel in range(0,nel):
+        for i in range(0,m_V):
+            rq=r_V[i]
+            sq=s_V[i]
+            N_V=basis_functions_V(rq,sq)
+            N_P=basis_functions_P(rq,sq)
+            dNdr_V=basis_functions_V_dr(rq,sq)
+            dNds_V=basis_functions_V_ds(rq,sq)
+            jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
+            jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
+            jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
+            jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
+            jcbi=np.linalg.inv(jcb)
+            dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V
+            dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V
+            e_xx=np.dot(dNdx_V[:],u[icon_V[:,iel]])
+            e_yy=np.dot(dNdy_V[:],v[icon_V[:,iel]])
+            e_xy=np.dot(dNdy_V[:],u[icon_V[:,iel]])*0.5\
+                +np.dot(dNdx_V[:],v[icon_V[:,iel]])*0.5
+            inode=icon_V[i,iel]
+            exx_n[inode]+=e_xx
+            eyy_n[inode]+=e_yy
+            exy_n[inode]+=e_xy
+            q[inode]+=np.dot(N_P,p[icon_P[:,iel]])
+            count[inode]+=1
+        #end for
+    #end for
+    
+    exx_n/=count
+    eyy_n/=count
+    exy_n/=count
+    q/=count
+
+    e_n=np.sqrt(0.5*(exx_n**2+eyy_n**2)+exy_n**2)
+
+    print("     -> exx nodal (m,M) %.6e %.6e " %(np.min(exx_n),np.max(exx_n)))
+    print("     -> eyy nodal (m,M) %.6e %.6e " %(np.min(eyy_n),np.max(eyy_n)))
+    print("     -> exy nodal (m,M) %.6e %.6e " %(np.min(exy_n),np.max(exy_n)))
+    print("     -> press nodal (m,M) %.5e %.5e " %(np.min(q),np.max(q)))
+
+    if debug: 
+       np.savetxt('q.ascii',np.array([x_V,y_V,q]).T,header='# x,y,q')
+       np.savetxt('strainrate.ascii',np.array([x_V,y_V,exx_n,eyy_n,exy_n]).T,header='# x,y,exx,eyy,exy')
+
+    print("compute nodal press & sr: %.3f s" % (clock.time()-start))
+
     ###########################################################################
-    # interpolate pressure onto velocity grid points (Q1 -> Q2)
+    # export profiles
     ###########################################################################
     start=clock.time()
 
-    q=np.zeros(nn_V,dtype=np.float64)
+    pfile=open('profile_h.ascii',"w")
+    for i in range(0,nn_V):
+       if abs(y_V[i]-Ly/2)/Ly<eps:
+          pfile.write("%e %e %e %e %e \n" %(x_V[i],u[i],v[i],q[i],e_n[i]))
+    pfile.close()
 
-    for iel in range(0,nel):
-        q[icon_V[0,iel]]=p[icon_P[0,iel]]
-        q[icon_V[1,iel]]=p[icon_P[1,iel]]
-        q[icon_V[2,iel]]=p[icon_P[2,iel]]
-        q[icon_V[3,iel]]=p[icon_P[3,iel]]
-        q[icon_V[4,iel]]=(p[icon_P[0,iel]]+p[icon_P[1,iel]])*0.5
-        q[icon_V[5,iel]]=(p[icon_P[1,iel]]+p[icon_P[2,iel]])*0.5
-        q[icon_V[6,iel]]=(p[icon_P[2,iel]]+p[icon_P[3,iel]])*0.5
-        q[icon_V[7,iel]]=(p[icon_P[3,iel]]+p[icon_P[0,iel]])*0.5
-        q[icon_V[8,iel]]=(p[icon_P[0,iel]]+p[icon_P[1,iel]]+p[icon_P[2,iel]]+p[icon_P[3,iel]])*0.25
+    pfile=open('profile_v.ascii',"w")
+    for i in range(0,nn_V):
+       if abs(x_V[i]-Lx/2)/Lx<eps:
+          pfile.write("%e %e %e %e %e \n" %(y_V[i],u[i],v[i],q[i],e_n[i]))
+    pfile.close()
 
-    if debug: np.savetxt('q.ascii',np.array([x_V,y_V,q]).T,header='# x,y,q')
-
-    print("interpolate pressure onto velocity mesh: %.3f s" % (clock.time()-start))
+    print("write out profile: %.3f s" % (clock.time()-start))
 
     ###########################################################################
     # export solution to vtu

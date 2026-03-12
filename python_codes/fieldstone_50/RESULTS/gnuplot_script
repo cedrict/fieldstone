@@ -2,29 +2,130 @@
 set term pdf enhanced font "Times,12pt"
 set grid
 set log y
-set pointsize .3
+set pointsize .23
 set xlabel '#iter'
-set ylabel 'xi'
-set output 'conv.pdf'
+
+set ylabel 'xi_u'
+set output 'conv_u.pdf'
 plot[][]\
-'conv.ascii' u 1:2 w lp t 'xi_u',\
-'conv.ascii' u 1:3 w lp t 'xi_v',\
-'conv.ascii' u 1:4 w lp t 'xi_p',\
+'120x30/conv.ascii' u 1:2 w lp t 'xi_u, 120x30',\
+'160x40/conv.ascii' u 1:2 w lp t 'xi_u, 160x40',\
+'200x50/conv.ascii' u 1:2 w lp t 'xi_u, 200x50',\
 1e-4 w l lt -1 lw 2 dt 2 t 'tol'
+
+set ylabel 'xi_v'
+set output 'conv_v.pdf'
+plot[][]\
+'120x30/conv.ascii' u 1:3 w lp t 'xi_u, 120x30',\
+'160x40/conv.ascii' u 1:3 w lp t 'xi_v, 160x40',\
+'200x50/conv.ascii' u 1:3 w lp t 'xi_v, 200x50',\
+1e-4 w l lt -1 lw 2 dt 2 t 'tol'
+
+set ylabel 'xi_p'
+set output 'conv_p.pdf'
+plot[][]\
+'120x30/conv.ascii' u 1:4 w lp t 'xi_u, 120x30',\
+'160x40/conv.ascii' u 1:4 w lp t 'xi_p, 160x40',\
+'200x50/conv.ascii' u 1:4 w lp t 'xi_p, 200x50',\
+1e-4 w l lt -1 lw 2 dt 2 t 'tol'
+
+###########################################################
 
 set key outside
 set ylabel 'velocity (cm/yr)'
 unset log y 
 set output 'statistics_uv.pdf
 plot[][]\
-'statistics.ascii' u 1:2 w lp t 'min(u)',\
-'statistics.ascii' u 1:3 w lp t 'max(u)',\
-'statistics.ascii' u 1:4 w lp t 'min(v)',\
-'statistics.ascii' u 1:5 w lp t 'max(v)',\
+'160x40/statistics.ascii' u 1:2 w lp t 'min(u), 160x40',\
+'160x40/statistics.ascii' u 1:3 w lp t 'max(u), 160x40',\
+'160x40/statistics.ascii' u 1:4 w lp t 'min(v), 160x40',\
+'160x40/statistics.ascii' u 1:5 w lp t 'max(v), 160x40',\
+'200x50/statistics.ascii' u 1:4 w lp t 'min(v), 200x50',\
+'200x50/statistics.ascii' u 1:5 w lp t 'max(v), 200x50',\
 
+###########################################################
 
 set ylabel 'pressure (MPa)'
 set output 'statistics_p.pdf
+plot[][-1000:]\
+'160x40/statistics.ascii' u 1:6 w lp t 'min(p), 160x40',\
+'160x40/statistics.ascii' u 1:7 w lp t 'max(p), 160x40',\
+'200x50/statistics.ascii' u 1:6 w lp t 'min(p), 200x50',\
+'200x50/statistics.ascii' u 1:7 w lp t 'max(p), 200x50',\
+
+###########################################################
+
+set xlabel 'x'
+
+set ylabel 'u'
+set output 'profile_h_u.pdf
 plot[][]\
-'statistics.ascii' u 1:6 w lp t 'min(p)',\
-'statistics.ascii' u 1:7 w lp t 'max(p)',\
+'120x30/profile_h.ascii' u 1:2 w lp t 'u, 120x30',\
+'160x40/profile_h.ascii' u 1:2 w lp t 'u, 160x40',\
+'200x50/profile_h.ascii' u 1:2 w lp t 'u, 200x50',\
+
+set ylabel 'v'
+set output 'profile_h_v.pdf
+plot[][]\
+'120x30/profile_h.ascii' u 1:3 w lp t 'v, 120x30',\
+'160x40/profile_h.ascii' u 1:3 w lp t 'u, 160x40',\
+'200x50/profile_h.ascii' u 1:3 w lp t 'u, 200x50',\
+
+set ylabel 'p'
+set output 'profile_h_p.pdf
+plot[][]\
+'120x30/profile_h.ascii' u 1:4 w lp t 'v, 120x30',\
+'160x40/profile_h.ascii' u 1:4 w lp t 'u, 160x40',\
+'200x50/profile_h.ascii' u 1:4 w lp t 'u, 200x50',\
+
+set ylabel 'e'
+set output 'profile_h_e.pdf
+plot[][]\
+'120x30/profile_h.ascii' u 1:5 w lp t 'v, 120x30',\
+'160x40/profile_h.ascii' u 1:5 w lp t 'u, 160x40',\
+'200x50/profile_h.ascii' u 1:5 w lp t 'u, 200x50',\
+
+###########################################################
+
+set xlabel 'y'
+
+set ylabel 'u'
+set output 'profile_v_u.pdf
+plot[][]\
+'120x30/profile_v.ascii' u 1:2 w lp t 'u, 120x30',\
+'160x40/profile_v.ascii' u 1:2 w lp t 'u, 160x40',\
+'200x50/profile_v.ascii' u 1:2 w lp t 'u, 200x50',\
+
+set ylabel 'v'
+set output 'profile_v_v.pdf
+plot[][]\
+'120x30/profile_v.ascii' u 1:3 w lp t 'v, 120x30',\
+'160x40/profile_v.ascii' u 1:3 w lp t 'u, 160x40',\
+'200x50/profile_v.ascii' u 1:3 w lp t 'u, 200x50',\
+
+set ylabel 'p'
+set output 'profile_v_p.pdf
+plot[][]\
+'120x30/profile_v.ascii' u 1:4 w lp t 'v, 120x30',\
+'160x40/profile_v.ascii' u 1:4 w lp t 'u, 160x40',\
+'200x50/profile_v.ascii' u 1:4 w lp t 'u, 200x50',\
+
+set ylabel 'e'
+set output 'profile_v_e.pdf
+plot[][]\
+'120x30/profile_v.ascii' u 1:5 w lp t 'v, 120x30',\
+'160x40/profile_v.ascii' u 1:5 w lp t 'u, 160x40',\
+'200x50/profile_v.ascii' u 1:5 w lp t 'u, 200x50',\
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,7 +1,6 @@
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/nonlinear}
 \includegraphics[height=1.25cm]{images/pictograms/paraview}
-\includegraphics[height=1.25cm]{images/pictograms/publication}
 \includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -37,6 +36,10 @@ The rheology is visco-plastic, with a dislocation creep rheology for the viscous
 a Drucker-Prager yield criterion. 
 The viscosity and density are computed at each quadrature point.
 For visualisation purposes these are averaged per element.
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_50/RESULTS/200x50/material}
+\end{center}
  
 Kinematical boundary conditions are precribed on the sides and bottom boundaries:
 $u=-0.25~\si{\cm\per\year}$ on the left, 
@@ -64,8 +67,9 @@ denote the solution vectors.
 When/if the fields converge then the denominator converges to a 
 single non-zero value and the numerator goes to zero.
 
-Note that all plots in what follows were obtained with an
-older version of the code.
+Note that all plots about relaxation in what follows were obtained with an
+older version of the code. Results without relaxatin are obtained 
+with the last version of the code.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,23 +126,45 @@ improve (if at all) the convergence.
 \section*{Without any relaxation}
 
 Since relaxation proved to be somewhat inconclusive, it is switched 
-off entirely. The model is run on a $160\times 40$ mesh.
+off entirely. 
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/conv.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/conv_u.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/conv_v.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/conv_p.pdf}\\
 \includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/statistics_uv.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/statistics_p.pdf}
 \end{center}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/u}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/v}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/p}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/e}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/eta}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/T}\\
-{\captionfont Fields obtained at convergence.}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/160x40/u}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/160x40/v}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/160x40/p}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/160x40/e}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/160x40/eta}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_50/RESULTS/160x40/T}\\
+{\captionfont $160\times 40$ resolution. Fields obtained at convergence.}
 \end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_50/RESULTS/200x50/e}
+\includegraphics[width=7cm]{python_codes/fieldstone_50/RESULTS/200x50/eta}\\
+{\captionfont $200\times 50$ resolution.}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_50/RESULTS/profile_h_u.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_50/RESULTS/profile_v_u.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_50/RESULTS/profile_h_v.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_50/RESULTS/profile_v_v.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_50/RESULTS/profile_h_p.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_50/RESULTS/profile_v_p.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_50/RESULTS/profile_h_e.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_50/RESULTS/profile_v_e.pdf}\\
+{\captionfont Left: measurements at $y=L_y/2$; Right: measurements at $x=L_x/2$.}
+\end{center}
+
 
 
 \vspace{.5cm}
@@ -151,6 +177,7 @@ off entirely. The model is run on a $160\times 40$ mesh.
 \item extract velocity and/or pressure value at key points and monitor as a 
 function of the nonlinear iterations loop increment
 \item run at different resolutions
+\item elements are rectangles. I could replace jacobian calculations by cheaper ones.
 \end{itemize}
 \end{minipage}}
 \end{center}
@@ -163,17 +190,17 @@ function of the nonlinear iterations loop increment
 
 \newpage
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/ee.0001.png}
-\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/eeta.0001.png}\\
-\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/ee.0010.png}
-\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/eeta.0010.png}\\
-\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/ee.0020.png}
-\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/eeta.0020.png}\\
-\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/ee.0040.png}
-\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/eeta.0040.png}\\
-\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/ee.0060.png}
-\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/eeta.0060.png}\\
-{\captionfont strain rate and viscosity fields at iterations 1,10,20,40,60.}
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/160x40/ee.0001.png}
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/160x40/eeta.0001.png}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/160x40/ee.0010.png}
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/160x40/eeta.0010.png}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/160x40/ee.0020.png}
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/160x40/eeta.0020.png}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/160x40/ee.0040.png}
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/160x40/eeta.0040.png}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/160x40/ee.0060.png}
+\includegraphics[width=6cm]{python_codes/fieldstone_50/RESULTS/160x40/eeta.0060.png}\\
+{\captionfont $160\times 40$ resolution. Strain rate and viscosity fields at iterations 1,10,20,40,60.}
 \end{center}
 
 
