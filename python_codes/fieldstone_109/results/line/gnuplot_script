@@ -1,0 +1,61 @@
+#
+set term pdf enhanced font "times,12pt" 
+set grid
+set pointsize .3
+set xlabel 'x (m)'
+set key outside
+
+set ylabel 'u'
+set output 'u.pdf'
+plot[][]\
+'v_line_28x14x5.ascii' u 1:4 w lp t '28x14x5',\
+'v_line_28x14x6.ascii' u 1:4 w lp t '28x14x6',\
+'v_line_30x15x5.ascii' u 1:4 w lp t '30x15x5',\
+'v_line_32x16x5.ascii' u 1:4 w lp t '32x16x5',\
+'v_line_34x17x5.ascii' u 1:4 w lp t '34x17x5',\
+'v_line_36x18x5.ascii' u 1:4 w lp t '36x18x5',\
+'v_line_38x19x5.ascii' u 1:4 w lp t '38x19x5',\
+'v_line_40x20x5.ascii' u 1:4 w lp t '40x20x5',\
+'v_line_40x20x8.ascii' u 1:4 w lp t '40x20x8',\
+
+set ylabel 'v'
+set output 'v.pdf'
+plot[][]\
+'v_line_28x14x5.ascii' u 1:5 w lp t '28x14x5',\
+'v_line_28x14x6.ascii' u 1:5 w lp t '28x14x6',\
+'v_line_30x15x5.ascii' u 1:5 w lp t '30x15x5',\
+'v_line_32x16x5.ascii' u 1:5 w lp t '32x16x5',\
+'v_line_34x17x5.ascii' u 1:5 w lp t '34x17x5',\
+'v_line_36x18x5.ascii' u 1:5 w lp t '36x18x5',\
+'v_line_38x19x5.ascii' u 1:5 w lp t '38x19x5',\
+'v_line_40x20x5.ascii' u 1:5 w lp t '40x20x5',\
+'v_line_40x20x8.ascii' u 1:5 w lp t '40x20x8',\
+
+set ylabel 'w'
+set output 'w.pdf'
+plot[][]\
+'v_line_28x14x5.ascii' u 1:6 w lp t '28x14x5',\
+'v_line_28x14x6.ascii' u 1:6 w lp t '28x14x6',\
+'v_line_30x15x5.ascii' u 1:6 w lp t '30x15x5',\
+'v_line_32x16x5.ascii' u 1:6 w lp t '32x16x5',\
+'v_line_34x17x5.ascii' u 1:6 w lp t '34x17x5',\
+'v_line_36x18x5.ascii' u 1:6 w lp t '36x18x5',\
+'v_line_38x19x5.ascii' u 1:6 w lp t '38x19x5',\
+'v_line_40x20x5.ascii' u 1:6 w lp t '40x20x5',\
+'v_line_40x20x8.ascii' u 1:6 w lp t '40x20x8',\
+
+set ylabel 'p'
+set output 'p.pdf'
+plot[][]\
+'v_line_28x14x5.ascii' u 1:7 w lp t '28x14x5',\
+'v_line_28x14x6.ascii' u 1:7 w lp t '28x14x6',\
+'v_line_30x15x5.ascii' u 1:7 w lp t '30x15x5',\
+'v_line_32x16x5.ascii' u 1:7 w lp t '32x16x5',\
+'v_line_34x17x5.ascii' u 1:7 w lp t '34x17x5',\
+'v_line_36x18x5.ascii' u 1:7 w lp t '36x18x5',\
+'v_line_38x19x5.ascii' u 1:7 w lp t '38x19x5',\
+'v_line_40x20x5.ascii' u 1:7 w lp t '40x20x5',\
+'v_line_40x20x8.ascii' u 1:7 w lp t '40x20x8',\
+
+
+

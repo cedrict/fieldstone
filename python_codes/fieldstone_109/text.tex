@@ -1,16 +1,26 @@
 \includegraphics[height=1.5cm]{images/pictograms/replication}
 \includegraphics[height=1.5cm]{images/pictograms/aspect_logo}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_109/keywords.ascii}
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_109/text.tex}} \end{flushright}
+
+\par\noindent\rule{\textwidth}{0.4pt}
 
 \begin{center}
-Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_109}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_109}}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Last revision: March 13th, 2026.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 This stone reproduces the lower crust experiment explained in \stone~108 coming from 
 \textcite{clbr05} (2005).
@@ -23,22 +33,22 @@ u(z)=U_0 \frac{4z(L_z-z)  }{L_z^2}
 \]
 with $U_0=80~\si{\mm\per\year}$.
 
-The obstacle is centered on $(L_x/2,0)$ and has a radius of $a=200~\si{\km}$ (because of the symmetry of the problem
-I only model half of the domain).
-It is assigned a viscosity $\eta=2\cdot 10^{21}~\si{\pascal\second}$ which is 1000 times larger than the viscosity
-of the channel $\eta=2\cdot 10^{18}~\si{\pascal\second}$.
+The obstacle is centered on $(L_x/2,0)$ and has a radius of $a=200~\si{\km}$ (because of 
+the symmetry of the problem I only model half of the domain).
+It is assigned a viscosity $\eta=2\cdot 10^{21}~\si{\pascal\second}$ which is 1000 times 
+larger than the viscosity of the channel $\eta=2\cdot 10^{18}~\si{\pascal\second}$.
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_109/images/grid}
 \includegraphics[width=7cm]{python_codes/fieldstone_109/images/eta}
 \end{center}
 
-Given the boundary conditions there is a pressure nullspace which is 
-removed by enforcing that pressure is volume normalised, i.e. $\int_\Omega p \; dV=0$. The element used is the 
-Taylor-Hood pair $Q_2\times Q_1$ (see Section~\ref{ss:pairq2q1}).
+Given the boundary conditions there is a pressure nullspace which is removed by enforcing 
+that pressure is volume normalised, i.e. $\int_\Omega p \; dV=0$ (as a postprocessing
+step). The element used is the Taylor-Hood pair $Q_2\times Q_1$ (see Section~\ref{MMM-ss:pairq2q1}).
 The numbering of the nodes follows the one of the VTK format as shown hereunder. 
 In retrospect it is not the most straightforward one but it is irrelevant with regards 
-to the calculations. A complete layout of the nodes is present in the images folder of this stone. 
+to the calculations. 
 
 \begin{center}
 \includegraphics[width=5.5cm]{python_codes/fieldstone_109/images/numbering}
@@ -46,8 +56,8 @@ to the calculations. A complete layout of the nodes is present in the images fol
 {\captionfont Left: Node numbering of the 20 first nodes; Right: matrix structure}
 \end{center}
 
-Because of the direct solver the resolution is rather limited and the maximum is 
-about $27\times 14 \times 5$ (the solver then claims about 26+ Gb). The analytical pressure  
+Because of the direct solver the resolution is rather limited (see resolution tests here after). 
+The analytical pressure  
 \[
 p(r,\theta) = 
 -\frac{1}{\kappa} U r  \cos \theta
@@ -110,9 +120,10 @@ Note that the computed pressure does not depend on the $z$-coordinate (while of 
 is rather large and this is likely to alter the accuracy of the calculations.}
 \end{center}
 
-The recovered pressure is rather similar to the analytical one. Indeed we find that an increase in resolution and 
-an increase in domain size (especially $L_z$) brings the computed pressure closer and closer to the 
-analytical one. At the max resolution that fits on my 32Gb laptop pressures are off by less than 10\%.
+The recovered pressure is rather similar to the analytical one. Indeed we find that 
+an increase in resolution and an increase in domain size (especially $L_z$) brings 
+the computed pressure closer and closer to the analytical one. 
+At resolution used here pressures are off by less than 10\%.
 
 I have also run this experiment with the \aspect code and the prm file is present in 
 the folder of this stone. Resolution was higher than above ($160 \times 80 \times 16 =204,800$ elements).
@@ -130,5 +141,22 @@ obtained with this stone, despite a much higher resolution.
 We find that the pressure min and max are quite larger than the isoviscous case (about 12.35MPa instead 
 of 9.014MPa).  
 
+%--------------------------------------------------------------
+\subsection*{resolution study}
+
+Velocity and pressure are exported on a line given by $y=L_y/2$ and $z=L_z/2$. 
+
+\begin{center}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_109/results/line/u}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_109/results/line/v}\\
+\includegraphics[width=8.5cm]{python_codes/fieldstone_109/results/line/w}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_109/results/line/p}
+\end{center}
+
+Note that the $40\times 20\times 5$ model takes approximately
+240s (4min) to build the matrix and 133s to solve the linear system 
+(about 5 GB of RAM are needed then). 
+The $40\times 20\times 8$ model takes approximately
+390s (6+min) to build the matrix and 440s to solve the linear system. 
 
 
