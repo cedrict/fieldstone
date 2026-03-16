@@ -29,6 +29,15 @@ def basis_functions_V_dt(r,s,t):
 def basis_functions_P(r,s,t):
     return np.array([N0,N1,N2,N3,N4,N5,N6,N7,N8],dtype=np.float64)
 
+def basis_functions_P_dr(r,s,t):
+    return np.array([dNd0,dNd1,dNd2,dNd3,dNd4,dNd5,dNd6,dNd7,dNd8],dtype=np.float64)
+
+def basis_functions_P_ds(r,s,t):
+    return np.array([dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6,dNds7,dNds8],dtype=np.float64)
+
+def basis_functions_P_dt(r,s,t):
+    return np.array([dNdt0,dNdt1,dNdt2,dNdt3,dNdt4,dNdt5,dNdt6,dNdt7,dNdt8],dtype=np.float64)
+
 ###############################################################################
 
 def u_analytical(x,y,z):
@@ -73,7 +82,7 @@ Ly=
 hx=Lx/nelx
 hy=Ly/nely
 hz=Lz/nelz
-nqel=
+nqel=         <- should replace it with nq_per_el
 
 
 ######NAME??!?! m_V*ndof_V
@@ -212,7 +221,7 @@ for iel in range(0,nel):
                 vq=np.dot(N_V,v[icon_V[:,iel]])
                 wq=np.dot(N_V,w[icon_V[:,iel]])
                 pq=np.dot(N_P,p[icon_P[:,iel]])
-                area[iel]+=JxWq
+                volume[iel]+=JxWq
             #end for
         #end for
     #end for
@@ -313,6 +322,9 @@ exxq=np.dot(dNdx_V,u[icon_V[:,iel]])
 eyyq=np.dot(dNdy_V,v[icon_V[:,iel]])
 exyq=np.dot(dNdx_V,v[icon_V[:,iel]])*0.5+\
      np.dot(dNdy_V,u[icon_V[:,iel]])*0.5
+            
+dTdxq=np.dot(dNdx_T,T[icon_T[:,iel]])
+dTdyq=np.dot(dNdy_T,T[icon_T[:,iel]])
 
 B=np.zeros((3,ndof_V*m_V),dtype=np.float64)  # gradient matrix 
 for i in range(0,m_V):
@@ -321,7 +333,7 @@ for i in range(0,m_V):
                       [dNdy_V[i],dNdx_V[i]]]
 
 
-B=np.zeros((6,ndofV*m_V),dtype=np.float64)  # gradient matrix B 
+B=np.zeros((6,ndof_V*m_V),dtype=np.float64)  # gradient matrix B 
 for i in range(0,m_V):
     B[0:6,3*i:3*i+3] = [[dNdx_V[i],0.       ,0.       ],
                         [0.       ,dNdy_V[i],0.       ],
@@ -389,9 +401,13 @@ C=np.zeros((6,6),dtype=np.float64)
 C[0,0]=2. ; C[1,1]=2. ; C[2,2]=2.
 C[3,3]=1. ; C[4,4]=1. ; C[5,5]=1.
 
-
 ##############################################################################r
 
+    vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
+    exy.tofile(vtufile,sep=' ',format='%.4e')
+    vtufile.write("</DataArray>\n")
+
+##############################################################################r
 
 ##################################################
 # check list
