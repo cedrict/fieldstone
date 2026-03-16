@@ -1,0 +1,87 @@
+set term pdf enhanced
+set log x
+
+set xlabel 'h'
+set ylabel 'q_{top}'
+
+set output 'q_1e4.pdf'
+plot[][]\
+'stone_1e4.ascii'  u (1/$1):4 w lp t 'stone 110',\
+'aspect_1e4.ascii' u (1/$1):4 w lp t 'aspect',\
+4.884409 lt -1 dt 2 t 'Blankenbach et al.'
+
+set output 'q_1e5.pdf'
+plot[][]\
+'stone_1e5.ascii' u (1/$1):4 w lp t 'stone 110',\
+'aspect_1e5.ascii' u (1/$1):4 w lp t 'aspect',\
+10.534095 lt -1 dt 2 t 'Blankenbach et al.'
+
+set output 'q_1e6.pdf'
+plot[][]\
+'stone_1e6.ascii' u (1/$1):4 w lp t 'stone 110',\
+'aspect_1e6.ascii' u (1/$1):4 w lp t 'aspect',\
+21.972465 lt -1 dt 2 t 'Blankenbach et al.'
+
+#####################################################
+set ylabel 'v_{rms}'
+
+set output 'vrms_1e4.pdf'
+plot[][]\
+'stone_1e4.ascii'  u (1/$1):2 w lp t 'stone 110',\
+'aspect_1e4.ascii' u (1/$1):($2/5) w lp t 'aspect',\
+42.864947 lt -1 dt 2 t 'Blankenbach et al.'
+
+set output 'vrms_1e5.pdf'
+plot[][]\
+'stone_1e5.ascii'  u (1/$1):2 w lp t 'stone 110',\
+'aspect_1e5.ascii' u (1/$1):($2/5) w lp t 'aspect',\
+193.21454 lt -1 dt 2 t 'Blankenbach et al.'
+
+set output 'vrms_1e6.pdf'
+plot[][]\
+'stone_1e6.ascii'  u (1/$1):2 w lp t 'stone 110',\
+'aspect_1e6.ascii' u (1/$1):($2/5) w lp t 'aspect',\
+833.98977 lt -1 dt 2 t 'Blankenbach et al.'
+
+#####################################################
+# convergence study
+#####################################################
+
+set log y
+
+vrms=42.864947 
+set output 'vrms_1e4_conv.pdf'
+plot[][]\
+'stone_1e4.ascii'  u (1/$1):(abs($2-vrms)) w lp t 'stone 110',\
+'aspect_1e4.ascii' u (1/$1):(abs($2/5-vrms)) w lp t 'aspect',\
+
+vrms=193.21454
+set output 'vrms_1e5_conv.pdf'
+plot[][]\
+'stone_1e5.ascii'  u (1/$1):(abs($2-vrms)) w lp t 'stone 110',\
+'aspect_1e5.ascii' u (1/$1):(abs($2/5-vrms)) w lp t 'aspect',\
+
+vrms=833.98977
+set output 'vrms_1e6_conv.pdf'
+plot[][]\
+'stone_1e6.ascii'  u (1/$1):(abs($2-vrms)) w lp t 'stone 110',\
+'aspect_1e6.ascii' u (1/$1):(abs($2/5-vrms)) w lp t 'aspect',\
+
+
+qy=4.884409
+set output 'q_1e4_conv.pdf'
+plot[][]\
+'stone_1e4.ascii'  u (1/$1):(abs($4-qy)) w lp t 'stone 110',\
+'aspect_1e4.ascii' u (1/$1):(abs($4-qy)) w lp t 'aspect',\
+
+qy=10.534095
+set output 'q_1e5_conv.pdf'
+plot[][]\
+'stone_1e5.ascii'  u (1/$1):(abs($4-qy)) w lp t 'stone 110',\
+'aspect_1e5.ascii' u (1/$1):(abs($4-qy)) w lp t 'aspect',\
+
+qy=21.972465 
+set output 'q_1e6_conv.pdf'
+plot[][]\
+'stone_1e6.ascii'  u (1/$1):(abs($4-qy)) w lp t 'stone 110',\
+'aspect_1e6.ascii' u (1/$1):(abs($4-qy)) w lp t 'aspect',\
