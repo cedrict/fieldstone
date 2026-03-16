@@ -30,8 +30,6 @@ Last revision: June 19th, 2025.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
 Our goal here is to introduce dilation in the governing equations.
 Dilation implies a change in volume, which conflicts with the assumption of incompressibility. 
 Nevertheless we find ourselves wanting to keep using the framework of incompressibility and 
@@ -52,7 +50,7 @@ where $\vec{\upnu}_d$ is a user-defined velocity field function that is in $C^2$
 We assume 2d Cartesian coordinates in $\Omega$, a domain of size $L_x \times L_y$. 
 
 %--------------------------------------
-\subsection*{A first simple approach}
+\section*{A first simple approach}
 
 For now, let us take $\vec{\upnu}_d=(u_d(x,y) ,0)$.
 The strain rate tensor is then given by 
@@ -127,10 +125,8 @@ We have to read this all as follows: There is a dilation term $\frac{\partial u_
 which is a function of the $x$-coordinate which in turn generates a horizontal flow $(u_d,0)$
 atop the Stokes solution $\vec\upnu^0$.
 
-{\color{red} Try later: keep $u_d(x,y)$, also $v_d$ ? }
-
 %-------------------------------------------
-\subsection*{A quick remark}
+\paragraph{A quick remark}
 
 One could think of choosing the dilation rate $du_d/dx$ to be constant in a band and 
 zero elsewhere. However, this poses a problem: the rhs of the momentum equation 
@@ -140,8 +136,15 @@ defined on the edges of the band.
 One could then prescribe the dilation rate on the nodes and use the basis functions derivatives
 to compute (an approximation of) the gradient of the dilation rate. This needs to be tested!
 
+
+
+
+
+
+
+\newpage
 %---------------------------------
-\subsection*{weak form}
+\section*{weak form}
 
 There is no real difficulty in establishing the weak form 
 of the mass and momentum conservation equations with the additional rhs terms. 
@@ -157,7 +160,7 @@ Both terms are already present in Aspect (plastic dilation term implemented by T
 In terms of implementation, we need to make sure that the matrix entering the $\K$ block is defined as 
 follows:
 \begin{lstlisting}
-c_mat = np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64) 
+C=np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64) 
 ...
 K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta*weightq*jcob
 \end{lstlisting}
@@ -206,18 +209,22 @@ def d2uddx2(x,y,Lx,Ly):
 \end{lstlisting}
 
 
+
+
+
+\newpage
 %--------------------------------------------------------------
-\subsection*{Simple case of a vertical cosine hill dilation zone (experiment \#1)}
+\section*{Simple case of a vertical cosine hill dilation zone (experiment \#1)}
 
 It feels more natural to postulate a dilation zone and then compute the corresponding velocity
 than the other way around, so we set
 \[
-\frac{d u_d}{d x} = \frac12 (1-\cos(\frac{2 \pi x}{L}))
+\frac{d u_d}{d x} = \frac12 \left(1-\cos(\frac{2 \pi x}{L}) \right)
 \]
 i.e., the dilation zone is strong in the middle of the domain and zero on the sides. 
 The dilation velocity $u_d(x)$ is then given by integration of the equation above
 \[
-u_d(x) = \frac12x - \frac{L}{4\pi  }\sin (\frac{2 \pi x}{L}) +C
+u_d(x) = \frac12x - \frac{L}{4\pi  }\sin \left(\frac{2 \pi x}{L} \right) +C
 \]
 where $C$ is the integration constant.
 Given the planar symmetry $u_d$ should be zero along the line $x=L_x/2$, so 
@@ -230,7 +237,7 @@ u_d(x) = \frac12 \left( x- \frac{L}{2} - \frac{L}{2\pi }\sin (\frac{2 \pi x}{L})
 \]
 Finally we will also need
 \[
-\frac{d^2 u_d}{d x^2} = \frac{\pi}{L}  \sin(\frac{2 \pi x}{L})
+\frac{d^2 u_d}{d x^2} = \frac{\pi}{L}  \sin \left(\frac{2 \pi x}{L} \right)
 \]
 The analytical expressions for $u_d$ and $du_d/dx$ are shown here:
 \begin{center}
@@ -245,16 +252,17 @@ The analytical expressions for $u_d$ and $du_d/dx$ are shown here:
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp1/duddx.png}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp1/ud.pdf}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp1/p.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp1/divv.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp1/duddx.pdf}\\
 {\captionfont Results obtained with the code for 2 different resolutions.}
 \end{center}
 
+\newpage
 %-----------------------------------------------------------------------------------
-\subsection*{Simple case of a vertical cosine hill dilation zone (experiment \#2)}
+\section*{Simple case of a vertical cosine hill dilation zone (experiment \#2)}
 
 We now start from a different dilation zone:
 \[
-\frac{d u_d}{d x} = \frac12 (1+\cos\frac{ \pi (x-L/2)}{\delta})
+\frac{d u_d}{d x} = \frac12 \left(1+\cos\frac{ \pi (x-L/2)}{\delta} \right)
 \]
 for $|x-Lx/2|<\delta$, zero otherwise.
 We then integrate to find
@@ -280,7 +288,7 @@ Finally we will need
 \]
 The analytical expressions for $u_d$ and $du_d/dx$ are shown here:
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp2/analytical.pdf}\\
+\includegraphics[width=9cm]{python_codes/fieldstone_175/results/exp2/analytical.pdf}\\
 {\captionfont dilation term and resulting velocity fields.}
 \end{center}
 
@@ -294,14 +302,18 @@ In the absence of dilation rate, the Stokes solution is then a zero velocity fie
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp2/duddx.png}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp2/ud.pdf}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp2/p.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp2/divv.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp2/duddx.pdf}\\
 {\captionfont Results obtained with the code for 2 different resolutions.}
 \end{center}
 
 
 \newpage
-%--------------------------------------
-\subsection*{A not so simple approach}
+%-----------------------------------------------------
+\section*{A not so simple approach - moving to 2d}
+
+{\color{red} I need to merge this section with the next one, they kinda both contain the 
+same info!!!}
+
 
 Let us now take $\vec{\upnu}_d=(u_d(x,y) , v_d(x,y))$.
 The strain rate tensor is then given by 
@@ -396,6 +408,135 @@ v_d(x,y)=?
 {\color{red} NOT FiNiSHED}
 
 
+%--------------------------------------
+\section*{A more complex case}
+
+Let us now assume/postulate $\vec{\upnu}_d=(u_d(x,y) , v_d(x,y))$.
+The strain rate tensor is then given by 
+\[
+\dot{\bm \varepsilon}(\vec\upnu)
+= \dot{\bm \varepsilon}(\vec\upnu^0)
++ \dot{\bm \varepsilon}(\vec\upnu_d)
+= 
+\dot{\bm \varepsilon}(\vec\upnu^0) + 
+\begin{pmatrix}
+\frac{\partial u_d}{\partial x} 
+& \frac12 \left(  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x} \right)  \\
+\frac12 \left(  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x} \right)  
+& \frac{\partial v_d}{\partial y}
+\end{pmatrix}
+\]
+Then 
+\[
+\vec\nabla \cdot \vec\upnu 
+= \text{Tr}[\dot{\bm \varepsilon}(\vec\upnu)]
+= \underbrace{\text{Tr}[\dot{\bm \varepsilon}(\vec\upnu^0)]}_{=0}
++ \text{Tr}[\dot{\bm \varepsilon}(\vec\upnu_d)]
+= \frac{\partial u_d}{\partial x} + \frac{\partial v_d}{\partial y}
+\]
+and it follows that\footnote{I here set $D=3$.}
+\[
+\dot{\bm \varepsilon}^d(\vec\upnu_d)
+=\dot{\bm \varepsilon}(\vec\upnu_d) - \frac{1}{3} Tr[\dot{\bm \varepsilon}(\vec\upnu_d)] {\bm 1}
+=\dot{\bm \varepsilon}(\vec\upnu_d) - \frac{1}{3} \left( \frac{\partial u_d}{\partial x} + \frac{\partial v_d}{\partial y} \right)  {\bm 1}
+=
+\begin{pmatrix}
+\frac23 \frac{\partial u_d}{\partial x} - \frac13 \frac{\partial v_d}{\partial y} 
+&  \frac12 \left(  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x} \right)  \\
+\frac12 \left(  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x} \right)  
+& -\frac13 \frac{\partial u_d}{\partial x} + \frac23 \frac{\partial v_d}{\partial y}
+\end{pmatrix}
+\]
+As above we start from
+\[
+\vec\nabla \cdot [2  \dot{\bm \varepsilon}^d(\vec\upnu_d)  ]  = \vec{f}_d
+\]
+or,
+\[
+(\partial_x \quad \partial_y) \cdot 
+2
+\begin{pmatrix}
+\frac23 \frac{\partial u_d}{\partial x} - \frac13 \frac{\partial v_d}{\partial y} 
+&  \frac12 \left(  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x} \right)  \\
+\frac12 \left(  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x} \right)  
+& -\frac13 \frac{\partial u_d}{\partial x} + \frac23 \frac{\partial v_d}{\partial y}
+\end{pmatrix}
+=(f_x \quad f_y)
+\]
+
+\[
+(\partial_x \quad \partial_y) \cdot 
+\begin{pmatrix}
+\frac43 \frac{\partial u_d}{\partial x} - \frac23 \frac{\partial v_d}{\partial y} 
+&  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x}   \\
+  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x} 
+& -\frac23 \frac{\partial u_d}{\partial x} + \frac43 \frac{\partial v_d}{\partial y}
+\end{pmatrix}
+=(f_x \quad f_y)
+\]
+
+\begin{eqnarray}
+\frac43 \frac{\partial^2 u_d}{\partial x^2} - \frac23 \frac{\partial^2 v_d}{\partial x \partial y} 
++ \frac{\partial^2 u_d}{\partial y^2} + \frac{\partial^2 v_d}{\partial x \partial y} &=& f_x 
+\nn\\
+\frac{\partial^2 u_d}{\partial x\partial y} + \frac{\partial^2 v_d}{\partial x^2}
+-\frac23 \frac{\partial^2 u_d}{\partial x \partial y} + \frac43 \frac{\partial^2 v_d}{\partial y^2} &=& f_y \nn
+ \end{eqnarray}
+
+\begin{eqnarray}
+\frac43 \frac{\partial^2 u_d}{\partial x^2} + \frac{\partial^2 u_d}{\partial y^2} 
++ \frac13 \frac{\partial^2 v_d}{\partial x \partial y}  &=& f_x 
+\nn\\
+\frac{\partial^2 v_d}{\partial x^2}
++ \frac43 \frac{\partial^2 v_d}{\partial y^2} 
++ \frac13\frac{\partial^2 u_d}{\partial x\partial y} 
+&=& f_y \nn
+ \end{eqnarray}
 
 
+\newpage
+%-----------------------------------------------------------------------------------
+\section*{Simple case of two orthogonal cosine hills dilation zone (experiment \#3)}
 
+We now further assume/postulate $\vec{\upnu}_d=(u_d(x) , v_d(y))$.
+and start from the dilation zone:
+\begin{eqnarray}
+\frac{d u_d}{d x} &=& \frac12 \left(1+\cos\frac{ \pi (x-L_x/2)}{\delta_x}\right) \qquad |x-L_x/2|<\delta_x \nn\\
+\frac{d v_d}{d y} &=& \frac12 \left(1+\cos\frac{ \pi (y-L_y/2)}{\delta_y}\right) \qquad |y-L_y/2|<\delta_y \nn\\
+\end{eqnarray}
+and zero otherwise.
+We then integrate to find (with the integration constant being $-L/4$ as in the 1d case)
+\begin{eqnarray}
+u_d(x) &=& \frac12 \left[ x-L_x/2 + \frac{\delta_x }{\pi  }\sin  \frac{ \pi (x-L_x/2)}{\delta_x} \right] \nn\\
+v_d(x) &=& \frac12 \left[ y-L_y/2 + \frac{\delta_y }{\pi  }\sin  \frac{ \pi (y-L_y/2)}{\delta_y} \right] \nn
+\end{eqnarray}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp3/u.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp3/v.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp3/vel.png}\\
+\includegraphics[width=9cm]{python_codes/fieldstone_175/results/exp3/vel2.png}\\
+{\captionfont Analytical $\vec{\upnu}_d$ - I need to produce better figs, not sure which 
+dilation bands thickness I have used here.}
+\end{center}
+
+Finally we will need
+
+\begin{eqnarray}
+\frac{d^2 u_d}{d x^2} &=& -\frac{\pi}{2\delta_x}  \sin \frac{ \pi (x-L_x/2)}{\delta_x} \nn\\
+\frac{d^2 u_d}{d x dy} &=& 0 \nn\\ 
+\frac{d^2 u_d}{dy^2} &=& 0 \nn\\ 
+\frac{d^2 v_d}{d y^2} &=& -\frac{\pi}{2\delta_y}  \sin \frac{ \pi (y-L_y/2)}{\delta_y} \nn\\
+\frac{d^2 v_d}{d x dy} &=& 0 \nn\\ 
+\frac{d^2 v_d}{dx^2} &=& 0 \nn
+\end{eqnarray}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp3/ud.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp3/vd.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp3/duddx.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp3/dvddy.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp3/p.pdf}\\
+{\captionfont pressure should be normalised. will do so asap.}
+\end{center}
