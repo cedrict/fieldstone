@@ -1,0 +1,73 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set pointsize .3
+Lx=2.
+Ly=1.
+delta_x=Lx/8
+delta_y=Ly/12
+
+#u_d
+f(x) = x<Lx/2-delta_x ? -delta_x/2 : x<Lx/2+delta_x ? 0.5*( x-Lx/2 + delta_x/pi * sin  (pi*(x-Lx/2)/delta_x) ) : delta_x/2
+
+#v_d
+h(x) = x<Ly/2-delta_y ? -delta_y/2 : x<Ly/2+delta_y ? 0.5*( x-Ly/2 + delta_y/pi * sin  (pi*(x-Ly/2)/delta_y) ) : delta_y/2
+
+#dudx
+g(x) =x<Lx/2-delta_x ? 0  : x<Lx/2+delta_x ?  0.5*(1+cos( pi*(x-Lx/2)/delta_x ))  : 0
+
+#dvdy
+k(x) =x<Ly/2-delta_y ? 0  : x<Ly/2+delta_y ?  0.5*(1+cos( pi*(x-Ly/2)/delta_y ))  : 0
+
+################################################################
+
+set xlabel 'x'
+set ylabel 'u_d'
+set output 'ud.pdf'
+plot[][]\
+'solution_32x16.ascii'  u 1:3 t '32x16',\
+'solution_64x32.ascii'  u 1:3 t '64x32',\
+'solution_96x48.ascii'  u 1:3 t '96x48',\
+f(x) lt -1 lw .5 dt 2 t 'analytical'
+
+set xlabel 'y'
+set ylabel 'v_d'
+set output 'vd.pdf'
+plot[][]\
+'solution_32x16.ascii'  u 2:4 t '32x16',\
+'solution_64x32.ascii'  u 2:4 t '64x32',\
+'solution_96x48.ascii'  u 2:4 t '96x48',\
+h(x) lt -1 lw .5 dt 2 t 'analytical'
+
+######################################################
+
+set xlabel 'x'
+set ylabel 'p'
+set output 'p.pdf'
+plot[][]\
+'solution_e_32x16.ascii' u 1:3 t '32x16',\
+'solution_e_64x32.ascii' u 1:3 t '64x32',\
+'solution_e_96x48.ascii' u 1:3 t '96x48',\
+0 lt -1 t 'analytical' 
+
+######################################################
+
+set xlabel 'x'
+set ylabel 'du_d/dx'
+set output 'duddx.pdf'
+plot[][]\
+'solution_e_32x16.ascii' u 1:4 t '32x16',\
+'solution_e_64x32.ascii' u 1:4 t '64x32',\
+'solution_e_96x48.ascii' u 1:4 t '96x48',\
+g(x) lt -1  t 'du_d/dx'
+
+set xlabel 'y'
+set ylabel 'dv_d/dy'
+set output 'dvddy.pdf'
+plot[][]\
+'solution_e_32x16.ascii' u 2:5 t '32x16',\
+'solution_e_64x32.ascii' u 2:5 t '64x32',\
+'solution_e_96x48.ascii' u 2:5 t '96x48',\
+k(x) lt -1  t 'dv_d/dy'
+
