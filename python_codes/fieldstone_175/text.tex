@@ -309,107 +309,7 @@ In the absence of dilation rate, the Stokes solution is then a zero velocity fie
 
 \newpage
 %-----------------------------------------------------
-\section*{A not so simple approach - moving to 2d}
-
-{\color{red} I need to merge this section with the next one, they kinda both contain the 
-same info!!!}
-
-
-Let us now take $\vec{\upnu}_d=(u_d(x,y) , v_d(x,y))$.
-The strain rate tensor is then given by 
-\[
-\dot{\bm \varepsilon}(\vec\upnu)
-= \dot{\bm \varepsilon}(\vec\upnu^0) + \dot{\bm \varepsilon}(\vec\upnu_d)
-= \dot{\bm \varepsilon}(\vec\upnu^0) 
-+ 
-\begin{pmatrix}
-\frac{\partial u_d}{\partial x} & \frac12 (\frac{\partial u_d}{\partial y}+ \frac{\partial v_d}{\partial x})  \\
-\frac12 (\frac{\partial u_d}{\partial y}+ \frac{\partial v_d}{\partial x})  & \frac{\partial v_d}{\partial y}
-\end{pmatrix}
-\]
-Then 
-\[
-\vec\nabla \cdot \vec\upnu 
-= \text{Tr}[\dot{\bm \varepsilon}(\vec\upnu)]
-= \underbrace{\text{Tr}[\dot{\bm \varepsilon}(\vec\upnu^0)]}_{=0}
-+ \text{Tr}[\dot{\bm \varepsilon}(\vec\upnu_d)]
-= \frac{\partial u_d}{\partial x} + \frac{\partial v_d}{\partial y}
-\]
-This completes the search of the right hand side of the mass conservation equation.
-
-We continue with the corresponding deviatoric strain rate tensor 
-\begin{eqnarray}
-\dot{\bm \varepsilon}^d(\vec\upnu_d)
-&=&\dot{\bm \varepsilon}(\vec\upnu_d) - \frac{1}{D} Tr[\dot{\bm \varepsilon}(\vec\upnu_d)] {\bm 1} \nn\\
-&=&\dot{\bm \varepsilon}(\vec\upnu_d) - \frac{1}{D} (\frac{\partial u_d}{\partial x} + \frac{\partial v_d}{\partial y}) {\bm 1} \nn\\
-&=&
-\begin{pmatrix}
-\frac{\partial u_d}{\partial x}- \frac{1}{D} (\frac{\partial u_d}{\partial x} + \frac{\partial v_d}{\partial y})
-& \frac12 (\frac{\partial u_d}{\partial y}+ \frac{\partial v_d}{\partial x})  \\
-\frac12 (\frac{\partial u_d}{\partial y}+ \frac{\partial v_d}{\partial x})  
-& \frac{\partial v_d}{\partial y} - \frac{1}{D} (\frac{\partial u_d}{\partial x} + \frac{\partial v_d}{\partial y})
-\end{pmatrix} \nn\\
-&=& 
-\begin{pmatrix}
-(1-\frac{1}{D}) \frac{\partial u_d}{\partial x}- \frac{1}{D} \frac{\partial v_d}{\partial y}
-& \frac12 (\frac{\partial u_d}{\partial y}+ \frac{\partial v_d}{\partial x})  \\
-\frac12 (\frac{\partial u_d}{\partial y}+ \frac{\partial v_d}{\partial x})  
-& -\frac{1}{D} \frac{\partial u_d}{\partial x} + (1- \frac{1}{D})  \frac{\partial v_d}{\partial y} 
-\end{pmatrix} \nn
-\end{eqnarray}
-
-We set again $\eta=1$ to simplify the equations. We then have 
-
-\[
-\vec{f}_d = \vec\nabla \cdot [2  \dot{\bm \varepsilon}^d(\vec\upnu_d)  ]  
-\]
-
-\[
-(\partial_x \quad \partial_y) \cdot 2  
-\begin{pmatrix}
-(1-\frac{1}{D}) \frac{\partial u_d}{\partial x}- \frac{1}{D} \frac{\partial v_d}{\partial y}
-& \frac12 (\frac{\partial u_d}{\partial y}+ \frac{\partial v_d}{\partial x})  \\
-\frac12 (\frac{\partial u_d}{\partial y}+ \frac{\partial v_d}{\partial x})  
-& -\frac{1}{D} \frac{\partial u_d}{\partial x} + (1- \frac{1}{D})  \frac{\partial v_d}{\partial y} 
-\end{pmatrix} 
-=(f_x \quad f_y)
-\]
-or, 
-\begin{eqnarray}
-\frac12 f_x(x,y) &=&  (1-\frac{1}{D}) \frac{\partial^2 u_d}{\partial x^2}- \frac{1}{D} \frac{\partial^2 v_d}{\partial x\partial y} 
-+ \frac12 (\frac{\partial^2 u_d}{\partial y^2}+ \frac{\partial^2 v_d}{\partial x \partial y}) \nn\\
-\frac12 f_y(x,y) &=& \frac12 (\frac{\partial^2 u_d}{\partial x \partial y}+ \frac{\partial^2 v_d}{\partial x^2})
- -\frac{1}{D} \frac{\partial^2 u_d}{\partial x \partial y} + (1- \frac{1}{D})  \frac{\partial^2 v_d}{\partial y^2} 
-\end{eqnarray}
-and finally
-
-\begin{eqnarray}
-f_x(x,y) &=&  (2-\frac{2}{D}) \frac{\partial^2 u_d}{\partial x^2}
-+  \frac{\partial^2 u_d}{\partial y^2}
-+ (1 - \frac{2}{D}) \frac{\partial^2 v_d}{\partial x\partial y}  \nn\\
-f_y(x,y) &=& (1 - \frac{2}{D}) \frac{\partial^2 u_d}{\partial x\partial y} 
-+ \frac{\partial^2 v_d}{\partial x^2} + (2-\frac{2}{D}) \frac{\partial^2 v_d}{\partial y^2}
-\end{eqnarray}
-
-We can verify that these expressions are identical to Eq.~\eqref{f175:fxfy} when $v_d=0$.
-
-In order to build a concrete case the difficulty lies in the fact that we must now 
-choose $u_d(x,y)$ and $v_d(x,y)$.
-Let us now postulate 
-
-\[
-u_d(x,y) = \frac12 \left[ x-L/2 + \frac{\delta }{\pi  }\sin  \frac{ \pi (x-L/2)}{\delta} \right]
-\sin \frac{\pi y}{L_y}
-\]
-\[
-v_d(x,y)=?
-\]
-
-{\color{red} NOT FiNiSHED}
-
-
-%--------------------------------------
-\section*{A more complex case}
+\section*{A more complex case -moving to 2d}
 
 Let us now assume/postulate $\vec{\upnu}_d=(u_d(x,y) , v_d(x,y))$.
 The strain rate tensor is then given by 
@@ -493,19 +393,22 @@ or,
 &=& f_y \nn
  \end{eqnarray}
 
+We can verify that these expressions are identical to Eq.~\eqref{f175:fxfy} when $v_d=0$.
 
 \newpage
 %-----------------------------------------------------------------------------------
 \section*{Simple case of two orthogonal cosine hills dilation zone (experiment \#3)}
 
-We now further assume/postulate $\vec{\upnu}_d=(u_d(x) , v_d(y))$.
+We now further assume/postulate $\vec{\upnu}_d=(u_d(x) , v_d(y))$
 and start from the dilation zone:
 \begin{eqnarray}
 \frac{d u_d}{d x} &=& \frac12 \left(1+\cos\frac{ \pi (x-L_x/2)}{\delta_x}\right) \qquad |x-L_x/2|<\delta_x \nn\\
-\frac{d v_d}{d y} &=& \frac12 \left(1+\cos\frac{ \pi (y-L_y/2)}{\delta_y}\right) \qquad |y-L_y/2|<\delta_y \nn\\
+\frac{d v_d}{d y} &=& \frac12 \left(1+\cos\frac{ \pi (y-L_y/2)}{\delta_y}\right) \qquad |y-L_y/2|<\delta_y \nn 
 \end{eqnarray}
 and zero otherwise.
-We then integrate to find (with the integration constant being $-L/4$ as in the 1d case)
+We then integrate to find (with the integration constant being $-L/4$ as in the 1d case, 
+stemmimg from the necessity of the velocity field to be continuous inside and 
+outside of the zones)
 \begin{eqnarray}
 u_d(x) &=& \frac12 \left[ x-L_x/2 + \frac{\delta_x }{\pi  }\sin  \frac{ \pi (x-L_x/2)}{\delta_x} \right] \nn\\
 v_d(x) &=& \frac12 \left[ y-L_y/2 + \frac{\delta_y }{\pi  }\sin  \frac{ \pi (y-L_y/2)}{\delta_y} \right] \nn
@@ -515,9 +418,8 @@ v_d(x) &=& \frac12 \left[ y-L_y/2 + \frac{\delta_y }{\pi  }\sin  \frac{ \pi (y-L
 \includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp3/u.png}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp3/v.png}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp3/vel.png}\\
-\includegraphics[width=9cm]{python_codes/fieldstone_175/results/exp3/vel2.png}\\
-{\captionfont Analytical $\vec{\upnu}_d$ - I need to produce better figs, not sure which 
-dilation bands thickness I have used here.}
+\includegraphics[width=10cm]{python_codes/fieldstone_175/results/exp3/vel2.png}\\
+{\captionfont Analytical $\vec{\upnu}_d$.}
 \end{center}
 
 Finally we will need
@@ -531,6 +433,11 @@ Finally we will need
 \frac{d^2 v_d}{dx^2} &=& 0 \nn
 \end{eqnarray}
 
+Given the nature of the solution (normal stress is not zero on the boundary)
+we cannot not prescribe the velocity on the boundary. In this case we 
+then prescribe the analytical velocity $u_d,v_d$ on all sides of the domain.
+And since this in turn leads to a pressure nullspace, it is removed by 
+requiring that the pressure fulfills the condition $\int_\Omega p dV =0$.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp3/ud.pdf}
@@ -538,5 +445,16 @@ Finally we will need
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp3/duddx.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp3/dvddy.pdf}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp3/p.pdf}\\
-{\captionfont pressure should be normalised. will do so asap.}
+{\captionfont pressure, Velocity and dilation terms for different resolutions.}
 \end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp3/vel_error.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp3/divv.png} \\
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp3/duddx.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp3/dvddy.png}
+\end{center}
+
+In the end this experiment is not truly 2d: it is made of 2 1d experiments 
+added to one another, one in the $x$ direction, one in the $y$ direction.
+

@@ -305,7 +305,6 @@ bc_fix_V=np.zeros(Nfem_V,dtype=bool)       # boundary condition, yes/no
 bc_val_V=np.zeros(Nfem_V,dtype=np.float64) # boundary condition, value
 
 if experiment==1 or experiment==2:
-
    for i in range(0,nn_V):
        if abs(y_V[i]-Ly)/Ly<eps:
           bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = 0
@@ -316,15 +315,7 @@ if experiment==1 or experiment==2:
              bc_fix_V[i*ndof_V] = True ; bc_val_V[i*ndof_V] = 0 
 
 if experiment==3:
-   # there are two translational nullspaces, x and y directions
-
    for i in range(0,nn_V):
-       #if abs(y_V[i])/Ly<eps and abs(x_V[i]-Lx/2)<eps:
-       #   bc_fix_V[i*ndof_V] = True ; bc_val_V[i*ndof_V] = 0 
-       #if abs(x_V[i])/Lx<eps and abs(y_V[i]-Ly/2)<eps:
-       #   bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = 0 
-
-
        if abs(x_V[i])/Lx<eps or abs(x_V[i]-Lx)/Lx<eps or \
           abs(y_V[i])/Ly<eps or abs(y_V[i]-Ly)/Ly<eps :
           bc_fix_V[i*ndof_V+0] = True ; bc_val_V[i*ndof_V+0] = ud(x_V[i],y_V[i],Lx,Ly)
@@ -465,6 +456,34 @@ print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 np.savetxt('solution.ascii',np.array([x_V,y_V,u,v]).T)
 
 print("solve system: %.3f s - Nfem %d" % (clock.time()-start,Nfem))
+
+###############################################################################
+# normalise pressure
+###############################################################################
+
+if experiment==3:
+
+   avrg_p=0.
+   for iel in range(0,nel):
+       for iq in range(0,nq_per_dim):
+           for jq in range(0,nq_per_dim):
+               rq=qcoords[iq]
+               sq=qcoords[jq]
+               weightq=qweights[iq]*qweights[jq]
+               N_P=basis_functions_P(rq,sq)
+               dNdr_V=basis_functions_V_dr(rq,sq)
+               dNds_V=basis_functions_V_ds(rq,sq)
+               jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
+               jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
+               jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
+               jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
+               JxWq=np.linalg.det(jcb)*weightq
+               pq=np.dot(N_P,p[icon_P[:,iel]])
+               avrg_p+=pq*JxWq 
+  
+   p-=avrg_p/(Lx*Ly)
+
+   print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
 ###############################################################################
 # interpolate pressure onto velocity grid points (for plotting)
@@ -634,9 +653,14 @@ for i in range(0,nn_V):
     vtufile.write("%e %e %e \n" %(u[i],v[i],0.))
 vtufile.write("</DataArray>\n")
 #--
-vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='vel_d' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='analytical' Format='ascii'> \n")
 for i in range(0,nn_V):
     vtufile.write("%e %e %e \n" %(ud(x_V[i],y_V[i],Lx,Ly),vd(x_V[i],y_V[i],Lx,Ly),0.))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity-analytical' Format='ascii'> \n")
+for i in range(0,nn_V):
+    vtufile.write("%e %e %e \n" %(u[i]-ud(x_V[i],y_V[i],Lx,Ly),v[i]-vd(x_V[i],y_V[i],Lx,Ly),0.))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='dud_dx' Format='ascii'> \n")

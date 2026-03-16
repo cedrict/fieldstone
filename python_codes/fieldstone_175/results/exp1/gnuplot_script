@@ -20,20 +20,20 @@ set output 'ud.pdf'
 plot[][]\
 'solution_32x16.ascii' u 1:3 t '32x16',\
 'solution_64x32.ascii' u 1:3 t '64x32',\
-f(x) lt -1 t 'analytical'
+f(x) lt -1 lw .5 dt 2 t 'analytical'
 
 set ylabel 'p'
 set output 'p.pdf'
 plot[][]\
-'solution_c_32x16.ascii' u 1:3 t '32x16',\
-'solution_c_64x32.ascii' u 1:3 t '64x32',\
+'solution_e_32x16.ascii' u 1:3 t '32x16',\
+'solution_e_64x32.ascii' u 1:3 t '64x32',\
 0 lt -1 t 'analytical' 
 
-set ylabel 'div(v)'
-set output 'divv.pdf'
+set ylabel 'du_d/dx'
+set output 'duddx.pdf'
 plot[][]\
-'solution_c_32x16.ascii' u 1:4 t '32x16',\
-'solution_c_64x32.ascii' u 1:4 t '64x32',\
+'solution_e_32x16.ascii' u 1:4 t '32x16',\
+'solution_e_64x32.ascii' u 1:4 t '64x32',\
 g(x) lt -1  t 'du_d/dx'
 
 unset ylabel
