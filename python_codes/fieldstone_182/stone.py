@@ -282,8 +282,8 @@ print("deform grid: %.3f s" % (clock.time()-start))
 ###############################################################################
 start=clock.time()
 
-xc=np.zeros(nel,dtype=np.float64)  
-yc=np.zeros(nel,dtype=np.float64)  
+x_e=np.zeros(nel,dtype=np.float64)  
+y_e=np.zeros(nel,dtype=np.float64)  
 rho=np.zeros(nel,dtype=np.float64)  
 eta=np.zeros(nel,dtype=np.float64)  
 
@@ -291,10 +291,10 @@ for iel in range(0,nel):
     r=0
     s=0
     N_V=basis_functions_V(r,s)
-    xc[iel]=np.dot(N_V,x_V[icon_V[:,iel]])
-    yc[iel]=np.dot(N_V,y_V[icon_V[:,iel]])
-    rho[iel]=density(xc[iel],yc[iel])
-    eta[iel]=viscosity(xc[iel],yc[iel],eta1,eta2)
+    x_e[iel]=np.dot(N_V,x_V[icon_V[:,iel]])
+    y_e[iel]=np.dot(N_V,y_V[icon_V[:,iel]])
+    rho[iel]=density(x_e[iel],y_e[iel])
+    eta[iel]=viscosity(x_e[iel],y_e[iel],eta1,eta2)
 
 print("compute elemental rho,eta: %.3f s" % (clock.time()-start))
 
@@ -336,14 +336,12 @@ for iel in range(0,nel):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
-            N_V=basis_functions_V(rq,sq)
             dNdr_V=basis_functions_V_dr(rq,sq)
             dNds_V=basis_functions_V_ds(rq,sq)
             jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
             jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
             jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
             jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
-            jcbi=np.linalg.inv(jcb)
             JxWq=np.linalg.det(jcb)*weightq
             area[iel]+=JxWq
         #end for
@@ -641,9 +639,9 @@ print("     -> exx (m,M) %.5e %.5e " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.5e %.5e " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.5e %.5e " %(np.min(exy),np.max(exy)))
 
-if debug: np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+if debug: np.savetxt('strainrate.ascii',np.array([x_e,y_e,exx,eyy,exy]).T,header='# x,y,exx,eyy,exy')
 
-print("compute press & sr: %.3f s" % (clock.time() - start))
+print("compute strainrate: %.3f s" % (clock.time() - start))
 
 ###############################################################################
 # interpolate pressure onto velocity grid points
