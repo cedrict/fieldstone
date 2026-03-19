@@ -5,6 +5,10 @@ import scipy.sparse as sps
 from scipy.sparse import csr_matrix,lil_matrix
 
 ###############################################################################
+# 1) smooth zone 1d
+# 2) narrow zone 1d
+# 3) two narrow zones 2d
+# 4) rotated zone 2d
 
 experiment=3
 
@@ -14,12 +18,20 @@ def gx(x,y):
     return 0
 
 def gy(x,y):
-    return 0 #-1
+    return 0
 
 ###############################################################################
+       
+theta=np.pi/6
+w3x=8.
+w3y=12.
+w4=12.
 
 def ud(x,y,Lx,Ly):
-    if experiment==1: return 0.5*(x-Lx/2 -Lx/2/np.pi*np.sin(2*np.pi*x/Lx) )
+    #----------------
+    if experiment==1: 
+       return 0.5*(x-Lx/2 -Lx/2/np.pi*np.sin(2*np.pi*x/Lx) )
+    #----------------
     if experiment==2:
        delta=Lx/8
        if x<=Lx/2-delta: 
@@ -28,42 +40,80 @@ def ud(x,y,Lx,Ly):
           return 0.5*(x-Lx/2+delta/np.pi*np.sin(np.pi*(x-Lx/2)/delta))
        else: 
           return delta/2
+    #----------------
     if experiment==3: 
-       delta=Lx/8
+       delta=Lx/w3x
        if x<=Lx/2-delta: 
           return -delta/2
        elif x<=Lx/2+delta:
           return 0.5*(x-Lx/2+delta/np.pi*np.sin(np.pi*(x-Lx/2)/delta))
        else: 
           return delta/2
+    #----------------
+    if experiment==4: 
+       delta4=Lx/w4
+       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
+       if xp<=Lx/2-delta4: 
+          return -delta4/2*np.cos(theta)
+       elif xp<=Lx/2+delta4:
+          return 0.5*(xp-Lx/2+delta4/np.pi*np.sin(np.pi*(xp-Lx/2)/delta4))*np.cos(theta)
+       else: 
+          return delta4/2*np.cos(theta)
+
 
 def dud_dx(x,y,Lx,Ly):
-    if experiment==1: return (1-np.cos(2*np.pi*x/Lx))/2
+    #----------------
+    if experiment==1: 
+       return (1-np.cos(2*np.pi*x/Lx))/2
+    #----------------
     if experiment==2:
        delta=Lx/8
        if abs(x-Lx/2)<=delta: 
           return 0.5*(1+np.cos(np.pi*(x-Lx/2)/delta))
        else:
           return 0
+    #----------------
     if experiment==3:
-       delta=Lx/8
+       delta=Lx/w3x
        if abs(x-Lx/2)<=delta: 
           return 0.5*(1+np.cos(np.pi*(x-Lx/2)/delta))
+       else:
+          return 0
+    #----------------
+    if experiment==4: 
+       delta4=Lx/w4
+       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
+       if abs(xp-Lx/2)<=delta4: 
+          return 0.5*(1+np.cos(np.pi*(xp-Lx/2)/delta4))*np.cos(theta)*np.cos(theta)
        else:
           return 0
 
+
+
 def d2ud_dx2(x,y,Lx,Ly):
-    if experiment==1: return np.pi/Lx*np.sin(2*np.pi*x/Lx)
+    #----------------
+    if experiment==1: 
+       return np.pi/Lx*np.sin(2*np.pi*x/Lx)
+    #----------------
     if experiment==2:
        delta=Lx/8
        if abs(x-Lx/2)<=delta: 
           return -0.5*np.pi/delta*np.sin(np.pi*(x-Lx/2)/delta)
        else:
           return 0
+    #----------------
     if experiment==3:
-       delta=Lx/8
+       delta=Lx/w3x
        if abs(x-Lx/2)<=delta: 
           return -0.5*np.pi/delta*np.sin(np.pi*(x-Lx/2)/delta)
+       else:
+          return 0
+    #----------------
+    if experiment==4: 
+       delta4=Lx/w4
+       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
+       if abs(xp-Lx/2)<=delta4: 
+          return -0.5*np.pi/delta4*np.sin(np.pi*(xp-Lx/2)/delta4)*np.cos(theta)*np.cos(theta)*np.cos(theta)
        else:
           return 0
 
@@ -71,43 +121,101 @@ def d2ud_dy2(x,y,Lx,Ly):
     if experiment==1: return 0
     if experiment==2: return 0
     if experiment==3: return 0
+    if experiment==4: 
+       delta4=Lx/w4
+       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
+       if abs(xp-Lx/2)<=delta4: 
+          return -0.5*np.pi/delta4*np.sin(np.pi*(xp-Lx/2)/delta4)*np.sin(theta)*np.sin(theta)*np.cos(theta)
+       else:
+          return 0
+
 
 def d2ud_dxdy(x,y,Lx,Ly):
     if experiment==1: return 0
     if experiment==2: return 0
     if experiment==3: return 0
+    if experiment==4: 
+       delta4=Lx/w4
+       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
+       if abs(xp-Lx/2)<=delta4: 
+          return -0.5*np.pi/delta4*np.sin(np.pi*(xp-Lx/2)/delta4)*np.sin(theta)*np.cos(theta)*np.cos(theta)
+       else:
+          return 0
 
 ###############################################################################
 
 def vd(x,y,Lx,Ly):
-    if experiment==1: return 0
-    if experiment==2: return 0
+    #----------------
+    if experiment==1: 
+       return 0
+    #----------------
+    if experiment==2: 
+       return 0
+    #----------------
     if experiment==3: 
-       delta=Ly/12
+       delta=Ly/w3y
        if y<=Ly/2-delta: 
           return -delta/2
        elif y<=Ly/2+delta:
           return 0.5*(y-Ly/2+delta/np.pi*np.sin(np.pi*(y-Ly/2)/delta))
        else: 
           return delta/2
+    #----------------
+    if experiment==4: 
+       delta4=Lx/w4
+       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
+       if xp<=Lx/2-delta4: 
+          return -delta4/2*np.sin(theta)
+       elif xp<=Lx/2+delta4:
+          return 0.5*(xp-Lx/2+delta4/np.pi*np.sin(np.pi*(xp-Lx/2)/delta4))*np.sin(theta)
+       else: 
+          return delta4/2*np.sin(theta)
+
+          
 
 def dvd_dy(x,y,Lx,Ly):
-    if experiment==1: return 0
-    if experiment==2: return 0
+    #----------------
+    if experiment==1: 
+       return 0
+    #----------------
+    if experiment==2: 
+       return 0
+    #----------------
     if experiment==3:
-       delta=Ly/12
+       delta=Ly/w3y
        if abs(y-Ly/2)<=delta: 
           return 0.5*(1+np.cos(np.pi*(y-Ly/2)/delta))
        else:
           return 0
+    #----------------
+    if experiment==4: 
+       delta4=Lx/w4
+       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
+       if abs(xp-Lx/2)<=delta4: 
+          return 0.5*(1+np.cos(np.pi*(xp-Lx/2)/delta4))*np.sin(theta)*np.sin(theta)
+       else:
+          return 0
 
 def d2vd_dy2(x,y,Lx,Ly):
-    if experiment==1: return 0
-    if experiment==2: return 0
+    #----------------
+    if experiment==1: 
+       return 0
+    #----------------
+    if experiment==2: 
+       return 0
+    #----------------
     if experiment==3:
-       delta=Ly/12
+       delta=Ly/w3y
        if abs(y-Ly/2)<=delta: 
           return -0.5*np.pi/delta*np.sin(np.pi*(y-Ly/2)/delta)
+       else:
+          return 0
+    #----------------
+    if experiment==4: 
+       delta4=Lx/w4
+       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
+       if abs(xp-Lx/2)<=delta4: 
+          return -0.5*np.pi/delta4*np.sin(np.pi*(xp-Lx/2)/delta4)*np.sin(theta)*np.sin(theta)*np.sin(theta)
        else:
           return 0
 
@@ -115,11 +223,25 @@ def d2vd_dx2(x,y,Lx,Ly):
     if experiment==1: return 0
     if experiment==2: return 0
     if experiment==3: return 0
+    if experiment==4: 
+       delta4=Lx/w4
+       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
+       if abs(xp-Lx/2)<=delta4: 
+          return -0.5*np.pi/delta4*np.sin(np.pi*(xp-Lx/2)/delta4)*np.cos(theta)*np.cos(theta)*np.sin(theta)
+       else:
+          return 0
 
 def d2vd_dxdy(x,y,Lx,Ly):
     if experiment==1: return 0
     if experiment==2: return 0
     if experiment==3: return 0
+    if experiment==4: 
+       delta4=Lx/w4
+       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
+       if abs(xp-Lx/2)<=delta4: 
+          return -0.5*np.pi/delta4*np.sin(np.pi*(xp-Lx/2)/delta4)*np.sin(theta)*np.cos(theta)*np.sin(theta)
+       else:
+          return 0
 
 ###############################################################################
 
@@ -190,7 +312,11 @@ m_V=9     # number of velocity nodes making up an element
 m_P=4     # number of pressure nodes making up an element
 ndof_V=2  # number of velocity degrees of freedom per node
 
-nelx=96
+if int(len(sys.argv) == 2): 
+   nelx = int(sys.argv[1])
+else:
+   nelx=32
+
 nely=int(nelx/2)
 
 Lx=2.
@@ -198,8 +324,6 @@ Ly=1.
 
 eta=1.
 rho=1.
-
-debug=False
 
 ###############################################################################
 
@@ -223,6 +347,26 @@ nq_per_dim=3
 nq_per_el=9
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
+
+nq_per_dim=4
+nq_per_el=16
+qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
+qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
+qw4a=(18-np.sqrt(30.))/36.
+qw4b=(18+np.sqrt(30.))/36.
+qcoords=[-qc4a,-qc4b,qc4b,qc4a]
+qweights=[qw4a,qw4b,qw4b,qw4a]
+
+#nq_per_dim=5
+#nq_per_el=25
+#qc5a=np.sqrt(5.+2.*np.sqrt(10./7.))/3.
+#qc5b=np.sqrt(5.-2.*np.sqrt(10./7.))/3.
+#qc5c=0.
+#qw5a=(322.-13.*np.sqrt(70.))/900.
+#qw5b=(322.+13.*np.sqrt(70.))/900.
+#qw5c=128./225.
+#qcoords=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
+#qweights=[qw5a,qw5b,qw5c,qw5b,qw5a]
 
 ###############################################################################
 
@@ -314,14 +458,52 @@ if experiment==1 or experiment==2:
           if abs(x_V[i]-Lx/2)<eps:
              bc_fix_V[i*ndof_V] = True ; bc_val_V[i*ndof_V] = 0 
 
-if experiment==3:
+if experiment==3 or experiment==4:
    for i in range(0,nn_V):
        if abs(x_V[i])/Lx<eps or abs(x_V[i]-Lx)/Lx<eps or \
           abs(y_V[i])/Ly<eps or abs(y_V[i]-Ly)/Ly<eps :
+       #if abs(y_V[i])/Ly<eps or abs(y_V[i]-Ly)/Ly<eps :
           bc_fix_V[i*ndof_V+0] = True ; bc_val_V[i*ndof_V+0] = ud(x_V[i],y_V[i],Lx,Ly)
           bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = vd(x_V[i],y_V[i],Lx,Ly)
 
-print("setup: boundary conditions: %.3f s" % (clock.time() - start))
+print("setup: boundary conditions: %.3f s" % (clock.time()-start))
+
+###############################################################################
+# grid point setup
+###############################################################################
+start=clock.time()
+
+u_th=np.zeros(nn_V,dtype=np.float64) 
+v_th=np.zeros(nn_V,dtype=np.float64) 
+dudx_th=np.zeros(nn_V,dtype=np.float64) 
+dvdy_th=np.zeros(nn_V,dtype=np.float64) 
+d2udx2_th=np.zeros(nn_V,dtype=np.float64) 
+d2udy2_th=np.zeros(nn_V,dtype=np.float64) 
+d2udxy_th=np.zeros(nn_V,dtype=np.float64) 
+d2vdx2_th=np.zeros(nn_V,dtype=np.float64) 
+d2vdy2_th=np.zeros(nn_V,dtype=np.float64) 
+d2vdxy_th=np.zeros(nn_V,dtype=np.float64) 
+fx_th=np.zeros(nn_V,dtype=np.float64) 
+fy_th=np.zeros(nn_V,dtype=np.float64) 
+
+for i in range(0,nn_V):
+    u_th[i]=ud(x_V[i],y_V[i],Lx,Ly)
+    v_th[i]=vd(x_V[i],y_V[i],Lx,Ly)
+    dudx_th[i]=dud_dx(x_V[i],y_V[i],Lx,Ly)
+    dvdy_th[i]=dvd_dy(x_V[i],y_V[i],Lx,Ly)
+    d2udx2_th[i]=d2ud_dx2(x_V[i],y_V[i],Lx,Ly)
+    d2udy2_th[i]=d2ud_dy2(x_V[i],y_V[i],Lx,Ly)
+    d2udxy_th[i]=d2ud_dxdy(x_V[i],y_V[i],Lx,Ly)
+    d2vdx2_th[i]=d2vd_dx2(x_V[i],y_V[i],Lx,Ly)
+    d2vdy2_th[i]=d2vd_dy2(x_V[i],y_V[i],Lx,Ly)
+    d2vdxy_th[i]=d2vd_dxdy(x_V[i],y_V[i],Lx,Ly)
+    fx_th[i]=fx(x_V[i],y_V[i],Lx,Ly)
+    fy_th[i]=fy(x_V[i],y_V[i],Lx,Ly)
+
+np.savetxt('solution_th.ascii',np.array([x_V,y_V,u_th,v_th,dudx_th,dvdy_th,\
+                                         d2udx2_th,d2udy2_th,d2udxy_th,\
+                                         d2vdx2_th,d2vdy2_th,d2vdxy_th,
+                                         fx_th,fy_th ]).T)
 
 ###############################################################################
 # build FE matrix A and rhs 
@@ -442,7 +624,7 @@ print("build FE matrix: %.3f s" % (clock.time()-start))
 ###############################################################################
 # assemble f, h into rhs and solve
 ###############################################################################
-start = clock.time()
+start=clock.time()
 
 sol=sps.linalg.spsolve(A_fem.tocsr(),b_fem)
 
@@ -461,7 +643,7 @@ print("solve system: %.3f s - Nfem %d" % (clock.time()-start,Nfem))
 # normalise pressure
 ###############################################################################
 
-if experiment==3:
+if experiment==3 or experiment==4:
 
    avrg_p=0.
    for iel in range(0,nel):
@@ -495,7 +677,7 @@ if experiment==3:
 # |       |   |       |
 # 0---4---1   0-------1
 ###############################################################################
-start = clock.time()
+start=clock.time()
 
 q=np.zeros(nn_V,dtype=np.float64)
 
@@ -516,7 +698,7 @@ print("project p onto vel nodes: %.3f s" % (clock.time()-start))
 ###############################################################################
 # compute strainrate at center of element 
 ###############################################################################
-start = clock.time()
+start=clock.time()
 
 x_e=np.zeros(nel,dtype=np.float64)  
 y_e=np.zeros(nel,dtype=np.float64)  
@@ -563,7 +745,7 @@ print("compute elemental press & sr: %.3f s" % (clock.time()-start))
 ###############################################################################
 # compute strainrate on velocity grid
 ###############################################################################
-start = clock.time()
+start=clock.time()
 
 exxn=np.zeros(nn_V,dtype=np.float64)
 eyyn=np.zeros(nn_V,dtype=np.float64)
@@ -608,11 +790,51 @@ print("     -> exyn  (m,M) %.4e %.4e " %(np.min(exyn),np.max(exyn)))
 print("     -> srn   (m,M) %.4e %.4e " %(np.min(srn),np.max(srn)))
 print("     -> divvn (m,M) %.4e %.4e " %(np.min(divvn),np.max(divvn)))
 
-print("compute nod strain rate: %.3f s" % (clock.time() - start))
+print("compute nod strain rate: %.3f s" % (clock.time()-start))
+
+###############################################################################
+# compute discretisation errors 
+###############################################################################
+start=clock.time()
+
+errv=0.
+errp=0.
+for iel in range(0,nel):
+    for iq in range(0,nq_per_dim):
+        for jq in range(0,nq_per_dim):
+            rq=qcoords[iq]
+            sq=qcoords[jq]
+            weightq=qweights[iq]*qweights[jq]
+            N_V=basis_functions_V(rq,sq)
+            N_P=basis_functions_P(rq,sq)
+            dNdr_V=basis_functions_V_dr(rq,sq)
+            dNds_V=basis_functions_V_ds(rq,sq)
+            jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
+            jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
+            jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
+            jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
+            JxWq=np.linalg.det(jcb)*weightq
+            xq=np.dot(N_V,x_V[icon_V[:,iel]])
+            yq=np.dot(N_V,y_V[icon_V[:,iel]])
+            uq=np.dot(N_V,u[icon_V[:,iel]])
+            vq=np.dot(N_V,v[icon_V[:,iel]])
+            pq=np.dot(N_P,p[icon_P[:,iel]])
+            errv+=((uq-ud(xq,yq,Lx,Ly))**2+(vq-vd(xq,yq,Lx,Ly))**2)*JxWq
+            errp+=(pq-0)**2*JxWq
+        #end for
+    #end for
+#end for
+errv=np.sqrt(errv)
+errp=np.sqrt(errp)
+
+print("     -> nel= %6d ; errv: %e ; errp: %e " %(nelx,errv,errp))
+
+print("compute discr errors: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # plot of solution
 ###############################################################################
+start=clock.time()
 
 filename = 'solution.vtu'
 vtufile=open(filename,"w")
@@ -653,24 +875,63 @@ for i in range(0,nn_V):
     vtufile.write("%e %e %e \n" %(u[i],v[i],0.))
 vtufile.write("</DataArray>\n")
 #--
-vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='analytical' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='analytical velocity' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%e %e %e \n" %(ud(x_V[i],y_V[i],Lx,Ly),vd(x_V[i],y_V[i],Lx,Ly),0.))
+    vtufile.write("%e %e %e \n" %(u_th[i],v_th[i],0.))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity-analytical' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%e %e %e \n" %(u[i]-ud(x_V[i],y_V[i],Lx,Ly),v[i]-vd(x_V[i],y_V[i],Lx,Ly),0.))
+    vtufile.write("%e %e %e \n" %(u[i]-u_th[i],v[i]-v_th[i],0.))
 vtufile.write("</DataArray>\n")
 #--
-vtufile.write("<DataArray type='Float32' Name='dud_dx' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' Name='analytical dud_dx' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%e \n" %(dud_dx(x_V[i],y_V[i],Lx,Ly)))
+    vtufile.write("%e \n" %(dudx_th[i]))
 vtufile.write("</DataArray>\n")
 #--
-vtufile.write("<DataArray type='Float32' Name='dvd_dy' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' Name='analytical d2ud_dx2' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%e \n" %(dvd_dy(x_V[i],y_V[i],Lx,Ly)))
+    vtufile.write("%e \n" %(d2udx2_th[i]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='analytical d2ud_dy2' Format='ascii'> \n")
+for i in range(0,nn_V):
+    vtufile.write("%e \n" %(d2udy2_th[i]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='analytical d2ud_dxdy' Format='ascii'> \n")
+for i in range(0,nn_V):
+    vtufile.write("%e \n" %(d2udxy_th[i]))
+vtufile.write("</DataArray>\n")
+
+#--
+vtufile.write("<DataArray type='Float32' Name='analytical dvd_dy' Format='ascii'> \n")
+for i in range(0,nn_V):
+    vtufile.write("%e \n" %(dvdy_th[i]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='analytical d2vd_dx2' Format='ascii'> \n")
+for i in range(0,nn_V):
+    vtufile.write("%e \n" %(d2vdx2_th[i]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='analytical d2vd_dy2' Format='ascii'> \n")
+for i in range(0,nn_V):
+    vtufile.write("%e \n" %(d2vdy2_th[i]))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='analytical d2vd_dxdy' Format='ascii'> \n")
+for i in range(0,nn_V):
+    vtufile.write("%e \n" %(d2vdxy_th[i]))
+vtufile.write("</DataArray>\n")
+
+
+
+#--
+vtufile.write("<DataArray type='Float32' Name='analytical divv' Format='ascii'> \n")
+for i in range(0,nn_V):
+    vtufile.write("%e \n" %( dudx_th[i]+dvdy_th[i]))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
@@ -699,6 +960,8 @@ vtufile.write("</Piece>\n")
 vtufile.write("</UnstructuredGrid>\n")
 vtufile.write("</VTKFile>\n")
 vtufile.close()
+
+print("export to vtu : %.3f s" % (clock.time()-start))
 
 print("*******************************")
 print("********** the end ************")

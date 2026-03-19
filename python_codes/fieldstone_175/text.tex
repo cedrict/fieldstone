@@ -120,6 +120,11 @@ We here make the convenient assumption that $u_d$ is only a function of $x$, so 
 f_x &=& (2-\frac2D) \frac{\partial^2 u_d}{\partial x^2}   \nn\\
 f_y &=& 0
 \end{eqnarray}
+Taking $D=3$:
+\begin{eqnarray}
+f_x &=& \frac43 \frac{\partial^2 u_d}{\partial x^2}   \nn\\
+f_y &=& 0
+\end{eqnarray}
 
 We have to read this all as follows: There is a dilation term $\frac{\partial u_d}{\partial x}$ 
 which is a function of the $x$-coordinate which in turn generates a horizontal flow $(u_d,0)$
@@ -457,4 +462,164 @@ requiring that the pressure fulfills the condition $\int_\Omega p dV =0$.
 
 In the end this experiment is not truly 2d: it is made of 2 1d experiments 
 added to one another, one in the $x$ direction, one in the $y$ direction.
+
+Looking at the discretisation errors we find that the convergence is not 
+really monotonous, although the errors decrease globally when resolution increases.
+
+
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_175/results/exp3/errors.pdf}\\
+{\captionfont Discretisation errors for velocity and pressure.}
+\end{center}
+
+
+\newpage
+%-----------------------------------------------------------------------------------
+\section*{Slanted cosine hill dilation zone (experiment \#4)}
+
+This is a very similar setup as in experiment 2, but the zone is not
+aligned anymore with the vertical axis:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp4/vel_analytical}
+\end{center}
+
+Concretely we use the velocity field of experiment 2 but rotate it by an angle $\theta$
+(measured from the center of the domain).
+We then define the coordinate $\tilde{x}=(x-L_x/2)\cos(\theta)+(y-L_y/2) \sin(\theta)+L_x/2$
+and define the $\vec\upnu_d$ velocity as follows (I use the $u_d$ expression of experiment 2
+albeit written as a function of $\tilde{x}$ and apply a rotation matrix to the vector $(u_d(\tilde{x}),0)$
+which yields the vector $( u_d(\tilde{x}) \cos\theta , u_d(\tilde{x}) \sin\theta )$:
+
+\begin{lstlisting}
+theta=np.pi/6
+w4=12
+
+def ud(x,y,Lx,Ly):
+       ...
+       delta4=Lx/w4
+       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
+       if xp<=Lx/2-delta4: 
+          return -delta4/2*np.cos(theta)
+       elif xp<=Lx/2+delta4:
+          return 0.5*(xp-Lx/2+delta4/np.pi*np.sin(np.pi*(xp-Lx/2)/delta4))*np.cos(theta)
+       else: 
+          return delta4/2*np.cos(theta)
+
+def vd(x,y,Lx,Ly):
+       ...
+       delta4=Lx/w4
+       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
+       if xp<=Lx/2-delta4: 
+          return -delta4/2*np.sin(theta)
+       elif xp<=Lx/2+delta4:
+          return 0.5*(xp-Lx/2+delta4/np.pi*np.sin(np.pi*(xp-Lx/2)/delta4))*np.sin(theta)
+       else: 
+          return delta4/2*np.sin(theta)
+\end{lstlisting}
+The rest of the functions are on github\footnote{\url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_175}}.
+
+From these expressions we can compute all the derivatives that we need for the implementation.
+Inside the band, we have 
+\begin{eqnarray}
+u_d &=&  \frac12 \left(\tilde{x}-\frac{L_x}{2} +\frac{\delta_4}{\pi} \sin\left(\frac{\pi}{\delta_4}(\tilde{x}-\frac{L_x}{2}) \right) \right) \cos\theta \nn\\
+v_d &=&  \frac12 \left(\tilde{x}-\frac{L_x}{2} +\frac{\delta_4}{\pi} \sin\left(\frac{\pi}{\delta_4}(\tilde{x}-\frac{L_x}{2}) \right) \right) \sin\theta \nn
+\end{eqnarray}
+where $\delta_4$ is the width of the zone (see experiment 2) and with 
+\begin{eqnarray}
+\tilde{x}(x,y) &=& (x-\frac{L_x}{2})  \cos\theta+(y-\frac{L_y}{2}) \sin\theta + \frac{L_x}{2} \nn\\
+\frac{\partial \tilde{x}}{\partial x} &=& \cos \theta \nn\\
+\frac{\partial \tilde{x}}{\partial y} &=& \sin \theta \nn
+\end{eqnarray}
+so 
+\begin{eqnarray}
+\frac{\partial u_d}{\partial x} 
+&=& \frac{\partial u_d}{\partial \tilde{x}}  \frac{\partial \tilde{x}}{\partial x} 
+= \frac12 \left(1+\cos\frac{ \pi ( \tilde{x}-L_x/2)}{\delta_4} \right) \cos\theta \cdot \cos \theta
+\nn\\
+\frac{\partial u_d}{\partial y} 
+&=& \frac{\partial u_d}{\partial \tilde{x}}  \frac{\partial \tilde{x}}{\partial y}
+= \frac12 \left(1+\cos\frac{ \pi ( \tilde{x}-L_x/2)}{\delta_4} \right) \cos\theta \cdot \sin\theta 
+\nn\\
+\frac{\partial^2 u_d}{\partial x^2}         
+&=& \frac{\partial }{\partial x} \frac{\partial u_d}{\partial x}  
+= \frac{\partial }{\partial x} \left[ \frac12 \left(1+\cos\frac{ \pi ( \tilde{x}-L_x/2)}{\delta_4} \right) \cos^2\theta  \right] 
+= - \frac12 \frac{\pi}{\delta_4}   \sin\frac{ \pi ( \tilde{x}-L_x/2)}{\delta_4}  \cos^3\theta
+\nn\\
+\frac{\partial^2 u_d}{\partial x \partial y} 
+&=& \frac{\partial }{\partial y} \frac{\partial u_d}{\partial x}   
+= \frac{\partial }{\partial y} \left[ \frac12 \left(1+\cos\frac{ \pi ( \tilde{x}-L_x/2)}{\delta_4} \right) \cos^2\theta  \right] 
+= - \frac12 \frac{\pi}{\delta_4}  \sin\frac{ \pi ( \tilde{x}-L_x/2)}{\delta_4}  \cos^2\theta \sin \theta
+\nn\\
+\frac{\partial^2 u_d}{\partial y^2}          
+&=& \frac{\partial }{\partial y} \frac{\partial u_d}{\partial y}  
+= \frac{\partial }{\partial y} \left[   \frac12 \left(1+\cos\frac{ \pi ( \tilde{x}-L_x/2)}{\delta_4} \right) \cos\theta \sin\theta      \right] 
+= -  \frac12 \frac{\pi}{\delta_4}   \sin\frac{ \pi ( \tilde{x}-L_x/2)}{\delta_4}  \cos\theta \sin^2\theta 
+\nn
+\end{eqnarray}
+and
+\begin{eqnarray}
+\frac{\partial v_d}{\partial x} 
+&=& \frac{\partial v_d}{\partial \tilde{x}}  \frac{\partial \tilde{x}}{\partial x} 
+= \frac12 \left(1+\cos\frac{ \pi ( \tilde{x}-L/2)}{\delta_4} \right) \sin\theta \cdot \cos\theta
+\nn\\ 
+\frac{\partial v_d}{\partial y} 
+&=& \frac{\partial v_d}{\partial \tilde{x}}  \frac{\partial \tilde{x}}{\partial y} 
+= \frac12 \left(1+\cos\frac{ \pi ( \tilde{x}-L/2)}{\delta_4} \right) \sin\theta \cdot \sin \theta
+\nn\\
+\frac{\partial^2 v_d}{\partial x^2}          
+&=& \frac{\partial }{\partial x} \frac{\partial v_d}{\partial x}   
+= \frac{\partial }{\partial x} \left[  \frac12 \left(1+\cos\frac{ \pi ( \tilde{x}-L/2)}{\delta_4} \right) \sin\theta \cos\theta     \right]  
+= -  \frac12 \frac{\pi}{\delta_4}    \sin\frac{ \pi ( \tilde{x}-L/2)}{\delta_4}   \cos^2\theta \sin\theta
+\nn \\
+\frac{\partial^2 v_d}{\partial x \partial y} 
+&=& \frac{\partial }{\partial x} \frac{\partial v_d}{\partial y}   
+= \frac{\partial }{\partial x} \left[ \frac12 \left(1+\cos\frac{ \pi ( \tilde{x}-L/2)}{\delta_4} \right) \sin^2\theta    \right] 
+= -\frac12 \frac{\pi}{\delta_4}   \sin\frac{ \pi ( \tilde{x}-L/2)}{\delta_4}  \cos\theta  \sin^2\theta  
+\nn\\
+\frac{\partial^2 v_d}{\partial y^2}          
+&=& \frac{\partial }{\partial y} \frac{\partial v_d}{\partial y}   
+= \frac{\partial }{\partial } \left[ \frac12 \left(1+\cos\frac{ \pi ( \tilde{x}-L/2)}{\delta_4} \right) \sin^2\theta      \right] 
+= - \frac12 \frac{\pi}{\delta_4}  \sin\frac{ \pi ( \tilde{x}-L/2)}{\delta_4} \sin^3\theta \nn
+\end{eqnarray}
+
+We can verify these formula by taking for example $\theta=0$, with $\cos \theta=1$ and $\sin\theta=0$. We then obtain:
+
+\begin{eqnarray}
+\tilde{x}(x,y) &=& (x-\frac{L_x}{2}) +  \frac{L_x}{2} =x \nn\\
+u_d &=&  \frac12 \left(\tilde{x}-\frac{L_x}{2} +\frac{\delta_4}{\pi} \sin\left(\frac{\pi}{\delta_4}(\tilde{x}-\frac{L_x}{2}) \right) \right) \nn\\
+v_d &=&  0 
+\nn\\
+\frac{\partial u_d}{\partial x} &=& \frac12 \left(1+\cos\frac{ \pi ( \tilde{x}-L_x/2)}{\delta_4} \right) \nn\\
+\frac{\partial u_d}{\partial y} &=& 0 \nn\\
+\frac{\partial^2 u_d}{\partial x^2} &=& = - \frac12 \frac{\pi}{\delta_4}   \sin\frac{ \pi ( \tilde{x}-L_x/2)}{\delta_4}   \nn\\
+\frac{\partial^2 u_d}{\partial x \partial y} &=& 0 \nn\\
+\frac{\partial^2 u_d}{\partial y^2}   &=& 0 \nn
+\end{eqnarray}
+and since $v_d\propto \sin \theta $ all partial derivatives thereof are also zero.
+These equations are identical to experiment 2.
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_175/results/exp4/errors.pdf}\\
+{\captionfont Discretisation errors for velocity and pressure.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp4/vel32}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp4/vel_error32}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp4/press32}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp4/vel64}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp4/vel_error64}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp4/press64}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp4/vel96}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp4/vel_error96}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp4/press96}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp4/vel128}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp4/vel_error128}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp4/press128}\\
+{\captionfont Resolution 32x16, 64x32, 96x48, 128x64.}
+\end{center}
+
+
 
