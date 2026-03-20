@@ -24,7 +24,7 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: June 19th, 2025.
+Last revision: March 20th, 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -34,17 +34,14 @@ Our goal here is to introduce dilation in the governing equations.
 Dilation implies a change in volume, which conflicts with the assumption of incompressibility. 
 Nevertheless we find ourselves wanting to keep using the framework of incompressibility and 
 so wish to account for the effects of dilation in the rhs of the mass and momentum conservation
-equations. This is very similar to the dilation rate terms of \textcite{chpe15} (2015).
+equations. This is very similar to the dilation rate terms of \textcite{chpe15} (2015) -- see \stone 39.
 
 Let us denote by $\vec{\upnu}^0$ and $p$ the solution of the 
 incompressible Stokes equations:
 \begin{eqnarray}
-\vec\nabla \cdot [2  \dot{\bm \varepsilon}^d(\vec\upnu^0)  ]  
--\vec\nabla p + \rho \vec{g} &=& \vec{0} \label{eq:dil1}
+-\vec\nabla p +\vec\nabla\cdot[2\dot{\bm \varepsilon}^d(\vec\upnu^0)] +\rho\vec{g} &=&\vec{0} \label{eq:dil1} \\
+\vec\nabla \cdot \vec\upnu^0 &=& 0
 \end{eqnarray}
-\[
-\vec\nabla \cdot \vec\upnu^0 = 0
-\]
 Let us now consider the velocity field $\vec{\upnu}=\vec{\upnu}^0+\vec{\upnu}_d$
 where $\vec{\upnu}_d$ is a user-defined velocity field function that is in $C^2$. 
 We assume 2d Cartesian coordinates in $\Omega$, a domain of size $L_x \times L_y$. 
@@ -67,13 +64,14 @@ Then
 \[
 \vec\nabla \cdot \vec\upnu 
 = \text{Tr}[\dot{\bm \varepsilon}(\vec\upnu)]
-= \underbrace{\text{Tr}[\dot{\bm \varepsilon}(\vec\upnu^0)]}_{=0}
+= \underbrace{\text{Tr}[\dot{\bm \varepsilon}(\vec\upnu^0)]}_{=  \vec\nabla \cdot \vec\upnu^0  =0}
 + \text{Tr}[\dot{\bm \varepsilon}(\vec\upnu_d)]
 = \frac{\partial u_d}{\partial x}
 \]
 This completes the search of the right hand side of the mass conservation equation.
 
-We will also need the corresponding deviatoric strain rate tensor ($D=3$, see discussions in Aspect on the topic
+We will also need the corresponding deviatoric strain rate tensor (here $D=3$, 
+see discussions in Aspect on the topic
 as \url{https://aspect-documentation.readthedocs.io/en/latest/user/methods/basic-equations/2d-models.html}):
 \[
 \dot{\bm \varepsilon}^d(\vec\upnu_d)
@@ -139,12 +137,8 @@ contains the term $d^2u_d/dx$, i.e. the gradient of the dilation. That quantity 
 defined on the edges of the band. 
 
 One could then prescribe the dilation rate on the nodes and use the basis functions derivatives
-to compute (an approximation of) the gradient of the dilation rate. This needs to be tested!
-
-
-
-
-
+to compute (an approximation of) the gradient of the dilation rate. 
+It remains simpler to consider a smoother dilation band that avoids that problem altogether. 
 
 
 \newpage
@@ -156,26 +150,27 @@ of the mass and momentum conservation equations with the additional rhs terms.
 
 By considering $\rho\vec{g}-\vec{f}_d$ as a single vector we have virtually nothing to do 
 in the momentum equation. 
-In the case of the mass equation, we have a rhs that poses no difficulty 
+In the case of the mass/continuity equation, we have a rhs that poses no difficulty 
 \[
 \int_\Omega \vec{\bN}^p \frac{\partial u_d}{\partial x}  dV
 \]
-Both terms are already present in Aspect (plastic dilation term implemented by Timo, John and me).
+Both terms are already present in Aspect (plastic dilation term implemented by Timo, John and me, 
+later reworked by Menno).
 
 In terms of implementation, we need to make sure that the matrix entering the $\K$ block is defined as 
 follows:
 \begin{lstlisting}
 C=np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64) 
 ...
-K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta*weightq*jcob
+K_el+=B.T.dot(C.dot(B))*eta*JxWq
 \end{lstlisting}
 The rhs terms are simply:
 \begin{lstlisting}
-for i in range(0,mV):
-    f_el[ndofV*i+0]+=NNNV[i]*jcob*weightq*(rho*gx(xq,yq)-d2uddx2(xq,yq,Lx,Ly)*(2-2./3))
-    f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*(rho*gy(xq,yq)-0)
+for i in range(0,m_V):
+    f_el[ndof_V*i+0]+=N_V[i]*(rho*gx(xq,yq)-fx(xq,yq,Lx,Ly))*JxWq
+    f_el[ndof_V*i+1]+=N_V[i]*(rho*gy(xq,yq)-fy(xq,yq,Lx,Ly))*JxWq
 
-h_el[:]-=NNNP[:]*duddx(xq,yq,Lx,Ly)*weightq*jcob
+h_el[:]-=N_P[:]*(dud_dx(xq,yq,Lx,Ly)+dvd_dy(xq,yq,Lx,Ly))*JxWq
 \end{lstlisting}
 
 The required functions for the 2 following experiments are defined as follows:
@@ -244,7 +239,7 @@ Finally we will also need
 \[
 \frac{d^2 u_d}{d x^2} = \frac{\pi}{L}  \sin \left(\frac{2 \pi x}{L} \right)
 \]
-The analytical expressions for $u_d$ and $du_d/dx$ are shown here:
+The analytical expressions for $u_d$ and $du_d/dx$ are shown here for $L_x=2$:
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp1/analytical.pdf}\\
 {\captionfont dilation term and resulting velocity fields.}
@@ -260,6 +255,9 @@ The analytical expressions for $u_d$ and $du_d/dx$ are shown here:
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp1/duddx.pdf}\\
 {\captionfont Results obtained with the code for 2 different resolutions.}
 \end{center}
+
+{\color{red} insert discretisation error plot as in exp 3,4}
+
 
 \newpage
 %-----------------------------------------------------------------------------------
@@ -311,6 +309,8 @@ In the absence of dilation rate, the Stokes solution is then a zero velocity fie
 {\captionfont Results obtained with the code for 2 different resolutions.}
 \end{center}
 
+{\color{red} insert discretisation error plot as in exp 3,4}
+
 
 \newpage
 %-----------------------------------------------------
@@ -342,7 +342,7 @@ Then
 and it follows that\footnote{I here set $D=3$.}
 \[
 \dot{\bm \varepsilon}^d(\vec\upnu_d)
-=\dot{\bm \varepsilon}(\vec\upnu_d) - \frac{1}{3} Tr[\dot{\bm \varepsilon}(\vec\upnu_d)] {\bm 1}
+=\dot{\bm \varepsilon}(\vec\upnu_d) - \frac{1}{3} \text{Tr}[\dot{\bm \varepsilon}(\vec\upnu_d)] {\bm 1}
 =\dot{\bm \varepsilon}(\vec\upnu_d) - \frac{1}{3} \left( \frac{\partial u_d}{\partial x} + \frac{\partial v_d}{\partial y} \right)  {\bm 1}
 =
 \begin{pmatrix}
@@ -405,7 +405,7 @@ We can verify that these expressions are identical to Eq.~\eqref{f175:fxfy} when
 \section*{Simple case of two orthogonal cosine hills dilation zone (experiment \#3)}
 
 We now further assume/postulate $\vec{\upnu}_d=(u_d(x) , v_d(y))$
-and start from the dilation zone:
+and start from the dilation zones given by:
 \begin{eqnarray}
 \frac{d u_d}{d x} &=& \frac12 \left(1+\cos\frac{ \pi (x-L_x/2)}{\delta_x}\right) \qquad |x-L_x/2|<\delta_x \nn\\
 \frac{d v_d}{d y} &=& \frac12 \left(1+\cos\frac{ \pi (y-L_y/2)}{\delta_y}\right) \qquad |y-L_y/2|<\delta_y \nn 
@@ -424,7 +424,7 @@ v_d(x) &=& \frac12 \left[ y-L_y/2 + \frac{\delta_y }{\pi  }\sin  \frac{ \pi (y-L
 \includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp3/v.png}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_175/results/exp3/vel.png}\\
 \includegraphics[width=10cm]{python_codes/fieldstone_175/results/exp3/vel2.png}\\
-{\captionfont Analytical $\vec{\upnu}_d$.}
+{\captionfont Analytical dilation velocity field $\vec{\upnu}_d$.}
 \end{center}
 
 Finally we will need
@@ -463,6 +463,8 @@ requiring that the pressure fulfills the condition $\int_\Omega p dV =0$.
 In the end this experiment is not truly 2d: it is made of 2 1d experiments 
 added to one another, one in the $x$ direction, one in the $y$ direction.
 
+The dilation velocity is prescribed on all sides of the domain.
+
 Looking at the discretisation errors we find that the convergence is not 
 really monotonous, although the errors decrease globally when resolution increases.
 
@@ -472,6 +474,10 @@ really monotonous, although the errors decrease globally when resolution increas
 \includegraphics[width=10cm]{python_codes/fieldstone_175/results/exp3/errors.pdf}\\
 {\captionfont Discretisation errors for velocity and pressure.}
 \end{center}
+
+I can't really explain what is going on. I suspect that there is a 
+discrepancy between the discretised dilation term and the discretised 
+flux on the boundaries. 
 
 
 \newpage
@@ -598,7 +604,7 @@ v_d &=&  0
 \frac{\partial^2 u_d}{\partial y^2}   &=& 0 \nn
 \end{eqnarray}
 and since $v_d\propto \sin \theta $ all partial derivatives thereof are also zero.
-These equations are identical to experiment 2.
+These equations are identical to exp 2.
 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_175/results/exp4/errors.pdf}\\

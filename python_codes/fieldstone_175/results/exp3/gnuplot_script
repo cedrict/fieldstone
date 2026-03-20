@@ -71,3 +71,16 @@ plot[][]\
 'solution_e_96x48.ascii' u 2:5 t '96x48',\
 k(x) lt -1  t 'dv_d/dy'
 
+######################################################
+Lx=2
+set xlabel 'h'
+set ylabel 'L_2 error'
+
+set log xy 
+set output 'errors.pdf'
+plot[][]\
+'errors.ascii' u (Lx/$3):6 w lp t 'velocity',\
+'errors.ascii' u (Lx/$3):9 w lp t 'pressure',\
+x**3/10 lt -1 dt 2 t 'h^3'
+
+

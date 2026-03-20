@@ -315,7 +315,7 @@ ndof_V=2  # number of velocity degrees of freedom per node
 if int(len(sys.argv) == 2): 
    nelx = int(sys.argv[1])
 else:
-   nelx=32
+   nelx=64
 
 nely=int(nelx/2)
 
@@ -348,14 +348,14 @@ nq_per_el=9
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
 
-nq_per_dim=4
-nq_per_el=16
-qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
-qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
-qw4a=(18-np.sqrt(30.))/36.
-qw4b=(18+np.sqrt(30.))/36.
-qcoords=[-qc4a,-qc4b,qc4b,qc4a]
-qweights=[qw4a,qw4b,qw4b,qw4a]
+#nq_per_dim=4
+#nq_per_el=16
+#qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
+#qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
+#qw4a=(18-np.sqrt(30.))/36.
+#qw4b=(18+np.sqrt(30.))/36.
+#qcoords=[-qc4a,-qc4b,qc4b,qc4a]
+#qweights=[qw4a,qw4b,qw4b,qw4a]
 
 #nq_per_dim=5
 #nq_per_el=25

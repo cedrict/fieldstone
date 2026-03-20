@@ -1,0 +1,74 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+
+Lx=2
+set xlabel 'h'
+set ylabel 'L_2 error'
+
+set log xy 
+set output 'errors.pdf'
+plot[][]\
+'errors.ascii' u (Lx/$3):6 w lp t 'velocity',\
+'errors.ascii' u (Lx/$3):9 w lp t 'pressure',\
+x**3/10 lt -1 dt 2 t 'h^3'
+
+
+
+exit
+
+
+
+
+
+
+
+
+
+
+set xlabel 'x'
+set ylabel 'y'
+set pointsize .4
+
+L=2.
+delta=L/12
+theta=pi/6
+
+#u
+f(x,y) = x<L/2-delta ? -delta/2 : x<L/2+delta ? 0.5*( x-L/2 + delta/pi * sin  (pi*(x-L/2)/delta) ) : delta/2
+
+f2(x,y)= (x*cos(theta)+y*sin(theta))<L/2-delta ? -delta/2 : (x*cos(theta)+y*sin(theta))<L/2+delta ? 0.5*( (x*cos(theta)+y*sin(theta))-L/2 + delta/pi * sin  (pi*((x*cos(theta)+y*sin(theta))-L/2)/delta) ) : delta/2
+
+#dudx
+g(x,y)=x<L/2-delta ? 0  : x<L/2+delta ?  0.5*(1+cos( pi*(x-L/2)/delta ))  : 0
+
+g2(x,y)=(x*cos(theta)+y*sin(theta))<L/2-delta ? 0 : (x*cos(theta)+y*sin(theta))<L/2+delta ? 0.5*(1+cos( pi*((x*cos(theta)+y*sin(theta))-L/2)/delta ))  : 0
+
+
+################################################################
+
+set zlabel 'u_d'
+set output 'ud.pdf'
+splot[0:2][0:1]\
+f(x,y) lt -1 lw .5 dt 2 t 'analytical'
+
+
+set output 'ud2.pdf'
+splot[0:2][0:1]\
+f2(x,y) lt -1 lw .5 dt 2 t 'analytical'
+
+
+set zlabel 'du_d/dx'
+set output 'duddx.pdf'
+splot[0:2][0:1]\
+g(x,y) lt -1 
+
+
+set output 'duddx2.pdf'
+splot[0:2][0:1]\
+g2(x,y) lt -1 
+
+
+
+
