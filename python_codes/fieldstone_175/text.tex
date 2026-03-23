@@ -256,7 +256,19 @@ The analytical expressions for $u_d$ and $du_d/dx$ are shown here for $L_x=2$:
 {\captionfont Results obtained with the code for 2 different resolutions.}
 \end{center}
 
-{\color{red} insert discretisation error plot as in exp 3,4}
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_175/results/exp1/errors.pdf}\\
+{\captionfont Discretisation errors for velocity and pressure.}
+\end{center}
+
+The velocity converges as expected (third-order) but the pressure error 
+showcases superconvergence, explained by the fact that the analytical solution
+$p=0$ is a zeroth-order polynomial which can be exactly represented in the 
+$Q_1$ pressure space.
+
+
+
 
 
 \newpage
@@ -309,7 +321,13 @@ In the absence of dilation rate, the Stokes solution is then a zero velocity fie
 {\captionfont Results obtained with the code for 2 different resolutions.}
 \end{center}
 
-{\color{red} insert discretisation error plot as in exp 3,4}
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_175/results/exp2/errors.pdf}\\
+{\captionfont Discretisation errors for velocity and pressure.}
+\end{center}
+
+The velocity converges as expected (third-order) but the pressure error 
+showcases weird jumps...
 
 
 \newpage

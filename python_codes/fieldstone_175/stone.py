@@ -8,9 +8,10 @@ from scipy.sparse import csr_matrix,lil_matrix
 # 1) smooth zone 1d
 # 2) narrow zone 1d
 # 3) two narrow zones 2d
-# 4) rotated zone 2d
+# 4) rotated zone 2d (2x1 domain)
+# 5) rotated zone 2d (2x3 domain)
 
-experiment=3
+experiment=5
 
 ###############################################################################
 
@@ -21,8 +22,9 @@ def gy(x,y):
     return 0
 
 ###############################################################################
-       
-theta=np.pi/6
+
+if experiment==4: theta=np.pi/6
+if experiment==5: theta=np.pi/20
 w3x=8.
 w3y=12.
 w4=12.
@@ -50,7 +52,7 @@ def ud(x,y,Lx,Ly):
        else: 
           return delta/2
     #----------------
-    if experiment==4: 
+    if experiment==4 or experiment==5: 
        delta4=Lx/w4
        xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
        if xp<=Lx/2-delta4: 
@@ -80,7 +82,7 @@ def dud_dx(x,y,Lx,Ly):
        else:
           return 0
     #----------------
-    if experiment==4: 
+    if experiment==4 or experiment==5: 
        delta4=Lx/w4
        xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
        if abs(xp-Lx/2)<=delta4: 
@@ -109,7 +111,7 @@ def d2ud_dx2(x,y,Lx,Ly):
        else:
           return 0
     #----------------
-    if experiment==4: 
+    if experiment==4 or experiment==5: 
        delta4=Lx/w4
        xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
        if abs(xp-Lx/2)<=delta4: 
@@ -121,7 +123,7 @@ def d2ud_dy2(x,y,Lx,Ly):
     if experiment==1: return 0
     if experiment==2: return 0
     if experiment==3: return 0
-    if experiment==4: 
+    if experiment==4 or experiment==5: 
        delta4=Lx/w4
        xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
        if abs(xp-Lx/2)<=delta4: 
@@ -134,7 +136,7 @@ def d2ud_dxdy(x,y,Lx,Ly):
     if experiment==1: return 0
     if experiment==2: return 0
     if experiment==3: return 0
-    if experiment==4: 
+    if experiment==4 or experiment==5: 
        delta4=Lx/w4
        xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
        if abs(xp-Lx/2)<=delta4: 
@@ -161,7 +163,7 @@ def vd(x,y,Lx,Ly):
        else: 
           return delta/2
     #----------------
-    if experiment==4: 
+    if experiment==4 or experiment==5: 
        delta4=Lx/w4
        xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
        if xp<=Lx/2-delta4: 
@@ -188,7 +190,7 @@ def dvd_dy(x,y,Lx,Ly):
        else:
           return 0
     #----------------
-    if experiment==4: 
+    if experiment==4 or experiment==5: 
        delta4=Lx/w4
        xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
        if abs(xp-Lx/2)<=delta4: 
@@ -211,7 +213,7 @@ def d2vd_dy2(x,y,Lx,Ly):
        else:
           return 0
     #----------------
-    if experiment==4: 
+    if experiment==4 or experiment==5: 
        delta4=Lx/w4
        xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
        if abs(xp-Lx/2)<=delta4: 
@@ -223,7 +225,7 @@ def d2vd_dx2(x,y,Lx,Ly):
     if experiment==1: return 0
     if experiment==2: return 0
     if experiment==3: return 0
-    if experiment==4: 
+    if experiment==4 or experiment==5: 
        delta4=Lx/w4
        xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
        if abs(xp-Lx/2)<=delta4: 
@@ -235,7 +237,7 @@ def d2vd_dxdy(x,y,Lx,Ly):
     if experiment==1: return 0
     if experiment==2: return 0
     if experiment==3: return 0
-    if experiment==4: 
+    if experiment==4 or experiment==5: 
        delta4=Lx/w4
        xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
        if abs(xp-Lx/2)<=delta4: 
@@ -315,12 +317,15 @@ ndof_V=2  # number of velocity degrees of freedom per node
 if int(len(sys.argv) == 2): 
    nelx = int(sys.argv[1])
 else:
-   nelx=64
+   nelx=48
 
 nely=int(nelx/2)
 
 Lx=2.
 Ly=1.
+
+if experiment==5: Ly=3
+if experiment==5: nely*=3
 
 eta=1.
 rho=1.
@@ -458,11 +463,10 @@ if experiment==1 or experiment==2:
           if abs(x_V[i]-Lx/2)<eps:
              bc_fix_V[i*ndof_V] = True ; bc_val_V[i*ndof_V] = 0 
 
-if experiment==3 or experiment==4:
+if experiment==3 or experiment==4 or experiment==5: 
    for i in range(0,nn_V):
        if abs(x_V[i])/Lx<eps or abs(x_V[i]-Lx)/Lx<eps or \
           abs(y_V[i])/Ly<eps or abs(y_V[i]-Ly)/Ly<eps :
-       #if abs(y_V[i])/Ly<eps or abs(y_V[i]-Ly)/Ly<eps :
           bc_fix_V[i*ndof_V+0] = True ; bc_val_V[i*ndof_V+0] = ud(x_V[i],y_V[i],Lx,Ly)
           bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = vd(x_V[i],y_V[i],Lx,Ly)
 
@@ -643,7 +647,7 @@ print("solve system: %.3f s - Nfem %d" % (clock.time()-start,Nfem))
 # normalise pressure
 ###############################################################################
 
-if experiment==3 or experiment==4:
+if experiment==3 or experiment==4 or experiment==5:
 
    avrg_p=0.
    for iel in range(0,nel):
