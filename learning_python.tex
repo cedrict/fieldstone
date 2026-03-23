@@ -173,7 +173,41 @@ size = ..some value..
 ax.scatter3D(x, y, z, s = size)
 \end{lstlisting}
 
+%------------------------------------------------
+\subsection{Making simple 3D plots of a function}
 
+
+\begin{flushright} {\tiny {\color{gray} provided by Jochem Veerman}} \end{flushright}
+
+\begin{lstlisting}
+import numpy as np
+import matplotlib.pyplot as plt
+
+def Z_func(X,Y):
+    Z = X**2 + Y**2
+    return Z
+
+L = 3 # half length for x and y
+
+x = np.linspace(-L,L,1000) # x-array
+y = np.linspace(-L,L,1000) # y-array
+X, Y = np.meshgrid(x,y,indexing="xy") # create 2D meshes
+Z = Z_func(X,Y) # Compute function using 2D meshes
+
+# Plot 3D figure
+fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+
+ax.plot_surface(X, Y, Z, linewidth=0, antialiased=False)
+
+ax.set_xlabel("x")
+ax.set_ylabel("y")
+
+plt.show()
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=4cm]{images/python/parabola}
+\end{center}
 
 
 %----------------------------------
