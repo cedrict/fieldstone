@@ -9,15 +9,19 @@
 \includegraphics[height=1.25cm]{images/pictograms/publication}
 \includegraphics[height=1.25cm]{images/pictograms/nonlinear}
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_39/keywords.key}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_39/text.tex}} \end{flushright}
+
+\par\noindent\rule{\textwidth}{0.4pt}
 
 \begin{center}
-Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_39}
+\inpython
+{\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_39}}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 \textcite{chpe15} (2015) offer a solution to the problem of the angle of shear bands in 
 geodynamic models. The underlying idea is based on simple modifications 
@@ -80,10 +84,11 @@ intersect with the free surface. Then
 \end{equation}
 This is what is implemented in the code.
 \begin{lstlisting}
-for i in range(0,mV):
-    f_el[ndofV*i+0]-=2./3.*dNNNVdx[i]*jcob*weightq*etaq[counter]*dilation_rate
-    f_el[ndofV*i+1]-=2./3.*dNNNVdy[i]*jcob*weightq*etaq[counter]*dilation_rate
-    h_el[:]-=NNNP[:]*dilation_rate*weightq*jcob
+if method==1:
+   for i in range(0,mV):
+       f_el[ndofV*i+0]-=2./3.*dNNNVdx[i]*jcob*weightq*etaq[counter]*dilation_rate
+       f_el[ndofV*i+1]-=2./3.*dNNNVdy[i]*jcob*weightq*etaq[counter]*dilation_rate
+h_el[:]-=NNNP[:]*dilation_rate*weightq*jcob
 \end{lstlisting}
 In practice we compute the strain rate components at the quadrature points, knowing that 
 the strain rate is not deviatoric there.
@@ -123,6 +128,14 @@ The ${\bm C}$ matrix is then
 \]
 Note that method 2 bypasses the discussion above about the integration by parts and the surface term. 
 
+\begin{lstlisting}
+if method==1:
+   C=np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+else:
+   C=np.array([[4,-2,0],[-2,4,0],[0,0,3]],dtype=np.float64) 
+   C/=3
+\end{lstlisting}
+
 My feeling is that method 1 stems from a FDM vision (i.e. from the paper). Method 2 is elegant, simple.
 
 \begin{remark}
@@ -130,16 +143,28 @@ The rhs of the continuity equation is formulated as a function of the (effective
 in the case of multiple deformation mechanisms one should be careful about this term.
 \end{remark}
 
+
+\begin{remark}
+Outside of this stone, we note that the standard momentum equation contains 
+the term $\vec\nabla \cdot (2 \eta \dot{\bm \varepsilon}^d$,
+i.e. a term with the deviatoric strain rate.
+In practice the  ${\bm C}$ matrix that should be used in any case is the ${\bm C}_{method\; 2}$.
+When the flow is incompressible then the strain rate and deviatoric strain rate tensors are 
+identical and then using ${\bm C}_{method\; 1}$ or ${\bm C}_{method\; 2}$ does not 
+matter in practice. However, in this case it does matter!
+\end{remark}
+
+
 \newpage 
 %..........................................................
 \subsection*{Benchmark \#1 - The simple brick}
 
 %The setup is {\sl similar} to the one in Kaus (2010) \cite{kaus10}, the main difference being that 
 %there is no weak inclusion at the bottom of the domain. 
-The 2D Cartesian domain filled with a 
-single rigid-plastic material characterised by a cohesion $c=10\text{MPa}$, an 
-angle of friction $\phi$, a dilation angle $\psi$ and a density $\rho=2800\text{kg/m}^3$.
-Gravity is set to $|g_y|=10\si{\metre\per\square\second}$.
+The 2D Cartesian domain is filled with a 
+single rigid-plastic material characterised by a cohesion $c=10~\si{\mega\pascal}$, an 
+angle of friction $\phi$, a dilation angle $\psi$ and a density $\rho=2800~\si{\kg\per\cubic\km}$.
+Gravity is set to $|g_y|=10~\si{\metre\per\square\second}$.
 
 \begin{center}
 \begin{tikzpicture}
@@ -207,16 +232,12 @@ extension and compression. Note that the domain has been substantially extended 
 direction because of the wide shear band angles obtained in compression. It is now 80\si{\km} long 
 and 10\si{\km} high (aspect ratio 8:1). 
 
-Three angles are mechanically stable (e.g. \cite{kaus10}):
-\[
-\theta=\frac{\pi}{4}\pm \frac{\psi}{2} \qquad \text{Roscoe angle}
-\]
-\[
-\theta=\frac{\pi}{4}\pm \frac{\phi}{2} \qquad \text{Coulomb angle}
-\]
-\[
-\theta=\frac{\pi}{4}\pm \frac{\phi+\phi}{4} \qquad \text{Arthur angle}
-\]
+Three angles are mechanically stable (e.g. \textcite{kaus10}, 2010):
+\begin{eqnarray}
+\theta&=&\frac{\pi}{4}\pm \frac{\psi}{2} \qquad \text{Roscoe angle} \nn\\
+\theta&=&\frac{\pi}{4}\pm \frac{\phi}{2} \qquad \text{Coulomb angle}\nn\\
+\theta&=&\frac{\pi}{4}\pm \frac{\phi+\psi}{4} \qquad \text{Arthur angle}\nn
+\end{eqnarray}
 In the case of associative plasticity, $\phi=\psi$, so that all three angles are the same. 
 Per row of elements, nodes or quadrature points, and per half of the domain (left and right) we find the location
 with the highest strain-rate and record their coordinates.
@@ -282,7 +303,7 @@ Results obtained on a 240x24 grid, max 50 nl iterations.
 
 Note that benchmarking this in not easy. One solution Timo and I found was to add a 
 velocity field $\underline{\vec\upnu}=(x,y,z)$ (with $\vec\nabla\cdot\underline{\vec\upnu}=3$)
-to an existing analytical problem, e.g. the Burstedde benchamrk.
+to an existing analytical problem, e.g. the Burstedde benchmark.
 
 \newpage
 %...........................................................
@@ -297,7 +318,7 @@ isoviscous layer at the bottom and a visco-plastic material on top, as shown her
 \includegraphics[width=8cm]{python_codes/fieldstone_39/images/spmw_2.png}
 \end{center}
 
-The domain has dimensions $L_x=128\si{\kilo\metre}$, $L_y=Lx/4$. 
+The domain has dimensions $L_x=128\si{\kilo\metre}$, $L_y=L_x/4$. 
 The lower layer depth is $L_y/4$. The notch has dimensions $w=4\si{\kilo\metre}$
 and $h=2\si{\kilo\metre}$. 
 
@@ -347,8 +368,8 @@ we expect:
 \]
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/line}
-\includegraphics[width=8cm]{python_codes/fieldstone_39/results_shortening_block/angles}\\
+\includegraphics[width=7.5cm]{python_codes/fieldstone_39/results_shortening_block/line}
+\includegraphics[width=7.5cm]{python_codes/fieldstone_39/results_shortening_block/angles}\\
 {\captionfont a) Line on which strain rate is measured. b) possible shear band angles:
 green is $45\degree$, blue is $35.75\degree$ and red is $26.5\degree$.}
 \end{center}
@@ -421,8 +442,8 @@ $L/8=12.5$km and the block has a thickness of 50km:
 \end{center}
 
 
+\vspace{2cm}
 
-\newpage
 To explore:
 
 - associative and non-associative drucker-prage
