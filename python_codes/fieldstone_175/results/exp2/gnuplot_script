@@ -28,8 +28,8 @@ f(x) lt -1 lw .5 dt 2 t 'analytical'
 set ylabel 'p'
 set output 'p.pdf'
 plot[][]\
-'solution_e_32x16.ascii' u 1:3 t '32x16',\
-'solution_e_64x32.ascii' u 1:3 t '64x32',\
+'solution_e_32x16.ascii' u 1:3 t '32x16' w lp ,\
+'solution_e_64x32.ascii' u 1:3 t '64x32' w lp,\
 0 lt -1 t 'analytical' 
 
 set ylabel 'du_d/dx'
@@ -44,6 +44,21 @@ set output 'analytical.pdf'
 plot[0:2][]\
 g(x)  t 'du_d/dx',\
 f(x) t 'u_d(x)'
+
+
+
+##########################################################
+
+Lx=2
+set xlabel 'h'
+set ylabel 'L_2 error'
+
+set log xy 
+set output 'errors.pdf'
+plot[][]\
+'errors.ascii' u (Lx/$3):6 w lp t 'velocity',\
+'errors.ascii' u (Lx/$3):9 w lp t 'pressure',\
+x**3/10 lt -1 dt 2 t 'h^3'
 
 
 
