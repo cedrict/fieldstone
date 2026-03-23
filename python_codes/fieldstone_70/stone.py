@@ -795,8 +795,6 @@ print("write out profile: %.3f s" % (clock.time()-start))
 
 #####################################################################
 # plot of solution
-# the 9-node Q2 element does not exist in vtk, but the 8-node one 
-# does, i.e. type=23. 
 #####################################################################
 start=clock.time()
 
