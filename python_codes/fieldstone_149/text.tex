@@ -177,7 +177,16 @@ for i in range(0,nn_V):
        bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = vvi
 \end{lstlisting}
 
-{\color{red} TODO}
+There is however a problem with this approach: the velocity is prescribed on the 
+boundary and imposes an influx or outflux on parts of the boundary. 
+Unfortunately, because of the discretised nature of the flow, the in/outflux
+balance is not zero and this yields a solution that is often nonsensical.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_149/results/case1b/diagT.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_149/results/case1b/diagP.pdf}\\
+{\captionfont Measurements on the diagonal.} 
+\end{center}
 
 
 \newpage

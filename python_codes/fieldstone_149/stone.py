@@ -1,16 +1,15 @@
 import numpy as np
 import sys as sys
-import time as time
 from tools import *
 import velocity
-from scipy.special import erf
 import time as clock
-from scipy.sparse import lil_matrix
 import scipy.sparse as sps
-#from scipy.sparse.linalg.dsolve import linsolve
+from scipy.special import erf
+from scipy.sparse import lil_matrix
 
 debug=False
 caase='1c'
+age=50e6
 
 ###############################################################################
 # Q1 basis functions in 2D - temperature equation
@@ -150,7 +149,6 @@ print("*******************************")
 print("********** stone 149 **********")
 print("*******************************")
 
-###############################################################################
 start=clock.time()
 
 m=4   # number of nodes per element
@@ -200,7 +198,7 @@ start=clock.time()
 if int(len(sys.argv) == 2):
    level=int(sys.argv[1])
 else:
-   level=48
+   level=32
 
 nelx=level
 nely=level
@@ -466,6 +464,7 @@ l3=0.e3
 vel=5*cm/year
 angle=45./180.*np.pi  
 
+kappa=hcond/rho/hcapa
 eta_ref=1e21
 
 ###############################################################################
@@ -496,7 +495,9 @@ for i in range(0,nn_T):
 mapping=np.zeros(nn_P,dtype=np.int32)
 for i in range(0,nn_P):
     for j in range(0,nn_T):
-        if in_stokes_domain[j] and abs(x_V[i]-x_T[j])<eps and abs(y_V[i]-y_T[j])<eps:
+        if in_stokes_domain[j] and \
+           abs(x_V[i]-x_T[j])<eps and \
+           abs(y_V[i]-y_T[j])<eps:
            mapping[i]=j
            break
 
@@ -504,14 +505,13 @@ print("establish mapping S->T: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # compute area of elements
-# This is a good test because it uses the quadrature points and 
-# weights as well as the shape functions. If any area comes out
-# negative or zero, or if the sum does not equal to the area of the 
-# whole domain then there is a major problem which needs to 
-# be addressed before FE are set into motion.
+# This is a good test because it uses the quadrature points and weights as 
+# well as the shape functions. If any area comes out negative or zero, or if 
+# the sum does not equal to the area of the whole domain then there is a 
+# major problem which needs to be addressed before FE are set into motion.
 # This is only valid for the Stokes mesh.
 ###############################################################################
-start = clock.time()
+start=clock.time()
 
 area=np.zeros(nel_S,dtype=np.float64) 
 jcb=np.zeros((ndim,ndim),dtype=np.float64)
@@ -544,7 +544,7 @@ print("     -> area (m,M) %.6e %.6e " %(np.min(area),np.max(area)))
 print("     -> total area meas %.6f " %(area.sum()))
 print("     -> total area anal %.6f " %((610e3+60e3)/2*550e3))
 
-print("compute elements areas: %.3f s" % (clock.time() - start))
+print("compute elements areas: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # this is a steady state code, but I leave the loop so that 
@@ -708,6 +708,44 @@ for iter in range(0,1):
        print("solve time: %.3f s" % (clock.time()-start))
 
        ##############################################################
+       # compute vrms and normalise pressure
+       ##############################################################
+       start=clock.time()
+
+       pavrg=0
+       vrms=0
+       for iel in range(0,nel_S):
+           for iq in range(0,nq_per_dim):
+               for jq in range(0,nq_per_dim):
+                   rq=qcoords[iq]
+                   sq=qcoords[jq]
+                   weightq=qweights[iq]*qweights[jq]
+                   N_V=basis_functions_V(rq,sq)
+                   N_P=basis_functions_P(rq,sq)
+                   dNdr_V=basis_functions_V_dr(rq,sq)
+                   dNds_V=basis_functions_V_ds(rq,sq)
+                   jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
+                   jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
+                   jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
+                   jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
+                   JxWq=np.linalg.det(jcb)*weightq
+                   uq=np.dot(N_V,u[icon_V[:,iel]])
+                   vq=np.dot(N_V,v[icon_V[:,iel]])
+                   vrms+=(uq**2+vq**2)*JxWq
+                   pq=np.dot(N_P,p[icon_P[:,iel]])
+                   pavrg+=pq*JxWq
+               #end for
+           #end for
+       #end for
+
+       vrms=np.sqrt(vrms/area.sum())
+       p-=pavrg/area.sum()
+
+       print("     -> vrms= %.4e cm/yr %d " %(vrms/cm*year,level))
+
+       print("compute rms vel/ norm p: %.3f s" % (clock.time()-start))
+
+       ##############################################################
        # export Stokes solution to vtu format
        ##############################################################
        start=clock.time()
@@ -811,10 +849,6 @@ for iter in range(0,1):
 
     bc_fix_T=np.zeros(Nfem_T,dtype=bool)  # boundary condition, yes/no
     bc_val_T=np.zeros(Nfem_T,dtype=np.float64)  # boundary condition, value
-
-    kappa=hcond/rho/hcapa
-
-    age=50e6
 
     for i in range(0,nn_T):
         # top boundary 
@@ -958,21 +992,22 @@ for iter in range(0,1):
     print("compute heat flux: %.3f s" % (clock.time()-start))
 
     #################################################################
-    # export Temperature along given lines 
+    # export Temperature along given lines
+    # all these arrays are way too big. 
     #################################################################
     start=clock.time()
 
-    diagT=np.zeros(nn_T,dtype=np.float64)  # size way too large
-    diagP=np.zeros(nn_T,dtype=np.float64)  # size way too large
-    dist=np.zeros(nn_T,dtype=np.float64)   # size way too large
-    rightu=np.zeros(nn_T,dtype=np.float64) # size way too large
-    rightv=np.zeros(nn_T,dtype=np.float64) # size way too large
-    rightT=np.zeros(nn_T,dtype=np.float64) # size way too large
-    rightP=np.zeros(nn_T,dtype=np.float64) # size way too large
-    depth=np.zeros(nn_T,dtype=np.float64)  # size way too large
-    topqx=np.zeros(nn_T,dtype=np.float64)  # size way too large
-    topqy=np.zeros(nn_T,dtype=np.float64)  # size way too large
-    topxx=np.zeros(nn_T,dtype=np.float64)  # size way too large
+    diagT=np.zeros(nn_T,dtype=np.float64) 
+    diagP=np.zeros(nn_T,dtype=np.float64) 
+    dist=np.zeros(nn_T,dtype=np.float64)  
+    rightu=np.zeros(nn_T,dtype=np.float64)
+    rightv=np.zeros(nn_T,dtype=np.float64)
+    rightT=np.zeros(nn_T,dtype=np.float64)
+    rightP=np.zeros(nn_T,dtype=np.float64)
+    depth=np.zeros(nn_T,dtype=np.float64) 
+    topqx=np.zeros(nn_T,dtype=np.float64) 
+    topqy=np.zeros(nn_T,dtype=np.float64) 
+    topxx=np.zeros(nn_T,dtype=np.float64) 
 
     counter=0
     for i in range(0,nn_T):

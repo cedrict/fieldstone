@@ -1,11 +1,14 @@
 
-python3 stone.py 16 > opla_16
-python3 stone.py 32 > opla_32
-python3 stone.py 48 > opla_48
-python3 stone.py 64 > opla_64
+python3 stone.py 16 > opla_16 ; grep vrms opla_16
+python3 stone.py 24 > opla_24 ; grep vrms opla_24
+python3 stone.py 32 > opla_32 ; grep vrms opla_32
+python3 stone.py 40 > opla_40 ; grep vrms opla_40
+python3 stone.py 48 > opla_48 ; grep vrms opla_48
+python3 stone.py 56 > opla_56 ; grep vrms opla_56
+python3 stone.py 64 > opla_64 ; grep vrms opla_64
+python3 stone.py 72 > opla_72 ; grep vrms opla_72
 python3 stone.py 80 > opla_80
 python3 stone.py 96 > opla_96
 python3 stone.py 112 > opla_112
 python3 stone.py 128 > opla_128
-
 

@@ -1,0 +1,43 @@
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set xlabel 'distance to top left corner (km)'
+
+set ylabel 'T (C)'
+set output 'diagT.pdf'
+plot[][0:1000]\
+'diag_lvl16.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=16',\
+'diag_lvl24.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=24',\
+'diag_lvl32.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=32',\
+'diag_lvl40.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=40',\
+'diag_lvl48.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=48',\
+'diag_lvl56.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=56',\
+'diag_lvl64.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=64',\
+'diag_lvl72.ascii'  u ($1/1e3):($2-273.15) ps .23 t 'lvl=72',\
+'diag_lvl80.ascii'  u ($1/1e3):($2-273.15) ps .123 t 'lvl=80',\
+'diag_lvl96.ascii'  u ($1/1e3):($2-273.15) ps .123 t 'lvl=96',\
+'diag_lvl128.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=128',\
+'diag_lvl144.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=144',\
+'diag_lvl160.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=160',\
+'diag_lvl176.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=176',\
+'diag_lvl192.ascii' u ($1/1e3):($2-273.15) ps .123 t 'lvl=192',\
+
+set ylabel 'p (Pa)'
+set output 'diagP.pdf'
+plot[][-4e9:4e9]\
+'diag_lvl16.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=16',\
+'diag_lvl24.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=24',\
+'diag_lvl32.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=32',\
+'diag_lvl40.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=40',\
+'diag_lvl48.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=48',\
+'diag_lvl56.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=56',\
+'diag_lvl64.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=64',\
+'diag_lvl72.ascii'  u ($1/1e3):($3) ps .23 t 'lvl=72',\
+'diag_lvl80.ascii'  u ($1/1e3):($3) ps .123 t 'lvl=80',\
+'diag_lvl96.ascii'  u ($1/1e3):($3) ps .123 t 'lvl=96',\
+'diag_lvl128.ascii' u ($1/1e3):($3) ps .123 t 'lvl=128',\
+'diag_lvl144.ascii' u ($1/1e3):($3) ps .123 t 'lvl=144',\
+'diag_lvl160.ascii' u ($1/1e3):($3) ps .123 t 'lvl=160',\
+'diag_lvl176.ascii' u ($1/1e3):($3) ps .123 t 'lvl=176',\
+'diag_lvl192.ascii' u ($1/1e3):($3) ps .123 t 'lvl=192',\
+
