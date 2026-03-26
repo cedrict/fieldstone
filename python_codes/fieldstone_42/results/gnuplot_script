@@ -1,9 +1,17 @@
+#
 set term pdf enhanced font "Times,12pt"
 set grid
 set xlabel 'h'
-set ylabel 'v_{rms}'
 set log xy
+
+set ylabel 'v_{rms}'
 set output "vrms.pdf"
 plot[][]\
-'vrms.ascii' u (6/(sqrt($3/2))):6 w lp notitle,\
-x**2/100 lt -1 t 'h^2'
+'vrms.ascii' u (6/(sqrt($3/2))):6 w lp pt 5 ps .4 notitle,\
+x**2/210 lt -1 dt 2 t 'h^2'
+
+unset log y 
+set ylabel 'p_{rms}'
+set output "prms.pdf"
+plot[][]\
+'vrms.ascii' u (6/(sqrt($3/2))):9 w lp pt 5 ps .4 notitle

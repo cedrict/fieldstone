@@ -40,24 +40,20 @@ mv solution.vtu solution_geom2_order3.vtu
 ###########################################
 
 rm vrms.ascii
-python3 stone.py 16  8 2 1 > opla
-grep vrms opla >> vrms.ascii 
-python3 stone.py 24  8 2 1 > opla
-grep vrms opla >> vrms.ascii 
-python3 stone.py 32 16 2 1 > opla
-grep vrms opla >> vrms.ascii 
-python3 stone.py 48 24 2 1 > opla
-grep vrms opla >> vrms.ascii 
-python3 stone.py 64 32 2 1 > opla
-grep vrms opla >> vrms.ascii 
-python3 stone.py 80 40 2 1 > opla
-grep vrms opla >> vrms.ascii 
-python3 stone.py 96 48 2 1 > opla
-grep vrms opla >> vrms.ascii 
-python3 stone.py 128 64 2 1 > opla
-grep vrms opla >> vrms.ascii 
-python3 stone.py 160 80 2 1 > opla
-grep vrms opla >> vrms.ascii 
+python3 stone.py  16  8 2 1 > opla ; grep vrms opla >> vrms.ascii 
+python3 stone.py  20 10 2 1 > opla ; grep vrms opla >> vrms.ascii 
+python3 stone.py  24 12 2 1 > opla ; grep vrms opla >> vrms.ascii 
+python3 stone.py  28 14 2 1 > opla ; grep vrms opla >> vrms.ascii 
+python3 stone.py  32 16 2 1 > opla ; grep vrms opla >> vrms.ascii 
+python3 stone.py  48 24 2 1 > opla ; grep vrms opla >> vrms.ascii 
+python3 stone.py  64 32 2 1 > opla ; grep vrms opla >> vrms.ascii 
+python3 stone.py  80 40 2 1 > opla ; grep vrms opla >> vrms.ascii 
+python3 stone.py  96 48 2 1 > opla ; grep vrms opla >> vrms.ascii 
+python3 stone.py 128 64 2 1 > opla ; grep vrms opla >> vrms.ascii 
+python3 stone.py 144 72 2 1 > opla ; grep vrms opla >> vrms.ascii 
+python3 stone.py 160 80 2 1 > opla ; grep vrms opla >> vrms.ascii 
+python3 stone.py 192 96 2 1 > opla ; grep vrms opla >> vrms.ascii 
+python3 stone.py 256 124 2 1 > opla ; grep vrms opla >> vrms.ascii 
 rm opla
 
 ###########################################
