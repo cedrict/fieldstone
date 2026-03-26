@@ -1,32 +1,31 @@
 import numpy as np
 import sys as sys
-import scipy
-import math as math
 import scipy.sparse as sps
-from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import lil_matrix
-import time as timing
+import time as clock
 
-#------------------------------------------------------------------------------
+debug=False
 
-def NNV(r,s,order):
+###############################################################################
+
+def basis_functions_V(r,s,order):
     if order==1:
-       N_0=0.25*(1.-r)*(1.-s)
-       N_1=0.25*(1.+r)*(1.-s)
-       N_2=0.25*(1.-r)*(1.+s)
-       N_3=0.25*(1.+r)*(1.+s)
-       return N_0,N_1,N_2,N_3
+       N0=0.25*(1.-r)*(1.-s)
+       N1=0.25*(1.+r)*(1.-s)
+       N2=0.25*(1.-r)*(1.+s)
+       N3=0.25*(1.+r)*(1.+s)
+       return np.array([N0,N1,N2,N3],dtype=np.float64)
     if order==2:
-       N_0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
-       N_1=    (1.-r**2) * 0.5*s*(s-1.)
-       N_2= 0.5*r*(r+1.) * 0.5*s*(s-1.)
-       N_3= 0.5*r*(r-1.) *    (1.-s**2)
-       N_4=    (1.-r**2) *    (1.-s**2)
-       N_5= 0.5*r*(r+1.) *    (1.-s**2)
-       N_6= 0.5*r*(r-1.) * 0.5*s*(s+1.)
-       N_7=    (1.-r**2) * 0.5*s*(s+1.)
-       N_8= 0.5*r*(r+1.) * 0.5*s*(s+1.)
-       return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8
+       N0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
+       N1=    (1.-r**2) * 0.5*s*(s-1.)
+       N2= 0.5*r*(r+1.) * 0.5*s*(s-1.)
+       N3= 0.5*r*(r-1.) *    (1.-s**2)
+       N4=    (1.-r**2) *    (1.-s**2)
+       N5= 0.5*r*(r+1.) *    (1.-s**2)
+       N6= 0.5*r*(r-1.) * 0.5*s*(s+1.)
+       N7=    (1.-r**2) * 0.5*s*(s+1.)
+       N8= 0.5*r*(r+1.) * 0.5*s*(s+1.)
+       return np.array([N0,N1,N2,N3,N4,N5,N6,N7,N8],dtype=np.float64)
     if order==3:
        N1r=(-1    +r +9*r**2 - 9*r**3)/16
        N2r=(+9 -27*r -9*r**2 +27*r**3)/16
@@ -36,24 +35,24 @@ def NNV(r,s,order):
        N2t=(+9 -27*s -9*s**2 +27*s**3)/16
        N3t=(+9 +27*s -9*s**2 -27*s**3)/16
        N4t=(-1    -s +9*s**2 + 9*s**3)/16
-       N_00= N1r*N1t 
-       N_01= N2r*N1t 
-       N_02= N3r*N1t 
-       N_03= N4r*N1t 
-       N_04= N1r*N2t 
-       N_05= N2r*N2t 
-       N_06= N3r*N2t 
-       N_07= N4r*N2t 
-       N_08= N1r*N3t 
-       N_09= N2r*N3t 
-       N_10= N3r*N3t 
-       N_11= N4r*N3t 
-       N_12= N1r*N4t 
-       N_13= N2r*N4t 
-       N_14= N3r*N4t 
-       N_15= N4r*N4t 
-       return N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
-              N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15
+       N00= N1r*N1t 
+       N01= N2r*N1t 
+       N02= N3r*N1t 
+       N03= N4r*N1t 
+       N04= N1r*N2t 
+       N05= N2r*N2t 
+       N06= N3r*N2t 
+       N07= N4r*N2t 
+       N08= N1r*N3t 
+       N09= N2r*N3t 
+       N10= N3r*N3t 
+       N11= N4r*N3t 
+       N12= N1r*N4t 
+       N13= N2r*N4t 
+       N14= N3r*N4t 
+       N15= N4r*N4t 
+       return np.array([N00,N01,N02,N03,N04,N05,N06,N07,
+                        N08,N09,N10,N11,N12,N13,N14,N15],dtype=np.float64)
     if order==4:
        N1r=(    r -   r**2 -4*r**3 + 4*r**4)/6
        N2r=( -8*r +16*r**2 +8*r**3 -16*r**4)/6
@@ -65,55 +64,55 @@ def NNV(r,s,order):
        N3s=(1     - 5*s**2         + 4*s**4) 
        N4s=(  8*s +16*s**2 -8*s**3 -16*s**4)/6
        N5s=(   -s -   s**2 +4*s**3 + 4*s**4)/6
-       N_00= N1r*N1s
-       N_01= N2r*N1s
-       N_02= N3r*N1s
-       N_03= N4r*N1s
-       N_04= N5r*N1s
-       N_05= N1r*N2s
-       N_06= N2r*N2s
-       N_07= N3r*N2s
-       N_08= N4r*N2s
-       N_09= N5r*N2s
-       N_10= N1r*N3s
-       N_11= N2r*N3s
-       N_12= N3r*N3s
-       N_13= N4r*N3s
-       N_14= N5r*N3s
-       N_15= N1r*N4s
-       N_16= N2r*N4s
-       N_17= N3r*N4s
-       N_18= N4r*N4s
-       N_19= N5r*N4s
-       N_20= N1r*N5s
-       N_21= N2r*N5s
-       N_22= N3r*N5s
-       N_23= N4r*N5s
-       N_24= N5r*N5s
-       return N_00,N_01,N_02,N_03,N_04,\
-              N_05,N_06,N_07,N_08,N_09,\
-              N_10,N_11,N_12,N_13,N_14,\
-              N_15,N_16,N_17,N_18,N_19,\
-              N_20,N_21,N_22,N_23,N_24
+       N00= N1r*N1s
+       N01= N2r*N1s
+       N02= N3r*N1s
+       N03= N4r*N1s
+       N04= N5r*N1s
+       N05= N1r*N2s
+       N06= N2r*N2s
+       N07= N3r*N2s
+       N08= N4r*N2s
+       N09= N5r*N2s
+       N10= N1r*N3s
+       N11= N2r*N3s
+       N12= N3r*N3s
+       N13= N4r*N3s
+       N14= N5r*N3s
+       N15= N1r*N4s
+       N16= N2r*N4s
+       N17= N3r*N4s
+       N18= N4r*N4s
+       N19= N5r*N4s
+       N20= N1r*N5s
+       N21= N2r*N5s
+       N22= N3r*N5s
+       N23= N4r*N5s
+       N24= N5r*N5s
+       return np.array([N00,N01,N02,N03,N04,\
+                        N05,N06,N07,N08,N09,\
+                        N10,N11,N12,N13,N14,\
+                        N15,N16,N17,N18,N19,\
+                        N20,N21,N22,N23,N24],dtype=np.float64)
 
-def dNNVdr(r,s,order):
+def basis_functions_V_dr(r,s,order):
     if order==1:
-       dNdr_0=-0.25*(1.-s) 
-       dNdr_1=+0.25*(1.-s) 
-       dNdr_2=-0.25*(1.+s) 
-       dNdr_3=+0.25*(1.+s) 
-       return dNdr_0,dNdr_1,dNdr_2,dNdr_3
+       dNdr0=-0.25*(1.-s) 
+       dNdr1=+0.25*(1.-s) 
+       dNdr2=-0.25*(1.+s) 
+       dNdr3=+0.25*(1.+s) 
+       return np.array([dNdr0,dNdr1,dNdr2,dNdr3],dtype=np.float64)
     if order==2:
-       dNdr_0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
-       dNdr_1=       (-2.*r) * 0.5*s*(s-1)
-       dNdr_2= 0.5*(2.*r+1.) * 0.5*s*(s-1)
-       dNdr_3= 0.5*(2.*r-1.) *   (1.-s**2)
-       dNdr_4=       (-2.*r) *   (1.-s**2)
-       dNdr_5= 0.5*(2.*r+1.) *   (1.-s**2)
-       dNdr_6= 0.5*(2.*r-1.) * 0.5*s*(s+1)
-       dNdr_7=       (-2.*r) * 0.5*s*(s+1)
-       dNdr_8= 0.5*(2.*r+1.) * 0.5*s*(s+1)
-       return dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8
+       dNdr0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
+       dNdr1=       (-2.*r) * 0.5*s*(s-1)
+       dNdr2= 0.5*(2.*r+1.) * 0.5*s*(s-1)
+       dNdr3= 0.5*(2.*r-1.) *   (1.-s**2)
+       dNdr4=       (-2.*r) *   (1.-s**2)
+       dNdr5= 0.5*(2.*r+1.) *   (1.-s**2)
+       dNdr6= 0.5*(2.*r-1.) * 0.5*s*(s+1)
+       dNdr7=       (-2.*r) * 0.5*s*(s+1)
+       dNdr8= 0.5*(2.*r+1.) * 0.5*s*(s+1)
+       return np.array([dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,dNdr6,dNdr7,dNdr8],dtype=np.float64)
     if order==3:
        dN1rdr=( +1 +18*r -27*r**2)/16
        dN2rdr=(-27 -18*r +81*r**2)/16
@@ -123,24 +122,25 @@ def dNNVdr(r,s,order):
        N2s=(+9 -27*s -9*s**2 +27*s**3)/16
        N3s=(+9 +27*s -9*s**2 -27*s**3)/16
        N4s=(-1    -s +9*s**2 + 9*s**3)/16
-       dNdr_00= dN1rdr* N1s 
-       dNdr_01= dN2rdr* N1s 
-       dNdr_02= dN3rdr* N1s 
-       dNdr_03= dN4rdr* N1s 
-       dNdr_04= dN1rdr* N2s 
-       dNdr_05= dN2rdr* N2s 
-       dNdr_06= dN3rdr* N2s 
-       dNdr_07= dN4rdr* N2s 
-       dNdr_08= dN1rdr* N3s 
-       dNdr_09= dN2rdr* N3s 
-       dNdr_10= dN3rdr* N3s 
-       dNdr_11= dN4rdr* N3s 
-       dNdr_12= dN1rdr* N4s 
-       dNdr_13= dN2rdr* N4s 
-       dNdr_14= dN3rdr* N4s 
-       dNdr_15= dN4rdr* N4s 
-       return dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,dNdr_05,dNdr_06,dNdr_07,\
-              dNdr_08,dNdr_09,dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,dNdr_15
+       dNdr00= dN1rdr* N1s 
+       dNdr01= dN2rdr* N1s 
+       dNdr02= dN3rdr* N1s 
+       dNdr03= dN4rdr* N1s 
+       dNdr04= dN1rdr* N2s 
+       dNdr05= dN2rdr* N2s 
+       dNdr06= dN3rdr* N2s 
+       dNdr07= dN4rdr* N2s 
+       dNdr08= dN1rdr* N3s 
+       dNdr09= dN2rdr* N3s 
+       dNdr10= dN3rdr* N3s 
+       dNdr11= dN4rdr* N3s 
+       dNdr12= dN1rdr* N4s 
+       dNdr13= dN2rdr* N4s 
+       dNdr14= dN3rdr* N4s 
+       dNdr15= dN4rdr* N4s 
+       return np.array([dNdr00,dNdr01,dNdr02,dNdr03,dNdr04,dNdr05,dNdr06,dNdr07,
+                        dNdr08,dNdr09,dNdr10,dNdr11,dNdr12,dNdr13,dNdr14,dNdr15],dtype=np.float64)
+
     if order==4:
        dN1dr=(    1 - 2*r -12*r**2 +16*r**3)/6
        dN2dr=(   -8 +32*r +24*r**2 -64*r**3)/6
@@ -152,55 +152,55 @@ def dNNVdr(r,s,order):
        N3s=(1     - 5*s**2         + 4*s**4) 
        N4s=(  8*s +16*s**2 -8*s**3 -16*s**4)/6
        N5s=(   -s -   s**2 +4*s**3 + 4*s**4)/6
-       dNdr_00= dN1dr*N1s
-       dNdr_01= dN2dr*N1s
-       dNdr_02= dN3dr*N1s
-       dNdr_03= dN4dr*N1s
-       dNdr_04= dN5dr*N1s
-       dNdr_05= dN1dr*N2s
-       dNdr_06= dN2dr*N2s
-       dNdr_07= dN3dr*N2s
-       dNdr_08= dN4dr*N2s
-       dNdr_09= dN5dr*N2s
-       dNdr_10= dN1dr*N3s
-       dNdr_11= dN2dr*N3s
-       dNdr_12= dN3dr*N3s
-       dNdr_13= dN4dr*N3s
-       dNdr_14= dN5dr*N3s
-       dNdr_15= dN1dr*N4s
-       dNdr_16= dN2dr*N4s
-       dNdr_17= dN3dr*N4s
-       dNdr_18= dN4dr*N4s
-       dNdr_19= dN5dr*N4s
-       dNdr_20= dN1dr*N5s
-       dNdr_21= dN2dr*N5s
-       dNdr_22= dN3dr*N5s
-       dNdr_23= dN4dr*N5s
-       dNdr_24= dN5dr*N5s
-       return dNdr_00,dNdr_01,dNdr_02,dNdr_03,dNdr_04,\
-              dNdr_05,dNdr_06,dNdr_07,dNdr_08,dNdr_09,\
-              dNdr_10,dNdr_11,dNdr_12,dNdr_13,dNdr_14,\
-              dNdr_15,dNdr_16,dNdr_17,dNdr_18,dNdr_19,\
-              dNdr_20,dNdr_21,dNdr_22,dNdr_23,dNdr_24
+       dNdr00= dN1dr*N1s
+       dNdr01= dN2dr*N1s
+       dNdr02= dN3dr*N1s
+       dNdr03= dN4dr*N1s
+       dNdr04= dN5dr*N1s
+       dNdr05= dN1dr*N2s
+       dNdr06= dN2dr*N2s
+       dNdr07= dN3dr*N2s
+       dNdr08= dN4dr*N2s
+       dNdr09= dN5dr*N2s
+       dNdr10= dN1dr*N3s
+       dNdr11= dN2dr*N3s
+       dNdr12= dN3dr*N3s
+       dNdr13= dN4dr*N3s
+       dNdr14= dN5dr*N3s
+       dNdr15= dN1dr*N4s
+       dNdr16= dN2dr*N4s
+       dNdr17= dN3dr*N4s
+       dNdr18= dN4dr*N4s
+       dNdr19= dN5dr*N4s
+       dNdr20= dN1dr*N5s
+       dNdr21= dN2dr*N5s
+       dNdr22= dN3dr*N5s
+       dNdr23= dN4dr*N5s
+       dNdr24= dN5dr*N5s
+       return np.array([dNdr00,dNdr01,dNdr02,dNdr03,dNdr04,
+                        dNdr05,dNdr06,dNdr07,dNdr08,dNdr09,
+                        dNdr10,dNdr11,dNdr12,dNdr13,dNdr14,
+                        dNdr15,dNdr16,dNdr17,dNdr18,dNdr19,
+                        dNdr20,dNdr21,dNdr22,dNdr23,dNdr24],dtype=np.float64)
 
-def dNNVds(r,s,order):
+def basis_functions_V_ds(r,s,order):
     if order==1:
-       dNds_0=-0.25*(1.-r)
-       dNds_1=-0.25*(1.+r)
-       dNds_2=+0.25*(1.-r)
-       dNds_3=+0.25*(1.+r)
-       return dNds_0,dNds_1,dNds_2,dNds_3
+       dNds0=-0.25*(1.-r)
+       dNds1=-0.25*(1.+r)
+       dNds2=+0.25*(1.-r)
+       dNds3=+0.25*(1.+r)
+       return np.array([dNds0,dNds1,dNds2,dNds3],dtype=np.float64)
     if order==2:
-       dNds_0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
-       dNds_1=    (1.-r**2) * 0.5*(2.*s-1.)
-       dNds_2= 0.5*r*(r+1.) * 0.5*(2.*s-1.)
-       dNds_3= 0.5*r*(r-1.) *       (-2.*s)
-       dNds_4=    (1.-r**2) *       (-2.*s)
-       dNds_5= 0.5*r*(r+1.) *       (-2.*s)
-       dNds_6= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
-       dNds_7=    (1.-r**2) * 0.5*(2.*s+1.)
-       dNds_8= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
-       return dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8
+       dNds0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
+       dNds1=    (1.-r**2) * 0.5*(2.*s-1.)
+       dNds2= 0.5*r*(r+1.) * 0.5*(2.*s-1.)
+       dNds3= 0.5*r*(r-1.) *       (-2.*s)
+       dNds4=    (1.-r**2) *       (-2.*s)
+       dNds5= 0.5*r*(r+1.) *       (-2.*s)
+       dNds6= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
+       dNds7=    (1.-r**2) * 0.5*(2.*s+1.)
+       dNds8= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
+       return np.array([dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6,dNds7,dNds8],dtype=np.float64)
     if order==3:
        N1r=(-1    +r +9*r**2 - 9*r**3)/16
        N2r=(+9 -27*r -9*r**2 +27*r**3)/16
@@ -210,24 +210,24 @@ def dNNVds(r,s,order):
        dN2sds=(-27 -18*s +81*s**2)/16
        dN3sds=(+27 -18*s -81*s**2)/16
        dN4sds=( -1 +18*s +27*s**2)/16
-       dNds_00= N1r*dN1sds 
-       dNds_01= N2r*dN1sds 
-       dNds_02= N3r*dN1sds 
-       dNds_03= N4r*dN1sds 
-       dNds_04= N1r*dN2sds 
-       dNds_05= N2r*dN2sds 
-       dNds_06= N3r*dN2sds 
-       dNds_07= N4r*dN2sds 
-       dNds_08= N1r*dN3sds 
-       dNds_09= N2r*dN3sds 
-       dNds_10= N3r*dN3sds 
-       dNds_11= N4r*dN3sds 
-       dNds_12= N1r*dN4sds 
-       dNds_13= N2r*dN4sds 
-       dNds_14= N3r*dN4sds 
-       dNds_15= N4r*dN4sds
-       return dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,dNds_05,dNds_06,dNds_07,\
-              dNds_08,dNds_09,dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,dNds_15
+       dNds00= N1r*dN1sds 
+       dNds01= N2r*dN1sds 
+       dNds02= N3r*dN1sds 
+       dNds03= N4r*dN1sds 
+       dNds04= N1r*dN2sds 
+       dNds05= N2r*dN2sds 
+       dNds06= N3r*dN2sds 
+       dNds07= N4r*dN2sds 
+       dNds08= N1r*dN3sds 
+       dNds09= N2r*dN3sds 
+       dNds10= N3r*dN3sds 
+       dNds11= N4r*dN3sds 
+       dNds12= N1r*dN4sds 
+       dNds13= N2r*dN4sds 
+       dNds14= N3r*dN4sds 
+       dNds15= N4r*dN4sds
+       return np.array([dNds00,dNds01,dNds02,dNds03,dNds04,dNds05,dNds06,dNds07,
+                        dNds08,dNds09,dNds10,dNds11,dNds12,dNds13,dNds14,dNds15],dtype=np.float64)
     if order==4:
        N1r=(    r -   r**2 -4*r**3 + 4*r**4)/6
        N2r=( -8*r +16*r**2 +8*r**3 -16*r**4)/6
@@ -239,59 +239,58 @@ def dNNVds(r,s,order):
        dN3ds=(      -10*s          +16*s**3) 
        dN4ds=(  8   +32*s -24*s**2 -64*s**3)/6
        dN5ds=(   -1 - 2*s +12*s**2 +16*s**3)/6
-       dNds_00= N1r*dN1ds
-       dNds_01= N2r*dN1ds
-       dNds_02= N3r*dN1ds
-       dNds_03= N4r*dN1ds
-       dNds_04= N5r*dN1ds
-       dNds_05= N1r*dN2ds
-       dNds_06= N2r*dN2ds
-       dNds_07= N3r*dN2ds
-       dNds_08= N4r*dN2ds
-       dNds_09= N5r*dN2ds
-       dNds_10= N1r*dN3ds
-       dNds_11= N2r*dN3ds
-       dNds_12= N3r*dN3ds
-       dNds_13= N4r*dN3ds
-       dNds_14= N5r*dN3ds
-       dNds_15= N1r*dN4ds
-       dNds_16= N2r*dN4ds
-       dNds_17= N3r*dN4ds
-       dNds_18= N4r*dN4ds
-       dNds_19= N5r*dN4ds
-       dNds_20= N1r*dN5ds
-       dNds_21= N2r*dN5ds
-       dNds_22= N3r*dN5ds
-       dNds_23= N4r*dN5ds
-       dNds_24= N5r*dN5ds
-       return dNds_00,dNds_01,dNds_02,dNds_03,dNds_04,\
-              dNds_05,dNds_06,dNds_07,dNds_08,dNds_09,\
-              dNds_10,dNds_11,dNds_12,dNds_13,dNds_14,\
-              dNds_15,dNds_16,dNds_17,dNds_18,dNds_19,\
-              dNds_20,dNds_21,dNds_22,dNds_23,dNds_24
+       dNds00= N1r*dN1ds
+       dNds01= N2r*dN1ds
+       dNds02= N3r*dN1ds
+       dNds03= N4r*dN1ds
+       dNds04= N5r*dN1ds
+       dNds05= N1r*dN2ds
+       dNds06= N2r*dN2ds
+       dNds07= N3r*dN2ds
+       dNds08= N4r*dN2ds
+       dNds09= N5r*dN2ds
+       dNds10= N1r*dN3ds
+       dNds11= N2r*dN3ds
+       dNds12= N3r*dN3ds
+       dNds13= N4r*dN3ds
+       dNds14= N5r*dN3ds
+       dNds15= N1r*dN4ds
+       dNds16= N2r*dN4ds
+       dNds17= N3r*dN4ds
+       dNds18= N4r*dN4ds
+       dNds19= N5r*dN4ds
+       dNds20= N1r*dN5ds
+       dNds21= N2r*dN5ds
+       dNds22= N3r*dN5ds
+       dNds23= N4r*dN5ds
+       dNds24= N5r*dN5ds
+       return np.array([dNds00,dNds01,dNds02,dNds03,dNds04,
+                        dNds05,dNds06,dNds07,dNds08,dNds09,
+                        dNds10,dNds11,dNds12,dNds13,dNds14,
+                        dNds15,dNds16,dNds17,dNds18,dNds19,
+                        dNds20,dNds21,dNds22,dNds23,dNds24],dtype=np.float64)
 
 
-def NNP(r,s,order):
+def basis_functions_P(r,s,order):
     if order==1:
-       N_1=1.
-       return N_1
+       return np.array([1],dtype=np.float64)
     if order==2:
-       N_0=0.25*(1-r)*(1-s)
-       N_1=0.25*(1+r)*(1-s)
-       N_2=0.25*(1-r)*(1+s)
-       N_3=0.25*(1+r)*(1+s)
-       return N_0,N_1,N_2,N_3
+       N0=0.25*(1-r)*(1-s)
+       N1=0.25*(1+r)*(1-s)
+       N2=0.25*(1-r)*(1+s)
+       N3=0.25*(1+r)*(1+s)
+       return np.array([N0,N1,N2,N3],dtype=np.float64)
     if order==3:
-       N_0= 0.5*r*(r-1) * 0.5*s*(s-1)
-       N_1=    (1-r**2) * 0.5*s*(s-1)
-       N_2= 0.5*r*(r+1) * 0.5*s*(s-1)
-       N_3= 0.5*r*(r-1) *    (1-s**2)
-       N_4=    (1-r**2) *    (1-s**2)
-       N_5= 0.5*r*(r+1) *    (1-s**2)
-       N_6= 0.5*r*(r-1) * 0.5*s*(s+1)
-       N_7=    (1-r**2) * 0.5*s*(s+1)
-       N_8= 0.5*r*(r+1) * 0.5*s*(s+1)
-       return N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8
+       N0= 0.5*r*(r-1) * 0.5*s*(s-1)
+       N1=    (1-r**2) * 0.5*s*(s-1)
+       N2= 0.5*r*(r+1) * 0.5*s*(s-1)
+       N3= 0.5*r*(r-1) *    (1-s**2)
+       N4=    (1-r**2) *    (1-s**2)
+       N5= 0.5*r*(r+1) *    (1-s**2)
+       N6= 0.5*r*(r-1) * 0.5*s*(s+1)
+       N7=    (1-r**2) * 0.5*s*(s+1)
+       N8= 0.5*r*(r+1) * 0.5*s*(s+1)
+       return np.array([N0,N1,N2,N3,N4,N5,N6,N7,N8],dtype=np.float64)
     if order==4:
        N1r=(-1    +r +9*r**2 - 9*r**3)/16
        N2r=(+9 -27*r -9*r**2 +27*r**3)/16
@@ -301,34 +300,35 @@ def NNP(r,s,order):
        N2t=(+9 -27*s -9*s**2 +27*s**3)/16
        N3t=(+9 +27*s -9*s**2 -27*s**3)/16
        N4t=(-1    -s +9*s**2 + 9*s**3)/16
-       N_00= N1r*N1t 
-       N_01= N2r*N1t 
-       N_02= N3r*N1t 
-       N_03= N4r*N1t 
-       N_04= N1r*N2t 
-       N_05= N2r*N2t 
-       N_06= N3r*N2t 
-       N_07= N4r*N2t 
-       N_08= N1r*N3t 
-       N_09= N2r*N3t 
-       N_10= N3r*N3t 
-       N_11= N4r*N3t 
-       N_12= N1r*N4t 
-       N_13= N2r*N4t 
-       N_14= N3r*N4t 
-       N_15= N4r*N4t 
-       return N_00,N_01,N_02,N_03,N_04,N_05,N_06,N_07,\
-              N_08,N_09,N_10,N_11,N_12,N_13,N_14,N_15
+       N00= N1r*N1t 
+       N01= N2r*N1t 
+       N02= N3r*N1t 
+       N03= N4r*N1t 
+       N04= N1r*N2t 
+       N05= N2r*N2t 
+       N06= N3r*N2t 
+       N07= N4r*N2t 
+       N08= N1r*N3t 
+       N09= N2r*N3t 
+       N10= N3r*N3t 
+       N11= N4r*N3t 
+       N12= N1r*N4t 
+       N13= N2r*N4t 
+       N14= N3r*N4t 
+       N15= N4r*N4t 
+       return np.array([N00,N01,N02,N03,N04,N05,N06,N07,
+                        N08,N09,N10,N11,N12,N13,N14,N15],dtype=np.float64)
 
-#------------------------------------------------------------------------------
+###############################################################################
 
-print("-----------------------------")
-print("----------fieldstone---------")
-print("-----------------------------")
+eps=1e-6
+
+print("*******************************")
+print("********** stone 042 **********")
+print("*******************************")
 
 ndim=2
-ndofV=2  # number of velocity degrees of freedom per node
-ndofP=1  # number of pressure degrees of freedom 
+ndof_V=2  # number of velocity degrees of freedom per node
 
 Lx=8.*2
 Ly=6.
@@ -342,9 +342,8 @@ else:
    nelx = 16
    nely = 8
    geom = 2
-   order= 1
+   order= 2
 
-gx=0
 gy=-1
 
 slope=0.6
@@ -352,76 +351,68 @@ slope=0.6
 nel=nelx*nely
 nnx=order*nelx+1  # number of elements, x direction
 nny=order*nely+1  # number of elements, y direction
-NV=nnx*nny
+nn_V=nnx*nny
 
 if order==1:
-   NP=nelx*nely
-   mV=4     # number of velocity nodes making up an element
-   mP=1     # number of pressure nodes making up an element
-   rVnodes=[-1,+1,-1,+1]
-   sVnodes=[-1,-1,+1,+1]
-   rPnodes=[0]
-   sPnodes=[0]
+   nn_P=nelx*nely
+   m_V=4 
+   m_P=1 
+   r_V=[-1,+1,-1,+1]
+   s_V=[-1,-1,+1,+1]
+   r_P=[0]
+   s_P=[0]
 if order==2:
-   NP=(nelx+1)*(nely+1)
-   mV=9     # number of velocity nodes making up an element
-   mP=4     # number of pressure nodes making up an element
-   rVnodes=[-1,0,+1,-1,0,+1,-1,0,+1]
-   sVnodes=[-1,-1,-1,0,0,0,+1,+1,+1]
-   rPnodes=[-1,+1,-1,+1]
-   sPnodes=[-1,-1,+1,+1]
+   nn_P=(nelx+1)*(nely+1)
+   m_V=9 
+   m_P=4 
+   r_V=[-1,0,+1,-1,0,+1,-1,0,+1]
+   s_V=[-1,-1,-1,0,0,0,+1,+1,+1]
+   r_P=[-1,+1,-1,+1]
+   s_P=[-1,-1,+1,+1]
 if order==3:
-   NP=(2*nelx+1)*(2*nely+1)
-   mV=16    # number of velocity nodes making up an element
-   mP=9     # number of pressure nodes making up an element
-   rVnodes=[-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1]
-   sVnodes=[-1,-1,-1,-1,-1./3.,-1./3.,-1./3.,-1./3.,+1./3.,+1./3.,+1./3.,+1./3.,+1,+1,+1,+1]
-   rPnodes=[-1,0,+1,-1,0,+1,-1,0,+1]
-   sPnodes=[-1,-1,-1,0,0,0,+1,+1,+1]
+   nn_P=(2*nelx+1)*(2*nely+1)
+   m_V=16 
+   m_P=9  
+   r_V=[-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1]
+   s_V=[-1,-1,-1,-1,-1./3.,-1./3.,-1./3.,-1./3.,+1./3.,+1./3.,+1./3.,+1./3.,+1,+1,+1,+1]
+   r_P=[-1,0,+1,-1,0,+1,-1,0,+1]
+   s_P=[-1,-1,-1,0,0,0,+1,+1,+1]
 if order==4:
-   NP=(3*nelx+1)*(3*nely+1)
-   mV=25    # number of velocity nodes making up an element
-   mP=16     # number of pressure nodes making up an element
-   rVnodes=[-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1]
-   sVnodes=[-1,-1,-1,-1,-1,-0.5,-0.5,-0.5,-0.5,-0.5,0,0,0,0,0,0.5,0.5,0.5,0.5,0.5,1,1,1,1,1]
-   rPnodes=[-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1]
-   sPnodes=[-1,-1,-1,-1,-1./3.,-1./3.,-1./3.,-1./3.,+1./3.,+1./3.,+1./3.,+1./3.,+1,+1,+1,+1]
+   nn_P=(3*nelx+1)*(3*nely+1)
+   m_V=25  
+   m_P=16  
+   r_V=[-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1,-1,-0.5,0,0.5,1]
+   s_V=[-1,-1,-1,-1,-1,-0.5,-0.5,-0.5,-0.5,-0.5,0,0,0,0,0,0.5,0.5,0.5,0.5,0.5,1,1,1,1,1]
+   r_P=[-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1,-1,-1./3.,+1./3.,+1]
+   s_P=[-1,-1,-1,-1,-1./3.,-1./3.,-1./3.,-1./3.,+1./3.,+1./3.,+1./3.,+1./3.,+1,+1,+1,+1]
 
-ndofV=2
-ndofP=1
 
-NfemV=NV*ndofV       # number of velocity dofs
-NfemP=NP*ndofP       # number of pressure dofs
-Nfem=NfemV+NfemP     # total nb of dofs
+Nfem_V=nn_V*ndof_V # number of velocity dofs
+Nfem_P=nn_P        # number of pressure dofs
+Nfem=Nfem_V+Nfem_P # total nb of dofs
 
-eps=1e-6
+rho=1.
 eta=1.
 
 hx=Lx/nelx
 hy=Ly/nely
 
-sparse=True
+###############################################################################
 
-#################################################################
+if order==1: nq_per_dim=2
+if order==2: nq_per_dim=3
+if order==3: nq_per_dim=4
+if order==4: nq_per_dim=5
 
-if order==1:
-   nqperdim=2
-if order==2:
-   nqperdim=3
-if order==3:
-   nqperdim=4
-if order==4:
-   nqperdim=5
-
-if nqperdim==2:
+if nq_per_dim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
    qweights=[1.,1.]
 
-if nqperdim==3:
+if nq_per_dim==3:
    qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
    qweights=[5./9.,8./9.,5./9.]
 
-if nqperdim==4:
+if nq_per_dim==4:
    qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
    qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
    qw4a=(18-np.sqrt(30.))/36.
@@ -429,7 +420,7 @@ if nqperdim==4:
    qcoords=[-qc4a,-qc4b,qc4b,qc4a]
    qweights=[qw4a,qw4b,qw4b,qw4a]
 
-if nqperdim==5:
+if nq_per_dim==5:
    qc5a=np.sqrt(5.+2.*np.sqrt(10./7.))/3.
    qc5b=np.sqrt(5.-2.*np.sqrt(10./7.))/3.
    qc5c=0.
@@ -439,7 +430,7 @@ if nqperdim==5:
    qcoords=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
    qweights=[qw5a,qw5b,qw5c,qw5b,qw5a]
 
-if nqperdim==6:
+if nq_per_dim==6:
    qcoords=[-0.932469514203152,\
             -0.661209386466265,\
             -0.238619186083197,\
@@ -453,57 +444,59 @@ if nqperdim==6:
              0.360761573048139,\
              0.171324492379170]
 
-#################################################################
+###############################################################################
 
-print ('order    =',order)
-print ('nnx      =',nnx)
-print ('nny      =',nny)
-print ('NV       =',NV)
-print ('NP       =',NP)
-print ('nel      =',nel)
-print ('NfemV    =',NfemV)
-print ('NfemP    =',NfemP)
-print ('Nfem     =',Nfem)
-print ('nqperdim =',nqperdim)
+print ('order      =',order)
+print ('nnx        =',nnx)
+print ('nny        =',nny)
+print ('nn_V       =',nn_V)
+print ('nn_P       =',nn_P)
+print ('nel        =',nel)
+print ('Nfem_V     =',Nfem_V)
+print ('Nfem_P     =',Nfem_P)
+print ('Nfem       =',Nfem)
+print ('nq_per_dim =',nq_per_dim)
 print("-----------------------------")
 
-#################################################################
-# checking that all velocity shape functions are 1 on their node 
-# and  zero elsewhere
-#for i in range(0,mV):
-#   print ('node',i,':',NNV(rVnodes[i],sVnodes[i],order))
+###############################################################################
+# check that all vel basis functions are 1 on their node and zero elsewhere
 
-#################################################################
-# checking that all pressure shape functions are 1 on their node 
-# and  zero elsewhere
-#for i in range(0,mP):
-#   print ('node',i,':',NNP(rPnodes[i],sPnodes[i],order))
+if debug:
+   for i in range(0,m_V):
+       print ('node',i,':',basis_functions_V(r_V[i],s_V[i],order))
 
-#################################################################
+###############################################################################
+# check that all press basis functions are 1 on their node and zero elsewhere
+
+if debug:
+   for i in range(0,m_P):
+       print ('node',i,':',basis_functions_S(r_P[i],s_P[i],order))
+
+###############################################################################
 # build velocity nodes coordinates 
-#################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-xV=np.zeros(NV,dtype=np.float64)  # x coordinates
-yV=np.zeros(NV,dtype=np.float64)  # y coordinates
+x_V=np.zeros(nn_V,dtype=np.float64)  # x coordinates
+y_V=np.zeros(nn_V,dtype=np.float64)  # y coordinates
 
 counter=0    
 for j in range(0,nny):
     for i in range(0,nnx):
-        xV[counter]=i*hx/order
-        yV[counter]=j*hy/order
+        x_V[counter]=i*hx/order
+        y_V[counter]=j*hy/order
         counter+=1
 
-#np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
+if debug: np.savetxt('gridV.ascii',np.array([x_V,y_V]).T,header='# x,y')
 
-print("build V grid: %.3f s" % (timing.time() - start))
+print("build V grid: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # connectivity
-#################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-iconV=np.zeros((mV,nel),dtype=np.int32)
+icon_V=np.zeros((m_V,nel),dtype=np.int32)
 
 counter=0
 for j in range(0,nely):
@@ -511,55 +504,56 @@ for j in range(0,nely):
         counter2=0
         for k in range(0,order+1):
             for l in range(0,order+1):
-                iconV[counter2,counter]=i*order+l+j*order*nnx+nnx*k
+                icon_V[counter2,counter]=i*order+l+j*order*nnx+nnx*k
                 counter2+=1
-        counter += 1
+        counter+=1
 
-#print("-------iconV--------")
-#for iel in range (0,nel):
-#    print ("iel=",iel)
-#    for i in range (0,mV):
-#        print ("node ",i,':',iconV[i,iel],"at pos.",xV[iconV[i,iel]], yV[iconV[i,iel]])
+if debug:
+   print("-------icon_V--------")
+   for iel in range (0,nel):
+       print ("iel=",iel)
+       for i in range (0,m_V):
+           print ("node ",i,':',icon_V[i,iel],"at pos.",x_V[icon_V[i,iel]],y_V[icon_V[i,iel]])
 
-print("build iconV: %.3f s" % (timing.time() - start))
+print("build icon_V: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # build pressure grid 
-#################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-xP=np.empty(NP,dtype=np.float64)     # x coordinates
-yP=np.empty(NP,dtype=np.float64)     # y coordinates
+x_P=np.zeros(nn_P,dtype=np.float64)
+y_P=np.zeros(nn_P,dtype=np.float64)
 
 if order==1:
    for iel in range(0,nel):
-       xP[iel]=sum(xV[iconV[0:mV,iel]])*0.25
-       yP[iel]=sum(yV[iconV[0:mV,iel]])*0.25
+       x_P[iel]=sum(x_V[icon_V[0:m_V,iel]])*0.25
+       y_P[iel]=sum(y_V[icon_V[0:m_V,iel]])*0.25
       
 if order>1:
    counter=0    
    for j in range(0,(order-1)*nely+1):
        for i in range(0,(order-1)*nelx+1):
-           xP[counter]=i*hx/(order-1)
-           yP[counter]=j*hy/(order-1)
+           x_P[counter]=i*hx/(order-1)
+           y_P[counter]=j*hy/(order-1)
            counter+=1
 
-#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+if debug: np.savetxt('gridP.ascii',np.array([x_P,y_P]).T,header='# x,y')
 
-print("build P grid: %.3f s" % (timing.time() - start))
+print("build P grid: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # build pressure connectivity array 
-#################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-iconP=np.zeros((mP,nel),dtype=np.int32)
+icon_P=np.zeros((m_P,nel),dtype=np.int32)
 
 if order==1:
    counter=0
    for j in range(0,nely):
        for i in range(0,nelx):
-           iconP[0,counter]=counter
+           icon_P[0,counter]=counter
            counter += 1
 
 if order>1:
@@ -570,410 +564,326 @@ if order>1:
            counter2=0
            for k in range(0,order):
                for l in range(0,order):
-                   iconP[counter2,counter]=i*om1+l+j*om1*(om1*nelx+1)+(om1*nelx+1)*k 
+                   icon_P[counter2,counter]=i*om1+l+j*om1*(om1*nelx+1)+(om1*nelx+1)*k 
                    counter2+=1
            counter += 1
 
-#print("-------iconP--------")
-#for iel in range (0,nel):
-#    print ("iel=",iel)
-#    for i in range(0,mP):
-#        print ("node ",i,':',iconP[i,iel],"at pos.",xP[iconP[i,iel]], yP[iconP[i,iel]])
+if debug:
+   print("-------icon_P--------")
+   for iel in range (0,nel):
+       print ("iel=",iel)
+       for i in range(0,m_P):
+           print ("node ",i,':',icon_P[i,iel],"at pos.",x_P[icon_P[i,iel]],y_P[icon_P[i,iel]])
 
-print("build iconP: %.3f s" % (timing.time() - start))
+print("build icon_P: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # define boundary conditions
-#################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
-bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
+bc_fix_V=np.zeros(Nfem_V,dtype=bool)  # boundary condition, yes/no
+bc_val_V=np.zeros(Nfem_V,dtype=np.float64)  # boundary condition, value
 
-for i in range(0,NV):
-    if xV[i]<eps:
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if xV[i]>(Lx-eps):
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if yV[i]<eps:
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
-    if yV[i]>(Ly-eps):
-       bc_fix[i*ndofV]   = True ; bc_val[i*ndofV]   = 0.
-       bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = 0.
+for i in range(0,nn_V):
+    if x_V[i]<eps:
+       bc_fix_V[i*ndof_V]   = True ; bc_val_V[i*ndof_V]   = 0.
+       bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = 0.
+    if x_V[i]>(Lx-eps):
+       bc_fix_V[i*ndof_V]   = True ; bc_val_V[i*ndof_V]   = 0.
+       bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = 0.
+    if y_V[i]<eps:
+       bc_fix_V[i*ndof_V]   = True ; bc_val_V[i*ndof_V]   = 0.
+       bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = 0.
+    if y_V[i]>(Ly-eps):
+       bc_fix_V[i*ndof_V]   = True ; bc_val_V[i*ndof_V]   = 0.
+       bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = 0.
 
-print("boundary conditions: %.3f s" % (timing.time() - start))
+print("boundary conditions: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # deform mesh
-#################################################################
+###############################################################################
 
 if geom==1:
-   for i in range(0,NV):
-       if xV[i]>Lx/2:
-          yV[i]-=slope*(xV[i]-Lx/2)
-   for i in range(0,NP):
-       if xP[i]>Lx/2:
-          yP[i]-=slope*(xP[i]-Lx/2)
+   for i in range(0,nn_V):
+       if x_V[i]>Lx/2:
+          y_V[i]-=slope*(x_V[i]-Lx/2)
+   for i in range(0,nn_P):
+       if x_P[i]>Lx/2:
+          y_P[i]-=slope*(x_P[i]-Lx/2)
 
 if geom==2:
    ymax=Ly
    counter=0    
    for j in range(0,nny):
        for i in range(0,nnx):
-           if xV[counter]>Lx/2:
-              ymin=-slope*(xV[i]-Lx/2)
-              yV[counter]=ymin+(ymax-ymin)/(order*nely)*j
+           if x_V[counter]>Lx/2:
+              ymin=-slope*(x_V[i]-Lx/2)
+              y_V[counter]=ymin+(ymax-ymin)/(order*nely)*j
            counter+=1
-
 
    if order==1:
       for iel in range(0,nel):
-          xP[iel]=sum(xV[iconV[0:mV,iel]])*0.25
-          yP[iel]=sum(yV[iconV[0:mV,iel]])*0.25
+          x_P[iel]=sum(x_V[icon_V[0:m_V,iel]])*0.25
+          y_P[iel]=sum(y_V[icon_V[0:m_V,iel]])*0.25
    else:
       counter=0    
       for j in range(0,(order-1)*nely+1):
           for i in range(0,(order-1)*nelx+1):
-              if xP[counter]>Lx/2:
-                 ymin=-slope*(xP[i]-Lx/2)
-                 yP[counter]=ymin+(ymax-ymin)/((order-1)*nely)*j
+              if x_P[counter]>Lx/2:
+                 ymin=-slope*(x_P[i]-Lx/2)
+                 y_P[counter]=ymin+(ymax-ymin)/((order-1)*nely)*j
               counter+=1
 
-#np.savetxt('gridV.ascii',np.array([xV,yV]).T,header='# x,y')
-#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+if debug:
+   np.savetxt('gridV.ascii',np.array([x_V,y_V]).T,header='# x,y')
+   np.savetxt('gridP.ascii',np.array([x_P,y_P]).T,header='# x,y')
 
-#################################################################
+###############################################################################
 # compute area of elements
-#################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-area    = np.zeros(nel,dtype=np.float64) 
-dNNNVdr = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
-dNNNVds = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
+
+jcb=np.zeros((ndim,ndim),dtype=np.float64)
+area=np.zeros(nel,dtype=np.float64) 
 
 for iel in range(0,nel):
-    for iq in range(0,nqperdim):
-        for jq in range(0,nqperdim):
+    for iq in range(0,nq_per_dim):
+        for jq in range(0,nq_per_dim):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
-            dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
-            dNNNVds[0:mV]=dNNVds(rq,sq,order)
-            jcb=np.zeros((ndim,ndim),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-            jcob = np.linalg.det(jcb)
-            area[iel]+=jcob*weightq
+            N_V=basis_functions_V(rq,sq,order)
+            dNdr_V=basis_functions_V_dr(rq,sq,order)
+            dNds_V=basis_functions_V_ds(rq,sq,order)
+            jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
+            jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
+            jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
+            jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
+            jcbi=np.linalg.inv(jcb)
+            JxWq=np.linalg.det(jcb)*weightq
+            area[iel]+=JxWq
+        #end for
+    #end for
+#end for
 
 print("     -> area (m,M) %.4e %.4e " %(np.min(area),np.max(area)))
 print("     -> total area %.6f " %(area.sum()))
 
-print("compute elements areas: %.3f s" % (timing.time() - start))
+print("compute elements areas: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # build FE matrix
 # [ K G ][u]=[f]
 # [GT 0 ][p] [h]
-#################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-if sparse:
-   A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
-else:   
-   K_mat = np.zeros((NfemV,NfemV),dtype=np.float64) # matrix K 
-   G_mat = np.zeros((NfemV,NfemP),dtype=np.float64) # matrix GT
-
-f_rhs   = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
-h_rhs   = np.zeros(NfemP,dtype=np.float64)        # right hand side h 
-b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
-N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64) # matrix  
-NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
-NNNP    = np.zeros(mP,dtype=np.float64)           # shape functions P
-dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVdr = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-u       = np.zeros(NV,dtype=np.float64)           # x-component velocity
-v       = np.zeros(NV,dtype=np.float64)           # y-component velocity
-c_mat   = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+A_sparse=lil_matrix((Nfem,Nfem),dtype=np.float64)
+rhs=np.zeros(Nfem,dtype=np.float64) 
+B=np.zeros((3,ndof_V*m_V),dtype=np.float64) 
+N_mat=np.zeros((3,m_P),dtype=np.float64) 
+C=np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 for iel in range(0,nel):
 
-    # set arrays to 0 every loop
-    f_el =np.zeros((mV*ndofV),dtype=np.float64)
-    K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
-    G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
-    h_el=np.zeros((mP*ndofP),dtype=np.float64)
+    K_el=np.zeros((m_V*ndof_V,m_V*ndof_V),dtype=np.float64)
+    G_el=np.zeros((m_V*ndof_V,m_P),dtype=np.float64)
+    f_el=np.zeros((m_V*ndof_V),dtype=np.float64)
+    h_el=np.zeros((m_P),dtype=np.float64)
 
-    for iq in range(0,nqperdim):
-        for jq in range(0,nqperdim):
+    for iq in range(0,nq_per_dim):
+        for jq in range(0,nq_per_dim):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
+            N_V=basis_functions_V(rq,sq,order)
+            N_P=basis_functions_P(rq,sq,order)
+            dNdr_V=basis_functions_V_dr(rq,sq,order)
+            dNds_V=basis_functions_V_ds(rq,sq,order)
+            jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
+            jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
+            jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
+            jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
+            jcbi=np.linalg.inv(jcb)
+            JxWq=np.linalg.det(jcb)*weightq
+            xq=np.dot(N_V,x_V[icon_V[:,iel]])
+            yq=np.dot(N_V,y_V[icon_V[:,iel]])
+            dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V
+            dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V
 
-            NNNV[0:mV]=NNV(rq,sq,order)
-            dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
-            dNNNVds[0:mV]=dNNVds(rq,sq,order)
-            NNNP[0:mP]=NNP(rq,sq,order)
+            for i in range(0,m_V):
+                B[0:3,2*i:2*i+2]=[[dNdx_V[i],0.      ],
+                                  [0.       ,dNdy_V[i]],
+                                  [dNdy_V[i],dNdx_V[i]]]
 
-            # calculate jacobian matrix
-            jcb=np.zeros((ndim,ndim),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-            jcob = np.linalg.det(jcb)
-            jcbi = np.linalg.inv(jcb)
+            K_el+=B.T.dot(C.dot(B))*eta*JxWq
 
-            # compute dNdx & dNdy
-            xq=0.0
-            yq=0.0
-            for k in range(0,mV):
-                xq+=NNNV[k]*xV[iconV[k,iel]]
-                yq+=NNNV[k]*yV[iconV[k,iel]]
-                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
+            for i in range(0,m_V):
+                f_el[ndof_V*i+1]+=N_V[i]*JxWq*rho*gy
 
-            # construct 3x8 b_mat matrix
-            for i in range(0,mV):
-                b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.     ],
-                                         [0.        ,dNNNVdy[i]],
-                                         [dNNNVdy[i],dNNNVdx[i]]]
+            N_mat[0,:]=N_P[:]
+            N_mat[1,:]=N_P[:]
 
-            # compute elemental a_mat matrix
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta*weightq*jcob
-
-            # compute elemental rhs vector
-            for i in range(0,mV):
-                f_el[ndofV*i  ]+=NNNV[i]*jcob*weightq*gx
-                f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy
-
-            for i in range(0,mP):
-                N_mat[0,i]=NNNP[i]
-                N_mat[1,i]=NNNP[i]
-                N_mat[2,i]=0.
-
-            G_el-=b_mat.T.dot(N_mat)*weightq*jcob
+            G_el-=B.T.dot(N_mat)*JxWq
 
         # end for jq
     # end for iq
 
     # impose b.c. 
-    for k1 in range(0,mV):
-        for i1 in range(0,ndofV):
-            ikk=ndofV*k1          +i1
-            m1 =ndofV*iconV[k1,iel]+i1
-            if bc_fix[m1]:
+    for k1 in range(0,m_V):
+        for i1 in range(0,ndof_V):
+            ikk=ndof_V*k1          +i1
+            m1 =ndof_V*icon_V[k1,iel]+i1
+            if bc_fix_V[m1]:
                K_ref=K_el[ikk,ikk] 
-               for jkk in range(0,mV*ndofV):
-                   f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
+               for jkk in range(0,m_V*ndof_V):
+                   f_el[jkk]-=K_el[jkk,ikk]*bc_val_V[m1]
                    K_el[ikk,jkk]=0
                    K_el[jkk,ikk]=0
                K_el[ikk,ikk]=K_ref
-               f_el[ikk]=K_ref*bc_val[m1]
-               h_el[:]-=G_el[ikk,:]*bc_val[m1]
+               f_el[ikk]=K_ref*bc_val_V[m1]
+               h_el[:]-=G_el[ikk,:]*bc_val_V[m1]
                G_el[ikk,:]=0
 
     # assemble matrix K_mat and right hand side rhs
-    for k1 in range(0,mV):
-        for i1 in range(0,ndofV):
-            ikk=ndofV*k1          +i1
-            m1 =ndofV*iconV[k1,iel]+i1
-            for k2 in range(0,mV):
-                for i2 in range(0,ndofV):
-                    jkk=ndofV*k2          +i2
-                    m2 =ndofV*iconV[k2,iel]+i2
-                    if sparse:
-                       A_sparse[m1,m2] += K_el[ikk,jkk]
-                    else:
-                       K_mat[m1,m2]+=K_el[ikk,jkk]
-            for k2 in range(0,mP):
+    for k1 in range(0,m_V):
+        for i1 in range(0,ndof_V):
+            ikk=ndof_V*k1          +i1
+            m1 =ndof_V*icon_V[k1,iel]+i1
+            for k2 in range(0,m_V):
+                for i2 in range(0,ndof_V):
+                    jkk=ndof_V*k2          +i2
+                    m2 =ndof_V*icon_V[k2,iel]+i2
+                    A_sparse[m1,m2] += K_el[ikk,jkk]
+            for k2 in range(0,m_P):
                 jkk=k2
-                m2 =iconP[k2,iel]
-                if sparse:
-                   A_sparse[m1,NfemV+m2]+=G_el[ikk,jkk]
-                   A_sparse[NfemV+m2,m1]+=G_el[ikk,jkk]
-                else:
-                   G_mat[m1,m2]+=G_el[ikk,jkk]
-            f_rhs[m1]+=f_el[ikk]
-    for k2 in range(0,mP):
-        m2=iconP[k2,iel]
-        h_rhs[m2]+=h_el[k2]
+                m2 =icon_P[k2,iel]
+                A_sparse[m1,Nfem_V+m2]+=G_el[ikk,jkk]
+                A_sparse[Nfem_V+m2,m1]+=G_el[ikk,jkk]
+            rhs[m1]+=f_el[ikk]
+    for k2 in range(0,m_P):
+        m2=icon_P[k2,iel]
+        rhs[Nfem_V+m2]+=h_el[k2]
 
-if not sparse:
-   print("     -> K_mat (m,M) %.4f %.4f " %(np.min(K_mat),np.max(K_mat)))
-   print("     -> G_mat (m,M) %.4f %.4f " %(np.min(G_mat),np.max(G_mat)))
+print("build FE matrix: %.3fs - %d elts" % (clock.time()-start,nel))
 
-print("build FE matrix: %.3fs - %d elts" % (timing.time()-start, nel))
-
-######################################################################
-# assemble K, G, GT, f, h into A and rhs
-######################################################################
-start = timing.time()
-
-rhs = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
-rhs[0:NfemV]=f_rhs
-rhs[NfemV:Nfem]=h_rhs
-
-if not sparse:
-   a_mat = np.zeros((Nfem,Nfem),dtype=np.float64) 
-   a_mat[0:NfemV,0:NfemV]=K_mat
-   a_mat[0:NfemV,NfemV:Nfem]=G_mat
-   a_mat[NfemV:Nfem,0:NfemV]=G_mat.T
-
-print("assemble blocks: %.3f s" % (timing.time() - start))
-
-######################################################################
+###############################################################################
 # assign extra pressure b.c. to remove null space
-######################################################################
+###############################################################################
 
-if sparse:
-   A_sparse[Nfem-1,:]=0
-   A_sparse[:,Nfem-1]=0
-   A_sparse[Nfem-1,Nfem-1]=1
-   rhs[Nfem-1]=0
-else:
-   a_mat[Nfem-1,:]=0
-   a_mat[:,Nfem-1]=0
-   a_mat[Nfem-1,Nfem-1]=1
-   rhs[Nfem-1]=0
+A_sparse[Nfem-1,:]=0
+A_sparse[:,Nfem-1]=0
+A_sparse[Nfem-1,Nfem-1]=1
+rhs[Nfem-1]=0
 
-######################################################################
+###############################################################################
 # solve system
-######################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-if sparse:
-   sparse_matrix=A_sparse.tocsr()
-else:
-   sparse_matrix=sps.csr_matrix(a_mat)
+sol=sps.linalg.spsolve(A_sparse.tocsr(),rhs)
 
-sol=sps.linalg.spsolve(sparse_matrix,rhs)
+print("solve time: %.3f s" % (clock.time()-start))
 
-print("solve time: %.3f s" % (timing.time() - start))
-
-######################################################################
+###############################################################################
 # put solution into separate x,y velocity arrays
-######################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-u,v=np.reshape(sol[0:NfemV],(NV,2)).T
-p=sol[NfemV:Nfem]
+u,v=np.reshape(sol[0:Nfem_V],(nn_V,2)).T
+p=sol[Nfem_V:Nfem]
 
 print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
-#np.savetxt('velocity.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
-np.savetxt('pressure.ascii',np.array([xP,yP,p]).T,header='# x,y,p')
+if debug:
+   np.savetxt('velocity.ascii',np.array([x_V,y_V,u,v]).T,header='# x,y,u,v')
+   np.savetxt('pressure.ascii',np.array([x_P,y_P,p]).T,header='# x,y,p')
 
-print("split vel into u,v: %.3f s" % (timing.time() - start))
+print("split vel into u,v: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # project pressure onto velocity grid
-#####################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-q=np.zeros(NV,dtype=np.float64)
-c=np.zeros(NV,dtype=np.float64)
+q=np.zeros(nn_V,dtype=np.float64)
+c=np.zeros(nn_V,dtype=np.float64)
 
 for iel in range(0,nel):
-    for i in range(0,mV):
-        NNNP[0:mP]=NNP(rVnodes[i],sVnodes[i],order)
-        q[iconV[i,iel]]+=np.dot(p[iconP[0:mP,iel]],NNNP[0:mP])
-        c[iconV[i,iel]]+=1.
+    for i in range(0,m_V):
+        N_P=basis_functions_P(r_V[i],s_V[i],order)
+        q[icon_V[i,iel]]+=np.dot(N_P,p[icon_P[:,iel]])
+        c[icon_V[i,iel]]+=1.
 
-q=q/c
+q/=c
 
-np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
+if debug: np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
 
-print("project p onto Vnodes: %.3f s" % (timing.time() - start))
+print("project p onto Vnodes: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # compute L2 errors
-#####################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-errv=0.
-errp=0.
-errq=0.
+vrms=0.
+prms=0
+qrms=0
 for iel in range (0,nel):
-
-    for iq in range(0,nqperdim):
-        for jq in range(0,nqperdim):
+    for iq in range(0,nq_per_dim):
+        for jq in range(0,nq_per_dim):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
-
-            NNNV[0:mV]=NNV(rq,sq,order)
-            dNNNVdr[0:mV]=dNNVdr(rq,sq,order)
-            dNNNVds[0:mV]=dNNVds(rq,sq,order)
-            NNNP[0:mP]=NNP(rq,sq,order)
-
-            jcb=np.zeros((ndim,ndim),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-            jcob = np.linalg.det(jcb)
-
-            xq=0.
-            yq=0.
-            uq=0.
-            vq=0.
-            qq=0.
-            for k in range(0,mV):
-                xq+=NNNV[k]*xV[iconV[k,iel]]
-                yq+=NNNV[k]*yV[iconV[k,iel]]
-                uq+=NNNV[k]*u[iconV[k,iel]]
-                vq+=NNNV[k]*v[iconV[k,iel]]
-                qq+=NNNV[k]*q[iconV[k,iel]]
-            errv+=(uq**2+vq**2)*weightq*jcob
-            errq+=qq**2*weightq*jcob
-
-            xq=0.
-            yq=0.
-            pq=0.
-            for k in range(0,mP):
-                xq+=NNNP[k]*xP[iconP[k,iel]]
-                yq+=NNNP[k]*yP[iconP[k,iel]]
-                pq+=NNNP[k]*p[iconP[k,iel]]
-            errp+=pq**2*weightq*jcob
-
+            N_V=basis_functions_V(rq,sq,order)
+            N_P=basis_functions_P(rq,sq,order)
+            dNdr_V=basis_functions_V_dr(rq,sq,order)
+            dNds_V=basis_functions_V_ds(rq,sq,order)
+            jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
+            jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
+            jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
+            jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
+            JxWq=np.linalg.det(jcb)*weightq
+            xq=np.dot(N_V,x_V[icon_V[:,iel]])
+            yq=np.dot(N_V,y_V[icon_V[:,iel]])
+            uq=np.dot(N_V,u[icon_V[:,iel]])
+            vq=np.dot(N_V,v[icon_V[:,iel]])
+            qq=np.dot(N_V,q[icon_V[:,iel]])
+            pq=np.dot(N_P,p[icon_P[:,iel]])
+            vrms+=(uq**2+vq**2)*JxWq
+            qrms+=qq**2*JxWq
+            prms+=pq**2*JxWq
         # end for jq
     # end for iq
 # end for iel
 
-errv=np.sqrt(errv)
-errp=np.sqrt(errp)
-errq=np.sqrt(errq)
+vrms=np.sqrt(vrms/area.sum())
+prms=np.sqrt(prms/area.sum())
+qrms=np.sqrt(qrms/area.sum())
 
-print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errq= %.8e" %(nel,errv,errp,errq))
+print("     -> nel= %6d ; vrms= %.8e ; prms= %.8e ; qrms= %.8e" %(nel,vrms,prms,qrms))
 
-print("compute errors: %.3f s" % (timing.time() - start))
+print("compute errors: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # plot of solution
-#####################################################################
+###############################################################################
 
 if True:
     vtufile=open('solution.vtu',"w")
     vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
     vtufile.write("<UnstructuredGrid> \n")
-    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+    vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nn_V,nel))
     #####
     vtufile.write("<Points> \n")
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-    for i in range(0,NV):
-        vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
+    for i in range(0,nn_V):
+        vtufile.write("%10e %10e %10e \n" %(x_V[i],y_V[i],0.))
     vtufile.write("</DataArray>\n")
     vtufile.write("</Points> \n")
     #####
@@ -995,12 +905,12 @@ if True:
     vtufile.write("<PointData Scalars='scalars'>\n")
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-    for i in range(0,NV):
+    for i in range(0,nn_V):
         vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
-    for i in range(0,NV):
+    for i in range(0,nn_V):
         vtufile.write("%10e \n" %q[i])
     vtufile.write("</DataArray>\n")
     #--
@@ -1011,16 +921,16 @@ if True:
     vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
     if order==1:
        for iel in range (0,nel):
-           vtufile.write("%d %d %d %d \n" %(iconV[0,iel],iconV[1,iel],iconV[3,iel],iconV[2,iel]))
+           vtufile.write("%d %d %d %d \n" %(icon_V[0,iel],icon_V[1,iel],icon_V[3,iel],icon_V[2,iel]))
     if order==2:
        for iel in range (0,nel):
-           vtufile.write("%d %d %d %d \n" %(iconV[0,iel],iconV[2,iel],iconV[8,iel],iconV[6,iel]))
+           vtufile.write("%d %d %d %d \n" %(icon_V[0,iel],icon_V[2,iel],icon_V[8,iel],icon_V[6,iel]))
     if order==3:
        for iel in range (0,nel):
-           vtufile.write("%d %d %d %d \n" %(iconV[0,iel],iconV[3,iel],iconV[15,iel],iconV[12,iel]))
+           vtufile.write("%d %d %d %d \n" %(icon_V[0,iel],icon_V[3,iel],icon_V[15,iel],icon_V[12,iel]))
     if order==4:
        for iel in range (0,nel):
-           vtufile.write("%d %d %d %d \n" %(iconV[0,iel],iconV[4,iel],iconV[24,iel],iconV[20,iel]))
+           vtufile.write("%d %d %d %d \n" %(icon_V[0,iel],icon_V[4,iel],icon_V[24,iel],icon_V[20,iel]))
 
     vtufile.write("</DataArray>\n")
     #--
@@ -1041,6 +951,8 @@ if True:
     vtufile.write("</VTKFile>\n")
     vtufile.close()
 
-print("-----------------------------")
-print("------------the end----------")
-print("-----------------------------")
+print("*******************************")
+print("********** the end ************")
+print("*******************************")
+
+###############################################################################

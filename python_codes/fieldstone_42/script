@@ -1,3 +1,9 @@
+#! /bin/bash
+
+# nelx = int(sys.argv[1])
+# nely = int(sys.argv[2])
+# geom = int(sys.argv[3])
+# order = int(sys.argv[4])
 
 python3 stone.py 16 8 0 1
 mv solution.vtu solution_geom0_order1.vtu
@@ -35,25 +41,24 @@ mv solution.vtu solution_geom2_order3.vtu
 
 rm vrms.ascii
 python3 stone.py 16  8 2 1 > opla
-grep errv opla >> vrms.ascii 
+grep vrms opla >> vrms.ascii 
+python3 stone.py 24  8 2 1 > opla
+grep vrms opla >> vrms.ascii 
 python3 stone.py 32 16 2 1 > opla
-grep errv opla >> vrms.ascii 
+grep vrms opla >> vrms.ascii 
 python3 stone.py 48 24 2 1 > opla
-grep errv opla >> vrms.ascii 
+grep vrms opla >> vrms.ascii 
 python3 stone.py 64 32 2 1 > opla
-grep errv opla >> vrms.ascii 
+grep vrms opla >> vrms.ascii 
 python3 stone.py 80 40 2 1 > opla
-grep errv opla >> vrms.ascii 
+grep vrms opla >> vrms.ascii 
 python3 stone.py 96 48 2 1 > opla
-grep errv opla >> vrms.ascii 
+grep vrms opla >> vrms.ascii 
+python3 stone.py 128 64 2 1 > opla
+grep vrms opla >> vrms.ascii 
+python3 stone.py 160 80 2 1 > opla
+grep vrms opla >> vrms.ascii 
 rm opla
 
-
-
-
-
-
-
-
-
+###########################################
 
