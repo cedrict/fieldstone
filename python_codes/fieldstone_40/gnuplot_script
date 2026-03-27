@@ -1,3 +1,4 @@
+#
 set term pdf enhanced
 set output 'plot.pdf'
 set xlabel '{/Symbol f}_1'
@@ -25,7 +26,7 @@ plot[][]\
 #d12(x) = (eta1*(sinh(2*x) -2*x))/(eta2*(cosh(2*x)-1-2*x**2)) + (sinh(2*phi2)-2*phi2)/(cosh(2*phi2)-1-2*phi2**2)
 #i21(x) = (eta1*phi2*(sinh(2*x)+2*x))/(eta2*(cosh(2*x)-1-2*x**2)) + (phi2*(sinh(2*phi2)+2*phi2))/(cosh(2*phi2)-1-2*phi2**2) 
 #j22(x) = (eta1*2*x**2*phi2)/(eta2*(cosh(2*x)-1-2*x**2))-(2*phi2**3)/(cosh(2*phi2)-1-2*phi2**2 )
-K(x)=-d12(x)/(c11(x)*j22(x)-d12(x)*i21(x))
+#K(x)=-d12(x)/(c11(x)*j22(x)-d12(x)*i21(x))
 #plot[2:8][]\
 #-d12(x)/(c11(x)*j22(x)-d12(x)*i21(x)) lw 5 ,K(x)
 

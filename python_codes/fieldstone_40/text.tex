@@ -3,7 +3,7 @@
 \includegraphics[height=1.25cm]{images/pictograms/benchmark}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/paraview}
-\includegraphics[height=1.25cm]{images/pictograms/publication}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -18,7 +18,7 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: September 19th, 2025.
+Last revision: March 26th, 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -65,25 +65,44 @@ j_{22} &=& \frac{\eta_1 2 \phi_1^2 \phi_2}{\eta_2(\cosh 2\phi_1 -1-2\phi_1^2)} -
 The velocity and pressure fields are then as follows in the isoviscous case:
 
 \begin{center}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_40/RESULTS/vel}
-\includegraphics[width=7.5cm]{python_codes/fieldstone_40/RESULTS/p}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_40/RESULTS/vel}
+\includegraphics[width=8.5cm]{python_codes/fieldstone_40/RESULTS/p}
 \end{center}
 
-
+\newpage
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_40/RESULTS/plot24x24}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_40/RESULTS/plot32x32}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_40/RESULTS/plot48x48}\\
 {\captionfont  Left: 24$\times$24 elements, middle: 32$\times$32; right: 48$\times$48. We see that 
 increasing resolution yields more accurate results in the cases of short wavelength 
-perturbations (points on the right on the plots).\\  
+perturbations (points on the right on the plots).\ 
 Note that in \cite{thie11} I fixed $\lambda=L_x/2$ and varied $L_x$. Here I keep $L_x$ fixed
 and vary $\lambda=L_x/2,L_x,4,L_x/8$. Each line corresponds to a different value of the viscosity $\eta_2$.} 
 \end{center}
-
 
 \begin{remark}
 Note that the same experiment is carried out in \stone 181. 
 This version is somewhat naive in how the FE matrix is built and the pressure normalised, 
 which restricts the highest achievable resolution and makes it somewhat inefficient too.
 \end{remark}
+
+In this experiment the density {\it differences} are driving the flow and
+the 'background lithostatic' pressure is neutral/irrelevant. 
+As such I have rerun the script with a version of the density
+function that now assigns $\rho=300$ in the upper half of the domain and 
+$\rho=0$ in the lower half. 
+We find that results are more accurate:
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_40/RESULTS/plot24x24_reduced}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_40/RESULTS/plot32x32_reduced}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_40/RESULTS/plot48x48_reduced}\\
+{\captionfont Resolution 48$\times$48.} 
+\end{center}
+
+
+
+
+
+ 
