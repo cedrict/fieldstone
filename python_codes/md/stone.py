@@ -5,6 +5,7 @@ import scipy.sparse as sps
 from scipy.sparse import lil_matrix
 import time as clock
 import numba
+import matplotlib.pyplot as plt
 
 ###############################################################################
 # density & viscosity functions
@@ -1134,9 +1135,56 @@ for istep in range(0,nstep):
        vtufile.write("</VTKFile>\n")
        vtufile.close()
 
-       print("export to vtu file: %.3f s" % (clock.time()-start))
+       print("export fields to vtu file: %.3f s" % (clock.time()-start))
 
        t10+=clock.time()-start
+
+    ###########################################################################
+       start=clock.time()
+    
+       plt.figure()
+       col=plt.scatter(x_V,y_V,c=T,cmap='Spectral')
+       plt.colorbar(col)
+       plt.title("Temperature")
+       plt.xlim(np.min(x_V),np.max(x_V))
+       plt.ylim(np.min(y_V),np.max(y_V))
+       plt.xlabel("X")
+       plt.ylabel("Y")
+       plt.savefig('solution_T.pdf', bbox_inches='tight')
+
+       plt.figure()
+       col=plt.scatter(x_V,y_V,c=u,cmap='RdGy')
+       plt.colorbar(col)
+       plt.title("Velocity x-component")
+       plt.xlim(np.min(x_V),np.max(x_V))
+       plt.ylim(np.min(y_V),np.max(y_V))
+       plt.xlabel("X")
+       plt.ylabel("Y")
+       plt.savefig('solution_u.pdf', bbox_inches='tight')
+
+       plt.figure()
+       col=plt.scatter(x_V,y_V,c=v,cmap='RdGy')
+       plt.colorbar(col)
+       plt.title("Velocity y-component")
+       plt.xlim(np.min(x_V),np.max(x_V))
+       plt.ylim(np.min(y_V),np.max(y_V))
+       plt.xlabel("X")
+       plt.ylabel("Y")
+       plt.savefig('solution_v.pdf', bbox_inches='tight')
+
+       vel=np.sqrt(u**2+v**2)
+
+       plt.figure()
+       col=plt.scatter(x_V,y_V,c=vel,cmap='RdGy')
+       plt.colorbar(col)
+       plt.title("Velocity norm")
+       plt.xlim(np.min(x_V),np.max(x_V))
+       plt.ylim(np.min(y_V),np.max(y_V))
+       plt.xlabel("X")
+       plt.ylabel("Y")
+       plt.savefig('solution_vel.pdf', bbox_inches='tight')
+
+       print("export fields to pdf file: %.3f s" % (clock.time()-start))
 
     ###########################################################################
 
