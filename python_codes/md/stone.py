@@ -134,7 +134,7 @@ hy=Ly/nely # element size in y direction
 
 EBA=False
 
-debug=False
+debug=True
 
 ###############################################################################
 
@@ -281,7 +281,7 @@ for j in range(0,nely+1):
     #end for
  #end for
 
-#np.savetxt('gridP.ascii',np.array([xP,yP]).T,header='# x,y')
+if debug: np.savetxt('gridP.ascii',np.array([x_P,y_P]).T,header='# x,y')
 
 print("build P grid: %.3f s" % (clock.time() - start))
 
@@ -362,7 +362,7 @@ for i in range(0,nn_V):
 
 T_mem=T.copy()
 
-if debug: np.savetxt('temperature_init.ascii',np.array([x,y,T]).T,header='# x,y,T')
+if debug: np.savetxt('temperature_init.ascii',np.array([x_V,y_V,T]).T,header='# x,y,T')
 
 ###############################################################################
 # compute area of elements
@@ -825,6 +825,8 @@ for istep in range(0,nstep):
     sparse_matrix=sparse.coo_matrix((VV_T,(II_T,JJ_T)),shape=(Nfem_T,Nfem_T)).tocsr()
 
     T = sps.linalg.spsolve(sparse_matrix,rhs)
+
+    if debug: np.savetxt('temperature.ascii',np.array([x_V,y_V,T]).T,header='# x,y,T')
 
     print("     T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
 
