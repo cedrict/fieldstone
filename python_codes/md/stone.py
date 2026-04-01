@@ -135,11 +135,11 @@ hy=Ly/nely # element size in y direction
 
 EBA=False
 
-debug=True
+debug=False
 
 ###############################################################################
 
-t01=0 ; t02=0 ; t03=0 ; t04=0 ; t05=0 ; t06=0 ; t14=0
+t01=0 ; t02=0 ; t03=0 ; t04=0 ; t05=0 ; t06=0 ; t14=0 ; t15=0
 t07=0 ; t08=0 ; t09=0 ; t10=0 ; t11=0 ; t12=0 ; t13=0
 
 ###############################################################################
@@ -1019,6 +1019,8 @@ for istep in range(0,nstep):
        eyy_n/=count
        exy_n/=count
 
+       e_n=np.sqrt(exx_n**2+eyy_n**2+2*exy_n**2)
+
        print("     -> exx_n (m,M) %.6e %.6e " %(np.min(exx_n),np.max(exx_n)))
        print("     -> eyy_n (m,M) %.6e %.6e " %(np.min(eyy_n),np.max(eyy_n)))
        print("     -> exy_n (m,M) %.6e %.6e " %(np.min(exy_n),np.max(exy_n)))
@@ -1083,7 +1085,7 @@ for istep in range(0,nstep):
        #--
        vtufile.write("<DataArray type='Float32' Name='Shear heating (2*eta*e)' Format='ascii'> \n")
        for i in range(0,nn_V):
-           vtufile.write("%.15f \n" % (2*eta(T[i],x_V[i],y_V[i],eta0)*np.sqrt(exx_n[i]**2+eyy_n[i]**2+exy_n[i]**2)))
+           vtufile.write("%.15f \n" % (2*eta(T[i],x_V[i],y_V[i],eta0)*np.sqrt(exx_n[i]**2+eyy_n[i]**2+2*exy_n[i]**2)))
        vtufile.write("</DataArray>\n")
        #--
        #vtufile.write("<DataArray type='Float32' Name='adiab heating (linearised)' Format='ascii'> \n")
@@ -1141,50 +1143,80 @@ for istep in range(0,nstep):
 
     ###########################################################################
        start=clock.time()
-    
-       plt.figure()
-       col=plt.scatter(x_V,y_V,c=T,cmap='Spectral')
-       plt.colorbar(col)
-       plt.title("Temperature")
-       plt.xlim(np.min(x_V),np.max(x_V))
-       plt.ylim(np.min(y_V),np.max(y_V))
-       plt.xlabel("X")
-       plt.ylabel("Y")
-       plt.savefig('solution_T.pdf', bbox_inches='tight')
-
-       plt.figure()
-       col=plt.scatter(x_V,y_V,c=u,cmap='RdGy')
-       plt.colorbar(col)
-       plt.title("Velocity x-component")
-       plt.xlim(np.min(x_V),np.max(x_V))
-       plt.ylim(np.min(y_V),np.max(y_V))
-       plt.xlabel("X")
-       plt.ylabel("Y")
-       plt.savefig('solution_u.pdf', bbox_inches='tight')
-
-       plt.figure()
-       col=plt.scatter(x_V,y_V,c=v,cmap='RdGy')
-       plt.colorbar(col)
-       plt.title("Velocity y-component")
-       plt.xlim(np.min(x_V),np.max(x_V))
-       plt.ylim(np.min(y_V),np.max(y_V))
-       plt.xlabel("X")
-       plt.ylabel("Y")
-       plt.savefig('solution_v.pdf', bbox_inches='tight')
 
        vel=np.sqrt(u**2+v**2)
+       x2=np.linspace(0,Lx,nnx)
+       y2=np.linspace(0,Ly,nny)
+       T2=np.reshape(T,(nnx,nny))
+       u2=np.reshape(u,(nnx,nny))
+       v2=np.reshape(v,(nnx,nny))
+       vel2=np.reshape(vel,(nnx,nny))
+       exx2=np.reshape(exx_n,(nnx,nny))
+       eyy2=np.reshape(eyy_n,(nnx,nny))
+       exy2=np.reshape(exy_n,(nnx,nny))
+       e2=np.reshape(e_n,(nnx,nny))
+       q2=np.reshape(q,(nnx,nny))
+       qx2=np.reshape(qx_n,(nnx,nny))
+       qy2=np.reshape(qy_n,(nnx,nny))
 
        plt.figure()
-       col=plt.scatter(x_V,y_V,c=vel,cmap='RdGy')
-       plt.colorbar(col)
-       plt.title("Velocity norm")
-       plt.xlim(np.min(x_V),np.max(x_V))
-       plt.ylim(np.min(y_V),np.max(y_V))
-       plt.xlabel("X")
-       plt.ylabel("Y")
+       col=plt.pcolormesh(x2,y2,T2,cmap='Spectral') ; plt.colorbar(col)
+       plt.title("Temperature") ; plt.xlabel("x") ; plt.ylabel("y")
+       plt.savefig('solution_T.pdf', bbox_inches='tight')
+
+       #plt.figure()
+       #col=plt.pcolormesh(x2,y2,u2,cmap='RdGy') ; plt.colorbar(col)
+       #plt.title("Velocity x-component") ; plt.xlabel("x") ; plt.ylabel("y")
+       #plt.savefig('solution_u.pdf', bbox_inches='tight')
+
+       #plt.figure()
+       #col=plt.pcolormesh(x2,y2,v2,cmap='RdGy') ; plt.colorbar(col)
+       #plt.title("Velocity y-component") ; plt.xlabel("x") ; plt.ylabel("y")
+       #plt.savefig('solution_v.pdf', bbox_inches='tight')
+
+       plt.figure()
+       col=plt.pcolormesh(x2,y2,vel2,cmap='RdGy') ; plt.colorbar(col)
+       plt.title("Velocity norm") ; plt.xlabel("x") ; plt.ylabel("y")
        plt.savefig('solution_vel.pdf', bbox_inches='tight')
 
+       #plt.figure()
+       #col=plt.pcolormesh(x2,y2,exx2,cmap='gnuplot') ; plt.colorbar(col)
+       #plt.title("strain rate e_{xx}") ; plt.xlabel("x") ; plt.ylabel("y")
+       #plt.savefig('solution_exx.pdf', bbox_inches='tight')
+
+       #plt.figure()
+       #col=plt.pcolormesh(x2,y2,eyy2,cmap='gnuplot') ; plt.colorbar(col)
+       #plt.title("strain rate e_{yy}") ; plt.xlabel("x") ; plt.ylabel("y")
+       #plt.savefig('solution_eyy.pdf', bbox_inches='tight')
+
+       #plt.figure()
+       #col=plt.pcolormesh(x2,y2,exy2,cmap='gnuplot') ; plt.colorbar(col)
+       #plt.title("strain rate e_{xy}") ; plt.xlabel("x") ; plt.ylabel("y")
+       #plt.savefig('solution_exy.pdf', bbox_inches='tight')
+
+       plt.figure()
+       col=plt.pcolormesh(x2,y2,e2,cmap='gnuplot') ; plt.colorbar(col)
+       plt.title("strain rate e_{eff}") ; plt.xlabel("x") ; plt.ylabel("y")
+       plt.savefig('solution_e.pdf', bbox_inches='tight')
+
+       plt.figure()
+       col=plt.pcolormesh(x2,y2,q2,cmap='PuRd') ; plt.colorbar(col)
+       plt.title("pressure") ; plt.xlabel("x") ; plt.ylabel("y")
+       plt.savefig('solution_p.pdf', bbox_inches='tight')
+
+       plt.figure()
+       col=plt.pcolormesh(x2,y2,qx2,cmap='YlOrRd') ; plt.colorbar(col)
+       plt.title("heat flux x-component") ; plt.xlabel("x") ; plt.ylabel("y")
+       plt.savefig('solution_qx.pdf', bbox_inches='tight')
+
+       plt.figure()
+       col=plt.pcolormesh(x2,y2,qy2,cmap='YlOrRd') ; plt.colorbar(col)
+       plt.title("heat flux y-component") ; plt.xlabel("x") ; plt.ylabel("y")
+       plt.savefig('solution_qy.pdf', bbox_inches='tight')
+
        print("export fields to pdf file: %.3f s" % (clock.time()-start))
+
+       t15+=clock.time()-start
 
     ###########################################################################
 
@@ -1226,8 +1258,9 @@ print("compute nodal sr: %.3f s        | %.2f percent" % (t11,(t11/duration*100)
 print("normalise pressure: %.3f s      | %.2f percent" % (t12,(t12/duration*100))) 
 print("assess convergence: %.3f s      | %.2f percent" % (t13,(t13/duration*100))) 
 print("split solution: %.3f s          | %.2f percent" % (t14,(t14/duration*100))) 
+print("export to pdf: %.3f s           | %.2f percent" % (t15,(t15/duration*100))) 
 print("-----------------------------------------------")
 
-print(t01+t02+t03+t04+t05+t06+t07+t08+t09+t10+t11+t12+t13+t14,duration)
+print(t01+t02+t03+t04+t05+t06+t07+t08+t09+t10+t11+t12+t13+t14+t15,duration)
     
 ###############################################################################
