@@ -129,7 +129,7 @@ https://learnpythonthehardway.org/book/
 \end{verbatim}
 
 %----------------------------------
-\subsection{Making simple 2D plots}
+\subsection{Making simple 2d plots}
 
 \begin{lstlisting}
 import matplotlib.pyplot as plt
@@ -146,7 +146,7 @@ for i in range(0,N):
     x_data.append(x)
     y_data.append(y)
 
-# generating a 2D figure with the data
+# generating figure with the data
 plt.figure()
 plt.plot(x_data,y_data, label = 'name of data')
 plt.xlabel('x-axis label')
@@ -160,10 +160,52 @@ plt.show()
 \includegraphics[width=7cm]{images/python/myplot}
 \end{center}
 
+%----------------------------------
+\subsection{Making simple 2d field plots }
+
+Let us assume that we have a file {\tt temperature.ascii}
+which contains three columns: the $x$-coordinate, $y$-coordinate 
+and temperature $T$ at all nodes of a grid.
+
+
+\begin{lstlisting}
+data=np.loadtxt("temperature.ascii")
+x=data[:,0]
+y=data[:,1]
+T=data[:,2]
+x2 = np.unique(x) # remove duplicate x values
+y2 = np.unique(y) # remove duplicate y values
+T2 = np.reshape(T,(len(x2),len(y2)))
+plt.figure()
+col=plt.pcolormesh(x2,y2,T2,cmap='bwr')
+plt.colorbar(col)
+plt.xlabel("x")
+plt.ylabel("y")
+plt.show()
+\end{lstlisting}
+
+We could also have used a scatter plot (but it is not really 
+what we want in the case of a regular grid):
+
+\begin{lstlisting}
+data=np.loadtxt("temperature.ascii")
+x=data[:,0]
+y=data[:,1]
+T=data[:,2]
+plt.figure()
+col=plt.scatter(x,y,c=T,cmap='bwr')
+plt.colorbar(col)
+plt.title("Scatter plot")
+plt.xlim(np.min(x),np.max(x))
+plt.ylim(np.min(y),np.max(y))
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.show()
+\end{lstlisting}
 
 
 %----------------------------------
-\subsection{Making simple 3D plots of scatter}
+\subsection{Making simple 3d plots of scatter}
 
 \begin{lstlisting}
 fig = plt.figure()
@@ -174,7 +216,7 @@ ax.scatter3D(x, y, z, s = size)
 \end{lstlisting}
 
 %------------------------------------------------
-\subsection{Making simple 3D plots of a function}
+\subsection{Making simple 3d plots of a function}
 
 
 \begin{flushright} {\tiny {\color{gray} provided by Jochem Veerman}} \end{flushright}
@@ -191,10 +233,10 @@ L = 3 # half length for x and y
 
 x = np.linspace(-L,L,1000) # x-array
 y = np.linspace(-L,L,1000) # y-array
-X, Y = np.meshgrid(x,y,indexing="xy") # create 2D meshes
-Z = Z_func(X,Y) # Compute function using 2D meshes
+X, Y = np.meshgrid(x,y,indexing="xy") # create 2d meshes
+Z = Z_func(X,Y) # Compute function using 2d meshes
 
-# Plot 3D figure
+# Plot 3d figure
 fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 
 ax.plot_surface(X, Y, Z, linewidth=0, antialiased=False)

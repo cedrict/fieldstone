@@ -244,6 +244,9 @@ for iq in range(0,nq_per_dim):
         jcb[1,0]=np.dot(dNds_V[cq,:],x_V[icon_V[:,iel]])
         jcb[1,1]=np.dot(dNds_V[cq,:],y_V[icon_V[:,iel]])
         JxWq=np.linalg.det(jcb)*weightq
+        jcbi=np.linalg.inv(jcb)
+        dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V
+        dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V
         area[iel]+=JxWq
         cq+=1
     #end for
@@ -395,6 +398,8 @@ H[2,0]=1. ; H[2,1]=1. ; H[2,2]=1.
 
 #--- 2d ---
 C=np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+
+C=np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64)
 
 #--- 3d ---
 C=np.zeros((6,6),dtype=np.float64) 
