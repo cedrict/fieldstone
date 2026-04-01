@@ -8,7 +8,6 @@
 
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_162/text.tex}} \end{flushright}
 
-%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/template_keywords.key}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -19,14 +18,20 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
+Last revision: March 29th, 2026.
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{center}
 {\color{red} This stone is not finished. It does not work. There is something 
 fundamental I do not understand and I do not know how to fix it yet.}
+\end{center}
 
 \vspace{.5cm}
 
-According to \textcite{bobf08} (p.90) one can make the ${\bm Q}_1 \times P_0$ stable by adding {\it one}
+According to \textcite{bobf08} (p.90) one can make the ${\Q}_1 \times P_0$ stable by adding {\it one}
 internal degree of freedom. This then translates as follows:
 \begin{eqnarray}
 u_h(r,s) &=& 
@@ -57,16 +62,14 @@ with
 \frac{\partial \overset{\small y}{\bN}_5}{\partial s}(r,s) &=& (1-r^2)(1-3s^2) 
 \end{eqnarray}
 
-Note that in this form the basis functions are not a partition of unity.
-
-
-If we write the basis functions as follows
+Note that in this form the basis functions are not a partition of unity: if 
+we write the basis functions as follows
 \begin{eqnarray}
-\overset{x}{\bN}_1(r,s) &=& \frac14(1-r)(1-s)  \\
-\overset{x}{\bN}_2(r,s) &=& \frac14(1+r)(1-s)  \\
-\overset{x}{\bN}_3(r,s) &=& \frac14(1+r)(1+s)  \\
-\overset{x}{\bN}_4(r,s) &=& \frac14(1-r)(1+s)  \\
-\overset{x}{\bN}_5(r,s) &=& r(1-r^2)(1-s^2)
+\overset{x}{\bN}_1(r,s) &=& \frac14(1-r)(1-s)  \nn\\
+\overset{x}{\bN}_2(r,s) &=& \frac14(1+r)(1-s)  \nn\\
+\overset{x}{\bN}_3(r,s) &=& \frac14(1+r)(1+s)  \nn\\
+\overset{x}{\bN}_4(r,s) &=& \frac14(1-r)(1+s)  \nn\\
+\overset{x}{\bN}_5(r,s) &=& r(1-r^2)(1-s^2) \nn
 \end{eqnarray}
 then they fail the zeroth-order consistency check, i.e. for $f(r,s)=C$:
 \begin{equation}
@@ -135,20 +138,20 @@ Let us now turn to the derivatives.
 For $f(r,s)=C$, we have
 
 \begin{eqnarray}
-\frac{\partial f}{\partial r}|_h(r,s) 
-&=& \sum_{i=1}^5 \frac{\partial \overset{x}{\bN}_i}{\partial r} f_i \\ 
-&=& C \sum_{i=1}^5 \frac{\partial \overset{x}{\bN}_i}{\partial r} \\
+&&\frac{\partial f}{\partial r}|_h(r,s) \nn\\
+&=& \sum_{i=1}^5 \frac{\partial \overset{x}{\bN}_i}{\partial r} f_i \nn\\ 
+&=& C \sum_{i=1}^5 \frac{\partial \overset{x}{\bN}_i}{\partial r} \nn\\
 &=&  C \left[ 
 \frac14(-1)(1-s) -\frac14 \frac{\partial b}{\partial r} + 
 \frac14(+1)(1-s) -\frac14 \frac{\partial b}{\partial r} + 
 \frac14(+1)(1+s) -\frac14 \frac{\partial b}{\partial r} + 
 \frac14(-1)(1+s) -\frac14 \frac{\partial b}{\partial r} + 
-\frac{\partial b}{\partial r} \right] \\
+\frac{\partial b}{\partial r} \right] \nn\\
 &=& C \left[ 
 \frac14(-1)(1-s)  + 
 \frac14(+1)(1-s)  + 
 \frac14(+1)(1+s)  + 
-\frac14(-1)(1+s)   \right] \\
+\frac14(-1)(1+s)   \right] \nn\\
 &=& 0
 \end{eqnarray}
 
@@ -164,7 +167,8 @@ I then logically organise the unknowns/dofs inside an element as follows:
 \[
 \vec{\cal V}=(u_1,v_1,u_2,v_2,u_3,v_3,u_4,v_4,\alpha)
 \]
-I then need to carefully go through the derivations of Section~\ref{MMM-sss:KGGT}:
+I then need to carefully go through the derivations of Section~\ref{MMM-sss:KGGT}.
+The weak forms of the Stokes equations are given by
 \begin{eqnarray}
 \int_\Omega \vec\nabla \vec{\upomega} : {\bm \sigma} \; d\Omega
 &=& \int_\Omega \vec\upomega \cdot \vec{b} \; d\Omega 
@@ -237,6 +241,17 @@ u_1 \\ v_1  \\ u_2 \\ v_2  \\ u_3 \\ v_3 \\ u_3 \\ v_3 \\  \alpha
 }_{\vec{\cal V}} \nn
 \end{eqnarray}
 
+\begin{lstlisting}
+for iel in range(0,nel):
+ [...]
+ for iq in range(0,nq_per_dim_K):
+  for jq in range(0,nq_per_dim_K):
+      [...]
+      B[0,:]=[dNudx[0],0       ,dNudx[1],       0,dNudx[2],       0,dNudx[3],       0,dNudx[4]         ]
+      B[1,:]=[       0,dNvdy[0],       0,dNvdy[1],       0,dNvdy[2],       0,dNvdy[3],dNvdy[4]         ]
+      B[2,:]=[dNudy[0],dNvdx[0],dNudy[1],dNvdx[1],dNudy[2],dNvdx[2],dNudy[3],dNvdx[3],dNudy[4]+dNvdx[4]]
+\end{lstlisting}
+
 I will then focus on the rhs term 
 \[
 \int_\Omega \vec\upomega \cdot \vec{b} \; d\Omega 
@@ -262,7 +277,7 @@ b_x \\ b_y
 %test velocity $\vec{\upomega}$.
 %The sum runs over the dofs inside the element. 
 
-In the case of the ${\bm Q}_1^\star \times P_0$ element we can write the
+In the case of the ${\Q}_1^\star \times P_0$ element we can write the
 components of the test function as follows:
 \begin{eqnarray}
 \upomega_x(x,y) &=& 
@@ -359,6 +374,24 @@ b_x\; \overset{\tiny x}{\bN_5}(x,y) +b_y\; \overset{\tiny y}{\bN_5}(x,y)
 }_{\vec{f}}
 \]
 
+This translates as follows in the code:
+\begin{lstlisting}
+for iel in range(0,nel):
+    [...]
+    for iq in range(0,nq_per_dim_K):
+        for jq in range(0,nq_per_dim_K):
+            [...]
+            f_el[0]+=Nu[0]*bx(xq,yq)*JxWq
+            f_el[1]+=Nv[0]*by(xq,yq)*JxWq
+            f_el[2]+=Nu[1]*bx(xq,yq)*JxWq
+            f_el[3]+=Nv[1]*by(xq,yq)*JxWq
+            f_el[4]+=Nu[2]*bx(xq,yq)*JxWq
+            f_el[5]+=Nv[2]*by(xq,yq)*JxWq
+            f_el[6]+=Nu[3]*bx(xq,yq)*JxWq
+            f_el[7]+=Nv[3]*by(xq,yq)*JxWq
+            f_el[8]+=Nu[4]*bx(xq,yq)*JxWq+Nv[4]*by(xq,yq)*JxWq
+\end{lstlisting}
+
 Finally let us turn to the $\G$ block.
 We have in the general case:
 \[
@@ -447,7 +480,7 @@ where
 \[
 \mathbb{G} = -\int_\Omega {\bm B}^T \cdot {\bm \bN}\; d\Omega 
 \]
-In the case of the ${\bm Q}_1^\star \times P_0$ element there is only one pressure dof per element 
+In the case of the ${\Q}_1^\star \times P_0$ element there is only one pressure dof per element 
 so that the corresponding pressure basis function is simply constant and equal to 1. 
 Then 
 \[
@@ -511,10 +544,25 @@ and
 \]
 
 
+\begin{lstlisting}
+for iel in range(0,nel):
+    [...]
+    for iq in range(0,nq_per_dim_G):
+        for jq in range(0,nq_per_dim_G):
+            [...]
+            G_el[0,0]-=dNudx[0]*JxWq
+            G_el[1,0]-=dNvdy[0]*JxWq
+            G_el[2,0]-=dNudx[1]*JxWq
+            G_el[3,0]-=dNvdy[1]*JxWq
+            G_el[4,0]-=dNudx[2]*JxWq
+            G_el[5,0]-=dNvdy[2]*JxWq
+            G_el[6,0]-=dNudx[3]*JxWq
+            G_el[7,0]-=dNvdy[3]*JxWq
+            G_el[8,0]-=(dNudx[4]+dNvdy[4])*JxWq
+\end{lstlisting}
 
-There are in total $NfemV=NV*ndfoV+nel$ velocity degrees of freedom and $NfemP=nel$
+There are in total $Nfem_V=nn_V*ndof_V+nel$ velocity degrees of freedom and $Nfem_P=nel$
 pressure degrees of freedom.
-
 
 Imposing boundary conditions is rather 
 straightforward since the additional dofs are never on the boundary. 
@@ -524,9 +572,7 @@ terms so we'll use a $3\times 3$ quadrature for the $\K$ block.
 However it is made clear by the authors that the bilinear form responsible for $\G$ 
 must be underintegrated (1 point quadrature). 
 
-
 The code for this stone is based on \stone~14.
-
 
 Remark: Since the additional dofs are internal one could resort to static condensation
 so as to reduce the size of the FEM system $\K$ block.
@@ -549,3 +595,12 @@ If I use 1 quad pt for $\G$ velocity not ok, and pressure is wrong.
 If I use 2x2 quad pt for $\K$ I get nonsense or nan!
 
 I wrote Prof Boffi 16 july 2024.
+
+
+\begin{itemize}
+
+\item {\tt stone1.py}:
+
+\item {\tt stone2.py}:
+
+\end{itemize}
