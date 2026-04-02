@@ -108,7 +108,7 @@ tol_ss=1e-7   # tolerance for steady state
 top_bc_noslip=False  
 bot_bc_noslip=False
 
-nely=nelx
+nely=nelx+4
 
 nel=nelx*nely # total number of elements
 nn_V=(2*nelx+1)*(2*nely+1)  # number of V nodes
@@ -1144,77 +1144,79 @@ for istep in range(0,nstep):
     ###########################################################################
        start=clock.time()
 
+
        vel=np.sqrt(u**2+v**2)
-       x2=np.linspace(0,Lx,nnx)
-       y2=np.linspace(0,Ly,nny)
-       T2=np.reshape(T,(nnx,nny))
-       u2=np.reshape(u,(nnx,nny))
-       v2=np.reshape(v,(nnx,nny))
-       vel2=np.reshape(vel,(nnx,nny))
-       exx2=np.reshape(exx_n,(nnx,nny))
-       eyy2=np.reshape(eyy_n,(nnx,nny))
-       exy2=np.reshape(exy_n,(nnx,nny))
-       e2=np.reshape(e_n,(nnx,nny))
-       q2=np.reshape(q,(nnx,nny))
-       qx2=np.reshape(qx_n,(nnx,nny))
-       qy2=np.reshape(qy_n,(nnx,nny))
+       x2=np.reshape(x_V,(nny,nnx))
+       y2=np.reshape(y_V,(nny,nnx))
+       u2=np.reshape(u,(nny,nnx))
+       v2=np.reshape(v,(nny,nnx))
+       T2=np.reshape(T,(nny,nnx))
+       vel2=np.reshape(vel,(nny,nnx))
+       exx2=np.reshape(exx_n,(nny,nnx))
+       eyy2=np.reshape(eyy_n,(nny,nnx))
+       exy2=np.reshape(exy_n,(nny,nnx))
+       e2=np.reshape(e_n,(nny,nnx))
+       q2=np.reshape(q,(nny,nnx))
+       #rho2=np.reshape(rho_n,(nny,nnx))
+       qx2=np.reshape(qx_n,(nny,nnx))
+       qy2=np.reshape(qy_n,(nny,nnx))
 
        plt.figure()
        col=plt.pcolormesh(x2,y2,T2,cmap='Spectral') ; plt.colorbar(col)
        plt.title("Temperature") ; plt.xlabel("x") ; plt.ylabel("y")
-       plt.savefig('solution_T.pdf', bbox_inches='tight')
+       plt.savefig('solution_T.png', bbox_inches='tight')
 
        #plt.figure()
        #col=plt.pcolormesh(x2,y2,u2,cmap='RdGy') ; plt.colorbar(col)
        #plt.title("Velocity x-component") ; plt.xlabel("x") ; plt.ylabel("y")
-       #plt.savefig('solution_u.pdf', bbox_inches='tight')
+       #plt.savefig('solution_u.png', bbox_inches='tight')
 
        #plt.figure()
        #col=plt.pcolormesh(x2,y2,v2,cmap='RdGy') ; plt.colorbar(col)
        #plt.title("Velocity y-component") ; plt.xlabel("x") ; plt.ylabel("y")
-       #plt.savefig('solution_v.pdf', bbox_inches='tight')
+       #plt.savefig('solution_v.png', bbox_inches='tight')
 
        plt.figure()
        col=plt.pcolormesh(x2,y2,vel2,cmap='RdGy') ; plt.colorbar(col)
        plt.title("Velocity norm") ; plt.xlabel("x") ; plt.ylabel("y")
-       plt.savefig('solution_vel.pdf', bbox_inches='tight')
+       plt.savefig('solution_vel.png', bbox_inches='tight')
 
        #plt.figure()
        #col=plt.pcolormesh(x2,y2,exx2,cmap='gnuplot') ; plt.colorbar(col)
        #plt.title("strain rate e_{xx}") ; plt.xlabel("x") ; plt.ylabel("y")
-       #plt.savefig('solution_exx.pdf', bbox_inches='tight')
+       #plt.savefig('solution_exx.png', bbox_inches='tight')
 
        #plt.figure()
        #col=plt.pcolormesh(x2,y2,eyy2,cmap='gnuplot') ; plt.colorbar(col)
        #plt.title("strain rate e_{yy}") ; plt.xlabel("x") ; plt.ylabel("y")
-       #plt.savefig('solution_eyy.pdf', bbox_inches='tight')
+       #plt.savefig('solution_eyy.png', bbox_inches='tight')
 
        #plt.figure()
        #col=plt.pcolormesh(x2,y2,exy2,cmap='gnuplot') ; plt.colorbar(col)
        #plt.title("strain rate e_{xy}") ; plt.xlabel("x") ; plt.ylabel("y")
-       #plt.savefig('solution_exy.pdf', bbox_inches='tight')
+       #plt.savefig('solution_exy.png', bbox_inches='tight')
 
        plt.figure()
        col=plt.pcolormesh(x2,y2,e2,cmap='gnuplot') ; plt.colorbar(col)
        plt.title("strain rate e_{eff}") ; plt.xlabel("x") ; plt.ylabel("y")
-       plt.savefig('solution_e.pdf', bbox_inches='tight')
+       plt.savefig('solution_e.png', bbox_inches='tight')
 
        plt.figure()
        col=plt.pcolormesh(x2,y2,q2,cmap='PuRd') ; plt.colorbar(col)
        plt.title("pressure") ; plt.xlabel("x") ; plt.ylabel("y")
-       plt.savefig('solution_p.pdf', bbox_inches='tight')
+       plt.savefig('solution_p.png', bbox_inches='tight')
 
        plt.figure()
        col=plt.pcolormesh(x2,y2,qx2,cmap='YlOrRd') ; plt.colorbar(col)
        plt.title("heat flux x-component") ; plt.xlabel("x") ; plt.ylabel("y")
-       plt.savefig('solution_qx.pdf', bbox_inches='tight')
+       plt.savefig('solution_qx.png', bbox_inches='tight')
 
        plt.figure()
        col=plt.pcolormesh(x2,y2,qy2,cmap='YlOrRd') ; plt.colorbar(col)
        plt.title("heat flux y-component") ; plt.xlabel("x") ; plt.ylabel("y")
-       plt.savefig('solution_qy.pdf', bbox_inches='tight')
+       plt.savefig('solution_qy.png', bbox_inches='tight')
 
-       print("export fields to pdf file: %.3f s" % (clock.time()-start))
+       print("export fields to png file: %.3f s" % (clock.time()-start))
 
        t15+=clock.time()-start
 
@@ -1258,7 +1260,7 @@ print("compute nodal sr: %.3f s        | %.2f percent" % (t11,(t11/duration*100)
 print("normalise pressure: %.3f s      | %.2f percent" % (t12,(t12/duration*100))) 
 print("assess convergence: %.3f s      | %.2f percent" % (t13,(t13/duration*100))) 
 print("split solution: %.3f s          | %.2f percent" % (t14,(t14/duration*100))) 
-print("export to pdf: %.3f s           | %.2f percent" % (t15,(t15/duration*100))) 
+print("export to png: %.3f s           | %.2f percent" % (t15,(t15/duration*100))) 
 print("-----------------------------------------------")
 
 print(t01+t02+t03+t04+t05+t06+t07+t08+t09+t10+t11+t12+t13+t14+t15,duration)
