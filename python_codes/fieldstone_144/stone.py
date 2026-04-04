@@ -1,15 +1,15 @@
 import numpy as np
 import sys as sys
-import scipy
-import math as math
 import scipy.sparse as sps
 from scipy.sparse import lil_matrix
 import time as clock
+import numba
 
 ###############################################################################
 # basis functions
 ###############################################################################
 
+@numba.njit
 def basis_functions_T(r,s):
     N0=0.25*(1.-r)*(1.-s)
     N1=0.25*(1.+r)*(1.-s)
@@ -17,6 +17,7 @@ def basis_functions_T(r,s):
     N3=0.25*(1.-r)*(1.+s)
     return np.array([N0,N1,N2,N3],dtype=np.float64)
 
+@numba.njit
 def basis_functions_T_dr(r,s):
     dNdr0=-0.25*(1.-s) 
     dNdr1=+0.25*(1.-s) 
@@ -24,6 +25,7 @@ def basis_functions_T_dr(r,s):
     dNdr3=-0.25*(1.+s) 
     return np.array([dNdr0,dNdr1,dNdr2,dNdr3],dtype=np.float64)
 
+@numba.njit
 def basis_functions_T_ds(r,s):
     dNds0=-0.25*(1.-r)
     dNds1=-0.25*(1.+r)
@@ -41,6 +43,7 @@ eps=1e-9
 year=365.25*24*3600
 sqrt2=np.sqrt(2)
 ndim=2   # number of dimensions
+TKelvin=273.15
 
 ###############################################################################
 
@@ -50,38 +53,68 @@ print("*******************************")
 
 #####################################################################
 # TODO:
-# - make function for velocity profile
-# - stretch mesh in vertical direction - careful with jacobian!!
-# - matrix does not change in time, precompute!
-# - benchmark advection and diffusion
-# - use Kelvin !
-# - better ramps element size 
-# hx,hy fcts of element id
-# choose hy in the channel, hy outside the channel -> compute nely from that 
+# - make function for velocity profile, powerlaw or Herschel-Bulkley vel profile ?
 # poiseuille flow in narrowing channel 
-# powerlaw or Herschel-Bulkley vel profile ?
+# - benchmark advection and diffusion
+# latent heat addition ? 
+# background T profile consistent w/ radiogenic decay ?
 ###############################################################################
 Lx=100*km          # horizontal dimension of domain
 Ly=25*km           # vertical dimension of domain
-Tsurf=0            # temperature at the top
-Tbase=1480         # temperature at the bottom
-Tintrusion=1250    # temperature prescribed at intrusion
-Hmagma=1000        # thickness of magma channel
-Umagma=20*cm/year  # maximum velocity
-Ymagma=10.5*km     # channel middle depth 
-hcapa_rock=800     # heat capacity
-hcond_rock=1.5     # heat conductivity
-rho_rock=2900      # density
-hcapa_magma=1100   # heat capacity
-hcond_magma=1.5    # heat conductivity
-rho_magma=2700     # density
-tfinal=10e6*year   # duration of simulation
-nelx = 64          # number of elements in x direction
-nely = 128         # number of elements in y direction
-nstep= 2000        # maximum number of time steps
-CFL_nb = 1         # CFL number
-supg_type=0        # toggle switch for SUPG advection stabilisation
-every=25           # how often outputs are generated
+nelx = 180          # number of elements in x direction
+
+# y=Ly-------
+#            hy_45
+# y4---------
+#    ramp    hy_34
+# y3---------
+#    channel hy_23
+# y2---------
+#    ramp    hy_12
+# y1---------
+#            hy_01 
+# y=0--------
+
+y1=11*km
+y2=14*km
+y3=15*km
+y4=18*km
+
+hy_01=1*km
+hy_12=0.5*km
+hy_23=0.1*km
+hy_34=0.25*km
+hy_45=1*km
+
+nely_01=int((y1- 0)/hy_01)
+nely_12=int((y2-y1)/hy_12)
+nely_23=int((y3-y2)/hy_23)
+nely_34=int((y4-y3)/hy_34)
+nely_45=int((Ly-y4)/hy_45)
+nely=nely_01+nely_12+nely_23+nely_34+nely_45
+
+print(0,y1,y2,y3,y4,Ly)
+print(nely_01,nely_12,nely_23,nely_34,nely_45)
+print(nely)
+
+Hmagma=y3-y2        # thickness of magma channel
+Ymagma=(y2+y3)/2    # channel middle depth 
+Umagma=100*cm/year  # maximum velocity
+
+Tsurf=0+TKelvin         # temperature at the top
+Tbase=1480+TKelvin      # temperature at the bottom
+Tintrusion=1250+TKelvin # temperature prescribed at intrusion
+hcapa_rock=800          # heat capacity
+hcond_rock=1.5          # heat conductivity
+rho_rock=2900           # density
+hcapa_magma=1100        # heat capacity
+hcond_magma=1.5         # heat conductivity
+rho_magma=2700          # density
+tfinal=10e6*year        # duration of simulation
+nstep=2000              # maximum number of time steps
+CFL_nb = .5             # CFL number
+supg_type=0             # toggle switch for SUPG advection stabilisation
+every=20                # how often outputs are generated
 ###############################################################################
 
 dojcb=False
@@ -100,12 +133,11 @@ nq_per_dim=2
 qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
 qweights=[1.,1.]
 
-debug=False
+debug=True
 
 ###############################################################################
 # open output files
 
-dt_file=open('dt.ascii',"w")
 Tstats_file=open('stats_T.ascii',"w")
 
 ###############################################################################
@@ -124,47 +156,31 @@ print ('Umagma      =',Umagma/cm*year,'cm/year')
 print ('Hmagma      =',Hmagma,'m')
 print ('-----------------------------')
 
-#################################################################
-# build velocity nodes coordinates 
-#################################################################
+###############################################################################
+# assign hx,hy to every element
+###############################################################################
 start=clock.time()
 
-x_T=np.zeros(nn_T,dtype=np.float64)  # x coordinates
-y_T=np.zeros(nn_T,dtype=np.float64)  # y coordinates
+hx=np.zeros(nel,dtype=np.float64) 
+hy=np.zeros(nel,dtype=np.float64) 
 
-counter=0    
-for j in range(0,nny):
-    for i in range(0,nnx):
-        x_T[counter]=i*Lx/nelx
-        y_T[counter]=j*Ly/nely
+counter = 0
+for j in range(0,nely):
+    for i in range(0,nelx):
+        hx[counter]=Lx/nelx
+        if j<nely_01:
+           hy[counter]=hy_01
+        elif j<nely_01+nely_12:
+           hy[counter]=hy_12
+        elif j<nely_01+nely_12+nely_23:
+           hy[counter]=hy_23
+        elif j<nely_01+nely_12+nely_23+nely_34:
+           hy[counter]=hy_34
+        else:
+           hy[counter]=hy_45
         counter+=1
-    #end for
-#end for
 
-if debug: np.savetxt('mesh.ascii',np.array([x_T,y_T]).T)
-
-print("build grid: %.3f s" % (clock.time()-start))
-
-###############################################################################
-
-beta1=0.125
-beta2=0.5
-y1=Ymagma-Hmagma/2
-y2=Ymagma+Hmagma/2
-a=2
-
-x1=y1/a
-x2=(y2-Ly)/a+Ly
-
-#for i in range(0,nn_T):
-#    if y_T[i]<x1:
-#       y_T[i]=a*y_T[i]
-#    elif y_T[i]<x2:
-#       y_T[i]=Hmagma/(x2-x1)*(y_T[i]-x1)+y1
-#    else:
-#       y_T[i]=a*(y_T[i]-Ly)+Ly
-
-np.savetxt('grid_stretched',np.array([x_T,y_T]).T)
+print("assign hx,hy to elements: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # connectivity
@@ -182,29 +198,38 @@ for j in range(0,nely):
         icon_T[3,counter]=i+(j+1)*(nelx+1)
         counter += 1
 
-if debug:
-   for iel in range (0,nel):
-       print ("iel=",iel)
-       print ("node 0",icon_T[0,iel],"at pos.",x_T[icon_T[0,iel]],y_T[icon_T[0,iel]])
-       print ("node 1",icon_T[1,iel],"at pos.",x_T[icon_T[1,iel]],y_T[icon_T[1,iel]])
-       print ("node 2",icon_T[2,iel],"at pos.",x_T[icon_T[2,iel]],y_T[icon_T[2,iel]])
-       print ("node 3",icon_T[3,iel],"at pos.",x_T[icon_T[3,iel]],y_T[icon_T[3,iel]])
-
 print("build mesh connectivity: %.3f s" % (clock.time()-start))
 
 ###############################################################################
-# compute hx,hy per element
+# build nodes coordinates arrays
 ###############################################################################
+start=clock.time()
 
-hx=np.zeros(nel,dtype=np.float64) 
-hy=np.zeros(nel,dtype=np.float64) 
+x_T=np.zeros(nn_T,dtype=np.float64)  # x coordinates
+y_T=np.zeros(nn_T,dtype=np.float64)  # y coordinates
 
-for iel in range(0,nel):
-    hx[iel]=x_T[icon_T[2,iel]]-x_T[icon_T[0,iel]]
-    hy[iel]=y_T[icon_T[2,iel]]-y_T[icon_T[0,iel]]
+counter = 0
+for j in range(0,nely):
+    for i in range(0,nelx):
+        y_T[icon_T[3,counter]]=y_T[icon_T[0,counter]]+hy[counter]
+        y_T[icon_T[2,counter]]=y_T[icon_T[1,counter]]+hy[counter]
+        x_T[icon_T[0,counter]]=i*hx[counter]
+        x_T[icon_T[3,counter]]=i*hx[counter]
+        x_T[icon_T[1,counter]]=(i+1)*hx[counter]
+        x_T[icon_T[2,counter]]=(i+1)*hx[counter]
+        counter+=1
 
-#print(hx)
-#print(hy)
+#if debug:
+#   for iel in range (0,nel):
+#       print ("iel=",iel)
+#       print ("node 0",icon_T[0,iel],"at pos.",x_T[icon_T[0,iel]],y_T[icon_T[0,iel]])
+#       print ("node 1",icon_T[1,iel],"at pos.",x_T[icon_T[1,iel]],y_T[icon_T[1,iel]])
+#       print ("node 2",icon_T[2,iel],"at pos.",x_T[icon_T[2,iel]],y_T[icon_T[2,iel]])
+#       print ("node 3",icon_T[3,iel],"at pos.",x_T[icon_T[3,iel]],y_T[icon_T[3,iel]])
+
+if debug: np.savetxt('grid_stretched.ascii',np.array([x_T,y_T]).T)
+
+print("build grid: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # define temperature boundary conditions
@@ -333,21 +358,21 @@ for istep in range(0,nstep):
     print("-----------------------------")
 
     #################################################################
-    # compute timestep value
+    # compute timestep value: since velocity is prescribed it does 
+    # not change and only needs to be computed once
     #################################################################
 
-    dt1=CFL_nb*min(hx) /np.max(np.sqrt(u**2))
-    dt2=CFL_nb*min(min(hx),min(hy))**2 / max(kappa_rock,kappa_magma)
-    dt=np.min([dt1,dt2])
+    if istep==0:
+       dt1=CFL_nb*min(hx)/np.max(np.sqrt(u**2))
+       dt2=CFL_nb*min(min(hx),min(hy))**2 / max(kappa_rock,kappa_magma)
+       dt=np.min([dt1,dt2])
+       print('     -> dt1  = %.6f yr' %(dt1/year))
+       print('     -> dt2  = %.6f yr' %(dt2/year))
+       print('     -> dt  = %.6f yr' %(dt/year))
+  
     time+=dt
 
-    print('     -> dt1  = %.6f yr' %(dt1/year))
-    print('     -> dt2  = %.6f yr' %(dt2/year))
-    print('     -> dt  = %.6f yr' %(dt/year))
-    print('     -> time= %.6f yr' %(time/year))
-
-    dt_file.write("%10e %10e %10e %10e\n" % (time/year,dt1/year,dt2/year,dt/year))
-    dt_file.flush()
+    print(f'     -> time={time/year:.6f} yr')
 
     #################################################################
     # build temperature matrix
@@ -359,113 +384,112 @@ for istep in range(0,nstep):
     B=np.zeros((2,m_T),dtype=np.float64)     # gradient matrix B 
     N_mat = np.zeros((m_T,1),dtype=np.float64)         # shape functions
     N_mat_supg = np.zeros((m_T,1),dtype=np.float64)         # shape functions
-    tau_supg = np.zeros(nel*nq_per_dim**ndim,dtype=np.float64)
 
-    counterq=0   
-    for iel in range (0,nel):
+    if True:
 
-        b_el=np.zeros(m_T,dtype=np.float64)
-        A_el=np.zeros((m_T,m_T),dtype=np.float64)
-        Ka=np.zeros((m_T,m_T),dtype=np.float64)   # elemental advection matrix 
-        Kd=np.zeros((m_T,m_T),dtype=np.float64)   # elemental diffusion matrix 
-        MM=np.zeros((m_T,m_T),dtype=np.float64)   # elemental mass matrix 
-        vel=np.zeros((1,ndim),dtype=np.float64)
+       counterq=0   
+       for iel in range (0,nel):
 
-        Tvect[:]=T[icon_T[:,iel]]
+           b_el=np.zeros(m_T,dtype=np.float64)
+           A_el=np.zeros((m_T,m_T),dtype=np.float64)
+           Ka=np.zeros((m_T,m_T),dtype=np.float64)   # elemental advection matrix 
+           Kd=np.zeros((m_T,m_T),dtype=np.float64)   # elemental diffusion matrix 
+           MM=np.zeros((m_T,m_T),dtype=np.float64)   # elemental mass matrix 
+           vel=np.zeros((1,ndim),dtype=np.float64)
 
-        for iq in range(0,nq_per_dim):
-            for jq in range(0,nq_per_dim):
-                rq=qcoords[iq]
-                sq=qcoords[jq]
-                weightq=qweights[iq]*qweights[jq]
+           Tvect[:]=T[icon_T[:,iel]]
 
-                N_T=basis_functions_T(rq,sq)
-                N_mat[:,0]=N_T[:]
+           for iq in range(0,nq_per_dim):
+               for jq in range(0,nq_per_dim):
+                   rq=qcoords[iq]
+                   sq=qcoords[jq]
+                   weightq=qweights[iq]*qweights[jq]
+   
+                   N_T=basis_functions_T(rq,sq)
+                   N_mat[:,0]=N_T[:]
 
-                if dojcb:
-                   dNdr_T=basis_functions_T_dr(rq,sq)
-                   dNds_T=basis_functions_T_ds(rq,sq)
-                   jcb[0,0]=np.dot(dNdr_T,x_T[icon_T[:,iel]])
-                   jcb[0,1]=np.dot(dNdr_T,y_T[icon_T[:,iel]])
-                   jcb[1,0]=np.dot(dNds_T,x_T[icon_T[:,iel]])
-                   jcb[1,1]=np.dot(dNds_T,y_T[icon_T[:,iel]])
-                   jcbi=np.linalg.inv(jcb)
-                   JxWq=np.linalg.det(jcb)*weightq
-                else:
-                   jcbi[0,0]=2./hx[iel]
-                   jcbi[1,1]=2./hy[iel]
-                   JxWq=hx[iel]*hy[iel]/4*weightq
+                   if dojcb:
+                      dNdr_T=basis_functions_T_dr(rq,sq)
+                      dNds_T=basis_functions_T_ds(rq,sq)
+                      jcb[0,0]=np.dot(dNdr_T,x_T[icon_T[:,iel]])
+                      jcb[0,1]=np.dot(dNdr_T,y_T[icon_T[:,iel]])
+                      jcb[1,0]=np.dot(dNds_T,x_T[icon_T[:,iel]])
+                      jcb[1,1]=np.dot(dNds_T,y_T[icon_T[:,iel]])
+                      jcbi=np.linalg.inv(jcb)
+                      JxWq=np.linalg.det(jcb)*weightq
+                   else:
+                      jcbi[0,0]=2./hx[iel]
+                      jcbi[1,1]=2./hy[iel]
+                      JxWq=hx[iel]*hy[iel]/4*weightq
 
-                xq=np.dot(N_T,x_T[icon_T[:,iel]])
-                yq=np.dot(N_T,y_T[icon_T[:,iel]])
+                   xq=np.dot(N_T,x_T[icon_T[:,iel]])
+                   yq=np.dot(N_T,y_T[icon_T[:,iel]])
 
-                vel[0,0]=np.dot(N_T,u[icon_T[:,iel]])
-                vel[0,1]=np.dot(N_T,v[icon_T[:,iel]])
+                   vel[0,0]=np.dot(N_T,u[icon_T[:,iel]])
+                   vel[0,1]=np.dot(N_T,v[icon_T[:,iel]])
 
-                dNdx_T=jcbi[0,0]*dNdr_T+jcbi[0,1]*dNds_T
-                dNdy_T=jcbi[1,0]*dNdr_T+jcbi[1,1]*dNds_T
+                   dNdx_T=jcbi[0,0]*dNdr_T+jcbi[0,1]*dNds_T
+                   dNdy_T=jcbi[1,0]*dNdr_T+jcbi[1,1]*dNds_T
 
-                B[0,:]=dNdx_T[:]
-                B[1,:]=dNdy_T[:]
+                   B[0,:]=dNdx_T[:]
+                   B[1,:]=dNdy_T[:]
 
-                if supg_type==0:
-                   tau_supg[counterq]=0.
-                elif supg_type==1:
-                      tau_supg[counterq]=(hx*sqrt2)/2/np.sqrt(vel[0,0]**2+vel[0,1]**2)
-                elif supg_type==2:
-                      tau_supg[counterq]=(hx*sqrt2)/np.sqrt(vel[0,0]**2+vel[0,1]**2)/sqrt15
-                else:
-                   exit("supg_type: wrong value")
+                   if supg_type==0:
+                      tau_supg=0.
+                   elif supg_type==1:
+                         tau_supg=(hx*sqrt2)/2/np.sqrt(vel[0,0]**2+vel[0,1]**2)
+                   elif supg_type==2:
+                         tau_supg=(hx*sqrt2)/np.sqrt(vel[0,0]**2+vel[0,1]**2)/sqrt15
+                   else:
+                      exit("supg_type: wrong value")
     
-                N_mat_supg=N_mat+tau_supg[counterq]*np.transpose(vel.dot(B))
+                   N_mat_supg=N_mat+tau_supg*np.transpose(vel.dot(B))
 
-                # compute mass matrix
-                MM+=N_mat_supg.dot(N_mat.T)*rho[iel]*hcapa[iel]*JxWq
+                   # compute mass matrix
+                   MM+=N_mat_supg.dot(N_mat.T)*rho[iel]*hcapa[iel]*JxWq
 
-                # compute diffusion matrix
-                Kd+=B.T.dot(B)*hcond[iel]*JxWq
+                   # compute diffusion matrix
+                   Kd+=B.T.dot(B)*hcond[iel]*JxWq
 
-                # compute advection matrix
-                Ka+=N_mat_supg.dot(vel.dot(B))*rho[iel]*hcapa[iel]*JxWq
+                   # compute advection matrix
+                   Ka+=N_mat_supg.dot(vel.dot(B))*rho[iel]*hcapa[iel]*JxWq
 
-                counterq+=1
+                   counterq+=1
 
-            #end for
-        #end for
+               #end for
+           #end for
 
-        A_el=MM+0.5*(Ka+Kd)*dt
+           A_el=MM+0.5*(Ka+Kd)*dt
 
-        b_el=(MM-0.5*(Ka+Kd)*dt).dot(Tvect)
+           b_el=(MM-0.5*(Ka+Kd)*dt).dot(Tvect)
 
-        # apply boundary conditions
-        for k1 in range(0,m_T):
-            m1=icon_T[k1,iel]
-            if bc_fix_T[m1]:
-               Aref=A_el[k1,k1]
+              # apply boundary conditions
+           for k1 in range(0,m_T):
+               m1=icon_T[k1,iel]
+               if bc_fix_T[m1]:
+                  Aref=A_el[k1,k1]
+                  for k2 in range(0,m_T):
+                      m2=icon_T[k2,iel]
+                      b_el[k2]-=A_el[k2,k1]*bc_val_T[m1]
+                      A_el[k1,k2]=0
+                      A_el[k2,k1]=0
+                  #end for
+                  A_el[k1,k1]=Aref
+                  b_el[k1]=Aref*bc_val_T[m1]
+               #end for
+           #end for
+
+           # assemble matrix A_fem and right hand side b_fem
+           for k1 in range(0,m_T):
+               m1=icon_T[k1,iel]
                for k2 in range(0,m_T):
                    m2=icon_T[k2,iel]
-                   b_el[k2]-=A_el[k2,k1]*bc_val_T[m1]
-                   A_el[k1,k2]=0
-                   A_el[k2,k1]=0
+                   A_fem[m1,m2]+=A_el[k1,k2]
                #end for
-               A_el[k1,k1]=Aref
-               b_el[k1]=Aref*bc_val_T[m1]
-            #end for
-        #end for
+               b_fem[m1]+=b_el[k1]
+           #end for
 
-        # assemble matrix A_fem and right hand side b_fem
-        for k1 in range(0,m_T):
-            m1=icon_T[k1,iel]
-            for k2 in range(0,m_T):
-                m2=icon_T[k2,iel]
-                A_fem[m1,m2]+=A_el[k1,k2]
-            #end for
-            b_fem[m1]+=b_el[k1]
-        #end for
-
-    #end for iel
-
-    #print("     -> tau_supg (m,M) %e %e " %(np.min(tau_supg),np.max(tau_supg)))
+       #end for iel
 
     print("build FE matrix : %.3f s" % (clock.time() - start))
 
@@ -476,9 +500,9 @@ for istep in range(0,nstep):
 
     T=sps.linalg.spsolve(sps.csr_matrix(A_fem),b_fem)
 
-    print("     T (m,M): %.4f %.4f " %(np.min(T),np.max(T)))
+    print("     T (m,M): %.4f %.4f C" %(np.min(T)-TKelvin,np.max(T)-TKelvin))
 
-    Tstats_file.write("%6e %6e %6e\n" % (time,np.min(T),np.max(T)))
+    Tstats_file.write("%6e %6e %6e\n" % (time/year,np.min(T)-TKelvin,np.max(T)-TKelvin))
     Tstats_file.flush()
 
     print("solve linear system: %.3f s" % (clock.time()-start))
@@ -556,12 +580,12 @@ for istep in range(0,nstep):
            vtufile.write("%10e %10e %10e \n" %(u[i]/cm*year,v[i]/cm*year,0.))
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='T (K)' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='T (C)' Format='ascii'> \n")
        for i in range(0,nn_T):
-           vtufile.write("%10e \n" %T[i])
+           vtufile.write("%10e \n" %(T[i]-TKelvin))
        vtufile.write("</DataArray>\n")
        #--
-       vtufile.write("<DataArray type='Float32' Name='T-T_init' Format='ascii'> \n")
+       vtufile.write("<DataArray type='Float32' Name='T-T_init (C)' Format='ascii'> \n")
        for i in range(0,nn_T):
            vtufile.write("%10e \n" %(T[i]-T_init[i]))
        vtufile.write("</DataArray>\n")
@@ -570,28 +594,22 @@ for istep in range(0,nstep):
        #####
        vtufile.write("<CellData Scalars='scalars'>\n")
        vtufile.write("<DataArray type='Float32' Name='qx' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%e \n" % qx[iel])
+       qx.tofile(vtufile,sep=' ',format='%.4e')
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Float32' Name='qy' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%e \n" % qy[iel])
+       qy.tofile(vtufile,sep=' ',format='%.4e')
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Float32' Name='rho' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%e \n" % rho[iel])
+       rho.tofile(vtufile,sep=' ',format='%.4e')
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Float32' Name='hcapa' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%e \n" % hcapa[iel])
+       hcapa.tofile(vtufile,sep=' ',format='%.4e')
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Float32' Name='hcond' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%e \n" % hcond[iel])
+       hcond.tofile(vtufile,sep=' ',format='%.4e')
        vtufile.write("</DataArray>\n")
        vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
-       for iel in range (0,nel):
-           vtufile.write("%e \n" % area[iel])
+       area.tofile(vtufile,sep=' ',format='%.4e')
        vtufile.write("</DataArray>\n")
 
        vtufile.write("</CellData>\n")
