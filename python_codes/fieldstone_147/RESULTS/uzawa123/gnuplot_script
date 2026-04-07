@@ -7,6 +7,7 @@ set format y "10^{%L}"
 set xlabel '# iteration'
 set ylabel '||p_k-p_{k-1}||_2'
 
+set title 'resolution 24x24'
 set output 'convergence_24x24.pdf'
 plot[:4000][1e-8:1]\
 '24x24/solver_convergence_omega2.ascii'    w l t 'U1, {/symbol a}=2',\
@@ -16,6 +17,7 @@ plot[:4000][1e-8:1]\
 '24x24/solver_convergence_uzawa2.ascii'    w l t 'U2',\
 '24x24/solver_convergence_uzawa3.ascii'    w l t 'U3',\
 
+set title 'resolution 48x48'
 set output 'convergence_48x48.pdf'
 plot[:4000][1e-8:1]\
 '48x48/solver_convergence_omega2.ascii'    w l t 'U1, {/symbol a}=2',\
@@ -26,6 +28,7 @@ plot[:4000][1e-8:1]\
 '48x48/solver_convergence_uzawa3.ascii'    w l t 'U3',\
 
 
+unset title 
 set xtics 50
 set output 'convergence_uzawa23.pdf'
 plot[:][1e-8:1]\

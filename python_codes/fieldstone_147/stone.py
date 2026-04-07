@@ -122,8 +122,8 @@ else:
     
 nnx=2*nelx+1           # number of V nodes, x direction
 nny=2*nely+1           # number of V nodes, y direction
-nn_V=nnx*nny           # number of V nodes
-nn_P=(nelx+1)*(nely+1) # number of P nodes
+nn_V=nnx*nny           # total number of V nodes
+nn_P=(nelx+1)*(nely+1) # total number of P nodes
 nel=nelx*nely          # total number of elements
 Nfem_V=nn_V*ndof_V     # number of velocity dofs
 Nfem_P=nn_P            # number of pressure dofs
@@ -132,7 +132,7 @@ Nfem=Nfem_V+Nfem_P     # total number of dofs
 hx=Lx/nelx
 hy=Ly/nely
 
-bench=3
+bench=1
    
 omega15=1000 # parameter for solver 15
 omega18=1    # parameter for solver 18
@@ -292,6 +292,7 @@ print("setup: connectivity: %.3f s" % (clock.time()-start))
 ###############################################################################
 # compute list of V-nodes seen by each P-node
 # it is worth acknowedging that the lists are automatically sorted
+# not sure why these are computed ... not use further
 ###############################################################################
 start=clock.time()
 
@@ -416,24 +417,20 @@ start=clock.time()
 
 jcb=np.zeros((2,2),dtype=np.float64)
 B=np.zeros((3,ndof_V*m_V),dtype=np.float64)      
-C=np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+#C=np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+C=np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64) 
 A_fem   = lil_matrix((Nfem,Nfem),dtype=np.float64)     # matrix of Ax=b
 K_mat   = lil_matrix((Nfem_V,Nfem_V),dtype=np.float64) # matrix K 
 G_mat   = lil_matrix((Nfem_V,Nfem_P),dtype=np.float64) # matrix G
 H_mat   = lil_matrix((Nfem_P,Nfem_V),dtype=np.float64) # matrix H 
 L_mat   = lil_matrix((Nfem_P,Nfem_P),dtype=np.float64) # matrix GT*G
 MP_mat  = lil_matrix((Nfem_P,Nfem_P),dtype=np.float64) # pressure mass matrix
-MV_mat  = lil_matrix((Nfem_V,Nfem_V),dtype=np.float64) # velocity mass matrix
 f_rhs   = np.zeros(Nfem_V,dtype=np.float64)            # right hand side f 
 h_rhs   = np.zeros(Nfem_P,dtype=np.float64)            # right hand side h 
 b_fem   = np.zeros(Nfem,dtype=np.float64)              # rhs of fem linear system
 aa_mat  = np.zeros((m_P,2),dtype=np.float64)      
 bb_mat  = np.zeros((2,ndof_V*m_V),dtype=np.float64)     
 N_mat   = np.zeros((3,m_P),dtype=np.float64)          # matrix  
-dNNNVdx = np.zeros(m_V,dtype=np.float64)              # shape functions derivatives
-dNNNVdy = np.zeros(m_V,dtype=np.float64)              # shape functions derivatives
-dNNNPdx = np.zeros(m_P,dtype=np.float64)              # shape functions derivatives
-dNNNPdy = np.zeros(m_P,dtype=np.float64)              # shape functions derivatives
 
 for iel in range(0,nel):
 
@@ -553,7 +550,7 @@ for iel in range(0,nel):
         h_rhs[m2]+=h_el[k2]
     #end for 
 
-    #assemble pressure mass matrix
+    #assemble pressure mass matrix and L matrix
     for k1 in range(0,m_P):
         m1=icon_P[k1,iel]
         for k2 in range(0,m_P):
@@ -646,8 +643,6 @@ sparse_matrix=sps.csc_matrix(A_fem)
 
 print("convert to CSR: %.3f s, nel= %d" % (clock.time()-start, nel))
 
-
-
 ###############################################################################
 # solve system
 ###############################################################################
@@ -655,56 +650,79 @@ start=clock.time()
 
 niter=0
 
-if solver==1: sol=sps.linalg.spsolve(sparse_matrix,b_fem,use_umfpack=False)
+match(solver):
+ case(1):
+  sol=sps.linalg.spsolve(sparse_matrix,b_fem,use_umfpack=False)
 
-elif solver==2:
-   sol,info=sps.linalg.gmres(sparse_matrix,b_fem,restart=2000,tol=tolerance)
-   if info!=0: exit('gmres did not converge')
+ case(2):
+  sol,info=sps.linalg.gmres(sparse_matrix,b_fem,restart=2000,tol=tolerance)
+  if info!=0: exit('gmres did not converge')
 
-elif solver==3: sol=sps.linalg.lgmres(sparse_matrix,b_fem,atol=1e-16,tol=tolerance)[0]
+ case(3):
+  sol=sps.linalg.lgmres(sparse_matrix,b_fem,atol=1e-16,tol=tolerance)[0]
 
-elif solver==4: solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
-                             Nfem_V,Nfem_P,niter_max,tolerance,use_precond,'direct')
-elif solver==5: sol=sps.linalg.minres(sparse_matrix,b_fem,tol=1e-12)[0]
+ case(4):
+  solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
+                                          Nfem_V,Nfem_P,niter_max,tolerance,use_precond,'direct')
+ case(5):
+  sol=sps.linalg.minres(sparse_matrix,b_fem,tol=1e-12)[0]
 
-elif solver==6: sol=sps.linalg.qmr(sparse_matrix,b_fem,tol=tolerance)[0]
+ case(6):
+  sol=sps.linalg.qmr(sparse_matrix,b_fem,tol=tolerance)[0]
 
-elif solver==7: sol=sps.linalg.tfqmr(sparse_matrix,b_fem, tol=tolerance)[0]
+ case(7):
+  sol=sps.linalg.tfqmr(sparse_matrix,b_fem, tol=tolerance)[0]
 
-elif solver==8: sol=sps.linalg.gcrotmk(sparse_matrix,b_fem,atol=1e-16, tol=tolerance)[0]
+ case(8):
+  sol=sps.linalg.gcrotmk(sparse_matrix,b_fem,atol=1e-16, tol=tolerance)[0]
 
-elif solver==9: sol=sps.linalg.bicg(sparse_matrix,b_fem, tol=tolerance)[0]
+ case(9):
+  sol=sps.linalg.bicg(sparse_matrix,b_fem, tol=tolerance)[0]
 
-elif solver==10: sol=sps.linalg.bicgstab(sparse_matrix,b_fem, tol=tolerance)[0]
+ case(10):
+  sol=sps.linalg.bicgstab(sparse_matrix,b_fem, tol=tolerance)[0]
 
-elif solver==11: sol=sps.linalg.spsolve(sparse_matrix,b_fem,use_umfpack=True)
+ case(11):
+  sol=sps.linalg.spsolve(sparse_matrix,b_fem,use_umfpack=True)
 
-elif solver==12: sol=sps.linalg.cgs(sparse_matrix,b_fem,tol=tolerance)[0]
+ case(12):
+  sol=sps.linalg.cgs(sparse_matrix,b_fem,tol=tolerance)[0]
 
-elif solver==13: solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
-                              Nfem_V,Nfem_P,niter_max,tolerance,use_precond,'cg')
-elif solver==14: solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
-                              Nfem_V,Nfem_P,niter_max,tolerance,use_precond,'splu')
-elif solver==15: solV,p,niter=uzawa1_solver(K_mat,G_mat,f_rhs,h_rhs,Nfem_P,niter_max,tolerance,omega15)
+ case(13):
+  solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
+                                          Nfem_V,Nfem_P,niter_max,tolerance,use_precond,'cg')
+ case(14):
+  solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
+                                          Nfem_V,Nfem_P,niter_max,tolerance,use_precond,'splu')
+ case(15):
+  solV,p,niter=uzawa1_solver(K_mat,G_mat,f_rhs,h_rhs,Nfem_P,niter_max,tolerance,omega15)
 
-elif solver==16: solV,p,niter=uzawa2_solver(K_mat,G_mat,f_rhs,h_rhs,Nfem_P,niter_max,tolerance)
+ case(16):
+  solV,p,niter=uzawa2_solver(K_mat,G_mat,f_rhs,h_rhs,Nfem_P,niter_max,tolerance)
 
-elif solver==17: solV,p,niter=projection_solver(K_mat,G_mat,L_mat,f_rhs,h_rhs,Nfem_V,Nfem_P,niter_max,tolerance)
+ case(17):
+  solV,p,niter=projection_solver(K_mat,G_mat,L_mat,f_rhs,h_rhs,Nfem_V,Nfem_P,niter_max,tolerance)
 
-elif solver==18: solV,p,niter=uzawa1_solver_L2(K_mat,G_mat,MP_mat,f_rhs,h_rhs,Nfem_P,niter_max,tolerance,omega18)
+ case(18):
+  solV,p,niter=uzawa1_solver_L2(K_mat,G_mat,MP_mat,f_rhs,h_rhs,Nfem_P,niter_max,tolerance,omega18)
 
-elif solver==19: solV,p,niter=uzawa1_solver_L2b(K_mat,G_mat,MP_mat,f_rhs,h_rhs,Nfem_P,niter_max,tolerance,omega19)
+ case(19):
+  solV,p,niter=uzawa1_solver_L2b(K_mat,G_mat,MP_mat,f_rhs,h_rhs,Nfem_P,niter_max,tolerance,omega19)
 
-elif solver==20: solV,p,niter=uzawa2_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,Nfem_P,niter_max,tolerance)
+ case(20):
+  solV,p,niter=uzawa2_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,Nfem_P,niter_max,tolerance)
 
-elif solver==21: solV,p,niter=uzawa3_solver(K_mat,G_mat,f_rhs,h_rhs,Nfem_P,niter_max,tolerance)
+ case(21):
+  solV,p,niter=uzawa3_solver(K_mat,G_mat,f_rhs,h_rhs,Nfem_P,niter_max,tolerance)
 
-elif solver==22: solV,p,niter=uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,\
-                              Nfem_P,niter_max,tolerance,'direct')
+ case(22):
+  solV,p,niter=uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,\
+                                Nfem_P,niter_max,tolerance,'direct')
 
-elif solver==23: solV,p,niter=uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,\
-                              Nfem_P,niter_max,tolerance,'splu')
-else:
+ case(23):
+  solV,p,niter=uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,\
+                                Nfem_P,niter_max,tolerance,'splu')
+ case _:
    exit('solver unknown')
 
 print("solve time: %.3f s, nel= %d, niter= %d" % (clock.time()-start,nel,niter))
@@ -783,7 +801,7 @@ print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 print("normalise pressure: %.3f s" % (clock.time()-start))
 
 ###############################################################################
-# compute strainrate 
+# compute elemental strainrate 
 ###############################################################################
 start=clock.time()
 

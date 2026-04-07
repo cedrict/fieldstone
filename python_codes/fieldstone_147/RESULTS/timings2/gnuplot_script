@@ -1,8 +1,9 @@
 #
-set term pdf
+set term pdf enhanced font "Times,12pt"
 set key outside
 set grid
 set pointsize .5
+set format y "10^{%L}"
 
 ########################################################
 
@@ -40,7 +41,7 @@ plot[][0.002:200]\
 
 set xlabel 'Nfem'
 set output 'solve_time3.pdf'
-plot[][0.002:200]\
+plot[][0.01:200]\
 'solve_1.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=1',\
 'solve_14.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=14',\
 'solve_23.ascii'  u (2*(2*sqrt($6)+1)**2+(sqrt($6)+1)**2):3 w lp t 'solver=23',\

@@ -34,7 +34,7 @@ In almost all previous stones I have used \lstinline{scipy.sparse.linalg.spsolve
 to solve the Stokes linear system but looking online we find that there are many more methods 
 available\footnote{\url{https://docs.scipy.org/doc/scipy/reference/sparse.linalg.html}}.
 
-As far as I know there are 3 different approaches to solve the Stokes system:
+As far as I know there are 4 different approaches to solve the Stokes system:
 
 \begin{itemize}
 \item Direct methods for linear equation systems
@@ -58,7 +58,7 @@ a SPD matrix, see \url{https://en.wikipedia.org/wiki/Conjugate_gradient_method}.
 \item \lstinline{gcrotmk}(A, b[, x0, tol, maxiter, M, ...])         - (\lstinline{solver=8})
 \item \lstinline{tfqmr}(A, b[, x0, tol, maxiter, M, callback, ...]) - (\lstinline{solver=7})
 \end{itemize}
-\item Iterative methods applied to the Schur complement, with or without L2
+\item Iterative methods applied to the Schur complement, with or without the $L_2$
 projection presented in \textcite{jalt26}. These are typically called the 
 Uzawa1, Uzawa2 and Uzawa3 method, the latter corresponding to the Conjugate Gradient approach.
 This requires the $\K$ and $\G$ blocks to be built separately as explained in Section~\ref{MMM-ss:schurpcg}.
@@ -67,154 +67,182 @@ a {\tt schur\_complement\_cg\_solver.py} which predates it.
 All these methods require an inner solver called once per iteration on the $\K$ block.
 We then have the choice between using a direct solver (spsolve \lstinline{solver=4}) or using a conjugate gradient
 approach since $\K$ is SPD (\lstinline{solve=13}). 
-By using CG for the inner solve we pretty much ensure that memory requirements remain very low.
+
+By using CG for the inner solve we pretty much ensure that memory requirements remain very low
+but we will then need a good(enough?) preconditioner.
 Another variant consists in acknowledging that inside the iterations the 
 block $\K$ does not change, so that we can compute its LU decomposition
 and use this decomposition every time that we need to solve a linear
 system with $\K$. This is \lstinline{solver=14} and \lstinline{solver=23}. 
 This option means that the LU factors are stored in the memory longer than in the standard
 case but with equal memory use.
-
+\item Transient solver methods \cite{raud22} which will not be taken into consideration here.
 \end{itemize}
 
 All these methods should also be used with a preconditioner, which we will investigate later on.
 
-Iterative solvers require a tolerance value and it is set to $10^{-7}$ unless mentioned otherwise.
+Iterative solvers require a tolerance value and it is set to $10^{-7}$ unless mentioned 
+otherwise (I do carry out a sensitivity analysis later on).
 
-Note that the \aspect solver presented in \textcite{krhb12} (2012) is rather complex. It is 
-based on FGMRES and clever preconditioners. It will not be explored here.
+Note that modern solvers presented in for example 
+\textcite{geum09} (2009) or 
+\textcite{krhb12} (2012) are rather complex. It is 
+based on FGMRES and clever preconditioners. They will not be explored here.
 
-Feeding the full Stokes matrix to a bunch of iterative solvers without thinking much 
-about it is rather naive.
-
-
+It should be acknowledged that feeding the full Stokes matrix to a bunch of iterative 
+solvers without thinking much about it is rather naive.
 
 
 %===========================================================
 \section*{The list of implemented solver strategies}
 
-\begin{enumerate}
+The solvers all follow the same nomenclature: {\tt OOOO-IIII-PPPP}
+where {\tt OOOO} indicates the type of outer solver applied
+to the full Stokes matrix (or to the Schur complement), 
+{\tt IIII} indicates the type of inner solver
+used on the $\K$ block (if applicable) and {\tt PPPP} indicates 
+an additional option/stragegy. If one of these is absent or irrelevant it 
+is indicated by an {\tt X}.
 
-\item[solver=1] (Full Stokes Matrix) the usual one I use in all the stones (i.e. direct solver on Stokes matrix)
+\begin{itemize}
+
+\item \lstinline{solver=1} (Full Stokes Matrix): {\tt DIRECT-X-X}
+the usual one I use in all the stones (i.e. direct solver on Stokes matrix).
 \begin{lstlisting}
    sol=sps.linalg.spsolve(sparse_matrix,rhs,use_umfpack=False)
 \end{lstlisting}
 
-\item[solver=2] (Full Stokes Matrix) the gmres from linalg 
+\item \lstinline{solver=2} (Full Stokes Matrix):  {\tt GMRES-X-X}
+the gmres from linalg. 
 \begin{lstlisting}
    sol,info=sps.linalg.gmres(sparse_matrix,b_fem,restart=2000,tol=tolerance)
 \end{lstlisting}
 
-\item[solver=3]  (Full Stokes Matrix) lgmres from linalg
+\item \lstinline{solver=3} (Full Stokes Matrix): {\tt LGMRES-X-X}
+ lgmres from linalg.
 \begin{lstlisting}
    sol=sps.linalg.lgmres(sparse_matrix,b_fem,atol=1e-16,tol=tolerance)[0]
 \end{lstlisting}
 
-\item[solver=4] (Schur complement approach) my Schur complement CG solver using direct solver for inner solve 
-on $\K$ matrix
+\item \lstinline{solver=4} (Schur complement approach): {\tt SCHURCG-DIRECT-X}
+my Schur complement CG solver using direct solver for inner solve on $\K$ matrix.
 \begin{lstlisting}
    solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                                           NfemV,NfemP,niter_max,tolerance,use_precond,'direct')
 \end{lstlisting}
 
-\item[solver=5] (Full Stokes Matrix) minres from linalg
+\item \lstinline{solver=5} (Full Stokes Matrix): {\tt MINRES-X-X} 
+minres from linalg
 \begin{lstlisting}
    sol=sps.linalg.minres(sparse_matrix,b_fem, tol=1e-10)[0]
 \end{lstlisting}
 
-\item[solver=6] (Full Stokes Matrix) qmr from linalg
+\item \lstinline{solver=6} (Full Stokes Matrix): {\tt QMR}
+qmr from linalg.
 \begin{lstlisting}
    sol=sps.linalg.qmr(sparse_matrix,b_fem,tol=tolerance)[0]
 \end{lstlisting}
 
-\item[solver=7]  (Full Stokes Matrix) tfqmr from linalg
+\item \lstinline{solver=7}  (Full Stokes Matrix) {\tt TFQMR}
+ tfqmr from linalg
 \begin{lstlisting}
    sol=sps.linalg.tfqmr(sparse_matrix,b_fem, tol=1e-10)[0]
 \end{lstlisting}
 
-\item[solver 8]  (Full Stokes Matrix) gcrotmk from linalg
+\item \lstinline{solver 8}  (Full Stokes Matrix) {\tt GCROTMK}
+gcrotmk from linalg
 \begin{lstlisting}
    sol=sps.linalg.gcrotmk(sparse_matrix,b_fem,atol=1e-16, tol=1e-10)[0]
 \end{lstlisting}
 
-\item[solver 9] (Full Stokes Matrix) bicg from linalg
+\item \lstinline{solver 9} (Full Stokes Matrix) {\tt BICG-X-X}
+bicg from linalg
 \begin{lstlisting}
-   sol=sps.linalg.bicg(sparse_matrix,b_fem, tol=tolerance)[0]
+   sol=sps.linalg.bicg(sparse_matrix,b_fem, tol=tolerance)[0] 
 \end{lstlisting}
 
-\item[solver=10]  (Full Stokes Matrix) bicgstab from linalg
+\item \lstinline{solver=10}  (Full Stokes Matrix) {\tt BICGSTAB-X-X}
+ bicgstab from linalg
 \begin{lstlisting}
    sol=sps.linalg.bicgstab(sparse_matrix,b_fem, tol=tolerance)[0]
 \end{lstlisting}
 
-\item[solver=11]  (Full Stokes Matrix) direct solver spsolve using umfpack 
+\item\lstinline{solver=11}  (Full Stokes Matrix) {\tt DIRECT-X-UMFPACK}
+direct solver spsolve using umfpack 
 \begin{lstlisting}
    sol=sps.linalg.spsolve(sparse_matrix,rhs,use_umfpack=True)
 \end{lstlisting}
 
-\item[solver=12]  (Full Stokes Matrix) cgs from linalg
+\item \lstinline{solver=12}  (Full Stokes Matrix) cgs from linalg
 \begin{lstlisting}
    sol=sps.linalg.cgs(sparse_matrix,b_fem, tol=tolerance)[0]
 \end{lstlisting}
 
-\item[solver=13]  (Schur complement approach) my Schur complement CG solver using cg for inner solve
+\item \lstinline{solver=13}  (Schur complement approach) {\tt SCHURCG-CG-X}
+
+my Schur complement CG solver using cg for inner solve
 \begin{lstlisting}
    solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                                            NfemV,NfemP,niter_max,tolerance,use_precond,'cg')
 \end{lstlisting}
 
-\item[solver=14]  (Schur complement approach) my Schur complement CG solver using splu for inner solve
+\item \lstinline{solver=14} (Schur complement approach): {\tt SCHURCG-LU-X}
+my Schur complement CG solver using splu for inner solve.
 \begin{lstlisting}
    solV,p,niter=schur_complement_cg_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                                            NfemV,NfemP,niter_max,tolerance,use_precond,'splu')
 \end{lstlisting}
 
-\item[solver=15]  (Schur complement approach) uzawa 1: Section 5.1 \cite{braess}. Parameterised by $\omega$
+\item \lstinline{solver=15} (Schur complement approach): {\tt SCHURU1-DIR9ECT-X}
+uzawa 1: Section 5.1 \cite{braess}, Parameterised by $\omega$.
 \begin{lstlisting}
    solV,p,niter=uzawa1_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                        NfemV,NfemP,niter_max,tolerance,use_precond,'direct',omega)
 \end{lstlisting}
 
-
-\item[solver=16] (Schur complement approach) uzawa 2: Section 5.2 \cite{braess}. 
+\item \lstinline{solver=16} (Schur complement approach): {\tt SCHURU2-DIRECT-X}
+uzawa 2, Section 5.2 \cite{braess}. 
 \begin{lstlisting}
    solV,p,niter=uzawa2_solver(K_mat,G_mat,M_mat,f_rhs,h_rhs,\
                        NfemV,NfemP,niter_max,tolerance,use_precond,'direct')
 \end{lstlisting}
 
-
-\item[solver=17] (Schur complement approach) projection solver {\color{red} where does it come from?!} 
+\item \lstinline{solver=17} (Schur complement approach): 
+projection solver\footnote{where does it come from?!?}.
 \begin{lstlisting}
 solV,p,niter=projection_solver(K_mat,G_mat,L_mat,f_rhs,h_rhs,NfemV,NfemP,niter_max,tolerance)
 \end{lstlisting}
 
-
-\item[solver=18]  (Schur complement approach) Uzawa 1 + L2 projection
+\item \lstinline{solver=18} (Schur complement approach): {\tt SCHURU1A-DIRECT-L2PROJ}
+Uzawa 1 + L2 projection.
 \begin{lstlisting}
 solV,p,niter=uzawa1_solver_L2(K_mat,G_mat,MP_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance,omega)
 \end{lstlisting}
 
-\item[solver=19] (Schur complement approach) Uzawa 1b + L2 projection
+\item \lstinline{solver=19} (Schur complement approach) {\tt SCHURU1B-DIRECT-L2PROJ}
 \begin{lstlisting}
 solV,p,niter=uzawa1_solver_L2b(K_mat,G_mat,MP_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance,omega)
 \end{lstlisting}
+In this variant the solve carried out with the pressure mass matrix yields
+a pressure correction, not a new pressure field as in the previous solver 18.
+See further for details on the L2-based solvers.
 
-\item[solver=20] (Schur complement approach) Uzawa 2 + L2 projection
+\item \lstinline{solver=20} (Schur complement approach)  {\tt SCHURU2-DIRECT-L2PROJ}
 \begin{lstlisting}
 solV,p,niter=uzawa2_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance)
 \end{lstlisting}
 
-\item[solver=21] (Schur complement approach) Uzawa 3 (CG on Schur) projection
+\item \lstinline{solver=21} (Schur complement approach) {\tt SCHURU3-DIRECT-X}
 \begin{lstlisting}
 solV,p,niter=uzawa3_solver(K_mat,G_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance)
 \end{lstlisting}
 
-\item[solver=22] (Schur complement approach) Uzawa 3 (CG on Schur) + L2 projection
+\item \lstinline{solver=22} (Schur complement approach) {\tt SCHURU3-DIRECT-L2}
 \begin{lstlisting}
 solV,p,niter=uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance,'direct')
 \end{lstlisting}
 
-\item[solver=23]  (Schur complement approach)  Uzawa 3 (CG on Schur), LU inner, L2 projection
+\item \lstinline{solver=23}  (Schur complement approach)  {\tt SCHURU3-LU-L2}
 \begin{lstlisting}
 solV,p,niter=uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter_max,tolerance,'splu')
 \end{lstlisting}
@@ -222,23 +250,23 @@ solV,p,niter=uzawa3_solver_L2(K_mat,G_mat,MP_mat,H_mat,f_rhs,h_rhs,NfemP,niter_m
 It relies on {\tt scipy.sparse.linalg.splu} which computes the LU decomposition of a sparse (CSC), square matrix,
 see documentation at \url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.splu.html}.
 
+\end{itemize}
 
-\end{enumerate}
 
-A few remarks:
+%-------------------------------------------
+\subsubsection*{A few remarks}
 
 \begin{itemize}
-\item All the solvers above containing the ``L2 projection'' (18 to 23) are related to the 
+\item All the solvers above containing the ``$L_2$ projection'' (18 to 23) are related to the 
 article \textcite{jalt26}. They were written specifically in the context of this publication 
 and obviously the Uzawa3 of solver 21 is identical in theory to solver 4. 
-More information about the L2 stuff is presented hereafter, see `About the Uzawa solvers' 
-and `L2 projection stuff' sections.
-
+More information about the $L_2$ stuff is presented hereafter, see `About the Uzawa solvers' 
+and `$L_2$ projection stuff' sections.
 
 \item this \stone is not optimised for performance: the assembly and matrix storage could 
-be improved.
+be improved. At the moment all matrices are stored as \lstinline{lil_matrix}.
 
-\item Numba is not used 
+\item Numba/jit is not used 
 
 \item About solver 13: in the earlier versions of the {\tt schur\_complement\_cg\_solver.py} 
 the rhs passed to {\tt sps.linalg.cg} inside the outer iterations gradually became  
@@ -253,6 +281,11 @@ for k in range (0,niter):
     dvect_k=sps.linalg.cg(K_mat,ptildevect_k/rhsmax)[0]
     dvect_k*=rhsmax
 \end{lstlisting}
+
+\item When relying on the Donea \& Huerta manufactured solution 
+we need not discuss the preconditioning of the 
+global matrix nor the $\K$ block since the viscosity is constant 
+and the domain is a unit square.
 
 
 \end{itemize}
@@ -310,7 +343,7 @@ solver 23 & ok & \\
 \end{tabular}
 \end{center}
 
-We then discard solvers 7, 10, 12, 17 and run now the remaining ones on 48x48 mesh using
+We then discard solvers 7, 10, 12, 17 and run now the remaining ones on $48\times 48$ mesh using
 the {\tt script\_test\_all\_solvers2} script:
 
 \begin{center}
@@ -343,7 +376,7 @@ the time per outer iteration (when applicable) and the total solve time:
 {\captionfont Results obtained with {\tt script\_errors}.}
 \end{center}
 
-Remark: 
+Remarks: 
 
 \begin{itemize}
 \item iteration time is very low for solver 23 (uzawa3 + LU inner) because the LU
@@ -352,9 +385,9 @@ decomposition is carried out outside of the iterations.
 %\item solver 13 fails to converge (schur complement CG + cg inner), since the rhs 
 %of the inner solve becomes very small and yields a zero solution for the inner solver. 
 
-\item Solvers 1, 11, 14, 23 are the fastest. 1 and 11 are direct solvers, 
-but relying on different functions/approaches, 
-while both 14 and 23 both use LU decomposition.
+\item Solvers 1, 11, 14, 23 are the fastest. 1 and 11 are direct solvers 
+but relying on different functions/approaches (i.e. with and without umfpack), 
+while both 14 and 23 use LU decomposition.
 
 \item most of the solvers used here tend to use all 8 cores on my laptop by default.
 
@@ -362,6 +395,15 @@ while both 14 and 23 both use LU decomposition.
 
 In what follows I focus on 1, 14 and 23 since 11 relies on umfpack which is not necessarily 
 installed by default and also does not yield substantially different results than solver 1.
+
+To recap:
+\begin{itemize}
+\item Solver 1 is a direct solver provided by scipy.
+\item Solver 14 is an 'old' Schur complement CG solver using splu for inner solve.
+\item Solver 23 Uzawa 3 (i.e. CG on Schur), spLU inner, $L_2$ projection
+\end{itemize} 
+
+
 
 \newpage
 
@@ -374,17 +416,23 @@ Solvers 1, 14, 23 only:
 \includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/timings2/solver_convergence_23.pdf}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/timings2/solve_time.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/timings2/solve_time2.pdf}\\
-\includegraphics[width=12cm]{python_codes/fieldstone_147/RESULTS/timings2/solve_time3.pdf}\\
+\includegraphics[width=10cm]{python_codes/fieldstone_147/RESULTS/timings2/solve_time3.pdf}\\
 {\captionfont Results obtained with {\tt script\_errors\_1\_14\_23}, in 
-{\tt fieldstone\_147/RESULTS/timings}.}
+{\tt fieldstone\_147/RESULTS/timings2}.}
 \end{center}
 
+Conclusions:
+
+\begin{itemize}
+\item
 The number of iterations in independent of resolution. 
 
+\item
 It is different for 14 and 23. 14 does more iterations but they are cheaper. 
 
-At resolution 192x192 solvers 14 \& 23 are approx. 3x faster than solver 1
-
+\item
+At resolution $192\times 192$ solvers 14 \& 23 are approx. 3x faster than solver 1
+\end{itemize}
 
 
 %We start by looking at the velocity and pressure discretisation errors in the $L_2$ norm:
@@ -420,10 +468,11 @@ On the following figure I plot the velocity and pressure errors for SC-CG+ilu so
 for different values of the relative tolerance. We find that the solve time is not 
 much influenced by the tolerance, but unsurprisingly the accuracy of the solution is: 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/tol_study_solver14/errors.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/tol_study_solver14/solve.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_147/RESULTS/tol_study_solver14/errors.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_147/RESULTS/tol_study_solver14/solve.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_147/RESULTS/tol_study_solver14/solve2.pdf}\\
 {\captionfont Left: Influence of the relative tolerance on the accuracy of the solution obtained 
-with the SC-CG+ilu ({\python solver=14}). Right: solve time in seconds.}
+with the SC-CG+ilu ({\python solver=14}). Middle, Right: solve time in seconds.}
 \end{center}
 It appears that a relative tolerance of $10^{-6}$ is enough, but I set it to $10^{-7}$ default
 to be on the safe side (when looking closley at high resolution it looks like the 
@@ -461,14 +510,13 @@ The three algorithms U1, U2, U3 are reproduced hereunder from left to right for 
 Taken from \textcite{braess}.
 \end{center}
 
-The following figure shows the convergence of this solver for different values of this parameter.
+The following figure shows the convergence of these solvers U1, U2 and U3 (U1 for different values of $\alpha$ parameter).
 20000 makes the solver explode.	
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/uzawa123/convergence_24x24.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/uzawa123/convergence_48x48.pdf}\\
-{\captionfont Convergence on 24x24 mesh (left) and 48x48 mesh (right) 
-for Donea \& Huerta manufactured solution.}
+{\captionfont Convergence on 24x24 mesh (left) and 48x48 mesh (right) for Donea \& Huerta manufactured solution.}
 \end{center}
 
 We see that the $\alpha$ parameter should be a function of resolution, and that 
@@ -478,18 +526,19 @@ computes the step.
 
 Actually when focusing now on U2 and U3 only and running the experiment at increasing resolutions I find ({\it as expected for stable element pairs}) that the number of iterations is independent of the resolution:
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/uzawa123/convergence_uzawa23}
+\includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/uzawa123/convergence_uzawa23}\\
+{\captionfont The number of iterations required by U2 is much larger than for U3.}
 \end{center}
 
 
 
 This shows that
-\begin{enumerate}
+\begin{itemize}
 \item U2 is a much better/safe algorithm than U1 while being equally simple to implement, 
 thereby proving that U1 should be discarded altogether; 
 \item U3 is the obvious starting point if one wishes to offer an improvement on Uzawa-type 
 solvers as it is by far the best of the three and is marginally more complex to implement than U1 or U2.
-\end{enumerate}
+\end{itemize}
 
 
 
@@ -529,18 +578,19 @@ solvers as it is by far the best of the three and is marginally more complex to 
 
 \newpage
 %==============================================================
-\section*{L2 projection stuff - Donea \& Huerta}
+\section*{$L_2$ projection - some implementation details - Donea \& Huerta}
 
 In what follows we will need to replace $\vec{p}^T\cdot\vec{q}$ 
 by 
 \[
-\langle p,q \rangle = \int_\Omega {p} \cdot {q} dV 
+\langle p,q \rangle = \int_\Omega {p} \cdot {q} \; dV 
 = \vec{p}^T \cdot {\bm M}_{p} \cdot \vec{q}
 \]
 where ${\bm M}_{p}$ is the pressure mass matrix. 
-Building and re-using the pressure mass matrix is simpler than 
+Note that building and re-using the pressure mass matrix is simpler than 
 computing the integral everytime, but it may not be 
-the fastest approach.
+the fastest approach. One could instead resort to computing the integral directly
+and only assemble vectors instead of matrices. 
 
 Likewise we will need to replace $( \G \cdot \vec{x})^T\cdot \vec{y}$
 by
@@ -549,8 +599,8 @@ by
 \]
 where ${\bm H}$ is defined as $\int \vec\nabla \vec{\bN}_P  \cdot \vec{\bN}_V dV$ (not exactly, see below). 
 
-Note that in the case of this benchmark the velocity boundary conditions
-are no slip on all sides, so that in practive $\vec{h}=0$.
+Note that in the case of the D\&H benchmark the velocity boundary conditions
+are no slip on all sides, so that in practice the rhs vector $\vec{h}=0$.
 
 %---------------------------------------------------
 \subsection*{Uzawa 1 algorithm}
@@ -573,9 +623,8 @@ Vectors this {\color{teal} color} are vectors of size \lstinline{NfemV} (the num
 of velocity degrees of freedom) and vectors this {\color{carrotorange} color} are 
 vectors of size \lstinline{NfemP} (the number of pressure degrees of freedom).
 
-In the context of the L2 projection, the second line of the algorithm 
-is replaced by a new one.
-we start instead from 
+In the context of the $L_2$ projection, the second line of the algorithm 
+is replaced by a new one and e start instead from 
 \[
 \langle p^{k+1},q  \rangle = 
 \langle p^{k},q  \rangle -\alpha_k \langle \vec\nabla \cdot \vec{\upnu}^{k} -h ,q \rangle 
@@ -596,14 +645,14 @@ where ${\bm M}_p$ is the pressure mass matrix.
 
 In light of all this, I have written three solvers:
 \begin{itemize}
-\item Solver 15 is the standard Uzawa 1 ({\tt uzawa1\_solver.py}):
+\item Solver 15 is the standard Uzawa 1 {\tt SCHURU1-DIRECT-X} ({\tt uzawa1\_solver.py}):
 \begin{lstlisting}
 for k in range (0,niter):
     solV=sps.linalg.spsolve(K_mat,f_rhs-G_mat.dot(solP))
     solPnew=solP+omega*(G_mat.T.dot(solV)-h_rhs)         
 \end{lstlisting}
 
-\item Solver 18 is Uzawa 1 with $L_2$ projection ({\tt uzawa1\_solver\_L2.py}):
+\item Solver 18 is Uzawa 1 with $L_2$ projection {\tt SCHURU1-DIRECT-L2}  ({\tt uzawa1\_solver\_L2.py}):
 \begin{lstlisting}
 for k in range (0,niter):
     solV=sps.linalg.spsolve(K_mat,f_rhs-G_mat.dot(solP))     
@@ -612,7 +661,7 @@ for k in range (0,niter):
 \end{lstlisting}
 
 
-\item Solver 19 is Uzawa 1 with $L_2$ projection in which 
+\item Solver 19 is Uzawa 1 with $L_2$ projection {\tt SCHURU1B-DIRECT-L2}in which 
 the matrix multiplication with the pressure mass matrix is avoided ({\tt uzawa1\_solver\_L2b.py}):
 \begin{lstlisting}
 for k in range (0,niter):
@@ -624,7 +673,8 @@ for k in range (0,niter):
 
 \end{itemize}
 
-Compared to the standard Uzawa1 approach (\lstinline{solver=15}) these have an additional cost, 
+Compared to the standard Uzawa1 approach (\lstinline{solver=15}) the L2-projection based
+solvers have an additional cost, 
 since each iteration now involves a solve with the pressure mass matrix 
 (and potentially a SpMV multiplication with this matrix too). 
 However, the results are nothing short of spectacular:
@@ -778,7 +828,7 @@ for iel in range(0,nel):
 
 Two solvers have then been written:
 \begin{itemize}
-\item Solver 16 is the standard Uzawa 2:
+\item Solver 16 {\tt SCHURU2-DIRECT-X} is the standard Uzawa 2:
 \begin{lstlisting}
 for k in range (0,niter): 
     qk=h_rhs-G_mat.T.dot(solV)      
@@ -789,7 +839,7 @@ for k in range (0,niter):
     solVnew=solV+alphak*Hk       
 \end{lstlisting}
 
-\item Solver 20 is Uzawa 2 with L2 projection: 
+\item Solver 20 {\tt SCHURU2-DIRECT-L2} is Uzawa 2 with L2 projection: 
 \begin{lstlisting}
 for k in range (0,niter): 
     rhs=h_rhs-G_mat.T.dot(solV)
@@ -899,16 +949,26 @@ denominator=rvect_k.dot(MP_mat.dot(rvect_k))
 beta=numerator/denominator                   
 \end{lstlisting}
 
-In what follows solver 21 is identical to solver 4 (schur complement solver) but: 
+In what follows 
+\begin{itemize}
+\item
+solver 21 is identical to solver 4 (schur complement solver) but: 
 different $\xi_{\cal V}=\|{\cal V}^{k+1}-{\cal V}\|_2$ and 
 $\xi_{\cal P}=\|{\cal P}^{k+1}-{\cal P}^k\|_2$ calculation (convergence indicators) so as to 
 compare with previous Uzawa 1 and 2 (and no preconditioner nor inner solver choice). 
+
+\item
 Solver 22 is the Uzawa 3 solver (i.e solver 21) with $L_2$ projection.
+
+\item
 I have also coded solver 23, which is solver 22, albeit the inner solve 
 is carried out with a LU solver\footnote{\url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.splu.html}}: 
 in practice the matrix $\K$ is then LU-decomposed once and the decomposition 
-is then reused for each solve with $\K$. This results in a drastic
-speedup as shown hereunder:
+is then reused for each solve with $\K$. 
+
+\end{itemize}
+
+This results in a drastic speedup as shown hereunder:
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa3/solver_convergence_P.pdf}
@@ -919,7 +979,7 @@ speedup as shown hereunder:
 \includegraphics[width=8cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa3/errorsP.pdf}
 \end{center}
 
-Again, the L2 projection improves on the standard Uzawa solver, and in 
+Again, the $L_2$ projection improves on the standard Uzawa solver, and in 
 this particular case the number of iterations is divided by 3, and the total solve 
 time is also more than halved.
 The direct solver approach (solver 1) is also included in the plots as reference. 
@@ -941,15 +1001,15 @@ For solver 22 we find:
 & tol=$10^{-4}$ & & tol=$10^{-5}$ & & tol=$10^{-7}$ & \\
 nel   & time (s) & \# its &  time (s) & \# its &  time (s) & \# its  \\ 
 \hline
-1024  & 1.748    &  7  &2.046  &   8  & 2.073    & 10 \\
-1600  & 4.159    &  8  &4.557  &   8  & 4.716    & 10 \\
-2304  & 8.103    &  8  &8.358  &   9  &  9.374   & 11 \\
-4096  & 18.581   &  8  &20.229 &   9  &  22.501  & 11 \\
-6400  & 34.032   &  8  &36.868 &   9  &  41.397  & 11 \\
-9216  & 73.158   &  9  &72.908 &   9  &  84.936  & 11 \\
-16384 & 192.415  &  9  &205.503&   10 &  226.167 & 11 \\
-25600 &          &     &       &      &  436.069 & 12 \\
-36864 &          &     &       &      &  786.035 & 12 \\
+32x32=1024    & 1.748    &  7  &2.046  &   8  & 2.073    & 10 \\
+40x40=1600    & 4.159    &  8  &4.557  &   8  & 4.716    & 10 \\
+48*48=2304    & 8.103    &  8  &8.358  &   9  &  9.374   & 11 \\
+64x64=4096    & 18.581   &  8  &20.229 &   9  &  22.501  & 11 \\
+80x80=6400    & 34.032   &  8  &36.868 &   9  &  41.397  & 11 \\
+96x96=9216    & 73.158   &  9  &72.908 &   9  &  84.936  & 11 \\
+128x128=16384 & 192.415  &  9  &205.503&   10 &  226.167 & 11 \\
+160x160=25600 &          &     &       &      &  436.069 & 12 \\
+192x192=36864 &          &     &       &      &  786.035 & 12 \\
 \hline
 \end{tabular}
 \end{center}
@@ -959,19 +1019,22 @@ One can also look at the time per solver iteration
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_147/RESULTS/L2/uzawa3/time_per_iteration.pdf}
 \end{center}
-We find that the additional solves and matrix-vector multiplications for the L2 variant (solver 22)
+We find that the additional solves and matrix-vector multiplications for the $L_2$ variant (solver 22)
 do not make each iteration substantially longer.
 
 Since solver 23 relies on LU and therefore needs to store the $L$ and $U$
 matrices, I expect it requires more memory than solver 22 - not proven yet.
 
 
-{\color{red} SAY smthg about Q1P0?}
+Thoughts about the $Q_1\times P_0$ element: As its name indicates the 
+pressure space is made of constant values over elements. As such the 
+pressure basis functions derivatives needed to compute ${\bm H}$ are zero and so is then 
+${\bm H}$. I have not worked it all out but this is not a good start...
 
 
 \newpage
 %====================================================
-\section*{Donea \& Huerta mms With preconditioner}
+\section*{Donea \& Huerta manufactured solution With preconditioner}
 
 Before reading what follows I refer the reader to \stone~16. 
 In that \stone I show (for the $Q_1 \times P_0$ element pair) that 

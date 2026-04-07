@@ -90,7 +90,7 @@ plot[][]\
 
 #########################################################
 
-set ylabel 'time (s)'
+set ylabel 'time to solve linear system (s)'
 set xlabel 'h'
 set output 'solve_time2.pdf'
 plot[][]\

@@ -1,5 +1,5 @@
 #
-set term pdf enhanced font "times,10pt"
+set term pdf enhanced font "times,12pt"
 set pointsize .2
 set grid
 set key outside
