@@ -1,0 +1,102 @@
+#gnuplot 
+
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set ylabel 'z (km)'
+
+##################################################
+set xlabel 'T (K)'
+
+set output 'T123.pdf'
+plot[255:2645][]\
+'T_5_50.ascii'  u 2:($1/1e3) w l lt 1 dt 1 t 'age=050Myr, coeff=0.5',\
+'T_5_100.ascii' u 2:($1/1e3) w l lt 1 dt 2 t 'age=100Myr, coeff=0.5',\
+'T_5_200.ascii' u 2:($1/1e3) w l lt 1 dt 3 t 'age=200Myr, coeff=0.5',\
+'T_5_300.ascii' u 2:($1/1e3) w l lt 1 dt 4 t 'age=300Myr, coeff=0.5',\
+'T_6_50.ascii'  u 2:($1/1e3) w l lt 2 dt 1 t 'age=050Myr, coeff=0.6',\
+'T_6_100.ascii' u 2:($1/1e3) w l lt 2 dt 2 t 'age=100Myr, coeff=0.6',\
+'T_6_200.ascii' u 2:($1/1e3) w l lt 2 dt 3 t 'age=200Myr, coeff=0.6',\
+'T_6_300.ascii' u 2:($1/1e3) w l lt 2 dt 4 t 'age=300Myr, coeff=0.6',\
+'T_7_50.ascii'  u 2:($1/1e3) w l lt 3 dt 1 t 'age=050Myr, coeff=0.7',\
+'T_7_100.ascii' u 2:($1/1e3) w l lt 3 dt 2 t 'age=100Myr, coeff=0.7',\
+'T_7_200.ascii' u 2:($1/1e3) w l lt 3 dt 3 t 'age=200Myr, coeff=0.7',\
+'T_7_300.ascii' u 2:($1/1e3) w l lt 3 dt 4 t 'age=300Myr, coeff=0.7',\
+'T_8_50.ascii'  u 2:($1/1e3) w l lt 4 dt 1 t 'age=050Myr, coeff=0.8',\
+'T_8_100.ascii' u 2:($1/1e3) w l lt 4 dt 2 t 'age=100Myr, coeff=0.8',\
+'T_8_200.ascii' u 2:($1/1e3) w l lt 4 dt 3 t 'age=200Myr, coeff=0.8',\
+'T_8_300.ascii' u 2:($1/1e3) w l lt 4 dt 4 t 'age=300Myr, coeff=0.8',\
+'T_9_50.ascii'  u 2:($1/1e3) w l lt 5 dt 1 t 'age=050Myr, coeff=0.9',\
+'T_9_100.ascii' u 2:($1/1e3) w l lt 5 dt 2 t 'age=100Myr, coeff=0.9',\
+'T_9_200.ascii' u 2:($1/1e3) w l lt 5 dt 3 t 'age=200Myr, coeff=0.9',\
+'T_9_300.ascii' u 2:($1/1e3) w l lt 5 dt 4 t 'age=300Myr, coeff=0.9',\
+
+
+##################################################
+unset title
+
+set xlabel 'density'
+set output 'rho.pdf'
+plot[][]\
+'rho_5_50.ascii'  u 2:($1/1e3) w l lt 1 dt 1 t 'age=050Myr, coeff=0.5',\
+'rho_5_100.ascii' u 2:($1/1e3) w l lt 1 dt 2 t 'age=100Myr, coeff=0.5',\
+'rho_5_200.ascii' u 2:($1/1e3) w l lt 1 dt 3 t 'age=200Myr, coeff=0.5',\
+'rho_5_300.ascii' u 2:($1/1e3) w l lt 1 dt 4 t 'age=300Myr, coeff=0.5',\
+'rho_7_50.ascii'  u 2:($1/1e3) w l lt 3 dt 1 t 'age=050Myr, coeff=0.7',\
+'rho_7_100.ascii' u 2:($1/1e3) w l lt 3 dt 2 t 'age=100Myr, coeff=0.7',\
+'rho_7_200.ascii' u 2:($1/1e3) w l lt 3 dt 3 t 'age=200Myr, coeff=0.7',\
+'rho_7_300.ascii' u 2:($1/1e3) w l lt 3 dt 4 t 'age=300Myr, coeff=0.7',\
+'rho_9_50.ascii'  u 2:($1/1e3) w l lt 5 dt 1 t 'age=050Myr, coeff=0.9',\
+'rho_9_100.ascii' u 2:($1/1e3) w l lt 5 dt 2 t 'age=100Myr, coeff=0.9',\
+'rho_9_200.ascii' u 2:($1/1e3) w l lt 5 dt 3 t 'age=200Myr, coeff=0.9',\
+'rho_9_300.ascii' u 2:($1/1e3) w l lt 5 dt 4 t 'age=300Myr, coeff=0.9',\
+
+##################################################
+
+set xlabel 'lithostatic pressure (GPa)'
+set output 'p.pdf'
+plot[][]\
+'p_50.ascii'  u ($2/1e9):($1/1e3) w l t 'age=050Myr',\
+'p_100.ascii' u ($2/1e9):($1/1e3) w l t 'age=100Myr',\
+'p_200.ascii' u ($2/1e9):($1/1e3) w l t 'age=200Myr',\
+'p_300.ascii' u ($2/1e9):($1/1e3) w l t 'age=300Myr',\
+
+##################################################
+set xlabel 'viscosity (Pa.s)'
+
+set output 'eta.pdf'
+plot[19:26][3485:6371]\
+'eta_5_50.ascii'  u 2:($1/1e3) w l lt 1 dt 1 t 'age=050Myr, coeff=0.5',\
+'eta_5_100.ascii' u 2:($1/1e3) w l lt 1 dt 2 t 'age=100Myr, coeff=0.5',\
+'eta_5_200.ascii' u 2:($1/1e3) w l lt 1 dt 3 t 'age=200Myr, coeff=0.5',\
+'eta_5_300.ascii' u 2:($1/1e3) w l lt 1 dt 4 t 'age=300Myr, coeff=0.5',\
+'eta_6_50.ascii'  u 2:($1/1e3) w l lt 2 dt 1 t 'age=050Myr, coeff=0.6',\
+'eta_6_100.ascii' u 2:($1/1e3) w l lt 2 dt 2 t 'age=100Myr, coeff=0.6',\
+'eta_6_200.ascii' u 2:($1/1e3) w l lt 2 dt 3 t 'age=200Myr, coeff=0.6',\
+'eta_6_300.ascii' u 2:($1/1e3) w l lt 2 dt 4 t 'age=300Myr, coeff=0.6',\
+'eta_7_50.ascii'  u 2:($1/1e3) w l lt 3 dt 1 t 'age=050Myr, coeff=0.7',\
+'eta_7_100.ascii' u 2:($1/1e3) w l lt 3 dt 2 t 'age=100Myr, coeff=0.7',\
+'eta_7_200.ascii' u 2:($1/1e3) w l lt 3 dt 3 t 'age=200Myr, coeff=0.7',\
+'eta_7_300.ascii' u 2:($1/1e3) w l lt 3 dt 4 t 'age=300Myr, coeff=0.7',\
+'eta_8_50.ascii'  u 2:($1/1e3) w l lt 4 dt 1 t 'age=050Myr, coeff=0.8',\
+'eta_8_100.ascii' u 2:($1/1e3) w l lt 4 dt 2 t 'age=100Myr, coeff=0.8',\
+'eta_8_200.ascii' u 2:($1/1e3) w l lt 4 dt 3 t 'age=200Myr, coeff=0.8',\
+'eta_8_300.ascii' u 2:($1/1e3) w l lt 4 dt 4 t 'age=300Myr, coeff=0.8',\
+'eta_9_50.ascii'  u 2:($1/1e3) w l lt 5 dt 1 t 'age=050Myr, coeff=0.9',\
+'eta_9_100.ascii' u 2:($1/1e3) w l lt 5 dt 2 t 'age=100Myr, coeff=0.9',\
+'eta_9_200.ascii' u 2:($1/1e3) w l lt 5 dt 3 t 'age=200Myr, coeff=0.9',\
+'eta_9_300.ascii' u 2:($1/1e3) w l lt 5 dt 4 t 'age=300Myr, coeff=0.9',\
+6371-660 lt -1 dt 2 notitle
+
+
+
+
+
+
+
+
+
+
+
+
+

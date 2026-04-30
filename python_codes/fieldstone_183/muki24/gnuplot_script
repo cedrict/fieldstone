@@ -1,0 +1,119 @@
+#gnuplot 
+
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set ylabel 'z (km)'
+
+##################################################
+set xlabel 'T (K)'
+
+set title 'age=100Myr'
+set output 'T100.pdf'
+plot[][]\
+'T_10_100.ascii' u 2:($1/1e3) w l t 'T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'T_11_100.ascii' u 2:($1/1e3) w l t 'T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'T_12_100.ascii' u 2:($1/1e3) w l t 'T_{cmb}=T_{surf}+1.2{/Symbol D}T'
+
+set title 'age=200Myr'
+set output 'T200.pdf'
+plot[][]\
+'T_10_200.ascii' u 2:($1/1e3) w l t 'T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'T_11_200.ascii' u 2:($1/1e3) w l t 'T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'T_12_200.ascii' u 2:($1/1e3) w l t 'T_{cmb}=T_{surf}+1.2{/Symbol D}T'
+
+set title 'different ages'
+set output 'T123.pdf'
+plot[][]\
+'T_11_50.ascii'  u 2:($1/1e3) w l t 'age=050Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'T_11_100.ascii' u 2:($1/1e3) w l t 'age=100Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'T_11_200.ascii' u 2:($1/1e3) w l t 'age=200Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'T_11_300.ascii' u 2:($1/1e3) w l t 'age=300Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T'
+
+##################################################
+unset title
+
+set xlabel 'density (kg/m^3)'
+set output 'rho.pdf'
+plot[][]\
+'rho_10_50.ascii'  u 2:($1/1e3) w l t 'age=050Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'rho_10_100.ascii' u 2:($1/1e3) w l t 'age=100Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'rho_10_200.ascii' u 2:($1/1e3) w l t 'age=200Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'rho_10_300.ascii' u 2:($1/1e3) w l t 'age=300Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'rho_11_50.ascii'  u 2:($1/1e3) w l t 'age=050Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'rho_11_100.ascii' u 2:($1/1e3) w l t 'age=100Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'rho_11_200.ascii' u 2:($1/1e3) w l t 'age=200Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'rho_11_300.ascii' u 2:($1/1e3) w l t 'age=300Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'rho_12_50.ascii'  u 2:($1/1e3) w l t 'age=050Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T',\
+'rho_12_100.ascii' u 2:($1/1e3) w l t 'age=100Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T',\
+'rho_12_200.ascii' u 2:($1/1e3) w l t 'age=200Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T',\
+'rho_12_300.ascii' u 2:($1/1e3) w l t 'age=300Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T'
+
+##################################################
+
+set xlabel 'lithostatic pressure (GPa)'
+set output 'p.pdf'
+plot[][]\
+'p_10_50.ascii'  u ($2/1e9):($1/1e3) w l t 'age=050Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'p_10_100.ascii' u ($2/1e9):($1/1e3) w l t 'age=100Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'p_10_200.ascii' u ($2/1e9):($1/1e3) w l t 'age=200Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'p_10_300.ascii' u ($2/1e9):($1/1e3) w l t 'age=300Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'p_11_50.ascii'  u ($2/1e9):($1/1e3) w l t 'age=050Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'p_11_100.ascii' u ($2/1e9):($1/1e3) w l t 'age=100Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'p_11_200.ascii' u ($2/1e9):($1/1e3) w l t 'age=200Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'p_11_300.ascii' u ($2/1e9):($1/1e3) w l t 'age=300Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'p_12_50.ascii'  u ($2/1e9):($1/1e3) w l t 'age=050Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T',\
+'p_12_100.ascii' u ($2/1e9):($1/1e3) w l t 'age=100Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T',\
+'p_12_200.ascii' u ($2/1e9):($1/1e3) w l t 'age=200Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T',\
+'p_12_300.ascii' u ($2/1e9):($1/1e3) w l t 'age=300Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T'
+
+##################################################
+set xlabel 'viscosity (Pa.s)'
+
+set title 'E=117kJ/mol'
+set output 'eta_E117.pdf'
+plot[19:25][]\
+'eta_10_50_E117.ascii'  u 2:($1/1e3) w l t 'age=050Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'eta_10_100_E117.ascii' u 2:($1/1e3) w l t 'age=100Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'eta_10_200_E117.ascii' u 2:($1/1e3) w l t 'age=200Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'eta_10_300_E117.ascii' u 2:($1/1e3) w l t 'age=300Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'eta_11_50_E117.ascii'  u 2:($1/1e3) w l t 'age=050Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'eta_11_100_E117.ascii' u 2:($1/1e3) w l t 'age=100Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'eta_11_200_E117.ascii' u 2:($1/1e3) w l t 'age=200Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'eta_11_300_E117.ascii' u 2:($1/1e3) w l t 'age=300Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'eta_12_50_E117.ascii'  u 2:($1/1e3) w l t 'age=050Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T',\
+'eta_12_100_E117.ascii' u 2:($1/1e3) w l t 'age=100Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T',\
+'eta_12_200_E117.ascii' u 2:($1/1e3) w l t 'age=200Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T',\
+'eta_12_300_E117.ascii' u 2:($1/1e3) w l t 'age=300Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T',\
+3.3895e3-100 lt -1 dt 2 notitle,\
+3.3895e3-1000 lt -1 dt 4 notitle
+
+
+set title 'E=350kJ/mol'
+set output 'eta_E350.pdf'
+plot[19:25][]\
+'eta_10_50_E350.ascii'  u 2:($1/1e3) w l t 'age=050Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'eta_10_100_E350.ascii' u 2:($1/1e3) w l t 'age=100Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'eta_10_200_E350.ascii' u 2:($1/1e3) w l t 'age=200Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'eta_10_300_E350.ascii' u 2:($1/1e3) w l t 'age=300Myr, T_{cmb}=T_{surf}+1.0{/Symbol D}T',\
+'eta_11_50_E350.ascii'  u 2:($1/1e3) w l t 'age=050Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'eta_11_100_E350.ascii' u 2:($1/1e3) w l t 'age=100Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'eta_11_200_E350.ascii' u 2:($1/1e3) w l t 'age=200Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'eta_11_300_E350.ascii' u 2:($1/1e3) w l t 'age=300Myr, T_{cmb}=T_{surf}+1.1{/Symbol D}T',\
+'eta_12_50_E350.ascii'  u 2:($1/1e3) w l t 'age=050Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T',\
+'eta_12_100_E350.ascii' u 2:($1/1e3) w l t 'age=100Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T',\
+'eta_12_200_E350.ascii' u 2:($1/1e3) w l t 'age=200Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T',\
+'eta_12_300_E350.ascii' u 2:($1/1e3) w l t 'age=300Myr, T_{cmb}=T_{surf}+1.2{/Symbol D}T',\
+3.3895e3-100 lt -1 dt 2 notitle,\
+3.3895e3-1000 lt -1 dt 4 notitle
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,39 @@
+# gnuplot
+set term pdf
+
+Tsurf=220
+age=100e6
+year=365.25*24*3600
+kappa=1e-6
+Rsurf=3.3895e6
+Rcmb=1.830e6
+DeltaT=1500
+Tcmb=Tsurf+1.2*DeltaT
+
+Tm=1720
+#Tm=0.5*Tsurf+0.5*Tcmb
+
+set output 'Tprofile1.pdf'
+plot[Rcmb:Rsurf][0:2000]\
+(Tm-Tsurf)*erf((Rsurf-x)/2/sqrt(age*year*kappa)) lw 5 ,\
+(Tcmb-Tm)*(1-erf((x-Rcmb)/2/sqrt(age*year*kappa))) lw 5
+
+set output 'Tprofile2.pdf'
+plot[Rcmb:Rsurf][0:2000]\
+(Tm-Tsurf)*erf((Rsurf-x)/2/sqrt(age*year*kappa))\
++(Tcmb-Tm)*(1-erf((x-Rcmb)/2/sqrt(age*year*kappa))) lw 5 
+
+set output 'Tprofile3.pdf'
+plot[Rcmb:Rsurf][0:2000]\
+Tsurf+\
+(Tm-Tsurf)*erf((Rsurf-x)/2/sqrt(age*year*kappa))\
++(Tcmb-Tm)*(1-erf((x-Rcmb)/2/sqrt(age*year*kappa))) lw 5 
+
+
+
+
+#(Tm-Tsurf)*erf((Rsurf-x)/2/sqrt(age*year*kappa))
+#Tsurf,\
+#+(Tm-Tsurf)*special.erf((Rsurf-r[i])/2/np.sqrt(age*year*kappa))\
+#                           -(Tcmb-Tm)*(-1+special.erf((r[i]-Rcmb)/2/np.sqrt(age*year*kappa)))
+
