@@ -29,6 +29,13 @@
 \DeclareSIUnit\year{yr}
 \DeclareSIUnit\day{day}
 
+\usepackage[most]{tcolorbox}
+\newtcolorbox{algobox}[1]{
+  colback=gray!5, colframe=gray!5,
+  coltitle=black, fonttitle=\bfseries, title={#1},
+  boxrule=0pt, arc=3pt, left=8pt, right=8pt, top=2pt, bottom=4pt}
+
+
 \usepackage{hyperref}
 \hypersetup{
 colorlinks,

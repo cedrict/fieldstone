@@ -15,8 +15,8 @@ Thermal Structure of Oceanic Lithosphere \cite{rihc18}
 \item thermal structure of a subducting plate with finite length \cite{hstt90}
 \end{itemize}
 
-%.............................................................
-\subsection{Single layer with imposed temperature b.c.}
+%----------------------------------------------------------------------------
+\subsection{Conductive geotherm: Single layer with imposed temperature b.c.}
 
 Let us take a single layer of material characterised by
 a heat capacity $C_p$, a heat conductivity $k$
@@ -95,8 +95,8 @@ which is somewhat problematic since the heat flux at the Moho
 is reported to be somewhere between 10 and 20 $mW/m^2$ in \cite[table 7.1]{jama}.
 
 
-%-----------------------------------------------------
-\subsection{Single layer with imposed heat flux b.c.}
+%-------------------------------------------------------------------------
+\subsection{Conductive geotherm: Single layer with imposed heat flux b.c.}
 
 Let us now assume that heat fluxes are imposed at the top and bottom of the layer:
 \begin{center} 
@@ -118,14 +118,114 @@ $q=k(dT/dy)|_{y=y_t} = q_t$ so that
 
 
  
-%-----------------------------------------------------
-\subsection{Single layer with imposed heat flux and temperature b.c. }
+%-------------------------------------------------------------------------------------------
+\subsection{Conductive geotherm: Single layer with imposed heat flux and temperature b.c. }
 
 \begin{center}
 \includegraphics[width=5cm]{images/initial_temperature/tempcond3.png}
 \end{center}
 
 \todo[inline]{to finish}
+
+
+%-------------------------------------------------------------------------------------------
+\subsection{Conductive geotherm: spherical shell} 
+
+To start with we can look at the conductive geotherm in a hollow sphere. 
+Assuming no advection takes place, and again assuming steady state we 
+must solve $\Delta T =0$, but this time in a layer that is no more an infinite rectangle 
+in the horizontal directions but a 3d radially symmetric hollow planet. 
+Spherical coordinates are then the appropriate choice, and the Laplace operator
+is given by 
+
+\begin{equation}
+\Delta f=
+\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial f}{\partial r} \right)
++\frac{1}{r^2 \sin\theta} \frac{\partial}{\partial \theta} \left( \sin\theta \frac{\partial f}{\partial \theta} \right)
++\frac{1}{r^2 \sin^2\theta}  \frac{\partial^2 f}{\partial \phi^2}
+\end{equation}
+In our case $\partial_\theta = \partial_\phi=0$ so that we are left with
+\[
+\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial T}{\partial r} \right) =0
+\]
+or,
+\[
+\frac{\partial}{\partial r} \left( r^2 \frac{\partial T}{\partial r} \right) =0
+\]
+\[
+r^2 \frac{\partial T}{\partial r}  = A
+\]
+\[
+\frac{\partial T}{\partial r}  = \frac{A}{r^2}
+\]
+\[
+T(r) = - \frac{A}{r} + B
+\]
+Assuming $T=T_b$ at the bottom (i.e. the core-mantle boundary) 
+and $T=T_s$ at the surface, we have
+\begin{eqnarray}
+T_b &=& -\frac{A}{R_b} + B \nn\\
+T_s &=& -\frac{A}{R_s} + B \nn
+\end{eqnarray}
+which yields 
+\[
+T_b-T_s = -A \left( \frac{1}{R_b} - \frac{1}{R_s}\right)
+\qquad \Rightarrow
+\qquad
+A= \frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } 
+\]
+Likewise we have
+\[
+\frac12(T_b+T_s) = - \frac{A}{2} \left( \frac{1}{R_b} +\frac{1}{R_s} \right) + B
+\]
+or,
+\[
+B = \frac12(T_b+T_s)  + \frac{A}{2} \left( \frac{1}{R_b} +\frac{1}{R_s} \right) 
+\]
+so that 
+\begin{eqnarray}
+T(r) 
+&=& -\frac{A}{r} + B  \nn\\
+&=& - A \frac{1}{r}  +\frac12(T_b+T_s)  + \frac{A}{2} \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \nn\\
+&=& A \left( -\frac{1}{r} + \frac 12 \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s) \nn
+\end{eqnarray}
+and in the end:
+
+\begin{mdframed}[backgroundcolor=blue!5]
+\begin{equation}
+T(r)
+=\frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } \left( -\frac{1}{r} + 
+\frac 12 \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s) \nn
+\end{equation}
+\end{mdframed}
+
+\noindent Verification:
+\begin{align}
+T(r=R_s) 
+&=  \frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } \left( -\frac{1}{R_s} + \frac 12 \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s)  \nn\\
+&=  \frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } \left( \frac 12 \left( \frac{1}{R_b} -\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s)  \nn\\
+&= -\frac12 (T_b-T_s)  +\frac12(T_b+T_s)  \nn\\
+&= T_s \nn
+\end{align}
+Same for $T(r=R_b)$.
+
+The temperature profile is not linear and in the case of the Earth, with $T_s=0^o$C and $T_b=3000^o$C
+it looks as follows:
+
+\begin{center}
+\includegraphics[width=9cm]{images/initial_temperature/temperature_spherical.pdf}
+\end{center}
+
+
+%..........................................
+\subsection{Adiabatic temperature profile}
+
+TODO: at the moment this section is being worked on outside of FieldStone.
+
+
+
+
+
 
 
 %---------------------------------------------------------------
@@ -281,107 +381,26 @@ velocity. The python code is available in {\tt images/mckenzie/mckenzie2.py}.
 
 %\todo[inline]{BSc: create mckenzie slab temperature setup}
 
-%......................................................................
-\subsection{Initial temperature for global mantle convection models}
+%-------------------------------------------------------------------------------
+\subsection{Remarks on initial temperature for global mantle convection models}
 
-This is a difficult topic, and Gottschaldt \etal \cite{gows09} list a few issues or 
-facts to take into account:
+\textcite{gows09} (2009) list a few issues or facts to take into account:
 \begin{itemize}
-\item Frequent  impacts  may  have  determined  the  heat structure of the outer layers (Arrhenius and Lepland 2000), leading to an early thermally stable stratification. 
+\item Frequent  impacts  may  have  determined  the  heat structure of the outer 
+layers (Arrhenius and Lepland 2000), leading to an early thermally stable stratification. 
 \item A global magma ocean (Solomatov 2000)  or  several  large  scale  melting events  (Kleine \etal. 2004)  
 are also conceivable. 
 \item Fractional crystallisation and subsequent overturn has the potential to result in 
 compositionally or thermally stable layering, too (Elkins-Tanton \etal 2003; Zaranek and Parmentier 2004)
 \end{itemize}
 
-%...............................
-\paragraph{Conductive geotherm} 
-To start with we can look at the conductive geotherm in a hollow sphere. 
-Assuming no advection takes place, and again assuming steady state we 
-must solve $\Delta T =0$, but this time in a layer that is no more an infinite rectangle 
-in the horizontal directions but a 3d radially symmetric hollow planet. 
-Spherical coordinates are then the appropriate choice, and the Laplace operator
-is given by 
 
-\begin{equation}
-\Delta f=
-\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial f}{\partial r} \right)
-+\frac{1}{r^2 \sin\theta} \frac{\partial}{\partial \theta} \left( \sin\theta \frac{\partial f}{\partial \theta} \right)
-+\frac{1}{r^2 \sin^2\theta}  \frac{\partial^2 f}{\partial \phi^2}
-\end{equation}
-In our case $\partial_\theta = \partial_\phi=0$ so that we are left with
-\[
-\frac{1}{r^2}\frac{\partial}{\partial r} \left( r^2 \frac{\partial T}{\partial r} \right) =0
-\]
-or,
-\[
-\frac{\partial}{\partial r} \left( r^2 \frac{\partial T}{\partial r} \right) =0
-\]
-\[
-r^2 \frac{\partial T}{\partial r}  = A
-\]
-\[
-\frac{\partial T}{\partial r}  = \frac{A}{r^2}
-\]
-\[
-T(r) = - \frac{A}{r} + B
-\]
-Assuming $T=T_b$ at the bottom (i.e. the core-mantle boundary) 
-and $T=T_s$ at the surface, we have
-\begin{eqnarray}
-T_b &=& -\frac{A}{R_b} + B \nn\\
-T_s &=& -\frac{A}{R_s} + B \nn
-\end{eqnarray}
-which yields 
-\[
-T_b-T_s = -A \left( \frac{1}{R_b} - \frac{1}{R_s}\right)
-\qquad \Rightarrow
-\qquad
-A= \frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } 
-\]
-Likewise we have
-\[
-\frac12(T_b+T_s) = - \frac{A}{2} \left( \frac{1}{R_b} +\frac{1}{R_s} \right) + B
-\]
-or,
-\[
-B = \frac12(T_b+T_s)  + \frac{A}{2} \left( \frac{1}{R_b} +\frac{1}{R_s} \right) 
-\]
-so that 
-\begin{eqnarray}
-T(r) 
-&=& -\frac{A}{r} + B  \nn\\
-&=& - A \frac{1}{r}  +\frac12(T_b+T_s)  + \frac{A}{2} \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \nn\\
-&=& A \left( -\frac{1}{r} + \frac 12 \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s) \nn
-\end{eqnarray}
-and in the end:
 
-\begin{mdframed}[backgroundcolor=blue!5]
-\begin{equation}
-T(r)
-=\frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } \left( -\frac{1}{r} + 
-\frac 12 \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s) \nn
-\end{equation}
-\end{mdframed}
 
-\noindent Verification:
-\begin{align}
-T(r=R_s) 
-&=  \frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } \left( -\frac{1}{R_s} + \frac 12 \left( \frac{1}{R_b} +\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s)  \nn\\
-&=  \frac{T_b-T_s}{\frac{1}{R_s}-\frac{1}{R_b} } \left( \frac 12 \left( \frac{1}{R_b} -\frac{1}{R_s} \right) \right)  +\frac12(T_b+T_s)  \nn\\
-&= -\frac12 (T_b-T_s)  +\frac12(T_b+T_s)  \nn\\
-&= T_s \nn
-\end{align}
-Same for $T(r=R_b)$.
 
-The temperature profile is not linear and in the case of the Earth, with $T_s=0^o$C and $T_b=3000^o$C
-it looks as follows:
 
-\begin{center}
-\includegraphics[width=9cm]{images/initial_temperature/temperature_spherical.pdf}
-\end{center}
 
-%..........................................
-\paragraph{Adiabatic temperature profile}
+
+
 
 

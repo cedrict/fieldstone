@@ -835,6 +835,346 @@ the Schur complement equation takes the form:
 Preconditioners of the Schur complement matrix are discussed in Section~\ref{sec:precond_S}
 
 
+\newpage
+%...................................................
+\subsection{Conjugate gradient and the Schur complement approach - 2026 \cite{jalt26}}
+\label{ss:schurpcg2}
+
+
+
+In the \textcite{jalt26} paper paper we find the following solver structure for the Stokes system:
+
+\begin{algobox}{CD-U-$\eta$}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Initialization:} & Set $p^0 = 0$ \\[4pt]
+\textit{Initial solve:} & Find $u^1$ satisfying $K u^1 = f - G p^0$ \\[4pt]
+\textit{Initial residual:} & Find $q^1$ satisfying $\langle q^1, r \rangle = \langle h + \nabla\!\cdot u^1, r \rangle$ \; $\forall r \in Q$ \\[4pt]
+\textit{Preconditioning:} & Find $w^1$ satisfying $\langle \tfrac{1}{\eta} w^1, r \rangle = \langle q^1, r \rangle$ \; $\forall r \in Q$, \; set $d^1 = -w^1$ \\[8pt]
+\textit{Iteration ($k \geq 1$):} & \\[4pt]
+\textit{Direction solve:} & Find $z^k$ satisfying $K z^k = G d^k$ \\[4pt]
+\textit{Step-size selection:} & Compute $\alpha_k = \langle q^k, w^k \rangle \,/\, \langle \nabla d^k, z^k \rangle$ \\[4pt]
+\textit{Pressure update:} & Compute $p^{k+1} = p^k + \alpha_k\, d^k$ \\[4pt]
+\textit{Velocity update:} & Compute $u^{k+1} = u^k - \alpha_k\, z^k$ \\[4pt]
+\textit{Residual update:} & Find $q^{k+1}$ satisfying $\langle q^{k+1}, r \rangle = \langle h + \nabla\!\cdot u^{k+1}, r \rangle$ \; $\forall r \in Q$ \\[4pt]
+\textit{Preconditioning:} & Find $w^{k+1}$ satisfying $\langle \tfrac{1}{\eta} w^{k+1}, r \rangle = \langle q^{k+1}, r \rangle$ \; $\forall r \in Q$ \\[4pt]
+\textit{Conjugate direction:} & Compute $\beta_k = \langle q^{k+1}, w^{k+1} \rangle \,/\, \langle q^k, w^k \rangle$, \; set $d^{k+1} = -w^{k+1} + \beta_k\, d^k$
+\end{tabular} 
+\end{algobox}
+
+
+To fit my usual notations, I will first transform the above algorithm by changing among other things the notations: $u$ in $\vec{\cal V}$, $p$ in $\vec{\cal P}$, and assigning colors 
+to vectors that are in the {\color{teal} velocity space} and in the {\color{orange}pressure space}.
+
+Let us then consider each line separately. In what follows ${\bm M}$ stands for the pressure mass matrix and ${\bm M}_\eta$ for the pressure mass matrix scaled by the inverse elemental viscosity field during assembly. Only the terms between the $\langle \rangle$ brackets truly need special attention.
+
+\begin{itemize}
+%-----------------------------------------
+\item ....................................................................................
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Initialization:} & Set $p^0 = 0$ 
+\end{tabular} 
+\end{algobox}
+becomes:
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Initialization:} & Set ${\color{orange}\vec{\cal P}}^0 = 0$ 
+\end{tabular} 
+\end{algobox}
+%-----------------------------------------
+\item ....................................................................................
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Initial solve:} & Find $u^1$ satisfying $K u^1 = f - G p^0$ 
+\end{tabular} 
+\end{algobox}
+becomes:
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Initial solve:} & Find ${\color{teal}\vec{\cal V}}^1$ satisfying $\K \cdot {\color{teal}\vec{\cal V}}^1 = \vec{f} - \G \cdot  {\color{orange} \vec{\cal P}}^0$ 
+\end{tabular} 
+\end{algobox}
+
+%-----------------------------------------
+\item ....................................................................................
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Initial residual:} & Find $q^1$ satisfying $\langle q^1, r \rangle = \langle h + \nabla\!\cdot u^1, r \rangle$ \; $\forall r \in Q$ 
+\end{tabular} 
+\end{algobox}
+becomes:
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Initial residual:} & Find ${\color{orange}\vec{q}^1}$ satisfying ${\bm M} \cdot {\color{orange}\vec{q}}^1
+= -\G \cdot {\color{teal}\vec{\cal U}}^1 + {\bm M} \cdot {\color{orange}\vec{h}} $ 
+\end{tabular} 
+\end{algobox}
+
+
+
+%-----------------------------------------
+\item ....................................................................................
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Preconditioning:} & Find $w^1$ satisfying $\langle \tfrac{1}{\eta} w^1, r \rangle = \langle q^1, r \rangle$ \; $\forall r \in Q$, \; set $d^1 = -w^1$ 
+\end{tabular} 
+\end{algobox}
+becomes:
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Preconditioning:} & Find ${\color{orange} \vec{w}}^1$ satisfying ${\bm M}_\eta \cdot {\color{orange}\vec{w}}^1 = {\bm M}\cdot {\color{orange}\vec{q}}^1$
+\; set ${\color{orange}\vec{d}}^1 = -{\color{orange}\vec{w}}^1$ 
+\end{tabular} 
+\end{algobox}
+
+%-----------------------------------------
+\item ....................................................................................
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Direction solve:} & Find $z^k$ satisfying $K z^k = G d^k$ 
+\end{tabular} 
+\end{algobox}
+becomes:
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Direction solve:} & Find ${\color{teal}\vec{z}}^k$ satisfying $\K \cdot {\color{teal}\vec{z}^k} 
+= \G \cdot {\color{orange}\vec{d}}^k$ 
+\end{tabular} 
+\end{algobox}
+
+%-----------------------------------------
+\item ....................................................................................
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Step-size selection:} & Compute $\alpha_k = \langle q^k, w^k \rangle \,/\, \langle \nabla d^k, z^k \rangle$ 
+\end{tabular} 
+\end{algobox}
+becomes:
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Step-size selection:} & Compute $\alpha_k = \frac{ {\color{orange}\vec{q}}^k \cdot {\bm M} \cdot {\color{orange}\vec{w}}^k }{ {\color{orange} \vec{d}}^k\cdot {\bm H} \cdot {\color{teal} \vec{z}}^k  }$ 
+\end{tabular} 
+\end{algobox}
+
+
+%-----------------------------------------
+\item ....................................................................................
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Pressure update:} & Compute $p^{k+1} = p^k + \alpha_k\, d^k$ 
+\end{tabular} 
+\end{algobox}
+becomes:
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Pressure update:} & Compute ${\color{orange}\vec{\cal P}}^{k+1} = {\color{orange}\vec{\cal P}}^k + \alpha_k\, {\color{orange}\vec{d}}^k$ 
+\end{tabular} 
+\end{algobox}
+
+
+%-----------------------------------------
+\item ....................................................................................
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Velocity update:} & Compute $u^{k+1} = u^k - \alpha_k\, z^k$ 
+\end{tabular} 
+\end{algobox}
+becomes:
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Velocity update:} & Compute ${\color{teal}\vec{\cal V}}^{k+1} = {\color{teal}\vec{\cal V}}^k - \alpha_k\, {\color{teal}\vec{z}}^k$ 
+\end{tabular} 
+\end{algobox}
+
+
+%-----------------------------------------
+\item ....................................................................................
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Residual update:} & Find $q^{k+1}$ satisfying $\langle q^{k+1}, r \rangle = \langle h + \nabla\!\cdot u^{k+1}, r \rangle$ \; $\forall r \in Q$ 
+\end{tabular} 
+\end{algobox}
+becomes:
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Residual update:} & Find ${\color{orange} \vec{q}}^{k+1}$ satisfying ${\bm M}\cdot {\color{orange}\vec{q}}^{k+1}=
+ -\G \cdot {\color{teal}\vec{\cal V}}^{k+1} + {\bm M} \cdot {\color{orange}\vec{h}} $
+\end{tabular} 
+\end{algobox}
+
+
+%-----------------------------------------
+\item ....................................................................................
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Preconditioning:} & Find $w^{k+1}$ satisfying $\langle \tfrac{1}{\eta} w^{k+1}, r \rangle = \langle q^{k+1}, r \rangle$ \; $\forall r \in Q$ 
+\end{tabular} 
+\end{algobox}
+becomes:
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Preconditioning:} & Find ${\color{orange} \vec{w}}^{k+1}$ satisfying ${\bm M}_\eta \cdot {\color{orange}\vec{w}}^{k+1} = {\bm M}\cdot {\color{orange}\vec{q}}^{k+1}$
+\end{tabular} 
+\end{algobox}
+
+
+%-----------------------------------------
+\item ....................................................................................
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Conjugate direction:} & Compute $\beta_k = \langle q^{k+1}, w^{k+1} \rangle \,/\, \langle q^k, w^k \rangle$, \; set $d^{k+1} = -w^{k+1} + \beta_k\, d^k$
+\end{tabular} 
+\end{algobox}
+becomes:
+\begin{algobox}{}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Conjugate direction:} & Compute $\beta_k = 
+\frac{{\color{orange}\vec{q}}^{k+1} \cdot {\bm M} \cdot {\color{orange}\vec{w}}^{k+1}}
+{ {\color{orange}\vec{q}}^k \cdot{\bm M} \cdot {\color{orange}\vec{w}}^k }
+$, \; set ${\color{orange}\vec{d}}^{k+1} = -{\color{orange}\vec{w}}^{k+1} + \beta_k\, {\color{orange}\vec{d}}^k$
+\end{tabular} 
+\end{algobox}
+
+\end{itemize}
+
+
+In the end we obtain the following rewritten solver algorithm:
+
+\begin{algobox}{CD-U-$\eta$}
+\begin{tabular}{@{}r@{\quad}l@{}}
+\textit{Initialization: (A)} & Set ${\color{orange}\vec{\cal P}}^0 = 0$ \\
+\textit{Initial solve: (B)} & Find ${\color{teal}\vec{\cal V}}^1$ satisfying $\K \cdot {\color{teal}\vec{\cal V}}^1 = \vec{f} - \G \cdot  {\color{orange} \vec{\cal P}}^0$ \\ [4pt]
+\textit{Initial residual: (C)} & Find ${\color{orange}\vec{q}}^1$ satisfying ${\bm M} \cdot {\color{orange}\vec{q}}^1
+= -\G \cdot {\color{teal}\vec{\cal U}}^1 + {\bm M} \cdot {\color{orange}\vec{h}} $ \\ [4pt]
+\textit{Preconditioning: (D)} & Find ${\color{orange}\vec{w}}^1$ satisfying ${\bm M}_\eta \cdot {\color{orange}\vec{w}}^1 = {\bm M}\cdot {\color{orange}\vec{q}}^1$
+\; set ${\color{orange}\vec{d}}^1 = -{\color{orange}\vec{w}}^1$ \\ [4pt]
+\textit{Iteration ($k \geq 1$):} & \\[4pt]
+\textit{Direction solve: (E)} & Find ${\color{teal}\vec{z}}^k$ satisfying $\K \cdot {\color{teal}\vec{z}^k} 
+= \G \cdot {\color{orange}\vec{d}}^k$ \\ [4pt]
+\textit{Step-size selection: (F)} & Compute $\alpha_k = \frac{ {\color{orange}\vec{q}}^k \cdot {\bm M} \cdot {\color{orange}\vec{w}}^k }{ {\color{orange} \vec{d}}^k\cdot {\bm H} \cdot {\color{teal} \vec{z}}^k  }$ \\ [4pt]
+\textit{Pressure update: (G)} & Compute ${\color{orange}\vec{\cal P}}^{k+1} = {\color{orange}\vec{\cal P}}^k + \alpha_k\, {\color{orange}\vec{d}}^k$  \\ [4pt]
+\textit{Velocity update: (H)} & Compute ${\color{teal}\vec{\cal V}}^{k+1} = {\color{teal}\vec{\cal V}}^k - \alpha_k\, {\color{teal}\vec{z}}^k$ \\ [4pt]
+\textit{Residual update: (I)} & Find ${\color{orange} \vec{q}}^{k+1}$ satisfying ${\bm M}\cdot {\color{orange}\vec{q}}^{k+1}=
+ -\G \cdot {\color{teal}\vec{\cal V}}^{k+1} + {\bm M} \cdot {\color{orange}\vec{h}} $ \\ [4pt]
+\textit{Preconditioning: (J)} & Find ${\color{orange} \vec{w}}^{k+1}$ satisfying ${\bm M}_\eta \cdot {\color{orange}\vec{w}}^{k+1} = {\bm M}\cdot {\color{orange}\vec{q}}^{k+1}$ \\ [4pt]
+\textit{Conjugate direction: (K)} & Compute $\beta_k = 
+\frac{{\color{orange}\vec{q}}^{k+1} \cdot {\bm M} \cdot {\color{orange}\vec{w}}^{k+1}}
+{ {\color{orange}\vec{q}}^k \cdot{\bm M} \cdot {\color{orange}\vec{w}}^k }
+$, \; set ${\color{orange}\vec{d}}^{k+1} = -{\color{orange}\vec{w}}^{k+1} + \beta_k\, {\color{orange}\vec{d}}^k$
+\end{tabular} 
+\end{algobox}
+
+Note that for $(B)$ the right hand side simplifies to $\vec{f}$ if $(A)$ is true.
+The matrices above are defined as follows:
+\begin{eqnarray}
+{\bm M} &=& \int_\Omega \vec{\bN}^p \vec{\bN}^p dV \\
+{\bm M}_\eta &=& \int_\Omega \vec{\bN}^p \frac{1}{\eta} \vec{\bN}^p dV \\
+{\bm H} &=& \int_\Omega \vec\nabla \vec{\bN}^p  \vec{\bN}^v dV 
+\end{eqnarray}
+
+The capital letters $(A \rightarrow K)$ are only there to help me build the solver python code\footnote{
+The code is taken from the MEEUUW code - april 2026}:
+
+
+
+
+
+\newpage
+
+\begin{lstlisting}
+import numpy as np
+import scipy.sparse as sps
+import scipy.sparse.linalg as sla
+
+def cd_u_eta(K,G,GT,M,M_eta,H,f,h,Nfem_P):
+
+   innerM='splu'
+   innerK='splu'
+   tol=1e-6
+   niter=100
+   array_xiV=np.zeros(niter,dtype=np.float64) 
+   array_xiP=np.zeros(niter,dtype=np.float64) 
+   array_alpha=np.zeros(niter,dtype=np.float64) 
+   array_beta=np.zeros(niter,dtype=np.float64) 
+
+   #(A) Initialization
+   solP=np.zeros(Nfem_P,dtype=np.float64)
+
+   #(B) Initial solve
+   if innerK=='direct':
+      solV=sps.linalg.spsolve(K,f)  
+   elif innerK=='splu':
+      LU_K=sla.splu(K)
+      solV=LU_K.solve(f)
+
+   #(C) Initial residual
+   if innerM=='direct': 
+      q_k=sps.linalg.spsolve(M,-GT@solV+M@h)
+   elif innerM=='splu':
+      LU_M=sla.splu(M)
+      LU_M_eta=sla.splu(M_eta)
+      q_k=LU_M.solve(-GT@solV+M@h)
+
+   #(D) Preconditioning
+   w_k=sps.linalg.spsolve(M_eta,-GT@solV+M@h)    
+   d_k=-np.copy(w_k)
+
+   for k in range (0,niter): #--------------------------------------#
+                                                                    #
+       #(E) Direction solve                                         #
+       if innerK=='direct':                                         #
+          z_k=sps.linalg.spsolve(K,G@d_k)                           #
+       elif innerK=='splu':                                         #
+          z_k=LU_K.solve(G@d_k)                                     #
+                                                                    #
+       #(F) Step-size selection                                     # 
+       numerator=q_k.dot(M.dot(w_k))                                #
+       denominator=d_k.dot(H.dot(z_k))                              #
+       alpha=numerator/denominator           ; array_alpha[k]=alpha #
+                                                                    #
+       #(G) Pressure update                                         #
+       solP+=alpha*d_k                                              #
+                                                                    #
+       #(H) Velocity update                                         #
+       solV-=alpha*z_k                                              #
+                                                                    #
+       #(I) Residual update                                         #
+       if innerM=='direct':                                         # 
+          q_kp1=sps.linalg.spsolve(M,-GT@solV+M@h)                  #
+       elif innerM=='splu':                                         #
+          q_kp1=LU_M.solve(-GT@solV+M@h)                            #
+                                                                    #
+       #(J) Preconditioning                                         #
+       if innerM=='direct':                                         #
+          w_kp1=sps.linalg.spsolve(M_eta,M@q_kp1)                   #
+       elif innerM=='splu':                                         #
+          w_kp1=LU_M_eta.solve(M@q_kp1)                             #
+                                                                    #
+       #(K) Conjugate direction                                     #
+       numerator=q_kp1.dot(M.dot(w_kp1))                            #
+       denominator=q_k.dot(M.dot(w_k))                              #
+       beta=numerator/denominator              ; array_beta[k]=beta #
+       d_kp1=-w_kp1+beta*d_k                                        #
+                                                                    #
+       xiP=np.linalg.norm(alpha*d_k)             ; array_xiP[k]=xiP #
+       xiV=np.linalg.norm(alpha*z_k)             ; array_xiV[k]=xiV #
+                                                                    #
+       if xiP<tol and xiV<tol: break                                #
+                                                                    #
+       w_k=np.copy(w_kp1)                                           #
+       d_k=np.copy(d_kp1)                                           #
+       q_k=np.copy(q_kp1)                                           #
+                                                                    #
+   #end for k #-----------------------------------------------------#
+    
+   return solV,solP,k+1,array_xiV,array_xiP,array_alpha,array_beta
+\end{lstlisting}
+
+This code is also available at \url{https://github.com/cedrict/meeuuw/blob/main/cd_u_eta.py}
+
+
+
+
 
 
 
