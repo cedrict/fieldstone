@@ -1,0 +1,41 @@
+\begin{flushright} {\tiny {\color{gray} \tt fem\_online\_resources.tex}} \end{flushright}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are {\it many} Finite Element libraries available online, in 
+many languages (C, C++, Fortran, Python, ...).
+What follows is not an exhaustive list, simply a recollection 
+of what I have come across or I am aware of:
+
+\begin{itemize}
+\item \inpython  {\bf scikit-fem} available at \url{https://scikit-fem.readthedocs.io/en/latest/}.
+scikit-fem is a pure Python 3.8+ library for performing finite element assembly. Its main purpose is the transformation of bilinear forms into sparse matrices and linear forms into vectors. The library supports triangular, quadrilateral, tetrahedral and hexahedral meshes as well as one-dimensional problems.
+It showcases 50+ examples, such as the Poisson equation, solid mechanics, fluid mechanics and heat transfer.
+It covers quadrilaterals and simplices, as well as the discontinuous Galerkin method.
+
+\item \inpython {\bf SfePy} available at \url{https://sfepy.org/doc-devel/index.html}.
+SfePy is a software for solving systems of coupled partial differential equations (PDEs) by the finite element method in 1D, 2D and 3D. It can be viewed both as black-box PDE solver, and as a Python package which can be used for building custom applications. The word “simple” means that complex FEM problems can be coded very easily and rapidly.
+SfePy comes also with a number of examples that can get you started, check Gallery, Examples and Tutorial. 
+
+
+\item \inpython {\bf PyFEM} available at \url{https://github.com/jjcremmers/PyFEM}.
+PyFEM is a Python-based finite element code designed for educational and research purposes in computational solid mechanics. The code emphasizes clarity and readability, making it ideal for learning, teaching, and prototyping finite element methods for nonlinear analysis.
+
+\item {\bf FEniCS} available at \url{https://fenicsproject.org/}.
+FEniCS is a popular open-source computing platform for solving partial differential equations (PDEs) with the finite element method (FEM). FEniCS enables users to quickly translate scientific models into efficient finite element code. With the high-level Python and C++ interfaces to FEniCS, it is easy to get started, but FEniCS offers also powerful capabilities for more experienced programmers. FEniCS runs on a multitude of platforms ranging from laptops to high-performance computers.
+
+\item {\bf MOOSE} available at \url{https://mooseframework.inl.gov/}.
+It stands for `Multiphysics Object-Oriented Simulation Environment' and it is an 
+open-source, parallel finite element framework.
+
+\item \incpp {\bf MFEM} available at \url{https://mfem.org/}.
+MFEM is a free, lightweight, scalable C++ library for finite element methods.
+It features arbitrary high-order finite element meshes and spaces,
+a wide variety of finite element discretization approaches, 
+conforming and nonconforming adaptive mesh refinement and it is 
+scalable from laptops to GPU-accelerated supercomputers.
+
+
+\end{itemize}
+
+
+
