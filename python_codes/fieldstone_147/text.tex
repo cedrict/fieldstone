@@ -903,7 +903,7 @@ with a $\triangleleft$ (I have also removed the $\C$ matrix entries which are ir
 \item return $\vec{\cal V}_{k+1}$ and $\vec{\cal P}_{k+1}$ as result
 \end{itemize}
 
-The first residual $\vec{r}_0$ is then computed as follows:
+The first residual $\vec{r}_0$ is then computed as follows {\color{red} there should probably be a mass matrix multiplying h !! - check paper}:
 \begin{lstlisting}
 rvect_k=sps.linalg.spsolve(MP_mat,G_mat.T.dot(solV)-h_rhs) 
 \end{lstlisting}
