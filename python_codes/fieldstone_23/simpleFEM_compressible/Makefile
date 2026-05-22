@@ -14,7 +14,6 @@ solve_uzawa1.o\
 solve_uzawa2.o\
 solve_uzawa3.o\
 solve_linpack.o\
-inverse_icon.o\
 elemental_to_nodal.o\
 compute_derivatives_errors.o\
 simplefem.o 
