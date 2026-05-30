@@ -1,3 +1,5 @@
+#! /bin/bash
+
 rm opla
 rm point2.ascii
 rm point4.ascii

@@ -1,3 +1,5 @@
+#! /bin/bash
+
 rm opla
 rm corner.ascii
 rm west.ascii
@@ -64,6 +66,21 @@ grep south opla >> south.ascii
 grep west opla >> west.ascii
 
 python3 stone.py  90 > opla
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+
+python3 stone.py  100 > opla
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+
+python3 stone.py  120 > opla
+grep corner opla >> corner.ascii
+grep south opla >> south.ascii
+grep west opla >> west.ascii
+
+python3 stone.py  140 > opla
 grep corner opla >> corner.ascii
 grep south opla >> south.ascii
 grep west opla >> west.ascii
