@@ -106,7 +106,7 @@ print('     -> experiment=',experiment)
 print('     -> nelx=',nelx)
 print('     -> nely=',nely)
 
-debug=True
+debug=False
 
 ###############################################################################
 #  The mesh is composed of eight blocks. Each is first built and warped
@@ -329,14 +329,15 @@ b7_y[:]= b5_x[:]
 b8_x[:]=-b6_y[:]
 b8_y[:]= b6_x[:]
 
-#np.savetxt('temp1.ascii',np.array([b1_x,b1_y]).T,header='# x,y')
-#np.savetxt('temp2.ascii',np.array([b2_x,b2_y]).T,header='# x,y')
-#np.savetxt('temp3.ascii',np.array([b3_x,b3_y]).T,header='# x,y')
-#np.savetxt('temp4.ascii',np.array([b4_x,b4_y]).T,header='# x,y')
-#np.savetxt('temp5.ascii',np.array([b5_x,b5_y]).T,header='# x,y')
-#np.savetxt('temp6.ascii',np.array([b6_x,b6_y]).T,header='# x,y')
-#np.savetxt('temp7.ascii',np.array([b7_x,b7_y]).T,header='# x,y')
-#np.savetxt('temp8.ascii',np.array([b8_x,b8_y]).T,header='# x,y')
+if debug:
+   np.savetxt('temp1.ascii',np.array([b1_x,b1_y]).T,header='# x,y')
+   np.savetxt('temp2.ascii',np.array([b2_x,b2_y]).T,header='# x,y')
+   np.savetxt('temp3.ascii',np.array([b3_x,b3_y]).T,header='# x,y')
+   np.savetxt('temp4.ascii',np.array([b4_x,b4_y]).T,header='# x,y')
+   np.savetxt('temp5.ascii',np.array([b5_x,b5_y]).T,header='# x,y')
+   np.savetxt('temp6.ascii',np.array([b6_x,b6_y]).T,header='# x,y')
+   np.savetxt('temp7.ascii',np.array([b7_x,b7_y]).T,header='# x,y')
+   np.savetxt('temp8.ascii',np.array([b8_x,b8_y]).T,header='# x,y')
 
 print("make block 3-8: %.3f s" % (clock.time()-start))
 
@@ -461,9 +462,9 @@ for iel in range(0,nel):
 
 print("compute coords.: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # define boundary conditions
-#################################################################
+###############################################################################
 start=clock.time()
 
 bc_fix=np.zeros(Nfem,dtype=bool)  # boundary condition, yes/no
@@ -531,7 +532,6 @@ for iel in range(0,nel):
     for iq in [-1,1]:
         for jq in [-1,1]:
 
-            # position & weight of quad. point
             rq=iq/sqrt3
             sq=jq/sqrt3
             weightq=1.*1.
@@ -658,18 +658,18 @@ for iel in range(0,nel):
 
 print("build FE matrix: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # solve system
-#################################################################
+###############################################################################
 start=clock.time()
 
 sol=sps.linalg.spsolve(sps.csr_matrix(A_fem),b_fem)
 
 print("solve time: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # put solution into separate x,y arrays
-#####################################################################
+###############################################################################
 start=clock.time()
 
 u,v=np.reshape(sol,(nn_V,2)).T
@@ -681,9 +681,9 @@ if debug: np.savetxt('displacement.ascii',np.array([x_V,y_V,u,v]).T,header='# x,
 
 print("split vel into u,v: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # retrieve pressure, stress, strain, ...
-#####################################################################
+###############################################################################
 start=clock.time()
 
 q=np.zeros(nn_V,dtype=np.float64)  
@@ -795,7 +795,7 @@ vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nn_V,n
 vtufile.write("<Points> \n")
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%10e %10e %10e \n" %(x_V[i],y_V[i],0.))
+    vtufile.write("%e %e %e \n" %(x_V[i],y_V[i],0.))
 vtufile.write("</DataArray>\n")
 vtufile.write("</Points> \n")
 #####
@@ -803,57 +803,57 @@ vtufile.write("<PointData Scalars='scalars'>\n")
 #--
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='displacement' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
+    vtufile.write("%e %e %e \n" %(u[i],v[i],0.))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%10e  \n" %q[i])
+    vtufile.write("%e  \n" %q[i])
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='e_xx' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%10e  \n" %e_xx_n[i])
+    vtufile.write("%e  \n" %e_xx_n[i])
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='e_yy' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%10e  \n" %e_yy_n[i])
+    vtufile.write("%e  \n" %e_yy_n[i])
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='e_xy' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%10e  \n" %e_xy_n[i])
+    vtufile.write("%e  \n" %e_xy_n[i])
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='sigma_xx' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%10e  \n" %sigma_xx_n[i])
+    vtufile.write("%e  \n" %sigma_xx_n[i])
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='sigma_yy' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%10e  \n" %sigma_yy_n[i])
+    vtufile.write("%e  \n" %sigma_yy_n[i])
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='sigma_xy' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%10e  \n" %sigma_xy_n[i])
+    vtufile.write("%e  \n" %sigma_xy_n[i])
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='sigma_zz' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%10e  \n" %sigma_zz_n[i])
+    vtufile.write("%e  \n" %sigma_zz_n[i])
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='sigma' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%10e  \n" %sigma_n[i])
+    vtufile.write("%e  \n" %sigma_n[i])
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
 for i in range(0,nn_V):
-    vtufile.write("%10e  \n" %e_n[i])
+    vtufile.write("%e  \n" %e_n[i])
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("</PointData>\n")
@@ -915,3 +915,5 @@ vtufile.close()
 print("*******************************")
 print("********** the end ************")
 print("*******************************")
+
+###############################################################################
