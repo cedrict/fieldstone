@@ -36,6 +36,7 @@ Last revision: June 1st, 2026.
 This \stone is based on \stone~124. 
 It is a proof of concept for a bigger study. Context:
 
+\newpage
 Email from Jacqueline , May 15th, 2026.
 \begin{verbatim}
 I'm reaching out to ask if you would potentially be interested in a collaboration. 
@@ -60,6 +61,27 @@ Layer 1: Youngs modulus: E = 3MPa, Shear modulus: G = 1.8 MPa
 Layer 2: E = 2.5 MPa (?), G = 1 Mpa (?)
 Applied stress: ~ 9kPa (sigma1). Sigma 2 and 3 can be very small.
 \end{verbatim} 
+
+Based on these values, we find the following Lam\'e's parameters
+
+\[
+\lambda_1=G_1*(E_1-2*G_1)/(3*G_1-E_1) = -450000
+\qquad
+\lambda_2=G_2*(E_2-2*G_2)/(3*G_2-E_2) = 1000000
+\]
+and the following Poisson's ratios:
+\[
+\nu_1=(E_1-2*G_1)/(2*G_1)= -0.1666666666
+\qquad
+\nu_2=(E_2-2*G_2)/(2*G_2)= 0.25
+\]
+
+A negative Poisson's ratio means a material expands perpendicular to 
+a pulling force (gets wider when stretched) or compresses inward when pushed, 
+directly opposite to conventional materials.
+See \url{https://en.wikipedia.org/wiki/Auxetics}
+
+I don't think this is how your rocks deform ? :)
 
 
 

@@ -79,7 +79,7 @@ rad=0.0125
 
 E1=3e6   ; G1=1.8e6
 E2=2.5e6 ; G2=1e6
-sigma_bc=9e3
+sigma_bc=-9e3
 
 nelx=12
 nely=nelx
@@ -96,6 +96,14 @@ print('     -> nely=',nely)
 print('     -> nelz=',nelz)
 
 debug=False
+
+nu1=nu=(E1-2*G1)/(2*G1)
+nu2=nu=(E2-2*G2)/(2*G2)
+lambdaa1=G1*(E1-2*G1)/(3*G1-E1) 
+lambdaa2=G2*(E2-2*G2)/(3*G2-E2)
+
+print('nu1=',nu1,'lambda1=',lambdaa1)
+print('nu2=',nu2,'lambda2=',lambdaa2)
 
 ###############################################################################
 # The mesh in the xy plane is composed of eight blocks. Each is first built 
@@ -494,7 +502,6 @@ z_V=np.zeros(nn_V,dtype=np.float64)
 icon_V=np.zeros((m_V,nel),dtype=np.int32)
 
 for i in range(0,nelz+1):
-    #print(i,i*nn_2d,(i+1)*nn_2d)
     x_V[i*nn_2d:(i+1)*nn_2d]=x_2d[:]
     y_V[i*nn_2d:(i+1)*nn_2d]=y_2d[:]
     z_V[i*nn_2d:(i+1)*nn_2d]=i*hz
@@ -570,17 +577,17 @@ face6=np.zeros(nel,dtype=bool)
 for iel in range(0,nel):
     for k in range(m_V):
         #x=0 side
-        if abs((x_V[icon_V[1,iel]]+x_V[icon_V[2,iel]])*0.5) < eps: face1[iel]=True
+        if abs((x_V[icon_V[1,iel]]+x_V[icon_V[2,iel]])*0.5)<eps: face1[iel]=True
         #x=Lx side
-        if abs((x_V[icon_V[1,iel]]+x_V[icon_V[2,iel]])*0.5-Lx) < eps: face2[iel]=True
+        if abs((x_V[icon_V[1,iel]]+x_V[icon_V[2,iel]])*0.5-Lx)<eps: face2[iel]=True
         #y=0 side
-        if abs((y_V[icon_V[1,iel]]+y_V[icon_V[2,iel]])*0.5) < eps: face3[iel]=True
+        if abs((y_V[icon_V[1,iel]]+y_V[icon_V[2,iel]])*0.5)<eps: face3[iel]=True
         #y=Ly side
-        if abs((y_V[icon_V[1,iel]]+y_V[icon_V[2,iel]])*0.5-Ly) < eps: face4[iel]=True
+        if abs((y_V[icon_V[1,iel]]+y_V[icon_V[2,iel]])*0.5-Ly)<eps: face4[iel]=True
         #z=0 side
-        if abs((z_V[icon_V[0,iel]]+z_V[icon_V[3,iel]])*0.5) < eps: face5[iel]=True
+        if abs((z_V[icon_V[0,iel]]+z_V[icon_V[3,iel]])*0.5)<eps: face5[iel]=True
         #z=Lz side
-        if abs((z_V[icon_V[4,iel]]+z_V[icon_V[7,iel]])*0.5-Lz) < eps: face6[iel]=True
+        if abs((z_V[icon_V[4,iel]]+z_V[icon_V[7,iel]])*0.5-Lz)<eps: face6[iel]=True
 
 print("flag elements: %.3f s" % (clock.time()-start))
 
@@ -725,9 +732,8 @@ for iel in range(0,nel):
     
 lambdaa=G*(E-2*G)/(3*G-E) # Table 4.1 of Sadd's book, wiki
 
+#nu=E/(2*G)-1     # https://en.wikipedia.org/wiki/Elastic_modulus, identical
 nu=(E-2*G)/(2*G) # Table 4.1 of Sadd's book
-nu=E/(2*G)-1     # https://en.wikipedia.org/wiki/Elastic_modulus, identical
-
 
 print("     -> Young's modulus: E (m,M) %e %e " %(np.min(E),np.max(E)))
 print("     -> Shear modulus: G (m,M) %e %e " %(np.min(G),np.max(G)))
@@ -779,7 +785,6 @@ for i in range(0,nn_V):
        abs(z_V[i]-Lz/2)/Lz<eps: 
        bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0 # fix v
        bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
-
 
 print("define boundary conditions: %.3f s" % (clock.time()-start))
 
@@ -911,7 +916,7 @@ start=clock.time()
 
 sol=sps.linalg.spsolve(sps.csr_matrix(A_fem),b_fem)
 
-#sol=np.zeros(Nfem,dtype=np.float64) 
+#sol=np.zeros(Nfem,dtype=np.float64)  
 
 print("solve time: %.3f s" % (clock.time()-start))
 
@@ -936,7 +941,6 @@ print("split vel into u,v: %.3f s" % (clock.time()-start))
 ###############################################################################
 start=clock.time()
 
-q=np.zeros(nn_V,dtype=np.float64)  
 cc=np.zeros(nn_V,dtype=np.float64)  
 e_n=np.zeros(nn_V,dtype=np.float64)  
 e_xx_n=np.zeros(nn_V,dtype=np.float64)  
@@ -959,7 +963,6 @@ for iel in range(0,nel):
         exx=np.dot(dNdx_V,u[icon_V[:,iel]])
         eyy=np.dot(dNdy_V,v[icon_V[:,iel]])
         ezz=np.dot(dNdz_V,w[icon_V[:,iel]])
-
         exy=np.dot(dNdx_V,v[icon_V[:,iel]])*0.5\
            +np.dot(dNdy_V,u[icon_V[:,iel]])*0.5
         exz=np.dot(dNdx_V,w[icon_V[:,iel]])*0.5\
@@ -1069,6 +1072,7 @@ print("compute elemental strain components: %.3f s" % (clock.time()-start))
 ###############################################################################
 start=clock.time()
 
+q=np.zeros(nn_V,dtype=np.float64)  
 sigma_n=np.zeros(nn_V,dtype=np.float64)  
 sigma_xx_n=np.zeros(nn_V,dtype=np.float64)  
 sigma_yy_n=np.zeros(nn_V,dtype=np.float64)  
@@ -1223,8 +1227,6 @@ vtufile.write("<DataArray type='Float32' Name='sigma' Format='ascii'> \n")
 sigma_e.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
 #--
-
-
 vtufile.write("</CellData>\n")
 #####
 vtufile.write("<Cells>\n")
