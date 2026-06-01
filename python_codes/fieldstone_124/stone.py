@@ -57,7 +57,7 @@ print("*******************************")
 m_V=4     # number of nodes making up an element
 ndof_V=2  # number of degrees of freedom per node
 
-experiment=3
+experiment=2
 
 if experiment==1: #hassani
    E=1e10
@@ -92,7 +92,7 @@ if experiment==3: #Ramm et al 2003
 if int(len(sys.argv) == 2):
    nelx   = int(sys.argv[1])
 else:
-   nelx=40
+   nelx=16
 
 #nely=int(nelx/4)
 nely=nelx
@@ -445,20 +445,20 @@ print("assemble blocks: %.3f s" % (clock.time()-start))
 ###############################################################################
 start=clock.time()
 
-xc=np.zeros(nel,dtype=np.float64)  
-yc=np.zeros(nel,dtype=np.float64)  
+x_e=np.zeros(nel,dtype=np.float64)  
+y_e=np.zeros(nel,dtype=np.float64)  
     
 for iel in range(0,nel):
     for k in range(0,m_V):
-        xc[iel]+=x_V[icon_V[k,iel]]*0.25
-        yc[iel]+=y_V[icon_V[k,iel]]*0.25
+        x_e[iel]+=x_V[icon_V[k,iel]]*0.25
+        y_e[iel]+=y_V[icon_V[k,iel]]*0.25
 
 rr=np.zeros(nel,dtype=np.float64)  
 theta=np.zeros(nel,dtype=np.float64)  
 
 for iel in range(0,nel):
-    rr[iel]=np.sqrt((xc[iel]-Lx/2)**2+(yc[iel]-Ly/2)**2)
-    theta[iel]=np.arctan2((yc[iel]-Ly/2),(xc[iel]-Lx/2))
+    rr[iel]=np.sqrt((x_e[iel]-Lx/2)**2+(y_e[iel]-Ly/2)**2)
+    theta[iel]=np.arctan2((y_e[iel]-Ly/2),(x_e[iel]-Lx/2))
 
 print("compute coords.: %.3f s" % (clock.time()-start))
 
@@ -568,56 +568,20 @@ for iel in range(0,nel):
     #end for
 
     if experiment==2:
-       if abs(x_V[icon_V[0,iel]])/Lx<eps and abs(x_V[icon_V[1,iel]])/Lx<eps: #left wall
-          b_el[0]-=sigma_bc*hy*0.5
-          b_el[2]-=sigma_bc*hy*0.5
        if abs(x_V[icon_V[1,iel]])/Lx<eps and abs(x_V[icon_V[2,iel]])/Lx<eps: #left wall
           b_el[2]-=sigma_bc*hy*0.5
           b_el[4]-=sigma_bc*hy*0.5
-       if abs(x_V[icon_V[2,iel]])/Lx<eps and abs(x_V[icon_V[3,iel]])/Lx<eps: #left wall
-          b_el[4]-=sigma_bc*hy*0.5
-          b_el[6]-=sigma_bc*hy*0.5
-       if abs(x_V[icon_V[3,iel]])/Lx<eps and abs(x_V[icon_V[0,iel]])/Lx<eps: #left wall
-          b_el[6]-=sigma_bc*hy*0.5
-          b_el[0]-=sigma_bc*hy*0.5
-       if abs(x_V[icon_V[0,iel]]-Lx)/Lx<eps and abs(x_V[icon_V[1,iel]]-Lx)/Lx<eps: #right wall
-          b_el[0]+=sigma_bc*hy*0.5
-          b_el[2]+=sigma_bc*hy*0.5
        if abs(x_V[icon_V[1,iel]]-Lx)/Lx<eps and abs(x_V[icon_V[2,iel]]-Lx)/Lx<eps: #right wall
           b_el[2]+=sigma_bc*hy*0.5
           b_el[4]+=sigma_bc*hy*0.5
-       if abs(x_V[icon_V[2,iel]]-Lx)/Lx<eps and abs(x_V[icon_V[3,iel]]-Lx)/Lx<eps: #right wall
-          b_el[4]+=sigma_bc*hy*0.5
-          b_el[6]+=sigma_bc*hy*0.5
-       if abs(x_V[icon_V[3,iel]]-Lx)/Lx<eps and abs(x_V[icon_V[0,iel]]-Lx)/Lx<eps: #right wall
-          b_el[6]+=sigma_bc*hy*0.5
-          b_el[0]+=sigma_bc*hy*0.5
 
     if experiment==3:
-       if abs(y_V[icon_V[0,iel]])/Ly<eps and abs(y_V[icon_V[1,iel]])/Ly<eps: #bottom wall
-          b_el[1]-=sigma_bc*hy*0.5
-          b_el[3]-=sigma_bc*hy*0.5
        if abs(y_V[icon_V[1,iel]])/Ly<eps and abs(y_V[icon_V[2,iel]])/Ly<eps: #bottom wall
           b_el[3]-=sigma_bc*hy*0.5
           b_el[5]-=sigma_bc*hy*0.5
-       if abs(y_V[icon_V[2,iel]])/Ly<eps and abs(y_V[icon_V[3,iel]])/Ly<eps: #bottom wall
-          b_el[5]-=sigma_bc*hy*0.5
-          b_el[7]-=sigma_bc*hy*0.5
-       if abs(y_V[icon_V[3,iel]])/Ly<eps and abs(y_V[icon_V[0,iel]])/Ly<eps: #bottom wall
-          b_el[7]-=sigma_bc*hy*0.5
-          b_el[1]-=sigma_bc*hy*0.5
-       if abs(y_V[icon_V[0,iel]]-Ly)/Ly<eps and abs(y_V[icon_V[1,iel]]-Ly)/Ly<eps: #top wall
-          b_el[1]+=sigma_bc*hy*0.5
-          b_el[3]+=sigma_bc*hy*0.5
        if abs(y_V[icon_V[1,iel]]-Ly)/Ly<eps and abs(y_V[icon_V[2,iel]]-Ly)/Ly<eps: #top wall
           b_el[3]+=sigma_bc*hy*0.5
           b_el[5]+=sigma_bc*hy*0.5
-       if abs(y_V[icon_V[2,iel]]-Ly)/Ly<eps and abs(y_V[icon_V[3,iel]]-Ly)/Ly<eps: #top wall
-          b_el[5]+=sigma_bc*hy*0.5
-          b_el[7]+=sigma_bc*hy*0.5
-       if abs(y_V[icon_V[3,iel]]-Ly)/Ly<eps and abs(y_V[icon_V[0,iel]]-Ly)/Ly<eps: #top wall
-          b_el[7]+=sigma_bc*hy*0.5
-          b_el[1]+=sigma_bc*hy*0.5
 
     # apply boundary conditions
     for k1 in range(0,m_V):
@@ -668,7 +632,7 @@ sol=sps.linalg.spsolve(sps.csr_matrix(A_fem),b_fem)
 print("solve time: %.3f s" % (clock.time()-start))
 
 ###############################################################################
-# put solution into separate x,y arrays
+# put solution into separate u,v arrays
 ###############################################################################
 start=clock.time()
 
@@ -758,8 +722,8 @@ print("     -> exy_n (m,M) %e %e " %(np.min(e_xy_n),np.max(e_xy_n)))
 print("     -> q (m,M) %e %e " %(np.min(q),np.max(q)))
 
 if debug:
-   np.savetxt('pressure.ascii',np.array([x_V,y_V,q]).T,header='# xc,yc,p')
-   np.savetxt('strainrate.ascii',np.array([x_V,y_V,e_xx_n,e_yy_n,e_xy_n]).T,header='# xc,yc,exx,eyy,exy')
+   np.savetxt('pressure.ascii',np.array([x_V,y_V,q]).T,header='# x,y,p')
+   np.savetxt('strainrate.ascii',np.array([x_V,y_V,e_xx_n,e_yy_n,e_xy_n]).T,header='# x,y,exx,eyy,exy')
 
 print("compute press & strain: %.3f s" % (clock.time()-start))
 
@@ -812,48 +776,29 @@ for i in range(0,nn_V):
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='e_xx' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e  \n" %e_xx_n[i])
+e_xx_n.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='e_yy' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e  \n" %e_yy_n[i])
+e_yy_n.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='e_xy' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e  \n" %e_xy_n[i])
+e_xy_n.tofile(vtufile,sep=' ',format='%.4e')
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
+e_n.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='sigma_xx' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e  \n" %sigma_xx_n[i])
+sigma_xx_n.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='sigma_yy' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e  \n" %sigma_yy_n[i])
+sigma_yy_n.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='sigma_xy' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e  \n" %sigma_xy_n[i])
+sigma_xy_n.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='sigma_zz' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e  \n" %sigma_zz_n[i])
-vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='sigma' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e  \n" %sigma_n[i])
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e  \n" %e_n[i])
+sigma_n.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("</PointData>\n")
@@ -861,29 +806,26 @@ vtufile.write("</PointData>\n")
 vtufile.write("<CellData Scalars='scalars'>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='r' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%e\n" % rr[iel])
+rr.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
-#--
 vtufile.write("<DataArray type='Float32' Name='theta' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%e\n" % theta[iel])
+theta.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
 #--
 if experiment==2:
    vtufile.write("<DataArray type='Float32' Name='sigma_xx (th)' Format='ascii'> \n")
    for iel in range (0,nel):
-       vtufile.write("%e\n" % sigma_xx_th(xc[iel],yc[iel],rr[iel],theta[iel],rad,sigma_bc))
+       vtufile.write("%e\n" % sigma_xx_th(x_e[iel],y_e[iel],rr[iel],theta[iel],rad,sigma_bc))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' Name='sigma_yy (th)' Format='ascii'> \n")
    for iel in range (0,nel):
-       vtufile.write("%e\n" % sigma_yy_th(xc[iel],yc[iel],rr[iel],theta[iel],rad,sigma_bc))
+       vtufile.write("%e\n" % sigma_yy_th(x_e[iel],y_e[iel],rr[iel],theta[iel],rad,sigma_bc))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' Name='sigma_xy (th)' Format='ascii'> \n")
    for iel in range (0,nel):
-       vtufile.write("%e\n" % sigma_xy_th(xc[iel],yc[iel],rr[iel],theta[iel],rad,sigma_bc))
+       vtufile.write("%e\n" % sigma_xy_th(x_e[iel],y_e[iel],rr[iel],theta[iel],rad,sigma_bc))
    vtufile.write("</DataArray>\n")
 #--
 vtufile.write("</CellData>\n")
