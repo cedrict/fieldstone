@@ -52,7 +52,6 @@
 \section{Ideas for new stones}
 
 \begin{itemize}
-\item Write Stone to redo Salt tectonics experiments of \cite{dacl94}
 \item DF, FEM of 1D, 2D wave equation stone, look at becker and kaus syllabus matlab file
 \item write FVM code
 \begin{itemize}
@@ -93,7 +92,7 @@ see \cite{dett04}. benchmarks in \cite{chcc12}
 \item build library of mms, tester
 \item biblio: for example, what are the sub-themes of subduction ? 
 or mantle convection. re-organise biblio around these themes
-\item structural geology: 2 and 3 layer (non)linear viscous folding
+\item structural geology: 2 and 3 layer (non)linear viscous folding, a la Frehner MSc/PhD thesis and papers 
 \item Gravity of cuboid: Sort out the mess by \textcite{duti16} and \textcite{zhhu17}.
 \item chunk grid. benchmark of busa13?
 \item Slab detachment + diff elements + Aitken
@@ -118,7 +117,6 @@ check availability of bc, rheology, etc ...
 \item numerical viscosimeter \cite{batt84}, taylor couette flow, stokes flow dye cylinders
 \item advection a la van Hunen, Lagrangian characteristics - see \textcite{bepo10} (2010), method 
       of characteristics, semi-lagrangian method, see chapter on tracking.
-\item folding experiments a la Frehner MSc/PhD thesis and papers 
 \item redo/combine Morgan \& Forsyth (1988) \cite{mofo88} 3D T field around transform faults in oceanic crust
 \item shear band fractals of elefant paper
 \item Busse benchmark (stone 20) upgrade, run, document
@@ -184,7 +182,7 @@ implement in stones and aspect ?
 \item STREAM + CVI + mixing ?
 
 \item rerun allken cookbook at high resolution with damper and divv=R
-\item salt tectonics wirh Ernst \cite{veja92,vasv93,maar96,istt04,maqs06,maqs07,bakp14,feka14a}
+\item salt tectonics wirh Ernst \cite{veja92,dacl94,vasv93,maar96,istt04,maqs06,maqs07,bakp14,feka14a}
 
 \item look at quinquis and buiter paper about H20 release and transport, water migration in subduction
 \item redo magma chamber studies \cite{cuwi14,gehn18}
@@ -218,12 +216,12 @@ Boyle \& Jennings (1973) \cite{boje73}, Jennings (1971) \cite{jenn71}.
 Aitken method for accelerate nonlinear problems, Chow \& Kay (1984) \cite{chka84}.
 Wang \& Wang (1994) \cite{wawa94}. Richardson extrapolation. 
 \item implementation of fault in FEM codes \cite{zhgu94,zhgu95}
-\item remove nnp from all stone
 \item use 3D benchmark of s75 for s82 !
 \item write generic ker program for LBB stab check
 \item look at Sobol sequences in Numerical recipes for tracer layout\\
 https://people.sc.fsu.edu/\~{}jburkardt/f\_src/sobol/sobol.html
 \item redo thie17 in axisymmetric geometry
+\item redo early compressional orogen study by Beaumont \cite{bequ94}
 
 \item write stone with matrix free approach
 
@@ -234,7 +232,6 @@ https://people.sc.fsu.edu/\~{}jburkardt/f\_src/sobol/sobol.html
 with ASPECT:
 
 \begin{itemize}
-\item redo early compressional orogen study by Beaumont \cite{bequ94}
 \item redo extension 3D Allken papers + \cite{poay84,katl95} 
 \item redo Travis study \cite{trab90} which is close to Blankenbach \cite{blbc89}. 
 Note that \cite{maie12} looks at kinetic energy for \cite{trab90}
@@ -253,7 +250,6 @@ These are not particularly well posed.
 \item in FEM, time derivative handled by FDM but not FEM?
 \item why not ok to prescribe T on outflow boundary. check aspect manual
 \item the need to underintegrate penalty term
-\item pseudo-transient methods \cite{alku24}
 \item what does it mean to have a negative pressure ? should we threshold it when computing yield strength ? 
 \item Why pressure bc works for Q2Q1 but not Q1P0 ??
 \item is there a formal definition of shape fct, trial fct, basis fct vs test fct 

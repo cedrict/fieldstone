@@ -1500,8 +1500,7 @@ $p=-\lambda \vec\nabla\cdot\vec{\upupsilon}$ (as opposed to $p=-K \vec\nabla\cdo
 %----------------------------------------------------
 \section{Elastic parameter values for Earth materials}
 
-
-what are $E$, $\nu$, $\mu$, etc ... for Earth ? bounds ? etc ...
+In this section I list the elastic parameter values that I have come across in the literature.
 
 \begin{center}
 \begin{tabular}{lll}
@@ -1509,10 +1508,10 @@ what are $E$, $\nu$, $\mu$, etc ... for Earth ? bounds ? etc ...
 material & Young's modulus (in $10^6$ bars) &	shear modulus (in $10^6$ bars)  \\
 \hline\hline
 ice &	0.1 &	0.03\\
-shale &	0.2–0.3 	& 0.15\\
-limestone &	0.4–0.7 &	0.22–0.26\\
-granite &	0.3–0.6 &	0.2\\
-basalt &	0.7–0.9 &	0.3\\
+shale &	0.2-0.3 	& 0.15\\
+limestone &	0.4-0.7 &	0.22-0.26\\
+granite &	0.3-0.6 &	0.2\\
+basalt &	0.7-0.9 &	0.3\\
 steel &	2.1 &	0.83 \\
 \hline
 \end{tabular}\\
@@ -1520,11 +1519,73 @@ steel &	2.1 &	0.83 \\
 \url{https://www.britannica.com/science/rock-geology/Stress-strain-relationships}}
 \end{center}
 
-Note that 1bar = 0.1MPa, so $10^6$bar=$10^5$MPa.
+Note that 1bar = 0.1MPa, so $10^6$bar=$10^5$MPa, so that the table above then 
+becomes:
+
+\begin{center}
+\begin{tabular}{lll}
+\hline
+material & Young's modulus (in MPa) &	shear modulus (in MPa)  \\
+\hline\hline
+ice &	1 &	0.3\\
+shale &	2-3 	& 1.5\\
+limestone &	4-7 &	2.2-2.6\\
+granite &	3-6 &	2\\
+basalt &	7-9 &	3\\
+steel &	21 &	8.3 \\
+\hline
+\end{tabular}
+\end{center}
 
 In \textcite{famc14} (2014), we find ``Elastic properties within the 
 lithosphere and mantle are relatively well constrained with a shear 
-modulus between $10^{10}$ and $10^{11}$ Pa.''
+modulus between $10^{10}$ and $10^{11}$ Pa.'' (i.e. between $10$ GPa
+and $100$ GPa).
+
+In Table 4.2 of \textcite{sadd14} we find:
+
+\begin{center}
+\begin{tabular}{lllllll}
+\hline
+ - & $E(\si{\giga\pascal})$ & $\nu$ & $\mu(\si{\giga\pascal})$ & $\lambda(\si{\giga\pascal})$ & $k(\si{\giga\pascal})$ & $\alpha(10^{-6}C^{-1})$ \\
+\hline
+Aluminum & 68.9   & 0.34  &25.7                & 54.6  & 71.8  & 25.5 \\
+Concrete & 27.6   & 0.20  &11.5                & 7.7   & 15.3  & 11 \\
+Copper   & 89.6   & 0.34  &33.4                & 71    & 93.3  & 18 \\
+Glass    & 68.9   & 0.25  &27.6                & 27.6  & 45.9  & 8.8 \\
+Nylon    & 28.3   & 0.40  &10.1                & 4.04  & 47.2  & 102 \\
+Rubber   & 0.0019 & 0.499 &$0.654\cdot10^{-3}$ & 0.326 & 0.326 & 200 \\
+Steel    & 207    & 0.29  &80.2                & 111   & 164   & 13.5 \\
+\hline
+\end{tabular}
+\end{center}
+
+In Table 5.1 of \textcite{weijermars} we find:
+\begin{center}
+\begin{tabular}{llll}
+\hline
+Rock & Young's modulus (\si{\giga\pascal}) & Shear modulus (\si{\giga\pascal}) & Poisson ratio \\
+\hline
+Ice & & 9.2 & 0.03 \\
+Halite & & 30 & 0.15 \\
+Shale & 10-30 & 14 & - \\
+Sandstone & 10-60 & 4-30 & 0.20-0.30 \\
+Limestone & 60-80 & 20-30 & 0.25-0.30 \\
+Dolomite & 50-90 & 30-50 & - \\
+Marble & 30-90 & 20-35 & 0.10-0.40 \\
+Gneiss & 4-70 & 10-35 & 0.04-0.15 \\
+Amphibole & - & 50-100 & 0.40 \\
+Basalt & 60-80 & 30 & 0.25 \\
+Granite & 40-70 & 20-30 & 0.10-0.25 \\
+Diabase & 80-110 & 30-45 & 0.25 \\
+Gabbro & 60-100 & 20-35 & 0.15-0.20 \\
+Diorite & 60-80 & 30-35 & - \\
+Dunite & 140-160 & 60-70 & - \\
+\hline
+\end{tabular}
+\end{center}
+
+
 
 
 %==============================================================================
@@ -1538,6 +1599,7 @@ see \textcite{lami14} (2014)).
 \item Thick-walled sphere under internal pressure (see \textcite{lami09} (2009) and refs therein).
 \end{itemize}
 
+Plenty in \textcite{sadd14}.
 
 %--------------------------------------
 \subsection{Cantilever beam}
