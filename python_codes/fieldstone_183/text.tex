@@ -73,9 +73,10 @@ for i in range(0,npts):
     r[i]=Rcmb+dr*i
 \end{lstlisting}
 
-Turning now to the initial temperature profile we quickly realise that Eqs. (10,11) of the paper are 
-wrong. They should contain $\kappa$ under the square root, and there seems to be a 
-confusion between $T_m$, $T_{surf}$ and $T_{cmb}$ in some places. 
+Turning now to the initial temperature profile we quickly realise that 
+Eqs. (10,11) of the paper are wrong. They should contain $\kappa$ under 
+the square root, and there seems to be a confusion between $T_m$, $T_{surf}$ 
+and $T_{cmb}$ in some places. 
 Instead we rely on the following function which serves the same purpose:
 \begin{lstlisting}
 def initial_temperature_hsc(r,Rcmb,Rsurf,Tcmb,Tsurf,age_cmb,age_surf,Tm,kappa):
@@ -120,30 +121,32 @@ for i in range(npts-2,-1,-1):
 
 In section 2.3.1 we read:
 \begin{displayquote}{\color{darkgray}
-Based on Christensen and Yuen (1984), activation energy is divided by the stress exponent 
-$n$ to approximate a power law rheology for olivine. Typically $n$ is taken to be 3, but we vary the 
-effective activation energy, corresponding to testing values of
-$n=3$ (dislocation creep) and $n=1$ (diffusion creep). 
-Thus to approximate $n=3$, the nominal activation energy of
-$350 kJ/mol$ becomes $117 kJ/mol$ (low activation energy cases), while for $n=1$, we keep the activation as
-$350 kJ/mol$ (high activation energy cases).
+Based on Christensen and Yuen (1984), activation energy is divided by 
+the stress exponent $n$ to approximate a power law rheology for olivine. 
+Typically $n$ is taken to be 3, but we vary the effective activation energy, 
+corresponding to testing values of $n=3$ (dislocation creep) and $n=1$ 
+(diffusion creep). Thus to approximate $n=3$, the nominal activation energy of
+$350 kJ/mol$ becomes $117 kJ/mol$ (low activation energy cases), while 
+for $n=1$, we keep the activation as $350 kJ/mol$ (high activation energy cases).
 
-The temperature and pressure (depth) dependent viscosity $\eta$ is given, in dimensional form, by
+The temperature and pressure (depth) dependent viscosity $\eta$ is given, 
+in dimensional form, by
 \[
-\eta = A \eta_0 \exp \left( \frac{E_a + p V_a}{RT} -\frac{E_a + p V_a}{R(\Delta T + T_s)}  \right)
+\eta = A \eta_0 \exp \left( \frac{E_a + p V_a}{RT} 
+-\frac{E_a + p V_a}{R(\Delta T + T_s)}  \right)
 \]
-where $\eta_0$ is the reference viscosity ($10^{21}$ Pa s), $E_a$ is the activation energy 
-(either 117 or 350 kJ/mol), $p$ is the pressure, $V_a$ is the activation volume 
-(6.6 cm3/mol), $R$ is the ideal gas constant, and $T$ is the potential
-temperature (in K). The pre‐exponential factor A is to control the viscosity by layer. 
-To enforce a strong (initially 100 km thick) lithosphere, from the surface to 100 km depth, 
-$A=10$. From 100 to 1,000 km depth, A = 0.1,
-establishing a weak martian upper mantle rheology. From 1,000 km depth to the CMB, 
-$A=10$, accounting for a strong lower martian mantle rheology.}
+where $\eta_0$ is the reference viscosity ($10^{21}$ Pa s), $E_a$ is the 
+activation energy (either 117 or 350 kJ/mol), $p$ is the pressure, $V_a$ is 
+the activation volume (6.6 cm3/mol), $R$ is the ideal gas constant, and $T$ 
+is the potential temperature (in K). The pre‐exponential factor $A$ is to 
+control the viscosity by layer. To enforce a strong (initially 100 km thick) 
+lithosphere, from the surface to 100 km depth, $A=10$. From 100 to 1,000 km 
+depth, $A=0.1$, establishing a weak martian upper mantle rheology. 
+From 1,000 km depth to the CMB, $A=10$, accounting for a strong lower martian 
+mantle rheology.}
 \end{displayquote}
 
-This translates as follows (a maximum viscosity cutoff has been 
-implemented):
+This translates as follows (a maximum viscosity cutoff has been implemented):
 
 \begin{lstlisting}
 eta=np.zeros(npts,dtype=np.float64)
@@ -165,6 +168,100 @@ on $p,T$ and $E$:
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_183/muki24/eta_E117.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_183/muki24/eta_E350.pdf}
+\end{center}
+
+In practice the viscosity formulation above is not very common and 
+might be somewhat problematic to implement in existing codes.
+However, this can be easily remedied as follows: 
+If one replaces the pressure by the lithostatic pressure in the second 
+term inside the exponential, then the entire second term is then 
+function of the vertical coordinate only and can then be 'merged' into 
+the $A$ term:
+\begin{eqnarray}
+\eta 
+&=& A(z) \eta_0 \exp \left( \frac{E_a + p V_a}{RT} 
+-\frac{E_a + p V_a}{R(\Delta T + T_s)}  \right) \nn\\
+&\simeq& A(z) \eta_0 \exp \left( \frac{E_a + p V_a}{RT} 
+-\frac{E_a + p_L(z) V_a}{R(\Delta T + T_s)}  \right) \nn\\
+&=& A(z) \eta_0 \exp \left( \frac{E_a + p V_a}{RT} \right) 
+\left(-\frac{E_a + p_L(z) V_a}{R(\Delta T + T_s)}  \right) \nn\\
+&=& \eta_0 \underbrace{A(z) \left(-\frac{E_a + p_L(z) V_a}
+{R(\Delta T + T_s)}  \right)}_{A'(z)}
+\exp \left( \frac{E_a + p V_a}{RT} \right) 
+\end{eqnarray}
+This expression is then akin to a diffusion creep viscosity
+albeit with a depth dependent prefactor. 
+ 
+
+
+%-------------------------------
+\subsection*{\textcite{seki14}}
+
+Important information taken from the paper: 
+``Boussinesq approximation'', ``We do not have a compositionally distinct crust.''.
+
+We also read ``The calculations are performed in a 3D spherical shell
+with a free-slip cold upper boundary and a stress-free core–mantle
+boundary.'' I do not understand this, how is a stress-free cmb different than
+free slip surface?
+
+The initial temperature is specified as follows:
+``
+The calculations begin with a conductive boundary layer
+at the surface and an initial non-dimensional mantle temperature
+of 0.95 with an error function temperature proﬁle for the top ther-
+mal boundary layer (250 Myr).''
+
+``We ﬁx the surface temperature at 220 K while the core-mantle boundary 
+is at 1820 K at a depth of 1780 km. [...] The
+initial temperature difference across the mantle is 1600 K.''
+
+
+``We consider a Newtonian rheology with a strong temperature-
+dependent viscosity and a layered viscosity structure that includes
+a viscosity increase by a factor of 8 and 25 at a depth of 996 km \cite{rozh06}.''
+Eq. 6 in the paper is written in dimensionless form, mixing primed and 
+not primed quantities, but Eq 7 allows us to arrive at the conclusion 
+that it is the same form as in \cite{muki24} above, although the
+radial dependency $\eta(r)$ is not specified.
+I then implemented this for simplicity:
+\begin{lstlisting}
+if depth<996e3: 
+   A=1
+else: 
+   A=8
+eta[i]=A*eta0*np.exp((E+p[i]*V)/R/T[i]-(E+p[i]*V)/R/(DeltaT+Tsurf))
+\end{lstlisting}
+
+
+
+We find most of these parameters in table 1 of the paper (see {\tt stone\_seki14.py}):
+\begin{lstlisting}
+Rsurf=3.398e6
+Rcmb=Rsurf-1780e3 
+rho0=3400
+g=3.72
+eta0=1e21
+R=8.314
+V=3.61e-6
+alpha=3e-5
+kappa=1e-6
+hcapa=1200
+Tsurf=220
+DeltaT=1600
+E=157e3 
+Tcmb=Tsurf+DeltaT
+Tm=Tsurf+0.95*(Tcmb-Tsurf) # not 100% sure
+year=365.25*24*3600
+age=250e6
+\end{lstlisting}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_183/seki14/T.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_183/seki14/rho.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_183/seki14/p.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_183/seki14/eta.pdf}
 \end{center}
 
 
@@ -348,6 +445,79 @@ T(r) = T_{pot} \exp\left(  -A (r- R_{surf} ) \right)
 On average in the mantle $\alpha\sim 2\cdot 10^{-5}$, $C_p\sim 1250$ and $g\sim 10$, 
 so that $A=\frac{\alpha g}{C_p} \sim 1.6e-7$.
 
+
+
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{The Earth a la Wang \& Li 2021}
+
+This is based on \fullcite{wali21}.
+The setup of the paper is pretty straightforward if not for the usual mix
+of dimensioned and dimensionless quantities. 
+The parameters are as follows:
+\begin{lstlisting}
+Rsurf = 6370e3
+Rcmb = Rsurf - 1000e3
+rho0 = 3300
+g = 9.8
+eta0 = 1e21
+R = 8.314
+alpha = 3e-5
+kappa = 1e-6
+hcapa = 1250
+Tsurf = 273
+DeltaT = 1350
+year = 365.25 * 24 * 3600
+\end{lstlisting}
+
+The dimensionless temperature is 0 at the top and 1 at the bottom, while 
+the real temperature difference is stated to be 1350C. We then dedude that 
+\[
+T^\star = \frac{T-T_K}{\Delta T}
+\]
+where $T_K=273$. We then have $T_{top}=273$ and $T_{bottom}=1350C=1623K$.
+
+The dimensionless viscosity is temperature-dependent and simply given by 
+$\eta^\star(T^\star)=\exp (E(1-T^\star))$ with $E=6.91$.
+We then have
+\begin{eqnarray}
+\eta(T) 
+&=& \eta_0 \exp \left[ E \left(1 - \frac{T-T_K}{\Delta T} \right)  \right] \nn
+\end{eqnarray}
+
+This yields the following temperature and viscosity profiles.
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_183/wali21/T.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_183/wali21/eta.pdf} 
+\end{center}
+
+Unfortunately this viscosity expression cannot be reworked to fit 
+existing viscosity forms in ASPECT (dislocation creep, diffusion creep, ...).
+This is quite a peculiar choice: using an extremely simplified 
+rheology that does not even fit any known deformation mechanism in the Earth
+so as to produce a study that focuses on dynamic topography is rather wild, in my 
+opinion.
+
+One solution could be to actually use a diffusion creep approach. 
+We then set 
+\[
+\eta(T) = \frac12 A^{-1} \exp \frac{Q}{RT}
+\]
+We vary Q between 100kJ/mol and 400kJ/mol, and adapt A so that 
+the viscosity is at $10^{21}$ in the deeper mantle at $T=T_m$.
+We then obtain the following viscosity profiles:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_183/wali21/eta2.pdf} 
+\end{center}
+
+It looks like we recover a similar viscosity profile, 
+although the viscosity becomes infinite towards the surface so that a 
+limiter is then needed.
 
 
 

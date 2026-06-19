@@ -1,0 +1,58 @@
+#gnuplot 
+
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set ylabel 'z (km)'
+
+set ytics 100
+##################################################
+set xlabel 'T (K)'
+
+set output 'T.pdf'
+plot[][5370:6370]\
+'T_50.ascii'  u 2:($1/1e3) w l t 'age=050Myr',\
+'T_80.ascii'  u 2:($1/1e3) w l t 'age=080Myr',\
+'T_100.ascii' u 2:($1/1e3) w l t 'age=100Myr',\
+'T_200.ascii' u 2:($1/1e3) w l t 'age=200Myr',\
+6250 lt -1 dt 2
+
+##################################################
+set xlabel 'viscosity (Pa.s)'
+set output 'eta.pdf'
+plot[20.5:][5370:6370]\
+'eta_50.ascii'  u 2:($1/1e3) w l t 'age=050Myr',\
+'eta_80.ascii'  u 2:($1/1e3) w l t 'age=080Myr',\
+'eta_100.ascii' u 2:($1/1e3) w l t 'age=100Myr',\
+'eta_200.ascii' u 2:($1/1e3) w l t 'age=200Myr',\
+6250 lt -1 dt 2
+
+
+set output 'eta2.pdf'
+plot[20.5:24][5370:6370]\
+'eta2_50_100.ascii'   u 2:($1/1e3) w l lt 1 dt 1 t'age=050Myr, E=100kJ',\
+'eta2_50_200.ascii'   u 2:($1/1e3) w l lt 1 dt 2 t'age=050Myr, E=200kJ',\
+'eta2_50_300.ascii'   u 2:($1/1e3) w l lt 1 dt 3 t'age=050Myr, E=300kJ',\
+'eta2_50_400.ascii'   u 2:($1/1e3) w l lt 1 dt 4 t'age=050Myr, E=400kJ',\
+'eta2_80_100.ascii'   u 2:($1/1e3) w l lt 2 dt 1 t'age=080Myr, E=100kJ',\
+'eta2_80_200.ascii'   u 2:($1/1e3) w l lt 2 dt 2 t'age=080Myr, E=200kJ',\
+'eta2_80_300.ascii'   u 2:($1/1e3) w l lt 2 dt 3 t'age=080Myr, E=300kJ',\
+'eta2_80_400.ascii'   u 2:($1/1e3) w l lt 2 dt 4 t'age=080Myr, E=400kJ',\
+'eta2_100_100.ascii'  u 2:($1/1e3) w l lt 3 dt 1 t'age=050Myr, E=100kJ',\
+'eta2_100_200.ascii'  u 2:($1/1e3) w l lt 3 dt 2 t'age=050Myr, E=200kJ',\
+'eta2_100_300.ascii'  u 2:($1/1e3) w l lt 3 dt 3 t'age=050Myr, E=300kJ',\
+'eta2_100_400.ascii'  u 2:($1/1e3) w l lt 3 dt 4 t'age=050Myr, E=400kJ',\
+'eta_80.ascii'  u 2:($1/1e3) w l t 'age=080Myr, wali21',\
+
+
+
+
+
+
+
+
+
+
+
+
+

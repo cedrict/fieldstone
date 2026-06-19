@@ -1,0 +1,39 @@
+#gnuplot 
+
+set term pdf enhanced font "Times,12pt"
+set grid
+set key outside
+set ylabel 'z (km)'
+
+##################################################
+set xlabel 'T (K)'
+
+set output 'T.pdf'
+plot[][]\
+'T.ascii'  u 2:($1/1e3) w l notitle 
+
+##################################################
+unset title
+
+set xlabel 'density (kg/m^3)'
+set output 'rho.pdf'
+plot[][]\
+'rho.ascii'  u 2:($1/1e3) w l notitle 
+
+##################################################
+
+set xlabel 'lithostatic pressure (GPa)'
+set output 'p.pdf'
+plot[][]\
+'p.ascii'  u ($2/1e9):($1/1e3) w l notitle 
+
+##################################################
+set xlabel 'viscosity (Pa.s)'
+
+set title 'E=117kJ/mol'
+set output 'eta.pdf'
+plot[19:25][]\
+'eta.ascii'  u 2:($1/1e3) w l notitle,\
+3.3895e3-100 lt -1 dt 2 notitle,\
+3.3895e3-1000 lt -1 dt 4 notitle
+
