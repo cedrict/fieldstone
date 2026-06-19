@@ -109,53 +109,44 @@ Very explicitly, and since the stress and strain tensors are symmetric, we have
 \sigma_{yz} &=& 2\mu  {\varepsilon}_{yz} 
 \end{eqnarray}
 
-
-
-%\index{general}{Lam\'e Parameter} 
-%\index{general}{Shear Modulus}
-
 This can be re-written in the 6-dimensional stress/strain space as
 \begin{equation}
 \underbrace{
-\left(
-\begin{array}{c}
+\left( \begin{array}{c}
 \sigma_{xx} \\
 \sigma_{yy} \\
 \sigma_{zz} \\
 \sigma_{xy} \\
 \sigma_{xz} \\
 \sigma_{yz} 
-\end{array}
-\right)}
+\end{array} \right)}
 _{\vec{\sigma}}
 =
 \underbrace{
-\left(
-\begin{array}{cccccc}
+\left( \begin{array}{cccccc}
 \lambda+2\mu & \lambda & \lambda & 0 & 0 & 0 \\ 
 \lambda & \lambda+2\mu & \lambda & 0 & 0 & 0 \\ 
 \lambda & \lambda & \lambda+2\mu & 0 & 0 & 0 \\
 0 & 0 & 0 & \mu & 0 & 0 \\ 
 0 & 0 & 0 & 0 & \mu & 0 \\ 
 0 & 0 & 0 & 0 & 0 & \mu  
-\end{array}
-\right)}
+\end{array} \right)}
 _{{\bm D}}
 \cdot
 \underbrace{
-\left(
-\begin{array}{c}
+\left( \begin{array}{c}
 \varepsilon_{xx} \\
 \varepsilon_{yy} \\
 \varepsilon_{zz} \\
 {\color{teal}2}\varepsilon_{xy} \\
 {\color{teal}2}\varepsilon_{xz} \\
 {\color{teal}2}\varepsilon_{yz} 
-\end{array}
-\right)}
+\end{array} \right)}
 _{\vec{\varepsilon}}
 \label{eq:el:vectors}
 \end{equation}
+
+
 
 Let us define the matrices
 \[
@@ -334,7 +325,8 @@ E \varepsilon_{yz} &=&  (1+\nu) \sigma_{yz} \label{eqs:elEe}
 \end{eqnarray}
 \end{mdframed}
 
-The incompressibility (or bulk modulus) $K$ is defined as $p=-K \vec{\nabla}\cdot\vec{\upupsilon}$ where $p$ is the pressure with \index{general}{Bulk Modulus}
+The incompressibility (or bulk modulus) $K$ is defined as 
+$p=-K \vec{\nabla}\cdot\vec{\upupsilon}$ where $p$ is the pressure with 
 \begin{eqnarray}
 p
 &=&-\frac{1}{3} \textrm{tr}({\bm \sigma}) \nonumber\\
@@ -392,54 +384,50 @@ direction of this stress.
 In the future we will also need to express the deviatoric part of a tensor as a function of the tensor itself, all in vector format. Let us consider the stress tensor. Then we have ${\bm \tau}=\textrm{dev}({\bm \sigma}) = {\bm \sigma} - \frac{1}{3} \textrm{tr}[ {\bm \sigma} ] {\bm 1}$ which becomes
 \[
 \vec{\tau}=
-\left(
-\begin{array}{c}
+\left( \begin{array}{c}
 \sigma_{xx}\\
 \sigma_{yy}\\
 \sigma_{zz}\\
 \sigma_{xy}\\
 \sigma_{xz}\\
 \sigma_{yz}
-\end{array}
-\right)
+\end{array} \right)
 -\frac{1}{3}
-\left(
-\begin{array}{c}
+\left( \begin{array}{c}
 \sigma_{xx} + \sigma_{yy}+\sigma_{zz} \\
 \sigma_{xx} + \sigma_{yy}+\sigma_{zz} \\
 \sigma_{xx} + \sigma_{yy}+\sigma_{zz} \\
 0 \\
 0 \\
 0
-\end{array}
-\right)
+\end{array} \right)
 \! = \!
-\left(
-\begin{array}{c}
+\left( \begin{array}{c}
  \frac23\sigma_{xx}-\frac13 \sigma_{yy}-\frac13 \sigma_{zz} \\
 -\frac13\sigma_{xx}+\frac23 \sigma_{yy}-\frac13 \sigma_{zz} \\
 -\frac13\sigma_{xx}-\frac13 \sigma_{yy}+\frac23 \sigma_{zz} \\
 \sigma_{xy}\\
 \sigma_{xz}\\
 \sigma_{yz}
-\end{array}
-\right)
+\end{array} \right)
 \! = \!
 \underbrace{
-\left(
-\begin{array}{cccccc}
+\left( \begin{array}{cccccc}
 \frac23 & - \frac13 & - \frac13 & 0 & 0 & 0 \\
 -\frac13 & \frac23 & - \frac13  & 0 & 0 & 0\\
 -\frac13& - \frac13 & \frac23  & 0 & 0 & 0\\
 0&0&0& 1&0 &0  \\
 0&0&0&0&1 &0\\
 0&0&0&0&0& 1
-\end{array}
-\right)
+\end{array} \right)
 }_{\tilde{\bm \Lambda}^d}
 \cdot
 \vec{\sigma}
 \]
+
+
+
+
 or, 
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}

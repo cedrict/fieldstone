@@ -229,8 +229,7 @@ for iel in range(0,nel):
 
 
 #--- OR ---
-
-cq=0
+#bit messy! -> see stone 185
 for iq in range(0,nq_per_dim):
     for jq in range(0,nq_per_dim):
         rq[cq]=qcoords[iq]
