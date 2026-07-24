@@ -10,42 +10,34 @@ from scipy.sparse import csr_matrix,lil_matrix
 # exp=2: pure shear
 # exp=3: aquarium 
 # exp=4: strip load
+# exp=5: strip load (hackathon 2026)
 
-experiment=4
+experiment=5
 
 ###############################################################################
 
 def disp_x(x,y,rho,g,lambdaa,mu,L):
-    if experiment==1:
-       val=y
-    if experiment==2:
-       val=2*(x-0.5)
-    if experiment==3:
-       val=0
-    if experiment==4:
-       val=0
+    if experiment==1: val=y
+    if experiment==2: val=2*(x-0.5)
+    if experiment==3: val=0
+    if experiment==4: val=0
+    if experiment==5: val=0
     return val
 
 def disp_y(x,y,rho,g,lambdaa,mu,L):
-    if experiment==1:
-       val=0
-    if experiment==2:
-       val=-2*(y-0.5)
-    if experiment==3:
-       val=rho*g/(lambdaa+2*mu)*(0.5*y**2-L*y)
-    if experiment==4:
-       val=0
+    if experiment==1: val=0
+    if experiment==2: val=-2*(y-0.5)
+    if experiment==3: val=rho*g/(lambdaa+2*mu)*(0.5*y**2-L*y)
+    if experiment==4: val=0
+    if experiment==5: val=0
     return val
 
 def pressure(x,y,rho,g,lambdaa,mu,L):
-    if experiment==1:
-       val=0.
-    if experiment==2:
-       val=0.
-    if experiment==3:
-       val=(lambdaa+2./3.*mu)/(lambdaa+2*mu)*rho*g*(L-y)
-    if experiment==4:
-       val=0
+    if experiment==1: val=0.
+    if experiment==2: val=0.
+    if experiment==3: val=(lambdaa+2./3.*mu)/(lambdaa+2*mu)*rho*g*(L-y)
+    if experiment==4: val=0
+    if experiment==5: val=0
     return val
 
 def sigma_xx(x,y,p0,a):
@@ -79,9 +71,9 @@ def sigma_yy(x,y,p0,a):
 eps=1.e-10
 sqrt3=np.sqrt(3.)
 
-print("-----------------------------")
-print("---------- stone 34 ---------")
-print("-----------------------------")
+print("*******************************")
+print("********** stone 034 **********")
+print("*******************************")
 
 m=4     # number of nodes making up an element
 ndof=2  # number of degrees of freedom per node
@@ -92,15 +84,10 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 540
-   nely = 360
+   nelx = 420
+   nely = 50
    visu = 1
     
-nnx=nelx+1 
-nny=nely+1 
-NV=nnx*nny 
-nel=nelx*nely 
-Nfem=NV*ndof 
 
 if experiment==1:
    Lx=1
@@ -146,6 +133,32 @@ if experiment==4:
    a=50
    p0=1e8
 
+if experiment==5:
+   #https://en.wikipedia.org/wiki/Bulk_modulus
+   Lx=300e3
+   Ly=100e3
+   gx=0
+   gy=0
+   rho=2700
+   K=1/4e-12 # bulk modulus
+   mu=1e10 # shear modulus (also G)
+   lambdaa=K-2*mu/3  #Lame's first parameter
+   a=20e3
+   p0=2.7e6 # rho*gy*1000
+   nely=int(nelx*Ly/Lx)
+   nu=(3*K-2*mu)/(6*K+2*mu)
+   print('mu=',mu)
+   print('lambdaa=',lambdaa)
+   print('nelx=',nelx)
+   print('nely=',nely)
+   print('nu=',nu)
+
+nnx=nelx+1 
+nny=nely+1 
+NV=nnx*nny 
+nel=nelx*nely 
+Nfem=NV*ndof 
+
 hx=Lx/nelx
 hy=Ly/nely
 
@@ -154,7 +167,7 @@ debug=False
 #####################################################################
 # grid point setup
 #####################################################################
-start = time.time()
+start=time.time()
 
 x=np.zeros(NV,dtype=np.float64)  # x coordinates
 y=np.zeros(NV,dtype=np.float64)  # y coordinates
@@ -166,14 +179,14 @@ for j in range(0,nny):
         y[counter]=j*Ly/float(nely)
         counter += 1
 
-print("setup: grid points: %.3f s" % (time.time() - start))
+print("setup: grid points: %.3f s" % (time.time()-start))
 
 #####################################################################
 # connectivity
 #####################################################################
-start = time.time()
+start=time.time()
 
-icon =np.zeros((m,nel),dtype=np.int32)
+icon=np.zeros((m,nel),dtype=np.int32)
 
 counter = 0
 for j in range(0,nely):
@@ -184,25 +197,25 @@ for j in range(0,nely):
         icon[3,counter] = i + (j + 1) * (nelx + 1)
         counter += 1
 
-print("setup: connectivity: %.3f s" % (time.time() - start))
+print("setup: connectivity: %.3f s" % (time.time()-start))
 
 #####################################################################
-start = time.time()
+start=time.time()
 
-xc = np.zeros(nel,dtype=np.float64)  
-yc = np.zeros(nel,dtype=np.float64)  
+xc=np.zeros(nel,dtype=np.float64)  
+yc=np.zeros(nel,dtype=np.float64)  
     
 for iel in range(0,nel):
     for k in range(0,m):
         xc[iel]+=x[icon[k,iel]]*0.25
         yc[iel]+=y[icon[k,iel]]*0.25
 
-print("setup: elt center coords: %.3f s" % (time.time() - start))
+print("setup: elt center coords: %.3f s" % (time.time()-start))
 
 #####################################################################
 # define boundary conditions
 #####################################################################
-start = time.time()
+start=time.time()
 
 bc_fix=np.zeros(Nfem,dtype=bool)       # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=np.float64) # boundary condition, value
@@ -231,7 +244,7 @@ if experiment==2:
        if y[i]>(Ly-eps):
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = +1
 
-if experiment==3 or experiment==4:
+if experiment==3 or experiment==4 or experiment==5:
    for i in range(0,NV):
        if x[i]<eps:
           bc_fix[i*ndof]   = True ; bc_val[i*ndof]   = 0.
@@ -240,12 +253,12 @@ if experiment==3 or experiment==4:
        if y[i]<eps:
           bc_fix[i*ndof+1] = True ; bc_val[i*ndof+1] = 0.
 
-print("setup: boundary conditions: %.3f s" % (time.time() - start))
+print("setup: boundary conditions: %.3f s" % (time.time()-start))
 
 #################################################################
 # build FE matrix
 #################################################################
-start = time.time()
+start=time.time()
 
 a_mat = lil_matrix((Nfem,Nfem),dtype=np.float64)
 b_mat = np.zeros((3,ndof*m),dtype=np.float64)    # gradient matrix B 
@@ -324,7 +337,7 @@ for iel in range(0, nel):
     #end for
 
     #applying pressure b.c. 
-    if experiment==4 and abs(xc[iel]-Lx/2)<a and yc[iel]>Ly-hy:
+    if (experiment==4 or experiment==5) and abs(xc[iel]-Lx/2)<a and yc[iel]>Ly-hy:
        b_el[2*2+1]-=0.5*p0*hx
        b_el[2*3+1]-=0.5*p0*hx
 
@@ -362,21 +375,21 @@ for iel in range(0, nel):
 
 #end for iel
 
-print("build FE matrix: %.3f s" % (time.time() - start))
+print("build FE matrix: %.3f s" % (time.time()-start))
 
 #################################################################
 # solve system
 #################################################################
-start = time.time()
+start=time.time()
 
 sol=sps.linalg.spsolve(sps.csr_matrix(a_mat),rhs)
 
-print("solve time: %.3f s" % (time.time() - start))
+print("solve time: %.3f s" % (time.time()-start))
 
 #####################################################################
 # put solution into separate x,y arrays
 #####################################################################
-start = time.time()
+start=time.time()
 
 u,v=np.reshape(sol,(NV,2)).T
 
@@ -385,12 +398,12 @@ print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 
 if debug: np.savetxt('displacement.ascii',np.array([x,y,u,v]).T,header='# x,y,u,v')
 
-print("split vel into u,v: %.3f s" % (time.time() - start))
+print("split vel into u,v: %.3f s" % (time.time()-start))
 
 #####################################################################
 # retrieve pressure
 #####################################################################
-start = time.time()
+start=time.time()
 
 p=np.zeros(nel,dtype=np.float64)  
 exx=np.zeros(nel,dtype=np.float64)  
@@ -445,12 +458,12 @@ print("     -> exy (m,M) %.e %.e " %(np.min(exy),np.max(exy)))
 if debug: np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
 if debug: np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
-print("compute press & sr: %.3f s" % (time.time() - start))
+print("compute press & sr: %.3f s" % (time.time()-start))
 
 #################################################################
 # compute error
 #################################################################
-start = time.time()
+start=time.time()
 
 errv=0.
 errp=0.
@@ -496,14 +509,14 @@ errp=np.sqrt(errp)
 
 print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
 
-print("compute errors: %.3f s" % (time.time() - start))
+print("compute errors: %.3f s" % (time.time()-start))
 
 #####################################################################
 # 
 #####################################################################
-start = time.time()
+start=time.time()
 
-if experiment==4:
+if experiment==4 or experiment==5:
    profile=open('top_profile_'+str(nelx)+'.ascii',"w")
    for i in range(0,NV):
        if y[i]/Ly>1-eps:
@@ -525,12 +538,12 @@ if experiment==4:
                                            sigma_xy(xc[iel],yc[iel],p0,a)))
 
 
-   print("export profiles: %.3f s" % (time.time() - start))
+   print("export profiles: %.3f s" % (time.time()-start))
 
 #####################################################################
 # plot of solution
 #####################################################################
-start = time.time()
+start=time.time()
        
 if visu==1:
        vtufile=open('solution.vtu',"w")
@@ -652,11 +665,11 @@ if visu==1:
        vtufile.write("</VTKFile>\n")
        vtufile.close()
    
-       print("export vtu file: %.3f s" % (time.time() - start))
+       print("export vtu file: %.3f s" % (time.time()-start))
 
-print("-----------------------------")
-print("------------the end----------")
-print("-----------------------------")
+print("*******************************")
+print("********** the end ************")
+print("*******************************")
 
 ###############################################################################
 ###############################################################################
