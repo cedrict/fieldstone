@@ -1,3 +1,4 @@
+#
 set term pdf enhanced font "Times,12pt"
 set grid
 set key outside
@@ -5,22 +6,35 @@ set ylabel 'displacement'
 
 set output 'yprofile.pdf'
 set xlabel 'x'
-set title 'line y=L_y/2'
+set title 'line y=L_y/2, z=L_z'
 plot[][]\
 'yprofile.ascii' u 1:4 ps .5 t 'u,32x32x16',\
 'yprofile.ascii' u 1:5 ps .5 t 'v,32x32x16',\
-'yprofile.ascii' u 1:6 ps .5 t 'v,32x32x16',\
+'yprofile.ascii' u 1:6 ps .5 t 'w,32x32x16',\
 'yprofile.ascii' u 1:7 w l lt -1 t 'analytical',\
 'yprofile.ascii' u 1:8 w l lt -1 notitle,\
 'yprofile.ascii' u 1:9 w l lt -1 notitle
 
 set output 'xprofile.pdf'
 set xlabel 'y'
-set title 'line x=L_x/2'
+set title 'line x=L_x/2, z=L_z'
 plot[][]\
 'xprofile.ascii' u 2:4 ps .5 t 'u,32x32x16',\
 'xprofile.ascii' u 2:5 ps .5 t 'v,32x32x16',\
-'xprofile.ascii' u 2:6 ps .5 t 'v,32x32x16',\
+'xprofile.ascii' u 2:6 ps .5 t 'w,32x32x16',\
 'xprofile.ascii' u 2:7 w l lt -1 t 'analytical',\
 'xprofile.ascii' u 2:8 w l lt -1 notitle,\
 'xprofile.ascii' u 2:9 w l lt -1 notitle
+
+set output 'zprofile.pdf'
+set xlabel 'z'
+set title 'line x=L_x/2, y=L_y/2'
+plot[][]\
+'zprofile.ascii' u 3:4 ps .5 t 'u,32x32x16',\
+'zprofile.ascii' u 3:5 ps .5 t 'v,32x32x16',\
+'zprofile.ascii' u 3:6 ps .5 t 'w,32x32x16',\
+'zprofile.ascii' u 3:7 w l lt -1 t 'analytical',\
+'zprofile.ascii' u 3:8 w l lt -1 notitle,\
+'zprofile.ascii' u 3:9 w l lt -1 notitle
+
+
