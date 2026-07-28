@@ -84,7 +84,7 @@ if int(len(sys.argv) == 4):
    nely = int(sys.argv[2])
    visu = int(sys.argv[3])
 else:
-   nelx = 420
+   nelx = 900
    nely = 50
    visu = 1
     
@@ -135,8 +135,8 @@ if experiment==4:
 
 if experiment==5:
    #https://en.wikipedia.org/wiki/Bulk_modulus
-   Lx=300e3
-   Ly=100e3
+   Lx=600e3
+   Ly=200e3
    gx=0
    gy=0
    rho=2700
@@ -146,6 +146,7 @@ if experiment==5:
    a=20e3
    p0=2.7e6 # rho*gy*1000
    nely=int(nelx*Ly/Lx)
+   nelx+=1
    nu=(3*K-2*mu)/(6*K+2*mu)
    print('mu=',mu)
    print('lambdaa=',lambdaa)
@@ -163,6 +164,9 @@ hx=Lx/nelx
 hy=Ly/nely
 
 debug=False
+   
+print('nel=',nel)
+print('Nfem=',Nfem)
 
 #####################################################################
 # grid point setup
@@ -412,6 +416,9 @@ exy=np.zeros(nel,dtype=np.float64)
 stress_xx=np.zeros(nel,dtype=np.float64)  
 stress_yy=np.zeros(nel,dtype=np.float64)  
 stress_xy=np.zeros(nel,dtype=np.float64)  
+devstress_xx=np.zeros(nel,dtype=np.float64)  
+devstress_yy=np.zeros(nel,dtype=np.float64)  
+devstress_xy=np.zeros(nel,dtype=np.float64)  
 
 for iel in range(0,nel):
 
@@ -450,10 +457,17 @@ for iel in range(0,nel):
     stress_yy[iel]=lambdaa*(exx[iel]+eyy[iel])+2*mu*eyy[iel]
     stress_xy[iel]=2*mu*exy[iel]
 
+    devstress_xx[iel]=stress_xx[iel]+p[iel] # not sure?!
+    devstress_yy[iel]=stress_yy[iel]+p[iel]
+    devstress_xy[iel]=stress_xy[iel]
+
 print("     -> p   (m,M) %.e %.e " %(np.min(p),np.max(p)))
 print("     -> exx (m,M) %.e %.e " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.e %.e " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.e %.e " %(np.min(exy),np.max(exy)))
+print("     -> sigma_xx (m,M) %.e %.e " %(np.min(stress_xx),np.max(stress_xx)))
+print("     -> sigma_yy (m,M) %.e %.e " %(np.min(stress_yy),np.max(stress_yy)))
+print("     -> sigma_xy (m,M) %.e %.e " %(np.min(stress_xy),np.max(stress_xy)))
 
 if debug: np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
 if debug: np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
@@ -512,7 +526,7 @@ print("     -> nel= %6d ; errv= %.8f ; errp= %.8f" %(nel,errv,errp))
 print("compute errors: %.3f s" % (time.time()-start))
 
 #####################################################################
-# 
+# export data on lines 
 #####################################################################
 start=time.time()
 
@@ -536,6 +550,21 @@ if experiment==4 or experiment==5:
                                            sigma_xx(xc[iel],yc[iel],p0,a),\
                                            sigma_yy(xc[iel],yc[iel],p0,a),\
                                            sigma_xy(xc[iel],yc[iel],p0,a)))
+
+   profile=open('mid_profile_e_'+str(nelx)+'.ascii',"w")
+   for iel in range(0,nel):
+       if abs(xc[iel]-Lx/2)<hx:
+          profile.write("%e %e %e %e %e %e %e %e\n" %(yc[iel],exx[iel],exy[iel],exy[iel],p[iel],
+                                                      stress_xx[iel],stress_yy[iel],stress_xy[iel]))
+
+   profile=open('mid_profile_anal_'+str(nelx)+'.ascii',"w")
+   for iel in range(0,nel):
+       if abs(xc[iel]-Lx/2)<hx:
+          profile.write("%e %e %e %e \n" %(yc[iel],\
+                                           sigma_xx(xc[iel],yc[iel],p0,a),\
+                                           sigma_yy(xc[iel],yc[iel],p0,a),\
+                                           sigma_xy(xc[iel],yc[iel],p0,a)))
+
 
 
    print("export profiles: %.3f s" % (time.time()-start))
@@ -605,6 +634,21 @@ if visu==1:
            vtufile.write("%e\n" % (stress_xy[iel]))
        vtufile.write("</DataArray>\n")
        #--
+       vtufile.write("<DataArray type='Float32' Name='dev sigma_xx' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%e\n" % (devstress_xx[iel]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='dev sigma_yy' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%e\n" % (devstress_yy[iel]))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='dev sigma_xy' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%e\n" % (devstress_xy[iel]))
+       vtufile.write("</DataArray>\n")
+       #--
        vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
        for iel in range (0,nel):
            vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
@@ -612,18 +656,41 @@ if visu==1:
        #--
        vtufile.write("<DataArray type='Float32' Name='sigma_xx (th)' Format='ascii'> \n")
        for iel in range (0,nel):
-           vtufile.write("%10e\n" % (sigma_xx(xc[iel],yc[iel],p0,a)))
+           vtufile.write("%e\n" % (sigma_xx(xc[iel],yc[iel],p0,a)))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='sigma_xy (th)' Format='ascii'> \n")
        for iel in range (0,nel):
-           vtufile.write("%10e\n" % (sigma_xy(xc[iel],yc[iel],p0,a)))
+           vtufile.write("%e\n" % (sigma_xy(xc[iel],yc[iel],p0,a)))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='sigma_yy (th)' Format='ascii'> \n")
        for iel in range (0,nel):
-           vtufile.write("%10e\n" % (sigma_yy(xc[iel],yc[iel],p0,a)))
+           vtufile.write("%e\n" % (sigma_yy(xc[iel],yc[iel],p0,a)))
        vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sigma_xx (error)' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (stress_xx[iel]-sigma_xx(xc[iel],yc[iel],p0,a)))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sigma_xy (error)' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (stress_xy[iel]-sigma_xy(xc[iel],yc[iel],p0,a)))
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='sigma_yy (error)' Format='ascii'> \n")
+       for iel in range (0,nel):
+           vtufile.write("%10e\n" % (stress_yy[iel]-sigma_yy(xc[iel],yc[iel],p0,a)))
+       vtufile.write("</DataArray>\n")
+
+
+
+
+
+
+
+
        #--
        vtufile.write("</CellData>\n")
        #####
