@@ -1,0 +1,196 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+#set key outside
+set ylabel 'displacement'
+set pointsize .2
+
+#######################################################
+
+set output 'xprofile_u.pdf'
+set xlabel 'x'
+set ylabel 'u'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_64.ascii'   u 1:4 ps .25 t '64',\
+'xprofile_80.ascii'   u 1:4 ps .25 t '80',\
+'xprofile_96.ascii'   u 1:4 ps .25 t '96',\
+'xprofile_112.ascii'  u 1:4 ps .25 t '112',\
+'xprofile_128.ascii'  u 1:4 ps .25 t '128',\
+'xprofile_160.ascii'  u 1:4 ps .25 t '160',\
+'xprofile_192.ascii'  u 1:4 ps .25 t '192',\
+'xprofile_256.ascii'  u 1:4 ps .25 t '256',\
+'xprofile_400.ascii'  u 1:4 ps .25 t '400',\
+
+
+set output 'xprofile_w.pdf'
+set xlabel 'x'
+set ylabel 'w'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_64.ascii'   u 1:6 ps .25 t '64',\
+'xprofile_80.ascii'   u 1:6 ps .25 t '80',\
+'xprofile_96.ascii'   u 1:6 ps .25 t '96',\
+'xprofile_112.ascii'  u 1:6 ps .25 t '112',\
+'xprofile_128.ascii'  u 1:6 ps .25 t '128',\
+'xprofile_160.ascii'  u 1:6 ps .25 t '160',\
+'xprofile_192.ascii'  u 1:6 ps .25 t '192',\
+'xprofile_256.ascii'  u 1:6 ps .25 t '256',\
+'xprofile_400.ascii'  u 1:6 ps .25 t '400',\
+
+
+set output 'xprofile_xx.pdf'
+set xlabel 'x'
+set ylabel 'xx'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_64.ascii'   u 1:8 ps .25 t '64',\
+'xprofile_80.ascii'   u 1:8 ps .25 t '80',\
+'xprofile_96.ascii'   u 1:8 ps .25 t '96',\
+'xprofile_112.ascii'  u 1:8 ps .25 t '112',\
+'xprofile_128.ascii'  u 1:8 ps .25 t '128',\
+'xprofile_160.ascii'  u 1:8 ps .25 t '160',\
+'xprofile_192.ascii'  u 1:8 ps .25 t '192',\
+'xprofile_256.ascii'  u 1:8 ps .25 t '256',\
+'xprofile_400.ascii'  u 1:8 ps .25 t '400',\
+
+
+set output 'xprofile_yy.pdf'
+set xlabel 'x'
+set ylabel 'yy'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_64.ascii'   u 1:9 ps .25 t '64',\
+'xprofile_80.ascii'   u 1:9 ps .25 t '80',\
+'xprofile_96.ascii'   u 1:9 ps .25 t '96',\
+'xprofile_112.ascii'  u 1:9 ps .25 t '112',\
+'xprofile_128.ascii'  u 1:9 ps .25 t '128',\
+'xprofile_160.ascii'  u 1:9 ps .25 t '160',\
+'xprofile_192.ascii'  u 1:9 ps .25 t '192',\
+'xprofile_256.ascii'  u 1:9 ps .25 t '256',\
+'xprofile_400.ascii'  u 1:9 ps .25 t '400',\
+
+
+set output 'xprofile_zz.pdf'
+set xlabel 'x'
+set ylabel 'zz'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_64.ascii'   u 1:10 ps .25 t '64',\
+'xprofile_80.ascii'   u 1:10 ps .25 t '80',\
+'xprofile_96.ascii'   u 1:10 ps .25 t '96',\
+'xprofile_112.ascii'  u 1:10 ps .25 t '112',\
+'xprofile_128.ascii'  u 1:10 ps .25 t '128',\
+'xprofile_160.ascii'  u 1:10 ps .25 t '160',\
+'xprofile_192.ascii'  u 1:10 ps .25 t '192',\
+'xprofile_256.ascii'  u 1:10 ps .25 t '256',\
+'xprofile_400.ascii'  u 1:10 ps .25 t '400',\
+
+
+
+set output 'xprofile_xy.pdf'
+set xlabel 'x'
+set ylabel 'xy'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_64.ascii'   u 1:11 ps .25 t '64',\
+'xprofile_80.ascii'   u 1:11 ps .25 t '80',\
+'xprofile_96.ascii'   u 1:11 ps .25 t '96',\
+'xprofile_112.ascii'  u 1:11 ps .25 t '112',\
+'xprofile_128.ascii'  u 1:11 ps .25 t '128',\
+'xprofile_160.ascii'  u 1:11 ps .25 t '160',\
+'xprofile_192.ascii'  u 1:11 ps .25 t '192',\
+'xprofile_256.ascii'  u 1:11 ps .25 t '256',\
+'xprofile_400.ascii'  u 1:11 ps .25 t '400',\
+
+set output 'xprofile_xz.pdf'
+set xlabel 'x'
+set ylabel 'xz'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_64.ascii'   u 1:12 ps .25 t '64',\
+'xprofile_80.ascii'   u 1:12 ps .25 t '80',\
+'xprofile_96.ascii'   u 1:12 ps .25 t '96',\
+'xprofile_112.ascii'  u 1:12 ps .25 t '112',\
+'xprofile_128.ascii'  u 1:12 ps .25 t '128',\
+'xprofile_160.ascii'  u 1:12 ps .25 t '160',\
+'xprofile_192.ascii'  u 1:12 ps .25 t '192',\
+'xprofile_256.ascii'  u 1:12 ps .25 t '256',\
+'xprofile_400.ascii'  u 1:12 ps .25 t '400',\
+
+
+set output 'xprofile_yz.pdf'
+set xlabel 'x'
+set ylabel 'yz'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_64.ascii'   u 1:13 ps .25 t '64',\
+'xprofile_80.ascii'   u 1:13 ps .25 t '80',\
+'xprofile_96.ascii'   u 1:13 ps .25 t '96',\
+'xprofile_112.ascii'  u 1:13 ps .25 t '112',\
+'xprofile_128.ascii'  u 1:13 ps .25 t '128',\
+'xprofile_160.ascii'  u 1:13 ps .25 t '160',\
+'xprofile_192.ascii'  u 1:13 ps .25 t '192',\
+'xprofile_256.ascii'  u 1:13 ps .25 t '256',\
+'xprofile_400.ascii'  u 1:13 ps .25 t '400',\
+
+
+##################################################
+set key bottom
+
+set output 'zprofile_w.pdf'
+set xlabel 'z'
+set ylabel 'w'
+set title 'line x=0, y=0'
+plot[][]\
+'zprofile_64.ascii'   u 1:2 ps .25 t '64',\
+'zprofile_80.ascii'   u 1:2 ps .25 t '80',\
+'zprofile_96.ascii'   u 1:2 ps .25 t '96',\
+'zprofile_112.ascii'  u 1:2 ps .25 t '112',\
+'zprofile_128.ascii'  u 1:2 ps .25 t '128',\
+'zprofile_160.ascii'  u 1:2 ps .25 t '160',\
+'zprofile_192.ascii'  u 1:2 ps .25 t '192',\
+'zprofile_256.ascii'  u 1:2 ps .25 t '256',\
+'zprofile_400.ascii'  u 1:2 ps .25 t '400',\
+
+
+set ylabel 'p'
+set output 'zprofile_p.pdf'
+set xlabel 'z'
+set title 'line x=0, y=0'
+plot[][]\
+'zprofile_64.ascii'   u 1:3 ps .25 t '64',\
+'zprofile_80.ascii'   u 1:3 ps .25 t '80',\
+'zprofile_96.ascii'   u 1:3 ps .25 t '96',\
+'zprofile_112.ascii'  u 1:3 ps .25 t '112',\
+'zprofile_128.ascii'  u 1:3 ps .25 t '128',\
+'zprofile_160.ascii'  u 1:3 ps .25 t '160',\
+'zprofile_192.ascii'  u 1:3 ps .25 t '192',\
+'zprofile_256.ascii'  u 1:3 ps .25 t '256',\
+'zprofile_400.ascii'  u 1:3 ps .25 t '400',\
+
+set ylabel 'zz'
+set output 'zprofile_zz.pdf'
+set xlabel 'z'
+set title 'line x=0, y=0'
+plot[][]\
+'zprofile_64.ascii'   u 1:4 ps .25 t '64',\
+'zprofile_80.ascii'   u 1:4 ps .25 t '80',\
+'zprofile_96.ascii'   u 1:4 ps .25 t '96',\
+'zprofile_112.ascii'  u 1:4 ps .25 t '112',\
+'zprofile_128.ascii'  u 1:4 ps .25 t '128',\
+'zprofile_160.ascii'  u 1:4 ps .25 t '160',\
+'zprofile_192.ascii'  u 1:4 ps .25 t '192',\
+'zprofile_256.ascii'  u 1:4 ps .25 t '256',\
+'zprofile_400.ascii'  u 1:4 ps .25 t '400',\
+
+
+
+
+
+
+
+
+
+
+

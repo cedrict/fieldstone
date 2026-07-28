@@ -1,0 +1,129 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+#set key outside
+set ylabel 'displacement'
+set pointsize .2
+
+#######################################################
+
+set output 'xprofile_u.pdf'
+set xlabel 'x'
+set ylabel 'u'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_400_0p25.ascii'  u 1:4 ps .25 t 'nu=0.25',\
+'xprofile_400_0p35.ascii'  u 1:4 ps .25 t 'nu=0.35',\
+'xprofile_400_0p45.ascii'  u 1:4 ps .25 t 'nu=0.45',\
+
+
+set output 'xprofile_w.pdf'
+set xlabel 'x'
+set ylabel 'w'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_400_0p25.ascii'  u 1:6 ps .25 t 'nu=0.25',\
+'xprofile_400_0p35.ascii'  u 1:6 ps .25 t 'nu=0.35',\
+'xprofile_400_0p45.ascii'  u 1:6 ps .25 t 'nu=0.45',\
+
+
+set output 'xprofile_xx.pdf'
+set xlabel 'x'
+set ylabel 'xx'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_400_0p25.ascii'  u 1:8 ps .25 t 'nu=0.25',\
+'xprofile_400_0p35.ascii'  u 1:8 ps .25 t 'nu=0.35',\
+'xprofile_400_0p45.ascii'  u 1:8 ps .25 t 'nu=0.45',\
+
+
+set output 'xprofile_yy.pdf'
+set xlabel 'x'
+set ylabel 'yy'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_400_0p25.ascii'  u 1:9 ps .25 t 'nu=0.25',\
+'xprofile_400_0p35.ascii'  u 1:9 ps .25 t 'nu=0.35',\
+'xprofile_400_0p45.ascii'  u 1:9 ps .25 t 'nu=0.45',\
+
+
+set output 'xprofile_zz.pdf'
+set xlabel 'x'
+set ylabel 'zz'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_400_0p25.ascii'  u 1:10 ps .25 t 'nu=0.25',\
+'xprofile_400_0p35.ascii'  u 1:10 ps .25 t 'nu=0.35',\
+'xprofile_400_0p45.ascii'  u 1:10 ps .25 t 'nu=0.45',\
+
+
+
+set output 'xprofile_xy.pdf'
+set xlabel 'x'
+set ylabel 'xy'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_400_0p25.ascii'  u 1:11 ps .25 t 'nu=0.25',\
+'xprofile_400_0p35.ascii'  u 1:11 ps .25 t 'nu=0.35',\
+'xprofile_400_0p45.ascii'  u 1:11 ps .25 t 'nu=0.45',\
+
+set output 'xprofile_xz.pdf'
+set xlabel 'x'
+set ylabel 'xz'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_400_0p25.ascii'  u 1:12 ps .25 t 'nu=0.25',\
+'xprofile_400_0p35.ascii'  u 1:12 ps .25 t 'nu=0.35',\
+'xprofile_400_0p45.ascii'  u 1:12 ps .25 t 'nu=0.45',\
+
+
+set output 'xprofile_yz.pdf'
+set xlabel 'x'
+set ylabel 'yz'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_400_0p25.ascii'  u 1:13 ps .25 t 'nu=0.25',\
+'xprofile_400_0p35.ascii'  u 1:13 ps .25 t 'nu=0.35',\
+'xprofile_400_0p45.ascii'  u 1:13 ps .25 t 'nu=0.45',\
+
+
+##################################################
+set key bottom
+
+set output 'zprofile_w.pdf'
+set xlabel 'z'
+set ylabel 'w'
+set title 'line x=0, y=0'
+plot[][]\
+'zprofile_400_0p25.ascii'  u 1:2 ps .25 t 'nu=0.25',\
+'zprofile_400_0p35.ascii'  u 1:2 ps .25 t 'nu=0.35',\
+'zprofile_400_0p45.ascii'  u 1:2 ps .25 t 'nu=0.45',\
+
+set ylabel 'p'
+set output 'zprofile_p.pdf'
+set xlabel 'z'
+set title 'line x=0, y=0'
+plot[][]\
+'zprofile_400_0p25.ascii'  u 1:3 ps .25 t 'nu=0.25',\
+'zprofile_400_0p35.ascii'  u 1:3 ps .25 t 'nu=0.35',\
+'zprofile_400_0p45.ascii'  u 1:3 ps .25 t 'nu=0.45',\
+
+set ylabel 'zz'
+set output 'zprofile_zz.pdf'
+set xlabel 'z'
+set title 'line x=0, y=0'
+plot[][]\
+'zprofile_400_0p25.ascii'  u 1:4 ps .25 t 'nu=0.25',\
+'zprofile_400_0p35.ascii'  u 1:4 ps .25 t 'nu=0.35',\
+'zprofile_400_0p45.ascii'  u 1:4 ps .25 t 'nu=0.45',\
+
+
+
+
+
+
+
+
+
+
+
