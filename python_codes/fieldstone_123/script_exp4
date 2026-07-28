@@ -1,0 +1,14 @@
+#! /bin/bash
+
+for res in 32 48 64 80 96 128 ; do
+
+    echo nelx= $res 
+
+    python3 stone.py $res > opla
+
+    mv xprofile.ascii xprofile_${res}.ascii
+    mv zprofile.ascii zprofile_${res}.ascii
+    mv solution.vtu solution_${res}.vtu
+
+done
+
