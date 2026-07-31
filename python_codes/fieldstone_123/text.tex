@@ -228,14 +228,15 @@ and what I prescribe is only half of it so factor 2 is needed to recover the the
 %----------------------------------------------------------------------
 \subsubsection*{Magma chamber problem (experiment=4)}
 
-Free slip on all sides but top boundary.
-Stress inside the sphere set to $10~\si{\mega\pascal}$.
-Poisson ratio $\nu=0.25$. Shear modulus at $10^{10}~\si{\pascal}$.
-Sphere of radius 1km, at 4km depth. No buoyancy forces. 
-Domain is 24x24x12km, but should be bigger (limited here by 3d nature of the problem
+The setup is as follows: Free slip on all sides except top boundary (free surface).
+Stress/pressure inside the sphere set to $10~\si{\mega\pascal}$.
+The Poisson ratio is set to $\nu=0.25$ and the shear modulus to $10^{10}~\si{\pascal}$.
+The sphere/chamber has a radius of $1~\si{\km}$, and is placed $4~\si{\km}$ below
+the surface. There are no buoyancy forces ($\vec{g}=\vec{0}$). 
+Domain size is $24 \times 24 \times 12~\si{\km}$, but should 
+ultimately be bigger (I am here limited by 3d nature of the problem
 which requires very large matrices and much memory).
-Maximum resolution achieved so far: 120x120x60=864,000 elements.
-
+Maximum resolution achieved so far: $120 \times 120 \times 60=864,000$ elements.
 
 Matrix assembly has been modified following stone 181.
 Jacobian is identical for all elements and easy to precompute analytically.
@@ -248,7 +249,8 @@ physical parameters are constant in space.
 Data is available when clicking on Solutions at the bottom. There are many datasets
 available, not all contain all required fields, some are objectively wrong.
 I here select the 3 datasets uploaded by the main author Crozier of the paper/website (
-on the website remember to select depth at 4km in the lower right corner). CITE 
+on the website remember to select depth at 4km in the lower right corner). 
+There is also a corresponding article: \textcite{crkm23}. 
 
 I for now use 3 files off the website:
 \begin{itemize}
@@ -258,12 +260,16 @@ I for now use 3 files off the website:
 \end{itemize}
 Note that these files have been modified (headers removed, and commas removed for gnuplot use).
 
+At the moment the implementation of the 'dilation' is obtained by means of a pre-stress.
+The value of this isotropic pre-stress must be set to 2e7 in the ball when $\nu=0.25$, 
+and then we recover 10Mpa in the ball. However as we will see in the 2d case where I vary 
+$\nu$ it yields different pressures inside the sphere.
+
+Note that by virtue of the boundary conditions at the top of the model (free surface)
+we expect $\sigma_{zz}=0$ on this boundary.
+
 Use {\tt script\_exp4} to run all models.
-
-ToDo Cedric: Improve nodal stress calculations! for now returned values are ok.
-
-By virtue of the surface bc, we expect sigmazz =0 you banana !
-
+I explore higher poisson ratios in the follow-up experiment as it is easier/faster in 2d.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp4/disp}
@@ -273,8 +279,6 @@ By virtue of the surface bc, we expect sigmazz =0 you banana !
 \includegraphics[width=5cm]{python_codes/fieldstone_123/results/exp4/sigma_zz} \\
 {\captionfont resolution 120x120x60}
 \end{center}
-
-
 
 
 \begin{center}
@@ -297,22 +301,23 @@ Remember that in FieldStone the components of the displacement vector are $u,v,w
 {\captionfont Measurements carried out on a vertical line, with $x=0$ and $y=0$.}
 \end{center}
 
-I explore higher poisson ratios in the follow-up experiment.
 
 \newpage
 %----------------------------------------------------------------------
 \subsubsection*{Magma chamber problem in 2d (experiment=5)}
 
 This is the same experiment at experiment 4, but the sphere is
-replaced by a cylinder, $L_y=1km$ and nely=2.
+replaced by a cylinder, $L_y=1km$ and nely=2. Domain is $25\times 25~\si{\km}$.
 This also means that I can achieve much higher resolutions, such 
-as 256x128 in the xz plane.
+as $256\times 256$ in the $xz$ plane.
+
 
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_123/results/exp5/disp}
-\includegraphics[width=6cm]{python_codes/fieldstone_123/results/exp5/p}\\
-\includegraphics[width=6cm]{python_codes/fieldstone_123/results/exp5/xx}
-\includegraphics[width=6cm]{python_codes/fieldstone_123/results/exp5/zz} \\
+\includegraphics[width=6cm]{python_codes/fieldstone_123/results/exp5/nu/nu25/disp}
+\includegraphics[width=6cm]{python_codes/fieldstone_123/results/exp5/nu/nu25/p}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_123/results/exp5/nu/nu25/sigmaxx}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_123/results/exp5/nu/nu25/sigmazz} 
+\includegraphics[width=5.6cm]{python_codes/fieldstone_123/results/exp5/nu/nu25/sigmaxz}\\
 {\captionfont resolution 400x200x2}
 \end{center}
 
@@ -337,29 +342,62 @@ Remember that in FieldStone the components of the displacement vector are $u,v,w
 {\captionfont Measurements carried out on a vertical line, with $x=0$ and $y=0$.}
 \end{center}
 
+\newpage
+%---------------------------------------------------------------------------------------
+\paragraph{Influence of the domain size on the results}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp5/sizes/xprofile_u.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp5/sizes/xprofile_w.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/sizes/xprofile_xx.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/sizes/xprofile_yy.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/sizes/xprofile_zz.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/sizes/xprofile_xy.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/sizes/xprofile_xz.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/sizes/xprofile_yz.pdf}\\
+{\captionfont Measurements carried out on a horizontal line at the surface, with $y=0$.
+Remember that in FieldStone the components of the displacement vector are $u,v,w$.}
+\end{center}
+
+
+
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/sizes/zprofile_p.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/sizes/zprofile_w.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/sizes/zprofile_zz.pdf}\\
+{\captionfont Measurements carried out on a vertical line, with $x=0$ and $y=0$.}
+\end{center}
+
+
+
 
 \newpage
-\paragraph{Influence of the Poisson ratio on the results}. 
-I here vary $nu$ and consider three values: 0.25, 0.35, 0.45.
-I do not fully understand why the recovered pressure in the sphere
-is not constant across runs... but I need to move on. 
-I can come back to this after the hackathon.
+%---------------------------------------------------------------------------------------
+\paragraph{Influence of the Poisson ratio on the results}
+I here vary $\nu$ and consider three values: 0.25, 0.35, 0.45.
+As of now I do not fully understand why the recovered pressure in the sphere
+is not constant across runs... I then modify the pre-stress values so that
+the pressure in the sphere/cylinder is $\sim 10MPa$. 
+Also for these tests the domain is set to $25\times 25~\si{\km}$.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp5/nu/xprofile_u.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp5/nu/xprofile_w.pdf}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/nu/xprofile_xx.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/nu/xprofile_yy.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/nu/xprofile_zz.pdf}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/nu/xprofile_xy.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/nu/xprofile_xz.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/nu/xprofile_yz.pdf}\\
-{\captionfont Measurements carried out on a horizontal line at the surface, with $y=0$.}
+\includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp5/nu/xprofile_xx.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp5/nu/xprofile_yy.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp5/nu/xprofile_zz.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp5/nu/xprofile_xz.pdf}\\
+{\captionfont Measurements carried out on a horizontal line at the surface.}
 \end{center}
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/nu/zprofile_p.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/nu/zprofile_w.pdf}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_123/results/exp5/nu/zprofile_zz.pdf}\\
-{\captionfont Measurements carried out on a vertical line, with $x=0$ and $y=0$.}
+{\captionfont Measurements carried out on a vertical line, with $x=0$.}
 \end{center}
+
+This means that the solution is reasonably sensitive to the value of the Poisson ratio 
+and we can then use it to test ASPECT compressible elasticity implementation.
