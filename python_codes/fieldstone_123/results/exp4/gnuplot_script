@@ -41,7 +41,7 @@ plot[][]\
 
 set output 'xprofile_xx.pdf'
 set xlabel 'x'
-set ylabel 'xx'
+set ylabel '{/Symbol s}_{xx}'
 set title 'line y=0, z=L_z'
 plot[][]\
 'xprofile_32.ascii'  u 1:8 ps .25 t '32',\
@@ -57,7 +57,7 @@ plot[][]\
 
 set output 'xprofile_yy.pdf'
 set xlabel 'x'
-set ylabel 'yy'
+set ylabel '{/Symbol s}_{yy}'
 set title 'line y=0, z=L_z'
 plot[][]\
 'xprofile_32.ascii'  u 1:9 w lp ps .25 t '32',\
@@ -73,7 +73,7 @@ plot[][]\
 
 set output 'xprofile_zz.pdf'
 set xlabel 'x'
-set ylabel 'zz'
+set ylabel '{/Symbol s}_{zz}'
 set title 'line y=0, z=L_z'
 plot[][]\
 'xprofile_32.ascii'  u 1:10 w lp ps .25 t '32',\
@@ -86,7 +86,7 @@ plot[][]\
 
 set output 'xprofile_xy.pdf'
 set xlabel 'x'
-set ylabel 'xy'
+set ylabel '{/Symbol s}_{xy}'
 set title 'line y=0, z=L_z'
 plot[][]\
 'xprofile_32.ascii'  u 1:11 w lp ps .25 t '32',\
@@ -98,7 +98,7 @@ plot[][]\
 
 set output 'xprofile_xz.pdf'
 set xlabel 'x'
-set ylabel 'xz'
+set ylabel '{/Symbol s}_{xz}'
 set title 'line y=0, z=L_z'
 plot[][]\
 'xprofile_32.ascii'  u 1:12 w lp ps .25 t '32',\
@@ -110,7 +110,7 @@ plot[][]\
 
 set output 'xprofile_yz.pdf'
 set xlabel 'x'
-set ylabel 'yz'
+set ylabel '{/Symbol s}_{yz}'
 set title 'line y=0, z=L_z'
 plot[][]\
 'xprofile_32.ascii'  u 1:13 w lp ps .25 t '32',\
@@ -121,18 +121,8 @@ plot[][]\
 'xprofile_128.ascii' u 1:13 w lp ps .25 t '128',\
 
 
-
-
-
-
-
-
-
-
-
-
 ##################################################
-set key bottom
+set key top left
 
 set output 'zprofile_w.pdf'
 set xlabel 'z'
@@ -159,9 +149,9 @@ plot[][]\
 'zprofile_96.ascii'  u 1:3 w lp ps .25 t '96',\
 'zprofile_128.ascii' u 1:3 w lp ps .25 t '128',\
 
-set ylabel 'zz'
 set output 'zprofile_zz.pdf'
 set xlabel 'z'
+set ylabel '{/Symbol s}_{zz}'
 set title 'line x=0, y=0'
 plot[][]\
 'zprofile_32.ascii'  u 1:4 w lp ps .25 t '32',\
