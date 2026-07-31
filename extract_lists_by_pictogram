@@ -1,0 +1,145 @@
+#! /bin/bash
+
+rm PICTO_LIST.tex
+
+
+echo "\subsection{replication}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/replication}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep replication | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{ASPECT}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/aspect_logo}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep aspect_logo | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Ice}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/ice}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep ice | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Visualisation}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/visualisation}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep  visualisation | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Gravity}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/gravity}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep  gravity | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Elasticity}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/elasticity}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep  elasticity | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Benchmark}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/benchmark}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep  benchmark | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Triangle}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/triangle}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep  triangle | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Under construction}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/under_construction}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep under_construction | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{BSc}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/bsc}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep bsc | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{MSc}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/msc}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep msc | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Tools}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/tools}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep tool | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Finite Element Method}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/FEM}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep FEM | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Finite Difference Method}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/FDM}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep FDM | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Temperature}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/temperature}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep temperature | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{3d}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/3d}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep 3d | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Particle in Cell}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/p_i_c}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep p_i_c | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Nonlinear problem}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/nonlinear}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep nonlinear | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+#echo "\subsection{}"
+#\includegraphics[height=1.25cm]{images/pictograms/paraview}
+#echo "\begin{verbatim}"
+#grep -r picto python_codes/ | grep tex  | grep field | grep paraview | cut -c-27 | sort >> PICTO_LIST.tex
+#echo "\end{verbatim}"
+
+echo "\subsection{Publication}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/publication}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep publication | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Stream function}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/streamfunction}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep streamfunction | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+echo "\subsection{Wave equation}" >> PICTO_LIST.tex
+echo "\includegraphics[height=1.25cm]{images/pictograms/wave}" >> PICTO_LIST.tex
+echo "\begin{verbatim}" >> PICTO_LIST.tex
+grep -r picto python_codes/ | grep tex  | grep field | grep wave | cut -c-27 | sort >> PICTO_LIST.tex
+echo "\end{verbatim}" >> PICTO_LIST.tex
+
+#echo "\subsection{}"
+#\includegraphics[height=1.25cm]{images/pictograms/clean}
+#echo "\begin{verbatim}"
+#grep -r picto python_codes/ | grep tex  | grep field | grep clean | cut -c-27 | sort >> PICTO_LIST.tex
+#echo "\end{verbatim}"
+
+
+echo new PICTO_LIST.tex produced
