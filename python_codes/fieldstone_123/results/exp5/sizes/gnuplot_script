@@ -1,0 +1,121 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+#set key outside
+set pointsize .2
+
+#######################################################
+
+set output 'xprofile_u.pdf'
+set xlabel 'x'
+set ylabel 'u'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_25.ascii'   u 1:4 w lp ps .25 t '25x25 km',\
+'xprofile_50.ascii'   u 1:4 w lp ps .25 t '50x50 km',\
+'xprofile_100.ascii'  u 1:4 w lp ps .25 t '100x100 km'
+
+set output 'xprofile_w.pdf'
+set xlabel 'x'
+set ylabel 'w'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_25.ascii'   u 1:6 w lp ps .25 t '25x25 km',\
+'xprofile_50.ascii'   u 1:6 w lp ps .25 t '50x50 km',\
+'xprofile_100.ascii'  u 1:6 w lp ps .25 t '100x100 km'
+
+set output 'xprofile_xx.pdf'
+set xlabel 'x'
+set ylabel 'xx'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_25.ascii'   u 1:8 w lp ps .25 t '25x25 km',\
+'xprofile_50.ascii'   u 1:8 w lp ps .25 t '50x50 km',\
+'xprofile_100.ascii'  u 1:8 w lp ps .25 t '100x100 km'
+
+set output 'xprofile_yy.pdf'
+set xlabel 'x'
+set ylabel 'yy'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_25.ascii'   u 1:9 w lp ps .25 t '25x25 km',\
+'xprofile_50.ascii'   u 1:9 w lp ps .25 t '50x50 km',\
+'xprofile_100.ascii'  u 1:9 w lp ps .25 t '100x100 km'
+
+set output 'xprofile_zz.pdf'
+set xlabel 'x'
+set ylabel 'zz'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_25.ascii'   u 1:10 w lp ps .25 t '25x25 km',\
+'xprofile_50.ascii'   u 1:10 w lp ps .25 t '50x50 km',\
+'xprofile_100.ascii'  u 1:10 w lp ps .25 t '100x100 km'
+
+set output 'xprofile_xy.pdf'
+set xlabel 'x'
+set ylabel 'xy'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_25.ascii'   u 1:11 w lp ps .25 t '25x25 km',\
+'xprofile_50.ascii'   u 1:11 w lp ps .25 t '50x50 km',\
+'xprofile_100.ascii'  u 1:11 w lp ps .25 t '100x100 km'
+
+set output 'xprofile_xz.pdf'
+set xlabel 'x'
+set ylabel 'xz'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_25.ascii'   u 1:12 w lp ps .25 t '25x25 km',\
+'xprofile_50.ascii'   u 1:12 w lp ps .25 t '50x50 km',\
+'xprofile_100.ascii'  u 1:12 w lp ps .25 t '100x100 km'
+
+set output 'xprofile_yz.pdf'
+set xlabel 'x'
+set ylabel 'yz'
+set title 'line y=0, z=L_z'
+plot[][]\
+'xprofile_25.ascii'   u 1:13 w lp ps .25 t '25x25 km',\
+'xprofile_50.ascii'   u 1:13 w lp ps .25 t '50x50 km',\
+'xprofile_100.ascii'  u 1:13 w lp ps .25 t '100x100 km'
+
+
+##################################################
+set key bottom
+
+set output 'zprofile_w.pdf'
+set xlabel 'depth'
+set ylabel 'w'
+set title 'line x=0, y=0'
+plot[][]\
+'zprofile_25.ascii'   u (25e3-$1):2 w lp ps .25 t '25x25 km',\
+'zprofile_50.ascii'   u (50e3-$1):2 w lp ps .25 t '50x50 km',\
+'zprofile_100.ascii'  u (100e3-$1):2 w lp ps .25 t '100x100 km'
+
+
+set ylabel 'p'
+set output 'zprofile_p.pdf'
+set title 'line x=0, y=0'
+plot[][]\
+'zprofile_25.ascii'   u (25e3-$1):3 w lp ps .25 t '25x25 km',\
+'zprofile_50.ascii'   u (50e3-$1):3 w lp ps .25 t '50x50 km',\
+'zprofile_100.ascii'  u (100e3-$1):3 w lp ps .25 t '100x100 km'
+
+set ylabel 'zz'
+set output 'zprofile_zz.pdf'
+set title 'line x=0, y=0'
+plot[][]\
+'zprofile_25.ascii'   u (25e3-$1):4 w lp ps .25 t '25x25 km',\
+'zprofile_50.ascii'   u (50e3-$1):4 w lp ps .25 t '50x50 km',\
+'zprofile_100.ascii'  u (100e3-$1):4 w lp ps .25 t '100x100 km'
+
+
+
+
+
+
+
+
+
+
+
+

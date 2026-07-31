@@ -1,6 +1,6 @@
 #! /bin/bash
 
-for res in 64 80 96 112 128 160 192 256 400; do
+for res in 64 96 128 160 192 256 400; do
 
     echo nelx= $res 
 
