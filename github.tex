@@ -7,6 +7,8 @@ and carry out a proper setup on your local computer as follows:\\
 \verb'$ git config --global user.name "firstname lastname" '\\
 \verb'$ git config --global user.email your@email'
 
+Check it with \verb'git config --list'
+
 \item On github.com, fork the official \aspect repository to your repository:\\
 go to \verb"https://github.com/geodynamics/aspect"
 and click on the 'fork' button on the upper right corner of the screen.
@@ -38,6 +40,15 @@ upstream	https://github.com/geodynamics/aspect.git (push)
 \end{verbatim}
 
 \end{enumerate}
+
+I have created a simple bash script ({\tt get\_aspect}) that does this above in one go:
+\begin{verbatim}
+git clone git@github.com:geodynamics/aspect.git 
+cd aspect
+git remote rename origin upstream
+git remote add cedrict git@github.com:cedrict/aspect.git
+git remote -v
+\end{verbatim}
 
 
 \begin{tikzpicture}
@@ -186,29 +197,31 @@ git stash
 git stash pop
 
 
-git log
+git log : gives history of comments/changes/authors of a file
 
 
 \newpage
-how to squash/fixup:
+\underline{how to squash/fixup:}
 
-git rebase -i main $->$  
-
-A similar window as this will open:
-
-\begin{center}
-\includegraphics[width=10cm]{images/github/aaa}
-\end{center}
-
-Since we wish to squash (or rather fixup!) we do:
+\begin{itemize}
+\item \verb'git rebase main'
+\item \verb'git rebase -i main'. A similar window as this will open:
 
 \begin{center}
-\includegraphics[width=10cm]{images/github/bbb}
+\includegraphics[width=13cm]{images/github/aaa}
 \end{center}
 
-save and exit
+\item Since we wish to squash (or rather fixup!) we do (replace all pick by f except first):
 
-do git diff
+\begin{center}
+\includegraphics[width=13cm]{images/github/bbb}
+\end{center}
+
+\item save and exit :wq
+\item do \verb'git diff' (not necessary)
+\item \verb'git push -f cedrict mybranch' 
+\item all is well now
+\end{itemize}
 
 \newpage
 
