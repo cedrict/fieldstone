@@ -16,7 +16,8 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-{\sl This fieldstone was partially co-developed in collaboration with Lukas van de Wiel}. \index{contributors}{L. van de Wiel}
+{\sl This fieldstone was partially co-developed in collaboration with Lukas van de Wiel,
+Annie Thompson and Daniel Douglas}. 
 
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,9 +107,8 @@ The stress components are also computed:
 \end{center}
 
 
-{\color{red} There is an analytical solution for the stress
-but I still need to find it and implement it...}
-
+{\color{red} ToDo (123): There is an analytical solution for the stress components
+of the Love problem, but I still need to find it and implement it...}
 
 \newpage
 %--------------------------------------------------
@@ -163,17 +163,19 @@ vertical lines passing through the point load.}
 \end{center}
 
 
-
+\newpage
 \begin{center}
-\includegraphics[width=5.27cm]{python_codes/fieldstone_123/results/exp2/50/disp} 
-\includegraphics[width=5.27cm]{python_codes/fieldstone_123/results/exp2/50/dispx} 
-\includegraphics[width=5.27cm]{python_codes/fieldstone_123/results/exp2/50/dispy} \\
-\includegraphics[width=5.27cm]{python_codes/fieldstone_123/results/exp2/50/dispz} 
-\includegraphics[width=5.27cm]{python_codes/fieldstone_123/results/exp2/50/press} 
-\includegraphics[width=5.27cm]{python_codes/fieldstone_123/results/exp2/50/strain}\\ 
+\includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp2/50/disp} 
+\includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp2/50/dispx} \\
+\includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp2/50/dispy} 
+\includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp2/50/dispz} \\
+\includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp2/50/press} 
+\includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp2/50/strain}\\ 
 {\captionfont Various fields as obtained on a $50\times 50 \times25$ mesh
 which seems to be about the maximum resolution. It takes over 10min to run and uses about 16Gb of RAM.}
 \end{center}
+
+{\color{red} ToDo (123): re-run with higher resolution now that the CG solver is implemented.} 
 
 \newpage
 %----------------------------------------------------------------------
@@ -307,9 +309,9 @@ Remember that in FieldStone the components of the displacement vector are $u,v,w
 \subsubsection*{Magma chamber problem in 2d (experiment=5)}
 
 This is the same experiment at experiment 4, but the sphere is
-replaced by a cylinder, $L_y=1km$ and nely=2. Domain is $25\times 25~\si{\km}$.
+replaced by a cylinder, $L_y=1~\si{\km}$ and nely=2. Domain is $25\times 25~\si{\km}$.
 This also means that I can achieve much higher resolutions, such 
-as $256\times 256$ in the $xz$ plane.
+as $400\times 400$ in the $xz$ plane.
 
 
 \begin{center}
@@ -318,7 +320,7 @@ as $256\times 256$ in the $xz$ plane.
 \includegraphics[width=5.6cm]{python_codes/fieldstone_123/results/exp5/nu/nu25/sigmaxx}
 \includegraphics[width=5.6cm]{python_codes/fieldstone_123/results/exp5/nu/nu25/sigmazz} 
 \includegraphics[width=5.6cm]{python_codes/fieldstone_123/results/exp5/nu/nu25/sigmaxz}\\
-{\captionfont resolution 400x200x2}
+{\captionfont Resolution $400 \times 200 \times 2$}
 \end{center}
 
 
@@ -345,6 +347,11 @@ Remember that in FieldStone the components of the displacement vector are $u,v,w
 \newpage
 %---------------------------------------------------------------------------------------
 \paragraph{Influence of the domain size on the results}
+
+In this serie of experiments I vary the size of the domain: $L_x=L_z=25,50,100~\si{\km}$
+with the corresponding resolutions $nelx=nelz=100,200,400$ so that the mesh resolution 
+is the same across all three experiments.
+We find that only the $u$ field at the surface seems to be affected by the domain size.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_123/results/exp5/sizes/xprofile_u.pdf}
@@ -379,7 +386,13 @@ Remember that in FieldStone the components of the displacement vector are $u,v,w
 I here vary $\nu$ and consider three values: 0.25, 0.35, 0.45.
 As of now I do not fully understand why the recovered pressure in the sphere
 is not constant across runs... I then modify the pre-stress values so that
-the pressure in the sphere/cylinder is $\sim 10MPa$. 
+the pressure in the sphere/cylinder is $\sim 10~\si{\mega\pascal}$.
+Rather interestingly it looks like the pre-stress value I need to use to recover 
+10MPa in the sphere seems to converge to 10MPa when $\nu \rightarrow 0.5$.
+Even more interesting are the results in that case: displacements tend to zero:
+Indeed, if the medium is incompressible no amount of added inner pressure will 
+have it inflate and push the surface.
+ 
 Also for these tests the domain is set to $25\times 25~\si{\km}$.
 
 \begin{center}

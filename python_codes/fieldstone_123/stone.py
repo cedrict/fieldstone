@@ -194,7 +194,7 @@ ndof_V=3  # number of degrees of freedom per node
 if int(len(sys.argv) == 2):
    nelx = int(sys.argv[1])
 else:
-   nelx = 200
+   nelx = 100
 
 if experiment==1 or experiment==2:
    Lx=5e3
@@ -249,6 +249,7 @@ if experiment==5:
    aaa=2e7 # nu=.25
    #aaa=1.65e7 # nu=.35
    #aaa=1.26e7 # nu=.45
+   #aaa=1.0e7 # nu=.499
 
 hx=Lx/nelx
 hy=Ly/nely
