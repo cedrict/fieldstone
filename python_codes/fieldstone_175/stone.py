@@ -2,20 +2,11 @@ import numpy as np
 import sys as sys
 import time as clock
 import scipy.sparse as sps
+from analytical_solutions import *
+from basis_functions import *
 from scipy.sparse import csr_matrix,lil_matrix
 
-###############################################################################
-# 1) smooth zone 1d
-# 2) narrow zone 1d
-# 3) two narrow zones 2d
-# 4) rotated zone 2d (2x1 domain)
-# 5) rotated zone 2d (2x3 domain)
-# 6) pseudo1d bench (W.Bangerth idea)
-# 7) disk radial dilation
-# 8) rotated zone 2d (3x2 domain) - comparison with Alexandr' model
-# 9) disk radial dilation + ring
 
-experiment=9
 
 ###############################################################################
 
@@ -27,391 +18,11 @@ def gy(x,y):
 
 ###############################################################################
 
-if experiment==7: radius=0.16
-if experiment==4: theta=np.pi/6
-if experiment==5: theta=np.pi/20
-if experiment==8: theta=0.3
-if experiment==9: R1=0.16 ; R2=0.6 ; R3=0.8
-w3x=8.
-w3y=12.
-w4=12.
-
-def ud(x,y,Lx,Ly):
-    #----------------
-    if experiment==1: 
-       return 0.5*(x-Lx/2 -Lx/2/np.pi*np.sin(2*np.pi*x/Lx) )
-    #----------------
-    if experiment==2:
-       delta=Lx/8
-       if x<=Lx/2-delta: 
-          return -delta/2
-       elif x<=Lx/2+delta:
-          return 0.5*(x-Lx/2+delta/np.pi*np.sin(np.pi*(x-Lx/2)/delta))
-       else: 
-          return delta/2
-    #----------------
-    if experiment==3: 
-       delta=Lx/w3x
-       if x<=Lx/2-delta: 
-          return -delta/2
-       elif x<=Lx/2+delta:
-          return 0.5*(x-Lx/2+delta/np.pi*np.sin(np.pi*(x-Lx/2)/delta))
-       else: 
-          return delta/2
-    #----------------
-    if experiment==4 or experiment==5 or experiment==8: 
-       delta4=Lx/w4
-       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
-       if xp<=Lx/2-delta4: 
-          return -delta4/2*np.cos(theta)
-       elif xp<=Lx/2+delta4:
-          return 0.5*(xp-Lx/2+delta4/np.pi*np.sin(np.pi*(xp-Lx/2)/delta4))*np.cos(theta)
-       else: 
-          return delta4/2*np.cos(theta)
-    #----------------
-    if experiment==6:
-       return x
-    #----------------
-    if experiment==7:
-       r2= (x-Lx/2)**2+(y-Ly/2)**2
-       if r2<radius**2:
-          return (x-Lx/2)/3*np.sqrt(r2) 
-       else:
-          return radius**3/3/r2 * (x-Lx/2)
-    #----------------
-    if experiment==9:
-       r2= (x-Lx/2)**2+(y-Ly/2)**2
-       if r2<R1**2:
-          return (x-Lx/2)/3*np.sqrt(r2) 
-       elif r2<R2**2:
-          return R1**3/3/r2 * (x-Lx/2)
-       elif r2<R3**2:
-          return (np.sqrt(r2)-R3)/(R2-R3)*R1**3/3/R2*(x-Lx/2)/np.sqrt(r2) 
-       else:
-          return 0
-
-
-def dud_dx(x,y,Lx,Ly):
-    #----------------
-    if experiment==1: 
-       return (1-np.cos(2*np.pi*x/Lx))/2
-    #----------------
-    if experiment==2:
-       delta=Lx/8
-       if abs(x-Lx/2)<=delta: 
-          return 0.5*(1+np.cos(np.pi*(x-Lx/2)/delta))
-       else:
-          return 0
-    #----------------
-    if experiment==3:
-       delta=Lx/w3x
-       if abs(x-Lx/2)<=delta: 
-          return 0.5*(1+np.cos(np.pi*(x-Lx/2)/delta))
-       else:
-          return 0
-    #----------------
-    if experiment==4 or experiment==5 or experiment==8: 
-       delta4=Lx/w4
-       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
-       if abs(xp-Lx/2)<=delta4: 
-          return 0.5*(1+np.cos(np.pi*(xp-Lx/2)/delta4))*np.cos(theta)*np.cos(theta)
-       else:
-          return 0
-    #----------------
-    if experiment==6:
-       return 1
-    #----------------
-    if experiment==7: 
-       r2= (x-Lx/2)**2+(y-Ly/2)**2
-       if r2<radius**2:
-          return np.sqrt(r2)
-       else:
-          return 0
-    #----------------
-    if experiment==9: 
-       r2= (x-Lx/2)**2+(y-Ly/2)**2
-       if r2<R1**2:
-          return np.sqrt(r2)
-       elif r2<R2**2:
-          return 0 
-       elif r2<R3**2:
-          return (2-R3/np.sqrt(r2))/(R2-R3)*R1**3/3/R2
-       else:
-          return 0
-
-
-
-def d2ud_dx2(x,y,Lx,Ly):
-    #----------------
-    if experiment==1: 
-       return np.pi/Lx*np.sin(2*np.pi*x/Lx)
-    #----------------
-    if experiment==2:
-       delta=Lx/8
-       if abs(x-Lx/2)<=delta: 
-          return -0.5*np.pi/delta*np.sin(np.pi*(x-Lx/2)/delta)
-       else:
-          return 0
-    #----------------
-    if experiment==3:
-       delta=Lx/w3x
-       if abs(x-Lx/2)<=delta: 
-          return -0.5*np.pi/delta*np.sin(np.pi*(x-Lx/2)/delta)
-       else:
-          return 0
-    #----------------
-    if experiment==4 or experiment==5 or experiment==8: 
-       delta4=Lx/w4
-       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
-       if abs(xp-Lx/2)<=delta4: 
-          return -0.5*np.pi/delta4*np.sin(np.pi*(xp-Lx/2)/delta4)*np.cos(theta)*np.cos(theta)*np.cos(theta)
-       else:
-          return 0
-    if experiment==6: 
-       return 0 
-    if experiment==7: 
-       return 0 
-    if experiment==9: 
-       return 0 
-
-def d2ud_dy2(x,y,Lx,Ly):
-    if experiment==1: return 0
-    if experiment==2: return 0
-    if experiment==3: return 0
-    if experiment==4 or experiment==5 or experiment==8: 
-       delta4=Lx/w4
-       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
-       if abs(xp-Lx/2)<=delta4: 
-          return -0.5*np.pi/delta4*np.sin(np.pi*(xp-Lx/2)/delta4)*np.sin(theta)*np.sin(theta)*np.cos(theta)
-       else:
-          return 0
-    if experiment==6: 
-       return 0 
-    if experiment==7: 
-       return 0 
-    if experiment==9: 
-       return 0 
-
-
-def d2ud_dxdy(x,y,Lx,Ly):
-    if experiment==1: return 0
-    if experiment==2: return 0
-    if experiment==3: return 0
-    if experiment==4 or experiment==5 or experiment==8: 
-       delta4=Lx/w4
-       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
-       if abs(xp-Lx/2)<=delta4: 
-          return -0.5*np.pi/delta4*np.sin(np.pi*(xp-Lx/2)/delta4)*np.sin(theta)*np.cos(theta)*np.cos(theta)
-       else:
-          return 0
-    if experiment==6: 
-       return 0 
-    if experiment==7: 
-       return 0 
-    if experiment==9: 
-       return 0 
-
-###############################################################################
-
-def vd(x,y,Lx,Ly):
-    #----------------
-    if experiment==1: 
-       return 0
-    #----------------
-    if experiment==2: 
-       return 0
-    #----------------
-    if experiment==3: 
-       delta=Ly/w3y
-       if y<=Ly/2-delta: 
-          return -delta/2
-       elif y<=Ly/2+delta:
-          return 0.5*(y-Ly/2+delta/np.pi*np.sin(np.pi*(y-Ly/2)/delta))
-       else: 
-          return delta/2
-    #----------------
-    if experiment==4 or experiment==5 or experiment==8: 
-       delta4=Lx/w4
-       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
-       if xp<=Lx/2-delta4: 
-          return -delta4/2*np.sin(theta)
-       elif xp<=Lx/2+delta4:
-          return 0.5*(xp-Lx/2+delta4/np.pi*np.sin(np.pi*(xp-Lx/2)/delta4))*np.sin(theta)
-       else: 
-          return delta4/2*np.sin(theta)
-    if experiment==6: 
-       return 0 
-    #----------------
-    if experiment==7: 
-       r2= (x-Lx/2)**2+(y-Ly/2)**2
-       if r2<radius**2:
-          return (y-Ly/2)/3*np.sqrt(r2) 
-       else:
-          return radius**3/3/r2 * (y-Ly/2)
-
-    #----------------
-    if experiment==9: 
-       r2= (x-Lx/2)**2+(y-Ly/2)**2
-       if r2<R1**2:
-          return (y-Ly/2)/3*np.sqrt(r2) 
-       elif r2<R2**2:
-          return R1**3/3/r2 * (y-Ly/2)
-       elif r2<R3**2:
-          return (np.sqrt(r2)-R3)/(R2-R3)*R1**3/3/R2*(y-Ly/2)/np.sqrt(r2) 
-       else:
-          return 0
-          
-
-def dvd_dy(x,y,Lx,Ly):
-    #----------------
-    if experiment==1: 
-       return 0
-    #----------------
-    if experiment==2: 
-       return 0
-    #----------------
-    if experiment==3:
-       delta=Ly/w3y
-       if abs(y-Ly/2)<=delta: 
-          return 0.5*(1+np.cos(np.pi*(y-Ly/2)/delta))
-       else:
-          return 0
-    #----------------
-    if experiment==4 or experiment==5 or experiment==8: 
-       delta4=Lx/w4
-       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
-       if abs(xp-Lx/2)<=delta4: 
-          return 0.5*(1+np.cos(np.pi*(xp-Lx/2)/delta4))*np.sin(theta)*np.sin(theta)
-       else:
-          return 0
-    if experiment==6: 
-       return 0 
-    #----------------
-    if experiment==7: 
-       return 0
-    if experiment==9: 
-       return 0 
-
-def d2vd_dy2(x,y,Lx,Ly):
-    #----------------
-    if experiment==1: 
-       return 0
-    #----------------
-    if experiment==2: 
-       return 0
-    #----------------
-    if experiment==3:
-       delta=Ly/w3y
-       if abs(y-Ly/2)<=delta: 
-          return -0.5*np.pi/delta*np.sin(np.pi*(y-Ly/2)/delta)
-       else:
-          return 0
-    #----------------
-    if experiment==4 or experiment==5 or experiment==8: 
-       delta4=Lx/w4
-       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
-       if abs(xp-Lx/2)<=delta4: 
-          return -0.5*np.pi/delta4*np.sin(np.pi*(xp-Lx/2)/delta4)*np.sin(theta)*np.sin(theta)*np.sin(theta)
-       else:
-          return 0
-    if experiment==6: 
-       return 0 
-    if experiment==7: 
-       return 0
-    if experiment==9: 
-       return 0 
-
-def d2vd_dx2(x,y,Lx,Ly):
-    if experiment==1: return 0
-    if experiment==2: return 0
-    if experiment==3: return 0
-    if experiment==4 or experiment==5 or experiment==8: 
-       delta4=Lx/w4
-       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
-       if abs(xp-Lx/2)<=delta4: 
-          return -0.5*np.pi/delta4*np.sin(np.pi*(xp-Lx/2)/delta4)*np.cos(theta)*np.cos(theta)*np.sin(theta)
-       else:
-          return 0
-    if experiment==6: 
-       return 0 
-    if experiment==7: 
-       return 0 
-    if experiment==9: 
-       return 0 
-
-def d2vd_dxdy(x,y,Lx,Ly):
-    if experiment==1: return 0
-    if experiment==2: return 0
-    if experiment==3: return 0
-    if experiment==4 or experiment==5 or experiment==8: 
-       delta4=Lx/w4
-       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
-       if abs(xp-Lx/2)<=delta4: 
-          return -0.5*np.pi/delta4*np.sin(np.pi*(xp-Lx/2)/delta4)*np.sin(theta)*np.cos(theta)*np.sin(theta)
-       else:
-          return 0
-    if experiment==6: 
-       return 0 
-    if experiment==7: 
-       return 0 
-    if experiment==9: 
-       return 0 
-
-###############################################################################
-
 def fx(x,y,Lx,Ly):
     return (4/3*d2ud_dx2(x,y,Lx,Ly) +d2ud_dy2(x,y,Lx,Ly) +1/3*d2vd_dxdy(x,y,Lx,Ly))
 
 def fy(x,y,Lx,Ly):
     return (d2vd_dx2(x,y,Lx,Ly) +4/3*d2vd_dy2(x,y,Lx,Ly) +1/3*d2ud_dxdy(x,y,Lx,Ly))
-
-###############################################################################
-
-def basis_functions_V(r,s):
-    N0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
-    N1= 0.5*r*(r+1.) * 0.5*s*(s-1.)
-    N2= 0.5*r*(r+1.) * 0.5*s*(s+1.)
-    N3= 0.5*r*(r-1.) * 0.5*s*(s+1.)
-    N4=    (1.-r**2) * 0.5*s*(s-1.)
-    N5= 0.5*r*(r+1.) *    (1.-s**2)
-    N6=    (1.-r**2) * 0.5*s*(s+1.)
-    N7= 0.5*r*(r-1.) *    (1.-s**2)
-    N8=    (1.-r**2) *    (1.-s**2)
-    return np.array([N0,N1,N2,N3,N4,N5,\
-                     N6,N7,N8],dtype=np.float64)
-
-def basis_functions_V_dr(r,s):
-    dNdr0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
-    dNdr1= 0.5*(2.*r+1.) * 0.5*s*(s-1)
-    dNdr2= 0.5*(2.*r+1.) * 0.5*s*(s+1)
-    dNdr3= 0.5*(2.*r-1.) * 0.5*s*(s+1)
-    dNdr4=       (-2.*r) * 0.5*s*(s-1)
-    dNdr5= 0.5*(2.*r+1.) *   (1.-s**2)
-    dNdr6=       (-2.*r) * 0.5*s*(s+1)
-    dNdr7= 0.5*(2.*r-1.) *   (1.-s**2)
-    dNdr8=       (-2.*r) *   (1.-s**2)
-    return np.array([dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,\
-                     dNdr6,dNdr7,dNdr8],dtype=np.float64)
-
-def basis_functions_V_ds(r,s):
-    dNds0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
-    dNds1= 0.5*r*(r+1.) * 0.5*(2.*s-1.)
-    dNds2= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
-    dNds3= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
-    dNds4=    (1.-r**2) * 0.5*(2.*s-1.)
-    dNds5= 0.5*r*(r+1.) *       (-2.*s)
-    dNds6=    (1.-r**2) * 0.5*(2.*s+1.)
-    dNds7= 0.5*r*(r-1.) *       (-2.*s)
-    dNds8=    (1.-r**2) *       (-2.*s)
-    return np.array([dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,\
-                     dNds6,dNds7,dNds8],dtype=np.float64)
-
-def basis_functions_P(r,s):
-    N0=0.25*(1-r)*(1-s)
-    N1=0.25*(1+r)*(1-s)
-    N2=0.25*(1+r)*(1+s)
-    N3=0.25*(1-r)*(1+s)
-    return np.array([N0,N1,N2,N3],dtype=np.float64)
 
 ###############################################################################
 
@@ -429,28 +40,40 @@ ndof_V=2  # number of velocity degrees of freedom per node
 if int(len(sys.argv) == 2): 
    nelx = int(sys.argv[1])
 else:
-   nelx = 256
+   nelx = 128
 
 Lx=2.
 Ly=1.
 
-if experiment==7 or experiment==9: Ly=2
 
-if experiment==8:
-   Lx=3
-   Ly=2
+if experiment==5: 
+   Lx=2.
+   Ly=3
+   nely=int(nelx/Lx*Ly)
 
 if experiment==6:
    Lx=1
    Ly=1
+   nely=nelx 
 
-nely=int(nelx/Lx*Ly)
+if experiment==7 or experiment==9: 
+   Lx=2
+   Ly=2
+   nely=nelx 
 
-if experiment==5: Ly=3
-if experiment==5: nely*=3
+if experiment==8:
+   Lx=3
+   Ly=2
+   nely=int(nelx/Lx*Ly)
+
+
 
 eta=1.
 rho=1.
+
+compensated=True
+
+debug=False
 
 ###############################################################################
 
@@ -497,6 +120,7 @@ qweights=[5./9.,8./9.,5./9.]
 
 ###############################################################################
 
+print("experiment",experiment)
 print("nelx",nelx)
 print("nely",nely)
 print("nel",nel)
@@ -525,7 +149,7 @@ for j in range(0,nny):
         y_V[counter]=j*hy/2.
         counter+=1
 
-print("setup: grid points: %.3f s" % (clock.time()-start))
+print("grid V points: %.3f s" % (clock.time()-start))
 
 #################################################################
 # build connectivity arrays for velocity and pressure
@@ -565,7 +189,7 @@ for j in range(0,nely):
         icon_P[3,counter]=i+(j+1)*(nelx+1)
         counter += 1
 
-print("setup: connectivity: %.3f s" % (clock.time()-start))
+print("connectivity arrays: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # define boundary conditions
@@ -623,14 +247,7 @@ if experiment==6:
        if abs(y_V[i])/Ly<eps or abs(y_V[i]-Ly)/Ly<eps :
           bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = 0
 
-#if experiment==9: 
-#   for i in range(0,nn_V):
-#       if abs(x_V[i])/Lx<eps or abs(x_V[i]-Lx)/Lx<eps or \
-#          abs(y_V[i])/Ly<eps or abs(y_V[i]-Ly)/Ly<eps :
-#          bc_fix_V[i*ndof_V+0] = True ; bc_val_V[i*ndof_V+0] = 0
-#          bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = 0
-
-print("setup: boundary conditions: %.3f s" % (clock.time()-start))
+print("boundary conditions: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # grid point setup
@@ -664,10 +281,12 @@ for i in range(0,nn_V):
     fx_th[i]=fx(x_V[i],y_V[i],Lx,Ly)
     fy_th[i]=fy(x_V[i],y_V[i],Lx,Ly)
 
-np.savetxt('solution_th.ascii',np.array([x_V,y_V,u_th,v_th,dudx_th,dvdy_th,\
-                                         d2udx2_th,d2udy2_th,d2udxy_th,\
-                                         d2vdx2_th,d2vdy2_th,d2vdxy_th,
-                                         fx_th,fy_th ]).T)
+if debug: np.savetxt('solution_th.ascii',np.array([x_V,y_V,u_th,v_th,dudx_th,dvdy_th,\
+                                                  d2udx2_th,d2udy2_th,d2udxy_th,\
+                                                  d2vdx2_th,d2vdy2_th,d2vdxy_th,
+                                                  fx_th,fy_th ]).T)
+
+print("compute analytical sol on mesh: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # build FE matrix A and rhs 
@@ -675,6 +294,7 @@ np.savetxt('solution_th.ascii',np.array([x_V,y_V,u_th,v_th,dudx_th,dvdy_th,\
 # [GT 0 ][p] [h]
 # note that we *must* use the deviatoric C matrix!
 ###############################################################################
+start=clock.time()
 
 C=np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64) 
 
@@ -718,12 +338,14 @@ for iel in range(0,nel):
 
             K_el+=B.T.dot(C.dot(B))*eta*JxWq
 
-            for i in range(0,m_V):
-                #f_el[ndof_V*i+0]+=N_V[i]*(rho*gx(xq,yq)-fx(xq,yq,Lx,Ly))*JxWq
-                #f_el[ndof_V*i+1]+=N_V[i]*(rho*gy(xq,yq)-fy(xq,yq,Lx,Ly))*JxWq
-                f_el[ndof_V*i+0]+=N_V[i]*(rho*gx(xq,yq))*JxWq
-                f_el[ndof_V*i+1]+=N_V[i]*(rho*gy(xq,yq))*JxWq
-
+            if compensated:
+               for i in range(0,m_V):
+                   f_el[ndof_V*i+0]+=N_V[i]*(rho*gx(xq,yq)-fx(xq,yq,Lx,Ly))*JxWq
+                   f_el[ndof_V*i+1]+=N_V[i]*(rho*gy(xq,yq)-fy(xq,yq,Lx,Ly))*JxWq
+            else:
+               for i in range(0,m_V):
+                   f_el[ndof_V*i+0]+=N_V[i]*(rho*gx(xq,yq))*JxWq
+                   f_el[ndof_V*i+1]+=N_V[i]*(rho*gy(xq,yq))*JxWq
 
             for i in range(0,m_P):
                 N_mat[0,i]=N_P[i]
@@ -802,13 +424,14 @@ print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
-np.savetxt('solution.ascii',np.array([x_V,y_V,u,v]).T)
+if debug: np.savetxt('solution.ascii',np.array([x_V,y_V,u,v]).T)
 
 print("solve system: %.3f s - Nfem %d" % (clock.time()-start,Nfem))
 
 ###############################################################################
 # normalise pressure
 ###############################################################################
+start=clock.time()
 
 if experiment==3 or experiment==4 or experiment==5 or \
    experiment==6 or experiment==7 or experiment==8 or experiment==9:
@@ -834,6 +457,8 @@ if experiment==3 or experiment==4 or experiment==5 or \
    p-=avrg_p/(Lx*Ly)
 
    print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
+
+print("normalise pressure: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # interpolate pressure onto velocity grid points (for plotting)
@@ -896,7 +521,7 @@ for iel in range(0,nel):
     eyy[iel]=np.dot(dNdy_V[:],v[icon_V[:,iel]])
     exy[iel]=np.dot(dNdy_V[:],u[icon_V[:,iel]])*0.5\
             +np.dot(dNdx_V[:],v[icon_V[:,iel]])*0.5
-    sr[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
+    sr[iel]=np.sqrt(0.5*(exx[iel]**2+eyy[iel]**2)+exy[iel]**2)
     p_e[iel]=np.dot(N_P,p[icon_P[:,iel]])
 #end if
 
@@ -906,7 +531,7 @@ print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
 print("     -> sr  (m,M) %.4e %.4e " %(np.min(sr),np.max(sr)))
 print("     -> p_e (m,M) %.4e %.4e " %(np.min(p_e),np.max(p_e)))
 
-np.savetxt('solution_e.ascii',np.array([x_e,y_e,p_e,exx,eyy,exx+eyy]).T)
+if debug: np.savetxt('solution_e.ascii',np.array([x_e,y_e,p_e,exx,eyy,exx+eyy]).T)
 
 print("compute elemental press & sr: %.3f s" % (clock.time()-start))
 
@@ -920,7 +545,7 @@ eyyn=np.zeros(nn_V,dtype=np.float64)
 exyn=np.zeros(nn_V,dtype=np.float64)
 srn=np.zeros(nn_V,dtype=np.float64)
 divvn=np.zeros(nn_V,dtype=np.float64)
-c=np.zeros(nn_V,dtype=np.float64)
+count=np.zeros(nn_V,dtype=np.float64)
 
 r_V=[-1,+1,1,-1, 0,1,0,-1,0]
 s_V=[-1,-1,1,+1,-1,0,1, 0,0]
@@ -940,17 +565,17 @@ for iel in range(0,nel):
         eyyn[icon_V[i,iel]]+=np.dot(dNdy_V,v[icon_V[:,iel]])
         exyn[icon_V[i,iel]]+=np.dot(dNdx_V,v[icon_V[:,iel]])*0.5+\
                              np.dot(dNdy_V,u[icon_V[:,iel]])*0.5
-        c[icon_V[i,iel]]+=1.
+        count[icon_V[i,iel]]+=1.
     # end for i
 # end for iel
 
-exxn/=c
-eyyn/=c
-exyn/=c
+exxn/=count
+eyyn/=count
+exyn/=count
 
 divvn[:]=exxn[:]+eyyn[:]
 
-srn[:]=np.sqrt(0.5*(exxn[:]*exxn[:]+eyyn[:]*eyyn[:])+exyn[:]*exyn[:])
+srn[:]=np.sqrt(0.5*(exxn[:]**2+eyyn[:]**2)+exyn[:]**2)
 
 print("     -> exxn  (m,M) %.4e %.4e " %(np.min(exxn),np.max(exxn)))
 print("     -> eyyn  (m,M) %.4e %.4e " %(np.min(eyyn),np.max(eyyn)))
@@ -1009,7 +634,6 @@ if experiment==7 or experiment==9:
        if abs(x_V[i]-Lx/2)<0.001: vline[i]=True 
    np.savetxt('solution_h_exp6.ascii',np.array([x_V[hline],u[hline],v[hline],q[hline],divvn[hline]]).T)
    np.savetxt('solution_v_exp6.ascii',np.array([y_V[vline],u[vline],v[vline],q[vline],divvn[vline]]).T)
-
 
 ###############################################################################
 # plot of solution
@@ -1084,7 +708,6 @@ vtufile.write("<DataArray type='Float32' Name='analytical d2ud_dxdy' Format='asc
 for i in range(0,nn_V):
     vtufile.write("%e \n" %(d2udxy_th[i]))
 vtufile.write("</DataArray>\n")
-
 #--
 vtufile.write("<DataArray type='Float32' Name='analytical dvd_dy' Format='ascii'> \n")
 for i in range(0,nn_V):
@@ -1105,9 +728,6 @@ vtufile.write("<DataArray type='Float32' Name='analytical d2vd_dxdy' Format='asc
 for i in range(0,nn_V):
     vtufile.write("%e \n" %(d2vdxy_th[i]))
 vtufile.write("</DataArray>\n")
-
-
-
 #--
 vtufile.write("<DataArray type='Float32' Name='analytical divv' Format='ascii'> \n")
 for i in range(0,nn_V):
