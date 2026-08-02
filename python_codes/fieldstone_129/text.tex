@@ -1,6 +1,16 @@
+\noindent
+\includegraphics[height=1.25cm]{images/pictograms/replication}
+\includegraphics[height=1.25cm]{images/pictograms/elasticity}
+\includegraphics[height=1.25cm]{images/pictograms/benchmark}
+\includegraphics[height=1.25cm]{images/pictograms/FEM}
+\includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{flushright} {\tiny {\color{gray} python\_codes/fieldstone\_129/text.tex}} \end{flushright}
 
-\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_129/keywords.ascii}
+%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_129/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -18,7 +28,7 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 The flow is compressible, but 
 we start from Eq.~(12.40) in the book of Simpson (I here use my notations
 and not those of the book), which only considers the deviatoric part of the 
-strain rate tensor:
+strain rate tensor and decomposes it into an elastic component and a viscous component:
 \begin{eqnarray}
 \dot{\bm\varepsilon}^d
 &=&\frac{1}{2\mu} \frac{\partial \bm\tau}{\partial t}
@@ -67,7 +77,7 @@ In the book it is written as $\sigma_m = 3K \varepsilon_v $}
 %= 3K \varepsilon_v 
 = K {\rm tr}({\bm\varepsilon})
 \]
-Then
+Then, assuming $K$ is constant in time,
 \[
 \frac{\partial\sigma_m}{\partial t} 
 \simeq 
@@ -86,13 +96,14 @@ and then
 Inserting this in Eq.~\eqref{tau_simp1}
 we obtain 
 \begin{mdframed}[backgroundcolor=blue!5]
-\begin{eqnarray}
+\begin{equation}
 \bm \sigma 
-&=& 
+=
 K {\rm tr}(\dot{\bm\varepsilon}) \delta t {\bm 1}  +
 \frac{2 \mu \eta\delta t}{ \mu\delta t +\eta} \dot{\bm\varepsilon}^d +
 \frac{ \eta}{\mu\delta t + \eta}  \bm\tau^0 + \sigma_m^0 {\bm 1}
-\end{eqnarray}
+\label{f129:eq:sigma}
+\end{equation}
 \end{mdframed}
 
 We can now switch to using a vector representation of the tensors\footnote{We need to be extra careful about the strain rate vector $\dot{\vec{\varepsilon}}$ since it contains a factor 2 in front of the off diagonal tensor terms, hence the ${\bm C}$ tensor.} as it is necessary for implementation in a FEM code:
@@ -159,7 +170,7 @@ with ${\bm I}_d$ the deviatoric operator:
 \end{array}
 \right)
 \]
-so that now
+so that now Eq.~\eqref{f129:eq:sigma} becomes:
 \begin{eqnarray}
 \vec{\sigma} 
 &=& K {\rm tr}(\dot{\bm\varepsilon}) \delta t \vec{m} +
@@ -481,7 +492,7 @@ K + \frac{4\mu \eta/3}{\mu \delta t + \eta} &
 
 %---------------------------------------
 \subsubsection*{In Plane strain}
-We start again from
+We start again from Eq.~\eqref{f129:eq:sigma}:
 \begin{eqnarray}
 \bm \sigma 
 &=& 
@@ -490,7 +501,11 @@ K {\rm tr}(\dot{\bm\varepsilon}) \delta t {\bm 1}  +
 \frac{ \eta}{\mu\delta t + \eta}  \bm\tau^0 + \sigma_m^0 {\bm 1}
 \end{eqnarray}
 
-In plane strain we have $\dot\varepsilon_{zz}=\dot\varepsilon_{xz}=\dot\varepsilon_{yz}=0$ and $\sigma_{xz}=\sigma_{yz}=0$ (Note that $\sigma_{zz}\ne 0$ !). Furthermore we have\footnote{Since the spring and dashpot are in series, they are under the same stress} the viscous strain rate given by:
+In plane strain, assuming deformation occurs in the $xy$-plane, we have 
+$\dot\varepsilon_{zz}=\dot\varepsilon_{xz}=\dot\varepsilon_{yz}=0$ and 
+$\sigma_{xz}=\sigma_{yz}=0$ (Note that $\sigma_{zz}\ne 0$ !). Furthermore 
+we have\footnote{Since the spring and dashpot are in series, they are under 
+the same stress} the viscous strain rate given by:
 \[
 \dot{\bm\varepsilon}_v
 = \frac{1}{2\eta} {\bm \tau}
@@ -515,10 +530,9 @@ Note that then
 \]
 
 
-
-
 We are left with the $\sigma_{xx}$, $\sigma_{yy}$ and $\sigma_{xy}$
-equations. All we have to do is select the 1st, 2nd and 4th lines and columns of the vectors/matrices in Eq.~\eqref{simpson3D}:
+equations. All we have to do is select the 1st, 2nd and 4th lines and 
+columns of the vectors/matrices in Eq.~\eqref{simpson3D}:
 
 \[
 \left(
@@ -572,6 +586,7 @@ K + \frac{4\mu \eta/3}{\mu \delta t + \eta} &
 \]
 or,
 \begin{mdframed}[backgroundcolor=blue!5]
+{\small
 \begin{equation}
 \left(
 \begin{array}{c}
@@ -622,10 +637,12 @@ or,
 \right) 
 \label{eq_129_2D}
 \end{equation}
+}
 \end{mdframed}
 
 In order to compare this with the book's equations, I rewrite the above equation with the 
 book's notations ($\mu \rightarrow G$, $\eta\rightarrow \mu$):
+{\small
 \begin{eqnarray}
 \left(
 \begin{array}{c}
@@ -681,7 +698,7 @@ book's notations ($\mu \rightarrow G$, $\eta\rightarrow \mu$):
 \right) 
 \nonumber
 \end{eqnarray}
-
+}
 
 
 \begin{center}
@@ -694,7 +711,7 @@ A few remarks:
 \begin{itemize}
 \item 
 Good news, I agree with the book's equations except for the (3,3)
-term which in my opinion is missing a factor 2 in front of 
+term which in my opinion is {\color{red} missing a factor 2} in front of 
 the $\Delta t G$ of the denominator.
 I will need an analytical benchmark to sort this out.
 \item 
@@ -1155,7 +1172,7 @@ This also probably means that reduced integration can/should be done ?
 Following chapter 12 of Guy Simpson's book\footnote{I have slightly changed the notations.} \cite{simp17} 
 or following the derivations above we have Eq.~\eqref{eq_129_2D}
 which I here recall:
-
+{\small
 \[
 \left(
 \begin{array}{c}
@@ -1204,7 +1221,7 @@ which I here recall:
 \sigma_{xy}^0 
 \end{array}
 \right) 
-\]
+\]}
 or, 
 \[
 \vec{\sigma} = \tilde{\bm D}\cdot \vec{\dot{\varepsilon}} +
@@ -1234,8 +1251,8 @@ is computed by means of the equation above.
 
 In the end we declare the following arrays:
 \begin{lstlisting}
-nqperdim=3
-nq=nel*nqperdim**ndim # total number of quadrature points
+nq_per_dim=3
+nq=nel*nq_per_dim**ndim # total number of quadrature points
 stress0_vector    = np.zeros((3,nq),dtype=np.float64) # stress vector memory
 stress_vector     = np.zeros((3,nq),dtype=np.float64) # stress vector 
 strainrate_vector = np.zeros((3,nq),dtype=np.float64) # strain rate vector
@@ -1310,9 +1327,11 @@ If we now write $\tau=2 \eta_{eff} \dot\varepsilon$, or
 \]
 
 
-Are there visco-elastic benchmarks ? bepo10 ?
-
-
+{\color{red} ToDo (f129)}: 
+Are there visco-elastic benchmarks ? 
+\fullcite{bepo10} ?
+\fullcite{ress23} ? 
+\fullcite{doso19} ? 
 
 
 \newpage
@@ -1350,11 +1369,11 @@ and a 40x40 elements.}
 The position of the nodes on the interface between the layer and the matrix is 
 perturbed with a random signal:
 \begin{lstlisting}
-for i in range(0,NV):
-    if abs(yV[i]-0.45)/Ly<eps:
-       yV[i]+=hy*0.05*random.uniform(-1,1)
-    if abs(yV[i]-0.55)/Ly<eps:
-       yV[i]+=hy*0.05*random.uniform(-1,1)
+for i in range(0,nn_V):
+    if abs(y_V[i]-0.45)/Ly<eps:
+       y_V[i]+=hy*0.05*random.uniform(-1,1)
+    if abs(y_V[i]-0.55)/Ly<eps:
+       y_V[i]+=hy*0.05*random.uniform(-1,1)
 \end{lstlisting}
 
 
@@ -1721,9 +1740,6 @@ It is described in Section~\ref{v-e-snac}.
 
 
 
-------------------------------------------------------------------------
-
-TODO: Look at \fullcite{doso19} and redo it ?
 
 
 
