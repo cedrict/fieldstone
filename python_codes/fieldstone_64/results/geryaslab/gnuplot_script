@@ -1,0 +1,141 @@
+#
+set term  pdf enhanced font "Times,12pt"
+set grid
+
+set xlabel 'time (yr)'
+
+yr=365.*3600.*24
+set key outside 
+
+set ylabel 'u (m/yr)'
+set output 'stats_u.pdf'
+plot[:60000]\
+'50x50_10_RK1/stats_u.ascii'  u ($1/yr):($2*yr)  w l lt 1 lw 2 t '50x50, 10^2, RK1',\
+'50x50_10_RK1/stats_u.ascii'  u ($1/yr):($3*yr)  w l lt 1 lw 2 notitle,\
+'50x50_10_RK2/stats_u.ascii'  u ($1/yr):($2*yr)  w l lt 2 lw 2 t '50x50, 10^2, RK2',\
+'50x50_10_RK2/stats_u.ascii'  u ($1/yr):($3*yr)  w l lt 2 lw 2 notitle,\
+'60x60_08_RK1/stats_u.ascii'  u ($1/yr):($2*yr)  w l lt 3 lw 2 t '60x60, 8^2, RK1',\
+'60x60_08_RK1/stats_u.ascii'  u ($1/yr):($3*yr)  w l lt 3 lw 2 notitle,\
+'70x70_08_RK1/stats_u.ascii'  u ($1/yr):($2*yr)  w l lt 4 lw 2 t '70x70, 8^2, RK1',\
+'70x70_08_RK1/stats_u.ascii'  u ($1/yr):($3*yr)  w l lt 4 lw 2 notitle,\
+'gerya/max-min_v_2500.dat'    u ($1):($3*yr)     w l lt 5 t 'Gerya, 2010',\
+'gerya/max-min_v_2500.dat'    u ($1):($4*yr)     w l lt 5 notitle,\
+'gerya2/velocity_min_max.txt' u ($2*1e6):($3*yr) w l lt 6 t 'Gerya, 2020',\
+'gerya2/velocity_min_max.txt' u ($2*1e6):($4*yr) w l lt 6 notitle 
+
+set output 'stats_u_zoom.pdf'
+plot[50000:400000]\
+'50x50_10_RK1/stats_u.ascii'  u ($1/yr):($2*yr)  w l lt 1 lw 2 t '50x50, 10^2, RK1',\
+'50x50_10_RK1/stats_u.ascii'  u ($1/yr):($3*yr)  w l lt 1 lw 2 notitle,\
+'50x50_10_RK2/stats_u.ascii'  u ($1/yr):($2*yr)  w l lt 2 lw 2 t '50x50, 10^2, RK2',\
+'50x50_10_RK2/stats_u.ascii'  u ($1/yr):($3*yr)  w l lt 2 lw 2 notitle,\
+'60x60_08_RK1/stats_u.ascii'  u ($1/yr):($2*yr)  w l lt 3 lw 2 t '60x60, 8^2, RK1',\
+'60x60_08_RK1/stats_u.ascii'  u ($1/yr):($3*yr)  w l lt 3 lw 2 notitle,\
+'70x70_08_RK1/stats_u.ascii'  u ($1/yr):($2*yr)  w l lt 4 lw 2 t '70x70, 8^2, RK1',\
+'70x70_08_RK1/stats_u.ascii'  u ($1/yr):($3*yr)  w l lt 4 lw 2 notitle,\
+'gerya/max-min_v_2500.dat'    u ($1):($3*yr)     w l lt 5 t 'Gerya, 2010',\
+'gerya/max-min_v_2500.dat'    u ($1):($4*yr)     w l lt 5 notitle,\
+'gerya2/velocity_min_max.txt' u ($2*1e6):($3*yr) w l lt 5 t 'Gerya, 2020',\
+'gerya2/velocity_min_max.txt' u ($2*1e6):($4*yr) w l lt 5 notitle 
+
+
+set ylabel 'v (m/yr)'
+set output 'stats_v.pdf'
+plot[:60000]\
+'50x50_10_RK1/stats_v.ascii'  u ($1/yr):($2*yr)   w l lt 1 lw 2 t '50x50, 10^2, RK1',\
+'50x50_10_RK1/stats_v.ascii'  u ($1/yr):($3*yr)   w l lt 1 lw 2 notitle,\
+'50x50_10_RK2/stats_v.ascii'  u ($1/yr):($2*yr)   w l lt 2 lw 2 t '50x50, 10^2, RK2',\
+'50x50_10_RK2/stats_v.ascii'  u ($1/yr):($3*yr)   w l lt 2 lw 2 notitle,\
+'60x60_08_RK1/stats_v.ascii'  u ($1/yr):($2*yr)   w l lt 3 lw 2 t '60x60, 8^2, RK1',\
+'60x60_08_RK1/stats_v.ascii'  u ($1/yr):($3*yr)   w l lt 3 lw 2 notitle,\
+'70x70_08_RK1/stats_v.ascii'  u ($1/yr):($2*yr)   w l lt 4 lw 2 t '70x70, 8^2, RK1',\
+'70x70_08_RK1/stats_v.ascii'  u ($1/yr):($3*yr)   w l lt 4 lw 2 notitle,\
+'gerya/max-min_v_2500.dat'    u ($1):(-$5*yr)     w l lt 5 t 'Gerya, 2010',\
+'gerya/max-min_v_2500.dat'    u ($1):(-$6*yr)     w l lt 5 notitle ,\
+'gerya2/velocity_min_max.txt' u ($2*1e6):(-$5*yr) w l lt 6 t 'Gerya, 2020',\
+'gerya2/velocity_min_max.txt' u ($2*1e6):(-$6*yr) w l lt 6 notitle 
+
+set output 'stats_v_zoom.pdf'
+plot[50000:400000]\
+'50x50_10_RK1/stats_v.ascii'  u ($1/yr):($2*yr)   w l lt 1 lw 2 t '50x50, 10^2, RK1',\
+'50x50_10_RK1/stats_v.ascii'  u ($1/yr):($3*yr)   w l lt 1 lw 2 notitle,\
+'50x50_10_RK2/stats_v.ascii'  u ($1/yr):($2*yr)   w l lt 2 lw 2 t '50x50, 10^2, RK2',\
+'50x50_10_RK2/stats_v.ascii'  u ($1/yr):($3*yr)   w l lt 2 lw 2 notitle,\
+'60x60_08_RK1/stats_v.ascii'  u ($1/yr):($2*yr)   w l lt 3 lw 2 t '60x60, 8^2, RK1',\
+'60x60_08_RK1/stats_v.ascii'  u ($1/yr):($3*yr)   w l lt 3 lw 2 notitle,\
+'70x70_08_RK1/stats_v.ascii'  u ($1/yr):($2*yr)   w l lt 4 lw 2 t '70x70, 8^2, RK1',\
+'70x70_08_RK1/stats_v.ascii'  u ($1/yr):($3*yr)   w l lt 4 lw 2 notitle,\
+'gerya/max-min_v_2500.dat'    u ($1):(-$5*yr)     w l lt 5 t 'Gerya, 2010',\
+'gerya/max-min_v_2500.dat'    u ($1):(-$6*yr)     w l lt 5 notitle ,\
+'gerya2/velocity_min_max.txt' u ($2*1e6):(-$5*yr) w l lt 6 t 'Gerya, 2020',\
+'gerya2/velocity_min_max.txt' u ($2*1e6):(-$6*yr) w l lt 6 notitle 
+
+##############################################################
+
+set ylabel '{/Symbol t}'
+set output 'stats_tau.pdf'
+plot[][]\
+'50x50_10_RK2/stats_tauxx.ascii' u ($1/yr):2 w l t 'min({/Symbol t}_{xx})',\
+'50x50_10_RK2/stats_tauxx.ascii' u ($1/yr):3 w l t 'max({/Symbol t}_{xx})',\
+'50x50_10_RK2/stats_tauyy.ascii' u ($1/yr):2 w l t 'min({/Symbol t}_{yy})',\
+'50x50_10_RK2/stats_tauyy.ascii' u ($1/yr):3 w l t 'max({/Symbol t}_{yy})',\
+'50x50_10_RK2/stats_tauxy.ascii' u ($1/yr):2 w l t 'min({/Symbol t}_{xy})',\
+'50x50_10_RK2/stats_tauxy.ascii' u ($1/yr):3 w l t 'max({/Symbol t}_{xy})',\
+
+set ylabel 'J'
+set output 'stats_J.pdf'
+plot[][]\
+'50x50_10_RK2/stats_Jxx.ascii' u ($1/yr):2 w l t 'min(J_{xx})',\
+'50x50_10_RK2/stats_Jxx.ascii' u ($1/yr):3 w l t 'max(J_{xx})',\
+'50x50_10_RK2/stats_Jyy.ascii' u ($1/yr):2 w l t 'min(J_{yy})',\
+'50x50_10_RK2/stats_Jyy.ascii' u ($1/yr):3 w l t 'max(J_{yy})',\
+'50x50_10_RK2/stats_Jxy.ascii' u ($1/yr):2 w l t 'min(J_{xy})',\
+'50x50_10_RK2/stats_Jxy.ascii' u ($1/yr):3 w l t 'max(J_{xy})',\
+
+set ylabel 'strain rate'
+set output 'stats_e.pdf'
+plot[][]\
+'50x50_10_RK2/stats_exx.ascii' u ($1/yr):2 w l t 'min(e_{xx})',\
+'50x50_10_RK2/stats_exx.ascii' u ($1/yr):3 w l t 'max(e_{xx})',\
+'50x50_10_RK2/stats_eyy.ascii' u ($1/yr):2 w l t 'min(e_{yy})',\
+'50x50_10_RK2/stats_eyy.ascii' u ($1/yr):3 w l t 'max(e_{yy})',\
+'50x50_10_RK2/stats_exy.ascii' u ($1/yr):2 w l t 'min(e_{xy})',\
+'50x50_10_RK2/stats_exy.ascii' u ($1/yr):3 w l t 'max(e_{xy})',\
+
+set ylabel '{/Symbol w}_{xy}'
+set output 'stats_wxy.pdf'
+plot[:60000][]\
+'50x50_10_RK1/stats_wxy.ascii' u ($1/yr):2 w l lt 1 t '50x50, 10^2, RK1',\
+'50x50_10_RK1/stats_wxy.ascii' u ($1/yr):3 w l lt 1 notitle,\
+'50x50_10_RK2/stats_wxy.ascii' u ($1/yr):2 w l lt 2 t '50x50, 10^2, RK2',\
+'50x50_10_RK2/stats_wxy.ascii' u ($1/yr):3 w l lt 2 notitle,\
+'60x60_08_RK1/stats_wxy.ascii' u ($1/yr):2 w l lt 3 t '60x60, 8^2, RK1',\
+'60x60_08_RK1/stats_wxy.ascii' u ($1/yr):3 w l lt 3 notitle,\
+'70x70_08_RK1/stats_wxy.ascii' u ($1/yr):2 w l lt 4 t '70x70, 8^2, RK1',\
+'70x70_08_RK1/stats_wxy.ascii' u ($1/yr):3 w l lt 4 notitle
+
+##############################################################
+
+set ylabel '{/Symbol t} on particles'
+set output 'stats_swarm_tau.pdf'
+plot[][]\
+'50x50_10_RK2/stats_m_tauxx.ascii' u ($1/yr):2 w l t 'min({/Symbol t}_{xx})',\
+'50x50_10_RK2/stats_m_tauxx.ascii' u ($1/yr):3 w l t 'max({/Symbol t}_{xx})',\
+'50x50_10_RK2/stats_m_tauyy.ascii' u ($1/yr):2 w l t 'min({/Symbol t}_{yy})',\
+'50x50_10_RK2/stats_m_tauyy.ascii' u ($1/yr):3 w l t 'max({/Symbol t}_{yy})',\
+'50x50_10_RK2/stats_m_tauxy.ascii' u ($1/yr):2 w l t 'min({/Symbol t}_{xy})',\
+'50x50_10_RK2/stats_m_tauxy.ascii' u ($1/yr):3 w l t 'max({/Symbol t}_{xy})',\
+
+##############################################################
+set xtics 100
+set ytics 100
+
+set title '50x50 mesh'
+set size square
+set xlabel 'x'
+set ylabel 'y'
+set output 'flagged_particles.pdf'
+plot[0:1e3][0:1e3]\
+'50x50_10_RK1/flagged_particles.ascii' u ($3/1e3):($4/1e3) w p ps .15 t '50x50, 10^2, RK1',\
+'50x50_10_RK2/flagged_particles.ascii' u ($3/1e3):($4/1e3) w p ps .05 t '50x50, 10^2, RK2'
+
