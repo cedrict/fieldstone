@@ -24,21 +24,17 @@ Code at \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fiel
 \paragraph{Disclaimer about this code}
 There has been multiple versions of this stone. 
 The current one relies on the Particle-in-Cell method. 
-All additional fields ($J$, $\tau$, $\dot\varepsilon$ are computed/stored 
+All additional fields ($J$, $\tau$, $\dot\varepsilon_{ij}$ are computed/stored 
 in the middle of each element. 
 This is a fairly complicated code since it features a deformable mesh 
 (by means of a simplified ALE which only allows for the vertical movement 
 of only the top row of mesh nodes), a particle-in-cell technique (only 
 1st or 2nd order in space) to carry out material tracking/advection and 
 of course the elasto-viscous rheology.
-Previous versions are available in the folder. 
+Previous versions are still available in the folder. 
 
 Particle properties and coordinates are stored in large arrays 
 coined {\tt swarm\_xxx} of size {\tt nparticle}. 
-
-
-Only particles carry a record of the stress state. Eulerian fields (in this case elemental
-fields) are only a projection of marker fields onto the mesh. 
 \begin{lstlisting}
 swarm_x=np.zeros(nparticle,dtype=np.float64)  
 swarm_y=np.zeros(nparticle,dtype=np.float64)  
@@ -63,15 +59,20 @@ Z = \frac{\eta_{eff}}{\mu \; \delta t}
 At the beginning the particles are set on a regular grid inside each element
 controlled by the {\tt nparticle\_per\_dim} parameter and a small 
 random perturbation is added.
+Only particles carry a record of the stress state. Eulerian fields (in this case elemental
+fields) are only a projection of marker fields onto the mesh. 
 
+It is also worth noting that experiments 11 and 12 are 
+attractive since they are analytical benchmarks, 
+but they only involve a single type of material (no averaging of 
+properties) and the computed strain rate components are constant in 
+space.
 
-ToDo: remove matrix blocks and normalisation
 
 ToDo: implement pressure normalisation as postprocessor
 
-Remain to explore: 
-types of averaging for Z? etaeff ?
-
+As it is now the code is rather slow, asssembly could be 
+improved, and probably some parts of the pic components.
 
 \newpage
 %.......................................................
@@ -282,8 +283,8 @@ visco-elasticity factor $Z$      \ [-]         & 0.9999999369280039      &  1.58
 \includegraphics[height=4cm]{python_codes/fieldstone_64/images/gerya1}
 \includegraphics[height=4cm]{python_codes/fieldstone_64/images/gerya2}
 \includegraphics[height=4cm]{python_codes/fieldstone_64/images/gerya3}\\
-\includegraphics[height=4cm]{python_codes/fieldstone_64/results/slab/markers0000}
-\includegraphics[height=4cm]{python_codes/fieldstone_64/results/slab/markers0100}\\
+%\includegraphics[height=4cm]{python_codes/fieldstone_64/results/slab/markers0000}
+%\includegraphics[height=4cm]{python_codes/fieldstone_64/results/slab/markers0100}\\
 {\captionfont Top row taken from \cite[16.11]{gery10}. 
 (a) Initial configuration, (b) configuration after 20 kyr of deformation under 
 constant vertical gravity field ($g_x=0$,$g_y =-10\text{m/s}^2$, 
@@ -299,23 +300,21 @@ elastic rhs is identically zero, and the system is solved with a viscosity equal
 $\eta_{eff,1}$ and $\eta_{eff,2}$ for the slab and mantle respectively:
 
 \begin{center}
-\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/vel}
-\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/u}
-\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/v}\\
-\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/exx}
-\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/eyy}
-\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/exy}\\
-\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/q}
-\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/etaeff}
-\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/slab/init/rho}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/geryaslab/init/vel}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/geryaslab/init/u}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/geryaslab/init/v}\\
+\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/geryaslab/init/exx}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/geryaslab/init/eyy}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/geryaslab/init/exy}\\
+\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/geryaslab/init/q}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/geryaslab/init/etaeff}
+\includegraphics[width=5.2cm]{python_codes/fieldstone_64/results/geryaslab/init/rho}\\
+{\captionfont these figs are old, should be redone with latest version of code.}
 \end{center}
 
 
 
-
-
 \newpage
-NEW RESULTS
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_64/results/geryaslab/stats_u.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_64/results/geryaslab/stats_v.pdf}\\
@@ -329,43 +328,47 @@ NEW RESULTS
 
 \newpage
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_64/results/geryaslab/70x70_08_RK1/particles.0000.png}
-\includegraphics[width=7cm]{python_codes/fieldstone_64/results/geryaslab/70x70_08_RK1/particles.0005.png}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_64/results/geryaslab/70x70_08_RK1/particles.0010.png}
-\includegraphics[width=7cm]{python_codes/fieldstone_64/results/geryaslab/70x70_08_RK1/particles.0015.png}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_64/results/geryaslab/70x70_08_RK1/particles.0020.png}
-\includegraphics[width=7cm]{python_codes/fieldstone_64/results/geryaslab/70x70_08_RK1/particles.0025.png}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_64/results/geryaslab/70x70_08_RK1/particles.0000.png}
+\includegraphics[width=6cm]{python_codes/fieldstone_64/results/geryaslab/70x70_08_RK1/particles.0005.png}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_64/results/geryaslab/70x70_08_RK1/particles.0010.png}
+\includegraphics[width=6cm]{python_codes/fieldstone_64/results/geryaslab/70x70_08_RK1/particles.0015.png}\\
+\includegraphics[width=6cm]{python_codes/fieldstone_64/results/geryaslab/70x70_08_RK1/particles.0020.png}
+\includegraphics[width=6cm]{python_codes/fieldstone_64/results/geryaslab/70x70_08_RK1/particles.0025.png}\\
 \includegraphics[width=9cm]{python_codes/fieldstone_64/results/geryaslab/flagged_particles.pdf}
 \end{center}
 
-We find that at number of particles constant the difference between RK1 and RK2 is extremely 
+We find that 
+\begin{itemize}
+\item at number of particles constant, the difference between RK1 and RK2 is extremely 
 small, most likely because the 200yr time step corresponds to a CFL number $<0.05$.
-Also the difference between 8x8 and 10x10 particles is negligible (not shown).
-Increasing resolution from 50x50 to 60x60 or 70x70 does not seem to yield different results.
-
+\item the difference between $8^2$ and $10^2$ particles is negligible (not shown).
+\item increasing resolution from 50x50 to 60x60 or 70x70 does not seem to yield different results.
+\item using harmonic averaging on $Z$ does not change results much, statistics look a bit less smooth.
+(not shown)
+\end{itemize}
 
 
 \newpage
 
 \begin{center}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/markers_0000_Myr}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/stress_0000_Myr}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/velocity_0000_Myr}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/markers_0010_Myr}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/stress_0010_Myr}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/velocity_0010_Myr}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/markers_0020_Myr}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/stress_0020_Myr}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/velocity_0020_Myr}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/markers_0030_Myr}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/stress_0030_Myr}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/velocity_0030_Myr}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/markers_0040_Myr}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/stress_0040_Myr}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/velocity_0040_Myr}\\
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/markers_0100_Myr}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/stress_0100_Myr}
-\includegraphics[width=5cm]{python_codes/fieldstone_64/results/slab/gerya2/velocity_0100_Myr}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/markers_0000_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/stress_0000_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/velocity_0000_Myr}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/markers_0010_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/stress_0010_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/velocity_0010_Myr}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/markers_0020_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/stress_0020_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/velocity_0020_Myr}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/markers_0030_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/stress_0030_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/velocity_0030_Myr}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/markers_0040_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/stress_0040_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/velocity_0040_Myr}\\
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/markers_0100_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/stress_0100_Myr}
+\includegraphics[width=5cm]{python_codes/fieldstone_64/results/geryaslab/gerya2/velocity_0100_Myr}\\
 {\captionfont Results obtained with the Matlab code provided with Gerya (2019) \cite{gery19book}}
 \end{center}
 
@@ -373,7 +376,9 @@ Increasing resolution from 50x50 to 60x60 or 70x70 does not seem to yield differ
 
 \newpage
 %.......................................................
-\subsection*{Stress build-up in viscoelastic Maxwell body}
+\subsection*{Experiment=3: Stress build-up in viscoelastic Maxwell body}
+
+{\color{red} presented results were obtained with previous version of code}
 
 This benchmark comes from Appendix B of \textcite{kemk13} (2013).
 The domain is $7.5\times5$km. A dominantly elastic beam is fixed to, and protrudes horizontally 
@@ -445,7 +450,10 @@ Velocity, strain rate components, $Z$, $\eta_{eff}$, strain rate components, pre
 
 \newpage
 %.......................................................
-\paragraph{Flexure of elastic plate}
+\paragraph{Experiment=4: Flexure of elastic plate}
+
+
+{\color{red} presented results were obtained with previous version of code}
 
 This benchmark is presented in Choi et al (2013) \cite{chtl13}. 
 The setup is as follows:
@@ -528,7 +536,10 @@ results from Choi et al and/or results with my code \elefant \cite{thie14}.
 
 \newpage
 %.......................................................
-\paragraph{Ice load}
+\section*{Experiment=5: Ice sheet load}
+
+{\color{red} presented results were obtained with previous version of code}
+
 
 The domain is $500\times500$km. Vertical gravity is 9.8, density is 3300, viscosity 
 is $3\cdot10^{20}$, shear modulus is $10^{10}$, free slip on left, right and bottom. 
