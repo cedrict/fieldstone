@@ -50,6 +50,8 @@ $u=v=0$ at the bottom and $u=1,v=0$ at the top.
 \includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp1/exy}
 \end{center}
 
+The velocity field is linear and can therefore be represented exactly 
+by the basis functions. The recovered errors are then zero down to machine precision.
 
 %---------------------------------------
 \section*{Experiment 2: Pure shear }
@@ -73,9 +75,8 @@ $v=-1$ at the bottom and $v=+1$ at the top.
 \includegraphics[width=5cm]{python_codes/fieldstone_34/results/exp2/p}
 \end{center}
 
-
-
-
+The velocity field is linear and can therefore be represented exactly 
+by the basis functions. The recovered errors are then zero down to machine precision.
 
 %---------------------------------------
 \section*{Experiment 3: Aquarium}
@@ -286,5 +287,37 @@ of the elements for simplicity.}
 We find that our results only qualitatively match the analytical solution. This can 
 be simply explained by recalling that the analytical solution is derived for an 
 infinite half space. 
+
+
+\newpage
+%---------------------------------------
+\section*{Experiment 5: Strip load (again)}
+
+This is a variant of Experiment 4. It was made during the 2026 ASPECT hackathon:
+
+\begin{lstlisting}
+   Lx=600e3
+   Ly=200e3
+   gx=0
+   gy=0
+   rho=2700
+   K=1/4e-12 # bulk modulus
+   mu=1e10 # shear modulus (also G)
+   lambdaa=K-2*mu/3  #Lame's first parameter
+   a=20e3
+   p0=2.7e6 # rho*gy*1000
+   nely=int(nelx*Ly/Lx)
+   nelx+=1
+   nu=(3*K-2*mu)/(6*K+2*mu)
+\end{lstlisting}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_34/results/exp5/disp.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_34/results/exp5/divv.png}
+\end{center}
+
+
+ToDo: When the cookbook is merged in ASPECT, make a link.
 
 
