@@ -7,22 +7,39 @@
 #   niter =  int(sys.argv[5])
 #   eta_m =  float(sys.argv[6])
 #   eta_v =  float(sys.argv[7])
+#   method U, C or M
 
-niter=1000
+niter=10
 
 for nelx in 64 96 128 160 ; do
 
-    nohup python3 stone.py $nelx 1  0  0 $niter 0 25  
-    nohup python3 stone.py $nelx 1 30  0 $niter 0 25  
-    nohup python3 stone.py $nelx 1 30 30 $niter 0 25  
+    for meth in U C M ; do
+        echo nelx= $nelx etam= 0 method= $meth
+        python3 stone.py $nelx 1  0  0 $niter 0 25 $meth > opla
+        python3 stone.py $nelx 1 30  0 $niter 0 25 $meth > opla
+        python3 stone.py $nelx 1 30 30 $niter 0 25 $meth > opla
+    done
 
-    nohup python3 stone.py $nelx 1  0  0 $niter 19 25  
-    nohup python3 stone.py $nelx 1 30  0 $niter 19 25  
-    nohup python3 stone.py $nelx 1 30 30 $niter 19 25  
+    for meth in U C M ; do
+        echo nelx= $nelx etam= 18 method= $meth
+        python3 stone.py $nelx 1  0  0 $niter 18 25 $meth > opla
+        python3 stone.py $nelx 1 30  0 $niter 18 25 $meth > opla
+        python3 stone.py $nelx 1 30 30 $niter 18 25 $meth > opla
+    done
 
-    nohup python3 stone.py $nelx 1  0  0 $niter 20 25  
-    nohup python3 stone.py $nelx 1 30  0 $niter 20 25  
-    nohup python3 stone.py $nelx 1 30 30 $niter 20 25  
+    for meth in U C M ; do
+        echo nelx= $nelx etam= 19 method= $meth
+        python3 stone.py $nelx 1  0  0 $niter 19 25 $meth > opla
+        python3 stone.py $nelx 1 30  0 $niter 19 25 $meth > opla
+        python3 stone.py $nelx 1 30 30 $niter 19 25 $meth > opla
+    done
+
+    for meth in U C M ; do
+        echo nelx= $nelx etam= 20 method= $meth
+        python3 stone.py $nelx 1  0  0 $niter 20 25 $meth > opla
+        python3 stone.py $nelx 1 30  0 $niter 20 25 $meth > opla
+        python3 stone.py $nelx 1 30 30 $niter 20 25 $meth > opla
+    done
 
 done
 

@@ -2,13 +2,12 @@ import numpy as np
 import sys as sys
 import time as clock 
 from numpy import linalg as LA
-#import scipy
 import scipy.sparse as sps
 from scipy.sparse import csr_matrix,lil_matrix
+import numba 
 
-method=2
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def gx(x,y):
     return 0
@@ -19,7 +18,7 @@ def gy(x,y):
     else:
        return -10
 
-#------------------------------------------------------------------------------
+###############################################################################
 # benchmark=1: simple brick
 # benchmark=2: Spiegelman et al (2016) 
 # benchmark=3: Kaus (2010) brick
@@ -27,16 +26,11 @@ def gy(x,y):
 # benchmark=5: Duretz et al (2018)
 
 def ubc(x,y):
-    if benchmark==1:
-       vaal=1.e-15*(Lx/2.0)
-    if benchmark==2:
-       vaal=0.0025/year
-    if benchmark==3: 
-       vaal=-1.e-15*(Lx/2.0)
-    if benchmark==4:
-       vaal=5e-9
-    if benchmark==5:
-       vaal=5.e-15*(Lx/2.0)
+    if benchmark==1: vaal=1.e-15*(Lx/2.0)
+    if benchmark==2: vaal=0.0025/year
+    if benchmark==3: vaal=-1.e-15*(Lx/2.0)
+    if benchmark==4: vaal=5e-9
+    if benchmark==5: vaal=5.e-15*(Lx/2.0)
 
     if x<Lx/2:
        val=vaal
@@ -68,6 +62,9 @@ def vbc(x,y):
     else:    
        return 0
 
+###############################################################################
+
+@numba.njit
 def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y,eta_m,eta_v):
 
     # deviatoric tensor E
@@ -216,93 +213,93 @@ def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y,eta_m,eta_v):
 
     return val,two_sin_psi,eps_vp,mech
 
-#------------------------------------------------------------------------------
+###############################################################################
 
-def NNV(rq,sq):
-    NV_0= 0.5*rq*(rq-1.) * 0.5*sq*(sq-1.)
-    NV_1= 0.5*rq*(rq+1.) * 0.5*sq*(sq-1.)
-    NV_2= 0.5*rq*(rq+1.) * 0.5*sq*(sq+1.)
-    NV_3= 0.5*rq*(rq-1.) * 0.5*sq*(sq+1.)
-    NV_4=     (1.-rq**2) * 0.5*sq*(sq-1.)
-    NV_5= 0.5*rq*(rq+1.) *     (1.-sq**2)
-    NV_6=     (1.-rq**2) * 0.5*sq*(sq+1.)
-    NV_7= 0.5*rq*(rq-1.) *     (1.-sq**2)
-    NV_8=     (1.-rq**2) *     (1.-sq**2)
-    return np.array([NV_0,NV_1,NV_2,NV_3,NV_4,NV_5,\
-                     NV_6,NV_7,NV_8],dtype=np.float64)
+def basis_functions_V(r,s):
+    N0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
+    N1= 0.5*r*(r+1.) * 0.5*s*(s-1.)
+    N2= 0.5*r*(r+1.) * 0.5*s*(s+1.)
+    N3= 0.5*r*(r-1.) * 0.5*s*(s+1.)
+    N4=    (1.-r**2) * 0.5*s*(s-1.)
+    N5= 0.5*r*(r+1.) *    (1.-s**2)
+    N6=    (1.-r**2) * 0.5*s*(s+1.)
+    N7= 0.5*r*(r-1.) *    (1.-s**2)
+    N8=    (1.-r**2) *    (1.-s**2)
+    return np.array([N0,N1,N2,N3,N4,N5,N6,N7,N8],dtype=np.float64)
 
-def dNNVdr(rq,sq):
-    dNVdr_0= 0.5*(2.*rq-1.) * 0.5*sq*(sq-1)
-    dNVdr_1= 0.5*(2.*rq+1.) * 0.5*sq*(sq-1)
-    dNVdr_2= 0.5*(2.*rq+1.) * 0.5*sq*(sq+1)
-    dNVdr_3= 0.5*(2.*rq-1.) * 0.5*sq*(sq+1)
-    dNVdr_4=       (-2.*rq) * 0.5*sq*(sq-1)
-    dNVdr_5= 0.5*(2.*rq+1.) *    (1.-sq**2)
-    dNVdr_6=       (-2.*rq) * 0.5*sq*(sq+1)
-    dNVdr_7= 0.5*(2.*rq-1.) *    (1.-sq**2)
-    dNVdr_8=       (-2.*rq) *    (1.-sq**2)
-    return np.array([dNVdr_0,dNVdr_1,dNVdr_2,dNVdr_3,dNVdr_4,dNVdr_5,\
-                     dNVdr_6,dNVdr_7,dNVdr_8],dtype=np.float64)
+def basis_functions_V_dr(r,s):
+    dNdr0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
+    dNdr1= 0.5*(2.*r+1.) * 0.5*s*(s-1)
+    dNdr2= 0.5*(2.*r+1.) * 0.5*s*(s+1)
+    dNdr3= 0.5*(2.*r-1.) * 0.5*s*(s+1)
+    dNdr4=       (-2.*r) * 0.5*s*(s-1)
+    dNdr5= 0.5*(2.*r+1.) *   (1.-s**2)
+    dNdr6=       (-2.*r) * 0.5*s*(s+1)
+    dNdr7= 0.5*(2.*r-1.) *   (1.-s**2)
+    dNdr8=       (-2.*r) *   (1.-s**2)
+    return np.array([dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,dNdr6,dNdr7,dNdr8],dtype=np.float64)
 
-def dNNVds(rq,sq):
-    dNVds_0= 0.5*rq*(rq-1.) * 0.5*(2.*sq-1.)
-    dNVds_1= 0.5*rq*(rq+1.) * 0.5*(2.*sq-1.)
-    dNVds_2= 0.5*rq*(rq+1.) * 0.5*(2.*sq+1.)
-    dNVds_3= 0.5*rq*(rq-1.) * 0.5*(2.*sq+1.)
-    dNVds_4=     (1.-rq**2) * 0.5*(2.*sq-1.)
-    dNVds_5= 0.5*rq*(rq+1.) *       (-2.*sq)
-    dNVds_6=     (1.-rq**2) * 0.5*(2.*sq+1.)
-    dNVds_7= 0.5*rq*(rq-1.) *       (-2.*sq)
-    dNVds_8=     (1.-rq**2) *       (-2.*sq)
-    return np.array([dNVds_0,dNVds_1,dNVds_2,dNVds_3,dNVds_4,dNVds_5,\
-                     dNVds_6,dNVds_7,dNVds_8],dtype=np.float64)
+def basis_functions_V_ds(r,s):
+    dNds0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
+    dNds1= 0.5*r*(r+1.) * 0.5*(2.*s-1.)
+    dNds2= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
+    dNds3= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
+    dNds4=    (1.-r**2) * 0.5*(2.*s-1.)
+    dNds5= 0.5*r*(r+1.) *       (-2.*s)
+    dNds6=    (1.-r**2) * 0.5*(2.*s+1.)
+    dNds7= 0.5*r*(r-1.) *       (-2.*s)
+    dNds8=    (1.-r**2) *       (-2.*s)
+    return np.array([dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6,dNds7,dNds8],dtype=np.float64)
 
-def NNP(rq,sq):
-    NP_0=0.25*(1-rq)*(1-sq)
-    NP_1=0.25*(1+rq)*(1-sq)
-    NP_2=0.25*(1+rq)*(1+sq)
-    NP_3=0.25*(1-rq)*(1+sq)
-    return np.array([NP_0,NP_1,NP_2,NP_3],dtype=np.float64)
+def basis_functions_P(r,s):
+    N0=0.25*(1-r)*(1-s)
+    N1=0.25*(1+r)*(1-s)
+    N2=0.25*(1+r)*(1+s)
+    N3=0.25*(1-r)*(1+s)
+    return np.array([N0,N1,N2,N3],dtype=np.float64)
 
-#------------------------------------------------------------------------------
+###############################################################################
 # benchmark=1: brick with velocity discontinuity at bottom
 # benchmark=2: Spiegelman et al, 2016. 
 # benchmark=3: brick with seed Kaus (2010)
 # benchmark=4: shortening block with sticky air - square inclusion (Gerya book)
 # benchmark=5: shortening block - round inclusion,  Duretz et al (2018)
-#------------------------------------------------------------------------------
+###############################################################################
 
 cm=0.01
 year=3600*24*365.
 eps=1.e-10
 
 print("*******************************")
-print("********** stone 39 ***********")
+print("********** stone 039 **********")
 print("*******************************")
 
 ndim=2
-mV=9     # number of velocity nodes making up an element
-mP=4     # number of pressure nodes making up an element
-ndofV=2  # number of velocity degrees of freedom per node
-ndofP=1  # number of pressure degrees of freedom 
+m_V=9     # number of velocity nodes making up an element
+m_P=4     # number of pressure nodes making up an element
+ndof_V=2  # number of velocity degrees of freedom per node
 
-debug=False
+debug=True
 
-if int(len(sys.argv) == 8):
+if int(len(sys.argv) == 9):
    print("reading arguments")
    nelx = int(sys.argv[1])
    benchmark = int(sys.argv[2])
    phi = float(sys.argv[3])
    psi =  float(sys.argv[4])
-   niter =  int(sys.argv[5])
-   eta_m =  float(sys.argv[6])
-   eta_v =  float(sys.argv[7])
-   eta_v=10**eta_v
-   eta_m=10**eta_m
+   niter = int(sys.argv[5])
+   eta_m = float(sys.argv[6]) ; eta_m=10**eta_m
+   eta_v = float(sys.argv[7]) ; eta_v=10**eta_v
+   method = str(sys.argv[8])
    produce_nl_vtu=False
-   name='_nelx'+sys.argv[1]+'_phi'+sys.argv[3]+'_psi'+sys.argv[4]+'_etam'+sys.argv[6]
+   name='_nelx'+sys.argv[1]+'_phi'+sys.argv[3]+'_psi'+sys.argv[4]+'_etam'+sys.argv[6]+'_'+method
+   print(name)
    every=1000000
 else:
+   #U (uncompensated): use dev strain rate in momentum eq, no rhs
+   #C (compensated)  : use dev strain rate in momentum eq, additional rhs
+   #M (modified)     : use full strain rate in momentum eq, no rhs
+   method='U'
    produce_nl_vtu=True
    benchmark=1
    every=1
@@ -310,7 +307,7 @@ else:
       nelx = 128
       phi=30
       psi=30
-      niter=5000
+      niter=50
       eta_v=1e25
       eta_m=1e20
       name=''
@@ -354,16 +351,17 @@ use_srn_diff=False # diffusion plasticity
 
 ###############################################################################
 
-nely=int(nelx*Ly/Lx)           # number of elements y direction
-nnx=2*nelx+1                   # number of nodes, x direction
-nny=2*nely+1                   # number of nodes, y direction
-NV=nnx*nny                     # total number of nodes
-nel=nelx*nely                  # total number of elements
-Nfem_V=NV*ndofV                # number of velocity dofs
-Nfem_P=(nelx+1)*(nely+1)*ndofP # number of pressure dofs
-Nfem=Nfem_V+Nfem_P             # total number of dofs
-hx=Lx/nelx                     # mesh size in x direction
-hy=Ly/nely                     # mesh size in y direction
+nely=int(nelx*Ly/Lx)     # number of elements y direction
+nnx=2*nelx+1             # number of nodes, x direction
+nny=2*nely+1             # number of nodes, y direction
+nn_V=nnx*nny             # total number of nodes
+nel=nelx*nely            # total number of elements
+Nfem_V=nn_V*ndof_V       # number of velocity dofs
+Nfem_P=(nelx+1)*(nely+1) # number of pressure dofs
+Nfem=Nfem_V+Nfem_P       # total number of dofs
+hx=Lx/nelx               # mesh size in x direction
+hy=Ly/nely               # mesh size in y direction
+ndof_V_el=m_V*ndof_V     # nb of V dofs per elt
 
 ###############################################################################
 # quadrature parameters
@@ -386,16 +384,20 @@ ustats_file=open("stats_u"+name+".ascii","w")
 vstats_file=open("stats_v"+name+".ascii","w")
 pstats_file=open("stats_p"+name+".ascii","w")
 etaqstats_file=open("stats_etaq"+name+".ascii","w")
+convfile=open('conv'+name+'.ascii',"w")
+vrmsfile=open('vrms'+name+'.ascii',"w")
+avrgsrfile=open('avrgsr'+name+'.ascii',"w")
 
 ###############################################################################
 
 print("benchmark=",benchmark)
+print("method=",method)
 print("nelx",nelx)
 print("nely",nely)
 print("nel",nel)
 print("nnx=",nnx)
 print("nny=",nny)
-print("NV=",NV)
+print("nn_V=",nn_V)
 print("Nfem_V=",Nfem_V)
 print("Nfem_P=",Nfem_P)
 print("Nfem=",Nfem)
@@ -411,19 +413,31 @@ print("*******************************")
 ###############################################################################
 start=clock.time()
 
-xV=np.zeros(NV,dtype=np.float64)  # x coordinates
-yV=np.zeros(NV,dtype=np.float64)  # y coordinates
+x_V=np.zeros(nn_V,dtype=np.float64)  # x coordinates
+y_V=np.zeros(nn_V,dtype=np.float64)  # y coordinates
 
 counter=0
 for j in range(0,nny):
     for i in range(0,nnx):
-        xV[counter]=i*hx/2.
-        yV[counter]=j*hy/2.
+        x_V[counter]=i*hx/2.
+        y_V[counter]=j*hy/2.
         counter += 1
 
 if debug: np.savetxt('grid.ascii',np.array([x_V,y_V]).T,header='# x,y')
 
 print("setup: grid points: %.3f s" % (clock.time()-start))
+
+###############################################################################
+# compute angle field that is only used in vtu output
+###############################################################################
+
+Angle=np.zeros(nn_V,dtype=np.float64)
+
+for i in range(0,nn_V):
+    if np.abs(x_V[i]-Lx/2)>hx/10:
+       Angle[i]=np.arctan(y_V[i]/np.abs(x_V[i]-Lx/2))/np.pi*180
+    else:
+       Angle[i]=90.
 
 ###############################################################################
 # build connectivity arrays for velocity and pressure
@@ -437,30 +451,30 @@ print("setup: grid points: %.3f s" % (clock.time()-start))
 ###############################################################################
 start=clock.time()
 
-iconV=np.zeros((mV,nel),dtype=np.int32)
-iconP=np.zeros((mP,nel),dtype=np.int32)
+icon_V=np.zeros((m_V,nel),dtype=np.int32)
+icon_P=np.zeros((m_P,nel),dtype=np.int32)
 
 counter = 0
 for j in range(0,nely):
     for i in range(0,nelx):
-        iconV[0,counter]=(i)*2+1+(j)*2*nnx -1
-        iconV[1,counter]=(i)*2+3+(j)*2*nnx -1
-        iconV[2,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1
-        iconV[3,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1
-        iconV[4,counter]=(i)*2+2+(j)*2*nnx -1
-        iconV[5,counter]=(i)*2+3+(j)*2*nnx+nnx -1
-        iconV[6,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1
-        iconV[7,counter]=(i)*2+1+(j)*2*nnx+nnx -1
-        iconV[8,counter]=(i)*2+2+(j)*2*nnx+nnx -1
+        icon_V[0,counter]=(i)*2+1+(j)*2*nnx -1
+        icon_V[1,counter]=(i)*2+3+(j)*2*nnx -1
+        icon_V[2,counter]=(i)*2+3+(j)*2*nnx+nnx*2 -1
+        icon_V[3,counter]=(i)*2+1+(j)*2*nnx+nnx*2 -1
+        icon_V[4,counter]=(i)*2+2+(j)*2*nnx -1
+        icon_V[5,counter]=(i)*2+3+(j)*2*nnx+nnx -1
+        icon_V[6,counter]=(i)*2+2+(j)*2*nnx+nnx*2 -1
+        icon_V[7,counter]=(i)*2+1+(j)*2*nnx+nnx -1
+        icon_V[8,counter]=(i)*2+2+(j)*2*nnx+nnx -1
         counter += 1
 
 counter = 0
 for j in range(0,nely):
     for i in range(0,nelx):
-        iconP[0,counter]=i+j*(nelx+1)
-        iconP[1,counter]=i+1+j*(nelx+1)
-        iconP[2,counter]=i+1+(j+1)*(nelx+1)
-        iconP[3,counter]=i+(j+1)*(nelx+1)
+        icon_P[0,counter]=i+j*(nelx+1)
+        icon_P[1,counter]=i+1+j*(nelx+1)
+        icon_P[2,counter]=i+1+(j+1)*(nelx+1)
+        icon_P[3,counter]=i+(j+1)*(nelx+1)
         counter += 1
 
 print("setup: connectivity: %.3f s" % (clock.time()-start))
@@ -470,93 +484,117 @@ print("setup: connectivity: %.3f s" % (clock.time()-start))
 ###############################################################################
 start=clock.time()
 
-u=np.zeros(NV,dtype=np.float64)    # x-component velocity
-v=np.zeros(NV,dtype=np.float64)    # y-component velocity
-bc_fix=np.zeros(Nfem_V,dtype=bool)    # boundary condition, yes/no
+u=np.zeros(nn_V,dtype=np.float64)        # x-component velocity
+v=np.zeros(nn_V,dtype=np.float64)        # y-component velocity
+bc_fix=np.zeros(Nfem_V,dtype=bool)       # boundary condition, yes/no
 bc_val=np.zeros(Nfem_V,dtype=np.float64) # boundary condition, value
 
-if benchmark==1: # simple brick
-   for i in range(0,NV):
-       if xV[i]/Lx<eps:
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
-          u[i]=ubc(xV[i],yV[i])
-       if xV[i]/Lx>(1-eps):
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
-          u[i] = ubc(xV[i],yV[i])
-       if yV[i]/Ly<eps:
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
+match benchmark:
 
-if benchmark==2 or benchmark==3: # spmw16 & kaus10
-   for i in range(0,NV):
-       if xV[i]/Lx<eps:
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
-          u[i]=ubc(xV[i],yV[i])
-       if xV[i]/Lx>(1-eps):
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
-          u[i] = ubc(xV[i],yV[i])
-       if yV[i]/Ly<eps:
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
-          v[i] = vbc(xV[i],yV[i])
+ case 1: # simple brick
+   for i in range(0,nn_V):
+       if x_V[i]/Lx<eps:
+          bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = ubc(x_V[i],y_V[i]) ; u[i]=ubc(x_V[i],y_V[i])
+       if x_V[i]/Lx>(1-eps):
+          bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = ubc(x_V[i],y_V[i]) ; u[i]=ubc(x_V[i],y_V[i])
+       if y_V[i]/Ly<eps:
+          bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = ubc(x_V[i],y_V[i]) ; u[i]=ubc(x_V[i],y_V[i])
+          bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = vbc(x_V[i],y_V[i]) ; v[i]=vbc(x_V[i],y_V[i])
 
-if benchmark==4 or benchmark==5: # shortening blocks
-   for i in range(0,NV):
-       if xV[i]/Lx<eps:
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
-       if xV[i]/Lx>(1-eps):
-          bc_fix[i*ndofV  ] = True ; bc_val[i*ndofV  ] = ubc(xV[i],yV[i])
-       if yV[i]/Ly<eps:
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
-       if yV[i]/Ly>1-eps:
-          bc_fix[i*ndofV+1] = True ; bc_val[i*ndofV+1] = vbc(xV[i],yV[i])
+ case 2 | 3: # spmw16 & kaus10
+   for i in range(0,nn_V):
+       if x_V[i]/Lx<eps:
+          bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = ubc(x_V[i],y_V[i]) ; u[i]=ubc(x_V[i],y_V[i])
+       if x_V[i]/Lx>(1-eps):
+          bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = ubc(x_V[i],y_V[i]) ; u[i]=ubc(x_V[i],y_V[i])
+       if y_V[i]/Ly<eps:
+          bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = vbc(x_V[i],y_V[i]) ; v[i]=vbc(x_V[i],y_V[i])
+
+ case 4 | 5: # shortening blocks
+   for i in range(0,nn_V):
+       if x_V[i]/Lx<eps:
+          bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = ubc(x_V[i],y_V[i]) ; u[i]=ubc(x_V[i],y_V[i])
+       if x_V[i]/Lx>(1-eps):
+          bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = ubc(x_V[i],y_V[i]) ; u[i]=ubc(x_V[i],y_V[i])
+       if y_V[i]/Ly<eps:
+          bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = vbc(x_V[i],y_V[i]) ; v[i]=vbc(x_V[i],y_V[i])
+       if y_V[i]/Ly>1-eps:
+          bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = vbc(x_V[i],y_V[i]) ; v[i]=vbc(x_V[i],y_V[i])
 
 print("setup: boundary conditions: %.3f s" % (clock.time()-start))
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
+# compute array for assembly - see stone 181
+###############################################################################
+start=clock.time()
+
+local_to_global_V=np.zeros((ndof_V_el,nel),dtype=np.int32)
+
+for iel in range(0,nel):
+    for k1 in range(0,m_V):
+        for i1 in range(0,ndof_V):
+            ikk=ndof_V*k1+i1
+            local_to_global_V[ikk,iel]=ndof_V*icon_V[k1,iel]+i1
+                 
+print("compute local_to_global_V: %.3f s" % (clock.time() - start))
+
+###############################################################################
+# fill I,J arrays - see stone 181
+###############################################################################
+start = clock.time()
+
+bignb=nel*( (m_V*ndof_V)**2 + 2*(m_V*ndof_V*m_P) )
+II_V=np.zeros(bignb,dtype=np.int32)    
+JJ_V=np.zeros(bignb,dtype=np.int32)    
+VV_V=np.zeros(bignb,dtype=np.float64)    
+
+counter=0
+for iel in range(0,nel):
+    for ikk in range(ndof_V_el):
+        m1=local_to_global_V[ikk,iel]
+        for jkk in range(ndof_V_el):
+            m2=local_to_global_V[jkk,iel]
+            II_V[counter]=m1
+            JJ_V[counter]=m2
+            counter+=1
+        for jkk in range(0,m_P):
+            m2 =icon_P[jkk,iel]+Nfem_V
+            II_V[counter]=m1
+            JJ_V[counter]=m2
+            counter+=1
+            II_V[counter]=m2
+            JJ_V[counter]=m1
+            counter+=1
+
+print("fill II_V,JJ_V arrays: %.3f s" % (clock.time()-start))
+
+###############################################################################
+###############################################################################
 # non-linear iterations
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
+###############################################################################
 
-if method==1:
+match method:
+ case 'C' | 'U':
+   C=np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64) 
+ case 'M':
    C=np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
-else:
-   C=np.array([[4,-2,0],[-2,4,0],[0,0,3]],dtype=np.float64) 
-   C/=3
 
-dNNNVdx = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVdy = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVdr = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-dNNNVds = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
-p       = np.zeros(Nfem_P,dtype=np.float64)        # pressure field 
-Res     = np.zeros(Nfem,dtype=np.float64)         # non-linear residual 
-sol     = np.zeros(Nfem,dtype=np.float64)         # solution vector 
-b_mat   = np.zeros((3,ndofV*mV),dtype=np.float64) # gradient matrix B 
-NNNV    = np.zeros(mV,dtype=np.float64)           # shape functions V
-NNNP    = np.zeros(mP,dtype=np.float64)           # shape functions P
-solP    = np.zeros(Nfem_P,dtype=np.float64)        # P solution vector 
-solV    = np.zeros(Nfem_V,dtype=np.float64)        # V solution vector
-exxn    = np.zeros(NV,dtype=np.float64)
-eyyn    = np.zeros(NV,dtype=np.float64)
-exyn    = np.zeros(NV,dtype=np.float64)
-srn     = np.zeros(NV,dtype=np.float64)
-etan    = np.zeros(NV,dtype=np.float64)
+p=np.zeros(Nfem_P,dtype=np.float64)         # (old) pressure field (needed) 
+sol=np.zeros(Nfem,dtype=np.float64)         # (old) solution vector (needed) 
 
-convfile=open('conv'+name+'.ascii',"w")
-vrmsfile=open('vrms'+name+'.ascii',"w")
-avrgsrfile=open('avrgsr'+name+'.ascii',"w")
-
-#only valid for rectangular elements!
-jcbi=np.zeros((ndim,ndim),dtype=np.float64)
+#only valid for all elements being identical rectangles !
+jcb=np.zeros((ndim,ndim),dtype=np.float64)  # jacobian matrix
+jcbi=np.zeros((ndim,ndim),dtype=np.float64) # inverse of jcb
 jcob=hx*hy/4
 jcbi[0,0] = 2/hx 
 jcbi[1,1] = 2/hy
 
 for iter in range(0,niter):
 
-   print("--------------------------")
+   print("-------------------------------")
    print("iter=", iter)
-   print("--------------------------")
+   print("-------------------------------")
 
    ############################################################################
    # build FE matrix A and rhs 
@@ -564,132 +602,113 @@ for iter in range(0,niter):
    # [GT 0 ][p] [h]
    ############################################################################
 
-   A_sparse= lil_matrix((Nfem,Nfem),dtype=np.float64) # FEM stokes matrix 
-   rhs     = np.zeros(Nfem,dtype=np.float64)          # right hand side of Ax=b
-   N_mat   = np.zeros((3,ndofP*mP),dtype=np.float64)  # N matrix  
-   f_rhs   = np.zeros(Nfem_V,dtype=np.float64)         # right hand side f 
-   h_rhs   = np.zeros(Nfem_P,dtype=np.float64)         # right hand side h 
-   xq      = np.zeros(9*nel,dtype=np.float64)         # x coords of q points 
-   yq      = np.zeros(9*nel,dtype=np.float64)         # y coords of q points 
-   etaq    = np.zeros(9*nel,dtype=np.float64)         # viscosity of q points 
-   divvq   = np.zeros(9*nel,dtype=np.float64)         # div velocity on q points 
-   pq      = np.zeros(9*nel,dtype=np.float64)         # pressure of q points 
-   srq_T   = np.zeros(9*nel,dtype=np.float64)         # total strain rate of q points 
-   srq_vp  = np.zeros(9*nel,dtype=np.float64)         # viscoplastic rate of q points 
-   mechq   = np.zeros(9*nel,dtype=np.float64)         # deformation mechanism at q points 
+   A_fem = lil_matrix((Nfem,Nfem),dtype=np.float64)  # FEM stokes matrix 
+   b_fem = np.zeros(Nfem,dtype=np.float64)           # right hand side of Ax=b
+   N_mat = np.zeros((3,m_P),dtype=np.float64)        # N matrix  
+   B     = np.zeros((3,ndof_V*m_V),dtype=np.float64) # gradient matrix B 
 
+   xq    = np.zeros(nq,dtype=np.float64) # x coords of q points 
+   yq    = np.zeros(nq,dtype=np.float64) # y coords of q points 
+   etaq  = np.zeros(nq,dtype=np.float64) # viscosity at q points 
+   divvq = np.zeros(nq,dtype=np.float64) # div velocity at q points 
+   pq    = np.zeros(nq,dtype=np.float64) # pressure at q points 
+   Dq    = np.zeros(nq,dtype=np.float64) # dilation rate at q points 
+   srq_T = np.zeros(nq,dtype=np.float64) # total strain rate at q points 
+   srq_vp= np.zeros(nq,dtype=np.float64) # viscoplastic rate at q points 
+   mechq = np.zeros(nq,dtype=np.float64) # deformation mechanism at q points 
+
+   time_bc=0
+   time_ass=0
    counter=0
+   counterq=0
    for iel in range(0,nel):
 
-       f_el =np.zeros((mV*ndofV),dtype=np.float64)
-       K_el =np.zeros((mV*ndofV,mV*ndofV),dtype=np.float64)
-       G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
-       h_el=np.zeros((mP*ndofP),dtype=np.float64)
+       K_el=np.zeros((ndof_V_el,ndof_V_el),dtype=np.float64)
+       G_el=np.zeros((ndof_V_el,m_P),dtype=np.float64)
+       f_el=np.zeros((ndof_V_el),dtype=np.float64)
+       h_el=np.zeros((m_P),dtype=np.float64)
 
        for jq in [0,1,2]:
            for iq in [0,1,2]:
-
-               # position & weight of quad. point
                rq=qcoords[iq]
                sq=qcoords[jq]
                weightq=qweights[iq]*qweights[jq]
-
-               NNNV[0:mV]=NNV(rq,sq)
-               dNNNVdr[0:mV]=dNNVdr(rq,sq)
-               dNNNVds[0:mV]=dNNVds(rq,sq)
-               NNNP[0:mP]=NNP(rq,sq)
-
-               # calculate jacobian matrix
-               #jcb=np.zeros((ndim,ndim),dtype=np.float64)
-               #for k in range(0,mV):
-               #    jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-               #    jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-               #    jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-               #    jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-               #jcob = np.linalg.det(jcb)
-               #jcbi = np.linalg.inv(jcb)
-
-               # compute dNdx & dNdy & strainrate
-               exxq=0.0
-               eyyq=0.0
-               exyq=0.0
-               for k in range(0,mV):
-                   xq[counter]+=NNNV[k]*xV[iconV[k,iel]]
-                   yq[counter]+=NNNV[k]*yV[iconV[k,iel]]
-                   #dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                   #dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-                   dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]
-                   dNNNVdy[k]=jcbi[1,1]*dNNNVds[k]
-                   exxq+=dNNNVdx[k]*u[iconV[k,iel]]
-                   eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
-                   exyq+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
-
-               if use_srn_diff:
-                  exxq=0.0
-                  eyyq=0.0
-                  exyq=0.0
-                  for k in range(0,mV):
-                      exxq+=NNNV[k]*exxn[iconV[k,iel]]
-                      eyyq+=NNNV[k]*eyyn[iconV[k,iel]]
-                      exyq+=NNNV[k]*exyn[iconV[k,iel]]
-
-               divvq[counter]=exxq+eyyq
+               N_V=basis_functions_V(rq,sq)
+               N_P=basis_functions_P(rq,sq)
+               dNdr_V=basis_functions_V_dr(rq,sq)
+               dNds_V=basis_functions_V_ds(rq,sq)
+               #jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
+               #jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
+               #jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
+               #jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
+               #jcbi=np.linalg.inv(jcb)
+               #JxWq=np.linalg.det(jcb)*weightq
+               JxWq=jcob*weightq
+               dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V
+               dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V
+               xq[counterq]=np.dot(N_V,x_V[icon_V[:,iel]])
+               yq[counterq]=np.dot(N_V,y_V[icon_V[:,iel]])
+               exxq=np.dot(dNdx_V,u[icon_V[:,iel]])
+               eyyq=np.dot(dNdy_V,v[icon_V[:,iel]])
+               exyq=np.dot(dNdx_V,v[icon_V[:,iel]])*0.5+\
+                    np.dot(dNdy_V,u[icon_V[:,iel]])*0.5
+               pq[counterq]=np.dot(N_P,p[icon_P[:,iel]])
+               #if use_srn_diff:
+               #   exxq=np.dot(N_V,exxn[icon_V[:,iel]])
+               #   eyyq=np.dot(N_V,eyyn[icon_V[:,iel]])
+               #   exyq=np.dot(N_V,exyn[icon_V[:,iel]])
+               divvq[counterq]=exxq+eyyq
 
                # effective strain rate at qpoint                
-               srq_T[counter]=np.sqrt(0.5*(exxq*exxq+eyyq*eyyq)+exyq*exyq)
+               srq_T[counterq]=np.sqrt(0.5*(exxq**2+eyyq**2)+exyq**2)     # dev?!!?
 
-               # compute pressure at qpoint
-               for k in range(0,mP):
-                   pq[counter]+=NNNP[k]*p[iconP[k,iel]]
-
-               # construct 3x8 b_mat matrix
-               for i in range(0,mV):
-                   b_mat[0:3, 2*i:2*i+2] = [[dNNNVdx[i],0.       ],
-                                            [0.        ,dNNNVdy[i]],
-                                            [dNNNVdy[i],dNNNVdx[i]]]
+               # construct 3x8 B matrix
+               for i in range(0,m_V):
+                   B[0:3,2*i:2*i+2]=[[dNdx_V[i],0.      ],
+                                     [0.       ,dNdy_V[i]],
+                                     [dNdy_V[i],dNdx_V[i]]]
 
                # compute effective plastic viscosity
-               etaq[counter],two_sin_psi,srq_vp[counter],mechq[counter]=\
-                   viscosity(exxq,eyyq,exyq,pq[counter],cohesion,phi,\
-                   iter,xq[counter],yq[counter],eta_m,eta_v)
+               etaq[counterq],two_sin_psi,srq_vp[counterq],mechq[counterq]=\
+                   viscosity(exxq,eyyq,exyq,pq[counterq],cohesion,phi,\
+                   iter,xq[counterq],yq[counterq],eta_m,eta_v)
 
-               dilation_rate=two_sin_psi*srq_vp[counter] *0.5 ##why *0.5 ?!?!
+               Dq[counterq]=two_sin_psi*srq_vp[counterq] *0.5 ##why *0.5 ?!?!
 
-               # compute elemental a_mat matrix
-               K_el+=b_mat.T.dot(C.dot(b_mat))*etaq[counter]*weightq*jcob
+               K_el+=B.T.dot(C.dot(B))*etaq[counterq]*JxWq
 
-               # compute elemental rhs vector
-               for i in range(0,mV):
-                   f_el[ndofV*i+0]+=NNNV[i]*jcob*weightq*gx(xq,yq)*rho
-                   f_el[ndofV*i+1]+=NNNV[i]*jcob*weightq*gy(xq,yq)*rho
+               for i in range(0,m_V):
+                   f_el[ndof_V*i+0]+=N_V[i]*rho*gx(xq,yq)*JxWq
+                   f_el[ndof_V*i+1]+=N_V[i]*rho*gy(xq,yq)*JxWq
 
-               #add to rhs dilation term only if method is 1
-               if method==1:
-                  for i in range(0,mV):
-                      f_el[ndofV*i+0]-=2./3.*dNNNVdx[i]*jcob*weightq*etaq[counter]*dilation_rate
-                      f_el[ndofV*i+1]-=2./3.*dNNNVdy[i]*jcob*weightq*etaq[counter]*dilation_rate
+               #add to rhs dilation term only if method is compensated
+               if method=='C':
+                  for i in range(0,m_V):
+                      f_el[ndof_V*i+0]-=2./3.*dNdx_V[i]*etaq[counterq]*Dq[counterq]*JxWq
+                      f_el[ndof_V*i+1]-=2./3.*dNdy_V[i]*etaq[counterq]*Dq[counterq]*JxWq
 
-               for i in range(0,mP):
-                   N_mat[0,i]=NNNP[i]
-                   N_mat[1,i]=NNNP[i]
-                   N_mat[2,i]=0.
-
-               G_el-=b_mat.T.dot(N_mat)*weightq*jcob
+               N_mat[0,:]=N_P[:]
+               N_mat[1,:]=N_P[:]
+               G_el-=B.T.dot(N_mat)*JxWq
                 
-               h_el[:]-=NNNP[:]*dilation_rate*weightq*jcob
+               h_el[:]-=N_P[:]*Dq[counterq]*JxWq
 
-               counter+=1
+               counterq+=1
            # end for iq 
        # end for jq 
 
+       G_el*=scaling_coeff
+       h_el*=scaling_coeff
+
        # impose b.c. 
-       for k1 in range(0,mV):
-           for i1 in range(0,ndofV):
-               ikk=ndofV*k1          +i1
-               m1 =ndofV*iconV[k1,iel]+i1
+       startbc=clock.time()
+       for k1 in range(0,m_V):
+           for i1 in range(0,ndof_V):
+               ikk=ndof_V*k1          +i1
+               m1 =ndof_V*icon_V[k1,iel]+i1
                if bc_fix[m1]:
                   K_ref=K_el[ikk,ikk] 
-                  for jkk in range(0,mV*ndofV):
+                  for jkk in range(0,m_V*ndof_V):
                       f_el[jkk]-=K_el[jkk,ikk]*bc_val[m1]
                       K_el[ikk,jkk]=0
                       K_el[jkk,ikk]=0
@@ -701,90 +720,65 @@ for iter in range(0,niter):
                # end if 
            # end for i1 
        #end for k1 
+       time_bc+=clock.time()-startbc
 
-       # assemble matrix K_mat and right hand side rhs
-       for k1 in range(0,mV):
-           for i1 in range(0,ndofV):
-               ikk=ndofV*k1          +i1
-               m1 =ndofV*iconV[k1,iel]+i1
-               for k2 in range(0,mV):
-                   for i2 in range(0,ndofV):
-                       jkk=ndofV*k2          +i2
-                       m2 =ndofV*iconV[k2,iel]+i2
-                       A_sparse[m1,m2] += K_el[ikk,jkk]
-                   #end for i2
-               #end for k2
-               for k2 in range(0,mP):
-                   jkk=k2
-                   m2 =iconP[k2,iel]
-                   A_sparse[m1,Nfem_V+m2]+=G_el[ikk,jkk]*scaling_coeff
-                   A_sparse[Nfem_V+m2,m1]+=G_el[ikk,jkk]*scaling_coeff
-               f_rhs[m1]+=f_el[ikk]
-               #end for k2
-           #end for i1
-       #end for k1 
-
-       for k1 in range(0,mP):
-           m1=iconP[k1,iel]
-           h_rhs[m1]+=h_el[k1]*scaling_coeff
-       #end for k1
+       # assembly
+       startass=clock.time()
+       for ikk in range(ndof_V_el):
+           m1=local_to_global_V[ikk,iel]
+           for jkk in range(ndof_V_el):
+               VV_V[counter]=K_el[ikk,jkk]
+               counter+=1
+           for jkk in range(0,m_P):
+               VV_V[counter]=G_el[ikk,jkk]
+               counter+=1
+               VV_V[counter]=G_el[ikk,jkk]
+               counter+=1
+           b_fem[m1]+=f_el[ikk]
+       for k2 in range(0,m_P):
+           m2=icon_P[k2,iel]
+           b_fem[Nfem_V+m2]+=h_el[k2]
+       time_ass+=clock.time()-startass
 
    # end for iel 
+   print("     -> time bc: %.2f s" %(time_bc))
+   print("     -> time assembly: %.2f s" %(time_ass))
 
-   print("     -> f (m,M) %.5e %.5e " %(np.min(f_rhs),np.max(f_rhs)))
-   print("     -> h (m,M) %.5e %.5e " %(np.min(h_rhs),np.max(h_rhs)))
+   print("     -> etaq (m,M) %.3e %.3e " %(np.min(etaq),np.max(etaq)))
 
-   print("     -> etaq (m,M) %.5e %.5e " %(np.min(etaq),np.max(etaq)))
-
-   etaqstats_file.write("%d %8e %8e \n" %(iter,np.min(etaq),np.max(etaq)))
-   etaqstats_file.flush()
+   etaqstats_file.write("%d %8e %8e \n" %(iter,np.min(etaq),np.max(etaq))) ; etaqstats_file.flush()
 
    print("build FE matrix: %.3f s" % (clock.time()-start))
 
-   ######################################################################
-   # pressure nullspace removal
-   ######################################################################
-
-   if benchmark==4 or benchmark==5: 
-      for i in range(0,Nfem):
-          A_sparse[Nfem-1,i]=0
-          A_sparse[i,Nfem-1]=0
-          A_sparse[Nfem-1,Nfem-1]=1
-          h_rhs[Nfem_P-1]=0
-
-   ######################################################################
+   ############################################################################
    # assemble f, h into rhs and solve
-   ######################################################################
+   ############################################################################
    start=clock.time()
 
-   rhs[0:Nfem_V]=f_rhs
-   rhs[Nfem_V:Nfem]=h_rhs
-   sparse_matrix=A_sparse.tocsr()
-   Res=sparse_matrix.dot(sol)-rhs
-   sol=sps.linalg.spsolve(sparse_matrix,rhs)
+   sparse_matrix=sps.coo_matrix((VV_V,(II_V,JJ_V)),shape=(Nfem,Nfem)).tocsr()
+   Res=sparse_matrix.dot(sol)-b_fem
+   sol=sps.linalg.spsolve(sparse_matrix,b_fem)
 
-   u,v=np.reshape(sol[0:Nfem_V],(NV,2)).T
+   u,v=np.reshape(sol[0:Nfem_V],(nn_V,2)).T
    p=sol[Nfem_V:Nfem]*scaling_coeff
 
    print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
    print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
    print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
-   ustats_file.write("%d %8e %8e \n" %(iter,np.min(u),np.max(u)))
-   vstats_file.write("%d %8e %8e \n" %(iter,np.min(v),np.max(v)))
-   pstats_file.write("%d %8e %8e \n" %(iter,np.min(p),np.max(p)))
-   ustats_file.flush()
-   vstats_file.flush()
-   pstats_file.flush()
+   ustats_file.write("%d %8e %8e \n" %(iter,np.min(u),np.max(u))) ; ustats_file.flush()
+   vstats_file.write("%d %8e %8e \n" %(iter,np.min(v),np.max(v))) ; vstats_file.flush()
+   pstats_file.write("%d %8e %8e \n" %(iter,np.min(p),np.max(p))) ; pstats_file.flush()
 
    print("solve system: %.3f s - Nfem %d" % (clock.time()-start,Nfem))
 
-   #################################################################
-   #normalise pressure
-   #################################################################
+   ############################################################################
+   # normalise pressure
+   # I take a shortcut and assume elements are all same size rectangles hx,hy
+   ############################################################################
    start=clock.time()
 
-   if benchmark==4:
+   if benchmark==4 or benchmark==5:
 
       int_p=0
       for iel in range(0,nel):
@@ -793,10 +787,10 @@ for iter in range(0,niter):
                   rq=qcoords[iq]
                   sq=qcoords[jq]
                   weightq=qweights[iq]*qweights[jq]
-                  NNNP[0:mP]=NNP(rq,sq)
-                  jcob=hx*hy/4
-                  p_q=NNNP[0:mP].dot(p[iconP[0:mP,iel]])
-                  int_p+=p_q*weightq*jcob
+                  N_P=basis_functions_P(rq,sq)
+                  JxWq=jcob*weightq
+                  p_q=np.dot(N_P,p[icon_P[:,iel]])
+                  int_p+=p_q*JxWq
               #end for
           #end for
       #end for
@@ -812,341 +806,225 @@ for iter in range(0,niter):
 
    print("normalise pressure: %.3f s" % (clock.time()-start))
 
-   #################################################################
-   # compute non-linear residual
-   #################################################################
-   start=clock.time()
-
-   if iter==0:
-      Res0_inf=LA.norm(Res,np.inf)
-      Res0_two=LA.norm(Res,2)
-
-   Res_inf=LA.norm(Res,np.inf)
-   Res_two=LA.norm(Res,2)
-
-   conv_inf=Res_inf/Res0_inf
-   conv_two=Res_two/Res0_two
-
-   print("     -> Nonlinear res. (2-norm) %7e" % (conv_two))
-
-   if conv_two<tol_nl:
-      break
-
-   Res_u,Res_v=np.reshape(Res[0:Nfem_V],(NV,2)).T
-   Res_p=Res[Nfem_V:Nfem]
-   Ru=LA.norm(Res_u,2)
-   Rv=LA.norm(Res_v,2)
-   Rp=LA.norm(Res_p,2)
-
-   convfile.write("%3d %10e %10e %10e %10e\n" %(iter,conv_two,Ru,Rv,Rp)) 
-   convfile.flush()
+   ############################################################################
 
    if debug:
       np.savetxt('etaq_{:04d}.ascii'.format(iter),np.array([xq,yq,etaq]).T,header='# x,y,eta')
       np.savetxt('velocity_{:04d}.ascii'.format(iter),np.array([x_V,y_V,u,v]).T,header='# x,y,u,v')
       np.savetxt('pq_{:04d}.ascii'.format(iter),np.array([xq,yq,pq]).T,header='# x,y,p')
 
-   print("computing res norms: %.3f s" % (clock.time()-start))
+   ############################################################################
+   # compute non-linear residual
+   ############################################################################
+   start=clock.time()
 
-   #####################################################################
-   # interpolate pressure onto velocity grid points (for plotting)
-   #####################################################################
+   if iter==0: Res0_two=LA.norm(Res,2)
+
+   Res_two=LA.norm(Res,2)
+
+   conv_two=Res_two/Res0_two
+
+   print("     -> Nonlinear res. (2-norm) %7e" % (conv_two))
+
+   Res_u,Res_v=np.reshape(Res[0:Nfem_V],(nn_V,2)).T
+   Ru=LA.norm(Res_u,2)
+   Rv=LA.norm(Res_v,2)
+
+   Res_p=Res[Nfem_V:Nfem]
+   Rp=LA.norm(Res_p,2)
+
+   convfile.write("%3d %10e %10e %10e %10e\n" %(iter,conv_two,Ru,Rv,Rp)) ; convfile.flush()
+
+   if conv_two<tol_nl:
+      break
+
+   print("computing resduals norm: %.3f s" % (clock.time()-start))
+
+   ############################################################################
+   # interpolate pressure and pressure residual onto V nodes (for plotting)
+   ############################################################################
    # velocity    pressure
    # 3---6---2   3-------2
    # |       |   |       |
    # 7   8   5   |       |
    # |       |   |       |
    # 0---4---1   0-------1
-   #################################################################
+   ############################################################################
    start=clock.time()
 
-   q=np.zeros(NV,dtype=np.float64)
-   Res_q=np.zeros(NV,dtype=np.float64)
+   q=np.zeros(nn_V,dtype=np.float64)
+   Res_q=np.zeros(nn_V,dtype=np.float64)
 
    for iel in range(0,nel):
-       q[iconV[0,iel]]=p[iconP[0,iel]]
-       q[iconV[1,iel]]=p[iconP[1,iel]]
-       q[iconV[2,iel]]=p[iconP[2,iel]]
-       q[iconV[3,iel]]=p[iconP[3,iel]]
-       q[iconV[4,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]])*0.5
-       q[iconV[5,iel]]=(p[iconP[1,iel]]+p[iconP[2,iel]])*0.5
-       q[iconV[6,iel]]=(p[iconP[2,iel]]+p[iconP[3,iel]])*0.5
-       q[iconV[7,iel]]=(p[iconP[3,iel]]+p[iconP[0,iel]])*0.5
-       q[iconV[8,iel]]=(p[iconP[0,iel]]+p[iconP[1,iel]]+\
-                        p[iconP[2,iel]]+p[iconP[3,iel]])*0.25
+       q[icon_V[0,iel]]=p[icon_P[0,iel]]
+       q[icon_V[1,iel]]=p[icon_P[1,iel]]
+       q[icon_V[2,iel]]=p[icon_P[2,iel]]
+       q[icon_V[3,iel]]=p[icon_P[3,iel]]
+       q[icon_V[4,iel]]=(p[icon_P[0,iel]]+p[icon_P[1,iel]])*0.5
+       q[icon_V[5,iel]]=(p[icon_P[1,iel]]+p[icon_P[2,iel]])*0.5
+       q[icon_V[6,iel]]=(p[icon_P[2,iel]]+p[icon_P[3,iel]])*0.5
+       q[icon_V[7,iel]]=(p[icon_P[3,iel]]+p[icon_P[0,iel]])*0.5
+       q[icon_V[8,iel]]=(p[icon_P[0,iel]]+p[icon_P[1,iel]]+\
+                         p[icon_P[2,iel]]+p[icon_P[3,iel]])*0.25
 
    for iel in range(0,nel):
-       Res_q[iconV[0,iel]]=Res_p[iconP[0,iel]]
-       Res_q[iconV[1,iel]]=Res_p[iconP[1,iel]]
-       Res_q[iconV[2,iel]]=Res_p[iconP[2,iel]]
-       Res_q[iconV[3,iel]]=Res_p[iconP[3,iel]]
-       Res_q[iconV[4,iel]]=(Res_p[iconP[0,iel]]+Res_p[iconP[1,iel]])*0.5
-       Res_q[iconV[5,iel]]=(Res_p[iconP[1,iel]]+Res_p[iconP[2,iel]])*0.5
-       Res_q[iconV[6,iel]]=(Res_p[iconP[2,iel]]+Res_p[iconP[3,iel]])*0.5
-       Res_q[iconV[7,iel]]=(Res_p[iconP[3,iel]]+Res_p[iconP[0,iel]])*0.5
-       Res_q[iconV[8,iel]]=(Res_p[iconP[0,iel]]+Res_p[iconP[1,iel]]+\
-                            Res_p[iconP[2,iel]]+Res_p[iconP[3,iel]])*0.25
+       Res_q[icon_V[0,iel]]=Res_p[icon_P[0,iel]]
+       Res_q[icon_V[1,iel]]=Res_p[icon_P[1,iel]]
+       Res_q[icon_V[2,iel]]=Res_p[icon_P[2,iel]]
+       Res_q[icon_V[3,iel]]=Res_p[icon_P[3,iel]]
+       Res_q[icon_V[4,iel]]=(Res_p[icon_P[0,iel]]+Res_p[icon_P[1,iel]])*0.5
+       Res_q[icon_V[5,iel]]=(Res_p[icon_P[1,iel]]+Res_p[icon_P[2,iel]])*0.5
+       Res_q[icon_V[6,iel]]=(Res_p[icon_P[2,iel]]+Res_p[icon_P[3,iel]])*0.5
+       Res_q[icon_V[7,iel]]=(Res_p[icon_P[3,iel]]+Res_p[icon_P[0,iel]])*0.5
+       Res_q[icon_V[8,iel]]=(Res_p[icon_P[0,iel]]+Res_p[icon_P[1,iel]]+\
+                             Res_p[icon_P[2,iel]]+Res_p[icon_P[3,iel]])*0.25
 
-   if debug: np.savetxt('q_{:04d}.ascii',np.array([x_V,y_V,q]).T,header='# x,y,q')
+   if debug: np.savetxt('q_{:04d}.ascii'.format(iter),np.array([x_V,y_V,q]).T,header='# x,y,q')
 
    print("project p(Q1) onto vel(Q2) nodes: %.3f s" % (clock.time()-start))
 
-   ######################################################################
-   # compute strainrate at center of element 
-   ######################################################################
+   ############################################################################
+   # compute strainrate and pressure at center of element 
+   ############################################################################
    start=clock.time()
 
-   xc = np.zeros(nel,dtype=np.float64)  
-   yc = np.zeros(nel,dtype=np.float64)  
-   pc = np.zeros(nel,dtype=np.float64)  
-   exx = np.zeros(nel,dtype=np.float64)  
-   eyy = np.zeros(nel,dtype=np.float64)  
-   exy = np.zeros(nel,dtype=np.float64)  
-   sr  = np.zeros(nel,dtype=np.float64)  
+   x_e=np.zeros(nel,dtype=np.float64)  
+   y_e=np.zeros(nel,dtype=np.float64)  
+   p_e=np.zeros(nel,dtype=np.float64)  
+   exx_e=np.zeros(nel,dtype=np.float64)  
+   eyy_e=np.zeros(nel,dtype=np.float64)  
+   exy_e=np.zeros(nel,dtype=np.float64)  
+   sr_e=np.zeros(nel,dtype=np.float64)  
+
+   rq=0.
+   sq=0.
+   N_V=basis_functions_V(rq,sq)
+   N_P=basis_functions_P(rq,sq)
+   dNdr_V=basis_functions_V_dr(rq,sq)
+   dNds_V=basis_functions_V_ds(rq,sq)
+   #jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
+   #jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
+   #jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
+   #jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
+   #jcbi=np.linalg.inv(jcb)
+   dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V
+   dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V
 
    for iel in range(0,nel):
+       p_e[iel]=np.dot(N_P,p[icon_P[:,iel]])
+       x_e[iel]=np.dot(N_V,x_V[icon_V[:,iel]])
+       y_e[iel]=np.dot(N_V,y_V[icon_V[:,iel]])
+       exx_e[iel]=np.dot(dNdx_V,u[icon_V[:,iel]])
+       eyy_e[iel]=np.dot(dNdy_V,v[icon_V[:,iel]])
+       exy_e[iel]=np.dot(dNdx_V,v[icon_V[:,iel]])*0.5+\
+                  np.dot(dNdy_V,u[icon_V[:,iel]])*0.5
+       sr_e[iel]=np.sqrt(0.5*(exx_e[iel]**2+eyy_e[iel]**2)+exy_e[iel]**2)
 
-       rq = 0.
-       sq = 0.
+   divv_e=exx_e+eyy_e
 
-       NNNV[0:mV]=NNV(rq,sq)
-       dNNNVdr[0:mV]=dNNVdr(rq,sq)
-       dNNNVds[0:mV]=dNNVds(rq,sq)
-       NNNP[0:mP]=NNP(rq,sq)
-
-       jcb=np.zeros((ndim,ndim),dtype=np.float64)
-       for k in range(0,mV):
-           jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-           jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
-           jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-           jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
-       jcob=np.linalg.det(jcb)
-       jcbi=np.linalg.inv(jcb)
-
-       for k in range(0,mV):
-           dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-           dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-
-       for k in range(0,mV):
-           xc[iel] += NNNV[k]*xV[iconV[k,iel]]
-           yc[iel] += NNNV[k]*yV[iconV[k,iel]]
-           exx[iel] += dNNNVdx[k]*u[iconV[k,iel]]
-           eyy[iel] += dNNNVdy[k]*v[iconV[k,iel]]
-           exy[iel] += 0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
-
-       sr[iel]=np.sqrt(0.5*(exx[iel]*exx[iel]+eyy[iel]*eyy[iel])+exy[iel]*exy[iel])
-
-       for k in range(0,mP):
-           pc[iel] += NNNP[k]*p[iconP[k,iel]]
-
-   #end if
-
-   print("     -> exx (m,M) %.5e %.5e " %(np.min(exx),np.max(exx)))
-   print("     -> eyy (m,M) %.5e %.5e " %(np.min(eyy),np.max(eyy)))
-   print("     -> exy (m,M) %.5e %.5e " %(np.min(exy),np.max(exy)))
-   print("     -> sr  (m,M) %.5e %.5e " %(np.min(sr),np.max(sr)))
-   print("     -> pc  (m,M) %.5e %.5e " %(np.min(pc),np.max(pc)))
+   print("     -> exx_e (m,M) %.3e %.3e " %(np.min(exx_e),np.max(exx_e)))
+   print("     -> eyy_e (m,M) %.3e %.3e " %(np.min(eyy_e),np.max(eyy_e)))
+   print("     -> exy_e (m,M) %.3e %.3e " %(np.min(exy_e),np.max(exy_e)))
+   print("     -> p_e   (m,M) %.3e %.3e " %(np.min(p_e),np.max(p_e)))
 
    print("compute press & sr: %.3f s" % (clock.time()-start))
 
-   #####################################################################
-   # compute strainrate on velocity grid
-   #####################################################################
+   ############################################################################
+   # compute elemental viscosity
+   ############################################################################
    start=clock.time()
 
-   exxn=np.zeros(NV,dtype=np.float64)
-   eyyn=np.zeros(NV,dtype=np.float64)
-   exyn=np.zeros(NV,dtype=np.float64)
-   srn=np.zeros(NV,dtype=np.float64)
-   divvn=np.zeros(NV,dtype=np.float64)
-   c=np.zeros(NV,dtype=np.float64)
-
-   rVnodes=[-1,+1,1,-1, 0,1,0,-1,0]
-   sVnodes=[-1,-1,1,+1,-1,0,1, 0,0]
+   eta_e=np.zeros(nel,dtype=np.float64)
 
    for iel in range(0,nel):
-       for i in range(0,mV):
-           NNNV[0:mV]=NNV(rVnodes[i],sVnodes[i])
-           dNNNVdr[0:mV]=dNNVdr(rVnodes[i],sVnodes[i])
-           dNNNVds[0:mV]=dNNVds(rVnodes[i],sVnodes[i])
-           jcb=np.zeros((ndim,ndim),dtype=np.float64)
-           for k in range(0,mV):
-               jcb[0,0]+=dNNNVdr[k]*xV[iconV[k,iel]]
-               jcb[0,1]+=dNNNVdr[k]*yV[iconV[k,iel]]
-               jcb[1,0]+=dNNNVds[k]*xV[iconV[k,iel]]
-               jcb[1,1]+=dNNNVds[k]*yV[iconV[k,iel]]
-           jcob=np.linalg.det(jcb)
-           jcbi=np.linalg.inv(jcb)
-           for k in range(0,mV):
-               dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-               dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-           e_xx=0.
-           e_yy=0.
-           e_xy=0.
-           for k in range(0,mV):
-               e_xx += dNNNVdx[k]*u[iconV[k,iel]]
-               e_yy += dNNNVdy[k]*v[iconV[k,iel]]
-               e_xy += 0.5*dNNNVdy[k]*u[iconV[k,iel]]+\
-                       0.5*dNNNVdx[k]*v[iconV[k,iel]]
-           exxn[iconV[i,iel]]+=e_xx
-           eyyn[iconV[i,iel]]+=e_yy
-           exyn[iconV[i,iel]]+=e_xy
-           c[iconV[i,iel]]+=1.
-       # end for i
-   # end for iel
+       eta_e[iel],dum,dum,dum=viscosity(exx_e[iel],eyy_e[iel],exy_e[iel],p_e[iel],\
+                                        cohesion,phi,iter,x_e[iel],y_e[iel],eta_m,eta_v)
 
-   exxn/=c
-   eyyn/=c
-   exyn/=c
+   print("     -> eta_e (m,M) %.3e %.3e " %(np.min(eta_e),np.max(eta_e)))
 
-   divvn[:]=exxn[:]+eyyn[:]
+   if debug: 
+      np.savetxt('eta_e_{:04d}.ascii'.format(iter),np.array([x_e,y_e,eta_e]).T,header='# x,y,eta')
 
-   srn[:]=np.sqrt(0.5*(exxn[:]*exxn[:]+eyyn[:]*eyyn[:])+exyn[:]*exyn[:])
+   print("compute elemental viscosity: %.3f s" % (clock.time()-start))
 
-   print("     -> exxn  (m,M) %.6e %.6e " %(np.min(exxn),np.max(exxn)))
-   print("     -> eyyn  (m,M) %.6e %.6e " %(np.min(eyyn),np.max(eyyn)))
-   print("     -> exyn  (m,M) %.6e %.6e " %(np.min(exyn),np.max(exyn)))
-   print("     -> srn   (m,M) %.6e %.6e " %(np.min(srn),np.max(srn)))
-   print("     -> divvn (m,M) %.6e %.6e " %(np.min(divvn),np.max(divvn)))
+   ############################################################################
+   # compute strainrate on velocity grid
+   ############################################################################
+   start=clock.time()
+
+   r_V=[-1,+1,1,-1, 0,1,0,-1,0]
+   s_V=[-1,-1,1,+1,-1,0,1, 0,0]
+
+   exx_n=np.zeros(nn_V,dtype=np.float64)
+   eyy_n=np.zeros(nn_V,dtype=np.float64)
+   exy_n=np.zeros(nn_V,dtype=np.float64)
+   counter=np.zeros(nn_V,dtype=np.float64)
+
+   for iel in range(0,nel):
+       for i in range(0,m_V):
+           dNdr_V=basis_functions_V_dr(r_V[i],s_V[i])
+           dNds_V=basis_functions_V_ds(r_V[i],s_V[i])
+           #jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
+           #jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
+           #jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
+           #jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
+           #jcbi=np.linalg.inv(jcb)
+           dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V
+           dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V
+           e_xx=np.dot(dNdx_V,u[icon_V[:,iel]])
+           e_yy=np.dot(dNdy_V,v[icon_V[:,iel]])
+           e_xy=np.dot(dNdx_V,v[icon_V[:,iel]])*0.5+\
+                np.dot(dNdy_V,u[icon_V[:,iel]])*0.5
+           exx_n[icon_V[i,iel]]+=e_xx
+           eyy_n[icon_V[i,iel]]+=e_yy
+           exy_n[icon_V[i,iel]]+=e_xy
+           counter[icon_V[i,iel]]+=1.
+
+   exx_n/=counter
+   eyy_n/=counter
+   exy_n/=counter
+
+   divv_n=exx_n+eyy_n
+
+   sr_n=np.sqrt(0.5*(exx_n**2+eyy_n**2)+exy_n**2)
+
+   print("     -> exx_n  (m,M) %.3e %.3e " %(np.min(exx_n),np.max(exx_n)))
+   print("     -> eyy_n  (m,M) %.3e %.3e " %(np.min(eyy_n),np.max(eyy_n)))
+   print("     -> exy_n  (m,M) %.3e %.3e " %(np.min(exy_n),np.max(exy_n)))
+   print("     -> divv_n (m,M) %.3e %.3e " %(np.min(divv_n),np.max(divv_n)))
+   print("     -> sr_n   (m,M) %.3e %.3e " %(np.min(sr_n),np.max(sr_n)))
 
    print("compute nod strain rate: %.3f s" % (clock.time()-start))
 
-   ######################################################################
+   ############################################################################
    # diffuse nodal strain rate
-   ######################################################################
+   ############################################################################
    start=clock.time()
 
-   if use_srn_diff:
+   #if use_srn_diff:
+      #check additional python file diffuse_strainrate.py & reattach
 
-      NfemT=NV
-      dt=1
-      alphaT=0.5
-      diffcoeff=250
-      ndofT=1
-
-      A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
-      rhs_xx = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
-      rhs_yy = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
-      rhs_xy = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
-      B_mat=np.zeros((2,ndofT*mV),dtype=np.float64)     # gradient matrix B 
-      N_mat = np.zeros((mV,1),dtype=np.float64)         # shape functions
-
-      counterq=0
-      for iel in range (0,nel):
-
-          exx_prev=np.zeros(mV,dtype=np.float64)
-          eyy_prev=np.zeros(mV,dtype=np.float64)
-          exy_prev=np.zeros(mV,dtype=np.float64)
-          b_el_xx=np.zeros(mV*ndofT,dtype=np.float64)
-          b_el_yy=np.zeros(mV*ndofT,dtype=np.float64)
-          b_el_xy=np.zeros(mV*ndofT,dtype=np.float64)
-          a_el=np.zeros((mV*ndofT,mV*ndofT),dtype=np.float64)
-          Kd=np.zeros((mV,mV),dtype=np.float64)   # elemental diffusion matrix 
-          MM=np.zeros((mV,mV),dtype=np.float64)   # elemental mass matrix 
-
-          for k in range(0,mV):
-               exx_prev[k]=exxn[iconV[k,iel]]
-               eyy_prev[k]=eyyn[iconV[k,iel]]
-               exy_prev[k]=exyn[iconV[k,iel]]
-          #end for
-
-          for iq in [0,1,2]:
-              for jq in [0,1,2]:
-
-                  # position & weight of quad. point
-                  rq=qcoords[iq]
-                  sq=qcoords[jq]
-                  weightq=qweights[iq]*qweights[jq]
-
-                  NNNV[0:mV]=NNV(rq,sq)
-                  dNNNVdr[0:mV]=dNNVdr(rq,sq)
-                  dNNNVds[0:mV]=dNNVds(rq,sq)
-                  N_mat[0:mV,0]=NNV(rq,sq)
-
-                  #only valid for rectangular elements!
-                  jcbi=np.zeros((ndim,ndim),dtype=np.float64)
-                  jcob=hx*hy/4
-                  jcbi[0,0] = 2/hx 
-                  jcbi[1,1] = 2/hy
- 
-                  # compute dNdx & dNdy
-                  for k in range(0,mV):
-                      dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                      dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-                      B_mat[0,k]=dNNNVdx[k]
-                      B_mat[1,k]=dNNNVdy[k]
-                  #end for
-
-                  # compute mass matrix
-                  MM=N_mat.dot(N_mat.T)*weightq*jcob
-
-                  # compute diffusion matrix
-                  Kd=B_mat.T.dot(B_mat)*diffcoeff*weightq*jcob
-
-                  a_el+=MM+alphaT*Kd*dt
-                  b_el_xx+=(MM-(1-alphaT)*Kd*dt).dot(exx_prev)
-                  b_el_yy+=(MM-(1-alphaT)*Kd*dt).dot(eyy_prev)
-                  b_el_xy+=(MM-(1-alphaT)*Kd*dt).dot(exy_prev)
-
-                  counterq+=1
-              #end for jq
-          #end for iq
-
-          # assemble matrix A_mat and right hand side rhs
-          for k1 in range(0,mV):
-              m1=iconV[k1,iel]
-              for k2 in range(0,mV):
-                  m2=iconV[k2,iel]
-                  A_mat[m1,m2]+=a_el[k1,k2]
-              #end for
-              rhs_xx[m1]+=b_el_xx[k1]
-              rhs_yy[m1]+=b_el_yy[k1]
-              rhs_xy[m1]+=b_el_xy[k1]
-          #end for
-
-      #end for iel
-    
-      print("     -> matrix (m,M) %.4e %.4e " %(np.min(A_mat),np.max(A_mat)))
-      print("     -> rhs (m,M) %.4e %.4e " %(np.min(rhs),np.max(rhs)))
-
-      Txx = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_xx)
-      Tyy = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_yy)
-      Txy = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs_xy)
-
-      if use_srn_diff:
-         exxn[:]=Txx[:]
-         eyyn[:]=Tyy[:]
-         exyn[:]=Txy[:]
-
-      srn[:]=np.sqrt(0.5*(exxn[:]*exxn[:]+eyyn[:]*eyyn[:])+exyn[:]*exyn[:])
-
-      print("     -> exxn (m,M) %.6e %.6e " %(np.min(exxn),np.max(exxn)))
-      print("     -> eyyn (m,M) %.6e %.6e " %(np.min(eyyn),np.max(eyyn)))
-      print("     -> exyn (m,M) %.6e %.6e " %(np.min(exyn),np.max(exyn)))
-      print("     -> srn  (m,M) %.6e %.6e " %(np.min(srn),np.max(srn)))
-
-      print("strain rate diffusion time: %.3f s" % (clock.time()-start))
-
-   #end if use_srn_diff
-
-   ######################################################################
+   ############################################################################
    # compute nodal viscosity
-   ######################################################################
+   ############################################################################
    start=clock.time()
 
-   for i in range(0,NV):
-       etan[i],dum,dum,dum=viscosity(exxn[i],eyyn[i],exyn[i],q[i],cohesion,phi,\
-                                     iter,xV[i],yV[i],eta_m,eta_v)
+   eta_n=np.zeros(nn_V,dtype=np.float64)
 
-   print("     -> etan (m,M) %.6e %.6e " %(np.min(etan),np.max(etan)))
+   for i in range(0,nn_V):
+       eta_n[i],dum,dum,dum=viscosity(exx_n[i],eyy_n[i],exy_n[i],q[i],cohesion,phi,\
+                                      iter,x_V[i],y_V[i],eta_m,eta_v)
 
-   if debug: np.savetxt('etan_{:04d}.ascii'.format(iter),np.array([x_V,y_V,etan]).T,header='# x,y,eta')
+   print("     -> eta_n (m,M) %.3e %.3e " %(np.min(eta_n),np.max(eta_n)))
+
+   if debug: 
+      np.savetxt('eta_n_{:04d}.ascii'.format(iter),np.array([x_V,y_V,eta_n]).T,header='# x,y,eta')
 
    print("compute nodal viscosity: %.3f s" % (clock.time()-start))
 
-   ######################################################################
+   ############################################################################
    # compute vrms
-   ######################################################################
+   ############################################################################
    start=clock.time()
 
    vrms=0.
@@ -1158,16 +1036,19 @@ for iter in range(0,niter):
                rq=qcoords[iq]
                sq=qcoords[jq]
                weightq=qweights[iq]*qweights[jq]
-               NNNV[0:mV]=NNV(rq,sq)
-               jcob=hx*hy/4 #only for rect elements!
-               uq=0.
-               vq=0.
-               for k in range(0,mV):
-                   uq+=NNNV[k]*u[iconV[k,iel]]
-                   vq+=NNNV[k]*v[iconV[k,iel]]
-               #end for
-               vrms+=(uq**2+vq**2)*weightq*jcob
-               avrg_sr+=srq_T[counterq]*weightq*jcob
+               N_V=basis_functions_V(rq,sq)
+               #dNdr_V=basis_functions_V_dr(rq,sq)
+               #dNds_V=basis_functions_V_ds(rq,sq)
+               #jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
+               #jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
+               #jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
+               #jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
+               #JxWq=np.linalg.det(jcb)*weightq
+               JxWq=jcob*weightq
+               uq=np.dot(N_V,u[icon_V[:,iel]])
+               vq=np.dot(N_V,v[icon_V[:,iel]])
+               vrms+=(uq**2+vq**2)*JxWq
+               avrg_sr+=srq_T[counterq]*JxWq
                counterq+=1
            #end for
        #end for
@@ -1176,25 +1057,23 @@ for iter in range(0,niter):
    vrms=np.sqrt(vrms/(Lx*Ly))
    avrg_sr=avrg_sr/(Lx*Ly)
 
-   vrmsfile.write("%3d %10e\n" %(iter,vrms))
-   vrmsfile.flush()
+   vrmsfile.write("%3d %e\n" %(iter,vrms)) ; vrmsfile.flush()
    if iter>0:
-      avrgsrfile.write("%3d %10e\n" %(iter,avrg_sr))
-      avrgsrfile.flush()
+      avrgsrfile.write("%3d %e\n" %(iter,avrg_sr)) ; avrgsrfile.flush()
 
    print("     -> vrms= %.7e " %vrms)
    print("     -> <sr>= %.7e " %avrg_sr)
 
    print("compute vrms: %.3f s" % (clock.time()-start))
 
-   ######################################################################
+   ############################################################################
    # generate vtu output at every nonlinear iteration
-   ######################################################################
+   ############################################################################
    start=clock.time()
 
    if iter%every==0 and produce_nl_vtu:
 
-      filename = 'solution_Q_nl_{:04d}'.format(iter)+name+'.vtu'
+      filename = 'solution_q_nl_{:04d}'.format(iter)+name+'.vtu'
       vtufile=open(filename,"w")
       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
       vtufile.write("<UnstructuredGrid> \n")
@@ -1209,28 +1088,25 @@ for iter in range(0,niter):
       #####
       vtufile.write("<PointData Scalars='scalars'>\n")
       vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
-      for iq in range(0,nq):
-          vtufile.write("%10e \n" % etaq[iq])
+      etaq.tofile(vtufile, sep=" ", format="%.4e")
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='div(v)' Format='ascii'> \n")
-      for iq in range(0,nq):
-          vtufile.write("%10e \n" % divvq[iq])
+      divvq.tofile(vtufile, sep=" ", format="%.4e")
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='strain_rate (T)' Format='ascii'> \n")
-      for iq in range(0,nq):
-          vtufile.write("%10e \n" % srq_T[iq])
+      srq_T.tofile(vtufile, sep=" ", format="%.4e")
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='strain_rate (vp)' Format='ascii'> \n")
-      for iq in range(0,nq):
-          vtufile.write("%10e \n" % srq_vp[iq])
+      srq_vp.tofile(vtufile, sep=" ", format="%.4e")
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='mechanism' Format='ascii'> \n")
-      for iq in range(0,nq):
-          vtufile.write("%10e \n" % mechq[iq])
+      mechq.tofile(vtufile, sep=" ", format="%.4e")
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
-      for iq in range(0,nq):
-          vtufile.write("%10e \n" % pq[iq])
+      pq.tofile(vtufile, sep=" ", format="%.4e")
+      vtufile.write("</DataArray>\n")
+      vtufile.write("<DataArray type='Float32' Name='D' Format='ascii'> \n")
+      Dq.tofile(vtufile, sep=" ", format="%.4e")
       vtufile.write("</DataArray>\n")
       vtufile.write("</PointData>\n")
       #####
@@ -1254,55 +1130,43 @@ for iter in range(0,niter):
       vtufile.write("</VTKFile>\n")
       vtufile.close()
 
-      filename = 'solution_G_nl_{:04d}.vtu'.format(iter)
+      filename = 'solution_n_nl_{:04d}.vtu'.format(iter)
       vtufile=open(filename,"w")
       vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
       vtufile.write("<UnstructuredGrid> \n")
-      vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+      vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nn_V,nel))
       #####
       vtufile.write("<Points> \n")
       vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-      for i in range(0,NV):
-          vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
+      for i in range(0,nn_V):
+          vtufile.write("%10e %10e %10e \n" %(x_V[i],y_V[i],0.))
       vtufile.write("</DataArray>\n")
       vtufile.write("</Points> \n")
       #####
       vtufile.write("<PointData Scalars='scalars'>\n")
       vtufile.write("<DataArray type='Float32' Name='Angle' Format='ascii'> \n")
-      for i in range(0,NV):
-          if np.abs(xV[i]-Lx/2)>hx/10:
-             theta=np.arctan(yV[i]/np.abs(xV[i]-Lx/2))/np.pi*180
-          else:
-             theta=90.
-          vtufile.write("%10e \n" % theta)
+      Angle.tofile(vtufile, sep=" ", format="%.4e")
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='Res (u)' Format='ascii'> \n")
-      for i in range(0,NV):
-          vtufile.write("%10e \n" %Res_u[i])
+      Res_u.tofile(vtufile, sep=" ", format="%.4e")
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='Res (v)' Format='ascii'> \n")
-      for i in range(0,NV):
-          vtufile.write("%10e \n" %Res_v[i])
+      Res_v.tofile(vtufile, sep=" ", format="%.4e")
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='Res (p)' Format='ascii'> \n")
-      for i in range(0,NV):
-          vtufile.write("%10e \n" %Res_q[i])
+      Res_q.tofile(vtufile, sep=" ", format="%.4e")
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='pressure' Format='ascii'> \n")
-      for i in range(0,NV):
-          vtufile.write("%10e \n" %q[i])
+      q.tofile(vtufile, sep=" ", format="%.4e")
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
-      for i in range (0,NV):
-          vtufile.write("%10e\n" % (etan[i]))
+      eta_n.tofile(vtufile, sep=" ", format="%.4e")
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
-      for i in range (0,NV):
-          vtufile.write("%e\n" % (srn[i]))
+      sr_n.tofile(vtufile, sep=" ", format="%.4e")
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='div(v)' Format='ascii'> \n")
-      for i in range (0,NV):
-          vtufile.write("%e\n" % (divvn[i]))
+      divv_n.tofile(vtufile, sep=" ", format="%.4e")
       vtufile.write("</DataArray>\n")
 
       vtufile.write("</PointData>\n")
@@ -1310,16 +1174,17 @@ for iter in range(0,niter):
       vtufile.write("<Cells>\n")
       vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
       for iel in range (0,nel):
-          vtufile.write("%d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel],\
-                                                      iconV[4,iel],iconV[5,iel],iconV[6,iel],iconV[7,iel]))
+          vtufile.write("%d %d %d %d %d %d %d %d %d\n" %(icon_V[0,iel],icon_V[1,iel],icon_V[2,iel],\
+                                                         icon_V[3,iel],icon_V[4,iel],icon_V[5,iel],\
+                                                         icon_V[6,iel],icon_V[7,iel],icon_V[8,iel]))
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
       for iel in range (0,nel):
-          vtufile.write("%d \n" %((iel+1)*8))
+          vtufile.write("%d \n" %((iel+1)*m_V))
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
       for iel in range (0,nel):
-          vtufile.write("%d \n" %23)
+          vtufile.write("%d \n" %28)
       vtufile.write("</DataArray>\n")
       vtufile.write("</Cells>\n")
       #####
@@ -1330,66 +1195,74 @@ for iter in range(0,niter):
 
    print("write nl iter vtu file: %.3f s" % (clock.time()-start))
 
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
+###############################################################################
 # end of non-linear iterations
-#------------------------------------------------------------------------------
-#------------------------------------------------------------------------------
+###############################################################################
+###############################################################################
 
-if debug: np.savetxt('sr_middle.ascii',np.array([x_e,y_e,exx,eyy,exy]).T,header='# x,y,exx,eyy,exy')
+print("-------------------------------")
+print("end of nonlinear iterations")
+print("-------------------------------")
 
-#####################################################################
+if debug: 
+   np.savetxt('sr_e.ascii',np.array([x_e,y_e,exx_e,eyy_e,exy_e,sr_e]).T,header='# x,y,exx,eyy,exy')
+   np.savetxt('sr_n.ascii',np.array([x_V,y_V,exx_n,eyy_n,exy_n,sr_n]).T,header='# x,y,exx,eyy,exy')
+
+###############################################################################
 # extracting shear bands 
-#####################################################################
+###############################################################################
 start=clock.time()
 
 if benchmark ==1 or benchmark==2 or benchmark==3:
 
+   #-----elemental -----
    shear_band_L_file_1=open("shear_band_L_elt"+name+".ascii","w")
    shear_band_R_file_1=open("shear_band_R_elt"+name+".ascii","w")
-   shear_band_L_file_2=open("shear_band_L_nod"+name+".ascii","w")
-   shear_band_R_file_2=open("shear_band_R_nod"+name+".ascii","w")
-   shear_band_L_file_3=open("shear_band_L_qpt"+name+".ascii","w")
-   shear_band_R_file_3=open("shear_band_R_qpt"+name+".ascii","w")
-
    counter = 0
    for j in range(0,nely):
        srmaxL=0.
        srmaxR=0.
        for i in range(0,nelx):
-           if i<=nelx/2 and sr[counter]>srmaxL:
-              srmaxL=sr[counter]
+           if i<=nelx/2 and sr_e[counter]>srmaxL:
+              srmaxL=sr_e[counter]
               ilocL=counter
            # end if
-           if i>=nelx/2 and sr[counter]>srmaxR:
-              srmaxR=sr[counter]
+           if i>=nelx/2 and sr_e[counter]>srmaxR:
+              srmaxR=sr_e[counter]
               ilocR=counter
            # end if
            counter += 1
        # end for i
-       shear_band_L_file_1.write("%6e %6e %6e \n"  % (xc[ilocL],yc[ilocL],sr[ilocL]) )
-       shear_band_R_file_1.write("%6e %6e %6e \n"  % (xc[ilocR],yc[ilocR],sr[ilocR]) )
+       shear_band_L_file_1.write("%6e %6e %6e \n"  % (x_e[ilocL],y_e[ilocL],sr_e[ilocL]) )
+       shear_band_R_file_1.write("%6e %6e %6e \n"  % (x_e[ilocR],y_e[ilocR],sr_e[ilocR]) )
    # end for j
 
+   #----- nodal -----
+   shear_band_L_file_2=open("shear_band_L_nod"+name+".ascii","w")
+   shear_band_R_file_2=open("shear_band_R_nod"+name+".ascii","w")
    counter = 0
    for j in range(0,nny):
        srmaxL=0.
        srmaxR=0.
        for i in range(0,nnx):
-           if i<=nnx/2 and srn[counter]>srmaxL:
-              srmaxL=srn[counter]
+           if i<=nnx/2 and sr_n[counter]>srmaxL:
+              srmaxL=sr_n[counter]
               ilocL=counter
            # end if
-           if i>=nnx/2 and srn[counter]>srmaxR:
-              srmaxR=srn[counter]
+           if i>=nnx/2 and sr_n[counter]>srmaxR:
+              srmaxR=sr_n[counter]
               ilocR=counter
            # end if
            counter += 1
        # end for i
-       shear_band_L_file_2.write("%6e %6e %6e \n"  % (xV[ilocL],yV[ilocL],srn[ilocL]) )
-       shear_band_R_file_2.write("%6e %6e %6e \n"  % (xV[ilocR],yV[ilocR],srn[ilocR]) )
+       shear_band_L_file_2.write("%6e %6e %6e \n"  % (x_V[ilocL],y_V[ilocL],sr_n[ilocL]) )
+       shear_band_R_file_2.write("%6e %6e %6e \n"  % (x_V[ilocR],y_V[ilocR],sr_n[ilocR]) )
    # end for j
 
+   #----- quadrature pts -----
+   shear_band_L_file_3=open("shear_band_L_qpt"+name+".ascii","w")
+   shear_band_R_file_3=open("shear_band_R_qpt"+name+".ascii","w")
    counter = 0
    for j in range(0,nely):
        srmaxL1=0.
@@ -1448,44 +1321,32 @@ if benchmark ==1 or benchmark==2 or benchmark==3:
        shear_band_R_file_3.write("%6e %6e %6e \n"  % (xq[ilocR3],yq[ilocR3],srq_T[ilocR3]) )
    # end for j
 
+   #----- horizontal line at mid height -----
    sr_file=open("line"+name+".ascii","w")
    counter=0
    for j in range(0,nny):
        for i in range(0,nnx):
-           if abs(yV[counter]-0.5*Ly)<1:
-              sr_file.write("%6e %6e %6e \n"  % (xV[counter],srn[counter],etan[counter]))
+           if abs(y_V[counter]/Ly-0.5)<eps:
+              sr_file.write("%6e %6e %6e \n"  % (x_V[counter],sr_n[counter],eta_n[counter]))
            counter += 1
        # end for i
    # end for i
    sr_file.close()
 
-
-#else:
-
-#sr_file=open("sr_line.ascii","w")
-#counter=0
-#for j in range(0,nny):
-#    for i in range(0,nnx):
-#        if abs(yV[counter]-11*Ly/16)<1:
-#           sr_file.write("%6e %6e %6e \n"  % (xV[counter],srn[counter],yV[counter]))
-#        counter += 1
-#    # end for i
-# end for i
-#sr_file.close()
-
 print("extracting shear bands: %.3f s" % (clock.time()-start))
 
-######################################################################
+###############################################################################
 # compute averaged elemental strainrate 
 # I use a 5 point quadrature rule (per dimension) and compute the 
 # average strain rate tensor components per element. 
-######################################################################
+###############################################################################
 start=clock.time()
 
-sr_avrg=np.zeros(nel,dtype=np.float64)  
-exx_avrg=np.zeros(nel,dtype=np.float64)  
-eyy_avrg=np.zeros(nel,dtype=np.float64)  
-exy_avrg=np.zeros(nel,dtype=np.float64)  
+sr_e_avrg=np.zeros(nel,dtype=np.float64)  
+exx_e_avrg=np.zeros(nel,dtype=np.float64)  
+eyy_e_avrg=np.zeros(nel,dtype=np.float64)  
+exy_e_avrg=np.zeros(nel,dtype=np.float64)  
+area=np.zeros(nel,dtype=np.float64)  
 
 qc5a=np.sqrt(5.+2.*np.sqrt(10./7.))/3.  
 qc5b=np.sqrt(5.-2.*np.sqrt(10./7.))/3.  
@@ -1499,169 +1360,139 @@ qweights5=[qw5a,qw5b,qw5c,qw5b,qw5a]
 for iel in range(0,nel):
     for jq in [0,1,2,3,4]:
         for iq in [0,1,2,3,4]:
-            # position & weight of quad. point
             rq=qcoords5[iq]
             sq=qcoords5[jq]
             weightq=qweights5[iq]*qweights5[jq]
-            NNNV[0:9]=NNV(rq,sq)
-            dNNNVdr[0:9]=dNNVdr(rq,sq)
-            dNNNVds[0:9]=dNNVds(rq,sq)
-            # calculate jacobian matrix
-            jcb=np.zeros((ndim,ndim),dtype=np.float64)
-            for k in range(0,mV):
-                jcb[0,0] += dNNNVdr[k]*xV[iconV[k,iel]]
-                jcb[0,1] += dNNNVdr[k]*yV[iconV[k,iel]]
-                jcb[1,0] += dNNNVds[k]*xV[iconV[k,iel]]
-                jcb[1,1] += dNNNVds[k]*yV[iconV[k,iel]]
-            # end for
-            jcob = np.linalg.det(jcb)
-            jcbi = np.linalg.inv(jcb)
-            # compute dNdx & dNdy & strainrate
-            exxq=0.0
-            eyyq=0.0
-            exyq=0.0
-            for k in range(0,mV):
-                dNNNVdx[k]=jcbi[0,0]*dNNNVdr[k]+jcbi[0,1]*dNNNVds[k]
-                dNNNVdy[k]=jcbi[1,0]*dNNNVdr[k]+jcbi[1,1]*dNNNVds[k]
-                exxq+=dNNNVdx[k]*u[iconV[k,iel]]
-                eyyq+=dNNNVdy[k]*v[iconV[k,iel]]
-                exyq+=0.5*dNNNVdy[k]*u[iconV[k,iel]]+ 0.5*dNNNVdx[k]*v[iconV[k,iel]]
-            # end for
-            exx_avrg[iel] += exxq*jcob*weightq
-            eyy_avrg[iel] += eyyq*jcob*weightq
-            exy_avrg[iel] += exyq*jcob*weightq
+            N_V=basis_functions_V(rq,sq)
+            dNdr_V=basis_functions_V_dr(rq,sq)
+            dNds_V=basis_functions_V_ds(rq,sq)
+            jcb[0,0]=np.dot(dNdr_V,x_V[icon_V[:,iel]])
+            jcb[0,1]=np.dot(dNdr_V,y_V[icon_V[:,iel]])
+            jcb[1,0]=np.dot(dNds_V,x_V[icon_V[:,iel]])
+            jcb[1,1]=np.dot(dNds_V,y_V[icon_V[:,iel]])
+            jcbi=np.linalg.inv(jcb)
+            JxWq=np.linalg.det(jcb)*weightq
+            dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V
+            dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V
+            exxq=np.dot(dNdx_V,u[icon_V[:,iel]])
+            eyyq=np.dot(dNdy_V,v[icon_V[:,iel]])
+            exyq=np.dot(dNdx_V,v[icon_V[:,iel]])*0.5+\
+                 np.dot(dNdy_V,u[icon_V[:,iel]])*0.5
+            exx_e_avrg[iel] += exxq*JxWq
+            eyy_e_avrg[iel] += eyyq*JxWq
+            exy_e_avrg[iel] += exyq*JxWq
+            area[iel]+=JxWq
         # end for
     # end for
-    exx_avrg[iel]/=(hx*hy) 
-    eyy_avrg[iel]/=(hx*hy) 
-    exy_avrg[iel]/=(hx*hy) 
-    sr_avrg[iel]=np.sqrt(0.5*(exx_avrg[iel]**2+eyy_avrg[iel]**2)+exy_avrg[iel]**2)
 #end for
 
-print("     -> exx_avrg (m,M) %.6e %.6e " %(np.min(exx_avrg),np.max(exx_avrg)))
-print("     -> eyy_avrg (m,M) %.6e %.6e " %(np.min(eyy_avrg),np.max(eyy_avrg)))
-print("     -> exy_avrg (m,M) %.6e %.6e " %(np.min(exy_avrg),np.max(exy_avrg)))
-print("     -> sr_avrg  (m,M) %.6e %.6e " %(np.min(sr_avrg),np.max(sr_avrg)))
+exx_e_avrg/=area
+eyy_e_avrg/=area
+exy_e_avrg/=area
+
+sr_e_avrg=np.sqrt(0.5*(exx_e_avrg**2+eyy_e_avrg**2)+exy_e_avrg**2)
+
+print("     -> exx_e_avrg (m,M) %.3e %.3e " %(np.min(exx_e_avrg),np.max(exx_e_avrg)))
+print("     -> eyy_e_avrg (m,M) %.3e %.3e " %(np.min(eyy_e_avrg),np.max(eyy_e_avrg)))
+print("     -> exy_e_avrg (m,M) %.3e %.3e " %(np.min(exy_e_avrg),np.max(exy_e_avrg)))
+print("     -> sr_e_avrg  (m,M) %.3e %.3e " %(np.min(sr_e_avrg),np.max(sr_e_avrg)))
 
 if debug:
-   np.savetxt('sr_avrg.ascii',np.array([x_e,y_e,exx_avrg,eyy_avrg,exy_avrg]).T,header='#x,y,exx,eyy,exy')
+   np.savetxt('sr_e_avrg.ascii',np.array([x_e,y_e,exx_e_avrg,eyy_e_avrg,exy_e_avrg,sr_e_avrg]).T,header='#x,y,exx,eyy,exy')
 
 print("compute avrg elemental strain rate: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # plot of solution
-#####################################################################
-# the 9-node Q2 element does not exist in vtk, but the 8-node one 
-# does, i.e. type=23. 
+###############################################################################
+start=clock.time()
 
 filename = 'solution'+name+'.vtu'
 vtufile=open(filename,"w")
 vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
 vtufile.write("<UnstructuredGrid> \n")
-vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel))
+vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nn_V,nel))
 #####
 vtufile.write("<Points> \n")
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%10e %10e %10e \n" %(xV[i],yV[i],0.))
+for i in range(0,nn_V):
+    vtufile.write("%10e %10e %10e \n" %(x_V[i],y_V[i],0.))
 vtufile.write("</DataArray>\n")
 vtufile.write("</Points> \n")
 #####
 vtufile.write("<CellData Scalars='scalars'>\n")
 vtufile.write("<DataArray type='Float32' Name='div.v' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%10e\n" % (exx[iel]+eyy[iel]))
+divv_e.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='exx (avrg)' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%10e\n" % exx_avrg[iel])
+exx_e_avrg.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='exy (avrg)' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%10e\n" % exy_avrg[iel])
+exy_e_avrg.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='strain rate (avrg)' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%10e\n" % (sr_avrg[iel]))
+sr_e_avrg.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
-for iel in range (0,nel):
-    eta,dum,dum,dum= viscosity(exx[iel],eyy[iel],exy[iel],pc[iel],cohesion,phi,iter,xc[iel],yc[iel],eta_m,eta_v)
-    vtufile.write("%10e\n" %eta) 
-vtufile.write("</DataArray>\n")
-vtufile.write("<DataArray type='Float32' Name='dilation rate (R)' Format='ascii'> \n")
-for iel in range (0,nel):
-    vtufile.write("%10e\n" % (  2.*np.sin(psi)*sr[iel] ))
+eta_e.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("</CellData>\n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/s)' Format='ascii'> \n")
-for i in range(0,NV):
+for i in range(0,nn_V):
     vtufile.write("%10e %10e %10e \n" %(u[i],v[i],0.))
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity (m/year)' Format='ascii'> \n")
-for i in range(0,NV):
+for i in range(0,nn_V):
     vtufile.write("%10e %10e %10e \n" %(u[i]*year,v[i]*year,0.))
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='Angle' Format='ascii'> \n")
-for i in range(0,NV):
-    if np.abs(xV[i]-Lx/2)>hx/10:
-       theta=np.arctan(yV[i]/np.abs(xV[i]-Lx/2))/np.pi*180
-    else:
-       theta=90.
-    vtufile.write("%10e \n" % theta)
+Angle.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%10e \n" %q[i])
+q.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='Res (u)' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%10e \n" %Res_u[i])
+Res_u.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='Res (v)' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%10e \n" %Res_v[i])
+Res_v.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='Res (p)' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%10e \n" %Res_q[i])
+Res_q.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='exxn' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%.5e \n" %exxn[i])
+exx_n.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='eyyn' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%.5e \n" %eyyn[i])
+eyy_n.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='exyn' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%.5e \n" %exyn[i])
+exy_n.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='strain rate' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%.5e \n" %srn[i])
+sr_n.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
-for i in range(0,NV):
-    vtufile.write("%.5e \n" %etan[i])
+eta_n.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 vtufile.write("</PointData>\n")
 #####
 vtufile.write("<Cells>\n")
 vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
 for iel in range (0,nel):
-    vtufile.write("%d %d %d %d %d %d %d %d\n" %(iconV[0,iel],iconV[1,iel],iconV[2,iel],iconV[3,iel],iconV[4,iel],iconV[5,iel],iconV[6,iel],iconV[7,iel]))
+    vtufile.write("%d %d %d %d %d %d %d %d %d \n" %(icon_V[0,iel],icon_V[1,iel],icon_V[2,iel],\
+                                                    icon_V[3,iel],icon_V[4,iel],icon_V[5,iel],\
+                                                    icon_V[6,iel],icon_V[7,iel],icon_V[8,iel]))
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Int32' Name='offsets' Format='ascii'> \n")
 for iel in range (0,nel):
-    vtufile.write("%d \n" %((iel+1)*8))
+    vtufile.write("%d \n" %((iel+1)*m_V))
 vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Int32' Name='types' Format='ascii'>\n")
 for iel in range (0,nel):
-    vtufile.write("%d \n" %23)
+    vtufile.write("%d \n" %28)
 vtufile.write("</DataArray>\n")
 vtufile.write("</Cells>\n")
 #####
@@ -1670,6 +1501,10 @@ vtufile.write("</UnstructuredGrid>\n")
 vtufile.write("</VTKFile>\n")
 vtufile.close()
 
-print("-----------------------------")
-print("------------the end----------")
-print("-----------------------------")
+print("produce final vtu file: %.3f s" % (clock.time()-start))
+
+print("*******************************")
+print("********** the end ************")
+print("*******************************")
+
+###############################################################################

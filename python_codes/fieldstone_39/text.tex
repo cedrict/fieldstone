@@ -8,6 +8,7 @@
 \includegraphics[height=1.25cm]{images/pictograms/paraview}
 \includegraphics[height=1.25cm]{images/pictograms/publication}
 \includegraphics[height=1.25cm]{images/pictograms/nonlinear}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -157,7 +158,7 @@ matter in practice. However, in this case it does matter!
 
 \newpage 
 %..........................................................
-\subsection*{Benchmark \#1 - The simple brick}
+\section*{Benchmark \#1 - The simple brick}
 
 %The setup is {\sl similar} to the one in Kaus (2010) \cite{kaus10}, the main difference being that 
 %there is no weak inclusion at the bottom of the domain. 
@@ -222,6 +223,51 @@ maximum of the normalised nonlinear residual reaches the desired tolerance.
 $\upnu_{bc}$ is chosen so that the background strain rate is $\dot\varepsilon_{bckgr}=10^{-15}\si{\per\second}$, 
 i.e. $\upnu_{bc}=\dot\varepsilon_{bckgr} L_x/2$.
 
+The effective visco-viscoplastic viscosity is computed as follows:
+\begin{lstlisting}
+def viscosity(exx,eyy,exy,pq,c,phi,iter,x,y,eta_m,eta_v):
+
+    # deviatoric tensor E
+    Exx=exx-(exx+eyy)/3
+    Eyy=eyy-(exx+eyy)/3
+    Ezz=   -(exx+eyy)/3
+
+    #compute effective strain rate (sqrt of 2nd inv)
+    e2=np.sqrt(0.5*(Exx**2+Eyy**2+Ezz**2)+exy**2)
+
+    #-------------------------------------------------
+    if benchmark==1: # simple brick
+    #-------------------------------------------------
+       if iter==0:
+          e2=1e-15
+          two_sin_psi=0.
+       else:
+          two_sin_psi=2.*np.sin(psi)
+       #end if
+       Y=max(pq,0)*np.sin(phi)+c*np.cos(phi)
+       if 2*eta_v*e2<Y:
+          val=eta_v
+          eps_vp=0
+          mech=1
+       else:
+          #see section 4.23
+          tau=(Y+2*eta_m*e2)/(1+eta_m/eta_v)
+          eps_v=tau/2/eta_v
+          eps_vp=e2-eps_v
+          eta_vp=Y/(2.*eps_vp)+eta_m
+          val=1./(1./eta_v + 1/eta_vp)
+          mech=2
+       #end if
+
+    [...]
+
+    return val,two_sin_psi,eps_vp,mech
+
+\end{lstlisting}
+
+
+
+
 Following Choi \& Petersen \cite{chpe15}, we run the experiment with an associative ($\phi=\psi$) plasticity
 and a non associative one ($\psi=0$, i.e. $R=0$). This second approach is essentially what many codes do (
 i.e. $\vec\nabla\cdot\vec\upnu = 0$). We can also run the model with $\phi=\psi=0\si{\degree}$ so that 
@@ -243,8 +289,120 @@ Per row of elements, nodes or quadrature points, and per half of the domain (lef
 with the highest strain-rate and record their coordinates.
 
 
+
 \newpage
-{\bf Extension}
+\subsection*{Compression - nonlinear convergence}
+
+\begin{center}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/conv_phi0_psi0_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/conv_phi30_psi0_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/conv_phi30_psi30_etam0.pdf} \\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/conv_phi0_psi0_etam18.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/conv_phi30_psi0_etam18.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/conv_phi30_psi30_etam18.pdf} \\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/conv_phi0_psi0_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/conv_phi30_psi0_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/conv_phi30_psi30_etam19.pdf} \\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/conv_phi0_psi0_etam20.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/conv_phi30_psi0_etam20.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/conv_phi30_psi30_etam20.pdf} \\
+{\captionfont From left to right: von Mises ($\phi=\Psi=0$), non-associated Drucker-Prager ($\phi=30^o,\Psi=0$), 
+associated Drucker-Prager ($\phi=\Psi=30$).\\ From top to bottom: $\eta_m=0,10^{18},10^{19},10^{20}$.}
+\end{center}
+
+
+\newpage
+\subsection*{Compression - strain rate on line}
+
+\begin{center}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_sr_phi0_psi0_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_sr_phi30_psi0_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_sr_phi30_psi30_etam0.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_sr_phi0_psi0_etam18.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_sr_phi30_psi0_etam18.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_sr_phi30_psi30_etam18.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_sr_phi0_psi0_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_sr_phi30_psi0_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_sr_phi30_psi30_etam19.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_sr_phi0_psi0_etam20.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_sr_phi30_psi0_etam20.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_sr_phi30_psi30_etam20.pdf}\\
+{\captionfont From left to right: von Mises ($\phi=\Psi=0$), non-associated Drucker-Prager ($\phi=30^o,\Psi=0$), 
+associated Drucker-Prager ($\phi=\Psi=30$).\\ From top to bottom: $\eta_m=0,10^{18},10^{19},10^{20}$.}
+\end{center}
+
+
+\newpage
+\subsection*{Compression - viscosity on line}
+
+\begin{center}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_eta_phi0_psi0_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_eta_phi30_psi0_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_eta_phi30_psi30_etam0.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_eta_phi0_psi0_etam18.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_eta_phi30_psi0_etam18.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_eta_phi30_psi30_etam18.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_eta_phi0_psi0_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_eta_phi30_psi0_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_eta_phi30_psi30_etam19.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_eta_phi0_psi0_etam20.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_eta_phi30_psi0_etam20.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/line_eta_phi30_psi30_etam20.pdf}\\
+{\captionfont From left to right: von Mises ($\phi=\Psi=0$), non-associated Drucker-Prager ($\phi=30^o,\Psi=0$), 
+associated Drucker-Prager ($\phi=\Psi=30$).\\ From top to bottom: $\eta_m=0,10^{18},10^{19},10^{20}$.}
+\end{center}
+
+
+
+
+\newpage
+\subsection*{Compression - right shear band}
+
+\begin{center}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/shear_band_phi0_psi0_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/shear_band_phi30_psi0_etam0.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/shear_band_phi30_psi30_etam0.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/shear_band_phi0_psi0_etam18.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/shear_band_phi30_psi0_etam18.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/shear_band_phi30_psi30_etam18.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/shear_band_phi0_psi0_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/shear_band_phi30_psi0_etam19.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/shear_band_phi30_psi30_etam19.pdf}\\
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/shear_band_phi0_psi0_etam20.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/shear_band_phi30_psi0_etam20.pdf}
+\includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/results/benchmark1/compression/shear_band_phi30_psi30_etam20.pdf}\\
+{\captionfont From left to right: von Mises ($\phi=\Psi=0$), non-associated Drucker-Prager ($\phi=30^o,\Psi=0$), 
+associated Drucker-Prager ($\phi=\Psi=30$).\\ From top to bottom: $\eta_m=0,10^{18},10^{19},10^{20}$.}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+\subsection*{Extension (OLD)}
 
 \begin{center}
 \includegraphics[width=.3\linewidth]{python_codes/fieldstone_39/benchmark1/extension/conv_phi0_psi0_etam0.pdf}
@@ -301,9 +459,6 @@ Results obtained on a 240x24 grid, max 50 nl iterations.
 \end{center}
 
 
-Note that benchmarking this in not easy. One solution Timo and I found was to add a 
-velocity field $\underline{\vec\upnu}=(x,y,z)$ (with $\vec\nabla\cdot\underline{\vec\upnu}=3$)
-to an existing analytical problem, e.g. the Burstedde benchmark.
 
 \newpage
 %...........................................................
