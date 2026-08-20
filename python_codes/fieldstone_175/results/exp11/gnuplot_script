@@ -1,0 +1,87 @@
+#
+set term pdf enhanced font "Times,12pt"
+set pointsize .2
+set grid
+
+aa=-14.
+bb=1.
+cc=1.
+ee=1.
+
+AA=aa/7.
+BB=(bb-2*aa)/6.
+CC=(aa-2*bb+cc)/5.
+DD=(bb-2*cc+ee)/4.
+EE=(cc-2*ee)/3.
+FF=ee/2.
+
+L=3.
+
+eta=1.
+
+#print AA
+#print BB
+#print CC
+#print DD
+#print EE 
+#print FF 
+
+##############################
+# velocity x contains x/r , but on hline x=r
+
+set xlabel 'r'
+set ylabel 'v_r'
+
+f(x) = x<1 ? AA*x**6 + BB*x**5 + CC*x**4 + DD*x**3 + EE*x**2 + FF*x : 0
+
+
+set output 'vel.pdf'
+plot[0:1.5][-0.05:0.15]\
+'solution_hline_48.ascii'  u 1:2 w lp t '48^2',\
+'solution_hline_64.ascii'  u 1:2 w lp t '64^2',\
+'solution_hline_96.ascii'  u 1:2 w lp t '96^2',\
+'solution_hline_128.ascii' u 1:2 w lp t '128^2',\
+f(x) lt -1 dt 2 t 'analytical'
+
+##################################
+f(x) = x<1 ? 2*eta*(14./3.*AA*x**5 +4*BB*x**4 +10./3.*CC*x**3 + 8./3.*DD*x**2 + 2*EE*x + 2./3.) : 0 
+
+set ylabel 'p'
+set output 'press.pdf'
+plot[0:1.5][-1.:1.5]\
+'solution_hline_48.ascii'  u 1:4 w lp t '48^2',\
+'solution_hline_64.ascii'  u 1:4 w lp t '64^2',\
+'solution_hline_96.ascii'  u 1:4 w lp t '96^2',\
+'solution_hline_128.ascii' u 1:4 w lp t '128^2',\
+f(x)  lt -1 dt 2 t 'analytical'
+
+##################################
+f(x) = x<1 ? aa*(x)**5 +(bb-2*aa)*(x)**4+(cc-2*bb+aa)*(x)**3+(ee-2*cc+bb)*(x)**2 +(cc-2*ee)*(x) + ee : 0 
+
+set ylabel 'D(r)'
+set output 'divv.pdf'
+plot[0:1.5][-.5:1.5]\
+'solution_hline_48.ascii'  u 1:5 w lp t '48^2',\
+'solution_hline_64.ascii'  u 1:5 w lp t '64^2',\
+'solution_hline_96.ascii'  u 1:5 w lp t '96^2',\
+'solution_hline_128.ascii' u 1:5 w lp t '128^2',\
+f(x) lt -1 dt 2 t 'analytical'
+
+##########################################################
+set key outside
+set format y "10^{%L}"
+
+Lx=3
+set xlabel 'h'
+set ylabel 'L_2 error'
+
+set log xy 
+set output 'errors.pdf'
+plot[][]\
+'errors.ascii' u (Lx/$3):6 w lp t 'velocity',\
+'errors.ascii' u (Lx/$3):9 w lp t 'pressure',\
+x**3/15 lt -1 dt 2 t 'h^3',\
+x**2 lt -1 dt 2 t 'h^2'
+
+
+
