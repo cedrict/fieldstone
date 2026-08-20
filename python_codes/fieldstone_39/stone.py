@@ -6,7 +6,6 @@ import scipy.sparse as sps
 from scipy.sparse import csr_matrix,lil_matrix
 import numba 
 
-
 ###############################################################################
 
 def gx(x,y):
@@ -26,7 +25,7 @@ def gy(x,y):
 # benchmark=5: Duretz et al (2018)
 
 def ubc(x,y):
-    if benchmark==1: vaal=1.e-15*(Lx/2.0)
+    if benchmark==1: vaal=-1.e-15*(Lx/2.0)
     if benchmark==2: vaal=0.0025/year
     if benchmark==3: vaal=-1.e-15*(Lx/2.0)
     if benchmark==4: vaal=5e-9
@@ -279,7 +278,7 @@ m_V=9     # number of velocity nodes making up an element
 m_P=4     # number of pressure nodes making up an element
 ndof_V=2  # number of velocity degrees of freedom per node
 
-debug=True
+debug=False
 
 if int(len(sys.argv) == 9):
    print("reading arguments")

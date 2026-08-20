@@ -9,9 +9,11 @@
 #   eta_v =  float(sys.argv[7])
 #   method U, C or M
 
-niter=10
+niter=3
 
-for nelx in 64 96 128 160 ; do
+#for nelx in 64 96 128 160 192 256; do
+
+for nelx in 256 ; do
 
     for meth in U C M ; do
         echo nelx= $nelx etam= 0 method= $meth
