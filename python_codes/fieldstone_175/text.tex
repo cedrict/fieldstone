@@ -24,7 +24,7 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: March 20th, 2026.
+Last revision: August 21st, 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -38,16 +38,338 @@ equations. This is very similar to the dilation rate terms of \textcite{chpe15} 
 
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{A) Manufactured solutions in 1d}
+
+Let us denote by $\vec{\upnu}^0$ and $p^0$ the solution of the incompressible Stokes equations
+given a buoyancy force and appropriate boundary conditions:
+\begin{eqnarray}
+-\vec\nabla p^0 +\vec\nabla\cdot[2\dot{\bm \varepsilon}^d(\vec\upnu^0)] +\rho\vec{g} &=&\vec{0} \label{eq:dil1} \\
+\vec\nabla \cdot \vec\upnu^0 &=& 0
+\end{eqnarray}
+Let us now consider the velocity field $\vec{\upnu}=\vec{\upnu}^0+\vec{\upnu}_d$
+where $\vec{\upnu}_d$ is a user-defined velocity field function that is in $C^2$. 
+We assume 2d Cartesian coordinates in $\Omega$, a domain of size $L_x \times L_y$. 
+
+
+
+
+
+
+%____________________________
+\subsection*{Generic case}
+
+For now, let us take $\vec{\upnu}_d=(u_d(x,y) ,0)$.
+The strain rate tensor is then given by 
+\[
+\dot{\bm \varepsilon}(\vec\upnu)= \dot{\bm \varepsilon}(\vec\upnu^0)
++ \dot{\bm \varepsilon}(\vec\upnu_d)= 
+\dot{\bm \varepsilon}(\vec\upnu^0) + 
+\begin{pmatrix}
+\frac{\partial u_d}{\partial x} & \frac12 \frac{\partial u_d}{\partial y}  \\
+\frac12 \frac{\partial u_d}{\partial y}  & 0
+\end{pmatrix}
+\]
+Then 
+\[
+\vec\nabla \cdot \vec\upnu 
+= \text{Tr}[\dot{\bm \varepsilon}(\vec\upnu)]
+= \underbrace{\text{Tr}[\dot{\bm \varepsilon}(\vec\upnu^0)]}_{=  \vec\nabla \cdot \vec\upnu^0  =0}
++ \text{Tr}[\dot{\bm \varepsilon}(\vec\upnu_d)]
+= \frac{\partial u_d}{\partial x}
+\]
+This completes the search of the right hand side of the mass conservation equation.
+
+We will also need the corresponding deviatoric strain rate tensor (here $D=3$, 
+see discussions in Aspect on the topic
+as \url{https://aspect-documentation.readthedocs.io/en/latest/user/methods/basic-equations/2d-models.html}):
+\[
+\dot{\bm \varepsilon}^d(\vec\upnu_d)
+=\dot{\bm \varepsilon}(\vec\upnu_d) - \frac{1}{D} \text{Tr}[\dot{\bm \varepsilon}(\vec\upnu_d)] {\bm 1}
+=\dot{\bm \varepsilon}(\vec\upnu_d) - \frac{1}{D} \frac{\partial u_d}{\partial x} {\bm 1}
+=
+\begin{pmatrix}
+(1-\frac1D) \frac{\partial u_d}{\partial x} & \frac12 \frac{\partial u_d}{\partial y}  \\
+\frac12 \frac{\partial u_d}{\partial y}  & -\frac1D \frac{\partial u_d}{\partial x}
+\end{pmatrix}
+\]
+
+%_____________________________________________________
+\subsubsection*{Compensated approach}
+
+We now wish to look at the momentum conservation equation with an additional rhs vector term 
+$\vec{f}_d$ accounting for the dilation:
+\[
+\vec\nabla \cdot [2 \eta \dot{\bm \varepsilon}^d(\vec\upnu)]  -\vec\nabla p^0 + \rho \vec{g} = \vec{f}_d
+\]
+First, let us take $\eta=1$ to simplify the equation:
+\[
+\vec\nabla \cdot [2  \dot{\bm \varepsilon}^d(\vec\upnu)]  -\vec\nabla p^0 + \rho \vec{g} = \vec{f}_d
+\]
+or,
+\[
+\vec\nabla \cdot [2  (\dot{\bm \varepsilon}^d(\vec\upnu^0) +\dot{\bm \varepsilon}^d(\vec\upnu_d) ) ]  
+-\vec\nabla p^0 + \rho \vec{g} = \vec{f}_d
+\]
+Using Eq.~\eqref{eq:dil1} the equation above then simply becomes
+\begin{equation}
+\vec\nabla \cdot [2  \dot{\bm \varepsilon}^d(\vec\upnu_d)  ]  = \vec{f}_d
+\label{eq:dilation_rhs}
+\end{equation}
+or, 
+\[
+(f_x \quad f_y)
+=
+(\partial_x \quad \partial_y) \cdot \begin{pmatrix}
+(2-\frac2D) \frac{\partial u_d}{\partial x} &  \frac{\partial u_d}{\partial y}  \\
+ \frac{\partial u_d}{\partial y}  & -\frac2D \frac{\partial u_d}{\partial x}
+\end{pmatrix}
+\]
+i.e., 
+\begin{eqnarray}
+f_x &=& \left(2-\frac2D\right) \frac{\partial^2 u_d}{\partial x^2}  +  \frac{\partial^2 u_d}{\partial y^2} \nonumber\\
+f_y &=& \left(1-\frac2D\right) \frac{\partial^2 u_d}{\partial x \partial y}  \label{f175:fxfy}
+\end{eqnarray}
+We here make the convenient assumption that $u_d$ is only a function of $x$, so that now
+\begin{eqnarray}
+f_x &=& (2-\frac2D) \frac{\partial^2 u_d}{\partial x^2}   \nonumber\\
+f_y &=& 0
+\end{eqnarray}
+Taking $D=3$:
+\begin{eqnarray}
+f_x &=& \frac43 \frac{\partial^2 u_d}{\partial x^2}   \nonumber\\
+f_y &=& 0
+\end{eqnarray}
+
+We have to read this all as follows: There is a dilation term $\frac{\partial u_d}{\partial x}$ 
+(which is a function of the $x$-coordinate only) which in turn generates a horizontal flow $(u_d,0)$
+atop the Stokes solution $\vec\upnu^0$ and $p^0$ remains the pressure solution.
+
+%-------------------------------------------
+\paragraph{A remark about the choice of dilation term}
+
+When designing a manufactured solution one could think of choosing the dilation rate 
+function $du_d/dx$ to be constant in a band or an area and 
+zero elsewhere. However, this poses a problem: the rhs of the momentum equation 
+contains the term $d^2u_d/dx$, i.e. the gradient of the dilation rate. That quantity is 
+ill-defined on the edges of such a band. 
+
+One could then prescribe the dilation rate on the nodes and use the basis functions derivatives
+to compute (an approximation of) the gradient of the dilation rate. 
+When designing a manufactured solution it remains simpler to consider a smoother dilation 
+band that circumvents that problem altogether. 
+
+
+%--------------------------------------------------------------------
+\subsubsection*{Uncompensated approach}
+We then start again from 
+\[
+\vec\nabla \cdot [2 \eta \dot{\bm \varepsilon}^d(\vec\upnu)]  -\vec\nabla p^0 + \rho \vec{g} = \vec{0}
+\]
+with $\vec\upnu=\vec\upnu_d+\vec\upnu^0$. Note that the rhs remains zero in this case.
+First, let us take $\eta=1$ again to simplify the equation:
+\[
+\vec\nabla \cdot [2  \dot{\bm \varepsilon}^d(\vec\upnu)]  -\vec\nabla p^0 + \rho \vec{g} = \vec{0}
+\]
+or,
+\[
+\vec\nabla \cdot [2  (\dot{\bm \varepsilon}^d(\vec\upnu^0) +\dot{\bm \varepsilon}^d(\vec\upnu_d) ) ]  
+-\vec\nabla p^0 + \rho \vec{g} = \vec{0}
+\]
+\[
+\vec\nabla \cdot [2  \dot{\bm \varepsilon}^d(\vec\upnu^0)  ]  
++\vec\nabla \cdot [2  \dot{\bm \varepsilon}^d(\vec\upnu_d)  ]  
+-\vec\nabla p^0 + \rho \vec{g} = \vec{0}
+\]
+The second term of this equation is actually a vector, which we can compute as:
+\[
+\vec\nabla \cdot [2  \dot{\bm \varepsilon}^d(\vec\upnu_d)  ]  = 
+\left(\begin{array}{c}
+ \frac43 \frac{\partial^2 u_d}{\partial x^2}   \\
+ 0
+\end{array}\right)
+\]
+and which can also be written as the gradient of a quantity $p'$, i.e.
+\[
+\vec\nabla \cdot [2  \dot{\bm \varepsilon}^d(\vec\upnu_d)  ]  = 
+\left(\begin{array}{c}
+ \frac43 \frac{\partial^2 u_d}{\partial x^2}   \\
+ 0
+\end{array}\right)
+=
+\vec\nabla p' 
+\qquad
+\qquad
+\text{with}
+\qquad
+ p'= \frac43 \frac{\partial u_d}{\partial x}   + const
+\]
+We can then write
+\[
+\vec\nabla \cdot [2  \dot{\bm \varepsilon}^d(\vec\upnu^0)  ]  
++\vec\nabla p' -\vec\nabla p^0 + \rho \vec{g} = \vec{0}
+\]
+and we can define $\tilde{p}=p^0-p'$ so that we have
+\[
+\vec\nabla \cdot [2  \dot{\bm \varepsilon}^d(\vec\upnu^0)  ]  
+-\vec\nabla \tilde{p} + \rho \vec{g} = \vec{0}
+\]
+In the absence of rhs terms in the momentum equation
+the calculated pressure accomodates the dilation.
+
+
+
+
+
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{B) Manufactured solutions in 2d}
+
+%------------------------
+\subsection*{Generic case}
+
+Let us now assume/postulate $\vec{\upnu}_d=(u_d(x,y) , v_d(x,y))$.
+The strain rate tensor is then given by 
+\[
+\dot{\bm \varepsilon}(\vec\upnu)
+= \dot{\bm \varepsilon}(\vec\upnu^0)
++ \dot{\bm \varepsilon}(\vec\upnu_d)
+= 
+\dot{\bm \varepsilon}(\vec\upnu^0) + 
+\begin{pmatrix}
+\frac{\partial u_d}{\partial x} 
+& \frac12 \left(  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x} \right)  \\
+\frac12 \left(  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x} \right)  
+& \frac{\partial v_d}{\partial y}
+\end{pmatrix}
+\]
+Then 
+\[
+\vec\nabla \cdot \vec\upnu 
+= \text{Tr}[\dot{\bm \varepsilon}(\vec\upnu)]
+= \underbrace{\text{Tr}[\dot{\bm \varepsilon}(\vec\upnu^0)]}_{=0}
++ \text{Tr}[\dot{\bm \varepsilon}(\vec\upnu_d)]
+= \frac{\partial u_d}{\partial x} + \frac{\partial v_d}{\partial y}
+\]
+and it follows that\footnote{I here set $D=3$.}
+\[
+\dot{\bm \varepsilon}^d(\vec\upnu_d)
+=\dot{\bm \varepsilon}(\vec\upnu_d) - \frac{1}{3} \text{Tr}[\dot{\bm \varepsilon}(\vec\upnu_d)] {\bm 1}
+=\dot{\bm \varepsilon}(\vec\upnu_d) - \frac{1}{3} \left( \frac{\partial u_d}{\partial x} + \frac{\partial v_d}{\partial y} \right)  {\bm 1}
+=
+\begin{pmatrix}
+\frac23 \frac{\partial u_d}{\partial x} - \frac13 \frac{\partial v_d}{\partial y} 
+&  \frac12 \left(  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x} \right)  \\
+\frac12 \left(  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x} \right)  
+& -\frac13 \frac{\partial u_d}{\partial x} + \frac23 \frac{\partial v_d}{\partial y}
+\end{pmatrix}
+\]
+
+%
+\subsubsection*{Compensated approach}
+
+We start again from Eq.~\eqref{eq:dilation_rhs}
+\begin{eqnarray}
+\vec\nabla \cdot [2  \dot{\bm \varepsilon}^d(\vec\upnu_d)  ]  &=& \vec{f}_d \nn\\
+(\partial_x \quad \partial_y) \cdot 
+2
+\begin{pmatrix}
+\frac23 \frac{\partial u_d}{\partial x} - \frac13 \frac{\partial v_d}{\partial y} 
+&  \frac12 \left(  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x} \right)  \\
+\frac12 \left(  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x} \right)  
+& -\frac13 \frac{\partial u_d}{\partial x} + \frac23 \frac{\partial v_d}{\partial y}
+\end{pmatrix}
+&=&(f_x \quad f_y) \nn\\
+(\partial_x \quad \partial_y) \cdot 
+\begin{pmatrix}
+\frac43 \frac{\partial u_d}{\partial x} - \frac23 \frac{\partial v_d}{\partial y} 
+&  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x}   \\
+  \frac{\partial u_d}{\partial y} + \frac{\partial v_d}{\partial x} 
+& -\frac23 \frac{\partial u_d}{\partial x} + \frac43 \frac{\partial v_d}{\partial y}
+\end{pmatrix}
+&=&(f_x \quad f_y)
+\end{eqnarray}
+We can rewrite the equation above by component:
+\begin{eqnarray}
+\frac43 \frac{\partial^2 u_d}{\partial x^2} - \frac23 \frac{\partial^2 v_d}{\partial x \partial y} 
++ \frac{\partial^2 u_d}{\partial y^2} + \frac{\partial^2 v_d}{\partial x \partial y} &=& f_x 
+\nn\\
+\frac{\partial^2 u_d}{\partial x\partial y} + \frac{\partial^2 v_d}{\partial x^2}
+-\frac23 \frac{\partial^2 u_d}{\partial x \partial y} + \frac43 \frac{\partial^2 v_d}{\partial y^2} &=& f_y \nn
+ \end{eqnarray}
+and finally:
+\begin{eqnarray}
+\frac43 \frac{\partial^2 u_d}{\partial x^2} + \frac{\partial^2 u_d}{\partial y^2} 
++ \frac13 \frac{\partial^2 v_d}{\partial x \partial y}  &=& f_x 
+\nn\\
+\frac{\partial^2 v_d}{\partial x^2}
++ \frac43 \frac{\partial^2 v_d}{\partial y^2} 
++ \frac13\frac{\partial^2 u_d}{\partial x\partial y} 
+&=& f_y \nn
+\end{eqnarray}
+We can easily verify that these expressions are identical to 
+Eq.~\eqref{f175:fxfy} when $v_d=0$.
+
+This leads to the following functions in the stone:
+\begin{lstlisting}
+def fx(x,y,Lx,Ly):
+    return (4/3*d2ud_dx2(x,y,Lx,Ly) +d2ud_dy2(x,y,Lx,Ly) +1/3*d2vd_dxdy(x,y,Lx,Ly))
+
+def fy(x,y,Lx,Ly):
+    return (d2vd_dx2(x,y,Lx,Ly) +4/3*d2vd_dy2(x,y,Lx,Ly) +1/3*d2ud_dxdy(x,y,Lx,Ly))
+\end{lstlisting}
+
+\subsubsection*{Uncompensated approach}
+
+if the vector $\vec{f}_d$ is not added to the rhs of the momentum 
+equation, I unfortunately cannot compute a fiele $p'$ like in the 1d case,
+in this very generic framework.
+
+
+
+
+
 
 \newpage
 %--------------------------------------------------------------
-\section*{Experiment 1: Simple case of a vertical cosine hill dilation zone}
+\section*{Experiment 1: Wide vertical cosine hill dilation zone}
+
+We postulate a dilation zone and then compute the corresponding velocity: 
+\[
+\frac{d u_d}{d x} = \frac12 \left(1-\cos(\frac{2 \pi x}{L_x}) \right)
+\]
+where $L_x$ is the width of the 1d domain.
+The dilation zone is strong in the middle of the domain and zero on the sides. 
+The dilation velocity $u_d(x)$ is then given by integration of the equation above
+\[
+u_d(x) = \frac12x - \frac{L}{4\pi  }\sin \left(\frac{2 \pi x}{L} \right) +C
+\]
+where $C$ is the integration constant.
+Given the planar symmetry $u_d$ should be zero along the line $x=L_x/2$, so 
+\[
+0 = \frac{L}{4}  + C \qquad \Rightarrow \qquad C = -L/4
+\]
+Then in the end:
+\[
+u_d(x) = \frac12 \left( x- \frac{L}{2} - \frac{L}{2\pi }\sin (\frac{2 \pi x}{L}) \right)
+\]
+Finally we will also need
+\[
+\frac{d^2 u_d}{d x^2} = \frac{\pi}{L}  \sin \left(\frac{2 \pi x}{L} \right)
+\]
+The analytical expressions for $u_d$ and $du_d/dx$ are shown here for $L_x=2$:
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp1/analytical.pdf}\\
 {\captionfont dilation term and resulting velocity fields.}
 \end{center}
 
+The dilation is positive in the middle of the domain and this results
+in a dilation velocity that is an outward flow on both boundaries.
 
 
 \begin{center}
@@ -76,13 +398,44 @@ $Q_1$ pressure space.
 
 \newpage
 %-----------------------------------------------------------------------------------
-\section*{Experiment 2: Simple case of a vertical cosine hill dilation zone}
+\section*{Experiment 2: Simple case of a narrow vertical cosine hill dilation zone}
 
+We now start from a different dilation zone:
+\[
+\frac{d u_d}{d x} = \frac12 \left(1+\cos\frac{ \pi (x-L/2)}{\delta} \right)
+\]
+for $|x-Lx/2|<\delta$, zero otherwise.
+We then integrate to find
+\[
+u_d(x) = \frac12x + \frac12\frac{\delta }{\pi  }\sin  \frac{ \pi (x-L/2)}{\delta} +C
+\]
+we find again $C=-L/4$
+so that 
+\[
+u_d(x) = \frac12 \left[ x-L/2 + \frac{\delta }{\pi  }\sin  \frac{ \pi (x-L/2)}{\delta} \right]
+\]
+for $|x-Lx/2|<\delta$. Outside, we have
+$u_d=constant$. We of course require the velocity to be continuous at 
+$x=L/2\pm \delta$ with:
+\[
+u_d(x=L/2+\delta) = \frac{\delta }{2} 
+\qquad
+u_d(x=L/2-\delta) = -\frac{\delta }{2} 
+\]
+Finally we will need
+\[
+\frac{d^2 u_d}{d x^2} = -\frac{\pi}{2\delta}  \sin \frac{ \pi (x-L/2)}{\delta}
+\]
+
+As above we set $L_x=2$, $L_y=1$. Free slip boundary conditions are imposed on the 
+top and bottom boundaries. $u=0$ is also presribed at location $(x=L_x/2,y=L_y)$
+so as to remove the translational nullspace. $\rho$ is set to zero and $\eta=1$. 
+
+The analytical expressions for $u_d$ and $du_d/dx$ are shown here:
 \begin{center}
 \includegraphics[width=9cm]{python_codes/fieldstone_175/results/exp2/analytical.pdf}\\
 {\captionfont dilation term and resulting velocity fields.}
 \end{center}
-
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp2/ud.png}
@@ -99,7 +452,16 @@ $Q_1$ pressure space.
 \end{center}
 
 The velocity converges as expected (third-order) but the pressure error 
-showcases weird jumps...
+showcases weird jumps and seems to be hyper-convergent for nelx values 
+multiple of 8...
+
+In the uncompensated case the expected pressure is $p=\frac43 \frac{du_d}{dx}$,
+which we recover (the velocity is of course unchanged):
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp2/uncompensated/p.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp2/uncompensated/errors.pdf}
+\end{center}
 
 
 \newpage
@@ -164,13 +526,31 @@ requiring that the pressure fulfills the condition $\int_\Omega p dV =0$.
 
 In the end this experiment is not truly 2d: it is made of 2 1d experiments 
 added to one another, one in the $x$ direction, one in the $y$ direction.
-
 The dilation velocity is prescribed on all sides of the domain.
+
+More concretely, the terms in the rhs of the momentum equation are:
+\begin{eqnarray}
+f_x 
+&=&
+\frac43 \frac{\partial^2 u_d}{\partial x^2} + \frac{\partial^2 u_d}{\partial y^2} 
++ \frac13 \frac{\partial^2 v_d}{\partial x \partial y} 
+=
+\frac43 \frac{\partial^2 u_d}{\partial x^2} 
+= 
+- \frac43 \frac{\pi}{2\delta_x}  \sin \frac{ \pi (x-L_x/2)}{\delta_x} \nn\\
+f_y 
+&=& 
+\frac{\partial^2 v_d}{\partial x^2}
++ \frac43 \frac{\partial^2 v_d}{\partial y^2} 
++ \frac13\frac{\partial^2 u_d}{\partial x\partial y} 
+=\frac43 \frac{\partial^2 v_d}{\partial y^2} 
+= -\frac43 \frac{\pi}{2\delta_y}  \sin \frac{ \pi (y-L_y/2)}{\delta_y} 
+\end{eqnarray}
+
+
 
 Looking at the discretisation errors we find that the convergence is not 
 really monotonous, although the errors decrease globally when resolution increases.
-
-
 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_175/results/exp3/errors.pdf}\\
@@ -198,35 +578,8 @@ Concretely we use the velocity field of experiment 2 but rotate it by an angle $
 We then define the coordinate $\tilde{x}=(x-L_x/2)\cos(\theta)+(y-L_y/2) \sin(\theta)+L_x/2$
 and define the $\vec\upnu_d$ velocity as follows (I use the $u_d$ expression of experiment 2
 albeit written as a function of $\tilde{x}$ and apply a rotation matrix to the vector $(u_d(\tilde{x}),0)$
-which yields the vector $( u_d(\tilde{x}) \cos\theta , u_d(\tilde{x}) \sin\theta )$:
-
-\begin{lstlisting}
-theta=np.pi/6
-w4=12
-
-def ud(x,y,Lx,Ly):
-       ...
-       delta4=Lx/w4
-       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
-       if xp<=Lx/2-delta4: 
-          return -delta4/2*np.cos(theta)
-       elif xp<=Lx/2+delta4:
-          return 0.5*(xp-Lx/2+delta4/np.pi*np.sin(np.pi*(xp-Lx/2)/delta4))*np.cos(theta)
-       else: 
-          return delta4/2*np.cos(theta)
-
-def vd(x,y,Lx,Ly):
-       ...
-       delta4=Lx/w4
-       xp=((x-Lx/2)*np.cos(theta)+(y-Ly/2)*np.sin(theta))+Lx/2
-       if xp<=Lx/2-delta4: 
-          return -delta4/2*np.sin(theta)
-       elif xp<=Lx/2+delta4:
-          return 0.5*(xp-Lx/2+delta4/np.pi*np.sin(np.pi*(xp-Lx/2)/delta4))*np.sin(theta)
-       else: 
-          return delta4/2*np.sin(theta)
-\end{lstlisting}
-The rest of the functions are on github\footnote{\url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_175}}.
+which yields the vector $( u_d(\tilde{x}) \cos\theta , u_d(\tilde{x}) \sin\theta )$.
+See the functions on github\footnote{\url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_175}}.
 
 From these expressions we can compute all the derivatives that we need for the implementation.
 Inside the band, we have 
@@ -308,6 +661,70 @@ v_d &=&  0
 and since $v_d\propto \sin \theta $ all partial derivatives thereof are also zero.
 These equations are identical to exp 2.
 
+
+Let us now investigate whether we can find a pressure field.
+We start from 
+\begin{eqnarray}
+f_x 
+&=&
+\frac43 \frac{\partial^2 u_d}{\partial x^2} 
++ \frac{\partial^2 u_d}{\partial y^2} 
++ \frac13 \frac{\partial^2 v_d}{\partial x \partial y} 
+\nn\\
+f_y 
+&=& 
+\frac{\partial^2 v_d}{\partial x^2}
++ \frac43 \frac{\partial^2 v_d}{\partial y^2} 
++ \frac13\frac{\partial^2 u_d}{\partial x\partial y} 
+\end{eqnarray}
+We then notice that 
+\[
+\frac{\partial^2 u_d}{\partial y^2} 
+= \frac{\partial^2 v_d}{\partial x\partial y}
+\qquad
+\text{and}
+\qquad
+\frac{\partial^2 v_d}{\partial x^2}
+= \frac{\partial^2 u_d}{\partial x\partial y}
+\]
+so that now
+\begin{eqnarray}
+f_x 
+&=&
+\frac43 \frac{\partial^2 u_d}{\partial x^2} 
++ \frac{\partial^2 v_d}{\partial x\partial y}
++ \frac13 \frac{\partial^2 v_d}{\partial x \partial y} \nn\\
+&=& 
+\frac43 \frac{\partial^2 u_d}{\partial x^2} 
++ \frac43 \frac{\partial^2 v_d}{\partial x \partial y} \nn\\
+&=& 
+\frac{\partial}{\partial x} \left[ \frac43 \left( \frac{\partial u_d}{\partial x} +  \frac{\partial v_d}{\partial y} \right) \right]
+\nn\\
+f_y
+&=& 
+\frac{\partial^2 u_d}{\partial x\partial y}
++ \frac43 \frac{\partial^2 v_d}{\partial y^2} 
++ \frac13\frac{\partial^2 u_d}{\partial x\partial y}  \nn\\
+&=&
+\frac{\partial}{\partial y} \left[ \frac43 \left( \frac{\partial u_d}{\partial x} +  \frac{\partial v_d}{\partial y} \right) \right]
+\end{eqnarray}
+and we can write 
+\[
+\left(\begin{array}{c}
+f_x \\ f_y
+\end{array} \right)
+= \vec\nabla p'
+\qquad
+\text{with}
+\qquad
+p'(x,y)= \frac43 \left( \frac{\partial u_d}{\partial x} +  \frac{\partial v_d}{\partial y} \right)
+\]
+
+
+
+
+
+
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_175/results/exp4/errors.pdf}\\
 {\captionfont Discretisation errors for velocity and pressure.}
@@ -353,12 +770,9 @@ theta=pi/20
 %==================================================
 \section*{Experiment 6: Wolfgang's idea}
 
-Lx=Ly=1
-
-left, bottom, top free slip. 
-analytical value prescribed on right boundary.
-
-pressure normalised
+The domain is the unit square. Free slip boundary conditions are imposed 
+on the left, top, and bottom boundaries. We choose $u_d=x$ and $div(v)=1$
+and prescribe $u_d$ on right boundary. The recovered pressure is zero. 
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp6/vel.png}
@@ -367,9 +781,265 @@ pressure normalised
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Magma chamber with constant dilation (not implemented)}
+
+Let us assume this is a 2d problem and the magma chamber is centered on 
+the origin of the axis coordinates:
+
+Let us assume we prescribe there a dilation term so that in the chamber $\vec\nabla \cdot \vec\upnu = {\cal D}$.
+In polar coordinates we have
+\[
+\vec\nabla \cdot \vec\upnu = \frac{1}{r} \frac{\partial (r \upnu_r) }{\partial r}
+\] 
+This leads to write 
+\[
+\frac{\partial (r \upnu_r) }{\partial r}
+={\cal D} r 
+\qquad
+\Rightarrow
+\qquad
+r \upnu_r + C
+=
+\frac12 {\cal D} r^2 
+\]
+where $C$ is an integration constant.
+We then obtain 
+\[
+\upnu_r(r) = \frac12 {\cal D} r +\frac{C}{r}
+\]
+Since the velocity must be finite in the middle of the chamber (i.e. for $r=0$)
+then we must set $C=0$ so that in the end:
+\[
+\boxed{
+\upnu_r(r) = \frac12 {\cal D} r 
+}
+\]
+From this we can compute 
+\[
+\dot\varepsilon_{rr} 
+= \frac{\partial \upnu_r}{\partial r} 
+= \frac12 {\cal D} 
+\]
+\[
+\dot\varepsilon_{\theta\theta}
+= \frac{\upnu_r}{r} + ...
+= \frac12 {\cal D} 
+\] 
+Sanity check: 
+$
+\dot\varepsilon_{rr} 
++
+\dot\varepsilon_{\theta\theta} 
+= \frac12 {\cal D} 
++ \frac12 {\cal D} 
+= {\cal D}
+$
+We find in the literature that the $r$ component of the momentum equation in 
+this coordinate system is given by
+\[
+\frac{\partial \sigma_{rr}}{\partial r} + 
+\frac{1}{r}
+\frac{\partial \sigma_{r\theta}}{\partial \theta} 
+%\frac{\partial \sigma_{rz}}{\partial z} 
++ \frac{1}{r} (\sigma_{rr} - \sigma_{\theta\theta}) + \rho g_r= 0
+\]
+We assume that gravity is zero, and since the problem is axially symmetric the second 
+term is zero ($\partial_\theta \rightarrow 0$).
+We are then left with:
+\begin{equation} \label{eq:meh}
+\frac{\partial \sigma_{rr}}{\partial r} + 
+%\frac{\partial \sigma_{rz}}{\partial z} 
+ \frac{1}{r} (\sigma_{rr} - \sigma_{\theta\theta}) = 0
+\end{equation}
+We have 
+\begin{eqnarray}
+\dot\varepsilon_{rr}^d &=&  \frac12 {\cal D} -\frac13 {\cal D}  = \frac16 {\cal D} \nn\\
+\dot\varepsilon_{\theta\theta}^d  &=&  \frac12 {\cal D} -\frac13 {\cal D}  = \frac16 {\cal D} \nn
+\end{eqnarray}
+so that 
+\begin{eqnarray}
+\sigma_{rr} &=& -p + 2 \eta \dot\varepsilon_{rr}^d = -p + 2 \eta \frac{1}{6} {\cal D} 
+= -p + \eta \frac13 {\cal D} \nn\\
+\sigma_{\theta\theta} &=& -p + 2 \eta \dot\varepsilon_{\theta\theta} = -p + 2 \eta \frac{1}{6} {\cal D} 
+= -p + \eta \frac13 {\cal D} \nn
+\end{eqnarray}
+Then Eq.~\eqref{eq:meh}  becomes
+\[
+-\frac{\partial p}{\partial r} =0
+\]
+which means that {\it the pressure is constant inside the chamber}.
+However we would need more information about the domain/physics/boundary conditions
+outside the chamber to be able to specify this constant.
+
+
+
+
 \newpage
-%==================================================
-\section*{Experiment 7: disk}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Experiment 7: magma chamber with radial dilation}
+
+
+
+Let us now assume that the dilation prescribed in the chamber is no more constant 
+but given by 
+\[
+\vec\nabla \cdot \vec\upnu = {\cal D} r
+\]
+This leads to write 
+\[
+\frac{\partial (r \upnu_r) }{\partial r} = {\cal D} r^2 
+\qquad
+\Rightarrow
+\qquad
+r \upnu_r +C =  \frac13 {\cal D} r^3 
+\]
+For the same reason as before we set $C=0$ so that 
+\[
+\boxed{
+\upnu_r(r) = \frac13 {\cal D} r^2
+}
+\]
+Since $\vec\upnu = \upnu_r \vec{e}_r$ and $\vec{e}_r=\cos\theta \vec{e}_x + \sin\theta \vec{e}_y$
+the the velocity is as follows in Cartesian coordinates:
+\begin{eqnarray}
+\upnu_x &=& \upnu_r \cos\theta \\ 
+\upnu_y &=& \upnu_r \sin\theta 
+\end{eqnarray}
+Since $\cos\theta = \frac{x}{r}$ and $\sin\theta = \frac{y}{r}$ then
+\begin{eqnarray}
+\upnu_x &=& \frac13 {\cal D} r^2 \frac{x}{r} = \frac13 {\cal D}  r x \\ 
+\upnu_y &=& \frac13 {\cal D} r^2 \frac{y}{r} = \frac13 {\cal D}  r y 
+\end{eqnarray}
+From this we can compute
+\begin{eqnarray}
+\dot\varepsilon_{rr} 
+&=& \frac{\partial \upnu_r}{\partial r} 
+= \frac23 {\cal D} r \\
+\dot\varepsilon_{\theta\theta}
+&=& \frac{\upnu_r}{r} + ...
+= \frac13 {\cal D} r
+\end{eqnarray}
+Again the sanity check yields 
+$
+\dot\varepsilon_{rr} +\dot\varepsilon_{\theta\theta} 
+= \frac23 {\cal D} r + \frac13 {\cal D} r = {\cal D} r
+$
+as expected.
+
+The deviatoric strain rate tensor diagonal terms are then given by:
+\begin{eqnarray}
+\dot\varepsilon_{rr}^d  &=& 
+\dot\varepsilon_{rr}  -\frac13  {\cal D} r 
+=\frac13  {\cal D} r  \nn\\
+\dot\varepsilon_{\theta\theta}^d  &=&
+\dot\varepsilon_{\theta\theta}  -\frac13  {\cal D} r = 0 
+\end{eqnarray}
+we then need
+\begin{eqnarray}
+\sigma_{rr} &=& -p + 2 \eta \dot\varepsilon_{rr}^d  
+= -p +  \frac23 \eta {\cal D}r \nn\\ 
+\sigma_{\theta\theta} &=& -p + 2 \eta \dot\varepsilon_{\theta\theta} ^d 
+= -p 
+\end{eqnarray}
+then we start again from Eq.~\eqref{eq:meh}, and obtain this time
+\[
+-\frac{\partial p}{\partial r} 
++  \frac23 \eta {\cal D} 
++ \frac23 \eta {\cal D} 
+=0
+\]
+or,
+\[
+-\frac{\partial p}{\partial r} 
++  \frac43 \eta {\cal D} 
+=0
+\]
+and finally 
+\[
+p(r) =  \frac43 \eta {\cal D}  r + C 
+\]
+where $C$ is an integration constant. 
+This time the pressure is linear in $r$ inside the chamber.  
+
+
+
+\paragraph{outside the chamber}
+
+Outside the chamber there is no dilation, and the velocity divergence is zero, 
+so that 
+\[
+\vec\nabla \cdot \vec\upnu = \frac{1}{r} \frac{\partial (r \upnu_r) }{\partial r} = 0
+\]
+i.e. $r \upnu_r = C$, or $\upnu_r(r) = C/r$.
+
+Assuming the chamber has a radius $R$, the velocity must be continuous at this 
+location $r=R$, so we must have 
+\[
+\frac{1}{3} {\cal D} R^2 = \frac{C}{R} 
+\qquad
+\Rightarrow
+\qquad
+C = \frac{1}{3} {\cal D} R^3 
+\]
+so the velocity outside the chamber is then 
+\[
+\boxed{
+\upnu_r(r) = \frac{{\cal D} R^3 } {3r} 
+}
+\]
+\begin{eqnarray}
+\upnu_x &=& \upnu_r \cos\theta = \frac{{\cal D} R^3 } {3r} \frac{x}{r} = \frac{{\cal D} R^3 } {3r^2} x \\
+\upnu_y &=& \upnu_r \sin\theta = \frac{{\cal D} R^3 } {3r} \frac{y}{r} = \frac{{\cal D} R^3 } {3r^2} y 
+\end{eqnarray}
+
+
+
+Let's go again computing the strain rate components:
+\begin{eqnarray}
+\dot\varepsilon_{rr} 
+&=& \frac{\partial \upnu_r}{\partial r} 
+= - \frac{{\cal D} R^3 } {3r^2} 
+\\
+\dot\varepsilon_{\theta\theta}
+&=& \frac{\upnu_r}{r} + ...
+= \frac{{\cal D} R^3 } {3r^2} 
+\end{eqnarray}
+
+Obviously $\dot\varepsilon_{rr}  + \dot\varepsilon_{\theta\theta}=0$
+so that $\dot\varepsilon_{rr}^d = \dot\varepsilon_{rr}$ 
+and $\dot\varepsilon_{\theta\theta}^d=\dot\varepsilon_{\theta\theta}$. 
+
+The stress components then write
+\begin{eqnarray}
+\sigma_{rr} 
+&=& -p + 2 \eta \dot\varepsilon_{rr}^d  
+= -p - \frac{2{\cal D} R^3 \eta } {3r^2}  \\
+\sigma_{\theta\theta} 
+&=& -p + 2 \eta \dot\varepsilon_{\theta\theta}^d  
+= -p + \frac{2{\cal D} R^3 \eta } {3r^2}  
+\end{eqnarray}
+We have 
+\[
+\frac{\partial \sigma_{rr}}{\partial r} 
+= -\frac{\partial p}{\partial r}  + 4 \frac{{\cal D} R^3 \eta } {3r^3}  
+\]
+\[
+\frac{1}{r} (\sigma_{rr} - \sigma_{\theta\theta}) 
+= -  4 \frac{{\cal D} R^3 \eta } {3r^3}  
+\]
+In the end, combining these terms in Eq.~\eqref{eq:meh}
+we obtain:
+\[
+-\frac{\partial p}{\partial r} = 0
+\] 
+so that the pressure is constant outside the chamber.
+
+
+
+
+
 
 Lx=Ly=2
 
@@ -382,19 +1052,12 @@ pressure normalised
 uncompensated
 
 \begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp7/divv}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp7/varrows}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp7/vel.png}
 \includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp7/press.png}
 \end{center}
 
-\begin{lstlisting}
-hline=np.zeros(nn_V,dtype=bool)    
-vline=np.zeros(nn_V,dtype=bool)    
-for i in range(0,nn_V):
-    if abs(y_V[i]-Ly/2)<0.001: hline[i]=True 
-    if abs(x_V[i]-Lx/2)<0.001: vline[i]=True 
-np.savetxt('solution_h_exp6.ascii',np.array([x_V[hline],u[hline],v[hline],q[hline],divvn[hline]]).T)
-np.savetxt('solution_v_exp6.ascii',np.array([y_V[vline],u[vline],v[vline],q[vline],divvn[vline]]).T)
-\end{lstlisting}
 
 
 
@@ -419,7 +1082,128 @@ theta=0.3
 
 \newpage
 %==================================================
-\section*{Experiment 9: disk + ring}
+\section*{Experiment 9: magma chamber with ring around it}
+
+This is experiment 9 of stone 175.
+Let us now assume that the central disc has radius $R_1$ and is characterised
+by a dilation ${\cal D} r$ as before.
+
+The solution outside the disc is then $\upnu_r(r)= {\cal D} R_1^3/3r$.
+We now add a ring bound by radii $R_2$ and $R_3$ with a different dilation rate term
+yet to be determined. We introduce such a ring in order to recover a zero
+velocity outside of it and therefore make the boundary conditions on the sides of
+the domain very simple. 
+Since the velocity field must be continuous we must then have
+$\upnu_r(R_2)= {\cal D} R_1^3/3R_2$ and we impose
+$\upnu_r(R_3)= 0$. 
+We additionally require the velocity to be linear in the ring, so that we arrive at
+\[
+\upnu_r(r)=\frac{r-R_3}{R_2-R_3} \frac{{\cal D} R_1^3}{3R_2}
+\]
+Let us define $H=\frac{1}{R_2-R_3} \frac{{\cal D} R_1^3}{3R_2}$ so that 
+\[
+\upnu_r(r)=H(r-R_3)
+\]
+inside the ring. We then have
+\[
+\vec\nabla\cdot \vec\upnu = 
+\frac{1}{r} \frac{\partial (r \upnu_r) }{\partial r} 
+= \frac{1}{r} H (2r-R_3) 
+= \left(2-\frac{R_3}{r}\right)  H 
+\]
+Again the Cartesian components of the velocity are given by
+\begin{eqnarray}
+\upnu_x &=& \upnu_r \cos\theta \\ 
+\upnu_y &=& \upnu_r \sin\theta 
+\end{eqnarray}
+and since
+\[
+\cos\theta = \frac{x}{r},
+\qquad
+\sin\theta = \frac{y}{r} 
+\]
+then 
+\begin{eqnarray}
+\upnu_x &=& H(r-R_3) \frac{x}{r}  \\
+\upnu_y &=& H(r-R_3) \frac{y}{r}  
+\end{eqnarray}
+
+
+
+
+
+From this we can compute the strain rate in the ring:
+\begin{eqnarray}
+\dot\varepsilon_{rr} 
+&=& \frac{\partial \upnu_r}{\partial r}  =H \\
+\dot\varepsilon_{\theta\theta}
+&=& \frac{\upnu_r}{r} + ...
+= H \left(1 - \frac{R_3}{r} \right)
+\end{eqnarray}
+Again the sanity check yields 
+\[
+\dot\varepsilon_{rr} +\dot\varepsilon_{\theta\theta} 
+= H + H \left(1 - \frac{R_3}{r} \right)
+= \left(2-\frac{R_3}{r}\right)  H 
+\]
+as expected.
+
+The deviatoric strain rate tensor diagonal terms are then given by:
+
+\begin{eqnarray}
+\dot\varepsilon_{rr}^d  
+&=& \dot\varepsilon_{rr}  -\frac13  \left(2-\frac{R_3}{r}\right)  H  \nn\\
+&=& H  -\frac13  \left(2-\frac{R_3}{r}\right)  H \nn \\
+&=& \frac13\left[ 3  -  \left(2-\frac{R_3}{r}\right) \right] H \nn \\
+&=& \frac13\left( 1+ \frac{R_3}{r} \right) H  
+\nn\\
+\dot\varepsilon_{\theta\theta}^d  
+&=& \dot\varepsilon_{\theta\theta}  -\frac13   \left(2-\frac{R_3}{r}\right)  H  \nn\\
+&=&  H \left(1 - \frac{R_3}{r} \right)-\frac13   \left(2-\frac{R_3}{r}\right)  H  \nn\\
+&=& \frac13  \left[  3\left(1 - \frac{R_3}{r} \right)-  \left(2-\frac{R_3}{r}\right)  \right] H \nn \\
+&=& \frac13  \left(  1 - 2\frac{R_3}{r}  \right) H 
+\end{eqnarray}
+Then
+\begin{eqnarray}
+\frac{1}{r}( \sigma_{rr} - \sigma_{\theta\theta} )
+&=& 
+\frac{1}{r} 2\eta \left( \dot\varepsilon_{rr}^d   - \dot\varepsilon_{\theta\theta}^d  \right) \nn\\
+&=& 
+\frac{1}{r} 2\eta \left[
+\frac13\left( 1+ \frac{R_3}{r} \right) H  
+-
+\frac13  \left(  1 - 2\frac{R_3}{r}  \right) H  
+\right] \nn\\
+&=& \frac{1}{r} \frac{2\eta}{3} \left[ 3\frac{R_3}{r}    \right] H  \nn\\
+&=&  2\eta \frac{R_3}{r^2}   H  \nn\\
+\frac{\partial \sigma_{rr}}{\partial r} 
+&=&
+- \frac{\partial p}{\partial r} 
++ 2\eta \frac{\partial }{\partial r}  \frac13\left( 1+ \frac{R_3}{r} \right) H  \nn\\
+&=&
+- \frac{\partial p}{\partial r} - \frac{2 \eta}{3} \frac{R_3}{r^2}   H  
+\end{eqnarray}
+
+
+Then
+\begin{eqnarray}
+\frac{\partial \sigma_{rr}}{\partial r} +\frac{1}{r}( \sigma_{rr} - \sigma_{\theta\theta} )
+&=&
+- \frac{\partial p}{\partial r} - \frac{2 \eta}{3} \frac{R_3}{r^2}   H  
++ 2\eta \frac{R_3}{r^2}   H  \nn\\
+&=& - \frac{\partial p}{\partial r} + \frac{4 \eta}{3} \frac{R_3}{r^2}   H  
+\end{eqnarray}
+so 
+\[
+p(r) \propto -\frac{4 \eta}{3} \frac{R_3}{r}   H  
+\]
+
+
+
+Pb1: It is actually hard to see whether the calculated pressure in the ring is $\propto 1/r$ or linear...
+but zooming in helps
+
+Pb2: Now I have four domain with different and discontinuous pressure fields...
 
 Lx=Ly=2
 
@@ -433,8 +1217,8 @@ R1=0.16 ; R2=0.6 ; R3=0.8
 
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp9/vel.png}
-\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp9/press.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp9/I/vel.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp9/I/press.png}
 \end{center}
 
 \begin{lstlisting}
@@ -446,6 +1230,395 @@ for i in range(0,nn_V):
 np.savetxt('solution_h_exp6.ascii',np.array([x_V[hline],u[hline],v[hline],q[hline],divvn[hline]]).T)
 np.savetxt('solution_v_exp6.ascii',np.array([y_V[vline],u[vline],v[vline],q[vline],divvn[vline]]).T)
 \end{lstlisting}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp9/I/vel.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp9/I/press.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp9/I/divv.pdf}
+\end{center}
+
+\newpage
+%==================================================
+\section*{Experiment 10: 2 disks positive and negative dilation}
+
+This is not an analytical benchmark.
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp10/u.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp10/v.png}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp10/divv.png}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp10/p.png}
+\end{center}
+
+\newpage
+%=========================================================
+\section*{Experiment 11: New radially symmetric benchmark}
+
+
+
+
+
+Let us postulate ${\cal D}(r)=(r-1)^2 d(r)$ on $r\in [0:1]$ (we thereby ensure that the dilation 
+and its derivative is zero at $r=1$) and zero outside. Let us further take $d(r)=ar^3+br^2+cr+e$.
+This yields:
+\begin{eqnarray}
+{\cal D}(r)
+&=&(r-1)^2 (ar^3+br^2+cr+e) \nn\\
+&=&(r^2-2r+1) (ar^3+br^2+cr+e) \nn\\
+&=& ar^5 +(b-2a) r^4+(c-2b+a)r^3+(e-2c+b)r^2 +(c-2e)r + e
+\end{eqnarray}
+
+
+In order to be able to apply no-slip boundary conditions on all sides of the domain, 
+we must insure that the overal effect of dilation (positive and negative) is zero 
+in the disc, or
+\begin{eqnarray}
+0 &=& \iint {\cal D}(r) \; r dr d\theta \nn\\ 
+&=& 2 \pi \int_0^1 {\cal D}(r) \; r dr \nn\\
+&=& \int_0^1 {\cal D}(r) \; r dr  \nn\\
+%&=& \int_0^1 (r-1)^2 d(r) \;  r dr  \nn\\
+%&=& \int_0^1 (r-1)^2 (ar^3+br^2+cr+e) \;  r dr  \nn\\
+%&=& \int_0^1 (r^2-2r+1) (ar^4+br^3+cr^2+er) \;  dr  \nn\\
+%&=& \int_0^1 ( ar^6+br^5+cr^4+er^3 -2ar^5-2br^4-2cr^3-2er^2 + ar^4+br^3+cr^2+er ) \;  dr  \nn\\
+&=& \int_0^1 [ ar^6 +(b-2a) r^5+(c-2b+a)r^4+(e-2c+b)r^3 +(c-2e)r^2 + er ] \;  dr  \nn\\
+&=& \frac17 a +(b-2a)\frac16 +(c-2b+a) \frac15 +(e-2c+b) \frac14  +  (c-2e) \frac13  +\frac12 e   \nn\\
+&=& 
+a \left( \frac17 - \frac13 +\frac15 \right) +
+b \left( \frac16 -\frac25 +\frac14  \right) +
+c \left( \frac15 -\frac12 +\frac13  \right) +
+e \left( \frac14 -\frac23 +\frac12 \right) \nn\\
+&=& \frac{1}{105}a
++\frac{1}{60} b
++ \frac{1}{30} c
++\frac{1}{12}e \nn\\
+&=& \frac{1}{420} (4a +7b +14c +35e) \label{eq:420} 
+\end{eqnarray}
+
+
+
+
+
+We can now proceed to compute the velocity field.
+We must solve:
+\[
+\vec\nabla \cdot \vec\upnu = \frac{1}{r}\frac{\partial (r \upnu_r) }{\partial r} =  {\cal D}(r)
+\qquad
+\Rightarrow
+\qquad
+\frac{\partial (r \upnu_r) }{\partial r} = r {\cal D}(r)
+\]
+i.e.
+\begin{eqnarray}
+\upnu_r (r) 
+&=& \frac{1}{r} \int r {\cal D}(r) dr \nn\\
+%&=& \frac{1}{r} \int r (r-1)^2 (ar^3+br^2+cr+e)  dr  \nn\\
+&=& \frac{1}{r} \int [ ar^6 +(b-2a) r^5+(c-2b+a)r^4+(e-2c+b)r^3 +(c-2e)r^2 + er ] \;  dr  \nn\\
+&=& \frac{1}{r} 
+\left[ \frac{r^7}{7} a 
++(b-2a)\frac{r^6}{6} 
++(c-2b+a) \frac{r^5}{5} 
++(e-2c+b) \frac{r^4}{4}
++(c-2e) \frac{r^3}{3}  
++\frac{r^2}{2} e   + const \right]  \nn\\
+&=& 
+\frac{r^6}{7} a 
++(b-2a)\frac{r^5}{6} 
++(c-2b+a) \frac{r^4}{5} 
++(e-2c+b) \frac{r^3}{4}
++(c-2e) \frac{r^2}{3}  
++\frac{r}{2} e 
++ \frac{const}{r}
+\end{eqnarray}
+Since the velocity must be finite at $r=0$ we must enforce $const=0$.
+In the end 
+
+\[
+\boxed{
+\upnu_r (r) 
+=
+\frac{r^6}{7} a 
++(b-2a)\frac{r^5}{6} 
++(c-2b+a) \frac{r^4}{5} 
++(e-2c+b) \frac{r^3}{4}
++(c-2e) \frac{r^2}{3}  
++\frac{r}{2} e 
+}
+\]
+Remember that we also have 
+\begin{eqnarray}
+\upnu_x &=& \upnu_r \cos\theta = \upnu_r \frac{x}{r} \\ 
+\upnu_y &=& \upnu_r \sin\theta = \upnu_r \frac{y}{r} 
+\end{eqnarray}
+
+
+From this we can compute
+\begin{eqnarray}
+\dot\varepsilon_{rr} 
+&=& \frac{\partial \upnu_r}{\partial r} \nn\\
+&=&  
+\frac{6r^5}{7} a 
++(b-2a)\frac{5r^4}{6} 
++(c-2b+a) \frac{4r^3}{5} 
++(e-2c+b) \frac{3r^2}{4}
++(c-2e) \frac{2r}{3}  
++\frac{1}{2} e 
+\nn\\
+\dot\varepsilon_{\theta\theta}
+&=& \frac{\upnu_r}{r} + ... \nn\\
+&=& 
+\frac{r^5}{7} a 
++(b-2a)\frac{r^4}{6} 
++(c-2b+a) \frac{r^3}{5} 
++(e-2c+b) \frac{r^2}{4}
++(c-2e) \frac{r}{3}  
++\frac{1}{2} e 
+\end{eqnarray}
+Again the sanity check yields 
+
+\begin{eqnarray}
+\dot\varepsilon_{rr} +\dot\varepsilon_{\theta\theta} 
+&=&
+\frac{6r^5}{7} a 
++(b-2a)\frac{5r^4}{6} 
++(c-2b+a) \frac{4r^3}{5} 
++(e-2c+b) \frac{3r^2}{4}
++(c-2e) \frac{2r}{3}  
++\frac{1}{2} e  \nn\\
+&+& \frac{r^5}{7} a 
++(b-2a)\frac{r^4}{6} 
++(c-2b+a) \frac{r^3}{5} 
++(e-2c+b) \frac{r^2}{4}
++(c-2e) \frac{r}{3}  
++\frac{1}{2} e \nn\\
+&=&  
+a r^5  
++(b-2a) r^4
++(c-2b+a) r^3
++(e-2c+b) r^2 
++(c-2e) r 
++ e  \nn\\
+&=& {\cal D}(r)
+\end{eqnarray}
+as expected.
+
+
+
+The deviatoric strain rate tensor diagonal terms are then given by:
+
+\begin{eqnarray}
+\dot\varepsilon_{rr}^d  
+&=& \dot\varepsilon_{rr}  -\frac13  {\cal D}(r)  
+= \dot\varepsilon_{rr}  -\frac13 ( \dot\varepsilon_{rr} + \dot\varepsilon_{\theta\theta} ) 
+= \frac23 \dot\varepsilon_{rr}  -\frac13  \dot\varepsilon_{\theta\theta} 
+\nn\\
+\dot\varepsilon_{\theta\theta}^d  
+&=& \dot\varepsilon_{\theta\theta}  -\frac13  {\cal D}(r)  
+= \dot\varepsilon_{\theta\theta}  -\frac13 ( \dot\varepsilon_{rr} + \dot\varepsilon_{\theta\theta} ) 
+= -\frac13  \dot\varepsilon_{rr} + \frac23 \dot\varepsilon_{\theta\theta}  
+\end{eqnarray}
+
+Then
+\begin{eqnarray}
+\frac{1}{r}( \sigma_{rr} - \sigma_{\theta\theta} )
+&=& 
+\frac{1}{r} 2\eta \left( \dot\varepsilon_{rr}^d   - \dot\varepsilon_{\theta\theta}^d  \right) \nn\\
+&=& 
+\frac{1}{r} 2\eta \left(
+\frac23 \dot\varepsilon_{rr}  -\frac13  \dot\varepsilon_{\theta\theta}
++\frac13  \dot\varepsilon_{rr} - \frac23 \dot\varepsilon_{\theta\theta}
+\right)  
+\nn\\
+&=& 
+\frac{1}{r} 2\eta \left( \dot\varepsilon_{rr}   - \dot\varepsilon_{\theta\theta}  \right) \nn\\
+\frac{\partial \sigma_{rr}}{\partial r} 
+&=& - \frac{\partial p}{\partial r} + 2\eta \frac{\partial }{\partial r} \dot\varepsilon_{rr}^d \nn\\
+&=& - \frac{\partial p}{\partial r} 
++ 2\eta \frac{\partial }{\partial r}
+\left(  \frac23 \dot\varepsilon_{rr}  -\frac13  \dot\varepsilon_{\theta\theta} \right) 
+%&=& - \frac{\partial p}{\partial r} 
+%+\frac43 \eta \frac{\partial }{\partial r}  \dot\varepsilon_{rr} 
+% -\frac23 \eta  \frac{\partial }{\partial r}  \dot\varepsilon_{\theta\theta} 
+\end{eqnarray}
+
+and the $r$-component of the momentum equation (in the absence of gravity forces) writes
+\begin{eqnarray}
+0&=& 
+\frac{\partial \sigma_{rr}}{\partial r} +\frac{1}{r}( \sigma_{rr} - \sigma_{\theta\theta} )\nn\\
+&=&
+- \frac{\partial p}{\partial r} 
++ 2\eta 
+\frac{\partial }{\partial r}
+\left(  \frac23 \dot\varepsilon_{rr}  -\frac13  \dot\varepsilon_{\theta\theta} \right) 
++
+\frac{1}{r} 2\eta \left( \dot\varepsilon_{rr}   - \dot\varepsilon_{\theta\theta}  \right) 
+\end{eqnarray}
+or, 
+\begin{eqnarray}
+\frac{\partial p}{\partial r}  
+&=& 2 \eta 
+\left[
+\frac23 \underbrace{\frac{\partial }{\partial r}   \dot\varepsilon_{rr} }_{M} 
+-\frac13 \underbrace{ \frac{\partial }{\partial r}  \dot\varepsilon_{\theta\theta} }_{N}
++ \underbrace{ \frac{1}{r} \dot\varepsilon_{rr}   }_{P}
+- \underbrace{ \frac{1}{r}\dot\varepsilon_{\theta\theta} }_{Q} 
+\right]
+\end{eqnarray}
+
+For simplicity we write the radial velocity as follows:
+\[
+\upnu_r(r) = A  r^6 + B r^5 + C r^4 + D r^3 + E  r^2 + Fr
+\]
+with 
+\[
+A=\frac{a}{7}
+\qquad
+B=\frac16(b-2a)
+\qquad
+C=\frac15(a-2b+c)
+\qquad
+D=\frac14(b-2c+e)
+\qquad
+E=\frac13(c-2e)
+\qquad
+F=\frac{1}{2}e
+\]
+
+
+
+From this we can compute
+\begin{eqnarray}
+\dot\varepsilon_{rr} 
+&=& \frac{\partial \upnu_r}{\partial r} 
+=  6A  r^5 + 5B r^4 + 4C r^3 + 3D r^2 + 2E  r + F
+\nn\\
+\dot\varepsilon_{\theta\theta}
+&=& \frac{\upnu_r}{r} + ... 
+= A  r^5 + B r^4 + C r^3 + D r^2 + E  r + F
+\nn\\
+M = \frac{\partial }{\partial r}   \dot\varepsilon_{rr} 
+&=& 30A  r^4 + 20B r^3 + 12C r^2 + 6D r + 2E    
+\nn\\
+N = \frac{\partial }{\partial r}  \dot\varepsilon_{\theta\theta} 
+&=&  5A  r^4 + 4B r^3 + 3C r^2 + 2D r + E 
+\nn\\
+P=\frac{1}{r} \dot\varepsilon_{rr} 
+&=&  6A  r^4 + 5B r^3 + 4C r^2 + 3D r + 2E  + F/r 
+\nn\\
+Q=\frac{1}{r}\dot\varepsilon_{\theta\theta}
+&=& A  r^4 + B r^3 + C r^2 + D r + E  + F/r
+\end{eqnarray}
+and finally 
+
+
+\begin{eqnarray}
+\frac23 M - \frac13 N+P - Q 
+%&=& \frac13 (2 M - N+3P - 3Q )\nn\\ 
+%&=& \frac23 \left( 30A  r^4 + 20B r^3 + 12C r^2 + 6D r + 2E \right) \nn\\
+%&-& \frac13 \left( 5A  r^4 + 4B r^3 + 3C r^2 + 2D r + E  \right) \nn\\
+%&+&  \left( 6A  r^4 + 5B r^3 + 4C r^2 + 3D r + 2E  + F/r \right) \nn\\
+%&-&  \left( A  r^4 + B r^3 + C r^2 + D r + E  + F/r \right) \nn\\
+&=& \frac{70}{3} A r^4 + 16 B r^3  + 10C r^2 + \frac{16}{3} Dr + 2E  
+\end{eqnarray}
+And in the end:
+\[
+p(r) = 2\eta \left(  \frac{14}{3} A r^5 + 4B r^4  + \frac{10}{3} C r^3 + \frac{8}{3}Dr^2 + 2Er + Const \right)
+\]
+
+We enforce $p(r=1)=0$, i.e.
+\[
+p(r=1) = 2\eta \left(  \frac{14}{3} A + 4B  + \frac{10}{3} C  + \frac{8}{3}D + 2E + Const \right) = 0
+\]
+\[
+\frac{14}{3} A + 4B  + \frac{10}{3} C  + \frac{8}{3}D + 2E + Const = 0 
+\]
+or 
+\begin{eqnarray}
+-Const
+&=& \frac{14}{3} A + 4B  + \frac{10}{3} C  + \frac{8}{3}D + 2E \nn\\
+&=& \frac{14}{3} \frac{a}{7} + 4 \frac16(b-2a) 
++ \frac{10}{3} \frac15(a-2b+c)
++ \frac{8}{3}\frac14(b-2c+e)
++ 2\frac13(c-2e) \nn\\
+&=& \frac23 a + \frac23 b - \frac43 a + \frac23a -\frac43 b + \frac23 c
++ \frac23 b  - \frac43 c +\frac23 e +\frac23 c -\frac43 e \nn\\
+&=& -\frac23 e 
+\end{eqnarray} 
+So that $Const=2/3e$.
+In the end
+
+
+\[
+\boxed{
+p(r) = 2\eta \left(  \frac{14}{3} A r^5 + 4B r^4  + \frac{10}{3} C r^3 + \frac{8}{3}Dr^2 + 2Er + \frac23 \right)
+}
+\]
+
+\paragraph{Application} 
+Eq.~\eqref{eq:420} is simply $4a +7b +14c +35e = 0$. 
+This simple relationship allows us to very simply choose 3 out of the 4 
+polynomial coefficients.
+We can then arbitrarily choose $b=c=e=1$ so that $4a + 56=0$, i.e. $a=-14$. 
+We can verify this with WolframAlfa:
+\begin{center}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_175/results/exp11/anal}
+\end{center}
+
+
+With the choice above ($a=-14,b=c=e=1$):
+{\tiny
+\[
+A=\frac{a}{7}=-2
+\qquad
+B=\frac16(b-2a)=\frac{26}{9}
+\qquad
+C=\frac15(a-2b+c)=-3
+\qquad
+D=\frac14(b-2c+e)=0
+\qquad
+E=\frac13(c-2e)=-\frac13 
+\qquad
+F=\frac{1}{2}e=\frac12
+\]
+}
+so that 
+\[
+\upnu_r (r) 
+=
+-2r^6 +\frac{29}{6} r^5 - 3r^4 -\frac{1}{3} r^2 +\frac{1}{2} r
+\]
+
+
+
+
+
+
+
+No slip imposed at 4 points E,W,N,S poles to remove nullspace.
+
+\begin{center}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_175/results/exp11/vel.png}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_175/results/exp11/divv.png}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_175/results/exp11/press.png}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_175/results/exp11/vel_error.png}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_175/results/exp11/press_error.png}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp11/vel.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp11/press.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp11/divv.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_175/results/exp11/errors.pdf}
+\end{center}
+
+
+
+
+
+
+
 
 
 

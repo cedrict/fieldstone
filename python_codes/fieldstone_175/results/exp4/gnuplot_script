@@ -2,6 +2,7 @@
 set term pdf enhanced font "Times,12pt"
 set grid
 set key outside
+set pointsize .4
 
 Lx=2
 set xlabel 'h'
@@ -12,7 +13,11 @@ set output 'errors.pdf'
 plot[][]\
 'errors.ascii' u (Lx/$3):6 w lp t 'velocity',\
 'errors.ascii' u (Lx/$3):9 w lp t 'pressure',\
-x**3/2 lt -1 dt 2 t 'h^3'
+x**3/2 lt -1 dt 2 t 'h^3',\
+x**2*2 lt -1 dt 3 t 'h^2'
+
+
+
 
 
 

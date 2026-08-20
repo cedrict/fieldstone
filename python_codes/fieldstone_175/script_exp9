@@ -1,0 +1,12 @@
+#! /bin/bash
+
+rm -f errors.ascii
+
+for n in 48 64 80 96 112 128 160 ; do
+    echo nelx=nely= $n
+    python3 stone.py  $n > opla
+    grep errv opla >> errors.ascii
+    mv solution_hline.ascii solution_hline_${n}.ascii 
+    mv solution_vline.ascii solution_vline_${n}.ascii 
+    mv solution.vtu solution_${n}.vtu
+done

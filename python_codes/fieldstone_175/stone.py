@@ -6,16 +6,6 @@ from analytical_solutions import *
 from basis_functions import *
 from scipy.sparse import csr_matrix,lil_matrix
 
-
-
-###############################################################################
-
-def gx(x,y):
-    return 0
-
-def gy(x,y):
-    return 0
-
 ###############################################################################
 
 def fx(x,y,Lx,Ly):
@@ -40,40 +30,54 @@ ndof_V=2  # number of velocity degrees of freedom per node
 if int(len(sys.argv) == 2): 
    nelx = int(sys.argv[1])
 else:
-   nelx = 128
+   nelx = 50
 
-Lx=2.
-Ly=1.
+compensated=False
 
+# experiment=1: Simple case of a vertical broad cosine hill dilation zone}
+# experiment=2: Simple case of a vertical narrow cosine hill dilation zone}
+# experiment=3: Simple case of two orthogonal cosine hills dilation zone}
+# experiment=4: Slanted cosine hill dilation zone
+# experiment=5: rotated zone in 2x3 domain
+# experiment=6: Wolfgang's idea
+# experiment=7: dilation in a disk
+# experiment=8: rotated zone 3x2
+# experiment=9: disk + ring
+# experiment=10: dilation +/i in two disks
+# experiment=11: analytical radial dilation
+# The value of experiment is set in the analytical_solutions.py file !
 
-if experiment==5: 
+match experiment:
+ case 1 | 3 | 4:
+   Lx=2.
+   Ly=1.
+ case 2 :
+   Lx=2.
+   Ly=0.25
+ case 5 | 10: 
    Lx=2.
    Ly=3
-   nely=int(nelx/Lx*Ly)
-
-if experiment==6:
+ case 6:
    Lx=1
    Ly=1
-   nely=nelx 
-
-if experiment==7 or experiment==9: 
+ case 7 | 9 :
    Lx=2
    Ly=2
-   nely=nelx 
-
-if experiment==8:
+ case 8:
    Lx=3
    Ly=2
-   nely=int(nelx/Lx*Ly)
+ case 11 :
+   Lx=3.
+   Ly=3.
 
-
+nely=int(nelx/Lx*Ly)
 
 eta=1.
 rho=1.
+gx=0
+gy=0
 
-compensated=True
-
-debug=False
+debug=True
 
 ###############################################################################
 
@@ -98,29 +102,10 @@ nq_per_el=9
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
 
-#nq_per_dim=4
-#nq_per_el=16
-#qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
-#qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
-#qw4a=(18-np.sqrt(30.))/36.
-#qw4b=(18+np.sqrt(30.))/36.
-#qcoords=[-qc4a,-qc4b,qc4b,qc4a]
-#qweights=[qw4a,qw4b,qw4b,qw4a]
-
-#nq_per_dim=5
-#nq_per_el=25
-#qc5a=np.sqrt(5.+2.*np.sqrt(10./7.))/3.
-#qc5b=np.sqrt(5.-2.*np.sqrt(10./7.))/3.
-#qc5c=0.
-#qw5a=(322.-13.*np.sqrt(70.))/900.
-#qw5b=(322.+13.*np.sqrt(70.))/900.
-#qw5c=128./225.
-#qcoords=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
-#qweights=[qw5a,qw5b,qw5c,qw5b,qw5a]
-
 ###############################################################################
 
 print("experiment",experiment)
+print("compensated",compensated)
 print("nelx",nelx)
 print("nely",nely)
 print("nel",nel)
@@ -209,21 +194,19 @@ if experiment==1 or experiment==2:
           if abs(x_V[i]-Lx/2)<eps:
              bc_fix_V[i*ndof_V] = True ; bc_val_V[i*ndof_V] = 0 
 
-if experiment==3 or experiment==4 or experiment==5 or experiment==8: 
+if experiment==3 or experiment==4 or experiment==5 or experiment==8 : 
    for i in range(0,nn_V):
        if abs(x_V[i])/Lx<eps or abs(x_V[i]-Lx)/Lx<eps or \
           abs(y_V[i])/Ly<eps or abs(y_V[i]-Ly)/Ly<eps :
           bc_fix_V[i*ndof_V+0] = True ; bc_val_V[i*ndof_V+0] = ud(x_V[i],y_V[i],Lx,Ly)
           bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = vd(x_V[i],y_V[i],Lx,Ly)
 
-
-if experiment==7 or experiment==9: 
+if experiment==7 or experiment==9 : 
    for i in range(0,nn_V):
        if abs(x_V[i])/Lx<eps or abs(x_V[i]-Lx)/Lx<eps or \
           abs(y_V[i])/Ly<eps or abs(y_V[i]-Ly)/Ly<eps :
           bc_fix_V[i*ndof_V+0] = True ; bc_val_V[i*ndof_V+0] = ud(x_V[i],y_V[i],Lx,Ly)
           bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = vd(x_V[i],y_V[i],Lx,Ly)
-
        # overriding the corners so that the solution is not nonsensical
        if abs(x_V[i])/Lx<eps and abs(y_V[i])/Ly<eps: # South West corner
           bc_fix_V[i*ndof_V+0] = False 
@@ -247,10 +230,30 @@ if experiment==6:
        if abs(y_V[i])/Ly<eps or abs(y_V[i]-Ly)/Ly<eps :
           bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = 0
 
+if experiment==10:
+   for i in range(0,nn_V):
+       if abs(x_V[i])/Lx<eps:
+          bc_fix_V[i*ndof_V+0] = True ; bc_val_V[i*ndof_V+0] = 0
+          bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = 0
+       if abs(x_V[i]-Lx)/Lx<eps:
+          bc_fix_V[i*ndof_V+0] = True ; bc_val_V[i*ndof_V+0] = 0 
+          bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = 0
+
+if experiment==11 : 
+   for i in range(0,nn_V):
+       if abs(x_V[i])/Lx<eps and abs(y_V[i]-Ly/2)/Ly<eps:
+          bc_fix_V[i*ndof_V+0] = True ; bc_val_V[i*ndof_V+0] = 0 
+          bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = 0
+       if abs(x_V[i]-Lx)/Lx<eps and abs(y_V[i]-Ly/2)/Ly<eps:
+          bc_fix_V[i*ndof_V+0] = True ; bc_val_V[i*ndof_V+0] = 0 
+          bc_fix_V[i*ndof_V+1] = True ; bc_val_V[i*ndof_V+1] = 0
+
+
+
 print("boundary conditions: %.3f s" % (clock.time()-start))
 
 ###############################################################################
-# grid point setup
+# compute analytical solution and derivatives on nodes 
 ###############################################################################
 start=clock.time()
 
@@ -266,6 +269,7 @@ d2vdy2_th=np.zeros(nn_V,dtype=np.float64)
 d2vdxy_th=np.zeros(nn_V,dtype=np.float64) 
 fx_th=np.zeros(nn_V,dtype=np.float64) 
 fy_th=np.zeros(nn_V,dtype=np.float64) 
+q_th=np.zeros(nn_V,dtype=np.float64)  
 
 for i in range(0,nn_V):
     u_th[i]=ud(x_V[i],y_V[i],Lx,Ly)
@@ -280,11 +284,14 @@ for i in range(0,nn_V):
     d2vdxy_th[i]=d2vd_dxdy(x_V[i],y_V[i],Lx,Ly)
     fx_th[i]=fx(x_V[i],y_V[i],Lx,Ly)
     fy_th[i]=fy(x_V[i],y_V[i],Lx,Ly)
+    q_th[i]=pd(x_V[i],y_V[i],Lx,Ly)
+
+divv_th=dudx_th+dvdy_th
 
 if debug: np.savetxt('solution_th.ascii',np.array([x_V,y_V,u_th,v_th,dudx_th,dvdy_th,\
                                                   d2udx2_th,d2udy2_th,d2udxy_th,\
                                                   d2vdx2_th,d2vdy2_th,d2vdxy_th,
-                                                  fx_th,fy_th ]).T)
+                                                  fx_th,fy_th,q_th ]).T,fmt="%.3e")
 
 print("compute analytical sol on mesh: %.3f s" % (clock.time()-start))
 
@@ -296,6 +303,8 @@ print("compute analytical sol on mesh: %.3f s" % (clock.time()-start))
 ###############################################################################
 start=clock.time()
 
+#C=np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+
 C=np.array([[4/3,-2/3,0],[-2/3,4/3,0],[0,0,1]],dtype=np.float64) 
 
 A_fem=lil_matrix((Nfem,Nfem),dtype=np.float64)
@@ -306,9 +315,9 @@ jcb=np.zeros((ndim,ndim),dtype=np.float64)
 
 for iel in range(0,nel):
 
-    K_el =np.zeros((m_V*ndof_V,m_V*ndof_V),dtype=np.float64)
+    K_el=np.zeros((m_V*ndof_V,m_V*ndof_V),dtype=np.float64)
     G_el=np.zeros((m_V*ndof_V,m_P),dtype=np.float64)
-    f_el =np.zeros((m_V*ndof_V),dtype=np.float64)
+    f_el=np.zeros((m_V*ndof_V),dtype=np.float64)
     h_el=np.zeros((m_P),dtype=np.float64)
 
     for iq in range(0,nq_per_dim):
@@ -340,12 +349,12 @@ for iel in range(0,nel):
 
             if compensated:
                for i in range(0,m_V):
-                   f_el[ndof_V*i+0]+=N_V[i]*(rho*gx(xq,yq)-fx(xq,yq,Lx,Ly))*JxWq
-                   f_el[ndof_V*i+1]+=N_V[i]*(rho*gy(xq,yq)-fy(xq,yq,Lx,Ly))*JxWq
+                   f_el[ndof_V*i+0]+=N_V[i]*(rho*gx-fx(xq,yq,Lx,Ly))*JxWq
+                   f_el[ndof_V*i+1]+=N_V[i]*(rho*gy-fy(xq,yq,Lx,Ly))*JxWq
             else:
                for i in range(0,m_V):
-                   f_el[ndof_V*i+0]+=N_V[i]*(rho*gx(xq,yq))*JxWq
-                   f_el[ndof_V*i+1]+=N_V[i]*(rho*gy(xq,yq))*JxWq
+                   f_el[ndof_V*i+0]+=N_V[i]*rho*gx*JxWq
+                   f_el[ndof_V*i+1]+=N_V[i]*rho*gy*JxWq
 
             for i in range(0,m_P):
                 N_mat[0,i]=N_P[i]
@@ -424,7 +433,6 @@ print("     -> u (m,M) %.4e %.4e " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4e %.4e " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
-if debug: np.savetxt('solution.ascii',np.array([x_V,y_V,u,v]).T)
 
 print("solve system: %.3f s - Nfem %d" % (clock.time()-start,Nfem))
 
@@ -433,9 +441,8 @@ print("solve system: %.3f s - Nfem %d" % (clock.time()-start,Nfem))
 ###############################################################################
 start=clock.time()
 
-if experiment==3 or experiment==4 or experiment==5 or \
-   experiment==6 or experiment==7 or experiment==8 or experiment==9:
-
+match experiment:
+ case 3 | 5 | 6 | 7 | 8 | 9 :
    avrg_p=0.
    for iel in range(0,nel):
        for iq in range(0,nq_per_dim):
@@ -456,7 +463,11 @@ if experiment==3 or experiment==4 or experiment==5 or \
   
    p-=avrg_p/(Lx*Ly)
 
-   print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
+ case 2 | 4 | 11 :
+   offset=p[0]
+   p-=offset
+
+print("     -> p (m,M) %.4e %.4e " %(np.min(p),np.max(p)))
 
 print("normalise pressure: %.3f s" % (clock.time()-start))
 
@@ -486,7 +497,11 @@ for iel in range(0,nel):
     q[icon_V[8,iel]]=(p[icon_P[0,iel]]+p[icon_P[1,iel]]+\
                       p[icon_P[2,iel]]+p[icon_P[3,iel]])*0.25
 
+q_error=q-q_th
+
 print("project p onto vel nodes: %.3f s" % (clock.time()-start))
+
+if debug: np.savetxt('solution.ascii',np.array([x_V,y_V,u,v,q]).T,fmt='%.3e')
 
 ###############################################################################
 # compute strainrate at center of element 
@@ -500,6 +515,7 @@ eyy=np.zeros(nel,dtype=np.float64)
 exy=np.zeros(nel,dtype=np.float64)  
 sr=np.zeros(nel,dtype=np.float64)  
 p_e=np.zeros(nel,dtype=np.float64)  
+p_th=np.zeros(nel,dtype=np.float64)  
 
 for iel in range(0,nel):
     rq = 0.
@@ -523,6 +539,7 @@ for iel in range(0,nel):
             +np.dot(dNdx_V[:],v[icon_V[:,iel]])*0.5
     sr[iel]=np.sqrt(0.5*(exx[iel]**2+eyy[iel]**2)+exy[iel]**2)
     p_e[iel]=np.dot(N_P,p[icon_P[:,iel]])
+    p_th[iel]=pd(x_e[iel],y_e[iel],Lx,Ly)
 #end if
 
 print("     -> exx (m,M) %.4e %.4e " %(np.min(exx),np.max(exx)))
@@ -531,7 +548,7 @@ print("     -> exy (m,M) %.4e %.4e " %(np.min(exy),np.max(exy)))
 print("     -> sr  (m,M) %.4e %.4e " %(np.min(sr),np.max(sr)))
 print("     -> p_e (m,M) %.4e %.4e " %(np.min(p_e),np.max(p_e)))
 
-if debug: np.savetxt('solution_e.ascii',np.array([x_e,y_e,p_e,exx,eyy,exx+eyy]).T)
+if debug: np.savetxt('solution_e.ascii',np.array([x_e,y_e,p_e,exx,eyy,exx+eyy]).T,fmt='%.3e')
 
 print("compute elemental press & sr: %.3f s" % (clock.time()-start))
 
@@ -613,7 +630,11 @@ for iel in range(0,nel):
             vq=np.dot(N_V,v[icon_V[:,iel]])
             pq=np.dot(N_P,p[icon_P[:,iel]])
             errv+=((uq-ud(xq,yq,Lx,Ly))**2+(vq-vd(xq,yq,Lx,Ly))**2)*JxWq
-            errp+=(pq-0)**2*JxWq
+            if compensated: 
+               pth=0
+            else:
+               pth=pd(xq,yq,Lx,Ly)
+            errp+=(pq-pth)**2*JxWq
         #end for
     #end for
 #end for
@@ -625,15 +646,22 @@ print("     -> nel= %6d ; errv: %e ; errp: %e " %(nelx,errv,errp))
 print("compute discr errors: %.3f s" % (clock.time()-start))
 
 ###############################################################################
+hline=np.zeros(nn_V,dtype=bool)    
+vline=np.zeros(nn_V,dtype=bool)    
 
-if experiment==7 or experiment==9:
-   hline=np.zeros(nn_V,dtype=bool)    
-   vline=np.zeros(nn_V,dtype=bool)    
+if experiment==7 or experiment==9 or experiment==10:
+   for i in range(0,nn_V):
+       if abs(y_V[i]-Ly/2)<0.001 and x_V[i]>=1: hline[i]=True 
+       if abs(x_V[i]-Lx/2)<0.001 and y_V[i]>=1: vline[i]=True 
+   np.savetxt('solution_hline.ascii',np.array([x_V[hline]-Lx/2,u[hline],v[hline],q[hline],divvn[hline]]).T,fmt='%.4e')
+   np.savetxt('solution_vline.ascii',np.array([y_V[vline]-Ly/2,u[vline],v[vline],q[vline],divvn[vline]]).T,fmt='%.4e')
+
+if experiment==11:
    for i in range(0,nn_V):
        if abs(y_V[i]-Ly/2)<0.001: hline[i]=True 
        if abs(x_V[i]-Lx/2)<0.001: vline[i]=True 
-   np.savetxt('solution_h_exp6.ascii',np.array([x_V[hline],u[hline],v[hline],q[hline],divvn[hline]]).T)
-   np.savetxt('solution_v_exp6.ascii',np.array([y_V[vline],u[vline],v[vline],q[vline],divvn[vline]]).T)
+   np.savetxt('solution_hline.ascii',np.array([x_V[hline]-Lx/2,u[hline],v[hline],q[hline],divvn[hline]]).T,fmt='%.4e')
+   np.savetxt('solution_vline.ascii',np.array([y_V[vline]-Ly/2,u[vline],v[vline],q[vline],divvn[vline]]).T,fmt='%.4e')
 
 ###############################################################################
 # plot of solution
@@ -671,6 +699,14 @@ vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
 exy.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
 #--
+vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
+p_e.tofile(vtufile,sep=' ',format='%.4e')
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='analytical p' Format='ascii'> \n")
+p_th.tofile(vtufile,sep=' ',format='%.4e')
+vtufile.write("</DataArray>\n")
+#--
 vtufile.write("</CellData>\n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")
@@ -684,59 +720,59 @@ for i in range(0,nn_V):
     vtufile.write("%e %e %e \n" %(u_th[i],v_th[i],0.))
 vtufile.write("</DataArray>\n")
 #--
-vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity-analytical' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity error' Format='ascii'> \n")
 for i in range(0,nn_V):
     vtufile.write("%e %e %e \n" %(u[i]-u_th[i],v[i]-v_th[i],0.))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='analytical dud_dx' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e \n" %(dudx_th[i]))
+dudx_th.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='analytical d2ud_dx2' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e \n" %(d2udx2_th[i]))
+d2udx2_th.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='analytical d2ud_dy2' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e \n" %(d2udy2_th[i]))
+d2udy2_th.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='analytical d2ud_dxdy' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e \n" %(d2udxy_th[i]))
+d2udxy_th.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='analytical dvd_dy' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e \n" %(dvdy_th[i]))
+dvdy_th.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='analytical d2vd_dx2' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e \n" %(d2vdx2_th[i]))
+d2vdx2_th.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='analytical d2vd_dy2' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e \n" %(d2vdy2_th[i]))
+d2vdy2_th.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='analytical d2vd_dxdy' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e \n" %(d2vdxy_th[i]))
+d2vdxy_th.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='analytical divv' Format='ascii'> \n")
-for i in range(0,nn_V):
-    vtufile.write("%e \n" %( dudx_th[i]+dvdy_th[i]))
+divv_th.tofile(vtufile, sep=" ", format="%.4e")
 vtufile.write("</DataArray>\n")
 #--
-vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
+vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
 q.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='analytical p' Format='ascii'> \n")
+q_th.tofile(vtufile,sep=' ',format='%.4e')
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='p error' Format='ascii'> \n")
+q_error.tofile(vtufile,sep=' ',format='%.4e')
+vtufile.write("</DataArray>\n")
+
 vtufile.write("</PointData>\n")
 #####
 vtufile.write("<Cells>\n")
