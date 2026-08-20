@@ -1,0 +1,66 @@
+#
+set term pdf enhanced font "Times,12pt"
+set pointsize .2
+set grid
+
+R1=0.16
+R2=0.60
+R3=0.80
+
+D=1
+
+eta=1
+
+H=1/(R2-R3)*(D*R1**3)/(3*R2)
+
+f(x)=D*x**2/3
+g(x)=D*R1**3/3/x
+#h(x)=(x-R3)/(R2-R3)*D*R1**3/3/R2
+h(x)=(x-R3)*H
+
+set xlabel 'r'
+set ylabel 'v_r'
+
+set output 'vel.pdf'
+plot[][-0.001:0.011]\
+'solution_hline_32.ascii'  u 1:2 w lp t '32^2',\
+'solution_hline_64.ascii'  u 1:2 w lp t '64^2',\
+'solution_hline_96.ascii'  u 1:2 w lp t '96^2',\
+'solution_hline_128.ascii' u 1:2 w lp t '128^2',\
+'solution_hline_160.ascii' u 1:2 w lp t '160^2',\
+f(x) lt -1 dt 2,\
+g(x) lt -1 dt 2,\
+h(x) lt -1 dt 2
+
+
+
+set ylabel 'p'
+set output 'press.pdf'
+plot[][-0.025:.25]\
+'solution_hline_32.ascii'  u 1:4 w lp t '32^2',\
+'solution_hline_64.ascii'  u 1:4 w lp t '64^2',\
+'solution_hline_96.ascii'  u 1:4 w lp t '96^2',\
+'solution_hline_128.ascii' u 1:4 w lp t '128^2',\
+'solution_hline_160.ascii' u 1:4 w lp t '160^2',\
+1.3333*(x) lt -1 dt 2 ,\
+-4*eta/3*R3/(x)*H lt -1 dt 2 
+
+set output 'press2.pdf'
+plot[0.6:0.8][]\
+'solution_hline_32.ascii'  u 1:4 w lp t '32^2',\
+'solution_hline_64.ascii'  u 1:4 w lp t '64^2',\
+'solution_hline_96.ascii'  u 1:4 w lp t '96^2',\
+'solution_hline_128.ascii' u 1:4 w lp t '128^2',\
+'solution_hline_160.ascii' u 1:4 w lp t '160^2',\
+-4.*eta/3.*R3/(x)*H    -0.0305  lt -1 dt 2 
+
+set output 'divv.pdf'
+plot[][]\
+'solution_hline_32.ascii'  u 1:5 w lp t '32^2',\
+'solution_hline_64.ascii'  u 1:5 w lp t '64^2',\
+'solution_hline_96.ascii'  u 1:5 w lp t '96^2',\
+'solution_hline_128.ascii' u 1:5 w lp t '128^2',\
+'solution_hline_160.ascii' u 1:5 w lp t '160^2',\
+
+
+
