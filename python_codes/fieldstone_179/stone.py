@@ -48,6 +48,7 @@ def displ_th(x,y):
 
 ###############################################################################
 # Triangle area is calculated via Heron's formula, see wikipedia
+# https://en.wikipedia.org/wiki/Heron%27s_formula
 ###############################################################################
 
 def compute_triangles_area(coords,nodesArray):
@@ -394,8 +395,8 @@ start=clock.time()
 
 e=np.zeros(nel,dtype=np.float64)  
 p=np.zeros(nel,dtype=np.float64)   
-xc=np.zeros(nel,dtype=np.float64)  
-yc=np.zeros(nel,dtype=np.float64)  
+x_e=np.zeros(nel,dtype=np.float64)  
+y_e=np.zeros(nel,dtype=np.float64)  
 exx=np.zeros(nel,dtype=np.float64)  
 eyy=np.zeros(nel,dtype=np.float64)  
 exy=np.zeros(nel,dtype=np.float64)  
@@ -410,8 +411,8 @@ for iel,nodes in enumerate(icon_V):
     dNdy_V[0]=x_V[nodes[2]]-x_V[nodes[1]]
     dNdy_V[1]=x_V[nodes[0]]-x_V[nodes[2]]
     dNdy_V[2]=x_V[nodes[1]]-x_V[nodes[0]]
-    xc[iel]=(x_V[nodes[0]]+x_V[nodes[1]]+x_V[nodes[2]])/3
-    yc[iel]=(y_V[nodes[0]]+y_V[nodes[1]]+y_V[nodes[2]])/3
+    x_e[iel]=(x_V[nodes[0]]+x_V[nodes[1]]+x_V[nodes[2]])/3
+    y_e[iel]=(y_V[nodes[0]]+y_V[nodes[1]]+y_V[nodes[2]])/3
     exx[iel]=np.dot(dNdx_V[:],u[icon_V[iel,:]])
     eyy[iel]=np.dot(dNdy_V[:],v[icon_V[iel,:]])
     exy[iel]=np.dot(dNdy_V[:],u[icon_V[iel,:]])*0.5\
@@ -432,8 +433,8 @@ print("     -> eyy (m,M) %.6e %.6e " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.6e %.6e " %(np.min(exy),np.max(exy)))
 
 if debug:
-   np.savetxt('pressure.ascii',np.array([xc,yc,p]).T,header='# xc,yc,p')
-   np.savetxt('strain.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+   np.savetxt('pressure.ascii',np.array([x_e,y_e,p]).T,header='# x_e,y_e,p')
+   np.savetxt('strain.ascii',np.array([x_e,y_e,exx,eyy,exy]).T,header='# x_e,y_e,exx,eyy,exy')
 
 print("compute p, sr & stress: %.3f s" % (clock.time() - start))
 
@@ -510,48 +511,39 @@ if visu==1:
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='exx' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (exx[iel]))
+    exx.tofile(vtufile, sep=" ", format="%.4e")
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='eyy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (eyy[iel]))
+    eyy.tofile(vtufile, sep=" ", format="%.4e")
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='exy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (exy[iel]))
+    exy.tofile(vtufile, sep=" ", format="%.4e")
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='strain' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (e[iel]))
+    e.tofile(vtufile, sep=" ", format="%.4e")
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (p[iel]))
+    p.tofile(vtufile, sep=" ", format="%.4e")
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='sigma_xx' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (sigmaxx[iel]))
+    sigmaxx.tofile(vtufile, sep=" ", format="%.4e")
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='sigma_yy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (sigmayy[iel]))
+    sigmayy.tofile(vtufile, sep=" ", format="%.4e")
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='sigma_xy' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" % (sigmaxy[iel]))
+    sigmaxy.tofile(vtufile, sep=" ", format="%.4e")
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='div(v)' Format='ascii'> \n")
-    for iel in range (0,nel):
-        vtufile.write("%10e\n" %divv[iel]) 
+    divv.tofile(vtufile, sep=" ", format="%.4e")
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("</CellData>\n")
