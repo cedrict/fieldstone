@@ -1,0 +1,3 @@
+biber --output-safechars chapter23
+pdflatex chapter23.tex
+

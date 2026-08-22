@@ -1,0 +1,104 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PREAMBLE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{pdflscape}
+\usepackage[cm]{fullpage}
+\usepackage{upgreek}
+\usepackage{bm}
+\usepackage{mdframed}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage[dvipsnames]{xcolor} 
+\usepackage{dsfont}
+\usepackage{gensymb} %\degree
+\usepackage{listings}
+\usepackage{stmaryrd}
+\usepackage{multicol} 
+\setlength{\columnseprule}{0.2pt}
+\usepackage{makeidx} 
+\usepackage{amssymb}
+\usepackage{csquotes}
+
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+
+\usepackage{siunitx} 
+\DeclareSIUnit\year{yr}
+\DeclareSIUnit\day{day}
+
+\usepackage[most]{tcolorbox}
+\newtcolorbox{algobox}[1]{
+  colback=gray!5, colframe=gray!5,
+  coltitle=black, fonttitle=\bfseries, title={#1},
+  boxrule=0pt, arc=3pt, left=8pt, right=8pt, top=2pt, bottom=4pt}
+
+
+\usepackage{hyperref}
+\hypersetup{
+colorlinks,
+citecolor=black,
+filecolor=black,
+linkcolor=violet,
+urlcolor=black}
+
+\usetikzlibrary{arrows, arrows.meta}
+
+\lstset{ 
+  language=Python,
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{xcolor}; should come as last argument
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code 
+  keywordstyle=\color{blue},       % keyword style
+}
+
+% be able to use \note environments with a box around the text
+\usepackage{fancybox}
+\newcommand{\note}[1]{
+{\parindent0pt
+  \begin{center}
+    \shadowbox{
+      \begin{minipage}[c]{0.9\linewidth}
+        \textbf{Note:} #1
+      \end{minipage}
+    }
+  \end{center}
+}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% newcommand
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{newcommands}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{amsthm}
+\newtheorem*{remark}{Remark}
+\newtheorem{problem}{problem:}
+\newtheorem{problem-bonus}{problem*}
+\newtheorem{exercise}{Exercise:}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Bibliography stuff
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[maxnames=6]{biblatex}
+\addbibresource{biblio_geosciences.bib}
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{FieldStone}
+\author{C. Thieulot}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{multind}
+\makeindex{general}
+\makeindex{contributors}
+ 

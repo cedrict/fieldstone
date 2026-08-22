@@ -34,9 +34,6 @@ Becker \& Kaus lecture notes \cite{beka}, the excellent paper
 by \textcite{bepo10} (2010), the syllabus of R. Hassani \cite{XX}
 and various books such as \textcite{sadd14}. 
 
-One will find in the literature either 'elasto-viscosity' or 'visco-elasticity'.
-In what follows I have adopted the former notation with the acronym EV.
-
 Once the equations have been laid out, one must then make a fundamental choice 
 with regards to the type of code/calculations in the case of elasto-viscous
 rheologies: will the primary variable be displacement $\vec{\upupsilon}$ or velocity $\vec\upnu$?
@@ -47,10 +44,24 @@ For a purely elastic code displacement is the meaningful primary variable since 
 is formulated as a function of strain (not strain rate). 
 
 
+\begin{verbatim}
+python_codes/fieldstone_34/ 2d plane strain elastic problems
+python_codes/fieldstone_36/ the annulus geometry elastic aquarium
+python_codes/fieldstone_58/ Elastic disk under compression
+python_codes/fieldstone_63/ failure in cemented granular material
+python_codes/fieldstone_90/ Thick-walled axisymmetric elastic cylinder under pressure
+python_codes/fieldstone_105/ solving the flexure equation with FDM
+python_codes/fieldstone_108/ topography above lower crustal bordering the Tibetan plateau
+python_codes/fieldstone_111/ Manufactured solution for compressible elastic deformation in a disc
+python_codes/fieldstone_123/ Boussinesq, Love magma chamber 3d elastic problems
+python_codes/fieldstone_124/ Plate with a hole elastic problems
+python_codes/fieldstone_179/ Elastic deformation in an L-shaped domain
+python_codes/fieldstone_185/ Stress around a borehole in 3d
+\end{verbatim}
 
 
 
-
+%==============================================================================
 \section{Basic equations}
 
 The strong form of the PDE that governs force balance in a medium is given by
@@ -491,7 +502,7 @@ The expression above is to be found at \url{https://en.wikipedia.org/wiki/Linear
 
 
 \newpage
-%............................
+%==============================================================================
 \section{Plane strain \label{ss:elpstrain}}
 Typically one of the spatial dimensions (e.g. $z$)
 is very large compared to the other two. 
@@ -765,7 +776,7 @@ In the case of a (near-)incompressible material, $\nu\rightarrow \frac12$ then $
 \end{remark}
 
 
-%............................
+%==============================================================================
 \section{Plane stress}
 
 For thin geometries. Let $z$ be the direction perpendicular to the plate.
@@ -870,7 +881,7 @@ The stiffness matrix for plane stress is {\it not} found by removing columns and
 
 
 
-%.........................................................
+%==============================================================================
 \section{The axisymmetric case} \label{ss:fem_elast_axissymm}
 
 We start from 
@@ -1330,7 +1341,7 @@ Note that in practice the matrix ${\bm D}$ is computed as follows (see for examp
 
 
 \newpage
-%-------------------------------------------------------------
+%==============================================================================
 \section{FEM: Incompressible formulation from Zienkiewicz \& Taylor book}
 
 This is from Volume 1-The Basis, page 307. Note that the authors use a different sign convention for pressure so that what follows is adapted from the book.
@@ -1485,7 +1496,7 @@ $p=-\lambda \vec\nabla\cdot\vec{\upupsilon}$ (as opposed to $p=-K \vec\nabla\cdo
 
 
 \newpage
-%----------------------------------------------------
+%==============================================================================
 \section{Elastic parameter values for Earth materials}
 
 In this section I list the elastic parameter values that I have come across in the literature.

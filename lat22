@@ -1,0 +1,3 @@
+biber --output-safechars chapter22
+pdflatex chapter22.tex
+
