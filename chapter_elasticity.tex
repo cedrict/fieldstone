@@ -13,12 +13,12 @@ variable name & symbol & unit \\
 full stress tensor & ${\bm \sigma}$ & \si{\pascal}\\
 deviatoric stress tensor & ${\bm \tau}$ & \si{\pascal}\\
 strain tensor & ${\bm \varepsilon}$ &  - \\
-elastic strain tensor & ${\bm \varepsilon}_{\tt e}$ &  - \\
-visco-plastic strain tensor & ${\bm \varepsilon}_{\tt vp}$ &  - \\
-total strain tensor & ${\bm \varepsilon}_{\tt T}$ &  - \\
+elastic strain tensor & ${\bm \varepsilon}^{\rm e}$ &  - \\
+visco-plastic strain tensor & ${\bm \varepsilon}^{\rm vp}$ &  - \\
+total strain tensor & ${\bm \varepsilon}^{\rm T}$ &  - \\
 strain rate tensor & $\dot{\bm \varepsilon}$ &  \si{\per\second} \\
 Lam\'e parameter & $\lambda$ & $\si{\pascal}$ \\
-Shear modulus & $\mu$ & $\si{\pascal}$ \\
+Shear modulus & $\mu(G)$ & $\si{\pascal}$ \\
 Bulk modulus & $K$& $\si{\pascal}$\\
 Poisson ratio & $\nu$ & -\\
 Young's modulus & $E$ & \si{\pascal}\\
@@ -31,7 +31,7 @@ velocity & $\vec\upnu$ & \si{\meter\per\second} \\
 
 What follows is a compilation of various sources, such as the
 Becker \& Kaus lecture notes \cite{beka}, the excellent paper
-by \textcite{bepo10} (2010), the syllabus of R. Hassani \cite{XX}
+by \textcite{bepo10} (2010), the syllabus of R. Hassani %\cite{XX}
 and various books such as \textcite{sadd14}. 
 
 Once the equations have been laid out, one must then make a fundamental choice 
@@ -43,7 +43,10 @@ Elasticity is usually added to such codes way after they were first used/written
 For a purely elastic code displacement is the meaningful primary variable since the stress 
 is formulated as a function of strain (not strain rate). 
 
+In what follows I solely focus on the FEM discretisation and solution of the 
+elastic equations. 
 
+List of all the stones relying on a linear elastic rheology:
 \begin{verbatim}
 python_codes/fieldstone_34/ 2d plane strain elastic problems
 python_codes/fieldstone_36/ the annulus geometry elastic aquarium
@@ -60,14 +63,14 @@ python_codes/fieldstone_185/ Stress around a borehole in 3d
 \end{verbatim}
 
 
-
 %==============================================================================
 \section{Basic equations}
 
 The strong form of the PDE that governs force balance in a medium is given by
-\[
+\begin{equation}
 \vec{\nabla}\cdot{\bm \sigma}  + \vec{f} = \vec{0}
-\]
+\label{eq:elast00}
+\end{equation}
 where ${\bm \sigma}$ is the full stress tensor and $\vec{f}$ is a body force
 (typically $\rho \vec{g}$).
 
@@ -78,17 +81,20 @@ Hooke's law\footnote{\url{https://en.wikipedia.org/wiki/Hooke's_law}}:
 \qquad
 \text{or}
 \qquad
-{\bm \sigma} = {\bm C} : {\bm \varepsilon}
+{\bm \sigma} = {\cal C} : {\bm \varepsilon}
 \label{eq:ooone}
 \end{equation}
-where ${\bm C}$ is the fourth-order elastic tensor (which contains $3^4=81$ coefficients).
-The strain tensor is related to the displacement $\vec{\upupsilon}$ as follows: \index{general}{Strain Tensor}
+where ${\cal C}$ is the fourth-order elastic tensor (which contains $3^4=81$ coefficients).
+The strain tensor is related to the displacement $\vec{\upupsilon}$ as follows: 
 \begin{equation}
 {\bm \varepsilon}(\vec{\upupsilon}) 
-= \frac{1}{2}(\vec{\nabla}\vec{\upupsilon} + (\vec{\nabla}\vec{\upupsilon})^T)
+= \frac{1}{2}\left(\vec{\nabla}\vec{\upupsilon} + (\vec{\nabla}\vec{\upupsilon})^T\right)
 \end{equation}
-Due to the inherent symmetries of ${\bm \sigma}$, ${\bm \varepsilon}$, and ${\bm C}$, 
-only 21 elastic coefficients of the latter are independent. For isotropic linear media (which have the same physical properties in any direction), ${\bm C}$ can be reduced to only two independent numbers (for example the bulk modulus $K$ and the shear modulus\footnote{It is also sometimes written $G$} $\mu$ that quantify the material's resistance to changes in volume and to shearing deformations, respectively).
+Due to the inherent symmetries of ${\bm \sigma}$, ${\bm \varepsilon}$, and ${\cal C}$, 
+only 21 elastic coefficients of the latter are independent. For isotropic linear media (which have the same physical 
+properties in any direction), ${\cal C}$ can be reduced to only two independent numbers 
+(for example the bulk modulus $K$ and the shear modulus\footnote{It is also sometimes written $G$} 
+$\mu$ that quantify the material's resistance to changes in volume and to shearing deformations, respectively).
 We find that
 \[
 C_{ijkl} = \lambda \delta_{ij}\delta_{kl} + \mu (\delta_{ik}\delta_{jl}+\delta_{il}\delta_{jk})
@@ -110,7 +116,257 @@ or
 \end{mdframed}
 where $\lambda$ is the Lam\'e parameter and $\mu$ is the shear modulus. The term $\vec{\nabla}\cdot\vec{\upupsilon}=\text{Tr}[{\bm \varepsilon}(\vec{\upupsilon})]$ is the isotropic dilation.
 
-Very explicitly, and since the stress and strain tensors are symmetric, we have
+
+%==============================================================================
+\section{Weak form}
+
+What follows is inspired by chapter 6 of \textcite{dohu03}.
+One can easily show that the weak form of the Stokes system can be written 
+\begin{eqnarray}
+\int_\Omega \vec\nabla \vec{\upomega} : {\bm \sigma} \; d\Omega
+&=& \int_\Omega \vec\upomega \cdot \vec{f} \; d\Omega + \int_\Gamma \vec\upomega \cdot \vec{t} \; d\Gamma
+\label{eq:elwf1} 
+\end{eqnarray}
+where $\vec\upomega$ is a displacement test function and with 
+%\[
+%\vec\nabla \vec{\upomega} :\ {\bm \sigma} 
+%\]
+%From Eq.~\eqref{eq:ooone} we know that ${\bm \sigma} = {\cal C} : {\bm \varepsilon}$
+%so that the weak form now takes the form 
+%\begin{eqnarray}
+%\int_\Omega \vec\nabla \vec{\upomega} : {\bm \sigma} \; d\Omega
+%&=& \int_\Omega \vec\nabla \vec{\upomega} : {\cal C} : {\bm \varepsilon}  \; d\Omega
+%=
+%\int_\Omega \vec\upomega \cdot \vec{b} \; d\Omega + \int_\Gamma \vec\upomega \cdot \vec{t} \; d\Gamma 
+%\end{eqnarray}
+
+
+
+
+\begin{eqnarray}
+\vec\nabla \vec{\upomega} :\ {\bm \sigma} 
+&=& \sum_i^{ndim}\sum_{j}^{ndim} \frac{\partial \upomega _i}{\partial x_j} \sigma_{ij} \nn\\
+&=& 
+\frac{\partial \upomega_x}{\partial x} \sigma_{xx} +
+\frac{\partial \upomega_x}{\partial y} \sigma_{xy} +
+\frac{\partial \upomega_x}{\partial z} \sigma_{xz} \nn\\
+&+& 
+\frac{\partial \upomega_y}{\partial x} \sigma_{yx} +
+\frac{\partial \upomega_y}{\partial y} \sigma_{yy} +
+\frac{\partial \upomega_y}{\partial z} \sigma_{yz} \nn\\
+&+& 
+\frac{\partial \upomega_z}{\partial x} \sigma_{zx} +
+\frac{\partial \upomega_z}{\partial y} \sigma_{zy} +
+\frac{\partial \upomega_z}{\partial z} \sigma_{zz} 
+\end{eqnarray}
+Inside each element the test functions are given by
+\begin{eqnarray}
+\upomega_x^h({\vec r}) &=& \sum_{k=1}^m \bN_k(\vec{r}) \upomega_{x,k} =\vec{\bN} \cdot \vec{\upomega}_x \nn\\
+\upomega_y^h({\vec r}) &=& \sum_{k=1}^m \bN_k(\vec{r}) \upomega_{y,k} =\vec{\bN} \cdot \vec{\upomega}_y \nn\\
+\upomega_z^h({\vec r}) &=& \sum_{k=1}^m \bN_k(\vec{r}) \upomega_{z,k} =\vec{\bN} \cdot \vec{\upomega}_z
+\end{eqnarray} 
+where $\vec{\bN}$ is the vector of basis functions: 
+\begin{eqnarray}
+\vec{\bN} &=& \left( \bN_1({\vec r}),  \bN_2({\vec r}),  
+\bN_3({\vec r}), \dots  \bN_{m}({\vec r}) \right) 
+\end{eqnarray}
+and with 
+\begin{eqnarray}
+\vec{\upomega}_x &=& \left( \upomega_{x,1}, \upomega_{x,2}, \upomega_{x,3}, \dots \upomega_{x,m} \right)\nn\\
+\vec{\upomega}_y &=& \left( \upomega_{y,1}, \upomega_{y,2}, \upomega_{y,3}, \dots \upomega_{y,m} \right)\nn\\
+\vec{\upomega}_z &=& \left( \upomega_{z,1}, \upomega_{z,2}, \upomega_{z,3}, \dots \upomega_{z,m} \right) 
+\end{eqnarray}
+
+
+The terms of Eq.~\eqref{eq:elwf1} inside an element become
+\begin{eqnarray}
+\left. \vec\nabla \vec{\upomega} :\ {\bm \sigma} \right|^h 
+&=& 
+\vec{\upomega}_x \cdot\frac{\partial \vec{\bN}}{\partial x} \sigma_{xx} +
+\vec{\upomega}_x \cdot\frac{\partial \vec{\bN}}{\partial y} \sigma_{xy} +
+\vec{\upomega}_x \cdot\frac{\partial \vec{\bN}}{\partial z} \sigma_{xz} \nn\\
+&+& 
+\vec{\upomega}_y \cdot \frac{\partial \vec{\bN}}{\partial x} \sigma_{yx} +
+\vec{\upomega}_y \cdot \frac{\partial \vec{\bN}}{\partial y} \sigma_{yy} +
+\vec{\upomega}_y \cdot \frac{\partial \vec{\bN}}{\partial z} \sigma_{yz} \nn\\
+&+& 
+\vec{\upomega}_z \cdot \frac{\partial \vec{\bN}}{\partial x} \sigma_{zx} +
+\vec{\upomega}_z \cdot \frac{\partial \vec{\bN}}{\partial y} \sigma_{zy} +
+\vec{\upomega}_z \cdot \frac{\partial \vec{\bN}}{\partial z} \sigma_{zz} \nn\\
+&=& 
+\sum_{k=1}^m  
+\left(
+{\upomega}_{x,k} \frac{\partial {\bN}_k}{\partial x} \sigma_{xx} +
+{\upomega}_{x,k} \frac{\partial {\bN}_k}{\partial y} \sigma_{xy} +
+{\upomega}_{x,k} \frac{\partial {\bN}_k}{\partial z} \sigma_{xz} 
+\right. \nn\\
+&&+
+{\upomega}_{y,k} \frac{\partial {\bN}_k}{\partial x} \sigma_{yx} +
+{\upomega}_{y,k} \frac{\partial {\bN}_k}{\partial y} \sigma_{yy} +
+{\upomega}_{y,k} \frac{\partial {\bN}_k}{\partial z} \sigma_{yz} \nn\\
+&&+
+\left.
+{\upomega}_{y,k} \frac{\partial {\bN}_k}{\partial x} \sigma_{zx} +
+{\upomega}_{y,k} \frac{\partial {\bN}_k}{\partial y} \sigma_{zy} +
+{\upomega}_{y,k} \frac{\partial {\bN}_k}{\partial z} \sigma_{zz} \right)
+\label{eq:el:alf}
+\end{eqnarray}
+
+Likewise we have
+\begin{eqnarray}
+\left. \vec\upomega \cdot \vec{f} \right|^h 
+&=& 
+\upomega_x^h f_x + 
+\upomega_y^h f_y + 
+\upomega_z^h f_z  \nn\\
+&=&
+\vec{\upomega}_x \cdot \vec{\bN}  f_x +
+\vec{\upomega}_y \cdot \vec{\bN}  f_y +
+\vec{\upomega}_z \cdot \vec{\bN}  f_z  \nn\\
+&=& 
+\sum_{k=1}^m  
+\left(
+{\upomega}_{x,k}  {\bN}_k  f_x +
+{\upomega}_{y,k}  {\bN}_k  f_y +
+{\upomega}_{z,k}  {\bN}_k  f_z  
+\right)
+\label{eq:el:heidi}
+\end{eqnarray}
+
+Eq.~\eqref{eq:elwf1} can we rewritten as follows for an element $e$:
+\begin{eqnarray}
+\int_{\Omega_e} \vec\nabla \vec{\upomega} : {\bm \sigma} \; d\Omega
+- \int_{\Omega_e} \vec\upomega \cdot \vec{b} \; d\Omega 
+- \int_{\Gamma_e} \vec\upomega \cdot \vec{t} \; d\Gamma = 0
+\end{eqnarray}
+or, using Eq.~\eqref{eq:el:alf} and Eq.~\eqref{eq:el:heidi}:
+\begin{eqnarray}
+&&\int_{\Omega_e} \sum_{k=1}^m  
+\left(
+{\upomega}_{x,k} \frac{\partial {\bN}_k}{\partial x} \sigma_{xx} +
+{\upomega}_{x,k} \frac{\partial {\bN}_k}{\partial y} \sigma_{xy} +
+{\upomega}_{x,k} \frac{\partial {\bN}_k}{\partial z} \sigma_{xz} 
+\right. 
++
+{\upomega}_{y,k} \frac{\partial {\bN}_k}{\partial x} \sigma_{yx} +
+{\upomega}_{y,k} \frac{\partial {\bN}_k}{\partial y} \sigma_{yy} +
+{\upomega}_{y,k} \frac{\partial {\bN}_k}{\partial z} \sigma_{yz} \nn\\
+&&+
+\left.
+{\upomega}_{y,k} \frac{\partial {\bN}_k}{\partial x} \sigma_{zx} +
+{\upomega}_{y,k} \frac{\partial {\bN}_k}{\partial y} \sigma_{zy} +
+{\upomega}_{y,k} \frac{\partial {\bN}_k}{\partial z} \sigma_{zz} 
+-{\upomega}_{x,k}  {\bN}_k  f_x 
+-{\upomega}_{y,k}  {\bN}_k  f_y 
+-{\upomega}_{z,k}  {\bN}_k  f_z 
+\right) d\Omega = 0 \nn
+\end{eqnarray}
+This equation is of the form 
+\begin{eqnarray}
+\upomega_{x,1} (...) + 
+\upomega_{x,2} (...) + 
+\upomega_{x,3} (...) + 
+...
+\upomega_{x,m} (...) &+&\nn\\ 
+\upomega_{y,1} (...) + 
+\upomega_{y,2} (...) + 
+\upomega_{y,3} (...) + 
+...
+\upomega_{y,m} (...) &+&\nn\\
+\upomega_{z,1} (...) + 
+\upomega_{z,2} (...) + 
+\upomega_{z,3} (...) + 
+...
+\upomega_{z,m} (...) &=&0
+\end{eqnarray}
+
+
+
+This must be valid for {\sl any} $\vec{\upomega}$ function, i.e. any $\upomega_{x,y,z|k}$
+The only way to guarantee this is such that $ndim*m$ equations are simultaneously true
+(i.e. each of the $(...)$ terms must be zero) and for each node $k$ we must have 
+
+{\color{red} I HAVE dropped the surface term!!}
+
+\begin{eqnarray}
+\int_\Omega
+\left(
+\frac{\partial {\bN}_k}{\partial x} \sigma_{xx} +
+\frac{\partial {\bN}_k}{\partial y} \sigma_{xy} +
+\frac{\partial {\bN}_k}{\partial z} \sigma_{xz} - {\bN}_k  f_x \right) d\Omega &=&0 \nn\\ 
+\int_\Omega
+\left(
+\frac{\partial {\bN}_k}{\partial x} \sigma_{yx} +
+\frac{\partial {\bN}_k}{\partial y} \sigma_{yy} +
+\frac{\partial {\bN}_k}{\partial z} \sigma_{yz} - {\bN}_k  f_y \right) d\Omega &=&0 \nn\\ 
+\int_\Omega
+\left(
+\frac{\partial {\bN}_k}{\partial x} \sigma_{zx} +
+\frac{\partial {\bN}_k}{\partial y} \sigma_{zy} +
+\frac{\partial {\bN}_k}{\partial z} \sigma_{zz} - {\bN}_k  f_y \right) d\Omega &=&0 
+\qquad
+\forall k=1,m 
+\end{eqnarray}
+or, 
+\begin{equation}
+\int_{\Omega_e} 
+\left(
+\begin{array}{cccccc}
+\frac{\partial \bN_k}{\partial x} & 0 & 0& 
+\frac{\partial \bN_k}{\partial y} & 
+\frac{\partial \bN_k}{\partial z} & 0\\  \\
+0 & \frac{\partial \bN_k}{\partial y} & 0  & 
+\frac{\partial \bN_k}{\partial x}  & 0 &
+\frac{\partial \bN_k}{\partial z}  \\ \\
+0 & 0 & \frac{\partial \bN_k}{\partial z} &  0 & 
+\frac{\partial \bN_k}{\partial x} &  
+\frac{\partial \bN_k}{\partial y} 
+\end{array}
+\right)
+\cdot
+\left(
+\begin{array}{c}
+\sigma_{xx}\\
+\sigma_{yy}\\
+\sigma_{zz}\\
+\sigma_{xy}\\
+\sigma_{xz}\\
+\sigma_{yz}\\
+\end{array}
+\right)
+d\Omega = \int_{\Omega_e} \bN_i {\vec f} \; d\Omega
+\qquad
+\forall k=1,m 
+\end{equation}
+The above equation can ultimately be written:
+\begin{equation}
+\int_{\Omega_e} {\bm B}^T \cdot 
+\left(
+\begin{array}{c}
+\sigma_{xx}\\
+\sigma_{yy}\\
+\sigma_{zz}\\
+\sigma_{xy}\\
+\sigma_{xz}\\
+\sigma_{yz}
+\end{array}
+\right)
+d\Omega
+=
+\int_{\Omega_e} {\vec \bN}_f\; d\Omega
+\label{eq:elfem1}
+\end{equation}
+where the gradient matrix ${\bm B}$ has size $6 \times (ndim*m)$ in 3d.
+The vector under the integral is coined the stress vector (the cousin 
+of the stress tensor). 
+We focus on the stress vector in the following section
+and will express it as a function of the vector of all nodal displacements
+using the elastic constitutive relationship. 
+
+%==============================================================================
+\section{The stress vector}
+
+Since the stress and strain tensors are symmetric, only 6 out of the 9 terms are independent:
 \begin{eqnarray}
 \sigma_{xx} &=& (\lambda+2\mu)  \varepsilon_{xx} + \lambda \varepsilon_{yy} + \lambda \varepsilon_{zz} \nn\\
 \sigma_{yy} &=& \lambda \varepsilon_{xx} + (\lambda+2\mu)  {\varepsilon}_{yy} + \lambda \varepsilon_{zz}\nn\\
@@ -119,7 +375,6 @@ Very explicitly, and since the stress and strain tensors are symmetric, we have
 \sigma_{xz} &=& 2\mu  {\varepsilon}_{xz} \nn\\
 \sigma_{yz} &=& 2\mu  {\varepsilon}_{yz} 
 \end{eqnarray}
-
 This can be re-written in the 6-dimensional stress/strain space as
 \begin{equation}
 \underbrace{
@@ -157,8 +412,6 @@ _{\vec{\varepsilon}}
 \label{eq:el:vectors}
 \end{equation}
 
-
-
 Let us define the matrices
 \[
 {\bm \Lambda}=
@@ -188,12 +441,13 @@ Let us define the matrices
 so that 
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
+\vec\sigma = {\bm D} \cdot \vec\varepsilon \qquad\qquad
+{\rm with} \qquad
 {\bm D} = \lambda {\bm \Xi} + \mu {\bm \Lambda} 
 \]
 \end{mdframed}
 
-If we define the Young's modulus $E$ and 
-the Poisson's ratio as
+The Young's modulus $E$ and the Poisson's ratio are defined as
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{equation}
 E=\frac{\mu(3\lambda+2\mu)}{\lambda+\mu}
@@ -252,6 +506,7 @@ E\frac{\lambda}{2(\lambda+\mu)}
 
 and in the end:
 \begin{mdframed}[backgroundcolor=blue!5]
+\begin{small}
 \begin{equation}
 {\bm D}_{\rm 3D} \!= \!
 \left(
@@ -278,18 +533,13 @@ and in the end:
 \right)
 \label{eq:D_3D}
 \end{equation}
+\end{small}
 \end{mdframed}
 This matrix is the same as Eq.~(3.6) on page 294 of \textcite{braess}.
 It is SPD for $0\leq \nu < 1/2$.
 
-In terms of the compliance matrix ${\bm D}^{-1}$,
-%\index{general}{Compliance Matrix}
-\[
-\vec{\varepsilon} 
-= {\bm D}^{-1} \cdot \vec{\sigma}
-\]
-with
-{\color{red} check these!}
+In terms of the compliance matrix ${\bm D}^{-1}$, we have $\vec{\varepsilon} 
+= {\bm D}^{-1} \cdot \vec{\sigma}$ with {\color{red} check these!}
 
 \[
 {\bm D}^{-1}
@@ -306,11 +556,10 @@ with
 \end{array}
 \right)
 \]
-then
-\[
+or,
+\begin{equation}
 {\bm D}^{-1}
-=
-\frac{1}{E}
+= \frac{1}{E}
 \left(
 \begin{array}{cccccc}
 1 & -\nu & -\nu & 0 & 0 & 0 \\
@@ -321,10 +570,11 @@ then
 0 & 0 & 0 & 0 & 0 & 2(1+\nu) 
 \end{array}
 \right)
-\]
+\label{eq:elastdm1}
+\end{equation}
 Note that the determinant  of ${\bm D}^{-1}$ is $8(1+\nu)^5(1-2\nu)E^{-6}$, so that when $\nu\rightarrow 1/2$ (incompressible material), the compliance matrix is singular and the stress cannot be given as a function of strain \cite{lubliner}.
 
-The above equation also leads to:
+The above equation \eqref{eq:elastdm1} also leads to:
 \begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
 E \varepsilon_{xx} &=&  \sigma_{xx} - \nu (\sigma_{yy}+\sigma_{zz}) \nn\\
@@ -336,8 +586,9 @@ E \varepsilon_{yz} &=&  (1+\nu) \sigma_{yz} \label{eqs:elEe}
 \end{eqnarray}
 \end{mdframed}
 
-The incompressibility (or bulk modulus) $K$ is defined as 
-$p=-K \vec{\nabla}\cdot\vec{\upupsilon}$ where $p$ is the pressure with 
+
+
+One can define the pressure $p$ as 
 \begin{eqnarray}
 p
 &=&-\frac{1}{3} \textrm{tr}({\bm \sigma}) \nonumber\\
@@ -347,6 +598,8 @@ p
  &=& -\frac{1}{3} [ \lambda (\vec{\nabla}\cdot\vec{\upupsilon})  3  + 2 \mu  (\vec{\nabla}\cdot\vec{\upupsilon}) ] \nonumber\\
  &=& -\left( \lambda + \frac{2}{3} \mu \right) (\vec{\nabla}\cdot\vec{\upupsilon})  
 \end{eqnarray}
+and the incompressibility (or bulk modulus) $K$ is defined as 
+$p=-K \vec{\nabla}\cdot\vec{\upupsilon}$ 
 so that 
 \begin{mdframed}[backgroundcolor=blue!5]
 \[
@@ -363,11 +616,11 @@ K=\lambda+\frac{2}{3}\mu
 \end{mdframed}
 
 \begin{remark}
-Eq. (\ref{eq:ooone}) and (\ref{eq:twooELAST}) are analogous to the ones that one has to solve in the context of viscous flow using the penalty method. In this case $\lambda$ is the penalty coefficient, $\vec{\upupsilon}$ is the velocity, and $\mu$ is the dynamic viscosity.
+Eq. \eqref{eq:elast00} and (\ref{eq:twooELAST}) are analogous to the ones that one has to solve in the context of viscous flow using the penalty method. In this case $\lambda$ is the penalty coefficient, $\vec{\upupsilon}$ is the velocity, and $\mu$ is the dynamic viscosity.
 \end{remark}
 
 \begin{remark}
-Note that sometimes authors define $p=-\lambda  \vec{\nabla}\cdot\vec{\upupsilon}$ instead so that then 
+Sometimes authors define $p=-\lambda  \vec{\nabla}\cdot\vec{\upupsilon}$ instead so that then 
 ${\bm \sigma} = -p {\bm 1} + 2\mu {\bm \varepsilon}(\vec\upupsilon)$ (to
 be very clear, strain tensor is not deviatoric),
 see for instance \textcite{samb20} (2020) or \textcite{hala01} (2001).
@@ -380,7 +633,7 @@ see for instance \textcite{samb20} (2020) or \textcite{hala01} (2001).
 
 The Lam\'e parameter $\lambda$ and the shear modulus $\mu$ 
 are also linked to the Poisson ratio $\nu$, 
-and $E$, Young's modulus: \index{general}{Poisson Ratio} \index{general}{Young's Modulus}
+and $E$, Young's modulus: 
 \[
 \lambda=\mu\frac{2\nu}{1-2\nu}
 =\frac{\nu E}{(1+\nu)(1-2\nu)}
@@ -392,7 +645,10 @@ E=2\mu(1+\nu)
 The shear modulus, expressed often in \si{\giga\pascal}, describes the material's response to shear stress. The Poisson ratio describes the response in the direction orthogonal to uniaxial stress. The Young's modulus\footnote{\url{https://en.wikipedia.org/wiki/Young's_modulus}}, expressed in \si{\giga\pascal}, describes the material's strain response to uniaxial stress in the 
 direction of this stress.
 
-In the future we will also need to express the deviatoric part of a tensor as a function of the tensor itself, all in vector format. Let us consider the stress tensor. Then we have ${\bm \tau}=\textrm{dev}({\bm \sigma}) = {\bm \sigma} - \frac{1}{3} \textrm{tr}[ {\bm \sigma} ] {\bm 1}$ which becomes
+In some cases one also needs to express the deviatoric part of a tensor as a function 
+of the tensor itself, all in vector format. Let us consider the stress tensor: 
+we then have ${\bm \tau}=\textrm{dev}({\bm \sigma}) = {\bm \sigma} - 
+\frac{1}{3} \textrm{tr}[ {\bm \sigma} ] {\bm 1}$ which becomes
 \[
 \vec{\tau}=
 \left( \begin{array}{c}
@@ -450,9 +706,10 @@ where $\tilde{\bm \Lambda}^d$ is a deviatoric projection matrix.
 
 
 
-Using the definition of $K$ above, 
+Using the definition of $K$ above (i.e. $K=\lambda + \frac23 \mu$), 
 we have $\lambda +2\mu = K + \frac43 \mu$
-and $\lambda= K-\frac23 \mu$ so that the ${\bm D}$ matrix can also be written as a function of $K,\mu$:
+and $\lambda= K-\frac23 \mu$ so that the ${\bm D}$ matrix 
+of Eq.~\eqref{eq:D_3D} can also be written as a function of $K,\mu$:
 \begin{eqnarray}
 {\bm D}_{\rm 3D} 
 &=& 
@@ -499,11 +756,223 @@ K & K & K & 0 & 0 & 0 \\
 
 The expression above is to be found at \url{https://en.wikipedia.org/wiki/Linear_elasticity}
 
+%==============================================================================
+\section{FEM implementation}
+
+Concretely speaking, the displacement inside an element is given by
+\begin{eqnarray}
+u^h(\vec{r}) = \upupsilon_x^h &=& \sum_{k=1}^m \bN_k(\vec{r}) u_k \nn\\
+v^h(\vec{r}) = \upupsilon_y^h &=& \sum_{k=1}^m \bN_k(\vec{r}) v_k \nn\\
+w^h(\vec{r}) = \upupsilon_z^h &=& \sum_{k=1}^m \bN_k(\vec{r}) w_k 
+\end{eqnarray}
+where $\bN_k$ are the polynomial basis functions for the displacement.
+In the case of linear triangles ($P_1$) we have $m=3$, in the case of linear
+quadrilaterals ($Q_1$) we have $m=4$, etc ... 
+Note that the displacement is a vector and that there are then $ndof_v=ndim$ 
+displacement degrees of freedom per node.
+
+Other notations will be sometimes used:
+\begin{equation}
+u^h({\vec r}) = \vec{\bN} \cdot \vec{u}
+\quad\quad\quad\quad
+v^h({\vec r}) = \vec{\bN} \cdot \vec{v}
+\quad\quad\quad\quad
+w^h({\vec r}) = \vec{\bN} \cdot \vec{w}
+\end{equation} 
+where ${\vec \upupsilon}=(u,v,w)$ is the vector containing 
+all basis functions\footnote{This is a repeat of Section 2, I know.} 
+evaluated at location ${\vec r}$:
+\begin{eqnarray}
+\vec{\bN} &=& \left( \bN_1({\vec r}),  \bN_2({\vec r}),  
+\bN_3({\vec r}), \dots  \bN_{m}({\vec r}) \right) 
+\end{eqnarray}
+and with 
+\begin{eqnarray}
+\vec{u} &=& \left( u_1,  u_2,  u_3, \dots  u_m \right) \nn\\
+\vec{v} &=& \left( v_1,  v_2,  v_3, \dots  v_m \right) \nn\\
+\vec{w} &=& \left( w_1,  w_2,  w_3, \dots  w_m \right) 
+\end{eqnarray}
+
+Inside an element the strain vector $\vec{\varepsilon}$ is then given by:
+\begin{equation}
+\vec{\varepsilon}=
+\left(
+\begin{array}{c}
+\frac{\partial u}{\partial x} \\ \\
+\frac{\partial v}{\partial y} \\ \\
+\frac{\partial w}{\partial z} \\ \\
+\frac{\partial u}{\partial y}\! +\! \frac{\partial v}{\partial x} \\ \\
+\frac{\partial u}{\partial z}\! +\! \frac{\partial w}{\partial x} \\ \\
+\frac{\partial v}{\partial z}\! +\! \frac{\partial w}{\partial y} 
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\sum\limits_i \frac{\partial \bN_i}{\partial x} u_i \\ \\
+\sum\limits_i \frac{\partial \bN_i}{\partial y} v_i \\ \\
+\sum\limits_i \frac{\partial \bN_i}{\partial z} w_i \\ \\
+\sum\limits_i (\frac{\partial \bN_i}{\partial y} u_i\! +\! 
+\frac{\partial \bN_i}{\partial x} v_i) \\ \\
+\sum\limits_i (\frac{\partial \bN_i}{\partial z} u_i\! +\! 
+\frac{\partial \bN_i}{\partial x} w_i) \\ \\
+\sum\limits_i (\frac{\partial \bN_i}{\partial z} v_i\! +\! 
+\frac{\partial \bN_i}{\partial y} w_i) 
+\end{array}
+\right)
+=
+\underbrace{
+\left(
+\begin{array}{ccccccccccc}
+\frac{\partial \bN_1}{\partial x} & 0 & 0 &  \cdots  & 
+\frac{\partial \bN_{m}}{\partial x} & 0 & 0 \\ \\
+0 & \frac{\partial \bN_1}{\partial y} & 0 & \cdots & 0 & 
+\frac{\partial \bN_{m}}{\partial y} & 0 \\ \\
+0 & 0 & \frac{\partial \bN_1}{\partial z} & \cdots & 0 & 0 & 
+\frac{\partial \bN_{m}}{\partial z} 
+\\ \\
+\frac{\partial \bN_1}{\partial y} &  \frac{\partial \bN_1}{\partial x} &  
+0 & \cdots  &\frac{\partial N_{m}}{\partial y} & \frac{\partial \bN_{m}}{\partial x} & 0 \\ \\
+\frac{\partial \bN_1}{\partial z} & 0 & \frac{\partial \bN_1}{\partial x} & \cdots &
+\frac{\partial \bN_{m}}{\partial z} & 0 & \frac{\partial \bN_{m}}{\partial x} \\  \\
+0 &  \frac{\partial \bN_1}{\partial z}  & \frac{\partial \bN_1}{\partial y} & \cdots &
+0 &  \frac{\partial \bN_{m}}{\partial z}  & \frac{\partial \bN_{m}}{\partial y} 
+\end{array}
+\right) 
+}_{\bm B}
+\!
+\cdot
+\!
+\underbrace{
+\left(
+\begin{array}{c}
+u_1 \\ v_1 \\ w_1 \\ u_2 \\ v_2 \\ w_2 \\ u_3 \\ v_3 \\ \dots \\ u_{m} \\ v_{m} \\ w_{m}
+\end{array}
+\right)
+}_{\vec{\cal V}}
+\label{eq:el:epsv}
+\end{equation}
+or, $\vec{\varepsilon}={\bm B}\cdot \vec{\cal V}$ where ${\bm B}$ is the gradient
+matrix and $\vec{\cal V}$ is the vector of all displacement degrees of freedom for the 
+element. The matrix ${\bm B}$ is then of size $6 \times (m\cdot ndof_v) $ and the vector
+$\vec{\cal V}$ is $m \cdot ndof_v$ long.
+
+
+Combining Eq.~\eqref{eq:elfem1} and Eq.~\eqref{eq:el:vectors} we can write
+\[
+\int_\Omega {\bm B} \cdot {\bm D} \cdot \vec{\varepsilon} \; d\Omega = \int_{\Omega_e} \vec{\bN}_f d\Omega
+\]
+Using now Eq.~\eqref{eq:el:epsv} we arrive at 
+\[
+\int_\Omega {\bm B}\cdot {\bm D}\cdot {\bm B}\cdot \vec{\cal V} \; d\Omega =\int_{\Omega_e} \vec{\bN}_f d\Omega
+\]
+or, 
+\[
+\underbrace{\left( \int_\Omega {\bm B} \cdot {\bm D} \cdot {\bm B}  \; d\Omega \right)}_{\K}  
+\cdot \vec{\cal V}  = ...
+\]
+The $6\times 6$ stiffness matrix is 
+\[
+\K = \iiint {\bm B}^T \cdot {\bm D} \cdot {\bm B}\; d\Omega
+\]
+
+
+
+
+A typical FEM elastic code in FieldStone looks like this.
+We first define the ${\bm D}$ matrix (check plane strain section 
+to obatin this matrix):
+\begin{lstlisting}
+D=np.array([[2*mu+lambdaa,lambdaa     , 0],
+            [lambdaa     ,2*mu+lambdaa, 0],
+            [0           ,           0,mu]],dtype=np.float64) 
+\end{lstlisting}
+
+Then a loop is carried out on all the elements, 
+then a loop over all quadrature points. 
+For each point the matrix $\K$ is built following Eq.~\eqref{sdfghjkl}
+as well as the rhs. 
+
+
+\begin{lstlisting}
+for iel in range(0,nel):
+
+    A_el=np.zeros((m*ndof,m*ndof),dtype=np.float64)
+    b_el=np.zeros((m*ndof),dtype=np.float64)
+
+    for iq in [-1,1]:
+        for jq in [-1,1]:
+            rq=iq/sqrt3
+            sq=jq/sqrt3
+            weightq=1.*1.
+            N_V=basis_functions_V(rq,sq)
+            dNdr_V=basis_functions_V_dr(rq,sq)
+            dNds_V=basis_functions_V_ds(rq,sq)
+            jcb[0,0]=np.dot(dNdr_V,x[icon[:,iel]])
+            jcb[0,1]=np.dot(dNdr_V,y[icon[:,iel]])
+            jcb[1,0]=np.dot(dNds_V,x[icon[:,iel]])
+            jcb[1,1]=np.dot(dNds_V,y[icon[:,iel]])
+            JxWq=np.linalg.det(jcb)*weightq
+            jcbi=np.linalg.inv(jcb)
+            dNdx_V=jcbi[0,0]*dNdr_V+jcbi[0,1]*dNds_V
+            dNdy_V=jcbi[1,0]*dNdr_V+jcbi[1,1]*dNds_V
+
+            for i in range(0,m):
+                B[0:3,2*i:2*i+2]=[[dNdx_V[i],0.      ],
+                                  [0.       ,dNdy_V[i]],
+                                  [dNdy_V[i],dNdx_V[i]]]
+
+            A_el+=B.T.dot(D.dot(B))*JxWq
+
+            for i in range(0,m):
+                b_el[2*i  ]+=N_V[i]*gx*rho0*JxWq
+                b_el[2*i+1]+=N_V[i]*gy*rho0*JxWq
+
+    [...] # apply boundary conditions
+
+    [...] # assemble matrix A_fem and right hand side b_fem
+
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \newpage
 %==============================================================================
-\section{Plane strain \label{ss:elpstrain}}
+\subsection{Plane strain \label{ss:elpstrain}}
 Typically one of the spatial dimensions (e.g. $z$)
 is very large compared to the other two. 
 As a consequence displacements $\upupsilon_z$ and 
@@ -511,12 +980,12 @@ displacement derivatives $\partial_z$ in the
 $z$-direction are assumed to be negligible, i.e. $\varepsilon_{zz}=\varepsilon_{xz}=\varepsilon_{yz}=0$
 and Eqs.~\eqref{eqs:elEe} become:
 \begin{eqnarray}
-E \varepsilon_{xx} &=&  \sigma_{xx} - \nu (\sigma_{yy}+\sigma_{zz}) \nn\\
-E \varepsilon_{yy} &=&  \sigma_{yy} - \nu (\sigma_{xx}+\sigma_{zz}) \nn\\
-E {\color{gray}\varepsilon_{zz}} &=&  \sigma_{zz} - \nu (\sigma_{xx}+\sigma_{yy}) \nn\\
-E \varepsilon_{xy} &=&  (1+\nu) \sigma_{xy} \nn\\
-E {\color{gray}\varepsilon_{xz}} &=&  (1+\nu) \sigma_{xz} \nn\\
-E {\color{gray}\varepsilon_{yz}} &=&  (1+\nu) \sigma_{yz} \nn 
+  E \varepsilon_{xx} &=&  \sigma_{xx} - \nu (\sigma_{yy}+\sigma_{zz}) \nn\\
+  E \varepsilon_{yy} &=&  \sigma_{yy} - \nu (\sigma_{xx}+\sigma_{zz}) \nn\\
+0=E \varepsilon_{zz} &=&  \sigma_{zz} - \nu (\sigma_{xx}+\sigma_{yy}) \nn\\
+  E \varepsilon_{xy} &=&  (1+\nu) \sigma_{xy} \nn\\
+0=E \varepsilon_{xz} &=&  (1+\nu) \sigma_{xz} \nn\\
+0=E \varepsilon_{yz} &=&  (1+\nu) \sigma_{yz} \nn 
 \end{eqnarray}
 leading to $\sigma_{xz}=\sigma_{yz}=0$, $\sigma_{zz}=\nu(\sigma_{xx}+\sigma_{yy})$
 and
@@ -698,7 +1167,12 @@ K-\frac23 \mu & K+\frac43 \mu & 0 \\
 \]
 \end{mdframed}
 
-
+Note that in the book by Simpson we find Eq.~(12.3)
+which is {\color{red} SIMILAR? what is gammaxz exactly? } to the one above:
+\begin{center} 
+\fbox{\includegraphics[width=7cm]{images/chapter_elasticity/simpson123}}\\
+{\captionfont Taken from Simpson, chapter 12.}
+\end{center} 
 
 
 The stress tensor is then as follows:
@@ -777,24 +1251,27 @@ In the case of a (near-)incompressible material, $\nu\rightarrow \frac12$ then $
 
 
 %==============================================================================
-\section{Plane stress}
+\subsection{Plane stress}
 
 For thin geometries. Let $z$ be the direction perpendicular to the plate.
 Tractions  on the $z$-surface are assumed to be negligible, e.g.
-$\sigma_{zz}=\sigma_{yz}=\sigma_{xz}=0$
+$\sigma_{zz}=\sigma_{yz}=\sigma_{xz}=0$ and Eqs.~\eqref{eqs:elEe} become:
 
 \begin{eqnarray}
-E \varepsilon_{xx} &=&  \sigma_{xx} - \nu (\sigma_{yy}+{\color{gray}\sigma_{zz}}) \nn\\
-E \varepsilon_{yy} &=&  \sigma_{yy} - \nu (\sigma_{xx}+{\color{gray}\sigma_{zz}}) \nn\\
-E \varepsilon_{zz} &=&  {\color{gray}\sigma_{zz}} - \nu (\sigma_{xx}+\sigma_{yy}) \nn\\
+E \varepsilon_{xx} &=&  \sigma_{xx} - \nu (\sigma_{yy}+\underbrace{\sigma_{zz}}_{=0}) \nn\\
+E \varepsilon_{yy} &=&  \sigma_{yy} - \nu (\sigma_{xx}+\underbrace{\sigma_{zz}}_{=0}) \nn\\
+E \varepsilon_{zz} &=&  \underbrace{\sigma_{zz}}_{=0} - \nu (\sigma_{xx}+\sigma_{yy}) \nn\\
 E \varepsilon_{xy} &=&  (1+\nu) \sigma_{xy} \nn\\
-E \varepsilon_{xz} &=&  (1+\nu) {\color{gray}\sigma_{xz}} \nn\\
-E \varepsilon_{yz} &=&  (1+\nu) {\color{gray}\sigma_{yz}} \nn 
+E \varepsilon_{xz} &=&  (1+\nu) \underbrace{\sigma_{xz}}_{=0} \nn\\
+E \varepsilon_{yz} &=&  (1+\nu) \underbrace{\sigma_{yz}}_{=0} \nn 
 \end{eqnarray}
 Immediately we have $\varepsilon_{xz}=\varepsilon_{yz}=0$.
 Furthermore, 
 \[
-E\varepsilon_{xx}+E\varepsilon_{yy} =  \sigma_{xx} - \nu \sigma_{yy} +  \sigma_{yy} - \nu \sigma_{xx} = (1-\nu)(\sigma_{xx}+\sigma_{yy})
+E(\varepsilon_{xx}+\varepsilon_{yy}) 
+=E\varepsilon_{xx}+E\varepsilon_{yy} 
+=  \sigma_{xx} - \nu \sigma_{yy} +  \sigma_{yy} - \nu \sigma_{xx} 
+= (1-\nu)(\sigma_{xx}+\sigma_{yy})
 \]
 so that the third equation can be written
 \[
@@ -882,9 +1359,9 @@ The stiffness matrix for plane stress is {\it not} found by removing columns and
 
 
 %==============================================================================
-\section{The axisymmetric case} \label{ss:fem_elast_axissymm}
+\subsection{The axisymmetric case} \label{ss:fem_elast_axissymm}
 
-We start from 
+We start from Eq.~\eqref{eq:twooELAST}:
 \begin{equation}
 {\bm \sigma} = 
 \lambda (\vec\nabla\cdot\vec{\upupsilon}) \;  {\bm 1}
@@ -1145,11 +1622,9 @@ Note that in the literature the above relationship is often written
 \]
 which is equivalent since $E=2\mu(1+\nu)$ and $\lambda=\frac{\nu E}{(1+\nu)(1-2\nu)}$ (see for instance Section~5.2.4 in \cite{zita1}).   
 
-----------------------------------------------------
-
-{\color{purple} about the implementation:}
-
-Only displacements in the $r$ and $z$ directions remain (note that $\varepsilon_{\theta\theta}$ is in fact equal to $\upupsilon_r/r$). In what follows I rename $u=\upupsilon_r$ and $\upupsilon_z=w$ to simplify notations. 
+\paragraph{Concrete steps} Only displacements in the $r$ and $z$ directions remain 
+(note that $\varepsilon_{\theta\theta}$ is in fact equal to $\upupsilon_r/r$). In 
+what follows I rename $u=\upupsilon_r$ and $\upupsilon_z=w$ to simplify notations. 
 Then, inside an element we have 
 \begin{eqnarray}
 u^h(r,z) &=& \sum_{i=1}^m \bN_i(r,z) u_i \nonumber\\
@@ -1284,12 +1759,9 @@ or,
 \vec\sigma = {\bm D} \cdot {\bm B} \cdot \vec{\cal U}
 }
 \]
-Note that in 2D, the matrix ${\bm D}$ is $3\times3$ and 
-${\bm B}$ is $3\times 6$.
 
-\todo[inline]{I do not know yet how to arrive at what follows}
 
-\noindent The $6\times 6$ stiffness matrix is then 
+The $6\times 6$ stiffness matrix is then 
 \[
 \K = \iiint {\bm B}^T \cdot {\bm D} \cdot {\bm B}\; dV
 \]
@@ -1300,42 +1772,7 @@ over the $\theta$ coordinate yields a factor $2\pi$ so
 \]
 The integration can now be performed as simply as was the case in the plane stress problem.
 
-\todo[inline]{write the derivation for the rhs}
 
-
-Note that in practice the matrix ${\bm D}$ is computed as follows (see for example Stone~63):
-\[
-{\bm D}
-=
-\left(
-\begin{array}{cccc}
-\lambda+2\mu & \lambda & \lambda & 0  \\
-\lambda & \lambda+2\mu & \lambda & 0  \\
-\lambda & \lambda & \lambda+2\mu & 0  \\
-0 & 0 & 0 & \mu 
-\end{array}
-\right)
-=
-\lambda
-\left(
-\begin{array}{cccc}
-1 & 1 & 1 & 0  \\
-1 & 1 & 1 & 0  \\
-1 & 1 & 1 & 0  \\
-0 & 0 & 0 & 0 
-\end{array}
-\right)
-+
-\mu
-\left(
-\begin{array}{cccc}
-2 & 0 & 0 & 0 \\
-0 & 2 & 0 & 0 \\
-0 & 0 & 2 & 0 \\
-0 & 0 & 0 & 1  
-\end{array}
-\right)
-\]
 
 
 
