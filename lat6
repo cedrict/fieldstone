@@ -1,0 +1,3 @@
+biber --output-safechars chapter6
+pdflatex chapter6.tex
+

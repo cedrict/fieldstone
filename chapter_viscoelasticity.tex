@@ -12,8 +12,6 @@ python_codes/fieldstone_64/
 python_codes/fieldstone_129/ Visco-elastic materials - Simpson book chapter 12
 \end{verbatim}
 
-
-
 Let us start by clarifying notations:
 
 \begin{center}
@@ -43,19 +41,10 @@ velocity & $\vec\upnu$ & \si{\meter\per\second} \\
 
 
 
-
-
-
-
-
-
-
-
 %==================================================================================================
 %==================================================================================================
 %==================================================================================================
 \section{The physics}
-
 
 The flow is compressible, but we start from Eq.~(12.40) in the book of Simpson (I here use 
 my notations and not those of the book), which only considers the deviatoric part of the 
@@ -141,9 +130,12 @@ we obtain
 \end{equation}
 \end{mdframed}
 
+%==================================================================================================
+%==================================================================================================
+%==================================================================================================
+\section{The weak form}
 
-
-
+ToDo
 
 
 
@@ -154,7 +146,7 @@ we obtain
 %==================================================================================================
 %==================================================================================================
 %==================================================================================================
-\section{FEM implementation}
+\section{The stress vector}
 
 We can now switch to using a vector representation of the tensors\footnote{We need 
 to be extra careful about the strain rate vector $\dot{\vec{\varepsilon}}$ since 
@@ -1232,16 +1224,224 @@ the $\vec{\sigma}_0$ term which accounts for the initial stress.
 This also probably means that reduced integration can/should be done ?
 
 
+%---------------------------------------------------
+\subsection{Visco-elasticity {\`a} la \textcite{bafg20}}
+
+We here focus on Appendix A of \textcite{bafg20}. 
+In what follows I present their approach, albeit with my notations, 
+and with a few additions. 
+
+%=====================================
+\subsubsection{Constitutive Equations}
 
 
+Let us define the deviatoric strain rate tensor:
+\begin{equation}
+\dot{\bm\varepsilon}^d 
+= \frac12 (\vec\nabla \vec\upnu + \vec\nabla \vec\upnu ^T  ) 
+- \frac13 \vec\nabla \cdot \vec\upnu {\bm 1} \label{bafg20_A3} 
+\end{equation}
+We also define the notation
+\begin{equation}
+X_{\rm II}  = \sqrt{ \frac14 (X_{11}-X_{22})^2 + X_{12}  X_{21}    }\label{bafg20_A4} 
+\end{equation}
+where $X_{\rm II}$ is the square root of the second invariant of a generic tensor ${\bm X}$.
+ToDo: CHECK!!
+
+We assume a Maxwell body with visco-elasto-plastic rheology. Thus, the strain rate is decomposed additively.
+[CT: I drop the $d$ for simplicity but all strain rates are deviatoric]
+\begin{equation}
+\dot {\bm \varepsilon}=
+\dot {\bm \varepsilon}^{v}+
+\dot {\bm \varepsilon}^{e}+
+\dot {\bm \varepsilon}^{p}\label{bafg20_A5} 
+\end{equation}
+where superscripts $v$, $e$, and $p$ denote the viscous, elastic, and plastic parts of the 
+total deviatoric strain rate tensor, respectively. 
+[CT: implicitely the three elements are in series]
+The deviatoric strain rate tensor 
+and the deviatoric stress tensor are linked by the following constitutive relationships
+\begin{eqnarray}
+\dot {\bm \varepsilon}^{v} &=& \frac{1}{2\eta } {\bm \tau},  \label{bafg20_A6}    \\
+\dot {\bm \varepsilon}^{e} &=& \frac{1}{2 G } \frac{\tilde{D} {\bm \tau}}{Dt} 
+\simeq \frac{1}{2G}  \frac{ {\bm \tau}^{\rm new} - {\bm \tau}^{\rm old}  }{\delta t} \label{bafg20_A7}    \\
+\dot {\bm \varepsilon}^{p} &=& 0 \qquad \text{when} \quad F<0 \nn\\
+\dot {\bm \varepsilon}^{p} &=& \frac{\kappa}{2} \frac{{\bm \tau}}{\tau_{II}} 
+\qquad \text{when} \quad F=0  \label{bafg20_A8}    
+\end{eqnarray}
+where $\eta$ is the viscosity, G is the elastic shear modulus, and $\kappa$ is the plastic multiplier.
+$\frac{\tilde{D} {\bm \tau}}{Dt}$ is the objective
+co-rotational time derivative of the deviatoric stress tensor which we approximate using a first order finite
+difference in time where $\delta t$ is small increment of time, 
+and $\tau_{ij}^{\rm old}$ and $\tau_{ij}^{\rm new}$ are the components of the deviatoric stress 
+tensor at time $t$ and $t+\delta t$, respectively. Equation \eqref{bafg20_A8} prescribes the plastic flow rule with the
+yield function
+\begin{equation}
+F=\tau_{\rm II} - (1- \xi w(\varepsilon_p)) \tau_y \label{bafg20_A9}    
+\end{equation}
+with
+\begin{equation}
+\tau_y = C \; \cos \phi + (1-\lambda) p \; \sin \phi \label{bafg20_A10}    
+\end{equation}
+where $\tau_y$ is the Mohr-Coulomb yield stress, $C$ is the cohesion, 
+and $\phi$ is the friction angle, and $\lambda$ is internal fluid pressure factor. 
+For simplicity I define $\tau_y'=(1- \xi w(\varepsilon_p)) \tau_y$ so that 
+the yield function writes
+\begin{equation}
+F=\tau_{\rm II} - \tau_y'
+\end{equation}
+$\xi$ is a weakening parameter and $w(\varepsilon_p)$ is a weighting 
+piecewise linear function of the plastic strain $\varepsilon_p$ defined as ...
+(see Eq. A11, not so important here).
+%where $\varepsilon_p^{ws}$ and $\varepsilon_p^{we}$ are the plastic strain values at 
+%which the weakening parameter starts and endss to increase, respectively. 
+The plastic strain is defined as
+\begin{equation}
+\varepsilon_p = \int_0^t \dot\varepsilon_{\rm II}^p \; dt
+\end{equation}
+
+%=========================================
+\subsubsection{Final Formulation of Stress}
+
+So far we have defined the stress tensor as a function of the independent parts 
+of the deviatoric strain rate tensor 
+$\dot {\bm \varepsilon}^{v}$, $\dot {\bm \varepsilon}^{e}$ and $\dot {\bm \varepsilon}^{p}$.
+Within the numerical scheme, it is convenient to get a new expression of the stress as
+a function of the total deviatoric strain rate tensor and the deviatoric stress tensor at a previous time step.
+Solving \eqref{bafg20_A6} for $\tau_{ij}$ and substituting \eqref{bafg20_A5} yields 
+(note that the superscript new is dropped on the left and on the right sides of the equations)
+\begin{equation}
+{\bm \tau} 
+= 2\eta \dot {\bm \varepsilon}^{v} = 
+2\eta ( \dot {\bm \varepsilon} - \dot {\bm \varepsilon}^{e} - \dot {\bm \varepsilon}^{p})
+\label{bafg20_A13}
+\end{equation}
 
 
+\paragraph{visco-elastic formulation}
+Before diving into a V-E-P formulation, let us now only consider an elasto-viscous
+formulation, i.e. $\dot{\bm \varepsilon}^p = 0$.
+Substituting \eqref{bafg20_A7} in \eqref{bafg20_A13} yields
+\begin{eqnarray}
+\tau_{ij} &=& 
+2\eta \left( \dot { \varepsilon}_{ij} - 
+\frac{ {\tau}_{ij}^{\rm new} - {\tau}_{ij}^{\rm old}  }{2 G \delta t} \right)
+\nn\\
+\Rightarrow \quad 
+\tau_{ij} &=& 
+2\eta \left( \dot { \varepsilon}_{ij} 
++ \frac{   {\tau}_{ij}^{\rm old}  }{2 G \delta t}
+\right)
+- 2\eta 
+\frac{ {\tau}_{ij} }{2 G \delta t} \nn\\
+\Rightarrow \quad 
+\tau_{ij} \left( 1 +2\eta   \frac{ 1 }{2 G \delta t} \right)
+&=& 
+2\eta \left( \dot { \varepsilon}_{ij} 
++ \frac{   {\tau}_{ij}^{\rm old}  }{2 G \delta t}
+\right) \nn\\
+\Rightarrow \quad 
+\tau_{ij} \left( \frac{1}{\eta} +   \frac{ 1 }{ G \delta t} \right) \eta
+&=& 
+2\eta \left( \dot { \varepsilon}_{ij} 
++ \frac{   {\tau}_{ij}^{\rm old}  }{2 G \delta t}
+ \right)
+\nn\\
+\Rightarrow \quad 
+\tau_{ij} &=& 2
+\underbrace{ \left( \frac{1}{\eta} +   \frac{ 1 }{ G \delta t} \right)^{-1} }_{\eta^{\rm ve} }
+\left( 
+\underbrace{ \dot { \varepsilon}_{ij}  + \frac{   {\tau}_{ij}^{\rm old}  }{2 G \delta t} }_{ \dot{\varepsilon}_{ij}^{\rm ve} }
+\right) \nn\\
+\Rightarrow \quad 
+\tau_{ij} &=& 2 \eta^{\rm ve} \dot{\varepsilon}_{ij}^{\rm ve} 
+\end{eqnarray}
 
+We then coin this deviatoric stress the visco-elastic stress so that 
+\[
+\tau_{ij}^{\rm ve} = 2 \eta^{\rm ve} \dot{\varepsilon}_{ij}^{\rm ve} 
+\]
+This is the standard elasto-viscous formulation.
+Note that the $\tau^{\rm old}$ should actually find its place 
+in the rhs.
+When this stress becomes too large then plasticity is activated.
 
+%---------------------------------------------
+\paragraph{visco-elasto-plastic formulation}
 
+If we now take plasticity into account, we start again from 
+\begin{eqnarray}
+\tau_{ij} &=& 2\eta \left( \dot { \varepsilon}_{ij} - 
+\frac{ {\tau}_{ij} - {\tau}_{ij}^{\rm old}  }{2 G \delta t}
+- \dot {\varepsilon}_{ij}^{p} \right)
+\nn\\
+\tau_{ij}&=& 
+2\eta \left( \dot { \varepsilon}_{ij} 
++ \frac{   {\tau}_{ij}^{\rm old}  }{2 G \delta t}
+- \dot {\varepsilon}_{ij}^{p} \right)
+- 2\eta 
+\frac{ {\tau}_{ij} }{2 G \delta t}
+\nn\\
+\tau_{ij} \left( 1 +2\eta   \frac{ 1 }{2 G \delta t} \right)
+&=& 2\eta \left( \dot { \varepsilon}_{ij} 
++ \frac{   {\tau}_{ij}^{\rm old}  }{2 G \delta t}
+- \dot {\varepsilon}_{ij}^{p} \right)
+\nn\\
+\tau_{ij} \left( \frac{1}{\eta} +   \frac{ 1 }{ G \delta t} \right) \eta
+&=& 2\eta \left( \dot { \varepsilon}_{ij} 
++ \frac{   {\tau}_{ij}^{\rm old}  }{2 G \delta t}
+- \dot {\varepsilon}_{ij}^{p} \right)
+\nn\\
+\tau_{ij} &=& 2
+\underbrace{ \left( \frac{1}{\eta} +   \frac{ 1 }{ G \delta t} \right)^{-1} }_{\eta^{\rm ve} }
+\left( \underbrace{ \dot { \varepsilon}_{ij}  + \frac{   {\tau}_{ij}^{\rm old}  }{2 G \delta t} }_{ \dot{\varepsilon}_{ij}^{\rm ve} } - \dot {\varepsilon}_{ij}^{p} \right)
+\nn\\
+\tau_{ij} &=& 2 \eta^{\rm ve} ( \dot{\varepsilon}_{ij}^{\rm ve} - \dot {\varepsilon}_{ij}^{p} )
+\label{bagf20_A15}
+\end{eqnarray}
 
+Again, defining the effective visco-elastic stress as 
+$\tau_{ij}^{\rm ve} 
+= 2 \eta^{\rm ve}  \dot{\varepsilon}_{ij}^{\rm ve}$ then Eq.~\eqref{bafg20_A8} can be rewritten as
+\begin{equation}
+\dot{\varepsilon}_{ij}^p
+= \frac{\kappa}{2} \frac{\tau_{ij}^{ve}}{\tau_{II}^{\rm ve}}
+= \frac{\kappa}{2} \frac{\dot\varepsilon_{ij}^{\rm ve}}{\dot\varepsilon_{II}^{\rm ve}}
+\label{bafg20_A18}
+\end{equation}
+Substituting \eqref{bafg20_A18} in \eqref{bagf20_A15} yields 
+\begin{eqnarray}
+\tau_{ij} 
+&=& 2 \eta^{\rm ve} ( \dot{\varepsilon}_{ij}^{\rm ve} - \dot {\varepsilon}_{ij}^{p} ) \nn\\
+&=& 2 \eta^{\rm ve} \left( \dot{\varepsilon}_{ij}^{\rm ve} - \frac{\kappa}{2} \frac{\dot\varepsilon_{ij}^{\rm ve}}{\dot\varepsilon_{II}^{\rm ve}} \right) \nn\\
+&=& 2 \eta^{\rm ve}    \dot{\varepsilon}_{ij}^{\rm ve}
+\left( 1  - \underbrace{ \frac{\kappa }{2 \dot\varepsilon_{II}^{\rm ve}}}_{\Lambda} \right) \nn\\
+&=& 2 \eta^{\rm ve}  \dot{\varepsilon}_{ij}^{\rm ve} \Lambda \nn\\
+&=& \tau_{ij}^{\rm ve} \Lambda \nn\\
+\end{eqnarray}
+The yield condition $F=0$ is satisfied if
+$\tau_{\rm II} = \tau_y'$
+i.e., using the equation above
+$\tau_{\rm II}^{ve} \Lambda  = \tau_y'$
+or
+\[
+\Lambda = \frac{\tau_y' }{\tau_{\rm II}^{ve} }
+\]
 
+Note that $w$ is missing in their equation A21.
 
+The authors add:
+``The numerical scheme is based on the finite-difference 
+marker-in-cell method (Harlow and Welch, 1965;
+Gerya and Yuen, 2003). All invariants are computed on a staggered grid. 
+The system of equations is solved for vx , vy , and P using PARDISO. 
+We compute the yield function directly on the grid, and markers are used only
+to advect material and physical properties. At the end of a 
+time step the components of the stress tensor
+are interpolated from the grid to the markers. Then, we apply 
+the rotation to the stress field and advect the
+markers. Finally, stress components are advected back from the 
+markers to the grid.''
 
 
 
