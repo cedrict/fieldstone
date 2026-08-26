@@ -9,7 +9,7 @@ for k in 2 3 4; do
             python3 stone.py  $res $n $k 0 > opla 
             grep vrms opla | grep = >> vrms_${n}_${k}.ascii 
             grep err opla | grep displ >> errors_${n}_${k}.ascii 
-            mv solution.vtu solution_${n}_${k}_${res}.vtu
+            #mv solution.vtu solution_${n}_${k}_${res}.vtu
             mv opla opla_${n}_${k}_${res} 
         done
     done
