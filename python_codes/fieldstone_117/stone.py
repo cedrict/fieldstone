@@ -6,9 +6,9 @@ import solvi as solvi
 import scipy.sparse as sps
 from scipy.sparse.linalg.dsolve import linsolve
 from scipy.sparse import lil_matrix
-import time as timing
+import time as clock
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def NNV(r,s,element):
     if element==1:
@@ -175,7 +175,7 @@ def dNNVds(r,s,element):
               dNds_15,dNds_16,dNds_17,dNds_18,dNds_19,\
               dNds_20,dNds_21,dNds_22,dNds_23,dNds_24
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def NNP(r,s,element):
     if element==1:
@@ -221,7 +221,7 @@ def NNP(r,s,element):
     if element==6:
        return 0,0,0
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def bx(x,y):
     if experiment==0:
@@ -243,7 +243,7 @@ def by(x,y):
        val=0
     return val
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def eta(x,y):
     if experiment==0:
@@ -255,7 +255,7 @@ def eta(x,y):
           val=1.
     return val
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def velocity_x(x,y):
     if experiment==0:
@@ -278,7 +278,7 @@ def pressure(x,y):
        ui,vi,val=solvi.SolViSolution(x,y) 
     return val
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 print("-----------------------------")
 print("----------fieldstone---------")
@@ -335,22 +335,22 @@ print (folder)
 
 ###############################################################################
 
-if element==1: nqperdim=2
-if element==2: nqperdim=3
-if element==3: nqperdim=4
-if element==4: nqperdim=5
-if element==5: nqperdim=3
-if element==6: nqperdim=3
+if element==1: nq_per_dim=2
+if element==2: nq_per_dim=3
+if element==3: nq_per_dim=4
+if element==4: nq_per_dim=5
+if element==5: nq_per_dim=3
+if element==6: nq_per_dim=3
 
-if nqperdim==2:
+if nq_per_dim==2:
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
    qweights=[1.,1.]
 
-if nqperdim==3:
+if nq_per_dim==3:
    qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
    qweights=[5./9.,8./9.,5./9.]
 
-if nqperdim==4:
+if nq_per_dim==4:
    qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
    qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
    qw4a=(18-np.sqrt(30.))/36.
@@ -358,7 +358,7 @@ if nqperdim==4:
    qcoords=[-qc4a,-qc4b,qc4b,qc4a]
    qweights=[qw4a,qw4b,qw4b,qw4a]
 
-if nqperdim==5:
+if nq_per_dim==5:
    qc5a=np.sqrt(5.+2.*np.sqrt(10./7.))/3.
    qc5b=np.sqrt(5.-2.*np.sqrt(10./7.))/3.
    qc5c=0.
@@ -368,7 +368,7 @@ if nqperdim==5:
    qcoords=[-qc5a,-qc5b,qc5c,qc5b,qc5a]
    qweights=[qw5a,qw5b,qw5c,qw5b,qw5a]
 
-if nqperdim==6:
+if nq_per_dim==6:
    qcoords=[-0.932469514203152,\
             -0.661209386466265,\
             -0.238619186083197,\
@@ -385,7 +385,7 @@ if nqperdim==6:
 ##############################################################################
 
 print ('element  =',element)
-print ('nqperdim =',nqperdim)
+print ('nq_per_dim =',nq_per_dim)
 print("-----------------------------")
 
 ##############################################################################
@@ -397,7 +397,7 @@ print("-----------------------------")
 ###############################################################################
 # read in node coordinates and connectivity
 ###############################################################################
-start = timing.time()
+start = clock.time()
 
 if element==1: # Q1Q0
    orderV='Q1'
@@ -463,8 +463,8 @@ print ('NfemV    =',NfemV)
 print ('NfemP    =',NfemP)
 print ('Nfem     =',Nfem)
 
-xV=np.empty(NV,dtype=np.float64)  # x coordinates
-yV=np.empty(NV,dtype=np.float64)  # y coordinates
+xV=np.zeros(NV,dtype=np.float64)  # x coordinates
+yV=np.zeros(NV,dtype=np.float64)  # y coordinates
 
 for i in range(0,NV):
     line=lines_vel[i+1].strip()
@@ -472,7 +472,7 @@ for i in range(0,NV):
     xV[i]=float(columns[0])
     yV[i]=float(columns[1])
 #end for
-np.savetxt('meshV.ascii',np.array([xV,yV]).T)
+if debug: np.savetxt('meshV.ascii',np.array([xV,yV]).T)
 
 iconV=np.zeros((mV,nel),dtype=np.int32)
 
@@ -484,8 +484,8 @@ for i in range(1,nel+1):
     #print(iconV[:,i-1])
 #end for
 
-xP=np.empty(NfemP,dtype=np.float64)  
-yP=np.empty(NfemP,dtype=np.float64) 
+xP=np.zeros(NfemP,dtype=np.float64)  
+yP=np.zeros(NfemP,dtype=np.float64) 
 iconP=np.zeros((mP,nel),dtype=np.int32)
 
 if orderP[0]=='Q':
@@ -535,11 +535,9 @@ if orderP=='P1':
        counter+=1
    #end for
       
+if debug: np.savetxt('meshP.ascii',np.array([xP,yP]).T)
 
-np.savetxt('meshP.ascii',np.array([xP,yP]).T)
-
-
-print("read in meshes : %.3f s" % (timing.time() - start))
+print("read in meshes : %.3f s" % (clock.time() - start))
 
 ###############################################################################
 #straighten things out
@@ -610,14 +608,12 @@ if correct_mesh:
              yV[mid]=r[mid]*np.sin(theta[mid])
              interface[mid]=1
 
-   np.savetxt('meshV3.ascii',np.array([xV,yV,interface,r,theta]).T)
-
-#exit()
+   if debug: np.savetxt('meshV3.ascii',np.array([xV,yV,interface,r,theta]).T)
 
 ###############################################################################
 # define boundary conditions
 ###############################################################################
-start = timing.time()
+start = clock.time()
 
 bc_fix=np.zeros(NfemV,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(NfemV,dtype=np.float64)  # boundary condition, value
@@ -638,12 +634,12 @@ for i in range(0,NV):
           bc_fix[i*ndofV+0]   = True ; bc_val[i*ndofV+0] = ui
           bc_fix[i*ndofV+1]   = True ; bc_val[i*ndofV+1] = vi
 
-print("boundary conditions: %.3f s" % (timing.time() - start))
+print("boundary conditions: %.3f s" % (clock.time() - start))
 
-#################################################################
+###############################################################################
 # compute area of elements
-#################################################################
-start = timing.time()
+###############################################################################
+start = clock.time()
 
 area    = np.zeros(nel,dtype=np.float64) 
 area_inc= np.zeros(nel,dtype=np.float64) 
@@ -651,8 +647,8 @@ dNNNVdr = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
 dNNNVds = np.zeros(mV,dtype=np.float64)  # shape functions derivatives
 
 for iel in range(0,nel):
-    for iq in range(0,nqperdim):
-        for jq in range(0,nqperdim):
+    for iq in range(0,nq_per_dim):
+        for jq in range(0,nq_per_dim):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
@@ -680,7 +676,7 @@ print("     -> area (m,M) %.4e %.4e " %(np.min(area),np.max(area)))
 print("     -> total area %.6f " %(area.sum()))
 print("     -> area inclusion %.10f %.10f %d" %(area_inc.sum(),0.25*np.pi*0.2**2,nel))
 
-print("compute elements areas: %.3f s" % (timing.time() - start))
+print("compute elements areas: %.3f s" % (clock.time() - start))
 
 #for iel in range (585,586):
 #     print ("iel=",iel)
@@ -698,6 +694,7 @@ print("compute elements areas: %.3f s" % (timing.time() - start))
 ###############################################################################
 
 p_analytical = np.zeros(NP,dtype=np.float64)
+
 for i in range(0,NP):
     p_analytical[i]=pressure(xP[i],yP[i])
 
@@ -706,7 +703,7 @@ for i in range(0,NP):
 # [ K G ][u]=[f]
 # [GT 0 ][p] [h]
 ###############################################################################
-start = timing.time()
+start = clock.time()
 
 A_sparse = lil_matrix((Nfem,Nfem),dtype=np.float64)
 f_rhs    = np.zeros(NfemV,dtype=np.float64)        # right hand side f 
@@ -721,7 +718,7 @@ dNNNVdr  = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 dNNNVds  = np.zeros(mV,dtype=np.float64)           # shape functions derivatives
 u        = np.zeros(NV,dtype=np.float64)           # x-component velocity
 v        = np.zeros(NV,dtype=np.float64)           # y-component velocity
-c_mat    = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
+C    = np.array([[2,0,0],[0,2,0],[0,0,1]],dtype=np.float64) 
 
 for iel in range(0,nel):
 
@@ -745,8 +742,8 @@ for iel in range(0,nel):
     G_el=np.zeros((mV*ndofV,mP*ndofP),dtype=np.float64)
     h_el=np.zeros((mP*ndofP),dtype=np.float64)
 
-    for iq in range(0,nqperdim):
-        for jq in range(0,nqperdim):
+    for iq in range(0,nq_per_dim):
+        for jq in range(0,nq_per_dim):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
@@ -787,7 +784,7 @@ for iel in range(0,nel):
                                          [dNNNVdy[i],dNNNVdx[i]]]
 
             # compute elemental a_mat matrix
-            K_el+=b_mat.T.dot(c_mat.dot(b_mat))*eta(xq,yq)*weightq*jcob
+            K_el+=b_mat.T.dot(C.dot(b_mat))*eta(xq,yq)*weightq*jcob
 
             # compute elemental rhs vector
             for i in range(0,mV):
@@ -840,22 +837,22 @@ for iel in range(0,nel):
         m2=iconP[k2,iel]
         h_rhs[m2]+=h_el[k2]
 
-print("build FE matrix: %.3fs - %d elts" % (timing.time()-start, nel))
+print("build FE matrix: %.3fs - %d elts" % (clock.time()-start, nel))
 
-######################################################################
+###############################################################################
 # assemble rhs
-######################################################################
-start = timing.time()
+###############################################################################
+start = clock.time()
    
 rhs = np.zeros(Nfem,dtype=np.float64)         # right hand side of Ax=b
 rhs[0:NfemV]=f_rhs
 rhs[NfemV:Nfem]=h_rhs
 
-print("assemble blocks: %.3f s" % (timing.time() - start))
+print("assemble blocks: %.3f s" % (clock.time() - start))
 
-######################################################################
+###############################################################################
 # assign extra pressure b.c. to remove null space
-######################################################################
+###############################################################################
 
 for i in range(0,Nfem):
     A_sparse[Nfem-1,i]=0
@@ -863,20 +860,20 @@ for i in range(0,Nfem):
 A_sparse[Nfem-1,Nfem-1]=1
 rhs[Nfem-1]=0
 
-######################################################################
+###############################################################################
 # solve system
-######################################################################
-start = timing.time()
+###############################################################################
+start = clock.time()
 
 sparse_matrix=A_sparse.tocsr()
 sol=sps.linalg.spsolve(sparse_matrix,rhs)
 
-print("solve time: %.3f s" % (timing.time() - start))
+print("solve time: %.3f s" % (clock.time() - start))
 
-######################################################################
+###############################################################################
 # put solution into separate x,y velocity arrays
-######################################################################
-start = timing.time()
+###############################################################################
+start = clock.time()
 
 u,v=np.reshape(sol[0:NfemV],(NV,2)).T
 p=sol[NfemV:Nfem]
@@ -885,14 +882,14 @@ print("     -> u (m,M) %.4f %.4f " %(np.min(u),np.max(u)))
 print("     -> v (m,M) %.4f %.4f " %(np.min(v),np.max(v)))
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
-#np.savetxt('vel.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
+if debug: np.savetxt('vel.ascii',np.array([xV,yV,u,v]).T,header='# x,y,u,v')
 
-print("split vel into u,v: %.3f s" % (timing.time() - start))
+print("split vel into u,v: %.3f s" % (clock.time() - start))
 
-#####################################################################
+###############################################################################
 # normalise pressure
-#####################################################################
-start = timing.time()
+###############################################################################
+start = clock.time()
 
 pavrg=0.
 for iel in range (0,nel):
@@ -911,8 +908,8 @@ for iel in range (0,nel):
        m32=(xP[iconP[0,iel]]-xP[iconP[2,iel]])/det
        m33=(xP[iconP[1,iel]]-xP[iconP[0,iel]])/det
 
-    for iq in range(0,nqperdim):
-        for jq in range(0,nqperdim):
+    for iq in range(0,nq_per_dim):
+        for jq in range(0,nq_per_dim):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
@@ -952,12 +949,12 @@ print("     -> pavrg=",pavrg)
 
 print("     -> p (m,M) %.4f %.4f " %(np.min(p),np.max(p)))
 
-print("normalise pressure: %.3f s" % (timing.time() - start))
+print("normalise pressure: %.3f s" % (clock.time() - start))
 
-#####################################################################
+###############################################################################
 # compute strainrate at element center
-#####################################################################
-start = timing.time()
+###############################################################################
+start = clock.time()
 
 xc = np.zeros(nel,dtype=np.float64)  
 yc = np.zeros(nel,dtype=np.float64)  
@@ -997,14 +994,14 @@ print("     -> exx (m,M) %.4f %.4f " %(np.min(exx),np.max(exx)))
 print("     -> eyy (m,M) %.4f %.4f " %(np.min(eyy),np.max(eyy)))
 print("     -> exy (m,M) %.4f %.4f " %(np.min(exy),np.max(exy)))
 
-#np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
+if debug: np.savetxt('strainrate.ascii',np.array([xc,yc,exx,eyy,exy]).T,header='# xc,yc,exx,eyy,exy')
 
-print("compute press & sr: %.3f s" % (timing.time() - start))
+print("compute press & sr: %.3f s" % (clock.time() - start))
 
-#####################################################################
+###############################################################################
 # project pressure onto velocity grid
-#####################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
 q=np.zeros(NV,dtype=np.float64)
 c=np.zeros(NV,dtype=np.float64)
@@ -1015,21 +1012,21 @@ for iel in range(0,nel):
         q[iconV[i,iel]]+=np.dot(p[iconP[0:mP,iel]],NNNP[0:mP])
         c[iconV[i,iel]]+=1.
 
-q=q/c
+q/=c
 
-np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
+if debug: np.savetxt('q.ascii',np.array([xV,yV,q]).T,header='# x,y,q')
 
-print("project p onto Vnodes: %.3f s" % (timing.time() - start))
+print("project p onto Vnodes: %.3f s" % (clock.time() - start))
 
-#####################################################################
+###############################################################################
 # compute error fields for plotting
-#####################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-error_u = np.empty(NV,dtype=np.float64)
-error_v = np.empty(NV,dtype=np.float64)
-error_p = np.empty(NP,dtype=np.float64)
-error_q = np.empty(NV,dtype=np.float64)
+error_u=np.zeros(NV,dtype=np.float64)
+error_v=np.zeros(NV,dtype=np.float64)
+error_p=np.zeros(NP,dtype=np.float64)
+error_q=np.zeros(NV,dtype=np.float64)
 
 for i in range(0,NV): 
     error_u[i]=u[i]-velocity_x(xV[i],yV[i])
@@ -1044,12 +1041,12 @@ print("     -> error_v (m,M) %.4e %.4e " %(np.min(error_v),np.max(error_v)))
 print("     -> error_p (m,M) %.4e %.4e " %(np.min(error_p),np.max(error_p)))
 print("     -> error_q (m,M) %.4e %.4e " %(np.min(error_q),np.max(error_q)))
 
-print("compute error fields: %.3f s" % (timing.time() - start))
+print("compute error fields: %.3f s" % (clock.time() - start))
 
-#####################################################################
+###############################################################################
 # compute L2 errors
-#####################################################################
-start = timing.time()
+###############################################################################
+start = clock.time()
 
 errv=0.
 errp=0.
@@ -1070,8 +1067,8 @@ for iel in range (0,nel):
        m32=(xP[iconP[0,iel]]-xP[iconP[2,iel]])/det
        m33=(xP[iconP[1,iel]]-xP[iconP[0,iel]])/det
 
-    for iq in range(0,nqperdim):
-        for jq in range(0,nqperdim):
+    for iq in range(0,nq_per_dim):
+        for jq in range(0,nq_per_dim):
             rq=qcoords[iq]
             sq=qcoords[jq]
             weightq=qweights[iq]*qweights[jq]
@@ -1125,19 +1122,19 @@ hmax=np.sqrt(max(area))
 
 print("     -> nel= %6d ; errv= %.8e ; errp= %.8e ; errq= %.8e ; hmin/max= %.6e %.6e" %(nel,errv,errp,errq,hmin,hmax))
 
-print("compute errors: %.3f s" % (timing.time() - start))
+print("compute errors: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # extract pressure profile at bottom
-#####################################################################
+###############################################################################
 
 r=np.sqrt(xP**2+yP**2)
 
-np.savetxt('p.ascii',np.array([xP,yP,p,r,p_analytical]).T,header='# x,y,p,r')
+if debug: np.savetxt('p.ascii',np.array([xP,yP,p,r,p_analytical]).T,header='# x,y,p,r')
 
-#####################################################################
+###############################################################################
 # plot of solution
-#####################################################################
+###############################################################################
 
 if True==1:
     vtufile=open('solution.vtu',"w")
@@ -1262,3 +1259,5 @@ if True==1:
 print("-----------------------------")
 print("------------the end----------")
 print("-----------------------------")
+
+###############################################################################
