@@ -1456,6 +1456,162 @@ markers to the grid.''
 
 
 
+\newpage
+%==================================================================================================
+\section{generalized Maxwell model}
+
+The generalized Maxwell model also known as the Maxwell–Wiechert model 
+(after James Clerk Maxwell and E Wiechert[1][2]) is the most general 
+form of the linear model for viscoelasticity. 
+See \url{https://en.wikipedia.org/wiki/Generalized_Maxwell_model}.
+
+
+\begin{center}
+\includegraphics[width=8cm]{images/viscoelasticity/Wiechert.png}\\
+{\captionfont From Wikipedia. In this model, several Maxwell elements are assembled in parallel. It takes into account that the relaxation does not occur at a single time, but in a set of times.}
+\end{center}
+
+
+
+The arrangement shown leads to the following relationships:
+\begin{eqnarray}
+\dot\varepsilon_{ij}^{\rm mw} &=&  
+\underset{\color{teal} 1}{\dot\varepsilon_{ij}^{\rm mw}}  
+=\underset{\color{teal}2}{\dot\varepsilon_{ij}^{\rm mw}}  
+=\underset{\color{teal} 3}{\dot\varepsilon_{ij}^{\rm mw}}  
+=\dots
+=\underset{\color{teal} m}{\dot\varepsilon_{ij}^{\rm mw}} \label{eqbob1}
+\\
+\tau_{ij}^{\rm mw} &=&  \sum_{k=1}^m  \underset{\color{teal}k}{\tau_{ij}^{\rm mw}}
+\label{eqbob2}
+\end{eqnarray}
+Within each row ${\color{teal}k}$ we have the further relationship
+\[
+\underset{\color{teal}k}{\dot\varepsilon_{ij}^{\rm mw}}  
+=\underset{\color{teal} k}{\dot\varepsilon_{ij}^{\rm el}}  
++\underset{\color{teal} k}{\dot\varepsilon_{ij}^{\rm v}}  
+\]
+\[
+\underset{\color{teal} k}{\tau_{ij}^{\rm mw}} 
+= \underset{\color{teal} k}{\tau_{ij}^{\rm el}} 
+= \underset{\color{teal} k}{\tau_{ij}^{\rm v}}  
+\]
+and the strain rate is given in terms of 
+$\underset{\color{teal} k}{\tau_{ij}^{\rm mw}}$
+and stored elastic stress from the previous time step:
+\[
+\underset{\color{teal}k}{\dot\varepsilon_{ij}^{\rm mw}}
+=\left(
+\frac{1}{2\; \Delta t_{el} \; G_{\color{teal}k} } 
++ \frac{1}{2 \eta_{\color{teal}k}} 
+\right)
+\underset{\color{teal} k}{\tau_{ij}^{\rm mw}}
+- \frac{1}{2 \Delta t_{el} \; G_{\color{teal}k}  }
+\underset{\color{teal} k}{\tau_{ij}}^{\rm mw,0}
+\]
+Rearranging this expression, we obtain a function for the stress:
+\[
+\underset{\color{teal} k}{\tau_{ij}^{\rm mw}}
+= 2 
+\left(
+\frac{1}{\Delta t_{el} \; G_{\color{teal}k} } 
++ \frac{1}{\eta_{\color{teal}k}}
+\right) ^{-1}
+\left(
+\underset{\color{teal}k}{\dot\varepsilon_{ij}^{\rm mw}}
++ \frac{1}{2 \Delta t_{el} \; G_{\color{teal}k}  }
+\underset{\color{teal} k}{\tau_{ij}}^{\rm mw,0}
+\right)
+\]
+We then define the effective visco-elastic term $\eta^{\rm ve}_{\color{teal}k}$
+as follows:
+\[
+\eta^{\rm ve}_{\color{teal}k}
+=
+\left(
+\frac{1}{\Delta t_{el} \; G_{\color{teal}k} } 
++ \frac{1}{\eta_{\color{teal}k}}
+\right) ^{-1}
+\]
+Then we have 
+\[
+\underset{\color{teal} k}{\tau_{ij}^{\rm mw}}
+= 2 
+\eta^{\rm ve}_{\color{teal}k}
+\underset{\color{teal}k}{\dot\varepsilon_{ij}^{\rm mw}}
++
+\left( \frac{1}{\Delta t_{el} \; G_{\color{teal}k} } 
++ \frac{1}{\eta_{\color{teal}k}} \right) ^{-1}
+\frac{1}{ \Delta t_{el} \; G_{\color{teal}k}  } \;
+\underset{\color{teal} k}{\tau_{ij}}^{\rm mw,0}
+\]
+The second term can be simplified:
+
+\begin{eqnarray}
+\left( \frac{1}{\Delta t_{el} \; G_{\color{teal}k} } 
++ \frac{1}{\eta_{\color{teal}k}} \right) ^{-1}
+\frac{1}{ \Delta t_{el} \; G_{\color{teal}k}  }
+&=&
+\left( \frac{
+\eta_{\color{teal}k} + \Delta t_{el} \; G_{\color{teal}k} 
+}{\Delta t_{el} \; G_{\color{teal}k} \eta_{\color{teal}k}} \right) ^{-1}
+\frac{1}{ \Delta t_{el} \; G_{\color{teal}k}  } \nn\\
+&=&
+\frac
+{\Delta t_{el} \; G_{\color{teal}k} \eta_{\color{teal}k}} 
+{\eta_{\color{teal}k} + \Delta t_{el} \; G_{\color{teal}k} }
+\frac{1}{ \Delta t_{el} \; G_{\color{teal}k}  } \nn\\
+&=&
+\frac{ \eta_{\color{teal}k}} 
+{\eta_{\color{teal}k} + \Delta t_{el} \; G_{\color{teal}k} } \nn\\
+&=&
+\frac{ 1} 
+{1 + \Delta t_{el} \; G_{\color{teal}k} /\eta_{\color{teal}k}
+} 
+\end{eqnarray}
+and we now introduce the Maxwell time $t_{{\color{teal}k}}^M = \eta_{{\color{teal}k}} / G_{{\color{teal}k}} $, so that 
+we can finally write
+\[
+\underset{\color{teal} k}{\tau_{ij}^{\rm mw}}
+= 2 
+\eta^{\rm ve}_{\color{teal}k}
+\underset{\color{teal}k}{\dot\varepsilon_{ij}^{\rm mw}}
++
+\frac{ 1}{1 + \Delta t_{el} \; / t_{{\color{teal}k}}^M }
+\;
+\underset{\color{teal} k}{\tau_{ij}}^{\rm mw,0}
+\]
+By summing of all stresses we obtain the total stress 
+(see Eq.~\eqref{eqbob2}):
+\[
+\tau^{\rm mw}
+=\sum_k \underset{\color{teal} k}{\tau_{ij}^{\rm mw}}
+=\sum_k
+ 2 
+\eta^{\rm ve}_{\color{teal}k}
+\underset{\color{teal}k}{\dot\varepsilon_{ij}^{\rm mw}}
++
+\sum_k
+\frac{ 1}{1 + \Delta t_{el} \; / t_{{\color{teal}k}}^M }
+\;
+\underset{\color{teal} k}{\tau_{ij}}^{\rm mw,0}
+\]
+Using Eq.~\eqref{eqbob1} we can write
+\[
+\tau^{\rm mw}
+= 2 \left(\sum_k  \eta^{\rm ve}_{\color{teal}k} \right)
+\dot\varepsilon_{ij}^{\rm mw}
++
+\sum_k
+\frac{ 1}{1 + \Delta t_{el} \; / t_{{\color{teal}k}}^M }
+\;
+\underset{\color{teal} k}{\tau_{ij}}^{\rm mw,0}
+\]
+
+
+
+
+
 
 
 
@@ -1628,9 +1784,8 @@ since $t_M=\eta/\mu$.
 
 
 
-%..........................................................
+%----------------------
 \subsection{Pure shear}
-
 
 {\color{orange} fully incompressible}
 
@@ -1702,19 +1857,13 @@ The expected stress value for $\tau_{xx}$ after the first Stokes solve is
 \simeq 38.775 \times 10^4 \text{Pa}
 \]
 
-
-
 Also check Gerya's book page 358 2nd edition ?
 
 
+%------------------------
+\subsection{simple shear (?)}
 
-
-
-
-%..........................................................
-\subsection{simple shear}
-
-%..........................................................
+%----------------------------------------
 \subsection{Rayleigh-Taylor instability}
 
 {\color{orange} fully incompressible}
@@ -1938,6 +2087,23 @@ Effective viscosity is given by
 It was run with ASPECT: prm file in stone 64 results folder.
 
 
+%--------------------------------------------------------------------------------------------
+\subsection{Rectangular sample of material under a constant downward velocity applied on top}
+
+This is taken from \textcite{modm01} (2001).
+
+\begin{center}
+\includegraphics[width=8cm]{images/viscoelasticity/bench_modm01a}
+\includegraphics[width=8cm]{images/viscoelasticity/bench_modm01b}\\
+\includegraphics[width=8cm]{images/viscoelasticity/bench_modm01c}
+\includegraphics[width=8cm]{images/viscoelasticity/bench_modm01d}\\
+\includegraphics[width=8cm]{images/viscoelasticity/bench_modm01e}
+\includegraphics[width=8cm]{images/viscoelasticity/bench_modm01f}\\
+\includegraphics[width=8cm]{images/viscoelasticity/bench_modm01g}
+\includegraphics[width=8cm]{images/viscoelasticity/bench_modm01h}\\
+\includegraphics[width=8cm]{images/viscoelasticity/bench_modm01i}
+\includegraphics[width=8cm]{images/viscoelasticity/bench_modm01j}\\
+\end{center}
 
 
 
@@ -1949,13 +2115,17 @@ It was run with ASPECT: prm file in stone 64 results folder.
 %==================================================================================================
 %==================================================================================================
 %==================================================================================================
-\section{Numerical Benchmarks}
+\section{Numerical Benchmarks/Experiments}
 
-%..........................................................
+%--------------------------------------------------
 \subsection{Bending of elastic slab (Gerya's book)}
 
 The sinking slab benchmark consists of a beam of elastic material which is placed 
-in a weak and viscous surrounding medium. The initially unstressed beam is attached to the left domain boundary through boundary conditions. A stress is then applied to the beam in the form of gravity. The applied gravity force results in the deformation of the beam through bending. After 20 kyr, the gravity field is turned off and the elastic properties of the beam will then force itself to its original position. The set-up of the benchmark is given in the following figure:
+in a weak and viscous surrounding medium. The initially unstressed beam is attached to the left 
+domain boundary through boundary conditions. A stress is then applied to the beam in the form of 
+gravity. The applied gravity force results in the deformation of the beam through bending. 
+After 20 kyr, the gravity field is turned off and the elastic properties of the beam will then 
+force itself to its original position. The set-up of the benchmark is given in the following figure:
 
 \begin{center}
 \includegraphics[width=6cm]{images/viscoelasticity/poster_benchmark.png}\\
@@ -1967,7 +2137,8 @@ The beam is surrounded by a low-density, low-viscosity and high shear modulus me
 of which the specifications are given in  the following table.
 The boundary conditions of the domain consist of a no slip condition at
 the left boundary where the slab is attached and free slip boundary conditions along all other sides.
-The results are calculated on a grid with a resolution of 50x50 elements containing 64 randomly distributed markers at startup.
+The results are calculated on a grid with a resolution of 50x50 elements containing 64 randomly 
+distributed markers at startup.
 The time step is set to $\delta t = 200yr$ (i.e. gravity is switched off after 100 time steps).
 
 \begin{center}
@@ -1993,8 +2164,8 @@ visco-elasticity factor $Z$      \ [-]         & 0.9999999369280039      &  1.58
 
 
 
-%..........................................................
-\subsection{Flexure of elastic plate (Choi et al) \label{sec:chtl13}}
+%--------------------------------------------------------------------------
+\subsection{Flexure of elastic plate (Choi et al, 2013) \label{sec:chtl13}}
 
 
 This benchmark is presented in \textcite{chtl13} (2013). 
@@ -2041,7 +2212,7 @@ on top of the plate or a deformable mesh (ALE formulation, see Section~\ref{sss:
 
 
 %..........................................................
-\subsection{Elastic beam in viscous matrix - von Tscharner and Schmalholz}
+\subsection{Elastic beam in viscous matrix (von Tscharner and Schmalholz, 2015)}
 
 
 What follows is taken from \textcite{vosc15} (2015).
@@ -2077,9 +2248,8 @@ tensor $\tau_{II}$.}
 
 
 
-%..........................................................
-\subsection{Elastic beam in viscous matrix - Keller, May, and Kaus}
-
+%------------------------------------------------------------------------
+\subsection{Elastic beam in viscous matrix (Keller, May, and Kaus, 2013)}
 
 This benchmark comes from Appendix B of Keller et al (2013) \cite{kemk13}.
 
@@ -2122,8 +2292,81 @@ After 50kyr, the gravity ($|\vec{g}|=10$) is switched off and the model is ran f
 500kyr.
 
 
-%..........................................................
-\subsection{Boxcar load on an incompressible viscoelastic lithosphere - Wu (1992)}
+%-----------------------------------------------
+\subsection{Cantilever Beam (Moresi et al, 2002)}
+
+The following text is 100\% taken from \textcite{modm02}. 
+
+``A simple example is the gravitational loading of a thick, heavy beam of
+viscoelastic material. The beam dimensions were 0.1 wide by 0.75 thick, with
+viscosity of $10^7$, elastic shear modulus of $10^6$, density 2500 and perfectly rigid
+support at one end. Loading was conducted in a very low viscosity ($\eta=0.01$)
+compressible, background medium. The beam was loaded by applying a
+gravitational body force at time $t=0$, which was subsequently switched off when
+the deflection of the beam reached 0.35 at the unsupported end. We varied the
+intensity of the gravitational acceleration from $g=5$ to $g=500$ to produce
+responses with diﬀerent characteristic times(owing to the viscous resistance of the
+embedding medium).''
+
+``Figure 3 shows superimposed snapshots of the loading (a) and unloading (b) of
+the beam for $g=500$. Under such strong loading, the beam reached the maximum
+allowed deﬂection very rapidly (relative to the viscous relaxation time) and the load
+was then released. Once unloaded, unrelaxed elastic stress in the beam caused it to
+straighten out. The loading time was sufficiently short that negligible viscous
+deformation occurred, allowing the beam to return to within 0.001 of its original
+location.''
+
+\begin{center}
+\includegraphics[width=10cm]{images/viscoelasticity/modm02f}\\
+{\captionfont A heavy viscoelastic beam of length 0.75 is subjected to a gravitational 
+load at time $t=0$ which is released when the end deflection reaches 0.35. The superimposed 
+conﬁgurations correspond to approximately equal time intervals.}
+\end{center}
+
+
+``The deflection of the mid-point at the unsupported end of the beam is shown in
+Figure 4 for the range of loading intensities. Under light loading ($g=5,9$) the
+initial deﬂection of the beam is rapid, dominated by elastic deformation of the beam
+and the viscous resistance of the embedding medium. In the absence of viscous
+terms, the elastic stresses in the beam would come to an equilibrium with
+gravitational loading. However, After $t=0.0005$, there was a small but observable
+rate of end deﬂection still occurring through gradual viscous relaxation of the
+elastic stresses. When the gravitational load was released, this relatively long period
+of viscous relaxation resulted in a permanent deﬂection of 0.1.In the case $g=5$, we
+observed the initial rapid deflection due to elastic deformation of the beam, and the
+gradual deﬂection after $t=0.0005$. However, the rate of viscous deformation was so
+low that the end deﬂection of 0.35 was not reached within the time limit imposed
+for the experiment.''
+
+
+\begin{center}
+\includegraphics[width=10cm]{images/viscoelasticity/modm02g}\\
+{\captionfont Deflection as a function of time for the heavy viscoelastic beam for 
+numerous different load intensities. Dashed lines correspond to simulations where 
+the corotational terms were omitted from the computation of the stress rate.}
+\end{center}
+
+
+``The fast-loading cases, $g=20,500$ suffered very little viscous relaxation
+before unloading occurred. The stress state at the time of unloading was therefore
+similar for the two cases. Although the loading rates were very different, the
+unloading displacement curves remained almost parallel until most the elastic stresses
+had been released.''
+
+``To demonstrate the importance of computing the stress update correctly, we ran
+the simulations omitting the corotational terms in the stress rate (dashed lines in
+Fig. 4). The results were qualitatively similar, however the cumulative result of not
+allowing for stress rotation was greater viscous deformation. This resulted in larger
+permanent deformation at the end of the simulation, particularly noticeable in the
+$g=500$ case where there is virtually no ﬁnal deformation if the corotational stress
+rate is computed correctly.''
+
+
+
+
+
+%---------------------------------------------------------------------------------
+\subsection{Boxcar load on an incompressible viscoelastic lithosphere (Wu, 1992)}
 
 {\color{orange} fully incompressible}
 
@@ -2149,7 +2392,7 @@ also explore Wu \& Peltier \cite{wupe82} (1982).
 
 
 %..........................................................
-\subsection{Boxcar load on an incompressible viscoelastic lithosphere - Hampel et al. (2019)}
+\subsection{Boxcar load on an incompressible viscoelastic lithosphere (Hampel et al, 2019)}
 
 
 \textcite{halk19} (2019)
@@ -2169,8 +2412,8 @@ the load coincides with the origin of the coordinate system at the beginning of 
 \end{center}
 
 
-%..........................................................
-\subsection{Kusznir and Bott (1977) experiment}
+%-----------------------------------------------------------------------------------------
+\subsection{Two-layer lithosphere under lateral stress (Kusznir and Bott, 1977)}
 
 The domain is a $\SI{2000}{\km}\times\SI{80}{\km}$ Cartesian box. 
 However since there is a vertical axis of symmetry it is then reduced to 
@@ -2249,11 +2492,8 @@ the setup figure above. probably should be reversed}
 
 
 
-
-
-
-%..........................................................
-\subsection{Parallel-Plate Viscometer Problem - SNAC manual \label{v-e-snac}}
+%---------------------------------------------------------------------------
+\subsection{Parallel-Plate Viscometer Problem (SNAC manual) \label{v-e-snac}}
 
 A parallel-plate viscometer problem is simulated, in which viscoelastic material is squeezed between two
 parallel plates. The plates are moving at a constant velocity, $v_0$. Each plate has the length of $2L$ and 
@@ -2334,7 +2574,9 @@ to reduce the maximum stress by a factor $e$.
 
 
 %-------------------------------------------------------------------------
-\subsection{Role of elasticity in slab bending - \textcite{fogm14} (2014)}
+\subsection{Role of elasticity in slab bending (Fourel et al, 2014)}
+
+\fullcite{fogm14}
 
 \begin{center}
 \includegraphics[width=8cm]{images/viscoelasticity/fogm14b}
@@ -2343,17 +2585,10 @@ to reduce the maximum stress by a factor $e$.
 
 
 
-
-
-
-
-
-
-
-
-
 %-------------------------------------------------------------------------
-\subsection{Shear test in 2D - \textcite{famc14} (2014)}
+\subsection{Shear test in 2D (Farrington et al, 2014)}
+
+\fullcite{famc14}
 
 This experiment consists of a viscoelastic material undergoing simple shear at a constant 
 rate from a time $t_0$ though to $t_{max}$. At $t_{max}$, the shearing velocity is taken 
@@ -2386,8 +2621,6 @@ C_1=-\frac{V^2 \eta^2 \mu}{\mu^2 h^2 + V^2 \eta^2}
 C_2=-\frac{Vh\eta \mu^2}{\mu^2 h^2 + V^2 \eta^2}
 \]
 
-
-
 \begin{center}
 \includegraphics[width=8cm]{images/viscoelasticity/famc14a}\\
 \captionfont{The xy component of dimensionless stored stress with dimensionless time 
@@ -2404,13 +2637,10 @@ sufficiently small to fully capture the elastic stored stresses produced within 
 applied strain rate.
 
 
-
-
-
-
-
 %-------------------------------------------------------------------------
-\subsection{Tortion test in 3D - \textcite{famc14} (2014)}
+\subsection{Tortion test in 3D (Farrington et al, 2014)}
+
+\fullcite{famc14}
 
 insert here eq 9 of paper
 
@@ -2473,7 +2703,7 @@ would then be required for consistency.
 
 
 
-%-------------------------------------------------------------------------
+%------------------------------------------------
 \subsection{Cylindrical tunnel - Segall book (?)}
 
 {\color{orange} compressible $\nu=0.25$}
@@ -2492,9 +2722,29 @@ See plot with radial deformation for t=0 (green), t=300s (red), t=600s (blue), a
 thin line is analytic, points are numeric.
 (with parameters and size parameters as in analytic.f)
 
-
 \begin{center}
 \includegraphics[width=8cm]{images/viscoelasticity/radialDisp}
+\end{center}
+
+
+%--------------------------------------------------------------------
+\subsection{Gravitational instability of an elastically compressible
+viscoelastic Maxwell solid overlying an inviscid incompressible ﬂuid (Burov \& Molnar, 2008)}
+
+\fullcite{bumo08}
+
+\begin{center}
+\includegraphics[width=12cm]{images/viscoelasticity/bumo08}\\
+{\captionfont A) Sequence of different stages of development of a Rayleigh–Taylor instability in a viscoelastic layer of thickness h overlying an inviscid ﬂuid of lower density. B) Numerical setup for experiments. }
+\end{center}
+
+%--------------------------------------------------------------------------------
+\subsection{craton stability using a viscoelastic rheology (Beuchert et al, 2010)}
+
+\fullcite{beps10}
+
+\begin{center}
+\includegraphics[width=7cm]{images/viscoelasticity/beps10d}
 \end{center}
 
 
@@ -2502,19 +2752,16 @@ thin line is analytic, points are numeric.
 
 
 
-
-
-
-
+\newpage
 %..........................................................
 \subsection{Relevant literature \& various notes}
 
 
 
 \begin{itemize}
-\item convection of viscoelastic fluids: 
+\item \underline{convection of viscoelastic fluids}: 
 \textcite{hard91}, \textcite{momy93}, 
-\textcite{zhgm96}, \textcite{modm02}, 
+\textcite{zhgm96},
 \textcite{mure05}, \textcite{likh05a},  
 \textcite{likh05b}, \textcite{fukk08}
 
@@ -2543,9 +2790,241 @@ Check early paper by Braun \& Beaumont (1987) \cite{brbe87}
 \textcite{hepk14} (2014)
 \textcite{daws16} (2016)
 \textcite{thkp15} (2015)
-\textcite{beps10} (2010)
 \textcite{samb20} (2020)
 \textcite{vosc15} (2015)
 \textcite{nalr12} (2012)
 \textcite{pelt74} (1974)
-\textcite{kaps04} (2004)
+
+
+\newpage
+%-----------------------------------------
+\subsection{appendix: Equations in beps10}
+
+\fullcite{beps10}
+
+\begin{multicols}{2}
+\includegraphics[width=7cm]{images/viscoelasticity/beps10a}
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=7cm]{images/viscoelasticity/beps10b}
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=7cm]{images/viscoelasticity/beps10c}
+\end{multicols}
+
+
+more details are given in \textcite{bepo10}
+
+\newpage
+%--------------------------------------
+\subsection{appendix: equations in momy93}
+
+\fullcite{momy93}
+
+\begin{multicols}{2}
+\includegraphics[width=7cm]{images/viscoelasticity/momy93a}\\
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=7cm]{images/viscoelasticity/momy93b}\\
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=7cm]{images/viscoelasticity/momy93c}
+\end{multicols}
+
+
+
+\newpage
+%-----------------------------------------
+\subsection{appendix: equations in modm01}
+
+\fullcite{modm01}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01a}\\
+\[
+\vec\nabla \cdot {\bm \sigma} + \vec{f} = \vec{0}
+\]
+\[
+{\bm \sigma} = -p {\bm 1} + {\bm \tau}
+\]
+\end{multicols}
+
+
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01b} \\
+\[
+{\bm \varepsilon} = \frac12 (\vec\nabla \vec\upnu  + \vec\nabla \vec\upnu^T  ) 
+\]
+
+\[
+{\bm \varepsilon}_e = \frac13 {\rm tr}({\bm \varepsilon}_e) {\bm 1} + {\bm \varepsilon}_e^d 
+\]
+\[
+{\bm \varepsilon}_v = \frac13 {\rm tr}({\bm \varepsilon}_v) {\bm 1} + {\bm \varepsilon}_v^d 
+\]
+
+\end{multicols}
+
+
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01c} \\
+\[
+\frac{ \tilde{\bm \tau}}{2\mu} + \frac{{\bm \tau}}{2\eta}  
+= {\bm \varepsilon}_e^d + {\bm \varepsilon}_v^d + {\bm \varepsilon}^d 
+\]
+\end{multicols}
+
+
+\newpage
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01d}\\
+\[
+\frac{\dot{p}}{K_e}+\frac{p}{\xi} = - {\rm tr} ({\bm \varepsilon})
+\]
+\[
+\tilde{\bm \tau} = \dot{\bm \tau} + {\bm \tau} \cdot {\bm W} + {\bm W} \cdot {\bm \tau}  
+\]
+\[
+{\bm W} = \frac12 (\vec\nabla \vec\upnu  - \vec\nabla \vec\upnu^T  ) 
+\]
+
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01e}\\
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01f}\\
+\[
+\tilde{\bm \tau} = \frac{ {\bm \tau}^{t+\delta t} - {\bm \tau}^t }{\delta t} + {\bm \tau}^t \cdot {\bm W}^t + {\bm W}^t \cdot {\bm \tau}^t  
+\]
+
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01g}\\
+{\color{red} derive!!}
+\[
+{\bm \tau}^{t+\delta t} = \frac{\eta \delta t}{\eta/\mu + \delta t} {\bm \varepsilon}^{d,t+\delta t} + ...
+\]
+\[
+p^{t + \delta t} = -\frac{\xi \delta t}{\xi/K_e + \delta_t } + \frac{}{} p^t
+\]
+\end{multicols}
+
+\newpage
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01h}\\
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01i}\\
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01j}\\
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01k}\\
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01l}\\
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01m}\\
+\end{multicols}
+
+\newpage
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01n}
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01p}\\
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm01q}\\
+\end{multicols}
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+%-----------------------------------------
+\subsection{appendix: equations in modm02}
+
+\fullcite{modm02}
+
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm02a}\\
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm02b}\\
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm02c}\\
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm02d}\\
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm02e}\\
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/modm02h}\\
+\end{multicols}
+
+
+
+
+
+
+\newpage
+%-----------------------------------------
+\subsection{appendix: equations in moql07}
+
+\fullcite{moql07}
+
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/moql07a}
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/moql07b}
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/moql07c}
+\end{multicols}
+
+\newpage
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/moql07d}
+\end{multicols}
+
+

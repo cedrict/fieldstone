@@ -188,3 +188,56 @@ THESE EQUATIONS SHOULD BE CHECKED and RE-CHECKED !!
 
 
 
+
+
+
+The divergence of the stress tensor is given by
+\begin{eqnarray}
+\vec\nabla \cdot {\bm \sigma}
+& = &
+\left[ {1 \over r} {\partial \over \partial \, r} \left( r \, \sigma_{\!rr} \right) + 
+{1 \over r} {\partial \, \sigma_{\!r\theta} \over \partial \, \theta} +
+{\partial \, \sigma_{\!rz} \over \partial z} - {\sigma_{\theta \theta} \over r} \right] \vec{ e}_r \\
+& + &
+\left[ {1 \over r} {\partial \over \partial \, r} \left( r \, \sigma_{\!r\theta} \right) + 
+{1 \over r} {\partial \, \sigma_{\!\theta\theta} \over \partial \, \theta} +
+{\partial \, \sigma_{\!\theta z} \over \partial z} + {\sigma_{r \theta} \over r} \right] \vec{e}_\theta \\
+& + &
+\left[ {1 \over r} {\partial \over \partial \, r} \left( r \, \sigma_{\!rz} \right) + 
+{1 \over r} {\partial \, \sigma_{\!\theta z} \over \partial \, \theta} +
+{\partial \, \sigma_{\!zz} \over \partial z} \right] \vec{e}_z
+\end{eqnarray}
+Since $\sigma_{r\theta}=\sigma_{\theta r}=0$ 
+and $\sigma_{z\theta}=\sigma_{\theta z}=0$
+and since $\partial_\theta \rightarrow 0$
+then 
+\begin{eqnarray}
+\vec\nabla \cdot {\bm \sigma}
+& = &
+\left[ {1 \over r} {\partial \over \partial \, r} \left( r \, \sigma_{\!rr} \right) + 
+{\partial \, \sigma_{\!rz} \over \partial z} - {\sigma_{\theta \theta} \over r} \right] \vec{ e}_r \\
+& + &
+\left[ {1 \over r} {\partial \over \partial \, r} \left( r \, \sigma_{\!rz} \right) 
+ +
+{\partial \, \sigma_{\!zz} \over \partial z} \right] \vec{e}_z
+\end{eqnarray}
+
+Then 
+\begin{eqnarray}
+\vec\nabla \cdot {\bm \sigma}|_r
+&=&  {1 \over r} {\partial \over \partial \, r} \left( r \, \sigma_{\!rr} \right) + 
+{\partial \, \sigma_{\!rz} \over \partial z} - {\sigma_{\theta \theta} \over r} \\
+&=& 
+\frac{\partial \sigma_{rr}}{\partial r} + \frac1r (\sigma_{rr}-\sigma_{\theta \theta} ) + \frac{\partial \sigma_{rz}}{\partial z} \\
+&=& 
+\frac{\partial \sigma_{rr}}{\partial r} + \frac{2\mu}{r} 
+({\partial \, u_r \over \partial \, r} - \frac{u_r}{r} ) 
++ \frac{\partial \sigma_{rz}}{\partial z} \\
+\vec\nabla \cdot {\bm \sigma}|_z
+&=& \frac{\partial \sigma_{rz}}{\partial r} + \frac{\sigma_{rz}}{r}
+ + {\partial \, \sigma_{\!zz} \over \partial z} 
+\end{eqnarray}
+
+
+
+
