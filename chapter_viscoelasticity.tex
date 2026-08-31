@@ -25,12 +25,14 @@ strain tensor & ${\bm \varepsilon}$ &  - \\
 elastic strain tensor & ${\bm \varepsilon}^{\rm e}$ &  - \\
 visco-plastic strain tensor & ${\bm \varepsilon}^{\rm vp}$ &  - \\
 total strain tensor & ${\bm \varepsilon}^{\rm T}$ &  - \\
-strain rate tensor & $\dot{\bm \varepsilon}$ &  \si{\per\second} \\
+strain rate tensor & $\dot{\bm \varepsilon},{\bm \varepsilon}(\vec\upnu)$ & \si{\per\second} \\
+anti-symmetric vel gradient & $\dot{\omega},{\bm\omega}(\vec\upnu)$ & \si{\per\second} \\
 Lam\'e parameter & $\lambda$ & $\si{\pascal}$ \\
 Shear modulus & $\mu(G)$ & $\si{\pascal}$ \\
 Bulk modulus & $K$& $\si{\pascal}$\\
 Poisson ratio & $\nu$ & -\\
 Young's modulus & $E$ & \si{\pascal}\\
+... $\xi$ & \\
 viscosity & $\eta$ & \si{\pascal\second} \\
 displacement & $\vec\upupsilon$ & \si{\meter} \\
 velocity & $\vec\upnu$ & \si{\meter\per\second} \\
@@ -1225,7 +1227,7 @@ This also probably means that reduced integration can/should be done ?
 
 
 %---------------------------------------------------
-\subsection{Visco-elasticity {\`a} la \textcite{bafg20}}
+\subsection{Visco-elasticity(-plasticity) {\`a} la \textcite{bafg20}}
 
 We here focus on Appendix A of \textcite{bafg20}. 
 In what follows I present their approach, albeit with my notations, 
@@ -1920,6 +1922,8 @@ $A_0=1~\si{\km}$, $\lambda=L_x$.
 %..........................................................
 \subsection{stress build-up inside an elastic inclusion in a viscous matrix (Beuchert \& Podlachikov, 2010)}
 
+\fullcite{bepo10}
+
 {\color{orange} fully incompressible}
 
 This is presented in Section 5.4 of \textcite{bepo10} (2010).
@@ -1962,6 +1966,8 @@ inside a viscous inclusion (dashed horizontal line ‘viscous limit’).
 
 %..........................................................
 \subsection{Viscoelastic flow past a cylinder in a channel (Beuchert \& Podlachikov, 2010)}
+
+\fullcite{bepo10}
 
 This is presented in Section 5.4 of \textcite{bepo10} (2010).
 
@@ -2058,6 +2064,8 @@ distribution becomes inhomogeneous and the simulation crashes for high strain.}
 %---------------------------------------------------------------------------
 \subsection{Response to load from ice sheet (Nakiboglu and Lambeck, 1982)}
 
+\fullcite{nala82}
+
 The domain is $500\times500$km. Vertical gravity is 9.8, density is 3300, viscosity 
 is $3\cdot10^{20}~\si{\pascal\second}$, 
 shear modulus is $10^{10}~\si{\pascal}$, free slip on left, right and bottom. 
@@ -2088,7 +2096,7 @@ It was run with ASPECT: prm file in stone 64 results folder.
 %--------------------------------------------------------------------------------------------
 \subsection{Rectangular sample of material under a constant downward velocity applied on top}
 
-This is taken from \textcite{modm01} (2001).
+\fullcite{modm01}
 
 \begin{center}
 \includegraphics[width=8cm]{images/viscoelasticity/bench_modm01a}
@@ -2550,8 +2558,7 @@ E=\frac{9K\mu}{3K+\mu}
 
 
 %..........................................................
-\subsection{Relaxation after extention - Hassani syllabus}
-
+\subsection{Relaxation after extention (Hassani syllabus)}
 
 {\color{orange} compressible $\nu=0.25$}
 
@@ -2717,7 +2724,7 @@ would then be required for consistency.
 
 
 %------------------------------------------------
-\subsection{Cylindrical tunnel - Segall book (?)}
+\subsection{Cylindrical tunnel (Segall book ?)}
 
 {\color{orange} compressible $\nu=0.25$}
 
@@ -2791,118 +2798,25 @@ range of numerical simulations to investigate its effect on subducting slab dyna
 Muhlhaus and Regenauer-Lieb [2005] and Moresi et al. [2002] have studied the role of elasticity in mantle convection, comparing the viscous case to that of viscoelastic, and Kaus and Becker [2007] discussed the effect of elasticity on layered Rayleigh-Taylor instabilities. However, a systematic study into the effects of elastic stresses on models of free subduction has yet to be completed. Morra and Regenauer-Lieb [2006], Funiciello et al. [2003], Capitanio et al. [2007], Yamato et al. [2007], and Royden and Husson [2006] have included a viscoelastic slab in subduction models, without explicitly studying the effects of the elastic component across a range of parameters.''
 
 
-\newpage
-%-----------------------------------------
-\subsection{appendix: Equations in bepo10}
-
-\fullcite{bepo10}
-
-This is in my opinion a fantastic article. 
-Physics is explained, FEM discretisation is derived, 
-with benchmarks and experiments.
-
-
-\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_a}}
-
-\[
-p=-K \varepsilon_{kk} = -K {\rm tr}({\bm \varepsilon})
-\]
-\[
-\vec\nabla\cdot\vec\upnu + \frac{1}{K} \frac{\partial p}{\partial t_p} = 0
-\]
-
-\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_ba}}
-\[
-\vec\nabla\cdot\vec\upnu^{k+1} + \frac{1}{K} \frac{p^{k+1}}{\delta t_p}  = \frac{1}{K} \frac{p^{k}}{\delta t_p}
-\Rightarrow
-\vec\nabla\cdot\vec\upnu^{k+1} + \frac{1}{\kappa} p^{k+1}  = \frac{1}{\kappa} p^{k}
-\]
-
-\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_bb}}
-
-\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_c}}
-
-\vspace{.5cm}
-
-``
-Use of a viscous rheology might be appropriate for modelling the dynamics of the hot, 
-convecting interior of our planet. Yet, when the relatively cold, elastic lithosphere 
-is included in the simulation, a viscoelastic rheology is more appropriate. While the 
-hot, sublithospheric interior experiences strong deformation on geological timescales 
-and thus behaves like a viscous fluid, the lithosphere itself remains relatively
-undeformed over long geological times and exhibits the properties of an elastic solid. 
-The difference in response of the mantle in the relatively hot sublithospheric interior 
-and the relatively cold lithosphere is a consequence of the strong temperature dependence 
-of creep activation in mantle rocks (Karato \& Wu 1993). A Maxwell rheology naturally 
-combines both viscous and elastic behaviour of mantle rocks, with the transition between 
-the two rheological regimes being determined by the temperature-dependent viscosity and 
-the timescale considered.
-''
-
-\vspace{.5cm}
-
-\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_d}}
-
-
-
-\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_e}}
-
-\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_f}}
-
-\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_g}}
-
-
-\paragraph{Derivation of Jaumann derivative from stress rotation formula}.
-
-\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_h}}
-
-\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_i}}
-
-
-\paragraph{FEM implementation}.
-
-\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_j}}
-
-\vspace{4cm}
-
-\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_k}}
 
 
 
 
-\newpage
-%-----------------------------------------
-\subsection{appendix: Equations in beps10}
-
-\fullcite{beps10}
-
-\begin{multicols}{2}
-\includegraphics[width=7cm]{images/viscoelasticity/beps10a}
-\end{multicols}
-
-\begin{multicols}{2}
-\includegraphics[width=7cm]{images/viscoelasticity/beps10b}\\
-\[
-\varepsilon_{ij}^d = \frac{1}{2\eta} \tau_{ij} + \frac{1}{2\mu} \frac{D\tau_{ij}}{Dt}
-\]
-with
-\[
-\frac{D\tau_{ij}}{Dt} =  \frac{\partial \tau_{ij}}{\partial t} 
-+ \upnu_k \frac{\partial \tau_{ij}}{\partial x_k}
-- (\tau_{ik} W_{kj} - W_{ik}\tau_{kj} ) 
-\]
-\end{multicols}
-
-\begin{multicols}{2}
-\includegraphics[width=7cm]{images/viscoelasticity/beps10c}
-\end{multicols}
 
 
-more details are given in \textcite{bepo10}
+
+
+
+
+
+
+
+
+
 
 \newpage
 %--------------------------------------
-\subsection{appendix: equations in momy93}
+\subsection{appendix: Equations in momy93}
 
 \fullcite{momy93}
 
@@ -2938,7 +2852,7 @@ more details are given in \textcite{bepo10}
 
 \newpage
 %-----------------------------------------
-\subsection{appendix: equations in modm01}
+\subsection{appendix: Equations in modm01}
 
 \fullcite{modm01}
 
@@ -3069,17 +2983,24 @@ p^{t + \delta t} = -\frac{\xi \delta t}{\xi/K_e + \delta_t } + \frac{}{} p^t
 
 \newpage
 %-----------------------------------------
-\subsection{appendix: equations in modm02}
+\subsection{appendix: Equations in modm02}
 
 \fullcite{modm02}
 
 
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm02a}\\
+\[
+\dot{\bm\varepsilon}=\frac12
+(\vec\nabla \vec\upnu + \vec\nabla \vec\upnu ^T )
+\]
 \end{multicols}
 
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm02b}\\
+\[
+\frac{1}{K} \frac{Dp}{Dt} + \frac{p}{\xi} = -{\rm tr}(\dot{\bm\varepsilon})
+\]
 \end{multicols}
 
 \begin{multicols}{2}
@@ -3105,20 +3026,41 @@ p^{t + \delta t} = -\frac{\xi \delta t}{\xi/K_e + \delta_t } + \frac{}{} p^t
 
 \newpage
 %-----------------------------------------
-\subsection{appendix: equations in moql07}
+\subsection{appendix: Equations in moql07}
 
 \fullcite{moql07}
 
 \begin{multicols}{2}
-\includegraphics[width=8.25cm]{images/viscoelasticity/moql07a}
+\includegraphics[width=8.25cm]{images/viscoelasticity/moql07a}\\
+\[
+\dot{\bm\varepsilon}=\frac12
+(\vec\nabla \vec\upnu + \vec\nabla \vec\upnu ^T )
+\]
+\[
+{\bm \tau}=2\eta \dot{\bm\varepsilon}^v
+\]
+\[
+\tilde{\bm \tau}=2\mu \dot{\bm\varepsilon}^e
+\]
 \end{multicols}
 
 \begin{multicols}{2}
-\includegraphics[width=8.25cm]{images/viscoelasticity/moql07b}
+\includegraphics[width=8.25cm]{images/viscoelasticity/moql07b}\\
+\[
+\tilde{\bm \tau} = \frac{\partial {\bm \tau}}{\partial t}
++ (\vec\upnu\cdot \vec\nabla) {\bm \tau} 
++ {\bm \tau}\cdot \dot{\bm\omega} - \dot{\bm\omega}\cdot {\bm \tau}
++ a ( {\bm \tau} \cdot \dot{\bm\varepsilon} +  \dot{\bm\varepsilon} \cdot {\bm \tau} )
+\]
+with $-1 \le a \le 1$.
 \end{multicols}
 
 \begin{multicols}{2}
-\includegraphics[width=8.25cm]{images/viscoelasticity/moql07c}
+\includegraphics[width=8.25cm]{images/viscoelasticity/moql07c}\\
+\[
+\dot{\bm\varepsilon} = \dot{\bm\varepsilon}^e+ \dot{\bm\varepsilon}^v
+= \frac{\tilde{\bm \tau}}{2\mu} + \frac{{\bm \tau}}{2\eta}
+\]
 \end{multicols}
 
 \newpage
@@ -3126,18 +3068,177 @@ p^{t + \delta t} = -\frac{\xi \delta t}{\xi/K_e + \delta_t } + \frac{}{} p^t
 \includegraphics[width=8.25cm]{images/viscoelasticity/moql07d}
 \end{multicols}
 
+
+
+
 \newpage
 %-----------------------------------------
-\subsection{appendix: equations in vosc15}
+\subsection{appendix: Equations in bepo10}
 
-\fullcite{vosc15}
+\fullcite{bepo10}
+
+This is in my opinion a fantastic article. 
+Physics is explained, FEM discretisation is derived, 
+with benchmarks and experiments.
+
+
+\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_a}}
+
+\[
+p=-K \varepsilon_{kk} = -K {\rm tr}({\bm \varepsilon})
+\]
+\[
+\vec\nabla\cdot\vec\upnu + \frac{1}{K} \frac{\partial p}{\partial t_p} = 0
+\]
+
+\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_ba}}
+\[
+\vec\nabla\cdot\vec\upnu^{k+1} + \frac{1}{K} \frac{p^{k+1}}{\delta t_p}  = \frac{1}{K} \frac{p^{k}}{\delta t_p}
+\Rightarrow
+\vec\nabla\cdot\vec\upnu^{k+1} + \frac{1}{\kappa} p^{k+1}  = \frac{1}{\kappa} p^{k}
+\]
+
+\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_bb}}
+
+\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_c}}
+
+\vspace{.5cm}
+
+``
+Use of a viscous rheology might be appropriate for modelling the dynamics of the hot, 
+convecting interior of our planet. Yet, when the relatively cold, elastic lithosphere 
+is included in the simulation, a viscoelastic rheology is more appropriate. While the 
+hot, sublithospheric interior experiences strong deformation on geological timescales 
+and thus behaves like a viscous fluid, the lithosphere itself remains relatively
+undeformed over long geological times and exhibits the properties of an elastic solid. 
+The difference in response of the mantle in the relatively hot sublithospheric interior 
+and the relatively cold lithosphere is a consequence of the strong temperature dependence 
+of creep activation in mantle rocks (Karato \& Wu 1993). A Maxwell rheology naturally 
+combines both viscous and elastic behaviour of mantle rocks, with the transition between 
+the two rheological regimes being determined by the temperature-dependent viscosity and 
+the timescale considered.
+''
+
+\vspace{.5cm}
+
+\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_d}}
+
+
+
+\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_e}}
+
+\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_f}}
+
+\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_g}}
+
+
+\paragraph{Derivation of Jaumann derivative from stress rotation formula}.
+
+\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_h}}\\
+\[
+{\bm \tau}' = {\bm R} \cdot {\bm \tau} \cdot {\bm R}
+\]
+\[
+{\bm R} = \left(\begin{array}{cc}
+\cos\theta & \sin\theta \\
+-\sin\theta  & \cos\theta
+\end{array}\right)
+\]
+\[
+\theta = \int_t \omega \; dt \simeq \omega \delta t
+\]
+
+
+\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_i}}
+
+
+\paragraph{FEM implementation}.
+
+\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_j}}
+
+\vspace{4cm}
+
+\fbox{\includegraphics[width=15cm]{images/viscoelasticity/bepo10_k}}
+
+
+
+
+\newpage
+%-----------------------------------------
+\subsection{appendix: Equations in beps10}
+
+\fullcite{beps10}
 
 \begin{multicols}{2}
-\includegraphics[width=8.25cm]{images/viscoelasticity/vosc15_l}
+\includegraphics[width=7cm]{images/viscoelasticity/beps10a}
 \end{multicols}
 
 \begin{multicols}{2}
-\includegraphics[width=8.25cm]{images/viscoelasticity/vosc15_m}
+\includegraphics[width=7cm]{images/viscoelasticity/beps10b}\\
+\[
+\varepsilon_{ij}^d = \frac{1}{2\eta} \tau_{ij} + \frac{1}{2\mu} \frac{D\tau_{ij}}{Dt}
+\]
+with
+\[
+\frac{D\tau_{ij}}{Dt} =  \frac{\partial \tau_{ij}}{\partial t} 
++ \upnu_k \frac{\partial \tau_{ij}}{\partial x_k}
+- (\tau_{ik} W_{kj} - W_{ik}\tau_{kj} ) 
+\]
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=7cm]{images/viscoelasticity/beps10c}
+\end{multicols}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+%-----------------------------------------
+\subsection{appendix: Equations in vosc15}
+
+\fullcite{vosc15}
+
+This is a nice and technical article. Added bonus, in 3d.
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/vosc15_l}\\
+\[
+\frac{Dp}{Dt} = -K \vec\nabla\cdot \vec\upnu
+\]
+\[
+\frac{Dp}{Dt} \simeq \frac{p^{k+1} -p^k}{\delta t} = -K \vec\nabla\cdot \vec\upnu
+\]
+\end{multicols}
+
+\begin{multicols}{2}
+\includegraphics[width=8.25cm]{images/viscoelasticity/vosc15_m}\\
+\[
+\tau_{ij}^{k+1} = 2 \eta_{ve} \dot{\varepsilon}_{ij} + \left(1+\frac{G \delta t}{\eta}\right)^{-1} 
+( \tau_{ij}^k - \tau^k_{ik} \omega_{kj} - \omega_{ik} \tau{kj}^k)
+\]
+with
+\[
+\eta_{ve}=
+\]
+
 \end{multicols}
 
 
@@ -3187,12 +3288,23 @@ p^{t + \delta t} = -\frac{\xi \delta t}{\xi/K_e + \delta_t } + \frac{}{} p^t
 
 \newpage
 %-----------------------------------------
-\subsection{appendix: equations in thkp15}
+\subsection{appendix: Equations in thkp15}
 
 \fullcite{thkp15}
 
 \begin{multicols}{2}
-\includegraphics[width=8.25cm]{images/viscoelasticity/thkp15a}
+\includegraphics[width=8.25cm]{images/viscoelasticity/thkp15a}\\
+\[
+\dot{\bm\varepsilon} = \frac{1}{2\mu} \frac{D{\bm \tau}}{Dt}
++\frac{1}{2\eta} {\bm \tau}
+\]
+Is is dev stress or full stress !?
+\[
+\frac{D {\bm \tau}}{Dt} = 
+\frac{\partial {\bm \tau}}{\partial t}  
++ {\bm \tau} \cdot \dot{\bm\omega} 
+- \dot{\bm\omega} \cdot {\bm \tau}
+\]
 \end{multicols}
 
 \begin{multicols}{2}
@@ -3207,11 +3319,16 @@ p^{t + \delta t} = -\frac{\xi \delta t}{\xi/K_e + \delta_t } + \frac{}{} p^t
 \paragraph{Discretization and solution}.
 
 \begin{multicols}{2}
-\includegraphics[width=8.25cm]{images/viscoelasticity/thkp15d}
+\includegraphics[width=8.25cm]{images/viscoelasticity/thkp15d}\\
+\[
+\vec\nabla\cdot \vec\upnu = \frac{1}{\lambda}p
+\]
+where $\lambda$ is a penalty parameter!
 \end{multicols}
 
 \begin{multicols}{2}
-\includegraphics[width=8.25cm]{images/viscoelasticity/thkp15e}
+\includegraphics[width=8.25cm]{images/viscoelasticity/thkp15e}\\
+$Q_2 \times P_{-1}$ element, discontinuous pressure field.
 \end{multicols}
 
 \begin{multicols}{2}
@@ -3221,11 +3338,38 @@ p^{t + \delta t} = -\frac{\xi \delta t}{\xi/K_e + \delta_t } + \frac{}{} p^t
 \paragraph{Numerical formulation of viscoelasticity}.
 
 \begin{multicols}{2}
-\includegraphics[width=8.25cm]{images/viscoelasticity/thkp15g}
+\includegraphics[width=8.25cm]{images/viscoelasticity/thkp15g}\\
+\[
+\frac{D \tau_{ij}^{k+1}}{Dt} \simeq \frac{\tau_{ij}^{k+1}- R_{ik}  \tau_{kl}^k R_{jl} }{\delta t}
+\]
+\[
+{\bm R} = \left(\begin{array}{cc}
+\cos\theta & -\sin \theta \\
+\sin\theta & \cos\theta
+\end{array}\right)
+\]
+\[
+\theta = \frac12 \left(\frac{\partial v_z}{\partial x} - \frac{\partial v_x}{\partial z} \right) \delta t
+\]
 \end{multicols}
 
 \begin{multicols}{2}
-\includegraphics[width=8.25cm]{images/viscoelasticity/thkp15h}
+\includegraphics[width=8.25cm]{images/viscoelasticity/thkp15h}\\
+\[
+{\bm\tau}_{ij}^{k+1} = 2 \eta_{ve} \dot{\varepsilon}_{ij} + \xi R_{ik}  \tau_{kl}^k R_{jl} 
+\]
+with 
+\[
+\eta_{ve} = 
+\left(
+\frac{1}{\eta} + \frac{1}{\mu \delta t}
+\right)^{-1}
+\qquad
+\xi = 
+\left(
+1 + \frac{\mu\delta t}{\eta}
+\right)^{-1}
+\]
 \end{multicols}
 
 
@@ -3236,12 +3380,16 @@ p^{t + \delta t} = -\frac{\xi \delta t}{\xi/K_e + \delta_t } + \frac{}{} p^t
 
 \newpage
 %-----------------------------------------
-\subsection{appendix: equations in daws16}
+\subsection{appendix: Equations in daws16}
 
 \fullcite{daws16}
 
 \begin{multicols}{2}
-\includegraphics[width=8.25cm]{images/viscoelasticity/daws16a}
+\includegraphics[width=8.25cm]{images/viscoelasticity/daws16a}\\
+\[
+\frac{1}{E} \frac{D{\bm \sigma}}{Dt} + \frac{1}{\eta} {\bm \sigma} = \dot{\bm\varepsilon}
+\]
+in 1d ?
 \end{multicols}
 
 \begin{multicols}{2}
@@ -3253,13 +3401,37 @@ p^{t + \delta t} = -\frac{\xi \delta t}{\xi/K_e + \delta_t } + \frac{}{} p^t
 \end{multicols}
 
 \begin{multicols}{2}
-\includegraphics[width=8.25cm]{images/viscoelasticity/daws16f}
+\includegraphics[width=8.25cm]{images/viscoelasticity/daws16f}\\
+\[
+\frac{1}{E} \frac{D{\bm \sigma}}{D t} + \frac{1}{\eta} \sigma 
+= {\cal C}: \dot{\bm \varepsilon}
+\]
+with
+\[
+{\cal C}: \dot{\bm \varepsilon}
+= \frac{\nu}{(1+\nu)(1-2\nu)} {\rm tr}({\bm \varepsilon}) {\bm 1}
++ 2\frac{1}{2(1+\nu)} {\bm \varepsilon}
+\]
+
+Gordon-Schowalter derivative:
+\[
+\frac{D{\bm \sigma}}{D t} = \frac{\partial{\bm \sigma}}{\partial t}
++ (\vec\upnu \cdot \vec\nabla) {\bm \sigma} +
+\beta_a (\vec\nabla\vec\upnu,{\bm \sigma})
+\]
+
 \end{multicols}
 
 \newpage
 
 \begin{multicols}{2}
-\includegraphics[width=8.25cm]{images/viscoelasticity/daws16d}
+\includegraphics[width=8.25cm]{images/viscoelasticity/daws16d} \\
+\[
+\beta_a (\vec\nabla\vec\upnu,{\bm \sigma})
+= {\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}
+- a ( {\bm \sigma} \cdot \dot{\bm \varepsilon}
++ \dot{\bm \varepsilon} \cdot {\bm \sigma})
+\]
 \end{multicols}
 
 
