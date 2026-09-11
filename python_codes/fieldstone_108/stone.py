@@ -6,11 +6,11 @@ import matplotlib.pyplot as plt
 mm=1e-3
 year=365.25*3600*24
 
-###########################################################
+###############################################################################
 
 Lx=20000e3        # m
 nnx=4001          # must be odd for experiment 1
-thickness=80e3     # m
+thickness=80e3    # m
 nu=0.25           # dimensionless
 E=70e9            # Pa
 g=9.81            # m/s^2
@@ -20,9 +20,9 @@ b=15e3/2          # semi height of channel
 eta=2e18          # viscosity (Pa)
 U=100*mm/year     # velocity
 a=200e3           # radius of obstacle
-
+debug=False
 P=0
-###########################################################
+###############################################################################
 
 nelx=nnx-1
 hx=Lx/nelx
@@ -34,16 +34,16 @@ print ('D=',D)
 print ('alpha=',alpha,'m')
 print ('kappa=',kappa)
 
-###########################################################
+###############################################################################
 
-x = np.empty(nnx,dtype=np.float64)
+x=np.zeros(nnx,dtype=np.float64)
 for i in range(0,nnx):
     x[i]=i*hx
 
-###########################################################
+###############################################################################
 
-A = np.zeros((nnx,nnx),dtype=np.float64)
-rhs = np.zeros((nnx),dtype=np.float64)
+A=np.zeros((nnx,nnx),dtype=np.float64)
+rhs=np.zeros((nnx),dtype=np.float64)
 
 for i in range(0,nnx):
 
@@ -88,11 +88,17 @@ for i in range(0,nnx):
 
 #end for
 
-#export matrix nonzero structure
-#plt.spy(A, markersize=2.5)
-#plt.savefig('matrix.png', bbox_inches='tight')
-#plt.clf()
+if debug:
+   export matrix nonzero structure
+   plt.spy(A, markersize=2.5)
+   plt.savefig('matrix.png', bbox_inches='tight')
+   plt.clf()
 
-sol = sps.linalg.spsolve(sps.csr_matrix(A),rhs)
+###############################################################################
+# solve linear system and write to file
+
+sol=sps.linalg.spsolve(sps.csr_matrix(A),rhs)
 
 np.savetxt('w.ascii',np.array([x/1e3,sol]).T,header='# r,w')
+
+###############################################################################
