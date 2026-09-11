@@ -200,9 +200,9 @@ for j in range(0,nelr):
 
 print("connectivity (%.3fs)" % (clock.time()-start))
 
-###############################################################################
+################################################################################
 # define boundary conditions: no slip at bottom
-###############################################################################
+################################################################################
 start=clock.time()
 
 bc_fix=np.zeros(Nfem,dtype=bool)  
@@ -225,7 +225,7 @@ b_fem=np.zeros(Nfem,dtype=np.float64)          # right hand side of Ax=b
 B=np.zeros((3,ndof*m),dtype=np.float64)        # gradient matrix 
 jcb=np.zeros((2,2),dtype=np.float64)
 
-C=np.array([[2*mu+lambdaa,lambdaa     , 0],
+D=np.array([[2*mu+lambdaa,lambdaa     , 0],
             [lambdaa     ,2*mu+lambdaa, 0],
             [0           ,           0,mu]],dtype=np.float64) 
 
@@ -258,7 +258,7 @@ for iel in range(0,nel):
                                   [0.       ,dNdy_V[i]],
                                   [dNdy_V[i],dNdx_V[i]]]
 
-            A_el+=B.T.dot(C.dot(B))*JxWq
+            A_el+=B.T.dot(D.dot(B))*JxWq
 
             for i in range(0,m):
                 b_el[2*i  ]+=N_V[i]*gx(xq,yq,g0)*rho0*JxWq
@@ -335,10 +335,11 @@ p   = np.zeros(nel,dtype=np.float64)
 exx = np.zeros(nel,dtype=np.float64)  
 eyy = np.zeros(nel,dtype=np.float64)  
 exy = np.zeros(nel,dtype=np.float64)  
+    
+rq=0.
+sq=0.
 
 for iel in range(0,nel):
-    rq = 0.0
-    sq = 0.0
     N_V=basis_functions_V(rq,sq)
     dNdr_V=basis_functions_V_dr(rq,sq)
     dNds_V=basis_functions_V_ds(rq,sq)
@@ -471,12 +472,14 @@ if visu==1:
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='displacement (th)' Format='ascii'> \n")
    for i in range(0,nn_V):
-       vtufile.write("%10f %10f %10f \n" %(displacement_x(x[i],y[i],R1,R2,rho0,g0,lambdaa,mu),displacement_y(x[i],y[i],R1,R2,rho0,g0,lambdaa,mu),0.))
+       vtufile.write("%10f %10f %10f \n" %(displacement_x(x[i],y[i],R1,R2,rho0,g0,lambdaa,mu),\
+                                           displacement_y(x[i],y[i],R1,R2,rho0,g0,lambdaa,mu),0.))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='displacement (error)' Format='ascii'> \n")
    for i in range(0,nn_V):
-       vtufile.write("%10f %10f %10f \n" %(u[i]-displacement_x(x[i],y[i],R1,R2,rho0,g0,lambdaa,mu),v[i]-displacement_y(x[i],y[i],R1,R2,rho0,g0,lambdaa,mu),0.))
+       vtufile.write("%10f %10f %10f \n" %(u[i]-displacement_x(x[i],y[i],R1,R2,rho0,g0,lambdaa,mu),\
+                                           v[i]-displacement_y(x[i],y[i],R1,R2,rho0,g0,lambdaa,mu),0.))
    vtufile.write("</DataArray>\n")
    #--
    vtufile.write("<DataArray type='Float32' NumberOfComponents='1' Name='r' Format='ascii'> \n")
