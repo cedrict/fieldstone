@@ -161,11 +161,9 @@ if debug: np.savetxt('grid.ascii',np.array([x_V,y_V]).T,header='# x,y')
 
 print("setup: grid points: %.3f s" % (clock.time()-start))
 
-#################################################################
 ###############################################################################
 # connectivity
 ###############################################################################
-#################################################################
 start=clock.time()
 
 icon_V=np.zeros((m_V,nel),dtype=np.int32)
@@ -511,10 +509,11 @@ exy=np.zeros(nel,dtype=np.float64)
 e=np.zeros(nel,dtype=np.float64)  
 p=np.zeros(nel,dtype=np.float64)   
 divv=np.zeros(nel,dtype=np.float64)  
+    
+rq=1./3.
+sq=1./3.
 
 for iel in range(0,nel):
-    rq = 1./3.
-    sq = 1./3.
 
     N_V=basis_functions_V(rq,sq)
     dNdr_V=basis_functions_V_dr(rq,sq)
@@ -731,7 +730,6 @@ if visu==1:
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (sigmaxy[iel]))
     vtufile.write("</DataArray>\n")
-
     vtufile.write("<DataArray type='Float32' Name='sigma_angle' Format='ascii'> \n")
     for iel in range (0,nel):
         vtufile.write("%10e\n" % (sigma_angle[iel]))
