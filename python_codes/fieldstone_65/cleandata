@@ -1,0 +1,4 @@
+rm solution.vtu
+rm solution.pdf
+rm *.ascii
+
