@@ -17,22 +17,35 @@ Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fields
 \par\noindent\rule{\textwidth}{0.4pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The data is obtained from \url{https://github.com/usgs/slab2}. More precisely,
+In the original version of this \stone (October 2022) the data was obtained 
+from \url{https://github.com/usgs/slab2}. More precisely,
 the csv files used here are in {\tt slab2code/Input/09\_21}. The data is several hundreds of Mb
 and it is not mine so it is not uploaded in the fieldstone repository. Go get 
 it on the slab2 github and place it in the slab2 folder.
 
+However I see in September 2026 that the github repository above now states
+``This repository is outdated. Instead please use 
+\url{https://code.usgs.gov/ghsc/esi/usgs-slab-models}.''
+One can then clone the project and in {\tt usgs-slab-models/input/input\_files/}
+we now find a folder {\tt 06\-23} which I believe contains more recent data. 
+Note that a quick visual comparison leads me to think that the differences
+with {\tt 09-21} are minimal. 
+There are 27 csv which we place in {\tt python\_codes/fieldstone\_135/slab2} 
+before executing the python script {\tt stone.py}.
+
+
 The 29 files are read in, the depth, latitude and longitude are extracted and exported
 to vtu. 
 
+\newpage
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_135/images/view1.png}
-\includegraphics[width=8cm]{python_codes/fieldstone_135/images/view2.png}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_135/images/view3.png}
-\includegraphics[width=8cm]{python_codes/fieldstone_135/images/view4.png}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_135/images/id1.png}
-\includegraphics[width=8cm]{python_codes/fieldstone_135/images/id2.png}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_135/images/id3.png}
-\includegraphics[width=8cm]{python_codes/fieldstone_135/images/id4.png}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_135/images/view1.png}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_135/images/view2.png}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_135/images/view3.png}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_135/images/view4.png}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_135/images/id1.png}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_135/images/id2.png}\\
+\includegraphics[width=8.3cm]{python_codes/fieldstone_135/images/id3.png}
+\includegraphics[width=8.3cm]{python_codes/fieldstone_135/images/id4.png}\\
 {\captionfont shell+topo obtained from \stone~69, scaled 95\%.}
 \end{center}
