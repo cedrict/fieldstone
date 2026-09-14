@@ -38,6 +38,101 @@ def basis_functions_P_ds(r,s,t):
 def basis_functions_P_dt(r,s,t):
     return np.array([dNdt0,dNdt1,dNdt2,dNdt3,dNdt4,dNdt5,dNdt6,dNdt7,dNdt8],dtype=np.float64)
 
+
+
+
+
+
+###############################################################################
+# Q2xQ1
+###############################################################################
+
+def basis_functions_V(r,s):
+    N0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
+    N1= 0.5*r*(r+1.) * 0.5*s*(s-1.)
+    N2= 0.5*r*(r+1.) * 0.5*s*(s+1.)
+    N3= 0.5*r*(r-1.) * 0.5*s*(s+1.)
+    N4=    (1.-r**2) * 0.5*s*(s-1.)
+    N5= 0.5*r*(r+1.) *    (1.-s**2)
+    N6=    (1.-r**2) * 0.5*s*(s+1.)
+    N7= 0.5*r*(r-1.) *    (1.-s**2)
+    N8=    (1.-r**2) *    (1.-s**2)
+    return np.array([N0,N1,N2,N3,N4,N5,N6,N7,N8],dtype=np.float64)
+
+def basis_functions_V_dr(r,s):
+    dNdr0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
+    dNdr1= 0.5*(2.*r+1.) * 0.5*s*(s-1)
+    dNdr2= 0.5*(2.*r+1.) * 0.5*s*(s+1)
+    dNdr3= 0.5*(2.*r-1.) * 0.5*s*(s+1)
+    dNdr4=       (-2.*r) * 0.5*s*(s-1)
+    dNdr5= 0.5*(2.*r+1.) *   (1.-s**2)
+    dNdr6=       (-2.*r) * 0.5*s*(s+1)
+    dNdr7= 0.5*(2.*r-1.) *   (1.-s**2)
+    dNdr8=       (-2.*r) *   (1.-s**2)
+    return np.array([dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,dNdr6,dNdr7,dNdr8],dtype=np.float64)
+
+def basis_functions_V_ds(r,s):
+    dNds0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
+    dNds1= 0.5*r*(r+1.) * 0.5*(2.*s-1.)
+    dNds2= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
+    dNds3= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
+    dNds4=    (1.-r**2) * 0.5*(2.*s-1.)
+    dNds5= 0.5*r*(r+1.) *       (-2.*s)
+    dNds6=    (1.-r**2) * 0.5*(2.*s+1.)
+    dNds7= 0.5*r*(r-1.) *       (-2.*s)
+    dNds8=    (1.-r**2) *       (-2.*s)
+    return np.array([dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6,dNds7,dNds8],dtype=np.float64)
+
+def basis_functions_P(r,s):
+    N0=0.25*(1-r)*(1-s)
+    N1=0.25*(1+r)*(1-s)
+    N2=0.25*(1+r)*(1+s)
+    N3=0.25*(1-r)*(1+s)
+    return np.array([N0,N1,N2,N3],dtype=np.float64)
+
+
+
+
+###############################################################################
+# P2+ x P-1
+###############################################################################
+
+def basis_functions_V(r,s):
+    N0= (1-r-s)*(1-2*r-2.*s+ 3.*r*s)
+    N1= r*(2*r-1+3*s-3.*r*s-3.*s**2 )
+    N2= s*(2*s-1+3*r-3.*r**2-3.*r*s )
+    N3= 4*(1-r-s)*r*(1-3.*s) 
+    N4= 4*r*s*(-2.+3*r+3.*s)
+    N5= 4*(1-r-s)*s*(1-3.*r) 
+    N6= 27*(1-r-s)*r*s
+    return np.array([N0,N1,N2,N3,N4,N5,N6],dtype=np.float64)
+
+def basis_functions_V_dr(r,s):
+    dNdr0= -3+4*r+7*s-6*r*s-3*s**2
+    dNdr1= 4*r-1+3*s-6*r*s-3*s**2
+    dNdr2= 3*s-6*r*s-3*s**2
+    dNdr3= -8*r+24*r*s+4-16*s+12*s**2
+    dNdr4= -8*s+24*r*s+12*s**2
+    dNdr5= -16*s+24*r*s+12*s**2
+    dNdr6= -54*r*s+27*s-27*s**2
+    return np.array([dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,dNdr6],dtype=np.float64)
+
+def basis_functions_V_ds(r,s):
+    dNds0= -3+7*r+4*s-6*r*s-3*r**2
+    dNds1= r*(3-3*r-6*s)
+    dNds2= 4*s-1+3*r-3*r**2-6*r*s
+    dNds3= -16*r+24*r*s+12*r**2
+    dNds4= -8*r+12*r**2+24*r*s
+    dNds5= 4-16*r-8*s+24*r*s+12*r**2
+    dNds6= -54*r*s+27*r-27*r**2
+    return np.array([dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6],dtype=np.float64)
+
+def basis_functions_P(r,s):
+    N0=1-r-s
+    N1=r
+    N2=s
+    return np.array([N0,N1,N2],dtype=np.float64)
+
 ###############################################################################
 
 def u_analytical(x,y,z):
@@ -295,7 +390,7 @@ jcbi=np.linalg.inv(jcb)
 
 JxWq=np.linalg.det(jcb)*weightq # avoid jcob
 
-r_V=np.array([-1, 1, 1,-1,-1, 1, 1 ,-1],np.float64)
+r_V=np.array([-1, 1, 1,-1,-1, 1, 1 ,-1],dtype=np.float64)
 s_V=() ...
 t_V=() ...
 
