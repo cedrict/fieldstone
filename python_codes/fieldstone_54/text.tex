@@ -412,11 +412,26 @@ I was eventually thinking about testing these using an ASPECT set up, but I need
 ------------------------------------------------------------
 
 
-Thanks for sharing your work on this. I agree this looks promising. Indeed, the numerical models seem to be following the general trend of the analytical results, even after just a first implementation.
+Thanks for sharing your work on this. I agree this looks promising. 
+Indeed, the numerical models seem to be following the general trend of 
+the analytical results, even after just a first implementation.
 
-So far, I developed this as a way to try to solve regional-scale GIA problems rather quickly, without the need to develop a full numerical model. I could not find any published theory for a layered solution, so I adapted one myself. My plan has been to test this with a numerical solution, and so your start on this is very welcome. I would be happy to team up with you to move this forward toward some sort of publication. My thought was to develop a sharable version of a python code that solves the analytical solution - it could be very useful for students, and some research applications as well.
+So far, I developed this as a way to try to solve regional-scale GIA problems 
+rather quickly, without the need to develop a full numerical model. I could not 
+find any published theory for a layered solution, so I adapted one myself. 
+My plan has been to test this with a numerical solution, and so your start on 
+this is very welcome. I would be happy to team up with you to move this forward 
+toward some sort of publication. My thought was to develop a sharable version of 
+a python code that solves the analytical solution - it could be very useful for 
+students, and some research applications as well.
 
-What I did so far is to write up the analytical solution for a 2 layer model. I attached this here. In addition to this, I developed a way to expand this to arbitrary functions (basically just using a Fourier series) and a treatment of the effect of elasticity (serves to reduce the amplitudes at short wavelengths). These aspects are also included in the attached theory. I also attached a short python code that I wrote to solve the equations - this might be useful for reproducing the curves in the figure.
+What I did so far is to write up the analytical solution for a 2 layer model. 
+I attached this here. In addition to this, I developed a way to expand this to 
+arbitrary functions (basically just using a Fourier series) and a treatment of 
+the effect of elasticity (serves to reduce the amplitudes at short wavelengths). 
+These aspects are also included in the attached theory. I also attached a short 
+python code that I wrote to solve the equations - this might be useful for 
+reproducing the curves in the figure.
 
 Looking at your results, I agree with the points you make at the end. I was at first surprised that the timescale always seems shorter (faster decay) than the analytical theory - I would have thought that having the bottom layer confined would slow things down. But you have free slip on the bottom, which seems like it would act as if there were a 3rd invicid halfspace below - so i think that would speed things up. If you added a rigid boundary on the bottom, this should make everything slower (longer timescale). I think it should be possible to adjust the analytical theory so to include either a free slip or rigid base on the bottom boundary. Or, you could extend the depth of the numerical solution downward, which should move the solution closer toward the analytical (but would be more computationally intensive). Of course, it is also possible that there is an error somewhere in my analytical solution. (which is why it is good to test this)
 
