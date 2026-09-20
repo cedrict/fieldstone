@@ -4,10 +4,9 @@
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/temperature}
 \includegraphics[height=1.25cm]{images/pictograms/nonlinear}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\lstinputlisting[language=bash,basicstyle=\small]{python_codes/fieldstone_28/keywords.ascii}
 
 \begin{center}
 \inpython
@@ -20,15 +19,14 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: September 26th, 2025.
+Last revision: September 20th, 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This \stone is based on \textcite{tosn15} (2015).
-As for every \stone aiming at reproducing results off a publication I here include de abstract
-of the article:
+This \stone is based on \textcite{tosn15} (2015). As for every \stone aiming at reproducing 
+results off a publication I here include de abstract of the article:
 
 \begin{displayquote}
 {\color{darkgray}
@@ -49,6 +47,26 @@ recent mantle convection codes can handle a number of different geometries withi
 framework, this benchmark will also prove useful when validating viscoplastic thermal convection 
 simulations in such geometries.}
 \end{displayquote}
+
+%==================
+\section*{Setup}
+
+In all cases that we present, the domain is a two-dimensional square box. The mechanical 
+boundary conditions are for all boundaries free-slip 
+with no flux across, i.e. $\tau_{xy}=\tau_{yx}=0$ and $\boldsymbol{u}\cdot \boldsymbol{n}=0$, 
+where $\boldsymbol{n}$ denotes the outward normal to 
+the boundary. Concerning the energy equation, the bottom and top boundaries are isothermal, 
+with the temperature $T$ set to 1 and 0, respectively, 
+while side-walls are assumed to be insulating, i.e. $\partial T/\partial x = 0$. 
+The initial distribution of the temperature field is prescribed as follows:
+
+\begin{equation}
+T(x,y) = (1-y) + A \cos(\pi x)\sin(\pi y), \label{eq:initemp}
+\end{equation}
+where $A=0.01$ is the amplitude of the initial perturbation.
+
+%==================
+\section*{Rheology}
 
 The viscosity field $\eta$ is calculated as the harmonic average between a linear part $\eta_{lin}$ 
 that depends on temperature only or on temperature and depth $d$ , and a non-linear,
@@ -92,20 +110,8 @@ deformation at low stresses (equation (\ref{eq:eta_Ty}))
 and to plastic deformation for stresses that exceed $\sigma_Y$ (equation (\ref{eq:eta_sigma})), 
 with the decrease in viscosity limited by the choice of $\eta^{*}$ \cite{stlh14}.
 
-In all cases that we present, the domain is a two-dimensional square box. The mechanical 
-boundary conditions are for all boundaries free-slip 
-with no flux across, i.e. $\tau_{xy}=\tau_{yx}=0$ and $\boldsymbol{u}\cdot \boldsymbol{n}=0$, 
-where $\boldsymbol{n}$ denotes the outward normal to 
-the boundary. Concerning the energy equation, the bottom and top boundaries are isothermal, 
-with the temperature $T$ set to 1 and 0, respectively, 
-while side-walls are assumed to be insulating, i.e. $\partial T/\partial x = 0$. 
-The initial distribution of the temperature field is prescribed as follows:
-
-\begin{equation}
-T(x,y) = (1-y) + A \cos(\pi x)\sin(\pi y), \label{eq:initemp}
-\end{equation}
-where $A=0.01$ is the amplitude of the initial perturbation.
-
+%==============================
+\section*{The difference cases}
 
 In the following Table, we list the benchmark cases according to the parameters used. 
 \begin{center}
@@ -128,14 +134,19 @@ In Cases 1 and 3 the viscosity is directly calculated from equation (\ref{eq:eta
 while for Cases 2, 4, 5a, and 5b, we used equation (\ref{eq:eta}). For a given mesh resolution, 
 Case 5b requires running simulations with yield stress varying between 3 and 5
 
-
-In all tests, the reference Rayleigh number is set at the surface ($y=1$) to $10^2$, and the viscosity contrast due to temperature $\Delta\eta_T$ is $10^5$, implying therefore a maximum effective Rayleigh number of $10^7$ for $T=1$. Cases 3, 4, 5a, and 5b employ in addition a depth-dependent rheology with viscosity contrast  $\Delta\eta_z=10$. Cases 1 and 3 assume a linear viscous rheology that leads to a stagnant lid regime. Cases 2 and 4 assume a viscoplastic rheology that leads instead to a mobile lid regime. Case 5a also assumes a viscoplastic rheology but a higher yield stress, which ultimately causes the emergence of a strictly periodic regime. The setup of Case 5b is identical to that of Case 5a but the test consists in running several simulations using different yield stresses. Specifically, we varied $\sigma_Y$ between 3 and 5 in increments of 0.1 in order to identify the values of the yield stress corresponding to the transition from mobile to periodic and from periodic to stagnant lid regime. 
+In all tests, the reference Rayleigh number is set at the surface ($y=1$) to $10^2$, 
+and the viscosity contrast due to temperature $\Delta\eta_T$ is $10^5$, implying 
+therefore a maximum effective Rayleigh number of $10^7$ for $T=1$. Cases 3, 4, 5a, and 5b 
+employ in addition a depth-dependent rheology with viscosity contrast  $\Delta\eta_z=10$. 
+Cases 1 and 3 assume a linear viscous rheology that leads to a stagnant lid regime. Cases 2 and 4 assume a viscoplastic rheology that leads instead to a mobile lid regime. Case 5a also assumes a viscoplastic rheology but a higher yield stress, which ultimately causes the emergence of a strictly periodic regime. The setup of Case 5b is identical to that of Case 5a but the test consists in running several simulations using different yield stresses. Specifically, we varied $\sigma_Y$ between 3 and 5 in increments of 0.1 in order to identify the values of the yield stress corresponding to the transition from mobile to periodic and from periodic to stagnant lid regime. 
 
 NOTE: no Crank-Nicolson scheme for temperature !!
 
+
+
 \newpage 
 %---------------------------------------------------------------------------------
-\subsection*{Case 0: Newtonian case, a la Blankenbach et al., 1989}
+\section*{Case 0: Newtonian case, a la Blankenbach et al., 1989}
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_28/results_case0/vrms.pdf}
@@ -152,7 +163,7 @@ NOTE: no Crank-Nicolson scheme for temperature !!
 
 \newpage 
 %---------------------------------------------------------------------------------
-\subsection*{Case 1}
+\section*{Case 1}
 
 In this case $\eta^\star=0$ and $\sigma_Y=0$ so that $\eta_{plast}$ can be discarded.
 The CFL number is set to 0.5 and the viscosity is given by 
@@ -195,7 +206,7 @@ $\eta_\text{lin} (T,z) = \exp(-\gamma_T T )$
 
 
 \newpage %-------------------------------------------------------
-\subsection*{Case 2}
+\section*{Case 2}
 
 \includegraphics[width=16cm]{python_codes/fieldstone_28/results_case4/tosn15}
 
@@ -226,7 +237,7 @@ $\eta_\text{lin} (T,z) = \exp(-\gamma_T T )$
 
 
 \newpage %-------------------------------------------------------
-\subsection*{Case 3}
+\section*{Case 3}
 
 \includegraphics[width=16cm]{python_codes/fieldstone_28/results_case3/tosn15}
 
@@ -257,7 +268,7 @@ $\eta_\text{lin} (T,z) = \exp(-\gamma_T T )$
 
 
 \newpage %-------------------------------------------------------
-\subsection*{Case 4}
+\section*{Case 4}
 
 \includegraphics[width=16cm]{python_codes/fieldstone_28/results_case4/tosn15}
 
@@ -285,7 +296,7 @@ $\eta_\text{lin} (T,z) = \exp(-\gamma_T T )$
 \end{center}
 
 \newpage %-------------------------------------------------------
-\subsection*{Case 5a - Periodic Solutions}
+\section*{Case 5a - Periodic Solutions}
 
 \begin{center}
 \includegraphics[width=7.8cm]{python_codes/fieldstone_28/results_case5/vrms.pdf}
@@ -320,7 +331,7 @@ $\eta_\text{lin} (T,z) = \exp(-\gamma_T T )$
 \end{center}
 
 %-----------------------------------------------
-\subsection*{Case 5b - Bifurcation Analysis}
+\section*{Case 5b - Bifurcation Analysis}
 
 Case 5b is an extension of Case 5a. Here we varied the yield stress from $\sigma_Y=$ 3 to 5 with the goal of identifying 
 the critical values at which the system transitions from a steady, mobile lid regime (for low values of $\sigma_Y$ ),
