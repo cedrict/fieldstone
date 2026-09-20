@@ -110,14 +110,14 @@ hcapa=1.            # heat capacity
 rho0=1.             # reference density
 T0=0                # reference temperature
 
-CFL_nb=0.95   # CFL number 
+CFL_nb=0.9   # CFL number 
 every=10     # vtu output frequency
 nstep=5000   # maximum number of timestep   
 tol_nl=1.e-1 # nonlinear convergence coeff.
 
 ###############################################################################
 
-case=5
+case=0
 
 if case==0:
    Ra=1e4  
