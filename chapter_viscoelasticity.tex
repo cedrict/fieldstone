@@ -1,23 +1,7 @@
 \chapter{Visco-elasticity: physics, formulations and FEM } %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The following chapter is based on about a dozen of references:
-\begin{itemize}
-\item \fullcite{}
-\item \fullcite{}
-\item \fullcite{bepo10}
-\item \fullcite{beps10}
-\item \fullcite{chtl13}
-\item \fullcite{famc14}
-\item \fullcite{daws16}
-\item \fullcite{bafg20}
-\item \fullcite{}
-\item \fullcite{}
-\item \fullcite{}
-\end{itemize}
-
-
-One will find in the literature either 'elasto-viscosity' or 'visco-elasticity'.
-In what follows I have adopted the former notation with the acronym EV.
+One will find in the literature either 'elasto-viscous' or 'visco-elastic' rheology names.
+I here make no distinction between the two.
 
 
 \begin{verbatim}
@@ -47,8 +31,8 @@ Poisson ratio & $\nu$ & -\\
 Young's modulus & $E$ & \si{\pascal}\\
 ... $\xi$ & \\
 viscosity & $\eta$ & \si{\pascal\second} \\
-displacement & $\vec\upupsilon$ & \si{\meter} \\
-velocity & $\vec\upnu$ & \si{\meter\per\second} \\
+displacement vector & $\vec\upupsilon$ & \si{\meter} \\
+velocity vector & $\vec\upnu$ & \si{\meter\per\second} \\
 \hline
 \end{tabular}
 \end{center}
