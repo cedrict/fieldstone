@@ -3,6 +3,7 @@
 \includegraphics[height=1.25cm]{images/pictograms/triangle}
 \includegraphics[height=1.25cm]{images/pictograms/FEM}
 \includegraphics[height=1.25cm]{images/pictograms/paraview}
+\includegraphics[height=1.25cm]{images/pictograms/clean}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -19,13 +20,12 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: Jan. 20th, 2025.
+Last revision: September 24th, 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-{\color{red} Mesh is wrong, see Thieulot \& Bangerth 2025!}
 
 This \stone showcases the Crouzeix-Raviart element (see Section~\ref{MMM-sec:crouzeix-raviart})
 used to solve the analytical problem "Donea \& Huerta" (see Section~\ref{MMM-mms1}).
@@ -33,6 +33,11 @@ used to solve the analytical problem "Donea \& Huerta" (see Section~\ref{MMM-mms
 Note that the assembled matrices $\K$ and $\G$ are first built and then assembled
 into the Stokes matrix, all not in sparse format. As such the code is not very efficient 
 and memory requirements increase quickly. 
+
+Also, as explained in Section 3 of \textcite{thba25}, the mesh is not acceptable at the corners, 
+as the three vertices of some triangles are on the boundary. Nevertheless the results
+seem fine. This should be remedied in the future.
+
 
 \begin{center}
 \includegraphics[width=5cm]{python_codes/fieldstone_46/results/grid}
