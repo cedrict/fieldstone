@@ -35,12 +35,14 @@ which explains the overlap in notations.
 %-------------------
 \begin{multicols}{2}
 \includegraphics[width=7cm]{images/viscoelasticity/momy93c}\\
+Invariant time derivative:
 \[
 \frac{{\cal D} {\bm \tau}}{{\cal D}t} = \frac{\partial {\bm \tau}}{\partial t}  
 + (\vec\upnu \cdot \vec\nabla) {\bm \tau} 
-+ {\bm \tau} \cdot \dot{\bm \omega} + \dot{\bm \omega} \cdot {\bm \tau}
++ {\bm \tau} \cdot \dot{\bm \omega} - \dot{\bm \omega} \cdot {\bm \tau}
 - a (\dot{\bm \varepsilon} \cdot {\bm \tau} + {\bm \tau} \cdot \dot{\bm \varepsilon})
 \]
+where $-1 \le a \le +1$ is a free parameter
 \[
 \dot{\bm \omega} = \frac12 (\vec\nabla \vec\upnu  - \vec\nabla \vec\upnu^T  ) 
 \]

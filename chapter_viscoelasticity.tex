@@ -2882,4 +2882,74 @@ Muhlhaus and Regenauer-Lieb [2005] and Moresi et al. [2002] have studied the rol
 \newpage
 \subsection{appendix: Equations in Gerya's book} \input{ve_gerya}
 
+\newpage
+\section{Concensus equations}
+
+The strain rate (corresponding to the velocity field $\vec\upnu$) is given by 
+\[
+\dot{\bm \varepsilon} = \frac12 ( \vec\nabla \vec\upnu + \vec\nabla \vec\upnu^T) 
+\]
+while the corresponding vorticity tensor is given by
+\[
+\dot{\bm \omega} = \frac12 ( \vec\nabla \vec\upnu - \vec\nabla \vec\upnu^T) 
+\]
+It is also sometimes called the 'spin tensor' \cite{moql07}.
+
+The total strain rate can be decomposed as \cite{hard91,momy93}
+\[
+\dot{\bm \varepsilon} = 
+\dot{\bm \varepsilon}_v+
+\dot{\bm \varepsilon}_e
+=
+\frac{1}{2\eta} {\bm \tau} + 
+\frac{1}{2\mu} \frac{{\cal D}{\bm \sigma}}{{\cal D} t}
+\]
+
+\[
+\dot{\bm\varepsilon}_e^d = 
+\dot{\bm\varepsilon}_e  - \frac13 {\rm tr} (\dot{\bm\varepsilon}_e) {\bm 1} 
+\]
+\[
+\dot{\bm\varepsilon}_v^d = 
+\dot{\bm\varepsilon}_v  - \frac13 {\rm tr} (\dot{\bm\varepsilon}_v) {\bm 1} 
+\]
+
+
+In the case of large deformations, the material derivative of the Cauchy
+stress tensor  takes the form of the objective Gordon-Schowalter derivative (Saramito, 2016):
+\[
+\frac{{\cal D}{\bm \sigma}}{{\cal D} t} = \frac{\partial{\bm \sigma}}{\partial t}
++ (\vec\upnu \cdot \vec\nabla) {\bm \sigma} +
+\beta_a (\vec\nabla\vec\upnu,{\bm \sigma})
+\]
+with 
+\[
+\beta_a (\vec\nabla\vec\upnu,{\bm \sigma})
+= 
+{\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}
+- a ( {\bm \sigma} \cdot \dot{\bm \varepsilon}
++ \dot{\bm \varepsilon} \cdot {\bm \sigma})
+\]
+where $-1 \le a \le +1$ is a free parameter. 
+With the choice $a = 1$ the upper convected derivative is obtained, 
+with $a = 0$ the co-rotational one \cite{hard91}.
+In \cite{moql07} we read: ``When $a=0$, $\check{\bm \tau}$ is known as the Jaumann derivative, and
+when $a=1$ or $a=-1$ it is known as the upper- or lower-convected Maxwell derivative, respectively. 
+The choice $a=0$ considerably simplifies the formulation as it ensures 
+that $\check{\bm \tau}$ is deviatoric when ${\bm \tau}$ is deviatoric.''
+
+
+In the end we can write \cite{hard91} 
+\[
+\frac{{\cal D}{\bm \sigma}}{{\cal D} t} = \frac{\partial{\bm \sigma}}{\partial t}
++ (\vec\upnu \cdot \vec\nabla) {\bm \sigma} +
+{\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}
+- a ( {\bm \sigma} \cdot \dot{\bm \varepsilon}
++ \dot{\bm \varepsilon} \cdot {\bm \sigma})
+\]
+
+where ${\cal D}/{\cal D} t$ is called an ``invariant time derivative'' in \cite{hard91}
+
+In \cite{modm01} we read that ``the $[\tau\omega-\omega\tau]$ terms account 
+for material spin during advection which reorients the elastic stored-stress tensor.''
 

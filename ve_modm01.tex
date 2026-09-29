@@ -52,7 +52,7 @@ By taking the 'special' time derivative of the elastic equation we obtain
 \frac{\dot{p}}{K_e}+\frac{p}{\xi} = - {\rm tr} (\dot{\bm \varepsilon})
 \]
 \[
-\tilde{\bm \tau} = \dot{\bm \tau} + {\bm \tau} \cdot \dot{\bm \omega} + \dot{\bm \omega} \cdot {\bm \tau}  
+\check{\bm \tau} = \dot{\bm \tau} + {\bm \tau} \cdot \dot{\bm \omega} - \dot{\bm \omega} \cdot {\bm \tau}  
 \]
 \[
 \dot{\bm \omega} = \frac12 (\vec\nabla \vec\upnu  - \vec\nabla \vec\upnu^T  ) 
@@ -66,10 +66,13 @@ By taking the 'special' time derivative of the elastic equation we obtain
 
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01f}\\
+
 \[
 \tilde{\bm \tau} = \frac{ {\bm \tau}^{t+\delta t} - {\bm \tau}^t }{\delta t} 
-+ {\bm \tau}^t \cdot \dot{\bm \omega}^t + \dot{\bm \omega}^t \cdot {\bm \tau}^t  
++ {\bm \tau}^t \cdot \dot{\bm \omega}^t - \dot{\bm \omega}^t \cdot {\bm \tau}^t  
 \]
+
+Note that the order of the terms in eq 8 and 10 is different...
 
 \end{multicols}
 

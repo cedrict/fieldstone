@@ -30,7 +30,7 @@
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm02b}\\
 \[
-\frac{TRIANGLE {\bm \tau}}{2 \mu}+\frac{{\bm \tau} }{2 \eta}
+\frac{\check{\bm \tau}}{2 \mu}+\frac{{\bm \tau} }{2 \eta}
 =
 \dot{\bm\varepsilon}_e^d 
 +
@@ -39,10 +39,10 @@
 \dot{\bm\varepsilon}^d 
 \]
 where 
-$TRIANGLE {\bm \tau}$ is the Jaumann corotational stress rate
+$\check{\bm \tau}$ is the Jaumann corotational stress rate
 with 
 \[
-TRIANGLE {\bm \tau} = 
+\check{\bm \tau} = 
 \frac{{\cal D}{\bm \tau}}{Dt} + 
 {\bm\tau}\cdot {\bm\omega} - {\bm\omega}\cdot {\bm \tau}
 \]
@@ -57,7 +57,7 @@ TRIANGLE {\bm \tau} =
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm02c}\\
 Numerical implementation
 \[
-TRIANGLE
+\check{\bm \tau} \simeq \frac{\tau-\tau}{\delta t} ...
 \]
 \end{multicols}
 

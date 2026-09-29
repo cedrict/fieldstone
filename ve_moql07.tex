@@ -21,14 +21,17 @@
 {\bm \tau}=2\eta \dot{\bm\varepsilon}^v
 \]
 \[
-\tilde{\bm \tau}=2\mu \dot{\bm\varepsilon}^e
+\check{\bm \tau}=2\mu \dot{\bm\varepsilon}^e
 \]
+where $\check{\bm\tau}$ is an objective material derivative of the deviatoric stress.
+
 \end{multicols}
 
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/moql07b}\\
+A common choice for $\check{\bm\tau}$ is the following:
 \[
-\tilde{\bm \tau} = \frac{\partial {\bm \tau}}{\partial t}
+\check{\bm \tau} = \frac{\partial {\bm \tau}}{\partial t}
 + (\vec\upnu\cdot \vec\nabla) {\bm \tau} 
 + {\bm \tau}\cdot \dot{\bm\omega} - \dot{\bm\omega}\cdot {\bm \tau}
 + a ( {\bm \tau} \cdot \dot{\bm\varepsilon} +  \dot{\bm\varepsilon} \cdot {\bm \tau} )
@@ -40,7 +43,7 @@ with $-1 \le a \le 1$.
 \includegraphics[width=8.25cm]{images/viscoelasticity/moql07c}\\
 \[
 \dot{\bm\varepsilon} = \dot{\bm\varepsilon}^e+ \dot{\bm\varepsilon}^v
-= \frac{\tilde{\bm \tau}}{2\mu} + \frac{{\bm \tau}}{2\eta}
+= \frac{\check{\bm \tau}}{2\mu} + \frac{{\bm \tau}}{2\eta}
 \]
 \end{multicols}
 
