@@ -22,6 +22,8 @@
 \]
 \end{multicols}
 
+%----------------------------------------------------------------
+
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01b} \\
 \[
@@ -29,21 +31,43 @@
 \]
 
 \[
-\dot{\bm \varepsilon}_e = \frac13 {\rm tr}(\dot{\bm \varepsilon}_e) {\bm 1} + \dot{\bm \varepsilon}_e^d 
+\dot{\bm \varepsilon}_{\rm e} 
+= \frac13 {\rm tr}(\dot{\bm \varepsilon}_{\rm e}) {\bm 1} + \dot{\bm \varepsilon}_{\rm e}^d 
 \]
 \[
-\dot{\bm \varepsilon}_v = \frac13 {\rm tr}(\dot{\bm \varepsilon}_v) {\bm 1} + \dot{\bm \varepsilon}_v^d 
+\dot{\bm \varepsilon}_{\rm v} 
+= \frac13 {\rm tr}(\dot{\bm \varepsilon}_{\rm v}) {\bm 1} + \dot{\bm \varepsilon}_{\rm v}^d 
 \]
+with
+\[
+\dot{\bm \varepsilon} = \dot{\bm \varepsilon}_{\rm e} + \dot{\bm \varepsilon}_{\rm v} 
+\]
+which leads to 
+\[
+\dot{\bm \varepsilon}^d = \dot{\bm \varepsilon}_{\rm e}^d + \dot{\bm \varepsilon}_{\rm v}^d 
+\]
+and
+\[
+{\rm tr}(\dot{\bm \varepsilon}) = 
+{\rm tr}(\dot{\bm \varepsilon}_{\rm e}) + 
+{\rm tr}(\dot{\bm \varepsilon}_{\rm v}) 
+\]
+
+
 \end{multicols}
+
+%----------------------------------------------------------------
 
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01c} \\
-By taking the 'special' time derivative of the elastic equation we obtain  
 \[
-\frac{ \tilde{\bm \tau}}{2\mu} + \frac{{\bm \tau}}{2\eta}  
+\frac{ \check{\bm \tau}}{2\mu} + \frac{{\bm \tau}}{2\eta}  
 = \dot{\bm \varepsilon}_e^d + \dot{\bm \varepsilon}_v^d = \dot{\bm \varepsilon}^d 
 \]
+$\check{\bm \tau}$ is the Jaumann corotational stress rate
 \end{multicols}
+
+%----------------------------------------------------------------
 
 \newpage
 \begin{multicols}{2}
@@ -51,24 +75,30 @@ By taking the 'special' time derivative of the elastic equation we obtain
 \[
 \frac{\dot{p}}{K_e}+\frac{p}{\xi} = - {\rm tr} (\dot{\bm \varepsilon})
 \]
+Note that $\check{p}=\dot{p}$ as it is a scalar.
+
 \[
 \check{\bm \tau} = \dot{\bm \tau} + {\bm \tau} \cdot \dot{\bm \omega} - \dot{\bm \omega} \cdot {\bm \tau}  
 \]
 \[
 \dot{\bm \omega} = \frac12 (\vec\nabla \vec\upnu  - \vec\nabla \vec\upnu^T  ) 
 \]
-
+where $\dot{\bm\omega}$ is the material spin tensor.
 \end{multicols}
+
+%----------------------------------------------------------------
 
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01e}\\
 \end{multicols}
 
+%----------------------------------------------------------------
+
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01f}\\
 
 \[
-\tilde{\bm \tau} = \frac{ {\bm \tau}^{t+\delta t} - {\bm \tau}^t }{\delta t} 
+\check{\bm \tau} = \frac{ {\bm \tau}^{t+\delta t} - {\bm \tau}^t }{\delta t} 
 + {\bm \tau}^t \cdot \dot{\bm \omega}^t - \dot{\bm \omega}^t \cdot {\bm \tau}^t  
 \]
 
@@ -76,54 +106,88 @@ Note that the order of the terms in eq 8 and 10 is different...
 
 \end{multicols}
 
+%----------------------------------------------------------------
+
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01g}\\
 {\color{red} derive!!}
 \[
-{\bm \tau}^{t+\delta t} = \frac{\eta \delta t}{\eta/\mu + \delta t} {\bm \varepsilon}^{d,t+\delta t} + ...
+{\bm \tau}^{t+\delta t} = \frac{\eta \delta t}{\eta/\mu + \delta t} 
+\dot{\bm \varepsilon}^{d,t+\delta t} + 
+\frac{1}{1 + \delta t/ t_M} {\bm \tau}^t
++
+\frac{1}{1/t_M + 1/\delta t}({\bm \tau}^t \cdot \dot{\bm \omega}^t - \dot{\bm \omega}^t \cdot {\bm \tau}^t)
 \]
 \[
-p^{t + \delta t} = -\frac{\xi \delta t}{\xi/K_e + \delta_t } + \frac{}{} p^t
+p^{t + \delta t} = -\frac{\xi \delta t}{\xi/K_e + \delta t } + \frac{}{} p^t
 \]
+$\xi$ bulk relaxation time
 \end{multicols}
+
+%----------------------------------------------------------------
 
 \newpage
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01h}\\
+\[
+\eta_{\rm ve} = \frac{\eta \delta t}{\delta t + \eta/\mu}
+\]
+\[
+\xi_{\rm ve} = \frac{\xi \delta t}{\delta t + \xi/K_e}
+\]
+
 \end{multicols}
+
+%----------------------------------------------------------------
 
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01i}\\
 \end{multicols}
 
+%----------------------------------------------------------------
+
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01j}\\
 \end{multicols}
+
+%----------------------------------------------------------------
 
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01k}\\
 \end{multicols}
 
+%----------------------------------------------------------------
+
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01l}\\
 \end{multicols}
 
+%----------------------------------------------------------------
+
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01m}\\
 \end{multicols}
+
+%----------------------------------------------------------------
 
 \newpage
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01n}
 \end{multicols}
 
+%----------------------------------------------------------------
+
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01p}\\
 \end{multicols}
 
+%----------------------------------------------------------------
+
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm01q}\\
 \end{multicols}
+
+%----------------------------------------------------------------
 
 
 

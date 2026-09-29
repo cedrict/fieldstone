@@ -6,12 +6,22 @@
 \includegraphics[width=8.25cm]{images/viscoelasticity/zhym12_a}
 \end{multicols}
 
+%----------------------------------------------------------------
+
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/zhym12_b}\\
 \[
-\dot{\bm\varepsilon} = \frac{ \dot{\bm \tau}  }{2\mu} + \frac{{\bm \tau}}{2\eta} 
+\dot{\bm\varepsilon} = \frac{ \check{\bm \tau}  }{2\mu} + \frac{{\bm \tau}}{2\eta} 
 \]
+\[
+\check{\bm \tau} = \frac{ {\bm \tau} - {\bm\tau} }{ \delta t^e}
+\]
+where $\delta t^e$ is the time step required to resolve 
+the elastic effects correctly.
+
 \end{multicols}
+
+%----------------------------------------------------------------
 
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/zhym12_c}\\
@@ -31,12 +41,17 @@
 \rho \vec{g}
 -\vec\nabla \cdot(\eta_{ve}\frac{1}{\mu \delta t^e} ... )
 \]
+
+Eq 106 confirms that $\tau$ is indeed the deviatoric stress tensor.
+
 \end{multicols}
+
+%----------------------------------------------------------------
 
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/zhym12_d} \\
 \[
-{\bm \tau} = \frac{\partial {\bm \tau}}{\partial t} + 
+\check{\bm \tau} = \frac{\partial {\bm \tau}}{\partial t} + 
 (\vec\upnu \cdot \vec\nabla ){\bm \tau} + 
 {\bm \tau} \cdot \dot{\bm\omega} - \dot{\bm\omega} \cdot {\bm\tau}
 \]

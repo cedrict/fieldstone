@@ -2941,15 +2941,70 @@ that $\check{\bm \tau}$ is deviatoric when ${\bm \tau}$ is deviatoric.''
 
 In the end we can write \cite{hard91} 
 \[
+\check{\bm\sigma} = 
 \frac{{\cal D}{\bm \sigma}}{{\cal D} t} = \frac{\partial{\bm \sigma}}{\partial t}
 + (\vec\upnu \cdot \vec\nabla) {\bm \sigma} +
 {\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}
 - a ( {\bm \sigma} \cdot \dot{\bm \varepsilon}
 + \dot{\bm \varepsilon} \cdot {\bm \sigma})
 \]
-
 where ${\cal D}/{\cal D} t$ is called an ``invariant time derivative'' in \cite{hard91}
+
+{\color{red} is it +a or -a?}
 
 In \cite{modm01} we read that ``the $[\tau\omega-\omega\tau]$ terms account 
 for material spin during advection which reorients the elastic stored-stress tensor.''
+Likewise in \cite{moql07} we read that the term 
+$(\vec\upnu \cdot \vec\nabla) {\bm \sigma} +
+{\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}
+- a ( {\bm \sigma} \cdot \dot{\bm \varepsilon}
++ \dot{\bm \varepsilon} \cdot {\bm \sigma})$
+is ``the instantaneous rate 
+of change in the stress tensor associated with the transport, rotation and stretching by fluid motion.''
+In other words:
 
+\[
+\check{\bm\sigma} = 
+\frac{{\cal D}{\bm \sigma}}{{\cal D} t} = \frac{\partial{\bm \sigma}}{\partial t}
++ \underbrace{(\vec\upnu \cdot \vec\nabla) {\bm \sigma} }_{advection}
++ \underbrace{{\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}}_{\rm rotation}
+\underbrace{- a ( {\bm \sigma} \cdot \dot{\bm \varepsilon} + \dot{\bm \varepsilon} \cdot {\bm \sigma})}_{\rm stretching}
+\]
+
+Note that in the appendix D of \cite{bepo10} the term ${\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}$
+is further worked out in 2d Cartesian coordinates and yields:
+\[
+{\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}
+=
+\left(
+\begin{array}{cc}
+2 \omega \tau_{xy} & \omega (\tau_{yy}-\tau_{xx}) \\
+\omega (\tau_{yy}-\tau_{xx}) -2 \omega \tau_{xy}
+\end{array}
+\right)
+\]
+
+
+The deviatoric strain rate is then decomposed as follows \cite{moql07}:
+\[
+\dot{\bm\varepsilon}^d 
+= \frac{1}{2\eta (T)} {\bm \tau}  + \frac{1}{2\mu} \frac{ {\cal D}{\bm \tau} }{{\cal D}t}
+= \frac{1}{2\eta (T)} {\bm \tau}  + \frac{1}{2\mu} \check{\bm \tau} 
+\]
+
+
+\[
+\eta_{\rm ve} 
+=
+\left(
+\frac{1}{\eta} + \frac{1}{\mu \delta t}
+\right)^{-1}
+= \frac{\eta\mu \; \delta t}{\eta + \mu \delta t}
+\]
+
+\[
+\xi = 
+\left(
+1 + \frac{\mu\delta t}{\eta}
+\right)^{-1}
+\]
