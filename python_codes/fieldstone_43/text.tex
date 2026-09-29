@@ -23,7 +23,7 @@ Last revision: Jan. 17th, 2025.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The following experiments are ``pure advection'' experiments (i.e. there is 
-no diffusion at all). As such the Peclet number
+no diffusion at all). As such the Peclet number $\Penb$
 is infinite and the $\gamma$ value of the SUPG algorithm as shown in Section~\ref{MMM-ss:supg} tends to 1
 and the $\tau$ parameter is simply $h/2 |\vec\upnu| p$ (where $p$ is the order of 
 the shape function polynomials).
@@ -32,29 +32,27 @@ Note that although the code can deal with linear elements, all results
 hereafter are obtained with quadratic elements (unless specified otherwise). 
 
 A very important remark: In step-9 of deal.II (which is concerned with solving the 
-steady-state advection equation) we read: `` The mathematical theory states that we must not 
+steady-state advection equation) we read: ``The mathematical theory states that we must not 
 pose any boundary condition on the outflow part of the boundary.''
 Upon my asking for more context to Wolfgang Bangerth (the author of step-9), his answer was:
 ``I think the statement can be shown in the following way: If
 you think of the advection equation as transporting information along
 characteristics, then the interior can only be affected by characteristics
 that go from the boundary into the interior. That's exactly the ones at inflow
-boundary conditions. ''
+boundary conditions.''
 Note that \aspect automatically checks that $\vec\upnu\cdot\vec{n}<0$ at each node where temperature is
 prescribed and only prescribe it there
 \footnote{\url{https://github.com/geodynamics/aspect/blob/main/source/simulator/core.cc}, Lines 689-726} 
 In other words, one cannot prescribe the temperature on a
 boundary where the fluid is leaving the domain, only where it is entering.
 
-\todo[inline]{This means that in the experiments presented hereafter this
-needs to be checked and corrected if needed!}
 
 
 
 
 \newpage
 %------------------------------------------------------------------------------
-\subsection*{Experiment 1 - rotating cone}
+\section*{Experiment 1 - rotating cone}
 
 This benchmark can be found \textcite{dohu03} and it is also carried out in \textcite{bepo10} (2010).
 A product-cosine hill is advected in a prescribed velocity field. 
@@ -148,6 +146,7 @@ BDF1,2,3 and Crank-Nicolson after a full rotation.
 {\captionfont Left to right: BDF1 (i.e. implicit euler), BDF2, BDF3, Crank-Nicolson}
 \end{center}
 
+This is broken. I need to fix it. I suspect it is bc of T4=T5 statements in stoopid python.
 
 
 %.....................................
@@ -179,7 +178,7 @@ f)\includegraphics[width=4.8cm]{python_codes/fieldstone_43/results/experiment1/s
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \newpage
-\subsection*{Experiment 2 - Three objects rotation}
+\section*{Experiment 2 - Three objects rotation}
 
 This setup is inspired by the one in the ASPECT 
 manual\footnote{\url{https://aspect-documentation.readthedocs.io/en/latest/user/benchmarks/benchmarks/advection/doc/advection.html}}. The cone of the previous 
@@ -201,6 +200,7 @@ for i in range(0,NV):
 The domain is $2\times2$, centered on the origin. The velocity is $\vec\upnu=(-y,x)$. Temperature 
 is set to zero on all four sides (only on influx subsets). For this experiment the CFL number is set to 0.5
 and the resolution is $64\times 64$ elements.
+A video of the results is available at \url{https://youtu.be/BiyxRsRArkM}.
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment2/buildings}
@@ -240,7 +240,7 @@ Left: all three cases. Right: only SUPG cases.}
 
 %------------------------------------------------------------------------------
 \newpage
-\subsection*{Experiment 3 - 1D step advection}
+\section*{Experiment 3 - 1D step advection}
 
 This experiment comes from Appendix A of Thieulot (2011) \cite{thie11}.
 The unit segment is discretised by means of 64 elements, 
@@ -287,7 +287,7 @@ with SUPG in the back.}
 
 %...........................................................................................
 \newpage
-\subsection*{Experiment 4 - Steady state sideways 2D advection}
+\section*{Experiment 4 - Steady state sideways 2D advection}
 
 This experiment is somewhat similar to the one in \stone~65.
 The domain is a unit square, and the velocity is given 
@@ -295,21 +295,26 @@ by $\vec\upnu=(\cos \theta, \sin\theta)$ with $\theta=\pi/6$.
 The temperature is prescribed on the left side only, i.e. $T=1$ for $x=0$, $y=[0,1]$ 
 (corners included), and 
 on the bottom (left corner excluded) with $T=0$. The other two sides 
-are left free. Initial temperature is $T=0$.
-The resolution is $10\times10$ and the CFL number is set to $C_{\tt CFL}=0.1$. 
+are left free (since the velocity is outward). Initial temperature is $T=0$ in the domain.
+The resolution is $16\times16$ and the CFL number is set to $C_{\tt CFL}=0.1$. 
 The model is run up to $t=3$ (steady state is then reached). 
 
 \begin{center}
 \includegraphics[width=5.6cm]{python_codes/fieldstone_43/results/experiment4/vel}
 \includegraphics[width=5.6cm]{python_codes/fieldstone_43/results/experiment4/Tss}
 \includegraphics[width=5.6cm]{python_codes/fieldstone_43/results/experiment4/Tss3D}\\
+{\captionfont Velocity and temperature field on $20\times 20$ mesh.}
+\end{center}
+
+
+\begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment4/stats_T}
 \includegraphics[width=8cm]{python_codes/fieldstone_43/results/experiment4/avrg_T}
 \end{center}
 
 %...........................................................................................
 \newpage
-\subsection*{Experiment 5 - Steady state rotation }
+\section*{Experiment 5 - Steady state rotation }
 
 The domain is a unit square. The velocity field is given by $\vec\upnu=(y,1-x)$. 
 The initial temperature is $T(x,y)=0$. 
@@ -335,7 +340,7 @@ Note that it is currently not possible to run this experiment with ASPECT (?).
 
 %...........................................................................................
 \newpage
-\subsection*{Experiment 6 - Bending beam}
+\section*{Experiment 6 - Bending beam}
 
 The domain is a Cartesian box of size $1000\times1000$km, 
 discretised with $50\times50$ elements. The CFL number is set to 0.25.
@@ -373,7 +378,7 @@ We can also plot the temperature on the vertical line given by $x=L_x/2$:
 
 %...........................................................................................
 \newpage
-\subsection*{Experiment 7 - Beam in a whirl}
+\section*{Experiment 7 - Beam in a whirl}
 
 The setup is identical to experiment 6 but the velocity is now 
 given by the equations of Section~\ref{MMM-mms1} which have been multiplied by 100 cm/year 
@@ -413,7 +418,7 @@ are about the same with and without supg.
 
 %...........................................................................................
 \newpage
-\subsection*{Experiment 8 - 1D Cosine hill advection}
+\section*{Experiment 8 - 1D Cosine hill advection}
 
 The setup originates in Li \cite[ex 5.2]{li06}.
 The domain has dimension $L_x=1$. 
@@ -454,7 +459,7 @@ We run the model to time $t=8$.
 \newpage
 %...........................................................................................
 \newpage
-\subsection*{Experiment 9 - wiggles advection (deal.II step-9)}
+\section*{Experiment 9 - wiggles advection (deal.II step-9)}
 
 The setup for this experiment is borrowed from step-9 of deal.II, found at 
 \url{https://www.dealii.org/current/doxygen/deal.II/step_9.html}.

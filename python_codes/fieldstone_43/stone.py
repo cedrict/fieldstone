@@ -1,16 +1,15 @@
 import numpy as np
 import sys as sys
 import scipy
-#from scipy.sparse.linalg.dsolve import linsolve
-import time as timing
+import time as clock
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import scipy.sparse as sps
 from scipy.sparse import csr_matrix, lil_matrix
 
-#------------------------------------------------------------------------------
+###############################################################################
 
-def rhs_f(x,y,experiment):
+def rhs(x,y,experiment):
     match(experiment):
         case(1|2|3|4|5|6|7|8):
             val=0.
@@ -21,95 +20,93 @@ def rhs_f(x,y,experiment):
                val=0.
     return val
 
-#------------------------------------------------------------------------------
+###############################################################################
 
-def NNT(r,s,order):
+def basis_functions_T(r,s,order):
     if order==1:
-       N_0=0.25*(1.-r)*(1.-s)
-       N_1=0.25*(1.+r)*(1.-s)
-       N_2=0.25*(1.-r)*(1.+s)
-       N_3=0.25*(1.+r)*(1.+s)
-       return np.array([N_0,N_1,N_2,N_3],dtype=np.float64)
+       N0=0.25*(1.-r)*(1.-s)
+       N1=0.25*(1.+r)*(1.-s)
+       N2=0.25*(1.-r)*(1.+s)
+       N3=0.25*(1.+r)*(1.+s)
+       return np.array([N0,N1,N2,N3],dtype=np.float64)
     if order==2:
-       N_0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
-       N_1=    (1.-r**2) * 0.5*s*(s-1.)
-       N_2= 0.5*r*(r+1.) * 0.5*s*(s-1.)
-       N_3= 0.5*r*(r-1.) *    (1.-s**2)
-       N_4=    (1.-r**2) *    (1.-s**2)
-       N_5= 0.5*r*(r+1.) *    (1.-s**2)
-       N_6= 0.5*r*(r-1.) * 0.5*s*(s+1.)
-       N_7=    (1.-r**2) * 0.5*s*(s+1.)
-       N_8= 0.5*r*(r+1.) * 0.5*s*(s+1.)
-       return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
+       N0= 0.5*r*(r-1.) * 0.5*s*(s-1.)
+       N1=    (1.-r**2) * 0.5*s*(s-1.)
+       N2= 0.5*r*(r+1.) * 0.5*s*(s-1.)
+       N3= 0.5*r*(r-1.) *    (1.-s**2)
+       N4=    (1.-r**2) *    (1.-s**2)
+       N5= 0.5*r*(r+1.) *    (1.-s**2)
+       N6= 0.5*r*(r-1.) * 0.5*s*(s+1.)
+       N7=    (1.-r**2) * 0.5*s*(s+1.)
+       N8= 0.5*r*(r+1.) * 0.5*s*(s+1.)
+       return np.array([N0,N1,N2,N3,N4,N5,N6,N7,N8],dtype=np.float64)
 
-def dNNTdr(r,s,order):
+def basis_functions_T_dr(r,s,order):
     if order==1:
-       dNdr_0=-0.25*(1.-s)
-       dNdr_1=+0.25*(1.-s)
-       dNdr_2=-0.25*(1.+s)
-       dNdr_3=+0.25*(1.+s)
+       dNdr0=-0.25*(1.-s)
+       dNdr1=+0.25*(1.-s)
+       dNdr2=-0.25*(1.+s)
+       dNdr3=+0.25*(1.+s)
        return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3],dtype=np.float64)
     if order==2:
-       dNdr_0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
-       dNdr_1=       (-2.*r) * 0.5*s*(s-1)
-       dNdr_2= 0.5*(2.*r+1.) * 0.5*s*(s-1)
-       dNdr_3= 0.5*(2.*r-1.) *   (1.-s**2)
-       dNdr_4=       (-2.*r) *   (1.-s**2)
-       dNdr_5= 0.5*(2.*r+1.) *   (1.-s**2)
-       dNdr_6= 0.5*(2.*r-1.) * 0.5*s*(s+1)
-       dNdr_7=       (-2.*r) * 0.5*s*(s+1)
-       dNdr_8= 0.5*(2.*r+1.) * 0.5*s*(s+1)
-       return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8],dtype=np.float64)
+       dNdr0= 0.5*(2.*r-1.) * 0.5*s*(s-1)
+       dNdr1=       (-2.*r) * 0.5*s*(s-1)
+       dNdr2= 0.5*(2.*r+1.) * 0.5*s*(s-1)
+       dNdr3= 0.5*(2.*r-1.) *   (1.-s**2)
+       dNdr4=       (-2.*r) *   (1.-s**2)
+       dNdr5= 0.5*(2.*r+1.) *   (1.-s**2)
+       dNdr6= 0.5*(2.*r-1.) * 0.5*s*(s+1)
+       dNdr7=       (-2.*r) * 0.5*s*(s+1)
+       dNdr8= 0.5*(2.*r+1.) * 0.5*s*(s+1)
+       return np.array([dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,dNdr6,dNdr7,dNdr8],dtype=np.float64)
 
-def dNNTds(r,s,order):
+def basis_functions_T_ds(r,s,order):
     if order==1:
-       dNds_0=-0.25*(1.-r)
-       dNds_1=-0.25*(1.+r)
-       dNds_2=+0.25*(1.-r)
-       dNds_3=+0.25*(1.+r)
-       return np.array([dNds_0,dNds_1,dNds_2,dNds_3],dtype=np.float64)
+       dNds0=-0.25*(1.-r)
+       dNds1=-0.25*(1.+r)
+       dNds2=+0.25*(1.-r)
+       dNds3=+0.25*(1.+r)
+       return np.array([dNds0,dNds1,dNds2,dNds3],dtype=np.float64)
     if order==2:
-       dNds_0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
-       dNds_1=    (1.-r**2) * 0.5*(2.*s-1.)
-       dNds_2= 0.5*r*(r+1.) * 0.5*(2.*s-1.)
-       dNds_3= 0.5*r*(r-1.) *       (-2.*s)
-       dNds_4=    (1.-r**2) *       (-2.*s)
-       dNds_5= 0.5*r*(r+1.) *       (-2.*s)
-       dNds_6= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
-       dNds_7=    (1.-r**2) * 0.5*(2.*s+1.)
-       dNds_8= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
-       return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8],dtype=np.float64)
+       dNds0= 0.5*r*(r-1.) * 0.5*(2.*s-1.)
+       dNds1=    (1.-r**2) * 0.5*(2.*s-1.)
+       dNds2= 0.5*r*(r+1.) * 0.5*(2.*s-1.)
+       dNds3= 0.5*r*(r-1.) *       (-2.*s)
+       dNds4=    (1.-r**2) *       (-2.*s)
+       dNds5= 0.5*r*(r+1.) *       (-2.*s)
+       dNds6= 0.5*r*(r-1.) * 0.5*(2.*s+1.)
+       dNds7=    (1.-r**2) * 0.5*(2.*s+1.)
+       dNds8= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
+       return np.array([dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6,dNds7,dNds8],dtype=np.float64)
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 sqrt3=np.sqrt(3.)
 sqrt2=np.sqrt(2.)
 sqrt15=np.sqrt(15.)
 eps=1.e-10 
 cm=0.01
-year=365.*24.*3600.
+year=365.25*24.*3600.
 
-print("-----------------------------")
-print("----------fieldstone---------")
-print("-----------------------------")
+print("*******************************")
+print("********** stone 043 **********")
+print("*******************************")
 
 ndim=2       # number of space dimensions
-ndofT=1      # number of degrees of freedom per node
 hcond=0.     # thermal conductivity
 hcapa=1.     # heat capacity
 rho0=1       # reference density
-
 
 if int(len(sys.argv) == 4):
    experiment=int(sys.argv[1])
    order     =int(sys.argv[2])
    supg_type =int(sys.argv[3])
 else:
-   experiment=5
+   experiment=2
    order=2
    supg_type=1
 
-if order==1: m=4 # number of nodes making up an element
+if order==1: m=4
 if order==2: m=9
 
 use_bdf=False
@@ -152,8 +149,8 @@ if experiment==3: # front advection
    steady_state=False
 
 if experiment==4: # skew advection
-   nelx=10
-   nely=10
+   nelx=16
+   nely=nelx
    Lx=1.   
    Ly=1.   
    tfinal=3.
@@ -168,11 +165,11 @@ if experiment==5: # quarter circle
    nely=16
    Lx=1.   
    Ly=1.   
-   tfinal=4.
+   tfinal=2.
    CFLnb=0.25
    xmin=0.
    ymin=0.
-   every=10
+   every=25
    steady_state=False
 
 if experiment==6: # elastic slab
@@ -212,7 +209,7 @@ if experiment==8: # advection cone Li book
    steady_state=False
 
 if experiment==9: #step-9
-   nelx=512
+   nelx=128
    nely=nelx
    Lx=2
    Ly=2
@@ -228,9 +225,11 @@ hy=Ly/float(nely)
     
 nnx=order*nelx+1  # number of elements, x direction
 nny=order*nely+1  # number of elements, y direction
-NV=nnx*nny        # number of nodes
+nn_T=nnx*nny      # number of nodes
 nel=nelx*nely     # number of elements, total
-NfemT=NV*ndofT    # Total number of degrees of temperature freedom
+Nfem_T=nn_T       # Total number of degrees of temperature freedom
+
+debug=False
 
 # alphaT=1: implicit
 # alphaT=0: explicit
@@ -238,58 +237,59 @@ NfemT=NV*ndofT    # Total number of degrees of temperature freedom
 
 alphaT=0.5
 
-#####################################################################
+###############################################################################
 
 if order==1:
-   nqperdim=2
+   nq_per_dim=2
    qcoords=[-1./sqrt3,1./sqrt3]
    qweights=[1.,1.]
 
 if order==2:
-   nqperdim=3
+   nq_per_dim=3
    qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
    qweights=[5./9.,8./9.,5./9.]
 
-#####################################################################
+###############################################################################
 
 stats_T_file=open('stats_T.ascii',"w")
 avrg_T_file=open('avrg_T.ascii',"w")
 ET_file=open('ET.ascii',"w")
 
-#####################################################################
+###############################################################################
 
 print ('experiment =',experiment)
 print ('order      =',order)
 print ('supg_type  =',supg_type)
 print ('nnx        =',nnx)
 print ('nny        =',nny)
-print ('NV         =',NV)
+print ('nn_T       =',nn_T)
 print ('nel        =',nel)
-print ('NfemT      =',NfemT)
-print ('nqperdim   =',nqperdim)
+print ('Nfem_T     =',Nfem_T)
+print ('nq_per_dim =',nq_per_dim)
+print ('CFLnb      =',CFLnb)
 print("-----------------------------")
 
-#####################################################################
+###############################################################################
 # grid point setup 
-#####################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-x = np.empty(NV,dtype=np.float64)  # x coordinates
-y = np.empty(NV,dtype=np.float64)  # y coordinates
-u = np.zeros(NV,dtype=np.float64)  # x-component velocity
-v = np.zeros(NV,dtype=np.float64)  # y-component velocity
+x_T=np.zeros(nn_T,dtype=np.float64)
+y_T=np.zeros(nn_T,dtype=np.float64)
+u=np.zeros(nn_T,dtype=np.float64)
+v=np.zeros(nn_T,dtype=np.float64)
 
-counter = 0
+counter=0
 for j in range(0,nny):
     for i in range(0,nnx):
-        x[counter]=i*hx/order+xmin
-        y[counter]=j*hy/order+ymin
+        x_T[counter]=i*hx/order+xmin
+        y_T[counter]=j*hy/order+ymin
         if experiment==1:
-           u[counter]=-(y[counter]-Ly/2)
-           v[counter]=+(x[counter]-Lx/2)
+           u[counter]=-(y_T[counter]-Ly/2)
+           v[counter]=+(x_T[counter]-Lx/2)
         if experiment==2:
-           u[counter]=-y[counter]
-           v[counter]=+x[counter]
+           u[counter]=-y_T[counter]
+           v[counter]=+x_T[counter]
         if experiment==3:
            u[counter]=1
            v[counter]=0
@@ -297,14 +297,14 @@ for j in range(0,nny):
            u[counter]=np.cos(30./180.*np.pi)
            v[counter]=np.sin(30./180.*np.pi)
         if experiment==5:
-           u[counter]=y[counter]
-           v[counter]=1-x[counter]
+           u[counter]=y_T[counter]
+           v[counter]=1-x_T[counter]
         if experiment==6:
            u[counter]=0
-           v[counter]=-x[counter]/Lx*cm/year
+           v[counter]=-x_T[counter]/Lx*cm/year
         if experiment==7:
-           xx=x[counter]/Lx
-           yy=y[counter]/Ly
+           xx=x_T[counter]/Lx
+           yy=y_T[counter]/Ly
            u[counter]=(xx*xx*(1.-xx)**2*(2.*yy-6.*yy*yy+4*yy*yy*yy))*cm/year  *100
            v[counter]=(-yy*yy*(1.-yy)**2*(2.*xx-6.*xx*xx+4*xx*xx*xx))*cm/year *100
         if experiment==8:
@@ -312,21 +312,21 @@ for j in range(0,nny):
            v[counter]=0
         if experiment==9:
            u[counter]=2
-           v[counter]=1+4./5.*np.sin(8*np.pi*x[counter])
+           v[counter]=1+4./5.*np.sin(8*np.pi*x_T[counter])
         counter += 1
     #end for
 #end for
 
-#np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
+if debug: np.savetxt('grid.ascii',np.array([x_T,y_T]).T,header='# x,y')
 
-print("mesh (%.3fs)" % (timing.time() - start))
+print("mesh (%.3fs)" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # connectivity
-#####################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-icon =np.zeros((m,nel),dtype=np.int32)
+icon_T=np.zeros((m,nel),dtype=np.int32)
 
 counter=0
 for j in range(0,nely):
@@ -334,7 +334,7 @@ for j in range(0,nely):
         counter2=0
         for k in range(0,order+1):
             for l in range(0,order+1):
-                icon[counter2,counter]=i*order+l+j*order*nnx+nnx*k
+                icon_T[counter2,counter]=i*order+l+j*order*nnx+nnx*k
                 counter2+=1
             #end for
         #end for
@@ -356,161 +356,134 @@ for j in range(0,nny-1):
     #end for
 #end for
 
-print("connectivity (%.3fs)" % (timing.time() - start))
+print("connectivity (%.3fs)" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # define temperature boundary conditions
-#####################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-bc_fixT=np.zeros(NfemT,dtype=bool)  
-bc_valT=np.zeros(NfemT,dtype=np.float64) 
+bc_fixT=np.zeros(Nfem_T,dtype=bool)  
+bc_valT=np.zeros(Nfem_T,dtype=np.float64) 
 
 if experiment==1 or experiment==2:
-   for i in range(0,NV):
-       if (x[i]-xmin)/Lx<eps and u[i]>0:
-          bc_fixT[i]=True ; bc_valT[i]=0.
-       if (x[i]-xmin)/Lx>(1-eps) and u[i]<0:
-          bc_fixT[i]=True ; bc_valT[i]=0.
-       if (y[i]-ymin)/Ly<eps and v[i]>0:
-          bc_fixT[i]=True ; bc_valT[i]=0.
-       if (y[i]-ymin)/Ly>(1-eps) and v[i]<0:
-          bc_fixT[i]=True ; bc_valT[i]=0.
-   #end for
+   for i in range(0,nn_T):
+       if (x_T[i]-xmin)/Lx<eps and u[i]>0:     bc_fixT[i]=True ; bc_valT[i]=0.
+       if (x_T[i]-xmin)/Lx>(1-eps) and u[i]<0: bc_fixT[i]=True ; bc_valT[i]=0.
+       if (y_T[i]-ymin)/Ly<eps and v[i]>0:     bc_fixT[i]=True ; bc_valT[i]=0.
+       if (y_T[i]-ymin)/Ly>(1-eps) and v[i]<0: bc_fixT[i]=True ; bc_valT[i]=0.
 
 if experiment==3:
-   for i in range(0,NV):
-       if x[i]/Lx<eps:
+   for i in range(0,nn_T):
+       if x_T[i]/Lx<eps:
           bc_fixT[i]=True ; bc_valT[i]=1.
    #end for
 
 if experiment==4:
-   for i in range(0,NV):
-       if y[i]/Ly<eps:
+   for i in range(0,nn_T):
+       if y_T[i]/Ly<eps:
           bc_fixT[i]=True ; bc_valT[i]=0.
-       if x[i]/Lx<eps:
+       if x_T[i]/Lx<eps:
           bc_fixT[i]=True ; bc_valT[i]=1.
    #end for
 
 if experiment==5:
-   for i in range(0,NV):
-       if y[i]/Ly<eps:                        #bottom
-          if x[i]<1./3.:
+   for i in range(0,nn_T):
+       if y_T[i]/Ly<eps:                        #bottom
+          if x_T[i]<1./3.:
              bc_fixT[i]=True ; bc_valT[i]=0.
           else:
              bc_fixT[i]=True ; bc_valT[i]=1.
        #if y[i]/Ly>(1-eps):
        #   bc_fixT[i]=True ; bc_valT[i]=0.
-       if x[i]/Lx<eps:                        # left bc
+       if x_T[i]/Lx<eps:                        # left bc
           bc_fixT[i]=True ; bc_valT[i]=0.
    #end for
 
 if experiment==6:
-   for i in range(0,NV):
-       if x[i]/Lx<eps and np.abs(y[i]-Ly/2)<=300e3:
+   for i in range(0,nn_T):
+       if x_T[i]/Lx<eps and np.abs(y_T[i]-Ly/2)<=300e3:
           bc_fixT[i]=True ; bc_valT[i]=1.
-       if x[i]/Lx<eps and np.abs(y[i]-Ly/2)>300e3:
+       if x_T[i]/Lx<eps and np.abs(y_T[i]-Ly/2)>300e3:
           bc_fixT[i]=True ; bc_valT[i]=0.
-       if y[i]/Ly>(1-eps):
+       if y_T[i]/Ly>(1-eps):
           bc_fixT[i]=True ; bc_valT[i]=0.
    #end for
 
 if experiment==7:
-   for i in range(0,NV):
-       if x[i]/Lx<eps and np.abs(y[i]-Ly/2)<=300e3:
+   for i in range(0,nn_T):
+       if x_T[i]/Lx<eps and np.abs(y_T[i]-Ly/2)<=300e3:
           bc_fixT[i]=True ; bc_valT[i]=1.
-       if x[i]/Lx<eps and np.abs(y[i]-Ly/2)>300e3:
+       if x_T[i]/Lx<eps and np.abs(y_T[i]-Ly/2)>300e3:
           bc_fixT[i]=True ; bc_valT[i]=0.
-       if (x[i]-xmin)/Lx>(1-eps):
+       if (x_T[i]-xmin)/Lx>(1-eps):
           bc_fixT[i]=True ; bc_valT[i]=0.
-       if y[i]/Ly>(1-eps):
+       if y_T[i]/Ly>(1-eps):
           bc_fixT[i]=True ; bc_valT[i]=0.
-       if (y[i])/Ly<eps:
+       if (y_T[i])/Ly<eps:
           bc_fixT[i]=True ; bc_valT[i]=0.
    #end for
 
 if experiment==8:
-   for i in range(0,NV):
-       if x[i]/Lx<eps:
+   for i in range(0,nn_T):
+       if x_T[i]/Lx<eps:
           bc_fixT[i]=True ; bc_valT[i]=0.
 
 if experiment==9:
-   for i in range(0,NV):
-       r2=x[i]**2+y[i]**2
-       if (x[i]+1)/Lx<eps:
+   for i in range(0,nn_T):
+       r2=x_T[i]**2+y_T[i]**2
+       if (x_T[i]+1)/Lx<eps:
           bc_fixT[i]=True ; bc_valT[i]=np.exp(5*(1-r2))*np.sin(16*np.pi*r2)
-       if (y[i]+1)/Lx<eps:
+       if (y_T[i]+1)/Lx<eps:
           bc_fixT[i]=True ; bc_valT[i]=np.exp(5*(1-r2))*np.sin(16*np.pi*r2)
 
-print("boundary conditions (%.3fs)" % (timing.time() - start))
+print("boundary conditions (%.3fs)" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # initial temperature
-#####################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
-T = np.zeros(NV,dtype=np.float64)
-Tm1 = np.zeros(NV,dtype=np.float64) # temperature at timestep n-1
-Tm2 = np.zeros(NV,dtype=np.float64) # temperature at timestep n-2
-Tm3 = np.zeros(NV,dtype=np.float64) # temperature at timestep n-3
-Tm4 = np.zeros(NV,dtype=np.float64) # temperature at timestep n-4
-Tm5 = np.zeros(NV,dtype=np.float64) # temperature at timestep n-5
+T=np.zeros(nn_T,dtype=np.float64)
+Tm1=np.zeros(nn_T,dtype=np.float64) # temperature at timestep n-1
+Tm2=np.zeros(nn_T,dtype=np.float64) # temperature at timestep n-2
+Tm3=np.zeros(nn_T,dtype=np.float64) # temperature at timestep n-3
+Tm4=np.zeros(nn_T,dtype=np.float64) # temperature at timestep n-4
+Tm5=np.zeros(nn_T,dtype=np.float64) # temperature at timestep n-5
 
 if experiment==1:
    xc=2./3.
    yc=2./3.
    sigma=0.2
-   for i in range(0,NV):
-       if (x[i]-xc)**2+(y[i]-yc)**2<=sigma**2:
-          T[i]=0.25*(1+np.cos(np.pi*(x[i]-xc)/sigma))*(1+np.cos(np.pi*(y[i]-yc)/sigma))
-       #end if
-   #end for
+   for i in range(0,nn_T):
+       if (x_T[i]-xc)**2+(y_T[i]-yc)**2<=sigma**2:
+          T[i]=0.25*(1+np.cos(np.pi*(x_T[i]-xc)/sigma))*(1+np.cos(np.pi*(y_T[i]-yc)/sigma))
 
 if experiment==2:
-   for i in range(0,NV):
-       xi=x[i]
-       yi=y[i]
+   for i in range(0,nn_T):
+       xi=x_T[i]
+       yi=y_T[i]
        if np.sqrt(xi**2+(yi-0.5)**2)<0.3 and (np.abs(xi)>=0.05 or yi>=0.7):
           T[i]=1
-       #end if
-       if np.sqrt((x[i])**2+(y[i]+0.5)**2)<0.3:
-          T[i]=1-np.sqrt((x[i])**2+(y[i]+0.5)**2)/0.3
-       #end if
-       if np.sqrt((x[i]+0.5)**2+(y[i])**2)<0.3:
+       if np.sqrt((x_T[i])**2+(y_T[i]+0.5)**2)<0.3:
+          T[i]=1-np.sqrt((x_T[i])**2+(y_T[i]+0.5)**2)/0.3
+       if np.sqrt((x_T[i]+0.5)**2+(y_T[i])**2)<0.3:
           T[i]=0.25*(1+np.cos(np.pi*np.sqrt((xi+0.5)**2+yi**2)/0.3))
-       #end if
-   #end for
 
 if experiment==3:
-   for i in range(0,NV):
-       if x[i]<0.25:
+   for i in range(0,nn_T):
+       if x_T[i]<0.25:
           T[i]=1
-       #end if
-   #end for
-
-if experiment==4:
-   T[i]=0.
-
-if experiment==5:
-   T[i]=0.
 
 if experiment==6 or experiment==7:
-   for i in range(0,NV):
-       if x[i]<=800e3 and np.abs(y[i]-Ly/2)<=300e3:
+   for i in range(0,nn_T):
+       if x_T[i]<=800e3 and np.abs(y_T[i]-Ly/2)<=300e3:
           T[i]=1
-       else:
-          T[i]=0
-       #end if
-    #end for
 
 if experiment==8:
-   for i in range(0,NV):
-       if x[i]<0.1:
-          T[i]=np.sin(10*np.pi*x[i])
-       else: 
-          T[i]=0
-       #end if
-   #end for
+   for i in range(0,nn_T):
+       if x_T[i]<0.1:
+          T[i]=np.sin(10*np.pi*x_T[i])
 
 Tm1[:]=T[:]
 Tm2[:]=T[:]
@@ -518,14 +491,14 @@ Tm3[:]=T[:]
 Tm4[:]=T[:]
 Tm5[:]=T[:]
 
-#np.savetxt('T_init.ascii',np.array([x,y,T]).T,header='# x,y,T')
+if debug: np.savetxt('T_init.ascii',np.array([x,y,T]).T,header='# x,y,T')
 
-print("initial temperature (%.3fs)" % (timing.time() - start))
+print("initial temperature (%.3fs)" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # compute timestep
-#################################################################
-start = timing.time()
+###############################################################################
+start=clock.time()
 
 if steady_state:
    dt=0.
@@ -536,119 +509,85 @@ else:
    nstep=int(tfinal/dt)
    print('nstep=',nstep)
 
-print("compute timestep (%.3fs)" % (timing.time() - start))
+print("compute timestep (%.3fs)" % (clock.time()-start))
 
-#####################################################################
-# create necessary arrays 
-#####################################################################
-start = timing.time()
-
-N     = np.zeros(m,dtype=np.float64)    # shape functions
-dNdx  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
-dNdy  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
-dNdr  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
-dNds  = np.zeros(m,dtype=np.float64)    # shape functions derivatives
-Tvectm1 = np.zeros(m,dtype=np.float64)   
-Tvectm2 = np.zeros(m,dtype=np.float64)   
-Tvectm3 = np.zeros(m,dtype=np.float64)   
-Tvectm4 = np.zeros(m,dtype=np.float64)   
-Tvectm5 = np.zeros(m,dtype=np.float64)   
-NNNT    = np.zeros(m,dtype=np.float64)           # shape functions 
-dNNNTdx = np.zeros(m,dtype=np.float64)           # shape functions derivatives
-dNNNTdy = np.zeros(m,dtype=np.float64)           # shape functions derivatives
-dNNNTdr = np.zeros(m,dtype=np.float64)           # shape functions derivatives
-dNNNTds = np.zeros(m,dtype=np.float64)           # shape functions derivatives
-    
-print("create arrays (%.3fs)" % (timing.time() - start))
-
-#==============================================================================
+###############################################################################
+###############################################################################
 # time stepping loop
-#==============================================================================
+###############################################################################
+###############################################################################
 
 model_time=0.
+jcb=np.zeros((ndim,ndim),dtype=np.float64)
 
 for istep in range(0,nstep):
+
     print("-----------------------------")
     print("istep= ", istep,'/',nstep-1)
     print("-----------------------------")
 
-    #################################################################
+    ###########################################################################
     # all elements are rectangles of size hx,hy
+
     jcob=hx*hy/4
     jcbi=np.zeros((2,2),dtype=np.float64)
     jcbi[0,0]=2/hx
     jcbi[1,1]=2/hy
 
-    #################################################################
+    ###########################################################################
     # build temperature matrix
-    #################################################################
-    start = timing.time()
+    ###########################################################################
+    start=clock.time()
 
-    A_mat = lil_matrix((NfemT,NfemT),dtype=np.float64)
-    #A_mat = np.zeros((NfemT,NfemT),dtype=np.float64) # FE matrix 
-    rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
-    B_mat=np.zeros((2,ndofT*m),dtype=np.float64)     # gradient matrix B 
-    N_mat = np.zeros((m,1),dtype=np.float64)         # shape functions
-    N_mat_supg = np.zeros((m,1),dtype=np.float64)         # shape functions
-    tau_supg = np.zeros(nel*nqperdim**ndim,dtype=np.float64)    
+    A_fem=lil_matrix((Nfem_T,Nfem_T),dtype=np.float64)
+    b_fem=np.zeros(Nfem_T,dtype=np.float64)  
+    B_mat=np.zeros((2,m),dtype=np.float64)    
+    N_mat=np.zeros((m,1),dtype=np.float64)       
+    N_mat_supg=np.zeros((m,1),dtype=np.float64)    
+    tau_supg=np.zeros(nel*nq_per_dim**ndim,dtype=np.float64)    
 
     counterq=0
     for iel in range (0,nel):
 
-        b_el=np.zeros(m*ndofT,dtype=np.float64)
-        a_el=np.zeros((m*ndofT,m*ndofT),dtype=np.float64)
+        b_el=np.zeros(m,dtype=np.float64)
+        A_el=np.zeros((m,m),dtype=np.float64)
         Ka=np.zeros((m,m),dtype=np.float64)   # elemental advection matrix 
         Kd=np.zeros((m,m),dtype=np.float64)   # elemental diffusion matrix 
         MM=np.zeros((m,m),dtype=np.float64)   # elemental mass matrix 
         vel=np.zeros((1,ndim),dtype=np.float64)
 
-        for k in range(0,m):
-            Tvectm1[k]=Tm1[icon[k,iel]]
-            Tvectm2[k]=Tm2[icon[k,iel]]
-            Tvectm3[k]=Tm3[icon[k,iel]]
-            Tvectm4[k]=Tm4[icon[k,iel]]
-            Tvectm5[k]=Tm5[icon[k,iel]]
-        #end for
+        Tvectm1=Tm1[icon_T[0:m,iel]]
+        Tvectm2=Tm2[icon_T[0:m,iel]]
+        Tvectm3=Tm3[icon_T[0:m,iel]]
+        Tvectm4=Tm4[icon_T[0:m,iel]]
+        Tvectm5=Tm5[icon_T[0:m,iel]]
 
-        for iq in range(0,nqperdim):
-            for jq in range(0,nqperdim):
+        for iq in range(0,nq_per_dim):
+            for jq in range(0,nq_per_dim):
 
-                # position & weight of quad. point
                 rq=qcoords[iq]
                 sq=qcoords[jq]
                 weightq=qweights[iq]*qweights[jq]
 
-                NNNT[0:m]=NNT(rq,sq,order)
-                dNNNTdr[0:m]=dNNTdr(rq,sq,order)
-                dNNNTds[0:m]=dNNTds(rq,sq,order)
-                N_mat[0:m,0]=NNT(rq,sq,order)
+                N_T=basis_functions_T(rq,sq,order)
+                N_mat[0:m,0]=N_T
+                dNdr_T=basis_functions_T_dr(rq,sq,order)
+                dNds_T=basis_functions_T_ds(rq,sq,order)
+                jcb[0,0]=np.dot(dNdr_T,x_T[icon_T[:,iel]])
+                jcb[0,1]=np.dot(dNdr_T,y_T[icon_T[:,iel]])
+                jcb[1,0]=np.dot(dNds_T,x_T[icon_T[:,iel]])
+                jcb[1,1]=np.dot(dNds_T,y_T[icon_T[:,iel]])
+                jcbi=np.linalg.inv(jcb)
+                JxWq=np.linalg.det(jcb)*weightq
 
-                # calculate jacobian matrix
-                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                #for k in range(0,m):
-                #    jcb[0,0]+=dNNNTdr[k]*x[icon[k,iel]]
-                #    jcb[0,1]+=dNNNTdr[k]*y[icon[k,iel]]
-                #    jcb[1,0]+=dNNNTds[k]*x[icon[k,iel]]
-                #    jcb[1,1]+=dNNNTds[k]*y[icon[k,iel]]
-                #end for
-                #jcob=np.linalg.det(jcb)
-                #jcbi=np.linalg.inv(jcb)
-
-                # compute dNdx & dNdy
-                vel[0,0]=0.
-                vel[0,1]=0.
-                xq=0.
-                yq=0.
-                for k in range(0,m):
-                    vel[0,0]+=N_mat[k,0]*u[icon[k,iel]]
-                    vel[0,1]+=N_mat[k,0]*v[icon[k,iel]]
-                    xq+=N_mat[k,0]*x[icon[k,iel]]
-                    yq+=N_mat[k,0]*y[icon[k,iel]]
-                    dNNNTdx[k]=jcbi[0,0]*dNNNTdr[k]+jcbi[0,1]*dNNNTds[k]
-                    dNNNTdy[k]=jcbi[1,0]*dNNNTdr[k]+jcbi[1,1]*dNNNTds[k]
-                    B_mat[0,k]=dNNNTdx[k]
-                    B_mat[1,k]=dNNNTdy[k]
-                #end for
+                xq=np.dot(N_T,x_T[icon_T[:,iel]])
+                yq=np.dot(N_T,y_T[icon_T[:,iel]])
+                vel[0,0]=np.dot(N_T,u[icon_T[:,iel]])
+                vel[0,1]=np.dot(N_T,v[icon_T[:,iel]])
+                dNdx_T=jcbi[0,0]*dNdr_T+jcbi[0,1]*dNds_T
+                dNdy_T=jcbi[1,0]*dNdr_T+jcbi[1,1]*dNds_T
+                B_mat[0,:]=dNdx_T
+                B_mat[1,:]=dNdy_T
 
                 if supg_type==0:
                    tau_supg[counterq]=0.
@@ -662,39 +601,39 @@ for istep in range(0,nstep):
                 N_mat_supg=N_mat+tau_supg[counterq]*np.transpose(vel.dot(B_mat))
 
                 # compute mass matrix
-                MM=N_mat_supg.dot(N_mat.T)*rho0*hcapa*weightq*jcob
+                MM=N_mat_supg.dot(N_mat.T)*rho0*hcapa*JxWq
 
                 # compute diffusion matrix
-                Kd=B_mat.T.dot(B_mat)*hcond*weightq*jcob
+                Kd=B_mat.T.dot(B_mat)*hcond*JxWq
 
                 # compute advection matrix
-                Ka=N_mat_supg.dot(vel.dot(B_mat))*rho0*hcapa*weightq*jcob
+                Ka=N_mat_supg.dot(vel.dot(B_mat))*rho0*hcapa*JxWq
 
                 if use_bdf and istep>bdf_order:
                    if bdf_order==1:
-                      a_el+=MM+1.*dt*(Ka+Kd)
+                      A_el+=MM+1.*dt*(Ka+Kd)
                       b_el+=MM.dot(Tvectm1)
                    #end if
                    if bdf_order==2:
-                      a_el+=MM+2./3.*dt*(Ka+Kd)
+                      A_el+=MM+2./3.*dt*(Ka+Kd)
                       b_el+=4./3.*MM.dot(Tvectm1)\
                            -1./3.*MM.dot(Tvectm2)
                    #end if
                    if bdf_order==3:
-                      a_el+=MM+6./11.*dt*(Ka+Kd)
+                      A_el+=MM+6./11.*dt*(Ka+Kd)
                       b_el+=18./11.*MM.dot(Tvectm1)\
                            -9./11.*MM.dot(Tvectm2)\
                            +2./11.*MM.dot(Tvectm3)
                    #end if
                    if bdf_order==4:
-                      a_el+=MM+12./25.*dt*(Ka+Kd)
+                      A_el+=MM+12./25.*dt*(Ka+Kd)
                       b_el+=48./25.*MM.dot(Tvectm1)\
                            -36./25.*MM.dot(Tvectm2)\
                            +16./25.*MM.dot(Tvectm3)\
                            -3./25.*MM.dot(Tvectm4)
                    #end if
                    if bdf_order==5:
-                      a_el+=MM+60./137.*dt*(Ka+Kd)
+                      A_el+=MM+60./137.*dt*(Ka+Kd)
                       b_el+=300./137.*MM.dot(Tvectm1)\
                            -300./137.*MM.dot(Tvectm2)\
                            +200./137.*MM.dot(Tvectm3)\
@@ -703,15 +642,15 @@ for istep in range(0,nstep):
                    #end if
                 else:
                    if steady_state:
-                      a_el+=Ka
-                      b_el+=N_mat[:,0]*weightq*jcob*rhs_f(xq,yq,experiment)
+                      A_el+=Ka
+                      b_el+=N_mat[:,0]*JxWq*rhs(xq,yq,experiment)
                    else:
-                      a_el+=MM+alphaT*(Ka+Kd)*dt
+                      A_el+=MM+alphaT*(Ka+Kd)*dt
                       b_el+=(MM-(1-alphaT)*(Ka+Kd)*dt).dot(Tvectm1) +\
-                            N_mat[:,0]*weightq*jcob*rhs_f(xq,yq,experiment)*dt
+                            N_mat[:,0]*JxWq*rhs(xq,yq,experiment)*dt
                 #end if
 
-                #print(xq,yq,rhs_f(xq,yq,experiment))
+                #print(xq,yq,rhs(xq,yq,experiment))
 
                 counterq+=1
             #end for jq
@@ -719,58 +658,55 @@ for istep in range(0,nstep):
 
         # apply boundary conditions
         for k1 in range(0,m):
-            m1=icon[k1,iel]
+            m1=icon_T[k1,iel]
             if bc_fixT[m1]:
-               Aref=a_el[k1,k1]
+               Aref=A_el[k1,k1]
                for k2 in range(0,m):
-                   m2=icon[k2,iel]
-                   b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
-                   a_el[k1,k2]=0
-                   a_el[k2,k1]=0
-               a_el[k1,k1]=Aref
+                   m2=icon_T[k2,iel]
+                   b_el[k2]-=A_el[k2,k1]*bc_valT[m1]
+                   A_el[k1,k2]=0
+                   A_el[k2,k1]=0
+               A_el[k1,k1]=Aref
                b_el[k1]=Aref*bc_valT[m1]
             #end if
         #end for
 
-        # assemble matrix A_mat and right hand side rhs
+        # assemble matrix A_fem and right hand side b_fem
         for k1 in range(0,m):
-            m1=icon[k1,iel]
+            m1=icon_T[k1,iel]
             for k2 in range(0,m):
-                m2=icon[k2,iel]
-                A_mat[m1,m2]+=a_el[k1,k2]
+                m2=icon_T[k2,iel]
+                A_fem[m1,m2]+=A_el[k1,k2]
             #end for
-            rhs[m1]+=b_el[k1]
+            b_fem[m1]+=b_el[k1]
         #end for
 
     #end for iel
-    
-    #print("     -> matrix (m,M) %.4e %.4e " %(np.min(A_mat),np.max(A_mat)))
-    #print("     -> rhs (m,M) %.4e %.4e " %(np.min(rhs),np.max(rhs)))
 
     print("     -> tau_supg (m,M) %e %e " %(np.min(tau_supg),np.max(tau_supg)))
 
     if istep==0:
        np.savetxt('tau_supg.ascii',np.array(tau_supg).T,header='# x,y,T')
 
-    print("build FEM matrix: %.3fs" % (timing.time() - start))
+    print("build FEM matrix: %.3fs" % (clock.time() - start))
 
-    #################################################################
+    ###########################################################################
     # solve system
-    #################################################################
-    start = timing.time()
+    ###########################################################################
+    start = clock.time()
 
-    T = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
+    T=sps.linalg.spsolve(sps.csr_matrix(A_fem),b_fem)
 
     print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
 
     stats_T_file.write("%e %e %e \n" %(model_time,np.min(T),np.max(T))) ; stats_T_file.flush()
 
-    print("solve T time: %.3f s" % (timing.time() - start))
+    print("solve T time: %.3f s" % (clock.time() - start))
 
-    #####################################################################
+    ###########################################################################
     # compute average of temperature using a 4x4 quadrature
-    #####################################################################
-    start = timing.time()
+    ###########################################################################
+    start=clock.time()
 
     qc4a=np.sqrt(3./7.+2./7.*np.sqrt(6./5.))
     qc4b=np.sqrt(3./7.-2./7.*np.sqrt(6./5.))
@@ -787,21 +723,20 @@ for istep in range(0,nstep):
                 rq=qcoords4[iq]
                 sq=qcoords4[jq]
                 weightq=qweights4[iq]*qweights4[jq]
-                NNNT[0:m]=NNT(rq,sq,order)
-                dNNNTdr[0:m]=dNNTdr(rq,sq,order)
-                dNNNTds[0:m]=dNNTds(rq,sq,order)
-                #jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                #for k in range(0,m):
-                #    jcb[0,0]+=dNNNTdr[k]*x[icon[k,iel]]
-                #    jcb[0,1]+=dNNNTdr[k]*y[icon[k,iel]]
-                #    jcb[1,0]+=dNNNTds[k]*x[icon[k,iel]]
-                #    jcb[1,1]+=dNNNTds[k]*y[icon[k,iel]]
-                #jcob=np.linalg.det(jcb)
-                Tq=0.
-                for k in range(0,m):
-                    Tq+=NNNT[k]*T[icon[k,iel]]
-                avrg_T+=Tq*weightq*jcob
-                ET+=rho0*hcapa*(abs(Tq))*weightq*jcob
+
+                N_T=basis_functions_T(rq,sq,order)
+                dNdr_T=basis_functions_T_dr(rq,sq,order)
+                dNds_T=basis_functions_T_ds(rq,sq,order)
+                jcb[0,0]=np.dot(dNdr_T,x_T[icon_T[:,iel]])
+                jcb[0,1]=np.dot(dNdr_T,y_T[icon_T[:,iel]])
+                jcb[1,0]=np.dot(dNds_T,x_T[icon_T[:,iel]])
+                jcb[1,1]=np.dot(dNds_T,y_T[icon_T[:,iel]])
+                jcbi=np.linalg.inv(jcb)
+                JxWq=np.linalg.det(jcb)*weightq
+
+                Tq=np.dot(N_T,T[icon_T[:,iel]])
+                avrg_T+=Tq*JxWq
+                ET+=rho0*hcapa*(abs(Tq))*JxWq
             #end for
         #end for
     #end for
@@ -812,46 +747,54 @@ for istep in range(0,nstep):
 
     print("     -> avrg T= %.6e" % avrg_T)
 
-    print("compute <T>,M: %.3f s" % (timing.time() - start))
+    print("compute <T>,M: %.3f s" % (clock.time()-start))
 
-    #################################################################
+    ###########################################################################
     # visualisation 
-    #################################################################
+    ###########################################################################
 
     if istep%every==0:
+       start=clock.time()
 
-       start = timing.time()
-
-       #filename = 'T_{:04d}.ascii'.format(istep) 
-       #np.savetxt(filename,np.array([x,y,T]).T,header='# x,y,T')
+       if debug:
+          filename = 'T_{:04d}.ascii'.format(istep) 
+          np.savetxt(filename,np.array([x_T,y_T,T]).T,header='# x,y,T')
 
        filename = 'solution_{:04d}.vtu'.format(istep) 
        vtufile=open(filename,"w")
        vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
        vtufile.write("<UnstructuredGrid> \n")
-       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NV,nel2))
+       vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nn_T,nel2))
        #####
        vtufile.write("<Points> \n")
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-       for i in range(0,NV):
-           vtufile.write("%e %e %e \n" %(x[i],y[i],0.))
+       for i in range(0,nn_T):
+           vtufile.write("%e %e %e \n" %(x_T[i],y_T[i],0.))
        vtufile.write("</DataArray>\n")
        vtufile.write("</Points> \n")
        #####
        vtufile.write("<PointData Scalars='scalars'>\n")
        #--
        vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='velocity' Format='ascii'> \n")
-       for i in range(0,NV):
+       for i in range(0,nn_T):
            vtufile.write("%e %e %e \n" %(u[i],v[i],0.))
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
-       for i in range(0,NV):
-           vtufile.write("%10f \n" %T[i])
+       for i in range(0,nn_T):
+           vtufile.write("%e \n" %T[i])
+       vtufile.write("</DataArray>\n")
+       #--
+       vtufile.write("<DataArray type='Float32' Name='bc T' Format='ascii'> \n")
+       for i in range(0,nn_T):
+           if bc_fixT[i]: 
+              vtufile.write("%e \n" % 1)
+           else:
+              vtufile.write("%e \n" % 0)
        vtufile.write("</DataArray>\n")
        #--
        vtufile.write("<DataArray type='Float32' Name='tau' Format='ascii'> \n")
-       for i in range(0,NV):
+       for i in range(0,nn_T):
            if np.sqrt(u[i]**2+v[i]**2)<eps:
               taunode=0
            else:
@@ -866,7 +809,7 @@ for istep in range(0,nstep):
        vtufile.write("<DataArray type='Int32' Name='connectivity' Format='ascii'> \n")
        if order==1:
           for iel in range (0,nel2):
-              vtufile.write("%d %d %d %d \n" %(icon[0,iel],icon[1,iel],icon[3,iel],icon[2,iel]))
+              vtufile.write("%d %d %d %d \n" %(icon_T[0,iel],icon_T[1,iel],icon_T[3,iel],icon_T[2,iel]))
        if order==2:
           for iel in range (0,nel2):
               vtufile.write("%d %d %d %d \n" %(iconQ1[0,iel],iconQ1[1,iel],iconQ1[2,iel],iconQ1[3,iel]))
@@ -902,15 +845,15 @@ for istep in range(0,nstep):
        #plt.show ()
        #plt.close()
 
-       print("export to files: %.3f s" % (timing.time() - start))
+       print("export to files: %.3f s" % (clock.time()-start))
 
     #end if
 
-    Tm5=Tm4
-    Tm4=Tm3
-    Tm3=Tm2
-    Tm2=Tm1
-    Tm1=T
+    Tm5=np.copy(Tm4)
+    Tm4=np.copy(Tm3)
+    Tm3=np.copy(Tm2)
+    Tm2=np.copy(Tm1)
+    Tm1=np.copy(T)
 
     model_time+=dt
     print ("model_time=",model_time)
@@ -919,28 +862,30 @@ for istep in range(0,nstep):
 
 if experiment==9 or experiment==7:
    diagonal_file=open('diagonal.ascii',"w")
-   for i in range(0,NV):
-       if np.abs(y[i]-Ly+x[i])<eps*Lx:
-          diagonal_file.write("%4e %6e %7e \n" %(x[i],y[i],T[i]))
+   for i in range(0,nn_T):
+       if np.abs(y_T[i]-Ly+x_T[i])<eps*Lx:
+          diagonal_file.write("%4e %6e %7e \n" %(x_T[i],y_T[i],T[i]))
 
 if experiment==6:
    diagonal_file=open('diagonal.ascii',"w")
-   for i in range(0,NV):
-       if np.abs(x[i]-Lx/2)<eps*Lx:
-          diagonal_file.write("%4e %6e %7e \n" %(x[i],y[i],T[i]))
+   for i in range(0,nn_T):
+       if np.abs(x_T[i]-Lx/2)<eps*Lx:
+          diagonal_file.write("%4e %6e %7e \n" %(x_T[i],y_T[i],T[i]))
 
 if experiment==8 or experiment==3:
    diagonal_file=open('diagonal.ascii',"w")
-   for i in range(0,NV):
-       if np.abs(y[i]-Ly/2)<eps*Ly:
-          diagonal_file.write("%4e %6e %7e \n" %(x[i],y[i],T[i]))
+   for i in range(0,nn_T):
+       if np.abs(y_T[i]-Ly/2)<eps*Ly:
+          diagonal_file.write("%4e %6e %7e \n" %(x_T[i],y_T[i],T[i]))
 
-
-
-#==============================================================================
+###############################################################################
+###############################################################################
 # end time stepping loop
-#==============================================================================
+###############################################################################
+###############################################################################
 
-print("-----------------------------")
-print("------------the end----------")
-print("-----------------------------")
+print("*******************************")
+print("********** the end ************")
+print("*******************************")
+
+###############################################################################
