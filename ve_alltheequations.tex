@@ -1,0 +1,316 @@
+
+%-------------------------------------------
+\paragraph{Strain rate and rotation rate}
+
+The strain rate (corresponding to the velocity field $\vec\upnu$) is given by 
+\[
+\dot{\bm \varepsilon} = \frac12 ( \vec\nabla \vec\upnu + \vec\nabla \vec\upnu^T) 
+\]
+while the corresponding vorticity tensor
+(sometimes called the 'spin tensor', e.g. \cite{moql07}, or 'vorticity tensor')  is given by
+\[
+\dot{\bm \omega} = \frac12 \left( \vec\nabla \vec\upnu - \vec\nabla \vec\upnu^T \right) 
+\]
+Obviously we find that $\dot{\bm \varepsilon}+\dot{\bm \omega}=\vec\nabla \vec\upnu  = {\bm L}$.
+
+
+
+%---------------------------
+\paragraph{Viscous rheology}
+
+From MD syllabus:
+\begin{eqnarray}
+{\bm \sigma} 
+&=& -p {\bm 1} + {\bm \pi} \nn\\
+&=& -p {\bm 1} + \lambda {\rm tr}(\dot{\bm \varepsilon}) {\bm 1} + 2 \eta \dot{\bm \varepsilon} \nn\\
+&=& -p {\bm 1} + \xi {\rm tr}(\dot{\bm \varepsilon}) {\bm 1} + 2 \eta \dot{\bm \varepsilon}^d 
+\end{eqnarray}
+where $p$ is the thermodynamic pressure and 
+where $\xi=\lambda+2\eta/3$ is the bulk viscosity. It follows that 
+\begin{equation}
+{\rm tr}({\bm \sigma}) = -3p + 3 \xi {\rm tr}(\dot{\bm \varepsilon}) \label{eq:trsigmav}
+\end{equation}
+and automatically the deviatoric stress ${\bm \tau}$ follows:
+\begin{equation}
+{\bm \tau} = {\bm \sigma} - \frac13 {\rm tr}({\bm \sigma}) {\bm 1} = 2 \eta \dot{\bm \varepsilon}^d \label{eq:ve:tauv}
+\end{equation}
+
+
+%---------------------------
+\paragraph{Elastic rheology}
+
+\begin{equation}
+{\bm \sigma} = \lambda {\rm tr}({\bm \varepsilon}) {\bm 1} + 2 \mu {\bm \varepsilon}
+\end{equation}
+where $\lambda$ is the Lame parameter and $\mu$ the shear modulus.
+
+Then 
+\begin{equation}
+{\rm tr}({\bm \sigma}) 
+= 3 \lambda {\rm tr}({\bm \varepsilon}) + 2 \mu {\rm tr}({\bm \varepsilon}) 
+= 3 \left(\lambda + \frac{2\mu}{3}\right) {\rm tr}({\bm \varepsilon})
+= 3 K {\rm tr}({\bm \varepsilon}) \label{eq:trsigmae}
+\end{equation}
+where $K$ is the elastic bulk modulus.
+
+Like wise 
+\begin{equation}
+{\bm \tau} 
+= {\bm \sigma} - \frac13 {\rm tr}({\bm \sigma}) {\bm 1}
+= \lambda {\rm tr}({\bm \varepsilon}) {\bm 1} + 2 \mu {\bm \varepsilon}
+- \frac13 \left(    3 \lambda {\rm tr}({\bm \varepsilon}) + 2 \mu {\rm tr}({\bm \varepsilon})    \right) {\rm tr}({\bm \varepsilon}) {\bm 1}
+= 2 \mu {\bm \varepsilon}^d\label{eq:ve:taue}
+\end{equation}
+
+%---------------------------
+\paragraph{total strain rate}
+
+The total strain rate tensor (i.e. {\it not} the deviatoric one) is the sum of the viscous and the elastic 
+strain rates
+\begin{equation}
+\dot{\bm \varepsilon}_{\rm T} = \dot{\bm \varepsilon}_{\rm v} + \dot{\bm \varepsilon}_{\rm e}
+\label{eq:ve:epsT} 
+\end{equation}
+
+We have
+\[
+\dot{\bm\varepsilon}_{\rm e}^d = 
+\dot{\bm\varepsilon}_{\rm e}  - \frac13 {\rm tr} (\dot{\bm\varepsilon}_{\rm e}) {\bm 1} 
+\]
+\[
+\dot{\bm\varepsilon}_{\rm v}^d = 
+\dot{\bm\varepsilon}_{\rm v}  - \frac13 {\rm tr} (\dot{\bm\varepsilon}_{\rm v}) {\bm 1} 
+\]
+
+We can then proceed to take the deviatoric part of the this equation: 
+\begin{eqnarray}
+\dot{\bm \varepsilon}_{\rm T}^d 
+&=& 
+\dot{\bm \varepsilon}_{\rm T} - \frac13 {\rm tr}(\dot{\bm \varepsilon}_{\rm T}) {\bm 1} \nn\\
+&=& \dot{\bm \varepsilon}_{\rm v} + \dot{\bm \varepsilon}_{\rm e} 
+- \frac13 {\rm tr}( \dot{\bm \varepsilon}_{\rm v} + \dot{\bm \varepsilon}_{\rm e} ) {\bm 1} \nn\\
+&=& \dot{\bm \varepsilon}_{\rm v}^d + \dot{\bm \varepsilon}_{\rm e}^d  \label{eq:ve:epsTdev}
+\end{eqnarray}
+
+
+From Eq.~\eqref{eq:ve:tauv} and Eq.~\eqref{eq:ve:taue} 
+(note that we must take its time derivative, 
+which yields $\check{\bm\tau}$... I still need to fully wrap my head around this. 
+See next section on this topic) we can write Eq.~\eqref{eq:ve:epsTdev}
+
+\begin{equation}
+\dot{\bm \varepsilon}_{\rm T}^d = 
+\frac{1}{2\eta} {\bm \tau} + \frac{1}{2\mu} \check{\bm\tau}
+\label{eq:ve:decomp}
+\end{equation}
+which forms the basis for all publications that implement elasticity in a viscous code.
+
+Let us now turn to the volumetric part of Eq.~\eqref{eq:ve:epsT}: 
+\begin{equation}
+{\rm tr}(\dot{\bm \varepsilon}_{\rm T}) = {\rm tr}(\dot{\bm \varepsilon}_{\rm v}) + {\rm tr}(\dot{\bm \varepsilon}_{\rm e})
+\end{equation}
+Obviously if any or both deformation mechanisms are assumed to be incompressible this 
+equation is not needed since all terms are zero. Also
+it seems to be quite common to only allow for compressible elastic deformation while
+the viscous one is incompressible (see for example Simpson's book, eq 12.43).
+
+From Eq.~\eqref{eq:trsigmae} we obtain (again I write $\check{\bm \sigma}$): 
+\begin{equation}
+{\rm tr}(\dot{\bm \varepsilon}_e) = \frac{1}{3K} {\rm tr}(\check{\bm \sigma})
+\end{equation}
+Remark: In order to recover the $\dot{p}$ term of the papers, I need to state that $p=-\frac13 {\rm tr}({\bm \sigma})$, 
+state that $\check{p}=\dot{p}$ because $p$ is a scalar (as in \cite{modm01}) and then I obtain:
+\begin{equation}
+{\rm tr}(\dot{\bm \varepsilon}_e) = - \frac{1}{K} \dot{p} 
+\end{equation}
+
+
+Conversely, from Eq.~\eqref{eq:trsigmav} we obtain:
+\[
+{\rm tr}(\dot{\bm \varepsilon}_{\rm v})  = ... 
+\]
+
+{\color{red} I am struggling here ... I need to get to :}
+
+
+In the end in \cite{modm01} they arrive at
+\[
+\frac{\dot{p}}{K_{\rm e}}+\frac{p}{\xi} = - {\rm tr} (\dot{\bm \varepsilon})
+\]
+where K bulk modulus and $\xi$ bulk viscosity
+Also in \cite{modm02}:
+\[
+\frac{1}{K} \frac{Dp}{Dt} + \frac{p}{\xi} = -{\rm tr}(\dot{\bm\varepsilon})
+\]
+
+{\color{red} I could arrive at these is I assume that the thermodynamic pressure $p$ is
+to be discarded , so that the pressure above is in fact the 'mechanical pressure' (?). see section 18.2.3 of MD}
+
+Ask Riad?
+
+
+%------------------------------------------
+\paragraph{About the weird time derivative}
+
+
+
+\[
+\check{\bm\tau} = 
+\frac{{\cal D}{\bm \tau}}{{\cal D} t} = \frac{\partial{\bm \tau}}{\partial t}
++ \underbrace{(\vec\upnu \cdot \vec\nabla) {\bm \tau} }_{\rm advection}
++ \underbrace{{\bm \tau}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \tau}}_{\rm rotation}
+\underbrace{- a ( {\bm \tau} \cdot \dot{\bm \varepsilon} + \dot{\bm \varepsilon} \cdot {\bm \tau})}_{\rm stretching}
+\]
+The labelling of the terms is to be found in \cite{moql07}.
+${\cal D}/{\cal D} t$ is called an ``invariant time derivative'' in \cite{hard91}.
+
+Sometimes the material derivative $\frac{D}{Dt} = \frac{\partial }{\partial t} + \vec\upnu \cdot \vec\nabla$
+is used so that the equation above then becomes:
+\[
+\check{\bm\sigma} = 
+\frac{{\cal D}{\bm \sigma}}{{\cal D} t} = \frac{D {\bm\tau}}{Dt}
++ {\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}
+- a ( {\bm \sigma} \cdot \dot{\bm \varepsilon} + \dot{\bm \varepsilon} \cdot {\bm \sigma})
+\]
+
+Note that in the equation above a minus sign is present in front of $a$ (which we 
+find in \cite{hard91,momy93,daws16}) but we find a plus sign in \cite{moql07} (probably a typo?). 
+
+In \cite{modm01} we read that ``the ${\bm\tau}\cdot \dot{\bm\omega}-\dot{\bm\omega}\cdot {\bm\tau}$ terms account 
+for material spin during advection which reorients the elastic stored-stress tensor.''
+
+In \cite{daws16} we read that 
+in the case of large deformations, the material derivative of the Cauchy
+stress tensor takes the form of the objective Gordon-Schowalter derivative (Saramito, 2016):
+\[
+\frac{{\cal D}{\bm \sigma}}{{\cal D} t} = \frac{\partial{\bm \sigma}}{\partial t}
++ (\vec\upnu \cdot \vec\nabla) {\bm \sigma} +
+\beta_a (\vec\nabla\vec\upnu,{\bm \sigma})
+\]
+where the additional term $\beta_a$  accounts for the effects
+of rotation and deformation on the evolution of the stress tensor 
+and is expressed as 
+\[
+\beta_a (\vec\nabla\vec\upnu,{\bm \sigma})
+= 
+{\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}
+- a ( {\bm \sigma} \cdot \dot{\bm \varepsilon}
++ \dot{\bm \varepsilon} \cdot {\bm \sigma})
+\]
+where $-1 \le a \le +1$ is a free parameter. 
+With the choice $a = 1$ the upper convected derivative is obtained, 
+with $a = 0$ the co-rotational one \cite{hard91}.
+
+In \cite{moql07} we read: ``When $a=0$, $\check{\bm \tau}$ is known as the Jaumann derivative, and
+when $a=1$ or $a=-1$ it is known as the upper- or lower-convected Maxwell derivative, respectively. 
+The choice $a=0$ considerably simplifies the formulation as it ensures 
+that $\check{\bm \tau}$ is deviatoric when ${\bm \tau}$ is deviatoric.''
+
+Note that in the appendix D of \cite{bepo10} the term ${\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}$
+is further worked out in 2d Cartesian coordinates and yields:
+\[
+{\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}
+=
+\left(
+\begin{array}{cc}
+2 \omega \tau_{xy} & \omega (\tau_{yy}-\tau_{xx}) \\
+\omega (\tau_{yy}-\tau_{xx}) -2 \omega \tau_{xy}
+\end{array}
+\right)
+\]
+
+%---------------------------------
+\paragraph{Discretisation}
+
+Let us for now drop the last term (i.e. $a=0$) so that 
+\[
+\check{\bm\tau} = 
+\frac{{\cal D}{\bm \tau}}{{\cal D} t} = 
+\frac{D {\bm \tau}}{D t}
++ {\bm \tau}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \tau}
+\]
+Following \cite{modm02} we discretise this as 
+\[
+\check{\bm\tau}^{t+\delta t} \simeq 
+\frac{ {\bm\tau}^{t+\delta t}- {\bm\tau}^t   }{\delta t}
++ {\bm \tau}^t\cdot \dot{\bm \omega}^t - \dot{\bm \omega}^t \cdot {\bm \tau}^t
+\]
+
+
+
+Then Eq.~\eqref{eq:ve:decomp} is written at time $t+\delta t$:
+\begin{eqnarray}
+\dot{\bm \varepsilon}^{d,t+\delta t} 
+&=& 
+\frac{1}{2\eta} {\bm \tau}^{t+\delta t} + \frac{1}{2\mu} \check{\bm \tau}^{t+\delta t}  
+\nn\\
+\dot{\bm \varepsilon}^{d,t+\delta t} 
+&=&
+\frac{1}{2\eta} {\bm \tau}^{t+\delta t} + \frac{1}{2\mu} 
+\left(
+\frac{ {\bm\tau}^{t+\delta t}- {\bm\tau}^t   }{\delta t}
++ {\bm \tau}^t\cdot \dot{\bm \omega}^t - \dot{\bm \omega}^t \cdot {\bm \tau}^t
+\right) 
+\nn\\
+\dot{\bm \varepsilon}^{d,t+\delta t} 
+&=&
+\left(\frac{1}{2\eta} + \frac{1}{2 \mu\delta t} \right){\bm \tau}^{t+\delta t} 
+- \frac{1}{2 \mu\delta t}  {\bm\tau}^t 
++ \frac{1}{2 \mu} 
+( {\bm \tau}^t\cdot \dot{\bm \omega}^t - \dot{\bm \omega}^t \cdot {\bm \tau}^t) \nn
+\end{eqnarray}
+
+or, 
+\[
+\frac12
+\left(\frac{1}{\eta} + \frac{1}{\mu\delta t} \right){\bm \tau}^{t+\delta t} 
+= \dot{\bm \varepsilon}^{d,t+\delta t} 
++ \frac{1}{2 \mu\delta t}  {\bm\tau}^t
+- \frac{1}{2 \mu} ( {\bm \tau}^t\cdot \dot{\bm \omega}^t - \dot{\bm \omega}^t \cdot {\bm \tau}^t)
+\]
+
+Defining the visco-elastic viscosity as  
+\[
+\eta_{\rm ve} 
+= \left( \frac{1}{\eta} + \frac{1}{\mu \delta t} \right)^{-1}
+= \frac{\eta\mu \; \delta t}{\eta + \mu \delta t}
+\]
+we can write
+\[
+\frac{1}{2\eta_{\rm ve}} {\bm \tau}^{t+\delta t} 
+= \dot{\bm \varepsilon}^{d,t+\delta t} 
++ \frac{1}{2 \mu\delta t}  {\bm\tau}^t
+- \frac{1}{2 \mu} ( {\bm \tau}^t\cdot \dot{\bm \omega}^t - \dot{\bm \omega}^t \cdot {\bm \tau}^t)
+\]
+and then 
+\[
+{\bm \tau}^{t+\delta t} 
+= 2 \eta_{\rm ve}\dot{\bm \varepsilon}^{d,t+\delta t} 
++ \frac{\eta_{\rm ve} }{\mu\delta t}  {\bm\tau}^t
+- \frac{\eta_{\rm ve} }{\mu} ( {\bm \tau}^t\cdot \dot{\bm \omega}^t - \dot{\bm \omega}^t \cdot {\bm \tau}^t)
+\]
+
+We can further work out
+\begin{eqnarray}
+\frac{\eta_{\rm ve} }{ \mu\delta t} 
+&=& \frac{\eta\mu \; \delta t}{\eta + \mu \delta t} \frac{1 }{ \mu\delta t} 
+= \frac{\eta }{\eta + \mu \delta t} 
+= \frac{1 }{1 + \frac{\mu}{\eta} \delta t}
+\nn\\ 
+\frac{\eta_{\rm ve} }{\mu}
+&=&
+\frac{\eta\mu \; \delta t}{\eta + \mu \delta t} \frac{1 }{\mu} 
+= \frac{\eta \; \delta t}{\eta + \mu \delta t} 
+\end{eqnarray}
+so that finally
+\[
+{\bm \tau}^{t+\delta t} = ...
+\]
+We find this equation in \cite{modm02}
+{\color{red} finish!}
+
+$\eta/\mu$ is called the Maxwell relation time (also sometimes called the shear relaxation time \cite{modm02}).
+
+
+
+

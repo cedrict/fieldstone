@@ -2810,21 +2810,16 @@ viscoelastic Maxwell solid overlying an inviscid incompressible ﬂuid (Burov \&
 
 \begin{itemize}
 \item \underline{convection of viscoelastic fluids}: 
-\textcite{hard91}, \textcite{zhgm96},
-\textcite{mure05}, \textcite{likh05a}, \textcite{likh05b}, \textcite{fukk08}.
+\textcite{zhgm96},
+\textcite{likh05a}, \textcite{likh05b}, \textcite{fukk08}.
 
 \item stress buildup associated with viscoelastic rheology: 
-\textcite{kubo77}, \textcite{kupa84}, \textcite{pocp93}, \textcite{mapo09}.
+\textcite{kubo77}, \textcite{kupa84}, \textcite{pocp93}
 
 \item viscoelastic effects on geodynamical pbs involving gravitational instability 
-\textcite{pocp93,kabe07,bumo08,scbe08}, \textcite{hamy95}.
+\textcite{pocp93}, 
 
 \end{itemize}
-
-\textcite{famc14} states 
-``Funiciello et al. [2003] implemented a viscoelastic rheology in numerical models of subduction, performing a
-range of numerical simulations to investigate its effect on subducting slab dynamics. Similar methodologies have addressed the details of viscoelastic stress within the bending zone during subduction, although a comparison between viscous and viscoelastic rheology was lacking [Capitanio et al., 2009; Capitanio and Morra, 2012].
-Muhlhaus and Regenauer-Lieb [2005] and Moresi et al. [2002] have studied the role of elasticity in mantle convection, comparing the viscous case to that of viscoelastic, and Kaus and Becker [2007] discussed the effect of elasticity on layered Rayleigh-Taylor instabilities. However, a systematic study into the effects of elastic stresses on models of free subduction has yet to be completed. Morra and Regenauer-Lieb [2006], Funiciello et al. [2003], Capitanio et al. [2007], Yamato et al. [2007], and Royden and Husson [2006] have included a viscoelastic slab in subduction models, without explicitly studying the effects of the elastic component across a range of parameters.''
 
 
 
@@ -2833,6 +2828,12 @@ Muhlhaus and Regenauer-Lieb [2005] and Moresi et al. [2002] have studied the rol
 
 \newpage
 \subsection{appendix: Equations in momy93\label{ve_momy93}} \input{ve_momy93}
+
+\newpage
+\subsection{appendix: Equations in hamy95\label{ve_hamy95}} \input{ve_hamy95}
+
+\newpage
+\subsection{appendix: Equations in zhgm96\label{ve_zhgm96}} \input{ve_zhgm96}
 
 \newpage
 \subsection{appendix: Equations in modm01\label{ve_modm01}} \input{ve_modm01}
@@ -2850,10 +2851,16 @@ Muhlhaus and Regenauer-Lieb [2005] and Moresi et al. [2002] have studied the rol
 \subsection{appendix: Equations in mure05\label{ve_mure05}} \input{ve_mure05}
 
 \newpage
+\subsection{appendix: Equations in likh05a\label{ve_likh05}} \input{ve_likh05}
+
+\newpage
 \subsection{appendix: Equations in kabe07\label{ve_kabe07}} \input{ve_kabe07}
 
 \newpage
 \subsection{appendix: Equations in moql07\label{ve_moql07}} \input{ve_moql07}
+
+\newpage
+\subsection{appendix: Equations in fukk08\label{ve_fukk08}} \input{ve_fukk08}
 
 \newpage
 \subsection{appendix: Equations in bepo10\label{ve_bepo10}} \input{ve_bepo10}
@@ -2866,6 +2873,9 @@ Muhlhaus and Regenauer-Lieb [2005] and Moresi et al. [2002] have studied the rol
 
 \newpage
 \subsection{appendix: Equations in kemk13\label{ve_kemk13}} \input{ve_kemk13}
+
+\newpage
+\subsection{appendix: Equations in zhwa13\label{ve_zhwa13}} \input{ve_zhwa13}
 
 \newpage
 \subsection{appendix: Equations in famc14\label{ve_famc14}} \input{ve_famc14}
@@ -2883,128 +2893,22 @@ Muhlhaus and Regenauer-Lieb [2005] and Moresi et al. [2002] have studied the rol
 \subsection{appendix: Equations in Gerya's book} \input{ve_gerya}
 
 \newpage
-\section{Concensus equations}
-
-The strain rate (corresponding to the velocity field $\vec\upnu$) is given by 
-\[
-\dot{\bm \varepsilon} = \frac12 ( \vec\nabla \vec\upnu + \vec\nabla \vec\upnu^T) 
-\]
-while the corresponding vorticity tensor is given by
-\[
-\dot{\bm \omega} = \frac12 ( \vec\nabla \vec\upnu - \vec\nabla \vec\upnu^T) 
-\]
-It is also sometimes called the 'spin tensor' \cite{moql07}.
-
-The total strain rate can be decomposed as \cite{hard91,momy93}
-\[
-\dot{\bm \varepsilon} = 
-\dot{\bm \varepsilon}_v+
-\dot{\bm \varepsilon}_e
-=
-\frac{1}{2\eta} {\bm \tau} + 
-\frac{1}{2\mu} \frac{{\cal D}{\bm \sigma}}{{\cal D} t}
-\]
-
-\[
-\dot{\bm\varepsilon}_e^d = 
-\dot{\bm\varepsilon}_e  - \frac13 {\rm tr} (\dot{\bm\varepsilon}_e) {\bm 1} 
-\]
-\[
-\dot{\bm\varepsilon}_v^d = 
-\dot{\bm\varepsilon}_v  - \frac13 {\rm tr} (\dot{\bm\varepsilon}_v) {\bm 1} 
-\]
+\subsection{appendix: Equations in Simpson's book} \input{ve_simpson}
 
 
-In the case of large deformations, the material derivative of the Cauchy
-stress tensor  takes the form of the objective Gordon-Schowalter derivative (Saramito, 2016):
-\[
-\frac{{\cal D}{\bm \sigma}}{{\cal D} t} = \frac{\partial{\bm \sigma}}{\partial t}
-+ (\vec\upnu \cdot \vec\nabla) {\bm \sigma} +
-\beta_a (\vec\nabla\vec\upnu,{\bm \sigma})
-\]
-with 
-\[
-\beta_a (\vec\nabla\vec\upnu,{\bm \sigma})
-= 
-{\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}
-- a ( {\bm \sigma} \cdot \dot{\bm \varepsilon}
-+ \dot{\bm \varepsilon} \cdot {\bm \sigma})
-\]
-where $-1 \le a \le +1$ is a free parameter. 
-With the choice $a = 1$ the upper convected derivative is obtained, 
-with $a = 0$ the co-rotational one \cite{hard91}.
-In \cite{moql07} we read: ``When $a=0$, $\check{\bm \tau}$ is known as the Jaumann derivative, and
-when $a=1$ or $a=-1$ it is known as the upper- or lower-convected Maxwell derivative, respectively. 
-The choice $a=0$ considerably simplifies the formulation as it ensures 
-that $\check{\bm \tau}$ is deviatoric when ${\bm \tau}$ is deviatoric.''
+
+\newpage
+\section{The visco-elastic equations}
+
+NEED to address the fact that most of what follows is only for Eulerian mesh case?
+
+\vspace{1cm}
+
+\input{ve_alltheequations}
 
 
-In the end we can write \cite{hard91} 
-\[
-\check{\bm\sigma} = 
-\frac{{\cal D}{\bm \sigma}}{{\cal D} t} = \frac{\partial{\bm \sigma}}{\partial t}
-+ (\vec\upnu \cdot \vec\nabla) {\bm \sigma} +
-{\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}
-- a ( {\bm \sigma} \cdot \dot{\bm \varepsilon}
-+ \dot{\bm \varepsilon} \cdot {\bm \sigma})
-\]
-where ${\cal D}/{\cal D} t$ is called an ``invariant time derivative'' in \cite{hard91}
-
-{\color{red} is it +a or -a?}
-
-In \cite{modm01} we read that ``the $[\tau\omega-\omega\tau]$ terms account 
-for material spin during advection which reorients the elastic stored-stress tensor.''
-Likewise in \cite{moql07} we read that the term 
-$(\vec\upnu \cdot \vec\nabla) {\bm \sigma} +
-{\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}
-- a ( {\bm \sigma} \cdot \dot{\bm \varepsilon}
-+ \dot{\bm \varepsilon} \cdot {\bm \sigma})$
-is ``the instantaneous rate 
-of change in the stress tensor associated with the transport, rotation and stretching by fluid motion.''
-In other words:
-
-\[
-\check{\bm\sigma} = 
-\frac{{\cal D}{\bm \sigma}}{{\cal D} t} = \frac{\partial{\bm \sigma}}{\partial t}
-+ \underbrace{(\vec\upnu \cdot \vec\nabla) {\bm \sigma} }_{advection}
-+ \underbrace{{\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}}_{\rm rotation}
-\underbrace{- a ( {\bm \sigma} \cdot \dot{\bm \varepsilon} + \dot{\bm \varepsilon} \cdot {\bm \sigma})}_{\rm stretching}
-\]
-
-Note that in the appendix D of \cite{bepo10} the term ${\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}$
-is further worked out in 2d Cartesian coordinates and yields:
-\[
-{\bm \sigma}\cdot \dot{\bm \omega} - \dot{\bm \omega}\cdot {\bm \sigma}
-=
-\left(
-\begin{array}{cc}
-2 \omega \tau_{xy} & \omega (\tau_{yy}-\tau_{xx}) \\
-\omega (\tau_{yy}-\tau_{xx}) -2 \omega \tau_{xy}
-\end{array}
-\right)
-\]
 
 
-The deviatoric strain rate is then decomposed as follows \cite{moql07}:
-\[
-\dot{\bm\varepsilon}^d 
-= \frac{1}{2\eta (T)} {\bm \tau}  + \frac{1}{2\mu} \frac{ {\cal D}{\bm \tau} }{{\cal D}t}
-= \frac{1}{2\eta (T)} {\bm \tau}  + \frac{1}{2\mu} \check{\bm \tau} 
-\]
 
 
-\[
-\eta_{\rm ve} 
-=
-\left(
-\frac{1}{\eta} + \frac{1}{\mu \delta t}
-\right)^{-1}
-= \frac{\eta\mu \; \delta t}{\eta + \mu \delta t}
-\]
 
-\[
-\xi = 
-\left(
-1 + \frac{\mu\delta t}{\eta}
-\right)^{-1}
-\]

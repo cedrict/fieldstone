@@ -1,6 +1,8 @@
 
 \fullcite{zhpw03}
 
+see also zhwa13.
+
 \begin{multicols}{2}
 \begin{center}
 {\bf Article excerpts}
@@ -12,24 +14,34 @@
 \begin{multicols}{2}
 \includegraphics[width=8cm]{images/viscoelasticity/zhpw03_a}\\
 \[
-{\bm \sigma} =-p {\bm 1} + 2\eta \dot{\bm\varepsilon}^v
+{\bm \sigma} =-p {\bm 1} + 2\eta \dot{\bm\varepsilon}_{\rm v}
+\Rightarrow
+\dot{\bm\varepsilon}_{\rm v} = \frac{1}{2\eta} ({\bm \sigma} + p {\bm 1})
 \]
 \[
-{\bm \sigma} =-p {\bm 1} + 2\mu {\bm\varepsilon}^e
+{\bm \sigma} =-p {\bm 1} + 2\mu {\bm\varepsilon}_{\rm e}
+\Rightarrow
+{\bm\varepsilon}_{\rm e} = \frac{1}{2\mu} ({\bm \sigma} + p {\bm 1})
 \]
-\[
-\dot{\bm\varepsilon}=\dot{\bm\varepsilon}^v+\dot{\bm\varepsilon}^e
-\]
-Adding the first equation to the time derivatives of the second leads to
+\begin{eqnarray}
+\dot{\bm\varepsilon}
+&=& \dot{\bm\varepsilon}_{\rm v}+\dot{\bm\varepsilon}_{\rm e} \nn\\
+&=& \frac{1}{2\eta} ({\bm \sigma} + p {\bm 1}) 
++ \frac{1}{2\mu} (\dot{\bm \sigma} + \dot{p} {\bm 1}) 
+\end{eqnarray}
+
+This leads to
 \[
 {\bm \sigma} + \frac{\eta}{\mu} \dot {\bm \sigma} = 
--(p + \frac{\eta}{\mu} \dot{p}) {\bm 1} + 2 \eta  \dot{\bm\varepsilon}
+-\left(p + \frac{\eta}{\mu} \dot{p}\right) {\bm 1} + 2 \eta  \dot{\bm\varepsilon}
 \]
 \end{multicols}
 
 \begin{multicols}{2}
 \includegraphics[width=8cm]{images/viscoelasticity/zhpw03_b}\\
 \end{multicols}
+
+\newpage
 
 \begin{multicols}{2}
 \includegraphics[width=8cm]{images/viscoelasticity/zhpw03_c}\\

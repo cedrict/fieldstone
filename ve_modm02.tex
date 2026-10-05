@@ -17,24 +17,26 @@
 (\vec\nabla \vec\upnu + \vec\nabla \vec\upnu ^T )
 \]
 \[
-\dot{\bm\varepsilon}_e^d = 
-\dot{\bm\varepsilon}_e  - \frac13 {\rm tr} (\dot{\bm\varepsilon}_e) {\bm 1} 
+\dot{\bm\varepsilon}_{\rm e}^d = 
+\dot{\bm\varepsilon}_{\rm e} - \frac13 {\rm tr} (\dot{\bm\varepsilon}_{\rm e}) {\bm 1} 
 \]
 \[
-\dot{\bm\varepsilon}_v^d = 
-\dot{\bm\varepsilon}_v  - \frac13 {\rm tr} (\dot{\bm\varepsilon}_v) {\bm 1} 
+\dot{\bm\varepsilon}_{\rm v}^d = 
+\dot{\bm\varepsilon}_{\rm v} - \frac13 {\rm tr} (\dot{\bm\varepsilon}_{\rm v}) {\bm 1} 
 \]
 
 \end{multicols}
+
+%------------------------------------------------------------------
 
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm02b}\\
 \[
 \frac{\check{\bm \tau}}{2 \mu}+\frac{{\bm \tau} }{2 \eta}
 =
-\dot{\bm\varepsilon}_e^d 
+\dot{\bm\varepsilon}_{\rm e}^d 
 +
-\dot{\bm\varepsilon}_v^d
+\dot{\bm\varepsilon}_{\rm v}^d
 =
 \dot{\bm\varepsilon}^d 
 \]
@@ -51,27 +53,44 @@ with
 \[
 \frac{1}{K} \frac{Dp}{Dt} + \frac{p}{\xi} = -{\rm tr}(\dot{\bm\varepsilon})
 \]
+
+$K$ is the bulk modulus, $\xi$ the bulk viscosity.
+
 \end{multicols}
+
+
+
+%------------------------------------------------------------------
 
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm02c}\\
 Numerical implementation
 \[
-\check{\bm \tau} \simeq \frac{\tau-\tau}{\delta t} ...
+\check{\bm \tau} \simeq 
+\frac{{\bm \tau}^{t+\delta t}-{\bm \tau}^t}{\delta t} 
++ {\bm\tau}^t \cdot \dot{\bm\omega}^t - \dot{\bm\omega}^t \cdot {\bm \tau}^t
 \]
 \end{multicols}
+
+%------------------------------------------------------------------
 
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm02d}\\
 \end{multicols}
 
+%------------------------------------------------------------------
+
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm02e}\\
 \end{multicols}
 
+%------------------------------------------------------------------
+
 \begin{multicols}{2}
 \includegraphics[width=8.25cm]{images/viscoelasticity/modm02h}\\
 \end{multicols}
+
+%------------------------------------------------------------------
 
 
 
