@@ -1,0 +1,17 @@
+#! /bin/bash
+
+rm opla
+
+for res in 16 32 48 64 ; do 
+
+    for f in 4 5 6 7 8; do
+
+        echo $res $f 
+
+        python3 stone.py $res $f > opla
+        mv solution.vtu solution_${res}_${f}.vtu
+        mv top_solution.ascii top_solution_${res}_${f}.ascii 
+
+    done
+
+done

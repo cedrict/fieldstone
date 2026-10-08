@@ -29,6 +29,48 @@ def basis_functions_V_ds(r,s):
 
 ###############################################################################
 
+def analytical_displacement(x,y,nu,R,Ly):
+    z=Ly-y
+    z1=-y
+    z2=-y+2*Ly
+    r1_2=x**2+y**2
+    r2_2=x**2+(y-2*Ly)**2
+    # eq1,2+10,11 of vebo96
+    ux=-(x/r1_2  + x/r2_2 ) - 2* ( (1-2*nu)*x/r2_2  - 2*x*z*z2/r2_2**2      )
+    uy=-(z1/r1_2 + z2/r2_2) + 2* ( 2*(1-nu)*z2/r2_2 - z*(x**2-z2**2)/r2_2**2)
+
+    ux*=epsilon*R**2
+    uy*=epsilon*R**2
+
+    return ux,uy
+
+def analytical_stress(x,y,mu,nu,R,Ly):
+    z=Ly-y
+    z1=-y
+    z2=-y+2*Ly
+    r1_2=x**2+y**2
+    r2_2=x**2+(y-2*Ly)**2
+
+    sigma_xx= (x**2-z1**2)/r1_2**2 \
+            + (x**2-z2**2)/r2_2**2 \
+            +2*( (x**2-z2**2)/r2_2**2 - 2*y*z2*(3*x**2-z2**2)/r2_2**3 )
+
+    sigma_yy= -(x**2-z1**2)/r1_2**2 \
+              -(x**2-z2**2)/r2_2**2 \
+            +2*( (x**2-z2**2)/r2_2**2 + 2*y*z2*(3*x**2-z2**2)/r2_2**3 )
+
+    sigma_xy= 2*x*z1/r1_2**2 \
+            + 2*x*z2/r2_2**2 \
+            + 4*x*y*(x**2-3*z2**2)/r2_2**3
+
+    sigma_xx*=2*mu*epsilon*R**2
+    sigma_yy*=2*mu*epsilon*R**2
+    sigma_xy*=2*mu*epsilon*R**2
+
+    return sigma_xx,sigma_yy,sigma_xy
+
+###############################################################################
+
 sqrt2=np.sqrt(2.)
 sqrt3=np.sqrt(3.)
 eps=1e-8
@@ -40,19 +82,37 @@ print("*******************************")
 m_V=4     # number of nodes making up an element
 ndof_V=2  # number of degrees of freedom per node
 
-nelx=64
+if int(len(sys.argv) == 3):
+   nelx   = int(sys.argv[1])
+   factor = int(sys.argv[2])
+else:
+   nelx=60
+   factor=5
 
-E=5e10
-nu=0.35
-mu=E/2/(1+nu)
-lambdaa=E*nu/(1+nu)/(1-2*nu)
-rad=2e3
-Lx=7e3
-Ly=7e3
+experiment=1
 
-sigma_bc=5e6
+if experiment==1: # GTecTon setup
+   E=5e10
+   nu=0.35
+   mu=E/2/(1+nu)
+   lambdaa=E*nu/(1+nu)/(1-2*nu)
+   rad=2e3
+   Lx=7e3
+   Ly=7e3
+   epsilon=0.55e-3
+   sigma_bc=5e6
 
-factor=7
+if experiment==2: # ASPECT setup
+   nu=0.48
+   mu=1e10
+   E=2*mu*(1+nu)
+   lambdaa=E*nu/(1+nu)/(1-2*nu)
+   rad=1e3
+   Lx=4e3
+   Ly=4e3
+   epsilon=0.55e-3
+
+
 
 nely=nelx
 
@@ -61,7 +121,9 @@ distance=eps*Lx
 print('     -> nelx=',nelx)
 print('     -> nely=',nely)
 print('     -> mu=',mu)
+print('     -> E=',E)
 print('     -> lambdaa=',lambdaa)
+print('     -> domain x=',factor*Lx)
 
 debug=False
 
@@ -86,7 +148,6 @@ debug=False
 #
 ###############################################################################
 start=clock.time()
-
 
 xA=rad       ; yA=0
 xB=Lx        ; yB=0
@@ -392,9 +453,6 @@ for iel in range(0,nel):
 
 if debug: np.savetxt('mesh.ascii',np.array([x_V,y_V]).T,header='# x,y')
 
-Lx=2*Lx  #### CHECK!!!!!!
-Ly=3*Ly
-
 print("assemble blocks: %.3f s" % (clock.time()-start))
 
 ###############################################################################
@@ -679,11 +737,66 @@ if debug:
 print("compute press & strain: %.3f s" % (clock.time()-start))
 
 ###############################################################################
+# compute analytical displacement and stress on nodes
 ###############################################################################
 
+uth=np.zeros(nn_V,dtype=np.float64)  
+vth=np.zeros(nn_V,dtype=np.float64)  
+sigmaxxth=np.zeros(nn_V,dtype=np.float64) 
+sigmayyth=np.zeros(nn_V,dtype=np.float64) 
+sigmaxyth=np.zeros(nn_V,dtype=np.float64) 
+ 
+for i in range(0,nn_V):
+    uth[i],vth[i]=analytical_displacement(x_V[i],y_V[i],nu,rad,Ly)
+    sigmaxxth[i],sigmayyth[i],sigmaxyth[i]=analytical_stress(x_V[i],y_V[i],mu,nu,rad,Ly)
 
-np.savetxt('top_solution.ascii',np.array([x_V[top],u[top],v[top],
-                                          sigma_xx_n[top],sigma_yy_n[top],sigma_xy_n[top]]).T,header='# x,u,v')
+disp=np.sqrt(u**2+v**2)
+dispth=np.sqrt(uth**2+vth**2)
+r=np.sqrt(x_V**2+y_V**2)
+theta=np.arctan2(y_V,x_V)
+
+###############################################################################
+# export measurements on tunnel and at surface 
+###############################################################################
+
+factor_disp=epsilon*rad**2
+factor_stress=2*mu*epsilon*rad**2
+
+np.savetxt('top_solution.ascii',np.array([x_V[top],\
+                                          u[top],\
+                                          v[top],\
+                                          sigma_xx_n[top],\
+                                          sigma_yy_n[top],\
+                                          sigma_xy_n[top]]).T,\
+                                header='# x,u,v',fmt='%.4e')
+
+np.savetxt('top_analytical_solution.ascii',np.array([x_V[top],\
+                                                     dispth[top]/factor_disp,\
+                                                     uth[top]/factor_disp,\
+                                                     vth[top]/factor_disp,\
+                                                     sigmaxxth[top]/factor_stress,\
+                                                     sigmayyth[top]/factor_stress,\
+                                                     sigmaxyth[top]/factor_stress]).T,\
+                                           header='# x,u,v',fmt='%.4e')
+
+
+np.savetxt('circle_solution.ascii',np.array([theta[circle],\
+                                             disp[circle],\
+                                             u[circle],\
+                                             v[circle],\
+                                             sigma_xx_n[circle],\
+                                             sigma_yy_n[circle],\
+                                             sigma_xy_n[circle]]).T,\
+                                   header='# x,u,v',fmt='%.4e')
+
+np.savetxt('circle_analytical_solution.ascii',np.array([theta[circle],\
+                                                        dispth[circle]/factor_disp,\
+                                                        uth[circle]/factor_disp,\
+                                                        vth[circle]/factor_disp,\
+                                                        sigmaxxth[circle]/factor_stress,\
+                                                        sigmayyth[circle]/factor_stress,\
+                                                        sigmaxyth[circle]/factor_stress]).T,\
+                                              header='# theta,disp,u,v',fmt='%.4e')
 
 
 ###############################################################################
@@ -708,6 +821,13 @@ vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='displaceme
 for i in range(0,nn_V):
     vtufile.write("%e %e %e \n" %(u[i],v[i],0.))
 vtufile.write("</DataArray>\n")
+
+#--
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='displacement (th)' Format='ascii'> \n")
+for i in range(0,nn_V):
+    vtufile.write("%e %e %e \n" %(uth[i],vth[i],0.))
+vtufile.write("</DataArray>\n")
+
 #--
 vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
 q.tofile(vtufile,sep=' ',format='%.4e')
@@ -756,6 +876,19 @@ vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='sigma' Format='ascii'> \n")
 sigma_n.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
+
+
+vtufile.write("<DataArray type='Float32' Name='sigma_xx (th)' Format='ascii'> \n")
+sigmaxxth.tofile(vtufile,sep=' ',format='%.4e')
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='sigma_yy (th)' Format='ascii'> \n")
+sigmayyth.tofile(vtufile,sep=' ',format='%.4e')
+vtufile.write("</DataArray>\n")
+vtufile.write("<DataArray type='Float32' Name='sigma_xy (th)' Format='ascii'> \n")
+sigmaxyth.tofile(vtufile,sep=' ',format='%.4e')
+vtufile.write("</DataArray>\n")
+
+
 #--
 vtufile.write("</PointData>\n")
 #####
