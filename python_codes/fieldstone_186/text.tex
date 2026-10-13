@@ -38,10 +38,26 @@ Last revision: October , 2026.
 
 This \stone is inspired/based on the following articles:
 \begin{itemize}
-\item \fullcite{mcti87}
-\item \fullcite{vebo96}:
+\item \fullcite{jeff21} (2d only):
+
 \begin{displayquote}
-an approximate analytical solution is presented,
+``In this paper the complete solution is given for bipolar co-ordinates, for which the
+co-ordinate curves are co-axial circles. This solution enables us to treat the problems
+of an infinite plate containing two circular holes, a semi-infinite plate bounded by a
+straight edge and containing one circular hole, and a circular disc with an eccentric
+circular hole.''
+\end{displayquote}
+ 
+\item \fullcite{mcti87} (3d only) :
+\begin{displayquote}
+Approximate solutions are obtained for the stress and displacement fields due to a 
+pressurized spherical cavity in an elastic half-space.
+\end{displayquote}
+
+
+\item \fullcite{vebo96} (2d only):
+\begin{displayquote}
+``An approximate analytical solution is presented,
 considering the soil as a linear elastic material.
 Although it is realized that this is a very poor
 schematization of the real behaviour of soils, an
@@ -51,20 +67,28 @@ and strain, and it may also serve as a reference for
 more refined (numerical) computations.
 [...]
 Here the surface displacements for a
-tunnel in a semi-in®nite medium are considered, as
+tunnel in a semi-infinite medium are considered, as
 well as the displacements and stresses throughout
 the half space.
 [...]
 In these solutions the displacements are of order ${\cal O}(1/r)$, so that they correspond
-to the removal of a finite volume, and the stresses are of order ${\cal O}(1/r^2)$.
+to the removal of a finite volume, and the stresses are of order ${\cal O}(1/r^2)$.''
 \end{displayquote}
 
-\item \fullcite{verr98}
-\item \fullcite{jeff21}
+\item \fullcite{verr98} (2d only):
+\begin{displayquote}
+``An analytical solution is given of the class of problems of an elastic half plane with a
+circular cavity, loaded on the cavity boundary.''
+\end{displayquote}
+
+
 \end{itemize}
 All publications deal with a 2d/3d cavity in an elastic medium and present 
 a (semi-)analytical solution.
 
+Note that my python code is only 2d but given the axisymmetric nature 
+of 3d setups I could easily modify it to allow for an 
+axisymmetric formulation.
 
 
 \newpage
@@ -93,6 +117,11 @@ stress). They merely arrive at a class of (approximate) solutions that fulfill
 the free surface boundary conditions. 
 The $\epsilon$ parameter acts in fact as a scaling coefficient for
 the amplitude of displacements and stresses.
+
+As such that article is not so useful. The analytical displacement and stresses
+are not exact on the tunnel wall so that neither can be 
+prescribed there. As it turns out to be, the 1998 paper by Verruit (see here after)
+is much better.
 
 %---------------------------------------
 \subsection*{Analytical displacement}
@@ -167,21 +196,6 @@ u_z(x,z=0)
 = 2 \epsilon R^2 \frac{m+1}{m} \frac{h}{x^2+h^2}
 = 4 \epsilon R^2 (1-\nu) \frac{h}{x^2+h^2}
 \]
-
-From Annie:
-\begin{lstlisting}
-def verruijt_displacement(x, epsilon=1/2000, R=1000, h=4000, nu=0.5):
-    """Surface (z = 0) displacements from Verruijt & Booker (1996), delta = 0.
-    epsilon > 0 means the cavity wall moves inward (ground loss).
-    Returns (ux, uz) with ux positive in +x and uz positive DOWN.
-        uz =  2*eps*R^2 * 2(1-nu) * h / (x^2 + h^2)
-        ux = -2*eps*R^2 * 2(1-nu) * x / (x^2 + h^2)"""
-    x = np.asarray(x, dtype=float)
-    coef = 2.0 * epsilon * R**2 * 2.0 * (1.0 - nu)
-    denom = x**2 + h**2
-    return -coef * x / denom, coef * h / denom
-\end{lstlisting}
-
 
 In the code the origin of the Cartesian coordinate system 
 is placed at the center of the tunnel, with the $y$-axis 
@@ -271,19 +285,6 @@ We need to turn to the additional material to find:
 +2 \frac{2xy(x^2-3y_2^2)}{r_2^6}
 \nn
 \end{eqnarray}
-
-
-From Annie:
-\begin{lstlisting}
-def isotropic_stress_ver(x, z, R=1000, h=4000, epsilon=1/2000, mu=1e10):
-    """Isotropic stress sigma_0 = (sigma_xx + sigma_zz)/2 from Verruijt & Booker
-    (1996) Eq. (14) with delta = 0. Paper coordinates: z positive down, cavity
-    centre at (0, h). Frame-independent, so valid in ASPECT's y-up frame."""
-    x = np.asarray(x, dtype=float)
-    z2 = np.asarray(z, dtype=float) + h
-    r2s = x**2 + z2**2
-    return -4 * mu * epsilon * R**2 * (z2**2 - x**2) / r2s**2
-\end{lstlisting}
 
 
 
@@ -469,22 +470,44 @@ i.e. the stress $\sigma_0$ is not constant on the wall.
 \section*{The GTECTON setup/experiment (experiment=1)}
 
 This experiment matches with the \textcite{verr98} (1998) article.
-Lukas has provided me with results obtained with GTECTON.
+Lukas has provided me with results obtained with GTECTON for reference (see figures below).
 
 The tunnel has a radius of 2~\si{\kilo\meter} and is situated 7~\si{\kilo\meter} below the surface.
 The inside pressure is set to 5~\si{\mega\pascal}.
 The Poisson ratio is $\nu=0.35$ and the Young's modulus is $E=5\cdot 10^{10}~\si{\pascal}$.
-
 This yields $\mu=\frac{E}{2(1+\nu)} \simeq 18.5e9$. 
+
+Boundary conditions are free slip on the left side (except on the tunnel walls), 
+free surface at the top and free slip on the bottom and right boundaries.
+
+We find that the domain size matters a lot, and in order to come close to 
+the analytical solution\footnote{I have not written a code to 
+compute the analytical solution, I use here the files provided by Lukas}, 
+we must use large values of $\xi$ and $\psi$. 
 
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/VerruijtHorizontal.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/VerruijtVertical.pdf}\\
-{\captionfont Results obtained with GTECTON.}
+\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/VerruijtHorizontal.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/VerruijtVertical.pdf}\\
+{\captionfont Results obtained with GTECTON on a 100x100 km domain. 
+Note that the analytical displacements are prescribed on the bottom and right boundaries.}
+\end{center}
+
+\newpage
+Results are obtained by running {\tt script\_experiments}.
+Note that the run 16-32-32 takes a few minutes: the mesh 
+counts 287,744 elements!
+
+\begin{center}
+\fbox{\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/d1}}
+\fbox{\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/d2}} \\
+\fbox{\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/d3}}
+\fbox{\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/d4}}\\
+{\captionfont Domains for $\xi=\psi=4,8,16,32$ with a resolution per block of 16x16 elements.}
 \end{center}
 
 
+\newpage
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/top_ux.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/top_uy.pdf}\\
@@ -505,9 +528,9 @@ is much smaller than $\sigma_{xx}$.}
 \includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_ux.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_uy.pdf}\\
 \includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_sigmaxx.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_sigmaxy.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_sigmayy.pdf}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_sigma0.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_sigmayy.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_sigmaxy.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_sigma0.pdf}
 \end{center}
 
 
@@ -517,16 +540,6 @@ is much smaller than $\sigma_{xx}$.}
 \section*{The ASPECT setup (experiment=2)}
 
 The tunnel has a radius of 1~\si{\kilo\meter} and is situated 4~\si{\kilo\meter} below the surface.
-
-Annie: 
-``The tunnel displacement is the distance that the tunnel expands radially to create the perturbation. 
-It's captured in the epsilon term in the paper.  Epsilon = tunnel displacement distance/ tunnel radius (R). 
-You can see in my .vtu that velocity at the chamber border is 0.55m/yr, so I used 0.55m/1000m = epsilon.''
-
-`` My isotropic stress function is straight from equation 14 and my displacement functions are 
-equations 1 + 10 for x and 2 + 11 for z. And I simplified assuming that delta = 0 and z = 0. ''
-
-``epsilon $>$ 0 means the cavity wall moves inward (ground loss)''
 
 \begin{lstlisting}
 nu=0.48
@@ -539,10 +552,26 @@ Ly=4e3
 \end{lstlisting}
 
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/ASPECT/top_ux.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/ASPECT/top_uy.pdf}
+\end{center}
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/ASPECT/ux.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/ASPECT/uy.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/ASPECT/top_sigmaxx.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/ASPECT/top_sigmaxy.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/ASPECT/top_sigmayy.pdf} \\
+{\captionfont Since the top surface is a free surface we should have recovered
+$\sigma_{xy}=\sigma_{yy}=0$. This is not the case but we see that their amplitude 
+is much smaller than $\sigma_{xx}$.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/ASPECT/circle_ux.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/ASPECT/circle_uy.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/ASPECT/circle_sigmaxx.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/ASPECT/circle_sigmayy.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/ASPECT/circle_sigmaxy.pdf}
 \end{center}
 
 

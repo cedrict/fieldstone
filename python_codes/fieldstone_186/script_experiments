@@ -1,0 +1,35 @@
+#! /bin/bash
+
+rm opla
+
+echo 16 4 4
+python3 stone.py 16 4 4 > opla
+mv top_solution.ascii top_solution_16_4_4.ascii
+mv circle_solution.ascii circle_solution_16_4_4.ascii
+mv solution.vtu solution_16_4_4.vtu
+
+echo 16 8 8
+python3 stone.py 16 8 8 > opla
+mv top_solution.ascii top_solution_16_8_8.ascii
+mv circle_solution.ascii circle_solution_16_8_8.ascii
+mv solution.vtu solution_16_8_8.vtu
+
+echo 16 16 16
+python3 stone.py 16 16 16 > opla
+mv top_solution.ascii top_solution_16_16_16.ascii
+mv circle_solution.ascii circle_solution_16_16_16.ascii
+mv solution.vtu solution_16_16_16.vtu
+
+echo 16 32 32
+python3 stone.py 16 32 32 > opla
+mv top_solution.ascii top_solution_16_32_32.ascii
+mv circle_solution.ascii circle_solution_16_32_32.ascii
+mv solution.vtu solution_16_32_32.vtu
+
+echo 16 48 48
+python3 stone.py 16 48 48 > opla
+mv top_solution.ascii top_solution_16_48_48.ascii
+mv circle_solution.ascii circle_solution_16_48_48.ascii
+mv solution.vtu solution_16_48_48.vtu
+
+

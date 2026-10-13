@@ -1,0 +1,90 @@
+#
+set term pdf enhanced font "Font,12"
+set grid
+set pointsize .4
+
+###############################################################################
+
+set xlabel 'theta'
+
+set ylabel 'displacement u_x/(eps*R^2)'
+set output 'circle_analytical_ux.pdf'
+plot[-pi/2:pi/2][]\
+'circle_analytical_solution.ascii' u 1:3 notitle
+
+set ylabel 'displacement u_y/(eps*R^2)'
+set output 'circle_analytical_uy.pdf'
+plot[-pi/2:pi/2][]\
+'circle_analytical_solution.ascii' u 1:4 notitle
+
+set ylabel 'displacement u/(eps*R^2)'
+set output 'circle_analytical_disp.pdf'
+plot[-pi/2:pi/2][]\
+'circle_analytical_solution.ascii' u 1:2 notitle
+
+set ylabel 'stress sigma xx/(2*mu*eps*R^2)'
+set output 'circle_analytical_sigmaxx.pdf'
+plot[-pi/2:pi/2][]\
+'circle_analytical_solution.ascii' u 1:5 notitle
+
+set ylabel 'stress sigma yy/(2*mu*eps*R^2)'
+set output 'circle_analytical_sigmayy.pdf'
+plot[-pi/2:pi/2][]\
+'circle_analytical_solution.ascii' u 1:6 notitle
+
+set ylabel 'stress sigma xy/(2*mu*eps*R^2)'
+set output 'circle_analytical_sigmaxy.pdf'
+plot[-pi/2:pi/2][]\
+'circle_analytical_solution.ascii' u 1:7 notitle
+
+set ylabel 'stress {/Symbol s}_0/(2*mu*eps*R^2)'
+set output 'circle_analytical_sigma0.pdf'
+plot[-pi/2:pi/2][]\
+'circle_analytical_solution.ascii' u 1:(0.5*($5+$6)) notitle
+
+###############################################################################
+
+set xlabel 'x'
+
+set ylabel 'displacement u_x/(eps*R^2)'
+set output 'top_analytical_ux.pdf'
+plot[][]\
+'top_analytical_solution.ascii' u 1:3 notitle
+
+set ylabel 'displacement u_y/(eps*R^2)'
+set output 'top_analytical_uy.pdf'
+plot[][]\
+'top_analytical_solution.ascii' u 1:4 notitle
+
+set ylabel 'displacement u/(eps*R^2)'
+set output 'top_analytical_disp.pdf'
+plot[][]\
+'top_analytical_solution.ascii' u 1:2 notitle
+
+set ylabel 'stress sigma xx/(2*mu*eps*R^2)'
+set output 'top_analytical_sigmaxx.pdf'
+plot[][]\
+'top_analytical_solution.ascii' u 1:5 notitle
+
+set ylabel 'stress sigma yy/(2*mu*eps*R^2)'
+set output 'top_analytical_sigmayy.pdf'
+plot[][]\
+'top_analytical_solution.ascii' u 1:6 notitle
+
+set ylabel 'stress sigma xy/(2*mu*eps*R^2)'
+set output 'top_analytical_sigmaxy.pdf'
+plot[][]\
+'top_analytical_solution.ascii' u 1:7 notitle
+
+set ylabel 'stress {/Symbol s}_0/(2*mu*eps*R^2)'
+set output 'top_analytical_sigma0.pdf'
+plot[][]\
+'top_analytical_solution.ascii' u 1:(0.5*($5+$6)) notitle
+
+###############################################################################
+
+
+
+
+
+

@@ -67,8 +67,8 @@ if int(len(sys.argv) == 4):
    xi=float(sys.argv[2])
    psi=float(sys.argv[3])
 else:
-   nelxA=32
-   xi=16
+   nelxA=16
+   xi=8
    psi=8
 
 experiment=1
@@ -91,6 +91,7 @@ if experiment==2: # ASPECT setup
    radius=1e3
    L=4e3
    epsilon=0.55e-3
+   sigma_bc=5e6
 
 extent_x=xi*L
 extent_y=psi*L
@@ -104,13 +105,14 @@ xNE=L+extent_x ; yNE=L           # upper right corner
 print('     -> mu=',mu)
 print('     -> E=',E)
 print('     -> lambdaa=',lambdaa)
-print('     -> xi=',xi)
-print('     -> psi=',psi) 
 print('     -> xSW,ySW=',xSW,ySW)
 print('     -> xNE,yNE=',xNE,yNE)
 print('     -> nelxA=',nelxA)
+print('     -> xi=',xi)
+print('     -> psi=',psi) 
 print('     -> nelxB=',nelxB)
 print('     -> nelyC=',nelyC)
+print("*******************************")
 
 debug=False
 
@@ -176,11 +178,11 @@ for i in range(0,nn_V):
     if left[i]:
        bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = 0
     if bottom[i]:
-       bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = 0
+       #bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = 0
        bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0
     if right[i]:
        bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = 0
-       bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0
+       #bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0
     #if circle[i]:
     #   bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = x_V[i]/100
     #   bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = y_V[i]/100

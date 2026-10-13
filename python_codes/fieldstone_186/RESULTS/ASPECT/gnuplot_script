@@ -1,0 +1,143 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize .12
+set key outside
+
+set title 'At the surface'
+
+set xlabel 'x (km)'
+set ylabel 'horizontal displacement u_x'
+set output 'top_ux.pdf'
+plot[:20][]\
+'top_solution_16_4_4.ascii'   u ($1/1e3):2 lt 1 pt 2 t 'nelxA=16,xi=4,psi=4',\
+'top_solution_16_8_8.ascii'   u ($1/1e3):2 lt 2 pt 2 t 'nelxA=16,xi=8,psi=8',\
+'top_solution_32_8_8.ascii'   u ($1/1e3):2 lt 2 pt 3 t 'nelxA=32,xi=8,psi=8',\
+'top_solution_16_16_16.ascii' u ($1/1e3):2 lt 3 pt 2 t 'nelxA=16,xi=16,psi=16',\
+'top_solution_16_32_32.ascii' u ($1/1e3):2 lt 4 pt 2 t 'nelxA=16,xi=32,psi=32',\
+'top_solution_16_48_48.ascii' u ($1/1e3):2 lt 5 pt 2 t 'nelxA=16,xi=48,psi=48',\
+
+################################################################
+
+set ylabel 'horizontal displacement u_y'
+set output 'top_uy.pdf'
+plot[:20][]\
+'top_solution_16_4_4.ascii'   u ($1/1e3):3 lt 1 pt 2 t 'nelxA=16,xi=4,psi=4',\
+'top_solution_16_8_8.ascii'   u ($1/1e3):3 lt 2 pt 2 t 'nelxA=16,xi=8,psi=8',\
+'top_solution_32_8_8.ascii'   u ($1/1e3):3 lt 2 pt 3 t 'nelxA=32,xi=8,psi=8',\
+'top_solution_16_16_16.ascii' u ($1/1e3):3 lt 3 pt 2 t 'nelxA=16,xi=16,psi=16',\
+'top_solution_16_32_32.ascii' u ($1/1e3):3 lt 4 pt 2 t 'nelxA=16,xi=32,psi=32',\
+'top_solution_16_48_48.ascii' u ($1/1e3):3 lt 5 pt 2 t 'nelxA=16,xi=48,psi=48',\
+
+################################################################
+
+set ylabel 'sigma xx'
+set output 'top_sigmaxx.pdf'
+plot[:50][-500e3:]\
+'top_solution_16_4_4.ascii'   u ($1/1e3):4 lt 1 pt 2 t 'nelxA=16,xi=4,psi=4',\
+'top_solution_16_8_8.ascii'   u ($1/1e3):4 lt 2 pt 2 t 'nelxA=16,xi=8,psi=8',\
+'top_solution_16_16_16.ascii' u ($1/1e3):4 lt 3 pt 2 t 'nelxA=16,xi=16,psi=16',\
+'top_solution_16_32_32.ascii' u ($1/1e3):4 lt 4 pt 2 t 'nelxA=16,xi=32,psi=32',\
+'top_solution_16_48_48.ascii' u ($1/1e3):4 lt 5 pt 2 t 'nelxA=16,xi=48,psi=48',\
+
+################################################################
+
+set ylabel 'sigma yy'
+set output 'top_sigmayy.pdf'
+plot[:50][]\
+'top_solution_16_4_4.ascii'   u ($1/1e3):5 lt 1 pt 2 t 'nelxA=16,xi=4,psi=4',\
+'top_solution_16_8_8.ascii'   u ($1/1e3):5 lt 2 pt 2 t 'nelxA=16,xi=8,psi=8',\
+'top_solution_16_16_16.ascii' u ($1/1e3):5 lt 3 pt 2 t 'nelxA=16,xi=16,psi=16',\
+'top_solution_16_32_32.ascii' u ($1/1e3):5 lt 4 pt 2 t 'nelxA=16,xi=32,psi=32',\
+'top_solution_16_48_48.ascii' u ($1/1e3):5 lt 5 pt 2 t 'nelxA=16,xi=48,psi=48',\
+
+################################################################
+
+set ylabel 'sigma xy'
+set output 'top_sigmaxy.pdf'
+plot[:50][-25000:25000]\
+'top_solution_16_4_4.ascii'   u ($1/1e3):6 lt 1 pt 2 t 'nelxA=16,xi=4,psi=4',\
+'top_solution_16_8_8.ascii'   u ($1/1e3):6 lt 2 pt 2 t 'nelxA=16,xi=8,psi=8',\
+'top_solution_16_16_16.ascii' u ($1/1e3):6 lt 3 pt 2 t 'nelxA=16,xi=16,psi=16',\
+'top_solution_16_32_32.ascii' u ($1/1e3):6 lt 4 pt 2 t 'nelxA=16,xi=32,psi=32',\
+'top_solution_16_48_48.ascii' u ($1/1e3):6 lt 5 pt 2 t 'nelxA=16,xi=48,psi=48',\
+
+
+
+################################################################
+################################################################
+################################################################
+
+set title 'At the tunnel walls'
+
+set xlabel 'angle {/Symbol Q}'
+set ylabel 'horizontal displacement u_x'
+set output 'circle_ux.pdf'
+plot[-pi/2:pi/2][]\
+'circle_solution_16_4_4.ascii'   u 1:3 lt 1 pt 2 t 'nelxA=16,xi=4,psi=4',\
+'circle_solution_16_8_8.ascii'   u 1:3 lt 2 pt 2 t 'nelxA=16,xi=8,psi=8',\
+'circle_solution_16_16_16.ascii' u 1:3 lt 3 pt 2 t 'nelxA=16,xi=16,psi=16',\
+'circle_solution_16_32_32.ascii' u 1:3 lt 4 pt 2 t 'nelxA=16,xi=32,psi=32',\
+'circle_solution_16_48_48.ascii' u 1:3 lt 5 pt 2 t 'nelxA=16,xi=48,psi=48',\
+
+set ylabel 'horizontal displacement u_y'
+set output 'circle_uy.pdf'
+plot[][]\
+'circle_solution_16_4_4.ascii'   u 1:4 lt 1 pt 2 t 'nelxA=16,xi=4,psi=4',\
+'circle_solution_16_8_8.ascii'   u 1:4 lt 2 pt 2 t 'nelxA=16,xi=8,psi=8',\
+'circle_solution_16_16_16.ascii' u 1:4 lt 3 pt 2 t 'nelxA=16,xi=16,psi=16',\
+'circle_solution_16_32_32.ascii' u 1:4 lt 4 pt 2 t 'nelxA=16,xi=32,psi=32',\
+'circle_solution_16_48_48.ascii' u 1:4 lt 5 pt 2 t 'nelxA=16,xi=48,psi=48',\
+
+set ylabel 'displacement |u|'
+set output 'circle_disp.pdf'
+plot[][]\
+'circle_solution_16_4_4.ascii'   u 1:2 lt 1 pt 2 t 'nelxA=16,xi=4,psi=4',\
+'circle_solution_16_8_8.ascii'   u 1:2 lt 2 pt 2 t 'nelxA=16,xi=8,psi=8',\
+'circle_solution_16_16_16.ascii' u 1:2 lt 3 pt 2 t 'nelxA=16,xi=16,psi=16',\
+'circle_solution_16_32_32.ascii' u 1:2 lt 4 pt 2 t 'nelxA=16,xi=32,psi=32',\
+'circle_solution_16_48_48.ascii' u 1:2 lt 5 pt 2 t 'nelxA=16,xi=48,psi=48',\
+
+set ylabel 'stress sigma xx'
+set output 'circle_sigmaxx.pdf'
+plot[][]\
+'circle_solution_16_4_4.ascii'   u 1:5 lt 1 pt 2 t 'nelxA=16,xi=4,psi=4',\
+'circle_solution_16_8_8.ascii'   u 1:5 lt 2 pt 2 t 'nelxA=16,xi=8,psi=8',\
+'circle_solution_32_8_8.ascii'   u 1:5 lt 2 pt 3 t 'nelxA=32,xi=8,psi=8',\
+'circle_solution_16_16_16.ascii' u 1:5 lt 3 pt 2 t 'nelxA=16,xi=16,psi=16',\
+'circle_solution_16_32_32.ascii' u 1:5 lt 4 pt 2 t 'nelxA=16,xi=32,psi=32',\
+'circle_solution_16_48_48.ascii' u 1:5 lt 5 pt 2 t 'nelxA=16,xi=48,psi=48',\
+
+set ylabel 'stress sigma yy'
+set output 'circle_sigmayy.pdf'
+plot[][]\
+'circle_solution_16_4_4.ascii'   u 1:6 lt 1 pt 2 t 'nelxA=16,xi=4,psi=4',\
+'circle_solution_16_8_8.ascii'   u 1:6 lt 2 pt 2 t 'nelxA=16,xi=8,psi=8',\
+'circle_solution_32_8_8.ascii'   u 1:6 lt 2 pt 3 t 'nelxA=32,xi=8,psi=8',\
+'circle_solution_16_16_16.ascii' u 1:6 lt 3 pt 2 t 'nelxA=16,xi=16,psi=16',\
+'circle_solution_16_32_32.ascii' u 1:6 lt 4 pt 2 t 'nelxA=16,xi=32,psi=32',\
+'circle_solution_16_48_48.ascii' u 1:6 lt 5 pt 2 t 'nelxA=16,xi=48,psi=48',\
+
+set ylabel 'stress sigma xy'
+set output 'circle_sigmaxy.pdf'
+plot[][]\
+'circle_solution_16_4_4.ascii'   u 1:7 lt 1 pt 2 t 'nelxA=16,xi=4,psi=4',\
+'circle_solution_16_8_8.ascii'   u 1:7 lt 2 pt 2 t 'nelxA=16,xi=8,psi=8',\
+'circle_solution_32_8_8.ascii'   u 1:7 lt 2 pt 3 t 'nelxA=32,xi=8,psi=8',\
+'circle_solution_16_16_16.ascii' u 1:7 lt 3 pt 2 t 'nelxA=16,xi=16,psi=16',\
+'circle_solution_16_32_32.ascii' u 1:7 lt 4 pt 2 t 'nelxA=16,xi=32,psi=32',\
+'circle_solution_16_48_48.ascii' u 1:7 lt 5 pt 2 t 'nelxA=16,xi=48,psi=48',\
+
+
+set ylabel 'stress {/Symbol s}_0'
+set output 'circle_sigma0.pdf'
+plot[][]\
+'circle_solution_16_4_4.ascii'   u 1:($5+$6) lt 1 pt 2 t 'nelxA=16,xi=4,psi=4',\
+'circle_solution_16_8_8.ascii'   u 1:($5+$6) lt 2 pt 2 t 'nelxA=16,xi=8,psi=8',\
+'circle_solution_32_8_8.ascii'   u 1:($5+$6) lt 2 pt 3 t 'nelxA=32,xi=8,psi=8',\
+'circle_solution_16_16_16.ascii' u 1:($5+$6) lt 3 pt 2 t 'nelxA=16,xi=16,psi=16',\
+'circle_solution_16_32_32.ascii' u 1:($5+$6) lt 4 pt 2 t 'nelxA=16,xi=32,psi=32',\
+'circle_solution_16_48_48.ascii' u 1:($5+$6) lt 5 pt 2 t 'nelxA=16,xi=48,psi=48',\
+
+
+
