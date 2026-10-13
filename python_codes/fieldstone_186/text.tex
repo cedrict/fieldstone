@@ -33,8 +33,43 @@ Last revision: October , 2026.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This \stone is based on:
-\fullcite{vebo96}.
+%=====================
+\section*{Background}
+
+This \stone is inspired/based on the following articles:
+\begin{itemize}
+\item \fullcite{mcti87}
+\item \fullcite{vebo96}:
+\begin{displayquote}
+an approximate analytical solution is presented,
+considering the soil as a linear elastic material.
+Although it is realized that this is a very poor
+schematization of the real behaviour of soils, an
+elastic solution may well serve to investigate some
+of the characteristics of the resulting fields of stress
+and strain, and it may also serve as a reference for
+more refined (numerical) computations.
+[...]
+Here the surface displacements for a
+tunnel in a semi-in®nite medium are considered, as
+well as the displacements and stresses throughout
+the half space.
+[...]
+In these solutions the displacements are of order ${\cal O}(1/r)$, so that they correspond
+to the removal of a finite volume, and the stresses are of order ${\cal O}(1/r^2)$.
+\end{displayquote}
+
+\item \fullcite{verr98}
+\item \fullcite{jeff21}
+\end{itemize}
+All publications deal with a 2d/3d cavity in an elastic medium and present 
+a (semi-)analytical solution.
+
+
+
+\newpage
+%==============================================
+\section*{Scrutinizing Verruit \& Booker 1996}
 
 The paper gives an approximate analytic solution for a tunnel in a homogeneous elastic half
 space, caused by ground loss and ovalization. The two basic processes are illustrated in
@@ -52,14 +87,15 @@ In what follows we disregard the ovalization, so $\delta=0$ (see paper).
 Note that the pdf of the paper also contains additional material with 
 full derivations of all fields. 
 
+Very important remark: at no point in this paper the authors 
+specify boundary conditions on the tunnel walls (no displacement nor
+stress). They merely arrive at a class of (approximate) solutions that fulfill
+the free surface boundary conditions. 
+The $\epsilon$ parameter acts in fact as a scaling coefficient for
+the amplitude of displacements and stresses.
 
-\newpage
 %---------------------------------------
 \subsection*{Analytical displacement}
-
-\begin{center}
-\includegraphics[width=4cm]{python_codes/fieldstone_186/images/fig2}
-\end{center}
 
 The total displacement is the sum of two components. The first is given by
 Eqs 1,2 of \textcite{vebo96}:
@@ -68,6 +104,13 @@ Eqs 1,2 of \textcite{vebo96}:
 u_x &=& -\epsilon R^2 \left(  \frac{x}{r_1^2}+\frac{x}{r_2^2} \right) \nn\\
 u_z &=& -\epsilon R^2 \left(  \frac{z_1}{r_1^2}+\frac{z_2}{r_2^2} \right) \nn
 \end{eqnarray}
+
+with the coordinate system defined as follows:
+\begin{center}
+\includegraphics[width=4cm]{python_codes/fieldstone_186/images/fig2}\\
+{\captionfont  Taken from \cite{vebo96}.}
+\end{center}
+
 
 Also note that $u_z=0$ for $z=0$ since $z_1=-z_2$.
 The second component is given by Eqs 10,11 of \textcite{vebo96}:
@@ -100,7 +143,7 @@ Then velocity components can be written as follows:
 \end{eqnarray}
 
 
-From the additional notes at the end of the paper we get\footnote{The 
+In the additional notes at the end of the paper we find\footnote{The 
 'basic solution for ground loss' part of the additional notes 
 needs to be discarded here. Also, these additional notes use the $y$
 coordinate instead of $z$ in the paper so I have changed $y\rightarrow z$
@@ -116,7 +159,7 @@ because I will use the $y$ coordinate later.}:
 +2 \left(\frac{2(1-\nu)z_2}{r_2^2} - \frac{z(x^2-z_2^2)}{r_2^4} \right)
 \end{eqnarray}
 where $z_1=z-h$ and $z_2=z+h$, and which is identical to the expressions
-of the original paper.
+of the first part of the article.
 
 In particular the vertical component of the velocity at the surface is given by Eq 12:
 \[
@@ -139,14 +182,10 @@ def verruijt_displacement(x, epsilon=1/2000, R=1000, h=4000, nu=0.5):
     return -coef * x / denom, coef * h / denom
 \end{lstlisting}
 
-Let us now formulate the equations above in Cartesian coordinates $x,y$, 
-centered on the tunnel, with the $y$ axis pointing upwards.
-In this case we have $z=L-y$, and then 
-\begin{eqnarray}
-z_1&=&z-h=L-y-L=-y  \\
-z_2&=&z+h=L-y+L=-y+2L
-\end{eqnarray}
 
+In the code the origin of the Cartesian coordinate system 
+is placed at the center of the tunnel, with the $y$-axis 
+pointing upward.
 
 
 \begin{center}
@@ -196,12 +235,15 @@ z_2&=&z+h=L-y+L=-y+2L
 \end{tikzpicture}
 \end{center}
 
-Likewise we have 
-
+In this case we have $z=L-y$, and then 
 \begin{eqnarray}
+z_1&=&z-h=L-y-L=-y  \\
+z_2&=&z+h=L-y+L=-y+2L \\
 r_1&=& \sqrt{(x-0)^2+(y-0)^2} = \sqrt{x^2+y^2}   \\
 r_2&=& \sqrt{(x-0)^2+(y-2L)^2} = \sqrt{x^2+(y-2L)^2}
 \end{eqnarray}
+
+Also, because the vertical axis has been reversed, we then have $u_y=-u_z$.
 
 
 %---------------------------------------
@@ -243,9 +285,130 @@ def isotropic_stress_ver(x, z, R=1000, h=4000, epsilon=1/2000, mu=1e10):
     return -4 * mu * epsilon * R**2 * (z2**2 - x**2) / r2s**2
 \end{lstlisting}
 
-\newpage
 
-Analytical solution in the tunnel walls:
+
+
+\newpage
+%==================================
+\section*{Meshing}
+
+Meshing the domain is a rather complex affair. It takes place in the {\tt mesher.py} script,
+called early on in the \stone.
+
+
+What follows is not a complete set of explainations but a single diagram that 
+allows me to understand how it all works...
+
+\begin{tikzpicture}
+%\draw[fill=gray!23,gray!23](0,0) rectangle (14,13);
+%\draw[step=0.5cm,gray,very thin] (0,0) grid (14,13); %background grid
+
+\node[] at (13,8.2) {\small $x$};
+\node[] at (2.25,13) {\small $y$};
+\draw[->] (1.5,8.5) -- (13,8.5)  ; 
+\draw[->] (2,1.5) -- (2,13)  ; 
+\draw[-] (2,2) -- (11.5,2) -- (11.5,11.5) -- (2,11.5) -- cycle ;
+\draw[-] (5,2) -- (5,11.5)  ; 
+\draw[-] (2,5.5) -- (11.5,5.5)  ; 
+\draw[-] (2,8.5) -- (5,11.5)  ; 
+\draw[-] (2,8.5) -- (5,5.5)  ; 
+\draw[<->] (2,12.5) -- (5,12.5)  ; 
+\draw[<->] (1,5.5) -- (1,8.5)  ; 
+\draw[<->] (1,8.5) -- (1,11.5) ; 
+\draw[<->] (5,12.5) -- (11.5,12.5) ; 
+\draw[<->] (1,2) -- (1,5.5) ; 
+
+\filldraw[color=red!60, fill=red!5, very thick]  (2,7) arc (-90:90:1.5cm);
+
+\node[] at (0.65,7) {\small $L$};
+\node[] at (0.65,10) {\small $L$};
+\node[] at (3.5,12.75) {\small $L$};
+\node[] at (8,12.75) {\small extent\_$x$};
+\node[rotate=90] at (0.75,4) {\small extent\_$y$};
+\filldraw[black] (2,2) circle (1.5pt) ;
+\filldraw[black] (5,2) circle (1.5pt) ;
+\filldraw[black] (11.5,2) circle (1.5pt) ;
+\filldraw[black] (2,5.5) circle (1.5pt) ;
+\filldraw[black] (5,5.5) circle (1.5pt) ;
+\filldraw[black] (11.5,5.5) circle (1.5pt) ;
+\filldraw[black] (5,8.5) circle (1.5pt) ;
+\filldraw[black] (11.5,8.5) circle (1.5pt) ;
+\filldraw[black] (2,11.5) circle (1.5pt) ;
+\filldraw[black] (5,11.5) circle (1.5pt) ;
+\filldraw[black] (11.5,11.5) circle (1.5pt) ;
+\filldraw[black] (3.5,8.5) circle (1.5pt) ;
+\filldraw[black] (3.10,7.4) circle (1.5pt) ;
+\filldraw[black] (3.10,9.6) circle (1.5pt) ;
+\filldraw[black] (2,10) circle (1.5pt) ;
+\filldraw[black] (2,7) circle (1.5pt) ;
+\filldraw[black] (2,8.5) circle (2.5pt) ;
+
+\node[] at (2.2,11.7) {\small $E$};
+\node[] at (5.2,11.7) {\small $C$};
+\node[] at (11.7,11.7) {\small $G$};
+\node[] at (3.7,8.7) {\small $A$};
+\node[] at (5.2,8.7) {\small $B$};
+\node[] at (11.7,8.7) {\small $H$};
+\node[] at (2.2,5.7) {\small $M$};
+\node[] at (5.2,5.7) {\small $O$};
+\node[] at (11.7,5.7) {\small $I$};
+\node[] at (2.2,2.2) {\small $L$};
+\node[] at (5.2,2.2) {\small $K$};
+\node[] at (11.7,2.2) {\small $J$};
+\node[] at (3,9.9) {\small $D$};
+\node[] at (3,7.1) {\small $P$};
+\node[] at (2.2,10.25) {\small $F$};
+\node[] at (2.2,7.25) {\small $N$};
+
+\node[] at (4.25,9) {\tiny block \# 1};
+\node[] at (2.9,11) {\tiny block \# 2};
+\node[] at (4.25,8) {\tiny block \# 8};
+\node[] at (2.9,6) {\tiny block \# 7};
+\node[] at (3,4) {\tiny block \# 6};
+\node[] at (8,4) {\tiny block \# 5};
+\node[] at (8,7) {\tiny block \# 4};
+\node[] at (8,10) {\tiny block \# 3};
+
+\end{tikzpicture}
+
+There are 4 zones:
+\begin{itemize}
+\item zone A comprises blocks 1,2,7,8
+\item zone B comprises blocks 3,4
+\item zone C comprises block 6
+\item zone D comprises block 5
+\end{itemize}
+
+We also have the following necessary requirements so that the mesh topology is 
+acceptable: 
+\lstinline{nelyD=nelyC},
+\lstinline{nelxD=nelxB},
+\lstinline{nelxC=nelxA} and 
+\lstinline{nelyB=nelyA=nelxA}
+so in the end only \lstinline{nelxA}, \lstinline{nelxB} and \lstinline{nelyC} 
+remain, which yields the falling function call in the main script: 
+
+\begin{lstlisting}
+x_V,y_V,icon_V,nn_V,nel,Nfem=mesher(nelxA,nelxB,nelyC,L,extent_x,extent_y,radius,m_V)
+\end{lstlisting}
+
+Note that \lstinline{extent_x} and \lstinline{extent_y} are calculated as a multiple of $L$:
+\begin{lstlisting}
+extent_x=xi*L
+extent_y=psi*L
+nelxB=int(xi*nelxA)
+nelyC=int(psi*nelxA)
+\end{lstlisting}
+
+
+
+
+\newpage
+%=================================================================================
+\section*{Verruit \& Booker 1996: Approx. analytical solution on the tunnel walls}
+
+Note that given the approximate nature of the vebo96 solution, these plots 
+are not so useful since our calculations will not match.
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/circle_analytical_ux.pdf}
@@ -258,7 +421,7 @@ Analytical solution in the tunnel walls:
 {\captionfont All quantities have been normalised by $\epsilon R^2$.}
 \end{center}
 
-Analytical solution at the surface:
+\section*{Verruit \& Booker 1996: Approx. analytical solution at the surface}
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/top_analytical_ux.pdf}
@@ -297,26 +460,56 @@ components is a relatively simple and straight-
 forward exercise.}
 \end{center}
 
+Note that on the figure above the stress isocontours are not parallel to the tunnel walls, 
+i.e. the stress $\sigma_0$ is not constant on the wall. 
 
 
 \newpage
-%==========================
-\section*{The GTECTON setup (experiment=1)}
+%======================================================
+\section*{The GTECTON setup/experiment (experiment=1)}
+
+This experiment matches with the \textcite{verr98} (1998) article.
+Lukas has provided me with results obtained with GTECTON.
 
 The tunnel has a radius of 2~\si{\kilo\meter} and is situated 7~\si{\kilo\meter} below the surface.
-The inside pressure is set to 5~\si{\mega\pascal}. The Poisson ratio is $\nu=0.35$ 
-and the Young's modulus is $E=5\cdot 10^{10}~\si{\pascal}$.
+The inside pressure is set to 5~\si{\mega\pascal}.
+The Poisson ratio is $\nu=0.35$ and the Young's modulus is $E=5\cdot 10^{10}~\si{\pascal}$.
 
-This yields 
-\[
-\mu=\frac{E}{2(1+\nu)} = 
-\]
+This yields $\mu=\frac{E}{2(1+\nu)} \simeq 18.5e9$. 
 
 
 \begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/VerruijtHorizontal.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/VerruijtVertical.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/VerruijtHorizontal.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/VerruijtVertical.pdf}\\
+{\captionfont Results obtained with GTECTON.}
 \end{center}
+
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/top_ux.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/top_uy.pdf}\\
+{\captionfont Reasonable match is obtained for very large domains!}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/top_sigmaxx.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/top_sigmaxy.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/top_sigmayy.pdf} \\
+{\captionfont Since the top surface is a free surface we should have recovered
+$\sigma_{xy}=\sigma_{yy}=0$. This is not the case but we see that their amplitude 
+is much smaller than $\sigma_{xx}$.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_ux.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_uy.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_sigmaxx.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_sigmaxy.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_sigmayy.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/GTECTON/circle_sigma0.pdf}
+\end{center}
+
 
 
 \newpage

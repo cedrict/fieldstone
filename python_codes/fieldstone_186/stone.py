@@ -3,29 +3,8 @@ import time as clock
 from scipy.sparse import lil_matrix
 import scipy.sparse as sps
 import sys as sys
-
-###############################################################################
-
-def basis_functions_V(r,s):
-    N0=0.25*(1-r)*(1-s)
-    N1=0.25*(1+r)*(1-s)
-    N2=0.25*(1+r)*(1+s)
-    N3=0.25*(1-r)*(1+s)
-    return np.array([N0,N1,N2,N3],dtype=np.float64)
-
-def basis_functions_V_dr(r,s):
-    dNdr0=-0.25*(1.-s)
-    dNdr1=+0.25*(1.-s)
-    dNdr2=+0.25*(1.+s)
-    dNdr3=-0.25*(1.+s)
-    return np.array([dNdr0,dNdr1,dNdr2,dNdr3],dtype=np.float64)
-
-def basis_functions_V_ds(r,s):
-    dNds0=-0.25*(1.-r)
-    dNds1=-0.25*(1.+r)
-    dNds2=+0.25*(1.+r)
-    dNds3=+0.25*(1.-r)
-    return np.array([dNds0,dNds1,dNds2,dNds3],dtype=np.float64)
+from mesher import *
+from basis_functions import *
 
 ###############################################################################
 
@@ -40,7 +19,7 @@ def analytical_displacement(x,y,nu,R,Ly):
     uy=-(z1/r1_2 + z2/r2_2) + 2* ( 2*(1-nu)*z2/r2_2 - z*(x**2-z2**2)/r2_2**2)
 
     ux*=epsilon*R**2
-    uy*=epsilon*R**2
+    uy*=epsilon*R**2 * (-1) # z -> y axis
 
     return ux,uy
 
@@ -82,12 +61,15 @@ print("*******************************")
 m_V=4     # number of nodes making up an element
 ndof_V=2  # number of degrees of freedom per node
 
-if int(len(sys.argv) == 3):
-   nelx   = int(sys.argv[1])
-   factor = int(sys.argv[2])
+if int(len(sys.argv) == 4):
+   print(sys.argv)
+   nelxA=int(sys.argv[1])
+   xi=float(sys.argv[2])
+   psi=float(sys.argv[3])
 else:
-   nelx=60
-   factor=5
+   nelxA=32
+   xi=16
+   psi=8
 
 experiment=1
 
@@ -96,10 +78,9 @@ if experiment==1: # GTecTon setup
    nu=0.35
    mu=E/2/(1+nu)
    lambdaa=E*nu/(1+nu)/(1-2*nu)
-   rad=2e3
-   Lx=7e3
-   Ly=7e3
-   epsilon=0.55e-3
+   radius=2e3
+   L=7e3
+   epsilon=-0.55e-3
    sigma_bc=5e6
 
 if experiment==2: # ASPECT setup
@@ -107,353 +88,40 @@ if experiment==2: # ASPECT setup
    mu=1e10
    E=2*mu*(1+nu)
    lambdaa=E*nu/(1+nu)/(1-2*nu)
-   rad=1e3
-   Lx=4e3
-   Ly=4e3
+   radius=1e3
+   L=4e3
    epsilon=0.55e-3
 
+extent_x=xi*L
+extent_y=psi*L
 
+nelxB=int(xi*nelxA)
+nelyC=int(psi*nelxA)
 
-nely=nelx
+xSW=0          ; ySW=-L-extent_y # lower left corner
+xNE=L+extent_x ; yNE=L           # upper right corner
 
-distance=eps*Lx
-
-print('     -> nelx=',nelx)
-print('     -> nely=',nely)
 print('     -> mu=',mu)
 print('     -> E=',E)
 print('     -> lambdaa=',lambdaa)
-print('     -> domain x=',factor*Lx)
+print('     -> xi=',xi)
+print('     -> psi=',psi) 
+print('     -> xSW,ySW=',xSW,ySW)
+print('     -> xNE,yNE=',xNE,yNE)
+print('     -> nelxA=',nelxA)
+print('     -> nelxB=',nelxB)
+print('     -> nelyC=',nelyC)
 
 debug=False
 
 ###############################################################################
-#  The mesh is composed of eight blocks. Each is first built and warped
-# to fit the contour of the hole and they are subsequently merged.
-# all blocks have the same topology and number of elements.
-#
-#   E-----C-------------G
-#   | 2   |             |
-#   F     |      3      |
-#    D  1 |             |
-#     A---B-------------H
-#    P  8 |             |
-#   N     |      4      |
-#   | 7   |             |
-#   M-----O-------------I
-#   |     |             |
-#   |  6  |      5      |
-#   |     |             |
-#   L-----K-------------J
-#
+# meshing the domain
 ###############################################################################
 start=clock.time()
 
-xA=rad       ; yA=0
-xB=Lx        ; yB=0
-xC=Lx        ; yC=Ly
-xD=rad/sqrt2 ; yD=rad/sqrt2
-xE=0         ; yE=Lx
-xF=0         ; yF=rad
-xG=factor*Lx ; yG=Ly
-xO=Lx        ; yO=-Ly
-xL=0         ; yL=-(factor-1)*Ly
-xM=0         ; yM=-Ly
-xK=Lx        ; yK=yL
+x_V,y_V,icon_V,nn_V,nel,Nfem=mesher(nelxA,nelxB,nelyC,L,extent_x,extent_y,radius,m_V)
 
-b_nelx=nelx
-b_nely=nely
-b_nnx=nelx+1
-b_nny=nely+1
-b_NV=b_nnx*b_nny
-b_nel=b_nelx*b_nely
-
-b1_x=np.zeros(b_NV,dtype=np.float64)  # x coordinates
-b1_y=np.zeros(b_NV,dtype=np.float64)  # y coordinates
-b2_x=np.zeros(b_NV,dtype=np.float64)  # x coordinates
-b2_y=np.zeros(b_NV,dtype=np.float64)  # y coordinates
-b3_x=np.zeros(b_NV,dtype=np.float64)  # x coordinates
-b3_y=np.zeros(b_NV,dtype=np.float64)  # y coordinates
-b4_x=np.zeros(b_NV,dtype=np.float64)  # x coordinates
-b4_y=np.zeros(b_NV,dtype=np.float64)  # y coordinates
-b5_x=np.zeros(b_NV,dtype=np.float64)  # x coordinates
-b5_y=np.zeros(b_NV,dtype=np.float64)  # y coordinates
-b6_x=np.zeros(b_NV,dtype=np.float64)  # x coordinates
-b6_y=np.zeros(b_NV,dtype=np.float64)  # y coordinates
-b7_x=np.zeros(b_NV,dtype=np.float64)  # x coordinates
-b7_y=np.zeros(b_NV,dtype=np.float64)  # y coordinates
-b8_x=np.zeros(b_NV,dtype=np.float64)  # x coordinates
-b8_y=np.zeros(b_NV,dtype=np.float64)  # y coordinates
-
-counter=0
-for j in range(0,b_nny):
-    for i in range(0,b_nnx):
-        b1_x[counter]=i*Lx/float(b_nelx)
-        b1_y[counter]=j*Ly/float(b_nely)
-        counter+=1
-
-b2_x[:]=b1_x[:]
-b2_y[:]=b1_y[:]
-
-b1_icon =np.zeros((m_V,b_nel),dtype=np.int32)
-b2_icon =np.zeros((m_V,b_nel),dtype=np.int32)
-b3_icon =np.zeros((m_V,b_nel),dtype=np.int32)
-b4_icon =np.zeros((m_V,b_nel),dtype=np.int32)
-b5_icon =np.zeros((m_V,b_nel),dtype=np.int32)
-b6_icon =np.zeros((m_V,b_nel),dtype=np.int32)
-b7_icon =np.zeros((m_V,b_nel),dtype=np.int32)
-b8_icon =np.zeros((m_V,b_nel),dtype=np.int32)
-
-counter=0
-for j in range(0,b_nely):
-    for i in range(0,b_nelx):
-        b1_icon[0, counter] = i + j * (b_nelx + 1)
-        b1_icon[1, counter] = i + 1 + j * (b_nelx + 1)
-        b1_icon[2, counter] = i + 1 + (j + 1) * (b_nelx + 1)
-        b1_icon[3, counter] = i + (j + 1) * (b_nelx + 1)
-        counter+=1
-
-b2_icon[:,:]=b1_icon[:,:]
-b3_icon[:,:]=b1_icon[:,:]
-b4_icon[:,:]=b1_icon[:,:]
-b5_icon[:,:]=b1_icon[:,:]
-b6_icon[:,:]=b1_icon[:,:]
-b7_icon[:,:]=b1_icon[:,:]
-b8_icon[:,:]=b1_icon[:,:]
-
-print("prepare arrays: %.3f s" % (clock.time()-start))
-
-###############################################################################
-# map block 1 (ABCD)
-###############################################################################
-start=clock.time()
-
-# map to quadrilateral ABCD
-counter=0
-for j in range(0,b_nny):
-    for i in range(0,b_nnx):
-        r=2*(b1_x[counter]/Lx-0.5)
-        s=2*(b1_y[counter]/Ly-0.5)
-        N_V=basis_functions_V(r,s)
-        b1_x[counter]=N_V[0]*xA+N_V[1]*xB+N_V[2]*xC+N_V[3]*xD
-        b1_y[counter]=N_V[0]*yA+N_V[1]*yB+N_V[2]*yC+N_V[3]*yD
-        counter+=1
-   #end for
-#end for
-
-# bend AD side
-counter=0
-for j in range(0,b_nny):
-    for i in range(0,b_nnx):
-        if i==0:
-           angle=np.arctan(b1_y[counter]/b1_x[counter])
-           b1_x[counter]=rad*np.cos(angle)
-           b1_y[counter]=rad*np.sin(angle)
-        counter+=1
-   #end for
-#end for
-
-# recompute position of inside nodes
-counter=0
-for j in range(0,b_nny):
-    for i in range(0,b_nnx):
-        if i!=0 and i!=b_nnx-1 and j!=0 and j!=b_nny-1:
-           inode_beg=j*b_nnx
-           inode_end=j*b_nnx+b_nnx-1
-           b1_x[counter]=float(i)/b_nelx*(b1_x[inode_end]-b1_x[inode_beg]) + b1_x[inode_beg]
-           b1_y[counter]=float(i)/b_nelx*(b1_y[inode_end]-b1_y[inode_beg]) + b1_y[inode_beg]
-        counter+=1
-   #end for
-#end for
-
-print("make block 1: %.3f s" % (clock.time()-start))
-
-###############################################################################
-# map block 2
-###############################################################################
-start=clock.time()
-
-# map to quadrilateral FDCE
-counter=0
-for j in range(0,b_nny):
-    for i in range(0,b_nnx):
-        r=2*(b2_x[counter]/Lx-0.5)
-        s=2*(b2_y[counter]/Ly-0.5)
-        N_V=basis_functions_V(r,s)
-        b2_x[counter]=N_V[0]*xD+N_V[1]*xC+N_V[2]*xE+N_V[3]*xF
-        b2_y[counter]=N_V[0]*yD+N_V[1]*yC+N_V[2]*yE+N_V[3]*yF
-        counter+=1
-   #end for
-#end for
-
-#bend FD side
-counter=0
-for j in range(0,b_nny):
-    for i in range(0,b_nnx):
-        if i==0 and j<b_nny-1:
-           angle=np.arctan(b2_y[counter]/b2_x[counter])
-           b2_x[counter]=rad*np.cos(angle)
-           b2_y[counter]=rad*np.sin(angle)
-        counter+=1
-   #end for
-#end for
-
-# recompute position of inside nodes
-counter=0
-for j in range(0,b_nny):
-    for i in range(0,b_nnx):
-        if i!=0 and i!=b_nnx-1 and j!=0 and j!=b_nny-1:
-           inode_beg=j*b_nnx
-           inode_end=j*b_nnx+b_nnx-1
-           b2_x[counter]=float(i)/b_nelx*(b2_x[inode_end]-b2_x[inode_beg]) + b2_x[inode_beg]
-           b2_y[counter]=float(i)/b_nelx*(b2_y[inode_end]-b2_y[inode_beg]) + b2_y[inode_beg]
-        counter+=1
-   #end for
-#end for
-
-print("make block 2: %.3f s" % (clock.time()-start))
-
-###############################################################################
-# make block 3,4,5,6 
-###############################################################################
-start=clock.time()
-
-counter=0
-for j in range(0,b_nny):
-    for i in range(0,b_nnx):
-        b3_x[counter]=xB+i*(xG-xB)/float(b_nelx)
-        b3_y[counter]=yB+j*Ly/float(b_nely)
-        b4_x[counter]=xO+i*(xG-xO)/float(b_nelx)
-        b4_y[counter]=yO+j*Ly/float(b_nely)
-        b5_x[counter]=xK+i*(xG-xK)/float(b_nelx)
-        b5_y[counter]=yK+j*(yM-yL)/float(b_nely)
-        b6_x[counter]=xL+i*Lx/float(b_nelx)
-        b6_y[counter]=yL+j*(yM-yL)/float(b_nely)
-        counter+=1
-
-print("make blocks 3,4,5,6: %.3f s" % (clock.time()-start))
-
-###############################################################################
-# make block 7 - it is a rotated block 5
-# make block 8 - it is a rotated block 6
-###############################################################################
-start=clock.time()
-
-b7_x[:]= b1_y[:]
-b7_y[:]=-b1_x[:]
-
-b8_x[:]= b2_y[:]
-b8_y[:]= -b2_x[:]
-
-print("make blocks 7,8: %.3f s" % (clock.time()-start))
-
-###############################################################################
-
-if debug:
-   np.savetxt('temp1.ascii',np.array([b1_x,b1_y]).T,header='# x,y')
-   np.savetxt('temp2.ascii',np.array([b2_x,b2_y]).T,header='# x,y')
-   np.savetxt('temp3.ascii',np.array([b3_x,b3_y]).T,header='# x,y')
-   np.savetxt('temp4.ascii',np.array([b4_x,b4_y]).T,header='# x,y')
-   np.savetxt('temp5.ascii',np.array([b5_x,b5_y]).T,header='# x,y')
-   np.savetxt('temp6.ascii',np.array([b6_x,b6_y]).T,header='# x,y')
-   np.savetxt('temp7.ascii',np.array([b7_x,b7_y]).T,header='# x,y')
-   np.savetxt('temp8.ascii',np.array([b8_x,b8_y]).T,header='# x,y')
-
-###############################################################################
-# merge blocks
-###############################################################################
-start=clock.time()
-
-nblock=8
-
-tempx=np.zeros(nblock*b_NV,dtype=np.float64)  # x coordinates
-tempy=np.zeros(nblock*b_NV,dtype=np.float64)  # y coordinates
-
-tempx[0*b_NV:1*b_NV]=b1_x[:]
-tempx[1*b_NV:2*b_NV]=b2_x[:]
-tempx[2*b_NV:3*b_NV]=b3_x[:]
-tempx[3*b_NV:4*b_NV]=b4_x[:]
-tempx[4*b_NV:5*b_NV]=b5_x[:]
-tempx[5*b_NV:6*b_NV]=b6_x[:]
-tempx[6*b_NV:7*b_NV]=b7_x[:]
-tempx[7*b_NV:8*b_NV]=b8_x[:]
-
-tempy[0*b_NV:1*b_NV]=b1_y[:]
-tempy[1*b_NV:2*b_NV]=b2_y[:]
-tempy[2*b_NV:3*b_NV]=b3_y[:]
-tempy[3*b_NV:4*b_NV]=b4_y[:]
-tempy[4*b_NV:5*b_NV]=b5_y[:]
-tempy[5*b_NV:6*b_NV]=b6_y[:]
-tempy[6*b_NV:7*b_NV]=b7_y[:]
-tempy[7*b_NV:8*b_NV]=b8_y[:]
-
-doubble=np.zeros(nblock*b_NV,dtype=bool)  # boundary condition, yes/no
-pointto=np.zeros(nblock*b_NV,dtype=np.int32)
-
-for i in range(0,nblock*b_NV):
-    pointto[i]=i
-
-counter=0
-for i in range(1,nblock*b_NV):
-   gxi=tempx[i]
-   gyi=tempy[i]
-   for j in range(0,i):
-      if abs(gxi-tempx[j])<distance and abs(gyi-tempy[j])<distance:
-          doubble[i]=True
-          pointto[i]=j
-          break
-      #end if
-   #end do
-#end do
-
-nn_V=nblock*b_NV-sum(doubble)
-nel=nblock*b_nel
-Nfem=nn_V*ndof_V
-
-print('     -> doubles=',sum(doubble))
-print('     -> nn_V=',nn_V)
-print('     -> nel=',nel)
-print('     -> Nfem=',Nfem)
-
-x_V=np.zeros(nn_V,dtype=np.float64)  # x coordinates
-y_V=np.zeros(nn_V,dtype=np.float64)  # y coordinates
-icon_V=np.zeros((m_V,nel),dtype=np.int32)
-
-counter=0
-for i in range(0,nblock*b_NV):
-    if not doubble[i]: 
-       x_V[counter]=tempx[i]#+Lx
-       y_V[counter]=tempy[i]#+Ly
-       counter+=1
-
-icon_V[0:m_V,0*b_nel:1*b_nel]=b1_icon[0:m_V,0:b_nel]+0*b_NV
-icon_V[0:m_V,1*b_nel:2*b_nel]=b2_icon[0:m_V,0:b_nel]+1*b_NV
-icon_V[0:m_V,2*b_nel:3*b_nel]=b2_icon[0:m_V,0:b_nel]+2*b_NV
-icon_V[0:m_V,3*b_nel:4*b_nel]=b2_icon[0:m_V,0:b_nel]+3*b_NV
-icon_V[0:m_V,4*b_nel:5*b_nel]=b2_icon[0:m_V,0:b_nel]+4*b_NV
-icon_V[0:m_V,5*b_nel:6*b_nel]=b2_icon[0:m_V,0:b_nel]+5*b_NV
-icon_V[0:m_V,6*b_nel:7*b_nel]=b2_icon[0:m_V,0:b_nel]+6*b_NV
-icon_V[0:m_V,7*b_nel:8*b_nel]=b2_icon[0:m_V,0:b_nel]+7*b_NV
-
-for iel in range(0,nel):
-    for i in range(0,m_V):
-        icon_V[i,iel]=pointto[icon_V[i,iel]]
-
-compact=np.zeros(nblock*b_NV,dtype=np.int32)
-
-counter=0
-for i in range(0,nblock*b_NV):
-    if not doubble[i]:
-       compact[i]=counter
-       counter=counter+1
-
-for iel in range(0,nel):
-   for i in range(0,m_V):
-      icon_V[i,iel]=compact[icon_V[i,iel]]
-
-if debug: np.savetxt('mesh.ascii',np.array([x_V,y_V]).T,header='# x,y')
-
-print("assemble blocks: %.3f s" % (clock.time()-start))
+print("meshing the domain: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # flag boundary elements
@@ -467,11 +135,11 @@ top=np.zeros(nn_V,dtype=bool)
 circle=np.zeros(nn_V,dtype=bool)  
 
 for i in range(0,nn_V):
-    if abs(x_V[i])/Lx<eps:       left[i]=True  
-    if abs(x_V[i]-xG)/Lx<eps:    right[i]=True  
-    if abs(y_V[i]-yK)/Ly<eps:    bottom[i]=True  
-    if abs(y_V[i]-yC)/Ly<eps:    top[i]=True  
-    if np.sqrt(x_V[i]**2+y_V[i]**2)<(1+eps)*rad:  circle[i]=True  
+    if abs(x_V[i]-xSW)/L<eps: left[i]=True  
+    if abs(x_V[i]-xNE)/L<eps: right[i]=True  
+    if abs(y_V[i]-ySW)/L<eps: bottom[i]=True  
+    if abs(y_V[i]-yNE)/L<eps: top[i]=True  
+    if np.sqrt(x_V[i]**2+y_V[i]**2)<(1+eps)*radius:  circle[i]=True  
 
 print("flag boundary nodes: %.3f s" % (clock.time()-start))
 
@@ -587,10 +255,13 @@ for iel in range(0,nel):
        xm=(x_V[icon_V[3,iel]]+x_V[icon_V[0,iel]])/2
        ym=(y_V[icon_V[3,iel]]+y_V[icon_V[0,iel]])/2
        theta=np.arctan2(ym,xm)
-       b_el[0]+=sigma_bc*dist*np.cos(theta)/2
-       b_el[1]+=sigma_bc*dist*np.sin(theta)/2
-       b_el[6]+=sigma_bc*dist*np.cos(theta)/2
-       b_el[7]+=sigma_bc*dist*np.sin(theta)/2
+       theta0=np.arctan2(y_V[icon_V[0,iel]],x_V[icon_V[0,iel]])
+       theta3=np.arctan2(y_V[icon_V[3,iel]],x_V[icon_V[3,iel]])
+       #print(xm,ym,theta,np.cos(theta),np.sin(theta))
+       b_el[0]+=sigma_bc*dist*np.cos(theta0)/2
+       b_el[1]+=sigma_bc*dist*np.sin(theta0)/2
+       b_el[6]+=sigma_bc*dist*np.cos(theta3)/2
+       b_el[7]+=sigma_bc*dist*np.sin(theta3)/2
 
     # apply boundary conditions
     for k1 in range(0,m_V):
@@ -747,8 +418,8 @@ sigmayyth=np.zeros(nn_V,dtype=np.float64)
 sigmaxyth=np.zeros(nn_V,dtype=np.float64) 
  
 for i in range(0,nn_V):
-    uth[i],vth[i]=analytical_displacement(x_V[i],y_V[i],nu,rad,Ly)
-    sigmaxxth[i],sigmayyth[i],sigmaxyth[i]=analytical_stress(x_V[i],y_V[i],mu,nu,rad,Ly)
+    uth[i],vth[i]=analytical_displacement(x_V[i],y_V[i],nu,radius,L)
+    sigmaxxth[i],sigmayyth[i],sigmaxyth[i]=analytical_stress(x_V[i],y_V[i],mu,nu,radius,L)
 
 disp=np.sqrt(u**2+v**2)
 dispth=np.sqrt(uth**2+vth**2)
@@ -759,8 +430,8 @@ theta=np.arctan2(y_V,x_V)
 # export measurements on tunnel and at surface 
 ###############################################################################
 
-factor_disp=epsilon*rad**2
-factor_stress=2*mu*epsilon*rad**2
+factor_disp=epsilon*radius**2
+factor_stress=2*mu*epsilon*radius**2
 
 np.savetxt('top_solution.ascii',np.array([x_V[top],\
                                           u[top],\
@@ -768,7 +439,7 @@ np.savetxt('top_solution.ascii',np.array([x_V[top],\
                                           sigma_xx_n[top],\
                                           sigma_yy_n[top],\
                                           sigma_xy_n[top]]).T,\
-                                header='# x,u,v',fmt='%.4e')
+                                header='# x,u,v,xx,yy,xy',fmt='%.4e')
 
 np.savetxt('top_analytical_solution.ascii',np.array([x_V[top],\
                                                      dispth[top]/factor_disp,\
@@ -777,7 +448,7 @@ np.savetxt('top_analytical_solution.ascii',np.array([x_V[top],\
                                                      sigmaxxth[top]/factor_stress,\
                                                      sigmayyth[top]/factor_stress,\
                                                      sigmaxyth[top]/factor_stress]).T,\
-                                           header='# x,u,v',fmt='%.4e')
+                                           header='# x,disp,u,v,xx,yy,xy',fmt='%.4e')
 
 
 np.savetxt('circle_solution.ascii',np.array([theta[circle],\
@@ -787,7 +458,7 @@ np.savetxt('circle_solution.ascii',np.array([theta[circle],\
                                              sigma_xx_n[circle],\
                                              sigma_yy_n[circle],\
                                              sigma_xy_n[circle]]).T,\
-                                   header='# x,u,v',fmt='%.4e')
+                                   header='# x,disp,u,v,xx,yy,xy',fmt='%.4e')
 
 np.savetxt('circle_analytical_solution.ascii',np.array([theta[circle],\
                                                         dispth[circle]/factor_disp,\
@@ -796,7 +467,7 @@ np.savetxt('circle_analytical_solution.ascii',np.array([theta[circle],\
                                                         sigmaxxth[circle]/factor_stress,\
                                                         sigmayyth[circle]/factor_stress,\
                                                         sigmaxyth[circle]/factor_stress]).T,\
-                                              header='# theta,disp,u,v',fmt='%.4e')
+                                              header='# theta,disp,u,v,xx,yy,xy',fmt='%.4e')
 
 
 ###############################################################################
@@ -827,7 +498,11 @@ vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='displaceme
 for i in range(0,nn_V):
     vtufile.write("%e %e %e \n" %(uth[i],vth[i],0.))
 vtufile.write("</DataArray>\n")
-
+#--
+vtufile.write("<DataArray type='Float32' Name='radius/r' Format='ascii'> \n")
+rr=radius/r
+rr.tofile(vtufile,sep=' ',format='%.4e')
+vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
 q.tofile(vtufile,sep=' ',format='%.4e')
@@ -845,7 +520,6 @@ vtufile.write("<DataArray type='Float32' Name='e' Format='ascii'> \n")
 e_n.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
 
-
 vtufile.write("<DataArray type='Float32' Name='circle' Format='ascii'> \n")
 circle.tofile(vtufile,sep=' ',format='%d')
 vtufile.write("</DataArray>\n")
@@ -861,7 +535,6 @@ vtufile.write("</DataArray>\n")
 vtufile.write("<DataArray type='Float32' Name='top' Format='ascii'> \n")
 top.tofile(vtufile,sep=' ',format='%d')
 vtufile.write("</DataArray>\n")
-
 
 #--
 vtufile.write("<DataArray type='Float32' Name='sigma_xx' Format='ascii'> \n")
