@@ -50,8 +50,8 @@ circular hole.''
  
 \item \fullcite{mcti87} (3d only) :
 \begin{displayquote}
-Approximate solutions are obtained for the stress and displacement fields due to a 
-pressurized spherical cavity in an elastic half-space.
+``Approximate solutions are obtained for the stress and displacement fields due to a 
+pressurized spherical cavity in an elastic half-space.''
 \end{displayquote}
 
 
@@ -88,12 +88,12 @@ a (semi-)analytical solution.
 
 Note that my python code is only 2d but given the axisymmetric nature 
 of 3d setups I could easily modify it to allow for an 
-axisymmetric formulation.
+axisymmetric formulation later on.
 
 
 \newpage
 %==============================================
-\section*{Scrutinizing Verruit \& Booker 1996}
+\section*{Scrutinizing Verruijt \& Booker 1996}
 
 The paper gives an approximate analytic solution for a tunnel in a homogeneous elastic half
 space, caused by ground loss and ovalization. The two basic processes are illustrated in
@@ -264,7 +264,7 @@ Also, because the vertical axis has been reversed, we then have $u_y=-u_z$.
 \subsection*{Analytical stress}
 
 In the original paper only the isotropic stress $\sigma_0=\frac12(\sigma_{xx}+\sigma_{yy})$
-at the surface is presented in Eq 14 
+at the surface is presented in Eq. 14:
 \[
 \sigma_0 = -4 \mu \epsilon R^2 \frac{z_2^2-x^2}{r_2^4}
 \]
@@ -294,8 +294,7 @@ We need to turn to the additional material to find:
 \section*{Meshing}
 
 Meshing the domain is a rather complex affair. It takes place in the {\tt mesher.py} script,
-called early on in the \stone.
-
+called early on in the \stone. The final mesh consists of 8 blocks glued together.
 
 What follows is not a complete set of explainations but a single diagram that 
 allows me to understand how it all works...
@@ -401,14 +400,26 @@ nelxB=int(xi*nelxA)
 nelyC=int(psi*nelxA)
 \end{lstlisting}
 
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_186/images/mesh.png}\\
+{\captionfont Mesh with nelxA=16, $\xi=\psi=2$.}
+\end{center}
 
+
+
+%=================================================================================
+\section*{Numerical methods}
+
+This \stone is a Finite Element code which solves the elastic equation in 2d.
+It relies on $Q_1$ elements.
+The methodology is explained in Chapter 22.
 
 
 \newpage
 %=================================================================================
 \section*{Verruit \& Booker 1996: Approx. analytical solution on the tunnel walls}
 
-Note that given the approximate nature of the vebo96 solution, these plots 
+Note that given the approximate nature of the \textcite{vebo96} solution, these plots 
 are not so useful since our calculations will not match.
 
 \begin{center}
@@ -423,6 +434,9 @@ are not so useful since our calculations will not match.
 \end{center}
 
 \section*{Verruit \& Booker 1996: Approx. analytical solution at the surface}
+
+The plots are for points potentially 'far' from the tunnel, so that 
+the error could be small enough that one could compare numerical results with those.
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_186/RESULTS/top_analytical_ux.pdf}
@@ -470,7 +484,8 @@ i.e. the stress $\sigma_0$ is not constant on the wall.
 \section*{The GTECTON setup/experiment (experiment=1)}
 
 This experiment matches with the \textcite{verr98} (1998) article.
-Lukas has provided me with results obtained with GTECTON for reference (see figures below).
+Lukas has provided me with the setup and the 
+results obtained with GTECTON for reference (see figures below).
 
 The tunnel has a radius of 2~\si{\kilo\meter} and is situated 7~\si{\kilo\meter} below the surface.
 The inside pressure is set to 5~\si{\mega\pascal}.
