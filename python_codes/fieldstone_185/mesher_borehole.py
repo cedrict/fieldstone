@@ -36,10 +36,19 @@ def mesher_borehole(Lx,Ly,Lz,nelx,nely,nelz,radius):
     #
     ###############################################################################
 
-    b_nelx=nelx
-    b_nely=nely
-    b_nnx=nelx+1
-    b_nny=nely+1
+    # Lx and Ly are the sides of the domain above. However in what follows 
+    # we will need their half values, i.e. Lx2, Ly2
+
+    Lx2=Lx/2
+    Ly2=Ly/2
+ 
+    nelx2=int(nelx/2)
+    nely2=int(nely/2)
+
+    b_nelx=nelx2
+    b_nely=nely2
+    b_nnx=nelx2+1
+    b_nny=nely2+1
     b_NV=b_nnx*b_nny
     b_nel=b_nelx*b_nely
 
@@ -63,8 +72,8 @@ def mesher_borehole(Lx,Ly,Lz,nelx,nely,nelz,radius):
     counter = 0
     for j in range(0,b_nny):
         for i in range(0,b_nnx):
-            b1_x[counter]=i*Lx/float(b_nelx)
-            b1_y[counter]=j*Ly/float(b_nely)
+            b1_x[counter]=i*Lx2/float(b_nelx)
+            b1_y[counter]=j*Ly2/float(b_nely)
             counter += 1
 
     b2_x[:]=b1_x[:]
@@ -103,11 +112,11 @@ def mesher_borehole(Lx,Ly,Lz,nelx,nely,nelz,radius):
     xA=radius
     yA=0
 
-    xB=Lx
+    xB=Lx2
     yB=0
 
-    xC=Lx
-    yC=Ly
+    xC=Lx2
+    yC=Ly2
 
     xD=radius/sqrt2
     yD=radius/sqrt2
@@ -116,8 +125,8 @@ def mesher_borehole(Lx,Ly,Lz,nelx,nely,nelz,radius):
     counter=0
     for j in range(0,b_nny):
         for i in range(0,b_nnx):
-            r=2*(b1_x[counter]/Lx-0.5)
-            s=2*(b1_y[counter]/Ly-0.5)
+            r=2*(b1_x[counter]/Lx2-0.5)
+            s=2*(b1_y[counter]/Ly2-0.5)
             N_V=basis_functions_2d(r,s)
             b1_x[counter]=N_V[0]*xA+N_V[1]*xB+N_V[2]*xC+N_V[3]*xD
             b1_y[counter]=N_V[0]*yA+N_V[1]*yB+N_V[2]*yC+N_V[3]*yD
@@ -154,8 +163,8 @@ def mesher_borehole(Lx,Ly,Lz,nelx,nely,nelz,radius):
     # map block 2
     ###############################################################################
 
-    xC=Lx
-    yC=Ly
+    xC=Lx2
+    yC=Ly2
 
     xD=radius/sqrt2
     yD=radius/sqrt2
@@ -164,14 +173,14 @@ def mesher_borehole(Lx,Ly,Lz,nelx,nely,nelz,radius):
     yF=radius
 
     xE=0
-    yE=Lx
+    yE=Lx2
 
     # map to quadrilateral FDCE
     counter=0
     for j in range(0,b_nny):
         for i in range(0,b_nnx):
-            r=2*(b2_x[counter]/Lx-0.5)
-            s=2*(b2_y[counter]/Ly-0.5)
+            r=2*(b2_x[counter]/Lx2-0.5)
+            s=2*(b2_y[counter]/Ly2-0.5)
             N_V=basis_functions_2d(r,s)
             b2_x[counter]=N_V[0]*xD+N_V[1]*xC+N_V[2]*xE+N_V[3]*xF
             b2_y[counter]=N_V[0]*yD+N_V[1]*yC+N_V[2]*yE+N_V[3]*yF
@@ -301,8 +310,8 @@ def mesher_borehole(Lx,Ly,Lz,nelx,nely,nelz,radius):
     counter=0
     for i in range(0,nblock*b_NV):
         if not doubble[i]: 
-           x_V[counter]=tempx[i]+Lx
-           y_V[counter]=tempy[i]+Ly
+           x_V[counter]=tempx[i]+Lx2
+           y_V[counter]=tempy[i]+Ly2
            counter+=1
 
     m_V=4
@@ -334,8 +343,8 @@ def mesher_borehole(Lx,Ly,Lz,nelx,nely,nelz,radius):
 
     if debug: np.savetxt('mesh.ascii',np.array([x_V,y_V]).T,header='# x,y')
 
-    Lx*=2
-    Ly*=2
+    #Lx*=2
+    #Ly*=2
 
     ###############################################################################
 

@@ -202,19 +202,149 @@ As such boundary conditions result in 3 translational nullspaces
 a zero tangential velocity is prescribed in the middle of all 
 four vertical faces.
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Analytical solution}
+
+This is taken from \textcite{HongXueHan2021}.
+``Suppose an elastic body of rock with Young's modulus E and Poisson's ratio $\nu$
+is subjected to the in-situ stresses $\sigma_v,\sigma_H,\sigma_h$.
+A circular vertical borehole is drilled through the body
+according to elastic theory,
+the solutions for the stresses around the borehole can be described by [the 
+following] equations 
+(derived from the Kirsch set of equations under linear elastic isotropic property assumptions,
+Jaeger et al., 2009).''
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_185/images/han}
+\end{center}
+
+{\color{red} Note that Han uses $R$ as coordinate and $r$ as the radius of the 
+borehole. This is bad and needs to be corrected.}
+
+\begin{eqnarray}
+\sigma_{rr} 
+&=& \left(1-\frac{r^2}{R^2} \right) 
+\left( \frac{\sigma_H+\sigma_h}{2} \right)
++
+\left( 1 + \frac{3r^4}{R^4} -\frac{4r^2}{R^2} \right)
+\left( \frac{\sigma_H-\sigma_h}{2} \right) \cos(2 \theta) 
+\nn\\
+\sigma_{\theta\theta} 
+&=& \left(1+\frac{r^2}{R^2} \right) 
+\left( \frac{\sigma_H+\sigma_h}{2} \right)
+-
+\left( 1 + \frac{3r^4}{R^4}  \right)
+\left( \frac{\sigma_H-\sigma_h}{2} \right) \cos(2 \theta) 
+\nn\\
+\sigma_{zz} 
+&=& \sigma_v - 4 \nu \frac{r^2}{R^2} \left( \frac{\sigma_H-\sigma_h}{2} \right)  \cos(2 \theta)
+\nn\\
+\sigma_{r\theta}
+&=& - \left( 1 -  \frac{3r^4}{R^4} + \frac{2r^2}{R^2} \right) 
+\left( \frac{\sigma_H-\sigma_h}{2} \right) \sin(2 \theta) 
+\nn\\
+\sigma_{xz} &=& 0 \nn\\
+\sigma_{\theta z} &=& 0 
+\end{eqnarray}
+
+
+where 
+$R$ is the distance from borehole center
+$\sigma_v$ is the vertical stress, 
+$\sigma_H$ is the maximum horizontal stress
+and $\sigma_h$ is the minimum horizontal stress,
+$\theta$ is the angle from the maximum horizontal stress direction.
+
+
+The linear elastic strains around the borehole can be calculated using equations
+
+\begin{eqnarray}
+\varepsilon_{rr} 
+&=& \frac{\sigma_{rr}-\nu(\sigma_{\theta\theta}+\sigma_{zz})}{E} 
+\nn\\
+\varepsilon_{\theta\theta} 
+&=& \frac{\sigma_{\theta\theta}-\nu(\sigma_{zz}+\sigma_{rr})}{E} 
+\nn\\
+\varepsilon_{zz} 
+&=& \frac{\sigma_{zz}-\nu(\sigma_{rr}+\sigma_{\theta\theta})}{E} 
+\nn\\
+\varepsilon_{r\theta} &=&  \sigma_{r\theta}/G
+\nn\\
+\varepsilon_{rz} &=&   0
+\nn\\
+\varepsilon_{\theta z} &=&  0
+\end{eqnarray}
+
+where $\varepsilon_{rr}$ is the radial normal strain, 
+$\varepsilon_{\theta\theta}$ is the tangential normal strain, 
+$\varepsilon_{zz}$ is the vertical normal strain, 
+$E$ is Young's modulus, $\nu$ is Poisson's ratio, 
+$\sigma_{r\theta}$ is the shear stress, and $G$ is the shear modulus.
+
+``For a vertically drilled borehole under anisotropic horizontal stresses, 
+in cases where neither drilling induced fractures nor breakouts occur, 
+the cross-section of the borehole will show an elliptical shape; 
+displacements around the borehole are illustrated in Figure [below]. 
+Within the framework of elasticity theory, the analytical solutions 
+of displacements around the borehole can be derived from the Kirsch set 
+of equations (Jaeger et al., 2009)...''
+
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_185/images/han2}
+\end{center}
+
+\begin{eqnarray}
+u_{rr} &=& 
+-\frac{1}{E} \left[ \frac{\sigma_H+\sigma_h}{2} (R+\frac{r^2}{R}) 
++ \frac{\sigma_H-\sigma_h}{2} (R -\frac{r^4}{R^3}+\frac{4r^2}{R})\cos(2\theta)
+  \right] \nn\\ 
+&&+\frac{\nu}{E} \left[  \frac{\sigma_H-\sigma_h}{2} (R-\frac{r^2}{R})
++ \frac{\sigma_H-\sigma_h}{2} (R -\frac{r^4}{R^3}) \cos(2\theta)
+ \right] \nn\\
+&& + 4 \frac{\nu^2}{E} \frac{R^2}{r} \frac{\sigma_H-\sigma_h}{2} \cos (2\theta)\nn\\
+&& +\frac{\nu}{E} r \sigma_v \nn\\
+&& + \frac{1+\nu}{E} P_m r
+\\
+u_{\theta\theta} &=&
+-\frac{1}{E} \left[
+\frac{\sigma_H-\sigma_h}{2} (R+\frac{2r^2}{R} + \frac{r^4}{R^3}) sins(2\theta)
+\right] \nn\\ 
+&&+\frac{\nu}{E} 
+\left[
+\frac{\sigma_H-\sigma_h}{2}  (R-\frac{r^2}{R} + \frac{r^4}{R^3}) sins(2\theta)
+\right] \nn\\
+&& -4 \frac{\nu^2}{E} \frac{r^2}{R} \frac{\sigma_H-\sigma_h}{2} \cos (2\theta)
+\\
+u_{zz} &=& 
+-\frac{z}{E} \left( \sigma_v - \nu (\sigma_H-\sigma_h)\right)
+\end{eqnarray}
+
+{\color{red} check against source. Also, what is sins ? is it r2/R or R2/r??}
+
+where $r$ is original borehole radius, $R$ is distance from borehole center, 
+$z$ is depth, $u_{rr}$ is the radial displacement of the borehole at $R$, 
+$u_{\theta\theta}$ is the tangential displacement of the borehole at $R$, 
+$u_{zz}$ is the axial displacement of the borehole at $R$, 
+$E$ is Young’s modulus, $\nu$ is Poisson's ratio,
+$\sigma_v$ is the vertical stress at depth $z$, $\sigma_H$ is the maximum horizontal stress, 
+$\sigma_h$ is the minimum horizontal stress, $p_m$ is borehole mud pressure, 
+and $\theta$ is the angle from the maximum horizontal stress direction.
+
+
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{to do ...}
 
 carry out analytical bench a la f124
 
-make oval hole ?
-
-deform borehole
-
 add stress bc in other direction 
-
-compute principal stresses
 
 modify my mesh to include cylinder like in gakj12?
 

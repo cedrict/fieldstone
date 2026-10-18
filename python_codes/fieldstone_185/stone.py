@@ -1,5 +1,6 @@
 import numpy as np
 import time as clock
+import scipy
 from scipy.sparse import lil_matrix
 import scipy.sparse as sps
 import numba
@@ -63,6 +64,13 @@ def effective(txx,tyy,tzz,txy,txz,tyz):
     return np.sqrt(0.5*(txx**2+tyy**2+tzz**2)+txy**2+txz**2+tyz**2)
 
 ###############################################################################
+# see Eq 9 of Glerum et al, 2018 (https://doi.org/10.5194/se-9-267-2018)
+
+def yield_criterion(c,phi,p):
+    return 6*c*np.cos(phi)/sqrt3/(3-np.sin(phi))+\
+           6*np.sin(phi)*p/sqrt3/(3-np.sin(phi))
+
+###############################################################################
 
 sqrt3=np.sqrt(3.)
 eps=1e-8
@@ -71,14 +79,15 @@ print("*******************************")
 print("********** stone 185 **********")
 print("*******************************")
 
-# 1: cube
-# 2: cube with borehole
-# 3: quarter cube with borehole
-
-meshtype=2
-
 m_V=8     # number of nodes making up an element
 ndof_V=3  # number of degrees of freedom per node
+
+#######################################
+# 1: cube
+# 2: cube with borehole
+# 3: quarter cube with borehole NOT DONE
+
+meshtype=2
 
 if meshtype==1:
    Lx=0.1
@@ -90,41 +99,49 @@ if meshtype==1:
    volume_analytical=Lx*Ly*Lz
 
 if meshtype==2:
-   Lx=0.05 # 50% of desired Lx
-   Ly=0.05 # 50% of desired Ly
+   Lx=0.1
+   Ly=0.1
    Lz=0.1
    radius=0.01
    volume_analytical=Lx*Ly*Lz-(np.pi*radius**2*Lz)
-   nelx=10
+   nelx=16
    nely=nelx
-   nelz=10  #must be even number
+   nelz=16  #must be even number
 
-sigma_bc=9e3
+#######################################
 
+sigma_H=9e3
+sigma_h=3e3
+sigma_v=0
 
-#1: direct solver
-#2: conjugate gradients
-solver=2
+layout=1
 
-
-hy=Ly/nely
-hz=Lz/nelz
-
-print('     -> nelx=',nelx)
-print('     -> nely=',nely)
-print('     -> nelz=',nelz)
-
-debug=True
+debug=False
 
 nstep=1
 
 #######################################
-# layout
+#1: direct solver
+#2: conjugate gradients
+solver=2
+
 #######################################
 
-layout=1
+print('     -> meshtype=',meshtype) 
+print('     -> nelx=',nelx)
+print('     -> nely=',nely)
+print('     -> nelz=',nelz)
+print('     -> layout=',layout) 
+print('     -> solver=',solver) 
+
+#######################################
+# layout
+# 1: single material
+# 2: one layer in matrix
+#######################################
 
 match layout:
+
  case 1:
   E1=2.5e6 ; G1=1e6
   nu1=nu=(E1-2*G1)/(2*G1)
@@ -147,7 +164,6 @@ match layout:
   aaa=0.1
   bbb=0.15
 
-
 ###############################################################################
 # create mesh
 ###############################################################################
@@ -165,12 +181,14 @@ match meshtype:
 
 print('     -> nel=',nel)
 print('     -> nn_V=',nn_V)
+print("*******************************")
 
 Nfem=ndof_V*nn_V
 
 #for iel in range (0,nel):
 #    print ("iel=",iel,'icon:',icon_V[:,iel])
 
+print("mesh domain: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # precompute basis functions at quadrature points 
@@ -517,6 +535,10 @@ print("fill II_matrix,JJ_matrix arrays: %.3f s" % (clock.time()-start))
 # time stepping
 #==============================================================================
 #==============================================================================
+
+hx=Lx/nelx
+hy=Ly/nely
+hz=Lz/nelz
     
 total_strain_xx=np.zeros(nn_V,dtype=np.float64)
 total_strain_yy=np.zeros(nn_V,dtype=np.float64)
@@ -595,32 +617,55 @@ for istep in range(0,nstep):
          case 1:
            if face1[iel]: # face is nodes 0,3,4,7 
                  surf=hz*hy
-                 #print(icon_V[0,iel],icon_V[3,iel],icon_V[4,iel],icon_V[7,iel])
-                 b_el[ndof_V*0]=sigma_bc*surf*0.25
-                 b_el[ndof_V*3]=sigma_bc*surf*0.25
-                 b_el[ndof_V*4]=sigma_bc*surf*0.25
-                 b_el[ndof_V*7]=sigma_bc*surf*0.25
-           if face2[iel]: # face is nodes 
+                 b_el[ndof_V*0+0]+=sigma_H*surf*0.25
+                 b_el[ndof_V*3+0]+=sigma_H*surf*0.25
+                 b_el[ndof_V*4+0]+=sigma_H*surf*0.25
+                 b_el[ndof_V*7+0]+=sigma_H*surf*0.25
+           if face2[iel]: # face is nodes 1,2,5,6 
                  surf=hz*hy
-                 #print(icon_V[1,iel],icon_V[2,iel],icon_V[5,iel],icon_V[6,iel])
-                 b_el[ndof_V*1]-=sigma_bc*surf*0.25
-                 b_el[ndof_V*2]-=sigma_bc*surf*0.25
-                 b_el[ndof_V*5]-=sigma_bc*surf*0.25
-                 b_el[ndof_V*6]-=sigma_bc*surf*0.25
+                 b_el[ndof_V*1+0]-=sigma_H*surf*0.25
+                 b_el[ndof_V*2+0]-=sigma_H*surf*0.25
+                 b_el[ndof_V*5+0]-=sigma_H*surf*0.25
+                 b_el[ndof_V*6+0]-=sigma_H*surf*0.25
+           if face3[iel]: 
+                 surf=hx*hz
+                 b_el[ndof_V*0+1]+=sigma_h*surf*0.25
+                 b_el[ndof_V*1+1]+=sigma_h*surf*0.25
+                 b_el[ndof_V*4+1]+=sigma_h*surf*0.25
+                 b_el[ndof_V*5+1]+=sigma_h*surf*0.25
+           if face4[iel]: 
+                 surf=hx*hz
+                 b_el[ndof_V*2+1]-=sigma_h*surf*0.25
+                 b_el[ndof_V*3+1]-=sigma_h*surf*0.25
+                 b_el[ndof_V*6+1]-=sigma_h*surf*0.25
+                 b_el[ndof_V*7+1]-=sigma_h*surf*0.25
+           if face5[iel]: 
+                 surf=hx*hy
+                 b_el[ndof_V*0+2]+=sigma_v*surf*0.25
+                 b_el[ndof_V*1+2]+=sigma_v*surf*0.25
+                 b_el[ndof_V*2+2]+=sigma_v*surf*0.25
+                 b_el[ndof_V*3+2]+=sigma_v*surf*0.25
+           if face6[iel]: 
+                 surf=hx*hy
+                 b_el[ndof_V*4+2]-=sigma_v*surf*0.25
+                 b_el[ndof_V*5+2]-=sigma_v*surf*0.25
+                 b_el[ndof_V*6+2]-=sigma_v*surf*0.25
+                 b_el[ndof_V*7+2]-=sigma_v*surf*0.25
+
 
          case 2:
            if face1[iel]: # face is nodes 1-2-5-6
                  surf=hz*abs(y_V[icon_V[1,iel]]-y_V[icon_V[2,iel]])
-                 b_el[ndof_V*1]=sigma_bc*surf*0.25
-                 b_el[ndof_V*2]=sigma_bc*surf*0.25
-                 b_el[ndof_V*5]=sigma_bc*surf*0.25
-                 b_el[ndof_V*6]=sigma_bc*surf*0.25
+                 b_el[ndof_V*1]+=sigma_H*surf*0.25
+                 b_el[ndof_V*2]+=sigma_H*surf*0.25
+                 b_el[ndof_V*5]+=sigma_H*surf*0.25
+                 b_el[ndof_V*6]+=sigma_H*surf*0.25
            if face2[iel]: # face is nodes 1-2-5-6
                  surf=hz*abs(y_V[icon_V[1,iel]]-y_V[icon_V[2,iel]])
-                 b_el[ndof_V*1]-=sigma_bc*surf*0.25
-                 b_el[ndof_V*2]-=sigma_bc*surf*0.25
-                 b_el[ndof_V*5]-=sigma_bc*surf*0.25
-                 b_el[ndof_V*6]-=sigma_bc*surf*0.25
+                 b_el[ndof_V*1]-=sigma_H*surf*0.25
+                 b_el[ndof_V*2]-=sigma_H*surf*0.25
+                 b_el[ndof_V*5]-=sigma_H*surf*0.25
+                 b_el[ndof_V*6]-=sigma_H*surf*0.25
         time_bcN+=clock.time()-start1
 
         # apply boundary conditions # could be improved with local_to_globalV
@@ -674,7 +719,9 @@ for istep in range(0,nstep):
      case 1:
       sol=sps.linalg.spsolve(A_fem,b_fem)
      case 2:
-      sol,info=sps.linalg.cg(A_fem,b_fem)
+      #sol,info=sps.linalg.cg(A_fem,b_fem,rtol=1e-06)
+      sol,info=scipy.sparse.linalg.cg(A_fem,b_fem,tol=1e-6)
+      if info!=0 : print('pb with cg solver',info)
      case _:
       sol=np.zeros(Nfem,dtype=np.float64)  
 
@@ -698,6 +745,9 @@ for istep in range(0,nstep):
 
     ###############################################################################
     # retrieve nodal strain tensor components 
+    # note that dNdr_V etc are stored on q points. I here therefore use dNdr__V
+    # for some weird reason there seems to be an asymmetry/error in the strain
+    # components (only nodal ones) but it's gone if I sample in the middle ...
     ###############################################################################
     start=clock.time()
 
@@ -722,14 +772,18 @@ for istep in range(0,nstep):
     s_V=np.array([-1,-1, 1, 1,-1,-1, 1, 1],np.float64)
     t_V=np.array([ 0, 0, 0, 0, 1, 1, 1, 1],np.float64)
 
+    #for debugging
+    #u=np.copy(0.5*x_V**2)
+    #v=np.copy(0.5*y_V**2)
+    #w=np.copy(0.5*z_V**2)
+
     for iel in range(0,nel):
         for i in range(0,m_V):
-            rq=r_V[i]
-            sq=s_V[i]
-            tq=t_V[i]
+            rq=0#r_V[i]
+            sq=0#s_V[i]
+            tq=0#t_V[i]
             inode=icon_V[i,iel]
 
-            N_V=basis_functions_V(rq,sq,tq)
             dNdr__V=basis_functions_V_dr(rq,sq,tq)
             dNds__V=basis_functions_V_ds(rq,sq,tq)
             dNdt__V=basis_functions_V_dt(rq,sq,tq)
@@ -825,6 +879,10 @@ for istep in range(0,nstep):
     total_strain=effective(total_strain_xx,total_strain_yy,total_strain_zz,\
                            total_strain_xy,total_strain_xz,total_strain_yz)
 
+    if debug:
+       np.savetxt('strain_nodal.ascii',np.array([x_V,y_V,z_V,e_xx_n,e_yy_n,e_zz_n,e_xy_n,e_xz_n,e_yz_n]).T,\
+                  header='# x,y,z,exx,eyy,ezz,exy,exz,eyz')
+
     print("compute nodal strain & stress components: %.3f s" % (clock.time()-start))
 
     ###############################################################################
@@ -867,7 +925,6 @@ for istep in range(0,nstep):
     e_xy_e=np.zeros(nel,dtype=np.float64)  
     e_xz_e=np.zeros(nel,dtype=np.float64)  
     e_yz_e=np.zeros(nel,dtype=np.float64)  
-
     sigma_e=np.zeros(nel,dtype=np.float64)  
     sigma_xx_e=np.zeros(nel,dtype=np.float64)  
     sigma_yy_e=np.zeros(nel,dtype=np.float64)  
@@ -919,6 +976,12 @@ for istep in range(0,nstep):
     print("     -> e_xy_e (m,M) %e %e " %(np.min(e_xy_e),np.max(e_xy_e)))
     print("     -> e_xz_e (m,M) %e %e " %(np.min(e_xz_e),np.max(e_xz_e)))
     print("     -> e_yz_e (m,M) %e %e " %(np.min(e_yz_e),np.max(e_yz_e)))
+
+
+    if debug:
+       np.savetxt('strain_elemental.ascii',np.array([x_e,y_e,z_e,e_xx_e,e_yy_e,e_zz_e,e_xy_e,e_xz_e,e_yz_e]).T,\
+                  header='# x,y,z,exx,eyy,ezz,exy,exz,eyz')
+
 
     print("compute elemental strain components: %.3f s" % (clock.time()-start))
 
@@ -976,6 +1039,7 @@ for istep in range(0,nstep):
 
     ###############################################################################
     # evolve mesh
+    ###############################################################################
 
     disp=np.sqrt(u**2+v**2+w**2)
     dx=Lx/nelx
