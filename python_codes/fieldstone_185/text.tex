@@ -214,7 +214,7 @@ according to elastic theory,
 the solutions for the stresses around the borehole can be described by [the 
 following] equations 
 (derived from the Kirsch set of equations under linear elastic isotropic property assumptions,
-Jaeger et al., 2009).''
+\textcite{jacz}).''
 
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_185/images/han}
@@ -289,8 +289,7 @@ the cross-section of the borehole will show an elliptical shape;
 displacements around the borehole are illustrated in Figure [below]. 
 Within the framework of elasticity theory, the analytical solutions 
 of displacements around the borehole can be derived from the Kirsch set 
-of equations (Jaeger et al., 2009)...''
-
+of equations \textcite{jacz}...''
 
 \begin{center}
 \includegraphics[width=10cm]{python_codes/fieldstone_185/images/han2}
@@ -333,26 +332,48 @@ $\sigma_v$ is the vertical stress at depth $z$, $\sigma_H$ is the maximum horizo
 $\sigma_h$ is the minimum horizontal stress, $p_m$ is borehole mud pressure, 
 and $\theta$ is the angle from the maximum horizontal stress direction.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Nomenclature}
+
+\begin{tabular}{ll}
+\lstinline|nel| & total number of elements in mesh \\
+\lstinline|nn_V| & total number of nodes in mesh \\
+\lstinline|Nfem| & total number of unknowns/dofs (size of matrix and rhs) \\
+\lstinline|x_V,y_V,z_V| & arrays containing coordinates of all nodes \\
+\lstinline|icon_V| & connectivity array \\
+\lstinline|u,v,w| & arrays containing displacement values of all nodes \\
+\lstinline|x_e,y_e,z_e| & arrays containing coordinates of all element centers \\
+\lstinline|E| & arrays containing Young's modulus value for all elements \\
+\lstinline|G| & arrays containing shear modulus value for all elements \\
+\lstinline|lambdaa| & arrays containing Lam\'e parameter value for all elements \\
+\lstinline|e_xx_n|, etc... & nodal strain tensor components  \\
+\lstinline|e_xx_e|, etc... & elemental strain tensor components \\
+\lstinline|sigma_xx_n|, etc... & nodal stress tensor components  \\
+\lstinline|sigma_xx_e|, etc... & elemental stress tensor components \\
+%bc_fix
+%bc_val
+\end{tabular}
 
 
+Null spaces
 
 
+\begin{verbatim}
+define parameters (geometry, rheology, resolution, ...)
+make mesh
+define boundary conditions
+-----time stepping (for) loop--->
+build FE matrix & rhs
+solve linear system -> u,v,w @ nodes 
+compute nodal strain & stress tensor components
+compute nodal principal stresses 
+compute elemental strain and stress tensor components
+compute elemental principal stresses 
+evolve mesh
+export to vtu 
+<-------------------------
+\end{verbatim}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{to do ...}
-
-carry out analytical bench a la f124
-
-add stress bc in other direction 
-
-modify my mesh to include cylinder like in gakj12?
-
-40x40x40 works, takes 15+ minutes
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
- 
 
 
 

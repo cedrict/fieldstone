@@ -343,9 +343,6 @@ def mesher_borehole(Lx,Ly,Lz,nelx,nely,nelz,radius):
 
     if debug: np.savetxt('mesh.ascii',np.array([x_V,y_V]).T,header='# x,y')
 
-    #Lx*=2
-    #Ly*=2
-
     ###############################################################################
 
     vtufile=open('mesh2d.vtu',"w")
