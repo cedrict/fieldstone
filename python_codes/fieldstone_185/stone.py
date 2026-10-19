@@ -59,7 +59,7 @@ if meshtype==2:
    volume_analytical=Lx*Ly*Lz-(np.pi*radius**2*Lz)
    nelx=16
    nely=nelx
-   nelz=16  #must be even number
+   nelz=32  #must be even number
 
 #######################################
 
@@ -67,7 +67,7 @@ sigma_H=9e3
 sigma_h=3e3
 sigma_v=0
 
-layout=1
+layout=2
 
 debug=False
 
@@ -139,11 +139,14 @@ print("*******************************")
 
 Nfem=ndof_V*nn_V
 
+wall_n=np.zeros(nn_V,dtype=bool)
 theta_n=np.zeros(nn_V,dtype=np.float64)  
 r_n=np.zeros(nn_V,dtype=np.float64)  
 for i in range(nn_V):
     r_n[i]=np.sqrt((x_V[i]-Lx/2)**2+(y_V[i]-Ly/2)**2)
     theta_n[i]=np.arctan2((y_V[i]-Ly/2),(x_V[i]-Lx/2))
+    if abs(r_n[i]-radius)<1e-6*radius:
+       wall_n[i]=True
 
 #for iel in range (0,nel):
 #    print ("iel=",iel,'icon:',icon_V[:,iel])
@@ -1002,11 +1005,15 @@ for istep in range(0,nstep):
     ###############################################################################
 
     disp=np.sqrt(u**2+v**2+w**2)
-    dd=0.01*min(hx,hz)/max(disp) # in %
+    dd=0.1*min(hx,hz)/max(disp) # in %
 
     x_V+=u*dd
     y_V+=v*dd
     z_V+=w*dd
+
+    for i in range(nn_V):
+        r_n[i]=np.sqrt((x_V[i]-Lx/2)**2+(y_V[i]-Ly/2)**2)
+        theta_n[i]=np.arctan2((y_V[i]-Ly/2),(x_V[i]-Lx/2))
 
     ###############################################################################
     # plot of solution
@@ -1060,21 +1067,27 @@ for istep in range(0,nstep):
     sigma_n.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
 
     #--
-    vtufile.write("<DataArray type='Float32' Name='bc fix u' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Int32' Name='bc fix u' Format='ascii'> \n")
     for i in range(0,nn_V):
         val=int(bc_fix[3*i+0])
         vtufile.write("%d \n" % val)
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='bc fix v' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Int32' Name='bc fix v' Format='ascii'> \n")
     for i in range(0,nn_V):
         val=int(bc_fix[3*i+1])
         vtufile.write("%d \n" % val)
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='bc fix w' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Int32' Name='bc fix w' Format='ascii'> \n")
     for i in range(0,nn_V):
         val=int(bc_fix[3*i+2])
+        vtufile.write("%d \n" % val)
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Int32' Name='wall' Format='ascii'> \n")
+    for i in range(0,nn_V):
+        val=int(wall_n[i]) 
         vtufile.write("%d \n" % val)
     vtufile.write("</DataArray>\n")
     #--
@@ -1150,6 +1163,16 @@ for istep in range(0,nstep):
     vtufile.close()
 
     print("export to vtu: %.3f s" % (clock.time()-start))
+
+    ###########################################################################
+    # export wall nodes to ascii file
+    ###########################################################################
+
+    np.savetxt('wall_displacement'+str(istep)+'.ascii',\
+               np.array([theta_n[wall_n],z_V[wall_n],\
+                         r_n[wall_n],disp[wall_n]]).T,header='# theta,z,r,disp',fmt='%.4e')
+
+    #INSERT matplotlib commands to generate colormaps
 
 #end of time stepping loop
 

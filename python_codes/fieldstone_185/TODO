@@ -1,0 +1,30 @@
+
+1) in parallel implement pricipal stresses calculations in function
+
+2) test it on chosen tensors.
+
+3) consolidate analytical solution(s)/ compare across sources on paper
+   (start with sigma_h=sigma_v=0)
+   find if possible figures obtained with this analytical solution (parameters?!!?!?)
+
+4) implement expressions in analytical_solution.py (disp, strain, stress)
+
+5) visualise these in tryout.py -> paraview
+
+6) compute p stresses on analytical solution -> visualise in paraview
+
+7) retro fit in stone 
+
+8) write small matplot 'function' to plot wall data
+
+########################################################################## 
+
+LATER
+- M: think of stochastic coeffs ? at some point 
+- M: yield criterion(s) - check remark in Han thesis 'breakouts occurrence criterion' p 53
+- C: create mesh 1/4th for tests ? 
+- C: assembly fast(er)
+- M: can we add strong layer on sides we push on to keep surface flat ?
+- C: modify my mesh to include cylinder like in gakj12? fig 4
+
+########################################################################## 
