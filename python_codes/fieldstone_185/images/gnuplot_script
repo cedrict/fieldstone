@@ -1,0 +1,43 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+
+set title 'at {/Symbol Q}=0'
+set xlabel 'r/a'
+
+#############################################################
+
+set ylabel '{/Symbol s}_{rr}/{/Symbol s}'
+set output 'sigma_rr.pdf'
+plot[1:5][]\
+0.5*(1-1/x**2 ) + 0.5*( 1 + 3/x**4  - 4/x**2  ) notitle
+
+set ylabel '{/Symbol s}_{rr}/{/Symbol s}'
+set output 'sigma_rr2.pdf'
+plot[0:2*pi][]\
+0.5*(1-1/1**2 ) + 0.5*( 1 + 3/1**4  - 4/1**2  ) * cos(2*x) notitle
+
+#############################################################
+
+set ylabel '{/Symbol s}_{{/Symbol Q}{/Symbol Q}}/{/Symbol s}'
+set output 'sigma_tt.pdf'
+plot[1:5][]\
+0.5*(1+1/x**2 ) - 0.5*( 1 + 3/x**4    ) notitle
+
+set ylabel '{/Symbol s}_{{/Symbol Q}{/Symbol Q}}/{/Symbol s}'
+set output 'sigma_tt2.pdf'
+plot[0:2*pi][]\
+0.5*(1+1/1**2 ) - 0.5*( 1 + 3/1**4 ) * cos(2*x)   notitle
+
+#############################################################
+
+set ylabel '{/Symbol s}_{r {/Symbol Q}}/{/Symbol s}'
+set output 'sigma_rt2.pdf'
+plot[0:2*pi][]\
+-0.5*(1-3/1**2+2/1**2)*sin(2*x)
+
+
+
+
+
+ 

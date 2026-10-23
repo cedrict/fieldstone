@@ -18,7 +18,7 @@ def mesher_borehole(Lx,Ly,Lz,nelx,nely,nelz,radius):
     eps=1e-8
     distance=eps*Lx
 
-    debug=True
+    debug=False
 
     ###############################################################################
     # The mesh in the xy plane is composed of eight blocks. Each is first built 
@@ -300,8 +300,8 @@ def mesher_borehole(Lx,Ly,Lz,nelx,nely,nelz,radius):
     nel=nblock*b_nel
 
     print('     -> doubles=',sum(doubble))
-    print('     -> nn_V=',nn_V)
-    print('     -> nel=',nel)
+    #print('     -> nn_V=',nn_V)
+    #print('     -> nel=',nel)
 
     x_V=np.zeros(nn_V,dtype=np.float64)  # x coordinates
     y_V=np.zeros(nn_V,dtype=np.float64)  # y coordinates
@@ -397,7 +397,6 @@ def mesher_borehole(Lx,Ly,Lz,nelx,nely,nelz,radius):
 
     print('     -> nn_V=',nn_V)
     print('     -> nel=',nel)
-    print('     -> hz=',hz)
 
     x_V=np.zeros(nn_V,dtype=np.float64) 
     y_V=np.zeros(nn_V,dtype=np.float64) 

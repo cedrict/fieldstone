@@ -73,7 +73,7 @@ def analytical_solution_displacement(r,theta,radius,sigma_H,E,nu):
 
     ur=(1-nu)+(1+nu)/rr**2 + ( (1+nu)-(1+nu)/rr**4+4/rr**2 )*c20
 
-    ut=( (1+nu)+(1+nu)/rr**4+2*(1-nu)/rr**2 ) * s20
+    ut=-( (1+nu)+(1+nu)/rr**4+2*(1-nu)/rr**2 ) * s20
 
     ur*=r*sigma_H/2/E
     ut*=r*sigma_H/2/E
