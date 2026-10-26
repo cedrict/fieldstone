@@ -41,10 +41,10 @@ ndof_V=3  # number of degrees of freedom per node
 debug=True
 
 #######################################
-#experiment=0: full block
-#experiment=1: 2d Kirsch (hole in a plate)
-#experiment=2: 3d solution
-#experiment=3: iowa setup
+#experiment=0,1: full block
+#experiment=2: 2d Kirsch (hole in a plate)
+#experiment=3: 3d solution
+#experiment=4: iowa setup
 #######################################
 # layout=1: one material
 # layout=2: 3 slanted layers
@@ -53,31 +53,36 @@ debug=True
 experiment=1
 
 match experiment:
- case 0:
+ case 0 | 1:
    meshtype=1 # full cuboid
    Lx=1
    Ly=1
    Lz=0.25
-   nelx=16
+   nelx=32
    nely=nelx
    nelz=int(nelx/4)
    volume_analytical=Lx*Ly*Lz
    layout=1
-   sigma_H=1
+   sigma_H=0
    sigma_h=0
    sigma_v=0
    nstep=1
    E1=2.5e6 
    G1=1e6
+   radius=0
+   if (experiment==0): 
+      from block0 import *
+   if (experiment==1): 
+      from block1 import *
 
- case 1:
+ case 2:
    meshtype=2 # hole
    Lx=1
    Ly=1
-   Lz=0.2
-   nelx=30
+   Lz=0.125
+   nelx=48
    nely=nelx
-   nelz=int(nelx/4)
+   nelz=4
    radius=0.02
    volume_analytical=Lx*Ly*Lz-(np.pi*radius**2*Lz)
    layout=1
@@ -90,7 +95,7 @@ match experiment:
    G1=1e6
    from kirsch import *
 
- case 2:
+ case 3:
    meshtype=2
    layout=1
    sigma_H=9e3
@@ -98,7 +103,7 @@ match experiment:
    sigma_v=0
    nstep=1
 
- case 3:
+ case 4:
    meshtype=2
    Lx=0.1
    Ly=0.1
@@ -318,7 +323,7 @@ start=clock.time()
 
 if debug:
    export_mesh_to_vtu(nn_V,nel,x_V,y_V,z_V,icon_V,volume,\
-                      face1,face2,face3,face4,face5,face6,experiment)
+                      face1,face2,face3,face4,face5,face6)
 
 print("export 3d mesh to vtu: %.3f s" % (clock.time()-start))
 
@@ -382,6 +387,46 @@ print("     -> Lame's 1st parameter: lambdaa (m,M) %e %e " %(np.min(lambdaa),np.
 print("compute coords.: %.3f s" % (clock.time()-start))
 
 ###############################################################################
+###############################################################################
+start=clock.time()
+
+u_th=np.zeros(nn_V,dtype=np.float64)  
+v_th=np.zeros(nn_V,dtype=np.float64)  
+w_th=np.zeros(nn_V,dtype=np.float64)  
+e_xx_th=np.zeros(nn_V,dtype=np.float64)  
+e_yy_th=np.zeros(nn_V,dtype=np.float64)  
+e_zz_th=np.zeros(nn_V,dtype=np.float64)  
+e_xy_th=np.zeros(nn_V,dtype=np.float64)  
+e_xz_th=np.zeros(nn_V,dtype=np.float64)  
+e_yz_th=np.zeros(nn_V,dtype=np.float64)  
+sigma_xx_th=np.zeros(nn_V,dtype=np.float64)  
+sigma_yy_th=np.zeros(nn_V,dtype=np.float64)  
+sigma_zz_th=np.zeros(nn_V,dtype=np.float64)  
+sigma_xy_th=np.zeros(nn_V,dtype=np.float64)  
+sigma_xz_th=np.zeros(nn_V,dtype=np.float64)  
+sigma_yz_th=np.zeros(nn_V,dtype=np.float64)  
+
+match experiment:
+ case 0 | 1 :
+   for i in range(0,nn_V):
+       u_th[i],v_th[i],w_th[i]=\
+       analytical_solution_displacement(x_V[i],y_V[i],z_V[i])
+       e_xx_th[i],e_yy_th[i],e_zz_th[i],e_xy_th[i],e_xz_th[i],e_yz_th[i]=\
+       analytical_solution_strain(x_V[i],y_V[i],z_V[i])
+       sigma_xx_th[i],sigma_yy_th[i],sigma_zz_th[i],sigma_xy_th[i],sigma_xz_th[i],sigma_yz_th[i]=\
+       analytical_solution_stress(x_V[i],y_V[i],z_V[i],lambdaa[0],G[0])
+ case 2:
+   for i in range(0,nn_V):
+       u_th[i],v_th[i],w_th[i]=\
+       analytical_solution_displacement(rad_V[i],theta_V[i],radius,sigma_H1,E1,nu1)
+       e_xx_th[i],e_yy_th[i],e_zz_th[i],e_xy_th[i],e_xz_th[i],e_yz_th[i]=\
+       analytical_solution_strain(rad_V[i],theta_V[i],radius,sigma_H1,E1,nu1)
+       sigma_xx_th[i],sigma_yy_th[i],sigma_zz_th[i],sigma_xy_th[i],sigma_xz_th[i],sigma_yz_th[i]=\
+       analytical_solution_stress(rad_V[i],theta_V[i],radius,sigma_H1)
+
+print("compute analytical solution on nodes: %.3f s" % (clock.time()-start))
+
+###############################################################################
 # define boundary conditions
 # there are 3 translational nullspaces so they need to be dealt with 
 # by means of Dirichlet boundary conditions at specific nodes:
@@ -396,7 +441,7 @@ bc_fix=np.zeros(Nfem,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=np.float64)  # boundary condition, value
 
 match experiment:
- case 0:
+ case 10:
    # w=0 on all six faces
    for i in range(0,nn_V):
     # x=0 face 
@@ -418,20 +463,23 @@ match experiment:
     if abs(z_V[i]-  Lz)/Lz<eps :
        bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
 
- case 1:
+ case 0 | 1 | 2 :
 
     for i in range(0,nn_V):
-        ui,vi,wi=analytical_solution_displacement(rad_V[i],theta_V[i],radius,sigma_H1,E1,nu1)
         if abs(x_V[i])/Lx<eps or abs(x_V[i]-Lx)/Lx<eps or \
            abs(y_V[i])/Ly<eps or abs(y_V[i]-Ly)/Ly<eps or \
            abs(z_V[i])/Lz<eps or abs(z_V[i]-Lz)/Lz<eps:
-           bc_fix[i*ndof_V+0] = True ; bc_val[i*ndof_V+0] = ui 
-           bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = vi
-           bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = wi
+           bc_fix[i*ndof_V+0] = True ; bc_val[i*ndof_V+0] = u_th[i] 
+           bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = v_th[i]
+           bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = w_th[i]
+        if wall_V[i]:
+           bc_fix[i*ndof_V+0] = True ; bc_val[i*ndof_V+0] = u_th[i] 
+           bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = v_th[i]
+           bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = w_th[i]
 
- case 2:
-   2
  case 3:
+   2
+ case 4:
 
    for i in range(0,nn_V):
 
@@ -754,9 +802,9 @@ for istep in range(0,nstep):
     sigma_yz_n=np.zeros(nn_V,dtype=np.float64)  
 
     #for debugging
-    #u=np.copy(0.5*x_V**2)
-    #v=np.copy(0.5*y_V**2)
-    #w=np.copy(0.5*z_V**2)
+    #u=np.copy(x_V-Lx/2)/50
+    #v=np.copy(y_V-Ly/2)/50
+    #w=np.copy(z_V)
 
     r_V=np.array([-1, 1, 1,-1,-1, 1, 1,-1],np.float64)
     s_V=np.array([-1,-1, 1, 1,-1,-1, 1, 1],np.float64)
@@ -977,7 +1025,8 @@ for istep in range(0,nstep):
     ###############################################################################
 
     disp=np.sqrt(u**2+v**2+w**2)
-    dd=0.51*min(hx,hz)/max(disp) # in %
+    dd=0.01*min(hx,hz)/max(disp) # in %
+    dd=0
 
     x_V+=u*dd
     y_V+=v*dd
@@ -989,6 +1038,7 @@ for istep in range(0,nstep):
 
     ###############################################################################
     # plot of solution
+    # note the specific ordering of tensor terms xx,yy,zz,xy,yz,xz
     ###############################################################################
     start=clock.time()
        
@@ -1010,13 +1060,17 @@ for istep in range(0,nstep):
     for i in range(0,nn_V):
         vtufile.write("%e %e %e \n" %(u[i],v[i],w[i]))
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='displacement (th)' Format='ascii'> \n")
     for i in range(0,nn_V):
-        ui,vi,wi=analytical_solution_displacement(rad_V[i],theta_V[i],radius,sigma_H1,E1,nu1)
-        vtufile.write("%e %e %e \n" %(ui,vi,wi))
+        vtufile.write("%e %e %e \n" %(u_th[i],v_th[i],w_th[i]))
     vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='displacement (error)' Format='ascii'> \n")
+    for i in range(0,nn_V):
+        vtufile.write("%e %e %e \n" %(u[i]-u_th[i],v[i]-v_th[i],w[i]-w_th[i]))
+    vtufile.write("</DataArray>\n")
+
 
     #--
     #vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
@@ -1037,10 +1091,8 @@ for istep in range(0,nstep):
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='6' Name='strain (th)' Format='ascii'> \n")
     for i in range(0,nn_V):
-        e_xxi,e_yyi,e_zzi,e_xyi,e_yzi,e_xzi=analytical_solution_strain(rad_V[i],theta_V[i],radius,sigma_H1,E1,nu1)
-        vtufile.write("%e %e %e %e %e %e\n" %(e_xxi,e_yyi,e_zzi,e_xyi,e_yzi,e_xzi))
+        vtufile.write("%e %e %e %e %e %e\n" %(e_xx_th[i],e_yy_th[i],e_zz_th[i],e_xy_th[i],e_yz_th[i],e_xz_th[i]))
     vtufile.write("</DataArray>\n")
-
     #--
     vtufile.write("<DataArray type='Float32' Name='total strain (effective)' Format='ascii'> \n")
     total_strain.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
@@ -1062,8 +1114,7 @@ for istep in range(0,nstep):
     #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='6' Name='stress (th)' Format='ascii'> \n")
     for i in range(0,nn_V):
-        s_xxi,s_yyi,s_zzi,s_xyi,s_yzi,s_xzi=analytical_solution_stress(rad_V[i],theta_V[i],radius,sigma_H1)
-        vtufile.write("%e %e %e %e %e %e\n" %(s_xxi,s_yyi,s_zzi,s_xyi,s_yzi,s_xzi))
+        vtufile.write("%e %e %e %e %e %e\n" %(sigma_xx_th[i],sigma_yy_th[i],sigma_zz_th[i],sigma_xy_th[i],sigma_yz_th[i],sigma_xz_th[i]))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Int32' Name='bc fix u' Format='ascii'> \n")
@@ -1119,9 +1170,9 @@ for istep in range(0,nstep):
                                               e_xy_e[iel],e_yz_e[iel],e_xz_e[iel]))
     vtufile.write("</DataArray>\n")
     #--
-    vtufile.write("<DataArray type='Float32' Name='sigma (effective)' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' Name='stress (effective)' Format='ascii'> \n")
     sigma_e.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' NumberOfComponents='6' Name='sigma (tensor)' Format='ascii'> \n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='6' Name='stress (tensor)' Format='ascii'> \n")
     for iel in range(0,nel):
         vtufile.write("%e %e %e %e %e %e\n" %(sigma_xx_e[iel],sigma_yy_e[iel],sigma_zz_e[iel],\
                                               sigma_xy_e[iel],sigma_yz_e[iel],sigma_xz_e[iel]))
@@ -1168,6 +1219,21 @@ for istep in range(0,nstep):
 
     #INSERT matplotlib commands to generate colormaps
 
+    ###########################################################################
+    # export analytical solution on line 
+    ###########################################################################
+
+    online=np.logical_and(  (abs(y_V-Ly/2)/Ly<eps) , (abs(z_V-Lz/2)/Lz<eps) )
+
+    np.savetxt('line_displacement.ascii',np.array([x_V[online],y_V[online],z_V[online],\
+                                                   u[online],v[online],w[online],\
+                                                   e_xx_n[online],e_yy_n[online],e_xy_n[online],\
+                                                   sigma_xx_n[online],sigma_yy_n[online],sigma_xy_n[online]  ]).T)
+
+    np.savetxt('line_displacement_th.ascii',np.array([x_V[online],y_V[online],z_V[online],\
+                                                      u_th[online],v_th[online],w_th[online],\
+                                                      e_xx_th[online],e_yy_th[online],e_xy_th[online],\
+                                                      sigma_xx_th[online],sigma_yy_th[online],sigma_xy_th[online]  ]).T)
 #end of time stepping loop
 
 print("*******************************")

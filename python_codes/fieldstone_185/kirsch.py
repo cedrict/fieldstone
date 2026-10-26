@@ -11,7 +11,7 @@ def analytical_solution_stress(r,theta,radius,sigma_H):
     c20=np.cos(2*theta)
     s20=np.sin(2*theta)
 
-    sigma_rr=0.5*(1-1/rr**2)+0.5*(1+3/rr**4-4*rr**2)*c20
+    sigma_rr=0.5*(1-1/rr**2)+0.5*(1+3/rr**4-4/rr**2)*c20
     sigma_tt=0.5*(1+1/rr**2)-0.5*(1+3/rr**4)*c20
     sigma_rt=-0.5*(1-3/rr**4+2/rr**2)*s20
 
@@ -39,7 +39,7 @@ def analytical_solution_strain(r,theta,radius,sigma_H,E,nu):
     c20=np.cos(2*theta)
     s20=np.sin(2*theta)
 
-    sigma_rr=0.5*(1-1/rr**2)+0.5*(1+3/rr**4-4*rr**2)*c20
+    sigma_rr=0.5*(1-1/rr**2)+0.5*(1+3/rr**4-4/rr**2)*c20
     sigma_tt=0.5*(1+1/rr**2)-0.5*(1+3/rr**4)*c20
     sigma_rt=-0.5*(1-3/rr**4+2/rr**2)*s20
 
@@ -75,8 +75,8 @@ def analytical_solution_displacement(r,theta,radius,sigma_H,E,nu):
 
     ut=-( (1+nu)+(1+nu)/rr**4+2*(1-nu)/rr**2 ) * s20
 
-    ur*=r*sigma_H/2/E
-    ut*=r*sigma_H/2/E
+    ur*=rr*sigma_H/2/E
+    ut*=rr*sigma_H/2/E
 
     ux=ur*c0-ut*s0
     uy=ur*s0+ut*c0

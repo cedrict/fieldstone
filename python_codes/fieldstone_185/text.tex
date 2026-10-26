@@ -202,9 +202,51 @@ As such boundary conditions result in 3 translational nullspaces
 a zero tangential velocity is prescribed in the middle of all 
 four vertical faces.
 
+
+
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{2d Analytical solution }
+\section*{2d Analytical solution with hole (experiment=0)}
+
+Let us choose $\vec{u}=(u_x,u_y,u_z)=(x,0,0)$. 
+Then 
+\begin{eqnarray}
+\varepsilon_{xx} &=& 1\\
+\varepsilon_{yy} &=& 0\\
+\varepsilon_{zz} &=& 0\\
+\varepsilon_{xy} &=& 0\\
+\varepsilon_{xz} &=& 0\\
+\varepsilon_{yz} &=& 0
+\end{eqnarray}
+and from ${\bm \sigma}=\lambda {\rm tr} ({\bm \varepsilon}) {\bm 1} + 2 \mu {\bm \varepsilon}$
+and setting  $\lambda=10^6$ and $\mu=10^6$ (i.e. $\nu=0.25$ and $E=2.5\cdot 10^6$).
+we obtain
+\begin{eqnarray}
+\sigma_{xx} &=& \lambda + 2 \mu = 3\cdot 10^6\\
+\sigma_{yy} &=& \lambda= 10^6 \\
+\sigma_{zz} &=& \lambda= 10^6 \\
+\sigma_{xy} &=& 0\\
+\sigma_{xz} &=& 0\\
+\sigma_{yz} &=& 0
+\end{eqnarray}
+
+Of course it is trivial to verigy that $\vec\nabla\cdot {\bm \sigma} = \vec{0}$, i.e.
+the stress tensor verifies the momentum conservation equation.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/disp.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/e_xx_n.png}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/s_xx_n.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/s_yy_n.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/s_zz_n.png}
+\end{center}
+
+This is a very simple benchmark that is in fact a sanity check.
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{2d Analytical solution with hole (experiment=1) }
 
 We find online\footnote{\url{https://en.wikipedia.org/wiki/Kirsch_equations}}
 the Kirsch equations which describe the elastic stresses around a hole in an 
@@ -231,12 +273,106 @@ applied stress is now called $\sigma_H$.}:
 -\frac12 \left( 1 -  \frac{3}{(r/a)^4} + \frac{2}{(r/a)^2} \right) \sin 2\theta
 \end{eqnarray}
 These equations are identical to those at \url{https://en.wikiversity.org/wiki/Elasticity/Plate_with_hole_in_tension}.
-
-
-\underline{Remark:} The stress solution above is independent of 
+Note that the stress solution above is independent of 
 elastic rheological parameters (i.e. $\lambda, \nu, E, ...$).
 
+Since this stress field is found in many sources we will not bother to 
+go through the derivations but will instead verify that it fulfills the 
+momentum equation. We start 
+from\footnote{\url{https://en.wikipedia.org/wiki/Del_in_cylindrical_and_spherical_coordinates}}  
+\[
+\nabla \cdot {\bm \sigma} 
+= 
+\begin{bmatrix} 
+\frac{\partial \sigma_{rr}}{\partial r} 
++ \frac{\sigma_{rr}}{r} 
++ \frac{1}{r} \frac{\partial \sigma_{\theta r}}{\partial \theta} 
++ \frac{\partial \sigma_{zr}}{\partial z} 
+- \frac{\sigma_{\theta \theta}}{r} 
+\\ \\
+\frac{1}{r} \frac{\partial \sigma_{\theta \theta}}{\partial \theta} 
++ \frac{\partial \sigma_{r \theta}}{\partial r} 
++ \frac{\sigma_{r \theta}}{r} + \frac{\sigma_{\theta r}}{r} 
++ \frac{\partial \sigma_{z \theta}}{\partial z}
+\\ \\
+\frac{\partial \sigma_{z z}}{\partial z} + \frac{\partial \sigma_{r z}}{\partial r} 
++ \frac{\sigma_{rz}}{r} 
++ \frac{1}{r}\frac{\partial \sigma_{\theta z}}{\partial \theta}
+\end{bmatrix}
+\]
+In the absence of body forces the quantity above should be exactly zero.
 
+We have $\sigma_{rz}=\sigma_{\theta z}=0$ and $\sigma_{r\theta}=\sigma_{\theta r}$ so that:
+\[
+\nabla \cdot {\bm \sigma} 
+= 
+\begin{bmatrix} 
+\frac{\partial \sigma_{rr}}{\partial r} 
++ \frac{1}{r} \frac{\partial \sigma_{\theta r}}{\partial \theta} 
++ \frac{\sigma_{rr}-\sigma_{\theta \theta}}{r} 
+\\ \\
+\frac{1}{r} \frac{\partial \sigma_{\theta \theta}}{\partial \theta} 
++ \frac{\partial \sigma_{r \theta}}{\partial r} 
++ 2\frac{\sigma_{r \theta}}{r}  
+\\ \\
+\frac{\partial \sigma_{z z}}{\partial z}
+\end{bmatrix}
+\]
+Let us then compute (in what follows I omit the $1/\sigma_H$ term for simplicity):
+\begin{eqnarray}
+\frac{\partial \sigma_{rr}}{\partial r} 
+&=& 
+\frac{1}{r (r/a)^2} 
++ \left( - \frac{6 }{r(r/a)^4} + \frac{4}{r(r/a)^2}   \right) \cos 2\theta 
+\nn\\
+\frac{1}{r} \frac{\partial \sigma_{\theta r}}{\partial \theta} 
+&=& 
+- \left( \frac1r -  \frac{3}{r(r/a)^4} + \frac{2}{r(r/a)^2} \right) \cos 2\theta
+\nn\\
+\frac{\sigma_{rr}-\sigma_{\theta \theta}}{r} 
+&=& 
+-\frac{1}{r(r/a)^2} + \left( \frac1r+  \frac{3}{r(r/a)^4} -\frac{2}{r(r/a)^2}\right) \cos 2\theta  
+\nn
+\end{eqnarray}
+Then 
+\[
+\nabla \cdot {\bm \sigma} |_r
+=
+\frac{1}{r (r/a)^2} -\frac{1}{r(r/a)^2} 
+\left( 
+- \frac{6 }{r(r/a)^4} + \frac{4}{r(r/a)^2}   
+-\frac1r +  \frac{3}{r(r/a)^4} - \frac{2}{r(r/a)^2}
++\frac1r+  \frac{3}{r(r/a)^4} -\frac{2}{r(r/a)^2}
+\right) \cos 2\theta =0
+\]
+Likewise, we have
+\begin{eqnarray}
+\frac{1}{r} \frac{\partial \sigma_{\theta \theta}}{\partial \theta} 
+&=&
+\left( \frac1r + \frac{3}{r(r/a)^4}   \right) \sin 2\theta   
+\nn\\
+\frac{\partial \sigma_{r \theta}}{\partial r} 
+&=&
+- \left(  +  \frac{6}{r(r/a)^4} - \frac{2}{r(r/a)^2} \right) \sin 2\theta
+\nn\\
+2\frac{\sigma_{r \theta}}{r}  
+&=&
+- \left( \frac1r -  \frac{3}{r(r/a)^4} + \frac{2}{r(r/a)^2} \right) \sin 2\theta
+\nn
+\end{eqnarray}
+then
+\[
+\nabla \cdot {\bm \sigma} |_\theta
+=
+\left(
+\frac1r + \frac{3}{r(r/a)^4}  
+-  \frac{6}{r(r/a)^4} + \frac{2}{r(r/a)^2}
+-\frac1r +  \frac{3}{r(r/a)^4} - \frac{2}{r(r/a)^2}
+\right) \sin 2\theta =0
+\]
+{\color{red} Say smthg about sigma zz.}
+This concludes the proof that the stress field above is a solution 
+of the momentum conservation equation.
 
 
 
@@ -281,16 +417,41 @@ We shall however not use these expressions but instead we will use the formula i
 \sigma_{xy} &=& \sin\theta\cos\theta (\sigma_{rr}-\sigma_{\theta\theta}) + \sigma_{r\theta} \cos 2\theta
 \end{eqnarray}
 
+\begin{lstlisting}
+def analytical_solution_stress(r,theta,radius,sigma_H):
 
+    rr=r/radius
 
+    c0=np.cos(theta)
+    s0=np.sin(theta)
+    c20=np.cos(2*theta)
+    s20=np.sin(2*theta)
 
+    sigma_rr=0.5*(1-1/rr**2)+0.5*(1+3/rr**4-4/rr**2)*c20
+    sigma_tt=0.5*(1+1/rr**2)-0.5*(1+3/rr**4)*c20
+    sigma_rt=-0.5*(1-3/rr**4+2/rr**2)*s20
 
-For an isotropic elastic material in 2d polar coordinates the generalized Hooke's law 
+    sigma_rr*=sigma_H
+    sigma_tt*=sigma_H
+    sigma_rt*=sigma_H
+
+    sigma_xx=sigma_rr*c0**2+sigma_tt*s0**2-sigma_rt*s20
+    sigma_yy=sigma_rr*s0**2+sigma_tt*c0**2+sigma_rt*s20
+    sigma_zz=0
+    sigma_xy=s0*c0*(sigma_rr-sigma_tt)+sigma_rt*c20
+    sigma_xz=0
+    sigma_yz=0
+
+    return sigma_xx,sigma_yy,sigma_zz,sigma_xy,sigma_xz,sigma_yz
+\end{lstlisting}
+
+For an isotropic elastic material 
+the generalized Hooke's law 
 \begin{equation}
 {\bm \sigma}=\lambda {\rm tr}({\bm \varepsilon}) {\bm 1} + 2 G {\bm \varepsilon} 
 \label{eq:f185:hooke}
 \end{equation} 
-is expressed as:
+is expressed in 2d polar coordinates as:
 \begin{eqnarray}
 \sigma_{rr}&=& \lambda(\varepsilon_{rr}+\varepsilon_{\theta\theta}) +2G\varepsilon_{rr}\\
 \sigma_{\theta\theta}
@@ -622,10 +783,40 @@ with a plus sign (left) and a minus sign (right).
 It is clear that the 'minus sign solution' is more physical. 
 
 \begin{center}
-\includegraphics[width=16cm]{python_codes/fieldstone_185/images/comparison}\\
+\includegraphics[width=17cm]{python_codes/fieldstone_185/images/comparison}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_185/images/hole_plus}
 \includegraphics[width=8cm]{python_codes/fieldstone_185/images/hole_minus}
 \end{center}
+
+
+\newpage
+
+We can also plot the strain and stress tensor components.
+We find that indeed $\sigma_{xx}$ is about $\sigma_H$
+on the sides.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/images/sigma_xx}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/images/sigma_yy}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/images/sigma_xy}\\
+{\captionfont Analytical stress for Lx=Ly=1 and radius=0.01, $\sigma_H=1e3$}
+\end{center}
+
+
+
+
+Note that when $r/a>>1$ then $sigma_xx -> sigma_H$ ,and $e_xx -> sigma_H/E $
+
+
+
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/ux.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/uy.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/uz.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_xx.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_xy.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_yy.pdf}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_xx.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_yy.pdf}
 
 
 
@@ -634,7 +825,7 @@ It is clear that the 'minus sign solution' is more physical.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{3d Analytical solution }
+\section*{3d Analytical solution (experiment=??)}
 
 We have just seen a a 2d solution, but we can find a 3d one in 
 the Phd thesis of \textcite{HongXueHan2021}.

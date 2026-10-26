@@ -1,7 +1,7 @@
 import numpy as np
 
 def export_mesh_to_vtu(nn_V,nel,x_V,y_V,z_V,icon_V,volume,\
-                      face1,face2,face3,face4,face5,face6,experiment):
+                      face1,face2,face3,face4,face5,face6):
 
    vtufile=open('mesh3d.vtu',"w")
    vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
