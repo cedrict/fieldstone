@@ -1,13 +1,11 @@
 
-1) in parallel implement pricipal stresses calculations in function
-
-2) test it on chosen tensors.
 
 3) consolidate analytical solution(s)/ compare across sources on paper
    (start with sigma_h=sigma_v=0)
    find if possible figures obtained with this analytical solution (parameters?!!?!?)
 
 4) implement expressions in analytical_solution.py (disp, strain, stress)
+   cyl -> carte
 
 5) visualise these in tryout.py -> paraview
 
@@ -17,6 +15,16 @@
 
 8) write small matplot 'function' to plot wall data
 
+
+https://en.wikipedia.org/wiki/Stress_concentration 
+also in https://en.wikiversity.org/wiki/Elasticity/Plate_with_hole_in_tension
+
+https://www.youtube.com/@dnicolasespinoza5258/videos
+
+https://dnicolasespinoza.github.io/intro.html   (chapter 6)
+
+https://dnicolasespinoza.github.io/IPG.html  
+
 ########################################################################## 
 
 LATER
@@ -25,6 +33,5 @@ LATER
 - C: create mesh 1/4th for tests ? 
 - C: assembly fast(er)
 - M: can we add strong layer on sides we push on to keep surface flat ?
-- C: modify my mesh to include cylinder like in gakj12? fig 4
 
 ########################################################################## 

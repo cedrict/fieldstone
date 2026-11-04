@@ -83,8 +83,8 @@ match experiment:
       nelx = int(sys.argv[1])
       nelz = int(sys.argv[2])
    else:
-      nelx = 32
-      nelz = 8
+      nelx = 16
+      nelz = 4
  
    nelr=int(nelx/2)
    nely=nelx

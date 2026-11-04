@@ -104,6 +104,27 @@ G_1=\frac{E}{2(1+\nu)} \simeq 1.15385e6
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Context} 
+
+We read on the World Stress Map website:
+``Borehole breakouts are an important indicator of horizontal 
+stress orientation, particularly in aseismic regions and at 
+intermediate depths (<5 km). Approximately 19\% of the stress 
+orientation indicators in the World Stress Map (WSM) database 
+have been determined from borehole breakouts.''
+
+Also:
+``Borehole breakouts are stress-induced enlargements of the wellbore cross-section (Bell and Gough,
+1979). When a borehole is drilled the material removed from the subsurface is no longer supporting
+the surrounding rock. As a result, the stresses become concentrated in the surrounding rock (i.e. the
+wellbore wall). Borehole breakout occurs when the stresses around the borehole exceed that required
+to cause compressive failure of the borehole wall (Zoback et al., 1985; Bell, 1990).''
+
+\url{https://www.world-stress-map.org}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Meshing} 
 
 The mesh of \stone~124 is extruded in the $z$ direction 
@@ -911,8 +932,6 @@ the function $f(\theta)$ so we will here take it to be zero,
 with the final recap of the analytical solution given by:
 
 
-
-
 \begin{eqnarray}
 u_r(r,\theta)
 &=& 
@@ -1108,21 +1127,24 @@ the final recap of the analytical solution given by:
 \varepsilon_{rr}           &=& \frac{1}{E}(\sigma_{rr}-\nu(\sigma_{\theta\theta}+\sigma_{zz}) )\\
 \varepsilon_{\theta\theta} &=& \frac{1}{E}(\sigma_{\theta\theta}-\nu(\sigma_{rr}+\sigma_{zz}) )\\
 \varepsilon_{r\theta}      &=& \frac{1}{E}(\sigma_{zz}-\nu(\sigma_{\theta\theta}+\sigma_{rr}) )\\
-u_r(r,\theta)
+u_r
 &=& 
 \frac{(\sigma_H+\sigma_h)(1+\nu)r}{2 E} \left(  1 -2\nu +\frac{1}{(r/a)^2} \right)   
 + \frac{(\sigma_H-\sigma_h)(1+\nu)r}{2E}
 \left(  1 - \frac{1}{(r/a)^4} + \frac{4(1-\nu)}{(r/a)^2}  
 \right) \cos 2\theta 
-\nn\\
-u_\theta(r,\theta)
+\\
+u_\theta
 &=& 
 -\frac{(\sigma_H-\sigma_h)(1+\nu) r}{2E}
 \left[
 1 +2\left( 1 - 2\nu \right)\frac{1}{(r/a)^2}
 + \frac{1}{(r/a)^4}
-\right]  \sin 2\theta \nn
+\right]  \sin 2\theta 
 \end{eqnarray}
+
+
+
 
 
 
@@ -1132,8 +1154,9 @@ u_\theta(r,\theta)
 
 The domain is a cuboid of size $1\times 1 \times 0.125$ with the hole in 
 its middle of radius 0.02. 
-Boundary conditions are all displacement (i.e. Dirichlet) boundary conditions based 
-on the analytical displacement solution.
+Boundary conditions are displacement (i.e. Dirichlet) boundary conditions based 
+on the analytical displacement solution. They are applied on all 
+6 sides of the cuboid and on the borehole wall. In what follows \lstinline{meshtype=3}.
 Displacement, strain and stress components are measured on three lines:
 \begin{itemize}
 \item a line parameterized by $y=L_y/2$ and $z=L_z/2$, hereafter called 'x-line'. 
@@ -1141,6 +1164,14 @@ Displacement, strain and stress components are measured on three lines:
 \item a line parameterized by $x=a$ and $y=L_y/2$, hereafter called 'z-line'. 
 \end{itemize}
 
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_185/RESULTS/exp1/mesh_16x16x4.png}
+\end{center}
+
+The code is ran for 5 horizontal resolutions $nelx=nely=32,64,96,128,160$ and
+for 3 vertical resolutions $nelz=4,8,16$ with the bash script {\tt script\_run}.
+
+\newpage
 \begin{center}
 \includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/u.png}
 \includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/v.png}
