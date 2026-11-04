@@ -1,0 +1,219 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize 0.3
+set xtics .1
+set key outside
+
+sigma_H=1e3
+radius=0.02
+Lx=1.
+E=2.5e6
+nu=0.25
+
+set style rect fc lt -1 fs solid 0.1 noborder
+set obj rect from 0.48, graph 0 to 0.52, graph 1
+
+####################################################
+set xlabel 'x'
+
+set ylabel 'u_x'
+set output 'ux__x.pdf'
+plot[0:1][]\
+'line_x_displacement_32_4.ascii'      u 1:4 lt 1  pt 1 t '32x32x4',\
+'line_x_displacement_32_8.ascii'      u 1:4 lt 1  pt 2 t '32x32x8',\
+'line_x_displacement_32_16.ascii'     u 1:4 lt 1  pt 3 t '32x32x16',\
+'line_x_displacement_64_4.ascii'      u 1:4 lt 2  pt 1 t '64x64x4',\
+'line_x_displacement_64_8.ascii'      u 1:4 lt 2  pt 2 t '64x64x8',\
+'line_x_displacement_64_16.ascii'     u 1:4 lt 2  pt 3 t '64x64x16',\
+'line_x_displacement_96_4.ascii'      u 1:4 lt 3  pt 1 t '96x96x4',\
+'line_x_displacement_96_8.ascii'      u 1:4 lt 3  pt 2 t '96x96x8',\
+'line_x_displacement_96_16.ascii'     u 1:4 lt 3  pt 3 t '96x96x16',\
+'line_x_displacement_128_4.ascii'     u 1:4 lt 4  pt 1 t '128x128x4',\
+'line_x_displacement_128_8.ascii'     u 1:4 lt 4  pt 2 t '128x128x8',\
+'line_x_displacement_128_16.ascii'    u 1:4 lt 4  pt 3 t '128x128x16',\
+'line_x_displacement_th_128_16.ascii' u 1:4 lt -1 pt 0 t 'analytical' 
+
+
+set ylabel 'u_y'
+set output 'uy__x.pdf'
+plot[0:1][]\
+'line_x_displacement_32_4.ascii'      u 1:5 lt 1  pt 1 t '32x32x4',\
+'line_x_displacement_32_8.ascii'      u 1:5 lt 1  pt 2 t '32x32x8',\
+'line_x_displacement_32_16.ascii'     u 1:5 lt 1  pt 3 t '32x32x16',\
+'line_x_displacement_64_4.ascii'      u 1:5 lt 2  pt 1 t '64x64x4',\
+'line_x_displacement_64_8.ascii'      u 1:5 lt 2  pt 2 t '64x64x8',\
+'line_x_displacement_64_16.ascii'     u 1:5 lt 2  pt 3 t '64x64x16',\
+'line_x_displacement_96_4.ascii'      u 1:5 lt 3  pt 1 t '96x96x4',\
+'line_x_displacement_96_8.ascii'      u 1:5 lt 3  pt 2 t '96x96x8',\
+'line_x_displacement_96_16.ascii'     u 1:5 lt 3  pt 3 t '96x96x16',\
+'line_x_displacement_128_4.ascii'     u 1:5 lt 4  pt 1 t '128x128x4',\
+'line_x_displacement_128_8.ascii'     u 1:5 lt 4  pt 2 t '128x128x8',\
+'line_x_displacement_128_16.ascii'    u 1:5 lt 4  pt 3 t '128x128x16',\
+'line_x_displacement_th_128_16.ascii' u 1:5 lt -1 pt 0 t 'analytical' 
+
+set ylabel 'u_z'
+set output 'uz__x.pdf'
+plot[0:1][]\
+'line_x_displacement_32_4.ascii'      u 1:6 lt 1  pt 1 t '32x32x4',\
+'line_x_displacement_32_8.ascii'      u 1:6 lt 1  pt 2 t '32x32x8',\
+'line_x_displacement_32_16.ascii'     u 1:6 lt 1  pt 3 t '32x32x16',\
+'line_x_displacement_64_4.ascii'      u 1:6 lt 2  pt 1 t '64x64x4',\
+'line_x_displacement_64_8.ascii'      u 1:6 lt 2  pt 2 t '64x64x8',\
+'line_x_displacement_64_16.ascii'     u 1:6 lt 2  pt 3 t '64x64x16',\
+'line_x_displacement_96_4.ascii'      u 1:6 lt 3  pt 1 t '96x96x4',\
+'line_x_displacement_96_8.ascii'      u 1:6 lt 3  pt 2 t '96x96x8',\
+'line_x_displacement_96_16.ascii'     u 1:6 lt 3  pt 3 t '96x96x16',\
+'line_x_displacement_128_4.ascii'     u 1:6 lt 4  pt 1 t '128x128x4',\
+'line_x_displacement_128_8.ascii'     u 1:6 lt 4  pt 2 t '128x128x8',\
+'line_x_displacement_128_16.ascii'    u 1:6 lt 4  pt 3 t '128x128x16',\
+'line_x_displacement_th_128_16.ascii' u 1:6 lt -1 pt 0 t 'analytical' 
+
+####################################################
+
+set ylabel '{/Symbol e}_{xx}'
+set output 'e_xx__x.pdf'
+plot[0:1][]\
+'line_x_displacement_32_4.ascii'      u 1:7 lt 1  pt 1 t '32x32x4',\
+'line_x_displacement_32_8.ascii'      u 1:7 lt 1  pt 2 t '32x32x8',\
+'line_x_displacement_32_16.ascii'     u 1:7 lt 1  pt 3 t '32x32x16',\
+'line_x_displacement_64_4.ascii'      u 1:7 lt 2  pt 1 t '64x64x4',\
+'line_x_displacement_64_8.ascii'      u 1:7 lt 2  pt 2 t '64x64x8',\
+'line_x_displacement_64_16.ascii'     u 1:7 lt 2  pt 3 t '64x64x16',\
+'line_x_displacement_96_4.ascii'      u 1:7 lt 3  pt 1 t '96x96x4',\
+'line_x_displacement_96_8.ascii'      u 1:7 lt 3  pt 2 t '96x96x8',\
+'line_x_displacement_96_16.ascii'     u 1:7 lt 3  pt 3 t '96x96x16',\
+'line_x_displacement_128_4.ascii'     u 1:7 lt 4  pt 1 t '128x128x4',\
+'line_x_displacement_128_8.ascii'     u 1:7 lt 4  pt 2 t '128x128x8',\
+'line_x_displacement_128_16.ascii'    u 1:7 lt 4  pt 3 t '128x128x16',\
+'line_x_displacement_th_128_16.ascii' u 1:7 lt -1 pt 0 t 'analytical',\
+sigma_H/E*(1-nu**2) lt -1 dt  2 
+
+set ylabel '{/Symbol e}_{yy}'
+set output 'e_yy__x.pdf'
+plot[0:1][]\
+'line_x_displacement_32_4.ascii'      u 1:8 lt 1  pt 1 t '32x32x4',\
+'line_x_displacement_32_8.ascii'      u 1:8 lt 1  pt 2 t '32x32x8',\
+'line_x_displacement_32_16.ascii'     u 1:8 lt 1  pt 3 t '32x32x16',\
+'line_x_displacement_64_4.ascii'      u 1:8 lt 2  pt 1 t '64x64x4',\
+'line_x_displacement_64_8.ascii'      u 1:8 lt 2  pt 2 t '64x64x8',\
+'line_x_displacement_64_16.ascii'     u 1:8 lt 2  pt 3 t '64x64x16',\
+'line_x_displacement_96_4.ascii'      u 1:8 lt 3  pt 1 t '96x96x4',\
+'line_x_displacement_96_8.ascii'      u 1:8 lt 3  pt 2 t '96x96x8',\
+'line_x_displacement_96_16.ascii'     u 1:8 lt 3  pt 3 t '96x96x16',\
+'line_x_displacement_128_4.ascii'     u 1:8 lt 4  pt 1 t '128x128x4',\
+'line_x_displacement_128_8.ascii'     u 1:8 lt 4  pt 2 t '128x128x8',\
+'line_x_displacement_128_16.ascii'    u 1:8 lt 4  pt 3 t '128x128x16',\
+'line_x_displacement_th_128_16.ascii' u 1:8 lt -1 pt 0 t 'analytical',\
+
+set ylabel '{/Symbol e}_{zz}'
+set output 'e_zz__x.pdf'
+plot[0:1][]\
+'line_x_displacement_32_4.ascii'      u 1:9 lt 1  pt 1 t '32x32x4',\
+'line_x_displacement_32_8.ascii'      u 1:9 lt 1  pt 2 t '32x32x8',\
+'line_x_displacement_32_16.ascii'     u 1:9 lt 1  pt 3 t '32x32x16',\
+'line_x_displacement_64_4.ascii'      u 1:9 lt 2  pt 1 t '64x64x4',\
+'line_x_displacement_64_8.ascii'      u 1:9 lt 2  pt 2 t '64x64x8',\
+'line_x_displacement_64_16.ascii'     u 1:9 lt 2  pt 3 t '64x64x16',\
+'line_x_displacement_96_4.ascii'      u 1:9 lt 3  pt 1 t '96x96x4',\
+'line_x_displacement_96_8.ascii'      u 1:9 lt 3  pt 2 t '96x96x8',\
+'line_x_displacement_96_16.ascii'     u 1:9 lt 3  pt 3 t '96x96x16',\
+'line_x_displacement_128_4.ascii'     u 1:9 lt 4  pt 1 t '128x128x4',\
+'line_x_displacement_128_8.ascii'     u 1:9 lt 4  pt 2 t '128x128x8',\
+'line_x_displacement_128_16.ascii'    u 1:9 lt 4  pt 3 t '128x128x16',\
+'line_x_displacement_th_128_16.ascii' u 1:9 lt -1 pt 0 t 'analytical',\
+
+
+set ylabel '{/Symbol e}_{xy}'
+set output 'e_xy__x.pdf'
+plot[0:1][]\
+'line_x_displacement_32_4.ascii'      u 1:10 lt 1  pt 1 t '32x32x4',\
+'line_x_displacement_32_8.ascii'      u 1:10 lt 1  pt 2 t '32x32x8',\
+'line_x_displacement_32_16.ascii'     u 1:10 lt 1  pt 3 t '32x32x16',\
+'line_x_displacement_64_4.ascii'      u 1:10 lt 2  pt 1 t '64x64x4',\
+'line_x_displacement_64_8.ascii'      u 1:10 lt 2  pt 2 t '64x64x8',\
+'line_x_displacement_64_16.ascii'     u 1:10 lt 2  pt 3 t '64x64x16',\
+'line_x_displacement_96_4.ascii'      u 1:10 lt 3  pt 1 t '96x96x4',\
+'line_x_displacement_96_8.ascii'      u 1:10 lt 3  pt 2 t '96x96x8',\
+'line_x_displacement_96_16.ascii'     u 1:10 lt 3  pt 3 t '96x96x16',\
+'line_x_displacement_128_4.ascii'     u 1:10 lt 4  pt 1 t '128x128x4',\
+'line_x_displacement_128_8.ascii'     u 1:10 lt 4  pt 2 t '128x128x8',\
+'line_x_displacement_128_16.ascii'    u 1:10 lt 4  pt 3 t '128x128x16',\
+'line_x_displacement_th_128_16.ascii' u 1:10 lt -1 pt 0 t 'analytical',\
+
+
+####################################################
+
+set ylabel '{/Symbol s}_{xx}'
+set output 'sigma_xx__x.pdf'
+plot[0:1][:]\
+'line_x_displacement_32_4.ascii'      u 1:11 lt 1  pt 1 t '32x32x4',\
+'line_x_displacement_32_8.ascii'      u 1:11 lt 1  pt 2 t '32x32x8',\
+'line_x_displacement_32_16.ascii'     u 1:11 lt 1  pt 3 t '32x32x16',\
+'line_x_displacement_64_4.ascii'      u 1:11 lt 2  pt 1 t '64x64x4',\
+'line_x_displacement_64_8.ascii'      u 1:11 lt 2  pt 2 t '64x64x8',\
+'line_x_displacement_64_16.ascii'     u 1:11 lt 2  pt 3 t '64x64x16',\
+'line_x_displacement_96_4.ascii'      u 1:11 lt 3  pt 1 t '96x96x4',\
+'line_x_displacement_96_8.ascii'      u 1:11 lt 3  pt 2 t '96x96x8',\
+'line_x_displacement_96_16.ascii'     u 1:11 lt 3  pt 3 t '96x96x16',\
+'line_x_displacement_128_4.ascii'     u 1:11 lt 4  pt 1 t '128x128x4',\
+'line_x_displacement_128_8.ascii'     u 1:11 lt 4  pt 2 t '128x128x8',\
+'line_x_displacement_128_16.ascii'    u 1:11 lt 4  pt 3 t '128x128x16',\
+'line_x_displacement_th_128_16.ascii' u 1:11 lt -1 pt 0 t 'analytical',\
+
+#sigma_H*(0.5*(1-1/((x-Lx/2)/radius)**2 ) + 0.5*( 1 + 3/((x-Lx/2)/radius)**4  - 4/((x-Lx/2)/radius)**2  )) lt -1 dt 2 notitle
+
+set ylabel '{/Symbol s}_{yy}'
+set output 'sigma_yy__x.pdf'
+plot[0:1][:]\
+'line_x_displacement_32_4.ascii'      u 1:12 lt 1  pt 1 t '32x32x4',\
+'line_x_displacement_32_8.ascii'      u 1:12 lt 1  pt 2 t '32x32x8',\
+'line_x_displacement_32_16.ascii'     u 1:12 lt 1  pt 3 t '32x32x16',\
+'line_x_displacement_64_4.ascii'      u 1:12 lt 2  pt 1 t '64x64x4',\
+'line_x_displacement_64_8.ascii'      u 1:12 lt 2  pt 2 t '64x64x8',\
+'line_x_displacement_64_16.ascii'     u 1:12 lt 2  pt 3 t '64x64x16',\
+'line_x_displacement_96_4.ascii'      u 1:12 lt 3  pt 1 t '96x96x4',\
+'line_x_displacement_96_8.ascii'      u 1:12 lt 3  pt 2 t '96x96x8',\
+'line_x_displacement_96_16.ascii'     u 1:12 lt 3  pt 3 t '96x96x16',\
+'line_x_displacement_128_4.ascii'     u 1:12 lt 4  pt 1 t '128x128x4',\
+'line_x_displacement_128_8.ascii'     u 1:12 lt 4  pt 2 t '128x128x8',\
+'line_x_displacement_128_16.ascii'    u 1:12 lt 4  pt 3 t '128x128x16',\
+'line_x_displacement_th_128_16.ascii' u 1:12 lt -1 pt 0 t 'analytical',\
+
+#sigma_H*(0.5*(1+1/((x-Lx/2)/radius)**2 ) - 0.5*( 1 + 3/((x-Lx/2)/radius)**4   )) lt -1 dt 2 notitle
+
+set ylabel '{/Symbol s}_{zz}'
+set output 'sigma_zz__x.pdf'
+plot[0:1][:]\
+'line_x_displacement_32_4.ascii'      u 1:13 lt 1  pt 1 t '32x32x4',\
+'line_x_displacement_32_8.ascii'      u 1:13 lt 1  pt 2 t '32x32x8',\
+'line_x_displacement_32_16.ascii'     u 1:13 lt 1  pt 3 t '32x32x16',\
+'line_x_displacement_64_4.ascii'      u 1:13 lt 2  pt 1 t '64x64x4',\
+'line_x_displacement_64_8.ascii'      u 1:13 lt 2  pt 2 t '64x64x8',\
+'line_x_displacement_64_16.ascii'     u 1:13 lt 2  pt 3 t '64x64x16',\
+'line_x_displacement_96_4.ascii'      u 1:13 lt 3  pt 1 t '96x96x4',\
+'line_x_displacement_96_8.ascii'      u 1:13 lt 3  pt 2 t '96x96x8',\
+'line_x_displacement_96_16.ascii'     u 1:13 lt 3  pt 3 t '96x96x16',\
+'line_x_displacement_128_4.ascii'     u 1:13 lt 4  pt 1 t '128x128x4',\
+'line_x_displacement_128_8.ascii'     u 1:13 lt 4  pt 2 t '128x128x8',\
+'line_x_displacement_128_16.ascii'    u 1:13 lt 4  pt 3 t '128x128x16',\
+'line_x_displacement_th_128_16.ascii' u 1:13 lt -1 pt 0 t 'analytical',\
+
+set ylabel '{/Symbol s}_{xy}'
+set output 'sigma_xy__x.pdf'
+plot[0:1][:]\
+'line_x_displacement_32_4.ascii'      u 1:14 lt 1  pt 1 t '32x32x4',\
+'line_x_displacement_32_8.ascii'      u 1:14 lt 1  pt 2 t '32x32x8',\
+'line_x_displacement_32_16.ascii'     u 1:14 lt 1  pt 3 t '32x32x16',\
+'line_x_displacement_64_4.ascii'      u 1:14 lt 2  pt 1 t '64x64x4',\
+'line_x_displacement_64_8.ascii'      u 1:14 lt 2  pt 2 t '64x64x8',\
+'line_x_displacement_64_16.ascii'     u 1:14 lt 2  pt 3 t '64x64x16',\
+'line_x_displacement_96_4.ascii'      u 1:14 lt 3  pt 1 t '96x96x4',\
+'line_x_displacement_96_8.ascii'      u 1:14 lt 3  pt 2 t '96x96x8',\
+'line_x_displacement_96_16.ascii'     u 1:14 lt 3  pt 3 t '96x96x16',\
+'line_x_displacement_128_4.ascii'     u 1:14 lt 4  pt 1 t '128x128x4',\
+'line_x_displacement_128_8.ascii'     u 1:14 lt 4  pt 2 t '128x128x8',\
+'line_x_displacement_128_16.ascii'    u 1:14 lt 4  pt 3 t '128x128x16',\
+'line_x_displacement_th_128_16.ascii' u 1:14 lt -1 pt 0 t 'analytical',\
+
+
