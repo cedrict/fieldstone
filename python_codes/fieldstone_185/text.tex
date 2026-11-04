@@ -39,13 +39,15 @@ It is a proof of concept for a bigger study. The context is as follows::
 \begin{itemize}
 \item Email from Jacqueline (May 15th, 2026):
 \begin{verbatim}
-I'm reaching out to ask if you would potentially be interested in a collaboration. 
-Sarah Titus (Carleton College) and I are working on a project on borehole breakouts and stress 
-distribution in the crust, and we could use some numerical help. If any of this sounds vaguely 
-interesting and you would potentially be up for collaborating, we could setup a call to talk 
-about the project in more detail. If not, no hard feelings! I just thought it would be nice to 
-work together at some point, and you came to mind instantly when we were chatting about 
-modelers who would be fun to work with.
+I'm reaching out to ask if you would potentially be interested in a 
+collaboration. Sarah Titus (Carleton College) and I are working on 
+a project on borehole breakouts and stress distribution in the crust, 
+and we could use some numerical help. If any of this sounds vaguely 
+interesting and you would potentially be up for collaborating, we could 
+setup a call to talk about the project in more detail. If not, no hard 
+feelings! I just thought it would be nice to work together at some point, 
+and you came to mind instantly when we were chatting about modelers 
+who would be fun to work with.
 \end{verbatim} 
 
 \item Email from Jacqueline (May 29th, 2026):
@@ -114,7 +116,7 @@ with a hollow cylinder in its middle:
 {\captionfont Left: our mesh. Right: the mesh used in \textcite{gakj12} (2012).}
 \end{center}
 
-
+{\color{red} ADD third mesh type!}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Numerical methods}
@@ -146,7 +148,7 @@ _{\vec{\sigma}}
 0 & 0 & 0 & 0 & \mu & 0 \\ 
 0 & 0 & 0 & 0 & 0 & \mu  
 \end{array} \right)}
-_{{\bm C}}
+_{{\bm D}}
 \cdot
 \underbrace{
 \left( \begin{array}{c}
@@ -190,816 +192,11 @@ finally the deviatoric stress ${\bm \tau}$ is given by:
 \]
 
 
-
-
-
 Each element is assigned a Young's modulus value $E$ and a 
-shear modulus value $G$ so that the matrix ${\bm C}$ can be built.
+shear modulus value $G$ so that the matrix ${\bm D}$ can be built.
 
-Boundary conditions are a mix of Dirichlet and Neumann ones.
-A traction $\sigma_{bc}$ is applied to the faces $x=0$ and $x=L_x$.
-As such boundary conditions result in 3 translational nullspaces
-a zero tangential velocity is prescribed in the middle of all 
-four vertical faces.
+{\color{red} talk about null spaces}
 
-
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{2d Analytical solution with hole (experiment=0)}
-
-Let us choose $\vec{u}=(u_x,u_y,u_z)=(x,0,0)$. 
-Then 
-\begin{eqnarray}
-\varepsilon_{xx} &=& 1\\
-\varepsilon_{yy} &=& 0\\
-\varepsilon_{zz} &=& 0\\
-\varepsilon_{xy} &=& 0\\
-\varepsilon_{xz} &=& 0\\
-\varepsilon_{yz} &=& 0
-\end{eqnarray}
-and from ${\bm \sigma}=\lambda {\rm tr} ({\bm \varepsilon}) {\bm 1} + 2 \mu {\bm \varepsilon}$
-and setting  $\lambda=10^6$ and $\mu=10^6$ (i.e. $\nu=0.25$ and $E=2.5\cdot 10^6$).
-we obtain
-\begin{eqnarray}
-\sigma_{xx} &=& \lambda + 2 \mu = 3\cdot 10^6\\
-\sigma_{yy} &=& \lambda= 10^6 \\
-\sigma_{zz} &=& \lambda= 10^6 \\
-\sigma_{xy} &=& 0\\
-\sigma_{xz} &=& 0\\
-\sigma_{yz} &=& 0
-\end{eqnarray}
-
-Of course it is trivial to verigy that $\vec\nabla\cdot {\bm \sigma} = \vec{0}$, i.e.
-the stress tensor verifies the momentum conservation equation.
-
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/disp.png}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/e_xx_n.png}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/s_xx_n.png}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/s_yy_n.png}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/s_zz_n.png}
-\end{center}
-
-This is a very simple benchmark that is in fact a sanity check.
-
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{2d Analytical solution with hole (experiment=1) }
-
-We find online\footnote{\url{https://en.wikipedia.org/wiki/Kirsch_equations}}
-the Kirsch equations which describe the elastic stresses around a hole in an 
-infinite plate under one directional tension. They are named after Ernst Gustav Kirsch.
-
-Loading an infinite plate with a circular hole of radius $a$ with stress $\sigma$, 
-the resulting stress field is (the angle is with respect to the direction of application of the stress):
-
-\begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_185/images/kirsch}
-\end{center}
-
-We can express the stress components in their dimensionless form as  
-follows\footnote{For reasons that will become clear in the next section the 
-applied stress is now called $\sigma_H$.}:
-\begin{eqnarray}
-\frac{\sigma_{rr}}{\sigma_H} &=& 
-\frac12 \left(1-\frac{1}{(r/a)^2} \right)
-+\frac12 \left( 1 + \frac{3}{(r/a)^4} - \frac{4}{(r/a)^2}   \right) \cos 2\theta   \label{f185k1}\\
-\frac{\sigma_{\theta\theta}}{\sigma_H} &=& 
-\frac12 \left(1+\frac{1}{(r/a)^2} \right)
--\frac12 \left( 1 + \frac{3}{(r/a)^4}   \right) \cos 2\theta   \label{f185k2}\\
-\frac{\sigma_{r\theta}}{\sigma_H} &=&
--\frac12 \left( 1 -  \frac{3}{(r/a)^4} + \frac{2}{(r/a)^2} \right) \sin 2\theta
-\end{eqnarray}
-These equations are identical to those at \url{https://en.wikiversity.org/wiki/Elasticity/Plate_with_hole_in_tension}.
-Note that the stress solution above is independent of 
-elastic rheological parameters (i.e. $\lambda, \nu, E, ...$).
-
-Since this stress field is found in many sources we will not bother to 
-go through the derivations but will instead verify that it fulfills the 
-momentum equation. We start 
-from\footnote{\url{https://en.wikipedia.org/wiki/Del_in_cylindrical_and_spherical_coordinates}}  
-\[
-\nabla \cdot {\bm \sigma} 
-= 
-\begin{bmatrix} 
-\frac{\partial \sigma_{rr}}{\partial r} 
-+ \frac{\sigma_{rr}}{r} 
-+ \frac{1}{r} \frac{\partial \sigma_{\theta r}}{\partial \theta} 
-+ \frac{\partial \sigma_{zr}}{\partial z} 
-- \frac{\sigma_{\theta \theta}}{r} 
-\\ \\
-\frac{1}{r} \frac{\partial \sigma_{\theta \theta}}{\partial \theta} 
-+ \frac{\partial \sigma_{r \theta}}{\partial r} 
-+ \frac{\sigma_{r \theta}}{r} + \frac{\sigma_{\theta r}}{r} 
-+ \frac{\partial \sigma_{z \theta}}{\partial z}
-\\ \\
-\frac{\partial \sigma_{z z}}{\partial z} + \frac{\partial \sigma_{r z}}{\partial r} 
-+ \frac{\sigma_{rz}}{r} 
-+ \frac{1}{r}\frac{\partial \sigma_{\theta z}}{\partial \theta}
-\end{bmatrix}
-\]
-In the absence of body forces the quantity above should be exactly zero.
-
-We have $\sigma_{rz}=\sigma_{\theta z}=0$ and $\sigma_{r\theta}=\sigma_{\theta r}$ so that:
-\[
-\nabla \cdot {\bm \sigma} 
-= 
-\begin{bmatrix} 
-\frac{\partial \sigma_{rr}}{\partial r} 
-+ \frac{1}{r} \frac{\partial \sigma_{\theta r}}{\partial \theta} 
-+ \frac{\sigma_{rr}-\sigma_{\theta \theta}}{r} 
-\\ \\
-\frac{1}{r} \frac{\partial \sigma_{\theta \theta}}{\partial \theta} 
-+ \frac{\partial \sigma_{r \theta}}{\partial r} 
-+ 2\frac{\sigma_{r \theta}}{r}  
-\\ \\
-\frac{\partial \sigma_{z z}}{\partial z}
-\end{bmatrix}
-\]
-Let us then compute (in what follows I omit the $1/\sigma_H$ term for simplicity):
-\begin{eqnarray}
-\frac{\partial \sigma_{rr}}{\partial r} 
-&=& 
-\frac{1}{r (r/a)^2} 
-+ \left( - \frac{6 }{r(r/a)^4} + \frac{4}{r(r/a)^2}   \right) \cos 2\theta 
-\nn\\
-\frac{1}{r} \frac{\partial \sigma_{\theta r}}{\partial \theta} 
-&=& 
-- \left( \frac1r -  \frac{3}{r(r/a)^4} + \frac{2}{r(r/a)^2} \right) \cos 2\theta
-\nn\\
-\frac{\sigma_{rr}-\sigma_{\theta \theta}}{r} 
-&=& 
--\frac{1}{r(r/a)^2} + \left( \frac1r+  \frac{3}{r(r/a)^4} -\frac{2}{r(r/a)^2}\right) \cos 2\theta  
-\nn
-\end{eqnarray}
-Then 
-\[
-\nabla \cdot {\bm \sigma} |_r
-=
-\frac{1}{r (r/a)^2} -\frac{1}{r(r/a)^2} 
-\left( 
-- \frac{6 }{r(r/a)^4} + \frac{4}{r(r/a)^2}   
--\frac1r +  \frac{3}{r(r/a)^4} - \frac{2}{r(r/a)^2}
-+\frac1r+  \frac{3}{r(r/a)^4} -\frac{2}{r(r/a)^2}
-\right) \cos 2\theta =0
-\]
-Likewise, we have
-\begin{eqnarray}
-\frac{1}{r} \frac{\partial \sigma_{\theta \theta}}{\partial \theta} 
-&=&
-\left( \frac1r + \frac{3}{r(r/a)^4}   \right) \sin 2\theta   
-\nn\\
-\frac{\partial \sigma_{r \theta}}{\partial r} 
-&=&
-- \left(  +  \frac{6}{r(r/a)^4} - \frac{2}{r(r/a)^2} \right) \sin 2\theta
-\nn\\
-2\frac{\sigma_{r \theta}}{r}  
-&=&
-- \left( \frac1r -  \frac{3}{r(r/a)^4} + \frac{2}{r(r/a)^2} \right) \sin 2\theta
-\nn
-\end{eqnarray}
-then
-\[
-\nabla \cdot {\bm \sigma} |_\theta
-=
-\left(
-\frac1r + \frac{3}{r(r/a)^4}  
--  \frac{6}{r(r/a)^4} + \frac{2}{r(r/a)^2}
--\frac1r +  \frac{3}{r(r/a)^4} - \frac{2}{r(r/a)^2}
-\right) \sin 2\theta =0
-\]
-{\color{red} Say smthg about sigma zz.}
-This concludes the proof that the stress field above is a solution 
-of the momentum conservation equation.
-
-
-
-On the following figures $\sigma_{rr}$ and $\sigma_{\theta\theta}$ are plotted 
-as a function of $r\ge a$ on the $x$-axis (i.e. $\theta=0$):
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_185/images/sigma_rr.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_185/images/sigma_tt.pdf}
-\end{center}
-
-We see that the domain will need to be rather large compared to the 
-hole size so that one can prescribe the stress $\sigma$ on the sides 
-and expect to match the analytical solution above near the hole. 
-Conversely one could prescribe the analytical stress on the 
-sides of the domain. In order to do so one should then convert the 
-expression above in Cartesian coordinates stress components.
-
-We can also plot the same stresses on the wall of the hole itself
-(note that $\sigma_{r\theta}=0$ on the hole wall):
-
-\begin{center}
-\includegraphics[width=8cm]{python_codes/fieldstone_185/images/sigma_rr2.pdf}
-\includegraphics[width=8cm]{python_codes/fieldstone_185/images/sigma_tt2.pdf}\\
-\end{center}
-
-
-
-Note that the same source gives us the stress components in Cartesian coordinates:
-\begin{eqnarray}
-\frac{\sigma_{xx}}{\sigma_H} (r,\theta) &=&  1 - \frac{a^2}{r^2} \left( \frac32  \cos 2\theta +\cos 4\theta \right) + 
-\frac32 \frac{a^4}{r^4} \cos 4 \theta \\
-\frac{\sigma_{yy}}{\sigma_H} (r,\theta)&=&  - \frac{a^2}{r^2} \left( \frac12 \cos 2\theta  - \cos 4 \theta  \right)
--\frac32 \frac{a^4}{r^4} \cos 4 \theta \\
-\frac{\sigma_{xy}}{\sigma_H} (r,\theta)&=&  - \frac{a^2}{r^2} \left( \frac12 \sin 2\theta  + \sin 4\theta  \right)
-+\frac32 \frac{a^4}{r^4} \sin 4 \theta 
-\end{eqnarray}
-We shall however not use these expressions but instead we will use the formula in Section~\ref{MMM-ss:convcartpol}:
-\begin{eqnarray}
-\sigma_{xx} &=& \sigma_{rr} \cos^2\theta + \sigma_{\theta\theta} \sin^2\theta - \sigma_{r\theta} \sin 2\theta \\
-\sigma_{yy} &=& \sigma_{rr} \sin^2\theta + \sigma_{\theta\theta} \cos^2\theta + \sigma_{r\theta} \sin 2\theta \\
-\sigma_{xy} &=& \sin\theta\cos\theta (\sigma_{rr}-\sigma_{\theta\theta}) + \sigma_{r\theta} \cos 2\theta
-\end{eqnarray}
-
-\begin{lstlisting}
-def analytical_solution_stress(r,theta,radius,sigma_H):
-
-    rr=r/radius
-
-    c0=np.cos(theta)
-    s0=np.sin(theta)
-    c20=np.cos(2*theta)
-    s20=np.sin(2*theta)
-
-    sigma_rr=0.5*(1-1/rr**2)+0.5*(1+3/rr**4-4/rr**2)*c20
-    sigma_tt=0.5*(1+1/rr**2)-0.5*(1+3/rr**4)*c20
-    sigma_rt=-0.5*(1-3/rr**4+2/rr**2)*s20
-
-    sigma_rr*=sigma_H
-    sigma_tt*=sigma_H
-    sigma_rt*=sigma_H
-
-    sigma_xx=sigma_rr*c0**2+sigma_tt*s0**2-sigma_rt*s20
-    sigma_yy=sigma_rr*s0**2+sigma_tt*c0**2+sigma_rt*s20
-    sigma_zz=0
-    sigma_xy=s0*c0*(sigma_rr-sigma_tt)+sigma_rt*c20
-    sigma_xz=0
-    sigma_yz=0
-
-    return sigma_xx,sigma_yy,sigma_zz,sigma_xy,sigma_xz,sigma_yz
-\end{lstlisting}
-
-For an isotropic elastic material 
-the generalized Hooke's law 
-\begin{equation}
-{\bm \sigma}=\lambda {\rm tr}({\bm \varepsilon}) {\bm 1} + 2 G {\bm \varepsilon} 
-\label{eq:f185:hooke}
-\end{equation} 
-is expressed in 2d polar coordinates as:
-\begin{eqnarray}
-\sigma_{rr}&=& \lambda(\varepsilon_{rr}+\varepsilon_{\theta\theta}) +2G\varepsilon_{rr}\\
-\sigma_{\theta\theta}
-&=& \lambda(\varepsilon_{rr}+\varepsilon_{\theta\theta}) +2G\varepsilon_{\theta\theta}\\
-\sigma_{r\theta} &=& 2G\varepsilon_{r \theta} 
-\end{eqnarray}
-
-From Eq.~\eqref{eq:f185:hooke} we obtain
-\[
-{\rm tr}({\bm \sigma})= (3\lambda+2G) {\rm tr}({\bm \varepsilon})
-\]
-Using the relationships
-\[
-\lambda=\frac{E \nu}{(1+\nu)(1-2\nu)} 
-\qquad\qquad
-G = \frac{E}{2(1+\nu)}
-\]
-we arrive at 
-\begin{equation}
-{\rm tr}({\bm \sigma})= (3\lambda+2G) {\rm tr}({\bm \varepsilon}) 
-= \frac{E}{1-2\nu} {\rm tr}({\bm \varepsilon}) \label{eq:f185trtr}
-\end{equation}
-Coming back to Eq.~\eqref{eq:f185:hooke}:
-\begin{eqnarray}
-{\bm \sigma} &=&\lambda {\rm tr}({\bm \varepsilon}) {\bm 1} + 2 G {\bm \varepsilon} 
-\nn\\
-{\bm \sigma} &=& \frac{E \nu}{(1+\nu)(1-2\nu)}  {\rm tr}({\bm \varepsilon}) {\bm 1} 
-+ 2 \frac{E}{2(1+\nu)} {\bm \varepsilon} 
-\nn\\
-\frac{1+\nu}{E}{\bm \sigma} &=& \frac{\nu}{1-2\nu}  {\rm tr}({\bm \varepsilon}) {\bm 1} 
-+  {\bm \varepsilon} 
-\nn\\
-{\bm \varepsilon} 
-&=& \frac{1+\nu}{E}{\bm \sigma}  - \frac{\nu}{1-2\nu}  {\rm tr}({\bm \varepsilon}) {\bm 1}
-\end{eqnarray}
-Using now Eq.~\eqref{eq:f185trtr} we obtain
-\begin{eqnarray}
-{\bm \varepsilon} 
-&=& \frac{1+\nu}{E}{\bm \sigma}  - \frac{\nu}{1-2\nu}   \frac{1-2\nu}{E} {\rm tr}({\bm \sigma}) {\bm 1}
-\nn\\
-\Rightarrow
-{\bm \varepsilon} 
-&=& \frac{1+\nu}{E}{\bm \sigma}  - \frac{\nu}{E} {\rm tr}({\bm \sigma}) {\bm 1}
-\end{eqnarray}
-which is the reversed Hooke's law for isotropic materials expressed 
-in terms of Young's modulus and Poisson's ratio as\footnote{\url{https://en.wikipedia.org/wiki/Hooke's_law}}
-This leads to write in polar coordinates: 
-\begin{eqnarray}
-\varepsilon_{rr} 
-&=& \frac{1+\nu}{E} {\sigma}_{rr}  - \frac{\nu}{E} (\sigma_{rr} + \sigma_{\theta\theta}) = \frac{\sigma_{rr}-\nu\sigma_{\theta\theta}}{E} 
-\label{f185k7}
-\\
-\varepsilon_{\theta\theta} 
-&=& \frac{1+\nu}{E} {\sigma}_{\theta\theta}  - \frac{\nu}{E} (\sigma_{rr} + \sigma_{\theta\theta}) 
-= \frac{\sigma_{\theta\theta}-\nu\sigma_{rr}}{E}  \label{f185k6}
-\\
-\varepsilon_{r\theta} &=& 
-\frac{1+\nu}{E} \sigma_{r\theta}
-=
-\frac{1}{2G}  \sigma_{r\theta}
-\end{eqnarray}
-
-
-
-
-
-Let us further explore Eq.~\eqref{f185k7}:
-
-
-
-
-\begin{eqnarray}
-E \varepsilon_{rr} 
-&=&  \sigma_{rr}-\nu\sigma_{\theta\theta}  \nn\\
-\frac{2E \varepsilon_{rr} }{\sigma_H}
-&=&  \frac{2\sigma_{rr} }{\sigma_H}  -\nu \frac{2 \sigma_{\theta\theta} }{\sigma_H} \nn\\
-\frac{2E}{\sigma_H} \varepsilon_{rr} 
-&=&
-\left(1-\frac{1}{(r/a)^2} \right)
-+ \left( 1 + \frac{3}{(r/a)^4} - \frac{4}{(r/a)^2}   \right) \cos 2\theta   
-- \nu \left[
- \left(1+\frac{1}{(r/a)^2} \right)
--\left( 1 + \frac{3}{(r/a)^4}   \right) \cos 2\theta \right] 
-\nn\\
-\frac{2E}{\sigma_H} \varepsilon_{rr} 
-&=&
-1-\frac{1}{(r/a)^2} 
-+ \left( 1 + \frac{3}{(r/a)^4} - \frac{4}{(r/a)^2}   \right) \cos 2\theta   
-- \nu \left[
- 1+\frac{1}{(r/a)^2} 
--\left( 1 + \frac{3}{(r/a)^4}   \right) \cos 2\theta \right] 
-\nn\\
-\frac{2E}{\sigma_H} \varepsilon_{rr} 
-&=&
-1-\frac{1}{(r/a)^2} 
-+ \left( 1 + \frac{3}{(r/a)^4} - \frac{4}{(r/a)^2}   \right) \cos 2\theta   
-- \nu  - \nu\frac{1}{(r/a)^2} 
-+ \left( \nu + \frac{3\nu}{(r/a)^4}   \right) \cos 2\theta 
-\nn\\
-\frac{2E}{\sigma_H} \varepsilon_{rr} 
-&=&
-(1-\nu) -\frac{1+\nu}{(r/a)^2}
-+ \left( 1+\nu + \frac{3(1+\nu)}{(r/a)^4} - \frac{4}{(r/a)^2}   \right) \cos 2\theta 
-\nn\\
-\varepsilon_{rr} 
-&=& 
-\frac{\sigma_H}{2E} 
-\left[  
-(1-\nu)  -\frac{1+\nu}{(r/a)^2}
-+ \left( 1+\nu + \frac{3(1+\nu)}{(r/a)^4} - \frac{4}{(r/a)^2}   \right) \cos 2\theta 
-\right]
-\end{eqnarray}
-
-\noindent Since $\varepsilon_{rr}  = \frac{\partial u_r}{\partial r} $ we can then integrate with respect 
-to $r$:
-
-\begin{eqnarray}
-u_r(r,\theta) 
-&=& \frac{\sigma_H}{2E} 
-\left[  (1-\nu) r  +\frac{1+\nu}{r/a^2}
-+ \left( (1+\nu)r - \frac{(1+\nu)}{r^3/a^4} + \frac{4}{r/a^2}   \right) \cos 2\theta  \right]
-+ f(\theta) \nn\\
-&=& \frac{r \sigma_H}{2E} 
-\left[  (1-\nu)   +\frac{1+\nu}{(r/a)^2}
-+ \left( (1+\nu) - \frac{(1+\nu)}{(r/a)^4} + \frac{4}{(r/a)^2}   \right) \cos 2\theta  \right]
-+ f(\theta)
-\label{f185k9}
-\end{eqnarray}
-where $f(\theta)$ is an integration constant to be determined.
-
-We have the relationship (see Section 4.1.2 of FieldStone):
-\[
-\varepsilon_{\theta\theta} 
-= \frac{u_r}{r} + \frac{1}{r} \frac{\partial u_\theta}{\partial \theta}
-\]
-which we combine with Eq.~\eqref{f185k6} so that 
-\[
-\varepsilon_{\theta\theta} 
-= \frac{u_r}{r} + \frac{1}{r} \frac{\partial u_\theta}{\partial \theta}
-= \frac{1}{E} (\sigma_{\theta\theta}-\nu \sigma_{rr})
-\]
-Since we have already obtained $u_r$ we can compute $u_{\theta}$ as follows:
-\begin{eqnarray}
- \frac{\partial u_\theta}{\partial \theta}
-&=& \frac{r}{E} (\sigma_{\theta\theta}-\nu \sigma_{rr})- u_r 
-\nn\\
-E \frac{\partial u_\theta}{\partial \theta}
-&=& r\sigma_{\theta\theta}-\nu r\sigma_{rr}- E u_r 
-\nn\\
-\frac{2E}{\sigma_H} \frac{\partial u_\theta}{\partial \theta}
-&=& \frac{2r\sigma_{\theta\theta}}{\sigma_H}
--\nu \frac{2r\sigma_{rr}}{\sigma_H}- 
-\frac{2E}{\sigma_H} u_r
-\end{eqnarray}
-Let us then look at the three terms of the right hand side one by one. 
-From Eqs.~\eqref{f185k1} and \eqref{f185k2} we get:
-\begin{eqnarray}
-\nu\frac{2r\sigma_{rr}}{\sigma_H} &=& 
-\nu\left(r-\frac{1}{r/a^2} \right)
-+ \nu\left( r + \frac{3}{r^3/a^4} - \frac{4}{r/a^2}   \right) \cos 2\theta \\
-\frac{2r \sigma_{\theta\theta}}{\sigma_H} &=& 
-\left(r+\frac{1}{r/a^2} \right)
--  \left( r + \frac{3}{r^3/a^4}   \right) \cos 2\theta   
-\end{eqnarray}
-and from Eq.~\eqref{f185k9}
-\begin{eqnarray}
-\frac{2E}{\sigma_H} u_r
-&=&
-\frac{2E}{\sigma_H} 
-\frac{\sigma_H}{2E} 
-\left[  (1-\nu) r  +\frac{1+\nu}{r/a^2}
-+ \left( (1+\nu)r - \frac{(1+\nu)}{r^3/a^4} + \frac{4}{r/a^2}   \right) \cos 2\theta  \right]
-+ f (\theta) \nn\\
-&=&   (1-\nu) r  +\frac{1+\nu}{r/a^2}
-+ \left( (1+\nu)r - \frac{(1+\nu)}{r^3/a^4} + \frac{4}{r/a^2}   \right) \cos 2\theta 
-+ \frac{2E}{\sigma_H} f (\theta) 
-\end{eqnarray}
-Then, putting it all together:
-\begin{eqnarray}
-\frac{2E}{\sigma_H} \frac{\partial u_\theta}{\partial \theta}
-&=&
-\left(r+\frac{1}{r/a^2} \right)
--  \left( r + \frac{3}{r^3/a^4}   \right) \cos 2\theta   \\
-&&-\nu\left(r-\frac{1}{r/a^2} \right)
-- \nu\left( r + \frac{3}{r^3/a^4} - \frac{4}{r/a^2}   \right) \cos 2\theta \\
-&& -(1-\nu) r  
--\frac{1+\nu}{r/a^2}
-- \left( (1+\nu)r -\frac{(1+\nu)}{r^3/a^4} + \frac{4}{r/a^2} \right)\cos 2\theta 
-- \frac{2E}{\sigma_H} f (\theta) \nn\\
-&=& (r -\nu r -r + \nu r) + (1 + \nu  - 1 - \nu )  \frac{1}{r/a^2} \nn\\
-&&
--
-\left(   
-r + \nu r + r + \nu r
-+ ( 3 +3\nu -(1+\nu) ) \frac{1}{r^3/a^4}
-+ ( -4\nu + 4 ) \frac{1}{r/a^2}
-\right) \cos 2\theta
-- \frac{2E}{\sigma_H} f (\theta) \nn\\
-&=& 
-\left(
-2(1+\nu)r+2(1+\nu) \frac{1}{r^3/a^4}
-+4(1-\nu) \frac{1}{r/a^2}
-\right)
-\cos 2\theta
-- \frac{2E}{\sigma_H} f (\theta)  \nn\\
-\Rightarrow
-\frac{\partial u_\theta}{\partial \theta}
-&=& \frac{\sigma_H}{2E}
-\left(
-2(1+\nu)r+2(1+\nu) \frac{1}{r^3/a^4}
-+4(1-\nu) \frac{1}{r/a^2}
-\right)
-\cos 2\theta
--  f (\theta)  \nn\\
-&=& \frac{r\sigma_H}{E}
-\left(
-(1+\nu)+(1+\nu) \frac{1}{(r/a)^4}
-+2(1-\nu) \frac{1}{(r/a)^2}
-\right)
-\cos 2\theta
--  f (\theta)  
-\end{eqnarray}
-which we now can integrate with respect to $\theta$ to yield:
-\[
-u_\theta = 
-\frac{r\sigma_H}{2E}
-\left(
-(1+\nu)+(1+\nu) \frac{1}{(r/a)^4}
-+2(1-\nu) \frac{1}{(r/a)^2}
-\right)
-\sin 2\theta
--  \int f (\theta)  d\theta + Constant \nn\\
-\]
-Immediately we set the constant to zero because it corresponds to a constant rotation.
-
-We have so far not encountered a specific condition which could help us specifying 
-the function $f(\theta)$ so we will here take it to be zero,
-with the final recap of the analytical solution given by:
-
-\begin{eqnarray}
-\frac{\sigma_{rr}}{\sigma_H} &=& 
-\frac12 \left(1-\frac{1}{(r/a)^2} \right)
-+\frac12 \left( 1 + \frac{3}{(r/a)^4} - \frac{4}{(r/a)^2}   \right) \cos 2\theta   \label{f185k1}\\
-\frac{\sigma_{\theta\theta}}{\sigma_H} &=& 
-\frac12 \left(1+\frac{1}{(r/a)^2} \right)
--\frac12 \left( 1 + \frac{3}{(r/a)^4}   \right) \cos 2\theta   \label{f185k2}\\
-\frac{\sigma_{r\theta}}{\sigma_H} &=&
--\frac12 \left( 1 -  \frac{3}{(r/a)^4} + \frac{2}{(r/a)^2} \right) \sin 2\theta
-\\
-\nn\\
-\varepsilon_{rr} 
-&=&
- \frac{\sigma_{rr}-\nu\sigma_{\theta\theta}}{E} 
-\\
-\varepsilon_{\theta\theta} 
-&=& \frac{\sigma_{\theta\theta}-\nu\sigma_{rr}}{E} 
-\\
-\varepsilon_{r\theta} &=& 
-\frac{1+\nu}{E} \sigma_{r\theta}
-\\
-\nn\\
-u_r &=& \frac{r \sigma_H}{2E} 
-\left[  (1-\nu)   +\frac{1+\nu}{(r/a)^2}
-+ \left( (1+\nu) - \frac{(1+\nu)}{(r/a)^4} + \frac{4}{(r/a)^2}   \right) \cos 2\theta  \right]
-+ f(\theta) \\
-u_\theta &=& 
-\frac{r\sigma_H}{2E}
-\left(
-(1+\nu)+ \frac{1+\nu}{(r/a)^4}
-+ \frac{2(1-\nu)}{(r/a)^2}
-\right)
-\sin 2\theta
--  \int f (\theta)  d\theta  
-\end{eqnarray}
-
-These displacements are identical to those presented at 
-\url{https://en.wikiversity.org/wiki/Elasticity/Plate_with_hole_in_tension}:
-
-\begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_185/images/wikieleqs1}\\
-{\captionfont here $T \rightarrow \sigma_H$}
-\end{center}
-
-These expressions are identical with the exception of a minus sign in $u_\theta$?
-
-
-We also find on the site the expression for the Cartesian components of 
-the velocity (the website authors do not specify $\kappa$):
-\begin{center}
-\fbox{\includegraphics[width=12cm]{python_codes/fieldstone_185/images/wikieleqs2}}
-\end{center}
-
-Again we will use a more generic approach to establish the expressions for $u_x,u_y$:
-\begin{eqnarray}
-u_x &=& u_r \cos\theta - u_\theta \sin\theta \nn\\
-u_y &=& u_r \sin\theta + u_\theta \cos\theta 
-\end{eqnarray}
-
-We can also compute the velocity on the hole wall, i.e. $r=a$. We get
-
-\begin{eqnarray}
-u_r 
-&=& \frac{r \sigma_H}{2E} 
-\left[  (1-\nu)   +\frac{1+\nu}{(r/a)^2}
-+ \left( (1+\nu) - \frac{(1+\nu)}{(r/a)^4} + \frac{4}{(r/a)^2}   \right) \cos 2\theta  \right]
-\\
-&=& \frac{a \sigma_H}{2E} 
-\left[  (1-\nu)   + 1+\nu
-+ \left( 1+\nu - (1+\nu) + 4  \right) \cos 2\theta  \right]
-\\
-&=& \frac{a \sigma_H}{2E} \left[  2 + 4 \cos 2\theta  \right] \\
-&=& \frac{a \sigma_H}{E} \left[  1 + 2 \cos 2\theta  \right] 
-\\
-u_\theta 
-&=& \frac{r\sigma_H}{2E}
-\left( (1+\nu)+(1+\nu) \frac{1}{(r/a)^4} +2(1-\nu) \frac{1}{(r/a)^2} \right) \sin 2\theta \\
-&=& \frac{a\sigma_H}{2E} \left( (1+\nu)+(1+\nu)  +2(1-\nu)  \right) \sin 2\theta \\
-&=& \frac{2a\sigma_H}{E}  \sin 2\theta 
-\end{eqnarray}
-These expression match those on the website, again with the exception of a minus sign.
-
-\begin{center}
-\fbox{\includegraphics[width=12cm]{python_codes/fieldstone_185/images/Tension_hole_deform}}\\
-{\captionfont Deformation of the hole under tension}
-\end{center}
-
-I have a big problem: on the following figure are the displacement fields
-with a plus sign (left) and a minus sign (right).
-It is clear that the 'minus sign solution' is more physical. 
-
-\begin{center}
-\includegraphics[width=17cm]{python_codes/fieldstone_185/images/comparison}\\
-\includegraphics[width=8cm]{python_codes/fieldstone_185/images/hole_plus}
-\includegraphics[width=8cm]{python_codes/fieldstone_185/images/hole_minus}
-\end{center}
-
-
-\newpage
-
-We can also plot the strain and stress tensor components.
-We find that indeed $\sigma_{xx}$ is about $\sigma_H$
-on the sides.
-
-\begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/images/sigma_xx}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/images/sigma_yy}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/images/sigma_xy}\\
-{\captionfont Analytical stress for Lx=Ly=1 and radius=0.01, $\sigma_H=1e3$}
-\end{center}
-
-
-
-
-Note that when $r/a>>1$ then $sigma_xx -> sigma_H$ ,and $e_xx -> sigma_H/E $
-
-
-
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/ux.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/uy.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/uz.pdf}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_xx.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_xy.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_yy.pdf}\\
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_xx.pdf}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_yy.pdf}
-
-
-
-
-
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{3d Analytical solution (experiment=??)}
-
-We have just seen a a 2d solution, but we can find a 3d one in 
-the Phd thesis of \textcite{HongXueHan2021}.
-``Suppose an elastic body of rock with Young's modulus E and Poisson's ratio $\nu$
-is subjected to the in-situ stresses $\sigma_v,\sigma_H,\sigma_h$.
-A circular vertical borehole is drilled through the body
-according to elastic theory, the solutions for the stresses around the 
-borehole can be described by [the following] equations (derived from the 
-Kirsch set of equations under linear elastic isotropic property assumptions,
-\textcite{jacz}).''
-
-\begin{center}
-\fbox{\includegraphics[width=8cm]{python_codes/fieldstone_185/images/han}}
-\end{center}
-
-\begin{center}
-\fbox{\includegraphics[width=8cm]{python_codes/fieldstone_185/images/han3}}
-\end{center}
-
-Rather annoyingly we see that Han uses $R$ as coordinate and 
-$r$ as the radius of the borehole. This is a poor choice and 
-we will rectify this as follows: $R \rightarrow r$, and 
-$r \rightarrow a$, so that:
-
-
-
-
-\begin{eqnarray}
-\sigma_{rr} 
-&=& \left(1-\frac{a^2}{r^2} \right) 
-\left( \frac{\sigma_H+\sigma_h}{2} \right)+
-\left( 1 + \frac{3a^4}{r^4} -\frac{4a^2}{r^2} \right)
-\left( \frac{\sigma_H-\sigma_h}{2} \right) \cos(2 \theta) 
-\nn\\
-\sigma_{\theta\theta} 
-&=& \left(1+\frac{a^2}{r^2} \right) 
-\left( \frac{\sigma_H+\sigma_h}{2} \right)
--\left( 1 + \frac{3a^4}{r^4}  \right)
-\left( \frac{\sigma_H-\sigma_h}{2} \right) \cos(2 \theta) 
-\nn\\
-\sigma_{zz} 
-&=& \sigma_v - 4 \nu \frac{a^2}{r^2} 
-\left( \frac{\sigma_H-\sigma_h}{2} \right)  \cos(2 \theta)
-\nn\\
-\sigma_{r\theta}
-&=& - \left( 1 -  \frac{3a^4}{r^4} + \frac{2a^2}{r^2} \right) 
-\left( \frac{\sigma_H-\sigma_h}{2} \right) \sin(2 \theta) 
-\nn\\
-\sigma_{xz} &=& 0 \nn\\
-\sigma_{\theta z} &=& 0 
-\end{eqnarray}
-where 
-$r$ is the distance from borehole center
-$\sigma_v$ is the vertical stress, 
-$\sigma_H$ is the maximum horizontal stress
-and $\sigma_h$ is the minimum horizontal stress,
-$\theta$ is the angle from the maximum horizontal stress direction.
-
-Obviously, the equations above yield the previous 2d solution for $\sigma_h=0$
-with the exception of $\sigma_{zz}$ (is it because we have not specified 
-plane stress or plane strain?):
-
-\begin{eqnarray}
-\sigma_{rr} 
-&=& 
-\frac{\sigma_H}{2} 
-\left(1-\frac{a^2}{r^2} \right) 
-+
-\frac{\sigma_H}{2} 
-\left( 1 + \frac{3a^4}{r^4} -\frac{4a^2}{r^2} \right)
-\cos(2 \theta) 
-\nn\\
-\sigma_{\theta\theta} 
-&=& 
-\frac{\sigma_H}{2} 
-\left(1+\frac{a^2}{r^2} \right) 
--
-\frac{\sigma_H}{2} 
-\left( 1 + \frac{3a^4}{r^4}  \right)
-\cos(2 \theta) 
-\nn\\
-\sigma_{zz} 
-&=& \sigma_v - 4 \nu \frac{a^2}{r^2} 
-\frac{\sigma_H}{2} 
-\cos(2 \theta)
-\nn\\
-\sigma_{r\theta}
-&=& - 
-\frac{\sigma_H}{2} 
-\left( 1 -  \frac{3a^4}{r^4} + \frac{2a^2}{r^2} \right) 
-\sin(2 \theta) 
-\nn\\
-\sigma_{xz} &=& 0 \nn\\
-\sigma_{\theta z} &=& 0 
-\end{eqnarray}
-
-
-
-
-
-
-The linear elastic strains around the borehole can be calculated using equations
-
-\begin{eqnarray}
-\varepsilon_{rr} 
-&=& \frac{\sigma_{rr}-\nu(\sigma_{\theta\theta}+\sigma_{zz})}{E} 
-\nn\\
-\varepsilon_{\theta\theta} 
-&=& \frac{\sigma_{\theta\theta}-\nu(\sigma_{zz}+\sigma_{rr})}{E} 
-\nn\\
-\varepsilon_{zz} 
-&=& \frac{\sigma_{zz}-\nu(\sigma_{rr}+\sigma_{\theta\theta})}{E} 
-\nn\\
-\varepsilon_{r\theta} &=&  \sigma_{r\theta}/G
-\nn\\
-\varepsilon_{rz} &=&   0
-\nn\\
-\varepsilon_{\theta z} &=&  0
-\end{eqnarray}
-
-where $\varepsilon_{rr}$ is the radial normal strain, 
-$\varepsilon_{\theta\theta}$ is the tangential normal strain, 
-$\varepsilon_{zz}$ is the vertical normal strain, 
-$E$ is Young's modulus, $\nu$ is Poisson's ratio, 
-$\sigma_{r\theta}$ is the shear stress, and $G$ is the shear modulus.
-
-``For a vertically drilled borehole under anisotropic horizontal stresses, 
-in cases where neither drilling induced fractures nor breakouts occur, 
-the cross-section of the borehole will show an elliptical shape; 
-displacements around the borehole are illustrated in Figure [below]. 
-Within the framework of elasticity theory, the analytical solutions 
-of displacements around the borehole can be derived from the Kirsch set 
-of equations \textcite{jacz}...''
-
-\begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_185/images/han2}
-\end{center}
-
-\begin{eqnarray}
-u_{rr} &=& 
--\frac{1}{E} \left[ \frac{\sigma_H+\sigma_h}{2} (R+\frac{r^2}{R}) 
-+ \frac{\sigma_H-\sigma_h}{2} (R -\frac{r^4}{R^3}+\frac{4r^2}{R})\cos(2\theta)
-  \right] \nn\\ 
-&&+\frac{\nu}{E} \left[  \frac{\sigma_H-\sigma_h}{2} (R-\frac{r^2}{R})
-+ \frac{\sigma_H-\sigma_h}{2} (R -\frac{r^4}{R^3}) \cos(2\theta)
- \right] \nn\\
-&& + 4 \frac{\nu^2}{E} \frac{R^2}{r} \frac{\sigma_H-\sigma_h}{2} \cos (2\theta)\nn\\
-&& +\frac{\nu}{E} r \sigma_v \nn\\
-&& + \frac{1+\nu}{E} P_m r
-\\
-u_{\theta\theta} &=&
--\frac{1}{E} \left[
-\frac{\sigma_H-\sigma_h}{2} (R+\frac{2r^2}{R} + \frac{r^4}{R^3}) sins(2\theta)
-\right] \nn\\ 
-&&+\frac{\nu}{E} 
-\left[
-\frac{\sigma_H-\sigma_h}{2}  (R-\frac{r^2}{R} + \frac{r^4}{R^3}) sins(2\theta)
-\right] \nn\\
-&& -4 \frac{\nu^2}{E} \frac{r^2}{R} \frac{\sigma_H-\sigma_h}{2} \cos (2\theta)
-\\
-u_{zz} &=& 
--\frac{z}{E} \left( \sigma_v - \nu (\sigma_H-\sigma_h)\right)
-\end{eqnarray}
-
-{\color{red} check against source. Also, what is sins ? is it r2/R or R2/r??}
-
-where $r$ is original borehole radius, $R$ is distance from borehole center, 
-$z$ is depth, $u_{rr}$ is the radial displacement of the borehole at $R$, 
-$u_{\theta\theta}$ is the tangential displacement of the borehole at $R$, 
-$u_{zz}$ is the axial displacement of the borehole at $R$, 
-$E$ is Young’s modulus, $\nu$ is Poisson's ratio,
-$\sigma_v$ is the vertical stress at depth $z$, $\sigma_H$ is the maximum horizontal stress, 
-$\sigma_h$ is the minimum horizontal stress, $p_m$ is borehole mud pressure, 
-and $\theta$ is the angle from the maximum horizontal stress direction.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Nomenclature}
@@ -1024,7 +221,6 @@ and $\theta$ is the angle from the maximum horizontal stress direction.
 \end{tabular}
 
 
-Null spaces
 
 
 \begin{verbatim}
@@ -1043,6 +239,990 @@ export to vtu
 <-------------------------
 \end{verbatim}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{2d Analytical solution without hole (experiment=0)}
+
+Let us choose $\vec{u}=(u_x,u_y,u_z)=(x,0,0)$. 
+Then 
+\begin{eqnarray}
+\varepsilon_{xx} &=& 1\\
+\varepsilon_{yy} &=& 0\\
+\varepsilon_{zz} &=& 0\\
+\varepsilon_{xy} &=& 0\\
+\varepsilon_{xz} &=& 0\\
+\varepsilon_{yz} &=& 0
+\end{eqnarray}
+and from ${\bm \sigma}=\lambda {\rm tr} ({\bm \varepsilon}) {\bm 1} + 2 \mu {\bm \varepsilon}$
+and setting  $\lambda=10^6$ and $\mu=10^6$ (i.e. $\nu=0.25$ and $E=2.5\cdot 10^6$).
+we obtain
+\begin{eqnarray}
+\sigma_{xx} &=& \lambda + 2 \mu = 3\cdot 10^6\\
+\sigma_{yy} &=& \lambda= 10^6 \\
+\sigma_{zz} &=& \lambda= 10^6 \\
+\sigma_{xy} &=& 0\\
+\sigma_{xz} &=& 0\\
+\sigma_{yz} &=& 0
+\end{eqnarray}
+
+Of course it is trivial to verify that $\vec\nabla\cdot {\bm \sigma} = \vec{0}$, i.e.
+the stress tensor verifies the momentum conservation equation.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/disp.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/e_xx_n.png}\\
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/s_xx_n.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/s_yy_n.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp0/s_zz_n.png}\\
+{\captionfont Do not be fooled by the color fields that Paraview generates
+for constant value fields...}
+\end{center}
+
+This is a {\it very} simple benchmark, i.e. in fact a sanity check.
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{3d Analytical solution with hole (experiment=1) }
+
+
+In the Phd thesis of \textcite{HongXueHan2021} we read
+``Suppose an elastic body of rock with Young's modulus E and Poisson's ratio $\nu$
+is subjected to the in-situ stresses $\sigma_v,\sigma_H,\sigma_h$.
+A circular vertical borehole is drilled through the body.
+According to elastic theory, the solutions for the stresses around the 
+borehole can be described by [the following] equations (derived from the 
+Kirsch set of equations under linear elastic isotropic property assumptions,
+\textcite{jacz}).''
+In what follows the hole has a radius $a$, and three (far field) stresses are applied,
+$\sigma_H$ in the $x$-direction,
+$\sigma_h$ in the $y$-direction,
+$\sigma_v$ in the $z$-direction.
+
+\begin{center}
+\fbox{\includegraphics[width=7.5cm]{python_codes/fieldstone_185/images/han}}
+\end{center}
+
+
+The 2d solution of this problem (with $\sigma_h=\sigma_v=0$) is known.
+The Kirsch equations, named after Ernst Gustav Kirsch, describe the elastic stresses around a hole in an 
+infinite plate under one directional tension.
+Loading an infinite plate with a circular hole of radius $a$ with stress $\sigma$, 
+the resulting stress field is (the angle is with respect to the direction of application of the stress):
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_185/images/kirsch}\\
+{\captionfont Taken from \url{https://en.wikipedia.org/wiki/Kirsch_equations}}
+\end{center}
+
+\begin{center}
+\includegraphics[width=11cm]{python_codes/fieldstone_185/images/fuchsclauss}\\
+{\captionfont Taken from \textcite{fucl88}. Note that here a second stress $S_h$ is also present.}
+\end{center}
+
+
+We can express the stress components in their dimensionless form as  
+follows\footnote{For reasons that will become clear later the 
+applied stress is now called $\sigma_H$.}:
+\begin{eqnarray}
+\frac{\sigma_{rr}}{\sigma_H} &=& 
+\frac12 \left(1-\frac{1}{(r/a)^2} \right)
++\frac12 \left( 1 + \frac{3}{(r/a)^4} - \frac{4}{(r/a)^2}   \right) \cos 2\theta   \label{f185k1}\\
+\frac{\sigma_{\theta\theta}}{\sigma_H} &=& 
+\frac12 \left(1+\frac{1}{(r/a)^2} \right)
+-\frac12 \left( 1 + \frac{3}{(r/a)^4}   \right) \cos 2\theta   \label{f185k2}\\
+\frac{\sigma_{r\theta}}{\sigma_H} &=&
+-\frac12 \left( 1 -  \frac{3}{(r/a)^4} + \frac{2}{(r/a)^2} \right) \sin 2\theta
+\end{eqnarray}
+
+These equations are identical to those 
+at \url{https://en.wikiversity.org/wiki/Elasticity/Plate_with_hole_in_tension}.
+Note that the stress solution above is independent of 
+elastic rheological parameters (i.e. $\lambda, \nu, E, ...$).
+
+The corresponding displacements are also given at 
+\url{https://en.wikiversity.org/wiki/Elasticity/Plate_with_hole_in_tension}
+for a 2d setup with $\sigma_h=(\sigma_v)=0$ (here $T \rightarrow \sigma_H$):
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_185/images/wikieleqs1}
+\end{center}
+
+However it is the 3d solution we are interested in, and we find it in the literature:
+
+\begin{center}
+\includegraphics[width=16.5cm]{python_codes/fieldstone_185/images/borehole1}\\
+{\captionfont Taken from \url{https://dnicolasespinoza.github.io/ch6_WellboreGeomech.html}.
+$P_W$ is the pressure in the wellbore which is the hydrostatic pressure generated by 
+the mud in the borehole and $P_p$ is the pore pressure.}
+\end{center}
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_185/images/borehole2}\\
+{\captionfont Taken from \textcite{HongXueHan2021}. Note that in these $R$ is the coordinate and 
+$r$ is the radius of the hole ...}
+\end{center}
+
+Taking $P_W=P_p=0$ in the first set of equations yields equations identical to the second set. 
+We also find in \textcite{jacz}:
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_185/images/jaeger1}
+\end{center}
+
+At this stage we have a perfect agreement between three different sources. 
+With our notations:
+
+\begin{eqnarray}
+\sigma_{rr} &=& 
+\frac{\sigma_H+\sigma_h}{2} \left(1-\frac{1}{(r/a)^2} \right)
++\frac{\sigma_H-\sigma_h}{2}  \left( 1 + \frac{3}{(r/a)^4} 
+- \frac{4}{(r/a)^2}   \right) \cos 2\theta   \label{f185k1}\\
+\sigma_{\theta\theta}&=& 
+\frac{\sigma_H+\sigma_h}{2} \left(1+\frac{1}{(r/a)^2} \right)
+-\frac{\sigma_H-\sigma_h}{2} \left( 1 + \frac{3}{(r/a)^4}   \right) \cos 2\theta   \label{f185k2}\\
+\sigma_{zz} &=& \sigma_v -  \frac{\sigma_H-\sigma_h}{2}   \frac{4 \nu}{(r/a)^2}  
+\cos 2\theta \label{f185k234}
+\\
+\sigma_{r\theta} &=&
+-\frac{\sigma_H-\sigma_h}{2}  \left( 1 -  \frac{3}{(r/a)^4} + \frac{2}{(r/a)^2} \right) \sin 2\theta 
+\\
+\sigma_{rz} &=& 0 \\
+\sigma_{\theta z} &=& 0 
+\end{eqnarray}
+where 
+$r$ is the distance from borehole center
+$\sigma_v$ is the vertical stress, 
+$\sigma_H$ is the maximum horizontal stress
+and $\sigma_h$ is the minimum horizontal stress,
+$\theta$ is the angle from the maximum horizontal stress direction.
+
+{\color{red} say smthg about $\sigma_{rz}=\sigma_{\theta z}=0$ underlying assumption ?}
+
+Since this stress field is found in many sources we will not bother to 
+go through its derivation but will instead verify that it does fulfill the 
+momentum equation, i.e. $\vec\nabla \cdot {\bm \sigma} + \rho \vec{g}
+= \vec\nabla \cdot {\bm \sigma}  = \vec{0}$ (no body forces in this case). We start 
+from\footnote{\url{https://en.wikipedia.org/wiki/Del_in_cylindrical_and_spherical_coordinates}}  
+\[
+\vec\nabla \cdot {\bm \sigma} 
+= 
+\begin{bmatrix} 
+\frac{\partial \sigma_{rr}}{\partial r} 
++ \frac{\sigma_{rr}}{r} 
++ \frac{1}{r} \frac{\partial \sigma_{\theta r}}{\partial \theta} 
++ \frac{\partial \sigma_{zr}}{\partial z} 
+- \frac{\sigma_{\theta \theta}}{r} 
+\\ \\
+\frac{1}{r} \frac{\partial \sigma_{\theta \theta}}{\partial \theta} 
++ \frac{\partial \sigma_{r \theta}}{\partial r} 
++ \frac{\sigma_{r \theta}}{r} + \frac{\sigma_{\theta r}}{r} 
++ \frac{\partial \sigma_{z \theta}}{\partial z}
+\\ \\
+\frac{\partial \sigma_{z z}}{\partial z} + \frac{\partial \sigma_{r z}}{\partial r} 
++ \frac{\sigma_{rz}}{r} 
++ \frac{1}{r}\frac{\partial \sigma_{\theta z}}{\partial \theta}
+\end{bmatrix}
+\]
+We have $\sigma_{rz}=\sigma_{\theta z}=0$ and $\sigma_{r\theta}=\sigma_{\theta r}$ so that:
+\[
+\vec\nabla \cdot {\bm \sigma} 
+= 
+\begin{bmatrix} 
+\frac{\partial \sigma_{rr}}{\partial r} 
++ \frac{1}{r} \frac{\partial \sigma_{\theta r}}{\partial \theta} 
++ \frac{\sigma_{rr}-\sigma_{\theta \theta}}{r} 
+\\ \\
+\frac{1}{r} \frac{\partial \sigma_{\theta \theta}}{\partial \theta} 
++ \frac{\partial \sigma_{r \theta}}{\partial r} 
++ 2\frac{\sigma_{r \theta}}{r}  
+\\ \\
+\frac{\partial \sigma_{z z}}{\partial z}
+\end{bmatrix}
+\]
+Since $\sigma_{zz}$ is independent of $z$ the third line is immediately verified.
+Let us then compute:
+\begin{eqnarray}
+\frac{\partial \sigma_{rr}}{\partial r} 
+&=& 
+\frac{\sigma_H+\sigma_h}{2}\frac{2}{r (r/a)^2} 
++ \frac{\sigma_H-\sigma_h}{2}  \left( - \frac{12 }{r(r/a)^4} + \frac{8}{r(r/a)^2}   \right) \cos 2\theta 
+\nn\\
+\frac{1}{r} \frac{\partial \sigma_{\theta r}}{\partial \theta} 
+&=& 
+- \frac{\sigma_H-\sigma_h}{2} \left( \frac1r -  \frac{3}{r(r/a)^4} + \frac{2}{r(r/a)^2} \right) 2 \cos 2\theta
+\nn\\
+\frac{\sigma_{rr}-\sigma_{\theta \theta}}{r} 
+&=& 
+-\frac{\sigma_H+\sigma_h}{2}  \frac{2}{r(r/a)^2} + 
+\frac{\sigma_H-\sigma_h}{2}  \left( \frac2r+  \frac{6}{r(r/a)^4} -\frac{4}{r(r/a)^2}\right) \cos 2\theta  
+\nn
+\end{eqnarray}
+Then 
+\begin{eqnarray}
+\nabla \cdot {\bm \sigma} |_r
+&=& \frac{\sigma_H+\sigma_h}{2} \frac{2}{r (r/a)^2} 
+- \frac{\sigma_H+\sigma_h}{2}\frac{2}{r(r/a)^2} \nn \\
+&+& \frac{\sigma_H-\sigma_h}{2}
+\left( 
+- \frac{12}{r(r/a)^4} + \frac{8}{r(r/a)^2}   
+-\frac2r +  \frac{6}{r(r/a)^4} - \frac{4}{r(r/a)^2}
++\frac2r+  \frac{6}{r(r/a)^4} -\frac{4}{r(r/a)^2}
+\right) \cos 2\theta \nn\\
+&=&0 \nn
+\end{eqnarray}
+Likewise, we have
+\begin{eqnarray}
+\frac{1}{r} \frac{\partial \sigma_{\theta \theta}}{\partial \theta} 
+&=&\frac{\sigma_H-\sigma_h}{2} 
+\left( \frac2r + \frac{6}{r(r/a)^4}   \right) \sin 2\theta   
+\nn\\
+\frac{\partial \sigma_{r \theta}}{\partial r} 
+&=& -\frac{\sigma_H-\sigma_h}{2}  \left(   \frac{12}{r(r/a)^4} - \frac{4}{r(r/a)^2} \right) \sin 2\theta
+\nn\\
+2\frac{\sigma_{r \theta}}{r}  
+&=& - \frac{\sigma_H-\sigma_h}{2} 
+ \left( \frac2r -  \frac{6}{r(r/a)^4} + \frac{4}{r(r/a)^2} \right) \sin 2\theta
+\nn
+\end{eqnarray}
+then
+\[
+\nabla \cdot {\bm \sigma} |_\theta
+=\frac{\sigma_H-\sigma_h}{2} 
+\left(
+\frac2r + \frac{6}{r(r/a)^4}  
+-  \frac{12}{r(r/a)^4} + \frac{4}{r(r/a)^2}
+-\frac2r +  \frac{6}{r(r/a)^4} - \frac{4}{r(r/a)^2}
+\right) \sin 2\theta =0
+\]
+This concludes the proof that the stress field above is a solution 
+of the momentum conservation equation.
+
+
+
+
+
+
+
+
+Let us assume temporarily $\sigma_h=\sigma_v=0$. In this case the stress components read:
+
+\begin{eqnarray}
+\sigma_{rr} &=& 
+\frac{\sigma_H}{2} \left(1-\frac{1}{(r/a)^2} \right)
++\frac{\sigma_H}{2}  \left( 1 + \frac{3}{(r/a)^4} - \frac{4}{(r/a)^2}   \right) \cos 2\theta   \\
+\sigma_{\theta\theta}&=& 
+\frac{\sigma_H}{2} \left(1+\frac{1}{(r/a)^2} \right)
+-\frac{\sigma_H}{2} \left( 1 + \frac{3}{(r/a)^4}   \right) \cos 2\theta  \\
+\sigma_{zz} &=&  - \frac{\sigma_H}{2}   \frac{4 \nu}{(r/a)^2}  
+\cos 2\theta \label{f185k234}
+\\
+\sigma_{r\theta} &=&
+-\frac{\sigma_H}{2}  \left( 1 -  \frac{3}{(r/a)^4} + \frac{2}{(r/a)^2} \right) \sin 2\theta 
+\\
+\sigma_{rz} &=& 0 \\
+\sigma_{\theta z} &=& 0 
+\end{eqnarray}
+which is indeed identical to the expressions we have seen earlier.
+
+On the following figures $\sigma_{rr}/\sigma_H$ and $\sigma_{\theta\theta}/\sigma_H$ are plotted 
+as a function of $r\ge a$ on the $x$-axis (i.e. $\theta=0$) 
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_185/images/sigma_rr.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_185/images/sigma_tt.pdf}
+\end{center}
+
+We see that the domain will need to be rather large compared to the 
+hole size so that one can prescribe the stress $\sigma$ on the sides 
+and expect to match the analytical solution above near the hole. 
+Conversely one could prescribe the analytical stress on the 
+sides of the domain. In order to do so one should then convert the 
+expression above in Cartesian coordinates stress components.
+
+We can also plot the same stresses on the wall of the hole itself
+(note that $\sigma_{r\theta}=0$ and $\sigma_{rr}=0$ on the hole wall):
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_185/images/sigma_tt2.pdf}\\
+\end{center}
+
+
+Note that some sources do provide the stress components in Cartesian coordinates, 
+but we shall not use these expressions and we will instead use the formula in Section~\ref{MMM-ss:convcartpol}:
+\begin{eqnarray}
+\sigma_{xx} &=& \sigma_{rr} \cos^2\theta + \sigma_{\theta\theta} \sin^2\theta - \sigma_{r\theta} \sin 2\theta \\
+\sigma_{yy} &=& \sigma_{rr} \sin^2\theta + \sigma_{\theta\theta} \cos^2\theta + \sigma_{r\theta} \sin 2\theta \\
+\sigma_{xy} &=& \sin\theta\cos\theta (\sigma_{rr}-\sigma_{\theta\theta}) + \sigma_{r\theta} \cos 2\theta
+\end{eqnarray}
+
+\begin{lstlisting}
+
+def analytical_solution_stress(r,theta,radius,sigma_H,sigma_h,sigma_v,nu):
+
+    rr=r/radius
+
+    c0=np.cos(theta)
+    s0=np.sin(theta)
+    c20=np.cos(2*theta)
+    s20=np.sin(2*theta)
+
+    sigma_plus=(sigma_H+sigma_h)/2
+    sigma_minus=(sigma_H-sigma_h)/2
+
+    sigma_rr=sigma_plus*(1-1/rr**2) + sigma_minus*(1+3/rr**4-4/rr**2)*c20
+    sigma_tt=sigma_plus*(1+1/rr**2) - sigma_minus*(1+3/rr**4)*c20
+    sigma_zz=2*nu*sigma_plus-sigma_minus*4*nu/rr**2*c20
+    sigma_rt=-sigma_minus*(1-3/rr**4+2/rr**2)*s20
+    sigma_rz=0
+    sigma_tz=0
+
+    # we only need to convert in the r-theta/x-y plane:
+
+    sigma_xx=sigma_rr*c0**2+sigma_tt*s0**2-sigma_rt*s20
+    sigma_yy=sigma_rr*s0**2+sigma_tt*c0**2+sigma_rt*s20
+    sigma_xy=s0*c0*(sigma_rr-sigma_tt)+sigma_rt*c20
+    sigma_xz=0
+    sigma_yz=0
+
+    return sigma_xx,sigma_yy,sigma_zz,sigma_xy,sigma_xz,sigma_yz
+\end{lstlisting}
+
+Having established the stress field, we now turn to the displacement field (as well as 
+the strain tensor field).
+For an isotropic elastic material 
+the generalized Hooke's law 
+\begin{equation}
+{\bm \sigma}=\lambda {\rm tr}({\bm \varepsilon}) {\bm 1} + 2 G {\bm \varepsilon} 
+\label{eq:f185:hooke}
+\end{equation} 
+is expressed in 2d polar coordinates as:
+\begin{eqnarray}
+\sigma_{rr}&=& \lambda(\varepsilon_{rr}+\varepsilon_{\theta\theta}) +2G\varepsilon_{rr}\\
+\sigma_{\theta\theta}
+&=& \lambda(\varepsilon_{rr}+\varepsilon_{\theta\theta}) +2G\varepsilon_{\theta\theta}\\
+\sigma_{r\theta} &=& 2G\varepsilon_{r \theta} 
+\end{eqnarray}
+From Eq.~\eqref{eq:f185:hooke} we obtain
+\[
+{\rm tr}({\bm \sigma})= (3\lambda+2G) {\rm tr}({\bm \varepsilon})
+\]
+Using the relationships
+\[
+\lambda=\frac{E \nu}{(1+\nu)(1-2\nu)} 
+\qquad\qquad
+G = \frac{E}{2(1+\nu)}
+\]
+we arrive at 
+\begin{equation}
+{\rm tr}({\bm \sigma})= (3\lambda+2G) {\rm tr}({\bm \varepsilon}) 
+= \frac{E}{1-2\nu} {\rm tr}({\bm \varepsilon}) \label{eq:f185trtr}
+\end{equation}
+Coming back to Eq.~\eqref{eq:f185:hooke}:
+\begin{eqnarray}
+{\bm \sigma} &=&\lambda {\rm tr}({\bm \varepsilon}) {\bm 1} + 2 G {\bm \varepsilon} 
+\nn\\
+\Rightarrow
+{\bm \sigma} &=& \frac{E \nu}{(1+\nu)(1-2\nu)}  {\rm tr}({\bm \varepsilon}) {\bm 1} 
++ 2 \frac{E}{2(1+\nu)} {\bm \varepsilon} 
+\nn\\
+\Rightarrow
+\frac{1+\nu}{E}{\bm \sigma} &=& \frac{\nu}{1-2\nu}  {\rm tr}({\bm \varepsilon}) {\bm 1} 
++  {\bm \varepsilon} 
+\nn\\
+\Rightarrow
+{\bm \varepsilon} 
+&=& \frac{1+\nu}{E}{\bm \sigma}  - \frac{\nu}{1-2\nu}  {\rm tr}({\bm \varepsilon}) {\bm 1}
+\end{eqnarray}
+Using now Eq.~\eqref{eq:f185trtr} we obtain
+\begin{eqnarray}
+{\bm \varepsilon} 
+&=& \frac{1+\nu}{E}{\bm \sigma}  - \frac{\nu}{1-2\nu}   \frac{1-2\nu}{E} {\rm tr}({\bm \sigma}) {\bm 1}
+\nn\\
+\Rightarrow
+{\bm \varepsilon} 
+&=& \frac{1+\nu}{E}{\bm \sigma}  - \frac{\nu}{E} {\rm tr}({\bm \sigma}) {\bm 1}
+\end{eqnarray}
+which is the reversed Hooke's law for isotropic materials expressed 
+in terms of Young's modulus and Poisson's ratio\footnote{\url{https://en.wikipedia.org/wiki/Hooke's_law}}. This leads to write in polar coordinates: 
+\begin{eqnarray}
+\varepsilon_{rr} 
+&=& \frac{1+\nu}{E} {\sigma}_{rr}  
+- \frac{\nu}{E} (\sigma_{rr} + \sigma_{\theta\theta}+\sigma_{zz}) 
+= \frac{\sigma_{rr}-\nu (\sigma_{\theta\theta}+\sigma_{zz})}{E} 
+\label{f185k7}
+\\
+\varepsilon_{\theta\theta} 
+&=& \frac{1+\nu}{E} {\sigma}_{\theta\theta}  
+- \frac{\nu}{E} (\sigma_{rr} + \sigma_{\theta\theta}+\sigma_{zz}) 
+= \frac{\sigma_{\theta\theta}-\nu(\sigma_{rr}+\sigma_{zz})}{E}  \label{f185k6}
+\\
+\varepsilon_{zz} 
+&=& \frac{1+\nu}{E} {\sigma}_{zz}  
+- \frac{\nu}{E} (\sigma_{rr} + \sigma_{\theta\theta}+\sigma_{zz}) 
+= \frac{\sigma_{zz}-\nu(\sigma_{rr}+\sigma_{\theta\theta})}{E}  \label{f185k8}
+\\
+\varepsilon_{r\theta} &=& 
+\frac{1+\nu}{E} \sigma_{r\theta}
+= \frac{1}{2G}  \sigma_{r\theta} 
+\\
+\varepsilon_{rz} &=&  \frac{1+\nu}{E} \sigma_{rz} = \frac{1}{2G}  \sigma_{rz} 
+\\
+\varepsilon_{ \theta z} &=&  \frac{1+\nu}{E} \sigma_{\theta z} = \frac{1}{2G}  \sigma_{\theta z} 
+\end{eqnarray}
+
+This translates as follows in the code:
+\begin{lstlisting}
+def analytical_solution_strain(r,theta,radius,sigma_H,sigma_h,sigma_v,E,nu):
+
+    rr=r/radius
+
+    c0=np.cos(theta)
+    s0=np.sin(theta)
+    c20=np.cos(2*theta)
+    s20=np.sin(2*theta)
+
+    sigma_plus=(sigma_H+sigma_h)/2
+    sigma_minus=(sigma_H-sigma_h)/2
+
+    sigma_rr=sigma_plus*(1-1/rr**2) + sigma_minus*(1+3/rr**4-4/rr**2)*c20
+    sigma_tt=sigma_plus*(1+1/rr**2) - sigma_minus*(1+3/rr**4)*c20
+    sigma_zz=2*nu*sigma_plus-sigma_minus*4*nu/rr**2*c20
+    sigma_rt=-sigma_minus*(1-3/rr**4+2/rr**2)*s20
+    sigma_rz=0
+    sigma_tz=0
+
+    e_rr=(sigma_rr-nu*(sigma_tt+sigma_zz))/E
+    e_tt=(sigma_tt-nu*(sigma_rr+sigma_zz))/E
+    e_zz=0
+    e_rt=(1+nu)/E*sigma_rt
+
+    e_xx=e_rr*c0**2+e_tt*s0**2-e_rt*s20
+    e_yy=e_rr*s0**2+e_tt*c0**2+e_rt*s20
+    e_xy=s0*c0*(e_rr-e_tt)+e_rt*c20
+    e_xz=0
+    e_yz=0
+
+    return e_xx,e_yy,e_zz,e_xy,e_xz,e_yz
+\end{lstlisting}
+
+
+In plane strain $\varepsilon_{zz}=0$ so Eq.~\eqref{f185k8} yields
+\begin{equation}
+\sigma_{zz}= \nu(\sigma_{rr}+\sigma_{\theta\theta}) \label{f185pszz}
+\end{equation}
+As a sanity check, we can verify that the proposed 3d analytical stress field equations 
+verify the equation above and we therefore compute 
+\begin{equation}
+\sigma_{zz} 
+= \nu(\sigma_{rr}+\sigma_{\theta\theta} )
+= 2\nu\frac{\sigma_H+\sigma_h}{2} 
+ -\frac{\sigma_H-\sigma_h}{2} \frac{4 \nu}{(r/a)^2}   \cos 2\theta \label{f185k111}
+\end{equation}
+Far from the borehole, or in the absence of it, the (Cartesian) stress tensor 
+is diagonal and its diagonal terms are $\sigma_H,\sigma_h,\sigma_v$ respectively, 
+so that the same plane strain condition $\sigma_{zz}= \nu(\sigma_{xx}+\sigma_{yy})$ yields 
+$\sigma_{v}= \nu(\sigma_{H}+\sigma_{h})$, which we can insert in the equation above to arrive at 
+\begin{eqnarray}
+\sigma_{zz} &=& 
+\sigma_v  - \frac{\sigma_H-\sigma_h}{2}   \frac{4 \nu}{(r/a)^2}   \cos 2\theta  
+\end{eqnarray}
+which is indeed the expected expression of Eq.~\eqref{f185k234}.
+
+
+Let us further explore Eq.~\eqref{f185k7} using Eq.~\eqref{f185k111}:
+
+\begin{eqnarray}
+E \varepsilon_{rr} 
+&=&  \sigma_{rr}-\nu (\sigma_{\theta\theta} +\sigma_{zz}) \nn\\
+&=&  \sigma_{rr}-\nu \sigma_{\theta\theta} -\nu \sigma_{zz} \nn\\
+&=& \left[  \frac{\sigma_H+\sigma_h}{2} \left(1-\frac{1}{(r/a)^2} \right)
++\frac{\sigma_H-\sigma_h}{2}  \left( 1 + \frac{3}{(r/a)^4} - \frac{4}{(r/a)^2}   \right) \cos 2\theta     \right]   \nn\\
+&& -\nu \left[  \frac{\sigma_H+\sigma_h}{2} \left(1+\frac{1}{(r/a)^2} \right)
+-\frac{\sigma_H-\sigma_h}{2} \left( 1 + \frac{3}{(r/a)^4}   \right) \cos 2\theta    \right]   \nn\\
+&& -\nu \left[ 2 \nu \frac{\sigma_H+\sigma_h}{2} -  \frac{4 \nu}{(r/a)^2}  \frac{\sigma_H-\sigma_h}{2}   \cos 2\theta    \right]   \nn\\
+&=& \frac{\sigma_H+\sigma_h}{2} \left[  \left(1-\frac{1}{(r/a)^2} \right) -\nu  \left(1+\frac{1}{(r/a)^2} \right)
+-2\nu^2 \right] \nn\\
+&& + \frac{\sigma_H-\sigma_h}{2}
+\left[ \left( 1 + \frac{3}{(r/a)^4} - \frac{4}{(r/a)^2}   \right) 
++\nu \left( 1 + \frac{3}{(r/a)^4}   \right) 
++  \frac{4 \nu^2}{(r/a)^2} \right] \cos 2\theta   \nn\\
+&=& \frac{\sigma_H+\sigma_h}{2} \left(  1 -\nu -2\nu^2 -\frac{1+\nu}{(r/a)^2} \right)   
++ \frac{\sigma_H-\sigma_h}{2}
+\left[  1+\nu + \frac{3(1+\nu)}{(r/a)^4} - \frac{4(1-\nu^2)}{(r/a)^2}  
+\right] \cos 2\theta \nn\\
+&=& \frac{(\sigma_H+\sigma_h)(1+\nu)}{2} \left(  1 -2\nu -\frac{1}{(r/a)^2} \right)   
++ \frac{(\sigma_H-\sigma_h)(1+\nu)}{2}
+\left[  1 + \frac{3}{(r/a)^4} - \frac{4(1-\nu)}{(r/a)^2}  
+\right] \cos 2\theta \nn 
+\end{eqnarray}
+
+
+\noindent Since $\varepsilon_{rr}  = \frac{\partial u_r}{\partial r} $ we 
+can then integrate with respect to $r$:
+\begin{eqnarray}
+u_r(r,\theta)
+&=& 
+\frac{(\sigma_H+\sigma_h)(1+\nu)r}{2 E} \left(  1 -2\nu +\frac{1}{(r/a)^2} \right)   
++ \frac{(\sigma_H-\sigma_h)(1+\nu)r}{2E}
+\left(  1 - \frac{1}{(r/a)^4} + \frac{4(1-\nu)}{(r/a)^2}  
+\right) \cos 2\theta +f(\theta)\nn
+\end{eqnarray}
+where $f(\theta)$ is an integration term yet to be determined.
+
+We have the relationship (e.g. see Section 4.1.2 of FieldStone):
+\[
+\varepsilon_{\theta\theta} 
+= \frac{u_r}{r} + \frac{1}{r} \frac{\partial u_\theta}{\partial \theta}
+\]
+which we combine with Eq.~\eqref{f185k6} so that
+\[
+\frac{u_r}{r} + \frac{1}{r} \frac{\partial u_\theta}{\partial \theta}
+= \frac{1}{E} (\sigma_{\theta\theta}-\nu (\sigma_{rr}+\sigma_{zz}))
+\]
+and since we have already obtained $u_r$ we can compute $u_{\theta}$ as follows:
+\begin{eqnarray}
+E \frac{\partial u_\theta}{\partial \theta}
+&=& r (\sigma_{\theta\theta}-\nu (\sigma_{rr}+\sigma_{zz}))- E u_r 
+\nn\\
+&=& r\sigma_{\theta\theta}
+-\nu r\sigma_{rr}
+-\nu r\sigma_{zz}
+- E u_r \nn
+\end{eqnarray}
+
+Let us compute each of the four rhs terms separately:
+\begin{eqnarray}
+r\sigma_{\theta\theta}&=& 
+\frac{(\sigma_H+\sigma_h)r}{2} \left(1+\frac{1}{(r/a)^2} \right)
+-\frac{(\sigma_H-\sigma_h)r}{2} \left( 1 + \frac{3}{(r/a)^4}   \right) \cos 2\theta   
+\nn\\
+\nu r\sigma_{rr} &=& 
+\frac{(\sigma_H+\sigma_h) r}{2} \nu\left(1-\frac{1}{(r/a)^2} \right)
++\frac{(\sigma_H-\sigma_h)r }{2}  \nu\left( 1 + \frac{3}{(r/a)^4} - \frac{4}{(r/a)^2}   \right) \cos 2\theta   
+\nn\\
+\nu r \sigma_{zz} 
+&=& 2\nu^2 r  \frac{\sigma_H+\sigma_h}{2} - \frac{(\sigma_H-\sigma_h)r}{2} \frac{4 \nu^2  }{(r/a)^2}  \cos 2\theta  
+\nn\\
+E u_r
+&=& 
+\frac{(\sigma_H+\sigma_h)(1+\nu)r}{2 } \left(  1 -2\nu +\frac{1}{(r/a)^2} \right)   
++ \frac{(\sigma_H-\sigma_h)(1+\nu)r}{2}
+\left(  1 - \frac{1}{(r/a)^4} + \frac{4(1-\nu)}{(r/a)^2}  
+\right) \cos 2\theta + E f(\theta)\nn
+\end{eqnarray}
+
+Then
+\begin{eqnarray}
+&&E\frac{\partial u_\theta}{\partial \theta} \nn\\
+&=& r\sigma_{\theta\theta} -\nu r\sigma_{rr} -\nu r\sigma_{zz} - E u_r  \nn\\
+&=& \frac{(\sigma_H+\sigma_h)r}{2} 
+\left[ 
+\left(1+\frac{1}{(r/a)^2} \right)
+-\nu\left(1-\frac{1}{(r/a)^2} \right)
+-2 \nu^2
+-(1+\nu) \left( 1 -2\nu +\frac{1}{(r/a)^2} \right) 
+\right] \nn\\
+&+&
+\frac{(\sigma_H-\sigma_h) r}{2}
+\left[
+-\left( 1 + \frac{3}{(r/a)^4}   \right)
+-\nu\left( 1 + \frac{3}{(r/a)^4} - \frac{4}{(r/a)^2}   \right)
++ \frac{4 \nu^2  }{(r/a)^2}
+-(1+\nu)\left(  1 - \frac{1}{(r/a)^4} + \frac{4(1-\nu)}{(r/a)^2}  \right)
+\right] \cos 2\theta \nn\\
+&&  -E f(\theta)\nn\\
+&=& 
+\frac{(\sigma_H+\sigma_h)r}{2} 
+\underbrace{\left[ 
+1+\frac{1}{(r/a)^2} 
+-\nu +\nu \frac{1}{(r/a)^2} 
+-2\nu^2 - 1 +\nu  +2 \nu^2 -\frac{1+\nu}{(r/a)^2} 
+\right]}_{=0} \nn\\
+&+&
+\frac{(\sigma_H-\sigma_h) r}{2}
+\left[
+-1 -\nu  -1 -\nu
++\left(  4\nu +4\nu^2 -4(1-\nu^2)  \right)\frac{1}{(r/a)^2}
++\left( -3 -3\nu +1+\nu  \right)\frac{1}{(r/a)^4}
+\right] \cos 2\theta  + E f(\theta)\nn\\
+&=& 
+\frac{(\sigma_H-\sigma_h) r}{2}
+\left[
+-2(1+\nu)
+-4\left( 1 - \nu -2\nu^2 \right)\frac{1}{(r/a)^2}
+-2 \left( 1+\nu   \right)\frac{1}{(r/a)^4}
+\right] \cos 2\theta    -E f(\theta) \nn\\
+&=& 
+-\frac{(\sigma_H-\sigma_h) r}{2}
+\left[ 2(1+\nu) +4\left( 1 - \nu -2\nu^2 \right)\frac{1}{(r/a)^2}
++2 \left( 1+\nu   \right)\frac{1}{(r/a)^4}
+\right] \cos 2\theta -E f(\theta) \nn\\
+&=& 
+-(\sigma_H-\sigma_h)(1+\nu) r
+\left[ 
+1 +2\left( 1 - 2\nu \right)\frac{1}{(r/a)^2}
++ \frac{1}{(r/a)^4}
+\right] \cos 2\theta -E f(\theta) \nn
+\end{eqnarray}
+We can now integrate with respect to $\theta$:
+
+
+\begin{eqnarray}
+u_\theta
+&=& 
+-\frac{(\sigma_H-\sigma_h)(1+\nu) r}{2E}
+\left[
+2(1+\nu)
++4\left( 1 - \nu -2\nu^2 \right)\frac{1}{(r/a)^2}
++2 \left( 1+\nu   \right)\frac{1}{(r/a)^4}
+\right]  \sin 2\theta - \int f(\theta) d\theta + Constant\nn\\
+&=& 
+-\frac{(\sigma_H-\sigma_h) (1+\nu)r}{2E}
+\left[
+1 +2\left( 1 - 2\nu \right)\frac{1}{(r/a)^2}
++ \frac{1}{(r/a)^4}
+\right]  \sin 2\theta - \int f(\theta) d\theta + Constant \nn
+\end{eqnarray}
+Immediately we set the constant to zero because it corresponds to a constant rotation.
+
+
+
+We have so far not encountered a specific condition which could help us specifying 
+the function $f(\theta)$ so we will here take it to be zero,
+with the final recap of the analytical solution given by:
+
+
+
+
+\begin{eqnarray}
+u_r(r,\theta)
+&=& 
+\frac{(\sigma_H+\sigma_h)(1+\nu)r}{2 E} \left(  1 -2\nu +\frac{1}{(r/a)^2} \right)   
++ \frac{(\sigma_H-\sigma_h)(1+\nu)r}{2E}
+\left(  1 - \frac{1}{(r/a)^4} + \frac{4(1-\nu)}{(r/a)^2}  
+\right) \cos 2\theta 
+\nn\\
+u_\theta(r,\theta)
+&=& 
+-\frac{(\sigma_H-\sigma_h)(1+\nu) r}{2E}
+\left[
+1 +2\left( 1 - 2\nu \right)\frac{1}{(r/a)^2}
++ \frac{1}{(r/a)^4}
+\right]  \sin 2\theta \nn
+\end{eqnarray}
+Using $G=E/2/(1+\nu)$ we can also write:
+\begin{eqnarray}
+u_r(r,\theta)
+&=& 
+\frac{(\sigma_H+\sigma_h)r}{4G} \left(  1 -2\nu +\frac{1}{(r/a)^2} \right)   
++ \frac{(\sigma_H-\sigma_h)r}{4G}
+\left[  1 - \frac{1}{(r/a)^4} + \frac{4(1-\nu)}{(r/a)^2}  
+\right] \cos 2\theta 
+\nn\\
+u_\theta(r,\theta)
+&=& 
+-\frac{(\sigma_H-\sigma_h) r}{4G}
+\left[
+1 +2\left( 1 - 2\nu \right)\frac{1}{(r/a)^2}
++ \frac{1}{(r/a)^4}
+\right]  \sin 2\theta \nn
+\end{eqnarray}
+
+
+which we could compare to those in \textcite{HongXueHan2021} here below, 
+but because of different notations and doubts with regards $u_z$ we won't be doing so.
+\begin{center}
+\includegraphics[width=11cm]{python_codes/fieldstone_185/images/han4}\\
+{\captionfont Taken from \textcite{HongXueHan2021}.
+Note that the $\mu$ terms above actually should read $u$, 
+and I do not understand why displacement components have two indices.
+We notice in the equation above that $u_{z} \propto z$ which a) makes zero sense: the further
+away from the origin the larger the displacement? b) 
+violates $\varepsilon_{zz}=\partial u_z/\partial z =0$ (plane strain assumption).
+}
+\end{center}
+
+
+Likewise we find in \textcite{jacz} the following displacements:
+\begin{center}
+\includegraphics[width=12cm]{python_codes/fieldstone_185/images/jaeger2}
+\end{center}
+Let us rework these equations a bit. We note that 
+$\kappa-1=3-4\nu-1=2-4\nu=2(1-2\nu)$ 
+and $\kappa+1=3-4\nu+1=4-4\nu=4(1-\nu)$ in plane strain (which is 
+of interest to us here). Also, be careful that 
+the equations above contain terms $a/r$ and $r/a$!
+The equations above then write ($\sigma_1^\infty \rightarrow \sigma_H$)
+\begin{eqnarray}
+u_r(r,\theta) 
+&=& 
+\frac{\sigma_H a}{8 G} \left[ (\kappa-1) \frac{r}{a} + 2 \frac{a}{r} \right] 
++ 2\frac{\sigma_H a}{8 G}
+\left[ \frac{r}{a} + (\kappa+1) \frac{a}{r} - \frac{a^3}{r^3} \right] \cos 2 \theta
+\nn\\
+&=& 
+\frac{\sigma_H a}{4 G} \left[ (1-2\nu) \frac{r}{a} +  \frac{a}{r} \right] 
++ \frac{\sigma_H a}{4 G}
+\left[ \frac{r}{a} + 4(1-\nu) \frac{a}{r} - \frac{a^3}{r^3} \right] \cos 2 \theta
+\nn\\
+&=& 
+\frac{\sigma_H r}{4 G} \left[ (1-2\nu)  +  \frac{a^2}{r^2} \right] 
++ \frac{\sigma_H r}{4 G}
+\left[ 1 + 4(1-\nu) \frac{a^2}{r^2} - \frac{a^4}{r^4} \right] \cos 2 \theta
+\nn\\
+u_\theta (r,\theta) 
+&=& 
+-\frac{\sigma_H a}{4 G} \left[ \frac{r}{a} + (\kappa-1) \frac{a}{r} +  \frac{a^3}{r^3} \right] 
+\sin 2 \theta
+\nn\\
+&=& 
+-\frac{\sigma_H a}{4 G} \left[ \frac{r}{a} + 2(1-2\nu) \frac{a}{r} +  \frac{a^3}{r^3} \right] 
+\sin 2 \theta
+\nn\\
+&=& 
+-\frac{\sigma_H r}{4 G} \left[ 1 + 2(1-2\nu) \frac{a^2}{r^2} +  \frac{a^4}{r^4} \right] 
+\sin 2 \theta
+\nn
+\end{eqnarray}
+
+These equations are indeed identical to my derived displacements!
+
+As for the stress components we will use a generic approach 
+to arrive at the expressions for $u_x,u_y$:
+\begin{eqnarray}
+u_x &=& u_r \cos\theta - u_\theta \sin\theta \nn\\
+u_y &=& u_r \sin\theta + u_\theta \cos\theta 
+\end{eqnarray}
+
+Having obtained $u_\theta$ we can now reconstruct the $\varepsilon_{\theta\theta}$
+strain component (we have previously already computed $\varepsilon_{rr}$ when 
+computing $u_r$):
+
+\begin{eqnarray}
+\varepsilon_{\theta\theta} 
+&=& \frac{u_r}{r} + \frac{1}{r} \frac{\partial u_\theta}{\partial \theta} \nn\\
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\varepsilon_{r \theta} 
+&=& \frac12 \left(  
+\frac{\partial u_\theta}{\partial r} - \frac{u_\theta}{r} 
++ \frac1r \frac{\partial u_r}{\partial \theta}
+\right)
+\\
+2\varepsilon_{r \theta} 
+&=& 
+\frac{\partial u_\theta}{\partial r} - \frac{u_\theta}{r} 
++ \frac1r \frac{\partial u_r}{\partial \theta}
+\\
+\end{eqnarray}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{\color{red} finish}
+
+\begin{lstlisting}
+def analytical_solution_displacement(r,theta,radius,sigma_H,sigma_h,sigma_v,E,nu):
+
+    rr=r/radius
+
+    c0=np.cos(theta)
+    s0=np.sin(theta)
+    c20=np.cos(2*theta)
+    s20=np.sin(2*theta)
+
+    sigma_plus =(sigma_H+sigma_h)/2*(1+nu)*r/E
+    sigma_minus=(sigma_H-sigma_h)/2*(1+nu)*r/E
+
+    ur=sigma_plus*(1-2*nu+1/rr**2) + sigma_minus*(1-1/rr**4+4*(1-nu)/rr**2)*c20
+    ut=-sigma_minus*(1+2*(1-2*nu)/rr**2+1/rr**4)*s20
+
+    ux=ur*c0-ut*s0
+    uy=ur*s0+ut*c0
+    uz=0
+
+    return ux,uy,uz
+\end{lstlisting}
+
+
+\begin{center}
+\fbox{\includegraphics[width=12cm]{python_codes/fieldstone_185/images/Tension_hole_deform}}\\
+{\captionfont Deformation of the hole under tension}
+\end{center}
+
+
+the final recap of the analytical solution given by:
+
+\begin{eqnarray}
+\sigma_{rr} &=& 
+\frac{\sigma_H+\sigma_h}{2} \left(1-\frac{1}{(r/a)^2} \right)
++\frac{\sigma_H-\sigma_h}{2}  \left( 1 + \frac{3}{(r/a)^4} 
+- \frac{4}{(r/a)^2}   \right) \cos 2\theta  \\
+\sigma_{\theta\theta}&=& 
+\frac{\sigma_H+\sigma_h}{2} \left(1+\frac{1}{(r/a)^2} \right)
+-\frac{\sigma_H-\sigma_h}{2} \left( 1 + \frac{3}{(r/a)^4}   \right) \cos 2\theta \\
+\sigma_{zz} &=& 
+2\nu\frac{\sigma_H+\sigma_h}{2} 
+ -\frac{\sigma_H-\sigma_h}{2} \frac{4 \nu}{(r/a)^2}   \cos 2\theta 
+\\
+\sigma_{r\theta} &=&
+-\frac{\sigma_H-\sigma_h}{2}  \left( 1 -  \frac{3}{(r/a)^4} + \frac{2}{(r/a)^2} \right) \sin 2\theta 
+\\
+\sigma_{rz} &=& 0 \\
+\sigma_{\theta z} &=& 0 \\ 
+\varepsilon_{rr}           &=& \frac{1}{E}(\sigma_{rr}-\nu(\sigma_{\theta\theta}+\sigma_{zz}) )\\
+\varepsilon_{\theta\theta} &=& \frac{1}{E}(\sigma_{\theta\theta}-\nu(\sigma_{rr}+\sigma_{zz}) )\\
+\varepsilon_{r\theta}      &=& \frac{1}{E}(\sigma_{zz}-\nu(\sigma_{\theta\theta}+\sigma_{rr}) )\\
+u_r(r,\theta)
+&=& 
+\frac{(\sigma_H+\sigma_h)(1+\nu)r}{2 E} \left(  1 -2\nu +\frac{1}{(r/a)^2} \right)   
++ \frac{(\sigma_H-\sigma_h)(1+\nu)r}{2E}
+\left(  1 - \frac{1}{(r/a)^4} + \frac{4(1-\nu)}{(r/a)^2}  
+\right) \cos 2\theta 
+\nn\\
+u_\theta(r,\theta)
+&=& 
+-\frac{(\sigma_H-\sigma_h)(1+\nu) r}{2E}
+\left[
+1 +2\left( 1 - 2\nu \right)\frac{1}{(r/a)^2}
++ \frac{1}{(r/a)^4}
+\right]  \sin 2\theta \nn
+\end{eqnarray}
+
+
+
+\newpage
+
+\section*{Results}
+
+The domain is a cuboid of size $1\times 1 \times 0.125$ with the hole in 
+its middle of radius 0.02. 
+Boundary conditions are all displacement (i.e. Dirichlet) boundary conditions based 
+on the analytical displacement solution.
+Displacement, strain and stress components are measured on three lines:
+\begin{itemize}
+\item a line parameterized by $y=L_y/2$ and $z=L_z/2$, hereafter called 'x-line'. 
+\item a line parameterized by $x=L_x/2$ and $z=L_z/2$, hereafter called 'y-line'. 
+\item a line parameterized by $x=a$ and $y=L_y/2$, hereafter called 'z-line'. 
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/u.png}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/v.png}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/w.png}\\
+\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/exx.png}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/eyy.png}\\
+\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/ezz.png}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/exy.png}\\
+\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_xx.png}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_yy.png}\\
+\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_zz.png}
+\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_xy.png}
+\end{center}
+
+
+
+\newpage
+\subsection*{On x line}
+
+Using 
+\begin{eqnarray}
+E \varepsilon_{rr} 
+&=& \frac{(\sigma_H+\sigma_h)(1+\nu)}{2} \left(  1 -2\nu -\frac{1}{(r/a)^2} \right)   
++ \frac{(\sigma_H-\sigma_h)(1+\nu)}{2}
+\left[  1 + \frac{3}{(r/a)^4} - \frac{4(1-\nu)}{(r/a)^2}  
+\right] \cos 2\theta \nn 
+\end{eqnarray}
+(which is equal to $\epsilon_{xx}$ on the x-axis) and with $\sigma_h=0$ in our case we arrive at
+\[
+\epsilon_{rr} (r\rightarrow \infty, \theta=0) 
+\rightarrow 
+\frac{\sigma_H (1+\nu)}{2} \left(  1 -2\nu  \right)   
++ \frac{\sigma_H (1+\nu)}{2} = \frac{\sigma_H}{E} (1-\nu^2) 
+\]
+
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/ux__x.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/uy__x.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/uz__x.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_xx__x.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_yy__x.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_zz__x.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_xy__x.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_xx__x.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_yy__x.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_zz__x.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_xy__x.pdf}
+\end{center}
+
+\newpage
+\subsection*{On y line}
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/ux__y.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/uy__y.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/uz__y.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_xx__y.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_yy__y.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_zz__y.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_xy__y.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_xx__y.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_yy__y.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_zz__y.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_xy__y.pdf}
+\end{center}
+
+
+\newpage
+\subsection*{On z line}
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/ux__z.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/uy__z.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/uz__z.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_xx__z.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_yy__z.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_zz__z.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/e_xy__z.pdf} \\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_xx__z.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_yy__z.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_zz__z.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_xy__z.pdf}
+\end{center}
 
 
 

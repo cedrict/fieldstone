@@ -1,0 +1,18 @@
+#! /bin/bash
+
+rm *.ascii
+
+for nelx in 160 128 32 64 96 128 160 ; do
+    for nelz in 4 8 16 ; do
+        echo nelx=nely= $nelx nelz= $nelz
+        python3 stone.py  $nelx  $nelz > opla
+        mv line_x_displacement.ascii    line_x_displacement_${nelx}_${nelz}.ascii
+        mv line_x_displacement_th.ascii line_x_displacement_th_${nelx}_${nelz}.ascii
+        mv line_y_displacement.ascii    line_y_displacement_${nelx}_${nelz}.ascii
+        mv line_y_displacement_th.ascii line_y_displacement_th_${nelx}_${nelz}.ascii
+        mv line_z_displacement.ascii    line_z_displacement_${nelx}_${nelz}.ascii
+        mv line_z_displacement_th.ascii line_z_displacement_th_${nelx}_${nelz}.ascii
+        mv opla opla_${nelx}_${nelz}
+        mv solution0.vtu solution_${nelx}_${nelz}.vtu
+    done
+done

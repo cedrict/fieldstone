@@ -1,4 +1,5 @@
 import numpy as np
+import sys as sys
 import time as clock
 import scipy
 from scipy.sparse import lil_matrix
@@ -7,6 +8,7 @@ import numba
 from compute_principal_stresses import *
 from mesher_cube import * 
 from mesher_borehole import * 
+from mesher_borehole2 import * 
 from basis_functions import *
 from build_elemental_matrix import *
 from compute_strain_tensor_components import *
@@ -38,12 +40,11 @@ print("*******************************")
 m_V=8     # number of nodes making up an element
 ndof_V=3  # number of degrees of freedom per node
 
-debug=True
+debug=False
 
 #######################################
-#experiment=0,1: full block
-#experiment=2: 2d Kirsch (hole in a plate)
-#experiment=3: 3d solution
+#experiment=0: full block
+#experiment=1: 3d solution
 #experiment=4: iowa setup
 #######################################
 # layout=1: one material
@@ -53,7 +54,7 @@ debug=True
 experiment=1
 
 match experiment:
- case 0 | 1:
+ case 0 :
    meshtype=1 # full cuboid
    Lx=1
    Ly=1
@@ -70,30 +71,36 @@ match experiment:
    E1=2.5e6 
    G1=1e6
    radius=0
-   if (experiment==0): 
-      from block0 import *
-   if (experiment==1): 
-      from block1 import *
+   from block0 import *
 
- case 2:
-   meshtype=2 # hole
-   Lx=1
-   Ly=1
+ case 1:
+   meshtype=3 # borehole setup
+   Lx=1.
+   Ly=1.
    Lz=0.125
-   nelx=48
+
+   if int(len(sys.argv) == 3):
+      nelx = int(sys.argv[1])
+      nelz = int(sys.argv[2])
+   else:
+      nelx = 32
+      nelz = 8
+ 
+   nelr=int(nelx/2)
    nely=nelx
-   nelz=4
-   radius=0.02
+   radius=0.02 #*4
    volume_analytical=Lx*Ly*Lz-(np.pi*radius**2*Lz)
    layout=1
    sigma_H1=1e3
+   sigma_h1=0
+   sigma_v1=0
    sigma_H=0
    sigma_h=0
    sigma_v=0
    nstep=1
    E1=2.5e6 
    G1=1e6
-   from kirsch import *
+   from borehole_solution import *
 
  case 3:
    meshtype=2
@@ -181,7 +188,7 @@ match meshtype:
  case 2:
    x_V,y_V,z_V,icon_V,nn_V,nel=mesher_borehole(Lx,Ly,Lz,nelx,nely,nelz,radius)
  case 3:
-   x_V,y_V,z_V,icon_V,nn_V,nel=mesher_quarter_borehole(radius)
+   x_V,y_V,z_V,icon_V,nn_V,nel=mesher_borehole2(Lx,Ly,Lz,nelx,nely,nelz,nelr,radius)
  case _:
    exit('unknown mesh value')
 
@@ -295,7 +302,7 @@ match meshtype:
                if k==nelz-1: face6[iel]=True
                iel+=1
 
- case 2:
+ case 2 | 3:
    for iel in range(0,nel):
        for k in range(m_V):
            #x=0 side
@@ -407,7 +414,7 @@ sigma_xz_th=np.zeros(nn_V,dtype=np.float64)
 sigma_yz_th=np.zeros(nn_V,dtype=np.float64)  
 
 match experiment:
- case 0 | 1 :
+ case 0:
    for i in range(0,nn_V):
        u_th[i],v_th[i],w_th[i]=\
        analytical_solution_displacement(x_V[i],y_V[i],z_V[i])
@@ -415,14 +422,14 @@ match experiment:
        analytical_solution_strain(x_V[i],y_V[i],z_V[i])
        sigma_xx_th[i],sigma_yy_th[i],sigma_zz_th[i],sigma_xy_th[i],sigma_xz_th[i],sigma_yz_th[i]=\
        analytical_solution_stress(x_V[i],y_V[i],z_V[i],lambdaa[0],G[0])
- case 2:
+ case 1:
    for i in range(0,nn_V):
        u_th[i],v_th[i],w_th[i]=\
-       analytical_solution_displacement(rad_V[i],theta_V[i],radius,sigma_H1,E1,nu1)
+       analytical_solution_displacement(rad_V[i],theta_V[i],radius,sigma_H1,sigma_h1,sigma_v1,E1,nu1)
        e_xx_th[i],e_yy_th[i],e_zz_th[i],e_xy_th[i],e_xz_th[i],e_yz_th[i]=\
-       analytical_solution_strain(rad_V[i],theta_V[i],radius,sigma_H1,E1,nu1)
+       analytical_solution_strain(rad_V[i],theta_V[i],radius,sigma_H1,sigma_h1,sigma_v1,E1,nu1)
        sigma_xx_th[i],sigma_yy_th[i],sigma_zz_th[i],sigma_xy_th[i],sigma_xz_th[i],sigma_yz_th[i]=\
-       analytical_solution_stress(rad_V[i],theta_V[i],radius,sigma_H1)
+       analytical_solution_stress(rad_V[i],theta_V[i],radius,sigma_H1,sigma_h1,sigma_v1,nu1)
 
 print("compute analytical solution on nodes: %.3f s" % (clock.time()-start))
 
@@ -463,7 +470,7 @@ match experiment:
     if abs(z_V[i]-  Lz)/Lz<eps :
        bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
 
- case 0 | 1 | 2 :
+ case 0 | 1 :
 
     for i in range(0,nn_V):
         if abs(x_V[i])/Lx<eps or abs(x_V[i]-Lx)/Lx<eps or \
@@ -680,7 +687,7 @@ for istep in range(0,nstep):
                  b_el[ndof_V*6+2]-=sigma_v*surf*0.25
                  b_el[ndof_V*7+2]-=sigma_v*surf*0.25
 
-         case 2:
+         case 2 | 3:
            if face1[iel]: # face is nodes 1-2-5-6
                  surf=hz*abs(y_V[icon_V[1,iel]]-y_V[icon_V[2,iel]])
                  b_el[ndof_V*1+0]+=sigma_H*surf*0.25
@@ -1220,20 +1227,59 @@ for istep in range(0,nstep):
     #INSERT matplotlib commands to generate colormaps
 
     ###########################################################################
-    # export analytical solution on line 
+    # export analytical solution on lines 
+    # one line y=Ly/2, z=Lz/2
+    # one line x=Lx/2, z=Lz/2
+    # one line x=Lx/2+a, y=Ly/2
     ###########################################################################
 
-    online=np.logical_and(  (abs(y_V-Ly/2)/Ly<eps) , (abs(z_V-Lz/2)/Lz<eps) )
+    online_x=np.logical_and( (abs(y_V-Ly/2)/Ly<eps) , (abs(z_V-Lz/2)/Lz<eps) )
+    online_y=np.logical_and( (abs(x_V-Lx/2)/Lx<eps) , (abs(z_V-Lz/2)/Lz<eps) )
+    online_z=np.logical_and( (abs(x_V-Lx/2-radius)/Lx<eps) , (abs(y_V-Ly/2)/Ly<eps) )
 
-    np.savetxt('line_displacement.ascii',np.array([x_V[online],y_V[online],z_V[online],\
-                                                   u[online],v[online],w[online],\
-                                                   e_xx_n[online],e_yy_n[online],e_xy_n[online],\
-                                                   sigma_xx_n[online],sigma_yy_n[online],sigma_xy_n[online]  ]).T)
+    np.savetxt('line_x_displacement.ascii',np.array([x_V[online_x],y_V[online_x],z_V[online_x],\
+                                                   u[online_x],v[online_x],w[online_x],\
+                                                   e_xx_n[online_x],e_yy_n[online_x],\
+                                                   e_zz_n[online_x],e_xy_n[online_x],\
+                                                   sigma_xx_n[online_x],sigma_yy_n[online_x],\
+                                                   sigma_zz_n[online_x],sigma_xy_n[online_x]  ]).T)
 
-    np.savetxt('line_displacement_th.ascii',np.array([x_V[online],y_V[online],z_V[online],\
-                                                      u_th[online],v_th[online],w_th[online],\
-                                                      e_xx_th[online],e_yy_th[online],e_xy_th[online],\
-                                                      sigma_xx_th[online],sigma_yy_th[online],sigma_xy_th[online]  ]).T)
+    np.savetxt('line_x_displacement_th.ascii',np.array([x_V[online_x],y_V[online_x],z_V[online_x],\
+                                                      u_th[online_x],v_th[online_x],w_th[online_x],\
+                                                      e_xx_th[online_x],e_yy_th[online_x],\
+                                                      e_zz_th[online_x], e_xy_th[online_x],\
+                                                      sigma_xx_th[online_x],sigma_yy_th[online_x],\
+                                                      sigma_zz_th[online_x],sigma_xy_th[online_x]  ]).T)
+
+    np.savetxt('line_y_displacement.ascii',np.array([x_V[online_y],y_V[online_y],z_V[online_y],\
+                                                   u[online_y],v[online_y],w[online_y],\
+                                                   e_xx_n[online_y],e_yy_n[online_y],\
+                                                   e_zz_n[online_y],e_xy_n[online_y],\
+                                                   sigma_xx_n[online_y],sigma_yy_n[online_y],\
+                                                   sigma_zz_n[online_y],sigma_xy_n[online_y] ]).T)
+
+    np.savetxt('line_y_displacement_th.ascii',np.array([x_V[online_y],y_V[online_y],z_V[online_y],\
+                                                      u_th[online_y],v_th[online_y],w_th[online_y],\
+                                                      e_xx_th[online_y],e_yy_th[online_y],\
+                                                      e_zz_th[online_y],e_xy_th[online_y],\
+                                                      sigma_xx_th[online_y],sigma_yy_th[online_y],\
+                                                      sigma_zz_th[online_y],sigma_xy_th[online_y]  ]).T)
+
+    np.savetxt('line_z_displacement.ascii',np.array([x_V[online_z],y_V[online_z],z_V[online_z],\
+                                                   u[online_z],v[online_z],w[online_z],\
+                                                   e_xx_n[online_z],e_yy_n[online_z],\
+                                                   e_zz_n[online_z],e_xy_n[online_z],\
+                                                   sigma_xx_n[online_z],sigma_yy_n[online_z],\
+                                                   sigma_zz_n[online_z],sigma_xy_n[online_z] ]).T)
+
+    np.savetxt('line_z_displacement_th.ascii',np.array([x_V[online_z],y_V[online_z],z_V[online_z],\
+                                                      u_th[online_z],v_th[online_z],w_th[online_z],\
+                                                      e_xx_th[online_z],e_yy_th[online_z],
+                                                      e_zz_th[online_z],e_xy_th[online_z],\
+                                                      sigma_xx_th[online_z],sigma_yy_th[online_z],\
+                                                      sigma_zz_th[online_z],sigma_xy_th[online_z] ]).T)
+
+
 #end of time stepping loop
 
 print("*******************************")
