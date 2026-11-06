@@ -127,9 +127,11 @@ to cause compressive failure of the borehole wall (Zoback et al., 1985; Bell, 19
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Meshing} 
 
-The mesh of \stone~124 is extruded in the $z$ direction 
-to produce a cuboid of size $L_x\times L_y \times L_z$ 
-with a hollow cylinder in its middle:
+The type of mesh is controlled by the \lstinline{meshtype} parameter.
+If \lstinline{meshtype=1} it corresponds to a regular mesh for a full cuboid.
+If \lstinline{meshtype=2} it corresponds to the mesh of \stone~124 extruded 
+in the $z$ direction to produce a cuboid of size $L_x\times L_y \times L_z$ 
+with a hollow cylinder in its middle as shown here on the left:
 
 \begin{center}
 \includegraphics[width=6cm]{python_codes/fieldstone_185/images/mesh}
@@ -137,7 +139,8 @@ with a hollow cylinder in its middle:
 {\captionfont Left: our mesh. Right: the mesh used in \textcite{gakj12} (2012).}
 \end{center}
 
-{\color{red} ADD third mesh type!}
+If \lstinline{meshtype=3} the mesh is the one on the right panel of the figure 
+above. See also results of experiment 1 later on.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Numerical methods}
@@ -261,20 +264,57 @@ export to vtu
 \end{verbatim}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Stress concentration around the borehole}
+
+\url{https://en.wikipedia.org/wiki/Stress_concentration}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Breakouts occurrence criterion}
+
+yield criterion(s) - 
+
+check remark in Han thesis 'breakouts occurrence criterion' p 53
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Principle stresses and directions}
 
+The following example is found at \url{https://stackoverflow.com/questions/65535899/linear-algebra-in-python-calculating-eigenvectors-for-3x3-matrix}
 
+\begin{lstlisting}
+import numpy as np
 
+A = np.array([[-2, -4,  2],
+              [-2,  1,  2],
+              [4,   2,  5]])
+print (A)
+print ('-------------------------------------------------------')
 
+eigenvalues, eigenvectors = np.linalg.eig(A) # must use this line of code exactly 
 
+print(f'eigenvalues of matrix A are: \n {eigenvalues}')
+print ('-------------------------------------------------------')
+print(f'eigenvectors of matrix A are:\n {eigenvectors}')
+\end{lstlisting}
 
-
-
-
-
-
+The code above is in {\tt test\_principal\_stresses.py} and 
+it returns:
+\begin{verbatim}
+[[-2 -4  2]
+ [-2  1  2]
+ [ 4  2  5]]
+-------------------------------------------------------
+eigenvalues of matrix A are: 
+ [-5.  3.  6.]
+-------------------------------------------------------
+eigenvectors of matrix A are:
+ [[ 0.81649658  0.53452248  0.05842062]
+ [ 0.40824829 -0.80178373  0.35052374]
+ [-0.40824829 -0.26726124  0.93472998]]
+\end{verbatim}
 
 
 
@@ -286,25 +326,18 @@ export to vtu
 \section*{2d Analytical solution without hole (experiment=0)}
 
 Let us choose $\vec{u}=(u_x,u_y,u_z)=(x,0,0)$. 
-Then 
-\begin{eqnarray}
-\varepsilon_{xx} &=& 1\\
-\varepsilon_{yy} &=& 0\\
-\varepsilon_{zz} &=& 0\\
-\varepsilon_{xy} &=& 0\\
-\varepsilon_{xz} &=& 0\\
-\varepsilon_{yz} &=& 0
-\end{eqnarray}
+Then $\varepsilon_{xx} = 1$ and 
+$\varepsilon_{yy}=  \varepsilon_{zz} = \varepsilon_{xy} = \varepsilon_{xz} = \varepsilon_{yz} = 0$
 and from ${\bm \sigma}=\lambda {\rm tr} ({\bm \varepsilon}) {\bm 1} + 2 \mu {\bm \varepsilon}$
 and setting  $\lambda=10^6$ and $\mu=10^6$ (i.e. $\nu=0.25$ and $E=2.5\cdot 10^6$).
 we obtain
 \begin{eqnarray}
-\sigma_{xx} &=& \lambda + 2 \mu = 3\cdot 10^6\\
-\sigma_{yy} &=& \lambda= 10^6 \\
-\sigma_{zz} &=& \lambda= 10^6 \\
-\sigma_{xy} &=& 0\\
-\sigma_{xz} &=& 0\\
-\sigma_{yz} &=& 0
+\sigma_{xx} &=& \lambda + 2 \mu = 3\cdot 10^6 \nn\\
+\sigma_{yy} &=& \lambda= 10^6 \nn\\
+\sigma_{zz} &=& \lambda= 10^6 \nn\\
+\sigma_{xy} &=& 0\nn\\
+\sigma_{xz} &=& 0\nn\\
+\sigma_{yz} &=& 0\nn
 \end{eqnarray}
 
 Of course it is trivial to verify that $\vec\nabla\cdot {\bm \sigma} = \vec{0}$, i.e.
@@ -362,6 +395,13 @@ the resulting stress field is (the angle is with respect to the direction of app
 {\captionfont Taken from \textcite{fucl88}. Note that here a second stress $S_h$ is also present.}
 \end{center}
 
+\begin{center}
+\includegraphics[width=11cm]{python_codes/fieldstone_185/images/zomm85}\\
+{\captionfont Taken from \textcite{zomm85}. $\Delta P$ is the difference between the
+fluid pressure in the borehole and that in the formation (positive indicates
+excess pressure in the borehole). Note the suspicious minus sign
+between $S_H$ and $S_h$ in the $\tau_{r\theta}$ equation.}
+\end{center}
 
 We can express the stress components in their dimensionless form as  
 follows\footnote{For reasons that will become clear later the 
@@ -579,12 +619,6 @@ Conversely one could prescribe the analytical stress on the
 sides of the domain. In order to do so one should then convert the 
 expression above in Cartesian coordinates stress components.
 
-We can also plot the same stresses on the wall of the hole itself
-(note that $\sigma_{r\theta}=0$ and $\sigma_{rr}=0$ on the hole wall):
-
-\begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_185/images/sigma_tt2.pdf}\\
-\end{center}
 
 
 Note that some sources do provide the stress components in Cartesian coordinates, 
@@ -929,7 +963,7 @@ Immediately we set the constant to zero because it corresponds to a constant rot
 
 We have so far not encountered a specific condition which could help us specifying 
 the function $f(\theta)$ so we will here take it to be zero,
-with the final recap of the analytical solution given by:
+with the final recap of the analytical solution for displacements given by:
 
 
 \begin{eqnarray}
@@ -1099,13 +1133,10 @@ def analytical_solution_displacement(r,theta,radius,sigma_H,sigma_h,sigma_v,E,nu
 \end{lstlisting}
 
 
-\begin{center}
-\fbox{\includegraphics[width=12cm]{python_codes/fieldstone_185/images/Tension_hole_deform}}\\
-{\captionfont Deformation of the hole under tension}
-\end{center}
 
-
-the final recap of the analytical solution given by:
+\newpage
+%---------------------------------------------------------
+\subsection*{Final recap of the full analytical solution}
 
 \begin{eqnarray}
 \sigma_{rr} &=& 
@@ -1143,6 +1174,132 @@ u_\theta
 \right]  \sin 2\theta 
 \end{eqnarray}
 
+\newpage
+%---------------------------------------------------------
+\subsection*{What happens at the wall}
+
+In \textcite{fucl88} we read:
+\begin{displayquote}
+If there is no stress at the wall of the hole $r=a$, the 
+boundary conditions are $\sigma_{rr}=\sigma_{r\theta}=0$ 
+and we get
+\[
+\sigma_{\theta\theta} = (\sigma_H + \sigma_h) - 2 (\sigma_H - \sigma_h) \cos 2 \theta
+\]
+where $\sigma_{\theta\theta}=3 \sigma_h-\sigma_H$ for $\theta=0,180$ and 
+$\sigma_{\theta\theta}=3 \sigma_H-\sigma_h$ for $\theta=\pm 90$.
+In case of compression ($\sigma_H>\sigma_h>0$, here compressional stresses are taken as
+positive) a maximum stress concentration at the borehole wall under the angles $\pm 90$
+is noted. Calculating the course of the stresses as a function of $r/a$ and the 
+ratio $\sigma_H/\sigma_h$ we see that the stresses increase of decrease respectively 
+to the values at a great distance to the borehole in less than 3 borehole radii. 
+\end{displayquote}
+
+
+
+
+\noindent We also find online on the site of the Subsurface 
+Alliance\footnote{\url{https://subsurfacealliance.com/technical-series/f/the-art-of-getting-stress-orientation-from-borehole-image-logs}}
+the following:
+\begin{displayquote}
+As demonstrated by many authors \cite{zomm85,bell90}, 
+borehole breakouts occur when the stresses concentration
+around the borehole exceeds the compressive strength of the rock
+as illustrated in Figure (A) below. Notice that when the circumferential
+hoop stress exceeds the compressive strength of the rock,
+breakouts form 90\si{\degree} from the direction of SHmax. The enlargement
+of the wellbore is caused by the development of intersecting
+conjugate shear planes that cause pieces of the borehole wall to
+spall off (Figure C below). If the hoop stress becomes tensile and exceeds
+the tensile strength of the rock, drilling induced tensile fractures
+(DITF) will form in the direction of SHmax (Figure B below, Aadnoy,
+1990). DITFs typically develop as narrow sharply deﬁned features
+that are sub-parallel or slightly inclined to the borehole axis in
+vertical wells and are generally not associated with significant
+borehole enlargement in the fracture direction (note that DITFs and
+breakouts can form at the same depth in orthogonal directions).
+\end{displayquote}
+
+\begin{center}
+\includegraphics[width=11cm]{python_codes/fieldstone_185/images/subsurface_alliance1}
+\includegraphics[width=5.5cm]{python_codes/fieldstone_185/images/subsurface_alliance2}\\
+{\captionfont Distribution of hoop stress around a wellbore illustrating
+conditions for shear failure (A) and tensile failure (B). (C) Scheme showing 
+occurrence of tensile fractures and borehole breakouts with respect to SHmax 
+orientation (red arrow) in a vertical wellbore. UCS stands for Uniaxial Compressive Strength.}
+\end{center}
+
+\noindent In \textcite{bell90} we read: 
+\begin{displayquote}
+The generation of breakouts can be understood
+by considering an infinitely large plate with a
+small circular hole in it which is subjected to a
+uniaxial compressive stress, $S$. [...]
+The angle $\theta$ is measured from
+the direction of $S$ and $\sigma_r$, $\sigma_\theta$ and 
+$\sigma_{r\theta}$ are the radial, tangential and shear stresses 
+respectively. At the hole wall where $r=a$, $\sigma_r$ and $\sigma_{r\theta}$
+become zero and 
+\[
+\sigma_\theta=S-2 S \cos 2\theta
+\]
+It has a maximum value of $3S$ when $\theta=90\si{\degree}$ or
+$270\si{\degree}$ which occurs at the ends of the diameter
+perpendicular to $S$. At the ends of the diameter
+aligned with the uniaxial compressive stress, $\sigma_\theta$
+has a minimal value of $-S$ and is tensile. In this
+idealized uniaxially stressed situation, $S$ is 
+amplified around the hole perimeter and stress is
+concentrated due to the realignment of stress
+trajectories near the hole (see figure below).
+
+\begin{center}
+\includegraphics[width=6cm]{python_codes/fieldstone_185/images/bell90}\\
+{\captionfont Taken from \textcite{bell90}.
+Stress trajectories near a circular hole in an
+infinite plate which is subjected to uniaxial compression 
+(after Jaeger 1962). Note the "clustering" of 
+trajectories near the hole wall prependicular to the
+applied stress around points M and N.}
+\end{center}
+
+THERE IS SO MUCH MORE IN THAT PAPER!
+
+\end{displayquote}
+
+
+
+
+We can also plot the stress $\sigma_{\theta\theta} $ on the wall of the hole
+for $\sigma_h=0$: 
+
+\begin{center}
+\includegraphics[width=10cm]{python_codes/fieldstone_185/images/sigma_tt2.pdf}
+\end{center}
+
+
+
+
+\begin{center}
+\fbox{\includegraphics[width=12cm]{python_codes/fieldstone_185/images/Tension_hole_deform}}\\
+{\captionfont Deformation of the hole under tension. ORIGIN?!?}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1173,18 +1330,53 @@ for 3 vertical resolutions $nelz=4,8,16$ with the bash script {\tt script\_run}.
 
 \newpage
 \begin{center}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/u.png}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/v.png}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/w.png}\\
-\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/exx.png}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/eyy.png}\\
-\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/ezz.png}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/exy.png}\\
-\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_xx.png}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_yy.png}\\
-\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_zz.png}
-\includegraphics[width=5.3cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_xy.png}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_185/RESULTS/exp1/u.png}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_185/RESULTS/exp1/v.png}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_185/RESULTS/exp1/w.png}\\
+{\captionfont Displacement vector components.}
 \end{center}
+
+\vspace{0.7cm}
+
+\begin{center}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_185/RESULTS/exp1/exx.png}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_185/RESULTS/exp1/eyy.png}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_185/RESULTS/exp1/ezz.png}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_185/RESULTS/exp1/exy.png}\\
+{\captionfont strain rate tensor components.}
+\end{center}
+
+\vspace{0.7cm}
+
+\begin{center}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_xx.png}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_yy.png}\\
+\includegraphics[width=5.6cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_zz.png}
+\includegraphics[width=5.6cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_xy.png}\\
+{\captionfont stress tensor components.}
+\end{center}
+
+\newpage
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma1.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma2.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma3.png}\\
+{\captionfont Principal stresses $\sigma_1$, $\sigma_2$, $\sigma_3$.}
+\end{center}
+
+\vspace{1cm}
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_rr.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_rt.png}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/sigma_tt.png}\\
+{\captionfont Analytical stress components 
+in cylindrical coordinates  $\sigma_{rr}$, $\sigma_{r\theta}$, $\sigma_{\theta\theta}$.}
+\end{center}
+
+
+
+
 
 
 

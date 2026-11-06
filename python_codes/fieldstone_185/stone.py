@@ -1,11 +1,10 @@
 import numpy as np
 import sys as sys
 import time as clock
-import scipy
+#import scipy
 from scipy.sparse import lil_matrix
 import scipy.sparse as sps
 import numba
-from compute_principal_stresses import *
 from mesher_cube import * 
 from mesher_borehole import * 
 from mesher_borehole2 import * 
@@ -83,7 +82,7 @@ match experiment:
       nelx = int(sys.argv[1])
       nelz = int(sys.argv[2])
    else:
-      nelx = 16
+      nelx = 48
       nelz = 4
  
    nelr=int(nelx/2)
@@ -199,12 +198,12 @@ print("*******************************")
 Nfem=ndof_V*nn_V
 
 wall_V=np.zeros(nn_V,dtype=bool)
-theta_V=np.zeros(nn_V,dtype=np.float64)  
-rad_V=np.zeros(nn_V,dtype=np.float64)  
+theta_n=np.zeros(nn_V,dtype=np.float64)  
+rad_n=np.zeros(nn_V,dtype=np.float64)  
 for i in range(nn_V):
-    rad_V[i]=np.sqrt((x_V[i]-Lx/2)**2+(y_V[i]-Ly/2)**2)
-    theta_V[i]=np.arctan2((y_V[i]-Ly/2),(x_V[i]-Lx/2))
-    if abs(rad_V[i]-radius)<1e-6*radius: wall_V[i]=True
+    rad_n[i]=np.sqrt((x_V[i]-Lx/2)**2+(y_V[i]-Ly/2)**2)
+    theta_n[i]=np.arctan2((y_V[i]-Ly/2),(x_V[i]-Lx/2))
+    if abs(rad_n[i]-radius)<1e-6*radius: wall_V[i]=True
 
 #for iel in range (0,nel):
 #    print ("iel=",iel,'icon:',icon_V[:,iel])
@@ -342,14 +341,14 @@ start=clock.time()
 x_e=np.zeros(nel,dtype=np.float64)  
 y_e=np.zeros(nel,dtype=np.float64)  
 z_e=np.zeros(nel,dtype=np.float64)  
-r_e=np.zeros(nel,dtype=np.float64)  
+rad_e=np.zeros(nel,dtype=np.float64)  
 theta_e=np.zeros(nel,dtype=np.float64)  
     
 for iel in range(0,nel):
     x_e[iel]=np.sum(x_V[icon_V[:,iel]])/m_V
     y_e[iel]=np.sum(y_V[icon_V[:,iel]])/m_V
     z_e[iel]=np.sum(z_V[icon_V[:,iel]])/m_V
-    r_e[iel]=np.sqrt((x_e[iel]-Lx/2)**2+(y_e[iel]-Ly/2)**2)
+    rad_e[iel]=np.sqrt((x_e[iel]-Lx/2)**2+(y_e[iel]-Ly/2)**2)
     theta_e[iel]=np.arctan2((y_e[iel]-Ly/2),(x_e[iel]-Lx/2))
 
 print("compute coords.: %.3f s" % (clock.time()-start))
@@ -412,6 +411,12 @@ sigma_zz_th=np.zeros(nn_V,dtype=np.float64)
 sigma_xy_th=np.zeros(nn_V,dtype=np.float64)  
 sigma_xz_th=np.zeros(nn_V,dtype=np.float64)  
 sigma_yz_th=np.zeros(nn_V,dtype=np.float64)  
+sigma_p1_th=np.zeros(nel,dtype=np.float64)  
+sigma_p2_th=np.zeros(nel,dtype=np.float64)  
+sigma_p3_th=np.zeros(nel,dtype=np.float64)  
+sigma_rr_th=np.zeros(nel,dtype=np.float64)  
+sigma_tt_th=np.zeros(nel,dtype=np.float64)  
+sigma_rt_th=np.zeros(nel,dtype=np.float64)  
 
 match experiment:
  case 0:
@@ -425,11 +430,23 @@ match experiment:
  case 1:
    for i in range(0,nn_V):
        u_th[i],v_th[i],w_th[i]=\
-       analytical_solution_displacement(rad_V[i],theta_V[i],radius,sigma_H1,sigma_h1,sigma_v1,E1,nu1)
+       analytical_solution_displacement(rad_n[i],theta_n[i],radius,sigma_H1,sigma_h1,sigma_v1,E1,nu1)
        e_xx_th[i],e_yy_th[i],e_zz_th[i],e_xy_th[i],e_xz_th[i],e_yz_th[i]=\
-       analytical_solution_strain(rad_V[i],theta_V[i],radius,sigma_H1,sigma_h1,sigma_v1,E1,nu1)
+       analytical_solution_strain(rad_n[i],theta_n[i],radius,sigma_H1,sigma_h1,sigma_v1,E1,nu1)
        sigma_xx_th[i],sigma_yy_th[i],sigma_zz_th[i],sigma_xy_th[i],sigma_xz_th[i],sigma_yz_th[i]=\
-       analytical_solution_stress(rad_V[i],theta_V[i],radius,sigma_H1,sigma_h1,sigma_v1,nu1)
+       analytical_solution_stress(rad_n[i],theta_n[i],radius,sigma_H1,sigma_h1,sigma_v1,nu1)
+
+   for iel in range(0,nel):
+       sxx,syy,szz,sxy,sxz,syz=\
+       analytical_solution_stress(rad_e[iel],theta_e[iel],radius,sigma_H1,sigma_h1,sigma_v1,nu1)
+       Sel=np.array([[sxx,sxy,sxz],[sxy,syy,syz],[sxz,syz,szz]],np.float64)
+       eigenvalues,eigenvectors=np.linalg.eig(Sel)
+       idx=np.flip(np.argsort(eigenvalues))
+       sigma_p1_th[iel]=eigenvalues[idx[0]]
+       sigma_p2_th[iel]=eigenvalues[idx[1]]
+       sigma_p3_th[iel]=eigenvalues[idx[2]]
+       sigma_rr_th[iel],sigma_tt_th[iel],sigma_rt_th[iel]=\
+       analytical_solution_stress_cyl(rad_e[iel],theta_e[iel],radius,sigma_H1,sigma_h1,sigma_v1,nu1)
 
 print("compute analytical solution on nodes: %.3f s" % (clock.time()-start))
 
@@ -907,27 +924,37 @@ for istep in range(0,nstep):
     ###############################################################################
     start=clock.time()
 
-    sigma_p1_n=np.zeros(nn_V,dtype=np.float64) # principal stress 1 
-    sigma_v1x_n=np.zeros(nn_V,dtype=np.float64) # eigenvector of ps 1  
+    sigma_p1_n=np.zeros(nn_V,dtype=np.float64) 
+    sigma_v1x_n=np.zeros(nn_V,dtype=np.float64)
     sigma_v1y_n=np.zeros(nn_V,dtype=np.float64)  
     sigma_v1z_n=np.zeros(nn_V,dtype=np.float64)  
-
     sigma_p2_n=np.zeros(nn_V,dtype=np.float64)  
     sigma_v2x_n=np.zeros(nn_V,dtype=np.float64)  
     sigma_v2y_n=np.zeros(nn_V,dtype=np.float64)  
     sigma_v2z_n=np.zeros(nn_V,dtype=np.float64)  
-
     sigma_p3_n=np.zeros(nn_V,dtype=np.float64)  
     sigma_v3x_n=np.zeros(nn_V,dtype=np.float64)  
     sigma_v3y_n=np.zeros(nn_V,dtype=np.float64)  
     sigma_v3z_n=np.zeros(nn_V,dtype=np.float64)  
 
     for i in range(0,nn_V):
-        sigma_p1_n[i],sigma_v1x_n[i],sigma_v1y_n[i],sigma_v1z_n[i],\
-        sigma_p2_n[i],sigma_v2x_n[i],sigma_v2y_n[i],sigma_v2z_n[i],\
-        sigma_p3_n[i],sigma_v3x_n[i],sigma_v3y_n[i],sigma_v3z_n[i]=\
-        compute_principal_stresses(sigma_xx_n[i],sigma_yy_n[i],sigma_zz_n[i],\
-                                   sigma_xy_n[i],sigma_xz_n[i],sigma_yz_n[i])
+        Sel=np.array([[sigma_xx_n[i],sigma_xy_n[i],sigma_xz_n[i]],
+                      [sigma_xy_n[i],sigma_yy_n[i],sigma_yz_n[i]],
+                      [sigma_xz_n[i],sigma_yz_n[i],sigma_zz_n[i]]],np.float64)
+        eigenvalues,eigenvectors=np.linalg.eig(Sel)
+        idx=np.flip(np.argsort(eigenvalues))
+        sigma_p1_n[i]=eigenvalues[idx[0]]
+        sigma_p2_n[i]=eigenvalues[idx[1]]
+        sigma_p3_n[i]=eigenvalues[idx[2]]
+        sigma_v1x_n[i]=eigenvectors[idx[0],0]
+        sigma_v1y_n[i]=eigenvectors[idx[0],1]
+        sigma_v1z_n[i]=eigenvectors[idx[0],2]
+        sigma_v2x_n[i]=eigenvectors[idx[1],0]
+        sigma_v2y_n[i]=eigenvectors[idx[1],1]
+        sigma_v2z_n[i]=eigenvectors[idx[1],2]
+        sigma_v3x_n[i]=eigenvectors[idx[2],0]
+        sigma_v3y_n[i]=eigenvectors[idx[2],1]
+        sigma_v3z_n[i]=eigenvectors[idx[2],2]
 
     print("compute principal stresses: %.3f s" % (clock.time()-start))
 
@@ -1018,12 +1045,24 @@ for istep in range(0,nstep):
     sigma_v2z_e=np.zeros(nel,dtype=np.float64)  
     sigma_v3z_e=np.zeros(nel,dtype=np.float64)  
 
-    for i in range(0,nel):
-        sigma_p1_e[i],sigma_v1x_e[i],sigma_v1y_e[i],sigma_v1z_e[i],\
-        sigma_p2_e[i],sigma_v2x_e[i],sigma_v2y_e[i],sigma_v2z_e[i],\
-        sigma_p3_e[i],sigma_v3x_e[i],sigma_v3y_e[i],sigma_v3z_e[i]=\
-        compute_principal_stresses(sigma_xx_e[i],sigma_yy_e[i],sigma_zz_e[i],\
-                                   sigma_xy_e[i],sigma_xz_e[i],sigma_yz_e[i])
+    for iel in range(0,nel):
+        Sel=np.array([[sigma_xx_e[iel],sigma_xy_e[iel],sigma_xz_e[iel]],
+                      [sigma_xy_e[iel],sigma_yy_e[iel],sigma_yz_e[iel]],
+                      [sigma_xz_e[iel],sigma_yz_e[iel],sigma_zz_e[iel]]],np.float64)
+        eigenvalues,eigenvectors=np.linalg.eig(Sel)
+        idx=np.flip(np.argsort(eigenvalues))
+        sigma_p1_e[iel]=eigenvalues[idx[0]]
+        sigma_p2_e[iel]=eigenvalues[idx[1]]
+        sigma_p3_e[iel]=eigenvalues[idx[2]]
+        sigma_v1x_e[iel]=eigenvectors[idx[0],0]
+        sigma_v1y_e[iel]=eigenvectors[idx[0],1]
+        sigma_v1z_e[iel]=eigenvectors[idx[0],2]
+        sigma_v2x_e[iel]=eigenvectors[idx[1],0]
+        sigma_v2y_e[iel]=eigenvectors[idx[1],1]
+        sigma_v2z_e[iel]=eigenvectors[idx[1],2]
+        sigma_v3x_e[iel]=eigenvectors[idx[2],0]
+        sigma_v3y_e[iel]=eigenvectors[idx[2],1]
+        sigma_v3z_e[iel]=eigenvectors[idx[2],2]
 
     print("compute principal stresses: %.3f s" % (clock.time()-start))
 
@@ -1040,8 +1079,8 @@ for istep in range(0,nstep):
     z_V+=w*dd
 
     for i in range(nn_V):
-        rad_V[i]=np.sqrt((x_V[i]-Lx/2)**2+(y_V[i]-Ly/2)**2)
-        theta_V[i]=np.arctan2((y_V[i]-Ly/2),(x_V[i]-Lx/2))
+        rad_n[i]=np.sqrt((x_V[i]-Lx/2)**2+(y_V[i]-Ly/2)**2)
+        theta_n[i]=np.arctan2((y_V[i]-Ly/2),(x_V[i]-Lx/2))
 
     ###############################################################################
     # plot of solution
@@ -1077,15 +1116,12 @@ for istep in range(0,nstep):
     for i in range(0,nn_V):
         vtufile.write("%e %e %e \n" %(u[i]-u_th[i],v[i]-v_th[i],w[i]-w_th[i]))
     vtufile.write("</DataArray>\n")
-
-
     #--
-    #vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
-    #q.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='r' Format='ascii'> \n")
-    rad_V.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='theta' Format='ascii'> \n")
-    theta_V.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+    if debug:
+       vtufile.write("<DataArray type='Float32' Name='r' Format='ascii'> \n")
+       rad_n.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='theta' Format='ascii'> \n")
+       theta_n.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='strain (effective)' Format='ascii'> \n")
     e_n.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
@@ -1119,9 +1155,30 @@ for istep in range(0,nstep):
                                               sigma_xy_n[i],sigma_yz_n[i],sigma_xz_n[i]))
     vtufile.write("</DataArray>\n")
     #--
+    vtufile.write("<DataArray type='Float32' Name='sigma_1' Format='ascii'> \n")
+    sigma_p1_n.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_2' Format='ascii'> \n")
+    sigma_p2_n.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_3' Format='ascii'> \n")
+    sigma_p3_n.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='sigma 1 dir' Format='ascii'> \n")
+    for i in range(0,nn_V):
+        vtufile.write("%.4e %.4e %.4e \n" %(sigma_v1x_n[i],sigma_v1y_n[i],sigma_v1z_n[i] ))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='sigma 2 dir' Format='ascii'> \n")
+    for i in range(0,nn_V):
+        vtufile.write("%.4e %.4e %.4e \n" %(sigma_v2x_n[i],sigma_v2y_n[i],sigma_v2z_n[i] ))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='sigma 3 dir' Format='ascii'> \n")
+    for i in range(0,nn_V):
+        vtufile.write("%.4e %.4e %.4e \n" %(sigma_v3x_n[i],sigma_v3y_n[i],sigma_v3z_n[i] ))
+    vtufile.write("</DataArray>\n")
+    #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='6' Name='stress (th)' Format='ascii'> \n")
     for i in range(0,nn_V):
-        vtufile.write("%e %e %e %e %e %e\n" %(sigma_xx_th[i],sigma_yy_th[i],sigma_zz_th[i],sigma_xy_th[i],sigma_yz_th[i],sigma_xz_th[i]))
+        vtufile.write("%e %e %e %e %e %e\n" %(sigma_xx_th[i],sigma_yy_th[i],sigma_zz_th[i],\
+                                              sigma_xy_th[i],sigma_yz_th[i],sigma_xz_th[i]))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Int32' Name='bc fix u' Format='ascii'> \n")
@@ -1163,10 +1220,13 @@ for istep in range(0,nstep):
     lambdaa.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
     vtufile.write("<DataArray type='Float32' Name='p' Format='ascii'> \n")
     p.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='r' Format='ascii'> \n")
-    r_e.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
-    vtufile.write("<DataArray type='Float32' Name='theta' Format='ascii'> \n")
-    theta_e.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+
+    if debug:
+       vtufile.write("<DataArray type='Float32' Name='r' Format='ascii'> \n")
+       rad_e.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+       vtufile.write("<DataArray type='Float32' Name='theta' Format='ascii'> \n")
+       theta_e.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+
     #--
     vtufile.write("<DataArray type='Float32' Name='strain (effective)' Format='ascii'> \n")
     e_e.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
@@ -1179,10 +1239,45 @@ for istep in range(0,nstep):
     #--
     vtufile.write("<DataArray type='Float32' Name='stress (effective)' Format='ascii'> \n")
     sigma_e.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+    #--
     vtufile.write("<DataArray type='Float32' NumberOfComponents='6' Name='stress (tensor)' Format='ascii'> \n")
     for iel in range(0,nel):
         vtufile.write("%e %e %e %e %e %e\n" %(sigma_xx_e[iel],sigma_yy_e[iel],sigma_zz_e[iel],\
                                               sigma_xy_e[iel],sigma_yz_e[iel],sigma_xz_e[iel]))
+    vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='sigma_1 (th)' Format='ascii'> \n")
+    sigma_p1_th.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_2 (th)' Format='ascii'> \n")
+    sigma_p2_th.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_3 (th)' Format='ascii'> \n")
+    sigma_p3_th.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='sigma_rr (th)' Format='ascii'> \n")
+    sigma_rr_th.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_tt (th)' Format='ascii'> \n")
+    sigma_tt_th.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_rt (th)' Format='ascii'> \n")
+    sigma_rt_th.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' Name='sigma_1' Format='ascii'> \n")
+    sigma_p1_e.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_2' Format='ascii'> \n")
+    sigma_p2_e.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' Name='sigma_3' Format='ascii'> \n")
+    sigma_p3_e.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+    #--
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='sigma 1 dir' Format='ascii'> \n")
+    for iel in range(0,nel):
+        vtufile.write("%.4e %.4e %.4e \n" %(sigma_v1x_e[iel],sigma_v1y_e[iel],sigma_v1z_e[iel] ))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='sigma 2 dir' Format='ascii'> \n")
+    for iel in range(0,nel):
+        vtufile.write("%.4e %.4e %.4e \n" %(sigma_v2x_e[iel],sigma_v2y_e[iel],sigma_v2z_e[iel] ))
+    vtufile.write("</DataArray>\n")
+    vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='sigma 3 dir' Format='ascii'> \n")
+    for iel in range(0,nel):
+        vtufile.write("%.4e %.4e %.4e \n" %(sigma_v3x_e[iel],sigma_v3y_e[iel],sigma_v3z_e[iel] ))
     vtufile.write("</DataArray>\n")
     #--
     vtufile.write("</CellData>\n")
@@ -1221,8 +1316,8 @@ for istep in range(0,nstep):
     ###########################################################################
 
     np.savetxt('wall_displacement'+str(istep)+'.ascii',\
-               np.array([theta_V[wall_V],z_V[wall_V],\
-                         rad_V[wall_V],disp[wall_V],e_n[wall_V],sigma_n[wall_V]]).T,header='# theta,z,r,disp',fmt='%.4e')
+               np.array([theta_n[wall_V],z_V[wall_V],\
+                         rad_n[wall_V],disp[wall_V],e_n[wall_V],sigma_n[wall_V]]).T,header='# theta,z,r,disp',fmt='%.4e')
 
     #INSERT matplotlib commands to generate colormaps
 

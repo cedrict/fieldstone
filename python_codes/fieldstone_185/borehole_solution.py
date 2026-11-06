@@ -33,6 +33,26 @@ def analytical_solution_stress(r,theta,radius,sigma_H,sigma_h,sigma_v,nu):
 
 ###############################################################################
 
+def analytical_solution_stress_cyl(r,theta,radius,sigma_H,sigma_h,sigma_v,nu):
+
+    rr=r/radius
+
+    c0=np.cos(theta)
+    s0=np.sin(theta)
+    c20=np.cos(2*theta)
+    s20=np.sin(2*theta)
+
+    sigma_plus=(sigma_H+sigma_h)/2
+    sigma_minus=(sigma_H-sigma_h)/2
+
+    sigma_rr=sigma_plus*(1-1/rr**2) + sigma_minus*(1+3/rr**4-4/rr**2)*c20
+    sigma_tt=sigma_plus*(1+1/rr**2) - sigma_minus*(1+3/rr**4)*c20
+    sigma_rt=-sigma_minus*(1-3/rr**4+2/rr**2)*s20
+
+    return sigma_rr,sigma_tt,sigma_rt
+
+###############################################################################
+
 def analytical_solution_strain(r,theta,radius,sigma_H,sigma_h,sigma_v,E,nu):
 
     rr=r/radius
