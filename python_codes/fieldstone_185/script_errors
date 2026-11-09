@@ -1,0 +1,14 @@
+#! /bin/bash
+
+rm *.ascii
+
+for nelx in 10 11 12 13 14 15 16 17 18 19 20 24 28 32 36 40 44 48 56 64 80 96 128  ; do
+    for nelz in 4 ; do
+        echo nelx=nely= $nelx nelz= $nelz
+        python3 stone.py  $nelx  $nelz > opla
+        grep drms opla  >> errors.ascii
+        grep 'u (m' opla >> u_stats.ascii
+        grep 'v (m' opla >> v_stats.ascii
+        grep 'w (m' opla >> w_stats.ascii
+    done
+done

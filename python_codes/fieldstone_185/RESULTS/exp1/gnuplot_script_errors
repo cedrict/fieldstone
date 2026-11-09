@@ -1,0 +1,45 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set xlabel 'h_x=h_y'
+set pointsize .4
+set log x
+
+
+
+set output 'u_stats.pdf'
+set ylabel 'u (min/max)'
+plot[5e-3:][]\
+'u_stats.ascii' u 7:4 w lp notitle,\
+'u_stats.ascii' u 7:5 w lp notitle
+
+set output 'v_stats.pdf'
+set ylabel 'v (min/max)'
+plot[5e-3:][]\
+'v_stats.ascii' u 7:4 w lp notitle,\
+'v_stats.ascii' u 7:5 w lp notitle
+
+set output 'w_stats.pdf'
+set ylabel 'w (min/max)'
+plot[5e-3:][]\
+'w_stats.ascii' u 7:4 w lp notitle,\
+'w_stats.ascii' u 7:5 w lp notitle
+
+###################################
+
+set ylabel 'd_{rms}'
+set output 'drms.pdf'
+plot[5e-3:][]\
+'errors.ascii'  u 7:3 w lp notitle
+
+###################################
+
+set log y 
+set ylabel '|u-u_{th}|_2'
+set output 'erru.pdf'
+plot[5e-3:][]\
+'errors.ascii'  u 7:5 w lp notitle,\
+2e-6*x**2 lt -1 dt 2 t 'h^2'
+
+###################################
+

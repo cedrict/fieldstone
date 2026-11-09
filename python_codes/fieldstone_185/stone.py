@@ -82,7 +82,7 @@ match experiment:
       nelx = int(sys.argv[1])
       nelz = int(sys.argv[2])
    else:
-      nelx = 48
+      nelx = 10
       nelz = 4
  
    nelr=int(nelx/2)
@@ -387,7 +387,7 @@ nu=(E-2*G)/(2*G) # Table 4.1 of Sadd's book
 
 print("     -> Young's modulus: E (m,M) %e %e " %(np.min(E),np.max(E)))
 print("     -> Shear modulus: G (m,M) %e %e " %(np.min(G),np.max(G)))
-print("     -> Poisson's ratio: nu (m,M) %e %e " %(np.min(nu),np.max(nu)))
+print("     -> Poisson's ratio (m,M) %e %e " %(np.min(nu),np.max(nu)))
 print("     -> Lame's 1st parameter: lambdaa (m,M) %e %e " %(np.min(lambdaa),np.max(lambdaa)))
 
 print("compute coords.: %.3f s" % (clock.time()-start))
@@ -787,28 +787,77 @@ for istep in range(0,nstep):
 
     print("solve time: %.3f s" % (clock.time()-start))
 
-    ###############################################################################
+    ###########################################################################
     # put solution into separate u,v,w arrays (nn_V long)
-    ###############################################################################
+    ###########################################################################
     start=clock.time()
 
     u,v,w=np.reshape(sol,(nn_V,3)).T
 
-    print("     -> u (m,M) %e %e " %(np.min(u),np.max(u)))
-    print("     -> v (m,M) %e %e " %(np.min(v),np.max(v)))
-    print("     -> w (m,M) %e %e " %(np.min(w),np.max(w)))
+    print("     -> u (m,M) %e %e h= %e" %(np.min(u),np.max(u),hx))
+    print("     -> v (m,M) %e %e h= %e" %(np.min(v),np.max(v),hx))
+    print("     -> w (m,M) %e %e h= %e" %(np.min(w),np.max(w),hx))
 
     if debug: 
        np.savetxt('displacement.ascii',np.array([x_V,y_V,z_V,u,v,w]).T,header='# x,y,z,u,v,w')
 
     print("split vel into u,v: %.3f s" % (clock.time()-start))
 
-    ###############################################################################
+    ###########################################################################
+    # Compute root mean square displacement & displacement L2 error
+    ###########################################################################
+    start=clock.time()
+    
+    drms=0
+    erru=0
+    for iel in range(0,nel):
+        nodes=icon_V[:,iel]
+        for k in range(0,nq_per_el):
+            jcb[0,0]=np.dot(dNdr_V[k,:],x_V[nodes])
+            jcb[0,1]=np.dot(dNdr_V[k,:],y_V[nodes])
+            jcb[0,2]=np.dot(dNdr_V[k,:],z_V[nodes])
+            jcb[1,0]=np.dot(dNds_V[k,:],x_V[nodes])
+            jcb[1,1]=np.dot(dNds_V[k,:],y_V[nodes])
+            jcb[1,2]=np.dot(dNds_V[k,:],z_V[nodes])
+            jcb[2,0]=np.dot(dNdt_V[k,:],x_V[nodes])
+            jcb[2,1]=np.dot(dNdt_V[k,:],y_V[nodes])
+            jcb[2,2]=np.dot(dNdt_V[k,:],z_V[nodes])
+            JxWq=np.linalg.det(jcb) #*weightq(=1)
+
+            xq=N_V[k,:].dot(x_V[icon_V[:,iel]])
+            yq=N_V[k,:].dot(y_V[icon_V[:,iel]])
+            zq=N_V[k,:].dot(z_V[icon_V[:,iel]])
+
+            radq=np.sqrt((xq-Lx/2)**2+(yq-Ly/2)**2)
+            thetaq=np.arctan2((yq-Ly/2),(xq-Lx/2))
+
+            uthq,vthq,wthq=\
+            analytical_solution_displacement(radq,thetaq,radius,sigma_H1,sigma_h1,sigma_v1,E1,nu1)
+
+            uq=N_V[k,:].dot(u[icon_V[:,iel]])
+            vq=N_V[k,:].dot(v[icon_V[:,iel]])
+            wq=N_V[k,:].dot(w[icon_V[:,iel]])
+
+            drms+=(uq**2+vq**2+wq**2)*JxWq
+
+            erru+=((uq-uthq)**2+(vq-vthq)**2+(wq-wthq)**2)*JxWq
+
+        #end for
+    #end for
+
+    erru=np.sqrt(erru)
+    drms=np.sqrt(drms/volume_analytical)
+
+    print("     -> drms= %.6e err(u)= %.6e h= %.4e" %(drms,erru,hx))
+
+    print("compute displacement rms and L2 error: %.3f s" % (clock.time()-start))
+
+    ###########################################################################
     # retrieve nodal strain tensor components 
     # note that dNdr_V etc are stored on q points. I here therefore use dNdr__V
     # for some weird reason there seems to be an asymmetry/error in the strain
     # components (only nodal ones) but it's gone if I sample in the middle ...
-    ###############################################################################
+    ###########################################################################
     start=clock.time()
 
     cc=np.zeros(nn_V,dtype=np.float64)  
