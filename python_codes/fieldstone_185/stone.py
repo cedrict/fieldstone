@@ -780,7 +780,7 @@ for istep in range(0,nstep):
      case 1:
       sol=sps.linalg.spsolve(A_fem,b_fem)
      case 2:
-      sol,info=sps.linalg.cg(A_fem,b_fem,tol=1e-06)
+      sol,info=sps.linalg.cg(A_fem,b_fem,tol=1e-8)
       if info!=0 : print('pb with cg solver',info)
      case _:
       sol=np.zeros(Nfem,dtype=np.float64)  

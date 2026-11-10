@@ -1449,15 +1449,22 @@ E \varepsilon_{rr}
 
 
 \newpage
+\subsection{Error and statistics}
+
+Using the {\tt script\_errors} we run the code for nelx=nely=10-160 while
+keeping nelz=4. In the light of an early run we also decrease the 
+conjugate gradient solver tolerance from 1e-6 to 1e-8 and find that 
+the later value guarantees the expected accuracy at higher resolutions.
 
 The root mean square displacement and the displacement error (in the $L_2$ norm)
-are also measured:
+are as follows
 
 \begin{center}
 \includegraphics[width=12cm]{python_codes/fieldstone_185/RESULTS/exp1/drms.pdf}\\
 \includegraphics[width=12cm]{python_codes/fieldstone_185/RESULTS/exp1/erru.pdf}
 \end{center}
 
+The minimum and maximum value of each displacement component are also measured:
 
 \begin{center}
 \includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/u_stats.pdf}
