@@ -637,6 +637,31 @@ and for an incompressible, Newtonian fluid
 + \frac{\partial \upnu_\theta}{\partial z} \right)
 \end{eqnarray}
 
+If the viscosity is not constant then one must look at $\vec\nabla\cdot {\bm \sigma}$.
+We find online\footnote{\url{
+https://math.stackexchange.com/questions/4665089/divergence-of-a-tensor-in-cylindrical-coordinates}} 
+the following:
+\[
+\nabla \cdot \mathbf{S} 
+= 
+\begin{bmatrix} 
+\frac{\partial S_{rr}}{\partial r} + \frac{S_{rr}}{r} + \frac{1}{r} \frac{\partial S_{\theta r}}{\partial \theta} 
++ \frac{\partial S_{zr}}{\partial z} - \frac{S_{\theta \theta}}{r} 
+\\
+\frac{1}{r} \frac{\partial S_{\theta \theta}}{\partial \theta} + \frac{\partial S_{r \theta}}{\partial r} 
++ \frac{S_{r \theta}}{r} + \frac{S_{\theta r}}{r} + \frac{\partial S_{z \theta}}{\partial z}
+\\
+\frac{\partial S_{z z}}{\partial z} + \frac{\partial S_{r z}}{\partial r} + \frac{S_{rz}}{r} 
++ \frac{1}{r}\frac{\partial S_{\theta z}}{\partial \theta}
+\end{bmatrix}
+\]
+We also find the same on 
+Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Del_in_cylindrical_and_spherical_coordinates}}:
+\begin{center}
+\includegraphics[width=10cm]{images/operators/tensor_divergence_cylindrical}
+\end{center}
+
+
 
 \newpage
 %------------------------------------------------------------------------------
@@ -831,6 +856,15 @@ and the Laplacian operator is \index{general}{Laplace Operator} \index{general}{
 \todo[inline]{
 Before being used these equations should be checked against multiple sources.  
 }
+
+
+We also find on Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Del_in_cylindrical_and_spherical_coordinates}}:
+\begin{center}
+\includegraphics[width=12cm]{images/operators/tensor_divergence_spherical}
+\end{center}
+
+
+
 
 %------------------------------------------------------------------------------
 \section{The equations for axisymmetric geometries \label{ss:axicyleqs}}
