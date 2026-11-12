@@ -12,11 +12,6 @@ coth(x)=(exp(x)+exp(-x))/(exp(x)-exp(-x))
 set output 'beta1.pdf'
 plot[0:30][0:] coth(x)-1./x notitle
 
-coth(x)=(1+exp(-2*x))/(1-exp(-2*x))
-set output 'beta2.pdf'
-plot[0:5][0:1.1] coth(x)-1./x notitle, x/2
-
-
 ###########################################################
 set ylabel '{/Symbol g}'
 set output 'gamma.pdf'
@@ -29,7 +24,23 @@ plot[0:30][0:]\
 #1./(1 + 1/0.1 + 1./x/4) t '{/Symbol g}_5 (C=0.1)',\
 #1./(1 + 1/0.5 + 1./x/4) t '{/Symbol g}_5 (C=0.5)',\
 #1./(1 + 1/1 + 1./x/4) t '{/Symbol g}_5 (C=1.0)' 
- 
+
+###########################################################
+set xtics 0.05
+set ylabel '{/Symbol g}_1'
+set output 'gamma1.pdf'
+plot[0:0.25][0:]\
+(coth(x)-1./x) notitle,\
+x/3 w l  
+
+set log y
+set output 'gamma1bis.pdf'
+set ylabel '{/Symbol g}_1-x/3'
+plot[0:0.25][]\
+abs((coth(x)-1./x) - x/3) notitle
+
+unset log y 
+set xtics 1 
 
 ###########################################################
 reset

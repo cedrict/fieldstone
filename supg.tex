@@ -208,34 +208,43 @@ A quick note about
 \[
 \beta(x) = \coth (x) -\frac{1}{x}
 \]
-If $x\rightarrow \infty$ then $1/x \rightarrow 0$ and then
+\begin{itemize}
+\item If $x\rightarrow \infty$ then $1/x \rightarrow 0$ and then
 \[
 \beta(x) \rightarrow \coth(x) 
 = \frac{\exp(x) + \exp(-x)}{\exp(x)-\exp(-x)}
-= \frac{1 + \exp(-2x)}{1-\exp(-2x)} \rightarrow 1
+= \frac{1+\exp(-2x)}{1-\exp(-2x)} \rightarrow 1
 \]
-If $x \rightarrow 0$ then we must use the Taylor expansion of the $\exp$ function:
+\item 
+If $x \rightarrow 0$ then we must use the Taylor expansion of the 
+exponential function:
 \[
-\exp(x) \simeq 1 +x +x\frac{x^2}{2} + \frac{x^3}{6}
+\exp(x) \simeq 1 +x + \frac{x^2}{2} + \frac{x^3}{6}
 \]
+
 Then 
 \begin{eqnarray}
 \exp(x) + \exp(-x)
 &\simeq& 1 +x +\frac{x^2}{2} + \frac{x^3}{6} + ...
 + 1 -x +\frac{x^2}{2} - \frac{x^3}{6} + ...
-\simeq 2 + x^2 \nn\\
+\simeq 2 + x^2 + {\cal O}(x^4)\nn\\
 \exp(x) - \exp(-x) 
 &\simeq& 1 +x +\frac{x^2}{2} + \frac{x^3}{6} + ...
 - 1 +x -\frac{x^2}{2} + \frac{x^3}{6} + ...
-\simeq 2x 
+\simeq 2x + \frac13 x^3 + {\cal O}(x^5) \nn
 \end{eqnarray}
-so that 
-\[
-\beta(x) \rightarrow \frac{2+x^2}{2x} - \frac{1}{x} = \frac12 x
-\]
-In both cases the function $\beta$ is bounded and positive. 
-
-
+then 
+\begin{eqnarray}
+\beta(x) = \frac{\exp(x) + \exp(-x)}{\exp(x) - \exp(-x)} - \frac1x
+&\simeq & \frac{2 + x^2 }{2x + \frac13 x^3} - \frac1x \nn\\
+&\simeq & \frac{2 + x^2 }{2x (1 + \frac16 x^2)} - \frac1x \nn\\
+&\simeq & \frac{2 + x^2 }{2x}  \left(1 - \frac16 x^2 \right) - \frac1x \nn\\
+&\simeq & \left( \frac1x + \frac{x}{2} \right) \left(1 - \frac16 x^2 \right) - \frac1x \nn\\
+&\simeq & \frac1x + \frac{x}{2} -\frac{x}{6} - \frac{1}{12} x^3 - \frac1x \nn\\
+&\simeq & \frac{x}{3} + {\cal O}(x^3) \nn
+\end{eqnarray}
+\end{itemize}
+In both cases the function $\beta$ is bounded and positive for $x \ge 0$. 
 
 The expression above is also found at p. 617 in \textcite{lomw12}.
 Note that Hughes \& Brooks \cite{hubr82} replace the costly '$\coth$' term by an asymptotic curve:
@@ -246,12 +255,11 @@ Note that Hughes \& Brooks \cite{hubr82} replace the costly '$\coth$' term by an
 \end{center}
 
 Note also that in \textcite{hubr82} (1982) the authors present the 
-following formulation for the 2d case:
+following formulation for the 2d case (This approach will certainly prove to be rather expensive):
 \begin{center}
 \includegraphics[width=9cm]{images/supg/hubr82b}\\
 {\captionfont Taken from \textcite{hubr82} (1982).} 
 \end{center}
-This approach will certainly prove to be rather expensive!
 
 
 
@@ -311,7 +319,9 @@ Remarks 4 and 5 of \cite{frfh92}. The authors conclude that for linear quadrilat
 1/3 should be used while for biquadratic elements 1/12 should be preferred.
 The same approach is found in \textcite{brbf92} (1992). 
 
-\item Knobloch \cite{knob08} discusses other choices of $\tau$.
+\item \textcite{knob08} (2008) discusses other choices of $\tau$.
+
+\item \textcite{alex23} (2023) discusses $\tau$ calculations in Appendix B of the paper.
 
 
 \end{enumerate}
@@ -321,16 +331,21 @@ is necessary for a fine enough mesh)" and "Numerical experiments seem to indicat
 finite elements of order $p$ the value of the stabilisation parameter should be approximately 
 $\tau/p$."
 
+\vspace{1cm}
+
 Let us define the dimensionless coefficient 
 $\gamma_j=\frac{\tau_j}{h/2|\vec\upnu|}$ and 
 plot this quantity against the Peclet number:
 
 \begin{center}
-\includegraphics[width=10cm]{images/supg/gamma}\\
+\includegraphics[width=10cm]{images/supg/gamma.pdf}\\
 {\captionfont in images/supg/ folder. Note that gnuplot
 struggles with small values of $\Penb$ and the purple line should 
 actually reach the origin.} 
 \end{center}
+Looking  at the figure above one can conclude that the various $\gamma$ curves 
+are actually rather close and which one is used in practice probably does not 
+matter too much.
 
 In the case when the equation to be stabilised is a pure advection equation, 
 then $\Penb\rightarrow \infty$ so 
@@ -344,6 +359,22 @@ then $\Penb\rightarrow \infty$ so
 Note that in most versions above (except $\tau_1$) 
 $\tau$ does not depend on the order $p$ of the basis functions.
 Is it an omission?
+
+Coming back to the Taylor expansion of $\beta(x)$ near zero, we can 
+also avoid numerical issues at low Peclet by setting a cutoff value:
+if $\Penb>0.25$ use $\beta(x)$, otherwise use $x/3$:
+\begin{center}
+\includegraphics[width=8cm]{images/supg/gamma1.pdf}
+\includegraphics[width=8cm]{images/supg/gamma1bis.pdf}\\
+{\captionfont in images/supg/ folder. Left: $\gamma_1$ function (i.e. $\beta$)
+alongside its Taylor expansion for $x<0.25$. Right: difference 
+between the two curves. We see that the error between both is less than 1e-3 overall.}
+\end{center}
+
+
+
+
+
 
 Finally it is worth mentioning that \textcite{dohu03} argue that $\tau$ should 
 ideally take different values at the corners and at the mid-side nodes for quadratic elements (p.~61).
@@ -513,7 +544,7 @@ else if $\Penb<1$ we say the problem is diffusion-dominated.
 
 The $\beta(\Penb)$ factor is shown in the following figure:
 \begin{center}
-\includegraphics[width=10cm]{images/supg/beta1}
+\includegraphics[width=10cm]{images/supg/beta1.pdf}
 \end{center}
 
 
