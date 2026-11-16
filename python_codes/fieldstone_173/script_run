@@ -3,6 +3,15 @@
 rm -f errors
 rm -f build
 rm -f solve
+rm NW_*.ascii
+rm NE_*.ascii
+rm SW_*.ascii
+rm SE_*.ascii
+rm North_*.ascii
+rm South_*.ascii
+rm West_*.ascii
+rm East_*.ascii
+rm qnsum_*.ascii
 
 order=1
 
@@ -10,21 +19,42 @@ for exp in {1..5} ; do
 
     echo experiment= $exp
 
-    for n in 8 12 16 24 32 48 64 ; do
+    for n in 8 16 32 64 128 256; do
 
         echo ----nelx=nely= $n
 
         python3 stone.py  $exp $order $n > opla
 
-        mv heat_flux_boundary_caveraging.ascii heat_flux_boundary_caveraging_exp${exp}_${n}.ascii
-        mv heat_flux_boundary_CBF.ascii        heat_flux_boundary_CBF_exp${exp}_${n}.ascii
+        mv heat_flux_boundary_cornertonode.ascii heat_flux_boundary_cornertonode_exp${exp}_${n}.ascii
+        mv heat_flux_boundary_CBF.ascii          heat_flux_boundary_CBF_exp${exp}_${n}.ascii
+        mv heat_flux_boundary_CBF2.ascii         heat_flux_boundary_CBF2_exp${exp}_${n}.ascii
+        mv heat_flux_boundary_analytical.ascii   heat_flux_boundary_analytical_exp${exp}_${n}.ascii
 
-        mv heat_flux_boundary_AB_caveraging.ascii heat_flux_boundary_AB_caveraging_exp${exp}_${n}.ascii
-        mv heat_flux_boundary_AB_CBF.ascii        heat_flux_boundary_AB_CBF_exp${exp}_${n}.ascii
-        mv heat_flux_boundary_AB_partial.ascii    heat_flux_boundary_AB_partial_exp${exp}_${n}.ascii
+        mv heat_flux_boundary_AB_cornertonode.ascii heat_flux_boundary_AB_cornertonode_exp${exp}_${n}.ascii
+        mv heat_flux_boundary_AB_CBF.ascii          heat_flux_boundary_AB_CBF_exp${exp}_${n}.ascii
+        mv heat_flux_boundary_AB_CBF2.ascii         heat_flux_boundary_AB_CBF2_exp${exp}_${n}.ascii
+        mv heat_flux_boundary_AB_partial.ascii      heat_flux_boundary_AB_partial_exp${exp}_${n}.ascii
 
         mv solution.vtu solution_exp${exp}_${n}.vtu
 
     done
+
+
+    for n in 8 10 12 14 16 18 20 22 24 26 28 30 32 40 48 56 64 72 80 88 96 112 128 144 160 176 192; do
+        echo ----nelx=nely= $n
+        python3 stone.py  $exp $order $n > opla
+        grep NW opla >> NW_exp${exp}.ascii
+        grep NE opla >> NE_exp${exp}.ascii
+        grep SW opla >> SW_exp${exp}.ascii
+        grep SE opla >> SE_exp${exp}.ascii
+        grep North opla >> North_exp${exp}.ascii
+        grep South opla >> South_exp${exp}.ascii
+        grep West opla >> West_exp${exp}.ascii
+        grep East opla >> East_exp${exp}.ascii
+        grep qn_sum opla >> qnsum_exp${exp}.ascii
+
+    done
+
+    #exit
 
 done

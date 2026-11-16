@@ -1,64 +1,43 @@
 import numpy as np
 import sys as sys
 import scipy
-import time as timing
-import matplotlib.pyplot as plt
+import time as clock
 import scipy.sparse as sps
 from scipy.sparse import csr_matrix, lil_matrix
 
-#------------------------------------------------------------------------------
+###############################################################################
 
 def T_analytical(x,y,experiment):
-    if experiment==1:
-       return (2*x+y)**2
-    if experiment==2:
-       return (1-x**2)*(1-y**2)
-    if experiment==3:
-       return x**2-y**2
-    if experiment==4:
-       return 2*x*y 
-    if experiment==5:
-       return x**3-3*x*y**2
+    if experiment==1: return (2*x+y)**2
+    if experiment==2: return (1-x**2)*(1-y**2)
+    if experiment==3: return x**2-y**2
+    if experiment==4: return 2*x*y 
+    if experiment==5: return x**3-3*x*y**2
 
 def qx_analytical(x,y,experiment):
-    if experiment==1:
-       return -4*(2*x+y)
-    if experiment==2:
-       return 2*x*(1-y**2)
-    if experiment==3:
-       return -2*x
-    if experiment==4:
-       return -2*y
-    if experiment==5:
-       return -3*x**2+3*y**2
+    if experiment==1: return -4*(2*x+y)
+    if experiment==2: return 2*x*(1-y**2)
+    if experiment==3: return -2*x
+    if experiment==4: return -2*y
+    if experiment==5: return -3*x**2+3*y**2
 
 def qy_analytical(x,y,experiment):
-    if experiment==1:
-       return -2*(2*x+y)
-    if experiment==2:
-       return 2*y*(1-x**2)
-    if experiment==3:
-       return 2*y
-    if experiment==4:
-       return -2*x
-    if experiment==5:
-       return +6*x*y
+    if experiment==1: return -2*(2*x+y)
+    if experiment==2: return 2*y*(1-x**2)
+    if experiment==3: return 2*y
+    if experiment==4: return -2*x
+    if experiment==5: return +6*x*y
 
 def rhs_f(x,y,experiment):
-    if experiment==1:
-       return -10
-    if experiment==2:
-       return 4-2*(x**2+y**2)
-    if experiment==3:
-       return 0 
-    if experiment==4:
-       return 0
-    if experiment==5:
-       return 0
+    if experiment==1: return -10
+    if experiment==2: return 4-2*(x**2+y**2)
+    if experiment==3: return 0 
+    if experiment==4: return 0
+    if experiment==5: return 0
 
-#------------------------------------------------------------------------------
+###############################################################################
 
-def NNT(r,s,order):
+def basis_functions_T(r,s,order):
     if order==1:
        N_0=0.25*(1.-r)*(1.-s)
        N_1=0.25*(1.+r)*(1.-s)
@@ -77,7 +56,7 @@ def NNT(r,s,order):
        N_8= 0.5*r*(r+1.) * 0.5*s*(s+1.)
        return np.array([N_0,N_1,N_2,N_3,N_4,N_5,N_6,N_7,N_8],dtype=np.float64)
 
-def dNNTdr(r,s,order):
+def basis_functions_T_dr(r,s,order):
     if order==1:
        dNdr_0=-0.25*(1.-s)
        dNdr_1=+0.25*(1.-s)
@@ -96,7 +75,7 @@ def dNNTdr(r,s,order):
        dNdr_8= 0.5*(2.*r+1.) * 0.5*s*(s+1)
        return np.array([dNdr_0,dNdr_1,dNdr_2,dNdr_3,dNdr_4,dNdr_5,dNdr_6,dNdr_7,dNdr_8],dtype=np.float64)
 
-def dNNTds(r,s,order):
+def basis_functions_T_ds(r,s,order):
     if order==1:
        dNds_0=-0.25*(1.-r)
        dNds_1=-0.25*(1.+r)
@@ -115,29 +94,33 @@ def dNNTds(r,s,order):
        dNds_8= 0.5*r*(r+1.) * 0.5*(2.*s+1.)
        return np.array([dNds_0,dNds_1,dNds_2,dNds_3,dNds_4,dNds_5,dNds_6,dNds_7,dNds_8],dtype=np.float64)
 
-#------------------------------------------------------------------------------
+###############################################################################
 
-print("-----------------------------")
-print("--------- stone 173 ---------")
-print("-----------------------------")
+eps=1.e-10 
+
+print("*******************************")
+print("********** stone 173 **********")
+print("*******************************")
 
 ndim=2       # number of space dimensions
-ndofT=1      # number of degrees of freedom per node
 hcond=1.     # thermal conductivity
 hcapa=1.     # heat capacity
 rho0=1       # reference density
+
+debug=False
 
 if int(len(sys.argv)==4):
    experiment=int(sys.argv[1])
    order     =int(sys.argv[2])
    nelx      =int(sys.argv[3])
 else:
-   experiment=5
+   experiment=1
    order=1
-   nelx=16
+   nelx=8
 
 if order==1: m=4 # number of nodes making up an element
 if order==2: m=9
+
 
 if experiment==1:  
    nely=nelx
@@ -153,99 +136,109 @@ if experiment==2 or experiment==3 or experiment==4 or experiment==5:
    x0=-1
    y0=-1
 
+if order==1: nn_B=2*(nelx+nely) # nb of nodes on boundary 
+
 hx=Lx/float(nelx)
 hy=Ly/float(nely)
     
 nnx=order*nelx+1  # number of elements, x direction
 nny=order*nely+1  # number of elements, y direction
-NT=nnx*nny        # number of nodes
+nn_T=nnx*nny       # number of nodes
 nel=nelx*nely     # number of elements, total
-NfemT=NT*ndofT    # Total number of degrees of temperature freedom
+Nfem_T=nn_T        # Total number of degrees of temperature freedom
 
-#####################################################################
+###############################################################################
 # define 1d quadrature points and weights
-#####################################################################
+###############################################################################
 
 if order==1:
-   nqperdim=2
+   nq_per_dim=2
    qcoords=[-1./np.sqrt(3.),1./np.sqrt(3.)]
    qweights=[1.,1.]
-   rnodes=[-1,1,1,-1]
-   snodes=[-1,-1,1,1]
+   r_T=np.array([-1, 1, 1,-1],dtype=np.float64)
+   s_T=np.array([-1,-1, 1, 1],dtype=np.float64)
 
 if order==2:
-   nqperdim=3
+   nq_per_dim=3
    qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
    qweights=[5./9.,8./9.,5./9.]
 
-#####################################################################
+###############################################################################
 
-print ('experiment =',experiment)
-print ('order      =',order)
-print ('nnx        =',nnx)
-print ('nny        =',nny)
-print ('NT         =',NT)
-print ('nel        =',nel)
-print ('NfemT      =',NfemT)
-print ('nqperdim   =',nqperdim)
-print("-----------------------------")
+print('experiment =',experiment)
+print('order      =',order)
+print('nnx        =',nnx)
+print('nny        =',nny)
+print('nn_T       =',nn_T)
+print('nn_B       =',nn_B)
+print('nel        =',nel)
+print('Nfem_T     =',Nfem_T)
+print('nq_per_dim =',nq_per_dim)
+print("*******************************")
 
-#####################################################################
+###############################################################################
 # grid point setup 
-#####################################################################
-start=timing.time()
+###############################################################################
+start=clock.time()
 
-x=np.zeros(NT,dtype=np.float64)  # x coordinates
-y=np.zeros(NT,dtype=np.float64)  # y coordinates
+x=np.zeros(nn_T,dtype=np.float64)
+y=np.zeros(nn_T,dtype=np.float64)
 
-counter = 0
+counter=0
 for j in range(0,nny):
     for i in range(0,nnx):
         x[counter]=i*hx/order+x0
         y[counter]=j*hy/order+y0
+        if i==0 and j==0: SW=counter
+        if i==nnx-1 and j==0: SE=counter
+        if i==0 and j==nny-1: NW=counter
+        if i==nnx-1 and j==nny-1: NE=counter
+        if abs(x[counter]-Lx/2)<eps and j==nny-1: North=counter
+        if abs(x[counter]-Lx/2)<eps and j==0: South=counter
+        if abs(y[counter]-Ly/2)<eps and i==nnx-1: East=counter
+        if abs(y[counter]-Ly/2)<eps and i==0: West=counter
         counter += 1
     #end for
 #end for
 
-#np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
+if debug: np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
 
-print("mesh (%.3fs)" % (timing.time() - start))
+print("mesh (%.3fs)" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # stretch mesh
-#####################################################################
-start=timing.time()
+###############################################################################
 
 if experiment==1:
-   for i in range(0,NT):
+   for i in range(0,nn_T):
        x[i]=x[i]**0.66
        y[i]=y[i]**0.66
 
-#####################################################################
+###############################################################################
 # connectivity
-#####################################################################
-start=timing.time()
+###############################################################################
+start=clock.time()
 
-icon =np.zeros((m,nel),dtype=np.int32)
+icon=np.zeros((m,nel),dtype=np.int32)
 
-counter = 0
-for j in range(0, nely):
-    for i in range(0, nelx):
+counter=0
+for j in range(0,nely):
+    for i in range(0,nelx):
         icon[0,counter]= i + j * (nelx + 1)
         icon[1,counter]= i + 1 + j * (nelx + 1)
         icon[2,counter]= i + 1 + (j + 1) * (nelx + 1)
         icon[3,counter]= i + (j + 1) * (nelx + 1)
         counter+=1
 
-print("connectivity (%.3fs)" % (timing.time() - start))
+print("connectivity (%.3fs)" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # flag nodes and elements on boundary
-#################################################################
-start=timing.time()
+###############################################################################
+start=clock.time()
 
 boundary_element=np.zeros(nel,dtype=bool)  
-boundary_node=np.zeros(NT,dtype=bool)  
+boundary_node=np.zeros(nn_T,dtype=bool)  
 
 counter=0
 for j in range(0,nely):
@@ -261,17 +254,15 @@ for j in range(0,nny):
            boundary_node[counter]=True 
         counter+=1
 
-print("flag boundary nodes & elements: %.3f s" % (timing.time()-start))
+print("flag boundary nodes & elements: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # compute B_to_G and G_to_B arrays
-#################################################################
-start=timing.time()
-    
-NB=2*(nelx+nely)
+###############################################################################
+start=clock.time()
 
-B_to_G=np.zeros((NB),dtype=np.int32) ; B_to_G[:]=-1
-G_to_B=np.zeros((NT),dtype=np.int32) ; G_to_B[:]=-1
+B_to_G=np.zeros((nn_B),dtype=np.int32) ; B_to_G[:]=-1
+G_to_B=np.zeros((nn_T),dtype=np.int32) ; G_to_B[:]=-1
 
 counter=0
 
@@ -290,167 +281,131 @@ for i in range(0,nny):
          
 counter-=1
 for i in range(0,nnx): 
-        inode=NT-i-1
+        inode=nn_T-i-1
         G_to_B[inode]=counter
         B_to_G[counter]=inode
         counter+=1
 
 counter-=1
 for i in range(0,nny-1):
-        inode=NT-(i+1)*nnx
+        inode=nn_T-(i+1)*nnx
         G_to_B[inode]=counter
         B_to_G[counter]=inode
         counter+=1
 
-#print (B_to_G)
+print("compute B_to_G, G_to_B: %.3f s" % (clock.time()-start))
 
-print("compute B_to_G, G_to_B: %.3f s" % (timing.time() - start))
-
-#################################################################
+###############################################################################
 # compute s coordinate along boundary
-#################################################################
+###############################################################################
 
-s=np.zeros((NB),dtype=np.float64) 
+s=np.zeros(nn_B,dtype=np.float64) 
 
-for k in range(1,NB):
+for k in range(1,nn_B):
     s[k]=s[k-1]+np.sqrt( (x[B_to_G[k]]-x[B_to_G[k-1]])**2+(y[B_to_G[k]]-y[B_to_G[k-1]])**2   )
 
-#################################################################
+###############################################################################
 # compute normal to domain at the nodes
 # this is also implemented in stone 151
-#################################################################
-start=timing.time()
+###############################################################################
+start=clock.time()
 
-nx=np.zeros(NT,dtype=np.float64) 
-ny=np.zeros(NT,dtype=np.float64) 
+nx=np.zeros(nn_T,dtype=np.float64) 
+ny=np.zeros(nn_T,dtype=np.float64) 
 jcb=np.zeros((ndim,ndim),dtype=np.float64)
 
 for iel in range(0,nel):
     if boundary_element[iel]: 
-       for iq in range(0,nqperdim):
-           for jq in range(0,nqperdim):
+       for iq in range(0,nq_per_dim):
+           for jq in range(0,nq_per_dim):
                rq=qcoords[iq]
                sq=qcoords[jq]
                weightq=qweights[iq]*qweights[jq]
-               dNNNTdr=dNNTdr(rq,sq,order)
-               dNNNTds=dNNTds(rq,sq,order)
-               jcb[0,0]=np.dot(dNNNTdr[:],x[icon[:,iel]])
-               jcb[0,1]=np.dot(dNNNTdr[:],y[icon[:,iel]])
-               jcb[1,0]=np.dot(dNNNTds[:],x[icon[:,iel]])
-               jcb[1,1]=np.dot(dNNNTds[:],y[icon[:,iel]])
-               jcob = np.linalg.det(jcb)
+               N_T=basis_functions_T(rq,sq,order)
+               dNdr_T=basis_functions_T_dr(rq,sq,order)
+               dNds_T=basis_functions_T_ds(rq,sq,order)
+               jcb[0,0]=np.dot(dNdr_T,x[icon[:,iel]])
+               jcb[0,1]=np.dot(dNdr_T,y[icon[:,iel]])
+               jcb[1,0]=np.dot(dNds_T,x[icon[:,iel]])
+               jcb[1,1]=np.dot(dNds_T,y[icon[:,iel]])
                jcbi=np.linalg.inv(jcb)
-               dNNNTdx=jcbi[0,0]*dNNNTdr[:]+jcbi[0,1]*dNNNTds[:]
-               dNNNTdy=jcbi[1,0]*dNNNTdr[:]+jcbi[1,1]*dNNNTds[:]
+               JxWq=np.linalg.det(jcb)*weightq
+               dNdx_T=jcbi[0,0]*dNdr_T+jcbi[0,1]*dNds_T
+               dNdy_T=jcbi[1,0]*dNdr_T+jcbi[1,1]*dNds_T
                for k in range(0,m):
                    if boundary_node[icon[k,iel]]:
-                      nx[icon[k,iel]]+=dNNNTdx[k]*jcob*weightq
-                      ny[icon[k,iel]]+=dNNNTdy[k]*jcob*weightq
+                      nx[icon[k,iel]]+=dNdx_T[k]*JxWq
+                      ny[icon[k,iel]]+=dNdy_T[k]*JxWq
            #end for
        #end for
     #end if
 #end for
 
-for i in range(0,NT):
+for i in range(0,nn_T):
     if boundary_node[i]:
        norm=np.sqrt(nx[i]**2+ny[i]**2)
        nx[i]/=norm
        ny[i]/=norm
 
-print("compute normal: %.3f s" % (timing.time() - start))
+print("compute normal: %.3f s" % (clock.time()-start))
 
-#####################################################################
+###############################################################################
 # define temperature boundary conditions
-#####################################################################
-start=timing.time()
+###############################################################################
+start=clock.time()
 
-eps=1.e-10 
+bc_fix_T=np.zeros(Nfem_T,dtype=bool)  
+bc_val_T=np.zeros(Nfem_T,dtype=np.float64) 
 
-bc_fixT=np.zeros(NfemT,dtype=bool)  
-bc_valT=np.zeros(NfemT,dtype=np.float64) 
-
-for i in range(0,NT):
+for i in range(0,nn_T):
     if (x[i]-x0)/Lx<eps:
-       bc_fixT[i]=True ; bc_valT[i]=T_analytical(x[i],y[i],experiment)
+       bc_fix_T[i]=True ; bc_val_T[i]=T_analytical(x[i],y[i],experiment)
     if (x[i]-x0)/Lx>(1-eps):
-       bc_fixT[i]=True ; bc_valT[i]=T_analytical(x[i],y[i],experiment)
+       bc_fix_T[i]=True ; bc_val_T[i]=T_analytical(x[i],y[i],experiment)
     if (y[i]-y0)/Ly<eps:
-       bc_fixT[i]=True ; bc_valT[i]=T_analytical(x[i],y[i],experiment)
+       bc_fix_T[i]=True ; bc_val_T[i]=T_analytical(x[i],y[i],experiment)
     if (y[i]-y0)/Ly>(1-eps):
-       bc_fixT[i]=True ; bc_valT[i]=T_analytical(x[i],y[i],experiment)
+       bc_fix_T[i]=True ; bc_val_T[i]=T_analytical(x[i],y[i],experiment)
 
-print("boundary conditions (%.3fs)" % (timing.time() - start))
+print("boundary conditions (%.3fs)" % (clock.time()-start))
 
-#####################################################################
-# create necessary arrays 
-#####################################################################
-start=timing.time()
-
-dNNNTdx = np.zeros(m,dtype=np.float64)           # shape functions derivatives
-dNNNTdy = np.zeros(m,dtype=np.float64)           # shape functions derivatives
-N_mat = np.zeros((m,1),dtype=np.float64)         # shape functions
-    
-print("create arrays (%.3fs)" % (timing.time() - start))
-
-#####################################################################
+###############################################################################
 # build FEM linear system
-#####################################################################
-start=timing.time()
+###############################################################################
+start=clock.time()
 
-A_mat = lil_matrix((NfemT,NfemT),dtype=np.float64)
-rhs   = np.zeros(NfemT,dtype=np.float64)         # FE rhs 
-B_mat=np.zeros((2,ndofT*m),dtype=np.float64)     # gradient matrix B 
+A_fem=lil_matrix((Nfem_T,Nfem_T),dtype=np.float64)
+b_fem=np.zeros(Nfem_T,dtype=np.float64)    
+B_mat=np.zeros((2,m),dtype=np.float64)   
 
-for iel in range (0,nel):
+for iel in range(0,nel):
 
-        b_el=np.zeros(m*ndofT,dtype=np.float64)
-        a_el=np.zeros((m*ndofT,m*ndofT),dtype=np.float64)
-        Kd=np.zeros((m,m),dtype=np.float64)   # elemental diffusion matrix 
-        MM=np.zeros((m,m),dtype=np.float64)   # elemental mass matrix 
+        A_el=np.zeros((m,m),dtype=np.float64)
+        b_el=np.zeros(m,dtype=np.float64)
 
-        for iq in range(0,nqperdim):
-            for jq in range(0,nqperdim):
+        for iq in range(0,nq_per_dim):
+            for jq in range(0,nq_per_dim):
 
-                # position & weight of quad. point
                 rq=qcoords[iq]
                 sq=qcoords[jq]
                 weightq=qweights[iq]*qweights[jq]
-
-                N_mat[0:m,0]=NNT(rq,sq,order)
-                dNNNTdr=dNNTdr(rq,sq,order)
-                dNNNTds=dNNTds(rq,sq,order)
-
-                # calculate jacobian matrix
-                jcb=np.zeros((ndim,ndim),dtype=np.float64)
-                for k in range(0,m):
-                    jcb[0,0]+=dNNNTdr[k]*x[icon[k,iel]]
-                    jcb[0,1]+=dNNNTdr[k]*y[icon[k,iel]]
-                    jcb[1,0]+=dNNNTds[k]*x[icon[k,iel]]
-                    jcb[1,1]+=dNNNTds[k]*y[icon[k,iel]]
-                #end for
-                jcob=np.linalg.det(jcb)
+                N_T=basis_functions_T(rq,sq,order)
+                dNdr_T=basis_functions_T_dr(rq,sq,order)
+                dNds_T=basis_functions_T_ds(rq,sq,order)
+                jcb[0,0]=np.dot(dNdr_T,x[icon[:,iel]])
+                jcb[0,1]=np.dot(dNdr_T,y[icon[:,iel]])
+                jcb[1,0]=np.dot(dNds_T,x[icon[:,iel]])
+                jcb[1,1]=np.dot(dNds_T,y[icon[:,iel]])
                 jcbi=np.linalg.inv(jcb)
-
-                # compute dNdx & dNdy
-                xq=0.
-                yq=0.
-                for k in range(0,m):
-                    xq+=N_mat[k,0]*x[icon[k,iel]]
-                    yq+=N_mat[k,0]*y[icon[k,iel]]
-                    dNNNTdx[k]=jcbi[0,0]*dNNNTdr[k]+jcbi[0,1]*dNNNTds[k]
-                    dNNNTdy[k]=jcbi[1,0]*dNNNTdr[k]+jcbi[1,1]*dNNNTds[k]
-                    B_mat[0,k]=dNNNTdx[k]
-                    B_mat[1,k]=dNNNTdy[k]
-                #end for
-
-                # compute mass matrix
-                MM=N_mat.dot(N_mat.T)*rho0*hcapa*weightq*jcob
-
-                # compute diffusion matrix
-                Kd=B_mat.T.dot(B_mat)*hcond*weightq*jcob
-
-                a_el+=Kd
-                b_el+=N_mat[:,0]*weightq*jcob*rhs_f(xq,yq,experiment)
+                JxWq=np.linalg.det(jcb)*weightq
+                dNdx_T=jcbi[0,0]*dNdr_T+jcbi[0,1]*dNds_T
+                dNdy_T=jcbi[1,0]*dNdr_T+jcbi[1,1]*dNds_T
+                xq=np.dot(N_T,x[icon[:,iel]])
+                yq=np.dot(N_T,y[icon[:,iel]])
+                B_mat[0,:]=dNdx_T[:]
+                B_mat[1,:]=dNdy_T[:]
+                A_el+=B_mat.T.dot(B_mat)*hcond*JxWq
+                b_el+=N_T*rhs_f(xq,yq,experiment)*JxWq
 
             #end for jq
         #end for iq
@@ -458,114 +413,127 @@ for iel in range (0,nel):
         # apply boundary conditions
         for k1 in range(0,m):
             m1=icon[k1,iel]
-            if bc_fixT[m1]:
-               Aref=a_el[k1,k1]
+            if bc_fix_T[m1]:
+               Aref=A_el[k1,k1]
                for k2 in range(0,m):
                    m2=icon[k2,iel]
-                   b_el[k2]-=a_el[k2,k1]*bc_valT[m1]
-                   a_el[k1,k2]=0
-                   a_el[k2,k1]=0
-               a_el[k1,k1]=Aref
-               b_el[k1]=Aref*bc_valT[m1]
+                   b_el[k2]-=A_el[k2,k1]*bc_val_T[m1]
+                   A_el[k1,k2]=0
+                   A_el[k2,k1]=0
+               A_el[k1,k1]=Aref
+               b_el[k1]=Aref*bc_val_T[m1]
             #end if
         #end for
 
-        # assemble matrix A_mat and right hand side rhs
+        # assemble matrix and right hand side
         for k1 in range(0,m):
             m1=icon[k1,iel]
             for k2 in range(0,m):
                 m2=icon[k2,iel]
-                A_mat[m1,m2]+=a_el[k1,k2]
+                A_fem[m1,m2]+=A_el[k1,k2]
             #end for
-            rhs[m1]+=b_el[k1]
+            b_fem[m1]+=b_el[k1]
         #end for
 
 #end for iel
 
-print("build FEM matrix: %.3fs" % (timing.time() - start))
+print("build FEM matrix: %.3fs" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # solve system
-#################################################################
-start=timing.time()
+###############################################################################
+start=clock.time()
 
-T = sps.linalg.spsolve(sps.csr_matrix(A_mat),rhs)
+T=sps.linalg.spsolve(sps.csr_matrix(A_fem),b_fem)
 
 print("     -> T (m,M) %.4f %.4f " %(np.min(T),np.max(T)))
 
-print("solve T time: %.3f s" % (timing.time() - start))
+print("solve T time: %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # compute heat flux - corner-to-node
-#################################################################
-start=timing.time()
+###############################################################################
+start=clock.time()
 
-qx=np.zeros(NT,dtype=np.float64) 
-qy=np.zeros(NT,dtype=np.float64) 
-qn=np.zeros(NT,dtype=np.float64) 
-cc=np.zeros(NT,dtype=np.float64) 
+qx=np.zeros(nn_T,dtype=np.float64) 
+qy=np.zeros(nn_T,dtype=np.float64) 
+cc=np.zeros(nn_T,dtype=np.float64) 
 
 for iel in range(0,nel):
-        for k in range(0,m):
-            rq=rnodes[k]
-            sq=snodes[k]
-            inode=icon[k,iel]
-            cc[inode]+=1
-            dNNNTdr=dNNTdr(rq,sq,order)
-            dNNNTds=dNNTds(rq,sq,order)
-            jcb=np.zeros((ndim,ndim),dtype=np.float64)
-            jcb[0,0]=np.sum(dNNNTdr[:]*x[icon[:,iel]])
-            jcb[0,1]=np.sum(dNNNTdr[:]*y[icon[:,iel]])
-            jcb[1,0]=np.sum(dNNNTds[:]*x[icon[:,iel]])
-            jcb[1,1]=np.sum(dNNNTds[:]*y[icon[:,iel]])
-            jcbi=np.linalg.inv(jcb)
-            dNNNTdx[:]=jcbi[0,0]*dNNNTdr[:]+jcbi[0,1]*dNNNTds[:]
-            dNNNTdy[:]=jcbi[1,0]*dNNNTdr[:]+jcbi[1,1]*dNNNTds[:]
-            qx[inode]-=np.sum(dNNNTdx[:]*T[icon[:,iel]])
-            qy[inode]-=np.sum(dNNNTdy[:]*T[icon[:,iel]])
-        #end for
+    for k in range(0,m):
+        rq=r_T[k]
+        sq=s_T[k]
+        inode=icon[k,iel]
+        dNdr_T=basis_functions_T_dr(rq,sq,order)
+        dNds_T=basis_functions_T_ds(rq,sq,order)
+        jcb[0,0]=np.dot(dNdr_T,x[icon[:,iel]])
+        jcb[0,1]=np.dot(dNdr_T,y[icon[:,iel]])
+        jcb[1,0]=np.dot(dNds_T,x[icon[:,iel]])
+        jcb[1,1]=np.dot(dNds_T,y[icon[:,iel]])
+        jcbi=np.linalg.inv(jcb)
+        dNdx_T=jcbi[0,0]*dNdr_T+jcbi[0,1]*dNds_T
+        dNdy_T=jcbi[1,0]*dNdr_T+jcbi[1,1]*dNds_T
+        qx[inode]-=np.dot(dNdx_T,T[icon[:,iel]])
+        qy[inode]-=np.dot(dNdy_T,T[icon[:,iel]])
+        cc[inode]+=1
+    #end for
 #end for
 qx/=cc
 qy/=cc
 
-qn[:]=qx[:]*nx[:]+qy[:]*ny[:]
+qn=qx*nx+qy*ny
 
 print("     -> qx (m,M) %.4f %.4f " %(np.min(qx),np.max(qx)))
 print("     -> qy (m,M) %.4f %.4f " %(np.min(qy),np.max(qy)))
 print("     -> qn (m,M) %.4f %.4f " %(np.min(qn),np.max(qn)))
 
-print("compute heat flux: %.3f s" % (timing.time() - start))
+print("compute heat flux: %.3f s" % (clock.time()-start))
 
-qn_analytical=np.zeros(NT,dtype=np.float64) 
-for i in range(NT):
-    qn_analytical[i]=qx_analytical(x[i],y[i],experiment)*nx[i]\
-                    +qy_analytical(x[i],y[i],experiment)*ny[i]
+###############################################################################
 
-qn_file=open('heat_flux_boundary_caveraging.ascii',"w")
-for k in range(0,NB):
-    qn_file.write("%e %e %e %e %e \n" %(x[B_to_G[k]],y[B_to_G[k]],
-                                        qn[B_to_G[k]],qn_analytical[B_to_G[k]],s[k]))
+qx_anal=np.zeros(nn_T,dtype=np.float64) 
+qy_anal=np.zeros(nn_T,dtype=np.float64) 
+qn_anal=np.zeros(nn_T,dtype=np.float64) 
+for i in range(nn_T):
+    qx_anal[i]=qx_analytical(x[i],y[i],experiment)
+    qy_anal[i]=qy_analytical(x[i],y[i],experiment)
+    qn_anal[i]=qx_anal[i]*nx[i]+qy_anal[i]*ny[i]
+
+qn_file=open('heat_flux_boundary_analytical.ascii',"w")
+for k in range(0,nn_B):
+    qn_file.write("%.4e %.4e %.4e %.4e %.4e %.4e \n" %(x[B_to_G[k]],\
+                                                       y[B_to_G[k]],\
+                                                       qx_anal[B_to_G[k]],\
+                                                       qy_anal[B_to_G[k]],\
+                                                       qn_anal[B_to_G[k]],\
+                                                       s[k]))
+
+qn_file=open('heat_flux_boundary_cornertonode.ascii',"w")
+for k in range(0,nn_B):
+    qn_file.write("%.4e %.4e %.4e %.4e \n" %(x[B_to_G[k]],\
+                                             y[B_to_G[k]],\
+                                             qn[B_to_G[k]],\
+                                             s[k]))
 qn_file.close()
 
-qn_file=open('heat_flux_boundary_AB_caveraging.ascii',"w")
+qn_file=open('heat_flux_boundary_AB_cornertonode.ascii',"w")
 for k in range(0,nnx):
-    qn_file.write("%e %e %e \n" %(x[k],y[k],qn[k]))
+    qn_file.write("%.4e %.4e %.4e \n" %(x[k],y[k],qn[k]))
 qn_file.close()
 
-#################################################################
+###############################################################################
 # compute heat flux w/ consistent boundary flux method
 # internal numbering of Q1 is 
 # 3--2
 # |  |
 # 0--1
 # the order of k,l does not matter
-# NB: number of nodes on boundary
-#################################################################
-start=timing.time()
+###############################################################################
+start=clock.time()
 
-M=lil_matrix((NB,NB),dtype=np.float64) # matrix
-Ml=lil_matrix((NB,NB),dtype=np.float64) # lumped matrix
-rhs= np.zeros(NB,dtype=np.float64)   
+M=lil_matrix((nn_B,nn_B),dtype=np.float64) # matrix
+Ml=lil_matrix((nn_B,nn_B),dtype=np.float64) # lumped matrix
+rhs= np.zeros(nn_B,dtype=np.float64)   
 Mel=np.zeros((2,2),dtype=np.float64) 
 
 for iel in range(0,nel):
@@ -576,7 +544,7 @@ for iel in range(0,nel):
                l=(k+1)%4 ; jnode=icon[l,iel]
 
                if boundary_node[inode] and boundary_node[jnode]: # both nodes are on boundary
-                  if bc_fixT[inode] and bc_fixT[jnode]: # both nodes are fixed
+                  if bc_fix_T[inode] and bc_fix_T[jnode]: # both nodes are fixed
 
                      # compute face length
                      h=np.sqrt( (x[icon[k,iel]]-x[icon[l,iel]])**2 + 
@@ -593,32 +561,32 @@ for iel in range(0,nel):
 
                      # compute bel, integration over volume
                      bel=np.zeros(2,dtype=np.float64) 
-                     for iq in range(0,nqperdim):
-                         for jq in range(0,nqperdim):
+                     for iq in range(0,nq_per_dim):
+                         for jq in range(0,nq_per_dim):
                              rq=qcoords[iq]
                              sq=qcoords[jq]
                              weightq=qweights[iq]*qweights[jq]
                              # compute \int grad N . grad T
-                             dNNNTdr=dNNTdr(rq,sq,order)
-                             dNNNTds=dNNTds(rq,sq,order)
-                             jcb[0,0]=np.dot(dNNNTdr[:],x[icon[:,iel]])
-                             jcb[0,1]=np.dot(dNNNTdr[:],y[icon[:,iel]])
-                             jcb[1,0]=np.dot(dNNNTds[:],x[icon[:,iel]])
-                             jcb[1,1]=np.dot(dNNNTds[:],y[icon[:,iel]])
-                             jcob=np.linalg.det(jcb)
+                             N_T=basis_functions_T(rq,sq,order)
+                             dNdr_T=basis_functions_T_dr(rq,sq,order)
+                             dNds_T=basis_functions_T_ds(rq,sq,order)
+                             jcb[0,0]=np.dot(dNdr_T,x[icon[:,iel]])
+                             jcb[0,1]=np.dot(dNdr_T,y[icon[:,iel]])
+                             jcb[1,0]=np.dot(dNds_T,x[icon[:,iel]])
+                             jcb[1,1]=np.dot(dNds_T,y[icon[:,iel]])
                              jcbi=np.linalg.inv(jcb)
-                             dNNNTdx=jcbi[0,0]*dNNNTdr[:]+jcbi[0,1]*dNNNTds[:]
-                             dNNNTdy=jcbi[1,0]*dNNNTdr[:]+jcbi[1,1]*dNNNTds[:]
-                             dTdxq=np.dot(dNNNTdx[:],T[icon[:,iel]])
-                             dTdyq=np.dot(dNNNTdy[:],T[icon[:,iel]])
-                             bel[0]-=(dNNNTdx[k]*dTdxq+dNNNTdy[k]*dTdyq)*weightq*jcob
-                             bel[1]-=(dNNNTdx[l]*dTdxq+dNNNTdy[l]*dTdyq)*weightq*jcob
+                             JxWq=np.linalg.det(jcb)*weightq
+                             xq=np.dot(N_T,x[icon[:,iel]])
+                             yq=np.dot(N_T,y[icon[:,iel]])
+                             dNdx_T=jcbi[0,0]*dNdr_T+jcbi[0,1]*dNds_T
+                             dNdy_T=jcbi[1,0]*dNdr_T+jcbi[1,1]*dNds_T
+                             dTdxq=np.dot(dNdx_T,T[icon[:,iel]])
+                             dTdyq=np.dot(dNdy_T,T[icon[:,iel]])
+                             bel[0]-=(dNdx_T[k]*dTdxq+dNdy_T[k]*dTdyq)*JxWq
+                             bel[1]-=(dNdx_T[l]*dTdxq+dNdy_T[l]*dTdyq)*JxWq
                              # compute \int N S 
-                             NNNT=NNT(rq,sq,order)
-                             xq=np.dot(NNNT[:],x[icon[:,iel]])
-                             yq=np.dot(NNNT[:],y[icon[:,iel]])
-                             bel[0]+=(NNNT[k]*rhs_f(xq,yq,experiment))*weightq*jcob
-                             bel[1]+=(NNNT[l]*rhs_f(xq,yq,experiment))*weightq*jcob
+                             bel[0]+=(N_T[k]*rhs_f(xq,yq,experiment))*JxWq
+                             bel[1]+=(N_T[l]*rhs_f(xq,yq,experiment))*JxWq
                          #end for jq
                      #end for iq
 
@@ -646,29 +614,34 @@ qn_CBF_lumped=sps.linalg.spsolve(sps.csr_matrix(Ml),rhs)
 
 print("     -> qn (m,M) %.4f %.4f " %(np.min(qn_CBF),np.max(qn_CBF)))
 
-#plt.spy(M,markersize=1)
-#plt.savefig('matrix.pdf', bbox_inches='tight')
+import matplotlib.pyplot as plt
+plt.spy(M,markersize=1)
+plt.savefig('matrix.pdf', bbox_inches='tight')
 
 qn_file=open('heat_flux_boundary_CBF.ascii',"w")
-for k in range(0,NB):
-    qn_file.write("%e %e %e %e %e \n" %(x[B_to_G[k]],y[B_to_G[k]],qn_CBF[k],qn_CBF_lumped[k],s[k]))
+for k in range(0,nn_B):
+    qn_file.write("%.4e %.4e %.4e %.4e %.4e \n" %(x[B_to_G[k]],\
+                                                  y[B_to_G[k]],\
+                                                  qn_CBF[k],\
+                                                  qn_CBF_lumped[k],\
+                                                  s[k]))
 qn_file.close()
 
 qn_file=open('heat_flux_boundary_AB_CBF.ascii',"w")
 for k in range(0,nnx):
-    qn_file.write("%e %e %e %e \n" %(x[B_to_G[k]],y[B_to_G[k]],qn_CBF[k],qn_CBF_lumped[k]))
+    qn_file.write("%.4e %.4e %.4e %.4e \n" %(x[B_to_G[k]],y[B_to_G[k]],qn_CBF[k],qn_CBF_lumped[k]))
 qn_file.close()
 
-print("compute heat flux (CBF): %.3f s" % (timing.time() - start))
+print("compute heat flux (CBF): %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
 # compute boundary heat flux: partial method
 # only for bottom boundary A-B
 # D--C
 # |  |
 # A--B  we here assume all nodes on AB are fixed.
-#################################################################
-start=timing.time()
+###############################################################################
+start=clock.time()
 
 M_AB=np.zeros((nnx,nnx),dtype=np.float64)
 rhs_AB= np.zeros(nnx,dtype=np.float64)   
@@ -676,31 +649,32 @@ Mel=np.zeros((2,2),dtype=np.float64)
 
 #compute heat flux at point A for bc: qn_A
 iel=0 ; rq=-1 ; sq=-1
-dNNNTdr=dNNTdr(rq,sq,order)
-dNNNTds=dNNTds(rq,sq,order)
-jcb[0,0]=np.dot(dNNNTdr[:],x[icon[:,iel]])
-jcb[0,1]=np.dot(dNNNTdr[:],y[icon[:,iel]])
-jcb[1,0]=np.dot(dNNNTds[:],x[icon[:,iel]])
-jcb[1,1]=np.dot(dNNNTds[:],y[icon[:,iel]])
+dNdr_T=basis_functions_T_dr(rq,sq,order)
+dNds_T=basis_functions_T_ds(rq,sq,order)
+jcb[0,0]=np.dot(dNdr_T,x[icon[:,iel]])
+jcb[0,1]=np.dot(dNdr_T,y[icon[:,iel]])
+jcb[1,0]=np.dot(dNds_T,x[icon[:,iel]])
+jcb[1,1]=np.dot(dNds_T,y[icon[:,iel]])
 jcbi=np.linalg.inv(jcb)
-dNNNTdx=jcbi[0,0]*dNNNTdr[:]+jcbi[0,1]*dNNNTds[:]
-dNNNTdy=jcbi[1,0]*dNNNTdr[:]+jcbi[1,1]*dNNNTds[:]
-dTdyq=np.dot(dNNNTdy[:],T[icon[:,iel]])
+dNdx_T=jcbi[0,0]*dNdr_T+jcbi[0,1]*dNds_T
+dNdy_T=jcbi[1,0]*dNdr_T+jcbi[1,1]*dNds_T
+dTdyq=np.dot(dNdy_T[:],T[icon[:,iel]])
 qn_A=-dTdyq
 print('     -> qn_A=',qn_A)
 
 #compute heat flux at point B for bc: qn_B
 iel=nelx-1 ; rq=+1 ; sq=-1
-dNNNTdr=dNNTdr(rq,sq,order)
-dNNNTds=dNNTds(rq,sq,order)
-jcb[0,0]=np.dot(dNNNTdr[:],x[icon[:,iel]])
-jcb[0,1]=np.dot(dNNNTdr[:],y[icon[:,iel]])
-jcb[1,0]=np.dot(dNNNTds[:],x[icon[:,iel]])
-jcb[1,1]=np.dot(dNNNTds[:],y[icon[:,iel]])
+
+dNdr_T=basis_functions_T_dr(rq,sq,order)
+dNds_T=basis_functions_T_ds(rq,sq,order)
+jcb[0,0]=np.dot(dNdr_T,x[icon[:,iel]])
+jcb[0,1]=np.dot(dNdr_T,y[icon[:,iel]])
+jcb[1,0]=np.dot(dNds_T,x[icon[:,iel]])
+jcb[1,1]=np.dot(dNds_T,y[icon[:,iel]])
 jcbi=np.linalg.inv(jcb)
-dNNNTdx=jcbi[0,0]*dNNNTdr[:]+jcbi[0,1]*dNNNTds[:]
-dNNNTdy=jcbi[1,0]*dNNNTdr[:]+jcbi[1,1]*dNNNTds[:]
-dTdyq=np.dot(dNNNTdy[:],T[icon[:,iel]])
+dNdx_T=jcbi[0,0]*dNdr_T+jcbi[0,1]*dNds_T
+dNdy_T=jcbi[1,0]*dNdr_T+jcbi[1,1]*dNds_T
+dTdyq=np.dot(dNdy_T[:],T[icon[:,iel]])
 qn_B=-dTdyq
 print('     -> qn_B=',qn_B)
 
@@ -718,32 +692,32 @@ for iel in range(0,nelx): # loop over
 
         # compute bel, integration over volume
         bel=np.zeros(2,dtype=np.float64) 
-        for iq in range(0,nqperdim):
-            for jq in range(0,nqperdim):
+        for iq in range(0,nq_per_dim):
+            for jq in range(0,nq_per_dim):
                 rq=qcoords[iq]
                 sq=qcoords[jq]
                 weightq=qweights[iq]*qweights[jq]
                 # compute \int grad N . grad T
-                dNNNTdr=dNNTdr(rq,sq,order)
-                dNNNTds=dNNTds(rq,sq,order)
-                jcb[0,0]=np.dot(dNNNTdr[:],x[icon[:,iel]])
-                jcb[0,1]=np.dot(dNNNTdr[:],y[icon[:,iel]])
-                jcb[1,0]=np.dot(dNNNTds[:],x[icon[:,iel]])
-                jcb[1,1]=np.dot(dNNNTds[:],y[icon[:,iel]])
-                jcob=np.linalg.det(jcb)
+                N_T=basis_functions_T(rq,sq,order)
+                dNdr_T=basis_functions_T_dr(rq,sq,order)
+                dNds_T=basis_functions_T_ds(rq,sq,order)
+                jcb[0,0]=np.dot(dNdr_T,x[icon[:,iel]])
+                jcb[0,1]=np.dot(dNdr_T,y[icon[:,iel]])
+                jcb[1,0]=np.dot(dNds_T,x[icon[:,iel]])
+                jcb[1,1]=np.dot(dNds_T,y[icon[:,iel]])
                 jcbi=np.linalg.inv(jcb)
-                dNNNTdx=jcbi[0,0]*dNNNTdr[:]+jcbi[0,1]*dNNNTds[:]
-                dNNNTdy=jcbi[1,0]*dNNNTdr[:]+jcbi[1,1]*dNNNTds[:]
-                dTdxq=np.dot(dNNNTdx[:],T[icon[:,iel]])
-                dTdyq=np.dot(dNNNTdy[:],T[icon[:,iel]])
-                bel[0]-=(dNNNTdx[0]*dTdxq+dNNNTdy[0]*dTdyq)*weightq*jcob
-                bel[1]-=(dNNNTdx[1]*dTdxq+dNNNTdy[1]*dTdyq)*weightq*jcob
+                JxWq=np.linalg.det(jcb)*weightq
+                dNdx_T=jcbi[0,0]*dNdr_T+jcbi[0,1]*dNds_T
+                dNdy_T=jcbi[1,0]*dNdr_T+jcbi[1,1]*dNds_T
+                dTdxq=np.dot(dNdx_T,T[icon[:,iel]])
+                dTdyq=np.dot(dNdy_T,T[icon[:,iel]])
+                xq=np.dot(N_T,x[icon[:,iel]])
+                yq=np.dot(N_T,y[icon[:,iel]])
+                bel[0]-=(dNdx_T[0]*dTdxq+dNdy_T[0]*dTdyq)*JxWq
+                bel[1]-=(dNdx_T[1]*dTdxq+dNdy_T[1]*dTdyq)*JxWq
                 # compute \int N S 
-                NNNT=NNT(rq,sq,order)
-                xq=np.dot(NNNT[:],x[icon[:,iel]])
-                yq=np.dot(NNNT[:],y[icon[:,iel]])
-                bel[0]+=(NNNT[0]*rhs_f(xq,yq,experiment))*weightq*jcob
-                bel[1]+=(NNNT[1]*rhs_f(xq,yq,experiment))*weightq*jcob
+                bel[0]+=(N_T[0]*rhs_f(xq,yq,experiment))*JxWq
+                bel[1]+=(N_T[1]*rhs_f(xq,yq,experiment))*JxWq
             #end for jq
         #end for iq
 
@@ -767,90 +741,202 @@ print("     -> qn on AB (m,M) %.4f %.4f " %(np.min(qn_AB),np.max(qn_AB)))
 
 qn_file=open('heat_flux_boundary_AB_partial.ascii',"w")
 for k in range(0,nnx):
-    qn_file.write("%e %e %e %e \n" %(x[k],y[k],qn_AB[k],s[k]))
+    qn_file.write("%.4e %.4e %.4e %.4e \n" %(x[k],y[k],qn_AB[k],s[k]))
 qn_file.close()
 
-print("compute heat flux (partial CBF): %.3f s" % (timing.time() - start))
+print("compute heat flux (partial CBF): %.3f s" % (clock.time()-start))
 
-#################################################################
+###############################################################################
+# CBF2 approch: full matrix approach
+# the difficulty here is to know which area to ascribe the corner nodes...
+###############################################################################
+start=clock.time()
+
+Residual=np.zeros(Nfem_T,dtype=np.float64)    
+B_mat=np.zeros((2,m),dtype=np.float64)   
+area=np.zeros(nn_T,dtype=np.float64)
+qn_newCBF=np.zeros(nn_T,dtype=np.float64)
+
+for iel in range(0,nel):
+
+        A_el=np.zeros((m,m),dtype=np.float64)
+        b_el=np.zeros(m,dtype=np.float64)
+        R_el=np.zeros(m,dtype=np.float64)
+
+        for iq in range(0,nq_per_dim):
+            for jq in range(0,nq_per_dim):
+                rq=qcoords[iq]
+                sq=qcoords[jq]
+                weightq=qweights[iq]*qweights[jq]
+                N_T=basis_functions_T(rq,sq,order)
+                dNdr_T=basis_functions_T_dr(rq,sq,order)
+                dNds_T=basis_functions_T_ds(rq,sq,order)
+                jcb[0,0]=np.dot(dNdr_T,x[icon[:,iel]])
+                jcb[0,1]=np.dot(dNdr_T,y[icon[:,iel]])
+                jcb[1,0]=np.dot(dNds_T,x[icon[:,iel]])
+                jcb[1,1]=np.dot(dNds_T,y[icon[:,iel]])
+                jcbi=np.linalg.inv(jcb)
+                JxWq=np.linalg.det(jcb)*weightq
+                dNdx_T=jcbi[0,0]*dNdr_T+jcbi[0,1]*dNds_T
+                dNdy_T=jcbi[1,0]*dNdr_T+jcbi[1,1]*dNds_T
+                xq=np.dot(N_T,x[icon[:,iel]])
+                yq=np.dot(N_T,y[icon[:,iel]])
+                B_mat[0,:]=dNdx_T[:]
+                B_mat[1,:]=dNdy_T[:]
+                A_el+=B_mat.T.dot(B_mat)*hcond*JxWq
+                b_el+=N_T*rhs_f(xq,yq,experiment)*JxWq
+            #end for jq
+        #end for iq
+
+        R_el=A_el.dot(T[icon[:,iel]])-b_el
+
+        # assemble residual vector 
+        for k1 in range(0,m):
+            Residual[icon[k1,iel]]+=R_el[k1]
+        #end for
+
+#end for iel
+
+# loop over elements that are on the boundary.
+# assign to each node half the length of the face
+# it belongs to. Corner nodes get two contributions.
+# In this case the sum of the area array is equal
+# to the perimeter of the domain.
+# this could be revisited. 
+
+iel=0
+for j in range(0,nely):
+    for i in range(0,nelx):
+        if i==0:
+           hy=y[icon[3,iel]]-y[icon[0,iel]]
+           area[icon[0,iel]]+=hy/2
+           area[icon[3,iel]]+=hy/2
+        if i==nelx-1:
+           hy=y[icon[2,iel]]-y[icon[1,iel]]
+           area[icon[1,iel]]+=hy/2
+           area[icon[2,iel]]+=hy/2
+        if j==0:
+           hx=x[icon[1,iel]]-x[icon[0,iel]]
+           area[icon[0,iel]]+=hx/2
+           area[icon[1,iel]]+=hx/2
+        if j==nely-1: 
+           hx=x[icon[2,iel]]-x[icon[3,iel]]
+           area[icon[2,iel]]+=hx/2
+           area[icon[3,iel]]+=hx/2
+        iel+=1
+    #end for
+#end for
+
+print(sum(area))
+
+for k in range(0,nn_T):
+    if boundary_node[k]:
+       qn_newCBF[k]=-Residual[k]/area[k]
+
+
+qn_file=open('heat_flux_boundary_CBF2.ascii',"w")
+for k in range(0,nn_B):
+    qn_file.write("%.4e %.4e %.4e %.4e \n" %(x[B_to_G[k]],\
+                                             y[B_to_G[k]],\
+                                             qn_newCBF[B_to_G[k]],\
+                                             s[k]))
+qn_file.close()
+
+
+qn_file=open('heat_flux_boundary_AB_CBF2.ascii',"w")
+for k in range(0,nnx):
+    qn_file.write("%e %e %e \n" %(x[k],y[k],qn_newCBF[k]))
+qn_file.close()
+
+print("     -> qn (m,M) %.4f %.4f " %(np.min(qn_newCBF),np.max(qn_newCBF)))
+
+print("compute heat flux (CBF2): %.3f s" % (clock.time()-start))
+
+###############################################################################
 # visualisation 
-#################################################################
-start=timing.time()
+###############################################################################
+start=clock.time()
 
 filename = 'solution.vtu'
 vtufile=open(filename,"w")
 vtufile.write("<VTKFile type='UnstructuredGrid' version='0.1' byte_order='BigEndian'> \n")
 vtufile.write("<UnstructuredGrid> \n")
-vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(NT,nel))
+vtufile.write("<Piece NumberOfPoints=' %5d ' NumberOfCells=' %5d '> \n" %(nn_T,nel))
 #####
 vtufile.write("<Points> \n")
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Format='ascii'> \n")
-for i in range(0,NT):
-    vtufile.write("%e %e %e \n" %(x[i],y[i],0.))
+for i in range(0,nn_T):
+    vtufile.write("%.4e %.4e %.4e \n" %(x[i],y[i],0.))
 vtufile.write("</DataArray>\n")
 vtufile.write("</Points> \n")
 #####
 vtufile.write("<PointData Scalars='scalars'>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='T' Format='ascii'> \n")
-for i in range(0,NT):
-    vtufile.write("%12.4e \n" %T[i])
+T.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
 #--
-vtufile.write("<DataArray type='Int32' Name='G_to_B' Format='ascii'> \n")
-for i in range(0,NT):
-    vtufile.write("%d \n" %G_to_B[i])
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='T (analytical)' Format='ascii'> \n")
-for i in range(0,NT):
-    vtufile.write("%12.4e \n" % (T_analytical(x[i],y[i],experiment)))
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' Name='T (error)' Format='ascii'> \n")
-for i in range(0,NT):
-    vtufile.write("%12.4e \n" % (T[i]-T_analytical(x[i],y[i],experiment)))
-vtufile.write("</DataArray>\n")
-#--
-vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux' Format='ascii'> \n")
-for i in range(0,NT):
-    vtufile.write("%e %e %e \n" %(qx[i],qy[i],0.))
+vtufile.write("<DataArray type='Float32' Name='Residual' Format='ascii'> \n")
+Residual.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='qn' Format='ascii'> \n")
-for i in range(0,NT):
-    vtufile.write("%e \n" % qn[i])
+qn.tofile(vtufile,sep=' ',format='%.4e')
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='area' Format='ascii'> \n")
+area.tofile(vtufile,sep=' ',format='%.4e')
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Int32' Name='G_to_B' Format='ascii'> \n")
+G_to_B.tofile(vtufile,sep=' ',format='%d')
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='T (analytical)' Format='ascii'> \n")
+for i in range(0,nn_T):
+    vtufile.write("%.4e \n" % (T_analytical(x[i],y[i],experiment)))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='T (error)' Format='ascii'> \n")
+for i in range(0,nn_T):
+    vtufile.write("%.4e \n" % (T[i]-T_analytical(x[i],y[i],experiment)))
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux' Format='ascii'> \n")
+for i in range(0,nn_T):
+    vtufile.write("%.4e %.4e %.4e \n" %(qx[i],qy[i],0.))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' Name='qn (CBF)' Format='ascii'> \n")
-for i in range(0,NT):
+for i in range(0,nn_T):
     if (G_to_B[i]>0):
-       vtufile.write("%e \n" % qn_CBF[G_to_B[i]])
+       vtufile.write("%.4e \n" % qn_CBF[G_to_B[i]])
     else:
-       vtufile.write("%e \n" % 0. )
+       vtufile.write("%.4e \n" % 0. )
+vtufile.write("</DataArray>\n")
+#--
+vtufile.write("<DataArray type='Float32' Name='qn (new CBF)' Format='ascii'> \n")
+qn_newCBF.tofile(vtufile,sep=' ',format='%.4e')
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux (analytical)' Format='ascii'> \n")
-for i in range(0,NT):
-    vtufile.write("%e %e %e \n" %(qx_analytical(x[i],y[i],experiment),qy_analytical(x[i],y[i],experiment),0))
+for i in range(0,nn_T):
+    vtufile.write("%.4e %.4e %.4e \n" %(qx_anal[i],qy_anal[i],0))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='heat flux (error)' Format='ascii'> \n")
-for i in range(0,NT):
-    vtufile.write("%e %e %e \n" %(qx[i]-qx_analytical(x[i],y[i],experiment),qy[i]-qy_analytical(x[i],y[i],experiment),0))
+for i in range(0,nn_T):
+    vtufile.write("%.4e %.4e %.4e \n" %(qx[i]-qx_anal[i],qy[i]-qy_anal[i],0))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Float32' NumberOfComponents='3' Name='normal' Format='ascii'> \n")
-for i in range(0,NT):
-    vtufile.write("%e %e %e \n" %(nx[i],ny[i],0.))
+for i in range(0,nn_T):
+    vtufile.write("%.4e %.4e %.4e \n" %(nx[i],ny[i],0.))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("<DataArray type='Int32' Name='boundary' Format='ascii'> \n")
-for i in range(0,NT):
-    if boundary_node[i]:
-       vtufile.write("%d \n" % 1)
-    else:
-       vtufile.write("%d \n" % 0)
+for i in range(0,nn_T):
+    vtufile.write("%d \n" % int(boundary_node[i]))
 vtufile.write("</DataArray>\n")
 #--
 vtufile.write("</PointData>\n")
@@ -888,8 +974,27 @@ vtufile.write("</UnstructuredGrid>\n")
 vtufile.write("</VTKFile>\n")
 vtufile.close()
 
-print("export to files: %.3f s" % (timing.time() - start))
+print("export to files: %.3f s" % (clock.time() - start))
+
+print('North',nelx,qn_anal[North],qn[North],qn_CBF[G_to_B[North]],qn_CBF_lumped[G_to_B[North]],qn_newCBF[North])
+print('South',nelx,qn_anal[South],qn[South],qn_CBF[G_to_B[South]],qn_CBF_lumped[G_to_B[South]],qn_newCBF[South])
+print('East',nelx,qn_anal[East],qn[East],qn_CBF[G_to_B[East]],qn_CBF_lumped[G_to_B[East]],qn_newCBF[East])
+print('West',nelx,qn_anal[West],qn[West],qn_CBF[G_to_B[West]],qn_CBF_lumped[G_to_B[West]],qn_newCBF[West])
+
+print('SWcorner',nelx,qn_anal[SW],qn[SW],qn_CBF[G_to_B[SW]],qn_CBF_lumped[G_to_B[SW]],qn_newCBF[SW])
+print('SEcorner',nelx,qn_anal[SE],qn[SE],qn_CBF[G_to_B[SE]],qn_CBF_lumped[G_to_B[SE]],qn_newCBF[SE])
+print('NWcorner',nelx,qn_anal[NW],qn[NW],qn_CBF[G_to_B[NW]],qn_CBF_lumped[G_to_B[NW]],qn_newCBF[NW])
+print('NEcorner',nelx,qn_anal[NE],qn[NE],qn_CBF[G_to_B[NE]],qn_CBF_lumped[G_to_B[NE]],qn_newCBF[NE])
+
+print('qn_sum',nelx,np.dot(qn_anal[boundary_node],area[boundary_node]),\
+                    np.dot(qn[boundary_node],area[boundary_node]),\
+                    np.dot(qn_CBF,area[boundary_node]),\
+                    np.dot(qn_CBF_lumped,area[boundary_node]),\
+                    np.dot(qn_newCBF[boundary_node],area[boundary_node]))
     
-print("-----------------------------")
-print("------------the end----------")
-print("-----------------------------")
+    
+print("*******************************")
+print("********** the end ************")
+print("*******************************")
+
+###############################################################################

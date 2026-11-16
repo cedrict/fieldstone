@@ -15,13 +15,13 @@
 \par\noindent\rule{\textwidth}{0.4pt}
 
 \begin{center}
-\inpython
+\inpython \hspace{.5cm}
 {\small Code: \url{https://github.com/cedrict/fieldstone/tree/master/python_codes/fieldstone_173}}
 \end{center}
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: June 2nd, 2025.
+Last revision: November 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -35,37 +35,41 @@ This \stone is based on
 \item \fullcite{grls87} (1987)
 \end{itemize}
 
-%====================================
+In all analytical experiments the analytical temperature is 
+prescribed on the boundary of the domain.
+
+\newpage
+%==============================================================================
 \section*{Setup of experiment \# 1}
 
-The 1d setup originates in Eq.~(52) of \textcite{grls87} (1987).
+The setup originates in Eq.~(52) of \textcite{grls87} (1987).
 The domain is the unit square. 
 The 2d steady state heat equation (with heat source) is solved, with $\rho=C_p=k=1$:
 \[
 \frac{\partial^2 T}{\partial x^2} + \frac{\partial^2 T}{\partial y^2} + S(x,y) = 0
 \]
 with $S(x,y)=-10$. 
-The exact solution is 
-\[
-T(x,y)=(2x+y)^2
-\]
-since 
+The exact solution is\footnote{It is a choice, because additional 1st and 0th order
+terms could be added that would disappear under the second-order derivatives.}
+$T(x,y)=(2x+y)^2$ since 
 \[
 \frac{\partial^2 T}{\partial x^2} + \frac{\partial^2 T}{\partial y^2}
 = 2\cdot 2 \cdot 2 + 2 \cdot 1 \cdot 1 = 10
 \]
-The heat flux vector is then given by\footnote{the heat conductivity is equal to 1}
+The heat flux vector is then given by
 \[
-\vec{q} = - \vec{\nabla} T = -2(2x+y) (2 \vec{e}_x + \vec{e}_y)
+\vec{q} 
+= - k \vec{\nabla} T 
+= - \vec{\nabla} T 
+= -2(2x+y) (2 \vec{e}_x + \vec{e}_y)
 \]
-
 We now turn to Figure 2 of the paper:
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_173/images/grls87a}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/images/grls87a}
 \end{center}
-
-We learn from it that the mesh counts $8\times 8$ elements with a gradual size change in space.
-This is implemented as follows:
+d
+\noindent We learn from this figure that the mesh counts $8\times 8$ elements 
+with a gradual size change in space. This is implemented as follows:
 \begin{lstlisting}
 for i in range(0,NV):
     x[i]=x[i]**0.66
@@ -75,9 +79,9 @@ for i in range(0,NV):
 The mesh then looks like this:
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_173/images/mesh8x8}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/images/mesh8x8}\\
+{\captionfont This is not identical to the article but sufficiently close.}
 \end{center}
-This is not identical to the article but sufficiently close.
 
 %We then solve the equation on this mesh with $Q_1$ elements:
 %\begin{center}
@@ -89,32 +93,33 @@ This is not identical to the article but sufficiently close.
 %\end{center}
 %We find that the calculated temperature is machine precision accurate.
 
-%====================================
+\newpage
+%==============================================================================
 \section*{Setup of experiment \# 2}
 
 It originates in \textcite{cacs85} (1985). The domain is $\Omega=[-1,1]\times [-1,1]$.
-The 2d steady state heat equation (with heat source) is solved again:
+The 2d steady state heat equation (with heat source) is solved again\footnote{Note 
+the minus sign error in the paper at Eq.~(13).}
 \[
 \frac{\partial^2 T}{\partial x^2} + \frac{\partial^2 T}{\partial y^2} + S(x,y) = 0
-\qquad
+\qquad \text{with} \qquad
 S(x,y)=4-2(x^2+y^2)
 \]
-Note the minus sign error in the paper at Eq.~(13).
 $T=0$ is prescribed on all faces $\partial \Omega$.
-The analytical solution is the polynomial
-\[
-T(x,y)=(1-x^2)(1-y^2)
-\]
-Indeed:
+The analytical solution is the polynomial $T(x,y)=(1-x^2)(1-y^2)$. Indeed:
 \[
 \Delta T = \frac{\partial^2 T}{\partial x^2} + \frac{\partial^2 T}{\partial y^2}
 = -2(1-y^2) -2(1-x^2)
 = -2 + 2y^2 -2 + x^2
 = -4 + 2(x^2+y^2)
+= -S(x,y)
 \]
 The heat flux is given by 
 \[
-\vec{q} = -\vec\nabla T = 
+\vec{q} 
+= -k \vec\nabla T 
+= -\vec\nabla T 
+= 
 \left(
 \begin{array}{c}
 2x(1-y^2) \\
@@ -123,26 +128,26 @@ The heat flux is given by
 \right)
 \]
 and the normal boundary flux is 
-\[
-{q}_n=-\vec\nabla T \cdot \vec{n}=-2(1-y^2) \qquad \text{on sides} \quad x=\pm 1
-\]
-and
-\[
-{q}_n=-\vec\nabla T \cdot \vec{n}=-2(1-x^2) \qquad \text{on sides} \quad y=\pm 1
-\]
+\begin{eqnarray}
+q_n&=&-\vec\nabla T \cdot \vec{n}=-2(1-y^2) \qquad \text{on sides} \quad x=\pm 1 \nn\\
+q_n&=&-\vec\nabla T \cdot \vec{n}=-2(1-x^2) \qquad \text{on sides} \quad y=\pm 1 \nn
+\end{eqnarray}
 Note that in this example the limit values of $q_n$ at the four corners agree, 
 although the normal direction is undefined at the corners.
 
 The paper relies mostly on linear triangles but we will only consider 
 linear quadrilaterals here.
-Resolutions used in the paper are $4\times 4$, $8\times 8$, $16\times 16$.
+Resolutions used in the paper are $4\times 4$, $8\times 8$, and $16\times 16$.
 
-%====================================
+
+
+\newpage
+%==============================================================================
 \section*{Setup of experiment \# 3,4,5}
 
 These originate in Section~5 of \textcite{care82} (1982).
 We solve the Laplace equation $\Delta T=0$ on the domain is $\Omega=[-1,1]\times [-1,1]$.
-The analytical solution for these exoeriments are 
+The three analytical solutions for these experiments are 
 \[
 T_3(x,y)=x^2-y^2
 \qquad
@@ -170,16 +175,13 @@ and it is prescribed on the boundary. The heat flux is then
 -3x^2+3y^2 \\ -6xy
 \end{array}\right)
 \]
-We find that the normal flux $q_1=\vec{q}_1\cdot\vec{n}$ is constant on each face 
+We find that the normal flux $q_n=\vec{q}\cdot\vec{n}$ is constant on each face 
 of the domain.
 
 
 {\color{red} check, implement, finish, compute error rates, ...}
 
-
-
-
-
+\newpage
 %==============================================================================
 \section*{Computing boundary normals}
 
@@ -252,15 +254,22 @@ for i in range(0,NV):
        ny[i]/=norm
 \end{lstlisting}
 
-In this case the normal vectors are as follows:
+In the case of experiment \#1 (with a stretched mesh) the normal vectors are as follows:
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/normals}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/normals}
 \end{center}
 We see that the vectors at the corners are not 'at $45$ degrees' if the element is not square.
 
+Note that the normal vectors are used here only in two cases:
+the corner-to-node approach allows us to compute $q_x$ and $q_y$ at all nodes
+and the nodal heat flux at the surface is given by $q_n=q_xn_x + q_yn_y$.
+The same approach is taken for the analytical heat flux.
+To be clear: the normal vector does not enter the calculations of the the CBF algorithms.
 
+
+\newpage
 %==============================================================================
-\section*{Computing the nodal heat flux everywhere - 'Corner Averaging'}
+\section*{Computing the nodal heat flux everywhere - ``Corner Averaging''}
 
 We apply here a standard technique: the derivatives of the temperature 
 are computed at each corner of the element by means of the basis functions
@@ -296,9 +305,6 @@ and then averaged out on the nodes.
     qn[:]=qx[:]*nx[:]+qy[:]*ny[:]
 \end{lstlisting}
 
-
-
-
 We read in \textcite{mizu86} (1986):
 \begin{displayquote}
 {\color{MidnightBlue}
@@ -307,6 +313,7 @@ derivative of the finite element solution. The boundary flux calculated by this 
 inaccurate and does not guarantee a global heat balance.}
 \end{displayquote}
 
+\newpage
 %==============================================================================
 \section*{Computing the boundary heat flux (CBF method)}
 
@@ -620,247 +627,17 @@ In this case the solution is then simply:
 \right)
 \]
 
------- above is  in FS already ----
 
+\newpage
 Let us now consider the mesh (topology) of \textcite{grls87}:
 \begin{center}
-\begin{tikzpicture}
-%\draw[step=0.5cm,gray,very thin] (0,0) grid (10,10); %background grid
-
-\draw[thick] (0,0)--(8,0)--(8,8)--(0,8)--cycle;  
-
-\draw[thick] (0,1)--(8,1);  
-\draw[thick] (0,2)--(8,2);  
-\draw[thick] (0,3)--(8,3);  
-\draw[thick] (0,4)--(8,4);  
-\draw[thick] (0,5)--(8,5);  
-\draw[thick] (0,6)--(8,6);  
-\draw[thick] (0,7)--(8,7);  
-\draw[thick] (0,8)--(8,8);  
-
-\draw[thick] (1,0)--(1,8);  
-\draw[thick] (2,0)--(2,8);  
-\draw[thick] (3,0)--(3,8);  
-\draw[thick] (4,0)--(4,8);  
-\draw[thick] (5,0)--(5,8);  
-\draw[thick] (6,0)--(6,8);  
-\draw[thick] (7,0)--(7,8);  
-\draw[thick] (8,0)--(8,8);  
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% element numbers
-
-\node[] at (0.45,0.45) {\tiny 0};
-\node[] at (1.45,0.45) {\tiny 1};
-\node[] at (2.45,0.45) {\tiny 2};
-\node[] at (3.45,0.45) {\tiny 3};
-\node[] at (4.45,0.45) {\tiny 4};
-\node[] at (5.45,0.45) {\tiny 5};
-\node[] at (6.45,0.45) {\tiny 6};
-\node[] at (7.45,0.45) {\tiny 7};
-
-\node[] at (0.45,1.45) {\tiny 8};
-\node[] at (1.45,1.45) {\tiny 9};
-\node[] at (2.45,1.45) {\tiny 10};
-\node[] at (3.45,1.45) {\tiny 11};
-\node[] at (4.45,1.45) {\tiny 12};
-\node[] at (5.45,1.45) {\tiny 13};
-\node[] at (6.45,1.45) {\tiny 14};
-\node[] at (7.45,1.45) {\tiny 15};
-
-\node[] at (0.45,2.45) {\tiny 16};
-\node[] at (1.45,2.45) {\tiny 17};
-\node[] at (2.45,2.45) {\tiny 18};
-\node[] at (3.45,2.45) {\tiny 19};
-\node[] at (4.45,2.45) {\tiny 20};
-\node[] at (5.45,2.45) {\tiny 21};
-\node[] at (6.45,2.45) {\tiny 22};
-\node[] at (7.45,2.45) {\tiny 23};
-
-\node[] at (0.45,3.45) {\tiny 24};
-\node[] at (1.45,3.45) {\tiny 25};
-\node[] at (2.45,3.45) {\tiny 26};
-\node[] at (3.45,3.45) {\tiny 27};
-\node[] at (4.45,3.45) {\tiny 28};
-\node[] at (5.45,3.45) {\tiny 29};
-\node[] at (6.45,3.45) {\tiny 30};
-\node[] at (7.45,3.45) {\tiny 31};
-
-\node[] at (0.45,4.45) {\tiny 32};
-\node[] at (1.45,4.45) {\tiny 33};
-\node[] at (2.45,4.45) {\tiny 34};
-\node[] at (3.45,4.45) {\tiny 35};
-\node[] at (4.45,4.45) {\tiny 36};
-\node[] at (5.45,4.45) {\tiny 37};
-\node[] at (6.45,4.45) {\tiny 38};
-\node[] at (7.45,4.45) {\tiny 39};
-
-\node[] at (0.45,5.45) {\tiny 40};
-\node[] at (1.45,5.45) {\tiny 41};
-\node[] at (2.45,5.45) {\tiny 42};
-\node[] at (3.45,5.45) {\tiny 43};
-\node[] at (4.45,5.45) {\tiny 44};
-\node[] at (5.45,5.45) {\tiny 45};
-\node[] at (6.45,5.45) {\tiny 46};
-\node[] at (7.45,5.45) {\tiny 47};
-
-\node[] at (0.45,6.45) {\tiny 48};
-\node[] at (1.45,6.45) {\tiny 49};
-\node[] at (2.45,6.45) {\tiny 50};
-\node[] at (3.45,6.45) {\tiny 51};
-\node[] at (4.45,6.45) {\tiny 52};
-\node[] at (5.45,6.45) {\tiny 53};
-\node[] at (6.45,6.45) {\tiny 54};
-\node[] at (7.45,6.45) {\tiny 55};
-
-\node[] at (0.45,7.45) {\tiny 56};
-\node[] at (1.45,7.45) {\tiny 57};
-\node[] at (2.45,7.45) {\tiny 58};
-\node[] at (3.45,7.45) {\tiny 59};
-\node[] at (4.45,7.45) {\tiny 60};
-\node[] at (5.45,7.45) {\tiny 61};
-\node[] at (6.45,7.45) {\tiny 62};
-\node[] at (7.45,7.45) {\tiny 63};
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% nodes
-
-\node[] at (-0.1,-0.15) {\color{teal} \tiny 0};
-\node[] at (0.9,-0.15) {\color{teal} \tiny 1};
-\node[] at (1.9,-0.15) {\color{teal} \tiny 2};
-\node[] at (2.9,-0.15) {\color{teal} \tiny 3};
-\node[] at (3.9,-0.15) {\color{teal} \tiny 4};
-\node[] at (4.9,-0.15) {\color{teal} \tiny 5};
-\node[] at (5.9,-0.15) {\color{teal} \tiny 6};
-\node[] at (6.9,-0.15) {\color{teal} \tiny 7};
-\node[] at (7.9,-0.15) {\color{teal} \tiny 8};
-
-\node[] at (-0.1,0.85) {\color{teal} \tiny 9};
-\node[] at (0.9,0.85) {\color{teal} \tiny 10};
-\node[] at (1.9,0.85) {\color{teal} \tiny 11};
-\node[] at (2.9,0.85) {\color{teal} \tiny 12};
-\node[] at (3.9,0.85) {\color{teal} \tiny 13};
-\node[] at (4.9,0.85) {\color{teal} \tiny 14};
-\node[] at (5.9,0.85) {\color{teal} \tiny 15};
-\node[] at (6.9,0.85) {\color{teal} \tiny 16};
-\node[] at (7.9,0.85) {\color{teal} \tiny 17};
-
-\node[] at (-0.1,1.85) {\color{teal} \tiny 18};
-\node[] at (0.9,1.85) {\color{teal} \tiny 19};
-\node[] at (1.9,1.85) {\color{teal} \tiny 20};
-\node[] at (2.9,1.85) {\color{teal} \tiny 21};
-\node[] at (3.9,1.85) {\color{teal} \tiny 22};
-\node[] at (4.9,1.85) {\color{teal} \tiny 23};
-\node[] at (5.9,1.85) {\color{teal} \tiny 24};
-\node[] at (6.9,1.85) {\color{teal} \tiny 25};
-\node[] at (7.9,1.85) {\color{teal} \tiny 26};
-
-\node[] at (-0.1,2.85) {\color{teal} \tiny 27};
-\node[] at (0.9,2.85) {\color{teal} \tiny 28};
-\node[] at (1.9,2.85) {\color{teal} \tiny 29};
-\node[] at (2.9,2.85) {\color{teal} \tiny 30};
-\node[] at (3.9,2.85) {\color{teal} \tiny 31};
-\node[] at (4.9,2.85) {\color{teal} \tiny 32};
-\node[] at (5.9,2.85) {\color{teal} \tiny 33};
-\node[] at (6.9,2.85) {\color{teal} \tiny 34};
-\node[] at (7.9,2.85) {\color{teal} \tiny 35};
-
-\node[] at (-0.1,3.85) {\color{teal} \tiny 36};
-\node[] at (0.9,3.85) {\color{teal} \tiny 37};
-\node[] at (1.9,3.85) {\color{teal} \tiny 38};
-\node[] at (2.9,3.85) {\color{teal} \tiny 39};
-\node[] at (3.9,3.85) {\color{teal} \tiny 40};
-\node[] at (4.9,3.85) {\color{teal} \tiny 41};
-\node[] at (5.9,3.85) {\color{teal} \tiny 42};
-\node[] at (6.9,3.85) {\color{teal} \tiny 43};
-\node[] at (7.9,3.85) {\color{teal} \tiny 44};
-
-\node[] at (-0.1,4.85) {\color{teal} \tiny 45};
-\node[] at (0.9,4.85) {\color{teal} \tiny 46};
-\node[] at (1.9,4.85) {\color{teal} \tiny 47};
-\node[] at (2.9,4.85) {\color{teal} \tiny 48};
-\node[] at (3.9,4.85) {\color{teal} \tiny 49};
-\node[] at (4.9,4.85) {\color{teal} \tiny 50};
-\node[] at (5.9,4.85) {\color{teal} \tiny 51};
-\node[] at (6.9,4.85) {\color{teal} \tiny 52};
-\node[] at (7.9,4.85) {\color{teal} \tiny 53};
-
-\node[] at (-0.1,5.85) {\color{teal} \tiny 54};
-\node[] at (0.9,5.85) {\color{teal} \tiny 55};
-\node[] at (1.9,5.85) {\color{teal} \tiny 56};
-\node[] at (2.9,5.85) {\color{teal} \tiny 57};
-\node[] at (3.9,5.85) {\color{teal} \tiny 58};
-\node[] at (4.9,5.85) {\color{teal} \tiny 59};
-\node[] at (5.9,5.85) {\color{teal} \tiny 60};
-\node[] at (6.9,5.85) {\color{teal} \tiny 61};
-\node[] at (7.9,5.85) {\color{teal} \tiny 62};
-
-\node[] at (-0.1,6.85) {\color{teal} \tiny 63};
-\node[] at (0.9,6.85) {\color{teal} \tiny 64};
-\node[] at (1.9,6.85) {\color{teal} \tiny 65};
-\node[] at (2.9,6.85) {\color{teal} \tiny 66};
-\node[] at (3.9,6.85) {\color{teal} \tiny 67};
-\node[] at (4.9,6.85) {\color{teal} \tiny 68};
-\node[] at (5.9,6.85) {\color{teal} \tiny 69};
-\node[] at (6.9,6.85) {\color{teal} \tiny 70};
-\node[] at (7.9,6.85) {\color{teal} \tiny 71};
-
-\node[] at (-0.1,7.85) {\color{teal} \tiny 72};
-\node[] at (0.9,7.85) {\color{teal} \tiny 73};
-\node[] at (1.9,7.85) {\color{teal} \tiny 74};
-\node[] at (2.9,7.85) {\color{teal} \tiny 75};
-\node[] at (3.9,7.85) {\color{teal} \tiny 76};
-\node[] at (4.9,7.85) {\color{teal} \tiny 77};
-\node[] at (5.9,7.85) {\color{teal} \tiny 78};
-\node[] at (6.9,7.85) {\color{teal} \tiny 79};
-\node[] at (7.9,7.85) {\color{teal} \tiny 80};
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% B nodes
-
-\node[] at (0.12,0.15) {\color{brown} \tiny 0};
-\node[] at (1.12,0.15) {\color{brown} \tiny 1};
-\node[] at (2.12,0.15) {\color{brown} \tiny 2};
-\node[] at (3.12,0.15) {\color{brown} \tiny 3};
-\node[] at (4.12,0.15) {\color{brown} \tiny 4};
-\node[] at (5.12,0.15) {\color{brown} \tiny 5};
-\node[] at (6.12,0.15) {\color{brown} \tiny 6};
-\node[] at (7.12,0.15) {\color{brown} \tiny 7};
-
-\node[] at (8.13,0.15) {\color{brown} \tiny 8};
-\node[] at (8.13,1.15) {\color{brown} \tiny 9};
-\node[] at (8.13,2.15) {\color{brown} \tiny 10};
-\node[] at (8.13,3.15) {\color{brown} \tiny 11};
-\node[] at (8.13,4.15) {\color{brown} \tiny 12};
-\node[] at (8.13,5.15) {\color{brown} \tiny 13};
-\node[] at (8.13,6.15) {\color{brown} \tiny 14};
-\node[] at (8.13,7.15) {\color{brown} \tiny 15};
-\node[] at (8.13,8.15) {\color{brown} \tiny 16};
-
-\node[] at (0.13,8.15) {\color{brown} \tiny 24};
-\node[] at (1.13,8.15) {\color{brown} \tiny 23};
-\node[] at (2.13,8.15) {\color{brown} \tiny 22};
-\node[] at (3.13,8.15) {\color{brown} \tiny 21};
-\node[] at (4.13,8.15) {\color{brown} \tiny 20};
-\node[] at (5.13,8.15) {\color{brown} \tiny 19};
-\node[] at (6.13,8.15) {\color{brown} \tiny 18};
-\node[] at (7.13,8.15) {\color{brown} \tiny 17};
-
-\node[] at (0.13,7.15) {\color{brown} \tiny 25};
-\node[] at (0.13,6.15) {\color{brown} \tiny 26};
-\node[] at (0.13,5.15) {\color{brown} \tiny 27};
-\node[] at (0.13,4.15) {\color{brown} \tiny 28};
-\node[] at (0.13,3.15) {\color{brown} \tiny 29};
-\node[] at (0.13,2.15) {\color{brown} \tiny 30};
-\node[] at (0.13,1.15) {\color{brown} \tiny 31};
-
-\end{tikzpicture}
+\input{python_codes/fieldstone_173/tikz_mesh}
 \end{center}
 
 
 
-
-
 The number of nodes on the $\Gamma_g$ boundary is the total
-number of nodes on the boundary, i.e. \lstinline{NB=(nelx+nely)*2=32} in this case 
+number of nodes on the boundary, i.e. \lstinline{nn_B=(nelx+nely)*2=32} in this case 
 since $\Gamma_h=0$.
 
 For the purpose of the implementation we will need two boolean arrays
@@ -890,7 +667,7 @@ boundary nodes their {\color{teal} global domain number} (between 0 and 80)
 with their {\color{teal} boundary number} (between 0 and 31).
 
 The array \lstinline{B_to_G} ('boundary to global') 
-of size \lstinline{NB} is filled with
+of size \lstinline{nn_B} is filled with
 \begin{lstlisting}
 [ 0  1  2  3  4  5  6  7  8 17 26 35 44 53 62 71 80 79 78 77 76 75 74 73
  72 63 54 45 36 27 18  9]
@@ -903,10 +680,10 @@ to the  {\color{brown} boundary number} if the node lies on the boundary
 
 The code is as follows:
 \begin{lstlisting}
-NB=2*(nelx+nely)
+nn_B=2*(nelx+nely)
 
-B_to_G=np.zeros((NB),dtype=np.int32) ; B_to_G[:]=-1
-G_to_B=np.zeros((NV),dtype=np.int32) ; G_to_B[:]=-1
+B_to_G=np.zeros((nn_B),dtype=np.int32) ; B_to_G[:]=-1
+G_to_B=np.zeros((nn_T),dtype=np.int32) ; G_to_B[:]=-1
 
 counter=0
 for i in range(0,nnx): 
@@ -1175,7 +952,7 @@ followed by
 
 Note that the 'spy' function allows us to look at the CBF matrix nonzero structure:
 \begin{center}
-\includegraphics[width=6cm]{python_codes/fieldstone_173/results/exp1/matrix.pdf}
+\includegraphics[width=6cm]{python_codes/fieldstone_173/images/matrix.pdf}
 \end{center}
 
 
@@ -1189,6 +966,7 @@ temperature gradients;
 computed normals above. 
 \end{itemize}
 
+\newpage
 %==============================================================================
 \section*{Computing the boundary heat flux ('partial' CBF method)}
 
@@ -1416,8 +1194,65 @@ q_i(x,y,t)=\rho C_p v_i T -k \frac{\partial T}{\partial x_i}
 }
 \end{displayquote}
 
+\newpage
+%===================================================
+\section*{A different approach to CBF ('CBF2')}
 
+The idea is of course very similar to the one above. 
+The algorithm is as follows:
+\begin{itemize}
+\item for each element compute the elemental matrix and rhs {\it without
+imposing Dirichlet boundary conditions}
+\begin{lstlisting}
+for iel in range(0,nel):
+        A_el=np.zeros((m,m),dtype=np.float64)
+        b_el=np.zeros(m,dtype=np.float64)
+        R_el=np.zeros(m,dtype=np.float64)
+        for iq in range(0,nq_per_dim):
+            for jq in range(0,nq_per_dim):
+                rq=qcoords[iq]
+                sq=qcoords[jq]
+                weightq=qweights[iq]*qweights[jq]
+                [...]
+                B_mat[0,:]=dNdx_T[:]
+                B_mat[1,:]=dNdy_T[:]
+                A_el+=B_mat.T.dot(B_mat)*hcond*JxWq
+                b_el+=N_T*rhs_f(xq,yq,experiment)*JxWq
+\end{lstlisting}
 
+\item compute the elemental residual vector and assemble it in the 
+global residual vector
+\begin{lstlisting}
+R_el=A_el.dot(T[icon[:,iel]])-b_el
+for k1 in range(0,m):
+    Residual[icon[k1,iel]]+=R_el[k1]
+\end{lstlisting}
+
+\item assign to each node an area. We can come back to the 8x8 mesh:
+\begin{center}
+\input{python_codes/fieldstone_173/tikz_mesh}
+\end{center}
+Node {\color{teal}5} will receive half of $h_{x,4-5}$ and half of $h_{x,5-6}$.
+Node {\color{teal}44} will receive half of $h_{y,35-44}$ and half of $h_{y,44-53}$.
+Node {\color{teal} 80} will receive half of $h_{x,79-80}$ and half of $h_{y,71-80}$.
+
+\item for the nodes on Dirichlet bc, divide residual by area
+\begin{lstlisting}
+for k in range(0,nn_T):
+    if boundary_node[k]:
+       qn_newCBF[k]=-Residual[k]/area[k]
+\end{lstlisting}
+
+\end{itemize}
+
+This has the advantage of being trivial to implement: rebuilding the 
+elemental matrix and rhs involves a partial copy paste of previously
+existing code, and the calculation of areas is not too difficult.
+This is much more straightforward than the previously implemented CBF method(s).
+
+Very importantly this method computes $q_n=\vec{q}\cdot \vec{n}$ which 
+bypasses us having to decide on the appropriate normal vector at 
+the corners.
 
 
 
@@ -1433,14 +1268,14 @@ q_i(x,y,t)=\rho C_p v_i T -k \frac{\partial T}{\partial x_i}
 \end{center}
 
 \begin{center}
-\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_8.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_bottom_8.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_16.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_bottom_16.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_32.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_bottom_32.pdf}\\
-\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_64.pdf}
-\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_bottom_64.pdf}\\
+\includegraphics[width=7.3cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_8.pdf}
+\includegraphics[width=7.3cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_bottom_8.pdf}\\
+\includegraphics[width=7.3cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_16.pdf}
+\includegraphics[width=7.3cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_bottom_16.pdf}\\
+\includegraphics[width=7.3cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_32.pdf}
+\includegraphics[width=7.3cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_bottom_32.pdf}\\
+\includegraphics[width=7.3cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_64.pdf}
+\includegraphics[width=7.3cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_bottom_64.pdf}\\
 {\captionfont Boundary heat flux. Left column: all four sides of domain, Right: error on bottom face.}
 \end{center}
 
@@ -1463,17 +1298,114 @@ to the point that it is somewhat dificult to distinguish between dots and triang
 
 
 \newpage
-%===================================================
-\section*{Results of experiment \# 2}
+
+\subsubsection*{Heat flux measurements at the cardinal points:}
 
 \begin{center}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp2/T}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp2/qx}
-\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp2/qy}\\
-{\captionfont Temperature and heat flux components in the domain on $32 \times 32$ mesh.}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/North.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/South.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/West.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/East.pdf}
+\end{center}
+
+\subsubsection*{Heat flux measurements at the corners:}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/SWcorner.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/SEcorner.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/NWcorner.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/NEcorner.pdf}
+\end{center}
+
+It looks like CBF2 does not converge to the expected value at the corners... 
+BUT 
+a) it is the best out of the other CBF approaches; 
+b) it is the only algorithm that does not showcase large under- and overshoots:
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_CTN.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_CBF.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_CBFL.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp1/heat_flux_boundary_CBF2.pdf}
 \end{center}
 
 
+
+
+
+
+\newpage
+\subsubsection*{Total heat flux measurements:}
+
+\begin{eqnarray}
+Q  
+&=& \int_\Gamma \vec{q}\cdot \vec{n} \; d\Gamma \nn\\
+&=& \int_{\Gamma_1} \vec{q}\cdot \vec{n} \; d\Gamma 
+  + \int_{\Gamma_2} \vec{q}\cdot \vec{n} \; d\Gamma 
+  + \int_{\Gamma_3} \vec{q}\cdot \vec{n} \; d\Gamma 
+  + \int_{\Gamma_4} \vec{q}\cdot \vec{n} \; d\Gamma \nn\\
+&=& -\int_{\Gamma_1} \vec{q}\cdot \vec{e}_x \; d\Gamma 
+  + \int_{\Gamma_2} \vec{q}\cdot \vec{e}_x \; d\Gamma 
+  - \int_{\Gamma_3} \vec{q}\cdot \vec{e}_y \; d\Gamma 
+  + \int_{\Gamma_4} \vec{q}\cdot \vec{e}_y \; d\Gamma \nn\\
+&=& -\int_{\Gamma_1} q_x \; d\Gamma 
+  + \int_{\Gamma_2} q_x \; d\Gamma 
+  - \int_{\Gamma_3} q_y \; d\Gamma 
+  + \int_{\Gamma_4} q_y \; d\Gamma \nn\\  
+&=& -\int_{y=0}^1 q_x(0,y) \; dy
+  + \int_{y=0}^1 q_x(1,y) \; dy
+  - \int_{x=0}^1 q_y(x,0) \; dx
+  + \int_{x=0}^1 q_y(x,1) \; dx \nn\\
+&=& \int_{y=0}^1 4(y) \; dy
+  - \int_{y=0}^1 4(2+y) \; dy
+  + \int_{x=0}^1 2(2x) \; dx
+  - \int_{x=0}^1 2(2x+1) \; dx \nn\\  
+&=& 4\int_{y=0}^1 y \; dy
+  - 4\int_{y=0}^1 2+y \; dy
+  + 4\int_{x=0}^1 x \; dx
+  - 2\int_{x=0}^1 2x+1 \; dx \nn\\    
+&=& 4 [\frac12 y^2]_0^1
+-4 [2y+\frac12 y^2]_0^1
++4 [\frac12 x^2]_0^1
+-2 [x^2+x]_0^1 \nn\\
+&=& 4 \frac12 - 10 + 4 \frac12 - 4 \nn\\
+&=& 2 -10 +2 -4 \nn\\
+&=& -10
+\end{eqnarray}
+which makes sense: the amount of heat going through the boundary is balanced out 
+by the heat production inside the domain.
+These measurements are carried out as follows in the code (each node has an 
+associated are and a $q_n$ value so the integral is simply the dot product
+of these arrays):
+
+\begin{lstlisting}
+print('qn_sum',nelx,np.dot(qn_anal[boundary_node],area[boundary_node]),\
+                    np.dot(qn[boundary_node],area[boundary_node]),\
+                    np.dot(qn_CBF,area[boundary_node]),\
+                    np.dot(qn_CBF_lumped,area[boundary_node]),\
+                    np.dot(qn_newCBF[boundary_node],area[boundary_node]))
+\end{lstlisting}
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_173/results/exp1/qnsum.pdf}
+\end{center}
+
+The fact that CBF2 is the best also has to do with the fact that the area assigned to 
+each node in its calculation is here also used to compute the residual integral.
+
+
+
+
+\newpage
+%==============================================================================
+\section*{Results of experiment \# 2}
+
+\begin{center}
+\includegraphics[width=5.cm]{python_codes/fieldstone_173/results/exp2/T}
+\includegraphics[width=5.cm]{python_codes/fieldstone_173/results/exp2/qx}
+\includegraphics[width=5.cm]{python_codes/fieldstone_173/results/exp2/qy}\\
+{\captionfont Temperature and heat flux components in the domain on $32 \times 32$ mesh.}
+\end{center}
 
 \begin{center}
 \includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp2/heat_flux_boundary_8.pdf}
@@ -1494,8 +1426,45 @@ All in all, the 'partial method' seems to work best.
 
 
 
+
 \newpage
-%===================================================
+
+\subsubsection*{Heat flux measurements at the cardinal points:}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp2/North.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp2/South.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp2/West.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp2/East.pdf}
+\end{center}
+
+\subsubsection*{Heat flux measurements at the corners:}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp2/SWcorner.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp2/SEcorner.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp2/NWcorner.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp2/NEcorner.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp2/heat_flux_boundary_CTN.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp2/heat_flux_boundary_CBF.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp2/heat_flux_boundary_CBFL.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp2/heat_flux_boundary_CBF2.pdf}
+\end{center}
+
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_173/results/exp2/qnsum.pdf}
+\end{center}
+
+
+
+
+
+\newpage
+%==============================================================================
 \section*{Results of experiment \# 3}
 
 Temperature and heat flux fields are shown hereunder. 
@@ -1522,6 +1491,49 @@ Temperature and heat flux fields are shown hereunder.
 \end{center}
 
 
+
+
+
+
+
+
+\newpage
+
+\subsubsection*{Heat flux measurements at the cardinal points:}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp3/North.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp3/South.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp3/West.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp3/East.pdf}
+\end{center}
+
+\subsubsection*{Heat flux measurements at the corners:}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp3/SWcorner.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp3/SEcorner.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp3/NWcorner.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp3/NEcorner.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary_CTN.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary_CBF.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary_CBFL.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp3/heat_flux_boundary_CBF2.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_173/results/exp3/qnsum.pdf}
+\end{center}
+
+
+
+
+
+
+
 \newpage
 %===================================================
 \section*{Results of experiment \# 4}
@@ -1546,6 +1558,56 @@ Temperature and heat flux fields are shown hereunder.
 \end{center}
 
 \newpage
+
+\subsubsection*{Heat flux measurements at the cardinal points:}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp4/North.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp4/South.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp4/West.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp4/East.pdf}
+\end{center}
+
+\subsubsection*{Heat flux measurements at the corners:}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp4/SWcorner.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp4/SEcorner.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp4/NWcorner.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp4/NEcorner.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary_CTN.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary_CBF.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary_CBFL.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp4/heat_flux_boundary_CBF2.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_173/results/exp4/qnsum.pdf}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
 %===================================================
 \section*{Results of experiment \# 5}
 
@@ -1568,6 +1630,36 @@ Temperature and heat flux fields are shown hereunder.
 {\captionfont Boundary heat flux. Left column: all four sides of domain, Right: error on bottom face.}
 \end{center}
 
+\newpage
+
+\subsubsection*{Heat flux measurements at the cardinal points:}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp5/North.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp5/South.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp5/West.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp5/East.pdf}
+\end{center}
+
+\subsubsection*{Heat flux measurements at the corners:}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp5/SWcorner.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp5/SEcorner.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp5/NWcorner.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp5/NEcorner.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary_CTN.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary_CBF.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary_CBFL.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp5/heat_flux_boundary_CBF2.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_173/results/exp5/qnsum.pdf}
+\end{center}
 
 
 
