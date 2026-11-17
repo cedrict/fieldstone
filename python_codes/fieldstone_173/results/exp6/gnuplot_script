@@ -1,0 +1,253 @@
+#
+set term pdf enhanced font "Times,12pt"
+set grid
+set pointsize .3
+set key outside
+
+set xlabel 's'
+set ylabel 'q_n'
+
+
+set title '8x8'
+set output 'heat_flux_boundary_8.pdf'
+plot[][-20:10]\
+'heat_flux_boundary_cornertonode_exp6_8.ascii' u 4:3 w lp t 'corner averaging',\
+'heat_flux_boundary_CBF_exp6_8.ascii'          u 5:3 pt 5 w lp t 'CBF',\
+'heat_flux_boundary_CBF_exp6_8.ascii'          u 5:4 w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp6_8.ascii'   u 4:3 w lp t 'CBF partial',\
+'heat_flux_boundary_CBF2_exp6_8.ascii'         u 4:3 w lp t 'CBF2',\
+'heat_flux_boundary_analytical_exp6_8.ascii'   u 6:5 w lp lt -1  dt 2  t 'analytical'
+
+set title '16x16'
+set output 'heat_flux_boundary_16.pdf'
+plot[][-20:10]\
+'heat_flux_boundary_cornertonode_exp6_16.ascii' u 4:3 w lp t 'corner averaging',\
+'heat_flux_boundary_CBF_exp6_16.ascii'          u 5:3 pt 5 w lp t 'CBF',\
+'heat_flux_boundary_CBF_exp6_16.ascii'          u 5:4 w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp6_16.ascii'   u 4:3 w lp t 'CBF partial',\
+'heat_flux_boundary_CBF2_exp6_16.ascii'         u 4:3 w lp t 'CBF2',\
+'heat_flux_boundary_analytical_exp6_16.ascii'   u 6:5 w lp lt -1  dt 2  t 'analytical'
+
+set title '32x32'
+set output 'heat_flux_boundary_32.pdf'
+plot[][-20:10]\
+'heat_flux_boundary_cornertonode_exp6_32.ascii' u 4:3 w lp t 'corner averaging',\
+'heat_flux_boundary_CBF_exp6_32.ascii'          u 5:3 pt 5 w lp t 'CBF',\
+'heat_flux_boundary_CBF_exp6_32.ascii'          u 5:4 w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp6_32.ascii'   u 4:3 w lp t 'CBF partial',\
+'heat_flux_boundary_CBF2_exp6_32.ascii'         u 4:3 w lp t 'CBF2',\
+'heat_flux_boundary_analytical_exp6_32.ascii'   u 6:5 w lp lt -1  dt 2  t 'analytical'
+
+set title '64x64'
+set output 'heat_flux_boundary_64.pdf'
+plot[][-20:10]\
+'heat_flux_boundary_cornertonode_exp6_64.ascii' u 4:3 w lp t 'corner averaging',\
+'heat_flux_boundary_CBF_exp6_64.ascii'          u 5:3 pt 5 w lp t 'CBF',\
+'heat_flux_boundary_CBF_exp6_64.ascii'          u 5:4 w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp6_64.ascii'   u 4:3 w lp t 'CBF partial',\
+'heat_flux_boundary_CBF2_exp6_64.ascii'         u 4:3 w lp t 'CBF2',\
+'heat_flux_boundary_analytical_exp6_64.ascii'   u 6:5 w lp lt -1  dt 2  t 'analytical'
+
+#####################################################################
+set key bottom inside
+
+set title 'CBF'
+set output 'heat_flux_boundary_CBF.pdf'
+plot[][-12:3]\
+'heat_flux_boundary_CBF_exp6_8.ascii'    u 5:3 w l t '8x8',\
+'heat_flux_boundary_CBF_exp6_16.ascii'   u 5:3 w l t '16x16',\
+'heat_flux_boundary_CBF_exp6_32.ascii'   u 5:3 w l t '32x32',\
+'heat_flux_boundary_CBF_exp6_64.ascii'   u 5:3 w l t '64x64',\
+'heat_flux_boundary_CBF_exp6_128.ascii'  u 5:3 w l t '128x128',\
+'heat_flux_boundary_CBF_exp6_256.ascii'  u 5:3 w l t '256x256'
+
+set title 'CBF lumped'
+set output 'heat_flux_boundary_CBFL.pdf'
+plot[][-12:3]\
+'heat_flux_boundary_CBF_exp6_8.ascii'    u 5:4 w l t '8x8',\
+'heat_flux_boundary_CBF_exp6_16.ascii'   u 5:4 w l t '16x16',\
+'heat_flux_boundary_CBF_exp6_32.ascii'   u 5:4 w l t '32x32',\
+'heat_flux_boundary_CBF_exp6_64.ascii'   u 5:4 w l t '64x64',\
+'heat_flux_boundary_CBF_exp6_128.ascii'  u 5:4 w l t '128x128',\
+'heat_flux_boundary_CBF_exp6_256.ascii'  u 5:4 w l t '256x256'
+
+set title 'CBF2'
+set output 'heat_flux_boundary_CBF2.pdf'
+plot[][-12:3]\
+'heat_flux_boundary_CBF2_exp6_8.ascii'    u 4:3 w l t '8x8',\
+'heat_flux_boundary_CBF2_exp6_16.ascii'   u 4:3 w l t '16x16',\
+'heat_flux_boundary_CBF2_exp6_32.ascii'   u 4:3 w l t '32x32',\
+'heat_flux_boundary_CBF2_exp6_64.ascii'   u 4:3 w l t '64x64',\
+'heat_flux_boundary_CBF2_exp6_128.ascii'  u 4:3 w l t '128x128',\
+'heat_flux_boundary_CBF2_exp6_256.ascii'  u 4:3 w l t '256x256'
+
+set title 'Corner-to-node'
+set output 'heat_flux_boundary_CTN.pdf'
+plot[][-12:3]\
+'heat_flux_boundary_cornertonode_exp6_8.ascii'   u 4:3 w l t '8x8',\
+'heat_flux_boundary_cornertonode_exp6_16.ascii'  u 4:3 w l t '16x16',\
+'heat_flux_boundary_cornertonode_exp6_32.ascii'  u 4:3 w l t '32x32',\
+'heat_flux_boundary_cornertonode_exp6_64.ascii'  u 4:3 w l t '64x64',\
+'heat_flux_boundary_cornertonode_exp6_128.ascii' u 4:3 w l t '128x128',\
+'heat_flux_boundary_cornertonode_exp6_256.ascii' u 4:3 w l t '256x256',\
+
+
+
+
+#####################################################################
+set key inside
+set key bottom left
+
+set ylabel 'q_n error on AB'
+set xlabel 'x'
+
+set title '8x8'
+set output 'heat_flux_boundary_bottom_8.pdf'
+plot[][]\
+'heat_flux_boundary_AB_cornertonode_exp6_8.ascii' u 1:($3-($1-1)) w lp t 'corner averaging',\
+'heat_flux_boundary_AB_CBF_exp6_8.ascii'          u 1:($3-($1-1)) pt 5 w lp t 'CBF',\
+'heat_flux_boundary_AB_CBF_exp6_8.ascii'          u 1:($4-($1-1)) w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp6_8.ascii'      u 1:($3-($1-1)) w lp t 'CBF partial',\
+'heat_flux_boundary_AB_CBF2_exp6_8.ascii'         u 1:($3-($1-1)) w lp t 'CBF2'
+
+set title '16x16'
+set output 'heat_flux_boundary_bottom_16.pdf'
+plot[][]\
+'heat_flux_boundary_AB_cornertonode_exp6_16.ascii' u 1:($3-($1-1)) w lp t 'corner averaging',\
+'heat_flux_boundary_AB_CBF_exp6_16.ascii'          u 1:($3-($1-1)) pt 5 w lp t 'CBF',\
+'heat_flux_boundary_AB_CBF_exp6_16.ascii'          u 1:($4-($1-1)) w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp6_16.ascii'      u 1:($3-($1-1)) w lp t 'CBF partial',\
+'heat_flux_boundary_AB_CBF2_exp6_16.ascii'         u 1:($3-($1-1)) w lp t 'CBF2'
+
+set title '32x32'
+set output 'heat_flux_boundary_bottom_32.pdf'
+plot[][]\
+'heat_flux_boundary_AB_cornertonode_exp6_32.ascii' u 1:($3-($1-1)) w lp t 'corner averaging',\
+'heat_flux_boundary_AB_CBF_exp6_32.ascii'          u 1:($3-($1-1)) pt 5 w lp t 'CBF',\
+'heat_flux_boundary_AB_CBF_exp6_32.ascii'          u 1:($4-($1-1)) w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp6_32.ascii'      u 1:($3-($1-1)) w lp t 'CBF partial',\
+'heat_flux_boundary_AB_CBF2_exp6_32.ascii'         u 1:($3-($1-1)) w lp t 'CBF2'
+
+set title '64x64'
+set output 'heat_flux_boundary_bottom_64.pdf'
+plot[][]\
+'heat_flux_boundary_AB_cornertonode_exp6_64.ascii' u 1:($3-($1-1)) w lp t 'corner averaging',\
+'heat_flux_boundary_AB_CBF_exp6_64.ascii'          u 1:($3-($1-1)) pt 5 w lp t 'CBF',\
+'heat_flux_boundary_AB_CBF_exp6_64.ascii'          u 1:($4-($1-1)) w lp t 'CBF lumped',\
+'heat_flux_boundary_AB_partial_exp6_64.ascii'      u 1:($3-($1-1)) w lp t 'CBF partial',\
+'heat_flux_boundary_AB_CBF2_exp6_64.ascii'         u 1:($3-($1-1)) w lp t 'CBF2'
+
+
+
+
+
+#####################################################################
+set key outside right top
+
+set title 'heat flux at South-West corner'
+set xlabel 'nelx'
+set ylabel 'q_n'
+set output 'SWcorner.pdf'
+plot[][:]\
+'SW_exp6.ascii' u 2:4 w lp lt 1 t'corner averaging',\
+'SW_exp6.ascii' u 2:5 w lp lt 2 t'CBF',\
+'SW_exp6.ascii' u 2:6 w lp lt 3 t'CBF lumped',\
+'SW_exp6.ascii' u 2:7 w lp lt 5 t'CBF2',\
+'SW_exp6.ascii' u 2:3 w lp lt -1 t'analytical',\
+
+
+set title 'heat flux at South-East corner'
+set xlabel 'nelx'
+set ylabel 'q_n'
+set output 'SEcorner.pdf'
+plot[][]\
+'SE_exp6.ascii' u 2:4 w lp lt 1 t'corner averaging',\
+'SE_exp6.ascii' u 2:5 w lp lt 2 t'CBF',\
+'SE_exp6.ascii' u 2:6 w lp lt 3 t'CBF lumped',\
+'SE_exp6.ascii' u 2:7 w lp lt 5 t'CBF2',\
+'SE_exp6.ascii' u 2:3 w lp lt -1 t'analytical',\
+
+set title 'heat flux at North-West corner'
+set xlabel 'nelx'
+set ylabel 'q_n'
+set output 'NWcorner.pdf'
+plot[][]\
+'NW_exp6.ascii' u 2:4 w lp lt 1 t'corner averaging',\
+'NW_exp6.ascii' u 2:5 w lp lt 2 t'CBF',\
+'NW_exp6.ascii' u 2:6 w lp lt 3 t'CBF lumped',\
+'NW_exp6.ascii' u 2:7 w lp lt 5 t'CBF2',\
+'NW_exp6.ascii' u 2:3 w lp lt -1 t'analytical',\
+
+set title 'heat flux at North-East corner'
+set xlabel 'nelx'
+set ylabel 'q_n'
+set output 'NEcorner.pdf'
+plot[][]\
+'NE_exp6.ascii' u 2:4 w lp lt 1 t'corner averaging',\
+'NE_exp6.ascii' u 2:5 w lp lt 2 t'CBF',\
+'NE_exp6.ascii' u 2:6 w lp lt 3 t'CBF lumped',\
+'NE_exp6.ascii' u 2:7 w lp lt 5 t'CBF2',\
+'NE_exp6.ascii' u 2:3 w lp lt -1 t'analytical',\
+
+
+
+set title 'heat flux at North pole'
+set xlabel 'nelx'
+set ylabel 'q_n'
+set output 'North.pdf'
+plot[][]\
+'North_exp6.ascii' u 2:4 w lp lt 1 t'corner averaging',\
+'North_exp6.ascii' u 2:5 w lp lt 2 t'CBF',\
+'North_exp6.ascii' u 2:6 w lp lt 3 t'CBF lumped',\
+'North_exp6.ascii' u 2:7 w lp lt 5 t'CBF2',\
+'North_exp6.ascii' u 2:3 w lp lt -1 t'analytical',\
+
+set title 'heat flux at South pole'
+set xlabel 'nelx'
+set ylabel 'q_n'
+set output 'South.pdf'
+plot[][]\
+'South_exp6.ascii' u 2:4 w lp lt 1 t'corner averaging',\
+'South_exp6.ascii' u 2:5 w lp lt 2 t'CBF',\
+'South_exp6.ascii' u 2:6 w lp lt 3 t'CBF lumped',\
+'South_exp6.ascii' u 2:7 w lp lt 5 t'CBF2',\
+'South_exp6.ascii' u 2:3 w lp lt -1 t'analytical',\
+
+set title 'heat flux at West pole'
+set xlabel 'nelx'
+set ylabel 'q_n'
+set output 'West.pdf'
+plot[][]\
+'West_exp6.ascii' u 2:4 w lp lt 1 t'corner averaging',\
+'West_exp6.ascii' u 2:5 w lp lt 2 t'CBF',\
+'West_exp6.ascii' u 2:6 w lp lt 3 t'CBF lumped',\
+'West_exp6.ascii' u 2:7 w lp lt 5 t'CBF2',\
+'West_exp6.ascii' u 2:3 w lp lt -1 t'analytical',\
+
+set title 'heat flux at East pole'
+set xlabel 'nelx'
+set ylabel 'q_n'
+set output 'East.pdf'
+plot[][]\
+'East_exp6.ascii' u 2:4 w lp lt 1 t'corner averaging',\
+'East_exp6.ascii' u 2:5 w lp lt 2 t'CBF',\
+'East_exp6.ascii' u 2:6 w lp lt 3 t'CBF lumped',\
+'East_exp6.ascii' u 2:7 w lp lt 5 t'CBF2',\
+'East_exp6.ascii' u 2:3 w lp lt -1 t'analytical',\
+
+###############################################################################
+
+set key bottom inside
+set title 'Total Heat flux'
+set xlabel 'nelx'
+set ylabel 'sum(q_n)'
+set output 'qnsum.pdf'
+plot[][]\
+'qnsum_exp6.ascii' u 2:4 w lp lt 1 t'corner averaging',\
+'qnsum_exp6.ascii' u 2:5 w lp lt 2 pt 6 t'CBF',\
+'qnsum_exp6.ascii' u 2:6 w lp lt 3 pt 2 t'CBF lumped',\
+'qnsum_exp6.ascii' u 2:7 w lp lt 5 t'CBF2',\
+'qnsum_exp6.ascii' u 2:3 w lp lt -1 t'analytical'
+
+
+
