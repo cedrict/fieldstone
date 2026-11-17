@@ -195,7 +195,7 @@ set title 'heat flux at North pole'
 set xlabel 'nelx'
 set ylabel 'q_n'
 set output 'North.pdf'
-plot[][-0.1:]\
+plot[][:]\
 'North_exp2.ascii' u 2:4 w lp lt 1 t'corner averaging',\
 'North_exp2.ascii' u 2:5 w lp lt 2 t'CBF',\
 'North_exp2.ascii' u 2:6 w lp lt 3 t'CBF lumped',\
@@ -206,7 +206,7 @@ set title 'heat flux at South pole'
 set xlabel 'nelx'
 set ylabel 'q_n'
 set output 'South.pdf'
-plot[][-0.1:]\
+plot[][:]\
 'South_exp2.ascii' u 2:4 w lp lt 1 t'corner averaging',\
 'South_exp2.ascii' u 2:5 w lp lt 2 t'CBF',\
 'South_exp2.ascii' u 2:6 w lp lt 3 t'CBF lumped',\
@@ -217,7 +217,7 @@ set title 'heat flux at West pole'
 set xlabel 'nelx'
 set ylabel 'q_n'
 set output 'West.pdf'
-plot[][-0.1:]\
+plot[][:]\
 'West_exp2.ascii' u 2:4 w lp lt 1 t'corner averaging',\
 'West_exp2.ascii' u 2:5 w lp lt 2 t'CBF',\
 'West_exp2.ascii' u 2:6 w lp lt 3 t'CBF lumped',\
@@ -228,7 +228,7 @@ set title 'heat flux at East pole'
 set xlabel 'nelx'
 set ylabel 'q_n'
 set output 'East.pdf'
-plot[][-0.1:]\
+plot[][:]\
 'East_exp2.ascii' u 2:4 w lp lt 1 t'corner averaging',\
 'East_exp2.ascii' u 2:5 w lp lt 2 t'CBF',\
 'East_exp2.ascii' u 2:6 w lp lt 3 t'CBF lumped',\
