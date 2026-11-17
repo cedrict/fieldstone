@@ -15,7 +15,7 @@ rm qnsum_*.ascii
 
 order=1
 
-for exp in {1..5} ; do 
+for exp in {1..6} ; do 
 
     echo experiment= $exp
 
@@ -40,7 +40,7 @@ for exp in {1..5} ; do
     done
 
 
-    for n in 8 10 12 14 16 18 20 22 24 26 28 30 32 40 48 56 64 72 80 88 96 112 128 144 160 176 192; do
+    for n in 8 10 12 14 16 18 20 22 24 26 28 30 32 40 48 56 64 72 80 88 96 112 128 144 160 176 192 256 ; do
         echo ----nelx=nely= $n
         python3 stone.py  $exp $order $n > opla
         grep NW opla >> NW_exp${exp}.ascii

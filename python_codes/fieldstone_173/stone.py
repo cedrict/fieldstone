@@ -13,6 +13,7 @@ def T_analytical(x,y,experiment):
     if experiment==3: return x**2-y**2
     if experiment==4: return 2*x*y 
     if experiment==5: return x**3-3*x*y**2
+    if experiment==6: return 3*x**2+5*y**2-7*x-y+x*y+1
 
 def qx_analytical(x,y,experiment):
     if experiment==1: return -4*(2*x+y)
@@ -20,6 +21,7 @@ def qx_analytical(x,y,experiment):
     if experiment==3: return -2*x
     if experiment==4: return -2*y
     if experiment==5: return -3*x**2+3*y**2
+    if experiment==6: return -6*x+7-y 
 
 def qy_analytical(x,y,experiment):
     if experiment==1: return -2*(2*x+y)
@@ -27,6 +29,7 @@ def qy_analytical(x,y,experiment):
     if experiment==3: return 2*y
     if experiment==4: return -2*x
     if experiment==5: return +6*x*y
+    if experiment==6: return -10*y+1-x
 
 def rhs_f(x,y,experiment):
     if experiment==1: return -10
@@ -34,6 +37,7 @@ def rhs_f(x,y,experiment):
     if experiment==3: return 0 
     if experiment==4: return 0
     if experiment==5: return 0
+    if experiment==6: return -16
 
 ###############################################################################
 
@@ -118,11 +122,12 @@ else:
    order=1
    nelx=8
 
-if order==1: m=4 # number of nodes making up an element
+# number of nodes making up an element
+if order==1: m=4 
 if order==2: m=9
 
 
-if experiment==1:  
+if experiment==1 or experiment==6:  
    nely=nelx
    Lx=1.  
    Ly=1.  
@@ -193,13 +198,15 @@ for j in range(0,nny):
         if i==nnx-1 and j==0: SE=counter
         if i==0 and j==nny-1: NW=counter
         if i==nnx-1 and j==nny-1: NE=counter
-        if abs(x[counter]-Lx/2)<eps and j==nny-1: North=counter
-        if abs(x[counter]-Lx/2)<eps and j==0: South=counter
-        if abs(y[counter]-Ly/2)<eps and i==nnx-1: East=counter
-        if abs(y[counter]-Ly/2)<eps and i==0: West=counter
+        if abs(x[counter]-(x0+Lx/2))<eps and j==nny-1: North=counter
+        if abs(x[counter]-(x0+Lx/2))<eps and j==0: South=counter
+        if abs(y[counter]-(y0+Ly/2))<eps and i==nnx-1: East=counter
+        if abs(y[counter]-(y0+Ly/2))<eps and i==0: West=counter
         counter += 1
     #end for
 #end for
+
+print(North,South,West,East)
 
 if debug: np.savetxt('grid.ascii',np.array([x,y]).T,header='# x,y')
 
@@ -209,7 +216,7 @@ print("mesh (%.3fs)" % (clock.time()-start))
 # stretch mesh
 ###############################################################################
 
-if experiment==1:
+if experiment==1 or experiment==6:
    for i in range(0,nn_T):
        x[i]=x[i]**0.66
        y[i]=y[i]**0.66

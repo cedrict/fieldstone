@@ -38,6 +38,9 @@ This \stone is based on
 In all analytical experiments the analytical temperature is 
 prescribed on the boundary of the domain.
 
+Also, although the code can deal with $Q_2$ elements only results
+obtained with $Q_1$ are presented hereafter.
+
 \newpage
 %==============================================================================
 \section*{Setup of experiment \# 1}
@@ -83,17 +86,31 @@ The mesh then looks like this:
 {\captionfont This is not identical to the article but sufficiently close.}
 \end{center}
 
-%We then solve the equation on this mesh with $Q_1$ elements:
-%\begin{center}
-%\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/T}
-%\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/T_analytical}
-%\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp1/T_error}\\
-%{\captionfont Temperature in the domain on stretched $8\times 8$ mesh. 
-%Left: computed; Middle: analytical; Right: error.}
-%\end{center}
-%We find that the calculated temperature is machine precision accurate.
+Note that only this experiment and Experiment \#6 rely on a stretched mesh.
 
-\newpage
+%==============================================================================
+\section*{Setup of experiment \# 6}
+
+This is based on Experiment \#1. 
+We have now 
+\[
+T(x,y)=3x^2+5y^2-7x-y+xy+1
+\]
+so that 
+\[
+\frac{\partial T}{\partial x}=6x-7+y
+\qquad
+\frac{\partial^2 T}{\partial x^2}=6
+\]
+\[
+\frac{\partial T}{\partial y}=10y-1+x
+\qquad
+\frac{\partial^2 T}{\partial y^2}=10
+\]
+with $\Delta T = 16$ so that we set $S=-16$.
+
+
+
 %==============================================================================
 \section*{Setup of experiment \# 2}
 
@@ -1254,6 +1271,10 @@ Very importantly this method computes $q_n=\vec{q}\cdot \vec{n}$ which
 bypasses us having to decide on the appropriate normal vector at 
 the corners.
 
+I need to formulate this better, but the idea is that the assembled nodal 
+residual vector is in fact equal to the integral of the (normal) heat flux accross the 
+boundary.
+
 
 
 \newpage
@@ -1279,6 +1300,8 @@ the corners.
 {\captionfont Boundary heat flux. Left column: all four sides of domain, Right: error on bottom face.}
 \end{center}
 
+Note that because of the mesh stretch there is no node at the 4 poles
+so I instead flag the nodes on the poles *before* the stretch.
 
 The conclusion is that with or without stretching the CBF algorithm (lumped or not) works. 
 However the presence of corners with an undefined normal yields anomalous results.
@@ -1659,6 +1682,53 @@ Temperature and heat flux fields are shown hereunder.
 
 \begin{center}
 \includegraphics[width=14cm]{python_codes/fieldstone_173/results/exp5/qnsum.pdf}
+\end{center}
+
+
+
+\newpage
+%===================================================
+\section*{Results of experiment \# 6}
+
+Note that this experiment relies on a stretched mesh.
+
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp6/T}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp6/qx}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_173/results/exp6/qy}\\
+{\captionfont Temperature and heat flux components in the domain on $32 \times 32$ mesh.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp6/heat_flux_boundary_8.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp6/heat_flux_boundary_bottom_8.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp6/heat_flux_boundary_16.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp6/heat_flux_boundary_bottom_16.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp6/heat_flux_boundary_32.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp6/heat_flux_boundary_bottom_32.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp6/heat_flux_boundary_64.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_173/results/exp6/heat_flux_boundary_bottom_64.pdf}\\
+{\captionfont Boundary heat flux. Left column: all four sides of domain, Right: error on bottom face.}
+\end{center}
+
+\subsubsection*{Heat flux measurements at the corners:}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp6/SWcorner.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp6/SEcorner.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp6/NWcorner.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp6/NEcorner.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp6/heat_flux_boundary_CTN.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp6/heat_flux_boundary_CBF.pdf}\\
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp6/heat_flux_boundary_CBFL.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_173/results/exp6/heat_flux_boundary_CBF2.pdf}
+\end{center}
+
+\begin{center}
+\includegraphics[width=14cm]{python_codes/fieldstone_173/results/exp6/qnsum.pdf}
 \end{center}
 
 
