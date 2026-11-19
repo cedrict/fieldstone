@@ -2,8 +2,8 @@
 
 rm *.ascii
 
-for nelx in 160 128 32 64 96 128 160 ; do
-    for nelz in 4 8 16 ; do
+for nelz in 4 8 16 ; do
+    for nelx in 32 64 96 128 160 ; do
         echo nelx=nely= $nelx nelz= $nelz
         python3 stone.py  $nelx  $nelz > opla
         mv line_x_displacement.ascii    line_x_displacement_${nelx}_${nelz}.ascii

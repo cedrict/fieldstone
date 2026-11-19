@@ -303,12 +303,9 @@ eigenvectors of matrix A are:
 
 
 
-
-
-
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{2d Analytical solution without hole (experiment=0)}
+\section*{A) 2d Analytical solution without hole (experiment=0)}
 
 Let us choose $\vec{u}=(u_x,u_y,u_z)=(x,0,0)$. 
 Then $\varepsilon_{xx} = 1$ and 
@@ -343,7 +340,7 @@ This is a {\it very} simple benchmark, i.e. in fact a sanity check.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{3d Analytical solution with hole (experiment=1) }
+\section*{B) 3d Analytical solution with hole (experiment=1) }
 
 
 In the Phd thesis of \textcite{HongXueHan2021} we read
@@ -371,26 +368,21 @@ Loading an infinite plate with a circular hole of radius $a$ with stress $\sigma
 the resulting stress field is (the angle is with respect to the direction of application of the stress):
 
 \begin{center}
-\includegraphics[width=10cm]{python_codes/fieldstone_185/images/kirsch}\\
-{\captionfont Taken from \url{https://en.wikipedia.org/wiki/Kirsch_equations}}
+\fbox{\includegraphics[width=8cm]{python_codes/fieldstone_185/images/kirsch}}
+\fbox{\includegraphics[width=8cm]{python_codes/fieldstone_185/images/fuchsclauss}}\\
+{\captionfont Left: Taken from Wikipedia\footnote{\url{https://en.wikipedia.org/wiki/Kirsch_equations}}. 
+Right: Taken from \textcite{fucl88}. Note that here a second stress $S_h$ is also present.}
 \end{center}
 
 \begin{center}
-\includegraphics[width=11cm]{python_codes/fieldstone_185/images/fuchsclauss}\\
-{\captionfont Taken from \textcite{fucl88}. Note that here a second stress $S_h$ is also present.}
-\end{center}
-
-\begin{center}
-\includegraphics[width=11cm]{python_codes/fieldstone_185/images/zomm85}\\
-{\captionfont Taken from \textcite{zomm85}. $\Delta P$ is the difference between the
+\fbox{\includegraphics[width=8cm]{python_codes/fieldstone_185/images/zomm85}}
+\fbox{\includegraphics[width=8cm]{python_codes/fieldstone_185/images/gaas24}}\\
+{\captionfont 
+Left: Taken from \textcite{zomm85}. $\Delta P$ is the difference between the
 fluid pressure in the borehole and that in the formation (positive indicates
 excess pressure in the borehole). Note the suspicious minus sign
-between $S_H$ and $S_h$ in the $\tau_{r\theta}$ equation.}
-\end{center}
-
-\begin{center}
-\includegraphics[width=11cm]{python_codes/fieldstone_185/images/gaas24}\\
-{\captionfont Taken from \textcite{gaas24}. Note the errorneous minus sign in the 
+between $S_H$ and $S_h$ in the $\tau_{r\theta}$ equation.
+Right: Taken from \textcite{gaas24}. Note the errorneous minus sign in the 
 third equation.}
 \end{center}
 
@@ -398,6 +390,7 @@ third equation.}
 We can express the stress components in their dimensionless form as  
 follows\footnote{For reasons that will become clear later the 
 applied stress is now called $\sigma_H$.}:
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
 \frac{\sigma_{rr}}{\sigma_H} &=& 
 \frac12 \left(1-\frac{1}{(r/a)^2} \right)
@@ -408,6 +401,7 @@ applied stress is now called $\sigma_H$.}:
 \frac{\sigma_{r\theta}}{\sigma_H} &=&
 -\frac12 \left( 1 -  \frac{3}{(r/a)^4} + \frac{2}{(r/a)^2} \right) \sin 2\theta
 \end{eqnarray}
+\end{mdframed}
 
 These equations are identical to those 
 at \url{https://en.wikiversity.org/wiki/Elasticity/Plate_with_hole_in_tension}.
@@ -430,9 +424,9 @@ $P_W$ is the pressure in the wellbore which is the hydrostatic pressure generate
 the mud in the borehole and $P_p$ is the pore pressure.}
 \end{center}
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_185/images/borehole2}\\
+\includegraphics[width=10cm]{python_codes/fieldstone_185/images/borehole2}\\
 {\captionfont Taken from \textcite{HongXueHan2021}. Note that in these $R$ is the coordinate and 
-$r$ is the radius of the hole ...}
+$r$ is the radius of the hole ... what a peculiar choice to say the least.}
 \end{center}
 
 Taking $P_W=P_p=0$ in the first set of equations yields equations identical to the second set. 
@@ -444,6 +438,7 @@ We also find in \textcite{jacz}:
 At this stage we have a perfect agreement between three different sources. 
 With our notations:
 
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
 \sigma_{rr} &=& 
 \frac{\sigma_H+\sigma_h}{2} \left(1-\frac{1}{(r/a)^2} \right)
@@ -461,6 +456,7 @@ With our notations:
 \sigma_{rz} &=& 0 \\
 \sigma_{\theta z} &=& 0 
 \end{eqnarray}
+\end{mdframed}
 where 
 $r$ is the distance from borehole center
 $\sigma_v$ is the vertical stress, 
@@ -995,7 +991,7 @@ u_\theta(r,\theta)
 which we could compare to those in \textcite{HongXueHan2021} here below, 
 but because of different notations and doubts with regards $u_z$ we won't be doing so.
 \begin{center}
-\includegraphics[width=11cm]{python_codes/fieldstone_185/images/han4}\\
+\fbox{\includegraphics[width=11cm]{python_codes/fieldstone_185/images/han4}}\\
 {\captionfont Taken from \textcite{HongXueHan2021}.
 Note that the $\mu$ terms above actually should read $u$, 
 and I do not understand why displacement components have two indices.
@@ -1008,7 +1004,7 @@ violates $\varepsilon_{zz}=\partial u_z/\partial z =0$ (plane strain assumption)
 
 Likewise we find in \textcite{jacz} the following displacements:
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_185/images/jaeger2}
+\fbox{\includegraphics[width=12cm]{python_codes/fieldstone_185/images/jaeger2}}
 \end{center}
 Let us rework these equations a bit. We note that 
 $\kappa-1=3-4\nu-1=2-4\nu=2(1-2\nu)$ 
@@ -1129,41 +1125,47 @@ def analytical_solution_displacement(r,theta,radius,sigma_H,sigma_h,sigma_v,E,nu
 %---------------------------------------------------------
 \subsection*{Final recap of the full analytical solution}
 
+\begin{mdframed}[backgroundcolor=blue!5]
 \begin{eqnarray}
 \sigma_{rr} &=& 
 \frac{\sigma_H+\sigma_h}{2} \left(1-\frac{1}{(r/a)^2} \right)
 +\frac{\sigma_H-\sigma_h}{2}  \left( 1 + \frac{3}{(r/a)^4} 
-- \frac{4}{(r/a)^2}   \right) \cos 2\theta  \\
+- \frac{4}{(r/a)^2}   \right) \cos 2\theta  \nn\\
 \sigma_{\theta\theta}&=& 
 \frac{\sigma_H+\sigma_h}{2} \left(1+\frac{1}{(r/a)^2} \right)
--\frac{\sigma_H-\sigma_h}{2} \left( 1 + \frac{3}{(r/a)^4}   \right) \cos 2\theta \\
+-\frac{\sigma_H-\sigma_h}{2} \left( 1 + \frac{3}{(r/a)^4}   \right) \cos 2\theta \nn\\
 \sigma_{zz} &=& 
 2\nu\frac{\sigma_H+\sigma_h}{2} 
  -\frac{\sigma_H-\sigma_h}{2} \frac{4 \nu}{(r/a)^2}   \cos 2\theta 
-\\
+\nn\\
 \sigma_{r\theta} &=&
 -\frac{\sigma_H-\sigma_h}{2}  \left( 1 -  \frac{3}{(r/a)^4} + \frac{2}{(r/a)^2} \right) \sin 2\theta 
-\\
-\sigma_{rz} &=& 0 \\
-\sigma_{\theta z} &=& 0 \\ 
-\varepsilon_{rr}           &=& \frac{1}{E}(\sigma_{rr}-\nu(\sigma_{\theta\theta}+\sigma_{zz}) )\\
-\varepsilon_{\theta\theta} &=& \frac{1}{E}(\sigma_{\theta\theta}-\nu(\sigma_{rr}+\sigma_{zz}) )\\
-\varepsilon_{r\theta}      &=& \frac{1}{E}(\sigma_{zz}-\nu(\sigma_{\theta\theta}+\sigma_{rr}) )\\
+\nn\\
+\sigma_{rz} &=& 0 \nn\\
+\sigma_{\theta z} &=& 0 
+\nn\\ 
+\nn\\
+\varepsilon_{rr}           &=& \frac{1}{E}(\sigma_{rr}-\nu(\sigma_{\theta\theta}+\sigma_{zz}) )\nn\\
+\varepsilon_{\theta\theta} &=& \frac{1}{E}(\sigma_{\theta\theta}-\nu(\sigma_{rr}+\sigma_{zz}) )\nn\\
+\varepsilon_{r\theta}      &=& \frac{1}{E}(\sigma_{zz}-\nu(\sigma_{\theta\theta}+\sigma_{rr}) )
+\nn\\
+\nn\\
 u_r
 &=& 
 \frac{(\sigma_H+\sigma_h)(1+\nu)r}{2 E} \left(  1 -2\nu +\frac{1}{(r/a)^2} \right)   
 + \frac{(\sigma_H-\sigma_h)(1+\nu)r}{2E}
 \left(  1 - \frac{1}{(r/a)^4} + \frac{4(1-\nu)}{(r/a)^2}  
 \right) \cos 2\theta 
-\\
+\nn\\
 u_\theta
 &=& 
 -\frac{(\sigma_H-\sigma_h)(1+\nu) r}{2E}
 \left[
 1 +2\left( 1 - 2\nu \right)\frac{1}{(r/a)^2}
 + \frac{1}{(r/a)^4}
-\right]  \sin 2\theta 
+\right]  \sin 2\theta \nn
 \end{eqnarray}
+\end{mdframed}
 
 \newpage
 %---------------------------------------------------------
@@ -1173,6 +1175,7 @@ u_\theta
 
 In \textcite{fucl88} we read:
 \begin{displayquote}
+{\color{MidnightBlue}
 If there is no stress at the wall of the hole $r=a$, the 
 boundary conditions are $\sigma_{rr}=\sigma_{r\theta}=0$ 
 and we get
@@ -1185,7 +1188,7 @@ In case of compression ($\sigma_H>\sigma_h>0$, here compressional stresses are t
 positive) a maximum stress concentration at the borehole wall under the angles $\pm 90$
 is noted. Calculating the course of the stresses as a function of $r/a$ and the 
 ratio $\sigma_H/\sigma_h$ we see that the stresses increase of decrease respectively 
-to the values at a great distance to the borehole in less than 3 borehole radii. 
+to the values at a great distance to the borehole in less than 3 borehole radii.} 
 \end{displayquote}
 
 
@@ -1195,6 +1198,7 @@ to the values at a great distance to the borehole in less than 3 borehole radii.
 Alliance\footnote{\url{https://subsurfacealliance.com/technical-series/f/the-art-of-getting-stress-orientation-from-borehole-image-logs}}
 the following:
 \begin{displayquote}
+{\color{MidnightBlue}
 As demonstrated by many authors \cite{zomm85,bell90}, 
 borehole breakouts occur when the stresses concentration
 around the borehole exceeds the compressive strength of the rock
@@ -1210,7 +1214,7 @@ the tensile strength of the rock, drilling induced tensile fractures
 that are sub-parallel or slightly inclined to the borehole axis in
 vertical wells and are generally not associated with significant
 borehole enlargement in the fracture direction (note that DITFs and
-breakouts can form at the same depth in orthogonal directions).
+breakouts can form at the same depth in orthogonal directions).}
 \end{displayquote}
 
 \begin{center}
@@ -1224,6 +1228,7 @@ orientation (red arrow) in a vertical wellbore. UCS stands for Uniaxial Compress
 
 \noindent In \textcite{bell90} we read: 
 \begin{displayquote}
+{\color{MidnightBlue}
 The generation of breakouts can be understood
 by considering an infinitely large plate with a
 small circular hole in it which is subjected to a
@@ -1257,7 +1262,7 @@ applied stress around points M and N.}
 \end{center}
 
 THERE IS SO MUCH MORE IN THAT PAPER!
-
+}
 \end{displayquote}
 
 
@@ -1473,5 +1478,74 @@ In turn we should expect zero $w$ min/max value but instead recover that these d
 in amplitude with resolution and that the solver tolerance plays a role at high resolution.
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{C) 3d Analytical solution with hole (experiment=2) }
 
+This is the very same experiment as experiment 1, with one major difference:
+boundary conditions on the sides are no more of the Dirichlet 
+type (i.e. displacement) but of the Neumann type (i.e. stress).
+
+Technically the (analytical) stress is not constant on the sides of the domain, but 
+'far away enough from the hole' the horizontal stress are very close
+to $\sigma_H$ and $\sigma_h$ so these will be prescribed on the lateral faces, 
+in this case $\sigma_H=2e3$ and $\sigma_h=1e3$ (compression).
+
+At the same time we still expect a zero velocity in the vertical ($z$) direction 
+so $w=0$ is prescribed on all 6 sides and on the hole walls.
+
+Concerning boundary conditions, horizontal stresses on the lateral walls 
+supplemented by $w=0$ is unfortunately not enough: there are two 
+translational null spaces, in the x and y directions. 
+We therefore prescribed $u=0$ at points $A(L_x/2,0,L_z/2) $ and $B(L_x/2,L_y,L_z/2)$ 
+and $v=0$ at points $C(0,L_y/2,L_z/2)$ and $D(L_x,L_y/2,L_z/2)$.
+
+\newpage
+\subsection*{On x line}
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp2/ux__x.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp2/uy__x.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp2/uz__x.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/e_xx__x.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/e_yy__x.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/e_zz__x.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/e_xy__x.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/sigma_xx__x.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/sigma_yy__x.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/sigma_zz__x.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/sigma_xy__x.pdf}
+\end{center}
+
+\newpage
+\subsection*{On y line}
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp2/ux__y.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp2/uy__y.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp2/uz__y.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/e_xx__y.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/e_yy__y.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/e_zz__y.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/e_xy__y.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/sigma_xx__y.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/sigma_yy__y.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/sigma_zz__y.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/sigma_xy__y.pdf}
+\end{center}
+
+
+\newpage
+\subsection*{On z line}
+\begin{center}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp2/ux__z.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp2/uy__z.pdf}
+\includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp2/uz__z.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/e_xx__z.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/e_yy__z.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/e_zz__z.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/e_xy__z.pdf} \\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/sigma_xx__z.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/sigma_yy__z.pdf}\\
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/sigma_zz__z.pdf}
+\includegraphics[width=7cm]{python_codes/fieldstone_185/RESULTS/exp2/sigma_xy__z.pdf}
+\end{center}
 

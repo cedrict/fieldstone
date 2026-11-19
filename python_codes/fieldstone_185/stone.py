@@ -39,20 +39,26 @@ print("*******************************")
 m_V=8     # number of nodes making up an element
 ndof_V=3  # number of degrees of freedom per node
 
-debug=False
+debug=True
 
 #######################################
 #experiment=0: full block
-#experiment=1: 3d solution
-#experiment=4: iowa setup
+#experiment=1: 3d borehole solution (disp bc)
+#experiment=2: 3d borehole solution (stress bc)
 #######################################
-# layout=1: one material
-# layout=2: 3 slanted layers
+#layout=1: one material
+#layout=2: 3 slanted layers
+#######################################
+#meshtype=1: full cuboid
+#meshtype=2: simple borehole
+#meshtype=3: elegant borehole
 #######################################
 
-experiment=1
+experiment=2
 
 match experiment:
+
+ #--------------------------------
  case 0 :
    meshtype=1 # full cuboid
    Lx=1
@@ -72,7 +78,8 @@ match experiment:
    radius=0
    from block0 import *
 
- case 1:
+ #--------------------------------
+ case 1 | 2:
    meshtype=3 # borehole setup
    Lx=1.
    Ly=1.
@@ -82,7 +89,7 @@ match experiment:
       nelx = int(sys.argv[1])
       nelz = int(sys.argv[2])
    else:
-      nelx = 10
+      nelx = 8
       nelz = 4
  
    nelr=int(nelx/2)
@@ -90,40 +97,30 @@ match experiment:
    radius=0.02 #*4
    volume_analytical=Lx*Ly*Lz-(np.pi*radius**2*Lz)
    layout=1
-   sigma_H1=1e3
-   sigma_h1=0
-   sigma_v1=0
-   sigma_H=0
-   sigma_h=0
-   sigma_v=0
+   if experiment==1:
+      #sigma_H is prescribed, 
+      #sigma_H1 is passed to anal solution.
+      sigma_H=0
+      sigma_h=0
+      sigma_v=0
+      sigma_H1=1e3
+      sigma_h1=0
+      sigma_v1=0
+   if experiment==2:
+      #there is a sign issue wrt the analytical solution
+      #so for now I prescribe sigma_H but anal solution
+      #requires the opposite of this. meh.
+      sigma_H=2e3
+      sigma_h=1e3
+      sigma_v=0
+      sigma_H1=-2e3
+      sigma_h1=-1e3
+      sigma_v1=0
+   
    nstep=1
    E1=2.5e6 
    G1=1e6
    from borehole_solution import *
-
- case 3:
-   meshtype=2
-   layout=1
-   sigma_H=9e3
-   sigma_h=0
-   sigma_v=0
-   nstep=1
-
- case 4:
-   meshtype=2
-   Lx=0.1
-   Ly=0.1
-   Lz=0.1
-   radius=0.01
-   volume_analytical=Lx*Ly*Lz-(np.pi*radius**2*Lz)
-   nelx=10
-   nely=nelx
-   nelz=10  #must be even number
-   layout=2
-   sigma_H=9e3
-   sigma_h=0
-   sigma_v=0
-   nstep=1
 
 #######################################
 #1: fast
@@ -140,6 +137,7 @@ solver=2
 
 #######################################
 
+print('     -> experiment=',experiment) 
 print('     -> meshtype=',meshtype) 
 print('     -> nelx=',nelx)
 print('     -> nely=',nely)
@@ -305,15 +303,15 @@ match meshtype:
    for iel in range(0,nel):
        for k in range(m_V):
            #x=0 side
-           if abs((x_V[icon_V[1,iel]]+x_V[icon_V[2,iel]])*0.5)<eps: face1[iel]=True
+           if abs((x_V[icon_V[1,iel]]+x_V[icon_V[2,iel]])*0.5-0 )<eps: face1[iel]=True
            #x=Lx side
            if abs((x_V[icon_V[1,iel]]+x_V[icon_V[2,iel]])*0.5-Lx)<eps: face2[iel]=True
            #y=0 side
-           if abs((y_V[icon_V[1,iel]]+y_V[icon_V[2,iel]])*0.5)<eps: face3[iel]=True
+           if abs((y_V[icon_V[1,iel]]+y_V[icon_V[2,iel]])*0.5-0 )<eps: face3[iel]=True
            #y=Ly side
            if abs((y_V[icon_V[1,iel]]+y_V[icon_V[2,iel]])*0.5-Ly)<eps: face4[iel]=True
            #z=0 side
-           if abs((z_V[icon_V[0,iel]]+z_V[icon_V[3,iel]])*0.5)<eps: face5[iel]=True
+           if abs((z_V[icon_V[0,iel]]+z_V[icon_V[3,iel]])*0.5-0 )<eps: face5[iel]=True
            #z=Lz side
            if abs((z_V[icon_V[4,iel]]+z_V[icon_V[7,iel]])*0.5-Lz)<eps: face6[iel]=True
 
@@ -427,7 +425,7 @@ match experiment:
        analytical_solution_strain(x_V[i],y_V[i],z_V[i])
        sigma_xx_th[i],sigma_yy_th[i],sigma_zz_th[i],sigma_xy_th[i],sigma_xz_th[i],sigma_yz_th[i]=\
        analytical_solution_stress(x_V[i],y_V[i],z_V[i],lambdaa[0],G[0])
- case 1:
+ case 1 | 2 :
    for i in range(0,nn_V):
        u_th[i],v_th[i],w_th[i]=\
        analytical_solution_displacement(rad_n[i],theta_n[i],radius,sigma_H1,sigma_h1,sigma_v1,E1,nu1)
@@ -452,12 +450,6 @@ print("compute analytical solution on nodes: %.3f s" % (clock.time()-start))
 
 ###############################################################################
 # define boundary conditions
-# there are 3 translational nullspaces so they need to be dealt with 
-# by means of Dirichlet boundary conditions at specific nodes:
-# point A (Lx/2,0,Lz/2) -> (u=0,_,w=0)
-# point B (Lx/2,Ly,Lz/2) -> (u=0,_,w=0)
-# point C (0,Ly/2,Lz/2) -> (_,v=0,w=0)
-# point D (Lx,Ly/2,Lz/2) -> (_,v=0,w=0)
 ###############################################################################
 start=clock.time()
 
@@ -465,29 +457,8 @@ bc_fix=np.zeros(Nfem,dtype=bool)  # boundary condition, yes/no
 bc_val=np.zeros(Nfem,dtype=np.float64)  # boundary condition, value
 
 match experiment:
- case 10:
-   # w=0 on all six faces
-   for i in range(0,nn_V):
-    # x=0 face 
-    if abs(x_V[i]-   0)/Lx<eps :
-       bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
-    # x=Lx face
-    if abs(x_V[i]-  Lx)/Lx<eps :
-       bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
-    # y=0 face 
-    if abs(y_V[i]-   0)/Ly<eps :
-       bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
-    # y=Ly face
-    if abs(y_V[i]-  Ly)/Ly<eps :
-       bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
-    # z=0 face 
-    if abs(z_V[i]-   0)/Lz<eps :
-       bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
-    # z=Ly face
-    if abs(z_V[i]-  Lz)/Lz<eps :
-       bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
 
- case 0 | 1 :
+ case 0 | 1 : # analytical displacement prescribed everywhere
 
     for i in range(0,nn_V):
         if abs(x_V[i])/Lx<eps or abs(x_V[i]-Lx)/Lx<eps or \
@@ -501,48 +472,45 @@ match experiment:
            bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = v_th[i]
            bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = w_th[i]
 
- case 3:
-   2
- case 4:
+ case 2:
 
-   for i in range(0,nn_V):
+    # point A (Lx/2,0,Lz/2) 
+    # point B (Lx/2,Ly,Lz/2)
+    # point C (0,Ly/2,Lz/2) 
+    # point D (Lx,Ly/2,Lz/2) 
+    for i in range(0,nn_V):
 
-    # point A
-    if abs(x_V[i]-Lx/2)/Lx<eps and \
-       abs(y_V[i]-   0)/Ly<eps and \
-       abs(z_V[i]-Lz/2)/Lz<eps: 
-       bc_fix[i*ndof_V+0] = True ; bc_val[i*ndof_V+0] = 0 # fix u
-       #bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
+       # w=0 on all six faces
+       if abs(x_V[i])/Lx<eps or abs(x_V[i]-Lx)/Lx<eps or \
+          abs(y_V[i])/Ly<eps or abs(y_V[i]-Ly)/Ly<eps or \
+          abs(z_V[i])/Lz<eps or abs(z_V[i]-Lz)/Lz<eps:
+          bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 
+       # w=0 on hole 
+       if wall_V[i]:
+          bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 
 
-    # point B
-    if abs(x_V[i]-Lx/2)/Lx<eps and \
-       abs(y_V[i]-  Ly)/Ly<eps and \
-       abs(z_V[i]-Lz/2)/Lz<eps: 
-       bc_fix[i*ndof_V+0] = True ; bc_val[i*ndof_V+0] = 0 # fix u
-       #bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
+       # point A
+       if abs(x_V[i]-Lx/2)/Lx<eps and \
+          abs(y_V[i]-   0)/Ly<eps and \
+          abs(z_V[i]-Lz/2)/Lz<eps: 
+          bc_fix[i*ndof_V+0] = True ; bc_val[i*ndof_V+0] = 0 # fix u
 
-    # point C
-    #if abs(x_V[i]-   0)/Lx<eps and \
-    #   abs(y_V[i]-Ly/2)/Ly<eps and \
-    #   abs(z_V[i]-Lz/2)/Lz<eps: 
-    #   bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0 # fix v
-    #   bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
-    # point D
-    #if abs(x_V[i]-  Lx)/Lx<eps and \
-    #   abs(y_V[i]-Ly/2)/Ly<eps and \
-    #   abs(z_V[i]-Lz/2)/Lz<eps: 
-    #   bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0 # fix v
-    #   bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
+       # point B
+       if abs(x_V[i]-Lx/2)/Lx<eps and \
+          abs(y_V[i]-  Ly)/Ly<eps and \
+          abs(z_V[i]-Lz/2)/Lz<eps: 
+          bc_fix[i*ndof_V+0] = True ; bc_val[i*ndof_V+0] = 0 # fix u
 
-    # x=0 face 
-    if abs(x_V[i]-   0)/Lx<eps :
-       bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0 # fix v
-       bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
-
-    # x=Lx face
-    if abs(x_V[i]-  Lx)/Lx<eps :
-       bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0 # fix v
-       bc_fix[i*ndof_V+2] = True ; bc_val[i*ndof_V+2] = 0 # fix w
+       # point C
+       if abs(x_V[i]-   0)/Lx<eps and \
+          abs(y_V[i]-Ly/2)/Ly<eps and \
+          abs(z_V[i]-Lz/2)/Lz<eps: 
+          bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0 # fix v
+       # point D
+       if abs(x_V[i]-  Lx)/Lx<eps and \
+          abs(y_V[i]-Ly/2)/Ly<eps and \
+          abs(z_V[i]-Lz/2)/Lz<eps: 
+          bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0 # fix v
 
 print("define boundary conditions: %.3f s" % (clock.time()-start))
 
@@ -706,6 +674,7 @@ for istep in range(0,nstep):
 
          case 2 | 3:
            if face1[iel]: # face is nodes 1-2-5-6
+                 #print(icon_V[1,iel],icon_V[2,iel],icon_V[5,iel],icon_V[6,iel])
                  surf=hz*abs(y_V[icon_V[1,iel]]-y_V[icon_V[2,iel]])
                  b_el[ndof_V*1+0]+=sigma_H*surf*0.25
                  b_el[ndof_V*2+0]+=sigma_H*surf*0.25
@@ -717,7 +686,19 @@ for istep in range(0,nstep):
                  b_el[ndof_V*2+0]-=sigma_H*surf*0.25
                  b_el[ndof_V*5+0]-=sigma_H*surf*0.25
                  b_el[ndof_V*6+0]-=sigma_H*surf*0.25
-           if sigma_h>0: exit('sigma_h not implemented yet')
+           if face3[iel]: # face is nodes 1-2-5-6 
+                 surf=hz*hx
+                 b_el[ndof_V*1+1]+=sigma_h*surf*0.25
+                 b_el[ndof_V*2+1]+=sigma_h*surf*0.25
+                 b_el[ndof_V*5+1]+=sigma_h*surf*0.25
+                 b_el[ndof_V*6+1]+=sigma_h*surf*0.25
+           if face4[iel]: # face is nodes 1-2-5-6
+                 surf=hz*hx
+                 b_el[ndof_V*1+1]-=sigma_h*surf*0.25
+                 b_el[ndof_V*2+1]-=sigma_h*surf*0.25
+                 b_el[ndof_V*5+1]-=sigma_h*surf*0.25
+                 b_el[ndof_V*6+1]-=sigma_h*surf*0.25
+
            if sigma_v>0: exit('sigma_v not implemented yet')
         time_bcN+=clock.time()-start1
 
