@@ -27,7 +27,7 @@
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
-Last revision: June 1st, 2026.
+Last revision: November 2026.
 
 \par\noindent\rule{\textwidth}{0.4pt}
 
@@ -265,21 +265,6 @@ export to vtu
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Stress concentration around the borehole}
-
-\url{https://en.wikipedia.org/wiki/Stress_concentration}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Breakouts occurrence criterion}
-
-yield criterion(s) - 
-
-check remark in Han thesis 'breakouts occurrence criterion' p 53
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Principle stresses and directions}
 
 The following example is found at \url{https://stackoverflow.com/questions/65535899/linear-algebra-in-python-calculating-eigenvectors-for-3x3-matrix}
@@ -402,6 +387,13 @@ fluid pressure in the borehole and that in the formation (positive indicates
 excess pressure in the borehole). Note the suspicious minus sign
 between $S_H$ and $S_h$ in the $\tau_{r\theta}$ equation.}
 \end{center}
+
+\begin{center}
+\includegraphics[width=11cm]{python_codes/fieldstone_185/images/gaas24}\\
+{\captionfont Taken from \textcite{gaas24}. Note the errorneous minus sign in the 
+third equation.}
+\end{center}
+
 
 We can express the stress components in their dimensionless form as  
 follows\footnote{For reasons that will become clear later the 
@@ -583,26 +575,25 @@ of the momentum conservation equation.
 
 
 
+%Let us assume temporarily $\sigma_h=\sigma_v=0$. In this case the stress components read:
 
-Let us assume temporarily $\sigma_h=\sigma_v=0$. In this case the stress components read:
-
-\begin{eqnarray}
-\sigma_{rr} &=& 
-\frac{\sigma_H}{2} \left(1-\frac{1}{(r/a)^2} \right)
-+\frac{\sigma_H}{2}  \left( 1 + \frac{3}{(r/a)^4} - \frac{4}{(r/a)^2}   \right) \cos 2\theta   \\
-\sigma_{\theta\theta}&=& 
-\frac{\sigma_H}{2} \left(1+\frac{1}{(r/a)^2} \right)
--\frac{\sigma_H}{2} \left( 1 + \frac{3}{(r/a)^4}   \right) \cos 2\theta  \\
-\sigma_{zz} &=&  - \frac{\sigma_H}{2}   \frac{4 \nu}{(r/a)^2}  
-\cos 2\theta \label{f185k234}
-\\
-\sigma_{r\theta} &=&
--\frac{\sigma_H}{2}  \left( 1 -  \frac{3}{(r/a)^4} + \frac{2}{(r/a)^2} \right) \sin 2\theta 
-\\
-\sigma_{rz} &=& 0 \\
-\sigma_{\theta z} &=& 0 
-\end{eqnarray}
-which is indeed identical to the expressions we have seen earlier.
+%\begin{eqnarray}
+%\sigma_{rr} &=& 
+%\frac{\sigma_H}{2} \left(1-\frac{1}{(r/a)^2} \right)
+%+\frac{\sigma_H}{2}  \left( 1 + \frac{3}{(r/a)^4} - \frac{4}{(r/a)^2}   \right) \cos 2\theta   \\
+%\sigma_{\theta\theta}&=& 
+%\frac{\sigma_H}{2} \left(1+\frac{1}{(r/a)^2} \right)
+%-\frac{\sigma_H}{2} \left( 1 + \frac{3}{(r/a)^4}   \right) \cos 2\theta  \\
+%\sigma_{zz} &=&  - \frac{\sigma_H}{2}   \frac{4 \nu}{(r/a)^2}  
+%\cos 2\theta \label{f185k234}
+%\\
+%\sigma_{r\theta} &=&
+%-\frac{\sigma_H}{2}  \left( 1 -  \frac{3}{(r/a)^4} + \frac{2}{(r/a)^2} \right) \sin 2\theta 
+%\\
+%\sigma_{rz} &=& 0 \\
+%\sigma_{\theta z} &=& 0 
+%\end{eqnarray}
+%which is indeed identical to the expressions we have seen earlier.
 
 On the following figures $\sigma_{rr}/\sigma_H$ and $\sigma_{\theta\theta}/\sigma_H$ are plotted 
 as a function of $r\ge a$ on the $x$-axis (i.e. $\theta=0$) 
@@ -1178,6 +1169,8 @@ u_\theta
 %---------------------------------------------------------
 \subsection*{What happens at the wall}
 
+
+
 In \textcite{fucl88} we read:
 \begin{displayquote}
 If there is no stress at the wall of the hole $r=a$, the 
@@ -1286,7 +1279,8 @@ for $\sigma_h=0$:
 \end{center}
 
 
-
+\vspace{1cm} 
+Also check \url{https://en.wikipedia.org/wiki/Stress_concentration}
 
 
 
@@ -1322,7 +1316,7 @@ Displacement, strain and stress components are measured on three lines:
 \end{itemize}
 
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_185/RESULTS/exp1/mesh_16x16x4.png}
+\includegraphics[width=14cm]{python_codes/fieldstone_185/RESULTS/exp1/mesh_16x16x4.png}
 \end{center}
 
 The code is ran for 5 horizontal resolutions $nelx=nely=32,64,96,128,160$ and
@@ -1449,11 +1443,11 @@ E \varepsilon_{rr}
 
 
 \newpage
-\subsection{Error and statistics}
+\subsection*{Error and statistics}
 
-Using the {\tt script\_errors} we run the code for nelx=nely=10-160 while
-keeping nelz=4. In the light of an early run we also decrease the 
-conjugate gradient solver tolerance from 1e-6 to 1e-8 and find that 
+Using the {\tt script\_errors} I run the code for nelx=nely=10-160 while
+keeping nelz=4. In light of an early run I also decrease the 
+conjugate gradient solver tolerance from 1e-6 to 1e-7 and then to 1e-8 and find that 
 the later value guarantees the expected accuracy at higher resolutions.
 
 The root mean square displacement and the displacement error (in the $L_2$ norm)
@@ -1464,6 +1458,7 @@ are as follows
 \includegraphics[width=12cm]{python_codes/fieldstone_185/RESULTS/exp1/erru.pdf}
 \end{center}
 
+
 The minimum and maximum value of each displacement component are also measured:
 
 \begin{center}
@@ -1472,6 +1467,10 @@ The minimum and maximum value of each displacement component are also measured:
 \includegraphics[width=5.7cm]{python_codes/fieldstone_185/RESULTS/exp1/w_stats.pdf}
 \end{center}
 
+The min/max values of $u$ and $v$ are unsuprisingly independent of resolution and tolerance
+since their analytical values are prescribed on the sides of the domain. 
+In turn we should expect zero $w$ min/max value but instead recover that these decrease 
+in amplitude with resolution and that the solver tolerance plays a role at high resolution.
 
 
 
