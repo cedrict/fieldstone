@@ -3,6 +3,15 @@
 One will find in the literature either 'elasto-viscous' or 'visco-elastic' rheology names.
 I here make no distinction between the two.
 
+Once the equations have been laid out, one must then make a fundamental choice 
+with regards to the type of code/calculations in the case of elasto-viscous
+rheologies: will the primary variable be displacement $\vec{\upupsilon}$ or velocity $\vec\upnu$?
+The latter is the common approach in the geodynamics community. The vast majority
+of codes are fluid flow solvers, formulated in velocity and pressure. 
+Elasticity is usually added to such codes way after they were first used/written 
+(e.g. ELEFANT, ASPECT, I2ELVIS, UNDERWORLD, ...). 
+For a purely elastic code displacement is the meaningful primary variable since the stress 
+is formulated as a function of strain (not strain rate). 
 
 \begin{verbatim}
 python_codes/fieldstone_64/

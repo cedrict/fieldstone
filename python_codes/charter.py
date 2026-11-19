@@ -40,7 +40,17 @@ def basis_functions_P_dt(r,s,t):
 
 
 
+def basis_functions_T(r,s,t):
+    return np.array([N0,N1,N2,N3,N4,N5,N6,N7,N8],dtype=np.float64)
 
+def basis_functions_T_dr(r,s,t):
+    return np.array([dNdr0,dNdr1,dNdr2,dNdr3,dNdr4,dNdr5,dNdr6,dNdr7,dNdr8],dtype=np.float64)
+
+def basis_functions_T_ds(r,s,t):
+    return np.array([dNds0,dNds1,dNds2,dNds3,dNds4,dNds5,dNds6,dNds7,dNds8],dtype=np.float64)
+
+def basis_functions_T_dt(r,s,t):
+    return np.array([dNdt0,dNdt1,dNdt2,dNdt3,dNdt4,dNdt5,dNdt6,dNdt7,dNdt8],dtype=np.float64)
 
 
 ###############################################################################
@@ -193,6 +203,7 @@ print('nelz=',nelz)
 print('nel=',nel)
 print('Nfem_V=',Nfem_V)
 print('Nfem_P=',Nfem_P)
+print('Nfem_T=',Nfem_T)
 print('Nfem=',Nfem)
 print("-----------------------------")
 
