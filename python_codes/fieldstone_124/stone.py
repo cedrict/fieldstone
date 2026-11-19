@@ -99,7 +99,6 @@ nely=nelx
 
 distance=eps*Lx
 
-hx=Lx/nelx
 hy=Ly/nely
 
 print('     -> experiment=',experiment)
@@ -527,7 +526,7 @@ C=np.array([[2*mu+lambdaa,lambdaa,0],
 for iel in range(0,nel):
 
     A_el=np.zeros((m_V*ndof_V,m_V*ndof_V),dtype=np.float64)
-    b_el=np.zeros(m_V*ndof_V)
+    b_el=np.zeros(m_V*ndof_V,dtype=np.float64)
 
     for iq in [-1,1]:
         for jq in [-1,1]:
