@@ -12,6 +12,7 @@ from basis_functions import *
 from build_elemental_matrix import *
 from compute_strain_tensor_components import *
 from export_mesh_to_vtu import *
+from export_borehole import *
 
 ###############################################################################
 # square root of second invariant of tensor 
@@ -89,7 +90,7 @@ match experiment:
       nelx = int(sys.argv[1])
       nelz = int(sys.argv[2])
    else:
-      nelx = 8
+      nelx = 16
       nelz = 4
  
    nelr=int(nelx/2)
@@ -1349,7 +1350,10 @@ for istep in range(0,nstep):
                np.array([theta_n[wall_V],z_V[wall_V],\
                          rad_n[wall_V],disp[wall_V],e_n[wall_V],sigma_n[wall_V]]).T,header='# theta,z,r,disp',fmt='%.4e')
 
-    #INSERT matplotlib commands to generate colormaps
+    ###########################################################################
+
+    export_borehole(nelx,nelz,x_V[wall_V],y_V[wall_V],z_V[wall_V],theta_n[wall_V],\
+                    radius,Lx,Ly,Lz,u[wall_V],v[wall_V],w[wall_V],sigma_n[wall_V])
 
     ###########################################################################
     # export analytical solution on lines 
