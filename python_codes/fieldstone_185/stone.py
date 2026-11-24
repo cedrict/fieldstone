@@ -30,6 +30,12 @@ def yield_criterion(c,phi,p):
 
 ###############################################################################
 
+def compute_tau0(sigma_rr,sigma_tt,sigma_rt,mu):
+    return np.sqrt(1+mu**2)*np.sqrt(0.25*(sigma_tt-sigma_rr)**2+sigma_rt**2)\
+           -mu*(sigma_tt+sigma_rr)/2
+
+###############################################################################
+
 sqrt3=np.sqrt(3.)
 eps=1e-8
 
@@ -90,7 +96,7 @@ match experiment:
       nelx = int(sys.argv[1])
       nelz = int(sys.argv[2])
    else:
-      nelx = 16
+      nelx = 48
       nelz = 4
  
    nelr=int(nelx/2)
@@ -98,6 +104,7 @@ match experiment:
    radius=0.02 #*4
    volume_analytical=Lx*Ly*Lz-(np.pi*radius**2*Lz)
    layout=1
+   mu=0.6
    if experiment==1:
       #sigma_H is prescribed, 
       #sigma_H1 is passed to anal solution.
@@ -416,6 +423,7 @@ sigma_p3_th=np.zeros(nel,dtype=np.float64)
 sigma_rr_th=np.zeros(nel,dtype=np.float64)  
 sigma_tt_th=np.zeros(nel,dtype=np.float64)  
 sigma_rt_th=np.zeros(nel,dtype=np.float64)  
+tau0_th=np.zeros(nel,dtype=np.float64)  
 
 match experiment:
  case 0:
@@ -446,6 +454,7 @@ match experiment:
        sigma_p3_th[iel]=eigenvalues[idx[2]]
        sigma_rr_th[iel],sigma_tt_th[iel],sigma_rt_th[iel]=\
        analytical_solution_stress_cyl(rad_e[iel],theta_e[iel],radius,sigma_H1,sigma_h1,sigma_v1,nu1)
+       tau0_th[iel]=compute_tau0(sigma_rr_th[iel],sigma_tt_th[iel],sigma_rt_th[iel],mu)
 
 print("compute analytical solution on nodes: %.3f s" % (clock.time()-start))
 
@@ -1290,6 +1299,9 @@ for istep in range(0,nstep):
     sigma_tt_th.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
     vtufile.write("<DataArray type='Float32' Name='sigma_rt (th)' Format='ascii'> \n")
     sigma_rt_th.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
+
+    vtufile.write("<DataArray type='Float32' Name='tau0 (th)' Format='ascii'> \n")
+    tau0_th.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
     #--
     vtufile.write("<DataArray type='Float32' Name='sigma_1' Format='ascii'> \n")
     sigma_p1_e.tofile(vtufile,sep=' ',format='%.4e') ; vtufile.write("</DataArray>\n")
