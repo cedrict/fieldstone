@@ -1,0 +1,26 @@
+# 1: Time step number
+# 2: Time (years)
+# 3: Time step size (years)
+# 4: Number of mesh cells
+# 5: Number of Stokes degrees of freedom
+# 6: Number of temperature degrees of freedom
+# 7: Number of degrees of freedom for all compositions
+# 8: Iterations for temperature solver
+# 9: Iterations for composition solver 1
+# 10: Iterations for composition solver 2
+# 11: Iterations for Stokes solver
+# 12: Velocity iterations in Stokes preconditioner
+# 13: Schur complement iterations in Stokes preconditioner
+# 14: Visualization file name
+# 15: Minimum topography (m)
+# 16: Maximum topography (m)
+0 0.000000000000e+00 0.000000000000e+00 31006 312507 138393 276786 0 0 0 39 54 150 output/solution/solution-00000  0.00000000e+00 0.00000000e+00 
+1 8.928797564071e+02 8.928797564071e+02 31006 312507 138393 276786 0 8 8 31 33  45                             "" -3.34993229e+00 8.54656121e+00 
+2 1.795733785360e+03 9.028540289526e+02 31006 312507 138393 276786 0 8 7 29 30  30                             "" -6.44673879e+00 1.65579258e+01 
+3 2.704826275857e+03 9.090924904971e+02 31006 312507 138393 276786 0 8 7 26 27  27                             "" -9.38520757e+00 2.42307860e+01 
+4 3.619939032010e+03 9.151127561531e+02 31006 312507 138393 276786 0 8 7 26 27  27                             "" -1.21720717e+01 3.15765917e+01 
+5 4.540796332645e+03 9.208573006356e+02 31006 312507 138393 276786 0 8 7 26 27  27                             "" -1.48134096e+01 3.86056156e+01 
+6 5.467196761930e+03 9.264004292844e+02 31036 312777 138513 277026 0 8 7 26 27  27                             "" -1.73154433e+01 4.53288754e+01 
+7 6.398930480951e+03 9.317337190212e+02 31036 312777 138513 277026 0 7 7 27 28  28                             "" -1.96842358e+01 5.17573648e+01 
+8 7.335791427865e+03 9.368609469140e+02 31036 312777 138513 277026 0 7 7 26 27  27                             "" -2.19257292e+01 5.79021194e+01 
+9 8.277621893710e+03 9.418304658446e+02 31036 312777 138513 277026 0 7 7 26 27  27                             "" -2.40458642e+01 6.37744438e+01 

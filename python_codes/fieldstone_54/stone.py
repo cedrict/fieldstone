@@ -68,13 +68,17 @@ def basis_functions_P(r,s):
 #experiment=8:  pure advection + pyramid bump
 #experiment=9:  rayleigh-taylor 
 #experiment=10: multilayer relaxation
+#experiment=11: crameri case 2
 
-experiment=10
+experiment=11
 
 gy=-10.
 rho1=3200.
 eta1=1e22
 eta_ref=1e22
+
+dt=125*year
+nstep=3
 
 match experiment:
  case 1:
@@ -115,12 +119,18 @@ match experiment:
    nelx=int(Lx/50e3)
    nely=int(Ly/100e3)
    laambda=2*Lx
+ case 11:
+   Lx=1400e3
+   Ly=700e3
+   nelx=140
+   nely=70
+   eta_ref=1e21
+   dt=2500*year
+   nstep=100
+   gy=-10.
 
 hx=Lx/nelx
 hy=Ly/nely
-
-#print (nelx,Lx,hx)
-#exit()
 
 ###############################################################################
 
@@ -143,9 +153,6 @@ Nfem=Nfem_V+Nfem_P
 nq_per_dim=3
 qcoords=[-np.sqrt(3./5.),0.,np.sqrt(3./5.)]
 qweights=[5./9.,8./9.,5./9.]
-
-dt=125*year
-nstep=3
 
 method=1
 vertical_only=False
@@ -253,6 +260,10 @@ match experiment:
  case 6 | 7 | 8:
    uleft=+1.*cm/year
    uright=+1.*cm/year
+ case 11:
+   uleft=0
+   uright=0
+
 
 for i in range(0,nn_V):
     if x_V[i]/Lx<eps:
@@ -340,6 +351,17 @@ match experiment:
           else:
              eta_e[iel]=1e21
              rho_e[iel]=3300
+ case 11: 
+      for iel in range(0,nel):
+          eta_e[iel]=1e21
+          rho_e[iel]=3300
+          if y_e[iel]>600e3:
+             eta_e[iel]=1e23
+             rho_e[iel]=3300
+          if (x_e[iel])**2 + (y_e[iel]-300e3)**2 < 50e3**2:
+             eta_e[iel]=1e20
+             rho_e[iel]=3200
+
  case _ :
       exit('unknown experiment')
 
@@ -415,6 +437,7 @@ print("assign initial elevation: %.3f s" % (clock.time()-start))
 elevation=np.zeros((nstep,4),dtype=np.float64)
 vrms=np.zeros((nstep,2),dtype=np.float64) 
 volume=np.zeros((nstep,3),dtype=np.float64) 
+measurements=np.zeros((nstep,6),dtype=np.float64)
 
 u=np.zeros(nn_V,dtype=np.float64) 
 v=np.zeros(nn_V,dtype=np.float64) 
@@ -422,7 +445,7 @@ v=np.zeros(nn_V,dtype=np.float64)
 for istep in range(0,nstep):
 
    print("----------------------------------")
-   print("istep= ", istep)
+   print("istep= ", istep, "time=",istep*dt)
    print("----------------------------------")
 
    if istep%every==0:
@@ -819,6 +842,16 @@ for istep in range(0,nstep):
    print("compute mesh deformation: %.3fs" % (clock.time()-start))
 
    #################################################################
+   # update vertical coordinates of P nodes!
+   #################################################################
+
+   for iel in range(0,nel):
+       y_P[icon_P[0,iel]]=y_V[icon_V[0,iel]]
+       y_P[icon_P[1,iel]]=y_V[icon_V[1,iel]]
+       y_P[icon_P[2,iel]]=y_V[icon_V[2,iel]]
+       y_P[icon_P[3,iel]]=y_V[icon_V[3,iel]]
+
+   #################################################################
    # build FE matrix
    # [ K G ][u]=[f]
    # [GT 0 ][p] [h]
@@ -1013,6 +1046,42 @@ for istep in range(0,nstep):
    print("compute vrms: %.3fs" % (clock.time()-start))
 
    ############################################################################
+   # compute lithostatic pressure
+   ############################################################################
+   start=clock.time()
+
+   plith=np.zeros(nn_P,dtype=np.float64) 
+
+   for i in range(0,nelx):
+       for j in range(nely-1,-1,-1):
+           iel=j*nelx+i
+           plith[icon_P[0,iel]]=plith[icon_P[3,iel]]+(y_P[icon_P[3,iel]]-y_P[icon_P[0,iel]])*rho_e[iel]*abs(gy)
+           if i==nelx-1:
+              plith[icon_P[1,iel]]=plith[icon_P[2,iel]]+(y_P[icon_P[2,iel]]-y_P[icon_P[1,iel]])*rho_e[iel]*abs(gy)
+
+   if debug: np.savetxt('plith.ascii',np.array([x_P,y_P,plith]).T,header='# x,y,p')
+
+   np.savetxt('plith_bottom_'+str(istep)+'.ascii',np.array([x_P[0:nelx+1],plith[0:nelx+1]]).T,header='# x,p')
+
+   ############################################################################
+   # experiment 11 measurement
+   ############################################################################
+
+   blob_vy=0
+   blob_volume=0
+   for iel in range(0,nel):
+       if abs(rho_e[iel]-3200)/3200<1e-6:
+          blob_vy+=vol[iel]*np.sum(v[icon_V[:,iel]])/9
+          blob_volume+=vol[iel]
+
+   measurements[istep,0]=istep*dt
+   measurements[istep,1]=v[nn_V-(2*nelx+1)]
+   measurements[istep,2]=q[0]
+   measurements[istep,3]=plith[0]
+   measurements[istep,4]=blob_vy/blob_volume
+   measurements[istep,5]=blob_volume
+
+   ############################################################################
    # plot of solution
    ############################################################################
    start=clock.time()
@@ -1034,7 +1103,7 @@ for istep in range(0,nstep):
       #####
       vtufile.write("<CellData Scalars='scalars'>\n")
       vtufile.write("<DataArray type='Float32' Name='volume' Format='ascii'> \n")
-      vol.tofile(vtufile,sep=' ',format='%.4e')
+      vol.tofile(vtufile,sep=' ',format='%.6e')
       vtufile.write("</DataArray>\n")
       vtufile.write("<DataArray type='Float32' Name='viscosity' Format='ascii'> \n")
       eta_e.tofile(vtufile,sep=' ',format='%.4e')
@@ -1091,6 +1160,12 @@ for istep in range(0,nstep):
                                           elevation[0:istep,2],elevation[0:istep,3]]).T)
    np.savetxt('vrms.ascii',np.array([vrms[0:istep,0],vrms[0:istep,1]]).T)
    np.savetxt('volume.ascii',np.array([volume[0:istep,0],volume[0:istep,1],volume[0:istep,2]]).T)
+   np.savetxt('measurements.ascii',np.array([measurements[0:istep,0],\
+                                             measurements[0:istep,1],\
+                                             measurements[0:istep,2],\
+                                             measurements[0:istep,3],\
+                                             measurements[0:istep,4],\
+                                             measurements[0:istep,5]]).T)
 
 #==============================================================================
 #==============================================================================
@@ -1101,7 +1176,6 @@ for istep in range(0,nstep):
 if experiment==10:
 
    np.savetxt('elevation_exp10.ascii',np.array([elevation[0:nstep,0],np.log(np.abs(elevation[0:nstep,1])/w0)]).T)
-
    
    print('tau=',4*np.pi*1e21/Lx/3300/abs(gy),'lambda=',laambda,\
          'slope=',np.log(np.abs(elevation[nstep-1,1])/w0)/elevation[nstep-1,0])
