@@ -264,7 +264,6 @@ match experiment:
    uleft=0
    uright=0
 
-
 for i in range(0,nn_V):
     if x_V[i]/Lx<eps:
        bc_fix[i*ndof_V]   = True ; bc_val[i*ndof_V]   = uleft
@@ -280,6 +279,9 @@ for i in range(0,nn_V):
              bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = 0.
           #end if 
           bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0.5*cm/year
+       elif experiment==11:
+          bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = 0 # no slip
+          bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0
        else:
           bc_fix[i*ndof_V+1] = True ; bc_val[i*ndof_V+1] = 0.
           #bc_fix[i*ndof_V  ] = True ; bc_val[i*ndof_V  ] = 0.   #noslip
@@ -981,27 +983,54 @@ for istep in range(0,nstep):
 
    print("split vel into u,v: %.3f s" % (clock.time()-start))
 
+   ############################################################################
+   # compute lithostatic pressure
+   ############################################################################
+   start=clock.time()
+
+   plith=np.zeros(nn_P,dtype=np.float64) 
+
+   for i in range(0,nelx):
+       for j in range(nely-1,-1,-1):
+           iel=j*nelx+i
+           dy=y_P[icon_P[3,iel]]-y_P[icon_P[0,iel]]
+           plith[icon_P[0,iel]]=plith[icon_P[3,iel]]+dy*rho_e[iel]*abs(gy)
+           if i==nelx-1:
+              dy=y_P[icon_P[2,iel]]-y_P[icon_P[1,iel]]
+              plith[icon_P[1,iel]]=plith[icon_P[2,iel]]+dy*rho_e[iel]*abs(gy)
+
+   if debug: np.savetxt('plith.ascii',np.array([x_P,y_P,plith]).T,header='# x,y,p')
+
+   np.savetxt('plith_bottom_'+str(istep)+'.ascii',np.array([x_P[0:nelx+1],plith[0:nelx+1]]).T,header='# x,p')
+
+   print("compute lithostatic pressure: %.3fs" % (clock.time()-start))
+
    #####################################################################
    # project pressure onto velocity grid
    #####################################################################
    start=clock.time()
 
    q=np.zeros(nn_V,dtype=np.float64)
+   qlith=np.zeros(nn_V,dtype=np.float64)
    c=np.zeros(nn_V,dtype=np.float64)
 
    for iel in range(0,nel):
        for i in range(0,m_V):
            N_P=basis_functions_P(r_V[i],s_V[i])
            q[icon_V[i,iel]]+=np.dot(N_P,p[icon_P[0:m_P,iel]])
+           qlith[icon_V[i,iel]]+=np.dot(N_P,plith[icon_P[0:m_P,iel]])
            c[icon_V[i,iel]]+=1.
        # end for i
    # end for iel
 
    q/=c
+   qlith/=c
 
-   if debug: np.savetxt('q.ascii',np.array([x_V,y_V,q]).T,header='# x,y,q')
+   if debug: 
+      np.savetxt('q.ascii',np.array([x_V,y_V,q]).T,header='# x,y,q')
+      np.savetxt('qlith.ascii',np.array([x_V,y_V,qlith]).T,header='# x,y,qlith')
 
-   print("project p onto Vnodes: %.3f s" % (clock.time() - start))
+   print("project p & plith onto Vnodes: %.3f s" % (clock.time() - start))
 
    #####################################################################
    # compute vrms and total volume 
@@ -1046,40 +1075,23 @@ for istep in range(0,nstep):
    print("compute vrms: %.3fs" % (clock.time()-start))
 
    ############################################################################
-   # compute lithostatic pressure
-   ############################################################################
-   start=clock.time()
-
-   plith=np.zeros(nn_P,dtype=np.float64) 
-
-   for i in range(0,nelx):
-       for j in range(nely-1,-1,-1):
-           iel=j*nelx+i
-           plith[icon_P[0,iel]]=plith[icon_P[3,iel]]+(y_P[icon_P[3,iel]]-y_P[icon_P[0,iel]])*rho_e[iel]*abs(gy)
-           if i==nelx-1:
-              plith[icon_P[1,iel]]=plith[icon_P[2,iel]]+(y_P[icon_P[2,iel]]-y_P[icon_P[1,iel]])*rho_e[iel]*abs(gy)
-
-   if debug: np.savetxt('plith.ascii',np.array([x_P,y_P,plith]).T,header='# x,y,p')
-
-   np.savetxt('plith_bottom_'+str(istep)+'.ascii',np.array([x_P[0:nelx+1],plith[0:nelx+1]]).T,header='# x,p')
-
-   ############################################################################
    # experiment 11 measurement
    ############################################################################
 
-   blob_vy=0
-   blob_volume=0
-   for iel in range(0,nel):
-       if abs(rho_e[iel]-3200)/3200<1e-6:
-          blob_vy+=vol[iel]*np.sum(v[icon_V[:,iel]])/9
-          blob_volume+=vol[iel]
+   if experiment==11:
+      blob_vy=0
+      blob_volume=0
+      for iel in range(0,nel):
+          if abs(rho_e[iel]-3200)/3200<1e-6:
+             blob_vy+=vol[iel]*np.sum(v[icon_V[:,iel]])/9
+             blob_volume+=vol[iel]
 
-   measurements[istep,0]=istep*dt
-   measurements[istep,1]=v[nn_V-(2*nelx+1)]
-   measurements[istep,2]=q[0]
-   measurements[istep,3]=plith[0]
-   measurements[istep,4]=blob_vy/blob_volume
-   measurements[istep,5]=blob_volume
+      measurements[istep,0]=istep*dt
+      measurements[istep,1]=v[nn_V-(2*nelx+1)]
+      measurements[istep,2]=q[0]
+      measurements[istep,3]=plith[0]
+      measurements[istep,4]=blob_vy/blob_volume
+      measurements[istep,5]=blob_volume
 
    ############################################################################
    # plot of solution
@@ -1122,6 +1134,15 @@ for istep in range(0,nstep):
       #--
       vtufile.write("<DataArray type='Float32' Name='q' Format='ascii'> \n")
       q.tofile(vtufile,sep=' ',format='%.4e')
+      vtufile.write("</DataArray>\n")
+      #--
+      vtufile.write("<DataArray type='Float32' Name='qlith' Format='ascii'> \n")
+      qlith.tofile(vtufile,sep=' ',format='%.4e')
+      vtufile.write("</DataArray>\n")
+      #--
+      vtufile.write("<DataArray type='Float32' Name='q-qlith' Format='ascii'> \n")
+      qq=q-qlith
+      qq.tofile(vtufile,sep=' ',format='%.4e')
       vtufile.write("</DataArray>\n")
       #--
       vtufile.write("</PointData>\n")

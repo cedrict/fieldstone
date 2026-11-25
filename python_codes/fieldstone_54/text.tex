@@ -600,14 +600,16 @@ Case 2 which includes a rising plume beneath the lithosphere.}
 
 Note that only half of the domain is modeled (the half-disc is then placed 
 on the left boundary), i.e. Lx=1400km, Ly=700km. Timestep is fixed at 2500 year.
-Also, a fully Lagrangian approach is taken, so that all elements deform, 
+Also, a fully Lagrangian approach is taken (i.e. method=1), so that all elements deform, 
 each being assigned an initial density and viscosity.
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp11/vel0}
 \includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp11/vel1}\\
 \includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp11/eta0}
 \includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp11/eta1}\\
-{\captionfont Velocity and viscosity fields at t=0 and t=200kyr.} 
+\includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp11/qq0}
+\includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp11/qq1}\\
+{\captionfont Velocity, viscosity and over-pressure fields at t=0 and t=200kyr.} 
 \end{center}
 
 \begin{center}
@@ -620,6 +622,13 @@ lines) shown for (a) long-term evolution and (b) short term isostatic adjustment
 sticky air results that use a 150 km thick weak surface layer and variable viscosity.
 }
 \end{center}
+
+It would be interesting to run these models at high resolution but 
+one needs to be careful since we wish to have a row on nodes 
+exactly at 100km depth. Also at 140x70 resolution each time step takes
+about 2 mins. 
+
+
 
 \newpage
 Many measurements are carried out:
@@ -643,8 +652,8 @@ measured at $y=L_y$:
 \includegraphics[width=10cm]{python_codes/fieldstone_54/RESULTS/exp11/pressures.pdf}\\
 \end{center}
 
-We see that when these two lines cross it roughly corresponds to the 
-inflection in the topography plot above.
+%We see that when these two lines cross it roughly corresponds to the 
+%inflection in the topography plot above.
 
 
 \item the vertical velocity of the top left corner node as a function of time:
@@ -666,7 +675,7 @@ Right: the volume of the blob as a function of time:
 \end{center}
 
 \item the computed lithostatic pressure (by downward integration) minus the reference
-lithostatic pressure given by $p_{ref}=700e3*10*3300$:
+lithostatic pressure given by $p_{ref}=700e3\cdot 10 \cdot 3300$:
 \begin{center}
 \includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp11/plith.pdf}
 \includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp11/plith_zoom.pdf}
@@ -674,14 +683,15 @@ lithostatic pressure given by $p_{ref}=700e3*10*3300$:
 
 \item the time evolution of the surface topography:
 \begin{center}
-\includegraphics[width=12cm]{python_codes/fieldstone_54/RESULTS/exp11/surface_topography.pdf}
+\includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp11/surface_topography.pdf}
 \end{center}
 
-\end{itemize}
+\item the relative volume change $(V(t)-V_0)/V_0$ as a function of time:
+\begin{center}
+\includegraphics[width=8cm]{python_codes/fieldstone_54/RESULTS/exp11/total_volume.pdf}
+\end{center}
 
-It would be interesting to run these models at high resolution but 
-one needs to be careful since we wish to have a row on nodes 
-exactly at 100km depth. Also at 140x70 resolution each time step takes
-about 2 mins. 
+
+\end{itemize}
 
 
